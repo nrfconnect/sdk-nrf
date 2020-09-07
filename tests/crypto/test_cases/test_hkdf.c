@@ -32,9 +32,6 @@ static uint8_t m_hkdf_salt_buf[HKDF_BUF_SIZE];
 static uint8_t m_hkdf_info_buf[HKDF_BUF_SIZE];
 static uint8_t m_hkdf_expected_okm_buf[HKDF_BUF_SIZE];
 
-static uint8_t *p_hkdp_salt;
-static uint8_t *p_hkdp_info;
-
 static test_vector_hkdf_t *p_test_vector;
 
 static size_t ikm_len;
@@ -69,9 +66,6 @@ __attribute__((noinline)) void unhexify_hkdf(void)
 		hex2bin(p_test_vector->p_okm, strlen(p_test_vector->p_okm),
 			m_hkdf_expected_okm_buf, strlen(p_test_vector->p_okm));
 	okm_len = expected_okm_len;
-
-	p_hkdp_salt = (salt_len == 0) ? NULL : m_hkdf_salt_buf;
-	p_hkdp_info = (info_len == 0) ? NULL : m_hkdf_info_buf;
 }
 
 void hkdf_setup(void)
@@ -88,14 +82,15 @@ void hkdf_setup(void)
  */
 void exec_test_case_hkdf(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	/* Calculation of the HKDF extract and expand. */
 	start_time_measurement();
 
 	const mbedtls_md_info_t *p_md_info =
-		mbedtls_md_info_from_type(p_test_vector->digest_type);
-	err_code = mbedtls_hkdf(p_md_info, p_hkdp_salt, salt_len,
+		mbedtls_md_info_from_type(
+			(mbedtls_md_type_t)p_test_vector->digest_type);
+	err_code = mbedtls_hkdf(p_md_info, m_hkdf_salt_buf, salt_len,
 				m_hkdf_ikm_buf, ikm_len, m_hkdf_info_buf,
 				info_len, m_hkdf_okm_buf, okm_len);
 	stop_time_measurement();

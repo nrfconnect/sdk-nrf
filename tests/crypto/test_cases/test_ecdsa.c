@@ -104,14 +104,14 @@ void ecdsa_clear_buffers(void)
  */
 void exec_test_case_ecdsa_sign(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	/* Prepare signer context. */
 	mbedtls_ecdsa_context ctx_sign;
 	mbedtls_ecdsa_init(&ctx_sign);
 
 	err_code = mbedtls_ecp_group_load(&ctx_sign.grp,
-					  p_test_vector_sign->curve_type);
+			(mbedtls_ecp_group_id)p_test_vector_sign->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Get public key. */
@@ -182,13 +182,13 @@ void exec_test_case_ecdsa_sign(void)
  */
 void exec_test_case_ecdsa_verify(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	mbedtls_ecdsa_context ctx_verify;
 	mbedtls_ecdsa_init(&ctx_verify);
 
 	err_code = mbedtls_ecp_group_load(&ctx_verify.grp,
-					  p_test_vector_verify->curve_type);
+			(mbedtls_ecp_group_id)p_test_vector_verify->curve_type);
 	if (err_code != 0) {
 		LOG_WRN("ecp group load error code: -0x%02X, curve type: %d",
 			-err_code, p_test_vector_verify->curve_type);
@@ -243,7 +243,7 @@ void exec_test_case_ecdsa_verify(void)
  */
 void exec_test_case_ecdsa_random(void)
 {
-	int err_code = -1;
+	int err_code;
 
 
 	/* Prepare signer context. */
@@ -252,8 +252,8 @@ void exec_test_case_ecdsa_random(void)
 
 	/* Create a ECDSA key pair */
 	err_code = mbedtls_ecdsa_genkey(&ctx_sign,
-					p_test_vector_random->curve_type,
-					drbg_random, &drbg_ctx);
+			(mbedtls_ecp_group_id)p_test_vector_random->curve_type,
+			drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Verify keys. */
@@ -277,6 +277,7 @@ void exec_test_case_ecdsa_random(void)
 				      m_ecdsa_input_buf, hash_len,
 				      drbg_random, &drbg_ctx);
 	stop_time_measurement();
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Prepare verification context. */
 	mbedtls_ecdsa_context ctx_verify;

@@ -199,7 +199,7 @@ __attribute__((noinline)) void unhexify_aead(void)
 #if defined(MBEDTLS_CCM_C)
 void exec_test_case_aead_ccm_star_simple(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	/* Initialize AEAD. */
 	key_bits = key_len * 8;
@@ -253,7 +253,7 @@ void exec_test_case_aead_ccm_star_simple(void)
 
 void exec_test_case_aead_ccm_star(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	/* Initialize AEAD. */
 	key_bits = key_len * 8;
@@ -335,7 +335,7 @@ void exec_test_case_aead_ccm_star(void)
  */
 void exec_test_case_aead(void)
 {
-	int err_code = -1;
+	int err_code;
 
 #if defined(MBEDTLS_CCM_C)
 	if (p_test_vector->mode == MBEDTLS_MODE_CCM &&
@@ -439,7 +439,7 @@ void exec_test_case_aead(void)
  */
 void exec_test_case_aead_simple(void)
 {
-	int err_code = -1;
+	int err_code;
 
 #if defined(MBEDTLS_CCM_C)
 	if (p_test_vector->mode == MBEDTLS_MODE_CCM &&

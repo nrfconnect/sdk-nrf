@@ -42,7 +42,6 @@ static uint8_t m_aes_expected_output_buf[AES_PLAINTEXT_BUF_SIZE_PLUS];
 static uint8_t m_prev_aes_output_buf[AES_PLAINTEXT_BUF_SIZE_PLUS];
 static uint8_t m_aes_key_buf[AES_MAX_KEY_SIZE];
 static uint8_t m_aes_iv_buf[AES_IV_MAX_SIZE + NUM_BUFFER_OVERFLOW_TEST_BYTES];
-static uint8_t m_aes_temp_buf[AES_MAX_KEY_SIZE];
 
 static test_vector_aes_t *p_test_vector;
 /* Some tests require overriding the test vector crypt direction.
@@ -54,7 +53,6 @@ static size_t input_len;
 static size_t output_len;
 static size_t key_len;
 static size_t iv_len;
-static size_t ad_len;
 
 void aes_ecb_clear_buffers(void);
 void unhexify_aes_ecb(void);
@@ -148,7 +146,6 @@ void aes_ecb_clear_buffers(void)
 	memset(m_prev_aes_output_buf, 0x00, sizeof(m_prev_aes_output_buf));
 	memset(m_aes_key_buf, 0x00, sizeof(m_aes_key_buf));
 	memset(m_aes_iv_buf, 0xFF, sizeof(m_aes_iv_buf));
-	memset(m_aes_temp_buf, 0x00, sizeof(m_aes_temp_buf));
 }
 
 __attribute__((noinline)) void unhexify_aes_ecb(void)
@@ -160,8 +157,6 @@ __attribute__((noinline)) void unhexify_aes_ecb(void)
 			  m_aes_key_buf, strlen(p_test_vector->p_key));
 	iv_len = hex2bin(p_test_vector->p_iv, strlen(p_test_vector->p_iv),
 			 m_aes_iv_buf, strlen(p_test_vector->p_iv));
-	ad_len = hex2bin(p_test_vector->p_ad, strlen(p_test_vector->p_ad),
-			 m_aes_temp_buf, strlen(p_test_vector->p_ad));
 
 	if (encrypt) {
 		input_len = hex2bin(p_test_vector->p_plaintext,
@@ -188,12 +183,13 @@ __attribute__((noinline)) void unhexify_aes_ecb(void)
  */
 void exec_test_case_aes_ecb_functional(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	mbedtls_cipher_context_t ctx;
 
 	err_code = cipher_init(&ctx, key_len, p_test_vector->mode);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	TEST_VECTOR_ASSERT_NOT_NULL(ctx.cipher_ctx);
 
 	err_code = cipher_set_key(&ctx, key_len, MBEDTLS_ENCRYPT);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
@@ -226,6 +222,7 @@ void exec_test_case_aes_ecb_functional(void)
 
 	err_code = cipher_init(&ctx, key_len, p_test_vector->mode);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	TEST_VECTOR_ASSERT_NOT_NULL(ctx.cipher_ctx);
 
 	err_code = cipher_set_key(&ctx, key_len, MBEDTLS_DECRYPT);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
@@ -258,12 +255,13 @@ void exec_test_case_aes_ecb_functional(void)
  */
 void exec_test_case_aes_ecb(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	mbedtls_cipher_context_t ctx;
 
 	err_code = cipher_init(&ctx, key_len, p_test_vector->mode);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	TEST_VECTOR_ASSERT_NOT_NULL(ctx.cipher_ctx);
 
 	err_code = cipher_set_key(&ctx, key_len, p_test_vector->direction);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
@@ -298,14 +296,14 @@ void monte_carlo_ecb_update_key(size_t key_len, size_t ciphertext_len)
 	divider = key_len - ciphertext_len;
 
 	/* Xor previous cipher with key if key_len > cipher_len. */
-	for (uint8_t xor_start = 0; xor_start < divider; xor_start++) {
+	for (size_t xor_start = 0; xor_start < divider; xor_start++) {
 		m_aes_key_buf[xor_start] ^=
 			m_prev_aes_output_buf[ciphertext_len - divider +
 					      xor_start];
 	}
 
 	/* Xor cipher with last 16 bytes of key. */
-	for (uint8_t xor_start = 0; xor_start < ciphertext_len; xor_start++) {
+	for (size_t xor_start = 0; xor_start < ciphertext_len; xor_start++) {
 		m_aes_key_buf[divider + xor_start] ^=
 			m_aes_output_buf[xor_start];
 	}
@@ -335,8 +333,9 @@ int monte_carlo_ecb(test_vector_aes_t *p_test_vector,
 		err_code =
 			mbedtls_cipher_update(p_ctx, m_aes_input_buf, input_len,
 					      m_aes_output_buf, &output_len);
-		TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code,
-					 err_code);
+		if (err_code != p_test_vector->expected_err_code)
+			return err_code;
+
 		memcpy(m_aes_input_buf, m_aes_output_buf, input_len);
 
 		if (j < 5 && dbg_hexdump_on) {
@@ -348,10 +347,7 @@ int monte_carlo_ecb(test_vector_aes_t *p_test_vector,
 	/* Update the AES key. */
 	monte_carlo_ecb_update_key(key_len, output_len);
 
-	err_code = cipher_set_key(p_ctx, key_len, p_test_vector->direction);
-	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
-
-	return err_code;
+	return cipher_set_key(p_ctx, key_len, p_test_vector->direction);
 }
 
 /**@brief Function for the AES Monte Carlo test execution.

@@ -12,7 +12,6 @@
 
 #include "common_test.h"
 #include <sha256.h>
-#include <mbedtls/md.h>
 
 /* Setting LOG_LEVEL_DBG might affect time measurements! */
 LOG_MODULE_REGISTER(test_sha_256, LOG_LEVEL_INF);
@@ -115,7 +114,9 @@ static int exec_sha256(test_vector_hash_t *p_test_vector, int in_len,
 {
 	mbedtls_sha256_init(&sha256_context);
 	int err_code = mbedtls_sha256_starts_ret(&sha256_context, false);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	if (err_code != 0) {
+		return err_code;
+	}
 
 	/* Update the hash. */
 	if (!is_long) {
@@ -132,12 +133,13 @@ static int exec_sha256(test_vector_hash_t *p_test_vector, int in_len,
 
 			err_code = mbedtls_sha256_update_ret(
 				&sha256_context, m_sha_input_buf, in_len);
-			TEST_VECTOR_ASSERT_EQUAL(
-				p_test_vector->expected_err_code, err_code);
+			if (err_code != 0)
+				return err_code;
 		}
 	}
 
-	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
+	if (err_code != p_test_vector->expected_err_code)
+		return err_code;
 
 	/* Finalize the hash. */
 	return mbedtls_sha256_finish_ret(&sha256_context, m_sha_output_buf);
@@ -147,7 +149,7 @@ static int exec_sha256(test_vector_hash_t *p_test_vector, int in_len,
  */
 void exec_test_case_sha_256(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	start_time_measurement();
 	err_code = exec_sha256(p_test_vector, in_len, false);
@@ -183,7 +185,7 @@ void exec_test_case_sha_256(void)
  */
 void exec_test_case_sha_256_long(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	start_time_measurement();
 	err_code = exec_sha256(p_test_vector, in_len, true);

@@ -171,12 +171,13 @@ __attribute__((noinline)) void unhexify_aes_ctr(void)
  */
 void exec_test_case_aes_ctr_functional(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	mbedtls_cipher_context_t ctx;
 
 	err_code = cipher_init(&ctx, key_len, p_test_vector->mode);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	TEST_VECTOR_ASSERT_NOT_NULL(ctx.cipher_ctx);
 
 	err_code = cipher_set_key(&ctx, key_len, MBEDTLS_ENCRYPT);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
@@ -238,12 +239,13 @@ void exec_test_case_aes_ctr_functional(void)
  */
 void exec_test_case_aes_ctr(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	mbedtls_cipher_context_t ctx;
 
 	err_code = cipher_init(&ctx, key_len, p_test_vector->mode);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	TEST_VECTOR_ASSERT_NOT_NULL(ctx.cipher_ctx);
 
 	err_code = cipher_set_key(&ctx, key_len, p_test_vector->direction);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
@@ -255,7 +257,6 @@ void exec_test_case_aes_ctr(void)
 	start_time_measurement();
 	err_code = cipher_crypt(&ctx, iv_len, input_len);
 	stop_time_measurement();
-
 	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
 
 	/* Verify the generated AES ciphertext. */
@@ -281,14 +282,14 @@ void monte_carlo_update_key(size_t key_len, size_t ciphertext_len)
 	divider = key_len - ciphertext_len;
 
 	/* Xor previous cipher with key if key_len > cipher_len. */
-	for (uint8_t xor_start = 0; xor_start < divider; xor_start++) {
+	for (size_t xor_start = 0; xor_start < divider; xor_start++) {
 		m_aes_key_buf[xor_start] ^=
 			m_prev_aes_output_buf[ciphertext_len - divider +
 					      xor_start];
 	}
 
 	/* Xor cipher with last 16 bytes of key. */
-	for (uint8_t xor_start = 0; xor_start < ciphertext_len; xor_start++) {
+	for (size_t xor_start = 0; xor_start < ciphertext_len; xor_start++) {
 		m_aes_key_buf[divider + xor_start] ^=
 			m_aes_output_buf[xor_start];
 	}
@@ -303,7 +304,7 @@ int monte_carlo(test_vector_aes_t *p_test_vector,
 		mbedtls_cipher_context_t *p_ctx, size_t key_len, size_t iv_len,
 		size_t input_len, size_t output_len)
 {
-	uint16_t j;
+	size_t j;
 	int err_code;
 
 	/* Execution of encryption or decryption 1000 times with same AES key. */
@@ -318,8 +319,9 @@ int monte_carlo(test_vector_aes_t *p_test_vector,
 		err_code =
 			mbedtls_cipher_update(p_ctx, m_aes_input_buf, input_len,
 					      m_aes_output_buf, &output_len);
-		TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code,
-					 err_code);
+		if (err_code != p_test_vector->expected_err_code)
+			return err_code;
+
 
 		if (j < 5 && dbg_hexdump_on) {
 			LOG_HEXDUMP_DBG(m_aes_output_buf, input_len,
@@ -330,10 +332,7 @@ int monte_carlo(test_vector_aes_t *p_test_vector,
 	/* Update the AES key. */
 	monte_carlo_update_key(key_len, output_len);
 
-	err_code = cipher_set_key(p_ctx, key_len, p_test_vector->direction);
-	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
-
-	return err_code;
+	return cipher_set_key(p_ctx, key_len, p_test_vector->direction);
 }
 
 /**@brief Function for the AES Monte Carlo test execution.
@@ -347,6 +346,7 @@ void exec_test_case_aes_monte_carlo(void)
 	mbedtls_cipher_context_t ctx;
 	err_code = cipher_init(&ctx, key_len, p_test_vector->mode);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	TEST_VECTOR_ASSERT_NOT_NULL(ctx.cipher_ctx);
 
 	err_code = cipher_set_key(&ctx, key_len, p_test_vector->direction);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);

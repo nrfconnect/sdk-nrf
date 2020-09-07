@@ -33,16 +33,11 @@ static uint8_t m_aes_input_buf[AES_PLAINTEXT_BUF_SIZE_PLUS];
 static uint8_t m_aes_output_buf[AES_PLAINTEXT_BUF_SIZE_PLUS];
 static uint8_t m_aes_expected_output_buf[AES_PLAINTEXT_BUF_SIZE_PLUS];
 static uint8_t m_aes_key_buf[AES_MAX_KEY_SIZE];
-static uint8_t m_aes_iv_buf[AES_IV_MAX_SIZE + NUM_BUFFER_OVERFLOW_TEST_BYTES];
-static uint8_t m_aes_temp_buf[AES_MAX_KEY_SIZE];
 
 static test_vector_aes_t *p_test_vector;
 
 static size_t input_len;
-static size_t output_len;
 static size_t key_len;
-static size_t iv_len;
-static size_t ad_len;
 
 void aes_ecb_mac_clear_buffers(void);
 void unhexify_aes_ecb_mac(void);
@@ -108,8 +103,6 @@ void aes_ecb_mac_clear_buffers(void)
 	memset(m_aes_expected_output_buf, 0xFF,
 	       sizeof(m_aes_expected_output_buf));
 	memset(m_aes_key_buf, 0x00, sizeof(m_aes_key_buf));
-	memset(m_aes_iv_buf, 0xFF, sizeof(m_aes_iv_buf));
-	memset(m_aes_temp_buf, 0x00, sizeof(m_aes_temp_buf));
 }
 
 __attribute__((noinline)) void unhexify_aes_ecb_mac(void)
@@ -118,29 +111,25 @@ __attribute__((noinline)) void unhexify_aes_ecb_mac(void)
 
 	key_len = hex2bin(p_test_vector->p_key, strlen(p_test_vector->p_key),
 			  m_aes_key_buf, strlen(p_test_vector->p_key));
-	iv_len = hex2bin(p_test_vector->p_iv, strlen(p_test_vector->p_iv),
-			 m_aes_iv_buf, strlen(p_test_vector->p_iv));
-	ad_len = hex2bin(p_test_vector->p_ad, strlen(p_test_vector->p_ad),
-			 m_aes_temp_buf, strlen(p_test_vector->p_ad));
 
 	if (encrypt) {
 		input_len = hex2bin(p_test_vector->p_plaintext,
 				    strlen(p_test_vector->p_plaintext),
 				    m_aes_input_buf,
 				    strlen(p_test_vector->p_plaintext));
-		output_len = hex2bin(p_test_vector->p_ciphertext,
-				     strlen(p_test_vector->p_ciphertext),
-				     m_aes_expected_output_buf,
-				     strlen(p_test_vector->p_ciphertext));
+		hex2bin(p_test_vector->p_ciphertext,
+					strlen(p_test_vector->p_ciphertext),
+					m_aes_expected_output_buf,
+					strlen(p_test_vector->p_ciphertext));
 	} else {
 		input_len = hex2bin(p_test_vector->p_ciphertext,
 				    strlen(p_test_vector->p_ciphertext),
 				    m_aes_input_buf,
 				    strlen(p_test_vector->p_ciphertext));
-		output_len = hex2bin(p_test_vector->p_plaintext,
-				     strlen(p_test_vector->p_plaintext),
-				     m_aes_expected_output_buf,
-				     strlen(p_test_vector->p_plaintext));
+		hex2bin(p_test_vector->p_plaintext,
+					strlen(p_test_vector->p_plaintext),
+					m_aes_expected_output_buf,
+					strlen(p_test_vector->p_plaintext));
 	}
 }
 
@@ -148,7 +137,7 @@ __attribute__((noinline)) void unhexify_aes_ecb_mac(void)
  */
 void exec_test_case_aes_ecb_mac(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	mbedtls_cipher_context_t ctx;
 

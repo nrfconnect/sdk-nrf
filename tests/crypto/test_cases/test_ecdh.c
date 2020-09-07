@@ -48,17 +48,11 @@ static int curve25519_ctx_fixup(mbedtls_ecdh_context *ctx)
 	/* Set certain bits to predefined values */
 	int err_code = mbedtls_mpi_set_bit(&ctx->d, 0, 0);
 
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 	err_code |= mbedtls_mpi_set_bit(&ctx->d, 1, 0);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 	err_code |= mbedtls_mpi_set_bit(&ctx->d, 2, 0);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 	err_code |= mbedtls_mpi_set_bit(&ctx->d, 254, 1);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 	err_code |= mbedtls_mpi_set_bit(&ctx->d, 255, 0);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-
-	mbedtls_mpi_lset(&ctx->Q.Z, 1);
+	err_code |= mbedtls_mpi_lset(&ctx->Q.Z, 1);
 
 	return err_code;
 }
@@ -119,8 +113,8 @@ __attribute__((noinline)) void unhexify_ecdh(void)
  */
 void exec_test_case_ecdh_random(void)
 {
-	int err_code_initiator = -1;
-	int err_code_responder = -1;
+	int err_code_initiator;
+	int err_code_responder;
 
 	mbedtls_ecdh_context initiator_ctx;
 	mbedtls_ecdh_context responder_ctx;
@@ -129,11 +123,11 @@ void exec_test_case_ecdh_random(void)
 	mbedtls_ecdh_init(&responder_ctx);
 
 	err_code_initiator = mbedtls_ecp_group_load(&initiator_ctx.grp,
-						    p_test_vector->curve_type);
+		(mbedtls_ecp_group_id)p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(err_code_initiator, 0);
 
 	err_code_responder = mbedtls_ecp_group_load(&responder_ctx.grp,
-						    p_test_vector->curve_type);
+		(mbedtls_ecp_group_id)p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(err_code_responder, 0);
 
 	err_code_initiator =
@@ -180,7 +174,7 @@ void exec_test_case_ecdh_random(void)
  */
 void exec_test_case_ecdh_deterministic_full(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	size_t initiator_ss_len;
 	size_t responder_ss_len;
@@ -194,11 +188,11 @@ void exec_test_case_ecdh_deterministic_full(void)
 	mbedtls_ecdh_init(&responder_ctx);
 
 	err_code = mbedtls_ecp_group_load(&initiator_ctx.grp,
-					  p_test_vector->curve_type);
+			(mbedtls_ecp_group_id)p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	err_code = mbedtls_ecp_group_load(&responder_ctx.grp,
-					  p_test_vector->curve_type);
+			(mbedtls_ecp_group_id)p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	const char *initiator_publ_y;
@@ -341,7 +335,7 @@ void exec_test_case_ecdh_deterministic_full(void)
  */
 void exec_test_case_ecdh_deterministic(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	mbedtls_ecdh_context initiator_ctx;
 	mbedtls_ecdh_context responder_ctx;
@@ -350,11 +344,11 @@ void exec_test_case_ecdh_deterministic(void)
 	mbedtls_ecdh_init(&responder_ctx);
 
 	err_code = mbedtls_ecp_group_load(&initiator_ctx.grp,
-					  p_test_vector->curve_type);
+		(mbedtls_ecp_group_id)p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	err_code = mbedtls_ecp_group_load(&responder_ctx.grp,
-					  p_test_vector->curve_type);
+		(mbedtls_ecp_group_id)p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Prepare initiator public key. */

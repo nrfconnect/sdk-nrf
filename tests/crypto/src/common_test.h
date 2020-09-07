@@ -547,6 +547,11 @@ void stop_time_measurement(void);
 			  (-actual))
 #endif
 
+#ifndef TEST_VECTOR_ASSERT_NOT_NULL
+#define TEST_VECTOR_ASSERT_NOT_NULL(ptr) \
+	zassert_not_null((ptr), "\tUnexpected null")
+#endif
+
 /**@brief Macro for checking buffer overflow for a given buffer. Requires that the two following
  *  bytes after the buffer are set to 0xFF.
  *

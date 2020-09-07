@@ -11,7 +11,6 @@
 #include <logging/log.h>
 
 #include "common_test.h"
-#include <mbedtls/md.h>
 #include <sha512.h>
 
 /* Setting LOG_LEVEL_DBG might affect time measurements! */
@@ -115,7 +114,8 @@ static int exec_sha_512(test_vector_hash_t *p_test_vector, int in_len,
 {
 	mbedtls_sha512_init(&sha512_context);
 	int err_code = mbedtls_sha512_starts_ret(&sha512_context, false);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	if (err_code != 0)
+		return err_code;
 
 	/* Update the hash. */
 	if (!is_long) {
@@ -132,12 +132,13 @@ static int exec_sha_512(test_vector_hash_t *p_test_vector, int in_len,
 
 			err_code = mbedtls_sha512_update_ret(
 				&sha512_context, m_sha_input_buf, in_len);
-			TEST_VECTOR_ASSERT_EQUAL(
-				p_test_vector->expected_err_code, err_code);
+			if (err_code != 0)
+				return err_code;
 		}
 	}
 
-	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
+	if (err_code != p_test_vector->expected_err_code)
+		return err_code;
 
 	/* Finalize the hash. */
 	return mbedtls_sha512_finish_ret(&sha512_context, m_sha_output_buf);
@@ -147,7 +148,7 @@ static int exec_sha_512(test_vector_hash_t *p_test_vector, int in_len,
  */
 void exec_test_case_sha_512(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	start_time_measurement();
 	err_code = exec_sha_512(p_test_vector, in_len, false);
@@ -183,7 +184,7 @@ void exec_test_case_sha_512(void)
  */
 void exec_test_case_sha_512_long(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	start_time_measurement();
 	err_code = exec_sha_512(p_test_vector, in_len, true);
