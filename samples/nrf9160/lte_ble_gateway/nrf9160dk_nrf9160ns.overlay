@@ -12,4 +12,5 @@
 	rx-pin = <17>;
 	rts-pin = <21>;
 	cts-pin = <19>;
+	hw-flow-control;
 };
