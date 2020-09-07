@@ -18,6 +18,7 @@
 #define SEC_TAG CONFIG_SAMPLE_SEC_TAG
 
 #define PROGRESS_WIDTH 50
+#define STARTING_OFFSET 0
 
 #if CONFIG_SAMPLE_SECURE_SOCKET
 static const char cert[] = {
@@ -125,6 +126,7 @@ static int callback(const struct download_client_evt *event)
 
 	if (downloaded == 0) {
 		download_client_file_size_get(&downloader, &file_size);
+		downloaded += STARTING_OFFSET;
 	}
 
 	switch (event->id) {
@@ -206,7 +208,7 @@ void main(void)
 
 	ref_time = k_uptime_get();
 
-	err = download_client_start(&downloader, URL, 0);
+	err = download_client_start(&downloader, URL, STARTING_OFFSET);
 	if (err) {
 		printk("Failed to start the downloader, err %d", err);
 		return;
