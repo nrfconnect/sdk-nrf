@@ -88,13 +88,14 @@ __attribute__((noinline)) void unhexify_hmac(void)
  */
 void exec_test_case_hmac(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	/* Initialize the HMAC module. */
 	mbedtls_md_init(&md_context);
 
 	const mbedtls_md_info_t *p_md_info =
-		mbedtls_md_info_from_type(p_test_vector->digest_type);
+		mbedtls_md_info_from_type(
+			(mbedtls_md_type_t)p_test_vector->digest_type);
 	err_code = mbedtls_md_setup(&md_context, p_md_info, 1);
 	if (err_code != 0) {
 		LOG_WRN("mb setup ec: -0x%02X", -err_code);
@@ -129,11 +130,12 @@ void exec_test_case_hmac(void)
  */
 void exec_test_case_hmac_combined(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	/* Generate the HMAC using the combined method. */
 	const mbedtls_md_info_t *p_md_info =
-		mbedtls_md_info_from_type(p_test_vector->digest_type);
+		mbedtls_md_info_from_type(
+			(mbedtls_md_type_t)p_test_vector->digest_type);
 	start_time_measurement();
 	err_code = mbedtls_md_hmac(p_md_info, m_hmac_key_buf, key_len,
 				   m_hmac_input_buf, in_len, m_hmac_output_buf);

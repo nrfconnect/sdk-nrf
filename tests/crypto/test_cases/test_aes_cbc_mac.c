@@ -39,15 +39,12 @@ static uint8_t m_aes_output_buf[AES_PLAINTEXT_BUF_SIZE_PLUS];
 static uint8_t m_aes_expected_output_buf[AES_PLAINTEXT_BUF_SIZE_PLUS];
 static uint8_t m_aes_key_buf[AES_MAX_KEY_SIZE];
 static uint8_t m_aes_iv_buf[AES_IV_MAX_SIZE + NUM_BUFFER_OVERFLOW_TEST_BYTES];
-static uint8_t m_aes_temp_buf[AES_MAX_KEY_SIZE];
 
 static test_vector_aes_t *p_test_vector;
 
 static size_t input_len;
-static size_t output_len;
 static size_t key_len;
 static size_t iv_len;
-static size_t ad_len;
 
 void aes_cbc_mac_clear_buffers(void);
 void unhexify_aes_cbc_mac(void);
@@ -132,7 +129,6 @@ void aes_cbc_mac_clear_buffers(void)
 	       sizeof(m_aes_expected_output_buf));
 	memset(m_aes_key_buf, 0x00, sizeof(m_aes_key_buf));
 	memset(m_aes_iv_buf, 0xFF, sizeof(m_aes_iv_buf));
-	memset(m_aes_temp_buf, 0x00, sizeof(m_aes_temp_buf));
 }
 
 __attribute__((noinline)) void unhexify_aes_cbc_mac(void)
@@ -145,24 +141,15 @@ __attribute__((noinline)) void unhexify_aes_cbc_mac(void)
 	iv_len = hex2bin_safe(p_test_vector->p_iv,
 			      m_aes_iv_buf,
 			      sizeof(m_aes_iv_buf));
-	ad_len = hex2bin_safe(p_test_vector->p_ad,
-			      m_aes_temp_buf,
-			      sizeof(m_aes_temp_buf));
 
 	if (encrypt) {
 		input_len = hex2bin_safe(p_test_vector->p_plaintext,
 					 m_aes_input_buf,
 					 sizeof(m_aes_input_buf));
-		output_len = hex2bin_safe(p_test_vector->p_ciphertext,
-					  m_aes_expected_output_buf,
-					  sizeof(m_aes_expected_output_buf));
 	} else {
 		input_len = hex2bin_safe(p_test_vector->p_ciphertext,
 					 m_aes_input_buf,
 					 sizeof(m_aes_input_buf));
-		output_len = hex2bin_safe(p_test_vector->p_plaintext,
-					  m_aes_expected_output_buf,
-					  sizeof(m_aes_expected_output_buf));
 	}
 }
 
@@ -170,12 +157,13 @@ __attribute__((noinline)) void unhexify_aes_cbc_mac(void)
  */
 void exec_test_case_aes_cbc_mac(void)
 {
-	int err_code = -1;
+	int err_code;
 
 	mbedtls_cipher_context_t ctx;
 
 	err_code = cipher_init(&ctx, key_len, p_test_vector->mode);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	TEST_VECTOR_ASSERT_NOT_NULL(ctx.cipher_ctx);
 
 	err_code = cipher_set_key(&ctx, key_len, MBEDTLS_ENCRYPT);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
@@ -202,6 +190,7 @@ void exec_test_case_aes_cbc_mac(void)
 
 	err_code = cipher_init(&ctx, key_len, p_test_vector->mode);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	TEST_VECTOR_ASSERT_NOT_NULL(ctx.cipher_ctx);
 
 	err_code = cipher_set_key(&ctx, key_len, MBEDTLS_ENCRYPT);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
