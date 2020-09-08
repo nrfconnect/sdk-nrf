@@ -5,4 +5,7 @@
 #
 
 zephyr_library()
-zephyr_library_sources(clock_control_mpsl.c)
+zephyr_library_sources(nrfx_clock_mpsl.c)
+
+target_include_directories(zephyr_interface BEFORE INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR})

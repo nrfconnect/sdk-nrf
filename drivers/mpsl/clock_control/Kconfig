@@ -5,45 +5,7 @@
 #
 
 config CLOCK_CONTROL_MPSL
-	bool "Enable MPSL clock control driver, for use with MPSL and protocols using MPSL, like the BLE Controller."
-	default y
+	bool
 	depends on MPSL
+	default y
 	select CLOCK_CONTROL_NRF_FORCE_ALT
-	select MULTITHREADING_LOCK
-
-choice CLOCK_CONTROL_NRF_SOURCE
-	prompt "32 KHz clock source"
-	default CLOCK_CONTROL_NRF_K32SRC_XTAL
-
-config CLOCK_CONTROL_NRF_K32SRC_RC
-	bool "RC Oscillator"
-
-config CLOCK_CONTROL_NRF_K32SRC_XTAL
-	bool "Crystal Oscillator"
-
-config CLOCK_CONTROL_NRF_K32SRC_SYNTH
-	bool "Synthesized from HFCLK"
-
-config CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING
-	depends on SOC_SERIES_NRF52X
-	bool "External low swing"
-
-config CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING
-	depends on SOC_SERIES_NRF52X
-	bool "External full swing"
-
-endchoice
-
-config CLOCK_CONTROL_NRF_K32SRC_BLOCKING
-	bool "Blocking 32 KHz crystal oscillator startup"
-	depends on CLOCK_CONTROL_NRF_K32SRC_XTAL
-	help
-	  Clock control driver will spin wait in CPU sleep until 32 KHz
-	  crystal oscillator starts up. If not enabled, RC oscillator will
-	  initially start running and automatically switch to crystal when
-	  ready.
-
-config CLOCK_CONTROL_NRF_ACCURACY
-	int "32 KHz clock accuracy"
-	default 250 if CLOCK_CONTROL_NRF_K32SRC_RC
-	default 20
