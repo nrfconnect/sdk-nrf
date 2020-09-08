@@ -18,6 +18,7 @@
 #include <sdc_hci.h>
 #include <sdc_hci_vs.h>
 #include "multithreading_lock.h"
+#include "hci_internal.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
 #define LOG_MODULE_NAME sdc_hci_driver
@@ -100,7 +101,7 @@ static int cmd_handle(struct net_buf *cmd)
 	int errcode = MULTITHREADING_LOCK_ACQUIRE();
 
 	if (!errcode) {
-		errcode = sdc_hci_cmd_put(cmd->data);
+		errcode = hci_internal_cmd_put(cmd->data);
 		MULTITHREADING_LOCK_RELEASE();
 	}
 	if (errcode) {
@@ -278,7 +279,7 @@ static bool fetch_and_process_hci_evt(uint8_t *p_hci_buffer)
 
 	errcode = MULTITHREADING_LOCK_ACQUIRE();
 	if (!errcode) {
-		errcode = sdc_hci_evt_get(p_hci_buffer);
+		errcode = hci_internal_evt_get(p_hci_buffer);
 		MULTITHREADING_LOCK_RELEASE();
 	}
 
