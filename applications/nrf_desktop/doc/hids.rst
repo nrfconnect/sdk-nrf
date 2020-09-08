@@ -93,8 +93,8 @@ The event is submitted when the |GATT_HID| calls a callback related to enabling 
 Transport for configuration channel
 ===================================
 
-The HID Service application module works as a transport for the :ref:`nrf_desktop_config_channel` and exchanges the HID feature reports over Bluetooth LE.
-The module communicates with the |conf_channel| listeners using |conf_channel| events.
+The HID Service application module works as a transport for the :ref:`nrf_desktop_config_channel` and exchanges the |conf_channel| HID reports over Bluetooth LE.
+The module communicates with the |conf_channel| listeners using ``config_event``.
 
 .. |GATT_HID| replace:: GATT HID Service
 .. |HID_state| replace:: HID state module

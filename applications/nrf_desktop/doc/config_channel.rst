@@ -57,27 +57,31 @@ Setting a configuration value of a device, forwarded by the dongle to a paired d
 Data format
 ===========
 
-The following table shows the format of requests used to exchange data in the HID feature reports.
+The following table shows the format of requests and responses used to exchange data in the HID feature reports.
 
 .. _nrf_desktop_table:
 
 +-------------------------------------------------------------------+
 | Feature report                                                    |
-+-----------+-----+-----+----------+--------+-------------+---+-----+
-| 0         | 1   | 2   | 3        | 4      | 5           | 6 | ... |
-+===========+=====+=====+==========+========+=============+===+=====+
++-----------+-----------+----------+--------+-------------+---+-----+
+| 0         | 1         | 2        | 3      | 4           | 5 | ... |
++===========+===========+==========+========+=============+===+=====+
 | Report ID | Recipient | Event ID | Status | Data length | Data    |
 +-----------+-----------+----------+--------+-------------+---------+
 
 Each feature report contains the following components:
 
 * Report ID - HID report identifier of the feature report used for transmitting data.
-* Recipient - Product identifier of the device to which the request is addressed.
+* Recipient - Identifier of the device to which the request is addressed.
   Needed to route requests in a multi-device setup.
+
+     * A recipient value that equals ``0`` means that configuration channel frame is intended for a HID device that is directly connected.
+     * Other recipient value means that the frame should be forwarded to the peripheral connected over |BLE|.
+
 * Event ID - Identifier of the value that should be set or fetched; consists of a module ID and an option ID.
-* Status - Value used to exchange status of the request; also used by sender to ask for fetch.
-* Data length - Value that indicates how many bytes of data the request holds.
-* Data - Arbitrary length data connected to the request.
+* Status - Value used to exchange status of the request; also used by sender to specify the requested operation.
+* Data length - Value that indicates how many bytes of data the request/response holds.
+* Data - Arbitrary length data connected to the request/response.
 
 .. note::
    Bluetooth LE HID Service removes the leading report ID byte, resulting in firmware obtaining a data frame 1 byte shorter.
@@ -109,14 +113,33 @@ Depending on the connection method:
 
   Forwarding requests through a dongle to a connected peripheral is handled in :ref:`nrf_desktop_hid_forward`.
   The dongle, which is a Bluetooth LE central, uses the HID Client module to find the feature report of the paired device and access it in order to forward the configuration request.
-  The report forwarding is based on the peripheral device PID.
+  The report forwarding is based on recipient, which is assigned by :ref:`nrf_desktop_hid_forward`.
+  The :ref:`nrf_desktop_config_channel_script` holds the mentioned recipient internally and uses it in configuration channel data frames.
+  From the script user perspective, the device can be identified using type, board name or hardware ID.
+
+.. note::
+   If the Low Latency Packet Mode (LLPM) connection interval is in use, the Bluetooth peripheral can provide either HID input report or config channel response during single connection event.
+
+   To prevent HID input report rate drop while forwarding config channel report set operation, nRF Desktop Dongle can forward the data using GATT write without response.
+   In that case, the peripheral does not have to provide response instead of sending HID input report.
+
+   The GATT write without response operation cannot be performed on HID feature report.
+   To allow GATT write without response, the peripheral must provide an additional HID output report.
+   Use the ``CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT`` Kconfig option in nRF Desktop peripheral configuration to add the mentioned HID output report.
+   Disabling this option reduces the memory consumption.
+
+The ``config_event`` is used to propagate the configuration channel data.
+The configuration channel request received from host is propagated using the mentioned event with :cpp:member:`is_request` set to ``true``.
+The application module that handles the request consumes the event and provides the response.
+The response is provided as ``config_event`` with :cpp:member:`is_request` set to ``false``.
+In case a request is not handled by any application module, the configuration channel transport will eventually receive it and generate an error response.
 
 Listener configuration
 ----------------------
 
-The listener can provide a set of options that are accessible through the configuration channel.
-For example, depending on listener, it can provide the CPI option from :ref:`nrf_desktop_motion` or the option for searching for new peer from :ref`ble_bond`.
-The host computer can use report set or report get for these options to access the option value.
+The configuration channel listener is an application module that provides a set of options that are accessible through the configuration channel.
+For example, depending on listener, it can provide the CPI option from :ref:`nrf_desktop_motion` or the option for searching for new peer from :ref:`nrf_desktop_ble_bond`.
+The host computer can use set or fetch operation for these options to access the option value.
 
 On the firmware side, the configuration channel listener and its options are referenced with numbers, respectively module ID and option IDs.
 
@@ -127,17 +150,22 @@ To register an application module as a configuration channel listener, complete 
 
 1. Make sure that the application module is an :ref:`event_manager` listener.
 #. Include the :file:`config_event.h` header.
-#. Subscribe for the ``config_event`` and ``config_fetch_request_event`` using the :c:macro:`EVENT_SUBSCRIBE` macro:
+#. Subscribe for the ``config_event`` using the :c:macro:`EVENT_SUBSCRIBE_EARLY` macro:
 
    .. code-block:: c
 
        EVENT_LISTENER(MODULE, event_handler);
        #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-       EVENT_SUBSCRIBE(MODULE, config_event);
-       EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
+       EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
        #endif
 
    The module should subscribe only if the configuration channel is enabled.
+
+   .. note::
+      The module must be an early subscriber to make sure it will receive the event before the configuration channel transports (:ref:`nrf_desktop_usb_state` and :ref:`nrf_desktop_hids`).
+      Otherwise, the module may not receive the configuration channel requests at all.
+      In that case an error responses will be generated by configuration channel transport.
+
 #. Call :c:macro:`GEN_CONFIG_EVENT_HANDLERS` in the :ref:`event_manager` event handler function registered by the application module:
 
    .. code-block:: c
@@ -148,7 +176,7 @@ To register an application module as a configuration channel listener, complete 
            ...
 
            GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr,
-                         config_set, config_get, false);
+                                     config_set, config_get);
 
            /* Functions used to handle other events. */
            ...
@@ -183,7 +211,7 @@ To register an application module as a configuration channel listener, complete 
    .. code-block:: c
 
        static void config_set(const uint8_t opt_id, const uint8_t *data,
-                      const size_t size)
+                              const size_t size)
        {
            switch (opt_id) {
            case TEST_MODULE_OPT_FILTER_PARAM:
@@ -243,9 +271,6 @@ To register an application module as a configuration channel listener, complete 
            }
        }
 
-   * Boolean indicating if the module is the final subscriber for the configuration channel events.
-     It should be set to ``false`` for every subscriber, except for :ref:`nrf_desktop_info`.
-
 For an example of a module that uses the configuration channel, see the following files:
 
 * :file:`src/modules/ble_qos.c`
@@ -263,8 +288,11 @@ Dependencies for the host software are described in the :ref:`nrf_desktop_config
 API documentation
 *****************
 
-| Header file: :file:`applications/nrf_desktop/src/util/config_channel.h`
-| Source file: :file:`applications/nrf_desktop/src/util/config_channel.c`
+The following API is used by the configuration channel transports.
+The configurable application modules (configuration channel listeners) do not use it.
+
+| Header file: :file:`applications/nrf_desktop/src/util/config_channel_transport.h`
+| Source file: :file:`applications/nrf_desktop/src/util/config_channel_transport.c`
 
 .. doxygengroup:: config_channel_transport
    :project: nrf

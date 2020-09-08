@@ -76,5 +76,12 @@ Configuration channel data forwarding
 =====================================
 
 The ``hid_forward`` module forwards the :ref:`nrf_desktop_config_channel` data between the host and the peripherals connected over Bluetooth.
-The data forwarding is based on peripheral device Product ID (PID).
-The data is exchanged with the peripheral connected over Bluetooth using HID feature reports.
+The data is exchanged with the peripheral connected over Bluetooth using HID feature report or HID output report.
+
+In contrast to :ref:`nrf_desktop_config_channel_script`, the ``hid_forward`` module does not use configuration channel request to get hardware ID (HW ID) of the peripheral.
+The peripheral indentification on nRF Desktop central is based on HW ID that is received from :ref:`nrf_desktop_ble_discovery` when peripheral discovery is completed.
+The peripheral uses :ref:`nrf_desktop_dev_descr` to provide the HW ID to the nRF Desktop central.
+
+The ``hid_forward`` only forwards the configuration channel requests that come from the USB connected host, it does not generate its own requests.
+
+For more details, see :ref:`nrf_desktop_config_channel` documentation.
