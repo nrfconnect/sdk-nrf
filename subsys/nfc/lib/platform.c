@@ -32,25 +32,19 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
  */
 #define NFC_TAGHEADER_DEFAULT_VAL	{0x5F, 0x00, 0x00}
 
-static struct device *clock;
+static struct onoff_manager *hf_mgr;
+static struct onoff_client cli;
 
-static void clock_handler(struct device *dev, clock_control_subsys_t subsys,
-			  void *user_data)
+static void clock_handler(struct onoff_manager *mgr, int res)
 {
 	/* Activate NFCT only when HFXO is running */
 	nrfx_nfct_state_force(NRFX_NFCT_STATE_ACTIVATED);
 }
 
-
-static struct clock_control_async_data clock_ctrl = {
-	.cb = clock_handler
-};
-
-
 nrfx_err_t nfc_platform_setup(void)
 {
-	clock = device_get_binding(DT_INST_LABEL(0));
-	__ASSERT_NO_MSG(clock);
+	hf_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+	__ASSERT_NO_MSG(hf_mgr);
 
 	IRQ_CONNECT(NFCT_IRQn, CONFIG_NFCT_IRQ_PRIORITY,
 			   nrfx_nfct_irq_handler, NULL,  0);
@@ -165,17 +159,17 @@ void nfc_platform_event_handler(nrfx_nfct_evt_t const *event)
 	case NRFX_NFCT_EVT_FIELD_DETECTED:
 		LOG_DBG("Field detected");
 
-		err = clock_control_async_on(clock, CLOCK_CONTROL_NRF_SUBSYS_HF,
-					     &clock_ctrl);
-		__ASSERT_NO_MSG(!err);
+		sys_notify_init_callback(&cli.notify, clock_handler);
+		err = onoff_request(hf_mgr, &cli);
+		__ASSERT_NO_MSG(err >= 0);
 
 		break;
 
 	case NRFX_NFCT_EVT_FIELD_LOST:
 		LOG_DBG("Field lost");
 
-		err = clock_control_off(clock, CLOCK_CONTROL_NRF_SUBSYS_HF);
-		__ASSERT_NO_MSG(!err);
+		err = onoff_cancel_or_release(hf_mgr, &cli);
+		__ASSERT_NO_MSG(err >= 0);
 
 		break;
 
