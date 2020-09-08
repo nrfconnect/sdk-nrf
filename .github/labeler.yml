@@ -1,2 +1,8 @@
+# https://github.com/actions/labeler/blob/main/README.md
+
 "manifest":
   - "west.yml"
+
+"doc-required":
+  - "doc/**/*"
+  - "*.rst"
