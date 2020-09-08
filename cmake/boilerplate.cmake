@@ -9,7 +9,7 @@
 # For more information regarding the Zephyr Build Configuration CMake package, please refer to:
 # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/zephyr_cmake_package.html#zephyr-build-configuration-cmake-package
 
-include(${NRF_DIR}/boards/deprecated.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../boards/deprecated.cmake)
 
 if(NOT BOARD)
         set(BOARD $ENV{BOARD})
