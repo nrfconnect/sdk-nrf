@@ -35,6 +35,7 @@ manifest:
   defaults:
     remote: ncs
 
+    
   # "projects" is a list of git repositories which make up the NCS
   # source code.
   projects:
