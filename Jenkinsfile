@@ -149,7 +149,7 @@ pipeline {
 
     stage('Trigger Downstream Jobs') {
       when { expression { CI_STATE.SELF.RUN_DOWNSTREAM } }
-      steps { script { lib_Stage.runDownstream(JOB_NAME, CI_STATE) } }
+      steps { script { runDownstreamCustom(JOB_NAME, CI_STATE) } }
     }
 
     stage('Report') {
@@ -206,4 +206,102 @@ def generateParallelStage(platform, compiler, JOB_NAME, CI_STATE, SANITYCHECK_OP
       }
     }
   }
+}
+
+def runDownstreamCustom(String JOB_NAME, HashMap CI_STATE) {
+  def tmp_stage = {
+    CI_STATE.SELF.STARTED_DOWNSTREAM = true
+
+    def jobs = [:]
+
+	def DOWNSTREAM_JOBS = ["latest/sub/test-fw-nrfconnect-nrf/v1.3-branch:[propagate:true, wait:true]", "latest/sub/test-fw-nrfconnect-nrf_doc/v1.3-branch:[propagate:true, wait:true]"]
+    println "DOWNSTREAM_JOBS = " + DOWNSTREAM_JOBS
+    DOWNSTREAM_JOBS.each { job ->
+      println "Starting JOB = $job"
+
+      CI_STATE.SELF.remove('jsonstr_CI_STATE')   // json string to pass is size limited
+      CI_STATE.ORIGIN.remove('jsonstr_CI_STATE')
+      // println 'GREP_KEY: CI_STATE =\n' + lib_util.prettyPrintMap(CI_STATE) + '\n'
+
+      jobs["$job.key"] = {
+        def lib_util = new lib_Util()
+        CI_STATE_COPY = CI_STATE.clone()
+
+        job_branch = job.key.split('/')[-1]
+        def on_commit_latest_result = "SUCCESS"
+        if ( job_branch == 'master' ) {
+          on_commit_latest_result = lib_util.getLatestBuildStatus(job.key)
+        }
+
+        if ( (job.value.propagate == false) && !JOB_NAME.contains('latest/') ) { println "SKIPPING: $job.key"; return }
+
+        CI_STATE_COPY.HANDOFF = new HashMap()
+
+
+
+        if (job.value.propagate == false) {
+
+          println "STARTED: $job.key (Not waiting for result)"
+          CI_STATE_COPY.HANDOFF.PROPAGATING = false
+
+        } else if ( ( job.value.propagate == true ) &&
+                    ( JOB_NAME.contains('/test-') ) &&
+                    ( !JOB_NAME.contains('/week/') ) &&
+                    ( !JOB_NAME.contains('/night/') ) &&
+                    ( !['SUCCESS'].contains(on_commit_latest_result) )
+                  ) {
+
+          println "IGNORING RESULT: because $job.key/master is failing on the commit trigger."
+          job.value.propagate = false
+          CI_STATE_COPY.HANDOFF.PROPAGATING = false
+
+        } else {
+
+          println "PROPAGATING RESULT: $job.key"
+          CI_STATE_COPY.HANDOFF.PROPAGATING = true
+
+        }
+
+        def build_failed_to_execute = false
+        try {
+          result = build job: job.key, propagate: false, wait: job.value.propagate,
+                             parameters: [ string(name: 'jsonstr_CI_STATE',
+                                                  value: lib_util.HashMap2Str(CI_STATE_COPY))]
+        } catch (Exception e) {
+          build_failed_to_execute = true
+        } finally {
+          if (build_failed_to_execute) {
+            catchError(stageResult: 'FAILURE', buildResult: 'FAILURE') {
+              error("Downstream Job:$job.key failed to run.")
+            }
+            return
+          }
+
+          if (job.value.propagate) {
+            def SUB_JOB_URL = result.getAbsoluteUrl()
+            println 'URL: ' + SUB_JOB_URL
+            println "RESULT: $job.key == $result.result"
+
+            catchError(stageResult: 'UNSTABLE', buildResult: 'UNSTABLE') {
+              if (result.result == 'UNSTABLE') {
+                error("Downstream Job:$job.key result=" + result.result)
+              }
+            }
+            catchError(stageResult: 'FAILURE', buildResult: 'FAILURE') {
+              if ( job.value.propagate && (result.result == 'FAILURE') ) {
+                error("Downstream Job:$job.key result=" + result.result)
+              }
+            }
+          } else {
+            println "TRIGGERED: $job.key (Not waiting for result)"
+            catchError(stageResult: 'UNSTABLE', buildResult: 'SUCCESS') {
+              error("Downstream Job:$job.key result is not propagated. You can ignore this job.")
+            }
+          }
+        }
+      }
+    }
+    parallel jobs
+  }
+  tmp_stage()
 }
