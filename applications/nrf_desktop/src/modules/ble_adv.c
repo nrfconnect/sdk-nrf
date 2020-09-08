@@ -511,24 +511,24 @@ static bool event_handler(const struct event_header *eh)
 		} else if (check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
 			static bool started;
 
-			__ASSERT_NO_MSG(!started);
+			if (!started) {
+				/* Settings need to be loaded before advertising start */
+				switch (state) {
+				case STATE_DISABLED:
+					state = STATE_OFF;
+					start();
+					break;
+				case STATE_DISABLED_OFF:
+					state = STATE_OFF;
+					break;
+				default:
+					/* Should not happen. */
+					__ASSERT_NO_MSG(false);
+					break;
+				}
 
-			/* Settings need to be loaded before advertising start */
-			switch (state) {
-			case STATE_DISABLED:
-				state = STATE_OFF;
-				start();
-				break;
-			case STATE_DISABLED_OFF:
-				state = STATE_OFF;
-				break;
-			default:
-				/* Should not happen. */
-				__ASSERT_NO_MSG(false);
-				break;
+				started = true;
 			}
-
-			started = true;
 		}
 
 		return false;

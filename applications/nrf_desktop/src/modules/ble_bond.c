@@ -15,6 +15,7 @@
 #include "ble_event.h"
 #include "selector_event.h"
 #include "config_event.h"
+#include "power_event.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);
@@ -42,7 +43,10 @@ enum state {
 	STATE_ERASE_PEER,
 	STATE_ERASE_ADV,
 	STATE_SELECT_PEER,
-	STATE_DONGLE_CONN
+	STATE_DONGLE_CONN,
+	STATE_DONGLE_CONN_STANDBY,
+	STATE_STANDBY,
+	STATE_STANDBY_DISABLED
 };
 
 struct state_switch {
@@ -475,7 +479,12 @@ static void erase_adv_confirm(void)
 
 static void select_dongle_peer(void)
 {
-	state = STATE_DONGLE_CONN;
+	if (state == STATE_IDLE) {
+		state = STATE_DONGLE_CONN;
+	} else {
+		__ASSERT_NO_MSG(state == STATE_STANDBY);
+		state = STATE_DONGLE_CONN_STANDBY;
+	}
 
 	LOG_INF("Selected dongle peer");
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
@@ -493,7 +502,14 @@ static void select_dongle_peer(void)
 static void select_ble_peers(void)
 {
 	LOG_INF("Selected BLE peers");
-	state = STATE_IDLE;
+	if (state == STATE_DONGLE_CONN) {
+		state = STATE_IDLE;
+	} else if (state == STATE_DONGLE_CONN_STANDBY) {
+		state = STATE_STANDBY;
+	} else {
+		__ASSERT_NO_MSG((state == STATE_STANDBY) ||
+				(state == STATE_IDLE));
+	}
 
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
@@ -535,14 +551,18 @@ static void handle_click(enum click click)
 		}
 	}
 
-	if (state != STATE_DONGLE_CONN) {
+	if ((state == STATE_ERASE_PEER) ||
+	    (state == STATE_ERASE_ADV) ||
+	    (state == STATE_SELECT_PEER)) {
 		cancel_operation();
 	}
 }
 
 static void timeout_handler(struct k_work *work)
 {
-	__ASSERT_NO_MSG(state != STATE_DISABLED);
+	__ASSERT_NO_MSG((state == STATE_ERASE_PEER) ||
+			(state == STATE_ERASE_ADV) ||
+			(state == STATE_SELECT_PEER));
 
 	cancel_operation();
 }
@@ -678,7 +698,11 @@ static int init(void)
 {
 	silence_unused();
 
-	state = STATE_IDLE;
+	if (state == STATE_DISABLED) {
+		state = STATE_IDLE;
+	} else {
+		state = STATE_STANDBY;
+	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL)) {
 		k_delayed_work_init(&timeout, timeout_handler);
@@ -791,6 +815,7 @@ static void selector_event_handler(const struct selector_event *event)
 			dongle_peer_selected_on_init = true;
 			break;
 		case STATE_DONGLE_CONN:
+		case STATE_DONGLE_CONN_STANDBY:
 			/* Ignore */
 			break;
 		case STATE_ERASE_PEER:
@@ -799,6 +824,7 @@ static void selector_event_handler(const struct selector_event *event)
 			cancel_operation();
 			/* Fall-through */
 		case STATE_IDLE:
+		case STATE_STANDBY:
 			select_dongle_peer();
 			break;
 		default:
@@ -811,6 +837,7 @@ static void selector_event_handler(const struct selector_event *event)
 			dongle_peer_selected_on_init = false;
 			break;
 		case STATE_IDLE:
+		case STATE_STANDBY:
 			/* Ignore */
 			break;
 		case STATE_ERASE_PEER:
@@ -819,6 +846,7 @@ static void selector_event_handler(const struct selector_event *event)
 			cancel_operation();
 			/* Fall-through */
 		case STATE_DONGLE_CONN:
+		case STATE_DONGLE_CONN_STANDBY:
 			select_ble_peers();
 			break;
 		default:
@@ -853,6 +881,10 @@ static void config_set(const uint8_t opt_id, const uint8_t *data, const size_t s
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 			erase_adv_confirm();
 			state = STATE_ERASE_ADV;
+
+			k_delayed_work_submit(&timeout,
+					      ERASE_ADV_TIMEOUT);
+
 		} else if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			erase_confirm();
 		}
@@ -869,6 +901,68 @@ static void config_fetch(const uint8_t opt_id, uint8_t *data, size_t *size)
 	LOG_WRN("Config fetch is not supported");
 }
 
+static bool handle_power_down_event(const struct power_down_event *event)
+{
+	switch (state) {
+	case STATE_DISABLED:
+		state = STATE_STANDBY_DISABLED;
+		break;
+
+	case STATE_ERASE_PEER:
+	case STATE_ERASE_ADV:
+	case STATE_SELECT_PEER:
+		cancel_operation();
+		/* Fall-through */
+
+	case STATE_IDLE:
+		state = STATE_STANDBY;
+		module_set_state(MODULE_STATE_OFF);
+		break;
+
+	case STATE_DONGLE_CONN:
+		state = STATE_DONGLE_CONN_STANDBY;
+		module_set_state(MODULE_STATE_OFF);
+		break;
+
+	case STATE_STANDBY:
+		/* Fall-through */
+	case STATE_DONGLE_CONN_STANDBY:
+		/* No action. */
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	return false;
+}
+
+static bool handle_wake_up_event(const struct wake_up_event *event)
+{
+	switch (state) {
+	case STATE_STANDBY_DISABLED:
+		state = STATE_DISABLED;
+		break;
+
+	case STATE_STANDBY:
+		state = STATE_IDLE;
+		module_set_state(MODULE_STATE_READY);
+		break;
+
+	case STATE_DONGLE_CONN_STANDBY:
+		state = STATE_DONGLE_CONN;
+		module_set_state(MODULE_STATE_READY);
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	return false;
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_module_state_event(eh)) {
@@ -877,10 +971,16 @@ static bool event_handler(const struct event_header *eh)
 
 		if (check_state(event, MODULE_ID(settings_loader),
 				MODULE_STATE_READY)) {
-			__ASSERT_NO_MSG(state == STATE_DISABLED);
+			__ASSERT_NO_MSG((state == STATE_DISABLED) ||
+					(state == STATE_STANDBY_DISABLED));
 
-			if (!init()) {
+			int err = init();
+
+			if (!err) {
 				module_set_state(MODULE_STATE_READY);
+				if (state == STATE_STANDBY) {
+					module_set_state(MODULE_STATE_OFF);
+				}
 			} else {
 				module_set_state(MODULE_STATE_ERROR);
 			}
@@ -905,6 +1005,16 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE) &&
+	    is_power_down_event(eh)) {
+		return handle_power_down_event(cast_power_down_event(eh));
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE) &&
+	    is_wake_up_event(eh)) {
+		return handle_wake_up_event(cast_wake_up_event(eh));
+	}
+
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, config_set,
 				  config_fetch);
 
@@ -927,6 +1037,8 @@ EVENT_SUBSCRIBE(MODULE, click_event);
 #if CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE
 EVENT_SUBSCRIBE(MODULE, selector_event);
 #endif
+EVENT_SUBSCRIBE(MODULE, power_down_event);
+EVENT_SUBSCRIBE(MODULE, wake_up_event);
 
 #if CONFIG_SHELL
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_peers,
