@@ -496,248 +496,269 @@ static void disconnect_peer(struct bt_conn *conn)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool handle_module_state_event(const struct module_state_event *event)
 {
-	if (is_module_state_event(eh)) {
-		const struct module_state_event *event = cast_module_state_event(eh);
+	if (check_state(event, MODULE_ID(ble_state), MODULE_STATE_READY)) {
+		static bool initialized;
 
-		if (check_state(event, MODULE_ID(ble_state), MODULE_STATE_READY)) {
-			static bool initialized;
+		__ASSERT_NO_MSG(!initialized);
 
-			__ASSERT_NO_MSG(!initialized);
+		init();
+		initialized = true;
+	} else if (check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
+		static bool started;
 
-			init();
-			initialized = true;
-		} else if (check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
-			static bool started;
-
-			if (!started) {
-				/* Settings need to be loaded before advertising start */
-				switch (state) {
-				case STATE_DISABLED:
-					state = STATE_OFF;
-					start();
-					break;
-				case STATE_DISABLED_OFF:
-					state = STATE_OFF;
-					break;
-				default:
-					/* Should not happen. */
-					__ASSERT_NO_MSG(false);
-					break;
-				}
-
-				started = true;
+		if (!started) {
+			/* Settings need to be loaded before advertising start */
+			switch (state) {
+			case STATE_DISABLED:
+				state = STATE_OFF;
+				start();
+				break;
+			case STATE_DISABLED_OFF:
+				state = STATE_OFF;
+				break;
+			default:
+				/* Should not happen. */
+				__ASSERT_NO_MSG(false);
+				break;
 			}
-		}
 
-		return false;
+			started = true;
+		}
 	}
 
-	if (is_ble_peer_event(eh)) {
-		const struct ble_peer_event *event = cast_ble_peer_event(eh);
-		int err = 0;
-		bool can_fast_adv = false;
+	return false;
+}
 
-		switch (event->state) {
-		case PEER_STATE_CONNECTED:
-			err = ble_adv_stop();
-			break;
+static bool handle_ble_peer_event(const struct ble_peer_event *event)
+{
+	int err = 0;
+	bool can_fast_adv = false;
 
-		case PEER_STATE_SECURED:
-			if (peer_is_rpa[cur_identity] == PEER_RPA_ERASED) {
-				if (bt_addr_le_is_rpa(bt_conn_get_dst(event->id))) {
-					update_peer_is_rpa(PEER_RPA_YES);
-				} else {
-					update_peer_is_rpa(PEER_RPA_NO);
-				}
+	switch (event->state) {
+	case PEER_STATE_CONNECTED:
+		err = ble_adv_stop();
+		break;
+
+	case PEER_STATE_SECURED:
+		if (peer_is_rpa[cur_identity] == PEER_RPA_ERASED) {
+			if (bt_addr_le_is_rpa(bt_conn_get_dst(event->id))) {
+				update_peer_is_rpa(PEER_RPA_YES);
+			} else {
+				update_peer_is_rpa(PEER_RPA_NO);
 			}
-			break;
+		}
+		break;
 
-		case PEER_STATE_DISCONNECTED:
-			can_fast_adv = true;
-			/* Fall-through */
+	case PEER_STATE_DISCONNECTED:
+		can_fast_adv = true;
+		/* Fall-through */
 
-		case PEER_STATE_CONN_FAILED:
-			if (state != STATE_OFF) {
-				state = can_fast_adv ?
-					STATE_DELAYED_ACTIVE_FAST :
-					STATE_DELAYED_ACTIVE_SLOW;
+	case PEER_STATE_CONN_FAILED:
+		if (state != STATE_OFF) {
+			state = can_fast_adv ?
+				STATE_DELAYED_ACTIVE_FAST :
+				STATE_DELAYED_ACTIVE_SLOW;
 
-				k_delayed_work_submit(&adv_update, K_NO_WAIT);
-			}
-			break;
+			k_delayed_work_submit(&adv_update, K_NO_WAIT);
+		}
+		break;
 
-		default:
-			/* Ignore */
+	default:
+		/* Ignore */
+		break;
+	}
+
+	if (err) {
+		module_set_state(MODULE_STATE_ERROR);
+	}
+
+	return false;
+}
+
+static bool handle_ble_peer_operation_event(const struct ble_peer_operation_event *event)
+{
+	int err;
+
+	switch (event->op)  {
+	case PEER_OPERATION_SELECTED:
+	case PEER_OPERATION_ERASE_ADV:
+	case PEER_OPERATION_ERASE_ADV_CANCEL:
+		if ((state == STATE_OFF) || (state == STATE_GRACE_PERIOD) ||
+		    (state == STATE_DISABLED) || (state == STATE_DISABLED_OFF)) {
+			cur_identity = event->bt_stack_id;
+			__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
 			break;
 		}
+
+		err = ble_adv_stop();
+
+		struct bt_conn *conn = NULL;
+
+		bt_conn_foreach(BT_CONN_TYPE_LE, conn_find, &conn);
+
+		if (conn) {
+			disconnect_peer(conn);
+		}
+
+		cur_identity = event->bt_stack_id;
+		__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
+
+		if (event->op == PEER_OPERATION_ERASE_ADV) {
+			update_peer_is_rpa(PEER_RPA_ERASED);
+		}
+		if (!conn) {
+			err = ble_adv_start(true);
+		}
+		break;
+
+	case PEER_OPERATION_ERASED:
+		__ASSERT_NO_MSG(cur_identity == event->bt_stack_id);
+		__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
+		break;
+
+	case PEER_OPERATION_SELECT:
+	case PEER_OPERATION_ERASE:
+	case PEER_OPERATION_CANCEL:
+		/* Ignore */
+		break;
+
+	case PEER_OPERATION_SCAN_REQUEST:
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	return false;
+}
+
+static bool handle_power_down_event(const struct power_down_event *event)
+{
+	int err = 0;
+
+	switch (state) {
+	case STATE_ACTIVE_FAST:
+	case STATE_ACTIVE_SLOW:
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR) &&
+		    adv_swift_pair) {
+			err = remove_swift_pair_section();
+		} else {
+			err = ble_adv_stop();
+			if (!err) {
+				state = STATE_OFF;
+				module_set_state(MODULE_STATE_OFF);
+			}
+		}
+		break;
+
+	case STATE_DELAYED_ACTIVE_FAST:
+	case STATE_DELAYED_ACTIVE_SLOW:
+	case STATE_ACTIVE_FAST_DIRECT:
+	case STATE_ACTIVE_SLOW_DIRECT:
+		err = ble_adv_stop();
+		if (!err) {
+			state = STATE_OFF;
+			module_set_state(MODULE_STATE_OFF);
+		}
+		break;
+
+	case STATE_IDLE:
+		state = STATE_OFF;
+		module_set_state(MODULE_STATE_OFF);
+		break;
+
+	case STATE_OFF:
+	case STATE_GRACE_PERIOD:
+	case STATE_DISABLED_OFF:
+		/* No action */
+		break;
+
+	case STATE_DISABLED:
+		state = STATE_DISABLED_OFF;
+		break;
+
+	default:
+		/* Should never happen */
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	if (err) {
+		module_set_state(MODULE_STATE_ERROR);
+	}
+
+	return (state != STATE_OFF) &&
+	       (state != STATE_DISABLED);
+}
+
+static bool handle_wake_up_event(const struct wake_up_event *event)
+{
+	bool was_off = false;
+	int err;
+
+	switch (state) {
+	case STATE_OFF:
+		was_off = true;
+		state = STATE_IDLE;
+		/* Fall-through */
+
+	case STATE_GRACE_PERIOD:
+		err = ble_adv_start(true);
 
 		if (err) {
 			module_set_state(MODULE_STATE_ERROR);
+		} else if (was_off) {
+			module_set_state(MODULE_STATE_READY);
 		}
+		break;
 
-		return false;
+	case STATE_IDLE:
+	case STATE_ACTIVE_FAST:
+	case STATE_ACTIVE_SLOW:
+	case STATE_ACTIVE_FAST_DIRECT:
+	case STATE_ACTIVE_SLOW_DIRECT:
+	case STATE_DELAYED_ACTIVE_FAST:
+	case STATE_DELAYED_ACTIVE_SLOW:
+	case STATE_DISABLED:
+		/* No action */
+		break;
+
+	case STATE_DISABLED_OFF:
+		state = STATE_DISABLED;
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	return false;
+}
+
+static bool event_handler(const struct event_header *eh)
+{
+	if (is_module_state_event(eh)) {
+		return handle_module_state_event(cast_module_state_event(eh));
+	}
+
+	if (is_ble_peer_event(eh)) {
+		return handle_ble_peer_event(cast_ble_peer_event(eh));
 	}
 
 	if (is_ble_peer_operation_event(eh)) {
-		struct ble_peer_operation_event *event =
-			cast_ble_peer_operation_event(eh);
-		int err;
-
-		switch (event->op)  {
-		case PEER_OPERATION_SELECTED:
-		case PEER_OPERATION_ERASE_ADV:
-		case PEER_OPERATION_ERASE_ADV_CANCEL:
-			if ((state == STATE_OFF) || (state == STATE_GRACE_PERIOD) ||
-			    (state == STATE_DISABLED) || (state == STATE_DISABLED_OFF)) {
-				cur_identity = event->bt_stack_id;
-				__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
-				break;
-			}
-
-			err = ble_adv_stop();
-
-			struct bt_conn *conn = NULL;
-
-			bt_conn_foreach(BT_CONN_TYPE_LE, conn_find, &conn);
-
-			if (conn) {
-				disconnect_peer(conn);
-			}
-
-			cur_identity = event->bt_stack_id;
-			__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
-
-			if (event->op == PEER_OPERATION_ERASE_ADV) {
-				update_peer_is_rpa(PEER_RPA_ERASED);
-			}
-			if (!conn) {
-				err = ble_adv_start(true);
-			}
-			break;
-
-		case PEER_OPERATION_ERASED:
-			__ASSERT_NO_MSG(cur_identity == event->bt_stack_id);
-			__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
-			break;
-
-		case PEER_OPERATION_SELECT:
-		case PEER_OPERATION_ERASE:
-		case PEER_OPERATION_CANCEL:
-			/* Ignore */
-			break;
-
-		case PEER_OPERATION_SCAN_REQUEST:
-		default:
-			__ASSERT_NO_MSG(false);
-			break;
-		}
-
-		return false;
+		return handle_ble_peer_operation_event(
+				cast_ble_peer_operation_event(eh));
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE)) {
-		if (is_power_down_event(eh)) {
-			int err = 0;
+	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE) &&
+	    is_power_down_event(eh)) {
+		return handle_power_down_event(cast_power_down_event(eh));
+	}
 
-			switch (state) {
-			case STATE_ACTIVE_FAST:
-			case STATE_ACTIVE_SLOW:
-				if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR) &&
-				    adv_swift_pair) {
-					err = remove_swift_pair_section();
-				} else {
-					err = ble_adv_stop();
-					if (!err) {
-						state = STATE_OFF;
-						module_set_state(MODULE_STATE_OFF);
-					}
-				}
-				break;
-
-			case STATE_DELAYED_ACTIVE_FAST:
-			case STATE_DELAYED_ACTIVE_SLOW:
-			case STATE_ACTIVE_FAST_DIRECT:
-			case STATE_ACTIVE_SLOW_DIRECT:
-				err = ble_adv_stop();
-				if (!err) {
-					state = STATE_OFF;
-					module_set_state(MODULE_STATE_OFF);
-				}
-				break;
-
-			case STATE_IDLE:
-				state = STATE_OFF;
-				module_set_state(MODULE_STATE_OFF);
-				break;
-
-			case STATE_OFF:
-			case STATE_GRACE_PERIOD:
-			case STATE_DISABLED_OFF:
-				/* No action */
-				break;
-
-			case STATE_DISABLED:
-				state = STATE_DISABLED_OFF;
-				break;
-
-			default:
-				/* Should never happen */
-				__ASSERT_NO_MSG(false);
-				break;
-			}
-
-			if (err) {
-				module_set_state(MODULE_STATE_ERROR);
-			}
-
-			return (state != STATE_OFF) &&
-			       (state != STATE_DISABLED);
-		}
-
-		if (is_wake_up_event(eh)) {
-			bool was_off = false;
-			int err;
-
-			switch (state) {
-			case STATE_OFF:
-				was_off = true;
-				state = STATE_IDLE;
-				/* Fall-through */
-
-			case STATE_GRACE_PERIOD:
-				err = ble_adv_start(true);
-
-				if (err) {
-					module_set_state(MODULE_STATE_ERROR);
-				} else if (was_off) {
-					module_set_state(MODULE_STATE_READY);
-				}
-				break;
-
-			case STATE_IDLE:
-			case STATE_ACTIVE_FAST:
-			case STATE_ACTIVE_SLOW:
-			case STATE_ACTIVE_FAST_DIRECT:
-			case STATE_ACTIVE_SLOW_DIRECT:
-			case STATE_DELAYED_ACTIVE_FAST:
-			case STATE_DELAYED_ACTIVE_SLOW:
-			case STATE_DISABLED:
-				/* No action */
-				break;
-
-			case STATE_DISABLED_OFF:
-				state = STATE_DISABLED;
-				break;
-
-			default:
-				__ASSERT_NO_MSG(false);
-				break;
-			}
-
-			return false;
-		}
+	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE) &&
+	    is_wake_up_event(eh)) {
+		return handle_wake_up_event(cast_wake_up_event(eh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
