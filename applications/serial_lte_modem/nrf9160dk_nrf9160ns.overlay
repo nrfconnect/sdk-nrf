@@ -1,8 +1,10 @@
 &uart2 {
+	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
 	status = "okay";
 	tx-pin = <10>;
 	rx-pin = <11>;
 	rts-pin = <12>;
 	cts-pin = <13>;
+	hw-flow-control;
 };

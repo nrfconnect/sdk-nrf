@@ -40,7 +40,6 @@ choice
 		bool "UART 2"
 	  select UART_2_NRF_UARTE
 	  select UART_2_NRF_HW_ASYNC
-	  select UART_2_NRF_FLOW_CONTROL
 endchoice
 
 choice
