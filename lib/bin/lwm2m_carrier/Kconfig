@@ -28,6 +28,7 @@ menuconfig LWM2M_CARRIER
 	depends on MODEM_KEY_MGMT
 	# AT libraries
 	depends on AT_CMD
+	depends on (AT_CMD_THREAD_STACK_SIZE >= 1536)
 	depends on (AT_CMD_RESPONSE_MAX_LEN > 128)
 	depends on AT_CMD_PARSER
 	depends on AT_NOTIF
