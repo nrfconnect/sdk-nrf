@@ -53,7 +53,7 @@ static struct lwm2m_ctx client;
 #include "config.h"
 #endif /* CONFIG_LWM2M_DTLS_SUPPORT */
 
-static struct k_sem quit_lock;
+static struct k_sem lwm2m_restart;
 
 static void rd_client_event(struct lwm2m_ctx *client,
 			    enum lwm2m_rd_client_event client_event);
@@ -356,9 +356,42 @@ static void rd_client_event(struct lwm2m_ctx *client,
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR:
-		LOG_ERR("LwM2M engine reported a network erorr.");
+		LOG_ERR("LwM2M engine reported a network error.");
+		k_sem_give(&lwm2m_restart);
 		break;
 	}
+}
+
+static void modem_connect(void)
+{
+	int ret;
+
+#if defined(CONFIG_LWM2M_QUEUE_MODE_ENABLED)
+	ret = lte_lc_psm_req(true);
+	if (ret < 0) {
+		LOG_ERR("lte_lc_psm_req, error: (%d)", ret);
+	} else {
+		LOG_INF("PSM mode requested");
+	}
+#endif
+
+	do {
+		LOG_INF("Connecting to LTE network.");
+		LOG_INF("This may take several minutes.");
+		ui_led_set_pattern(UI_LTE_CONNECTING);
+
+		ret = lte_lc_connect();
+		if (ret < 0) {
+			LOG_WRN("Failed to establish LTE connection (%d).",
+				ret);
+			LOG_WRN("Will retry in a minute.");
+			lte_lc_offline();
+			k_sleep(K_SECONDS(60));
+		} else {
+			LOG_INF("Connected to LTE network");
+			ui_led_set_pattern(UI_LTE_CONNECTED);
+		}
+	} while (ret < 0);
 }
 
 void main(void)
@@ -369,7 +402,7 @@ void main(void)
 
 	LOG_INF(APP_BANNER);
 
-	k_sem_init(&quit_lock, 0, UINT_MAX);
+	k_sem_init(&lwm2m_restart, 0, 1);
 
 	ui_init(ui_evt_handler);
 
@@ -386,6 +419,7 @@ void main(void)
 	/* Modem FW update needs to be verified before modem is used. */
 	lwm2m_verify_modem_fw_update();
 #endif
+
 	LOG_INF("Initializing modem.");
 	ret = lte_lc_init();
 	if (ret < 0) {
@@ -434,25 +468,7 @@ void main(void)
 	}
 #endif
 
-	/* setup modem */
-	LOG_INF("Connecting to LTE network.");
-	LOG_INF("This may take several minutes.");
-	ui_led_set_pattern(UI_LTE_CONNECTING);
-
-	ret = lte_lc_connect();
-	__ASSERT(ret == 0, "LTE link could not be established.");
-
-	LOG_INF("Connected to LTE network");
-	ui_led_set_pattern(UI_LTE_CONNECTED);
-
-#if defined(CONFIG_LWM2M_QUEUE_MODE_ENABLED)
-	ret = lte_lc_psm_req(true);
-	if (ret < 0) {
-		LOG_ERR("lte_lc_psm_req, error: %d", ret);
-	} else {
-		LOG_INF("PSM mode requested");
-	}
-#endif
+	modem_connect();
 
 #if defined(CONFIG_LWM2M_CONN_MON_OBJ_SUPPORT)
 	ret = lwm2m_start_connmon();
@@ -461,6 +477,25 @@ void main(void)
 	}
 #endif
 
-	lwm2m_rd_client_start(&client, endpoint_name, flags, rd_client_event);
-	k_sem_take(&quit_lock, K_FOREVER);
+	while (true) {
+		lwm2m_rd_client_start(&client, endpoint_name, flags,
+				      rd_client_event);
+
+		k_sem_take(&lwm2m_restart, K_FOREVER);
+
+		LOG_INF("LwM2M restart requested. The sample will try to"
+			" re-establish network connection.");
+
+		/* Stop the LwM2M engine. */
+		lwm2m_rd_client_stop(&client, rd_client_event);
+
+		/* Try to reconnect to the network. */
+		ret = lte_lc_offline();
+		if (ret < 0) {
+			LOG_ERR("Failed to put LTE link in offline state. (%d)",
+				ret);
+		}
+
+		modem_connect();
+	}
 }
