@@ -515,6 +515,7 @@ static int sensor_cli_init(struct bt_mesh_model *mod)
 	cli->mod = mod;
 
 	net_buf_simple_init(cli->pub.msg, 0);
+	model_ack_init(&cli->ack);
 
 	return 0;
 }
