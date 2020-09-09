@@ -4,13 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-macro(add_partition_manager_config config_file)
-  get_filename_component(pm_path ${config_file} REALPATH)
-  get_filename_component(pm_filename ${config_file} NAME)
-  list(APPEND PM_SUBSYS_PATHS ${pm_path})
-  list(APPEND PM_SUBSYS_OUTPUT_PATHS ${CMAKE_CURRENT_BINARY_DIR}/${pm_filename})
-endmacro()
-
 function(preprocess_pm_yml in_file out_file)
   execute_process(
     COMMAND ${CMAKE_C_COMPILER}
@@ -35,19 +28,19 @@ endfunction()
 # Store the preprocessed output in the binary dir of the subsystems
 # to avoid overwriting pm.yml files.
 if (CONFIG_SETTINGS_FCB OR CONFIG_SETTINGS_NVS)
-  add_partition_manager_config(pm.yml.settings)
+  ncs_add_partition_manager_config(pm.yml.settings)
 endif()
 
 if (CONFIG_FILE_SYSTEM)
-  add_partition_manager_config(pm.yml.file_system)
+  ncs_add_partition_manager_config(pm.yml.file_system)
 endif()
 
 if (CONFIG_ZIGBEE)
-  add_partition_manager_config(pm.yml.zboss)
+  ncs_add_partition_manager_config(pm.yml.zboss)
 endif()
 
 if (CONFIG_NVS AND NOT CONFIG_SETTINGS_NVS)
-  add_partition_manager_config(pm.yml.nvs)
+  ncs_add_partition_manager_config(pm.yml.nvs)
 endif()
 
 # We are using partition manager if we are a child image or if we are
@@ -73,6 +66,9 @@ if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND IMAGE_NAME)
     ${ZEPHYR_BINARY_DIR}/include/generated/pm.yml
     )
 endif()
+
+get_property(PM_SUBSYS_PATHS GLOBAL PROPERTY PM_SUBSYS_PATHS)
+get_property(PM_SUBSYS_OUTPUT_PATHS GLOBAL PROPERTY PM_SUBSYS_OUTPUT_PATHS)
 
 # Check for partition manager configurations defined by subsystems
 # This is a list of absolute paths to these pm.yml files.
