@@ -26,7 +26,7 @@ config OPENTHREAD_NRF_SECURITY
 	  OpenThread to make use of hardware accelerated cryptography functions
 	  if available as well as fast oberon backend for software encryption.
 
-config OPENTHREAD_MBEDTLS_TARGET
+config OPENTHREAD_MBEDTLS_LIB_NAME
 	default "mbedtls_common" if OPENTHREAD_NRF_SECURITY
 
 endmenu
