@@ -95,6 +95,40 @@ struct bt_mesh_prop_cli {
 				  const struct bt_mesh_prop_val *prop);
 };
 
+
+/** @brief Get the list of Generic Client Properties of the bound server.
+ *
+ * To get the list of other property states, use
+ * :ref:`bt_mesh_prop_cli_props_get`.
+ *
+ * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_prop_cli::prop_list callback.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context, or NULL to use the configured publish
+ * parameters.
+ * @param[in] id A starting Client Property ID present within an element.
+ * @param[out] rsp Response buffer, or NULL to keep from blocking.
+ *
+ * @retval 0 Successfully sent the message and populated the @p rsp buffer.
+ * @retval -EINVAL The @p rsp::ids list was NULL.
+ * @retval -ENOBUFS The client received a response, but the supplied response
+ * buffer was too small to hold all the properties. All property IDs that could
+ * fit in the response buffers were copied into it, and the @p rsp::count
+ * field was left unchanged.
+ * @retval -EALREADY A blocking request is already in progress.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
+ */
+int bt_mesh_prop_cli_client_props_get(struct bt_mesh_prop_cli *cli,
+				      struct bt_mesh_msg_ctx *ctx, uint16_t id,
+				      struct bt_mesh_prop_list *rsp);
+
 /** @brief Get the list of properties of the bound server.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
@@ -104,7 +138,9 @@ struct bt_mesh_prop_cli {
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] kind Kind of Property Server to query.
+ * @param[in] kind Kind of Property Server to query. Use with every property
+ * kind except for BT_MESH_PROP_SRV_KIND_CLIENT. To get the list of client
+ * property states, use :ref:`bt_mesh_prop_cli_client_props_get`.
  * @param[out] rsp Response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
