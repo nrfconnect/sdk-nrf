@@ -297,7 +297,7 @@ config USE_BME680_BSEC
 
 config BOSCH_BSEC_LIBRARY_PATH
 	string "Path to Bosch BSEC library folder"
-	default "$(ZEPHYR_BASE)/../nrf/ext/BSEC_1.4.7.4_Generic_Release"
+	default "$(ZEPHYR_BASE)/../nrf/ext/BSEC_1.4.8.0_Generic_Release"
 	help
 	  Path to the folder where the Bosch BSEC library is placed.
 

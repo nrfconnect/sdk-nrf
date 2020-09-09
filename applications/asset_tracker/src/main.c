@@ -146,6 +146,7 @@ static atomic_val_t cloud_association =
 	ATOMIC_INIT(CLOUD_ASSOCIATION_STATE_INIT);
 
 /* Structures for work */
+static struct k_work sensors_start_work;
 static struct k_work send_gps_data_work;
 static struct k_work send_button_data_work;
 static struct k_work send_modem_at_cmd_work;
@@ -1284,6 +1285,11 @@ void sensors_start(void)
 	}
 }
 
+static void sensors_start_work_fn(struct k_work *work)
+{
+	sensors_start();
+}
+
 /**@brief nRF Cloud specific callback for cloud association event. */
 static void on_user_pairing_req(const struct cloud_event *evt)
 {
@@ -1364,7 +1370,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		boot_write_img_confirmed();
 #endif
 		atomic_set(&cloud_association, CLOUD_ASSOCIATION_STATE_READY);
-		sensors_start();
+		k_work_submit_to_queue(&application_work_q, &sensors_start_work);
 		break;
 	case CLOUD_EVT_ERROR:
 		LOG_INF("CLOUD_EVT_ERROR");
@@ -1539,6 +1545,7 @@ static void long_press_handler(struct k_work *work)
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
+	k_work_init(&sensors_start_work, sensors_start_work_fn);
 	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
 	k_work_init(&send_modem_at_cmd_work, send_modem_at_cmd_work_fn);
