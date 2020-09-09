@@ -33,3 +33,28 @@ function(add_overlay_config image overlay_file)
   endif()
 endfunction()
 
+# Add a partition manager configuration file to the build.
+# Note that is only one image is included in the build,
+# you must set CONFIG_PM_SINGLE_IMAGE=y for the partition manager
+# configuration to take effect.
+function(ncs_add_partition_manager_config config_file)
+  get_filename_component(pm_path ${config_file} REALPATH)
+  get_filename_component(pm_filename ${config_file} NAME)
+
+  if (NOT EXISTS ${pm_path})
+    message(FATAL_ERROR
+      "Could not find specified partition manager configuration file "
+      "${config_file} at ${pm_path}"
+      )
+  endif()
+
+  set_property(GLOBAL APPEND PROPERTY
+    PM_SUBSYS_PATHS
+    ${pm_path}
+    )
+  set_property(GLOBAL APPEND PROPERTY
+    PM_SUBSYS_OUTPUT_PATHS
+    ${CMAKE_CURRENT_BINARY_DIR}/${pm_filename}
+    )
+endfunction()
+
