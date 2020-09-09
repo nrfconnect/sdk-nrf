@@ -34,8 +34,8 @@ extern "C" {
 	X(SUCCESS)			\
 	X(TIMEOUT)			\
 	X(REJECT)			\
-	X(WRITE_ERROR)			\
-	X(DISCONNECTED_ERROR)
+	X(WRITE_FAIL)			\
+	X(DISCONNECTED)
 
 enum config_status {
 #define X(name) _CONCAT(CONFIG_STATUS_, name),
