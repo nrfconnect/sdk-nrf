@@ -81,7 +81,7 @@ void power_down_unused_ram(void)
 	uint8_t     section_id              = 5;
 	uint32_t    section_size            = 0;
 	/* Mask to power down whole RAM bank. */
-	uint32_t    ram_bank_power_off_mask = 0xFFFFFFFF;
+	uint32_t    ram_bank_power_off_mask = 0x0000FFFF;
 	/* Mask to select sections of RAM bank to power off. */
 	uint32_t    mask_off;
 
@@ -109,8 +109,7 @@ void power_down_unused_ram(void)
 			section_id,
 			bank_id);
 
-		mask_off = (NRF_POWER_RAMPOWER_S0POWER << section_id);
-		mask_off |= (NRF_POWER_RAMPOWER_S0RETENTION << section_id);
+		mask_off = ((1 << section_id) << NRF_POWER_RAMPOWER_S0POWER);
 
 		nrf_power_rampower_mask_off(NRF_POWER, bank_id, mask_off);
 		section_id--;
