@@ -50,7 +50,7 @@ static void handle_last_status(struct bt_mesh_model *mod,
 	struct bt_mesh_plvl_cli *cli = mod->user_data;
 	uint16_t last = net_buf_simple_pull_le16(buf);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_PLVL_OP_LEVEL_STATUS, ctx)) {
+	if (model_ack_match(&cli->ack_ctx, BT_MESH_PLVL_OP_LAST_STATUS, ctx)) {
 		uint16_t *rsp = cli->ack_ctx.user_data;
 		*rsp = last;
 		model_ack_rx(&cli->ack_ctx);
@@ -72,7 +72,7 @@ static void handle_default_status(struct bt_mesh_model *mod,
 	struct bt_mesh_plvl_cli *cli = mod->user_data;
 	uint16_t default_lvl = net_buf_simple_pull_le16(buf);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_PLVL_OP_LEVEL_STATUS, ctx)) {
+	if (model_ack_match(&cli->ack_ctx, BT_MESH_PLVL_OP_DEFAULT_STATUS, ctx)) {
 		uint16_t *rsp = cli->ack_ctx.user_data;
 		*rsp = default_lvl;
 		model_ack_rx(&cli->ack_ctx);
@@ -98,7 +98,7 @@ static void handle_range_status(struct bt_mesh_model *mod,
 	status.range.min = net_buf_simple_pull_le16(buf);
 	status.range.max = net_buf_simple_pull_le16(buf);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_PLVL_OP_LEVEL_STATUS, ctx)) {
+	if (model_ack_match(&cli->ack_ctx, BT_MESH_PLVL_OP_RANGE_STATUS, ctx)) {
 		struct bt_mesh_plvl_range_status *rsp = cli->ack_ctx.user_data;
 		*rsp = status;
 		model_ack_rx(&cli->ack_ctx);
