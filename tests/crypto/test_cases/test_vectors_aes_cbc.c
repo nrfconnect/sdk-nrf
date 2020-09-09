@@ -1348,6 +1348,9 @@ ITEM_REGISTER(test_vector_aes_cbc_data,
 	.p_iv = "54130eea9e96a1199d3c090f690a479f"
 };
 
+/* This test vector file is very long. Chop off a few if this is set. */
+#if !defined(CONFIG_CRYPTO_LARGE_VECTORS_DISABLE)
+
 /* AES CBC - NIST CAVS 11.1 Multiblock Message Tests 192 Decrypt - Count 9 */
 ITEM_REGISTER(test_vector_aes_cbc_data,
 	      test_vector_aes_t test_vector_aes_cbc_192_decrypt_160) = {
@@ -2134,4 +2137,5 @@ ITEM_REGISTER(test_vector_aes_cbc_monte_carlo_data,
 	.p_iv = "4139cb54eeac3fcf36ed72941122c40f"
 };
 #endif /* CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE */
+#endif /* CRYPTO_LARGE_VECTORS_DISABLE */
 #endif /* MBEDTLS_CIPHER_AES_256_CBC_C */

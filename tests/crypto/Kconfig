@@ -14,4 +14,25 @@ config CRYPTO_LONG_RUNNING_VECTORS_DISABLE
 	  Do a search of CRYPTO_LONG_RUNNING_VECTORS_DISABLE amongst the
 	  test_vectors_* files to see which vectors are affected.
 
+config CRYPTO_LARGE_VECTORS_DISABLE
+	bool "Disable large test vectors"
+	default n
+	help
+	  Some test vectors are very large.
+	  This might be inappropriate for devices with
+	  limited resources.
+	  If True large test vectors will not be compiled or executed.
+	  Also, some test suites have a very large amount of similar but small
+	  test vectors, this amount will be somewhat reduced.
+
+config CRYPTO_SKIP_HASH_TESTS
+	bool "Skip testing hash (SHA, hmac, hkdf)"
+	default n
+	help
+	  Hash support is always enabled.
+	  In order to save space on smaller devices,
+	  allow skipping these tests,
+	  which means the tests are neither executed nor compiled in.
+
+
 source "Kconfig.zephyr"

@@ -16,9 +16,25 @@ static int init_leds(void)
 	return dk_leds_init();
 }
 
+static void state_reset(void)
+{
+	/* To avoid heap fragmentation, reallocate it.
+	 * The first allocation is performed by the kernel.
+	 * DRBG uses heap allocation, so it must be reset as well.
+	 */
+	_heap_free();
+	_heap_init();
+
+	if (init_drbg(NULL, 0) != 0) {
+		LOG_ERR("Bad drbg init!");
+	}
+}
+
 void run_suites(test_case_t *test_cases, uint32_t test_case_count)
 {
 	for (uint32_t i = 0; i < test_case_count; i++) {
+		state_reset();
+
 		uint32_t n_cases = get_vector_count(&test_cases[i]);
 		if (n_cases == 0) {
 			continue;
@@ -47,9 +63,6 @@ void test_main(void)
 	if (init_leds() != 0)
 		LOG_ERR("Bad leds init!");
 
-	if (init_drbg(NULL, 0) != 0)
-		LOG_ERR("Bad ctr drbg init!");
-
 	run_suites(__start_test_case_aead_ccm_data,
 		   ITEM_COUNT(test_case_aead_ccm_data, test_case_t));
 	run_suites(__start_test_case_aead_ccm_simple_data,
@@ -74,9 +87,13 @@ void test_main(void)
 	run_suites(__start_test_case_aes_cbc_data,
 		   ITEM_COUNT(test_case_aes_cbc_data, test_case_t));
 	run_suites(__start_test_case_ecdsa_data,
-		   ITEM_COUNT(test_case_ecdh_data, test_case_t));
+		   ITEM_COUNT(test_case_ecdsa_data, test_case_t));
 	run_suites(__start_test_case_ecdh_data,
 		   ITEM_COUNT(test_case_ecdh_data, test_case_t));
+	run_suites(__start_test_case_ecjpake_data,
+		   ITEM_COUNT(test_case_ecjpake_data, test_case_t));
+
+	#if !defined(CONFIG_CRYPTO_SKIP_HASH_TESTS)
 	run_suites(__start_test_case_sha_256_data,
 		   ITEM_COUNT(test_case_sha_256_data, test_case_t));
 	run_suites(__start_test_case_sha_512_data,
@@ -85,6 +102,5 @@ void test_main(void)
 		   ITEM_COUNT(test_case_hmac_data, test_case_t));
 	run_suites(__start_test_case_hkdf_data,
 		   ITEM_COUNT(test_case_hkdf_data, test_case_t));
-	run_suites(__start_test_case_ecjpake_data,
-		   ITEM_COUNT(test_case_ecjpake_data, test_case_t));
+	#endif // CONFIG_CRYPTO_SKIP_HASH_TESTS
 }

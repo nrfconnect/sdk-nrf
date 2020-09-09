@@ -1927,6 +1927,9 @@ ITEM_REGISTER(test_vector_aead_ccm_simple_data,
 	.p_mac = "a3fd8b8dae862dc5"
 };
 
+/* This test vector file is very long. Chop off a few if this is set. */
+#if !defined(CONFIG_CRYPTO_LARGE_VECTORS_DISABLE)
+
 /* AES CCM STAR - Custom Test vector. */
 ITEM_REGISTER(test_vector_aead_ccm_simple_data,
 	      test_vector_aead_t test_vector_aes_ccm_star_128_inv_c5) = {
@@ -5092,4 +5095,5 @@ ITEM_REGISTER(test_vector_aead_ccm_simple_data,
 	.p_mac = "527e5ed0"
 };
 
+#endif /* CRYPTO_LARGE_VECTORS_DISABLE */
 #endif /* MBEDTLS_CIPHER_AES_256_CCM_C */

@@ -16,7 +16,6 @@
  *
  * https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing
  */
-const char flash_data_sha_256[4096] = { "1234567890" };
 
 /* SHA256 - Based on NIST CAVS 11.0 */
 ITEM_REGISTER(test_vector_hash_256_data,
@@ -92,6 +91,9 @@ ITEM_REGISTER(test_vector_hash_256_data,
 	.p_expected_output =
 		"5f4e16a72d6c9857da0ba009ccacd4f26d7f6bf6c1b78a2ed35e68fcb15b8e40"
 };
+
+#if !defined(CONFIG_CRYPTO_LARGE_VECTORS_DISABLE)
+const char flash_data_sha_256[4096] = { "1234567890" };
 
 /* SHA256 - NIST CAVS 11.0 */
 ITEM_REGISTER(test_vector_hash_256_data,
@@ -358,3 +360,5 @@ ITEM_REGISTER(test_vector_hash_256_long_data,
 	.p_expected_output =
 		"7b09661bdd3dc086e9303102e0c1da76eef506e403419f722947e377a6edec00"
 };
+
+#endif /* CRYPTO_LARGE_VECTORS_DISABLE */

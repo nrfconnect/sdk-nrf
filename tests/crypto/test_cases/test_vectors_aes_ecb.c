@@ -1022,6 +1022,9 @@ ITEM_REGISTER(test_vector_aes_ecb_data,
 	.p_key = "c4854919c324d381bbef9bea771172f6e4563ffbd1e1e956"
 };
 
+/* This test vector file is very long. Chop off a few if this is set. */
+#if !defined(CONFIG_CRYPTO_LARGE_VECTORS_DISABLE)
+
 /* AES ECB - NIST CAVS 11.1 Multiblock Message Tests 192 Encrypt - Count 3 */
 ITEM_REGISTER(test_vector_aes_ecb_data,
 	      test_vector_aes_t test_vector_aes_ecb_192_encrypt_64) = {
@@ -2090,4 +2093,5 @@ ITEM_REGISTER(test_vector_aes_ecb_monte_carlo_data,
 	.p_key = "2b09ba39b834062b9e93f48373b8dd018dedf1e5ba1b8af831ebbacbc92a2643"
 };
 #endif /* CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE */
+#endif /* CRYPTO_LARGE_VECTORS_DISABLE */
 #endif /* MBEDTLS_CIPHER_AES_256_ECB_C */

@@ -1283,6 +1283,8 @@ ITEM_REGISTER(test_vector_aead_gcm_simple_data,
 	.p_mac = "c4d72c983924fcd886b6e076525b7104"
 };
 
+/* This test vector file is very long. Chop off a few if this is set. */
+#if !defined(CONFIG_CRYPTO_LARGE_VECTORS_DISABLE)
 /* AES GCM - NIST CAVS 14.0 Decrypt with keysize 192 - Count 0 */
 ITEM_REGISTER(test_vector_aead_gcm_simple_data,
 	      test_vector_aead_t test_vector_aes_aead_gcm_192_encrypt9) = {
@@ -2782,3 +2784,5 @@ ITEM_REGISTER(test_vector_aead_gcm_simple_data,
 		"d17ede09ef36b35b1d908608aeb7ea77d03eec9936736b",
 	.p_mac = "8eac04b744d91e7b2c5a6ed792"
 };
+
+#endif /* CRYPTO_LARGE_VECTORS_DISABLE */

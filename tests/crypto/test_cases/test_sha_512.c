@@ -23,7 +23,12 @@ extern test_vector_hash_t __stop_test_vector_hash_512_data[];
 extern test_vector_hash_t __start_test_vector_hash_512_long_data[];
 extern test_vector_hash_t __stop_test_vector_hash_512_long_data[];
 
+#if !defined(CONFIG_CRYPTO_LARGE_VECTORS_DISABLE)
 #define INPUT_BUF_SIZE (4125)
+#else
+#define INPUT_BUF_SIZE (512)
+#endif // CRYPTO_LARGE_VECTORS_DISABLE
+
 #define OUTPUT_BUF_SIZE (64)
 
 static mbedtls_sha512_context sha512_context;
