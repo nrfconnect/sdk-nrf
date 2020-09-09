@@ -103,6 +103,11 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   set(app_sign_depends
     $<IF:${sign_merged},${merged_hex_file_depends},zephyr_final>)
 
+  if (NOT DEFINED CONFIG_BOOT_SIGNATURE_KEY_FILE)
+    include(${CMAKE_BINARY_DIR}/mcuboot/shared_vars.cmake)
+    set(CONFIG_BOOT_SIGNATURE_KEY_FILE ${mcuboot_SIGNATURE_KEY_FILE})
+  endif ()
+
   if (DEFINED mcuboot_CONF_FILE)
     get_filename_component(mcuboot_CONF_DIR ${mcuboot_CONF_FILE} DIRECTORY)
     if (EXISTS ${mcuboot_CONF_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
