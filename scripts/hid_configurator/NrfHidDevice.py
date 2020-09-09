@@ -40,8 +40,8 @@ class ConfigStatus(IntEnum):
     SUCCESS            = 8
     TIMEOUT            = 9
     REJECT             = 10
-    WRITE_ERROR        = 11
-    DISCONNECTED_ERROR = 12
+    WRITE_FAIL         = 11
+    DISCONNECTED       = 12
     FAULT              = 99
 
 class NrfHidTransport():
