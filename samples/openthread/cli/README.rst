@@ -51,7 +51,6 @@ User interface
 All the interactions with the application are handled using serial communication.
 See `OpenThread CLI Reference`_ for the list of available serial commands.
 
-
 Building and running
 ********************
 
@@ -69,6 +68,10 @@ After building the sample and programming it to your development kit, test it by
 #. Turn on the development kit.
 #. Set up the serial connection with the development kit.
    For more details, see :ref:`putty`.
+
+   .. note::
+        |thread_hwfc_enabled|
+
 #. Invoke some of the OpenThread commands:
 
    a. Test the state of the Thread network with the ``ot state`` command.
@@ -122,6 +125,10 @@ To test communication between boards, complete the following steps:
 #. Turn on the developments kits.
 #. Set up the serial connection with both development kits.
    For more details, see :ref:`putty`.
+
+   .. note::
+        |thread_hwfc_enabled|
+
 #. Test communication between the boards with the ``ot ping <ip_address_of_the_first_board>`` command.
    For example:
 
@@ -139,6 +146,10 @@ To test diagnostic commands, complete the following steps:
 #. Turn on the developments kits.
 #. Set up the serial connection with both development kits.
    For more details, see :ref:`putty`.
+
+   .. note::
+        |thread_hwfc_enabled|.
+
 #. Make sure that the diagnostic module is enabled and configured with proper radio channel and transmission power by running the following commands on both devices:
 
    .. code-block:: console

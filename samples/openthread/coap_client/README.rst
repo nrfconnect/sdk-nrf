@@ -230,6 +230,9 @@ Sample output
 The sample logging output can be observed through a serial port.
 For more details, see :ref:`putty`.
 
+.. note::
+     |thread_hwfc_enabled|
+
 Dependencies
 ************
 
