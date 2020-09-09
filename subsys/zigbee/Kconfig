@@ -208,6 +208,23 @@ config ZIGBEE_UART_TX_BUF_LEN
 
 endif #ZIGBEE_HAVE_SERIAL
 
+
+config ZIGBEE_USE_LEDS
+	bool "LEDs abstract for ZBOSS OSIF"
+	imply GPIO
+	imply DK_LIBRARY
+
+config ZIGBEE_USE_DIMMABLE_LED
+	bool "Dimmable LED (PWM) abstract for ZBOSS OSIF"
+	imply GPIO
+	imply PWM
+
+config ZIGBEE_USE_BUTTONS
+	bool "Buttons abstract for ZBOSS OSIF"
+	imply GPIO
+	imply DK_LIBRARY
+
+
 menuconfig ZIGBEE_SHELL
 	bool "Enable Zigbee Shell"
 	select SHELL
