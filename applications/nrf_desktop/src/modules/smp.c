@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <zephyr/types.h>
 
-#include <mgmt/smp_bt.h>
+#include <mgmt/mcumgr/smp_bt.h>
 #include <img_mgmt/img_mgmt.h>
 
 #define MODULE smp
