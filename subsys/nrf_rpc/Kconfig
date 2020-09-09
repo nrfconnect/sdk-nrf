@@ -53,7 +53,7 @@ config NRF_RPC_TR_PRMSG_RX_PRIORITY
 	  messages from rpmsg.
 
 module = NRF_RPC
-module-str = NRF_RPC_
+module-str = NRF_RPC
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 module = NRF_RPC_TR
