@@ -82,14 +82,18 @@ After building the sample and programming it to your development kit, test it by
 Running OpenThread CLI commands
 -------------------------------
 
-You can connect to any of the Simple CoAP Server or Simple CoAP Client nodes through a serial port and run OpenThread CLI commands.
+You can connect to any of the Simple CoAP Server or Simple CoAP Client nodes through a serial port.
 For more details, see :ref:`putty`.
+
+.. note::
+     |thread_hwfc_enabled|
+
+Once the serial connection is ready, you can run OpenThread CLI commands.
+For complete CLI documentation, refer to `OpenThread CLI Reference`_.
 
 .. note::
     In Zephyr shell, every OpenThread command needs to be prepended with the `ot` keyword.
     For example, ``ot channel 20``.
-
-For complete CLI documentation, refer to `OpenThread CLI Reference`_.
 
 Dependencies
 ************

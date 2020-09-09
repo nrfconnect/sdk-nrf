@@ -48,6 +48,8 @@
 
 .. |enable_thread_before_testing| replace:: Make sure to enable the OpenThread stack before building and testing this sample.
    See :ref:`ug_thread` for more information.
+.. |thread_hwfc_enabled| replace:: Thread samples have Hardware Flow Control mechanism enabled by default in serial communication.
+   When enabled, it allows devices to manage transmission by informing each other about their current state, and ensures more reliable connection in high-speed communication scenarios.
 
 .. |zigbee_version| replace:: Zigbee 3.0
 .. |zigbee_description| replace:: Zigbee is a portable, low-power software networking protocol that provides connectivity over an 802.15.4-based mesh network.

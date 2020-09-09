@@ -80,7 +80,9 @@ It is also possible to communicate with NCP board using `PySpinel`_ commands.
 
 You can use your own application instead of wpantund and PySpinel provided that it supports the spinel communication protocol.
 
-Sample by default reconfigures baudrate 1000000 bit/s for serial communication.
+.. note::
+    |thread_hwfc_enabled|
+    In addition, the NCP sample by default reconfigures the baud rate to 1000000 bit/s.
 
 Building and running
 ********************

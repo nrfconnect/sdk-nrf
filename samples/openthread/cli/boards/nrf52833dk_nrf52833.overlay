@@ -4,12 +4,6 @@
  */
 
 &uart0 {
-	current-speed = <1000000>;
 	status = "okay";
 	hw-flow-control;
-};
-
-&uart1 {
-	current-speed = <1000000>;
-	status = "okay";
 };

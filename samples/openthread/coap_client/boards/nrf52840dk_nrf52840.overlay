@@ -17,6 +17,10 @@
 &adc {
 	status = "disabled";
 };
+&uart0 {
+	status = "okay";
+	hw-flow-control;
+};
 &uart1 {
 	status = "disabled";
 };
