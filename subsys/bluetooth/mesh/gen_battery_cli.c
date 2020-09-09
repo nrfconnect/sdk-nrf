@@ -11,7 +11,7 @@
 static void decode_status(struct net_buf_simple *buf,
 			  struct bt_mesh_battery_status *status)
 {
-	status->battery_lvl = net_buf_simple_pull_le16(buf);
+	status->battery_lvl = net_buf_simple_pull_u8(buf);
 
 	uint8_t *discharge_minutes = net_buf_simple_pull_mem(buf, 3);
 
@@ -76,7 +76,7 @@ const struct bt_mesh_model_cb _bt_mesh_battery_cli_cb = {
 	.init = bt_mesh_battery_cli_init,
 };
 
-int bt_mesh_battery_cli_status_get(struct bt_mesh_battery_cli *cli,
+int bt_mesh_battery_cli_get(struct bt_mesh_battery_cli *cli,
 				   struct bt_mesh_msg_ctx *ctx,
 				   struct bt_mesh_battery_status *rsp)
 {
