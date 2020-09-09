@@ -39,14 +39,14 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);
 
 enum state {
 	STATE_DISABLED,
+	STATE_DISABLED_STANDBY,
 	STATE_IDLE,
+	STATE_STANDBY,
 	STATE_ERASE_PEER,
 	STATE_ERASE_ADV,
 	STATE_SELECT_PEER,
 	STATE_DONGLE_CONN,
-	STATE_DONGLE_CONN_STANDBY,
-	STATE_STANDBY,
-	STATE_STANDBY_DISABLED
+	STATE_DONGLE_CONN_STANDBY
 };
 
 struct state_switch {
@@ -812,6 +812,7 @@ static void selector_event_handler(const struct selector_event *event)
 	if (event->position == CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS) {
 		switch (state) {
 		case STATE_DISABLED:
+		case STATE_DISABLED_STANDBY:
 			dongle_peer_selected_on_init = true;
 			break;
 		case STATE_DONGLE_CONN:
@@ -905,7 +906,7 @@ static bool handle_power_down_event(const struct power_down_event *event)
 {
 	switch (state) {
 	case STATE_DISABLED:
-		state = STATE_STANDBY_DISABLED;
+		state = STATE_DISABLED_STANDBY;
 		break;
 
 	case STATE_ERASE_PEER:
@@ -926,6 +927,8 @@ static bool handle_power_down_event(const struct power_down_event *event)
 
 	case STATE_STANDBY:
 		/* Fall-through */
+	case STATE_DISABLED_STANDBY:
+		/* Fall-through */
 	case STATE_DONGLE_CONN_STANDBY:
 		/* No action. */
 		break;
@@ -941,7 +944,7 @@ static bool handle_power_down_event(const struct power_down_event *event)
 static bool handle_wake_up_event(const struct wake_up_event *event)
 {
 	switch (state) {
-	case STATE_STANDBY_DISABLED:
+	case STATE_DISABLED_STANDBY:
 		state = STATE_DISABLED;
 		break;
 
@@ -972,7 +975,7 @@ static bool event_handler(const struct event_header *eh)
 		if (check_state(event, MODULE_ID(settings_loader),
 				MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG((state == STATE_DISABLED) ||
-					(state == STATE_STANDBY_DISABLED));
+					(state == STATE_DISABLED_STANDBY));
 
 			int err = init();
 
