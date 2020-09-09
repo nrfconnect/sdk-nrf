@@ -246,7 +246,7 @@ bool config_channel_transport_rsp_receive(struct config_channel_transport *trans
 
 	if (event->is_request) {
 		/* Mark request as unhandled. */
-		event->status = CONFIG_STATUS_DISCONNECTED_ERROR;
+		event->status = CONFIG_STATUS_DISCONNECTED;
 		event->dyndata.size = 0;
 	}
 

@@ -344,7 +344,7 @@ static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 
 	if (err) {
 		LOG_WRN("Failed to read report: %d", err);
-		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
+		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
 	} else {
 		/* Recipient and event_id must be stored to send proper values
 		 * on error.
@@ -368,7 +368,7 @@ static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 		if (pos < 0) {
 			LOG_WRN("Failed to parse response: %d", pos);
 			per->cfg_chan_rsp->event_id = event_id;
-			submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
+			submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
 			return pos;
 		}
 
@@ -378,7 +378,7 @@ static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 			per->cur_poll_cnt++;
 
 			if (per->cur_poll_cnt >= CFG_CHAN_MAX_RSP_POLL_CNT) {
-				submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
+				submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
 			} else {
 				k_delayed_work_submit(&per->read_rsp,
 						      CFG_CHAN_RSP_READ_DELAY);
@@ -409,7 +409,7 @@ static void read_rsp_fn(struct k_work *work)
 
 	if (err) {
 		LOG_WRN("Cannot read feature report (err: %d)", err);
-		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
+		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
 	}
 }
 
@@ -429,7 +429,7 @@ static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 
 	if (err) {
 		LOG_WRN("Failed to write report: %d", err);
-		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
+		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
 		return;
 	}
 
@@ -616,13 +616,13 @@ static bool handle_config_event(struct config_event *event)
 	}
 
 	if (!config_rep) {
-		send_nodata_response(event, CONFIG_STATUS_WRITE_ERROR);
+		send_nodata_response(event, CONFIG_STATUS_WRITE_FAIL);
 		LOG_ERR("Feature report not found");
 		return true;
 	}
 
 	if (event->dyndata.size > UCHAR_MAX) {
-		send_nodata_response(event, CONFIG_STATUS_WRITE_ERROR);
+		send_nodata_response(event, CONFIG_STATUS_WRITE_FAIL);
 		LOG_WRN("Event data too big");
 		return true;
 	}
@@ -639,7 +639,7 @@ static bool handle_config_event(struct config_event *event)
 	event->recipient = recipient;
 
 	if (pos < 0) {
-		send_nodata_response(event, CONFIG_STATUS_WRITE_ERROR);
+		send_nodata_response(event, CONFIG_STATUS_WRITE_FAIL);
 		LOG_WRN("Invalid event data");
 		return true;
 	}
@@ -661,7 +661,7 @@ static bool handle_config_event(struct config_event *event)
 	}
 
 	if (err) {
-		send_nodata_response(event, CONFIG_STATUS_WRITE_ERROR);
+		send_nodata_response(event, CONFIG_STATUS_WRITE_FAIL);
 		LOG_ERR("Writing report failed, err:%d", err);
 	} else {
 		size_t dyndata_size;
@@ -709,7 +709,7 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 	per->cur_poll_cnt = 0;
 	per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
 	if (per->cfg_chan_rsp) {
-		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
+		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
 	}
 }
 
