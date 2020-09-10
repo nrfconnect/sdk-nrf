@@ -305,6 +305,9 @@
 .. _`OpenThread.io`: https://openthread.io
 .. _`Device Types on OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
+
+.. _`OpenThread logging`: https://openthread.io/guides/build/logs
+
 .. _`Commissioner CLI commands`: https://github.com/openthread/openthread/blob/master/src/cli/README_COMMISSIONER.md
 .. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/master/src/cli/README_JOINER.md
 
@@ -316,7 +319,10 @@
 
 .. _`wpantund`: https://github.com/openthread/wpantund/blob/master/README.md
 .. _`wpantund Installation Guide`: https://github.com/openthread/wpantund/blob/master/INSTALL.md
+.. _`wpantund Usage Overview`: https://github.com/openthread/wpantund#usage-overview
+
 .. _`PySpinel`: https://github.com/openthread/pyspinel/blob/master/README.md
+.. _`PySpinel arguments`: https://github.com/openthread/pyspinel/blob/master/README.md#description
 
 .. _`Thread Group's certification information`: https://www.threadgroup.org/What-is-Thread/Certification
 

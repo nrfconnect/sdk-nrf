@@ -105,6 +105,8 @@ The dedicated thread can be configured using the following options:
 * :option:`CONFIG_ZBOSS_DEFAULT_THREAD_PRIORITY` - Defines thread priority; set to 3 by default.
 * :option:`CONFIG_ZBOSS_DEFAULT_THREAD_STACK_SIZE` - Defines the size of the thread stack; set to 2048 by default.
 
+.. _zigbee_ug_logging:
+
 Custom logging per module
 =========================
 
