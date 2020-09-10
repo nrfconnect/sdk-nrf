@@ -295,6 +295,7 @@ static int ctrl_pin_configure(struct lpuart_bidir_gpio *io,
 			      const struct lpuart_pin_config *cfg, bool req)
 {
 	int err;
+	size_t i;
 
 	io->pin = cfg->pin;
 	io->nrf_pin = cfg->nrf_pin;
@@ -325,7 +326,7 @@ static int ctrl_pin_configure(struct lpuart_bidir_gpio *io,
 	/* It is a hacky way to determine which channel is used for given pin.
 	 * GPIO driver implementation change may lead to break.
 	 */
-	for (size_t i = 0; i < GPIOTE_CH_NUM; i++) {
+	for (i = 0; i < GPIOTE_CH_NUM; i++) {
 		if (nrf_gpiote_event_pin_get(NRF_GPIOTE, i) == io->nrf_pin) {
 			io->ch = i;
 			break;
