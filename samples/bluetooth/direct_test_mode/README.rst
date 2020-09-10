@@ -133,9 +133,9 @@ Requirements
 
 * The following development kit:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set20_start
-   :end-before: set20_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340pdk_nrf5340_cpunet
 
 * The Network core
 

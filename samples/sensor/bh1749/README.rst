@@ -15,9 +15,9 @@ Requirements
 
 The sample supports the following nRF9160-based device:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set10_start
-   :end-before: set10_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: thingy91_nrf9160ns
 
 Building and Running
 ********************

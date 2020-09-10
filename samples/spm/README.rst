@@ -54,9 +54,9 @@ Requirements
 
 The sample supports the following development kits:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set19_start
-   :end-before: set19_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340pdk_nrf5340_cpuapp, nrf9160dk_nrf9160
 
 Building and running
 ********************

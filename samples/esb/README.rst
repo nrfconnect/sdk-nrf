@@ -31,9 +31,9 @@ Requirements
 
 The sample supports the following development kits:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set2_start
-   :end-before: set2_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832
 
 You can use any two of the development kits listed above and mix different development kits.
 

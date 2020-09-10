@@ -24,9 +24,9 @@ Requirements
 
 The sample supports the following development kit:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set5_start
-   :end-before: set5_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160ns
 
 Additionally, the sample requires a `Nordic Thingy:52`_.
 
