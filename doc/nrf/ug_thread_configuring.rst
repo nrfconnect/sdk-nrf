@@ -124,6 +124,8 @@ You can also configure how the commissioning process is to be started:
 
 For more details about the commissioning process, see `Thread Commissioning on OpenThread portal`_.
 
+.. _thread_ug_logging_options:
+
 OpenThread stack logging options
 ================================
 
