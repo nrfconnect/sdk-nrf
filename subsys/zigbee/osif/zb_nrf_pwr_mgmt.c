@@ -29,7 +29,10 @@ void zb_osif_sleep_init(void)
  */
 __weak zb_uint32_t zb_osif_sleep(zb_uint32_t sleep_tmo)
 {
-	zb_uint32_t time_slept_ms = 0;
+	/* The amount of microseconds that the ZBOSS task was blocked. */
+	zb_uint32_t time_slept_us;
+	/* The amount of milliseconds that the ZBOSS task was blocked. */
+	zb_uint32_t time_slept_ms;
 
 	if (!sleep_tmo) {
 		return sleep_tmo;
@@ -43,6 +46,7 @@ __weak zb_uint32_t zb_osif_sleep(zb_uint32_t sleep_tmo)
 	 * Such solution may break the internal logic of the stack.
 	 */
 	ZVUNUSED(time_slept_ms);
+	ZVUNUSED(time_slept_us);
 	return ZB_SLEEP_INVALID_VALUE;
 #else
 
@@ -54,9 +58,15 @@ __weak zb_uint32_t zb_osif_sleep(zb_uint32_t sleep_tmo)
 	ZVUNUSED(atomic_set((atomic_t *)&is_sleeping, 1));
 
 	/* Wait for an event. */
-	time_slept_ms = zigbee_event_poll(sleep_tmo);
+	time_slept_us = zigbee_event_poll(sleep_tmo * USEC_PER_MSEC);
 
-	/* Unlock timer value updaes. */
+	/* Calculate sleep duration in milliseconds. Round up the result
+	 * to avoid possible errors in the event of
+	 * another time unit conversion.
+	 */
+	time_slept_ms = ceiling_fraction(time_slept_us, USEC_PER_MSEC);
+
+	/* Unlock timer value updates. */
 	ZVUNUSED(atomic_set((atomic_t *)&is_sleeping, 0));
 
 	/* Enable Zigbee stack-related peripherals. */
