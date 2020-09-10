@@ -548,9 +548,9 @@ void zigbee_event_notify(zigbee_event_t event)
 	k_poll_signal_raise(&zigbee_sig, event);
 }
 
-uint32_t zigbee_event_poll(uint32_t timeout_ms)
+uint32_t zigbee_event_poll(uint32_t timeout_us)
 {
-	/* Configure event/signals to wait for in wait_for_event function */
+	/* Configure event/signals to wait for in zigbee_event_poll function. */
 	static struct k_poll_event wait_events[] = {
 		K_POLL_EVENT_INITIALIZER(K_POLL_TYPE_SIGNAL,
 					 K_POLL_MODE_NOTIFY_ONLY,
@@ -559,9 +559,10 @@ uint32_t zigbee_event_poll(uint32_t timeout_ms)
 
 	unsigned int signaled;
 	int result;
-	int64_t time_stamp = k_uptime_get();
+	/* Store timestamp of event polling start. */
+	int64_t timestamp_poll_start = k_uptime_ticks();
 
-	k_poll(wait_events, 1, K_MSEC(timeout_ms));
+	k_poll(wait_events, 1, K_USEC(timeout_us));
 
 	k_poll_signal_check(&zigbee_sig, &signaled, &result);
 	if (signaled) {
@@ -570,7 +571,7 @@ uint32_t zigbee_event_poll(uint32_t timeout_ms)
 		LOG_DBG("Received new Zigbee event: 0x%02x", result);
 	}
 
-	return k_uptime_delta(&time_stamp);
+	return k_ticks_to_us_floor32(k_uptime_ticks() - timestamp_poll_start);
 }
 
 void zigbee_enable(void)

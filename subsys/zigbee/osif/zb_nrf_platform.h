@@ -56,12 +56,12 @@ void zigbee_event_notify(zigbee_event_t event);
 /**@brief Function which waits for event in case
  *        of empty Zigbee stack scheduler queue.
  *
- * @param[in] timeout_ms  Maximum amount of time, in milliseconds
+ * @param[in] timeout_us  Maximum amount of time, in microseconds
  *                        for which the ZBOSS task processing may be blocked.
  *
- * @returns The amount of milliseconds that the ZBOSS task was blocked.
+ * @returns The amount of microseconds that the ZBOSS task was blocked.
  */
-uint32_t zigbee_event_poll(uint32_t timeout_ms);
+uint32_t zigbee_event_poll(uint32_t timeout_us);
 
 /**@brief Schedule single-param callback execution.
  *
