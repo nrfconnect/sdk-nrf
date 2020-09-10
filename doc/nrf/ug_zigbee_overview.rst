@@ -28,3 +28,5 @@ The stack comes with the following features:
 * Experimental support for ``ZB_ZCL_WWAH``.
 
 See :ref:`nrfxlib:zboss` for more information.
+
+The |NCS|'s Zigbee protocol also supports :ref:`Zigbee firmware over-the-air updates <lib_zigbee_fota>`.
