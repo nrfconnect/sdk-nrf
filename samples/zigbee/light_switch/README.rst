@@ -7,6 +7,10 @@ The Zigbee light switch sample can be used to change the state of light sources 
 
 You can use this sample together with the :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` and the :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` to set up a basic Zigbee network.
 
+.. note::
+    This sample supports :ref:`lib_zigbee_fota`.
+    See :ref:`zigbee_light_switch_activating_variants` for details.
+
 Overview
 ********
 
@@ -75,6 +79,18 @@ Building and running
 |enable_zigbee_before_testing|
 
 .. include:: /includes/build_and_run.txt
+
+.. _zigbee_light_switch_activating_variants:
+
+Activating sample extensions
+============================
+
+To activate the extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
+
+* For the variant that supports Zigbee FOTA, set :file:`ota_overlay.conf`.
+  Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
+
+See :ref:`cmake_options` for instructions on how to add this option.
 
 .. _zigbee_light_switch_testing:
 
