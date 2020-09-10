@@ -257,7 +257,7 @@ void coap_client_utils_init(ot_connection_cb_t on_connect,
 {
 	on_mtd_mode_toggle = on_toggle;
 
-	coap_init(AF_INET6);
+	coap_init(AF_INET6, NULL);
 
 	k_work_init(&on_connect_work, on_connect);
 	k_work_init(&on_disconnect_work, on_disconnect);
