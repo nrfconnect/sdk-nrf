@@ -44,9 +44,9 @@ Requirements
 
 The sample supports the following development kit:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set5_start
-   :end-before: set5_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160ns
 
 The sample also requires an LwM2M server URL address available on the internet.
 For this sample, the URL address mentioned on the `Leshan Demo Server`_ page is used.

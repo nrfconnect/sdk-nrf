@@ -60,9 +60,9 @@ Requirements
 
 The sample supports the following development kits for testing the network status:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set8_start
-   :end-before: set8_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833
 
 To test the sample, you need at least one development kit NCP board.
 Additional NCP boards can be used for the :ref:`optional testing of network joining <ot_ncp_sample_testing_more_boards>`.

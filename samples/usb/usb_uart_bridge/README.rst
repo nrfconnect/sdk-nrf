@@ -15,9 +15,9 @@ Requirements
 
 The sample supports the following nRF52840-based device:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set17_start
-   :end-before: set17_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: thingy91_nrf52840
 
 The sample also requires a USB host which can communicate with CDC ACM devices, like a Windows or Linux PC.
 
