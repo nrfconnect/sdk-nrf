@@ -17,9 +17,11 @@
 
 /** @brief Open socket and start the receiving thread.
  *
- * @param[in] ip_family network ip protocol family (AF_INET or AF_INET6)
+ * @param[in] ip_family Network ip protocol family (AF_INET or AF_INET6).
+ * @param[in] addr Local address to bind for receiving data.
+ *		   Pass NULL pointer if no address is provided.
  */
-void coap_init(int ip_family);
+void coap_init(int ip_family, struct sockaddr *addr);
 
 /** @brief Send CoAP non-confirmable request.
  *

@@ -27,6 +27,7 @@ const static int nfds = 1;
 static struct pollfd fds;
 static struct coap_reply replies[COAP_MAX_REPLIES];
 static int proto_family;
+static struct sockaddr *bind_addr;
 
 static K_THREAD_STACK_DEFINE(receive_stack_area, COAP_RECEIVE_STACK_SIZE);
 static struct k_thread receive_thread_data;
@@ -43,6 +44,12 @@ static int coap_open_socket(void)
 			continue;
 		}
 		break;
+	}
+
+	if (bind_addr) {
+		if (bind(sock, bind_addr, sizeof(*bind_addr))) {
+			LOG_ERR("Failed to bind socket, errno: %d", errno);
+		}
 	}
 
 	return sock;
@@ -192,13 +199,17 @@ static void coap_set_response_callback(struct coap_packet *request,
 	reply->reply = reply_cb;
 }
 
-void coap_init(int ip_family)
+void coap_init(int ip_family, struct sockaddr *addr)
 {
 	proto_family = ip_family;
 
 	fds.events = POLLIN;
 	fds.revents = 0;
 	fds.fd = coap_open_socket();
+
+	if (addr) {
+		bind_addr = addr;
+	}
 
 	/* start sock receive thread */
 	k_thread_create(&receive_thread_data, receive_stack_area,
