@@ -16,7 +16,7 @@ static int init_leds(void)
 	return dk_leds_init();
 }
 
-static void state_reset(void)
+static void test_state_reset(void)
 {
 	/* To avoid heap fragmentation, reallocate it.
 	 * The first allocation is performed by the kernel.
@@ -25,34 +25,43 @@ static void state_reset(void)
 	_heap_free();
 	_heap_init();
 
-	if (init_drbg(NULL, 0) != 0) {
-		LOG_ERR("Bad drbg init!");
-	}
+	TEST_VECTOR_ASSERT_EQUAL(0, init_drbg(NULL, 0));
 }
 
-void run_suites(test_case_t *test_cases, uint32_t test_case_count)
+void run_suites(test_case_t *cases, uint32_t case_count)
 {
-	for (uint32_t i = 0; i < test_case_count; i++) {
-		state_reset();
+	for (uint32_t c = 0; c < case_count; c++) {
+		uint32_t n_cases = get_vector_count(&cases[c]);
 
-		uint32_t n_cases = get_vector_count(&test_cases[i]);
-		if (n_cases == 0) {
+		if (n_cases == 0)
 			continue;
+
+		/* Inject an extra first test case for setting up state.
+		 * If that fails, the rest will not run (fail fast).
+		 * Ztest also requires an extra terminating NULL
+		 * test case at the end.
+		 */
+		struct unit_test suites[n_cases + 2];
+
+		uint32_t suite = 0;
+
+		suites[suite].name = TV_NAME("state_reset");
+		suites[suite].setup = unit_test_noop;
+		suites[suite].teardown = unit_test_noop;
+		suites[suite].test = test_state_reset;
+		suites[suite].thread_options = 0;
+
+		for (uint32_t cnt = 0; cnt < n_cases; suite++, cnt++) {
+			suites[suite].name = get_vector_name(&cases[c], cnt);
+			suites[suite].setup = cases[c].setup;
+			suites[suite].teardown = cases[c].teardown;
+			suites[suite].test = cases[c].exec;
+			suites[suite].thread_options = 0;
 		}
+		/* Terminating test suite */
+		suites[suite].test = NULL;
 
-		struct unit_test test_suite[n_cases + 1];
-
-		for (uint32_t v = 0; v < n_cases; v++) {
-			test_suite[v].name = get_vector_name(&test_cases[i], v);
-			test_suite[v].setup = test_cases[i].setup;
-			test_suite[v].teardown = test_cases[i].teardown;
-			test_suite[v].test = test_cases[i].exec;
-			test_suite[v].thread_options = 0;
-		}
-		test_suite[n_cases].test = NULL;
-
-		z_ztest_run_test_suite(test_cases[i].p_test_case_name,
-				       test_suite);
+		z_ztest_run_test_suite(cases[c].p_test_case_name, suites);
 	}
 }
 
