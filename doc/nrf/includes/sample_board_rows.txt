@@ -1,0 +1,83 @@
+.. heading
+
+| Hardware platforms | PCA | Board name | Build target |
+
+.. nrf52833dk_nrf52833
+
+| :ref:`nRF52833 DK <ug_nrf52>` | PCA10010   | :ref:`nrf52833dk_nrf52833 <nrf52833dk_nrf52833>` | ``nrf52833dk_nrf52833`` |
+
+.. nrf52dk_nrf52832
+
+| :ref:`nRF52 DK <ug_nrf52>` | PCA10040 | :ref:`nrf52dk_nrf52832 <nrf52dk_nrf52832>` | ``nrf52dk_nrf52832`` |
+
+.. nrf52840dk_nrf52840
+
+| :ref:`nRF52840 DK <ug_nrf52>` | PCA10056 | :ref:`nrf52840dk_nrf52840 <nrf52840dk_nrf52840>` | ``nrf52840dk_nrf52840`` |
+
+.. nrf52840dongle_nrf52840
+
+| :ref:`nRF52840 Dongle <ug_nrf52>` | PCA10059 | :ref:`nrf52840dongle_nrf52840 <nrf52840dongle_nrf52840>` | ``nrf52840dongle_nrf52840`` |
+
+.. nrf9160dk_nrf9160
+
+| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk_nrf9160 <nrf9160dk_nrf9160>` | ``nrf9160dk_nrf9160``  |
+
+.. nrf9160dk_nrf9160ns
+
+| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk_nrf9160 <nrf9160dk_nrf9160>` | ``nrf9160dk_nrf9160ns`` |
+
+.. nrf5340pdk_nrf5340_cpuapp
+
+| :ref:`nRF5340 PDK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340pdk_nrf5340 <nrf5340pdk_nrf5340>` | ``nrf5340pdk_nrf5340_cpuapp`` |
+
+.. nrf5340pdk_nrf5340_cpuappns
+
+| :ref:`nRF5340 PDK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340pdk_nrf5340 <nrf5340pdk_nrf5340>` | ``nrf5340pdk_nrf5340_cpuappns`` |
+
+.. nrf5340pdk_nrf5340_cpunet
+
+| :ref:`nRF5340 PDK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340pdk_nrf5340 <nrf5340pdk_nrf5340>` | ``nrf5340pdk_nrf5340_cpunet`` |
+
+.. nrf52833dongle_nrf52833
+
+| nRF52833 Dongle | PCA10111 | nrf52833dongle_nrf52833 | ``nrf52833dongle_nrf52833`` |
+
+.. nrf52820dongle_nrf52820
+
+| nRF52820 Dongle | PCA10114 | nrf52820dongle_nrf52820 | ``nrf52820dongle_nrf52820`` |
+
+.. thingy91_nrf9160ns
+
+| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91_nrf9160 | ``thingy91_nrf9160ns`` |
+
+.. nrf52kbd_nrf52832
+
+| nRF52832 Desktop Keyboard | PCA20037 | nrf52kbd_nrf52832 | ``nrf52kbd_nrf52832`` |
+
+.. nrf52840gmouse_nrf52840
+
+| nRF52840 Gaming Mouse | PCA20041 | nrf52840gmouse_nrf52840 | ``nrf52840gmouse_nrf52840`` |
+
+.. nrf52dmouse_nrf52832
+
+| nRF52832 Desktop Mouse | PCA20044 | nrf52dmouse_nrf52832 | ``nrf52dmouse_nrf52832`` |
+
+.. nrf52810dmouse_nrf52810
+
+| nRF52810 Desktop Mouse | PCA20045 | nrf52810dmouse_nrf52810 | ``nrf52810dmouse_nrf52810`` |
+
+.. thingy91_nrf52840
+
+| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91_nrf52840 | ``thingy91_nrf52840`` |
+
+.. nrf5340pdk_nrf5340_cpuapp_and_cpuappns
+
+| :ref:`nRF5340 PDK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340pdk_nrf5340 <nrf5340pdk_nrf5340>` | ``nrf5340pdk_nrf5340_cpuapp``   |
+|                                 |          |                                                |                                 |
+|                                 |          |                                                | ``nrf5340pdk_nrf5340_cpuappns`` |
+
+.. nrf5340pdk_nrf5340_cpuapp_and_cpunet
+
+| :ref:`nRF5340 PDK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340pdk_nrf5340 <nrf5340pdk_nrf5340>` | ``nrf5340pdk_nrf5340_cpuapp`` |
+|                                 |          |                                                |                               |
+|                                 |          |                                                | ``nrf5340pdk_nrf5340_cpunet`` |
