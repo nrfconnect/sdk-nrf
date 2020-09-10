@@ -32,8 +32,8 @@ void coap_init(int ip_family, struct sockaddr *addr);
  * @param[in] payload_size     size of the CoAP message payload.
  * @param[in] reply_cb         function to call when the response comes.
  *
- * @retval 0    On success.
- * @retval != 0 On failure.
+ * @retval >= 0 On success.
+ * @retval < 0 On failure.
  */
 int coap_send_request(enum coap_method method, const struct sockaddr *addr,
 		      const char *const *uri_path_options, uint8_t *payload,
