@@ -56,7 +56,7 @@ config PROFILER_NORDIC_DATA_BUFFER_SIZE
 
 config PROFILER_NORDIC_INFO_BUFFER_SIZE
 	int "Info buffer size"
-	default 1024
+	default 256
 
 config PROFILER_NORDIC_RTT_CHANNEL_DATA
 	int "Data up channel index"
