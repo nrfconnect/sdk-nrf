@@ -78,32 +78,7 @@ void zb_trans_hw_init(void)
 	nrf_802154_src_addr_matching_method_set(
 		NRF_802154_SRC_ADDR_MATCH_ZIGBEE);
 
-	/* WORKAROUND: Send continuous carrier to leave the sleep state
-	 *             and request the HFCLK.
-	 *             Manually wait for HFCLK to synchronize by sleeping
-	 *             for 1 ms afterwards.
-	 *
-	 * The bug causes the Radio Driver to start transmitting
-	 * frames while the HFCLK is still starting.
-	 * As a result, the Radio Driver, as well as the ZBOSS,
-	 * is notified that the frame was sent, but it was not, because
-	 * the analog part of the radio was not working at that time.
-	 * The carrier will not be transmitted for the same reason.
-	 * It is placed here just to trigger the proper set of events
-	 * in Radio Driver.
-	 *
-	 * Since the coordinator/router/non-sleepy end device does
-	 * not reenter sleep state, it is enough to apply this
-	 * procedure here. For SED it has to be repeated every time
-	 * the Radio leaves sleep state.
-	 *
-	 * More info: https://github.com/zephyrproject-rtos/zephyr/issues/20712
-	 * JIRA issue: KRKNWK-5533
-	 */
-	/*(void)nrf_802154_sleep(); */
-	(void)nrf_802154_continuous_carrier();
-	k_sleep(K_MSEC(1));
-	(void)nrf_802154_receive();
+	(void)nrf_802154_sleep();
 
 	k_fifo_init(&rx_fifo);
 	k_sem_init(&energy_detect.sem, 1, 1);
