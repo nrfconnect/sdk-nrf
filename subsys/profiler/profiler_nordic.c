@@ -56,10 +56,39 @@ static K_THREAD_STACK_DEFINE(profiler_nordic_stack,
 			     CONFIG_PROFILER_NORDIC_STACK_SIZE);
 static struct k_thread profiler_nordic_thread;
 
-static void send_system_description(void)
+static int send_info_data(const char *data, size_t data_len)
 {
+	uint8_t retry_cnt = 0;
+	static const uint8_t retry_cnt_max = 100;
+
 	size_t num_bytes_send;
 
+	num_bytes_send = SEGGER_RTT_WriteNoLock(
+				  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
+				  data, data_len);
+
+	while (num_bytes_send == 0) {
+		/* Give host time to read the data and free some space
+		 * in the buffer. */
+		k_sleep(K_MSEC(100));
+		num_bytes_send = SEGGER_RTT_WriteNoLock(
+				  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
+				  data, data_len);
+
+		/* Avoid being blocked in while loop if host does not read
+		 * the RTT data.
+		 */
+		retry_cnt++;
+		if (retry_cnt > retry_cnt_max) {
+			return -ENOBUFS;
+		}
+	}
+
+	return 0;
+}
+
+static void send_system_description(void)
+{
 	/* Memory barrier to make sure that data is visible
 	 * before being accessed
 	 */
@@ -67,24 +96,18 @@ static void send_system_description(void)
 
 	__DMB();
 	char end_line = '\n';
+	int err = 0;
 
-	for (size_t t = 0; t < ne; t++) {
-		num_bytes_send = SEGGER_RTT_WriteNoLock(
-				  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
-				  descr[t],
-				  strlen(descr[t]));
-		__ASSERT_NO_MSG(num_bytes_send > 0);
-		num_bytes_send = SEGGER_RTT_WriteNoLock(
-				  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
-				  &end_line,
-				  1);
-		__ASSERT_NO_MSG(num_bytes_send > 0);
+	for (size_t t = 0; ((t < ne) && !err); t++) {
+		err = send_info_data(descr[t], strlen(descr[t]));
+		if (!err) {
+			err = send_info_data(&end_line, 1);
+		}
 	}
-	num_bytes_send = SEGGER_RTT_WriteNoLock(
-			  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
-			  &end_line,
-			  1);
-	__ASSERT_NO_MSG(num_bytes_send > 0);
+
+	if (!err) {
+		err = send_info_data(&end_line, 1);
+	}
 }
 
 static void profiler_nordic_thread_fn(void)
