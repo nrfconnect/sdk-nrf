@@ -958,6 +958,20 @@ static bool handle_wake_up_event(const struct wake_up_event *event)
 		module_set_state(MODULE_STATE_READY);
 		break;
 
+	case STATE_DISABLED:
+		/* Fall-through */
+	case STATE_IDLE:
+		/* Fall-through */
+	case STATE_ERASE_PEER:
+		/* Fall-through */
+	case STATE_ERASE_ADV:
+		/* Fall-through */
+	case STATE_SELECT_PEER:
+		/* Fall-through */
+	case STATE_DONGLE_CONN:
+		/* No action. */
+		break;
+
 	default:
 		__ASSERT_NO_MSG(false);
 		break;
