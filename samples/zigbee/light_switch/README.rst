@@ -87,7 +87,7 @@ Activating sample extensions
 
 To activate the extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
 
-* For the variant that supports Zigbee FOTA, set :file:`ota_overlay.conf`.
+* For the variant that supports :ref:`lib_zigbee_fota`, set :file:`overlay-fota.conf`.
   Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
