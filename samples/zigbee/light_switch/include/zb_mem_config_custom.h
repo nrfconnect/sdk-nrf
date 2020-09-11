@@ -37,7 +37,7 @@
 #define ZB_CONFIG_SCHEDULER_Q_SIZE 24
 
 
-/* Memory context definitions */
+/* Memory context definitions. */
 #include "zb_mem_config_context.h"
 
 #endif /* ZB_MEM_CONFIG_CUSTOM_H */
