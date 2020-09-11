@@ -82,10 +82,6 @@
 
 .. _`nRF52 Series`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52.html
 
-.. _`Wi-Fi coexistence documentation`: https://infocenter.nordicsemi.com/topic/15.4_radio_driver_v2.0.0-1.prealpha/rd_coex.html
-.. _`PA/LNA module documentation`: https://infocenter.nordicsemi.com/topic/15.4_radio_driver_v2.0.0-1.prealpha/rd_fem.html
-.. _`antenna diversity documentation`: https://infocenter.nordicsemi.com/topic/15.4_radio_driver_v2.0.0-1.prealpha/ant_diversity.html
-
 .. _`anomaly 19`: https://infocenter.nordicsemi.com/topic/errata_nRF5340_EngA/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
 .. _`nRF9160 compatibility matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_operator_certifications.html
@@ -108,7 +104,7 @@
 
 .. _`DevZone`: https://devzone.nordicsemi.com/
 
-.. _`Enabling and testing TLS in mqtt_simple`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/enabling-and-testing-tls-in-mqtt_5f00_simple
+.. _`Enabling and testing TLS in mqtt_simple`: https://devzone.nordicsemi.com/nordic/cellular-iot-guides/b/software-and-protocols/posts/enabling-and-testing-tls-in-mqtt_5f00_simple
 
 .. _`nRF9160 DK product page`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF9160-DK/Download#infotabs
 
@@ -128,7 +124,7 @@
 
 .. _`Energy efficiency` : https://www.nordicsemi.com/Products/Low-power-cellular-IoT#Cellular-performance-for-the-IoT
 
-.. _`nRF Connect for Cloud Certificate Update`: https://devzone.nordicsemi.com/nordic/cellular-iot-guides/b/getting-started-cellular/posts/nrf-cloud-certificate-update
+.. _`Updating the nRF Connect for Cloud certificate`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_certificates.html
 
 .. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
 
@@ -273,8 +269,7 @@
 
 .. ### Links to Bluetooth Mesh
 
-.. _`Mesh Model Specification`: https://www.bluetooth.com/specifications/mesh-specifications/
-
+.. _`Mesh Model Specification`:
 .. _`Bluetooth Mesh Profile Specification`: https://www.bluetooth.com/specifications/mesh-specifications/
 
 .. _`Mesh Model Overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
@@ -339,7 +334,7 @@
 
 .. _`Zigbee Alliance`: https://www.zigbeealliance.org
 
-.. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/zigbee-specification
+.. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/
 
 .. _`Stack commissioning start sequence`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss_api_doc/using_zigbee__z_c_l.html#stack_start_initiation
 

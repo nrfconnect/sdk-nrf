@@ -36,7 +36,7 @@ The API blocks for the duration of the handshake.
 
 Next, the API subscribes to an MQTT topic to start receiving user association requests from the cloud.
 The cloud uses the device's certificates for authentication.
-See `nRF Connect for Cloud Certificate Update`_ and the :ref:`modem_key_mgmt` library for more information on modem credentials.
+See `Updating the nRF Connect for Cloud certificate`_ and the :ref:`modem_key_mgmt` library for more information on modem credentials.
 The certificates are generated using the device's ID and PIN/HWID.
 
 Every time nRF Cloud starts a communication session with a device, it verifies whether the device is uniquely associated with a user.
