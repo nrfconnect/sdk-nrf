@@ -78,10 +78,10 @@ The passkey input is handled in the :ref:`nrf_desktop_passkey`.
     If the nRF Desktop dongle is unable to achieve the security level 3, it will be unable to connect with the peripheral.
     Disable the :option:`CONFIG_BT_SMP_ENFORCE_MITM` option to allow the dongle to connect without the authentication.
 
-Nrfxlib Link Layer
-==================
+SoftDevice Link Layer
+=====================
 
-If Nordic Semiconductor's proprietary Bluetooth LE Link Layer is selected (:option:`CONFIG_BT_LL_SOFTDEVICE`), the module sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
+If Nordic Semiconductor's SoftDevice |BLE| Link Layer is selected (:option:`CONFIG_BT_LL_SOFTDEVICE`) and the ``CONFIG_DESKTOP_BLE_USE_LLPM`` option is enabled, the module sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
 The |ble_state| also sets the TX power for connections, because Zephyr's Kconfig options related to selecting the default TX power are not used by this Link Layer.
 
 .. |ble_state| replace:: Bluetooth LE state module

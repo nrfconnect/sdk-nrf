@@ -21,7 +21,6 @@ Configuration
 Complete the following steps to enable the |ble_adv|:
 
 1. Configure Bluetooth, as described in :ref:`nrf_desktop_bluetooth_guide`.
-#. Define the short device name used for advertising (``CONFIG_DESKTOP_BLE_SHORT_NAME``).
 #. Define the Bluetooth device name (:option:`CONFIG_BT_DEVICE_NAME`).
 #. Define the Bluetooth device appearance (:option:`CONFIG_BT_DEVICE_APPEARANCE`).
 #. Set the ``CONFIG_DESKTOP_BLE_ADVERTISING_ENABLE`` Kconfig option.

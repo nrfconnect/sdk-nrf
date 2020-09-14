@@ -66,6 +66,10 @@ The following diagram shows states and transitions between these states after th
 
    nRF Desktop Bluetooth LE bond module state diagram (click to enlarge)
 
+.. note::
+  The diagram does not present the states related to module going into standby (:cpp:enum:`STATE_STANDBY`, :cpp:enum:`STATE_DISABLED_STANDBY`, :cpp:enum:`STATE_DONGLE_CONN_STANDBY`).
+  For more information about the standby states, see `Standby states`_.
+
 Receiving ``click_event`` with a click type that is not included in the schematic will result in cancelling the ongoing operation and returning to :cpp:enum:`STATE_IDLE`.
 This does not apply to :cpp:enum:`STATE_DONGLE_CONN`.
 In this state, all the peer operations triggered by ``click_event`` are disabled.
@@ -96,6 +100,27 @@ The new peer is associated with the currently used application local identity.
 
 After a time-out or on user request, the erase advertising is stopped.
 The application local identity still uses the Bluetooth local identity that was associated with it before the erase advertising.
+
+.. note::
+   The erase advertising time-out can be extended in case a new peer connects.
+   This ensures that a new peer will have time to establish the Bluetooth security level.
+
+   The time-out is increased to a bigger value when the passkey authentication is enabled (``CONFIG_DESKTOP_BLE_ENABLE_PASSKEY``).
+   This gives the end user enough time to enter the passkey.
+
+Standby states
+==============
+
+The module can go into one of the following standby states to make sure that the peer operations are not triggered when the device is suspended by :ref:`nrf_desktop_power_manager`:
+
+* :cpp:enum:`STATE_DISABLED_STANDBY` - the module is suspended before initialization.
+* :cpp:enum:`STATE_DONGLE_CONN_STANDBY` - the module is suspended while the dongle peer is selected.
+* :cpp:enum:`STATE_STANDBY` - the module is suspended while other Bluetooth peers are selected.
+
+Going into the standby states and leaving them happens in reaction to the following events:
+
+* ``power_down_event`` - on this event, the module goes into one of the standby states and the ongoing peer operation is cancelled.
+* ``wake_up_event`` - on this event, the module returns from the standby state.
 
 Configuration
 *************
@@ -180,7 +205,10 @@ The module provides the following :ref:`nrf_desktop_config_channel` options:
 * ``peer_search`` - Request scanning for new peripherals.
   The option is available only for the nRF Desktop central.
 
+Perform :ref:`nrf_desktop_config_channel` set operation on selected option to trigger the operation.
 The options can be used only if the module is in :cpp:enum:`STATE_IDLE`.
+Because of this, they cannot be used when device is suspended by :ref:`nrf_desktop_power_manager`.
+The device must be woken up from suspended state before the operation is started.
 
 Shell integration
 *****************

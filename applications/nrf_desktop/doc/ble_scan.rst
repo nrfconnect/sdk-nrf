@@ -43,7 +43,8 @@ Complete the following steps to enable the |ble_scan|:
    The |ble_scan| module uses Bluetooth name filters to look for unbonded peripherals.
    The value must be equal to the number of peripheral types the nRF Desktop central connects to.
    The peripheral type may be either a mouse or a keyboard.
-   The nRF Desktop central connects and bonds with only one peripheral of a given type.
+#. Configure the maximum number of bonded mice (``CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT``) and keyboards (``CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT``) for the nRF Desktop central.
+   By default, the nRF Desktop central connects and bonds with only one mouse and one keyboard.
 #. Define the Bluetooth name filters in the :file:`ble_scan_def.h` file that is located in the board-specific directory in the application configuration directory.
    You must define a Bluetooth name filter for every peripheral type the nRF Desktop central connects to.
    For an example, see :file:`configuration/nrf52840dongle_nrf52840/ble_scan_def.h`.
@@ -87,7 +88,7 @@ The scanning is interrupted if one of the following conditions occurs:
   Scanning in this situation will have a negative impact on user experience.
 * The maximum scan duration specified by ``CONFIG_DESKTOP_BLE_SCAN_DURATION_S`` times out.
 
-The scanning continues even if there is no connected Bluetooth peer.
+The scanning is never interrupted if there is no connected Bluetooth peer.
 
 Implementation details
 **********************
@@ -99,7 +100,7 @@ The |ble_scan| module stores the following information for every bonded peer:
 * Information about Low Latency Packet Mode (LLPM) support.
 
 The module uses Zephyr's :ref:`zephyr:settings_api` subsystem to store the information in the non-volatile memory.
-This information is required to filter out unbonded devices, because the nRF Desktop central connects and bonds with only one mouse and one keyboard.
+This information is required to filter out unbonded devices, because the nRF Desktop central connects and bonds only with a defined number of mice and keyboards.
 
 Bluetooth connection interval
 =============================
@@ -112,9 +113,10 @@ a. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatical
 #. The peer discovery is started.
 #. After the :ref:`nrf_desktop_ble_discovery` completes the peer discovery, the :ref:`nrf_desktop_ble_conn_params` receives the ``ble_discovery_complete_event`` and updates the Bluetooth connection interval.
 
-.. note::
+.. important::
    If a Bluetooth peer is aready connected with a 1-ms connection interval, the next peer is connected with a 10-ms connection interval instead of 7.5 ms.
-   This is required to avoid Bluetooth scheduling issues.
+   The peer is connected with a 10-ms connection interval also in case :option:`CONFIG_BT_MAX_CONN` is set to value greater than 2 and ``CONFIG_DESKTOP_BLE_USE_LLPM`` Kconfig option is enabled.
+   This is required to avoid Bluetooth scheduling issues that may lead to HID input report rate drops and disconnections.
 
 At this point, the scanning can be restarted.
 

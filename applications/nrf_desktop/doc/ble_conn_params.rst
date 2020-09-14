@@ -47,8 +47,12 @@ Connection interval update
 
 After the :ref:`nrf_desktop_ble_discovery` completes the peripheral discovery, the |ble_conn_params| updates the connection parameters in the following manner:
 
-* If the central and the connected peripheral both support the Low Latency Packet Mode (LLPM), the connection interval is set to 1 ms.
-* If neither the central nor the connected peripheral support LLPM, or if only one of them supports it, the interval is set to 7.5 ms.
-  This is the shortest interval allowed by the standard Bluetooth.
+* If the central and the connected peripheral both support the Low Latency Packet Mode (LLPM), the connection interval is set to **1 ms**.
+* If neither the central nor the connected peripheral support LLPM, or if only one of them supports it, the interval is set to the following values:
+
+  * **7.5 ms** if LLPM is not supported by the central or :option:`CONFIG_BT_MAX_CONN` is set to value 2 or lower.
+    This is the shortest interval allowed by the standard Bluetooth.
+  * **10 ms** otherwise.
+    This is required to avoid Bluetooth Link Layer scheduling conflicts that could lead to HID report rate drop.
 
 .. |ble_conn_params| replace:: Bluetooth LE connection parameters module
