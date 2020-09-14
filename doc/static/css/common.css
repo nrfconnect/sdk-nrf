@@ -76,6 +76,17 @@ div.figure {
  background-color: #e82424
 }
 
+
+/* footer */
+footer table {
+ width: 100%;
+}
+
+#nordiclogo {
+ width: 100px;
+}
+
+
 /*
  * dbk tweak for doxygen-generated API headings (for RTD theme)
  */
