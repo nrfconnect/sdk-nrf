@@ -438,10 +438,13 @@ def dfu_transfer(dev, dfu_image, progress_callback):
 
 
 def send_chunk(dev, img_csum, img_file, img_length, offset, success, progress_callback):
+    next_checkpoint = offset + FLASH_PAGE_SIZE
     while offset < img_length:
-        if offset % FLASH_PAGE_SIZE == 0:
+        if offset >= next_checkpoint:
             # Sync DFU state at regular intervals to ensure everything
             # is all right.
+            next_checkpoint += FLASH_PAGE_SIZE
+
             success = False
             dfu_info = dfu_sync(dev)
 
@@ -452,7 +455,7 @@ def send_chunk(dev, img_csum, img_file, img_length, offset, success, progress_ca
                 print('DFU interrupted by device')
                 break
             if (dfu_info[1] != img_length) or (dfu_info[2] != img_csum) or (dfu_info[3] != offset):
-                print('Invalid sync information')
+                print('Invalid sync information {}'.format(dfu_info))
                 break
 
         chunk_data = img_file.read(EVENT_DATA_LEN_MAX)
