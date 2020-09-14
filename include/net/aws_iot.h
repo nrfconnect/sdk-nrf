@@ -145,7 +145,7 @@ struct aws_iot_config {
 	/** Socket for AWS IoT broker connection */
 	int socket;
 	/** Client id for AWS IoT broker connection, used when
-	 *  CONFIG_AWS_IOT_CLIENT_ID_APP is set. If not set an internal
+	 *  @option{CONFIG_AWS_IOT_CLIENT_ID_APP} is set. If not set an internal
 	 *  configurable static client id is used.
 	 */
 	char *client_id;

@@ -63,9 +63,10 @@ static struct azure_iot_hub_config conn_config = {
 static azure_iot_hub_evt_handler_t evt_handler;
 
 /* If DPS is used, the IoT hub hostname is obtained through that service,
- * otherwise it has to be set compile time using CONFIG_AZURE_IOT_HUB_HOSTNAME.
- * The maximal size is length of hub name + device ID length + lengths of
- * ".azure-devices-provisioning.net/" and "/?api-version=2018-06-30"
+ * otherwise it has to be set compile time using
+ * @option{CONFIG_AZURE_IOT_HUB_HOSTNAME}. The maximal size is length of hub
+ * name + device ID length + lengths of ".azure-devices-provisioning.net/"
+ * and "/?api-version=2018-06-30"
  */
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 #define USER_NAME_BUF_LEN	(CONFIG_AZURE_IOT_HUB_HOSTNAME_MAX_LEN + \

@@ -39,8 +39,8 @@ bool (*bl_validate_firmware_t)(uint32_t fw_dst_address, uint32_t fw_src_address)
 
 /** Whether bl_validate_firmware() is available.
  *
- * @details This is only relevant when CONFIG_BL_VALIDATE_FW_EXT_API_OPTIONAL is
- *          set.
+ * @details This is only relevant when
+ *          @option{CONFIG_BL_VALIDATE_FW_EXT_API_OPTIONAL} is set.
  *
  * @retval true  bl_validate_firmware() can be called and should work correctly.
  * @retval false bl_validate_firmware() is unavailable and will always return
