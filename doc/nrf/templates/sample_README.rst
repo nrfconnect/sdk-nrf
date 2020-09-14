@@ -28,9 +28,8 @@ Requirements
 ************
 
 .. note::
-   * Supported kits are listed in a table, which is included from the :file:`doc/nrf/includes/boardname_tables/sample_boardnames.txt` file.
-     Check if a suitable set already exists, and if not, add a new one.
-     Select the set in the ``:start-after:`` and ``:end-before:`` configuration.
+   * Supported kits are listed in a table, which is composed of rows from the :file:`doc/nrf/includes/sample_board_rows.txt` file.
+     Select the required rows in the ``:rows:`` configuration.
    * If only one kit is supported, replace the introduction text with "The sample supports the following development kit:".
    * If several kits are required to test the sample, state it after the table (for example, "You can use one or more of the development kits listed above and mix different development kits.").
    * Mention additional requirements after the table.
@@ -38,9 +37,9 @@ Requirements
 
 The sample supports the following development kits:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set1_start
-   :end-before: set1_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf52dk_nrf52832, nrf52840dk_nrf52840
 
 The sample also requires ...
 
