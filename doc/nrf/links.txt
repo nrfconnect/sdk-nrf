@@ -50,6 +50,7 @@
 
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
+.. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/
 
 .. _`LTE Link Monitor`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_intro.html
 

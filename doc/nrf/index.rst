@@ -14,6 +14,33 @@ The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is bui
 
 To access different versions of the |NCS| documentation, use the version drop-down in the top-left corner.
 
+In addition to the |NCS| documentation, information is available in the following locations:
+
+.. rst-class:: doc-link blue-box
+..
+
+    .. rst-class:: doc-link-image
+
+    .. image:: /images/doc_icon.svg
+       :target: `Nordic Semiconductor Infocenter`_
+
+    .. rst-class:: doc-link-text
+
+    `Nordic Semiconductor Infocenter`_
+
+.. rst-class:: doc-link gray-box
+..
+
+    .. rst-class:: doc-link-image
+
+    .. image:: /images/DevZone.svg
+       :target: `DevZone`_
+
+    .. rst-class:: doc-link-text
+
+    `Tutorials and blog posts <DevZone_>`_
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
