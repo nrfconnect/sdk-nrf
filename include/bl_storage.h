@@ -102,7 +102,7 @@ uint16_t get_monotonic_counter(void);
  * @retval -EINVAL  @p new_counter is invalid (must be larger than current
  *                  counter, and cannot be 0xFFFF).
  * @retval -ENOMEM  There are no more free counter slots (see
- *                  @em CONFIG_SB_NUM_VER_COUNTER_SLOTS).
+ *                  @option{CONFIG_SB_NUM_VER_COUNTER_SLOTS}).
  */
 int set_monotonic_counter(uint16_t new_counter);
 
