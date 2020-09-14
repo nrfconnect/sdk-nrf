@@ -159,7 +159,7 @@ The following threads are kept running in the application:
 * Application-related threads
     * Motion sensor thread (running only on mouse)
     * Settings loading thread (enabled by default only on keyboard)
-    * QoS data sampling thread (running only on dongle)
+    * QoS data sampling thread (running only if |BLE| QoS feature is enabled)
 
 Most of the application activity takes place in the context of the system work queue thread, either through scheduled work objects or through the event manager callbacks (executed from the system workqueue thread).
 Because of this, the application does not need to handle resource protection.
@@ -323,7 +323,7 @@ For example, if the ``ZDebugWithShell`` build type is not supported on the selec
   Configuration file for build type ZDebugWithShell is missing.
 
 In addition to the build types mentioned above, some boards can provide more build types, which can be used to generate an application in a specific variant.
-For example, such additional configurations are used to allow generation of application with different role (such as mouse, keyboard, or dongle on a DK board) or to select a different link layer (such as LLPM capable Nordic LL or standard Zephyr SW LL).
+For example, such additional configurations are used to allow generation of application with different role (such as mouse, keyboard, or dongle on a DK board) or to select a different link layer (such as LLPM capable Nordic SoftDevice LL or standard Zephyr SW LL).
 
 See :ref:`nrf_desktop_porting_guide` for detailed information about the application configuration and how to create build type files for your hardware.
 
@@ -435,7 +435,7 @@ When it is connected through USB, charging of the rechargeable batteries starts.
 Dongle USB
 ~~~~~~~~~~
 
-The nRF Desktop dongle works as a bridge between the devices connected through Bluetooth LE or Low Latency Packet Mode and the host connected through USB.
+The nRF Desktop dongle works as a bridge between the devices connected through standard Bluetooth LE or Low Latency Packet Mode and the host connected through USB.
 It receives data wirelessly from the connected peripherals and forwards the data to the host.
 
 The nRF Desktop dongle is powered directly through USB.
@@ -444,7 +444,7 @@ DK USB
 ~~~~~~
 
 The DK functionality depends on the application configuration.
-Depending on the selected configuration options, it can work as a mouse or a dongle.
+Depending on the selected configuration options, it can work as a mouse, keyboard, or a dongle.
 
 .. _nrf_desktop_ble:
 
@@ -724,6 +724,9 @@ By default, this period is set to 120 seconds.
 .. important::
     When the gaming mouse is powered from USB, the power down time-out functionality is disabled.
 
+    If a nRF Desktop device supports remote wakeup, the USB connected device goes to suspended state when USB is suspended.
+    The device can then trigger remote wakeup of the connected host on user input.
+
 ----
 
 Building and running
@@ -769,8 +772,8 @@ The following procedure refers to the scenario where the gaming mouse (nRF52840 
 
 After building the application with or without :ref:`specifying the build type <nrf_desktop_selecting_build_types>`, test the nRF Desktop application by performing the following steps:
 
-1. Insert the :ref:`debug board or bypass board <nrf_desktop_debugging>` into the mouse to make sure it is powered.
-#. Program the required firmware to each device.
+1. Program the required firmware to each device.
+#. Insert the :ref:`debug board or bypass board <nrf_desktop_debugging>` into the mouse to make sure it is powered.
 #. Turn on both mouse and keyboard.
    **LED1** on the keyboard and **LED1** on the mouse start breathing.
 #. Plug the dongle to the USB port.
@@ -866,7 +869,7 @@ nRF52840 Gaming Mouse (nrf52840gmouse_nrf52840)
       * To achieve gaming-grade performance:
 
         * The application is configured to act as a gaming mouse, with both Bluetooth LE and USB transports enabled.
-        * Bluetooth is configured to use Nordic's proprietary link layer.
+        * Bluetooth is configured to use Nordic's SoftDevice link layer.
 
       * |preconfigured_build_types|
 
@@ -877,23 +880,23 @@ nRF52832 Desktop Mouse (nrf52dmouse_nrf52832) and nRF52810 Desktop Mouse (nrf528
         Bluetooth uses Zephyr's software link layer.
       * There is no configuration with bootloader available.
 
-Sample mouse or keyboard (nrf52840dk_nrf52840)
+Sample mouse, keyboard or dongle (nrf52840dk_nrf52840)
       * The configuration uses the nRF52840 Development Kit.
-      * The build types allow to build the application both as mouse or as keyboard.
+      * The build types allow to build the application as mouse, keyboard or dongle.
       * Inputs are simulated based on the hardware button presses.
       * The configuration with bootloader is available.
 
 nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
       * The reference design used is defined in :file:`nrf/boards/arm/nrf52kbd_nrf52832` for the project-specific hardware.
       * The application is configured to act as a keyboard, with the Bluetooth LE transport enabled.
-      * Bluetooth is configured to use Nordic's proprietary link layer.
+      * Bluetooth is configured to use Nordic's SoftDevice link layer.
       * |preconfigured_build_types|
 
 nRF52840 USB Dongle (nrf52840dongle_nrf52840)
       * This configuration uses Nordic's nRF52840 dongle defined in Zephyr.
       * Since the reference design is generic, project-specific changes are applied in the DTS overlay file.
       * The application is configured to act as both mouse and keyboard.
-      * Bluetooth uses Nordic's proprietary link layer and is configured to act as a central.
+      * Bluetooth uses Nordic's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * |preconfigured_build_types|
 
@@ -1226,7 +1229,7 @@ For detailed information about every option, see the Kconfig help.
 
 * :option:`CONFIG_BT_MAX_PAIRED`
 
-  * nRF Desktop central: The maximum number of paired devices is equal to the maximum number of simultaneously connected peers.
+  * nRF Desktop central: The maximum number of paired devices is greater than or equal to the maximum number of simultaneously connected peers.
   * nRF Desktop peripheral: The maximum number of paired devices is equal to the number of peers plus one, where the one additional paired device slot is used for erase advertising.
 
 * :option:`CONFIG_BT_ID_MAX`
@@ -1252,6 +1255,11 @@ The nRF Desktop devices use one of the following Link Layers:
 * :option:`CONFIG_BT_LL_SOFTDEVICE` that supports the Low Latency Packet Mode (LLPM).
 * :option:`CONFIG_BT_LL_SW_SPLIT` that does not support the LLPM and has a lower memory usage, so it can be used by memory-limited devices.
 
+.. note::
+   For the :option:`CONFIG_BT_LL_SOFTDEVICE` you can use the ``CONFIG_DESKTOP_BLE_USE_LLPM`` Kconfig option to enable or disable the LLPM.
+   By default, the LLPM is enabled.
+   When this option is disabled, the device will use only standard BLE connection parameters with the lowest available connection interval of 7.5 ms.
+
 .. _nrf_desktop_bluetooth_guide_modules:
 
 Application modules
@@ -1263,7 +1271,13 @@ These features are implemented by the following modules:
 * :ref:`nrf_desktop_ble_state` - Enables Bluetooth and LLPM (if supported), and handles Zephyr connection callbacks.
 * :ref:`nrf_desktop_ble_bond` - Manages Bluetooth bonds and local identities.
 
-|enable_modules|
+You need to enable all these modules to enable both features.
+For information about how to enable the modules, see their respective documentation pages.
+
+Optionally, you can also enable the following module:
+
+* :ref:`nrf_desktop_ble_qos` - Helps achieve better connection quality and higher report rate.
+  The module can be used only with the SoftDevice Link Layer.
 
 .. note::
    The nRF Destkop devices enable :option:`CONFIG_BT_SETTINGS`.
@@ -1283,7 +1297,11 @@ The HID over GATT profile specification requires Bluetooth Peripherals to define
 * Device Information Service - Implemented in Zephyr and enabled with :option:`CONFIG_BT_GATT_DIS`.
   It can be configured using Kconfig options with the ``CONFIG_BT_GATT_DIS`` prefix.
 
-The nRF Desktop peripherals must also define a dedicated GATT Service, which is used to inform whether the device supports the LLPM Bluetooth extension.
+The nRF Desktop peripherals must also define a dedicated GATT Service, which is used to provide the following information:
+
+* Information whether the device can use the LLPM Bluetooth connection parameters.
+* Hardware ID of the peripheral.
+
 The GATT Service is implemented by the :ref:`nrf_desktop_dev_descr`.
 
 Apart from the GATT Services, an nRF Desktop peripheral device must enable and configure the following application modules:
@@ -1291,22 +1309,24 @@ Apart from the GATT Services, an nRF Desktop peripheral device must enable and c
 * :ref:`nrf_desktop_ble_adv` - Controls the Bluetooth advertising.
 * :ref:`nrf_desktop_ble_latency` - Keeps the connection latency low when the :ref:`nrf_desktop_config_channel` is being used, in order to ensure quick transfer of configuration data.
 
+Optionally, you can also enable the following module:
+
+* :ref:`nrf_desktop_qos` - Forwards the |BLE| channel map generated by :ref:`nrf_desktop_ble_qos`.
+  The |BLE| channel map is forwarded using GATT characteristic.
+  The Bluetooth Central can apply the channel map to avoid congested RF channels.
+  This results in better connection quality and higher report rate.
+
 Bluetooth Central
 -----------------
 
 The nRF Desktop central must implement Bluetooth scanning and handle the GATT operations.
-Both these features are implemented by the following application modules:
+The central must also control the Bluetooth connection parameters.
+These features are implemented by the following application modules:
 
 * :ref:`nrf_desktop_ble_scan` - Controls the Bluetooth scanning.
+* :ref:`nrf_desktop_ble_conn_params` - Control the Bluetooth connection parameters and react on connection slave latency update requests received from the connected peripherals.
 * :ref:`nrf_desktop_ble_discovery` - Handles discovering and reading the GATT Characteristics from the connected peripheral.
 * :ref:`nrf_desktop_hid_forward` - Subscribes for HID reports from the Bluetooth Peripherals (HID over GATT) and forwards data using application events.
-
-|enable_modules|
-
-Optionally, you can also enable the following module:
-
-* :ref:`nrf_desktop_ble_qos` - Helps achieve better connection quality and higher report rate.
-  The module can be used only with the nrfxlib Link Layer.
 
 .. _nrf_desktop_bootloader:
 
@@ -1545,9 +1565,6 @@ These are valid for events that have many listeners or sources, and are shared f
 .. |nRF_Desktop_cancel_operation| replace:: You can cancel the ongoing peer operation with a standard button press.
 
 .. |preconfigured_build_types| replace:: The preconfigured build types configure the device with or without the bootloader and in debug or release mode.
-
-.. |enable_modules| replace:: You need to enable all these modules to enable both features.
-   For information about how to enable the modules, see their respective documentation pages.
 
 .. |hid_state| replace:: HID state module
 

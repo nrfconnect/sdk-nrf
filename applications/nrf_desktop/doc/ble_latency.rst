@@ -5,7 +5,8 @@ Bluetooth LE latency module
 
 Use the |ble_latency| to:
 
-* Lower the Bluetooth LE connection latency when :ref:`nrf_desktop_config_channel` is in use (low latency ensures a quick data exchange).
+* Lower the Bluetooth LE connection latency either when :ref:`nrf_desktop_config_channel` is in use or when a firmware update is received by the :ref:`nrf_desktop_smp` (low latency ensures quick data exchange).
+* Request setting the initial connection parameters for a new Bluetooth connection.
 * Keep the connection latency low for the LLPM (Low Latency Packet Mode) connections to improve performance.
 * Disconnect the Bluetooth Central if the connection has not been secured in the predefined amount of time after the connection occurred.
 
@@ -31,20 +32,28 @@ If the connection is not secured during this period of time, the peripheral devi
 You can set the option ``CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK`` to keep the connection latency low for the LLPM connections.
 This speeds up sending the first HID report after not sending a report for some connection intervals.
 Enabling this option increases the power consumption - the connection latency is kept low unless the device is in the low power mode.
-When the device is in the low power mode and :ref:`nrf_desktop_config_channel` is not used, the connection latency is set to higher value to reduce the power consumption.
 
 Implementation details
 **********************
 
 The |ble_latency| uses delayed works (:cpp:class:`k_delayed_work`) to control the connection latency and trigger the security time-out.
 
-The module listens for ``config_event`` and ``config_fetch_request_event`` to detect when the :ref:`nrf_desktop_config_channel` is in use.
+.. note::
+   The module does not request an increase in the connection latency until the connection is secured.
+   Increasing the slave latency can significantly increase the amount of time required to establish the Bluetooth connection security level on some hosts.
 
-* When the :ref:`nrf_desktop_config_channel` is in use, the module sets the connection latency to low.
-* When the :ref:`nrf_desktop_config_channel` is no longer in use (no :ref:`nrf_desktop_config_channel` events for ``LOW_LATENCY_CHECK_PERIOD_MS``), the module sets the connection latency to :option:`CONFIG_BT_PERIPHERAL_PREF_SLAVE_LATENCY` in order to reduce the power consumption.
+The module listens for the following events related to data transfer initiated by the connected Bluetooth central:
+
+* ``config_event`` - This event is received when the :ref:`nrf_desktop_config_channel` is in use.
+* ``ble_smp_transfer_event`` - This event is received when the firmware update is received by :ref:`nrf_desktop_smp`.
+
+When these events are received, the module sets the connection latency to low.
+When the :ref:`nrf_desktop_config_channel` is no longer in use and firmware update is not received by :ref:`nrf_desktop_smp` (no mentioned events for ``LOW_LATENCY_CHECK_PERIOD_MS``), the module sets the connection latency to :option:`CONFIG_BT_PERIPHERAL_PREF_SLAVE_LATENCY`  to reduce the power consumption.
 
   .. note::
      If the option ``CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK`` is enabled, the LLPM connection latency is not increased unless the device is in the low power mode.
+
+     When the device is in the low power mode and the events related to data transfer are not received, the connection latency is set to higher value to reduce the power consumption.
 
 The ``ble_latency`` module receives :ref:`nrf_desktop_config_channel` events, but it is not configurable with the :ref:`nrf_desktop_config_channel`.
 The module does not register itself using the ``GEN_CONFIG_EVENT_HANDLERS`` macro.

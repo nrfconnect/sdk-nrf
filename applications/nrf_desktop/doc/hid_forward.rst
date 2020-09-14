@@ -29,9 +29,14 @@ Complete the following steps to configure the module:
    .. note::
        Make sure to define the maximum number of supported HID reports (:option:`CONFIG_BT_GATT_HIDS_C_REPORTS_MAX`).
 
+#. Make sure that the ``CONFIG_DESKTOP_HID_STATE_ENABLE`` option is disabled.
+   The nRF Desktop central does not generate its own HID input reports.
+   It only forwards HID input reports that it receives from the peripherals connected over Bluetooth.
 #. The HID forward module is enabled with the ``CONFIG_DESKTOP_HID_FORWARD_ENABLE`` option.
    The option is selected by default for every nRF Desktop central.
    By default, it is set to ``y`` if the :option:`CONFIG_BT_CENTRAL` option is enabled.
+
+You can set the queued HID input reports limit using the ``CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS`` Kconfig option.
 
 Implementation details
 **********************
@@ -55,7 +60,7 @@ Enqueuing incoming HID input reports
 The device forwards only one HID input report to the host at a time.
 Another HID input report may be received from a peripheral connected over Bluetooth before the previous one was sent to the host.
 In that case, ``hid_report_event`` is enqueued and submitted later.
-Up to :c:macro:`MAX_ENQUEUED_ITEMS` reports can be enqueued at a time.
+Up to ``CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS`` reports can be enqueued at a time.
 In case there is no space to enqueue a new event, the module drops the oldest enqueued event.
 
 Upon receiving the ``hid_report_sent_event``, ``hid_forward`` submits the first enqueued ``hid_report_event``.
