@@ -187,6 +187,7 @@ breathe_domain_by_extension = {
     "h": "c",
     "c": "c",
 }
+breathe_separate_member_pages = True
 
 # Qualifiers to a function are causing Sphinx/Breathe to warn about
 # Error when parsing function declaration and more.  This is a list
