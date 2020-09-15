@@ -380,6 +380,9 @@ static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 			if (per->cur_poll_cnt >= CFG_CHAN_MAX_RSP_POLL_CNT) {
 				submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
 			} else {
+				/* Reset response size. */
+				per->cfg_chan_rsp->dyndata.size = CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE;
+
 				k_delayed_work_submit(&per->read_rsp,
 						      CFG_CHAN_RSP_READ_DELAY);
 			}
