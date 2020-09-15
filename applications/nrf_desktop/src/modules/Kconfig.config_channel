@@ -47,6 +47,8 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
+comment "DFU"
+
 config DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
 	bool "DFU over the config channel"
 	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
@@ -54,6 +56,17 @@ config DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
 	  This option enables DFU over the config channel.
 
 if DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
+
+config DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE
+	int "Size (in words) of sync buffer"
+	range 1 16383
+	default 128
+	help
+	  Number of words DFU data synchronization buffer will use. The new
+	  image data is first transmitted to this RAM located buffer. When host
+	  performs progress synchronization the data is moved from RAM to flash.
+	  The host must perform progress synchronization at least
+	  every synchronization buffer bytes count.
 
 module = DESKTOP_CONFIG_CHANNEL_DFU
 module-str = Config channel DFU
