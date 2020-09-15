@@ -17,16 +17,72 @@ import json
 from NrfHidDevice import EVENT_DATA_LEN_MAX
 import imgtool.image
 
-FLASH_PAGE_SIZE = 4096
-
-DFU_SYNC_RETRIES = 3
 DFU_SYNC_INTERVAL = 1
+
+
+class DFUInfo:
+    _DFU_STATE_INACTIVE = 0x00
+    _DFU_STATE_ACTIVE   = 0x01
+    _DFU_STATE_STORING  = 0x02
+    _DFU_STATE_CLEANING = 0x03
+
+    _DFUSTATE2STR = {
+        _DFU_STATE_INACTIVE: "Inactive",
+        _DFU_STATE_ACTIVE:   "Active",
+        _DFU_STATE_STORING:  "Storing",
+        _DFU_STATE_CLEANING: "Cleaning"
+    }
+
+    def __init__(self, fetched_data):
+        fmt = '<BIIIH'
+        assert struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX
+        assert struct.calcsize(fmt) == len(fetched_data)
+        vals = struct.unpack(fmt, fetched_data)
+        self.dfu_state = vals[0]
+        self.img_length = vals[1]
+        self.img_csum = vals[2]
+        self.offset = vals[3]
+        self.sync_buffer_size = vals[4]
+
+    def get_img_length(self):
+        return self.img_length
+
+    def get_img_csum(self):
+        return self.img_csum
+
+    def get_offset(self):
+        return self.offset
+
+    def get_sync_buffer_size(self):
+        return self.sync_buffer_size
+
+    def is_started(self):
+        return (self.dfu_state == self._DFU_STATE_ACTIVE) or (self.dfu_state == self._DFU_STATE_STORING)
+
+    def is_storing(self):
+        return self.dfu_state == self._DFU_STATE_STORING
+
+    def is_cleaning(self):
+        return self.dfu_state == self._DFU_STATE_CLEANING
+
+    def is_busy(self):
+        return self.dfu_state != self._DFU_STATE_INACTIVE
+
+    def __str__(self):
+        return ('DFU synchronization data\n'
+                '  state: {}\n'
+                '  Image length: {}\n'
+                '  Image checksum: {}\n'
+                '  Offset: {}\n'
+                '  Sync buffer size: {}').format(self._DFUSTATE2STR[self.dfu_state], self.img_length,
+                                                 self.img_csum, self.offset, self.sync_buffer_size)
 
 
 class FwInfo:
     def __init__(self, fetched_data):
         fmt = '<BIBBHI'
         assert struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX
+        assert struct.calcsize(fmt) == len(fetched_data)
         vals = struct.unpack(fmt, fetched_data)
         flash_area_id, image_len, ver_major, ver_minor, ver_rev, ver_build_nr = vals
         self.flash_area_id = flash_area_id
@@ -305,6 +361,7 @@ def fwreboot(dev):
 
     fmt = '<?'
     assert struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX
+    assert struct.calcsize(fmt) == len(fetched_data)
     rebooted = struct.unpack(fmt, fetched_data)
 
     if success and rebooted:
@@ -318,16 +375,11 @@ def fwreboot(dev):
 def dfu_sync(dev):
     success, fetched_data = dev.config_get('dfu', 'sync')
 
-    if (not success) or (fetched_data is None):
+    if success and fetched_data:
+        dfu_info = DFUInfo(fetched_data)
+        return dfu_info
+    else:
         return None
-
-    fmt = '<BIII'
-    assert struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX
-
-    if (fetched_data is None) or (len(fetched_data) < struct.calcsize(fmt)):
-        return None
-
-    return struct.unpack(fmt, fetched_data)
 
 
 def dfu_start(dev, img_length, img_csum, offset):
@@ -366,52 +418,57 @@ def file_crc(dfu_image):
     return crc32
 
 
-def dfu_sync_wait(dev, is_active):
-    if is_active:
-        dfu_state = 0x01
-    else:
-        dfu_state = 0x00
+def dfu_sync_wait_until_inactive(dev):
+    state_shown = False
 
-    for _ in range(DFU_SYNC_RETRIES):
+    while True:
         dfu_info = dfu_sync(dev)
+        if dfu_info is None:
+            break
 
-        if dfu_info is not None:
-            if dfu_info[0] != dfu_state:
-                # DFU may be transiting its state. This can happen when previous
-                # interrupted DFU operation is timing out. Sleep to allow it
-                # to settle the state.
-                time.sleep(DFU_SYNC_INTERVAL)
-            else:
-                break
+        if dfu_info.is_cleaning() and not state_shown:
+            print('Waiting for device to clean update slot')
+            state_shown = True
+
+        if dfu_info.is_busy():
+            # DFU may be transiting its state. This can happen when previous
+            # interrupted DFU operation is timing out. Sleep to allow it
+            # to settle the state.
+            time.sleep(DFU_SYNC_INTERVAL)
+        else:
+            break
 
     return dfu_info
 
 
 def dfu_transfer(dev, dfu_image, progress_callback):
     img_length = os.stat(dfu_image).st_size
-    dfu_info = dfu_sync_wait(dev, False)
-
-    if is_dfu_operation_pending(dfu_info):
-        return False
-
     img_csum = file_crc(dfu_image)
-
     if not img_csum:
         return False
 
-    offset = get_dfu_operation_offset(dfu_image, dfu_info, img_csum)
+    while True:
+        dfu_info = dfu_sync_wait_until_inactive(dev)
 
-    success = dfu_start(dev, img_length, img_csum, offset)
+        if is_dfu_operation_pending(dfu_info):
+            return False
 
-    if not success:
-        print('Cannot start DFU operation')
-        return False
+        offset = get_dfu_operation_offset(dfu_image, dfu_info, img_csum)
+
+        success = dfu_start(dev, img_length, img_csum, offset)
+        if not success:
+            print('Cannot start DFU operation')
+            return False
+
+        dfu_info = dfu_sync(dev)
+        if dfu_info.is_started():
+            break
 
     img_file = open(dfu_image, 'rb')
     img_file.seek(offset)
 
     try:
-        offset, success = send_chunk(dev, img_csum, img_file, img_length, offset, success, progress_callback)
+        success, offset = send_chunks(dev, img_csum, img_file, img_length, offset, dfu_info.get_sync_buffer_size(), progress_callback)
     except Exception:
         success = False
 
@@ -419,64 +476,84 @@ def dfu_transfer(dev, dfu_image, progress_callback):
     print('')
 
     if success:
-        print('DFU transfer completed')
         success = False
 
-        dfu_info = dfu_sync_wait(dev, False)
+        dfu_info = dfu_sync_wait_until_inactive(dev)
 
         if dfu_info is None:
             print('Lost communication with the device')
         else:
-            if dfu_info[0] != 0:
+            if dfu_info.is_busy():
                 print('Device holds DFU active')
-            elif dfu_info[3] != offset:
-                print('Device holds incorrect image offset')
+            elif dfu_info.get_offset() != offset:
+                print('Offset {} does not match device info {}'.format(offset, dfu_info))
             else:
                 success = True
 
     return success
 
 
-def send_chunk(dev, img_csum, img_file, img_length, offset, success, progress_callback):
-    next_checkpoint = offset + FLASH_PAGE_SIZE
-    while offset < img_length:
-        if offset >= next_checkpoint:
-            # Sync DFU state at regular intervals to ensure everything
-            # is all right.
-            next_checkpoint += FLASH_PAGE_SIZE
-
-            success = False
+def send_chunks(dev, img_csum, img_file, img_length, offset, sync_buffer_size, progress_callback):
+    def dfu_checkpoint(img_csum, img_length, offset):
+        # Sync DFU state at regular intervals to ensure everything
+        # is all right.
+        store_retry = 0
+        sleep_time = 0.3
+        while True:
             dfu_info = dfu_sync(dev)
-
             if dfu_info is None:
                 print('Lost communication with the device')
-                break
-            if dfu_info[0] == 0:
-                print('DFU interrupted by device')
-                break
-            if (dfu_info[1] != img_length) or (dfu_info[2] != img_csum) or (dfu_info[3] != offset):
+                return False
+            if (dfu_info.get_img_length() != img_length) or (dfu_info.get_img_csum() != img_csum):
                 print('Invalid sync information {}'.format(dfu_info))
-                break
+                return False
+            if (not dfu_info.is_busy()) and (dfu_info.get_img_length() != img_length):
+                print('DFU interrupted by device')
+                return False
+            if dfu_info.is_storing():
+                # DFU store in progress - retry
+                store_retry += 1
+                if store_retry % 8 == 0: sleep_time += sleep_time
+                if sleep_time > DFU_SYNC_INTERVAL: sleep_time = DFU_SYNC_INTERVAL
+                time.sleep(sleep_time)
+                continue
+            if (dfu_info.is_busy()) and (dfu_info.get_offset() != offset):
+                print('Mismatching offset after synchronization {} != {}'.format(dfu_info.get_offset(), offset))
+                return False
+            return True
 
-        chunk_data = img_file.read(EVENT_DATA_LEN_MAX)
+    next_checkpoint = offset + sync_buffer_size
+    if next_checkpoint > img_length: next_checkpoint = img_length
+
+    while offset < img_length:
+        # Set current progress
+        progress_callback(int(offset / img_length * 1000))
+
+        # Read data from the file
+        chunk_len = EVENT_DATA_LEN_MAX
+        if next_checkpoint - offset < chunk_len:
+            chunk_len = next_checkpoint - offset
+        chunk_data = img_file.read(chunk_len)
         chunk_len = len(chunk_data)
-
         if chunk_len == 0:
             break
 
+        # Send data to the device
         logging.debug('Send DFU request: offset {}, size {}'.format(offset, chunk_len))
-
-        progress_callback(int(offset / img_length * 1000))
-
         success = dev.config_set('dfu', 'data', chunk_data)
-
         if not success:
             print('Lost communication with the device')
             break
 
+        # Progress checkpoint
         offset += chunk_len
+        if offset >= next_checkpoint:
+            success = dfu_checkpoint(img_csum, img_length, offset)
+            if not success: break
+            next_checkpoint += sync_buffer_size
+            if next_checkpoint > img_length: next_checkpoint = img_length
 
-    return offset, success
+    return success, offset
 
 
 def get_dfu_operation_offset(dfu_image, dfu_info, img_csum):
@@ -486,9 +563,9 @@ def get_dfu_operation_offset(dfu_image, dfu_info, img_csum):
     if not img_csum:
         return None
 
-    if (dfu_info[1] == img_length) and (dfu_info[2] == img_csum) and (dfu_info[3] <= img_length):
-        print('Resume DFU at {}'.format(dfu_info[3]))
-        offset = dfu_info[3]
+    if (dfu_info.get_img_length() == img_length) and (dfu_info.get_img_csum() == img_csum) and (dfu_info.get_offset() <= img_length):
+        print('Resume DFU at {}'.format(dfu_info.get_offset()))
+        offset = dfu_info.get_offset()
     else:
         offset = 0
 
@@ -501,7 +578,7 @@ def is_dfu_operation_pending(dfu_info):
         print('Cannot start DFU, device not responding')
         return True
 
-    if dfu_info[0] != 0:
+    if dfu_info.is_busy():
         print('Cannot start DFU. DFU in progress or memory is not clean.')
         print('Please stop ongoing DFU and wait until device cleans memory.')
         return True

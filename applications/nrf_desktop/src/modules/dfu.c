@@ -24,6 +24,13 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 
 
+/* DFU state values must match with values used by the host. */
+#define DFU_STATE_INACTIVE 0x00
+#define DFU_STATE_ACTIVE   0x01
+#define DFU_STATE_STORING  0x02
+#define DFU_STATE_CLEANING 0x03
+
+
 #define FLASH_PAGE_SIZE_LOG2	12
 #define FLASH_PAGE_SIZE		BIT(FLASH_PAGE_SIZE_LOG2)
 #define FLASH_PAGE_ID(off)	((off) >> FLASH_PAGE_SIZE_LOG2)
@@ -33,6 +40,12 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 #define DFU_TIMEOUT			K_SECONDS(2)
 #define REBOOT_REQUEST_TIMEOUT		K_MSEC(250)
 #define BACKGROUND_FLASH_ERASE_TIMEOUT	K_SECONDS(15)
+#define BACKGROUND_FLASH_STORE_TIMEOUT	K_MSEC(5)
+
+/* Keep small to avoid blocking the workqueue for long periods of time. */
+#define STORE_CHUNK_SIZE		16 /* bytes */
+
+#define SYNC_BUFFER_SIZE (CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE * sizeof(uint32_t)) /* bytes */
 
 #if CONFIG_SECURE_BOOT
  #include <fw_info.h>
@@ -53,11 +66,16 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 static struct k_delayed_work dfu_timeout;
 static struct k_delayed_work reboot_request;
 static struct k_delayed_work background_erase;
+static struct k_delayed_work background_store;
 
 static const struct flash_area *flash_area;
 static uint32_t cur_offset;
 static uint32_t img_csum;
 static uint32_t img_length;
+
+static uint16_t store_offset;
+static uint16_t sync_offset;
+static char sync_buffer[SYNC_BUFFER_SIZE] __aligned(4);
 
 static bool device_in_use;
 static bool is_flash_area_clean;
@@ -125,15 +143,23 @@ static bool is_page_clean(const struct flash_area *fa, off_t off, size_t len)
 	return true;
 }
 
+static void terminate_dfu(void)
+{
+	__ASSERT_NO_MSG(flash_area != NULL);
+
+	flash_area_close(flash_area);
+	k_delayed_work_cancel(&dfu_timeout);
+	k_delayed_work_cancel(&background_store);
+	dfu_unlock(MODULE_ID(MODULE));
+	flash_area = NULL;
+	sync_offset = 0;
+}
+
 static void dfu_timeout_handler(struct k_work *work)
 {
 	LOG_WRN("DFU timed out");
 
-	if (flash_area) {
-		dfu_unlock(MODULE_ID(MODULE));
-		flash_area_close(flash_area);
-		flash_area = NULL;
-	}
+	terminate_dfu();
 }
 
 static void reboot_request_handler(struct k_work *work)
@@ -141,8 +167,7 @@ static void reboot_request_handler(struct k_work *work)
 	LOG_INF("Handle reset request now");
 
 	if (flash_area) {
-		flash_area_close(flash_area);
-		flash_area = NULL;
+		terminate_dfu();
 	}
 
 	LOG_PANIC();
@@ -204,10 +229,87 @@ static void background_erase_handler(struct k_work *work)
 	}
 }
 
-static void handle_dfu_data(const uint8_t *data, const size_t size)
+static void complete_dfu_data_store(void)
 {
-	int err;
+	cur_offset += sync_offset;
+	sync_offset = 0;
+	store_offset = 0;
 
+	LOG_DBG("DFU data store complete: %" PRIu32, cur_offset);
+
+	if (cur_offset == img_length) {
+		LOG_INF("DFU image written");
+#ifdef CONFIG_BOOTLOADER_MCUBOOT
+		int err = boot_request_upgrade(false);
+		if (err) {
+			LOG_ERR("Cannot request the DFU (%d)", err);
+		}
+#endif
+		terminate_dfu();
+	}
+}
+
+static void store_dfu_data_chunk(void)
+{
+	/* Some flash may require word alignment. */
+	BUILD_ASSERT((STORE_CHUNK_SIZE % sizeof(uint32_t)) == 0);
+	BUILD_ASSERT((sizeof(sync_buffer) % sizeof(uint32_t)) == 0);
+
+	__ASSERT_NO_MSG(store_offset <= sync_offset);
+	__ASSERT_NO_MSG(flash_area != NULL);
+
+	size_t store_size = STORE_CHUNK_SIZE;
+
+	if (sync_offset - store_offset < store_size) {
+		store_size = sync_offset - store_offset;
+	}
+	if ((store_size > sizeof(uint32_t)) &&
+	    ((store_size % sizeof(uint32_t)) != 0)) {
+		/* Required by some flash drivers. */
+		store_size = (store_size / sizeof(uint32_t)) * sizeof(uint32_t);
+	}
+
+	LOG_DBG("DFU data store chunk: %" PRIu32, cur_offset + store_offset);
+	int err = flash_area_write(flash_area, cur_offset + store_offset,
+				   &sync_buffer[store_offset], store_size);
+	if (err) {
+		LOG_ERR("Cannot write data (%d)", err);
+		terminate_dfu();
+	} else {
+		store_offset += store_size;
+	}
+}
+
+static void background_store_handler(struct k_work *work)
+{
+	if (device_in_use) {
+		device_in_use = false;
+	} else {
+		store_dfu_data_chunk();
+	}
+
+	if (store_offset < sync_offset) {
+		k_delayed_work_submit(&background_store, BACKGROUND_FLASH_STORE_TIMEOUT);
+		k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
+	} else {
+		complete_dfu_data_store();
+	}
+}
+
+static bool is_dfu_data_store_active(void)
+{
+	return k_delayed_work_pending(&background_store);
+}
+
+static void start_dfu_data_store(void)
+{
+	LOG_DBG("DFU data store start: %" PRIu32 " %" PRIu32, cur_offset, sync_offset);
+	store_offset = 0;
+	k_delayed_work_submit(&background_store, K_NO_WAIT);
+}
+
+static void handle_dfu_data(const uint8_t *data, size_t size)
+{
 	if (!is_flash_area_clean) {
 		LOG_WRN("Flash is not clean");
 		return;
@@ -222,38 +324,23 @@ static void handle_dfu_data(const uint8_t *data, const size_t size)
 
 	if (size == 0) {
 		LOG_WRN("Invalid DFU data header");
-		goto dfu_finish;
+		terminate_dfu();
+		return;
 	}
 
-	err = flash_area_write(flash_area, cur_offset, data, size);
-	if (err) {
-		LOG_ERR("Cannot write data (%d)", err);
-		goto dfu_finish;
+	if (size > sizeof(sync_buffer) - sync_offset) {
+		LOG_WRN("Chunk size truncated");
+		size = sizeof(sync_buffer) - sync_offset;
 	}
+	memcpy(&sync_buffer[sync_offset], data, size);
 
-	cur_offset += size;
+	sync_offset += size;
 
-	LOG_DBG("DFU chunk written");
+	LOG_DBG("DFU chunk collected");
 
-	if (img_length == cur_offset) {
-		LOG_INF("DFU image written");
-#ifdef CONFIG_BOOTLOADER_MCUBOOT
-		err = boot_request_upgrade(false);
-		if (err) {
-			LOG_ERR("Cannot request the DFU (%d)", err);
-		}
-#endif
-		goto dfu_finish;
-	} else {
-		k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
-	}
+	k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
 
 	return;
-
-dfu_finish:
-	flash_area_close(flash_area);
-	flash_area = NULL;
-	k_delayed_work_cancel(&dfu_timeout);
 }
 
 static void handle_dfu_start(const uint8_t *data, const size_t size)
@@ -267,6 +354,8 @@ static void handle_dfu_start(const uint8_t *data, const size_t size)
 	BUILD_ASSERT(sizeof(length) == sizeof(img_length), "");
 	BUILD_ASSERT(sizeof(csum) == sizeof(img_csum), "");
 	BUILD_ASSERT(sizeof(offset) == sizeof(cur_offset), "");
+
+	sync_offset = 0;
 
 	if (size < data_size) {
 		LOG_WRN("Invalid DFU start header");
@@ -347,9 +436,7 @@ static void handle_dfu_start(const uint8_t *data, const size_t size)
 		LOG_WRN("Insufficient space for DFU (%zu < %" PRIu32 ")",
 			flash_area->fa_size, img_length);
 
-		flash_area_close(flash_area);
-		flash_area = NULL;
-		dfu_unlock(MODULE_ID(MODULE));
+		terminate_dfu();
 	} else {
 		LOG_INF("DFU started");
 		k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
@@ -359,18 +446,37 @@ static void handle_dfu_start(const uint8_t *data, const size_t size)
 static void handle_dfu_sync(uint8_t *data, size_t *size)
 {
 	LOG_INF("DFU sync requested");
+	uint16_t sync_buffer_size = sizeof(sync_buffer);
 
-	uint8_t dfu_active = (flash_area != NULL) ? 0x01 : 0x00;
+	bool storing_data = (sync_offset > 0);
+	bool dfu_active = (flash_area != NULL);
 
-	size_t data_size = sizeof(dfu_active) + sizeof(img_length) +
-			   sizeof(img_csum) + sizeof(cur_offset);
+	if (storing_data && !is_dfu_data_store_active()) {
+		start_dfu_data_store();
+	}
+
+	uint8_t dfu_state;
+
+	if (!is_flash_area_clean) {
+		dfu_state = DFU_STATE_CLEANING;
+	} else if (storing_data) {
+		dfu_state = DFU_STATE_STORING;
+	} else if (dfu_active) {
+		dfu_state = DFU_STATE_ACTIVE;
+	} else {
+		dfu_state = DFU_STATE_INACTIVE;
+	}
+
+	size_t data_size = sizeof(dfu_state) + sizeof(img_length) +
+			   sizeof(img_csum) + sizeof(cur_offset) +
+			   sizeof(sync_buffer_size);
 
 	*size = data_size;
 
 	size_t pos = 0;
 
-	data[pos] = dfu_active;
-	pos += sizeof(dfu_active);
+	data[pos] = dfu_state;
+	pos += sizeof(dfu_state);
 
 	sys_put_le32(img_length, &data[pos]);
 	pos += sizeof(img_length);
@@ -380,6 +486,11 @@ static void handle_dfu_sync(uint8_t *data, size_t *size)
 
 	sys_put_le32(cur_offset, &data[pos]);
 	pos += sizeof(cur_offset);
+
+	sys_put_le16(sync_buffer_size, &data[pos]);
+	pos += sizeof(sync_buffer_size);
+
+	__ASSERT_NO_MSG(pos == data_size);
 }
 
 static void handle_reboot_request(uint8_t *data, size_t *size)
@@ -580,6 +691,7 @@ static bool event_handler(const struct event_header *eh)
 			k_delayed_work_init(&dfu_timeout, dfu_timeout_handler);
 			k_delayed_work_init(&reboot_request, reboot_request_handler);
 			k_delayed_work_init(&background_erase, background_erase_handler);
+			k_delayed_work_init(&background_store, background_store_handler);
 
 			if (!dfu_lock(MODULE_ID(MODULE))) {
 				/* Should not happen. */
