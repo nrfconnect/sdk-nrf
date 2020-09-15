@@ -91,7 +91,11 @@ int config_channel_report_parse(const uint8_t *buffer, size_t length,
 		return -EMSGSIZE;
 	}
 
-	__ASSERT_NO_MSG(event->dyndata.size >= config_data_len);
+	if (event->dyndata.size < config_data_len) {
+		LOG_ERR("Invalid packet size %zu < %zu", event->dyndata.size,
+			config_data_len);
+		return -ENOMEM;
+	}
 	event->dyndata.size = config_data_len;
 
 	memcpy(event->dyndata.data, &buffer[pos], config_data_len);
