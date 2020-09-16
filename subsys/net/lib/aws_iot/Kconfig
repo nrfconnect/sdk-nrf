@@ -81,14 +81,6 @@ config AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE
 config AWS_IOT_CONNECTION_POLL_THREAD
 	bool "Enable polling on MQTT socket in AWS IoT backend"
 
-config AWS_IOT_PERSISTENT_SESSIONS
-	bool "Enable reusing previous subscriptions to save bandwidth"
-	help
-	  If y, the AWS IoT broker will save all subscriptions the client makes
-	  during the connection. Upon a disconnect/reconnect the broker resumes
-	  the saved subscriptions removing the need to do a resubscription by
-	  the client.
-
 config AWS_IOT_TLS_SESSION_CACHING
 	bool "Enable TLS session caching"
 	default y

@@ -573,6 +573,7 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		LOG_DBG("MQTT client connected!");
 
 		aws_iot_evt.data.persistent_session =
+				   !IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION) &&
 				   mqtt_evt->param.connack.session_present_flag;
 		aws_iot_evt.type = AWS_IOT_EVT_CONNECTED;
 		aws_iot_notify_event(&aws_iot_evt);
@@ -804,10 +805,6 @@ static int client_broker_init(struct mqtt_client *const client)
 	client->tx_buf			= tx_buffer;
 	client->tx_buf_size		= sizeof(tx_buffer);
 	client->transport.type		= MQTT_TRANSPORT_SECURE;
-
-#if defined(CONFIG_AWS_IOT_PERSISTENT_SESSIONS)
-	client->clean_session		= 0U;
-#endif
 
 	static sec_tag_t sec_tag_list[] = { CONFIG_AWS_IOT_SEC_TAG };
 	struct mqtt_sec_config *tls_cfg = &(client->transport).tls.config;
