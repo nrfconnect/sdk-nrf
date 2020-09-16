@@ -38,6 +38,10 @@ config AT_HOST_UART
 
 config AT_HOST_UART_INIT_TIMEOUT
 	int "Timeout waiting for a valid UART line on init (ms)"
+	help
+		If the selected UART has error conditions during init caused by
+		e. g. a floating RX line during boot, at_host will clear the
+		errors and retry for this amount of time.
 	default 500
 
 choice
