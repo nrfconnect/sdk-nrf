@@ -246,7 +246,7 @@ static void rtt_send_end(struct eth_rtt_context *context)
  *  @param iface   Network interface associated with this driver.
  *  @param pkt     Frame that have to be send.
  */
-static int eth_send(struct device *dev, struct net_pkt *pkt)
+static int eth_send(const struct device *dev, struct net_pkt *pkt)
 {
 	struct eth_rtt_context *context = dev->data;
 	struct net_buf *frag;
@@ -512,7 +512,7 @@ static void eth_iface_init(struct net_if *iface)
 /** Returns network driver capabilities. Currently no additional capabilities
  *  available.
  */
-static enum ethernet_hw_caps eth_capabilities(struct device *dev)
+static enum ethernet_hw_caps eth_capabilities(const struct device *dev)
 {
 	return (enum ethernet_hw_caps)0;
 }
@@ -520,7 +520,7 @@ static enum ethernet_hw_caps eth_capabilities(struct device *dev)
 /** Network driver initialization. It setups RTT channels.
  *  @param dev   Device to initialize.
  */
-static int eth_rtt_init(struct device *dev)
+static int eth_rtt_init(const struct device *dev)
 {
 	struct eth_rtt_context *context = dev->data;
 

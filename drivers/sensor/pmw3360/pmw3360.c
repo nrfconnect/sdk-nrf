@@ -129,9 +129,9 @@ enum async_init_step {
 };
 
 struct pmw3360_data {
-	struct device                *cs_gpio_dev;
-	struct device                *irq_gpio_dev;
-	struct device                *spi_dev;
+	const struct device          *cs_gpio_dev;
+	const struct device          *irq_gpio_dev;
+	const struct device          *spi_dev;
 	struct gpio_callback         irq_gpio_cb;
 	struct k_spinlock            lock;
 	int16_t                        x;
@@ -677,7 +677,7 @@ static int pmw3360_async_init_fw_load_verify(struct pmw3360_data *dev_data)
 	return err;
 }
 
-static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
+static void irq_handler(const struct device *gpiob, struct gpio_callback *cb,
 			uint32_t pins)
 {
 	int err;
@@ -849,7 +849,7 @@ static int pmw3360_init_spi(struct pmw3360_data *dev_data)
 	return 0;
 }
 
-static int pmw3360_init(struct device *dev)
+static int pmw3360_init(const struct device *dev)
 {
 	struct pmw3360_data *dev_data = &pmw3360_data;
 	int err;
@@ -882,7 +882,7 @@ static int pmw3360_init(struct device *dev)
 	return err;
 }
 
-static int pmw3360_sample_fetch(struct device *dev, enum sensor_channel chan)
+static int pmw3360_sample_fetch(const struct device *dev, enum sensor_channel chan)
 {
 	struct pmw3360_data *dev_data = &pmw3360_data;
 	uint8_t data[PMW3360_BURST_SIZE];
@@ -918,7 +918,7 @@ static int pmw3360_sample_fetch(struct device *dev, enum sensor_channel chan)
 	return err;
 }
 
-static int pmw3360_channel_get(struct device *dev, enum sensor_channel chan,
+static int pmw3360_channel_get(const struct device *dev, enum sensor_channel chan,
 			       struct sensor_value *val)
 {
 	struct pmw3360_data *dev_data = &pmw3360_data;
@@ -948,7 +948,7 @@ static int pmw3360_channel_get(struct device *dev, enum sensor_channel chan,
 	return 0;
 }
 
-static int pmw3360_trigger_set(struct device *dev,
+static int pmw3360_trigger_set(const struct device *dev,
 			       const struct sensor_trigger *trig,
 			       sensor_trigger_handler_t handler)
 {
@@ -991,7 +991,7 @@ static int pmw3360_trigger_set(struct device *dev,
 	return err;
 }
 
-static int pmw3360_attr_set(struct device *dev, enum sensor_channel chan,
+static int pmw3360_attr_set(const struct device *dev, enum sensor_channel chan,
 			    enum sensor_attribute attr,
 			    const struct sensor_value *val)
 {

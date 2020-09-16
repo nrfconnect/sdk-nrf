@@ -61,14 +61,14 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len)
 		p_seed = p_optional_seed;
 	}
 
-	struct device *p_device =
+	const struct device *p_device =
 	    device_get_binding(DT_LABEL(DT_CHOSEN(zephyr_entropy)));
 
 	if (p_device == NULL)
 		return -ENODEV;
 
 	mbedtls_ctr_drbg_init(&drbg_ctx);
-	return mbedtls_ctr_drbg_seed(&drbg_ctx, entropy_func, p_device,
+	return mbedtls_ctr_drbg_seed(&drbg_ctx, entropy_func, (void *)p_device,
 				     p_seed, len);
 }
 #elif defined(MBEDTLS_HMAC_DRBG_C)
@@ -90,7 +90,7 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len)
 
 	mbedtls_hmac_drbg_init(&drbg_ctx);
 
-	struct device *p_device =
+	const struct device *p_device =
 	    device_get_binding(DT_LABEL(DT_CHOSEN(zephyr_entropy)));
 
 	if (!p_device)

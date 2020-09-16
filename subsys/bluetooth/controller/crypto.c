@@ -23,7 +23,7 @@
 
 int bt_rand(void *buf, size_t len)
 {
-	static struct device *dev;
+	static const struct device *dev;
 
 	if (unlikely(!dev)) {
 		dev = device_get_binding(DT_LABEL(DT_NODELABEL(rng)));

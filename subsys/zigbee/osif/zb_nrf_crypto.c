@@ -28,7 +28,7 @@
 LOG_MODULE_DECLARE(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
 
 #if CONFIG_CRYPTO_NRF_ECB
-static struct device *dev;
+static const struct device *dev;
 
 static void encrypt_aes(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
 {

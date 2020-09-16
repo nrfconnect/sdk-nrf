@@ -70,7 +70,7 @@ static K_SEM_DEFINE(sem, 1, 1);
 static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
 static struct k_thread thread;
 
-static struct device *sensor_dev;
+static const struct device *sensor_dev;
 
 static struct sensor_state state;
 
@@ -154,7 +154,7 @@ static int settings_set(const char *key, size_t len_rd,
 SETTINGS_STATIC_HANDLER_DEFINE(motion_sensor, MODULE_NAME, NULL, settings_set,
 			       NULL, NULL);
 
-static void data_ready_handler(struct device *dev, struct sensor_trigger *trig);
+static void data_ready_handler(const struct device *dev, struct sensor_trigger *trig);
 
 
 static int enable_trigger(void)
@@ -181,7 +181,7 @@ static int disable_trigger(void)
 	return err;
 }
 
-static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
+static void data_ready_handler(const struct device *dev, struct sensor_trigger *trig)
 {
 	k_spinlock_key_t key = k_spin_lock(&state.lock);
 

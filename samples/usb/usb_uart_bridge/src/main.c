@@ -51,7 +51,7 @@ struct uart_data {
 };
 
 static struct serial_dev {
-	struct device *dev;
+	const struct device *dev;
 	void *peer;
 	struct k_fifo *fifo;
 	struct k_sem sem;
@@ -179,7 +179,7 @@ void main(void)
 	struct serial_dev *usb_1_sd = &devs[1];
 	struct serial_dev *uart_0_sd = &devs[2];
 	struct serial_dev *uart_1_sd = &devs[3];
-	struct device *usb_0_dev, *usb_1_dev, *uart_0_dev, *uart_1_dev;
+	const struct device *usb_0_dev, *usb_1_dev, *uart_0_dev, *uart_1_dev;
 
 	usb_0_dev = device_get_binding("CDC_ACM_0");
 	if (!usb_0_dev) {

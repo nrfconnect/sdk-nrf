@@ -4,12 +4,12 @@ tests:
   samples.nrf9160.serial_lte_modem:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf9160dk_nrf9160ns
+    platform_allow: nrf9160dk_nrf9160ns
     tags: ci_build
   samples.nrf9160.serial_lte_modem.tcp_udp_server:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf9160dk_nrf9160ns
+    platform_allow: nrf9160dk_nrf9160ns
     tags: ci_build
     extra_configs:
       - CONFIG_SLM_TCP_PROXY=y

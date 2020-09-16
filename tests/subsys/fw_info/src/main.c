@@ -33,7 +33,7 @@ void test_fw_info_invalidate(void)
 	const uint32_t zero = 0;
 	int ret;
 
-	struct device *flash_dev = device_get_binding(PM_S0_DEV_NAME);
+	const struct device *flash_dev = device_get_binding(PM_S0_DEV_NAME);
 	(void) flash_write_protection_set(flash_dev, false);
 
 	/* Write a dummy upgrade to S1 */

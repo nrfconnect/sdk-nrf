@@ -647,7 +647,7 @@ static void gps_time_set(struct gps_pvt *gps_data)
 	date_time_set(&gps_time);
 }
 
-static void gps_handler(struct device *dev, struct gps_event *evt)
+static void gps_handler(const struct device *dev, struct gps_event *evt)
 {
 	gps_last_active_time = k_uptime_get();
 

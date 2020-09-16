@@ -5,5 +5,5 @@ tests:
   zigbee.light_switch:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf52840dk_nrf52840 nrf52833dk_nrf52833
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
     tags: ci_build

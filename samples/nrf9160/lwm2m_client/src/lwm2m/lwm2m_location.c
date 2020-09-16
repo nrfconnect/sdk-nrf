@@ -15,7 +15,7 @@
 LOG_MODULE_REGISTER(app_lwm2m_loc, CONFIG_APP_LOG_LEVEL);
 
 static struct gps_nmea nmea_data;
-static struct device *gps_dev;
+static const struct device *gps_dev;
 
 static void update_location_data(struct gps_nmea *nmea)
 {
@@ -27,7 +27,7 @@ static void update_location_data(struct gps_nmea *nmea)
 }
 
 /**@brief Callback for GPS events */
-static void gps_event_handler(struct device *dev, struct gps_event *evt)
+static void gps_event_handler(const struct device *dev, struct gps_event *evt)
 {
 	ARG_UNUSED(dev);
 	static uint32_t timestamp_prev;

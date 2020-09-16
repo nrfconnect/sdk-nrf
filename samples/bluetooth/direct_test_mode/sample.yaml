@@ -5,5 +5,5 @@ tests:
   samples.bluetooth.direct_test_mode:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf5340pdk_nrf5340_cpunet
+    platform_allow: nrf5340pdk_nrf5340_cpunet
     tags: bluetooth ci_build

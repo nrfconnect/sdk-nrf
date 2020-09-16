@@ -122,7 +122,7 @@ typedef struct {
 static bulb_device_ctx_t dev_ctx;
 
 /* Pointer to PWM device controlling leds with pwm signal. */
-static struct device *led_pwm_dev;
+static const struct device *led_pwm_dev;
 
 ZB_ZCL_DECLARE_IDENTIFY_ATTRIB_LIST(
 	identify_attr_list,

@@ -527,7 +527,7 @@ static void timer_init(const struct radio_test_config *config)
 	}
 }
 
-void radio_handler(void *context)
+void radio_handler(const void *context)
 {
 	const struct radio_test_config *config =
 		(const struct radio_test_config *) context;

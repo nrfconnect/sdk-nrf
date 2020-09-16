@@ -24,7 +24,7 @@ extern void agps_print(enum nrf_cloud_agps_type type, void *data);
 
 static int fd = -1;
 static bool agps_print_enabled;
-static struct device *gps_dev;
+static const struct device *gps_dev;
 
 static enum gps_agps_type type_lookup_socket2gps[] = {
 	[NRF_GNSS_AGPS_UTC_PARAMETERS]	= GPS_AGPS_UTC_PARAMETERS,

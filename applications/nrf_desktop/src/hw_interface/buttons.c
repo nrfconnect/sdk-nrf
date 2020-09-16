@@ -39,7 +39,7 @@ enum state {
 	STATE_SUSPENDING
 };
 
-static struct device *gpio_devs[ARRAY_SIZE(port_map)];
+static const struct device *gpio_devs[ARRAY_SIZE(port_map)];
 static struct gpio_callback gpio_cb[ARRAY_SIZE(port_map)];
 static struct k_delayed_work matrix_scan;
 static struct k_delayed_work button_pressed;
@@ -351,7 +351,7 @@ error:
 	module_set_state(MODULE_STATE_ERROR);
 }
 
-static void button_pressed_isr(struct device *gpio_dev,
+static void button_pressed_isr(const struct device *gpio_dev,
 			       struct gpio_callback *cb,
 			       uint32_t pins)
 {

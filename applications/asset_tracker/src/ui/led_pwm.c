@@ -16,7 +16,7 @@
 LOG_MODULE_REGISTER(ui_led_pwm, CONFIG_UI_LOG_LEVEL);
 
 struct led {
-	struct device *pwm_dev;
+	const struct device *pwm_dev;
 
 	size_t id;
 	struct led_color color;

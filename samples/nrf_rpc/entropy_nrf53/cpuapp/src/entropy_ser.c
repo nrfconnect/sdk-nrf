@@ -296,7 +296,7 @@ static void err_handler(const struct nrf_rpc_err_report *report)
 }
 
 
-static int serialization_init(struct device *dev)
+static int serialization_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 

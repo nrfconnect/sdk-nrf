@@ -1331,8 +1331,8 @@ The HID over GATT profile specification requires Bluetooth Peripherals to define
 
 * HID Service - Handled in the :ref:`nrf_desktop_hids`.
 * Battery Service - Handled in the :ref:`nrf_desktop_bas`.
-* Device Information Service - Implemented in Zephyr and enabled with :option:`CONFIG_BT_GATT_DIS`.
-  It can be configured using Kconfig options with the ``CONFIG_BT_GATT_DIS`` prefix.
+* Device Information Service - Implemented in Zephyr and enabled with :option:`CONFIG_BT_DIS`.
+  It can be configured using Kconfig options with the ``CONFIG_BT_DIS`` prefix.
 
 The nRF Desktop peripherals must also define a dedicated GATT Service, which is used to provide the following information:
 

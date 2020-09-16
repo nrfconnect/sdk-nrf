@@ -25,7 +25,7 @@ enum call_type {
 
 NRF_RPC_GROUP_DEFINE(entropy_group, "nrf_sample_entropy", NULL, NULL, NULL);
 
-static struct device *entropy;
+static const struct device *entropy;
 
 static void rsp_error_code_send(int err_code)
 {
@@ -167,7 +167,7 @@ static void err_handler(const struct nrf_rpc_err_report *report)
 }
 
 
-static int serialization_init(struct device *dev)
+static int serialization_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 

@@ -68,8 +68,8 @@ static enum state state;
 static struct k_delayed_work buttons_scan;
 static button_handler_t button_handler_cb;
 static atomic_t my_buttons;
-static struct device *button_devs[ARRAY_SIZE(button_pins)];
-static struct device *led_devs[ARRAY_SIZE(led_pins)];
+static const struct device *button_devs[ARRAY_SIZE(button_pins)];
+static const struct device *led_devs[ARRAY_SIZE(led_pins)];
 static struct gpio_callback gpio_cb;
 static struct k_spinlock lock;
 static sys_slist_t button_handlers;
@@ -211,7 +211,7 @@ int dk_leds_init(void)
 	return dk_set_leds_state(DK_NO_LEDS_MSK, DK_ALL_LEDS_MSK);
 }
 
-static void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
+static void button_pressed(const struct device *gpio_dev, struct gpio_callback *cb,
 		    uint32_t pins)
 {
 	k_spinlock_key_t key = k_spin_lock(&lock);

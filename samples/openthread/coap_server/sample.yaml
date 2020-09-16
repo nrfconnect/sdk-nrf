@@ -4,4 +4,4 @@ sample:
 tests:
   samples.openthread.coap_server:
     tags: net openthread coap
-    platform_whitelist: nrf52840dk_nrf52840 nrf52833dk_nrf52833
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833

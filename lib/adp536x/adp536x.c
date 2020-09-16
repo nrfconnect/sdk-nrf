@@ -138,7 +138,7 @@
 #define ADP536X_DEFAULT_SET(x)				(((x) & 0xFF) << 0)
 
 
-static struct device *i2c_dev;
+static const struct device *i2c_dev;
 
 static int adp536x_reg_read(uint8_t reg, uint8_t *buff)
 {

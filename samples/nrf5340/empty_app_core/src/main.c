@@ -49,7 +49,7 @@ void main(void)
  * that the network core is not started yet. More pins can be added if the
  * network core needs them.
  */
-static int network_gpio_allow(struct device *dev)
+static int network_gpio_allow(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 

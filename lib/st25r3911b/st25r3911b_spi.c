@@ -18,7 +18,7 @@
 
 LOG_MODULE_REGISTER(st25r3911b, CONFIG_ST25R3911B_LIB_LOG_LEVEL);
 
-static struct device *spi_dev;
+static const struct device *spi_dev;
 
 #define ST25R3911B_READ_REG(_reg) (0x40 | (_reg))
 #define ST25R3911B_WRITE_REG(_reg) (~0xC0 & (_reg))

@@ -70,7 +70,7 @@ BUILD_ASSERT((sizeof(struct uart_rx_buf) % UART_SLAB_ALIGNMENT) == 0);
 
 K_MEM_SLAB_DEFINE(uart_rx_slab, UART_SLAB_BLOCK_SIZE, UART_SLAB_BLOCK_COUNT, UART_SLAB_ALIGNMENT);
 
-static struct device *devices[UART_DEVICE_COUNT];
+static const struct device *devices[UART_DEVICE_COUNT];
 static struct uart_tx_buf uart_tx_ringbufs[UART_DEVICE_COUNT];
 static uint32_t uart_default_baudrate[UART_DEVICE_COUNT];
 /* UART RX only enabled when there is one or more subscribers (power saving) */
@@ -137,7 +137,7 @@ static void uart_rx_buf_unref(void *buf)
 	}
 }
 
-static void uart_callback(struct device *dev, struct uart_event *evt,
+static void uart_callback(const struct device *dev, struct uart_event *evt,
 			  void *user_data)
 {
 	int dev_idx = (int) user_data;
@@ -212,7 +212,7 @@ static void uart_callback(struct device *dev, struct uart_event *evt,
 
 static void set_uart_baudrate(uint8_t dev_idx, uint32_t baudrate)
 {
-	struct device *dev = devices[dev_idx];
+	const struct device *dev = devices[dev_idx];
 	struct uart_config cfg;
 	int err;
 
@@ -242,7 +242,7 @@ static void set_uart_baudrate(uint8_t dev_idx, uint32_t baudrate)
 static void set_uart_power_state(uint8_t dev_idx, bool active)
 {
 #if UART_SET_PM_STATE
-	struct device *dev = devices[dev_idx];
+	const struct device *dev = devices[dev_idx];
 	int err;
 	uint32_t current_state;
 	uint32_t target_state;
@@ -273,7 +273,7 @@ static void set_uart_power_state(uint8_t dev_idx, bool active)
 
 static void enable_uart_rx(uint8_t dev_idx)
 {
-	struct device *dev = devices[dev_idx];
+	const struct device *dev = devices[dev_idx];
 	int err;
 	struct uart_rx_buf *buf;
 
@@ -299,7 +299,7 @@ static void enable_uart_rx(uint8_t dev_idx)
 
 static void disable_uart_rx(uint8_t dev_idx)
 {
-	struct device *dev = devices[dev_idx];
+	const struct device *dev = devices[dev_idx];
 	int err;
 
 	err = uart_rx_disable(dev);

@@ -56,7 +56,7 @@ static K_SEM_DEFINE(ble_init_ok, 0, 1);
 static struct bt_conn *current_conn;
 static struct bt_conn *auth_conn;
 
-static struct device *uart;
+static const struct device *uart;
 static struct k_delayed_work uart_work;
 
 struct uart_data_t {
@@ -77,7 +77,7 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, NUS_UUID_SERVICE),
 };
 
-static void uart_cb(struct device *dev, struct uart_event *evt, void *user_data)
+static void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
 {
 	ARG_UNUSED(dev);
 

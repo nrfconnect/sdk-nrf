@@ -1,4 +1,4 @@
 tests:
   date_time.functionality_test:
-    platform_whitelist: qemu_x86
+    platform_allow: qemu_x86
     tags: date_time

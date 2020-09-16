@@ -445,7 +445,7 @@ void at_cmd_set_notification_handler(at_cmd_handler_t handler)
 	notification_handler = handler;
 }
 
-static int at_cmd_driver_init(struct device *dev)
+static int at_cmd_driver_init(const struct device *dev)
 {
 	static bool initialized;
 
