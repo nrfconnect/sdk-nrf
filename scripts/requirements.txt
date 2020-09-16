@@ -1,3 +1,4 @@
+cryptography
 ecdsa
 imagesize>=1.2.0
 intelhex
