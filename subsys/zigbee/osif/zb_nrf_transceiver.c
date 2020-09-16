@@ -59,7 +59,7 @@ static struct {
 	volatile uint8_t rssi_val; /* Detected energy level. */
 } energy_detect;
 
-static struct device *radio_dev;
+static const struct device *radio_dev;
 static struct ieee802154_radio_api *radio_api;
 static struct net_if *net_iface;
 
@@ -105,7 +105,7 @@ void zb_trans_set_short_addr(zb_uint16_t addr)
 }
 
 /* Energy detection callback */
-static void energy_scan_done(struct device *dev, int16_t max_ed)
+static void energy_scan_done(const struct device *dev, int16_t max_ed)
 {
 	ARG_UNUSED(dev);
 

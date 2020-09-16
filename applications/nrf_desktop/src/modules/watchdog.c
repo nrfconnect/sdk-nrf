@@ -17,7 +17,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_WATCHDOG_LOG_LEVEL);
 #define WDT_FEED_WORKER_DELAY_MS ((CONFIG_DESKTOP_WATCHDOG_TIMEOUT)/3)
 
 struct wdt_data_storage {
-	struct device *wdt_drv;
+	const struct device *wdt_drv;
 	int wdt_channel_id;
 	struct k_delayed_work work;
 };

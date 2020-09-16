@@ -11,6 +11,7 @@
 #include <device.h>
 #include <drivers/gpio.h>
 #include <hal/nrf_spu.h>
+#include <arch/arm/aarch32/irq.h>
 #include "spm_internal.h"
 
 #if !defined(CONFIG_ARM_SECURE_FIRMWARE)
@@ -79,7 +80,8 @@
  *  0 kB  |---------------------|
  */
 
-extern void irq_target_state_set(unsigned int irq, int secure_state);
+extern irq_target_state_t irq_target_state_set(unsigned int irq,
+	irq_target_state_t irq_target_state);
 extern int irq_target_state_is_secure(unsigned int irq);
 
 /* printk wrapper, to turn off logs when booting silently */
@@ -275,7 +277,7 @@ static int spm_config_peripheral(uint8_t id, bool dma_present)
 	/* Even for non-present peripherals we force IRQs to be routed
 	 * to Non-Secure state.
 	 */
-	irq_target_state_set(id, 0);
+	irq_target_state_set(id, IRQ_TARGET_STATE_NON_SECURE);
 	return 0;
 }
 

@@ -22,7 +22,7 @@ LOG_MODULE_REGISTER(nrf_cloud_agps_sample,
 		    CONFIG_NRF_CLOUD_AGPS_SAMPLE_LOG_LEVEL);
 
 static struct cloud_backend *cloud_backend;
-static struct device *gps_dev;
+static const struct device *gps_dev;
 static uint64_t start_search_timestamp;
 static uint64_t fix_timestamp;
 static struct k_delayed_work gps_start_work;
@@ -273,7 +273,7 @@ static void send_nmea(char *nmea)
 	LOG_INF("GPS position sent to cloud");
 }
 
-static void gps_handler(struct device *dev, struct gps_event *evt)
+static void gps_handler(const struct device *dev, struct gps_event *evt)
 {
 	ARG_UNUSED(dev);
 

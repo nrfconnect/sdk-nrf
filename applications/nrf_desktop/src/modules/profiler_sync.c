@@ -22,7 +22,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_PROFILER_SYNC_LOG_LEVEL);
 
 #define SYNC_EVENT_NAME		"sync_event"
 
-static struct device *gpio_dev;
+static const struct device *gpio_dev;
 static struct gpio_callback gpio_cb;
 
 static struct k_delayed_work gen_sync_event;
@@ -44,7 +44,7 @@ static void register_sync_event(void)
 						     NULL, 0);
 }
 
-static void gen_sync_event_isr(struct device *gpio_dev,
+static void gen_sync_event_isr(const struct device *gpio_dev,
 			       struct gpio_callback *cb,
 			       uint32_t pins)
 {

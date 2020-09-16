@@ -36,7 +36,6 @@ pipeline {
       ARCH = "-a arm"
       SANITYCHECK_OPTIONS_COMMON = '''--ninja \
                                       --board-root nrf/boards \
-                                      --board-root zephyr/boards \
                                       --testcase-root nrf/samples \
                                       --testcase-root nrf/applications \
                                       --testcase-root nrf/tests \

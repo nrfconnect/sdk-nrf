@@ -36,8 +36,8 @@ struct nmos_config {
 	} mode;
 };
 
-static struct device *gpio_dev;
-static struct device *pwm_dev;
+static const struct device *gpio_dev;
+static const struct device *pwm_dev;
 
 static uint32_t current_period_us;
 

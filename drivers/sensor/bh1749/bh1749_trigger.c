@@ -18,7 +18,8 @@ LOG_MODULE_REGISTER(BH1749_TRIGGER, CONFIG_SENSOR_LOG_LEVEL);
 #define DT_DRV_COMPAT rohm_bh1749
 
 /* Callback for active sense pin from BH1749 */
-static void bh1749_gpio_callback(struct device *dev, struct gpio_callback *cb,
+static void bh1749_gpio_callback(const struct device *dev,
+				 struct gpio_callback *cb,
 				 uint32_t pins)
 {
 	struct bh1749_data *drv_data =
@@ -35,7 +36,7 @@ static void bh1749_work_cb(struct k_work *work)
 	struct bh1749_data *data = CONTAINER_OF(work,
 						struct bh1749_data,
 						work);
-	struct device *dev = data->dev;
+	const struct device *dev = data->dev;
 
 	if (data->trg_handler != NULL) {
 		data->trg_handler(dev, &data->trigger);
@@ -43,7 +44,7 @@ static void bh1749_work_cb(struct k_work *work)
 }
 
 /* Set sensor trigger attributes */
-int bh1749_attr_set(struct device *dev,
+int bh1749_attr_set(const struct device *dev,
 		    enum sensor_channel chan,
 		    enum sensor_attribute attr,
 		    const struct sensor_value *val)
@@ -94,7 +95,7 @@ int bh1749_attr_set(struct device *dev,
 	return -ENOTSUP;
 }
 
-int bh1749_trigger_set(struct device *dev,
+int bh1749_trigger_set(const struct device *dev,
 		       const struct sensor_trigger *trig,
 		       sensor_trigger_handler_t handler)
 {
@@ -159,7 +160,7 @@ int bh1749_trigger_set(struct device *dev,
 }
 
 /* Enabling GPIO sense on BH1749 INT pin. */
-int bh1749_gpio_interrupt_init(struct device *dev)
+int bh1749_gpio_interrupt_init(const struct device *dev)
 {
 	int err;
 	struct bh1749_data *drv_data = dev->data;

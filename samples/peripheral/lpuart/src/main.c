@@ -13,7 +13,7 @@ LOG_MODULE_REGISTER(app);
 #define BUF_SIZE 64
 static K_MEM_SLAB_DEFINE(uart_slab, BUF_SIZE, 3, 4);
 
-static void uart_irq_handler(struct device *dev, void *context)
+static void uart_irq_handler(const struct device *dev, void *context)
 {
 	uint8_t buf[] = {1, 2, 3, 4, 5};
 
@@ -32,7 +32,7 @@ static void uart_irq_handler(struct device *dev, void *context)
 	}
 }
 
-static void interrupt_driven(struct device *dev)
+static void interrupt_driven(const struct device *dev)
 {
 	uint8_t c = 0xff;
 
@@ -47,7 +47,7 @@ static void interrupt_driven(struct device *dev)
 	}
 }
 
-static void uart_callback(struct device *dev,
+static void uart_callback(const struct device *dev,
 			  struct uart_event *evt,
 			  void *user_data)
 {
@@ -91,7 +91,7 @@ static void uart_callback(struct device *dev,
 	}
 }
 
-static void async(struct device *lpuart)
+static void async(const struct device *lpuart)
 {
 	uint8_t txbuf[5] = {1, 2, 3, 4, 5};
 	int err;
@@ -100,7 +100,7 @@ static void async(struct device *lpuart)
 	err = k_mem_slab_alloc(&uart_slab, (void **)&buf, K_NO_WAIT);
 	__ASSERT(err == 0, "Failed to alloc slab");
 
-	err = uart_callback_set(lpuart, uart_callback, lpuart);
+	err = uart_callback_set(lpuart, uart_callback, (void *)lpuart);
 	__ASSERT(err == 0, "Failed to set callback");
 
 	err = uart_rx_enable(lpuart, buf, BUF_SIZE, 10);
@@ -119,7 +119,7 @@ static void async(struct device *lpuart)
 
 void main(void)
 {
-	struct device *lpuart;
+	const struct device *lpuart;
 
 	k_msleep(1000);
 

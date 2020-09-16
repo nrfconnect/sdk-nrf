@@ -23,7 +23,7 @@ struct env_sensor {
 	env_sensor_data_t sensor;
 	enum sensor_channel channel;
 	uint8_t *dev_name;
-	struct device *dev;
+	const struct device *dev;
 	struct k_spinlock lock;
 };
 

@@ -20,7 +20,7 @@
 #include "nrf_cc310_platform_entropy.h"
 #endif
 
-static int entropy_cc310_rng_get_entropy(struct device *dev, uint8_t *buffer,
+static int entropy_cc310_rng_get_entropy(const struct device *dev, uint8_t *buffer,
 					 uint16_t length)
 {
 	int res = -EINVAL;
@@ -70,7 +70,7 @@ static int entropy_cc310_rng_get_entropy(struct device *dev, uint8_t *buffer,
 	return res;
 }
 
-static int entropy_cc310_rng_init(struct device *dev)
+static int entropy_cc310_rng_init(const struct device *dev)
 {
 	/* No initialization is required */
 	(void)dev;

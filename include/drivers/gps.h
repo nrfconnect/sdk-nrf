@@ -189,7 +189,7 @@ struct gps_event {
  * @param dev Pointer to GPS device
  * @param evt Pointer to event data
  */
-typedef void (*gps_event_handler_t)(struct device *dev,
+typedef void (*gps_event_handler_t)(const struct device *dev,
 				    struct gps_event *evt);
 
 /**
@@ -198,7 +198,7 @@ typedef void (*gps_event_handler_t)(struct device *dev,
  *
  * See gps_start() for argument description
  */
-typedef int (*gps_start_t)(struct device *dev, struct gps_config *cfg);
+typedef int (*gps_start_t)(const struct device *dev, struct gps_config *cfg);
 
 /**
  * @typedef gps_stop_t
@@ -206,7 +206,7 @@ typedef int (*gps_start_t)(struct device *dev, struct gps_config *cfg);
  *
  * See gps_stop() for argument description
  */
-typedef int (*gps_stop_t)(struct device *dev);
+typedef int (*gps_stop_t)(const struct device *dev);
 
 /**
  * @typedef gps_agps_write_t
@@ -214,7 +214,8 @@ typedef int (*gps_stop_t)(struct device *dev);
  *
  * See gps_write() for argument description
  */
-typedef int (*gps_agps_write_t)(struct device *dev, enum gps_agps_type type,
+typedef int (*gps_agps_write_t)(const struct device *dev,
+				enum gps_agps_type type,
 				void *data, size_t data_len);
 
 /**
@@ -223,7 +224,8 @@ typedef int (*gps_agps_write_t)(struct device *dev, enum gps_agps_type type,
  *
  * See gps_init() for argument description
  */
-typedef int (*gps_init_t)(struct device *dev, gps_event_handler_t handler);
+typedef int (*gps_init_t)(const struct device *dev,
+			  gps_event_handler_t handler);
 
 /**
  * @typedef gps_deinit_t
@@ -231,7 +233,7 @@ typedef int (*gps_init_t)(struct device *dev, gps_event_handler_t handler);
  *
  * See gps_deinit() for argument description
  */
-typedef int (*gps_deinit_t)(struct device *dev);
+typedef int (*gps_deinit_t)(const struct device *dev);
 
 /**
  * @brief GPS driver API
@@ -255,7 +257,7 @@ struct gps_driver_api {
  * @param dev Pointer to GPS device
  * @param cfg Pointer to GPS configuration.
  */
-static inline int gps_start(struct device *dev, struct gps_config *cfg)
+static inline int gps_start(const struct device *dev, struct gps_config *cfg)
 {
 	struct gps_driver_api *api;
 
@@ -277,7 +279,7 @@ static inline int gps_start(struct device *dev, struct gps_config *cfg)
  *
  * @param dev Pointer to GPS device
  */
-static inline int gps_stop(struct device *dev)
+static inline int gps_stop(const struct device *dev)
 {
 	struct gps_driver_api *api;
 
@@ -304,7 +306,8 @@ static inline int gps_stop(struct device *dev)
  *
  * @return Zero on success or (negative) error code otherwise.
  */
-static inline int gps_agps_write(struct device *dev, enum gps_agps_type type,
+static inline int gps_agps_write(const struct device *dev,
+				 enum gps_agps_type type,
 				 void *data, size_t data_len)
 {
 	struct gps_driver_api *api;
@@ -330,7 +333,8 @@ static inline int gps_agps_write(struct device *dev, enum gps_agps_type type,
  *
  * @return Zero on success or (negative) error code otherwise.
  */
-static inline int gps_init(struct device *dev, gps_event_handler_t handler)
+static inline int gps_init(const struct device *dev,
+			   gps_event_handler_t handler)
 {
 	struct gps_driver_api *api;
 
@@ -354,7 +358,7 @@ static inline int gps_init(struct device *dev, gps_event_handler_t handler)
  *
  * @return Zero on success or (negative) error code otherwise.
  */
-static inline int gps_deinit(struct device *dev)
+static inline int gps_deinit(const struct device *dev)
 {
 	struct gps_driver_api *api;
 

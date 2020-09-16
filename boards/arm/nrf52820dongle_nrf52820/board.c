@@ -8,7 +8,7 @@
 #include <hal/nrf_power.h>
 #include <hal/nrf_nvmc.h>
 
-static int board_nrf52820dongle_init(struct device *dev)
+static int board_nrf52820dongle_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 

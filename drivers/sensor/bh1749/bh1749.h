@@ -103,11 +103,11 @@ enum async_init_step {
 };
 
 struct bh1749_data {
-	struct device *i2c;
-	struct device *gpio;
+	const struct device *i2c;
+	const struct device *gpio;
 	struct gpio_callback gpio_cb;
 	struct k_work work;
-	struct device *dev;
+	const struct device *dev;
 	uint16_t sample_rgb_ir[BH1749_SAMPLES_TO_FETCH];
 	enum async_init_step async_init_step;
 	int err;
@@ -120,16 +120,16 @@ struct bh1749_data {
 };
 
 #ifdef CONFIG_BH1749_TRIGGER
-int bh1749_attr_set(struct device *dev,
+int bh1749_attr_set(const struct device *dev,
 		    enum sensor_channel chan,
 		    enum sensor_attribute attr,
 		    const struct sensor_value *val);
 
-int bh1749_trigger_set(struct device *dev,
+int bh1749_trigger_set(const struct device *dev,
 		       const struct sensor_trigger *trig,
 		       sensor_trigger_handler_t handler);
 
-int bh1749_gpio_interrupt_init(struct device *dev);
+int bh1749_gpio_interrupt_init(const struct device *dev);
 #endif  /* CONFIG_BH1749_TRIGGER */
 
 #endif  /* ZEPHYR_DRIVERS_SENSOR_BH1749_H_ */

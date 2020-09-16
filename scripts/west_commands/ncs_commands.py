@@ -455,6 +455,7 @@ _BLOCKED_PROJECTS = set(
      'modules/hal/nxp',
      'modules/hal/openisa',
      'modules/hal/qmsi',
+     'modules/hal/quicklogic',
      'modules/hal/silabs',
      'modules/hal/stm32',
      'modules/hal/ti',

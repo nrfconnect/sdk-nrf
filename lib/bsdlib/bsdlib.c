@@ -34,7 +34,7 @@ extern void ipc_proxy_irq_handler(void);
 
 static int init_ret;
 
-static int _bsdlib_init(struct device *unused)
+static int _bsdlib_init(const struct device *unused)
 {
 	if (!first_time_init) {
 		sys_slist_init(&shutdown_threads);

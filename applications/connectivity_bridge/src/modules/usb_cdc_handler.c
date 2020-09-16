@@ -33,7 +33,7 @@ static K_WORK_DEFINE(cdc_dtr_work, cdc_dtr_work_handler);
 /* Incoming data from any CDC instance is copied into a block from this slab */
 K_MEM_SLAB_DEFINE(cdc_rx_slab, USB_CDC_RX_BLOCK_SIZE, USB_CDC_RX_BLOCK_COUNT, USB_CDC_SLAB_ALIGNMENT);
 
-static struct device *devices[CDC_DEVICE_COUNT];
+static const struct device *devices[CDC_DEVICE_COUNT];
 static uint32_t cdc_ready[CDC_DEVICE_COUNT];
 
 static uint8_t overflow_buf[64];
@@ -87,7 +87,7 @@ static void cdc_dtr_work_handler(struct k_work *work)
 	poll_dtr();
 }
 
-static void cdc_uart_interrupt_handler(struct device *dev, void *user_data)
+static void cdc_uart_interrupt_handler(const struct device *dev, void *user_data)
 {
 	int dev_idx = (int) user_data;
 

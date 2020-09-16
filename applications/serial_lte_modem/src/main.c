@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
 #define SLM_WQ_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
 static K_THREAD_STACK_DEFINE(slm_wq_stack_area, SLM_WQ_STACK_SIZE);
 
-static struct device *gpio_dev;
+static const struct device *gpio_dev;
 static struct gpio_callback gpio_cb;
 static struct k_work exit_idle_work;
 
@@ -57,7 +57,7 @@ static void exit_idle(struct k_work *work)
 	}
 }
 
-static void gpio_callback(struct device *dev,
+static void gpio_callback(const struct device *dev,
 		     struct gpio_callback *gpio_cb, uint32_t pins)
 {
 	k_work_submit_to_queue(&slm_work_q, &exit_idle_work);

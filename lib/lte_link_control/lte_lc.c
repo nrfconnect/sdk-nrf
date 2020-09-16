@@ -702,7 +702,7 @@ static int w_lte_lc_connect(bool blocking)
 	return err;
 }
 
-static int w_lte_lc_init_and_connect(struct device *unused)
+static int w_lte_lc_init_and_connect(const struct device *unused)
 {
 	int ret;
 
@@ -750,7 +750,7 @@ int lte_lc_connect(void)
 /* lte lc Init and connect wrapper */
 int lte_lc_init_and_connect(void)
 {
-	struct device *x = 0;
+	const struct device *x = 0;
 
 	int err = w_lte_lc_init_and_connect(x);
 

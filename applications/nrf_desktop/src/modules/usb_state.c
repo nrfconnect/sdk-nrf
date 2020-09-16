@@ -37,30 +37,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #define CONFIG_USB_HID_PROTOCOL_CODE -1
 #endif
 
-#define HID_DEVICE_CALLBACKS(dev_id)											\
-	static int _CONCAT(get_report_cb, dev_id)(struct usb_setup_packet *setup, int32_t *len, uint8_t **data) {	\
-		return get_report(usb_hid_device[dev_id].dev, setup, len, data);					\
-	}														\
-	static int _CONCAT(set_report_cb, dev_id)(struct usb_setup_packet *setup, int32_t *len, uint8_t **data) {	\
-		return set_report(usb_hid_device[dev_id].dev, setup, len, data);					\
-	}														\
-	static void _CONCAT(report_sent_cb, dev_id)(void) {								\
-		return report_sent_cb(usb_hid_device[dev_id].dev);							\
-	}														\
-	static void _CONCAT(protocol_change_cb, dev_id)(uint8_t protocol) {						\
-		return protocol_change(usb_hid_device[dev_id].dev, protocol);						\
-	}
-
-#define HID_DEVICE_OPS(dev_id)								\
-	[dev_id] = {									\
-		.get_report   		= _CONCAT(get_report_cb, dev_id),		\
-		.set_report   		= _CONCAT(set_report_cb, dev_id),		\
-		.int_in_ready		= _CONCAT(report_sent_cb, dev_id),		\
-		.protocol_change 	= _CONCAT(protocol_change_cb, dev_id),		\
-	}
 
 struct usb_hid_device {
-	struct device *dev;
+	const struct device *dev;
 	uint8_t hid_protocol;
 	uint8_t sent_report_id;
 	bool report_enabled[REPORT_ID_COUNT];
@@ -92,7 +71,7 @@ static struct usb_hid_device *dev_to_hid(const struct device *dev)
 	return usb_hid;
 }
 
-static int get_report(struct device *dev, struct usb_setup_packet *setup, int32_t *len, uint8_t **data)
+static int get_report(const struct device *dev, struct usb_setup_packet *setup, int32_t *len, uint8_t **data)
 {
 	uint8_t request_value[2];
 
@@ -143,7 +122,7 @@ static int get_report(struct device *dev, struct usb_setup_packet *setup, int32_
 	return 0;
 }
 
-static int set_report(struct device *dev, struct usb_setup_packet *setup, int32_t *len, uint8_t **data)
+static int set_report(const struct device *dev, struct usb_setup_packet *setup, int32_t *len, uint8_t **data)
 {
 	uint8_t request_value[2];
 
@@ -196,7 +175,7 @@ static int set_report(struct device *dev, struct usb_setup_packet *setup, int32_
 	return 0;
 }
 
-static void report_sent(struct device *dev, bool error)
+static void report_sent(const struct device *dev, bool error)
 {
 	struct usb_hid_device *usb_hid = dev_to_hid(dev);
 
@@ -213,7 +192,7 @@ static void report_sent(struct device *dev, bool error)
 	usb_hid->sent_report_id = REPORT_ID_COUNT;
 }
 
-static void report_sent_cb(struct device *dev)
+static void report_sent_cb(const struct device *dev)
 {
 	report_sent(dev, false);
 }
@@ -505,7 +484,7 @@ static void device_status(enum usb_dc_status_code cb_status, const uint8_t *para
 	}
 }
 
-static void protocol_change(struct device *dev, uint8_t protocol)
+static void protocol_change(const struct device *dev, uint8_t protocol)
 {
 	struct usb_hid_device *usb_hid = dev_to_hid(dev);
 
@@ -554,47 +533,15 @@ static void usb_wakeup(void)
 	}
 }
 
-HID_DEVICE_CALLBACKS(0);
-#if CONFIG_USB_HID_DEVICE_COUNT > 1
-HID_DEVICE_CALLBACKS(1);
-#endif
-#if CONFIG_USB_HID_DEVICE_COUNT > 2
-HID_DEVICE_CALLBACKS(2);
-#endif
-#if CONFIG_USB_HID_DEVICE_COUNT > 3
-HID_DEVICE_CALLBACKS(3);
-#endif
-#if CONFIG_USB_HID_DEVICE_COUNT > 4
-HID_DEVICE_CALLBACKS(4);
-#endif
-#if CONFIG_USB_HID_DEVICE_COUNT > 5
-HID_DEVICE_CALLBACKS(5);
-#endif
-#if CONFIG_USB_HID_DEVICE_COUNT > 6
-#error "Unsupported"
-#endif
-
-static const struct hid_ops hid_ops[CONFIG_USB_HID_DEVICE_COUNT] = {
-	HID_DEVICE_OPS(0),
-#if CONFIG_USB_HID_DEVICE_COUNT > 1
-	HID_DEVICE_OPS(1),
-#endif
-#if CONFIG_USB_HID_DEVICE_COUNT > 2
-	HID_DEVICE_OPS(2),
-#endif
-#if CONFIG_USB_HID_DEVICE_COUNT > 3
-	HID_DEVICE_OPS(3),
-#endif
-#if CONFIG_USB_HID_DEVICE_COUNT > 4
-	HID_DEVICE_OPS(4),
-#endif
-#if CONFIG_USB_HID_DEVICE_COUNT > 5
-	HID_DEVICE_OPS(5),
-#endif
-};
-
 static int usb_init(void)
 {
+	static const struct hid_ops hid_ops = {
+		.get_report = get_report,
+		.set_report = set_report,
+		.int_in_ready = report_sent_cb,
+		.protocol_change = protocol_change,
+	};
+
 	for (size_t i = 0; i < CONFIG_USB_HID_DEVICE_COUNT; i++) {
 		char name[32];
 		snprintf(name, sizeof(name), CONFIG_USB_HID_DEVICE_NAME "_%d", i);
@@ -607,7 +554,7 @@ static int usb_init(void)
 		usb_hid_device[i].sent_report_id = REPORT_ID_COUNT;
 
 		usb_hid_register_device(usb_hid_device[i].dev, hid_report_desc,
-					hid_report_desc_size, &hid_ops[i]);
+					hid_report_desc_size, &hid_ops);
 
 		int err = usb_hid_init(usb_hid_device[i].dev);
 		if (err) {

@@ -18,7 +18,7 @@
 #define LED_PORT	DT_GPIO_LABEL(DT_ALIAS(led0), gpios)
 #define TLS_SEC_TAG 42
 
-static struct		device *gpiob;
+static const struct	device *gpiob;
 static struct		gpio_callback gpio_cb;
 static struct k_work	fota_work;
 
@@ -108,7 +108,7 @@ static void app_dfu_transfer_start(struct k_work *unused)
  */
 static int led_app_version(void)
 {
-	struct device *dev;
+	const struct device *dev;
 
 	dev = device_get_binding(LED_PORT);
 	if (dev == 0) {
@@ -128,7 +128,7 @@ static int led_app_version(void)
 	return 0;
 }
 
-void dfu_button_pressed(struct device *gpiob, struct gpio_callback *cb,
+void dfu_button_pressed(const struct device *gpiob, struct gpio_callback *cb,
 			uint32_t pins)
 {
 	k_work_submit(&fota_work);

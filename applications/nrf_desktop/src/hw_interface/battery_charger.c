@@ -29,7 +29,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_CHARGER_LOG_LEVEL);
 
 #define ERROR_CHECK_TIMEOUT_MS	(1 + CSO_CHANGE_MAX * (1000 / CSO_PERIOD_HZ))
 
-static struct device *gpio_dev;
+static const struct device *gpio_dev;
 static struct gpio_callback gpio_cb;
 
 static struct k_delayed_work error_check;
@@ -82,7 +82,7 @@ static void error_check_handler(struct k_work *work)
 }
 
 
-static void cs_change(struct device *gpio_dev, struct gpio_callback *cb,
+static void cs_change(const struct device *gpio_dev, struct gpio_callback *cb,
 	       uint32_t pins)
 {
 	if (!atomic_get(&active)) {

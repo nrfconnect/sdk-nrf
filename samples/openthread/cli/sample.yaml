@@ -6,4 +6,4 @@ tests:
     build_only: true
     build_on_all: true
     tags: openthread cli
-    platform_whitelist: nrf52840dk_nrf52840 nrf52833dk_nrf52833
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833

@@ -25,7 +25,7 @@ static void test_flash_write_protected(void)
 	int err;
 
 	(void)memset(wd, 0xa5, sizeof(wd));
-	struct device *flash_dev = device_get_binding(FLASH_DEV_NAME);
+	const struct device *flash_dev = device_get_binding(FLASH_DEV_NAME);
 	(void) flash_write_protection_set(flash_dev, false);
 	printk("NOTE: A BUS FAULT immediately after this message"
 		" means the test passed!\n");

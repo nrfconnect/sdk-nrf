@@ -1089,7 +1089,7 @@ SHELL_CMD_REGISTER(print_rx, NULL, "Print RX payload", cmd_print_payload);
 SHELL_CMD_REGISTER(toggle_dcdc_state, NULL, TOGGLE_DCDC_HELP, cmd_toggle_dc);
 #endif
 
-static int radio_cmd_init(struct device *dev)
+static int radio_cmd_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 

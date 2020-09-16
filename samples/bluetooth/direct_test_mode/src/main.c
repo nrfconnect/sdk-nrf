@@ -36,7 +36,7 @@
 void main(void)
 {
 	int err;
-	struct device *uart;
+	const struct device *uart;
 	bool is_msb_read = false;
 	uint8_t rx_byte;
 	uint16_t dtm_cmd;

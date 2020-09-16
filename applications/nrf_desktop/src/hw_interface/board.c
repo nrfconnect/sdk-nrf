@@ -25,7 +25,7 @@ static int port_setup(const char *name,
 		      const struct pin_state pin_state[],
 		      size_t cnt)
 {
-	struct device *gpio_dev = device_get_binding(name);
+	const struct device *gpio_dev = device_get_binding(name);
 	int err = 0;
 
 	if (!gpio_dev) {

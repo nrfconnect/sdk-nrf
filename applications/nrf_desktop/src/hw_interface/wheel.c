@@ -45,8 +45,8 @@ static const struct sensor_trigger qdec_trig = {
 	.chan = SENSOR_CHAN_ROTATION,
 };
 
-static struct device *qdec_dev;
-static struct device *gpio_dev;
+static const struct device *qdec_dev;
+static const struct device *gpio_dev;
 static struct gpio_callback gpio_cbs[2];
 static struct k_spinlock lock;
 static struct k_delayed_work idle_timeout;
@@ -56,7 +56,7 @@ static enum state state;
 static int enable_qdec(enum state next_state);
 
 
-static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
+static void data_ready_handler(const struct device *dev, struct sensor_trigger *trig)
 {
 	if (IS_ENABLED(CONFIG_ASSERT)) {
 		k_spinlock_key_t key = k_spin_lock(&lock);
@@ -128,7 +128,7 @@ static int wakeup_int_ctrl_nolock(bool enable)
 	return err;
 }
 
-static void wakeup_cb(struct device *gpio_dev, struct gpio_callback *cb,
+static void wakeup_cb(const struct device *gpio_dev, struct gpio_callback *cb,
 		      uint32_t pins)
 {
 	struct wake_up_event *event;

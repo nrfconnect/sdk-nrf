@@ -25,7 +25,7 @@ LOG_MODULE_REGISTER(agps, CONFIG_AGPS_LOG_LEVEL);
 /* Number of DNS lookup attempts */
 #define DNS_ATTEMPT_COUNT  3
 
-static struct device *gps_dev;
+static const struct device *gps_dev;
 static int gnss_fd;
 static int supl_fd;
 #endif /* CONFIG_AGPS_SRC_SUPL */

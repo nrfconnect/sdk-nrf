@@ -118,7 +118,7 @@ static void notif_dispatch(const char *response)
 	k_mutex_unlock(&list_mtx);
 }
 
-static int module_init(struct device *dev)
+static int module_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 

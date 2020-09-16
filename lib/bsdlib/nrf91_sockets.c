@@ -1199,7 +1199,7 @@ NET_SOCKET_REGISTER(nrf91_socket, AF_UNSPEC, nrf91_socket_is_supported,
 
 /* Create a network interface for nRF91 */
 
-static int nrf91_bsdlib_socket_offload_init(struct device *arg)
+static int nrf91_bsdlib_socket_offload_init(const struct device *arg)
 {
 	ARG_UNUSED(arg);
 

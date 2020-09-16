@@ -34,7 +34,7 @@ LOG_MODULE_REGISTER(bsec, CONFIG_ASSET_TRACKER_LOG_LEVEL);
  */
 #define BSEC_STATE_SAVE_INTERVAL	600
 
-struct device *i2c_master;
+const struct device *i2c_master;
 
 struct env_sensor {
 	env_sensor_data_t sensor;

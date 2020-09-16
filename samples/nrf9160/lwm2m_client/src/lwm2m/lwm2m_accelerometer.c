@@ -54,7 +54,7 @@ struct orientation_detector_sensor_data {
 	enum orientation_state orientation; /**< Current orientation. */
 };
 
-static struct device *accel_dev;
+static const struct device *accel_dev;
 static double accel_offset[3];
 static struct k_delayed_work flip_poll_work;
 static uint32_t timestamp;

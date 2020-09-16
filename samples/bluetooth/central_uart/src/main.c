@@ -43,7 +43,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define UART_WAIT_FOR_BUF_DELAY K_MSEC(50)
 #define UART_RX_TIMEOUT 50
 
-static struct device *uart;
+static const struct device *uart;
 static struct k_delayed_work uart_work;
 
 K_SEM_DEFINE(nus_write_sem, 0, 1);
@@ -117,7 +117,7 @@ static uint8_t ble_data_received(const uint8_t *const data, uint16_t len)
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static void uart_cb(struct device *dev, struct uart_event *evt, void *user_data)
+static void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
 {
 	ARG_UNUSED(dev);
 

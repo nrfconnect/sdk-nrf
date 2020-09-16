@@ -45,7 +45,7 @@ LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);
 #define GPS_BLOCKED_TIMEOUT CONFIG_NRF9160_GPS_PRIORITY_WINDOW_TIMEOUT_SEC
 
 struct gps_drv_data {
-	struct device *dev;
+	const struct device *dev;
 	gps_event_handler_t handler;
 	struct gps_config current_cfg;
 	atomic_t is_init;
@@ -71,7 +71,7 @@ struct nrf9160_gps_config {
 	bool priority;
 };
 
-static int stop_gps(struct device *dev, bool is_timeout);
+static int stop_gps(const struct device *dev, bool is_timeout);
 
 static uint64_t fix_timestamp;
 
@@ -174,7 +174,7 @@ static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
 			(k_uptime_get() - fix_timestamp) / 1000);
 }
 
-static void notify_event(struct device *dev, struct gps_event *evt)
+static void notify_event(const struct device *dev, struct gps_event *evt)
 {
 	struct gps_drv_data *drv_data = dev->data;
 
@@ -437,14 +437,14 @@ wait:
 	}
 }
 
-static int init_thread(struct device *dev)
+static int init_thread(const struct device *dev)
 {
 	struct gps_drv_data *drv_data = dev->data;
 
 	drv_data->thread_id = k_thread_create(
 			&drv_data->thread, drv_data->thread_stack,
 			K_THREAD_STACK_SIZEOF(drv_data->thread_stack),
-			(k_thread_entry_t)gps_thread, dev, NULL, NULL,
+			(k_thread_entry_t)gps_thread, (void *)dev, NULL, NULL,
 			K_PRIO_PREEMPT(CONFIG_NRF9160_GPS_THREAD_PRIORITY),
 			0, K_NO_WAIT);
 
@@ -452,7 +452,7 @@ static int init_thread(struct device *dev)
 }
 
 #ifdef CONFIG_NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
-static int enable_gps(struct device *dev)
+static int enable_gps(const struct device *dev)
 {
 	int err;
 	enum lte_lc_system_mode system_mode;
@@ -567,7 +567,7 @@ static int parse_cfg(struct gps_config *cfg_src,
 	return 0;
 }
 
-static int start(struct device *dev, struct gps_config *cfg)
+static int start(const struct device *dev, struct gps_config *cfg)
 {
 	int retval, err;
 	struct gps_drv_data *drv_data = dev->data;
@@ -692,7 +692,7 @@ set_configuration:
 	return retval;
 }
 
-static int setup(struct device *dev)
+static int setup(const struct device *dev)
 {
 	int err = 0;
 	struct gps_drv_data *drv_data = dev->data;
@@ -729,7 +729,7 @@ static int setup(struct device *dev)
 	return err;
 }
 
-static int stop_gps(struct device *dev, bool is_timeout)
+static int stop_gps(const struct device *dev, bool is_timeout)
 {
 	struct gps_drv_data *drv_data = dev->data;
 	nrf_gnss_delete_mask_t delete_mask = 0;
@@ -756,7 +756,7 @@ static int stop_gps(struct device *dev, bool is_timeout)
 	return 0;
 }
 
-static int stop(struct device *dev)
+static int stop(const struct device *dev)
 {
 	int err = 0;
 	struct gps_drv_data *drv_data = dev->data;
@@ -793,7 +793,7 @@ static void stop_work_fn(struct k_work *work)
 {
 	struct gps_drv_data *drv_data =
 		CONTAINER_OF(work, struct gps_drv_data, stop_work);
-	struct device *dev = drv_data->dev;
+	const struct device *dev = drv_data->dev;
 	struct gps_event evt = {
 		.type = GPS_EVT_SEARCH_STOPPED
 	};
@@ -805,7 +805,7 @@ static void timeout_work_fn(struct k_work *work)
 {
 	struct gps_drv_data *drv_data =
 		CONTAINER_OF(work, struct gps_drv_data, timeout_work);
-	struct device *dev = drv_data->dev;
+	const struct device *dev = drv_data->dev;
 	struct gps_event evt = {
 		.type = GPS_EVT_SEARCH_TIMEOUT
 	};
@@ -825,8 +825,8 @@ static void blocked_work_fn(struct k_work *work)
 	}
 }
 
-static int agps_write(struct device *dev, enum gps_agps_type type, void *data,
-		      size_t data_len)
+static int agps_write(const struct device *dev, enum gps_agps_type type,
+		      void *data, size_t data_len)
 {
 	int err;
 	struct gps_drv_data *drv_data = dev->data;
@@ -844,7 +844,7 @@ static int agps_write(struct device *dev, enum gps_agps_type type, void *data,
 	return 0;
 }
 
-static int init(struct device *dev, gps_event_handler_t handler)
+static int init(const struct device *dev, gps_event_handler_t handler)
 {
 	struct gps_drv_data *drv_data = dev->data;
 	int err;

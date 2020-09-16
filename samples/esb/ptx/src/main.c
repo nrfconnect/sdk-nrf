@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(esb_ptx, CONFIG_ESB_PTX_APP_LOG_LEVEL);
 #define DT_DRV_COMPAT nordic_nrf_clock
 
 static bool ready = true;
-static struct device *led_port;
+static const struct device *led_port;
 static struct esb_payload rx_payload;
 static struct esb_payload tx_payload = ESB_CREATE_PAYLOAD(0,
 	0x01, 0x00, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
@@ -60,7 +60,7 @@ void event_handler(struct esb_evt const *event)
 int clocks_start(void)
 {
 	int err;
-	struct device *clk;
+	const struct device *clk;
 
 	clk = device_get_binding(DT_INST_LABEL(0));
 	if (!clk) {

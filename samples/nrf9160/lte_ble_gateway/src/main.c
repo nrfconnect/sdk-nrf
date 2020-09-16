@@ -146,7 +146,7 @@ void bsd_recoverable_error_handler(uint32_t err)
 }
 
 /**@brief Callback for GPS events */
-static void gps_handler(struct device *dev, struct gps_event *evt)
+static void gps_handler(const struct device *dev, struct gps_event *evt)
 {
 	uint32_t button_state, has_changed;
 	struct sensor_data in_data = {
@@ -437,7 +437,7 @@ static void modem_configure(void)
 static void sensors_init(void)
 {
 	int err;
-	struct device *gps_dev = device_get_binding(CONFIG_GPS_DEV_NAME);
+	const struct device *gps_dev = device_get_binding(CONFIG_GPS_DEV_NAME);
 	struct gps_config gps_cfg = {
 		.nav_mode = GPS_NAV_MODE_PERIODIC,
 		.interval = CONFIG_GPS_SEARCH_INTERVAL,

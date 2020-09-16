@@ -13,7 +13,7 @@
 static void clock_init(void)
 {
 	int err;
-	struct device *clock;
+	const struct device *clock;
 	enum clock_control_status clock_status;
 
 	clock = device_get_binding(DT_INST_LABEL(0));

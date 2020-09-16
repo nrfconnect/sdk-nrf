@@ -31,7 +31,7 @@
 #define PWM_CHANNEL	0
 #endif
 
-static struct device *pwm;
+static const struct device *pwm;
 #define PWM_PERIOD 1024
 
 void lc_pwm_led_init(void)

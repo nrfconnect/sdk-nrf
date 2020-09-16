@@ -17,7 +17,7 @@
 #include "bh1749.h"
 
 static struct k_delayed_work bh1749_init_work;
-static struct device *bh1749_dev;
+static const struct device *bh1749_dev;
 
 LOG_MODULE_REGISTER(BH1749, CONFIG_SENSOR_LOG_LEVEL);
 
@@ -40,7 +40,7 @@ static int(*const async_init_fn[ASYNC_INIT_STEP_COUNT])(
 	[ASYNC_INIT_STEP_CONFIGURE] = bh1749_async_init_configure,
 };
 
-static int bh1749_sample_fetch(struct device *dev, enum sensor_channel chan)
+static int bh1749_sample_fetch(const struct device *dev, enum sensor_channel chan)
 
 {
 	struct bh1749_data *data = dev->data;
@@ -101,7 +101,7 @@ static int bh1749_sample_fetch(struct device *dev, enum sensor_channel chan)
 	return 0;
 }
 
-static int bh1749_channel_get(struct device *dev,
+static int bh1749_channel_get(const struct device *dev,
 			      enum sensor_channel chan,
 			      struct sensor_value *val)
 {
@@ -176,7 +176,7 @@ static int bh1749_check(struct bh1749_data *data)
 	return 0;
 }
 
-static int bh1749_sw_reset(struct device *dev)
+static int bh1749_sw_reset(const struct device *dev)
 {
 	return i2c_reg_update_byte(dev, DT_REG_ADDR(DT_DRV_INST(0)),
 				   BH1749_SYSTEM_CONTROL,
@@ -279,7 +279,7 @@ static int bh1749_async_init_configure(struct bh1749_data *data)
 	return 0;
 }
 
-static int bh1749_init(struct device *dev)
+static int bh1749_init(const struct device *dev)
 {
 	bh1749_dev = dev;
 

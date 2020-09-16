@@ -4,10 +4,10 @@ sample:
 tests:
   samples.bluetooth.peripheral_hids_mouse:
     harness: bluetooth
-    platform_whitelist: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840
+    platform_allow: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840
     tags: bluetooth
   samples.bluetooth.peripheral_hids_mouse.build:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340pdk_nrf5340_cpuapp
+    platform_allow: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340pdk_nrf5340_cpuapp
     tags: bluetooth ci_build
