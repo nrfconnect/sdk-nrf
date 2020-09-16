@@ -27,7 +27,7 @@
 
 #include <zephyr/types.h>
 #include <sys/slist.h>
-#include <bluetooth/hci.h>
+#include <bluetooth/bluetooth.h>
 #include <bluetooth/uuid.h>
 #include <bluetooth/conn.h>
 
@@ -282,17 +282,14 @@ struct bt_scan_filter_match {
  *        connection and advertising information.
  */
 struct bt_scan_device_info {
-	/** Information about advertising. */
-	struct bt_scan_adv_info adv_info;
-
-	/** Pointer to device LE address. */
-	const bt_addr_le_t *addr;
+	/** Received advertising packet information */
+	const struct bt_le_scan_recv_info *recv_info;
 
 	/** Connection parameters for LE connection. */
 	const struct bt_le_conn_param *conn_param;
 
 	/** Received advertising data. If further
-	 *  data proccesing is needed, you should
+	 *  data processing is needed, you should
 	 *  use @em bt_data_parse() to get specific
 	 *  advertising data type.
 	 */

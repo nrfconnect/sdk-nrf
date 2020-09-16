@@ -74,7 +74,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 
 	const struct bt_uuid *uuid = filter_match->uuid.uuid[0];
 
-	bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
+	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
 	printk("Filters matched on UUID 0x%04x.\nAddress: %s connectable: %s\n",
 		BT_UUID_16(uuid)->val,
@@ -99,12 +99,13 @@ static void scan_filter_no_match(struct bt_scan_device_info *device_info,
 	struct bt_conn *conn;
 	char addr[BT_ADDR_LE_STR_LEN];
 
-	if (device_info->adv_info.adv_type == BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
-		bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
+	if (device_info->recv_info->adv_type == BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
+		bt_addr_le_to_str(device_info->recv_info->addr, addr,
+				  sizeof(addr));
 		printk("Direct advertising received from %s\n", addr);
 		bt_scan_stop();
 
-		err = bt_conn_le_create(device_info->addr,
+		err = bt_conn_le_create(device_info->recv_info->addr,
 					BT_CONN_LE_CREATE_CONN,
 					device_info->conn_param, &conn);
 
