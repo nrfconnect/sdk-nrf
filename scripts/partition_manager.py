@@ -617,17 +617,29 @@ def load_reqs(input_config):
 
 
 def get_dynamic_area_start_and_size(static_config, flash_size, dp):
-    # Remove app from this dict to simplify the case where partitions before and after are removed.
+    # Remove app from this dict to simplify the case where partitions
+    # before and after are removed.
     proper_partitions = [config for name, config in static_config.items()
                          if 'span' not in config.keys() and
                          name != dp]
 
-    starts = {flash_size} | {config['address'] for config in proper_partitions}
-    ends = {0} | {config['address'] + config['size'] for config in proper_partitions}
+    starts = {flash_size} | {config['address']
+                             for config in proper_partitions}
+    ends = {0} | {config['address'] + config['size']
+                  for config in proper_partitions}
     gaps = list(zip(sorted(ends - starts), sorted(starts - ends)))
 
     if len(gaps) != 1:
-        raise PartitionError("Incorrect amount of gaps found")
+        raise PartitionError(
+            "Incorrect amount of gaps found in static configuration. "
+            "There must be exactly one gap in the static configuration to "
+            "support placing the dynamic partitions (such as 'app'). "
+            f"Gaps found ({len(gaps)}):" +
+            ' '.join([f'0x{gap[0]:x}-0x{gap[1]:x}' for gap in gaps]) +
+            " The most common solution to this problem is to fill the "
+            "smallest of these gaps with statically defined partition(s) until"
+            " there is only one gap left. Alternatively re-order the already "
+            "defined static partitions so that only one gap remains.")
 
     start, end = gaps[0]
     return start, end - start
@@ -665,7 +677,7 @@ def get_region_config(pm_config, region_config, static_conf=None):
 def solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf):
     reserved = 0
     if static_conf:
-        verify_static_conf(size, start, placement_strategy, static_conf)
+        verify_static_conf_simple(size, start, placement_strategy, static_conf)
         reserved = sum([config['size'] for name, config in static_conf.items()
                         if 'region' in config.keys() and config['region'] == region_name])
         pm_config.update(static_conf)
@@ -708,11 +720,14 @@ def solve_simple_region(pm_config, start, size, placement_strategy, region_name,
             pm_config[region_name]['size'] = (start + size) - address
 
 
-def verify_static_conf(size, start, placement_strategy, static_conf):
-    # Verify that all statically defined partitions has given address,
+def verify_static_conf_simple(size, start, placement_strategy, static_conf):
+    # Verify the static configuration of a region with 'simple' placement.
+    # Ensure that all statically defined partitions have a given address,
     # and that they are packed at the end/start of the region.
-    starts = {start + size} | {c['address'] for c in static_conf.values() if 'size' in c}
-    ends = {start} | {c['address'] + c['size'] for c in static_conf.values() if 'size' in c}
+    starts = {start + size} | {c['address']
+                               for c in static_conf.values() if 'size' in c}
+    ends = {start} | {c['address'] + c['size']
+                      for c in static_conf.values() if 'size' in c}
     gaps = list(zip(sorted(ends - starts), sorted(starts - ends)))
 
     # The whole region is filled, which is valid.
@@ -724,9 +739,21 @@ def verify_static_conf(size, start, placement_strategy, static_conf):
     else:
         start_end_correct = gaps[0][0] == start
 
-    if len(gaps) != 1 or not start_end_correct:
-        raise PartitionError("Statically defined partitions are not packed at"
-                             " the start/end of region")
+    if len(gaps) != 1:
+        raise PartitionError(
+            "Incorrect amount of gaps found in static configuration for region"
+            f" '{list(static_conf.values())[0]['region']}'. "
+            "There must be exactly one gap in the static configuration to "
+            "support placing the non-statically-defined partitions. "
+            f"Gaps found ({len(gaps)}):" +
+            ' '.join([f'0x{gap[0]:x}-0x{gap[1]:x}' for gap in gaps]) +
+            " The most common solution to this problem is to re-order the "
+            "defined static partitions so that only one gap remains.")
+    elif not start_end_correct:
+        raise PartitionError(
+            f"Statically defined partitions are not packed at "
+            f"{'start' if placement_strategy == START_TO_END else 'end'} of "
+            f"region '{list(static_conf.values())[0]['region']}'.")
 
 
 def solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf, dp):
@@ -886,7 +913,7 @@ def main():
             to_print = \
                 {x: {a: b for a, b in y.items() if a in
                      ['size', 'placement', 'align']}
-                 for x, y in pm_config.items()
+                 for x, y in {**pm_config, **static_config}.items()
                  if 'size' in y and 'region' in y and y['region'] == region}
             print(yaml.dump(to_print))
             sys.exit(1)
