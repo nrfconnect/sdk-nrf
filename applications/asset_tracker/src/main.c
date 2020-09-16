@@ -1467,7 +1467,7 @@ void connection_evt_handler(const struct cloud_event *const evt)
 		k_delayed_work_cancel(&cloud_reboot_work);
 		k_sem_take(&cloud_disconnected, K_NO_WAIT);
 		atomic_set(&cloud_connect_attempts, 0);
-#if defined(CONFIG_CLOUD_PERSISTENT_SESSIONS)
+#if !IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION)
 		LOG_INF("Persistent Sessions = %u",
 			evt->data.persistent_session);
 #endif
