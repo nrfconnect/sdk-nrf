@@ -139,11 +139,6 @@ config DESKTOP_BLE_ADVERTISING_ENABLE
 	help
 	  Make device discoverable via BLE.
 
-config DESKTOP_BLE_SHORT_NAME
-	string "Short device name used for advertising"
-	default ""
-	depends on DESKTOP_BLE_ADVERTISING_ENABLE
-
 config DESKTOP_BLE_DIRECT_ADV
 	bool "Advertise to bonded peer directly"
 	depends on DESKTOP_BLE_ADVERTISING_ENABLE
