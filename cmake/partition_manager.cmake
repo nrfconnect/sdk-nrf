@@ -38,6 +38,17 @@ if (EXISTS ${static_configuration_file})
   set(static_configuration --static-config ${static_configuration_file})
 endif()
 
+if (NOT static_configuration AND CONFIG_PM_IMAGE_NOT_BUILT_FROM_SOURCE)
+  message(WARNING
+    "One or more child image is not configured to be built from source. \
+    However, there is no static configuration provided to the \
+    partition manager. Please provide a static configuration as described in \
+    the 'Scripts -> Partition Manager -> Static configuration' chapter in the \
+    documentation. Without this information, the build system is not able to \
+    place the image correctly in flash.")
+endif()
+
+
 # Check if current image is the dynamic partition in its domain.
 # I.E. it is the only partition without a statically configured size in this
 # domain. This is equivalent to the 'app' partition in the root domain.

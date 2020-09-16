@@ -5,6 +5,7 @@ choice
 config $(module)_BUILD_STRATEGY_USE_HEX_FILE
 	# Mandatory option when being built through add_child_image'
 	bool "Use hex file instead of building $(module)"
+	select PM_IMAGE_NOT_BUILT_FROM_SOURCE
 
 if $(module)_BUILD_STRATEGY_USE_HEX_FILE
 
@@ -17,6 +18,7 @@ endif # $(module)_BUILD_STRATEGY_USE_HEX_FILE
 config $(module)_BUILD_STRATEGY_SKIP_BUILD
 	# Mandatory option when being built through add_child_image'
 	bool "Skip building $(module)"
+	select PM_IMAGE_NOT_BUILT_FROM_SOURCE
 
 config $(module)_BUILD_STRATEGY_FROM_SOURCE
 	# Mandatory option when being built through add_child_image'

@@ -50,8 +50,10 @@ endmenu # Zephyr subsystem configurations
 
 menu "Zephyr samples configurations"
 
+if BT_RPMSG_NRF53 && SOC_NRF5340_CPUAPP
 module=HCI_RPMSG
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
+endif
 
 endmenu # Zephyr samples configurations
 
@@ -83,5 +85,11 @@ config PM_EXTERNAL_FLASH_BASE
 	default 0
 
 endif
+
+config PM_IMAGE_NOT_BUILT_FROM_SOURCE
+	bool
+	help
+	  Promptless helper config used to indicate that one or more
+	  image is not built from source.
 
 endmenu # Partition Manager
