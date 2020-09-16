@@ -264,6 +264,118 @@
 #define BT_MESH_PROP_ID_PRESENT_AMB_VOC_CONCENTRATION 0x0078
 /** Present Ambient Noise. */
 #define BT_MESH_PROP_ID_PRESENT_AMB_NOISE 0x0079
+/** Active Energy Loadside. */
+#define BT_MESH_PROP_ID_ACTIVE_ENERGY_LOADSIDE 0x0080
+/** Active Power Loadside. */
+#define BT_MESH_PROP_ID_ACTIVE_POWER_LOADSIDE 0x0081
+/** Air Pressure. */
+#define BT_MESH_PROP_ID_AIR_PRESSURE 0x0082
+/** Apparent Energy. */
+#define BT_MESH_PROP_ID_APPARENT_ENERGY 0x0083
+/** Apparent Power. */
+#define BT_MESH_PROP_ID_APPARENT_POWER 0x0084
+/** Apparent Wind Direction. */
+#define BT_MESH_PROP_ID_APPARENT_WIND_DIRECTION 0x0085
+/** Apparent Wind Speed. */
+#define BT_MESH_PROP_ID_APPARENT_WIND_SPEED 0x0086
+/** Dew Point. */
+#define BT_MESH_PROP_ID_DEW_POINT 0x0087
+/** External Supply Voltage. */
+#define BT_MESH_PROP_ID_EXTERNAL_SUPPLY_VOLTAGE 0x0088
+/** External Supply Voltage Frequency. */
+#define BT_MESH_PROP_ID_EXTERNAL_SUPPLY_VOLTAGE_FREQ 0x0089
+/** Gust Factor. */
+#define BT_MESH_PROP_ID_GUST_FACTOR 0x008A
+/** Heat Index. */
+#define BT_MESH_PROP_ID_HEAT_INDEX 0x008B
+/** Light Distribution. */
+#define BT_MESH_PROP_ID_LIGHT_DISTRIBUTION 0x008C
+/** Light Source Current. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_CURRENT 0x008D
+/** Light Source On Time Not Resettable. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_ON_TIME_NOT_RESETTABLE 0x008E
+/** Light Source On Time Resettable. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_ON_TIME_RESETTABLE 0x008F
+/** Light Source Open Circuit Statistics. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_OPEN_CIRCUIT_STAT 0x0090
+/** Light Source Overall Failures Statistics. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_OVERALL_FAILURES_STAT 0x0091
+/** Light Source Short Circuit Statistics. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_SHORT_CIRCUIT_STAT 0x0092
+/** Light Source Start Counter Resettable. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_START_COUNTER_RESETTABLE 0x0093
+/** Light Source Temperature. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_TEMP 0x0094
+/** Light Source Thermal Derating Statistics. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_THERMAL_DERATING_STAT 0x0095
+/** Light Source Thermal Shutdown Statistics. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_THERMAL_SHUTDOWN_STAT 0x0096
+/** Light Source Total Power On Cycles. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_TOTAL_POWER_ON_CYCLES 0x0097
+/** Light Source Voltage. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_VOLTAGE 0x0098
+/** Luminaire Color. */
+#define BT_MESH_PROP_ID_LUMINAIRE_COLOR 0x0099
+/** Luminaire Identification Number. */
+#define BT_MESH_PROP_ID_LUMINAIRE_IDENTIFICATION_NUMBER 0x009A
+/** Luminaire Manufacturer GTIN. */
+#define BT_MESH_PROP_ID_LUMINAIRE_MANUFACTURER_GTIN 0x009B
+/** Luminaire Nominal Input Power. */
+#define BT_MESH_PROP_ID_LUMINAIRE_NOMINAL_INPUT_POWER 0x009C
+/** Luminaire Nominal Maximum AC Mains Voltage. */
+#define BT_MESH_PROP_ID_LUMINAIRE_NOMINAL_MAXIMUM_AC_MAINS_VOLTAGE 0x009D
+/** Luminaire Nominal Minimum AC Mains Voltage. */
+#define BT_MESH_PROP_ID_LUMINAIRE_NOMINAL_MINIMUM_AC_MAINS_VOLTAGE 0x009E
+/** Luminaire Power At Minimum Dim Level. */
+#define BT_MESH_PROP_ID_LUMINAIRE_POWER_AT_MINIMUM_DIM_LEVEL 0x009F
+/** Luminaire Time Of Manufacture. */
+#define BT_MESH_PROP_ID_LUMINAIRE_TIME_OF_MANUFACTURE 0x00A0
+/** Magnetic Declination. */
+#define BT_MESH_PROP_ID_MAGNETIC_DECLINATION 0x00A1
+/** Magnetic Flux Density - 2D. */
+#define BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_2D 0x00A2
+/** Magnetic Flux Density - 3D. */
+#define BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_3D 0x00A3
+/** Nominal Light Output. */
+#define BT_MESH_PROP_ID_NOMINAL_LIGHT_OUTPUT 0x00A4
+/** Overall Failure Condition. */
+#define BT_MESH_PROP_ID_OVERALL_FAILURE_CONDITION 0x00A5
+/** Pollen Concentration. */
+#define BT_MESH_PROP_ID_POLLEN_CONCENTRATION 0x00A6
+/** Present Indoor Relative Humidity. */
+#define BT_MESH_PROP_ID_PRESENT_INDOOR_RELATIVE_HUMIDITY 0x00A7
+/** Present Outdoor Relative Humidity. */
+#define BT_MESH_PROP_ID_PRESENT_OUTDOOR_RELATIVE_HUMIDITY 0x00A8
+/** Pressure. */
+#define BT_MESH_PROP_ID_PRESSURE 0x00A9
+/** Rainfall. */
+#define BT_MESH_PROP_ID_RAINFALL 0x00AA
+/** Rated Median Useful Life Of Luminaire. */
+#define BT_MESH_PROP_ID_RATED_MEDIAN_USEFUL_LIFE_OF_LUMINAIRE 0x00AB
+/** Rated Median Useful Light Source Starts. */
+#define BT_MESH_PROP_ID_RATED_MEDIAN_USEFUL_LIGHT_SRC_STARTS 0x00AC
+/** Reference Temperature. */
+#define BT_MESH_PROP_ID_REFERENCE_TEMP 0x00AD
+/** Total Device Starts. */
+#define BT_MESH_PROP_ID_TOTAL_DEVICE_STARTS 0x00AE
+/** True Wind Direction. */
+#define BT_MESH_PROP_ID_TRUE_WIND_DIRECTION 0x00AF
+/** True Wind Speed. */
+#define BT_MESH_PROP_ID_TRUE_WIND_SPEED 0x00B0
+/** UV Index. */
+#define BT_MESH_PROP_ID_UV_INDEX 0x00B1
+/** Wind Chill. */
+#define BT_MESH_PROP_ID_WIND_CHILL 0x00B2
+/** Light Source Type. */
+#define BT_MESH_PROP_ID_LIGHT_SRC_TYPE 0x00B3
+/** Luminaire Identification String. */
+#define BT_MESH_PROP_ID_LUMINAIRE_IDENTIFICATION_STRING 0x00B4
+/** Output Power Limitation. */
+#define BT_MESH_PROP_ID_OUTPUT_POWER_LIMITATION 0x00B5
+/** Thermal Derating. */
+#define BT_MESH_PROP_ID_THERMAL_DERATING 0x00B6
+/** Output Current Percent. */
+#define BT_MESH_PROP_ID_OUTPUT_CURRENT_PERCENT 0x00B7
 
 /** @} */
 

@@ -334,6 +334,226 @@ extern const struct bt_mesh_sensor_type
  */
 extern const struct bt_mesh_sensor_type bt_mesh_sensor_present_amb_noise;
 
+/** Apparent Wind Direction
+ *
+ *  The apparent wind direction is the relative clockwise direction of the wind
+ *  in relation to the observer.
+ *
+ *  For example, the apparent wind direction aboard a boat is given in degrees
+ *  relative to the heading of the boat.
+ *
+ *  Channels:
+ *  - Apparent Wind Direction
+ *    - Unit: Degrees
+ *    - Encoding: 16 bit unsigned scalar (Resolution: 0.01 degrees)
+ *    - Range: 0 to 359.99
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_apparent_wind_direction;
+
+/** Apparent Wind Speed
+ *
+ *  Apparent Wind Speed is the relative speed of the wind in relation to the
+ *  observer.
+ *
+ *  Channels:
+ *  - Apparent Wind Speed
+ *    - Unit: Metres per second
+ *    - Encoding: 16 bit unsigned scalar (Resolution: 0.01 m/s)
+ *    - Range: 0 to 655.35
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_apparent_wind_speed;
+
+/** Dew Point
+ *
+ *  Channels:
+ *  - Dew Point
+ *    - Unit: Degrees Celsius
+ *    - Encoding: 8 bit signed scalar (Resolution: 1 C)
+ *    - Range: -128 to 127
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_dew_point;
+
+/** Gust Factor
+ *
+ *  Channels:
+ *  - Gust Factor
+ *    - Unit: _unitless_
+ *    - Encoding: 8 bit unsigned scalar (Resolution: 0.1)
+ *    - Range: 0 to 25.5
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_gust_factor;
+
+/** Heat Index
+ *
+ *  Channels:
+ *  - Heat Index
+ *    - Unit: Degrees Celsius
+ *    - Encoding: 8 bit signed scalar (Resolution: 1 C)
+ *    - Range: -128 to 127
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_heat_index;
+
+/** Present Indoor Relative Humidity
+ *
+ *  Channels:
+ *  - Humidity
+ *    - Unit: Percentage
+ *    - Encoding: 16 bit unsigned scalar (Resolution: 0.01 %)
+ *    - Range: 0 to 100
+ */
+extern const struct bt_mesh_sensor_type
+	bt_mesh_sensor_present_indoor_relative_humidity;
+
+/** Present Outdoor Relative Humidity
+ *
+ *  Channels:
+ *  - Humidity
+ *    - Unit: Percentage
+ *    - Encoding: 16 bit unsigned scalar (Resolution: 0.01 %)
+ *    - Range: 0 to 100
+ */
+extern const struct bt_mesh_sensor_type
+	bt_mesh_sensor_present_outdoor_relative_humidity;
+
+/** Magnetic Declination
+ *
+ *  The magnetic declination is the angle on the horizontal plane between the
+ *  direction of True North (geographic) and the direction of Magnetic North,
+ *  measured clockwise from True North to Magnetic North.
+ *
+ *  Channels:
+ *  - Magnetic Declination
+ *    - Unit: Degrees
+ *    - Encoding: 16 bit unsigned scalar (Resolution: 0.01 degrees)
+ *    - Range: 0 to 359.99
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_magnetic_declination;
+
+/** Magnetic Flux Density - 2D
+ *
+ * @note The Magnetic Flux Density unit is measured in tesla in the
+ *       specification. In the API, it is measured in microtesla to accomodate
+ *       the 6 digit format of the sensor values.
+ *
+ *  Channels:
+ *  - X-axis
+ *    - Unit: Microtesla
+ *    - Encoding: 16 bit signed scalar (Resolution: 0.1 uT)
+ *    - Range: -6553.6 to 6553.5
+ *  - Y-axis
+ *    - Unit: Microtesla
+ *    - Encoding: 16 bit signed scalar (Resolution: 0.1 uT)
+ *    - Range: -6553.6 to 6553.5
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_magnetic_flux_density_2d;
+
+/** Magnetic Flux Density - 3D
+ *
+ * @note The Magnetic Flux Density unit is measured in tesla in the
+ *       specification. In the API, it is measured in microtesla to accomodate
+ *       the 6 digit format of the sensor values.
+ *
+ *  Channels:
+ *  - X-axis
+ *    - Unit: Microtesla
+ *    - Encoding: 16 bit signed scalar (Resolution: 0.1 uT)
+ *    - Range: -6553.6 to 6553.5
+ *  - Y-axis
+ *    - Unit: Microtesla
+ *    - Encoding: 16 bit signed scalar (Resolution: 0.1 uT)
+ *    - Range: -6553.6 to 6553.5
+ *  - Z-axis
+ *    - Unit: Microtesla
+ *    - Encoding: 16 bit signed scalar (Resolution: 0.1 uT)
+ *    - Range: -6553.6 to 6553.5
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_magnetic_flux_density_3d;
+
+/** Pollen Concentration
+ *
+ *  Channels:
+ *  - Pollen Concentration
+ *    - Unit: Concentration
+ *    - Encoding: 24 bit unsigned scalar (Resolution: 1 per m3)
+ *    - Range: 0 to 16777215
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_pollen_concentration;
+
+/** Air Pressure
+ *
+ *  Channels:
+ *  - Pressure
+ *    - Unit: Pascal
+ *    - Encoding: 32 bit unsigned scalar (Resolution: 0.1 Pa)
+ *    - Range: 0 to 429496729.5
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_air_pressure;
+
+/** Pressure
+ *
+ *  A sensor reporting pressure other than air pressure.
+ *
+ *  Channels:
+ *  - Pressure
+ *    - Unit: Pascal
+ *    - Encoding: 32 bit unsigned scalar (Resolution: 0.1 Pa)
+ *    - Range: 0 to 429496729.5
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_pressure;
+
+/** Rainfall
+ *
+ *  Channels:
+ *  - Rainfall
+ *    - Unit: Meter
+ *    - Encoding: 16 bit unsigned scalar (Resolution: 0.001 m)
+ *    - Range: 0 to 655.35
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_rainfall;
+
+/** True Wind Direction
+ *
+ *  Wind direction is reported by the direction from which it originates and is
+ *  an angle measured clockwise relative to Geographic North.
+ *
+ *  Channels:
+ *  - True Wind Direction
+ *    - Unit: Degrees
+ *    - Encoding: 16 bit unsigned scalar (Resolution: 0.01 degrees)
+ *    - Range: 0 to 359.99
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_true_wind_direction;
+
+/** True Wind Speed
+ *
+ *  Channels:
+ *  - True Wind Speed
+ *    - Unit: Metres per second
+ *    - Encoding: 16 bit unsigned scalar (Resolution: 0.01 m/s)
+ *    - Range: 0 to 655.35
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_true_wind_speed;
+
+/** UV Index
+ *
+ *  Channels:
+ *  - UV Index
+ *    - Unit: _unitless_
+ *    - Encoding: 8 bit unsigned scalar (Resolution: 1)
+ *    - Range: 0 to 255
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_uv_index;
+
+/** Wind Chill
+ *
+ *  Channels:
+ *  - Wind Chill
+ *    - Unit: Degrees Celsius
+ *    - Encoding: 8 bit signed scalar (Resolution: 1 C)
+ *    - Range: -128 to 127
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_wind_chill;
+
 /** @} */
 
 /** @defgroup bt_mesh_sensor_types_device_operating_temperature Device operating
