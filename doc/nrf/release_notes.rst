@@ -17,6 +17,7 @@ Important issues that are discovered after a release is tagged are listed in the
    :maxdepth: 1
 
    releases/release-notes-latest
+   releases/release-notes-1.3.1
    releases/release-notes-1.3.0
    releases/release-notes-1.2.1
    releases/release-notes-1.2.0
