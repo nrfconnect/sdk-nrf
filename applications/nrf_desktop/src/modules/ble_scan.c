@@ -468,8 +468,8 @@ static void scan_init(void)
 	reset_subscribers();
 
 	static const struct bt_le_scan_param sp = {
-		.type = BT_HCI_LE_SCAN_ACTIVE,
-		.filter_dup = BT_HCI_LE_SCAN_FILTER_DUP_ENABLE,
+		.type = BT_LE_SCAN_TYPE_ACTIVE,
+		.options = BT_LE_SCAN_OPT_FILTER_DUPLICATE,
 		.interval = BT_GAP_SCAN_FAST_INTERVAL,
 		.window = BT_GAP_SCAN_FAST_WINDOW,
 	};

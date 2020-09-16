@@ -1309,11 +1309,11 @@ int bt_scan_start(enum bt_scan_type scan_type)
 {
 	switch (scan_type) {
 	case BT_SCAN_TYPE_SCAN_ACTIVE:
-		bt_scan.scan_param.type = BT_HCI_LE_SCAN_ACTIVE;
+		bt_scan.scan_param.type = BT_LE_SCAN_TYPE_ACTIVE;
 		break;
 
 	case BT_SCAN_TYPE_SCAN_PASSIVE:
-		bt_scan.scan_param.type = BT_HCI_LE_SCAN_PASSIVE;
+		bt_scan.scan_param.type = BT_LE_SCAN_TYPE_PASSIVE;
 		break;
 
 	default:
