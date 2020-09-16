@@ -373,7 +373,8 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			return 1;
 		}
 
-		if (!evt->param.connack.session_present_flag) {
+		if (IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION) ||
+		    !evt->param.connack.session_present_flag) {
 			err = aws_jobs_subscribe_topic_notify_next(client,
 							     notify_next_topic);
 			if (err) {
