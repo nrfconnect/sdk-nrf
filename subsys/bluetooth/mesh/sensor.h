@@ -31,12 +31,21 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_percentage_16;
 /* Environmental formats */
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_temp_8;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_temp;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_humidity;
 extern const struct bt_mesh_sensor_format
 	bt_mesh_sensor_format_co2_concentration;
+extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_noise;
 extern const struct bt_mesh_sensor_format
 	bt_mesh_sensor_format_voc_concentration;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_noise;
+extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_wind_speed;
+extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_temp_8_wide;
+extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_gust_factor;
+extern const struct bt_mesh_sensor_format
+	bt_mesh_sensor_format_magnetic_flux_density;
+extern const struct bt_mesh_sensor_format
+	bt_mesh_sensor_format_pollen_concentration;
+extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_pressure;
+extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_rainfall;
+extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_uv_index;
 
 /* Time formats */
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_decihour_8;
@@ -72,6 +81,7 @@ extern const struct bt_mesh_sensor_format
 	bt_mesh_sensor_format_perceived_lightness;
 
 /* Miscellaneous formats */
+extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_direction_16;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_count_16;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_gen_lvl;
 extern const struct bt_mesh_sensor_format
@@ -106,6 +116,12 @@ extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_lumen_per_watt;
 extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_lumen_hour;
 extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_gram_per_sec;
 extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_litre_per_sec;
+extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_degrees;
+extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_mps;
+extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_microtesla;
+extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_concentration;
+extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_pascal;
+extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_metre;
 extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_unitless;
 
 /** @} */
