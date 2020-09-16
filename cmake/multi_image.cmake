@@ -34,6 +34,20 @@ if(IMAGE_NAME)
 endif(IMAGE_NAME)
 
 function(add_child_image)
+  # Adds a child image to the build.
+  #
+  # Required arguments are:
+  # NAME - The name of the child image
+  # SOURCE_DIR - The source dir of the child image
+  #
+  # Optional arguments are:
+  # DOMAIN - The domain to place the child image in.
+  #
+  # Depending on the value of CONFIG_${NAME}_BUILD_STRATEGY the child image
+  # is either built from source, included as a hex file, or ignored.
+  #
+  # See chapter "Multi-image builds" in the documentation for more details.
+
   set(oneValueArgs NAME SOURCE_DIR DOMAIN)
   cmake_parse_arguments(ACI "" "${oneValueArgs}" "" ${ARGN})
 
@@ -57,8 +71,8 @@ function(add_child_image)
   endif()
 endfunction()
 
-# See 'add_child_image'
 function(add_child_image_from_source)
+  # See 'add_child_image'
   set(oneValueArgs NAME SOURCE_DIR DOMAIN BOARD)
   cmake_parse_arguments(ACI "" "${oneValueArgs}" "" ${ARGN})
 
