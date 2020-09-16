@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(app);
 #define RTC_LABEL DT_LABEL(DT_NODELABEL(rtc0))
 #endif
 
-static void alarm_callback(struct device *dev, uint8_t chan_id, uint32_t ticks,
+static void alarm_callback(const struct device *dev, uint8_t chan_id, uint32_t ticks,
 			   void *user_data);
 
 static struct counter_alarm_cfg alarm_cfg = {
@@ -62,8 +62,8 @@ static void ppi_trace_setup(void)
 	LOG_INF("PPI trace setup done.");
 }
 
-static void alarm_callback(struct device *dev, uint8_t chan_id, uint32_t ticks,
-			   void *user_data)
+static void alarm_callback(const struct device *dev, uint8_t chan_id,
+			   uint32_t ticks, void *user_data)
 {
 	int err;
 	uint32_t alarm_cnt = (uint32_t)user_data + 1;
@@ -79,7 +79,7 @@ static void alarm_callback(struct device *dev, uint8_t chan_id, uint32_t ticks,
 static void counter_setup(void)
 {
 	int err;
-	struct device *dev = device_get_binding(RTC_LABEL);
+	const struct device *dev = device_get_binding(RTC_LABEL);
 
 	__ASSERT(dev, "Sample cannot run on this board.");
 

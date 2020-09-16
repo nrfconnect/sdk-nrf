@@ -16,20 +16,20 @@
 #include <mpsl_clock.h>
 #include <multithreading_lock.h>
 #if IS_ENABLED(CONFIG_USB_NRFX)
-#include <hal/nrf_power.h>
+#include <nrfx_power.h>
 #endif
 
 #define DT_DRV_COMPAT nordic_nrf_clock
 
-static int clock_start(struct device *dev, clock_control_subsys_t subsys);
-static int clock_stop(struct device *dev, clock_control_subsys_t subsys);
-static int clock_async_start(struct device *dev, clock_control_subsys_t subsys,
+static int clock_start(const struct device *dev, clock_control_subsys_t subsys);
+static int clock_stop(const struct device *dev, clock_control_subsys_t subsys);
+static int clock_async_start(const struct device *dev, clock_control_subsys_t subsys,
 			     struct clock_control_async_data *data);
-static int clock_get_rate(struct device *dev, clock_control_subsys_t subsys,
+static int clock_get_rate(const struct device *dev, clock_control_subsys_t subsys,
 			  uint32_t *rate);
 static enum clock_control_status
-clock_get_status(struct device *dev, clock_control_subsys_t subsys);
-static int clock_control_init(struct device *dev);
+clock_get_status(const struct device *dev, clock_control_subsys_t subsys);
+static int clock_control_init(const struct device *dev);
 
 static const struct clock_control_driver_api clock_control_api = {
 	.on = clock_start,
@@ -165,11 +165,13 @@ static enum clock_control_status hf_get_status(void)
 }
 
 #if IS_ENABLED(CONFIG_USB_NRFX)
-static inline void power_event_cb(nrf_power_event_t event)
+static inline void power_event_cb(nrfx_power_usb_evt_t event)
 {
-	extern void usb_dc_nrfx_power_event_callback(nrf_power_event_t event);
+	// TODO TORA: will be reworked completely. Temp fix.
+	// See: https://github.com/zephyrproject-rtos/zephyr/pull/27422
+	extern void usb_dc_power_event_handler(nrfx_power_usb_evt_t event);
 
-	usb_dc_nrfx_power_event_callback(event);
+	usb_dc_power_event_handler(event);
 }
 #endif
 
@@ -188,22 +190,22 @@ void nrf_power_clock_isr(void)
 
 	if (usb_detected) {
 		nrf_power_event_clear(NRF_POWER, NRF_POWER_EVENT_USBDETECTED);
-		power_event_cb(NRF_POWER_EVENT_USBDETECTED);
+		power_event_cb(NRFX_POWER_USB_EVT_DETECTED);
 	}
 
 	if (usb_pwr_rdy) {
 		nrf_power_event_clear(NRF_POWER, NRF_POWER_EVENT_USBPWRRDY);
-		power_event_cb(NRF_POWER_EVENT_USBPWRRDY);
+		power_event_cb(NRFX_POWER_USB_EVT_READY);
 	}
 
 	if (usb_removed) {
 		nrf_power_event_clear(NRF_POWER, NRF_POWER_EVENT_USBREMOVED);
-		power_event_cb(NRF_POWER_EVENT_USBREMOVED);
+		power_event_cb(NRFX_POWER_USB_EVT_REMOVED);
 	}
 #endif
 }
 
-static int clock_start(struct device *dev, clock_control_subsys_t subsys)
+static int clock_start(const struct device *dev, clock_control_subsys_t subsys)
 {
 	struct mpsl_clock_control_data *mpsl_control_data = dev->data;
 	enum clock_control_nrf_type type = (enum clock_control_nrf_type)subsys;
@@ -235,7 +237,7 @@ static int clock_start(struct device *dev, clock_control_subsys_t subsys)
 	}
 }
 
-static int clock_stop(struct device *dev, clock_control_subsys_t subsys)
+static int clock_stop(const struct device *dev, clock_control_subsys_t subsys)
 {
 	struct mpsl_clock_control_data *mpsl_control_data = dev->data;
 	enum clock_control_nrf_type type = (enum clock_control_nrf_type)subsys;
@@ -271,7 +273,7 @@ static int clock_stop(struct device *dev, clock_control_subsys_t subsys)
 	}
 }
 
-static int clock_get_rate(struct device *dev, clock_control_subsys_t subsys,
+static int clock_get_rate(const struct device *dev, clock_control_subsys_t subsys,
 			  uint32_t *rate)
 {
 	ARG_UNUSED(dev);
@@ -294,7 +296,7 @@ static int clock_get_rate(struct device *dev, clock_control_subsys_t subsys,
 	return 0;
 }
 
-static enum clock_control_status clock_get_status(struct device *dev,
+static enum clock_control_status clock_get_status(const struct device *dev,
 						  clock_control_subsys_t subsys)
 {
 	ARG_UNUSED(dev);
@@ -314,7 +316,7 @@ static enum clock_control_status clock_get_status(struct device *dev,
 	}
 }
 
-static int clock_async_start(struct device *dev, clock_control_subsys_t subsys,
+static int clock_async_start(const struct device *dev, clock_control_subsys_t subsys,
 			     struct clock_control_async_data *data)
 {
 	struct mpsl_clock_control_data *mpsl_control_data = dev->data;
@@ -369,7 +371,7 @@ static int clock_async_start(struct device *dev, clock_control_subsys_t subsys,
 	return errcode;
 }
 
-static void started_cb(struct device *dev,
+static void started_cb(const struct device *dev,
 		       clock_control_subsys_t subsys,
 		       void *user_data)
 {
@@ -386,7 +388,7 @@ static void started_cb(struct device *dev,
 
 static void onoff_start(struct onoff_manager *mgr, onoff_notify_fn notify)
 {
-	struct device *dev = DEVICE_GET(clock_nrf);
+	const struct device *dev = DEVICE_GET(clock_nrf);
 	enum clock_control_nrf_type type = manager_to_clock_type(mgr);
 	static struct clock_control_async_data data;
 
@@ -406,7 +408,7 @@ static void onoff_start(struct onoff_manager *mgr, onoff_notify_fn notify)
 
 static void onoff_stop(struct onoff_manager *mgr, onoff_notify_fn notify)
 {
-	struct device *dev = DEVICE_GET(clock_nrf);
+	const struct device *dev = DEVICE_GET(clock_nrf);
 	enum clock_control_nrf_type type = manager_to_clock_type(mgr);
 
 	int err = clock_stop(dev, (clock_control_subsys_t) type);
@@ -414,7 +416,7 @@ static void onoff_stop(struct onoff_manager *mgr, onoff_notify_fn notify)
 	notify(mgr, err);
 }
 
-static int clock_control_init(struct device *dev)
+static int clock_control_init(const struct device *dev)
 {
 	struct mpsl_clock_control_data *mpsl_control_data = dev->data;
 
@@ -487,7 +489,7 @@ static void hf_clock_started_callback(void)
 	}
 
 	sys_slist_t *list = &(clock_control_data.async_on_list);
-	struct device *dev = DEVICE_GET(clock_nrf);
+	const struct device *dev = DEVICE_GET(clock_nrf);
 
 	if (is_running) {
 		struct clock_control_async_data *clock_async_data = NULL;

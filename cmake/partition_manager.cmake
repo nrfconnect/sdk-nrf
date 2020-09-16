@@ -311,13 +311,21 @@ foreach(container ${containers} ${merged})
 
 endforeach()
 
-get_target_property(runners_content runner_yml_props_target yaml_contents)
+# We need to tell the flash runner use 'merged.hex' instead of 'zephyr.hex'.
+# This is typically done by setting the 'hex_file' property of the
+# 'runners_yaml_props_target' target. However, since the CMakeLists.txt file
+# reading those properties has already run, and the 'hex_file' property
+# is not evaluated in a generator expression, it is too late at this point to
+# set that variable. Hence we must operate on the 'yaml_contents' property,
+# which is evaluated in a generator expression.
 
-string(REGEX REPLACE "--hex-file=[^\n]*"
-  "--hex-file=${PROJECT_BINARY_DIR}/${merged}.hex" new  ${runners_content})
+get_target_property(runners_content runners_yaml_props_target yaml_contents)
+
+string(REGEX REPLACE "hex_file:[^\n]*"
+  "hex_file: ${PROJECT_BINARY_DIR}/${merged}.hex" new  ${runners_content})
 
 set_property(
-  TARGET         runner_yml_props_target
+  TARGET         runners_yaml_props_target
   PROPERTY       yaml_contents
   ${new}
   )

@@ -19,7 +19,7 @@ LOG_MODULE_REGISTER(ui_led_pwm, CONFIG_UI_LOG_LEVEL);
 #define PWM_PIN(channel) DT_PROP(PWM_NODE, ch##channel##_pin)
 
 struct led {
-	struct device *pwm_dev;
+	const struct device *pwm_dev;
 
 	size_t id;
 	struct led_color color;

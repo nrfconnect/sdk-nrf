@@ -22,7 +22,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_LOG_LEVEL);
 #define LED_ID(led) ((led) - &leds[0])
 
 struct led {
-	struct device *pwm_dev;
+	const struct device *pwm_dev;
 
 	struct led_color color;
 	const struct led_effect *effect;

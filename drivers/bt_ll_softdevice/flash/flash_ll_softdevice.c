@@ -46,25 +46,25 @@ static struct {
 } flash_state;
 
 /* Forward declarations */
-static int sdc_flash_read(struct device *dev,
+static int sdc_flash_read(const struct device *dev,
 			off_t offset,
 			void *data,
 			size_t len);
-static int sdc_flash_write(struct device *dev,
+static int sdc_flash_write(const struct device *dev,
 			off_t offset,
 			const void *data,
 			size_t len);
-static int sdc_flash_erase(struct device *dev,
+static int sdc_flash_erase(const struct device *dev,
 			off_t offset,
 			size_t size);
-static int sdc_flash_write_protection_set(struct device *dev,
+static int sdc_flash_write_protection_set(const struct device *dev,
 					bool enable);
 
 static int flash_op_execute(void);
 
 #if defined(CONFIG_FLASH_PAGE_LAYOUT)
 static void sdc_flash_page_layout_get(
-	struct device *dev,
+	const struct device *dev,
 	const struct flash_pages_layout **layout,
 	size_t *layout_size);
 #endif /* defined(CONFIG_FLASH_PAGE_LAYOUT) */
@@ -269,7 +269,7 @@ static int flash_op_execute_with_lock(void)
 
 /* Driver API. */
 
-static int sdc_flash_read(struct device *dev,
+static int sdc_flash_read(const struct device *dev,
 			     off_t offset,
 			     void *data,
 			     size_t len)
@@ -295,7 +295,7 @@ static int sdc_flash_read(struct device *dev,
 	return 0;
 }
 
-static int sdc_flash_write(struct device *dev,
+static int sdc_flash_write(const struct device *dev,
 			      off_t offset,
 			      const void *data,
 			      size_t len)
@@ -326,7 +326,7 @@ static int sdc_flash_write(struct device *dev,
 	return err;
 }
 
-static int sdc_flash_erase(struct device *dev, off_t offset, size_t len)
+static int sdc_flash_erase(const struct device *dev, off_t offset, size_t len)
 {
 	int err;
 
@@ -361,7 +361,7 @@ static int sdc_flash_erase(struct device *dev, off_t offset, size_t len)
 	return err;
 }
 
-static int sdc_flash_write_protection_set(struct device *dev, bool enable)
+static int sdc_flash_write_protection_set(const struct device *dev, bool enable)
 {
 	/* The BLE controller handles the write protection automatically. */
 	return 0;
@@ -371,7 +371,7 @@ static int sdc_flash_write_protection_set(struct device *dev, bool enable)
 static struct flash_pages_layout dev_layout;
 
 static void sdc_flash_page_layout_get(
-	struct device *dev,
+	const struct device *dev,
 	const struct flash_pages_layout **layout,
 	size_t *layout_size)
 {
@@ -380,9 +380,8 @@ static void sdc_flash_page_layout_get(
 }
 #endif /* defined(CONFIG_FLASH_PAGE_LAYOUT) */
 
-static int flash_init(struct device *dev)
+static int flash_init(const struct device *dev)
 {
-	dev->api = &flash_api;
 	k_sem_init(&flash_state.sync, 0, 1);
 	k_mutex_init(&flash_state.lock);
 
@@ -394,6 +393,7 @@ static int flash_init(struct device *dev)
 	return 0;
 }
 
-DEVICE_INIT(flash, DT_LABEL(SOC_NV_FLASH_CONTROLLER_NODE),
-	    flash_init, NULL, NULL, POST_KERNEL,
-	    CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+// TODO TORA: upmerge confirmation from Robert needed.
+DEVICE_AND_API_INIT(flash, DT_LABEL(SOC_NV_FLASH_CONTROLLER_NODE),
+		    flash_init, NULL, NULL, POST_KERNEL,
+		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &flash_api);

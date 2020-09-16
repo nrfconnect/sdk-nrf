@@ -111,9 +111,9 @@ enum async_init_step {
 };
 
 struct paw3212_data {
-	struct device                *cs_gpio_dev;
-	struct device                *irq_gpio_dev;
-	struct device                *spi_dev;
+	const struct device          *cs_gpio_dev;
+	const struct device          *irq_gpio_dev;
+	const struct device          *spi_dev;
 	struct gpio_callback         irq_gpio_cb;
 	struct k_spinlock            lock;
 	int16_t                        x;
@@ -536,7 +536,7 @@ static int toggle_sleep_modes(struct paw3212_data *dev_data, uint8_t reg_addr1, 
 	return err;
 }
 
-static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
+static void irq_handler(const struct device *gpiob, struct gpio_callback *cb,
 			uint32_t pins)
 {
 	int err;
@@ -735,7 +735,7 @@ static int paw3212_init_spi(struct paw3212_data *dev_data)
 	return 0;
 }
 
-static int paw3212_init(struct device *dev)
+static int paw3212_init(const struct device *dev)
 {
 	struct paw3212_data *dev_data = &paw3212_data;
 	int err;
@@ -771,7 +771,7 @@ static int paw3212_init(struct device *dev)
 	return err;
 }
 
-static int paw3212_sample_fetch(struct device *dev, enum sensor_channel chan)
+static int paw3212_sample_fetch(const struct device *dev, enum sensor_channel chan)
 {
 	struct paw3212_data *dev_data = &paw3212_data;
 	uint8_t motion_status;
@@ -841,7 +841,7 @@ static int paw3212_sample_fetch(struct device *dev, enum sensor_channel chan)
 	return err;
 }
 
-static int paw3212_channel_get(struct device *dev, enum sensor_channel chan,
+static int paw3212_channel_get(const struct device *dev, enum sensor_channel chan,
 			       struct sensor_value *val)
 {
 	struct paw3212_data *dev_data = &paw3212_data;
@@ -871,7 +871,7 @@ static int paw3212_channel_get(struct device *dev, enum sensor_channel chan,
 	return 0;
 }
 
-static int paw3212_trigger_set(struct device *dev,
+static int paw3212_trigger_set(const struct device *dev,
 			       const struct sensor_trigger *trig,
 			       sensor_trigger_handler_t handler)
 {
@@ -914,7 +914,7 @@ static int paw3212_trigger_set(struct device *dev,
 	return err;
 }
 
-static int paw3212_attr_set(struct device *dev, enum sensor_channel chan,
+static int paw3212_attr_set(const struct device *dev, enum sensor_channel chan,
 			    enum sensor_attribute attr,
 			    const struct sensor_value *val)
 {

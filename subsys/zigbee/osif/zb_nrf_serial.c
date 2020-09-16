@@ -12,7 +12,7 @@
 
 static K_SEM_DEFINE(tx_done_sem, 1, 1);
 static K_SEM_DEFINE(rx_done_sem, 1, 1);
-static struct device *uart_dev;
+static const struct device *uart_dev;
 static bool is_sleeping;
 
 static zb_callback_t char_handler;
@@ -106,7 +106,7 @@ static void uart_rx_timeout(struct k_timer *dummy)
 	}
 }
 
-static void handle_rx_ready_evt(struct device *dev)
+static void handle_rx_ready_evt(const struct device *dev)
 {
 	int recv_len = 0;
 	uint8_t buffer[CONFIG_ZIGBEE_UART_RX_BUF_LEN];
@@ -157,7 +157,7 @@ static void handle_rx_ready_evt(struct device *dev)
 	}
 }
 
-static void handle_tx_ready_evt(struct device *dev)
+static void handle_tx_ready_evt(const struct device *dev)
 {
 	if (uart_tx_buf_len <= uart_tx_buf_offset) {
 		uart_irq_tx_disable(dev);
@@ -191,7 +191,7 @@ static void handle_tx_ready_evt(struct device *dev)
 	}
 }
 
-static void interrupt_handler(struct device *dev, void *user_data)
+static void interrupt_handler(const struct device *dev, void *user_data)
 {
 	while (uart_irq_update(dev) && uart_irq_is_pending(dev)) {
 		if (uart_irq_rx_ready(dev)) {

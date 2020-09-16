@@ -36,7 +36,7 @@ static struct ls_ch_data ls_ch_green = { .type = SENSOR_CHAN_GREEN };
 static struct ls_ch_data ls_ch_blue = { .type = SENSOR_CHAN_BLUE };
 static struct ls_ch_data ls_ch_ir = { .type = SENSOR_CHAN_IR };
 static char *ls_dev_name = CONFIG_LIGHT_SENSOR_DEV_NAME;
-static struct device *ls_dev;
+static const struct device *ls_dev;
 static struct k_spinlock ls_lock;
 static struct ls_ch_data *ls_data[LS_CH__END] = { [LS_CH_RED] = &ls_ch_red,
 						  [LS_CH_GREEN] = &ls_ch_green,

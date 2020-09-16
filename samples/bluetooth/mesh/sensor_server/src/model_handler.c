@@ -19,7 +19,7 @@ static const struct bt_mesh_sensor_column columns[] = {
 	{ { 30 }, { 100 } },
 };
 
-static struct device *dev;
+static const struct device *dev;
 static uint32_t tot_temp_samps;
 static uint32_t col_samps[ARRAY_SIZE(columns)];
 

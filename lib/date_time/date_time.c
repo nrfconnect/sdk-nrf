@@ -293,7 +293,7 @@ static void date_time_handler(struct k_work *work)
 	}
 }
 
-static int date_time_init(struct device *unused)
+static int date_time_init(const struct device *unused)
 {
 	k_delayed_work_init(&time_work, date_time_handler);
 	k_delayed_work_submit(&time_work,

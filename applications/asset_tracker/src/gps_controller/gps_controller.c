@@ -16,7 +16,7 @@
 LOG_MODULE_REGISTER(gps_control, CONFIG_ASSET_TRACKER_LOG_LEVEL);
 
 /* Structure to hold GPS work information */
-static struct device *gps_dev;
+static const struct device *gps_dev;
 static atomic_t gps_is_enabled;
 static atomic_t gps_is_active;
 static struct k_work_q *app_work_q;

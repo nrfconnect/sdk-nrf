@@ -12,7 +12,7 @@
 
 struct sensor_sim_data {
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
-	struct device *gpio;
+	const struct device *gpio;
 	const char *gpio_port;
 	uint8_t gpio_pin;
 	struct gpio_callback gpio_cb;

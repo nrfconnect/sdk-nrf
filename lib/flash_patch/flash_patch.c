@@ -9,7 +9,7 @@
 #include <init.h>
 
 #ifdef CONFIG_DISABLE_FLASH_PATCH
-static int disable_flash_patch(struct device *dev)
+static int disable_flash_patch(const struct device *dev)
 {
 	(void)dev;
 

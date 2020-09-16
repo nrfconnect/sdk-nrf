@@ -25,7 +25,7 @@ struct rng_driver_data {
 
 static struct rng_driver_data rng_data;
 
-static inline struct rng_driver_data *rng_driver_data_get(struct device *dev)
+static inline struct rng_driver_data *rng_driver_data_get(const struct device *dev)
 {
 	__ASSERT_NO_MSG(dev != NULL);
 	__ASSERT_NO_MSG((intptr_t) dev->data == (intptr_t) &rng_data);
@@ -33,7 +33,7 @@ static inline struct rng_driver_data *rng_driver_data_get(struct device *dev)
 	return dev->data;
 }
 
-static int rng_driver_get_entropy(struct device *dev, uint8_t *buf, uint16_t len)
+static int rng_driver_get_entropy(const struct device *dev, uint8_t *buf, uint16_t len)
 {
 	struct rng_driver_data *rng_dev = rng_driver_data_get(dev);
 	uint8_t *p_dst = buf;
@@ -66,7 +66,7 @@ static int rng_driver_get_entropy(struct device *dev, uint8_t *buf, uint16_t len
 	return 0;
 }
 
-static int rng_driver_get_entropy_isr(struct device *dev, uint8_t *buf, uint16_t len,
+static int rng_driver_get_entropy_isr(const struct device *dev, uint8_t *buf, uint16_t len,
 				      uint32_t flags)
 {
 
@@ -105,7 +105,7 @@ static void rng_driver_isr(void *param)
 	k_sem_give(&rng_data.sem_sync);
 }
 
-static int rng_driver_init(struct device *dev)
+static int rng_driver_init(const struct device *dev)
 {
 	struct rng_driver_data *rng_dev = rng_driver_data_get(dev);
 

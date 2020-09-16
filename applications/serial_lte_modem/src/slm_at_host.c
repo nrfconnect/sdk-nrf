@@ -70,7 +70,7 @@ enum shutdown_modes {
 };
 
 static enum term_modes term_mode;
-static struct device *uart_dev;
+static const struct device *uart_dev;
 static uint8_t at_buf[AT_MAX_CMD_LEN];
 static size_t at_buf_len;
 static struct k_work cmd_send_work;
@@ -541,7 +541,7 @@ send:
 	cmd_len = 0;
 }
 
-static void uart_callback(struct device *dev, struct uart_event *evt,
+static void uart_callback(const struct device *dev, struct uart_event *evt,
 			  void *user_data)
 {
 	ARG_UNUSED(dev);

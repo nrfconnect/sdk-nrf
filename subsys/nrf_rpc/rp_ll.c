@@ -46,10 +46,10 @@ BUILD_ASSERT(VRING_RX_ADDRESS >= SHM_START_ADDR);
 
 /* Handlers for TX and RX channels */
 /* TX handler */
-static struct device *ipm_tx_handle;
+static const struct device *ipm_tx_handle;
 
 /* RX handler */
-static struct device *ipm_rx_handle;
+static const struct device *ipm_rx_handle;
 
 static struct rpmsg_virtio_device rvdev;
 struct rpmsg_device *rdev;

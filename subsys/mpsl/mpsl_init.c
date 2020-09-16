@@ -118,7 +118,7 @@ static uint8_t m_config_clock_source_get(void)
 #endif
 }
 
-static int mpsl_lib_init(struct device *dev)
+static int mpsl_lib_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 	int err = 0;
@@ -158,7 +158,7 @@ static int mpsl_lib_init(struct device *dev)
 	return 0;
 }
 
-static int mpsl_signal_thread_init(struct device *dev)
+static int mpsl_signal_thread_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 

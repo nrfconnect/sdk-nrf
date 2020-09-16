@@ -54,7 +54,7 @@ enum select_uart {
 };
 
 static enum term_modes term_mode;
-static struct device *uart_dev;
+static const struct device *uart_dev;
 static char at_buf[AT_BUF_SIZE]; /* AT command and modem response buffer */
 static struct k_work_q at_host_work_q;
 static struct k_work cmd_send_work;
@@ -189,7 +189,7 @@ send:
 	}
 }
 
-static void isr(struct device *dev, void *user_data)
+static void isr(const struct device *dev, void *user_data)
 {
 	ARG_UNUSED(user_data);
 
@@ -249,7 +249,7 @@ static int at_uart_init(char *uart_dev_name)
 	return err;
 }
 
-static int at_host_init(struct device *arg)
+static int at_host_init(const struct device *arg)
 {
 	char *uart_dev_name;
 	int err;

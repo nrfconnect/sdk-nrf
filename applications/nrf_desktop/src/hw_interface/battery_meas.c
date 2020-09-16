@@ -51,7 +51,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_MEAS_LOG_LEVEL);
 				 * ADC_REF_INTERNAL_MV / ADC_MAX)
 #endif
 
-static struct device *adc_dev;
+static const struct device *adc_dev;
 static int16_t adc_buffer;
 static bool adc_async_read_pending;
 
@@ -62,7 +62,7 @@ static struct k_poll_event  async_evt =
 				 K_POLL_MODE_NOTIFY_ONLY,
 				 &async_sig);
 
-static struct device *gpio_dev;
+static const struct device *gpio_dev;
 
 static atomic_t active;
 static bool sampling;

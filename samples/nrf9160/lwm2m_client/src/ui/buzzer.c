@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(buzzer, CONFIG_UI_LOG_LEVEL);
 #define BUZZER_MIN_DUTY_CYCLE_DIV	100
 #define BUZZER_MAX_DUTY_CYCLE_DIV	2
 
-struct device *pwm_dev;
+const struct device *pwm_dev;
 static atomic_t buzzer_enabled;
 
 static uint32_t intensity_to_duty_cycle_divisor(uint8_t intensity)

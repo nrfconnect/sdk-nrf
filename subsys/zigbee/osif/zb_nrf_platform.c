@@ -248,7 +248,7 @@ static void zb_app_cb_process_schedule(struct k_work *item)
 	(void)item;
 }
 
-static int zigbee_init(struct device *unused)
+static int zigbee_init(const struct device *unused)
 {
 	ARG_UNUSED(unused);
 

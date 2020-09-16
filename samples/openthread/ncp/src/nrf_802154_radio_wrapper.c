@@ -8,7 +8,7 @@
 #include <device.h>
 #include <net/ieee802154_radio.h>
 
-static struct device *radio_dev;
+static const struct device *radio_dev;
 static struct ieee802154_radio_api *radio_api;
 
 bool nrf_802154_radio_wrapper_auto_ack_get(void)

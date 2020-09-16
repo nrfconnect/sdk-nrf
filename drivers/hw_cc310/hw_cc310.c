@@ -17,7 +17,7 @@
 
 #if CONFIG_HW_CC310
 
-static int hw_cc310_init(struct device *dev)
+static int hw_cc310_init(const struct device *dev)
 {
 	int res;
 

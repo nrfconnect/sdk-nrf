@@ -68,7 +68,7 @@ config SDC_MAX_CONN_EVENT_LEN_DEFAULT
 config SDC_RX_PRIO
 	# Hidden option to set the priority of the controller receive thread
 	int
-	default BT_RX_PRIO_HIGH
+	default BT_DRIVER_RX_HIGH_PRIO
 
 config SDC_RX_STACK_SIZE
 	int "Size of the receive thread stack"
