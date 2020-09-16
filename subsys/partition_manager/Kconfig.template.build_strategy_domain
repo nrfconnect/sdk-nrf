@@ -14,6 +14,7 @@ choice
 config $(module)_BUILD_STRATEGY_SKIP_BUILD
 	# Mandatory option when being built through add_child_image'
 	bool "Skip building $(module)"
+	select PM_IMAGE_NOT_BUILT_FROM_SOURCE
 
 config $(module)_BUILD_STRATEGY_FROM_SOURCE
 	# Mandatory option when being built through add_child_image'
