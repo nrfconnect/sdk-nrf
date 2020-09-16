@@ -565,25 +565,32 @@ Configuring static partitions
 Static partitions are defined through a YAML-formatted configuration file in the root application's source directory.
 This file is similar to the regular :file:`pm.yml` configuration files, except that it also defines the start address for all partitions.
 
-If the build system discovers a file named :file:`pm_static.yml`, it automatically provides it to the Partition Manager script as static configuration.
 The static configuration can be provided through a :file:`pm_static.yml` file in the application's source directory.
-Alternatively, define a ``PM_STATIC_YML_FILE`` variable that provides the path and file name for the static configuration in the application's :file:`CMakeLists.txt` file.
+Alternatively, define a ``PM_STATIC_YML_FILE`` variable that provides the path and file name for the static configuration in the application's :file:`CMakeLists.txt` file, as shown in the excerpt below.
+
+
+.. code-block:: cmake
+
+   # Use static partition layout to ensure consistency between builds.
+   # This is to ensure settings storage will be at the same location after the DFU.
+   set(PM_STATIC_YML_FILE
+     ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_${CMAKE_BUILD_TYPE}.yml
+     )
 
 The current partition configuration for a build can be found in :file:`${BUILD_DIR}/partitions.yml`.
 To apply the current configuration as a static configuration, copy this file to :file:`${APPLICATION_SOURCE_DIR}/pm_static.yml`.
+
+It is also possible to build a :file:`pm_static.yml` from scratch by following the description in :ref:`ug_pm_static_add`
+
+Some care must be taken when modifying static configurations.
+Firstly, there can be only one unoccupied gap per region.
+Secondly all statically defined partitions in regions with ``end_to_start`` or ``start_to_end`` placement strategy must be packed at the end or start of the region, respectively.
+The default ``flash_primary`` region use the ``complex`` placement strategy, so the this limitation does not apply there.
 
 You can add or remove partitions as described in the following sections.
 
 .. note::
   If the static configuration contains an entry for the ``app`` partition, this entry is ignored.
-
-.. _ug_pm_static_remove:
-
-Removing a static partition
----------------------------
-To remove a static partition, delete its entry in :file:`pm_static.yml`.
-
-Only partitions adjacent to the ``app`` partition or other removed partitions can be removed.
 
 .. _ug_pm_static_add_dynamic:
 
@@ -601,6 +608,7 @@ Adding a static partition
 -------------------------
 To add a static partition, add an entry for it in :file:`pm_static.yml`.
 This entry must define the properties ``address``, ``size``, and - if applicable - ``span``.
+The ``flash_primary`` region is the default if no ``region`` property is specified.
 
 .. code-block:: yaml
    :caption: Example of static configuration of a partition with span
@@ -612,3 +620,12 @@ This entry must define the properties ``address``, ``size``, and - if applicable
 
 .. note::
   Child images that are built with the build strategy *partition_name*\ _BUILD_STRATEGY_SKIP_BUILD or *partition_name*\ _BUILD_STRATEGY_USE_HEX_FILE must define a static partition to ensure correct placement of the dynamic partitions.
+
+.. _ug_pm_static_remove:
+
+Removing a static partition
+---------------------------
+To remove a static partition, delete its entry in :file:`pm_static.yml`.
+
+Only partitions adjacent to the ``app`` partition or other removed partitions can be removed.
+
