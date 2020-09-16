@@ -90,15 +90,24 @@ See the following example code:
 .. code-block:: cmake
 
    if (CONFIG_SPM)
-     add_child_image(spm ${CMAKE_CURRENT_LIST_DIR}/spm)
+     add_child_image(
+       NAME spm
+       SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/spm
+       )
    endif()
 
    if (CONFIG_SECURE_BOOT)
-     add_child_image(b0 ${CMAKE_CURRENT_LIST_DIR}/bootloader)
+     add_child_image(
+       NAME b0
+       SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/bootloader
+       )
    endif()
 
    if (CONFIG_BOOTLOADER_MCUBOOT)
-     add_child_image(mcuboot ${MCUBOOT_BASE}/boot/zephyr)
+      add_child_image(
+        NAME mcuboot
+        SOURCE_DIR ${MCUBOOT_DIR}/boot/zephyr
+        )
    endif()
 
 In this code, ``add_child_image`` registers the child image with the given name and file path and executes the build scripts of the child image.
@@ -113,8 +122,10 @@ For example:
    add_child_image(
       NAME hci_rpmsg
       SOURCE_DIR ${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg
-      DOMAIN nrf5340pdk_nrf5340_cpunet)
+      DOMAIN CPUNET
+      )
 
+A *domain* is well-defined if there exists a configuration ``CONFIG_DOMAIN_${DOMAIN}_BOARD`` in Kconfig.
 
 Adding configuration options
 ============================
@@ -134,35 +145,12 @@ The three options are:
 
 You must add these four configuration options to the Kconfig file for your child image, replacing *IMAGENAME* with the (uppercase) name of your child image (as specified in ``add_child_image``).
 
-The following example shows the configuration options for MCUboot:
+This can be done by including the :file:`Kconfig.template.build_strategy` template, as shown below.
 
 .. code-block:: Kconfig
 
-   choice
-  	prompt "MCUboot build strategy"
-  	default MCUBOOT_BUILD_STRATEGY_FROM_SOURCE
-
-   config MCUBOOT_BUILD_STRATEGY_USE_HEX_FILE
-  	# Mandatory option when being built through 'add_child_image'
-  	bool "Use HEX file instead of building MCUboot"
-
-   if MCUBOOT_BUILD_STRATEGY_USE_HEX_FILE
-
-   config MCUBOOT_HEX_FILE
-  	# Mandatory option when being built through 'add_child_image'
-  	string "MCUboot HEX file"
-
-   endif # MCUBOOT_USE_HEX_FILE
-
-   config MCUBOOT_BUILD_STRATEGY_SKIP_BUILD
-  	# Mandatory option when being built through 'add_child_image'
-  	bool "Skip building MCUboot"
-
-   config MCUBOOT_BUILD_STRATEGY_FROM_SOURCE
-  	# Mandatory option when being built through 'add_child_image'
-  	bool "Build from source"
-
-   endchoice
+   module=MCUBOOT
+   source "${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/Kconfig.template.build_strategy"
 
 
 Image-specific variables
