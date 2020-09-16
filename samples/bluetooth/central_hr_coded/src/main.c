@@ -127,7 +127,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	char addr[BT_ADDR_LE_STR_LEN];
 	struct bt_conn_le_create_param *conn_params;
 
-	bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
+	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
 	printk("Filters matched. Address: %s connectable: %s\n",
 		addr, connectable ? "yes" : "no");
@@ -142,7 +142,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 			BT_GAP_SCAN_FAST_INTERVAL,
 			BT_GAP_SCAN_FAST_INTERVAL);
 
-	err = bt_conn_le_create(device_info->addr, conn_params,
+	err = bt_conn_le_create(device_info->recv_info->addr, conn_params,
 				BT_LE_CONN_PARAM_DEFAULT,
 				&default_conn);
 

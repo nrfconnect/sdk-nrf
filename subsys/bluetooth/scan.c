@@ -1119,8 +1119,11 @@ int bt_scan_stop(void)
 	return bt_le_scan_stop();
 }
 
+static struct bt_le_scan_cb scan_cb;
 void bt_scan_init(const struct bt_scan_init_param *init)
 {
+	bt_le_scan_cb_register(&scan_cb);
+
 	/* Disable all scanning filters. */
 	memset(&bt_scan.scan_filters, 0, sizeof(bt_scan.scan_filters));
 
@@ -1261,8 +1264,8 @@ static void filter_state_check(struct bt_scan_control *control,
 	}
 }
 
-static void scan_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
-			      struct net_buf_simple *ad)
+static void scan_recv(const struct bt_le_scan_recv_info *info,
+		      struct net_buf_simple *ad)
 {
 	struct bt_scan_control scan_control;
 	struct net_buf_simple_state state;
@@ -1274,13 +1277,11 @@ static void scan_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t typ
 	check_enabled_filters(&scan_control);
 
 	/* Check id device is connectable. */
-	if (type == BT_GAP_ADV_TYPE_ADV_IND ||
-	    type ==  BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
-		scan_control.connectable = true;
-	}
+	scan_control.connectable =
+		(info->adv_props & BT_GAP_ADV_PROP_CONNECTABLE) != 0;
 
 	/* Check the address filter. */
-	check_addr(&scan_control, addr);
+	check_addr(&scan_control, info->addr);
 
 	/* Save advertising buffer state to transfer it
 	 * data to application if futher processing is needed.
@@ -1289,18 +1290,20 @@ static void scan_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t typ
 	bt_data_parse(ad, adv_data_found, (void *)&scan_control);
 	net_buf_simple_restore(ad, &state);
 
-	scan_control.device_info.addr = addr;
+	scan_control.device_info.recv_info = info;
 	scan_control.device_info.conn_param = &bt_scan.conn_param;
-	scan_control.device_info.adv_info.adv_type = type;
-	scan_control.device_info.adv_info.rssi = rssi;
 	scan_control.device_info.adv_data = ad;
 
 	/* In the multifilter mode, the number of the active filters must equal
 	 * the number of the filters matched to generate the notification.
 	 * If the event handler is not NULL, notify the main application.
 	 */
-	filter_state_check(&scan_control, addr);
+	filter_state_check(&scan_control, info->addr);
 }
+
+static struct bt_le_scan_cb scan_cb = {
+	.recv = scan_recv,
+};
 
 int bt_scan_start(enum bt_scan_type scan_type)
 {
@@ -1318,7 +1321,7 @@ int bt_scan_start(enum bt_scan_type scan_type)
 	}
 
 	/* Start the scanning. */
-	int err = bt_le_scan_start(&bt_scan.scan_param, scan_device_found);
+	int err = bt_le_scan_start(&bt_scan.scan_param, NULL);
 
 	if (!err) {
 		LOG_DBG("Scanning");
