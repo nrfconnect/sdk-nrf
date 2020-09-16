@@ -8,7 +8,7 @@ menuconfig NRF_CLOUD
 	select CJSON_LIB
 	select MQTT_LIB
 	select MQTT_LIB_TLS
-	depends on !(CLOUD_PERSISTENT_SESSIONS && SETTINGS_NONE)
+	select SETTINGS if !MQTT_CLEAN_SESSION
 
 if NRF_CLOUD
 

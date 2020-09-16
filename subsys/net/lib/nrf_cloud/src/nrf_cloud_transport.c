@@ -637,7 +637,7 @@ static int nct_settings_set(const char *key, size_t len_rd,
 		     strlen(SETTINGS_KEY_PERSISTENT_SESSION)) &&
 	    (len_rd == sizeof(read_val))) {
 		if (read_cb(cb_arg, (void *)&read_val, len_rd) == len_rd) {
-#if defined(CONFIG_CLOUD_PERSISTENT_SESSIONS)
+#if !IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION)
 			persistent_session = (bool)read_val;
 #endif
 			LOG_DBG("Read setting val: %d", read_val);
@@ -651,7 +651,7 @@ int save_session_state(const int session_valid)
 {
 	int ret = 0;
 
-#if defined(CONFIG_CLOUD_PERSISTENT_SESSIONS)
+#if !IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION)
 	LOG_DBG("Setting session state: %d", session_valid);
 	persistent_session = (bool)session_valid;
 	ret = settings_save_one(SETTINGS_FULL_PERSISTENT_SESSION,
@@ -664,7 +664,7 @@ static int nct_settings_init(void)
 {
 	int ret = 0;
 
-#if defined(CONFIG_CLOUD_PERSISTENT_SESSIONS)
+#if !IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION)
 	ret = settings_subsys_init();
 	if (ret) {
 		LOG_ERR("Settings init failed: %d", ret);
@@ -697,12 +697,9 @@ int nct_mqtt_connect(void)
 		nct.client.protocol_version = MQTT_VERSION_3_1_1;
 		nct.client.password = NULL;
 		nct.client.user_name = NULL;
-		if (persistent_session) {
-			LOG_DBG("Requesting MQTT persistent session");
-			nct.client.clean_session = 0U;
-		} else {
-			nct.client.clean_session = 1U;
-		}
+		nct.client.clean_session = persistent_session ? 0U : 1U;
+		LOG_DBG("MQTT clean session flag: %u",
+			nct.client.clean_session);
 
 #if defined(CONFIG_MQTT_LIB_TLS)
 		nct.client.transport.type = MQTT_TRANSPORT_SECURE;
