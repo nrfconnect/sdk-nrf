@@ -7,15 +7,15 @@
 menu "Cloud Client Sample Settings"
 
 config CLOUD_BACKEND
-	string "String that selects the cloud backend to be used"
+	string "Selects the cloud backend to be used"
 	default "NRF_CLOUD"
 
 config CLOUD_MESSAGE
-	string "Custom message published periodically to cloud"
+	string "Sets the custom message published periodically to cloud"
 	default "{\"state\":{\"reported\":{\"message\":\"Hello Internet of Things!\"}}}"
 
 config CLOUD_MESSAGE_PUBLICATION_INTERVAL
-	int "How often the custom message should be published to cloud, in seconds"
+	int "Sets how often the custom message should be published to cloud, in seconds"
 	default 10
 
 choice
@@ -23,15 +23,15 @@ choice
 	default CLOUD_PUBLICATION_BUTTON_PRESS
 
 config CLOUD_PUBLICATION_BUTTON_PRESS
-	bool "Trigger publication to cloud upon a button press"
+	bool "Triggers publication to cloud upon a button press"
 
 config CLOUD_PUBLICATION_SEQUENTIAL
-	bool "Sequential publication to cloud set by the CONFIG_MESSAGE_PUBLICATION_INTERVAL option"
+	bool "Sets sequential publication to cloud set by the CONFIG_MESSAGE_PUBLICATION_INTERVAL option"
 
 endchoice
 
 config POWER_SAVING_MODE_ENABLE
-	bool "Request PSM from cellular network"
+	bool "Requests PSM from cellular network"
 
 endmenu
 
