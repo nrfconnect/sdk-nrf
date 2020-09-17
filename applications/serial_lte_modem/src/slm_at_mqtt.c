@@ -52,7 +52,7 @@ static int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type);
 static int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type);
 
 /**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t m_mqtt_at_list[AT_MQTT_MAX] = {
+static slm_at_cmd_list_t mqtt_at_list[AT_MQTT_MAX] = {
 	{AT_MQTT_CONNECT, "AT#XMQTTCON", handle_at_mqtt_connect},
 	{AT_MQTT_PUBLISH, "AT#XMQTTPUB", handle_at_mqtt_publish},
 	{AT_MQTT_SUBSCRIBE, "AT#XMQTTSUB", handle_at_mqtt_subscribe},
@@ -841,7 +841,7 @@ int slm_at_mqtt_parse(const char *at_cmd)
 	enum at_cmd_type type;
 
 	for (int i = 0; i < AT_MQTT_MAX; i++) {
-		if (slm_util_cmd_casecmp(at_cmd, m_mqtt_at_list[i].string)) {
+		if (slm_util_cmd_casecmp(at_cmd, mqtt_at_list[i].string)) {
 			ret = at_parser_params_from_str(at_cmd, NULL,
 						&at_param_list);
 			if (ret) {
@@ -849,7 +849,7 @@ int slm_at_mqtt_parse(const char *at_cmd)
 				return -EINVAL;
 			}
 			type = at_parser_cmd_type_get(at_cmd);
-			ret = m_mqtt_at_list[i].handler(type);
+			ret = mqtt_at_list[i].handler(type);
 			break;
 		}
 	}
@@ -862,7 +862,7 @@ int slm_at_mqtt_parse(const char *at_cmd)
 void slm_at_mqtt_clac(void)
 {
 	for (int i = 0; i < AT_MQTT_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", m_mqtt_at_list[i].string);
+		sprintf(rsp_buf, "%s\r\n", mqtt_at_list[i].string);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 }

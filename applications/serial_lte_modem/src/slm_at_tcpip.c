@@ -75,7 +75,7 @@ static int handle_at_recvfrom(enum at_cmd_type cmd_type);
 static int handle_at_getaddrinfo(enum at_cmd_type cmd_type);
 
 /**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t m_tcpip_at_list[AT_TCPIP_MAX] = {
+static slm_at_cmd_list_t tcpip_at_list[AT_TCPIP_MAX] = {
 	{AT_SOCKET, "AT#XSOCKET", handle_at_socket},
 	{AT_SOCKETOPT, "AT#XSOCKETOPT", handle_at_socketopt},
 	{AT_BIND, "AT#XBIND", handle_at_bind},
@@ -1229,7 +1229,7 @@ int slm_at_tcpip_parse(const char *at_cmd)
 	enum at_cmd_type type;
 
 	for (int i = 0; i < AT_TCPIP_MAX; i++) {
-		if (slm_util_cmd_casecmp(at_cmd, m_tcpip_at_list[i].string)) {
+		if (slm_util_cmd_casecmp(at_cmd, tcpip_at_list[i].string)) {
 			ret = at_parser_params_from_str(at_cmd, NULL,
 						&at_param_list);
 			if (ret) {
@@ -1237,7 +1237,7 @@ int slm_at_tcpip_parse(const char *at_cmd)
 				return -EINVAL;
 			}
 			type = at_parser_cmd_type_get(at_cmd);
-			ret = m_tcpip_at_list[i].handler(type);
+			ret = tcpip_at_list[i].handler(type);
 			break;
 		}
 	}
@@ -1250,7 +1250,7 @@ int slm_at_tcpip_parse(const char *at_cmd)
 void slm_at_tcpip_clac(void)
 {
 	for (int i = 0; i < AT_TCPIP_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", m_tcpip_at_list[i].string);
+		sprintf(rsp_buf, "%s\r\n", tcpip_at_list[i].string);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 }
