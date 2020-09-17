@@ -54,26 +54,11 @@ Configurations
 
 The configurations used in the sample are listed below. They can be added to ``cloud_client/prj.conf``.
 
-
-.. option:: CONFIG_CLOUD_BACKEND
-
-Decides the cloud backend to be used.
-
-.. option:: CONFIG_CLOUD_PUBLICATION_SEQUENTIAL
-
-Publishes a message to cloud sequentially.
-
-.. option:: CONFIG_CLOUD_PUBLICATION_BUTTON_PRESS
-
-Publishes a message to cloud upon a button press.
-
-.. option:: CONFIG_CLOUD_MESSAGE
-
-Modifies the message published to the cloud service.
-
-.. option:: CONFIG_CLOUD_MESSAGE_PUBLICATION_INTERVAL
-
-Modifies the interval within which the message is published to the cloud service.
+.. options-from-kconfig::
+   :prefix: "This option "
+   :suffix: .
+   :show-type:
+   :only-visible:
 
 .. note::
    To output data in the terminal window located in the `nRF Cloud`_ web interface, the data format must be in JSON format.
