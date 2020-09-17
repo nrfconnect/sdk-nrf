@@ -199,15 +199,15 @@ void main(void)
 	work_init();
 
 #if defined(CONFIG_BSD_LIBRARY)
-	modem_configure();
-
-	k_sem_take(&lte_connected, K_FOREVER);
-
 	err = configure_low_power();
 	if (err) {
 		printk("Unable to set low power configuration, error: %d\n",
 		       err);
 	}
+
+	modem_configure();
+
+	k_sem_take(&lte_connected, K_FOREVER);
 #endif
 
 	err = server_init();
