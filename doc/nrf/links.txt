@@ -329,6 +329,7 @@
 .. _`OpenThread THCI`: https://github.com/openthread/openthread/tree/master/tools/harness-thci
 
 .. _`Openthread acting as a new reference platform`: https://openthread.io/certification/automation-setup#acting_as_a_new_reference_platform
+.. _`OpenThread Border Router`: https://openthread.io/guides/border-router
 
 .. ### Links to Zigbee
 
