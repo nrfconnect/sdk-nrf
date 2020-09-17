@@ -72,6 +72,7 @@ enum cloud_endpoint_type {
 	CLOUD_EP_TOPIC_CONFIG,
 	CLOUD_EP_TOPIC_PAIR,
 	CLOUD_EP_TOPIC_BATCH,
+	CLOUD_EP_TOPIC_WILL,
 	CLOUD_EP_URI,
 	CLOUD_EP_COMMON_COUNT,
 	CLOUD_EP_PRIV_START = CLOUD_EP_COMMON_COUNT,
@@ -134,6 +135,17 @@ struct cloud_event {
 	} data;
 };
 
+/**@brief Cloud configuration. */
+struct cloud_cfg {
+	union {
+		struct {
+			struct cloud_msg epitath_msg;
+			bool retain;
+		} mqtt;
+		/* add other transport-specific cfg here */
+	} cfg;
+};
+
 /**
  * @brief Cloud event handler function type.
  *
@@ -155,7 +167,8 @@ struct cloud_api {
 	int (*init)(const struct cloud_backend *const backend,
 		    cloud_evt_handler_t handler);
 	int (*uninit)(const struct cloud_backend *const backend);
-	int (*connect)(const struct cloud_backend *const backend);
+	int (*connect)(const struct cloud_backend *const backend,
+		       const struct cloud_cfg *const cfg);
 	int (*disconnect)(const struct cloud_backend *const backend);
 	int (*send)(const struct cloud_backend *const backend,
 		    const struct cloud_msg *const msg);
@@ -235,16 +248,19 @@ static inline int cloud_uninit(const struct cloud_backend *const backend)
  *
  * @param backend Pointer to a cloud backend structure.
  *
+ * @param cfg Pointer to optional backend configuration.
+ *
  * @return connect result defined by enum cloud_connect_result.
  */
-static inline int cloud_connect(const struct cloud_backend *const backend)
+static inline int cloud_connect(const struct cloud_backend *const backend,
+				const struct cloud_cfg *const cfg)
 {
 	if (backend == NULL || backend->api == NULL ||
 	    backend->api->connect == NULL) {
 		return CLOUD_CONNECT_RES_ERR_INVALID_PARAM;
 	}
 
-	return backend->api->connect(backend);
+	return backend->api->connect(backend, cfg);
 }
 
 /**@brief Disconnect from a cloud backend.

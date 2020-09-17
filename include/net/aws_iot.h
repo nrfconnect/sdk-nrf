@@ -151,6 +151,7 @@ struct aws_iot_config {
 	char *client_id;
 	/** Length of client_id string. */
 	size_t client_id_len;
+	const struct cloud_cfg *cfg;
 };
 
 /** @brief Initialize the module.

@@ -95,6 +95,8 @@ struct nrf_cloud_sensor_list {
 struct nrf_cloud_connect_param {
 	/** Supported sensor types. May be NULL. */
 	const struct nrf_cloud_sensor_list *sensor;
+	/** Backend config.  May be NULL. */
+	const struct cloud_cfg *cfg;
 };
 
 /**@brief Parameters of attached sensors. */
@@ -240,6 +242,23 @@ int nrf_cloud_disconnect(void);
  * functional.
  */
 void nrf_cloud_process(void);
+
+/**
+ * @brief Duplicate a cloud config structure.
+ *
+ * @param[in] cfg pointer to cloud_cfg structure.
+ *
+ * @return struct cloud_cfg* or NULL if out of memory.
+ */
+struct cloud_cfg *nrf_cloud_dup_cfg(const struct cloud_cfg *cfg);
+
+/**
+ * @brief Free memory allocated for a duplicated cloud_cfg
+ *        structure.
+ *
+ * @param cfg pointer to cloud_cfg structure to free.
+ */
+void nrf_cloud_free_cfg(struct cloud_cfg *cfg);
 
 /** @} */
 
