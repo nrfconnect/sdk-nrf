@@ -52,7 +52,7 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type);
 static int handle_at_udp_send(enum at_cmd_type cmd_type);
 
 /**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t m_udp_proxy_at_list[AT_UDP_PROXY_MAX] = {
+static slm_at_cmd_list_t udp_proxy_at_list[AT_UDP_PROXY_MAX] = {
 	{AT_UDP_SERVER, "AT#XUDPSVR", handle_at_udp_server},
 	{AT_UDP_CLIENT, "AT#XUDPCLI", handle_at_udp_client},
 	{AT_UDP_SEND, "AT#XUDPSEND", handle_at_udp_send},
@@ -587,7 +587,7 @@ int slm_at_udp_proxy_parse(const char *at_cmd, uint16_t length)
 
 	for (int i = 0; i < AT_UDP_PROXY_MAX; i++) {
 		if (slm_util_cmd_casecmp(at_cmd,
-					m_udp_proxy_at_list[i].string)) {
+					udp_proxy_at_list[i].string)) {
 			ret = at_parser_params_from_str(at_cmd, NULL,
 						&at_param_list);
 			if (ret) {
@@ -595,7 +595,7 @@ int slm_at_udp_proxy_parse(const char *at_cmd, uint16_t length)
 				return -EINVAL;
 			}
 			type = at_parser_cmd_type_get(at_cmd);
-			ret = m_udp_proxy_at_list[i].handler(type);
+			ret = udp_proxy_at_list[i].handler(type);
 			break;
 		}
 	}
@@ -613,7 +613,7 @@ int slm_at_udp_proxy_parse(const char *at_cmd, uint16_t length)
 void slm_at_udp_proxy_clac(void)
 {
 	for (int i = 0; i < AT_UDP_PROXY_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", m_udp_proxy_at_list[i].string);
+		sprintf(rsp_buf, "%s\r\n", udp_proxy_at_list[i].string);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 }

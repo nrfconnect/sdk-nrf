@@ -52,7 +52,7 @@ static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type);
 static int handle_AT_HTTPC_REQUEST(enum at_cmd_type cmd_type);
 
 /**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t m_http_at_list[AT_HTTPC_MAX] = {
+static slm_at_cmd_list_t http_at_list[AT_HTTPC_MAX] = {
 	{AT_HTTPC_CONNECT, "AT#XHTTPCCON", handle_AT_HTTPC_CONNECT},
 	{AT_HTTPC_REQUEST, "AT#XHTTPCREQ", handle_AT_HTTPC_REQUEST},
 };
@@ -662,7 +662,7 @@ int slm_at_httpc_parse(const char *at_cmd, size_t length)
 	enum at_cmd_type type;
 
 	for (int i = 0; i < AT_HTTPC_MAX; i++) {
-		if (slm_util_cmd_casecmp(at_cmd, m_http_at_list[i].string)) {
+		if (slm_util_cmd_casecmp(at_cmd, http_at_list[i].string)) {
 			ret = at_parser_params_from_str(at_cmd, NULL,
 						&at_param_list);
 			if (ret) {
@@ -670,7 +670,7 @@ int slm_at_httpc_parse(const char *at_cmd, size_t length)
 				return -EINVAL;
 			}
 			type = at_parser_cmd_type_get(at_cmd);
-			ret = m_http_at_list[i].handler(type);
+			ret = http_at_list[i].handler(type);
 			break;
 		}
 	}
@@ -738,7 +738,7 @@ int slm_at_httpc_uninit(void)
 void slm_at_httpc_clac(void)
 {
 	for (int i = 0; i < AT_HTTPC_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", m_http_at_list[i].string);
+		sprintf(rsp_buf, "%s\r\n", http_at_list[i].string);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 }

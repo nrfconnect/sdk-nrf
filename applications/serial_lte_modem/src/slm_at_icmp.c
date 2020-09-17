@@ -56,7 +56,7 @@ extern struct k_work_q slm_work_q;
 static int handle_at_icmp_ping(enum at_cmd_type cmd_type);
 
 /**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t m_icmp_at_list[AT_ICMP_MAX] = {
+static slm_at_cmd_list_t icmp_at_list[AT_ICMP_MAX] = {
 	{AT_ICMP_PING, "AT#XPING", handle_at_icmp_ping},
 };
 
@@ -433,7 +433,7 @@ int slm_at_icmp_parse(const char *at_cmd)
 	enum at_cmd_type type;
 
 	for (int i = 0; i < AT_ICMP_MAX; i++) {
-		if (slm_util_cmd_casecmp(at_cmd, m_icmp_at_list[i].string)) {
+		if (slm_util_cmd_casecmp(at_cmd, icmp_at_list[i].string)) {
 			ret = at_parser_params_from_str(at_cmd, NULL,
 						&at_param_list);
 			if (ret < 0) {
@@ -441,7 +441,7 @@ int slm_at_icmp_parse(const char *at_cmd)
 				return -EINVAL;
 			}
 			type = at_parser_cmd_type_get(at_cmd);
-			ret = m_icmp_at_list[i].handler(type);
+			ret = icmp_at_list[i].handler(type);
 			break;
 		}
 	}
@@ -454,7 +454,7 @@ int slm_at_icmp_parse(const char *at_cmd)
 void slm_at_icmp_clac(void)
 {
 	for (int i = 0; i < AT_ICMP_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", m_icmp_at_list[i].string);
+		sprintf(rsp_buf, "%s\r\n", icmp_at_list[i].string);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 }

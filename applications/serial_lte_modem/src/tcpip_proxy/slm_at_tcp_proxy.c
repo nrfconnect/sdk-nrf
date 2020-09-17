@@ -53,7 +53,7 @@ static int handle_at_tcp_send(enum at_cmd_type cmd_type);
 static int handle_at_tcp_recv(enum at_cmd_type cmd_type);
 
 /**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t m_tcp_proxy_at_list[AT_TCP_PROXY_MAX] = {
+static slm_at_cmd_list_t tcp_proxy_at_list[AT_TCP_PROXY_MAX] = {
 	{AT_TCP_SERVER, "AT#XTCPSVR", handle_at_tcp_server},
 	{AT_TCP_CLIENT, "AT#XTCPCLI", handle_at_tcp_client},
 	{AT_TCP_SEND, "AT#XTCPSEND", handle_at_tcp_send},
@@ -779,7 +779,7 @@ int slm_at_tcp_proxy_parse(const char *at_cmd, uint16_t length)
 
 	for (int i = 0; i < AT_TCP_PROXY_MAX; i++) {
 		if (slm_util_cmd_casecmp(at_cmd,
-			m_tcp_proxy_at_list[i].string)) {
+			tcp_proxy_at_list[i].string)) {
 			ret = at_parser_params_from_str(at_cmd, NULL,
 						&at_param_list);
 			if (ret) {
@@ -787,7 +787,7 @@ int slm_at_tcp_proxy_parse(const char *at_cmd, uint16_t length)
 				return -EINVAL;
 			}
 			type = at_parser_cmd_type_get(at_cmd);
-			ret = m_tcp_proxy_at_list[i].handler(type);
+			ret = tcp_proxy_at_list[i].handler(type);
 			break;
 		}
 	}
@@ -805,7 +805,7 @@ int slm_at_tcp_proxy_parse(const char *at_cmd, uint16_t length)
 void slm_at_tcp_proxy_clac(void)
 {
 	for (int i = 0; i < AT_TCP_PROXY_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", m_tcp_proxy_at_list[i].string);
+		sprintf(rsp_buf, "%s\r\n", tcp_proxy_at_list[i].string);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 }
