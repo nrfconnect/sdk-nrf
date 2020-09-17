@@ -623,10 +623,6 @@ int nct_mqtt_connect(void)
 		nct.client.protocol_version = MQTT_VERSION_3_1_1;
 		nct.client.password = NULL;
 		nct.client.user_name = NULL;
-#if defined(CONFIG_CLOUD_PERSISTENT_SESSIONS)
-		nct.client.clean_session = 0U;
-		LOG_DBG("mqtt_connect requesting persistent session");
-#endif
 #if defined(CONFIG_MQTT_LIB_TLS)
 		nct.client.transport.type = MQTT_TRANSPORT_SECURE;
 		nct.client.rx_buf = nct.rx_buf;

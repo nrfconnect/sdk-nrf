@@ -805,10 +805,6 @@ static int client_broker_init(struct mqtt_client *const client)
 	client->tx_buf_size		= sizeof(tx_buffer);
 	client->transport.type		= MQTT_TRANSPORT_SECURE;
 
-#if defined(CONFIG_AWS_IOT_PERSISTENT_SESSIONS)
-	client->clean_session		= 0U;
-#endif
-
 	static sec_tag_t sec_tag_list[] = { CONFIG_AWS_IOT_SEC_TAG };
 	struct mqtt_sec_config *tls_cfg = &(client->transport).tls.config;
 

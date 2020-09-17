@@ -1467,10 +1467,8 @@ void connection_evt_handler(const struct cloud_event *const evt)
 		k_delayed_work_cancel(&cloud_reboot_work);
 		k_sem_take(&cloud_disconnected, K_NO_WAIT);
 		atomic_set(&cloud_connect_attempts, 0);
-#if defined(CONFIG_CLOUD_PERSISTENT_SESSIONS)
-		LOG_INF("Persistent Sessions = %u",
+		LOG_DBG("Persistent Sessions = %u",
 			evt->data.persistent_session);
-#endif
 	} else if (evt->type == CLOUD_EVT_DISCONNECTED) {
 		int32_t connect_wait_s = CONFIG_CLOUD_CONNECT_RETRY_DELAY;
 
