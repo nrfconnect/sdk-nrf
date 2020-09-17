@@ -457,6 +457,11 @@
 
 .. _`Mosquitto`: https://mosquitto.org/
 
+.. _`BSD Networking Services Spec Reference`: https://pubs.opengroup.org/onlinepubs/007908799/xnsix.html
+
+.. _`SETSOCKETOPT Service Spec Reference`: https://pubs.opengroup.org/onlinepubs/007908799/xns/setsockopt.html
+
+.. _`GETSOCKETOPT Service Spec Reference`: https://pubs.opengroup.org/onlinepubs/007908799/xns/getsockopt.html
 .. _`Alexa Gadgets Bluetooth LE`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/bluetooth-le-pair-connect.html
 .. _`Alexa Gadgets Bluetooth LE Packet Format`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/packet-ble.html
 .. _`Alexa Gadgets Setup`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/steps-to-set-up-gadget.html
