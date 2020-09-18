@@ -5,17 +5,57 @@ LwM2M carrier
 
 You can use the LwM2M carrier library in your nRF91 application in order to connect to the LwM2M operator network.
 Integrating this library into an application causes the device to connect to the operator's device management platform autonomously.
+Two examples of such device management platforms are `Verizon's Thingspace`_ and `AT&T's IoT Platform`_.
 
-Some examples of carrier device management platforms are listed below:
+.. important::
 
-* `Verizon's Thingspace`_
-* `AT&T's IoT Platform`_
+   It is *mandatory* to include the LwM2M carrier library in any Verizon or AT&T certified products.
 
 This library uses LwM2M protocol to communicate with device manager platforms, but it does not expose an LwM2M API to your application.
 If you want to use LwM2M for other purposes, see :ref:`lwm2m_interface`.
 
 The :ref:`lwm2m_carrier` sample demonstrates how to run this library in an application.
 The LwM2M carrier library is also used in the :ref:`asset_tracker` application.
+
+
+Certification and Version Dependencies
+**************************************
+
+Every released version of the LwM2M carrier library is considered for certification with applicable carriers.
+The LwM2M carrier library is certified together with specific versions of the modem firmware and the |NCS|.
+Refer to the :ref:`liblwm2m_carrier_changelog` or the :ref:`versiondep_table` to check the certification status of a particular version of the library, and to see the version of the |NCS| it was released with.
+
+For a list of all the carrier certifications (including those certifications with no dependency on the LwM2M carrier library), see the `nRF9160 compatibility matrix`_.
+
+.. note::
+
+   Your final product will need certification from the carrier.
+   Please contact the carrier for more information on their respective device certification program.
+
+.. _versiondep_table:
+
+Version Dependency table
+========================
+
+See the following table for the certification status of the library and the related version dependencies:
+
++-----------------+---------------+---------------+---------------+
+| LwM2M carrier   | Modem version | |NCS| release | Certification |
+| library version |               |               |               |
++=================+===============+===============+===============+
+| 0.9.1           | 1.2.1         | 1.3.1         | AT&T          |
++-----------------+---------------+---------------+---------------+
+| 0.9.0           | 1.2.1         | 1.3.0         |               |
++-----------------+---------------+---------------+---------------+
+| 0.8.2           | 1.1.2         | 1.2.1         | Verizon       |
++-----------------+---------------+---------------+---------------+
+| 0.8.1+build1    | 1.1.0         | 1.2.0         | Verizon       |
++-----------------+---------------+---------------+---------------+
+| 0.8.0           | 1.1.0         | 1.1.0         |               |
++-----------------+---------------+---------------+---------------+
+| 0.6.0           | 1.0.1         | 1.0.0         |               |
++-----------------+---------------+---------------+---------------+
+
 
 .. _lwm2m_app_int:
 
@@ -239,7 +279,7 @@ Below are some of the requirements and limitations of the application while runn
    * The application should implement a retry mechanism so that the application can perform the TLS handshake later.
    * Another alternative is to supply TLS from a source other than the modem, for example `Mbed TLS`_.
 
-* The LwM2M carrier library uses both the DTLS sessions made available through the modem. Therefore, the application can not run any DTLS sessions.
+* The LwM2M carrier library uses both the DTLS sessions made available through the modem. Therefore, the application cannot run any DTLS sessions.
 
 * The LwM2M carrier library provisions the necessary security credentials to the security tags 11, 25, 26, 27, 28.
   These tags should not be used by the application.
@@ -247,38 +287,24 @@ Below are some of the requirements and limitations of the application while runn
 * The LwM2M carrier library uses the following NVS record key range: 0xCA00 - 0xCAFF.
   This range should not be used by the application.
 
-Certification and Version Dependencies
-**************************************
 
-Every released version of the LwM2M carrier library is considered for certification with the carriers.
-The library is certified together with specific versions of the modem firmware and the |NCS|.
-Refer to the :ref:`liblwm2m_carrier_changelog` to check the certification status of a particular version of the library, and to see the version of the |NCS| it was released with.
+.. _lwm2m_lib_size:
+
+Library Size
+============
+
+The following library sizes are reported in the :ref:`liblwm2m_carrier_changelog`:
+
+ * Library size (binary): This shows the standalone size of the library. This size includes all objects, since the library is not linked. This size will change when linking the library to an application.
+ * Library size (reference application): This size shows the *total* memory impact of enabling the LwM2M carrier library in the :ref:`lwm2m_carrier` sample.
+   This size accounts for the library, abstraction layer and the associated heap and stack requirements. It also includes all the resources for all the dependencies, except :ref:`bsdlib`.
+   See :ref:`lwm2m_app_int` for more information.
 
 .. note::
 
-   Your final product will need certification from the carrier.
-   You can contact the carrier for more information on the respective device certification program.
-
-.. _versiondep_table:
-
-Version Dependency table
-========================
-
-See the following table for the certification status of the library and the related version dependencies:
-
-+-----------------+---------------+---------------+---------------+
-| LwM2M carrier   | Modem version | |NCS| release | Certification |
-| library version |               |               |               |
-+=================+===============+===============+===============+
-| 0.9.0           | 1.2.1         | 1.3.0         |               |
-+-----------------+---------------+---------------+---------------+
-| 0.8.1+build1    | 1.1.0         | 1.2.0         | Verizon       |
-+-----------------+---------------+---------------+---------------+
-| 0.8.0           | 1.1.0         | 1.1.0         |               |
-+-----------------+---------------+---------------+---------------+
-| 0.6.0           | 1.0.1         | 1.0.0         |               |
-+-----------------+---------------+---------------+---------------+
-
+   Enabling the LwM2M carrier library into the :ref:`lwm2m_carrier` sample serves only as a reference.
+   The increase in memory size due to the inclusion of the LwM2M carrier library depends on the application that it is being integrated into.
+   For example, an application such as the :ref:`asset_tracker` already uses several libraries which the LwM2M carrier library depends on. This makes the added memory requirement considerably smaller.
 
 LwM2M carrier library changelog
 *******************************
