@@ -185,6 +185,12 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
  */
 int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler);
 
+/**@brief Deinitialize the LTE module, powers of the modem.
+ *
+ * @return Zero on success, -EIO if it fails.
+ */
+int lte_lc_deinit(void);
+
 /** @brief Function for sending the modem to offline mode
  *
  * @return Zero on success or (negative) error code otherwise.
