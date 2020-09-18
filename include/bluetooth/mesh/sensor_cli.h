@@ -113,6 +113,13 @@ struct bt_mesh_sensor_info {
 	struct bt_mesh_sensor_descriptor descriptor;
 };
 
+struct bt_mesh_sensor_data {
+	/** Sensor type. */
+	const struct bt_mesh_sensor_type *type;
+	/** Sensor value. */
+	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+};
+
 /** Sensor client handler functions. */
 struct bt_mesh_sensor_cli_handlers {
 	/** @brief Sensor data callback.
@@ -136,7 +143,7 @@ struct bt_mesh_sensor_cli_handlers {
 	/** @brief Sensor description callback.
 	 *
 	 *  Called when the client receives sensor descriptors, either as a
-	 *  result of calling @ref bt_mesh_sensor_cli_list_get or @ref
+	 *  result of calling @ref bt_mesh_sensor_cli_all_get or @ref
 	 *  bt_mesh_sensor_cli_desc_get, or as an unsolicited message.
 	 *
 	 *  The sensor description does not reference the sensor type directly,
@@ -248,7 +255,7 @@ struct bt_mesh_sensor_cli_handlers {
 			     uint32_t opcode);
 };
 
-/** @brief Retrieve a list of all sensors in a sensor server.
+/** @brief Retrieve all sensor descriptors in a sensor server.
  *
  *  This call is blocking if the @c sensors buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
@@ -282,10 +289,10 @@ struct bt_mesh_sensor_cli_handlers {
  *                         not configured.
  *  @retval -EAGAIN        The device has not been provisioned.
  */
-int bt_mesh_sensor_cli_list_get(struct bt_mesh_sensor_cli *cli,
-				struct bt_mesh_msg_ctx *ctx,
-				struct bt_mesh_sensor_info *sensors,
-				uint32_t *count);
+int bt_mesh_sensor_cli_desc_all_get(struct bt_mesh_sensor_cli *cli,
+				    struct bt_mesh_msg_ctx *ctx,
+				    struct bt_mesh_sensor_info *sensors,
+				    uint32_t *count);
 
 /** @brief Get the descriptor for the given sensor.
  *
@@ -508,6 +515,31 @@ int bt_mesh_sensor_cli_setting_set_unack(
 	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_type *setting,
 	const struct sensor_value *value);
+
+/** @brief Read sensor data from all sensors on a server.
+ *
+ *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
+ *  function will return, and the response will be passed to the
+ *  bt_mesh_sensor_cli_handlers::data callback.
+ *
+ *  @param[in]  cli       Sensor client instance.
+ *  @param[in]  ctx       Message context parameters, or NULL to use the
+ *                        configured publish parameters.
+ *  @param[in]  sensors   List of sensor data values.
+ *  @param[in,out] count  The number of elements in the @c sensors array.
+ *                        Will be changed to reflect the resulting number
+ *                        of elements in a list.
+ *
+ *  @retval 0              Successfully received the sensor data.
+ *  @retval -ENODEV        The sensor server doesn't have the given sensor.
+ *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ *                         not configured.
+ *  @retval -EAGAIN        The device has not been provisioned.
+ */
+int bt_mesh_sensor_cli_all_get(struct bt_mesh_sensor_cli *cli,
+			       struct bt_mesh_msg_ctx *ctx,
+			       struct bt_mesh_sensor_data *sensors,
+			       uint32_t *count);
 
 /** @brief Read sensor data from a sensor instance.
  *

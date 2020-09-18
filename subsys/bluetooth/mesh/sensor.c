@@ -106,7 +106,7 @@ void sensor_status_id_decode(struct net_buf_simple *buf, uint8_t *len, uint16_t 
 			return;
 		}
 
-		*len = (first >> 1) + 1;
+		*len = ((first >> 1) + 1) & 0x7f;
 		*id = net_buf_simple_pull_le16(buf);
 	} else if (buf->len < 1) {
 		*len = 0;
