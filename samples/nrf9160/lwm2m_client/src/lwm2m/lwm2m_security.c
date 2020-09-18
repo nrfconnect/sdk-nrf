@@ -56,8 +56,14 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
 				(void *)client_psk, sizeof(client_psk));
 #endif /* CONFIG_LWM2M_DTLS_SUPPORT */
 
+#if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
+	/* Mark 1st instance of security object as a bootstrap server */
+	lwm2m_engine_set_u8("0/0/1", 1);
+#else
 	/* Security and Server object need matching Short Server ID value. */
 	lwm2m_engine_set_u16("0/0/10", 101);
 	lwm2m_engine_set_u16("1/0/0", 101);
+#endif
+
 	return ret;
 }
