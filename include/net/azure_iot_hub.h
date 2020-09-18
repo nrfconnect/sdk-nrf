@@ -91,7 +91,7 @@ enum azure_iot_hub_evt_type {
 /** @brief Azure IoT Hub topic type, used to route messages to the correct
  *	   destination.
  */
-enum azure_iot_topic_type {
+enum azure_iot_hub_topic_type {
 	/** Data received on the devicebound topic. */
 	AZURE_IOT_HUB_TOPIC_DEVICEBOUND,
 	/** Event topic used to send event data to Azure IoT Hub. */
@@ -104,14 +104,34 @@ enum azure_iot_topic_type {
 	AZURE_IOT_HUB_TOPIC_TWIN_REQUEST,
 };
 
+/** @brief Property bag structure for key/value string pairs. Per Azure
+ *	   IoT Hub documentation, the key must be defined, while the
+ *	   value can be a string, an empty string or NULL.
+ *
+ *  @note If value is provided as a string, it's the equivalent to "key=value".
+ *	  If the value is an empty string (only null-terminator), it's the
+ *	  equivalent of "key=". If value is NULL, it's the equivalent of
+ *	  "key".
+ */
+struct azure_iot_hub_prop_bag {
+	/** Null-terminated key string. */
+	char *key;
+	/** Null-terminated value string. */
+	char *value;
+};
+
 /** @brief Azure IoT Hub topic data. */
 struct azure_iot_hub_topic_data {
 	/** Topic type. */
-	enum azure_iot_topic_type type;
+	enum azure_iot_hub_topic_type type;
 	/** Pointer to topic name. */
 	char *str;
 	/** Length of topic name. */
 	size_t len;
+	/* Array of property bags. */
+	struct azure_iot_hub_prop_bag *prop_bag;
+	/* Number of property bag elements in the prop_bag array. */
+	size_t prop_bag_count;
 };
 
 /** @brief Azure IoT Hub transmission data. */
