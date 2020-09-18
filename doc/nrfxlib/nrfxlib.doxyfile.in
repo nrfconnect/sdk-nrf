@@ -804,6 +804,7 @@ EXCLUDE_SYMLINKS       = NO
 
 EXCLUDE_PATTERNS       = */zboss/* \
                          */openthread/include/* \
+                         */openthread/lib/* \
                          */nrf_cc312_platform/* \
                          */nrf_cc312_mbedcrypto/* \
                          */nrf_cc310_mbedcrypto/include/*
