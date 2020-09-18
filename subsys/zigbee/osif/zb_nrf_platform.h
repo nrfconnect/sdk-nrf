@@ -37,6 +37,12 @@ void zigbee_debug_resume_zboss_thread(void);
 bool zigbee_is_zboss_thread_suspended(void);
 #endif /* defined(CONFIG_ZIGBEE_DEBUG_FUNCTIONS) */
 
+/**@brief Function for Zigbee stack initialization
+ *
+ * @return    0 if success
+ */
+int zigbee_init(void);
+
 /**@brief Function for checking if the Zigbee stack has been started.
  *
  * @retval true   Zigbee stack has been started.

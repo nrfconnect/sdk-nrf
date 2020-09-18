@@ -88,7 +88,8 @@ You can enable the following additional configuration options:
     To configure a custom set of channels in the range from 11 to 26, edit the :option:`CONFIG_ZIGBEE_CHANNEL_MASK` option.
     For example, you can set channels 13, 16, and 21.
     You must have at least one channel enabled with this option.
-* :option:`CONFIG_ZIGBEE_VENDOR_OUI` - Represents MAC Address Block Large, and by default it is set to Nordic Semiconductor's MA-L block (f4-ce-36).
+* :option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` - MAC Address Block Large is set to Nordic Semiconductor's MA-L block (f4-ce-36) by default.
+  To set a different MA-L, enable this option and edit the :option:`CONFIG_IEEE802154_VENDOR_OUI` to the desired value.
 * :option:`CONFIG_ZIGBEE_SHELL_LOG_ENABLED` - Enables logging of the incoming ZCL frames, and it is enabled by default.
 
 ZBOSS stack start options

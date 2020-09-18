@@ -5,121 +5,133 @@
  */
 
 #include <kernel.h>
+#include <device.h>
+#include <sys/byteorder.h>
 #include <logging/log.h>
-#include <nrf_802154.h>
-#include <nrf_802154_const.h>
+#include <net/ieee802154_radio.h>
 #include <zboss_api.h>
 #include <zb_macll.h>
 #include <zb_transceiver.h>
 #include "zb_nrf_platform.h"
 
-#if !defined NRF_802154_FRAME_TIMESTAMP_ENABLED ||                             \
-	!NRF_802154_FRAME_TIMESTAMP_ENABLED
-#warning Must define NRF_802154_FRAME_TIMESTAMP_ENABLED!
-#endif
+#define PHR_LENGTH                1
+#define FCS_LENGTH                2
+#define ACK_PKT_LENGTH            3
+#define FRAME_TYPE_MASK           0x07
+#define FRAME_TYPE_ACK            0x02
+#define ZBOSS_ED_MIN_DBM          -94
+#define ZBOSS_ED_RESULT_FACTOR    4
+
+BUILD_ASSERT(IS_ENABLED(CONFIG_NET_PKT_TIMESTAMP), "Timestamp is required");
+BUILD_ASSERT(!IS_ENABLED(CONFIG_IEEE802154_NET_IF_NO_AUTO_START),
+	     "Option not supported");
 
 LOG_MODULE_DECLARE(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
 
+enum ieee802154_radio_state {
+	RADIO_802154_STATE_SLEEP,
+	RADIO_802154_STATE_ACTIVE,
+	RADIO_802154_STATE_RECEIVE,
+	RADIO_802154_STATE_TRANSMIT,
+};
 
-/* Definition of FIFO queue entry for the received frame */
-typedef struct nrf_802154_rx_frame {
-	void	*fifo_reserved; /* 1st word reserved for the kernel's use. */
-	uint8_t	*data; /* Pointer to a received frame. */
-	int8_t	power; /* Last received frame RSSI value. */
-	uint8_t	lqi; /* Last received frame LQI value. */
-	uint32_t	time; /* Timestamp in microseconds. */
-	bool	pending_bit;
-} rx_frame_t;
+struct ieee802154_state_cache {
+	int8_t power;
+	enum ieee802154_radio_state radio_state;
+};
+
+static struct ieee802154_state_cache state_cache = {
+	.power = SCHAR_MIN,
+	.radio_state = RADIO_802154_STATE_SLEEP,
+};
 
 /* RX fifo queue. */
 static struct k_fifo rx_fifo;
 
-/* Array of pointers to received frames and their metadata.
- *
- * Keep one additional element in case a new frame is received after
- * nrf_802154_buffer_free_raw(..) is called and before the rx_frame->data
- * is set back to NULL.
- */
-static rx_frame_t rx_frames[NRF_802154_RX_BUFFERS + 1];
+static uint8_t ack_frame_buf[ACK_PKT_LENGTH + PHR_LENGTH];
+static uint8_t *ack_frame;
 
 static struct {
 	/* Semaphore for waiting for end of energy detection procedure. */
 	struct k_sem sem;
-	volatile bool failed;   /* Energy detection procedure failed. */
-	volatile uint32_t time_us; /* Duration of energy detection procedure. */
+	volatile bool failed;      /* Energy detection procedure failed. */
+	volatile uint32_t time_ms; /* Duration of energy detection procedure. */
 	volatile uint8_t rssi_val; /* Detected energy level. */
 } energy_detect;
 
-static volatile bool acked_with_pending_bit;
+static struct device *radio_dev;
+static struct ieee802154_radio_api *radio_api;
+static struct net_if *net_iface;
 
-#if !CONFIG_MPSL
-static void nrf5_radio_irq(void *arg)
-{
-	ARG_UNUSED(arg);
-
-	nrf_802154_radio_irq_handler();
-}
-#endif
-
-static void nrf5_irq_config(void)
-{
-#if !CONFIG_MPSL
-	IRQ_CONNECT(RADIO_IRQn, NRF_802154_IRQ_PRIORITY, nrf5_radio_irq, NULL,
-		    0);
-	irq_enable(RADIO_IRQn);
-#endif
-}
-
-/* Initializes the transceiver. */
 void zb_trans_hw_init(void)
 {
-	nrf_802154_init();
-	nrf_802154_auto_ack_set(ZB_TRUE);
-	nrf_802154_src_addr_matching_method_set(
-		NRF_802154_SRC_ADDR_MATCH_ZIGBEE);
-
-	(void)nrf_802154_sleep();
-
-	k_fifo_init(&rx_fifo);
-	k_sem_init(&energy_detect.sem, 1, 1);
-
-	nrf5_irq_config();
-
-	LOG_DBG("The 802.15.4 radio initialized.");
+	/* Radio hardware is initialized in 802.15.4 driver */
 }
 
 /* Sets the PAN ID used by the device. */
 void zb_trans_set_pan_id(zb_uint16_t pan_id)
 {
+	struct ieee802154_filter filter = { .pan_id = pan_id };
+
 	LOG_DBG("Function: %s, PAN ID: 0x%x", __func__, pan_id);
-	nrf_802154_pan_id_set((zb_uint8_t *)(&pan_id));
+
+	radio_api->filter(radio_dev, true, IEEE802154_FILTER_TYPE_PAN_ID, &filter);
 }
 
 /* Sets the long address in the radio driver. */
 void zb_trans_set_long_addr(zb_ieee_addr_t long_addr)
 {
+	struct ieee802154_filter filter = { .ieee_addr = long_addr };
+
 	LOG_DBG("Function: %s, long addr: 0x%llx", __func__, (uint64_t)*long_addr);
-	nrf_802154_extended_address_set(long_addr);
+
+	radio_api->filter(radio_dev,
+			  true,
+			  IEEE802154_FILTER_TYPE_IEEE_ADDR,
+			  &filter);
 }
 
 /* Sets the short address of the device. */
 void zb_trans_set_short_addr(zb_uint16_t addr)
 {
+	struct ieee802154_filter filter = { .short_addr = addr };
+
 	LOG_DBG("Function: %s, 0x%x", __func__, addr);
-	nrf_802154_short_address_set((uint8_t *)(&addr));
+
+	radio_api->filter(radio_dev,
+			  true,
+			  IEEE802154_FILTER_TYPE_SHORT_ADDR,
+			  &filter);
+}
+
+/* Energy detection callback */
+static void energy_scan_done(struct device *dev, int16_t max_ed)
+{
+	ARG_UNUSED(dev);
+
+	if (max_ed == SHRT_MAX) {
+		energy_detect.failed = true;
+	} else {
+		energy_detect.rssi_val =
+			(max_ed - ZBOSS_ED_MIN_DBM) * ZBOSS_ED_RESULT_FACTOR;
+	}
+	k_sem_give(&energy_detect.sem);
 }
 
 /* Start the energy detection procedure */
 void zb_trans_start_get_rssi(zb_uint8_t scan_duration_bi)
 {
 	energy_detect.failed = false;
-	energy_detect.time_us = ZB_TIME_BEACON_INTERVAL_TO_USEC(
-		scan_duration_bi);
+	energy_detect.time_ms =
+		ZB_TIME_BEACON_INTERVAL_TO_MSEC(scan_duration_bi);
 
-	LOG_DBG("Function: %s, scan duration: %d", __func__,
-		energy_detect.time_us);
+	LOG_DBG("Function: %s, scan duration: %d ms", __func__,
+		energy_detect.time_ms);
+
 	k_sem_take(&energy_detect.sem, K_FOREVER);
-	while (!nrf_802154_energy_detection(energy_detect.time_us)) {
+	while (radio_api->ed_scan(radio_dev,
+				  energy_detect.time_ms,
+				  energy_scan_done)) {
 		k_usleep(500);
 	}
 }
@@ -132,15 +144,18 @@ void zb_trans_get_rssi(zb_uint8_t *rssi_value_p)
 	/*Wait until the ED scan finishes.*/
 	while (1) {
 		k_sem_take(&energy_detect.sem, K_FOREVER);
-		if (energy_detect.failed == false) {
+		if (!energy_detect.failed) {
 			*rssi_value_p = energy_detect.rssi_val;
 			LOG_DBG("Energy detected: %d", *rssi_value_p);
 			break;
 		}
+
 		/* Try again */
 		LOG_DBG("Energy detect failed, tries again");
 		energy_detect.failed = false;
-		while (!nrf_802154_energy_detection(energy_detect.time_us)) {
+		while (radio_api->ed_scan(radio_dev,
+					  energy_detect.time_ms,
+					  energy_scan_done)) {
 			k_usleep(500);
 		}
 	}
@@ -151,63 +166,95 @@ void zb_trans_get_rssi(zb_uint8_t *rssi_value_p)
 void zb_trans_set_channel(zb_uint8_t channel_number)
 {
 	LOG_DBG("Function: %s, channel number: %d", __func__, channel_number);
-	nrf_802154_channel_set(channel_number);
+
+	radio_api->set_channel(radio_dev, channel_number);
 }
 
 /* Sets the transmit power. */
 void zb_trans_set_tx_power(zb_int8_t power)
 {
 	LOG_DBG("Function: %s, power: %d", __func__, power);
-	nrf_802154_tx_power_set(power);
+
+	radio_api->set_txpower(radio_dev, power);
+	state_cache.power = power;
 }
 
 /* Gets the currently set transmit power. */
 void zb_trans_get_tx_power(zb_int8_t *power)
 {
-	*power = (zb_int8_t)nrf_802154_tx_power_get();
+	__ASSERT_NO_MSG(state_cache.power != SCHAR_MIN);
+
+	*power = state_cache.power;
+
 	LOG_DBG("Function: %s, power: %d", __func__, *power);
 }
 
 /* Configures the device as the PAN coordinator. */
 void zb_trans_set_pan_coord(zb_bool_t enabled)
 {
+	struct ieee802154_config config = { .pan_coordinator = enabled };
+
 	LOG_DBG("Function: %s, enabled: %d", __func__, enabled);
-	nrf_802154_pan_coord_set((bool)enabled);
+
+	radio_api->configure(radio_dev,
+			     IEEE802154_CONFIG_PAN_COORDINATOR,
+			     &config);
 }
 
 /* Enables or disables the automatic acknowledgments (auto ACK) */
 void zb_trans_set_auto_ack(zb_bool_t enabled)
 {
+	struct ieee802154_config config = {
+		.auto_ack_fpb = {
+			.enabled = enabled,
+			.mode = IEEE802154_FPB_ADDR_MATCH_ZIGBEE
+		}
+	};
+
 	LOG_DBG("Function: %s, enabled: %d", __func__, enabled);
-	nrf_802154_auto_ack_set((bool)enabled);
+
+	radio_api->configure(radio_dev,
+			     IEEE802154_CONFIG_AUTO_ACK_FPB,
+			     &config);
 }
 
 /* Enables or disables the promiscuous radio mode. */
 void zb_trans_set_promiscuous_mode(zb_bool_t enabled)
 {
+	struct ieee802154_config config = {
+		.promiscuous = enabled
+	};
+
 	LOG_DBG("Function: %s, enabled: %d", __func__, enabled);
-	nrf_802154_promiscuous_set((bool)enabled);
+
+	radio_api->configure(radio_dev,
+			     IEEE802154_CONFIG_PROMISCUOUS,
+			     &config);
 }
 
 /* Changes the radio state to receive. */
 void zb_trans_enter_receive(void)
 {
 	LOG_DBG("Function: %s", __func__);
-	(void)nrf_802154_receive();
+
+	radio_api->start(radio_dev);
+	state_cache.radio_state = RADIO_802154_STATE_RECEIVE;
 }
 
 /* Changes the radio state to sleep. */
 void zb_trans_enter_sleep(void)
 {
 	LOG_DBG("Function: %s", __func__);
-	(void)nrf_802154_sleep_if_idle();
+
+	(void)radio_api->stop(radio_dev);
+	state_cache.radio_state = RADIO_802154_STATE_SLEEP;
 }
 
 /* Returns ZB_TRUE if radio is in receive state, otherwise ZB_FALSE */
 zb_bool_t zb_trans_is_receiving(void)
 {
 	zb_bool_t is_receiv =
-		(nrf_802154_state_get() == NRF_802154_STATE_RECEIVE) ?
+		(state_cache.radio_state == RADIO_802154_STATE_RECEIVE) ?
 			ZB_TRUE : ZB_FALSE;
 
 	LOG_DBG("Function: %s, is receiv: %d", __func__, is_receiv);
@@ -218,7 +265,7 @@ zb_bool_t zb_trans_is_receiving(void)
 zb_bool_t zb_trans_is_active(void)
 {
 	zb_bool_t is_active =
-		(nrf_802154_state_get() != NRF_802154_STATE_SLEEP) ?
+		(state_cache.radio_state != RADIO_802154_STATE_SLEEP) ?
 			ZB_TRUE : ZB_FALSE;
 
 	LOG_DBG("Function: %s, is active: %d", __func__, is_active);
@@ -228,26 +275,33 @@ zb_bool_t zb_trans_is_active(void)
 zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 			    zb_uint8_t *tx_buf, zb_uint8_t current_channel)
 {
+	struct net_buf frag = {
+		.frags = NULL,
+		.b = {
+			.data = &tx_buf[1],
+			.len = tx_buf[0] - FCS_LENGTH,
+			.size = tx_buf[0] - FCS_LENGTH,
+			.__buf = &tx_buf[1]
+		}
+	};
+	int err = 0;
+
 	LOG_DBG("Function: %s, channel: %d", __func__, current_channel);
-	zb_bool_t transmit_status = ZB_FALSE;
 
 #ifndef ZB_ENABLE_ZGP_DIRECT
 	ARG_UNUSED(tx_at);
 	ARG_UNUSED(current_channel);
 #endif
 
+	ack_frame = NULL;
+
 	switch (wait_type) {
 	case ZB_MAC_TX_WAIT_CSMACA:
-#if !NRF_802154_CSMA_CA_ENABLED
-		while (!transmit_status) {
-			transmit_status = (zb_bool_t)nrf_802154_transmit_raw(
-				tx_buf, ZB_FALSE);
-		}
-		break;
-#else
-		transmit_status = ZB_TRUE;
-		nrf_802154_transmit_csma_ca_raw(tx_buf);
-#endif
+		state_cache.radio_state = RADIO_802154_STATE_TRANSMIT;
+		err = radio_api->tx(radio_dev,
+				    IEEE802154_TX_MODE_CSMA_CA,
+				    NULL,
+				    &frag);
 		break;
 
 #ifdef ZB_ENABLE_ZGP_DIRECT
@@ -257,15 +311,41 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 #endif
 	case ZB_MAC_TX_WAIT_NONE:
 		/* First transmit attempt without CCA. */
-		transmit_status = (zb_bool_t)nrf_802154_transmit_raw(
-			tx_buf, ZB_FALSE);
+		state_cache.radio_state = RADIO_802154_STATE_TRANSMIT;
+		err = radio_api->tx(radio_dev,
+				    IEEE802154_TX_MODE_DIRECT,
+				    NULL,
+				    &frag);
 		break;
 	default:
 		LOG_DBG("Illegal wait_type parameter: %d", wait_type);
 		ZB_ASSERT(0);
+		return ZB_FALSE;
+	}
+
+	state_cache.radio_state = RADIO_802154_STATE_RECEIVE;
+
+	switch (err) {
+	case 0:
+		/* ack_frame is overwritten if ack frame was received */
+		zb_macll_transmitted_raw(ack_frame);
+
+		/* Raise signal to indicate radio event */
+		zigbee_event_notify(ZIGBEE_EVENT_TX_DONE);
+		break;
+	case -ENOMSG:
+		zb_macll_transmit_failed(ZB_TRANS_NO_ACK);
+		zigbee_event_notify(ZIGBEE_EVENT_TX_FAILED);
+		break;
+	case -EBUSY:
+	case -EIO:
+	default:
+		zb_macll_transmit_failed(ZB_TRANS_CHANNEL_BUSY_ERROR);
+		zigbee_event_notify(ZIGBEE_EVENT_TX_FAILED);
 		break;
 	}
-	return transmit_status;
+
+	return !err ? ZB_TRUE : ZB_FALSE;
 }
 
 /* Notifies the driver that the buffer containing the received frame
@@ -273,42 +353,53 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
  */
 void zb_trans_buffer_free(zb_uint8_t *buf)
 {
+	ARG_UNUSED(buf);
 	LOG_DBG("Function: %s", __func__);
-	nrf_802154_buffer_free_raw(buf);
+
+	/* The buffer containing the released frame is freed
+	 * in 802.15.4 shim driver
+	 */
 }
 
 zb_bool_t zb_trans_set_pending_bit(zb_uint8_t *addr, zb_bool_t value,
 				   zb_bool_t extended)
 {
+	struct ieee802154_config config = {
+		.ack_fpb = {
+			.addr = addr,
+			.extended = extended,
+			.enabled = !value
+		}
+	};
+	int ret;
+
 	LOG_DBG("Function: %s, value: %d", __func__, value);
-	if (!value) {
-		return (zb_bool_t)nrf_802154_pending_bit_for_addr_set(
-			(const uint8_t *)addr, (bool)extended);
-	} else {
-		return (zb_bool_t)nrf_802154_pending_bit_for_addr_clear(
-			(const uint8_t *)addr, (bool)extended);
-	}
+
+	ret = radio_api->configure(radio_dev,
+				   IEEE802154_CONFIG_ACK_FPB,
+				   &config);
+	return !ret ? ZB_TRUE : ZB_FALSE;
 }
 
 void zb_trans_src_match_tbl_drop(void)
 {
+	struct ieee802154_config config = {
+		.ack_fpb = {
+			.addr = NULL,
+			.enabled = false
+		}
+	};
+
 	LOG_DBG("Function: %s", __func__);
 
 	/* reset for short addresses */
-	nrf_802154_pending_bit_for_addr_reset(ZB_FALSE);
+	config.ack_fpb.extended = false;
+	radio_api->configure(radio_dev, IEEE802154_CONFIG_ACK_FPB, &config);
 
 	/* reset for long addresses */
-	nrf_802154_pending_bit_for_addr_reset(ZB_TRUE);
+	config.ack_fpb.extended = true;
+	radio_api->configure(radio_dev, IEEE802154_CONFIG_ACK_FPB, &config);
 }
-
-#ifdef CONFIG_RADIO_STATISTICS
-static zb_osif_radio_stats_t nrf_radio_statistics;
-
-zb_osif_radio_stats_t *zb_osif_get_radio_stats(void)
-{
-	return &nrf_radio_statistics;
-}
-#endif /* defined CONFIG_RADIO_STATISTICS */
 
 zb_time_t osif_sub_trans_timer(zb_time_t t2, zb_time_t t1)
 {
@@ -317,272 +408,137 @@ zb_time_t osif_sub_trans_timer(zb_time_t t2, zb_time_t t1)
 
 zb_uint8_t zb_trans_get_next_packet(zb_bufid_t buf)
 {
-	LOG_DBG("Function: %s", __func__);
 	zb_uint8_t *data_ptr;
-	zb_uint8_t length = 0;
+	size_t length;
+
+	LOG_DBG("Function: %s", __func__);
 
 	if (!buf) {
 		return 0;
 	}
 
-	/*Packed received with correct CRC, PANID and address*/
-	rx_frame_t *rx_frame = k_fifo_get(&rx_fifo, K_NO_WAIT);
+	/* Packet received with correct CRC, PANID and address */
+	struct net_pkt *pkt = k_fifo_get(&rx_fifo, K_NO_WAIT);
 
-	if (!rx_frame) {
+	if (!pkt) {
 		return 0;
 	}
 
-	length = rx_frame->data[0];
-
+	length = net_pkt_get_len(pkt);
 	data_ptr = zb_buf_initial_alloc(buf, length);
 
-	/*Copy received data*/
-	ZB_MEMCPY(data_ptr, (void const *)(rx_frame->data + 1), length);
+	/* Copy received data */
+	net_pkt_cursor_init(pkt);
+	net_pkt_read(pkt, data_ptr, length);
 
-	/*Put LQI, RSSI*/
+	/* Put LQI, RSSI */
 	zb_macll_metadata_t *metadata = ZB_MACLL_GET_METADATA(buf);
 
-	metadata->lqi = rx_frame->lqi;
-	metadata->power = rx_frame->power;
-	/* Put timestamp (usec) into the packet tail */
-	*ZB_BUF_GET_PARAM(buf, zb_time_t) = rx_frame->time;
-	/* Additional buffer status for Data Request command */
-	zb_macll_set_received_data_status(buf, rx_frame->pending_bit);
+	metadata->lqi = net_pkt_ieee802154_lqi(pkt);
+	metadata->power = net_pkt_ieee802154_rssi(pkt);
 
-	nrf_802154_buffer_free_raw(rx_frame->data);
-	rx_frame->data = NULL;
+	/* Put timestamp (usec) into the packet tail */
+	*ZB_BUF_GET_PARAM(buf, zb_time_t) =
+		net_pkt_timestamp(pkt)->second * USEC_PER_SEC +
+		net_pkt_timestamp(pkt)->nanosecond / NSEC_PER_USEC;
+	/* Additional buffer status for Data Request command */
+	zb_macll_set_received_data_status(buf,
+		net_pkt_ieee802154_ack_fpb(pkt));
+
+	/* Release the packet */
+	net_pkt_unref(pkt);
 
 	return 1;
 }
 
-/************ 802.15.4 radio driver callbacks **************/
-
-/**
- * @brief Notify that frame was transmitted.
- *
- * @note If ACK was requested for transmitted frame this function
- *       is called after proper ACK is received.
- *       If ACK was not requested this function is called just
- *       after transmission is ended.
- * @note Buffer pointed by the @p ack pointer is not modified
- *       by the radio driver (and can't be used to receive a frame)
- *       until @sa nrf_802154_buffer_free_raw() function is called.
- * @note Buffer pointed by the @p ack pointer may be modified by
- *       the function handler (and other modules) until
- *       @sa nrf_802154_buffer_free_raw() function is called.
- * @note The next higher layer should handle @sa nrf_802154_transmitted_raw()
- *       or @sa nrf_802154_transmitted() function. It should not handle both.
- *
- * @param[in]  ack    Pointer to received ACK buffer. Fist byte
- *                    in the buffer is length of the frame (PHR) and
- *                    following bytes are the ACK frame itself (PSDU).
- *                    Length byte (PHR) includes FCS. FCS is already
- *                    verified by the hardware and may be modified by
- *                    the hardware. If ACK was not requested @p ack
- *                    is set to NULL.
- * @param[in]  power  RSSI of received frame or 0 if ACK was not requested.
- * @param[in]  lqi    LQI of received frame or 0 if ACK was not requested.
- */
-void nrf_802154_transmitted_raw(const uint8_t *frame, uint8_t *ack,
-				int8_t power, uint8_t lqi)
+void zb_osif_get_ieee_eui64(zb_ieee_addr_t ieee_eui64)
 {
-	ARG_UNUSED(frame);
-	ARG_UNUSED(power);
-	ARG_UNUSED(lqi);
+	__ASSERT_NO_MSG(net_iface);
+	__ASSERT_NO_MSG(net_if_get_link_addr(net_iface)->len ==
+			sizeof(zb_ieee_addr_t));
 
-#ifdef CONFIG_RADIO_STATISTICS
-	zb_osif_get_radio_stats()->tx_successful++;
-#endif /* defined CONFIG_RADIO_STATISTICS */
-
-	zb_macll_transmitted_raw(ack);
-
-	/* Raise signal to indicate radio event */
-	zigbee_event_notify(ZIGBEE_EVENT_TX_DONE);
+	sys_memcpy_swap(ieee_eui64,
+			net_if_get_link_addr(net_iface)->addr,
+			net_if_get_link_addr(net_iface)->len);
 }
 
-/**
- * @brief Notify that frame was not transmitted due to busy channel.
- *
- * This function is called if transmission procedure fails.
- *
- * @param[in]  error  Reason of the failure.
- */
-
-void nrf_802154_transmit_failed(uint8_t const *frame,
-				nrf_802154_tx_error_t error)
+void ieee802154_init(struct net_if *iface)
 {
-	ARG_UNUSED(frame);
-#ifdef CONFIG_RADIO_STATISTICS
-	switch (error) {
-	case NRF_802154_TX_ERROR_NONE:
-		zb_osif_get_radio_stats()->tx_err_none++;
-		break;
-	case NRF_802154_TX_ERROR_BUSY_CHANNEL:
-		zb_osif_get_radio_stats()->tx_err_busy_channel++;
-		break;
-	case NRF_802154_TX_ERROR_INVALID_ACK:
-		zb_osif_get_radio_stats()->tx_err_invalid_ack++;
-		break;
-	case NRF_802154_TX_ERROR_NO_MEM:
-		zb_osif_get_radio_stats()->tx_err_no_mem++;
-		break;
-	case NRF_802154_TX_ERROR_TIMESLOT_ENDED:
-		zb_osif_get_radio_stats()->tx_err_timeslot_ended++;
-		break;
-	case NRF_802154_TX_ERROR_NO_ACK:
-		zb_osif_get_radio_stats()->tx_err_no_ack++;
-		break;
-	case NRF_802154_TX_ERROR_ABORTED:
-		zb_osif_get_radio_stats()->tx_err_aborted++;
-		break;
-	case NRF_802154_TX_ERROR_TIMESLOT_DENIED:
-		zb_osif_get_radio_stats()->tx_err_timeslot_denied++;
-		break;
-	}
-#endif /* defined CONFIG_RADIO_STATISTICS */
+	__ASSERT_NO_MSG(iface);
+	net_iface = iface;
 
-	switch (error) {
-	case NRF_802154_TX_ERROR_NO_MEM:
-	case NRF_802154_TX_ERROR_ABORTED:
-	case NRF_802154_TX_ERROR_TIMESLOT_DENIED:
-	case NRF_802154_TX_ERROR_TIMESLOT_ENDED:
-	case NRF_802154_TX_ERROR_BUSY_CHANNEL:
-		zb_macll_transmit_failed(ZB_TRANS_CHANNEL_BUSY_ERROR);
-		break;
+	radio_dev = net_if_get_device(iface);
+	__ASSERT_NO_MSG(radio_dev);
 
-	case NRF_802154_TX_ERROR_INVALID_ACK:
-	case NRF_802154_TX_ERROR_NO_ACK:
-		zb_macll_transmit_failed(ZB_TRANS_NO_ACK);
-		break;
-	}
+	radio_api = (struct ieee802154_radio_api *)radio_dev->api;
+	__ASSERT_NO_MSG(radio_api);
 
-	/* Raise signal to indicate radio event */
-	zigbee_event_notify(ZIGBEE_EVENT_TX_FAILED);
+	zb_trans_set_auto_ack(ZB_TRUE);
+
+	zigbee_init();
+
+	k_fifo_init(&rx_fifo);
+	k_sem_init(&energy_detect.sem, 1, 1);
+
+	radio_api->stop(radio_dev);
+	net_if_up(iface);
+	LOG_DBG("The 802.15.4 interface initialized.");
 }
 
-/* Callback notifies about the start of the ACK frame transmission. */
-void nrf_802154_tx_ack_started(const uint8_t *data)
+enum net_verdict ieee802154_radio_handle_ack(struct net_if *iface,
+					     struct net_pkt *pkt)
 {
-    /* Check if the frame pending bit is set in ACK frame. */
-	acked_with_pending_bit = data[FRAME_PENDING_OFFSET] & FRAME_PENDING_BIT;
+	ARG_UNUSED(iface);
+
+	size_t ack_len = net_pkt_get_len(pkt);
+
+	if (ack_len != ACK_PKT_LENGTH) {
+		LOG_ERR("%s: ACK length error", __func__);
+		return NET_CONTINUE;
+	}
+
+	if ((*net_pkt_data(pkt) & FRAME_TYPE_MASK) != FRAME_TYPE_ACK) {
+		LOG_ERR("%s: ACK frame was expected", __func__);
+		return NET_CONTINUE;
+	}
+
+	if (ack_frame != NULL) {
+		LOG_ERR("Overwriting unhandled ACK frame.");
+	}
+
+	ack_frame_buf[0] = ack_len;
+	if (net_pkt_read(pkt, &ack_frame_buf[1], ack_len) < 0) {
+		LOG_ERR("Failed to read ACK frame.");
+		return NET_CONTINUE;
+	}
+
+	/* ack_frame != NULL informs that ACK frame has been received */
+	ack_frame = ack_frame_buf;
+
+	return NET_OK;
 }
 
-/**
- * @brief Notify that frame was received.
- *
- * @note Buffer pointed by the data pointer is not modified
- *       by the radio driver (and can't be used to receive a frame)
- *       until nrf_802154_buffer_free_raw() function is called.
- * @note Buffer pointed by the data pointer may be modified by the function
- *       handler (and other modules) until @sa nrf_802154_buffer_free_raw()
- *       function is called.
- * @note The next higher layer should handle @sa nrf_802154_received_raw()
- *       or @sa nrf_802154_received() function. It should not handle both.
- *
- * data
- * v
- * +-----+---------------------------------------------------+------------+
- * | PHR | MAC Header and payload                            | FCS        |
- * +-----+---------------------------------------------------+------------+
- *       |                                                                |
- *       | <---------------------------- PHR ---------------------------> |
- *
- * @param[in]  data    Pointer to the buffer containing received data
- *                     (PHR + PSDU). First byte in the buffer is length
- *                     of the frame (PHR) and following bytes is the frame
- *                     itself (PSDU). Length byte (PHR) includes FCS.
- *                     FCS is already verified by the hardware and may be
- *                     modified by the hardware.
- * @param[in]  power   RSSI of received frame.
- * @param[in]  lqi     LQI of received frame.
- */
-void nrf_802154_received_timestamp_raw(uint8_t *data, int8_t power,
-				       uint8_t lqi, uint32_t time)
+static enum net_verdict zigbee_l2_recv(struct net_if *iface,
+					struct net_pkt *pkt)
 {
-#ifdef CONFIG_RADIO_STATISTICS
-	zb_osif_get_radio_stats()->rx_successful++;
-#endif /* defined CONFIG_RADIO_STATISTICS */
+	ARG_UNUSED(iface);
 
-	rx_frame_t *rx_frame_free_slot = NULL;
-
-	/* Find free slot for frame */
-	for (uint32_t i = 0; i < ARRAY_SIZE(rx_frames); i++) {
-		if (rx_frames[i].data == NULL) {
-			rx_frame_free_slot = &rx_frames[i];
-			break;
-		}
-	}
-
-	if (rx_frame_free_slot == NULL) {
-		__ASSERT(false,
-			 "Not enough rx frames allocated for 15.4 driver");
-		return;
-	}
-
-	rx_frame_free_slot->data = data;
-	rx_frame_free_slot->power = power;
-	rx_frame_free_slot->lqi = lqi;
-	rx_frame_free_slot->time = time;
-
-	if (data[ACK_REQUEST_OFFSET] & ACK_REQUEST_BIT) {
-		rx_frame_free_slot->pending_bit = acked_with_pending_bit;
-	} else {
-		rx_frame_free_slot->pending_bit = ZB_FALSE;
-	}
-
-	acked_with_pending_bit = ZB_FALSE;
-	k_fifo_put(&rx_fifo, rx_frame_free_slot);
+	k_fifo_put(&rx_fifo, pkt);
 
 	zb_macll_set_rx_flag();
 	zb_macll_set_trans_int();
 
-	/* Raise signal to indicate radio event */
+	/* Raise signal to indicate rx event */
 	zigbee_event_notify(ZIGBEE_EVENT_RX_DONE);
+
+	return NET_OK;
 }
 
-/* Callback notify that reception of a frame failed. */
-void nrf_802154_receive_failed(nrf_802154_rx_error_t error)
+static enum net_l2_flags zigbee_l2_flags(struct net_if *iface)
 {
-	acked_with_pending_bit = ZB_FALSE;
+	ARG_UNUSED(iface);
 
-#ifdef CONFIG_RADIO_STATISTICS
-	switch (error) {
-	case NRF_802154_RX_ERROR_NONE:
-		zb_osif_get_radio_stats()->rx_err_none++;
-		break;
-	case NRF_802154_RX_ERROR_INVALID_FRAME:
-		zb_osif_get_radio_stats()->rx_err_invalid_frame++;
-		break;
-	case NRF_802154_RX_ERROR_INVALID_FCS:
-		zb_osif_get_radio_stats()->rx_err_invalid_fcs++;
-		break;
-	case NRF_802154_RX_ERROR_INVALID_DEST_ADDR:
-		zb_osif_get_radio_stats()->rx_err_invalid_dest_addr++;
-		break;
-	case NRF_802154_RX_ERROR_RUNTIME:
-		zb_osif_get_radio_stats()->rx_err_runtime++;
-		break;
-	case NRF_802154_RX_ERROR_TIMESLOT_ENDED:
-		zb_osif_get_radio_stats()->rx_err_timeslot_ended++;
-		break;
-	case NRF_802154_RX_ERROR_ABORTED:
-		zb_osif_get_radio_stats()->rx_err_aborted++;
-		break;
-	}
-#endif /* defined CONFIG_RADIO_STATISTICS */
+	return 0;
 }
 
-/* Callback notify that Energy Detection procedure finished. */
-void nrf_802154_energy_detected(uint8_t result)
-{
-	energy_detect.rssi_val = result;
-	k_sem_give(&energy_detect.sem);
-}
-
-/* Callback notifies that the energy detection procedure failed. */
-void nrf_802154_energy_detection_failed(nrf_802154_ed_error_t error)
-{
-	ARG_UNUSED(error);
-	energy_detect.failed = true;
-	k_sem_give(&energy_detect.sem);
-}
+NET_L2_INIT(ZIGBEE_L2, zigbee_l2_recv, NULL, NULL, zigbee_l2_flags);
