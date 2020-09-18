@@ -11,6 +11,7 @@ menuconfig ZIGBEE
 	select PM_SINGLE_IMAGE
 	select NET_L2_ZIGBEE
 	select NETWORKING
+	imply MPSL
 	imply COUNTER
 	imply COUNTER_TIMER3
 	imply ENTROPY_GENERATOR
