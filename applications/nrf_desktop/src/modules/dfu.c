@@ -242,7 +242,7 @@ static void complete_dfu_data_store(void)
 #ifdef CONFIG_BOOTLOADER_MCUBOOT
 		int err = boot_request_upgrade(false);
 		if (err) {
-			LOG_ERR("Cannot request the DFU (%d)", err);
+			LOG_ERR("Cannot request the image upgrade (err:%d)", err);
 		}
 #endif
 		terminate_dfu();
