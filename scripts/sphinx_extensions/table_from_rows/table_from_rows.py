@@ -6,6 +6,8 @@ from docutils import io, statemachine
 from docutils.utils.error_reporting import ErrorString
 from docutils.parsers.rst import directives
 from sphinx.util.docutils import SphinxDirective
+import os
+import yaml
 
 
 class TableFromRows(SphinxDirective):
@@ -17,6 +19,7 @@ class TableFromRows(SphinxDirective):
     option_spec = {
         'header': directives.unchanged,
         'rows': directives.unchanged,
+        'sample-yaml-rows': directives.flag,
     }
 
     def _load_section(self, lines, section):
@@ -91,6 +94,26 @@ class TableFromRows(SphinxDirective):
         column_sizes = self._find_column_sizes(header_lines, rows)
         return self._build_table(column_sizes, header_lines, rows)
 
+    def _rows_from_sample_yaml(self, path):
+        if 'NRF_BASE' not in os.environ:
+            raise self.severe(":sample-yaml-rows: needs NRF_BASE in the environment")
+        if 'NRF_RST_SRC' not in os.environ:
+            raise self.severe(":sample-yaml-rows: needs NRF_RST_SRC in the environment")
+        rel_path = os.path.relpath(path, os.environ['NRF_RST_SRC'])
+        path = os.path.join(os.environ['NRF_BASE'], rel_path, 'sample.yaml')
+        try:
+            sample_yaml = open(path)
+        except FileNotFoundError:
+            raise self.severe('"%s" not found' % path)
+        data = yaml.load(sample_yaml, Loader=yaml.BaseLoader)
+        path_key = '.'.join(rel_path.split(os.path.sep))
+        for key in ['tests', path_key, 'platform_whitelist']:
+            if key not in data:
+                raise self.severe('Unexpected sample.yaml format detected, '
+                                  '"%s" key not found!' % key)
+            data = data[key]
+        return [r.strip() for r in data.split(' ') if r.strip() != '']
+
     def run(self):
         _, path = self.env.relfn2path(self.arguments[0])
 
@@ -104,10 +127,29 @@ class TableFromRows(SphinxDirective):
         if rows is not None:
             rows = [r.strip() for r in rows.split(',') if r.strip() != '']
         else:
-            raise self.severe('Problem with "rows" option of "%s" '
-                              'directive:\nEmpty content.' % self.name)
+            rows = []
 
-        raw = '\n'.join(self._load_header_and_rows(path, header, rows))
+        if 'sample-yaml-rows' in self.options:
+            source = self.state_machine.input_lines.source(
+                 self.lineno - self.state_machine.input_offset - 1)
+            source_dir = os.path.dirname(os.path.abspath(source))
+            sample_yaml_rows = self._rows_from_sample_yaml(source_dir)
+        else:
+            sample_yaml_rows = []
+
+        if len(rows) == 0 and len(sample_yaml_rows) == 0:
+            raise self.severe('No "rows" content or "sample-yaml-rows" '
+                              'provided for "%s" ' % self.name)
+
+        # join all rows for uniqueness, using the order given in the :rows:
+        # option or inside sample.yaml, and prioritize :rows: order
+        all_rows = {}
+        if len(rows) > 0:
+            all_rows.update(dict.fromkeys(rows))
+        if len(sample_yaml_rows) > 0:
+            all_rows.update(dict.fromkeys(sample_yaml_rows))
+        raw = '\n'.join(self._load_header_and_rows(path, header,
+                                                   all_rows.keys()))
         lines = statemachine.string2lines(raw)
         self.state_machine.insert_input(lines, path)
         return []
