@@ -799,6 +799,17 @@ int lte_lc_power_off(void)
 	return 0;
 }
 
+int lte_lc_deinit(void)
+{
+	if (is_initialized) {
+		is_initialized = false;
+		at_notif_deregister_handler(NULL, at_handler);
+		return lte_lc_power_off();
+	}
+
+	return 0;
+}
+
 int lte_lc_normal(void)
 {
 	if (at_cmd_write(normal, NULL, 0, NULL) != 0) {
