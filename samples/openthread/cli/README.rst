@@ -18,9 +18,6 @@ The CLI sample comes with the :ref:`full set of OpenThread functionalities <thre
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample to be able to test communication.
 
-An additional functionality of this particular sample is the possibility of updating OpenThread libraries
-with the version compiled from the current source.
-
 See :ref:`ug_thread_cert` for information on how to use this sample on Thread Certification Test Harness.
 
 .. _ot_cli_sample_diag_module:
@@ -28,13 +25,13 @@ See :ref:`ug_thread_cert` for information on how to use this sample on Thread Ce
 Diagnostic module
 =================
 
-By default, the CLI sample comes with the :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` :ref:`configuration set <thread_ug_feature_sets>` enabled, which allows you to use Zephyr's diagnostic module with its ``diag`` commands.
+By default, the CLI sample comes with the :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` :ref:`feature set <thread_ug_feature_sets>` enabled, which allows you to use Zephyr's diagnostic module with its ``diag`` commands.
 Use these commands for manually checking hardware-related functionalities without running a Thread network.
 For example, when adding a new functionality or during the manufacturing process to ensure radio communication is working.
 See `Testing diagnostic module`_ section for an example.
 
 .. note::
-    If you disable the :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` configuration set, you can enable the diagnostic module with the :option:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
+    If you disable the :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` feature set, you can enable the diagnostic module with the :option:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
 
 .. _ot_cli_sample_thread_v12:
 

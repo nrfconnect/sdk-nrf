@@ -16,7 +16,6 @@ config OPENTHREAD_NRF_SECURITY
 	bool "Enable nrf_security module for OpenThread"
 	default y
 	depends on !OPENTHREAD_MBEDTLS
-	depends on OPENTHREAD_SOURCES
 	select NORDIC_SECURITY_BACKEND
 	select OBERON_BACKEND if !CC3XX_BACKEND
 	select MBEDTLS_TLS_LIBRARY
