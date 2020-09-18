@@ -71,6 +71,34 @@ config AZURE_IOT_HUB_AUTO_DEVICE_TWIN_REQUEST
 	bool "Request device twin automatically when connected"
 	default y
 
+config AZURE_IOT_HUB_TOPIC_MAX_LEN
+	int "Max length of topic"
+	default 100
+	help
+	  Sets the maximum length of a topic. If a user plans to make extensive
+	  use of property bags, it should be considered to increase this value
+	  to fit the topic into the allocated buffers.
+
+config AZURE_IOT_HUB_TOPIC_ELEMENT_MAX_LEN
+	int "Maximum length of topic element strings"
+	default 22
+	help
+	  Azure IoT Hub uses dynamically constructed topics to transfer
+	  information elements such as response codes, direct method names and
+	  property bag keys and values.
+	  This option configures the maximum length of such an element.
+	  Note that all values are also represented as strings, regardless
+	  of their content, so a boolean or a number will require its length as
+	  a string, and not the size of its binary representation.
+
+config AZURE_IOT_HUB_PROPERTY_BAG_MAX_COUNT
+	int "Maximum number of property bag elements"
+	default 2
+	help
+	  The maximum number of property bags that can be parsed from a topic.
+	  Increasing this value will increase stack usage when parsing topics,
+	  and vice versa if decreasing it.
+
 config AZURE_IOT_HUB_DPS
 	bool "Use Device Provisioning Service"
 	select CJSON_LIB

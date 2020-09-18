@@ -12,6 +12,7 @@
 #include <settings/settings.h>
 
 #include "azure_iot_hub_dps.h"
+#include "azure_iot_hub_topic.h"
 
 #include <logging/log.h>
 
@@ -320,33 +321,22 @@ exit:
 	return err;
 }
 
-static void dps_parse_reg_update(char *topic, size_t topic_len, char *payload,
+static void dps_parse_reg_update(struct topic_parser_data *topic, char *payload,
 				 size_t payload_len)
 {
-	/* This is a DPS registration update message on this format:
-	 * $dps/registrations/res/202/?$rid={request_id}&retry-after=x
-	 * The response code (202 above) should be checked.
-	 */
 	int err;
-	char *ptr;
-	char retry_str[3];
+	char *reg_id_str = NULL;
+	char *retry_str = NULL;
+	char *end_ptr;
 
 	LOG_DBG("DPS registration request response received");
-
-	/* Move pointer to the first digit in the response code */
-	ptr = topic + (sizeof(DPS_TOPIC_REG) - 1);
-
-	/* Detect the '/' after the status code to be able to read the
-	 * status code as a string
-	 */
-	ptr = strtok(ptr, "/");
 
 	/* Response codes:
 	 *	200: Device registration has been processed
 	 *	202: Registration pending, keep polling
 	 *	All others: Failure
 	 */
-	if (strcmp("200", ptr) == 0) {
+	if (topic->status == 200) {
 		k_delayed_work_cancel(&dps_reg_status.poll_work);
 
 		/* The assigned IoT hub is stored as JSON in the payload */
@@ -367,19 +357,52 @@ static void dps_parse_reg_update(char *topic, size_t topic_len, char *payload,
 		dps_reg_status.state = DPS_STATE_REGISTERED;
 		cb_handler(dps_reg_status.state);
 		return;
-	} else if (strcmp("202", ptr) != 0) {
+	} else if (topic->status != 202) {
 		/* Invalid response code */
 		LOG_ERR("DPS registration request not successful");
-		LOG_ERR("Code was %s, while 202 was expected",
-			log_strdup(ptr));
+		LOG_ERR("Code was %d, while 202 was expected", topic->status);
 		return;
 	}
 
-	/* Check that request ID matches the expected value */
-	(void)strtok(NULL, "="); /* Pointer at start of "$rid" */
-	ptr = strtok(NULL, "&"); /* Pointer at start of "{request_id}" */
+	/* The property bag count shall be 2, and in its raw format, the
+	 * property bag part of the topic looks like this:
+	 *	?$rid={request_id}&retry-after=x
+	 */
+	if (topic->prop_bag_count != 2) {
+		LOG_WRN("Invalid property bag count");
+		return;
+	}
 
-	err = strcmp(dps_reg_status.reg_id, ptr);
+	/* Usually the registration ID comes first. */
+	if (strcmp("$rid", topic->prop_bag[0].key) == 0) {
+		reg_id_str = topic->prop_bag[0].value;
+	} else if (strcmp("retry-after", topic->prop_bag[0].key) == 0) {
+		retry_str = topic->prop_bag[0].value;
+	} else {
+		LOG_WRN("Unexpected property bag keys: \"%s\", \"%s\"",
+			log_strdup(topic->prop_bag[0].key),
+			log_strdup(topic->prop_bag[1].key));
+		return;
+	}
+
+	/* Usually the retry-after property comes second. */
+	if (strcmp("retry-after", topic->prop_bag[1].key) == 0) {
+		retry_str = topic->prop_bag[1].value;
+	} else if (strcmp("$rid", topic->prop_bag[1].key) == 0) {
+		reg_id_str = topic->prop_bag[1].value;
+	} else {
+		LOG_WRN("Unexpected property bag keys: \"%s\", \"%s\"",
+			log_strdup(topic->prop_bag[0].key),
+			log_strdup(topic->prop_bag[1].key));
+		return;
+	}
+
+	if ((reg_id_str == NULL) || (retry_str == NULL)) {
+		LOG_ERR("Retry value or request ID was not be found in topic");
+		return;
+	}
+
+	err = strcmp(dps_reg_status.reg_id, reg_id_str);
 	if (err != 0) {
 		LOG_ERR("Mismatch in received registration ID");
 		return;
@@ -387,16 +410,14 @@ static void dps_parse_reg_update(char *topic, size_t topic_len, char *payload,
 
 	LOG_DBG("Correct registration ID verified");
 
-	/* Get retry value */
-	ptr = strtok(NULL, "="); /* Pointer at start of "retry-after" */
-	ptr += sizeof("&retry-after=") - 2; /* Pointer at "x" */
-
-	snprintf(retry_str, MIN(sizeof(retry_str),
-		 topic_len - (ptr - topic) + 1),
-		 "%s", ptr);
-
 	/* Convert retry value from string to integer */
-	dps_reg_status.retry = strtoul(retry_str, NULL, 10);
+	errno = 0;
+	dps_reg_status.retry = strtoul(retry_str, &end_ptr, 10);
+
+	if ((errno == ERANGE) || (*end_ptr != '\0')) {
+		LOG_WRN("Retry value could not be parsed and applied");
+		return;
+	}
 
 	LOG_DBG("Received retry value: %d", dps_reg_status.retry);
 
@@ -571,10 +592,9 @@ int dps_send_reg_request(void)
 	return mqtt_publish(mqtt_client, &param);
 }
 
-bool dps_process_message(struct azure_iot_hub_evt *evt)
+bool dps_process_message(struct azure_iot_hub_evt *evt,
+			 struct topic_parser_data *topic_data)
 {
-	bool is_reg_update;
-
 	if (evt->type == AZURE_IOT_HUB_EVT_DISCONNECTED) {
 		LOG_WRN("DPS disconnected unexpectedly");
 
@@ -583,18 +603,17 @@ bool dps_process_message(struct azure_iot_hub_evt *evt)
 		return true;
 	}
 
-	if (evt->topic.str == NULL) {
+	if (topic_data == NULL) {
+		LOG_DBG("No topic data provided, message won't be processed");
 		return false;
 	}
 
-	is_reg_update =
-		strstr(DPS_TOPIC_REG, evt->topic.str) == 0 ? true : false;
-	if (!is_reg_update) {
+	if (topic_data->type != TOPIC_TYPE_DPS_REG_RESULT) {
+		LOG_DBG("Not a DPS result update, ignoring");
 		return false;
 	}
 
-	dps_parse_reg_update(evt->topic.str, evt->topic.len,
-			     evt->data.msg.ptr, evt->data.msg.len);
+	dps_parse_reg_update(topic_data, evt->data.msg.ptr, evt->data.msg.len);
 
 	LOG_DBG("Incoming DPS data consumed");
 

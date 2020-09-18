@@ -11,6 +11,7 @@
 #include <settings/settings.h>
 
 #include "azure_iot_hub_dps.h"
+#include "azure_iot_hub_topic.h"
 
 #if defined(CONFIG_AZURE_FOTA)
 #include <net/azure_fota.h>
@@ -32,17 +33,23 @@ LOG_MODULE_REGISTER(azure_iot_hub, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
  */
 #define USER_NAME_TEMPLATE	"%s/%s/?api-version=2018-06-30"
 
+#define DPS_USER_NAME		CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE \
+				"/registrations/%s/api-version=2019-03-31"
+
+/* Topics for data publishing */
+#define TOPIC_TWIN_REPORT	"$iothub/twin/PATCH/properties/reported/?$rid=%d"
+#define TOPIC_EVENTS		"devices/%s/messages/events/%s"
+#define TOPIC_TWIN_REQUEST	"$iothub/twin/GET/?$rid=%d"
+#define TOPIC_DIRECT_METHOD_RES	"$iothub/methods/res/%d/?$rid=%d"
+
+/* Subscription topics */
 #define TOPIC_DEVICEBOUND	"devices/%s/messages/devicebound/#"
 #define TOPIC_TWIN_DESIRED	"$iothub/twin/PATCH/properties/desired/#"
 #define TOPIC_TWIN_RES		"$iothub/twin/res/#"
-#define TOPIC_TWIN_REPORT	"$iothub/twin/PATCH/properties/reported/?$rid=%d"
-#define TOPIC_EVENTS		"devices/%s/messages/events/"
-#define TOPIC_TWIN_REQUEST	"$iothub/twin/GET/?$rid=%d"
 #define TOPIC_DIRECT_METHODS	"$iothub/methods/POST/#"
-#define TOPIC_DIRECT_METHOD_RES	"$iothub/methods/res/%d/?$rid=%d"
 
-#define DPS_USER_NAME		CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE \
-				"/registrations/%s/api-version=2019-03-31"
+#define PROP_BAG_STR_BUF_SIZE	(AZURE_IOT_HUB_TOPIC_ELEMENT_MAX_LEN * \
+				AZURE_IOT_HUB_PROPERTY_BAG_MAX_COUNT)
 
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP)
 static char device_id_buf[CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + 1];
@@ -188,121 +195,33 @@ static int topic_subscribe(void)
 	return err;
 }
 
-static bool is_direct_method(const char *topic, size_t topic_len)
-{
-	/* Compare topic with the direct method topic prefix
-	 * `$iothub/methods/POST/`.
-	 */
-	return strncmp(TOPIC_DIRECT_METHODS, topic,
-		       MIN(sizeof(TOPIC_DIRECT_METHODS) - 2, topic_len)) == 0;
-}
-
-static bool is_device_twin_update(const char *topic, size_t topic_len)
-{
-	/* Compare topic with the device twin desired prefix
-	 * `$iothub/twin/PATCH/properties/desired/#`.
-	 */
-	return strncmp(TOPIC_TWIN_DESIRED, topic,
-		       MIN(sizeof(TOPIC_TWIN_DESIRED) - 2, topic_len)) == 0;
-}
-
-static bool is_device_twin_result(const char *topic, size_t topic_len)
-{
-	/* Compare topic with the device twin report result prefix
-	 * `$iothub/twin/res/#`.
-	 */
-	return strncmp(TOPIC_TWIN_RES, topic,
-		       MIN(sizeof(TOPIC_TWIN_RES) - 2, topic_len)) == 0;
-}
-
-/* Get report result's status code. Returns 0 on success. */
-static int get_device_twin_result(char *topic, size_t topic_len,
-				  struct azure_iot_hub_result *result)
-{
-	char *max_ptr = topic + topic_len - 1;
-	char *ptr;
-
-	/* Topic format:
-	 *   $iothub/twin/res/{status}/?$rid={request id}&$version={version}
-	 *
-	 * Place pointer at start of status (integer)
-	 */
-	ptr = topic + sizeof("$iothub/twin/res/") - 1;
-
-	/* Get the status as a string */
-	ptr = strtok(ptr, "/");
-	if ((ptr == NULL) || (strlen(ptr) > 3)) {
-		LOG_ERR("Invalid status");
-		return -1;
-	}
-
-	result->status = atoi(ptr);
-
-	/* Move pointer to start of request ID */
-	ptr = ptr + strlen(ptr) + sizeof("/?$rid=") - 1;
-	if (ptr > max_ptr) {
-		LOG_ERR("Could not find request ID");
-		return -1;
-	}
-
-	/* Get the request ID as a string */
-	ptr = strtok(ptr, "&");
-	if ((ptr == NULL) || (ptr > max_ptr)) {
-		LOG_ERR("Invalid request ID");
-		return -1;
-	}
-
-	result->rid = atoi(ptr);
-
-	LOG_DBG("Device twin received, request ID %d, status: %d",
-		result->rid, result->status);
-
-	return 0;
-}
-
-/* Note: This function alters the content of the topic string through
- * the use of strtok().
- */
-static bool direct_method_process(char *topic, size_t topic_len,
+static bool direct_method_process(struct topic_parser_data *topic,
 				  const char *payload, size_t payload_len)
 {
-	char *max_ptr = topic + topic_len - 1;
-	char *ptr;
-	char rid_buf[8];
 	struct azure_iot_hub_evt evt = {
 		.type = AZURE_IOT_HUB_EVT_DIRECT_METHOD,
-		.topic.str = topic,
-		.topic.len = topic_len,
+		.topic.str = (char *)topic->topic,
+		.topic.len = topic->topic_len,
 		.data.method.payload = payload,
 		.data.method.payload_len = payload_len,
 	};
 
-	/* Topic format: $iothub/methods/POST/{method name}/?$rid={req ID} */
-	/* Place pointer at start of method name */
-	ptr = topic + sizeof("$iothub/methods/POST/") - 1;
+	if (topic->name) {
+		evt.data.method.name = topic->name;
 
-	/* Null-terminate the method name */
-	ptr = strtok(ptr, "/");
-	if ((ptr == NULL) || ((ptr + strlen(ptr)) > max_ptr)) {
-		LOG_ERR("Invalid method name");
+		LOG_DBG("Direct method name: %s", log_strdup(topic->name));
+	} else {
+		LOG_WRN("No direct method name, event will not be notified");
 		return false;
 	}
 
-	evt.data.method.name = ptr;
-
-	LOG_DBG("Direct method name: %s", log_strdup(evt.data.method.name));
-
-	/* Move pointer to start of request ID, {req ID} in topic */
-	ptr = ptr + strlen(ptr) + sizeof("/?$rid=") - 1;
-	if ((ptr > max_ptr) || ((max_ptr - ptr) > sizeof(rid_buf))) {
-		LOG_ERR("Invalid request ID");
+	if (topic->prop_bag_count == 0) {
+		LOG_WRN("No request ID, cannot process direct method");
 		return false;
 	}
 
 	/* Get request ID */
-	memcpy(rid_buf, ptr, max_ptr - ptr + 1);
-	rid_buf[max_ptr - ptr + 1] = '\0';
-	evt.data.method.rid = atoi(rid_buf);
+	evt.data.method.rid = atoi(topic->prop_bag[0].value);
 
 	LOG_DBG("Direct method request ID: %d", evt.data.method.rid);
 
@@ -327,22 +246,15 @@ static void device_twin_request(void)
 	LOG_DBG("Device twin requested");
 }
 
-static void device_twin_result_process(char *topic, size_t topic_len,
+static void device_twin_result_process(struct topic_parser_data *topic,
 				       char *payload, size_t payload_len)
 {
-	int err;
 	struct azure_iot_hub_evt evt = {
-		.topic.str = topic,
-		.topic.len = topic_len,
+		.topic.str = (char *)topic->topic,
+		.topic.len = topic->topic_len,
 		.data.msg.ptr = payload,
 		.data.msg.len = payload_len,
 	};
-
-	err = get_device_twin_result(topic, topic_len, &evt.data.result);
-	if (err) {
-		LOG_ERR("Failed to process report result");
-		return;
-	}
 
 	/* Status codes
 	 *	200: Response to request for device twin from
@@ -354,10 +266,11 @@ static void device_twin_result_process(char *topic, size_t topic_len,
 	 *	     settings.
 	 *	5xx: Server errors
 	 */
-	switch (evt.data.result.status) {
-	case 200:
+	switch (topic->status) {
+	case 200: {
 #if IS_ENABLED(CONFIG_AZURE_FOTA)
-		err = azure_fota_msg_process(payload_buf, payload_len);
+		int err = azure_fota_msg_process(payload, payload_len);
+
 		if (err < 0) {
 			LOG_ERR("Failed to process FOTA msg");
 			return;
@@ -368,6 +281,7 @@ static void device_twin_result_process(char *topic, size_t topic_len,
 #endif /* IS_ENABLED(CONFIG_AZURE_FOTA) */
 		evt.type = AZURE_IOT_HUB_EVT_TWIN_RECEIVED;
 		break;
+	}
 	case 204:
 		evt.type = AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS;
 		break;
@@ -418,15 +332,20 @@ static void on_publish(struct mqtt_client *const client,
 {
 	int err;
 	const struct mqtt_publish_param *p = &mqtt_evt->param.publish;
-	char *topic = (char *)p->message.topic.topic.utf8;
-	size_t topic_len = p->message.topic.topic.size;
 	size_t payload_len = p->message.payload.len;
+	struct azure_iot_hub_prop_bag prop_bag[TOPIC_PROP_BAG_COUNT];
 	struct azure_iot_hub_evt evt = {
 		.type = AZURE_IOT_HUB_EVT_DATA_RECEIVED,
 		.data.msg.ptr = payload_buf,
 		.data.msg.len = payload_len,
-		.topic.str = (char *)topic,
-		.topic.len = topic_len,
+		.topic.str = (char *)p->message.topic.topic.utf8,
+		.topic.len = p->message.topic.topic.size,
+		.topic.prop_bag = prop_bag,
+	};
+	struct topic_parser_data topic_data = {
+		.topic = p->message.topic.topic.utf8,
+		.topic_len = p->message.topic.topic.size,
+		.type = TOPIC_TYPE_UNKNOWN,
 	};
 
 	LOG_DBG("MQTT_EVT_PUBLISH: id = %d, len = %d ",
@@ -450,29 +369,43 @@ static void on_publish(struct mqtt_client *const client,
 		}
 	}
 
-#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
-	if (dps_reg_in_progress()) {
-		if (dps_process_message(&evt)) {
-			/* The message has been processed */
-			return;
-		}
+	err = azure_iot_hub_topic_parse(&topic_data);
+	if (err) {
+		LOG_ERR("Failed to parse topic, error: %d", err);
 	}
-#endif
 
-	/* Check if it's a direct method invocation */
-	if (is_direct_method(topic, topic_len)) {
-		if (direct_method_process((char *)topic, topic_len,
-						payload_buf, payload_len)) {
+	switch (topic_data.type) {
+	case TOPIC_TYPE_DEVICEBOUND:
+		evt.topic.prop_bag_count = topic_data.prop_bag_count;
+		if (evt.topic.prop_bag_count == 0) {
+			break;
+		}
+
+		for (size_t i = 0; i < topic_data.prop_bag_count; i++) {
+			prop_bag[i].key = topic_data.prop_bag[i].key;
+			prop_bag[i].value = topic_data.prop_bag[i].value;
+		}
+		break;
+	case TOPIC_TYPE_DIRECT_METHOD:
+		if (direct_method_process(&topic_data, payload_buf,
+					  payload_len)) {
 			LOG_DBG("Direct method processed");
 			return;
 		}
 
 		LOG_WRN("Unhandled direct method invocation");
 		return;
-	}
-
-	/* Check if message is a desired device twin change */
-	if (is_device_twin_update(topic, topic_len)) {
+	case TOPIC_TYPE_DPS_REG_RESULT:
+#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
+		if (dps_reg_in_progress()) {
+			if (dps_process_message(&evt, &topic_data)) {
+				/* The message has been processed */
+				return;
+			}
+		}
+#endif
+		break;
+	case TOPIC_TYPE_TWIN_UPDATE_DESIRED:
 #if IS_ENABLED(CONFIG_AZURE_FOTA)
 		err = azure_fota_msg_process(payload_buf, payload_len);
 		if (err < 0) {
@@ -486,14 +419,23 @@ static void on_publish(struct mqtt_client *const client,
 		evt.type = AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED;
 
 		azure_iot_hub_notify_event(&evt);
-	} else if (is_device_twin_result(topic, topic_len)) {
+		return;
+	case TOPIC_TYPE_TWIN_UPDATE_RESULT:
 		LOG_DBG("Device twin data received");
-
-		device_twin_result_process(topic, topic_len, payload_buf,
+		device_twin_result_process(&topic_data, payload_buf,
 					   payload_len);
-	} else {
-		azure_iot_hub_notify_event(&evt);
+		return;
+	case TOPIC_TYPE_UNEXPECTED:
+	case TOPIC_TYPE_EMPTY:
+	case TOPIC_TYPE_UNKNOWN:
+		LOG_WRN("Data received on unexpected topic");
+		break;
+	default:
+		/* Should not be reachable */
+		LOG_ERR("Topic parsing failed");
 	}
+
+	azure_iot_hub_notify_event(&evt);
 }
 
 static void mqtt_evt_handler(struct mqtt_client *const client,
@@ -544,7 +486,7 @@ static void mqtt_evt_handler(struct mqtt_client *const client,
 
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 		if (dps_reg_in_progress()) {
-			if (dps_process_message(&evt)) {
+			if (dps_process_message(&evt, NULL)) {
 				/* The message has been processed */
 				break;
 			}
@@ -1037,7 +979,7 @@ int azure_iot_hub_input(void)
 int azure_iot_hub_send(const struct azure_iot_hub_data *const tx_data)
 {
 	ssize_t len;
-	static char topic[100];
+	static char topic[CONFIG_AZURE_IOT_HUB_TOPIC_MAX_LEN + 1];
 	struct mqtt_publish_param param = {
 		.message.payload.data = tx_data->ptr,
 		.message.payload.len = tx_data->len,
@@ -1053,14 +995,33 @@ int azure_iot_hub_send(const struct azure_iot_hub_data *const tx_data)
 	}
 
 	switch (tx_data->topic.type) {
-	case AZURE_IOT_HUB_TOPIC_EVENT:
+	case AZURE_IOT_HUB_TOPIC_EVENT: {
+		char *prop_bag_str = NULL;
+
+		if (tx_data->topic.prop_bag_count > 0) {
+			prop_bag_str = azure_iot_hub_prop_bag_str_get(
+						tx_data->topic.prop_bag,
+						tx_data->topic.prop_bag_count);
+			if (prop_bag_str == NULL) {
+				LOG_ERR("Failed to add property bags");
+			}
+		}
+
 		len = snprintk(topic, sizeof(topic),
-			       TOPIC_EVENTS, conn_config.device_id);
+			       TOPIC_EVENTS, conn_config.device_id,
+			       prop_bag_str ? prop_bag_str : "");
+
+		if (prop_bag_str) {
+			azure_iot_hub_prop_bag_free(prop_bag_str);
+		}
+
 		if ((len < 0) || (len > sizeof(topic))) {
 			LOG_ERR("Failed to create event topic");
 			return -ENOMEM;
 		}
+
 		break;
+	}
 	case AZURE_IOT_HUB_TOPIC_TWIN_REPORTED:
 		len = snprintk(topic, sizeof(topic),
 				TOPIC_TWIN_REPORT, k_uptime_get_32());

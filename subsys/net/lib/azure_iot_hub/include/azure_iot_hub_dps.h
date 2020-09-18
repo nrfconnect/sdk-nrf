@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <net/azure_iot_hub.h>
 
+#include "azure_iot_hub_topic.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,10 +52,15 @@ int dps_init(struct dps_config *cfg);
 /* @brief Parse incoming MQTT message to see if it's DPS related and process
  *	  accordingly.
  *
+ * @param evt Pointer to Azure IoT Hub event.
+ * @param topic_data Pointer to parsed topic data. If NULL, only the event
+ *		     data will be processed.
+ *
  * @retval true The message was DPS-related and is consumed.
  * @retval false The message was not DPS-related.
  */
-bool dps_process_message(struct azure_iot_hub_evt *evt);
+bool dps_process_message(struct azure_iot_hub_evt *evt,
+			 struct topic_parser_data *topic_data);
 
 /* @brief Start Azure Device Provisioning Service process.
  *
