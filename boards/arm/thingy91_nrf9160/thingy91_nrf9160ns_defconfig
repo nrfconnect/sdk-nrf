@@ -5,6 +5,9 @@ CONFIG_BOARD_THINGY91_NRF9160NS=y
 # Enable MPU
 CONFIG_ARM_MPU=y
 
+# Enable hardware stack protection
+CONFIG_HW_STACK_PROTECTION=y
+
 # Enable TrustZone-M
 CONFIG_ARM_TRUSTZONE_M=y
 
