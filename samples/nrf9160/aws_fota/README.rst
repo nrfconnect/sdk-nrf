@@ -108,7 +108,7 @@ The sample supports the following development kit:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160ns
+   :sample-yaml-rows:
 
 The sample requires an `AWS account`_ with access to Simple Storage Service (S3) and the IoT Core service.
 

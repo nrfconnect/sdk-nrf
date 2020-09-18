@@ -36,7 +36,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: thingy91_nrf9160ns, nrf9160dk_nrf9160ns
+   :sample-yaml-rows:
 
 Setup
 *****
