@@ -9,9 +9,10 @@ menuconfig ZIGBEE
 	imply FPU
 	select APP_LINK_WITH_ZBOSS
 	select PM_SINGLE_IMAGE
+	select NET_L2_ZIGBEE
+	select NETWORKING
 	imply COUNTER
 	imply COUNTER_TIMER3
-	imply NRF_802154_RADIO_DRIVER
 	imply ENTROPY_GENERATOR
 	imply POLL
 	imply FLASH
@@ -94,13 +95,6 @@ config ZIGBEE_APP_CB_QUEUE_LENGTH
 	  threads/ISR to the ZBOSS main loop context.
 	  Elements from this queue are flushed right after ZBOSS context awakes,
 	  before the actual callback execution.
-
-config ZIGBEE_VENDOR_OUI
-	hex "A value that represents MAC Address Block Large"
-	default 0xf4ce36
-	help
-	  A value that represents MAC Address Block Large (MA-L, formerly called Organizationally Unique Identifier, or OUI), a part of the device's EUI-64 address.
-	  By default, use Nordic Semiconductor's MA-L block (f4-ce-36), assigned by the IEEE Registration Authority.
 
 config ZIGBEE_DEBUG_FUNCTIONS
 	bool "Include Zigbee debug functions"
@@ -294,12 +288,6 @@ config ZIGBEE_SHELL_CTX_MGR_ENTRIES_NBR
 	  Entries are shared by ZDO commands, ZCL commands and PING commands.
 
 endif #ZIGBEE_SHELL
-
-config RADIO_STATISTICS
-	bool "Collect radio statistics"
-	default n
-	help
-	  This option enables the radio statistics.
 
 endmenu #menu "ZBOSS osif configuration"
 

@@ -248,10 +248,8 @@ static void zb_app_cb_process_schedule(struct k_work *item)
 	(void)item;
 }
 
-static int zigbee_init(struct device *unused)
+int zigbee_init(void)
 {
-	ARG_UNUSED(unused);
-
 	/* Initialise work queue for processing app callback and alarms. */
 	k_work_init(&zb_app_cb_work, zb_app_cb_process_schedule);
 
@@ -528,22 +526,6 @@ __weak zb_uint32_t zb_get_utc_time(void)
 	return ZB_TIME_BEACON_INTERVAL_TO_MSEC(ZB_TIMER_GET()) / 1000;
 }
 
-/**@brief Read IEEE long address from FICR registers. */
-void zb_osif_get_ieee_eui64(zb_ieee_addr_t ieee_eui64)
-{
-	uint64_t factoryAddress;
-
-	/* Read random address from FICR. */
-	factoryAddress = (uint64_t)NRF_FICR->DEVICEID[0] << 32;
-	factoryAddress |= NRF_FICR->DEVICEID[1];
-
-	/* Set constant manufacturer ID to use MAC compression mechanisms. */
-	factoryAddress &= 0x000000FFFFFFFFFFLL;
-	factoryAddress |= (uint64_t)(CONFIG_ZIGBEE_VENDOR_OUI) << 40;
-
-	memcpy(ieee_eui64, &factoryAddress, sizeof(factoryAddress));
-}
-
 void zigbee_event_notify(zigbee_event_t event)
 {
 	k_poll_signal_raise(&zigbee_sig, event);
@@ -586,5 +568,3 @@ void zigbee_enable(void)
 				    0, K_NO_WAIT);
 	k_thread_name_set(&zboss_thread_data, "zboss");
 }
-
-SYS_INIT(zigbee_init, POST_KERNEL, CONFIG_ZBOSS_DEFAULT_THREAD_PRIORITY);
