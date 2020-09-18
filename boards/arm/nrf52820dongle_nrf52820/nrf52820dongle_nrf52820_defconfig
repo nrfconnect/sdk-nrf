@@ -5,6 +5,9 @@ CONFIG_BOARD_NRF52820DONGLE_NRF52820=y
 # Enable MPU
 CONFIG_ARM_MPU=y
 
+# Enable hardware stack protection
+CONFIG_HW_STACK_PROTECTION=y
+
 # enable GPIO
 CONFIG_GPIO=y
 
