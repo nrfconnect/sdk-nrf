@@ -328,6 +328,10 @@ static void scan_start(void)
 	size_t bond_count = count_bond();
 	int err;
 
+	if (scanning) {
+		scan_stop();
+	}
+
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST) &&
 	    (conn_count == bond_count) && peers_only) {
 		LOG_INF("All known peers connected - scanning disabled");
@@ -342,10 +346,6 @@ static void scan_start(void)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM) &&
 	    (CONFIG_BT_MAX_CONN == 2)) {
-		if (scanning) {
-			scan_stop();
-		}
-
 		update_init_conn_params(is_llpm_peer_connected());
 	}
 
@@ -526,11 +526,6 @@ static bool event_handler(const struct event_header *eh)
 
 			module_set_state(MODULE_STATE_READY);
 		} else if (check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
-			static bool started;
-
-			__ASSERT_NO_MSG(!started);
-			started = true;
-
 			/* Settings need to be loaded before scan start */
 			scan_start();
 		}
