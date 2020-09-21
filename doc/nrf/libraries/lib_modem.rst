@@ -9,3 +9,4 @@ Modem libraries
 
    ../../include/modem/*
    ../../lib/zzhc/*
+   ../../lib/at_host/*
