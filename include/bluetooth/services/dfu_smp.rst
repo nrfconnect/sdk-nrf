@@ -1,4 +1,4 @@
-.. _dfu_smp_c_readme:
+.. _dfu_smp_readme:
 
 GATT DFU SMP Service Client
 ###########################
@@ -38,7 +38,7 @@ Usage
 *****
 
 .. note::
-   Do not access any of the values in the :c:struct:`bt_gatt_dfu_smp_c` object structure directly.
+   Do not access any of the values in the :c:struct:`bt_dfu_smp` object structure directly.
    All values that should be accessed have accessor functions.
    The reason that the structure is fully defined is to allow the application to allocate the memory for it.
 
@@ -55,7 +55,7 @@ Note that this is a limitation of the :ref:`zephyr:smp_svr_sample`, not of the S
 Sending a command
 =================
 
-To send a command, use :c:func:`bt_gatt_dfu_smp_c_command`.
+To send a command, use :c:func:`bt_dfu_smp_command`.
 The command is provided as a raw binary buffer consisting of a :c:struct:`dfu_smp_header` and the payload.
 
 
@@ -63,19 +63,19 @@ Processing the response
 =======================
 
 The response to a command is sent as notification.
-It is passed to the callback function that was provided when issuing the command with :c:func:`bt_gatt_dfu_smp_c_command`.
+It is passed to the callback function that was provided when issuing the command with :c:func:`bt_dfu_smp_command`.
 
-Use :c:func:`bt_gatt_dfu_smp_c_rsp_state` to access the data of the current part of the response.
-As the response might be received in multiple notifications, use :c:func:`bt_gatt_dfu_smp_c_rsp_total_check` to verify if this is the last part of the response.
-The offset size of the current part and the total size are available in fields of the :c:struct:`bt_gatt_dfu_smp_rsp_state` structure.
+Use :c:func:`bt_dfu_smp_rsp_state` to access the data of the current part of the response.
+As the response might be received in multiple notifications, use :c:func:`bt_dfu_smp_rsp_total_check` to verify if this is the last part of the response.
+The offset size of the current part and the total size are available in fields of the :c:struct:`bt_dfu_smp_rsp_state` structure.
 
 
 API documentation
 *****************
 
-| Header file: :file:`include/dfu_smp_c.h`
-| Source file: :file:`subsys/bluetooth/services/dfu_smp_c.c`
+| Header file: :file:`include/bluetooth/services/dfu_smp.h`
+| Source file: :file:`subsys/bluetooth/services/dfu_smp.c`
 
-.. doxygengroup:: bt_gatt_dfu_smp_c
+.. doxygengroup:: bt_dfu_smp
    :project: nrf
    :members:
