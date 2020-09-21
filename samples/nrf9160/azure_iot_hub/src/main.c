@@ -148,6 +148,11 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 	case AZURE_IOT_HUB_EVT_CONNECTED:
 		printk("AZURE_IOT_HUB_EVT_CONNECTED\n");
 		break;
+	case AZURE_IOT_HUB_EVT_CONNECTION_FAILED:
+		printk("AZURE_IOT_HUB_EVT_CONNECTION_FAILED\n");
+		printk("Error code received from IoT Hub: %d\n",
+		       evt->data.err);
+		break;
 	case AZURE_IOT_HUB_EVT_DISCONNECTED:
 		printk("AZURE_IOT_HUB_EVT_DISCONNECTED\n");
 		break;

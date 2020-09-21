@@ -508,7 +508,10 @@ static void mqtt_evt_handler(struct mqtt_client *const client,
 			LOG_ERR("Connection was rejected with return code %d",
 				mqtt_evt->param.connack.return_code);
 			LOG_WRN("Is the device certificate valid?");
-				return;
+			evt.data.err = mqtt_evt->param.connack.return_code;
+			evt.type = AZURE_IOT_HUB_EVT_CONNECTION_FAILED;
+			azure_iot_hub_notify_event(&evt);
+			return;
 		}
 
 		connection_state = STATE_CONNECTED;
