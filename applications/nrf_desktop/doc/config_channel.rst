@@ -206,7 +206,7 @@ To register an application module as a configuration channel listener, complete 
            [TEST_MODULE_OPT_PARAM_WIFI] = "param_wifi"
        };
 
-   * Set report handler (:cpp:func:`config_set`):
+   * Set operation handler (:cpp:func:`config_set`):
 
    .. code-block:: c
 
@@ -240,7 +240,7 @@ To register an application module as a configuration channel listener, complete 
            }
        }
 
-   * Get report handler (:cpp:func:`config_get`):
+   * Fetch operation handler (:cpp:func:`config_get`):
 
    .. code-block:: c
 
@@ -270,6 +270,13 @@ To register an application module as a configuration channel listener, complete 
                break;
            }
        }
+
+.. note::
+  A configuration channel listener can specify it's variant by providing an option named :c:macro:`OPT_DESCR_MODULE_VARIANT`.
+  On fetch operation of the mentioned option, the module must provide an array of characters that represents the module variant.
+
+  The :ref:`nrf_desktop_motion` uses the module variant to specify the motion sensor model.
+  The :ref:`nrf_destkop_config_channel_script` uses the module variant to provide separate description of the configurable module for every module variant.
 
 For an example of a module that uses the configuration channel, see the following files:
 
