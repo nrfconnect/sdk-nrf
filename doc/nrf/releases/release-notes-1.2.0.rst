@@ -330,7 +330,7 @@ Bluetooth Low Energy
   * Enabled stack protection, assertions, and logging by default.
   * Modified the samples to use the synchronous :c:func:`bt_enable` function.
 
-* :ref:`nus_c_readme`, :ref:`bas_client_readme`, and :ref:`dfu_smp_c_readme`:
+* :ref:`nus_c_readme`, :ref:`bas_client_readme`, and :ref:`dfu_smp_readme`:
 
   * Fixed an issue where it was not possible to subscribe to the service notifications more than once.
 

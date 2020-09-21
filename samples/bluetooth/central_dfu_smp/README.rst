@@ -3,7 +3,7 @@
 Bluetooth: Central DFU SMP
 ##########################
 
-The Central DFU SMP sample demonstrates how to use the :ref:`dfu_smp_c_readme` to connect to an SMP Server and send a simple echo command.
+The Central DFU SMP sample demonstrates how to use the :ref:`dfu_smp_readme` to connect to an SMP Server and send a simple echo command.
 The response, which is received as CBOR-encoded data, is decoded and printed.
 
 
@@ -80,7 +80,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`dfu_smp_c_readme`
+* :ref:`dfu_smp_readme`
 * :ref:`gatt_dm_readme`
 * :ref:`nrf_bt_scan_readme`
 

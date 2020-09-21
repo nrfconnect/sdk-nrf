@@ -23,7 +23,7 @@
 #include <bluetooth/gatt_dm.h>
 #include <sys/byteorder.h>
 #include <bluetooth/scan.h>
-#include <bluetooth/services/dfu_smp_c.h>
+#include <bluetooth/services/dfu_smp.h>
 #include <dk_buttons_and_leds.h>
 
 
@@ -33,7 +33,7 @@
 
 
 static struct bt_conn *default_conn;
-static struct bt_gatt_dfu_smp_c dfu_smp_c;
+static struct bt_dfu_smp dfu_smp;
 static struct bt_gatt_exchange_params exchange_params;
 
 /* Buffer for response */
@@ -79,7 +79,7 @@ static void discovery_completed_cb(struct bt_gatt_dm *dm,
 
 	bt_gatt_dm_data_print(dm);
 
-	err = bt_gatt_dfu_smp_c_handles_assign(dm, &dfu_smp_c);
+	err = bt_dfu_smp_handles_assign(dm, &dfu_smp);
 	if (err) {
 		printk("Could not init DFU SMP client object, error: %d\n",
 		       err);
@@ -157,10 +157,8 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	}
 
 	if (conn == default_conn) {
-		err = bt_gatt_dm_start(conn,
-				       DFU_SMP_UUID_SERVICE,
-				       &discovery_cb,
-				       NULL);
+		err = bt_gatt_dm_start(conn, BT_UUID_DFU_SMP_SERVICE,
+				       &discovery_cb, NULL);
 		if (err) {
 			printk("Could not start the discovery procedure "
 			       "(err %d)\n", err);
@@ -226,7 +224,7 @@ static void scan_init(void)
 	bt_scan_cb_register(&scan_cb);
 
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID,
-				 DFU_SMP_UUID_SERVICE);
+				 BT_UUID_DFU_SMP_SERVICE);
 	if (err) {
 		printk("Scanning filters cannot be set (err %d)\n", err);
 
@@ -240,22 +238,22 @@ static void scan_init(void)
 }
 
 
-static void dfu_smp_c_on_error(struct bt_gatt_dfu_smp_c *dfu_smp_c, int err)
+static void dfu_smp_on_error(struct bt_dfu_smp *dfu_smp, int err)
 {
 	printk("DFU SMP generic error: %d\n", err);
 }
 
 
-static const struct bt_gatt_dfu_smp_c_init_params init_params = {
-	.error_cb = dfu_smp_c_on_error
+static const struct bt_dfu_smp_init_params init_params = {
+	.error_cb = dfu_smp_on_error
 };
 
-static void smp_echo_rsp_proc(struct bt_gatt_dfu_smp_c *dfu_smp_c)
+static void smp_echo_rsp_proc(struct bt_dfu_smp *dfu_smp)
 {
 	uint8_t *p_outdata = (uint8_t *)(&smp_rsp_buff);
-	const struct bt_gatt_dfu_smp_rsp_state *rsp_state;
+	const struct bt_dfu_smp_rsp_state *rsp_state;
 
-	rsp_state = bt_gatt_dfu_smp_c_rsp_state(dfu_smp_c);
+	rsp_state = bt_dfu_smp_rsp_state(dfu_smp);
 	printk("Echo response part received, size: %zu.\n",
 	       rsp_state->chunk_size);
 
@@ -268,7 +266,7 @@ static void smp_echo_rsp_proc(struct bt_gatt_dfu_smp_c *dfu_smp_c)
 		       rsp_state->chunk_size);
 	}
 
-	if (bt_gatt_dfu_smp_c_rsp_total_check(dfu_smp_c)) {
+	if (bt_dfu_smp_rsp_total_check(dfu_smp)) {
 		printk("Total response received - decoding\n");
 		if (smp_rsp_buff.header.op != 3 /* WRITE RSP*/) {
 			printk("Unexpected operation code (%u)!\n",
@@ -316,7 +314,7 @@ static void smp_echo_rsp_proc(struct bt_gatt_dfu_smp_c *dfu_smp_c)
 
 }
 
-static int send_smp_echo(struct bt_gatt_dfu_smp_c *dfu_smp_c,
+static int send_smp_echo(struct bt_dfu_smp *dfu_smp,
 			 const char *string)
 {
 	static struct smp_buffer smp_cmd;
@@ -342,10 +340,9 @@ static int send_smp_echo(struct bt_gatt_dfu_smp_c *dfu_smp_c,
 	smp_cmd.header.seq = 0;
 	smp_cmd.header.id  = 0; /* ECHO */
 
-	return bt_gatt_dfu_smp_c_command(dfu_smp_c,
-					 smp_echo_rsp_proc,
-					 sizeof(smp_cmd.header) + payload_len,
-					 &smp_cmd);
+	return bt_dfu_smp_command(dfu_smp, smp_echo_rsp_proc,
+				  sizeof(smp_cmd.header) + payload_len,
+				  &smp_cmd);
 }
 
 
@@ -359,7 +356,7 @@ static void button_echo(bool state)
 		++echo_cnt;
 		printk("Echo test: %d\n", echo_cnt);
 		snprintk(buffer, sizeof(buffer), "Echo message: %u", echo_cnt);
-		ret = send_smp_echo(&dfu_smp_c, buffer);
+		ret = send_smp_echo(&dfu_smp, buffer);
 		if (ret) {
 			printk("Echo command send error (err: %d)\n", ret);
 		}
@@ -381,7 +378,7 @@ void main(void)
 
 	printk("Starting Bluetooth Central DFU SMP example\n");
 
-	bt_gatt_dfu_smp_c_init(&dfu_smp_c, &init_params);
+	bt_dfu_smp_init(&dfu_smp, &init_params);
 
 	err = bt_enable(NULL);
 	if (err) {
