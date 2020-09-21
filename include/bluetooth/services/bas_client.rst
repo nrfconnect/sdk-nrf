@@ -1,4 +1,4 @@
-.. _bas_c_readme:
+.. _bas_client_readme:
 
 GATT Battery Service (BAS) Client
 #################################
@@ -15,42 +15,42 @@ Usage
 *****
 
 .. note::
-   Do not access any of the values in the :c:struct:`bt_gatt_bas_c` object structure directly.
+   Do not access any of the values in the :c:struct:`bt_bas_client` object structure directly.
    All values that should be accessed have accessor functions.
    The reason that the structure is fully defined is to allow the application to allocate the memory for it.
 
 There are different ways to retrieve the battery level:
 
 Notifications
-  Use :c:func:`bt_gatt_bas_c_subscribe` to receive notifications from the connected Battery Service.
+  Use :c:func:`bt_bas_subscribe_battery_level` to receive notifications from the connected Battery Service.
   The notifications are passed to the provided callback function.
 
   Note that it is not mandatory for the Battery Level Characteristic to support notifications.
   If the server does not support notifications, read the current value as described below instead.
 
 Reading the current value
-  Use :c:func:`bt_gatt_bas_c_read` to read the battery level.
+  Use :c:func:`bt_bas_read_battery_level` to read the battery level.
   When subscribing to notifications, you can call this function to retrieve the current value even when there is no change.
 
 Periodically reading the current value with time interval
-  Use :c:func:`bt_gatt_bas_c_periodic_read_start` to periodically read the battery level with a given time interval.
+  Use :c:func:`bt_bas_start_per_read_battery_level` to periodically read the battery level with a given time interval.
   You can call this function only when notification support is not enabled in BAS.
-  See :ref:`bas_c_readme_periodic` for more details.
+  See :ref:`bas_client_readme_periodic` for more details.
 
 Getting the last known value
   The BAS Client stores the last known battery level information internally.
-  Use :c:func:`bt_gatt_bas_c_get` to access it.
+  Use :c:func:`bt_bas_get_last_battery_level` to access it.
 
   .. note::
      The internally stored value is updated every time a notification or read response is received.
-     If no value is received from the server, the get function returns :c:macro:`BT_GATT_BAS_VAL_INVALID`.
+     If no value is received from the server, the get function returns :c:macro:`BT_BAS_VAL_INVALID`.
 
-.. _bas_c_readme_periodic:
+.. _bas_client_readme_periodic:
 
 Periodic reading of the battery level
 *************************************
 
-You can use the :c:func:`bt_gatt_bas_c_periodic_read_start` function to periodically read the battery level with a specific time interval.
+You can use the :c:func:`bt_bas_start_per_read_battery_level` function to periodically read the battery level with a specific time interval.
 This function sends a read request to the connected device periodically.
 It can be used only when support for notifications is not enabled in BAS.
 
@@ -62,15 +62,15 @@ Periodic read interval can be changed while the periodic read is active.
 In such case, the next read period is started with the new interval.
 
 .. note::
-   Providing the ``K_NO_WAIT`` and ``K_FOREVER`` arguments as the time interval causes reading of the charasteristic value as soon and as often as possible.
+   Providing the ``K_NO_WAIT`` and ``K_FOREVER`` arguments as the time interval causes reading of the characteristic value as soon and as often as possible.
 
 
 API documentation
 *****************
 
-| Header file: :file:`include/bas_c.h`
-| Source file: :file:`subsys/bluetooth/services/bas_c.c`
+| Header file: :file:`include/bas_client.h`
+| Source file: :file:`subsys/bluetooth/services/bas_client.c`
 
-.. doxygengroup:: bt_gatt_bas_c_api
+.. doxygengroup:: bt_bas_client_api
    :project: nrf
    :members:

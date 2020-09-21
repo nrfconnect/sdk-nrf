@@ -8,10 +8,10 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
 
-#include <bluetooth/services/bas_c.h>
+#include <bluetooth/services/bas_client.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(bas_c, CONFIG_BT_GATT_BAS_C_LOG_LEVEL);
+LOG_MODULE_REGISTER(bas_client, CONFIG_BT_BAS_CLIENT_LOG_LEVEL);
 
 #define BAS_PERIODIC_READ_PROC_BIT BIT(0)
 
@@ -33,37 +33,37 @@ static uint8_t notify_process(struct bt_conn *conn,
 			   struct bt_gatt_subscribe_params *params,
 			   const void *data, uint16_t length)
 {
-	struct bt_gatt_bas_c *bas_c;
+	struct bt_bas_client *bas;
 	uint8_t battery_level;
 	const uint8_t *bdata = data;
 
-	bas_c = CONTAINER_OF(params, struct bt_gatt_bas_c, notify_params);
+	bas = CONTAINER_OF(params, struct bt_bas_client, notify_params);
 	if (!data || !length) {
 		LOG_INF("Notifications disabled.");
-		if (bas_c->notify_cb) {
-			bas_c->notify_cb(bas_c, BT_GATT_BAS_VAL_INVALID);
+		if (bas->notify_cb) {
+			bas->notify_cb(bas, BT_BAS_VAL_INVALID);
 		}
 		return BT_GATT_ITER_STOP;
 	}
 	if (length != 1) {
 		LOG_ERR("Unexpected notification value size.");
-		if (bas_c->notify_cb) {
-			bas_c->notify_cb(bas_c, BT_GATT_BAS_VAL_INVALID);
+		if (bas->notify_cb) {
+			bas->notify_cb(bas, BT_BAS_VAL_INVALID);
 		}
 		return BT_GATT_ITER_STOP;
 	}
 
 	battery_level = bdata[0];
-	if (battery_level > BT_GATT_BAS_VAL_MAX) {
+	if (battery_level > BT_BAS_VAL_MAX) {
 		LOG_ERR("Unexpected notification value.");
-		if (bas_c->notify_cb) {
-			bas_c->notify_cb(bas_c, BT_GATT_BAS_VAL_INVALID);
+		if (bas->notify_cb) {
+			bas->notify_cb(bas, BT_BAS_VAL_INVALID);
 		}
 		return BT_GATT_ITER_STOP;
 	}
-	bas_c->battery_level = battery_level;
-	if (bas_c->notify_cb) {
-		bas_c->notify_cb(bas_c, battery_level);
+	bas->battery_level = battery_level;
+	if (bas->notify_cb) {
+		bas->notify_cb(bas, battery_level);
 	}
 
 	return BT_GATT_ITER_CONTINUE;
@@ -88,31 +88,31 @@ static uint8_t read_process(struct bt_conn *conn, uint8_t err,
 			     struct bt_gatt_read_params *params,
 			     const void *data, uint16_t length)
 {
-	struct bt_gatt_bas_c *bas_c;
-	uint8_t battery_level = BT_GATT_BAS_VAL_INVALID;
+	struct bt_bas_client *bas;
+	uint8_t battery_level = BT_BAS_VAL_INVALID;
 	const uint8_t *bdata = data;
 
-	bas_c = CONTAINER_OF(params, struct bt_gatt_bas_c, read_params);
+	bas = CONTAINER_OF(params, struct bt_bas_client, read_params);
 
-	if (!bas_c->read_cb) {
+	if (!bas->read_cb) {
 		LOG_ERR("No read callback present");
 	} else  if (err) {
 		LOG_ERR("Read value error: %d", err);
-		bas_c->read_cb(bas_c,  battery_level, err);
+		bas->read_cb(bas,  battery_level, err);
 	} else if (!data || length != 1) {
-		bas_c->read_cb(bas_c,  battery_level, -EMSGSIZE);
+		bas->read_cb(bas,  battery_level, -EMSGSIZE);
 	} else {
 		battery_level = bdata[0];
-		if (battery_level > BT_GATT_BAS_VAL_MAX) {
+		if (battery_level > BT_BAS_VAL_MAX) {
 			LOG_ERR("Unexpected read value.");
-			bas_c->read_cb(bas_c, BT_GATT_BAS_VAL_INVALID, err);
+			bas->read_cb(bas, BT_BAS_VAL_INVALID, err);
 		} else {
-			bas_c->battery_level = battery_level;
-			bas_c->read_cb(bas_c, battery_level, err);
+			bas->battery_level = battery_level;
+			bas->read_cb(bas, battery_level, err);
 		}
 	}
 
-	bas_c->read_cb = NULL;
+	bas->read_cb = NULL;
 
 	return BT_GATT_ITER_STOP;
 }
@@ -137,14 +137,14 @@ static uint8_t periodic_read_process(struct bt_conn *conn, uint8_t err,
 				  struct bt_gatt_read_params *params,
 				  const void *data, uint16_t length)
 {
-	struct bt_gatt_bas_c *bas_c;
-	uint8_t battery_level = BT_GATT_BAS_VAL_INVALID;
+	struct bt_bas_client *bas;
+	uint8_t battery_level = BT_BAS_VAL_INVALID;
 	const uint8_t *bdata = data;
 
-	bas_c = CONTAINER_OF(params, struct bt_gatt_bas_c,
+	bas = CONTAINER_OF(params, struct bt_bas_client,
 			periodic_read.params);
 
-	if (!bas_c->notify_cb) {
+	if (!bas->notify_cb) {
 		LOG_ERR("No notification callback present");
 	} else  if (err) {
 		LOG_ERR("Read value error: %d", err);
@@ -152,21 +152,21 @@ static uint8_t periodic_read_process(struct bt_conn *conn, uint8_t err,
 		LOG_ERR("Unexpected read value size.");
 	} else {
 		battery_level = bdata[0];
-		if (battery_level > BT_GATT_BAS_VAL_MAX) {
+		if (battery_level > BT_BAS_VAL_MAX) {
 			LOG_ERR("Unexpected read value.");
-		} else if (bas_c->battery_level != battery_level) {
-			bas_c->battery_level = battery_level;
-			bas_c->notify_cb(bas_c, battery_level);
+		} else if (bas->battery_level != battery_level) {
+			bas->battery_level = battery_level;
+			bas->notify_cb(bas, battery_level);
 		} else {
 			/* Do nothing. */
 		}
 	}
 
-	if (atomic_test_bit(&bas_c->periodic_read.process,
+	if (atomic_test_bit(&bas->periodic_read.process,
 			    BAS_PERIODIC_READ_PROC_BIT)) {
-		k_delayed_work_submit(&bas_c->periodic_read.read_work,
+		k_delayed_work_submit(&bas->periodic_read.read_work,
 				      K_MSEC(atomic_get(
-					&bas_c->periodic_read.interval)));
+					&bas->periodic_read.interval)));
 	}
 
 	return BT_GATT_ITER_STOP;
@@ -181,22 +181,22 @@ static uint8_t periodic_read_process(struct bt_conn *conn, uint8_t err,
 static void bas_read_value_handler(struct k_work *work)
 {
 	int err;
-	struct bt_gatt_bas_c *bas_c;
+	struct bt_bas_client *bas;
 
-	bas_c = CONTAINER_OF(work, struct bt_gatt_bas_c,
+	bas = CONTAINER_OF(work, struct bt_bas_client,
 			     periodic_read.read_work);
 
-	if (!bas_c->conn) {
+	if (!bas->conn) {
 		LOG_ERR("No connection object.");
 		return;
 	}
 
-	bas_c->periodic_read.params.func = periodic_read_process;
-	bas_c->periodic_read.params.handle_count  = 1;
-	bas_c->periodic_read.params.single.handle = bas_c->val_handle;
-	bas_c->periodic_read.params.single.offset = 0;
+	bas->periodic_read.params.func = periodic_read_process;
+	bas->periodic_read.params.handle_count  = 1;
+	bas->periodic_read.params.single.handle = bas->val_handle;
+	bas->periodic_read.params.single.offset = 0;
 
-	err = bt_gatt_read(bas_c->conn, &bas_c->periodic_read.params);
+	err = bt_gatt_read(bas->conn, &bas->periodic_read.params);
 
 	/* Do not treats reading after disconnection as error.
 	 * Periodic read process is stopped after disconnection.
@@ -211,32 +211,32 @@ static void bas_read_value_handler(struct k_work *work)
 /**
  * @brief Reinitialize the BAS Client.
  *
- * @param bas_c BAS Client object.
+ * @param bas BAS Client object.
  */
-static void bas_reinit(struct bt_gatt_bas_c *bas_c)
+static void bas_reinit(struct bt_bas_client *bas)
 {
-	bas_c->ccc_handle = 0;
-	bas_c->val_handle = 0;
-	bas_c->battery_level = BT_GATT_BAS_VAL_INVALID;
-	bas_c->conn = NULL;
-	bas_c->notify_cb = NULL;
-	bas_c->read_cb = NULL;
-	bas_c->notify = false;
+	bas->ccc_handle = 0;
+	bas->val_handle = 0;
+	bas->battery_level = BT_BAS_VAL_INVALID;
+	bas->conn = NULL;
+	bas->notify_cb = NULL;
+	bas->read_cb = NULL;
+	bas->notify = false;
 }
 
 
-void bt_gatt_bas_c_init(struct bt_gatt_bas_c *bas_c)
+void bt_bas_client_init(struct bt_bas_client *bas)
 {
-	memset(bas_c, 0, sizeof(*bas_c));
-	bas_c->battery_level = BT_GATT_BAS_VAL_INVALID;
+	memset(bas, 0, sizeof(*bas));
+	bas->battery_level = BT_BAS_VAL_INVALID;
 
-	k_delayed_work_init(&bas_c->periodic_read.read_work,
+	k_delayed_work_init(&bas->periodic_read.read_work,
 			    bas_read_value_handler);
 }
 
 
-int bt_gatt_bas_c_handles_assign(struct bt_gatt_dm *dm,
-				 struct bt_gatt_bas_c *bas_c)
+int bt_bas_handles_assign(struct bt_gatt_dm *dm,
+				 struct bt_bas_client *bas)
 {
 	const struct bt_gatt_dm_attr *gatt_service_attr =
 			bt_gatt_dm_service_get(dm);
@@ -252,9 +252,9 @@ int bt_gatt_bas_c_handles_assign(struct bt_gatt_dm *dm,
 	LOG_DBG("Getting handles from battery service.");
 
 	/* If connection is established again, cancel previous read request. */
-	k_delayed_work_cancel(&bas_c->periodic_read.read_work);
+	k_delayed_work_cancel(&bas->periodic_read.read_work);
 	/* When workqueue is used its instance cannont be cleared. */
-	bas_reinit(bas_c);
+	bas_reinit(bas);
 
 	/* Battery level characteristic */
 	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_BAS_BATTERY_LEVEL);
@@ -266,62 +266,62 @@ int bt_gatt_bas_c_handles_assign(struct bt_gatt_dm *dm,
 	__ASSERT_NO_MSG(chrc_val); /* This is internal function and it has to
 				    * be called with characteristic attribute
 				    */
-	bas_c->properties = chrc_val->properties;
+	bas->properties = chrc_val->properties;
 	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc,
 					    BT_UUID_BAS_BATTERY_LEVEL);
 	if (!gatt_desc) {
 		LOG_ERR("No battery level characteristic value found.");
 		return -EINVAL;
 	}
-	bas_c->val_handle = gatt_desc->handle;
+	bas->val_handle = gatt_desc->handle;
 
 	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_GATT_CCC);
 	if (!gatt_desc) {
 		LOG_INF("No battery CCC descriptor found. Battery service do not supported notification.");
 	} else {
-		bas_c->notify = true;
-		bas_c->ccc_handle = gatt_desc->handle;
+		bas->notify = true;
+		bas->ccc_handle = gatt_desc->handle;
 	}
 
 	/* Finally - save connection object */
-	bas_c->conn = bt_gatt_dm_conn_get(dm);
+	bas->conn = bt_gatt_dm_conn_get(dm);
 	return 0;
 }
 
-int bt_gatt_bas_c_subscribe(struct bt_gatt_bas_c *bas_c,
-			    bt_gatt_bas_c_notify_cb func)
+int bt_bas_subscribe_battery_level(struct bt_bas_client *bas,
+				   bt_bas_notify_cb func)
 {
 	int err;
 
-	if (!bas_c || !func) {
+	if (!bas || !func) {
 		return -EINVAL;
 	}
-	if (!bas_c->conn) {
+	if (!bas->conn) {
 		return -EINVAL;
 	}
-	if (!(bas_c->properties & BT_GATT_CHRC_NOTIFY)) {
+	if (!(bas->properties & BT_GATT_CHRC_NOTIFY)) {
 		return -ENOTSUP;
 	}
-	if (bas_c->notify_cb) {
+	if (bas->notify_cb) {
 		return -EALREADY;
 	}
 
-	bas_c->notify_cb = func;
+	bas->notify_cb = func;
 
-	bas_c->notify_params.notify = notify_process;
-	bas_c->notify_params.value = BT_GATT_CCC_NOTIFY;
-	bas_c->notify_params.value_handle = bas_c->val_handle;
-	bas_c->notify_params.ccc_handle = bas_c->ccc_handle;
-	atomic_set_bit(bas_c->notify_params.flags,
+	bas->notify_params.notify = notify_process;
+	bas->notify_params.value = BT_GATT_CCC_NOTIFY;
+	bas->notify_params.value_handle = bas->val_handle;
+	bas->notify_params.ccc_handle = bas->ccc_handle;
+	atomic_set_bit(bas->notify_params.flags,
 		       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
 	LOG_DBG("Subscribe: val: %u, ccc: %u",
-		bas_c->notify_params.value_handle,
-		bas_c->notify_params.ccc_handle);
-	err = bt_gatt_subscribe(bas_c->conn, &bas_c->notify_params);
+		bas->notify_params.value_handle,
+		bas->notify_params.ccc_handle);
+	err = bt_gatt_subscribe(bas->conn, &bas->notify_params);
 	if (err) {
 		LOG_ERR("Report notification subscribe error: %d.", err);
-		bas_c->notify_cb = NULL;
+		bas->notify_cb = NULL;
 		return err;
 	}
 	LOG_DBG("Report subscribed.");
@@ -329,85 +329,86 @@ int bt_gatt_bas_c_subscribe(struct bt_gatt_bas_c *bas_c,
 }
 
 
-int bt_gatt_bas_c_unsubscribe(struct bt_gatt_bas_c *bas_c)
+int bt_bas_unsubscribe_battery_level(struct bt_bas_client *bas)
 {
 	int err;
 
-	if (!bas_c) {
+	if (!bas) {
 		return -EINVAL;
 	}
 
-	if (!bas_c->notify_cb) {
+	if (!bas->notify_cb) {
 		return -EFAULT;
 	}
 
-	err = bt_gatt_unsubscribe(bas_c->conn, &bas_c->notify_params);
-	bas_c->notify_cb = NULL;
+	err = bt_gatt_unsubscribe(bas->conn, &bas->notify_params);
+	bas->notify_cb = NULL;
 	return err;
 }
 
 
-struct bt_conn *bt_gatt_bas_c_conn(const struct bt_gatt_bas_c *bas_c)
+struct bt_conn *bt_bas_conn(const struct bt_bas_client *bas)
 {
-	return bas_c->conn;
+	return bas->conn;
 }
 
 
-int bt_gatt_bas_c_read(struct bt_gatt_bas_c *bas_c, bt_gatt_bas_c_read_cb func)
+int bt_bas_read_battery_level(struct bt_bas_client *bas, bt_bas_read_cb func)
 {
 	int err;
 
-	if (!bas_c || !func) {
+	if (!bas || !func) {
 		return -EINVAL;
 	}
-	if (!bas_c->conn) {
+	if (!bas->conn) {
 		return -EINVAL;
 	}
-	if (bas_c->read_cb) {
+	if (bas->read_cb) {
 		return -EBUSY;
 	}
-	bas_c->read_cb = func;
-	bas_c->read_params.func = read_process;
-	bas_c->read_params.handle_count  = 1;
-	bas_c->read_params.single.handle = bas_c->val_handle;
-	bas_c->read_params.single.offset = 0;
+	bas->read_cb = func;
+	bas->read_params.func = read_process;
+	bas->read_params.handle_count  = 1;
+	bas->read_params.single.handle = bas->val_handle;
+	bas->read_params.single.offset = 0;
 
-	err = bt_gatt_read(bas_c->conn, &bas_c->read_params);
+	err = bt_gatt_read(bas->conn, &bas->read_params);
 	if (err) {
-		bas_c->read_cb = NULL;
+		bas->read_cb = NULL;
 		return err;
 	}
 	return 0;
 }
 
 
-int bt_gatt_bas_c_get(struct bt_gatt_bas_c *bas_c)
+int bt_bas_get_last_battery_level(struct bt_bas_client *bas)
 {
-	if (!bas_c) {
+	if (!bas) {
 		return -EINVAL;
 	}
-	return bas_c->battery_level;
+
+	return bas->battery_level;
 }
 
 
-int bt_gatt_bas_c_periodic_read_start(struct bt_gatt_bas_c *bas_c,
-				      int32_t interval,
-				      bt_gatt_bas_c_notify_cb func)
+int bt_bas_start_per_read_battery_level(struct bt_bas_client *bas,
+					int32_t interval,
+					bt_bas_notify_cb func)
 {
-	if (!bas_c || !func) {
+	if (!bas || !func) {
 		return -EINVAL;
 	}
 
-	if (bt_gatt_bas_c_notify_supported(bas_c)) {
+	if (bt_bas_notify_supported(bas)) {
 		return -ENOTSUP;
 	}
 
-	bas_c->notify_cb = func;
-	atomic_set(&bas_c->periodic_read.interval, interval);
+	bas->notify_cb = func;
+	atomic_set(&bas->periodic_read.interval, interval);
 
-	if (!atomic_test_and_set_bit(&bas_c->periodic_read.process,
+	if (!atomic_test_and_set_bit(&bas->periodic_read.process,
 				     BAS_PERIODIC_READ_PROC_BIT)) {
-		k_delayed_work_submit(&bas_c->periodic_read.read_work,
+		k_delayed_work_submit(&bas->periodic_read.read_work,
 				      K_MSEC(interval));
 	}
 
@@ -415,14 +416,14 @@ int bt_gatt_bas_c_periodic_read_start(struct bt_gatt_bas_c *bas_c,
 }
 
 
-void bt_gatt_bas_c_periodic_read_stop(struct bt_gatt_bas_c *bas_c)
+void bt_bas_stop_per_read_battery_level(struct bt_bas_client *bas)
 {
 	/* If delayed workqueue pending, cancel it. */
-	k_delayed_work_cancel(&bas_c->periodic_read.read_work);
+	k_delayed_work_cancel(&bas->periodic_read.read_work);
 
 	/* If read is proccesed now, prevent triggering new
 	 * characteristic read.
 	 */
-	atomic_clear_bit(&bas_c->periodic_read.process,
+	atomic_clear_bit(&bas->periodic_read.process,
 			 BAS_PERIODIC_READ_PROC_BIT);
 }

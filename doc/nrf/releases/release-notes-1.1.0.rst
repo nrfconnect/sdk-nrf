@@ -370,7 +370,7 @@ Bluetooth Low Energy
 
   * Updated to allow to define services as static using ``BT_GATT_SERVICE_DEFINE``.
 
-* :ref:`bas_c_readme`:
+* :ref:`bas_client_readme`:
 
   * Extended API to enable periodical reading of the characteristic value.
 
@@ -450,7 +450,7 @@ Documentation
 
   * Bluetooth Low Energy:
 
-    * :ref:`bas_c_readme`
+    * :ref:`bas_client_readme`
     * :ref:`bt_mesh`
 
 
