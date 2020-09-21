@@ -1,0 +1,4 @@
+tests:
+  net.lib.azure_iot_hub:
+    platform_allow: nrf9160dk_nrf9160 qemu_x86 native_posix
+    tags: azure_iot_hub
