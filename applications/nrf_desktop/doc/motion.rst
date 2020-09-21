@@ -16,6 +16,8 @@ Module events
 .. note::
     |nrf_desktop_module_event_note|
 
+.. _nrf_desktop_motion_configuration:
+
 Configuration
 *************
 
@@ -25,7 +27,7 @@ The motion module selects the source of movement based on the following configur
 * ``CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE`` - Movement data is obtained from the gaming-grade ``PMW3360`` motion sensor.
 * ``CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE`` - Movement data is obtained from ``PAW3212`` motion sensor.
 * ``CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE`` - Movement data is generated using buttons.
-* ``CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE`` - Movement data is simulated (controlled from Zephyr's shell).
+* ``CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE`` - Movement data is simulated (controlled from Zephyr's :ref:`zephyr:shell_api`).
 
 See the following sections for more information.
 
@@ -70,6 +72,29 @@ You can configure the path with the following options:
 * ``CONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR`` - Scales the size of the polygon.
 
 The ``stop`` command will cause the module to stop generating new events.
+
+Configuration channel
+*********************
+
+In a :ref:`configuration <nrf_desktop_motion_configuration>` where either ``CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE`` or ``CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE`` is used, you can configure the module through the :ref:`nrf_desktop_config_channel`.
+In these configurations, the module is a configuration channel listener and it provides the following configuration options:
+
+* :c:macro:`OPT_DESCR_MODULE_VARIANT`
+    This is a special, read-only option used to provide information about the module variant.
+    For the motion sensor, the module variant is a sensor model written in lowercase, for example ``pmw3360`` or ``paw3212``.
+
+    The :ref:`nrf_desktop_config_channel_script` uses the sensor model to identify the descriptions of the configuration options.
+    These descriptions are defined in the :file:`nrf/scripts/hid_configurator/modules/module_config.py`.
+* ``cpi``
+    The motion sensor CPI.
+* ``downshift``, ``rest1``, ``rest2``
+    These firmware option names correspond to switch times of motion sensor modes, namely the sleep modes of ``PAW3212`` and the rest modes of ``PMW3360``.
+    This kind of modes is used by a motion sensor to reduce the power consumption, but it also increases the sensor's response time when a motion is detected after a period of inactivity.
+
+    The :ref:`nrf_desktop_config_channel_script` refers to these mode options using names that depend on the sensor variant:
+
+    * For ``PAW3212``, the mode options are called respectively: ``sleep1_timeout``, ``sleep2_timeout``, and ``sleep3_timeout``.
+    * For ``PMW3360``, the mode options are called respectively: ``downshift_run``, ``downshift_rest1``, and ``downshift_rest2``.
 
 Implementation details
 **********************
