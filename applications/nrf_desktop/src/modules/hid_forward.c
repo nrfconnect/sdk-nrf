@@ -311,20 +311,34 @@ static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
 	}
 	__ASSERT_NO_MSG(sub_id < ARRAY_SIZE(subscribers));
 
+	size_t per_free = ARRAY_SIZE(peripherals);
 	size_t per_id;
 	for (per_id = 0; per_id < ARRAY_SIZE(peripherals); per_id++) {
 		if (!is_peripheral_connected(&peripherals[per_id])) {
-			break;
+			per_free = per_id;
+			if (peripherals[per_id].sub_id == sub_id) {
+				break;
+			}
 		}
+	}
+	if (per_id == ARRAY_SIZE(peripherals)) {
+		per_id = per_free;
 	}
 	__ASSERT_NO_MSG(per_id < ARRAY_SIZE(peripherals));
 
-	peripherals[per_id].sub_id = sub_id;
+	struct hids_peripheral *per = &peripherals[per_id];
+
+	if (per->sub_id != sub_id) {
+		for (size_t report_id = 0; report_id < ARRAY_SIZE(per->enqueued_report); report_id++) {
+			drop_enqueued_reports(&per->enqueued_report[report_id]);
+		}
+		per->sub_id = sub_id;
+	}
 
 	__ASSERT_NO_MSG(hwid_len == HWID_LEN);
-	memcpy(peripherals[per_id].hwid, hwid, hwid_len);
+	memcpy(per->hwid, hwid, hwid_len);
 
-	int err = bt_gatt_hids_c_handles_assign(dm, &peripherals[per_id].hidc);
+	int err = bt_gatt_hids_c_handles_assign(dm, &per->hidc);
 
 	if (err) {
 		LOG_ERR("Cannot assign handles (err:%d)", err);
@@ -828,11 +842,6 @@ static void send_enqueued_report(struct subscriber *sub)
 
 		/* Check if peripheral is linked with the subscriber. */
 		if (sub != get_subscriber(per)) {
-			continue;
-		}
-
-		/* Check if peripheral is connected. */
-		if (!is_peripheral_connected(per)) {
 			continue;
 		}
 
