@@ -30,6 +30,12 @@ enum azure_iot_hub_evt_type {
 	AZURE_IOT_HUB_EVT_CONNECTING = 0x1,
 	/** Connected to Azure IoT Hub. */
 	AZURE_IOT_HUB_EVT_CONNECTED,
+	/** Connection attempt failed. The reported error code from the
+	 *  IoT Hub is available in the data.err member in the event structure.
+	 *  The error codes correspond to return codes in MQTT CONNACK
+	 *  messages.
+	 */
+	AZURE_IOT_HUB_EVT_CONNECTION_FAILED,
 	/** Azure IoT Hub connection established and ready. */
 	AZURE_IOT_HUB_EVT_READY,
 	/** Disconnected from Azure IoT Hub. */
