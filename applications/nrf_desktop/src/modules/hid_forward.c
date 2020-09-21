@@ -158,6 +158,24 @@ static bool is_report_enabled(struct subscriber *sub, uint8_t report_id)
 	return (sub->enabled_reports_bm & BIT(report_id)) != 0;
 }
 
+static void drop_enqueued_reports(struct enqueued_reports *enqueued_report)
+{
+	/* Clear all the reports. */
+	while (!sys_slist_is_empty(&enqueued_report->list)) {
+		struct enqueued_report *item;;
+
+		item = CONTAINER_OF(sys_slist_get(&enqueued_report->list),
+				__typeof__(*item),
+				node);
+		enqueued_report->count--;
+
+		k_free(item->report);
+		k_free(item);
+	}
+
+	__ASSERT_NO_MSG(enqueued_report->count == 0);
+}
+
 static void enqueue_hid_report(struct enqueued_reports *enqueued_report,
 			       struct hid_report_event *report)
 {
@@ -716,29 +734,25 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 	}
 }
 
-static void clear_state(void)
+static void enable_notifications(struct subscriber *sub, uint8_t report_id)
 {
+	sub->enabled_reports_bm |= BIT(report_id);
+}
+
+static void disable_notifications(struct subscriber *sub, uint8_t report_id)
+{
+	sub->enabled_reports_bm &= ~BIT(report_id);
+
+	/* For all peripherals connected to this subscriber. */
 	for (size_t per_id = 0; per_id < ARRAY_SIZE(peripherals); per_id++) {
 		struct hids_peripheral *per = &peripherals[per_id];
 
-		for (size_t report_id = 0; report_id < ARRAY_SIZE(per->enqueued_report); report_id++) {
-			struct enqueued_reports *enqueued_report = &per->enqueued_report[report_id];
-
-			/* Clear all the reports. */
-			while (!sys_slist_is_empty(&enqueued_report->list)) {
-				struct enqueued_report *item;;
-
-				item = CONTAINER_OF(sys_slist_get(&enqueued_report->list),
-						     __typeof__(*item),
-						    node);
-				enqueued_report->count--;
-
-				k_free(item->report);
-				k_free(item);
-			}
-
-			__ASSERT_NO_MSG(enqueued_report->count == 0);
+		if ((sub != get_subscriber(per)) ||
+		    (!is_peripheral_connected(per))) {
+			continue;
 		}
+
+		drop_enqueued_reports(&per->enqueued_report[report_id]);
 	}
 }
 
@@ -929,11 +943,10 @@ static bool event_handler(const struct event_header *eh)
 
 		__ASSERT_NO_MSG(event->report_id < __CHAR_BIT__ * sizeof(sub->enabled_reports_bm));
 		if (event->enabled) {
-			sub->enabled_reports_bm |= BIT(event->report_id);
+			enable_notifications(sub, event->report_id);
 			send_enqueued_report(sub);
 		} else {
-			sub->enabled_reports_bm &= ~BIT(event->report_id);
-			clear_state();
+			disable_notifications(sub, event->report_id);
 		}
 
 		return false;
