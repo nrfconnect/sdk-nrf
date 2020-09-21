@@ -22,7 +22,7 @@ The script looks for nRF Desktop devices connected to the host through USB, Blue
 The devices are identified based on Vendor ID.
 
 The script exchanges data with the device using :ref:`nrf_desktop_config_channel`.
-The data is sent using a HID feature reports and targets a specific FW module of the nRF Desktop application.
+The data is sent using HID feature reports and targets a specific FW module of the nRF Desktop application.
 
 For more information about the architecture of the nRF Desktop configuration channel, see :ref:`nrf_desktop_config_channel`.
 The configuration channel uses a cross-platform HIDAPI library to communicate with HID devices attached to the operating system.
@@ -144,6 +144,19 @@ Use the following syntax to display list of configurable modules:
   The list contains all the configurable modules used by nRF Desktop devices.
   Make sure that selected module and option combination is supported by the configured device using ``show`` command.
 
+Use the following syntax to display list of options for the given configurable module:
+
+.. parsed-literal::
+    :class: highlight
+
+    python3 configurator_cli.py DEVICE config MODULE_NAME -h
+
+.. tip::
+  The available configurable modules and options are defined by the :file:`nrf/scripts/hid_configurator/modules/module_config.py` file.
+
+  You can add another configurable modules to the file following the existing examples.
+  Make sure to also add the application firmware module as a :ref:`nrf_desktop_config_channel` listener.
+
 Customize the command with the following variables:
 
 * ``MODULE_NAME`` - The third argument is used to pass the name of module to be configured.
@@ -164,6 +177,13 @@ To write a new value for the selected option, pass the value as the fifth argume
 
     python3 configurator_cli.py DEVICE config MODULE_NAME OPTION_NAME VALUE
 
+.. important::
+  If the module that is a configuration channel listener specifies it's variant, you must refer to the module using the following syntax: ``module_name/variant``.
+  For example, the :ref:`nrf_desktop_motion` variant depends on the motion sensor model:
+
+  * ``motion/paw3212``
+  * ``motion/pmw3360``.
+
 Performing DFU
 ==============
 
@@ -175,6 +195,7 @@ When the whole image is transmitted, the update process is completed during the 
 If the DFU process is interrupted, it can be resumed using the same image, unless the device restarts.
 After the device reboots, the process always starts from the beginning.
 For more information, see nRF Desktop's :ref:`nrf_desktop_dfu`.
+The DFU functionality on the host computer is implemented in the :file:`nrf/scripts/hid_configurator/modules/dfu.py` file.
 
 The ``dfu`` command will read the version of the firmware running on the device and compare it with the firmware version in the update image at the provided path.
 If the process is to be continued, the script will upload the image data to the device.
@@ -225,6 +246,10 @@ Playing LEDstream
 
 The LEDstream is a feature of nRF Desktop that allows you to send a stream of color data to be replayed on the device LED.
 For more information about its implementation, see nRF Desktop's :ref:`nrf_desktop_led_stream`.
+The LEDstream functionality on the host computer is implemented by the following files:
+
+* :file:`nrf/scripts/hid_configurator/modules/led_stream.py`
+* :file:`nrf/scripts/hid_configurator/modules/music_led_stream.py`.
 
 HID configurator's ``led_stream`` command will start the LEDstream playback on the device.
 
