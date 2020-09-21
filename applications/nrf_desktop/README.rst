@@ -1217,7 +1217,7 @@ Both central and peripheral devices have dedicated configuration options and use
 Common configuration and application modules
 --------------------------------------------
 
-Some Bluetooth-related :ref:`configuration options <nrf_desktop_bluetooth_guide_configuration>` and :ref:`application modules <nrf_desktop_bluetooth_guide_modules>` are common for every nRF Desktop device.
+Some Bluetooth-related :ref:`configuration options <nrf_desktop_bluetooth_guide_configuration>` (including :ref:`nrf_desktop_bluetooth_guide_configuration_ll` in a separate section) and :ref:`application modules <nrf_desktop_bluetooth_guide_modules>` are common for every nRF Desktop device.
 
 .. _nrf_desktop_bluetooth_guide_configuration:
 
@@ -1250,15 +1250,31 @@ For detailed information about every option, see the Kconfig help.
    After changing the number of Bluetooth peers for the nRF Desktop peripheral device, you must update the LED effects used to represent the Bluetooth connection state.
    For details, see :ref:`nrf_desktop_led_state`.
 
+.. _nrf_desktop_bluetooth_guide_configuration_ll:
+
+Link Layer configuration options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 The nRF Desktop devices use one of the following Link Layers:
 
-* :option:`CONFIG_BT_LL_SOFTDEVICE` that supports the Low Latency Packet Mode (LLPM).
-* :option:`CONFIG_BT_LL_SW_SPLIT` that does not support the LLPM and has a lower memory usage, so it can be used by memory-limited devices.
+* :option:`CONFIG_BT_LL_SW_SPLIT`
+    This Link Layer does not support the Low Latency Packet Mode (LLPM) and has a lower memory usage, so it can be used by memory-limited devices.
 
-.. note::
-   For the :option:`CONFIG_BT_LL_SOFTDEVICE` you can use the ``CONFIG_DESKTOP_BLE_USE_LLPM`` Kconfig option to enable or disable the LLPM.
-   By default, the LLPM is enabled.
-   When this option is disabled, the device will use only standard BLE connection parameters with the lowest available connection interval of 7.5 ms.
+* :option:`CONFIG_BT_LL_SOFTDEVICE`
+    This Link Layer does support the Low Latency Packet Mode (LLPM).
+    If you opt for this Link Layer and enable this option, the ``CONFIG_DESKTOP_BLE_USE_LLPM`` is also enabled by default and can be configured further:
+
+    * When ``CONFIG_DESKTOP_BLE_USE_LLPM`` is enabled, set the value for :option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``3000``.
+
+      This is required by the nRF Desktop central and helps avoid scheduling conflicts with Bluetooth Link Layer.
+      Such conflicts could lead to a drop in HID input report rate or a disconnection.
+      Setting the value to ``3000`` also enables the nRF Desktop central to exchange data with up to 2 standard |BLE| peripherals during every connection interval (every 7.5 ms).
+
+    * When ``CONFIG_DESKTOP_BLE_USE_LLPM`` is disabled, the device will use only standard BLE connection parameters with the lowest available connection interval of 7.5 ms.
+
+      If the LLPM is disabled and more than 2 simultaneous Bluetooth connections are supported (:option:`CONFIG_BT_MAX_CONN`), you can set the value for :option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``2500``.
+      With this value, the nRF Desktop central is able to exchange the data with up to 3 |BLE| peripherals during every 7.5-ms connection interval.
+      Using the value of ``3000`` for more than 2 simultaneous |BLE| connections will result in a lower HID input report rate.
 
 .. _nrf_desktop_bluetooth_guide_modules:
 
