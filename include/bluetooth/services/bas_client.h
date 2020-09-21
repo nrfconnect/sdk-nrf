@@ -8,7 +8,7 @@
 
 /**
  * @file
- * @defgroup bt_gatt_bas_c_api Battery Service Client API
+ * @defgroup bt_bas_client_api Battery Service Client API
  * @{
  * @brief API for the Bluetooth LE GATT Battery Service (BAS) Client.
  */
@@ -20,7 +20,6 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt_dm.h>
 
-
 /**
  * @brief Value that shows that the battery level is invalid.
  *
@@ -28,19 +27,18 @@
  * information is unknown.
  *
  * The same value is used to mark the fact that a notification has been
- * aborted (see @ref bt_gatt_bas_c_notify_cb).
+ * aborted (see @ref bt_bas_notify_cb).
  */
-#define BT_GATT_BAS_VAL_INVALID (255)
+#define BT_BAS_VAL_INVALID (255)
 
 /**
  * @brief Maximum allowed value for battery level.
  *
  * Any value above that limit is treated as invalid.
  */
-#define BT_GATT_BAS_VAL_MAX (100)
+#define BT_BAS_VAL_MAX (100)
 
-
-struct bt_gatt_bas_c;
+struct bt_bas_client;
 
 /**
  * @brief Value notification callback.
@@ -48,32 +46,30 @@ struct bt_gatt_bas_c;
  * This function is called every time the server sends a notification
  * for a changed value.
  *
- * @param bas_c         BAS Client object.
+ * @param bas           BAS Client object.
  * @param battery_level The notified battery level value, or
- *                      @ref BT_GATT_BAS_VAL_INVALID if the notification
+ *                      @ref BT_BAS_VAL_INVALID if the notification
  *                      was interrupted by the server
  *                      (NULL received from the stack).
  */
-typedef void (*bt_gatt_bas_c_notify_cb)(struct bt_gatt_bas_c *bas_c,
-					uint8_t battery_level);
+typedef void (*bt_bas_notify_cb)(struct bt_bas_client *bas,
+				 uint8_t battery_level);
 
 /**
  * @brief Read complete callback.
  *
  * This function is called when the read operation finishes.
  *
- * @param bas_c         BAS Client object.
+ * @param bas           BAS Client object.
  * @param battery_level The battery level value that was read.
  * @param err           ATT error code or 0.
  */
-typedef void (*bt_gatt_bas_c_read_cb)(struct bt_gatt_bas_c *bas_c,
-				      uint8_t battery_level,
-				      int err);
+typedef void (*bt_bas_read_cb)(struct bt_bas_client *bas,
+			       uint8_t battery_level,
+			       int err);
 
-/**
- * @brief Battery Service Client characteristic periodic read.
- */
-struct bt_gatt_bas_c_periodic_read {
+/* @brief Battery Service Client characteristic periodic read. */
+struct bt_bas_periodic_read {
 	/** Work queue used to measure the read interval. */
 	struct k_delayed_work read_work;
 	/** Read parameters. */
@@ -84,10 +80,8 @@ struct bt_gatt_bas_c_periodic_read {
 	atomic_t process;
 };
 
-/**
- * @brief Battery Service Client instance.
- */
-struct bt_gatt_bas_c {
+/** @brief Battery Service Client instance. */
+struct bt_bas_client {
 	/** Connection handle. */
 	struct bt_conn *conn;
 	/** Notification parameters. */
@@ -97,11 +91,11 @@ struct bt_gatt_bas_c {
 	/** Read characteristic value timing. Used when characteristic do not
 	 *  have a CCCD descriptor.
 	 */
-	struct bt_gatt_bas_c_periodic_read periodic_read;
+	struct bt_bas_periodic_read periodic_read;
 	/** Notification callback. */
-	bt_gatt_bas_c_notify_cb notify_cb;
+	bt_bas_notify_cb notify_cb;
 	/** Read value callback. */
-	bt_gatt_bas_c_read_cb read_cb;
+	bt_bas_read_cb read_cb;
 	/** Handle of the Battery Level Characteristic. */
 	uint16_t val_handle;
 	/** Handle of the CCCD of the Battery Level Characteristic. */
@@ -120,9 +114,9 @@ struct bt_gatt_bas_c {
  * You must call this function on the BAS Client object before
  * any other function.
  *
- * @param bas_c  BAS Client object.
+ * @param bas  BAS Client object.
  */
-void bt_gatt_bas_c_init(struct bt_gatt_bas_c *bas_c);
+void bt_bas_client_init(struct bt_bas_client *bas);
 
 /**
  * @brief Assign handles to the BAS Client instance.
@@ -134,20 +128,20 @@ void bt_gatt_bas_c_init(struct bt_gatt_bas_c *bas_c);
  * The GATT attribute handles are provided by the GATT Discovery Manager.
  *
  * @param dm    Discovery object.
- * @param bas_c BAS Client object.
+ * @param bas BAS Client object.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  * @retval (-ENOTSUP) Special error code used when the UUID
  *         of the service does not match the expected UUID.
  */
-int bt_gatt_bas_c_handles_assign(struct bt_gatt_dm *dm,
-				 struct bt_gatt_bas_c *bas_c);
+int bt_bas_handles_assign(struct bt_gatt_dm *dm,
+			  struct bt_bas_client *bas);
 
 /**
  * @brief Subscribe to the battery level value change notification.
  *
- * @param bas_c BAS Client object.
+ * @param bas BAS Client object.
  * @param func  Callback function handler.
  *
  * @retval 0 If the operation was successful.
@@ -155,27 +149,27 @@ int bt_gatt_bas_c_handles_assign(struct bt_gatt_dm *dm,
  * @retval -ENOTSUP Special error code used if the connected server
  *         does not support notifications.
  */
-int bt_gatt_bas_c_subscribe(struct bt_gatt_bas_c *bas_c,
-			    bt_gatt_bas_c_notify_cb func);
+int bt_bas_subscribe_battery_level(struct bt_bas_client *bas,
+				   bt_bas_notify_cb func);
 
 /**
  * @brief Remove the subscription.
  *
- * @param bas_c BAS Client object.
+ * @param bas BAS Client object.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int bt_gatt_bas_c_unsubscribe(struct bt_gatt_bas_c *bas_c);
+int bt_bas_unsubscribe_battery_level(struct bt_bas_client *bas);
 
 /**
  * @brief Get the connection object that is used with a given BAS Client.
  *
- * @param bas_c BAS Client object.
+ * @param bas BAS Client object.
  *
  * @return Connection object.
  */
-struct bt_conn *bt_gatt_bas_c_conn(const struct bt_gatt_bas_c *bas_c);
+struct bt_conn *bt_bas_conn(const struct bt_bas_client *bas);
 
 
 /**
@@ -183,13 +177,13 @@ struct bt_conn *bt_gatt_bas_c_conn(const struct bt_gatt_bas_c *bas_c);
  *
  * This function sends a read request to the connected device.
  *
- * @param bas_c BAS Client object.
+ * @param bas BAS Client object.
  * @param func  The callback function.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int bt_gatt_bas_c_read(struct bt_gatt_bas_c *bas_c, bt_gatt_bas_c_read_cb func);
+int bt_bas_read_battery_level(struct bt_bas_client *bas, bt_bas_read_cb func);
 
 /**
  * @brief Get the last known battery level.
@@ -198,46 +192,46 @@ int bt_gatt_bas_c_read(struct bt_gatt_bas_c *bas_c, bt_gatt_bas_c_read_cb func);
  * The battery level is stored when a notification or read response is
  * received.
  *
- * @param bas_c BAS Client object.
+ * @param bas BAS Client object.
  *
  * @return Battery level or negative error code.
  */
-int bt_gatt_bas_c_get(struct bt_gatt_bas_c *bas_c);
+int bt_bas_get_last_battery_level(struct bt_bas_client *bas);
 
 /**
  * @brief Check whether notification is supported by the service.
  *
- * @param bas_c BAS Client object.
+ * @param bas BAS Client object.
  *
  * @retval true If notifications are supported.
  *              Otherwise, @c false is returned.
  */
-static inline bool bt_gatt_bas_c_notify_supported(struct bt_gatt_bas_c *bas_c)
+static inline bool bt_bas_notify_supported(struct bt_bas_client *bas)
 {
-	return bas_c->notify;
+	return bas->notify;
 }
 
 /**
  * @brief Periodically read the battery level value from the device with
  *        specific time interval.
  *
- * @param bas_c BAS Client object.
+ * @param bas BAS Client object.
  * @param interval Characteristic Read interval in milliseconds.
  * @param func The callback function.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int bt_gatt_bas_c_periodic_read_start(struct bt_gatt_bas_c *bas_c,
-				      int32_t interval,
-				      bt_gatt_bas_c_notify_cb func);
+int bt_bas_start_per_read_battery_level(struct bt_bas_client *bas,
+					int32_t interval,
+					bt_bas_notify_cb func);
 
 /**
  * @brief Stop periodic reading of the battery value from the device.
  *
- * @param bas_c BAS Client object.
+ * @param bas BAS Client object.
  */
-void bt_gatt_bas_c_periodic_read_stop(struct bt_gatt_bas_c *bas_c);
+void bt_bas_stop_per_read_battery_level(struct bt_bas_client *bas);
 
 /**
  * @}

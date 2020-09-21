@@ -172,12 +172,12 @@ Bluetooth Low Energy
 
 * Added the following samples:
 
-  * :ref:`central_bas` - demonstrates how do use the :ref:`bas_c_readme` to receive battery level information from a compatible device.
+  * :ref:`central_bas` - demonstrates how do use the :ref:`bas_client_readme` to receive battery level information from a compatible device.
   * :ref:`shell_bt_nus` - demonstrates how to use the :ref:`shell_bt_nus_readme` to receive shell commands from a remote device.
 
 * Added the following libraries:
 
-  * :ref:`bas_c_readme` - used to retrieve information about the battery level from a device.
+  * :ref:`bas_client_readme` - used to retrieve information about the battery level from a device.
   * :ref:`shell_bt_nus_readme` - allows for sending shell commands from a host to the application.
 
 * Added :ref:`ble_console_readme` - a desktop application that can be used to communicate with an nRF device over *Bluetooth* Low Energy using the :ref:`shell_bt_nus_readme`.
@@ -235,7 +235,7 @@ Documentation
 
   * Bluetooth Low Energy:
 
-    * :ref:`bas_c_readme`
+    * :ref:`bas_client_readme`
 
   * Other:
 

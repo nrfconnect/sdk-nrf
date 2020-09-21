@@ -22,7 +22,7 @@
 #include <bluetooth/gatt.h>
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
-#include <bluetooth/services/bas_c.h>
+#include <bluetooth/services/bas_client.h>
 #include <dk_buttons_and_leds.h>
 
 #include <settings/settings.h>
@@ -36,12 +36,10 @@
 
 
 static struct bt_conn *default_conn;
-static struct bt_gatt_bas_c bas_c;
+static struct bt_bas_client bas;
 
-
-static void bas_c_notify_cb(struct bt_gatt_bas_c *bas_c,
+static void notify_battery_level_cb(struct bt_bas_client *bas,
 				    uint8_t battery_level);
-
 
 static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match,
@@ -102,24 +100,24 @@ static void discovery_completed_cb(struct bt_gatt_dm *dm,
 
 	bt_gatt_dm_data_print(dm);
 
-	err = bt_gatt_bas_c_handles_assign(dm, &bas_c);
+	err = bt_bas_handles_assign(dm, &bas);
 	if (err) {
 		printk("Could not init BAS client object, error: %d\n", err);
 	}
 
-	if (bt_gatt_bas_c_notify_supported(&bas_c)) {
-		err = bt_gatt_bas_c_subscribe(&bas_c, bas_c_notify_cb);
+	if (bt_bas_notify_supported(&bas)) {
+		err = bt_bas_subscribe_battery_level(&bas,
+						     notify_battery_level_cb);
 		if (err) {
-			printk("Cannot subscribe to BAS value notification (err: %d)\n",
-			       err);
+			printk("Cannot subscribe to BAS value notification "
+				"(err: %d)\n", err);
 			/* Continue anyway */
 		}
 	} else {
-		err = bt_gatt_bas_c_periodic_read_start(&bas_c,
-							BAS_READ_VALUE_INTERVAL,
-							bas_c_notify_cb);
+		err = bt_bas_start_per_read_battery_level(
+			&bas, BAS_READ_VALUE_INTERVAL, notify_battery_level_cb);
 		if (err) {
-			printk("Could not turn on periodic BAS value reading\n");
+			printk("Could not start periodic read of BAS value\n");
 		}
 	}
 
@@ -160,7 +158,7 @@ static void gatt_discover(struct bt_conn *conn)
 	err = bt_gatt_dm_start(conn, BT_UUID_BAS, &discovery_cb, NULL);
 	if (err) {
 		printk("Could not start the discovery procedure, error "
-			"code: %d\n", err);
+		       "code: %d\n", err);
 	}
 }
 
@@ -270,14 +268,14 @@ static void scan_init(void)
 	}
 }
 
-static void bas_c_notify_cb(struct bt_gatt_bas_c *bas_c,
+static void notify_battery_level_cb(struct bt_bas_client *bas,
 				    uint8_t battery_level)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
-	bt_addr_le_to_str(bt_conn_get_dst(bt_gatt_bas_c_conn(bas_c)),
+	bt_addr_le_to_str(bt_conn_get_dst(bt_bas_conn(bas)),
 			  addr, sizeof(addr));
-	if (battery_level == BT_GATT_BAS_VAL_INVALID) {
+	if (battery_level == BT_BAS_VAL_INVALID) {
 		printk("[%s] Battery notification aborted\n", addr);
 	} else {
 		printk("[%s] Battery notification: %"PRIu8"%%\n",
@@ -285,18 +283,19 @@ static void bas_c_notify_cb(struct bt_gatt_bas_c *bas_c,
 	}
 }
 
-static void bas_c_read_cb(struct bt_gatt_bas_c *bas_c,
+static void read_battery_level_cb(struct bt_bas_client *bas,
 				  uint8_t battery_level,
 				  int err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
-	bt_addr_le_to_str(bt_conn_get_dst(bt_gatt_bas_c_conn(bas_c)),
+	bt_addr_le_to_str(bt_conn_get_dst(bt_bas_conn(bas)),
 			  addr, sizeof(addr));
 	if (err) {
 		printk("[%s] Battery read ERROR: %d\n", addr, err);
 		return;
 	}
+
 	printk("[%s] Battery read: %"PRIu8"%%\n", addr, battery_level);
 }
 
@@ -305,7 +304,7 @@ static void button_readval(void)
 	int err;
 
 	printk("Reading BAS value:\n");
-	err = bt_gatt_bas_c_read(&bas_c, bas_c_read_cb);
+	err = bt_bas_read_battery_level(&bas, read_battery_level_cb);
 	if (err) {
 		printk("BAS read call error: %d\n", err);
 	}
@@ -378,7 +377,7 @@ void main(void)
 
 	printk("Starting Bluetooth Central BAS example\n");
 
-	bt_gatt_bas_c_init(&bas_c);
+	bt_bas_client_init(&bas);
 
 	err = bt_enable(NULL);
 	if (err) {
