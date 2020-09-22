@@ -14,12 +14,13 @@ config USE_NRF_CLOUD
 	bool "Use nRF Cloud"
 	default n
 
-if !USE_NRF_CLOUD
 config CLOUD_CERT_SEC_TAG
+	depends on !USE_NRF_CLOUD
 	int "Security tag for TLS credentials"
 	default 12345678
 
 config PROVISION_CERTIFICATES
+	depends on !USE_NRF_CLOUD
 	bool "Provision certificates from the certificates.h file"
 	select MODEM_KEY_MGMT
 	default n
@@ -36,35 +37,53 @@ config PROVISION_CERTIFICATES
 	  certificates with anyone.
 
 config USE_CLOUD_CLIENT_ID
+	depends on !USE_NRF_CLOUD
 	bool "Custom MQTT client ID"
 	default y
-if USE_CLOUD_CLIENT_ID
+
 config CLOUD_CLIENT_ID
+	depends on !USE_NRF_CLOUD
+	depends on USE_CLOUD_CLIENT_ID
 	string "Client ID"
 	default "your_client_id"
-endif
 
 config MQTT_BROKER_HOSTNAME
+	depends on !USE_NRF_CLOUD
 	string "AWS IoT MQTT broker hostname"
 	default "your_aws_mqtt_broker_hostname.amazonaws.com"
 	help
 	  Default is set to be the nRF Cloud MQTT broker.
+
 config MQTT_BROKER_PORT
+	depends on !USE_NRF_CLOUD
 	int "AWS IoT MQTT broker port"
 	default 8883
-endif #!USE_NRF_CLOUD
 
-if USE_NRF_CLOUD
 config MQTT_BROKER_HOSTNAME
+	depends on USE_NRF_CLOUD
 	string
 	default "a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com"
 	help
 	  Default is set to be the nRF Cloud MQTT broker.
 
 config MQTT_BROKER_PORT
+	depends on USE_NRF_CLOUD
 	int
 	default 8883
-endif #USE_NRF_CLOUD
+
+config NRF_CLOUD_CLIENT_ID_PREFIX
+	depends on !USE_CLOUD_CLIENT_ID
+	depends on !NRF_CLOUD
+	string "Prefix used when constructing the MQTT client ID from the IMEI"
+	default "nrf-"
+	help
+	  The nrf- prefix is reserved on nRF Connect for Cloud for official Nordic
+	  devices (e.g. the nRF9160 DK or the Thingy:91).
+	  In case you wish to use aws_fota on nRF Connect for Cloud with your own
+	  devices you need to modify the prefix used to generate the MQTT client
+	  ID from the IMEI.
+	  This property is provided here in case the nrf_cloud module itself is not
+	  enabled.
 
 config MQTT_MESSAGE_BUFFER_SIZE
 	int "MQTT message buffer size"
