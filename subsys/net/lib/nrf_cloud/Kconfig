@@ -89,7 +89,7 @@ config NRF_CLOUD_AGPS_AUTO
 
 module = NRF_CLOUD_AGPS
 module-str = nRF Cloud A-GPS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "subsys/logging/Kconfig.template.log_config"
 
 endif # NRF_CLOUD_AGPS"
 endmenu
@@ -102,6 +102,6 @@ module=NRF_CLOUD
 module-dep=LOG
 module-str=Log level for nRF Cloud
 module-help=Enables nRF Cloud log messages.
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "subsys/logging/Kconfig.template.log_config"
 
 endif # NRF_CLOUD
