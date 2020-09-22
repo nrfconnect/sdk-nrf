@@ -104,4 +104,8 @@ module-str=Log level for nRF Cloud
 module-help=Enables nRF Cloud log messages.
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
+config NRF_CLOUD_CLIENT_ID_PREFIX
+	string "Prefix used when constructing the MQTT client ID from the IMEI"
+	default "nrf-"
+
 endif # NRF_CLOUD

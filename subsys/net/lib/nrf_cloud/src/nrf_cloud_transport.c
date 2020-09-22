@@ -36,7 +36,7 @@ LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 #if !defined(NRF_CLOUD_CLIENT_ID)
 #define NRF_IMEI_LEN 15
-#define NRF_CLOUD_CLIENT_ID_LEN (NRF_IMEI_LEN + 4)
+#define NRF_CLOUD_CLIENT_ID_LEN (sizeof(CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX) - 1 + NRF_IMEI_LEN)
 #else
 #define NRF_CLOUD_CLIENT_ID_LEN (sizeof(NRF_CLOUD_CLIENT_ID) - 1)
 #endif
@@ -327,7 +327,7 @@ static int nct_client_id_get(char *id)
 	__ASSERT_NO_MSG(bytes_read == NRF_IMEI_LEN);
 	imei_buf[NRF_IMEI_LEN] = 0;
 
-	snprintf(id, NRF_CLOUD_CLIENT_ID_LEN + 1, "nrf-%s", imei_buf);
+	snprintf(id, NRF_CLOUD_CLIENT_ID_LEN + 1, "%s%s", CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX, imei_buf);
 
 	ret = nrf_close(at_socket_fd);
 	__ASSERT_NO_MSG(ret == 0);

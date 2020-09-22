@@ -44,6 +44,12 @@ config CLOUD_CLIENT_ID
 	default "your_client_id"
 endif
 
+if !USE_CLOUD_CLIENT_ID
+config CLOUD_CLIENT_ID_PREFIX
+	string "Prefix used when constructing the MQTT client ID from the IMEI"
+	default "nrf-"
+endif #!USE_CLOUD_CLIENT_ID
+
 config MQTT_BROKER_HOSTNAME
 	string "AWS IoT MQTT broker hostname"
 	default "your_aws_mqtt_broker_hostname.amazonaws.com"
