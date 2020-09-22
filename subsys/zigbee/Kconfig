@@ -129,6 +129,40 @@ config ZIGBEE_SHELL_LOG_ENABLED
 	help
 	  Include functions for Zigbee Shell logging.
 
+# Configure ZBOSS_TRACE_LOG_LEVEL
+choice
+	prompt "Max compiled-in log level for ZBOSS trace"
+	default ZBOSS_TRACE_LOG_LEVEL_OFF
+
+config ZBOSS_TRACE_LOG_LEVEL_OFF
+	bool "Off"
+
+config ZBOSS_TRACE_LOG_LEVEL_ERR
+	depends on LOG
+	bool "Error"
+
+config ZBOSS_TRACE_LOG_LEVEL_WRN
+	depends on LOG
+	bool "Warning"
+
+config ZBOSS_TRACE_LOG_LEVEL_INF
+	depends on LOG
+	bool "Info"
+
+config ZBOSS_TRACE_LOG_LEVEL_DBG
+	depends on LOG
+	bool "Debug"
+
+endchoice
+
+config ZBOSS_TRACE_LOG_LEVEL
+	int
+	default 0 if ZBOSS_TRACE_LOG_LEVEL_OFF
+	default 1 if ZBOSS_TRACE_LOG_LEVEL_ERR
+	default 2 if ZBOSS_TRACE_LOG_LEVEL_WRN
+	default 3 if ZBOSS_TRACE_LOG_LEVEL_INF
+	default 4 if ZBOSS_TRACE_LOG_LEVEL_DBG
+
 config ZBOSS_TRACE_MASK
 	hex "Trace mask of ZBOSS stack logs"
 	default 0x0000
@@ -154,11 +188,6 @@ config ZBOSS_TRACE_MASK
 	  For example, in order to enable traces related to OTA DFU, one should set this option to 0x4100.
 
 	  Note: For general debugging purposes, please use 0x0C48.
-
-# Configure ZBOSS_TRACE_LOG_LEVEL
-module = ZBOSS_TRACE
-module-str = ZBOSS trace
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 # Configure ZIGBEE_SHELL_LOG_LEVEL
 module = ZIGBEE_SHELL
