@@ -495,16 +495,16 @@ void zb_reset(zb_uint8_t param)
 	sys_reboot(SYS_REBOOT_COLD);
 }
 
+zb_bool_t zb_osif_is_inside_isr(void)
+{
+	return (zb_bool_t)(__get_IPSR() != 0);
+}
+
 void zb_osif_enable_all_inter(void)
 {
 	__ASSERT(zb_osif_is_inside_isr() == 0,
 		 "Unable to unlock mutex from interrupt context");
 	k_mutex_unlock(&zigbee_mutex);
-}
-
-zb_bool_t zb_osif_is_inside_isr(void)
-{
-	return (zb_bool_t)(__get_IPSR() != 0);
 }
 
 void zb_osif_disable_all_inter(void)
