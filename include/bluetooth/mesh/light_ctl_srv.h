@@ -180,6 +180,8 @@ struct bt_mesh_light_ctl_srv {
 	struct bt_mesh_light_ctl default_params;
 	/** Handler function structure. */
 	const struct bt_mesh_light_ctl_srv_handlers *handlers;
+	/** Scene entry */
+	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Publish the current CTL status.

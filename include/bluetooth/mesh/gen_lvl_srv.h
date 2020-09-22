@@ -16,6 +16,7 @@
 #define BT_MESH_GEN_LVL_SRV_H__
 
 #include <bluetooth/mesh/gen_lvl.h>
+#include <bluetooth/mesh/scene_srv.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -147,6 +148,8 @@ struct bt_mesh_lvl_srv {
 	struct bt_mesh_model_pub pub;
 	/** Transaction ID tracking. */
 	struct bt_mesh_tid_ctx tid;
+	/* Scene entry */
+	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Publish the generic level state.

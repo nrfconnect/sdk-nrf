@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <sys/byteorder.h>
 #include <bluetooth/mesh/light_ctl_srv.h>
 #include <bluetooth/mesh/light_temp_srv.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
@@ -134,6 +135,10 @@ static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	set.time = transition.time;
 	set.delay = transition.delay;
 	srv->handlers->set(srv, ctx, &set, &status);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
+	}
 
 	struct bt_mesh_light_temp_status temp_status = {
 		.current.temp = status.current.temp,
@@ -498,6 +503,46 @@ const struct bt_mesh_model_op _bt_mesh_light_ctl_setup_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+static ssize_t scene_store(struct bt_mesh_model *mod, uint8_t data[])
+{
+	struct bt_mesh_light_ctl_srv *srv = mod->user_data;
+	struct bt_mesh_light_ctl_rsp rsp;
+
+	srv->handlers->get(srv, NULL, &rsp);
+
+	/* Only need to store the delta UV in the scene, the rest is stored by
+	 * the extended models.
+	 */
+	if (rsp.remaining_time) {
+		sys_put_le16(rsp.target.delta_uv, data);
+	} else {
+		sys_put_le16(rsp.current.delta_uv, data);
+	}
+
+	return 2;
+}
+
+static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
+			 size_t len,
+			 struct bt_mesh_model_transition *transition)
+{
+	struct bt_mesh_light_ctl_srv *srv = mod->user_data;
+	uint16_t delta_uv = sys_get_le16(data);
+	struct bt_mesh_light_ctl_gen_cb_set set = {
+		.delta_uv = &delta_uv,
+		.time = transition->time,
+		.delay = transition->delay,
+	};
+
+	srv->handlers->set(srv, NULL, &set, NULL);
+}
+
+static const struct bt_mesh_scene_entry_type scene_type = {
+	.maxlen = 2,
+	.store = scene_store,
+	.recall = scene_recall,
+};
+
 static int bt_mesh_light_ctl_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_ctl_srv *srv = model->user_data;
@@ -523,6 +568,10 @@ static int bt_mesh_light_ctl_srv_init(struct bt_mesh_model *model)
 			model, bt_mesh_model_find(
 				       bt_mesh_model_elem(model),
 				       BT_MESH_MODEL_ID_LIGHT_CTL_SETUP_SRV));
+	}
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
 	}
 
 	return 0;

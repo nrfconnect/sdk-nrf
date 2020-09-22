@@ -155,6 +155,10 @@ static void change_lvl(struct bt_mesh_plvl_srv *srv,
 	memset(status, 0, sizeof(*status));
 	srv->handlers->power_set(srv, ctx, set, status);
 
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->lvl.scene);
+	}
+
 	pub(srv, NULL, status);
 }
 

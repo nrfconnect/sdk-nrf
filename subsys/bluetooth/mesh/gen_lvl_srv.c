@@ -7,6 +7,8 @@
 #include <string.h>
 #include <bluetooth/mesh/gen_lvl_srv.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
+#include <bluetooth/mesh/scene_srv.h>
+#include <sys/byteorder.h>
 #include "model_utils.h"
 
 static void encode_status(const struct bt_mesh_lvl_status *status,
@@ -81,6 +83,10 @@ static void set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	srv->handlers->set(srv, ctx, &set, &status);
 
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
+	}
+
 	if (ack) {
 		rsp_status(model, ctx, &status);
 	}
@@ -108,6 +114,10 @@ static void delta_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	delta_set.transition = &transition;
 
 	srv->handlers->delta_set(srv, ctx, &delta_set, &status);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
+	}
 
 	if (ack) {
 		rsp_status(model, ctx, &status);
@@ -144,6 +154,10 @@ static void move_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	srv->handlers->move_set(srv, ctx, &move_set, &status);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
+	}
 
 	if (ack) {
 		rsp_status(model, ctx, &status);
@@ -211,12 +225,47 @@ const struct bt_mesh_model_op _bt_mesh_lvl_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+static int scene_store(struct bt_mesh_model *mod, uint8_t data[])
+{
+	struct bt_mesh_lvl_srv *srv = mod->user_data;
+	struct bt_mesh_lvl_status status = { 0 };
+
+	srv->handlers->get(srv, NULL, &status);
+	sys_put_le16(status.remaining_time ? status.target : status.current,
+		     &data[0]);
+
+	return 2;
+}
+
+static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
+			 size_t len,
+			 struct bt_mesh_model_transition *transition)
+{
+	struct bt_mesh_lvl_srv *srv = mod->user_data;
+	struct bt_mesh_lvl_set set = {
+		.lvl = sys_get_le16(data),
+		.transition = transition,
+	};
+
+	srv->handlers->set(srv, NULL, &set, NULL);
+}
+
+static const struct bt_mesh_scene_entry_type scene_type = {
+	.maxlen = 2,
+	.store = scene_store,
+	.recall = scene_recall,
+};
+
 static int bt_mesh_lvl_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_lvl_srv *srv = model->user_data;
 
 	srv->model = model;
 	net_buf_simple_init(model->pub->msg, 0);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
+	}
 
 	return 0;
 }
