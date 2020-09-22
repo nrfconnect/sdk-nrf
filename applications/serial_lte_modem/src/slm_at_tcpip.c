@@ -9,10 +9,12 @@
 #include <string.h>
 #include <net/socket.h>
 #include <modem/modem_info.h>
+#include <modem/modem_key_mgmt.h>
 #include <net/tls_credentials.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_tcpip.h"
+#include "slm_native_tls.h"
 
 LOG_MODULE_REGISTER(tcpip, CONFIG_SLM_LOG_LEVEL);
 
@@ -93,6 +95,7 @@ static struct sockaddr_in remote;
 
 static struct tcpip_client {
 	int sock; /* Socket descriptor. */
+	sec_tag_t sec_tag; /* Security tag of the credential */
 	int role; /* Client or Server role */
 	int sock_peer; /* Socket descriptor for peer. */
 	int ip_proto; /* IP protocol */
@@ -167,6 +170,7 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 {
 	int ret = 0;
 
+	client.sec_tag = sec_tag;
 	if (type == SOCK_STREAM) {
 		if (sec_tag == INVALID_SEC_TAG) {
 			client.sock = socket(AF_INET, SOCK_STREAM,
@@ -197,9 +201,32 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 		goto error_exit;
 	}
 
-	if (sec_tag != INVALID_SEC_TAG) {
-		sec_tag_t sec_tag_list[1] = { sec_tag };
+	if (client.sec_tag != INVALID_SEC_TAG) {
+		sec_tag_t sec_tag_list[1] = { client.sec_tag };
+#if defined(CONFIG_SLM_NATIVE_TLS)
+		int verify;
 
+		ret = slm_tls_loadcrdl(client.sec_tag);
+		if (ret < 0) {
+			LOG_ERR("Fail to load credential: %d", ret);
+			return ret;
+		}
+
+		/* Set up default TLS peer verification */
+		if (role == AT_SOCKET_ROLE_SERVER) {
+			verify = TLS_PEER_VERIFY_NONE;
+		} else {
+			verify = TLS_PEER_VERIFY_REQUIRED;
+		}
+
+		ret = setsockopt(client.sock, SOL_TLS, TLS_PEER_VERIFY,
+				 &verify, sizeof(verify));
+		if (ret) {
+			printk("Failed to setup peer verification, err %d\n",
+			       errno);
+			return ret;
+		}
+#else
 		if (role == AT_SOCKET_ROLE_SERVER) {
 			sprintf(rsp_buf,
 				"#XSOCKET: (D)TLS Server not supported\r\n");
@@ -207,6 +234,7 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 			ret = -ENOTSUP;
 			goto error_exit;
 		}
+#endif
 
 		ret = setsockopt(client.sock, SOL_TLS, TLS_SEC_TAG_LIST,
 				sec_tag_list, sizeof(sec_tag_t));
@@ -239,6 +267,15 @@ static int do_socket_close(int error)
 	int ret = 0;
 
 	if (client.sock > 0) {
+#if defined(CONFIG_SLM_NATIVE_TLS)
+		if (client.sec_tag != INVALID_SEC_TAG) {
+			ret = slm_tls_unloadcrdl(client.sec_tag);
+			if (ret < 0) {
+				LOG_ERR("Fail to load credential: %d", ret);
+				return ret;
+			}
+		}
+#endif
 		ret = close(client.sock);
 		if (ret < 0) {
 			LOG_WRN("close() failed: %d", -errno);
@@ -389,6 +426,15 @@ static int do_connect(const char *url, uint16_t port)
 	if (ret) {
 		LOG_ERR("Parse failed: %d", ret);
 		return ret;
+	}
+
+	if (client.sec_tag != INVALID_SEC_TAG) {
+		ret = setsockopt(client.sock, SOL_TLS,
+				 TLS_HOSTNAME, url, strlen(url));
+		if (ret < 0) {
+			printk("Failed to set TLS_HOSTNAME\n");
+			ret = -errno;
+		}
 	}
 
 	ret = connect(client.sock, (struct sockaddr *)&remote,
@@ -1260,6 +1306,7 @@ void slm_at_tcpip_clac(void)
 int slm_at_tcpip_init(void)
 {
 	client.sock = INVALID_SOCKET;
+	client.sec_tag = INVALID_SEC_TAG;
 	client.role = AT_SOCKET_ROLE_CLIENT;
 	client.sock_peer = INVALID_SOCKET;
 	client.connected = false;

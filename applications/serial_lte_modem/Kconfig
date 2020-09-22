@@ -24,6 +24,9 @@ config SLM_AT_MAX_PARAM
 	int "Maximum number of parameters in AT command"
 	default 8
 
+config SLM_NATIVE_TLS
+	bool "Use Zephyr mbedTLS"
+
 #
 # Inter-Connect
 #
