@@ -38,6 +38,7 @@ LOG_MODULE_REGISTER(sms, CONFIG_SMS_LOG_LEVEL);
 #define AT_SMS_NOTIFICATION "+CMT:"
 #define AT_SMS_NOTIFICATION_LEN (sizeof(AT_SMS_NOTIFICATION) - 1)
 
+static struct k_work sms_ack_work;
 static struct at_param_list resp_list;
 static char resp[AT_SMS_RESPONSE_MAX_LEN];
 
@@ -135,8 +136,17 @@ static int sms_cmt_notif_save(void)
 	return 0;
 }
 
+static void sms_ack(struct k_work *work)
+{
+	int ret = at_cmd_write(AT_SMS_PDU_ACK, NULL, 0, NULL);
+
+	if (ret != 0) {
+		LOG_ERR("Unable to ACK the SMS PDU");
+	}
+}
+
 /** @brief Handler for AT responses and unsolicited events. */
-void sms_at_handler(void *context, char *at_notif)
+void sms_at_handler(void *context, const char *at_notif)
 {
 	ARG_UNUSED(context);
 
@@ -154,13 +164,6 @@ void sms_at_handler(void *context, char *at_notif)
 	/* Extract and save the SMS notification parameters. */
 	int valid_notif = sms_cmt_notif_save();
 
-	/* Acknowledge the SMS PDU in any case. */
-	int ret = at_cmd_write(AT_SMS_PDU_ACK, NULL, 0, NULL);
-
-	if (ret != 0) {
-		LOG_ERR("Unable to ACK the SMS PDU");
-	}
-
 	if (valid_notif != 0) {
 		LOG_ERR("Invalid SMS notification format");
 		return;
@@ -173,11 +176,18 @@ void sms_at_handler(void *context, char *at_notif)
 			subscribers[i].listener(&cmt_rsp, subscribers[i].ctx);
 		}
 	}
+
+	/* Use system work queue to ACK SMS PDU because we cannot
+	 * call at_cmd_write from a notification callback.
+	 */
+	k_work_submit(&sms_ack_work);
 }
 
 int sms_init(void)
 {
 	int ret = at_params_list_init(&resp_list, AT_SMS_PARAMS_COUNT_MAX);
+
+	k_work_init(&sms_ack_work, &sms_ack);
 
 	if (ret) {
 		LOG_ERR("AT params error, err: %d", ret);
