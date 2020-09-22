@@ -81,5 +81,5 @@ config DEVICE_SHADOW_PAYLOAD_SIZE
 endmenu
 
 menu "Zephyr Kernel"
-source "$ZEPHYR_BASE/Kconfig.zephyr"
+source "Kconfig.zephyr"
 endmenu
