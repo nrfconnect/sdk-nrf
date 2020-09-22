@@ -678,7 +678,7 @@ ITEM_REGISTER(test_vector_aes_cbc_data,
 	.p_iv = "d4b4eab92aa9637e87d366384ed6915c"
 };
 
-#if !defined(CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE)
+#if defined(CONFIG_CRYPTO_TEST_LONG_RUNNING_VECTORS)
 /* AES CBC - NIST CAVS 11.1 Monte Carlo 128 Encrypt */
 ITEM_REGISTER(test_vector_aes_cbc_monte_carlo_data,
 	      test_vector_aes_t test_vector_aes_cbc_128_encrypt_monte_carlo) = {
@@ -708,7 +708,7 @@ ITEM_REGISTER(test_vector_aes_cbc_monte_carlo_data,
 	.p_key = "287b07c78f8e3e1be7c41b3d96c04e6e",
 	.p_iv = "41b461f9464fd515d25413b4241002b8"
 };
-#endif /* CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE */
+#endif /* CONFIG_CRYPTO_TEST_LONG_RUNNING_VECTORS */
 
 #if defined(MBEDTLS_CIPHER_AES_256_CBC_C)
 /* AES CBC - Functional test using test vector NIST CAVS 11.1 CBC KeySbox 192 - Count 0 */
@@ -1348,6 +1348,9 @@ ITEM_REGISTER(test_vector_aes_cbc_data,
 	.p_iv = "54130eea9e96a1199d3c090f690a479f"
 };
 
+/* This test vector file is very long. Chop off a few if this is set. */
+#if defined(CONFIG_CRYPTO_TEST_LARGE_VECTORS)
+
 /* AES CBC - NIST CAVS 11.1 Multiblock Message Tests 192 Decrypt - Count 9 */
 ITEM_REGISTER(test_vector_aes_cbc_data,
 	      test_vector_aes_t test_vector_aes_cbc_192_decrypt_160) = {
@@ -1373,7 +1376,7 @@ ITEM_REGISTER(test_vector_aes_cbc_data,
 	.p_iv = "d6d86e0c82dd8788f4147a26f9a71c74"
 };
 
-#if !defined(CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE)
+#if !defined(CONFIG_CRYPTO_TEST_LONG_RUNNING_VECTORS)
 /* AES CBC - NIST CAVS 11.1 Monte Carlo 192 Encrypt */
 ITEM_REGISTER(test_vector_aes_cbc_monte_carlo_data,
 	      test_vector_aes_t test_vector_aes_cbc_192_encrypt_monte_carlo) = {
@@ -1403,7 +1406,7 @@ ITEM_REGISTER(test_vector_aes_cbc_monte_carlo_data,
 	.p_key = "a24ebd4d7a080c28caae984b5098a9ea38cf7280e2c5f122",
 	.p_iv = "c5aeb9b51ad5108371c59d0b90816310"
 };
-#endif /* CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE */
+#endif /* CONFIG_CRYPTO_TEST_LONG_RUNNING_VECTORS */
 
 /* AES CBC - Functional test using test vector NIST CAVS 11.1 CBC KeySbox 256 - Count 0 */
 ITEM_REGISTER(test_vector_aes_cbc_func_data,
@@ -2101,7 +2104,7 @@ ITEM_REGISTER(test_vector_aes_cbc_data,
 	.p_iv = "e49651988ebbb72eb8bb80bb9abbca34"
 };
 
-#if !defined(CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE)
+#if !defined(CONFIG_CRYPTO_TEST_LONG_RUNNING_VECTORS)
 /* AES CBC - NIST CAVS 11.1 Monte Carlo 256 Encrypt */
 ITEM_REGISTER(test_vector_aes_cbc_monte_carlo_data,
 	      test_vector_aes_t test_vector_aes_cbc_256_encrypt_monte_carlo) = {
@@ -2133,5 +2136,6 @@ ITEM_REGISTER(test_vector_aes_cbc_monte_carlo_data,
 		"31397ad8cc79c519e0f46e0f70303587e38958d70723b771552336b7771f6311",
 	.p_iv = "4139cb54eeac3fcf36ed72941122c40f"
 };
-#endif /* CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE */
+#endif /* CONFIG_CRYPTO_TEST_LONG_RUNNING_VECTORS */
+#endif /* CRYPTO_TEST_LARGE_VECTORS */
 #endif /* MBEDTLS_CIPHER_AES_256_CBC_C */
