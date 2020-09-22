@@ -346,6 +346,11 @@ static void scan_start(void)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM) &&
 	    (CONFIG_BT_MAX_CONN == 2)) {
+		/* If the central supports the LLPM and more than two
+		 * simultaneous Bluetooth connections, the BLE peers use the
+		 * connection interval of 10 ms instead of 7.5 ms and there is
+		 * no need to update the initial connection parameters.
+		 */
 		update_init_conn_params(is_llpm_peer_connected());
 	}
 
@@ -356,9 +361,7 @@ static void scan_start(void)
 	}
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-	if (err == -EALREADY) {
-		LOG_WRN("Scanning already enabled");
-	} else if (err) {
+	if (err) {
 		LOG_ERR("Cannot start scanning (err %d)", err);
 		goto error;
 	} else {
@@ -549,7 +552,6 @@ static bool event_handler(const struct event_header *eh)
 				bt_conn_unref(discovering_peer_conn);
 				discovering_peer_conn = NULL;
 			}
-			scan_stop();
 			/* ble_state keeps reference to connection object.
 			 * Cannot create new connection now.
 			 */
@@ -579,7 +581,6 @@ static bool event_handler(const struct event_header *eh)
 
 		case PEER_OPERATION_SCAN_REQUEST:
 			peers_only = false;
-			scan_stop();
 			scan_start();
 			break;
 
