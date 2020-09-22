@@ -46,17 +46,17 @@ Complete the following steps:
    Use the bundled DLL or build it according to instructions in `HIDAPI library`_.
 #. Install `pyhidapi Python wrapper`_ and other required libraries with the following command:
 
-.. parsed-literal::
-   :class: highlight
+   .. parsed-literal::
+      :class: highlight
 
-   py -3 -m pip install -r requirements.txt
+      py -3 -m pip install -r requirements.txt
 
 #. If you want to display LED stream based on sound data, you must also install the additional requrements using the following command:
 
-.. parsed-literal::
-   :class: highlight
+   .. parsed-literal::
+      :class: highlight
 
-   py -3 -m pip install -r requirements_music_led_stream.txt
+      py -3 -m pip install -r requirements_music_led_stream.txt
 
 For more detailed information about LED stream functionality, see the `Playing LEDstream`_ section.
 
@@ -67,24 +67,24 @@ Complete the following steps:
 
 1. Run the following commands to install the basic requirements:
 
-.. parsed-literal::
-   :class: highlight
+   .. parsed-literal::
+      :class: highlight
 
-   sudo apt install libhidapi-hidraw0
-   pip3 install --user -r requirements.txt
+      sudo apt install libhidapi-hidraw0
+      pip3 install --user -r requirements.txt
 
-.. note::
-    When using the configuration channel for Bluetooth LE devices on Linux, use the BlueZ version 5.44 or higher.
-    In earlier versions, the HID device attached by BlueZ could obtain wrong VID and PID values (ignoring values in Device Information Service), which would stop HIDAPI from opening the device.
+   .. note::
+       When using the configuration channel for Bluetooth LE devices on Linux, use the BlueZ version 5.44 or higher.
+       In earlier versions, the HID device attached by BlueZ could obtain wrong VID and PID values (ignoring values in Device Information Service), which would stop HIDAPI from opening the device.
 
-    Additionally, to call the Python script on Linux without root rights, install the provided udev rule :file:`99-hid.rules` file by copying it to :file:`/etc/udev/rules.d` and replugging the device.
+   Additionally, to call the Python script on Linux without root rights, install the provided udev rule :file:`99-hid.rules` file by copying it to :file:`/etc/udev/rules.d` and replugging the device.
 
 #. If you want to display LED stream based on sound data, you must also install the additional requrements using the following command:
 
-.. parsed-literal::
-   :class: highlight
+   .. parsed-literal::
+      :class: highlight
 
-   pip3 install --user -r requirements_music_led_stream.txt
+      pip3 install --user -r requirements_music_led_stream.txt
 
 For more detailed information about LED stream functionality, see the `Playing LEDstream`_ section.
 
@@ -133,7 +133,7 @@ Configuring device runtime options
 ==================================
 
 The script can pass the configuration values to the linked FW module using the ``config`` command.
-Use the following syntax to display list of configurable modules:
+Use the following syntax to display list of modules that can have device runtime options configured:
 
 .. parsed-literal::
     :class: highlight
@@ -144,7 +144,7 @@ Use the following syntax to display list of configurable modules:
   The list contains all the configurable modules used by nRF Desktop devices.
   Make sure that selected module and option combination is supported by the configured device using ``show`` command.
 
-Use the following syntax to display list of options for the given configurable module:
+Use the following syntax to display list of options for the given module that can have device runtime options configured:
 
 .. parsed-literal::
     :class: highlight
@@ -154,8 +154,9 @@ Use the following syntax to display list of options for the given configurable m
 .. tip::
   The available configurable modules and options are defined by the :file:`nrf/scripts/hid_configurator/modules/module_config.py` file.
 
-  You can add another configurable modules to the file following the existing examples.
-  Make sure to also add the application firmware module as a :ref:`nrf_desktop_config_channel` listener.
+  You can add another configurable module to the file.
+  Use the existing modules as examples.
+  Make sure to also add the application firmware module as a :ref:`nrf_desktop_config_channel` listener, as described on the configuration channel page.
 
 Customize the command with the following variables:
 
@@ -178,11 +179,11 @@ To write a new value for the selected option, pass the value as the fifth argume
     python3 configurator_cli.py DEVICE config MODULE_NAME OPTION_NAME VALUE
 
 .. important::
-  If the module that is a configuration channel listener specifies it's variant, you must refer to the module using the following syntax: ``module_name/variant``.
-  For example, the :ref:`nrf_desktop_motion` variant depends on the motion sensor model:
+   If the module that is a configuration channel listener specifies its variant, you must refer to the module using the following syntax: ``module_name/variant``.
+   For example, the :ref:`nrf_desktop_motion` variant that depends on the motion sensor model will require the following naming convention:
 
-  * ``motion/paw3212``
-  * ``motion/pmw3360``.
+   * ``motion/paw3212``
+   * ``motion/pmw3360``
 
 Performing DFU
 ==============

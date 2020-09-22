@@ -187,96 +187,96 @@ To register an application module as a configuration channel listener, complete 
    * Module name - String representing the module name (``STRINGIFY(MODULE)``).
    * Array with the names of the module's options (``opt_descr``):
 
-   .. code-block:: c
+     .. code-block:: c
 
-       /* Creating enum to denote the module options is recommended,
-        * because it makes code more readable.
-        */
-       enum test_module_opt {
-           TEST_MODULE_OPT_FILTER_PARAM,
-           TEST_MODULE_OPT_PARAM_BLE,
-           TEST_MODULE_OPT_PARAM_WIFI,
+         /* Creating enum to denote the module options is recommended,
+          * because it makes code more readable.
+          */
+         enum test_module_opt {
+             TEST_MODULE_OPT_FILTER_PARAM,
+             TEST_MODULE_OPT_PARAM_BLE,
+             TEST_MODULE_OPT_PARAM_WIFI,
 
-           TEST_MODULE_OPT_COUNT
-       };
+             TEST_MODULE_OPT_COUNT
+         };
 
-       static const char * const opt_descr[] = {
-           [TEST_MODULE_OPT_FILTER_PARAM] = "filter_param",
-           [TEST_MODULE_OPT_PARAM_BLE] = "param_ble",
-           [TEST_MODULE_OPT_PARAM_WIFI] = "param_wifi"
-       };
+         static const char * const opt_descr[] = {
+             [TEST_MODULE_OPT_FILTER_PARAM] = "filter_param",
+             [TEST_MODULE_OPT_PARAM_BLE] = "param_ble",
+             [TEST_MODULE_OPT_PARAM_WIFI] = "param_wifi"
+         };
 
    * Set operation handler (:cpp:func:`config_set`):
 
-   .. code-block:: c
+     .. code-block:: c
 
-       static void config_set(const uint8_t opt_id, const uint8_t *data,
-                              const size_t size)
-       {
-           switch (opt_id) {
-           case TEST_MODULE_OPT_FILTER_PARAM:
-               /* Handle the data received under the "data" pointer.
-                * Number of received bytes is described as "size".
-                */
-               if (size != sizeof(struct filter_parameters)) {
-                   LOG_WRN("Invalid size");
-               } else {
-                   update_filter_params(data);
-               }
-           break;
+         static void config_set(const uint8_t opt_id, const uint8_t *data,
+                                const size_t size)
+         {
+             switch (opt_id) {
+             case TEST_MODULE_OPT_FILTER_PARAM:
+                 /* Handle the data received under the "data" pointer.
+                  * Number of received bytes is described as "size".
+                  */
+                 if (size != sizeof(struct filter_parameters)) {
+                     LOG_WRN("Invalid size");
+                 } else {
+                     update_filter_params(data);
+                 }
+             break;
 
-           case TEST_MODULE_OPT_PARAM_BLE:
-               /* Handle the data. */
-               ....
-           break;
+             case TEST_MODULE_OPT_PARAM_BLE:
+                 /* Handle the data. */
+                 ....
+             break;
 
-           /* Handlers for other option IDs. */
-           ....
+             /* Handlers for other option IDs. */
+             ....
 
-           default:
-               /* The option is not supported by the module. */
-               LOG_WRN("Unknown opt %" PRIu8, opt_id);
-               break;
-           }
-       }
+             default:
+                 /* The option is not supported by the module. */
+                 LOG_WRN("Unknown opt %" PRIu8, opt_id);
+                 break;
+             }
+         }
 
    * Fetch operation handler (:cpp:func:`config_get`):
 
-   .. code-block:: c
+     .. code-block:: c
 
-       static void config_get(const uint8_t opt_id, uint8_t *data, size_t *size)
-       {
-           switch (opt_id) {
-           case TEST_MODULE_OPT_FILTER_PARAM:
-               /* Fill the buffer under the "data" pointer with
-                * requested data. Number of written bytes must be
-                * reflected by the value under the "size" pointer.
-                */
-               memcpy(data, filter_param, sizeof(filter_param));
-               *size = sizeof(filter_param);
-               break;
+         static void config_get(const uint8_t opt_id, uint8_t *data, size_t *size)
+         {
+             switch (opt_id) {
+             case TEST_MODULE_OPT_FILTER_PARAM:
+                 /* Fill the buffer under the "data" pointer with
+                  * requested data. Number of written bytes must be
+                  * reflected by the value under the "size" pointer.
+                  */
+                 memcpy(data, filter_param, sizeof(filter_param));
+                 *size = sizeof(filter_param);
+                 break;
 
-           case TEST_MODULE_OPT_PARAM_BLE:
-               /* Handle the request. */
-               ....
-               break;
+             case TEST_MODULE_OPT_PARAM_BLE:
+                 /* Handle the request. */
+                 ....
+                 break;
 
-           /* Handlers for other option IDs. */
-           ....
+             /* Handlers for other option IDs. */
+             ....
 
-           default:
-               /* The option is not supported by the module. */
-               LOG_WRN("Unknown opt: %" PRIu8, opt_id);
-               break;
-           }
-       }
+             default:
+                 /* The option is not supported by the module. */
+                 LOG_WRN("Unknown opt: %" PRIu8, opt_id);
+                 break;
+             }
+         }
 
 .. note::
-  A configuration channel listener can specify it's variant by providing an option named :c:macro:`OPT_DESCR_MODULE_VARIANT`.
-  On fetch operation of the mentioned option, the module must provide an array of characters that represents the module variant.
+   A configuration channel listener can specify its variant by providing an option named :c:macro:`OPT_DESCR_MODULE_VARIANT`.
+   On a fetch operation of this option, the module must provide an array of characters that represents the module variant.
 
-  The :ref:`nrf_desktop_motion` uses the module variant to specify the motion sensor model.
-  The :ref:`nrf_destkop_config_channel_script` uses the module variant to provide separate description of the configurable module for every module variant.
+   * The :ref:`nrf_desktop_motion` uses the module variant to specify the motion sensor model.
+   * The :ref:`nrf_desktop_config_channel_script` uses the module variant to provide a separate description of the configurable module for every module variant.
 
 For an example of a module that uses the configuration channel, see the following files:
 
