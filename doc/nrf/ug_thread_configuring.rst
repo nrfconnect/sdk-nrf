@@ -95,7 +95,16 @@ By selecting support for the v1.2, you enable the following features in addition
 
 * Enhanced Frame Pending
 * Enhanced Keep Alive
-* Thread domain name
+* Thread Domain Name
+
+Moreover, the v1.2 also comes with the following features supported in experimental status:
+
+* :option:`CONFIG_OPENTHREAD_DUA` - Enable Domain Unicast Addresses.
+* :option:`CONFIG_OPENTHREAD_MLR` - Enable Multicast Listener Registration.
+* :option:`CONFIG_OPENTHREAD_BACKBONE_ROUTER` - Enable Backbone Router.
+
+.. note::
+    To test Thread Specification v1.2 options, you can use the :ref:`Thread CLI sample <ot_cli_sample>` with the :ref:`experimental v1.2 extension <ot_cli_sample_thread_v12>`.
 
 Thread commissioning
 ====================

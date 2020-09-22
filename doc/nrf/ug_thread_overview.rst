@@ -62,3 +62,4 @@ By default, |NCS| supports Thread Specification v1.1, but you can enable and con
 .. note::
     Not all v1.2 functionalities are currently supported.
     See the dedicated options link for the list of v1.2 features currently available in |NCS|, with information about how to enable them.
+    Currently, the :ref:`Thread CLI sample <ot_cli_sample>` is the only sample to offer :ref:`experimental v1.2 extension <ot_cli_sample_thread_v12>`.
