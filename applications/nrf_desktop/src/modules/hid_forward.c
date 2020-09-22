@@ -216,12 +216,18 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 		return;
 	}
 
-	struct hid_report_event *report = new_hid_report_event(size + sizeof(report_id));
+	if (suspended) {
+		/* If suspended, report should wake up the board. */
+		struct wake_up_event *event = new_wake_up_event();
+		EVENT_SUBMIT(event);
+	}
 
-	if (!is_report_enabled(sub, report_id) && !suspended && !per->enqueued_report[report_id].count) {
-		k_free(report);
+	if (!is_report_enabled(sub, report_id)) {
+		/* Drop report if subscriber is not waiting for it. */
 		return;
 	}
+
+	struct hid_report_event *report = new_hid_report_event(size + sizeof(report_id));
 
 	report->subscriber = sub->id;
 
@@ -229,17 +235,14 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 	report->dyndata.data[0] = report_id;
 	memcpy(&report->dyndata.data[1], data, size);
 
-	if (!sub->busy && !suspended && !per->enqueued_report[report_id].count) {
+	if (!sub->busy) {
+		__ASSERT_NO_MSG(per->enqueued_report[report_id].count == 0);
+
 		EVENT_SUBMIT(report);
 		per->last_report_id = report_id;
 		sub->busy = true;
 	} else {
 		enqueue_hid_report(&per->enqueued_report[report_id], report);
-	}
-
-	if (suspended) {
-		struct wake_up_event *event = new_wake_up_event();
-		EVENT_SUBMIT(event);
 	}
 }
 
