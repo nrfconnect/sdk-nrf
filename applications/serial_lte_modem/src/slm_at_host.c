@@ -32,6 +32,9 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #endif
 #include "slm_at_mqtt.h"
 #include "slm_at_httpc.h"
+#if defined(CONFIG_SLM_NATIVE_TLS)
+#include "slm_at_cmng.h"
+#endif
 
 #define OK_STR		"OK\r\n"
 #define ERROR_STR	"ERROR\r\n"
@@ -189,6 +192,9 @@ static void handle_at_clac(void)
 	slm_at_ftp_clac();
 	slm_at_httpc_clac();
 	slm_at_fota_clac();
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	slm_at_cmng_clac();
+#endif
 }
 
 static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
@@ -459,6 +465,17 @@ static void cmd_send(struct k_work *work)
 		goto done;
 	}
 
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	err = slm_at_cmng_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOENT) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+#endif
+
 	/* Send to modem */
 	err = at_cmd_write(at_buf, buf, AT_MAX_CMD_LEN, &state);
 	if (err < 0) {
@@ -724,6 +741,14 @@ int slm_at_host_init(void)
 		return -EFAULT;
 	}
 
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	err = slm_at_cmng_init();
+	if (err) {
+		LOG_ERR("TLS could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
+
 	k_work_init(&cmd_send_work, cmd_send);
 	k_sem_give(&tx_done);
 	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
@@ -776,6 +801,12 @@ void slm_at_host_uninit(void)
 	if (err) {
 		LOG_WRN("FOTA could not be uninitialized: %d", err);
 	}
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	err = slm_at_cmng_uninit();
+	if (err) {
+		LOG_WRN("TLS could not be uninitialized: %d", err);
+	}
+#endif
 	err = at_notif_deregister_handler(NULL, response_handler);
 	if (err) {
 		LOG_WRN("Can't deregister handler: %d", err);

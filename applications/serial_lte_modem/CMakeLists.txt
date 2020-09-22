@@ -34,6 +34,8 @@ target_sources(app PRIVATE src/slm_at_mqtt.c)
 target_sources(app PRIVATE src/slm_at_ftp.c)
 target_sources(app PRIVATE src/slm_at_httpc.c)
 target_sources(app PRIVATE src/slm_at_fota.c)
+target_sources_ifdef(CONFIG_SLM_NATIVE_TLS app PRIVATE src/slm_native_tls.c)
+target_sources_ifdef(CONFIG_SLM_NATIVE_TLS app PRIVATE src/slm_at_cmng.c)
 
 add_subdirectory(src/tcpip_proxy)
 

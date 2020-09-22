@@ -9,15 +9,15 @@
 #include <string.h>
 #include <net/socket.h>
 #include <modem/modem_info.h>
-#include <net/tls_credentials.h>
 #include <sys/ring_buffer.h>
 #include "slm_util.h"
+#include "slm_native_tls.h"
 #include "slm_at_host.h"
 #include "slm_at_tcp_proxy.h"
 
 LOG_MODULE_REGISTER(tcp_proxy, CONFIG_SLM_LOG_LEVEL);
 
-#define THREAD_STACK_SIZE	(KB(1) + NET_IPV4_MTU)
+#define THREAD_STACK_SIZE	(KB(3) + NET_IPV4_MTU)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
 #define DATA_HEX_MAX_SIZE	(2 * NET_IPV4_MTU)
 
@@ -70,6 +70,7 @@ K_TIMER_DEFINE(conn_timer, NULL, NULL);
 static struct sockaddr_in remote;
 static struct tcp_proxy_t {
 	int sock; /* Socket descriptor. */
+	sec_tag_t sec_tag; /* Security tag of the credential */
 	int sock_peer; /* Socket descriptor for peer. */
 	int role; /* Client or Server proxy */
 	bool datamode; /* Data mode flag*/
@@ -92,14 +93,20 @@ static int do_tcp_server_start(uint16_t port, int sec_tag)
 	struct sockaddr_in local;
 	int addr_len;
 
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	if (sec_tag != INVALID_SEC_TAG) {
+		ret = slm_tls_loadcrdl(sec_tag);
+		if (ret < 0) {
+			LOG_ERR("Fail to load credential: %d", ret);
+			return ret;
+		}
+	}
+#endif
 	/* Open socket */
 	if (sec_tag == INVALID_SEC_TAG) {
 		proxy.sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	} else {
-		sprintf(rsp_buf,
-			"#XTCPSVR: TLS Server not supported\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
-		return -ENOTSUP;
+		proxy.sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
 	}
 	if (proxy.sock < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
@@ -107,6 +114,21 @@ static int do_tcp_server_start(uint16_t port, int sec_tag)
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		return -errno;
 	}
+
+	if (sec_tag != INVALID_SEC_TAG) {
+		sec_tag_t sec_tag_list[1] = { sec_tag };
+
+		ret = setsockopt(proxy.sock, SOL_TLS, TLS_SEC_TAG_LIST,
+				sec_tag_list, sizeof(sec_tag_t));
+		if (ret) {
+			LOG_ERR("set tag list failed: %d", -errno);
+			sprintf(rsp_buf, "#XTCPSVR: %d\r\n", -errno);
+			rsp_send(rsp_buf, strlen(rsp_buf));
+			close(proxy.sock);
+			return -errno;
+		}
+	}
+
 
 	/* Bind to local port */
 	local.sin_family = AF_INET;
@@ -160,7 +182,6 @@ static int do_tcp_server_start(uint16_t port, int sec_tag)
 			K_THREAD_STACK_SIZEOF(tcp_thread_stack),
 			tcp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
-
 	proxy.role = AT_TCP_ROLE_SERVER;
 	sprintf(rsp_buf, "#XTCPSVR: %d started\r\n", proxy.sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
@@ -183,6 +204,14 @@ static int do_tcp_server_stop(int error)
 			LOG_WRN("close() failed: %d", -errno);
 			ret = -errno;
 		}
+#if defined(CONFIG_SLM_NATIVE_TLS)
+		if (proxy.sec_tag != INVALID_SEC_TAG) {
+			ret = slm_tls_unloadcrdl(proxy.sec_tag);
+			if (ret < 0) {
+				LOG_ERR("Fail to unload credential: %d", ret);
+			}
+		}
+#endif
 		(void)slm_at_tcp_proxy_init();
 		if (error) {
 			sprintf(rsp_buf, "#XTCPSVR: %d stopped\r\n", error);
@@ -548,7 +577,7 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 		if (op == AT_SERVER_START ||
 		    op == AT_SERVER_START_WITH_DATAMODE) {
 			uint16_t port;
-			sec_tag_t sec_tag = INVALID_SEC_TAG;
+			proxy.sec_tag = INVALID_SEC_TAG;
 
 			if (param_count < 3) {
 				return -EINVAL;
@@ -558,9 +587,10 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 				return err;
 			}
 			if (param_count > 3) {
-				at_params_int_get(&at_param_list, 3, &sec_tag);
+				at_params_int_get(&at_param_list, 3,
+						  &proxy.sec_tag);
 			}
-			err = do_tcp_server_start(port, sec_tag);
+			err = do_tcp_server_start(port, proxy.sec_tag);
 			if (err == 0 && op == AT_SERVER_START_WITH_DATAMODE) {
 				proxy.datamode = true;
 			}
@@ -625,7 +655,7 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 			uint16_t port;
 			char url[TCPIP_MAX_URL];
 			int size = TCPIP_MAX_URL;
-			sec_tag_t sec_tag = INVALID_SEC_TAG;
+			proxy.sec_tag = INVALID_SEC_TAG;
 
 			if (param_count < 4) {
 				return -EINVAL;
@@ -641,9 +671,10 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 				return err;
 			}
 			if (param_count > 4) {
-				at_params_int_get(&at_param_list, 4, &sec_tag);
+				at_params_int_get(&at_param_list,
+						  4, &proxy.sec_tag);
 			}
-			err = do_tcp_client_connect(url, port, sec_tag);
+			err = do_tcp_client_connect(url, port, proxy.sec_tag);
 			if (err == 0 &&
 			    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				proxy.datamode = true;

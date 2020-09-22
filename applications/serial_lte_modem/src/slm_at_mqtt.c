@@ -11,6 +11,7 @@
 #include <net/socket.h>
 #include <random/rand32.h>
 #include "slm_util.h"
+#include "slm_native_tls.h"
 #include "slm_at_mqtt.h"
 
 LOG_MODULE_REGISTER(mqtt, CONFIG_SLM_LOG_LEVEL);
@@ -69,7 +70,7 @@ static struct slm_mqtt_ctx {
 	uint8_t pword[MQTT_MAX_PASSWORD_LEN + 1];
 	char url[MQTT_MAX_URL_LEN + 1];
 	uint32_t port;
-	uint32_t sec_tag;
+	sec_tag_t sec_tag;
 } ctx;
 
 /* global functions defined in different files */
@@ -102,6 +103,8 @@ static K_SEM_DEFINE(mqtt_connected, 0, 1);
 static struct pollfd fds = {
 	.fd = INVALID_FDS,
 };
+
+static int do_mqtt_disconnect(void);
 
 /**@brief Function to read the published payload.
  */
@@ -461,15 +464,33 @@ static int do_mqtt_connect(void)
 		return err;
 	}
 
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	if (ctx.sec_tag != INVALID_SEC_TAG) {
+		err = slm_tls_loadcrdl(ctx.sec_tag);
+		if (err < 0) {
+			LOG_ERR("Fail to load credential: %d", err);
+			return err;
+		}
+	}
+#endif
+
 	err = mqtt_connect(&client);
 	if (err != 0) {
 		LOG_ERR("ERROR: mqtt_connect %d", err);
+#if defined(CONFIG_SLM_NATIVE_TLS)
+		if (ctx.sec_tag != INVALID_SEC_TAG) {
+			if (slm_tls_unloadcrdl(ctx.sec_tag) != 0) {
+				LOG_ERR("Fail to load credential: %d", err);
+			}
+		}
+#endif
 		return err;
 	}
 
 	err = fds_init(&client);
 	if (err != 0) {
 		LOG_ERR("ERROR: fds_init %d", err);
+		do_mqtt_disconnect();
 		return err;
 	}
 
@@ -488,6 +509,15 @@ static int do_mqtt_disconnect(void)
 	if (err) {
 		LOG_ERR("ERROR: mqtt_disconnect %d", err);
 	}
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	if (ctx.sec_tag != INVALID_SEC_TAG) {
+		err = slm_tls_unloadcrdl(ctx.sec_tag);
+		if (err < 0) {
+			LOG_ERR("Fail to load credential: %d", err);
+			return err;
+		}
+	}
+#endif
 	slm_at_mqtt_uninit();
 
 	return err;
@@ -585,6 +615,7 @@ static int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 			}
 
 			memset(&ctx, 0, sizeof(ctx));
+			ctx.sec_tag = INVALID_SEC_TAG;
 
 			err = at_params_string_get(&at_param_list, 2,
 							ctx.cid, &cid_sz);
