@@ -4,15 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig BT_GATT_BMS_SRV
+menuconfig BT_BMS
 	bool "Bond Management Service"
 	select BT_NRF_SERVICES
 	depends on !BT_KEYS_OVERWRITE_OLDEST
 
-if BT_GATT_BMS_SRV
+if BT_BMS
 
-module = BT_GATT_BMS_SRV
-module-str = BMS_SRV
+module = BT_BMS
+module-str = BMS
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-endif # BT_GATT_BMS_SRV
+endif # BT_BMS

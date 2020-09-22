@@ -1,4 +1,4 @@
-.. _bms_srv_readme:
+.. _bms_readme:
 
 GATT Bond Management Service (BMS)
 ##################################
@@ -34,9 +34,9 @@ Otherwise, the Server removes the bond for a given peer when it disconnects.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/bms_srv.h`
-| Source file: :file:`subsys/bluetooth/services/bms_srv.c`
+| Header file: :file:`include/bluetooth/services/bms.h`
+| Source file: :file:`subsys/bluetooth/services/bms.c`
 
-.. doxygengroup:: bt_gatt_bms_srv
+.. doxygengroup:: bt_bms
    :project: nrf
    :members:

@@ -20,7 +20,7 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
 
-#include <bluetooth/services/bms_srv.h>
+#include <bluetooth/services/bms.h>
 
 #include <settings/settings.h>
 
@@ -145,7 +145,7 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 };
 
 static bool bms_authorize(struct bt_conn *conn,
-			  struct bt_gatt_bms_srv_authorize_params *params)
+			  struct bt_bms_authorize_params *params)
 {
 	if ((params->code_len == sizeof(bms_auth_code)) &&
 	    (memcmp(bms_auth_code, params->code, sizeof(bms_auth_code)) == 0)) {
@@ -157,13 +157,13 @@ static bool bms_authorize(struct bt_conn *conn,
 	return false;
 }
 
-static struct bt_gatt_bms_srv_cb bms_callbacks = {
+static struct bt_bms_cb bms_callbacks = {
 	.authorize = bms_authorize,
 };
 
 static int bms_init(void)
 {
-	struct bt_gatt_bms_srv_init_params init_params = {0};
+	struct bt_bms_init_params init_params = {0};
 
 	/* Enable all possible operation codes */
 	init_params.features.delete_requesting.supported = true;
@@ -179,7 +179,7 @@ static int bms_init(void)
 
 	init_params.cbs = &bms_callbacks;
 
-	return bt_gatt_bms_srv_init(&init_params);
+	return bt_bms_init(&init_params);
 }
 
 void main(void)
