@@ -18,11 +18,11 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
 
-#include <bluetooth/services/bms_srv.h>
+#include <bluetooth/services/bms.h>
 
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(bt_gatt_bms_srv, CONFIG_BT_GATT_BMS_SRV_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_bms, CONFIG_BT_BMS_LOG_LEVEL);
 
 #define UINT24_SIZE	3
 
@@ -30,32 +30,32 @@ LOG_MODULE_REGISTER(bt_gatt_bms_srv, CONFIG_BT_GATT_BMS_SRV_LOG_LEVEL);
 #define BT_ATT_ERR_OPERATION_FAILED		0x81
 
 /* Features relevant for LE Transport only */
-enum bt_gatt_bms_srv_le_feature {
+enum bt_bms_le_feature {
 	/* Delete bond of the requesting device */
-	BT_GATT_BMS_SRV_REQ_DEV = BIT(4),
+	BT_BMS_REQ_DEV = BIT(4),
 
 	/* Delete bond of the requesting device with an authorization code */
-	BT_GATT_BMS_SRV_REQ_DEV_AUTH_CODE = BIT(5),
+	BT_BMS_REQ_DEV_AUTH_CODE = BIT(5),
 
 	/* Delete all bonds on the device */
-	BT_GATT_BMS_SRV_ALL_BONDS = BIT(10),
+	BT_BMS_ALL_BONDS = BIT(10),
 
 	/* Delete all bonds on the device with an authorization code */
-	BT_GATT_BMS_SRV_ALL_BONDS_AUTH_CODE = BIT(11),
+	BT_BMS_ALL_BONDS_AUTH_CODE = BIT(11),
 
 	/* Delete all bonds on the device except for the bond of
 	 * the requesting device
 	 */
-	BT_GATT_BMS_SRV_ALL_EXCEPT_REQ_DEV = BIT(16),
+	BT_BMS_ALL_EXCEPT_REQ_DEV = BIT(16),
 
 	/* Delete all bonds on the device except for the bond of
 	 * the requesting device with an authorization code
 	 */
-	BT_GATT_BMS_SRV_ALL_EXCEPT_REQ_DEV_AUTH_CODE = BIT(17),
+	BT_BMS_ALL_EXCEPT_REQ_DEV_AUTH_CODE = BIT(17),
 };
 
 /* State of BMS instance */
-enum bt_gatt_bms_srv_state {
+enum bt_bms_state {
 	/* Idle */
 	IDLE,
 
@@ -67,23 +67,23 @@ enum bt_gatt_bms_srv_state {
 };
 
 /* Execution descriptor */
-struct bt_gatt_bms_srv_bond_add_exec {
+struct bt_bms_bond_add_exec {
 	/* Kernel work item */
 	struct k_work work;
 
 	/* Bond operation code */
-	enum bt_gatt_bms_srv_op op_code;
+	enum bt_bms_op op_code;
 
 	/* Requestor address */
 	bt_addr_le_t req_addr;
 };
 
-static struct bt_gatt_bms_srv {
-	enum bt_gatt_bms_srv_state state;
-	struct bt_gatt_bms_srv_bond_add_exec bond_add_exec;
+static struct bt_bms {
+	enum bt_bms_state state;
+	struct bt_bms_bond_add_exec bond_add_exec;
 	struct k_work bond_del_exec;
-	const struct bt_gatt_bms_srv_cb *cbs;
-	struct bt_gatt_bms_srv_features features;
+	const struct bt_bms_cb *cbs;
+	struct bt_bms_features features;
 	bt_addr_le_t bonded_addrs[CONFIG_BT_MAX_PAIRED];
 } bms_inst;
 
@@ -174,18 +174,18 @@ static void rest_bond_items_add(const struct bt_bond_info *info,
 
 static void bond_add_execute(struct k_work *item)
 {
-	struct bt_gatt_bms_srv_bond_add_exec *exec =
-		CONTAINER_OF(item, struct bt_gatt_bms_srv_bond_add_exec, work);
+	struct bt_bms_bond_add_exec *exec =
+		CONTAINER_OF(item, struct bt_bms_bond_add_exec, work);
 
 	/* Add bonds to the storage on client's delete request. */
 	switch (exec->op_code) {
-	case BT_GATT_BMS_SRV_OP_DEL_REQ_BOND:
+	case BT_BMS_OP_DEL_REQ_BOND:
 		bond_item_add(&exec->req_addr);
 		break;
-	case BT_GATT_BMS_SRV_OP_DEL_ALL_BONDS:
+	case BT_BMS_OP_DEL_ALL_BONDS:
 		bt_foreach_bond(BT_ID_DEFAULT, all_bond_items_add, NULL);
 		break;
-	case BT_GATT_BMS_SRV_OP_DEL_REST_BONDS:
+	case BT_BMS_OP_DEL_REST_BONDS:
 		bt_foreach_bond(BT_ID_DEFAULT, rest_bond_items_add,
 				&exec->req_addr);
 		break;
@@ -208,28 +208,28 @@ static void bond_del_execute(struct k_work *item)
 	LOG_DBG("Bond deleting work is done");
 }
 
-static bool ctrl_pt_op_code_validate(enum bt_gatt_bms_srv_op op_code)
+static bool ctrl_pt_op_code_validate(enum bt_bms_op op_code)
 {
 	switch (op_code) {
-	case BT_GATT_BMS_SRV_OP_DEL_REQ_BOND:
+	case BT_BMS_OP_DEL_REQ_BOND:
 		return bms_inst.features.delete_requesting.supported;
-	case BT_GATT_BMS_SRV_OP_DEL_ALL_BONDS:
+	case BT_BMS_OP_DEL_ALL_BONDS:
 		return bms_inst.features.delete_all.supported;
-	case BT_GATT_BMS_SRV_OP_DEL_REST_BONDS:
+	case BT_BMS_OP_DEL_REST_BONDS:
 		return bms_inst.features.delete_rest.supported;
 	default:
 		return false;
 	}
 }
 
-static bool ctrl_pt_auth_op_check(enum bt_gatt_bms_srv_op op_code)
+static bool ctrl_pt_auth_op_check(enum bt_bms_op op_code)
 {
 	switch (op_code) {
-	case BT_GATT_BMS_SRV_OP_DEL_REQ_BOND:
+	case BT_BMS_OP_DEL_REQ_BOND:
 		return bms_inst.features.delete_requesting.authorize;
-	case BT_GATT_BMS_SRV_OP_DEL_ALL_BONDS:
+	case BT_BMS_OP_DEL_ALL_BONDS:
 		return bms_inst.features.delete_all.authorize;
-	case BT_GATT_BMS_SRV_OP_DEL_REST_BONDS:
+	case BT_BMS_OP_DEL_REST_BONDS:
 		return bms_inst.features.delete_rest.authorize;
 	default:
 		return false;
@@ -237,7 +237,7 @@ static bool ctrl_pt_auth_op_check(enum bt_gatt_bms_srv_op op_code)
 }
 
 static bool ctrl_pt_authorize(struct bt_conn *conn,
-			      struct bt_gatt_bms_srv_authorize_params *params)
+			      struct bt_bms_authorize_params *params)
 {
 	if (!ctrl_pt_auth_op_check(params->op_code)) {
 		return true;
@@ -260,8 +260,8 @@ static ssize_t ctrl_pt_write(struct bt_conn *conn,
 	LOG_DBG("Attribute write, handle: %u, conn: %p", attr->handle, conn);
 
 	uint8_t *cp_proc;
-	enum bt_gatt_bms_srv_op op_code;
-	struct bt_gatt_bms_srv_authorize_params params;
+	enum bt_bms_op op_code;
+	struct bt_bms_authorize_params params;
 
 	if (offset != 0) {
 		LOG_ERR("Invalid offset of Write Request");
@@ -274,7 +274,7 @@ static ssize_t ctrl_pt_write(struct bt_conn *conn,
 	}
 
 	cp_proc = (uint8_t *) buf;
-	op_code = (enum bt_gatt_bms_srv_op) cp_proc[0];
+	op_code = (enum bt_bms_op) cp_proc[0];
 	if (!ctrl_pt_op_code_validate(op_code)) {
 		LOG_ERR("Operation code not supported 0x%02X", op_code);
 		return BT_GATT_ERR(BT_ATT_ERR_OP_CODE_NOT_SUPPORTED);
@@ -305,25 +305,25 @@ static inline uint32_t feature_encode(void)
 
 	if (bms_inst.features.delete_requesting.supported) {
 		if (bms_inst.features.delete_requesting.authorize) {
-			feature |= BT_GATT_BMS_SRV_REQ_DEV_AUTH_CODE;
+			feature |= BT_BMS_REQ_DEV_AUTH_CODE;
 		} else {
-			feature |= BT_GATT_BMS_SRV_REQ_DEV;
+			feature |= BT_BMS_REQ_DEV;
 		}
 	}
 
 	if (bms_inst.features.delete_all.supported) {
 		if (bms_inst.features.delete_all.authorize) {
-			feature |= BT_GATT_BMS_SRV_ALL_BONDS_AUTH_CODE;
+			feature |= BT_BMS_ALL_BONDS_AUTH_CODE;
 		} else {
-			feature |= BT_GATT_BMS_SRV_ALL_BONDS;
+			feature |= BT_BMS_ALL_BONDS;
 		}
 	}
 
 	if (bms_inst.features.delete_rest.supported) {
 		if (bms_inst.features.delete_rest.authorize) {
-			feature |= BT_GATT_BMS_SRV_ALL_EXCEPT_REQ_DEV_AUTH_CODE;
+			feature |= BT_BMS_ALL_EXCEPT_REQ_DEV_AUTH_CODE;
 		} else {
-			feature |= BT_GATT_BMS_SRV_ALL_EXCEPT_REQ_DEV;
+			feature |= BT_BMS_ALL_EXCEPT_REQ_DEV;
 		}
 	}
 
@@ -385,10 +385,10 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_BMS),
 			       NULL),
 );
 
-int bt_gatt_bms_srv_init(const struct bt_gatt_bms_srv_init_params *init_params)
+int bt_bms_init(const struct bt_bms_init_params *init_params)
 {
 	if (memcmp(&init_params->features,
-		   (struct bt_gatt_bms_srv_features[]) {0},
+		   (struct bt_bms_features[]) {0},
 		   sizeof(init_params->features)) == 0) {
 		return -EINVAL;
 	}

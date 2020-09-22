@@ -3,7 +3,7 @@
 Bluetooth: Peripheral Bond Management Service (BMS)
 ###################################################
 
-The peripheral BMS sample demonstrates how to use the :ref:`bms_srv_readme`.
+The peripheral BMS sample demonstrates how to use the :ref:`bms_readme`.
 
 Overview
 ********
@@ -84,7 +84,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`bms_srv_readme`
+* :ref:`bms_readme`
 * :ref:`dk_buttons_and_leds_readme`
 
 In addition, it uses the following Zephyr libraries:
