@@ -36,6 +36,13 @@ See `Testing diagnostic module`_ section for an example.
 .. note::
     If you disable the :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` configuration set, you can enable the diagnostic module with the :option:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
 
+.. _ot_cli_sample_thread_v12:
+
+Experimental Thread v1.2 extension
+==================================
+
+This optional extension allows you to test :ref:`available features from Thread Specification v1.2 <thread_ug_thread_1_2>`.
+You can enable these features either by :ref:`activating the overlay extension <ot_cli_sample_activating_variants>` as described below or by setting :ref:`thread_ug_thread_1_2`.
 
 Requirements
 ************
@@ -47,6 +54,11 @@ The sample supports the following development kits for testing the network statu
    :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833
 
 Optionally, you can use one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for :ref:`testing communication or diagnostics <ot_cli_sample_testing_multiple>` and :ref:`thread_ot_commissioning_configuring_on-mesh`.
+
+Thread v1.2 extension requirements
+==================================
+
+If you enable the :ref:`experimental Thread v1.2 extension <ot_cli_sample_thread_v12>`, you will need `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ to observe messages sent from the router to the leader board when :ref:`testing v1.2 features <ot_cli_sample_testing_multiple_v12>`.
 
 User interface
 **************
@@ -64,6 +76,17 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 To update OpenThread libraries provided by the ``nrfxlib``, please invoke ``west build -b nrf52840dk_nrf52840 -t install_openthread_libraries``.
+
+.. _ot_cli_sample_activating_variants:
+
+Activating sample extensions
+============================
+
+To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
+
+* For the experimental Thread 1.2 variant, set :file:`overlay-thread_1_2.conf`.
+
+See :ref:`cmake_options` for instructions on how to add this option.
 
 Testing
 =======
@@ -192,6 +215,89 @@ To test diagnostic commands, complete the following steps:
       first received packet: rssi=-29, lqi=255
       last received packet: rssi=-30, lqi=255
       Done
+
+.. _ot_cli_sample_testing_multiple_v12:
+
+Testing Thread Specification v1.2 features
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To test the Thread Specification v1.2 features, complete the following steps:
+
+#. Make sure both development kits are programmed with the CLI sample with the :ref:`Thread v1.2 extension <ot_cli_sample_thread_v12>` enabled.
+#. Turn on the developments kits.
+#. Set up the serial connection with both development kits.
+   For more details, see :ref:`putty`.
+#. Test the state of the Thread network with the ``ot state`` command to see which board is the leader:
+
+   .. code-block:: console
+
+      uart:~$ ot state
+      leader
+      Done
+
+#. On the leader board, enable the Backbone Router function:
+
+   .. code-block:: console
+
+      uart:~$ ot bbr enable
+      DIo:
+       State changed! Flags: 0x02001000 Current role: 4
+      I: State changed! Flags: 0x00000200 Current role: 4
+      I: State changed! Flags: 0x02000001 Current role: 4
+
+#. On the leader board, configure the Domain prefix:
+
+   .. code-block:: console
+
+      uart:~$ ot prefix add fd00:7d03:7d03:7d03::/64 prosD med
+      Done
+      uart:~$ ot netdataregister
+      Done
+      I: State changed! Flags: 0x00000200 Current role: 4
+      I: State changed! Flags: 0x00001001 Current role: 4
+
+#. On the router board, display the autoconfigured Domain Unicast Address and set another one manually:
+
+   .. code-block:: console
+
+      uart:~$ ot ipaddr
+      fd00:7d03:7d03:7d03:ee2d:eed:4b59:2736
+      fdde:ad00:beef:0:0:ff:fe00:c400
+      fdde:ad00:beef:0:e0fc:dc28:1d12:8c2
+      fe80:0:0:0:acbd:53bf:1461:a861
+      uart:~$ ot dua iid 0004000300020001
+      Io:
+      State changed! Flags: 0x00000003 Current role: 3
+      uart:~$ ot ipaddr
+      fd00:7d03:7d03:7d03:4:3:2:1
+      fdde:ad00:beef:0:0:ff:fe00:c400
+      fdde:ad00:beef:0:e0fc:dc28:1d12:8c2
+      fe80:0:0:0:acbd:53bf:1461:a861
+      Done
+
+#. On the router board, configure a multicast address with a scope greater than realm-local:
+
+   .. code-block:: console
+
+      uart:~$ ot ipmaddr add ff04::1
+      Done
+      : State changed! Flags: 0x00001000 Current role: 3
+      uart:~$ ot ipmaddr
+      ff04:0:0:0:0:0:0:1
+      ff33:40:fdde:ad00:beef:0:0:1
+      ff32:40:fdde:ad00:beef:0:0:1
+      ff02:0:0:0:0:0:0:2
+      ff03:0:0:0:0:0:0:2
+      ff02:0:0:0:0:0:0:1
+      ff03:0:0:0:0:0:0:1
+      ff03:0:0:0:0:0:0:fc
+      Done
+
+   The router board will send an ``MLR.req`` message to the leader board (Backbone Router).
+   This can be observed using the `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_.
+
+   .. note::
+        The DUA registration with the Backbone Router is not yet supported.
 
 Dependencies
 ************
