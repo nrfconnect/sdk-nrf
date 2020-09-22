@@ -52,6 +52,8 @@
 /* Time and Scene models */
 #include <bluetooth/mesh/time_cli.h>
 #include <bluetooth/mesh/time_srv.h>
+#include <bluetooth/mesh/scene_cli.h>
+#include <bluetooth/mesh/scene_srv.h>
 
 /** @brief Check whether the model publishes to a unicast address.
  *

@@ -534,4 +534,25 @@ config BT_MESH_SENSOR_CLI
 
 rsource "Kconfig.sensor"
 
+menuconfig BT_MESH_SCENE_SRV
+	bool "Scene Server"
+	select BT_MESH_NRF_MODELS
+	depends on BT_SETTINGS
+	help
+	  Enable Mesh Scene Server model.
+
+config BT_MESH_SCENES_MAX
+	int "Max number of scenes"
+	default 4
+	range 1 65535
+	depends on BT_MESH_SCENE_SRV
+	help
+	  Max number of scenes that can be stored by a single Scene Server.
+
+config BT_MESH_SCENE_CLI
+	bool "Scene Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable Mesh Scene Client model.
+
 endmenu

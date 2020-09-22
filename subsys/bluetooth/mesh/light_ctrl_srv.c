@@ -773,6 +773,10 @@ static int om_set(struct bt_mesh_light_ctrl_srv *srv,
 	atomic_set_bit_to(&srv->flags, FLAG_OCC_MODE, mode);
 	store(srv, FLAG_STORE_STATE);
 
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
+	}
+
 	return 0;
 }
 
@@ -856,6 +860,10 @@ static void light_onoff_set(struct bt_mesh_light_ctrl_srv *srv,
 			turn_on(srv, has_trans ? &transition : NULL, true);
 		} else {
 			turn_off(srv, has_trans ? &transition : NULL, true);
+		}
+
+		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+			bt_mesh_scene_invalidate(&srv->scene);
 		}
 	}
 
@@ -1212,6 +1220,10 @@ static void handle_prop_set(struct bt_mesh_model *mod,
 	if (!err) {
 		prop_tx(srv, ctx, id);
 		prop_tx(srv, NULL, id);
+
+		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+			bt_mesh_scene_invalidate(&srv->scene);
+		}
 	}
 }
 
@@ -1220,11 +1232,18 @@ static void handle_prop_set_unack(struct bt_mesh_model *mod,
 				  struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
+	int err;
 
 	uint16_t id = net_buf_simple_pull_le16(buf);
 
-	prop_set(buf, srv, id);
-	prop_tx(srv, NULL, id);
+	err = prop_set(buf, srv, id);
+	if (!err) {
+		prop_tx(srv, NULL, id);
+
+		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+			bt_mesh_scene_invalidate(&srv->scene);
+		}
+	}
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctrl_setup_srv_op[] = {
@@ -1284,6 +1303,55 @@ const struct bt_mesh_onoff_srv_handlers _bt_mesh_light_ctrl_srv_onoff = {
 	.get = onoff_get,
 };
 
+struct __packed scene_data {
+	uint8_t enabled:1,
+		occ:1;
+	struct bt_mesh_light_ctrl_srv_cfg cfg;
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	struct bt_mesh_light_ctrl_srv_reg_cfg reg;
+#endif
+};
+
+static int scene_store(struct bt_mesh_model *mod, uint8_t data[])
+{
+	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
+	struct scene_data *scene = (struct scene_data *)&data[0];
+
+	scene->enabled = is_enabled(srv);
+	scene->occ = atomic_test_bit(&srv->flags, FLAG_OCC_MODE);
+	scene->cfg = srv->cfg;
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	scene->reg = srv->reg.cfg;
+#endif
+
+	return sizeof(struct scene_data);
+}
+
+static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
+			 size_t len,
+			 struct bt_mesh_model_transition *transition)
+{
+	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
+	struct scene_data *scene = (struct scene_data *)&data[0];
+
+	atomic_set_bit_to(&srv->flags, FLAG_OCC_MODE, scene->occ);
+	srv->cfg = scene->cfg;
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	srv->reg.cfg = scene->reg;
+#endif
+	if (scene->enabled) {
+		ctrl_enable(srv);
+	} else {
+		ctrl_disable(srv);
+	}
+}
+
+static const struct bt_mesh_scene_entry_type scene_type = {
+	.maxlen = sizeof(struct scene_data),
+	.store = scene_store,
+	.recall = scene_recall,
+};
+
 static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
@@ -1315,6 +1383,10 @@ static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 #endif
 
 	net_buf_simple_init(srv->pub.msg, 0);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_entry_add(mod, &srv->scene, &scene_type, false);
+	}
 
 	return 0;
 }
@@ -1484,12 +1556,26 @@ int _bt_mesh_light_ctrl_srv_update(struct bt_mesh_model *mod)
 
 int bt_mesh_light_ctrl_srv_on(struct bt_mesh_light_ctrl_srv *srv)
 {
-	return turn_on(srv, NULL, true);
+	int err;
+
+	err = turn_on(srv, NULL, true);
+	if (!err && IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
+	}
+
+	return err;
 }
 
 int bt_mesh_light_ctrl_srv_off(struct bt_mesh_light_ctrl_srv *srv)
 {
-	return turn_off(srv, NULL, true);
+	int err;
+
+	err = turn_off(srv, NULL, true);
+	if (!err && IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
+	}
+
+	return err;
 }
 
 int bt_mesh_light_ctrl_srv_enable(struct bt_mesh_light_ctrl_srv *srv)
@@ -1502,6 +1588,9 @@ int bt_mesh_light_ctrl_srv_enable(struct bt_mesh_light_ctrl_srv *srv)
 	if (atomic_test_bit(&srv->flags, FLAG_STARTED)) {
 		ctrl_enable(srv);
 		store(srv, FLAG_STORE_STATE);
+		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+			bt_mesh_scene_invalidate(&srv->scene);
+		}
 	}
 
 	return 0;
@@ -1513,8 +1602,12 @@ int bt_mesh_light_ctrl_srv_disable(struct bt_mesh_light_ctrl_srv *srv)
 	if (!is_enabled(srv)) {
 		return -EALREADY;
 	}
+
 	ctrl_disable(srv);
 	store(srv, FLAG_STORE_STATE);
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
+	}
 
 	return 0;
 }

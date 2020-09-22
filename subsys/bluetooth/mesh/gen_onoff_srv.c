@@ -88,6 +88,10 @@ static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	srv->handlers->set(srv, ctx, &set, &status);
 
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
+	}
+
 	(void)bt_mesh_onoff_srv_pub(srv, NULL, &status);
 
 respond:
@@ -117,12 +121,49 @@ const struct bt_mesh_model_op _bt_mesh_onoff_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+/* .. include_startingpoint_scene_srv_rst_1 */
+static ssize_t scene_store(struct bt_mesh_model *mod, uint8_t data[])
+{
+	struct bt_mesh_onoff_srv *srv = mod->user_data;
+	struct bt_mesh_onoff_status status = { 0 };
+
+	/* Only store the next stable on_off state: */
+	srv->handlers->get(srv, NULL, &status);
+	data[0] = status.remaining_time ? status.target_on_off :
+					  status.present_on_off;
+
+	return 1;
+}
+
+static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
+		       size_t len, struct bt_mesh_model_transition *transition)
+{
+	struct bt_mesh_onoff_srv *srv = mod->user_data;
+	struct bt_mesh_onoff_set set = {
+		.on_off = data[0],
+		.transition = transition,
+	};
+
+	srv->handlers->set(srv, NULL, &set, NULL);
+}
+
+static const struct bt_mesh_scene_entry_type scene_type = {
+	.maxlen = 1,
+	.store = scene_store,
+	.recall = scene_recall,
+};
+/* .. include_endpoint_scene_srv_rst_1 */
+
 static int bt_mesh_onoff_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_onoff_srv *srv = model->user_data;
 
 	srv->model = model;
 	net_buf_simple_init(model->pub->msg, 0);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
+	}
 
 	return 0;
 }

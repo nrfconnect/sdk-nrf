@@ -240,6 +240,10 @@ static void lightness_set(struct bt_mesh_model *mod,
 		atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
 
 		lightness_srv_change_lvl(srv, ctx, &set, &status);
+
+		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+			bt_mesh_scene_invalidate(&srv->lvl.scene);
+		}
 	} else if (ack) {
 		srv->handlers->light_get(srv, NULL, &status);
 	}

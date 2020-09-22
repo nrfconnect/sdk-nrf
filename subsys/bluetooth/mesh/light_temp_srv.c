@@ -75,6 +75,10 @@ static void temp_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	srv->delta_uv_last = delta_uv;
 	srv->handlers->set(srv, ctx, &cb_msg, &status);
 
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->lvl.scene);
+	}
+
 	struct bt_mesh_lvl_status lvl_status = {
 		.current = temp_to_lvl(srv, status.current.temp),
 		.target = temp_to_lvl(srv, status.target.temp),
