@@ -41,9 +41,14 @@ struct enqueued_report {
 	struct hid_report_event *report;
 };
 
-struct enqueued_reports {
+struct counted_list {
 	sys_slist_t list;
 	size_t count;
+};
+
+struct enqueued_reports {
+	struct counted_list reports[REPORT_ID_COUNT];
+	uint8_t last_report_id;
 };
 
 struct subscriber {
@@ -55,7 +60,7 @@ struct subscriber {
 
 struct hids_peripheral {
 	struct bt_gatt_hids_c hidc;
-	struct enqueued_reports enqueued_report[REPORT_ID_COUNT];
+	struct enqueued_reports enqueued_reports;
 
 	struct k_delayed_work read_rsp;
 	struct config_event *cfg_chan_rsp;
@@ -63,7 +68,6 @@ struct hids_peripheral {
 	uint8_t hwid[HWID_LEN];
 	uint8_t cur_poll_cnt;
 	uint8_t sub_id;
-	uint8_t last_report_id;
 };
 
 static struct subscriber subscribers[CONFIG_USB_HID_DEVICE_COUNT];
@@ -152,43 +156,114 @@ static struct subscriber *get_subscriber(const struct hids_peripheral *per)
 	return &subscribers[per->sub_id];
 }
 
+static size_t next_id(size_t id, size_t max)
+{
+	return (id + 1) % max;
+}
+
 static bool is_report_enabled(struct subscriber *sub, uint8_t report_id)
 {
 	__ASSERT_NO_MSG(report_id < __CHAR_BIT__ * sizeof(sub->enabled_reports_bm));
 	return (sub->enabled_reports_bm & BIT(report_id)) != 0;
 }
 
-static void drop_enqueued_reports(struct enqueued_reports *enqueued_report)
+static bool is_report_enqueued(struct enqueued_reports *enqueued_reports,
+			       uint8_t report_id)
 {
-	/* Clear all the reports. */
-	while (!sys_slist_is_empty(&enqueued_report->list)) {
-		struct enqueued_report *item;;
+	struct counted_list *reports = &enqueued_reports->reports[report_id];
 
-		item = CONTAINER_OF(sys_slist_get(&enqueued_report->list),
-				__typeof__(*item),
-				node);
-		enqueued_report->count--;
+	if (reports->count == 0) {
+		__ASSERT_NO_MSG(sys_slist_is_empty(&reports->list));
+		return false;
+	}
+	return true;
+}
+
+static struct enqueued_report *get_enqueued_report(struct enqueued_reports *enqueued_reports,
+						   uint8_t report_id)
+{
+	struct counted_list *reports = &enqueued_reports->reports[report_id];
+	struct enqueued_report *item;
+
+	item = CONTAINER_OF(sys_slist_get(&reports->list),
+			    __typeof__(*item),
+			    node);
+	__ASSERT_NO_MSG(reports->count > 0);
+	reports->count--;
+
+	return item;
+}
+
+static void drop_enqueued_reports(struct enqueued_reports *enqueued_reports,
+				  uint8_t report_id)
+{
+	__ASSERT_NO_MSG(report_id < ARRAY_SIZE(enqueued_reports->reports));
+
+	while (is_report_enqueued(enqueued_reports, report_id)) {
+		struct enqueued_report *item;
+
+		item = get_enqueued_report(enqueued_reports, report_id);
 
 		k_free(item->report);
 		k_free(item);
 	}
 
-	__ASSERT_NO_MSG(enqueued_report->count == 0);
+	__ASSERT_NO_MSG(enqueued_reports->reports[report_id].count == 0);
 }
 
-static void enqueue_hid_report(struct enqueued_reports *enqueued_report,
+static void drop_all_enqueued_reports(struct enqueued_reports *enqueued_reports)
+{
+	for (size_t report_id = 0; report_id < ARRAY_SIZE(enqueued_reports->reports); report_id++) {
+		drop_enqueued_reports(enqueued_reports, report_id);
+	}
+}
+
+static void init_enqueued_reports(struct enqueued_reports *enqueued_reports)
+{
+	for (size_t report_id = 0; report_id < ARRAY_SIZE(enqueued_reports->reports); report_id++) {
+		struct counted_list *reports = &enqueued_reports->reports[report_id];
+
+		sys_slist_init(&reports->list);
+		reports->count = 0;
+	}
+
+	enqueued_reports->last_report_id = 0;
+}
+
+static struct enqueued_report *get_next_enqueued_report(struct enqueued_reports *enqueued_reports)
+{
+	struct enqueued_report *item = NULL;
+
+	for (size_t i = 0; i < ARRAY_SIZE(enqueued_reports->reports); i++) {
+		size_t report_id = next_id(enqueued_reports->last_report_id + i,
+					   ARRAY_SIZE(enqueued_reports->reports));
+
+		if (is_report_enqueued(enqueued_reports, report_id)) {
+			item = get_enqueued_report(enqueued_reports, report_id);
+
+			enqueued_reports->last_report_id = report_id;
+			break;
+		}
+	}
+
+	return item;
+}
+
+static void enqueue_hid_report(struct enqueued_reports *enqueued_reports,
+			       uint8_t report_id,
 			       struct hid_report_event *report)
 {
+	__ASSERT_NO_MSG(report_id < ARRAY_SIZE(enqueued_reports->reports));
+
+	struct counted_list *reports = &enqueued_reports->reports[report_id];
+
 	struct enqueued_report *item;
 
-	if (enqueued_report->count < MAX_ENQUEUED_ITEMS) {
+	if (reports->count < MAX_ENQUEUED_ITEMS) {
 		item = k_malloc(sizeof(*item));
-		enqueued_report->count++;
 	} else {
 		LOG_WRN("Enqueue dropped the oldest report");
-		item = CONTAINER_OF(sys_slist_get(&enqueued_report->list),
-				    __typeof__(*item),
-				    node);
+		item = get_enqueued_report(enqueued_reports, report_id);
 		k_free(item->report);
 	}
 
@@ -197,7 +272,8 @@ static void enqueue_hid_report(struct enqueued_reports *enqueued_report,
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
 		item->report = report;
-		sys_slist_append(&enqueued_report->list, &item->node);
+		sys_slist_append(&reports->list, &item->node);
+		reports->count++;
 	}
 }
 
@@ -211,7 +287,7 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 		return;
 	}
 
-	if (report_id > ARRAY_SIZE(per->enqueued_report)) {
+	if (report_id > ARRAY_SIZE(per->enqueued_reports.reports)) {
 		LOG_ERR("Unknown report id");
 		return;
 	}
@@ -236,13 +312,13 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 	memcpy(&report->dyndata.data[1], data, size);
 
 	if (!sub->busy) {
-		__ASSERT_NO_MSG(per->enqueued_report[report_id].count == 0);
+		__ASSERT_NO_MSG(!is_report_enqueued(&per->enqueued_reports, report_id));
 
 		EVENT_SUBMIT(report);
-		per->last_report_id = report_id;
+		per->enqueued_reports.last_report_id = report_id;
 		sub->busy = true;
 	} else {
-		enqueue_hid_report(&per->enqueued_report[report_id], report);
+		enqueue_hid_report(&per->enqueued_reports, report_id, report);
 	}
 }
 
@@ -332,9 +408,7 @@ static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
 	struct hids_peripheral *per = &peripherals[per_id];
 
 	if (per->sub_id != sub_id) {
-		for (size_t report_id = 0; report_id < ARRAY_SIZE(per->enqueued_report); report_id++) {
-			drop_enqueued_reports(&per->enqueued_report[report_id]);
-		}
+		drop_all_enqueued_reports(&per->enqueued_reports);
 		per->sub_id = sub_id;
 	}
 
@@ -433,8 +507,8 @@ static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 static void read_rsp_fn(struct k_work *work)
 {
 	struct hids_peripheral *per = CONTAINER_OF(work,
-						struct hids_peripheral,
-						read_rsp);
+						   struct hids_peripheral,
+						   read_rsp);
 	struct bt_gatt_hids_c_rep_info *config_rep =
 		bt_gatt_hids_c_rep_find(&per->hidc,
 					BT_GATT_HIDS_REPORT_TYPE_FEATURE,
@@ -769,7 +843,7 @@ static void disable_notifications(struct subscriber *sub, uint8_t report_id)
 			continue;
 		}
 
-		drop_enqueued_reports(&per->enqueued_report[report_id]);
+		drop_enqueued_reports(&per->enqueued_reports, report_id);
 	}
 }
 
@@ -822,12 +896,7 @@ static void init(void)
 		k_delayed_work_init(&per->read_rsp, read_rsp_fn);
 		per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
 
-		for (size_t report_id = 0; report_id < ARRAY_SIZE(per->enqueued_report); report_id++) {
-			struct enqueued_reports *enqueued_report = &per->enqueued_report[report_id];
-
-			sys_slist_init(&enqueued_report->list);
-			enqueued_report->count = 0;
-		}
+		init_enqueued_reports(&per->enqueued_reports);
 	}
 
 	reset_peripheral_address();
@@ -840,7 +909,8 @@ static void send_enqueued_report(struct subscriber *sub)
 	}
 
 	for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
-		size_t per_id = (sub->last_peripheral_id + i + 1) % ARRAY_SIZE(peripherals);
+		size_t per_id = next_id(sub->last_peripheral_id + i,
+					ARRAY_SIZE(peripherals));
 		struct hids_peripheral *per = &peripherals[per_id];
 
 		/* Check if peripheral is linked with the subscriber. */
@@ -848,36 +918,19 @@ static void send_enqueued_report(struct subscriber *sub)
 			continue;
 		}
 
-		for (size_t j = 0; j < ARRAY_SIZE(per->enqueued_report); j++) {
-			size_t report_id = (per->last_report_id + j + 1) % ARRAY_SIZE(per->enqueued_report);
-			struct enqueued_reports *enqueued_report = &per->enqueued_report[report_id];
+		struct enqueued_report *item;
 
-			if (!is_report_enabled(sub, report_id)) {
-				/* Not subscribed yet. */
-				continue;
-			}
+		item = get_next_enqueued_report(&per->enqueued_reports);
 
-			if (sys_slist_is_empty(&enqueued_report->list)) {
-				/* Nothing to send. */
-				continue;
-			}
-
-			struct enqueued_report *item;
-
-			item = CONTAINER_OF(sys_slist_get(&enqueued_report->list),
-					    __typeof__(*item),
-					    node);
-			enqueued_report->count--;
-
+		if (item) {
 			EVENT_SUBMIT(item->report);
 
 			k_free(item);
 
-			per->last_report_id = report_id;
 			sub->busy = true;
 			sub->last_peripheral_id = per_id;
 
-			return;
+			break;
 		}
 	}
 }
