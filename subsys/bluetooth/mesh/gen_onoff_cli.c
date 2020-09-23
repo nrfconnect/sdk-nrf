@@ -71,9 +71,9 @@ const struct bt_mesh_model_cb _bt_mesh_onoff_cli_cb = {
 	.init = bt_mesh_onoff_cli_init,
 };
 
-int bt_mesh_onoff_cli_status_get(struct bt_mesh_onoff_cli *cli,
-				 struct bt_mesh_msg_ctx *ctx,
-				 struct bt_mesh_onoff_status *rsp)
+int bt_mesh_onoff_cli_get(struct bt_mesh_onoff_cli *cli,
+			  struct bt_mesh_msg_ctx *ctx,
+			  struct bt_mesh_onoff_status *rsp)
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_ONOFF_OP_GET,
 				 BT_MESH_ONOFF_MSG_LEN_GET);
