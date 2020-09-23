@@ -206,7 +206,6 @@ static void bt_get_name_out_rpc_rsp(CborValue *_value, void *_handler_data)     
 
 static bool bt_get_name_out(char *name, size_t size)
 {
-
 	SERIALIZE(OUT(name));
 	SERIALIZE(STR(name));
 	SERIALIZE(SIZE_PARAM(name, size));
@@ -230,7 +229,6 @@ static bool bt_get_name_out(char *name, size_t size)
 		&_ctx, bt_get_name_out_rpc_rsp, &_result);                       /*#####@sSg*/
 
 	return _result._result;                                                  /*##BW0ge3U*/
-
 }
 
 #endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(__GENERATOR) */
@@ -1170,13 +1168,14 @@ void bt_le_scan_recv_info_dec(struct ser_scratchpad *_scratchpad, struct bt_le_s
 
 	CborValue *_value = _scratchpad->value;                                                      /*##AU3cSLw*/
 
-	_data->addr = ser_decode_buffer_sp(_scratchpad);                                             /*#######%C*/
-	_data->sid = ser_decode_uint(_value);                                                        /*########l*/
-	_data->rssi = ser_decode_int(_value);                                                        /*########l*/
-	_data->tx_power = ser_decode_int(_value);                                                    /*########D*/
-	_data->adv_type = ser_decode_uint(_value);                                                   /*########+*/
-	_data->adv_props = ser_decode_uint(_value);                                                  /*########C*/
-	_data->primary_phy = ser_decode_uint(_value);                                                /*########Q*/
+	_data->addr = ser_decode_buffer_sp(_scratchpad);                                             /*########%*/
+	_data->sid = ser_decode_uint(_value);                                                        /*########C*/
+	_data->rssi = ser_decode_int(_value);                                                        /*########u*/
+	_data->tx_power = ser_decode_int(_value);                                                    /*########m*/
+	_data->adv_type = ser_decode_uint(_value);                                                   /*########y*/
+	_data->adv_props = ser_decode_uint(_value);                                                  /*########E*/
+	_data->interval = ser_decode_uint(_value);                                                   /*########N*/
+	_data->primary_phy = ser_decode_uint(_value);                                                /*########w*/
 	_data->secondary_phy = ser_decode_uint(_value);                                              /*########@*/
 
 }                                                                                                    /*##B9ELNqo*/

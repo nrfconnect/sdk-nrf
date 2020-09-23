@@ -1211,7 +1211,7 @@ size_t bt_le_scan_recv_info_sp_size(const struct bt_le_scan_recv_info *_data)   
 size_t bt_le_scan_recv_info_buf_size(const struct bt_le_scan_recv_info *_data)   /*####%BqRr*/
 {                                                                                /*#####@tMY*/
 
-	size_t _buffer_size_max = 18;                                            /*##ARGP9z4*/
+	size_t _buffer_size_max = 21;                                            /*##AZIQJqE*/
 
 	_buffer_size_max += sizeof(bt_addr_le_t);                                /*##CN3eLBo*/
 
@@ -1224,13 +1224,14 @@ void bt_le_scan_recv_info_enc(CborEncoder *_encoder, const struct bt_le_scan_rec
 
 	SERIALIZE(STRUCT(struct bt_le_scan_recv_info));
 
-	ser_encode_buffer(_encoder, _data->addr, sizeof(bt_addr_le_t));                       /*#######%A*/
-	ser_encode_uint(_encoder, _data->sid);                                                /*########x*/
-	ser_encode_int(_encoder, _data->rssi);                                                /*########d*/
-	ser_encode_int(_encoder, _data->tx_power);                                            /*########s*/
-	ser_encode_uint(_encoder, _data->adv_type);                                           /*########c*/
-	ser_encode_uint(_encoder, _data->adv_props);                                          /*########g*/
-	ser_encode_uint(_encoder, _data->primary_phy);                                        /*########Q*/
+	ser_encode_buffer(_encoder, _data->addr, sizeof(bt_addr_le_t));                       /*########%*/
+	ser_encode_uint(_encoder, _data->sid);                                                /*########A*/
+	ser_encode_int(_encoder, _data->rssi);                                                /*########y*/
+	ser_encode_int(_encoder, _data->tx_power);                                            /*########c*/
+	ser_encode_uint(_encoder, _data->adv_type);                                           /*########K*/
+	ser_encode_uint(_encoder, _data->adv_props);                                          /*########5*/
+	ser_encode_uint(_encoder, _data->interval);                                           /*########8*/
+	ser_encode_uint(_encoder, _data->primary_phy);                                        /*########I*/
 	ser_encode_uint(_encoder, _data->secondary_phy);                                      /*########@*/
 
 }                                                                                             /*##B9ELNqo*/

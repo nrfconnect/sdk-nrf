@@ -12,8 +12,12 @@
 			"host": "host/bt_rpc_conn_host.c"
 		},
 		{
-			"cli": "client/bt_rpc_gatt_cli.c",
-			"host": "host/bt_rpc_gatt_host.c"
+			"cli": "client/bt_rpc_gatt_svc_cli.c",
+			"host": "host/bt_rpc_gatt_svc_host.c"
+		},
+		{
+			"cli": "client/bt_rpc_gatt_dis_cli.c",
+			"host": "host/bt_rpc_gatt_dis_host.c"
 		}
 	],
 	"cmd-id-pattern": "$_RPC_CMD",
@@ -25,11 +29,21 @@
 	"clang-cli-params": "-DCONFIG_BT_RPC_CLIENT=1",
 	"clang-host-params": "-DCONFIG_BT_RPC_HOST=1",
 	"include-stubs": {
-		"syscall_list.h": "",
-		"devicetree_unfixed.h": "",
-		"devicetree_fixups.h": "",
-		"kobj-types-enum.h": "",
-		"syscalls/kernel.h": "",
+		"conf.txt": [
+			"-include _rpc_defines.h",
+			"-Wno-int-to-pointer-cast",
+			"-Wno-undefined-internal",
+			"-I${include-stubs}",
+			"-Iclient/include",
+			"-Ihost/include",
+			"-Icommon/include",
+			"-I../../nrf_rpc/include",
+			"-I../../../../nrfxlib/nrf_rpc/include",
+			"-I../../../../modules/lib/tinycbor/include",
+			"-I../../../../zephyr/include",
+			"-I../../../../modules/lib/open-amp/open-amp/lib/include",
+			"-I../../../../nrf/samples/nrf_rpc/entropy_nrf53/cpuapp/build_nrf5340pdk_nrf5340_cpuapp/modules/libmetal/libmetal/lib/include"
+		],
 		"_rpc_defines.h": [
 			"#define __GENERATOR",
 			"#define CONFIG_NRF_RPC_TR_RPMSG 1",
@@ -52,21 +66,6 @@
 			"#define CONFIG_BT_EXT_ADV_MAX_ADV_SET 4",
 			"#define CONFIG_BT_MAX_PAIRED 4"
 		],
-		"conf.txt": [
-			"-include _rpc_defines.h",
-			"-Wno-int-to-pointer-cast",
-			"-Wno-undefined-internal",
-			"-I${include-stubs}",
-			"-Iclient/include",
-			"-Ihost/include",
-			"-Icommon/include",
-			"-I../../nrf_rpc/include",
-			"-I../../../../nrfxlib/nrf_rpc/include",
-			"-I../../../../modules/lib/tinycbor/include",
-			"-I../../../../zephyr/include",
-			"-I../../../../modules/lib/open-amp/open-amp/lib/include",
-			"-I../../../../nrf/samples/nrf_rpc/entropy_nrf53/cpuapp/build_nrf5340pdk_nrf5340_cpuapp/modules/libmetal/libmetal/lib/include"
-		],
 		"logging/log.h": [
 			"#define LOG_MODULE_DECLARE(...)",
 			"#define LOG_MODULE_REGISTER(...)",
@@ -74,6 +73,11 @@
 			"#define LOG_WRN(...)",
 			"#define LOG_INF(...)",
 			"#define LOG_DBG(...)"
-		]
+		],
+		"syscall_list.h": "",
+		"devicetree_unfixed.h": "",
+		"devicetree_fixups.h": "",
+		"kobj-types-enum.h": "",
+		"syscalls/kernel.h": ""
 	}
 }

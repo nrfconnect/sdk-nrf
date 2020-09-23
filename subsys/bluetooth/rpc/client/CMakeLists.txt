@@ -8,5 +8,6 @@ target_include_directories(zephyr_interface BEFORE INTERFACE ${CMAKE_CURRENT_SOU
 
 zephyr_sources(bt_rpc_gap_cli.c)
 zephyr_sources_ifdef(CONFIG_BT_CONN bt_rpc_conn_cli.c)
-#zephyr_sources_ifdef(CONFIG_BT_CONN bt_rpc_gatt_cli.c)
+zephyr_sources_ifdef(CONFIG_BT_CONN bt_rpc_gatt_svc_cli.c)
+zephyr_sources_ifdef(CONFIG_BT_CONN bt_rpc_gatt_dis_cli.c)
 
