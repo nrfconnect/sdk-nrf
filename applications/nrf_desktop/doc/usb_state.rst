@@ -29,14 +29,57 @@ When enabling the USB support for the device, set the following generic device o
 * :option:`CONFIG_USB_DEVICE_VID` - Vendor ID (VID) number.
 * :option:`CONFIG_USB_DEVICE_PID` - Product ID (PID) number.
 
+Additionally, you can also configure the following options:
+
+.. contents::
+    :local:
+    :depth: 1
+
+Low latency device configuration
+================================
+
 For low latency devices, make sure that the device requests a polling rate of 1 ms by setting :option:`CONFIG_USB_HID_POLL_INTERVAL_MS` to ``1``.
 
-If the device is meant to support the boot protocol, select :option:`CONFIG_USB_HID_BOOT_PROTOCOL` and make sure :option:`CONFIG_USB_HID_PROTOCOL_CODE` chooses either the mouse or the keyboard code.
+Boot protocol configuration
+===========================
+
+If the device is meant to support the boot protocol, set the following options:
+
+#. Enable :option:`CONFIG_USB_HID_BOOT_PROTOCOL`.
+#. Make sure :option:`CONFIG_USB_HID_PROTOCOL_CODE` is set to either the mouse or the keyboard code.
+
+USB device instance configuration
+=================================
+
+The nRF Desktop device can provide multiple instances of a HID-class USB device.
+The number of instances is controlled by :option:`CONFIG_USB_HID_DEVICE_COUNT`.
+
+* The Bluetooth Peripheral device will be able to use a single instance only.
+* The Bluetooth Central device can use either a single instance or a number of instances equal to :option:`CONFIG_BT_MAX_PAIRED`.
+
+On the Bluetooth Central device, if only one instance is used, reports from all Peripherals connected to the Central are forwarded to the same instance.
+In other cases, reports from each of the bonded peripherals will be forwarded to a dedicated HID-class USB device instance.
+The same instance is used after reconnection.
+
+USB wake-up configuration
+=========================
+
+The nRF Desktop device can work as a source of wake-up events for the host device if connected through the USB.
+
+To use the feature, select :option:`CONFIG_USB_DEVICE_REMOTE_WAKEUP`.
+
+When host enters the suspended state, the USB will be suspended as well.
+With this feature enabled, this state change is used to suspend the nRF Desktop device (see :ref:`nrf_desktop_power_manager`).
+When the nRF Desktop device wakes up from standby, the |usb_state| will issue a wake-up request on the USB.
+
+.. note::
+    The USB wake-up request is transmitted to the host only if the host enables this request before suspending the USB.
+
 
 Implementation details
 **********************
 
-The |usb_state| registers the HID-class USB device and initializes the USB subsystem.
+The |usb_state| registers the :option:`CONFIG_USB_HID_DEVICE_COUNT` instances of HID-class USB device and initializes the USB subsystem.
 
 The necessary callbacks are connected to the module to ensure that the state of the USB connection is tracked.
 From the application's viewpoint, USB can be in the following states:
@@ -56,10 +99,8 @@ When the HID report data is transmitted through ``hid_report_event``, the module
 Upon data delivery, ``hid_report_sent_event`` is submitted by the module.
 
 .. note::
-    Only one report can be transmitted by the module at any given time.
-
-.. warning::
-    Writing to an endpoint is a blocking operation.
+    Only one report can be transmitted by the module to a single instance of HID-class USB device at any given time.
+    Different instances can transmit reports in parallel.
 
 The |usb_state| is a transport for :ref:`nrf_desktop_config_channel` when the channel is enabled.
 
