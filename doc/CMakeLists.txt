@@ -288,11 +288,6 @@ add_custom_target(
   # Copy all markdown files from mcuboot/docs to the rst folder
   COMMAND ${CMAKE_COMMAND} -E copy ${MDFILES} ${MCUBOOT_RST_OUT}/doc/mcuboot/
 
-  # Fix problems in markdown files
-  COMMAND ${CMAKE_COMMAND} -E env
-  ${PYTHON_EXECUTABLE} ${NRF_BASE}/doc/scripts/fix_markdown.py
-    ${MCUBOOT_RST_OUT}/doc/mcuboot
-
   WORKING_DIRECTORY ${MCUBOOT_DOC_DIR}
 )
 
