@@ -515,6 +515,34 @@ void bt_scan_filter_remove_all(void);
  */
 int bt_scan_params_set(struct bt_le_scan_param *scan_param);
 
+/**@brief Clear connection attempts filter.
+ *
+ * @details Use this function to remove all entries
+ *          from the connection attempts filter.
+ */
+void bt_scan_conn_attempts_filter_clear(void);
+
+/**@brief Add a new device to the blocklist.
+ *
+ * @details Use this function to add a device to the blocklist.
+ *          Scanning module does not generate any event for the
+ *          blocklist device or does not try to connect such
+ *          devices.
+ *
+ * @param[in] addr Device address.
+ *
+ * @retval 0 If the operation was successful. Otherwise, a (negative) error
+ *	     code is returned.
+ */
+int bt_scan_blocklist_device_add(const bt_addr_le_t *addr);
+
+/**@brief Clear the blocklist of the scanning module device.
+ *
+ * @details Use this function to remove all entries from
+ *          the blocklist.
+ */
+void bt_scan_blocklist_clear(void);
+
 #ifdef __cplusplus
 }
 #endif

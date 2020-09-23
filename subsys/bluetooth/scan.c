@@ -18,8 +18,8 @@ LOG_MODULE_REGISTER(nrf_bt_scan, CONFIG_BT_SCAN_LOG_LEVEL);
 	BT_SCAN_SHORT_NAME_FILTER | BT_SCAN_APPEARANCE_FILTER | \
 	BT_SCAN_UUID_FILTER | BT_SCAN_MANUFACTURER_DATA_FILTER)
 
-/* Scan filter add mutex. */
-K_MUTEX_DEFINE(scan_add_mutex);
+/* Scan filter mutex. */
+K_MUTEX_DEFINE(scan_mutex);
 
 /* Scanning control structure used to
  * compare matching filters, their mode and event generation.
@@ -196,7 +196,41 @@ struct bt_scan_filters {
 	bool all_mode;
 };
 
-/* Scan module instance. Options for the different scanning modes.
+#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+/* Connection attempts filter device */
+struct conn_attempts_device {
+	/* Filtered device address. */
+	bt_addr_le_t addr;
+
+	/* Number of the connection attempts. */
+	size_t attempts;
+};
+
+/* Connection attempts filter. */
+struct conn_attempts_filter {
+	/* Array of the filtered devices. */
+	struct conn_attempts_device device[CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER_LEN];
+
+	/* The oldest device index. */
+	uint32_t oldest_idx;
+
+	/* Count of the filtered devices. */
+	size_t count;
+};
+#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+
+#if CONFIG_BT_SCAN_BLOCKLIST
+/* Connection blocklist */
+struct conn_blocklist {
+	/* Array of the blocklist devices. */
+	bt_addr_le_t addr[CONFIG_BT_SCAN_BLOCKLIST_LEN];
+
+	/* Blocklist device count. */
+	uint32_t count;
+};
+#endif /* CONFIG_BT_SCAN_BLOCKLIST */
+
+/* Scanning module instance. Options for the different scanning modes.
  * This structure stores all module settings. It is used to enable
  * or disable scanning modes and to configure filters.
  */
@@ -220,6 +254,15 @@ static struct bt_scan {
 	 */
 	struct bt_le_conn_param conn_param;
 
+#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+	/* Scan Connection attempts filter. */
+	struct conn_attempts_filter attempts_filter;
+#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+
+#if CONFIG_BT_SCAN_BLOCKLIST
+	/* Scan device blocklist. */
+	struct conn_blocklist blocklist;
+#endif /* CONFIG_BT_SCAN_BLOCKLIST */
 
 } bt_scan;
 
@@ -283,6 +326,148 @@ static void notify_connecting_error(struct bt_scan_device_info *device_info)
 	}
 }
 
+#if CONFIG_BT_SCAN_BLOCKLIST
+static bool blocklist_device_check(const bt_addr_le_t *addr)
+{
+	bool blocklist_device = false;
+
+	k_mutex_lock(&scan_mutex, K_FOREVER);
+
+	for (size_t i = 0; i < bt_scan.blocklist.count; i++) {
+		if (bt_addr_le_cmp(&bt_scan.blocklist.addr[i], addr) == 0) {
+			blocklist_device = true;
+
+			break;
+		}
+	}
+
+	k_mutex_unlock(&scan_mutex);
+
+	return blocklist_device;
+}
+#endif /* CONFIG_BT_SCAN_BLOCKLIST */
+
+#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+static void attempts_filter_force_add(struct conn_attempts_filter *filter,
+				      const bt_addr_le_t *addr)
+{
+	/* Overwrite the oldest device */
+	filter->device[filter->oldest_idx].attempts = 0;
+	bt_addr_le_copy(&filter->device[filter->oldest_idx].addr, addr);
+
+	if (filter->oldest_idx == (ARRAY_SIZE(filter->device) - 1)) {
+		filter->oldest_idx = 0;
+
+		return;
+	}
+
+	filter->oldest_idx++;
+}
+
+static void scan_attempts_filter_device_add(const bt_addr_le_t *addr)
+{
+	struct conn_attempts_filter *filter = &bt_scan.attempts_filter;
+	char addr_str[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(addr, addr_str, sizeof(addr_str));
+
+	k_mutex_lock(&scan_mutex, K_FOREVER);
+
+	/* Check if device is already in the filter array. */
+	for (size_t i = 0; i < filter->count; i++) {
+		struct conn_attempts_device *device = &filter->device[i];
+
+		if (bt_addr_le_cmp(addr, &device->addr) == 0) {
+			LOG_DBG("Device %s is already in the filter array",
+				log_strdup(addr_str));
+			goto out;
+		}
+	}
+
+	if (filter->count >= ARRAY_SIZE(filter->device)) {
+		LOG_DBG("Force adding %s device filter",
+			log_strdup(addr_str));
+		attempts_filter_force_add(filter, addr);
+	} else {
+		bt_addr_le_copy(&filter->device[filter->count].addr, addr);
+		filter->count++;
+	}
+
+out:
+	k_mutex_unlock(&scan_mutex);
+}
+
+static void device_conn_attempts_count(struct bt_conn *conn)
+{
+	const bt_addr_le_t *addr = bt_conn_get_dst(conn);
+	struct conn_attempts_filter *filter = &bt_scan.attempts_filter;
+
+	k_mutex_lock(&scan_mutex, K_FOREVER);
+
+	for (size_t i = 0; i < filter->count; i++) {
+		struct conn_attempts_device *device = &filter->device[i];
+
+		if (bt_addr_le_cmp(addr, &device->addr) == 0) {
+			if (device->attempts < CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT) {
+				device->attempts++;
+			}
+
+			break;
+		}
+	}
+
+	k_mutex_unlock(&scan_mutex);
+}
+
+static bool conn_attempts_exceeded(const bt_addr_le_t *addr)
+{
+	struct conn_attempts_filter *filter = &bt_scan.attempts_filter;
+	char addr_str[BT_ADDR_LE_STR_LEN];
+	bool attempts_exceeded = false;
+
+	bt_addr_le_to_str(addr, addr_str, sizeof(addr_str));
+
+	k_mutex_lock(&scan_mutex, K_FOREVER);
+
+	/* Check if the device is in the filter array. */
+	for (size_t i = 0; i < filter->count; i++) {
+		struct conn_attempts_device *device = &filter->device[i];
+
+		if (bt_addr_le_cmp(addr, &device->addr) == 0) {
+			if (device->attempts >= CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT) {
+				LOG_DBG("Connection attempts count for %s exceeded",
+					log_strdup(addr_str));
+				attempts_exceeded = true;
+			}
+
+			break;
+		}
+	}
+
+	k_mutex_unlock(&scan_mutex);
+
+	return attempts_exceeded;
+}
+
+#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+
+static bool scan_device_filter_check(const bt_addr_le_t *addr)
+{
+#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+	if (blocklist_device_check(addr)) {
+		return false;
+	}
+#endif /* */
+
+#if CONFIG_BT_SCAN_BLOCKLIST
+	if (conn_attempts_exceeded(addr)) {
+		return false;
+	}
+#endif /* CONFIG_BT_SCAN_BLOCKLIST */
+
+	return true;
+}
+
 static void scan_connect_with_target(struct bt_scan_control *control,
 				     const bt_addr_le_t *addr)
 {
@@ -293,11 +478,11 @@ static void scan_connect_with_target(struct bt_scan_control *control,
 		return;
 	}
 
-	/* Stop scanning. */
-	bt_scan_stop();
-
 	/* Establish connection. */
 	struct bt_conn *conn;
+
+	/* Stop scanning. */
+	bt_scan_stop();
 
 	err = bt_conn_le_create(addr,
 			       BT_CONN_LE_CREATE_CONN,
@@ -938,6 +1123,26 @@ static void scan_default_param_set(void)
 	bt_scan.scan_param = *scan_param;
 }
 
+#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+static void connected(struct bt_conn *conn, uint8_t err)
+{
+	scan_attempts_filter_device_add(bt_conn_get_dst(conn));
+	if (err) {
+		device_conn_attempts_count(conn);
+	}
+}
+
+static void disconnected(struct bt_conn *conn, uint8_t reason)
+{
+	device_conn_attempts_count(conn);
+}
+
+static struct bt_conn_cb conn_callbacks = {
+	.connected = connected,
+	.disconnected = disconnected
+};
+#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+
 static void scan_default_conn_param_set(void)
 {
 	struct bt_le_conn_param *conn_param = BT_LE_CONN_PARAM_DEFAULT;
@@ -961,7 +1166,7 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
 		return -EINVAL;
 	}
 
-	k_mutex_lock(&scan_add_mutex, K_FOREVER);
+	k_mutex_lock(&scan_mutex, K_FOREVER);
 
 	switch (type) {
 	case BT_SCAN_FILTER_TYPE_NAME:
@@ -999,14 +1204,14 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
 		break;
 	}
 
-	k_mutex_unlock(&scan_add_mutex);
+	k_mutex_unlock(&scan_mutex);
 
 	return err;
 }
 
 void bt_scan_filter_remove_all(void)
 {
-	k_mutex_lock(&scan_add_mutex, K_FOREVER);
+	k_mutex_lock(&scan_mutex, K_FOREVER);
 
 	struct bt_scan_name_filter *name_filter =
 			&bt_scan.scan_filters.name;
@@ -1032,7 +1237,7 @@ void bt_scan_filter_remove_all(void)
 		&bt_scan.scan_filters.manufacturer_data;
 	manufacturer_data_filter->cnt = 0;
 
-	k_mutex_unlock(&scan_add_mutex);
+	k_mutex_unlock(&scan_mutex);
 }
 
 void bt_scan_filter_disable(void)
@@ -1153,6 +1358,10 @@ void bt_scan_init(const struct bt_scan_init_param *init)
 
 		bt_scan.connect_if_match = false;
 	}
+
+#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+	bt_conn_cb_register(&conn_callbacks);
+#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
 }
 
 void bt_scan_update_init_conn_params(struct bt_le_conn_param *new_conn_param)
@@ -1242,6 +1451,10 @@ static bool adv_data_found(struct bt_data *data, void *user_data)
 static void filter_state_check(struct bt_scan_control *control,
 			       const bt_addr_le_t *addr)
 {
+	if (!scan_device_filter_check(addr)) {
+		return;
+	}
+
 	if (control->all_mode &&
 	    (control->filter_match_cnt == control->filter_cnt)) {
 		notify_filter_matched(&control->device_info,
@@ -1346,3 +1559,61 @@ int bt_scan_params_set(struct bt_le_scan_param *scan_param)
 
 	return 0;
 }
+
+#if CONFIG_BT_SCAN_BLOCKLIST
+int bt_scan_blocklist_device_add(const bt_addr_le_t *addr)
+{
+	int err = 0;
+	char addr_str[BT_ADDR_LE_STR_LEN];
+
+	if (!addr) {
+		return -EINVAL;
+	}
+
+	bt_addr_le_to_str(addr, addr_str, sizeof(addr_str));
+
+	k_mutex_lock(&scan_mutex, K_FOREVER);
+
+	/* Check if the device is already on the blocklist. */
+	for (size_t i = 0; i < ARRAY_SIZE(bt_scan.blocklist.addr); i++) {
+		if (bt_addr_le_cmp(&bt_scan.blocklist.addr[i], addr) == 0) {
+			LOG_DBG("Device %s is already on the blocklist",
+				log_strdup(addr_str));
+
+			goto out;
+		}
+	}
+
+	if (bt_scan.blocklist.count >= ARRAY_SIZE(bt_scan.blocklist.addr)) {
+		LOG_ERR("No place for the new device");
+		err = -ENOMEM;
+	} else {
+		bt_addr_le_copy(&bt_scan.blocklist.addr[bt_scan.blocklist.count],
+				addr);
+		bt_scan.blocklist.count++;
+		LOG_INF("Device %s added to the scanning blocklist",
+			log_strdup(addr_str));
+	}
+
+out:
+	k_mutex_unlock(&scan_mutex);
+
+	return err;
+}
+
+void bt_scan_blocklist_clear(void)
+{
+	k_mutex_lock(&scan_mutex, K_FOREVER);
+	memset(&bt_scan.blocklist, 0, sizeof(bt_scan.blocklist));
+	k_mutex_unlock(&scan_mutex);
+}
+#endif /* CONFIG_BT_SCAN_BLOCKLIST */
+
+#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+void bt_scan_conn_attempts_filter_clear(void)
+{
+	k_mutex_lock(&scan_mutex, K_FOREVER);
+	memset(&bt_scan.attempts_filter, 0, sizeof(bt_scan.attempts_filter));
+	k_mutex_unlock(&scan_mutex);
+}
+#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
