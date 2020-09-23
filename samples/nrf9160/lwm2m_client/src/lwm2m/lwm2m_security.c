@@ -10,12 +10,6 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(app_lwm2m_security, CONFIG_APP_LOG_LEVEL);
 
-#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
-#include <net/tls_credentials.h>
-
-#define TLS_TAG			35724861
-#endif
-
 #include "config.h"
 
 #define SERVER_ADDR	CONFIG_APP_LWM2M_SERVER
@@ -53,7 +47,8 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
 	lwm2m_engine_set_u8("0/0/2",
 			    IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT) ? 0 : 3);
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
-	ctx->tls_tag = TLS_TAG;
+	ctx->tls_tag = IS_ENABLED(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP) ?
+		       BOOTSTRAP_TLS_TAG : SERVER_TLS_TAG;
 	ctx->load_credentials = load_credentials_dummy;
 
 	lwm2m_engine_set_string("0/0/3", endpoint);
