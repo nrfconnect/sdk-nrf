@@ -125,7 +125,8 @@ const struct virtio_dispatch dispatch = {
 };
 
 /* Callback launch right after some data has arrived. */
-static void ipm_callback(void *context, uint32_t id, volatile void *data)
+static void ipm_callback(struct device *ipmdev, void *user_data, uint32_t id,
+			 volatile void *data)
 {
 	k_work_submit_to_queue(&my_work_q, &work_item);
 }
