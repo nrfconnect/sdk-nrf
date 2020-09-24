@@ -34,11 +34,16 @@ static void uart_irq_handler(struct device *dev, void *context)
 
 static void interrupt_driven(struct device *dev)
 {
+	uint8_t c = 0xff;
+
 	uart_irq_callback_set(dev, uart_irq_handler);
 	uart_irq_rx_enable(dev);
 	while (1) {
 		uart_irq_tx_enable(dev);
 		k_sleep(K_MSEC(500));
+
+		uart_poll_out(dev, c);
+		k_sleep(K_MSEC(100));
 	}
 }
 
@@ -106,6 +111,9 @@ static void async(struct device *lpuart)
 		__ASSERT(err == 0, "Failed to initiate transmission");
 
 		k_sleep(K_MSEC(500));
+
+		uart_poll_out(lpuart, txbuf[0]);
+		k_sleep(K_MSEC(100));
 	}
 }
 
