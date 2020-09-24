@@ -7,6 +7,7 @@
 #include <dk_buttons_and_leds.h>
 #include <logging/log.h>
 #include <ram_pwrdn.h>
+#include <device.h>
 
 #include "coap_client_utils.h"
 
@@ -15,6 +16,8 @@
 #endif
 
 LOG_MODULE_REGISTER(coap_client, CONFIG_COAP_CLIENT_LOG_LEVEL);
+
+#define CONSOLE_LABEL DT_LABEL(DT_CHOSEN(zephyr_console))
 
 #define OT_CONNECTION_LED DK_LED1
 #define BLE_CONNECTION_LED DK_LED2
@@ -84,9 +87,20 @@ static void on_ot_disconnect(struct k_work *item)
 	dk_set_led_off(OT_CONNECTION_LED);
 }
 
-static void on_mtd_mode_toggle(uint32_t val)
+static void on_mtd_mode_toggle(uint32_t med)
 {
-	dk_set_led(MTD_SED_LED, val);
+#if IS_ENABLED(CONFIG_DEVICE_POWER_MANAGEMENT)
+	struct device *cons = device_get_binding(CONSOLE_LABEL);
+
+	if (med) {
+		device_set_power_state(cons, DEVICE_PM_ACTIVE_STATE,
+				       NULL, NULL);
+	} else {
+		device_set_power_state(cons, DEVICE_PM_OFF_STATE,
+				       NULL, NULL);
+	}
+#endif
+	dk_set_led(MTD_SED_LED, med);
 }
 
 static void on_button_changed(uint32_t button_state, uint32_t has_changed)
