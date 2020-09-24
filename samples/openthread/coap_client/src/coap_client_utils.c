@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 #include <zephyr.h>
-#include <device.h>
 #include <coap_server_client_interface.h>
 #include <net/coap_utils.h>
 #include <logging/log.h>
@@ -16,7 +15,6 @@
 
 LOG_MODULE_REGISTER(coap_client_utils, CONFIG_COAP_CLIENT_UTILS_LOG_LEVEL);
 
-#define CONSOLE_LABEL DT_LABEL(DT_CHOSEN(zephyr_console))
 #define RESPONSE_POLL_PERIOD 100
 
 static uint32_t poll_period;
@@ -190,32 +188,19 @@ static void toggle_minimal_sleepy_end_device(struct k_work *item)
 	struct otInstance *instance = openthread_get_default_instance();
 	otLinkModeConfig mode = otThreadGetLinkMode(instance);
 
-#if IS_ENABLED(CONFIG_DEVICE_POWER_MANAGEMENT)
-	struct device *cons = device_get_binding(CONSOLE_LABEL);
-#endif
-
-	if (mode.mRxOnWhenIdle) {
-		mode.mRxOnWhenIdle = false;
-
-#if IS_ENABLED(CONFIG_DEVICE_POWER_MANAGEMENT)
-		device_set_power_state(cons, DEVICE_PM_OFF_STATE,
-				       NULL, NULL);
-#endif
-	} else {
-		mode.mRxOnWhenIdle = true;
-
-#if IS_ENABLED(CONFIG_DEVICE_POWER_MANAGEMENT)
-		device_set_power_state(cons, DEVICE_PM_ACTIVE_STATE,
-				       NULL, NULL);
-#endif
-	}
-
+	mode.mRxOnWhenIdle = !mode.mRxOnWhenIdle;
 	error = otThreadSetLinkMode(instance, mode);
 	if (error != OT_ERROR_NONE) {
 		LOG_ERR("Failed to set MLE link mode configuration");
-		return;
+	} else {
+		on_mtd_mode_toggle(mode.mRxOnWhenIdle);
 	}
+}
 
+static void update_device_state(void)
+{
+	struct otInstance *instance = openthread_get_default_instance();
+	otLinkModeConfig mode = otThreadGetLinkMode(instance);
 	on_mtd_mode_toggle(mode.mRxOnWhenIdle);
 }
 
@@ -271,7 +256,7 @@ void coap_client_utils_init(ot_connection_cb_t on_connect,
 	if (IS_ENABLED(CONFIG_OPENTHREAD_MTD_SED)) {
 		k_work_init(&toggle_MTD_SED_work,
 			    toggle_minimal_sleepy_end_device);
-		k_work_submit(&toggle_MTD_SED_work);
+		update_device_state();
 	}
 }
 
