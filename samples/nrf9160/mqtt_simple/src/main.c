@@ -32,9 +32,6 @@ static struct mqtt_client client;
 /* MQTT Broker details. */
 static struct sockaddr_storage broker;
 
-/* Connected flag */
-static bool connected;
-
 /* File descriptor */
 static struct pollfd fds;
 
@@ -227,7 +224,6 @@ void mqtt_evt_handler(struct mqtt_client *const c,
 			break;
 		}
 
-		connected = true;
 		printk("[%s:%d] MQTT client connected!\n", __func__, __LINE__);
 
 #if defined(CONFIG_MQTT_LIB_TLS)
@@ -241,7 +237,6 @@ void mqtt_evt_handler(struct mqtt_client *const c,
 		printk("[%s:%d] MQTT client disconnected %d\n", __func__,
 		       __LINE__, evt->result);
 
-		connected = false;
 		break;
 
 	case MQTT_EVT_PUBLISH: {
@@ -290,7 +285,6 @@ void mqtt_evt_handler(struct mqtt_client *const c,
 	case MQTT_EVT_PINGRESP:
 		if (evt->result != 0) {
 			printk("MQTT PINGRESP error %d\n", evt->result);
-			break;
 		}
 		break;
 
@@ -348,7 +342,6 @@ static int broker_init(void)
 		}
 
 		addr = addr->ai_next;
-		break;
 	}
 
 	/* Free the address. */
