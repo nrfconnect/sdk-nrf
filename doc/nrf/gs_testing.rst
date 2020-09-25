@@ -23,6 +23,11 @@ Connect with the following settings:
  * No parity
  * HW flow control: None
 
+If you want to send commands via UART, make sure to configure the required line endings and turn on local echo and local line editing:
+
+.. figure:: /images/putty.svg
+   :alt: PuTTY configuration for sending commands via UART
+
 UART can also be used for logging purposes as one of the :ref:`logging backends <ug_logging_backends>`.
 
 .. _testing_rtt:
@@ -83,11 +88,11 @@ To connect to the nRF9160-based board with LTE Link Monitor, perform the followi
 
    .. note::
 
-      Make sure that **Automatic requests** is enabled in LTE Link Monitor.
+      Make sure that **Automatic requests** is enabled in LTE Link Monitor.
 
 #. Connect the nRF9160-based board to the PC with a USB cable.
 #. Power on the nRF9160-based board.
-#. Click **Select Device** and select the particular board entry from the drop-down list in the LTE Link Monitor.
+#. Click **Select Device** and select the particular board entry from the drop-down list in the LTE Link Monitor.
 #. Observe that the LTE Link monitor app starts AT communication with the modem of the nRF9160-based board and shows the status of the communication in the display terminal.
    The app also displays any information that is logged on UART.
 
