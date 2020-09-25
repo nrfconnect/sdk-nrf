@@ -130,6 +130,8 @@
 
 .. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
 
+.. _`Managing credentials`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_certificate_manager.html
+
 .. ### Links to Nordic software
 
 .. _`nRF Command Line Tools`:
@@ -156,6 +158,8 @@
 .. _`nRF Thread Topology Monitor`: https://infocenter.nordicsemi.com/topic/sdk_tz_v4.1.0/thread_topology_monitor.html
 
 .. _`nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`: https://infocenter.nordicsemi.com/topic/sdk_tz_v4.1.0/nrf802154_sniffer.html
+
+.. _`nRF52 client for serial LTE modem application`: https://github.com/NordicPlayground/nRF52-clients-for-serial-LTE-modem
 
 .. ### Links to Nordic mobile applications
 
@@ -470,7 +474,11 @@
 .. _`Nanopb`: https://jpa.kapsi.fi/nanopb/
 .. _`Nanopb Downloads`: https://jpa.kapsi.fi/nanopb/download/
 
+.. _`POSIX Programmer's Manual`: https://man7.org/linux/man-pages/dir_section_3.html
+
 .. _`LwM2M`: https://www.omaspecworks.org/what-is-oma-specworks/iot/lightweight-m2m-lwm2m/
+
+.. _`Private addresses`: https://en.wikipedia.org/wiki/IP_address#Private_addresses
 
 .. _`Leshan Demo Server`: https://github.com/eclipse/leshan/blob/master/README.md
 
