@@ -47,8 +47,8 @@ struct counted_list {
 };
 
 struct enqueued_reports {
-	struct counted_list reports[REPORT_ID_COUNT];
-	uint8_t last_report_id;
+	struct counted_list reports[ARRAY_SIZE(input_reports)];
+	uint8_t last_idx;
 };
 
 struct subscriber {
@@ -162,6 +162,17 @@ static size_t next_id(size_t id, size_t max)
 	return (id + 1) % max;
 }
 
+static int get_input_report_idx(uint8_t report_id)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(input_reports); i++) {
+		if (input_reports[i] == report_id) {
+			return i;
+		}
+	}
+
+	return -ENOENT;
+}
+
 static bool is_report_enabled(struct subscriber *sub, uint8_t report_id)
 {
 	__ASSERT_NO_MSG(report_id < __CHAR_BIT__ * sizeof(sub->enabled_reports_bm));
@@ -169,9 +180,9 @@ static bool is_report_enabled(struct subscriber *sub, uint8_t report_id)
 }
 
 static bool is_report_enqueued(struct enqueued_reports *enqueued_reports,
-			       uint8_t report_id)
+			       size_t irep_idx)
 {
-	struct counted_list *reports = &enqueued_reports->reports[report_id];
+	struct counted_list *reports = &enqueued_reports->reports[irep_idx];
 
 	if (reports->count == 0) {
 		__ASSERT_NO_MSG(sys_slist_is_empty(&reports->list));
@@ -182,8 +193,8 @@ static bool is_report_enqueued(struct enqueued_reports *enqueued_reports,
 
 static bool is_any_report_enqueued(struct enqueued_reports *enqueued_reports)
 {
-	for (size_t report_id = 0; report_id < ARRAY_SIZE(enqueued_reports->reports); report_id++) {
-		if (is_report_enqueued(enqueued_reports, report_id)) {
+	for (size_t irep_idx = 0; irep_idx < ARRAY_SIZE(enqueued_reports->reports); irep_idx++) {
+		if (is_report_enqueued(enqueued_reports, irep_idx)) {
 			return true;
 		}
 	}
@@ -192,9 +203,9 @@ static bool is_any_report_enqueued(struct enqueued_reports *enqueued_reports)
 }
 
 static struct enqueued_report *get_enqueued_report(struct enqueued_reports *enqueued_reports,
-						   uint8_t report_id)
+						   size_t irep_idx)
 {
-	struct counted_list *reports = &enqueued_reports->reports[report_id];
+	struct counted_list *reports = &enqueued_reports->reports[irep_idx];
 	struct enqueued_report *item;
 
 	item = CONTAINER_OF(sys_slist_get(&reports->list),
@@ -207,32 +218,30 @@ static struct enqueued_report *get_enqueued_report(struct enqueued_reports *enqu
 }
 
 static void drop_enqueued_reports(struct enqueued_reports *enqueued_reports,
-				  uint8_t report_id)
+				  size_t irep_idx)
 {
-	__ASSERT_NO_MSG(report_id < ARRAY_SIZE(enqueued_reports->reports));
+	__ASSERT_NO_MSG(irep_idx < ARRAY_SIZE(enqueued_reports->reports));
 
-	while (is_report_enqueued(enqueued_reports, report_id)) {
+	while (is_report_enqueued(enqueued_reports, irep_idx)) {
 		struct enqueued_report *item;
 
-		item = get_enqueued_report(enqueued_reports, report_id);
+		item = get_enqueued_report(enqueued_reports, irep_idx);
 
 		k_free(item->report);
 		k_free(item);
 	}
-
-	__ASSERT_NO_MSG(enqueued_reports->reports[report_id].count == 0);
 }
 
 static void init_enqueued_reports(struct enqueued_reports *enqueued_reports)
 {
-	for (size_t report_id = 0; report_id < ARRAY_SIZE(enqueued_reports->reports); report_id++) {
-		struct counted_list *reports = &enqueued_reports->reports[report_id];
+	for (size_t irep_idx = 0; irep_idx < ARRAY_SIZE(enqueued_reports->reports); irep_idx++) {
+		struct counted_list *reports = &enqueued_reports->reports[irep_idx];
 
 		sys_slist_init(&reports->list);
 		reports->count = 0;
 	}
 
-	enqueued_reports->last_report_id = 0;
+	enqueued_reports->last_idx = 0;
 }
 
 static struct enqueued_report *get_next_enqueued_report(struct enqueued_reports *enqueued_reports)
@@ -240,13 +249,13 @@ static struct enqueued_report *get_next_enqueued_report(struct enqueued_reports 
 	struct enqueued_report *item = NULL;
 
 	for (size_t i = 0; i < ARRAY_SIZE(enqueued_reports->reports); i++) {
-		size_t report_id = next_id(enqueued_reports->last_report_id + i,
-					   ARRAY_SIZE(enqueued_reports->reports));
+		size_t irep_idx = next_id(enqueued_reports->last_idx + i,
+					  ARRAY_SIZE(enqueued_reports->reports));
 
-		if (is_report_enqueued(enqueued_reports, report_id)) {
-			item = get_enqueued_report(enqueued_reports, report_id);
+		if (is_report_enqueued(enqueued_reports, irep_idx)) {
+			item = get_enqueued_report(enqueued_reports, irep_idx);
 
-			enqueued_reports->last_report_id = report_id;
+			enqueued_reports->last_idx = irep_idx;
 			break;
 		}
 	}
@@ -265,10 +274,10 @@ static void migrate_enqueued_reports(struct enqueued_reports *dst_reports,
 	 * Leaving the oldest items at sub will allow them to be sent
 	 * out first.
 	 */
-	for (size_t report_id = 0; report_id < ARRAY_SIZE(dst_reports->reports); report_id++) {
-		if (is_report_enqueued(src_reports, report_id)) {
-			struct counted_list *dst = &dst_reports->reports[report_id];
-			struct counted_list *src = &src_reports->reports[report_id];
+	for (size_t irep_idx = 0; irep_idx < ARRAY_SIZE(dst_reports->reports); irep_idx++) {
+		if (is_report_enqueued(src_reports, irep_idx)) {
+			struct counted_list *dst = &dst_reports->reports[irep_idx];
+			struct counted_list *src = &src_reports->reports[irep_idx];
 
 			sys_slist_t tmp_list;
 			size_t count = 0;
@@ -297,12 +306,12 @@ static void migrate_enqueued_reports(struct enqueued_reports *dst_reports,
 }
 
 static void enqueue_hid_report(struct enqueued_reports *enqueued_reports,
-			       uint8_t report_id,
+			       size_t irep_idx,
 			       struct hid_report_event *report)
 {
-	__ASSERT_NO_MSG(report_id < ARRAY_SIZE(enqueued_reports->reports));
+	__ASSERT_NO_MSG(irep_idx < ARRAY_SIZE(enqueued_reports->reports));
 
-	struct counted_list *reports = &enqueued_reports->reports[report_id];
+	struct counted_list *reports = &enqueued_reports->reports[irep_idx];
 
 	struct enqueued_report *item;
 
@@ -310,7 +319,7 @@ static void enqueue_hid_report(struct enqueued_reports *enqueued_reports,
 		item = k_malloc(sizeof(*item));
 	} else {
 		LOG_WRN("Enqueue dropped the oldest report");
-		item = get_enqueued_report(enqueued_reports, report_id);
+		item = get_enqueued_report(enqueued_reports, irep_idx);
 		k_free(item->report);
 	}
 
@@ -334,8 +343,10 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 		return;
 	}
 
-	if (report_id > ARRAY_SIZE(per->enqueued_reports.reports)) {
-		LOG_ERR("Unknown report id");
+	int irep_idx = get_input_report_idx(report_id);
+
+	if (irep_idx < 0) {
+		LOG_ERR("Unsupported report id %" PRIu8, report_id);
 		return;
 	}
 
@@ -359,13 +370,13 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 	memcpy(&report->dyndata.data[1], data, size);
 
 	if (!sub->busy) {
-		__ASSERT_NO_MSG(!is_report_enqueued(&per->enqueued_reports, report_id));
+		__ASSERT_NO_MSG(!is_report_enqueued(&per->enqueued_reports, irep_idx));
 
 		EVENT_SUBMIT(report);
-		per->enqueued_reports.last_report_id = report_id;
+		per->enqueued_reports.last_idx = irep_idx;
 		sub->busy = true;
 	} else {
-		enqueue_hid_report(&per->enqueued_reports, report_id, report);
+		enqueue_hid_report(&per->enqueued_reports, irep_idx, report);
 	}
 }
 
@@ -883,13 +894,29 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 	}
 }
 
-static void enable_notifications(struct subscriber *sub, uint8_t report_id)
+static void enable_subscription(struct subscriber *sub, uint8_t report_id)
 {
+	int irep_idx = get_input_report_idx(report_id);
+
+	if (irep_idx < 0) {
+		LOG_ERR("Cannot enable subscription for report %" PRIu8,
+			report_id);
+		return;
+	}
+
 	sub->enabled_reports_bm |= BIT(report_id);
 }
 
-static void disable_notifications(struct subscriber *sub, uint8_t report_id)
+static void disable_subscription(struct subscriber *sub, uint8_t report_id)
 {
+	int irep_idx = get_input_report_idx(report_id);
+
+	if (irep_idx < 0) {
+		LOG_ERR("Cannot disable subscription for report %" PRIu8,
+			report_id);
+		return;
+	}
+
 	sub->enabled_reports_bm &= ~BIT(report_id);
 
 	/* For all peripherals connected to this subscriber. */
@@ -901,11 +928,11 @@ static void disable_notifications(struct subscriber *sub, uint8_t report_id)
 			continue;
 		}
 
-		drop_enqueued_reports(&per->enqueued_reports, report_id);
+		drop_enqueued_reports(&per->enqueued_reports, irep_idx);
 	}
 
 	/* And also this subscriber. */
-	drop_enqueued_reports(&sub->enqueued_reports, report_id);
+	drop_enqueued_reports(&sub->enqueued_reports, irep_idx);
 }
 
 static void hidc_ready(struct bt_gatt_hids_c *hids_c)
@@ -1077,10 +1104,10 @@ static bool event_handler(const struct event_header *eh)
 
 		__ASSERT_NO_MSG(event->report_id < __CHAR_BIT__ * sizeof(sub->enabled_reports_bm));
 		if (event->enabled) {
-			enable_notifications(sub, event->report_id);
+			enable_subscription(sub, event->report_id);
 			send_enqueued_report(sub);
 		} else {
-			disable_notifications(sub, event->report_id);
+			disable_subscription(sub, event->report_id);
 		}
 
 		return false;
