@@ -777,7 +777,7 @@ static int api_irq_rx_ready(const struct device *dev)
 {
 	struct lpuart_data *data = get_dev_data(dev);
 
-	return data->int_driven.rx_enabled &
+	return data->int_driven.rx_enabled &&
 		int_driven_rd_available(get_dev_data(dev));
 }
 
