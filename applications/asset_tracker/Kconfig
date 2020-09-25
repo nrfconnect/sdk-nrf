@@ -405,7 +405,7 @@ config GPS_START_AFTER_CLOUD_EVT_READY
 
 config ASSET_TRACKER_WATCHDOG_TIMEOUT_MSEC
 	int "Watchdog timeout in milliseconds"
-	default 10000
+	default 60000
 
 config USE_AT_HOST
 	bool "Enable AT commands"
