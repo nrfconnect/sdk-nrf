@@ -1,0 +1,1628 @@
+.. _slm_description:
+
+Application description
+#######################
+
+The Serial LTE Modem (SLM) application demonstrates how to use the nRF9160 as a stand-alone LTE modem that can be controlled by proprietary AT commands.
+
+
+Requirements
+************
+
+The application supports the following development kit:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160
+
+.. include:: /includes/spm.txt
+
+Overview
+********
+
+The nRF9160 SiP integrates both a full LTE modem and an application MCU, which enables you to run your LTE application directly on the nRF9160.
+
+However, you might want to run your application on a different chip and use the nRF9160 only as a modem.
+For this use case, the serial LTE modem application provides an interface for controlling the LTE modem through AT commands.
+
+The proprietary AT commands that are specific to the serial LTE modem application are described in the :ref:`SLM_AT_intro` documentation.
+In addition to these proprietary AT commands, the application supports the nRF91 AT commands described in the `AT Commands Reference Guide`_.
+
+Communicating with the modem
+============================
+
+The nRF9160 DK running the serial LTE modem application serves as the host.
+As a client, you can use either a PC or an external MCU.
+
+Connecting with a PC
+--------------------
+
+To connect to the nRF9160 DK with a PC, make sure that :option:`CONFIG_SLM_CONNECT_UART_0` is defined in the application.
+It is defined in the default configuration.
+
+Use LTE Link Monitor to connect to the nRF9160 DK.
+See :ref:`lte_connect` for instructions.
+You can then use this connection to send or receive AT commands over UART, and to see the log output of the nRF9160 DK.
+
+Alternatively, you can use a terminal emulator like PuTTY to establish a terminal connection to the nRF9160 DK.
+See :ref:`putty` for instructions.
+
+.. note::
+   The default AT command terminator is carriage return and line feed (``\r\n``).
+   LTE Link Monitor supports this format.
+   When connecting with another terminal emulator, make sure that the configured AT command terminator corresponds to the line terminator of your terminal.
+   You can change the termination mode in the :ref:`application configuration <slm_config>`.
+
+Connecting with an external MCU
+-------------------------------
+
+If you run your user application on an external MCU (for example, an nRF52 Series DK), you can control the modem on the nRF9160 directly from the application.
+See the `nRF52 client for serial LTE modem application`_ repository for a sample implementation of such an application.
+
+To connect with an external MCU, you must set the configuration options :option:`CONFIG_SLM_GPIO_WAKEUP` and :option:`CONFIG_SLM_CONNECT_UART_2` in the serial LTE modem application configuration.
+
+The following table shows how to connect an nRF52 Series DK to the nRF9160 DK to be able to communicate through UART:
+
+.. list-table::
+   :align: center
+   :header-rows: 1
+
+   * - nRF52 Series DK
+     - nRF9160 DK
+   * - UART TX P0.6
+     - UART RX P0.11
+   * - UART RX P0.8
+     - UART TX P0.10
+   * - UART CTS P0.7
+     - UART RTS P0.12
+   * - UART RTS P0.5
+     - UART CTS P0.13
+   * - GPIO OUT P0.27
+     - GPIO IN P0.31
+
+UART instance in use:
+
+* nRF52840 or nRF52832 (UART0)
+* nRF9160 (UART2)
+
+UART configuration:
+
+* Hardware flow control: enabled
+* Baud rate: 115200
+* Parity bit: no
+* Operation mode: IRQ
+
+Note that the GPIO output level on nRF9160 side must be 3 V.
+
+Configuration
+*************
+
+|config|
+
+.. _slm_config:
+
+Configuration options
+=====================
+
+Check and configure the following configuration options for the sample:
+
+.. option:: CONFIG_SLM_CONNECT_UART_0 - UART 0
+
+   This option selects UART 0 for the UART connection.
+   Select this option if you want to test the application with a PC.
+
+.. option:: CONFIG_SLM_CONNECT_UART_2 - UART 2
+
+   This option selects UART 2 for the UART connection.
+   Select this option if you want to test the application with an external CPU.
+
+.. option:: CONFIG_SLM_GPIO_WAKEUP - Support of GPIO wakeup
+
+   This option enables using GPIO to wake up from sleep mode.
+   Select this option if you want to test the application with an external CPU.
+
+   If this option is not selected, you must reset the kit to exit sleep mode.
+
+.. option:: CONFIG_SLM_INTERFACE_PIN - Interface GPIO to wake up or exit idle mode
+
+   This option specifies which interface GPIO to use for exiting sleep or idle mode.
+   By default, **P0.6** (Button 1 on the nRF9160 DK) is used when :option:`CONFIG_SLM_CONNECT_UART_0` is selected, and **P0.31** is used when when :option:`CONFIG_SLM_CONNECT_UART_2` is selected.
+
+   Note that when :option:`CONFIG_SLM_CONNECT_UART_0` is selected, Button 1 can be used to exit idle mode, but not to wake up from sleep mode.
+
+.. option:: CONFIG_SLM_NULL_TERMINATION - NULL termination
+
+   This option configures the application to accept AT commands without a termination character.
+
+.. option:: CONFIG_SLM_CR_TERMINATION - CR termination
+
+   This option configures the application to accept AT commands ending with a carriage return.
+
+.. option:: CONFIG_SLM_LF_TERMINATION - LF termination
+
+   This option configures the application to accept AT commands ending with a line feed.
+
+.. option:: CONFIG_SLM_CR_LF_TERMINATION - CR+LF termination
+
+   This option configures the application to accept AT commands ending with carriage return and line feed.
+
+.. option:: CONFIG_SLM_SUPL_SERVER - SUPL server
+
+   This option specifies the SUPL server to use for retrieving SUPL A-GPS data.
+
+.. option:: CONFIG_SLM_SUPL_PORT - SUPL server port
+
+   This option specifies the port to use for the specified SUPL server.
+
+.. option:: CONFIG_SLM_FTP_SERVER_PORT - FTP service port on remote host
+
+   This option specifies the port to use when connecting to an FTP server.
+
+.. option:: CONFIG_SLM_FTP_USER_ANONYMOUS - FTP client anonymous login user
+
+   This option specifies the user name to use for anonymous login on an FTP server.
+
+.. option:: CONFIG_SLM_FTP_PASSWORD_ANONYMOUS - FTP client anonymous login password
+
+   This option specifies the password to use for anonymous login on an FTP server.
+
+.. option:: CONFIG_SLM_TCP_PROXY
+
+   This option enables additional AT commands for using a TCP proxy service.
+
+.. option:: CONFIG_SLM_UDP_PROXY
+
+   This option enables additional AT commands for using a UDP proxy service.
+
+
+Additional configuration
+========================
+
+Check and configure the following library options that are used by the sample:
+
+* :option:`CONFIG_SUPL_CLIENT_LIB` - Enables the :ref:`supl_client`.
+
+To save power, console and logging output over ``UART_0`` is disabled in this application.
+This information is logged to RTT instead.
+See :ref:`testing_rtt_connect` for instructions on how to view this information.
+
+To switch to UART output, change the following options in the :file:`prj.conf` file::
+
+   # Segger RTT
+   CONFIG_USE_SEGGER_RTT=n
+   CONFIG_RTT_CONSOLE=n
+   CONFIG_UART_CONSOLE=y
+   CONFIG_LOG_BACKEND_RTT=n
+   CONFIG_LOG_BACKEND_UART=y
+
+
+Configuration files
+===================
+
+The sample provides predefined configuration files for both the parent image and the child image.
+You can find the configuration files in the :file:`applications/nrf9160/serial_lte_modem` directory.
+
+The following files are provided:
+
+* :file:`prj.conf` - This configuration file contains the standard configuration for the serial LTE modem application.
+
+* :file:`child_secure_partition_manager.conf` - This configuration file contains the project-specific configuration for the :ref:`secure_partition_manager` child image.
+
+
+Building and running
+********************
+
+.. |sample path| replace:: :file:`applications/nrf9160/serial_lte_modem`
+
+.. include:: /includes/build_and_run_nrf9160.txt
+
+
+Testing
+=======
+
+The testing instructions focus on testing the application with a PC client.
+If you have an nRF52 Series DK running a client application, you can also use this DK for testing the different scenarios.
+
+|test_sample|
+
+1. |connect_kit|
+#. :ref:`Connect to the kit with LTE Link Monitor <lte_connect>`.
+   If you want to use a different terminal emulator, see `Connecting with a PC`_.
+#. Reset the kit.
+#. Observe that the nRF9160 DK sends a ``Ready\r\n`` message on UART.
+#. Enter ``AT+CFUN=1`` to turn on the modem and connect to the network.
+#. Enter ``AT+CFUN?`` and observe that the connection indicators in the LTE Link Monitor side panel turn green.
+   This indicates that the modem is connected to the network.
+#. Send AT commands and observe the responses from the nRF9160 DK.
+   See the following sections for typical test cases.
+
+
+Testing generic AT commands
+---------------------------
+
+Complete the following steps to test the functionality provided by the :ref:`SLM_AT_gen`:
+
+1. Retrieve the version of the serial LTE modem application.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XSLMVER**
+      #XSLMVER: 1.4
+      OK
+
+#. Read the current baud rate.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XSLMUART?**
+      #SLMUART: 115200
+      OK
+
+   You can change the used baud rate with the corresponding set command, but note that LTE Link Monitor requires 115200 bps for communication.
+
+#. Retrieve a list of all supported proprietary AT commands.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XCLAC**
+      AT#XSLMVER
+      AT#XSLEEP
+      AT#XCLAC
+      AT#XSOCKET
+      AT#XSOCKETOPT
+      AT#XBIND
+      *[...]*
+      OK
+
+#. Check the supported values for the sleep command, then put the board in sleep mode.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XSLEEP=?**
+      #XSLEEP: (0, 1)
+      OK
+
+      **AT#XSLEEP=1**
+
+   Reset the board to exit sleep mode.
+   If you are testing with an external MCU and :option:`CONFIG_SLM_GPIO_WAKEUP` is enabled, you can wake up by GPIO as well.
+
+
+
+Testing TCP/IP AT commands
+--------------------------
+
+The following sections show how to test the functionality provided by the :ref:`SLM_AT_TCP_UDP`.
+
+TCP client
+~~~~~~~~~~
+
+1. Establish and test a TCP connection:
+
+   a. Check the available values for the XSOCKET command.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=?**
+         #XSOCKET: (0, 1), (1, 2), (0, 1), <sec-tag>
+         OK
+
+   #. Open a TCP socket, read information (handle, protocol, and role) about the open socket, and set the receive time-out of the open socket to 30 seconds.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=1,1,0**
+         #XSOCKET: 1, 1, 0, 6
+         OK
+
+         **AT#XSOCKET?**
+         #XSOCKET: 1, 6, 0
+         OK
+
+         **AT#XSOCKETOPT=1,20,30**
+         OK
+
+   #. Connect to a TCP server on a specified port.
+      Replace *example.com* with the host name or IPv4 address of a TCP server and *1234* with the corresponding port.
+      Then read the connection status.
+      ``1`` indicates that the connection is established.
+
+      .. parsed-literal::
+        :class: highlight
+
+         **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
+         #XCONNECT: 1
+         OK
+
+         **AT#XCONNECT?**
+         #XCONNECT: 1
+         OK
+
+   #. Send plain text data to the TCP server and retrieve the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSEND=1,"Test TCP"**
+         #XSEND: 8
+         OK
+
+         **AT#XRECV**
+         PONG: b'Test TCP'
+         #XRECV: 1, 17
+         OK
+
+   #. Send hexadecimal data to the TCP server and retrieve the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSEND=0,"DEADBEEF"**
+         #XSEND: 4
+         OK
+
+         **AT#XRECV**
+         PONG: b'\\xde\\xad\\xbe\\xef'
+         #XRECV: 1, 25
+         OK
+
+   #. Close the socket and confirm its state.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=0**
+         #XSOCKET: 0, closed
+         OK
+
+         **AT#XSOCKET?**
+         #XSOCKET: 0
+         OK
+
+#. If you do not have a TCP server to test with, you can use TCP commands to request and receive a response from an HTTP server, for example, www.google.com:
+
+   a. Open a TCP socket and connect to the HTTP server on port 80.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=1,1,0**
+         #XSOCKET: 1, 1, 0, 6
+         OK
+
+         **AT#XCONNECT="google.com",80**
+         #XCONNECT: 1
+         OK
+
+   #. Send an HTTP request to the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSEND=1,"HEAD / HTTP/1.1"**
+         #XSEND: 15
+         OK
+
+         **AT#XSEND=0,"0D0A"**
+         #XSEND: 2
+         OK
+
+         **AT#XSEND=1,"Host: www.google.com:443"**
+         #XSEND: 24
+         OK
+
+         **AT#XSEND=0,"0D0A"**
+         #XSEND: 2
+         OK
+
+         **AT#XSEND=1,"Connection: close"**
+         #XSEND: 17
+         OK
+
+         **AT#XSEND=0,"0D0A0D0A"**
+         #XSEND: 4
+         OK
+
+   #. Receive the response from the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XRECV**
+         HTTP/1.1 200 OK
+         Content-Type: text/html; charset=ISO-8859-1
+         *[...]*
+         #XRECV: 1, 576
+         OK
+
+         **AT#XRECV**
+         *[...]*
+         Connection: close
+         #XRECV: 1, 147
+         OK
+
+   #. Close the socket.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=0**
+         #XSOCKET: 0, closed
+         OK
+
+#. Test a TCP client with TCP proxy service (note that these commands are available only if :option:`CONFIG_SLM_TCP_PROXY` is defined):
+
+   a. Check the available values for the XTCPCLI command.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPCLI=?**
+         #XTCPCLI: (0, 1, 2),<url>,<port>,<sec_tag>
+         OK
+
+   #. Create a TCP/TLS client and connect to a server.
+      Replace *example.com* with the host name or IPv4 address of a TCP server and *1234* with the corresponding port.
+      Then read information about the connection.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPCLI=1,"**\ *example.com*\ **",**\ *1234*
+         #XTCPCLI: 2 connected
+         OK
+
+         **AT#XTCPCLI?**
+         #XTCPCLI: 1, 0
+         OK
+
+   #. Send plain text data to the TCP server and retrieve ten bytes of the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPSEND=1,"Test TCP"**
+         #XTCPSEND: 8
+         OK
+
+         **AT#XTCPRECV=10**
+         PONG: b'Te
+         #XTCPRECV: 10
+         OK
+
+   #. Send hexadecimal data to the TCP server and retrieve the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPSEND=0,"DEADBEEF"**
+         #XTCPSEND: 4
+         OK
+
+         **AT#XTCPRECV**
+         PONG: b'\\xde\\xad\\xbe\\xef'
+         #XTCPRECV: 25
+         OK
+
+   #. Disconnect and confirm the status of the connection.
+      ``-1`` indicates that no connection is open.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPCLI=0**
+         OK
+
+         **AT#XTCPCLI?**
+         #XTCPCLI: -1
+         OK
+
+
+#. Test a TCP client with TCP proxy service in data mode (note that these commands are available only if :option:`CONFIG_SLM_TCP_PROXY` is defined):
+
+   a. Create a TCP/TLS client and connect to a server with data mode support.
+      Replace *example.com* with the host name or IPv4 address of a TCP server and *1234* with the corresponding port.
+      Then read information about the connection.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPCLI=2,"**\ *example.com*\ **",**\ *1234*
+         #XTCPCLI: 1 connected
+         OK
+
+         **AT#XTCPCLI?**
+         #XTCPCLI: 1, 1
+         OK
+
+   #. Send plain text data to the TCP server and retrieve the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **Test data mode**
+         PONG: b'Test data mode\\r\\n'
+
+   #. Disconnect from the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPCLI=0**
+         #XTCPCLI: disconnected
+         OK
+
+UDP client
+~~~~~~~~~~
+
+1. Test a UDP client with connectionless UDP:
+
+   a. Open a UDP socket and read information (handle, protocol, and role) about the open socket.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=1,2,0**
+         #XSOCKET: 1, 2, 0, 17
+         OK
+         **AT#XSOCKET?**
+         #XSOCKET: 1, 17, 0
+         OK
+
+   #. Send plain text data to a UDP server on a specified port.
+      Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
+      Then retrieve the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,1,"Test UDP"**
+         #XSENDTO: 8
+         OK
+         **AT#XRECVFROM**
+         PONG: Test UDP
+         #XRECVFROM: 1, 14
+         OK
+
+   #. Send hexadecimal data to a UDP server on a specified port.
+      Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
+      Then retrieve the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,0,"DEADBEEF"**
+         #XSENDTO: 4
+         OK
+         **AT#XRECVFROM**
+         504F4E473A20DEADBEEF
+         #XRECVFROM: 0, 20
+         OK
+
+   #. Close the socket.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=0**
+         #XSOCKET: 0, closed
+         OK
+
+#. Test a UDP client with connection-based UDP:
+
+   a. Open a UDP socket and connect to a UDP server on a specified port.
+      Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=1,2,0**
+         #XSOCKET: 1, 2, 0, 17
+         OK
+
+         **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
+         #XCONNECT: 1
+         OK
+
+   #. Send plain text data to the UDP server and retrieve the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSEND=1,"Test UDP"**
+         #XSEND: 8
+         OK
+
+         **AT#XRECV**
+         PONG: Test UDP
+         #XRECV: 1, 14
+         OK
+
+   #. Close the socket.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=0**
+         #XSOCKET: 0, closed
+         OK
+
+#. Test a connection-based UDP client with UDP proxy service (note that these commands are available only if :option:`CONFIG_SLM_UDP_PROXY` is defined):
+
+   a. Check the available values for the XUDPCLI command.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPCLI=?**
+         #XUDPCLI: (0, 1, 2),<url>,<port>,<sec_tag>
+         OK
+
+   #. Create a UDP client and connect to a server.
+      Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPCLI=1,"**\ *example.com*\ **",**\ *1234*
+         #XUDPCLI: 2 connected
+         OK
+
+   #. Send plain text data to the UDP server and check the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPSEND=1,"Test UDP"**
+         #XUDPSEND: 8
+         OK
+         #XUDPRECV: 1, 14
+         PONG: Test UDP
+
+   #. Send hexadecimal data to the UDP server and check the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPSEND=0,"DEADBEEF"**
+         #XUDPSEND: 4
+         OK
+         #XUDPRECV: 0, 20
+         504F4E473A20DEADBEEF
+
+   #. Disconnect from the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPCLI=0**
+         OK
+
+#. Test a connection-based UDP client with UDP proxy service in data mode (note that these commands are available only if :option:`CONFIG_SLM_UDP_PROXY` is defined):
+
+   a. Create a UDP client and connect to a server with data mode support.
+      Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
+      Then read information about the connection.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPCLI=2,"**\ *example.com*\ **",**\ *1234*
+         #XUDPCLI: 1 connected
+         OK
+
+         **AT#XUDPCLI?**
+         #XUDPCLI: 1, 1
+         OK
+
+   #. Send plain text data to the UDP server and retrieve the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **Test UDP by hostname**
+         PONG: Test UDP by hostname
+
+   #. Disconnect from the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPCLI=0**
+         #XUDPCLI: disconnected
+         OK
+
+
+TLS client
+~~~~~~~~~~
+
+Before completing this test, you must update the CA certificate, the client certificate, and the private key to be used for the TLS connection in the modem.
+The credentials must use the security tag 16842755.
+
+To store the credentials in the modem, use LTE Link Monitor.
+See `Managing credentials`_ in the LTE Link Monitor User Guide for instructions.
+
+You must register the corresponding credentials on the server side.
+
+1. Establish and test a TLS connection:
+
+   a. List the credentials that are stored in the modem with security tag 16842755.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT%CMNG=1,16842755**
+         %CMNG: 16842755,0,"0000000000000000000000000000000000000000000000000000000000000000"
+         %CMNG: 16842755,1,"0101010101010101010101010101010101010101010101010101010101010101"
+         %CMNG: 16842755,2,"0202020202020202020202020202020202020202020202020202020202020202"
+         OK
+
+   #. Open a TCP/TLS socket that uses the security tag 16842755 and connect to a TLS server on a specified port.
+      Replace *example.com* with the host name or IPv4 address of a TLS server and *1234* with the corresponding port.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=1,1,0,16842755**
+         #XSOCKET: 1, 1, 0, 258
+         OK
+
+         **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
+         #XCONNECT: 1
+         OK
+
+   #. Send plain text data to the TLS server and retrieve the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSEND=1,"Test TLS client"**
+         #XSEND: 15
+         OK
+
+         **AT#XRECV**
+         PONG: b'Test TLS client'
+         #XRECV: 1, 24
+         OK
+
+   #. Close the socket.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=0**
+         #XSOCKET: 0, closed
+         OK
+
+#. Test a TLS client with TCP proxy service (note that these commands are available only if :option:`CONFIG_SLM_TCP_PROXY` is defined):
+
+   a. Create a TCP/TLS client and connect to a server.
+      Replace *example.com* with the host name or IPv4 address of a TLS server and *1234* with the corresponding port.
+      Then read information about the connection.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPCLI=1,"**\ *example.com*\ **",**\ *1234*
+         #XTCPCLI: 2 connected
+         OK
+
+         **AT#XTCPCLI?**
+         #XTCPCLI: 1, 0
+         OK
+
+   #. Send plain text data to the TLS server and retrieve the returned data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPSEND=1,"Test TLS client"**
+         #XTCPSEND: 15
+         OK
+         #XTCPDATA: 1, 24
+
+         **AT#XTCPRECV**
+         PONG: b'Test TLS client'
+         #XTCPRECV: 24
+         OK
+
+   #. Disconnect from the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPCLI=0**
+         #XTCPCLI: disconnected
+         OK
+
+.. not tested
+
+    DTLS client
+    ~~~~~~~~~~~
+
+    The DTLS client requires connection-based UDP to trigger the DTLS establishment.
+
+    Before completing this test, you must update the Pre-shared Key (PSK) and the PSK identity to be used for the TLS connection in the modem.
+    The credentials must use the security tag 16842756.
+
+    To store the credentials in the modem, enter the following AT commands:
+
+    .. parsed-literal::
+       :class: highlight
+
+       **AT%CMNG=0,16842756,3,"6e7266393174657374"**
+       **AT%CMNG=0,16842756,4,"nrf91test"**
+
+    You must register the same PSK and PSK identity on the server side.
+
+    1. Establish and test a DTLS connection:
+
+       a. List the credentials that are stored in the modem with security tag 16842755.
+
+	  .. parsed-literal::
+	     :class: highlight
+
+	     **AT%CMNG=1,16842756**
+	     %CMNG: 16842756,3,"0303030303030303030303030303030303030303030303030303030303030303"
+	     %CMNG: 16842756,4,"0404040404040404040404040404040404040404040404040404040404040404"
+	     OK
+
+       #. Open a TCP/DTLS socket that uses the security tag 16842756 and connect to a DTLS server on a specified port.
+	  Replace *example.com* with the host name or IPv4 address of a DTLS server and *1234* with the corresponding port.
+
+	 .. parsed-literal::
+	     :class: highlight
+
+	     **AT#XSOCKET=1,2,0,16842756**
+	     #XSOCKET: 1, 2, 0, 273
+	     OK
+
+	     **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
+	     #XCONNECT: 1
+	     OK
+
+       #. Send plain text data to the DTLS server and retrieve the returned data.
+
+	  .. parsed-literal::
+	     :class: highlight
+
+	     **AT#XSEND=1,"Test DTLS client"**
+	     #XSEND: 16
+	     OK
+
+	     **AT#XRECV**
+	     PONG: b'Test DTLS client'
+	     #XRECV: 1, 25
+	     OK
+
+       #. Close the socket.
+
+	  .. parsed-literal::
+	     :class: highlight
+
+	     **AT#XSOCKET=0**
+	     #XSOCKET: 0, closed
+	     OK
+
+    #. Test a DTLS client with UDP proxy service (note that these commands are available only if :option:`CONFIG_SLM_UDP_PROXY` is defined):
+
+       a. Create a UDP/DTLS client and connect to a server.
+	  Replace *example.com* with the host name or IPv4 address of a DTLS server and *1234* with the corresponding port.
+	  Then read information about the connection.
+
+	  .. parsed-literal::
+	     :class: highlight
+
+	     **AT#XUDPCLI=1,"**\ *example.com*\ **",**\ *1234*\ **,16842756**
+	     #XUDPCLI: 2 connected
+	     OK
+
+       #. Disconnect from the server.
+
+	  .. parsed-literal::
+	     :class: highlight
+
+	     **AT#XUDPCLI=0**
+	     OK
+
+TCP server
+~~~~~~~~~~
+
+.. |global_private_address| replace:: the nRF9160 DK must have a global private address.
+   The radio network must be configured to route incoming IP packets to the nRF9160 DK.
+
+.. |global_private_address_check| replace::    To check if the setup is correct, use the ``AT+CGDCONT?`` command to check if the local IP address allocated by the network is a reserved private address of class A, B, or C (see `Private addresses`_).
+   If it is not, ping your nRF9160 DK from the destination server.
+
+
+To act as a TCP server, |global_private_address|
+
+|global_private_address_check|
+
+1. Create a Python script :file:`client_tcp.py` that acts a TCP client.
+   See the following sample code (make sure to use the correct IP address and port):
+
+   .. code-block:: python
+
+      import socket
+      import time
+
+      host_addr = '000.000.000.00'
+      host_port = 1234
+      s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+      s.connect((host_addr, host_port))
+      time.sleep(1)
+      print("Sending: 'Hello, TCP#1!")
+      s.send(b"Hello, TCP#1!")
+      time.sleep(1)
+      print("Sending: 'Hello, TCP#2!")
+      s.send(b"Hello, TCP#2!")
+      data = s.recv(1024)
+      print(data)
+
+      time.sleep(1)
+      print("Sending: 'Hello, TCP#3!")
+      s.send(b"Hello, TCP#3!")
+      time.sleep(1)
+      print("Sending: 'Hello, TCP#4!")
+      s.send(b"Hello, TCP#4!")
+      time.sleep(1)
+      print("Sending: 'Hello, TCP#5!")
+      s.send(b"Hello, TCP#5!")
+      time.sleep(1)
+      data = s.recv(1024)
+      print(data)
+
+      print("Closing connection")
+      s.close()
+
+#. Establish and test a TCP connection:
+
+   a. Open a TCP socket, bind it to the TCP port that you want to use, and start listening.
+      Replace *1234* with the correct port number.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=1,1,1**
+         #XSOCKET: 2, 1, 1, 6
+         OK
+
+         **AT#XBIND=**\ *1234*
+         OK
+
+         **AT#XLISTEN**
+         OK
+
+   #. Run the :file:`client_tcp.py` script to start sending data to the server.
+
+   #. Accept the connection from the client and start receiving and acknowledging the data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XACCEPT**
+         #XACCEPT: connected with *IP address*
+         #XACCEPT: 3
+         OK
+
+         **AT#XRECV**
+         Hello, TCP#1!Hello, TCP#2!
+         #XRECV: 1, 26
+         OK
+
+         **AT#XSEND=1,"TCP1/2 received"**
+         #XSEND: 15
+         OK
+
+         **AT#XRECV**
+         Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!
+         #XRECV: 1, 39
+         OK
+
+         **AT#XSEND=1,"TCP3/4/5 received"**
+         #XSEND: 17
+         OK
+
+   #. Observe the output of the Python script::
+
+         $ python client_tcp.py
+
+         Sending: 'Hello, TCP#1!
+         Sending: 'Hello, TCP#2!
+         TCP1/2 received
+         Sending: 'Hello, TCP#3!
+         Sending: 'Hello, TCP#4!
+         Sending: 'Hello, TCP#5!
+         TCP3/4/5 received
+         Closing connection
+
+   #. Close the socket.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=0**
+         #XSOCKET: closed
+         OK
+
+
+#. Test the TCP server with TCP proxy service (note that these commands are available only if :option:`CONFIG_SLM_TCP_PROXY` is defined):
+
+   a. Check the available values for the XTCPSVR command and read information about the current state.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPSVR=?**
+         #XTCPSVR: (0, 1, 2),<port>,<sec_tag>
+         OK
+
+         **AT#XTCPSVR?**
+         #XTCPSVR: -1, -1
+         OK
+
+   #. Create a TCP server and read information about the current state.
+      Replace *1234* with the correct port number.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPSVR=1,**\ *1234*
+         #XTCPSVR: 2 started
+         OK
+
+         **AT#XTCPSVR?**
+         #XTCPSVR: 1, -1, 0
+         OK
+
+   #. Run the :file:`client_tcp.py` script to start sending data to the server.
+
+   #. Observe that the server accepts the connection from the client.
+      Read information about the current state again.
+
+      .. parsed-literal::
+         :class: highlight
+
+         #XTCPSVR: *IP address* connected
+         #XTCPDATA: 1, 13
+         #XTCPDATA: 1, 13
+
+         **AT#XTCPSVR?**
+         #XTCPSVR: 1, 2, 0
+         OK
+
+   #. Start receiving and acknowledging the data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPRECV**
+         Hello, TCP#1!Hello, TCP#2!
+         #XTCPRECV: 26
+         OK
+
+         **AT#XTCPSEND=1,"TCP1/2 received"**
+         #XTCPSEND: 15
+         OK
+         #XTCPDATA: 1, 13
+         #XTCPDATA: 1, 13
+         #XTCPDATA: 1, 13
+
+         **AT#XTCPSVR?**
+         #XTCPSVR: 1, 2, 0
+         OK
+
+         **AT#XTCPRECV**
+         Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!
+         #XTCPRECV: 39
+         OK
+
+         **AT#XTCPSEND=1,"TCP3/4/5 received"**
+         #XTCPSEND: 17
+         OK
+
+   #. Observe the output of the Python script::
+
+         $ python client_tcp.py
+
+         Sending: 'Hello, TCP#1!
+         Sending: 'Hello, TCP#2!
+         TCP1/2 received
+         Sending: 'Hello, TCP#3!
+         Sending: 'Hello, TCP#4!
+         Sending: 'Hello, TCP#5!
+         TCP3/4/5 received
+         Closing connection
+
+   #. Read information about the current state and observe that the client disconnects.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPSVR?**
+         #XTCPSVR: 1, 2, 0
+         OK
+         #XTCPSVR: timeout
+
+         **AT#XTCPSVR?**
+         #XTCPSVR: 1, -1, 0
+         OK
+
+   #. Stop the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPSVR=0**
+         #XTCPSVR: stopped
+         OK
+
+         **AT#XTCPSVR?**
+         #XTCPSVR: -1, -1
+         OK
+
+#. Test the TCP server with TCP proxy service in data mode (note that these commands are available only if :option:`CONFIG_SLM_TCP_PROXY` is defined):
+
+   a. Create a TCP server and read information about the current state.
+      Replace *1234* with the correct port number.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPSVR=2,**\ *1234*
+         #XTCPSVR: 1 started
+         OK
+
+         **AT#XTCPSVR?**
+         #XTCPSVR: 1, -1, 1
+         OK
+
+   #. Run the :file:`client_tcp.py` script to start sending data to the server.
+
+   #. Observe that the server accepts the connection from the client and starts receiving data.
+      Acknowledge the received data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         #XTCPSVR: *IP address* connected
+         Hello, TCP#1!Hello, TCP#2!\ **TCP1/2 received**
+         Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!\ **TCP3/4/5 received**
+
+   #. Observe the output of the Python script::
+
+         $ python client_tcp.py
+
+         Sending: 'Hello, TCP#1!
+         Sending: 'Hello, TCP#2!
+         TCP1/2 received
+         Sending: 'Hello, TCP#3!
+         Sending: 'Hello, TCP#4!
+         Sending: 'Hello, TCP#5!
+         TCP3/4/5 received
+         Closing connection
+
+   #. Stop the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XTCPSVR=0**
+         #XTCPSVR: stopped
+         OK
+
+UDP server
+~~~~~~~~~~
+
+To act as a UDP server, |global_private_address|
+
+|global_private_address_check|
+
+1. Create a Python script :file:`client_udp.py` that acts a UDP client.
+   See the following sample code (make sure to use the correct IP addresses and port):
+
+   .. code-block:: python
+
+      import socket
+      import time
+
+      host_addr = '000.000.000.00'
+      host_port = 1234
+      host = (host_addr, host_port)
+      local_addr = '9.999.999.99'
+      local_port = 1234
+      local = (local_addr, local_port)
+      s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+      s.bind(local)
+      print("Sending: 'Hello, UDP#1!")
+      s.sendto("Hello, UDP#1!", host)
+      time.sleep(1)
+      print("Sending: 'Hello, UDP#2!")
+      s.sendto("Hello, UDP#2!", host)
+      data, address = s.recvfrom(1024)
+      print(data)
+      print(address)
+
+      print("Sending: 'Hello, UDP#3!")
+      s.sendto("Hello, UDP#3!", host)
+      time.sleep(1)
+      print("Sending: 'Hello, UDP#4!")
+      s.sendto("Hello, UDP#4!", host)
+      time.sleep(1)
+      print("Sending: 'Hello, UDP#5!")
+      s.sendto("Hello, UDP#5!", host)
+      data, address = s.recvfrom(1024)
+      print(data)
+      print(address)
+
+      print("Closing connection")
+      s.close()
+
+#. Establish and test a UDP connection:
+
+   a. Open a UDP socket and bind it to the UDP port that you want to use.
+      Replace *1234* with the correct port number.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=1,2,1**
+         #XSOCKET: 2, 2, 1, 17
+         OK
+
+         **AT#XBIND=**\ *1234*
+         OK
+
+   #. Run the :file:`client_udp.py` script to start sending data to the server.
+
+   #. Start receiving and acknowledging the data.
+      Replace *example.com* with the host name or IPv4 address of the UDP client and *1234* with the corresponding port.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XRECVFROM**
+         Hello, UDP#1!
+         #XRECVFROM: 1, 13
+         OK
+
+         **AT#XRECVFROM**
+         Hello, UDP#2!
+         #XRECVFROM: 1, 13
+         OK
+
+         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,1,"UDP1/2 received"**
+         #XSENDTO: 15
+         OK
+
+         **AT#XRECVFROM**
+         Hello, UDP#3!
+         #XRECVFROM: 1, 13
+         OK
+
+         **AT#XRECVFROM**
+         Hello, UDP#4!
+         #XRECVFROM: 1, 13
+         OK
+
+         **AT#XRECVFROM**
+         Hello, UDP#5!
+         #XRECVFROM: 1, 13
+         OK
+
+         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,1,"UDP3/4/5 received"**
+         #XSENDTO: 17
+         OK
+
+      Note that you will get an error message if a UDP packet is lost.
+      For example, this error indicates that a packet is lost in the downlink to the nRF9160 DK:
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XRECVFROM**
+         #XSOCKET: -60
+         ERROR
+
+   #. Observe the output of the Python script::
+
+         $ python client_udp.py
+
+         Sending: 'Hello, UDP#1!
+         Sending: 'Hello, UDP#2!
+         UDP1/2 received
+         ('000.000.000.00', 1234)
+         Sending: 'Hello, UDP#3!
+         Sending: 'Hello, UDP#4!
+         Sending: 'Hello, UDP#5!
+         UDP3/4/5 received
+         ('000.000.000.00', 1234)
+         Closing connection
+
+   #. Close the socket.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XSOCKET=0**
+         #XSOCKET: 0, closed
+         OK
+
+#. Test the UDP server with UDP proxy service (note that these commands are available only if :option:`CONFIG_SLM_UDP_PROXY` is defined):
+
+   a. Check the available values for the XUDPSVR command and create a UDP server.
+      Replace *1234* with the correct port number.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPSVR=?**
+         #XUDPSVR: (0, 1, 2),<port>,<sec_tag>
+         OK
+
+         **AT#XUDPSVR=1,**\ *1234*
+         #XUDPSVR: 2 started
+         OK
+
+   #. Run the :file:`client_udp.py` script to start sending data to the server.
+
+   #. Observe that the server starts receiving data and acknowledge the data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         #XUDPRECV: 1, 13
+         Hello, UDP#1!
+         #XUDPRECV: 1, 13
+         Hello, UDP#2!
+
+         **AT#XUDPSEND=1,"UDP1/2 received"**
+         #XUDPSEND: 15
+         OK
+
+         #XUDPRECV: 1, 13
+         Hello, UDP#3!
+         #XUDPRECV: 1, 13
+         Hello, UDP#4!
+         #XUDPRECV: 1, 13
+         Hello, UDP#5!
+
+         **AT#XUDPSEND=1,"UDP3/4/5 received"**
+         #XUDPSEND: 17
+         OK
+
+   #. Observe the output of the Python script::
+
+         $ python client_udp.py
+
+         Sending: 'Hello, UDP#1!
+         Sending: 'Hello, UDP#2!
+         UDP1/2 received
+         ('000.000.000.00', 1234)
+         Sending: 'Hello, UDP#3!
+         Sending: 'Hello, UDP#4!
+         Sending: 'Hello, UDP#5!
+         UDP3/4/5 received
+         ('000.000.000.00', 1234)
+         Closing connection
+
+   #. Close the socket.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPSVR=0**
+         #XUDPSVR: stopped
+         OK
+
+#. Test the UDP server with UDP proxy service in data mode (note that these commands are available only if :option:`CONFIG_SLM_UDP_PROXY` is defined):
+
+   a. Create a UDP server and read information about the current state.
+      Replace *1234* with the correct port number.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPSVR=2,**\ *1234*
+         #XUDPSVR: 1 started
+         OK
+
+         **AT#XUDPSVR?**
+         #XUDPSVR: 1, 1
+         OK
+
+   #. Run the :file:`client_udp.py` script to start sending data to the server.
+
+   #. Observe that the server starts receiving data.
+      Acknowledge the received data.
+
+      .. parsed-literal::
+         :class: highlight
+
+         Hello, UDP#1!Hello, UDP#2!\ **UDP1/2 received**
+         Hello, UDP#3!Hello, UDP#4!Hello, UDP#5!\ **UDP3/4/5 received**
+
+   #. Observe the output of the Python script::
+
+         $ python client_udp.py
+
+         Sending: 'Hello, UDP#1!
+         Sending: 'Hello, UDP#2!
+         UDP1/2 received
+         ('000.000.000.00', 1234)
+         Sending: 'Hello, UDP#3!
+         Sending: 'Hello, UDP#4!
+         Sending: 'Hello, UDP#5!
+         UDP3/4/5 received
+         ('000.000.000.00', 1234)
+         Closing connection
+
+   #. Stop the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XUDPSVR=0**
+         #XUDPSVR: stopped
+         OK
+
+TLS server
+~~~~~~~~~~
+
+The TLS server role is currently not supported.
+
+.. parsed-literal::
+   :class: highlight
+
+   **AT#XSOCKET=1,1,1,16842753**
+   #XSOCKET: (D)TLS Server not supported
+   ERROR
+
+   **AT#XTCPSVR=1,3443,16842753**
+   #XTCPSVR: TLS Server not supported
+   ERROR
+
+DTLS server
+~~~~~~~~~~~
+
+The DTLS server role is currently not supported (modem limitation).
+
+.. parsed-literal::
+   :class: highlight
+
+   **AT#XSOCKET=1,2,1,16842755**
+   #XSOCKET: (D)TLS Server not supported
+   ERROR
+
+DNS lookup
+~~~~~~~~~~
+
+1. Look up the IP address for a host name.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XGETADDRINFO="www.google.com"**
+      #XGETADDRINFO: 172.217.174.100
+      OK
+
+#. Observe that you cannot look up the host name for an IP address.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XGETADDRINFO="172.217.174.100"**
+      ERROR
+
+Socket options
+~~~~~~~~~~~~~~
+
+After opening a client-role socket, you can configure various options.
+
+1. Check the available values for the XSOCKETOPT command.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XSOCKETOPT=?**
+      #XSOCKETOPT: (0, 1), <name>, <value>
+      OK
+
+#. Open a client socket.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XSOCKET=1,1,0**
+      #XSOCKET: 2, 1, 0, 6
+      OK
+
+#. Test to set and get socket options.
+   Note that not all options are supported.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XSOCKETOPT=1,20,30**
+      OK
+
+      **AT#XSOCKETOPT=0,20**
+      ERROR  // to be investigated
+
+      **AT#XSOCKETOPT=0,2**
+      #XSOCKETOPT: ignored
+      OK
+
+      **AT#XSOCKETOPT=1,2,1**
+      #XSOCKETOPT: ignored
+      OK
+
+      **AT#XSOCKETOPT=0,61**
+      #XSOCKETOPT: not supported
+      OK
+
+      **AT#XSOCKETOPT=1,61,30**
+      #XSOCKETOPT: not supported
+      OK
+
+Testing ICMP AT commands
+------------------------
+
+Complete the following steps to test the functionality provided by the :ref:`SLM_AT_ICMP`:
+
+1. Ping a remote host, for example, www.google.com.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XPING="www.google.com",45,5000,5,1000**
+      #XPING: 0.637
+      #XPING: 0.585
+      #XPING: 0.598
+      #XPING: 0.598
+      #XPING: 0.599
+      #XPING: average 0.603
+      OK
+
+#. Ping a remote IP address, for example, 172.217.174.100.
+
+   .. parsed-literal::
+      :class: highlight
+
+      **AT#XPING="172.217.174.100",45,5000,5,1000**
+      #XPING: 0.873
+      #XPING: 0.576
+      #XPING: 0.599
+      #XPING: 0.623
+      #XPING: 0.577
+      #XPING: average 0.650
+      OK
+
+
+Dependencies
+************
+
+This application uses the following |NCS| libraries:
+
+* :ref:`lte_lc_readme`
+* :ref:`at_cmd_readme`
+* :ref:`at_cmd_parser_readme`
+* :ref:`at_notif_readme`
+* :ref:`modem_info_readme`
+* :ref:`lib_ftp_client`
+* :ref:`supl_client`
+
+It uses the following `nrfxlib`_ libraries:
+
+* :ref:`nrfxlib:bsdlib`
+
+In addition, it uses the following samples:
+
+* :ref:`secure_partition_manager`
