@@ -21,17 +21,17 @@ config SLM_AT_MODE
 	select HTTP_CLIENT
 
 config SLM_AT_MAX_PARAM
-	int "Max number of parameters in AT command"
+	int "Maximum number of parameters in AT command"
 	default 8
 
 #
 # Inter-Connect
 #
 choice
-	prompt "UART for Interconnect"
+	prompt "UART for interconnect"
 	default SLM_CONNECT_UART_0
 	help
-		Sets the UART to use for interconnect
+		Selects which UART to use for interconnect:
 		-  UART 0
 		-  UART 2
 	config SLM_CONNECT_UART_0
@@ -44,23 +44,23 @@ choice
 endchoice
 
 choice
-	prompt "Termination Mode"
+	prompt "Termination mode"
 	default SLM_CR_LF_TERMINATION
 	help
-		Sets the termination ending from the serial terminal
-		Levels are:
-		-  NULL Termination
-		-  CR Termination
-		-  LF Termination
-		-  CR+LF Termination
+		Sets the command terminator used by the serial terminal.
+		Available options are:
+		-  NULL termination
+		-  CR termination
+		-  LF termination
+		-  CR+LF termination
 	config SLM_NULL_TERMINATION
-		bool "NULL Termination"
+		bool "NULL termination"
 	config SLM_CR_TERMINATION
-		bool "CR Termination"
+		bool "CR termination"
 	config SLM_LF_TERMINATION
-		bool "LF Termination"
+		bool "LF termination"
 	config SLM_CR_LF_TERMINATION
-		bool "CR+LF Termination"
+		bool "CR+LF termination"
 endchoice
 
 config SLM_AT_HOST_TERMINATION
@@ -76,10 +76,10 @@ config SLM_AT_HOST_TERMINATION
 config SLM_GPIO_WAKEUP
 	bool "Support of GPIO wakeup"
 	help
-	  Enable GPIO wakeup on nRF9160 side
+	  Enable GPIO wakeup on nRF9160 side.
 
 config SLM_INTERFACE_PIN
-	int "Interface GPIO to wake up or exit idle"
+	int "Interface GPIO to wake up or exit idle mode"
 	default 6 if SLM_CONNECT_UART_0
 	default 31 if SLM_CONNECT_UART_2
 
@@ -102,13 +102,13 @@ config SLM_FTP_SERVER_PORT
 	default 21
 
 config SLM_FTP_USER_ANONYMOUS
-	string "FTP client login user Anonymous"
+	string "FTP client anonymous login user"
 	default "anonymous"
 	help
 	  Define the user name for anonymous login.
 
 config SLM_FTP_PASSWORD_ANONYMOUS
-	string "FTP client login password for user Anonymous"
+	string "FTP client anonymous login password"
 	default "anonymous@example.com"
 	help
 	  Define the password for anonymous login.
