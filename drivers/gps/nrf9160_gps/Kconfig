@@ -38,6 +38,24 @@ config NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 	  application send the AT commands to configure the GPS
 	  properly.
 
+config NRF9160_GPS_PRIORITY_WINDOW_TIMEOUT_SEC
+	int "Enable GPS priority window if the GPS is blocked for this duration"
+	default 10
+	help
+	  This configuration sets the amount of time the GPS must be blocked by
+	  LTE before requesting GPS priority. For GPS priority to be requested
+	  after this timeout, the GPS must also be configured with the priority
+	  flag enabled when starting it. When GPS priority is enabled, the
+	  modem grants the GPS prioritized access to the radio at the cost of
+	  LTE activity. If the value of this option is kept low, GPS priority is
+	  requested at an earlier point of time after the GPS is actively
+	  blocked by LTE activity. This means that data traffic scheduled during
+	  a GPS search is more likely to be blocked by the GPS. Increasing the
+	  value of this option will favor data traffic since the GPS will be
+	  blocked for a longer duration before GPS priority is requested.
+	  Note that GPS priority might not be granted by the modem, even though
+	  it is requested by the driver.
+
 if NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 
 choice NRF9160_GPS_ANTENNA
