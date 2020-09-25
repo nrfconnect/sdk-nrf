@@ -45,6 +45,15 @@ enum report_id {
 	REPORT_ID_COUNT
 };
 
+static const uint8_t input_reports[] = {
+	REPORT_ID_MOUSE,
+	REPORT_ID_KEYBOARD_KEYS,
+	REPORT_ID_SYSTEM_CTRL,
+	REPORT_ID_CONSUMER_CTRL,
+	REPORT_ID_BOOT_MOUSE,
+	REPORT_ID_BOOT_KEYBOARD,
+};
+
 
 extern const uint8_t hid_report_desc[];
 extern const size_t hid_report_desc_size;
