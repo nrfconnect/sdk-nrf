@@ -15,6 +15,9 @@
 
 #include <logging/log.h>
 
+#define SERVICE_INFO_GPS "{\"state\":{\"reported\":{\"device\": \
+			  {\"serviceInfo\":{\"ui\":[\"GPS\"]}}}}}"
+
 LOG_MODULE_REGISTER(nrf_cloud_agps_sample,
 		    CONFIG_NRF_CLOUD_AGPS_SAMPLE_LOG_LEVEL);
 
@@ -80,6 +83,25 @@ static void on_agps_needed(struct gps_agps_request request)
 	}
 }
 
+static void send_service_info(void)
+{
+	int err;
+	struct cloud_msg msg = {
+		.qos = CLOUD_QOS_AT_MOST_ONCE,
+		.endpoint.type = CLOUD_EP_TOPIC_STATE,
+		.buf = SERVICE_INFO_GPS,
+		.len = strlen(SERVICE_INFO_GPS)
+	};
+
+	err = cloud_send(cloud_backend, &msg);
+	if (err) {
+		LOG_ERR("Failed to send message to cloud, error: %d", err);
+		return;
+	}
+
+	LOG_INF("Service info sent to cloud");
+}
+
 static void cloud_event_handler(const struct cloud_backend *const backend,
 				const struct cloud_event *const evt,
 				void *user_data)
@@ -96,6 +118,9 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 		break;
 	case CLOUD_EVT_READY:
 		LOG_INF("CLOUD_EVT_READY");
+		/* Update nRF Cloud with GPS service info signifying that it
+		 * has GPS capabilities. */
+		send_service_info();
 		k_delayed_work_submit(&gps_start_work, K_NO_WAIT);
 		break;
 	case CLOUD_EVT_DISCONNECTED:
