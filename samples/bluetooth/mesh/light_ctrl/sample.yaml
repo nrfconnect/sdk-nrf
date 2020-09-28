@@ -1,8 +1,8 @@
 sample:
-  name: Bluetooth Mesh Light LC
-  description: Bluetooth Mesh Light LC sample
+  name: Bluetooth Mesh Light Control
+  description: Bluetooth Mesh Light Control sample
 tests:
-  samples.bluetooth.mesh.light_lc:
+  samples.bluetooth.mesh.light_ctrl:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf52dk_nrf52832 nrf52840dk_nrf52840

@@ -53,20 +53,22 @@ The following table shows the Mesh light controller composition data for this sa
 
 The models are used for the following purposes:
 
-- The first element consists of a Config Server and a Health Server.
+- The first element contains a Config Server and a Health Server.
   The Config Server allows configurator devices to configure the node remotely.
   The Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
-- The eight other models contained within the first element are a result of a single implementation of the Light Lightness Server.
-  These models are bound internally to the light source hardware you want to control (in this case the first LED of the DK).
-  External control of the light source can be achieved directly by using either the Generic Level Server or the Generic OnOff Server in the first element.
-- The three models contained within the second element are a result of a single implementation of the Light Control Server.
-  Together they establish a controller that, if enabled, can take control over a Light Lightness Server instance, where the controller decides parameters such as fade time, lighting levels for different states, and inactivity timing.
-  In this sample the Light Control Server is bound internally to the Light Lightness Server instance in the second element, and enabled by default on boot up.
-  External control of the light source associated with the Light Lightness Server can be achieved indirectly by the Light Control Server, by using the Generic OnOff Server in the second element.
+- The seven other models in the first element are the product of a single instance of the Light Lightness Server.
+  The application implements callbacks for the Light Lightness Server to control the first LED on the device using the PWM (pulse width modulation) driver.
+- The three models in the second element are the product of a single instance of the Light Control Server.
+  The Light Control Server controls the Light Lightness Server in the first element, deciding on parameters such as fade time, lighting levels for different states, and inactivity timing.
+  In this sample, the Light Control Server is enabled by default on startup.
+
+Other nodes can control the Light Lightness Server through the Light Control Server by sending On/Off messages to the Light Control Server or to the Generic OnOff Server in the second element.
+
+.. note::
+    It is possible to bypass the Light Controller Server by directly communicating with the Lightness Server on the first element.
 
 For more details, see :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_light_ctrl_srv_readme`.
-:ref:`bt_mesh_light_ctrl_srv_readme`.
 
 The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` and the
 :ref:`zephyr:pwm_api` API to control the LEDs on the board.
@@ -100,7 +102,7 @@ LEDs:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/light_lc`
+.. |sample path| replace:: :file:`samples/bluetooth/mesh/light_ctrl`
 
 .. include:: /includes/build_and_run.txt
 
@@ -145,11 +147,11 @@ Complete the following steps in the nRF Mesh app to configure models:
 
 You should now see the following actions:
 
-1. The LED fades from 0% to 100% over one second :guilabel:`Standby -> On`.
+1. The LED fades from 0% to 100% over 500ms :guilabel:`Standby -> On`.
 #. The LED stays at 100% for three seconds :guilabel:`On`.
-#. The LED fades from 100% to 50% over one second :guilabel:`On -> Prolong`.
+#. The LED fades from 100% to 50% over five seconds :guilabel:`On -> Prolong`.
 #. The LED stays at 50% for three seconds :guilabel:`Prolong`.
-#. The LED fades from 50% to 0% over one second :guilabel:`Prolong -> Standby`.
+#. The LED fades from 50% to 0% over five seconds :guilabel:`Prolong -> Standby`.
 
 .. figure:: /images/bt_mesh_light_ctrl_levels.svg
    :alt: Light level transitions over time
