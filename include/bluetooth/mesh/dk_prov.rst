@@ -54,7 +54,9 @@ UUID
 ====
 
 The provisioning handler uses :cpp:func:`hwinfo_get_device_id` from the ``hwinfo`` driver to generate a unique, deterministic UUID for each device.
-The UUID is used in the unprovisioned beacon to identify the device.
+
+The UUID is used in the unprovisioned beacon and the broadcasted Mesh Provisioning Service data.
+It allows the Provisioners to uniquely identify the device before starting provisioning.
 
 API documentation
 =================
