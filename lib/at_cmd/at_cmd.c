@@ -363,7 +363,9 @@ int at_cmd_write(const char *const cmd,
 
 	if (cmd == NULL) {
 		LOG_ERR("cmd is NULL");
-		*state = AT_CMD_ERROR_QUEUE;
+		if (state) {
+			*state = AT_CMD_ERROR_QUEUE;
+		}
 		return -EINVAL;
 	}
 
@@ -381,7 +383,9 @@ int at_cmd_write(const char *const cmd,
 	ret.code = k_msgq_put(&commands, &command, K_FOREVER);
 	if (ret.code) {
 		LOG_ERR("Could not enqueue cmd, error %d", ret.code);
-		*state = AT_CMD_ERROR_QUEUE;
+		if (state) {
+			*state = AT_CMD_ERROR_QUEUE;
+		}
 		return ret.code;
 	}
 
