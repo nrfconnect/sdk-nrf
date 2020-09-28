@@ -305,9 +305,27 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 		break;
 
 #ifdef ZB_ENABLE_ZGP_DIRECT
-	case ZB_MAC_TX_WAIT_ZGP:
-		LOG_ERR("ZB_MAC_TX_WAIT_ZGP - not implemented in osif, TBD");
+	case ZB_MAC_TX_WAIT_ZGP: {
+		struct net_pkt *pkt = net_pkt_alloc(K_NO_WAIT);
+
+		if (!pkt) {
+			ZB_ASSERT(0);
+			return ZB_FALSE;
+		}
+
+		struct net_ptp_time timestamp = {
+			.second = tx_at / USEC_PER_SEC,
+			.nanosecond = (tx_at % USEC_PER_SEC) * NSEC_PER_USEC
+		};
+		net_pkt_set_timestamp(pkt, &timestamp);
+		state_cache.radio_state = RADIO_802154_STATE_TRANSMIT;
+		err = radio_api->tx(radio_dev,
+				    IEEE802154_TX_MODE_TXTIME,
+				    pkt,
+				    &frag);
+		net_pkt_unref(pkt);
 		break;
+	}
 #endif
 	case ZB_MAC_TX_WAIT_NONE:
 		/* First transmit attempt without CCA. */
