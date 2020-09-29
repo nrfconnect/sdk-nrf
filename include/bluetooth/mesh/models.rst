@@ -27,6 +27,7 @@ Nordic Semiconductor provides a variety of model implementations from the `Mesh 
    ../../../include/bluetooth/mesh/gen_prop.rst
    ../../../include/bluetooth/mesh/lightness.rst
    ../../../include/bluetooth/mesh/light_ctrl.rst
+   ../../../include/bluetooth/mesh/light_ctl.rst
    ../../../include/bluetooth/mesh/sensor_models.rst
 
 For more information about these and other models, see also `Mesh Model Overview`_.
