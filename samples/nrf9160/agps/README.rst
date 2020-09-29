@@ -1,26 +1,39 @@
-.. _nrf_cloud_agps_sample:
+.. _agps_sample:
 
-nRF9160: nRF Cloud A-GPS
-########################
+nRF9160: A-GPS
+##############
 
-The nRF Cloud A-GPS sample demonstrates how the `nRF Cloud`_ Assisted GPS (`A-GPS`_) feature can be used in an application.
-You can use this sample as a starting point to implement A-GPS in your application.
+The A-GPS sample demonstrates how the `nRF Cloud`_ Assisted GPS (`A-GPS`_) feature or an external :ref:`SUPL client <supl_client>` can be used to implement A-GPS in your application.
+The sample uses the generic A-GPS library, which allows the selection of different A-GPS sources via the :option:`CONFIG_AGPS_SRC_SUPL` configurable option.
+By default, `nRF Cloud`_ is used for A-GPS and cloud communication.
+
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: thingy91_nrf9160ns, nrf9160dk_nrf9160ns
+
+The sample also requires an nRF Cloud account.
+
+.. include:: /includes/spm.txt
 
 Overview
 ********
 
-The use of A-GPS speeds up the time to first GPS position fix (commonly known as TTFF or Time to first fix), as the required satellite information is downloaded from nRF Cloud instead of direct download of the data from the satellites.
+The use of A-GPS speeds up the time to first GPS position fix (commonly known as TTFF or Time to first fix), as the required satellite information is downloaded from the A-GPS source instead of direct download of the data from the satellites.
 
-The sample application uses the nRF Cloud A-GPS library to request and receive A-GPS data.
 The Assistance GPS data includes the following information:
 
 * `Ephemeris`_
 * `Almanac`_
 * UTC time
-* integrity data
-* approximate location
+* Integrity data
+* Approximate location
 * GPS system clock
-* ionospheric correction parameters for `Klobuchar Ionospheric Model`_
+* Ionospheric correction parameters for `Klobuchar Ionospheric Model`_
 
 TTFF is expected to be less when compared to that in the scenario of GPS without assistance data, performing a cold or a warm start.
 The TTFF is expected to be comparable to that of a GPS hot start and is usually in the range of 5 to 20 seconds in good satellite signaling conditions.
@@ -39,73 +52,81 @@ In RRC idle mode, the GPS is usually able to operate.
 It is recommended to use LTE Power Saving Mode (PSM) and extended Discontinuous Reception (eDRX) mode to increase the allowed time of operation for GPS.
 During the defined intervals of PSM and eDRX, LTE communication does not occur, and the GPS has full access to the radio resources.
 In this sample, both PSM and eDRX are enabled by default.
-You can enable or disable these features by setting the following configuration options to ``y`` or ``n``.
-
-* ``CONFIG_LTE_POWER_SAVING_MODE``
-* :option:`CONFIG_LTE_EDRX_REQ`
+You can enable or disable these features by using the :option:`CONFIG_LTE_POWER_SAVING_MODE` and :option:`CONFIG_LTE_EDRX_REQ` configuration options.
 
 .. include:: /applications/asset_tracker/README.rst
    :start-after: external_antenna_note_start
    :end-before: external_antenna_note_end
 
-
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy91_nrf9160ns, nrf9160dk_nrf9160ns
-
-The sample also requires an nRF Cloud account.
-
-.. include:: /includes/spm.txt
-
 User interface
 **************
 
-A predefined message can be sent to nRF Cloud by pressing button 1.
+You can send a predefined message to nRF Cloud by pressing button 1.
 The message can be changed by setting the :option:`CONFIG_CLOUD_MESSAGE` to a new message.
 
-To ease outdoors and remote testing of A-GPS feature, two methods for resetting the board are provided.
+To ease outdoors and remote testing of A-GPS feature, two methods for resetting the board are provided, if the default A-GPS source is used.
 Both are equivalent to pressing the reset button on the nRF9160 DK, or power-cycling the nRF9160 DK or Thingy:91.
 
 Button 1:
-   Press the button to send a predefined message to nRF Cloud.
+   Press the button to send a predefined message to nRF Cloud (the default A-GPS source).
    Press the button for a minimum of 3 seconds to reset the nRF9160-based device.
 
 nRF Cloud:
    Use the terminal pane in the device view for a particular device in nRF Cloud and send the ``"{"reboot":true}"`` command to reset the nRF9160-based device.
 
+Configuration
+*************
+|config|
+
+Configuration options
+=====================
+
+Check and configure the following configuration options for the sample:
+
+.. option:: CONFIG_LTE_POWER_SAVING_MODE - LTE Power Saving Mode
+
+This configuration option enables or disables the LTE Power Saving Mode.
+
+Additional configuration
+========================
+
+Check and configure the following library options that are used by the sample:
+
+* :option:`CONFIG_LTE_EDRX_REQ`
+
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf9160/nrf_cloud_agps`
+.. |sample path| replace:: :file:`samples/nrf9160/agps`
 
 .. include:: /includes/build_and_run_nrf9160.txt
 
-The configuration file for this sample is located in :file:`samples/nrf9160/nrf_cloud_agps`.
+The configuration file for this sample is located in :file:`samples/nrf9160/agps`.
 See :ref:`configure_application` for information on how to configure the parameters.
 
 Testing
 =======
 
-After programming the sample to your nRF9160-based device, test it by performing the following steps:
+|test_sample|
 
 #. Place the nRF9160-based device in a location with direct line of sight to a large portion of the sky.
    This is to achieve sufficient satellite coverage to get a position fix.
-#. Optionally connect the nRF9160-based device to a PC with a terminal application to see log output.
+#. Optionally, connect the nRF9160-based device to a PC with a USB cable. The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+#. Optionally, connect to the kit with a terminal emulator (for example, PuTTY) to see log output. See How to connect with PuTTY for the required settings.
    You can also use the Bluetooth LE service of Thingy:91 to see log output on a mobile device.
 #. Log into your nRF Cloud account and select your device.
 #. Power on the nRF9160-based device.
-#. The device connects to the LTE network and nRF Cloud.
+
+   .. note::
+      The sample outputs shown in the subsequent steps correspond to the scenario when nRF Cloud is used as the A-GPS source.
+
+#. The device connects to the LTE network and nRF Cloud as shown below:
 
    .. code-block:: console
 
 	  -------------------------
-	  I: nRF Cloud and A-GPS sample has started
+	  I: A-GPS sample has started
 	  I: Connecting to LTE network. This may take minutes.
 	  I: PSM mode requested
 	  +CEREG: 2,"7725","0138E000",7,0,0,"11100000","11100000"
@@ -115,6 +136,7 @@ After programming the sample to your nRF9160-based device, test it by performing
 
 #. Make sure that GPS has started by confirming that the device requests GPS assistance data and receives a response.
    You can do this by checking the logs.
+
 
    .. code-block:: console
 
@@ -199,7 +221,7 @@ After programming the sample to your nRF9160-based device, test it by performing
 	  D: GPS mode is enabled
 	  D: GPS operational
 
-#. Observe that the GPS starts to track the position based on the satellite data received.
+#. Observe that the GPS starts to track the position based on the satellite data received as shown below:
 
    .. code-block:: console
 
@@ -280,7 +302,7 @@ After programming the sample to your nRF9160-based device, test it by performing
 	  D: Stopping GPS
 
 #. Observe that the current position of the device shows up on the GPS position map in nRF Cloud, after acquiring the GPS position fix.
-   The position details are also displayed on the terminal.
+   The position details are also displayed on the terminal as shown below:
 
    .. code-block:: console
 
@@ -306,7 +328,7 @@ After programming the sample to your nRF9160-based device, test it by performing
 	  I: GPS position sent to cloud
 
 
-#. Optionally press Button 1 and observe that the predefined message is sent from the device to nRF Cloud.
+#. Optionally, press Button 1 and observe that the predefined message is sent from the device to nRF Cloud.
    Note that this interrupts the GPS search for a period of time since LTE requires the use of the radio resources of the device.
 
 Dependencies

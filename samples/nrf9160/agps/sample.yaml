@@ -1,7 +1,7 @@
 sample:
-  name: nRF Cloud A-GPS sample
+  name: A-GPS sample
 tests:
-  samples.nrf9160.nrf_cloud_agps:
+  samples.nrf9160.agps:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160ns thingy91_nrf9160ns
