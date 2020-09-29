@@ -1,7 +1,7 @@
 .. _release_notes:
 
-|NCS| Release Notes
-###################
+Release Notes
+#############
 
 See the release notes for information about specific |NCS| releases.
 
