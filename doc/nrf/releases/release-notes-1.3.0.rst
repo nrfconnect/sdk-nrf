@@ -65,7 +65,7 @@ nRF9160
   * :ref:`lib_date_time` library - maintains the current date-time UTC from multiple time sources (modem, NTP servers).
   * :ref:`lib_ftp_client` library - can be used to download or upload FTP server files.
   * :ref:`lib_nrf_cloud_agps` library - provides a way to request and process A-GPS data from nRF Cloud to be used with the nRF9160 SiP.
-    The :ref:`nrf_cloud_agps_sample` sample demonstrates how to use the library.
+    The :ref:`agps_sample` sample demonstrates how to use the library.
   * :ref:`connectivity_bridge` application with dual UART and Bluetooth LE support - replaces the :ref:`usb_uart_bridge_sample` sample.
 
 * :ref:`gps_with_supl_support_sample` sample:

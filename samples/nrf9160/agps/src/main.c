@@ -18,8 +18,7 @@
 #define SERVICE_INFO_GPS "{\"state\":{\"reported\":{\"device\": \
 			  {\"serviceInfo\":{\"ui\":[\"GPS\"]}}}}}"
 
-LOG_MODULE_REGISTER(nrf_cloud_agps_sample,
-		    CONFIG_NRF_CLOUD_AGPS_SAMPLE_LOG_LEVEL);
+LOG_MODULE_REGISTER(agps_sample, CONFIG_AGPS_SAMPLE_LOG_LEVEL);
 
 static struct cloud_backend *cloud_backend;
 static const struct device *gps_dev;
@@ -138,7 +137,7 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 		/* Convenience functionality for remote testing.
 		 * The device is reset if it receives "{"reboot":true}"
 		 * from the cloud. The command can be sent using the terminal
-		 * card on the device pgae on nrfcloud.com.
+		 * card on the device page on nrfcloud.com.
 		 */
 		if (evt->data.msg.buf[0] == '{') {
 			int ret = strncmp(evt->data.msg.buf,

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "nRF Cloud A-GPS Sample Settings"
+menu "A-GPS Sample Settings"
 
 config CLOUD_MESSAGE
 	string "Custom message published periodically to cloud"
@@ -19,6 +19,6 @@ menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
 
-module = NRF_CLOUD_AGPS_SAMPLE
-module-str = nRF Cloud A-GPS sample
+module = AGPS_SAMPLE
+module-str = A-GPS sample
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
