@@ -249,6 +249,9 @@ struct gps_driver_api {
 /**
  * @brief Function to start GPS operation.
  *
+ * If gps is already running a call to this function will
+ * restart the gps.
+ *
  * @param dev Pointer to GPS device
  * @param cfg Pointer to GPS configuration.
  */

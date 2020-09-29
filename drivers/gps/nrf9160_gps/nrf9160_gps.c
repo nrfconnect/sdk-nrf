@@ -520,8 +520,8 @@ static int start(struct device *dev, struct gps_config *cfg)
 	}
 
 	if (atomic_get(&drv_data->is_active)) {
-		LOG_WRN("GPS is already active");
-		return -EALREADY;
+		LOG_DBG("GPS is already active. Clean up before restart");
+		cancel_works(drv_data);
 	}
 
 	if (atomic_get(&drv_data->is_init) != 1) {
