@@ -7,6 +7,72 @@
 #include "nrf.h"
 
 #include "dtm_hw.h"
+#include "dtm_hw_config.h"
+
+const uint32_t nrf_power_value[] = {
+#if defined(RADIO_TXPOWER_TXPOWER_Neg40dBm)
+	RADIO_TXPOWER_TXPOWER_Neg40dBm,
+#endif /* RADIO_TXPOWER_TXPOWER_Neg40dBm */
+	RADIO_TXPOWER_TXPOWER_Neg30dBm,
+	RADIO_TXPOWER_TXPOWER_Neg20dBm,
+	RADIO_TXPOWER_TXPOWER_Neg16dBm,
+	RADIO_TXPOWER_TXPOWER_Neg12dBm,
+	RADIO_TXPOWER_TXPOWER_Neg8dBm,
+	RADIO_TXPOWER_TXPOWER_Neg4dBm,
+	RADIO_TXPOWER_TXPOWER_0dBm,
+#if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm)
+	RADIO_TXPOWER_TXPOWER_Pos2dBm,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm)
+	RADIO_TXPOWER_TXPOWER_Pos3dBm,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos3dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Pos4dBm)
+	RADIO_TXPOWER_TXPOWER_Pos4dBm,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos4dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Pos5dBm)
+	RADIO_TXPOWER_TXPOWER_Pos5dBm,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos5dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Pos6dBm)
+	RADIO_TXPOWER_TXPOWER_Pos6dBm,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos6dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Pos7dBm)
+	RADIO_TXPOWER_TXPOWER_Pos7dBm,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos7dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm)
+	RADIO_TXPOWER_TXPOWER_Pos8dBm
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos8dBm) */
+};
+
+#if DIRECTION_FINDING_SUPPORTED
+/**@brief Antenna pin array.
+ */
+static const uint32_t antenna_pin[] = {
+#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_1_pin)
+	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_1_pin),
+#endif
+#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_2_pin)
+	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_2_pin),
+#endif
+#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_3_pin)
+	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_3_pin),
+#endif
+#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_4_pin)
+	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_4_pin),
+#endif
+#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_5_pin)
+	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_6_pin),
+#endif
+#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_6_pin)
+	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_6_pin),
+#endif
+#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_7_pin)
+	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_7_pin),
+#endif
+#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_8_pin)
+	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_8_pin),
+#endif
+};
+#endif /* DIRECTION_FINDING_SUPPORTED */
 
 bool dtm_hw_radio_validate(nrf_radio_txpower_t tx_power,
 			   nrf_radio_mode_t radio_mode)
@@ -17,40 +83,6 @@ bool dtm_hw_radio_validate(nrf_radio_txpower_t tx_power,
 	 */
 
 	if (!(
-#if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm)
-		tx_power == NRF_RADIO_TXPOWER_POS8DBM     ||
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos7dBm)
-		tx_power == NRF_RADIO_TXPOWER_POS7DBM     ||
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos6dBm)
-		tx_power == NRF_RADIO_TXPOWER_POS6DBM     ||
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos5dBm)
-		tx_power == NRF_RADIO_TXPOWER_POS5DBM     ||
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos4dBm)
-		tx_power == NRF_RADIO_TXPOWER_POS4DBM     ||
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm)
-		tx_power == NRF_RADIO_TXPOWER_POS3DBM     ||
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm)
-		tx_power == NRF_RADIO_TXPOWER_POS2DBM     ||
-#endif
-		tx_power == NRF_RADIO_TXPOWER_0DBM        ||
-		tx_power == NRF_RADIO_TXPOWER_NEG4DBM     ||
-		tx_power == NRF_RADIO_TXPOWER_NEG8DBM     ||
-		tx_power == NRF_RADIO_TXPOWER_NEG12DBM    ||
-		tx_power == NRF_RADIO_TXPOWER_NEG16DBM    ||
-		tx_power == NRF_RADIO_TXPOWER_NEG20DBM    ||
-		tx_power == NRF_RADIO_TXPOWER_NEG30DBM    ||
-#if defined(RADIO_TXPOWER_TXPOWER_Neg40dBm)
-		tx_power == NRF_RADIO_TXPOWER_NEG40DBM
-#endif
-		) ||
-
-		!(
 #if defined(RADIO_MODE_MODE_Ble_LR125Kbit)
 		radio_mode == NRF_RADIO_MODE_BLE_LR125KBIT  ||
 #endif
@@ -64,7 +96,13 @@ bool dtm_hw_radio_validate(nrf_radio_txpower_t tx_power,
 		return false;
 	}
 
-	return true;
+	for (size_t i = 0; i < ARRAY_SIZE(nrf_power_value); i++) {
+		if (tx_power == nrf_power_value[i]) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool dtm_hw_radio_lr_check(nrf_radio_mode_t radio_mode)
@@ -82,3 +120,35 @@ bool dtm_hw_radio_lr_check(nrf_radio_mode_t radio_mode)
 
 	return false;
 }
+
+uint32_t dtm_hw_radio_min_power_get(void)
+{
+	return nrf_power_value[0];
+}
+
+uint32_t dtm_hw_radio_max_power_get(void)
+{
+	return nrf_power_value[ARRAY_SIZE(nrf_power_value) - 1];
+}
+
+size_t dtm_hw_radio_power_array_size_get(void)
+{
+	return ARRAY_SIZE(nrf_power_value);
+}
+
+const uint32_t *dtm_hw_radio_power_array_get(void)
+{
+	return nrf_power_value;
+}
+
+#if DIRECTION_FINDING_SUPPORTED
+size_t dtm_radio_antenna_pin_array_size_get(void)
+{
+	return ARRAY_SIZE(antenna_pin);
+}
+
+const uint32_t *dtm_hw_radion_antenna_pin_array_get(void)
+{
+	return antenna_pin;
+}
+#endif /* DIRECTION_FINDING_SUPPORTED */

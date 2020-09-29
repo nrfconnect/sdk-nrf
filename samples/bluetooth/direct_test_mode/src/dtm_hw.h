@@ -34,6 +34,47 @@ bool dtm_hw_radio_validate(nrf_radio_txpower_t tx_power,
  */
 bool dtm_hw_radio_lr_check(nrf_radio_mode_t radio_mode);
 
+/**@brief Function for getting minimum tx power.
+ *
+ * @retval Minimum tx power value.
+ */
+uint32_t dtm_hw_radio_min_power_get(void);
+
+/**@brief Function for getting maximum tx power.
+ *
+ * @retval Maximum tx power value.
+ */
+uint32_t dtm_hw_radio_max_power_get(void);
+
+/**@brief Function for getting power array size. This array contains all
+ *        possible tx power values for given divice sorted in ascending
+ *        order.
+ *
+ * @reval Size of the tx power array.
+ */
+size_t dtm_hw_radio_power_array_size_get(void);
+
+/**@brief Function for getting tx power array. This array contains all
+ *        possible tx power values for given divice sorted in ascending
+ *        order.
+ *
+ * @retval Size of the tx power array.
+ */
+const uint32_t *dtm_hw_radio_power_array_get(void);
+
+/**@brief Function for getting antenna pins array. This array contains
+ *        all antenna pins data.
+ *
+ * @retval Size of the antenna pin array.
+ */
+size_t dtm_radio_antenna_pin_array_size_get(void);
+
+/**@brief Function for getting antenna pins array size.
+ *
+ * @retval Pointer to the first element in antenna pins array.
+ */
+const uint32_t *dtm_hw_radion_antenna_pin_array_get(void);
+
 #ifdef __cplusplus
 }
 #endif
