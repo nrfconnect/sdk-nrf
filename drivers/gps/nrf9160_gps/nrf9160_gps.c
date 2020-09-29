@@ -55,7 +55,6 @@ struct gps_drv_data {
 	struct k_thread thread;
 	k_tid_t thread_id;
 	struct k_sem thread_run_sem;
-	struct k_delayed_work start_work;
 	struct k_delayed_work stop_work;
 	struct k_delayed_work timeout_work;
 };
@@ -197,6 +196,11 @@ static int open_socket(struct gps_drv_data *drv_data)
 	return 0;
 }
 
+static void cancel_works(struct gps_drv_data *drv_data)
+{
+	k_delayed_work_cancel(&drv_data->timeout_work);
+}
+
 static void gps_thread(int dev_ptr)
 {
 	struct device *dev = INT_TO_POINTER(dev_ptr);
@@ -246,8 +250,7 @@ wait:
 
 			if (errno == EHOSTDOWN) {
 				LOG_DBG("GPS host is going down, sleeping");
-				k_delayed_work_cancel(&drv_data->timeout_work);
-				k_delayed_work_cancel(&drv_data->start_work);
+				cancel_works(drv_data);
 				atomic_clear(&drv_data->is_active);
 				atomic_set(&drv_data->is_shutdown, 1);
 				nrf_close(drv_data->socket);
@@ -477,11 +480,6 @@ static int parse_cfg(struct gps_config *cfg_src,
 	case GPS_NAV_MODE_PERIODIC:
 		if (cfg_src->interval < 10) {
 			LOG_ERR("Minimum periodic interval is 10 sec");
-			return -EINVAL;
-		}
-
-		if (cfg_src->timeout >= cfg_src->interval) {
-			LOG_ERR("Interval must be longer than timeout");
 			return -EINVAL;
 		}
 
@@ -732,8 +730,7 @@ static int stop(struct device *dev)
 		return -EHOSTDOWN;
 	}
 
-	k_delayed_work_cancel(&drv_data->timeout_work);
-	k_delayed_work_cancel(&drv_data->start_work);
+	cancel_works(drv_data);
 
 	if (atomic_get(&drv_data->is_active) == 0) {
 		/* The GPS is already stopped, attempting to stop it again would
@@ -755,19 +752,6 @@ notify:
 	k_delayed_work_submit(&drv_data->stop_work, K_NO_WAIT);
 
 	return 0;
-}
-
-static void start_work_fn(struct k_work *work)
-{
-	struct gps_drv_data *drv_data =
-		CONTAINER_OF(work, struct gps_drv_data, start_work);
-	struct device *dev = drv_data->dev;
-	struct gps_event evt = {
-		.type = GPS_EVT_SEARCH_STARTED
-	};
-
-	start(dev, &drv_data->current_cfg);
-	notify_event(dev, &evt);
 }
 
 static void stop_work_fn(struct k_work *work)
@@ -839,7 +823,6 @@ static int init(struct device *dev, gps_event_handler_t handler)
 		}
 	}
 
-	k_delayed_work_init(&drv_data->start_work, start_work_fn);
 	k_delayed_work_init(&drv_data->stop_work, stop_work_fn);
 	k_delayed_work_init(&drv_data->timeout_work, timeout_work_fn);
 	k_sem_init(&drv_data->thread_run_sem, 0, 1);
