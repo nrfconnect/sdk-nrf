@@ -45,6 +45,9 @@
 #include <bluetooth/mesh/lightness_cli.h>
 #include <bluetooth/mesh/light_ctrl_srv.h>
 #include <bluetooth/mesh/light_ctrl_cli.h>
+#include <bluetooth/mesh/light_ctl_cli.h>
+#include <bluetooth/mesh/light_temp_srv.h>
+#include <bluetooth/mesh/light_ctl_srv.h>
 
 /* Time and Scene models */
 #include <bluetooth/mesh/time_cli.h>

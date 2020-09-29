@@ -476,6 +476,27 @@ config BT_MESH_LIGHT_CTRL_CLI
 	help
 	  Enable Mesh Light Lightness Control Client model.
 
+config BT_MESH_LIGHT_CTL_CLI
+	bool "Color Tunable Light (CTL) Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable Mesh Light CTL Client model.
+
+config BT_MESH_LIGHT_CTL_SRV
+	bool "Color Tunable Light (CTL) Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHTNESS_SRV
+	select BT_MESH_LIGHT_TEMP_SRV
+	help
+	  Enable Mesh Light CTL Server model.
+
+config BT_MESH_LIGHT_TEMP_SRV
+	bool "Color Tunable Light (CTL) Temperature Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LVL_SRV
+	help
+	  Enable Mesh Light CTL Temperature Server model.
+
 menuconfig BT_MESH_SENSOR_SRV
 	bool "Sensor Server"
 	select BT_MESH_NRF_MODELS
