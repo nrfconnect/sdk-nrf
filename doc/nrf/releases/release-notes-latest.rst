@@ -23,7 +23,7 @@ The following list summarizes the most important changes inherited from upstream
   * Fixed an issue where after erasing an image, an image trailer might be left behind.
   * Added a ``CONFIG_BOOT_INTR_VEC_RELOC`` option to relocate interrupts to application.
   * Fixed single image compilation with serial recovery.
-  * Added support for single-image applications (see :option:`CONFIG_SINGLE_IMAGE_DFU`).
+  * Added support for single-image applications (see `CONFIG_SINGLE_IMAGE_DFU`).
   * Added a ``CONFIG_BOOT_SIGNATURE_TYPE_NONE`` option to disable the cryptographic check of the image.
   * Reduced the minimum number of members in SMP packet for serial recovery.
   * Introduced direct execute-in-place (XIP) mode (see ``CONFIG_BOOT_DIRECT_XIP``).
