@@ -378,6 +378,10 @@ void main(void)
 	/* Load *all* persistent settings */
 	settings_load();
 
+#if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
+	/* Modem FW update needs to be verified before modem is used. */
+	lwm2m_verify_modem_fw_update();
+#endif
 	LOG_INF("Initializing modem.");
 	ret = lte_lc_init();
 	if (ret < 0) {

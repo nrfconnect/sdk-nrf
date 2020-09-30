@@ -29,6 +29,7 @@ int lwm2m_init_location(void);
 void *firmware_read_cb(uint16_t obj_inst_id, size_t *data_len);
 int lwm2m_init_firmware(void);
 int lwm2m_init_image(void);
+int lwm2m_verify_modem_fw_update(void);
 #endif
 
 #if defined(CONFIG_LWM2M_CONN_MON_OBJ_SUPPORT)
