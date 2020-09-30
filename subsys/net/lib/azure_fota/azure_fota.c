@@ -210,6 +210,9 @@ static bool parse_reported_status(const char *msg)
 	fw_obj = cJSON_GetObjectItemCaseSensitive(reported_obj, "firmware");
 	if (fw_obj == NULL) {
 		LOG_DBG("No 'firmware' object found");
+
+		report_needed = true;
+
 		goto clean_exit;
 	}
 
