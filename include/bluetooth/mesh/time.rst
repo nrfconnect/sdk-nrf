@@ -18,7 +18,7 @@ The following Time models are supported:
 The Time models also feature their own common types, listed in the `Common types`_ section below.
 For types common to all models, see :ref:`bt_mesh_models`.
 
-.. _bt_mesh_time_tai:
+.. _bt_mesh_time_tai_readme:
 
 International Atomic Time (TAI)
 ===============================

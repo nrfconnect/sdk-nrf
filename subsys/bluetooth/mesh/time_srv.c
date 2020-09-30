@@ -201,6 +201,12 @@ static void handle_time_status(struct bt_mesh_model *model,
 
 	struct bt_mesh_time_status status;
 
+	if (status.is_authority <= srv->data.sync.status.is_authority &&
+	    srv->data.sync.status.uncertainty < status.uncertainty) {
+		/* The new time status is not an improvement, ignore. */
+		return;
+	}
+
 	bt_mesh_time_decode_time_params(buf, &status);
 	srv->data.sync.uptime = k_uptime_get();
 	srv->data.sync.status.tai = status.tai;
