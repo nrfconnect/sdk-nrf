@@ -64,7 +64,7 @@ For other optional configuration options, see the following sections.
 Hardware-accelerated cryptography
 =================================
 
-You can enable hardware-accelerated cryptography by using the :ref:`nrfxlib:nrf_security_readme`.
+You can enable hardware-accelerated cryptography by using the :ref:`nrfxlib:nrf_security`.
 To do this, modify the setting of the following Kconfig option:
 
 * :option:`CONFIG_OPENTHREAD_MBEDTLS` - Disable this option to disable the default mbedTLS configuration for OpenThread.

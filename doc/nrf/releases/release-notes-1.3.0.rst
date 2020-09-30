@@ -443,7 +443,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`nrfxlib:bsdlib` - added documentation about :ref:`nrfxlib:gnss_extension`
 * :ref:`nrfxlib:mpsl` - added documentation about :ref:`nrfxlib:mpsl_timeslot`, :ref:`nrfxlib:mpsl_radio_notification`, and :ref:`nrfxlib:mpsl_tx_power_control`
 * :ref:`nrfxlib:nfc` - added documentation about :ref:`nrfxlib:type_2_tag` and :ref:`nrfxlib:type_4_tag`, updated the :ref:`nrfxlib:nfc_integration_notes`
-* :ref:`nrfxlib:nrf_security_readme` - updated
+* :ref:`nrfxlib:nrf_security` - updated
 
 Known issues
 ************
