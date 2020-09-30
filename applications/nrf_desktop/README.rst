@@ -1152,7 +1152,7 @@ Depending on whether the bootloader is enabled, the partition layout on the flas
 The set of required partitions differs depending on configuration:
 
 * There must be at least one partition where the code is stored.
-* There must be one partition for storing settings.
+* There must be one partition for storing :ref:`zephyr:settings_api`.
 * The bootloader, if enabled, will add additional partitions to the set.
 
 Memory layout in DTS
@@ -1180,10 +1180,31 @@ Memory layout in partition manager
 ----------------------------------
 
 When the bootloader is enabled, the nRF Desktop application uses the partition manager for the layout configuration of the flash memory.
-The project uses the static configuration of partitions.
-Add the :file:`pm_static_${CMAKE_BUILD_TYPE}.yml` partition manager configuration file to the project's board configuration directory to use this configuration.
+The nRF Desktop configurations with bootloader use static configurations of partitions to ensure that the partition layout will not change between builds.
+
+Add the :file:`pm_static_${CMAKE_BUILD_TYPE}.yml` file to the project's board configuration directory to define the static partition manager configuration for given board and build type.
+Take into account the following points:
+
+* For the :ref:`background firmware upgrade <nrf_desktop_bootloader_background_dfu>`, you must define the secondary image partition.
+  This is because the update image is stored on the secondary image partition while the device is running firmware from the primary partition.
+* When you use :ref:`USB serial recovery <nrf_desktop_bootloader_serial_dfu>`, you do not need the secondary image partition.
+  The firmware image is overwritten by the bootloader.
 
 For more information about how to configure the flash memory layout using the partition manager, see :ref:`partition_manager`.
+
+External flash configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Partition Manager supports partitions in external flash.
+
+Enabling external flash can be useful especially for memory-limited devices.
+For example, the MCUboot can use it as a secondary image partition for the :ref:`background firmware upgrade <nrf_desktop_bootloader_background_dfu>`.
+The MCUboot moves the image data from the secondary image partition to the primary image partition before booting the new firmware.
+
+For an example of the nRF Desktop application configuration that uses an external flash, see the ``ZDebugMCUBootQSPI`` configuration of the nRF52840 Development Kit.
+This configuration uses the ``MX25R64`` external flash that is part of the development kit.
+
+For detailed information, see the :ref:`partition_manager` documentation.
 
 .. _nrf_desktop_bluetooth_guide:
 
