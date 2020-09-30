@@ -229,7 +229,7 @@ static int publish(struct mqtt_client *const client, const uint8_t *job_id,
 		.message.topic = topic,
 		.message.payload.data = payload_data,
 		.message.payload.len = payload_data_len,
-		.message_id = sys_rand32_get(),
+		.message_id = k_cycle_get_32(),
 		.dup_flag = 0,
 		.retain_flag = 0,
 	};
