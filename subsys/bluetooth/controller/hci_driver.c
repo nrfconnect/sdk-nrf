@@ -328,7 +328,9 @@ static void recv_thread(void *p1, void *p2, void *p3)
 
 		received_evt = fetch_and_process_hci_evt(&hci_buffer[0]);
 
-		received_data = fetch_and_process_acl_data(&hci_buffer[0]);
+		if (IS_ENABLED(CONFIG_BT_CONN)) {
+			received_data = fetch_and_process_acl_data(&hci_buffer[0]);
+		}
 
 		/* Let other threads of same priority run in between. */
 		k_yield();
