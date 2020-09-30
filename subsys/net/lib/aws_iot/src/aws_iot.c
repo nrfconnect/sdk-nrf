@@ -917,7 +917,7 @@ int aws_iot_send(const struct aws_iot_data *const tx_data)
 	param.message.topic.topic.size	= tx_data_pub.topic.len;
 	param.message.payload.data	= tx_data_pub.ptr;
 	param.message.payload.len	= tx_data_pub.len;
-	param.message_id		= sys_rand32_get();
+	param.message_id		= k_cycle_get_32();
 	param.dup_flag			= 0;
 	param.retain_flag		= 0;
 
