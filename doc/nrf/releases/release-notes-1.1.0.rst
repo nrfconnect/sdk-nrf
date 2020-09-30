@@ -481,7 +481,7 @@ Documentation
   * :ref:`nrfxlib:softdevice_controller`
   * :ref:`nrfxlib:bsdlib`
   * :ref:`nrfxlib:nrf_cc310_platform_readme`
-  * :ref:`nrf_security_readme`
+  * :ref:`nrfxlib:nrf_security`
   * :ref:`mcuboot:mcuboot_wrapper`
   * :ref:`mcuboot:mcuboot_ncs`
 
