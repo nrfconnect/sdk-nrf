@@ -185,8 +185,17 @@ For example, configure ``CONFIG_POWER_OPTIMIZATION_ENABLE`` to enable power opti
 In |SES|, select **Project** > **Configure nRF Connect SDK project** to browse and configure these options.
 Alternatively, use the command line tool ``menuconfig`` or configure the options directly in ``prj.conf``.
 
+.. external_antenna_note_start
+
+.. note::
+   For nRF9160 DK v0.15.0 and later, set the :option:`CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL` option to ``y`` when building the application to achieve the best external antenna performance.
+
+.. external_antenna_note_end
+
 This application supports the |NCS| :ref:`ug_bootloader`, but it is disabled by default.
 To enable the immutable bootloader, set ``CONFIG_SECURE_BOOT=y``.
+
+
 
 Testing
 =======
