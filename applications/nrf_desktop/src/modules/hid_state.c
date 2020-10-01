@@ -257,7 +257,9 @@ static void eventq_append(struct eventq *eventq, uint16_t usage_id, int16_t valu
 	struct item_event *hid_event = k_malloc(sizeof(*hid_event));
 
 	if (!hid_event) {
-		LOG_WRN("Failed to allocate HID event");
+		LOG_ERR("Failed to allocate HID event");
+		/* Should never happen. */
+		__ASSERT_NO_MSG(false);
 		return;
 	}
 
