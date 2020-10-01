@@ -19,7 +19,7 @@
 
 #define REG_INT CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_INTERVAL
 
-#define FLAGS_CONFIGURATION (BIT(FLAG_OCC_MODE))
+#define FLAGS_CONFIGURATION (BIT(FLAG_STARTED) | BIT(FLAG_OCC_MODE))
 
 enum flags {
 	FLAG_ON,
@@ -1226,6 +1226,8 @@ static void handle_prop_set(struct bt_mesh_model *mod,
 			bt_mesh_scene_invalidate(&srv->scene);
 		}
 	}
+
+	store(srv, FLAG_STORE_CFG);
 }
 
 static void handle_prop_set_unack(struct bt_mesh_model *mod,
@@ -1245,6 +1247,8 @@ static void handle_prop_set_unack(struct bt_mesh_model *mod,
 			bt_mesh_scene_invalidate(&srv->scene);
 		}
 	}
+
+	store(srv, FLAG_STORE_CFG);
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctrl_setup_srv_op[] = {
@@ -1383,6 +1387,11 @@ static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 	k_delayed_work_init(&srv->reg.timer, reg_step);
 #endif
 
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
+		bt_mesh_model_extend(mod, srv->onoff.model);
+		bt_mesh_model_extend(mod, srv->lightness->lightness_model);
+	}
+
 	net_buf_simple_init(srv->pub.msg, 0);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
@@ -1516,6 +1525,20 @@ static int lc_setup_srv_init(struct bt_mesh_model *mod)
 	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
 
 	srv->setup_srv = mod;
+
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
+		/* Model extensions:
+		 * To simplify the model extension tree, we're flipping the
+		 * relationship between the Light LC Server and the Light LC
+		 * Setup Server. In the specification, the Light LC Setup
+		 * Server extends the Light LC Server, which is the opposite of
+		 * what we're doing here. This makes no difference for the mesh
+		 * stack, but it makes it a lot easier to extend this model, as
+		 * we won't have to support multiple extenders.
+		 */
+		bt_mesh_model_extend(srv->model, srv->setup_srv);
+	}
+
 	net_buf_simple_init(srv->setup_pub.msg, 0);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
