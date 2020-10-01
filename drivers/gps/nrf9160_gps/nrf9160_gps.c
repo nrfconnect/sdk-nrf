@@ -614,7 +614,7 @@ set_configuration:
 				sizeof(gps_cfg.retry));
 
 	if ((retval == -1) && ((errno == EFAULT) || (errno == EBADF))) {
-		LOG_WRN("Failed to set fix retry value, "
+		LOG_DBG("Failed to set fix retry value, "
 			"will try to re-init GPS service");
 
 		nrf_close(drv_data->socket);
