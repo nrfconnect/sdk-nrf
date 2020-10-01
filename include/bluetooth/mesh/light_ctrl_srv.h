@@ -123,6 +123,8 @@ struct bt_mesh_light_ctrl_srv_reg {
 	struct k_delayed_work timer;
 	/** Internal integral sum. */
 	float i;
+	/** Previous output */
+	uint16_t prev;
 	/** Regulator configuration */
 	struct bt_mesh_light_ctrl_srv_reg_cfg cfg;
 };
