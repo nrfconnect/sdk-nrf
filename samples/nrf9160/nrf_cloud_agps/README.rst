@@ -44,6 +44,11 @@ You can enable or disable these features by setting the following configuration 
 * ``CONFIG_LTE_POWER_SAVING_MODE``
 * :option:`CONFIG_LTE_EDRX_REQ`
 
+.. include:: /applications/asset_tracker/README.rst
+   :start-after: external_antenna_note_start
+   :end-before: external_antenna_note_end
+
+
 Requirements
 ************
 
