@@ -324,8 +324,9 @@ static void enqueue_hid_report(struct enqueued_reports *enqueued_reports,
 	}
 
 	if (!item) {
-		LOG_ERR("OOM error");
-		module_set_state(MODULE_STATE_ERROR);
+		LOG_ERR("Dropped HID report");
+		/* Should never happen. */
+		__ASSERT_NO_MSG(false);
 	} else {
 		item->report = report;
 		sys_slist_append(&reports->list, &item->node);
