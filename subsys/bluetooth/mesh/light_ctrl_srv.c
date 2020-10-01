@@ -533,6 +533,11 @@ static void reg_step(struct k_work *work)
 
 	/* Output value is max out of regulator and configured level. */
 	if (output > lvl) {
+		if (output == srv->reg.prev) {
+			return;
+		}
+
+		srv->reg.prev = output;
 		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
 		light_set(srv, light_to_repr(output, LINEAR), REG_INT);
 	} else if (atomic_test_and_clear_bit(&srv->flags, FLAG_REGULATOR)) {
