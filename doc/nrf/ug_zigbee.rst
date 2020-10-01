@@ -13,6 +13,7 @@ See :ref:`zigbee_samples` for the list of available Zigbee samples.
    :caption: Subpages:
 
    ug_zigbee_overview.rst
+   ug_zigbee_architectures.rst
    ug_zigbee_configuring.rst
    ug_zigbee_configuring_libraries.rst
    ug_zigbee_tools.rst
