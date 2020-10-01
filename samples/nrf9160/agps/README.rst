@@ -134,6 +134,13 @@ Testing
 	  +CEREG: 1,"7725","0138E000",7,,,"00000010","00000110"
 	  I: Network registration status: Connected - home network
 
+   .. note::
+      If the credentials on the device are used to connect to nRF Cloud for the first time, the device will be disconnected, and a :cpp:enumerator:`CLOUD_EVT_DISCONNECTED <cloud_api::CLOUD_EVT_DISCONNECTED>` event will be logged on the terminal.
+      This happens due to the configuring of the device on the cloud by `AWS IoT Just-in-time-provisioning`_ and the subsequent termination of the connection.
+      In general, the devices reconnect automatically.
+      However, for the simplicity of the sample, reconnection is not implemented.
+      Hence you must reset the device manually.
+
 #. Make sure that GPS has started by confirming that the device requests GPS assistance data and receives a response.
    You can do this by checking the logs.
 
