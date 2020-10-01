@@ -110,6 +110,21 @@ struct bt_mesh_light_ctrl_cli_handlers {
 		     struct bt_mesh_msg_ctx *ctx,
 		     enum bt_mesh_light_ctrl_prop id,
 		     const struct sensor_value *value);
+
+	/** @brief Light LC Regulator Coefficient status handler.
+	 *
+	 *  The Light Lightness Control Server's Regulator Coeffients control
+	 *  its Illuminance Regulator's response.
+	 *
+	 *  @param[in] cli   Client that received the message.
+	 *  @param[in] ctx   Context of the message.
+	 *  @param[in] id    ID of the property.
+	 *  @param[in] value Value of the property.
+	 */
+	void (*coeff)(struct bt_mesh_light_ctrl_cli *cli,
+		     struct bt_mesh_msg_ctx *ctx,
+		     enum bt_mesh_light_ctrl_coeff id,
+		     float value);
 };
 
 /** @brief Light Lightness Control Client instance.
@@ -194,8 +209,7 @@ int bt_mesh_light_ctrl_cli_mode_set(struct bt_mesh_light_ctrl_cli *cli,
  *                     parameters.
  *  @param[in] enabled The new Mode to set.
  *
- *  @retval 0              Successfully sent the message and populated the @c
- *                         rsp buffer.
+ *  @retval 0              Successfully sent the message.
  *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  *                         not configured.
  *  @retval -EAGAIN        The device has not been provisioned.
@@ -272,8 +286,7 @@ int bt_mesh_light_ctrl_cli_occupancy_enabled_set(
  *                     parameters.
  *  @param[in] enabled The new Occupancy Mode to set.
  *
- *  @retval 0              Successfully sent the message and populated the @c
- *                         rsp buffer.
+ *  @retval 0              Successfully sent the message.
  *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  *                         not configured.
  *  @retval -EAGAIN        The device has not been provisioned.
@@ -353,8 +366,7 @@ int bt_mesh_light_ctrl_cli_light_onoff_set(struct bt_mesh_light_ctrl_cli *cli,
  *                  to override the Server's default fade time, or @c transition
  *                  may be set to NULL.
  *
- *  @retval 0              Successfully sent the message and populated the @c
- *                         rsp buffer.
+ *  @retval 0              Successfully sent the message.
  *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  *                         not configured.
  *  @retval -EAGAIN        The device has not been provisioned.
@@ -432,11 +444,10 @@ int bt_mesh_light_ctrl_cli_prop_set(struct bt_mesh_light_ctrl_cli *cli,
  *  @param[in]  cli Client model to send on.
  *  @param[in]  ctx Message context, or NULL to use the configured publish
  *                  parameters.
- *  @param[in]  id  Light Lightness Control Server property to get.
+ *  @param[in]  id  Light Lightness Control Server property to set.
  *  @param[in]  val New property value.
  *
- *  @retval 0              Successfully sent the message and populated the @c
- *                         rsp buffer.
+ *  @retval 0              Successfully sent the message.
  *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  *                         not configured.
  *  @retval -EAGAIN        The device has not been provisioned.
@@ -445,6 +456,79 @@ int bt_mesh_light_ctrl_cli_prop_set_unack(struct bt_mesh_light_ctrl_cli *cli,
 					  struct bt_mesh_msg_ctx *ctx,
 					  enum bt_mesh_light_ctrl_prop id,
 					  const struct sensor_value *val);
+
+/** @brief Get a Light Lightness Control Server Regulator Coefficient value.
+ *
+ *  Regulator coefficients are the configuration parameters for the Light
+ *  Lightness Control Server Illuminance Regulator.
+ *
+ *  @param[in]  cli Client model to send on.
+ *  @param[in]  ctx Message context, or NULL to use the configured publish
+ *                  parameters.
+ *  @param[in]  id  Light Lightness Control Server coefficient to get.
+ *  @param[in]  rsp Coefficient value response buffer, or NULL to keep from
+ *                  blocking.
+ *
+ *  @retval 0              Successfully sent the message and populated the @c
+ *                         rsp buffer.
+ *  @retval -EALREADY      A blocking request is already in progress.
+ *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ *                         not configured.
+ *  @retval -EAGAIN        The device has not been provisioned.
+ *  @retval -ETIMEDOUT     The request timed out without a response.
+ */
+int bt_mesh_light_ctrl_cli_coeff_get(struct bt_mesh_light_ctrl_cli *cli,
+				     struct bt_mesh_msg_ctx *ctx,
+				     enum bt_mesh_light_ctrl_coeff id,
+				     float *rsp);
+
+/** @brief Set a Light Lightness Control Server Regulator Coefficient value.
+ *
+ *  Regulator coefficients are the configuration parameters for the Light
+ *  Lightness Control Server Illuminance Regulator.
+ *
+ *  @param[in]  cli Client model to send on.
+ *  @param[in]  ctx Message context, or NULL to use the configured publish
+ *                  parameters.
+ *  @param[in]  id  Light Lightness Control Server coefficient to set.
+ *  @param[in]  val New coefficient value.
+ *  @param[in]  rsp Coefficient value response buffer, or NULL to keep from
+ *                  blocking.
+ *
+ *  @retval 0              Successfully sent the message and populated the @c
+ *                         rsp buffer.
+ *  @retval -EALREADY      A blocking request is already in progress.
+ *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ *                         not configured.
+ *  @retval -EAGAIN        The device has not been provisioned.
+ *  @retval -ETIMEDOUT     The request timed out without a response.
+ */
+int bt_mesh_light_ctrl_cli_coeff_set(struct bt_mesh_light_ctrl_cli *cli,
+				     struct bt_mesh_msg_ctx *ctx,
+				     enum bt_mesh_light_ctrl_coeff id,
+				     float val, float *rsp);
+
+/** @brief Set a Light Lightness Control Server Regulator Coefficient value
+ *         without requesting a response.
+ *
+ *  Regulator coefficients are the configuration parameters for the Light
+ *  Lightness Control Server Illuminance Regulator.
+ *
+ *  @param[in]  cli Client model to send on.
+ *  @param[in]  ctx Message context, or NULL to use the configured publish
+ *                  parameters.
+ *  @param[in]  id  Light Lightness Control Server coefficient to set.
+ *  @param[in]  val New coefficient value.
+ *
+ *  @retval 0              Successfully sent the message.
+ *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ *                         not configured.
+ *  @retval -EAGAIN        The device has not been provisioned.
+ */
+int bt_mesh_light_ctrl_cli_coeff_set_unack(struct bt_mesh_light_ctrl_cli *cli,
+					   struct bt_mesh_msg_ctx *ctx,
+					   enum bt_mesh_light_ctrl_coeff id,
+					   float val);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_light_ctrl_cli_op[];
