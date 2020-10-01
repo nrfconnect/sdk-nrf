@@ -455,12 +455,15 @@ static void user_property_set(struct bt_mesh_model *mod,
 		goto respond;
 	}
 
+	net_buf_simple_add_u8(&rsp, prop->user_access);
+
 	if (!(prop->user_access & BT_MESH_PROP_ACCESS_WRITE) ||
 	    IS_MFR_SRV(owner_srv->mod)) {
-		return;
+		/* IF write is not supported, we should only send the ID
+		 * and user_access as a response.
+		 */
+		goto respond;
 	}
-
-	net_buf_simple_add_u8(&rsp, prop->user_access);
 
 	struct bt_mesh_prop_val value = {
 		.meta = *prop,
