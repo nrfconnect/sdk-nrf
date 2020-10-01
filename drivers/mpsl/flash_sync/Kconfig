@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+if SOC_FLASH_NRF
+
+choice SOC_FLASH_NRF_RADIO_SYNC_CHOICE
+	prompt "Nordic nRFx flash driver synchronization"
+	default SOC_FLASH_NRF_RADIO_SYNC_MPSL if MPSL
+
+config SOC_FLASH_NRF_RADIO_SYNC_MPSL
+	bool "Nordic nRFx flash driver synchronized using MPSL"
+	depends on MPSL
+	help
+	  Enable synchronization between flash memory driver and MPSL.
+
+endchoice
+
+endif
+
+config SOC_FLASH_NRF_RADIO_SYNC_MPSL_TIMESLOT_SESSION_COUNT
+	int
+	default 1 if SOC_FLASH_NRF_RADIO_SYNC_MPSL
+	default 0

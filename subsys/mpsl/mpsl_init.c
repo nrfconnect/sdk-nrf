@@ -27,10 +27,16 @@ static struct k_thread signal_thread_data;
 static K_THREAD_STACK_DEFINE(signal_thread_stack,
 			     CONFIG_MPSL_SIGNAL_STACK_SIZE);
 
-#if CONFIG_MPSL_TIMESLOT_SESSION_COUNT > 0
+#define MPSL_TIMESLOT_SESSION_COUNT (\
+	CONFIG_MPSL_TIMESLOT_SESSION_COUNT + \
+	CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL_TIMESLOT_SESSION_COUNT)
+BUILD_ASSERT(MPSL_TIMESLOT_SESSION_COUNT <= MPSL_TIMESLOT_CONTEXT_COUNT_MAX,
+	     "Too many timeslot sessions");
+
+#if MPSL_TIMESLOT_SESSION_COUNT > 0
 #define TIMESLOT_MEM_SIZE \
 	((MPSL_TIMESLOT_CONTEXT_SIZE) * \
-	(CONFIG_MPSL_TIMESLOT_SESSION_COUNT))
+	(MPSL_TIMESLOT_SESSION_COUNT))
 static uint8_t __aligned(4) timeslot_context[TIMESLOT_MEM_SIZE];
 #endif
 
@@ -140,9 +146,9 @@ static int mpsl_lib_init(const struct device *dev)
 		return err;
 	}
 
-#if CONFIG_MPSL_TIMESLOT_SESSION_COUNT > 0
+#if MPSL_TIMESLOT_SESSION_COUNT > 0
 	err = mpsl_timeslot_session_count_set((void *) timeslot_context,
-			CONFIG_MPSL_TIMESLOT_SESSION_COUNT);
+			MPSL_TIMESLOT_SESSION_COUNT);
 	if (err) {
 		return err;
 	}
