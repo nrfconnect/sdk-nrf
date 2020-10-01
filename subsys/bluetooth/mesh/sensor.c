@@ -360,7 +360,7 @@ int sensor_cadence_encode(struct net_buf_simple *buf,
 
 	const struct bt_mesh_sensor_format *delta_format =
 		(threshold->delta.type == BT_MESH_SENSOR_DELTA_PERCENT) ?
-			&bt_mesh_sensor_format_percentage_16 :
+			&bt_mesh_sensor_format_percentage_delta_trigger :
 			sensor_type->channels[0].format;
 	int err;
 
@@ -412,7 +412,7 @@ int sensor_cadence_decode(struct net_buf_simple *buf,
 	}
 
 	delta_format = (threshold->delta.type == BT_MESH_SENSOR_DELTA_PERCENT) ?
-			       &bt_mesh_sensor_format_percentage_16 :
+			       &bt_mesh_sensor_format_percentage_delta_trigger :
 			       sensor_type->channels[0].format;
 
 	err = sensor_ch_decode(buf, delta_format, &threshold->delta.down);

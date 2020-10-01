@@ -417,6 +417,10 @@ FORMAT(percentage_16) = SCALAR_FORMAT_MAX(2,
 					  percent,
 					  SCALAR(1e-2, 0),
 					  10000);
+FORMAT(percentage_delta_trigger) = SCALAR_FORMAT(2,
+					  (UNSIGNED),
+					  percent,
+					  SCALAR(1e-2, 0));
 
 /*******************************************************************************
  * Environmental formats

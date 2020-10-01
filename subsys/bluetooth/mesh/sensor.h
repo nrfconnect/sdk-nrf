@@ -27,6 +27,7 @@ extern "C" {
 /* Percentage formats */
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_percentage_8;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_percentage_16;
+extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_percentage_delta_trigger;
 
 /* Environmental formats */
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_temp_8;
