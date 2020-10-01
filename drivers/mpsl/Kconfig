@@ -5,3 +5,4 @@
 #
 
 rsource "clock_control/Kconfig"
+rsource "flash_sync/Kconfig"
