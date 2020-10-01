@@ -18,7 +18,7 @@ Requirements
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf5340pdk_nrf5340_cpuapp
+   :rows: nrf9160dk_nrf9160, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52dk_nrf52832, nrf5340pdk_nrf5340_cpuapp
 
 * The following pins shorted:
 
