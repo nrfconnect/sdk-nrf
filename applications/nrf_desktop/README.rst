@@ -161,15 +161,22 @@ Memory allocation
 
 Most of memory resources that are used by the application are allocated statically.
 
-The application uses dynamic allocation for creating the event manager events.
-For more information, see the :ref:`event_manager` page.
+The application uses dynamic allocation to:
 
-When configuring HEAP, remember to set both :option:`CONFIG_HEAP_MEM_POOL_SIZE` and :option:`CONFIG_HEAP_MEM_POOL_MIN_SIZE` to match typical event size and system needs.
+* Create the event manager events.
+  For more information, see the :ref:`event_manager` page.
+* Temporarily store the HID-related data in the :ref:`nrf_desktop_hid_state` and :ref:`nrf_desktop_hid_forward`.
+  For more information, see the documentation pages of these modules.
+
+When configuring HEAP, make sure that the values for the following options match the typical event size and the system needs:
+
+* :option:`CONFIG_HEAP_MEM_POOL_SIZE` - The size must be big enough to handle the worst possible use case for the given device.
+* :option:`CONFIG_HEAP_MEM_POOL_MIN_SIZE`
 
 .. important::
-    Zephyr's heap allocator divides larger blocks into four smaller blocks.
-    This behavior impacts both the performance and the memory usage.
-    For more information, refer to Zephyr's documentation at :ref:`heap_v2` and :ref:`memory_pools_v2`.
+    The nRF Desktop uses ``k_heap`` as the backend for dynamic allocation.
+    This backend is used by default in Zephyr.
+    For more information, refer to Zephyr's documentation about :ref:`zephyr:heap_v2`.
 
 HID mouse data forwarding
 =========================
