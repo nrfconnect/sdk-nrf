@@ -351,6 +351,8 @@
 
 .. _`Stack commissioning start sequence`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss_api_doc/using_zigbee__z_c_l.html#stack_start_initiation
 
+.. _`ZBOSS Open Initiative (ZOI)`: https://dsr-zoi.com/
+
 .. ### Links to crypto specs
 
 .. _`NIST - AES`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/block-ciphers#AES
