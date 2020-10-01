@@ -321,7 +321,7 @@ comment "Target Illuminance"
 config BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON
 	int "Default target illuminance in the On state"
 	range 0 167772
-	default 167772
+	default 500
 	help
 	  Target ambient illuminance for the On state (in lux). May be
 	  reconfigured at runtime by other models in the mesh network.
@@ -329,7 +329,7 @@ config BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON
 config BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG
 	int "Default target illuminance in the Prolong state"
 	range 0 167772
-	default 83886
+	default 80
 	help
 	  Target ambient illuminance for the Prolong state (in lux). May be
 	  reconfigured at runtime by other models in the mesh network.
