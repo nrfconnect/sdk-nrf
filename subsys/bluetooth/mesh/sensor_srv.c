@@ -459,7 +459,7 @@ static void cadence_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 				    &threshold);
 	if (err) {
 		BT_WARN("Invalid cadence");
-		goto respond;
+		return;
 	}
 
 	BT_DBG("Min int: %u div: %u "
