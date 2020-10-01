@@ -8,6 +8,15 @@
 #include "model_utils.h"
 #include "light_ctrl_internal.h"
 
+union prop_value {
+	struct sensor_value prop;
+	float coeff;
+};
+struct prop_status_ctx {
+	uint16_t id;
+	union prop_value val;
+};
+
 static void handle_mode(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf)
 {
@@ -111,32 +120,50 @@ static void handle_prop(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct prop_status_ctx *rsp = cli->ack.user_data;
 	const struct bt_mesh_sensor_format *format;
-	struct sensor_value value;
+	union prop_value value;
 	int err;
 
 	uint16_t id = net_buf_simple_pull_le16(buf);
+	bool coeff = (id == BT_MESH_LIGHT_CTRL_COEFF_KID ||
+		      id == BT_MESH_LIGHT_CTRL_COEFF_KIU ||
+		      id == BT_MESH_LIGHT_CTRL_COEFF_KPD ||
+		      id == BT_MESH_LIGHT_CTRL_COEFF_KPU);
 
-	format = prop_format_get(id);
-	if (!format) {
-		return;
-	}
+	if (coeff) {
+		if (buf->len != sizeof(float)) {
+			return;
+		}
 
-	err = sensor_ch_decode(buf, format, &value);
-	if (err) {
-		return;
+		memcpy(&value.coeff,
+		       net_buf_simple_pull_mem(buf, sizeof(float)),
+		       sizeof(float));
+	} else {
+		format = prop_format_get(id);
+		if (!format) {
+			return;
+		}
+
+		err = sensor_ch_decode(buf, format, &value.prop);
+		if (err) {
+			return;
+		}
 	}
 
 	if (model_ack_match(&cli->ack, BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,
-			    ctx)) {
-		struct sensor_value *ack_buf = cli->ack.user_data;
+			    ctx) && rsp->id == id) {
 
-		*ack_buf = value;
+		rsp->val = value;
 		model_ack_rx(&cli->ack);
 	}
 
-	if (cli->handlers && cli->handlers->prop) {
-		cli->handlers->prop(cli, ctx, id, &value);
+	if (coeff) {
+		if (cli->handlers && cli->handlers->coeff) {
+			cli->handlers->coeff(cli, ctx, id, value.coeff);
+		}
+	} else if (cli->handlers && cli->handlers->prop) {
+		cli->handlers->prop(cli, ctx, id, &value.prop);
 	}
 }
 
@@ -282,12 +309,26 @@ int bt_mesh_light_ctrl_cli_prop_get(struct bt_mesh_light_ctrl_cli *cli,
 				    enum bt_mesh_light_ctrl_prop id,
 				    struct sensor_value *rsp)
 {
+	struct prop_status_ctx ack = {
+		.id = id,
+	};
+	int err;
+
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_PROP_GET, 2);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_PROP_GET);
 	net_buf_simple_add_le16(&buf, id);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
-			       BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, rsp);
+	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
+	if (err) {
+		return err;
+	}
+
+	if (rsp) {
+		*rsp = ack.val.prop;
+	}
+
+	return 0;
 }
 
 int bt_mesh_light_ctrl_cli_prop_set(struct bt_mesh_light_ctrl_cli *cli,
@@ -297,6 +338,9 @@ int bt_mesh_light_ctrl_cli_prop_set(struct bt_mesh_light_ctrl_cli *cli,
 				    struct sensor_value *rsp)
 {
 	const struct bt_mesh_sensor_format *format;
+	struct prop_status_ctx ack = {
+		.id = id,
+	};
 	int err;
 
 	BT_MESH_MODEL_BUF_DEFINE(
@@ -315,8 +359,17 @@ int bt_mesh_light_ctrl_cli_prop_set(struct bt_mesh_light_ctrl_cli *cli,
 		return err;
 	}
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
-			       BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, rsp);
+	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
+	if (err) {
+		return err;
+	}
+
+	if (rsp) {
+		*rsp = ack.val.prop;
+	}
+
+	return 0;
 }
 
 int bt_mesh_light_ctrl_cli_prop_set_unack(struct bt_mesh_light_ctrl_cli *cli,
@@ -342,6 +395,76 @@ int bt_mesh_light_ctrl_cli_prop_set_unack(struct bt_mesh_light_ctrl_cli *cli,
 	if (err) {
 		return err;
 	}
+
+	return model_send(cli->model, ctx, &buf);
+}
+
+int bt_mesh_light_ctrl_cli_coeff_get(struct bt_mesh_light_ctrl_cli *cli,
+				     struct bt_mesh_msg_ctx *ctx,
+				     enum bt_mesh_light_ctrl_coeff id,
+				     float *rsp)
+{
+	struct prop_status_ctx ack = {
+		.id = id,
+	};
+	int err;
+
+	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_PROP_GET, 2);
+	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_PROP_GET);
+	net_buf_simple_add_le16(&buf, id);
+
+	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
+	if (err) {
+		return err;
+	}
+
+	if (rsp) {
+		*rsp = ack.val.coeff;
+	}
+
+	return 0;
+}
+
+int bt_mesh_light_ctrl_cli_coeff_set(struct bt_mesh_light_ctrl_cli *cli,
+				     struct bt_mesh_msg_ctx *ctx,
+				     enum bt_mesh_light_ctrl_coeff id,
+				     float val, float *rsp)
+{
+	struct prop_status_ctx ack = {
+		.id = id,
+	};
+	int err;
+
+	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_PROP_SET,
+				 2 + sizeof(float));
+	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_PROP_SET);
+	net_buf_simple_add_le16(&buf, id);
+	net_buf_simple_add_mem(&buf, &val, sizeof(float));
+
+	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
+	if (err) {
+		return err;
+	}
+
+	if (rsp) {
+		*rsp = ack.val.coeff;
+	}
+
+	return 0;
+}
+
+int bt_mesh_light_ctrl_cli_coeff_set_unack(struct bt_mesh_light_ctrl_cli *cli,
+					   struct bt_mesh_msg_ctx *ctx,
+					   enum bt_mesh_light_ctrl_coeff id,
+					   float val)
+{
+	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_PROP_SET_UNACK,
+				 2 + sizeof(float));
+	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_PROP_SET_UNACK);
+	net_buf_simple_add_le16(&buf, id);
+	net_buf_simple_add_mem(&buf, &val, sizeof(float));
 
 	return model_send(cli->model, ctx, &buf);
 }

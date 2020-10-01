@@ -84,42 +84,6 @@ enum bt_mesh_light_ctrl_prop {
 	BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY =
 		BT_MESH_PROP_ID_LIGHT_CTRL_REG_ACCURACY,
 
-	/** Regulator downwards integral coeffient (Kid).
-	 *
-	 *  - Unit: Unitless
-	 *  - Encoding: 32 bit floating point.
-	 *  - Range: 0 to 1000.0
-	 */
-	BT_MESH_LIGHT_CTRL_PROP_REG_KID =
-		BT_MESH_PROP_ID_LIGHT_CTRL_REG_KID,
-
-	/** Regulator upwards integral coeffient (Kiu).
-	 *
-	 *  - Unit: Unitless
-	 *  - Encoding: 32 bit floating point.
-	 *  - Range: 0 to 1000.0
-	 */
-	BT_MESH_LIGHT_CTRL_PROP_REG_KIU =
-		BT_MESH_PROP_ID_LIGHT_CTRL_REG_KIU,
-
-	/** Regulator downwards proportional coeffient (Kpd).
-	 *
-	 *  - Unit: Unitless
-	 *  - Encoding: 32 bit floating point.
-	 *  - Range: 0 to 1000.0
-	 */
-	BT_MESH_LIGHT_CTRL_PROP_REG_KPD =
-		BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPD,
-
-	/** Regulator upwards proportional coeffient (Kpu).
-	 *
-	 *  - Unit: Unitless
-	 *  - Encoding: 32 bit floating point.
-	 *  - Range: 0 to 1000.0
-	 */
-	BT_MESH_LIGHT_CTRL_PROP_REG_KPU =
-		BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPU,
-
 	/** Fade time for fading to the Prolong state.
 	 *
 	 *  - Unit: Seconds
@@ -182,6 +146,41 @@ enum bt_mesh_light_ctrl_prop {
 	 */
 	BT_MESH_LIGHT_CTRL_PROP_TIME_ON =
 		BT_MESH_PROP_ID_LIGHT_CTRL_TIME_RUN_ON,
+};
+
+/** Light Control Regulator Coefficients */
+enum bt_mesh_light_ctrl_coeff {
+	/** Regulator downwards integral coeffient (Kid).
+	 *
+	 *  - Unit: Unitless
+	 *  - Encoding: 32 bit floating point.
+	 *  - Range: 0 to 1000.0
+	 */
+	BT_MESH_LIGHT_CTRL_COEFF_KID = BT_MESH_PROP_ID_LIGHT_CTRL_REG_KID,
+
+	/** Regulator upwards integral coeffient (Kiu).
+	 *
+	 *  - Unit: Unitless
+	 *  - Encoding: 32 bit floating point.
+	 *  - Range: 0 to 1000.0
+	 */
+	BT_MESH_LIGHT_CTRL_COEFF_KIU = BT_MESH_PROP_ID_LIGHT_CTRL_REG_KIU,
+
+	/** Regulator downwards proportional coeffient (Kpd).
+	 *
+	 *  - Unit: Unitless
+	 *  - Encoding: 32 bit floating point.
+	 *  - Range: 0 to 1000.0
+	 */
+	BT_MESH_LIGHT_CTRL_COEFF_KPD = BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPD,
+
+	/** Regulator upwards proportional coeffient (Kpu).
+	 *
+	 *  - Unit: Unitless
+	 *  - Encoding: 32 bit floating point.
+	 *  - Range: 0 to 1000.0
+	 */
+	BT_MESH_LIGHT_CTRL_COEFF_KPU = BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPU,
 };
 
 /** @cond INTERNAL_HIDDEN */

@@ -289,10 +289,16 @@ static uint16_t light_get(struct bt_mesh_light_ctrl_srv *srv)
 	return start + ((end - start) * curr) / srv->fade.duration;
 }
 
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+
+static float sensor_to_float(struct sensor_value *val)
+{
+	return val->val1 + val->val2 / 1000000.0f;
+}
+
 static void lux_get(struct bt_mesh_light_ctrl_srv *srv,
 		    struct sensor_value *lux)
 {
-#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	if (!is_enabled(srv)) {
 		memset(lux, 0, sizeof(*lux));
 		return;
@@ -310,10 +316,35 @@ static void lux_get(struct bt_mesh_light_ctrl_srv *srv,
 	uint32_t centi_lux = init + ((cfg - init) * delta) / srv->fade.duration;
 
 	from_centi_lux(centi_lux, lux);
-#else
-	memset(lux, 0, sizeof(*lux));
-#endif
 }
+
+static float lux_getf(struct bt_mesh_light_ctrl_srv *srv)
+{
+	if (!is_enabled(srv)) {
+		return 0.0f;
+	}
+
+	if (atomic_test_bit(&srv->flags, FLAG_TRANSITION) &&
+	    srv->fade.duration) {
+		uint32_t delta = curr_fade_time(srv);
+		float init = sensor_to_float(&srv->fade.initial_lux);
+		float cfg = sensor_to_float(&srv->reg.cfg.lux[srv->state]);
+
+		return init + ((cfg - init) * delta) / srv->fade.duration;
+	}
+
+	return to_centi_lux(&srv->reg.cfg.lux[srv->state]) / 100.0f;
+}
+
+#else
+
+static void lux_get(struct bt_mesh_light_ctrl_srv *srv,
+		    struct sensor_value *lux)
+{
+	memset(lux, 0, sizeof(*lux));
+}
+
+#endif
 
 static void transition_start(struct bt_mesh_light_ctrl_srv *srv,
 			     enum bt_mesh_light_ctrl_srv_state state,
@@ -427,7 +458,7 @@ static void prolong(struct bt_mesh_light_ctrl_srv *srv)
 static void ctrl_enable(struct bt_mesh_light_ctrl_srv *srv)
 {
 	atomic_set_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
-	BT_DBG("Light Control Enabled\n");
+	BT_DBG("Light Control Enabled");
 	transition_start(srv, LIGHT_CTRL_STATE_STANDBY, 0);
 	reg_start(srv);
 }
@@ -461,40 +492,38 @@ static void reg_step(struct k_work *work)
 		return;
 	}
 
-	struct sensor_value raw_lux;
+	k_delayed_work_submit(&srv->reg.timer, K_MSEC(REG_INT));
 
-	lux_get(srv, &raw_lux);
+	float target = lux_getf(srv);
+	float ambient = sensor_to_float(&srv->ambient_lux);
+	float error = target - ambient;
 
-	uint32_t lux = raw_lux.val1;
-	uint32_t ambient = srv->ambient_lux.val1;
-
-	int32_t error = lux - ambient;
 	/* Accuracy should be in percent and both up and down: */
-	uint32_t accuracy = (srv->reg.cfg.accuracy * lux) / (2 * 100);
-	int16_t input;
-	uint16_t output;
+	float accuracy = (srv->reg.cfg.accuracy * target) / (2 * 100.0f);
 
+	float input;
 	if (error > accuracy) {
 		input = error - accuracy;
 	} else if (error < -accuracy) {
 		input = error + accuracy;
 	} else {
-		return;
+		input = 0.0f;
 	}
 
+	float kp, ki;
 	if (input >= 0) {
-		int32_t p = input * srv->reg.cfg.kpu;
-		int32_t i = (input * REG_INT * srv->reg.cfg.kiu) / MSEC_PER_SEC;
-
-		srv->reg.i = MIN(UINT16_MAX, srv->reg.i + i);
-		output = MIN(UINT16_MAX, srv->reg.i + p);
+		kp = srv->reg.cfg.kpu;
+		ki = srv->reg.cfg.kiu;
 	} else {
-		int32_t p = input * srv->reg.cfg.kpd;
-		int32_t i = (input * REG_INT * srv->reg.cfg.kid) / MSEC_PER_SEC;
-
-		srv->reg.i = MAX(0, srv->reg.i + i);
-		output = MAX(0, srv->reg.i + p);
+		kp = srv->reg.cfg.kpd;
+		ki = srv->reg.cfg.kid;
 	}
+
+	srv->reg.i += (input * ki) * ((float)REG_INT / (float)MSEC_PER_SEC);
+	srv->reg.i = MIN(UINT16_MAX, MAX(0, srv->reg.i));
+
+	float p = input * kp;
+	uint16_t output = MIN(UINT16_MAX, MAX(0, (srv->reg.i + p)));
 
 	/* The regulator output is always in linear format. We'll convert to
 	 * the configured representation again before calling the Lightness
@@ -509,8 +538,6 @@ static void reg_step(struct k_work *work)
 	} else if (atomic_test_and_clear_bit(&srv->flags, FLAG_REGULATOR)) {
 		light_set(srv, light_to_repr(lvl, LINEAR), REG_INT);
 	}
-
-	k_delayed_work_submit(&srv->reg.timer, K_MSEC(REG_INT));
 }
 #endif
 
@@ -952,21 +979,23 @@ static int prop_get(struct net_buf_simple *buf,
 		    const struct bt_mesh_light_ctrl_srv *srv, uint16_t id)
 {
 	struct sensor_value val = { 0 };
-
 	switch (id) {
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KID:
-		val.val1 = srv->reg.cfg.kid;
-		break;
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KIU:
-		val.val1 = srv->reg.cfg.kiu;
-		break;
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KPD:
-		val.val1 = srv->reg.cfg.kpd;
-		break;
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KPU:
-		val.val1 = srv->reg.cfg.kpu;
-		break;
+	/* Regulator coefficients are raw IEEE-754 floats, push them straight
+	 * to the buffer instead of using sensor to encode them:
+	 */
+	case BT_MESH_LIGHT_CTRL_COEFF_KID:
+		net_buf_simple_add_mem(buf, &srv->reg.cfg.kid, sizeof(float));
+		return 0;
+	case BT_MESH_LIGHT_CTRL_COEFF_KIU:
+		net_buf_simple_add_mem(buf, &srv->reg.cfg.kiu, sizeof(float));
+		return 0;
+	case BT_MESH_LIGHT_CTRL_COEFF_KPD:
+		net_buf_simple_add_mem(buf, &srv->reg.cfg.kpd, sizeof(float));
+		return 0;
+	case BT_MESH_LIGHT_CTRL_COEFF_KPU:
+		net_buf_simple_add_mem(buf, &srv->reg.cfg.kpu, sizeof(float));
+		return 0;
 	case BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY:
 		val.val1 = srv->reg.cfg.accuracy;
 		break;
@@ -980,10 +1009,10 @@ static int prop_get(struct net_buf_simple *buf,
 		val = srv->reg.cfg.lux[LIGHT_CTRL_STATE_STANDBY];
 		break;
 #else
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KID:
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KIU:
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KPD:
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KPU:
+	case BT_MESH_LIGHT_CTRL_COEFF_KID:
+	case BT_MESH_LIGHT_CTRL_COEFF_KIU:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPD:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPU:
 	case BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY:
 	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON:
 	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG:
@@ -1033,6 +1062,34 @@ static int prop_set(struct net_buf_simple *buf,
 	struct sensor_value val;
 	int err;
 
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	/* Regulator coefficients are raw IEEE-754 floats, pull them straight
+	 * from the buffer instead of using sensor to decode them:
+	 */
+	switch (id) {
+	case BT_MESH_LIGHT_CTRL_COEFF_KID:
+		memcpy(&srv->reg.cfg.kid,
+		       net_buf_simple_pull_mem(buf, sizeof(float)),
+		       sizeof(float));
+		return 0;
+	case BT_MESH_LIGHT_CTRL_COEFF_KIU:
+		memcpy(&srv->reg.cfg.kiu,
+		       net_buf_simple_pull_mem(buf, sizeof(float)),
+		       sizeof(float));
+		return 0;
+	case BT_MESH_LIGHT_CTRL_COEFF_KPD:
+		memcpy(&srv->reg.cfg.kpd,
+		       net_buf_simple_pull_mem(buf, sizeof(float)),
+		       sizeof(float));
+		return 0;
+	case BT_MESH_LIGHT_CTRL_COEFF_KPU:
+		memcpy(&srv->reg.cfg.kpu,
+		       net_buf_simple_pull_mem(buf, sizeof(float)),
+		       sizeof(float));
+		return 0;
+	}
+#endif
+
 	err = prop_decode(buf, id, &val);
 	if (err) {
 		return err;
@@ -1042,18 +1099,6 @@ static int prop_set(struct net_buf_simple *buf,
 
 	switch (id) {
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KID:
-		srv->reg.cfg.kid = val.val1;
-		break;
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KIU:
-		srv->reg.cfg.kiu = val.val1;
-		break;
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KPD:
-		srv->reg.cfg.kpd = val.val1;
-		break;
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KPU:
-		srv->reg.cfg.kpu = val.val1;
-		break;
 	case BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY:
 		srv->reg.cfg.accuracy = val.val1;
 		break;
@@ -1067,10 +1112,10 @@ static int prop_set(struct net_buf_simple *buf,
 		srv->reg.cfg.lux[LIGHT_CTRL_STATE_STANDBY] = val;
 		break;
 #else
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KID:
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KIU:
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KPD:
-	case BT_MESH_LIGHT_CTRL_PROP_REG_KPU:
+	case BT_MESH_LIGHT_CTRL_COEFF_KID:
+	case BT_MESH_LIGHT_CTRL_COEFF_KIU:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPD:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPU:
 	case BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY:
 	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON:
 	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG:

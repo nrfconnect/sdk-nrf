@@ -105,14 +105,14 @@ struct bt_mesh_light_ctrl_srv_cfg {
 struct bt_mesh_light_ctrl_srv_reg_cfg {
 	/** Target illuminance values */
 	struct sensor_value lux[LIGHT_CTRL_STATE_COUNT];
-	/** Regulator positive integral coefficient */
-	uint16_t kiu;
-	/** Regulator negative integral coefficient */
-	uint16_t kid;
-	/** Regulator positive propotional coefficient */
-	uint16_t kpu;
-	/** Regulator negative propotional coefficient */
-	uint16_t kpd;
+	/** Regulator upwards integral coefficient */
+	float kiu;
+	/** Regulator downwards integral coefficient */
+	float kid;
+	/** Regulator upwards propotional coefficient */
+	float kpu;
+	/** Regulator downwards propotional coefficient */
+	float kpd;
 	/** Regulator dead zone (in percent) */
 	uint8_t accuracy;
 };
@@ -122,7 +122,7 @@ struct bt_mesh_light_ctrl_srv_reg {
 	/** Regulator step timer */
 	struct k_delayed_work timer;
 	/** Internal integral sum. */
-	uint16_t i;
+	float i;
 	/** Regulator configuration */
 	struct bt_mesh_light_ctrl_srv_reg_cfg cfg;
 };

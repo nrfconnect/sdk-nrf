@@ -302,14 +302,11 @@ For each step, the regulator:
 #. Multiplies this sum by an integral coefficient.
 #. Summarizes the sum with the raw difference multiplied by a proportional coefficient.
 
-Both the internal integral sum and the output level is represented as an unsigned 16-bit integer.
+The error, the regulator coefficients, and the internal sum, are represented as 32-bit floating point values.
+The resulting output level is represented as an unsigned 16-bit integer.
 
 To reduce noise, the regulator has a configurable accuracy property, which allows it to ignore errors smaller than the configured accuracy (represented as a percentage of the light level).
 See :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY` and :c:enumerator:`BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY` for more information.
-
-.. note::
-   The illuminance regulator implementation only supports integers in its configuration.
-   The fractional part of coefficients, accuracy, and target levels is ignored.
 
 Sensor input
 ------------
