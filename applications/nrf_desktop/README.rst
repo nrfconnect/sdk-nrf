@@ -28,7 +28,9 @@ An application event can be submitted by multiple modules and it can have multip
 Module and component overview
 =============================
 
-The following figure shows all of nRF Desktop modules and how they relate with other components and the :ref:`event_manager`.
+The following figure shows the nRF Desktop modules and how they relate with other components and the :ref:`event_manager`.
+The figure does not present all the available modules.
+For example, the figure does not include the modules that are used as hotfixes or only for debug or profiling purposes.
 
 .. figure:: /images/nrf_desktop_arch.svg
    :scale: 25 %
@@ -36,7 +38,7 @@ The following figure shows all of nRF Desktop modules and how they relate with o
 
    Application high-level design overview (click to enlarge)
 
-For more information about each of these modules, see the :ref:`nrf_desktop_app_internal_modules` section.
+For more information about each of nRF Desktop modules, see the :ref:`nrf_desktop_app_internal_modules` section.
 
 Module event tables
 -------------------
@@ -496,11 +498,10 @@ The assignments of hardware interface elements depend on the device type.
              nRF Desktop gaming mouse - side view
 
           * Short-press to initialize the peer selection.
+            (The **LED1** changes color and starts blinking.)
             During the peer selection:
 
-            1. Short-press to select the next peer.
-               The **LED1** changes color and starts blinking.
-            #. Short-press to toggle between available peers.
+            1. Short-press to toggle between available peers.
                The **LED1** changes color for each peer and keeps blinking.
             #. Double-press to confirm the peer selection.
                The peer is changed after the confirmation.
@@ -545,9 +546,7 @@ The assignments of hardware interface elements depend on the device type.
         * Short-press the Page Down key to initialize the peer selection.
           During the peer selection:
 
-          1. Short-press to select the next peer.
-             **LED1** changes color to red and starts blinking.
-          #. Short-press to toggle between available peers.
+          1. Short-press to toggle between available peers.
              **LED1** blinks rapidly for each peer.
              The amount of blinks corresponds to the number assigned to a peer: one blink for peer 1, two blinks for peer 2, and so on.
           #. Double-press to confirm the peer selection.
@@ -859,17 +858,28 @@ Sample mouse, keyboard or dongle (nrf52840dk_nrf52840)
       * Inputs are simulated based on the hardware button presses.
       * The configuration with bootloader is available.
 
+Sample dongle (nrf52833dk_nrf52833)
+      * The configuration uses the nRF52833 Development Kit.
+      * The application is configured to act as both mouse and keyboard.
+      * Bluetooth uses Nordic's SoftDevice link layer and is configured to act as a central.
+        Input data comes from Bluetooth and is retransmitted to USB.
+
 nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
       * The reference design used is defined in :file:`nrf/boards/arm/nrf52kbd_nrf52832` for the project-specific hardware.
       * The application is configured to act as a keyboard, with the Bluetooth LE transport enabled.
       * Bluetooth is configured to use Nordic's SoftDevice link layer.
       * |preconfigured_build_types|
 
-nRF52840 USB Dongle (nrf52840dongle_nrf52840)
-      * This configuration uses Nordic's nRF52840 dongle defined in Zephyr.
-      * Since the reference design is generic, project-specific changes are applied in the DTS overlay file.
+nRF52840 USB Dongle (nrf52840dongle_nrf52840) and nRF52833 USB Dongle (nrf52833dongle_nrf52833)
+      * Since the nRF52840 Dongle is generic and defined in Zephyr, project-specific changes are applied in the DTS overlay file.
       * The application is configured to act as both mouse and keyboard.
       * Bluetooth uses Nordic's SoftDevice link layer and is configured to act as a central.
+        Input data comes from Bluetooth and is retransmitted to USB.
+      * |preconfigured_build_types|
+
+nRF52820 USB Dongle (nrf52820dongle_nrf52820)
+      * The application is configured to act as both mouse and keyboard.
+      * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * |preconfigured_build_types|
 
