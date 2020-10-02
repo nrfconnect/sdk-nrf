@@ -31,6 +31,7 @@ config OPENTHREAD_NRF_SECURITY
 	  if available as well as fast oberon backend for software encryption.
 
 config OPENTHREAD_MBEDTLS_LIB_NAME
+	string "Mbed TLS linked libraries"
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc310 mbedcrypto_oberon mbedcrypto_vanilla" if CC310_BACKEND && OBERON_BACKEND && MBEDTLS_VANILLA_BACKEND
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc310 mbedcrypto_oberon" if CC310_BACKEND && OBERON_BACKEND
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc310 mbedcrypto_vanilla" if CC310_BACKEND && MBEDTLS_VANILLA_BACKEND
