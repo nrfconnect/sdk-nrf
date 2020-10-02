@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 3.13.1)
 
 set(NRF_SUPPORTED_BOARDS
   nrf5340pdk_nrf5340_cpuapp
+  nrf5340dk_nrf5340_cpuapp
   )
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
