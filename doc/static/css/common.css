@@ -204,6 +204,19 @@ div.numbered-step>h6::before {
 }
 
 
+/* change the bullet item for links to subpages */
+
+.toctree-wrapper ul li {
+  list-style: none !important;
+}
+
+.toctree-wrapper ul li::before {
+  content: "\27A4";
+  padding-right: 10px;
+  color: #444;
+}
+
+
 /* add styling for a local ToC */
 
 .contents.local {
