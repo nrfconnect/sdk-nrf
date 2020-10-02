@@ -36,6 +36,12 @@
 #undef ZB_CONFIG_SCHEDULER_Q_SIZE
 #define ZB_CONFIG_SCHEDULER_Q_SIZE 24
 
+/**
+ * Increase OTA transfer time by extending the APS duplicate rejection table.
+ * This value must be less than the amount of possible APS counter values (256).
+ */
+#undef ZB_CONFIG_APS_DUPS_TABLE_SIZE
+#define ZB_CONFIG_APS_DUPS_TABLE_SIZE 64
 
 /* Memory context definitions. */
 #include "zb_mem_config_context.h"
