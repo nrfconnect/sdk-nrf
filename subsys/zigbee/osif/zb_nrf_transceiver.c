@@ -406,6 +406,11 @@ zb_time_t osif_sub_trans_timer(zb_time_t t2, zb_time_t t1)
 	return ZB_TIME_SUBTRACT(t2, t1);
 }
 
+zb_bool_t zb_trans_rx_pending(void)
+{
+	return k_fifo_is_empty(&rx_fifo) ? ZB_FALSE : ZB_TRUE;
+}
+
 zb_uint8_t zb_trans_get_next_packet(zb_bufid_t buf)
 {
 	zb_uint8_t *data_ptr;
