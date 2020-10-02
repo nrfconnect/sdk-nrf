@@ -16,6 +16,7 @@ Samples showcase a single feature or library, while applications include a varie
 
 .. toctree::
    :maxdepth: 2
+   :caption: Subpages:
 
    applications
    samples

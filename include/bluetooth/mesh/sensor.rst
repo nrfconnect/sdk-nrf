@@ -153,12 +153,7 @@ Typically, settings should only be meta data related to the sensor data type, bu
 Available sensor types
 **********************
 
-All available sensor types are collected in a single module:
-
-.. toctree::
-   :maxdepth: 1
-
-   sensor_types.rst
+All available sensor types are collected in the :ref:`bt_mesh_sensor_types_readme` module.
 
 .. _bt_mesh_sensor_publishing:
 

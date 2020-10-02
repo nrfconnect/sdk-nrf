@@ -8,6 +8,7 @@ They introduce you to important concepts and guide you through developing your a
 
 .. toctree::
    :maxdepth: 2
+   :caption: Subpages:
 
    ug_app_dev
    ug_dev_model

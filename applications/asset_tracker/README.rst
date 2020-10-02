@@ -247,7 +247,7 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`lte_lc_readme`
 * |NCS| modules abstracted via the LwM2M carrier OS abstraction layer (:file:`lwm2m_os.h`)
 
-.. include:: /../../lib/bin/lwm2m_carrier/lwm2m_carrier.rst
+.. include:: /../../lib/bin/lwm2m_carrier/doc/app_integration.rst
   :start-after: lwm2m_osal_mod_list_start
   :end-before: lwm2m_osal_mod_list_end
 

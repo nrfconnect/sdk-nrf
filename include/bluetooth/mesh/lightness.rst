@@ -16,20 +16,8 @@ The relationship between the *Actual* and the *Linear* representations is the fo
 
 Bindings with other states are always made to the *Actual* representation.
 
-The following Light Lightness models are supported:
-
-.. toctree::
-   :maxdepth: 1
-   :glob:
-
-   lightness_srv.rst
-   lightness_cli.rst
-
-The Light Lightness models also feature their own common types, listed in the `Common types`_ section below.
+The Light Lightness models also feature their own common types, listed below.
 For types common to all models, see :ref:`bt_mesh_models`.
-
-Configuration
-=============
 
 The application can select whether to use the Actual or Linear representation.
 To do so, use the following options in the API at compile time:
@@ -39,8 +27,19 @@ To do so, use the following options in the API at compile time:
 
 Internally, the models will always support both representations, so nodes with different representations can be be used interchangeably.
 
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :caption: Subpages:
+
+   lightness_srv.rst
+   lightness_cli.rst
+
+
 Common types
-============
+************
+
+This section lists the types common to the Light Lightness mesh models.
 
 | Header file: :file:`include/bluetooth/mesh/lightness.h`
 

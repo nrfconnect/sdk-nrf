@@ -13,15 +13,6 @@ If you want to implement your own polling device, you can use the supplied parse
 .. note::
    You need additional hardware for reading NFC tags.
 
-Currently, the following NDEF libraries are supported:
-
-.. toctree::
-   :maxdepth: 1
-   :glob:
-
-   ../../include/nfc/ndef/*
-
-
 The NFC NDEF libraries are used in the following samples:
 
 * :ref:`record_text`
@@ -29,3 +20,10 @@ The NFC NDEF libraries are used in the following samples:
 * :ref:`nfc_tag_reader`
 * :ref:`nfc_tnep_tag`
 * :ref:`nfc_tnep_poller`
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :caption: Subpages:
+
+   ../../include/nfc/ndef/*

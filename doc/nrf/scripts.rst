@@ -10,6 +10,7 @@ Here you can find documentation for these scripts.
 .. toctree::
    :maxdepth: 1
    :glob:
+   :caption: Subpages:
 
    ../../scripts/shell/*/*
    ../../scripts/hid_configurator/*
