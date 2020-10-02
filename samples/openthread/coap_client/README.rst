@@ -120,7 +120,7 @@ Activating sample extensions
 To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
 
 * For the Minimal Thread Device variant, set :file:`overlay-mtd.conf`.
-* For the Multiprotocol BLE extension, set :file:`overlay-multiprotocol_ble.conf`.
+* For the Multiprotocol Bluetooth LE extension, set :file:`overlay-multiprotocol_ble.conf`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 

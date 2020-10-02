@@ -128,7 +128,7 @@ When running ``plot_from_files.py`` or ``real_time_plot.py``, the profiled event
 When displaying Event Manager events, submissions are marked as dots.
 Processing of the events is displayed as rectangles, visualizing the processing time.
 
-Use the **start/stop** button below the plot to pause or resume real time plot translation.
+Use the :guilabel:`start/stop` button below the plot to pause or resume real time plot translation.
 Scroll to zoom in or out.
 When paused, scrolling zooms to the cursor location.
 When plotting in real time, scrolling zooms to the right edge of the plot.

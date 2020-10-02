@@ -150,7 +150,7 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
   .. note::
      The :file:`overlay-fota.conf` file can be used only for nRF52840 DK.
 
-* For the Multiprotocol BLE extension, set :file:`overlay-multiprotocol_ble.conf`.
+* For the Multiprotocol Bluetooth LE extension, set :file:`overlay-multiprotocol_ble.conf`.
   Check :ref:`gs_programming_board_names` for the board name to use instead of the ``nrf52840dk_nrf52840``.
 
 See :ref:`cmake_options` for instructions on how to add this option.
