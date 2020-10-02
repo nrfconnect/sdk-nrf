@@ -10,5 +10,6 @@ Here you can find documentation for these libraries, including API documentation
 .. toctree::
    :maxdepth: 1
    :glob:
+   :caption: Subpages:
 
    libraries/*

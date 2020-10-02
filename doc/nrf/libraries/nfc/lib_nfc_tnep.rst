@@ -12,5 +12,6 @@ The |NCS| provides libraries to implement TNEP for both the polling device and t
 .. toctree::
    :maxdepth: 1
    :glob:
+   :caption: Subpages:
 
    ../../include/nfc/tnep/*

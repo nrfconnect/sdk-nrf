@@ -12,7 +12,7 @@ Here you can find documentation for drivers in the |NCS|, including API document
 
 .. toctree::
    :maxdepth: 1
-   :caption: Drivers:
+   :caption: Subpages:
    :glob:
 
    drivers/*

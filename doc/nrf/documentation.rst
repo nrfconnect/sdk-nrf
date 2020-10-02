@@ -15,6 +15,7 @@ API documentation is extracted from the source code and included with the librar
 
 .. toctree::
    :maxdepth: 2
+   :caption: Subpages:
 
    doc_build
    doc_styleguide

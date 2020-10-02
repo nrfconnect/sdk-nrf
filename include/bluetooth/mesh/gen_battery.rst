@@ -5,20 +5,22 @@ Generic Battery models
 
 The Generic Battery models allow remote monitoring of the battery status of a mesh device.
 
-The following Generic Battery models are supported:
+The Generic Battery models also feature their own common types, listed below.
+For types common to all models, see :ref:`bt_mesh_models`.
 
 .. toctree::
    :maxdepth: 1
    :glob:
+   :caption: Subpages:
 
    gen_battery_srv.rst
    gen_battery_cli.rst
 
-The Generic Battery models also feature their own common types, listed in the section below.
-For types common to all models, see :ref:`bt_mesh_models`.
 
 Common types
-=============
+************
+
+This section lists the types common to the Generic Battery mesh models.
 
 | Header file: :file:`include/bluetooth/mesh/gen_battery.h`
 

@@ -1516,10 +1516,15 @@ Application internal modules
 
 The nRF Desktop application uses its own set of internal modules.
 See `Module and component overview`_ for more information.
-For more information about each application module and its configuration details, see the following pages:
+More information about each application module and its configuration details is available on the subpages.
+
+Each module documentation page has a table that shows the relations between module event.
+`Module event tables`_ for some modules include extensive lists of source and sink modules.
+These are valid for events that have many listeners or sources, and are gathered on the :ref:`nrf_desktop_event_rel_modules` subpage.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Subpages:
 
    doc/main.rst
    doc/battery_charger.rst
@@ -1563,17 +1568,6 @@ For more information about each application module and its configuration details
    doc/wheel.rst
    doc/constlat.rst
    doc/hfclk_lock.rst
-
-Source and sink modules
-=======================
-
-Each module documentation page has a table that shows the relations between module event.
-`Module event tables`_ for some modules include extensive lists of source and sink modules.
-These are valid for events that have many listeners or sources, and are shared from the following page:
-
-.. toctree::
-   :maxdepth: 1
-
    doc/event_rel_modules.rst
 
 .. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.

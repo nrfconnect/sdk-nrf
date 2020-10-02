@@ -10,6 +10,7 @@ See the :ref:`ug_nfc` user guide for an overview of the technology and informati
 .. toctree::
    :maxdepth: 1
    :glob:
+   :caption: Subpages:
 
    nfc/lib_nfc_t2t
    nfc/lib_nfc_t4t

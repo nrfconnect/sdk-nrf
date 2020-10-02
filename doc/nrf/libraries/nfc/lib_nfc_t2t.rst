@@ -10,10 +10,10 @@ See the :ref:`ug_nfc` user guide for information about :ref:`ug_nfc_programming`
 
 Additionally, the |NCS| provides libraries for reading Type 2 Tags.
 Note that these require an NFC polling device.
-The following libraries are provided:
 
 .. toctree::
    :maxdepth: 1
    :glob:
+   :caption: Subpages:
 
    ../../include/nfc/t2t/*

@@ -15,5 +15,6 @@ For detailed information on how to run them, see :ref:`zephyr:test-framework`.
 .. toctree::
    :maxdepth: 1
    :glob:
+   :caption: Subpages:
 
    ../../tests/*/README

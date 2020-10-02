@@ -7,21 +7,23 @@ The Color-Tunable Light (CTL) models allow remote control and configuration of C
 The Light CTL models can represent the lightness states on a linear or preceptually uniform lightness scale.
 See :ref:`bt_mesh_lightness_readme` for details.
 
-The following Light CTL models are supported:
+The Light CTL models also feature their own common types, listed below.
+For types common to all models, see :ref:`bt_mesh_models`.
 
 .. toctree::
    :maxdepth: 1
    :glob:
+   :caption: Subpages:
 
    light_ctl_cli.rst
    light_ctl_srv.rst
    light_temp_srv.rst
 
-The Light CTL models also feature their own common types, listed in the `Common types`_ section below.
-For types common to all models, see :ref:`bt_mesh_models`.
 
 Common types
 ============
+
+This section lists the types common to the Light CTL mesh models.
 
 | Header file: :file:`include/bluetooth/mesh/light_ctl.h`
 

@@ -12,6 +12,6 @@ You can find the templates in ``ncs/nrf/doc/nrf/templates``. This folder also co
 .. toctree::
    :maxdepth: 1
    :glob:
-   :caption: Available templates:
+   :caption: Subpages:
 
    templates/*_README
