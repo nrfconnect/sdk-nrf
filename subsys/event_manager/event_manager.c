@@ -14,6 +14,12 @@
 LOG_MODULE_REGISTER(event_manager, CONFIG_DESKTOP_EVENT_MANAGER_LOG_LEVEL);
 
 
+/* Event manager uses orphan sections. Below tag will allow linker to
+ * find a section usable to put the orphan sections next to.
+ */
+const struct {} linker_tag __attribute__((__section__("event_manager"))) __used;
+
+
 static void event_processor_fn(struct k_work *work);
 
 
