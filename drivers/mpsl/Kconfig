@@ -6,3 +6,9 @@
 
 rsource "clock_control/Kconfig"
 rsource "flash_sync/Kconfig"
+
+if SENSOR
+
+rsource "temp_nrf5/Kconfig"
+
+endif # SENSOR
