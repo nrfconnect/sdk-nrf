@@ -23,7 +23,7 @@ Editing :file:`CMakeList.txt` directly
 
 Add all files that your application uses to the ``target_sources`` function in :file:`CMakeList.txt`.
 To include several files, it can be useful to specify them with a wildcard.
-For example, to include all ``.c`` files from the ``src`` folder, add the following lines to your :file:`CMakeList.txt`::
+For example, to include all :file:`.c` files from the :file:`src` folder, add the following lines to your :file:`CMakeList.txt`::
 
    FILE(GLOB app_sources src/*.c)
    target_sources(app PRIVATE ${app_sources})
@@ -58,7 +58,7 @@ In the window that is displayed, you can define compilation options for the proj
 
 .. note::
    These compilation options apply to the application project only.
-   To manage Zephyr and other subsystems, go to :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
+   To manage Zephyr and other subsystems, go to :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project`.
 
 
 SES tags in :file:`CMakeLists.txt`
@@ -149,7 +149,7 @@ You can provide additional options for building your application to the CMake pr
 These options are specified when CMake is run, thus not during the actual build, but when configuring the build.
 
 If you work with SES, this configuration takes place when you open an |NCS| project, and you must therefore provide the CMake options before you open the project.
-To specify CMake options, click :guilabel:`Tools` > :guilabel:`Options`, select the :guilabel:`nRF Connect` tab, and specify a value for :guilabel:`Additional CMake options`.
+To specify CMake options, click :guilabel:`Tools` -> :guilabel:`Options`, select the :guilabel:`nRF Connect` tab, and specify a value for :guilabel:`Additional CMake options`.
 
 If you work on the command line, pass the additional options to the ``west build`` command.
 The options must be added after a ``--`` at the end of the command.
@@ -163,7 +163,7 @@ Configuring build types
 .. build_types_overview_start
 
 Build types enable you to use different sets of configuration options for each board.
-You can create several build type ``.conf`` files per board and select one of them when building the application.
+You can create several build type :file:`.conf` files per board and select one of them when building the application.
 This means that you do not have to use one :file:`prj.conf` file for your project and modify it each time to fit your needs.
 
 .. build_types_overview_end

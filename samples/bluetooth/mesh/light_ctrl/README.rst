@@ -70,8 +70,7 @@ Other nodes can control the Light Lightness Server through the Light Control Ser
 
 For more details, see :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_light_ctrl_srv_readme`.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` and the
-:ref:`zephyr:pwm_api` API to control the LEDs on the board.
+The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the board.
 
 Requirements
 ************

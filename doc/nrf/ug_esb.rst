@@ -123,7 +123,7 @@ Setting up an ESB application
 Perform the following steps to set up an application to send and receive packets:
 
 1. Initialize ESB using :c:func:`esb_init`.
-   You can use the default parameters in :c:macro:`ESB_DEFAULT_CONFIG` as starting point for the **p_config** parameter and reconfigure them if needed.
+   You can use the default parameters in :c:macro:`ESB_DEFAULT_CONFIG` as starting point for the ``p_config`` parameter and reconfigure them if needed.
 #. If necessary, use any of the folowing functions to update the addresses, the address prefix, the channel, and the bitrate:
 
    * :c:func:`esb_set_base_address_0`

@@ -292,7 +292,7 @@ share_size: list
    If the target partition is the ``app`` or a partition that spans over the ``app``, the size is effectively split between them, because the size of the ``app`` is dynamically decided.
 
    If none of the partitions in the ``share_size`` list exists, and the partition does not define a ``size`` property, then the partition is removed.
-   If none of the partitions in the ``share_size`` list exists, and the partition **does** define a ``size`` property, then the ``size`` property is used to set the size.
+   If none of the partitions in the ``share_size`` list exists, and the partition *does* define a ``size`` property, then the ``size`` property is used to set the size.
 
 region: string
    Specify the region where a partition should be placed.

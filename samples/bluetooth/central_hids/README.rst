@@ -77,31 +77,31 @@ Testing with another board
       Subscribe to report id: 1
       Subscribe to boot keyboard report
 
-#. Press Button 1 and Button 2 one after another on the board that runs the keyboard sample and observe the notification values in the terminal window.
+#. Press **Button 1** and **Button 2** one after another on the board that runs the keyboard sample and observe the notification values in the terminal window.
    See :ref:`peripheral_hids_keyboard` for the expected values::
 
       Notification, id: 1, size: 8, data: 0x0 0x0 0xb 0x0 0x0 0x0 0x0 0x0
       Notification, id: 1, size: 8, data: 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
 
-#. Press Button 2 on the board that runs the Central HIDS sample and observe that the protocol mode is updated into boot mode::
+#. Press **Button 2** on the board that runs the Central HIDS sample and observe that the protocol mode is updated into boot mode::
 
       Setting protocol mode: BOOT
 
-#. Press Button 1 and Button 2 one after another on the board that runs the keyboard sample and observe the notification of the boot report values::
+#. Press **Button 1** and **Button 2** one after another on the board that runs the keyboard sample and observe the notification of the boot report values::
 
       Notification, keyboard boot, size: 8, data: 0x0 0x0 0xf 0x0 0x0 0x0 0x0 0x0
       Notification, keyboard boot, size: 8, data: 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
 
 
-#. Press Button 1 and Button 3 one after another on the Central HIDS board and observe that LED 1 on the keyboard board changes its state.
+#. Press **Button 1** and **Button 3** one after another on the Central HIDS board and observe that **LED 1** on the keyboard board changes its state.
    The following information is also displayed in the terminal window.
 
-   If Button 1 was pressed::
+   If **Button 1** was pressed::
 
       Caps lock send (val: 0x2)
       Caps lock sent
 
-   If Button 3 was pressed::
+   If **Button 3** was pressed::
 
       Caps lock send using write with response (val: 0x2)
       Capslock write result: 0
@@ -114,12 +114,12 @@ Testing with nRF Connect for Desktop
 1. |connect_terminal_specific|
 #. Reset the board.
 #. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
-#. Go to the **Server setup** tab.
-   Click the dongle configuration and select **Load setup**.
+#. Go to the :guilabel:`Server setup` tab.
+   Click the dongle configuration and select :guilabel:`Load setup`.
    Load the ``hids_keyboard.ncs`` file that is located under :file:`samples/bluetooth/central_hids` in the |NCS| folder structure.
-#. Click **Apply to device**.
-#. Go to the **Connection Map** tab.
-   Click the dongle configuration and select **Advertising setup**.
+#. Click :guilabel:`Apply to device`.
+#. Go to the :guilabel:`Connection Map` tab.
+   Click the dongle configuration and select :guilabel:`Advertising setup`.
 
    The current version of nRF Connect cannot store the advertising setup, so it must be configured manually.
    See the following image for the required target configuration:
@@ -139,9 +139,9 @@ Testing with nRF Connect for Desktop
    #. Add a **UUID 16 bit complete list** with two comma-separated values: ``1812`` and ``180F``.
       These are the values for HIDS and BAS.
    #. Add a **Complete local name** of your choice to the **Scan response data**.
-   #. Click **Apply** and **Close**.
+   #. Click :guilabel:`Apply` and :guilabel:`Close`.
 
-#. In the Adapter settings, choose **Start advertising**.
+#. In the Adapter settings, choose :guilabel:`Start advertising`.
 #. Wait until the board that runs the Central HIDS sample connects.
    All detected descriptors are listed.
    Check for information similar to the following::
@@ -150,10 +150,10 @@ Testing with nRF Connect for Desktop
       Subscribe in report id: 1
       Subscribe in boot keyboard report
 
-#. Explore the first report inside **Human Interface Device** (the one with eight values).
+#. Explore the first report inside Human Interface Device (the one with eight values).
    Change any of the values and note that the board logs the change.
-#. Press Button 2 on the board and observe that the **Protocol Mode** value changes from ``01`` to ``00``.
-#. Press Button 1 and Button 3 one after another and observe that the **Boot Keyboard Output Report** value toggles between ``00`` and ``02``.
+#. Press **Button 2** on the board and observe that the Protocol Mode value changes from ``01`` to ``00``.
+#. Press **Button 1** and **Button 3** one after another and observe that the Boot Keyboard Output Report value toggles between ``00`` and ``02``.
 
 Dependencies
 *************

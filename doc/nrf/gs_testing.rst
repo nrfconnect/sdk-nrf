@@ -92,7 +92,7 @@ To connect to the nRF9160-based board with LTE Link Monitor, perform the followi
 
 #. Connect the nRF9160-based board to the PC with a USB cable.
 #. Power on the nRF9160-based board.
-#. Click **Select Device** and select the particular board entry from the drop-down list in the LTE Link Monitor.
+#. Click :guilabel:`Select Device` and select the particular board entry from the drop-down list in the LTE Link Monitor.
 #. Observe that the LTE Link monitor app starts AT communication with the modem of the nRF9160-based board and shows the status of the communication in the display terminal.
    The app also displays any information that is logged on UART.
 

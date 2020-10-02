@@ -60,7 +60,7 @@ Check and configure the following library options that are used by the sample:
 * :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Specifies the device ID, which is used when connecting to Azure IoT Hub or when DPS is enabled.
 
 .. note::
-   If the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is disabled, the device ID must be set in ``prj.conf``.
+   If the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is disabled, the device ID must be set in :file:`prj.conf`.
    If the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is enabled, the device ID must be provided using the :c:struct:`azure_iot_hub_config` configuration struct in a call to the :c:func:`azure_iot_hub_init` function.
 
 Building and running

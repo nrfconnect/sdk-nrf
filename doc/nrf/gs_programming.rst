@@ -25,7 +25,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    If you have installed the |NCS| using the :ref:`gs_app_tcm`, click :guilabel:`Open IDE` next to the version you installed to start SES.
    If you have installed SES manually, run :file:`bin/emStudio`.
 
-#. Select **File -> Open nRF Connect SDK Project**.
+#. Select :guilabel:`File` -> :guilabel:`Open nRF Connect SDK Project`.
 
     .. figure:: images/ses_open.png
        :alt: Open nRF Connect SDK Project menu
@@ -34,11 +34,11 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
 #. To import a project into SES, you must specify the following information:
 
-   * **CMakeLists.txt** - the location of the :file:`CMakeLists.txt` project file of the sample that you want to work with
-   *  **Board Directory** - the location of the board description of the board for which to build the project
-   *  **Board Name** - the board name (select from the list that is populated based on the board directory)
-   * **Build Directory** - the folder in which to run the build (automatically filled based on the board name, but you can specify a different directory)
-   * **Delete Existing CMakeCache.txt** - select this option to ensure that you are not building with an outdated build cache
+   * CMakeLists.txt - the location of the :file:`CMakeLists.txt` project file of the sample that you want to work with
+   *  Board Directory - the location of the board description of the board for which to build the project
+   *  Board Name - the board name (select from the list that is populated based on the board directory)
+   * Build Directory - the folder in which to run the build (automatically filled based on the board name, but you can specify a different directory)
+   * Delete Existing CMakeCache.txt - select this option to ensure that you are not building with an outdated build cache
 
 .. build_SES_projimport_open_end
 
@@ -51,7 +51,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
 .. build_SES_projimport_start
 
-4. Click **OK** to import the project into SES. You can now work with the
+4. Click :guilabel:`OK` to import the project into SES. You can now work with the
    project in the IDE.
 
 .. build_SES_projimport_note_start
@@ -87,18 +87,17 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    To build and program an application:
 
       a. Select your project in the Project Explorer.
-      #. From the menu, select **Build -> Build Solution**.
+      #. From the menu, select :guilabel:`Build` -> :guilabel:`Build Solution`.
       #. When the build completes, you can program the sample to a connected board:
 
-         * For a single-image application, select **Target -> Download zephyr/zephyr.elf**.
-         * For a multi-image application, select **Target -> Download zephyr/merged.hex**.
+         * For a single-image application, select :guilabel:`Target` -> :guilabel:`Download zephyr/zephyr.elf`.
+         * For a multi-image application, select :guilabel:`Target` -> :guilabel:`Download zephyr/merged.hex`.
 
       .. note::
-	   Alternatively, choose the **Build and Debug** option.
-	   **Build and Debug** will build the application and program it when
-	   the build completes.
+	   Alternatively, choose the :guilabel:`Build and Debug` option.
+	   :guilabel:`Build and Debug` will build the application and program it when the build completes.
 
-#. To inspect the details of the code that was programmed and the memory usage, click **Debug -> Go**.
+#. To inspect the details of the code that was programmed and the memory usage, click :guilabel:`Debug` -> :guilabel:`Go`.
 
    .. note::
    	In a multi-image build, this allows you to debug the source code of your application only.
@@ -135,7 +134,7 @@ Complete the following steps to build |NCS| projects on the command line after c
 
       .. note::
 
-	     To build from a directory other than the sample or application directory, run the west build command with an additional parameter *directory_name*,  specifying the sample or application directory.
+	     To build from a directory other than the sample or application directory, run the west build command with an additional parameter ``directory_name``,  specifying the sample or application directory.
 
       See `Board names <Board names_>`_ for more information on the development boards.
       To reuse an existing build directory for building another sample or application for another board, pass ``-p=auto`` to ``west build``.
