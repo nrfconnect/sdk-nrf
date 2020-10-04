@@ -8,6 +8,7 @@ menu "BLE HID Client"
 
 config DESKTOP_HID_FORWARD_ENABLE
 	bool "Enable HID forward"
+	depends on BT_GATT_HIDS_C
 	depends on BT_CENTRAL
 	depends on !DESKTOP_HID_STATE_ENABLE
 	help
@@ -21,8 +22,11 @@ config DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS
 	default 2
 	range 1 255
 	help
-	  The USB can forward one report at a time. If busy the incoming report
-	  will be enqueued.
+	  A single instance of HID-class USB device can forward one report
+	  at a time. If busy the incoming report will be enqueued.
+
+	  The limit is defined separately for every HID input report type of
+	  a given Bluetooth peripheral.
 
 module = DESKTOP_HID_FORWARD
 module-str = HID over GATT client
