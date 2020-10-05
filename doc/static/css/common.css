@@ -59,6 +59,17 @@ div.figure {
  padding-top: 10px;
 }
 
+/* differentiate more between headings */
+
+h5 {
+ font-size: 105%;
+}
+
+h6 {
+ font-size: 90%;
+}
+
+
 /* Background colors for the different sets */
 .ncs {
  background-color: #00a9ce;
