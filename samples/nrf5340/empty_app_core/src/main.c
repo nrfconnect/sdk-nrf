@@ -59,6 +59,11 @@ static int network_gpio_allow(const struct device *dev)
 					GPIO_PIN_CNF_MCUSEL_Pos);
 	}
 
+	for (uint32_t i = 0; i < P1_PIN_NUM; i++) {
+		NRF_P1_S->PIN_CNF[i] = (GPIO_PIN_CNF_MCUSEL_NetworkMCU <<
+					GPIO_PIN_CNF_MCUSEL_Pos);
+	}
+
 
 	return 0;
 }
