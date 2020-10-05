@@ -52,7 +52,7 @@ static void thread1_fn(void)
 
 static void thread2_fn(void)
 {
-	k_timer_start(&test_timer, K_MSEC(2), 0);
+	k_timer_start(&test_timer, K_MSEC(2), K_NO_WAIT);
 	send_event(SOURCE_T2, true);
 }
 

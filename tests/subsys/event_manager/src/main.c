@@ -12,6 +12,15 @@
 static enum test_id cur_test_id;
 static K_SEM_DEFINE(test_end_sem, 0, 1);
 
+/* Provide custom assert post action handler to handle the assertion on OOM
+ * error in Event Manager.
+ */
+BUILD_ASSERT(!IS_ENABLED(CONFIG_ASSERT_NO_FILE_INFO));
+void assert_post_action(const char *file, unsigned int line)
+{
+       printk("assert_post_action - file: %s (line: %u)\n", file, line);
+}
+
 void test_init(void)
 {
 	zassert_false(event_manager_init(), "Error when initializing");
