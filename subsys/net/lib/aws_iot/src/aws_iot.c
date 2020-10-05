@@ -2,7 +2,6 @@
 #include <net/mqtt.h>
 #include <net/socket.h>
 #include <net/cloud.h>
-#include <random/rand32.h>
 #include <stdio.h>
 
 #if defined(CONFIG_AWS_FOTA)
@@ -484,7 +483,7 @@ static int topic_subscribe(void)
 		const struct mqtt_subscription_list app_sub_list = {
 			.list = app_topic_data.list,
 			.list_count = app_topic_data.list_count,
-			.message_id = sys_rand32_get()
+			.message_id = k_cycle_get_32()
 		};
 
 		for (size_t i = 0; i < app_sub_list.list_count; i++) {
@@ -502,7 +501,7 @@ static int topic_subscribe(void)
 		const struct mqtt_subscription_list aws_sub_list = {
 			.list = (struct mqtt_topic *)&aws_iot_rx_list,
 			.list_count = ARRAY_SIZE(aws_iot_rx_list),
-			.message_id = sys_rand32_get()
+			.message_id = k_cycle_get_32()
 		};
 
 		for (size_t i = 0; i < aws_sub_list.list_count; i++) {
