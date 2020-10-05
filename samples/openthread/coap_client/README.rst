@@ -150,15 +150,15 @@ After building the sample and programming it to your development kit, test it by
 Testing Minimal Thread Device
 -----------------------------
 
-After building the MTD variant of this sample and programming it, the device starts in the MED mode with **LED 3** on.
-This means that the radio is enabled when idle and the serial console is operating.
-You can switch to the SED mode at any moment during the standard testing procedure.
+After building the MTD variant of this sample and programming it, the device starts in the SED mode with **LED 3** off.
+This means that the radio is disabled when idle and the serial console is not working to decrease the power consumption.
+You can switch to the MED mode at any moment during the standard testing procedure.
 
-To toggle SED, press **Button 3** on the client node.
-**LED 3** turns off to indicate the switch to the SED mode.
-At this point, the radio is disabled when it is idle and the serial console is not working to decrease the power consumption.
+To toggle MED, press **Button 3** on the client node.
+**LED 3** turns on to indicate the switch to the MED mode.
+At this point, the radio is enabled when it is idle and the serial console is operating.
 
-Pressing **Button 3** again will switch the mode back to MED.
+Pressing **Button 3** again will switch the mode back to SED.
 Switching between SED and MED modes does not affect the standard testing procedure, but terminal logs are not available in the SED mode.
 
 .. _coap_client_sample_testing_ble:
