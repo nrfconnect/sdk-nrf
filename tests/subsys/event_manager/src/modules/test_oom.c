@@ -11,7 +11,7 @@
 #include <data_event.h>
 
 #define MODULE test_oom
-#define TEST_EVENTS_CNT 100
+#define TEST_EVENTS_CNT 150
 
 static struct data_event *event_tab[TEST_EVENTS_CNT];
 static bool oom_error;
