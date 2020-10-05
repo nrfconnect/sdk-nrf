@@ -578,15 +578,15 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		aws_iot_notify_event(&aws_iot_evt);
 
 		if (!mqtt_evt->param.connack.session_present_flag) {
-			int res = topic_subscribe();
+			err = topic_subscribe();
 
-			if (res < 0) {
+			if (err < 0) {
 				aws_iot_evt.type = AWS_IOT_EVT_ERROR;
 				aws_iot_evt.data.err = err;
 				aws_iot_notify_event(&aws_iot_evt);
 				break;
 			}
-			if (res == 0) {
+			if (err == 0) {
 				/* There were not topics to subscribe to. */
 				aws_iot_evt.type = AWS_IOT_EVT_READY;
 				aws_iot_notify_event(&aws_iot_evt);
