@@ -1445,6 +1445,8 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
 			ctrl_enable(srv);
 		} else {
+			light_set(srv, 0,
+				  srv->lightness->ponoff.dtt.transition_time);
 			ctrl_disable(srv);
 		}
 
