@@ -93,7 +93,9 @@ struct bt_mesh_loc_local {
 	int16_t floor_number;
 	/** Whether the device is movable. */
 	bool is_mobile;
-	/** Time since the previous position update, or @em K_FOREVER. */
+	/** Time since the previous position update in milliseconds, or
+	 *  @em SYS_FOREVER_MS.
+	 */
 	int32_t time_delta;
 	/** Precision of the location in millimeters. */
 	uint32_t precision_mm;

@@ -70,8 +70,9 @@ struct bt_mesh_plvl_status {
 	/** Target Power Level. */
 	uint16_t target;
 	/**
-	 * Time remaining of the ongoing transition, or @em K_FOREVER.
-	 * If there's no ongoing transition, @c remaining_time is 0.
+	 * Time remaining of the ongoing transition in milliseconds, or
+	 * @em SYS_FOREVER_MS. If there's no ongoing transition,
+	 * @c remaining_time is 0.
 	 */
 	int32_t remaining_time;
 };
