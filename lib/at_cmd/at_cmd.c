@@ -76,6 +76,25 @@ static int open_socket(void)
 	return 0;
 }
 
+/*
+ * Do any validation of an AT command not performed by the lower layers or
+ * by the modem.
+ */
+static int check_cmd(const char *cmd)
+{
+	if (cmd == NULL) {
+		return -EINVAL;
+	}
+
+	/* Check for the presence one printable non-whitespace character */
+	for (const char *c = cmd; *c != '\0'; c++) {
+		if (*c > ' ') {
+			return 0;
+		}
+	}
+	return -EINVAL;
+}
+
 static int get_return_code(char *buf, size_t bytes_read, struct resp_item *ret)
 {
 	bool match;
@@ -324,6 +343,12 @@ int at_cmd_write_with_callback(const char *const cmd,
 	}
 
 	if (cmd == NULL) {
+		LOG_ERR("cmd is NULL");
+		return -EINVAL;
+	}
+
+	if (check_cmd(cmd)) {
+		LOG_ERR("Invalid command");
 		return -EINVAL;
 	}
 
@@ -363,6 +388,14 @@ int at_cmd_write(const char *const cmd,
 
 	if (cmd == NULL) {
 		LOG_ERR("cmd is NULL");
+		if (state) {
+			*state = AT_CMD_ERROR_QUEUE;
+		}
+		return -EINVAL;
+	}
+
+	if (check_cmd(cmd)) {
+		LOG_ERR("Invalid command");
 		if (state) {
 			*state = AT_CMD_ERROR_QUEUE;
 		}
