@@ -16,6 +16,7 @@ Important issues that are discovered after a release is tagged are listed in the
 .. toctree::
    :maxdepth: 1
 
+   doc/release-notes-1.3.2
    doc/release-notes-1.3.1
    doc/release-notes-1.3.0
    doc/release-notes-1.2.0
