@@ -194,3 +194,11 @@ div.numbered-step>h6::before {
   counter-increment: step-count-h6;
   content: counter(step-count-h6);
 }
+
+
+/* add a section divider */
+
+.rst-content h2 {
+ border-top: 1px solid #ddd;
+ padding-top: 20px;
+}
