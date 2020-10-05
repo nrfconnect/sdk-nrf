@@ -182,6 +182,15 @@ send:
 	inside_quotes = false;
 	at_cmd_len = 0;
 
+	/* Check for the presence of one printable non-whitespace character */
+	for (const char *c = at_buf;; c++) {
+		if (*c > ' ') {
+			break;
+		} else if (*c == '\0') {
+			return; /* Drop command, if it has no such character */
+		}
+	}
+
 	/* Send the command, if there is one to send */
 	if (at_buf[0]) {
 		uart_irq_rx_disable(uart_dev); /* Stop UART to protect at_buf */
