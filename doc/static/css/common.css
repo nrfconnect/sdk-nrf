@@ -202,3 +202,24 @@ div.numbered-step>h6::before {
  border-top: 1px solid #ddd;
  padding-top: 20px;
 }
+
+
+/* add styling for a local ToC */
+
+.contents.local {
+    float: right;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    padding: 10px 10px 0px 0px;
+    margin: 5px;
+    max-width: 30%;
+}
+
+.contents.local a {
+    font-size: 13px;
+    line-height: 13px;
+}
+
+.contents.local ul p {
+    margin-bottom: 0px;
+}
