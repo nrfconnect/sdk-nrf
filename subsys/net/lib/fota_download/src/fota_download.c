@@ -28,8 +28,19 @@ static int socket_retries_left;
 static void send_evt(enum fota_download_evt_id id)
 {
 	__ASSERT(id != FOTA_DOWNLOAD_EVT_PROGRESS, "use send_progress");
+	__ASSERT(id != FOTA_DOWNLOAD_EVT_ERROR, "use send_error_evt");
 	const struct fota_download_evt evt = {
 		.id = id
+	};
+	callback(&evt);
+}
+
+static void send_error_evt(enum fota_download_error_cause cause)
+{
+	__ASSERT(cause != FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR, "use a valid error cause");
+	const struct fota_download_evt evt = {
+		.id = FOTA_DOWNLOAD_EVT_ERROR,
+		.cause = cause
 	};
 	callback(&evt);
 }
@@ -53,7 +64,7 @@ static void dfu_target_callback_handler(enum dfu_target_evt_id evt)
 		send_evt(FOTA_DOWNLOAD_EVT_ERASE_DONE);
 		break;
 	default:
-		send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+		send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 	}
 }
 
@@ -75,7 +86,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			if (err != 0) {
 				LOG_DBG("download_client_file_size_get err: %d",
 					err);
-				send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 				return err;
 			}
 			first_fragment = false;
@@ -85,7 +96,7 @@ static int download_client_callback(const struct download_client_evt *event)
 					      dfu_target_callback_handler);
 			if ((err < 0) && (err != -EBUSY)) {
 				LOG_ERR("dfu_target_init error %d", err);
-				send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 				int res = dfu_target_reset();
 
 				if (res != 0) {
@@ -99,7 +110,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			if (err != 0) {
 				LOG_DBG("unable to get dfu target offset err: "
 					"%d", err);
-				send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 			}
 
 			if (offset != 0) {
@@ -126,7 +137,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			}
 			first_fragment = true;
 			(void) download_client_disconnect(&dlc);
-			send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+			send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE);
 			return err;
 		}
 
@@ -136,13 +147,13 @@ static int download_client_callback(const struct download_client_evt *event)
 			if (err != 0) {
 				LOG_DBG("unable to get dfu target "
 						"offset err: %d", err);
-				send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 				return err;
 			}
 
 			if (file_size == 0) {
 				LOG_DBG("invalid file size: %d", file_size);
-				send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 				return err;
 			}
 
@@ -156,13 +167,13 @@ static int download_client_callback(const struct download_client_evt *event)
 		err = dfu_target_done(true);
 		if (err != 0) {
 			LOG_ERR("dfu_target_done error: %d", err);
-			send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+			send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 			return err;
 		}
 
 		err = download_client_disconnect(&dlc);
 		if (err != 0) {
-			send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+			send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 			return err;
 		}
 		send_evt(FOTA_DOWNLOAD_EVT_FINISHED);
@@ -192,7 +203,7 @@ static int download_client_callback(const struct download_client_evt *event)
 					"used by dfu_target.");
 			}
 			first_fragment = true;
-			send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+			send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 			/* Return non-zero to tell download_client to stop */
 			return event->error;
 		}

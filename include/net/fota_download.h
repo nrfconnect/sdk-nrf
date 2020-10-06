@@ -43,12 +43,29 @@ enum fota_download_evt_id {
 };
 
 /**
+ * @brief FOTA download error cause values.
+ */
+enum fota_download_error_cause {
+	/** No error, used when event ID is not FOTA_DOWNLOAD_EVT_ERROR. */
+	FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR,
+	/** Downloading the update failed. The download may be retried. */
+	FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED,
+	/** The update is invalid and was rejected. Retry will not help. */
+	FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE,
+};
+
+/**
  * @brief FOTA download event data.
  */
 struct fota_download_evt {
 	enum fota_download_evt_id id;
-	/** Download progress % */
-	int progress;
+
+	union {
+		/** Error cause. */
+		enum fota_download_error_cause cause;
+		/** Download progress %. */
+		int progress;
+	};
 };
 
 /**
