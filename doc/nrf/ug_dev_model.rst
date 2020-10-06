@@ -205,7 +205,7 @@ In order to obtain a fresh copy of the |NCS| at revision ``{revision}`` and plac
   west update
 
 Replace ``{revision}`` with any revision you wish to obtain.
-This can be ``master`` if you want the latest state, or any released version (e.g. ``v1.3.0``).
+This can be ``master`` if you want the latest state, or any released version (e.g. |release_tt|).
 If you omit the ``--mr`` parameter, west defaults to ``master``.
 
 .. _dm-wf-update-ncs:
@@ -382,7 +382,7 @@ This is demonstrated by the following code:
      projects:
        - name: nrf
          remote: ncs
-         revision: v1.3.0
+         revision: v1.3.2
          import: true
      self:
        path: application
@@ -409,7 +409,7 @@ For example:
      projects:
        - name: nrf
          remote: ncs
-         revision: v1.3.0
+         revision: v1.3.2
          import: true
        # Example for how to override a repository in the NCS with your own:
        - name: mcuboot
