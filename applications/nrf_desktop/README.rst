@@ -1570,6 +1570,12 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/hfclk_lock.rst
    doc/event_rel_modules.rst
 
+Application configuration options
+*********************************
+
+.. options-from-kconfig::
+   :show-type:
+
 .. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
    When a new Bluetooth Central device successfully connects and bonds, the old bond is removed and the new bond is used instead.
    If the new peer does not connect in the predefined period of time, the advertising ends and the application switches back to the old peer.
