@@ -135,21 +135,36 @@ For more details about the commissioning process, see `Thread Commissioning on O
 OpenThread stack logging options
 ================================
 
-The OpenThread stack logging is handled with the following options:
+You can enable the OpenThread stack logging for your project with the following options:
 
 * :option:`CONFIG_LOG` - This option enables Zephyr's :ref:`zephyr:logging_api`.
 * :option:`CONFIG_OPENTHREAD_DEBUG` - This option enables logging for the OpenThread stack.
 
 Both options must be enabled to allow logging.
 
-This said, enabling logging is optional, because it is enabled by default for all Thread samples.
-However, you must set one of the following logging levels to start receiving the logging output:
+After setting these options, you can choose one of several :ref:`logging backends <ug_logging_backends>` available in Zephyr and supported in |NCS|.
 
-* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_CRIT` - critical error logging only.
-* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_WARN` - enable warning logging in addition to critical errors.
-* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_NOTE` - additionally enable notice logging.
-* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_INFO` - additionally enable informational logging.
-* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_DEBG` - additionally enable debug logging.
+.. note::
+    If you are working with Thread samples, enabling logging and logging backend is optional.
+    By default, all Thread samples have logging enabled in the :file:`overlay-ot-defaults.conf` file, and are set to provide output at the informational level (:option:`CONFIG_OPENTHREAD_LOG_LEVEL_INFO`).
+
+Logging levels
+--------------
+
+You can set one of the following logging levels to customize the logging output:
+
+* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_CRIT` - This option enables critical error logging only.
+* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_WARN` - This option enables warning logging in addition to critical errors.
+* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_NOTE` - This option additionally enables notice logging.
+* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_INFO` - This option additionally enables informational logging.
+* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_DEBG` - This option additionally enables debug logging.
+
+The more detailed logging level you select, the more logging buffers you need to be able to see all messages, and the buffer size also needs to be increased.
+Use the following Kconfig options for this purpose:
+
+* :option:`CONFIG_LOG_STRDUP_BUF_COUNT` - This option specifies the number of logging buffers.
+* :option:`CONFIG_LOG_STRDUP_MAX_STRING` - This option specifies the size of logging buffers.
+
 
 Zephyr L2 logging options
 =========================
