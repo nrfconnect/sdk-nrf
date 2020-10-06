@@ -24,14 +24,14 @@ static inline void zb_cli_print_done(const struct shell *shell,
 				     bool prepend_newline)
 {
 	shell_fprintf(shell, SHELL_NORMAL,
-		      prepend_newline ? "\nDone\n" : "Done\n");
+		      (prepend_newline ? "\nDone\n" : "Done\n"));
 }
 
 /**@brief Print error message to the console.
  *
- * @param message         Pointer to the message which should be printed
- *                        as an error.
- * @param prepend_newline Whether to prepend a newline.
+ * @param message          Pointer to the message which should be printed
+ *                         as an error.
+ * @param prepend_newline  Whether to prepend a newline.
  */
 static inline void zb_cli_print_error(const struct shell *shell,
 				      const char *message, bool prepend_newline)
@@ -115,7 +115,7 @@ int zb_cli_sscan_uint(const char *bp, uint8_t *value, uint8_t size,
 
 /**@brief Print buffer as hex string.
  *
- * @param shell    Pointer to shell instance.
+ * @param shell    Pointer to the shell instance.
  * @param data     Pointer to data to be printed out.
  * @param size     Data size in bytes
  * @param reverse  If True then data is printed out in reverse order.

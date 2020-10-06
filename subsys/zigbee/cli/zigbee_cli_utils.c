@@ -15,8 +15,11 @@
 #include <zigbee_logger_eprxzcl.h>
 #include "zigbee_cli_utils.h"
 
+zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid);
 
-static zb_device_handler_t zb_ep_handlers[] = {};
+static zb_device_handler_t zb_ep_handlers[] = {
+	cli_agent_ep_handler_ping
+};
 
 zb_uint8_t zb_cli_ep_handler(zb_bufid_t bufid)
 {
