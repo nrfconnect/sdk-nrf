@@ -7,10 +7,6 @@ This page describes the OpenThread stack architecture and platform designs that 
 
 The designs are described from the least to the most complex, that is from simple applications that consist of a single chip running single or multiple protocols to scenarios in which the nRF SoC acts as a network co-processor when the application is running on a much more powerful host processor.
 
-.. contents::
-    :local:
-    :depth: 1
-
 .. _openthread_stack_architecture:
 
 OpenThread stack architecture
@@ -123,10 +119,6 @@ Co-processor designs
 
 In the co-processor designs, with either network co-processor (NCP) or radio co-processor (RCP), the application layer runs on a host processor and communicates with OpenThread through a serial connection using a standardized host-controller protocol (Spinel).
 OpenThread can run on either the radio or the host processor.
-
-.. contents::
-    :local:
-    :depth: 1
 
 .. _thread_architectures_designs_cp_ncp:
 

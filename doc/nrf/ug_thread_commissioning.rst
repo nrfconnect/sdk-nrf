@@ -11,12 +11,6 @@ The whole process can happen within the Thread network (connectivity within the 
 This is the main difference between :ref:`thread_ot_commissioning_types_on-mesh` and :ref:`thread_ot_commissioning_types_external`, respectively.
 The whole commissioning process benefits from :ref:`several security measures <thread_ot_commissioning_roles_authentication>`, especially the DTLS protocol.
 
-This page describes the following commissioning topics:
-
-.. contents::
-    :local:
-    :depth: 2
-
 Once familiar with these concepts, read the following page:
 
 .. toctree::
@@ -118,11 +112,7 @@ See :ref:`thread_ot_commissioning_roles_authentication` for related information.
 Commissioning phases
 ********************
 
-The commissioning process has the following phases:
-
-.. contents::
-    :local:
-    :depth: 1
+The commissioning process goes through petitioning and joining.
 
 .. _thread_ot_commissioning_phases_petitioning:
 

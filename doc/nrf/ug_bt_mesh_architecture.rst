@@ -38,11 +38,7 @@ The following figure demonstrates how the data packets flow between mesh nodes a
 
    Basic data flow within a mesh network in the |NCS| Bluetooth Mesh
 
-As an example, consider a Bluetooth Mesh network with three devices/mesh network nodes listed below, and the process that takes place on each node when the light switch on the source node is pressed:
-
-.. contents::
-   :local:
-   :depth: 1
+As an example, consider a Bluetooth Mesh network with three devices/mesh network nodes and the process that takes place on each node when the light switch on the source node is pressed, as discussed in the following sections.
 
 Source node with a light switch
 ===============================

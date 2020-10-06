@@ -136,13 +136,10 @@ After building the sample and programming it to your development kit, test it by
 Testing with more boards
 ------------------------
 
-If you are using more than one development kit for testing the CLI sample, you can also complete the following testing procedures:
+If you are using more than one development kit for testing the CLI sample, you can also complete additional testing procedures.
 
-.. contents::
-    :local:
-    :depth: 1
-
-The following testing procedures assume you are using two development kits.
+.. note::
+    The following testing procedures assume you are using two development kits.
 
 Testing communication between boards
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

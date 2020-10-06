@@ -3,11 +3,7 @@
 Configuring Thread in |NCS|
 ###########################
 
-This page describes what is needed to start working with Thread in |NCS|:
-
-.. contents::
-    :local:
-    :depth: 2
+This page describes what is needed to start working with Thread in |NCS|.
 
 Required modules
 ****************
@@ -60,11 +56,7 @@ This includes the following options:
 Default configuration reference
     The default configuration for all :ref:`openthread_samples` is defined in :file:`nrf/samples/openthread/openthread.conf`.
 
-For other optional configuration options, see the following sections:
-
-.. contents::
-    :local:
-    :depth: 2
+For other optional configuration options, see the following sections.
 
 .. _ug_thread_configuring_crypto:
 
