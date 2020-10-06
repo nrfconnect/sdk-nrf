@@ -107,7 +107,7 @@ class TableFromRows(SphinxDirective):
             raise self.severe('"%s" not found' % path)
         data = yaml.load(sample_yaml, Loader=yaml.BaseLoader)
         path_key = '.'.join(rel_path.split(os.path.sep))
-        for key in ['tests', path_key, 'platform_whitelist']:
+        for key in ['tests', path_key, 'platform_allow']:
             if key not in data:
                 raise self.severe('Unexpected sample.yaml format detected, '
                                   '"%s" key not found!' % key)
