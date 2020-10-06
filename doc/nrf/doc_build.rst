@@ -211,4 +211,4 @@ To test the version drop-down locally, complete the following steps:
 
 #. Access http://localhost:8000/latest/index.html with your browser to see the documentation.
 
-To add other versions of the documentation to your local documentation output, build the versions from a tagged release and rename the :file:`html` folder to the respective version (for example, ``1.3.0``).
+To add other versions of the documentation to your local documentation output, build the versions from a tagged release and rename the :file:`html` folder to the respective version (for example, |release_number_tt|).
