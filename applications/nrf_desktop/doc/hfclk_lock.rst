@@ -20,7 +20,7 @@ Module events
 Configuration
 *************
 
-Enable the module with the ``CONFIG_DESKTOP_HFCLK_LOCK_ENABLE`` Kconfig option.
+Enable the module with the :option:`CONFIG_DESKTOP_HFCLK_LOCK_ENABLE` Kconfig option.
 
 Implementation details
 **********************

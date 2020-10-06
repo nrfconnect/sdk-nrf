@@ -45,7 +45,7 @@ Complete the following steps to configure the module:
 
         The assigned PIDs should be unique for devices with the same VID.
 
-#. Set the ``CONFIG_DESKTOP_BLE_DISCOVERY_ENABLE`` Kconfig option to enable the ``ble_discovery`` application module.
+#. Set the :option:`CONFIG_DESKTOP_BLE_DISCOVERY_ENABLE` Kconfig option to enable the ``ble_discovery`` application module.
 
 Implementation details
 **********************

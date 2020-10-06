@@ -49,13 +49,13 @@ To use the module, set the following configuration options:
 The PWM ports needed by the application are enabled in the :file:`dts.overlay` file by setting the status to "okay".
 Make sure to configure all PWM ports that are used by the application.
 
-The module is enabled using ``CONFIG_DESKTOP_LED_ENABLE``.
+The module is enabled using :option:`CONFIG_DESKTOP_LED_ENABLE`.
 
 You can use the following additional configuration options:
 
-* ``CONFIG_DESKTOP_LED_COUNT`` - Number of LEDs in use.
-* ``CONFIG_DESKTOP_LED_COLOR_COUNT`` - Number of color channels per diode.
-* ``CONFIG_DESKTOP_LED_BRIGHTNESS_MAX`` - Maximum value of LED brightness.
+* :option:`CONFIG_DESKTOP_LED_COUNT` - Number of LEDs in use.
+* :option:`CONFIG_DESKTOP_LED_COLOR_COUNT` - Number of color channels per diode.
+* :option:`CONFIG_DESKTOP_LED_BRIGHTNESS_MAX` - Maximum value of LED brightness.
 
 Symbols from Zephyr's :ref:`zephyr:dt-guide` are used to define the mapping of the PWM channels to pin numbers.
 By default, the symbols are defined in the board configuration, but you can redefine them in the :file:`dts.overlay` file.

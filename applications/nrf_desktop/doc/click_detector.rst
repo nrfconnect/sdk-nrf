@@ -33,7 +33,7 @@ Configuration
 The |click_detector| detects click types based on ``button_event``.
 Make sure you define the :ref:`nrf_desktop_buttons` hardware interface.
 
-Set ``CONFIG_DESKTOP_CLICK_DETECTOR_ENABLE`` and define the module configuration.
+Set :option:`CONFIG_DESKTOP_CLICK_DETECTOR_ENABLE` and define the module configuration.
 The configuration (array of :c:struct:`click_detector_config`) is written in the :file:`click_detector_def.h`` file located in the board-specific directory in the application configuration directory.
 
 For every click detector, make sure to define the following information:
