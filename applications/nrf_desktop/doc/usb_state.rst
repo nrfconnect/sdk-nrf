@@ -29,11 +29,7 @@ When enabling the USB support for the device, set the following generic device o
 * :option:`CONFIG_USB_DEVICE_VID` - Vendor ID (VID) number.
 * :option:`CONFIG_USB_DEVICE_PID` - Product ID (PID) number.
 
-Additionally, you can also configure the following options:
-
-.. contents::
-    :local:
-    :depth: 1
+Additionally, you can also configure the options described in the following sections.
 
 Low latency device configuration
 ================================

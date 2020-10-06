@@ -25,12 +25,6 @@ This means that parts of the application functionality are separated into isolat
 Modules register themselves as listeners of those events that they are configured to react to.
 An application event can be submitted by multiple modules and it can have multiple listeners.
 
-See the following subsections for more information about the firmware architecture:
-
-.. contents::
-    :local:
-    :depth: 1
-
 Module and component overview
 =============================
 
@@ -91,12 +85,7 @@ Module usage per hardware type
 ==============================
 
 Since the application architecture is uniform and the code is shared, the set of modules in use depends on the selected device role.
-A different set of modules is enabled when the application is working as mouse, keyboard, or dongle:
-
-.. contents::
-    :local:
-    :depth: 1
-
+A different set of modules is enabled when the application is working as mouse, keyboard, or dongle.
 In other words, not all of the :ref:`nrf_desktop_app_internal_modules` need to be enabled for a given reference design.
 
 Gaming mouse module set
@@ -333,11 +322,7 @@ User interface
 **************
 
 The nRF Desktop configuration files have a set of preprogrammed options bound to different parts of the hardware.
-These options are related to the following functionalities:
-
-.. contents::
-    :local:
-    :depth: 1
+These options are related to the functionalities discussed in this section.
 
 Turning devices on and off
 ==========================
@@ -374,11 +359,7 @@ See the following figures for the exact location of these switches:
 Connectability
 ==============
 
-The nRF Desktop devices provide user input to the host in the same way as other mice and keyboards, using the following connection options:
-
-.. contents::
-    :local:
-    :depth: 1
+The nRF Desktop devices provide user input to the host in the same way as other mice and keyboards, using connection through USB or Bluetooth LE.
 
 The nRF Desktop devices support additional operations, like firmware upgrade or configuration change.
 The support is implemented through the :ref:`nrf_desktop_config_channel`.
@@ -416,11 +397,7 @@ No additional software or drivers are required.
 
 ..
 
-The following devices support the HID data transmission through USB:
-
-.. contents::
-    :local:
-    :depth: 1
+Gaming mouse, dongle, and DK support the HID data transmission through USB.
 
 Gaming mouse USB
 ~~~~~~~~~~~~~~~~
@@ -813,11 +790,7 @@ Integrating your own hardware
 *****************************
 
 This section describes how to adapt the nRF Desktop application to different hardware.
-It describes the configuration sources that are used for the default configuration, and lists steps required for adding a new board:
-
-.. contents::
-    :local:
-    :depth: 2
+It describes the configuration sources that are used for the default configuration, and lists steps required for adding a new board.
 
 Configuration sources
 =====================
@@ -983,11 +956,7 @@ You can use it as a reference for adding other hardware components.
 The nRF Desktop application comes with a :ref:`nrf_desktop_motion` that is able to read data from a motion sensor.
 While |NCS| provides support for two motion sensor drivers (PMW3360 and PAW3212), you can add support for a different sensor, based on your development needs.
 
-Complete the following steps to add a new motion sensor:
-
-.. contents::
-    :local:
-    :depth: 1
+Complete the steps described in the following sections to add a new motion sensor.
 
 1. Add a new sensor driver
 --------------------------
@@ -1404,12 +1373,7 @@ Background Device Firmware Upgrade
 ==================================
 
 The nRF Desktop application uses the background image transfer for the background DFU process.
-The firmware update process has the following stages:
-
-.. contents::
-    :local:
-    :depth: 1
-
+The firmware update process has three stages, discussed below.
 At the end of these three stages, the nRF Desktop application will be rebooted with the new firmware package installed.
 
 .. note::

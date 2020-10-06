@@ -16,12 +16,7 @@ However, Bluetooth Mesh specifies a completely new host layer, and although some
 
    Relationship between Bluetooth Mesh and |BLE| specifications
 
-Read more about basic Bluetooth Mesh concepts in the following sections:
-
-.. contents::
-   :local:
-   :depth: 2
-
+This page describes basic Bluetooth Mesh concepts.
 Check the official `Bluetooth Mesh glossary`_ for definitions of the most important Bluetooth Mesh-related terms used in this documentation.
 
 .. _mesh_concepts_app_areas:

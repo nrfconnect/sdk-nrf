@@ -4,11 +4,7 @@ OpenThread integration
 ######################
 
 This page explains how the OpenThread stack is integrated with Zephyr and |NCS|.
-It describes the location of components in the file structure, threads and synchronization primitives used, and the network traffic flow:
-
-.. contents::
-    :local:
-    :depth: 2
+It describes the location of components in the file structure, threads and synchronization primitives used, and the network traffic flow.
 
 Overview
 ********

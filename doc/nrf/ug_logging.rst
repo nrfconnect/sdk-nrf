@@ -18,11 +18,7 @@ You can obtain logging information from the following sources:
 For example, you can gather logging information about network events from network protocol applications and logging information about threads from Zephyr system kernel at the same time.
 
 This flexibility comes at a cost: the system's complexity requires different approach to configuration for single components and backends.
-See the following sections for more information:
-
-.. contents::
-    :local:
-    :depth: 1
+See the following sections for more information.
 
 .. _ug_logging_zephyr:
 
@@ -73,12 +69,6 @@ You can enable many backends at once and make them work simultaneously, if you w
 .. tip::
     As a recommendation, avoid selecting many backends using the same physical interface instance to avoid mutual interference.
     For example, instead of ``UART0`` for both, choose ``UART0`` for one backend and ``UART1`` for another.
-
-The following backends are available in |NCS|:
-
-.. contents::
-    :local:
-    :depth: 1
 
 UART
 ====
