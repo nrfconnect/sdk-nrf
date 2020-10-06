@@ -19,7 +19,7 @@
 
 #define CMD_COMPLETE_MIN_SIZE (BT_HCI_EVT_HDR_SIZE \
 				+ sizeof(struct bt_hci_evt_cmd_complete) \
-				+ sizeof(uint8_t))
+				+ sizeof(struct bt_hci_evt_cc_status))
 
 static struct
 {
@@ -130,7 +130,7 @@ static void encode_command_status(uint8_t * const event,
 			(struct bt_hci_evt_cmd_status *)&event[BT_HCI_EVT_HDR_SIZE];
 
 	evt_hdr->evt = BT_HCI_EVT_CMD_STATUS;
-	evt_hdr->len = BT_HCI_EVT_HDR_SIZE + sizeof(struct bt_hci_evt_cmd_status);
+	evt_hdr->len = sizeof(struct bt_hci_evt_cmd_status);
 
 	evt_data->status = status_code;
 	evt_data->ncmd = 1;
@@ -772,7 +772,10 @@ static void cmd_put(uint8_t *cmd_in, uint8_t * const raw_event_out)
 {
 	uint8_t status;
 	uint16_t opcode = sys_get_le16(cmd_in);
-	uint8_t return_param_length = CMD_COMPLETE_MIN_SIZE;
+
+	/* Assume command complete */
+	uint8_t return_param_length = sizeof(struct bt_hci_evt_cmd_complete)
+				      + sizeof(struct bt_hci_evt_cc_status);
 
 	switch (BT_OGF(opcode)) {
 #if defined(CONFIG_BT_CONN)
