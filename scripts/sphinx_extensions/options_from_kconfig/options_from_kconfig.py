@@ -32,7 +32,7 @@ class OptionsFromKconfig(SphinxDirective):
         inside the parsed Kconfig file itself will be available to be used by
         this extension.
         '''
-        kconfiglib._SOURCE_TOKENS = frozenset({})
+        kconfiglib._SOURCE_TOKENS = kconfiglib._REL_SOURCE_TOKENS
         kconfiglib.Kconfig._parse_error = lambda self_, msg: None
 
     @staticmethod
