@@ -17,7 +17,4 @@ This support is based on the OpenThread stack, which is integrated into Zephyr.
 
 See :ref:`openthread_samples` for the list of available Thread samples.
 
-----
-
-Copyright disclaimer
-    |Google_CCLicense|
+:Copyright disclaimer: |Google_CCLicense|

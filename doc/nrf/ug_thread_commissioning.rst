@@ -197,8 +197,6 @@ The commissioning uses the following passwords and credentials:
 
 For details and full overview of security credentials, see `Thread protocol specification`_, table 8.2.
 
-----
-
 .. _thread_ot_commissioning_cli:
 
 Commissioning CLI commands
@@ -209,7 +207,4 @@ See the following pages in the `OpenThread CLI Reference`_ on GitHub for an over
 * `Commissioner CLI commands`_
 * `Joiner CLI commands`_
 
-----
-
-Copyright disclaimer
-    |Google_CCLicense|
+:Copyright disclaimer: |Google_CCLicense|
