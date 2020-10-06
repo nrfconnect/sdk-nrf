@@ -57,7 +57,7 @@ This section lists commands that are supported by :ref:`Zigbee samples <zigbee_s
 Description convention
 ======================
 
-Every command prints ``Done`` when it is finished, or ``Error: <reason>`` in case of errors.
+Every command prints ``Done`` when it is finished, or an error with the reason why it occurs.
 
 The command argument description uses the following convention:
 
@@ -336,6 +336,118 @@ Example:
    Done
 
 ----
+
+.. _zcl_ping:
+
+zcl ping
+========
+
+Ping other devices using ZCL.
+
+.. parsed-literal::
+   :class: highlight
+
+   zcl ping [--no-echo] [--aps-ack] *h:dst_addr* *d:payload_size*
+
+Example:
+
+.. code-block::
+
+   zcl ping 0b010eaafd745dfa 32
+
+.. note::
+    |precondition4|
+
+Issue a ping-style shell command to another CLI node with the given 16-bit destination address (*dst_addr*) by using a payload equal to *payload_size* bytes.
+The command is sent and received on endpoints with the same ID.
+
+This shell command uses a custom ZCL frame, which is constructed as a ZCL frame of a custom ping ZCL cluster with the cluster ID ``0xBEEF``.
+For details, see the implementation of :c:func:`ping_request_send` in :file:`subsys/zigbee/cli/zigbee_cli_cmd_ping.c`.
+
+The command measures the time needed for a Zigbee frame to travel between two nodes in the network (there and back again).
+The shell command sends a ping request ZCL command, which is followed by a ping reply ZCL command.
+The IDs of the ping request change depending on optional arguments.
+The ping reply ID stays the same (``0x01``).
+
+The following optional argument are available:
+
+* ``--aps-ack`` requests an APS acknowledgment
+* ``--no-echo`` asks the destination node not to send the ping reply
+
+Both arguments can be used at the same time.
+See the following graphs for use cases.
+
+Case 1: Ping with echo, but without the APS acknowledgment
+    This is the default case, without optional arguments.
+
+        .. msc::
+            hscale = "1.3";
+            App1 [label="Application 1"],Node1 [label="Node 1"],Node2 [label="Node 2"];
+            App1 rbox Node2     [label="Command ID: 0x02 - Ping request without the APS acknowledgment"];
+            App1>>Node1         [label="ping"];
+            Node1>>Node2        [label="ping request"];
+            Node1<<Node2        [label="MAC ACK"];
+            App1 rbox Node2     [label="Command ID: 0x01 - Ping reply"];
+            Node1<<Node2        [label="ping reply"];
+            Node1>>Node2        [label="MAC ACK"];
+            App1<<Node1         [label="Done"];
+        ..
+
+    In this default case, the ``zcl ping`` command measures the time between sending the ping request and receiving the ping reply.
+
+Case 2: Ping with echo and with the APS acknowledgment
+    This is a case with the ``--aps-ack`` optional argument.
+
+        .. msc::
+            hscale = "1.3";
+            App1 [label="Application 1"],Node1 [label="Node 1"],Node2 [label="Node 2"];
+            App1 rbox Node2     [label="Command ID: 0x00 - Ping request with the APS acknowledgment"];
+            App1>>Node1         [label="ping"];
+            Node1>>Node2        [label="ping request"];
+            Node1<<Node2        [label="MAC ACK"];
+            Node1<<Node2        [label="APS ACK"];
+            Node1>>Node2        [label="MAC ACK"];
+            App1 rbox Node2     [label="Command ID: 0x01 - Ping reply"];
+            Node1<<Node2        [label="ping reply"];
+            Node1>>Node2        [label="MAC ACK"];
+            Node1>>Node2        [label="APS ACK"];
+            Node1<<Node2        [label="MAC ACK"];
+            App1<<Node1         [label="Done"];
+        ..
+
+     In this case, the ``zcl ping`` command measures the time between sending the ping request and receiving the ping reply.
+
+Case 3: Ping without echo, but with the APS acknowledgment
+    This is a case with both optional arguments provided, ``--aps-ack`` and ``--no-echo``.
+
+        .. msc::
+            hscale = "1.3";
+            App1 [label="Application 1"],Node1 [label="Node 1"],Node2 [label="Node 2"];
+            App1 rbox Node2     [label="Command ID: 0x03 - Ping request without echo"];
+            App1>>Node1         [label="ping"];
+            Node1>>Node2        [label="ping request"];
+            Node1<<Node2        [label="MAC ACK"];
+            Node1<<Node2        [label="APS ACK"];
+            Node1>>Node2        [label="MAC ACK"];
+            App1<<Node1         [label="Done"];
+        ..
+
+    In this case, the ``zcl ping`` command measures the time between sending the ping request and receiving the APS acknowledgment.
+
+Case 4: Ping without echo and without the APS acknowledgment
+    This is a case with the ``--no-echo`` optional argument.
+
+        .. msc::
+            hscale = "1.3";
+            App1 [label="Application 1"],Node1 [label="Node 1"],Node2 [label="Node 2"];
+            App1 rbox Node2     [label="Command ID: 0x03 - Ping request without echo"];
+            App1>>Node1         [label="ping"];
+            Node1>>Node2        [label="ping request"];
+            App1<<Node1         [label="Done"];
+            Node1<<Node2        [label="MAC ACK"];
+        ..
+
+    In this case, the ``zcl ping`` command does not measure time after sending the ping request.
 
 .. _zdo_simple_desc_req:
 
@@ -705,3 +817,5 @@ Resume Zigbee scheduler processing.
 
 .. |precondition3| replace:: Setting and defining policy only before :ref:`bdb_start`.
    Adding only after :ref:`bdb_start`.
+
+.. |precondition4| replace:: Use only after :ref:`bdb_start`.
