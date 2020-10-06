@@ -43,7 +43,7 @@ Complete the following steps to enable the |ble_scan|:
    The |ble_scan| module uses Bluetooth name filters to look for unbonded peripherals.
    The value must be equal to the number of peripheral types the nRF Desktop central connects to.
    The peripheral type may be either a mouse or a keyboard.
-#. Configure the maximum number of bonded mice (``CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT``) and keyboards (``CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT``) for the nRF Desktop central.
+#. Configure the maximum number of bonded mice (:option:`CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT`) and keyboards (:option:`CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT`) for the nRF Desktop central.
    By default, the nRF Desktop central connects and bonds with only one mouse and one keyboard.
 #. Define the Bluetooth name filters in the :file:`ble_scan_def.h` file that is located in the board-specific directory in the application configuration directory.
    You must define a Bluetooth name filter for every peripheral type the nRF Desktop central connects to.
@@ -53,20 +53,20 @@ Complete the following steps to enable the |ble_scan|:
       The Bluetooth device name for given peripheral is defined as the :option:`CONFIG_BT_DEVICE_NAME` Kconfig option in the peripheral's configuration.
       For more detailed information about the Bluetooth advertising configuration in the nRF Desktop application, see the :ref:`nrf_desktop_ble_adv` documentation.
 
-#. Set the ``CONFIG_DESKTOP_BLE_SCANNING_ENABLE`` option to enable the |ble_scan| module.
+#. Set the :option:`CONFIG_DESKTOP_BLE_SCANNING_ENABLE` option to enable the |ble_scan| module.
 
 By default, the nRF Desktop central always looks for both bonded and unbonded peripherals.
-You can set the ``CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST`` option to make the device look for unbonded peripherals only on user request.
+You can set the :option:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST` option to make the device look for unbonded peripherals only on user request.
 The request is submitted by :ref:`nrf_desktop_ble_bond` as :c:struct:`ble_peer_operation_event` with :c:member:`ble_peer_operation_event.op` set to :c:enumerator:`PEER_OPERATION_SCAN_REQUEST`.
 
 The central always looks for new bonds also after the bond erase (on :c:struct:`ble_peer_operation_event` with :c:member:`ble_peer_operation_event.op` set to :c:enumerator:`PEER_OPERATION_ERASED`).
-If ``CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST`` is enabled, you can also set the ``CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT`` option to make the central scan for new peers after every boot.
+If :option:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST` is enabled, you can also set the :option:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT` option to make the central scan for new peers after every boot.
 
 The following scanning scenarios are possible:
 
 * If no peripheral is connected, the central scans for the peripheral devices without interruption.
 * If a peripheral is connected, the scanning is triggered periodically.
-  If none of the connected peripherals is in use for at least ``CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S``, the scanning is started.
+  If none of the connected peripherals is in use for at least :option:`CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S`, the scanning is started.
 
 Scanning not started
 ====================
@@ -86,7 +86,7 @@ The scanning is interrupted if one of the following conditions occurs:
 
 * A connected peripheral is in use.
   Scanning in this situation will have a negative impact on user experience.
-* The maximum scan duration specified by ``CONFIG_DESKTOP_BLE_SCAN_DURATION_S`` times out.
+* The maximum scan duration specified by :option:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S` times out.
 
 The scanning is never interrupted if there is no connected Bluetooth peer.
 
@@ -115,7 +115,7 @@ a. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatical
 
 .. important::
    If a Bluetooth peer is aready connected with a 1-ms connection interval, the next peer is connected with a 10-ms connection interval instead of 7.5 ms.
-   The peer is connected with a 10-ms connection interval also in case :option:`CONFIG_BT_MAX_CONN` is set to value greater than 2 and ``CONFIG_DESKTOP_BLE_USE_LLPM`` Kconfig option is enabled.
+   The peer is connected with a 10-ms connection interval also in case :option:`CONFIG_BT_MAX_CONN` is set to value greater than 2 and :option:`CONFIG_DESKTOP_BLE_USE_LLPM` Kconfig option is enabled.
    This is required to avoid Bluetooth scheduling issues that may lead to HID input report rate drops and disconnections.
 
 At this point, the scanning can be restarted.

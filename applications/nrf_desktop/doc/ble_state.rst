@@ -25,7 +25,7 @@ Configuration
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 
-You can use the option ``CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`` to enable pairing based on passkey for increased security.
+You can use the option :option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY` to enable pairing based on passkey for increased security.
 Make sure to enable and configure the :ref:`nrf_desktop_passkey` if you decide to use this option.
 
 Implementation details
@@ -69,7 +69,7 @@ If the connection security level 2 is not established, the peripheral device dis
 Passkey enabled
 ===============
 
-If you set the ``CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`` option, the |ble_state| registers the set of authenticated pairing callbacks (:c:struct:`bt_conn_auth_cb`).
+If you set the :option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY` option, the |ble_state| registers the set of authenticated pairing callbacks (:c:struct:`bt_conn_auth_cb`).
 The callbacks can be used to achieve higher security levels.
 The passkey input is handled in the :ref:`nrf_desktop_passkey`.
 
@@ -81,7 +81,7 @@ The passkey input is handled in the :ref:`nrf_desktop_passkey`.
 SoftDevice Link Layer
 =====================
 
-If Nordic Semiconductor's SoftDevice |BLE| Link Layer is selected (:option:`CONFIG_BT_LL_SOFTDEVICE`) and the ``CONFIG_DESKTOP_BLE_USE_LLPM`` option is enabled, the module sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
+If Nordic Semiconductor's SoftDevice |BLE| Link Layer is selected (:option:`CONFIG_BT_LL_SOFTDEVICE`) and the :option:`CONFIG_DESKTOP_BLE_USE_LLPM` option is enabled, the module sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
 The |ble_state| also sets the TX power for connections, because Zephyr's Kconfig options related to selecting the default TX power are not used by this Link Layer.
 
 .. |ble_state| replace:: Bluetooth LE state module

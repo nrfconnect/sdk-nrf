@@ -30,7 +30,7 @@ Configuration
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 
-The module is enabled with ``CONFIG_DESKTOP_QOS_ENABLE`` option.
+The module is enabled with :option:`CONFIG_DESKTOP_QOS_ENABLE` option.
 The module is available on the :ref:`peripheral devices <nrf_desktop_bluetooth_guide_peripheral>` only and requires the :ref:`nrf_desktop_ble_qos` to be enabled.
 
 Implementation details

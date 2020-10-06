@@ -19,7 +19,7 @@ Module events
 Configuration
 *************
 
-Enable the module with the ``CONFIG_DESKTOP_CONSTLAT_ENABLE`` Kconfig option.
+Enable the module with the :option:`CONFIG_DESKTOP_CONSTLAT_ENABLE` Kconfig option.
 
-You can set the ``CONFIG_DESKTOP_CONSTLAT_DISABLE_ON_STANDBY`` to disable the constant latency interrupts when the device goes to the low power mode (on ``power_down_event``).
+You can set the :option:`CONFIG_DESKTOP_CONSTLAT_DISABLE_ON_STANDBY` to disable the constant latency interrupts when the device goes to the low power mode (on ``power_down_event``).
 The constant latency interrupts are reenabled on ``wake_up_event``.

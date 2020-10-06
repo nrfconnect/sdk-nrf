@@ -105,7 +105,7 @@ The application local identity still uses the Bluetooth local identity that was 
    The erase advertising time-out can be extended in case a new peer connects.
    This ensures that a new peer will have time to establish the Bluetooth security level.
 
-   The time-out is increased to a bigger value when the passkey authentication is enabled (``CONFIG_DESKTOP_BLE_ENABLE_PASSKEY``).
+   The time-out is increased to a bigger value when the passkey authentication is enabled (:option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`).
    This gives the end user enough time to enter the passkey.
 
 Standby states
@@ -142,17 +142,17 @@ Peer control using a button
 
 Complete the following steps to let the user control Bluetooth peers using the dedicated button:
 
-1. Set the ``CONFIG_DESKTOP_BLE_PEER_CONTROL`` option to enable the feature.
+1. Set the :option:`CONFIG_DESKTOP_BLE_PEER_CONTROL` option to enable the feature.
 #. Configure the :ref:`nrf_desktop_buttons`.
-#. Define the button's key ID as ``CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON``.
+#. Define the button's key ID as :option:`CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON`.
 #. Add the button to the :ref:`nrf_desktop_click_detector` configuration, because the |ble_bond| reacts on ``click_event``.
 
 The following peer operations can be enabled:
 
-* ``CONFIG_DESKTOP_BLE_PEER_ERASE`` - Bluetooth LE peer erase triggered at any time.
-* ``CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START`` - Erase advertising triggered by long press of the predefined button on system start.
+* :option:`CONFIG_DESKTOP_BLE_PEER_ERASE` - Bluetooth LE peer erase triggered at any time.
+* :option:`CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START` - Erase advertising triggered by long press of the predefined button on system start.
   This option can be used only by nRF Desktop peripheral.
-* ``CONFIG_DESKTOP_BLE_PEER_SELECT`` - Select Bluetooth LE peer.
+* :option:`CONFIG_DESKTOP_BLE_PEER_SELECT` - Select Bluetooth LE peer.
   This option can be used only by nRF Desktop peripheral.
 * ``CONFIG_DESKTOP0_BLE_NEW_PEER_SCAN_REQUEST`` - Scan for new Bluetooth peers.
   This option can be used only by nRF Desktop central.
@@ -163,7 +163,7 @@ Peer control using a hardware selector
 .. note::
     This feature can be used only by nRF Desktop peripheral devices.
 
-Set the ``CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE`` option to use the dedicated local identity to connect with the dongle.
+Set the :option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE` option to use the dedicated local identity to connect with the dongle.
 The last application local identity (the one with the highest ID) is used for this purpose.
 
 The dongle is the nRF Desktop central.
@@ -173,8 +173,8 @@ This local identity is meant to be paired with the dongle during the production 
 The dongle peer is selected using the :ref:`nrf_desktop_selector`.
 You must also define the following parameters of the selector used to switch between dongle peer and other Bluetooth LE peers:
 
-* ``CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID`` - Selector ID.
-* ``CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS`` - Selector position for the dongle peer (when selector is in other position, other Bluetooth peers are selected).
+* :option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID` - Selector ID.
+* :option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS` - Selector position for the dongle peer (when selector is in other position, other Bluetooth peers are selected).
 
 .. note::
     The Bluetooth local identity used for the dongle peer does not provide any special capabilities.
@@ -187,7 +187,7 @@ Default Bluetooth local identity on peripheral
 ==============================================
 
 By default, the default Bluetooth local identity is unused, because it cannot be reset.
-You can set ``CONFIG_DESKTOP_BLE_USE_DEFAULT_ID`` to make the nRF Desktop peripheral initially use the default Bluetooth local identity for the application local identity with ID ``0``.
+You can set :option:`CONFIG_DESKTOP_BLE_USE_DEFAULT_ID` to make the nRF Desktop peripheral initially use the default Bluetooth local identity for the application local identity with ID ``0``.
 After the successful erase advertising for application local identity with ID ``0``, the default Bluetooth local identity is switched out and it is no longer used.
 The peer bonded with the default Bluetooth local identity is unpaired.
 

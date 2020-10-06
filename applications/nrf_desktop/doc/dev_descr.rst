@@ -8,7 +8,7 @@ The device description module defines custom GATT Service, which contains:
 * Information about whether the peripheral supports the Low Latency Packet Mode (LLPM)
 * Hardware ID (HW ID) of the peripheral
 
-In order to support the LLPM, the peripheral must use the SoftDevice Link Layer (:option:`CONFIG_BT_LL_SOFTDEVICE`) and ``CONFIG_DESKTOP_BLE_USE_LLPM`` Kconfig option must be enabled.
+In order to support the LLPM, the peripheral must use the SoftDevice Link Layer (:option:`CONFIG_BT_LL_SOFTDEVICE`) and :option:`CONFIG_DESKTOP_BLE_USE_LLPM` Kconfig option must be enabled.
 
 The Service is mandatory for all nRF Desktop peripherals that connect to the nRF Desktop centrals.
 

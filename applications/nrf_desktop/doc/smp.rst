@@ -33,12 +33,12 @@ Make sure that the following Kconfig options are enabled:
   See the :ref:`zephyr:device_mgmt` for details about Zephyr's device management subsystem.
 * :option:`CONFIG_MCUMGR_SMP_BT`
   The device receives SMP commands over Bluetooth.
-* ``CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE``
+* :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE`
   The :ref:`nrf_desktop_dfu` performs a secondary image FLASH area erase in the background and confirms the currently running MCUboot image.
 * :option:`CONFIG_BOOTLOADER_MCUBOOT`
   The DFU over Simple Management Protocol in Zephyr is supported only with the MCUboot bootloader.
 
-Enable the module using the ``CONFIG_DESKTOP_SMP_ENABLE`` Kconfig option.
+Enable the module using the :option:`CONFIG_DESKTOP_SMP_ENABLE` Kconfig option.
 
 Implementation details
 **********************

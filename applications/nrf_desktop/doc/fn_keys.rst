@@ -21,14 +21,14 @@ Configuration
 The module uses ``button_event`` sent by :ref:`nrf_desktop_buttons`.
 Make sure mentioned hardware interface is defined.
 
-The module is enabled with ``CONFIG_DESKTOP_FN_KEYS_ENABLE`` option.
+The module is enabled with :option:`CONFIG_DESKTOP_FN_KEYS_ENABLE` option.
 
 You must configure the following options:
 
-* ``CONFIG_DESKTOP_FN_KEYS_SWITCH`` - Fn key button.
-* ``CONFIG_DESKTOP_FN_KEYS_LOCK`` - Fn lock button.
-* ``CONFIG_DESKTOP_STORE_FN_LOCK`` - Option for defining if the device should store the Fn lock state after reboot (set by default to storing the state).
-* ``CONFIG_DESKTOP_FN_KEYS_MAX_ACTIVE`` - Maximum number of dual-purpose keys pressed at the same time (8 by default).
+* :option:`CONFIG_DESKTOP_FN_KEYS_SWITCH` - Fn key button.
+* :option:`CONFIG_DESKTOP_FN_KEYS_LOCK` - Fn lock button.
+* :option:`CONFIG_DESKTOP_STORE_FN_LOCK` - Option for defining if the device should store the Fn lock state after reboot (set by default to storing the state).
+* :option:`CONFIG_DESKTOP_FN_KEYS_MAX_ACTIVE` - Maximum number of dual-purpose keys pressed at the same time (8 by default).
   The module remembers the pressed keys to send proper key releases.
 
 In the file :file:`fn_keys_def.h``, define all the dual-purpose keys.

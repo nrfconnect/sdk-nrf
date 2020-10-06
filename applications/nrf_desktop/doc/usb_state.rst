@@ -19,7 +19,7 @@ Module events
 Configuration
 *************
 
-The module is enabled by selecting ``CONFIG_DESKTOP_USB_ENABLE``.
+The module is enabled by selecting :option:`CONFIG_DESKTOP_USB_ENABLE`.
 It depends on :option:`CONFIG_USB_DEVICE_HID`.
 
 When enabling the USB support for the device, set the following generic device options:

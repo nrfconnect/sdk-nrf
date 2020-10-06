@@ -19,7 +19,7 @@ Module Events
 Configuration
 *************
 
-Use the ``CONFIG_DESKTOP_FAILSAFE_ENABLE`` option to enable the module.
+Use the :option:`CONFIG_DESKTOP_FAILSAFE_ENABLE` option to enable the module.
 
 Additionally, make sure that the following options are set as follows:
 

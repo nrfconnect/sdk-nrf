@@ -701,7 +701,7 @@ For example, LEDs are turned off and advertising is stopped.
 
 Moving the mouse or pressing any button wakes up the device and turns on the disabled functionalities.
 
-You can define the amount of time after which the peripherals are suspended or powered off in ``CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT``.
+You can define the amount of time after which the peripherals are suspended or powered off in :option:`CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT`.
 By default, this period is set to 120 seconds.
 
 .. important::
@@ -769,7 +769,7 @@ After building the application with or without :ref:`specifying the build type <
    .. note::
         You can manually start the scanning for new peripheral devices by pressing the **SW1** button on the dongle for a short time.
         This might be needed if the dongle does not connect with all the peripherals before time-out.
-        The scanning is interrupted after the amount of time predefined in ``CONFIG_DESKTOP_BLE_SCAN_DURATION_S``, because it negatively affects the performance of already connected peripherals.
+        The scanning is interrupted after the amount of time predefined in :option:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S`, because it negatively affects the performance of already connected peripherals.
 
 #. Move the mouse and press any key on the keyboard.
    The input is reflected on the host.
@@ -954,7 +954,7 @@ To use the nRF Desktop application with your custom board:
    a. Ensure that the Bluetooth role is properly configured.
       For mouse, it should be configured as peripheral.
    #. Update the configuration related to peer control.
-      You can also disable the peer control using the ``CONFIG_DESKTOP_BLE_PEER_CONTROL`` option.
+      You can also disable the peer control using the :option:`CONFIG_DESKTOP_BLE_PEER_CONTROL` option.
       Peer control details are described in the :ref:`nrf_desktop_ble_bond` documentation.
 
    Refer to the :ref:`nrf_desktop_bluetooth_guide` section and Zephyr's :ref:`zephyr:bluetooth` page for more detailed information about the Bluetooth configuration.
@@ -1269,15 +1269,15 @@ The nRF Desktop devices use one of the following Link Layers:
 
 * :option:`CONFIG_BT_LL_SOFTDEVICE`
     This Link Layer does support the Low Latency Packet Mode (LLPM).
-    If you opt for this Link Layer and enable this option, the ``CONFIG_DESKTOP_BLE_USE_LLPM`` is also enabled by default and can be configured further:
+    If you opt for this Link Layer and enable this option, the :option:`CONFIG_DESKTOP_BLE_USE_LLPM` is also enabled by default and can be configured further:
 
-    * When ``CONFIG_DESKTOP_BLE_USE_LLPM`` is enabled, set the value for :option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``3000``.
+    * When :option:`CONFIG_DESKTOP_BLE_USE_LLPM` is enabled, set the value for :option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``3000``.
 
       This is required by the nRF Desktop central and helps avoid scheduling conflicts with Bluetooth Link Layer.
       Such conflicts could lead to a drop in HID input report rate or a disconnection.
       Setting the value to ``3000`` also enables the nRF Desktop central to exchange data with up to 2 standard |BLE| peripherals during every connection interval (every 7.5 ms).
 
-    * When ``CONFIG_DESKTOP_BLE_USE_LLPM`` is disabled, the device will use only standard BLE connection parameters with the lowest available connection interval of 7.5 ms.
+    * When :option:`CONFIG_DESKTOP_BLE_USE_LLPM` is disabled, the device will use only standard BLE connection parameters with the lowest available connection interval of 7.5 ms.
 
       If the LLPM is disabled and more than 2 simultaneous Bluetooth connections are supported (:option:`CONFIG_BT_MAX_CONN`), you can set the value for :option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``2500``.
       With this value, the nRF Desktop central is able to exchange the data with up to 3 |BLE| peripherals during every 7.5-ms connection interval.

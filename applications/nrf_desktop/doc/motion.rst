@@ -23,11 +23,11 @@ Configuration
 
 The motion module selects the source of movement based on the following configuration options:
 
-* ``CONFIG_DESKTOP_MOTION_NONE`` - Module is disabled.
-* ``CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE`` - Movement data is obtained from the gaming-grade ``PMW3360`` motion sensor.
-* ``CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE`` - Movement data is obtained from ``PAW3212`` motion sensor.
-* ``CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE`` - Movement data is generated using buttons.
-* ``CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE`` - Movement data is simulated (controlled from Zephyr's :ref:`zephyr:shell_api`).
+* :option:`CONFIG_DESKTOP_MOTION_NONE` - Module is disabled.
+* :option:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE` - Movement data is obtained from the gaming-grade ``PMW3360`` motion sensor.
+* :option:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE` - Movement data is obtained from ``PAW3212`` motion sensor.
+* :option:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE` - Movement data is generated using buttons.
+* :option:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE` - Movement data is simulated (controlled from Zephyr's :ref:`zephyr:shell_api`).
 
 See the following sections for more information.
 
@@ -36,30 +36,30 @@ Depending on the selected configuration option, different implementation file is
 Movement data from motion sensors
 =================================
 
-Selecting either of the motion sensors (``CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE`` or ``CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE``) adds the :file:`src/hw_interface/motion_sensor.c` file to the compilation.
+Selecting either of the motion sensors (:option:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE` or :option:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE`) adds the :file:`src/hw_interface/motion_sensor.c` file to the compilation.
 
 The motion sensor is sampled from the context of a dedicated thread.
-The option ``CONFIG_DESKTOP_MOTION_SENSOR_THREAD_STACK_SIZE`` is used to set the thread's stack size.
+The option :option:`CONFIG_DESKTOP_MOTION_SENSOR_THREAD_STACK_SIZE` is used to set the thread's stack size.
 
 The motion sensor default sensitivity and power saving switching times can be set with the following options:
 
-* ``CONFIG_DESKTOP_MOTION_SENSOR_CPI`` - Default CPI.
-* ``CONFIG_DESKTOP_MOTION_SENSOR_SLEEP1_TIMEOUT_MS`` - ``Sleep 1`` mode default switch time.
-* ``CONFIG_DESKTOP_MOTION_SENSOR_SLEEP2_TIMEOUT_MS`` - ``Sleep 2`` mode default switch time.
-* ``CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS`` - ``Sleep 3`` mode default switch time.
+* :option:`CONFIG_DESKTOP_MOTION_SENSOR_CPI` - Default CPI.
+* :option:`CONFIG_DESKTOP_MOTION_SENSOR_SLEEP1_TIMEOUT_MS` - ``Sleep 1`` mode default switch time.
+* :option:`CONFIG_DESKTOP_MOTION_SENSOR_SLEEP2_TIMEOUT_MS` - ``Sleep 2`` mode default switch time.
+* :option:`CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS` - ``Sleep 3`` mode default switch time.
 
 For more information, see the sensor documentation and the Kconfig help.
 
 Movement data from buttons
 ==========================
 
-Selecting the ``CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE`` option adds the :file:`src/hw_interface/motion_buttons.c` file to the compilation.
+Selecting the :option:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE` option adds the :file:`src/hw_interface/motion_buttons.c` file to the compilation.
 
 Simulated movement data
 =======================
 
-Selecting the ``CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE`` option adds the :file:`src/hw_interface/motion_simulated.c` file to the compilation.
-This option depends on the shell (``CONFIG_DESKTOP_SHELL_ENABLE`` option) to be enabled in the application configuration.
+Selecting the :option:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE` option adds the :file:`src/hw_interface/motion_simulated.c` file to the compilation.
+This option depends on the shell (:option:`CONFIG_DESKTOP_SHELL_ENABLE` option) to be enabled in the application configuration.
 
 When using this option, the motion module registers a shell module ``motion_sim`` and links to it two commands: ``start`` and ``stop``.
 
@@ -68,15 +68,15 @@ The movement data in each event will be tracing the predefined path, an eight-si
 
 You can configure the path with the following options:
 
-* ``CONFIG_DESKTOP_MOTION_SIMULATED_EDGE_TIME`` - Sets how long each edge is traced.
-* ``CONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR`` - Scales the size of the polygon.
+* :option:`CONFIG_DESKTOP_MOTION_SIMULATED_EDGE_TIME` - Sets how long each edge is traced.
+* :option:`CONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR` - Scales the size of the polygon.
 
 The ``stop`` command will cause the module to stop generating new events.
 
 Configuration channel
 *********************
 
-In a :ref:`configuration <nrf_desktop_motion_configuration>` where either ``CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE`` or ``CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE`` is used, you can configure the module through the :ref:`nrf_desktop_config_channel`.
+In a :ref:`configuration <nrf_desktop_motion_configuration>` where either :option:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE` or :option:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE` is used, you can configure the module through the :ref:`nrf_desktop_config_channel`.
 In these configurations, the module is a configuration channel listener and it provides the following configuration options:
 
 * :c:macro:`OPT_DESCR_MODULE_VARIANT`
@@ -141,5 +141,5 @@ Upon connection, the following happens:
 #. At that point, a next motion sampling is performed and the next ``motion_event`` sent.
 
 The module continues to sample data until disconnection or when there is no motion detected.
-The ``motion`` module assumes no motion when a number of consecutive samples equal to ``CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT`` returns zero on both axis.
+The ``motion`` module assumes no motion when a number of consecutive samples equal to :option:`CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT` returns zero on both axis.
 In such case, the module will switch back to ``STATE_IDLE`` and wait for the motion sensor trigger.

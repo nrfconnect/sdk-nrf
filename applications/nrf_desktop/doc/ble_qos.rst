@@ -23,27 +23,27 @@ Configuration
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 
 The QoS module uses the ``chmap_filter`` library, whose API is described in :file:`src/util/chmap_filter/include/chmap_filter.h`.
-The library is linked if ``CONFIG_DESKTOP_BLE_QOS_ENABLE`` Kconfig option is enabled.
+The library is linked if :option:`CONFIG_DESKTOP_BLE_QOS_ENABLE` Kconfig option is enabled.
 
-Enable the module using the ``CONFIG_DESKTOP_BLE_QOS_ENABLE`` Kconfig option.
+Enable the module using the :option:`CONFIG_DESKTOP_BLE_QOS_ENABLE` Kconfig option.
 The option selects :option:`CONFIG_BT_HCI_VS_EVT_USER`, because the module uses vendor-specific HCI events.
 
-You can use the ``CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE`` option to enable real-time QoS information printouts through a virtual COM port (serial port emulated over USB).
+You can use the :option:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE` option to enable real-time QoS information printouts through a virtual COM port (serial port emulated over USB).
 This option also enables and configures the COM port (USB CDC ACM).
 For this reason, the :option:`CONFIG_USB` must be enabled.
 
 The QoS module creates additional thread for processing the QoS algorithm.
 You can define the following options:
 
-* ``CONFIG_DESKTOP_BLE_QOS_INTERVAL``
+* :option:`CONFIG_DESKTOP_BLE_QOS_INTERVAL`
     This option specifies the amount of time of the processing interval for the QoS thread.
     The interval is defined in milliseconds.
     The thread periodically performs calculations and then sleeps during the interval.
     Longer intervals give more time to accumulate the Cyclic Redundancy Check (CRC) stats.
-* ``CONFIG_DESKTOP_BLE_QOS_STACK_SIZE``
+* :option:`CONFIG_DESKTOP_BLE_QOS_STACK_SIZE`
     This option defines the base stack size for the QoS thread.
-* ``CONFIG_DESKTOP_BLE_QOS_STATS_PRINT_STACK_SIZE``
-    This option specifies the stack size increase if ``CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE`` is enabled.
+* :option:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINT_STACK_SIZE`
+    This option specifies the stack size increase if :option:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE` is enabled.
 
 .. tip::
    You can use the default thread stack sizes as long as you do not modify the module source code.
@@ -119,7 +119,7 @@ The thread is used to periodically perform the following operations:
 * Submit the suggested channel map as ``ble_qos_event``.
 * If the device is a Bluetooth central, update the used |BLE| channel map.
 
-If the ``CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE`` Kconfig option is set, the module prints the following information through the virtual COM port:
+If the :option:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE` Kconfig option is set, the module prints the following information through the virtual COM port:
 
 * HID report rate
    The module counts the number of HID input reports received via Bluetoooth LE and prints the report rate through the virtual COM port every 100 packets.

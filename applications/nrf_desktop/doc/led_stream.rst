@@ -20,11 +20,11 @@ Configuration
 *************
 
 The module receives LED effects through the :ref:`nrf_desktop_config_channel` and displays them using the :ref:`nrf_desktop_leds`.
-For this reason, make sure that ``CONFIG_DESKTOP_LED_ENABLE`` and ``CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE`` are both set.
+For this reason, make sure that :option:`CONFIG_DESKTOP_LED_ENABLE` and :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` are both set.
 
-To enable the module, use the ``CONFIG_DESKTOP_LED_STREAM_ENABLE`` Kconfig option.
+To enable the module, use the :option:`CONFIG_DESKTOP_LED_STREAM_ENABLE` Kconfig option.
 
-You can also define the stream LED event queue size (``CONFIG_DESKTOP_LED_STREAM_QUEUE_SIZE``).
+You can also define the stream LED event queue size (:option:`CONFIG_DESKTOP_LED_STREAM_QUEUE_SIZE`).
 The queue is used by the module as data buffer for the data received from the host computer.
 
 Configuration channel
