@@ -1805,9 +1805,9 @@ static void no_sim_go_offline(struct k_work *work)
 #endif /* CONFIG_BSD_LIBRARY */
 }
 
+#if defined(CONFIG_LTE_LINK_CONTROL)
 static void lte_handler(const struct lte_lc_evt *const evt)
 {
-#if defined(CONFIG_BSD_LIBRARY)
 	switch (evt->type) {
 	case LTE_LC_EVT_NW_REG_STATUS:
 
@@ -1850,8 +1850,8 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 	default:
 		break;
 	}
-#endif /* CONFIG_BSD_LIBRARY */
 }
+#endif /* defined(CONFIG_LTE_LINK_CONTROL) */
 
 static void date_time_event_handler(const struct date_time_evt *evt)
 {
@@ -1902,9 +1902,9 @@ void main(void)
 	ui_init(ui_evt_handler);
 #endif
 	work_init();
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_LTE_LINK_CONTROL)
 	lte_lc_register_handler(lte_handler);
-#endif /* CONFIG_BSD_LIBRARY */
+#endif /* defined(CONFIG_LTE_LINK_CONTROL) */
 	while (modem_configure() != 0) {
 		LOG_WRN("Failed to establish LTE connection.");
 		LOG_WRN("Will retry in %d seconds.",
