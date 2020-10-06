@@ -85,7 +85,7 @@ UART
 
 The UART interface can be configured as a logging backend using the following Kconfig options:
 
-* :option:`CONFIG_LOG_BACKEND_UART` - This option enables the UART backend.
+* :option:`CONFIG_LOG_BACKEND_UART` - This option enables the UART logging backend.
 * :option:`CONFIG_LOG_BACKEND_UART_SYST_ENABLE` - This option is used to output logs in system format.
 
 For information about how to see UART output, see :ref:`putty`.
@@ -95,7 +95,7 @@ RTT
 
 SEGGER's J-Link RTT backend logging can be handled with the following Kconfig options:
 
-* :option:`CONFIG_LOG_BACKEND_RTT` - This option enables RTT backend.
+* :option:`CONFIG_LOG_BACKEND_RTT` - This option enables RTT logging backend.
 * :option:`CONFIG_LOG_BACKEND_RTT_MODE_DROP` - This option enables the mode in which messages that do not fit the buffer are dropped.
 * :option:`CONFIG_LOG_BACKEND_RTT_MODE_BLOCK` - This option enables the mode in which the device is blocked until a message is transferred.
 * :option:`CONFIG_LOG_BACKEND_RTT_OUTPUT_BUFFER_SIZE` - This option defines the size of the buffer used for storing data prepared for sending.
@@ -115,7 +115,7 @@ Spinel
 Using Spinel protocol as a logging backend is specific to OpenThread's :ref:`thread_architectures_designs_cp_ncp` architecture.
 The Spinel protocol can be configured as a logging backend using the following Kconfig options:
 
-* :option:`CONFIG_LOG_BACKEND_SPINEL` - This option enables the Spinel backend.
+* :option:`CONFIG_LOG_BACKEND_SPINEL` - This option enables the Spinel logging backend.
 * :option:`CONFIG_LOG_BACKEND_SPINEL_BUFFER_SIZE` - This option defines the size of buffer used for logger output.
 
 To communicate using the Spinel protocol and gather logs, you need one of the following tools:
@@ -123,9 +123,21 @@ To communicate using the Spinel protocol and gather logs, you need one of the fo
 * `PySpinel`_
 * :ref:`ug_thread_tools_wpantund`
 
-Each one of these tools accepts the ``-d <DEBUG_LEVEL>`` and ``--debug=<DEBUG_LEVEL>`` arguments, which can be used to display log messages.
+Each one of these tools accepts the ``-d <DEBUG_LEVEL>`` and ``--debug=<DEBUG_LEVEL>`` arguments, which can be used to display logging messages.
 See `PySpinel arguments`_ for an example if you are using PySpinel.
 Alternatively, see `wpantund Usage Overview`_ for information about how to change wpantund configuration file to avoid passing arguments manually every time.
+
+Shell
+=====
+
+When you enable Zephyr's :ref:`zephyr:shell_api`, it by default becomes a logging backend.
+You can disable this backend by using the following Kconfig option:
+
+* :option:`CONFIG_SHELL_LOG_BACKEND` - This option enables and disables the shell logging backend.
+
+.. note::
+   The UART and RTT logging backends can also be configured as shell backends.
+   For example, if the UART backend is disabled, but UART is selected as the shell backend and Zephyr's shell is enabled as the logging backend, the logging output will end up in UART.
 
 Logging output examples
 ***********************

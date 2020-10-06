@@ -69,6 +69,7 @@ Complete the following steps to run the certification tests:
 
    .. note::
       The overlay file selects the precompiled OpenThread libraries by default.
+      It also enables OpenThread debug logs on the RTT backend.
 
 #. Prepare Thread Test Harness.
 
