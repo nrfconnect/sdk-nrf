@@ -1278,7 +1278,7 @@ class nRF52840(IThci):
         try:
             self._sendline('factoryreset')
             self._read()
-            time.sleep(1.5)
+            time.sleep(0.5)
 
         except Exception as e:
             ModuleHelper.WriteIntoDebugLogger('reset() Error: ' + str(e))
