@@ -36,6 +36,8 @@
 
 .. ### Links to Nordic documentation
 
+.. _`nRF Connect SDK v1.3.2 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.3.2/nrf/index.html
+
 .. _`nRF Connect SDK v1.3.1 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.3.1/nrf/index.html
 
 .. _`nRF Connect SDK v1.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.3.0/nrf/index.html
