@@ -306,7 +306,4 @@ This sample uses the following Zephyr libraries:
 
   * ``include/logging/log.h``
 
-----
-
-Copyright disclaimer
-    |Google_CCLicense|
+:Copyright disclaimer: |Google_CCLicense|

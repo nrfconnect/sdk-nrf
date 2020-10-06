@@ -26,8 +26,6 @@ The mesh stack's structure corresponds to the structure of the Bluetooth Mesh sp
 See the official `Bluetooth Mesh glossary`_ for definitions of the most important Bluetooth Mesh-related terms used in this documentation.
 You can also read about :ref:`basic Bluetooth Mesh concepts <mesh_concepts>` for a concise introduction to the Bluetooth Mesh.
 
-----
-
 .. _mesh_architecture_flow:
 
 Bluetooth Mesh network data flow
@@ -78,8 +76,6 @@ The following process takes place at this stage:
 
 The light bulb model may respond to acknowledge the transmission, following the same procedure back to the light switch node, which can notify the application that the on/off message was received.
 
-----
-
 .. _mesh_architecture_models:
 
 Models
@@ -92,8 +88,6 @@ All mesh communication happens through models, and any application that exposes 
 The Bluetooth Mesh Specification defines a set of immutable models for typical usage scenarios, but vendors are also free to implement their own models.
 
 You can read more about the Bluetooth Mesh models in |NCS| in :ref:`bt_mesh_models`.
-
-----
 
 .. _mesh_architecture_access:
 
@@ -111,8 +105,6 @@ As the device receives mesh messages, the access layer finds which models the me
 The access layer is implemented in Zephyr.
 For more information about the access layer, see :ref:`zephyr:bluetooth_mesh_access`.
 
-----
-
 .. _mesh_architecture_core:
 
 Bluetooth Mesh core
@@ -129,8 +121,6 @@ When receiving a mesh packet, the network layer decrypts the message, inspects t
 The Bluetooth Mesh core provides protection against malicious behavior and attacks against the mesh network through two-layer encryption, replay protection, and packet header obfuscation.
 The Bluetooth Mesh core is implemented in Zephyr.
 Read more about the Bluetooth Mesh core API in :ref:`zephyr:bluetooth_mesh_core`.
-
-----
 
 .. _mesh_architecture_provisioning:
 

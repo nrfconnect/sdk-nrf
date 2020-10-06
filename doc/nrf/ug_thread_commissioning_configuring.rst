@@ -172,7 +172,4 @@ Complete the following steps:
 
 Both devices are now able to ping each other.
 
-----
-
-Copyright disclaimer
-    |Google_CCLicense|
+:Copyright disclaimer: |Google_CCLicense|
