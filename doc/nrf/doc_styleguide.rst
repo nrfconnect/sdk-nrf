@@ -160,7 +160,7 @@ Therefore, every group must be explicitly added to an RST file.
 
 .. code-block:: none
 
-   .. doxygengroup:: bluetooth_gatt_throughput
+   .. doxygengroup:: bluetooth_throughput
       :project: nrf
       :members:
 

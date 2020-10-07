@@ -4,16 +4,16 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-config BT_GATT_THROUGHPUT
+config BT_THROUGHPUT
 	bool "Throughput service"
 	select BT_NRF_SERVICES
 	help
 	 Enable Nordic GATT throughput BLE service.
 
-if BT_GATT_THROUGHPUT
+if BT_THROUGHPUT
 
-module = BT_GATT_THROUGHPUT
+module = BT_THROUGHPUT
 module-str = THROUGHPUT
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-endif # BT_GATT_THROUGHPUT
+endif # BT_THROUGHPUT

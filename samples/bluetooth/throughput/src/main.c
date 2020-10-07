@@ -28,7 +28,7 @@
 
 static volatile bool test_ready;
 static struct bt_conn *default_conn;
-static struct bt_gatt_throughput gatt_throughput;
+static struct bt_throughput throughput;
 static struct bt_uuid *uuid128 = BT_UUID_THROUGHPUT;
 static struct bt_gatt_exchange_params exchange_params;
 static struct bt_le_conn_param *conn_param =
@@ -103,12 +103,12 @@ static void discovery_complete(struct bt_gatt_dm *dm,
 			       void *context)
 {
 	int err;
-	struct bt_gatt_throughput *throughput = context;
+	struct bt_throughput *throughput = context;
 
 	printk("Service discovery completed\n");
 
 	bt_gatt_dm_data_print(dm);
-	bt_gatt_throughput_handles_assign(dm, throughput);
+	bt_throughput_handles_assign(dm, throughput);
 	bt_gatt_dm_data_release(dm);
 
 	exchange_params.func = exchange_func;
@@ -177,7 +177,7 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 		err = bt_gatt_dm_start(default_conn,
 				       BT_UUID_THROUGHPUT,
 				       &discovery_cb,
-				       &gatt_throughput);
+				       &throughput);
 
 		if (err) {
 			printk("Discover failed (err %d)\n", err);
@@ -273,7 +273,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	}
 }
 
-static uint8_t throughput_read(const struct bt_gatt_throughput_metrics *met)
+static uint8_t throughput_read(const struct bt_throughput_metrics *met)
 {
 	printk("[peer] received %u bytes (%u KB)"
 	       " in %u GATT writes at %u bps\n",
@@ -285,7 +285,7 @@ static uint8_t throughput_read(const struct bt_gatt_throughput_metrics *met)
 	return BT_GATT_ITER_STOP;
 }
 
-static void throughput_received(const struct bt_gatt_throughput_metrics *met)
+static void throughput_received(const struct bt_throughput_metrics *met)
 {
 	static uint32_t kb;
 
@@ -302,7 +302,7 @@ static void throughput_received(const struct bt_gatt_throughput_metrics *met)
 	}
 }
 
-static void throughput_send(const struct bt_gatt_throughput_metrics *met)
+static void throughput_send(const struct bt_throughput_metrics *met)
 {
 	printk("\n[local] received %u bytes (%u KB)"
 		" in %u GATT writes at %u bps\n",
@@ -310,7 +310,7 @@ static void throughput_send(const struct bt_gatt_throughput_metrics *met)
 		met->write_count, met->write_rate);
 }
 
-static const struct bt_gatt_throughput_cb throughput_cb = {
+static const struct bt_throughput_cb throughput_cb = {
 	.data_read = throughput_read,
 	.data_received = throughput_received,
 	.data_send = throughput_send
@@ -340,7 +340,7 @@ static void test_run(void)
 	test_ready = false;
 
 	/* reset peer metrics */
-	err = bt_gatt_throughput_write(&gatt_throughput, dummy, 1);
+	err = bt_throughput_write(&throughput, dummy, 1);
 	if (err) {
 		printk("Reset peer metrics failed.\n");
 		return;
@@ -350,7 +350,7 @@ static void test_run(void)
 	stamp = k_uptime_get_32();
 
 	while (prog < IMG_SIZE) {
-		err = bt_gatt_throughput_write(&gatt_throughput, dummy, 244);
+		err = bt_throughput_write(&throughput, dummy, 244);
 		if (err) {
 			printk("GATT write failed (err %d)\n", err);
 			break;
@@ -369,7 +369,7 @@ static void test_run(void)
 	       data, data / 1024, delta, ((uint64_t)data * 8 / delta));
 
 	/* read back char from peer */
-	err = bt_gatt_throughput_read(&gatt_throughput);
+	err = bt_throughput_read(&throughput);
 	if (err) {
 		printk("GATT read failed (err %d)\n", err);
 	}
@@ -431,7 +431,7 @@ void main(void)
 
 	scan_init();
 
-	err = bt_gatt_throughput_init(&gatt_throughput, &throughput_cb);
+	err = bt_throughput_init(&throughput, &throughput_cb);
 	if (err) {
 		printk("Throughput service initialization failed.\n");
 		return;
