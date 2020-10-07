@@ -38,7 +38,7 @@ typedef void (*ble_disconnection_cb_t)(struct k_work *item);
  * @retval 0    On success.
  * @retval != 0 On failure.
  */
-int ble_utils_init(nus_received_cb_t on_nus_received, nus_sent_cb_t on_nus_send,
+int ble_utils_init(struct bt_nus_cb *nus_clbs,
 		   ble_connection_cb_t on_connect,
 		   ble_disconnection_cb_t on_disconnect);
 

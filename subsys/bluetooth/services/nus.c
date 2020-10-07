@@ -11,9 +11,9 @@
 #include <bluetooth/services/nus.h>
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(bt_gatt_nus, CONFIG_BT_GATT_NUS_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_nus, CONFIG_BT_NUS_LOG_LEVEL);
 
-static struct bt_gatt_nus_cb nus_cb;
+static struct bt_nus_cb nus_cb;
 
 static ssize_t on_receive(struct bt_conn *conn,
 			  const struct bt_gatt_attr *attr,
@@ -25,8 +25,8 @@ static ssize_t on_receive(struct bt_conn *conn,
 	LOG_DBG("Received data, handle %d, conn %p",
 		attr->handle, conn);
 
-	if (nus_cb.received_cb) {
-		nus_cb.received_cb(conn, buf, len);
+	if (nus_cb.received) {
+		nus_cb.received(conn, buf, len);
 }
 	return len;
 }
@@ -37,8 +37,8 @@ static void on_sent(struct bt_conn *conn, void *user_data)
 
 	LOG_DBG("Data send, conn %p", conn);
 
-	if (nus_cb.sent_cb) {
-		nus_cb.sent_cb(conn);
+	if (nus_cb.sent) {
+		nus_cb.sent(conn);
 	}
 }
 
@@ -57,17 +57,17 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_NUS_SERVICE),
 			       NULL, on_receive, NULL),
 );
 
-int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks)
+int bt_nus_init(struct bt_nus_cb *callbacks)
 {
 	if (callbacks) {
-		nus_cb.received_cb = callbacks->received_cb;
-		nus_cb.sent_cb     = callbacks->sent_cb;
+		nus_cb.received = callbacks->received;
+		nus_cb.sent = callbacks->sent;
 	}
 
 	return 0;
 }
 
-int bt_gatt_nus_send(struct bt_conn *conn, const uint8_t *data, uint16_t len)
+int bt_nus_send(struct bt_conn *conn, const uint8_t *data, uint16_t len)
 {
 	struct bt_gatt_notify_params params = {0};
 	const struct bt_gatt_attr *attr = &nus_svc.attrs[2];

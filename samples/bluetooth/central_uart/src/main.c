@@ -20,7 +20,7 @@
 #include <bluetooth/gatt.h>
 
 #include <bluetooth/services/nus.h>
-#include <bluetooth/services/nus_c.h>
+#include <bluetooth/services/nus_client.h>
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
 
@@ -58,7 +58,7 @@ static K_FIFO_DEFINE(fifo_uart_tx_data);
 static K_FIFO_DEFINE(fifo_uart_rx_data);
 
 static struct bt_conn *default_conn;
-static struct bt_gatt_nus_c gatt_nus_c;
+static struct bt_nus_client nus_client;
 
 static void ble_data_sent(uint8_t err, const uint8_t *const data, uint16_t len)
 {
@@ -280,13 +280,13 @@ static int uart_init(void)
 static void discovery_complete(struct bt_gatt_dm *dm,
 			       void *context)
 {
-	struct bt_gatt_nus_c *nus_c = context;
+	struct bt_nus_client *nus = context;
 	LOG_INF("Service discovery completed");
 
 	bt_gatt_dm_data_print(dm);
 
-	bt_gatt_nus_c_handles_assign(dm, nus_c);
-	bt_gatt_nus_c_tx_notif_enable(nus_c);
+	bt_nus_handles_assign(dm, nus);
+	bt_nus_subscribe_receive(nus);
 
 	bt_gatt_dm_data_release(dm);
 }
@@ -321,7 +321,7 @@ static void gatt_discover(struct bt_conn *conn)
 	err = bt_gatt_dm_start(conn,
 			       BT_UUID_NUS_SERVICE,
 			       &discovery_cb,
-			       &gatt_nus_c);
+			       &nus_client);
 	if (err) {
 		LOG_ERR("could not start the discovery procedure, error "
 			"code: %d", err);
@@ -442,14 +442,14 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 static int nus_client_init(void)
 {
 	int err;
-	struct bt_gatt_nus_c_init_param nus_c_init_obj = {
-		.cbs = {
-			.data_received = ble_data_received,
-			.data_sent = ble_data_sent,
+	struct bt_nus_client_init_param init = {
+		.cb = {
+			.received = ble_data_received,
+			.sent = ble_data_sent,
 		}
 	};
 
-	err = bt_gatt_nus_c_init(&gatt_nus_c, &nus_c_init_obj);
+	err = bt_nus_client_init(&nus_client, &init);
 	if (err) {
 		LOG_ERR("NUS Client initialization failed (err %d)", err);
 		return err;
@@ -586,7 +586,7 @@ void main(void)
 		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
 						     K_FOREVER);
 
-		err = bt_gatt_nus_c_send(&gatt_nus_c, buf->data, buf->len);
+		err = bt_nus_client_send(&nus_client, buf->data, buf->len);
 		if (err) {
 			LOG_WRN("Failed to send data over BLE connection"
 				"(err %d)", err);

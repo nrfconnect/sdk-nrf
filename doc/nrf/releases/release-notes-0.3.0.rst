@@ -155,7 +155,7 @@ Bluetooth Low Energy
   * :ref:`bluetooth_central_hids`:
     This sample connects to HID devices and uses the :ref:`gatt_dm_readme` library to perform HID service discovery.
   * :ref:`central_uart`:
-    This sample connects to NUS Servers and uses the :ref:`nus_c_readme` library to interact with them.
+    This sample connects to NUS Servers and uses the :ref:`nus_client_readme` library to interact with them.
     The sample can be tested with the :ref:`peripheral_uart` sample.
 
 * Added the following libraries:
@@ -164,7 +164,7 @@ Bluetooth Low Energy
     This library handles BLE scanning for your application.
   * :ref:`gatt_dm_readme`:
     This library handles service discovery on BLE GATT servers.
-  * :ref:`nus_c_readme`:
+  * :ref:`nus_client_readme`:
     This library can be used to act as a NUS Client.
 
 Bootloader

@@ -9,7 +9,7 @@ menuconfig SHELL_BT_NUS
 	prompt "Shell Bluetooth NUS transport"
 	depends on BT
 	select SHELL
-	select BT_GATT_NUS
+	select BT_NUS
 	select RING_BUFFER
 	help
 	  Enable shell BT NUS transport.

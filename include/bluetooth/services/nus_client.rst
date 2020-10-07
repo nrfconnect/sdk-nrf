@@ -1,4 +1,4 @@
-.. _nus_c_readme:
+.. _nus_client_readme:
 
 Nordic UART Service (NUS) Client
 ################################
@@ -20,14 +20,14 @@ TX Characteristic
 
 To receive data coming from the TX Characteristic, enable notifications after the service discovery.
 After that, you can request to disable notifications again by returning the STOP value in the callback that is used to handle incoming data.
-Another dedicated callback is triggered when your request has been completed, to notify you that you have unsubscribed successfully.
+Another dedicated callback is triggered when your request has been completed, to inform you that you have unsubscribed successfully.
 
 API documentation
 *****************
 
-| Header file: :file:`include/nus_c.h`
-| Source file: :file:`subsys/bluetooth/services/nus_c.c`
+| Header file: :file:`include/nus_client.h`
+| Source file: :file:`subsys/bluetooth/services/nus_client.c`
 
-.. doxygengroup:: bt_gatt_nus_c
+.. doxygengroup:: bt_nus_client
    :project: nrf
    :members:

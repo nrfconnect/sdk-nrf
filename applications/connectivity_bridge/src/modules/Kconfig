@@ -43,7 +43,7 @@ endif
 
 config BRIDGE_BLE_ENABLE
 	bool "Enable BLE UART Service"
-	depends on BT_GATT_NUS
+	depends on BT_NUS
 	help
 	  This option enables BLE NUS Service.
 	  BLE advertisement will run continuously when not connected.

@@ -30,7 +30,7 @@
 #define OTA_ACTIVITY_LED          DK_LED2
 #endif /* CONFIG_ZIGBEE_FOTA */
 
-#if CONFIG_BT_GATT_NUS
+#if CONFIG_BT_NUS
 #include "nus_cmd.h"
 
 /* LED which indicates that Central is connected. */
@@ -45,7 +45,7 @@
 #define COMMAND_INCREASE          "i"
 /**< UART command that will decrease brightness of found light bulb(s). */
 #define COMMAND_DECREASE          "d"
-#endif /* CONFIG_BT_GATT_NUS */
+#endif /* CONFIG_BT_NUS */
 
 /* Source endpoint used to control light bulb. */
 #define LIGHT_SWITCH_ENDPOINT      1
@@ -476,7 +476,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	}
 }
 
-#if CONFIG_BT_GATT_NUS
+#if CONFIG_BT_NUS
 
 static void turn_on_cmd(struct k_work *item)
 {
@@ -534,7 +534,7 @@ static struct nus_entry commands[] = {
 	NUS_COMMAND(NULL, NULL),
 };
 
-#endif /* CONFIG_BT_GATT_NUS */
+#endif /* CONFIG_BT_NUS */
 
 void main(void)
 {
@@ -583,10 +583,10 @@ void main(void)
 	/* Start Zigbee default thread. */
 	zigbee_enable();
 
-#if CONFIG_BT_GATT_NUS
+#if CONFIG_BT_NUS
 	/* Initalize NUS command service. */
 	nus_cmd_init(on_nus_connect, on_nus_disconnect, commands);
-#endif /* CONFIG_BT_GATT_NUS */
+#endif /* CONFIG_BT_NUS */
 
 	LOG_INF("ZBOSS Light Switch example started");
 

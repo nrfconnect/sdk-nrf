@@ -4,15 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-config BT_GATT_NUS
+config BT_NUS
 	bool "Nordic UART service"
 	select BT_NRF_SERVICES
 	help
 	  Enable Nordic UART service.
-if BT_GATT_NUS
+if BT_NUS
 
-module = BT_GATT_NUS
+module = BT_NUS
 module-str = NUS
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-endif # BT_GATT_NUS
+endif # BT_NUS
