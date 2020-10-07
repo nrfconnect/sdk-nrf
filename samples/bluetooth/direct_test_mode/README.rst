@@ -3,20 +3,20 @@
 Bluetooth: Direct Test Mode
 ###########################
 
-This sample enables the Direct Test Mode functions described in `Bluetooth Core Specification`_: Version 5.0, Vol. 6, Part F.
+This sample enables the Direct Test Mode functions described in `Bluetooth Core Specification`_: Version 5.2, Vol. 6, Part F.
 
 Overview
 ********
 
 The sample uses Direct Test Mode to test the operation of the following features of the radio:
 
-* transmission power and receiver sensitivity,
-* frequency offset and drift,
-* modulation characteristics,
-* packet error rate,
-* intermodulation performance.
+* Transmission power and receiver sensitivity
+* Frequency offset and drift
+* Modulation characteristics
+* Packet error rate
+* Intermodulation performance
 
-Test procedures are defined in the document `Bluetooth Low Energy RF PHY Test Specification`_: Document number RF-PHY.TS/5.0.0.
+Test procedures are defined in the document `Bluetooth Low Energy RF PHY Test Specification`_: Document number RF-PHY.TS.p15
 
 You can carry out conformance tests using dedicated test equipment, such as the Anritsu MT8852 or similar, with an nRF5 running the DTM sample set as device under test (DUT).
 
@@ -85,6 +85,35 @@ The DTM sample supports all four PHYs specified in DTM, but not all devices supp
      - Yes
    * - LE Coded S=2
      - Yes
+
+Bluetooth Direction Finding support
+===================================
+
+The DTM sample supports all Bluetooth Direction Finding modes specified in DTM.
+
+.. list-table:: Supported Bluetooth Direction Finding modes
+   :header-rows: 1
+
+   * - Direction Finding mode
+     - nRF5340
+   * - AoD 1 us slot
+     - Yes
+   * - AoD 2 us slot
+     - Yes
+   * - AoA
+     - Yes
+
+The following antenna switching patterns are possible:
+
+* 1, 2, 3, ..., N
+* 1, 2, 3, ..., N, N - 1, N - 2, ..., 1
+
+The application supports a maximum of 19 antennas in the direction finding mode.
+The RADIO can control up to 8 GPIO pins for the purpose of controlling the external antenna switches used in direction finding.
+
+The antenna is chosen by writing consecutive numbers to the SWITCHPATTERN register.
+This means that the antenna GPIO pins act like 8-bit registers.
+In other words, for the first antena, antenna pin 1 is active, for the second antenna, pin 2 is active, for the third antenna, pins 1 and 2 are active, and so on.
 
 Vendor-Specific packet payload
 ==============================
