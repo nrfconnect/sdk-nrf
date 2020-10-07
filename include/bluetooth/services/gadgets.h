@@ -29,25 +29,25 @@ extern "C" {
 #endif
 
 /** @brief UUID of the Gadgets Service. */
-#define BT_GADGETS_UUID_SERVICE \
+#define BT_UUID_GADGETS_VAL \
 	BT_UUID_128_ENCODE(0x0000FE03, 0x0000, 0x1000, 0x8000, 0x00805F9B34FB)
 
 /** @brief Short version of the Gadgets Service UUID.
  *         Used in advertisement packets.
  */
-#define BT_GADGETS_UUID_SERVICE_SHORT 0x03, 0xFE
+#define BT_UUID_GADGETS_SHORT_VAL 0xfe03
 
 /** @brief UUID of the TX Characteristic. */
-#define BT_GADGETS_UUID_GADGETS_TX_CHAR \
+#define BT_UUID_GADGETS_TX_VAL \
 	BT_UUID_128_ENCODE(0xF04EB177, 0x3005, 0x43A7, 0xAC61, 0xA390DDF83076)
 
 /** @brief UUID of the RX Characteristic. */
-#define BT_GADGETS_UUID_GADGETS_RX_CHAR \
+#define BT_UUID_GADGETS_RX_VAL \
 	BT_UUID_128_ENCODE(0x2BEEA05B, 0x1879, 0x4BB4, 0x8A2F, 0x72641F82420B)
 
-#define BT_UUID_GADGETS_SERVICE BT_UUID_DECLARE_128(BT_GADGETS_UUID_SERVICE)
-#define BT_UUID_GADGETS_RX BT_UUID_DECLARE_128(BT_GADGETS_UUID_GADGETS_RX_CHAR)
-#define BT_UUID_GADGETS_TX BT_UUID_DECLARE_128(BT_GADGETS_UUID_GADGETS_TX_CHAR)
+#define BT_UUID_GADGETS    BT_UUID_DECLARE_128(BT_UUID_GADGETS_VAL)
+#define BT_UUID_GADGETS_RX BT_UUID_DECLARE_128(BT_UUID_GADGETS_RX_VAL)
+#define BT_UUID_GADGETS_TX BT_UUID_DECLARE_128(BT_UUID_GADGETS_TX_VAL)
 
 
 /** @brief Gadgets Service result codes. */
@@ -76,15 +76,15 @@ enum bt_gadgets_stream_id {
 /** @brief Callback type for data received.
  *         Returns false if type is unsupported.
  */
-typedef bool (*bt_gadgets_stream_cb_t)(
-				struct bt_conn *conn,
-				const uint8_t *const data,
-				uint16_t len,
-				bool more_data);
+typedef bool (*bt_gadgets_stream_cb_t)(struct bt_conn *conn,
+				       const uint8_t *const data,
+				       uint16_t len,
+				       bool more_data);
 
 /** @brief Callback type for data sent. */
-typedef void (*bt_gadgets_sent_cb_t)(
-	struct bt_conn *conn, const void *buf, bool success);
+typedef void (*bt_gadgets_sent_cb_t)(struct bt_conn *conn,
+				     const void *buf,
+				     bool success);
 
 /** @brief Callback type for CCCD updated. */
 typedef void (*bt_gadgets_ccc_update_cb_t)(bool enabled);
@@ -132,11 +132,10 @@ int bt_gadgets_init(const struct bt_gadgets_cb *callbacks);
  * @retval 0 If the data is sent.
  *           Otherwise, a negative value is returned.
  */
-int bt_gadgets_stream_send(
-	struct bt_conn *conn,
-	enum bt_gadgets_stream_id stream,
-	void *data,
-	uint16_t size);
+int bt_gadgets_stream_send(struct bt_conn *conn,
+			   enum bt_gadgets_stream_id stream,
+			   void *data,
+			   uint16_t size);
 
 /**@brief Send data without stream formatting.
  *
@@ -150,10 +149,7 @@ int bt_gadgets_stream_send(
  * @retval 0 If the data is sent.
  *           Otherwise, a negative value is returned.
  */
-int bt_gadgets_send(
-	struct bt_conn *conn,
-	void *data,
-	uint16_t size);
+int bt_gadgets_send(struct bt_conn *conn, void *data, uint16_t size);
 
 /**@brief Get maximum data length that can be used for
  *        @ref bt_gadgets_send.

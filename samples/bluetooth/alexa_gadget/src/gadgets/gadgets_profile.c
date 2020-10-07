@@ -325,7 +325,8 @@ static const struct bt_data ad[] = {
 };
 
 static const struct bt_data sd_pairing[] = {
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_GADGETS_UUID_SERVICE_SHORT),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
+		      BT_UUID_16_ENCODE(BT_UUID_GADGETS_SHORT_VAL)),
 	BT_DATA_BYTES(BT_DATA_SVC_DATA16, SD_VAL_PAIRING),
 };
 
