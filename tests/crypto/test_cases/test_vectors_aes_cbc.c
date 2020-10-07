@@ -1376,7 +1376,7 @@ ITEM_REGISTER(test_vector_aes_cbc_data,
 	.p_iv = "d6d86e0c82dd8788f4147a26f9a71c74"
 };
 
-#if !defined(CONFIG_CRYPTO_TEST_LONG_RUNNING_VECTORS)
+#if defined(CONFIG_CRYPTO_TEST_LONG_RUNNING_VECTORS)
 /* AES CBC - NIST CAVS 11.1 Monte Carlo 192 Encrypt */
 ITEM_REGISTER(test_vector_aes_cbc_monte_carlo_data,
 	      test_vector_aes_t test_vector_aes_cbc_192_encrypt_monte_carlo) = {
@@ -2104,7 +2104,7 @@ ITEM_REGISTER(test_vector_aes_cbc_data,
 	.p_iv = "e49651988ebbb72eb8bb80bb9abbca34"
 };
 
-#if !defined(CONFIG_CRYPTO_TEST_LONG_RUNNING_VECTORS)
+#if defined(CONFIG_CRYPTO_TEST_LONG_RUNNING_VECTORS)
 /* AES CBC - NIST CAVS 11.1 Monte Carlo 256 Encrypt */
 ITEM_REGISTER(test_vector_aes_cbc_monte_carlo_data,
 	      test_vector_aes_t test_vector_aes_cbc_256_encrypt_monte_carlo) = {
