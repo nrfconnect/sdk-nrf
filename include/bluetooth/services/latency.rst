@@ -29,6 +29,6 @@ API documentation
 | Header file: :file:`include/bluetooth/services/latency.h`
 | Source file: :file:`subsys/bluetooth/services/latency.c`
 
-.. doxygengroup::  bt_gatt_latency
+.. doxygengroup::  bt_latency
    :project: nrf
    :members:

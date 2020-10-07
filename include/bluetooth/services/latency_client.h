@@ -6,13 +6,13 @@
 
 /**
  * @file
- * @defgroup bt_gatt_latency_c Bluetooth LE GATT Latency Client API
+ * @defgroup bt_latency_c Bluetooth LE GATT Latency Client API
  * @{
  * @brief API for the Bluetooth LE GATT Latency Client.
  */
 
-#ifndef BT_GATT_LATENCY_C_H_
-#define BT_GATT_LATENCY_C_H_
+#ifndef BT_LATENCY_CLIENT_H_
+#define BT_LATENCY_CLIENT_H_
 
 #include <bluetooth/uuid.h>
 #include <bluetooth/conn.h>
@@ -23,7 +23,7 @@ extern "C" {
 #endif
 
 /** @brief Latency client callback structure. */
-struct bt_gatt_latency_c_cb {
+struct bt_latency_client_cb {
 	/** @brief Latency received callback.
 	 *
 	 * This function is called when a GATT write response has been received
@@ -39,7 +39,7 @@ struct bt_gatt_latency_c_cb {
 };
 
 /** @brief Latency client structure. */
-struct bt_gatt_latency_c {
+struct bt_latency_client {
 	/** Characteristic handle. */
 	uint16_t handle;
 
@@ -65,8 +65,8 @@ struct bt_gatt_latency_c {
  *  @retval (-EALREADY) Special error code used when the latency
  *          client has been initialed.
  */
-int bt_gatt_latency_c_init(struct bt_gatt_latency_c *latency,
-			   const struct bt_gatt_latency_c_cb *cb);
+int bt_latency_client_init(struct bt_latency_client *latency,
+			   const struct bt_latency_client_cb *cb);
 
 /** @brief Assign handles to the latency client instance.
  *
@@ -86,8 +86,8 @@ int bt_gatt_latency_c_init(struct bt_gatt_latency_c *latency,
  *  @retval (-EINVAL) Special error code used when the UUID
  *          characteristic or value descriptor not found.
  */
-int bt_gatt_latency_c_handles_assign(struct bt_gatt_dm *dm,
-				     struct bt_gatt_latency_c *latency);
+int bt_latency_handles_assign(struct bt_gatt_dm *dm,
+			      struct bt_latency_client *latency);
 
 /** @brief Write data to the server.
  *
@@ -100,8 +100,8 @@ int bt_gatt_latency_c_handles_assign(struct bt_gatt_dm *dm,
  *  @retval (-EALREADY) Special error code used when the asynchronous
  *          request is waiting for a response.
  */
-int bt_gatt_latency_c_request(struct bt_gatt_latency_c *latency,
-			      const void *data, uint16_t len);
+int bt_latency_request(struct bt_latency_client *latency,
+		       const void *data, uint16_t len);
 
 #ifdef __cplusplus
 }
@@ -111,4 +111,4 @@ int bt_gatt_latency_c_request(struct bt_gatt_latency_c *latency,
  * @}
  */
 
-#endif /* BT_GATT_LATENCY_C_H_ */
+#endif /* BT_LATENCY_CLIENT_H_ */

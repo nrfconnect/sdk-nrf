@@ -15,26 +15,26 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/uuid.h>
 #include <bluetooth/services/latency.h>
-#include <bluetooth/services/latency_c.h>
+#include <bluetooth/services/latency_client.h>
 
-LOG_MODULE_REGISTER(bt_gatt_latency_c, CONFIG_BT_GATT_LATENCY_C_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_latency_client, CONFIG_BT_LATENCY_CLIENT_LOG_LEVEL);
 
 enum {
 	LATENCY_INITIALIZED,
 	LATENCY_ASYNC_WRITE_PENDING
 };
 
-static const struct bt_gatt_latency_c_cb *callbacks;
+static const struct bt_latency_client_cb *callbacks;
 
 static void received_latency_response(struct bt_conn *conn, uint8_t err,
 				      struct bt_gatt_write_params *params)
 {
-	struct bt_gatt_latency_c *latency;
+	struct bt_latency_client *latency;
 	const void *buf;
 	uint16_t len;
 
 	/* Retrieve Latency context. */
-	latency = CONTAINER_OF(params, struct bt_gatt_latency_c,
+	latency = CONTAINER_OF(params, struct bt_latency_client,
 			       latency_params);
 
 	/* Make a copy of volatile data that is required by the callback. */
@@ -55,8 +55,8 @@ static void received_latency_response(struct bt_conn *conn, uint8_t err,
 	}
 }
 
-int bt_gatt_latency_c_init(struct bt_gatt_latency_c *latency,
-			   const struct bt_gatt_latency_c_cb *cb)
+int bt_latency_client_init(struct bt_latency_client *latency,
+			   const struct bt_latency_client_cb *cb)
 {
 	if (!latency) {
 		return -EINVAL;
@@ -70,8 +70,8 @@ int bt_gatt_latency_c_init(struct bt_gatt_latency_c *latency,
 	return 0;
 }
 
-int bt_gatt_latency_c_handles_assign(struct bt_gatt_dm *dm,
-				     struct bt_gatt_latency_c *latency)
+int bt_latency_handles_assign(struct bt_gatt_dm *dm,
+			      struct bt_latency_client *latency)
 {
 	const struct bt_gatt_dm_attr *gatt_service_attr =
 			bt_gatt_dm_service_get(dm);
@@ -113,8 +113,8 @@ int bt_gatt_latency_c_handles_assign(struct bt_gatt_dm *dm,
 	return 0;
 }
 
-int bt_gatt_latency_c_request(struct bt_gatt_latency_c *latency,
-			      const void *data, uint16_t len)
+int bt_latency_request(struct bt_latency_client *latency,
+		       const void *data, uint16_t len)
 {
 	int err;
 
