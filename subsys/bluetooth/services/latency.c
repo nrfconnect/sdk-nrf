@@ -16,13 +16,13 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/services/latency.h>
 
-LOG_MODULE_REGISTER(bt_gatt_latency, CONFIG_BT_GATT_LATENCY_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_latency, CONFIG_BT_LATENCY_LOG_LEVEL);
 
 enum {
 	LATENCY_INITIALIZED
 };
 
-static const struct bt_gatt_latency_cb *callbacks;
+static const struct bt_latency_cb *callbacks;
 
 static ssize_t received_latency_request(struct bt_conn *conn,
 					const struct bt_gatt_attr *attr,
@@ -46,8 +46,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LATENCY),
 		NULL, received_latency_request, NULL),
 );
 
-int bt_gatt_latency_init(struct bt_gatt_latency *latency,
-			 const struct bt_gatt_latency_cb *cb)
+int bt_latency_init(struct bt_latency *latency, const struct bt_latency_cb *cb)
 {
 	if (!latency) {
 		return -EINVAL;

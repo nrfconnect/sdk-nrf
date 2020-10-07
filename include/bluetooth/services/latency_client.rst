@@ -1,4 +1,4 @@
-.. _latency_c_readme:
+.. _latency_client_readme:
 
 GATT Latency Client
 ###################
@@ -15,9 +15,9 @@ The sending procedure is asynchronous, so the data to be sent must remain valid 
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/latency_c.h`
-| Source file: :file:`subsys/bluetooth/services/latency_c.c`
+| Header file: :file:`include/bluetooth/services/latency_client.h`
+| Source file: :file:`subsys/bluetooth/services/latency_client.c`
 
-.. doxygengroup::  bt_gatt_latency_c
+.. doxygengroup::  bt_latency_c
    :project: nrf
    :members:

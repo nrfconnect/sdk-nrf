@@ -4,18 +4,18 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-config BT_GATT_LATENCY_C
+config BT_LATENCY_CLIENT
 	bool "Latency service client"
 	select BT_NRF_SERVICES
 	select BT_GATT_DM
 	select BT_GATT_CLIENT
 	help
-	 Enable Nordic GATT Latency BLE service client.
+	 Enable Nordic GATT Latency client.
 
-if BT_GATT_LATENCY_C
+if BT_LATENCY_CLIENT
 
-module = BT_GATT_LATENCY_C
+module = BT_LATENCY_CLIENT
 module-str = LATENCY Client
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-endif # BT_GATT_LATENCY_C
+endif # BT_LATENCY_CLIENT

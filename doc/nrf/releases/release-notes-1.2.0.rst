@@ -476,7 +476,7 @@ Documentation
   * Bluetooth Low Energy:
 
     * :ref:`bt_mesh_dk_prov` - added
-    * :ref:`latency_c_readme` - added
+    * :ref:`latency_client_readme` - added
     * :ref:`latency_readme` - added
     * :ref:`shell_bt_nus_readme` - updated
 
