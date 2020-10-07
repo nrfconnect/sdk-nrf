@@ -305,8 +305,8 @@ See `the breathe documentation <https://breathe.readthedocs.io/en/latest/directi
 
 To link to doxygen macros, enums or functions use:
 
-* :c:macro:`BT_GATT_HIDS_INFORMATION_LEN`
-* :c:func:`bt_gatt_hids_init`
+* :c:macro:`BT_HIDS_INFORMATION_LEN`
+* :c:func:`bt_hids_init`
 
 Linked RST project
 ==================

@@ -24,16 +24,16 @@ Configuration
 Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-#. Enable and configure the :ref:`hids_c_readme` (:option:`CONFIG_BT_GATT_HIDS_C`).
+#. Enable and configure the :ref:`hogp_readme` (:option:`CONFIG_BT_HOGP`).
 
    .. note::
-       Make sure to define the maximum number of supported HID reports (:option:`CONFIG_BT_GATT_HIDS_C_REPORTS_MAX`).
+       Make sure to define the maximum number of supported HID reports (:option:`CONFIG_BT_HOGP_REPORTS_MAX`).
 
 #. Make sure that the :option:`CONFIG_DESKTOP_HID_STATE_ENABLE` option is disabled.
    The nRF Desktop central does not generate its own HID input reports.
    It only forwards HID input reports that it receives from the peripherals connected over Bluetooth.
 #. The |hid_forward| is enabled with the :option:`CONFIG_DESKTOP_HID_FORWARD_ENABLE` option.
-   This option is available only if you enable both the :option:`CONFIG_BT_CENTRAL` and :option:`CONFIG_BT_GATT_HIDS_C` Kconfig options.
+   This option is available only if you enable both the :option:`CONFIG_BT_CENTRAL` and :option:`CONFIG_BT_HOGP` Kconfig options.
    The module is used on Bluetooth Central to forward the HID reports that are received by the HID service client.
 
 You can set the queued HID input reports limit using the :option:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS` Kconfig option.

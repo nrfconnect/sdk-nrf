@@ -358,7 +358,7 @@ Bluetooth Low Energy
   * Added an option to configure report permissions.
     The user can configure permissions globally or individually for each report.
 
-* :ref:`hids_readme` and :ref:`hids_c_readme`:
+* :ref:`hids_readme` and :ref:`hogp_readme`:
 
   * Extracted common declarations to a separate header file.
 

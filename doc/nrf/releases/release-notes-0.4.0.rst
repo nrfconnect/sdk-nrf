@@ -132,7 +132,7 @@ Bluetooth Low Energy
 * Added the following libraries:
 
   * :ref:`dfu_smp_readme` - GATT Client implementation compatible with the GATT SMP Service, which is used as DFU transport
-  * :ref:`hids_c_readme` - GATT Client implementation compatible with the HID Service
+  * :ref:`hogp_readme` - GATT Client implementation compatible with the HID Service
 
 
 NFC

@@ -8,21 +8,23 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
 
-#include <bluetooth/services/hids_c.h>
+#include <bluetooth/services/hogp.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(hids_c, CONFIG_BT_GATT_HIDS_C_LOG_LEVEL);
+#include <sys/byteorder.h>
+
+LOG_MODULE_REGISTER(hogp, CONFIG_BT_HOGP_LOG_LEVEL);
 
 /* Real report structure definition */
-struct bt_gatt_hids_c_rep_info {
-	/** HIDS client object
+struct bt_hogp_rep_info {
+	/** HOGP object
 	 *  @note Do not use it directly as it may be changed to some kind of
 	 *        connection context management
 	 */
-	struct bt_gatt_hids_c *hids_c;
-	bt_gatt_hids_c_read_cb  read_cb;   /**< Read function callback        */
-	bt_gatt_hids_c_write_cb write_cb;  /**< Write function callback       */
-	bt_gatt_hids_c_read_cb  notify_cb; /**< Notification function (Input) */
+	struct bt_hogp *hogp;
+	bt_hogp_read_cb  read_cb;   /**< Read function callback        */
+	bt_hogp_write_cb write_cb;  /**< Write function callback       */
+	bt_hogp_read_cb  notify_cb; /**< Notification function (Input) */
 	struct bt_gatt_read_params      read_params;   /**< Read params   */
 	struct bt_gatt_write_params     write_params;  /**< Write params  */
 	struct bt_gatt_subscribe_params notify_params; /**< Notify params */
@@ -38,15 +40,15 @@ struct bt_gatt_hids_c_rep_info {
 	/** Report reference information */
 	struct {
 		uint8_t id;                              /**< Report identifier */
-		enum bt_gatt_hids_report_type type; /**< Report type       */
+		enum bt_hids_report_type type; /**< Report type       */
 	} ref;
 	uint8_t size; /**< The size of the value */
 };
 
 /* Memory slab used for reports */
-K_MEM_SLAB_DEFINE(bt_gatt_hids_c_reports_mem,
-		  sizeof(struct bt_gatt_hids_c_rep_info),
-		  CONFIG_BT_GATT_HIDS_C_REPORTS_MAX,
+K_MEM_SLAB_DEFINE(bt_hogp_reports_mem,
+		  sizeof(struct bt_hogp_rep_info),
+		  CONFIG_BT_HOGP_REPORTS_MAX,
 		  4);
 
 
@@ -60,11 +62,11 @@ K_MEM_SLAB_DEFINE(bt_gatt_hids_c_reports_mem,
  *
  * @sa rep_new
  */
-static struct bt_gatt_hids_c_rep_info *rep_alloc(void)
+static struct bt_hogp_rep_info *rep_alloc(void)
 {
-	struct bt_gatt_hids_c_rep_info *rep;
+	struct bt_hogp_rep_info *rep;
 
-	if (k_mem_slab_alloc(&bt_gatt_hids_c_reports_mem,
+	if (k_mem_slab_alloc(&bt_hogp_reports_mem,
 			     (void **)&rep, K_NO_WAIT)) {
 		rep = NULL;
 	} else {
@@ -81,9 +83,9 @@ static struct bt_gatt_hids_c_rep_info *rep_alloc(void)
  *
  * @param repp Pointer to the report.
  */
-static void rep_free(struct bt_gatt_hids_c_rep_info **repp)
+static void rep_free(struct bt_hogp_rep_info **repp)
 {
-	k_mem_slab_free(&bt_gatt_hids_c_reports_mem, (void **)repp);
+	k_mem_slab_free(&bt_hogp_reports_mem, (void **)repp);
 	*repp = NULL;
 }
 
@@ -93,7 +95,7 @@ static void rep_free(struct bt_gatt_hids_c_rep_info **repp)
  * Allocate memory for new report and fill it with data from given report
  * characteristic.
  *
- * @param hids_c   HIDS client object.
+ * @param hogp     HOGP object.
  * @param repp     Pointer with would be set to newly created report.
  * @param dm       Discovery object.
  * @param rep_chrc Report characteristic.
@@ -106,12 +108,12 @@ static void rep_free(struct bt_gatt_hids_c_rep_info **repp)
  * @note If error is found during report initialization,
  *       allocated report memory is freed.
  */
-static int rep_new(struct bt_gatt_hids_c *hids_c,
-		   struct bt_gatt_hids_c_rep_info **repp,
+static int rep_new(struct bt_hogp *hogp,
+		   struct bt_hogp_rep_info **repp,
 		   const struct bt_gatt_dm *dm,
 		   const struct bt_gatt_dm_attr *rep_chrc)
 {
-	struct bt_gatt_hids_c_rep_info *rep;
+	struct bt_hogp_rep_info *rep;
 	const struct bt_gatt_chrc *chrc_val;
 	const struct bt_gatt_dm_attr *gatt_desc;
 
@@ -127,10 +129,10 @@ static int rep_new(struct bt_gatt_hids_c *hids_c,
 	/* Guess the type depending on the flags */
 	if (chrc_val->properties & BT_GATT_CHRC_WRITE_WITHOUT_RESP) {
 		/* Only Out Report has this properties */
-		rep->ref.type = BT_GATT_HIDS_REPORT_TYPE_OUTPUT;
+		rep->ref.type = BT_HIDS_REPORT_TYPE_OUTPUT;
 	} else if (chrc_val->properties & BT_GATT_CHRC_NOTIFY) {
 		/* Only In Report has this properties */
-		rep->ref.type = BT_GATT_HIDS_REPORT_TYPE_INPUT;
+		rep->ref.type = BT_HIDS_REPORT_TYPE_INPUT;
 		/* And it has CCC descriptor */
 		gatt_desc = bt_gatt_dm_desc_by_uuid(dm, rep_chrc,
 						    BT_UUID_GATT_CCC);
@@ -142,7 +144,7 @@ static int rep_new(struct bt_gatt_hids_c *hids_c,
 		rep->handlers.ccc = gatt_desc->handle;
 	} else {
 		/* It has to be feature report */
-		rep->ref.type = BT_GATT_HIDS_REPORT_TYPE_FEATURE;
+		rep->ref.type = BT_HIDS_REPORT_TYPE_FEATURE;
 	}
 	/* Get common report handlers */
 	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, rep_chrc,
@@ -165,7 +167,7 @@ static int rep_new(struct bt_gatt_hids_c *hids_c,
 	}
 	rep->handlers.val = gatt_desc->handle;
 	/* Remember the parent object */
-	rep->hids_c = hids_c;
+	rep->hogp = hogp;
 
 	*repp = rep;
 	return 0;
@@ -182,9 +184,9 @@ static int rep_new(struct bt_gatt_hids_c *hids_c,
  *
  * @sa repptr_array_free
  */
-static struct bt_gatt_hids_c_rep_info **repptr_array_new(size_t cnt)
+static struct bt_hogp_rep_info **repptr_array_new(size_t cnt)
 {
-	struct bt_gatt_hids_c_rep_info **repp = k_malloc(cnt * sizeof(void *));
+	struct bt_hogp_rep_info **repp = k_malloc(cnt * sizeof(void *));
 
 	if (repp) {
 		memset(repp, 0, cnt * sizeof(*repp));
@@ -199,7 +201,7 @@ static struct bt_gatt_hids_c_rep_info **repptr_array_new(size_t cnt)
  *
  * @param repp Pointer to the array.
  */
-static void repptr_array_free(struct bt_gatt_hids_c_rep_info **repp)
+static void repptr_array_free(struct bt_hogp_rep_info **repp)
 {
 	k_free(repp);
 }
@@ -213,14 +215,14 @@ static void repptr_array_free(struct bt_gatt_hids_c_rep_info **repp)
  * It is used only for required characteristic.
  *
  * @param dm     Discovery object.
- * @param hids_c HIDS client object.
+ * @param hogp   HOGP object.
  * @param uuid   UUID of the characteristic.
  *
  * @return Handle of the characteristic value of 0 if it cannot be found.
  */
 static uint16_t chrc_value_handle_by_uuid(struct bt_gatt_dm *dm,
-				       struct bt_gatt_hids_c *hids_c,
-				       const struct bt_uuid *uuid)
+					  struct bt_hogp *hogp,
+					  const struct bt_uuid *uuid)
 {
 	const struct bt_gatt_dm_attr *gatt_chrc;
 	const struct bt_gatt_dm_attr *gatt_desc;
@@ -243,14 +245,14 @@ static uint16_t chrc_value_handle_by_uuid(struct bt_gatt_dm *dm,
  * This function marks ready flags and calls required callbacks.
  * It releases parameter read semaphore.
  *
- * @param hids_c HIDS client object.
+ * @param hogp HOGP object.
  */
-static void hids_mark_ready(struct bt_gatt_hids_c *hids_c)
+static void hids_mark_ready(struct bt_hogp *hogp)
 {
-	k_sem_give(&hids_c->read_params_sem);
-	hids_c->ready = true;
-	if (hids_c->ready_cb) {
-		hids_c->ready_cb(hids_c);
+	k_sem_give(&hogp->read_params_sem);
+	hogp->ready = true;
+	if (hogp->ready_cb) {
+		hogp->ready_cb(hogp);
 	}
 }
 
@@ -260,14 +262,14 @@ static void hids_mark_ready(struct bt_gatt_hids_c *hids_c)
  * This function calls HIDS client callback for error.
  * It releases parameter read semaphore.
  *
- * @param hids_c HIDS client object.
+ * @param hogp   HOGP object.
  * @param err    Error code.
  */
-static void hids_prep_error(struct bt_gatt_hids_c *hids_c, int err)
+static void hids_prep_error(struct bt_hogp *hogp, int err)
 {
-	k_sem_give(&hids_c->read_params_sem);
-	if (hids_c->prep_error_cb) {
-		hids_c->prep_error_cb(hids_c, err);
+	k_sem_give(&hogp->read_params_sem);
+	if (hogp->prep_error_cb) {
+		hogp->prep_error_cb(hogp, err);
 	}
 }
 
@@ -298,26 +300,26 @@ static uint8_t pm_read_process(struct bt_conn *conn, uint8_t err,
  * @note
  * Read semaphore should be already taken in @ref repref_read_start.
  *
- * @param hids_c  See @ref bt_gatt_hids_c_handles_assign.
+ * @param hogp  See @ref bt_hogp_handles_assign.
  *
  * @return 0 or negative error value.
  */
-static int pm_read_start(struct bt_gatt_hids_c *hids_c)
+static int pm_read_start(struct bt_hogp *hogp)
 {
 	int err;
 
-	__ASSERT_NO_MSG(hids_c);
-	if (hids_c->handlers.pm == 0) {
+	__ASSERT_NO_MSG(hogp);
+	if (hogp->handlers.pm == 0) {
 		LOG_DBG("Device ready without boot protocol");
-		hids_mark_ready(hids_c);
+		hids_mark_ready(hogp);
 		return 0;
 	}
 	LOG_DBG("PM read start");
-	hids_c->read_params.func = pm_read_process;
-	hids_c->read_params.handle_count  = 1;
-	hids_c->read_params.single.handle = hids_c->handlers.pm;
-	hids_c->read_params.single.offset = 0;
-	err = bt_gatt_read(hids_c->conn, &(hids_c->read_params));
+	hogp->read_params.func = pm_read_process;
+	hogp->read_params.handle_count  = 1;
+	hogp->read_params.single.handle = hogp->handlers.pm;
+	hogp->read_params.single.offset = 0;
+	err = bt_gatt_read(hogp->conn, &(hogp->read_params));
 	if (err) {
 		LOG_ERR("PM read error (err: %d)", err);
 		return err;
@@ -329,26 +331,24 @@ static uint8_t pm_read_process(struct bt_conn *conn, uint8_t err,
 			    struct bt_gatt_read_params *params,
 			    const void *data, uint16_t length)
 {
-	struct bt_gatt_hids_c *hids_c;
+	struct bt_hogp *hogp;
 
-	hids_c = CONTAINER_OF(params,
-			      struct bt_gatt_hids_c,
-			      read_params);
+	hogp = CONTAINER_OF(params, struct bt_hogp, read_params);
 
 	if (err) {
 		LOG_ERR("PM read error");
-		hids_prep_error(hids_c, err);
+		hids_prep_error(hogp, err);
 		return BT_GATT_ITER_STOP;
 	}
 	if (length != 1 || !data) {
 		LOG_ERR("Unexpected PM size");
-		hids_prep_error(hids_c, -ENOTSUP);
+		hids_prep_error(hogp, -ENOTSUP);
 		return BT_GATT_ITER_STOP;
 	}
 
-	hids_c->pm = (enum bt_gatt_hids_pm)((uint8_t *)data)[0];
-	LOG_DBG("Read PM success: %d", (int)hids_c->pm);
-	hids_mark_ready(hids_c);
+	hogp->pm = (enum bt_hids_pm)((uint8_t *)data)[0];
+	LOG_DBG("Read PM success: %d", (int)hogp->pm);
+	hids_mark_ready(hogp);
 	return BT_GATT_ITER_STOP;
 }
 
@@ -376,19 +376,19 @@ static uint8_t repref_read_process(struct bt_conn *conn, uint8_t err,
  *
  * Internal function that initializes report reference value read.
  *
- * @param hids_c  See @ref bt_gatt_hids_c_handles_assign.
+ * @param hogp  See @ref bt_hogp_handles_assign.
  * @param rep_idx Index in the report array
  *
  * @return 0 or negative error value.
  */
-static int repref_read_start(struct bt_gatt_hids_c *hids_c, size_t rep_idx)
+static int repref_read_start(struct bt_hogp *hogp, size_t rep_idx)
 {
 	int err;
-	struct bt_gatt_hids_c_rep_info *rep;
+	struct bt_hogp_rep_info *rep;
 
-	__ASSERT_NO_MSG(hids_c);
-	if (rep_idx >= hids_c->rep_cnt) {
-		err = pm_read_start(hids_c);
+	__ASSERT_NO_MSG(hogp);
+	if (rep_idx >= hogp->rep_count) {
+		err = pm_read_start(hogp);
 		if (err) {
 			LOG_ERR("Cannot start boot protocol read (err: %d)",
 				err);
@@ -396,13 +396,13 @@ static int repref_read_start(struct bt_gatt_hids_c *hids_c, size_t rep_idx)
 		return err;
 	}
 	LOG_DBG("Report (id: %u) reference read start", rep_idx);
-	rep = hids_c->rep_info[rep_idx];
-	hids_c->init_repref.rep_idx = rep_idx;
-	hids_c->read_params.func = repref_read_process;
-	hids_c->read_params.handle_count  = 1;
-	hids_c->read_params.single.handle = rep->handlers.ref;
-	hids_c->read_params.single.offset = 0;
-	err = bt_gatt_read(hids_c->conn, &(hids_c->read_params));
+	rep = hogp->rep_info[rep_idx];
+	hogp->init_repref.rep_idx = rep_idx;
+	hogp->read_params.func = repref_read_process;
+	hogp->read_params.handle_count  = 1;
+	hogp->read_params.single.handle = rep->handlers.ref;
+	hogp->read_params.single.offset = 0;
+	err = bt_gatt_read(hogp->conn, &(hogp->read_params));
 	if (err) {
 		LOG_ERR("Report reference read error (err: %d)", err);
 		return err;
@@ -415,36 +415,34 @@ static uint8_t repref_read_process(struct bt_conn *conn, uint8_t err,
 				const void *data, uint16_t length)
 {
 	int ret;
-	struct bt_gatt_hids_c *hids_c;
-	struct bt_gatt_hids_c_rep_info *rep;
+	struct bt_hogp *hogp;
+	struct bt_hogp_rep_info *rep;
 	size_t rep_idx;
 	const uint8_t *bdata = data;
 
-	hids_c = CONTAINER_OF(params,
-			      struct bt_gatt_hids_c,
-			      read_params);
+	hogp = CONTAINER_OF(params, struct bt_hogp, read_params);
 
-	rep_idx = hids_c->init_repref.rep_idx;
-	__ASSERT_NO_MSG(rep_idx < hids_c->rep_cnt);
+	rep_idx = hogp->init_repref.rep_idx;
+	__ASSERT_NO_MSG(rep_idx < hogp->rep_count);
 
 	if (err) {
 		LOG_ERR("Report (idx: %u) reference read error (err: %d)",
 			rep_idx, err);
-		hids_prep_error(hids_c, err);
+		hids_prep_error(hogp, err);
 		return BT_GATT_ITER_STOP;
 	}
 	if (length != 2 || !data) {
 		LOG_ERR("Report (idx: %u) reference unexpected size (%u)",
 			rep_idx, length);
-		hids_prep_error(hids_c, -ENOTSUP);
+		hids_prep_error(hogp, -ENOTSUP);
 		return BT_GATT_ITER_STOP;
 	}
 
-	rep = hids_c->rep_info[rep_idx];
+	rep = hogp->rep_info[rep_idx];
 	if ((uint8_t)rep->ref.type != bdata[1]) {
 		LOG_ERR("Unexpected report type (%u while expecting %u)",
 			bdata[1], rep->ref.type);
-		hids_prep_error(hids_c, -EINVAL);
+		hids_prep_error(hogp, -EINVAL);
 		return BT_GATT_ITER_STOP;
 	}
 	rep->ref.id = bdata[0];
@@ -453,9 +451,9 @@ static uint8_t repref_read_process(struct bt_conn *conn, uint8_t err,
 
 
 	/* Next */
-	ret = repref_read_start(hids_c, rep_idx + 1);
+	ret = repref_read_start(hogp, rep_idx + 1);
 	if (ret) {
-		hids_prep_error(hids_c, ret);
+		hids_prep_error(hogp, ret);
 		return BT_GATT_ITER_STOP;
 	}
 
@@ -481,21 +479,21 @@ static uint8_t hid_info_read_process(struct bt_conn *conn, uint8_t err,
 				   struct bt_gatt_read_params *params,
 				   const void *data, uint16_t length);
 
-static int hid_info_read_start(struct bt_gatt_hids_c *hids_c)
+static int hid_info_read_start(struct bt_hogp *hogp)
 {
 	int err;
 
-	__ASSERT_NO_MSG(hids_c);
-	if (hids_c->handlers.info == 0) {
+	__ASSERT_NO_MSG(hogp);
+	if (hogp->handlers.info == 0) {
 		LOG_ERR("Device ready without HID information characteristic");
 		return -EINVAL;
 	}
 	LOG_DBG("HID information read start");
-	hids_c->read_params.func = hid_info_read_process;
-	hids_c->read_params.handle_count  = 1;
-	hids_c->read_params.single.handle = hids_c->handlers.info;
-	hids_c->read_params.single.offset = 0;
-	err = bt_gatt_read(hids_c->conn, &(hids_c->read_params));
+	hogp->read_params.func = hid_info_read_process;
+	hogp->read_params.handle_count  = 1;
+	hogp->read_params.single.handle = hogp->handlers.info;
+	hogp->read_params.single.offset = 0;
+	err = bt_gatt_read(hogp->conn, &(hogp->read_params));
 	if (err) {
 		LOG_ERR("HID information read error (err: %d)", err);
 		return err;
@@ -507,36 +505,34 @@ static uint8_t hid_info_read_process(struct bt_conn *conn, uint8_t err,
 				   struct bt_gatt_read_params *params,
 				   const void *data, uint16_t length)
 {
-	struct bt_gatt_hids_c *hids_c;
+	struct bt_hogp *hogp;
 	const uint8_t *bdata = data;
 
-	hids_c = CONTAINER_OF(params,
-			      struct bt_gatt_hids_c,
-			      read_params);
+	hogp = CONTAINER_OF(params, struct bt_hogp, read_params);
 
 	if (err) {
 		LOG_ERR("HID information read error");
-		hids_prep_error(hids_c, err);
+		hids_prep_error(hogp, err);
 		return BT_GATT_ITER_STOP;
 	}
 	if (length != 4 || !data) {
 		LOG_ERR("Unexpected HID information size: %u", length);
-		hids_prep_error(hids_c, -ENOTSUP);
+		hids_prep_error(hogp, -ENOTSUP);
 		return BT_GATT_ITER_STOP;
 	}
 
-	hids_c->info_val.bcd_hid = (uint16_t)bdata[0] | (((uint16_t)bdata[1]) << 8);
-	hids_c->info_val.b_country_code = bdata[2];
-	hids_c->info_val.flags = bdata[3];
+	hogp->info_val.bcd_hid = sys_get_le16(&bdata[0]);
+	hogp->info_val.b_country_code = bdata[2];
+	hogp->info_val.flags = bdata[3];
 
 	LOG_DBG("HID information success:");
-	LOG_DBG("  bcdHID: %x", hids_c->info_val.bcd_hid);
-	LOG_DBG("  bCountryCode: 0x%x", hids_c->info_val.b_country_code);
-	LOG_DBG("  Flags: 0x%x", hids_c->info_val.flags);
+	LOG_DBG("  bcdHID: %x", hogp->info_val.bcd_hid);
+	LOG_DBG("  bCountryCode: 0x%x", hogp->info_val.b_country_code);
+	LOG_DBG("  Flags: 0x%x", hogp->info_val.flags);
 
-	err = repref_read_start(hids_c, 0);
+	err = repref_read_start(hogp, 0);
 	if (err) {
-		hids_prep_error(hids_c, err);
+		hids_prep_error(hogp, err);
 	}
 
 	return BT_GATT_ITER_STOP;
@@ -549,23 +545,23 @@ static uint8_t hid_info_read_process(struct bt_conn *conn, uint8_t err,
  * starts the reading of the additional data from the HID server
  * that is required for HIDS client to work.
  *
- * @param hids_c  See @ref bt_gatt_hids_c_handles_assign.
+ * @param hogp  See @ref bt_hogp_handles_assign.
  *
  * @return 0 or negative error value.
  */
-static int post_discovery_start(struct bt_gatt_hids_c *hids_c)
+static int post_discovery_start(struct bt_hogp *hogp)
 {
 	int err;
 
-	__ASSERT_NO_MSG(hids_c);
-	err = k_sem_take(&hids_c->read_params_sem, K_NO_WAIT);
+	__ASSERT_NO_MSG(hogp);
+	err = k_sem_take(&hogp->read_params_sem, K_NO_WAIT);
 	if (err) {
 		return err;
 	}
 
-	err = hid_info_read_start(hids_c);
+	err = hid_info_read_start(hogp);
 	if (err) {
-		k_sem_give(&hids_c->read_params_sem);
+		k_sem_give(&hogp->read_params_sem);
 		return err;
 	}
 
@@ -575,20 +571,20 @@ static int post_discovery_start(struct bt_gatt_hids_c *hids_c)
 /**
  * @brief Auxiliary internal function for handles assign
  *
- * This is internal function for @ref bt_gatt_hids_c_handles_assign.
+ * This is internal function for @ref bt_hogp_handles_assign.
  * It takes care about detecting and saving all the handlers.
  * The only thing it is missing is releasing memory on error and calling
  * error callback.
  *
- * @param dm     See @ref bt_gatt_hids_c_handles_assign.
- * @param hids_c See @ref bt_gatt_hids_c_handles_assign.
+ * @param dm     See @ref bt_hogp_handles_assign.
+ * @param hogp See @ref bt_hogp_handles_assign.
  *
- * @return See @ref bt_gatt_hids_c_handles_assign.
+ * @return See @ref bt_hogp_handles_assign.
  *
- * @sa bt_gatt_hids_c_handles_assign
+ * @sa bt_hogp_handles_assign
  */
 static int handles_assign_internal(struct bt_gatt_dm *dm,
-				   struct bt_gatt_hids_c *hids_c)
+				   struct bt_hogp *hogp)
 {
 	const struct bt_gatt_dm_attr *gatt_service_attr =
 			bt_gatt_dm_service_get(dm);
@@ -599,7 +595,7 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 	bool boot_protocol_required;
 	int ret;
 
-	bt_gatt_hids_c_release(hids_c);
+	bt_hogp_release(hogp);
 
 	if (bt_uuid_cmp(gatt_service->uuid, BT_UUID_HIDS)) {
 		return -ENOTSUP;
@@ -607,34 +603,34 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 	LOG_DBG("Getting handles from HID service.");
 
 	/* Control Point Characteristic (Mandatory) */
-	handle = chrc_value_handle_by_uuid(dm, hids_c,
+	handle = chrc_value_handle_by_uuid(dm, hogp,
 					   BT_UUID_HIDS_CTRL_POINT);
 	if (handle == 0) {
 		LOG_ERR("Missing HIDS CP characteristic.");
 		return -EINVAL;
 	}
 	LOG_DBG("Found handle for HIDS CP characteristic: 0x%x.", handle);
-	hids_c->handlers.cp = handle;
+	hogp->handlers.cp = handle;
 
 	/* HID Information Characteristic (Mandatory) */
-	handle = chrc_value_handle_by_uuid(dm, hids_c,
+	handle = chrc_value_handle_by_uuid(dm, hogp,
 					   BT_UUID_HIDS_INFO);
 	if (handle == 0) {
 		LOG_ERR("Missing HIDS Info characteristic.");
 		return -EINVAL;
 	}
 	LOG_DBG("Found handle for HIDS Info characteristic: 0x%x.", handle);
-	hids_c->handlers.info = handle;
+	hogp->handlers.info = handle;
 
 	/* HID Report Map Characteristic (Mandatory)  */
-	handle = chrc_value_handle_by_uuid(dm, hids_c,
+	handle = chrc_value_handle_by_uuid(dm, hogp,
 					   BT_UUID_HIDS_REPORT_MAP);
 	if (handle == 0) {
 		LOG_ERR("Missing Report Map characteristic.");
 		return -EINVAL;
 	}
 	LOG_DBG("Found handle for Report Map characteristic: 0x%x.", handle);
-	hids_c->handlers.rep_map = handle;
+	hogp->handlers.rep_map = handle;
 
 	/* If we have any of the boot report - protocol mode is mandatory,
 	 * otherwise optional, but it does not make any sense to keep it
@@ -645,7 +641,7 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 					    BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT);
 	if (gatt_chrc) {
 		LOG_DBG("Mouse boot IN characteristic found.");
-		ret = rep_new(hids_c, &(hids_c->rep_boot.mouse_inp),
+		ret = rep_new(hogp, &(hogp->rep_boot.mouse_inp),
 			      dm, gatt_chrc);
 		if (ret) {
 			LOG_ERR("Report cannot be created.");
@@ -666,13 +662,13 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 	if (gatt_chrc && gatt_chrc_kbd) {
 		/* Boot keyboard present */
 		LOG_DBG("KBD boot characteristics found.");
-		ret = rep_new(hids_c, &(hids_c->rep_boot.kbd_inp),
+		ret = rep_new(hogp, &(hogp->rep_boot.kbd_inp),
 			      dm, gatt_chrc);
 		if (ret) {
 			LOG_ERR("KBD IN Report cannot be created.");
 			return ret;
 		}
-		ret = rep_new(hids_c, &(hids_c->rep_boot.kbd_out),
+		ret = rep_new(hogp, &(hogp->rep_boot.kbd_out),
 			      dm, gatt_chrc_kbd);
 		if (ret) {
 			LOG_ERR("KBD OUT Report cannot be created.");
@@ -691,140 +687,140 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 	/* HID Protocol Mode (Optional) */
 	if (boot_protocol_required) {
 		LOG_DBG("HIDS Protocol Mode characteristic required.");
-		handle = chrc_value_handle_by_uuid(dm, hids_c,
+		handle = chrc_value_handle_by_uuid(dm, hogp,
 						   BT_UUID_HIDS_PROTOCOL_MODE);
 		if (handle == 0) {
 			LOG_ERR("Missing Protocol Mode characteristic.");
 			return -EINVAL;
 		}
 		LOG_DBG("Found handle for Protocol Mode characteristic.");
-		hids_c->handlers.pm = handle;
+		hogp->handlers.pm = handle;
 	} else {
 		LOG_DBG("HIDS Protocol Mode characteristic ignored.");
-		hids_c->handlers.pm = 0;
+		hogp->handlers.pm = 0;
 	}
 
 	/* Count number of records */
-	size_t rep_cnt = 0;
+	size_t rep_count = 0;
 
 	gatt_chrc = NULL;
 	while (NULL != (gatt_chrc = bt_gatt_dm_char_next(dm, gatt_chrc))) {
 		struct bt_gatt_chrc *chrc_val =
 				bt_gatt_dm_attr_chrc_val(gatt_chrc);
 		if (!bt_uuid_cmp(chrc_val->uuid, BT_UUID_HIDS_REPORT)) {
-			++rep_cnt;
+			++rep_count;
 		}
 	}
-	LOG_DBG("%u report(s) found", rep_cnt);
-	if (rep_cnt > UINT8_MAX) {
+	LOG_DBG("%u report(s) found", rep_count);
+	if (rep_count > UINT8_MAX) {
 		LOG_ERR("Number of records cannot fit into 8 bit identifier.");
 		return -EINVAL;
 	}
 
-	hids_c->rep_info = repptr_array_new(rep_cnt);
-	if (!(hids_c->rep_info)) {
+	hogp->rep_info = repptr_array_new(rep_count);
+	if (!(hogp->rep_info)) {
 		LOG_ERR("Cannot create report pointers array.");
 		return -ENOMEM;
 	}
-	hids_c->rep_cnt = (uint8_t)rep_cnt;
+	hogp->rep_count = (uint8_t)rep_count;
 
 	/* Process all the records */
-	rep_cnt = 0;
+	rep_count = 0;
 	gatt_chrc = NULL;
 	while (NULL != (gatt_chrc = bt_gatt_dm_char_next(dm, gatt_chrc))) {
 		struct bt_gatt_chrc *chrc_val =
 				bt_gatt_dm_attr_chrc_val(gatt_chrc);
 		if (!bt_uuid_cmp(chrc_val->uuid, BT_UUID_HIDS_REPORT)) {
 			LOG_DBG("Creating report at index %u, handle: 0x%.4x",
-				rep_cnt, gatt_chrc->handle);
-			ret = rep_new(hids_c,
-				      &(hids_c->rep_info[rep_cnt]),
+				rep_count, gatt_chrc->handle);
+			ret = rep_new(hogp,
+				      &(hogp->rep_info[rep_count]),
 				      dm,
 				      gatt_chrc);
 			if (ret) {
 				LOG_ERR("Cannot create report, error: %d", ret);
 				return ret;
 			}
-			++rep_cnt;
+			++rep_count;
 		}
 	}
 
 	LOG_DBG("Report memory allocated, entities used: %u",
-		k_mem_slab_num_used_get(&bt_gatt_hids_c_reports_mem));
+		k_mem_slab_num_used_get(&bt_hogp_reports_mem));
 
 	/* Finally - save connection object */
-	hids_c->conn = bt_gatt_dm_conn_get(dm);
+	hogp->conn = bt_gatt_dm_conn_get(dm);
 
-	return post_discovery_start(hids_c);
+	return post_discovery_start(hogp);
 }
 
-void bt_gatt_hids_c_init(struct bt_gatt_hids_c *hids_c,
-			const struct bt_gatt_hids_c_init_params *params)
+void bt_hogp_init(struct bt_hogp *hogp,
+			const struct bt_hogp_init_params *params)
 {
-	memset(hids_c, 0, sizeof(*hids_c));
-	hids_c->ready_cb      = params->ready_cb;
-	hids_c->prep_error_cb = params->prep_error_cb;
-	hids_c->pm_update_cb  = params->pm_update_cb;
-	k_sem_init(&hids_c->read_params_sem, 1, 1);
+	memset(hogp, 0, sizeof(*hogp));
+	hogp->ready_cb      = params->ready_cb;
+	hogp->prep_error_cb = params->prep_error_cb;
+	hogp->pm_update_cb  = params->pm_update_cb;
+	k_sem_init(&hogp->read_params_sem, 1, 1);
 }
 
-int bt_gatt_hids_c_handles_assign(struct bt_gatt_dm *dm,
-				  struct bt_gatt_hids_c *hids_c)
+int bt_hogp_handles_assign(struct bt_gatt_dm *dm,
+			   struct bt_hogp *hogp)
 {
-	int ret = handles_assign_internal(dm, hids_c);
+	int ret = handles_assign_internal(dm, hogp);
 
 	if (ret) {
-		bt_gatt_hids_c_release(hids_c);
+		bt_hogp_release(hogp);
 	}
 	return ret;
 }
 
-void bt_gatt_hids_c_release(struct bt_gatt_hids_c *hids_c)
+void bt_hogp_release(struct bt_hogp *hogp)
 {
-	if (hids_c->rep_info) {
-		uint8_t rep_cnt = hids_c->rep_cnt;
+	if (hogp->rep_info) {
+		uint8_t rep_count = hogp->rep_count;
 
-		while (rep_cnt) {
-			rep_free(&(hids_c->rep_info[--rep_cnt]));
+		while (rep_count) {
+			rep_free(&(hogp->rep_info[--rep_count]));
 		}
 
-		hids_c->rep_cnt = 0;
-		repptr_array_free(hids_c->rep_info);
-		hids_c->rep_info = NULL;
+		hogp->rep_count = 0;
+		repptr_array_free(hogp->rep_info);
+		hogp->rep_info = NULL;
 	}
-	if (hids_c->rep_boot.kbd_inp) {
-		rep_free(&(hids_c->rep_boot.kbd_inp));
+	if (hogp->rep_boot.kbd_inp) {
+		rep_free(&(hogp->rep_boot.kbd_inp));
 	}
-	if (hids_c->rep_boot.kbd_out) {
-		rep_free(&(hids_c->rep_boot.kbd_out));
+	if (hogp->rep_boot.kbd_out) {
+		rep_free(&(hogp->rep_boot.kbd_out));
 	}
-	if (hids_c->rep_boot.mouse_inp) {
-		rep_free(&(hids_c->rep_boot.mouse_inp));
+	if (hogp->rep_boot.mouse_inp) {
+		rep_free(&(hogp->rep_boot.mouse_inp));
 	}
 	LOG_DBG("Report memory released, entities used: %u",
-		k_mem_slab_num_used_get(&bt_gatt_hids_c_reports_mem));
+		k_mem_slab_num_used_get(&bt_hogp_reports_mem));
 
-	memset(&hids_c->info_val, 0, sizeof(hids_c->info_val));
-	memset(&hids_c->handlers, 0, sizeof(hids_c->handlers));
-	hids_c->map_cb  = NULL;
-	hids_c->ready   = false;
-	hids_c->conn    = NULL;
-	k_sem_give(&hids_c->read_params_sem);
+	memset(&hogp->info_val, 0, sizeof(hogp->info_val));
+	memset(&hogp->handlers, 0, sizeof(hogp->handlers));
+	hogp->map_cb  = NULL;
+	hogp->ready   = false;
+	hogp->conn    = NULL;
+	k_sem_give(&hogp->read_params_sem);
 }
 
-void bt_gatt_hids_c_abort_all(struct bt_gatt_hids_c *hids_c)
+void bt_hogp_abort_all(struct bt_hogp *hogp)
 {
-	k_sem_give(&hids_c->read_params_sem);
+	k_sem_give(&hogp->read_params_sem);
 }
 
-bool bt_gatt_hids_c_assign_check(const struct bt_gatt_hids_c *hids_c)
+bool bt_hogp_assign_check(const struct bt_hogp *hogp)
 {
-	return hids_c->conn != NULL;
+	return hogp->conn != NULL;
 }
 
-bool bt_gatt_hids_c_ready_check(const struct bt_gatt_hids_c *hids_c)
+bool bt_hogp_ready_check(const struct bt_hogp *hogp)
 {
-	return hids_c->ready;
+	return hogp->ready;
 }
 
 /**
@@ -846,10 +842,10 @@ static uint8_t rep_read_process(struct bt_conn *conn, uint8_t err,
 			     struct bt_gatt_read_params *params,
 			     const void *data, uint16_t length)
 {
-	struct bt_gatt_hids_c_rep_info *rep;
+	struct bt_hogp_rep_info *rep;
 
 	rep = CONTAINER_OF(params,
-			   struct bt_gatt_hids_c_rep_info,
+			   struct bt_hogp_rep_info,
 			   read_params);
 	if (!rep->read_cb) {
 		LOG_ERR("No read callback present");
@@ -860,18 +856,18 @@ static uint8_t rep_read_process(struct bt_conn *conn, uint8_t err,
 		length = UINT8_MAX;
 	}
 	rep->size = (uint8_t)length;
-	(void)rep->read_cb(rep->hids_c, rep, 0, data);
+	(void)rep->read_cb(rep->hogp, rep, 0, data);
 	rep->read_cb = NULL;
 	return BT_GATT_ITER_STOP;
 }
 
-int bt_gatt_hids_c_rep_read(struct bt_gatt_hids_c *hids_c,
-			    struct bt_gatt_hids_c_rep_info *rep,
-			    bt_gatt_hids_c_read_cb func)
+int bt_hogp_rep_read(struct bt_hogp *hogp,
+		     struct bt_hogp_rep_info *rep,
+		     bt_hogp_read_cb func)
 {
 	int err;
 
-	if (!hids_c || !rep || !func) {
+	if (!hogp || !rep || !func) {
 		return -EINVAL;
 	}
 	if (rep->read_cb) {
@@ -883,7 +879,7 @@ int bt_gatt_hids_c_rep_read(struct bt_gatt_hids_c *hids_c,
 	rep->read_params.single.handle = rep->handlers.val;
 	rep->read_params.single.offset = 0;
 
-	err = bt_gatt_read(hids_c->conn, &(rep->read_params));
+	err = bt_gatt_read(hogp->conn, &(rep->read_params));
 	if (err) {
 		rep->read_cb = NULL;
 		return err;
@@ -901,27 +897,27 @@ int bt_gatt_hids_c_rep_read(struct bt_gatt_hids_c *hids_c,
 static void rep_write_process(struct bt_conn *conn, uint8_t err,
 			      struct bt_gatt_write_params *params)
 {
-	struct bt_gatt_hids_c_rep_info *rep;
+	struct bt_hogp_rep_info *rep;
 
 	rep = CONTAINER_OF(params,
-			   struct bt_gatt_hids_c_rep_info,
+			   struct bt_hogp_rep_info,
 			   write_params);
 	if (!rep->write_cb) {
 		LOG_ERR("No write callback present");
 		return;
 	}
-	rep->write_cb(rep->hids_c, rep, err);
+	rep->write_cb(rep->hogp, rep, err);
 	rep->write_cb = NULL;
 }
 
-int bt_gatt_hids_c_rep_write(struct bt_gatt_hids_c *hids_c,
-			     struct bt_gatt_hids_c_rep_info *rep,
-			     bt_gatt_hids_c_write_cb func,
+int bt_hogp_rep_write(struct bt_hogp *hogp,
+			     struct bt_hogp_rep_info *rep,
+			     bt_hogp_write_cb func,
 			     const void *data, uint8_t length)
 {
 	int err;
 
-	if (!hids_c || !rep || !func) {
+	if (!hogp || !rep || !func) {
 		return -EINVAL;
 	}
 	if (rep->write_cb) {
@@ -933,7 +929,7 @@ int bt_gatt_hids_c_rep_write(struct bt_gatt_hids_c *hids_c,
 	rep->write_params.handle = rep->handlers.val;
 	rep->write_params.length = length;
 
-	err = bt_gatt_write(hids_c->conn, &(rep->write_params));
+	err = bt_gatt_write(hogp->conn, &(rep->write_params));
 	if (err) {
 		rep->write_cb = NULL;
 	}
@@ -949,29 +945,29 @@ int bt_gatt_hids_c_rep_write(struct bt_gatt_hids_c *hids_c,
  */
 static void rep_write_wo_rsp_process(struct bt_conn *conn, void *rep_ptr)
 {
-	struct bt_gatt_hids_c_rep_info *rep = rep_ptr;
+	struct bt_hogp_rep_info *rep = rep_ptr;
 
 	if (!rep->write_cb) {
 		LOG_ERR("No write callback present");
 		return;
 	}
 
-	rep->write_cb(rep->hids_c, rep, 0);
+	rep->write_cb(rep->hogp, rep, 0);
 	rep->write_cb = NULL;
 }
 
-int bt_gatt_hids_c_rep_write_wo_rsp(struct bt_gatt_hids_c *hids_c,
-				   struct bt_gatt_hids_c_rep_info *rep,
+int bt_hogp_rep_write_wo_rsp(struct bt_hogp *hogp,
+				   struct bt_hogp_rep_info *rep,
 				   const void *data, uint8_t length,
-				   bt_gatt_hids_c_write_cb func)
+				   bt_hogp_write_cb func)
 {
 	int err;
 
-	if (!hids_c || !rep || !func) {
+	if (!hogp || !rep || !func) {
 		return -EINVAL;
 	}
 
-	if (rep->ref.type != BT_GATT_HIDS_REPORT_TYPE_OUTPUT) {
+	if (rep->ref.type != BT_HIDS_REPORT_TYPE_OUTPUT) {
 		return -ENOTSUP;
 	}
 
@@ -981,7 +977,7 @@ int bt_gatt_hids_c_rep_write_wo_rsp(struct bt_gatt_hids_c *hids_c,
 
 	rep->write_cb = func;
 
-	err = bt_gatt_write_without_response_cb(hids_c->conn,
+	err = bt_gatt_write_without_response_cb(hogp->conn,
 						rep->handlers.val,
 						data,
 						length,
@@ -1013,10 +1009,10 @@ static uint8_t rep_notify_process(struct bt_conn *conn,
 			       struct bt_gatt_subscribe_params *params,
 			       const void *data, uint16_t length)
 {
-	struct bt_gatt_hids_c_rep_info *rep;
+	struct bt_hogp_rep_info *rep;
 
 	rep = CONTAINER_OF(params,
-			   struct bt_gatt_hids_c_rep_info,
+			   struct bt_hogp_rep_info,
 			   notify_params);
 	if (!rep->notify_cb) {
 		LOG_ERR("No notification callback present");
@@ -1033,19 +1029,19 @@ static uint8_t rep_notify_process(struct bt_conn *conn,
 		rep->size = (uint8_t)length;
 	}
 
-	return rep->notify_cb(rep->hids_c, rep, 0, data);
+	return rep->notify_cb(rep->hogp, rep, 0, data);
 }
 
-int bt_gatt_hids_c_rep_subscribe(struct bt_gatt_hids_c *hids_c,
-				 struct bt_gatt_hids_c_rep_info *rep,
-				 bt_gatt_hids_c_read_cb func)
+int bt_hogp_rep_subscribe(struct bt_hogp *hogp,
+			  struct bt_hogp_rep_info *rep,
+			  bt_hogp_read_cb func)
 {
 	int err;
 
-	if (!hids_c || !rep || !func) {
+	if (!hogp || !rep || !func) {
 		return -EINVAL;
 	}
-	if (rep->ref.type != BT_GATT_HIDS_REPORT_TYPE_INPUT) {
+	if (rep->ref.type != BT_HIDS_REPORT_TYPE_INPUT) {
 		return -ENOTSUP;
 	}
 	if (rep->notify_cb) {
@@ -1064,7 +1060,7 @@ int bt_gatt_hids_c_rep_subscribe(struct bt_gatt_hids_c *hids_c,
 	LOG_DBG("Subscribe: val: %u, ccc: %u",
 		rep->notify_params.value_handle,
 		rep->notify_params.ccc_handle);
-	err = bt_gatt_subscribe(hids_c->conn, &rep->notify_params);
+	err = bt_gatt_subscribe(hogp->conn, &rep->notify_params);
 	if (err) {
 		LOG_ERR("Report notification subscribe error: %d.", err);
 		rep->notify_cb = NULL;
@@ -1074,13 +1070,13 @@ int bt_gatt_hids_c_rep_subscribe(struct bt_gatt_hids_c *hids_c,
 	return err;
 }
 
-int bt_gatt_hids_c_rep_unsubscribe(struct bt_gatt_hids_c *hids_c,
-				   struct bt_gatt_hids_c_rep_info *rep)
+int bt_hogp_rep_unsubscribe(struct bt_hogp *hogp,
+			    struct bt_hogp_rep_info *rep)
 {
-	if (!hids_c || !rep) {
+	if (!hogp || !rep) {
 		return -EINVAL;
 	}
-	return bt_gatt_unsubscribe(hids_c->conn, &rep->notify_params);
+	return bt_gatt_unsubscribe(hogp->conn, &rep->notify_params);
 }
 
 /**
@@ -1102,47 +1098,45 @@ static uint8_t map_read_process(struct bt_conn *conn, uint8_t err,
 			     struct bt_gatt_read_params *params,
 			     const void *data, uint16_t length)
 {
-	struct bt_gatt_hids_c *hids_c;
+	struct bt_hogp *hogp;
 	size_t offset;
 
-	hids_c = CONTAINER_OF(params,
-			      struct bt_gatt_hids_c,
-			      read_params);
-	if (!hids_c->map_cb) {
+	hogp = CONTAINER_OF(params, struct bt_hogp, read_params);
+	if (!hogp->map_cb) {
 		LOG_ERR("No map read callback present");
 		return BT_GATT_ITER_STOP;
 	}
 
-	offset = hids_c->read_params.single.offset;
-	k_sem_give(&hids_c->read_params_sem);
-	hids_c->map_cb(hids_c, err, data, length, offset);
+	offset = hogp->read_params.single.offset;
+	k_sem_give(&hogp->read_params_sem);
+	hogp->map_cb(hogp, err, data, length, offset);
 	return BT_GATT_ITER_STOP;
 }
 
-int bt_gatt_hids_c_map_read(struct bt_gatt_hids_c *hids_c,
-			    bt_gatt_hids_c_map_cb func,
-			    size_t offset,
-			    k_timeout_t timeout)
+int bt_hogp_map_read(struct bt_hogp *hogp,
+		     bt_hogp_map_cb func,
+		     size_t offset,
+		     k_timeout_t timeout)
 {
 	int err;
 
-	if (!hids_c || !func) {
+	if (!hogp || !func) {
 
 		return -EINVAL;
 	}
-	err = k_sem_take(&hids_c->read_params_sem, timeout);
+	err = k_sem_take(&hogp->read_params_sem, timeout);
 	if (err) {
 		return err;
 	}
-	hids_c->map_cb = func;
-	hids_c->read_params.func = map_read_process;
-	hids_c->read_params.handle_count  = 1;
-	hids_c->read_params.single.handle = hids_c->handlers.rep_map;
-	hids_c->read_params.single.offset = offset;
-	err = bt_gatt_read(hids_c->conn, &(hids_c->read_params));
+	hogp->map_cb = func;
+	hogp->read_params.func = map_read_process;
+	hogp->read_params.handle_count  = 1;
+	hogp->read_params.single.handle = hogp->handlers.rep_map;
+	hogp->read_params.single.offset = offset;
+	err = bt_gatt_read(hogp->conn, &(hogp->read_params));
 	if (err) {
-		hids_c->map_cb = NULL;
-		k_sem_give(&hids_c->read_params_sem);
+		hogp->map_cb = NULL;
+		k_sem_give(&hogp->read_params_sem);
 		return err;
 	}
 	return 0;
@@ -1152,7 +1146,7 @@ int bt_gatt_hids_c_map_read(struct bt_gatt_hids_c *hids_c,
  * @brief Protocol mode update process
  *
  * Function that process protocol mode update and updates
- * the HIDS client object.
+ * the HOGP object.
  *
  * @param conn   Connection handler.
  * @param err    Read ATT error code.
@@ -1168,159 +1162,150 @@ static uint8_t pm_update_process(struct bt_conn *conn, uint8_t err,
 			     struct bt_gatt_read_params *params,
 			     const void *data, uint16_t length)
 {
-	struct bt_gatt_hids_c *hids_c;
+	struct bt_hogp *hogp;
 
-	hids_c = CONTAINER_OF(params,
-			      struct bt_gatt_hids_c,
-			      read_params);
-	k_sem_give(&hids_c->read_params_sem);
+	hogp = CONTAINER_OF(params, struct bt_hogp, read_params);
+	k_sem_give(&hogp->read_params_sem);
 	if (err || !data) {
 		LOG_ERR("PM read error");
 	} else if (length != 1) {
 		LOG_ERR("Unexpected PM size");
 	} else {
-		hids_c->pm = (enum bt_gatt_hids_pm)((uint8_t *)data)[0];
+		hogp->pm = (enum bt_hids_pm)((uint8_t *)data)[0];
 	}
 
-	if (hids_c->pm_update_cb) {
-		hids_c->pm_update_cb(hids_c);
+	if (hogp->pm_update_cb) {
+		hogp->pm_update_cb(hogp);
 	}
 
 	return BT_GATT_ITER_STOP;
 }
 
-int bt_gatt_hids_c_pm_update(struct bt_gatt_hids_c *hids_c, k_timeout_t timeout)
+int bt_hogp_pm_update(struct bt_hogp *hogp, k_timeout_t timeout)
 {
 	int err;
 
-	if (!hids_c) {
+	if (!hogp) {
 		return -EINVAL;
 	}
-	err = k_sem_take(&hids_c->read_params_sem, timeout);
+	err = k_sem_take(&hogp->read_params_sem, timeout);
 	if (err) {
 		return err;
 	}
-	hids_c->read_params.func = pm_update_process;
-	hids_c->read_params.handle_count  = 1;
-	hids_c->read_params.single.handle = hids_c->handlers.pm;
-	hids_c->read_params.single.offset = 0;
-	err = bt_gatt_read(hids_c->conn, &(hids_c->read_params));
+	hogp->read_params.func = pm_update_process;
+	hogp->read_params.handle_count  = 1;
+	hogp->read_params.single.handle = hogp->handlers.pm;
+	hogp->read_params.single.offset = 0;
+	err = bt_gatt_read(hogp->conn, &(hogp->read_params));
 	if (err) {
-		k_sem_give(&hids_c->read_params_sem);
+		k_sem_give(&hogp->read_params_sem);
 		return err;
 	}
 	return 0;
 }
 
-enum bt_gatt_hids_pm bt_gatt_hids_c_pm_get(
-	const struct bt_gatt_hids_c *hids_c)
+enum bt_hids_pm bt_hogp_pm_get(const struct bt_hogp *hogp)
 {
-	return hids_c->pm;
+	return hogp->pm;
 }
 
-int bt_gatt_hids_c_pm_write(struct bt_gatt_hids_c *hids_c,
-			    enum bt_gatt_hids_pm pm)
+int bt_hogp_pm_write(struct bt_hogp *hogp, enum bt_hids_pm pm)
 {
 	int err;
 	uint8_t data[] = {(uint8_t)pm};
 
-	if (hids_c->handlers.pm == 0) {
+	if (hogp->handlers.pm == 0) {
 		return -EOPNOTSUPP;
 	}
-	err = bt_gatt_write_without_response(hids_c->conn,
-					     hids_c->handlers.pm,
+	err = bt_gatt_write_without_response(hogp->conn,
+					     hogp->handlers.pm,
 					     data,
 					     sizeof(data),
 					     false);
 	if (!err) {
-		hids_c->pm = pm;
-		if (hids_c->pm_update_cb) {
-			hids_c->pm_update_cb(hids_c);
+		hogp->pm = pm;
+		if (hogp->pm_update_cb) {
+			hogp->pm_update_cb(hogp);
 		}
 	}
 
 	return err;
 }
 
-int bt_gatt_hids_c_suspend(struct bt_gatt_hids_c *hids_c)
+int bt_hogp_suspend(struct bt_hogp *hogp)
 {
 	int err;
-	uint8_t data[] = {BT_GATT_HIDS_CONTROL_POINT_SUSPEND};
+	uint8_t data[] = {BT_HIDS_CONTROL_POINT_SUSPEND};
 
-	err = bt_gatt_write_without_response(hids_c->conn,
-					     hids_c->handlers.cp,
+	err = bt_gatt_write_without_response(hogp->conn,
+					     hogp->handlers.cp,
 					     data,
 					     sizeof(data),
 					     false);
 	return err;
 }
 
-int bt_gatt_hids_c_exit_suspend(struct bt_gatt_hids_c *hids_c)
+int bt_hogp_exit_suspend(struct bt_hogp *hogp)
 {
 	int err;
-	uint8_t data[] = {BT_GATT_HIDS_CONTROL_POINT_EXIT_SUSPEND};
+	uint8_t data[] = {BT_HIDS_CONTROL_POINT_EXIT_SUSPEND};
 
-	err = bt_gatt_write_without_response(hids_c->conn,
-					     hids_c->handlers.cp,
+	err = bt_gatt_write_without_response(hogp->conn,
+					     hogp->handlers.cp,
 					     data,
 					     sizeof(data),
 					     false);
 	return err;
 }
 
-struct bt_conn *bt_gatt_hids_c_conn(const struct bt_gatt_hids_c *hids_c)
+struct bt_conn *bt_hogp_conn(const struct bt_hogp *hogp)
 {
-	return hids_c->conn;
+	return hogp->conn;
 }
 
-const struct bt_gatt_hids_info *bt_gatt_hids_c_conn_info_val(
-	const struct bt_gatt_hids_c *hids_c)
+const struct bt_hids_info *bt_hogp_conn_info_val(const struct bt_hogp *hogp)
 {
-	return &hids_c->info_val;
+	return &hogp->info_val;
 }
 
-struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_boot_kbd_in(
-	struct bt_gatt_hids_c *hids_c)
+struct bt_hogp_rep_info *bt_hogp_rep_boot_kbd_in(struct bt_hogp *hogp)
 {
-	return hids_c->rep_boot.kbd_inp;
+	return hogp->rep_boot.kbd_inp;
 }
 
-struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_boot_kbd_out(
-	struct bt_gatt_hids_c *hids_c)
+struct bt_hogp_rep_info *bt_hogp_rep_boot_kbd_out(struct bt_hogp *hogp)
 {
-	return hids_c->rep_boot.kbd_out;
+	return hogp->rep_boot.kbd_out;
 }
 
-struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_boot_mouse_in(
-	struct bt_gatt_hids_c *hids_c)
+struct bt_hogp_rep_info *bt_hogp_rep_boot_mouse_in(struct bt_hogp *hogp)
 {
-	return hids_c->rep_boot.mouse_inp;
+	return hogp->rep_boot.mouse_inp;
 }
 
-size_t bt_gatt_hids_c_rep_cnt(const struct bt_gatt_hids_c *hids_c)
+size_t bt_hogp_rep_count(const struct bt_hogp *hogp)
 {
-	return hids_c->rep_cnt;
+	return hogp->rep_count;
 }
 
-struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_next(
-	struct bt_gatt_hids_c *hids_c,
-	const struct bt_gatt_hids_c_rep_info *rep)
+struct bt_hogp_rep_info *bt_hogp_rep_next(struct bt_hogp *hogp,
+					  const struct bt_hogp_rep_info *rep)
 {
-	struct bt_gatt_hids_c_rep_info **rep_arr;
+	struct bt_hogp_rep_info **rep_arr;
 	size_t n;
 
 	/* No reports in HIDS */
-	if (hids_c->rep_cnt == 0) {
+	if (hogp->rep_count == 0) {
 		return NULL;
 	}
 	/* First element */
 	if (rep == NULL) {
-		return hids_c->rep_info[0];
+		return hogp->rep_info[0];
 	}
 	/* Searching current report in array */
-	rep_arr = hids_c->rep_info;
+	rep_arr = hogp->rep_info;
 
-	for (n = 0; n + 1 < hids_c->rep_cnt; ++n) {
+	for (n = 0; n + 1 < hogp->rep_count; ++n) {
 		if (*rep_arr++ == rep) {
 			return *rep_arr;
 		}
@@ -1328,18 +1313,17 @@ struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_next(
 	return NULL;
 }
 
-struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_find(
-	struct bt_gatt_hids_c *hids_c,
-	enum bt_gatt_hids_report_type type,
-	uint8_t id)
+struct bt_hogp_rep_info *bt_hogp_rep_find(struct bt_hogp *hogp,
+					  enum bt_hids_report_type type,
+					  uint8_t id)
 {
-	struct bt_gatt_hids_c_rep_info **rep_arr;
+	struct bt_hogp_rep_info **rep_arr;
 	size_t n;
 
 	/* Searching the report */
-	rep_arr = hids_c->rep_info;
-	for (n = 0; n < hids_c->rep_cnt; ++n, ++rep_arr) {
-		struct bt_gatt_hids_c_rep_info *rep = (*rep_arr);
+	rep_arr = hogp->rep_info;
+	for (n = 0; n < hogp->rep_count; ++n, ++rep_arr) {
+		struct bt_hogp_rep_info *rep = (*rep_arr);
 
 		if ((rep->ref.id == id) && (rep->ref.type == type)) {
 			return rep;
@@ -1348,29 +1332,27 @@ struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_find(
 	return NULL;
 }
 
-void bt_gatt_hids_c_rep_user_data_set(struct bt_gatt_hids_c_rep_info *rep,
-				      void *data)
+void bt_hogp_rep_user_data_set(struct bt_hogp_rep_info *rep, void *data)
 {
 	rep->user_data = data;
 }
 
-void *bt_gatt_hids_c_rep_user_data(const struct bt_gatt_hids_c_rep_info *rep)
+void *bt_hogp_rep_user_data(const struct bt_hogp_rep_info *rep)
 {
 	return rep->user_data;
 }
 
-uint8_t bt_gatt_hids_c_rep_id(const struct bt_gatt_hids_c_rep_info *rep)
+uint8_t bt_hogp_rep_id(const struct bt_hogp_rep_info *rep)
 {
 	return rep->ref.id;
 }
 
-enum bt_gatt_hids_report_type bt_gatt_hids_c_rep_type(
-	const struct bt_gatt_hids_c_rep_info *rep)
+enum bt_hids_report_type bt_hogp_rep_type(const struct bt_hogp_rep_info *rep)
 {
 	return rep->ref.type;
 }
 
-size_t bt_gatt_hids_c_rep_size(const struct bt_gatt_hids_c_rep_info *rep)
+size_t bt_hogp_rep_size(const struct bt_hogp_rep_info *rep)
 {
 	return rep->size;
 }

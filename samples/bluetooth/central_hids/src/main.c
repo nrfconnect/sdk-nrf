@@ -20,7 +20,7 @@
 #include <bluetooth/gatt_dm.h>
 #include <sys/byteorder.h>
 #include <bluetooth/scan.h>
-#include <bluetooth/services/hids_c.h>
+#include <bluetooth/services/hogp.h>
 #include <dk_buttons_and_leds.h>
 
 #include <settings/settings.h>
@@ -50,9 +50,8 @@
 #define KEY_PAIRING_REJECT DK_BTN2_MSK
 
 static struct bt_conn *default_conn;
-static struct bt_gatt_hids_c hids_c;
+static struct bt_hogp hogp;
 static uint8_t capslock_state;
-
 
 static void hids_on_ready(struct k_work *work);
 static K_WORK_DEFINE(hids_ready_work, hids_on_ready);
@@ -128,7 +127,7 @@ static void discovery_completed_cb(struct bt_gatt_dm *dm,
 
 	bt_gatt_dm_data_print(dm);
 
-	err = bt_gatt_hids_c_handles_assign(dm, &hids_c);
+	err = bt_hogp_handles_assign(dm, &hogp);
 	if (err) {
 		printk("Could not init HIDS client object, error: %d\n", err);
 	}
@@ -217,9 +216,9 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	printk("Disconnected: %s (reason %u)\n", addr, reason);
 
-	if (bt_gatt_hids_c_assign_check(&hids_c)) {
+	if (bt_hogp_assign_check(&hogp)) {
 		printk("HIDS client active - releasing");
-		bt_gatt_hids_c_release(&hids_c);
+		bt_hogp_release(&hogp);
 	}
 
 	if (default_conn != conn) {
@@ -285,19 +284,19 @@ static void scan_init(void)
 	}
 }
 
-static uint8_t hids_c_notify_cb(struct bt_gatt_hids_c *hids_c,
-			     struct bt_gatt_hids_c_rep_info *rep,
+static uint8_t hogp_notify_cb(struct bt_hogp *hogp,
+			     struct bt_hogp_rep_info *rep,
 			     uint8_t err,
 			     const uint8_t *data)
 {
-	uint8_t size = bt_gatt_hids_c_rep_size(rep);
+	uint8_t size = bt_hogp_rep_size(rep);
 	uint8_t i;
 
 	if (!data) {
 		return BT_GATT_ITER_STOP;
 	}
 	printk("Notification, id: %u, size: %u, data:",
-	       bt_gatt_hids_c_rep_id(rep),
+	       bt_hogp_rep_id(rep),
 	       size);
 	for (i = 0; i < size; ++i) {
 		printk(" 0x%x", data[i]);
@@ -306,12 +305,12 @@ static uint8_t hids_c_notify_cb(struct bt_gatt_hids_c *hids_c,
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static uint8_t hids_c_boot_mouse_report(struct bt_gatt_hids_c *hids_c,
-				     struct bt_gatt_hids_c_rep_info *rep,
+static uint8_t hogp_boot_mouse_report(struct bt_hogp *hogp,
+				     struct bt_hogp_rep_info *rep,
 				     uint8_t err,
 				     const uint8_t *data)
 {
-	uint8_t size = bt_gatt_hids_c_rep_size(rep);
+	uint8_t size = bt_hogp_rep_size(rep);
 	uint8_t i;
 
 	if (!data) {
@@ -325,12 +324,12 @@ static uint8_t hids_c_boot_mouse_report(struct bt_gatt_hids_c *hids_c,
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static uint8_t hids_c_boot_kbd_report(struct bt_gatt_hids_c *hids_c,
-				   struct bt_gatt_hids_c_rep_info *rep,
+static uint8_t hogp_boot_kbd_report(struct bt_hogp *hogp,
+				   struct bt_hogp_rep_info *rep,
 				   uint8_t err,
 				   const uint8_t *data)
 {
-	uint8_t size = bt_gatt_hids_c_rep_size(rep);
+	uint8_t size = bt_hogp_rep_size(rep);
 	uint8_t i;
 
 	if (!data) {
@@ -344,7 +343,7 @@ static uint8_t hids_c_boot_kbd_report(struct bt_gatt_hids_c *hids_c,
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static void hids_c_ready_cb(struct bt_gatt_hids_c *hids_c)
+static void hogp_ready_cb(struct bt_hogp *hogp)
 {
 	k_work_submit(&hids_ready_work);
 }
@@ -352,85 +351,85 @@ static void hids_c_ready_cb(struct bt_gatt_hids_c *hids_c)
 static void hids_on_ready(struct k_work *work)
 {
 	int err;
-	struct bt_gatt_hids_c_rep_info *rep = NULL;
+	struct bt_hogp_rep_info *rep = NULL;
 
 	printk("HIDS is ready to work\n");
 
-	while (NULL != (rep = bt_gatt_hids_c_rep_next(&hids_c, rep))) {
-		if (bt_gatt_hids_c_rep_type(rep) ==
-		    BT_GATT_HIDS_REPORT_TYPE_INPUT) {
+	while (NULL != (rep = bt_hogp_rep_next(&hogp, rep))) {
+		if (bt_hogp_rep_type(rep) ==
+		    BT_HIDS_REPORT_TYPE_INPUT) {
 			printk("Subscribe to report id: %u\n",
-			       bt_gatt_hids_c_rep_id(rep));
-			err = bt_gatt_hids_c_rep_subscribe(&hids_c, rep,
-							   hids_c_notify_cb);
+			       bt_hogp_rep_id(rep));
+			err = bt_hogp_rep_subscribe(&hogp, rep,
+							   hogp_notify_cb);
 			if (err) {
 				printk("Subscribe error (%d)\n", err);
 			}
 		}
 	}
-	if (hids_c.rep_boot.kbd_inp) {
+	if (hogp.rep_boot.kbd_inp) {
 		printk("Subscribe to boot keyboard report\n");
-		err = bt_gatt_hids_c_rep_subscribe(&hids_c,
-						   hids_c.rep_boot.kbd_inp,
-						   hids_c_boot_kbd_report);
+		err = bt_hogp_rep_subscribe(&hogp,
+						   hogp.rep_boot.kbd_inp,
+						   hogp_boot_kbd_report);
 		if (err) {
 			printk("Subscribe error (%d)\n", err);
 		}
 	}
-	if (hids_c.rep_boot.mouse_inp) {
+	if (hogp.rep_boot.mouse_inp) {
 		printk("Subscribe to boot mouse report\n");
-		err = bt_gatt_hids_c_rep_subscribe(&hids_c,
-						   hids_c.rep_boot.mouse_inp,
-						   hids_c_boot_mouse_report);
+		err = bt_hogp_rep_subscribe(&hogp,
+						   hogp.rep_boot.mouse_inp,
+						   hogp_boot_mouse_report);
 		if (err) {
 			printk("Subscribe error (%d)\n", err);
 		}
 	}
 }
 
-static void hids_c_prep_fail_cb(struct bt_gatt_hids_c *hids_c, int err)
+static void hogp_prep_fail_cb(struct bt_hogp *hogp, int err)
 {
 	printk("ERROR: HIDS client preparation failed!\n");
 }
 
-static void hids_c_pm_update_cb(struct bt_gatt_hids_c *hids_c)
+static void hogp_pm_update_cb(struct bt_hogp *hogp)
 {
 	printk("Protocol mode updated: %s\n",
-	      bt_gatt_hids_c_pm_get(hids_c) == BT_GATT_HIDS_PM_BOOT ?
+	      bt_hogp_pm_get(hogp) == BT_HIDS_PM_BOOT ?
 	      "BOOT" : "REPORT");
 }
 
 /* HIDS client initialization parameters */
-static const struct bt_gatt_hids_c_init_params hids_c_init_params = {
-	.ready_cb      = hids_c_ready_cb,
-	.prep_error_cb = hids_c_prep_fail_cb,
-	.pm_update_cb  = hids_c_pm_update_cb
+static const struct bt_hogp_init_params hogp_init_params = {
+	.ready_cb      = hogp_ready_cb,
+	.prep_error_cb = hogp_prep_fail_cb,
+	.pm_update_cb  = hogp_pm_update_cb
 };
 
 
 static void button_bootmode(void)
 {
-	if (!bt_gatt_hids_c_ready_check(&hids_c)) {
+	if (!bt_hogp_ready_check(&hogp)) {
 		printk("HID device not ready\n");
 		return;
 	}
 	int err;
-	enum bt_gatt_hids_pm pm = bt_gatt_hids_c_pm_get(&hids_c);
+	enum bt_hids_pm pm = bt_hogp_pm_get(&hogp);
 
 	printk("Setting protocol mode: %s\n",
-	       (pm == BT_GATT_HIDS_PM_BOOT) ?
+	       (pm == BT_HIDS_PM_BOOT) ?
 	       "BOOT" : "REPORT");
-	err = bt_gatt_hids_c_pm_write(&hids_c,
-				      (pm == BT_GATT_HIDS_PM_BOOT) ?
-				      BT_GATT_HIDS_PM_REPORT :
-				      BT_GATT_HIDS_PM_BOOT);
+	err = bt_hogp_pm_write(&hogp,
+				      (pm == BT_HIDS_PM_BOOT) ?
+				      BT_HIDS_PM_REPORT :
+				      BT_HIDS_PM_BOOT);
 	if (err) {
 		printk("Cannot change protocol mode (err %d)\n", err);
 	}
 }
 
-static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
-			  struct bt_gatt_hids_c_rep_info *rep,
+static void hidc_write_cb(struct bt_hogp *hidc,
+			  struct bt_hogp_rep_info *rep,
 			  uint8_t err)
 {
 	printk("Caps lock sent\n");
@@ -441,24 +440,23 @@ static void button_capslock(void)
 	int err;
 	uint8_t data;
 
-	if (!bt_gatt_hids_c_ready_check(&hids_c)) {
+	if (!bt_hogp_ready_check(&hogp)) {
 		printk("HID device not ready\n");
 		return;
 	}
-	if (!hids_c.rep_boot.kbd_out) {
+	if (!hogp.rep_boot.kbd_out) {
 		printk("HID device does not have Keyboard OUT report\n");
 		return;
 	}
-	if (bt_gatt_hids_c_pm_get(&hids_c) != BT_GATT_HIDS_PM_BOOT) {
+	if (bt_hogp_pm_get(&hogp) != BT_HIDS_PM_BOOT) {
 		printk("This function works only in BOOT Report mode\n");
 		return;
 	}
 	capslock_state = capslock_state ? 0 : 1;
 	data = capslock_state ? 0x02 : 0;
-	err = bt_gatt_hids_c_rep_write_wo_rsp(&hids_c,
-					      hids_c.rep_boot.kbd_out,
-					      &data, sizeof(data),
-					      hidc_write_cb);
+	err = bt_hogp_rep_write_wo_rsp(&hogp, hogp.rep_boot.kbd_out,
+				       &data, sizeof(data),
+				       hidc_write_cb);
 
 	if (err) {
 		printk("Keyboard data write error (err: %d)\n", err);
@@ -468,8 +466,8 @@ static void button_capslock(void)
 }
 
 
-static uint8_t capslock_read_cb(struct bt_gatt_hids_c *hids_c,
-			     struct bt_gatt_hids_c_rep_info *rep,
+static uint8_t capslock_read_cb(struct bt_hogp *hogp,
+			     struct bt_hogp_rep_info *rep,
 			     uint8_t err,
 			     const uint8_t *data)
 {
@@ -482,21 +480,21 @@ static uint8_t capslock_read_cb(struct bt_gatt_hids_c *hids_c,
 		return BT_GATT_ITER_STOP;
 	}
 	printk("Received data (size: %u, data[0]: 0x%x)\n",
-	       bt_gatt_hids_c_rep_size(rep), data[0]);
+	       bt_hogp_rep_size(rep), data[0]);
 
 	return BT_GATT_ITER_STOP;
 }
 
 
-static void capslock_write_cb(struct bt_gatt_hids_c *hids_c,
-			      struct bt_gatt_hids_c_rep_info *rep,
+static void capslock_write_cb(struct bt_hogp *hogp,
+			      struct bt_hogp_rep_info *rep,
 			      uint8_t err)
 {
 	int ret;
 
 	printk("Capslock write result: %u\n", err);
 
-	ret = bt_gatt_hids_c_rep_read(hids_c, rep, capslock_read_cb);
+	ret = bt_hogp_rep_read(hogp, rep, capslock_read_cb);
 	if (ret) {
 		printk("Cannot read capslock value (err: %d)\n", ret);
 	}
@@ -505,11 +503,11 @@ static void capslock_write_cb(struct bt_gatt_hids_c *hids_c,
 
 static void button_capslock_rsp(void)
 {
-	if (!bt_gatt_hids_c_ready_check(&hids_c)) {
+	if (!bt_hogp_ready_check(&hogp)) {
 		printk("HID device not ready\n");
 		return;
 	}
-	if (!hids_c.rep_boot.kbd_out) {
+	if (!hogp.rep_boot.kbd_out) {
 		printk("HID device does not have Keyboard OUT report\n");
 		return;
 	}
@@ -518,10 +516,8 @@ static void button_capslock_rsp(void)
 
 	capslock_state = capslock_state ? 0 : 1;
 	data = capslock_state ? 0x02 : 0;
-	err = bt_gatt_hids_c_rep_write(&hids_c,
-				       hids_c.rep_boot.kbd_out,
-				       capslock_write_cb,
-				       &data, sizeof(data));
+	err = bt_hogp_rep_write(&hogp, hogp.rep_boot.kbd_out, capslock_write_cb,
+				&data, sizeof(data));
 	if (err) {
 		printk("Keyboard data write error (err: %d)\n", err);
 		return;
@@ -601,7 +597,7 @@ void main(void)
 
 	printk("Starting Bluetooth Central HIDS example\n");
 
-	bt_gatt_hids_c_init(&hids_c, &hids_c_init_params);
+	bt_hogp_init(&hogp, &hogp_init_params);
 
 	bt_conn_cb_register(&conn_callbacks);
 
