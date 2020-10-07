@@ -13,6 +13,7 @@
 #include <init.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
+#include <power/reboot.h>
 
 LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 
@@ -22,6 +23,7 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #include "slm_at_icmp.h"
 #include "slm_at_gps.h"
 #include "slm_at_ftp.h"
+#include "slm_at_fota.h"
 #if defined(CONFIG_SLM_TCP_PROXY)
 #include "slm_at_tcp_proxy.h"
 #endif
@@ -31,9 +33,6 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #include "slm_at_mqtt.h"
 #include "slm_at_httpc.h"
 
-#define SLM_UART_0_NAME	"UART_0"
-#define SLM_UART_2_NAME	"UART_2"
-
 #define OK_STR		"OK\r\n"
 #define ERROR_STR	"ERROR\r\n"
 #define FATAL_STR	"FATAL ERROR\r\n"
@@ -42,6 +41,7 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #define SLM_VERSION	"#XSLMVER: 1.4\r\n"
 #define AT_CMD_SLMVER	"AT#XSLMVER"
 #define AT_CMD_SLEEP	"AT#XSLEEP"
+#define AT_CMD_RESET	"AT#XRESET"
 #define AT_CMD_CLAC	"AT#XCLAC"
 #define AT_CMD_SLMUART	"AT#XSLMUART"
 
@@ -85,7 +85,7 @@ static K_SEM_DEFINE(tx_done, 0, 1);
 
 /* global functions defined in different files */
 void enter_idle(void);
-void enter_sleep(void);
+void enter_sleep(bool wake_up);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -172,6 +172,8 @@ static void handle_at_clac(void)
 	rsp_send("\r\n", 2);
 	rsp_send(AT_CMD_SLEEP, sizeof(AT_CMD_SLEEP) - 1);
 	rsp_send("\r\n", 2);
+	rsp_send(AT_CMD_RESET, sizeof(AT_CMD_RESET) - 1);
+	rsp_send("\r\n", 2);
 	rsp_send(AT_CMD_CLAC, sizeof(AT_CMD_CLAC) - 1);
 	rsp_send("\r\n", 2);
 #if defined(CONFIG_SLM_TCP_PROXY)
@@ -186,6 +188,7 @@ static void handle_at_clac(void)
 	slm_at_mqtt_clac();
 	slm_at_ftp_clac();
 	slm_at_httpc_clac();
+	slm_at_fota_clac();
 }
 
 static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
@@ -218,7 +221,7 @@ static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
 			ret = 0; /*Will send no "OK"*/
 		} else if (shutdown_mode == SHUTDOWN_MODE_SLEEP) {
 			slm_at_host_uninit();
-			enter_sleep();
+			enter_sleep(true);
 			ret = 0; /* Cannot reach here */
 		} else {
 			LOG_ERR("AT parameter error");
@@ -335,6 +338,14 @@ static void cmd_send(struct k_work *work)
 		}
 	}
 
+	if (slm_util_cmd_casecmp(at_buf, AT_CMD_RESET)) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		k_sleep(K_MSEC(50));
+		slm_at_host_uninit();
+		enter_sleep(false);
+		sys_reboot(SYS_REBOOT_COLD);
+	}
+
 	if (slm_util_cmd_casecmp(at_buf, AT_CMD_CLAC)) {
 		handle_at_clac();
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
@@ -431,6 +442,15 @@ static void cmd_send(struct k_work *work)
 	}
 
 	err = slm_at_httpc_parse(at_buf, at_buf_len);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOENT) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+
+	err = slm_at_fota_parse(at_buf);
 	if (err == 0) {
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
@@ -602,31 +622,20 @@ static void uart_callback(const struct device *dev, struct uart_event *evt,
 
 int slm_at_host_init(void)
 {
-	char *uart_dev_name;
 	int err;
-	enum term_modes mode = CONFIG_SLM_AT_HOST_TERMINATION;
 	uint32_t start_time;
 
-	/* Choosing the termination mode */
-	if (mode < MODE_COUNT) {
-		term_mode = mode;
-	} else {
-		return -EINVAL;
-	}
-
-	/* Choose which UART to use */
+	/* Initialize the UART module */
 #if defined(CONFIG_SLM_CONNECT_UART_0)
-		uart_dev_name = SLM_UART_0_NAME;
+	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
 #elif defined(CONFIG_SLM_CONNECT_UART_2)
-		uart_dev_name = SLM_UART_2_NAME;
+	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart2)));
 #else
 	LOG_ERR("Unsupported UART instance");
 	return -EINVAL;
 #endif
-	/* Initialize the UART module */
-	uart_dev = device_get_binding(uart_dev_name);
 	if (uart_dev == NULL) {
-		LOG_ERR("Cannot bind %s\n", uart_dev_name);
+		LOG_ERR("Cannot bind UART device\n");
 		return -EINVAL;
 	}
 	/* Wait for the UART line to become valid */
@@ -650,6 +659,7 @@ int slm_at_host_init(void)
 	/* Power on UART module */
 	device_set_power_state(uart_dev, DEVICE_PM_ACTIVE_STATE,
 				NULL, NULL);
+	term_mode = CONFIG_SLM_AT_HOST_TERMINATION;
 	err = uart_rx_enable(uart_dev, uart_rx_buf[0],
 				sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT);
 	if (err) {
@@ -708,6 +718,12 @@ int slm_at_host_init(void)
 		return -EFAULT;
 	}
 
+	err = slm_at_fota_init();
+	if (err) {
+		LOG_ERR("FOTA could not be initialized: %d", err);
+		return -EFAULT;
+	}
+
 	k_work_init(&cmd_send_work, cmd_send);
 	k_sem_give(&tx_done);
 	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
@@ -755,6 +771,10 @@ void slm_at_host_uninit(void)
 	err = slm_at_httpc_uninit();
 	if (err) {
 		LOG_WRN("HTTP could not be uninitialized: %d", err);
+	}
+	err = slm_at_fota_uninit();
+	if (err) {
+		LOG_WRN("FOTA could not be uninitialized: %d", err);
 	}
 	err = at_notif_deregister_handler(NULL, response_handler);
 	if (err) {

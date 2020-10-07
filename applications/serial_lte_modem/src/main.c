@@ -16,6 +16,9 @@
 #include <hal/nrf_power.h>
 #include <hal/nrf_regulators.h>
 #include <modem/modem_info.h>
+#include <modem/bsdlib.h>
+#include <dfu/mcuboot.h>
+#include <power/reboot.h>
 #include "slm_at_host.h"
 
 LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
@@ -92,17 +95,19 @@ void enter_idle(void)
 	}
 }
 
-void enter_sleep(void)
+void enter_sleep(bool wake_up)
 {
 #if defined(CONFIG_SLM_GPIO_WAKEUP)
 	/*
 	 * Due to errata 4, Always configure PIN_CNF[n].INPUT before
 	 *  PIN_CNF[n].SENSE.
 	 */
-	nrf_gpio_cfg_input(CONFIG_SLM_INTERFACE_PIN,
-		NRF_GPIO_PIN_PULLUP);
-	nrf_gpio_cfg_sense_set(CONFIG_SLM_INTERFACE_PIN,
-		NRF_GPIO_PIN_SENSE_LOW);
+	if (wake_up) {
+		nrf_gpio_cfg_input(CONFIG_SLM_INTERFACE_PIN,
+			NRF_GPIO_PIN_PULLUP);
+		nrf_gpio_cfg_sense_set(CONFIG_SLM_INTERFACE_PIN,
+			NRF_GPIO_PIN_SENSE_LOW);
+	}
 #endif	/* CONFIG_SLM_GPIO_WAKEUP */
 
 	/*
@@ -115,8 +120,37 @@ void enter_sleep(void)
 	 * pmu.html?cp=2_0_0_4_0_0_1#system_off_mode
 	 */
 	lte_lc_power_off();
-	bsd_shutdown();
-	nrf_regulators_system_off(NRF_REGULATORS_NS);
+	k_sleep(K_SECONDS(1));
+#if defined(CONFIG_SLM_GPIO_WAKEUP)
+	if (wake_up) {
+		nrf_regulators_system_off(NRF_REGULATORS_NS);
+	}
+#endif	/* CONFIG_SLM_GPIO_WAKEUP */
+}
+
+void handle_bsdlib_init_ret(void)
+{
+	int ret = bsdlib_get_init_ret();
+
+	/* Handle return values relating to modem firmware update */
+	switch (ret) {
+	case MODEM_DFU_RESULT_OK:
+		LOG_INF("MODEM UPDATE OK. Will run new firmware");
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+		LOG_ERR("MODEM UPDATE ERROR %d. Will run old firmware", ret);
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failiure", ret);
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+	default:
+		break;
+	}
 }
 
 void start_execute(void)
@@ -124,6 +158,8 @@ void start_execute(void)
 	int err;
 
 	LOG_INF("Serial LTE Modem");
+
+	handle_bsdlib_init_ret();
 
 	err = modem_info_init();
 	if (err) {
@@ -149,6 +185,11 @@ void start_execute(void)
 	k_work_q_start(&slm_work_q, slm_wq_stack_area,
 		K_THREAD_STACK_SIZEOF(slm_wq_stack_area), SLM_WQ_PRIORITY);
 	k_work_init(&exit_idle_work, exit_idle);
+
+	/* All initializations were successful mark image as working so that we
+	 * will not revert upon reboot.
+	 */
+	boot_write_img_confirmed();
 }
 
 #if defined(CONFIG_SLM_GPIO_WAKEUP)
@@ -162,7 +203,7 @@ void main(void)
 		start_execute();
 	} else {
 		LOG_INF("Sleep");
-		enter_sleep();
+		enter_sleep(true);
 	}
 }
 #else
