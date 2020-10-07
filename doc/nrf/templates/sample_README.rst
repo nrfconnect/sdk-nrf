@@ -145,7 +145,7 @@ Additional configuration*
 Check and configure the following library options that are used by the sample:
 
 * :option:`CONFIG_BT_DEVICE_NAME` - Defines the Bluetooth device name.
-* :option:`CONFIG_BT_GATT_LBS` - Enables the :ref:`lbs_readme`.
+* :option:`CONFIG_BT_LBS` - Enables the :ref:`lbs_readme`.
 
 Configuration files*
 ====================

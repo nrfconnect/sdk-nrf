@@ -4,15 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig BT_GATT_LBS
+menuconfig BT_LBS
 	bool "Led Button service"
 	select BT_NRF_SERVICES
 	help
 	  Enable Led Button service.
 
-if BT_GATT_LBS
+if BT_LBS
 
-config BT_GATT_LBS_POLL_BUTTON
+config BT_LBS_POLL_BUTTON
 	bool
 	default n
 	prompt "Support button state polling"
@@ -20,8 +20,8 @@ config BT_GATT_LBS_POLL_BUTTON
 	  Enable support for button state polling
 	  (button state change notify always supported)
 
-module = BT_GATT_LBS
+module = BT_LBS
 module-str = LBS
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-endif # BT_GATT_LBS
+endif # BT_LBS
