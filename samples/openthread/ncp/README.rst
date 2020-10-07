@@ -16,7 +16,7 @@ However, it customizes Zephyr's sample to the NCS requirements (for example, by 
 Overview
 ********
 
-The sample demonstrates using an NCP target on the MCU to communicate with Userspace WPAN Network Daemon (wpantund) on Unix-like operating system.
+The sample demonstrates using an NCP target on the MCU to communicate with Userspace WPAN Network Daemon (`wpantund`_) on Unix-like operating system.
 According to the NCP architecture, the MCU part needs to cooperate with user higher layer process to establish the complete full stack application.
 The sample shows how to set connection between NCP and wpantund.
 
@@ -49,7 +49,7 @@ Logging
 
 This sample by default uses Spinel logging backend, which allows sending log messages to the host device using Spinel protocol.
 Presented feature is very useful, because it doesn't require having seperate interfaces to communicate with NCP via Spinel protocol and collect log messages.
-Moreover selecting Spinel logging backend (by setting CONFIG_LOG_BACKEND_SPINEL) doesn't exclude using another backend like UART or RTT at the same time.
+Moreover selecting Spinel logging backend (by setting :option:`CONFIG_LOG_BACKEND_SPINEL`) doesn't exclude using another backend like UART or RTT at the same time.
 
 By default log levels of all modules are set to critical to not engage microprocessor in unnecessary activites, but User is able to change it in overlay :file:`overlay-logging.conf`.
 It is possible to change log levels of User modules, whole Zephyr system and OpenThread independently to make solution flexible.
@@ -137,13 +137,13 @@ After building the sample and programming it to your development kit, test it by
 
    .. code-block:: console
 
-      wpanctl:leader_interface> status
+      wpanctl:leader_if> status
 
    The output will look similar to the following:
 
    .. code-block:: console
 
-      leader_interface => [
+      leader_if => [
         "NCP:State" => "offline"
         "Daemon:Enabled" => true
         "NCP:Version" => "OPENTHREAD/gde3f05d8; NONE; Jul  7 2020 10:04:51"
@@ -157,7 +157,7 @@ After building the sample and programming it to your development kit, test it by
 
    .. code-block:: console
 
-      wpanctl:leader_interface> form "My_OpenThread_network"
+      wpanctl:leader_if> form "My_OpenThread_network"
 
    The output will look similar to the following:
 
@@ -171,13 +171,13 @@ After building the sample and programming it to your development kit, test it by
 
    .. code-block:: console
 
-      wpanctl:leader_interface> status
+      wpanctl:leader_if> status
 
 The final output will be similar to the following:
 
 .. code-block:: console
 
-   leader_interface => [
+   leader_if => [
      "NCP:State" => "associated"
      "Daemon:Enabled" => true
      "NCP:Version" => "OPENTHREAD/gde3f05d8; NONE; Jul  7 2020 10:04:51"
@@ -214,24 +214,24 @@ Optionally, if you are using more than one NCP board, you can test the network j
    For `baudrate`, use value 1000000.
    For `serial_port_name_board2`, use the value from the previous step.
    For `network_interface_name_board2`, use a name of your choice.
-   In this testing procedure, this will be `joiner_interface`.
+   In this testing procedure, this will be `joiner_if`.
 #. Open another shell and run another wpanctl process for the second board by using following command:
 
    .. code-block:: console
 
-      wpanctl -I joiner_interface
+      wpanctl -I joiner_if
 
 #. In the wpanctl shell, run the following command to check the NCP board state:
 
    .. code-block:: console
 
-      wpanctl:joiner_interface> status
+      wpanctl:joiner_if> status
 
    The output will look similar to the following:
 
    .. code-block:: console
 
-      joiner_interface => [
+      joiner_if => [
          "NCP:State" => "offline"
          "Daemon:Enabled" => true
          "NCP:Version" => "OPENTHREAD/gde3f05d8; NONE; Jul  7 2020 10:04:51"
@@ -245,7 +245,7 @@ Optionally, if you are using more than one NCP board, you can test the network j
 
    .. code-block:: console
 
-      wpanctl:leader_interface> get Network:Key
+      wpanctl:leader_if> get Network:Key
 
    The output will look similar to the following:
 
@@ -257,13 +257,13 @@ Optionally, if you are using more than one NCP board, you can test the network j
 
    .. code-block:: console
 
-      wpanctl:joiner_interface> set Network:Key 2429EFAF21421AE3CB30B9204016EDC9
+      wpanctl:joiner_if> set Network:Key 2429EFAF21421AE3CB30B9204016EDC9
 
 #. In the second board's wpanctl shell, run the following command to scan your neighborhood and find the network formed with the leader NCP board:
 
    .. code-block:: console
 
-      wpanctl:joiner_interface> scan
+      wpanctl:joiner_if> scan
 
    The output will look similar to the following:
 
@@ -280,7 +280,7 @@ Optionally, if you are using more than one NCP board, you can test the network j
 
    .. code-block:: console
 
-      wpanctl:joiner_interface> join 2
+      wpanctl:joiner_if> join 2
 
    The output will look similar to the following:
 
