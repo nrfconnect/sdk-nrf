@@ -254,7 +254,13 @@ static int job_update_accepted(struct mqtt_client *const client,
 		if (err) {
 			LOG_ERR("Error (%d) when trying to start firmware "
 				"download", err);
-			return err;
+			execution_state = AWS_JOBS_FAILED;
+			err = update_job_execution(client, job_id,
+						   execution_state, "");
+			if (err) {
+				return err;
+			}
+
 		}
 		callback(&aws_fota_evt);
 	} else if (execution_state == AWS_JOBS_IN_PROGRESS
@@ -274,6 +280,10 @@ static int job_update_accepted(struct mqtt_client *const client,
 		callback(&aws_fota_evt);
 		LOG_INF("Job document updated with SUCCEDED");
 		LOG_INF("Ready to reboot");
+	} else if (execution_state == AWS_JOBS_FAILED) {
+		fota_state = NONE;
+		execution_state = AWS_JOBS_QUEUED;
+		accepted = false;
 	}
 	return 0;
 }
