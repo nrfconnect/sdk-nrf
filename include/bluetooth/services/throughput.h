@@ -6,13 +6,13 @@
 
 /**
  * @file
- * @defgroup bt_gatt_throughput Bluetooth LE GATT Throughput Service API
+ * @defgroup bt_throughput Bluetooth LE GATT Throughput Service API
  * @{
  * @brief API for the Bluetooth LE GATT Throughput Service.
  */
 
-#ifndef BT_GATT_THROUGHPUT_H_
-#define BT_GATT_THROUGHPUT_H_
+#ifndef BT_THROUGHPUT_H_
+#define BT_THROUGHPUT_H_
 
 #include <bluetooth/uuid.h>
 #include <bluetooth/conn.h>
@@ -23,7 +23,7 @@ extern "C" {
 #endif
 
 /** @brief Throughput metrics. */
-struct bt_gatt_throughput_metrics {
+struct bt_throughput_metrics {
 
         /** Number of GATT writes received. */
 	uint32_t write_count;
@@ -36,7 +36,7 @@ struct bt_gatt_throughput_metrics {
 };
 
 /** @brief Throughput callback structure. */
-struct bt_gatt_throughput_cb {
+struct bt_throughput_cb {
 	/** @brief Data read callback.
 	 *
 	 * This function is called when data has been read from the
@@ -47,7 +47,7 @@ struct bt_gatt_throughput_cb {
 	 * @retval BT_GATT_ITER_CONTINUE To keep notifications enabled.
 	 * @retval BT_GATT_ITER_STOP To disable notifications.
 	 */
-	uint8_t (*data_read)(const struct bt_gatt_throughput_metrics *met);
+	uint8_t (*data_read)(const struct bt_throughput_metrics *met);
 
 	/** @brief Data received callback.
 	 *
@@ -56,7 +56,7 @@ struct bt_gatt_throughput_cb {
 	 *
 	 * @param[in] met Throughput metrics.
 	 */
-	void (*data_received)(const struct bt_gatt_throughput_metrics *met);
+	void (*data_received)(const struct bt_throughput_metrics *met);
 
 	/** @brief Data send callback.
 	 *
@@ -65,11 +65,11 @@ struct bt_gatt_throughput_cb {
 	 *
 	 * @param[in] met Throughput metrics.
 	 */
-	void (*data_send)(const struct bt_gatt_throughput_metrics *met);
+	void (*data_send)(const struct bt_throughput_metrics *met);
 };
 
 /** @brief Throughput structure. */
-struct bt_gatt_throughput {
+struct bt_throughput {
 	/** Throughput Characteristic handle. */
 	uint16_t char_handle;
 
@@ -77,7 +77,7 @@ struct bt_gatt_throughput {
 	struct bt_gatt_read_params read_params;
 
 	/** Throughput callback structure. */
-	struct bt_gatt_throughput_cb *cb;
+	struct bt_throughput_cb *cb;
 
 	/** Connection object. */
 	struct bt_conn *conn;
@@ -99,8 +99,8 @@ struct bt_gatt_throughput {
  *  @retval 0 If the operation was successful.
  *            Otherwise, a negative error code is returned.
  */
-int bt_gatt_throughput_init(struct bt_gatt_throughput *throughput,
-			    const struct bt_gatt_throughput_cb *cb);
+int bt_throughput_init(struct bt_throughput *throughput,
+		       const struct bt_throughput_cb *cb);
 
 /** @brief Assign handles to the Throughput Service instance.
  *
@@ -118,8 +118,8 @@ int bt_gatt_throughput_init(struct bt_gatt_throughput *throughput,
  * @retval (-ENOTSUP) Special error code used when the UUID
  *         of the service does not match the expected UUID.
  */
-int bt_gatt_throughput_handles_assign(struct bt_gatt_dm *dm,
-				      struct bt_gatt_throughput *throughput);
+int bt_throughput_handles_assign(struct bt_gatt_dm *dm,
+				 struct bt_throughput *throughput);
 
 /** @brief Read data from the server.
  *
@@ -130,7 +130,7 @@ int bt_gatt_throughput_handles_assign(struct bt_gatt_dm *dm,
  *  @retval 0 If the operation was successful.
  *            Otherwise, a negative error code is returned.
  */
-int bt_gatt_throughput_read(struct bt_gatt_throughput *throughput);
+int bt_throughput_read(struct bt_throughput *throughput);
 
 /** @brief Write data to the server.
  *
@@ -141,8 +141,8 @@ int bt_gatt_throughput_read(struct bt_gatt_throughput *throughput);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a negative error code is returned.
  */
-int bt_gatt_throughput_write(struct bt_gatt_throughput *throughput,
-			     const uint8_t *data, uint16_t len);
+int bt_throughput_write(struct bt_throughput *throughput,
+			const uint8_t *data, uint16_t len);
 
 #ifdef __cplusplus
 }
@@ -152,4 +152,4 @@ int bt_gatt_throughput_write(struct bt_gatt_throughput *throughput,
  * @}
  */
 
-#endif /* BT_GATT_THROUGHPUT_H_ */
+#endif /* BT_THROUGHPUT_H_ */
