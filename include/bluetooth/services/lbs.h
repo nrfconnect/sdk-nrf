@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef BT_GATT_LBS_H_
-#define BT_GATT_LBS_H_
+#ifndef BT_LBS_H_
+#define BT_LBS_H_
 
 /**@file
- * @defgroup bt_gatt_lbs LED Button Service API
+ * @defgroup bt_lbs LED Button Service API
  * @{
  * @brief API for the LED Button Service (LBS).
  */
@@ -20,16 +20,21 @@ extern "C" {
 #include <zephyr/types.h>
 
 /** @brief LBS Service UUID. */
-#define LBS_UUID_SERVICE \
+#define BT_UUID_LBS_VAL \
 	BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
 
 /** @brief Button Characteristic UUID. */
-#define LBS_UUID_BUTTON_CHAR \
+#define BT_UUID_LBS_BUTTON_VAL \
 	BT_UUID_128_ENCODE(0x00001524, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
 
 /** @brief LED Characteristic UUID. */
-#define LBS_UUID_LED_CHAR \
+#define BT_UUID_LBS_LED_VAL \
 	BT_UUID_128_ENCODE(0x00001525, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
+
+
+#define BT_UUID_LBS           BT_UUID_DECLARE_128(BT_UUID_LBS_VAL)
+#define BT_UUID_LBS_BUTTON    BT_UUID_DECLARE_128(BT_UUID_LBS_BUTTON_VAL)
+#define BT_UUID_LBS_LED       BT_UUID_DECLARE_128(BT_UUID_LBS_LED_VAL)
 
 /** @brief Callback type for when an LED state change is received. */
 typedef void (*led_cb_t)(const bool led_state);
@@ -38,7 +43,7 @@ typedef void (*led_cb_t)(const bool led_state);
 typedef bool (*button_cb_t)(void);
 
 /** @brief Callback struct used by the LBS Service. */
-struct bt_gatt_lbs_cb {
+struct bt_lbs_cb {
 	/** LED state change callback. */
 	led_cb_t    led_cb;
 	/** Button read callback. */
@@ -62,7 +67,7 @@ struct bt_gatt_lbs_cb {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int bt_gatt_lbs_init(struct bt_gatt_lbs_cb *callbacks);
+int bt_lbs_init(struct bt_lbs_cb *callbacks);
 
 /** @brief Send the button state.
  *
@@ -74,7 +79,7 @@ int bt_gatt_lbs_init(struct bt_gatt_lbs_cb *callbacks);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int bt_gatt_lbs_send_button_state(bool button_state);
+int bt_lbs_send_button_state(bool button_state);
 
 #ifdef __cplusplus
 }
@@ -84,4 +89,4 @@ int bt_gatt_lbs_send_button_state(bool button_state);
  * @}
  */
 
-#endif /* BT_GATT_LBS_H_ */
+#endif /* BT_LBS_H_ */

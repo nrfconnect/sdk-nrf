@@ -46,7 +46,7 @@ static const struct bt_data ad[] = {
 };
 
 static const struct bt_data sd[] = {
-	BT_DATA_BYTES(BT_DATA_UUID128_ALL, LBS_UUID_SERVICE),
+	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
 
 static void connected(struct bt_conn *conn, uint8_t err)
@@ -68,7 +68,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	dk_set_led_off(CON_STATUS_LED);
 }
 
-#ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
+#ifdef CONFIG_BT_LBS_SECURITY_ENABLED
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err err)
 {
@@ -88,12 +88,12 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 static struct bt_conn_cb conn_callbacks = {
 	.connected        = connected,
 	.disconnected     = disconnected,
-#ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
+#ifdef CONFIG_BT_LBS_SECURITY_ENABLED
 	.security_changed = security_changed,
 #endif
 };
 
-#if defined(CONFIG_BT_GATT_LBS_SECURITY_ENABLED)
+#if defined(CONFIG_BT_LBS_SECURITY_ENABLED)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -162,7 +162,7 @@ static bool app_button_cb(void)
 	return app_button_state;
 }
 
-static struct bt_gatt_lbs_cb lbs_callbacs = {
+static struct bt_lbs_cb lbs_callbacs = {
 	.led_cb    = app_led_cb,
 	.button_cb = app_button_cb,
 };
@@ -170,7 +170,7 @@ static struct bt_gatt_lbs_cb lbs_callbacs = {
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	if (has_changed & USER_BUTTON) {
-		bt_gatt_lbs_send_button_state(button_state);
+		bt_lbs_send_button_state(button_state);
 		app_button_state = button_state ? true : false;
 	}
 }
@@ -207,7 +207,7 @@ void main(void)
 	}
 
 	bt_conn_cb_register(&conn_callbacks);
-	if (IS_ENABLED(CONFIG_BT_GATT_LBS_SECURITY_ENABLED)) {
+	if (IS_ENABLED(CONFIG_BT_LBS_SECURITY_ENABLED)) {
 		bt_conn_auth_cb_register(&conn_auth_callbacks);
 	}
 
@@ -223,7 +223,7 @@ void main(void)
 		settings_load();
 	}
 
-	err = bt_gatt_lbs_init(&lbs_callbacs);
+	err = bt_lbs_init(&lbs_callbacs);
 	if (err) {
 		printk("Failed to init LBS (err:%d)\n", err);
 		return;
