@@ -67,12 +67,12 @@ When working with samples that support wpantund, complete the following steps to
    For ``baudrate``, use value ``1000000``.
    For ``serial_port_name``, use the value that is valid for the sample.
    For ``network_interface_name``, use a name of your choice.
-   For example, `leader_interface`.
+   For example, `leader_if`.
 #. Open another shell and run the wpanctl process by using the following command:
 
    .. code-block:: console
 
-      wpanctl -I leader_interface
+      wpanctl -I leader_if
 
    This process can be used to control the connected NCP board.
 
@@ -86,7 +86,7 @@ For example, the following command checks the the NCP board state:
 
 .. code-block:: console
 
-   wpanctl:leader_interface> status
+   wpanctl:leader_if> status
 
 The output will be different depending on the board and the sample.
 
