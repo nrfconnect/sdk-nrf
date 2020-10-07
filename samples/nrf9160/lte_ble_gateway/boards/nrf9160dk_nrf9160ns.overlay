@@ -1,0 +1,23 @@
+/ {
+	chosen {
+		zephyr,bt-uart=&lpuart;
+	};
+};
+
+&uart2 {
+	current-speed = <1000000>;
+	status = "okay";
+	tx-pin = <18>;
+	rx-pin = <17>;
+	/delete-property/ rts-pin;
+	/delete-property/ cts-pin;
+	/delete-property/ hw-flow-control;
+
+	lpuart: nrf-sw-lpuart {
+		compatible = "nordic,nrf-sw-lpuart";
+		status = "okay";
+		label = "LPUART";
+		req-pin = <21>;
+		rdy-pin = <19>;
+	};
+};
