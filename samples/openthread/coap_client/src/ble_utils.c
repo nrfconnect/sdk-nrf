@@ -48,7 +48,7 @@ static const struct bt_data ad[] = {
 };
 
 static const struct bt_data sd[] = {
-	BT_DATA_BYTES(BT_DATA_UUID128_ALL, NUS_UUID_SERVICE),
+	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NUS_VAL),
 };
 
 static struct k_work on_connect_work;
@@ -142,23 +142,11 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	LOG_INF("Pairing failed conn: %s, reason %d", log_strdup(addr), reason);
 }
 
-static struct bt_gatt_nus_cb *set_nus_clbs(nus_received_cb_t on_nus_received,
-					   nus_sent_cb_t on_nus_send)
-{
-	static struct bt_gatt_nus_cb nus_cb;
-
-	nus_cb.received_cb = on_nus_received;
-	nus_cb.sent_cb = on_nus_send;
-
-	return &nus_cb;
-}
-
-int ble_utils_init(nus_received_cb_t on_nus_received, nus_sent_cb_t on_nus_send,
+int ble_utils_init(struct bt_nus_cb *nus_clbs,
 		   ble_connection_cb_t on_connect,
 		   ble_disconnection_cb_t on_disconnect)
 {
 	int ret;
-	struct bt_gatt_nus_cb *nus_clbs;
 
 	k_work_init(&on_connect_work, on_connect);
 	k_work_init(&on_disconnect_work, on_disconnect);
@@ -181,8 +169,7 @@ int ble_utils_init(nus_received_cb_t on_nus_received, nus_sent_cb_t on_nus_send,
 		settings_load();
 	}
 
-	nus_clbs = set_nus_clbs(on_nus_received, on_nus_send);
-	ret = bt_gatt_nus_init(nus_clbs);
+	ret = bt_nus_init(nus_clbs);
 	if (ret) {
 		LOG_ERR("Failed to initialize UART service (error: %d)", ret);
 		goto end;

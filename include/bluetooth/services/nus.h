@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef BT_GATT_NUS_H_
-#define BT_GATT_NUS_H_
+#ifndef BT_NUS_H_
+#define BT_NUS_H_
 
 /**
  * @file
- * @defgroup bt_gatt_nus Nordic UART (NUS) GATT Service
+ * @defgroup bt_nus Nordic UART (NUS) GATT Service
  * @{
  * @brief Nordic UART (NUS) GATT Service API.
  */
@@ -24,36 +24,44 @@ extern "C" {
 #endif
 
 /** @brief UUID of the NUS Service. **/
-#define NUS_UUID_SERVICE \
+#define BT_UUID_NUS_VAL \
 	BT_UUID_128_ENCODE(0x6e400001, 0xb5a3, 0xf393, 0xe0a9, 0xe50e24dcca9e)
 
 /** @brief UUID of the TX Characteristic. **/
-#define NUS_UUID_NUS_TX_CHAR \
+#define BT_UUID_NUS_TX_VAL \
 	BT_UUID_128_ENCODE(0x6e400003, 0xb5a3, 0xf393, 0xe0a9, 0xe50e24dcca9e)
 
 /** @brief UUID of the RX Characteristic. **/
-#define NUS_UUID_NUS_RX_CHAR \
+#define BT_UUID_NUS_RX_VAL \
 	BT_UUID_128_ENCODE(0x6e400002, 0xb5a3, 0xf393, 0xe0a9, 0xe50e24dcca9e)
 
-#define BT_UUID_NUS_SERVICE   BT_UUID_DECLARE_128(NUS_UUID_SERVICE)
-#define BT_UUID_NUS_RX        BT_UUID_DECLARE_128(NUS_UUID_NUS_RX_CHAR)
-#define BT_UUID_NUS_TX        BT_UUID_DECLARE_128(NUS_UUID_NUS_TX_CHAR)
-
-/** @brief Callback type for data received. */
-typedef void (*nus_received_cb_t)(struct bt_conn *conn,
-				  const uint8_t *const data, uint16_t len);
-
-/** @brief Callback type for data sent. */
-typedef void (*nus_sent_cb_t)(struct bt_conn *conn);
+#define BT_UUID_NUS_SERVICE   BT_UUID_DECLARE_128(BT_UUID_NUS_VAL)
+#define BT_UUID_NUS_RX        BT_UUID_DECLARE_128(BT_UUID_NUS_RX_VAL)
+#define BT_UUID_NUS_TX        BT_UUID_DECLARE_128(BT_UUID_NUS_TX_VAL)
 
 /** @brief Pointers to the callback functions for service events. */
-struct bt_gatt_nus_cb {
+struct bt_nus_cb {
+	/** @brief Data received callback.
+	 *
+	 * The data has been received as a write request on the NUS RX
+	 * Characteristic.
+	 *
+	 * @param[in] conn  Pointer to connection object that has received data.
+	 * @param[in] data  Received data.
+	 * @param[in] len   Length of received data.
+	 */
+	void (*received)(struct bt_conn *conn,
+			 const uint8_t *const data, uint16_t len);
 
-        /** Callback for data received. **/
-	nus_received_cb_t received_cb;
-
-        /** Callback for data sent. **/
-	nus_sent_cb_t     sent_cb;
+	/** @brief Data sent callback.
+	 *
+	 * The data has been sent as a notification and written on the NUS TX
+	 * Characteristic.
+	 *
+	 * @param[in] conn Pointer to connection object, or NULL if sent to all
+	 *                 connected peers.
+	 */
+	void (*sent)(struct bt_conn *conn);
 };
 
 /**@brief Initialize the service.
@@ -71,7 +79,7 @@ struct bt_gatt_nus_cb {
  * @retval 0 If initialization is successful.
  *           Otherwise, a negative value is returned.
  */
-int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks);
+int bt_nus_init(struct bt_nus_cb *callbacks);
 
 /**@brief Send data.
  *
@@ -86,15 +94,15 @@ int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks);
  * @retval 0 If the data is sent.
  *           Otherwise, a negative value is returned.
  */
-int bt_gatt_nus_send(struct bt_conn *conn, const uint8_t *data, uint16_t len);
+int bt_nus_send(struct bt_conn *conn, const uint8_t *data, uint16_t len);
 
-/**@brief Get maximum data length that can be used for @ref bt_gatt_nus_send.
+/**@brief Get maximum data length that can be used for @ref bt_nus_send.
  *
  * @param[in] conn Pointer to connection Object.
  *
  * @return Maximum data length.
  */
-static inline uint32_t bt_gatt_nus_max_send(struct bt_conn *conn)
+static inline uint32_t bt_nus_get_mtu(struct bt_conn *conn)
 {
 	/* According to 3.4.7.1 Handle Value Notification off the ATT protocol.
 	 * Maximum supported notification is ATT_MTU - 3 */
@@ -109,4 +117,4 @@ static inline uint32_t bt_gatt_nus_max_send(struct bt_conn *conn)
  *@}
  */
 
-#endif /* BT_GATT_NUS_H_ */
+#endif /* BT_NUS_H_ */

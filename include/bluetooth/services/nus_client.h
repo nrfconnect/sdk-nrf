@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef BT_GATT_NUS_C_H_
-#define BT_GATT_NUS_C_H_
+#ifndef BT_NUS_CLIENT_H_
+#define BT_NUS_CLIENT_H_
 
 /**
  * @file
- * @defgroup bt_gatt_nus_c Bluetooth LE GATT NUS Client API
+ * @defgroup bt_nus_client Bluetooth LE GATT NUS Client API
  * @{
  * @brief API for the Bluetooth LE GATT Nordic UART Service (NUS) Client.
  */
@@ -25,7 +25,7 @@ extern "C" {
 /** @brief Handles on the connected peer device that are needed to interact with
  * the device.
  */
-struct bt_gatt_nus_c_handles {
+struct bt_nus_client_handles {
 
         /** Handle of the NUS RX characteristic, as provided by
 	 *  a discovery.
@@ -44,7 +44,7 @@ struct bt_gatt_nus_c_handles {
 };
 
 /** @brief NUS Client callback structure. */
-struct bt_gatt_nus_c_cbs {
+struct bt_nus_client_cb {
 	/** @brief Data received callback.
 	 *
 	 * The data has been received as a notification of the NUS TX
@@ -56,7 +56,7 @@ struct bt_gatt_nus_c_cbs {
 	 * @retval BT_GATT_ITER_CONTINUE To keep notifications enabled.
 	 * @retval BT_GATT_ITER_STOP To disable notifications.
 	 */
-	uint8_t (*data_received)(const uint8_t *data, uint16_t len);
+	uint8_t (*received)(const uint8_t *data, uint16_t len);
 
 	/** @brief Data sent callback.
 	 *
@@ -66,17 +66,17 @@ struct bt_gatt_nus_c_cbs {
 	 * @param[in] data Transmitted data.
 	 * @param[in] len Length of transmitted data.
 	 */
-	void (*data_sent)(uint8_t err, const uint8_t *data, uint16_t len);
+	void (*sent)(uint8_t err, const uint8_t *data, uint16_t len);
 
 	/** @brief TX notifications disabled callback.
 	 *
 	 * TX notifications have been disabled.
 	 */
-	void (*tx_notif_disabled)(void);
+	void (*unsubscribed)(void);
 };
 
 /** @brief NUS Client structure. */
-struct bt_gatt_nus_c {
+struct bt_nus_client {
 
         /** Connection object. */
 	struct bt_conn *conn;
@@ -87,7 +87,7 @@ struct bt_gatt_nus_c {
         /** Handles on the connected peer device that are needed
          * to interact with the device.
          */
-	struct bt_gatt_nus_c_handles handles;
+	struct bt_nus_client_handles handles;
 
         /** GATT subscribe parameters for NUS TX Characteristic. */
 	struct bt_gatt_subscribe_params tx_notif_params;
@@ -96,14 +96,14 @@ struct bt_gatt_nus_c {
 	struct bt_gatt_write_params rx_write_params;
 
         /** Application callbacks. */
-	struct bt_gatt_nus_c_cbs cbs;
+	struct bt_nus_client_cb cb;
 };
 
 /** @brief NUS Client initialization structure. */
-struct bt_gatt_nus_c_init_param {
+struct bt_nus_client_init_param {
 
         /** Callbacks provided by the user. */
-	struct bt_gatt_nus_c_cbs cbs;
+	struct bt_nus_client_cb cb;
 };
 
 /** @brief Initialize the NUS Client module.
@@ -111,14 +111,14 @@ struct bt_gatt_nus_c_init_param {
  * This function initializes the NUS Client module with callbacks provided by
  * the user.
  *
- * @param[in,out] nus_c NUS Client instance.
- * @param[in] nus_c_init NUS Client initialization instance.
+ * @param[in,out] nus    NUS Client instance.
+ * @param[in] init_param NUS Client initialization parameters.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a negative error code is returned.
  */
-int bt_gatt_nus_c_init(struct bt_gatt_nus_c *nus_c,
-		       const struct bt_gatt_nus_c_init_param *nus_c_init);
+int bt_nus_client_init(struct bt_nus_client *nus,
+		       const struct bt_nus_client_init_param *init_param);
 
 /** @brief Send data to the server.
  *
@@ -127,14 +127,14 @@ int bt_gatt_nus_c_init(struct bt_gatt_nus_c *nus_c,
  * @note This procedure is asynchronous. Therefore, the data to be sent must
  * remain valid while the function is active.
  *
- * @param[in,out] nus_c NUS Client instance.
+ * @param[in,out] nus NUS Client instance.
  * @param[in] data Data to be transmitted.
  * @param[in] len Length of data.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a negative error code is returned.
  */
-int bt_gatt_nus_c_send(struct bt_gatt_nus_c *nus_c, const uint8_t *data,
+int bt_nus_client_send(struct bt_nus_client *nus, const uint8_t *data,
 		       uint16_t len);
 
 /** @brief Assign handles to the NUS Client instance.
@@ -146,15 +146,15 @@ int bt_gatt_nus_c_send(struct bt_gatt_nus_c *nus_c, const uint8_t *data,
  * GATT DB discovery module.
  *
  * @param[in] dm Discovery object.
- * @param[in,out] nus_c NUS Client instance.
+ * @param[in,out] nus NUS Client instance.
  *
  * @retval 0 If the operation was successful.
  * @retval (-ENOTSUP) Special error code used when UUID
  *         of the service does not match the expected UUID.
  * @retval Otherwise, a negative error code is returned.
  */
-int bt_gatt_nus_c_handles_assign(struct bt_gatt_dm *dm,
-				 struct bt_gatt_nus_c *nus_c);
+int bt_nus_handles_assign(struct bt_gatt_dm *dm,
+			  struct bt_nus_client *nus);
 
 /** @brief Request the peer to start sending notifications for the TX
  *	   Characteristic.
@@ -162,12 +162,12 @@ int bt_gatt_nus_c_handles_assign(struct bt_gatt_dm *dm,
  * This function enables notifications for the NUS TX Characteristic at the peer
  * by writing to the CCC descriptor of the NUS TX Characteristic.
  *
- * @param[in,out] nus_c NUS Client instance.
+ * @param[in,out] nus NUS Client instance.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a negative error code is returned.
  */
-int bt_gatt_nus_c_tx_notif_enable(struct bt_gatt_nus_c *nus_c);
+int bt_nus_subscribe_receive(struct bt_nus_client *nus);
 
 #ifdef __cplusplus
 }
@@ -177,4 +177,4 @@ int bt_gatt_nus_c_tx_notif_enable(struct bt_gatt_nus_c *nus_c);
  * @}
  */
 
-#endif /* BT_GATT_NUS_C_H_ */
+#endif /* BT_NUS_CLIENT_H_ */

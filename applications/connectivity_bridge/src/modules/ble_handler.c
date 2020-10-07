@@ -58,14 +58,14 @@ static struct bt_data ad[] = {
 };
 
 static const struct bt_data sd[] = {
-	BT_DATA_BYTES(BT_DATA_UUID128_ALL, NUS_UUID_SERVICE),
+	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NUS_VAL),
 };
 
 static void exchange_func(struct bt_conn *conn, uint8_t err,
 			  struct bt_gatt_exchange_params *params)
 {
 	if (!err) {
-		nus_max_send_len = bt_gatt_nus_max_send(conn);
+		nus_max_send_len = bt_nus_get_mtu(conn);
 	}
 }
 
@@ -136,7 +136,7 @@ static void bt_send_work_handler(struct k_work *work)
 	do {
 		len = ring_buf_get_claim(&ble_tx_ring_buf, &buf, nus_max_send_len);
 
-		err = bt_gatt_nus_send(current_conn, buf, len);
+		err = bt_nus_send(current_conn, buf, len);
 		if (err == -EINVAL) {
 			notif_disabled = true;
 			len = 0;
@@ -197,9 +197,9 @@ static void bt_sent_cb(struct bt_conn *conn)
 	k_work_submit(&bt_send_work);
 }
 
-static struct bt_gatt_nus_cb nus_cb = {
-	.received_cb = bt_receive_cb,
-	.sent_cb = bt_sent_cb,
+static struct bt_nus_cb nus_cb = {
+	.received = bt_receive_cb,
+	.sent = bt_sent_cb,
 };
 
 static void adv_start(void)
@@ -265,9 +265,9 @@ static void bt_ready(int err)
 		return;
 	}
 
-	err = bt_gatt_nus_init(&nus_cb);
+	err = bt_nus_init(&nus_cb);
 	if (err) {
-		LOG_ERR("bt_gatt_nus_init: %d", err);
+		LOG_ERR("bt_nus_init: %d", err);
 		return;
 	}
 

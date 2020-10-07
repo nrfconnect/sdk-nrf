@@ -39,14 +39,14 @@ static void tx_try(const struct shell_bt_nus *bt_nus)
 {
 	uint8_t *buf;
 	uint32_t size;
-	uint32_t req_len = bt_gatt_nus_max_send(bt_nus->ctrl_blk->conn);
+	uint32_t req_len = bt_nus_get_mtu(bt_nus->ctrl_blk->conn);
 
 	size = ring_buf_get_claim(bt_nus->tx_ringbuf, &buf, req_len);
 
 	if (size) {
 		int err, err2;
 
-		err = bt_gatt_nus_send(bt_nus->ctrl_blk->conn, buf, size);
+		err = bt_nus_send(bt_nus->ctrl_blk->conn, buf, size);
 		err2 = ring_buf_get_finish(bt_nus->tx_ringbuf, size);
 		__ASSERT_NO_MSG(err2 == 0);
 
@@ -177,10 +177,10 @@ const struct shell_transport_api shell_bt_nus_transport_api = {
 
 int shell_bt_nus_init(void)
 {
-	struct bt_gatt_nus_cb callbacks = {
-		.received_cb = rx_callback,
-		.sent_cb = tx_callback
+	struct bt_nus_cb callbacks = {
+		.received = rx_callback,
+		.sent = tx_callback
 	};
 
-	return bt_gatt_nus_init(&callbacks);
+	return bt_nus_init(&callbacks);
 }
