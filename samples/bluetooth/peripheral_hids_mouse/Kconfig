@@ -8,7 +8,7 @@ source "Kconfig.zephyr"
 
 menu "Nordic HIDS BLE GATT mouse service sample"
 
-config BT_GATT_HIDS_SECURITY_ENABLED
+config BT_HIDS_SECURITY_ENABLED
 	bool "Enable security"
 	default y
 	select BT_SMP

@@ -1547,7 +1547,7 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`event_manager`
 * :ref:`profiler`
 * :ref:`hids_readme`
-* :ref:`hids_c_readme`
+* :ref:`hogp_readme`
 * :ref:`nrf_bt_scan_readme`
 * :ref:`gatt_dm_readme`
 * :file:`drivers/sensor/paw3212`

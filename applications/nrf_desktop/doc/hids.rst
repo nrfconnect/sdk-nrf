@@ -26,7 +26,7 @@ Complete the following steps to configure the module:
    During this configuration, you must enable the :option:`CONFIG_BT_PERIPHERAL` Kconfig option for every nRF Desktop peripheral.
    When this option is enabled, the :option:`CONFIG_DESKTOP_HID_PERIPHERAL` is set to ``y``, which enables the following two additional options, among others:
 
-   * :option:`CONFIG_BT_GATT_HIDS` - This is required because the HID Service module is based on the :ref:`hids_readme` implementation of the GATT Service.
+   * :option:`CONFIG_BT_HIDS` - This is required because the HID Service module is based on the :ref:`hids_readme` implementation of the GATT Service.
    * :option:`CONFIG_DESKTOP_HIDS_ENABLE` - This enables the ``hids`` application module.
 
    This step also enables the |GATT_HID|.
@@ -73,7 +73,7 @@ Detailed information about the usage of LEDs to display information to the user 
 Bluetooth LE connections and disconnections
 ===========================================
 
-The module informs the |GATT_HID| about the Bluetooth LE connections and disconnections using :c:func:`bt_gatt_hids_notify_connected` and :c:func:`bt_gatt_hids_notify_disconnected`, respectively.
+The module informs the |GATT_HID| about the Bluetooth LE connections and disconnections using :c:func:`bt_hids_connected` and :c:func:`bt_hids_disconnected`, respectively.
 
 Registered handlers
 ===================

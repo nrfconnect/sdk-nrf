@@ -6,7 +6,6 @@
 
 menuconfig BT_GATT_POOL
 	bool "GATT Attribute pools"
-	default y if BT_GATT_HIDS
 	help
 	  Enable pools for UUID, characteristics and CCCD descriptors.
 

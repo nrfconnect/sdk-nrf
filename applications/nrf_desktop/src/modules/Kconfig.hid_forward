@@ -8,7 +8,7 @@ menu "BLE HID Client"
 
 config DESKTOP_HID_FORWARD_ENABLE
 	bool "Enable HID forward"
-	depends on BT_GATT_HIDS_C
+	depends on BT_HOGP
 	depends on BT_CENTRAL
 	depends on !DESKTOP_HID_STATE_ENABLE
 	help

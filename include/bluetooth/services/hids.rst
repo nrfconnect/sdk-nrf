@@ -9,7 +9,7 @@ characteristics, according to the HID Service specification and to the user
 requirements, to the Zephyr Bluetooth stack database.
 
 If enabled, notification of Input Report characteristics is performed when the
-application calls the corresponding :c:func:`bt_gatt_hids_inp_rep_send` function.
+application calls the corresponding :c:func:`bt_hids_inp_rep_send` function.
 
 You can register dedicated event handlers for most of the HIDS characteristics
 to be notified about changes in their values.
@@ -62,6 +62,6 @@ API documentation
 | Header file: :file:`include/hids.h`
 | Source file: :file:`subsys/bluetooth/services/hids.c`
 
-.. doxygengroup:: bt_gatt_hids
+.. doxygengroup:: bt_hids
    :project: nrf
    :members:
