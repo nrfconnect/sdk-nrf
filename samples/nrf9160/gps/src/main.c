@@ -31,21 +31,32 @@
 #ifdef CONFIG_BOARD_NRF9160DK_NRF9160NS
 #define AT_MAGPIO      "AT\%XMAGPIO=1,0,0,1,1,1574,1577"
 #ifdef CONFIG_GPS_SAMPLE_ANTENNA_ONBOARD
-#define AT_COEX0       "AT\%XCOEX0=1,1,1570,1580"
+#define AT_COEX0       "AT\%XCOEX0=1,1,1565,1586"
 #elif CONFIG_GPS_SAMPLE_ANTENNA_EXTERNAL
 #define AT_COEX0       "AT\%XCOEX0"
 #endif
-#endif
+#endif /* CONFIG_BOARD_NRF9160DK_NRF9160NS */
 
-static const char            update_indicator[] = {'\\', '|', '/', '-'};
-static const char            at_commands[][31]  = {
-					AT_XSYSTEMMODE,
-#ifdef CONFIG_BOARD_NRF9160DK_NRF9160NS
-					AT_MAGPIO,
-					AT_COEX0,
+#ifdef CONFIG_BOARD_THINGY91_NRF9160NS
+#define AT_MAGPIO      "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200," \
+			"3,824,894,4,880,960,5,791,849,7,1565,1586"
+#ifdef CONFIG_GPS_SAMPLE_ANTENNA_ONBOARD
+#define AT_COEX0       "AT\%XCOEX0=1,1,1565,1586"
+#elif CONFIG_GPS_SAMPLE_ANTENNA_EXTERNAL
+#define AT_COEX0       "AT\%XCOEX0"
 #endif
-					AT_ACTIVATE_GPS
-				};
+#endif /* CONFIG_BOARD_THINGY91_NRF9160NS */
+
+static const char update_indicator[] = {'\\', '|', '/', '-'};
+static const char *const at_commands[] = {
+	AT_XSYSTEMMODE,
+#if defined(CONFIG_BOARD_NRF9160DK_NRF9160NS) || \
+	defined(CONFIG_BOARD_THINGY91_NRF9160NS)
+	AT_MAGPIO,
+	AT_COEX0,
+#endif
+	AT_ACTIVATE_GPS
+};
 
 static int                   gnss_fd;
 static char                  nmea_strings[10][NRF_GNSS_NMEA_MAX_LEN];
