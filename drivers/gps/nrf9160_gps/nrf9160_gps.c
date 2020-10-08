@@ -694,13 +694,19 @@ set_configuration:
 
 static int setup(const struct device *dev)
 {
-	int err = 0;
 	struct gps_drv_data *drv_data = dev->data;
 
 	drv_data->socket = -1;
 	drv_data->dev = dev;
 
 	atomic_set(&drv_data->is_active, 0);
+
+	return 0;
+}
+
+static int configure_antenna(void)
+{
+	int err = 0;
 
 #if CONFIG_NRF9160_GPS_SET_MAGPIO
 	err = at_cmd_write(CONFIG_NRF9160_GPS_MAGPIO_STRING,
@@ -862,6 +868,11 @@ static int init(const struct device *dev, gps_event_handler_t handler)
 
 	drv_data->handler = handler;
 
+	err = configure_antenna();
+	if (err) {
+		return err;
+	}
+
 	if (drv_data->socket < 0) {
 		int ret = open_socket(drv_data);
 
@@ -886,7 +897,6 @@ static int init(const struct device *dev, gps_event_handler_t handler)
 
 	return 0;
 }
-
 
 static struct gps_drv_data gps_drv_data;
 
