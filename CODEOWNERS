@@ -6,6 +6,7 @@
 
 # Root folder
 /VERSION                                  @carlescufi @tejlmand
+/ncs_version.h.in                         @carlescufi @tejlmand
 /CODEOWNERS                               @carlescufi
 /LICENSE                                  @carlescufi
 /README.rst                               @carlescufi
