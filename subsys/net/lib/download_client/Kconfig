@@ -88,7 +88,7 @@ config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_128
 
 endchoice
 
-comment "Stack and stack buffers"
+comment "Thread and stack buffers"
 
 config DOWNLOAD_CLIENT_STACK_SIZE
 	int "Thread stack size"
