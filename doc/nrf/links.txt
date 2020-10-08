@@ -252,6 +252,8 @@
 .. _`Bond Management Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=293524
 .. _`Current Time Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=292957
 
+.. _`Bluetooth SIG company identifiers`: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
+
 .. _`Mesh Model Specification`:
 .. _`Bluetooth Mesh Profile Specification`: https://www.bluetooth.com/specifications/mesh-specifications/
 
@@ -317,8 +319,6 @@
 .. _`RFC1055 Serial Line Internet Protocol (SLIP)`: https://tools.ietf.org/html/rfc1055
 
 .. _`TLS`: https://www.ietf.org/rfc/rfc5246.txt
-
-.. _`Bluetooth SIG Company Identifiers`: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
 
 .. _`RFC 5639 - ECC Brainpool Standard Curves and Curve Generation`: https://tools.ietf.org/html/rfc5639
 .. _`RFC 5869 - HMAC-based Extract-and-Expand Key Derivation Function (HKDF)`: https://tools.ietf.org/html/rfc5869
