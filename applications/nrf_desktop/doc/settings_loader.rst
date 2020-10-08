@@ -32,7 +32,7 @@ Settings are by default loaded in the system workqueue context.
 This blocks the workqueue until the operation is finished.
 You can set the :option:`CONFIG_DESKTOP_SETTINGS_LOADER_USE_THREAD` Kconfig option to load the settings in a separate thread in the background instead of using the system workqueue for that purpose.
 This will prevent blocking the system workqueue, but it requires creating an additional thread.
-The stack size for the background thread is defined as :option:`CONFIG_DESKTOP_SETTINGS_LOAD_THREAD_STACK_SIZE`.
+The stack size for the background thread is defined as :option:`CONFIG_DESKTOP_SETTINGS_LOADER_THREAD_STACK_SIZE`.
 
 .. tip::
    Using separate thread is recommended for nRF Desktop keyboards.
