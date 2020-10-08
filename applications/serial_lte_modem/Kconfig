@@ -22,7 +22,7 @@ config SLM_AT_MODE
 
 config SLM_AT_MAX_PARAM
 	int "Maximum number of parameters in AT command"
-	default 8
+	default 9
 
 config SLM_NATIVE_TLS
 	bool "Use Zephyr mbedTLS"
