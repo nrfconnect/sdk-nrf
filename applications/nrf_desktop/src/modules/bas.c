@@ -59,7 +59,9 @@ static bool event_handler(const struct event_header *eh)
 			int err = bt_gatt_notify(NULL, &bas_svc.attrs[1],
 						 &battery, sizeof(battery));
 
-			if (err) {
+			if (err == -ENOTCONN) {
+				LOG_WRN("Cannot notify. Peer disconnecting.");
+			} else if (err) {
 				LOG_ERR("GATT notify failed (err=%d)", err);
 			}
 		}
