@@ -59,9 +59,9 @@ Simulated movement data
 =======================
 
 Selecting the :option:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE` option adds the :file:`src/hw_interface/motion_simulated.c` file to the compilation.
-This option depends on the shell (:option:`CONFIG_DESKTOP_SHELL_ENABLE` option) to be enabled in the application configuration.
 
-When using this option, the motion module registers a shell module ``motion_sim`` and links to it two commands: ``start`` and ``stop``.
+If shell is available (:option:`CONFIG_SHELL` option is set) the motion module registers a shell module ``motion_sim`` and links to it two commands: ``start`` and ``stop``.
+If shell is not available motion generation starts automatically when the device is connected to the USB or Bluetooth.
 
 When started, the module will generate simulated motion events.
 The movement data in each event will be tracing the predefined path, an eight-sided polygon.
