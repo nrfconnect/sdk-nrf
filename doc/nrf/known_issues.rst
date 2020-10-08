@@ -12,7 +12,6 @@ Known issues
 
    <select name="versions" id="versions-select">
      <option value="all" selected>All versions</option>
-     <option value="master">master branch</option>
      <option value="v1-3-1">v1.3.1</option>
      <option value="v1-3-0">v1.3.0</option>
      <option value="v1-2-1">v1.2.1</option>
@@ -46,17 +45,17 @@ nRF9160
 Asset tracker
 =============
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 External antenna performance setting
   For nRF9160 DK v0.15.0, you must set the :option:`CONFIG_NRF9160_GPS_COEX0_STRING` option to ``AT%XCOEX0`` when building the preprogrammed Asset Tracker to achieve the best external antenna performance.
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 NCSDK-5574: Warnings during FOTA
    The :ref:`asset_tracker` application prints warnings and error messages during successful FOTA.
 
-.. rst-class:: v0-3-0 v0-4-0 v1-0-0 v1-1-0 v1-2-0 v1-2-1 v1-3-0 v1-3-1 master
+.. rst-class:: v0-3-0 v0-4-0 v1-0-0 v1-1-0 v1-2-0 v1-2-1 v1-3-0 v1-3-1
 
 High current consumption in Asset Tracker
   The :ref:`asset_tracker` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
@@ -70,12 +69,12 @@ Sending data before connecting to nRF Cloud
 Other issues
 ============
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 NCSDK-5666: LTE Sensor Gateway
   The :ref:`lte_sensor_gateway` sample crashes when Thingy:52 is flipped.
 
-.. rst-class:: v1-2-0 v1-2-1 v1-3-0 v1-3-1 master
+.. rst-class:: v1-2-0 v1-2-1 v1-3-0 v1-3-1
 
 ``nrf_send`` is blocking
   The :cpp:func:`nrf_send` function in the :ref:`nrfxlib:bsdlib` might be blocking for several minutes, even if the socket is configured for non-blocking operation.
@@ -102,7 +101,7 @@ Problems with RTT Viewer/Logger
   **Workaround:** Set the RTT Control Block address to 0 and it will try to search from address 0 and upwards.
   If this does not work, look in the ``builddir/zephyr/zephyr.map`` file to find the address of the ``_SEGGER_RTT`` symbol in the map file and use that as input to the viewer/logger.
 
-.. rst-class:: v1-0-0 v1-1-0 v1-2-0 v1-2-1 v1-3-0 v1-3-1 master
+.. rst-class:: v1-0-0 v1-1-0 v1-2-0 v1-2-1 v1-3-0 v1-3-1
 
 Receive error with large packets
   nRF91 fails to receive large packets (over 4000 bytes).
@@ -119,7 +118,7 @@ nRF5
 nRF5340
 =======
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 FOTA does not work
   FOTA with the :ref:`zephyr:smp_svr_sample` does not work.
@@ -127,7 +126,7 @@ FOTA does not work
 nRF52820
 ========
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 Missing :file:`CMakeLists.txt`
   The :file:`CMakeLists.txt` file for developing applications that emulate nRF52830 on the nRF52833 DK is missing.
@@ -143,7 +142,7 @@ Missing :file:`CMakeLists.txt`
 Multi-Protocol Service Layer (MPSL)
 ===================================
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 KRKNWK-6361: Antenna Diversity not supported on nRF52840
   The Antenna Diversity feature is not supported on nRF52840 devices.
@@ -151,19 +150,19 @@ KRKNWK-6361: Antenna Diversity not supported on nRF52840
 Thread
 ======
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 NCSDK-5014: Building with SES not possible
   It is not possible to build Thread samples using SEGGER Embedded Studio (SES).
   SES does not support :file:`.cpp` files in |NCS| projects.
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 KRKNWK-6358: CoAP client sample provisioning issues
   It is not possible to provision the :ref:`coap_client_sample` sample to servers that it cannot directly communicate with.
   This is because Link Local Address is used for communication.
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 KRKNWK-6408: ``diag`` command not supported
   The ``diag`` command is not yet supported by Thread in the |NCS|.
@@ -171,12 +170,12 @@ KRKNWK-6408: ``diag`` command not supported
 Zigbee
 ======
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 Potential delay during FOTA
   There might be a noticeable delay (~220 ms) between calling the ZBOSS API and on-the-air activity.
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 ZBOSS alarms inaccurate
   On average, ZBOSS alarms last longer by 6.4 percent than Zephyr alarms.
@@ -221,7 +220,7 @@ Assert risk after performing a DLE procedure
 Other issues
 ------------
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 NCSDK-5711: High-throughput transmission can deadlock the receive thread
   High-throughput transmission can deadlock the receive thread if the connection is suddenly disconnected.
@@ -318,7 +317,7 @@ Reconnection issues after bonding
 Bluetooth Mesh
 ==============
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 NCSDK-5580: nRF5340 only supports SoftDevice Controller
   On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth Mesh.
@@ -352,21 +351,21 @@ Immutable bootloader board restrictions
 Build system
 ============
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 Build configuration issues
   The build configuration consisting of :ref:`bootloader`, :ref:`secure_partition_manager`, and application does not work.
 
   **Workaround:** Either include MCUboot in the build or use MCUboot instead of the immutable bootloader.
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 Flash commands only program one core
   ``west flash`` and ``ninja flash`` only program one core, even if multiple cores are included in the build.
 
   **Workaround:** Execute the flash command from inside the build directory of the child image that is placed on the other core (for example, :file:`build/hci_rpmsg`).
 
-.. rst-class:: v1-1-0 v1-2-0 v1-2-1 v1-3-0 v1-3-1 master
+.. rst-class:: v1-1-0 v1-2-0 v1-2-1 v1-3-0 v1-3-1
 
 Secure Partition Manager and application building together
   It is not possible to build and program :ref:`secure_partition_manager` and the application individually.
@@ -434,7 +433,7 @@ Unstable NFC tag samples
 Secure Partition Manager (SPM)
 ==============================
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 NCSIDB-114: Default logging causes crash
   Enabling default logging in the :ref:`secure_partition_manager` sample makes it crash if the sample logs any data after the application has booted (for example, during a SecureFault, or in a secure service).
@@ -457,14 +456,14 @@ nrfxlib
 Crypto
 ======
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 NCSDK-5546: Oberon missing symbols for HKDF
   nRF Oberon v3.0.5 is missing symbols for HKDF using SHA1, which will be fixed in an upcoming version of the library.
 
   **Workaround:** Use a different backend (for example, vanilla mbed TLS) for HKDF/HMAC using SHA1.
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 Limited support for Nordic Security Module
   The :ref:`nrfxlib:nrf_security` is currently only fully supported on nRF52840 and nRF9160 devices.
@@ -542,7 +541,7 @@ tx_buffer_length set incorrectly
 Zephyr
 ******
 
-.. rst-class:: v1-3-0 v1-3-1 master
+.. rst-class:: v1-3-0 v1-3-1
 
 NCSIDB-108: Thread context switch might lead to a kernel fault
   If the Zephyr kernel preempts the current thread and performs a context switch to a new thread while the current thread is executing a secure service, the behavior is undefined and might lead to a kernel fault.
