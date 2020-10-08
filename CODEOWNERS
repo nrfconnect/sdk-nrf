@@ -93,7 +93,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
 /scripts/                                 @mbolivar @tejlmand
 /scripts/hid_configurator/                @pdunaj
-/scripts/tools-versions-*.txt             @tejlmand @asle-nordic @groh @shanta-14
+/scripts/tools-versions-*.txt             @tejlmand @asle-nordic @grho @shanta-14
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
 /subsys/bluetooth/                        @joerchan @carlescufi
