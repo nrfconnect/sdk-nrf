@@ -18,4 +18,5 @@ The Bluetooth Mesh samples use the `nRF Mesh mobile app`_ to perform provisionin
    ug_bt_mesh_concepts.rst
    ug_bt_mesh_architecture.rst
    ug_bt_mesh_configuring.rst
+   ug_bt_mesh_vendor_model.rst
    ug_bt_mesh_reserved_ids.rst
