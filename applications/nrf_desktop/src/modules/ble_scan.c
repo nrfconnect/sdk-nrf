@@ -574,12 +574,18 @@ static bool event_handler(const struct event_header *eh)
 			reset_subscribers();
 			store_subscribed_peers();
 			if (count_conn() == CONFIG_BT_MAX_CONN) {
+				if (IS_ENABLED(CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER)) {
+					bt_scan_conn_attempts_filter_clear();
+				}
 				peers_only = false;
 				break;
 			}
 			/* Fall-through */
 
 		case PEER_OPERATION_SCAN_REQUEST:
+			if (IS_ENABLED(CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER)) {
+				bt_scan_conn_attempts_filter_clear();
+			}
 			peers_only = false;
 			scan_start();
 			break;
@@ -635,6 +641,10 @@ static bool event_handler(const struct event_header *eh)
 		k_delayed_work_submit(&scan_start_trigger,
 				      K_MSEC(SCAN_TRIG_TIMEOUT_MS));
 		scan_counter = SCAN_TRIG_TIMEOUT_MS;
+
+		if (IS_ENABLED(CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER)) {
+			bt_scan_conn_attempts_filter_clear();
+		}
 
 		return false;
 	}
