@@ -33,6 +33,8 @@ The following list summarizes the most important changes inherited from upstream
   * Allowed to set VTOR to a relay vector before chain-loading the application.
   * Allowed using a larger primary slot in swap-move.
     Before, both slots had to be the same size, which imposed an unused sector in the secondary slot.
+  * Fixed bootstrapping in swap-move mode.
+  * Fixed an issue that caused an interrupted swap-move operation to potentially brick the device if the primary image was padded.
   * Various fixes, enhancements, and changes needed to work with the latest Zephyr version.
 
 sdk-nrfxlib
