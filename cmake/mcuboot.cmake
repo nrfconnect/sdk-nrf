@@ -294,3 +294,21 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   endif()
 endif()
 
+# Zephyr has a Kconfig option used for signing an application image
+# with MCUboot using west sign. If partition manager is in use and
+# there are multiple images, we want to make sure users understand
+# this option should probably be left alone, since the NCS build
+# system has its own way of managing signing.
+if (CONFIG_MCUBOOT_SIGNATURE_KEY_FILE)
+    message(WARNING
+      "CONFIG_MCUBOOT_SIGNATURE_KEY_FILE is set to \"${CONFIG_MCUBOOT_SIGNATURE_KEY_FILE}\".
+You are using the NCS Mcuboot signing, which means this option will be ignored.
+Image signing in NCS is done via the MCUboot image's \
+ CONFIG_BOOT_SIGNATURE_KEY_FILE option.
+Consider setting CONFIG_MCUBOOT_SIGNATURE_KEY_FILE in your application image\
+ back to its default value, the empty string.")
+endif()
+
+# NCS Handles everything regarding mcuboot, ensure Zephyr doesn't interfere.
+# This is a temporary solution until Zephyr signing has been made more modular.
+set(CONFIG_BOOTLOADER_MCUBOOT False PARENT_SCOPE)
