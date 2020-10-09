@@ -239,45 +239,45 @@ Depending on what development kit you use, you need to select the respective con
       .. figure:: /images/nrf_desktop_gaming_mouse_top_no_captions.svg
          :alt: nRF Desktop gaming mouse (top view)
 
-      .. include:: /includes/boardname_tables/sample_boardnames.txt
-         :start-after: set11_start
-         :end-before: set11_end
+      .. table-from-rows:: /includes/sample_board_rows.txt
+         :header: heading
+         :rows: nrf52840gmouse_nrf52840
 
    .. tab:: Desktop mouse
 
       .. figure:: /images/nrf_desktop_desktop_mouse_side_no_captions.svg
          :alt: nRF Desktop desktop mouse (side view)
 
-      .. include:: /includes/boardname_tables/sample_boardnames.txt
-         :start-after: set12_start
-         :end-before: set12_end
+      .. table-from-rows:: /includes/sample_board_rows.txt
+         :header: heading
+         :rows: nrf52dmouse_nrf52832, nrf52810dmouse_nrf52810
 
    .. tab:: Keyboard
 
       .. figure:: /images/nrf_desktop_keyboard_top_no_captions.svg
          :alt: nRF Desktop keyboard (top view)
 
-      .. include:: /includes/boardname_tables/sample_boardnames.txt
-         :start-after: set13_start
-         :end-before: set13_end
+      .. table-from-rows:: /includes/sample_board_rows.txt
+         :header: heading
+         :rows: nrf52kbd_nrf52832
 
    .. tab:: HID dongle
 
       .. figure:: /images/nrf_desktop_dongle_no_captions.svg
          :alt: nRF Desktop dongle (top view)
 
-      .. include:: /includes/boardname_tables/sample_boardnames.txt
-         :start-after: set14_start
-         :end-before: set14_end
+      .. table-from-rows:: /includes/sample_board_rows.txt
+         :header: heading
+         :rows: nrf52840dongle_nrf52840, nrf52833dongle_nrf52833, nrf52820dongle_nrf52820
 
    .. tab:: DK
 
       .. figure:: /images/nrf_desktop_nrf52840_dk_no_captions.svg
          :alt: DK
 
-      .. include:: /includes/boardname_tables/sample_boardnames.txt
-         :start-after: set8_start
-         :end-before: set8_end
+      .. table-from-rows:: /includes/sample_board_rows.txt
+         :header: heading
+         :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833
 
       In nRF52840 DK, the application is configured to work as gaming mouse (with motion emulated by using DK buttons) and in nRF52833 DK, the application is configured to work as HID dongle.
 

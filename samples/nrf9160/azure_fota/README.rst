@@ -10,9 +10,9 @@ Requirements
 
 The sample supports the following development kits:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set6_start
-   :end-before: set6_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: thingy91_nrf9160ns, nrf9160dk_nrf9160ns
 
 The sample also requires an Azure IoT Hub instance, and optionally an `Azure IoT Hub Device Provisioning Service (DPS)`_ instance, if the device is not already registered with the IoT hub.
 
