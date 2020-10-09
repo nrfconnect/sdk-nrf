@@ -11,7 +11,7 @@ The following commands list contains TCP and UDP related AT commands:
 * `TCP connection #XCONNECT`_
 * `TCP set listen mode #XLISTEN`_
 * `TCP accept incoming connection #XACCEPT`_
-* `Send data #XDATA`_
+* `Send data #XSEND`_
 * `Receive data #XRECV`_
 * `UDP send data #XSENDTO`_
 * `UDP receive data #XRECVFROM`_
@@ -588,10 +588,10 @@ Test command
 
 The test command is not supported.
 
-Send data #XDATA
+Send data #XSEND
 ================
 
-The ``#XDATA`` command allows you to send data over the connection.
+The ``#XSEND`` command allows you to send data over the connection.
 
 Set command
 -----------
