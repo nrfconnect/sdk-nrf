@@ -9,6 +9,7 @@ See the subpages for how to use the application, how to extend it, and informati
 
 .. toctree::
    :maxdepth: 2
+   :caption: Subpages:
 
    doc/slm_description
    doc/slm_extending
