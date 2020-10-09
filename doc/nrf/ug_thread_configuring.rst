@@ -22,6 +22,7 @@ To use the Thread protocol in |NCS|, set the following Kconfig options:
 
 * :option:`CONFIG_NETWORKING` - This option enables the generic link layer and the IP networking support.
 * :option:`CONFIG_NET_L2_OPENTHREAD` - This option enables the OpenThread stack required for the correct operation of the Thread protocol and allows you to use them.
+* :option:`CONFIG_MPSL` - - This options enables the Nordic Multi Protocol Service Layer (MPSL) implementation, which provides services for :ref:`single-protocol and multi-protocol implementations <ug_thread_architectures>`.
 
 At this point, you can either:
 
