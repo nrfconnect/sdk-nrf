@@ -27,6 +27,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 	(CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S * MSEC_PER_SEC)
 #define SCAN_DURATION_MS \
 	(CONFIG_DESKTOP_BLE_SCAN_DURATION_S * MSEC_PER_SEC)
+#define SCAN_START_DELAY_MS   15
 
 #define SUBSCRIBED_PEERS_STORAGE_NAME "subscribers"
 
@@ -422,7 +423,9 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
 	LOG_WRN("Connecting failed");
-	scan_start();
+	scan_counter = SCAN_TRIG_TIMEOUT_MS;
+	k_delayed_work_submit(&scan_start_trigger,
+			      K_MSEC(SCAN_START_DELAY_MS));
 }
 
 static void scan_connecting(struct bt_scan_device_info *device_info,
@@ -555,8 +558,9 @@ static bool event_handler(const struct event_header *eh)
 			/* ble_state keeps reference to connection object.
 			 * Cannot create new connection now.
 			 */
-			k_delayed_work_submit(&scan_start_trigger, K_NO_WAIT);
 			scan_counter = SCAN_TRIG_TIMEOUT_MS;
+			k_delayed_work_submit(&scan_start_trigger,
+					      K_MSEC(SCAN_START_DELAY_MS));
 			break;
 		default:
 			__ASSERT_NO_MSG(false);
