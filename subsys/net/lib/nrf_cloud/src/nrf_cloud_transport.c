@@ -732,7 +732,7 @@ int nct_mqtt_connect(void)
 		return err;
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_NONBLOCKING_SEND)) {
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_SEND_NONBLOCKING)) {
 		err = fcntl(nct_socket_get(), F_SETFL, O_NONBLOCK);
 		if (err == -1) {
 			LOG_ERR("Failed to set socket as non-blocking, err: %d",
@@ -741,6 +741,20 @@ int nct_mqtt_connect(void)
 			err = 0;
 		} else {
 			LOG_INF("Using non-blocking socket");
+		}
+	}  else if (IS_ENABLED(CONFIG_NRF_CLOUD_SEND_TIMEOUT)) {
+		struct timeval timeout = {
+			.tv_sec = CONFIG_NRF_CLOUD_SEND_TIMEOUT_SEC
+		};
+
+		err = setsockopt(nct_socket_get(), SOL_SOCKET, SO_SNDTIMEO,
+				 &timeout, sizeof(timeout));
+		if (err == -1) {
+			LOG_ERR("Failed to set timeout, errno: %d", errno);
+			err = 0;
+		} else {
+			LOG_INF("Using socket send timeout of %d seconds",
+				CONFIG_NRF_CLOUD_SEND_TIMEOUT_SEC);
 		}
 	}
 

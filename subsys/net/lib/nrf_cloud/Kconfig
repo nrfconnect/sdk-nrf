@@ -57,7 +57,17 @@ config NRF_CLOUD_PORT
 config NRF_CLOUD_IPV6
 	bool "Configure nRF Cloud library to use IPv6 addressing. Otherwise IPv4 is used."
 
-config NRF_CLOUD_NONBLOCKING_SEND
+choice
+	prompt "Socket behavior when sending"
+	default NRF_CLOUD_SEND_BLOCKING
+
+config NRF_CLOUD_SEND_BLOCKING
+	bool "Send data using blocking socket"
+	help
+	  Send data using a blocking socket. Selecting this option will make call to
+	  send data block until the data is processed by the network stack.
+
+config NRF_CLOUD_SEND_NONBLOCKING
 	bool "Send data using non-blocking socket"
 	help
 	  When using a blocking socket, the application can in certain situations
@@ -65,6 +75,22 @@ config NRF_CLOUD_NONBLOCKING_SEND
 	  Using a non-blocking socket for data transfers can help avoid getting
 	  into such a situation, at the cost of failing in situations where
 	  a short period of blocking would have sent the data.
+
+config NRF_CLOUD_SEND_TIMEOUT
+	bool "Send data with socket timeout"
+	help
+	  Configures a timeout on the nRF Cloud socket to ensure that a call to
+	  te send function will not block indefinitely.
+	  To configure the length of the timeout, use NRF_CLOUD_SEND_TIMEOUT_SEC.
+
+endchoice
+
+config NRF_CLOUD_SEND_TIMEOUT_SEC
+	int "Send timeout"
+	default 60
+	help
+	  Timeout in seconds to use when the nRF Cloud socket is configured to
+	  send with a timeout by enabling NRF_CLOUD_SEND_TIMEOUT.
 
 config NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN
 	int "Size of the buffer for MQTT library."
