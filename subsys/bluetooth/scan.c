@@ -453,17 +453,17 @@ static bool conn_attempts_exceeded(const bt_addr_le_t *addr)
 
 static bool scan_device_filter_check(const bt_addr_le_t *addr)
 {
-#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+#if CONFIG_BT_SCAN_BLOCKLIST
 	if (blocklist_device_check(addr)) {
 		return false;
 	}
-#endif /* */
+#endif /* CONFIG_BT_SCAN_BLOCKLIST */
 
-#if CONFIG_BT_SCAN_BLOCKLIST
+#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
 	if (conn_attempts_exceeded(addr)) {
 		return false;
 	}
-#endif /* CONFIG_BT_SCAN_BLOCKLIST */
+#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
 
 	return true;
 }
