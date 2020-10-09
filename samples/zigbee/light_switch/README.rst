@@ -146,6 +146,10 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
 
 * For the variant that supports :ref:`lib_zigbee_fota`, set :file:`overlay-fota.conf`.
   Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
+
+  .. note::
+     The :file:`overlay-fota.conf` file can be used only for nRF52840 DK.
+
 * For the Multiprotocol BLE extension, set :file:`overlay-multiprotocol_ble.conf`.
   Check :ref:`gs_programming_board_names` for the board name to use instead of the ``nrf52840dk_nrf52840``.
 
