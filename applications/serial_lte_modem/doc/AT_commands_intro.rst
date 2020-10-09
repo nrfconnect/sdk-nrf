@@ -29,6 +29,7 @@ AT responds to all commands with a final response.
 
 .. toctree::
    :maxdepth: 2
+   :caption: Subpages:
 
    Generic_AT_commands
    FTP_AT_commands
