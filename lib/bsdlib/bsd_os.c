@@ -322,6 +322,9 @@ void bsd_os_errno_set(int err_code)
 	case NRF_EMSGSIZE:
 		errno = EMSGSIZE;
 		break;
+	case NRF_ECONNABORTED:
+		errno = ECONNABORTED;
+		break;
 	default:
 		/* Catch untranslated errnos.
 		 * Log the untranslated errno and return a magic value
