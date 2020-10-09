@@ -21,7 +21,7 @@
 #include <sockets_internal.h>
 #include <sys/fdtable.h>
 #include <zephyr.h>
-#include "nrf_gai_errors.h"
+#include <nrf_gai_errors.h>
 
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)
 
