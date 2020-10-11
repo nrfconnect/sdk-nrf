@@ -67,6 +67,9 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len)
 	if (p_device == NULL)
 		return -ENODEV;
 
+	// Ensure previously run test is properly deallocated
+	// (This frees the mutex inside ctr_drbg context)
+	mbedtls_ctr_drbg_free(&drbg_ctx);
 	mbedtls_ctr_drbg_init(&drbg_ctx);
 	return mbedtls_ctr_drbg_seed(&drbg_ctx, entropy_func, (void *)p_device,
 				     p_seed, len);
@@ -88,6 +91,9 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len)
 		p_seed = p_optional_seed;
 	}
 
+	// Ensure previously run test is properly deallocated
+	// (This frees the mutex inside hmac_drbg context)
+	mbedtls_hmac_drbg_free(&drbg_ctx);
 	mbedtls_hmac_drbg_init(&drbg_ctx);
 
 	const struct device *p_device =
