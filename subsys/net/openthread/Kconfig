@@ -16,14 +16,22 @@ config OPENTHREAD_NRF_SECURITY
 	bool "Enable nrf_security module for OpenThread"
 	default y
 	depends on !OPENTHREAD_MBEDTLS
-	select NORDIC_SECURITY_BACKEND
-	select OBERON_BACKEND if !CC3XX_BACKEND
-	select MBEDTLS_TLS_LIBRARY
 	select MBEDTLS_AES_C
+	select MBEDTLS_ENABLE_HEAP
+	select MBEDTLS_CCM_C
+	select MBEDTLS_CMAC_C
+	select MBEDTLS_CTR_DRBG_C
+	select MBEDTLS_ECDH_C if OPENTHREAD_ECDSA
+	select MBEDTLS_ECDSA_C if OPENTHREAD_ECDSA
 	select MBEDTLS_ECJPAKE_C
 	select MBEDTLS_ECP_C
-	select MBEDTLS_ENABLE_HEAP
+	select MBEDTLS_ECP_DP_SECP256R1_ENABLED
+	select MBEDTLS_HMAC_DRBG_C
+	select MBEDTLS_TLS_LIBRARY
+	select NORDIC_SECURITY_BACKEND
 	select NRF_SECURITY_ADVANCED
+	select NRF_SECURITY_RNG
+	select OBERON_BACKEND if !CC3XX_BACKEND
 	help
 	  Enables nrf_security module for use by OpenThread. This allows
 	  OpenThread to make use of hardware accelerated cryptography functions
