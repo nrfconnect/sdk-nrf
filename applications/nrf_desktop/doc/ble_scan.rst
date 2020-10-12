@@ -43,6 +43,22 @@ Complete the following steps to enable the |ble_scan|:
    The |ble_scan| module uses Bluetooth name filters to look for unbonded peripherals.
    The value must be equal to the number of peripheral types the nRF Desktop central connects to.
    The peripheral type may be either a mouse or a keyboard.
+#. If you want to limit the number of attempts to connect to a device, you can enable the connection attempt filter with the :option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER` Kconfig option.
+   After the predefined number of disconnections or connection failures, the nRF Desktop central will no longer try to connect with the given peripheral device.
+   This is done to prevent connecting and disconnecting with a peripheral in a never-ending loop.
+
+   You can further configure this setting with the following Kconfig options:
+
+   * :option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER_LEN` - This option defines the maximum number of filtered devices.
+   * :option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT` - This option defines the connection attempt count for a given peripheral.
+
+   The :ref:`nrf_bt_scan_readme` counts all disconnections for a peripheral.
+   The |ble_scan| uses :c:func:`bt_scan_conn_attempts_filter_clear` to clear all the connection attempt counters on the following occasions:
+
+   * After a successful peripheral discovery takes place (on ``ble_discovery_complete_event``).
+   * When you request scan start or peer erase.
+
+   If filters are not cleared by the application, the Bluetooth Central will be unable to reconnect to the peripheral after exceeding the maximum connection attempts.
 #. Configure the maximum number of bonded mice (:option:`CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT`) and keyboards (:option:`CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT`) for the nRF Desktop central.
    By default, the nRF Desktop central connects and bonds with only one mouse and one keyboard.
 #. Define the Bluetooth name filters in the :file:`ble_scan_def.h` file that is located in the board-specific directory in the application configuration directory.
