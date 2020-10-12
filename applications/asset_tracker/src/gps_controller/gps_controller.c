@@ -102,7 +102,7 @@ static void stop(struct k_work *work)
 		LOG_ERR("Failed to disable GPS, error: %d", err);
 		return;
 	}
-
+	k_delayed_work_cancel(&start_work);
 	atomic_set(&gps_is_enabled, 0);
 	gps_control_set_active(false);
 	LOG_INF("GPS operation was stopped");
