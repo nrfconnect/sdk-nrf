@@ -148,8 +148,13 @@ Providing CMake options
 You can provide additional options for building your application to the CMake process, which can be useful, for example, to switch between different build scenarios.
 These options are specified when CMake is run, thus not during the actual build, but when configuring the build.
 
-If you work with SES, this configuration takes place when you open an |NCS| project, and you must therefore provide the CMake options before you open the project.
-To specify CMake options, click :guilabel:`Tools` > :guilabel:`Options`, select the :guilabel:`nRF Connect` tab, and specify a value for :guilabel:`Additional CMake options`.
+If you work with SES, you can specify global CMake options that are used for all projects, and you can modify these options when you open a project:
+
+* Specify global CMake options in the SES options before opening a project.
+  Click :guilabel:`Tools` > :guilabel:`Options`, select the :guilabel:`nRF Connect` tab, and specify a value for :guilabel:`Additional CMake options`.
+* Specify project-specific CMake options when opening the |NCS| project.
+  Click :guilabel:`File` > :guilabel:`Open nRF Connect SDK project`, select :guilabel:`Extended Settings`, and specify the options in the :guilabel:`Extra CMake Build Options` field.
+  This field is prepopulated with the global CMake options, and you can modify them, remove them, or add to them for the current project.
 
 If you work on the command line, pass the additional options to the ``west build`` command.
 The options must be added after a ``--`` at the end of the command.
@@ -202,12 +207,18 @@ Selecting a build type in SES
 
 To select the build type in SEGGER Embedded Studio:
 
-1. Go to :guilabel:`Tools` -> :guilabel:`Options...` -> :guilabel:`nRF Connect`.
-#. Set ``Additional CMake Options`` to ``-DCMAKE_BUILD_TYPE=selected_build_type``.
+1. Go to :guilabel:`File` > :guilabel:`Open nRF Connect SDK project`, select the current project, and specify the board name and build directory.
+#. Select :guilabel:`Extended Settings`.
+#. In the :guilabel:`Extra CMake Build Options` field, specify ``-DCMAKE_BUILD_TYPE=selected_build_type``.
    For example, for ``ZRelease`` set the following value: ``-DCMAKE_BUILD_TYPE=ZRelease``.
-#. Reload the project.
+#. Do not select :guilabel:`Clean Build Directory`.
+#. Click :guilabel:`OK` to re-open the project.
 
-The changes will be applied after reloading.
+
+.. note::
+   You can also specify the build type in the :guilabel:`Additional CMake Options` field in :guilabel:`Tools` -> :guilabel:`Options` -> :guilabel:`nRF Connect`.
+   However, the changes will only be applied after re-opening the project.
+   Reloading the project is not sufficient.
 
 .. build_types_selection_ses_end
 
