@@ -24,7 +24,7 @@ config NRF_SW_LPUART_DEFAULT_TX_TIMEOUT
 	int "TX Timeout in milliseconds"
 	default 1000
 	help
-	  Timeout is used in uart_poll_out and uart_fifo_fill (in interrupt
+	  Timeout is used in uart_poll_out and uart_fifo_fill (if interrupt
 	  driven API is enabled).
 
 config NRF_SW_LPUART_INT_DRIVEN
