@@ -201,6 +201,8 @@ div.numbered-step>h6::before {
 .rst-content h2 {
  border-top: 1px solid #ddd;
  padding-top: 20px;
+ overflow-x: auto;
+ line-height: 40px;
 }
 
 
@@ -235,4 +237,9 @@ div.numbered-step>h6::before {
 
 .contents.local ul p {
     margin-bottom: 0px;
+}
+
+.rst-content .admonition {
+   overflow-x: auto;
+   clear: left;
 }
