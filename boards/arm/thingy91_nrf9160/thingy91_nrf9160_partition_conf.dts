@@ -45,7 +45,7 @@
  * - Upper 128 kB allocated to Non-Secure image (sram0_ns).
  */
 
-&sram0 {
+&sram0_s {
 	reg = <0x20000000 DT_SIZE_K(64)>;
 };
 
