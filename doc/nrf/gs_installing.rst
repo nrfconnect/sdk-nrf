@@ -511,10 +511,12 @@ Setting up the build environment
 
 Before you start :ref:`building and programming a sample application <gs_programming>`, you must set up your build environment.
 
+.. _setting_up_SES:
+
 Setting up the SES environment
 ==============================
 
-If you plan to :ref:`build with SEGGER Embedded Studio <gs_programming_ses>`, the first time you import an |NCS| project, SES will prompt you to set the paths to the Zephyr Base directory and the GNU ARM Embedded Toolchain.
+If you plan to :ref:`build with SEGGER Embedded Studio <gs_programming_ses>`, the first time you import an |NCS| project, SES might prompt you to set the paths to the Zephyr Base directory and the GNU ARM Embedded Toolchain.
 This must be done only once.
 
 Complete the following steps to set up the |SES| environment:

@@ -205,15 +205,16 @@ Building and programming using SEGGER Embedded Studio
    :start-after: build_SES_projimport_open_start
    :end-before: build_SES_projimport_open_end
 
+..
 
-.. figure:: images/ses_thingy_configuration.png
-   :alt: Opening the Asset tracker application
+   .. figure:: images/ses_thingy_configuration.png
+      :alt: Opening the Asset tracker application
 
-   Opening the Asset tracker application for the thingy91_nrf9160ns build target
+      Opening the Asset tracker application for the thingy91_nrf9160ns build target
 
-.. note::
+   .. note::
 
-   The *Board Directory* folder can be found in the following location: ``ncs/nrf/boards/arm``.
+      The *Board Directory* folder can be found in the following location: ``ncs/nrf/boards/arm``.
 
 
 4. Click **OK** to import the project into SES.

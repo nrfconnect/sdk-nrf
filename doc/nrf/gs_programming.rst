@@ -25,7 +25,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    If you have installed the |NCS| using the :ref:`gs_app_tcm`, click :guilabel:`Open IDE` next to the version you installed to start SES.
    If you have installed SES manually, run :file:`bin/emStudio`.
 
-#. Select **File -> Open nRF Connect SDK Project**.
+#. Select :guilabel:`File` -> :guilabel:`Open nRF Connect SDK Project`.
 
     .. figure:: images/ses_open.png
        :alt: Open nRF Connect SDK Project menu
@@ -34,13 +34,33 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
 #. To import a project into SES, you must specify the following information:
 
-   * **CMakeLists.txt** - the location of the :file:`CMakeLists.txt` project file of the sample that you want to work with
-   *  **Board Directory** - the location of the board description of the board for which to build the project
-   *  **Board Name** - the board name (select from the list that is populated based on the board directory)
-   * **Build Directory** - the folder in which to run the build (automatically filled based on the board name, but you can specify a different directory)
-   * **Delete Existing CMakeCache.txt** - select this option to ensure that you are not building with an outdated build cache
+   * :guilabel:`nRF Connect SDK Release` - Select the |NCS| version that you want to work with.
 
-.. build_SES_projimport_open_end
+     The drop-down list contains the current version of all |NCS| installation directories that SES knows about.
+     To add a missing |NCS| installation directory to that list, run ``west zephyr-export`` in the installation repository or define the Zephyr base to point to the directory (see :ref:`setting_up_SES`).
+   * :guilabel:`nRF Connect Toolchain Version` - If you used the Toolchain manager to install the |NCS|, select the version of the toolchain that works with the selected |NCS| version.
+     Otherwise, select NONE and make sure that your SES environment is configured correctly (see :ref:`setting_up_SES`).
+
+     .. note::
+        The drop-down list contains only toolchain versions that are compatible with the selected |NCS| version.
+
+   * :guilabel:`Projects` - Select the project that you want to work with.
+
+     The drop-down list contains a selection of samples and applications from the sdk-nrf and sdk-zephyr repositories.
+     Select any of the checkboxes underneath to add the samples from that area to the drop-down list.
+     To add projects to the drop-down list, for example, your own custom projects, click :guilabel:`...` and select the folder that contains the projects that you want to add.
+   * :guilabel:`Board Name` - Select the board that you want to work with.
+
+     The drop-down list contains the build targets for all Nordic Semiconductor boards that are defined in the sdk-nrf and sdk-zephyr repositories.
+     Select any of the checkboxes underneath to add the build targets from that area to the drop-down list.
+     To add build targets to the drop-down list, for example, targets for your own custom board, click :guilabel:`...` and select the folder that contains the board definitions.
+   * :guilabel:`Build Directory` - Select the folder in which to run the build.
+     The field is filled automatically based on the selected board name, but you can specify a different directory.
+   * :guilabel:`Clean Build Directory` - Select this option to ensure that you are not building with an outdated build cache.
+   * :guilabel:`Extended Settings` - Select this option to display a field where you can specify additional CMake options to be used for building.
+     See :ref:`cmake_options`.
+
+   .. build_SES_projimport_open_end
 
    The following figure shows an example configuration for the Asset Tracker application built for the ``nrf9160dk_nrf9160ns`` build target:
 
@@ -49,12 +69,12 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
       Opening the Asset Tracker project
 
-.. build_SES_projimport_start
+   .. build_SES_projimport_start
 
-4. Click **OK** to import the project into SES. You can now work with the
+4. Click :guilabel:`OK` to import the project into SES. You can now work with the
    project in the IDE.
 
-.. build_SES_projimport_note_start
+   .. build_SES_projimport_note_start
 
    .. note::
 
@@ -68,7 +88,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
       SES helps you to identify the source of the issue by providing a text output with detailed information about the error.
       Make sure to click :guilabel:`OK` on the error pop-up message and then inspect the text output in SES.
 
-.. build_SES_projimport_note_end
+   .. build_SES_projimport_note_end
 
 5. Build and program your project.
 
@@ -87,18 +107,18 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    To build and program an application:
 
       a. Select your project in the Project Explorer.
-      #. From the menu, select **Build -> Build Solution**.
+      #. From the menu, select :guilabel:`Build` -> :guilabel:`Build Solution`.
       #. When the build completes, you can program the sample to a connected board:
 
-         * For a single-image application, select **Target -> Download zephyr/zephyr.elf**.
-         * For a multi-image application, select **Target -> Download zephyr/merged.hex**.
+         * For a single-image application, select :guilabel:`Target` -> :guilabel:`Download zephyr/zephyr.elf`.
+         * For a multi-image application, select :guilabel:`Target` -> :guilabel:`Download zephyr/merged.hex`.
 
       .. note::
-	   Alternatively, choose the **Build and Debug** option.
-	   **Build and Debug** will build the application and program it when
+	   Alternatively, choose the :guilabel:`Build and Debug` option.
+	   :guilabel:`Build and Debug` will build the application and program it when
 	   the build completes.
 
-#. To inspect the details of the code that was programmed and the memory usage, click **Debug -> Go**.
+#. To inspect the details of the code that was programmed and the memory usage, click :guilabel:`Debug` -> :guilabel:`Go`.
 
    .. note::
    	In a multi-image build, this allows you to debug the source code of your application only.
