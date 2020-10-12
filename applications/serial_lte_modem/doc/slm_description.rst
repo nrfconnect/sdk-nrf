@@ -174,6 +174,11 @@ Check and configure the following configuration options for the sample:
 
    This option enables additional AT commands for using a UDP proxy service.
 
+.. option:: CONFIG_SLM_NATIVE_TLS
+
+   This option enables using Zephyr's mbedTLS.
+   It requires additional configuration.
+   See :ref:`slm_native_tls` for more information.
 
 Additional configuration
 ========================
@@ -206,7 +211,36 @@ The following files are provided:
 
 * :file:`prj.conf` - This configuration file contains the standard configuration for the serial LTE modem application.
 
+* :file:`overlay-native_tls.conf` - This configuration file contains additional configuration options that are required to use :ref:`slm_native_tls`.
+  You can include it by adding ``-DOVERLAY_CONFIG=overlay-native_tls.conf`` to your build command.
+  See :ref:`cmake_options`.
+
 * :file:`child_secure_partition_manager.conf` - This configuration file contains the project-specific configuration for the :ref:`secure_partition_manager` child image.
+
+.. _slm_native_tls:
+
+Native TLS sockets
+------------------
+
+By default, the secure socket (TLS/DTLS) is offloaded onto the modem.
+However, if you require customized TLS/DTLS features that are not supported by the modem firmware, you can use a native TLS socket instead.
+The serial LTE modem application will then handle all secure sockets used in TCP/IP, TCP/IP proxy, and MQTT.
+
+If native TLS is enabled, the `Credential storage management %CMNG`_ command is overridden to map the :ref:`security tag <nrfxlib:security_tags>` from the serial LTE modem application to the modem.
+You must use the overridden AT%CMNG command to provision credentials to the modem.
+Note that the serial LTE modem application supports security tags in the range of 0 - 214748364.
+
+The configuration options that are required to enable the native TLS socket are defined in the :file:`overlay-native_tls.conf` file.
+
+.. note::
+
+   The following limitations exist for native TLS sockets:
+
+   * PSK, PSK identity, and Public Key are currently not supported.
+   * DTLS server is currently not supported.
+   * ``AT%CMNG=1`` is not supported.
+   * FTP client and HTTP client do currently not support native TLS.
+
 
 
 Building and running
