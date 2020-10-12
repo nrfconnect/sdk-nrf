@@ -137,11 +137,6 @@ static motion_data_t last_motion_data = {
 	.orientation = MOTION_ORIENTATION_NOT_KNOWN,
 };
 
-#if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
-/* Current state of activity monitor */
-static motion_activity_state_t last_activity_state = MOTION_ACTIVITY_NOT_KNOWN;
-#endif
-
 /* Variable to keep track of nRF cloud association state. */
 enum cloud_association_state {
 	CLOUD_ASSOCIATION_STATE_INIT,
@@ -762,10 +757,6 @@ static void button_send(bool pressed)
 #endif
 
 #if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
-static bool motion_activity_is_active(void)
-{
-	return (last_activity_state == MOTION_ACTIVITY_ACTIVE);
-}
 
 static void motion_trigger_gps(motion_data_t  motion_data)
 {
@@ -779,7 +770,7 @@ static void motion_trigger_gps(motion_data_t  motion_data)
 		return;
 	}
 
-	if (motion_activity_is_active() && gps_control_is_enabled()) {
+	if (!gps_control_is_active() && gps_control_is_enabled()) {
 		static int64_t next_active_time;
 		int64_t last_active_time = gps_last_active_time / 1000;
 		int64_t now = k_uptime_get() / 1000;
@@ -827,15 +818,6 @@ static void motion_trigger_gps(motion_data_t  motion_data)
 /**@brief Callback from the motion module. Sends motion data to cloud. */
 static void motion_handler(motion_data_t  motion_data)
 {
-
-#if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
-	/* toggle state since the accelerometer does not yet report
-	 * which state occurred
-	 */
-	last_activity_state = (last_activity_state != MOTION_ACTIVITY_ACTIVE) ?
-			      MOTION_ACTIVITY_ACTIVE : MOTION_ACTIVITY_INACTIVE;
-#endif
-
 	if (motion_data.orientation != last_motion_data.orientation) {
 		last_motion_data = motion_data;
 		k_work_submit_to_queue(&application_work_q,
