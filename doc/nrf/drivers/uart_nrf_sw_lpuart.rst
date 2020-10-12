@@ -3,8 +3,8 @@
 Low power UART driver
 #####################
 
-The low power UART driver implements the standard asynchronous UART API that can be enabled with the :option:`CONFIG_UART_ASYNC_API` configuration option.
-Alternatively, Interrupt Driven UART API can be used instead if :option:`CONFIG_NRF_SW_LPUART_INT_DRIVEN` is enabled.
+The low power UART driver implements the standard *asynchronous UART API* that can be enabled with the :option:`CONFIG_UART_ASYNC_API` configuration option.
+Alternatively, you can also enable the *interrupt-driven UART API* using the :option:`CONFIG_NRF_SW_LPUART_INT_DRIVEN` configuration option.
 
 The protocol used by this driver implements two control lines, instead of standard hardware flow control lines, to allow for disabling the UART receiver during the idle period.
 This results in low power consumption, as you can shut down the high-frequency clock when UART is in idle state.
@@ -80,30 +80,28 @@ See the following configuration example:
 
 The low power UART configuration includes:
 
-* :option:`CONFIG_NRF_SW_LPUART_MAX_PACKET_SIZE`: Maximum RX packet size.
+* :option:`CONFIG_NRF_SW_LPUART_MAX_PACKET_SIZE`: Sets the maximum RX packet size.
 
-* :option:`CONFIG_NRF_SW_LPUART_DEFAULT_TX_TIMEOUT`: Timeout (in milliseconds)
-  used in :c:func:`uart_poll_out` and :c:func:`uart_fifo_fill` (if interrupt
-  driven API is enabled).
+* :option:`CONFIG_NRF_SW_LPUART_INT_DRIVEN`: Enables the interrupt-driven API.
+  When enabled, the asynchronous API cannot be used.
 
-* :option:`CONFIG_NRF_SW_LPUART_INT_DRIVEN`: Enable interrupt driven API. if
-  enabled, then asynchronous API cannot be used.
+* :option:`CONFIG_NRF_SW_LPUART_DEFAULT_TX_TIMEOUT`: Sets the timeout value, in milliseconds.
+  It is used in :c:func:`uart_poll_out` and :c:func:`uart_fifo_fill` when the interrupt-driven API is enabled.
 
-* :option:`CONFIG_NRF_SW_LPUART_INT_DRV_TX_BUF_SIZE`: Internal buffer of that
-  size is created and used by uart_fifo_fill. For optimal performance it should
-  be able to fit the longest possible packet.
+* :option:`CONFIG_NRF_SW_LPUART_INT_DRV_TX_BUF_SIZE`: Set the size of the internal buffer created and used by :c:func:`uart_fifo_fill`.
+  For optimal performance, it should be able to fit the longest possible packet.
 
 Usage
 *****
 
-You can access and control the low power UART using the Asynchronous UART API.
+You can access and control the low power UART using the asynchronous UART API.
 
 Data is sent using :c:func:`uart_tx`.
 The transfer will timeout if the receiver does not acknowledge its readiness.
 
 The receiver is enabled by calling :c:func:`uart_rx_enable`.
-After that call, the receiver is set up and set to idle (low power) state.
+After that call, the receiver is set up and set to the idle (low power) state.
 
-Alternatively, you can access the low power UART using the Interrupt Driven UART API.
+Alternatively, you can access the low power UART using the interrupt-driven UART API.
 
-See :ref:`lpuart_sample` sample for an implementation of this driver.
+See :ref:`lpuart_sample` sample for the implementation of this driver.
