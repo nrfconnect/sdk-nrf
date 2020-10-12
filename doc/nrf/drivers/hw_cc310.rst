@@ -3,7 +3,7 @@
 CC310 hardware driver
 #####################
 
-The CC310 hardware driver (hw_cc310) ensures correct initialization of the :ref:`nrf_cc310_platform_readme`.
+The CC310 hardware driver (hw_cc310) ensures correct initialization of the :ref:`nrf_cc3xx_platform_readme`.
 
 It initializes the following elements of the library:
 
@@ -18,4 +18,4 @@ API documentation
 
 | Source file: :file:`drivers/hw_cc310/hw_cc310.c`
 
-After the hw_cc310 driver has been initialized, you can use the APIs from the :ref:`crypto_api_nrf_cc310_platform` and the :ref:`nrf_cc310_mbedcrypto_readme`.
+After the hw_cc310 driver has been initialized, you can use the APIs from the :ref:`crypto_api_nrf_cc3xx_platform` and the :ref:`nrf_cc3xx_mbedcrypto_readme`.
