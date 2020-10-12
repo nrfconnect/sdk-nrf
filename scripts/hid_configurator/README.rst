@@ -44,6 +44,7 @@ Complete the following steps:
 
 1. Download the HIDAPI library from `HIDAPI releases`_.
    Use the bundled DLL or build it according to instructions in `HIDAPI library`_.
+#. Copy the proper version of :file:`hidapi.dll` file to the directory where :file:`python.exe` is located.
 #. Install `pyhidapi Python wrapper`_ and other required libraries with the following command:
 
    .. parsed-literal::
