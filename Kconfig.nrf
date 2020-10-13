@@ -6,6 +6,11 @@
 
 menu "Nordic nRF Connect"
 
+# This is a temporary solution to whitelist
+# BOARD_THINGY91_NRF9160NS in compliance
+config BOARD_THINGY91_NRF9160NS
+	bool
+
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
 rsource "lib/Kconfig"
