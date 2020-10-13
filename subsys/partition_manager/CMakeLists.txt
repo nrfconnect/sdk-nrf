@@ -47,6 +47,10 @@ if (CONFIG_BSD_LIBRARY)
   ncs_add_partition_manager_config(pm.yml.bsdlib)
 endif()
 
+if (CONFIG_BT_RPMSG_NRF53)
+  ncs_add_partition_manager_config(pm.yml.bt_rpmsg_nrf53)
+endif()
+
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
 set(using_partition_manager
