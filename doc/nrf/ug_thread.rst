@@ -18,5 +18,3 @@ See :ref:`openthread_samples` for the list of available Thread samples.
    ug_thread_vendor_hooks.rst
    ug_thread_tools.rst
    ug_thread_certification.rst
-
-:Copyright disclaimer: |Google_CCLicense|

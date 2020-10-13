@@ -446,5 +446,3 @@ Now that the Commissioner is ready, complete the following steps for the sample 
             Resuming saved WPAN. . .
 
 Both devices are now able to ping each other.
-
-:Copyright disclaimer: |Google_CCLicense|
