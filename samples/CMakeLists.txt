@@ -5,6 +5,20 @@
 #
 
 if (CONFIG_SPM)
+  get_cmake_property(VARIABLES              VARIABLES)
+  get_cmake_property(VARIABLES_CACHED CACHE_VARIABLES)
+
+  set(regex "^CONFIG_SPM_SERVICE.+")
+
+  list(FILTER VARIABLES        INCLUDE REGEX ${regex})
+  list(FILTER VARIABLES_CACHED INCLUDE REGEX ${regex})
+
+  foreach(var_name ${VARIABLES} ${VARIABLES_CACHED})
+    set(spm_${var_name} ${${var_name}})
+  endforeach()
+
+  set(spm_CONFIG_SPM_SECURE_SERVICES ${CONFIG_SPM_SECURE_SERVICES})
+
   add_child_image(
     NAME spm
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/spm
