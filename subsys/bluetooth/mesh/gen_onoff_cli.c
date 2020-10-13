@@ -81,8 +81,17 @@ static int bt_mesh_onoff_cli_init(struct bt_mesh_model *model)
 	return 0;
 }
 
+static void bt_mesh_onoff_cli_reset(struct bt_mesh_model *model)
+{
+	struct bt_mesh_onoff_cli *cli = model->user_data;
+
+	net_buf_simple_reset(cli->pub.msg);
+	model_ack_reset(&cli->ack_ctx);
+}
+
 const struct bt_mesh_model_cb _bt_mesh_onoff_cli_cb = {
 	.init = bt_mesh_onoff_cli_init,
+	.reset = bt_mesh_onoff_cli_reset,
 };
 
 int bt_mesh_onoff_cli_get(struct bt_mesh_onoff_cli *cli,

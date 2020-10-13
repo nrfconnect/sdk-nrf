@@ -46,8 +46,17 @@ static int bt_mesh_dtt_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
+static void bt_mesh_dtt_reset(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_dtt_cli *cli = mod->user_data;
+
+	net_buf_simple_reset(mod->pub->msg);
+	model_ack_reset(&cli->ack_ctx);
+}
+
 const struct bt_mesh_model_cb _bt_mesh_dtt_cli_cb = {
 	.init = bt_mesh_dtt_init,
+	.reset = bt_mesh_dtt_reset,
 };
 
 int bt_mesh_dtt_get(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,

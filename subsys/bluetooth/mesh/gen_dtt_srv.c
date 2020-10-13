@@ -101,6 +101,19 @@ static int bt_mesh_dtt_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
+static void bt_mesh_dtt_srv_reset(struct bt_mesh_model *model)
+{
+	struct bt_mesh_dtt_srv *srv = model->user_data;
+
+	srv->transition_time = 0;
+
+	if (IS_ENABLED(CONFIG_BT_MESH_DTT_SRV_PERSISTENT)) {
+		(void)bt_mesh_model_data_store(model, false, NULL, NULL, 0);
+	}
+
+	net_buf_simple_reset(model->pub->msg);
+}
+
 #ifdef CONFIG_BT_MESH_DTT_SRV_PERSISTENT
 static int bt_mesh_dtt_srv_settings_set(struct bt_mesh_model *model,
 					const char *name,
@@ -129,6 +142,7 @@ static int bt_mesh_dtt_srv_settings_set(struct bt_mesh_model *model,
 
 const struct bt_mesh_model_cb _bt_mesh_dtt_srv_cb = {
 	.init = bt_mesh_dtt_srv_init,
+	.reset = bt_mesh_dtt_srv_reset,
 #ifdef CONFIG_BT_MESH_DTT_SRV_PERSISTENT
 	.settings_set = bt_mesh_dtt_srv_settings_set,
 #endif

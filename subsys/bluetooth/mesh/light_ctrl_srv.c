@@ -1514,9 +1514,25 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 	return 0;
 }
 
+static void light_ctrl_srv_reset(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
+	struct bt_mesh_light_ctrl_srv_cfg cfg = BT_MESH_LIGHT_CTRL_SRV_CFG_INIT;
+
+	srv->cfg = cfg;
+	ctrl_disable(srv);
+	net_buf_simple_reset(srv->pub.msg);
+
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		(void)bt_mesh_model_data_store(srv->setup_srv, false, NULL,
+					       NULL, 0);
+	}
+}
+
 const struct bt_mesh_model_cb _bt_mesh_light_ctrl_srv_cb = {
 	.init = light_ctrl_srv_init,
 	.start = light_ctrl_srv_start,
+	.reset = light_ctrl_srv_reset,
 	.settings_set = light_ctrl_srv_settings_set,
 };
 

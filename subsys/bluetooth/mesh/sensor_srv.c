@@ -754,6 +754,27 @@ static int sensor_srv_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
+static void sensor_srv_reset(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_sensor_srv *srv = mod->user_data;
+
+	net_buf_simple_reset(srv->pub.msg);
+	net_buf_simple_reset(srv->setup_pub.msg);
+
+	for (int i = 0; i < srv->sensor_count; ++i) {
+		struct bt_mesh_sensor *s = srv->sensor_array[i];
+
+		s->state.pub_div = 0;
+		s->state.min_int = 0;
+		memset(&s->state.threshold, 0, sizeof(s->state.threshold));
+	}
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		(void)bt_mesh_model_data_store(srv->model, false, NULL, NULL,
+					       0);
+	}
+}
+
 static int sensor_srv_settings_set(struct bt_mesh_model *mod, const char *name,
 				   size_t len_rd, settings_read_cb read_cb,
 				   void *cb_arg)
@@ -809,6 +830,7 @@ static int sensor_srv_settings_set(struct bt_mesh_model *mod, const char *name,
 
 const struct bt_mesh_model_cb _bt_mesh_sensor_srv_cb = {
 	.init = sensor_srv_init,
+	.reset = sensor_srv_reset,
 	.settings_set = sensor_srv_settings_set,
 };
 

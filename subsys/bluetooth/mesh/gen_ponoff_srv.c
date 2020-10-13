@@ -209,6 +209,11 @@ static void bt_mesh_ponoff_srv_reset(struct bt_mesh_model *model)
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 
 	srv->on_power_up = BT_MESH_ON_POWER_UP_OFF;
+	net_buf_simple_reset(srv->pub.msg);
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		(void)bt_mesh_model_data_store(srv->ponoff_model, false, NULL,
+					       NULL, 0);
+	}
 }
 
 #ifdef CONFIG_BT_SETTINGS

@@ -542,6 +542,17 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
+static void bt_mesh_prop_srv_reset(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_prop_srv *srv = mod->user_data;
+
+	net_buf_simple_reset(srv->pub.msg);
+
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		(void)bt_mesh_model_data_store(srv->mod, false, NULL, NULL, 0);
+	}
+}
+
 #ifdef CONFIG_BT_SETTINGS
 static int bt_mesh_prop_srv_settings_set(struct bt_mesh_model *model,
 					 const char *name, size_t len_rd,
@@ -571,6 +582,7 @@ static int bt_mesh_prop_srv_settings_set(struct bt_mesh_model *model,
 
 const struct bt_mesh_model_cb _bt_mesh_prop_srv_cb = {
 	.init = bt_mesh_prop_srv_init,
+	.reset = bt_mesh_prop_srv_reset,
 #ifdef CONFIG_BT_SETTINGS
 	.settings_set = bt_mesh_prop_srv_settings_set,
 #endif

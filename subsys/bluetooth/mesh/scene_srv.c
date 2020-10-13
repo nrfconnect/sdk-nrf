@@ -80,11 +80,11 @@ static void scene_set(struct bt_mesh_scene_srv *srv, uint16_t scene)
 
 	srv->curr = scene;
 	if (scene) {
-		bt_mesh_model_data_store(srv->mod, false, CURR_SCENE_PATH,
-					 &srv->curr, sizeof(srv->curr));
+		(void)bt_mesh_model_data_store(srv->mod, false, CURR_SCENE_PATH,
+					       &srv->curr, sizeof(srv->curr));
 	} else {
-		bt_mesh_model_data_store(srv->mod, false, CURR_SCENE_PATH, NULL,
-					 0);
+		(void)bt_mesh_model_data_store(srv->mod, false, CURR_SCENE_PATH,
+					       NULL, 0);
 	}
 }
 
@@ -401,12 +401,12 @@ static void scene_delete(struct bt_mesh_scene_srv *srv, uint16_t *scene)
 
 	for (int i = 0; i < srv->sigpages; i++) {
 		scene_path(path, *scene, false, i);
-		bt_mesh_model_data_store(srv->mod, false, path, NULL, 0);
+		(void)bt_mesh_model_data_store(srv->mod, false, path, NULL, 0);
 	}
 
 	for (int i = 0; i < srv->vndpages; i++) {
 		scene_path(path, *scene, true, i);
-		bt_mesh_model_data_store(srv->mod, false, path, NULL, 0);
+		(void)bt_mesh_model_data_store(srv->mod, false, path, NULL, 0);
 	}
 
 	if (srv->curr == *scene) {
