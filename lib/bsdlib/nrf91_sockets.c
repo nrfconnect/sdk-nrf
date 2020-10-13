@@ -999,20 +999,10 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
 
 	if (hints != NULL) {
-		error = z_to_nrf_addrinfo_hints(hints, &nrf_hints);
-		if (error == -EPROTONOSUPPORT) {
-			return DNS_EAI_SOCKTYPE;
-		} else if (error == -EAFNOSUPPORT) {
-			return DNS_EAI_ADDRFAMILY;
-		}
+		z_to_nrf_addrinfo_hints(hints, &nrf_hints);
 
 		if (hints->ai_next != NULL) {
 			z_to_nrf_addrinfo_hints(hints->ai_next, &nrf_hints_pdn);
-			if (error == -EPROTONOSUPPORT) {
-				return DNS_EAI_SOCKTYPE;
-			} else if (error == -EAFNOSUPPORT) {
-				return DNS_EAI_ADDRFAMILY;
-			}
 			nrf_hints.ai_next = &nrf_hints_pdn;
 		}
 		nrf_hints_ptr = &nrf_hints;
