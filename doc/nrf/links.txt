@@ -301,7 +301,7 @@
 
 .. ### Links to Thread and OpenThread
 
-.. _`Creative Commons 3.0 Attribution License`: https://creativecommons.org/licenses/by/3.0/
+.. _`Creative Commons 4.0 Attribution License`: https://creativecommons.org/licenses/by/4.0/
 .. _`shared by Google`: https://developers.google.com/readme/policies/
 
 .. _`OpenThread CoAP API`: https://openthread.io/reference/group/api-coap

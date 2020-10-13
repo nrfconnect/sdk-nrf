@@ -305,5 +305,3 @@ This sample uses the following Zephyr libraries:
 * :ref:`zephyr:logging_api`:
 
   * ``include/logging/log.h``
-
-:Copyright disclaimer: |Google_CCLicense|

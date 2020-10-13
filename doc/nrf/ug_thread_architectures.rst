@@ -379,5 +379,10 @@ However, when using NCP with Zephyr, there is still a possibility that NCP will 
 This happens when some critical errors occur in Zephyr and the system wants to provide as much information about the failure as possible without using interrupts.
 This exception applies mainly to log messages and is done by turning off UART interrupts and flushing everything from the TX buffer without encoding it.
 
+----
+
+|Google_CCLicense|
+The source page is available `here <https://openthread.io/platforms#system_architecture>`_.
+
 .. |connection_options_limited| replace:: Spinel connections through SPI and USB are not currently available.
 .. |5340_not_supported| replace:: :ref:`nRF5340 PDK <ug_nrf5340>` is not yet supported by Thread in |NCS|.
