@@ -563,14 +563,14 @@ static int usb_init(void)
 		}
 	}
 
-	int err = usb_enable(device_status);
-	if (err) {
-		LOG_ERR("Cannot enable USB");
-		return err;
-	}
-
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		config_channel_transport_init(&cfg_chan_transport);
+	}
+
+	int err = usb_enable(device_status);
+
+	if (err) {
+		LOG_ERR("Cannot enable USB (err: %d)", err);
 	}
 
 	return err;
