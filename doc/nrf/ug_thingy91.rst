@@ -44,7 +44,7 @@ Firmware
 
 The firmware of Thingy:91 has been developed using the nRF Connect SDK.
 It is open source, and can be modified according to specific needs.
-The :ref:`asset_tracker` application firmware, which is pre-flashed in the Thingy:91, enables the device to use the environment sensors and provides an option of tracking the device using GPS.
+The :ref:`asset_tracker` application firmware, which is preprogrammed in the Thingy:91, enables the device to use the environment sensors and provides an option of tracking the device using GPS.
 
 The data, along with information about the device, is transmitted to Nordic Semiconductor's cloud solution, `nRF Cloud`_, where it can be visualized.
 See :ref:`asset_tracker` for more information on the asset tracker application.
@@ -66,7 +66,7 @@ LTE Band Lock
 
 The modem within Thingy:91 can be configured to use specific LTE bands by using the band lock AT command.
 See :ref:`nrf9160_ug_band_lock` and the `band lock section in the AT Commands reference document`_ for additional information.
-The pre-flashed firmware configures the modem to use the bands currently certified on the Thingy:91 hardware.
+The preprogrammed firmware configures the modem to use the bands currently certified on the Thingy:91 hardware.
 When building the firmware, you can configure which bands should be enabled.
 
 LTE-M / NB-IoT switching
