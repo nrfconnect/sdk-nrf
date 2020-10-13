@@ -53,6 +53,11 @@ menu "Zephyr samples configurations"
 if BT_RPMSG_NRF53 && SOC_NRF5340_CPUAPP
 module=HCI_RPMSG
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
+
+partition=RPMSG_NRF53_SRAM
+partition-size=0x10000
+rsource "Kconfig.template.partition_size"
+
 endif
 
 endmenu # Zephyr samples configurations
