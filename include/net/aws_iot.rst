@@ -22,7 +22,7 @@ Setting up a secure MQTTS connection to the AWS IoT message broker consists of t
 
 1. Creating a Thing
 #. Generating a CA certificate.
-#. Flashing the certificates to the on-board modem of the nRF9160 based board.
+#. Programming the certificates to the on-board modem of the nRF9160 based board.
 #. Configuring the library options.
 
 For more information on creating a thing in AWS IoT and generating the certificate, see :ref:`creating_a_thing_in_AWS_IoT`.
@@ -32,8 +32,8 @@ For more information on creating a thing in AWS IoT and generating the certifica
 
 .. _flash_certi_device:
 
-Flashing the certificates to the on-board modem of the nRF9160 based board
-==========================================================================
+Programming the certificates to the on-board modem of the nRF9160 based board
+=============================================================================
 
 1. `Download nRF Connect for Desktop`_
 #. Update the modem firmware on the on-board modem of the nRF9160 based board to the latest version by following the steps in `Updating the nRF9160 DK cellular modem`_.
@@ -54,7 +54,7 @@ To configure the library options, complete the following steps:
 1. In the `AWS IoT console`_, navigate to :guilabel:`IoT core` -> :guilabel:`Manage` -> :guilabel:`things` and click on the entry for the *thing*, created during the steps of :ref:`creating_a_thing_in_AWS_IoT`.
 #. Navigate to :guilabel:`interact`, find ``Rest API Endpoint`` and set the configurable option :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` to this address.
 #. Set the option :option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` to the name of the *thing* created during the aforementioned steps.
-#. Set the security tag configuration :option:`CONFIG_AWS_IOT_SEC_TAG` to the security tag, chosen while `Flashing the certificates to the on-board modem of the nRF9160 based board`_.
+#. Set the security tag configuration :option:`CONFIG_AWS_IOT_SEC_TAG` to the security tag, chosen while `Programming the certificates to the on-board modem of the nRF9160 based board`_.
 
 Initializing
 ************

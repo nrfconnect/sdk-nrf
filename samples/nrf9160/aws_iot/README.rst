@@ -42,7 +42,7 @@ Before starting this sample, you should complete the following steps that are de
 
 1. `Setting up an AWS account`_
 #. :ref:`set_up_conn_to_iot`
-#. :ref:`Flashing device certificates <flash_certi_device>`
+#. :ref:`Programming device certificates <flash_certi_device>`
 #. :ref:`Configuring the sample options <configure_options>`
 
 For FOTA DFU related documentation, see :ref:`aws_fota_sample`.
@@ -76,7 +76,7 @@ Testing
    This retrieves the AWS IoT broker hostname, security tag and client-id.
 
 #. Set the :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`, :option:`CONFIG_AWS_IOT_SEC_TAG`, and :option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` options to reflect the values retrieved during step 1.
-#. Flash the sample.
+#. Program the sample to hardware.
 
 .. note::
 

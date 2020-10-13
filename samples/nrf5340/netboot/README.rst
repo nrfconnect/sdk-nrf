@@ -68,11 +68,11 @@ To test the network core bootloader sample run the following commands:
 
 #. ``west flash -d build_netboot``
 
-   Flash the merged hex files for both domains (application core and network core).
+   Program the merged hex files for both domains (application core and network core).
 
 #. ``nrfjprog --program build_netboot/zephyr/net_core_app_moved_test_update.hex --sectorerase -r``
 
-   This command will flash the update firmware for the network core to the secondary slot of MCUBoot in the application core.
+   This command will program the update firmware for the network core to the secondary slot of MCUBoot in the application core.
    The firmware is signed the same way that the application firmware is signed.
    Hence, the firmware is also verified by MCUBoot on the application core.
    See :ref:`subsys_pcd` for more details.
