@@ -537,8 +537,17 @@ static int sensor_cli_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
+static void sensor_cli_reset(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_sensor_cli *cli = mod->user_data;
+
+	net_buf_simple_reset(cli->pub.msg);
+	model_ack_reset(&cli->ack);
+}
+
 const struct bt_mesh_model_cb _bt_mesh_sensor_cli_cb = {
 	.init = sensor_cli_init,
+	.reset = sensor_cli_reset,
 };
 
 int bt_mesh_sensor_cli_desc_all_get(struct bt_mesh_sensor_cli *cli,

@@ -79,8 +79,17 @@ static int bt_mesh_loc_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
+static void bt_mesh_loc_reset(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_loc_cli *cli = mod->user_data;
+
+	net_buf_simple_reset(mod->pub->msg);
+	model_ack_reset(&cli->ack_ctx);
+}
+
 const struct bt_mesh_model_cb _bt_mesh_loc_cli_cb = {
 	.init = bt_mesh_loc_init,
+	.reset = bt_mesh_loc_reset,
 };
 
 int bt_mesh_loc_cli_global_get(struct bt_mesh_loc_cli *cli,

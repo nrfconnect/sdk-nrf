@@ -687,10 +687,8 @@ const struct bt_mesh_onoff_srv_handlers
 		.get = onoff_get,
 	};
 
-static void bt_mesh_lightness_srv_reset(struct bt_mesh_model *mod)
+static void lightness_srv_reset(struct bt_mesh_lightness_srv *srv)
 {
-	struct bt_mesh_lightness_srv *srv = mod->user_data;
-
 	srv->range.min = 0;
 	srv->range.max = UINT16_MAX;
 	srv->default_light = 0;
@@ -698,12 +696,25 @@ static void bt_mesh_lightness_srv_reset(struct bt_mesh_model *mod)
 	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON);
 }
 
+static void bt_mesh_lightness_srv_reset(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_lightness_srv *srv = mod->user_data;
+
+	lightness_srv_reset(srv);
+	net_buf_simple_reset(srv->pub.msg);
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		(void)bt_mesh_model_data_store(srv->lightness_model, false,
+					       NULL, NULL, 0);
+	}
+}
+
 static int bt_mesh_lightness_srv_init(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_lightness_srv *srv = mod->user_data;
 
 	srv->lightness_model = mod;
-	bt_mesh_lightness_srv_reset(mod);
+
+	lightness_srv_reset(srv);
 	net_buf_simple_init(mod->pub->msg, 0);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {

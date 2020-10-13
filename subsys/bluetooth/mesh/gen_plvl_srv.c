@@ -579,10 +579,8 @@ const struct bt_mesh_onoff_srv_handlers bt_mesh_plvl_srv_onoff_handlers = {
 	.get = onoff_get,
 };
 
-static void bt_mesh_plvl_srv_reset(struct bt_mesh_model *mod)
+static void plvl_srv_reset(struct bt_mesh_plvl_srv *srv)
 {
-	struct bt_mesh_plvl_srv *srv = mod->user_data;
-
 	srv->range.min = 0;
 	srv->range.max = UINT16_MAX;
 	srv->default_power = 0;
@@ -590,12 +588,24 @@ static void bt_mesh_plvl_srv_reset(struct bt_mesh_model *mod)
 	srv->is_on = false;
 }
 
+static void bt_mesh_plvl_srv_reset(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_plvl_srv *srv = mod->user_data;
+
+	plvl_srv_reset(srv);
+	net_buf_simple_reset(mod->pub->msg);
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		(void)bt_mesh_model_data_store(srv->plvl_model, false, NULL,
+					       NULL, 0);
+	}
+}
+
 static int bt_mesh_plvl_srv_init(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_plvl_srv *srv = mod->user_data;
 
 	srv->plvl_model = mod;
-	bt_mesh_plvl_srv_reset(mod);
+	plvl_srv_reset(srv);
 	net_buf_simple_init(mod->pub->msg, 0);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {

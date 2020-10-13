@@ -52,8 +52,17 @@ static int bt_mesh_ponoff_cli_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
+static void bt_mesh_ponoff_cli_reset(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_ponoff_cli *cli = mod->user_data;
+
+	net_buf_simple_reset(mod->pub->msg);
+	model_ack_reset(&cli->ack_ctx);
+}
+
 const struct bt_mesh_model_cb _bt_mesh_ponoff_cli_cb = {
 	.init = bt_mesh_ponoff_cli_init,
+	.reset = bt_mesh_ponoff_cli_reset,
 };
 
 int bt_mesh_ponoff_cli_on_power_up_get(struct bt_mesh_ponoff_cli *cli,

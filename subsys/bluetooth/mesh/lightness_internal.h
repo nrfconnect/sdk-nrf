@@ -141,6 +141,7 @@ static inline uint16_t light_to_repr(uint16_t light, enum light_repr repr)
 }
 
 struct bt_mesh_lightness_srv;
+struct bt_mesh_lightness_cli;
 
 void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 			      struct bt_mesh_msg_ctx *ctx,

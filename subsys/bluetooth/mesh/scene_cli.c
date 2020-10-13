@@ -115,8 +115,18 @@ static int scene_cli_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
+
+static void scene_cli_reset(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_scene_cli *cli = mod->user_data;
+
+	net_buf_simple_reset(cli->pub.msg);
+	model_ack_reset(&cli->ack);
+}
+
 const struct bt_mesh_model_cb _bt_mesh_scene_cli_cb = {
 	.init = scene_cli_init,
+	.reset = scene_cli_reset,
 };
 
 int bt_mesh_scene_cli_get(struct bt_mesh_scene_cli *cli,

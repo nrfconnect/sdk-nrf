@@ -577,6 +577,18 @@ static int bt_mesh_light_ctl_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
+static void bt_mesh_light_ctl_srv_reset(struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+
+	net_buf_simple_reset(srv->pub.msg);
+
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		(void)bt_mesh_model_data_store(srv->model, false, NULL, NULL,
+					       0);
+	}
+}
+
 static int bt_mesh_light_ctl_srv_settings_set(struct bt_mesh_model *model,
 					 const char *name, size_t len_rd,
 					 settings_read_cb read_cb, void *cb_arg)
@@ -653,6 +665,7 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *mod)
 
 const struct bt_mesh_model_cb _bt_mesh_light_ctl_srv_cb = {
 	.init = bt_mesh_light_ctl_srv_init,
+	.reset = bt_mesh_light_ctl_srv_reset,
 	.start = bt_mesh_light_ctl_srv_start,
 	.settings_set = bt_mesh_light_ctl_srv_settings_set,
 };

@@ -300,8 +300,16 @@ static int bt_mesh_light_temp_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
+static void bt_mesh_light_temp_srv_reset(struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_temp_srv *srv = model->user_data;
+
+	net_buf_simple_reset(srv->pub.msg);
+}
+
 const struct bt_mesh_model_cb _bt_mesh_light_temp_srv_cb = {
 	.init = bt_mesh_light_temp_srv_init,
+	.reset = bt_mesh_light_temp_srv_reset,
 };
 
 int32_t bt_mesh_light_temp_srv_pub(struct bt_mesh_light_temp_srv *srv,
