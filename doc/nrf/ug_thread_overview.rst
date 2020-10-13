@@ -26,4 +26,5 @@ You can also find more information at `OpenThread.io`_ and `Thread Group`_ pages
    ug_thread_supported_features.rst
    ug_thread_architectures.rst
    ug_thread_ot_integration.rst
+   ug_thread_ot_memory.rst
    ug_thread_commissioning.rst
