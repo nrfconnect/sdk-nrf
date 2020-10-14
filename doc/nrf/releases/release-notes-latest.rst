@@ -1,3 +1,5 @@
+:orphan:
+
 .. _ncs_release_notes_latest:
 
 Changes in |NCS| v1.3.99

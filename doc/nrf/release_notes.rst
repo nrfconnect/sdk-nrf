@@ -17,7 +17,7 @@ Important issues that are discovered after a release is tagged are listed in the
    :maxdepth: 1
    :caption: Subpages:
 
-   releases/release-notes-latest
+   releases/release-notes-1.4.0
    releases/release-notes-1.3.2
    releases/release-notes-1.3.1
    releases/release-notes-1.3.0

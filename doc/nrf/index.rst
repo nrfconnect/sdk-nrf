@@ -48,7 +48,6 @@ In addition to the |NCS| documentation, information is available in the followin
    introduction
    documentation
    release_notes
-   known_issues
    getting_started
    user_guides
    examples
