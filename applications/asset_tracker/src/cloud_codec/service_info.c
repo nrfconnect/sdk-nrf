@@ -75,6 +75,12 @@ int service_info_json_object_encode(
 			 fota_version);
 		err = add_array_obj(fota, fota_count, fota_name,
 				    service_info_obj);
+		if (fota_version > 1) {
+			/* Clear previous fota version in the shadow */
+			snprintf(fota_name, sizeof(fota_name), "%s%hu",
+				 FOTAS_JSON_NAME, fota_version - 1);
+			cJSON_AddNullToObject(service_info_obj, fota_name);
+		}
 	}
 
 	if (!err) {
