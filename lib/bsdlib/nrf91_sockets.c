@@ -250,13 +250,17 @@ static int z_to_nrf_flags(int z_flags)
 	if (z_flags & MSG_TRUNC) {
 		nrf_flags |= NRF_MSG_TRUNC;
 	}
+
+	if (z_flags & MSG_WAITALL) {
+		nrf_flags |= NRF_MSG_WAITALL;
+	}
+
 	/* TODO: Handle missing flags, missing from zephyr,
 	 * may also be missing from bsd socket library.
 	 * Missing flags from "man recv" or "man recvfrom":
 	 *	MSG_CMSG_CLOEXEC
 	 *	MSG_ERRQUEUE
 	 *	MSG_OOB
-	 *	MSG_WAITALL
 	 * Missing flags from "man send" or "man sendto":
 	 *	MSG_CONFIRM
 	 *	MSG_DONTROUTE
@@ -268,7 +272,7 @@ static int z_to_nrf_flags(int z_flags)
 	 *	NRF_MSG_DONTWAIT (covered)
 	 *	NRF_MSG_OOB
 	 *	NRF_MSG_PEEK (covered)
-	 *	NRF_MSG_WAITALL
+	 *	NRF_MSG_WAITALL (covered)
 	 *	NRF_MSG_TRUNC (covered)
 	 */
 	return nrf_flags;
