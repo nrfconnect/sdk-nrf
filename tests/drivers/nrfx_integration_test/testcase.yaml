@@ -3,9 +3,15 @@ tests:
     build_only: true
     filter: CONFIG_HAS_NRFX
     tags: drivers ci_build
-  nrfx_integration_test.build.softdevice:
+  nrfx_integration_test.build.bt.softdevice:
     build_only: true
-    filter: CONFIG_HAS_NRFX
+    filter: CONFIG_HAS_NRFX and CONFIG_BT_LL_SOFTDEVICE
     tags: drivers ci_build
     extra_configs:
-      - CONFIG_BT_LL_SOFTDEVICE=y
+      - CONFIG_NRFX_AND_BT_LL_SOFTDEVICE=y
+  nrfx_integration_test.build.bt.sw_split:
+    build_only: true
+    filter: CONFIG_HAS_NRFX and CONFIG_BT_LL_SW_SPLIT
+    tags: drivers ci_build
+    extra_configs:
+      - CONFIG_NRFX_AND_BT_LL_SW_SPLIT=y
