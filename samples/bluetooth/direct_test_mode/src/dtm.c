@@ -1607,13 +1607,13 @@ static enum dtm_err_code on_test_setup_cmd(enum dtm_ctrl_code control,
 		break;
 
 	case LE_TEST_SETUP_SET_UPPER:
-		if (parameter > LE_SET_UPER_BITS_MAX_RANGE) {
+		if (parameter > LE_SET_UPPER_BITS_MAX_RANGE) {
 			dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
 			return DTM_ERROR_ILLEGAL_CONFIGURATION;
 		}
 
 		dtm_inst.packet_len =
-			(parameter && LE_UPPER_BITS_MASK) << LE_UPPER_BITS_POS;
+			(parameter & LE_UPPER_BITS_MASK) << LE_UPPER_BITS_POS;
 
 		break;
 
