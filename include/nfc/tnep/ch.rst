@@ -3,6 +3,10 @@
 NFC TNEP Connection Handover
 ############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The NFC TNEP Connection Handover service handles the exchange of Connection Handover Messages between an NFC Forum Tag and an NFC Forum Poller device.
 It uses the TNEP protocol in the Single Response Communication mode to exchange the handover messages between:
 

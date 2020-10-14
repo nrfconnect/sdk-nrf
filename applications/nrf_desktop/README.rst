@@ -3,6 +3,10 @@
 nRF Desktop
 ###########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The nRF Desktop is a reference design of a Human Interface Device (HID) that is connected to a host through Bluetooth LE or USB, or both.
 Depending on the configuration, this application can work as desktop mouse, gaming mouse, keyboard, or connection dongle.
 

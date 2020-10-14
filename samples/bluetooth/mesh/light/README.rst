@@ -3,6 +3,10 @@
 Bluetooth: Mesh Light
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Bluetooth Mesh Light sample demonstrates how to set up a basic Mesh server model application and control LEDs with the Bluetooth Mesh, using the :ref:`bt_mesh_onoff_readme`.
 
 .. note::

@@ -3,6 +3,10 @@
 Radio Test
 ##########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Radio Test sample demonstrates how to configure the radio in a specific mode and then test its performance.
 The sample provides a set of predefined commands that allow you to configure the radio in three modes:
 

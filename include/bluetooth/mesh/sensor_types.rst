@@ -3,17 +3,11 @@
 Bluetooth Mesh sensor types
 ###########################
 
-All sensor types are collected in :file:`include/bluetooth/mesh/sensor_types.h`, and are divided into the following categories:
+.. contents::
+   :local:
+   :depth: 2
 
-* :ref:`bt_mesh_sensor_types_occupancy_readme`
-* :ref:`bt_mesh_sensor_types_ambient_temperature_readme`
-* :ref:`bt_mesh_sensor_types_environmental_readme`
-* :ref:`bt_mesh_sensor_types_device_operating_temperature_readme`
-* :ref:`bt_mesh_sensor_types_electrical_input_readme`
-* :ref:`bt_mesh_sensor_types_energy_management_readme`
-* :ref:`bt_mesh_sensor_types_photometry_readme`
-* :ref:`bt_mesh_sensor_types_power_supply_output_readme`
-* :ref:`bt_mesh_sensor_types_warranty_and_service_readme`
+All sensor types are collected in :file:`include/bluetooth/mesh/sensor_types.h`, and are divided into the categories listed in the page index.
 
 To keep the total flash usage down, the sensor types are only instantiated if they're referenced by the application.
 This behavior can be overridden by enabling :option:`CONFIG_BT_MESH_SENSOR_ALL_TYPES`.

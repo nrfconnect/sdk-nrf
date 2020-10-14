@@ -3,6 +3,10 @@
 nRF Cloud A-GPS
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The nRF Cloud A-GPS library enables applications to request and process Assisted GPS (`A-GPS`_) data from `nRF Cloud`_ to be used with the nRF9160 SiP.
 This library is an enhancement to the :ref:`lib_nrf_cloud`.
 

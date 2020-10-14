@@ -3,6 +3,10 @@
 Bluetooth LE state module
 #########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the Bluetooth LE state module to:
 
 * Enable Bluetooth (:c:func:`bt_enable`).

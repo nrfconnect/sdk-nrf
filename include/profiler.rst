@@ -3,6 +3,10 @@
 Profiler
 ########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Profiler provides an interface for logging and visualizing data for performance measurements, while the system is running.
 You can use the module to profile :ref:`event_manager` events or custom events.
 The output is provided via RTT and can be visualized in `SEGGER SystemView`_ or in a custom Python backend.

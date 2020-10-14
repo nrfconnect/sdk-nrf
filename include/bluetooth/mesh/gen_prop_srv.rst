@@ -3,6 +3,10 @@
 Generic Property Servers
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 A Generic Property Server holds a list of Device Properties.
 The following property servers are supported:
 

@@ -3,6 +3,10 @@
 Generic Power Level models
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Power Level models allow remote control of power levels on a mesh device.
 Typical applications for the Generic Power Level model are heaters, fans and dimmer outlets.
 

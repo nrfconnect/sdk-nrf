@@ -3,6 +3,10 @@
 HID configurator for nRF Desktop
 ################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This Python application uses :ref:`nrf_desktop_config_channel` for communication between a computer and firmware.
 
 The script controls the :ref:`nrf_desktop` firmware parameters at runtime.

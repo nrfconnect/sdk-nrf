@@ -3,6 +3,10 @@
 Bluetooth LE Controller
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 When you develop a Bluetooth Low Energy (LE) application, you must include a Bluetooth LE Controller.
 A Bluetooth LE Controller is the layer of the Bluetooth stack that handles the physical layer packets and all associated timing.
 It implements the Link Layer, which is the low-level, real-time protocol that controls the Bluetooth LE communication.

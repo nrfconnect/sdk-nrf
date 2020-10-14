@@ -3,6 +3,10 @@
 Cloud API
 #########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The cloud API library exposes API to interact with cloud solutions.
 Using these APIs, an application can connect to a cloud, and send and receive data.
 

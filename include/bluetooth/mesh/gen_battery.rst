@@ -3,6 +3,10 @@
 Generic Battery models
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Battery models allow remote monitoring of the battery status of a mesh device.
 
 The Generic Battery models also feature their own common types, listed below.

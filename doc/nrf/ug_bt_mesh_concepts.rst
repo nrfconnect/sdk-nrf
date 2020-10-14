@@ -3,6 +3,10 @@
 Bluetooth Mesh concepts
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Bluetooth Mesh is a profile specification developed and published by the Bluetooth Special Interest Group (SIG).
 This document explains the basic concepts of the Bluetooth Mesh and gives an overview of the operation and capabilities of the profile, as well as the life cycle of a mesh device.
 For more information about the |NCS| implementation of the Bluetooth Mesh, see :ref:`Bluetooth Mesh architecture documentation <mesh_architecture>`.

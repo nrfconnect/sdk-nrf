@@ -3,6 +3,10 @@
 Azure IoT Hub
 #############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Azure IoT Hub library provides an API to connect to an `Azure IoT Hub`_ instance and interact with it.
 It connects to Azure IoT Hub using MQTT over TLS.
 

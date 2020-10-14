@@ -3,6 +3,10 @@
 LED stream module
 #################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the |led_stream| to receive the LED effect sequence and display it using LEDs.
 The LED effect sequence is generated on the host computer and sent through the :ref:`nrf_desktop_config_channel`.
 

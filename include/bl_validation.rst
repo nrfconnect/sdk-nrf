@@ -3,6 +3,10 @@
 Bootloader firmware validation
 ##############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The bootloader firmware validation library provides the function that the :ref:`bootloader` uses to validate a firmware image before booting it.
 
 The API is public because applications that are booted by the immutable bootloader can call the function from this library via the bootloader's code, through external APIs.

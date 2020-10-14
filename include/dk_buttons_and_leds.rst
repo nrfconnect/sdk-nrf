@@ -3,6 +3,10 @@
 DK Button and LEDs
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The DK Button and LED library is a simple module to interface with the buttons and LEDs on a Nordic Semiconductor development kit.
 It supports reading the state of up to four buttons or switches and controlling up to four LEDs.
 

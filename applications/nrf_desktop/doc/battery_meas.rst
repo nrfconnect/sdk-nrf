@@ -3,6 +3,10 @@
 Battery measurement module
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the |battery_meas| to periodically measure the battery voltage and send the ``battery_level_event`` event that informs about the current battery level.
 
 Module events

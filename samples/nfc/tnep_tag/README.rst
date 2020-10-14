@@ -3,6 +3,10 @@
 NFC: TNEP tag
 #############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The TNEP tag sample demonstrates how to use the :ref:`tnep_tag_readme` library to exchange data using NFC's TNEP Protocol on an NFC Tag device.
 
 Overview

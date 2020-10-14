@@ -3,6 +3,10 @@
 nRF5340: Network core bootloader
 ################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This bootloader sample implements an immutable first stage bootloader that has the capability to update the application firmware on the network core of the nRF5340 System on Chip (SoC).
 In addition to this, the network core bootloader sample performs flash protection of both itself and the application.
 

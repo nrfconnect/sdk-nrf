@@ -3,6 +3,10 @@
 Bluetooth EnOcean
 #################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Bluetooth EnOcean library allows passive observation of wall switches and sensors based on Bluetooth LE from `EnOcean`_, such as wall switches based on the Push Button Transmitter module (PTM 215B) and the Easyfit Motion Detector with Illumination (EMDCB) sensor module.
 The library is only capable of observing the output of the devices, and does not send anything back.
 NFC-based configuration is not supported.

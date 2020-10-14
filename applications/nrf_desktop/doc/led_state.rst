@@ -3,6 +3,10 @@
 LED state module
 ################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The |led_state| is used to set LED effects based on the Bluetooth peer state and the system state.
 
 Controlled LEDs

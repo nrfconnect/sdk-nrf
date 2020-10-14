@@ -3,6 +3,10 @@
 Generic Power OnOff models
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Power OnOff models allow remote control of the power up behavior on a mesh device.
 
 The Generic Power OnOff models also feature their own common types, listed below.

@@ -3,6 +3,10 @@
 Info module
 ###########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Info module provides the following device information through the configuration channel:
 
 * Highest ID of configuration channel listener

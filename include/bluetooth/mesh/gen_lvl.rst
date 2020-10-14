@@ -3,6 +3,10 @@
 Generic Level models
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Level models allows remote control of integer states on a mesh device.
 
 The Generic Level models also feature their own common types, listed below.

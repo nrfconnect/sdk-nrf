@@ -3,6 +3,10 @@
 Firmware information
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The firmware information module (``fw_info``) provides externally readable metadata about a firmware image.
 This information is located at a specific offset in the image.
 In addition, the module provides code to read such information.

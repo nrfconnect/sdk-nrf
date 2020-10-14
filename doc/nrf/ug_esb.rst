@@ -3,6 +3,10 @@
 Enhanced ShockBurst (ESB)
 #########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This user guide describes what Enhanced ShockBurst (ESB) is and how to use it with an nRF5 Series device.
 
 .. esb_intro_start

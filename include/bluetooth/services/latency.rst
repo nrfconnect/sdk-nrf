@@ -3,6 +3,10 @@
 GATT Latency Service
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The GATT Latency Service is a custom service containing a single writable characteristic.
 This characteristic can be used to calculate the round-trip time of a GATT Write operation.
 

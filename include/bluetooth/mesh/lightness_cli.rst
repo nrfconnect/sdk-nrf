@@ -3,6 +3,10 @@
 Light Lightness Client
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Light Lightness Client model remotely controls the state of a :ref:`bt_mesh_lightness_srv_readme` model.
 
 Unlike the Server model, the Client only creates a single model instance in the mesh composition data.

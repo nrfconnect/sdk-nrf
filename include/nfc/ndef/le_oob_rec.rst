@@ -3,6 +3,10 @@
 Bluetooth LE OOB records
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 A Bluetooth LE device that has an NFC interface (a tag or a polling device) can use NFC to send or receive data required for connecting and pairing in the Bluetooth domain.
 This data should be presented in the form of a Bluetooth LE pairing message.
 

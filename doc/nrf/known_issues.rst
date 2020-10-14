@@ -3,6 +3,10 @@
 Known issues
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. raw:: html
    :file: includes/filter.js
 

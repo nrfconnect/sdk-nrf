@@ -5,6 +5,10 @@
 Cheat Sheet
 ###########
 
+.. contents::
+   :local:
+   :depth: 2
+
 This topic is not meant to be included in the output, but to serve as reference for common RST syntax and linking between doc sets.
 
 RST syntax

@@ -3,8 +3,11 @@
 Building and programming a sample application
 #############################################
 
-The recommended way of building and programming an |NCS| sample is to use
-the Nordic Edition of the SEGGER Embedded Studio (SES) IDE.
+.. contents::
+   :local:
+   :depth: 2
+
+The recommended way of building and programming an |NCS| sample is to use the Nordic Edition of the SEGGER Embedded Studio (SES) IDE.
 
 
 .. note::

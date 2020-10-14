@@ -6,6 +6,10 @@
 Vendor hooks
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 Vendor hooks are a software mechanism that allows for using enhanced application features provided by a specific vendor.
 For example, they allow you to add radio or crypto functionalities, whose settings will be managed from the host device.
 

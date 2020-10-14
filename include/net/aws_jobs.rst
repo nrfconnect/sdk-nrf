@@ -3,6 +3,10 @@
 AWS jobs
 ########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Amazon Web Services (AWS) jobs library provides functions for working with the `AWS IoT jobs`_ service.
 
 You can use the library to report the status of AWS IoT jobs and to subscribe to job topics.

@@ -3,6 +3,10 @@
 SUPL client and SUPL client OS integration
 ##########################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This section documents both the Secure User-Plane Location (SUPL) client library and the SUPL client OS integration library.
 
 The Secure User-Plane Location (SUPL) client library is an OS-independent library that is distributed separately with a different license than the |NCS|.

@@ -3,6 +3,10 @@
 AT command notifications
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 AT command notifications can be dispatched to registered modules.
 Modules can register a callback function to receive AT command notifications as raw string.
 Multiple instances, which can be identified by pointers to contexts, are also supported.

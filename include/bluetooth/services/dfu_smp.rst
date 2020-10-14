@@ -3,6 +3,10 @@
 GATT DFU SMP Service Client
 ###########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This module implements a Simple Management Protocol (SMP) Service Client that can be used in the context of Device Firmware Updates (DFU).
 SMP is a basic transfer encoding for use with the `MCUmgr`_ management protocol.
 See `SMP over Bluetooth`_ for the service specification.

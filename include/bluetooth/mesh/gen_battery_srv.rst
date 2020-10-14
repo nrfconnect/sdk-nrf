@@ -3,6 +3,10 @@
 Generic Battery Server
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Battery Server model provides information about the current battery status of the device.
 
 States

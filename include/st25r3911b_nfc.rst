@@ -3,6 +3,10 @@
 NFC Reader ST25R3911B
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The NFC Device ST25R3911B can be used to read and write NFC-A compatible tags (tags that support the ISO/IEC 14443 standard), creating an NFC polling device.
 
 This driver is intended to be used with the NFC Reader ST25R3911B Nucleo expansion board (X-NUCLEO-NFC05A1).

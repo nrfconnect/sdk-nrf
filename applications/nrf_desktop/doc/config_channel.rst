@@ -3,6 +3,10 @@
 Configuration channel
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the configuration channel to exchange data between your host computer and nRF Desktop's HID device.
 
 For example, among the types of data that you can send through the configuration channel are the following:

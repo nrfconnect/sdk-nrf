@@ -3,6 +3,10 @@
 Simple Management Protocol module
 #################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the Simple Management Protocol module to perform a Device Firmware Upgrade (DFU) over |BLE|.
 
 The DFU can be performed among others using the nRF Connect Android application.

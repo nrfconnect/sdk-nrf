@@ -3,6 +3,10 @@
 LTE link controller
 ###################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The LTE link controller library is intended to be used for simpler control of LTE connections on an nRF9160 SiP.
 
 This library provides the API and configurations for setting up an LTE connection with definite properties.

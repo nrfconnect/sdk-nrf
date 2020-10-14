@@ -3,6 +3,10 @@
 GATT Bond Management Service (BMS)
 ##################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This module implements the Bond Management Service with the corresponding set of characteristics defined in the `Bond Management Service Specification`_.
 
 You can configure the service to support your desired feature set of bond management operations.

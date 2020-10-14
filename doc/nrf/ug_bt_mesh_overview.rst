@@ -3,6 +3,10 @@
 Bluetooth Mesh overview
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The `Bluetooth Mesh Profile Specification`_ is developed and published by the Bluetooth SIG.
 It allows one-to-one, one-to-many, and many-to-many communication, using the |BLE| protocol to exchange messages between the nodes on the network.
 All nodes in a Bluetooth Mesh network can communicate with each other, as long as there's a chain of nodes between them to relay the messages.

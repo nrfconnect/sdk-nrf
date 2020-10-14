@@ -3,6 +3,10 @@
 Source and sink module lists
 ############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This page includes lists of source and sink modules for events that have many listeners or sources.
 These were gathered on a single page to simplify the event propagation tables.
 

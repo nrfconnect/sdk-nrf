@@ -3,6 +3,10 @@
 FTP client
 ##########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The FTP client library can be used to download or upload FTP server files.
 
 The file is downloaded in fragments of :c:enumerator:`NET_IPV4_MTU`.

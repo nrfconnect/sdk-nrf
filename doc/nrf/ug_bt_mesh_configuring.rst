@@ -3,6 +3,10 @@
 Configuring Bluetooth Mesh in |NCS|
 ###################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Bluetooth Mesh support is controlled by :option:`CONFIG_BT_MESH`, which depends on the following configuration options:
 
 * :option:`CONFIG_BT` - Enables the Bluetooth subsystem.

@@ -3,6 +3,10 @@
 Selector module
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The selector module is used to send ``selector_event`` that informs about the current selector state.
 The module has one implementation, which uses hardware selectors (:file:`selector_hw.c`).
 

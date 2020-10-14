@@ -3,6 +3,10 @@
 Parser for messages and records
 ###############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 When using an NFC polling device, you can use the NDEF message parser module to interpret the NDEF messages the are read from the NFC tag.
 See the documentation for the :ref:`nfc_t2t_parser_readme` for more information on how to read the content of the tag.
 

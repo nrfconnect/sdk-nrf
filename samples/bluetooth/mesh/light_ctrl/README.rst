@@ -3,6 +3,10 @@
 Bluetooth: Mesh Light Control
 #############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Bluetooth Mesh Light Control sample demonstrates how to set up a light control Mesh server model application and control a dimmable LED with the Bluetooth Mesh, using the :ref:`bt_mesh_onoff_readme`.
 
 Overview

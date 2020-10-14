@@ -3,6 +3,10 @@
 Hardware flash write protection
 ###############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The hardware flash write protection driver (``fprotect``) can be used to protect flash areas from writing.
 The driver uses a hardware peripheral (BPROT, ACL, or SPU, depending on the chip model) to protect the area.
 The protection is irreversible until a reset occurs.

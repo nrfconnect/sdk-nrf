@@ -3,6 +3,10 @@
 Cryptography tests
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Cryptography tests verify the functionality of the :ref:`nrfxlib:nrf_security` by using known test vectors approved by the National Institute of Standards and Technology (NIST) and others.
 
 Overview

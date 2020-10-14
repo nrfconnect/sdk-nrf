@@ -3,6 +3,10 @@
 APDU reader and writer
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Application protocol data units (APDUs) are special communication units that are defined in `ISO/IEC 7816-4`_.
 The subset of these commands that is used to interact with a Type 4 Tag is implemented in this library.
 

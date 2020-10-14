@@ -3,6 +3,10 @@
 Enhanced ShockBurst: Transmitter/Receiver
 #########################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Enhanced ShockBurst Transmitter/Receiver sample shows the basic steps that are needed to transmit and receive packets using :ref:`ug_esb`.
 
 Overview

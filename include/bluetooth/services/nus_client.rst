@@ -3,6 +3,10 @@
 Nordic UART Service (NUS) Client
 ################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Nordic UART Service Client module can be used to interact with a connected peer that is running the GATT server with the :ref:`nus_service_readme`.
 The client uses the :ref:`gatt_dm_readme` module to acquire the attribute handles that are necessary to interact with the RX and TX Characteristics.
 

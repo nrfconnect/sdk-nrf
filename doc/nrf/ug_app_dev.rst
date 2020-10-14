@@ -3,6 +3,10 @@
 Application development
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This user guide provides fundamental information on developing a new application based on the |NCS|.
 
 Build and Configuration System

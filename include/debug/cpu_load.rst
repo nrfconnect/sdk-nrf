@@ -3,6 +3,10 @@
 CPU load measurement
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The CPU load measurement module allows you to monitor the CPU utilization based on the amount of time during which the CPU has been asleep.
 The module measures the amount of the sleep time and divides this value by the total amount of time since the reset of the measurement.
 The resulting CPU load value is a percentage value that corresponds to the amount of time when the CPU has not been sleeping.

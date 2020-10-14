@@ -3,6 +3,10 @@
 Scanning module
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The scanning module handles the Bluetooth Low Energy scanning for your application.
 You can use it to find advertising devices and establish connections with them.
 

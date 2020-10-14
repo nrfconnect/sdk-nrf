@@ -3,6 +3,10 @@
 Generic Level Client
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Level Client model remotely controls the state of a :ref:`bt_mesh_lvl_srv_readme` model.
 
 Extended models

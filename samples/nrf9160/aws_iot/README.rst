@@ -3,6 +3,10 @@
 nRF9160: AWS IoT
 ################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The AWS IoT sample shows the communication of an nRF9160-based device with the AWS IoT message broker over MQTT.
 This sample uses the :ref:`lib_aws_iot` library.
 

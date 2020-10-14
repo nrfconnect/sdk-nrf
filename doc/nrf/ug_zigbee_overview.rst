@@ -3,6 +3,10 @@
 Zigbee overview
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 |zigbee_description|
 It also defines an application layer that provides interoperability among all vendors.
 

@@ -3,6 +3,10 @@
 Sensor Server
 #############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Sensor Server model holds a list of sensors, and exposes them to the mesh network.
 There may be multiple Sensor Server models on a single mesh node, and each model may hold up to 47 sensors.
 

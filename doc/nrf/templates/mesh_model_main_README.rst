@@ -3,6 +3,10 @@
 Mesh model template
 ###################
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. tip::
    This is the mesh model overview page.
    On this page, explain what this model allows you to do within the broader context of the mesh network and list server and client models that are part of this Mesh model.

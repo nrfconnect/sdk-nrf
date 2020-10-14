@@ -3,6 +3,10 @@
 PPI trace
 #########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The PPI trace module enables tracing of hardware peripheral events on pins.
 Tracing is performed without CPU intervention, because PPI is used to connect events with tasks in GPIOTE.
 

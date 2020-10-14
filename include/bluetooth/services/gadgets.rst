@@ -3,6 +3,10 @@
 Alexa Gadgets Service
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The BLE GATT Alexa Gadgets Service is a custom service that manages Alexa Gadgets stream transactions.
 For details about the stream format, see Alexa Gadgets Bluetooth LE Packet `Alexa Gadgets Bluetooth LE Packet Format`_.
 

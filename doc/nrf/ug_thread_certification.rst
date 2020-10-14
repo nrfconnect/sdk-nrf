@@ -3,6 +3,10 @@
 Thread certification
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Thread Group requires certification for devices using the Thread protocol.
 You can follow different scenarios to assure that your Nordic Semiconductor device based on |NCS| becomes a Thread-certified product.
 

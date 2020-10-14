@@ -3,6 +3,10 @@
 |BLE| Quality of Service module
 ###############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the |BLE| Quality of Service (QoS) module to achieve better connection quality and higher report rate by avoiding congested RF channels.
 The module can be used by both nRF Desktop peripheral and nRF Desktop central with the SoftDevice Link Layer (:option:`CONFIG_BT_LL_SOFTDEVICE`).
 However, only the Bluetooth central can update the |BLE| channel map that is in use.
