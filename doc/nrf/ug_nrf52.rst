@@ -3,6 +3,10 @@
 Working with nRF52
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The |NCS| provides support for developing on all nRF52 Series devices and contains board definitions for all development kits and reference design hardware.
 
 Introduction

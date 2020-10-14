@@ -3,6 +3,10 @@
 Thread tools
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 When working with Thread in |NCS|, you can use the following tools during Thread application development:
 
 * `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ - Tool for analyzing network traffic during development.

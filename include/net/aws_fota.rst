@@ -3,6 +3,10 @@
 AWS FOTA
 ########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Amazon Web Services firmware over-the-air (AWS FOTA) library combines the :ref:`lib_aws_jobs` and :ref:`lib_fota_download` libraries to create a user-friendly library that can perform an over-the-air firmware update using HTTP and MQTT TLS.
 
 It connects to the specified broker using the existing or given certificates and uses `TLS`_ for the MQTT connection.

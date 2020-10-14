@@ -3,6 +3,10 @@
 Installing the |NCS| through nRF Connect for Desktop
 ####################################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 `nRF Connect for Desktop`_, a cross-platform tool available for Windows, Linux, and macOS, provides different apps that simplify installing the |NCS|.
 
 On Windows, use the :ref:`gs_app_tcm`.

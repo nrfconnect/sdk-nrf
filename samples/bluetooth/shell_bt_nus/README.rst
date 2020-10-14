@@ -3,6 +3,10 @@
 Bluetooth: NUS shell transport
 ##############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Nordic UART Service (NUS) shell transport sample demonstrates how to use the :ref:`shell_bt_nus_readme` to receive shell commands from a remote device.
 
 Overview

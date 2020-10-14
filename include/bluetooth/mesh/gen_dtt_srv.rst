@@ -3,6 +3,10 @@
 Generic Default Transition Time Server
 ######################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The DTT Server provides a common way to specify the state transition time for other models on the same element.
 If other generic models on the same element receive state change commands without transition parameters, they will use the default transition time specified by the DTT Server model.
 This way, the DTT Server can define a consistent transition time for all states on their elements, without depending on client configurations.

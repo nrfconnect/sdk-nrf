@@ -3,6 +3,10 @@
 Bluetooth: Mesh Light Switch
 ############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Bluetooth Mesh Light Switch sample demonstrates how to set up a basic Mesh client model application and control LEDs with the Bluetooth Mesh, using the :ref:`bt_mesh_onoff_readme`.
 
 Overview

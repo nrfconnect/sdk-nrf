@@ -3,6 +3,10 @@
 DFU target
 ##########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The DFU target library provides a common API for different types of firmware upgrades, for example, an MCUboot style upgrade or a modem firmware upgrade.
 Use this library in your component to do different types of firmware upgrades against a single interface.
 

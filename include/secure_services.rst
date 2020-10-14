@@ -3,6 +3,10 @@
 Secure Services
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 Secure Services are functions implemented in the Secure Firmware (:ref:`secure_partition_manager`), but made available to be called from the Non-Secure Firmware.
 
 Calling functions in this API requires that the service is enabled in the :ref:`secure_partition_manager`.

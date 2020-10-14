@@ -3,6 +3,10 @@
 Zigbee default signal handler
 #############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The :ref:`nrfxlib:zboss` interacts with the user application by invoking the :c:func:`zboss_signal_handler` function whenever a stack event, such as network steering, occurs.
 It is mandatory to define :c:func:`zboss_signal_handler` in the application.
 

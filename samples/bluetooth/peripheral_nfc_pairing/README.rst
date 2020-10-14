@@ -3,6 +3,10 @@
 Bluetooth: NFC pairing
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The NFC pairing sample demonstrates Bluetooth LE out-of-band pairing using an NFC tag and the NFC TNEP protocol.
 You can use it to test the touch-to-pair feature between Nordic Semiconductor's devices and an NFC polling device with Bluetooth LE support, for example, a mobile phone.
 

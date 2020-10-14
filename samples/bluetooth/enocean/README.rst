@@ -3,6 +3,10 @@
 Bluetooth: EnOcean
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Bluetooth EnOcean sample demonstrates the basic usage of the :ref:`bt_enocean_readme` library.
 
 Overview

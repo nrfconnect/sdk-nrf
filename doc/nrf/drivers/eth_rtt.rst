@@ -3,6 +3,10 @@
 Ethernet over RTT driver
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This driver transfers Ethernet frames using the SEGGER J-Link debugger Real-Time Transfer feature.
 
 It is a network driver visible as a completely independent network interface.

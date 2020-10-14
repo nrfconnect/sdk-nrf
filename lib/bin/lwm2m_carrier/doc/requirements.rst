@@ -3,6 +3,10 @@
 Requirements and application limitations
 ########################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Below are some of the requirements and limitations of the application while running this module.
 
 * The application should not call the :c:func:`bsdlib_init` function.

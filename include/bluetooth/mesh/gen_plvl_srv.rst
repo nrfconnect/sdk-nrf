@@ -3,6 +3,10 @@
 Generic Power Level Server
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Power Level Server controls the output power level of a peripheral on the Mesh-enabled device.
 
 Generic Power Level Server adds two model instances in the composition data:

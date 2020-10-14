@@ -3,6 +3,10 @@
 Bluetooth: Peripheral HIDS mouse
 ################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Peripheral HIDS mouse sample demonstrates how to use the :ref:`hids_readme` to implement a mouse input device that you can connect to your computer.
 This sample also shows how to perform directed advertising.
 

@@ -3,6 +3,10 @@
 Event Manager
 #############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Event Manager sample demonstrates the functionality of the :ref:`event_manager` subsystem.
 It uses an event-driven architecture, where different modules communicate through sending and processing events.
 

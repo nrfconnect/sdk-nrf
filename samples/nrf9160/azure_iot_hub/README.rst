@@ -3,6 +3,10 @@
 nRF9160: Azure IoT Hub
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Azure IoT Hub sample shows the communication of an nRF9160-based device with an `Azure IoT Hub`_ instance.
 This sample uses the :ref:`lib_azure_iot_hub` library to communicate with the IoT hub.
 

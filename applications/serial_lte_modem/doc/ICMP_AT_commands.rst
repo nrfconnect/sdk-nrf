@@ -3,9 +3,11 @@
 ICMP AT Commands
 ****************
 
-The following commands list contains ICMP related AT commands:
+.. contents::
+   :local:
+   :depth: 2
 
-* `ICMP echo request #XPING`_
+The following commands list contains ICMP related AT commands.
 
 ICMP echo request #XPING
 ========================

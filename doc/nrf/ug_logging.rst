@@ -3,6 +3,10 @@
 Logging in |NCS|
 ################
 
+.. contents::
+   :local:
+   :depth: 2
+
 |NCS| provides a logging system that offers different logging possibilities for testing and debugging.
 The system is multilevel, meaning that it can be enabled and configured independently for different modules.
 This allows you to choose the logging information you want to receive and how it should be gathered.

@@ -3,6 +3,10 @@
 Bluetooth: LLPM
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Bluetooth Low Latency Packet Mode (LLPM) sample uses the :ref:`latency_readme` and the :ref:`latency_client_readme` to showcase the LLPM proprietary Bluetooth extension from Nordic Semiconductor.
 You can use it to determine the transmission latency of LLPM-enabled connections, or to compare with different connection parameters and check their influence on the results.
 

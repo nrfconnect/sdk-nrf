@@ -3,12 +3,11 @@
 Generic AT Commands
 *******************
 
-The following commands list contains generic AT commands:
+.. contents::
+   :local:
+   :depth: 2
 
-* `SLM version #XSLMVER`_
-* `SLM proprietary command list #XCLAC`_
-* `Power saving #XSLEEP`_
-* `SLM UART #XSLMUART`_
+The following commands list contains generic AT commands.
 
 SLM version #XSLMVER
 ====================

@@ -3,6 +3,10 @@
 PPI trace
 #########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The PPI trace sample shows how to trace hardware events on GPIO pins.
 It uses the :ref:`ppi_trace` module.
 

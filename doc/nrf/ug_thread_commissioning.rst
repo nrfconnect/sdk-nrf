@@ -3,6 +3,10 @@
 OpenThread commissioning
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Commissioning is the process that allows a new Thread device to join a Thread network.
 The new device must be authenticated and authorized to become part of the network.
 

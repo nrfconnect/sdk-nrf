@@ -3,6 +3,10 @@
 |NCS| development model
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This user guide describes the development model that the |NCS| follows in order to give its users access to both stable releases and newest features.
 
 Refer to the :ref:`dm-glossary` for additional clarification on terms used in these sections.

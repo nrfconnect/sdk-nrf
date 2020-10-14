@@ -3,6 +3,10 @@
 GATT Discovery Manager
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The GATT Discovery Manager handles service discovery on GATT servers.
 
 When a client connects to a peer device that has a desired server, service discovery is necessary to ensure that the client interacts with the server's characteristics using the correct attributes handles.

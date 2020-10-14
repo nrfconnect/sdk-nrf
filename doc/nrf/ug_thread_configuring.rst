@@ -3,6 +3,10 @@
 Configuring Thread in |NCS|
 ###########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This page describes what is needed to start working with Thread in |NCS|.
 
 Required modules

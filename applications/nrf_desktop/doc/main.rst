@@ -3,6 +3,10 @@
 Basic module (main)
 ###################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The main module is the entry point of the nRF Desktop application.
 
 Module events

@@ -3,6 +3,10 @@
 Failsafe module
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the failsafe module to erase the :ref:`zephyr:settings_api` partition after a fatal error.
 This can be done to prevent broken settings from rendering the device permanently unusable.
 

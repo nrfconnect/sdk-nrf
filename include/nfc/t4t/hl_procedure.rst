@@ -3,6 +3,10 @@
 Type 4 Tag procedures
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This module provides functions to perform the NDEF detection procedure, which is used to retrieve the NDEF message from the data of a tag.
 
 The full NDEF detection procedure consists of the following procedures:

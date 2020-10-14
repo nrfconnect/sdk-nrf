@@ -3,6 +3,10 @@
 Profiler synchronization module
 ###############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the profiler synchronization module to synchronize the timestamps of :ref:`profiler` events between two devices connected over a physical wire.
 Timestamp synchronization is required to increase the accuracy of the measured times between the profiler events that come from two different devices.
 

@@ -3,6 +3,10 @@
 nRF9160: Download client
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Download client sample demonstrates how to download a file from an HTTP or a CoAP server, with optional TLS or DTLS.
 It uses the :ref:`lib_download_client` library.
 

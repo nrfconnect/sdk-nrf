@@ -3,6 +3,10 @@
 Scene models
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Scene models allow storing the model state of the entire mesh network as a *scene*, which can be recalled at a later time.
 The Scene models are most commonly used to implement presets for different times and activities.
 Scenes typically show up in the end user application as user presets, like "Dinner lights", "Night time" or "Movie night".

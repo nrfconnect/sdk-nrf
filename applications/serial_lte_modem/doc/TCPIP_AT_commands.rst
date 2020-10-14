@@ -3,26 +3,11 @@
 TCP and UDP AT Commands
 ***********************
 
-The following commands list contains TCP and UDP related AT commands:
+.. contents::
+   :local:
+   :depth: 2
 
-* `BSD socket #XSOCKET`_
-* `BSD socket options #XSOCKETOPT`_
-* `Socket binding #XBIND`_
-* `TCP connection #XCONNECT`_
-* `TCP set listen mode #XLISTEN`_
-* `TCP accept incoming connection #XACCEPT`_
-* `Send data #XSEND`_
-* `Receive data #XRECV`_
-* `UDP send data #XSENDTO`_
-* `UDP receive data #XRECVFROM`_
-* `Resolve hostname #XGETADDRINFO`_
-* `TCP server #XTCPSVR`_
-* `TCP/TLS client #XTCPCLI`_
-* `TCP send data #XTCPSEND`_
-* `TCP receive data #XTCPRECV`_
-* `UDP server #XUDPSVR`_
-* `UDP/DTLS client #XUDPCLI`_
-* `UDP send data #XUDPSEND`_
+The following commands list contains TCP and UDP related AT commands.
 
 For more information on the BSD networking services, visit the `BSD Networking Services Spec Reference`_.
 

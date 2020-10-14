@@ -3,6 +3,10 @@
 Power manager module
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the power manager module to reduce the energy consumption of battery-powered devices.
 The module achieves this by switching to low power modes when the device is not used for a longer period of time.
 

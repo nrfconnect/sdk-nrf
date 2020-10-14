@@ -3,6 +3,10 @@
 Connectivity bridge
 ###################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Connectivity bridge application demonstrates the bridge functionality for the Thingy:91 hardware and is an enhancement to the :ref:`usb_uart_bridge_sample` sample.
 
 Additionally, the application also provides an option of adding the bluetooth functionality by making use of the :ref:`nus_service_readme`.

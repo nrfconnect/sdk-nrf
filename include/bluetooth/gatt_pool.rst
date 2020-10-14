@@ -3,6 +3,10 @@
 Bluetooth GATT attribute pools
 ##############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 GATT attribute pools can be used to dynamically create a service description, which can later be registered in the Zephyr GATT database.
 
 Every GATT service is essentially a set of GATT attributes that are ordered in a particular way.

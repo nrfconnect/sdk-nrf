@@ -3,6 +3,10 @@
 Bluetooth: Central HIDS
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Central HIDS sample demonstrates how to use the :ref:`hogp_readme` to interact with a HIDS server.
 Basically, the sample simulates a computer that connects to a mouse or a keyboard.
 

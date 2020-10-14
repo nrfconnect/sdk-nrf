@@ -3,6 +3,10 @@
 Generic Location Server
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Location Server provides location information about the device.
 The location data is split up into the following separate states: Global and Local.
 

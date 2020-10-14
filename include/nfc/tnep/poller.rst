@@ -3,6 +3,10 @@
 TNEP for polling device
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The poller library provides functionality to implement the Tag NDEF Exchange Protocol (TNEP) for a polling device.
 
 The poller library is used in the :ref:`nfc_tnep_poller` sample.

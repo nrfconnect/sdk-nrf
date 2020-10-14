@@ -3,6 +3,10 @@
 OpenThread architectures
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This page describes the OpenThread stack architecture and platform designs that are possible with the OpenThread network stack on Nordic Semiconductor devices in |NCS|.
 
 The designs are described from the least to the most complex, that is from simple applications that consist of a single chip running single or multiple protocols to scenarios in which the nRF SoC acts as a network co-processor when the application is running on a much more powerful host processor.

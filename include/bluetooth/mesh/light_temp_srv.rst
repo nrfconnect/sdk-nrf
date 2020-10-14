@@ -3,6 +3,10 @@
 Light CTL Temperature Server
 ############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Color-Tunable Light (CTL) Temperature Server represents a single light on a mesh device.
 It should be instantiated in the light fixture node.
 

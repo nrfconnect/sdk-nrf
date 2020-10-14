@@ -3,6 +3,10 @@
 Bluetooth LE bond module
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the |ble_bond| to manage the Bluetooth peers and bonds.
 The module controls the following operations:
 

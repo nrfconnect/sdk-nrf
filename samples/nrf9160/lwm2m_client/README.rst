@@ -3,6 +3,10 @@
 nRF9160: LwM2M Client
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The LwM2M Client demonstrates how to use Lightweight Machine to Machine (`LwM2M`_) protocol to connect an nRF9160 DK to an LwM2M server such as `Leshan Demo Server`_ via LTE.
 Once connected, the device can be queried to obtain GPS and sensor data, and to retrieve information about the modem.
 

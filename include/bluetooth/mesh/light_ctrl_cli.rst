@@ -3,6 +3,10 @@
 Light Lightness Control Client
 ##############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Light Lightness Control (LC) Client configures and interacts with the :ref:`bt_mesh_light_ctrl_srv_readme`.
 
 The Light LC Client creates a single model instance in the mesh composition data.

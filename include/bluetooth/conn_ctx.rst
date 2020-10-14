@@ -3,6 +3,10 @@
 Bluetooth connection context
 ############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Data related to a Bluetooth connection can be stored in a Bluetooth connection context.
 The Bluetooth connection context library can be used with Bluetooth LE services that require the connection context to support multilink functionality for the GATT server role.
 

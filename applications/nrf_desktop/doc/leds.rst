@@ -3,6 +3,10 @@
 LEDs module
 ###########
 
+.. contents::
+   :local:
+   :depth: 2
+
 You can control LED diodes with the LEDs module, which sets the LED effect in response to a ``led_event``.
 
 LED effect

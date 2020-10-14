@@ -3,6 +3,10 @@
 Time Server
 ###########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Time Server model allows mesh nodes to synchronize the current time and date by publishing and subscribing to Time Status messages.
 
 The Time Server model relies on an external clock source to provide the current time and date, but takes care of distributing this information through the network.

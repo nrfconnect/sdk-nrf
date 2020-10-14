@@ -3,6 +3,10 @@
 Thread: CLI
 ###########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Thread CLI sample demonstrates the usage of OpenThread Command Line Interface inside the Zephyr shell.
 
 Overview

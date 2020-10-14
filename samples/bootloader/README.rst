@@ -3,6 +3,10 @@
 Immutable bootloader
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The bootloader sample implements an immutable first stage bootloader that has the capability to verify and boot a second stage bootloader.
 If the second stage bootloader is upgradable, it can reside in one of two slots.
 In this case, the sample chooses the second stage bootloader with the highest version number.

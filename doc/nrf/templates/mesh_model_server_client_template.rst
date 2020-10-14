@@ -3,6 +3,10 @@
 Mesh server and client model template
 #####################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. tip::
    Use this template to create pages that describe the server or the client models of the related mesh model, or both.
    To create the main mesh model page, use the :ref:`bt_mesh_model_main_template`.

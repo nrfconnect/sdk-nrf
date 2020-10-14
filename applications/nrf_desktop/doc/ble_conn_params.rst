@@ -3,6 +3,10 @@
 Bluetooth LE connection parameters module
 #########################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the |ble_conn_params| to:
 
 * Update the connection parameters after the peripheral discovery.

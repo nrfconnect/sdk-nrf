@@ -3,6 +3,10 @@
 LED Button Service (LBS)
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The GATT LED Button Service (LBS) is a custom service that receives information about the state of an LED and sends notifications when a button changes its state.
 
 The LBS Service is used in the :ref:`peripheral_lbs` sample.

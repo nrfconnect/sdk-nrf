@@ -3,9 +3,12 @@
 Bluetooth: Peripheral UART
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Peripheral UART sample demonstrates how to use the :ref:`nus_service_readme`.
 It uses the NUS service to send data back and forth between a UART connection and a Bluetooth LE connection, emulating a serial port over Bluetooth LE.
-
 
 Overview
 ********
@@ -14,7 +17,6 @@ When connected, the sample forwards any data received on the RX pin of the UART 
 On Nordic Semiconductor's development kits, the UART 1 peripheral is typically gated through the SEGGER chip to a USB CDC virtual serial port.
 
 Any data sent from the Bluetooth LE unit is sent out of the UART 1 peripheral's TX pin.
-
 
 .. _peripheral_uart_debug:
 
@@ -36,7 +38,8 @@ Requirements
   * |nRF52840DK|
   * |nRF52DK|
 
-* A phone or tablet running a compatible application. The `Testing`_ instructions refer to nRF Connect for Mobile, but similar applications (for example, nRF Toolbox) can be used as well.
+* A phone or tablet running a compatible application.
+  The `Testing`_ instructions refer to nRF Connect for Mobile, but similar applications (for example, nRF Toolbox) can be used as well.
 
   You can also test the application with the :ref:`central_uart` sample. See the documentation for that sample for detailed instructions.
 
@@ -57,6 +60,7 @@ Button 2:
 
 Building and running
 ********************
+
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_uart`
 
 .. include:: /includes/build_and_run.txt

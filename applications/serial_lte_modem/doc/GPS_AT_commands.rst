@@ -3,9 +3,11 @@
 GPS AT Commands
 ***************
 
-The following commands list contains GPS related AT commands:
+.. contents::
+   :local:
+   :depth: 2
 
-* `Run GPS #XGPS`_
+The following commands list contains GPS related AT commands.
 
 Run GPS #XGPS
 =============

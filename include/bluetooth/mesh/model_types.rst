@@ -3,6 +3,10 @@
 Bluetooth Mesh models overview
 ##############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 A Bluetooth Mesh model is a standardized component that defines a series of states and related behaviors.
 Models encapsulate a single feature of a Mesh node, and expose this feature to the mesh network.
 Each Mesh-based product implements several models.

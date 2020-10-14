@@ -3,6 +3,10 @@
 ISO-DEP protocol
 ################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This library is an NFC ISO-DEP protocol implementation for an NFC polling device.
 
 You can use the :ref:`st25r3911b_nfc_readme` library to transmit and receive frames with a tag in NFC-A technology.

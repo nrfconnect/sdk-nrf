@@ -3,6 +3,10 @@
 Testing a sample application
 ############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Follow the instructions in the testing section of the sample documentation to ensure that the application runs as expected.
 
 Information about the current state of the application is usually provided through the LEDs or through UART, or through both.

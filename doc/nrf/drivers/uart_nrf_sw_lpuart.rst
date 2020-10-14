@@ -3,6 +3,10 @@
 Low power UART driver
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The low power UART driver implements the standard asynchronous UART API that can be enabled with the :option:`CONFIG_UART_ASYNC_API` configuration option.
 
 The protocol used by this driver implements two control lines, instead of standard hardware flow control lines, to allow for disabling the UART receiver during the idle period.
@@ -15,8 +19,8 @@ You can use the protocol for duplex transmission between two devices.
 
 The control protocol uses two additional lines alongside the standard TX and RX lines:
 
-* the *Request* line (REQ),
-* the *Ready* line (RDY).
+* The *Request* line (REQ)
+* The *Ready* line (RDY)
 
 The REQ line of the first device is connected with the RDY line of the second device.
 It is configured as an output and set to low.

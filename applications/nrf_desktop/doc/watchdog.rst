@@ -3,6 +3,10 @@
 Watchdog module
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The watchdog module is responsible for controlling the watchdog timer.
 
 The watchdog timer is used to prevent hangs caused by software or hardware faults.

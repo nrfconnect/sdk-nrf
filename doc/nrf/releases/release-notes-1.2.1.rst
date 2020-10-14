@@ -3,6 +3,10 @@
 |NCS| v1.2.1 Release Notes
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 |NCS| delivers reference software and supporting libraries for developing low-power wireless applications with Nordic Semiconductor products.
 It includes the MCUboot and the Zephyr RTOS open source projects, which are continuously integrated and re-distributed with the SDK.
 

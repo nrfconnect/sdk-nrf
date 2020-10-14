@@ -3,6 +3,10 @@
 Light Lightness Control Server
 ##############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Light Lightness Control (LC) Server controls a single :ref:`bt_mesh_lightness_srv_readme` instance on the same device with a state machine.
 
 The state machine defines common behavior for a Light fixture through three states, each with its own timing parameters and light levels.

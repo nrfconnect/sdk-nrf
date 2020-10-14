@@ -3,14 +3,18 @@
 GATT Bond Management Service (BMS)
 ##################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This module implements the Bond Management Service with the corresponding set of characteristics defined in the `Bond Management Service Specification`_.
 
 You can configure the service to support your desired feature set of bond management operations.
 All the BMS features in the "LE transport only" mode are supported:
 
- * delete the bond of the requesting device,
- * delete all bonds on the Server,
- * delete all bonds on the Server except the one of the requesting device.
+ * Delete the bond of the requesting device.
+ * Delete all bonds on the Server.
+ * Delete all bonds on the Server except the one of the requesting device.
 
 You can enable each feature when initializing the module.
 

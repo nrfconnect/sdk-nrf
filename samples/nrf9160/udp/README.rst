@@ -3,6 +3,10 @@
 nRF9160: UDP
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The UDP sample demonstrates the sequential transmission of UDP packets to a predetermined server identified by an IP address and a port.
 The sample uses the :ref:`nrfxlib:bsdlib` and :ref:`lte_lc_readme` library.
 

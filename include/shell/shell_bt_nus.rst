@@ -3,6 +3,10 @@
 Nordic UART Service (NUS) shell transport
 #########################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The |BLE| GATT Nordic UART Service shell transport allows you to receive shell commands remotely over *Bluetooth*.
 It uses the :ref:`nus_service_readme`.
 
@@ -53,7 +57,7 @@ The script requires the following parameters:
 
 * ``com`` - the port of the development kit used by the script
 * ``snr`` - the SEGGER board ID
-* ``family`` - the chip family of the development kit, for example, nRF52.
+* ``family`` - the chip family of the development kit, for example, nRF52
 * ``name`` - the advertising name of the device with the NUS shell
 
 .. note::

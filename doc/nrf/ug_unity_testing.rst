@@ -3,6 +3,10 @@
 Testing with Unity and CMock
 ############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The |NCS| provides support for writing unit tests using Unity and CMock.
 `Unity`_ is a C unit test framework.
 `CMock`_ is a framework for generating mocks based on a header API.
