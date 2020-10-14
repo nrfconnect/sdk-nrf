@@ -4,15 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-source "Kconfig.zephyr"
-
 # This hidden option is intended to enable (include into compilation) all nrfx
 # drivers that are available for the SoC that is the build target.
 config NRFX_ALL_DRIVERS
 	def_bool y
 	depends on HAS_NRFX
 	select NRFX_ADC		if HAS_HW_NRF_ADC
-	select NRFX_CLOCK	if HAS_HW_NRF_CLOCK
+	select NRFX_CLOCK	if HAS_HW_NRF_CLOCK && !CLOCK_CONTROL_MPSL
 	select NRFX_COMP	if HAS_HW_NRF_COMP
 	select NRFX_DPPI	if HAS_HW_NRF_DPPIC
 	select NRFX_EGU0	if HAS_HW_NRF_EGU0
@@ -84,3 +82,18 @@ config NRFX_ALL_DRIVERS
 	select NRFX_PRS_BOX_2
 	select NRFX_PRS_BOX_3
 	select NRFX_PRS_BOX_4
+
+config NRFX_AND_BT_LL_SOFTDEVICE
+	bool "Test nrfx integration with SoftDevice BLE LL"
+	select BT
+
+config NRFX_AND_BT_LL_SW_SPLIT
+	bool "Test nrfx integration with Zephyr BLE LL"
+	select BT
+
+choice BT_LL_CHOICE
+	default BT_LL_SOFTDEVICE if NRFX_AND_BT_LL_SOFTDEVICE
+	default BT_LL_SW_SPLIT   if NRFX_AND_BT_LL_SW_SPLIT
+endchoice
+
+source "Kconfig.zephyr"
