@@ -170,7 +170,6 @@
 .. _`nRF Mesh mobile app for iOS`: https://itunes.apple.com/us/app/nrf-mesh/id1380726771?mt=8
 .. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner
 
-
 .. ### Links to other websites and software
 
 .. _`Git`: https://git-scm.com/
@@ -222,8 +221,6 @@
 .. _`TLS`: https://www.ietf.org/rfc/rfc5246.txt
 
 .. _`OpenAMP`: https://github.com/OpenAMP/open-amp/
-
-.. _`RPMsg`: https://github.com/OpenAMP/open-amp/wiki/RPMsg-Messaging-Protocol
 
 .. _`SSL Labs`: https://www.ssllabs.com/ssltest/
 
@@ -352,8 +349,6 @@
 .. _`Zigbee Alliance`: https://www.zigbeealliance.org
 
 .. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/
-
-.. _`Zigbee Cluster Library specification`: https://zigbeealliance.org/developer_resources/zigbee-cluster-library
 
 .. _`Stack commissioning start sequence`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss_api_doc/using_zigbee__z_c_l.html#stack_start_initiation
 
