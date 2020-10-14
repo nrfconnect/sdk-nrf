@@ -3,6 +3,10 @@
 Generic Power OnOff Server
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Power OnOff Server controls the power up behavior of other models on its element.
 
 The Generic Power OnOff Server adds the following model instances in the composition data:

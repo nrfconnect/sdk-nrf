@@ -3,6 +3,10 @@
 Changes in |NCS| v1.3.99
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The most relevant changes that are present on the master branch of the |NCS|, as compared to the latest release, are tracked in this file.
 Note that this file is a work in progress and might not cover all relevant changes.
 

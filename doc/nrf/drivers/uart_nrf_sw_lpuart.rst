@@ -3,6 +3,10 @@
 Low power UART driver
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The low power UART driver implements the standard *asynchronous UART API* that can be enabled with the :option:`CONFIG_UART_ASYNC_API` configuration option.
 Alternatively, you can also enable the *interrupt-driven UART API* using the :option:`CONFIG_NRF_SW_LPUART_INT_DRIVEN` configuration option.
 

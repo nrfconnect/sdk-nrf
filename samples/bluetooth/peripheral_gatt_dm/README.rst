@@ -3,6 +3,10 @@
 Bluetooth: Peripheral GATT Discovery Manager
 ############################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Peripheral GATT Discovery Manager sample demonstrates how to use the :ref:`gatt_dm_readme`.
 
 Overview

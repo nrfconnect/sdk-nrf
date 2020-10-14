@@ -3,6 +3,10 @@
 Type 2 Tag parser
 #################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The nRF Connect SDK provides functionality to read the content of an NFC tag.
 Note that an nRF5 Series IC does not provide the hardware that is required for a polling device.
 If you want to create a polling device, you can use an ST25R3911B NFC shield together with an nRF5 Development Kit.

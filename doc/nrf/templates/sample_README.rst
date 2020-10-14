@@ -3,6 +3,10 @@
 Template: Sample
 ################
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. note::
    * Give the sample a concise name that corresponds to the folder name.
      If the sample targets a specific protocol or device, add it in the title before the sample name (for example, "NFC:" or "nRF9160:").

@@ -3,6 +3,10 @@
 nRF9160: AWS FOTA
 #################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Amazon Web Services firmware over-the-air (AWS FOTA) sample shows how to perform an over-the-air firmware update of an nRF9160 device via MQTT and HTTP. It is similar to the :ref:`http_application_update_sample`, except that the firmware download is triggered through an AWS IoT job.
 
 Overview

@@ -3,6 +3,10 @@
 Button simulator module
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the |button_sim| to generate the sequence of simulated key presses.
 The time between subsequent key presses is defined as a module configuration option.
 Generating keys can be started and stopped by pressing the predefined button.

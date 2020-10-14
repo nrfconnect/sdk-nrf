@@ -3,6 +3,10 @@
 CC310 entropy driver
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 You can use the CC3xx entropy driver (entropy_cc310) to generate random data using the Arm CryptoCell CC310 hardware.
 This hardware is available on the nRF52840 and nRF9160 devices.
 

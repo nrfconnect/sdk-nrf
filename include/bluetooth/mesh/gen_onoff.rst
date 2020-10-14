@@ -3,6 +3,10 @@
 Generic OnOff models
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic OnOff models allows remote control of boolean states on a mesh device.
 
 The Generic OnOff models also feature their own common types, listed below.

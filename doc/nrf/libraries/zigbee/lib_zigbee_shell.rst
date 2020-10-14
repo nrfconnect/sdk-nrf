@@ -3,6 +3,10 @@
 Zigbee shell
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Zigbee shell library implements a set of Zigbee shell commands that allow you to control the device behavior and perform operations in the Zigbee network, such as steering the network, discovering devices, and reading the network properties.
 Enabling a device to work with these commands simplifies testing and debugging of an existing network and reduces the amount of reprogramming operations.
 

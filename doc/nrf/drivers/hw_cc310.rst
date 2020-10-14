@@ -3,6 +3,10 @@
 CC310 hardware driver
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The CC310 hardware driver (hw_cc310) ensures correct initialization of the :ref:`nrf_cc3xx_platform_readme`.
 
 It initializes the following elements of the library:

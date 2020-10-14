@@ -3,6 +3,10 @@
 Thread: NCP
 ###########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Thread NCP sample demonstrates the usage of OpenThread Network Co-Processor architecture inside the Zephyr environment.
 
 The sample is based on Zephyr's :ref:`zephyr:ncp-sample` sample.

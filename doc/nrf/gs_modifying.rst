@@ -3,6 +3,10 @@
 Modifying a sample application
 ##############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 After programming and testing a sample application, you probably want to make some modifications to the application, for example, add your own files with additional functionality, change compilation options, or update the default configuration.
 
 

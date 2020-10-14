@@ -3,6 +3,10 @@
 Board module
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The board module is used to ensure the proper state of GPIO pins that are not configured by other modules in the application.
 Ensuring the proper state is done by setting the state of the mentioned pins on the system start and wake-up, and when the system enters the low-power mode.
 

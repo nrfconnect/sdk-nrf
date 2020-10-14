@@ -3,6 +3,10 @@
 LwM2M carrier
 #############
 
+.. contents::
+   :local:
+   :depth: 2
+
 You can use the LwM2M carrier library in your nRF91 application in order to connect to the LwM2M operator network.
 Integrating this library into an application causes the device to connect to the operator's device management platform autonomously.
 Two examples of such device management platforms are `Verizon's Thingspace`_ and `AT&T's IoT Platform`_.

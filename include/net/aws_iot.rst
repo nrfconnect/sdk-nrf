@@ -3,6 +3,10 @@
 AWS IoT
 #######
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Amazon Web Services Internet-of-Things (AWS IoT) library enables applications to connect to, and exchange messages with the AWS IoT message broker.
 The library supports the following technologies:
 

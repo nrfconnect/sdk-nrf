@@ -3,6 +3,10 @@
 nRF9160: nRF CoAP Client
 ########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The nRF CoAP Client sample demonstrates the communication between a public CoAP server and an nRF9160 SiP that acts as the CoAP client.
 
 Overview

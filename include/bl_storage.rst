@@ -3,6 +3,10 @@
 Bootloader storage
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The bootloader storage library is used by the :ref:`bootloader` to read from and write to a protected data area that contains the provisioned bootloader data.
 The library can also be included into the application to allow reading the provisioned data.
 

@@ -3,6 +3,10 @@
 Azure FOTA
 ##########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Azure firmware over-the-air (Azure FOTA) library provides a way to parse `Azure IoT Hub device twin messages`_ to obtain firmware upgrade information and perform FOTA downloads.
 This library is used by the :ref:`azure_fota_sample` sample.
 

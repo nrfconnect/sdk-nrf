@@ -3,6 +3,10 @@
 nRF9160: GPS sockets and SUPL client library
 ############################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The GPS sample demonstrates how to retrieve `GPS`_ data.
 If Secure User-Plane Location (SUPL) support is enabled, it also shows how to improve the GPS fix accuracy and fix speed with `A-GPS`_ data from a SUPL server.
 See :ref:`supl_client` for information on enabling SUPL support for the sample.

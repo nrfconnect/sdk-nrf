@@ -3,6 +3,10 @@
 HID state module
 ################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The |hid_state| is required for generating reports from input data.
 It is responsible for the following operations:
 

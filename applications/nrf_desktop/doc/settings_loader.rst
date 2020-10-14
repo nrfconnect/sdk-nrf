@@ -3,6 +3,10 @@
 Settings loader module
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the settings loader module to trigger loading the data from non-volatile memory.
 
 Module events

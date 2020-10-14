@@ -3,6 +3,10 @@
 Bluetooth Mesh Properties
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Bluetooth SIG defines a list of Bluetooth Mesh properties in the Mesh Device Properties Specification.
 Each property has an assigned ID and an associated Bluetooth GATT characteristic.
 The properties all represent values on a format defined by the associated characteristic.

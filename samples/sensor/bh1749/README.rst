@@ -3,6 +3,10 @@
 BH1749: Ambient Light Sensor IC
 #####################################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This sample application sets up the BH1749 color sensor to provide 8-bit
 measurement data every time a set threshold value (>50) is reached for the
 RED color channel.

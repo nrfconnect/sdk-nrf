@@ -3,6 +3,10 @@
 Multiprotocol support for Thread and Zigbee
 ###########################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The :ref:`Thread <ug_thread>` and :ref:`Zigbee <ug_zigbee>` protocols support running another protocol in parallel.
 
 This is achieved with the :ref:`Multi-Protocol Service Layer (MPSL) <nrfxlib:mpsl>` library, which provides services for multiprotocol applications and allows the 802.15.4 radio driver to negotiate for transmission timeslots with the radio controller.

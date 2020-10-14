@@ -3,6 +3,10 @@
 nRF9160: AT Client
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The AT Client sample demonstrates the asynchronous serial communication taking place over UART to the nRF9160 modem.
 The sample enables you to use an external computer or MCU to send AT commands to the LTE-M/NB-IoT modem of your nRF9160 device.
 

@@ -3,6 +3,10 @@
 China Telecom ZZHC library
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The China Telecom ZZHC library implements the self-registration (Zi-ZHu-Ce, ZZHC) functionality that registers the module information on the server when the network is available.
 
 Overview

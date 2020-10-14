@@ -3,6 +3,10 @@
 Application integration
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The LwM2M carrier library has an OS abstraction layer.
 See :file:`lwm2m_os.h`.
 This abstraction layer makes the LwM2M carrier library independent of the |NCS| modules and underlying implementation of primitives such as timers, non-volatile storage, and heap allocation.

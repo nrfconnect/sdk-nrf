@@ -3,6 +3,10 @@
 Bluetooth LE advertising module
 ###############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the |ble_adv| to control the Bluetooth LE advertising for the nRF Desktop peripheral device.
 
 Module events

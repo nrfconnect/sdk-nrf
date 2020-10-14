@@ -3,6 +3,10 @@
 Generic Power Level Client
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Power Level Client model remotely controls the state of a Generic Power Level Server model.
 
 Contrary to the Server model, the Client only creates a single model instance in the mesh composition data.

@@ -3,6 +3,10 @@
 Generic Power OnOff Client
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Power OnOff Client model remotely controls the state of a :ref:`bt_mesh_ponoff_srv_readme` model.
 
 Unlike the Generic Power OnOff Server, the Generic Power OnOff Client only adds one model instance to the composition data.

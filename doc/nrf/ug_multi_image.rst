@@ -3,6 +3,10 @@
 Multi-image builds
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 In many cases, the firmware that is programmed to a device consists of not only one application, but several separate images, where one of the images (the *parent image*) requires one or more other images (the *child images*) to be present.
 The child image then *chain-loads* (or *boots*) the parent image, which in turn might be a child image to another parent image and boot that one.
 The most common use cases for builds consisting of multiple images are applications that require a bootloader to be present, or applications for multi-core CPUs.

@@ -3,9 +3,11 @@
 FTP AT Commands
 ***************
 
-The following commands list contains FTP related AT commands:
+.. contents::
+   :local:
+   :depth: 2
 
-* `FTP client #XFTP`_
+The following commands list contains FTP related AT commands.
 
 FTP client #XFTP
 ================

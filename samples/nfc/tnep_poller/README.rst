@@ -3,6 +3,10 @@
 NFC: TNEP poller
 ################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The NFC TNEP poller sample demonstrates how to use the :ref:`tnep_poller_readme` library to exchange data using an NFC polling device.
 
 Overview

@@ -3,6 +3,10 @@
 Text records
 ############
 
+.. contents::
+   :local:
+   :depth: 2
+
 Text records contain descriptive text and can be added to any type of message.
 This kind of record can be used in a message together with other records to provide extra information.
 The Text Records module provides functions for creating and encoding text records.

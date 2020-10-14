@@ -3,6 +3,10 @@
 nRF9160: Azure FOTA
 ###################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Azure firmware over-the-air (Azure FOTA) sample demonstrates how to perform an over-the-air firmware update of an nRF9160-based device using the :ref:`lib_azure_fota` and :ref:`lib_azure_iot_hub` libraries of |NCS|.
 
 Requirements

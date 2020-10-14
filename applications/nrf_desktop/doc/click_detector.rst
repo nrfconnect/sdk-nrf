@@ -3,6 +3,10 @@
 Click detector module
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The |click_detector| is used to send a ``click_event`` when a known type of click is recorded for the button defined in the module configuration.
 
 Click type

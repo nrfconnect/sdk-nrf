@@ -3,6 +3,10 @@
 nRF9160: Simple MQTT
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Simple MQTT sample demonstrates how to easily connect an nRF9160 SiP to an MQTT broker and send and receive data.
 
 Requirements

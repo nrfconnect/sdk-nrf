@@ -3,6 +3,10 @@
 Passkey module
 ##############
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the passkey module to handle numeric passkey input.
 The input handling is based on button presses.
 

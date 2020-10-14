@@ -3,6 +3,10 @@
 Working with nRF9160
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The |NCS| provides support for developing on the nRF9160 System in Package (SiP) using the nRF9160 DK (PCA10090), and :ref:`offers samples <nrf9160_ug_drivs_libs_samples>` dedicated to this device.
 
 .. _nrf9160_ug_intro:

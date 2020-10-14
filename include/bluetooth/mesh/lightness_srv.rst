@@ -3,6 +3,10 @@
 Light Lightness Server
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Light Lightness Server represents a single light on a mesh device.
 It should be instantiated in the light fixture node.
 

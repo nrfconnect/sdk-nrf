@@ -3,12 +3,11 @@
 MQTT AT Commands
 ****************
 
-The following commands list contains the AT commands used to operate the MQTT client:
+.. contents::
+   :local:
+   :depth: 2
 
-* `MQTT connect #XMQTTCON`_
-* `MQTT subscribe #XMQTTSUB`_
-* `MQTT unsubscribe #XMQTTUNSUB`_
-* `MQTT publish #XMQTTPUB`_
+The following commands list contains the AT commands used to operate the MQTT client.
 
 MQTT connect #XMQTTCON
 ======================

@@ -3,6 +3,10 @@
 SMS subscriber
 ##############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The current modem firmware allows only one SMS client.
 The SMS subscriber module acts as a unique and global client in the system that can dispatch SMS notifications to many subscribers, which makes it possible for more than one module to receive SMS messages.
 

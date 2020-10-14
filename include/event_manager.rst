@@ -3,6 +3,10 @@
 Event Manager
 #############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Event Manager provides the infrastructure for implementing applications in an event-driven architecture.
 Instead of using direct function calls between modules, the modules can communicate and transfer data using events, which reduces the number of direct dependencies between modules.
 

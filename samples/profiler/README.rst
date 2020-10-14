@@ -3,6 +3,10 @@
 Profiler
 ########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Profiler sample demonstrates the functionality of the :ref:`profiler` subsystem.
 It shows how to use the Profiler to log and visualize data about custom events that are not part of the :ref:`event_manager`.
 

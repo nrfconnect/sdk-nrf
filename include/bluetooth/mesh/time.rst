@@ -3,6 +3,10 @@
 Time models
 ###########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Time models allow network-wide time and date synchronization with a granularity of 3.9 ms (1/256th second), and provide services for converting timestamps to and from time zone adjusted UTC time (Coordinated Universal Time).
 The time is measured based on the International Atomic Time (TAI).
 

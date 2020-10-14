@@ -5,6 +5,10 @@
 Working with Thingy:91
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Nordic Thingy:91 is a battery-operated prototyping platform for cellular IoT systems, designed especially for asset tracking applications and environmental monitoring.
 
 Thingy:91 integrates the following components:

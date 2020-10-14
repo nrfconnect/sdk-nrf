@@ -3,6 +3,10 @@
 Bluetooth: Throughput
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Bluetooth Throughput sample uses the :ref:`throughput_readme` to measure *Bluetooth* Low Energy throughput performance.
 You can use it to determine the maximum throughput, or to experiment with different connection parameters and check their influence on the throughput.
 

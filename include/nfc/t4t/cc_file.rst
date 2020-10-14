@@ -3,6 +3,10 @@
 Parser for CC files
 ###################
 
+.. contents::
+   :local:
+   :depth: 2
+
 To detect and access :ref:`NDEF <ug_nfc_ndef_format>` data, the NFC reader uses the capability container (CC) file that is contained inside the NDEF tag application.
 The CC file is a read-only file that contains management data for the Type 4 Tag platform, for example, information about the implemented specification and other capability parameters of the tag.
 The file identifier of the CC file is E103h.

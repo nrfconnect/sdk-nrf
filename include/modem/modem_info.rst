@@ -3,6 +3,10 @@
 Modem information
 #################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The modem information library can be used by an LTE application to obtain specific data from a modem.
 It issues AT commands to retrieve the following data:
 

@@ -3,6 +3,10 @@
 nRF9160: HTTPS Client
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The HTTPS Client sample demonstrates a minimal implementation of HTTP communication.
 It shows how to set up a TLS session towards an HTTPS server and how to send an HTTP request.
 

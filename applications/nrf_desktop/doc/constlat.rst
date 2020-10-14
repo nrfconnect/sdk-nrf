@@ -3,6 +3,10 @@
 Constant latency hotfix module
 ##############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Enable the constant latency hotfix module to use a device configuration with constant latency interrupts.
 This reduces the interrupt propagation time, but increases the power consumption.
 

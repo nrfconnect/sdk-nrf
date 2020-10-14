@@ -3,6 +3,10 @@
 Zigbee: Light bulb
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This Zigbee light bulb sample demonstrates a simple light bulb whose brightness can be regulated by another device.
 
 You can use this sample with the :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` and the :ref:`Zigbee light switch <zigbee_light_switch_sample>` to set up a basic Zigbee network.

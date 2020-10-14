@@ -5,6 +5,10 @@
 Documentation |sg|
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The |NCS| documentation is written in two formats:
 
 * doxygen for API documentation

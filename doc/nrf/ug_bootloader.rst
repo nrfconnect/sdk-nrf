@@ -3,6 +3,10 @@
 Secure bootloader chain
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The |NCS| provides a secure bootloader solution based on the chain of trust concept.
 
 By using this bootloader chain, you can easily ensure that all code that is executed is authorized and your application is protected against running altered code.

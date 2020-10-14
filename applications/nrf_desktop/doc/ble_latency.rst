@@ -3,6 +3,10 @@
 Bluetooth LE latency module
 ###########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the |ble_latency| to:
 
 * Lower the Bluetooth LE connection latency either when :ref:`nrf_desktop_config_channel` is in use or when a firmware update is received by the :ref:`nrf_desktop_smp` (low latency ensures quick data exchange).

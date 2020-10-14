@@ -3,6 +3,10 @@
 Generic Property Client
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Generic Property Client model can access properties from a :ref:`Property Server <bt_mesh_prop_srv_readme>` remotely.
 The Property Client can talk directly to all types of Property Servers, but only if it shares an application key with the target server.
 

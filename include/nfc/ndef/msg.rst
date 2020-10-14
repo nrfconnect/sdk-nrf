@@ -3,6 +3,10 @@
 Messages and records
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the :ref:`nfc_ndef_msg` and :ref:`nfc_ndef_record` modules to create standardized messages and records that are not covered by other modules, or to create your own custom messages.
 
 To generate an NDEF message, start by creating the records that make up the message.

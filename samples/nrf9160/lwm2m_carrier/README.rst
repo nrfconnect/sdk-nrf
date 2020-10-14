@@ -3,6 +3,10 @@
 nRF9160: LwM2M carrier
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The LwM2M carrier sample demonstrates how to run the :ref:`liblwm2m_carrier_readme` library in an application in order to connect to the operator LwM2M network.
 
 Requirements

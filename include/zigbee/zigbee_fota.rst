@@ -3,6 +3,10 @@
 Zigbee FOTA
 ###########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Zigbee firmware over-the-air (Zigbee FOTA) library provides Zigbee endpoint definition, which implements clusters responsible for transferring a firmware file through the Zigbee network.
 The received data is passed as an upgrade candidate through the :ref:`lib_dfu_target` library API.
 

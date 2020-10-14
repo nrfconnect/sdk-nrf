@@ -3,6 +3,10 @@
 Bootloader crypto
 #################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The bootloader crypto library is the cryptography library that is used by the :ref:`bootloader`.
 
 The API is public because applications that are booted by the immutable bootloader can call functions from this library via the bootloader's code, through external APIs.

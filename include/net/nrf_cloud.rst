@@ -3,6 +3,10 @@
 nRF Cloud
 #########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The nRF Cloud library enables applications to connect to Nordic Semiconductor's `nRF Cloud`_.
 It abstracts and hides the details of the transport and the encoding scheme that is used for the payload and provides a simplified API interface for sending data from supported sensor types to the cloud.
 The current implementation supports the following technology:

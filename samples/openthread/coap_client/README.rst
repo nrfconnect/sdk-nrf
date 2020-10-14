@@ -3,6 +3,10 @@
 Thread: CoAP Client
 ###################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Thread CoAP Client sample demonstrates controlling light resources of other nodes within an OpenThread network.
 To show this interaction, the sample requires a server sample that is compatible with the OpenThread network and has a light resource available.
 The recommended server sample referenced on this page is :ref:`coap_server_sample`.

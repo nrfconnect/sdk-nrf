@@ -3,11 +3,11 @@
 HTTP client AT Commands
 ***********************
 
-The following commands list contains the HTTP client AT commands:
+.. contents::
+   :local:
+   :depth: 2
 
-* `HTTP client connection #XHTTPCCON`_
-* `HTTP request #XHTTPCREQ`_
-* `HTTP response #XHTTPCRSP`_
+The following commands list contains the HTTP client AT commands.
 
 HTTP client connection #XHTTPCCON
 =================================

@@ -3,6 +3,10 @@
 GATT Human Interface Device (HID) Service Client
 ################################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The HID Service Client module can be used to interact with a connected HID server.
 The server can, for example, be an instance of the :ref:`hids_readme`.
 

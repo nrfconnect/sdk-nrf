@@ -3,6 +3,10 @@
 HID forward module
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the |hid_forward| to:
 
 * Receive the HID input reports from the peripherals connected over Bluetooth.

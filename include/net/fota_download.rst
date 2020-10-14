@@ -3,6 +3,10 @@
 FOTA download
 #############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The firmware over-the-air (FOTA) download library provides functions for downloading a firmware file as an upgrade candidate to the DFU target that is used in the :ref:`lib_dfu_target` library.
 
 To start a FOTA download, you must provide the URL for the file that should be downloaded.

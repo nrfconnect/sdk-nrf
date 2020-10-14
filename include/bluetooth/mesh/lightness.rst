@@ -3,6 +3,10 @@
 Light Lightness models
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Light Lightness models allow remote control and configuration of dimmable lights on a mesh device.
 
 The Light Lightness models can represent light in the following ways:

@@ -3,6 +3,10 @@
 GATT Latency Client
 ###################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Latency Client can be used to interact with a connected peer that is running the Latency service with the :ref:`latency_readme`.
 It writes data to the Latency characteristic and wait for a response to count the time spend of a GATT Write operation.
 

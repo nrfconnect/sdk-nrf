@@ -3,6 +3,10 @@
 GATT Battery Service module
 ###########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Use the GATT Battery Service module to enable and define the GATT Battery Service, and notify the subscribers about the battery level changes.
 
 Module events

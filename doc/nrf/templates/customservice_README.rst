@@ -3,6 +3,10 @@
 Custom service template
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The XYZ Service is a custom service that does something.
 
 .. tip::

@@ -3,6 +3,10 @@
 nRF9160: Asset Tracker
 ######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based board to the `nRF Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the device.
 
 
