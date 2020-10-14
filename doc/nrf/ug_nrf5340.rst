@@ -100,7 +100,7 @@ Network samples
 The nRF5340 network core supports samples that directly use the radio peripheral, for example, :ref:`radio_test`.
 
 For Bluetooth Low Energy, the |NCS| provides the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample.
-This Zephyr sample is designed specifically to enable the Bluetooth LE Controller functionality on a remote MCU (for example, the nRF5340 network core) using the `RPMsg`_ protocol as a transport for Bluetooth HCI.
+This Zephyr sample is designed specifically to enable the Bluetooth LE Controller functionality on a remote MCU (for example, the nRF5340 network core) using the `RPMsg Messaging Protocol`_ as a transport for Bluetooth HCI.
 The sample implements the RPMsg transport using the `OpenAMP`_ library to communicate with a Bluetooth Host stack that runs on a separate core (for example, the nRF5340 application core).
 
 This sample must be programmed to the network core to run standard Bluetooth Low Energy samples on nRF5340.
