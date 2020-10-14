@@ -186,10 +186,10 @@ enum dtm_reset_code {
 /* DTM Test Setup upper bits code. */
 enum dtm_set_upper_bits_code {
 	/* Set upper bits. Minimum parameter value. */
-	LE_SET_UPER_BITS_MIN_RANGE = 0x00,
+	LE_SET_UPPER_BITS_MIN_RANGE = 0x00,
 
 	/* Set upper bits. Maximum parameter value. */
-	LE_SET_UPER_BITS_MAX_RANGE = 0x0F
+	LE_SET_UPPER_BITS_MAX_RANGE = 0x0F
 };
 
 /* DTM Test Setup modulation code. */
