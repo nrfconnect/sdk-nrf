@@ -387,7 +387,7 @@ This is demonstrated by the following code:
      projects:
        - name: nrf
          remote: ncs
-         revision: v1.3.2
+         revision: v1.4.0
          import: true
      self:
        path: application
@@ -414,7 +414,7 @@ For example:
      projects:
        - name: nrf
          remote: ncs
-         revision: v1.3.2
+         revision: v1.4.0
          import: true
        # Example for how to override a repository in the NCS with your own:
        - name: mcuboot
