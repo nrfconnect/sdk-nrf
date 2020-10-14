@@ -1,6 +1,6 @@
 .. _SLM_AT_FTP:
 
-FTP AT Commands
+FTP AT commands
 ***************
 
 .. contents::
