@@ -12,6 +12,7 @@ Known issues
 
    <select name="versions" id="versions-select">
      <option value="all" selected>All versions</option>
+     <option value="v1-4-0">v1.4.0</option>
      <option value="v1-3-1">v1.3.1</option>
      <option value="v1-3-0">v1.3.0</option>
      <option value="v1-2-1">v1.2.1</option>
@@ -181,6 +182,17 @@ ZBOSS alarms inaccurate
   On average, ZBOSS alarms last longer by 6.4 percent than Zephyr alarms.
 
   **Workaround:** Use Zephyr alarms.
+
+nRF Desktop
+===========
+
+.. rst-class:: v1-3-0 v1-3-1 v1-4-0
+
+DESK-978: Directed advertising issues with SoftDevice Link Layer
+  Directed advertising (:option:`CONFIG_DESKTOP_BLE_DIRECT_ADV`) should not be used by the :ref:`nrf_desktop` application when the :ref:`nrfxlib:softdevice_controller` is in use, because that leads to reconnection problems.
+  For more detailed information, see the ``Known issues and limitations`` section of the SoftDevice Controller's :ref:`nrfxlib:softdevice_controller_changelog`.
+
+  **Workaround:** Directed advertising is disabled by default for nRF Desktop.
 
 Subsystems
 **********
