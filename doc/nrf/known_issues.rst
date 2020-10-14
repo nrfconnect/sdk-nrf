@@ -1,4 +1,6 @@
-﻿.. _known_issues:
+:orphan:
+
+.. _known_issues:
 
 Known issues
 ############
