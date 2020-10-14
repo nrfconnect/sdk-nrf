@@ -13,21 +13,6 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_fsm, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
-/**@brief Identifier for cloud state request.
- * Can be any unique unsigned 16-bit integer value except zero.
- */
-#define CLOUD_STATE_REQ_ID 5678
-
-/**@brief Identifier for message sent to report status in UA_COMPLETE state.
- * Can be any unique unsigned 16-bit integer value except zero.
- */
-#define PAIRING_STATUS_REPORT_ID 7890
-
-/**@brief Default message identifier.
- * Can be any unique unsigned 16-bit integer value except zero.
- */
-#define DEFAULT_REPORT_ID 1
-
 typedef int (*fsm_transition)(const struct nct_evt *nct_evt);
 
 static int drop_event_handler(const struct nct_evt *nct_evt);
