@@ -180,6 +180,10 @@ config SPM_NRF_FPU_NS
 	bool "FPU is Non-Secure"
 	default y
 
+config SPM_NRF_TWIM1_NS
+	bool "TWIM1 is Non-Secure"
+	default y
+
 config SPM_NRF_TWIM2_NS
 	bool "TWIM2 is Non-Secure"
 	default y
