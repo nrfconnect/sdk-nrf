@@ -1,6 +1,6 @@
 .. _SLM_AT_MQTT:
 
-MQTT AT Commands
+MQTT AT commands
 ****************
 
 .. contents::

@@ -1,6 +1,6 @@
 .. _SLM_AT_ICMP:
 
-ICMP AT Commands
+ICMP AT commands
 ****************
 
 .. contents::

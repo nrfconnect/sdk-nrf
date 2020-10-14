@@ -1,6 +1,6 @@
 .. _SLM_AT_GPS:
 
-GPS AT Commands
+GPS AT commands
 ***************
 
 .. contents::

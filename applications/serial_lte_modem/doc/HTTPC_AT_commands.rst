@@ -1,6 +1,6 @@
 .. _SLM_AT_HTTPC:
 
-HTTP client AT Commands
+HTTP client AT commands
 ***********************
 
 .. contents::

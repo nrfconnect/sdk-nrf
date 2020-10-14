@@ -1,6 +1,6 @@
 .. _SLM_AT_TCP_UDP:
 
-TCP and UDP AT Commands
+TCP and UDP AT commands
 ***********************
 
 .. contents::

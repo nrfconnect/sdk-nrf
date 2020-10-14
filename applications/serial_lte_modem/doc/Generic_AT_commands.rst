@@ -1,6 +1,6 @@
 .. _SLM_AT_gen:
 
-Generic AT Commands
+Generic AT commands
 *******************
 
 .. contents::
