@@ -51,6 +51,7 @@ struct gps_drv_data {
 	atomic_t is_init;
 	atomic_t is_active;
 	atomic_t is_shutdown;
+	atomic_t timeout_occurred;
 	int socket;
 	K_THREAD_STACK_MEMBER(thread_stack,
 			      CONFIG_NRF9160_GPS_THREAD_STACK_SIZE);
@@ -261,6 +262,7 @@ static void gps_thread(int dev_ptr)
 wait:
 	k_sem_take(&drv_data->thread_run_sem, K_FOREVER);
 
+	evt.type = GPS_EVT_SEARCH_STARTED;
 	notify_event(dev, &evt);
 
 	while (true) {
@@ -275,12 +277,12 @@ wait:
 		if (!has_fix) {
 			/** If nrf_recv() blocks for more than one second, a fix
 			 *  has been obtained or the GPS has timed out. Submit
-			 *  a delayed timeout work every two seconds to make
+			 *  a delayed timeout work every five seconds to make
 			 *  sure the appropriate event is propagated upon
 			 *  a block.
 			 */
 			k_delayed_work_submit(&drv_data->timeout_work,
-					      K_SECONDS(2));
+					      K_SECONDS(5));
 		}
 
 		len = nrf_recv(drv_data->socket, &raw_gps_data,
@@ -321,6 +323,14 @@ wait:
 
 		switch (raw_gps_data.data_id) {
 		case NRF_GNSS_PVT_DATA_ID:
+			if (atomic_get(&drv_data->timeout_occurred) ||
+			    ((drv_data->current_cfg.nav_mode != GPS_NAV_MODE_CONTINUOUS) &&
+			    has_fix)) {
+				atomic_set(&drv_data->timeout_occurred, 0);
+				evt.type = GPS_EVT_SEARCH_STARTED;
+				notify_event(dev, &evt);
+			}
+
 			has_fix = false;
 
 			if (has_no_time_window(&raw_gps_data.pvt) ||
@@ -685,6 +695,7 @@ set_configuration:
 	}
 
 	atomic_set(&drv_data->is_active, 1);
+	atomic_set(&drv_data->timeout_occurred, 0);
 	k_sem_give(&drv_data->thread_run_sem);
 
 	LOG_DBG("GPS operational");
@@ -700,6 +711,7 @@ static int setup(const struct device *dev)
 	drv_data->dev = dev;
 
 	atomic_set(&drv_data->is_active, 0);
+	atomic_set(&drv_data->timeout_occurred, 0);
 
 	return 0;
 }
@@ -815,7 +827,7 @@ static void timeout_work_fn(struct k_work *work)
 	struct gps_event evt = {
 		.type = GPS_EVT_SEARCH_TIMEOUT
 	};
-
+	atomic_set(&drv_data->timeout_occurred, 1);
 	notify_event(dev, &evt);
 }
 
