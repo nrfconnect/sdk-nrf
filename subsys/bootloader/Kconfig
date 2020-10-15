@@ -209,6 +209,15 @@ config SB_BPROT_IN_DEBUG
 endif # SECURE_BOOT_DEBUG
 endif # IS_SECURE_BOOTLOADER
 
+config NRF53_UPGRADE_NETWORK_CORE
+	bool "Support updating nRF53 Network Core application"
+	default y
+	depends on SOC_NRF5340_CPUAPP
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  Enables support for updating the application on the nRF53 Network
+	  core.
+
 rsource "bl_crypto/Kconfig"
 rsource "bl_validation/Kconfig"
 rsource "bl_storage/Kconfig"

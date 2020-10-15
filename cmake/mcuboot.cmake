@@ -186,8 +186,8 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
     )
 
-  if (CONFIG_BT_RPMSG_NRF53 AND CONFIG_HCI_RPMSG_BUILD_STRATEGY_FROM_SOURCE
-      AND CONFIG_SOC_NRF5340_CPUAPP)
+  if (CONFIG_NRF53_UPGRADE_NETWORK_CORE
+      AND CONFIG_HCI_RPMSG_BUILD_STRATEGY_FROM_SOURCE)
     # Network core application updates are enabled.
     # We know this since MCUBoot is enabled on the application core, and
     # a network core child image is included in the build.
