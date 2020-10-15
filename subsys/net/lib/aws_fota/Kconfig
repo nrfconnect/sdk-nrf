@@ -25,7 +25,7 @@ config AWS_FOTA_FILE_PATH_MAX_LEN
 
 config AWS_FOTA_DOWNLOAD_SECURITY_TAG
 	int "Security tag to be used for downloads"
-	default 42
+	default -1
 
 
 module=AWS_FOTA
