@@ -13,6 +13,7 @@
 #include <modem/bsdlib.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/fota_download.h>
+#include <dfu/dfu_target.h>
 #include <dfu/mcuboot.h>
 
 #define LED_PORT	DT_GPIO_LABEL(DT_ALIAS(led0), gpios)
@@ -239,6 +240,18 @@ static int application_init(void)
 	return 0;
 }
 
+void erase_modem_update_bank(void)
+{
+	int err = dfu_target_init(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA, 0, NULL);
+
+	if (err != 0) {
+		printk("Unable to clear modem update bank\n\r");
+	}
+
+	err = dfu_target_done(false);
+	__ASSERT(err == 0, "Unable to deinitialize dfu_target.");
+}
+
 void main(void)
 {
 	int err;
@@ -278,6 +291,13 @@ void main(void)
 	}
 	printk("Initialized bsdlib\n");
 
+#if CONFIG_DFU_TARGET_MODEM
+	/* The modem bank should be clean so that the device is ready to recive
+	 * an update. If not it may halt when trying to erase the modem firmware
+	 * while downloading.
+	 */
+	erase_modem_update_bank();
+#endif
 	modem_configure();
 
 	boot_write_img_confirmed();

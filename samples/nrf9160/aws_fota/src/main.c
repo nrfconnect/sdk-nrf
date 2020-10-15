@@ -15,6 +15,7 @@
 #include <modem/bsdlib.h>
 #include <net/aws_jobs.h>
 #include <net/aws_fota.h>
+#include <dfu/dfu_target.h>
 #include <dfu/mcuboot.h>
 #include <power/reboot.h>
 #include <random/rand32.h>
@@ -520,6 +521,18 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 	}
 }
 
+void erase_modem_update_bank(void)
+{
+	int err = dfu_target_init(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA, 0, NULL);
+
+	if (err != 0) {
+		printk("Unable to clear modem update bank\n\r");
+	}
+
+	err = dfu_target_done(false);
+	__ASSERT(err == 0, "Unable to deinitialize dfu_target.");
+}
+
 void main(void)
 {
 	int err;
@@ -559,6 +572,14 @@ void main(void)
 #if defined(CONFIG_PROVISION_CERTIFICATES)
 	provision_certificates();
 #endif /* CONFIG_PROVISION_CERTIFICATES */
+
+#if CONFIG_DFU_TARGET_MODEM
+	/* The modem bank should be clean so that the device is ready to recive
+	 * an update. If not it may halt when trying to erase the modem firmware
+	 * while downloading.
+	 */
+	erase_modem_update_bank();
+#endif
 	printk("LTE Link Connecting ...\n");
 	err = lte_lc_init_and_connect();
 	__ASSERT(err == 0, "LTE link could not be established.");
