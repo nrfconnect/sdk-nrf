@@ -1,6 +1,6 @@
 .. _nc_bootloader:
 
-nRF5340 network core bootloader
+nRF5340: Network core bootloader
 ################################
 
 This bootloader sample implements an immutable first stage bootloader that has the capability to update the application firmware on the network core of the nRF5340 System on Chip (SoC).
