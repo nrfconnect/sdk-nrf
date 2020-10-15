@@ -382,7 +382,7 @@ Use this functionality for example for :ref:`certification <ug_thread_cert>` of 
 Updating libraries without debug symbols
 ----------------------------------------
 
-You can install the release version of the latest nrfxlib libraries without the debug symbols to save a lot of memory space.
+You can install the release version of the latest nrfxlib libraries without the debug symbols.
 This is handled with the :option:`CONFIG_OPENTHREAD_BUILD_OUTPUT_STRIPPED` Kconfig option.
 This option is disabled by default.
 
@@ -401,7 +401,7 @@ Updating libraries to debug version
 -----------------------------------
 
 You can also install only the debug version of the current OpenThread libraries (from Zephyr).
-This can be useful when debugging, but will take a significant amount of memory space.
+This can be useful when debugging, but will take a significant amount of memory of the PC storage - it should be taken into account if one intends to commit those libraries to the repository.
 
 To update the nrfxlib libraries with debug symbols, run the following command:
 
