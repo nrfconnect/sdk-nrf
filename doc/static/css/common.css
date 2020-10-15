@@ -226,7 +226,7 @@ div.numbered-step>h6::before {
     border: 1px solid #ddd;
     background-color: #fafafa;
     padding: 10px 10px 0px 0px;
-    margin: 5px;
+    margin: 0px 0px 25px 25px;
     max-width: 30%;
 }
 
