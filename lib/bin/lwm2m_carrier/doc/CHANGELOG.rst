@@ -9,6 +9,31 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.10.0
+***********************
+
+Snapshot release for modem firmware version 1.2.2 and the upcoming version 1.1.4, and |NCS| 1.4.0.
+
+This release is intended to let users begin integration towards the AT&T and Verizon device management platforms.
+Modem firmware version 1.1.4 must be used for Verizon, and the modem firmware version 1.2.2 must be used for AT&T.
+
+The snapshot can be used for development and testing only.
+It is not ready for certification.
+
+Certification status
+====================
+
+The library is not certified with any carrier.
+
+Changes
+=======
+
+* Reduced the required amount of stack and heap allocated by the library.
+* Reduced the power consumption of the library.
+* Renamed the event :c:macro:`LWM2M_CARRIER_EVENT_READY` to :c:macro:`LWM2M_CARRIER_EVENT_REGISTERED`.
+* Introduced a new event :c:macro:`LWM2M_CARRIER_EVENT_LTE_READY`, to indicate that the LTE link can be used by the application.
+* The Modem DFU socket can now be used by the application when it is not needed by the library.
+
 liblwm2m_carrier 0.9.1
 **********************
 

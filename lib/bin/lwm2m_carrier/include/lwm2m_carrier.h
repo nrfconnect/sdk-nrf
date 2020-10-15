@@ -33,13 +33,15 @@ extern "C"
 /** LWM2M carrier bootstrapped. */
 #define LWM2M_CARRIER_EVENT_BOOTSTRAPPED  6
 /** LWM2M carrier registered. */
-#define LWM2M_CARRIER_EVENT_READY         7
+#define LWM2M_CARRIER_EVENT_REGISTERED    7
 /** LWM2M carrier operation is deferred. */
 #define LWM2M_CARRIER_EVENT_DEFERRED      8
 /** Modem update started. */
 #define LWM2M_CARRIER_EVENT_FOTA_START    9
 /** Application will reboot. */
 #define LWM2M_CARRIER_EVENT_REBOOT        10
+/**< LTE network is ready to be used. */
+#define LWM2M_CARRIER_EVENT_LTE_READY     11
 /** An error occurred. */
 #define LWM2M_CARRIER_EVENT_ERROR         20
 
@@ -180,7 +182,7 @@ typedef struct {
 	/** Optional custom APN, null-terminated string. */
 	const char *apn;
 	/** Connect to certification servers if true,
-	 *  connect to production servers otherwise
+	 *  connect to production servers otherwise.
 	 */
 	bool certification_mode;
 } lwm2m_carrier_config_t;
@@ -194,6 +196,10 @@ typedef struct {
  *       parameters. The application has to make sure that the provided
  *       parameters are valid throughout the application lifetime
  *       (i. e. placed in static memory or in flash).
+ *
+ * @note The first time this function is called after a modem firmware update,
+ *       (FOTA) it may take several seconds to return in order to complete
+ *       the procedure.
  *
  * @return 0 on success, negative error code on error.
  */

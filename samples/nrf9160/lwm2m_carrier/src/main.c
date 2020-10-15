@@ -95,8 +95,11 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
 		printk("LWM2M_CARRIER_EVENT_BOOTSTRAPPED\n");
 		break;
-	case LWM2M_CARRIER_EVENT_READY:
-		printk("LWM2M_CARRIER_EVENT_READY\n");
+	case LWM2M_CARRIER_EVENT_LTE_READY:
+		printk("LWM2M_CARRIER_EVENT_LTE_READY\n");
+		break;
+	case LWM2M_CARRIER_EVENT_REGISTERED:
+		printk("LWM2M_CARRIER_EVENT_REGISTERED\n");
 		break;
 	case LWM2M_CARRIER_EVENT_DEFERRED:
 		printk("LWM2M_CARRIER_EVENT_DEFERRED\n");
