@@ -45,8 +45,7 @@ The following image shows an abstract representation of the memory layout, assum
 
    Memory layout
 
-For detailed information about the memory layout, see the partition configuration in the DTS overlay file for the board that you are using.
-This file is located in ``subsys\bootloader\dts``.
+For detailed information about the memory layout, see the partition configuration in the :file:`<build folder>/partitions.yml` file or run ``ninja partition_manager_report``.
 
 .. _immutable_bootloader:
 
