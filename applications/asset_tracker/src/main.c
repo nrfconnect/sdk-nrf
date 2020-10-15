@@ -43,6 +43,7 @@
 #include "watchdog.h"
 #include "gps_controller.h"
 #include <date_time.h>
+#include <dfu/dfu_target.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(asset_tracker, CONFIG_ASSET_TRACKER_LOG_LEVEL);
@@ -1863,6 +1864,18 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 	k_sem_give(&date_time_obtained);
 }
 
+void erase_modem_update_bank(void)
+{
+	int err = dfu_target_init(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA, 0, NULL);
+
+	if (err != 0) {
+		printk("Unable to clear modem update bank\n\r");
+	}
+
+	err = dfu_target_done(false);
+	__ASSERT(err == 0, "Unable to deinitialize dfu_target.");
+}
+
 void main(void)
 {
 	int ret;
@@ -1879,6 +1892,13 @@ void main(void)
 	k_sem_take(&bsdlib_initialized, K_FOREVER);
 #else
 	handle_bsdlib_init_ret();
+#endif
+#if CONFIG_DFU_TARGET_MODEM
+	/* The modem bank should be clean so that the device is ready to recive
+	 * an update. If not it may halt when trying to erase the modem firmware
+	 * while downloading.
+	 */
+	erase_modem_update_bank();
 #endif
 
 	cloud_api_init();
