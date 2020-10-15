@@ -11,23 +11,21 @@
 #include <stdbool.h>
 #include <zephyr.h>
 #include <string.h>
+#include <bsd.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
-#include <bsd.h>
 #include <modem/lte_lc.h>
 #include <modem/bsdlib.h>
+#include <modem/modem_key_mgmt.h>
 #include <net/download_client.h>
 #include <power/reboot.h>
 #include <sys/util.h>
 #include <toolchain.h>
 #include <fs/nvs.h>
 #include <logging/log.h>
-#include <errno.h>
 #include <nrf_errno.h>
-#include <modem/modem_key_mgmt.h>
-#include <random/rand32.h>
 
 /* NVS-related defines */
 
@@ -90,7 +88,7 @@ void lwm2m_os_sys_reset(void)
 
 uint32_t lwm2m_os_rand_get(void)
 {
-	return sys_rand32_get();
+	return k_cycle_get_32();
 }
 
 /* Non volatile storage */
@@ -278,6 +276,19 @@ void lwm2m_os_log(int level, const char *fmt, ...)
 		va_start(ap, fmt);
 		log_generic(src_level, fmt, ap, LOG_STRDUP_SKIP);
 		va_end(ap);
+	}
+}
+
+void lwm2m_os_logdump(const char *str, const void *data, size_t len)
+{
+	if (IS_ENABLED(CONFIG_LOG)) {
+		int level = LOG_LEVEL_INF;
+		struct log_msg_ids src_level = {
+			.level = log_level_lut[level],
+			.domain_id = CONFIG_LOG_DOMAIN_ID,
+			.source_id = LOG_CURRENT_MODULE_ID()
+		};
+		log_hexdump(str, data, len, src_level);
 	}
 }
 
@@ -561,18 +572,12 @@ static lwm2m_os_download_callback_t lwm2m_os_lib_callback;
 int lwm2m_os_download_connect(const char *host,
 			      const struct lwm2m_os_download_cfg *cfg)
 {
-	#define HOST 128
-	#define PORT 8
-
-	static char hostname[HOST + PORT];
 	struct download_client_cfg config = {
 		.sec_tag = cfg->sec_tag,
 		.apn = cfg->apn,
 	};
 
-	snprintf(hostname, sizeof(hostname), "%s:%d", host, cfg->port);
-
-	return download_client_connect(&http_downloader, hostname, &config);
+	return download_client_connect(&http_downloader, host, &config);
 }
 
 int lwm2m_os_download_disconnect(void)
@@ -677,6 +682,8 @@ int lwm2m_os_lte_power_down(void)
 int lwm2m_os_errno(void)
 {
 	switch (errno) {
+	case 0:
+		return 0;
 	case EPERM:
 		return NRF_EPERM;
 	case ENOENT:

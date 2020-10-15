@@ -21,7 +21,6 @@ If you want to use LwM2M for other purposes, see :ref:`lwm2m_interface`.
 The :ref:`lwm2m_carrier` sample demonstrates how to run this library in an application.
 The LwM2M carrier library is also used in the :ref:`asset_tracker` application.
 
-See the changelog for the latest updates in the LwM2M carrier library, and for a list of known issues and limitations.
 
 .. toctree::
     :maxdepth: 1

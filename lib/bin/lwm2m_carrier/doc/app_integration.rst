@@ -81,12 +81,16 @@ LwM2M carrier library events
    This event indicates that the bootstrap sequence is complete, and that the device is ready to be registered.
    This event is typically seen during the first boot-up.
 
-:c:macro:`LWM2M_CARRIER_EVENT_READY`
-   This event indicates that the device has connected successfully to the carrier's device management server.
+:c:macro:`LWM2M_CARRIER_EVENT_LTE_READY`
+   This event indicates that the device is registered to the LTE network (home or roaming).
+   The bootstrap sequence is complete and the application can use the LTE link.
+
+:c:macro:`LWM2M_CARRIER_EVENT_REGISTERED`
+   This event indicates that the device has registered successfully to the carrier's device management servers.
 
 :c:macro:`LWM2M_CARRIER_EVENT_DEFERRED`
    This event indicates that the connection to the device management server has failed.
-   The :c:macro:`LWM2M_CARRIER_EVENT_DEFERRED` event appears instead of the :c:macro:`LWM2M_CARRIER_EVENT_READY` event.
+   The :c:macro:`LWM2M_CARRIER_EVENT_DEFERRED` event appears instead of the :c:macro:`LWM2M_CARRIER_EVENT_REGISTERED` event.
    The :c:member:`timeout` parameter supplied with this event determines when the LwM2M carrier library will retry the connection.
 
 :c:macro:`LWM2M_CARRIER_DEFERRED_NO_REASON`

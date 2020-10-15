@@ -28,16 +28,15 @@ Below are some of the requirements and limitations of the application while runn
 
 * The LwM2M carrier library controls the LTE link.
 
-   * This is needed for storing keys to the modem, which requires disconnecting from an LTE link and connecting to it.
-   * The application should not connect to the LTE link between a :c:macro:`LWM2M_CARRIER_EVENT_DISCONNECTING` event and :c:macro:`LWM2M_CARRIER_EVENT_CONNECTED` event.
+   * The LwM2M carrier library stores keys into the modem, which requires disconnecting from the LTE link and connecting to it.
+   * The application must wait for the :c:macro:`LWM2M_CARRIER_EVENT_LTE_READY` event before using the LTE link.
 
-* The LwM2M carrier library uses a TLS session for FOTA.
-  TLS handshakes performed by the application might fail if the LwM2M carrier library is performing one at the same time.
+* The LwM2M carrier library uses the modem DFU socket and a TLS socket for FOTA.
 
-   * If the application is in a TLS session and a :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START` event is sent to the application, the application must immediately end the TLS session.
-   * TLS becomes available again upon the next :c:macro:`LWM2M_CARRIER_EVENT_READY` or :c:macro:`LWM2M_CARRIER_EVENT_DEFERRED` event.
-   * The application should implement a retry mechanism so that the application can perform the TLS handshake later.
-   * Another alternative is to supply TLS from a source other than the modem, for example `Mbed TLS`_.
+  * The modem DFU socket is available to the application until a carrier-initiated modem DFU (FOTA) occurs.
+  * If the application is using the modem DFU or TLS sockets, it must immediately close both when the :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START` event is received.
+    This is necessary to let the library use the only modem DFU socket, and to have sufficient memory to perform a TLS handshake.
+  * If the application needs a TLS socket at all times, it can use `Mbed TLS`_.
 
 * The LwM2M carrier library uses both the DTLS sessions made available through the modem. Therefore, the application cannot run any DTLS sessions.
 

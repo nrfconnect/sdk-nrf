@@ -35,7 +35,8 @@ The following message sequence chart shows the bootstrap process:
     Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_CONNECTING"];
     Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_CONNECTED"];
     Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_BOOTSTRAPPED"];
-    Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_READY"];
+    Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_LTE_READY"];
+    Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_REGISTERED"];
 
 
 The following message sequence chart shows FOTA updates:
@@ -52,5 +53,6 @@ The following message sequence chart shows FOTA updates:
     Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_DISCONNECTED"];
     Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_CONNECTING"];
     Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_CONNECTED"];
-    Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_READY"];
+    Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_LTE_READY"];
+    Application<<="LwM2M carrier Library"      [label="LWM2M_CARRIER_EVENT_REGISTERED"];
     ...;
