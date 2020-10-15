@@ -422,6 +422,7 @@
 .. _`AWS S3 Developer Guide: Using Bucket Policies and User Policies`: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
 .. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
 
+.. _`Windows Hardware Lab Kit`: https://docs.microsoft.com/en-us/windows-hardware/test/hlk/
 
 .. _`RRC idle mode`: https://en.wikipedia.org/wiki/Radio_Resource_Control
 .. _`Klobuchar Ionospheric Model`: https://gssc.esa.int/navipedia/index.php/Klobuchar_Ionospheric_Model
