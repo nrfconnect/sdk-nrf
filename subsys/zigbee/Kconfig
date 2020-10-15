@@ -184,6 +184,12 @@ config ZBOSS_TRACE_MASK
 
 	  Note: For general debugging purposes, please use 0x0C48.
 
+config ZBOSS_TRAF_DUMP
+	bool "Enable MAC level traffic dump over ZBOSS traces"
+	depends on !ZBOSS_TRACE_LOG_LEVEL_OFF
+	help
+	  Dumps all packets destined to the node ove ZBOSS binary trace protocol
+
 # Configure ZIGBEE_SHELL_LOG_LEVEL
 module = ZIGBEE_SHELL
 module-str = Zigbee Shell
