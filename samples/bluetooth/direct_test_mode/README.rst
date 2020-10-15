@@ -8,7 +8,7 @@ This sample enables the Direct Test Mode functions described in `Bluetooth Core 
 Overview
 ********
 
-The sample uses Direct Test Mode to test the operation of the following features of the radio:
+The sample uses Direct Test Mode (DTM) to test the operation of the following features of the radio:
 
 * Transmission power and receiver sensitivity
 * Frequency offset and drift
