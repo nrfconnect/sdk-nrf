@@ -1144,6 +1144,10 @@ The set of required partitions differs depending on configuration:
 * There must be one partition for storing :ref:`zephyr:settings_api`.
 * The bootloader, if enabled, will add additional partitions to the set.
 
+.. important::
+   Before updating the firmware, make sure that the data stored in the settings partition is compatible with the new firmware.
+   If it is incompatible, erase the settings area before using the new firmware.
+
 Memory layout in DTS
 --------------------
 
