@@ -223,8 +223,6 @@ To keep it simple, the diagram only shows data related to HID input reports that
 
    nRF Desktop mouse HID data sensing and transmission
 
-----
-
 Requirements
 ************
 
@@ -324,8 +322,6 @@ In addition to the build types mentioned above, some boards can provide more bui
 For example, such additional configurations are used to allow generation of application with different role (such as mouse, keyboard, or dongle on a DK board) or to select a different link layer (such as LLPM capable Nordic SoftDevice LL or standard Zephyr SW LL).
 
 See :ref:`nrf_desktop_porting_guide` for detailed information about the application configuration and how to create build type files for your hardware.
-
-----
 
 User interface
 **************
@@ -710,8 +706,6 @@ By default, this period is set to 120 seconds.
     If a nRF Desktop device supports remote wakeup, the USB connected device goes to suspended state when USB is suspended.
     The device can then trigger remote wakeup of the connected host on user input.
 
-----
-
 Building and running
 ********************
 
@@ -788,7 +782,12 @@ After building the application with or without :ref:`specifying the build type <
 
 After the connection is established and the device is bonded, you can use the mouse with the connected device.
 
-----
+Windows Hardware Lab Kit tests
+------------------------------
+
+The nRF Desktop devices have passed the tests from official playlist required for compatibility with Windows 10 by Windows Hardware Compatibility Program (:file:`HLK Version 1903 CompatPlaylist x86 x64 ARM64.xml`).
+The tests were conducted using `Windows Hardware Lab Kit`_.
+
 
 .. _nrf_desktop_porting_guide:
 
@@ -1537,8 +1536,6 @@ For example, the following line will start the upload of the new image to the de
 
   mcumgr -t 60 --conntype serial --connstring=/dev/ttyACM0 image upload build-nrf52833dongle_nrf52833/zephyr/app_update.bin
 
-----
-
 Dependencies
 ************
 
@@ -1552,8 +1549,6 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`gatt_dm_readme`
 * :file:`drivers/sensor/paw3212`
 * :file:`drivers/sensor/pmw3360`
-
-----
 
 .. _nrf_desktop_app_internal_modules:
 
