@@ -474,6 +474,20 @@ zb_uint8_t zb_trans_get_next_packet(zb_bufid_t buf)
 	return 1;
 }
 
+zb_ret_t zb_trans_cca(void)
+{
+	int cca_result = radio_api->cca(radio_dev);
+
+	switch (cca_result) {
+	case 0:
+		return RET_OK;
+	case -EBUSY:
+		return RET_BUSY;
+	default:
+		return RET_ERROR;
+	}
+}
+
 void zb_osif_get_ieee_eui64(zb_ieee_addr_t ieee_eui64)
 {
 	__ASSERT_NO_MSG(net_iface);
