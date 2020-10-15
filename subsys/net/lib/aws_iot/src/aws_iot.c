@@ -1132,7 +1132,7 @@ reset:
 #ifdef CONFIG_BOARD_QEMU_X86
 #define POLL_THREAD_STACK_SIZE 4096
 #else
-#define POLL_THREAD_STACK_SIZE 2560
+#define POLL_THREAD_STACK_SIZE 3072
 #endif
 K_THREAD_DEFINE(connection_poll_thread, POLL_THREAD_STACK_SIZE,
 		aws_iot_cloud_poll, NULL, NULL, NULL,
