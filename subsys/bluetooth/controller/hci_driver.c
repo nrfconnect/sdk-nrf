@@ -351,7 +351,7 @@ static int hci_driver_open(void)
 			K_THREAD_STACK_SIZEOF(recv_thread_stack), recv_thread,
 			NULL, NULL, NULL, K_PRIO_COOP(CONFIG_SDC_RX_PRIO), 0,
 			K_NO_WAIT);
-	k_thread_name_set(&recv_thread_data, "blectlr recv");
+	k_thread_name_set(&recv_thread_data, "SDC RX");
 
 	uint8_t build_revision[SDC_BUILD_REVISION_SIZE];
 
