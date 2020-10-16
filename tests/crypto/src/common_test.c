@@ -105,7 +105,8 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len)
 	const mbedtls_md_info_t *p_info =
 		mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
 
-	return mbedtls_hmac_drbg_seed(&drbg_ctx, p_info, entropy_func, p_device, p_seed, len);
+	return mbedtls_hmac_drbg_seed(&drbg_ctx, p_info, entropy_func,
+		(void *)p_device, p_seed, len);
 }
 #endif
 
