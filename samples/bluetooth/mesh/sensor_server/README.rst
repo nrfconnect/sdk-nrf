@@ -56,7 +56,7 @@ The models are used for the following purposes:
   These callbacks trigger blinking of the LEDs.
 * Mesh sensor server provides sensor data to one or more :ref:`Mesh sensor client(s) <bt_mesh_sensor_cli_readme>`.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the ``TEMP_NRF5`` temperature sensor, and :ref:`dk_buttons_and_leds_readme` to detect button presses.
+The model handling is implemented in :file:`src/model_handler.c`, which uses the ``TEMP_NRF5`` temperature sensor, and the :ref:`dk_buttons_and_leds_readme` library to detect button presses.
 
 Requirements
 ************

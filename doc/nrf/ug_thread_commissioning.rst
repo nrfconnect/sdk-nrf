@@ -218,7 +218,7 @@ Check the sample documentation pages for the list of compatible development kit 
 Programming the DKs
 ===================
 
-Flash both development kits with the :ref:`Thread CLI sample <ot_cli_sample>` or flash both of them with the :ref:`Thread NCP sample <ot_ncp_sample>`.
+Program both development kits with the :ref:`Thread CLI sample <ot_cli_sample>` or program both of them with the :ref:`Thread NCP sample <ot_ncp_sample>`.
 See the sample's page for details.
 
 After programming the DKs and turning them on, both devices will be pre-commissioned and will form a Thread network.

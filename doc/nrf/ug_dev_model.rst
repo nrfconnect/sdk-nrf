@@ -151,9 +151,10 @@ The current values of ``[nrf xyz]`` are:
 * ``[nrf temphack]``: temporary patches with some known issues
 * ``[nrf fromtree]``: patches which have been cherry-picked from an upstream tree
 
-It is important to note that the **downstream project history is periodically rewritten**.
-This is important to prevent the number of downstream patches included in a specific NCS release from increasing forever.
-A repository's history is typically only rewritten once for every |NCS| release.
+.. note::
+    The downstream project history is periodically rewritten.
+    This is important to prevent the number of downstream patches included in a specific |NCS| release from increasing forever.
+    A repository's history is typically only rewritten once for every |NCS| release.
 
 To make incorporating new history into your own forks easier, a new point in the downstream |NCS| history is always created which has an empty ``git diff`` with the previous version.
 The empty diff means you can always use:
@@ -271,7 +272,7 @@ You can also create standard forks with GitHub by just creating an empty reposit
 
 If you want to create a `GitHub fork`_ follow the steps below:
 
-#. Create a `GitHub fork`_ using the **Fork** button in the GitHub user interface.
+#. Create a `GitHub fork`_ using the :guilabel:`Fork` button in the GitHub user interface.
 #. Add the newly created remote repository as a Git remote::
 
      cd ncs/{folder_path}
@@ -299,7 +300,7 @@ If you want to create a `GitHub fork`_ follow the steps below:
   * ``ncs`` pointing to the |NCS| `sdk-zephyr`_.
   * ``upstream`` pointing to the upstream `official Zephyr repository`_.
 
-To create a regular fork, follow the exact same steps as above, but the actual repository must be created by you beforehand, instead of clicking **Fork** in GitHub.
+To create a regular fork, follow the exact same steps as above, but the actual repository must be created by you beforehand, instead of clicking :guilabel:`Fork` in GitHub.
 Also, since a GitHub fork automatically initializes the forked repository with the exact same contents as the original one, you must push the contents yourself::
 
   cd ncs/{folder_path}
@@ -318,7 +319,7 @@ All workflows are described under the following basic assumptions:
 * One or more applications are to be developed using the |NCS|.
 * Additional board definitions might be required by the user.
 * Additional libraries might be required by the user.
-* The term "application" refers to the application code and any board definitions and libraries it requires.
+* The term *application* refers to the application code and any board definitions and libraries it requires.
 * The application(s) will require updates of the |NCS| revision.
 
 Workflow 1: Eschew Git and west
@@ -387,7 +388,7 @@ This is demonstrated by the following code:
      self:
        path: application
 
-Importing :file:`west.yml` also results in the addition of all the NCS projects, including those imported from Zephyr, into your workspace.
+Importing :file:`west.yml` also results in the addition of all the |NCS| projects, including those imported from Zephyr, into your workspace.
 
 Then, make the following changes:
 

@@ -28,4 +28,4 @@ When you build your application with this option set, the following files that c
   It will not trigger a DFU procedure.
 
 * :file:`app_moved_test_update.hex` - Same as :file:`app_test_update.hex` except that it is linked against the address used to store the upgrade candidates.
-  When this file is flashed to the device, MCUboot will trigger the DFU procedure upon reboot.
+  When this file is programmed to the device, MCUboot will trigger the DFU procedure upon reboot.

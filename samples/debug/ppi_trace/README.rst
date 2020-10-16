@@ -21,7 +21,6 @@ Initially, RTC runs on RC low frequency (lower precision) as clock source.
 When the crystal is ready, it switches seamlessly to crystal (precise) as clock source.
 When the low-frequency crystal is ready, an ``NRF_CLOCK_EVENT_LFCLKSTARTED`` event is generated.
 
-
 Requirements
 ************
 
@@ -39,7 +38,6 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-
 Testing
 =======
 
@@ -47,12 +45,13 @@ After programming the sample to your board, test it by performing the following 
 
 1. Connect a logic analyzer to the pins that are used for tracing.
    Check the sample configuration for information about which pins are used.
-   To do so in |SES|, select **Project** > **Configure nRF Connect SDK Project** and navigate to **PPI trace pins configuration**.
+   To do so in |SES|, select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project` and navigate to :guilabel:`PPI trace pins configuration`.
 #. Observe that:
 
    * The pin that is tracing the RTC Tick event is toggling with a frequency of approximately 32 kHz.
    * The pin that is tracing the RTC Compare event is toggling approximately every 50 ms.
    * The pin that is tracing the LFCLK Started event is set at some point.
+
 #. Measure the typical time between two consecutive toggles of the pin that is tracing the RTC Compare event, before and after the LFCLK Started event is generated.
    Observe that the precision increases when the low-frequency crystal is started.
 #. Observe periodical radio activity during Bluetooth advertising.

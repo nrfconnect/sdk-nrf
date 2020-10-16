@@ -1,7 +1,7 @@
 .. _supl_client:
 
-SUPL client and SUPL client OS integration library
-##################################################
+SUPL client and SUPL client OS integration
+##########################################
 
 This section documents both the Secure User-Plane Location (SUPL) client library and the SUPL client OS integration library.
 
