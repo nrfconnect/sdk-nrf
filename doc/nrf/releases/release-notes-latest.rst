@@ -418,7 +418,7 @@ The following list summarizes the most important changes inherited from upstream
   * Updated the :ref:`zephyr:nrf-system-off-sample` to better support low-power states of Nordic Semiconductor devices.
   * Updated the :ref:`zephyr:usb_mass` to perform all application-level configuration before the USB subsystem starts.
     The sample now also supports FAT file systems on external storage.
-  * Updated the :ref:`zephyr:nvs-sample` sample to do a full chip erase when flashing.
+  * Updated the :ref:`zephyr:nvs-sample` sample to do a full chip erase when programming.
   * Fixed the build of the :ref:`zephyr:bluetooth-mesh-onoff-level-lighting-vnd-sample` application with mcumgr.
   * Added new commands ``write_unaligned`` and ``write_pattern`` to the :ref:`zephyr:samples_flash_shell`.
   * Fixed the ``cmd_hdr`` and ``acl_hdr`` usage in the :ref:`zephyr:bluetooth-hci-spi-sample` sample.

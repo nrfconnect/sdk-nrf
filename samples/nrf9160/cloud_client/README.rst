@@ -45,7 +45,7 @@ For configuring the different cloud backends, refer to the documentation on :ref
 Each cloud backend has specific setup steps that must be executed before it can be used.
 
 .. note::
-   The nRF9160 DK and Thingy:91 come pre-flashed with the certificates required for a connection to `nRF Cloud`_.
+   The nRF9160 DK and Thingy:91 come preprogrammed with the certificates required for a connection to `nRF Cloud`_.
    No extra steps are required to use the Cloud client sample with nRF Cloud.
 
 

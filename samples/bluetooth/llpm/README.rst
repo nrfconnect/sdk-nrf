@@ -17,7 +17,7 @@ See the following subsections for a description of the key LLPM elements.
 
 LLPM connection interval (1 ms)
    The connection interval defines how often the devices must listen on the radio.
-   The LLPM introduces the possibility to reduce the connection interval below what is supported in BLE.
+   The LLPM introduces the possibility to reduce the connection interval below what is supported in Bluetooth LE.
    The lowest supported connection interval is 1 ms for one link.
 
 Physical layer (PHY)

@@ -44,7 +44,7 @@ Firmware
 
 The firmware of Thingy:91 has been developed using the nRF Connect SDK.
 It is open source, and can be modified according to specific needs.
-The :ref:`asset_tracker` application firmware, which is pre-flashed in the Thingy:91, enables the device to use the environment sensors and provides an option of tracking the device using GPS.
+The :ref:`asset_tracker` application firmware, which is preprogrammed in the Thingy:91, enables the device to use the environment sensors and provides an option of tracking the device using GPS.
 
 The data, along with information about the device, is transmitted to Nordic Semiconductor's cloud solution, `nRF Cloud`_, where it can be visualized.
 See :ref:`asset_tracker` for more information on the asset tracker application.
@@ -66,7 +66,7 @@ LTE Band Lock
 
 The modem within Thingy:91 can be configured to use specific LTE bands by using the band lock AT command.
 See :ref:`nrf9160_ug_band_lock` and the `band lock section in the AT Commands reference document`_ for additional information.
-The pre-flashed firmware configures the modem to use the bands currently certified on the Thingy:91 hardware.
+The preprogrammed firmware configures the modem to use the bands currently certified on the Thingy:91 hardware.
 When building the firmware, you can configure which bands should be enabled.
 
 LTE-M / NB-IoT switching
@@ -109,7 +109,7 @@ Downloading precompiled firmware images
 
 To obtain precompiled firmware images for updating the firmware, perform the following steps:
 
-	1. Go to the `Thingy:91 product page`_ and under the **Downloads** tab, navigate to **Precompiled firmware**.
+	1. Go to the `Thingy:91 product page`_ and under the :guilabel:`Downloads` tab, navigate to :guilabel:`Precompiled firmware`.
 	#. Download and extract the latest Thingy:91 firmware package.
 	#. Check the :file:`CONTENTS.txt` file in the extracted folder for the location and names of the different firmware images.
 
@@ -217,7 +217,7 @@ Building and programming using SEGGER Embedded Studio
       The *Board Directory* folder can be found in the following location: ``ncs/nrf/boards/arm``.
 
 
-4. Click **OK** to import the project into SES.
+4. Click :guilabel:`OK` to import the project into SES.
    You can now work with the project in the IDE.
 
    .. include:: gs_programming.rst
@@ -227,7 +227,7 @@ Building and programming using SEGGER Embedded Studio
 #. To build the sample or application:
 
    a. Select your project in the Project Explorer.
-   #. From the menu, select **Build -> Build Solution**.
+   #. From the menu, select :guilabel:`Build` -> :guilabel:`Build Solution`.
       This builds the project.
 
    You can find the output of the build, which includes the merged HEX file containing both the application and the SPM, in the ``zephyr`` subfolder in the build directory.
@@ -249,8 +249,8 @@ Building and programming using SEGGER Embedded Studio
 .. prog_extdebugprobe_end
 ..
 
-   e. In SES, select **Target -> Connect J-Link**.
-   #. Select **Target -> Download zephyr/merged.hex** to program the sample or application onto Thingy:91.
+   e. In SES, select :guilabel:`Target` -> :guilabel:`Connect J-Link`.
+   #. Select :guilabel:`Target` -> :guilabel:`Download zephyr/merged.hex` to program the sample or application onto Thingy:91.
    #. The device will reset and run the programmed sample or application.
 
 .. _build_pgm_cmdline:

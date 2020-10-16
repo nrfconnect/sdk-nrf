@@ -23,7 +23,7 @@ Editing :file:`CMakeList.txt` directly
 
 Add all files that your application uses to the ``target_sources`` function in :file:`CMakeList.txt`.
 To include several files, it can be useful to specify them with a wildcard.
-For example, to include all ``.c`` files from the ``src`` folder, add the following lines to your :file:`CMakeList.txt`::
+For example, to include all :file:`.c` files from the :file:`src` folder, add the following lines to your :file:`CMakeList.txt`::
 
    FILE(GLOB app_sources src/*.c)
    target_sources(app PRIVATE ${app_sources})
@@ -58,7 +58,7 @@ In the window that is displayed, you can define compilation options for the proj
 
 .. note::
    These compilation options apply to the application project only.
-   To manage Zephyr and other subsystems, go to :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
+   To manage Zephyr and other subsystems, go to :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project`.
 
 
 SES tags in :file:`CMakeLists.txt`
@@ -126,7 +126,7 @@ Changes are picked up immediately, and you do not need to re-open the project in
 While it is possible to edit the :file:`.config` file directly, you should use SES or a tool like menuconfig or guiconfig to update it.
 These tools present all available options and allow you to select the ones that you need.
 
-To edit the file in SES, select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
+To edit the file in SES, select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project`.
 If your application contains more than one image (see :ref:`ug_multi_image`), you must select the correct target.
 To configure the parent image (the main application), select :guilabel:`menuconfig`.
 The other options allow you to configure the child images.
@@ -168,7 +168,7 @@ Configuring build types
 .. build_types_overview_start
 
 Build types enable you to use different sets of configuration options for each board.
-You can create several build type ``.conf`` files per board and select one of them when building the application.
+You can create several build type :file:`.conf` files per board and select one of them when building the application.
 This means that you do not have to use one :file:`prj.conf` file for your project and modify it each time to fit your needs.
 
 .. build_types_overview_end

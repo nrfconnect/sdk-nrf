@@ -78,7 +78,7 @@ If you choose to do so, use the Python scripts in ``scripts\bootloader`` to crea
       On nRF9160, the UICR can only be erased by erasing the whole chip.
       To do so on the command line, call ``west flash`` with the ``--erase`` option.
       This will erase the whole chip before programming the new image.
-      In |SES|, choose :guilabel:`Target` > :guilabel:`Connect J-Link` and then :guilabel:`Target` > :guilabel:`Erase All` to erase the whole chip.
+      In |SES|, choose :guilabel:`Target` -> :guilabel:`Connect J-Link` and then :guilabel:`Target` -> :guilabel:`Erase All` to erase the whole chip.
 
    .. note::
       On some chips (for example, nRF9160 or nRF5340), the provisioned data is held in the OTP region in UICR.
@@ -122,9 +122,9 @@ Complete the following steps to add the bootloader sample as child image to your
 
 #. Run ``menuconfig`` on your application to enable Secure Boot:
 
-   a. Select **Project** > **Configure nRF Connect SDK project**.
-   #. Go to **Modules** > **Nordic nRF Connect** and select **Use Secure Bootloader** to enable :option:`CONFIG_SECURE_BOOT`.
-   #. Under **Private key PEM file** (:option:`CONFIG_SB_SIGNING_KEY_FILE`), enter the path to the private key that you created.
+   a. Select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK project`.
+   #. Go to :guilabel:`Modules` -> :guilabel:`Nordic nRF Connect` and select :guilabel:`Use Secure Bootloader` to enable :option:`CONFIG_SECURE_BOOT`.
+   #. Under :guilabel:`Private key PEM file` (:option:`CONFIG_SB_SIGNING_KEY_FILE`), enter the path to the private key that you created.
       If you choose to run the sample with default debug keys, you can skip this step.
 
       There are additional configuration options that you can modify, but it is not recommended to do so.
@@ -135,11 +135,11 @@ Complete the following steps to add the bootloader sample as child image to your
          This option allows you to define the signing command.
          In this case, you must also specify :option:`CONFIG_SB_SIGNING_COMMAND` and :option:`CONFIG_SB_SIGNING_PUBLIC_KEY`.
 
-   #. Click **Configure**.
+   #. Click :guilabel:`Configure`.
 
-#. Select **Build** > **Build Solution** to compile your application.
+#. Select :guilabel:`Build` -> :guilabel:`Build Solution` to compile your application.
    The build process creates two images, one for the bootloader and one for the application, and merges them together.
-#.  Select **Build** > **Build and Run** to program the resulting image to your device.
+#.  Select :guilabel:`Build` -> :guilabel:`Build and Run` to program the resulting image to your device.
 
 
 Testing

@@ -69,7 +69,7 @@ Testing with another board
       [xx.xx.xx.xx.xx.xx (random)]: Battery notification: 98%
       [xx.xx.xx.xx.xx.xx (random)]: Battery notification: 97%
 
-#. Press Button 1 to send a read request and process the response::
+#. Press **Button 1** to send a read request and process the response::
 
       Reading BAS value:
       [xx.xx.xx.xx.xx.xx (random)]: Battery read: 97%
@@ -81,12 +81,12 @@ Testing with nRF Connect for Desktop
 1. |connect_terminal_specific|
 #. Reset the board.
 #. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
-#. Go to the **Server setup** tab.
-   Click the dongle configuration and select **Load setup**.
+#. Go to the :guilabel:`Server setup` tab.
+   Click the dongle configuration and select :guilabel:`Load setup`.
    Load the ``hids_keyboard.ncs`` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
-#. Click **Apply to device**.
-#. Go to the **Connection Map** tab.
-   Click the dongle configuration and select **Advertising setup**.
+#. Click :guilabel:`Apply to device`.
+#. Go to the :guilabel:`Connection Map` tab.
+   Click the dongle configuration and select :guilabel:`Advertising setup`.
 
    The current version of nRF Connect cannot store the advertising setup, so it must be configured manually.
    See the following image for the required target configuration:
@@ -106,20 +106,20 @@ Testing with nRF Connect for Desktop
    #. Add a **UUID 16 bit complete list** with two comma-separated values: ``1812`` and ``180F``.
       These are the values for HIDS and BAS.
    #. Add a **Complete local name** of your choice to the **Scan response data**.
-   #. Click **Apply** and **Close**.
+   #. Click :guilabel:`Apply` and :guilabel:`Close`.
 
-#. In the Adapter settings, choose **Start advertising**.
+#. In the Adapter settings, choose :guilabel:`Start advertising`.
 #. Wait until the board that runs the Central BAS sample connects.
    In the terminal window, check for information similar to the following::
 
       The discovery procedure succeeded
 
-#. Press Button 1 to send read request and process the response::
+#. Press **Button 1** to send read request and process the response::
 
       Reading BAS value:
       [xx.xx.xx.xx.xx.xx (random)]: Battery read: 100%
 
-#. Change the value in **Battery Service** > **Battery Level** to generate notifications.
+#. Change the value in :guilabel:`Battery Service` -> :guilabel:`Battery Level` to generate notifications.
 #. Observe that the notification information is displayed::
 
       [xx.xx.xx.xx.xx.xx (random)]: Battery notification: 99%

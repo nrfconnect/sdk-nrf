@@ -273,7 +273,7 @@ Reconnection issues on some operating systems
 .. rst-class:: v1-0-0
 
 :ref:`bluetooth_central_hids` loses UART connectivity
-  After flashing a HEX file to the nrf52_pca10040 board, UART connectivity is lost when using the BLE Controller.
+  After programming a HEX file to the nrf52_pca10040 board, UART connectivity is lost when using the BLE Controller.
   The board must be reset to get UART output.
 
 .. rst-class:: v1-0-0 v1-1-0

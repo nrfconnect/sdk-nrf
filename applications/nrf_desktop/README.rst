@@ -1277,7 +1277,7 @@ The nRF Desktop devices use one of the following Link Layers:
       Such conflicts could lead to a drop in HID input report rate or a disconnection.
       Setting the value to ``3000`` also enables the nRF Desktop central to exchange data with up to 2 standard |BLE| peripherals during every connection interval (every 7.5 ms).
 
-    * When :option:`CONFIG_DESKTOP_BLE_USE_LLPM` is disabled, the device will use only standard BLE connection parameters with the lowest available connection interval of 7.5 ms.
+    * When :option:`CONFIG_DESKTOP_BLE_USE_LLPM` is disabled, the device will use only standard Bluetooth LE connection parameters with the lowest available connection interval of 7.5 ms.
 
       If the LLPM is disabled and more than 2 simultaneous Bluetooth connections are supported (:option:`CONFIG_BT_MAX_CONN`), you can set the value for :option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``2500``.
       With this value, the nRF Desktop central is able to exchange the data with up to 3 |BLE| peripherals during every 7.5-ms connection interval.
