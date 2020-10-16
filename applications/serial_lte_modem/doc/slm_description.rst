@@ -1642,6 +1642,408 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       #XPING: average 0.650
       OK
 
+Testing FTP AT commands
+-----------------------
+
+Before you test the FTP AT commands, check the setting of the :option:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` option.
+By default, the :ref:`lib_ftp_client` library keeps the connection to the FTP server alive for 60 seconds, but you can change the duration or turn KEEPALIVE off by setting :option:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` to 0.
+
+The FTP client behavior depends on the FTP server that is used for testing.
+Complete the following steps to test the functionality provided by the :ref:`SLM_AT_FTP` with two example servers:
+
+1. Test an FTP connection to "speedtest.tele2.net".
+
+   This server supports only anonymous login.
+   Files must be uploaded to a given folder and will be deleted immediately.
+   It is not possible to create, rename, or delete folders or rename files.
+
+   a. Connect to the FTP server, check the status, and change the transfer mode.
+      Then disconnect.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="open",,,"speedtest.tele2.net"**
+         220 (vsFTPd 3.0.3)
+         200 Always in UTF8 mode.
+         331 Please specify the password.
+         230 Login successful.
+         OK
+
+         **AT#XFTP="status"**
+         215 UNIX Type: L8
+         211-FTP server status:
+              Connected to ::ffff:202.238.218.44
+              Logged in as ftp
+              TYPE: ASCII
+              No session bandwidth limit
+              Session timeout in seconds is 300
+              Control connection is plain text
+              Data connections will be plain text
+              At session startup, client count was 38
+              vsFTPd 3.0.3 - secure, fast, stable
+         211 End of status
+         OK
+
+         **AT#XFTP="ascii"**
+         200 Switching to ASCII mode.
+         OK
+
+         **AT#XFTP="binary"**
+         200 Switching to Binary mode.
+         OK
+
+         **AT#XFTP="close"**
+         221 Goodbye.
+         OK
+
+   #. Connect to the FTP server and retrieve information about the existing files and folders.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="open",,,"speedtest.tele2.net"**
+         220 (vsFTPd 3.0.3)
+         200 Always in UTF8 mode.
+         331 Please specify the password.
+         230 Login successful.
+         OK
+
+         **AT#XFTP="pwd"**
+         257 "/" is the current directory
+         OK
+
+         **AT#XFTP="ls"**
+         227 Entering Passive Mode (90,130,70,73,103,35).
+         1000GB.zip
+         100GB.zip
+         100KB.zip
+         *[...]*
+         5MB.zip
+         upload
+         150 Here comes the directory listing.
+         226 Directory send OK.
+         OK
+
+         **AT#XFTP="ls","-l"**
+         227 Entering Passive Mode (90,130,70,73,94,158).
+         150 Here comes the directory listing.
+         -rw-r--r--    1 0        0        1073741824000 Feb 19  2016 1000GB.zip
+         -rw-r--r--    1 0        0        107374182400 Feb 19  2016 100GB.zip
+         -rw-r--r--    1 0        0          102400 Feb 19  2016 100KB.zip
+         -rw-r--r--    1 0        0        104857600 Feb 19  2016 100MB.zip
+         *[...]*
+         -rw-r--r--    1 0        0         5242880 Feb 19  2016 5MB.zip
+         drwxr-xr-x    2 105      108        561152 Apr 30 02:30 upload
+         226 Directory send OK.
+         OK
+
+         **AT#XFTP="ls","-l","upload"**
+         227 Entering Passive Mode (90,130,70,73,86,44).
+         150 Here comes the directory listing.
+         -rw-------    1 105      108      57272385 Apr 30 02:29 10MB.zip
+         -rw-------    1 105      108        119972 Apr 30 02:30 14qj36kc9esslej6porartkjks.txt
+         *[...]*
+         -rw-------    1 105      108         32352 Apr 30 02:30 upload_file.txt
+         226 Directory send OK.
+         OK
+
+         **AT#XFTP="cd","upload"**
+         250 Directory successfully changed.
+         OK
+
+         **AT#XFTP="pwd"**
+         257 "/upload" is the current directory
+         OK
+
+         **AT#XFTP="ls","-l"**
+         227 Entering Passive Mode (90,130,70,73,113,191).
+         150 Here comes the directory listing.
+         -rw-------    1 105      108      57272385 Apr 30 02:29 10MB.zip
+         -rw-------    1 105      108        294236 Apr 30 02:31 1MB.zip
+         *[...]*
+         -rw-------    1 105      108        838960 Apr 30 02:31 upload_file.txt
+         226 Directory send OK.
+         OK
+
+         **AT#XFTP="cd", ".."**
+         250 Directory successfully changed.
+         OK
+
+         **AT#XFTP="pwd"**
+         257 "/" is the current directory
+         OK
+
+         **AT#XFTP="ls","-l"**
+         227 Entering Passive Mode (90,130,70,73,90,43).
+         150 Here comes the directory listing.
+         -rw-r--r--    1 0        0        1073741824000 Feb 19  2016 1000GB.zip
+         -rw-r--r--    1 0        0        107374182400 Feb 19  2016 100GB.zip
+         -rw-r--r--    1 0        0          102400 Feb 19  2016 100KB.zip
+         *[...]*
+         -rw-r--r--    1 0        0         5242880 Feb 19  2016 5MB.zip
+         drwxr-xr-x    2 105      108        561152 Apr 30 02:31 upload
+         226 Directory send OK.
+         OK
+
+         **AT#XFTP="ls","-l 1KB.zip"**
+         227 Entering Passive Mode (90,130,70,73,106,84).
+         150 Here comes the directory listing.
+         -rw-r--r--    1 0        0            1024 Feb 19  2016 1KB.zip
+         226 Directory send OK.
+         OK
+
+   #. Switch to binary transfer mode and download a file from the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="binary"**
+         200 Switching to Binary mode.
+         OK
+
+         **AT#XFTP="get","1KB.zip"**
+         227 Entering Passive Mode (90,130,70,73,84,29).
+
+         00000000000000000000000000\ *[...]*\ 000000000000
+         226 Transfer complete.
+         OK
+
+   #. Navigate to the :file:`upload` folder, switch to binary transfer mode, and create a binary file with the content "DEADBEEF".
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="cd","upload"**
+         250 Directory successfully changed.
+         OK
+
+         **AT#XFTP="binary"**
+         200 Switching to Binary mode.
+         OK
+
+         **AT#XFTP="put","upload.bin",0,"DEADBEEF"**
+         227 Entering Passive Mode (90,130,70,73,114,150).
+         150 Ok to send data.
+         226 Transfer complete.
+         OK
+
+   #. Switch to ASCII transfer mode and create a text file with the content "TEXTDATA".
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="ascii"**
+         200 Switching to ASCII mode.
+         OK
+
+         **AT#XFTP="put","upload.txt",1,"TEXTDATA"**
+         227 Entering Passive Mode (90,130,70,73,99,84).
+         150 Ok to send data.
+         226 Transfer complete.
+         OK
+
+   #. Disconnect from the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="close"**
+         221 Goodbye.
+         OK
+
+#. Test an FTP connection to "ftp.dlptest.com".
+
+   This server does not support anonymous login.
+   Go to `DLPTest.com`_ to get the latest login information.
+   After login on, you can create and remove folders and files, rename files, and upload files.
+
+   a. Connect to the FTP server and check the status.
+      Replace *user* and *password* with the login information from `DLPTest.com`_.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="open","**\ *user*\ **","**\ *password*\ **","ftp.dlptest.com"**
+         220-#########################################################
+         220-Please upload your web files to the public_html directory.
+         220-Note that letters are case sensitive.
+         220-#########################################################
+         220 This is a private system - No anonymous login
+         200 OK, UTF-8 enabled
+         331 User *user* OK. Password required
+         230-Your bandwidth usage is restricted
+         230 OK. Current restricted directory is /
+         OK
+
+         **AT#XFTP="status"**
+         215 UNIX Type: L8
+         211 https://www.pureftpd.org/
+         OK
+
+   #. Retrieve information about the existing files and folders.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="pwd"**
+         257 "/" is your current location
+         OK
+
+         **AT#XFTP="ls"**
+         227 Entering Passive Mode (35,209,241,59,135,181)
+         150 Accepted data connection
+         226-Options: -a
+         226 42 matches total
+         OK
+         .
+         ..
+         1_2596384601376578508_17-9ULspeedtest.upt
+         1_603281663034123496_17-9ULspeedtest.upt
+         *[...]*
+         aa\_.rar
+         write to File.txt
+
+   #. Create a folder and enter it.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="mkdir", "newfolder"**
+         257 "newfolder" : The directory was successfully created
+         OK
+
+         **AT#XFTP="ls","-l","newfolder"**
+         227 Entering Passive Mode (35,209,241,59,135,134)
+         150 Accepted data connection
+         226-Options: -a -l
+         226 2 matches total
+         OK
+         drwxr-xr-x    2 dlptest9   dlptest9         4096 Apr 29 19:53 .
+         drwxr-xr-x    3 dlptest9   dlptest9        57344 Apr 29 19:53 ..
+         +CEREG: 1,"1285","02EF8210",7
+
+         **AT#XFTP="cd","newfolder"**
+         250 OK. Current directory is /newfolder
+         OK
+
+   #. Switch to binary transfer mode and create a binary file with the content "DEADBEEF".
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="binary"**
+         200 TYPE is now 8-bit binary
+         OK
+
+         **AT#XFTP="put","upload.bin",0,"DEADBEEF"**
+         227 Entering Passive Mode (35,209,241,59,135,182)
+         150 Accepted data connection
+         226-File successfully transferred
+         226 0.013 seconds (measured here), 310.20 bytes per second
+         OK
+
+         **AT#XFTP="ls","-l","upload.bin"**
+         227 Entering Passive Mode (35,209,241,59,135,146)
+         150 Accepted data connection
+         226-Options: -a -l
+         226 1 matches total
+         OK
+         -rw-r--r--    1 dlptest9   dlptest9            4 Apr 29 19:54 upload.bin
+
+   #. Rename the file.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="rename","upload.bin","uploaded.bin"**
+         350 RNFR accepted - file exists, ready for destination
+         250 File successfully renamed or moved
+         OK
+
+         **AT#XFTP="ls","-l","uploaded.bin"**
+         227 Entering Passive Mode (35,209,241,59,135,111)
+         150 Accepted data connection
+         -rw-r--r--    1 dlptest9   dlptest9            4 Apr 29 19:54 uploaded.bin
+         226-Options: -a -l
+         226 1 matches total
+         OK
+
+   #. Switch to ASCII transfer mode and create a text file with the content "line #1\\r\\n".
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="ascii"**
+         200 TYPE is now ASCII
+         OK
+
+         **AT#XFTP="put","upload.txt",1,"line #1\\r\\n"**
+         227 Entering Passive Mode (35,209,241,59,135,136)
+         150 Accepted data connection
+         226-File successfully transferred
+         226 0.013 seconds (measured here), 0.82 Kbytes per second
+         OK
+
+         **AT#XFTP="ls","-l upload.txt"**
+         227 Entering Passive Mode (35,209,241,59,135,166)
+         150 Accepted data connection
+         226-Options: -a -l
+         226 1 matches total
+         OK
+         -rw-r--r--    1 dlptest9   dlptest9           11 Apr 29 19:56 upload.txt
+
+   #. Rename the file.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="rename","upload.txt","uploaded.txt"**
+         350 RNFR accepted - file exists, ready for destination
+         250 File successfully renamed or moved
+         OK
+
+         **AT#XFTP="ls","-l uploaded.txt"**
+         227 Entering Passive Mode (35,209,241,59,135,213)
+         200 Zzz...  // (KEEPALIVE response)
+         150 Accepted data connection
+         226-Options: -a -l
+         226 1 matches total
+         OK
+         -rw-r--r--    1 dlptest9   dlptest9           11 Apr 29 19:56 uploaded.txt
+         +CEREG: 1,"1285","02EF8200",7
+
+   #. Delete the files and the folder that you created.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="delete","uploaded.bin"**
+         250 Deleted uploaded.bin
+         OK
+
+         **AT#XFTP="delete","uploaded.txt"**
+         250 Deleted uploaded.txt
+         OK
+
+         **AT#XFTP="cd", ".."**
+         250 OK. Current directory is /
+         OK
+
+         **AT#XFTP="rmdir", "newfolder"**
+         250 The directory was successfully removed
+         OK
+
+   #. Disconnect from the server.
+
+      .. parsed-literal::
+         :class: highlight
+
+         **AT#XFTP="close"**
+         221-Goodbye. You uploaded 1 and downloaded 0 kbytes.
+         221 Logout.
+         OK
+
 
 Dependencies
 ************

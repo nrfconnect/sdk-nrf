@@ -244,6 +244,8 @@
 
 .. _`mscgen`: http://www.mcternan.me.uk/mscgen/
 
+.. _`DLPTest.com`: https://dlptest.com/ftp-test/
+
 .. _`Azure Firmware Over The Air (FOTA)`: https://docs.microsoft.com/en-us/azure/iot-hub/tutorial-firmware-update
 .. _`Azure IoT Hub`: https://docs.microsoft.com/en-us/azure/iot-hub/about-iot-hub
 .. _`Creating an Azure IoT Hub instance using the Azure portal`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal
