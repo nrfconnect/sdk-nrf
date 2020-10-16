@@ -70,7 +70,6 @@ manifest:
           - civetweb
           - edtt
           - fatfs
-          - hal_nordic
           - hal_st
           - libmetal
           - littlefs
@@ -107,6 +106,11 @@ manifest:
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
       remote: throwtheswitch
+    - name: hal_nordic
+      repo-path: hal_nordic
+      revision: pull/60/head
+      path: modules/hal_nordic
+      remote: zephyrproject
     - name: unity
       path: test/cmock/vendor/unity
       revision: 031f3bbe45f8adf504ca3d13e6f093869920b091
