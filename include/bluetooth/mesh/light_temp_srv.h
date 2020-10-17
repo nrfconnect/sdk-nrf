@@ -141,7 +141,7 @@ struct bt_mesh_light_temp_srv {
  * default publish parameters.
  * @param[in] status Current status.
  *
- * @retval 0 Successfully published a Generic OnOff Status message.
+ * @retval 0 Successfully sent the message.
  * @retval -ENOTSUP A message context was not provided and publishing is not
  * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is

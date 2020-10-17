@@ -577,7 +577,7 @@ static int bt_mesh_light_ctl_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_time_srv_settings_set(struct bt_mesh_model *model,
+static int bt_mesh_light_ctl_srv_settings_set(struct bt_mesh_model *model,
 					 const char *name, size_t len_rd,
 					 settings_read_cb read_cb, void *cb_arg)
 {
@@ -646,7 +646,7 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *mod)
 const struct bt_mesh_model_cb _bt_mesh_light_ctl_srv_cb = {
 	.init = bt_mesh_light_ctl_srv_init,
 	.start = bt_mesh_light_ctl_srv_start,
-	.settings_set = bt_mesh_time_srv_settings_set,
+	.settings_set = bt_mesh_light_ctl_srv_settings_set,
 };
 
 int32_t bt_mesh_light_ctl_pub(struct bt_mesh_light_ctl_srv *srv,
@@ -666,7 +666,7 @@ int32_t bt_mesh_light_ctl_range_pub(struct bt_mesh_light_ctl_srv *srv,
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_TEMP_RANGE_STATUS,
 				 BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS);
-	range_encode_status(&msg, srv, BT_MESH_MODEL_SUCCESS);
+	range_encode_status(&msg, srv, status);
 	return model_send(srv->model, ctx, &msg);
 }
 
