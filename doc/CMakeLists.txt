@@ -75,6 +75,9 @@ set(KCONFIG_BINARY_DIR ${CMAKE_BINARY_DIR}/Kconfig)
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
 file(MAKE_DIRECTORY ${HTML_DIR})
 
+# Known issues script
+set(KI_SCRIPT ${ZEPHYR_BASE}/scripts/filter-known-issues.py)
+
 #
 # Add the 'zephyr' target for building the Zephyr documentation. We reuse
 # doc/CMakeLists.txt from the Zephyr repository, but use our own Sphinx
@@ -132,6 +135,8 @@ set(NRF_DOC_LOG ${NRF_BINARY_DIR}/doc.log)
 set(NRF_DOXY_LOG ${NRF_BINARY_DIR}/doxy.log)
 set(NRF_SPHINX_LOG ${NRF_BINARY_DIR}/sphinx.log)
 set(NRF_CONTENT_OUTPUTS ${NRF_BINARY_DIR}/extracted-content.txt)
+set(NRF_DOC_WARN ${NRF_BINARY_DIR}/doc.warnings)
+set(NRF_KI_DIR ${NRF_BASE}/.known-issues/doc)
 
 configure_file(${NRF_DOXYFILE_IN} ${NRF_DOXYFILE_OUT} @ONLY)
 
@@ -243,6 +248,7 @@ add_custom_target(
   COMMAND ${NRF_SPHINX_BUILD_HTML_COMMAND}
   # Merge the Doxygen and Sphinx logs into a single file
   COMMAND ${CMAKE_COMMAND} -P ${ZEPHYR_BASE}/cmake/util/fmerge.cmake ${NRF_DOC_LOG} ${NRF_DOXY_LOG} ${NRF_SPHINX_LOG}
+  COMMAND ${PYTHON_EXECUTABLE} ${KI_SCRIPT} --config-dir ${NRF_KI_DIR} --errors ${NRF_DOC_WARN} --warnings ${NRF_DOC_WARN} ${NRF_DOC_LOG}
   # Copy root index file
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/static/html/index.html ${HTML_DIR}
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}

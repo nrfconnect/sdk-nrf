@@ -36,6 +36,7 @@ Kconfig*                                  @tejlmand
 /doc/**/conf.py                           @carlescufi
 /doc/nrf/                                 @carlescufi
 /doc/versions.json                        @carlescufi
+/.known-issues/                           @carlescufi
 # All subfolders
 /drivers/                                 @anangl
 /drivers/bt_ll_softdevice/                @anangl @rugeGerritsen
