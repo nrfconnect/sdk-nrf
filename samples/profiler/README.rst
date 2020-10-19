@@ -52,6 +52,9 @@ See the Profiler documentation for more information.
 Connect to the board with a terminal emulator (for example, PuTTY) to see messages displayed by the sample.
 See :ref:`putty` for the required settings.
 
+.. tip::
+   If you use SEGGER Embedded Studio, make sure to stop debugging before you run Python scripts.
+   Otherwise, you may observe problems with accessing RTT data by the profiler scripts.
 
 Dependencies
 ************
