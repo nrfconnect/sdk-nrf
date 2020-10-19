@@ -9,7 +9,7 @@ Application development
 
 This user guide provides fundamental information on developing a new application based on the |NCS|.
 
-Build and Configuration System
+Build and configuration system
 ******************************
 
 The |NCS| build and configuration system is based on the one from Zephyr, with some additions.
@@ -56,3 +56,62 @@ In order to define your own board, you can use the following Zephyr guides as re
 
 * :ref:`custom_board_definition` is a guide to adding your own custom board to the Zephyr build system.
 * :ref:`board_porting_guide` is a complete guide to porting Zephyr to your own board.
+
+Memory footprint optimization
+*****************************
+
+When developing an application, ROM and RAM footprint are important factors, especially when the firmware runs on the most resource-constrained devices like nRF52810 or nRF52811.
+
+To reduce the memory footprint, ensure that your application uses the minimum required resources and tune the |NCS| configuration parameters.
+Complete the following actions to optimize your application:
+
+* Follow the guides for :ref:`optimizing Zephyr <zephyr:optimizations>`.
+  Also see the implementation of the :ref:`zephyr:minimal_sample` sample.
+* Analyze stack usage in each thread of your application by using the :ref:`zephyr:thread_analyzer`.
+  Reduce the stack sizes where possible.
+* Limit or disable debugging features such as logging or asserts.
+* Go through each component and subsystem and turn off all features that your application does not use.
+
+The following subsections give more information on how to optimize specific subsystems.
+
+
+Bluetooth
+=========
+
+Complete the following actions to optimize the Bluetooth part of your application:
+
+* Disable features that your application does not use.
+  For example, disable the following features:
+
+  * Data Length Update
+  * Extended Advertising
+  * PHY Update
+  * Security Manager Protocol (if no encryption and authentication is needed)
+  * GATT Caching
+  * GATT Service Changed
+
+* Reduce the stack sizes of the Bluetooth internal threads where possible.
+  Use the :ref:`zephyr:thread_analyzer` to analyze the stack usage.
+
+  The following configuration options affect the stack sizes of the Bluetooth threads:
+
+  * :option:`CONFIG_SDC_RX_STACK_SIZE`
+  * :option:`CONFIG_BT_RX_STACK_SIZE`
+  * :option:`CONFIG_BT_HCI_TX_STACK_SIZE`
+  * :option:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
+
+* Reduce the overall number and the sizes of the Bluetooth buffers, based on the expected data traffic in your application.
+
+  The following configuration options affect the Bluetooth buffers:
+
+  * :option:`CONFIG_BT_DISCARDABLE_BUF_COUNT`
+  * :option:`CONFIG_BT_DISCARDABLE_BUF_SIZE`
+  * :option:`CONFIG_BT_RX_BUF_COUNT`
+  * :option:`CONFIG_BT_CONN_TX_MAX`
+  * :option:`CONFIG_BT_L2CAP_TX_BUF_COUNT`
+  * :option:`CONFIG_BT_ATT_TX_MAX`
+  * :option:`CONFIG_BT_CTLR_RX_BUFFERS`
+  * :option:`CONFIG_BT_CTLR_TX_BUFFERS`
+  * :option:`CONFIG_BT_CTLR_TX_BUFFER_SIZE`
+
+For reference, you can find a minimal footprint configuration of the :ref:`peripheral_lbs` sample in :file:`nrf/samples/bluetooth/peripheral_lbs/minimal.conf`.
