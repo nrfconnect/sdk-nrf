@@ -30,9 +30,9 @@ The Light Temperature Server should reference the :c:member:`bt_mesh_light_ctl_s
 
 Conventionally, the Light Temperature Server model is instantiated on the very next element, and the composition data looks as presented below.
 
-.. code-block:: console
+.. code-block:: c
 
-    static struct bt_mesh_light_ctl_srv light_ctl_srv = BT_MESH_LIGHT_CTL_SRV_INIT(&light_ctl_handlers);
+    static struct bt_mesh_light_ctl_srv light_ctl_srv = BT_MESH_LIGHT_CTL_SRV_INIT(&lightness_handlers, &light_temp_handlers);
 
     static struct bt_mesh_elem elements[] = {
         BT_MESH_ELEM(
@@ -45,11 +45,13 @@ Conventionally, the Light Temperature Server model is instantiated on the very n
             BT_MESH_MODEL_NONE),
     };
 
+The Light CTL Server does not require any message handler callbacks, as all its states are bound to the included :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_light_temp_srv_readme` models.
+The Lightness and Light Temperature server callbacks will pass pointers to :c:member:`bt_mesh_light_ctl_srv.lightness_srv` and :c:member:`bt_mesh_light_ctl_srv.temp_srv`, respectively.
+
 .. note::
 
     The Light CTL Server will verify that its internal Light Temperature Server is instantiated on a subsequent element on startup.
-    If the Light Temperature Server is missing or instantiated on the same or a preceding element, the Bluetooth Mesh startup procedure will
-    fail, and the device will not be responsive.
+    If the Light Temperature Server is missing or instantiated on the same or a preceding element, the Bluetooth Mesh startup procedure will fail, and the device will not be responsive.
 
 States
 ======

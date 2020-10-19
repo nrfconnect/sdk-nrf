@@ -17,7 +17,7 @@ static struct bt_mesh_lightness_srv lightness_srv =
 static struct bt_mesh_light_ctrl_srv light_ctrl_srv =
 	BT_MESH_LIGHT_CTRL_SRV_INIT(NULL);
 static struct bt_mesh_light_ctl_srv light_ctl_srv =
-	BT_MESH_LIGHT_CTL_SRV_INIT(NULL);
+	BT_MESH_LIGHT_CTL_SRV_INIT(NULL, NULL);
 static struct bt_mesh_onoff_srv onoff_srv = BT_MESH_ONOFF_SRV_INIT(NULL);
 static struct bt_mesh_onoff_cli onoff_cli = BT_MESH_ONOFF_CLI_INIT(NULL);
 static struct bt_mesh_time_srv time_srv = BT_MESH_TIME_SRV_INIT(NULL);

@@ -66,7 +66,7 @@ static void temp_range_status_handle(struct bt_mesh_model *model,
 	struct bt_mesh_light_ctl_cli *cli = model->user_data;
 	struct bt_mesh_light_temp_range_status status;
 
-	status.status_code = net_buf_simple_pull_u8(buf);
+	status.status = net_buf_simple_pull_u8(buf);
 	status.range.min = net_buf_simple_pull_le16(buf);
 	status.range.max = net_buf_simple_pull_le16(buf);
 
@@ -264,17 +264,17 @@ int bt_mesh_light_ctl_set_unack(struct bt_mesh_light_ctl_cli *cli,
 }
 
 int bt_mesh_light_temp_get(struct bt_mesh_light_ctl_cli *cli,
-			       struct bt_mesh_msg_ctx *ctx,
-			       struct bt_mesh_light_temp_status *rsp)
+			   struct bt_mesh_msg_ctx *ctx,
+			   struct bt_mesh_light_temp_status *rsp)
 {
 	return get_msg(cli, ctx, rsp, BT_MESH_LIGHT_TEMP_GET,
 		       BT_MESH_LIGHT_TEMP_STATUS);
 }
 
 int bt_mesh_light_temp_set(struct bt_mesh_light_ctl_cli *cli,
-			       struct bt_mesh_msg_ctx *ctx,
-			       const struct bt_mesh_light_temp_set *set,
-			       struct bt_mesh_light_temp_status *rsp)
+			   struct bt_mesh_msg_ctx *ctx,
+			   const struct bt_mesh_light_temp_set *set,
+			   struct bt_mesh_light_temp_status *rsp)
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_TEMP_SET,
 				 BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_SET);
