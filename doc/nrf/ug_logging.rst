@@ -74,6 +74,8 @@ You can enable many backends at once and make them work simultaneously, if you w
     As a recommendation, avoid selecting many backends using the same physical interface instance to avoid mutual interference.
     For example, instead of ``UART0`` for both, choose ``UART0`` for one backend and ``UART1`` for another.
 
+.. _ug_logging_backends_uart:
+
 UART
 ====
 
@@ -83,6 +85,8 @@ The UART interface can be configured as a logging backend using the following Kc
 * :option:`CONFIG_LOG_BACKEND_UART_SYST_ENABLE` - This option is used to output logs in system format.
 
 For information about how to see UART output, see :ref:`putty`.
+
+.. _ug_logging_backends_rtt:
 
 RTT
 ===
@@ -103,10 +107,12 @@ SEGGER's J-Link RTT backend logging can be handled with the following Kconfig op
 
 For information about how to run SEGGER's J-Link RTT on your PC and see the logs, see :ref:`testing_rtt`.
 
+.. _ug_logging_backends_spinel:
+
 Spinel
 ======
 
-Using Spinel protocol as a logging backend is specific to OpenThread's :ref:`thread_architectures_designs_cp_ncp` architecture.
+Using `Spinel protocol`_ as a logging backend is specific to OpenThread's :ref:`thread_architectures_designs_cp_ncp` architecture.
 The Spinel protocol can be configured as a logging backend using the following Kconfig options:
 
 * :option:`CONFIG_LOG_BACKEND_SPINEL` - This option enables the Spinel logging backend.
@@ -120,6 +126,8 @@ To communicate using the Spinel protocol and gather logs, you need one of the fo
 Each one of these tools accepts the ``-d <DEBUG_LEVEL>`` and ``--debug=<DEBUG_LEVEL>`` arguments, which can be used to display logging messages.
 See `PySpinel arguments`_ for an example if you are using PySpinel.
 Alternatively, see `wpantund Usage Overview`_ for information about how to change wpantund configuration file to avoid passing arguments manually every time.
+
+.. _ug_logging_backends_shell:
 
 Shell
 =====

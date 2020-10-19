@@ -7,7 +7,7 @@ Thread: NCP
    :local:
    :depth: 2
 
-The Thread NCP sample demonstrates the usage of OpenThread Network Co-Processor architecture inside the Zephyr environment.
+The :ref:`Thread <ug_thread>` NCP sample demonstrates the usage of OpenThread's :ref:`thread_architectures_designs_cp_ncp` architecture inside the Zephyr environment.
 
 The sample is based on Zephyr's :ref:`zephyr:ncp-sample` sample.
 However, it customizes Zephyr's sample to the NCS requirements (for example, by increasing the stack size dedicated for the user application), and also extends it with several features:
@@ -16,6 +16,9 @@ However, it customizes Zephyr's sample to the NCS requirements (for example, by 
 * Lowered main stack size to increase user application space.
 * No obsolete configuration options.
 * Vendor hooks for NCP allowing User to extend handled properties by its own, customized functionalities.
+
+This sample supports optional :ref:`ot_ncp_sample_vendor_hook_extension` and :ref:`logging extension <ot_ncp_sample_logging>`, which can be turned on or off independently.
+See :ref:`ot_ncp_sample_features_enabling` for details.
 
 Overview
 ********
@@ -26,38 +29,29 @@ The sample shows how to set connection between NCP and wpantund.
 
 This sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
 
-.. _ot_ncp_sample_features:
+.. _ot_ncp_sample_vendor_hook_extension:
 
-Additional features for NCP sample
-==================================
+Vendor hooks extension
+======================
 
-Besides its basic functionalities, this sample supports additional features, which can be turned on or off independently.
-These features are defined as overlays to the main project configuration file.
-
-The following features are available in the NCP sample:
-
-* :file:`overlay-vendor_hook.conf` - Enables vendor hooks feature support.
-* :file:`overlay-logging.conf` - Presents how to change log levels of specific modules.
-
-Vendor hooks
-------------
-
-The vendor hook feature allows you to define your own commands and properties for the Spinel protocol, and extend the standard set used in communication with NCP.
+The vendor hook feature extension allows you to define your own commands and properties for the `Spinel protocol`_, and extend the standard set used in communication with NCP.
 Thanks to this feature, you can add new custom functionalities and manage them from host device by using serial interface - in the same way as the default functionalities.
 
 For more detailed information about the vendor hooks feature and host device configuration, see :ref:`ug_thread_vendor_hooks`.
-For information about how to enable the vendor hook feature for this sample, see `Enabling vendor hook feature`_.
+For information about how to enable the vendor hook feature for this sample, see :ref:`ot_ncp_sample_features_enabling_hooks`.
 
-Logging
--------
+.. _ot_ncp_sample_logging:
 
-This sample by default uses Spinel logging backend, which allows sending log messages to the host device using Spinel protocol.
-Presented feature is very useful, because it doesn't require having seperate interfaces to communicate with NCP via Spinel protocol and collect log messages.
-Moreover selecting Spinel logging backend (by setting :option:`CONFIG_LOG_BACKEND_SPINEL`) doesn't exclude using another backend like UART or RTT at the same time.
+Logging extension
+=================
 
-By default log levels of all modules are set to critical to not engage microprocessor in unnecessary activites, but User is able to change it in overlay :file:`overlay-logging.conf`.
-It is possible to change log levels of User modules, whole Zephyr system and OpenThread independently to make solution flexible.
-For information how to include overlay file, when building target, see `Enabling additional features`_.
+This sample by default uses :ref:`Spinel logging backend <ug_logging_backends_spinel>`, which allows sending log messages to the host device using the Spinel protocol.
+This feature is very useful, because it does not require having separate interfaces to communicate with NCP through the Spinel protocol and collect log messages.
+Moreover, selecting the Spinel logging backend (by setting :option:`CONFIG_LOG_BACKEND_SPINEL`) does not exclude using another backend like UART or RTT at the same time.
+
+By default, the log levels for all modules are set to critical to not engage the microprocessor in unnecessary activities.
+To make the solution flexible, you can change independently the log levels for your modules, for the whole Zephyr system, and for OpenThread.
+Use the :file:`overlay-logging.conf` overlay file as reference for this purpose.
 
 Requirements
 ************
@@ -99,18 +93,22 @@ Building and running
 
 .. _ot_ncp_sample_features_enabling:
 
-Enabling additional features
+Activating sample extensions
 ============================
 
-When building the sample, you can enable :ref:`additional sample features <ot_ncp_sample_features>`.
-To do this, modify :makevar:`OVERLAY_CONFIG`.
-For example, to enable vendor hooks, set :file:`overlay-vendor_hook.conf`.
-See :ref:`cmake_options` for instructions on how to add this option.
+To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
 
+* For the vendor hooks feature support, set :file:`overlay-vendor_hook.conf`.
+  See :ref:`ot_ncp_sample_features_enabling_hooks` for more information.
+* For the logging variant that presents how to change log levels of specific modules, set :file:`overlay-logging.conf`.
+
+See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
-Enabling vendor hook feature
-----------------------------
+.. _ot_ncp_sample_features_enabling_hooks:
+
+Activating vendor hook feature
+------------------------------
 
 For this sample, handling of extension commands and properties is done through the vendor hook :file:`.cpp` file, which is dynamically attached to the NCP component during the compilation.
 

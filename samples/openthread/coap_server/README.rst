@@ -7,14 +7,14 @@ Thread: CoAP Server
    :local:
    :depth: 2
 
-The Thread CoAP Server sample demonstrates controlling light resources within an OpenThread network.
-This sample exposes resorces in the network and requires another sample that is compatible with the OpenThread network to access them.
+The :ref:`Thread <ug_thread>` CoAP Server sample demonstrates controlling light resources within an OpenThread network.
+This sample exposes resources in the network and requires another sample that is compatible with the OpenThread network to access them.
 The recommended sample referenced on this page is :ref:`coap_client_sample`.
 
 Overview
 ********
 
-This sample demnstrates how to expose resources that can be accessed by other devices in the same Thread network.
+This sample demonstrates how to expose resources that can be accessed by other devices in the same Thread network.
 You can use this sample application as a starting point to implement a :ref:`CoAP <zephyr:coap_sock_interface>` application.
 
 The following CoAP resources are exposed on the network by this sample:
@@ -96,7 +96,7 @@ Once the serial connection is ready, you can run OpenThread CLI commands.
 For complete CLI documentation, refer to `OpenThread CLI Reference`_.
 
 .. note::
-    In Zephyr shell, every OpenThread command needs to be prepended with the `ot` keyword.
+    In Zephyr shell, every OpenThread command needs to be preceded with the `ot` keyword.
     For example, ``ot channel 20``.
 
 Dependencies
