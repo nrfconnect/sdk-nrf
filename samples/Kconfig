@@ -10,7 +10,7 @@ config NCS_SAMPLES_DEFAULTS
 	imply LOG
 	imply LOG_MINIMAL
 	imply ASSERT
-	imply HW_STACK_PROTECTION
+	imply HW_STACK_PROTECTION if ARCH_HAS_STACK_PROTECTION
 	help
 	  Use the default configuration for NCS samples.
 
