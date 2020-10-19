@@ -822,6 +822,7 @@ static ssize_t nrf91_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
 {
 	ssize_t len = 0;
 	ssize_t ret;
+	ssize_t offset;
 	int i;
 	static K_MUTEX_DEFINE(sendmsg_lock);
 	static uint8_t buf[CONFIG_BSD_LIBRARY_SENDMSG_BUF_SIZE];
@@ -830,6 +831,13 @@ static ssize_t nrf91_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
 		errno = EINVAL;
 		return -1;
 	}
+
+	/* The standard POSIX definition of sendmsg says it should return
+	 * EWOULDBLOCK if the socket is in NONBLOCK mode and handed too much data.
+	 * This implementation doesn't meet that requirement and will always
+	 * block, even in NONBLOCK mode.  See POSIX.1-2017:
+	 * <http://pubs.opengroup.org/onlinepubs/9699919799/functions/sendmsg.html>
+	 */
 
 	/* Try to reduce number of `sendto` calls - copy data if they fit into
 	 * a single buffer
@@ -850,9 +858,16 @@ static ssize_t nrf91_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
 			len += msg->msg_iov[i].iov_len;
 		}
 
-		ret = nrf91_socket_offload_sendto(obj, buf, len,
-						  flags, msg->msg_name,
-						  msg->msg_namelen);
+		offset = 0;
+		ret = 0;
+		while ((offset < len) && (ret >= 0)) {
+			ret = nrf91_socket_offload_sendto(obj,
+				(buf + offset), (len - offset), flags,
+				msg->msg_name, msg->msg_namelen);
+			if (ret > 0) {
+				offset += ret;
+			}
+		}
 
 		k_mutex_unlock(&sendmsg_lock);
 		return ret;
@@ -869,15 +884,18 @@ static ssize_t nrf91_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
 			continue;
 		}
 
-		ret = nrf91_socket_offload_sendto(obj, msg->msg_iov[i].iov_base,
-						  msg->msg_iov[i].iov_len,
-						  flags, msg->msg_name,
-						  msg->msg_namelen);
-		if (ret < 0) {
-			return ret;
+		offset = 0;
+		while (offset < msg->msg_iov[i].iov_len) {
+			ret = nrf91_socket_offload_sendto(obj,
+				(((uint8_t *) msg->msg_iov[i].iov_base) + offset),
+				(msg->msg_iov[i].iov_len - offset), flags,
+				msg->msg_name, msg->msg_namelen);
+			if (ret < 0) {
+				return ret;
+			}
+			offset += ret;
+			len += ret;
 		}
-
-		len += ret;
 	}
 
 	return len;
