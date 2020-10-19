@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+zephyr_library()
+
 zephyr_library_sources(model_utils.c)
 
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_ONOFF_SRV gen_onoff_srv.c)
