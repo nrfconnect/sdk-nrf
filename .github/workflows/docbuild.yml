@@ -1,0 +1,105 @@
+name: Documentation Build
+
+on:
+  pull_request_target:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Run documentation build
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v2
+      with:
+        path: ncs/nrf
+        ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: 0
+
+    - name: cache-pip
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-doc-pip
+
+    - name: Install packages
+      run: |
+        sudo apt-get install -y ninja-build doxygen mscgen sshpass
+
+    - name: Install base dependencies
+      working-directory: ncs
+      run: |
+        pip3 install -U pip
+        pip3 install -U setuptools
+        export PATH="$HOME/.local/bin:$PATH"
+        pip3 install -r nrf/scripts/requirements-base.txt
+
+    - name: West init and update
+      working-directory: ncs
+      run: |
+        export PATH="$HOME/.local/bin:$PATH"
+        west init -l nrf
+        west update
+        west zephyr-export
+
+    - name: Install documentation dependencies
+      working-directory: ncs
+      run: |
+        pip3 install -r zephyr/scripts/requirements-doc.txt
+        pip3 install -r nrf/scripts/requirements-doc.txt
+
+    - name: Build documentation
+      working-directory: ncs
+      run: |
+        export PATH="$HOME/.local/bin:$PATH"
+        mkdir -p _build && cd _build
+        cmake -GNinja ../nrf/doc
+        ninja build-all
+
+    - name: Check build warnings
+      working-directory: ncs
+      run: |
+        cd _build
+        if [ -s Kconfig/sphinx.log ]; then
+          errors=$(cat Kconfig/sphinx.log)
+          echo "::error file=Kconfig/sphinx.log::$errors"
+          exit 1
+        fi
+        if [ -s zephyr/doc.warnings ]; then
+          errors=$(cat zephyr/doc.warnings)
+          echo "::error file=zephyr/doc.warnings::$errors"
+          exit 1
+        fi
+        if [ -s mcuboot/sphinx.log ]; then
+          errors=$(cat mcuboot/sphinx.log)
+          echo "::error file=mcuboot/sphinx.log::$errors"
+          exit 1
+        fi
+        if [ -s nrf/doc.warnings ]; then
+          errors=$(cat nrf/doc.warnings)
+          echo "::error file=nrf/doc.warnings::$errors"
+          exit 1
+        fi
+        if [ -s nrfxlib/doc.log ]; then
+          errors=$(cat nrfxlib/doc.log)
+          echo "::error file=nrfxlib/doc.log::$errors"
+          exit 1
+        fi
+
+    - name: Archive and upload documentation
+      working-directory: ncs
+      env:
+        NCS_DOC_USR: ${{ secrets.NCS_TRANSFER_DOC_USR }}
+        NCS_DOC_PWD: ${{ secrets.NCS_TRANSFER_DOC_PWD }}
+        PR_NUMBER: ${{ github.event.number }}
+      run: |
+        # FIXME: must be updated once push is added to events
+        archive="doc_build_pr${PR_NUMBER}.tar.gz"
+        cd _build
+        tar -C html -zcf $archive .
+        mkdir -p ~/.ssh && \
+          ssh-keyscan -p 2222 transfer.nordicsemi.no >> ~/.ssh/known_hosts
+        echo "put ${archive}" | \
+          sshpass -p $NCS_DOC_PWD sftp -P 2222 -o BatchMode=no -b - $NCS_DOC_USR@transfer.nordicsemi.no
