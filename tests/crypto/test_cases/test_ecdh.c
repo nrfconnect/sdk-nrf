@@ -277,7 +277,7 @@ void exec_test_case_ecdh_deterministic_full(void)
 	err_code =
 		mbedtls_ecdh_compute_shared(&initiator_ctx.grp,
 					    &initiator_ctx.z, &responder_ctx.Q,
-					    &initiator_ctx.d, NULL, NULL);
+					    &initiator_ctx.d, drbg_random, NULL);
 	stop_time_measurement();
 
 	LOG_DBG("Error code compute shared: -0x%04X", -err_code);
@@ -293,7 +293,7 @@ void exec_test_case_ecdh_deterministic_full(void)
 	err_code =
 		mbedtls_ecdh_compute_shared(&responder_ctx.grp,
 					    &responder_ctx.z, &initiator_ctx.Q,
-					    &responder_ctx.d, NULL, NULL);
+					    &responder_ctx.d, drbg_random, NULL);
 
 	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
 
@@ -371,7 +371,7 @@ void exec_test_case_ecdh_deterministic(void)
 	err_code =
 		mbedtls_ecdh_compute_shared(&responder_ctx.grp,
 					    &responder_ctx.z, &initiator_ctx.Q,
-					    &responder_ctx.d, NULL, NULL);
+					    &responder_ctx.d, drbg_random, NULL);
 	stop_time_measurement();
 
 	LOG_DBG("Error code ss computation: -0x%04X", -err_code);
