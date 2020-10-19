@@ -17,7 +17,7 @@ In |NCS|, your implementation of the vendor hooks file is compiled by OpenThread
 The only information needed for compilation is the file location.
 This allows you to implement new features in the application or elsewhere without having to modify OpenThread components.
 
-Vendor hooks are strictly connected to the Spinel protocol used in serial communication between host device and the MCU board working in Thread NCP/RCP architecture.
+Vendor hooks are strictly connected to the `Spinel protocol`_ used in serial communication between host device and the MCU board working in :ref:`Thread NCP or RCP architecture <thread_architectures_designs_cp>`.
 Spinel uses serial frames with commands that describe the activity to take (for example, get or set), and with properties that define the object on which the activity is to be performed.
 You can use the available commands and properties, but also define your set of instructions to provide new features by using the vendor hooks.
 

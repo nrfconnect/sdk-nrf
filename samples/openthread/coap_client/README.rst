@@ -7,13 +7,12 @@ Thread: CoAP Client
    :local:
    :depth: 2
 
-The Thread CoAP Client sample demonstrates controlling light resources of other nodes within an OpenThread network.
+The :ref:`Thread <ug_thread>` CoAP Client sample demonstrates controlling light resources of other nodes within an OpenThread network.
 To show this interaction, the sample requires a server sample that is compatible with the OpenThread network and has a light resource available.
 The recommended server sample referenced on this page is :ref:`coap_server_sample`.
 
-.. note::
-    This sample supports optional :ref:`coap_client_sample_multi_ext` and Minimal Thread Device variants.
-    See :ref:`coap_client_sample_activating_variants` for details.
+This sample supports optional :ref:`coap_client_sample_multi_ext` and :ref:`Minimal Thread Device variant <thread_ug_device_type>`, which can be turned on or off.
+See :ref:`coap_client_sample_activating_variants` for details.
 
 Overview
 ********
@@ -37,7 +36,7 @@ Multiprotocol |BLE| extension
 
 This optional extension can demonstrate the OpenThread stack and :ref:`nrfxlib:softdevice_controller` working concurrently.
 It uses the :ref:`nus_service_readme` library to control the LED states over |BLE| in a Thread network.
-For more information about multiprotocol feature, see :ref:`ug_multiprotocol_support`.
+For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
 
 Requirements
 ************
@@ -127,6 +126,7 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
 * For the Multiprotocol Bluetooth LE extension, set :file:`overlay-multiprotocol_ble.conf`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
+For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 Testing
 =======

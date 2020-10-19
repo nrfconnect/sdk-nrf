@@ -99,6 +99,8 @@ It also has the following disadvantages:
 
    Multiprotocol Thread and |BLE| architecture
 
+For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
+
 This platform design is suitable for the following development kits:
 
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+

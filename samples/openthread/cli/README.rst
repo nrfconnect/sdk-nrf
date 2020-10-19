@@ -7,7 +7,10 @@ Thread: CLI
    :local:
    :depth: 2
 
-The Thread CLI sample demonstrates the usage of OpenThread Command Line Interface inside the Zephyr shell.
+The :ref:`Thread <ug_thread>` CLI sample demonstrates the usage of OpenThread Command Line Interface inside the Zephyr shell.
+
+This sample supports optional :ref:`ot_cli_sample_thread_v12`, which can be turned on or off.
+See :ref:`coap_client_sample_activating_variants` for details.
 
 Overview
 ********
@@ -88,6 +91,7 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
 * For the experimental Thread 1.2 variant, set :file:`overlay-thread_1_2.conf`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
+For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 Testing
 =======

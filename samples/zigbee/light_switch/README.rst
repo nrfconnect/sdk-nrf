@@ -7,13 +7,13 @@ Zigbee: Light switch
    :local:
    :depth: 2
 
-The Zigbee light switch sample can be used to change the state of light sources on other devices within the same Zigbee network.
+The :ref:`Zigbee <ug_zigbee>` light switch sample can be used to change the state of light sources on other devices within the same Zigbee network.
 
 You can use this sample together with the :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` and the :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` to set up a basic Zigbee network.
 
-.. note::
-    This sample supports the `Sleepy End Device behavior`_ and the optional :ref:`lib_zigbee_fota` and :ref:`zigbee_light_switch_sample_nus` extensions.
-    See :ref:`zigbee_light_switch_activating_variants` for details about how to enable these variants.
+This sample supports the optional `Sleepy End Device behavior`_ and :ref:`zigbee_light_switch_sample_nus`.
+It also supports :ref:`lib_zigbee_fota`.
+See :ref:`zigbee_light_switch_activating_variants` for details about how to enable these variants.
 
 Overview
 ********
@@ -49,6 +49,8 @@ To support both protocols at the same time, the Zigbee stack uses the :ref:`zeph
 Depending on the |BLE| connection interval, the nRF52 development kits can spend up to 99% of the radio time on the Zigbee protocol.
 
 Transmitting and receiving data when using this example does not break connection from any of the used radio protocols, either |BLE| or Zigbee.
+
+For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
 
 Source file setup
 =================
@@ -158,6 +160,7 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
   Check :ref:`gs_programming_board_names` for the board name to use instead of the ``nrf52840dk_nrf52840``.
 
 See :ref:`cmake_options` for instructions on how to add this option.
+For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 .. _zigbee_light_switch_testing:
 
