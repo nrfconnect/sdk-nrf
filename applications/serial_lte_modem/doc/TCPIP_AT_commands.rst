@@ -30,8 +30,8 @@ Syntax
 
 * The ``<op>`` parameter can accept one of the following values:
 
-  * ``0`` - Open
-  * ``1`` - Close
+  * ``0`` - Close
+  * ``1`` - Open
 
 * The ``<sec_tag>`` parameter is an integer.
   It indicates to the modem the credential of the security tag used for establishing a secure connection.
