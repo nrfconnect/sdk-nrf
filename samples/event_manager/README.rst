@@ -28,7 +28,7 @@ Controller (``controller.c``):
 
 Statistics (``stats.c``):
   This module waits for measurement events from the sensor.
-  Every time a measurement event is received, the module calculates simple statistics about one of the measurement values that are transmitted as part of the event and logs them.
+  The module calculates and logs basic statistics about one of the measurement values that are transmitted as part of the event.
 
 
 Requirements
