@@ -32,15 +32,15 @@ extern "C" {
 
 #ifdef CONFIG_SOC_SERIES_NRF53X
 
-/* These must be hard coded as this code is preprocessed for both net and app
- * core.
- */
-#define APP_CORE_SRAM_START 0x20000000
-#define APP_CORE_SRAM_SIZE KB(512)
-#define RAM_SECURE_ATTRIBUTION_REGION_SIZE 0x2000
-#define PCD_CMD_ADDRESS (APP_CORE_SRAM_START \
-			+ APP_CORE_SRAM_SIZE \
-			- RAM_SECURE_ATTRIBUTION_REGION_SIZE)
+#include <pm_config.h>
+
+#ifdef PM_PCD_SRAM_ADDRESS
+#define PCD_CMD_ADDRESS PM_PCD_SRAM_ADDRESS
+#else
+/* extra '_' since its in a different domain */
+#define PCD_CMD_ADDRESS PM__PCD_SRAM_ADDRESS
+#endif /* PM_PCD_SRAM_ADDRESS */
+
 #endif
 
 enum pcd_status {
