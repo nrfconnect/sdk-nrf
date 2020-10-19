@@ -2,6 +2,6 @@
 
 # This block of RAM is used for IPC
 rpmsg_nrf53_sram:
-  placement: {before: end}
+  placement: {before: {one_of: [pcd_sram, end]}}
   size: CONFIG_PM_PARTITION_SIZE_RPMSG_NRF53_SRAM
   region: sram_primary
