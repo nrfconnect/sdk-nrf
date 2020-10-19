@@ -155,6 +155,14 @@ KRKNWK-6361: Antenna Diversity not supported on nRF52840
 Thread
 ======
 
+.. rst-class:: v1-4-0
+
+KRKNWK-7803: Automatically generated libraries are missing otPlatLog for NCP
+  When building OpenThread libraries using a different sample than the :ref:`Thread NCP sample <ot_ncp_sample>`, the :file:`ncp_base.cpp` is not compiled with the :c:func:`otPlatLog` function.
+  This results in a linking failure when building the NCP with these libraries.
+
+  **Workaround:** Use the :ref:`Thread NCP sample <ot_ncp_sample>` to create OpenThread libraries.
+
 .. rst-class:: v1-3-0 v1-3-1
 
 NCSDK-5014: Building with SES not possible
