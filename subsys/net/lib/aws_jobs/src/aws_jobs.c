@@ -124,11 +124,11 @@ static int reg_topic(struct mqtt_client *const client, uint8_t *topic_buf,
 	}
 
 	if (subscribe) {
-		LOG_INF("Subscribe: %s", log_strdup(topic.topic.utf8));
+		LOG_DBG("Subscribe: %s", log_strdup(topic.topic.utf8));
 		return mqtt_subscribe(client, &subscription_list);
 	}
 
-	LOG_INF("Unsubscribe: %s", log_strdup(topic.topic.utf8));
+	LOG_DBG("Unsubscribe: %s", log_strdup(topic.topic.utf8));
 	return mqtt_unsubscribe(client, &subscription_list);
 }
 
@@ -222,8 +222,8 @@ static int publish(struct mqtt_client *const client, const uint8_t *job_id,
 		return ret;
 	}
 
-	LOG_INF("Publish topic: %s", log_strdup(topic.topic.utf8));
-	LOG_INF("Publish payload %s", log_strdup(payload_data));
+	LOG_DBG("Publish topic: %s", log_strdup(topic.topic.utf8));
+	LOG_DBG("Publish payload %s", log_strdup(payload_data));
 
 	struct mqtt_publish_param param = {
 		.message.topic = topic,

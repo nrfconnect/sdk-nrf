@@ -177,7 +177,7 @@ static int get_job_execution(struct mqtt_client *const client,
 		return err;
 	} else if (err == 0) {
 		LOG_DBG("Got only one field");
-		LOG_INF("No queued jobs for this device");
+		LOG_DBG("No queued jobs for this device");
 		return 0;
 	}
 
@@ -195,7 +195,7 @@ static int get_job_execution(struct mqtt_client *const client,
 				"%d", err);
 		return err;
 	}
-	LOG_INF("Subscribed to FOTA update topic %s", log_strdup(update_topic));
+	LOG_DBG("Subscribed to FOTA update topic %s", log_strdup(update_topic));
 
 	/* Set fota_state to DOWNLOAD_FIRMWARE, when we are subscribed
 	 * to job_id topics we will try to publish and if accepted we
@@ -244,7 +244,7 @@ static int job_update_accepted(struct mqtt_client *const client,
 		 * the firmware.
 		 */
 		execution_state = AWS_JOBS_IN_PROGRESS;
-		LOG_INF("Start downloading firmware from %s/%s",
+		LOG_DBG("Start downloading firmware from %s/%s",
 			log_strdup(hostname), log_strdup(file_path));
 #if defined(CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG)
 		sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG;
@@ -265,7 +265,7 @@ static int job_update_accepted(struct mqtt_client *const client,
 		callback(&aws_fota_evt);
 	} else if (execution_state == AWS_JOBS_IN_PROGRESS
 		   && fota_state == APPLY_UPDATE) {
-		LOG_INF("Firmware download completed");
+		LOG_DBG("Firmware download completed");
 		execution_state = AWS_JOBS_SUCCEEDED;
 		err = update_job_execution(client, job_id, execution_state, "");
 		if (err) {
@@ -278,8 +278,8 @@ static int job_update_accepted(struct mqtt_client *const client,
 			.id = AWS_FOTA_EVT_DONE };
 
 		callback(&aws_fota_evt);
-		LOG_INF("Job document updated with SUCCEDED");
-		LOG_INF("Ready to reboot");
+		LOG_DBG("Job document updated with SUCCEDED");
+		LOG_DBG("Ready to reboot");
 	} else if (execution_state == AWS_JOBS_FAILED) {
 		fota_state = NONE;
 		execution_state = AWS_JOBS_QUEUED;
@@ -353,7 +353,7 @@ static int on_publish_evt(struct mqtt_client *const client,
 #endif
 
 	if (is_notify_next_topic || is_get_next_topic || is_get_accepted) {
-		LOG_INF("Checking for an available job");
+		LOG_DBG("Checking for an available job");
 		return get_job_execution(client, payload_len);
 	} else if (doc_update_accepted) {
 		return job_update_accepted(client, payload_len);
@@ -409,7 +409,7 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 				LOG_ERR("Error when creating topic: %d", err);
 				return err;
 			}
-			LOG_INF("Created notify_next_topic %s",
+			LOG_DBG("Created notify_next_topic %s",
 				log_strdup(notify_next_topic));
 
 			err = aws_jobs_create_topic_get(client, "$next",
@@ -418,9 +418,9 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 				LOG_ERR("Error when creating topic: %d", err);
 				return err;
 			}
-			LOG_INF("Created get_topic %s", log_strdup(get_topic));
+			LOG_DBG("Created get_topic %s", log_strdup(get_topic));
 
-			LOG_INF("previously subscribed to notify-next topic");
+			LOG_DBG("previously subscribed to notify-next topic");
 			err = aws_jobs_get_job_execution(client, "$next",
 							 get_topic);
 			if (err) {
@@ -479,7 +479,7 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			return evt->result;
 		}
 		if (evt->param.suback.message_id == SUBSCRIBE_NOTIFY_NEXT) {
-			LOG_INF("subscribed to notify-next topic");
+			LOG_DBG("subscribed to notify-next topic");
 			err = aws_jobs_get_job_execution(client, "$next",
 							 get_topic);
 			if (err) {
@@ -489,7 +489,7 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 		}
 
 		if (evt->param.suback.message_id == SUBSCRIBE_GET) {
-			LOG_INF("subscribed to get topic");
+			LOG_DBG("subscribed to get topic");
 			return 0;
 		}
 
@@ -521,7 +521,7 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		LOG_INF("FOTA download completed evt received");
+		LOG_DBG("FOTA download completed evt received");
 
 		/* Always send download complete progress */
 		aws_fota_evt.id = AWS_FOTA_EVT_DL_PROGRESS;
