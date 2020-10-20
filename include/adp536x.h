@@ -46,6 +46,9 @@
 #define ADP536X_OC_CHG_THRESHOLD_300mA	0x06
 #define ADP536X_OC_CHG_THRESHOLD_400mA	0x07
 
+/* Macro for setting buck output voltage */
+#define ADP536X_VOUT_BUCK(volt) ((u8_t)(((volt)-0.6)/0.05))
+
 /**
  * @brief Initialize ADP536X.
  *
@@ -55,6 +58,18 @@
  *           Otherwise, a (negative) error code is returned.
  */
 int adp536x_init(const char *dev_name);
+
+/**
+ * @brief  Arbitrary register read function
+ *
+ * @param[in] reg Register address
+ *
+ * @param[out] buff Buffer for the result
+ *
+ * @return 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_get_reg(u8_t reg, u8_t *buff);
 
 /**
  * @brief Set the VBUS current limit.
@@ -150,13 +165,25 @@ int adp536x_oc_dis_hiccup_set(bool enable);
 int adp536x_buckbst_enable(bool enable);
 
 /**
- * @brief Set the buck regulator to 1.8 V.
+ * @brief Set the buck regulator output voltage.
+ *
+ * @param[in] value The requested output voltage. Use @ref ADP536X_VOUT_BUCK for conversion.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int adp536x_buck_1v8_set(void);
+int adp536x_buck_set(u8_t value);
 
+
+/**
+ * @brief  Enable or Disable the buck regulator.
+ *
+ * @param[in] enable Should the buck regulator be enabled or disabled?
+ *
+ * @return 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_buck_enable(bool enable);
 /**
  * @brief Set the buck/boost regulator to 3.3 V.
  *

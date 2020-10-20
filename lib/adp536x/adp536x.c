@@ -116,6 +116,9 @@
 /* Buck configure register. */
 #define ADP536X_BUCK_CFG_DISCHG_BUCK_MSK		BIT(1)
 #define ADP536X_BUCK_CFG_DISCHG_BUCK(x)			(((x) & 0x01) << 1)
+#define ADP536X_BUCK_CFG_ENABLE_BUCK_MSK		BIT(0)
+#define ADP536X_BUCK_CFG_ENABLE_BUCK(x)			(((x) & 0x01) << 0)
+
 
 /* Buck output voltage setting register. */
 #define ADP536X_BUCK_OUTPUT_VOUT_BUCK_MSK		GENMASK(5, 0)
@@ -166,6 +169,10 @@ static int adp536x_reg_write_mask(u8_t reg_addr,
 	tmp |= data;
 
 	return adp536x_reg_write(reg_addr, tmp);
+}
+
+int adp536x_get_reg(u8_t reg, u8_t *buff){
+	return adp536x_reg_read(reg, buff);
 }
 
 int adp536x_charger_current_set(u8_t value)
@@ -234,14 +241,18 @@ int adp536x_oc_chg_current_set(u8_t value)
 					ADP536X_BAT_OC_CHG_OC_CHG(value));
 }
 
-int adp536x_buck_1v8_set(void)
+int adp536x_buck_set(u8_t value)
 {
-	/* 1.8V equals to 0b11000 = 0x18 according to ADP536X datasheet. */
-	u8_t value = 0x18;
 
 	return adp536x_reg_write_mask(ADP536X_BUCK_OUTPUT,
 					ADP536X_BUCK_OUTPUT_VOUT_BUCK_MSK,
 					ADP536X_BUCK_OUTPUT_VOUT_BUCK(value));
+}
+
+int adp536x_buck_enable(bool enable) {
+	return adp536x_reg_write_mask(ADP536X_BUCK_CFG,
+																ADP536X_BUCK_CFG_ENABLE_BUCK_MSK,
+																ADP536X_BUCK_CFG_ENABLE_BUCK(enable));
 }
 
 int adp536x_buck_discharge_set(bool enable)

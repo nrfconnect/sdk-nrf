@@ -23,7 +23,7 @@ static int power_mgmt_init(void)
 		return err;
 	}
 
-	err = adp536x_buck_1v8_set();
+	err = adp536x_buck_set(ADP536X_VOUT_BUCK(1.8));
 	if (err) {
 		LOG_ERR("Could not set buck to 1.8 V, error: %d\n", err);
 		return err;
