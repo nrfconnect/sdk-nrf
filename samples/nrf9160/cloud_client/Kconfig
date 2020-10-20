@@ -18,6 +18,10 @@ config CLOUD_MESSAGE_PUBLICATION_INTERVAL
 	int "Sets how often the custom message should be published to cloud, in seconds"
 	default 10
 
+config CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS
+	int "Sets the number of seconds between each cloud connection retry"
+	default 30
+
 choice
 	prompt "Cloud Publication Trigger"
 	default CLOUD_PUBLICATION_BUTTON_PRESS
