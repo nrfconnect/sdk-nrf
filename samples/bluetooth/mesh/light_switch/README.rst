@@ -60,17 +60,6 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832
 
-.. note::
-   If you use nRF5340 PDK, add the following options to the configuration of the network sample:
-
-   .. code-block:: none
-
-      CONFIG_BT_CTLR_TX_BUFFER_SIZE=74
-      CONFIG_BT_CTLR_DATA_LENGTH_MAX=74
-      CONFIG_BT_LL_SW_SPLIT=y
-
-   This is required because Bluetooth Mesh has different |BLE| Controller requirements than other Bluetooth samples.
-
 The sample requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
   * `nRF Mesh mobile app for Android`_
