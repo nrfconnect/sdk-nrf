@@ -417,7 +417,7 @@ static int nct_provision(void)
 		/* Delete certificates */
 		nrf_sec_tag_t sec_tag = CONFIG_NRF_CLOUD_SEC_TAG;
 
-		for (enum modem_key_mgnt_cred_type type = 0; type < 5;
+		for (enum modem_key_mgmt_cred_type type = 0; type < 5;
 		     type++) {
 			err = modem_key_mgmt_delete(sec_tag, type);
 			LOG_DBG("modem_key_mgmt_delete(%u, %d) => result = %d",

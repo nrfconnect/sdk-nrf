@@ -348,21 +348,21 @@ static int provision_certificates(void)
 		"\n");
 	printk("************************* WARNING *************************\n");
 	nrf_sec_tag_t sec_tag = CONFIG_CLOUD_CERT_SEC_TAG;
-	enum modem_key_mgnt_cred_type cred[] = {
+	enum modem_key_mgmt_cred_type cred[] = {
 		MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 		MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
 		MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
 	};
 
 	/* Delete certificates */
-	for (enum modem_key_mgnt_cred_type type = 0; type < 3; type++) {
+	for (enum modem_key_mgmt_cred_type type = 0; type < 3; type++) {
 		err = modem_key_mgmt_delete(sec_tag, type);
 		printk("modem_key_mgmt_delete(%u, %d) => result=%d\n",
 				sec_tag, type, err);
 	}
 
 	/* Write certificates */
-	for (enum modem_key_mgnt_cred_type type = 0; type < 3; type++) {
+	for (enum modem_key_mgmt_cred_type type = 0; type < 3; type++) {
 		err = modem_key_mgmt_write(sec_tag, cred[type],
 				certificates[type], cert_len[type]);
 		printk("modem_key_mgmt_write => result=%d\n", err);
