@@ -14,6 +14,10 @@ config PUBLICATION_INTERVAL_SECONDS
 	int "Interval in seconds that the sample will publish data"
 	default 60
 
+config CONNECTION_RETRY_TIMEOUT_SECONDS
+	int "Number of seconds between each AWS IoT connection retry"
+	default 30
+
 endmenu
 
 menu "Zephyr Kernel"
