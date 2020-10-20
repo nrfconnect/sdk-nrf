@@ -33,6 +33,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 #define DATE_TIME_TIMEOUT_S 15
 
 static struct k_delayed_work shadow_update_work;
+static struct k_delayed_work connect_work;
 static struct k_delayed_work shadow_update_version_work;
 
 K_SEM_DEFINE(lte_connected, 0, 1);
@@ -150,6 +151,22 @@ cleanup:
 	return err;
 }
 
+static void connect_work_fn(struct k_work *work)
+{
+	int err;
+
+	err = aws_iot_connect(NULL);
+	if (err) {
+		printk("aws_iot_connect, error: %d\n", err);
+	}
+
+	printk("Next connection retry in %d seconds\n",
+	       CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS);
+
+	k_delayed_work_submit(&connect_work,
+			K_SECONDS(CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS));
+}
+
 static void shadow_update_work_fn(struct k_work *work)
 {
 	int err;
@@ -212,6 +229,8 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 	case AWS_IOT_EVT_CONNECTED:
 		printk("AWS_IOT_EVT_CONNECTED\n");
 
+		k_delayed_work_cancel(&connect_work);
+
 		if (evt->data.persistent_session) {
 			printk("Persistent session enabled\n");
 		}
@@ -246,6 +265,12 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 	case AWS_IOT_EVT_DISCONNECTED:
 		printk("AWS_IOT_EVT_DISCONNECTED\n");
 		k_delayed_work_cancel(&shadow_update_work);
+
+		if (k_delayed_work_pending(&connect_work)) {
+			break;
+		}
+
+		k_delayed_work_submit(&connect_work, K_NO_WAIT);
 		break;
 	case AWS_IOT_EVT_DATA_RECEIVED:
 		printk("AWS_IOT_EVT_DATA_RECEIVED\n");
@@ -296,6 +321,7 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 static void work_init(void)
 {
 	k_delayed_work_init(&shadow_update_work, shadow_update_work_fn);
+	k_delayed_work_init(&connect_work, connect_work_fn);
 	k_delayed_work_init(&shadow_update_version_work,
 			    shadow_update_version_work_fn);
 }
@@ -498,8 +524,5 @@ void main(void)
 			DATE_TIME_TIMEOUT_S);
 	}
 
-	err = aws_iot_connect(NULL);
-	if (err) {
-		printk("aws_iot_connect failed: %d\n", err);
-	}
+	k_delayed_work_submit(&connect_work, K_NO_WAIT);
 }
