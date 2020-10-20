@@ -11,6 +11,16 @@ menu "Nordic nRF Connect"
 config BOARD_THINGY91_NRF9160NS
 	bool
 
+# nRF Connect SDK needs a larger default stacks for running certain tests.
+config MAIN_STACK_SIZE
+	default 2048 if ZTEST
+
+config ZTEST_STACKSIZE
+	default 2048 if ZTEST
+
+config PRIVILEGED_STACK_SIZE
+	default 2048 if ZTEST
+
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
 rsource "lib/Kconfig"
