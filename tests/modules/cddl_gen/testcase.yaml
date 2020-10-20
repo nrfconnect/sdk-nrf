@@ -1,0 +1,5 @@
+tests:
+  modules.cddl_gen.decode:
+    platform_allow: native_posix
+    tags: cddl_gen
+    build_only: true

@@ -33,6 +33,8 @@ manifest:
       url-base: https://github.com/nanopb
     - name: alexa
       url-base: https://github.com/alexa
+    - name: hakonfam
+      url-base: https://github.com/hakonfam
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -124,6 +126,11 @@ manifest:
       path: modules/alexa-embedded
       revision: face92d8c62184832793f518bb1f19379538c5c1
       remote: alexa
+    - name: cddl-gen
+      remote: hakonfam
+      repo-path: cddl_gen
+      revision: ncs-module
+      path: modules/lib/cddl_gen
 
   # West-related configuration for the nrf repository.
   self:
