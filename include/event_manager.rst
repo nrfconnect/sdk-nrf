@@ -21,9 +21,9 @@ You can easily define custom event types for your application.
 Currently, up to 32 event types can be used in an application.
 
 You can use the :ref:`profiler` to observe the propagation of an event in the system, view the data connected with the event, or create statistics.
-A shell integration is available to display additional information and to dynamically enable or disable logging for given event types.
+Shell integration is available to display additional information and to dynamically enable or disable logging for given event types.
 
-See the :ref:`event_manager_sample` sample for an example on how to use the Event Manager.
+See the :ref:`event_manager_sample` sample for an example of how to use the Event Manager.
 
 Configuration
 *************
@@ -70,7 +70,28 @@ The following code example shows how to create and submit an event of type ``sam
 	/* Submit event. */
 	EVENT_SUBMIT(event);
 
-After the event is submitted, the Event Manager adds it into the processing queue.
+If an event type also defines data with variable size, you must pass also the size of the data as an argument to the function that allocates the event.
+For example, if the ``sample_event`` also contains data with variable size, you must apply the following changes to the code:
+
+.. code-block:: c
+
+	/* Allocate event. */
+	struct sample_event *event = new_sample_event(my_data_size);
+
+	/* Write data to datafields. */
+	event->value1 = value1;
+	event->value2 = value2;
+	event->value3 = value3;
+
+	/* Write data with variable size. */
+	memcpy(event->dyndata.data, my_buf, my_data_size);
+
+	/* Submit event. */
+	EVENT_SUBMIT(event);
+
+For additional details on event types defining data with a variable size, see the `Header file`_ section.
+
+After the event is submitted, the Event Manager adds it to the processing queue.
 When the event is processed, the Event Manager notifies all modules that subscribe to this event type.
 
 .. warning::
@@ -92,8 +113,8 @@ Header file
 -----------
 
 The header file must include the Event Manager header file (``#include event_manager.h``).
-To define the new event type, create a structure for it that contains :c:struct:`event_header` ``header`` as first field and, optionally, custom data fields.
-Finally, declare the event type with the :c:macro:`EVENT_TYPE_DECLARE` macro, passing the name of the created structure as argument.
+To define the new event type, create a structure for it that contains :c:struct:`event_header` ``header`` as the first field and, optionally, additional custom data fields.
+Finally, declare the event type with the :c:macro:`EVENT_TYPE_DECLARE` macro, passing the name of the created structure as an argument.
 
 The following code example shows a header file for the event type ``sample_event``:
 
@@ -112,11 +133,37 @@ The following code example shows a header file for the event type ``sample_event
 
 	EVENT_TYPE_DECLARE(sample_event);
 
+In some use cases, the length of the data associated with an event may vary.
+You can use the :c:macro:`EVENT_TYPE_DYNDATA_DECLARE` macro instead of :c:macro:`EVENT_TYPE_DECLARE` to declare an event type with variable data size.
+The data with variable size must be added as the last member of the event structure.
+For example, you can add the variable size data to a previously defined event by applying the following change to the code:
+
+.. code-block:: c
+
+	#include "event_manager.h"
+
+	struct sample_event {
+		struct event_header header;
+
+		/* Custom data fields. */
+		int8_t value1;
+		int16_t value2;
+		int32_t value3;
+		struct event_dyndata dyndata;
+	};
+
+	EVENT_TYPE_DYNDATA_DECLARE(sample_event);
+
+The :c:struct:`event_dyndata` contains:
+
+* A zero-length array that is used as a buffer with variable size (:c:member:`event_dyndata.data`).
+* A number representing the size of the buffer(:c:member:`event_dyndata.size`).
+
 Source file
 -----------
 
 The source file must include the header file for the new event type.
-Define the event type with the :c:macro:`EVENT_TYPE_DEFINE` macro, passing the name of the event type as declared in the header and additional parameters.
+Define the event type with the :c:macro:`EVENT_TYPE_DEFINE` macro, passing the name of the event type as declared in the header and the additional parameters.
 For example, you can provide a function that fills a buffer with a string version of the event data (used for logging).
 
 The following code example shows a source file for the event type ``sample_event``:
@@ -141,15 +188,17 @@ The following code example shows a source file for the event type ``sample_event
 
 
 
-Creating a listener
-*******************
+Register a module as listener
+*****************************
 
-Modules that should receive events managed by the Event Manager must be registered as listeners and subscribe to a given event type.
+If you want a module to receive events managed by the Event Manager, you must register it as a listener and you must subscribe it to a given event type.
 Every listener is identified by a unique name.
 
-To turn a module into a listener for specific event types, include the header files for the respective event types, for example, ``#include "sample_event.h"``.
-You must then implement an `Event handler function`_ and define the module as listener with the :c:macro:`EVENT_LISTENER` macro, passing the name of the module and the event handler function as arguments.
-Finally, subscribe the listener to specific event types.
+To turn a module into a listener for specific event types:
+
+1. Include the header files for the respective event types, for example, ``#include "sample_event.h"``.
+#. Implement an `Event handler function`_ and define the module as a listener with the :c:macro:`EVENT_LISTENER` macro, passing both the name of the module and the event handler function as arguments.
+#. Subscribe the listener to specific event types.
 
 For subscribing to an event type, the Event Manager provides three types of subscriptions, differing in priority.
 They can be registered with the following macros:
@@ -161,23 +210,23 @@ They can be registered with the following macros:
 There is no defined order in which subscribers of the same priority are notified.
 
 The module will receive events for the subscribed event types only.
-The listener name passed to the subscribe macro must be the same as in :c:macro:`EVENT_LISTENER`.
+The listener name passed to the subscribe macro must be the same one used in the macro :c:macro:`EVENT_LISTENER`.
 
 
 Event handler function
 ======================
 
-The event handler function is called when any of the subscribed event types is being processed.
+The event handler function is called when any of the subscribed event types are being processed.
 Note that only one event handler function can be registered for a listener.
 Therefore, if a listener subscribes to multiple event types, the function must handle all of them.
 
-The event handler gets a pointer to the :c:struct:`event_header` structure as function argument.
-The function should return ``true`` to consume the event (which means that the event is not propagated to further listeners), or ``false`` otherwise.
+The event handler gets a pointer to the :c:struct:`event_header` structure as the function argument.
+The function should return ``true`` to consume the event, which means that the event is not propagated to further listeners, or ``false``, otherwise.
 
-To check if an event has a given type, call the function with the name is\_\ *event_type_name* (for example, ``is_sample_event()``), passing the pointer to the event header as argument.
+To check if an event has a given type, call the function with the name is\_\ *event_type_name* (for example, ``is_sample_event()``), passing the pointer to the event header as the argument.
 This function returns ``true`` if the event matches the given type, or ``false`` otherwise.
 
-To access the event data, cast the :c:struct:`event_header` structure to a proper event type using the function with the name cast\_\ *event_type_name* (for example, ``cast_sample_event()``), passing the pointer to the event header as argument.
+To access the event data, cast the :c:struct:`event_header` structure to a proper event type, using the function with the name cast\_\ *event_type_name* (for example, ``cast_sample_event()``), passing the pointer to the event header as the argument.
 
 Code example
 ============
@@ -211,18 +260,20 @@ The following code example shows how to register an event listener with an event
         EVENT_LISTENER(sample_module, event_handler);
 	EVENT_SUBSCRIBE(sample_module, sample_event);
 
+All the events, both the ones with and the ones without the variable size data, are handled by an application module in the same way.
+The variable size data is accessed in the same way as the other members of the structure defining an event.
 
 
 Profiling an event
 ******************
 
 Event Manager events can be profiled (see :ref:`profiler`).
-To profile a given Event Manager event, you must define an :c:struct:`event_info` structure (with :c:macro:`EVENT_INFO_DEFINE`) and provide it as argument when defining the event type.
+To profile a given Event Manager event, you must define an :c:struct:`event_info` structure, using :c:macro:`EVENT_INFO_DEFINE`, and provide it as an argument when defining the event type.
 This structure contains a profiling function and information about the data fields that are logged.
 
-The profiling function should log the event data to a given buffer by calling :c:func:`profiler_log_encode_u32` (regardless of the profiled data type).
+The profiling function should log the event data to a given buffer by calling :c:func:`profiler_log_encode_u32`, regardless of the profiled data type.
 
-The following code examples shows a profiling function for the event type ``sample_event``:
+The following code example shows a profiling function for the event type ``sample_event``:
 
 .. code::
 
@@ -277,7 +328,7 @@ This subcommand set contains the following commands:
 :command:`enable` or :command:`disable`
   Enable or disable logging.
   If called without additional arguments, the command applies to all event types.
-  To enable or disable logging for specific event types, pass the event type indexes (as displayed by :command:`show_events`) as arguments.
+  To enable or disable logging for specific event types, pass the event type indexes, as displayed by :command:`show_events`, as arguments.
 
 
 API documentation
