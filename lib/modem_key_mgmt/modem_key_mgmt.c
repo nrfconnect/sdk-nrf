@@ -110,7 +110,7 @@ static int write_at_cmd_with_cme_enabled(char *cmd, char *buf, size_t buf_len,
 
 /* Read the given credential into the static buffer */
 static int key_fetch(nrf_sec_tag_t tag,
-		     enum modem_key_mgnt_cred_type cred_type)
+		     enum modem_key_mgmt_cred_type cred_type)
 {
 	int err;
 	int written;
@@ -135,7 +135,7 @@ static int key_fetch(nrf_sec_tag_t tag,
 }
 
 int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
-			 enum modem_key_mgnt_cred_type cred_type,
+			 enum modem_key_mgmt_cred_type cred_type,
 			 const void *buf, size_t len)
 {
 	int err;
@@ -168,7 +168,7 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 }
 
 int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
-			enum modem_key_mgnt_cred_type cred_type,
+			enum modem_key_mgmt_cred_type cred_type,
 			void *buf, size_t *len)
 {
 	int err;
@@ -194,7 +194,7 @@ int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
 }
 
 int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
-		       enum modem_key_mgnt_cred_type cred_type,
+		       enum modem_key_mgmt_cred_type cred_type,
 		       const void *buf, size_t len)
 {
 	int err;
@@ -235,7 +235,7 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 }
 
 int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
-			  enum modem_key_mgnt_cred_type cred_type)
+			  enum modem_key_mgmt_cred_type cred_type)
 {
 	int err;
 	int written;
@@ -254,14 +254,14 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 }
 
 int modem_key_mgmt_permission_set(nrf_sec_tag_t sec_tag,
-				  enum modem_key_mgnt_cred_type cred_type,
+				  enum modem_key_mgmt_cred_type cred_type,
 				  uint8_t perm_flags)
 {
 	return -EOPNOTSUPP;
 }
 
 int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
-			  enum modem_key_mgnt_cred_type cred_type,
+			  enum modem_key_mgmt_cred_type cred_type,
 			  bool *exists, uint8_t *perm_flags)
 {
 	int err;

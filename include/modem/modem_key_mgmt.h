@@ -18,7 +18,7 @@
 #include <nrf_socket.h>
 
 /**@brief Credential types. */
-enum modem_key_mgnt_cred_type {
+enum modem_key_mgmt_cred_type {
 	MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 	MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
 	MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
@@ -49,7 +49,7 @@ enum modem_key_mgnt_cred_type {
  * @retval -EPERM	Insufficient permissions.
  */
 int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
-			 enum modem_key_mgnt_cred_type cred_type,
+			 enum modem_key_mgmt_cred_type cred_type,
 			 const void *buf, size_t len);
 
 /**
@@ -69,7 +69,7 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
  * @retval -EPERM	Insufficient permissions.
  */
 int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
-			enum modem_key_mgnt_cred_type cred_type,
+			enum modem_key_mgmt_cred_type cred_type,
 			void *buf, size_t *len);
 
 /**
@@ -88,7 +88,7 @@ int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
  * @retval -EPERM	Insufficient permissions.
  */
 int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
-		       enum modem_key_mgnt_cred_type cred_type,
+		       enum modem_key_mgmt_cred_type cred_type,
 		       const void *buf, size_t len);
 
 /**
@@ -108,7 +108,7 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
  * @retval -EPERM	Insufficient permissions.
  */
 int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
-			  enum modem_key_mgnt_cred_type cred_type);
+			  enum modem_key_mgmt_cred_type cred_type);
 
 /**
  * @brief Set permissions for a credential in persistent storage.
@@ -124,7 +124,7 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
  * @retval -EPERM	Insufficient permissions.
  */
 int modem_key_mgmt_permission_set(nrf_sec_tag_t sec_tag,
-				  enum modem_key_mgnt_cred_type cred_type,
+				  enum modem_key_mgmt_cred_type cred_type,
 				  uint8_t perm_flags);
 
 /**
@@ -142,7 +142,7 @@ int modem_key_mgmt_permission_set(nrf_sec_tag_t sec_tag,
  * @retval -EPERM	Insufficient permissions.
  */
 int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
-			  enum modem_key_mgnt_cred_type cred_type,
+			  enum modem_key_mgmt_cred_type cred_type,
 			  bool *exists, uint8_t *perm_flags);
 
 #endif /* MODEM_KEY_MGMT_H__ */
