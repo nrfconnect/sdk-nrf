@@ -21,6 +21,11 @@ static struct k_delayed_work connect_work;
 
 static K_SEM_DEFINE(lte_connected, 0, 1);
 
+/* Flag to signify if the cloud client is connected or not connected to cloud,
+ * used to abort/allow cloud publications.
+ */
+static bool cloud_connected;
+
 static void connect_work_fn(struct k_work *work)
 {
 	int err;
@@ -40,6 +45,11 @@ static void connect_work_fn(struct k_work *work)
 static void cloud_update_work_fn(struct k_work *work)
 {
 	int err;
+
+	if (!cloud_connected) {
+		LOG_INF("Not connected to cloud, abort cloud publication");
+		return;
+	}
 
 	LOG_INF("Publishing message: %s", log_strdup(CONFIG_CLOUD_MESSAGE));
 
@@ -75,6 +85,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		break;
 	case CLOUD_EVT_CONNECTED:
 		LOG_INF("CLOUD_EVT_CONNECTED");
+		cloud_connected = true;
 		break;
 	case CLOUD_EVT_READY:
 		LOG_INF("CLOUD_EVT_READY");
@@ -87,6 +98,8 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		break;
 	case CLOUD_EVT_DISCONNECTED:
 		LOG_INF("CLOUD_EVT_DISCONNECTED");
+
+		cloud_connected = false;
 
 		if (k_delayed_work_pending(&connect_work)) {
 			break;
@@ -103,8 +116,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_DATA_RECEIVED:
 		LOG_INF("CLOUD_EVT_DATA_RECEIVED");
 		LOG_INF("Data received from cloud: %s",
-			log_strdup(evt->data.msg.buf))
-	;
+			log_strdup(evt->data.msg.buf));
 		break;
 	case CLOUD_EVT_PAIR_REQUEST:
 		LOG_INF("CLOUD_EVT_PAIR_REQUEST");
