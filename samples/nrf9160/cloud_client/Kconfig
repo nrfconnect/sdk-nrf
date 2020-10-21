@@ -9,6 +9,8 @@ menu "Cloud Client Sample Settings"
 config CLOUD_BACKEND
 	string "Selects the cloud backend to be used"
 	default "NRF_CLOUD"
+	help
+	  Possible values are "NRF_CLOUD", "AWS_IOT", "AZURE_IOT_HUB".
 
 config CLOUD_MESSAGE
 	string "Sets the custom message published periodically to cloud"
