@@ -274,10 +274,17 @@ void exec_test_case_ecdh_deterministic_full(void)
 
 	/* Execute ECDH on initiator side. */
 	start_time_measurement();
-	err_code =
-		mbedtls_ecdh_compute_shared(&initiator_ctx.grp,
-					    &initiator_ctx.z, &responder_ctx.Q,
-					    &initiator_ctx.d, drbg_random, NULL);
+	err_code = mbedtls_ecdh_compute_shared(
+			&initiator_ctx.grp,
+			&initiator_ctx.z,
+			&responder_ctx.Q,
+			&initiator_ctx.d,
+#if defined(CONFIG_MBEDTLS_VANILLA_BACKEND)
+			NULL,
+#else
+			drbg_random,
+#endif
+			NULL);
 	stop_time_measurement();
 
 	LOG_DBG("Error code compute shared: -0x%04X", -err_code);
@@ -290,10 +297,17 @@ void exec_test_case_ecdh_deterministic_full(void)
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Execute ECDH on responder side. */
-	err_code =
-		mbedtls_ecdh_compute_shared(&responder_ctx.grp,
-					    &responder_ctx.z, &initiator_ctx.Q,
-					    &responder_ctx.d, drbg_random, NULL);
+	err_code = mbedtls_ecdh_compute_shared(
+			&responder_ctx.grp,
+			&responder_ctx.z,
+			&initiator_ctx.Q,
+			&responder_ctx.d,
+#if defined(CONFIG_MBEDTLS_VANILLA_BACKEND)
+			NULL,
+#else
+			drbg_random,
+#endif
+			NULL);
 
 	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
 
@@ -368,10 +382,17 @@ void exec_test_case_ecdh_deterministic(void)
 	}
 
 	start_time_measurement();
-	err_code =
-		mbedtls_ecdh_compute_shared(&responder_ctx.grp,
-					    &responder_ctx.z, &initiator_ctx.Q,
-					    &responder_ctx.d, drbg_random, NULL);
+	err_code = mbedtls_ecdh_compute_shared(
+			&responder_ctx.grp,
+			&responder_ctx.z,
+			&initiator_ctx.Q,
+			&responder_ctx.d,
+#if defined(CONFIG_MBEDTLS_VANILLA_BACKEND)
+			NULL,
+#else
+			drbg_random,
+#endif
+			NULL);
 	stop_time_measurement();
 
 	LOG_DBG("Error code ss computation: -0x%04X", -err_code);
