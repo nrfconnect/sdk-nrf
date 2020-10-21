@@ -179,7 +179,7 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_read_rssi = 1;
 #endif
 
-#if defined(CONFIG_BT_CTLR_LE_ENC) && defined(BT_CTLR_LE_PING)
+#if defined(CONFIG_BT_CTLR_LE_ENC) && defined(CONFIG_BT_CTLR_LE_PING)
 	cmds->hci_set_event_mask_page_2 = 1;
 #endif
 
@@ -235,7 +235,7 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 
 	cmds->hci_le_read_supported_states = 1;
 
-#if defined(BT_CTLR_DTM)
+#if defined(CONFIG_BT_CTLR_DTM)
 	cmds->hci_le_receiver_test_v1 = 1;
 	cmds->hci_le_transmitter_test_v1 = 1;
 	cmds->hci_le_test_end = 1;
@@ -266,7 +266,7 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_phy = 1;
 #endif
 
-#if defined(BT_CTLR_DTM)
+#if defined(CONFIG_BT_CTLR_DTM)
 	cmds->hci_le_receiver_test_v2 = 1;
 	cmds->hci_le_transmitter_test_v2 = 1;
 #endif
@@ -410,7 +410,7 @@ static uint8_t controller_and_baseband_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_cb_host_number_of_completed_packets((void *)cmd_params);
 #endif
 
-#if defined(CONFIG_BT_CTLR_LE_ENC) && defined(BT_CTLR_LE_PING)
+#if defined(CONFIG_BT_CTLR_LE_ENC) && defined(CONFIG_BT_CTLR_LE_PING)
 	case SDC_HCI_OPCODE_CMD_CB_SET_EVENT_MASK_PAGE_2:
 		return sdc_hci_cmd_cb_set_event_mask_page_2((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_CB_READ_AUTHENTICATED_PAYLOAD_TIMEOUT:
