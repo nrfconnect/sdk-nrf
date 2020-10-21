@@ -141,7 +141,7 @@ static int shadow_update(bool version_number_include)
 		printk("aws_iot_send, error: %d\n", err);
 	}
 
-	k_free(message);
+	cJSON_FreeString(message);
 
 cleanup:
 
