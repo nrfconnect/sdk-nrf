@@ -190,6 +190,18 @@ int lwm2m_init_firmware(void)
 	return 0;
 }
 
+void erase_modem_update_bank(void)
+{
+	int err = dfu_target_init(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA, 0, NULL);
+
+	if (err != 0) {
+		LOG_ERR("Unable to clear modem update bank");
+	}
+
+	err = dfu_target_done(false);
+	__ASSERT(err == 0, "Unable to deinitialize dfu_target.");
+}
+
 void lwm2m_verify_modem_fw_update(void)
 {
 	int ret = bsdlib_get_init_ret();
@@ -228,6 +240,11 @@ void lwm2m_verify_modem_fw_update(void)
 		break;
 
 	default:
+		/* The modem bank should be clean so that the device is ready to
+		 * recive an update. If not it may halt when trying to erase the
+		 * modem firmware while downloading.
+		 */
+		erase_modem_update_bank();
 		return;
 	}
 
