@@ -176,6 +176,33 @@ static void shadow_update_version_work_fn(struct k_work *work)
 	}
 }
 
+static void print_received_data(const char *buf, const char *topic,
+				size_t topic_len)
+{
+	char *str = NULL;
+	cJSON *root_obj = NULL;
+
+	root_obj = cJSON_Parse(buf);
+	if (root_obj == NULL) {
+		printk("cJSON Parse failure");
+		return;
+	}
+
+	str = cJSON_Print(root_obj);
+	if (str == NULL) {
+		printk("Failed to print JSON object");
+		goto clean_exit;
+	}
+
+	printf("Data received from AWS IoT console:\nTopic: %.*s\nMessage: %s\n",
+	       topic_len, topic, str);
+
+	cJSON_FreeString(str);
+
+clean_exit:
+	cJSON_Delete(root_obj);
+}
+
 void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 {
 	switch (evt->type) {
@@ -222,6 +249,8 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		break;
 	case AWS_IOT_EVT_DATA_RECEIVED:
 		printk("AWS_IOT_EVT_DATA_RECEIVED\n");
+		print_received_data(evt->data.msg.ptr, evt->data.msg.topic.str,
+				    evt->data.msg.topic.len);
 		break;
 	case AWS_IOT_EVT_FOTA_START:
 		printk("AWS_IOT_EVT_FOTA_START\n");
