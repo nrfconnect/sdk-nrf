@@ -18,6 +18,7 @@ The current version of the sample supports the following libraries as cloud back
 
 *  :ref:`lib_nrf_cloud`
 *  :ref:`lib_aws_iot`
+*  :ref:`lib_azure_iot_hub`
 
 To swap between the supported libraries, change the option :option:`CONFIG_CLOUD_BACKEND` to match the configuration string of a compatible cloud backend.
 The identification strings for the different cloud backends are listed in the following table:
@@ -28,10 +29,12 @@ The identification strings for the different cloud backends are listed in the fo
 
    * - Cloud Backend
      - Configuration String
-   * - NRF Cloud
-     - NRF_CLOUD
+   * - nRF Cloud
+     - "NRF_CLOUD"
    * - AWS IoT
-     - AWS_IOT
+     - "AWS_IOT"
+   * - Azure IoT Hub
+     - "AZURE_IOT_HUB"
 
 Requirements
 ************
@@ -45,7 +48,7 @@ The sample supports the following development kits:
 Setup
 *****
 
-For configuring the different cloud backends, refer to the documentation on :ref:`lib_nrf_cloud` and :ref:`lib_aws_iot`.
+For configuring the different cloud backends, refer to the documentation on :ref:`lib_nrf_cloud`, :ref:`lib_aws_iot`, and :ref:`lib_azure_iot_hub`.
 Each cloud backend has specific setup steps that must be executed before it can be used.
 
 .. note::
