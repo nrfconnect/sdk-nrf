@@ -386,6 +386,7 @@ static int gps_sim_setup(const struct device *dev)
 	k_work_q_start(&drv_data->work_q, drv_data->work_q_stack,
 		       K_THREAD_STACK_SIZEOF(drv_data->work_q_stack),
 		       K_PRIO_PREEMPT(CONFIG_GPS_SIM_WORKQUEUE_PRIORITY));
+	k_thread_name_set(&drv_data->work_q.thread, "gpssimworkq");
 
 	return 0;
 }
