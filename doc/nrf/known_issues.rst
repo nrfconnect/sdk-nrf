@@ -364,6 +364,15 @@ Secure Partition Manager and application building together
 DFU and FOTA
 ============
 
+.. rst-class:: v1-4-0
+
+NCSDK-6754: Modem DFU erase may be halted
+  Modem erase may be halted if you delete the modem update bank while downloading with the :ref:`lib_fota_download` library.
+
+  **Workaround:** Ensure that the modem update bank is empty before you start downloading a modem delta update.
+  If you have downloaded a wrong or corrupted update, the modem update bank will also need to be erased.
+  In the :ref:`aws_fota_sample` sample and the :ref:`http_application_update_sample` sample, there are now functions that delete the modem firmware.
+
 .. rst-class:: v1-1-0
 
 Jobs not received after reset
