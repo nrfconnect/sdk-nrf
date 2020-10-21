@@ -412,7 +412,7 @@ static int app_topics_subscribe(void)
 		[0].str = custom_topic,
 		[0].len = strlen(custom_topic),
 		[1].str = custom_topic_2,
-		[1].len = strlen(custom_topic)
+		[1].len = strlen(custom_topic_2)
 	};
 
 	err = aws_iot_subscription_topics_add(topics_list,
