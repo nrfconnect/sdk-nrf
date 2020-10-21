@@ -244,6 +244,7 @@ static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
 	struct bt_mesh_lvl_srv *srv = mod->user_data;
 	struct bt_mesh_lvl_set set = {
 		.lvl = sys_get_le16(data),
+		.new_transaction = true,
 		.transition = transition,
 	};
 
