@@ -142,7 +142,7 @@ void main(void)
 
 	ret = dk_leds_init();
 	if (ret) {
-		LOG_ERR("Connot init leds, (error: %d)", ret);
+		LOG_ERR("Cannot init leds, (error: %d)", ret);
 		return;
 	}
 

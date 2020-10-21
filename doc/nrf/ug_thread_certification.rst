@@ -56,7 +56,6 @@ A detailed description of how to assemble and configure a Thread Test Bed and ru
 
 Complete the following steps to run the certification tests:
 
-
 #. Build the certification image.
 
    The :ref:`ot_cli_sample` sample is used as a base, modified with an overlay file.
@@ -68,7 +67,7 @@ Complete the following steps to run the certification tests:
 
    .. note::
       The overlay file selects the precompiled OpenThread libraries by default.
-      It also enables OpenThread debug logs on the RTT backend.
+      It also enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth LE advertising.
 
 #. Prepare Thread Test Harness.
 

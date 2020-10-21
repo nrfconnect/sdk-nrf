@@ -25,8 +25,6 @@ The CLI sample comes with the :ref:`full set of OpenThread functionalities <thre
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample to be able to test communication.
 
-See :ref:`ug_thread_cert` for information on how to use this sample on Thread Certification Test Harness.
-
 .. _ot_cli_sample_diag_module:
 
 Diagnostic module
@@ -47,6 +45,15 @@ Experimental Thread v1.2 extension
 
 This optional extension allows you to test :ref:`available features from Thread Specification v1.2 <thread_ug_thread_1_2>`.
 You can enable these features either by :ref:`activating the overlay extension <ot_cli_sample_activating_variants>` as described below or by setting :ref:`thread_ug_thread_1_2`.
+
+.. _ot_cli_sample_thread_certification:
+
+Certification tests with CLI sample
+===================================
+
+The Thread CLI sample can be used for running certification tests.
+See :ref:`ug_thread_cert` for information on how to use this sample on Thread Certification Test Harness.
+
 
 Requirements
 ************
