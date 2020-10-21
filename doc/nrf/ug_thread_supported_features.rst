@@ -1,7 +1,7 @@
 .. _thread_ug_supported_features:
 
-Supported features
-##################
+Supported Thread features
+#########################
 
 .. contents::
    :local:
