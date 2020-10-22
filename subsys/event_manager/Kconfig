@@ -37,6 +37,10 @@ config DESKTOP_EVENT_MANAGER_EVENT_LOG_BUF_LEN
 	default 128
 	range 2 1024
 
+config DESKTOP_EVENT_MANAGER_LOG_EVENT_TYPE
+	bool "Include event type in the event log output"
+	default y
+
 config DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
 	bool "Log events to Profiler"
 	select PROFILER
