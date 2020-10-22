@@ -24,6 +24,9 @@ The sample also requires an nRF Cloud account.
 
 .. include:: /includes/spm.txt
 
+.. note::
+   This sample does not support the modem firmware v1.1.x (or earlier).
+
 Overview
 ********
 
