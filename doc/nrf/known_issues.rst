@@ -341,6 +341,21 @@ Immutable bootloader board restrictions
 Build system
 ============
 
+.. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+
+KRKNWK-7827: Application build system is not aware of the settings partition
+  The application build system is not aware of partitions, including the settings partition, which can result in application code overlapping with other partitions.
+  As a consequence, writing to overlapping partitions might remove or damage parts of the firmware, which can lead to errors that are difficult to debug.
+
+  **Workaround:** Define and use a code partition to shrink the effective flash memory available for the application.
+  You can use one of the following solutions:
+
+  * :ref:`partition_manager` from |NCS| - see the page for all configuration options.
+    For example, for single image (without bootloader and with the settings partition used), set the :option:`CONFIG_PM_SINGLE_IMAGE` Kconfig option to ``y`` and define the value for :option:`CONFIG_PM_PARTITION_SIZE_SETTINGS_STORAGE` to the required settings storage size.
+  * :ref:`Devicetree code partition <zephyr:legacy_flash_partitions>` from Zephyr.
+    Set :option:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option to ``y``.
+    Make sure that the code partition is defined and chosen correctly (``offset`` and ``size``).
+
 .. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 Build configuration issues
