@@ -13,6 +13,10 @@ set(PM_STATIC_YML_FILE
   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml
   )
 
+list(APPEND mcuboot_OVERLAY_CONFIG
+  "${CMAKE_CURRENT_SOURCE_DIR}/mcuboot_overlay-rsa.conf"
+  )
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(asset_tracker)
 zephyr_compile_definitions(PROJECT_NAME=${PROJECT_NAME})
