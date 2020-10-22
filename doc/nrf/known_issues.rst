@@ -712,6 +712,21 @@ tx_buffer_length set incorrectly
 Zephyr
 ******
 
+.. rst-class:: v1-4-0
+
+NCSDK-6330: USB Mass Storage Sample Application fails MSC Tests from USB3CV test tool
+  :ref:`zephyr:usb_mass` fails the USB3CV compliance Command Set Test from the MSC Tests suite.
+
+.. rst-class:: v1-4-0
+
+NCSDK-6328: USB CDC ACM Composite Sample Application fails Chapter 9 Tests from USB3CV test tool
+  :ref:`zephyr:usb_cdc-acm_composite` fails the USB3CV compliance TD 9.1: Device Descriptor Test from the Chapter 9 Test suite.
+
+.. rst-class:: v1-4-0
+
+NCSDK-6331: WebUSB sample application fails Chapter 9 Tests from USB3CV test tool
+  :ref:`zephyr:webusb-sample` fails the USB3CV compliance TD 9.21: LPM L1 Suspend Resume Test from the Chapter 9 Test suite.
+
 .. rst-class:: v1-3-1 v1-3-0
 
 NCSIDB-108: Thread context switch might lead to a kernel fault
@@ -724,12 +739,10 @@ Counter Alarm sample does not work
   The :ref:`zephyr:alarm_sample` does not work.
   A fix can be found in `Pull Request #16736 <https://github.com/zephyrproject-rtos/zephyr/pull/16736>`_.
 
-.. rst-class:: v1-0-0
+.. rst-class:: v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 USB Mass Storage Sample Application compilation issues
   :ref:`zephyr:usb_mass` does not compile.
-
-.. rst-class:: v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 ----
 
