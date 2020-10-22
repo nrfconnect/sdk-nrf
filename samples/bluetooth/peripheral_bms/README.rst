@@ -66,7 +66,7 @@ After programming the sample to your development kit, test it by performing the 
 #. Check the logs to verify that the connection security is updated.
 #. Disconnect the device in nRF Connect.
 #. Reconnect again and verify that the connection security is updated automatically.
-#. Verify that the Feature Characteristic of the Bond Management Service displays ``20 08 02``.
+#. Verify that the Feature Characteristic of the Bond Management Service displays ``10 08 02``.
    This means that the following features are supported:
 
    * Deletion of the bonds for the current connection of the requesting device.
