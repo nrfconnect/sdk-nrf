@@ -379,6 +379,14 @@ Secure Partition Manager and application building together
 DFU and FOTA
 ============
 
+.. rst-class:: v1-4-0
+
+NCSDK-6238: Socket API calls may hang when using Download client
+  When using the :ref:`lib_download_client` library with HTTP (without TLS), the application might not process incoming fragments fast enough, which can starve the :ref:`nrfxlib:bsdlib` buffers and make calls to BSD library hang.
+  Samples and applications that are affected include those that use :ref:`lib_download_client` to download files through HTTP, or those that use :ref:`lib_fota_download` with modem updates enabled.
+
+**Workaround:** Set :option:`CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS`.
+
 .. rst-class:: v1-1-0
 
 Jobs not received after reset

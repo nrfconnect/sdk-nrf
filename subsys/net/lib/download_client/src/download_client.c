@@ -483,7 +483,8 @@ restart_and_suspend:
 send_again:
 		dl->offset = 0;
 		/* Request next fragment, if necessary (HTTPS/CoAP) */
-		if (dl->proto != IPPROTO_TCP || len == 0) {
+		if (dl->proto != IPPROTO_TCP || len == 0
+		   || IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
 			dl->http.has_header = false;
 
 			rc = request_send(dl);
