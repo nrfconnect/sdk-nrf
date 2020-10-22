@@ -69,8 +69,13 @@ static void log_event(const struct event_header *eh)
 			log_buf[sizeof(log_buf) - 2] = '~';
 		}
 
-		LOG_INF("e: %s %s", et->name, log_strdup(log_buf));
-	} else {
+		if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_LOG_EVENT_TYPE)) {
+			LOG_INF("e: %s %s", et->name, log_strdup(log_buf));
+		} else {
+			LOG_INF("%s", log_strdup(log_buf));
+		}
+
+	} else if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_LOG_EVENT_TYPE)) {
 		LOG_INF("e: %s", et->name);
 	}
 }
