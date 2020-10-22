@@ -315,7 +315,7 @@ static void recv_thread(void *p1, void *p2, void *p3)
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
-	static uint8_t hci_buffer[HCI_MSG_BUFFER_MAX_SIZE];
+	static uint8_t hci_buffer[CONFIG_BT_RX_BUF_LEN];
 
 	bool received_evt = false;
 	bool received_data = false;

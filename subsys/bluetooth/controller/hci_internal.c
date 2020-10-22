@@ -24,7 +24,7 @@
 static struct
 {
 	bool occurred; /**< Set in only one execution context */
-	uint8_t raw_event[HCI_EVENT_PACKET_MAX_SIZE];
+	uint8_t raw_event[CONFIG_BT_RX_BUF_LEN];
 } cmd_complete_or_status;
 
 static bool command_generates_command_complete_event(uint16_t hci_opcode)
