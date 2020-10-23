@@ -535,7 +535,8 @@ start:
 	atomic_set(&transport_disconnected, 0);
 
 	while (true) {
-		ret = poll(fds, ARRAY_SIZE(fds), POLL_TIMEOUT_MS);
+		ret = poll(fds, ARRAY_SIZE(fds),
+			cloud_keepalive_time_left(nrf_cloud_backend));
 
 		if (ret == 0) {
 			if (cloud_keepalive_time_left(nrf_cloud_backend) <
