@@ -2,7 +2,7 @@
 set(NRF_RELATIVE_DIR "../../..")
 set(NCS_RELATIVE_DIR "../../../..")
 
-set(NCS_TOOLCHAIN_MINIMUM_REQUIRED 1.3.0)
+set(NCS_TOOLCHAIN_MINIMUM_REQUIRED 1.4.0)
 
 # Set the current NRF_DIR
 # The use of get_filename_component ensures that the final path variable will not contain `../..`.
