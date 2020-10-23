@@ -35,7 +35,6 @@ Requirements
   * |nRF5340DK|
   * |nRF52840DK|
   * |nRF52DK|
-  * |nRF51DK|
 
 User interface
 **************
