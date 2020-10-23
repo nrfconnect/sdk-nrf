@@ -616,17 +616,20 @@ def load_reqs(input_config):
     return reqs
 
 
-def get_dynamic_area_start_and_size(static_config, flash_size, dp):
+def get_dynamic_area_start_and_size(static_config, base, size, dp):
     # Remove app from this dict to simplify the case where partitions
     # before and after are removed.
     proper_partitions = [config for name, config in static_config.items()
                          if 'span' not in config.keys() and
                          name != dp]
 
-    starts = {flash_size} | {config['address']
-                             for config in proper_partitions}
-    ends = {0} | {config['address'] + config['size']
-                  for config in proper_partitions}
+    first_address = base
+    last_address = base + size
+
+    starts = {last_address} | {config['address']
+                               for config in proper_partitions}
+    ends = {first_address} | {config['address'] + config['size']
+                              for config in proper_partitions}
     gaps = list(zip(sorted(ends - starts), sorted(starts - ends)))
 
     if len(gaps) != 1:
@@ -760,7 +763,8 @@ def solve_complex_region(pm_config, start, size, placement_strategy, region_name
     free_size = size
 
     if static_conf:
-        start, free_size = get_dynamic_area_start_and_size(static_conf, free_size, dp)
+        start, free_size = \
+            get_dynamic_area_start_and_size(static_conf, start, size, dp)
 
         # If nothing is unresolved (only dynamic partition remaining),
         # simply return the pre defined config with dynamic_partition
@@ -952,7 +956,7 @@ def test():
         'app':   {'address': 20, 'size': 10},
         # Gap from deleted partition.
         'fourth': {'address': 40, 'size': 60}}
-    start, size = get_dynamic_area_start_and_size(test_config, 100, 'app')
+    start, size = get_dynamic_area_start_and_size(test_config, 0, 100, 'app')
     assert start == 10
     assert size == 40-10
 
@@ -963,7 +967,7 @@ def test():
         # Gap from deleted partition.
     }
 
-    start, size = get_dynamic_area_start_and_size(test_config, 100, 'app')
+    start, size = get_dynamic_area_start_and_size(test_config, 0, 100, 'app')
     assert start == 20
     assert size == 80
 
@@ -971,7 +975,7 @@ def test():
         'app':    {'address': 0,    'size': 10},
         # Gap from deleted partition.
         'second': {'address': 40, 'size': 60}}
-    start, size = get_dynamic_area_start_and_size(test_config, 100, 'app')
+    start, size = get_dynamic_area_start_and_size(test_config, 0, 100, 'app')
     assert start == 0
     assert size == 40
 
@@ -979,9 +983,19 @@ def test():
         'first': {'address': 0,    'size': 10},
         # Gap from deleted partition.
         'app':   {'address': 20, 'size': 10}}
-    start, size = get_dynamic_area_start_and_size(test_config, 100, 'app')
+    start, size = get_dynamic_area_start_and_size(test_config, 0, 100, 'app')
     assert start == 10
     assert size == 100 - 10
+
+    # Verify that base address can be larger than 0 (RAM vs FLASH)
+    test_config = {
+        'first': {'address': 1000, 'size': 10},
+        # Gap from deleted partition.
+        'app': {'address': 1200, 'size': 10}}
+    start, size = get_dynamic_area_start_and_size(test_config, 1000, 400,
+                                                  'app')
+    assert start == 1010
+    assert size == 400 - 10
 
     # Verify that all 'end' and 'start' are valid references in 'one_of' dicts
     td = {
