@@ -25,6 +25,7 @@
 
 #include "multithreading_lock.h"
 #include "hci_internal.h"
+#include "ecdh.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
 #define LOG_MODULE_NAME sdc_hci_driver

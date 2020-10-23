@@ -86,4 +86,39 @@ choice SOFTDEVICE_CONTROLLER_VARIANT
 
 endchoice
 
+if BT_CTLR_ECDH
+choice BT_CTLR_ECDH_LIB
+	prompt "SoftDevice Controller ECDH library"
+
+config BT_CTLR_ECDH_LIB_OBERON
+	select NRF_OBERON
+	bool "Use nrf_oberon SW crypto library for ECDH"
+
+config BT_CTLR_ECDH_LIB_TINYCRYPT
+	select TINYCRYPT
+	select TINYCRYPT_ECC_DH
+	bool "Use TinyCrypt library library for ECDH"
+
+endchoice
+
+config BT_CTLR_ECDH_STACK_SIZE
+	# NOTE: This value is derived from other symbols and should only be
+	# changed if required by architecture.
+	int
+	default 800 if BT_CTLR_ECDH_LIB_OBERON
+	default 1024 if BT_CTLR_ECDH_LIB_TINYCRYPT
+	help
+	  NOTE: This is an advanced setting and should not be changed unless
+	  absolutely necessary
+
+config BT_CTLR_ECDH_IN_MPSL_WORK
+	bool "ECDH processing in MPSL workqueue"
+	depends on BT_CTLR_ECDH_LIB_OBERON
+	help
+	  Run the ECDH processing in the MPSL workqueue instead of in a
+	  a dedicated pre-emptible thread.
+	  This saves RAM at the cost of delaying MPSL work.
+
+endif # BT_CTLR_ECDH
+
 endmenu
