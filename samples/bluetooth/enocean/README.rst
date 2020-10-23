@@ -27,7 +27,6 @@ Requirements
   * |nRF5340DK|
   * |nRF52840DK|
   * |nRF52DK|
-  * |nRF51DK|
 
 * At least one :ref:`supported EnOcean device <bt_enocean_devices>`.
 
