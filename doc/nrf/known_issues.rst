@@ -767,6 +767,14 @@ Counter Alarm sample does not work
 USB Mass Storage Sample Application compilation issues
   :ref:`zephyr:usb_mass` does not compile.
 
+.. rst-class:: v1-4-0
+
+NCSDK-6832: SMP Server sample fails upon initialization
+  The :ref:`zephyr:smp_svr_sample` will fail upon initialization when using the :file:`bt-overlay.conf` Kconfig overlay file.
+  This happens because of a stack overflow.
+
+  **Workaround:** Set :option:`CONFIG_MAIN_STACK_SIZE` to ``2048``.
+
 ----
 
 In addition to these known issues, check the current issues in the `official Zephyr repository`_, since these might apply to the |NCS| fork of the Zephyr repository as well.
