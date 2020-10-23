@@ -17,7 +17,7 @@ static uint32_t entry_count;
 
 struct fifo_entry {
 	void *fifo_reserved;
-	uint8_t data[ENTRY_MAX_SIZE];
+	uint8_t data[sizeof(struct sensor_data)];
 };
 
 int aggregator_put(struct sensor_data in_data)
