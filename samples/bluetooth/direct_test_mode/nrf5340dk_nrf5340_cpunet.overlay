@@ -1,0 +1,18 @@
+&uart0 {
+	status = "okay";
+	current-speed = <19200>;
+};
+
+/ {
+     zephyr,user {
+	     dtm_antenna_count = <12>;
+	     dtm_antenna_1_pin = <32>;
+	     dtm_antenna_2_pin = <33>;
+	     dtm_antenna_3_pin = <34>;
+	     dtm_antenna_4_pin = <35>;
+	     dtm_antenna_5_pin = <36>;
+	     dtm_antenna_6_pin = <37>;
+	     dtm_antenna_7_pin = <38>;
+	     dtm_antenna_8_pin = <39>;
+     };
+};
