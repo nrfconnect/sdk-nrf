@@ -13,6 +13,7 @@ config BT_LL_SOFTDEVICE
 	select MPSL
 	select ZERO_LATENCY_IRQS
 	select BT_CTLR_LE_ENC_SUPPORT
+	select BT_CTLR_ECDH_SUPPORT
 	select BT_CTLR_EXT_REJ_IND_SUPPORT
 	select BT_CTLR_PRIVACY_SUPPORT
 	select BT_CTLR_EXT_SCAN_FP_SUPPORT
@@ -182,6 +183,41 @@ config BT_LL_SOFTDEVICE_MULTIROLE
 	  by the linker.
 
 endchoice
+
+if BT_CTLR_ECDH
+choice BT_CTLR_ECDH_LIB
+	prompt "SoftDevice Controller ECDH library"
+
+config BT_CTLR_ECDH_LIB_OBERON
+	select NRF_OBERON
+	# TODO: Fix ocrypto header not available in these configurations
+	depends on !BUILD_WITH_TFM
+	depends on !OBERON_BACKEND
+	bool "nRF Oberon (SW)"
+
+config BT_CTLR_ECDH_LIB_TINYCRYPT
+	select TINYCRYPT
+	select TINYCRYPT_ECC_DH
+	bool "Tinycrypt"
+
+endchoice
+
+config BT_CTLR_ECDH_STACK_SIZE
+	int
+	default 800 if BT_CTLR_ECDH_LIB_OBERON
+	default 1024 if BT_CTLR_ECDH_LIB_TINYCRYPT
+	help
+	  Size of the ECDH processing thread stack.
+
+config BT_CTLR_ECDH_IN_MPSL_WORK
+	bool "ECDH processing in MPSL workqueue"
+	depends on BT_CTLR_ECDH_LIB_OBERON
+	help
+	  Run the ECDH processing in the MPSL workqueue instead of in a
+	  dedicated pre-emptible thread.
+	  This saves RAM at the cost of delaying MPSL work.
+
+endif # BT_CTLR_ECDH
 
 endmenu
 endif  # BT_LL_SOFTDEVICE
