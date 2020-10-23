@@ -27,6 +27,7 @@
 
 #include "multithreading_lock.h"
 #include "hci_internal.h"
+#include "ecdh.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
 #define LOG_MODULE_NAME sdc_hci_driver
@@ -690,21 +691,15 @@ static int hci_driver_open(void)
 {
 	BT_DBG("Open");
 
-	k_thread_create(&recv_thread_data, recv_thread_stack,
-			K_THREAD_STACK_SIZEOF(recv_thread_stack), recv_thread,
-			NULL, NULL, NULL, K_PRIO_COOP(CONFIG_BT_CTLR_SDC_RX_PRIO), 0,
-			K_NO_WAIT);
-	k_thread_name_set(&recv_thread_data, "SDC RX");
+	if (IS_ENABLED(CONFIG_BT_CTLR_ECDH)) {
+		hci_ecdh_init();
+	}
 
 	uint8_t build_revision[SDC_BUILD_REVISION_SIZE];
 
 	sdc_build_revision_get(build_revision);
 	LOG_HEXDUMP_INF(build_revision, sizeof(build_revision),
 			"SoftDevice Controller build revision: ");
-
-	if (IS_ENABLED(CONFIG_BT_CTLR_ECDH)) {
-		hci_ecdh_init();
-	}
 
 	int err;
 
@@ -735,6 +730,8 @@ static int hci_driver_open(void)
 		BT_ERR("Failed to register rand source (%d)", err);
 		return -EINVAL;
 	}
+
+	k_work_init(&receive_work, receive_work_handler);
 
 	err = MULTITHREADING_LOCK_ACQUIRE();
 	if (!err) {
