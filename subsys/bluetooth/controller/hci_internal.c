@@ -17,6 +17,7 @@
 #include <sdc_hci_vs.h>
 
 #include "hci_internal.h"
+#include "ecdh.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
 #define LOG_MODULE_NAME sdc_hci_internal
@@ -44,6 +45,8 @@ static bool command_generates_command_complete_event(uint16_t hci_opcode)
 	case SDC_HCI_OPCODE_CMD_LE_ENABLE_ENCRYPTION:
 	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN:
 	case SDC_HCI_OPCODE_CMD_LE_PERIODIC_ADV_CREATE_SYNC:
+	case BT_HCI_OP_LE_P256_PUBLIC_KEY:
+	case BT_HCI_OP_LE_GENERATE_DHKEY:
 		return false;
 	default:
 		return true;
@@ -347,7 +350,7 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_privacy_mode = 1;
 #endif
 
-#if defined(CONFIG_BT_HCI_RAW) && defined(CONFIG_BT_TINYCRYPT_ECC)
+#if (defined(CONFIG_BT_HCI_RAW) && defined(CONFIG_BT_TINYCRYPT_ECC)) || defined(CONFIG_BT_CTLR_ECDH)
 	cmds->hci_le_read_local_p256_public_key = 1;
 	cmds->hci_le_generate_dhkey_v1 = 1;
 	cmds->hci_le_generate_dhkey_v2 = 1;
@@ -751,6 +754,14 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_LE_WRITE_SUGGESTED_DEFAULT_DATA_LENGTH:
 		return sdc_hci_cmd_le_write_suggested_default_data_length((void *)cmd_params);
 
+#endif
+#if defined(CONFIG_BT_CTLR_ECDH)
+	case BT_HCI_OP_LE_P256_PUBLIC_KEY:
+		return hci_cmd_le_read_local_p256_public_key();
+	case BT_HCI_OP_LE_GENERATE_DHKEY:
+		return hci_cmd_le_generate_dhkey((void *)cmd_params);
+	case BT_HCI_OP_LE_GENERATE_DHKEY_V2:
+		return hci_cmd_le_generate_dhkey_v2((void *)cmd_params);
 #endif
 
 #if defined(CONFIG_BT_CTLR_PRIVACY)
