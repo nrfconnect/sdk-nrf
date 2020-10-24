@@ -210,6 +210,14 @@ Subsystems
 |BLE|
 =====
 
+.. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-6845: Pairing failure with simultaneous pairing on multiple connections
+  When using LE Secure Connections pairing, the pairing fails with simultaneous pairing on multiple connections.
+  The failure reason is unspecified.
+
+  **Workaround:** Retry the pairing on the connections that failed one by one after the pairing procedure has finished.
+
 .. rst-class:: v1-3-0
 
 NCSDK-5711: High-throughput transmission can deadlock the receive thread
