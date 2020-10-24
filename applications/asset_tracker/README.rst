@@ -199,7 +199,12 @@ Alternatively, use the command line tool ``menuconfig`` or configure the options
 This application supports the |NCS| :ref:`ug_bootloader`, but it is disabled by default.
 To enable the immutable bootloader, set ``CONFIG_SECURE_BOOT=y``.
 
+Using RSA signing for MCUboot
+=============================
 
+When :option:`CONFIG_BOOTLOADER_MCUBOOT` is set to ``y``, the Asset Tracker application adds an overlay configuration for MCUboot.
+This configuration enables the RSA signing of the images for backward compatibility with the MCUboot versions that precede the |NCS| v1.4.0.
+The overlay can be found in :file:`mcuboot_overlay-rsa.conf`.
 
 Testing
 =======
