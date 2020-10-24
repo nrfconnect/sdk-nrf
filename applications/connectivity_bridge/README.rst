@@ -65,6 +65,12 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+Using RSA signing for MCUboot
+=============================
+
+The Connectivity bridge application adds an overlay configuration for MCUboot.
+This configuration enables the RSA signing of the images for backward compatibility with the MCUboot versions that precede the |NCS| v1.4.0.
+The overlay can be found in :file:`mcuboot_overlay-rsa.conf`.
 
 Testing
 =======
