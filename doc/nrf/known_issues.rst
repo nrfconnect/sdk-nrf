@@ -341,6 +341,13 @@ Immutable bootloader board restrictions
 Build system
 ============
 
+.. rst-class:: v1-4-0
+
+NCSDK-6848: MCUboot must be built from source when included
+  The build will fail if either :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_SKIP_BUILD` or :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_USE_HEX_FILE` is set.
+
+  **Workaround:** Set :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE` instead.
+
 .. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
 KRKNWK-7827: Application build system is not aware of the settings partition
@@ -374,7 +381,6 @@ Flash commands only program one core
 
 Secure Partition Manager and application building together
   It is not possible to build and program :ref:`secure_partition_manager` and the application individually.
-
 
 DFU and FOTA
 ============
