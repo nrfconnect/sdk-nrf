@@ -2,7 +2,7 @@
 # Copyright 2018 Foundries.io, Limited
 # Copyright (c) 2019 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
 # Helper code used by NCS west commands.
 #

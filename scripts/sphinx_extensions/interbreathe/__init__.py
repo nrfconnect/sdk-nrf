@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2020 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
 from sphinx.transforms.post_transforms import SphinxPostTransform
 from sphinx import addnodes

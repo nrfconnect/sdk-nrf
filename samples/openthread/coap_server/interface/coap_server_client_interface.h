@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2020 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
+
 #ifndef __COAP_SERVER_CLIENT_INTRFACE_H__
 #define __COAP_SERVER_CLIENT_INTRFACE_H__
 

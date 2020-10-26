@@ -2,7 +2,7 @@
 # Copyright 2018 Foundries.io, Limited
 # Copyright (c) 2019 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
 # Helper code used by NCS to augment the pygit2 APIs. Used by
 # maintainers to help synchronize upstream open source projects and

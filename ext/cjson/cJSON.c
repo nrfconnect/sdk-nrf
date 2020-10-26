@@ -1,4 +1,10 @@
 /*
+ * Copyright (c) 2020 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
+
+/*
   Copyright (c) 2009-2017 Dave Gamble and cJSON contributors
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
