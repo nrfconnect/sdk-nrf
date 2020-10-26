@@ -64,16 +64,19 @@ Check and configure the following configuration options for the sample:
 
 .. option:: CONFIG_SAMPLE_SECURE_SOCKET - Secure socket configuration
 
-   If enabled, this option provisions the certificate to the modem.
+If enabled, this option provisions the certificate to the modem.
 
 .. option:: CONFIG_SAMPLE_SEC_TAG - Security tag configuration
 
-   This option configures the security tag.
+This option configures the security tag.
 
 .. option:: CONFIG_SAMPLE_CERT_FILE - Certificate file name configuration
 
-   This option sets the certificate file name.
+This option sets the certificate file name.
 
+.. option:: CONFIG_SAMPLE_COMPUTE_HASH - Hash compute configuration
+
+If enabled, this option computes the SHA256 hash of the downloaded file.
 
 
 Building and running
