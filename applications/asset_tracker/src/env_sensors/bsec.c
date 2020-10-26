@@ -324,6 +324,10 @@ int env_sensors_init_and_start(struct k_work_q *work_q,
 	} else if (bsec_ret.bsec_status) {
 		LOG_ERR("Could not initialize BSEC library: %d",
 			(int)bsec_ret.bsec_status);
+		if ((int)bsec_ret.bsec_status == -34) {
+			LOG_ERR("Deleting state from flash");
+			settings_delete(SETTINGS_BSEC_STATE);
+		}
 		return (int)bsec_ret.bsec_status;
 	}
 
