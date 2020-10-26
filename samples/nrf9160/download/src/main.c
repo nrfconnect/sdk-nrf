@@ -36,6 +36,11 @@ static struct download_client_cfg config = {
 #endif
 };
 
+#if CONFIG_SAMPLE_COMPUTE_HASH
+#include <mbedtls/sha256.h>
+static mbedtls_sha256_context sha256_ctx;
+#endif
+
 static int64_t ref_time;
 
 /* Initialize AT communications */
@@ -137,14 +142,31 @@ static int callback(const struct download_client_evt *event)
 		} else {
 			printk("\r[ %d bytes ] ", downloaded);
 		}
+
+#if CONFIG_SAMPLE_COMPUTE_HASH
+		mbedtls_sha256_update_ret(&sha256_ctx,
+			event->fragment.buf, event->fragment.len);
+#endif
 		return 0;
 
 	case DOWNLOAD_CLIENT_EVT_DONE:
 		ms_elapsed = k_uptime_delta(&ref_time);
 		speed = ((float)file_size / ms_elapsed) * MSEC_PER_SEC;
-
 		printk("\nDownload completed in %lld ms @ %d bytes per sec, total %d bytes\n",
 		       ms_elapsed, speed, downloaded);
+
+#if CONFIG_SAMPLE_COMPUTE_HASH
+		uint8_t hash[32];
+		uint8_t hash_str[64 + 1];
+
+		mbedtls_sha256_finish_ret(&sha256_ctx, hash);
+		mbedtls_sha256_free(&sha256_ctx);
+
+		bin2hex(hash, sizeof(hash), hash_str, sizeof(hash_str));
+
+		printk("SHA256: %s\n", hash_str);
+#endif /* CONFIG_SAMPLE_COMPUTE_HASH */
+
 		printk("Bye\n");
 		downloaded = 0;
 		return 0;
@@ -199,6 +221,11 @@ void main(void)
 		printk("Failed to initialize the client, err %d", err);
 		return;
 	}
+
+#if CONFIG_SAMPLE_COMPUTE_HASH
+	mbedtls_sha256_init(&sha256_ctx);
+	mbedtls_sha256_starts_ret(&sha256_ctx, false);
+#endif
 
 	err = download_client_connect(&downloader, URL, &config);
 	if (err) {

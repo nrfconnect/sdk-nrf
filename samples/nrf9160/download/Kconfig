@@ -32,6 +32,10 @@ config SAMPLE_FILE_URL
 	default "http://speedtest.ftp.otenet.gr/files/test100k.db" if SAMPLE_FILE_HTTP
 	default "https://file-examples-com.github.io/uploads/2017/10/file_example_JPG_100kB.jpg" if SAMPLE_FILE_HTTPS
 
+config SAMPLE_COMPUTE_HASH
+	bool "Compute sha256 hash"
+	select MBEDTLS
+
 endmenu
 
 menu "Zephyr Kernel"
