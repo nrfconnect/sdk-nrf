@@ -247,8 +247,10 @@ int http_parse(struct download_client *client, size_t len)
 	client->progress += MIN(client->offset, len);
 
 	/* Have we received a whole fragment or the whole file? */
-	if ((client->offset < CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE) &&
-	    (client->progress != client->file_size)) {
+	if (client->progress != client->file_size &&
+	    client->offset < (client->config.frag_size_override != 0 ?
+			      client->config.frag_size_override :
+			      CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE)) {
 		return 1;
 	}
 
