@@ -14,7 +14,7 @@ if (CONFIG_BOOTLOADER_MCUBOOT)
 
   add_overlay_config(
     mcuboot
-    ${CMAKE_CURRENT_SOURCE_DIR}/multi_image_mcuboot.conf
+    CONFIG_UPDATEABLE_IMAGE_NUMBER=2
     )
 
 else()
@@ -29,7 +29,7 @@ if (image_to_boot)
   # which is booted by B0.
   add_overlay_config(
     ${image_to_boot}
-    ${CMAKE_CURRENT_SOURCE_DIR}/fw_info.conf
+    CONFIG_FW_INFO=y
     )
 else()
   assert(CONFIG_FW_INFO "CONFIG_FW_INFO must be set")

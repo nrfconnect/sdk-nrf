@@ -10,7 +10,7 @@ if (CONFIG_ZTEST AND
   # Add overlay for enabling B0N
   add_overlay_config(
     hello_world
-    "${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/secure_boot.conf"
+    CONFIG_SECURE_BOOT=y
     )
 
   # Add a child image in the network core.

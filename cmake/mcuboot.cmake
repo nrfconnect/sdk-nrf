@@ -83,7 +83,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     # Inject this configuration from parent image to mcuboot.
     add_overlay_config(
       mcuboot
-      ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/build_s1.conf
+      CONFIG_BUILD_S1_VARIANT=y
       )
   endif()
 

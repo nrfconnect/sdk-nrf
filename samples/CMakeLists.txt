@@ -61,7 +61,8 @@ if (CONFIG_BT_RPMSG_NRF53)
     if (CONFIG_BT_LL_SOFTDEVICE_DEFAULT)
       add_overlay_config(
         hci_rpmsg
-        ${NRF_DIR}/subsys/bluetooth/controller/bt_ll_softdevice_hci_rpmsg.conf
+        CONFIG_SDC_SLAVE_COUNT=2
+        CONFIG_BT_CTLR_ADV_EXT=y
         )
     endif()
     if (CONFIG_BOOTLOADER_MCUBOOT AND CONFIG_NRF53_UPGRADE_NETWORK_CORE)
@@ -70,7 +71,7 @@ if (CONFIG_BT_RPMSG_NRF53)
       # of the network core application.
       add_overlay_config(
         hci_rpmsg
-        "${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/secure_boot.conf"
+        CONFIG_SECURE_BOOT=y
         )
 
       # Inject this configuration from parent image mcuboot to enable
@@ -78,7 +79,7 @@ if (CONFIG_BT_RPMSG_NRF53)
       # to the network core bootloader.
       add_overlay_config(
         mcuboot
-        "${ZEPHYR_NRF_MODULE_DIR}/subsys/pcd/pcd.conf"
+        CONFIG_PCD=y
         )
     endif()
 
