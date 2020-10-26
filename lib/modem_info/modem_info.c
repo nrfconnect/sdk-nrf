@@ -147,6 +147,14 @@ static const struct modem_info_data rsrp_data = {
 	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
 };
 
+static const struct modem_info_data rsrp_notify_data = {
+	.cmd		= AT_CMD_CESQ_ON,
+	.data_name	= RSRP_DATA_NAME,
+	.param_index	= RSRP_NOTIFY_PARAM_INDEX,
+	.param_count	= RSRP_NOTIFY_PARAM_COUNT,
+	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+};
+
 static const struct modem_info_data band_data = {
 	.cmd		= AT_CMD_CURRENT_BAND,
 	.data_name	= CUR_BAND_DATA_NAME,
@@ -342,6 +350,18 @@ static const struct modem_info_data *const modem_data[] = {
 
 static rsrp_cb_t modem_info_rsrp_cb;
 static struct at_param_list m_param_list;
+
+/* Metadata for a data request */
+struct request_item  {
+	enum modem_info info,
+	uint16_t *value_short,
+	char *value_string,
+	modem_info_cb_t cb
+};
+
+/* Queue for queued data requests */
+K_MSGQ_DEFINE(requests, sizeof(struct request_item),
+	      CONFIG_MODEM_INFO_QUEUE_LEN, 4);
 
 static bool is_cesq_notification(const char *buf, size_t len)
 {
@@ -606,14 +626,6 @@ static void modem_info_rsrp_subscribe_handler(void *context, const char *respons
 		return;
 	}
 
-	const struct modem_info_data rsrp_notify_data = {
-		.cmd		= AT_CMD_CESQ,
-		.data_name	= RSRP_DATA_NAME,
-		.param_index	= RSRP_NOTIFY_PARAM_INDEX,
-		.param_count	= RSRP_NOTIFY_PARAM_COUNT,
-		.data_type	= AT_PARAM_TYPE_NUM_SHORT,
-	};
-
 	err = modem_info_parse(&rsrp_notify_data, response);
 	if (err != 0) {
 		LOG_ERR("modem_info_parse failed to parse "
@@ -657,4 +669,38 @@ int modem_info_init(void)
 				CONFIG_MODEM_INFO_MAX_AT_PARAMS_RSP);
 
 	return err;
+}
+
+static void at_handler(int code,
+		       enum at_cmd_state state,
+		       const char *response)
+{
+	// NYI
+}
+
+static int modem_info_request(enum modem_info info,
+			      uint16_t *value_short,
+			      char *value_string,
+			      modem_info_cb_t cb)
+{
+	int err;
+	struct request_item request;
+
+	request.info = info;
+	request.value_short = value_short;
+	request.value_string = value_string;
+	request.cb = cb;
+
+	err = k_msgq_put(&requests, &request, K_FOREVER);
+	if (err) {
+		LOG_ERR("Unable to queue request: %d", err);
+		return err;
+	}
+
+	err = at_cmd_write_with_callback(modem_data[info]->cmd, at_handler);
+	if (err) {
+		LOG_ERR("Unable to send AT command: %d", err);
+		k_mesq_
+		return err;
+	}
 }

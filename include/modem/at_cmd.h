@@ -49,10 +49,18 @@ enum at_cmd_state {
  * at_cmd_set_notification_handler() function. Both handlers are of the type
  * @ref at_cmd_handler_t.
  *
- * @param response     Null terminated string containing the modem message
+ * @param code     Return code of AT command
+ * @param state    Pointer to enum @em at_cmd_state variable that can hold
+ *                 the error state returned by the modem. If the return state
+ *                 is a CMS or CME errors will the error code be returned in the
+ *                 the function return code as a positive value. NULL pointer is
+ *                 allowed.
+ * @param response Null terminated string containing the modem message
  *
  */
-typedef void (*at_cmd_handler_t)(const char *response);
+typedef void (*at_cmd_handler_t)(int code,
+				 enum at_cmd_state state,
+				 const char *response);
 
 /**@brief Initialize or recover the AT command driver.
  *

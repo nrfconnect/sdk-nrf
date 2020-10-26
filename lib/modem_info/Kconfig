@@ -26,6 +26,10 @@ config MODEM_INFO_BUFFER_SIZE
 	  string after an AT command. The buffer is processed
 	  through the parser.
 
+config MODEM_INFO_QUEUE_LEN
+	int "Maximum number of queued data requests"
+	default 16
+
 config MODEM_INFO_ADD_NETWORK
 	bool "Read the network information from the modem"
 	default y

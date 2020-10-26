@@ -311,9 +311,9 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 		/* Call the relevant callback, if any */
 		if (ret.state == AT_CMD_NOTIFICATION &&
 		    notification_handler != NULL) {
-			notification_handler(buf);
+			notification_handler(ret.code, ret.state, buf);
 		} else if (current_cmd.callback != NULL) {
-			current_cmd.callback(buf);
+			current_cmd.callback(ret.code, ret.state, buf);
 		}
 
 next:

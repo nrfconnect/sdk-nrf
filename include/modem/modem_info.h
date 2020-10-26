@@ -120,6 +120,13 @@ struct modem_param_info {
 	struct device_param  device;/**< Device parameters. */
 };
 
+/**@brief modem_info handler function protoype. */
+// TODO: Document
+typedef void (*modem_info_cb_t)(int ret,
+				enum modem_info info,
+				uint16_t value_short,
+				char *value_string);
+
 /** @brief Initialize the modem information module.
  *
  * @retval 0 If the operation was successful.

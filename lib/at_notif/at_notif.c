@@ -100,8 +100,13 @@ static int remove_notif_handler(void *ctx, at_notif_handler_t handler)
 }
 
 /**@brief AT command notifications handler. */
-static void notif_dispatch(const char *response)
+static void notif_dispatch(int code,
+			   enum at_cmd_state state,
+			   const char *response)
 {
+	ARG_UNUSED(code); // TODO check?
+	ARG_UNUSED(state);
+
 	struct notif_handler *curr, *tmp;
 
 	k_mutex_lock(&list_mtx, K_FOREVER);
