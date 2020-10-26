@@ -1673,6 +1673,12 @@ static void sensors_init(void)
 	err = env_sensors_init_and_start(&application_work_q, env_data_send);
 	if (err) {
 		LOG_ERR("Environmental sensors init failed, error: %d", err);
+#if CONFIG_USE_BME680_BSEC
+		if (err == -34) {
+			LOG_ERR("Reboot to initialize BSEC with clean state");
+			sys_reboot(SYS_REBOOT_COLD);
+		}
+#endif /* CONFIG_USE_BME680_BSEC */
 	}
 #if CONFIG_LIGHT_SENSOR
 	err = light_sensor_init_and_start(&application_work_q,
