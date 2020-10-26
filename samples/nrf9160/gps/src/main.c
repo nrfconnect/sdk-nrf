@@ -275,9 +275,9 @@ static void print_fix_data(nrf_gnss_data_frame_t *pvt_data)
 	printf("Altitude:   %f\n", pvt_data->pvt.altitude);
 	printf("Speed:      %f\n", pvt_data->pvt.speed);
 	printf("Heading:    %f\n", pvt_data->pvt.heading);
-	printk("Date:       %02u-%02u-%02u\n", pvt_data->pvt.datetime.day,
+	printk("Date:       %02u-%02u-%02u\n", pvt_data->pvt.datetime.year,
 					       pvt_data->pvt.datetime.month,
-					       pvt_data->pvt.datetime.year);
+					       pvt_data->pvt.datetime.day);
 	printk("Time (UTC): %02u:%02u:%02u\n", pvt_data->pvt.datetime.hour,
 					       pvt_data->pvt.datetime.minute,
 					      pvt_data->pvt.datetime.seconds);
