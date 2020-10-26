@@ -99,7 +99,7 @@ After programming the sample and all the prerequisites to the board, you can tes
                 Altitude:   116.274658
                 Speed:      0.039595
                 Heading:    0.000000
-                Date:       03-06-2020
+                Date:       2020-03-06
                 Time (UTC): 05:48:24
 
                 NMEA strings:

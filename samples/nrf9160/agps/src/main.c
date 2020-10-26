@@ -186,8 +186,8 @@ static void print_pvt_data(struct gps_pvt *pvt_data)
 		      "Time (UTC): %02u:%02u:%02u\r\n",
 		      pvt_data->longitude, pvt_data->latitude,
 		      pvt_data->altitude, pvt_data->speed, pvt_data->heading,
-		      pvt_data->datetime.day, pvt_data->datetime.month,
-		      pvt_data->datetime.year, pvt_data->datetime.hour,
+		      pvt_data->datetime.year, pvt_data->datetime.month,
+		      pvt_data->datetime.day, pvt_data->datetime.hour,
 		      pvt_data->datetime.minute, pvt_data->datetime.seconds);
 	if (len < 0) {
 		LOG_ERR("Could not construct PVT print");
