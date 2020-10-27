@@ -720,7 +720,7 @@ The nRF Desktop application is built the same way to any other |NCS| application
 .. include:: /includes/build_and_run.txt
 
 .. note::
-    Information about the known issues in nRF Desktop can be found in |NCS|'s :ref:`release_notes` and on the `Known issues`_ wiki page.
+    Information about the known issues in nRF Desktop can be found in |NCS|'s :ref:`release_notes` and on the :ref:`known_issues` page.
 
 .. _nrf_desktop_selecting_build_types:
 
