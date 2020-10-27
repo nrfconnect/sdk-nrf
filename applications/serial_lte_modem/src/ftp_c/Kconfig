@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+
+config SLM_FTPC
+	bool "FTP client support in SLM"
+	select FTP_CLIENT
+
+if SLM_FTPC
+
+config SLM_FTP_SERVER_PORT
+	int "FTP service port on remote host"
+	default 21
+
+config SLM_FTP_USER_ANONYMOUS
+	string "FTP client anonymous login user"
+	default "anonymous"
+	help
+	  Define the user name for anonymous login.
+
+config SLM_FTP_PASSWORD_ANONYMOUS
+	string "FTP client anonymous login password"
+	default "anonymous@example.com"
+	help
+	  Define the password for anonymous login.
+
+endif

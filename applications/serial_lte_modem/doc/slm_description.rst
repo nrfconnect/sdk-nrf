@@ -109,6 +109,12 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
+.. option:: CONFIG_SLM_NATIVE_TLS
+
+   This option enables using Zephyr's mbedTLS.
+   It requires additional configuration.
+   See :ref:`slm_native_tls` for more information.
+
 .. option:: CONFIG_SLM_CONNECT_UART_0 - UART 0
 
    This option selects UART 0 for the UART connection.
@@ -149,6 +155,18 @@ Check and configure the following configuration options for the sample:
 
    This option configures the application to accept AT commands ending with carriage return and line feed.
 
+.. option:: CONFIG_SLM_TCP_POLL_TIME - Poll time-out in seconds for TCP connection
+
+   This option specifies the poll time-out for the TCP connection, in seconds.
+
+.. option:: CONFIG_SLM_CONN_TIME - Connection time-out in seconds for TCP server
+
+   This option specifies the connection time-out for the TCP connection, in seconds.
+
+.. option:: CONFIG_SLM_GPS - GPS support in SLM
+
+   This option enables additional AT commands for using GPS service.
+
 .. option:: CONFIG_SLM_SUPL_SERVER - SUPL server
 
    This option specifies the SUPL server to use for retrieving SUPL A-GPS data.
@@ -156,6 +174,10 @@ Check and configure the following configuration options for the sample:
 .. option:: CONFIG_SLM_SUPL_PORT - SUPL server port
 
    This option specifies the port to use for the specified SUPL server.
+
+.. option:: CONFIG_SLM_FTPC - FTP client support in SLM
+
+   This option enables additional AT commands for using the FTP client service.
 
 .. option:: CONFIG_SLM_FTP_SERVER_PORT - FTP service port on remote host
 
@@ -169,19 +191,14 @@ Check and configure the following configuration options for the sample:
 
    This option specifies the password to use for anonymous login on an FTP server.
 
-.. option:: CONFIG_SLM_TCP_PROXY
+.. option:: CONFIG_SLM_MQTTC - MQTT client support in SLM
 
-   This option enables additional AT commands for using a TCP proxy service.
+   This option enables additional AT commands for using the MQTT client service.
 
-.. option:: CONFIG_SLM_UDP_PROXY
+.. option:: CONFIG_SLM_HTTPC - HTTP client support in SLM
 
-   This option enables additional AT commands for using a UDP proxy service.
+   This option enables additional AT commands for using the HTTP client service.
 
-.. option:: CONFIG_SLM_NATIVE_TLS
-
-   This option enables using Zephyr's mbedTLS.
-   It requires additional configuration.
-   See :ref:`slm_native_tls` for more information.
 
 Additional configuration
 ========================
@@ -493,7 +510,7 @@ TCP client
          #XSOCKET: 0, closed
          OK
 
-#. Test a TCP client with TCP proxy service (note that these commands are available only if :option:`CONFIG_SLM_TCP_PROXY` is defined):
+#. Test a TCP client with TCP proxy service:
 
    a. Check the available values for the XTCPCLI command.
 
@@ -561,7 +578,7 @@ TCP client
          OK
 
 
-#. Test a TCP client with TCP proxy service in data mode (note that these commands are available only if :option:`CONFIG_SLM_TCP_PROXY` is defined):
+#. Test a TCP client with TCP proxy service in data mode:
 
    a. Create a TCP/TLS client and connect to a server with data mode support.
       Replace *example.com* with the host name or IPv4 address of a TCP server and *1234* with the corresponding port.
@@ -690,7 +707,7 @@ UDP client
          #XSOCKET: 0, closed
          OK
 
-#. Test a connection-based UDP client with UDP proxy service (note that these commands are available only if :option:`CONFIG_SLM_UDP_PROXY` is defined):
+#. Test a connection-based UDP client with UDP proxy service:
 
    a. Check the available values for the XUDPCLI command.
 
@@ -741,7 +758,7 @@ UDP client
          **AT#XUDPCLI=0**
          OK
 
-#. Test a connection-based UDP client with UDP proxy service in data mode (note that these commands are available only if :option:`CONFIG_SLM_UDP_PROXY` is defined):
+#. Test a connection-based UDP client with UDP proxy service in data mode:
 
    a. Create a UDP client and connect to a server with data mode support.
       Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
@@ -837,7 +854,7 @@ You must register the corresponding credentials on the server side.
          #XSOCKET: 0, closed
          OK
 
-#. Test a TLS client with TCP proxy service (note that these commands are available only if :option:`CONFIG_SLM_TCP_PROXY` is defined):
+#. Test a TLS client with TCP proxy service:
 
    a. Create a TCP/TLS client and connect to a server.
       Replace *example.com* with the host name or IPv4 address of a TLS server and *1234* with the corresponding port.
@@ -947,7 +964,7 @@ You must register the corresponding credentials on the server side.
 	     #XSOCKET: 0, closed
 	     OK
 
-    #. Test a DTLS client with UDP proxy service (note that these commands are available only if :option:`CONFIG_SLM_UDP_PROXY` is defined):
+    #. Test a DTLS client with UDP proxy service:
 
        a. Create a UDP/DTLS client and connect to a server.
 	  Replace *example.com* with the host name or IPv4 address of a DTLS server and *1234* with the corresponding port.
@@ -1090,7 +1107,7 @@ To act as a TCP server, |global_private_address|
          OK
 
 
-#. Test the TCP server with TCP proxy service (note that these commands are available only if :option:`CONFIG_SLM_TCP_PROXY` is defined):
+#. Test the TCP server with TCP proxy service:
 
    a. Check the available values for the XTCPSVR command and read information about the current state.
 
@@ -1205,7 +1222,7 @@ To act as a TCP server, |global_private_address|
          #XTCPSVR: -1, -1
          OK
 
-#. Test the TCP server with TCP proxy service in data mode (note that these commands are available only if :option:`CONFIG_SLM_TCP_PROXY` is defined):
+#. Test the TCP server with TCP proxy service in data mode:
 
    a. Create a TCP server and read information about the current state.
       Replace *1234* with the correct port number.
@@ -1392,7 +1409,7 @@ To act as a UDP server, |global_private_address|
          #XSOCKET: 0, closed
          OK
 
-#. Test the UDP server with UDP proxy service (note that these commands are available only if :option:`CONFIG_SLM_UDP_PROXY` is defined):
+#. Test the UDP server with UDP proxy service:
 
    a. Check the available values for the XUDPSVR command and create a UDP server.
       Replace *1234* with the correct port number.
@@ -1459,7 +1476,7 @@ To act as a UDP server, |global_private_address|
          #XUDPSVR: stopped
          OK
 
-#. Test the UDP server with UDP proxy service in data mode (note that these commands are available only if :option:`CONFIG_SLM_UDP_PROXY` is defined):
+#. Test the UDP server with UDP proxy service in data mode:
 
    a. Create a UDP server and read information about the current state.
       Replace *1234* with the correct port number.
@@ -1645,6 +1662,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
 Testing FTP AT commands
 -----------------------
 
+Note that these commands are available only if :option:`CONFIG_SLM_FTPC` is defined.
 Before you test the FTP AT commands, check the setting of the :option:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` option.
 By default, the :ref:`lib_ftp_client` library keeps the connection to the FTP server alive for 60 seconds, but you can change the duration or turn KEEPALIVE off by setting :option:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` to 0.
 
@@ -2047,6 +2065,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
 Testing GPS AT commands
 -----------------------
 
+Note that these commands are available only if :option:`CONFIG_SLM_GPS` is defined.
 Before you test the GPS AT commands, check the following configuration values:
 
 * :option:`CONFIG_SUPL_CLIENT_LIB` - must be enabled to use the :ref:`supl_client`

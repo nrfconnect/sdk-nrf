@@ -15,10 +15,6 @@ config SLM_AT_MODE
 	select AT_NOTIF
 	select AT_CMD_PARSER
 	select MODEM_INFO
-	select MQTT_LIB
-	select MQTT_LIB_TLS
-	select FTP_CLIENT
-	select HTTP_CLIENT
 
 config SLM_AT_MAX_PARAM
 	int "Maximum number of parameters in AT command"
@@ -87,36 +83,23 @@ config SLM_INTERFACE_PIN
 	default 31 if SLM_CONNECT_UART_2
 
 #
-# A-GPS
+# TCP/TLS proxy
 #
-config SLM_SUPL_SERVER
-	string "SUPL server"
-	default "supl.google.com"
+config SLM_TCP_POLL_TIME
+	int "Poll time-out in seconds for TCP connection"
+	default 10
 
-config SLM_SUPL_PORT
-	int "SUPL server port"
-	default 7276
+config SLM_TCP_CONN_TIME
+	int "Connection time-out in seconds for TCP server"
+	default 60
 
 #
-# FTP
+# Configurable services
 #
-config SLM_FTP_SERVER_PORT
-	int "FTP service port on remote host"
-	default 21
-
-config SLM_FTP_USER_ANONYMOUS
-	string "FTP client anonymous login user"
-	default "anonymous"
-	help
-	  Define the user name for anonymous login.
-
-config SLM_FTP_PASSWORD_ANONYMOUS
-	string "FTP client anonymous login password"
-	default "anonymous@example.com"
-	help
-	  Define the password for anonymous login.
-
-rsource "src/tcpip_proxy/Kconfig"
+rsource "src/gps/Kconfig"
+rsource "src/ftp_c/Kconfig"
+rsource "src/mqtt_c/Kconfig"
+rsource "src/http_c/Kconfig"
 
 module = SLM
 module-str = serial modem
