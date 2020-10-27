@@ -45,7 +45,7 @@ Complete the following actions to optimize the Bluetooth® part of your applicat
   * :kconfig:`CONFIG_BT_CTLR_SDC_RX_STACK_SIZE`
   * :kconfig:`CONFIG_BT_RX_STACK_SIZE`
   * :kconfig:`CONFIG_BT_HCI_TX_STACK_SIZE`
-  * :kconfig:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
+  * :kconfig:`CONFIG_MPSL_WORK_STACK_SIZE`
 
 * Reduce the overall number and the sizes of the Bluetooth buffers, based on the expected data traffic in your application.
 
@@ -89,7 +89,7 @@ Complete the following actions to optimize the Thread part of your application:
   * :kconfig:`CONFIG_NET_MGMT_EVENT_STACK_SIZE`
   * :kconfig:`CONFIG_IEEE802154_NRF5_RX_STACK_SIZE`
   * :kconfig:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`
-  * :kconfig:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
+  * :kconfig:`CONFIG_MPSL_WORK_STACK_SIZE`
   * :kconfig:`CONFIG_SHELL_STACK_SIZE`
   * :kconfig:`CONFIG_IDLE_STACK_SIZE`
   * :kconfig:`CONFIG_MAIN_STACK_SIZE`
