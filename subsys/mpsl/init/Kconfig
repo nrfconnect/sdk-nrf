@@ -10,12 +10,12 @@ config MPSL_THREAD_COOP_PRIO
 	default BT_CTLR_SDC_RX_PRIO if BT_LL_SOFTDEVICE
 	default 8
 
-config MPSL_SIGNAL_STACK_SIZE
-	int "Size of the signal handler thread stack"
+config MPSL_WORK_STACK_SIZE
+	int "Size of the work handler thread stack"
 	default 1024
 	help
-	  Size of the signal handler thread stack, used to process lower
-	  priority signals in MPSL.
+	  Size of the work handler thread stack, used to process work in MPSL
+	  low priority context.
 
 config MPSL_TIMESLOT_SESSION_COUNT
 	int "Number of timeslot sessions"
