@@ -6,19 +6,19 @@ tests:
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160ns
     tags: ci_build
-  samples.nrf9160.serial_lte_modem.tcp_udp_server:
+  samples.nrf9160.serial_lte_modem.full_services:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160ns
     tags: ci_build
     extra_configs:
-      - CONFIG_SLM_TCP_PROXY=y
-      - CONFIG_SLM_UDP_PROXY=y
+      - CONFIG_SLM_GPS=y
+      - CONFIG_SLM_FTPC=y
+      - CONFIG_SLM_MQTTC=y
+      - CONFIG_SLM_HTTPC=y
   samples.nrf9160.serial_lte_modem.native_tls:
     build_only: true
     build_on_all: true
     extra_args: OVERLAY_CONFIG=overlay-native_tls.conf
     platform_allow: nrf9160dk_nrf9160ns
     tags: ci_build
-    extra_configs:
-      - CONFIG_SLM_TCP_PROXY=y

@@ -19,21 +19,25 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 
 #include "slm_util.h"
 #include "slm_at_host.h"
-#include "slm_at_tcpip.h"
-#include "slm_at_icmp.h"
-#include "slm_at_gps.h"
-#include "slm_at_ftp.h"
-#include "slm_at_fota.h"
-#if defined(CONFIG_SLM_TCP_PROXY)
 #include "slm_at_tcp_proxy.h"
-#endif
-#if defined(CONFIG_SLM_UDP_PROXY)
 #include "slm_at_udp_proxy.h"
-#endif
-#include "slm_at_mqtt.h"
-#include "slm_at_httpc.h"
+#include "slm_at_tcpip.h"
 #if defined(CONFIG_SLM_NATIVE_TLS)
 #include "slm_at_cmng.h"
+#endif
+#include "slm_at_icmp.h"
+#include "slm_at_fota.h"
+#if defined(CONFIG_SLM_GPS)
+#include "slm_at_gps.h"
+#endif
+#if defined(CONFIG_SLM_FTPC)
+#include "slm_at_ftp.h"
+#endif
+#if defined(CONFIG_SLM_MQTTC)
+#include "slm_at_mqtt.h"
+#endif
+#if defined(CONFIG_SLM_HTTPC)
+#include "slm_at_httpc.h"
 #endif
 
 #define OK_STR		"OK\r\n"
@@ -41,7 +45,7 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #define FATAL_STR	"FATAL ERROR\r\n"
 #define SLM_SYNC_STR	"Ready\r\n"
 
-#define SLM_VERSION	"#XSLMVER: 1.4\r\n"
+#define SLM_VERSION	"#XSLMVER: 1.5\r\n"
 #define AT_CMD_SLMVER	"AT#XSLMVER"
 #define AT_CMD_SLEEP	"AT#XSLEEP"
 #define AT_CMD_RESET	"AT#XRESET"
@@ -179,21 +183,25 @@ static void handle_at_clac(void)
 	rsp_send("\r\n", 2);
 	rsp_send(AT_CMD_CLAC, sizeof(AT_CMD_CLAC) - 1);
 	rsp_send("\r\n", 2);
-#if defined(CONFIG_SLM_TCP_PROXY)
 	slm_at_tcp_proxy_clac();
-#endif
-#if defined(CONFIG_SLM_UDP_PROXY)
 	slm_at_udp_proxy_clac();
-#endif
 	slm_at_tcpip_clac();
-	slm_at_icmp_clac();
-	slm_at_gps_clac();
-	slm_at_mqtt_clac();
-	slm_at_ftp_clac();
-	slm_at_httpc_clac();
-	slm_at_fota_clac();
 #if defined(CONFIG_SLM_NATIVE_TLS)
 	slm_at_cmng_clac();
+#endif
+	slm_at_icmp_clac();
+	slm_at_fota_clac();
+#if defined(CONFIG_SLM_GPS)
+	slm_at_gps_clac();
+#endif
+#if defined(CONFIG_SLM_FTPC)
+	slm_at_ftp_clac();
+#endif
+#if defined(CONFIG_SLM_MQTTC)
+	slm_at_mqtt_clac();
+#endif
+#if defined(CONFIG_SLM_HTTPC)
+	slm_at_httpc_clac();
 #endif
 }
 
@@ -377,7 +385,6 @@ static void cmd_send(struct k_work *work)
 		}
 	}
 
-#if defined(CONFIG_SLM_TCP_PROXY)
 	err = slm_at_tcp_proxy_parse(at_buf, at_buf_len);
 	if (err > 0) {
 		goto done;
@@ -388,9 +395,7 @@ static void cmd_send(struct k_work *work)
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
-#endif
 
-#if defined(CONFIG_SLM_UDP_PROXY)
 	err = slm_at_udp_proxy_parse(at_buf, at_buf_len);
 	if (err > 0) {
 		goto done;
@@ -401,7 +406,6 @@ static void cmd_send(struct k_work *work)
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
-#endif
 
 	err = slm_at_tcpip_parse(at_buf);
 	if (err == 0) {
@@ -412,44 +416,19 @@ static void cmd_send(struct k_work *work)
 		goto done;
 	}
 
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	err = slm_at_cmng_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOENT) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+#endif
+
 	err = slm_at_icmp_parse(at_buf);
 	if (err == 0) {
-		goto done;
-	} else if (err != -ENOENT) {
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
-		goto done;
-	}
-
-	err = slm_at_gps_parse(at_buf);
-	if (err == 0) {
-		rsp_send(OK_STR, sizeof(OK_STR) - 1);
-		goto done;
-	} else if (err != -ENOENT) {
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
-		goto done;
-	}
-
-	err = slm_at_mqtt_parse(at_buf);
-	if (err == 0) {
-		rsp_send(OK_STR, sizeof(OK_STR) - 1);
-		goto done;
-	} else if (err != -ENOENT) {
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
-		goto done;
-	}
-
-	err = slm_at_ftp_parse(at_buf);
-	if (err == 0) {
-		rsp_send(OK_STR, sizeof(OK_STR) - 1);
-		goto done;
-	} else if (err != -ENOENT) {
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
-		goto done;
-	}
-
-	err = slm_at_httpc_parse(at_buf, at_buf_len);
-	if (err == 0) {
-		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
 	} else if (err != -ENOENT) {
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
@@ -465,8 +444,41 @@ static void cmd_send(struct k_work *work)
 		goto done;
 	}
 
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	err = slm_at_cmng_parse(at_buf);
+#if defined(CONFIG_SLM_GPS)
+	err = slm_at_gps_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOENT) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+#endif
+
+#if defined(CONFIG_SLM_FTPC)
+	err = slm_at_ftp_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOENT) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+#endif
+
+#if defined(CONFIG_SLM_MQTTC)
+	err = slm_at_mqtt_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOENT) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+#endif
+
+#if defined(CONFIG_SLM_HTTPC)
+	err = slm_at_httpc_parse(at_buf, at_buf_len);
 	if (err == 0) {
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
@@ -690,22 +702,25 @@ int slm_at_host_init(void)
 		return err;
 	}
 
-	err = slm_at_tcpip_init();
-	if (err) {
-		LOG_ERR("TCPIP could not be initialized: %d", err);
-		return -EFAULT;
-	}
-#if defined(CONFIG_SLM_TCP_PROXY)
 	err = slm_at_tcp_proxy_init();
 	if (err) {
 		LOG_ERR("TCP Server could not be initialized: %d", err);
 		return -EFAULT;
 	}
-#endif
-#if defined(CONFIG_SLM_UDP_PROXY)
 	err = slm_at_udp_proxy_init();
 	if (err) {
 		LOG_ERR("UDP Server could not be initialized: %d", err);
+		return -EFAULT;
+	}
+	err = slm_at_tcpip_init();
+	if (err) {
+		LOG_ERR("TCPIP could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	err = slm_at_cmng_init();
+	if (err) {
+		LOG_ERR("TLS could not be initialized: %d", err);
 		return -EFAULT;
 	}
 #endif
@@ -714,41 +729,39 @@ int slm_at_host_init(void)
 		LOG_ERR("ICMP could not be initialized: %d", err);
 		return -EFAULT;
 	}
-	err = slm_at_gps_init();
-	if (err) {
-		LOG_ERR("GPS could not be initialized: %d", err);
-		return -EFAULT;
-	}
-	err = slm_at_mqtt_init();
-	if (err) {
-		LOG_ERR("MQTT could not be initialized: %d", err);
-		return -EFAULT;
-	}
-	err = slm_at_ftp_init();
-	if (err) {
-		LOG_ERR("FTP could not be initialized: %d", err);
-		return -EFAULT;
-	}
-	err = slm_at_httpc_init();
-	if (err) {
-		LOG_ERR("HTTP could not be initialized: %d", err);
-		return -EFAULT;
-	}
-
 	err = slm_at_fota_init();
 	if (err) {
 		LOG_ERR("FOTA could not be initialized: %d", err);
 		return -EFAULT;
 	}
-
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	err = slm_at_cmng_init();
+#if defined(CONFIG_SLM_GPS)
+	err = slm_at_gps_init();
 	if (err) {
-		LOG_ERR("TLS could not be initialized: %d", err);
+		LOG_ERR("GPS could not be initialized: %d", err);
 		return -EFAULT;
 	}
 #endif
-
+#if defined(CONFIG_SLM_FTPC)
+	err = slm_at_ftp_init();
+	if (err) {
+		LOG_ERR("FTP could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
+#if defined(CONFIG_SLM_MQTTC)
+	err = slm_at_mqtt_init();
+	if (err) {
+		LOG_ERR("MQTT could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
+#if defined(CONFIG_SLM_HTTPC)
+	err = slm_at_httpc_init();
+	if (err) {
+		LOG_ERR("HTTP could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
 	k_work_init(&cmd_send_work, cmd_send);
 	k_sem_give(&tx_done);
 	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
@@ -761,45 +774,17 @@ void slm_at_host_uninit(void)
 {
 	int err;
 
-	err = slm_at_tcpip_uninit();
-	if (err) {
-		LOG_WRN("TCPIP could not be uninitialized: %d", err);
-	}
-#if defined(CONFIG_SLM_TCP_PROXY)
 	err = slm_at_tcp_proxy_uninit();
 	if (err) {
 		LOG_WRN("TCP Server could not be uninitialized: %d", err);
 	}
-#endif
-#if defined(CONFIG_SLM_UDP_PROXY)
 	err = slm_at_udp_proxy_uninit();
 	if (err) {
 		LOG_WRN("UDP Server could not be uninitialized: %d", err);
 	}
-#endif
-	err = slm_at_icmp_uninit();
+	err = slm_at_tcpip_uninit();
 	if (err) {
-		LOG_WRN("ICMP could not be uninitialized: %d", err);
-	}
-	err = slm_at_gps_uninit();
-	if (err) {
-		LOG_WRN("GPS could not be uninitialized: %d", err);
-	}
-	err = slm_at_mqtt_uninit();
-	if (err) {
-		LOG_WRN("MQTT could not be uninitialized: %d", err);
-	}
-	err = slm_at_ftp_uninit();
-	if (err) {
-		LOG_WRN("FTP could not be uninitialized: %d", err);
-	}
-	err = slm_at_httpc_uninit();
-	if (err) {
-		LOG_WRN("HTTP could not be uninitialized: %d", err);
-	}
-	err = slm_at_fota_uninit();
-	if (err) {
-		LOG_WRN("FOTA could not be uninitialized: %d", err);
+		LOG_WRN("TCPIP could not be uninitialized: %d", err);
 	}
 #if defined(CONFIG_SLM_NATIVE_TLS)
 	err = slm_at_cmng_uninit();
@@ -807,11 +792,43 @@ void slm_at_host_uninit(void)
 		LOG_WRN("TLS could not be uninitialized: %d", err);
 	}
 #endif
+	err = slm_at_icmp_uninit();
+	if (err) {
+		LOG_WRN("ICMP could not be uninitialized: %d", err);
+	}
+	err = slm_at_fota_uninit();
+	if (err) {
+		LOG_WRN("FOTA could not be uninitialized: %d", err);
+	}
+#if defined(CONFIG_SLM_GPS)
+	err = slm_at_gps_uninit();
+	if (err) {
+		LOG_WRN("GPS could not be uninitialized: %d", err);
+	}
+#endif
+#if defined(CONFIG_SLM_FTPC)
+	err = slm_at_ftp_uninit();
+	if (err) {
+		LOG_WRN("FTP could not be uninitialized: %d", err);
+	}
+#endif
+#if defined(CONFIG_SLM_MQTTC)
+	err = slm_at_mqtt_uninit();
+	if (err) {
+		LOG_WRN("MQTT could not be uninitialized: %d", err);
+	}
+#endif
+#if defined(CONFIG_SLM_HTTPC)
+	err = slm_at_httpc_uninit();
+	if (err) {
+		LOG_WRN("HTTP could not be uninitialized: %d", err);
+	}
+
 	err = at_notif_deregister_handler(NULL, response_handler);
 	if (err) {
 		LOG_WRN("Can't deregister handler: %d", err);
 	}
-
+#endif
 	/* Power off UART module */
 	uart_rx_disable(uart_dev);
 	k_sleep(K_MSEC(100));

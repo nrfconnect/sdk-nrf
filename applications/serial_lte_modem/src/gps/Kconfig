@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+
+config SLM_GPS
+	bool "GPS support in SLM"
+
+if SLM_GPS
+
+config SLM_SUPL_SERVER
+	string "SUPL server"
+	default "supl.google.com"
+
+config SLM_SUPL_PORT
+	int "SUPL server port"
+	default 7276
+
+endif
