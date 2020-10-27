@@ -165,6 +165,13 @@ static int callback(const struct download_client_evt *event)
 		bin2hex(hash, sizeof(hash), hash_str, sizeof(hash_str));
 
 		printk("SHA256: %s\n", hash_str);
+
+#if CONFIG_SAMPLE_COMPARE_HASH
+		if (strcmp(hash_str, CONFIG_SAMPLE_SHA256_HASH)) {
+			printk("Expect: %s\n", CONFIG_SAMPLE_SHA256_HASH);
+			printk("SHA256 mismatch!\n");
+		}
+#endif /* CONFIG_SAMPLE_COMPARE_HASH */
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
 		printk("Bye\n");
