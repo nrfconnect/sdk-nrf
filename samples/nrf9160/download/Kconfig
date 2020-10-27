@@ -36,6 +36,16 @@ config SAMPLE_COMPUTE_HASH
 	bool "Compute sha256 hash"
 	select MBEDTLS
 
+config SAMPLE_COMPARE_HASH
+	bool "Compare hash"
+	depends on SAMPLE_COMPUTE_HASH
+
+config SAMPLE_SHA256_HASH
+	string "sha256 hash"
+	depends on SAMPLE_COMPARE_HASH
+	default "f627ca4c2c322f15db26152df306bd4f983f0146409b81a4341b9b340c365a16" if SAMPLE_FILE_HTTP
+	default "88aeb1f4467bd1e50cf624de972fbf3f40801632fedb64aaa7b1a8a9ef786fc6" if SAMPLE_FILE_HTTPS
+
 endmenu
 
 menu "Zephyr Kernel"
