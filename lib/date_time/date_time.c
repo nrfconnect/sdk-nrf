@@ -418,7 +418,7 @@ void date_time_register_handler(date_time_evt_handler_t evt_handler)
 	if (evt_handler == NULL) {
 		app_evt_handler = NULL;
 
-		LOG_INF("Previously registered handler %p de-registered",
+		LOG_DBG("Previously registered handler %p de-registered",
 			app_evt_handler);
 
 		return;
