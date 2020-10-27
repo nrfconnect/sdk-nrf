@@ -1,11 +1,11 @@
 .. _release_notes:
 
-Release Notes
+Release notes
 #############
 
 See the release notes for information about specific |NCS| releases.
 
-Important issues that are discovered after a release is tagged are listed in the `Known issues`_ wiki page.
+Important issues that are discovered after a release is tagged are listed on the :ref:`known_issues` page.
 
 .. important::
    A "99" at the end of the version number of this documentation indicates continuous updates on the master branch since the previous major.minor release.
@@ -17,6 +17,7 @@ Important issues that are discovered after a release is tagged are listed in the
    :maxdepth: 1
    :caption: Subpages:
 
+   releases/release-notes-latest
    releases/release-notes-1.4.0
    releases/release-notes-1.3.2
    releases/release-notes-1.3.1
