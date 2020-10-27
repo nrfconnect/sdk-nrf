@@ -378,6 +378,14 @@ Build system
 
 .. rst-class:: v1-4-0
 
+NCSDK-6777: Project out of date when :option:`CONFIG_SECURE_BOOT` is set
+  The DFU :file:`.zip` file is regenerated even when no changes are made to the files it depends on.
+  As a consequence, SES displays a "Project out of date" message even when the project is not out of date.
+
+  **Workaround:** Apply the fix from `sdk-nrf PR #3241 <https://github.com/nrfconnect/sdk-nrf/pull/3241>`_.
+
+.. rst-class:: v1-4-0
+
 NCSDK-6848: MCUboot must be built from source when included
   The build will fail if either :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_SKIP_BUILD` or :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_USE_HEX_FILE` is set.
 
