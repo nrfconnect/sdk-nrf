@@ -78,6 +78,14 @@ This option sets the certificate file name.
 
 If enabled, this option computes the SHA256 hash of the downloaded file.
 
+.. option:: CONFIG_SAMPLE_COMPARE_HASH - Hash compare configuration
+
+If enabled, this option compares the hash against the SHA256 hash set by :option:`CONFIG_SAMPLE_SHA256_HASH` for a match.
+
+.. option:: CONFIG_SAMPLE_SHA256_HASH - Hash configuration
+
+This option sets the SHA256 hash to be compared with :option:`CONFIG_SAMPLE_COMPUTE_HASH`.
+
 
 Building and running
 ********************
