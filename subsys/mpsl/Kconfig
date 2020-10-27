@@ -12,7 +12,7 @@ config MPSL_THREAD_COOP_PRIO
 	default SDC_RX_PRIO if BT_LL_SOFTDEVICE
 	default 8
 
-config MPSL_SIGNAL_STACK_SIZE
+config MPSL_WORK_STACK_SIZE
 	int "Size of the signal handler thread stack"
 	default 1024
 	help
