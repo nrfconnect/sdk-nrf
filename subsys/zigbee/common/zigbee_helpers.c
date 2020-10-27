@@ -141,9 +141,14 @@ addr_type_t parse_address(const char *input, zb_addr_u *addr,
 			  addr_type_t addr_type)
 {
 	addr_type_t result = ADDR_INVALID;
-	size_t len = strlen(input);
+	size_t len;
 
-	if (!input || !addr || !strlen(input)) {
+	if (!input || !addr) {
+		return ADDR_INVALID;
+	}
+
+	len = strlen(input);
+	if (!len) {
 		return ADDR_INVALID;
 	}
 

@@ -20,7 +20,7 @@
 BUILD_ASSERT((ZBOSS_NVRAM_PAGE_SIZE % PHYSICAL_PAGE_SIZE) == 0,
 	     "The size must be a multiply of physical page size.");
 
-static char zb_nvram_buf[PAGE_SIZE];
+static uint8_t zb_nvram_buf[PAGE_SIZE];
 
 /* Stub for ZBOSS callout */
 void zb_nvram_erase_finished_stub(zb_uint8_t page)
@@ -50,10 +50,10 @@ static void test_zb_nvram_erase(void)
 	}
 
 	/* Validate if flash memory is cleared */
-	for (int page = 0; page < VIRTUAL_PAGE_COUNT; page++) {
+	for (uint8_t page = 0; page < VIRTUAL_PAGE_COUNT; page++) {
 
 		/* Validate all physical page offsets */
-		for (int offset = 0; offset < ZBOSS_NVRAM_PAGE_SIZE;
+		for (uint32_t offset = 0; offset < ZBOSS_NVRAM_PAGE_SIZE;
 		     offset += PHYSICAL_PAGE_SIZE) {
 
 			zb_osif_nvram_read(page, offset, zb_nvram_buf,
@@ -68,14 +68,14 @@ static void test_zb_nvram_erase(void)
 
 static void test_zb_nvram_write(void)
 {
-	const char MEM_PATTERN = 0xAA;
+	const uint8_t MEM_PATTERN = 0xAA;
 
 	memset(zb_nvram_buf, MEM_PATTERN, sizeof(zb_nvram_buf));
 
-	for (int page = 0; page < VIRTUAL_PAGE_COUNT; page++) {
+	for (uint8_t page = 0; page < VIRTUAL_PAGE_COUNT; page++) {
 
 		/* Write to all physical page offsets */
-		for (int offset = 0; offset < ZBOSS_NVRAM_PAGE_SIZE;
+		for (uint32_t offset = 0; offset < ZBOSS_NVRAM_PAGE_SIZE;
 		     offset += PHYSICAL_PAGE_SIZE) {
 
 			int ret = zb_osif_nvram_write(page, offset,
