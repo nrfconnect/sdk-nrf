@@ -1,10 +1,6 @@
-/*
- * Copyright (c) 2020 Nordic Semiconductor ASA
- *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
- */
-
 #!/usr/bin/env python3
+# Copyright (c) 2020 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 # -*- coding: utf-8 -*-
 #
 # nRF Connect SDK documentation build configuration file, created by

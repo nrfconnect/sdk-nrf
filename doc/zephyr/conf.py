@@ -1,10 +1,6 @@
-/*
- * Copyright (c) 2020 Nordic Semiconductor ASA
- *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
- */
-
 # -*- coding: utf-8 -*-
+# Copyright (c) 2020 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 # Zephyr documentation build configuration file, created by
 # sphinx-quickstart on Fri May  8 11:43:01 2015.

@@ -1,10 +1,6 @@
-#!/usr/bin/env python3
 #
-# Copyright (c) 2018 Nordic Semiconductor ASA
-#
+# Copyright (c) 2020 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
-#
-#
 # Script to go through all *.md files in a folder and replace occurrences
 # of ".md)" with ".html)" and delete comments.
 # Sphinx transforms .md files to .html files, but it does not fix the links

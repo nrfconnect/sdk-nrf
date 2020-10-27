@@ -1,10 +1,6 @@
-#!/usr/bin/env python3
-#
-# Copyright (c) 2019 Nordic Semiconductor ASA
-#
+
+# Copyright (c) 2020 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
-
-
 import argparse
 import yaml
 from os import path

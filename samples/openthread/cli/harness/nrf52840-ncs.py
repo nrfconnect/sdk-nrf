@@ -1,10 +1,6 @@
-/*
- * Copyright (c) 2020 Nordic Semiconductor ASA
- *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
- */
-
 #!/usr/bin/env python
+# Copyright (c) 2020 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 # Copyright (c) 2016, The OpenThread Authors.
 # All rights reserved.
