@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
+
 cmake_minimum_required(VERSION 3.13.1)
 
 set(OT_NCP_VENDOR_HOOK_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})

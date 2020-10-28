@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
+
 #include <zephyr.h>
 #include <bluetooth/gatt.h>
 #include <bluetooth/hci.h>

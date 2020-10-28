@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
+
 cmake_minimum_required(VERSION 3.13.1)
 
 list(INSERT OVERLAY_CONFIG 0 ../common/overlay-ot-defaults.conf)
