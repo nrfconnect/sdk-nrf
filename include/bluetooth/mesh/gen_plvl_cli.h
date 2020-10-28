@@ -119,7 +119,7 @@ struct bt_mesh_plvl_cli {
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -145,7 +145,7 @@ int bt_mesh_plvl_cli_power_get(struct bt_mesh_plvl_cli *cli,
  * parameters.
  * @param[in] set New Power Level value to set. Set @p set::transition to NULL
  * to use the server's default transition parameters.
- * @param[in] rsp Response status buffer, or NULL to keep from blocking.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -189,7 +189,7 @@ int bt_mesh_plvl_cli_power_set_unack(struct bt_mesh_plvl_cli *cli,
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -214,7 +214,7 @@ int bt_mesh_plvl_cli_range_get(struct bt_mesh_plvl_cli *cli,
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] range New Power Range value to set.
- * @param[in] rsp Response status buffer, or NULL to keep from blocking.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -258,7 +258,7 @@ int bt_mesh_plvl_cli_range_set_unack(struct bt_mesh_plvl_cli *cli,
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -282,7 +282,7 @@ int bt_mesh_plvl_cli_default_get(struct bt_mesh_plvl_cli *cli,
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] default_power New Default Power value to set.
- * @param[in] rsp Response status buffer, or NULL to keep from blocking.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -330,7 +330,7 @@ int bt_mesh_plvl_cli_default_set_unack(struct bt_mesh_plvl_cli *cli,
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.

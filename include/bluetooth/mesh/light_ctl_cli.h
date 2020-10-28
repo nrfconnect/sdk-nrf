@@ -118,7 +118,7 @@ struct bt_mesh_light_ctl_cli {
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -142,7 +142,7 @@ int bt_mesh_light_ctl_get(struct bt_mesh_light_ctl_cli *cli,
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] set CTL state to set.
- * @param[in] rsp Response status buffer, or NULL to keep from blocking.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -189,7 +189,7 @@ int bt_mesh_light_ctl_set_unack(struct bt_mesh_light_ctl_cli *cli,
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -218,7 +218,7 @@ int bt_mesh_light_temp_get(struct bt_mesh_light_ctl_cli *cli,
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] set CTL Temperature state to set.
- * @param[in] rsp Response status buffer, or NULL to keep from blocking.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -266,7 +266,7 @@ int bt_mesh_light_temp_set_unack(
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -290,7 +290,7 @@ int bt_mesh_light_ctl_default_get(struct bt_mesh_light_ctl_cli *cli,
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] set Default CTL value to set.
- * @param[in] rsp Response status buffer, or NULL to keep from blocking.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -333,7 +333,7 @@ int bt_mesh_light_ctl_default_set_unack(
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -357,7 +357,7 @@ int bt_mesh_light_temp_range_get(
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] set Range to set.
- * @param[in] rsp Response status buffer, or NULL to keep from blocking.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
