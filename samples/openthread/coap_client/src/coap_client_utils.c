@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
+
 #include <zephyr.h>
 #include <coap_server_client_interface.h>
 #include <net/coap_utils.h>

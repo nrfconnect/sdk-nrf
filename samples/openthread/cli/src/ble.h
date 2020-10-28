@@ -9,6 +9,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
+
 #ifndef __BLE_H__
 #define __BLE_H__
 
