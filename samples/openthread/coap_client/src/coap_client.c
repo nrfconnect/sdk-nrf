@@ -33,12 +33,12 @@ LOG_MODULE_REGISTER(coap_client, CONFIG_COAP_CLIENT_LOG_LEVEL);
 static void on_nus_received(struct bt_conn *conn, const uint8_t *const data,
 			    uint16_t len)
 {
-	LOG_INF("Received data: %s", log_strdup(data));
-
 	if (len != 1) {
-		LOG_WRN("Received invalid data length from NUS");
+		LOG_WRN("Received invalid data length (%hd) from NUS", len);
 		return;
 	}
+
+	LOG_INF("Received data: %c", data[0]);
 
 	switch (*data) {
 	case COMMAND_REQUEST_UNICAST:
