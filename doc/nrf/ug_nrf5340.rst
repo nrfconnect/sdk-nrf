@@ -9,6 +9,10 @@ Working with nRF5340
 
 The |NCS| provides support for developing on the nRF5340 System on Chip (SoC) using the nRF5340 PDK (PCA10095).
 
+See the `nRF5340 PDK User Guide`_ for detailed information about the nRF5340 PDK hardware.
+To get started with the nRF5340 PDK, follow the steps in the `Getting started with nRF Connect SDK (nRF53 Series)`_ guide.
+
+
 Introduction
 ************
 

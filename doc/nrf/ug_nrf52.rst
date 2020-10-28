@@ -9,6 +9,8 @@ Working with nRF52
 
 The |NCS| provides support for developing on all nRF52 Series devices and contains board definitions for all development kits and reference design hardware.
 
+See `Getting started with nRF Connect SDK (nRF52 Series)`_ for step-by-step instructions on how to test and develop with an nRF52 Series development kit.
+
 Introduction
 ************
 
@@ -29,27 +31,40 @@ Devices in the nRF52 Series are supported by these boards in the Zephyr open sou
    * - DK
      - PCA number
      - Build target
+     - Documentation
    * - :ref:`zephyr:nrf52840dk_nrf52840`
      - PCA10056
      - ``nrf52840dk_nrf52840``
+     - | `Product Specification <nRF52840 Product Specification_>`_
+       | `User Guide <nRF52840 DK User Guide_>`_
    * - :ref:`zephyr:nrf52840dk_nrf52811`
      - PCA10056
      - ``nrf52840dk_nrf52811``
+     - `Product Specification <nRF52811 Product Specification_>`_
    * - :ref:`zephyr:nrf52833dk_nrf52833`
      - PCA10100
      - ``nrf52833dk_nrf52833``
+     - | `Product Specification <nRF52833 Product Specification_>`_
+       | `User Guide <nRF52833 DK User Guide_>`_
    * - :ref:`zephyr:nrf52833dk_nrf52820`
      - PCA10100
      - ``nrf52833dk_nrf52820``
+     - `Product Specification <nRF52820 Product Specification_>`_
    * - :ref:`zephyr:nrf52dk_nrf52832`
      - PCA10040
      - ``nrf52dk_nrf52832``
+     - | `Product Specification <nRF52832 Product Specification_>`_
+       | `User Guide <nRF52 DK User Guide_>`_
    * - :ref:`zephyr:nrf52dk_nrf52810`
      - PCA10040
      - ``nrf52dk_nrf52810``
+     - `Product Specification <nRF52810 Product Specification_>`_
    * - :ref:`zephyr:nrf52840dongle_nrf52840`
      - PCA10059
      - ``nrf52840dongle_nrf52840``
+     - | `Product Specification <nRF52840 Product Specification_>`_
+       | `User Guide <nRF52840 Dongle User Guide_>`_
+
 
 nRF Desktop
 ===========
