@@ -243,3 +243,9 @@ div.numbered-step>h6::before {
    overflow-x: auto;
    clear: left;
 }
+
+
+/* fix styling for line blocks in tables */
+.rst-content td .line-block {
+   margin-bottom: 0px;
+}
