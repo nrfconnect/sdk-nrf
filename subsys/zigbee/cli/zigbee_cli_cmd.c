@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
 #include <errno.h>
