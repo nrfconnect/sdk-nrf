@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2020 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
+
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 static char client_psk[] = "000102030405060708090a0b0c0d0e0f";
 
