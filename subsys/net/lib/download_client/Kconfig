@@ -105,8 +105,8 @@ config DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
 	range 8 256
 	default 192
 
-config DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS
-	int "Receive timeout, in milliseconds"
+config DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS
+	int "Receive timeout on UDP sockets, in milliseconds"
 	default 4000
 	range -1 30000
 	help
