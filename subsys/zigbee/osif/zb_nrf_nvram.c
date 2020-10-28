@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
+
 #include <pm_config.h>
 #include <storage/flash_map.h>
 #include <logging/log.h>

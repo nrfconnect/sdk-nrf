@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
+
 #include <kernel.h>
 #include <drivers/uart.h>
 #include <zboss_api.h>
