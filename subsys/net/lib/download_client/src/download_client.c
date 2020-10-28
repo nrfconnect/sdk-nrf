@@ -50,11 +50,11 @@ static int socket_timeout_set(int fd)
 {
 	int err;
 
-	if (CONFIG_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS == SYS_FOREVER_MS) {
+	if (CONFIG_DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS == SYS_FOREVER_MS) {
 		return 0;
 	}
 
-	const uint32_t timeout_ms = CONFIG_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS;
+	const uint32_t timeout_ms = CONFIG_DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS;
 
 	struct timeval timeo = {
 		.tv_sec = (timeout_ms / 1000),
@@ -572,12 +572,6 @@ int download_client_connect(struct download_client *client, const char *host,
 		return err;
 	}
 
-	/* Set socket timeout, if configured */
-	err = socket_timeout_set(client->fd);
-	if (err) {
-		return err;
-	}
-
 	return 0;
 }
 
@@ -622,6 +616,11 @@ int download_client_start(struct download_client *client, const char *file,
 
 	if (IS_ENABLED(CONFIG_COAP)) {
 		coap_block_init(client, from);
+		/* Set socket timeout, if configured */
+		err = socket_timeout_set(client->fd);
+		if (err) {
+			return err;
+		}
 	}
 
 	err = request_send(client);
