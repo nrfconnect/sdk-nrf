@@ -54,9 +54,19 @@
 
 .. _`LTE Link Monitor`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_intro.html
 
+.. _`Managing credentials`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_certificate_manager.html
+
 .. _`nRF Connect Programmer`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_introduction.html
 
+.. _`nRF9160 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/nRF9160_html5_keyfeatures.html
+
+.. _`nRF9160 DK Getting Started`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/intro.html
+
 .. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_modem_firmware.html
+
+.. _`Updating the nRF Connect for Cloud certificate`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_certificates.html
+
+.. _`nRF9160 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/intro.html
 
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/board_controller.html
 
@@ -69,14 +79,40 @@
 .. _`system mode section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
 
 .. _`Credential storage management %CMNG`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/cmng.html
+
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
 
+.. _`nRF5340 PDK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_pdk/UG/nrf5340_PDK/intro.html
+
+.. _`Getting started with nRF Connect SDK (nRF53 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs/UG/gsg/intro.html
+.. _`Getting started with nRF Connect SDK (nRF52 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs52/UG/gsg/intro.html
+
+.. _`nRF52840 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/keyfeatures_html5.html
+
 .. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1227688711
+
+.. _`nRF52833 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52833/keyfeatures_html5.html
+
+.. _`nRF52833 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52833_dk/UG/nrf52833_DK/intro.html
+
+.. _`nRF52832 Product Specification`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52832_ps.html
+
+.. _`nRF52 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52832_dk/UG/nrf52_DK/intro.html
+
+.. _`nRF52820 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52820/keyfeatures_html5.html
+
+.. _`nRF52811 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52811/keyfeatures_html5.html
+
+.. _`nRF52810 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52810/keyfeatures_html5.html
+
+.. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/nrf52840_DK/intro.html
+
+.. _`nRF52840 Dongle User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dongle/UG/nrf52840_Dongle/intro.html
+
 .. _`Programming DK boards using nrfjprog`: https://infocenter.nordicsemi.com/topic/ug_nrf5x_cltools/UG/cltools/nrf5x_nrfjprogexe.html
 .. _`Nordic Thingy:91 User Guide`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/intro/frontpage.html
 
 .. _`Programming applications on Nordic Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_programming_appln_thingy91.html
-
 
 .. _`Programming the Thingy:91 modem`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_updating_modem_thingy91_intro.html
 
@@ -99,6 +135,7 @@
 .. _`DFU over Zigbee`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_zigbee.html
 
 .. _`nRF Util`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_nrfutil%2FUG%2Fnrfutil%2Fnrfutil_intro.html
+
 
 .. ### Links to the Nordic website
 
@@ -126,11 +163,8 @@
 
 .. _`Energy efficiency` : https://www.nordicsemi.com/Products/Low-power-cellular-IoT#Cellular-performance-for-the-IoT
 
-.. _`Updating the nRF Connect for Cloud certificate`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_certificates.html
-
 .. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
 
-.. _`Managing credentials`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_certificate_manager.html
 
 .. ### Links to Nordic software
 

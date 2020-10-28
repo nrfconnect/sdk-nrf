@@ -9,6 +9,9 @@ Working with nRF9160
 
 The |NCS| provides support for developing on the nRF9160 System in Package (SiP) using the nRF9160 DK (PCA10090), and :ref:`offers samples <nrf9160_ug_drivs_libs_samples>` dedicated to this device.
 
+See the `nRF9160 DK Hardware`_ guide for detailed information about the nRF9160 DK hardware.
+To get started with the nRF9160 DK, follow the steps in the `nRF9160 DK Getting Started`_ guide.
+
 .. _nrf9160_ug_intro:
 
 Introduction
@@ -16,7 +19,8 @@ Introduction
 
 The nRF9160 SiP integrates an application MCU, a full LTE modem, RF front end, and power management.
 With built-in GPS support, it is dedicated to asset tracking applications.
-For more details on the SiP, see the `nRF9160 product website`_.
+
+For more details on the SiP, see the `nRF9160 product website`_ and the `nRF9160 Product Specification`_.
 
 .. figure:: images/nrf9160_ug_overview.svg
    :alt: Overview of nRF91 application architecture
