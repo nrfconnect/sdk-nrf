@@ -121,7 +121,7 @@ struct bt_mesh_lightness_cli {
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -147,7 +147,7 @@ int bt_mesh_lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
  * parameters.
  * @param[in] set New Light Level value to set. Set @c set::transition to NULL
  * to use the server's default transition parameters.
- * @param[in] rsp Response status buffer, or NULL to keep from blocking.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -191,7 +191,7 @@ int bt_mesh_lightness_cli_light_set_unack(
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -216,7 +216,7 @@ int bt_mesh_lightness_cli_range_get(struct bt_mesh_lightness_cli *cli,
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] range New Light Range value to set.
- * @param[in] rsp Response status buffer, or NULL to keep from blocking.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -260,7 +260,7 @@ int bt_mesh_lightness_cli_range_set_unack(
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -284,7 +284,7 @@ int bt_mesh_lightness_cli_default_get(struct bt_mesh_lightness_cli *cli,
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] default_light New Default Light value to set.
- * @param[in] rsp Response status buffer, or NULL to keep from blocking.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -332,7 +332,7 @@ int bt_mesh_lightness_cli_default_set_unack(struct bt_mesh_lightness_cli *cli,
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.

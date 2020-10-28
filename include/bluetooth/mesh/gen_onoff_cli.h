@@ -111,7 +111,7 @@ int bt_mesh_onoff_cli_get(struct bt_mesh_onoff_cli *cli,
  * @param[in] set New OnOff parameters to set. @p set::transition can either
  * point to a transition structure, or be left to NULL to use the default
  * transition parameters on the server.
- * @param[in] rsp Status response buffer, or NULL to keep from blocking.
+ * @param[out] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
