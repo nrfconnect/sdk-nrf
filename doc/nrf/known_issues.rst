@@ -55,6 +55,14 @@ nRF9160
 Asset tracker
 =============
 
+.. rst-class:: v1-4-0
+
+NCSDK-6898: Setting :option:`CONFIG_SECURE_BOOT` does not work
+  The immutable bootloader is not able to find the required metadata in the MCUboot image.
+  See the related NCSDK-6898 known issue in `Build system`_ for more details.
+
+  **Workaround:** Set :option:`CONFIG_FW_INFO` in MCUboot.
+
 .. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 External antenna performance setting
@@ -421,6 +429,13 @@ Immutable bootloader board restrictions
 
 Build system
 ============
+
+.. rst-class:: v1-4-0
+
+NCSDK-6898: Overriding child images
+  Adding child image overlay from the :file:`CMakeLists.txt` top-level file located in the :file:`samples` directory overrides the existing child image overlay.
+
+  **Workaround:** Apply the configuration from the overlay to the child image manually.
 
 .. rst-class:: v1-4-0
 
