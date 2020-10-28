@@ -167,12 +167,20 @@ Variables in the parent image are not propagated to the child image, with the fo
 * Variables that are in the list ``SHARED_MULTI_IMAGE_VARIABLES`` are propagated to all child images.
 
 With these two mechanisms, it is possible to set variables in child images from either parent images or the command line, and it is possible to set variables globally across all images.
-For example, to change the ``CONF_FILE`` variable for the MCUboot image and the parent image, specify the CMake command as follows::
+For example, to change the ``FOO`` variable for the ``bar`` child image and the parent image, specify the CMake command as follows::
 
-   cmake -Dmcuboot_CONF_FILE=prj_a.conf -DCONF_FILE=app_prj.conf
+   cmake -Dbar_FOO=value -DFOO=value
 
 You can extend the CMake command that is used to create the child images by adding flags to the CMake variable ``EXTRA_MULTI_IMAGE_CMAKE_ARGS``.
 For example, add ``--trace-expand`` to that variable to output more debug information.
+
+It is possible for a project to pass Kconfig configuration files and fragments to child images by placing them in a :file:`child_image` folder in the application source directory.
+The listing below describes how leverage this functionality, ``ACI_NAME`` is the name of the child image that the configuration will be applied to.
+
+.. literalinclude:: ../../cmake/multi_image.cmake
+    :language: c
+    :start-at: It is possible for a sample to use a custom set of Kconfig fragments for a
+    :end-before: set(ACI_CONF_DIR ${APPLICATION_SOURCE_DIR}/child_image)
 
 Child image targets
 ===================
