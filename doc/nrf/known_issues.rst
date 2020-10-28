@@ -283,6 +283,14 @@ NCSDK-6845: Pairing failure with simultaneous pairing on multiple connections
 
   **Workaround:** Retry the pairing on the connections that failed one by one after the pairing procedure has finished.
 
+.. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+NCSDK-6844: Security procedure failure can terminate GATT client request
+  A security procedure terminates the GATT client request that is currently in progress, unless the request was the reason to initiate the security procedure.
+  If a new GATT client request is queued at this time, this might potentially cause a GATT transaction violation and fail as well.
+
+  **Workaround:** Do not initiate a security procedure in parallel with GATT client requests.
+
 .. rst-class:: v1-3-0
 
 NCSDK-5711: High-throughput transmission can deadlock the receive thread
