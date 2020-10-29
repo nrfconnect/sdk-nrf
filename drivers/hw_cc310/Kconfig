@@ -21,8 +21,8 @@ if !HW_CC3XX_FORCE_ALT
 
 menuconfig HW_CC3XX
 	bool "Arm CC3xx hw driver for Nordic devices"
-	depends on SOC_NRF52840 || (SOC_NRF9160 && !SPM) || (SOC_NRF9160 && TRUSTED_EXECUTION_SECURE) || \
-			  (SOC_NRF5340_CPUAPP && !SPM) || (SOC_NRF5340_CPUAPP && TRUSTED_EXECUTION_SECURE)
+	depends on HAS_HW_NRF_CC310 || HAS_HW_NRF_CC312
+	depends on !TRUSTED_EXECUTION_NONSECURE
 	select NRF_CC3XX_PLATFORM
 	default y
 	help
