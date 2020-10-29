@@ -171,7 +171,9 @@ Therefore, every group must be explicitly added to an RST file.
 
 .. note::
     Including a group on a page does not include all its subgroups automatically.
-    To include subgroups, list them on the page of the group they belong to.
+    To include subgroups, add the ``:inner:`` option.
+
+    However, if subgroups are defined in separate files, you should rather list them manually on the page of the group they belong to, so that you can include information on where they are defined.
 
 The `Breathe documentation`_ contains information about what you can link to.
 
