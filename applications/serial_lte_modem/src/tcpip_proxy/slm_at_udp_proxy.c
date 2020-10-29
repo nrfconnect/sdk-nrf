@@ -143,18 +143,30 @@ static int do_udp_server_start(uint16_t port)
 	return ret;
 }
 
+static int do_udp_reset(void)
+{
+	int ret;
+
+	ret = close(udp_sock);
+	if (ret < 0) {
+		LOG_WRN("close() failed: %d", -errno);
+		return -errno;
+	}
+	ret = k_thread_join(udp_thread_id, K_MSEC(500));
+	if (ret < 0) {
+		LOG_WRN("Could not join UDP thread: %d", ret);
+		k_thread_abort(udp_thread_id);
+	}
+	(void)slm_at_udp_proxy_init();
+	return 0;
+}
+
 static int do_udp_server_stop(int error)
 {
 	int ret = 0;
 
 	if (udp_sock > 0) {
-		k_thread_abort(udp_thread_id);
-		ret = close(udp_sock);
-		if (ret < 0) {
-			LOG_WRN("close() failed: %d", -errno);
-			ret = -errno;
-		}
-		(void)slm_at_udp_proxy_init();
+		(void)do_udp_reset();
 		if (error) {
 			sprintf(rsp_buf, "#XUDPSVR: %d stopped\r\n", error);
 		} else {
@@ -257,13 +269,7 @@ static int do_udp_client_disconnect(void)
 	int ret = 0;
 
 	if (udp_sock > 0) {
-		k_thread_abort(udp_thread_id);
-		ret = close(udp_sock);
-		if (ret < 0) {
-			LOG_WRN("close() failed: %d", -errno);
-			ret = -errno;
-		}
-		(void)slm_at_udp_proxy_init();
+		(void)do_udp_reset();
 		sprintf(rsp_buf, "#XUDPCLI: disconnected\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
@@ -331,16 +337,29 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 	int ret;
 	int size = sizeof(struct sockaddr_in);
 	char data[NET_IPV4_MTU];
+	struct pollfd fds[1];
 
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
+	memset(fds, 0, sizeof(fds));
+	fds[0].fd = udp_sock;
+	fds[0].events = POLLIN;
+
 	do {
-		ret = recvfrom(udp_sock, data, NET_IPV4_MTU, 0,
+		ret = poll(fds, 1, -1);
+		if (ret < 0) {
+			LOG_ERR("poll() error: %d", -errno);
+		}
+		if (fds[0].revents & (POLLHUP | POLLNVAL)) {
+			LOG_DBG("Socket closed/invalid, exiting");
+			return;
+		}
+		ret = recvfrom(udp_sock, data, NET_IPV4_MTU, MSG_DONTWAIT,
 			(struct sockaddr *)&remote, &size);
 		if (ret < 0) {
-			LOG_WRN("recv() error: %d", -errno);
+			LOG_WRN("recvfrom() error: %d", -errno);
 			continue;
 		}
 		if (ret == 0) {
@@ -634,16 +653,8 @@ int slm_at_udp_proxy_init(void)
  */
 int slm_at_udp_proxy_uninit(void)
 {
-	int ret;
-
 	if (udp_sock > 0) {
-		k_thread_abort(udp_thread_id);
-		ret = close(udp_sock);
-		if (ret < 0) {
-			LOG_WRN("close() failed: %d", -errno);
-			ret = -errno;
-		}
-		udp_sock = INVALID_SOCKET;
+		(void)do_udp_reset();
 	}
 
 	return 0;
