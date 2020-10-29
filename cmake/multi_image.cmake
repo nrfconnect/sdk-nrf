@@ -271,6 +271,7 @@ function(add_child_image_from_source)
       --target flash
       DEPENDS
       ${ACI_NAME}_subimage
+      USES_TERMINAL
       )
 
     # If the dynamic partition has child images, their hex files will be
