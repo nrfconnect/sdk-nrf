@@ -29,7 +29,8 @@ static void light_status(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 		status.remaining_time = 0;
 	}
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_LIGHTNESS_OP_STATUS, ctx)) {
+	if (model_ack_match(&cli->ack_ctx,
+			    op_get(LIGHTNESS_OP_TYPE_STATUS, repr), ctx)) {
 		struct bt_mesh_lightness_status *rsp = cli->ack_ctx.user_data;
 		*rsp = status;
 		model_ack_rx(&cli->ack_ctx);
@@ -155,29 +156,27 @@ const struct bt_mesh_model_cb _bt_mesh_lightness_cli_cb = {
 	.init = bt_mesh_lvl_cli_init,
 };
 
-int bt_mesh_lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
-				    struct bt_mesh_msg_ctx *ctx,
-				    struct bt_mesh_lightness_status *rsp)
+int lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
+			    struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
+			    struct bt_mesh_lightness_status *rsp)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHTNESS_OP_GET,
 				 BT_MESH_LIGHTNESS_MSG_LEN_GET);
-	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHTNESS_OP_GET);
+	bt_mesh_model_msg_init(&buf, op_get(LIGHTNESS_OP_TYPE_GET, repr));
 
 	return model_ackd_send(cli->model, ctx, &buf,
 			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHTNESS_OP_STATUS, rsp);
+			       op_get(LIGHTNESS_OP_TYPE_STATUS, repr), rsp);
 }
 
-int bt_mesh_lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
-				    struct bt_mesh_msg_ctx *ctx,
-				    const struct bt_mesh_lightness_set *set,
-				    struct bt_mesh_lightness_status *rsp)
+int lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
+			    struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
+			    const struct bt_mesh_lightness_set *set,
+			    struct bt_mesh_lightness_status *rsp)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHTNESS_OP_SET,
 				 BT_MESH_LIGHTNESS_MSG_MAXLEN_SET);
-	bt_mesh_model_msg_init(&buf, ((ACTUAL == LIGHT_USER_REPR) ?
-					      BT_MESH_LIGHTNESS_OP_SET :
-					      BT_MESH_LIGHTNESS_OP_LINEAR_SET));
+	bt_mesh_model_msg_init(&buf, op_get(LIGHTNESS_OP_TYPE_SET, repr));
 
 	net_buf_simple_add_le16(&buf, set->lvl);
 	net_buf_simple_add_u8(&buf, cli->tid++);
@@ -187,19 +186,17 @@ int bt_mesh_lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
 
 	return model_ackd_send(cli->model, ctx, &buf,
 			       rsp ? &cli->ack_ctx : NULL,
-			       BT_MESH_LIGHTNESS_OP_STATUS, rsp);
+			       op_get(LIGHTNESS_OP_TYPE_STATUS, repr), rsp);
 }
 
-int bt_mesh_lightness_cli_light_set_unack(
-	struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	const struct bt_mesh_lightness_set *set)
+int lightness_cli_light_set_unack(struct bt_mesh_lightness_cli *cli,
+				  struct bt_mesh_msg_ctx *ctx,
+				  enum light_repr repr,
+				  const struct bt_mesh_lightness_set *set)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHTNESS_OP_SET_UNACK,
 				 BT_MESH_LIGHTNESS_MSG_MAXLEN_SET);
-	bt_mesh_model_msg_init(&buf,
-			       ((ACTUAL == LIGHT_USER_REPR) ?
-					BT_MESH_LIGHTNESS_OP_SET_UNACK :
-					BT_MESH_LIGHTNESS_OP_LINEAR_SET_UNACK));
+	bt_mesh_model_msg_init(&buf, op_get(LIGHTNESS_OP_TYPE_SET_UNACK, repr));
 
 	net_buf_simple_add_le16(&buf, set->lvl);
 	net_buf_simple_add_u8(&buf, cli->tid++);
@@ -208,6 +205,28 @@ int bt_mesh_lightness_cli_light_set_unack(
 	}
 
 	return model_send(cli->model, ctx, &buf);
+}
+
+int bt_mesh_lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
+				    struct bt_mesh_msg_ctx *ctx,
+				    struct bt_mesh_lightness_status *rsp)
+{
+	return lightness_cli_light_get(cli, ctx, LIGHT_USER_REPR, rsp);
+}
+
+int bt_mesh_lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
+				    struct bt_mesh_msg_ctx *ctx,
+				    const struct bt_mesh_lightness_set *set,
+				    struct bt_mesh_lightness_status *rsp)
+{
+	return lightness_cli_light_set(cli, ctx, LIGHT_USER_REPR, set, rsp);
+}
+
+int bt_mesh_lightness_cli_light_set_unack(
+	struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx,
+	const struct bt_mesh_lightness_set *set)
+{
+	return lightness_cli_light_set_unack(cli, ctx, LIGHT_USER_REPR, set);
 }
 
 int bt_mesh_lightness_cli_range_get(struct bt_mesh_lightness_cli *cli,

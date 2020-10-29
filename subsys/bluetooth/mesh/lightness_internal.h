@@ -35,6 +35,36 @@ enum light_repr {
 	LINEAR,
 };
 
+enum bt_mesh_lightness_op_type {
+	LIGHTNESS_OP_TYPE_GET,
+	LIGHTNESS_OP_TYPE_SET,
+	LIGHTNESS_OP_TYPE_SET_UNACK,
+	LIGHTNESS_OP_TYPE_STATUS,
+};
+
+static inline uint32_t op_get(enum bt_mesh_lightness_op_type type,
+				     enum light_repr repr)
+{
+	switch (type) {
+	case LIGHTNESS_OP_TYPE_GET:
+		return repr == ACTUAL ? BT_MESH_LIGHTNESS_OP_GET :
+					BT_MESH_LIGHTNESS_OP_LINEAR_GET;
+	case LIGHTNESS_OP_TYPE_SET:
+		return repr == ACTUAL ? BT_MESH_LIGHTNESS_OP_SET :
+					BT_MESH_LIGHTNESS_OP_LINEAR_SET;
+	case LIGHTNESS_OP_TYPE_SET_UNACK:
+		return repr == ACTUAL ? BT_MESH_LIGHTNESS_OP_SET_UNACK :
+					BT_MESH_LIGHTNESS_OP_LINEAR_SET_UNACK;
+	case LIGHTNESS_OP_TYPE_STATUS:
+		return repr == ACTUAL ? BT_MESH_LIGHTNESS_OP_STATUS :
+					BT_MESH_LIGHTNESS_OP_LINEAR_STATUS;
+	default:
+		return 0;
+	}
+
+	return 0;
+}
+
 static inline uint32_t lightness_sqrt32(uint32_t val)
 {
 	/* Shortcut out of this for the very common case of 0: */
@@ -116,6 +146,21 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct bt_mesh_lightness_set *set,
 			      struct bt_mesh_lightness_status *status);
+
+/* For testing purposes */
+int lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
+			    struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
+			    struct bt_mesh_lightness_status *rsp);
+
+int lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
+			    struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
+			    const struct bt_mesh_lightness_set *set,
+			    struct bt_mesh_lightness_status *rsp);
+
+int lightness_cli_light_set_unack(struct bt_mesh_lightness_cli *cli,
+				  struct bt_mesh_msg_ctx *ctx,
+				  enum light_repr repr,
+				  const struct bt_mesh_lightness_set *set);
 
 #ifdef __cplusplus
 }
