@@ -57,6 +57,8 @@ In order to define your own board, you can use the following Zephyr guides as re
 * :ref:`custom_board_definition` is a guide to adding your own custom board to the Zephyr build system.
 * :ref:`board_porting_guide` is a complete guide to porting Zephyr to your own board.
 
+.. _memory_footprint_optimization:
+
 Memory footprint optimization
 *****************************
 
@@ -115,3 +117,37 @@ Complete the following actions to optimize the Bluetooth part of your applicatio
   * :option:`CONFIG_BT_CTLR_TX_BUFFER_SIZE`
 
 For reference, you can find a minimal footprint configuration of the :ref:`peripheral_lbs` sample in :file:`nrf/samples/bluetooth/peripheral_lbs/minimal.conf`.
+
+Thread
+======
+
+Complete the following actions to optimize the Thread part of your application:
+
+* Disable features that your application does not use.
+  For example, disable the following features:
+
+  * Asserts
+  * Logging
+  * Network shell and OpenThread CLI shell support (see :ref:`ug_thread_configuring_additional`)
+
+* :ref:`Configure the OpenThread stack. <ug_thread_configuring_basic_building>`
+* :ref:`Select the appropriate OpenThread device type. <thread_ug_device_type>`
+* Reduce the stack sizes of the Thread internal threads where possible.
+  Use the :ref:`zephyr:thread_analyzer` to analyze the stack usage.
+
+  The following configuration options affect the stack sizes of the Thread threads:
+
+  * :option:`CONFIG_OPENTHREAD_THREAD_STACK_SIZE`
+  * :option:`CONFIG_NET_CONNECTION_MANAGER_STACK_SIZE`
+  * :option:`CONFIG_NET_RX_STACK_SIZE`
+  * :option:`CONFIG_NET_TX_STACK_SIZE`
+  * :option:`CONFIG_NET_MGMT_EVENT_STACK_SIZE`
+  * :option:`CONFIG_IEEE802154_NRF5_RX_STACK_SIZE`
+  * :option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`
+  * :option:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
+  * :option:`CONFIG_SHELL_STACK_SIZE`
+  * :option:`CONFIG_IDLE_STACK_SIZE`
+  * :option:`CONFIG_MAIN_STACK_SIZE`
+  * :option:`CONFIG_ISR_STACK_SIZE`
+
+For reference, you can find minimal footprint configurations for the single protocol and multiprotocol variants of the :ref:`ot_cli_sample` sample in :file:`nrf/samples/openthread/cli/overlay-minimal_*protocol.conf`.

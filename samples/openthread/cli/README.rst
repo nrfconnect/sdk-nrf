@@ -54,6 +54,15 @@ Certification tests with CLI sample
 The Thread CLI sample can be used for running certification tests.
 See :ref:`ug_thread_cert` for information on how to use this sample on Thread Certification Test Harness.
 
+.. _ot_cli_sample_minimal:
+
+Minimal configuration
+=====================
+
+This optional extension demonstrates an optimized configuration for the Thread CLI sample.
+The provided configurations optimize the memory footprint of the sample for single protocol and multiprotocol use.
+
+For more information, see :ref:`memory_footprint_optimization`.
 
 Requirements
 ************
@@ -96,6 +105,8 @@ Activating sample extensions
 To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
 
 * For the experimental Thread 1.2 variant, set :file:`overlay-thread_1_2.conf`.
+* For the minimal single protocol variant, set :file:`"overlay-minimal_singleprotocol.conf"`.
+* For the minimal multiprotocol variant, set :file:`"overlay-minimal_multiprotocol.conf"`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.

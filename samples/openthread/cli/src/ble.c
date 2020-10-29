@@ -18,12 +18,10 @@ static const struct bt_data ad[] = {
 };
 
 static struct bt_conn_cb conn_callbacks;
-static struct bt_conn_auth_cb conn_auth_callbacks;
 
 void ble_enable(void)
 {
 	bt_enable(NULL);
 	bt_conn_cb_register(&conn_callbacks);
-	bt_conn_auth_cb_register(&conn_auth_callbacks);
 	bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), NULL, 0);
 }
