@@ -17,3 +17,4 @@ endif()
 
 zephyr_library()
 zephyr_library_sources(${FPROTECT_SRC})
+zephyr_library_sources_ifdef(CONFIG_FPROTECT_APP sys_init_fprotect.c)
