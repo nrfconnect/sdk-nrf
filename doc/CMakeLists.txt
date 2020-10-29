@@ -159,12 +159,16 @@ endforeach()
 file(STRINGS ${ZEPHYR_BASE}/scripts/requirements-base.txt ZEPHYR_BASE_PACKAGE_VERSIONS REGEX "^[^#].*")
 file(STRINGS ${ZEPHYR_BASE}/scripts/requirements-doc.txt ZEPHYR_DOCS_PACKAGE_VERSIONS REGEX "^[^#].*")
 file(STRINGS ${MCUBOOT_BASE}/scripts/requirements.txt MCUBOOT_PACKAGE_VERSIONS REGEX "^[^#].*")
-file(STRINGS ${NRF_BASE}/scripts/requirements.txt NRF_PACKAGE_VERSIONS REGEX "^[^#].*")
+file(STRINGS ${NRF_BASE}/scripts/requirements-base.txt NRF_BASE_PACKAGE_VERSIONS REGEX "^[^#].*")
+file(STRINGS ${NRF_BASE}/scripts/requirements-doc.txt NRF_DOC_PACKAGE_VERSIONS REGEX "^[^#].*")
+file(STRINGS ${NRF_BASE}/scripts/requirements-build.txt NRF_BUILD_PACKAGE_VERSIONS REGEX "^[^#].*")
 
 foreach(package ${ZEPHYR_BASE_PACKAGE_VERSIONS}
                 ${ZEPHYR_DOCS_PACKAGE_VERSIONS}
                 ${MCUBOOT_PACKAGE_VERSIONS}
-                ${NRF_PACKAGE_VERSIONS}
+                ${NRF_BASE_PACKAGE_VERSIONS}
+                ${NRF_DOC_PACKAGE_VERSIONS}
+                ${NRF_BUILD_PACKAGE_VERSIONS}
 )
   string(REGEX REPLACE "(^[^>=\;]*)([\;]|([>=][^\;]*))\;*.*" "\\1" package_name "${package}")
   string(TOUPPER ${package_name} PACKAGE_NAME_UPPER)
