@@ -53,9 +53,12 @@ Additional configuration options
 Depending on your configuration needs, you can also set the following options:
 
 * :option:`CONFIG_NET_SOCKETS` - This option enables API similar to BSD Sockets on top of the native Zephyr networking API.
-  This is needed for managing networking protocols.
-* :option:`CONFIG_NET_SHELL` - This option enables Zephyr's :ref:`zephyr:shell_api` if you need to access OpenThread CLI and use commands from `OpenThread CLI Reference`_.
+  This configuration is needed for managing networking protocols.
+* :option:`CONFIG_NET_SHELL` - This option enables Zephyr's :ref:`zephyr:net_shell`.
+  This configuration is needed for managing the network, based on Zephyr's IP stack, from the command line.
+* :option:`CONFIG_OPENTHREAD_SHELL` - This option enables OpenThread CLI (see `OpenThread CLI Reference`_).
 * :option:`CONFIG_COAP` - This option enables Zephyr's :ref:`zephyr:coap_sock_interface` support.
+* :option:`CONFIG_COAP_UTILS` - This option enables the :ref:`CoAP utils library <coap_utils_readme>`.
 * :option:`CONFIG_OPENTHREAD_COAP` - This option enables OpenThread's native CoAP API.
 
 You can also change the default values in menuconfig for the options listed in the following files:
