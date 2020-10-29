@@ -173,6 +173,7 @@ Other libraries
 ---------------
 
 * Moved :ref:`lib_bootloader` to a section of their own.
+  * Added write protection by default for the image partition.
 
 Modem library
 +++++++++++++

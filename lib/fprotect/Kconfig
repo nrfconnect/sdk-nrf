@@ -65,3 +65,22 @@ config FPROTECT_ENABLE_IS_PROTECTED
 	depends on FPROTECT && HAS_HW_NRF_ACL
 	help
 	  Enable API to query if an address has been protected.
+
+config FPROTECT_APP
+	bool "Lock image partition using FPROTECT"
+	depends on PARTITION_MANAGER_ENABLED && FPROTECT
+	help
+	  The flash partition which contains the image hex file should never be
+	  written to. Set this option to enable a module which will perform
+	  a 'fprotect_area' operation during system initialization before
+	  the kernel is initialized. This will ensure that the appropriate
+	  locking mechanism is configured to not allow write operations to the
+	  memory partition which contains the image hex file. Note that this
+	  imposes a requirement to the start address and size of the image
+	  hex file: they must both be aligned with the locking granularity
+	  of the locking mechanism available for the current hardware. See
+	  'FPROTECT_BLOCK_SIZE' and set the partition sizes in the system so
+	  that this is aligned with the 'app' partition. The start and size
+	  of the 'app' partition can be found by either inspecting the file
+	  'pm_config.h' in your build directory, or by invoking the
+	  'partition_manager_report' target.
