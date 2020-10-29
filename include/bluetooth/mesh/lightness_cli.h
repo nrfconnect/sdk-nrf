@@ -114,6 +114,9 @@ struct bt_mesh_lightness_cli {
 
 /** @brief Get the Light Level of the bound server.
  *
+ * By default, the ACTUAL representation will be used. LINEAR representation
+ * can be configured by defining CONFIG_BT_MESH_LIGHTNESS_LINEAR.
+ *
  * This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  * function will return, and the response will be passed to the
  * @ref bt_mesh_lightness_cli_handlers::light_status callback.
@@ -135,6 +138,9 @@ int bt_mesh_lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
 				    struct bt_mesh_lightness_status *rsp);
 
 /** @brief Set the Light Level of the server.
+ *
+ * By default, the ACTUAL representation will be used. LINEAR representation
+ * can be configured by defining CONFIG_BT_MESH_LIGHTNESS_LINEAR.
  *
  * This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  * function will return, and the response will be passed to the
@@ -160,6 +166,9 @@ int bt_mesh_lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
 				    struct bt_mesh_lightness_status *rsp);
 
 /** @brief Set the Light Level of the server without requesting a response.
+ *
+ * By default, the ACTUAL representation will be used. LINEAR representation
+ * can be configured by defining CONFIG_BT_MESH_LIGHTNESS_LINEAR.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish

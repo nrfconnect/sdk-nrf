@@ -52,9 +52,7 @@ static void lvl_status_encode(struct net_buf_simple *buf,
 			      const struct bt_mesh_lightness_status *status,
 			      enum light_repr repr)
 {
-	bt_mesh_model_msg_init(buf, repr == ACTUAL ?
-					    BT_MESH_LIGHTNESS_OP_STATUS :
-					    BT_MESH_LIGHTNESS_OP_LINEAR_STATUS);
+	bt_mesh_model_msg_init(buf, op_get(LIGHTNESS_OP_TYPE_STATUS, repr));
 
 	net_buf_simple_add_le16(buf, light_to_repr(status->current, repr));
 
