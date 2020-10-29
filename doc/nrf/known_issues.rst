@@ -858,6 +858,16 @@ NCSDK-6832: SMP Server sample fails upon initialization
 
   **Workaround:** Set :option:`CONFIG_MAIN_STACK_SIZE` to ``2048``.
 
+SEGGER Embedded Studio Nordic Edition
+***************************************
+
+.. rst-class:: v1-4-0
+
+NCSDK-6852: Extra CMake options might not be applied in version 5.10d
+  If you specify :guilabel:`Extra CMake Build Options` in the :guilabel:`Open nRF Connect SDK Project` dialog and at the same time select an :guilabel:`nRF Connect Toolchain Version` of the form ``X.Y.Z``, the additional CMake options are discarded.
+
+  **Workaround:** Select ``NONE (Use SES settings / environment PATH)`` from the  :guilabel:`nRF Connect Toolchain Version` drop-down if you want to specify :guilabel:`Extra CMake Build Options`.
+
 ----
 
 In addition to these known issues, check the current issues in the `official Zephyr repository`_, since these might apply to the |NCS| fork of the Zephyr repository as well.
