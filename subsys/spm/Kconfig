@@ -9,6 +9,7 @@ menu "SPM"
 config SPM
 	bool "Use Secure Partition Manager"
 	default y if TRUSTED_EXECUTION_NONSECURE
+	depends on !BUILD_WITH_TFM
 	select FW_INFO
 	imply ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS
 
