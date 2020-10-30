@@ -181,10 +181,27 @@ KRKNWK-6408: ``diag`` command not supported
 Zigbee
 ======
 
-.. rst-class:: v1-3-1 v1-3-0
+.. rst-class:: v1-4-0
 
-KRKNWK-6073: Potential delay during FOTA
-  There might be a noticeable delay (~220 ms) between calling the ZBOSS API and on-the-air activity.
+KRKNWK-7836: Coordinator asserting when flooded with ZDO commands
+  Executing a high number of ZDO commands can cause assert on the coordinator with the :ref:`lib_zigbee_shell` component enabled.
+
+.. rst-class:: v1-4-0
+
+KRKNWK-7831: Factory reset broken on coordinator with Zigbee shell
+  A coordinator with the :ref:`lib_zigbee_shell` component enabled could assert after executing the ``bdb factory_reset`` command.
+
+  **Workaround:** Call the ``bdb_reset_via_local_action`` function twice to remove all the network information.
+
+.. rst-class:: v1-4-0
+
+KRKNWK-7723: OTA upgrade process restarting after client reset
+  After the reset of OTA Upgrade Client, the client will start the OTA upgrade process from the beginning instead of continuing the previous process.
+
+.. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+KRKNWK-6318: Device assert after multiple Leave requests
+  If a device that rejoins the network receives Leave requests several times in a row, the device could assert.
 
 .. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
@@ -192,6 +209,16 @@ KRKNWK-6071: ZBOSS alarms inaccurate
   On average, ZBOSS alarms last longer by 6.4 percent than Zephyr alarms.
 
   **Workaround:** Use Zephyr alarms.
+
+.. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+KRKNWK-5535: Device assert if flooded with multiple Network Address requests
+  The device could assert if it receives Network Address requests every 0.2 second or more frequently.
+
+.. rst-class:: v1-3-1 v1-3-0
+
+KRKNWK-6073: Potential delay during FOTA
+  There might be a noticeable delay (~220 ms) between calling the ZBOSS API and on-the-air activity.
 
 nRF Desktop
 ===========
