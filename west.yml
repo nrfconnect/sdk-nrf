@@ -85,6 +85,7 @@ manifest:
           - segger
           - tinycbor
           - tinycrypt
+          - trusted-firmware-m
 
     # NCS repositories.
     #
