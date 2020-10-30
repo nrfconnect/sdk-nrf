@@ -155,6 +155,40 @@ Thread
 
 .. rst-class:: v1-4-0
 
+KRKNWK-6848: Reduced throughput
+  Performance testing for :ref:`NCP sample <ot_ncp_sample>` shows a decrease of throughput of around 10-20% compared with the standard OpenThread.
+
+.. rst-class:: v1-4-0
+
+KRKNWK-7885: Throughput is lower when using CC310 nrf_security backend
+  A decrease of throughput of around 5-10% has been observed for the :ref:`CC310 nrf_security backend <nrfxlib:nrf_security_backends_cc3xx>` when compared with :ref:`nrf_oberon <nrf_security_backends_oberon>` or :ref:`the standard mbedtls backend <nrf_security_backends_orig_mbedtls>`.
+  CC310 nrf_security backend is used by default for nRF52840 boards.
+
+  **Workaround:** Use AES-CCM ciphers from the nrf_oberon backend by setting the following options:
+
+  * :option:`CONFIG_OBERON_BACKEND` to ``y``
+  * :option:`CONFIG_OBERON_MBEDTLS_AES_C` to ``y``
+  * :option:`CONFIG_OBERON_MBEDTLS_CCM_C` to ``y``
+  * :option:`CONFIG_CC3XX_MBEDTLS_AES_C` to ``n``
+
+.. rst-class:: v1-4-0
+
+KRKNWK-7721: MAC counter updating issue
+  The ``RxDestAddrFiltered`` MAC counter is not being updated.
+  This is because the ``PENDING_EVENT_RX_FAILED`` event is not implemented in Zephyr.
+
+  **Workaround:** To fix the error, cherry-pick commits from the upstream `Zephyr PR #29226 <https://github.com/zephyrproject-rtos/zephyr/pull/29226>`_.
+
+.. rst-class:: v1-4-0
+
+KRKNWK-7962: Logging interferes with shell output
+  :option:`CONFIG_LOG_MINIMAL` is configured by default for most OpenThread samples.
+  It accesses the UART independently from the shell backend, which sometimes leads to malformed output.
+
+  **Workaround:** Disable logging or enable a more advanced logging option.
+
+.. rst-class:: v1-4-0
+
 KRKNWK-7803: Automatically generated libraries are missing otPlatLog for NCP
   When building OpenThread libraries using a different sample than the :ref:`Thread NCP sample <ot_ncp_sample>`, the :file:`ncp_base.cpp` is not compiled with the :c:func:`otPlatLog` function.
   This results in a linking failure when building the NCP with these libraries.
