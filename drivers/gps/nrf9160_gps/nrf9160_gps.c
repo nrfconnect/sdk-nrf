@@ -117,6 +117,12 @@ static void copy_pvt(struct gps_pvt *dest, nrf_gnss_pvt_data_frame_t *src)
 		dest->sv[i].elevation = src->sv[i].elevation;
 		dest->sv[i].azimuth = src->sv[i].azimuth;
 		dest->sv[i].signal = src->sv[i].signal;
+		dest->sv[i].in_fix =
+			(src->sv[i].flags & NRF_GNSS_SV_FLAG_USED_IN_FIX) ==
+			NRF_GNSS_SV_FLAG_USED_IN_FIX;
+		dest->sv[i].unhealthy =
+			(src->sv[i].flags & NRF_GNSS_SV_FLAG_UNHEALTHY) ==
+			NRF_GNSS_SV_FLAG_UNHEALTHY;
 	}
 }
 
