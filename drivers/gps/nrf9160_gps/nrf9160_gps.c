@@ -561,7 +561,7 @@ static int parse_cfg(struct gps_config *cfg_src,
 	}
 
 	if (cfg_src->delete_agps_data) {
-		cfg_dst->delete_mask = 0xFF;
+		cfg_dst->delete_mask = 0x7F;
 	}
 
 	set_nmea_mask(&cfg_dst->nmea_mask);
