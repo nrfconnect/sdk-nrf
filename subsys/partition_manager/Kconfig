@@ -101,6 +101,26 @@ config PM_EXTERNAL_FLASH_BASE
 
 endif
 
+if BUILD_WITH_TFM
+
+partition=TFM_RAM
+partition-size=0x16000
+rsource "Kconfig.template.partition_size"
+
+partition=BL2
+partition-size=0x10000
+rsource "Kconfig.template.partition_size"
+
+partition=TFM
+partition-size=0x40000
+rsource "Kconfig.template.partition_size"
+
+partition=TFM_EXTRA
+partition-size=0x10000
+rsource "Kconfig.template.partition_size"
+
+endif
+
 config PM_IMAGE_NOT_BUILT_FROM_SOURCE
 	bool
 	help

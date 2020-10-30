@@ -55,6 +55,10 @@ if (CONFIG_NRF53_UPGRADE_NETWORK_CORE)
   ncs_add_partition_manager_config(pm.yml.pcd)
 endif()
 
+if (CONFIG_BUILD_WITH_TFM)
+  ncs_add_partition_manager_config(pm.yml.tfm)
+endif()
+
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
 set(using_partition_manager

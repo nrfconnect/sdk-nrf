@@ -22,6 +22,7 @@ add_subdirectory_ifdef(CONFIG_DFU_TARGET		dfu)
 add_subdirectory_ifdef(CONFIG_PCD 		pcd)
 add_subdirectory_ifdef(CONFIG_IS_SPM		spm)
 add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
+add_subdirectory_ifdef(CONFIG_BUILD_WITH_TFM tfm)
 add_subdirectory_ifdef(CONFIG_MPSL mpsl)
 add_subdirectory_ifdef(CONFIG_ZIGBEE zigbee)
 

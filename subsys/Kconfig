@@ -37,4 +37,6 @@ rsource "partition_manager/Kconfig"
 
 rsource "nrf_rpc/Kconfig"
 
+rsource "tfm/Kconfig"
+
 rsource "zigbee/Kconfig"
