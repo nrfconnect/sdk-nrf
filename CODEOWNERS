@@ -89,6 +89,7 @@ Kconfig*                                  @tejlmand
 /samples/profiler/                        @pdunaj @pizi-nordic
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/lpuart/               @nordic-krch
+/samples/tfm/tfm_hello_world/             @oyvindronningstad
 /samples/usb/usb_uart_bridge/             @jhn-nordic @jtguggedal
 /samples/zigbee/                          @maciekfabia @mariuszpos
 /samples/CMakeLists.txt                   @tejlmand
