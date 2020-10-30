@@ -1,0 +1,9 @@
+sample:
+  name: UART Consistent Overhead Byte Stuffing (COBS)
+  description: UART Consistent Overhead Byte Stuffing (COBS) sample
+tests:
+  samples.peripheral.uart_cobs:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52840dk_nrf52840 nrf9160dk_nrf9160ns nrf9160dk_nrf52840
+    tags: ci_build

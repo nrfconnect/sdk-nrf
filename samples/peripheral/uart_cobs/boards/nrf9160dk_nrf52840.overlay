@@ -1,0 +1,19 @@
+/* SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic */
+
+/ {
+	chosen {
+		nordic,cobs-uart-controller=&uart1;
+	};
+};
+
+/* uart1 is used to communicate with the on-board nRF9160 device. */
+&uart1 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	status = "okay";
+	tx-pin = <17>;
+	rx-pin = <20>;
+	rts-pin = <15>;
+	cts-pin = <22>;
+	hw-flow-control;
+};

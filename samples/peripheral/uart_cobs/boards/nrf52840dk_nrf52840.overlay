@@ -1,0 +1,19 @@
+/* SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic */
+
+/ {
+	chosen {
+		nordic,cobs-uart-controller=&uart1;
+	};
+};
+
+/* uart1 is used to communicate with an externally connected device. */
+&uart1 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	status = "okay";
+	rx-pin = <44>;
+	tx-pin = <45>;
+	rts-pin = <46>;
+	cts-pin = <47>;
+	hw-flow-control;
+};

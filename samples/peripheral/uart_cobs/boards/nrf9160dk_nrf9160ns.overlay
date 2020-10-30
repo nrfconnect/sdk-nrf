@@ -1,0 +1,19 @@
+/* SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic */
+
+/ {
+	chosen {
+		nordic,cobs-uart-controller=&uart2;
+	};
+};
+
+/* uart2 is used to communicate with the on-board nRF52840 device. */
+&uart2 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	status = "okay";
+	tx-pin = <18>;
+	rx-pin = <17>;
+	rts-pin = <21>;
+	cts-pin = <19>;
+	hw-flow-control;
+};
