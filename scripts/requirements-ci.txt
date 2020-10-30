@@ -25,6 +25,7 @@ gcovr==4.2
 gitlint==0.13.1
 idna==2.9
 imagesize==1.2.0
+imgtool==1.7.0
 importlib-metadata==1.6.0
 intelhex==2.2.1
 intervaltree==3.0.2

@@ -55,6 +55,16 @@ if (CONFIG_NRF53_UPGRADE_NETWORK_CORE)
   ncs_add_partition_manager_config(pm.yml.pcd)
 endif()
 
+if (CONFIG_BUILD_WITH_TFM)
+  ncs_add_partition_manager_config(pm.yml.tfm)
+
+  # Add the mcuboot hex file built by TFM as the contents of the bl2 partitions,
+  # so it can be flashed together with the app/tfm hex files.
+  set_property(GLOBAL PROPERTY
+    bl2_PM_HEX_FILE ${CMAKE_BINARY_DIR}/tfm/bin/bl2.hex
+    )
+endif()
+
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
 set(using_partition_manager

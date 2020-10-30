@@ -101,6 +101,47 @@ config PM_EXTERNAL_FLASH_BASE
 
 endif
 
+config BUILD_WITH_TFM
+	bool
+	select PM_SINGLE_IMAGE
+
+if BUILD_WITH_TFM
+
+config PM_PARTITION_SIZE_TFM_RAM
+	hex
+	default 0x16000 if SOC_NRF9160
+	default 0x40000 if SOC_NRF5340_CPUAPP
+	help
+	  Memory set aside for the TFM_RAM partition.
+	  The prompt has been removed since the value is dictated by TFM and
+	  cannot be changed.
+
+config PM_PARTITION_SIZE_BL2
+	hex
+	default 0x10000
+	help
+	  Memory set aside for the BL2 partition.
+	  The prompt has been removed since the value is dictated by TFM and
+	  cannot be changed.
+
+config PM_PARTITION_SIZE_TFM
+	hex
+	default 0x40000
+	help
+	  Memory set aside for the TFM partition.
+	  The prompt has been removed since the value is dictated by TFM and
+	  cannot be changed.
+
+config PM_PARTITION_SIZE_TFM_EXTRA
+	hex
+	default 0x10000
+	help
+	  Memory set aside for the TFM_EXTRA partition.
+	  The prompt has been removed since the value is dictated by TFM and
+	  cannot be changed.
+
+endif
+
 config PM_IMAGE_NOT_BUILT_FROM_SOURCE
 	bool
 	help
