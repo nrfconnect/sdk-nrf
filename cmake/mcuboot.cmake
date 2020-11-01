@@ -109,10 +109,13 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   endif ()
 
   if (DEFINED mcuboot_CONF_FILE)
-    get_filename_component(mcuboot_CONF_DIR ${mcuboot_CONF_FILE} DIRECTORY)
-    if (EXISTS ${mcuboot_CONF_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
-      set(mcuboot_key_file ${mcuboot_CONF_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
-    endif()
+    foreach(F in LISTS mcuboot_CONF_FILE)
+      get_filename_component(mcuboot_CONF_DIR ${F} DIRECTORY)
+      if (EXISTS ${mcuboot_CONF_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
+        set(mcuboot_key_file ${mcuboot_CONF_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
+        break()
+      endif()
+    endforeach()
   endif()
 
   # Set default key
