@@ -121,4 +121,5 @@ Kconfig*                                  @tejlmand
 /subsys/zigbee/                           @maciekfabia @mariuszpos
 /tests/                                   @rakons
 /tests/subsys/zigbee/                     @rakons @maciekfabia @mariuszpos
+/tests/subsys/bluetooth/mesh/             @joerchan @trond-snekvik
 /zephyr/                                  @carlescufi
