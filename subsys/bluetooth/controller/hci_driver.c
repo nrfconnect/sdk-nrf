@@ -437,6 +437,13 @@ static int hci_driver_open(void)
 		if (err) {
 			return -ENOTSUP;
 		}
+
+		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
+			err = sdc_support_ext_scan();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
