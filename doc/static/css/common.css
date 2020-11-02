@@ -204,6 +204,12 @@ div.numbered-step>h6::before {
  overflow-x: auto;
  line-height: 40px;
 }
+.grid-item h2 {
+ border: 0px;
+ padding-top: 0px;
+ line-height: unset;
+}
+
 
 
 /* change the bullet item for links to subpages */
