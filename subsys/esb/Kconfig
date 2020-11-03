@@ -6,6 +6,8 @@
 
 menuconfig ESB
 	bool "Enhanced ShockBurst"
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	default n
 	help
 	  Enable ESB functionality.
@@ -42,46 +44,6 @@ config ESB_PIPE_COUNT
 	  this at 8 even if fewer pipes are used.
 
 menu "Hardware selection (alter with care)"
-
-config ESB_PPI_TIMER_START
-	int "PPI channel used to start the sys timer."
-	default 5
-	range 0 19
-	help
-	  PPI channel used to start the sys timer. Note that this value can not
-	  overlap with PPI channels used by other subsystems. Only change this
-	  if you have an understanding of the other nRF5 specific submodules
-	  your implementation is currently using.
-
-config ESB_PPI_TIMER_STOP
-	int "PPI channel used to stop the sys timer."
-	default 6
-	range 0 19
-	help
-	  PPI channel used to stop the sys timer. Note that this value can not
-	  overlap with PPI channels used by other subsystems. Only change this
-	  if you have an understanding of the other nRF5 specific submodules
-	  your implementation is currently using.
-
-config ESB_PPI_RX_TIMEOUT
-	int "PPI channel used to stop the radio when the timer expires."
-	default 7
-	range 0 19
-	help
-	  PPI channel used to stop the radio when the timer expires. Note
-	  that this value can not overlap with PPI channels used by other
-	  subsystems. Only change this if you have an understanding of the other
-	  nRF5 specific submodules your implementation is currently using.
-
-config ESB_PPI_TX_START
-	int "PPI channel used to start the radio when the timer expires."
-	default 8
-	range 0 19
-	help
-	  PPI channel used to start the radio when the timer expires. Note that
-	  this value can not overlap with PPI channels used by other subsystems.
-	  Only change this if you have an understanding of the other nRF5
-	  specific submodules your implementation is currently using.
 
 config ESB_PPI_BUGFIX1
 	int "PPI channel used on nRF52832 to work around radio erratas."
