@@ -280,6 +280,13 @@ config CLOUD_FOTA_MODEM
 	depends on DFU_TARGET_MODEM
 	default y
 
+config CLOUD_FOTA_BOOT
+	bool "Enable firmware over-the-air upgrades for bootloader"
+	depends on AWS_FOTA
+	depends on DFU_TARGET_MCUBOOT
+	depends on SECURE_BOOT
+	default y
+
 config CLOUD_CONNECT_ERR_REBOOT_S
 	int "Seconds to wait before rebooting when a cloud connect error occurs"
 	default 300
