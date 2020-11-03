@@ -14,7 +14,8 @@
 
 #include "radio_test.h"
 
-#define USE_MORE_NRF52_RADIO_POWER_OPTIONS (defined(NRF52840_XXAA))
+#define USE_MORE_NRF52_RADIO_POWER_OPTIONS (defined(NRF52840_XXAA) || defined(NRF52820_XXAA) || \
+					    defined(NRF52833_XXAA))
 
 #if NRF_POWER_HAS_DCDCEN_VDDH
 	#define TOGGLE_DCDC_HELP			\
