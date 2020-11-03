@@ -22,6 +22,17 @@ nRF5
 
 The following changes are relevant for the nRF52 and nRF53 Series.
 
+nRF52832 SoC
+------------
+
+* Removed:
+
+  * ``esb`` subystem - Removed support for older SoC revision workarounds.
+
+    * Removed support for nRF52832 revision 1 workarounds for Errata 102, Errata 106, and Errata 107.
+    * Removed support for nRF52832 revision 2 workarounds for Errata 143.
+
+
 nRF5340 SoC
 -----------
 

@@ -45,36 +45,6 @@ config ESB_PIPE_COUNT
 
 menu "Hardware selection (alter with care)"
 
-config ESB_PPI_BUGFIX1
-	int "PPI channel used on nRF52832 to work around radio erratas."
-	default 11
-	range 0 19
-	help
-	  PPI channel used on nRF52832 to work around radio erratas. Note that
-	  this value can not overlap with PPI channels used by other subsystems.
-	  Only change this if you have an understanding of the other nRF5
-	  specific submodules your implementation is currently using.
-
-config ESB_PPI_BUGFIX2
-	int "PPI channel used on nRF52832 to work around radio erratas."
-	default 10
-	range 0 19
-	help
-	  PPI channel used on nRF52832 to work around radio erratas. Note that
-	  this value can not overlap with PPI channels used by other subsystems.
-	  Only change this if you have an understanding of the other nRF5
-	  specific submodules your implementation is currently using.
-
-config ESB_PPI_BUGFIX3
-	int "PPI channel used on nRF52832 to work around radio erratas."
-	default 9
-	range 0 19
-	help
-	  PPI channel used on nRF52832 to work around radio erratas. Note that
-	  this value can not overlap with PPI channels used by other subsystems.
-	  Only change this if you have an understanding of the other nRF5
-	  specific submodules your implementation is currently using.
-
 choice ESB_SYS_TIMER
 	default ESB_SYS_TIMER2
 	prompt "Timer to use for the ESB system timer."
@@ -95,38 +65,6 @@ config ESB_SYS_TIMER4
 	bool "TIMER4"
 
 endchoice
-
-config ESB_ADDR_HANG_BUGFIX
-	depends on SOC_NRF52832
-	bool "Apply address hang bugfix"
-	help
-	  Apply address hang bugfix.
-	  Only affects nRF52832 Rev. 1 SoCs.
-
-if ESB_ADDR_HANG_BUGFIX
-
-choice ESB_BUGFIX_TIMER
-	default ESB_BUGFIX_TIMER3
-	prompt "Timer to use for the ESB bugfix timer."
-
-config ESB_BUGFIX_TIMER0
-	bool "TIMER0"
-
-config ESB_BUGFIX_TIMER1
-	bool "TIMER1"
-
-config ESB_BUGFIX_TIMER2
-	bool "TIMER2"
-
-config ESB_BUGFIX_TIMER3
-	bool "TIMER3"
-
-config ESB_BUGFIX_TIMER4
-	bool "TIMER4"
-
-endchoice
-
-endif # ESB_ADDR_HANG_BUGFIX
 
 endmenu
 
