@@ -180,13 +180,16 @@ static uint32_t radio_shorts_common = RADIO_SHORTS_COMMON;
 
 /* PPI or DPPI instances */
 #ifdef DPPI_PRESENT
-
+typedef uint8_t ppi_channel_t;
 #else
-static nrf_ppi_channel_t ppi_ch_radio_ready_timer_start;
-static nrf_ppi_channel_t ppi_ch_radio_address_timer_stop;
-static nrf_ppi_channel_t ppi_ch_timer_compare0_radio_disable;
-static nrf_ppi_channel_t ppi_ch_timer_compare1_radio_txen;
+typedef nrf_ppi_channel_t ppi_channel_t;
 #endif
+
+static ppi_channel_t ppi_ch_radio_ready_timer_start;
+static ppi_channel_t ppi_ch_radio_address_timer_stop;
+static ppi_channel_t ppi_ch_timer_compare0_radio_disable;
+static ppi_channel_t ppi_ch_timer_compare1_radio_txen;
+
 static uint32_t ppi_all_channels_mask;
 
 /* These function pointers are changed dynamically, depending on protocol
@@ -480,23 +483,35 @@ static void sys_timer_init(void)
 static void ppi_init(void)
 {
 #ifdef DPPI_PRESENT
+	nrfx_dppi_channel_alloc(&ppi_ch_radio_ready_timer_start);
+	nrfx_dppi_channel_alloc(&ppi_ch_radio_address_timer_stop);
+	nrfx_dppi_channel_alloc(&ppi_ch_timer_compare0_radio_disable);
+	nrfx_dppi_channel_alloc(&ppi_ch_timer_compare1_radio_txen);
 
+	NRF_RADIO->PUBLISH_READY          = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | ppi_ch_radio_ready_timer_start;
+	ESB_SYS_TIMER->SUBSCRIBE_START    = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | ppi_ch_radio_ready_timer_start;
+	NRF_RADIO->PUBLISH_ADDRESS        = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | ppi_ch_radio_address_timer_stop;
+	ESB_SYS_TIMER->SUBSCRIBE_SHUTDOWN = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | ppi_ch_radio_address_timer_stop;
+	ESB_SYS_TIMER->PUBLISH_COMPARE[0] = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | ppi_ch_timer_compare0_radio_disable;
+	NRF_RADIO->SUBSCRIBE_DISABLE      = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | ppi_ch_timer_compare0_radio_disable;
+	ESB_SYS_TIMER->PUBLISH_COMPARE[1] = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | ppi_ch_timer_compare1_radio_txen;
+	NRF_RADIO->SUBSCRIBE_TXEN         = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | ppi_ch_timer_compare1_radio_txen;
 #else
 	nrfx_ppi_channel_alloc(&ppi_ch_radio_ready_timer_start);
 	nrfx_ppi_channel_alloc(&ppi_ch_radio_address_timer_stop);
 	nrfx_ppi_channel_alloc(&ppi_ch_timer_compare0_radio_disable);
 	nrfx_ppi_channel_alloc(&ppi_ch_timer_compare1_radio_txen);
 
-	nrfx_ppi_channel_assign(ppi_ch_radio_ready_timer_start, 
+	nrfx_ppi_channel_assign(ppi_ch_radio_ready_timer_start,
 		(uint32_t)&NRF_RADIO->EVENTS_READY, (uint32_t)&ESB_SYS_TIMER->TASKS_START);
-	nrfx_ppi_channel_assign(ppi_ch_radio_address_timer_stop, 
+	nrfx_ppi_channel_assign(ppi_ch_radio_address_timer_stop,
 		(uint32_t)&NRF_RADIO->EVENTS_ADDRESS, (uint32_t)&ESB_SYS_TIMER->TASKS_SHUTDOWN);
-	nrfx_ppi_channel_assign(ppi_ch_timer_compare0_radio_disable, 
+	nrfx_ppi_channel_assign(ppi_ch_timer_compare0_radio_disable,
 		(uint32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[0], (uint32_t)&NRF_RADIO->TASKS_DISABLE);
-	nrfx_ppi_channel_assign(ppi_ch_timer_compare1_radio_txen, 
+	nrfx_ppi_channel_assign(ppi_ch_timer_compare1_radio_txen,
 		(uint32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[1], (uint32_t)&NRF_RADIO->TASKS_TXEN);
 #endif
-	ppi_all_channels_mask = (1 << ppi_ch_radio_ready_timer_start) | (1 << ppi_ch_radio_address_timer_stop) | 
+	ppi_all_channels_mask = (1 << ppi_ch_radio_ready_timer_start) | (1 << ppi_ch_radio_address_timer_stop) |
 							(1 << ppi_ch_timer_compare0_radio_disable) | (1 << ppi_ch_timer_compare1_radio_txen);
 }
 
@@ -664,7 +679,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 	} else {
 		if (retransmits_remaining-- == 0) {
 			ESB_SYS_TIMER->TASKS_SHUTDOWN = 1;
-			
+
 			/* All retransmits are expended, and the TX operation is
 			 * suspended
 			 */
@@ -936,13 +951,13 @@ int esb_init(const struct esb_config *config)
 
 	IRQ_DIRECT_CONNECT(RADIO_IRQn, config->radio_irq_priority,
 			   RADIO_IRQHandler, 0);
-	IRQ_DIRECT_CONNECT(SWI0_IRQn, config->event_irq_priority,
+	IRQ_DIRECT_CONNECT(ESB_EVT_IRQ, config->event_irq_priority,
 			   ESB_EVT_IRQHandler, 0);
 	IRQ_DIRECT_CONNECT(ESB_SYS_TIMER_IRQn, config->event_irq_priority,
 			   ESB_SYS_TIMER_IRQHandler, 0);
 
 	irq_enable(RADIO_IRQn);
-	irq_enable(SWI0_IRQn);
+	irq_enable(ESB_EVT_IRQ);
 	irq_enable(ESB_SYS_TIMER_IRQn);
 
 	esb_state = ESB_STATE_IDLE;

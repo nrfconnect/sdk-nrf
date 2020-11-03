@@ -25,11 +25,18 @@ extern "C" {
  *        acknowledgment, and automatic retransmission of lost packets.
  */
 
-
+#if defined(CONFIG_SOC_NRF5340_CPUNET)
+/** nRF5340 Errata 29 workaround (SWI interrupts missing in network core) */
+/** The ESB event IRQ number when running on an nRF5 device. */
+#define ESB_EVT_IRQ EGU0_IRQn
+/** The handler for @ref ESB_EVT_IRQ when running on an nRF5 device. */
+#define ESB_EVT_IRQHandler EGU0_IRQHandler
+#else
 /** The ESB event IRQ number when running on an nRF5 device. */
 #define ESB_EVT_IRQ SWI0_IRQn
 /** The handler for @ref ESB_EVT_IRQ when running on an nRF5 device. */
 #define ESB_EVT_IRQHandler SWI0_IRQHandler
+#endif
 
 /** @brief Default radio parameters.
  *
@@ -114,7 +121,7 @@ enum esb_bitrate {
 	/** 2 Mb radio mode. */
 	ESB_BITRATE_2MBPS = RADIO_MODE_MODE_Nrf_2Mbit,
 #if !(defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52810) ||          \
-      defined(CONFIG_SOC_NRF52811))
+      defined(CONFIG_SOC_NRF52811) || defined(CONFIG_SOC_NRF5340_CPUNET))
 	/** 250 Kb radio mode. */
 	ESB_BITRATE_250KBPS = RADIO_MODE_MODE_Nrf_250Kbit,
 #endif
@@ -136,7 +143,9 @@ enum esb_crc {
 /** @brief Enhanced ShockBurst radio transmission power modes. */
 enum esb_tx_power {
 	/** 4 dBm radio transmit power. */
+#if !defined(CONFIG_SOC_NRF5340_CPUNET)
 	ESB_TX_POWER_4DBM = RADIO_TXPOWER_TXPOWER_Pos4dBm,
+#endif
 #if defined(CONFIG_SOC_SERIES_NRF52X)
 	/** 3 dBm radio transmit power. */
 	ESB_TX_POWER_3DBM = RADIO_TXPOWER_TXPOWER_Pos3dBm,

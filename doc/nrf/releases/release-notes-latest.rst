@@ -36,6 +36,10 @@ nRF52832 SoC
 nRF5340 SoC
 -----------
 
+* Added:
+
+  * ``esb`` subsystem - Added support for nRF5340 SoC (CPUNET) in ESB subsystem.
+
 * Updated:
 
   * ``bl_boot`` library - Disabled clock interrupts before booting the application.
