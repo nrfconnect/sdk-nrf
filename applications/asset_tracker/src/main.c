@@ -1051,7 +1051,10 @@ static void device_status_send(struct k_work *work)
 		SERVICE_INFO_FOTA_STR_APP,
 #endif
 #if defined(CONFIG_CLOUD_FOTA_MODEM)
-		SERVICE_INFO_FOTA_STR_MODEM
+		SERVICE_INFO_FOTA_STR_MODEM,
+#endif
+#if defined(CONFIG_CLOUD_FOTA_BOOT)
+		SERVICE_INFO_FOTA_STR_BOOTLOADER
 #endif
 	};
 
