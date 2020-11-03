@@ -405,7 +405,7 @@ Similarly, to point your existing fw-nrfconnect-zephyr clone to the new URL, ent
     cd ncs/zephyr
     git remote set-url ncs https://github.com/nrfconnect/sdk-zephyr
 
-Additional information about remotes and how to handle them can be found in :ref:`dm-user-workflow`.
+Additional information about remotes and how to handle them can be found in :ref:`dm-wf-fork`.
 
 .. _additional_deps:
 

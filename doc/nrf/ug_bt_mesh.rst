@@ -1,7 +1,7 @@
 .. _ug_bt_mesh:
 
-Working with Bluetooth Mesh
-###########################
+Bluetooth Mesh
+##############
 
 The |NCS| provides support for developing applications using the Bluetooth Mesh protocol.
 The support is based on Zephyr's :ref:`bluetooth_mesh` implementation.

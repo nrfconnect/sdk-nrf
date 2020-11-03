@@ -1,7 +1,7 @@
 .. _ug_nrf9160:
 
-Working with nRF9160
-####################
+Working with nRF9160 DK
+#######################
 
 .. contents::
    :local:

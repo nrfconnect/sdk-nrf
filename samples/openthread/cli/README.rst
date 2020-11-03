@@ -62,7 +62,7 @@ Minimal configuration
 This optional extension demonstrates an optimized configuration for the Thread CLI sample.
 The provided configurations optimize the memory footprint of the sample for single protocol and multiprotocol use.
 
-For more information, see :ref:`memory_footprint_optimization`.
+For more information, see :ref:`app_memory`.
 
 Requirements
 ************

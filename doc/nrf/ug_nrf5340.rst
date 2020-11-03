@@ -1,7 +1,7 @@
 .. _ug_nrf5340:
 
-Working with nRF5340
-####################
+Working with nRF53 Series
+#########################
 
 .. contents::
    :local:

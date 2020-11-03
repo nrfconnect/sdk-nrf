@@ -160,7 +160,7 @@ Complete the following steps to build |NCS| projects on the command line after c
 
 	     To build from a directory other than the sample or application directory, run the west build command with an additional parameter *directory_name*,  specifying the sample or application directory.
 
-      See `Board names <Board names_>`_ for more information on the development boards.
+      See :ref:`gs_programming_board_names` for more information on the development boards.
       To reuse an existing build directory for building another sample or application for another board, pass ``-p=auto`` to ``west build``.
 
       If you want to configure your application, run the following west command:
@@ -195,84 +195,3 @@ Complete the following steps to build |NCS| projects on the command line after c
       The ``west flash`` command automatically resets the board and starts the sample or application.
 
 For more information on building and programming using the command line, see the Zephyr documentation on :ref:`zephyr:west-build-flash-debug`.
-
-.. _gs_programming_board_names:
-
-Board names
-***********
-
-The following tables lists all boards and build targets for Nordic Semiconductor's hardware platforms.
-
-Boards included in sdk-zephyr
-=============================
-
-The following boards are defined in the :file:`zephyr/boards/arm/` folder.
-Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
-
-.. _table:
-
-+-------------------+------------+-----------------------------------------------------------------+---------------------------------------+
-| Hardware platform | PCA number | Board name                                                      | Build target                          |
-+===================+============+=================================================================+=======================================+
-| nRF52 DK          | PCA10040   | :ref:`nrf52dk_nrf52832 <zephyr:nrf52dk_nrf52832>`               | ``nrf52dk_nrf52832``                  |
-| (nRF52832)        |            +-----------------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`nrf52dk_nrf52810 <zephyr:nrf52dk_nrf52810>`               | ``nrf52dk_nrf52810``                  |
-+-------------------+------------+-----------------------------------------------------------------+---------------------------------------+
-| nRF52833 DK       | PCA10100   | :ref:`nrf52833dk_nrf52833 <zephyr:nrf52833dk_nrf52833>`         | ``nrf52833dk_nrf52833``               |
-|                   |            +-----------------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`nrf52833dk_nrf52820 <zephyr:nrf52833dk_nrf52820>`         | ``nrf52833dk_nrf52820``               |
-+-------------------+------------+-----------------------------------------------------------------+---------------------------------------+
-| nRF52840 DK       | PCA10056   | :ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`         | ``nrf52840dk_nrf52840``               |
-|                   |            +-----------------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`nrf52840dk_nrf52811 <zephyr:nrf52840dk_nrf52811>`         | ``nrf52840dk_nrf52811``               |
-+-------------------+------------+-----------------------------------------------------------------+---------------------------------------+
-| nRF52840 Dongle   | PCA10059   | :ref:`nrf52840dongle_nrf52840 <zephyr:nrf52840dongle_nrf52840>` | ``nrf52840dongle_nrf52840``           |
-+-------------------+------------+-----------------------------------------------------------------+---------------------------------------+
-| Thingy:52         | PCA20020   | :ref:`thingy52_nrf52832 <zephyr:thingy52_nrf52832>`             | ``thingy52_nrf52832``                 |
-+-------------------+------------+-----------------------------------------------------------------+---------------------------------------+
-| nRF5340 PDK       | PCA10095   | :ref:`nrf5340pdk_nrf5340 <zephyr:nrf5340pdk_nrf5340>`           | ``nrf5340pdk_nrf5340_cpunet``         |
-|                   |            |                                                                 |                                       |
-|                   |            |                                                                 | ``nrf5340pdk_nrf5340_cpuapp``         |
-|                   |            |                                                                 |                                       |
-|                   |            |                                                                 | ``nrf5340pdk_nrf5340_cpuappns``       |
-+-------------------+------------+-----------------------------------------------------------------+---------------------------------------+
-| nRF9160 DK        | PCA10090   | :ref:`nrf9160dk_nrf9160 <zephyr:nrf9160dk_nrf9160>`             | ``nrf9160dk_nrf9160``                 |
-|                   |            |                                                                 |                                       |
-|                   |            |                                                                 | ``nrf9160dk_nrf9160ns``               |
-|                   |            +-----------------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`nrf9160dk_nrf52840 <zephyr:nrf9160dk_nrf52840>`           | ``nrf9160dk_nrf52840``                |
-+-------------------+------------+-----------------------------------------------------------------+---------------------------------------+
-
-
-Boards included in sdk-nrf
-==========================
-
-The following boards are defined in the :file:`nrf/boards/arm/` folder.
-
-+-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| Hardware platform | PCA number | Board name                                               | Build target                          |
-+===================+============+==========================================================+=======================================+
-| nRF Desktop       | PCA20041   | :ref:`nrf52840gmouse_nrf52840 <nrf_desktop>`             | ``nrf52840gmouse_nrf52840``           |
-| Gaming Mouse      |            |                                                          |                                       |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA20044   | :ref:`nrf52dmouse_nrf52832 <nrf_desktop>`                | ``nrf52dmouse_nrf52832``              |
-| Mouse             |            |                                                          |                                       |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA20045   | :ref:`nrf52810dmouse_nrf52810 <nrf_desktop>`             | ``nrf52810dmouse_nrf52810``           |
-| Mouse             |            |                                                          |                                       |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA20037   | :ref:`nrf52kbd_nrf52832 <nrf_desktop>`                   | ``nrf52kbd_nrf52832``                 |
-| Keyboard          |            |                                                          |                                       |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA10111   | :ref:`nrf52833dongle_nrf52833 <nrf_desktop>`             | ``nrf52833dongle_nrf52833``           |
-| Dongle            |            |                                                          |                                       |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA10114   | :ref:`nrf52820dongle_nrf52820 <nrf_desktop>`             | ``nrf52820dongle_nrf52820``           |
-| Dongle            |            |                                                          |                                       |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| Thingy:91         | PCA20035   | :ref:`thingy91_nrf9160 <ug_thingy91>`                    | ``thingy91_nrf9160``                  |
-|                   |            |                                                          |                                       |
-|                   |            |                                                          | ``thingy91_nrf9160ns``                |
-|                   |            +----------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`thingy91_nrf52840 <ug_thingy91>`                   | ``thingy91_nrf52840``                 |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------+
