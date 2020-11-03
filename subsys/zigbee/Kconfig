@@ -12,6 +12,7 @@ menuconfig ZIGBEE
 	select NET_L2_ZIGBEE
 	select NETWORKING
 	imply MPSL
+	imply MPSL_SCHEDULER
 	imply COUNTER
 	imply COUNTER_TIMER3
 	imply ENTROPY_GENERATOR

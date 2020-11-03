@@ -22,10 +22,12 @@ LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 #endif
 #define MPSL_LOW_PRIO (4)
 
+#if CONFIG_MPSL_SCHEDULER
 static K_SEM_DEFINE(sem_signal, 0, UINT_MAX);
 static struct k_thread signal_thread_data;
 static K_THREAD_STACK_DEFINE(signal_thread_stack,
 			     CONFIG_MPSL_SIGNAL_STACK_SIZE);
+#endif /* CONFIG_MPSL_SCHEDULER */
 
 #define MPSL_TIMESLOT_SESSION_COUNT (\
 	CONFIG_MPSL_TIMESLOT_SESSION_COUNT + \
@@ -34,12 +36,41 @@ BUILD_ASSERT(MPSL_TIMESLOT_SESSION_COUNT <= MPSL_TIMESLOT_CONTEXT_COUNT_MAX,
 	     "Too many timeslot sessions");
 
 #if MPSL_TIMESLOT_SESSION_COUNT > 0
+BUILD_ASSERT(CONFIG_MPSL_SCHEDULER,
+	     "Timeslot can be used only when MPSL scheduler is supported");
+#if CONFIG_MPSL_SCHEDULER
 #define TIMESLOT_MEM_SIZE \
 	((MPSL_TIMESLOT_CONTEXT_SIZE) * \
 	(MPSL_TIMESLOT_SESSION_COUNT))
 static uint8_t __aligned(4) timeslot_context[TIMESLOT_MEM_SIZE];
+#endif /* CONFIG_MPSL_SCHEDULER */
 #endif
 
+static void m_assert_handler(const char *const file, const uint32_t line)
+{
+	LOG_ERR("MPSL ASSERT: %s, %d", log_strdup(file), line);
+	k_oops();
+}
+
+static uint8_t m_config_clock_source_get(void)
+{
+#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
+	return MPSL_CLOCK_LF_SRC_RC;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL
+	return MPSL_CLOCK_LF_SRC_XTAL;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH
+	return MPSL_CLOCK_LF_SRC_SYNTH;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING
+	return MPSL_CLOCK_LF_SRC_EXT_LOW_SWING;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING
+	return MPSL_CLOCK_LF_SRC_EXT_FULL_SWING;
+#else
+	#error "Clock source is not supported or not defined"
+	return 0;
+#endif
+}
+
+#if CONFIG_MPSL_SCHEDULER
 static void mpsl_low_prio_irq_handler(void)
 {
 	k_sem_give(&sem_signal);
@@ -99,36 +130,20 @@ ISR_DIRECT_DECLARE(mpsl_radio_isr_wrapper)
 	 */
 	return 1;
 }
-
-static void m_assert_handler(const char *const file, const uint32_t line)
-{
-	LOG_ERR("MPSL ASSERT: %s, %d", log_strdup(file), line);
-	k_oops();
-}
-
-static uint8_t m_config_clock_source_get(void)
-{
-#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
-	return MPSL_CLOCK_LF_SRC_RC;
-#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL
-	return MPSL_CLOCK_LF_SRC_XTAL;
-#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH
-	return MPSL_CLOCK_LF_SRC_SYNTH;
-#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING
-	return MPSL_CLOCK_LF_SRC_EXT_LOW_SWING;
-#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING
-	return MPSL_CLOCK_LF_SRC_EXT_FULL_SWING;
-#else
-	#error "Clock source is not supported or not defined"
-	return 0;
-#endif
-}
+#endif /* CONFIG_MPSL_SCHEDULER */
 
 static int mpsl_lib_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 	int err = 0;
 	mpsl_clock_lfclk_cfg_t clock_cfg;
+
+#if CONFIG_MPSL_SCHEDULER
+	err = mpsl_support_scheduler();
+	if (err) {
+		return err;
+	}
+#endif /* CONFIG_MPSL_SCHEDULER */
 
 	clock_cfg.source = m_config_clock_source_get();
 	clock_cfg.accuracy_ppm = CONFIG_CLOCK_CONTROL_NRF_ACCURACY;
@@ -140,12 +155,12 @@ static int mpsl_lib_init(const struct device *dev)
 	clock_cfg.rc_ctiv = 0;
 	clock_cfg.rc_temp_ctiv = 0;
 #endif
-
 	err = mpsl_init(&clock_cfg, MPSL_LOW_PRIO_IRQn, m_assert_handler);
 	if (err) {
 		return err;
 	}
 
+#if CONFIG_MPSL_SCHEDULER
 #if MPSL_TIMESLOT_SESSION_COUNT > 0
 	err = mpsl_timeslot_session_count_set((void *) timeslot_context,
 			MPSL_TIMESLOT_SESSION_COUNT);
@@ -160,10 +175,11 @@ static int mpsl_lib_init(const struct device *dev)
 			   mpsl_rtc0_isr_wrapper, IRQ_ZERO_LATENCY);
 	IRQ_DIRECT_CONNECT(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
 			   mpsl_radio_isr_wrapper, IRQ_ZERO_LATENCY);
-
+#endif /* CONFIG_MPSL_SCHEDULER */
 	return 0;
 }
 
+#if CONFIG_MPSL_SCHEDULER
 static int mpsl_signal_thread_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
@@ -181,6 +197,7 @@ static int mpsl_signal_thread_init(const struct device *dev)
 	return 0;
 }
 
-SYS_INIT(mpsl_lib_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 SYS_INIT(mpsl_signal_thread_init, POST_KERNEL,
 	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+#endif /* CONFIG_MPSL_SCHEDULER */
+SYS_INIT(mpsl_lib_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);

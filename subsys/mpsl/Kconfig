@@ -25,6 +25,15 @@ config MPSL_TIMESLOT_SESSION_COUNT
 	help
 	  Maximum number of timeslot sessions.
 
+config MPSL_SCHEDULER
+	bool
+	default y if ((MPSL_TIMESLOT_SESSION_COUNT > 0) || (SOC_FLASH_NRF_RADIO_SYNC_MPSL_TIMESLOT_SESSION_COUNT > 0))
+	help
+	  Initialize MPSL scheduler. MPSL scheduler is needed when using:
+	    - Radio scheduler used for Bluetooth LE and/or 802.15.4
+	    - Timeslot
+	    - Radio notifications
+
 module=MPSL
 module-str=MPSL
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
