@@ -1,7 +1,7 @@
 .. _ug_multiprotocol_support:
 
-Multiprotocol support for Thread and Zigbee
-###########################################
+Multiprotocol support
+#####################
 
 .. contents::
    :local:

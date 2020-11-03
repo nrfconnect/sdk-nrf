@@ -478,7 +478,7 @@ Documentation
   * :ref:`gs_assistant`
   * :ref:`gs_installing`
   * :ref:`doc_styleguide`
-  * :ref:`ncs-app-dev`
+  * :ref:`app_build_system`
   * :ref:`ug_bootloader`
   * :ref:`dev-model`
   * :ref:`ug_nrf9160`

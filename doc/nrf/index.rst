@@ -47,15 +47,18 @@ In addition to the |NCS| documentation, information is available in the followin
 
    introduction
    documentation
-   release_notes
-   known_issues
    getting_started
-   user_guides
+   ug_dev_model
+   ug_app_dev
+   ug_nrf91
+   ug_nrf5340
+   ug_nrf52
+   protocols
    examples
    drivers
    libraries
    scripts
+   release_notes
+   known_issues
 
 ..   cheat_sheet
-
-..   sample_boardnames.txt

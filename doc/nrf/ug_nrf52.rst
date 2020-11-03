@@ -1,7 +1,7 @@
 .. _ug_nrf52:
 
-Working with nRF52
-##################
+Working with nRF52 Series
+#########################
 
 .. contents::
    :local:

@@ -1,7 +1,7 @@
 .. _ug_zigbee:
 
-Working with Zigbee
-###################
+Zigbee
+######
 
 The |NCS| provides support for developing applications using the Zigbee protocol.
 The protocol uses the :ref:`nrfxlib:zboss` library, a third-party precompiled Zigbee stack available in nrfxlib.

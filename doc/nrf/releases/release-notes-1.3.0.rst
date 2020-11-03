@@ -428,7 +428,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`gs_programming` - updated :ref:`gs_programming_board_names`
 * :ref:`gs_testing` - added :ref:`lte_connect`
 * :ref:`gs_modifying`  - added :ref:`gs_modifying_build_types`
-* :ref:`ncs-app-dev` - updated |NCS| additions
+* :ref:`app_build_system` - updated |NCS| additions
 * :ref:`ug_nrf9160` - added :ref:`Concurrent GPS and LTE <nrf9160_gps_lte>`
 * :ref:`ug_nrf5340` - updated
 * :ref:`ug_nrf52` - added
