@@ -8,6 +8,12 @@
 #include <sys/byteorder.h>
 #include <nrf.h>
 #include <esb.h>
+#ifdef DPPI_PRESENT
+#include <nrfx_dppi.h>
+#else
+#include <nrfx_ppi.h>
+#endif
+#include <helpers/nrfx_gppi.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -193,6 +199,17 @@ static volatile uint32_t last_tx_attempts;
 static volatile uint32_t wait_for_ack_timeout_us;
 
 static uint32_t radio_shorts_common = RADIO_SHORTS_COMMON;
+
+/* PPI or DPPI instances */
+#ifdef DPPI_PRESENT
+
+#else
+static nrf_ppi_channel_t ppi_ch_radio_ready_timer_start;
+static nrf_ppi_channel_t ppi_ch_radio_address_timer_stop;
+static nrf_ppi_channel_t ppi_ch_timer_compare0_radio_disable;
+static nrf_ppi_channel_t ppi_ch_timer_compare1_radio_txen;
+#endif
+static uint32_t ppi_all_channels_mask;
 
 /* These function pointers are changed dynamically, depending on protocol
  * configuration and state. Note that they will be 0 initialized.
@@ -547,25 +564,25 @@ static void sys_timer_init(void)
 
 static void ppi_init(void)
 {
-	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_START].EEP =
-		(uint32_t)&NRF_RADIO->EVENTS_READY;
-	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_START].TEP =
-		(uint32_t)&ESB_SYS_TIMER->TASKS_START;
+#ifdef DPPI_PRESENT
 
-	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_STOP].EEP =
-		(uint32_t)&NRF_RADIO->EVENTS_ADDRESS;
-	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_STOP].TEP =
-		(uint32_t)&ESB_SYS_TIMER->TASKS_SHUTDOWN;
+#else
+	nrfx_ppi_channel_alloc(&ppi_ch_radio_ready_timer_start);
+	nrfx_ppi_channel_alloc(&ppi_ch_radio_address_timer_stop);
+	nrfx_ppi_channel_alloc(&ppi_ch_timer_compare0_radio_disable);
+	nrfx_ppi_channel_alloc(&ppi_ch_timer_compare1_radio_txen);
 
-	NRF_PPI->CH[CONFIG_ESB_PPI_RX_TIMEOUT].EEP =
-		(uint32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[0];
-	NRF_PPI->CH[CONFIG_ESB_PPI_RX_TIMEOUT].TEP =
-		(uint32_t)&NRF_RADIO->TASKS_DISABLE;
-
-	NRF_PPI->CH[CONFIG_ESB_PPI_TX_START].EEP =
-		(uint32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[1];
-	NRF_PPI->CH[CONFIG_ESB_PPI_TX_START].TEP =
-		(uint32_t)&NRF_RADIO->TASKS_TXEN;
+	nrfx_ppi_channel_assign(ppi_ch_radio_ready_timer_start, 
+		(uint32_t)&NRF_RADIO->EVENTS_READY, (uint32_t)&ESB_SYS_TIMER->TASKS_START);
+	nrfx_ppi_channel_assign(ppi_ch_radio_address_timer_stop, 
+		(uint32_t)&NRF_RADIO->EVENTS_ADDRESS, (uint32_t)&ESB_SYS_TIMER->TASKS_SHUTDOWN);
+	nrfx_ppi_channel_assign(ppi_ch_timer_compare0_radio_disable, 
+		(uint32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[0], (uint32_t)&NRF_RADIO->TASKS_DISABLE);
+	nrfx_ppi_channel_assign(ppi_ch_timer_compare1_radio_txen, 
+		(uint32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[1], (uint32_t)&NRF_RADIO->TASKS_TXEN);
+#endif
+	ppi_all_channels_mask = (1 << ppi_ch_radio_ready_timer_start) | (1 << ppi_ch_radio_address_timer_stop) | 
+							(1 << ppi_ch_timer_compare0_radio_disable) | (1 << ppi_ch_timer_compare1_radio_txen);
 }
 
 static void start_tx_transaction(void)
@@ -675,13 +692,13 @@ static void on_radio_disabled_tx(void)
 	ESB_SYS_TIMER->TASKS_CLEAR = 1;
 	ESB_SYS_TIMER->EVENTS_COMPARE[0] = 0;
 	ESB_SYS_TIMER->EVENTS_COMPARE[1] = 0;
+
 	/* Remove */
 	ESB_SYS_TIMER->TASKS_START = 1;
 
-	NRF_PPI->CHENSET = (1 << CONFIG_ESB_PPI_TIMER_START) |
-			   (1 << CONFIG_ESB_PPI_RX_TIMEOUT) |
-			   (1 << CONFIG_ESB_PPI_TIMER_STOP);
-	NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TX_START);
+	nrfx_gppi_channels_enable(ppi_all_channels_mask);
+	nrfx_gppi_channels_disable(1 << ppi_ch_timer_compare1_radio_txen);
+
 	NRF_RADIO->EVENTS_END = 0;
 
 	if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
@@ -700,14 +717,12 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 	/* Make sure the timer will not deactivate the radio if a packet is
 	 * received.
 	 */
-	NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TIMER_START) |
-			   (1 << CONFIG_ESB_PPI_RX_TIMEOUT) |
-			   (1 << CONFIG_ESB_PPI_TIMER_STOP);
+	nrfx_gppi_channels_disable(ppi_all_channels_mask);
 
 	/* If the radio has received a packet and the CRC status is OK */
 	if (NRF_RADIO->EVENTS_END && NRF_RADIO->CRCSTATUS != 0) {
 		ESB_SYS_TIMER->TASKS_SHUTDOWN = 1;
-		NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TX_START);
+
 		interrupt_flags |= INT_TX_SUCCESS_MSK;
 		last_tx_attempts = esb_cfg.retransmit_count -
 				   retransmits_remaining + 1;
@@ -734,7 +749,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 	} else {
 		if (retransmits_remaining-- == 0) {
 			ESB_SYS_TIMER->TASKS_SHUTDOWN = 1;
-			NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TX_START);
+			
 			/* All retransmits are expended, and the TX operation is
 			 * suspended
 			 */
@@ -755,7 +770,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			on_radio_disabled = on_radio_disabled_tx;
 			esb_state = ESB_STATE_PTX_TX_ACK;
 			ESB_SYS_TIMER->TASKS_START = 1;
-			NRF_PPI->CHENSET = (1 << CONFIG_ESB_PPI_TX_START);
+			nrfx_gppi_channels_enable(1 << ppi_ch_timer_compare1_radio_txen);
 			if (ESB_SYS_TIMER->EVENTS_COMPARE[1]) {
 				NRF_RADIO->TASKS_TXEN = 1;
 			}
@@ -1101,10 +1116,7 @@ int esb_suspend(void)
 	}
 
 	/*  Clear PPI */
-	NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TIMER_START) |
-			   (1 << CONFIG_ESB_PPI_TIMER_STOP) |
-			   (1 << CONFIG_ESB_PPI_RX_TIMEOUT) |
-			   (1 << CONFIG_ESB_PPI_TX_START);
+	nrfx_gppi_channels_disable(ppi_all_channels_mask);
 
 	esb_state = ESB_STATE_IDLE;
 
@@ -1114,10 +1126,7 @@ int esb_suspend(void)
 void esb_disable(void)
 {
 	/*  Clear PPI */
-	NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TIMER_START) |
-			   (1 << CONFIG_ESB_PPI_TIMER_STOP) |
-			   (1 << CONFIG_ESB_PPI_RX_TIMEOUT) |
-			   (1 << CONFIG_ESB_PPI_TX_START);
+	nrfx_gppi_channels_disable(ppi_all_channels_mask);
 
 	esb_state = ESB_STATE_IDLE;
 	esb_initialized = false;
