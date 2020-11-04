@@ -348,13 +348,16 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 	cJSON *state_obj = cJSON_CreateObject();
 	cJSON *reported_obj = cJSON_CreateObject();
 	cJSON *pairing_obj = cJSON_CreateObject();
+	cJSON *connection_obj = cJSON_CreateObject();
 
 	if ((root_obj == NULL) || (state_obj == NULL) ||
-	    (reported_obj == NULL) || (pairing_obj == NULL)) {
+	    (reported_obj == NULL) || (pairing_obj == NULL) ||
+	    (connection_obj == NULL)) {
 		cJSON_Delete(root_obj);
 		cJSON_Delete(state_obj);
 		cJSON_Delete(reported_obj);
 		cJSON_Delete(pairing_obj);
+		cJSON_Delete(connection_obj);
 
 		return -ENOMEM;
 	}
@@ -369,6 +372,7 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 		ret += json_add_null(reported_obj, "stage");
 		ret += json_add_null(reported_obj,
 				     "nrfcloud_mqtt_topic_prefix");
+		ret += json_add_null(connection_obj, "keepalive");
 		break;
 	}
 	case STATE_UA_PIN_COMPLETE: {
@@ -386,6 +390,12 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 		ret += json_add_null(pairing_obj, "config");
 		ret += json_add_null(reported_obj, "pairingStatus");
 
+		/* Report keepalive value. */
+		if (cJSON_AddNumberToObject(connection_obj, "keepalive",
+					    CONFIG_MQTT_KEEPALIVE) == NULL) {
+			ret = -ENOMEM;
+		}
+
 		/* Report pairing topics. */
 		cJSON *topics_obj = cJSON_CreateObject();
 
@@ -394,6 +404,7 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 			cJSON_Delete(state_obj);
 			cJSON_Delete(reported_obj);
 			cJSON_Delete(pairing_obj);
+			cJSON_Delete(connection_obj);
 
 			return -ENOMEM;
 		}
@@ -412,11 +423,13 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 		cJSON_Delete(state_obj);
 		cJSON_Delete(reported_obj);
 		cJSON_Delete(pairing_obj);
+		cJSON_Delete(connection_obj);
 		return -ENOTSUP;
 	}
 	}
 
 	ret += json_add_obj(reported_obj, "pairing", pairing_obj);
+	ret += json_add_obj(reported_obj, "connection", connection_obj);
 	ret += json_add_obj(state_obj, "reported", reported_obj);
 	ret += json_add_obj(root_obj, "state", state_obj);
 
@@ -425,6 +438,7 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 		cJSON_Delete(state_obj);
 		cJSON_Delete(reported_obj);
 		cJSON_Delete(pairing_obj);
+		cJSON_Delete(connection_obj);
 
 		return -ENOMEM;
 	}
