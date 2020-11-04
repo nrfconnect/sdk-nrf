@@ -111,6 +111,7 @@ static int scene_cli_init(struct bt_mesh_model *mod)
 	net_buf_simple_init_with_data(&cli->pub_msg, cli->buf,
 				      sizeof(cli->buf));
 	cli->pub.msg = &cli->pub_msg;
+	model_ack_init(&cli->ack);
 
 	return 0;
 }
