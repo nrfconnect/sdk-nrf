@@ -1022,7 +1022,7 @@ static void radio_prepare(bool rx)
 		NRF_RADIO_SHORT_READY_START_MASK |
 		(dtm_inst.cte_info.mode == DTM_CTE_MODE_OFF ?
 		 NRF_RADIO_SHORT_END_DISABLE_MASK :
-		 NRF_RADIO_SHORT_PHYEND_START_MASK));
+		 NRF_RADIO_SHORT_PHYEND_DISABLE_MASK));
 #else
 	nrf_radio_shorts_set(NRF_RADIO,
 			     NRF_RADIO_SHORT_READY_START_MASK |
