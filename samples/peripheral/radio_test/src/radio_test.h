@@ -10,11 +10,6 @@
 #include <zephyr/types.h>
 #include <nrfx/hal/nrf_radio.h>
 
-/** Indicates devices that support BLE LR and 802.15.4 radio modes. */
-#if defined(NRF52840_XXAA) || defined(NRF5340_XXAA_NETWORK)
-	#define USE_MORE_RADIO_MODES 1
-#endif
-
 /** Maximum radio RX or TX payload. */
 #define RADIO_MAX_PAYLOAD_LEN	256
 /** IEEE 802.15.4 maximum payload length. */
