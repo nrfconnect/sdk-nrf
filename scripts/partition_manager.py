@@ -354,12 +354,13 @@ def dynamic_partitions_size(reqs, total_size, dp):
 def verify_layout(reqs, solution, total_size, flash_start):
     # Verify no overlap, that all flash is assigned, and that the total amount of flash
     # assigned corresponds to the total size available.
-    expected_address = flash_start + reqs[solution[0]]['size']
-    for p in solution[1:]:
+    expected_address = flash_start
+    for p in solution:
         actual_address = reqs[p]['address']
         if actual_address != expected_address:
             raise PartitionError(f"Error when inspecting {p},"
-                                 f" invalid address {actual_address}")
+                                 f" invalid address {hex(actual_address)},"
+                                 f" expected {hex(expected_address)},")
 
         expected_address += reqs[p]['size']
     last = reqs[solution[-1]]
