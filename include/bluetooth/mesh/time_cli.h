@@ -26,6 +26,10 @@ struct bt_mesh_time_cli;
 /** @def BT_MESH_TIME_CLI_INIT
  *
  * @brief Initialization parameters for a @ref bt_mesh_time_cli instance.
+ *
+ * @sa bt_mesh_time_cli_handlers
+ *
+ * @param[in] _handlers Optional message handler structure.
  */
 #define BT_MESH_TIME_CLI_INIT(_handlers)                                       \
 	{                                                                      \
@@ -51,9 +55,15 @@ struct bt_mesh_time_cli;
 struct bt_mesh_time_cli_handlers {
 	/** @brief Time status message handler.
 	 *
+	 * Called when the client receives a Time Status message, either as a
+	 * result of calling @ref bt_mesh_time_cli_time_get,
+	 * @ref bt_mesh_time_cli_time_set, or as an unsolicited message.
+	 *
+	 * @note This handler is optional.
+	 *
 	 * @param[in] cli Client that received the status message.
-	 * @param[in] ctx Context of the message.
-	 * @param[in] status Time status contained in the message.
+	 * @param[in] ctx Context of the incoming message.
+	 * @param[in] status Time Status contained in the message.
 	 */
 	void (*const time_status)(struct bt_mesh_time_cli *cli,
 				  struct bt_mesh_msg_ctx *ctx,
@@ -61,9 +71,15 @@ struct bt_mesh_time_cli_handlers {
 
 	/** @brief Time Zone status message handler.
 	 *
+	 * Called when the client receives a Time Zone Status message, either
+	 * as a result of calling @ref bt_mesh_time_cli_zone_get,
+	 * @ref bt_mesh_time_cli_zone_set, or as an unsolicited message.
+	 *
+	 * @note This handler is optional.
+	 *
 	 * @param[in] cli Client that received the status message.
-	 * @param[in] ctx Context of the message.
-	 * @param[in] status Time Zone status contained in the message.
+	 * @param[in] ctx Context of the incoming message.
+	 * @param[in] status Time Zone Status contained in the message.
 	 */
 	void (*const time_zone_status)(
 		struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx,
@@ -71,9 +87,15 @@ struct bt_mesh_time_cli_handlers {
 
 	/** @brief TAI-UTC Delta status message handler.
 	 *
+	 * Called when the client receives a TAI-UTC Delta Status message, either
+	 * as a result of calling @ref bt_mesh_time_cli_tai_utc_delta_get,
+	 * @ref bt_mesh_time_cli_tai_utc_delta_set, or as an unsolicited message.
+	 *
+	 * @note This handler is optional.
+	 *
 	 * @param[in] cli Client that received the status message.
-	 * @param[in] ctx Context of the message.
-	 * @param[in] status TAI-UTC delta status contained in the message.
+	 * @param[in] ctx Context of the incoming message.
+	 * @param[in] status TAI-UTC Delta Status contained in the message.
 	 */
 	void (*const tai_utc_delta_status)(
 		struct bt_mesh_time_cli *cli, struct bt_mesh_msg_ctx *ctx,
@@ -81,8 +103,14 @@ struct bt_mesh_time_cli_handlers {
 
 	/** @brief Time Role status message handler.
 	 *
+	 * Called when the client receives a Time Role Status message, either
+	 * as a result of calling @ref bt_mesh_time_cli_role_get,
+	 * @ref bt_mesh_time_cli_role_set, or as an unsolicited message.
+	 *
+	 * @note This handler is optional.
+	 *
 	 * @param[in] cli Client that received the status message.
-	 * @param[in] ctx Context of the message.
+	 * @param[in] ctx Context of the incoming message.
 	 * @param[in] time_role Time Role of the server.
 	 */
 	void (*const time_role_status)(struct bt_mesh_time_cli *cli,
@@ -101,7 +129,10 @@ struct bt_mesh_time_cli {
 	struct bt_mesh_model_pub pub;
 	/** Acknowledged message tracking. */
 	struct bt_mesh_model_ack_ctx ack_ctx;
-	/** Handler function structure. */
+	/** Collection of handler callbacks.
+	*
+	* @note Must point to memory that remains valid.
+	*/
 	const struct bt_mesh_time_cli_handlers *handlers;
 };
 
