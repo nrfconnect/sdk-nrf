@@ -676,6 +676,9 @@ def get_region_config(pm_config, region_config, static_conf=None):
 
         solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf, dp)
 
+    for part in pm_config:
+        pm_config[part]['end_address'] = pm_config[part]['address'] + pm_config[part]['size']
+
 
 def solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf):
     reserved = 0
@@ -935,6 +938,9 @@ def expect_addr_size(td, name, expected_address, expected_size):
     if expected_address:
         assert td[name]['address'] == expected_address, \
             "Address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['address'], expected_address, pformat(td))
+    if expected_size and expected_address:
+        assert td[name]['end_address'] == expected_address + expected_size, \
+            "End address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['end_address'], expected_address + expected_size, pformat(td))
 
 
 def expect_list(expected, actual):

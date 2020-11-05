@@ -52,6 +52,8 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
                                       key=lambda key_value_tuple: key_value_tuple[1]['address']):
 
             add_line("%s_ADDRESS" % name.upper(), "0x%x" % partition['address'])
+            # The end address facilitates using PM values via Cmake generator expressions.
+            add_line("%s_END_ADDRESS" % name.upper(), "0x%x" % partition['end_address'])
             add_line("%s_SIZE" % name.upper(), "0x%x" % partition['size'])
             add_line("%s_NAME" % name.upper(), "%s" % name)
 
