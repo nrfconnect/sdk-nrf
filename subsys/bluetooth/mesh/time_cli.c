@@ -29,7 +29,7 @@ static void handle_status(struct bt_mesh_model *model,
 		model_ack_rx(&cli->ack_ctx);
 	}
 
-	if (cli->handlers->time_status) {
+	if (cli->handlers && cli->handlers->time_status) {
 		cli->handlers->time_status(cli, ctx, &status);
 	}
 }
@@ -54,7 +54,7 @@ static void time_role_status_handle(struct bt_mesh_model *model,
 		model_ack_rx(&cli->ack_ctx);
 	}
 
-	if (cli->handlers->time_role_status) {
+	if (cli->handlers && cli->handlers->time_role_status) {
 		cli->handlers->time_role_status(cli, ctx, status);
 	}
 }
@@ -85,7 +85,7 @@ static void time_zone_status_handle(struct bt_mesh_model *model,
 		model_ack_rx(&cli->ack_ctx);
 	}
 
-	if (cli->handlers->time_zone_status) {
+	if (cli->handlers && cli->handlers->time_zone_status) {
 		cli->handlers->time_zone_status(cli, ctx, &status);
 	}
 }
@@ -116,7 +116,7 @@ static void tai_utc_delta_status_handle(struct bt_mesh_model *model,
 		model_ack_rx(&cli->ack_ctx);
 	}
 
-	if (cli->handlers->tai_utc_delta_status) {
+	if (cli->handlers && cli->handlers->tai_utc_delta_status) {
 		cli->handlers->tai_utc_delta_status(cli, ctx, &status);
 	}
 }
