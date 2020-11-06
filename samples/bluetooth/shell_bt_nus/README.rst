@@ -40,8 +40,8 @@ Testing
 
 The |NCS| provides two alternatives for testing the sample:
 
-* `Testing using shell_bt_nus`_. It is a Python script that requires a console application, like PuTTY, and a second development kit.
-* `Testing using the BLE Console`_. It is a stand-alone application for Linux.
+* `Testing using shell_bt_nus`_. It is a Python 3 script that requires a console application, like PuTTY, and a second development kit.
+* `Testing using the Bluetooth LE Console`_. It is a stand-alone application for Linux.
 
 Testing using shell_bt_nus
 ==========================
@@ -54,18 +54,11 @@ After programming the sample to your development kits, test it by performing the
 
 1. Start a console application, like PuTTY, and connect through UART to the ``shell_bt_nus`` application running on the development kit to check the log.
    See :ref:`gs_testing` for more information on how to connect with PuTTY through UART.
-#. On the host PC, install *Python 2*.
-#. Run the following command to install the Bluetooth LE driver:
+#. Run the following command in the |NCS| root directory to install the script dependencies:
 
    .. code-block:: console
 
-      pip2 install pc_ble_driver_py
-
-#. Run the following command to install `nRF Util`_:
-
-   .. code-block:: console
-
-      pip2 install --user nrfutil==4.0.0
+      pip install --user -r scripts/shell/requirements.txt
 
 #. Connect to your PC the nRF52 development kit meant to use the :file:`bt_nus_shell.py` script.
 #. Start the :file:`bt_nus_shell.py` script with the correct parameters, for example:
@@ -74,15 +67,15 @@ After programming the sample to your development kits, test it by performing the
 
       bt_nus_shell.py --name BT_NUS_shell --com COM237 --family NRF52 --snr 682560213
 
-#. Open a console application, like PuTTY, and open a new session, setting the Connection Type to :guilabel:`Raw` and the Destination Address to ``127.0.0.1:8889``.
+#. Open a console application, like PuTTY, and open a new session, setting the :guilabel:`Connection Type` to :guilabel:`Raw` and the :guilabel:`Destination Address` to ``127.0.0.1:8889``.
 #. Press Enter in the terminal window.
    A console prompt is displayed showing a log message that indicates the active connection.
 #. Enter the commands that you want to execute.
 
-Testing using the BLE Console
-=============================
+Testing using the Bluetooth LE Console
+======================================
 
-See :ref:`ble_console_readme` for more information on how to test the sample using the BLE Console.
+See :ref:`ble_console_readme` for more information on how to test the sample using the Bluetooth LE Console.
 
 Dependencies
 ************
