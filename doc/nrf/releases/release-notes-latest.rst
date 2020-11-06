@@ -16,7 +16,7 @@ The most relevant changes that are present on the master branch of the |NCS|, as
 Changelog
 *********
 
-See the `master branch section in the changelog`_ for a list of the most important changes.
+See the following sections for a list of the most important changes.
 
 
 sdk-mcuboot
