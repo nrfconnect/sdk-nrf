@@ -13,6 +13,15 @@ config NRF_SW_LPUART
 
 if NRF_SW_LPUART
 
+config NRF_SW_LPUART_HFXO_ON_RX
+	bool "Turn on HFXO for RX"
+	default y
+	help
+	  According to the UART specification high frequency RC oscillator is
+	  not accurate enough. However, in normal conditions and accurate clock
+	  on the transmitter side it may be accepted to disable it. Turning on
+	  HFXO prolongs receiver activation for up to 3 milliseconds.
+
 config NRF_SW_LPUART_MAX_PACKET_SIZE
 	int "Maximum RX packet size"
 	default 128
