@@ -27,7 +27,7 @@ Sending shell commands
 The |NCS| provides two alternatives for sending shell commands from a host, like a PC, to the application that uses this module:
 
 * `bt_nus_shell.py`_. It is a Python script that requires a console application, like PuTTY, and a second development kit.
-* `BLE Console`_. It is a stand-alone application for Linux.
+* `Bluetooth LE Console`_. It is a stand-alone application for Linux.
 
 .. testing_general_end
 
@@ -36,7 +36,7 @@ bt_nus_shell.py
 
 .. testing_bt_nus_shell_intro_start
 
-The script file :file:`scripts/shell/bt_nus_shell.py` contains a cross-platform example host application, written in Python 2.
+The script file :file:`scripts/shell/bt_nus_shell.py` contains a cross-platform example host application, written in Python 3.
 
 The script uses an additional Nordic development kit, like the PCA10040, as a Bluetooth central device.
 It connects to the specified device and forwards all NUS traffic to the network port.
@@ -45,20 +45,22 @@ The default port is set to ``8889``.
 
 .. testing_bt_nus_shell_intro_end
 
-The script requires the ``nrfutil`` Python package to be installed.
-
-To install it, open your preferred command-line interface and enter the following command:
+To install the script dependencies, open your preferred command-line interface, and enter the following command in the |NCS| root directory:
 
    .. code-block:: console
 
-      pip2 install --user nrfutil==4.0.0
+      pip install --user -r scripts/shell/requirements.txt
 
 The script requires the following parameters:
 
-* ``com`` - the port of the development kit used by the script
+* ``com`` - the COM port of the development kit used by the script
+
+Additionally, following parameters are option:
+
 * ``snr`` - the SEGGER board ID
-* ``family`` - the chip family of the development kit, for example, nRF52.
+* ``family`` - the chip family of the development kit, for example, nRF52
 * ``name`` - the advertising name of the device with the NUS shell
+* ``port`` - the local network port
 
 .. note::
    The script does not support reconnections.
@@ -74,13 +76,13 @@ Perform the following steps to use the :file:`bt_nus_shell.py` script:
       bt_nus_shell.py --name BT_NUS_shell --com COM237 --family NRF52 --snr 682560213
 
 #. Open a console application, for example, PuTTY.
-   Open a new session, setting up the Connection Type to :guilabel:`Raw` and the  Destination Address to ``127.0.0.1:8889``.
+   Open a new session, setting up the :guilabel:`Connection Type` to :guilabel:`Raw` and the :guilabel:`Destination Address` to ``127.0.0.1:8889``.
 #. Press Enter in the terminal window.
    A console prompt is displayed.
-#. Enter the commands that you want to execute on the remote shell.
+#. Enter the commands that you want to execute in the remote shell.
 
-BLE Console
-===========
+Bluetooth LE Console
+====================
 
 The BLE Console is a stand-alone Linux application that uses a standard Bluetooth device, like an HCI dongle or a built-in Bluetooth device, and the BlueZ stack to communicate over Bluetooth with the device that runs the NUS shell transport.
 
