@@ -26,10 +26,6 @@
 .. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/nrfxlib
 .. _`nrfxlib`: https://github.com/nrfconnect/nrfxlib
 
-.. _`nRF Connect SDK changelog`: https://github.com/nrfconnect/sdk-nrf/wiki/Changelog
-
-.. _`master branch section in the changelog`: https://github.com/nrfconnect/sdk-nrf/wiki/Changelog#master-branch
-
 .. ### Links to Nordic documentation
 
 .. _`nRF Connect SDK v1.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.3.0/nrf/index.html
