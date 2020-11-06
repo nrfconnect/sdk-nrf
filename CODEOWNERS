@@ -98,6 +98,7 @@ Kconfig*                                  @tejlmand
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/tfm/tfm_hello_world/             @oyvindronningstad
+/samples/tfm/tfm_psa_test/                @oyvindronningstad
 /samples/zigbee/                          @maciekfabia @mariuszpos
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
