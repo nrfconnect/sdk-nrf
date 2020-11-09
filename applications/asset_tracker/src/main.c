@@ -578,7 +578,7 @@ static void send_modem_at_cmd_work_fn(struct k_work *work)
 	};
 	struct cloud_msg msg = {
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_TOPIC_MSG
+		.endpoint.type = CLOUD_EP_MSG
 	};
 	size_t len = strlen(modem_at_cmd_buff);
 
@@ -843,7 +843,7 @@ static void motion_data_send(struct k_work *work)
 
 	struct cloud_msg msg = {
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_TOPIC_MSG
+		.endpoint.type = CLOUD_EP_MSG
 	};
 
 	int err = 0;
@@ -1057,7 +1057,7 @@ static void device_status_send(struct k_work *work)
 
 	struct cloud_msg msg = {
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_TOPIC_STATE
+		.endpoint.type = CLOUD_EP_STATE
 	};
 
 	ret = cloud_encode_device_status_data(modem_ptr,
@@ -1084,7 +1084,7 @@ static void device_config_send(struct k_work *work)
 	int ret;
 	struct cloud_msg msg = {
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_TOPIC_STATE
+		.endpoint.type = CLOUD_EP_STATE
 	};
 	enum cloud_cmd_state gps_cfg_state =
 		cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS);
@@ -1125,7 +1125,7 @@ static void env_data_send(void)
 	env_sensor_data_t env_data;
 	struct cloud_msg msg = {
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_TOPIC_MSG
+		.endpoint.type = CLOUD_EP_MSG
 	};
 
 	if (!data_send_enabled()) {
@@ -1198,7 +1198,7 @@ void light_sensor_data_send(void)
 	int err;
 	struct light_sensor_data light_data;
 	struct cloud_msg msg = { .qos = CLOUD_QOS_AT_MOST_ONCE,
-				 .endpoint.type = CLOUD_EP_TOPIC_MSG };
+				 .endpoint.type = CLOUD_EP_MSG };
 
 	if (!data_send_enabled() || gps_control_is_active()) {
 		return;
@@ -1242,7 +1242,7 @@ static void sensor_data_send(struct cloud_channel_data *data)
 	int err = 0;
 	struct cloud_msg msg = {
 			.qos = CLOUD_QOS_AT_MOST_ONCE,
-			.endpoint.type = CLOUD_EP_TOPIC_MSG
+			.endpoint.type = CLOUD_EP_MSG
 		};
 
 	if (!data_send_enabled() || gps_control_is_active()) {

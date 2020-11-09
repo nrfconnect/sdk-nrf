@@ -55,10 +55,20 @@ static void cloud_update_work_fn(struct k_work *work)
 
 	struct cloud_msg msg = {
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_TOPIC_MSG,
 		.buf = CONFIG_CLOUD_MESSAGE,
 		.len = strlen(CONFIG_CLOUD_MESSAGE)
 	};
+
+	/* When using the nRF Cloud backend data is sent to the message topic.
+	 * This is in order to visualize the data in the web UI terminal.
+	 * For Azure IoT Hub and AWS IoT, messages are addressed directly to the
+	 * device twin (Azure) or device shadow (AWS).
+	 */
+	if (strcmp(CONFIG_CLOUD_BACKEND, "NRF_CLOUD") == 0) {
+		msg.endpoint.type = CLOUD_EP_MSG;
+	} else {
+		msg.endpoint.type = CLOUD_EP_STATE;
+	}
 
 	err = cloud_send(cloud_backend, &msg);
 	if (err) {

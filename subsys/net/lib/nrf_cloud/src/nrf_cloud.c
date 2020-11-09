@@ -308,7 +308,7 @@ static void api_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		evt.type = CLOUD_EVT_DATA_RECEIVED;
 		evt.data.msg.buf = (char *)nrf_cloud_evt->data.ptr;
 		evt.data.msg.len = nrf_cloud_evt->data.len;
-		evt.data.msg.endpoint.type = CLOUD_EP_TOPIC_MSG;
+		evt.data.msg.endpoint.type = CLOUD_EP_MSG;
 		evt.data.msg.endpoint.str =
 			(char *)nrf_cloud_evt->topic.ptr;
 		evt.data.msg.endpoint.len = nrf_cloud_evt->topic.len;
@@ -427,7 +427,7 @@ static int api_send(const struct cloud_backend *const backend,
 	}
 
 	switch (msg->endpoint.type) {
-	case CLOUD_EP_TOPIC_MSG: {
+	case CLOUD_EP_MSG: {
 		const struct nct_dc_data buf = {
 			.data.ptr = msg->buf,
 			.data.len = msg->len
@@ -444,7 +444,7 @@ static int api_send(const struct cloud_backend *const backend,
 		}
 		break;
 	}
-	case CLOUD_EP_TOPIC_STATE: {
+	case CLOUD_EP_STATE: {
 		struct nct_cc_data shadow_data = {
 			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
 			.data.ptr = msg->buf,
