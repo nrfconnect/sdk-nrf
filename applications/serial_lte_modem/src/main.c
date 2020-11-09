@@ -19,6 +19,8 @@
 #include <modem/bsdlib.h>
 #include <dfu/mcuboot.h>
 #include <power/reboot.h>
+#include <drivers/clock_control.h>
+#include <drivers/clock_control/nrf_clock_control.h>
 #include "slm_at_host.h"
 
 LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
@@ -156,9 +158,21 @@ void handle_bsdlib_init_ret(void)
 void start_execute(void)
 {
 	int err;
+	struct onoff_manager *clk_mgr;
+	struct onoff_client cli = {};
 
 	LOG_INF("Serial LTE Modem");
 
+	/* request external XTAL for UART */
+	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+	sys_notify_init_spinwait(&cli.notify);
+	err = onoff_request(clk_mgr, &cli);
+	if (err) {
+		LOG_ERR("Clock request failed: %d", err);
+		return;
+	}
+
+	/* check FOTA result */
 	handle_bsdlib_init_ret();
 
 	err = modem_info_init();
