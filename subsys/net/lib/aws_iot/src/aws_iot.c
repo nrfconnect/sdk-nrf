@@ -241,7 +241,7 @@ static void aws_iot_notify_event(const struct aws_iot_evt *aws_iot_evt)
 		cloud_evt.type = CLOUD_EVT_DATA_RECEIVED;
 		cloud_evt.data.msg.buf = aws_iot_evt->data.msg.ptr;
 		cloud_evt.data.msg.len = aws_iot_evt->data.msg.len;
-		cloud_evt.data.msg.endpoint.type = CLOUD_EP_TOPIC_MSG;
+		cloud_evt.data.msg.endpoint.type = CLOUD_EP_MSG;
 		cloud_evt.data.msg.endpoint.str =
 				(char *)aws_iot_evt->data.msg.topic.str;
 		cloud_evt.data.msg.endpoint.len =
@@ -901,15 +901,15 @@ int aws_iot_send(const struct aws_iot_data *const tx_data)
 
 	switch (tx_data_pub.topic.type) {
 #if defined(CONFIG_CLOUD_API)
-	case CLOUD_EP_TOPIC_STATE:
+	case CLOUD_EP_STATE_GET:
 		tx_data_pub.topic.str = get_topic;
 		tx_data_pub.topic.len = strlen(get_topic);
 		break;
-	case CLOUD_EP_TOPIC_MSG:
+	case CLOUD_EP_STATE:
 		tx_data_pub.topic.str = update_topic;
 		tx_data_pub.topic.len = strlen(update_topic);
 		break;
-	case CLOUD_EP_TOPIC_STATE_DELETE:
+	case CLOUD_EP_STATE_DELETE:
 		tx_data_pub.topic.str = delete_topic;
 		tx_data_pub.topic.len = strlen(delete_topic);
 		break;
