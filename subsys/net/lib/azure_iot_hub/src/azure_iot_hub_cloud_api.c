@@ -56,6 +56,26 @@ static void api_event_handler(struct azure_iot_hub_evt *evt)
 		cloud_notify_event(azure_iot_hub_backend, &cloud_evt,
 				   config->user_data);
 		break;
+	case AZURE_IOT_HUB_EVT_TWIN_RECEIVED:
+		cloud_evt.type = CLOUD_EVT_DATA_RECEIVED;
+		cloud_evt.data.msg.buf = evt->data.msg.ptr;
+		cloud_evt.data.msg.len = evt->data.msg.len;
+		cloud_evt.data.msg.endpoint.type = CLOUD_EP_TOPIC_STATE;
+		cloud_evt.data.msg.endpoint.str = evt->topic.str;
+		cloud_evt.data.msg.endpoint.len = evt->topic.len;
+		cloud_notify_event(azure_iot_hub_backend, &cloud_evt,
+				   config->user_data);
+		break;
+	case AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED:
+		cloud_evt.type = CLOUD_EVT_DATA_RECEIVED;
+		cloud_evt.data.msg.buf = evt->data.msg.ptr;
+		cloud_evt.data.msg.len = evt->data.msg.len;
+		cloud_evt.data.msg.endpoint.type = CLOUD_EP_TOPIC_STATE;
+		cloud_evt.data.msg.endpoint.str = evt->topic.str;
+		cloud_evt.data.msg.endpoint.len = evt->topic.len;
+		cloud_notify_event(azure_iot_hub_backend, &cloud_evt,
+				   config->user_data);
+		break;
 	case AZURE_IOT_HUB_EVT_FOTA_START:
 		cloud_evt.type = CLOUD_EVT_FOTA_START;
 		cloud_notify_event(azure_iot_hub_backend, &cloud_evt,
