@@ -999,11 +999,11 @@ int aws_iot_send(const struct aws_iot_data *const tx_data)
 
 	switch (tx_data_pub.topic.type) {
 #if defined(CONFIG_CLOUD_API)
-	case CLOUD_EP_TOPIC_STATE:
+	case CLOUD_EP_TOPIC_STATE_GET:
 		tx_data_pub.topic.str = get_topic;
 		tx_data_pub.topic.len = strlen(get_topic);
 		break;
-	case CLOUD_EP_TOPIC_MSG:
+	case CLOUD_EP_TOPIC_STATE:
 		tx_data_pub.topic.str = update_topic;
 		tx_data_pub.topic.len = strlen(update_topic);
 		break;

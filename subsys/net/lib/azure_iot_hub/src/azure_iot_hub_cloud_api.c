@@ -171,6 +171,9 @@ static int api_send(const struct cloud_backend *const backend,
 	};
 
 	switch (msg->endpoint.type) {
+	case CLOUD_EP_TOPIC_STATE_GET:
+		tx_data.topic.type = AZURE_IOT_HUB_TOPIC_TWIN_REQUEST;
+		break;
 	case CLOUD_EP_TOPIC_STATE:
 		tx_data.topic.type = AZURE_IOT_HUB_TOPIC_TWIN_REPORTED;
 		break;
