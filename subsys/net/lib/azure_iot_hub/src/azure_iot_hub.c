@@ -527,7 +527,7 @@ static void mqtt_evt_handler(struct mqtt_client *const client,
 			break;
 		}
 
-		evt.type = AZURE_IOT_HUB_EVT_READY;
+		evt.type = AZURE_IOT_HUB_EVT_TOPICS_SUBSCRIBED;
 		azure_iot_hub_notify_event(&evt);
 		break;
 	default:

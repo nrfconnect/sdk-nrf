@@ -477,7 +477,7 @@ static int dc_connection_handler(const struct nct_evt *nct_evt)
 {
 	if (nct_evt->status == 0) {
 		struct nrf_cloud_evt evt = {
-			.type = NRF_CLOUD_EVT_READY,
+			.type = NRF_CLOUD_EVT_TOPICS_SUBSCRIBED,
 		};
 
 		nfsm_set_current_state_and_notify(STATE_DC_CONNECTED, &evt);

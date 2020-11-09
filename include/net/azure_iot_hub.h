@@ -36,8 +36,8 @@ enum azure_iot_hub_evt_type {
 	 *  messages.
 	 */
 	AZURE_IOT_HUB_EVT_CONNECTION_FAILED,
-	/** Azure IoT Hub connection established and ready. */
-	AZURE_IOT_HUB_EVT_READY,
+	/** Azure IoT Hub has subscribed to all nessecary topics. */
+	AZURE_IOT_HUB_EVT_TOPICS_SUBSCRIBED,
 	/** Disconnected from Azure IoT Hub. */
 	AZURE_IOT_HUB_EVT_DISCONNECTED,
 	/** Device-bound data received from Azure IoT Hub. */
@@ -239,7 +239,8 @@ int azure_iot_hub_init(const struct azure_iot_hub_config *config,
 /** @brief Establish connection to Azure IoT Hub. The function blocks
  *	   until a connection to the hub is established on the transport level.
  *	   Subsequent calls to other library function should await
- *	   AZURE_IOT_HUB_EVT_CONNECTED and AZURE_IOT_HUB_EVT_READY events.
+ *	   AZURE_IOT_HUB_EVT_CONNECTED and AZURE_IOT_HUB_EVT_TOPICS_SUBSCRIBED
+ *	   events.
  *
  *  @retval 0 If successful.
  *            Otherwise, a (negative) error code is returned.

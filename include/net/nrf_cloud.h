@@ -28,7 +28,7 @@ enum nrf_cloud_evt_type {
 	/** The device is successfully associated with a user. */
 	NRF_CLOUD_EVT_USER_ASSOCIATED,
 	/** The device can now start sending sensor data to the cloud. */
-	NRF_CLOUD_EVT_READY,
+	NRF_CLOUD_EVT_TOPICS_SUBSCRIBED,
 	/** A sensor was successfully attached to the cloud.
 	 * Supported sensor types are defined in @ref nrf_cloud_sensor.
 	 */
@@ -173,7 +173,7 @@ int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
  * @brief Attach a sensor to the cloud.
  *
  * This API should only be called after receiving an
- * @ref NRF_CLOUD_EVT_READY event.
+ * @ref NRF_CLOUD_EVT_TOPICS_SUBSCRIBED event.
  * If the API succeeds, wait for the @ref NRF_CLOUD_EVT_SENSOR_ATTACHED
  * event before sending the sensor data.
  *

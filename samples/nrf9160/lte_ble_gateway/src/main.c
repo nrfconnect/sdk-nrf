@@ -303,8 +303,8 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		printk("NRF_CLOUD_EVT_USER_ASSOCIATED\n");
 		on_cloud_evt_user_associated();
 		break;
-	case NRF_CLOUD_EVT_READY:
-		printk("NRF_CLOUD_EVT_READY\n");
+	case NRF_CLOUD_EVT_TOPICS_SUBSCRIBED:
+		printk("NRF_CLOUD_EVT_TOPICS_SUBSCRIBED\n");
 		display_state = LEDS_CLOUD_CONNECTED;
 		struct nrf_cloud_sa_param param = {
 			.sensor_type = NRF_CLOUD_SENSOR_FLIP,

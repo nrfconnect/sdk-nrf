@@ -95,7 +95,7 @@ After programming the sample to your development kit, test it by performing the 
       Connecting to LTE network
       AZURE_IOT_HUB_EVT_CONNECTING
       AZURE_IOT_HUB_EVT_CONNECTED
-      AZURE_IOT_HUB_EVT_READY
+      AZURE_IOT_HUB_EVT_TOPICS_SUBSCRIBED
 
 
 #. Log in to the `Azure Portal`_, navigate to :guilabel:`IoT Hub` and select your IoT hub.

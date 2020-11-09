@@ -117,7 +117,7 @@ When the sample runs, the device boots, and the sample displays an output identi
 	Connected to LTE network
 	AZURE_IOT_HUB_EVT_CONNECTING
 	AZURE_IOT_HUB_EVT_CONNECTED
-	AZURE_IOT_HUB_EVT_READY
+	AZURE_IOT_HUB_EVT_TOPICS_SUBSCRIBED
 	AZURE_IOT_HUB_EVT_TWIN_RECEIVED
 	No 'telemetryInterval' object in the device twin
 	Sending event:

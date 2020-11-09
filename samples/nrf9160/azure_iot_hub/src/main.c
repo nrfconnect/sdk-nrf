@@ -156,15 +156,15 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 	case AZURE_IOT_HUB_EVT_DISCONNECTED:
 		printk("AZURE_IOT_HUB_EVT_DISCONNECTED\n");
 		break;
-	case AZURE_IOT_HUB_EVT_READY:
-		printk("AZURE_IOT_HUB_EVT_READY\n");
+	case AZURE_IOT_HUB_EVT_TOPICS_SUBSCRIBED:
+		printk("AZURE_IOT_HUB_EVT_TOPICS_SUBSCRIBED\n");
 
-		/* The AZURE_IOT_HUB_EVT_READY event indicates that the
-		 * IoT hub connection is established and interaction with the
-		 * cloud can begin.
+		/* The AZURE_IOT_HUB_EVT_TOPICS_SUBSCRIBED event indicates that
+		 * the Azure IoT Hub library has subscribed to its respective
+		 * topics and interaction with the cloud can begin.
 		 *
 		 * The below work submission will cause send_event() to be
-		 * call after 3 seconds.
+		 * called upon the callback of this event.
 		 */
 		k_delayed_work_submit_to_queue(&application_work_q,
 					       &send_event_work, K_NO_WAIT);

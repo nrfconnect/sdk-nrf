@@ -259,8 +259,8 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		}
 #endif
 		break;
-	case AWS_IOT_EVT_READY:
-		printk("AWS_IOT_EVT_READY\n");
+	case AWS_IOT_EVT_TOPICS_SUBSCRIBED:
+		printk("AWS_IOT_EVT_TOPICS_SUBSCRIBED\n");
 		break;
 	case AWS_IOT_EVT_DISCONNECTED:
 		printk("AWS_IOT_EVT_DISCONNECTED\n");

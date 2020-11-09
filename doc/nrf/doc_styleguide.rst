@@ -131,7 +131,7 @@ You can include Message Sequence Chart (MSC) diagrams in RST by using the ``.. m
         Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST"];
         Module<<Application      [label="nrf_cloud_user_associate()"];
         Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
-        Module>>Application      [label="NRF_CLOUD_EVT_READY"];
+        Module>>Application      [label="NRF_CLOUD_EVT_TOPICS_SUBSCRIBED"];
         Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED"];
 
 
@@ -145,7 +145,7 @@ This will generate the following output:
         Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST"];
         Module<<Application      [label="nrf_cloud_user_associate()"];
         Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
-        Module>>Application      [label="NRF_CLOUD_EVT_READY"];
+        Module>>Application      [label="NRF_CLOUD_EVT_TOPICS_SUBSCRIBED"];
         Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED"];
 
 

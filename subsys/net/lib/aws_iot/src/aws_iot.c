@@ -238,7 +238,7 @@ static void aws_iot_notify_event(const struct aws_iot_evt *aws_iot_evt)
 		cloud_evt.data.err =
 		api_connect_error_translate(aws_iot_evt->data.err);
 		break;
-	case AWS_IOT_EVT_READY:
+	case AWS_IOT_EVT_TOPICS_SUBSCRIBED:
 		cloud_evt.type = CLOUD_EVT_READY;
 		break;
 	case AWS_IOT_EVT_DISCONNECTED:
@@ -688,14 +688,14 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 				break;
 			}
 			if (err == 0) {
-				/* There were not topics to subscribe to. */
-				aws_iot_evt.type = AWS_IOT_EVT_READY;
-				aws_iot_notify_event(&aws_iot_evt);
+				/* No specific topic subscriptions added or
+				 * configured.
+				 */
 			} /* else: wait for SUBACK */
 		} else {
 			/** pre-existing session:
 			  * subscription is already established */
-			aws_iot_evt.type = AWS_IOT_EVT_READY;
+			aws_iot_evt.type = AWS_IOT_EVT_TOPICS_SUBSCRIBED;
 			aws_iot_notify_event(&aws_iot_evt);
 
 			if (IS_ENABLED(
@@ -760,7 +760,7 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 			}
 
 			/** MQTT subscriptions established. */
-			aws_iot_evt.type = AWS_IOT_EVT_READY;
+			aws_iot_evt.type = AWS_IOT_EVT_TOPICS_SUBSCRIBED;
 			aws_iot_notify_event(&aws_iot_evt);
 		} else if (err == -EAGAIN) {
 			/** Subscriptions remaining to be acknowledged. */

@@ -115,7 +115,7 @@ When the sample runs, the device boots, and the sample displays the following ou
                 }
         }
         } to AWS IoT broker
-        AWS_IOT_EVT_READY
+        AWS_IOT_EVT_TOPICS_SUBSCRIBED
         RRC mode: Idle
         LTE cell changed: Cell ID: 34237195, Tracking area: 2305
         Publishing: {

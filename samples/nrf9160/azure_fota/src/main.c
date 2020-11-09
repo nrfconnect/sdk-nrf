@@ -42,8 +42,8 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 	case AZURE_IOT_HUB_EVT_DISCONNECTED:
 		printk("AZURE_IOT_HUB_EVT_DISCONNECTED\n");
 		break;
-	case AZURE_IOT_HUB_EVT_READY:
-		printk("AZURE_IOT_HUB_EVT_READY\n");
+	case AZURE_IOT_HUB_EVT_TOPICS_SUBSCRIBED:
+		printk("AZURE_IOT_HUB_EVT_TOPICS_SUBSCRIBED\n");
 		k_sem_give(&cloud_connected_sem);
 		break;
 	case AZURE_IOT_HUB_EVT_DATA_RECEIVED:

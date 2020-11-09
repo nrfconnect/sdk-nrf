@@ -62,7 +62,7 @@ The following message sequence chart shows the flow of events and expected appli
    Module<<Application      [label="nrf_cloud_connect() returns successfully"];
    Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_CONNECTED"];
    Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
-   Module>>Application      [label="NRF_CLOUD_EVT_READY"];
+   Module>>Application      [label="NRF_CLOUD_EVT_TOPICS_SUBSCRIBED"];
 
 
 .. note::
@@ -78,9 +78,9 @@ When the device is successfully associated with a user on the cloud, subsequent 
    Module<<Application      [label="nrf_cloud_connect() returns successfully"];
    Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_CONNECTED"];
    Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
-   Module>>Application      [label="NRF_CLOUD_EVT_READY"];
+   Module>>Application      [label="NRF_CLOUD_EVT_TOPICS_SUBSCRIBED"];
 
-After receiving :c:enumerator:`NRF_CLOUD_EVT_READY`, the application can start sending sensor data to the cloud.
+After receiving :c:enumerator:`NRF_CLOUD_EVT_TOPICS_SUBSCRIBED`, the application can start sending sensor data to the cloud.
 
 .. _lib_nrf_cloud_data:
 
@@ -92,7 +92,7 @@ Currently, the supported sensor types are GPS and FLIP (see :c:enum:`nrf_cloud_s
 Use :c:func:`nrf_cloud_sensor_data_stream` to send sensor data with best quality.
 
 Before sending any sensor data, call the function :c:func:`nrf_cloud_sensor_attach` with the type of the sensor.
-Note that this function must be called after receiving the event :c:enumerator:`NRF_CLOUD_EVT_READY`.
+Note that this function must be called after receiving the event :c:enumerator:`NRF_CLOUD_EVT_TOPICS_SUBSCRIBED`.
 It triggers the event :c:enumerator:`NRF_CLOUD_EVT_SENSOR_ATTACHED` if the execution was successful.
 
 .. _lib_nrf_cloud_unlink:
@@ -112,7 +112,7 @@ See the following message sequence chart:
    Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST"];
    Module<<Application      [label="nrf_cloud_user_associate()"];
    Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
-   Module>>Application      [label="NRF_CLOUD_EVT_READY"];
+   Module>>Application      [label="NRF_CLOUD_EVT_TOPICS_SUBSCRIBED"];
    Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED"];
 
 .. _use_nrfcloud_cloudapi:

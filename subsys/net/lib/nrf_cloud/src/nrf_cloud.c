@@ -257,8 +257,8 @@ static void api_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 
 		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
-	case NRF_CLOUD_EVT_READY:
-		LOG_DBG("NRF_CLOUD_EVT_READY");
+	case NRF_CLOUD_EVT_TOPICS_SUBSCRIBED:
+		LOG_DBG("NRF_CLOUD_EVT_TOPICS_SUBSCRIBED");
 
 		evt.type = CLOUD_EVT_READY;
 
