@@ -99,6 +99,9 @@ static struct cloud_backend *aws_iot_backend;
 
 #define AWS_IOT_POLL_TIMEOUT_MS 500
 
+/** Empty string used to request the AWS IoT shadow document. */
+#define AWS_IOT_SHADOW_REQUEST_STRING ""
+
 static struct aws_iot_app_topic_data app_topic_data;
 static struct mqtt_client client;
 static struct sockaddr_storage broker;
@@ -111,6 +114,17 @@ static aws_iot_evt_handler_t module_evt_handler;
 
 static atomic_t disconnect_requested;
 static atomic_t connection_poll_active;
+
+/** Structure used to confirm successful subscriptions. */
+static struct aws_iot_suback_confirmation {
+	/** Subscription ID for application specific topics. */
+	uint16_t app_subs_message_id;
+	/** Subscription ID for AWS specific topics. */
+	uint16_t aws_subs_message_id;
+	/** Number of active topic lists subscribed to by the AWS IoT backend.
+	 */
+	uint8_t active_topic_list_count;
+} suback_conf;
 
 static K_SEM_DEFINE(connection_poll_sem, 0, 1);
 
@@ -486,10 +500,13 @@ static int topic_subscribe(void)
 	};
 
 	if (app_topic_data.list_count > 0) {
+
+		suback_conf.app_subs_message_id = k_cycle_get_32();
+
 		const struct mqtt_subscription_list app_sub_list = {
 			.list = app_topic_data.list,
 			.list_count = app_topic_data.list_count,
-			.message_id = k_cycle_get_32()
+			.message_id = suback_conf.app_subs_message_id
 		};
 
 		for (size_t i = 0; i < app_sub_list.list_count; i++) {
@@ -500,14 +517,20 @@ static int topic_subscribe(void)
 		err = mqtt_subscribe(&client, &app_sub_list);
 		if (err) {
 			LOG_ERR("Application topics subscribe, error: %d", err);
+			return err;
 		}
+
+		suback_conf.active_topic_list_count++;
 	}
 
 	if (ARRAY_SIZE(aws_iot_rx_list) > 0) {
+
+		suback_conf.aws_subs_message_id = k_cycle_get_32();
+
 		const struct mqtt_subscription_list aws_sub_list = {
 			.list = (struct mqtt_topic *)&aws_iot_rx_list,
 			.list_count = ARRAY_SIZE(aws_iot_rx_list),
-			.message_id = k_cycle_get_32()
+			.message_id = suback_conf.aws_subs_message_id
 		};
 
 		for (size_t i = 0; i < aws_sub_list.list_count; i++) {
@@ -518,13 +541,85 @@ static int topic_subscribe(void)
 		err = mqtt_subscribe(&client, &aws_sub_list);
 		if (err) {
 			LOG_ERR("AWS shadow topics subscribe, error: %d", err);
+			return err;
 		}
+
+		suback_conf.active_topic_list_count++;
 	}
 
 	if (err < 0) {
 		return err;
 	}
 	return app_topic_data.list_count + ARRAY_SIZE(aws_iot_rx_list);
+}
+
+static void device_shadow_document_request(void)
+{
+	int err;
+
+	/* The device shadow document is requested by sending an empty string to
+	 * $aws/things/<thing-name>/shadow/get/. The shadow document is
+	 * published to the $aws/things/<thing-name>/shadow/get/accepted topic.
+	 * To subscribe to this topic set the
+	 * CONFIG_AWS_IOT_TOPIC_GET_ACCEPTED_SUBSCRIBE configurable option. If
+	 * no AWS shadow document exist an error message will be published to
+	 * the $aws/things/<thing-name>/shadow/get/rejected topic. Messages
+	 * from this topic can be subscribed to by setting the
+	 * CONFIG_AWS_IOT_TOPIC_GET_REJECTED_SUBSCRIBE configurable option.
+	 */
+	struct aws_iot_data msg = {
+		.topic.type = AWS_IOT_SHADOW_TOPIC_GET,
+		.ptr = AWS_IOT_SHADOW_REQUEST_STRING,
+		.len = strlen(AWS_IOT_SHADOW_REQUEST_STRING)
+	};
+
+	err = aws_iot_send(&msg);
+	if (err) {
+		LOG_ERR("Failed to send device shadow request, error: %d", err);
+		return;
+	}
+
+	LOG_DBG("Device shadow document requested");
+}
+
+/** Function that checks if all topics subscribed to by the client has been
+ *  acknowledged.
+ */
+static int subscription_list_id_check(uint16_t suback_message_id,
+				      int suback_result)
+{
+	int err;
+	static int suback_count;
+
+	if (suback_result) {
+		/** Error subscribing to topics. */
+		err = suback_result;
+		goto clean_exit;
+	}
+
+	if (suback_conf.app_subs_message_id == suback_message_id) {
+		suback_count++;
+	} else if (suback_conf.aws_subs_message_id == suback_message_id) {
+		suback_count++;
+	}
+
+	if (suback_count >= suback_conf.active_topic_list_count &&
+	    suback_conf.active_topic_list_count > 0) {
+		/* All subscriptions are acknowledged. */
+		err = 0;
+		goto clean_exit;
+	}
+
+	/* Missing subscription list acknowledgment. Wait for next
+	 * MQTT SUBACK.
+	 */
+	return -EAGAIN;
+
+clean_exit:
+	suback_count = 0;
+	memset(&suback_conf, 0, sizeof(struct aws_iot_suback_confirmation));
+
+	return err;
 }
 
 static int publish_get_payload(struct mqtt_client *const c, size_t length)
@@ -602,6 +697,11 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 			  * subscription is already established */
 			aws_iot_evt.type = AWS_IOT_EVT_READY;
 			aws_iot_notify_event(&aws_iot_evt);
+
+			if (IS_ENABLED(
+				CONFIG_AWS_IOT_AUTO_DEVICE_SHADOW_REQUEST)) {
+				device_shadow_document_request();
+			}
 		}
 		break;
 	case MQTT_EVT_DISCONNECT:
@@ -648,9 +748,28 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		LOG_DBG("MQTT_EVT_SUBACK: id = %d result = %d",
 			mqtt_evt->param.suback.message_id,
 			mqtt_evt->result);
-		/* MQTT subscription established. */
-		aws_iot_evt.type = AWS_IOT_EVT_READY;
-		aws_iot_notify_event(&aws_iot_evt);
+
+		err = subscription_list_id_check(
+					mqtt_evt->param.suback.message_id,
+					mqtt_evt->result);
+		if (err == 0) {
+			/** All subscription list IDs confirmed. */
+			if (IS_ENABLED(
+				CONFIG_AWS_IOT_AUTO_DEVICE_SHADOW_REQUEST)) {
+				device_shadow_document_request();
+			}
+
+			/** MQTT subscriptions established. */
+			aws_iot_evt.type = AWS_IOT_EVT_READY;
+			aws_iot_notify_event(&aws_iot_evt);
+		} else if (err == -EAGAIN) {
+			/** Subscriptions remaining to be acknowledged. */
+		} else if (err < 0) {
+			/** Error subscribing to topics. */
+			aws_iot_evt.type = AWS_IOT_EVT_ERROR;
+			aws_iot_evt.data.err = err;
+			aws_iot_notify_event(&aws_iot_evt);
+		}
 		break;
 	default:
 		break;

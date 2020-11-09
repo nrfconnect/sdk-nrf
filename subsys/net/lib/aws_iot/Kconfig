@@ -57,6 +57,10 @@ config AWS_IOT_CLIENT_ID_STATIC
 config AWS_IOT_CLIENT_ID_APP
 	bool "Client ID provided by application run-time"
 
+config AWS_IOT_AUTO_DEVICE_SHADOW_REQUEST
+	bool "Request the device shadow automatically upon a connection to AWS"
+	default y
+
 config AWS_IOT_TOPIC_GET_ACCEPTED_SUBSCRIBE
 	bool "Subscribe to get accepted shadow topic, $aws/things/<thing-name>/shadow/get/accepted"
 
