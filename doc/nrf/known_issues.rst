@@ -7,6 +7,9 @@ Known issues
    :local:
    :depth: 2
 
+Known issues listed on this page *and* tagged with the :ref:`latest official release version <release_notes>` are valid for the current state of development.
+Use the drop-down filter to see known issues for previous releases and check if they are still valid.
+
 .. raw:: html
    :file: includes/filter.js
 
