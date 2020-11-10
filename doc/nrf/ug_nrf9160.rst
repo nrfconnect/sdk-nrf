@@ -92,7 +92,7 @@ You can download the firmware from the `nRF9160 product website (compatible down
 The zip file contains both the full firmware and patches to upgrade from one version to another.
 
 Different versions of the LTE modem firmware are available and these versions are certified for the mobile network operators who have their own certification programs.
-See the `nRF9160 compatibility matrix`_ for more information.
+See the `Mobile network operator certifications`_ for more information.
 
 .. note::
 
