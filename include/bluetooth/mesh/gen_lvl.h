@@ -50,8 +50,6 @@ extern "C" {
 struct bt_mesh_lvl_set {
 	/** New level. */
 	int16_t lvl;
-	/** Whether this is a new action. */
-	bool new_transaction;
 	/**
 	 * Transition time parameters for the state change. Setting the
 	 * transition to NULL makes the server use its default transition time
@@ -82,8 +80,6 @@ struct bt_mesh_lvl_delta_set {
 struct bt_mesh_lvl_move_set {
 	/** Translation to make for every transition step. */
 	int16_t delta;
-	/** Whether this is a new action. */
-	bool new_transaction;
 	/**
 	 * Transition parameters. @c delay indicates time until the move
 	 * should start, @c transition indicates the amount of time each

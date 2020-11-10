@@ -496,11 +496,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	};
 	struct bt_mesh_lightness_status status = { 0 };
 
-	if (lvl_set->new_transaction) {
-		lightness_srv_change_lvl(srv, ctx, &set, &status);
-	} else if (rsp) {
-		srv->handlers->light_get(srv, NULL, &status);
-	}
+    lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {
 		rsp->current = LIGHT_TO_LVL(status.current);

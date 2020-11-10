@@ -80,16 +80,12 @@ int bt_mesh_lvl_cli_set(struct bt_mesh_lvl_cli *cli,
 			const struct bt_mesh_lvl_set *set,
 			struct bt_mesh_lvl_status *rsp)
 {
-	if (set->new_transaction) {
-		cli->tid++;
-	}
-
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_SET,
 				 BT_MESH_LVL_MSG_MAXLEN_SET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_SET);
 
 	net_buf_simple_add_le16(&msg, set->lvl);
-	net_buf_simple_add_u8(&msg, cli->tid);
+	net_buf_simple_add_u8(&msg, cli->tid++);
 	if (set->transition) {
 		model_transition_buf_add(&msg, set->transition);
 	}
@@ -103,16 +99,12 @@ int bt_mesh_lvl_cli_set_unack(struct bt_mesh_lvl_cli *cli,
 			      struct bt_mesh_msg_ctx *ctx,
 			      const struct bt_mesh_lvl_set *set)
 {
-	if (set->new_transaction) {
-		cli->tid++;
-	}
-
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_SET_UNACK,
 				 BT_MESH_LVL_MSG_MAXLEN_SET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_SET_UNACK);
 
 	net_buf_simple_add_le16(&msg, set->lvl);
-	net_buf_simple_add_u8(&msg, cli->tid);
+	net_buf_simple_add_u8(&msg, cli->tid++);
 	if (set->transition) {
 		model_transition_buf_add(&msg, set->transition);
 	}
@@ -170,16 +162,12 @@ int bt_mesh_lvl_cli_move_set(struct bt_mesh_lvl_cli *cli,
 			     const struct bt_mesh_lvl_move_set *move_set,
 			     struct bt_mesh_lvl_status *rsp)
 {
-	if (move_set->new_transaction) {
-		cli->tid++;
-	}
-
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_MOVE_SET,
 				 BT_MESH_LVL_MSG_MAXLEN_MOVE_SET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_MOVE_SET);
 
 	net_buf_simple_add_le16(&msg, move_set->delta);
-	net_buf_simple_add_u8(&msg, cli->tid);
+	net_buf_simple_add_u8(&msg, cli->tid++);
 
 	if (move_set->transition) {
 		model_transition_buf_add(&msg, move_set->transition);
@@ -194,16 +182,12 @@ int bt_mesh_lvl_cli_move_set_unack(struct bt_mesh_lvl_cli *cli,
 				   struct bt_mesh_msg_ctx *ctx,
 				   const struct bt_mesh_lvl_move_set *move_set)
 {
-	if (move_set->new_transaction) {
-		cli->tid++;
-	}
-
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_MOVE_SET_UNACK,
 				 BT_MESH_LVL_MSG_MAXLEN_MOVE_SET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_MOVE_SET_UNACK);
 
 	net_buf_simple_add_le16(&msg, move_set->delta);
-	net_buf_simple_add_u8(&msg, cli->tid);
+	net_buf_simple_add_u8(&msg, cli->tid++);
 
 	if (move_set->transition) {
 		model_transition_buf_add(&msg, move_set->transition);

@@ -165,12 +165,8 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	cb_msg.time = lvl_set->transition->time;
 	cb_msg.delay = lvl_set->transition->delay;
 
-	if (lvl_set->new_transaction) {
-		srv->handlers->set(srv, NULL, &cb_msg, &status);
-		srv->temp_last = temp;
-	} else if (rsp) {
-		srv->handlers->get(srv, NULL, &status);
-	}
+    srv->handlers->set(srv, NULL, &cb_msg, &status);
+    srv->temp_last = temp;
 
 	(void)bt_mesh_light_temp_srv_pub(srv, NULL, &status);
 

@@ -65,8 +65,20 @@ static void set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_lvl_set set;
 
 	set.lvl = net_buf_simple_pull_le16(buf);
-	set.new_transaction = !tid_check_and_update(
-		&srv->tid, net_buf_simple_pull_u8(buf), ctx);
+
+	uint8_t tid = net_buf_simple_pull_u8(buf);
+
+	if (tid_check_and_update(&srv->tid, tid, ctx) != 0) {
+		/* If this is the same transaction, we don't need to send it
+		 * to the app, but we still have to respond with a status.
+		 */
+		if (ack) {
+			srv->handlers->get(srv, NULL, &status);
+			rsp_status(model, ctx, &status);
+		}
+
+		return;
+	}
 
 	transition_get(srv->model, buf, &transition);
 	set.transition = &transition;
@@ -131,8 +143,20 @@ static void move_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_lvl_move_set move_set;
 
 	move_set.delta = net_buf_simple_pull_le16(buf);
-	move_set.new_transaction = !tid_check_and_update(
-		&srv->tid, net_buf_simple_pull_u8(buf), ctx);
+
+	uint8_t tid = net_buf_simple_pull_u8(buf);
+
+	if (tid_check_and_update(&srv->tid, tid, ctx) != 0) {
+		/* If this is the same transaction, we don't need to send it
+		 * to the app, but we still have to respond with a status.
+		 */
+		if (ack) {
+			srv->handlers->get(srv, NULL, &status);
+			rsp_status(model, ctx, &status);
+		}
+
+		return;
+	}
 
 	transition_get(srv->model, buf, &transition);
 	move_set.transition = &transition;
@@ -236,7 +260,6 @@ static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
 	struct bt_mesh_lvl_srv *srv = mod->user_data;
 	struct bt_mesh_lvl_set set = {
 		.lvl = sys_get_le16(data),
-		.new_transaction = true,
 		.transition = transition,
 	};
 

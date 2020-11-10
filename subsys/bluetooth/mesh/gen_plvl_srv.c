@@ -412,11 +412,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	};
 	struct bt_mesh_plvl_status status = { 0 };
 
-	if (lvl_set->new_transaction) {
-		change_lvl(srv, ctx, &set, &status);
-	} else if (rsp) {
-		srv->handlers->power_get(srv, NULL, &status);
-	}
+	change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {
 		rsp->current = POWER_TO_LVL(status.current);
