@@ -11,6 +11,7 @@ import argparse
 import struct
 from ecdsa import VerifyingKey
 from hashlib import sha256
+import os
 
 
 def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
@@ -63,7 +64,11 @@ def get_hashes(public_key_files):
     hashes = list()
     for fn in public_key_files:
         with open(fn, 'rb') as f:
-            hashes.append(sha256(VerifyingKey.from_pem(f.read()).to_string()).digest()[:16])
+            digest = sha256(VerifyingKey.from_pem(f.read()).to_string()).digest()[:16]
+            if any([digest[n:n+2] == b'\xff\xff' for n in range(0, len(digest), 2)]):
+                raise RuntimeError("Hash of key in '%s' contains 0xffff. Please regenerate the key." %
+                                   os.path.abspath(f.name))
+            hashes.append(digest)
 
     if len(hashes) != len(set(hashes)):
         raise RuntimeError('Duplicate public key found. Note that the public key corresponding to the private'
