@@ -449,7 +449,12 @@ static void cadence_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	sensor = sensor_get(srv, id);
 	if (!sensor || sensor->type->channel_count != 1) {
 		BT_WARN("Cadence not supported");
-		goto respond;
+
+		if (ack) {
+			bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
+		}
+
+		return;
 	}
 
 	struct bt_mesh_sensor_threshold threshold;
@@ -488,12 +493,14 @@ static void cadence_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 		return;
 	}
 
-	model_send(mod, NULL, &rsp);
-
-respond:
 	if (ack) {
-		bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
+		BT_MESH_MODEL_BUF_DEFINE(rsp_copy, BT_MESH_SENSOR_OP_CADENCE_STATUS,
+					 BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_STATUS);
+		net_buf_simple_add_mem(&rsp_copy, rsp.data, rsp.len);
+		bt_mesh_model_send(mod, ctx, &rsp_copy, NULL, NULL);
 	}
+
+	model_send(mod, NULL, &rsp);
 }
 
 static void handle_cadence_set(struct bt_mesh_model *mod,
@@ -635,12 +642,20 @@ static void setting_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 
 	sensor = sensor_get(srv, id);
 	if (!sensor) {
-		goto respond;
+		if (ack) {
+			bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
+		}
+
+		return;
 	}
 
 	setting = setting_get(sensor, setting_id);
 	if (!setting || !setting->set) {
-		goto respond;
+		if (ack) {
+			bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
+		}
+
+		return;
 	}
 
 	struct sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
@@ -667,17 +682,24 @@ static void setting_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 
 		/* Undo the access field */
 		rsp.len = minlen;
-		goto respond;
+
+		if (ack) {
+			bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
+		}
+
+		return;
 	}
 
 	BT_DBG("0x%04x: 0x%04x", id, setting_id);
 
-	model_send(mod, NULL, &rsp);
-
-respond:
 	if (ack) {
-		bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
+		BT_MESH_MODEL_BUF_DEFINE(rsp_copy, BT_MESH_SENSOR_OP_SETTING_STATUS,
+					 BT_MESH_SENSOR_MSG_MAXLEN_SETTING_STATUS);
+		net_buf_simple_add_mem(&rsp_copy, rsp.data, rsp.len);
+		bt_mesh_model_send(mod, ctx, &rsp_copy, NULL, NULL);
 	}
+
+	model_send(mod, NULL, &rsp);
 }
 
 static void handle_setting_set(struct bt_mesh_model *mod,

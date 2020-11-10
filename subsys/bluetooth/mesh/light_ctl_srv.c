@@ -116,8 +116,12 @@ static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		/* If this is the same transaction, we don't need to send it
 		 * to the app, but we still have to respond with a status.
 		 */
-		srv->handlers->get(srv, NULL, &status);
-		goto respond;
+		if (ack) {
+			srv->handlers->get(srv, NULL, &status);
+			ctl_rsp(model, ctx, &status);
+		}
+
+		return;
 	}
 
 	transition_get(srv->model, buf, &transition);
@@ -155,17 +159,16 @@ static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		.remaining_time = status.remaining_time,
 	};
 
+	if (ack) {
+		ctl_rsp(model, ctx, &status);
+	}
+
 	light_ctl_pub(srv, &status);
 	(void)bt_mesh_light_temp_srv_pub(&srv->temp_srv, NULL,
 					     &temp_status);
 	(void)bt_mesh_lvl_srv_pub(&srv->temp_srv.lvl, NULL, &lvl_status);
 	(void)bt_mesh_lightness_srv_pub(&srv->lightness_srv, NULL,
 					&lightness_status);
-
-respond:
-	if (ack) {
-		ctl_rsp(model, ctx, &status);
-	}
 }
 
 static void handle_ctl_get(struct bt_mesh_model *model,
@@ -229,11 +232,19 @@ static void temp_range_set(struct bt_mesh_model *model,
 	uint16_t new_max = net_buf_simple_pull_le16(buf);
 
 	if ((new_min < BT_MESH_LIGHT_TEMP_MIN) || (new_min > new_max)) {
-		status = BT_MESH_MODEL_ERROR_INVALID_RANGE_MIN;
-		goto respond;
+		if (ack) {
+			status = BT_MESH_MODEL_ERROR_INVALID_RANGE_MIN;
+			temp_range_rsp(model, ctx, status);
+		}
+
+		return;
 	} else if (new_max > BT_MESH_LIGHT_TEMP_MAX) {
-		status = BT_MESH_MODEL_ERROR_INVALID_RANGE_MAX;
-		goto respond;
+		if (ack) {
+			status = BT_MESH_MODEL_ERROR_INVALID_RANGE_MAX;
+			temp_range_rsp(model, ctx, status);
+		}
+
+		return;
 	}
 
 	srv->temp_srv.temp_range.min = new_min;
@@ -246,12 +257,11 @@ static void temp_range_set(struct bt_mesh_model *model,
 						 &srv->temp_srv.temp_range);
 	}
 
-	(void)bt_mesh_light_ctl_range_pub(srv, NULL, status);
-
-respond:
 	if (ack) {
 		temp_range_rsp(model, ctx, status);
 	}
+
+	(void)bt_mesh_light_ctl_range_pub(srv, NULL, status);
 }
 
 static void handle_temp_range_get(struct bt_mesh_model *model,
@@ -315,6 +325,9 @@ static void default_set(struct bt_mesh_model *model,
 
 	if ((temp < BT_MESH_LIGHT_TEMP_MIN) ||
 	    (temp > BT_MESH_LIGHT_TEMP_MAX)) {
+		if (ack) {
+			default_rsp(model, ctx);
+		}
 		return;
 	}
 
@@ -327,11 +340,11 @@ static void default_set(struct bt_mesh_model *model,
 		srv->handlers->default_update(srv, ctx, &srv->default_params);
 	}
 
-	(void)bt_mesh_light_ctl_default_pub(srv, NULL);
-
 	if (ack) {
 		default_rsp(model, ctx);
 	}
+
+	(void)bt_mesh_light_ctl_default_pub(srv, NULL);
 }
 
 static void handle_default_get(struct bt_mesh_model *model,

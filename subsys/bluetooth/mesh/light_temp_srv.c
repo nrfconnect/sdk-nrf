@@ -61,8 +61,12 @@ static void temp_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		/* If this is the same transaction, we don't need to send it
 		 * to the app, but we still have to respond with a status.
 		 */
-		srv->handlers->get(srv, NULL, &status);
-		goto respond;
+		if (ack) {
+			srv->handlers->get(srv, NULL, &status);
+			rsp_status(model, ctx, &status);
+		}
+
+		return;
 	}
 
 	transition_get(srv->model, buf, &transition);
@@ -84,16 +88,14 @@ static void temp_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		.current = temp_to_lvl(srv, status.current.temp),
 		.target = temp_to_lvl(srv, status.target.temp),
 		.remaining_time = status.remaining_time,
-
 	};
 
-	(void)bt_mesh_light_temp_srv_pub(srv, NULL, &status);
-	(void)bt_mesh_lvl_srv_pub(&srv->lvl, NULL, &lvl_status);
-
-respond:
 	if (ack) {
 		rsp_status(model, ctx, &status);
 	}
+
+	(void)bt_mesh_light_temp_srv_pub(srv, NULL, &status);
+	(void)bt_mesh_lvl_srv_pub(&srv->lvl, NULL, &lvl_status);
 }
 
 static void temp_get_handle(struct bt_mesh_model *model,
@@ -165,8 +167,8 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	cb_msg.time = lvl_set->transition->time;
 	cb_msg.delay = lvl_set->transition->delay;
 
-    srv->handlers->set(srv, NULL, &cb_msg, &status);
-    srv->temp_last = temp;
+	srv->handlers->set(srv, NULL, &cb_msg, &status);
+	srv->temp_last = temp;
 
 	(void)bt_mesh_light_temp_srv_pub(srv, NULL, &status);
 
@@ -263,6 +265,8 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	}
 
 	srv->handlers->set(srv, ctx, &cb_msg, &status);
+
+	(void)bt_mesh_light_temp_srv_pub(srv, NULL, &status);
 
 	if (rsp) {
 		rsp->current = temp_to_lvl(srv, status.current.temp);

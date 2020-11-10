@@ -51,39 +51,6 @@ static void lvl_status_encode(struct net_buf_simple *buf,
 			      model_transition_encode(status->remaining_time));
 }
 
-static int pub(struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx,
-	       const struct bt_mesh_plvl_status *status)
-{
-	if (ctx == NULL) {
-		/* We'll always make an attempt to publish to the underlying
-		 * models as well, since a publish message typically indicates
-		 * a status change, which should always be published.
-		 * Ignoring the status codes, so that we're able to publish
-		 * in the highest model even if the underlying models don't have
-		 * publishing configured.
-		 */
-		struct bt_mesh_lvl_status lvl_status;
-		struct bt_mesh_onoff_status onoff_status;
-
-		lvl_status.current = POWER_TO_LVL(status->current);
-		lvl_status.target = POWER_TO_LVL(status->target);
-		lvl_status.remaining_time = status->remaining_time;
-		(void)bt_mesh_lvl_srv_pub(&srv->lvl, NULL, &lvl_status);
-
-		onoff_status.present_on_off = status->current > 0;
-		onoff_status.target_on_off = status->target > 0;
-		onoff_status.remaining_time = status->remaining_time;
-		(void)bt_mesh_onoff_srv_pub(&srv->ponoff.onoff, NULL,
-					    &onoff_status);
-	}
-
-	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PLVL_OP_LEVEL_STATUS,
-				 BT_MESH_PLVL_MSG_MAXLEN_LEVEL_STATUS);
-	lvl_status_encode(&msg, status);
-
-	return model_send(srv->plvl_model, ctx, &msg);
-}
-
 static void rsp_plvl_status(struct bt_mesh_model *mod,
 			    struct bt_mesh_msg_ctx *ctx,
 			    struct bt_mesh_plvl_status *status)
@@ -143,8 +110,6 @@ static void change_lvl(struct bt_mesh_plvl_srv *srv,
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 		bt_mesh_scene_invalidate(&srv->lvl.scene);
 	}
-
-	pub(srv, NULL, status);
 }
 
 static void plvl_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
@@ -164,18 +129,28 @@ static void plvl_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	set.power_lvl = net_buf_simple_pull_le16(buf);
 	tid = net_buf_simple_pull_u8(buf);
 
+	if (tid_check_and_update(&srv->tid, tid, ctx) != 0) {
+		/* If this is the same transaction, we don't need to send it
+		 * to the app, but we still have to respond with a status.
+		 */
+		if (ack) {
+			srv->handlers->power_get(srv, NULL, &status);
+			rsp_plvl_status(mod, ctx, &status);
+		}
+
+		return;
+	}
+
 	transition_get(srv->plvl_model, buf, &transition);
 	set.transition = &transition;
 
-	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
-		change_lvl(srv, ctx, &set, &status);
-	} else if (ack) {
-		srv->handlers->power_get(srv, NULL, &status);
-	}
+	change_lvl(srv, ctx, &set, &status);
 
 	if (ack) {
 		rsp_plvl_status(mod, ctx, &status);
 	}
+
+	(void)bt_mesh_plvl_srv_pub(srv, NULL, &status);
 }
 
 static void handle_plvl_set(struct bt_mesh_model *mod,
@@ -655,6 +630,9 @@ static int bt_mesh_plvl_srv_start(struct bt_mesh_model *mod)
 	}
 
 	change_lvl(srv, NULL, &set, &dummy);
+
+	(void)bt_mesh_plvl_srv_pub(srv, NULL, &dummy);
+
 	return 0;
 }
 #endif
@@ -672,7 +650,34 @@ int bt_mesh_plvl_srv_pub(struct bt_mesh_plvl_srv *srv,
 			 struct bt_mesh_msg_ctx *ctx,
 			 const struct bt_mesh_plvl_status *status)
 {
-	return pub(srv, ctx, status);
+	if (ctx == NULL) {
+		/* We'll always make an attempt to publish to the underlying
+		 * models as well, since a publish message typically indicates
+		 * a status change, which should always be published.
+		 * Ignoring the status codes, so that we're able to publish
+		 * in the highest model even if the underlying models don't have
+		 * publishing configured.
+		 */
+		struct bt_mesh_lvl_status lvl_status;
+		struct bt_mesh_onoff_status onoff_status;
+
+		lvl_status.current = POWER_TO_LVL(status->current);
+		lvl_status.target = POWER_TO_LVL(status->target);
+		lvl_status.remaining_time = status->remaining_time;
+		(void)bt_mesh_lvl_srv_pub(&srv->lvl, NULL, &lvl_status);
+
+		onoff_status.present_on_off = status->current > 0;
+		onoff_status.target_on_off = status->target > 0;
+		onoff_status.remaining_time = status->remaining_time;
+		(void)bt_mesh_onoff_srv_pub(&srv->ponoff.onoff, NULL,
+					    &onoff_status);
+	}
+
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PLVL_OP_LEVEL_STATUS,
+				 BT_MESH_PLVL_MSG_MAXLEN_LEVEL_STATUS);
+	lvl_status_encode(&msg, status);
+
+	return model_send(srv->plvl_model, ctx, &msg);
 }
 
 int _bt_mesh_plvl_srv_update_handler(struct bt_mesh_model *model)

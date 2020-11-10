@@ -167,6 +167,8 @@ static void light_set(struct bt_mesh_light_ctrl_srv *srv, uint16_t lvl,
 	struct bt_mesh_lightness_status dummy;
 
 	lightness_srv_change_lvl(srv->lightness, NULL, &set, &dummy);
+
+	bt_mesh_light_ctrl_srv_pub(srv, NULL);
 }
 
 static uint32_t curr_fade_time(struct bt_mesh_light_ctrl_srv *srv)

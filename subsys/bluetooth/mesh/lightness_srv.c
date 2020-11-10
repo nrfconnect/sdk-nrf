@@ -71,6 +71,7 @@ static int pub(struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx,
 	       const struct bt_mesh_lightness_status *status,
 	       enum light_repr repr)
 {
+	BT_DBG("Publishing Light %s to 0x%04x", repr_str[repr], srv->pub.addr);
 	BT_DBG("%u -> %u [%u ms]", status->current, status->target,
 	       status->remaining_time);
 
@@ -184,12 +185,6 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 
 	memset(status, 0, sizeof(*status));
 	srv->handlers->light_set(srv, ctx, set, status);
-
-	BT_DBG("Publishing Light %s to 0x%04x", repr_str[ACTUAL],
-	       srv->pub.addr);
-
-	/* Publishing is always done as an Actual, according to test spec. */
-	pub(srv, NULL, status, ACTUAL);
 }
 
 static void lightness_set(struct bt_mesh_model *mod,
@@ -217,24 +212,35 @@ static void lightness_set(struct bt_mesh_model *mod,
 	BT_DBG("Light set %s: %u [%u + %u ms]", repr_str[repr], set.lvl,
 	       set.transition->delay, set.transition->time);
 
-	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
-		/* According to the Mesh Model Specification section 6.2.3.1,
-		 * receiving a lightness set message should disable control.
+	if (tid_check_and_update(&srv->tid, tid, ctx) != 0) {
+		/* If this is the same transaction, we don't need to send it
+		 * to the app, but we still have to respond with a status.
 		 */
-		atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
-
-		lightness_srv_change_lvl(srv, ctx, &set, &status);
-
-		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-			bt_mesh_scene_invalidate(&srv->lvl.scene);
+		if (ack) {
+			srv->handlers->light_get(srv, NULL, &status);
+			rsp_lightness_status(mod, ctx, &status, repr);
 		}
-	} else if (ack) {
-		srv->handlers->light_get(srv, NULL, &status);
+
+		return;
+	}
+
+	/* According to the Mesh Model Specification section 6.2.3.1,
+	 * receiving a lightness set message should disable control.
+	 */
+	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+
+	lightness_srv_change_lvl(srv, ctx, &set, &status);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->lvl.scene);
 	}
 
 	if (ack) {
 		rsp_lightness_status(mod, ctx, &status, repr);
 	}
+
+	/* Publishing is always done as an Actual, according to test spec. */
+	pub(srv, NULL, &status, ACTUAL);
 }
 
 static void handle_actual_set(struct bt_mesh_model *mod,
@@ -496,7 +502,10 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	};
 	struct bt_mesh_lightness_status status = { 0 };
 
-    lightness_srv_change_lvl(srv, ctx, &set, &status);
+	lightness_srv_change_lvl(srv, ctx, &set, &status);
+
+	/* Publishing is always done as an Actual, according to test spec. */
+	pub(srv, NULL, &status, ACTUAL);
 
 	if (rsp) {
 		rsp->current = LIGHT_TO_LVL(status.current);
@@ -544,6 +553,9 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	};
 
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
+
+	/* Publishing is always done as an Actual, according to test spec. */
+	pub(srv, NULL, &status, ACTUAL);
 
 	/* Override "last" value to be able to make corrective deltas when
 	 * new_transaction is false. Note that the "last" value in persistent
@@ -608,6 +620,9 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
+	/* Publishing is always done as an Actual, according to test spec. */
+	pub(srv, NULL, &status, ACTUAL);
+
 	if (rsp) {
 		rsp->current = LIGHT_TO_LVL(status.current);
 		rsp->target = LIGHT_TO_LVL(status.target);
@@ -645,6 +660,9 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 	}
 
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
+
+	/* Publishing is always done as an Actual, according to test spec. */
+	pub(srv, NULL, &status, ACTUAL);
 
 	if (rsp) {
 		rsp->present_on_off = (status.current > 0);
@@ -779,6 +797,10 @@ static int bt_mesh_lightness_srv_start(struct bt_mesh_model *mod)
 	       set.lvl, transition.time);
 
 	lightness_srv_change_lvl(srv, NULL, &set, &dummy);
+
+	/* Publishing is always done as an Actual, according to test spec. */
+	pub(srv, NULL, &dummy, ACTUAL);
+
 	return 0;
 }
 #endif

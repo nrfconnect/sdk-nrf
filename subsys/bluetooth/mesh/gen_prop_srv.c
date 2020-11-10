@@ -193,7 +193,11 @@ static void owner_property_set(struct bt_mesh_model *mod,
 		/* If the prop doesn't exist, we should only send the ID as a
 		 * response.
 		 */
-		goto respond;
+		if (ack) {
+			bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
+		}
+
+		return;
 	}
 
 	set_user_access(srv, prop, user_access);
@@ -225,13 +229,12 @@ static void owner_property_set(struct bt_mesh_model *mod,
 		}
 	}
 
-	bt_mesh_prop_srv_pub(srv, NULL, &value);
-
 	net_buf_simple_add(&rsp, value.size);
-respond:
 	if (ack) {
 		bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
 	}
+
+	bt_mesh_prop_srv_pub(srv, NULL, &value);
 }
 
 static void handle_owner_property_set(struct bt_mesh_model *mod,
@@ -452,7 +455,11 @@ static void user_property_set(struct bt_mesh_model *mod,
 		/* If the prop doesn't exist, we should only send the ID as a
 		 * response.
 		 */
-		goto respond;
+		if (ack) {
+			bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
+		}
+
+		return;
 	}
 
 	net_buf_simple_add_u8(&rsp, prop->user_access);
@@ -462,7 +469,11 @@ static void user_property_set(struct bt_mesh_model *mod,
 		/* IF write is not supported, we should only send the ID
 		 * and user_access as a response.
 		 */
-		goto respond;
+		if (ack) {
+			bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
+		}
+
+		return;
 	}
 
 	struct bt_mesh_prop_val value = {
@@ -482,13 +493,11 @@ static void user_property_set(struct bt_mesh_model *mod,
 	}
 
 	net_buf_simple_add(&rsp, value.size);
-
-	bt_mesh_prop_srv_pub(user_srv, NULL, &value);
-
-respond:
 	if (ack) {
 		bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
 	}
+
+	bt_mesh_prop_srv_pub(user_srv, NULL, &value);
 }
 
 static void handle_user_property_set(struct bt_mesh_model *mod,

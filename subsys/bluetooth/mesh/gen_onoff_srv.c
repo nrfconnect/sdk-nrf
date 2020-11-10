@@ -64,7 +64,14 @@ static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	uint8_t on_off = net_buf_simple_pull_u8(buf);
 	uint8_t tid = net_buf_simple_pull_u8(buf);
 
-	if (on_off > 1) {
+	if (on_off >= 0x02) {
+		/* Generic OnOff states:
+		 *  Value           | Description
+		 * -----------------|-----------------
+		 *  0x00            | Off
+		 *  0x01            | On
+		 *  0x02-0xFF       | Prohibited
+		 */
 		return;
 	}
 
@@ -74,8 +81,12 @@ static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		/* If this is the same transaction, we don't need to send it
 		 * to the app, but we still have to respond with a status.
 		 */
-		srv->handlers->get(srv, NULL, &status);
-		goto respond;
+		if (ack) {
+			srv->handlers->get(srv, NULL, &status);
+			rsp_status(model, ctx, &status);
+		}
+
+		return;
 	}
 
 	transition_get(srv->model, buf, &transition);
@@ -87,12 +98,11 @@ static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		bt_mesh_scene_invalidate(&srv->scene);
 	}
 
-	(void)bt_mesh_onoff_srv_pub(srv, NULL, &status);
-
-respond:
 	if (ack) {
 		rsp_status(model, ctx, &status);
 	}
+
+	(void)bt_mesh_onoff_srv_pub(srv, NULL, &status);
 }
 
 static void handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
