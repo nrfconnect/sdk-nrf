@@ -24,14 +24,13 @@ Any changes to the NDEF message update the NDEF message file, which is stored in
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF52833DK|
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833
 
-* Smartphone or tablet with NFC Tools application (or equivalent)
+The sample also requires a smartphone or tablet with NFC Tools application (or equivalent).
 
 User interface
 **************
