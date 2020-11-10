@@ -104,7 +104,7 @@ The sample uses the following cloud events:
 * :c:enumerator:`CLOUD_EVT_CONNECTED` : Connected to the cloud service.
 
 
-* :c:enumerator:`CLOUD_EVT_READY` : Ready for cloud communication.
+* :c:enumerator:`CLOUD_EVT_EP_READY` : Ready for cloud communication.
 
 
 * :c:enumerator:`CLOUD_EVT_DISCONNECTED` : Disconnected from the cloud service.
@@ -131,7 +131,7 @@ After programming the sample to your device, test it by performing the following
 1. Open a web browser and navigate to the correct device in `nRF Cloud`_.
 #. Connect the USB cable and power on or reset your device.
 #. Open a terminal emulator and observe that the sample has started.
-   Wait until the "I: CLOUD_EVT_READY" status appears in the terminal.
+   Wait until the "I: CLOUD_EVT_EP_READY" status appears in the terminal.
 
    .. code-block:: console
 
@@ -147,7 +147,7 @@ After programming the sample to your device, test it by performing the following
       I: CLOUD_EVT_DATA_RECEIVED
       I: Data received from cloud: {"desired":{"pairing":{"state":"paired","topics":{"d2c":..
       I: CLOUD_EVT_PAIR_DONE
-      I: CLOUD_EVT_READY
+      I: CLOUD_EVT_EP_READY
 
     The device is now connected to nRF Cloud.
 

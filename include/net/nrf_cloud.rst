@@ -186,7 +186,7 @@ If the device is not associated with an nRF Cloud account, a :c:enumerator:`CLOU
 The device must wait until it is added to an account, which is indicated by the :c:enumerator:`CLOUD_EVT_PAIR_DONE` event.
 If a device pair request is received, the device must disconnect and reconnect after receiving the :c:enumerator:`CLOUD_EVT_PAIR_DONE` event.
 This is necessary because the updated policy of the cloud becomes effective only on a new connection.
-Following the :c:enumerator:`CLOUD_EVT_PAIR_DONE` event, the Cloud API sends a :c:enumerator:`CLOUD_EVT_READY` event to indicate that the cloud is ready to receive data from the device.
+Following the :c:enumerator:`CLOUD_EVT_PAIR_DONE` event, the Cloud API sends a :c:enumerator:`CLOUD_EVT_EP_READY` event to indicate that the cloud is ready to receive data from the device.
 
 Disconnection from the Cloud
 ============================

@@ -65,9 +65,9 @@ static void cloud_update_work_fn(struct k_work *work)
 	 * device twin(Azure) or device shadow (AWS).
 	 */
 	if (CONFIG_CLOUD_BACKEND == "NRF_CLOUD") {
-		msg.endpoint.type = CLOUD_EP_TOPIC_MSG;
+		msg.endpoint.type = CLOUD_EP_MSG;
 	} else {
-		msg.endpoint.type = CLOUD_EP_TOPIC_STATE;
+		msg.endpoint.type = CLOUD_EP_STATE;
 	}
 
 	err = cloud_send(cloud_backend, &msg);
@@ -97,8 +97,8 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		LOG_INF("CLOUD_EVT_CONNECTED");
 		cloud_connected = true;
 		break;
-	case CLOUD_EVT_READY:
-		LOG_INF("CLOUD_EVT_READY");
+	case CLOUD_EVT_EP_READY:
+		LOG_INF("CLOUD_EVT_EP_READY");
 
 		k_delayed_work_cancel(&connect_work);
 

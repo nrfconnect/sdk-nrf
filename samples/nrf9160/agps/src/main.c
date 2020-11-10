@@ -37,7 +37,7 @@ static void cloud_send_msg(void)
 
 	struct cloud_msg msg = {
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_TOPIC_MSG,
+		.endpoint.type = CLOUD_EP_MSG,
 		.buf = CONFIG_CLOUD_MESSAGE,
 		.len = sizeof(CONFIG_CLOUD_MESSAGE)
 	};
@@ -87,7 +87,7 @@ static void send_service_info(void)
 	int err;
 	struct cloud_msg msg = {
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_TOPIC_STATE,
+		.endpoint.type = CLOUD_EP_STATE,
 		.buf = SERVICE_INFO_GPS,
 		.len = strlen(SERVICE_INFO_GPS)
 	};
@@ -115,8 +115,8 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_CONNECTED:
 		LOG_INF("CLOUD_EVT_CONNECTED");
 		break;
-	case CLOUD_EVT_READY:
-		LOG_INF("CLOUD_EVT_READY");
+	case CLOUD_EVT_EP_READY:
+		LOG_INF("CLOUD_EVT_EP_READY");
 		/* Update nRF Cloud with GPS service info signifying that it
 		 * has GPS capabilities. */
 		send_service_info();
@@ -248,7 +248,7 @@ static void send_nmea(char *nmea)
 	char buf[150];
 	struct cloud_msg msg = {
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_TOPIC_MSG,
+		.endpoint.type = CLOUD_EP_MSG,
 		.buf = buf,
 	};
 

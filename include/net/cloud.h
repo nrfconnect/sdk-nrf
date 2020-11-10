@@ -15,33 +15,39 @@
 
 #include <zephyr.h>
 
-/**@brief Cloud backend states. */
-enum cloud_state {
-	CLOUD_STATE_DISCONNECTED,
-	CLOUD_STATE_DISCONNECTING,
-	CLOUD_STATE_CONNECTED,
-	CLOUD_STATE_CONNECTING,
-	CLOUD_STATE_BUSY,
-	CLOUD_STATE_ERROR,
-	CLOUD_STATE_COUNT
-};
-
 /**@brief Cloud events that can be notified asynchronously by the backend. */
 enum cloud_event_type {
+	/** The cloud backend is connectiong to the configured cloud vendor. */
 	CLOUD_EVT_CONNECTING,
+	/** The cloud backend is connected to cloud. */
 	CLOUD_EVT_CONNECTED,
+	/** The cloud backend got disconnected from cloud. */
 	CLOUD_EVT_DISCONNECTED,
-	CLOUD_EVT_READY,
+	/** The cloud backend has established the appropriate endpoints for the
+	 *  connection.
+	 */
+	CLOUD_EVT_EP_READY,
+	/** An error has occurred in the cloud backend. */
 	CLOUD_EVT_ERROR,
+	/** Data has been sent to cloud. */
 	CLOUD_EVT_DATA_SENT,
+	/** Data has been received from cloud. */
 	CLOUD_EVT_DATA_RECEIVED,
+	/** Cloud is not associated with the device. Pairing requested. */
 	CLOUD_EVT_PAIR_REQUEST,
+	/** Pairing with cloud has been carried out. */
 	CLOUD_EVT_PAIR_DONE,
+	/** FOTA has started. */
 	CLOUD_EVT_FOTA_START,
+	/** FOTA has finished. */
 	CLOUD_EVT_FOTA_DONE,
+	/** The underlying FOTA process has a pending image erase. */
 	CLOUD_EVT_FOTA_ERASE_PENDING,
+	/** The FOTA image erase has finished. */
 	CLOUD_EVT_FOTA_ERASE_DONE,
+	/** FOTA download progress event. */
 	CLOUD_EVT_FOTA_DL_PROGRESS,
+
 	CLOUD_EVT_COUNT
 };
 
@@ -53,6 +59,7 @@ enum cloud_disconnect_reason {
 	CLOUD_DISCONNECT_INVALID_REQUEST,
 	/** Miscellaneous error */
 	CLOUD_DISCONNECT_MISC,
+
 	CLOUD_DISCONNECT_COUNT
 };
 
@@ -61,18 +68,18 @@ enum cloud_qos {
 	CLOUD_QOS_AT_MOST_ONCE,
 	CLOUD_QOS_AT_LEAST_ONCE,
 	CLOUD_QOS_EXACTLY_ONCE,
+
 	CLOUD_QOS_COUNT
 };
 
 /**@brief Cloud endpoint type. */
 enum cloud_endpoint_type {
-	CLOUD_EP_TOPIC_MSG,
-	CLOUD_EP_TOPIC_STATE,
-	CLOUD_EP_TOPIC_STATE_DELETE,
-	CLOUD_EP_TOPIC_STATE_GET,
-	CLOUD_EP_TOPIC_PAIR,
-	CLOUD_EP_TOPIC_BATCH,
-	CLOUD_EP_URI,
+	CLOUD_EP_MSG,
+	CLOUD_EP_STATE,
+	CLOUD_EP_STATE_DELETE,
+	CLOUD_EP_STATE_GET,
+	CLOUD_EP_PAIR,
+	CLOUD_EP_BATCH,
 	CLOUD_EP_COMMON_COUNT,
 	CLOUD_EP_PRIV_START = CLOUD_EP_COMMON_COUNT,
 	CLOUD_EP_PRIV_END = INT16_MAX

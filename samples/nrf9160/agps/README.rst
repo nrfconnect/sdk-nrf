@@ -158,7 +158,7 @@ Testing
 	  I: CLOUD_EVT_CONNECTED
 	  I: CLOUD_EVT_DATA_RECEIVED
 	  I: CLOUD_EVT_PAIR_DONE
-	  I: CLOUD_EVT_READY
+	  I: CLOUD_EVT_EP_READY
 	  I: CLOUD_EVT_DATA_RECEIVED
 	  D: Sent A-GPS data to modem, type: 3
 	  D: Sent A-GPS data to modem, type: 3
