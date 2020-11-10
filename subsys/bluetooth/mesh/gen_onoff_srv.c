@@ -78,12 +78,7 @@ static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		goto respond;
 	}
 
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, &transition);
-	} else {
-		bt_mesh_dtt_srv_transition_get(srv->model, &transition);
-	}
-
+	transition_get(srv->model, buf, &transition);
 	set.transition = &transition;
 
 	srv->handlers->set(srv, ctx, &set, &status);

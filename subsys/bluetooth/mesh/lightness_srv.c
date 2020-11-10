@@ -105,18 +105,6 @@ static int pub(struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx,
 	return model_send(srv->lightness_model, ctx, &msg);
 }
 
-static void transition_get(struct bt_mesh_lightness_srv *srv,
-			   struct bt_mesh_model_transition *transition,
-			   struct net_buf_simple *buf)
-{
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, transition);
-	} else {
-		bt_mesh_dtt_srv_transition_get(srv->lightness_model,
-					       transition);
-	}
-}
-
 static void rsp_lightness_status(struct bt_mesh_model *mod,
 				 struct bt_mesh_msg_ctx *ctx,
 				 struct bt_mesh_lightness_status *status,
@@ -222,7 +210,8 @@ static void lightness_set(struct bt_mesh_model *mod,
 
 	set.lvl = repr_to_light(net_buf_simple_pull_le16(buf), repr);
 	tid = net_buf_simple_pull_u8(buf);
-	transition_get(srv, &transition, buf);
+
+	transition_get(srv->lightness_model, buf, &transition);
 	set.transition = &transition;
 
 	BT_DBG("Light set %s: %u [%u + %u ms]", repr_str[repr], set.lvl,

@@ -157,6 +157,20 @@ model_transition_is_active(const struct bt_mesh_model_transition *transition)
 	return (transition->time > 0 || transition->delay > 0);
 }
 
+/** @brief Get the transition parameters from the received message buffer if
+ *         the message contains them or get the default transition parameters
+ *         for the given model.
+ *
+ * @param[in] model       Model instance receiving the message.
+ * @param[in] buf         Message buffer containing the message payload since
+ *                        the position of transition time field, even if the
+ *                        message doesn't really contain transition parameters.
+ * @param[out] transition Transition buffer.
+ */
+void transition_get(struct bt_mesh_model *model,
+			struct net_buf_simple *buf,
+			struct bt_mesh_model_transition *transition);
+
 #endif /* MODEL_UTILS_H__ */
 
 /** @} */

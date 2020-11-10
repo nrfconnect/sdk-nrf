@@ -91,6 +91,11 @@ static void scene_set(struct bt_mesh_scene_srv *srv, uint16_t scene)
 static void scene_recall(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf, bool ack)
 {
+	if (buf->len != BT_MESH_SCENE_MSG_MINLEN_RECALL &&
+		buf->len != BT_MESH_SCENE_MSG_MAXLEN_RECALL) {
+		return;
+	}
+
 	struct bt_mesh_scene_srv *srv = mod->user_data;
 	struct bt_mesh_model_transition transition;
 	enum bt_mesh_scene_status status;
@@ -104,13 +109,8 @@ static void scene_recall(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	tid = net_buf_simple_pull_u8(buf);
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, &transition);
-	} else if (!buf->len) {
-		bt_mesh_dtt_srv_transition_get(mod, &transition);
-	} else {
-		return;
-	}
+
+	transition_get(mod, buf, &transition);
 
 	if (tid_check_and_update(&srv->tid, tid, ctx)) {
 		BT_DBG("Duplicate TID");

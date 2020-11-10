@@ -120,11 +120,7 @@ static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		goto respond;
 	}
 
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, &transition);
-	} else {
-		bt_mesh_dtt_srv_transition_get(srv->model, &transition);
-	}
+	transition_get(srv->model, buf, &transition);
 
 	srv->temp_srv.temp_last = temp;
 	srv->temp_srv.delta_uv_last = delta_uv;

@@ -152,3 +152,16 @@ bool bt_mesh_model_pub_is_unicast(const struct bt_mesh_model *mod)
 {
 	return mod->pub && BT_MESH_ADDR_IS_UNICAST(mod->pub->addr);
 }
+
+void transition_get(struct bt_mesh_model *model,
+			struct net_buf_simple *buf,
+			struct bt_mesh_model_transition *transition)
+{
+	if (buf->len == 2) {
+		/* Message buffer contains transition parameters. */
+		model_transition_buf_pull(buf, transition);
+	} else {
+		/* Message buffer doesn't contain transition parameters. */
+		bt_mesh_dtt_srv_transition_get(model, transition);
+	}
+}
