@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 /** Maximum permissible transition time in milliseconds */
-#define BT_MESH_MODEL_TRANSITION_TIME_MAX_MS (K_MINUTES(10) * (0x3e))
+#define BT_MESH_MODEL_TRANSITION_TIME_MAX_MS (10 * 60 * MSEC_PER_SEC * 0x3e)
 
 /** Generic Transition parameters for the model messages. */
 struct bt_mesh_model_transition {
