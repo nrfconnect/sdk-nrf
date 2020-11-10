@@ -65,6 +65,10 @@ int bt_mesh_dtt_get(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
 int bt_mesh_dtt_set(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
 		    uint32_t transition_time, int32_t *rsp_transition_time)
 {
+	if (transition_time > BT_MESH_MODEL_TRANSITION_TIME_MAX_MS) {
+		return -EINVAL;
+	}
+
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_DTT_OP_SET,
 				 BT_MESH_DTT_MSG_LEN_SET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_DTT_OP_SET);
@@ -79,6 +83,10 @@ int bt_mesh_dtt_set(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
 int bt_mesh_dtt_set_unack(struct bt_mesh_dtt_cli *cli,
 			  struct bt_mesh_msg_ctx *ctx, uint32_t transition_time)
 {
+	if (transition_time > BT_MESH_MODEL_TRANSITION_TIME_MAX_MS) {
+		return -EINVAL;
+	}
+
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_DTT_OP_SET_UNACK,
 				 BT_MESH_DTT_MSG_LEN_SET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_DTT_OP_SET_UNACK);
