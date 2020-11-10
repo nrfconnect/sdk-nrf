@@ -11,7 +11,7 @@ Every released version of the LwM2M carrier library is considered for certificat
 The LwM2M carrier library is certified together with specific versions of the modem firmware and the |NCS|.
 Refer to the :ref:`liblwm2m_carrier_changelog` or the :ref:`versiondep_table` to check the certification status of a particular version of the library, and to see the version of the |NCS| it was released with.
 
-For a list of all the carrier certifications (including those certifications with no dependency on the LwM2M carrier library), see the `nRF9160 compatibility matrix`_.
+For a list of all the carrier certifications (including those certifications with no dependency on the LwM2M carrier library), see the `Mobile network operator certifications`_.
 
 .. note::
 
