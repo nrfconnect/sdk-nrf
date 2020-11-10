@@ -85,11 +85,11 @@ Complete the following steps to build the documentation output:
 
    Alternatively, if you want to build each documentation set separately, complete the following steps:
 
-   a. Run ninja to build the Kconfig documentation:
+   a. Run ninja to build the configuration reference documentation:
 
       .. code-block:: console
 
-         ninja kconfig-html
+         ninja config-html
 
    #. Run ninja to build the Zephyr documentation:
 

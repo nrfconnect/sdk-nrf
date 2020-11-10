@@ -32,9 +32,12 @@ if "ZEPHYR_RST_SRC" not in os.environ:
     sys.exit("$ZEPHYR_RST_SRC environment variable undefined.")
 ZEPHYR_RST_SRC = os.path.abspath(os.environ["ZEPHYR_RST_SRC"])
 
-if "KCONFIG_OUTPUT" not in os.environ:
-    sys.exit("$KCONFIG_OUTPUT environment variable undefined.")
-KCONFIG_OUTPUT = os.path.abspath(os.environ["KCONFIG_OUTPUT"])
+if "CONFIGURATION_OUTPUT" not in os.environ:
+    with open('/tmp/marti', 'w') as f:
+        import pprint
+        pprint.pprint(dict(os.environ), f)
+    sys.exit("$CONFIGURATION_OUTPUT environment variable undefined.")
+CONFIGURATION_OUTPUT = os.path.abspath(os.environ["CONFIGURATION_OUTPUT"])
 
 NRF_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
@@ -270,12 +273,14 @@ html_show_copyright = True
 # If true, license is shown in the HTML footer. Default is True.
 html_show_license = True
 
-# Link the Kconfig docs with Intersphinx so that references to Kconfig symbols
-# (via :option:`CONFIG_FOO`) turn into links
+# Link the Configuration Reference docs with Intersphinx so that
+# references to Kconfig symbols (via :option:`CONFIG_FOO`) turn into
+# links, etc.
 intersphinx_mapping = {
-    'kconfig': (os.path.relpath(KCONFIG_OUTPUT, ZEPHYR_OUTPUT),
-                os.path.join(os.path.relpath(KCONFIG_OUTPUT, ZEPHYR_RST_SRC),
-                             'objects.inv'))
+    'config': (os.path.relpath(CONFIGURATION_OUTPUT, ZEPHYR_OUTPUT),
+               os.path.join(os.path.relpath(CONFIGURATION_OUTPUT,
+                                            ZEPHYR_RST_SRC),
+                            'objects.inv'))
 }
 
 # If true, an OpenSearch description file will be output, and all pages will

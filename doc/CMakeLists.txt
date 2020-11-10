@@ -68,8 +68,12 @@ set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(MCUBOOT_BINARY_DIR ${CMAKE_BINARY_DIR}/mcuboot)
 set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
 
-# Output directory for the shared Kconfig documentation
-set(KCONFIG_BINARY_DIR ${CMAKE_BINARY_DIR}/Kconfig)
+# Output directory for the Configuration Reference, which includes
+# shared Kconfig and devicetree documentation
+set(CONFIGURATION_BINARY_DIR ${CMAKE_BINARY_DIR}/config)
+# Output subdirectory for generated .rst files and the index file we
+# version in nrf/doc/config/index.rst.
+set(CONFIGURATION_RST_OUT ${CONFIGURATION_BINARY_DIR}/rst)
 
 # HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
@@ -82,12 +86,12 @@ file(MAKE_DIRECTORY ${HTML_DIR})
 # common Sphinx HTML output folder.
 #
 
-# Parameters to doc/CMakeLists.txt in Zephyr. KCONFIG_OUTPUT is used to find
-# objects.inv from the Kconfig docs, to link the Zephyr docs to the Kconfig
-# docs.
+# Parameters to doc/CMakeLists.txt in Zephyr. CONFIGURATION_OUTPUT is
+# used to find objects.inv from the configuration reference docs, to
+# allow inter-docset linking with intersphinx.
 set(SPHINXOPTS -c ${NRF_BASE}/doc/zephyr)
 set(SPHINX_OUTPUT_DIR ${HTML_DIR}/zephyr)
-set(KCONFIG_OUTPUT ${HTML_DIR}/kconfig)
+set(CONFIGURATION_OUTPUT ${HTML_DIR}/config)
 
 # Get access to the 'html' target from doc/CMakeLists.txt in Zephyr
 add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
@@ -101,7 +105,7 @@ add_dependencies(zephyr html)
 # Add 'clean-zephyr', 'clean-nrf', etc., targets
 #
 
-foreach(target zephyr nrf mcuboot nrfxlib kconfig)
+foreach(target zephyr nrf mcuboot nrfxlib config)
   set(TARGET_BINARY_DIR ${CMAKE_BINARY_DIR}/${target})
   # Cleanup build output
   add_custom_target(
@@ -231,7 +235,7 @@ set(NRF_SPHINX_BUILD_HTML_COMMAND
   NRF_BASE=${NRF_BASE}
   NRF_BUILD=${NRF_BINARY_DIR}
   NRF_OUTPUT=${HTML_DIR}/nrf
-  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
+  CONFIGURATION_OUTPUT=${CONFIGURATION_OUTPUT}
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
   NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
@@ -300,7 +304,7 @@ add_custom_target(
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
   MCUBOOT_RST_SRC=${MCUBOOT_RST_OUT}/doc/mcuboot
-  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
+  CONFIGURATION_OUTPUT=${CONFIGURATION_OUTPUT}
   ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html ${MCUBOOT_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${HTML_DIR}/mcuboot
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
@@ -380,7 +384,7 @@ add_custom_target(
   NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
   NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
   NRFXLIB_RST_SRC=${NRFXLIB_RST_OUT}
-  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
+  CONFIGURATION_OUTPUT=${CONFIGURATION_OUTPUT}
   ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
 
   # Merge the Doxygen and Sphinx logs into a single file
@@ -402,29 +406,34 @@ add_custom_target(
   NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
   NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
   NRFXLIB_RST_SRC=${NRFXLIB_RST_OUT}
-  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
+  CONFIGURATION_OUTPUT=${CONFIGURATION_OUTPUT}
   ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b inventory ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 add_dependencies(nrfxlib-inventory nrfxlib-content nrfxlib-doxy)
 
 #
-# Add targets for building the shared Kconfig documentation
+# Add targets for building the shared Configuration Reference (Kconfig
+# and devicetree bindings documentation).
 #
 
-# The Kconfig documentation is a separate documentation set that's shared
-# between all modules (nRF, Zephyr, etc.). This makes it possible to link to
-# Kconfig symbols regardless of where they are defined.
+# The Kconfig documentation is shared between all modules (nRF,
+# Zephyr, etc.). This makes it possible to link to Kconfig symbols
+# regardless of where they are defined.
 #
 # We rely on the Zephyr Kconfig files pulling in the other Kconfig files, and
 # use the --modules option to gen_kconfig_rest.py to split the documentation
 # into a separate page for each module.
 
-set(KCONFIG_RST_OUT ${KCONFIG_BINARY_DIR}/rst)
+set(KCONFIG_BINARY_DIR ${CMAKE_BINARY_DIR}/Kconfig)
+set(KCONFIG_RST_OUT    ${CONFIGURATION_RST_OUT}/Kconfig)
 
 # The 'kconfig-content' target uses gen_kconfig_rest.py to generate
 # .rst files for all Kconfig symbols, as well as index pages that
 # point to them
+#
+# No 'kconfig' target exists, because it clashes with the imported 'kconfig'
+# target from the Zephyr repository
 add_custom_target(
   kconfig-content
   COMMAND ${CMAKE_COMMAND} -E make_directory ${KCONFIG_RST_OUT}
@@ -451,31 +460,78 @@ add_custom_target(
   VERBATIM
 )
 
-# No 'kconfig' target exists, because it clashes with the imported 'kconfig'
-# target from the Zephyr repository
+# The devicetree bindings index is in the same documentation set as
+# the Kconfig reference. This makes it possible to centralize the
+# documentation for DT bindings regardless of where they are defined.
+
+set(DEVICETREE_RST_OUT ${CONFIGURATION_RST_OUT}/devicetree)
+set(DTS_ROOT_ARGS --dts-root ${ZEPHYR_BASE} --dts-root ${NRF_BASE})
+set(GEN_DEVICETREE_REST_SCRIPT ${ZEPHYR_BASE}/doc/scripts/gen_devicetree_rest.py)
+set(GEN_DEVICETREE_REST_ZEPHYR_DOCSET zephyr)
+
+# The 'devicetree-content' target uses gen_devicetree_rest.py to generate
+# .rst files for all devicetree bindings, as well as an index page that
+# points to them
+add_custom_target(
+  devicetree-content
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${DEVICETREE_RST_OUT}
+  COMMAND ${CMAKE_COMMAND} -E env
+    PYTHONPATH=${ZEPHYR_BASE}/scripts/dts${SEP}$ENV{PYTHONPATH}
+    GEN_DEVICETREE_REST_ZEPHYR_DOCSET=${GEN_DEVICETREE_REST_ZEPHYR_DOCSET}
+      ${PYTHON_EXECUTABLE} ${GEN_DEVICETREE_REST_SCRIPT}
+        --vendor-prefixes ${ZEPHYR_BASE}/dts/bindings/vendor-prefixes.txt
+        ${DTS_ROOT_ARGS} ${DEVICETREE_RST_OUT}
+  VERBATIM
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  COMMENT "Running gen_devicetree_rest.py ${DEVICETREE_RST_OUT}"
+  USES_TERMINAL
+)
+
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${GEN_DEVICETREE_REST_SCRIPT})
+
+# This custom target copies the top-level Configuration Reference
+# index page to the output directory. We don't need extract_content.py
+# because there's just one file.
+
+set(CONFIGURATION_DOC_DIR ${NRF_BASE}/doc/config)
+set(CONFIGURATION_INDEX_IN ${CONFIGURATION_DOC_DIR}/index.rst)
+set(CONFIGURATION_INDEX_OUT ${CONFIGURATION_RST_OUT}/index.rst)
+
+set(CONFIGURATION_EXTRACT_CONTENT_COMMAND
+  ${CMAKE_COMMAND} -E copy_if_different
+  ${CONFIGURATION_INDEX_IN} ${CONFIGURATION_INDEX_OUT}
+)
 
 add_custom_target(
-  kconfig-html
+  config-index-content
+  COMMAND ${CONFIGURATION_EXTRACT_CONTENT_COMMAND}
+  BYPRODUCTS ${CONFIGURATION_INDEX_OUT}
+  DEPENDS ${CONFIGURATION_INDEX_IN}
+)
+
+add_custom_target(
+  config-html
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CONFIGURATION_BINARY_DIR}
   COMMAND ${CMAKE_COMMAND} -E env
     ZEPHYR_BASE=${ZEPHYR_BASE}
     ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
       ${SPHINXBUILD}
         -b html
-        -c ${NRF_BASE}/doc/kconfig
-        -d ${KCONFIG_BINARY_DIR}/doctrees
+        -c ${NRF_BASE}/doc/config
+        -d ${CONFIGURATION_BINARY_DIR}/doctrees
         -N
-        -w ${KCONFIG_BINARY_DIR}/sphinx.log
-        # The Kconfig reference build doesn't use Breathe, so we can safely
-        # parallelize it
+        -w ${CONFIGURATION_BINARY_DIR}/sphinx.log
+        # The Kconfig and devicetree reference builds don't use
+        # Breathe, so we can safely parallelize it
         -j auto
-        ${KCONFIG_RST_OUT}
-        ${HTML_DIR}/kconfig
+        ${CONFIGURATION_RST_OUT}
+        ${HTML_DIR}/config
 )
-add_dependencies(kconfig-html kconfig-content)
+add_dependencies(config-html kconfig-content devicetree-content config-index-content)
 
 add_custom_target(
   build-all
-  COMMAND ${CMAKE_MAKE_PROGRAM} kconfig-html
+  COMMAND ${CMAKE_MAKE_PROGRAM} config-html
   COMMAND ${CMAKE_MAKE_PROGRAM} zephyr
   COMMAND ${CMAKE_MAKE_PROGRAM} mcuboot
   COMMAND ${CMAKE_MAKE_PROGRAM} nrfxlib-inventory

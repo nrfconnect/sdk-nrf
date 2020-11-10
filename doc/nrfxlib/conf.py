@@ -49,9 +49,9 @@ if "NRFXLIB_RST_SRC" not in os.environ:
     sys.exit("$NRFXLIB_RST_SRC environment variable undefined.")
 NRFXLIB_RST_SRC = os.path.abspath(os.environ["NRFXLIB_RST_SRC"])
 
-if "KCONFIG_OUTPUT" not in os.environ:
-    sys.exit("$KCONFIG_OUTPUT environment variable undefined.")
-KCONFIG_OUTPUT = os.path.abspath(os.environ["KCONFIG_OUTPUT"])
+if "CONFIGURATION_OUTPUT" not in os.environ:
+    sys.exit("$CONFIGURATION_OUTPUT environment variable undefined.")
+CONFIGURATION_OUTPUT = os.path.abspath(os.environ["CONFIGURATION_OUTPUT"])
 
 # -- General configuration ------------------------------------------------
 
@@ -163,12 +163,13 @@ html_show_copyright = True
 # If true, license is shown in the HTML footer. Default is True.
 html_show_license = True
 
-# Link the Kconfig docs with Intersphinx so that references to Kconfig symbols
-# (via :option:`CONFIG_FOO`) turn into links
+# Link the Configuration Reference docs with Intersphinx so that
+# references to Kconfig symbols (via :option:`CONFIG_FOO`) turn into
+# links, etc.
 intersphinx_mapping = {
-    'kconfig': (
-        path.relpath(KCONFIG_OUTPUT, NRFXLIB_OUTPUT),
-        path.join(path.relpath(KCONFIG_OUTPUT, NRFXLIB_RST_SRC),
+    'config': (
+        path.relpath(CONFIGURATION_OUTPUT, NRFXLIB_OUTPUT),
+        path.join(path.relpath(CONFIGURATION_OUTPUT, NRFXLIB_RST_SRC),
                   'objects.inv')),
 }
 

@@ -22,3 +22,8 @@
 .wy-menu-vertical li.current a {
  color: #e82424;
 }
+
+/* multi-column support, from zephyr (for DT bindings) */
+.rst-columns {
+   column-width: 18em;
+}

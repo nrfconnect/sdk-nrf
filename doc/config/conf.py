@@ -1,4 +1,4 @@
-# Kconfig documentation build configuration file
+# Configuration Reference documentation build configuration file
 
 import os
 
@@ -10,8 +10,8 @@ NRF_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 master_doc = 'index'
 
 # General information about the project.
-project = 'Kconfig reference'
-copyright = '2019, Nordic Semiconductor'
+project = 'Configuration Reference'
+copyright = '2020, Nordic Semiconductor'
 author = 'Nordic Semiconductor'
 
 # Get rid of version number while keeping the spacing the same as for other
@@ -22,15 +22,20 @@ version = '&nbsp;'
 # directories to ignore when looking for source files.
 exclude_patterns = ['_build']
 
+extensions = [
+    # Used by the generated devicetree documentation.
+    'sphinx_tabs.tabs'
+]
+
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = "kconfig"
+html_theme = "config"
 html_theme_path = ['{}/doc/themes'.format(NRF_BASE)]
 html_favicon = '{}/doc/static/images/favicon.ico'.format(NRF_BASE)
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "Kconfig reference"
+html_title = "Configuration Reference"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -61,5 +66,5 @@ html_show_license = True
 
 def setup(app):
     app.add_css_file("css/common.css")
-    app.add_css_file("css/kconfig.css")
+    app.add_css_file("css/config.css")
     app.add_js_file("js/ncs.js")

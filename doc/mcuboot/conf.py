@@ -50,9 +50,9 @@ if "MCUBOOT_RST_SRC" not in os.environ:
     sys.exit("$MCUBOOT_RST_SRC environment variable undefined.")
 MCUBOOT_RST_SRC = os.path.abspath(os.environ["MCUBOOT_RST_SRC"])
 
-if "KCONFIG_OUTPUT" not in os.environ:
-    sys.exit("$KCONFIG_OUTPUT environment variable undefined.")
-KCONFIG_OUTPUT = os.path.abspath(os.environ["KCONFIG_OUTPUT"])
+if "CONFIGURATION_OUTPUT" not in os.environ:
+    sys.exit("$CONFIGURATION_OUTPUT environment variable undefined.")
+CONFIGURATION_OUTPUT = os.path.abspath(os.environ["CONFIGURATION_OUTPUT"])
 
 # -- General configuration ------------------------------------------------
 
@@ -170,11 +170,13 @@ html_show_copyright = True
 html_show_license = True
 
 intersphinx_mapping = {
-    # Link the Kconfig docs with Intersphinx so that references to Kconfig
-    # symbols (via :option:`CONFIG_FOO`) turn into links
-    'kconfig': (os.path.relpath(KCONFIG_OUTPUT, MCUBOOT_OUTPUT),
-                os.path.join(os.path.relpath(KCONFIG_OUTPUT, MCUBOOT_RST_SRC),
-                             'objects.inv')),
+    # Link the Configuration Reference docs with Intersphinx so that
+    # references to Kconfig symbols (via :option:`CONFIG_FOO`) turn
+    # into links, etc.
+    'config': (os.path.relpath(CONFIGURATION_OUTPUT, MCUBOOT_OUTPUT),
+               os.path.join(os.path.relpath(CONFIGURATION_OUTPUT,
+                                            MCUBOOT_RST_SRC),
+                            'objects.inv')),
     'zephyr': (os.path.relpath(ZEPHYR_OUTPUT, NRF_OUTPUT),
                os.path.join(os.path.relpath(ZEPHYR_OUTPUT, NRF_RST_SRC),
                             'objects.inv'))
