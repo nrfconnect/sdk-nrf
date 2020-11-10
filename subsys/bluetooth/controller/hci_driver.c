@@ -419,9 +419,16 @@ static int hci_driver_open(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_BROADCASTER)) {
-		err = sdc_support_adv();
-		if (err) {
-			return -ENOTSUP;
+		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
+			err = sdc_support_ext_adv();
+			if (err) {
+				return -ENOTSUP;
+			}
+		} else {
+			err = sdc_support_adv();
+			if (err) {
+				return -ENOTSUP;
+			}
 		}
 	}
 
@@ -433,13 +440,13 @@ static int hci_driver_open(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
-		err = sdc_support_scan();
-		if (err) {
-			return -ENOTSUP;
-		}
-
 		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
 			err = sdc_support_ext_scan();
+			if (err) {
+				return -ENOTSUP;
+			}
+		} else {
+			err = sdc_support_scan();
 			if (err) {
 				return -ENOTSUP;
 			}
