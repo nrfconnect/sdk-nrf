@@ -5,6 +5,8 @@ function NCS () {
 
   // XXX: do not remove the trailing '/'
   const NCS_PATH_PREFIX = "/nRF_Connect_SDK/doc/";
+  const STABLE_VERSION_RE = /^(\d+\.)+\d+$/;
+  const DEV_VERSION_RE = /^(\d+\.)+\d+-[a-z0-9]+$/;
 
   /*
    * Allow running from localhost; local build can be served with:
@@ -21,6 +23,21 @@ function NCS () {
     this.url_root = window.location.protocol + "//" + host + this.url_prefix;
     this.version_data_url = this.url_root + "latest" + "/versions.json";
   };
+
+  /*
+   * Find the index of the first element that matches a X.Y.Z release, this
+   * is considered the last "official" release.
+   */
+  state.findLastVersionIndex = function() {
+    const versions = window.NCS.versions.VERSIONS;
+    window.NCS.last_version_index = 1;
+    for (var index in versions) {
+      if (STABLE_VERSION_RE.test(versions[index])) {
+        window.NCS.last_version_index = index;
+        break;
+      }
+    }
+  }
 
   /*
    * Infer the currently running version of the documentation
@@ -101,32 +118,37 @@ function NCS () {
   state.showVersion = function() {
     const ncs = window.NCS;
     const VERSIONS = ncs.versions.VERSIONS;
+    const last_version_index = ncs.last_version_index;
     const path_suffix = "/" +  ncs.current_page;
-    const last_release_url = ncs.url_root + VERSIONS[1] + path_suffix;
+    const last_release_url = ncs.url_root + VERSIONS[last_version_index] + path_suffix;
     const latest_release_url = ncs.url_root + "latest" + path_suffix;
 
+    const SWITCH_MSG = "You might want to switch to the documentation for " +
+      "the <a href='" + last_release_url + "'>" + VERSIONS[last_version_index] +
+      "</a> release or the <a href='" + latest_release_url + "'>current " +
+      "state of development</a>."
+
     const OLD_RELEASE_MSG =
-      "You are looking at an older version of the documentation. You might " +
-      "want to switch to the documentation for the <a href='" +
-      last_release_url + "'>" + VERSIONS[1] + "</a> release or the " +
-      "<a href='" + latest_release_url + "'>current state of development</a>.";
+      "You are looking at an older version of the documentation. " + SWITCH_MSG;
+
+    const DEV_RELEASE_MSG =
+      "You are looking at the documentation for a development release. " + SWITCH_MSG;
 
     const LAST_RELEASE_MSG =
-      "You are looking at the documentation for the last official release.";
+      "You are looking at the documentation for the latest official release.";
 
     if ($("#version_status").length === 0) {
       $("div[role='navigation'] > ul.wy-breadcrumbs").
         after("<div id='version_status'></div>");
     }
 
-    switch (ncs.current_version) {
-    case VERSIONS[0]:
+    if (ncs.current_version === VERSIONS[0]) {
       $("div#version_status").hide();
-      break;
-    case VERSIONS[1]:
+    } else if (ncs.current_version === VERSIONS[last_version_index]) {
       $("div#version_status").html(LAST_RELEASE_MSG);
-      break;
-    default:
+    } else if (DEV_VERSION_RE.test(ncs.current_version)) {
+      $("div#version_status").html(DEV_RELEASE_MSG);
+    } else {
       $("div#version_status").html(OLD_RELEASE_MSG);
     }
   };
@@ -168,6 +190,7 @@ function NCS () {
 
   state.updatePage = function() {
     let ncs = window.NCS;
+    ncs.findLastVersionIndex();
     ncs.findCurrentVersion();
     ncs.findCurrentPage();
     ncs.updateVersionDropDown();
