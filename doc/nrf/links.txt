@@ -441,6 +441,8 @@
 .. _`Secure Location Protocol (SLP)` : https://en.wikipedia.org/wiki/Service_Location_Protocol
 
 .. _`Verizon's Thingspace`: https://thingspace.verizon.com
+.. _`Verizon's Get certified program`: https://opendevelopment.verizonwireless.com/get-certified
+.. _`AT&T's Get network ready program`: https://iotdevices.att.com/networkready.aspx
 .. _`AT&T's IoT Platform`: https://iotplatform.att.com
 .. _`Pre-Shared Key (PSK)`: https://en.wikipedia.org/wiki/Pre-shared_key
 .. _`Mbed TLS`: https://en.wikipedia.org/wiki/Mbed_TLS
