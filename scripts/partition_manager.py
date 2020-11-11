@@ -269,7 +269,9 @@ def resolve(reqs, dp):
 
     remove_irrelevant_requirements(reqs, dp)
     sub_partitions = {k: v for k, v in reqs.items() if 'span' in v}
-    reqs = {k: v for k, v in reqs.items() if 'span' not in v}
+    for k, v in list(reqs.items()):
+        if 'span' in v:
+            del reqs[k]
 
     solve_inside(reqs, sub_partitions)
     clean_sub_partitions(reqs, sub_partitions)
@@ -939,7 +941,7 @@ def expect_addr_size(td, name, expected_address, expected_size):
     if expected_address:
         assert td[name]['address'] == expected_address, \
             "Address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['address'], expected_address, pformat(td))
-    if expected_size and expected_address:
+    if expected_size and expected_address and 'end_address' in td[name]:
         assert td[name]['end_address'] == expected_address + expected_size, \
             "End address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['end_address'], expected_address + expected_size, pformat(td))
 
@@ -1204,8 +1206,10 @@ def test():
               'share_size': {'one_of': ['a', 'b']}},
         'd': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'start']}},
               'share_size': {'one_of': ['a', 'b', 'c']}},
+        # Empty spans should be removed
+        'e': {'span': [], 'region': 'sram'},
         # You get the point
-        'e': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'd', 'start']}}, 'size': 100},
+        'f': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'd', 'start']}}, 'size': 100},
         'app': {}
     }
     # Perform the same test as above, but run it through the 'resolve' function this time.
@@ -1215,7 +1219,8 @@ def test():
     assert 'b' not in td
     assert 'c' not in td
     assert 'd' not in td
-    expect_addr_size(td, 'e', 0, 100)
+    assert 'e' not in td
+    expect_addr_size(td, 'f', 0, 100)
 
     # Verify that an error is raised when no partition inside 'one_of' dicts exist as dict value
     failed = False
