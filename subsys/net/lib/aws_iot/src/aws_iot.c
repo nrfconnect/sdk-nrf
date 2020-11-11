@@ -9,6 +9,7 @@
 #include <net/socket.h>
 #include <net/cloud.h>
 #include <stdio.h>
+#include <settings/settings.h>
 
 #if defined(CONFIG_AWS_FOTA)
 #include <net/aws_fota.h>
@@ -102,6 +103,13 @@ static struct cloud_backend *aws_iot_backend;
 /** Empty string used to request the AWS IoT shadow document. */
 #define AWS_IOT_SHADOW_REQUEST_STRING ""
 
+#define AWS_IOT_SETTINGS_KEY "aws_iot"
+#define AWS_IOT_SETTINGS_PERSISTENT_SESSION_KEY "persistent_session"
+
+/* Flags used to set persistent session state. */
+#define AWS_IOT_PERSISTENT_SESSION_ENABLED true
+#define AWS_IOT_PERSISTENT_SESSION_DISABLED false
+
 static struct aws_iot_app_topic_data app_topic_data;
 static struct mqtt_client client;
 static struct sockaddr_storage broker;
@@ -115,6 +123,11 @@ static aws_iot_evt_handler_t module_evt_handler;
 static atomic_t disconnect_requested;
 static atomic_t connection_poll_active;
 
+/* Flag stored to and retreved from flash that keeps track of MQTT persistent
+ * session. Disabled by default.
+ */
+static bool persistent_session = AWS_IOT_PERSISTENT_SESSION_DISABLED;
+
 /** Structure used to confirm successful subscriptions. */
 static struct aws_iot_suback_confirmation {
 	/** Subscription ID for application specific topics. */
@@ -127,6 +140,75 @@ static struct aws_iot_suback_confirmation {
 } suback_conf;
 
 static K_SEM_DEFINE(connection_poll_sem, 0, 1);
+
+static int aws_iot_settings_handler(const char *key, size_t len,
+				    settings_read_cb read_cb, void *cb_arg)
+{
+	int err;
+
+	if (strcmp(key, AWS_IOT_SETTINGS_PERSISTENT_SESSION_KEY) == 0) {
+		err = read_cb(cb_arg, &persistent_session,
+			      sizeof(persistent_session));
+		if (err < 0) {
+			LOG_WRN("Failed to load settings, error: %d", err);
+			return err;
+		}
+	}
+
+	LOG_WRN("Persistent session flag loaded from flash, value: %d",
+		persistent_session);
+
+	return 0;
+}
+
+static void save_session_state(const bool session_state)
+{
+	int err;
+
+	persistent_session = session_state;
+
+	err = settings_save_one(AWS_IOT_SETTINGS_KEY "/"
+				AWS_IOT_SETTINGS_PERSISTENT_SESSION_KEY,
+				&persistent_session,
+				sizeof(persistent_session));
+	if (err) {
+		LOG_WRN("settings_save_one, error: %d", err);
+		return;
+	}
+
+	LOG_DBG("Persistent session flag stored to flash, value: %d",
+		persistent_session);
+}
+
+static int settings_init(void)
+{
+	int err;
+
+	struct settings_handler settings_cfg = {
+		.name = AWS_IOT_SETTINGS_KEY,
+		.h_set = aws_iot_settings_handler
+	};
+
+	err = settings_subsys_init();
+	if (err) {
+		LOG_ERR("settings_subsys_init, error: %d", err);
+		return err;
+	}
+
+	err = settings_register(&settings_cfg);
+	if (err) {
+		LOG_ERR("settings_register, error: %d", err);
+		return err;
+	}
+
+	err = settings_load_subtree(AWS_IOT_SETTINGS_KEY);
+	if (err) {
+		LOG_ERR("settings_load_subtree, error: %d", err);
+		return err;
+	}
+
+	return 0;
+}
 
 static int connect_error_translate(const int err)
 {
@@ -678,29 +760,49 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		aws_iot_evt.type = AWS_IOT_EVT_CONNECTED;
 		aws_iot_notify_event(&aws_iot_evt);
 
-		if (!mqtt_evt->param.connack.session_present_flag) {
-			err = topic_subscribe();
-
-			if (err < 0) {
-				aws_iot_evt.type = AWS_IOT_EVT_ERROR;
-				aws_iot_evt.data.err = err;
-				aws_iot_notify_event(&aws_iot_evt);
-				break;
-			}
-			if (err == 0) {
-				/* No specific topic subscriptions added or
-				 * configured.
-				 */
-			} /* else: wait for SUBACK */
-		} else {
+		/* If the session_present_flag in the CONNACK message is 1
+		 * and the previous persistent_session flag is 1, the session
+		 * has already been established and no new subscription to
+		 * topics occurs. The CONFIG_CLEAN_SESSION flag must also be
+		 * disabled. Enabling CONFIG_CLEAN_SESSION will always cause
+		 * the AWS IoT library to subscribe to the specified topics.
+		 */
+		if (persistent_session &&
+		    !IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION) &&
+		    mqtt_evt->param.connack.session_present_flag) {
 			/** pre-existing session:
-			  * subscription is already established */
+			 *  subscription is already established
+			 */
 			aws_iot_evt.type = AWS_IOT_EVT_TOPICS_SUBSCRIBED;
 			aws_iot_notify_event(&aws_iot_evt);
 
 			if (IS_ENABLED(
 				CONFIG_AWS_IOT_AUTO_DEVICE_SHADOW_REQUEST)) {
 				device_shadow_document_request();
+			}
+
+		} else {
+
+			err = topic_subscribe();
+			if (err < 0) {
+				aws_iot_evt.type = AWS_IOT_EVT_ERROR;
+				aws_iot_evt.data.err = err;
+				aws_iot_notify_event(&aws_iot_evt);
+				break;
+			} else if (err == 0) {
+				/* No specific topic subscriptions added or
+				 * configured.
+				 */
+				LOG_DBG("No subscriptions lists provided");
+			} /* else: wait for SUBACK */
+
+			if (!IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION) &&
+			    mqtt_evt->param.connack.session_present_flag) {
+				save_session_state(
+					AWS_IOT_PERSISTENT_SESSION_ENABLED);
+			} else {
+				save_session_state(
+					AWS_IOT_PERSISTENT_SESSION_DISABLED);
 			}
 		}
 		break;
@@ -1140,6 +1242,12 @@ int aws_iot_init(const struct aws_iot_config *const config,
 		return err;
 	}
 #endif
+
+	err = settings_init();
+	if (err) {
+		LOG_ERR("settings_init, error: %d", err);
+		return err;
+	}
 
 	module_evt_handler = event_handler;
 
