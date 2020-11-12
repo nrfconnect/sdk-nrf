@@ -18,8 +18,8 @@ Use the drop-down filter to see known issues for previous releases and check if 
    Filter by versions:
 
    <select name="versions" id="versions-select">
-     <option value="all" selected>All versions</option>
-     <option value="v1-4-0">v1.4.0</option>
+     <option value="all">All versions</option>
+     <option value="v1-4-0" selected>v1.4.0</option>
      <option value="v1-3-2">v1.3.2</option>
      <option value="v1-3-1">v1.3.1</option>
      <option value="v1-3-0">v1.3.0</option>
@@ -34,7 +34,8 @@ Use the drop-down filter to see known issues for previous releases and check if 
 
 .. HOWTO
 
-   When adding a new version, add it to the dropdown list above.
+   When adding a new version, add it to the dropdown list above and move the "selected" option next to it.
+   Once "selected" is moved, only issues that are valid for the new version will be displayed when entering the page.
 
    When updating this file, add entries in the following format:
 

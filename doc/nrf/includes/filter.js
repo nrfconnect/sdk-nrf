@@ -70,12 +70,19 @@
       }
     };
 
-    /** Retrieve the 'v' parameter and switch to that version, if applicable **/
+    /** Retrieve the 'v' parameter and switch to that version, if applicable.
+        Otherwise, switch to the version that is selected in the dropdown.    **/
     var v = getUrlParameter('v');
 
     if ((RegExp('v\\d+-\\d+-\\d+').test(v)) || v === 'master') {
 
       displayVersion(v);
+
+    }
+
+    else {
+
+      displayVersion($("[name='versions'] option:selected").val());
 
     };
 
