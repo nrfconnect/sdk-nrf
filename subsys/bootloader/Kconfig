@@ -158,8 +158,12 @@ config PM_PARTITION_SIZE_PROVISION
 	help
 	  Flash space set aside for the PROVISION partition.
 
+config B0_MIN_PARTITION_SIZE
+	bool "Use minimimum partition size"
+
 config PM_PARTITION_SIZE_B0_IMAGE
 	hex "Flash space reserved for B0_IMAGE"
+	default 0x8000 if !B0_MIN_PARTITION_SIZE
 	default FPROTECT_BLOCK_SIZE if SOC_NRF9160 || SOC_NRF5340_CPUAPP
 	default 0x3800 if SOC_NRF5340_CPUNET
 	default 0x7000

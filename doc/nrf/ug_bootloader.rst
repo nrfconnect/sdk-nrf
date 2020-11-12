@@ -110,6 +110,18 @@ To add the immutable bootloader to your application, set :option:`CONFIG_SECURE_
 See the documentation of the :ref:`bootloader` sample for more information.
 The :ref:`bootloader_build_and_run` section has detailed instructions for adding the immutable bootloader as first stage of the secure bootloader chain.
 
+To ensure that the immutable bootloader occupies as little flash as possible, apply the :file:`overlay-minimal-size.conf` Kconfig overlay file for the b0 image.
+This can be done in the following way:
+
+* Using cmake::
+
+     cmake -GNinja -DBOARD=nrf52840dk_nrf5840 -Db0_OVERLAY_CONFIG=overlay-minimal-size.conf -DCONFIG_SECURE_BOOT=y ../
+
+* Using west::
+
+     west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- -Db0_OVERLAY_CONFIG=overlay-minimal-size.conf -DCONFIG_SECURE_BOOT=y
+
+
 Adding MCUboot as an upgradable bootloader
 ==========================================
 
@@ -124,12 +136,12 @@ Set option :option:`CONFIG_SECURE_BOOT` to do this.
    In this case, MCUboot will act as an immutable bootloader.
 
 It is possible for MCUboot to use the cryptographic functionality exposed by the immutable bootloader, reducing the flash usage for MCUboot to less than 16 kB.
-To enable this configuration, apply the :file:`overlay-minimal-size.conf` Kconfig overlay file for the MCUboot image.
+To enable this configuration, apply the :file:`overlay-minimal-external-crypto.conf` Kconfig overlay file for the MCUboot image.
 This can be done in the following way:
 
 * Using cmake::
 
-     cmake -GNinja -DBOARD=nrf52840dk_nrf5840 -Dmcuboot_OVERLAY_CONFIG=overlay-minimal-size.conf -DCONFIG_SECURE_BOOT=y -DCONFIG_BOOTLOADER_MCUBOOT=y ../
+     cmake -GNinja -DBOARD=nrf52840dk_nrf5840 -Dmcuboot_OVERLAY_CONFIG=overlay-minimal-external-crypto.conf -DCONFIG_SECURE_BOOT=y -DCONFIG_BOOTLOADER_MCUBOOT=y ../
 
 * Using west::
 
