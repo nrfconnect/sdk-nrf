@@ -655,7 +655,7 @@ DRGN-9083: AAR populated with zero IRK
 
 .. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-DRGN-10659: Directed advertising issues using RPA in TargetA
+DRGN-13921: Directed advertising issues using RPA in TargetA
   The SoftDevice Controller will generate a resolvable address for the TargetA field in directed advertisements if the target device address is in the resolving list with a non-zero IRK, even if privacy is not enabled and the local device address is set to a public address.
 
   **Workaround:** Remove the device address from the resolving list.
