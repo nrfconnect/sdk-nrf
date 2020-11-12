@@ -1,6 +1,6 @@
-.. _doc_styleguide:
-
 .. |sg| replace:: style guide
+
+.. _doc_styleguide:
 
 Documentation |sg|
 ##################
