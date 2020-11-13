@@ -22,13 +22,13 @@ The LEDs of the board also respond to button presses from an EnOcean switch.
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810
 
-* At least one :ref:`supported EnOcean device <bt_enocean_devices>`.
+The sample also requires at least one :ref:`supported EnOcean device <bt_enocean_devices>`.
 
 .. note::
     The sample supports up to four devices at a time that work with one board.

@@ -69,21 +69,25 @@ You can experiment with different connection parameter values by reconfiguring t
 Requirements
 ************
 
-* Two of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|; if you use this development kit, add the following options to the configuration of the network sample:
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52dk_nrf52832
 
-    .. code-block:: none
+You can use any two of the development kits listed above and mix different development kits.
+
+.. note::
+
+  If you use nRF5340 PDK, add the following options to the configuration of the network sample:
+
+  .. code-block:: none
 
        CONFIG_BT_CTLR_TX_BUFFER_SIZE=251
        CONFIG_BT_CTLR_DATA_LENGTH_MAX=251
        CONFIG_BT_RX_BUF_LEN=255
 
-  * |nRF52840DK|
-  * |nRF52DK|
-
-  You can mix different boards.
-* Connection to a computer with a serial terminal for each of the boards.
+The sample also requires a connection to a computer with a serial terminal for each of the development kits.
 
 Building and running
 ********************

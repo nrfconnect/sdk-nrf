@@ -79,15 +79,16 @@ By default, the following values are used to demonstrates the interaction of the
 Requirements
 ************
 
-* Two of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF5340DK|
-  * Other boards running SoftDevice Controller variants that support LLPM (see :ref:`nrfxlib:softdevice_controller` Proprietary feature support)
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns,nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52dk_nrf52832
 
-  You can mix different boards.
-* Connection to a computer with a serial terminal for each of the boards.
+The sample also supports other development kits running SoftDevice Controller variants that support LLPM (see :ref:`nrfxlib:softdevice_controller` Proprietary feature support).
+You can use any two of the development kits mentioned above and mix different development kits.
+
+Additionally, the sample requires a connection to a computer with a serial terminal for each of the development kits.
 
 
 Building and running

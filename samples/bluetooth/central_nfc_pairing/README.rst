@@ -55,11 +55,13 @@ The NFC Poler Device can be the Handover Requester or Handover Selector Device, 
 Requirements
 ************
 
-* One of the following Nordic development kits:
+The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
    :rows: nrf5340pdk_nrf5340_cpuapp, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833
+
+The sample has the following additional requirements:
 
 * NFC Reader ST25R3911B Nucleo expansion board (X-NUCLEO-NFC05A1)
 * NFC Tag 2 Tag device or NFC Tag 4 Tag device
