@@ -18,18 +18,18 @@ The sample has console and logging disabled by default, to demonstrate low power
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
    :rows: nrf9160dk_nrf9160, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52dk_nrf52832, nrf5340pdk_nrf5340_cpuapp
 
-* The following pins shorted:
+The sample also requires the following pins to be shorted:
 
-  * TX (Arduino Digital Pin 10) with RX (Arduino Digital Pin 11)
-  * Request Pin (Arduino Digital Pin 12) with Response Pin (Arduino Digital Pin 13)
+* TX (Arduino Digital Pin 10) with RX (Arduino Digital Pin 11)
+* Request Pin (Arduino Digital Pin 12) with Response Pin (Arduino Digital Pin 13)
 
-* A logic analyzer
+Additionally, it requires a logic analyzer.
 
 Building and running
 ********************
