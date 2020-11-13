@@ -66,14 +66,16 @@ You can change the default role by choosing ``CONFIG_NFC_TAG_CH_SELECTOR`` or ``
 Requirements
 ************
 
-* One of the following Nordic development kits:
+The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
    :rows: nrf5340pdk_nrf5340_cpuapp, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833
 
-* NFC polling device (for example, a smartphone or a tablet with NFC support)
-* NFC poling device with TNEP support (when testing the two-way OOB pairing).
+The sample has the following additional requirements:
+
+* NFC polling device (for example, a smartphone or a tablet with NFC support).
+* NFC polling device with TNEP support (when testing the two-way OOB pairing).
   You can use the corresponding :ref:`central_nfc_pairing` as an NFC Polling Device.
 
 User interface

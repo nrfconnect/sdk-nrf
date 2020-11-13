@@ -26,10 +26,8 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns, nrf52840dongle_nrf52840, nrf52840dk_nrf52840
 
-The sample also requires:
-
-* A device running a Heart Rate Server with LE Coded PHY support to connect to.
-  For example, another development kit running the :ref:`peripheral_hr_coded` sample.
+The sample also requires a device running a Heart Rate Server with LE Coded PHY support to connect to.
+For example, another development kit running the :ref:`peripheral_hr_coded` sample.
 
 Building and Running
 ********************

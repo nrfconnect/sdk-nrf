@@ -164,15 +164,13 @@ If you want to view the debug messages, follow the procedure in :ref:`testing_rt
 Requirements
 ************
 
-* The following development kit:
+The sample supports the following development kit:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
    :rows: nrf5340pdk_nrf5340_cpunet
 
-* The Network core
-
-* One of the following testing devices:
+Additionally, the sample requires one of the following testing devices:
 
   * Dedicated test equipment, like an Anritsu MT8852 tester.
     See :ref:`direct_test_mode_testing_anritsu`.

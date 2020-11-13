@@ -34,15 +34,18 @@ If you want to view the debug messages, follow the procedure in :ref:`testing_rt
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52dk_nrf52832
 
-* A phone or tablet running a compatible application. The `Testing`_ instructions refer to nRF Connect for Mobile, but similar applications (for example, nRF Toolbox) can be used as well.
 
-  You can also test the application with the :ref:`central_uart` sample. See the documentation for that sample for detailed instructions.
+The sample also requires a phone or tablet running a compatible application.
+The `Testing`_ instructions refer to nRF Connect for Mobile, but similar applications (for example, nRF Toolbox) can be used as well.
+
+You can also test the application with the :ref:`central_uart` sample.
+See the documentation for that sample for detailed instructions.
 
 User interface
 **************
