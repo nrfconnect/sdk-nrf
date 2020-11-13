@@ -11,9 +11,26 @@ config FPROTECT
 	  Use hardware peripherals (BPROT, ACL, or SPU) to write-protect
 	  regions of flash until next reset.
 
-
 if !ARM
 config NRF_SPU_FLASH_REGION_SIZE
+	hex
+	default 0x1000
+	help
+	  Redefinition for the benefit of qemu_x86
+
+config NRF_MPU_FLASH_REGION_SIZE
+	hex
+	default 0x1000
+	help
+	  Redefinition for the benefit of qemu_x86
+
+config NRF_BPROT_FLASH_REGION_SIZE
+	hex
+	default 0x1000
+	help
+	  Redefinition for the benefit of qemu_x86
+
+config NRF_ACL_FLASH_REGION_SIZE
 	hex
 	default 0x1000
 	help
@@ -30,5 +47,6 @@ config FPROTECT_BLOCK_SIZE
 	default NRF_MPU_FLASH_REGION_SIZE if HAS_HW_NRF_MPU
 	default NRF_BPROT_FLASH_REGION_SIZE if HAS_HW_NRF_BPROT
 	default NRF_ACL_FLASH_REGION_SIZE if HAS_HW_NRF_ACL
+	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 	help
 	  Block size of fprotect
