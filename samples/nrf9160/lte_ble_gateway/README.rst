@@ -27,15 +27,15 @@ You can then trigger an alarm that sends the aggregated data over LTE to the `nR
 Requirements
 ************
 
-* The sample supports the following development kit:
+The sample supports the following development kit:
 
-  .. table-from-rows:: /includes/sample_board_rows.txt
-     :header: heading
-     :rows: nrf9160dk_nrf9160ns
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160ns
 
-* It also requires a `Nordic Thingy:52`_.
+The sample also requires a `Nordic Thingy:52`_.
 
-* .. include:: /includes/spm.txt
+.. include:: /includes/spm.txt
 
 User interface
 **************
