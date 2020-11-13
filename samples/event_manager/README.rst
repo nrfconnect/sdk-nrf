@@ -34,11 +34,11 @@ Statistics (``stats.c``):
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF9160DK|
-  * |nRF52840DK|
-  * |nRF52DK|
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160ns, nrf52dk_nrf52832, nrf52840dk_nrf52840
 
 
 Building and running

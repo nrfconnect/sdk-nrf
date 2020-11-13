@@ -19,11 +19,13 @@ This is to demonstrate the :c:func:`spm_request_system_reboot` and :c:func:`spm_
 Requirements
 ************
 
-The following development board:
+The sample supports the following development kit:
 
-* |nRF9160DK|
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160ns
 
-* .. include:: /includes/spm.txt
+.. include:: /includes/spm.txt
 
 Building and running
 ********************
