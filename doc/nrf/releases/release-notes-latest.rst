@@ -12,6 +12,10 @@ The most relevant changes that are present on the master branch of the |NCS|, as
 .. note::
     This file is a work in progress and might not cover all relevant changes.
 
+* ``bl_boot`` library:
+
+    * Disable clock interrupts before booting app.
+      This fixes an issue where the :ref:`bootloader` sample would not be able to boot a zephyr application on the nRF5340.
 
 Changelog
 *********
