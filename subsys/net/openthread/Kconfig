@@ -52,6 +52,10 @@ config OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE
 	default 640 if NRF_802154_SER_HOST
 	default 512
 
+choice CC3XX_LOCK_VARIANT
+	default CC3XX_ATOMIC_LOCK if CC310_BACKEND
+endchoice
+
 endmenu
 
 endif
