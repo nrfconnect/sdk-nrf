@@ -26,7 +26,9 @@ Overview
 *********
 
 The sample connects to an MQTT broker and publishes the data it receives on the configured subscribe topic to the configured publish topic.
+On a button press event, the sample publishes the configured message to the configured publish topic.
 By default, the sample can establish a secure (TLS) connection or a non-secure connection to the configured MQTT broker.
+The sample disables power saving modes (PSM and eDRX) so that network events are processed as soon as possible.
 
 Configuration
 *************
@@ -57,6 +59,22 @@ This configuration option sets the MQTT Publish topic.
 .. option:: CONFIG_MQTT_BROKER_PORT - MQTT Broker Port
 
 This configuration option specifies the port number associated with the MQTT broker.
+
+.. option:: CONFIG_BUTTON_EVENT_PUBLISH_MSG - Button event publish message
+
+This configuration option specifies the message text which is published on a button press.
+
+.. option:: CONFIG_BUTTON_EVENT_BTN_NUM - Button number for publish
+
+This configuration option specifies the button number which, when pressed, will publish an MQTT message.
+
+.. option:: CONFIG_MQTT_RECONNECT_DELAY_S - MQTT broker reconnect delay
+
+This configuration option specifies the delay (in seconds) before attempting to reconnect to the broker.
+
+.. option:: CONFIG_LTE_CONNECT_RETRY_DELAY_S - LTE connection retry delay
+
+This configuration option specifies delay (in seconds) before attempting to retry LTE connection.
 
 Configuration files
 =====================
@@ -118,14 +136,19 @@ The following serial UART output is displayed in the terminal emulator:
 
 .. code-block:: console
 
-      *** Booting Zephyr OS build v2.3.0-rc1-ncs1-2401-ga87b995bec87  ***
-      The MQTT simple sample started
-      LTE Link Connecting ...
-      LTE Link Connected!
-      IPv4 Address found 137.135.83.217
-      [mqtt_evt_handler:229] MQTT client connected!
-      Subscribing to: my/subscribe/topic len 18
-      [mqtt_evt_handler:284] SUBACK packet id: 1234
+      *** Booting Zephyr OS build v2.4.0-ncs1-rc1-6-g45f2d5cf8ea4  ***
+      <inf> mqtt_simple: The MQTT simple sample started
+      <inf> mqtt_simple: LTE Link Connecting...
+      <inf> mqtt_simple: LTE Link Connected!
+      <inf> mqtt_simple: Disabling PSM and eDRX
+      <inf> mqtt_simple: IPv4 Address found 137.135.83.217
+      <inf> mqtt_simple: MQTT client connected
+      <inf> mqtt_simple: Subscribing to: my/subscribe/topic len 18
+      <inf> mqtt_simple: SUBACK packet id: 1234
+      <inf> mqtt_simple: Publishing: Hello from nRF91 MQTT Simple Sample
+      <inf> mqtt_simple: to topic: my/publish/topic len: 16
+      <inf> mqtt_simple: PUBACK packet id: 51700
+
 
 
 Troubleshooting
