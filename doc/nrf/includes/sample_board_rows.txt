@@ -46,6 +46,10 @@
 
 | nRF52833 Dongle | PCA10111 | nrf52833dongle_nrf52833 | ``nrf52833dongle_nrf52833`` |
 
+.. nrf52833dk_nrf52820
+
+| :ref:`nRF52833 DK (emulating nRF52820) <ug_nrf52>` | PCA10100 | :ref:`nrf52833dk_nrf52820 <nrf52833dk_nrf52820>` | ``nrf52833dk_nrf52820`` |
+
 .. nrf52820dongle_nrf52820
 
 | nRF52820 Dongle | PCA10114 | nrf52820dongle_nrf52820 | ``nrf52820dongle_nrf52820`` |
@@ -54,9 +58,17 @@
 
 | :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91_nrf9160 | ``thingy91_nrf9160ns`` |
 
+.. nrf52dk_nrf52810
+
+| :ref:`nRF52 DK (emulating nRF52810) <ug_nrf52>` | PCA10040 | :ref:`nrf52dk_nrf52810 <nrf52dk_nrf52810>` | ``nrf52dk_nrf52810`` |
+
 .. nrf52kbd_nrf52832
 
 | nRF52832 Desktop Keyboard | PCA20037 | nrf52kbd_nrf52832 | ``nrf52kbd_nrf52832`` |
+
+.. nrf52840dk_nrf52811
+
+| :ref:`nRF52840 DK (emulating nRF52811) <ug_nrf52>` | PCA10056 | :ref:`nrf52840dk_nrf52811 <nrf52840dk_nrf52811>` | ``nrf52840dk_nrf52811`` |
 
 .. nrf52840gmouse_nrf52840
 

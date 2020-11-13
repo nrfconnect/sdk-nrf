@@ -19,15 +19,13 @@ It supports up to two simultaneous Client connections.
 Requirements
 ************
 
-* One of the following Nordic development kits:
+The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832
+   :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52dk_nrf52810
 
-* A Bluetooth Low Energy dongle or development kit
-
-* nRF Connect for Desktop
+The sample also requires a Bluetooth Low Energy dongle and nRF Connect for Desktop.
 
 User interface
 **************

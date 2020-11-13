@@ -33,13 +33,13 @@ If you want to view the debug messages, follow the procedure in :ref:`testing_rt
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820
 
-* Another development board running a compatible application (see :ref:`peripheral_uart`).
+The sample also requires another development kit running a compatible application (see :ref:`peripheral_uart`).
 
 Building and running
 ********************

@@ -65,11 +65,11 @@ Requirements
 
 The sample supports the following development kits:
 
-.. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set2_start
-   :end-before: set2_end
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52dk_nrf52810
 
-The sample also requires:
+The sample also has the following requirements:
 
 * An Amazon Echo device
 * An Amazon developer account
