@@ -388,6 +388,7 @@ const struct bt_mesh_model_op _bt_mesh_sensor_srv_op[] = {
 	  handle_column_get },
 	{ BT_MESH_SENSOR_OP_SERIES_GET, BT_MESH_SENSOR_MSG_MINLEN_SERIES_GET,
 	  handle_series_get },
+	BT_MESH_MODEL_OP_END,
 };
 
 static void handle_cadence_get(struct bt_mesh_model *mod,
@@ -709,6 +710,7 @@ const struct bt_mesh_model_op _bt_mesh_sensor_setup_srv_op[] = {
 	  handle_setting_set },
 	{ BT_MESH_SENSOR_OP_SETTING_SET_UNACKNOWLEDGED,
 	  BT_MESH_SENSOR_MSG_MINLEN_SETTING_SET, handle_setting_set_unack },
+	BT_MESH_MODEL_OP_END,
 };
 
 static int sensor_srv_init(struct bt_mesh_model *mod)

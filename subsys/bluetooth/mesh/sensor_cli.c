@@ -506,6 +506,7 @@ const struct bt_mesh_model_op _bt_mesh_sensor_cli_op[] = {
 	  BT_MESH_SENSOR_MSG_MINLEN_SETTINGS_STATUS, handle_settings_status },
 	{ BT_MESH_SENSOR_OP_SETTING_STATUS,
 	  BT_MESH_SENSOR_MSG_MINLEN_SETTING_STATUS, handle_setting_status },
+	BT_MESH_MODEL_OP_END,
 };
 
 static int sensor_cli_init(struct bt_mesh_model *mod)
