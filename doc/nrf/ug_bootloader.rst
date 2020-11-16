@@ -47,19 +47,23 @@ The following image shows an abstract representation of the memory layout, assum
 
 For detailed information about the memory layout, see the partition configuration in the :file:`partitions.yml` file (located in the build folder directory) or run ``ninja partition_manager_report``.
 
+.. note::
+   The Partition Manager must be enabled to make the :file:`parititions.yml` file and the partition_manager_report target available.
+   See :ref:`partition_manager` and :ref:`ug_multi_image` for details.
+
 .. _immutable_bootloader:
 
 Immutable bootloader
 ====================
 
 The first step in the chain of trust is an immutable first stage bootloader, in the following referred to as immutable bootloader.
-The code abbreviates this bootloader as SB (for Secure Boot) or B0.
+The code abbreviates this bootloader as SB (Secure Boot, Secure Bootloader) or B0.
 
 The immutable bootloader runs after every reset and establishes the root of trust by verifying the signature and metadata of the next image in the boot sequence.
-If verification fails, the boot process stops.
+If the verification fails, the boot process stops.
 
-This way, the immutable bootloader can guarantee that if the flash of the next image in the boot sequence (another bootloader or the application) has been tampered with in any way, that image will not start up.
-So if an attacker attempts to take over the device by altering the flash, the device will not boot and not run the infected code.
+This way, the immutable bootloader can guarantee that if the flash of the next image in the boot sequence (another bootloader or an application) has been tampered with in any way, the image will not start up.
+For example, if an attacker attempts to take over the device by altering the flash, the device will not boot, and thus not run the infected code.
 
 The immutable bootloader cannot be updated or deleted from the device unless you erase the device.
 
@@ -84,9 +88,9 @@ The upgradable bootloader should carry out the same signature and metadata verif
 In addition, it can provide functionality for upgrading both itself and the following image in the boot sequence (in most cases, the application).
 
 There are two partitions where the upgradable bootloader can be stored: slot 0 and slot 1 (also called *S0* and *S1*).
-A new bootloader image is stored in the partition that is not currently used.
+A new bootloader image is placed in the partition that is currently not in use.
 When booting, the immutable bootloader checks the version information for the images in slot 0 and slot 1 and boots the one with the highest version.
-If this image is faulty and cannot be booted, the other partition will always hold a working image, and this one is booted instead.
+If this image is faulty and cannot be booted, the other partition will always hold a working image and be booted instead.
 
 Set the option :option:`CONFIG_BUILD_S1_VARIANT` when building the upgradable bootloader to automatically generate pre-signed variants of the image for both slots.
 These signed variants can be used to perform an upgrade procedure through the :ref:`lib_fota_download` library.
@@ -96,10 +100,10 @@ These signed variants can be used to perform an upgrade procedure through the :r
 Adding a bootloader chain to your application
 *********************************************
 
-The |NCS| includes a sample implementation of an immutable bootloader.
+The |NCS| includes a sample implementation of an :ref:`immutable bootloader <bootloader>`.
 Additionally, the |NCS| comes with a slightly modified version of :doc:`mcuboot:index`.
 
-Both bootloaders can easily be included in your application using :ref:`ug_multi_image`.
+Both bootloaders can easily be included in your application using :ref:`multi-image builds <ug_multi_image>`.
 
 Adding the immutable bootloader
 ===============================
@@ -107,7 +111,6 @@ Adding the immutable bootloader
 To add the immutable bootloader to your application, set :option:`CONFIG_SECURE_BOOT` and add your private key file under :option:`CONFIG_SB_SIGNING_KEY_FILE`.
 |how_to_configure|
 
-See the documentation of the :ref:`bootloader` sample for more information.
 The :ref:`bootloader_build_and_run` section has detailed instructions for adding the immutable bootloader as first stage of the secure bootloader chain.
 
 To ensure that the immutable bootloader occupies as little flash as possible, apply the :file:`overlay-minimal-size.conf` Kconfig overlay file for the b0 image.
