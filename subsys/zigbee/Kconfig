@@ -13,7 +13,7 @@ menuconfig ZIGBEE
 	select NETWORKING
 	imply MPSL
 	imply COUNTER
-	imply COUNTER_TIMER3
+	imply COUNTER_TIMER2
 	imply ENTROPY_GENERATOR
 	imply POLL
 	imply FLASH
