@@ -67,7 +67,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833
+   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp
 
 You can use one or more of the development kits listed above and mix different development kits.
 
@@ -78,6 +78,9 @@ For this sample to work, the following samples also need to be programmed:
 
 Multiprotocol |BLE| extension requirements
 ==========================================
+
+.. note::
+   The multiprotocol variant is not supported on nRF53 Series devices.
 
 If you enable the :ref:`zigbee_light_switch_sample_nus`, make sure you have a phone or a tablet with the `nRF Toolbox`_ application installed.
 

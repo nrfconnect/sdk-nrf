@@ -299,12 +299,13 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 	case ZB_MAC_TX_WAIT_CSMACA: {
 		state_cache.radio_state = RADIO_802154_STATE_TRANSMIT;
 		enum ieee802154_tx_mode mode;
-		if (radio_api->get_capabilities(radio_dev) & IEEE802154_HW_CSMA) {
+		if (radio_api->get_capabilities(radio_dev)
+		    & IEEE802154_HW_CSMA) {
 			mode = IEEE802154_TX_MODE_CSMA_CA;
 		} else {
 			mode = IEEE802154_TX_MODE_CCA;
 		}
-		
+
 		err = radio_api->tx(radio_dev, mode, NULL, &frag);
 		break;
 	}
@@ -313,7 +314,8 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 	case ZB_MAC_TX_WAIT_ZGP: {
 		struct net_pkt *pkt = NULL;
 
-		if (!(radio_api->get_capabilities(radio_dev) & IEEE802154_HW_TXTIME)) {
+		if (!(radio_api->get_capabilities(radio_dev)
+		      & IEEE802154_HW_TXTIME)) {
 			return ZB_FALSE;
 		}
 
