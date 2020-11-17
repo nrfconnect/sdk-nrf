@@ -112,6 +112,11 @@ static aws_iot_evt_handler_t module_evt_handler;
 static atomic_t disconnect_requested;
 static atomic_t connection_poll_active;
 
+/* Flag that indicates if the client is disconnected from the
+ * AWS IoT broker, or not.
+ */
+static atomic_t aws_iot_disconnected = ATOMIC_INIT(1);
+
 static K_SEM_DEFINE(connection_poll_sem, 0, 1);
 
 static int connect_error_translate(const int err)
@@ -606,6 +611,22 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		break;
 	case MQTT_EVT_DISCONNECT:
 		LOG_DBG("MQTT_EVT_DISCONNECT: result = %d", mqtt_evt->result);
+
+		aws_iot_evt.data.err = AWS_IOT_DISCONNECT_MISC;
+
+		if (atomic_get(&disconnect_requested)) {
+#if defined(CONFIG_AWS_IOT_CONNECTION_POLL_THREAD)
+			if (atomic_get(&connection_poll_active)) {
+				/* The connection poll event will handle the
+				 * disconnect.
+				 */
+				break;
+			}
+#endif
+			aws_iot_evt.data.err = AWS_IOT_DISCONNECT_USER_REQUEST;
+		}
+
+		atomic_set(&aws_iot_disconnected, 1);
 		aws_iot_evt.type = AWS_IOT_EVT_DISCONNECTED;
 		aws_iot_notify_event(&aws_iot_evt);
 		break;
@@ -960,7 +981,11 @@ int aws_iot_connect(struct aws_iot_config *const config)
 
 		err = connect_error_translate(err);
 
-		config->socket = client.transport.tls.sock;
+		if (err == 0) {
+			atomic_set(&aws_iot_disconnected, 0);
+			config->socket = client.transport.tls.sock;
+		}
+
 	}
 
 	return err;
@@ -1070,6 +1095,7 @@ start:
 	fds[0].events = POLLIN;
 
 	aws_iot_evt.type = AWS_IOT_EVT_DISCONNECTED;
+	atomic_set(&aws_iot_disconnected, 0);
 
 	while (true) {
 		err = poll(fds, ARRAY_SIZE(fds), AWS_IOT_POLL_TIMEOUT_MS);
@@ -1096,7 +1122,7 @@ start:
 		if (atomic_get(&disconnect_requested)) {
 			atomic_set(&disconnect_requested, 0);
 			LOG_DBG("Expected disconnect event.");
-			aws_iot_evt.data.err = AWS_IOT_DISCONNECT_MISC;
+			aws_iot_evt.data.err = AWS_IOT_DISCONNECT_USER_REQUEST;
 			aws_iot_notify_event(&aws_iot_evt);
 			goto reset;
 		}
@@ -1125,9 +1151,15 @@ start:
 		}
 	}
 
-
-	aws_iot_notify_event(&aws_iot_evt);
-	aws_iot_disconnect();
+	/* Upon a socket error, disconnect the client and notify the
+	 * application. If the client has already been disconnected this has
+	 * occurred via a MQTT DISCONNECT event and the application has
+	 * already been notified.
+	 */
+	if (atomic_get(&aws_iot_disconnected) == 0) {
+		aws_iot_notify_event(&aws_iot_evt);
+		aws_iot_disconnect();
+	}
 
 reset:
 	atomic_set(&connection_poll_active, 0);
