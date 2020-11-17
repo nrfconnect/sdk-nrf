@@ -12,6 +12,9 @@ The |NCS| provides support for developing on the nRF5340 System on Chip (SoC) us
 See the `nRF5340 PDK User Guide`_ for detailed information about the nRF5340 PDK hardware.
 To get started with the nRF5340 PDK, follow the steps in the `Getting started with nRF Connect SDK (nRF53 Series)`_ guide.
 
+.. note::
+   The nRF5340 PDK has been deprecated with the introduction of the production-level nRF5340 DK.
+   See `nRF Connect SDK v1.4.0 documentation`_ for the last release supporting nRF5340 PDK.
 
 Introduction
 ************
