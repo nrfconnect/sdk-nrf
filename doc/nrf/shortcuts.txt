@@ -60,6 +60,8 @@
    See :ref:`ug_zigbee` for more information.
 .. |zigbee_library| replace:: This is a Zigbee library.
    See :ref:`ug_zigbee_configuring_libraries` for information about how to configure it for you Zigbee application.
+.. |zigbee_ncp_package| replace:: It contains the full development-ready source code for host and evaluation-ready firmware for the nRF52840 DK and the nRF52840 Dongle (nRF SoC; not subject to modification), which is not yet feature-complete.
+   The reference examples are provided for a Linux-based host.
 
 .. |nrf_desktop_module_event_note| replace:: See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 

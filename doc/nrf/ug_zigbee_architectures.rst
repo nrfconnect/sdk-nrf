@@ -70,14 +70,17 @@ For more information, see :ref:`ug_multiprotocol_support` and :ref:`zigbee_light
 Co-processor designs
 ********************
 
-The co-processor designs can be used when a more powerful processor (host) that does not have a suitable radio interface.
-In these designs, the host interacts with the Zigbee network through Network Co-Processor (NCP).
+The co-processor designs can be used when a device requires additional functionalities or more compute power than what Nordic Semiconductor's devices have to offer, but a more powerful processor does not have a suitable radio interface.
+In these designs, the more powerful processor (host) interacts with the Zigbee network through a connectivity device, for example a Nordic Semiconductor's device with the Zigbee interface.
+The split stack architectures are most commonly used to design a Zigbee gateway, but sometimes also for complex Zigbee Routers or Zigbee End Devices.
 
-Split-stack co-processor design
-===============================
+.. _ug_zigbee_platform_design_ncp_details:
 
-In this design, the host processor runs only the Zigbee application layer (ZCL).
-The NCP runs the Zigbee MAC and the Zigbee Pro network layer as well as provides commands to execute BDB commissioning primitives.
+Network Co-Processor (NCP)
+==========================
+
+In this design, the host processor runs the Zigbee application layer (ZCL) and and the Zigbee commissioning logic.
+The connectivity device (nRF SoC) runs the NCP application that contains lower parts of the Zigbee stack (802.15.4 PHY/MAC and the Zigbee PRO network layer), as well as provides commands to execute BDB commissioning primitives.
 The host processor communicates with the NCP through a serial interface (USB or UART).
 
 .. figure:: /images/zigbee_platform_design_ncp.svg
@@ -85,14 +88,18 @@ The host processor communicates with the NCP through a serial interface (USB or 
 
    Split Zigbee architecture
 
-The NCP firmware source is available to `ZBOSS Open Initiative (ZOI)`_ members.
+The |NCS|'s :ref:`ug_zigbee_tools` include the `NCP Host for Zigbee`_ based on ZBOSS and available for download as a standalone :file:`zip` package.
+|zigbee_ncp_package|
 
-This design has the following advantages:
+The NCP design has the following advantages:
 
 * Cost-optimized solution - uses the resources on the more powerful processor.
 * The NCP device does not require the support for the dual-bank DFU.
   It can be upgraded by the host processor.
+* Access to the full feature set of ZBOSS.
+* Lower memory footprint on the connectivity side (as compared with single-SoC Zigbee applications).
 
 It also has the following disadvantages:
 
 * The host part of the stack must be built and run for every individual host processor in use.
+  However, Nordic Semiconductor provides reference implementation for Linux-based platforms in the NCP Host for Zigbee package.

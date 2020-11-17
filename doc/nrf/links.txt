@@ -382,6 +382,8 @@
 
 .. _`ZBOSS Open Initiative (ZOI)`: https://dsr-zoi.com/
 
+.. _`NCP Host for Zigbee`: https://developer.nordicsemi.com/Zigbee/ncp_sdk_for_host/ncp_sdk_v0.9.2.zip
+
 .. ### Links to crypto specs
 
 .. _`NIST - AES`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/block-ciphers#AES
