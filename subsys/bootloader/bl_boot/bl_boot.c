@@ -65,6 +65,8 @@ void bl_boot(const struct fw_info *fw_info)
 			"Not in Privileged mode");
 #endif
 
+	printk("Booting (0x%x).\r\n", fw_info->address);
+
 	uninit_used_peripherals();
 
 	/* Allow any pending interrupts to be recognized */
@@ -80,7 +82,6 @@ void bl_boot(const struct fw_info *fw_info)
 		nvic->ICPR[i] = 0xFFFFFFFF;
 	}
 
-	printk("Booting (0x%x).\r\n", fw_info->address);
 
 	SysTick->CTRL = 0;
 
