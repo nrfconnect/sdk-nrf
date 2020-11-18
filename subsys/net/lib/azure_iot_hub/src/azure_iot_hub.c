@@ -40,7 +40,7 @@ LOG_MODULE_REGISTER(azure_iot_hub, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 #define TOPIC_TWIN_REPORT	"$iothub/twin/PATCH/properties/reported/?$rid=%d"
 #define TOPIC_EVENTS		"devices/%s/messages/events/%s"
 #define TOPIC_TWIN_REQUEST	"$iothub/twin/GET/?$rid=%d"
-#define TOPIC_DIRECT_METHOD_RES	"$iothub/methods/res/%d/?$rid=%d"
+#define TOPIC_DIRECT_METHOD_RES	"$iothub/methods/res/%d/?$rid=%s"
 
 /* Subscription topics */
 #define TOPIC_DEVICEBOUND	"devices/%s/messages/devicebound/#"
@@ -221,9 +221,20 @@ static bool direct_method_process(struct topic_parser_data *topic,
 	}
 
 	/* Get request ID */
-	evt.data.method.rid = atoi(topic->prop_bag[0].value);
+	for (size_t i = 0; i < topic->prop_bag_count; i++) {
+		if (strcmp("$rid", topic->prop_bag[i].key) == 0) {
+			evt.data.method.rid = topic->prop_bag[i].value;
+			break;
+		}
+	}
 
-	LOG_DBG("Direct method request ID: %d", evt.data.method.rid);
+	if (evt.data.method.rid == NULL) {
+		LOG_WRN("No request ID, direct method processing aborted");
+		return false;
+	}
+
+	LOG_DBG("Direct method request ID: %s",
+		log_strdup(evt.data.method.rid));
 
 	azure_iot_hub_notify_event(&evt);
 
@@ -255,6 +266,20 @@ static void device_twin_result_process(struct topic_parser_data *topic,
 		.data.msg.ptr = payload,
 		.data.msg.len = payload_len,
 	};
+
+
+	/* Get request ID */
+	for (size_t i = 0; i < topic->prop_bag_count; i++) {
+		if (strcmp("$rid", topic->prop_bag[i].key) == 0) {
+			evt.data.result.rid = topic->prop_bag[i].value;
+			break;
+		}
+	}
+
+	if (evt.data.result.rid == NULL) {
+		LOG_WRN("No request ID, device twin processing aborted");
+		return;
+	}
 
 	/* Status codes
 	 *	200: Response to request for device twin from
@@ -1154,8 +1179,7 @@ int azure_iot_hub_init(const struct azure_iot_hub_config *const config,
 	return 0;
 }
 
-int azure_iot_hub_method_respond(
-	struct azure_iot_hub_result *result)
+int azure_iot_hub_method_respond(struct azure_iot_hub_result *result)
 {
 	ssize_t len;
 	static char topic[100];

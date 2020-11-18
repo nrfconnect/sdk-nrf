@@ -26,7 +26,7 @@
 
 struct method_data {
 	struct k_delayed_work work;
-	uint32_t request_id;
+	char request_id[8];
 	char name[32];
 	char payload[200];
 } method_data;
@@ -129,7 +129,8 @@ static void on_evt_direct_method(struct azure_iot_hub_method *method)
 	printk("Method name: %s\n", method->name);
 	printf("Payload: %.*s\n", method->payload_len, method->payload);
 
-	method_data.request_id = method->rid;
+	strncpy(method_data.request_id, method->rid,
+		sizeof(method_data.request_id));
 
 	strncpy(method_data.name, method->name, sizeof(method_data.name));
 	snprintf(method_data.payload, sizeof(method_data.payload),
@@ -199,11 +200,11 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 		on_evt_direct_method(&evt->data.method);
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS:
-		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: %d\n",
+		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: %s\n",
 		       evt->data.result.rid);
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL:
-		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL, ID %d, status %d\n",
+		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL, ID %s, status %d\n",
 			evt->data.result.rid, evt->data.result.status);
 		break;
 	case AZURE_IOT_HUB_EVT_PUBACK:

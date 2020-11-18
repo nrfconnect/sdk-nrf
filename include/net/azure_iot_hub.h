@@ -160,8 +160,8 @@ struct azure_iot_hub_data {
 struct azure_iot_hub_method {
 	/** Method name, null-terminated string. */
 	const char *name;
-	/** Method request ID. */
-	uint32_t rid;
+	/** Method request ID, null-terminated string. */
+	char *rid;
 	/** Method payload. */
 	const char *payload;
 	/** Method payload length. */
@@ -176,8 +176,8 @@ struct azure_iot_hub_method {
  *	     cloud with success or failure).
  */
 struct azure_iot_hub_result {
-	/** Request ID to which the result belongs. */
-	uint32_t rid;
+	/** Request ID to which the result belongs, null-terminated string. */
+	char *rid;
 	/** Status code. */
 	uint32_t status;
 	/** Result payload. */
