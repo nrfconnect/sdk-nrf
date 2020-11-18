@@ -77,11 +77,11 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 		       evt->data.method.payload);
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS:
-		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: %d\n",
+		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: %s\n",
 		       evt->data.result.rid);
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL:
-		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL, ID %d, status %d\n",
+		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL, ID %s, status %d\n",
 		       evt->data.result.rid, evt->data.result.status);
 		break;
 	case AZURE_IOT_HUB_EVT_PUBACK:
