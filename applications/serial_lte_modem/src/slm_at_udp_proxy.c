@@ -147,8 +147,7 @@ static int do_udp_server_stop(int error)
 {
 	int ret = 0;
 
-	if (udp_sock > 0) {
-		k_thread_abort(udp_thread_id);
+	if (udp_sock != INVALID_SOCKET) {
 		ret = close(udp_sock);
 		if (ret < 0) {
 			LOG_WRN("close() failed: %d", -errno);
@@ -256,8 +255,7 @@ static int do_udp_client_disconnect(void)
 {
 	int ret = 0;
 
-	if (udp_sock > 0) {
-		k_thread_abort(udp_thread_id);
+	if (udp_sock != INVALID_SOCKET) {
 		ret = close(udp_sock);
 		if (ret < 0) {
 			LOG_WRN("close() failed: %d", -errno);
@@ -330,15 +328,40 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 {
 	int ret;
 	int size = sizeof(struct sockaddr_in);
+	struct pollfd fds;
 	char data[NET_IPV4_MTU];
 
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
+	fds.fd = udp_sock;
+	fds.events = POLLIN;
+
 	do {
-		ret = recvfrom(udp_sock, data, NET_IPV4_MTU, 0,
-			(struct sockaddr *)&remote, &size);
+		ret = poll(&fds, 1, MSEC_PER_SEC * CONFIG_SLM_UDP_POLL_TIME);
+		if (ret < 0) {  /* IO error */
+			LOG_WRN("poll() error: %d", ret);
+			continue;
+		}
+		if (ret == 0) {  /* timeout */
+			continue;
+		}
+		LOG_DBG("Poll events 0x%08x", fds.revents);
+		if ((fds.revents & POLLERR) == POLLERR) {
+			LOG_DBG("Socket error");
+			return;
+		}
+		if ((fds.revents & POLLNVAL) == POLLNVAL) {
+			LOG_DBG("Socket closed");
+			return;
+		}
+		if ((fds.revents & POLLIN) != POLLIN) {
+			continue;
+		} else {
+			ret = recvfrom(udp_sock, data, NET_IPV4_MTU, 0,
+				(struct sockaddr *)&remote, &size);
+		}
 		if (ret < 0) {
 			LOG_WRN("recv() error: %d", -errno);
 			continue;
@@ -636,7 +659,7 @@ int slm_at_udp_proxy_uninit(void)
 {
 	int ret;
 
-	if (udp_sock > 0) {
+	if (udp_sock != INVALID_SOCKET) {
 		k_thread_abort(udp_thread_id);
 		ret = close(udp_sock);
 		if (ret < 0) {
