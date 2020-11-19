@@ -38,6 +38,7 @@ config PM_PARTITION_SIZE_SPM
 
 config PM_PARTITION_SIZE_SPM_SRAM
 	hex "RAM reserved for SPM"
+	default 0 if !SPM_SECURE_SERVICES
 	default 0x10000 if SOC_NRF9160
 	default 0x8000
 	help
