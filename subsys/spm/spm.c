@@ -145,7 +145,8 @@ static void config_regions(bool ram, size_t start, size_t end, uint32_t perm)
 	const size_t region_size = ram ? RAM_SECURE_ATTRIBUTION_REGION_SIZE
 					: FLASH_SECURE_ATTRIBUTION_REGION_SIZE;
 
-	if (end == 0) {
+	__ASSERT_NO_MSG(end >= start);
+	if (end <= start) {
 		return;
 	}
 
