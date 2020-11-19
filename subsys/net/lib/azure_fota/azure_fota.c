@@ -481,6 +481,14 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 		.type = AZURE_FOTA_EVT_START
 	};
 
+	/* Ensure that FOTA download is not started multiple times, which
+	 * would corrupt the downloaded image.
+	 */
+	if (fota_state == STATUS_DOWNLOADING) {
+		LOG_INF("Firmware download is ongoing, message ignored");
+		return 0;
+	}
+
 	/* Check last reported FOTA status */
 	if (parse_reported_status(buf)) {
 		evt.type = AZURE_FOTA_EVT_REPORT;
@@ -496,11 +504,6 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 		return 0;
 	} else if (err < 0) {
 		LOG_DBG("Firmware details not found, FOTA will not start");
-		return 0;
-	}
-
-	if (fota_state == STATUS_DOWNLOADING) {
-		LOG_INF("Firmware download is already ongoing");
 		return 0;
 	}
 
