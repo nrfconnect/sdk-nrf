@@ -12,19 +12,34 @@ The most relevant changes that are present on the master branch of the |NCS|, as
 .. note::
     This file is a work in progress and might not cover all relevant changes.
 
-* ``bl_boot`` library:
-
-    * Disable clock interrupts before booting app.
-      This fixes an issue where the :ref:`bootloader` sample would not be able to boot a zephyr application on the nRF5340.
-
 Changelog
 *********
 
-See the following sections for a list of the most important changes.
+The following sections provide detailed lists of changes by component.
 
+nRF5
+====
+
+The following changes are relevant for the nRF52 and nRF53 Series.
+
+nRF5340 SoC
+-----------
+
+* Updated:
+
+  * ``bl_boot`` library - Disabled clock interrupts before booting the application.
+    This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
+
+Common
+======
+
+The following changes are relevant for all device families.
+
+MCUboot
+=======
 
 sdk-mcuboot
-===========
+-----------
 
 The MCUboot fork in |NCS| contains all commits from the upstream MCUboot repository up to and including ``5a6e18148d``, plus some |NCS| specific additions.
 The list of the most important recent changes can be found in :ref:`ncs_release_notes_140`.
@@ -34,8 +49,11 @@ sdk-nrfxlib
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for the most current information.
 
+Zephyr
+======
+
 sdk-zephyr
-==========
+----------
 
 .. NOTE TO MAINTAINERS: The latest Zephyr commit appears in multiple places; make sure you update them all.
 
