@@ -27,7 +27,11 @@
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
 #define NON_SECURE_APP_ADDRESS PM_APP_ADDRESS
+#ifdef PM_SRAM_SECURE_SIZE
 #define NON_SECURE_RAM_OFFSET PM_SRAM_SECURE_SIZE
+#else
+#define NON_SECURE_RAM_OFFSET 0
+#endif
 #else
 #include <storage/flash_map.h>
 #define NON_SECURE_APP_ADDRESS FLASH_AREA_OFFSET(image_0_nonsecure)
@@ -140,6 +144,10 @@ static void config_regions(bool ram, size_t start, size_t end, uint32_t perm)
 {
 	const size_t region_size = ram ? RAM_SECURE_ATTRIBUTION_REGION_SIZE
 					: FLASH_SECURE_ATTRIBUTION_REGION_SIZE;
+
+	if (end == 0) {
+		return;
+	}
 
 	for (size_t i = start; i < end; i++) {
 		if (ram) {
