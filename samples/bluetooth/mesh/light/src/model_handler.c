@@ -110,19 +110,6 @@ static void led_work(struct k_work *work)
 	}
 }
 
-/** Configuration server definition */
-static struct bt_mesh_cfg_srv cfg_srv = {
-	.relay = IS_ENABLED(CONFIG_BT_MESH_RELAY),
-	.beacon = BT_MESH_BEACON_ENABLED,
-	.frnd = IS_ENABLED(CONFIG_BT_MESH_FRIEND),
-	.gatt_proxy = IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY),
-	.default_ttl = 7,
-
-	/* 3 transmissions with 20ms interval */
-	.net_transmit = BT_MESH_TRANSMIT(2, 20),
-	.relay_retransmit = BT_MESH_TRANSMIT(2, 20),
-};
-
 /* Set up a repeating delayed work to blink the DK's LEDs when attention is
  * requested.
  */
@@ -166,7 +153,7 @@ BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 static struct bt_mesh_elem elements[] = {
 	BT_MESH_ELEM(
 		1, BT_MESH_MODEL_LIST(
-			BT_MESH_MODEL_CFG_SRV(&cfg_srv),
+			BT_MESH_MODEL_CFG_SRV,
 			BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 			BT_MESH_MODEL_ONOFF_SRV(&led_ctx[0].srv)),
 		BT_MESH_MODEL_NONE),
