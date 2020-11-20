@@ -78,6 +78,26 @@ config AWS_IOT_TOPIC_DELETE_ACCEPTED_SUBSCRIBE
 config AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE
 	bool "Subscribe to delete rejected shadow topic, $aws/things/<thing-name>/shadow/delete/rejected"
 
+config AWS_IOT_LAST_WILL
+	bool "This option includes the last will message and topic in the initial MQTT handshake"
+	help
+	  If this option is set a configurable last will topic and message is
+	  provided by the device in the MQTT CONNECT message. Upon a disconnect
+	  from the AWS IoT broker the broker will publish the last will message
+	  to the last will topic.
+
+if AWS_IOT_LAST_WILL
+
+config AWS_IOT_LAST_WILL_MESSAGE
+	string "Message published to the last will topic"
+	default "{\"lastwill\": \"offline\"}"
+
+config AWS_IOT_LAST_WILL_TOPIC
+	string "Topic that the last will message is published to"
+	default "lastwilltopic"
+
+endif
+
 config AWS_IOT_CONNECTION_POLL_THREAD
 	bool "Enable polling on MQTT socket in AWS IoT backend"
 
