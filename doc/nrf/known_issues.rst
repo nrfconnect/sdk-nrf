@@ -19,6 +19,7 @@ Use the drop-down filter to see known issues for previous releases and check if 
 
    <select name="versions" id="versions-select">
      <option value="all">All versions</option>
+     <option value="v1-4-99-dev1">v1.4.99-dev1</option>
      <option value="v1-4-0" selected>v1.4.0</option>
      <option value="v1-3-2">v1.3.2</option>
      <option value="v1-3-1">v1.3.1</option>
@@ -404,6 +405,14 @@ NCSDK-5580: nRF5340 only supports SoftDevice Controller
 Bootloader
 ==========
 
+.. rst-class:: v1-4-99-dev1
+
+NCSDK-7173: nRF5340 network core bootloader cannot be built stand-alone
+  The :ref:`nc_bootloader` sample does not compile when built stand-alone.
+  It compiles without problems when included as a child image.
+
+  **Workaround:** Include the :ref:`nc_bootloader` sample as child image instead of compiling it stand-alone.
+
 .. rst-class:: v1-1-0
 
 Public keys revocation
@@ -495,7 +504,7 @@ NCSDK-6238: Socket API calls may hang when using Download client
   When using the :ref:`lib_download_client` library with HTTP (without TLS), the application might not process incoming fragments fast enough, which can starve the :ref:`nrfxlib:bsdlib` buffers and make calls to BSD library hang.
   Samples and applications that are affected include those that use :ref:`lib_download_client` to download files through HTTP, or those that use :ref:`lib_fota_download` with modem updates enabled.
 
-**Workaround:** Set :option:`CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS`.
+  **Workaround:** Set :option:`CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS`.
 
 .. rst-class:: v1-1-0
 
@@ -514,7 +523,7 @@ Stalled download
 .. rst-class:: v1-1-0
 
 Offset not retained with an MCUboot target
- When using the MCUboot target in :ref:`lib_dfu_target`, the write/downloaded offset is not retained when the device is reset.
+  When using the MCUboot target in :ref:`lib_dfu_target`, the write/downloaded offset is not retained when the device is reset.
 
 .. rst-class:: v1-1-0
 
