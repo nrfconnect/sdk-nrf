@@ -59,6 +59,7 @@ Kconfig*                                  @tejlmand
 /lib/at_notif/                            @pkchan
 /lib/agps/                                @jtguggedal @simensrostad
 /lib/nrf_modem_lib/                       @rlubos
+/lib/edge_impulse/                        @pdunaj
 /lib/fprotect/                            @hakonfam
 /lib/flash_patch/                         @hakonfam
 /lib/lte_link_control/                    @jtguggedal

@@ -28,5 +28,6 @@ rsource "modem_key_mgmt/Kconfig"
 rsource "supl/Kconfig"
 rsource "date_time/Kconfig"
 rsource "ram_pwrdn/Kconfig"
+rsource "edge_impulse/Kconfig"
 
 endmenu

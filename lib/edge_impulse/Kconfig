@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig EDGE_IMPULSE
+	bool "Enable Edge Impulse"
+	depends on CPLUSPLUS
+	depends on STD_CPP11
+	depends on LIB_CPLUSPLUS
+	depends on NEWLIB_LIBC
+	depends on NEWLIB_LIBC_FLOAT_PRINTF
+	depends on FPU
+	help
+	  Enable Edge Impulse library.
+
+if EDGE_IMPULSE
+
+config APP_LINK_WITH_EDGE_IMPULSE
+	bool "Link 'app' with Edge Impulse"
+	default y
+	help
+	  Add Edge Impulse header files to the 'app' include path. It may be
+	  disabled if the include paths for Edge Impulse are causing aliasing
+	  issues for 'app'.
+
+config EDGE_IMPULSE_DOWNLOAD_ALWAYS
+	bool "Download Edge Impulse library on each build"
+	default y
+	help
+	  Request the build system to download the Edge Impulse library on each
+	  build. This results in the build target to always be considered out
+	  of date.
+	  If the re-downloaded zip has no code changes, then no re-building of
+	  source is performed and only download of zip file will be done.
+
+config EDGE_IMPULSE_URI
+	string "Edge Impulse library URI"
+	default ''
+	help
+	  Specify URI used to access archive with Edge Impulse library.
+	  The library will be downloaded into build directory. Make sure
+	  to specify the HTTP API key header as EI_API_KEY_HEADER variable
+	  during build if the HTTP server uses it.
+	  You can also specify absolute file path of a local file.
+
+endif # EDGE_IMPULSE
