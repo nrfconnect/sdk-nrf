@@ -530,8 +530,8 @@ parse:
 			LOG_ERR("Unable to obtain short: %d", err);
 			return err;
 		}
-		err = snprintf(buf, buf_size, "%d", param_value);
-		if ((err <= 0) || (err > buf_size)) {
+		len = snprintf(buf, buf_size, "%d", param_value);
+		if ((len <= 0) || (len > buf_size)) {
 			return -EMSGSIZE;
 		}
 	} else if (modem_data[info]->data_type == AT_PARAM_TYPE_STRING) {
