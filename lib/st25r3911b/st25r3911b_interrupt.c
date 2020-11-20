@@ -117,7 +117,7 @@ int st25r3911b_irq_modify(uint32_t clr_mask, uint32_t set_mask)
 	int err = 0;
 	uint32_t mask;
 	uint32_t old_mask;
-	struct k_spinlock_key key;
+	k_spinlock_key_t key;
 
 	key = k_spin_lock(&spinlock);
 
