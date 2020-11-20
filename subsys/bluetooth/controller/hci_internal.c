@@ -245,6 +245,11 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_test_end = 1;
 #endif
 
+#if defined(CONFIG_BT_CTLR_LE_ENC) && defined(CONFIG_BT_CTLR_LE_PING)
+	cmds->hci_read_authenticated_payload_timeout = 1;
+	cmds->hci_write_authenticated_payload_timeout = 1;
+#endif
+
 #if defined(CONFIG_BT_CTLR_DATA_LENGTH)
 	cmds->hci_le_set_data_length = 1;
 	cmds->hci_le_read_suggested_default_data_length = 1;
