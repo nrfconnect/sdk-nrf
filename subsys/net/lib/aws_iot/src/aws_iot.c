@@ -832,6 +832,22 @@ static int client_broker_init(struct mqtt_client *const client)
 	client->tx_buf_size		= sizeof(tx_buffer);
 	client->transport.type		= MQTT_TRANSPORT_SECURE;
 
+#if defined(CONFIG_AWS_IOT_LAST_WILL)
+	static struct mqtt_topic last_will_topic = {
+		.topic.utf8 = CONFIG_AWS_IOT_LAST_WILL_TOPIC,
+		.topic.size = sizeof(CONFIG_AWS_IOT_LAST_WILL_TOPIC) - 1,
+		.qos = MQTT_QOS_0_AT_MOST_ONCE
+	};
+
+	static struct mqtt_utf8 last_will_message = {
+		.utf8 = CONFIG_AWS_IOT_LAST_WILL_MESSAGE,
+		.size = sizeof(CONFIG_AWS_IOT_LAST_WILL_MESSAGE) - 1
+	};
+
+	client->will_topic = &last_will_topic;
+	client->will_message = &last_will_message;
+#endif
+
 	static sec_tag_t sec_tag_list[] = { CONFIG_AWS_IOT_SEC_TAG };
 	struct mqtt_sec_config *tls_cfg = &(client->transport).tls.config;
 
