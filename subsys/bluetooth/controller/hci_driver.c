@@ -29,6 +29,12 @@ static K_SEM_DEFINE(sem_recv, 0, 1);
 static struct k_thread recv_thread_data;
 static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_SDC_RX_STACK_SIZE);
 
+/* The priority of RX thread should be always lower than SDC_HOST_SIGNAL_PRIO.
+ * It fetchs the hci events and acl data when there is no pending signal in SDC.
+ */
+#define SDC_HOST_SIGNAL_PRIO 4
+BUILD_ASSERT(SDC_HOST_SIGNAL_PRIO < CONFIG_SDC_RX_PRIO);
+
 #if defined(CONFIG_BT_CONN)
 /* It should not be possible to set CONFIG_SDC_SLAVE_COUNT larger than
  * CONFIG_BT_MAX_CONN. Kconfig should make sure of that, this assert is to
