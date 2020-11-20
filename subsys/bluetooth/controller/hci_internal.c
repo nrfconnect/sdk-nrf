@@ -165,6 +165,10 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_set_event_mask = 1;
 	cmds->hci_reset = 1;
 
+#if defined(CONFIG_BT_CONN)
+	cmds->hci_read_transmit_power_level = 1;
+#endif
+
 #if defined(CONFIG_BT_HCI_ACL_FLOW_CONTROL)
 	cmds->hci_set_controller_to_host_flow_control = 1;
 	cmds->hci_host_buffer_size = 1;
