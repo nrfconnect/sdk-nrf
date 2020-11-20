@@ -1,5 +1,4 @@
 #include <autoconf.h>
-#include <devicetree_legacy_unfixed.h>
 
 b0_image:
   size: CONFIG_PM_PARTITION_SIZE_B0_IMAGE
@@ -31,7 +30,7 @@ s1_pad:
   share_size: mcuboot_pad
   placement:
     after: s0
-    align: {start: DT_FLASH_ERASE_BLOCK_SIZE}
+    align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
 
 s1_image:
   share_size: {one_of: [mcuboot, s0_image]}
@@ -50,5 +49,5 @@ provision:
 #else
   placement:
     after: b0_image
-    align: {start: DT_FLASH_ERASE_BLOCK_SIZE}
+    align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
 #endif
