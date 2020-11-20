@@ -12,6 +12,8 @@ set(NRF_SUPPORTED_BOARDS
   nrf52833dk_nrf52833
   nrf5340pdk_nrf5340_cpuapp
   nrf5340pdk_nrf5340_cpuappns
+  nrf5340dk_nrf5340_cpuapp
+  nrf5340dk_nrf5340_cpuappns
   )
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
