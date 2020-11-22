@@ -47,6 +47,12 @@ if (CONFIG_SECURE_BOOT)
       SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/bootloader
       )
   endif()
+  if (CONFIG_SOC_NRF5340_CPUAPP AND CONFIG_BOOTLOADER_MCUBOOT)
+      add_overlay_config(
+        mcuboot
+        ${NRF_DIR}/subsys/bootloader/image/log_minimal.conf
+        )
+  endif()
 endif()
 
 # Special handling for the nRF53 when using RPMSG HCI.
