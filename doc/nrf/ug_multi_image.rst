@@ -44,7 +44,7 @@ MCUboot bootloader
    However, it allows to update the application, and therefore MCUboot and the application must be located in different images.
    In this scenario, the application is the parent image and MCUboot is the child image.
 
-   See :ref:`about_mcuboot` for more information.
+   See :doc:`MCUboot documentation <mcuboot:index>` for more information.
    The MCUboot bootloader is used in the :ref:`http_application_update_sample` sample.
 
 nRF5340 support
