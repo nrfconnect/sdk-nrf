@@ -378,9 +378,7 @@ static int turn_on(struct bt_mesh_light_ctrl_srv *srv,
 		fade_time = srv->cfg.fade_on;
 	}
 
-	if (srv->state == LIGHT_CTRL_STATE_ON) {
-		restart_timer(srv, remaining_fade_time(srv) + srv->cfg.on);
-	} else {
+	if (srv->state != LIGHT_CTRL_STATE_ON) {
 		enum bt_mesh_light_ctrl_srv_state prev_state = srv->state;
 
 		if (prev_state == LIGHT_CTRL_STATE_STANDBY) {
@@ -391,6 +389,9 @@ static int turn_on(struct bt_mesh_light_ctrl_srv *srv,
 
 		transition_start(srv, LIGHT_CTRL_STATE_ON, fade_time);
 		onoff_pub(srv, prev_state, pub_gen_onoff);
+	} else if (!atomic_test_bit(&srv->flags, FLAG_TRANSITION)) {
+		/* Delay the move to prolong */
+		restart_timer(srv, srv->cfg.on);
 	}
 
 	return 0;
