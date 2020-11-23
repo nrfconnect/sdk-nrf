@@ -126,33 +126,35 @@ set(CUSTOM_PROTO_FILES
 foreach(GROUP BASE NOTIFICATIONS ALERTS STATELISTENER SPEECHDATA MUSICDATA CUSTOM)
     # Populate list of expected .c files output from protobuf generation
     foreach(file ${${GROUP}_PROTO_FILES})
-        get_filename_component(FILE_PATH ${file} DIRECTORY)
-        get_filename_component(FILE_BASE ${file} NAME_WE)
+        get_filename_component(FILE_DIR ${file} DIRECTORY)
+        get_filename_component(FILE_BASE_NAME ${file} NAME_WE)
         list(APPEND PROTOC_INC_DIRS "-I.")
-        list(APPEND PROTOC_INC_DIRS "-I${FILE_PATH}")
-        list(APPEND ${GROUP}_PROTO_BYPRODUCTS "${PROTO_COMPILATION_DIR}/${FILE_BASE}.pb.c")
+        list(APPEND PROTOC_INC_DIRS "-I${FILE_DIR}")
+        list(APPEND ${GROUP}_PROTO_OUTPUTS "${PROTO_COMPILATION_DIR}/${FILE_BASE_NAME}.pb.c")
+        list(APPEND ${GROUP}_PROTO_DEPENDENCIES "${file}")
     endforeach()
 
-    # Populate list of compilation commands for protoc compiler.
-    unset(PROTOC_CMD_LIST)
+    # Each .pb.c file to be compiled by protoc gets its own CMake custom command,
+    # with dependencies to all other .proto files in its group and the base files.
     foreach(file ${${GROUP}_PROTO_FILES})
-        get_filename_component(FILE_PATH ${file} DIRECTORY)
+        get_filename_component(FILE_DIR ${file} DIRECTORY)
         get_filename_component(FILE_NAME ${file} NAME)
+        get_filename_component(FILE_BASE_NAME ${file} NAME_WE)
+
         set(PROTOC_ARGS "-I."
                         "${PROTOC_INC_DIRS}"
                         "--nanopb_out=${PROTO_COMPILATION_DIR}"
                         "${FILE_NAME}"
         )
-        list(APPEND PROTOC_CMD_LIST
-                    COMMAND ${CMAKE_COMMAND} -E chdir ${FILE_PATH}
-                    ${PROTOC_BIN} ${PROTOC_ARGS})
-    endforeach()
 
-    add_custom_target(
-        protobuf_generation_${GROUP}
-        ${PROTOC_CMD_LIST}
-        BYPRODUCTS ${${GROUP}_PROTO_BYPRODUCTS}
-    )
+        add_custom_command(
+          OUTPUT "${PROTO_COMPILATION_DIR}/${FILE_BASE_NAME}.pb.c"
+          COMMAND ${PROTOC_BIN} ${PROTOC_ARGS}
+          WORKING_DIRECTORY ${FILE_DIR}
+          MAIN_DEPENDENCY ${file}
+          DEPENDS ${${GROUP}_PROTO_DEPENDENCIES} ${BASE_PROTO_DEPENDENCIES}
+        )
+    endforeach()
 endforeach()
 
 zephyr_library_named(ALEXA_GADGETS_PROFILE)
@@ -166,29 +168,29 @@ zephyr_library_sources_ifdef(CONFIG_GADGETS_PROFILE_ENABLE
     ${NANOPB_PATH}/pb_common.c
     ${NANOPB_PATH}/pb_encode.c
     ${NANOPB_PATH}/pb_decode.c
-    ${BASE_PROTO_BYPRODUCTS}
+    ${BASE_PROTO_OUTPUTS}
 )
 
 zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_NOTIFICATIONS_ENABLE
-    ${NOTIFICATIONS_PROTO_BYPRODUCTS}
+    ${NOTIFICATIONS_PROTO_OUTPUTS}
 )
 
 zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_ALERTS_ENABLE
-    ${ALERTS_PROTO_BYPRODUCTS}
+    ${ALERTS_PROTO_OUTPUTS}
 )
 
 zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_STATELISTENER_ENABLE
-    ${STATELISTENER_PROTO_BYPRODUCTS}
+    ${STATELISTENER_PROTO_OUTPUTS}
 )
 
 zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_SPEECHDATA_ENABLE
-    ${SPEECHDATA_PROTO_BYPRODUCTS}
+    ${SPEECHDATA_PROTO_OUTPUTS}
 )
 
 zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_MUSICDATA_ENABLE
-    ${MUSICDATA_PROTO_BYPRODUCTS}
+    ${MUSICDATA_PROTO_OUTPUTS}
 )
 
 zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE
-    ${CUSTOM_PROTO_BYPRODUCTS}
+    ${CUSTOM_PROTO_OUTPUTS}
 )
