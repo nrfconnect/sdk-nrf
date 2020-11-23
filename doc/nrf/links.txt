@@ -419,6 +419,7 @@
 
 .. _`generator expressions`: https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html
 
+
 .. ### Source: EnOcean.com
 
 .. _`EnOcean`: https://www.enocean.com
@@ -427,6 +428,10 @@
 .. _`Easyfit Motion Detector with Illumination Sensor - EMDCB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-motion-detector-with-illumination-sensor-emdcb/
 
 .. ### Source: other
+
+.. _`Ninja documentation`: https://ninja-build.org/manual.html
+
+.. _`GCC compiler`: https://gcc.gnu.org/
 
 .. _`MCUboot`: https://mcuboot.com
 
