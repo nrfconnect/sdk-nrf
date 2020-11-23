@@ -227,6 +227,14 @@ static bool parse_reported_status(const char *msg)
 	LOG_DBG("Currently reported 'fwUpdateStatus' in device twin: %s",
 		log_strdup(fw_status_obj->valuestring));
 
+	/* "current" status indicates no FOTA was in progress, only allow
+	 * updates with this status to be applied.
+	 */
+	if (strcmp("current", fw_status_obj->valuestring) != 0) {
+		LOG_DBG("Firmware update already in progress.");
+		goto clean_exit;
+	}
+
 	/* Current firmware object (currentFwVersion) */
 	fw_current_obj = cJSON_GetObjectItemCaseSensitive(fw_obj,
 							 "currentFwVersion");
