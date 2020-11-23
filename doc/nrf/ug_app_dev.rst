@@ -13,6 +13,7 @@ The following user guides introduce important concepts that you should be  famil
    app_boards
    app_build_system
    app_memory
+   app_power_opt
    ug_logging
    ug_multi_image
    ug_bootloader

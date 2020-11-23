@@ -134,6 +134,9 @@
 
 .. _`nRF Util`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_nrfutil%2FUG%2Fnrfutil%2Fnrfutil_intro.html
 
+.. _`Power Profiler Kit II (PPK2)`: https://infocenter.nordicsemi.com/topic/ug_ppk2/UG/ppk/PPK_user_guide_Intro.html
+
+.. _`Electrical specification of nrf9160`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/_tmp/alta.nRF9160/autodita/CURRENT/parameters.frontpage.html#
 
 .. ### Links to the Nordic website
 
@@ -162,6 +165,13 @@
 .. _`Energy efficiency` : https://www.nordicsemi.com/Products/Low-power-cellular-IoT#Cellular-performance-for-the-IoT
 
 .. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
+
+.. _`Online Power Profiler (OPP)`: https://devzone.nordicsemi.com/nordic/power/w/opp/3/online-power-profiler-for-lte
+
+.. _`Online Power Profiler user guide`: https://devzone.nordicsemi.com/nordic/power/w/opp/4/user-guide-lte
+
+.. _`Optimizing Power on nRF52 Designs`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/optimizing-power-on-nrf52-designs
+
 
 
 .. ### Links to Nordic software
@@ -294,6 +304,7 @@
 .. _`Registering the device with Azure IoT Hub`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal#register-a-new-device-in-the-iot-hub
 
 .. _`AWS IoT Just-in-time-provisioning`: https://aws.amazon.com/blogs/iot/just-in-time-registration-of-device-certificates-on-aws-iot/
+
 
 .. ### Links to Bluetooth specs
 
