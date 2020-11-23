@@ -239,11 +239,12 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 
 	cmds->hci_le_read_supported_states = 1;
 
-#if defined(CONFIG_BT_CTLR_DTM)
+	/* NOTE: The DTM commands are *not* supported by the SoftDevice
+	 * controller. See doc/nrf/known_issues.rst.
+	 */
 	cmds->hci_le_receiver_test_v1 = 1;
 	cmds->hci_le_transmitter_test_v1 = 1;
 	cmds->hci_le_test_end = 1;
-#endif
 
 #if defined(CONFIG_BT_CTLR_LE_ENC) && defined(CONFIG_BT_CTLR_LE_PING)
 	cmds->hci_read_authenticated_payload_timeout = 1;
@@ -275,10 +276,11 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_phy = 1;
 #endif
 
-#if defined(CONFIG_BT_CTLR_DTM)
+	/* NOTE: The DTM commands are *not* supported by the SoftDevice
+	 * controller. See doc/nrf/known_issues.rst.
+	 */
 	cmds->hci_le_receiver_test_v2 = 1;
 	cmds->hci_le_transmitter_test_v2 = 1;
-#endif
 
 #if defined(CONFIG_BT_CTLR_ADV_EXT)
 #if defined(CONFIG_BT_BROADCASTER)
