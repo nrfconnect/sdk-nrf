@@ -17,7 +17,6 @@ module=SPM
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
 endif
 
-
 menuconfig IS_SPM
 	bool "Current app is SPM"
 	default n
