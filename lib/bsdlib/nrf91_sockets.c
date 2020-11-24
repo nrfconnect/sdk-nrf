@@ -1000,6 +1000,7 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 	struct nrf_addrinfo nrf_hints_pdn;
 	struct nrf_addrinfo *nrf_res = NULL;
 	struct nrf_addrinfo *nrf_hints_ptr = NULL;
+	static K_MUTEX_DEFINE(getaddrinfo_lock);
 
 	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
 
@@ -1022,11 +1023,14 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 		}
 		nrf_hints_ptr = &nrf_hints;
 	}
+
+	k_mutex_lock(&getaddrinfo_lock, K_FOREVER);
 	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
 
 	if (retval != 0) {
 		error = nrf_to_z_dns_error_code(retval);
-		return error;
+		retval = error;
+		goto error;
 	}
 
 	struct nrf_addrinfo *next_nrf_res = nrf_res;
@@ -1074,6 +1078,8 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 	}
 	nrf_freeaddrinfo(nrf_res);
 
+error:
+	k_mutex_unlock(&getaddrinfo_lock);
 	return retval;
 }
 
