@@ -27,17 +27,11 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 
 #define APP_TOPICS_COUNT CONFIG_AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT
 
-/* Timeout in seconds in which the application will wait for an initial event
- * from the date time library.
- */
-#define DATE_TIME_TIMEOUT_S 15
-
 static struct k_delayed_work shadow_update_work;
 static struct k_delayed_work connect_work;
 static struct k_delayed_work shadow_update_version_work;
 
 K_SEM_DEFINE(lte_connected, 0, 1);
-K_SEM_DEFINE(date_time_obtained, 0, 1);
 
 static int json_add_obj(cJSON *parent, const char *str, cJSON *item)
 {
@@ -468,11 +462,6 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 	default:
 		break;
 	}
-
-	/** Do not depend on obtained time, continue upon any event from the
-	 *  date time library.
-	 */
-	k_sem_give(&date_time_obtained);
 }
 
 void main(void)
@@ -517,12 +506,5 @@ void main(void)
 
 
 	date_time_update_async(date_time_event_handler);
-
-	err = k_sem_take(&date_time_obtained, K_SECONDS(DATE_TIME_TIMEOUT_S));
-	if (err) {
-		printk("Date time, no callback event within %d seconds\n",
-			DATE_TIME_TIMEOUT_S);
-	}
-
 	k_delayed_work_submit(&connect_work, K_NO_WAIT);
 }
