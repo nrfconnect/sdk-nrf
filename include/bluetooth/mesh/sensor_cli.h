@@ -602,7 +602,6 @@ int bt_mesh_sensor_cli_series_entry_get(
  *                         has been changed to the number of columns in the
  *                         response.
  *  @retval -ENOTSUP       The sensor doesn't support series data.
- *  @retval -ENODEV        The sensor server doesn't have the given sensor.
  *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  *                         not configured.
  *  @retval -EAGAIN        The device has not been provisioned.
