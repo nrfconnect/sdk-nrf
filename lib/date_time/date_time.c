@@ -241,20 +241,6 @@ static void new_date_time_get(void)
 
 		LOG_DBG("Current time not valid");
 
-#if defined(CONFIG_DATE_TIME_MODEM)
-		LOG_DBG("Fallback on cellular network time");
-
-		err = time_modem_get();
-		if (err == 0) {
-			LOG_DBG("Time from cellular network obtained");
-			initial_valid_time = true;
-			evt.type = DATE_TIME_OBTAINED_MODEM;
-			date_time_notify_event(&evt);
-			continue;
-		}
-
-		LOG_DBG("Not getting cellular network time");
-#endif
 #if defined(CONFIG_DATE_TIME_NTP)
 		LOG_DBG("Fallback on NTP server");
 
@@ -268,6 +254,20 @@ static void new_date_time_get(void)
 		}
 
 		LOG_DBG("Not getting time from NTP server");
+#endif
+#if defined(CONFIG_DATE_TIME_MODEM)
+		LOG_DBG("Fallback on cellular network time");
+
+		err = time_modem_get();
+		if (err == 0) {
+			LOG_DBG("Time from cellular network obtained");
+			initial_valid_time = true;
+			evt.type = DATE_TIME_OBTAINED_MODEM;
+			date_time_notify_event(&evt);
+			continue;
+		}
+
+		LOG_DBG("Not getting cellular network time");
 #endif
 		LOG_DBG("Not getting time from any time source");
 
