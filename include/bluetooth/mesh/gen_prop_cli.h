@@ -160,7 +160,11 @@ int bt_mesh_prop_cli_prop_get(struct bt_mesh_prop_cli *cli,
 
 /** @brief Set a property value in a User Property Server.
  *
- * @copydetails bt_mesh_prop_cli_user_prop_set_unack
+ * The User Property may only be set if the server enabled user write access to
+ * it. If this is not the case, the server will only respond with the set user
+ * access mode for the given property.
+ *
+ * @note The @p val::meta::user_access level will be ignored.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
  * function will return, and the response will be passed to the

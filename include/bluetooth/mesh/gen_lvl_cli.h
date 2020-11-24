@@ -146,7 +146,11 @@ int bt_mesh_lvl_cli_set_unack(struct bt_mesh_lvl_cli *cli,
 
 /** @brief Trigger a differential level state change in the server.
  *
- * @copydetails bt_mesh_lvl_cli_delta_set_unack
+ * Makes the server move its level state by some delta value. If multiple
+ * delta_set messages are sent in a row (with less than 6 seconds interval),
+ * and @p delta_set::new_transaction is set to false, the server will continue
+ * using the same base value for its delta as in the first message, unless
+ * some other client made changes to the server.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
  * function will return, and the response will be passed to the
@@ -201,7 +205,16 @@ int bt_mesh_lvl_cli_delta_set_unack(
 
 /** @brief Trigger a continuous level change in the server.
  *
- * @copydetails bt_mesh_lvl_cli_move_set_unack
+ * Makes the server continuously move its level state by the set rate:
+ *
+ * @code
+ * rate_of_change = move_set->delta / move_set->transition->time
+ * @endcode
+ *
+ * The server will continue moving its level until it is told to stop, or until
+ * it reaches some application specific boundary value. The server may choose
+ * to wrap around the level value, depending on its usage. The move can be
+ * stopped by sending a new move message with a delta value of 0.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
  * function will return, and the response will be passed to the
