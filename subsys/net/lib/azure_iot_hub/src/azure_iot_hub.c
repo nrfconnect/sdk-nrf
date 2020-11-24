@@ -298,11 +298,11 @@ static void device_twin_result_process(struct topic_parser_data *topic,
 
 		if (err < 0) {
 			LOG_ERR("Failed to process FOTA msg");
-			return;
 		} else if (err == 1) {
 			LOG_DBG("FOTA message handled");
-			return;
 		}
+
+		/* Forward the device twin to the application. */
 #endif /* IS_ENABLED(CONFIG_AZURE_FOTA) */
 		evt.type = AZURE_IOT_HUB_EVT_TWIN_RECEIVED;
 		break;
@@ -435,11 +435,11 @@ static void on_publish(struct mqtt_client *const client,
 		err = azure_fota_msg_process(payload_buf, payload_len);
 		if (err < 0) {
 			LOG_ERR("Failed to process FOTA message");
-			return;
 		} else if (err == 1) {
 			LOG_DBG("Device twin update handled (FOTA)");
-			return;
 		}
+
+		/* Forward the device twin to the application. */
 #endif /* IS_ENABLED(CONFIG_AZURE_FOTA) */
 		evt.type = AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED;
 
