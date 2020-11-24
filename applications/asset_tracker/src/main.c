@@ -78,11 +78,6 @@ defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #define CLOUD_LED_OFF_STR "{\"led\":\"off\"}"
 #define CLOUD_LED_MSK UI_LED_1
 
-/* Timeout in seconds in which the application will wait for an initial event
- * from the date time library.
- */
-#define DATE_TIME_TIMEOUT_S 15
-
 /* Interval in milliseconds after which the device will reboot
  * if the disconnect event has not been handled.
  */
@@ -184,7 +179,6 @@ static K_SEM_DEFINE(bsdlib_initialized, 0, 1);
 static K_SEM_DEFINE(lte_connected, 0, 1);
 static K_SEM_DEFINE(cloud_ready_to_connect, 0, 1);
 #endif
-static K_SEM_DEFINE(date_time_obtained, 0, 1);
 
 #if CONFIG_MODEM_INFO
 static struct k_delayed_work rsrp_work;
@@ -1892,17 +1886,10 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 	default:
 		break;
 	}
-
-	/* Do not depend on obtained time, continue upon any event from the
-	 * date time library.
-	 */
-	k_sem_give(&date_time_obtained);
 }
 
 void main(void)
 {
-	int ret;
-
 	LOG_INF("Asset tracker started");
 	k_work_q_start(&application_work_q, application_stack_area,
 		       K_THREAD_STACK_SIZEOF(application_stack_area),
@@ -1939,12 +1926,5 @@ void main(void)
 #endif
 
 	date_time_update_async(date_time_event_handler);
-
-	ret = k_sem_take(&date_time_obtained, K_SECONDS(DATE_TIME_TIMEOUT_S));
-	if (ret) {
-		LOG_WRN("Date time, no callback event within %d seconds",
-			DATE_TIME_TIMEOUT_S);
-	}
-
 	connect_to_cloud(0);
 }
