@@ -306,4 +306,4 @@ int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model);
 
 #endif /* BT_MESH_TIME_SRV_H__ */
 
-/* @} */
+/** @} */

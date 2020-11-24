@@ -271,4 +271,4 @@ extern const struct bt_mesh_lightness_srv_handlers
 
 #endif /* BT_MESH_LIGHT_CTL_SRV_H__ */
 
-/* @} */
+/** @} */

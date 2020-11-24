@@ -243,4 +243,4 @@ extern const struct bt_mesh_model_cb _bt_mesh_loc_cli_cb;
 
 #endif /* BT_MESH_GEN_LOC_CLI_H__ */
 
-/* @} */
+/** @} */

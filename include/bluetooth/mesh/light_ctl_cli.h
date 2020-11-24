@@ -403,4 +403,4 @@ extern const struct bt_mesh_model_cb _bt_mesh_light_ctl_cli_cb;
 
 #endif /* BT_MESH_LIGHT_CTL_CLI_H__ */
 
-/* @} */
+/** @} */
