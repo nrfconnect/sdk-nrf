@@ -427,13 +427,13 @@ add_dependencies(nrfxlib-inventory nrfxlib-content nrfxlib-doxy)
 # Kconfig symbols regardless of where they are defined.
 #
 # We rely on the Zephyr Kconfig files pulling in the other Kconfig files, and
-# use the --modules option to genrest.py to split the documentation into a
-# separate page for each module.
+# use the --modules option to gen_kconfig_rest.py to split the documentation
+# into a separate page for each module.
 
 set(KCONFIG_RST_OUT ${KCONFIG_BINARY_DIR}/rst)
 
-# The 'kconfig-content' target uses genrest.py to generate .rst files for all
-# Kconfig symbols, as well as index pages that point to them
+# The 'kconfig-content' target uses gen_kconfig_rest.py to generate .rst files
+# for all Kconfig symbols, as well as index pages that point to them
 add_custom_target(
   kconfig-content
   COMMAND ${CMAKE_COMMAND} -E make_directory ${KCONFIG_RST_OUT}
@@ -450,7 +450,7 @@ add_custom_target(
     KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
     KCONFIG_DOC_MODE=1
       ${PYTHON_EXECUTABLE}
-        ${ZEPHYR_BASE}/doc/scripts/genrest.py ${KCONFIG_RST_OUT}
+        ${ZEPHYR_BASE}/doc/scripts/gen_kconfig_rest.py ${KCONFIG_RST_OUT}
         --separate-all-index
         --modules Zephyr,zephyr,${ZEPHYR_BASE}
                   nRF,nrf,${NRF_BASE}
