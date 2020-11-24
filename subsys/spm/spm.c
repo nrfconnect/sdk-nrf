@@ -30,7 +30,7 @@
 #define NON_SECURE_RAM_OFFSET PM_SRAM_SECURE_SIZE
 #else
 #include <storage/flash_map.h>
-#define NON_SECURE_APP_ADDRESS FLASH_AREA_ID(image_0_nonsecure)
+#define NON_SECURE_APP_ADDRESS FLASH_AREA_OFFSET(image_0_nonsecure)
 /* This reflects the configuration in DTS. */
 #define NON_SECURE_RAM_OFFSET 0x10000
 #endif /* USE_PARTITION_MANAGER */
