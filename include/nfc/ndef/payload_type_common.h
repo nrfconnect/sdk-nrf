@@ -10,7 +10,7 @@
 /**@file
  *
  * @defgroup nfc_ndef_payload_type_common Standard NDEF Record Type definitions
- *
+ * @{
  * @brief    Set of standard NDEF Record Types defined in NFC Forum
  *           specifications.
  *

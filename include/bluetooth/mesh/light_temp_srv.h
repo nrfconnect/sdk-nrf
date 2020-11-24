@@ -165,4 +165,4 @@ extern const struct bt_mesh_lvl_srv_handlers
 
 #endif /* BT_MESH_LIGHT_TEMP_SRV_H__ */
 
-/* @} */
+/** @} */

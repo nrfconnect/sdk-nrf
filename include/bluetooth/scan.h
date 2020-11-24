@@ -60,7 +60,7 @@ extern "C" {
 
 /**@brief Uses the combination of all filters. */
 #define BT_SCAN_ALL_FILTER 0x3F
-/* @} */
+/** @} */
 
 
 /**@brief Scan types.
@@ -547,8 +547,6 @@ void bt_scan_blocklist_clear(void);
 }
 #endif
 
-/**
- * @}
- */
-
 #endif /* BT_SCAN_H_ */
+
+/** @} */
