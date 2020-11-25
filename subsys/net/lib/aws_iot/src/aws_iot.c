@@ -25,6 +25,14 @@ LOG_MODULE_REGISTER(aws_iot, CONFIG_AWS_IOT_LOG_LEVEL);
 BUILD_ASSERT(sizeof(CONFIG_AWS_IOT_BROKER_HOST_NAME) > 1,
 	    "AWS IoT hostname not set");
 
+/* Check that the client ID buffer is large enough if a static ID is used. */
+#if !defined(CONFIG_AWS_IOT_CLIENT_ID_APP)
+BUILD_ASSERT(CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN >=
+	     sizeof(CONFIG_AWS_IOT_CLIENT_ID_STATIC) - 1,
+	     "AWS IoT client ID static buffer to small "
+	     "Increase CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN");
+#endif /* !defined(CONFIG_AWS_IOT_CLIENT_ID_APP */
+
 #if defined(CONFIG_AWS_IOT_IPV6)
 #define AWS_AF_FAMILY AF_INET6
 #else
