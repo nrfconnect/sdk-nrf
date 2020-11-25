@@ -295,8 +295,8 @@ def resolve(reqs, dp):
                                  f"parts. Solution: {str(solution)}")
         for part in sub_partitions[sub]['span']:
             if part not in solution:
-                raise PartitionError(f"Some or all parts of partition {part}"
-                                     f" have not been placed.")
+                raise PartitionError(f'Some or all parts of partition {part}'
+                                     f' have not been placed.')
 
     return solution, sub_partitions
 
@@ -360,15 +360,15 @@ def verify_layout(reqs, solution, total_size, flash_start):
     for p in solution:
         actual_address = reqs[p]['address']
         if actual_address != expected_address:
-            raise PartitionError(f"Error when inspecting {p},"
-                                 f" invalid address {hex(actual_address)},"
-                                 f" expected {hex(expected_address)},")
+            raise PartitionError(f'Error when inspecting {p},'
+                                 f' invalid address {hex(actual_address)},'
+                                 f' expected {hex(expected_address)},')
 
         expected_address += reqs[p]['size']
     last = reqs[solution[-1]]
     if not last['address'] + last['size'] == flash_start + total_size:
-        raise PartitionError("End of last partition is after last valid"
-                             " address")
+        raise PartitionError('End of last partition is after last valid'
+                             ' address')
 
 
 def set_addresses_and_align(reqs, sub_partitions, solution, size, dp, start=0):
@@ -462,8 +462,8 @@ def align_partition(current, reqs, move_up, dynamic_partitions, dp, solution):
                                             required_offset, align_end,
                                             solution)
     else:
-        raise PartitionError("Invalid combination, can not have dynamic"
-                             " partition in front of app with alignment")
+        raise PartitionError('Invalid combination, can not have dynamic'
+                             ' partition in front of app with alignment')
 
     e = 'EMPTY_{}'.format(len([x for x in reqs.keys() if 'EMPTY' in x]))
     reqs[e] = {'address': empty_partition_address,
@@ -514,7 +514,7 @@ def get_empty_part_to_move_dyn_part(dynamic_partitions, current, reqs,
     num_dyn_part_in_front = solution.index(current) - solution.index(first_dyn)
 
     if not num_bytes_to_move_dyn_part > 0:
-        raise PartitionError("Invalid move size specified, must be > 0.")
+        raise PartitionError('Invalid move size specified, must be > 0.')
 
     if move_end:
         # Add the current partition to the list of dynamic partitions in front,
@@ -526,8 +526,8 @@ def get_empty_part_to_move_dyn_part(dynamic_partitions, current, reqs,
         num_bytes_to_move_dyn_part // num_dyn_part_in_front
 
     if not reduction_each_dynamic_part % 4 == 0:
-        raise PartitionError(f"The current configuration gives {first_dyn}"
-                             f" a non-word-aligned size" + ALIGNMENT_ERROR)
+        raise PartitionError(f'The current configuration gives {first_dyn}'
+                             f' a non-word-aligned size' + ALIGNMENT_ERROR)
 
     if not reduction_each_dynamic_part < reqs[first_dyn]['size']:
         raise PartitionError(
@@ -548,7 +548,7 @@ def get_empty_part_to_move_dyn_part(dynamic_partitions, current, reqs,
 
 def get_required_offset(align, start, size, move_up):
     if len(align) != 1 or ('start' not in align and 'end' not in align):
-        raise PartitionError(f"Invalid alignment requirement {align}")
+        raise PartitionError(f'Invalid alignment requirement {align}')
 
     end = start + size
     align_start = 'start' in align
@@ -580,7 +580,7 @@ def set_sub_partition_address_and_size(reqs, sub_partitions):
         size = sum([reqs[part]['size'] for part in sp_value['span']])
         if size == 0:
             raise PartitionError(
-                f"No compatible parent partition found for {sp_name}")
+                f'No compatible parent partition found for {sp_name}')
         address = min([reqs[part]['address'] for part in sp_value['span']])
 
         reqs[sp_name] = sp_value
@@ -641,7 +641,7 @@ def get_dynamic_area_start_and_size(static_config, base, size, dp):
             "There must be exactly one gap in the static configuration to "
             "support placing the dynamic partitions (such as 'app'). "
             f"Gaps found ({len(gaps)}):" +
-            ' '.join([f'0x{gap[0]:x}-0x{gap[1]:x}' for gap in gaps]) +
+            " ".join([f"0x{gap[0]:x}-0x{gap[1]:x}" for gap in gaps]) +
             " The most common solution to this problem is to fill the "
             "smallest of these gaps with statically defined partition(s) until"
             " there is only one gap left. Alternatively re-order the already "
@@ -715,8 +715,8 @@ def solve_simple_region(pm_config, start, size, placement_strategy, region_name,
         # But first, verify that the user hasn't created a partition with the name of the region.
         if region_name in pm_config:
             raise PartitionError(
-                f"Found partition named {region_name}, this is the name of a"
-                f" region, and is a reserved name")
+                f'Found partition named {region_name}, this is the name of a'
+                f' region, and is a reserved name')
 
         pm_config[region_name] = dict()
         pm_config[region_name]['region'] = region_name
@@ -755,7 +755,7 @@ def verify_static_conf_simple(size, start, placement_strategy, static_conf):
             "There must be exactly one gap in the static configuration to "
             "support placing the non-statically-defined partitions. "
             f"Gaps found ({len(gaps)}):" +
-            ' '.join([f'0x{gap[0]:x}-0x{gap[1]:x}' for gap in gaps]) +
+            " ".join([f"0x{gap[0]:x}-0x{gap[1]:x}" for gap in gaps]) +
             " The most common solution to this problem is to re-order the "
             "defined static partitions so that only one gap remains.")
     elif not start_end_correct:
@@ -810,19 +810,19 @@ This file contains all addresses and sizes of all partitions.
 
 "pm_config.h" is in the same folder as the given 'pm.yml' file.''',
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--input-files", required=True, type=str, nargs="+",
-                        help="List of paths to input yaml files. ")
+    parser.add_argument('--input-files', required=True, type=str, nargs='+',
+                        help='List of paths to input yaml files.')
 
-    parser.add_argument("--output-partitions", required=True, type=str,
-                        help="Path to output partition configuration file.")
+    parser.add_argument('--output-partitions', required=True, type=str,
+                        help='Path to output partition configuration file.')
 
-    parser.add_argument("--output-regions", required=True, type=str,
-                        help="Path to output regions configuration file.")
+    parser.add_argument('--output-regions', required=True, type=str,
+                        help='Path to output regions configuration file.')
 
-    parser.add_argument("--static-config", required=False, type=argparse.FileType(mode='r'),
-                        help="Path static configuration.")
+    parser.add_argument('--static-config', required=False, type=argparse.FileType(mode='r'),
+                        help='Path static configuration.')
 
-    parser.add_argument("--regions", required=False, type=str, nargs='*',
+    parser.add_argument('--regions', required=False, type=str, nargs='*',
                         help="Space separated list of regions. For each region specified here, one must specify"
                              "--{region_name}-base-addr and --{region_name}-size. If the region is associated"
                              "with a driver, the device name must be given in --{region_name}-device (e.g. an "
@@ -841,7 +841,7 @@ This file contains all addresses and sizes of all partitions.
         parser.add_argument(f'--{x}-placement-strategy', required=False, type=str,
                             choices=[START_TO_END, END_TO_START, COMPLEX], default=START_TO_END)
         parser.add_argument(f'--{x}-device', required=False, type=str, default='')
-        parser.add_argument(f'--{x}-dynamic-partition', required=False, type=str, help="Name of dynamic partition")
+        parser.add_argument(f'--{x}-dynamic-partition', required=False, type=str, help='Name of dynamic partition')
 
     ranges_configuration = parser.parse_args(region_args)
 
@@ -918,9 +918,9 @@ def main():
             solution.update(solve_region(pm_config, region, region_config,
                                          static_config))
         except PartitionError as e:
-            print(f'Partition manager failed: {str(e)}')
-            print(f'Failed to partition region {region},'
-                  f' size of region: {region_config["size"]}')
+            print(f"Partition manager failed: {str(e)}")
+            print(f"Failed to partition region {region},"
+                  f" size of region: {region_config['size']}")
             print('Partition Configuration:')
             to_print = \
                 {x: {a: b for a, b in y.items() if a in
@@ -937,19 +937,19 @@ def main():
 def expect_addr_size(td, name, expected_address, expected_size):
     if expected_size:
         assert td[name]['size'] == expected_size, \
-            "Size of {} was {}, expected {}.\ntd:{}".format(name, td[name]['size'], expected_size, pformat(td))
+            'Size of {} was {}, expected {}.\ntd:{}'.format(name, td[name]['size'], expected_size, pformat(td))
     if expected_address:
         assert td[name]['address'] == expected_address, \
-            "Address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['address'], expected_address, pformat(td))
+            'Address of {} was {}, expected {}.\ntd:{}'.format(name, td[name]['address'], expected_address, pformat(td))
     if expected_size and expected_address and 'end_address' in td[name]:
         assert td[name]['end_address'] == expected_address + expected_size, \
-            "End address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['end_address'], expected_address + expected_size, pformat(td))
+            'End address of {} was {}, expected {}.\ntd:{}'.format(name, td[name]['end_address'], expected_address + expected_size, pformat(td))
 
 
 def expect_list(expected, actual):
     expected_list = list(sorted(expected))
     actual_list = list(sorted(actual))
-    assert sorted(expected_list) == sorted(actual_list), "Expected list %s, was %s" % (str(expected_list), str(actual_list))
+    assert sorted(expected_list) == sorted(actual_list), 'Expected list {}, was {}'.format(expected_list, actual_list)
 
 
 def test():
@@ -1274,8 +1274,8 @@ def test():
     assert offset == 600
 
     for l in [
-            lambda : get_required_offset(align={'end': ["CONFIG_VAR"]}, start=0, size=1000, move_up=False),
-            lambda : get_required_offset(align={'start': ["CONFIG_VAR"]}, start=0, size=1000, move_up=False),
+            lambda : get_required_offset(align={'end': ['CONFIG_VAR']}, start=0, size=1000, move_up=False),
+            lambda : get_required_offset(align={'start': ['CONFIG_VAR']}, start=0, size=1000, move_up=False),
             lambda : get_required_offset(align={'start': [[2]]},start=0, size=1000, move_up=False)
             ]:
         failed = False
@@ -1283,7 +1283,7 @@ def test():
             l()
         except TypeError:
             failed = True
-        assert failed, "Should have received a TypeError."
+        assert failed, 'Should have received a TypeError.'
     # Verify that the first partition can be aligned, and that the inserted empty partition is placed behind it.
     td = {'first': {'placement': {'before': 'app', 'align': {'end': 800}}, 'size': 100},
           'app': {'region': 'flash_primary',}}
@@ -1679,12 +1679,12 @@ def test():
         failed = True
     assert failed
 
-    print("All tests passed!")
+    print('All tests passed!')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     if len(sys.argv) > 1:
         main()
     else:
-        print("No input, running tests.")
+        print('No input, running tests.')
         test()
