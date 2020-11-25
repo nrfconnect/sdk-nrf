@@ -17,8 +17,9 @@
 
 #define AT_CMD_MAX_ARRAY_SIZE 32
 
-#define AT_CMD_HWVERSION_LEN    10
+#define AT_CMD_CGSN_LEN         5
 #define AT_CMD_SHORTSWVER_LEN   11
+#define AT_CMD_HWVERSION_LEN    10
 #define AT_CMD_XMODEMUUID_LEN   11
 #define AT_CMD_XICCID_LEN       7
 
@@ -36,7 +37,7 @@ enum at_parser_state {
 
 static enum at_parser_state state;
 
-static bool set_type_string = false;
+static bool set_type_string;
 
 static inline void set_new_state(enum at_parser_state new_state)
 {
@@ -65,16 +66,11 @@ static inline bool check_response_for_forced_string(const char *tmpstr)
 {
 	bool retval = false;
 
-	if (!strncmp(tmpstr, "%HWVERSION", AT_CMD_HWVERSION_LEN)) {
-			retval = true;
-	}
-	else if (!strncmp(tmpstr, "%SHORTSWVER", AT_CMD_SHORTSWVER_LEN)) {
-			retval = true;
-	}
-	else if (!strncmp(tmpstr, "%XMODEMUUID", AT_CMD_XMODEMUUID_LEN)) {
-			retval = true;
-	}
-	else if (!strncmp(tmpstr, "%XICCID", AT_CMD_XICCID_LEN)) {
+	if (!strncmp(tmpstr, "+CGSN", AT_CMD_CGSN_LEN) ||
+	    !strncmp(tmpstr, "%SHORTSWVER", AT_CMD_SHORTSWVER_LEN) ||
+	    !strncmp(tmpstr, "%HWVERSION", AT_CMD_HWVERSION_LEN) ||
+	    !strncmp(tmpstr, "%XMODEMUUID", AT_CMD_XMODEMUUID_LEN) ||
+	    !strncmp(tmpstr, "%XICCID", AT_CMD_XICCID_LEN)) {
 			retval = true;
 	}
 
