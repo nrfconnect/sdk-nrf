@@ -66,6 +66,13 @@ Publishes the application version number to the AWS IoT message broker.
 
 Configures the time interval between each publishing of the message.
 
+.. note::
+
+   The sample sets the option :option:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value, 1200 seconds (20 minutes) as specified by AWS IoT Core.
+   This is to limit the IP traffic between the device and the AWS IoT message broker for supporting a low power sample.
+   However, note that in certain LTE networks, the NAT timeout can be considerably lower than 1200 seconds.
+   So as a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, the option :option:`CONFIG_MQTT_KEEPALIVE` must be set to the lowest of the aforementioned timeout limits (Maximum allowed MQTT keepalive and NAT timeout).
+
 Building and running
 ********************
 
