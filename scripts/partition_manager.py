@@ -939,7 +939,7 @@ def expect_addr_size(td, name, expected_address, expected_size):
     if expected_address:
         assert td[name]['address'] == expected_address, \
             "Address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['address'], expected_address, pformat(td))
-    if expected_size and expected_address:
+    if td[name].get('end_address') and expected_size and expected_address:
         assert td[name]['end_address'] == expected_address + expected_size, \
             "End address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['end_address'], expected_address + expected_size, pformat(td))
 
