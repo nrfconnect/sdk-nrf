@@ -69,6 +69,12 @@ Check and configure the following library options that are used by the sample:
 * :option:`CONFIG_AZURE_IOT_HUB_DPS` - Enables Azure IoT Hub DPS.
 * :option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` - Sets the Azure IoT Hub DPS ID scope.
 
+.. note::
+
+   The sample sets the option :option:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value, 1767 seconds (29.45 minutes) as specified by Azure IoT Hub.
+   This is to limit the IP traffic between the device and the Azure IoT Hub message broker for supporting a low power sample.
+   However, note that in certain LTE networks, the NAT timeout can be considerably lower than 1767 seconds.
+   So as a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, the option :option:`CONFIG_MQTT_KEEPALIVE` must be set to the lowest of the aforementioned timeout limits (Maximum allowed MQTT keepalive and NAT timeout).
 
 Building and running
 ********************
