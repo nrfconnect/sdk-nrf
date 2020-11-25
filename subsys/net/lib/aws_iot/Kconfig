@@ -48,7 +48,7 @@ config AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT
 
 config AWS_IOT_CLIENT_ID_MAX_LEN
 	int "Maximum length of cliend id"
-	default 20
+	default 30
 
 config AWS_IOT_CLIENT_ID_STATIC
 	string "Static client id"
