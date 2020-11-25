@@ -12,6 +12,7 @@
 #define BT_MESH_INTERNAL_SENSOR_H__
 
 #include <bluetooth/mesh/sensor.h>
+#include <bluetooth/mesh/sensor_cli.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -133,6 +134,11 @@ int sensor_status_encode(struct net_buf_simple *buf,
 
 int sensor_status_id_encode(struct net_buf_simple *buf, uint8_t len, uint16_t id);
 void sensor_status_id_decode(struct net_buf_simple *buf, uint8_t *len, uint16_t *id);
+
+void sensor_descriptor_decode(struct net_buf_simple *buf,
+			      struct bt_mesh_sensor_info *sensor);
+void sensor_descriptor_encode(struct net_buf_simple *buf,
+			      struct bt_mesh_sensor *sensor);
 
 int sensor_value_encode(struct net_buf_simple *buf,
 			const struct bt_mesh_sensor_type *type,
