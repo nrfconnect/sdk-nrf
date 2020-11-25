@@ -153,7 +153,14 @@ endif
 
 endmenu # Device
 
-menu "Motion"
+menuconfig MOTION
+	bool "Enable motion sensing in Asset Tracker"
+	default y
+	help
+	  Enables motion sensing in asset tracker with real
+	  sensors or simulated ones.
+
+if MOTION
 
 choice
 	prompt "Accelerometer device"
@@ -220,7 +227,7 @@ config ACCEL_INVERTED
 	  Enable if the accelerometer is mounted with the top side facing
 	  down when the board itself is in normal position.
 
-endmenu # Motion
+endif # MOTION
 
 menu "Cloud"
 
@@ -293,7 +300,14 @@ config CLOUD_CONNECT_ERR_REBOOT_S
 
 endmenu # Cloud
 
-menu "Environment sensors"
+menuconfig ENVIRONMENT_SENSORS
+	bool "Enable environment sensing in Asset Tracker"
+	default y
+	help
+	  Enables environment sensing in asset tracker with real
+	  sensors or simulated ones.
+
+if ENVIRONMENT_SENSORS
 
 config USE_BME680_BSEC
 	bool "Use Bosch BME680 BSEC lib"
@@ -379,7 +393,7 @@ config TEMP_DEV_NAME
 
 endif
 
-endmenu # Environment sensors
+endif # ENVIRONMENT_SENSORS
 
 menuconfig LIGHT_SENSOR
 	bool "Light sensor"
