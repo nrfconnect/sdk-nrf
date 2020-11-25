@@ -69,6 +69,7 @@ struct nrf9160_gps_config {
 	nrf_gnss_nmea_mask_t nmea_mask;
 	nrf_gnss_delete_mask_t delete_mask;
 	nrf_gnss_power_save_mode_t power_mode;
+	nrf_gnss_use_case_t use_case;
 	bool priority;
 };
 
@@ -580,6 +581,18 @@ static int parse_cfg(struct gps_config *cfg_src,
 
 	cfg_dst->priority = cfg_src->priority;
 
+	if (cfg_src->use_case == GPS_USE_CASE_SINGLE_COLD_START) {
+		cfg_dst->use_case = NRF_GNSS_USE_CASE_SINGLE_COLD_START;
+	} else if (cfg_src->use_case == GPS_USE_CASE_MULTIPLE_HOT_START) {
+		cfg_dst->use_case = NRF_GNSS_USE_CASE_MULTIPLE_HOT_START;
+	}
+
+	if (cfg_src->accuracy == GPS_ACCURACY_NORMAL) {
+		cfg_dst->use_case |= NRF_GNSS_USE_CASE_NORMAL_ACCURACY;
+	} else if (cfg_src->accuracy == GPS_ACCURACY_LOW) {
+		cfg_dst->use_case |= NRF_GNSS_USE_CASE_LOW_ACCURACY;
+	}
+
 	return 0;
 }
 
@@ -673,6 +686,18 @@ set_configuration:
 					sizeof(gps_cfg.power_mode));
 		if (retval != 0) {
 			LOG_ERR("Failed to set GPS power mode");
+			return -EIO;
+		}
+	}
+
+	if (gps_cfg.use_case) {
+		retval = nrf_setsockopt(drv_data->socket,
+					NRF_SOL_GNSS,
+					NRF_SO_GNSS_USE_CASE,
+					&gps_cfg.use_case,
+					sizeof(gps_cfg.use_case));
+		if (retval) {
+			LOG_ERR("Failed to set use case and accuracy");
 			return -EIO;
 		}
 	}
