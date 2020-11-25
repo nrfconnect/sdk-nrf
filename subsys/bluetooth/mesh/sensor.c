@@ -117,6 +117,63 @@ void sensor_status_id_decode(struct net_buf_simple *buf, uint8_t *len, uint16_t 
 	}
 }
 
+static void tolerance_decode(uint16_t encoded, struct sensor_value *tolerance)
+{
+	uint32_t toll_mill = (encoded * 100ULL * 1000000ULL) / 4095ULL;
+
+	tolerance->val1 = toll_mill / 1000000ULL;
+	tolerance->val2 = toll_mill % 1000000ULL;
+}
+static uint16_t tolerance_encode(const struct sensor_value *tol)
+{
+	uint64_t tol_mill = 1000000L * tol->val1 + tol->val2;
+
+	if (tol_mill > (1000000L * 100L)) {
+		return 0;
+	}
+	return (tol_mill * 4095L) / (1000000L * 100L);
+}
+
+void sensor_descriptor_decode(struct net_buf_simple *buf,
+			struct bt_mesh_sensor_info *sensor)
+{
+	uint32_t tolerances;
+
+	sensor->id = net_buf_simple_pull_le16(buf);
+	tolerances = net_buf_simple_pull_le24(buf);
+	tolerance_decode(tolerances & BIT_MASK(12),
+			 &sensor->descriptor.tolerance.positive);
+	tolerance_decode(tolerances >> 12,
+			 &sensor->descriptor.tolerance.negative);
+	sensor->descriptor.sampling_type = net_buf_simple_pull_u8(buf);
+	sensor->descriptor.period =
+		sensor_powtime_decode(net_buf_simple_pull_u8(buf));
+	sensor->descriptor.update_interval =
+		sensor_powtime_decode(net_buf_simple_pull_u8(buf));
+}
+
+void sensor_descriptor_encode(struct net_buf_simple *buf,
+				     struct bt_mesh_sensor *sensor)
+{
+	net_buf_simple_add_le16(buf, sensor->type->id);
+
+	const struct bt_mesh_sensor_descriptor dummy = { 0 };
+	const struct bt_mesh_sensor_descriptor *d =
+		sensor->descriptor ? sensor->descriptor : &dummy;
+
+	uint16_t tol_pos = tolerance_encode(&d->tolerance.positive);
+	uint16_t tol_neg = tolerance_encode(&d->tolerance.negative);
+
+	net_buf_simple_add_u8(buf, tol_pos & 0xff);
+	net_buf_simple_add_u8(buf,
+			      ((tol_pos >> 8) & BIT_MASK(4)) | (tol_neg << 4));
+	net_buf_simple_add_u8(buf, tol_neg >> 4);
+	net_buf_simple_add_u8(buf, d->sampling_type);
+
+	net_buf_simple_add_u8(buf, sensor_powtime_encode(d->period));
+	net_buf_simple_add_u8(buf, sensor_powtime_encode(d->update_interval));
+}
+
 int sensor_value_encode(struct net_buf_simple *buf,
 			const struct bt_mesh_sensor_type *type,
 			const struct sensor_value *values)

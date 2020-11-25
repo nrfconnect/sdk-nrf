@@ -50,13 +50,6 @@ struct cadence_rsp {
 	struct bt_mesh_sensor_cadence_status *cadence;
 };
 
-static void tolerance_decode(uint16_t encoded, struct sensor_value *tolerance)
-{
-	uint32_t toll_mill = (encoded * 100ULL * 1000000ULL) / 4095ULL;
-
-	tolerance->val1 = toll_mill / 1000000ULL;
-	tolerance->val2 = toll_mill % 1000000ULL;
-}
 
 static void unknown_type(struct bt_mesh_sensor_cli *cli,
 			 struct bt_mesh_msg_ctx *ctx, uint16_t id, uint32_t op)
@@ -93,19 +86,8 @@ static void handle_descriptor_status(struct bt_mesh_model *mod,
 	struct bt_mesh_sensor_info sensor;
 
 	while (buf->len >= 8) {
-		uint32_t tolerances;
 
-		sensor.id = net_buf_simple_pull_le16(buf);
-		tolerances = net_buf_simple_pull_le24(buf);
-		tolerance_decode(tolerances & BIT_MASK(12),
-				 &sensor.descriptor.tolerance.positive);
-		tolerance_decode(tolerances >> 12,
-				 &sensor.descriptor.tolerance.negative);
-		sensor.descriptor.sampling_type = net_buf_simple_pull_u8(buf);
-		sensor.descriptor.period =
-			sensor_powtime_decode(net_buf_simple_pull_u8(buf));
-		sensor.descriptor.update_interval =
-			sensor_powtime_decode(net_buf_simple_pull_u8(buf));
+		sensor_descriptor_decode(buf, &sensor);
 
 		if (cli->cb && cli->cb->sensor) {
 			cli->cb->sensor(cli, ctx, &sensor);
