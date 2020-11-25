@@ -104,6 +104,7 @@ endif
 
 config AWS_IOT_CONNECTION_POLL_THREAD
 	bool "Enable polling on MQTT socket in AWS IoT backend"
+	default y
 
 config AWS_IOT_TLS_SESSION_CACHING
 	bool "Enable TLS session caching"

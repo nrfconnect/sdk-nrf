@@ -308,6 +308,7 @@
 .. _`Registering the device with Azure IoT Hub`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal#register-a-new-device-in-the-iot-hub
 
 .. _`AWS IoT Just-in-time-provisioning`: https://aws.amazon.com/blogs/iot/just-in-time-registration-of-device-certificates-on-aws-iot/
+.. _`AWS IoT Device Shadow Topics`: https://docs.aws.amazon.com/iot/latest/developerguide/device-shadow-mqtt.html
 
 
 .. ### Links to Bluetooth specs
