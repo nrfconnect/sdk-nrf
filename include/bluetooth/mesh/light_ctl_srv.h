@@ -198,8 +198,6 @@ struct bt_mesh_light_ctl_srv {
  * @param[in] status Current status.
  *
  * @retval 0 Successfully published a Generic OnOff Status message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -222,8 +220,6 @@ int32_t bt_mesh_light_ctl_pub(struct bt_mesh_light_ctl_srv *srv,
  * @param[in] status Current status.
  *
  * @retval 0 Successfully published a Generic OnOff Status message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -245,8 +241,6 @@ int32_t bt_mesh_light_ctl_range_pub(struct bt_mesh_light_ctl_srv *srv,
  * default publish parameters.
  *
  * @retval 0 Successfully published a Generic OnOff Status message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.

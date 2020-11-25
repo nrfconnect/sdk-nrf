@@ -93,8 +93,6 @@ struct bt_mesh_battery_srv {
  * @param[in] status Current status.
  *
  * @retval 0 Successfully published a Generic Battery Status message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.

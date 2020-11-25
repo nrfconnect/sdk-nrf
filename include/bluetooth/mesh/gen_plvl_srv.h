@@ -174,8 +174,6 @@ struct bt_mesh_plvl_srv {
  * @param[in] status Status to publish.
  *
  * @return 0 Successfully published the current Power state.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
