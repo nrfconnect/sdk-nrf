@@ -156,6 +156,8 @@ static int mpsl_lib_init(const struct device *dev)
 
 	clock_cfg.source = m_config_clock_source_get();
 	clock_cfg.accuracy_ppm = CONFIG_CLOCK_CONTROL_NRF_ACCURACY;
+	clock_cfg.skip_wait_lfclk_started =
+		IS_ENABLED(CONFIG_SYSTEM_CLOCK_NO_WAIT);
 
 #ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
 	clock_cfg.rc_ctiv = MPSL_RECOMMENDED_RC_CTIV;
