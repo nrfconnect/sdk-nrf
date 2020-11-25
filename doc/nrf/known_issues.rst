@@ -659,6 +659,12 @@ Closing sockets
 Multiprotocol Service Layer (MPSL)
 ==================================
 
+.. rst-class:: v1-4-99-dev1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+DRGN-15064: External Full swing and External Low swing not working
+  Even though the MPSL Clock driver accepts a Low Frequency Clock source configuration for External Full swing and External Low swing, the clock control system is not configured correctly.
+  For this reason, do not use :c:macro:`CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING` and :c:macro:`CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING`.
+
 .. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 DRGN-6362: Do not use the synthesized low frequency clock source
