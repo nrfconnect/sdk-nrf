@@ -23,8 +23,6 @@ CONFIG_UART_CONSOLE=y
 
 # Enable I2C
 CONFIG_I2C=y
-# Note: I2C_2 is enabled in Kconfig.defconfig where it can depend on I2C
-#	to avoid warnings when building for MCUboot, which disables I2C.
 
 # Enable power management IC ADP536x
 CONFIG_ADP536X=y
