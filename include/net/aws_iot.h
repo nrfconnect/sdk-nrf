@@ -28,9 +28,22 @@ extern "C" {
  *         topic that will be published to.
  */
 enum aws_iot_topic_type {
+	/** Unknown device shadow topic. */
 	AWS_IOT_SHADOW_TOPIC_UNKNOWN = 0x0,
+	/** This topic type corresponds to
+	 *  $aws/things/<thing-name>/shadow/get, publishing an empty message
+	 *  to this topic requests the device shadow document.
+	 */
 	AWS_IOT_SHADOW_TOPIC_GET,
+	/** This topic type corresponds to
+	 *  $aws/things/<thing-name>/shadow/update, publishing data to this
+	 *  topic updates the device shadow document.
+	 */
 	AWS_IOT_SHADOW_TOPIC_UPDATE,
+	/** This topic type corresponds to
+	 *  $aws/things/<thing-name>/shadow/delete, publishing an empty message
+	 *  to this topic deletes the device Shadow document.
+	 */
 	AWS_IOT_SHADOW_TOPIC_DELETE
 };
 
