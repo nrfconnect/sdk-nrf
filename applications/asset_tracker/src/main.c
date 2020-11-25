@@ -131,11 +131,13 @@ static int64_t gps_last_search_start_time;
 static atomic_t carrier_requested_disconnect;
 static atomic_t cloud_connect_attempts;
 
+#if defined(CONFIG_MOTION)
 /* Flag used for flip detection */
 static bool flip_mode_enabled = true;
 static motion_data_t last_motion_data = {
 	.orientation = MOTION_ORIENTATION_NOT_KNOWN,
 };
+#endif
 
 /* Variable to keep track of nRF cloud association state. */
 enum cloud_association_state {
@@ -160,7 +162,9 @@ static struct k_delayed_work device_config_work;
 static struct k_delayed_work cloud_connect_work;
 static struct k_work device_status_work;
 static struct k_delayed_work send_agps_request_work;
+#if defined(CONFIG_MOTION)
 static struct k_work motion_data_send_work;
+#endif
 static struct k_work no_sim_go_offline_work;
 
 #if defined(CONFIG_AT_CMD)
@@ -194,8 +198,12 @@ enum error_type {
 };
 
 /* Forward declaration of functions */
+#if defined(CONFIG_MOTION)
 static void motion_handler(motion_data_t  motion_data);
+#endif
+#if defined(CONFIG_ENVIRONMENT_SENSORS)
 static void env_data_send(void);
+#endif
 #if CONFIG_LIGHT_SENSOR
 static void light_sensor_data_send(void);
 #endif /* CONFIG_LIGHT_SENSOR */
@@ -702,7 +710,9 @@ static void gps_handler(const struct device *dev, struct gps_event *evt)
 
 		k_work_submit_to_queue(&application_work_q,
 				       &send_gps_data_work);
+#if defined(CONFIG_ENVIRONMENT_SENSORS)
 		env_sensors_poll();
+#endif
 		break;
 	case GPS_EVT_OPERATION_BLOCKED:
 		LOG_INF("GPS_EVT_OPERATION_BLOCKED");
@@ -759,6 +769,7 @@ static void button_send(bool pressed)
 }
 #endif
 
+#if defined(CONFIG_MOTION)
 #if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
 
 static void motion_trigger_gps(motion_data_t  motion_data)
@@ -857,6 +868,7 @@ static void motion_data_send(struct k_work *work)
 		}
 	}
 }
+#endif /* CONFIG_MOTION */
 
 static void cloud_cmd_handle_modem_at_cmd(const char *const at_cmd)
 {
@@ -913,8 +925,10 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 				(uint32_t)cmd->data.sv.value);
 #endif
 		} else if (cmd->channel == CLOUD_CHANNEL_ENVIRONMENT) {
+#if defined(CONFIG_ENVIRONMENT_SENSORS)
 			env_sensors_set_send_interval(
 				(uint32_t)cmd->data.sv.value);
+#endif
 		} else if (cmd->channel == CLOUD_CHANNEL_GPS) {
 			/* TODO: update GPS controller to handle send */
 			/* interval */
@@ -925,8 +939,10 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 	} else if ((cmd->group == CLOUD_CMD_GROUP_GET) &&
 		   (cmd->type == CLOUD_CMD_EMPTY)) {
 		if (cmd->channel == CLOUD_CHANNEL_FLIP) {
+#if defined(CONFIG_MOTION)
 			k_work_submit_to_queue(&application_work_q,
 					       &motion_data_send_work);
+#endif
 		} else if (cmd->channel == CLOUD_CHANNEL_DEVICE_INFO) {
 			k_work_submit_to_queue(&application_work_q,
 					       &device_status_work);
@@ -937,7 +953,9 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 						       K_NO_WAIT);
 #endif
 		} else if (cmd->channel == CLOUD_CHANNEL_ENVIRONMENT) {
+#if defined(CONFIG_ENVIRONMENT_SENSORS)
 			env_sensors_poll();
+#endif
 		} else if (cmd->channel == CLOUD_CHANNEL_LIGHT_SENSOR) {
 #if IS_ENABLED(CONFIG_LIGHT_SENSOR)
 			light_sensor_poll();
@@ -1121,6 +1139,7 @@ static void device_config_send(struct k_work *work)
 	}
 }
 
+#if defined(CONFIG_ENVIRONMENT_SENSORS)
 /**@brief Get environment data from sensors and send to cloud. */
 static void env_data_send(void)
 {
@@ -1194,6 +1213,7 @@ error:
 	LOG_ERR("sensor_data_send failed: %d", err);
 	cloud_error_handler(err);
 }
+#endif /* CONFIG_ENVIRONMENT_SENSORS */
 
 #if defined(CONFIG_LIGHT_SENSOR)
 void light_sensor_data_send(void)
@@ -1572,7 +1592,9 @@ static void work_init(void)
 	k_delayed_work_init(&device_config_work, device_config_send);
 	k_delayed_work_init(&cloud_connect_work, cloud_connect_work_fn);
 	k_work_init(&device_status_work, device_status_send);
+#if defined(CONFIG_MOTION)
 	k_work_init(&motion_data_send_work, motion_data_send);
+#endif
 	k_work_init(&no_sim_go_offline_work, no_sim_go_offline);
 #if CONFIG_MODEM_INFO
 	k_delayed_work_init(&rsrp_work, modem_rsrp_data_send);
@@ -1667,12 +1689,13 @@ static void modem_data_init(void)
 static void sensors_init(void)
 {
 	int err;
-
+#if defined(CONFIG_MOTION)
 	err = motion_init_and_start(&application_work_q, motion_handler);
 	if (err) {
 		LOG_ERR("motion module init failed, error: %d", err);
 	}
-
+#endif
+#if defined(CONFIG_ENVIRONMENT_SENSORS)
 	err = env_sensors_init_and_start(&application_work_q, env_data_send);
 	if (err) {
 		LOG_ERR("Environmental sensors init failed, error: %d", err);
@@ -1683,6 +1706,8 @@ static void sensors_init(void)
 		}
 #endif /* CONFIG_USE_BME680_BSEC */
 	}
+#endif /* CONFIG_ENVIRONMENT_SENSORS */
+
 #if CONFIG_LIGHT_SENSOR
 	err = light_sensor_init_and_start(&application_work_q,
 					  light_sensor_data_send);
@@ -1716,10 +1741,12 @@ static void ui_evt_handler(struct ui_evt evt)
 		button_send(evt.type == UI_EVT_BUTTON_ACTIVE ? 1 : 0);
 	}
 
+#if defined(CONFIG_MOTION)
 	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (evt.button == FLIP_INPUT) &&
 	    data_send_enabled()) {
 		motion_simulate_trigger();
 	}
+#endif
 
 	if (IS_ENABLED(CONFIG_GPS_CONTROL_ON_LONG_PRESS) &&
 	   (evt.button == UI_BUTTON_1)) {
