@@ -88,8 +88,6 @@ struct bt_mesh_ponoff_cli {
  * @retval 0 Successfully sent a get message. If a response buffer is
  * provided, it has been populated.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -115,8 +113,6 @@ int bt_mesh_ponoff_cli_on_power_up_get(struct bt_mesh_ponoff_cli *cli,
  * @retval 0 Successfully sent a set message. If a response buffer is
  * provided, it has been populated.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -135,8 +131,6 @@ int bt_mesh_ponoff_cli_on_power_up_set(struct bt_mesh_ponoff_cli *cli,
  * @param[in] on_power_up New OnPowerUp state of the server.
  *
  * @retval 0 Successfully sent a set message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.

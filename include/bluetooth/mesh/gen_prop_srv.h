@@ -224,8 +224,6 @@ struct bt_mesh_prop_srv {
  *
  * @retval 0 Successfully publish a Generic Level Status message.
  * @retval -EMSGSIZE The given property size is not supported.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -244,8 +242,6 @@ int bt_mesh_prop_srv_pub_list(struct bt_mesh_prop_srv *srv,
  * @retval -EINVAL The server is a Client Property server, which does not
  * support publishing of property values.
  * @retval -EMSGSIZE The given property size is not supported.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.

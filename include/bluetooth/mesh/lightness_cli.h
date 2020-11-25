@@ -125,8 +125,6 @@ struct bt_mesh_lightness_cli {
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -151,8 +149,6 @@ int bt_mesh_lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -172,8 +168,6 @@ int bt_mesh_lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
  * to use the server's default transition parameters.
  *
  * @retval 0 Successfully sent the message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -195,8 +189,6 @@ int bt_mesh_lightness_cli_light_set_unack(
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -220,8 +212,6 @@ int bt_mesh_lightness_cli_range_get(struct bt_mesh_lightness_cli *cli,
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -241,8 +231,6 @@ int bt_mesh_lightness_cli_range_set(struct bt_mesh_lightness_cli *cli,
  * @param[in] range New Light Range value to set.
  *
  * @retval 0 Successfully sent the message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -264,8 +252,6 @@ int bt_mesh_lightness_cli_range_set_unack(
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -288,8 +274,6 @@ int bt_mesh_lightness_cli_default_get(struct bt_mesh_lightness_cli *cli,
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -309,8 +293,6 @@ int bt_mesh_lightness_cli_default_set(struct bt_mesh_lightness_cli *cli,
  *
  * @retval 0 Successfully sent the message.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -336,8 +318,6 @@ int bt_mesh_lightness_cli_default_set_unack(struct bt_mesh_lightness_cli *cli,
  *
  * @retval 0 Successfully sent the message and populated the @c rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.

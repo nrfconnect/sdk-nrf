@@ -114,8 +114,6 @@ struct bt_mesh_prop_cli {
  * fit in the response buffers were copied into it, and the @p rsp::count
  * field was left unchanged.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -146,8 +144,6 @@ int bt_mesh_prop_cli_props_get(struct bt_mesh_prop_cli *cli,
  * fit in the response buffers were copied into it, and the @p rsp::count
  * field was left unchanged.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -179,8 +175,6 @@ int bt_mesh_prop_cli_prop_get(struct bt_mesh_prop_cli *cli,
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -207,8 +201,6 @@ int bt_mesh_prop_cli_user_prop_set(struct bt_mesh_prop_cli *cli,
  * will be ignored.
  *
  * @retval 0 Successfully sent the message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -231,8 +223,6 @@ int bt_mesh_prop_cli_user_prop_set_unack(struct bt_mesh_prop_cli *cli,
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -252,8 +242,6 @@ int bt_mesh_prop_cli_admin_prop_set(struct bt_mesh_prop_cli *cli,
  * @param[in] val New property value to set.
  *
  * @retval 0 Successfully sent the message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -276,8 +264,6 @@ int bt_mesh_prop_cli_admin_prop_set_unack(struct bt_mesh_prop_cli *cli,
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -297,8 +283,6 @@ int bt_mesh_prop_cli_mfr_prop_set(struct bt_mesh_prop_cli *cli,
  * @param[in] prop New property value to set.
  *
  * @retval 0 Successfully sent the message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.

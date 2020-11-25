@@ -156,8 +156,6 @@ struct bt_mesh_loc_srv {
  * @param[in] global Current global location.
  *
  * @retval 0 Successfully published a Global Location status message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -183,8 +181,6 @@ int32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
  * @param[in] local Current local location.
  *
  * @retval 0 Successfully published a Local Location status message.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.

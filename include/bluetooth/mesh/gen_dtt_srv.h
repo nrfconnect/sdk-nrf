@@ -99,8 +99,6 @@ void bt_mesh_dtt_srv_set(struct bt_mesh_dtt_srv *srv, uint32_t transition_time);
  * configured parameters.
  *
  * @retval 0 Successfully published the current transition time.
- * @retval -ENOTSUP A message context was not provided and publishing is not
- * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
