@@ -252,6 +252,10 @@ config ZIGBEE_UART_TX_BUF_LEN
 
 endif #ZIGBEE_HAVE_SERIAL
 
+config ZIGBEE_USE_SOFTWARE_AES
+	bool "Use software based AES"
+	select TINYCRYPT
+	default n
 
 config ZIGBEE_USE_LEDS
 	bool "LEDs abstract for ZBOSS OSIF"
