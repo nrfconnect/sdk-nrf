@@ -61,6 +61,8 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
                 add_line("%s_ID" % name.upper(), "%d" % partition_id)
                 # Used to support lowercase access. See flash_map.h.
                 add_line("%s_ID" % name.lower(), "PM_%s_ID" % name.upper())
+                # Used for IS_ENABLED access, see flash_map_pm.h
+                add_line("%s_IS_ENABLED" % name.lower(), "1")
 
                 if current_domain is None or domain == current_domain:
                     add_line("%d_LABEL" % partition_id, "%s" % name.upper())
