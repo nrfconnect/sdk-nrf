@@ -35,7 +35,6 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    :glob:
 
    ../../samples/nrf9160/*/README
-   ../../samples/tfm/*/README
 
 .. _nrf5340_samples:
 
@@ -46,7 +45,6 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
    ../../samples/nrf5340/*/README
    ../../samples/nrf_rpc/entropy_nrf53/README
-   ../../samples/tfm/*/README
 
 .. _openthread_samples:
 
@@ -77,5 +75,6 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    ../../samples/peripheral/*/README
    ../../samples/sensor/*/README
    ../../samples/usb/*/README
+   ../../samples/tfm/*/README
 
 For more complex examples, see :ref:`applications`.

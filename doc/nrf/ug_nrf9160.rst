@@ -64,6 +64,10 @@ This firmware is required to set up the nRF9160 DK so that it can run user appli
 The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160ns`` build target.
 To disable the automatic inclusion of the Secure Partition Manager sample, set the option :option:`CONFIG_SPM` to "n" in the project configuration.
 
+.. include:: ug_nrf5340.rst
+   :start-after: tfm_support_start
+   :end-before: tfm_support_finish
+
 Application
 -----------
 

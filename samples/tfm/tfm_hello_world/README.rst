@@ -27,12 +27,21 @@ Building and Running
 
 .. include:: /includes/build_and_run.txt
 
-Sample Output
-=============
+Testing
+=======
+
+After programming the sample, the following output is displayed in the console:
 
 .. code-block:: console
 
-    Hello World! nrf5340pdk_nrf5340_cpuapp
+    Hello World! nrf5340dk_nrf5340_cpuapp
     SHA256 digest:
     d87280aef6d36814af7cd864bc7cf28f
     759f8d33c97459dd28eacee7133cb60c
+
+Dependencies
+*************
+
+This sample uses the TF-M module that can be found in the following location in the |NCS| folder structure:
+
+* ``modules/tee/tfm/``

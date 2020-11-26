@@ -18,3 +18,4 @@ The following user guides introduce important concepts that you should be  famil
    ug_multi_image
    ug_bootloader
    ug_unity_testing
+   ug_tfm
