@@ -462,6 +462,4 @@ int date_time_timestamp_clear(int64_t *unix_timestamp)
 	return 0;
 }
 
-DEVICE_INIT(date_time, "DATE_TIME",
-	    date_time_init, NULL, NULL, APPLICATION,
-	    CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(date_time_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
