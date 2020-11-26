@@ -138,18 +138,13 @@ static void zb_app_cb_process(zb_bufid_t bufid)
 		case ZB_CALLBACK_TYPE_SINGLE_PARAM:
 			ret_code = zb_schedule_app_callback(
 					new_app_cb.func,
-					(zb_uint8_t)new_app_cb.param,
-					ZB_FALSE,
-					0,
-					ZB_FALSE);
+					(zb_uint8_t)new_app_cb.param);
 			break;
 		case ZB_CALLBACK_TYPE_TWO_PARAMS:
-			ret_code = zb_schedule_app_callback(
-					(zb_callback_t)(new_app_cb.func2),
+			ret_code = zb_schedule_app_callback2(
+					new_app_cb.func2,
 					(zb_uint8_t)new_app_cb.param,
-					ZB_TRUE,
-					new_app_cb.user_param,
-					ZB_FALSE);
+					new_app_cb.user_param);
 			break;
 		case ZB_CALLBACK_TYPE_ALARM_SET:
 		{
@@ -239,8 +234,7 @@ static void zb_app_cb_process_schedule(struct k_work *item)
 	 *
 	 * Note: the ZB_SCHEDULE_APP_CALLBACK is thread-safe.
 	 */
-	while (zb_schedule_app_callback(zb_app_cb_process,
-					0, ZB_FALSE, 0, ZB_FALSE) != RET_OK) {
+	while (zb_schedule_app_callback(zb_app_cb_process, 0) != RET_OK) {
 		k_sleep(K_MSEC(1000));
 	}
 	zigbee_event_notify(ZIGBEE_EVENT_APP);
