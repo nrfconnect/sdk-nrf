@@ -18,9 +18,9 @@ def parse_args():
                     "the files, prepend the 'key' with the name of the file (only the basename, not the path)",
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    parser.add_argument("--output", required=True, type=argparse.FileType(mode='w'), help="Output zip path")
-    parser.add_argument("--bin-files", required=True, type=argparse.FileType(mode='r'), nargs='+',
-                        help="Bin files to be stored in zip")
+    parser.add_argument('--output', required=True, type=argparse.FileType(mode='w'), help='Output zip path')
+    parser.add_argument('--bin-files', required=True, type=argparse.FileType(mode='r'), nargs='+',
+                        help='Bin files to be stored in zip')
     return parser.parse_known_args()
 
 
@@ -28,7 +28,7 @@ def get_name(text_wrapper):
     return path.basename(text_wrapper.name)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     args, info = parse_args()
 
     manifest = {
