@@ -115,9 +115,9 @@ class OTA_header:
 
 def convert_version_string_to_int(s):
     """Convert from semver string "1.2.3", to integer 1020003"""
-    numbers = s.split(".")
+    numbers = s.split('.')
     if len(numbers) != 3:
-        raise ValueError("application-version-string parameter must be on the format x.y.z")
+        raise ValueError('application-version-string parameter must be on the format x.y.z')
     js = [0x100*0x10000, 0x10000, 1]
     return sum([js[i] * int(numbers[i]) for i in range(3)])
 
@@ -127,25 +127,25 @@ def hex2int(x):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Append Zigbee OTA header to BIN file",
+        description='Append Zigbee OTA header to BIN file',
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    parser.add_argument("--application", required=True,
-                        help="The application firmware file.")
-    parser.add_argument("--application-version-string", required=True,
+    parser.add_argument('--application', required=True,
+                        help='The application firmware file.')
+    parser.add_argument('--application-version-string', required=True,
                         help="The application version string, e.g. '2.7.31'. Will be converted to an integer, e.g. 20731.")
-    parser.add_argument("--zigbee-manufacturer-id", required=False, default=OTA_HEADER_MANUFACTURER_WILDCARD, type=hex2int,
-                        help="Manufacturer ID to be used in Zigbee OTA header.")
-    parser.add_argument("--zigbee-image-type", required=False, default=OTA_HEADER_IMAGE_TYPE_WILDCARD, type=hex2int,
-                        help="Image type to be used in Zigbee OTA header.")
-    parser.add_argument("--zigbee-comment", required=False, default="", nargs='?', const='',
-                        help="Firmware comment to be used in Zigbee OTA header.")
-    parser.add_argument("--zigbee-ota-min-hw-version", required=False, type=hex2int, nargs='?',
-                        help="The zigbee OTA minimum hw version of Zigbee OTA Client.")
-    parser.add_argument("--zigbee-ota-max-hw-version", required=False, type=hex2int, nargs='?',
-                        help="The zigbee OTA maximum hw version of Zigbee OTA Client.")
-    parser.add_argument("--out-directory", required=False, default="", nargs='?',
-                        help="The zigbee OTA maximum hw version of Zigbee OTA Client.")
+    parser.add_argument('--zigbee-manufacturer-id', required=False, default=OTA_HEADER_MANUFACTURER_WILDCARD, type=hex2int,
+                        help='Manufacturer ID to be used in Zigbee OTA header.')
+    parser.add_argument('--zigbee-image-type', required=False, default=OTA_HEADER_IMAGE_TYPE_WILDCARD, type=hex2int,
+                        help='Image type to be used in Zigbee OTA header.')
+    parser.add_argument('--zigbee-comment', required=False, default='', nargs='?', const='',
+                        help='Firmware comment to be used in Zigbee OTA header.')
+    parser.add_argument('--zigbee-ota-min-hw-version', required=False, type=hex2int, nargs='?',
+                        help='The zigbee OTA minimum hw version of Zigbee OTA Client.')
+    parser.add_argument('--zigbee-ota-max-hw-version', required=False, type=hex2int, nargs='?',
+                        help='The zigbee OTA maximum hw version of Zigbee OTA Client.')
+    parser.add_argument('--out-directory', required=False, default='', nargs='?',
+                        help='The zigbee OTA maximum hw version of Zigbee OTA Client.')
     return parser.parse_args()
 
 
@@ -199,10 +199,10 @@ def main():
     with open(os.path.join(out_dir, zigbee_ota_file.filename), 'wb') as f:
         f.write(zigbee_ota_file.binary)
 
-    print(f"Zigbee update created at {zigbee_ota_file.filename}")
+    print(f'Zigbee update created at {zigbee_ota_file.filename}')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     try:
         main()
     except Exception as e:

@@ -28,7 +28,7 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
     if num_counters == 1:
         if num_counter_slots_version % 2 == 1:
             num_counter_slots_version += 1
-            print(f"Monotonic counter slots rounded up to {num_counter_slots_version}")
+            print(f'Monotonic counter slots rounded up to {num_counter_slots_version}')
         provision_data += struct.pack('H', 1) # counter description
         provision_data += struct.pack('H', num_counter_slots_version)
 
@@ -42,20 +42,20 @@ Reduce the number of public keys or counter slots and try again."""
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Generate provisioning hex file.",
+        description='Generate provisioning hex file.',
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--s0-addr", type=lambda x: int(x, 0), required=True, help="Address of image slot s0")
-    parser.add_argument("--s1-addr", type=lambda x: int(x, 0), required=False, help="Address of image slot s1")
-    parser.add_argument("--provision-addr", type=lambda x: int(x, 0),
-                        required=True, help="Address at which to place the provisioned data")
-    parser.add_argument("--public-key-files", required=False,
-                        help="Semicolon-separated list of public key .pem files.")
-    parser.add_argument("-o", "--output", required=False, default="provision.hex",
-                        help="Output file name.")
-    parser.add_argument("--max-size", required=False, type=lambda x: int(x, 0), default=0x1000,
-                        help="Maximum total size of the provision data, including the counter slots.")
-    parser.add_argument("--num-counter-slots-version", required=False, type=int, default=0,
-                        help="Number of monotonic counter slots for version number.")
+    parser.add_argument('--s0-addr', type=lambda x: int(x, 0), required=True, help='Address of image slot s0')
+    parser.add_argument('--s1-addr', type=lambda x: int(x, 0), required=False, help='Address of image slot s1')
+    parser.add_argument('--provision-addr', type=lambda x: int(x, 0),
+                        required=True, help='Address at which to place the provisioned data')
+    parser.add_argument('--public-key-files', required=False,
+                        help='Semicolon-separated list of public key .pem files.')
+    parser.add_argument('-o', '--output', required=False, default='provision.hex',
+                        help='Output file name.')
+    parser.add_argument('--max-size', required=False, type=lambda x: int(x, 0), default=0x1000,
+                        help='Maximum total size of the provision data, including the counter slots.')
+    parser.add_argument('--num-counter-slots-version', required=False, type=int, default=0,
+                        help='Number of monotonic counter slots for version number.')
     return parser.parse_args()
 
 
@@ -66,8 +66,8 @@ def get_hashes(public_key_files):
             hashes.append(sha256(VerifyingKey.from_pem(f.read()).to_string()).digest()[:16])
 
     if len(hashes) != len(set(hashes)):
-        raise RuntimeError("Duplicate public key found. Note that the public key corresponding to the private"
-                           "key used for signing is automatically added, and must not be added explicitly.")
+        raise RuntimeError('Duplicate public key found. Note that the public key corresponding to the private'
+                           'key used for signing is automatically added, and must not be added explicitly.')
 
     return hashes
 
@@ -89,5 +89,5 @@ def main():
                                 num_counter_slots_version=args.num_counter_slots_version)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -40,10 +40,10 @@ def append_validation_data(signature, input_file, public_key, offset, output_hex
 
     minimum_offset = ((ih.maxaddr() // 4) + 1) * 4
     if offset != 0 and offset < minimum_offset:
-        raise RuntimeError("Incorrect offset, must be bigger than %x" % minimum_offset)
+        raise RuntimeError(f'Incorrect offset, must be bigger than {hex(minimum_offset)}')
 
     # Parse comma-separated string of uint32s into hex string. Each is encoded in little-endian byte order
-    parsed_magic_value = b''.join([struct.pack("<I", int(m, 0)) for m in magic_value.split(",")])
+    parsed_magic_value = b''.join([struct.pack('<I', int(m, 0)) for m in magic_value.split(',')])
 
     validation_data = get_validation_data(signature_bytes=signature,
                                           input_hex=ih,
@@ -66,23 +66,23 @@ def append_validation_data(signature, input_file, public_key, offset, output_hex
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Append validation metadata at specified offset. Generate HEX and BIN file",
+        description='Append validation metadata at specified offset. Generate HEX and BIN file',
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    parser.add_argument("-i", "--input", required=True, type=argparse.FileType('r', encoding='UTF-8'),
-                        help="Input hex file.")
-    parser.add_argument("--offset", required=False, type=int,
-                        help="Offset to store validation metadata at.", default=0)
-    parser.add_argument("-s", "--signature", required=True, type=argparse.FileType('rb'),
+    parser.add_argument('-i', '--input', required=True, type=argparse.FileType('r', encoding='UTF-8'),
+                        help='Input hex file.')
+    parser.add_argument('--offset', required=False, type=int,
+                        help='Offset to store validation metadata at.', default=0)
+    parser.add_argument('-s', '--signature', required=True, type=argparse.FileType('rb'),
                         help="Signature file (DER) of ECDSA (secp256r1) signature of 'input' argument.")
-    parser.add_argument("-p", "--public-key", required=True, type=argparse.FileType('r', encoding='UTF-8'),
-                        help="Public key file (PEM).")
-    parser.add_argument("-m", "--magic-value", required=True,
-                        help="ASCII representation of magic value.")
-    parser.add_argument("-o", "--output-hex", required=False, default=None, type=argparse.FileType('w'),
-                        help=".hex output file name. Default is to overwrite --input.")
-    parser.add_argument("--output-bin", required=False, default=None, type=argparse.FileType('w'),
-                        help=".bin output file name.")
+    parser.add_argument('-p', '--public-key', required=True, type=argparse.FileType('r', encoding='UTF-8'),
+                        help='Public key file (PEM).')
+    parser.add_argument('-m', '--magic-value', required=True,
+                        help='ASCII representation of magic value.')
+    parser.add_argument('-o', '--output-hex', required=False, default=None, type=argparse.FileType('w'),
+                        help='.hex output file name. Default is to overwrite --input.')
+    parser.add_argument('--output-bin', required=False, default=None, type=argparse.FileType('w'),
+                        help='.bin output file name.')
 
     args = parser.parse_args()
     if args.output_hex is None:
@@ -104,5 +104,5 @@ def main():
                            magic_value=args.magic_value)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

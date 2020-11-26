@@ -11,22 +11,22 @@ import argparse
 import sys
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description="Generate PEM file.",
+        description='Generate PEM file.',
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
     priv_pub_group = parser.add_mutually_exclusive_group(required=True)
-    priv_pub_group.add_argument("--private", required=False, action="store_true",
-                                help="Output a private key.")
-    priv_pub_group.add_argument("--public", required=False, action="store_true",
-                                help="Output a public key.")
-    parser.add_argument("--out", "-out", "-o", required=False,
+    priv_pub_group.add_argument('--private', required=False, action='store_true',
+                                help='Output a private key.')
+    priv_pub_group.add_argument('--public', required=False, action='store_true',
+                                help='Output a public key.')
+    parser.add_argument('--out', '-out', '-o', required=False,
                         type=argparse.FileType('wb'), default=sys.stdout.buffer,
-                        help="Output to specified file instead of stdout.")
-    parser.add_argument("--in", "-in", "-i", required=False, dest="infile",
+                        help='Output to specified file instead of stdout.')
+    parser.add_argument('--in', '-in', '-i', required=False, dest='infile',
                         type=argparse.FileType('rb'),
-                        help="Read private key from specified PEM file instead of generating it.")
+                        help='Read private key from specified PEM file instead of generating it.')
 
     args = parser.parse_args()
 
