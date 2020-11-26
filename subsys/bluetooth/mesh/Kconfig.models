@@ -510,6 +510,42 @@ config BT_MESH_LIGHT_XYL_SRV
 	help
 	  Enable Mesh Light xyL Server model.
 
+config BT_MESH_LIGHT_HSL
+	bool # Hidden entry
+
+config BT_MESH_LIGHT_HSL_CLI
+	bool "Light HSL Client"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHT_HSL
+	help
+	  Enable Mesh Light HSL Client model.
+
+config BT_MESH_LIGHT_HSL_SRV
+	bool "Light HSL Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHTNESS_SRV
+	select BT_MESH_LIGHT_SAT_SRV
+	select BT_MESH_LIGHT_HUE_SRV
+	select BT_MESH_LIGHT_HSL
+	help
+	  Enable Mesh Light HSL Server model.
+
+config BT_MESH_LIGHT_SAT_SRV
+	bool "Light Saturation Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LVL_SRV
+	select BT_MESH_LIGHT_HSL
+	help
+	  Enable Mesh Light Saturation Server model.
+
+config BT_MESH_LIGHT_HUE_SRV
+	bool "Light Hue Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LVL_SRV
+	select BT_MESH_LIGHT_HSL
+	help
+	  Enable Mesh Light Hue Server model.
+
 menuconfig BT_MESH_SENSOR_SRV
 	bool "Sensor Server"
 	select BT_MESH_NRF_MODELS

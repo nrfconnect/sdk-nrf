@@ -162,6 +162,7 @@ int lightness_cli_light_set_unack(struct bt_mesh_lightness_cli *cli,
 				  struct bt_mesh_msg_ctx *ctx,
 				  enum light_repr repr,
 				  const struct bt_mesh_lightness_set *set);
+
 void lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
 			       struct bt_mesh_msg_ctx *ctx, uint16_t set);
 
