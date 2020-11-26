@@ -1167,7 +1167,7 @@ Since the nRF Desktop application uses the partition manager when the bootloader
 
 Because the nRF Desktop application depends on the DTS layout only for configurations without the bootloader, only the settings partition is relevant in such cases and other partitions are ignored.
 
-For more information about how to configure the flash memory layout in the DTS files, see :ref:`zephyr:legacy_flash_partitions`.
+For more information about how to configure the flash memory layout in the DTS files, see :ref:`zephyr:flash_map_api`.
 
 Memory layout in partition manager
 ----------------------------------
