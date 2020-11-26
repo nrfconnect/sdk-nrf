@@ -30,10 +30,10 @@ The sample supports any one of the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340pdk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf52dk_nrf52832
+   :rows: nrf5340dk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf52dk_nrf52832
 
 .. note::
-   For nRF5340 PDK, this sample is only supported on the network core (nrf5340pdk_nrf5340_cpunet), and the :ref:`nrf5340_empty_app_core` sample must be programmed to the application core.
+   For nRF5340 PDK, this sample is only supported on the network core (nrf5340dk_nrf5340_cpunet), and the :ref:`nrf5340_empty_app_core` sample must be programmed to the application core.
 
 Building and Running
 ********************

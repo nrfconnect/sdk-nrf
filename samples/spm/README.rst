@@ -60,7 +60,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340pdk_nrf5340_cpuapp, nrf9160dk_nrf9160
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160
 
 Building and running
 ********************
@@ -69,7 +69,7 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-The sample is built as a secure firmware image for the nrf9160dk_nrf9160 and nrf5340pdk_nrf5340 boards.
+The sample is built as a secure firmware image for the nrf9160dk_nrf9160 and nrf5340dk_nrf5340 boards.
 See `Automatic building of SPM`_ if you want to program it independently from the non-secure application firmware.
 
 
