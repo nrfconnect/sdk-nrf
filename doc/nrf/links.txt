@@ -538,6 +538,15 @@
 
 .. _`Leshan Demo Server`: https://github.com/eclipse/leshan/blob/master/README.md
 
+.. _`Platform Security Architecture (PSA)`: https://www.psacertified.org/what-is-psa-certified/
+
+.. _`Trusted Firmware M source code`: https://git.trustedfirmware.org/
+
+.. _`Zephyr TF-M module`: https://github.com/zephyrproject-rtos/trusted-firmware-m
+
+.. _`TF-M documentation`: https://ci-builds.trustedfirmware.org/static-files/DkdCrQzFZSnnOE237JnAP31qbSUWnEhVzQwxZ_NIpaExNjA2NDMwMTIxODMyOjk6YW5vbnltb3VzOnZpZXcvVEYtTS9qb2IvdGYtbS1idWlsZC1kb2NzLW5pZ2h0bHkvbGFzdFN0YWJsZUJ1aWxkL2FydGlmYWN0/trusted-firmware-m/build/install/doc/user_guide/html/docs/introduction/readme.html
+
+
 .. ### Links to specific files on GitHub
 
 .. _`nrf9160dk_nrf9160_partition_conf.dts`: https://github.com/nrfconnect/sdk-zephyr/blob/master/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_partition_conf.dts

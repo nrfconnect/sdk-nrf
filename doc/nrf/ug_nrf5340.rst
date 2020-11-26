@@ -70,6 +70,17 @@ In Zephyr, :ref:`zephyr:nrf5340dk_nrf5340` is divided into two different build t
 
 When built for the ``nrf5340dk_nrf5340_cpuappns`` board, the :ref:`secure_partition_manager` sample is automatically included in the build.
 
+.. tfm_support_start
+
+Trusted Firmware-M (TF-M) support
+---------------------------------
+
+You can use Trusted Firmware-M (TF-M) as an alternative to :ref:`secure_partition_manager` for running an application from the non-secure area of the memory.
+
+For more information and instructions on how to do this, see :ref:`ug_tfm`.
+
+.. tfm_support_finish
+
 Inter-core communication
 ========================
 
