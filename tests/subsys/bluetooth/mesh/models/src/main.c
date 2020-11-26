@@ -46,6 +46,13 @@ static struct bt_mesh_scene_cli scene_cli;
 static struct bt_mesh_light_xyl_srv xyl_srv =
 	BT_MESH_LIGHT_XYL_SRV_INIT(NULL, NULL);
 static struct bt_mesh_light_xyl_cli xyl_cli;
+static struct bt_mesh_light_hsl_cli light_hsl_cli;
+static struct bt_mesh_light_hsl_srv light_hsl_srv =
+	BT_MESH_LIGHT_HSL_SRV_INIT(NULL, NULL, NULL);
+static struct bt_mesh_light_hue_srv light_hue_srv =
+	BT_MESH_LIGHT_HUE_SRV_INIT(NULL);
+static struct bt_mesh_light_sat_srv light_sat_srv =
+	BT_MESH_LIGHT_SAT_SRV_INIT(NULL);
 
 /* Settings dependent models: */
 #ifdef CONFIG_BT_SETTINGS
@@ -87,6 +94,10 @@ static struct bt_mesh_elem elems[] = {
 		BT_MESH_MODEL_SCENE_CLI(&scene_cli),
 		BT_MESH_MODEL_LIGHT_XYL_SRV(&xyl_srv),
 		BT_MESH_MODEL_LIGHT_XYL_CLI(&xyl_cli),
+		BT_MESH_MODEL_LIGHT_HSL_CLI(&light_hsl_cli),
+		BT_MESH_MODEL_LIGHT_HSL_SRV(&light_hsl_srv),
+		BT_MESH_MODEL_LIGHT_HUE_SRV(&light_hue_srv),
+		BT_MESH_MODEL_LIGHT_SAT_SRV(&light_sat_srv),
 	), BT_MESH_MODEL_NONE),
 };
 

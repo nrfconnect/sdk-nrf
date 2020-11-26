@@ -62,6 +62,15 @@ enum bt_mesh_model_status {
 	BT_MESH_MODEL_STATUS_INVALID,
 };
 
+/** RGB color channels */
+enum bt_mesh_rgb_ch {
+	BT_MESH_RGB_CH_RED,
+	BT_MESH_RGB_CH_GREEN,
+	BT_MESH_RGB_CH_BLUE,
+
+	BT_MESH_RGB_CHANNELS,
+};
+
 /** @cond INTERNAL_HIDDEN
  * @def BT_MESH_MODEL_USER_DATA
  *
