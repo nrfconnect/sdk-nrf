@@ -20,7 +20,7 @@ nRF5340 is a wireless ultra-low power multicore System on Chip (SoC) with two fu
 The |NCS| supports Bluetooth Low Energy and NFC communication on the nRF5340 SoC.
 
 See the `nRF5340 Product Specification`_ for more information about the nRF5340 SoC.
-:ref:`zephyr:nrf5340pdk_nrf5340` gives an overview of the nRF5340 PDK support in Zephyr.
+:ref:`zephyr:nrf5340dk_nrf5340` gives an overview of the nRF5340 PDK support in Zephyr.
 
 Network core
 ============
@@ -39,7 +39,7 @@ See `Network samples`_ for more information.
 
 In general, this core should be used for real-time processing tasks involving low-level radio protocol layers.
 
-The board name for the network core in Zephyr is ``nrf5340pdk_nrf5340_cpunet``.
+The board name for the network core in Zephyr is ``nrf5340dk_nrf5340_cpunet``.
 
 Application core
 ================
@@ -59,12 +59,12 @@ The M33 TrustZone divides the application MCU into secure and non-secure domains
 When the MCU boots, it always starts executing from the secure area.
 The secure bootloader chain starts the :ref:`secure_partition_manager` sample, which configures a part of memory and peripherals to be non-secure and then jumps to the main application located in the non-secure area.
 
-In Zephyr, :ref:`zephyr:nrf5340pdk_nrf5340` is divided into two different build targets:
+In Zephyr, :ref:`zephyr:nrf5340dk_nrf5340` is divided into two different build targets:
 
-* ``nrf5340pdk_nrf5340_cpuapp`` for the secure domain
-* ``nrf5340pdk_nrf5340_cpuappns`` for the non-secure domain
+* ``nrf5340dk_nrf5340_cpuapp`` for the secure domain
+* ``nrf5340dk_nrf5340_cpuappns`` for the non-secure domain
 
-When built for the ``nrf5340pdk_nrf5340_cpuappns`` board, the :ref:`secure_partition_manager` sample is automatically included in the build.
+When built for the ``nrf5340dk_nrf5340_cpuappns`` board, the :ref:`secure_partition_manager` sample is automatically included in the build.
 
 Inter-core communication
 ========================
@@ -149,9 +149,9 @@ Depending on the sample, you must program only the application core (for example
    On nRF5340, the application core is responsible for starting the network core and connecting its GPIO pins.
    Therefore, to run any sample on nRF5340, the application core must be programmed, even if the firmware is supposed to run only on the network core, and the firmware for the application core must set :option:`CONFIG_BOARD_ENABLE_CPUNET` to ``y``.
    You can use the :ref:`nrf5340_empty_app_core` sample for this purpose.
-   For details, see the code in :file:`zephyr/boards/arm/nrf5340pdk_nrf5340/nrf5340_cpunet_reset.c`.
+   For details, see the code in :file:`zephyr/boards/arm/nrf5340dk_nrf5340/nrf5340_cpunet_reset.c`.
 
-To program only the application core, follow the instructions in :ref:`gs_programming_ses` and use ``nrf5340pdk_nrf5340_cpuapp`` or ``nrf5340pdk_nrf5340_cpuappns`` as build target.
+To program only the application core, follow the instructions in :ref:`gs_programming_ses` and use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuappns`` as build target.
 
 When programming both the application core and the network core, you can choose whether you want to build and program both images separately or combined as a :ref:`multi-image build <ug_multi_image>`.
 
@@ -163,7 +163,7 @@ The network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` is automatically add
 When :option:`CONFIG_BT_RPMSG_NRF53` is set to ``y`` (the default), the build system automatically includes the sample as a child image in the ``nrf5340_pdk_nrf5340_cpunet`` core.
 
 If the image in the network core is not added to the application core build, you can build and program both samples separately by following the instructions in :ref:`gs_programming_ses`.
-Make sure to use ``nrf5340pdk_nrf5340_cpunet`` as build target when building the network sample, and ``nrf5340pdk_nrf5340_cpuapp`` or ``nrf5340pdk_nrf5340_cpuappns`` when building the application sample.
+Make sure to use ``nrf5340dk_nrf5340_cpunet`` as build target when building the network sample, and ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuappns`` when building the application sample.
 
 
 Programming from the command line

@@ -38,7 +38,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340pdk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf52dk_nrf52832
+   :rows: nrf5340dk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf52dk_nrf52832
 
 You can use any one of the development kits listed above.
 

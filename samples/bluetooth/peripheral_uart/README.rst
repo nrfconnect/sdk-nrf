@@ -38,7 +38,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340pdk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52dk_nrf52832
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52dk_nrf52832
 
 
 The sample also requires a phone or tablet running a compatible application.

@@ -43,7 +43,7 @@ The sample supports the following development kit:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340pdk_nrf5340_cpuapp_and_cpunet
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpunet
 
 Building and running
 ********************
