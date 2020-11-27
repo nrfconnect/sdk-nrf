@@ -223,7 +223,7 @@ void nrf_cloud_process(void)
 #if defined(CONFIG_CLOUD_API)
 /* Cloud API specific wrappers. */
 
-#define POLL_TIMEOUT_MS 500
+#define POLL_TIMEOUT_MS 60000
 static struct cloud_backend *nrf_cloud_backend;
 static K_SEM_DEFINE(connection_poll_sem, 0, 1);
 static atomic_t connection_poll_active;
