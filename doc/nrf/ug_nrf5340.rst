@@ -7,10 +7,10 @@ Working with nRF53 Series
    :local:
    :depth: 2
 
-The |NCS| provides support for developing on the nRF5340 System on Chip (SoC) using the nRF5340 PDK (PCA10095).
+The |NCS| provides support for developing on the nRF5340 System on Chip (SoC) using the nRF5340 DK (PCA10095).
 
-See the `nRF5340 PDK User Guide`_ for detailed information about the nRF5340 PDK hardware.
-To get started with the nRF5340 PDK, follow the steps in the `Getting started with nRF Connect SDK (nRF53 Series)`_ guide.
+See the `nRF5340 PDK User Guide`_ for detailed information about the nRF5340 DK hardware.
+To get started with the nRF5340 DK, follow the steps in the `Getting started with nRF Connect SDK (nRF53 Series)`_ guide.
 
 .. note::
    The nRF5340 PDK has been deprecated with the introduction of the production-level nRF5340 DK.
@@ -23,6 +23,7 @@ nRF5340 is a wireless ultra-low power multicore System on Chip (SoC) with two fu
 The |NCS| supports Bluetooth Low Energy and NFC communication on the nRF5340 SoC.
 
 See the `nRF5340 Product Specification`_ for more information about the nRF5340 SoC.
+
 :ref:`zephyr:nrf5340dk_nrf5340` gives an overview of the nRF5340 PDK support in Zephyr.
 
 Network core
@@ -131,7 +132,7 @@ Application samples
 ===================
 
 The |NCS| provides a series of :ref:`Bluetooth Low Energy samples <ble_samples>`, in addition to the :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`.
-Most of these samples should run on the nRF5340 PDK, but not all have been thoroughly tested.
+Most of these samples should run on the nRF5340 DK, but not all have been thoroughly tested.
 
 Some Bluetooth LE samples require configuration adjustments to the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample as described in the `Network samples`_ section.
 
@@ -163,7 +164,7 @@ For this to work, the network core image must be explicitly added as a child ima
 See :ref:`ug_multi_image_defining` for details.
 
 The network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` is automatically added to all Bluetooth Low Energy samples in the |NCS|.
-When :option:`CONFIG_BT_RPMSG_NRF53` is set to ``y`` (the default), the build system automatically includes the sample as a child image in the ``nrf5340_pdk_nrf5340_cpunet`` core.
+When :option:`CONFIG_BT_RPMSG_NRF53` is set to ``y`` (the default), the build system automatically includes the sample as a child image in the ``nrf5340_dk_nrf5340_cpunet`` core.
 
 If the image in the network core is not added to the application core build, you can build and program both samples separately by following the instructions in :ref:`gs_programming_ses`.
 Make sure to use ``nrf5340dk_nrf5340_cpunet`` as build target when building the network sample, and ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuappns`` when building the application sample.
@@ -191,7 +192,7 @@ Then navigate to the build folder of the application sample and enter the follow
 Getting logging output
 **********************
 
-When connected to the computer, the nRF5340 PDK emulates three virtual COM ports.
+When connected to the computer, the nRF5340 DK emulates three virtual COM ports.
 In the default configuration, logging output of the application core sample is available on the third (last) COM port.
 The first two COM ports are silent.
 
@@ -202,7 +203,7 @@ Logging output on the network core
 
 In the default configuration, you cannot access the logging output of the network core sample.
 
-To get logging output on the second COM port, you must connect certain pins on the nRF5340 PDK.
+To get logging output on the second COM port, you must connect certain pins on the nRF5340 DK.
 The following table lists which pins must be shorted:
 
 .. list-table::

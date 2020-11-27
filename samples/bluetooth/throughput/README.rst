@@ -79,7 +79,7 @@ You can use any two of the development kits listed above and mix different devel
 
 .. note::
 
-  If you use nRF5340 PDK, add the following options to the configuration of the network sample:
+  If you use nRF5340 DK, add the following options to the configuration of the network sample:
 
   .. code-block:: none
 
