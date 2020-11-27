@@ -30,6 +30,15 @@ nRF5340 SoC
   * ``bl_boot`` library - Disabled clock interrupts before booting the application.
     This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
 
+Thread
+------
+
+* Added:
+
+  * Development support for the nRF5340 in single-protocol configuration for the :ref:`ot_cli_sample`, :ref:`coap_client_sample`, and :ref:`coap_server_sample` samples.
+
+* Optimized ROM and RAM used by Thread samples.
+
 Common
 ======
 
