@@ -807,7 +807,8 @@ EXCLUDE_PATTERNS       = */zboss/* \
                          */openthread/lib/* \
                          */nrf_cc312_platform/* \
                          */nrf_cc312_mbedcrypto/* \
-                         */nrf_cc310_mbedcrypto/include/*
+                         */nrf_cc310_mbedcrypto/include/* \
+                         */nrf_802154_sl/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
