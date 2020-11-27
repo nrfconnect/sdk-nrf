@@ -222,3 +222,52 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed handling of zero-length packets (ZLP) in the Nordic Semiconductor USB Device Controller driver (usb_dc_nrfx).
     * Fixed initialization of the workqueue in the usb_dc_nrfx driver, to prevent fatal errors when the driver is reattached.
     * Fixed handling of the SUSPEND and RESUME events in the Bluetooth classes.
+
+* Networking:
+
+  * General:
+
+    * Added support for DNS Service Discovery.
+    * Deprecated legacy TCP stack (TCP1).
+    * Added multiple minor TCP2 bugfixes and improvements.
+    * Added network management events for DHCPv4.
+
+  * LwM2M:
+
+    * Made the endpoint name length configurable with Kconfig (see :option:`CONFIG_LWM2M_RD_CLIENT_ENDPOINT_NAME_MAX_LENGTH`).
+    * Fixed PUSH FOTA block transfer with Opaque content format.
+    * Added various improvements to the bootstrap procedure.
+    * Fixed token generation.
+    * Added separate response handling.
+    * Fixed Registration Update to be sent on lifetime update, as required by the specification.
+    * Added a new event (:c:enumerator:`LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR`) that notifies the application about underlying socket errors.
+      The event is reported after several failed registration attempts.
+    * Improved integers packing in TLVs.
+
+  * OpenThread:
+
+    * Removed obsolete flash driver from the OpenThread platform.
+    * Added new OpenThread options:
+
+      * :option:`CONFIG_OPENTHREAD_NCP_BUFFER_SIZE`
+      * :option:`CONFIG_OPENTHREAD_NUM_MESSAGE_BUFFERS`
+      * :option:`CONFIG_OPENTHREAD_MAX_STATECHANGE_HANDLERS`
+      * :option:`CONFIG_OPENTHREAD_TMF_ADDRESS_CACHE_ENTRIES`
+      * :option:`CONFIG_OPENTHREAD_MAX_CHILDREN`
+      * :option:`CONFIG_OPENTHREAD_MAX_IP_ADDR_PER_CHILD`
+      * :option:`CONFIG_OPENTHREAD_LOG_PREPEND_LEVEL_ENABLE`
+      * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_ACK_TIMEOUT_ENABLE`
+      * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_RETRANSMIT_ENABLE`
+      * :option:`CONFIG_OPENTHREAD_PLATFORM_USEC_TIMER_ENABLE`
+      * :option:`CONFIG_OPENTHREAD_CONFIG_PLATFORM_INFO`
+
+  * MQTT:
+
+    * Fixed mutex protection on :c:func:`mqtt_disconnect`.
+    * Switched the library to use ``zsock_*`` socket functions instead of POSIX names.
+
+  * Sockets:
+
+    * Enabled Maximum Fragment Length (MFL) extension on TLS sockets.
+    * Added a :c:macro:`TLS_ALPN_LIST` socket option for TLS sockets.
+    * Fixed a ``tls_context`` leak on ``ztls_socket()`` failure.
