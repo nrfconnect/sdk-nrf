@@ -268,7 +268,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`latency_readme`
 * :ref:`latency_client_readme`
 
-This sample uses the following `nrfxlib`_ libraries:
+This sample uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:softdevice_controller`
 

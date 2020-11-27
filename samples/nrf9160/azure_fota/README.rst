@@ -149,7 +149,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`lib_azure_iot_hub`
 * :ref:`lte_lc_readme`
 
-It uses the following `nrfxlib`_ libraries:
+It uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:bsdlib`
 

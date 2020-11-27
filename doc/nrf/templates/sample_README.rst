@@ -256,7 +256,7 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`customservice_readme`
 
-It uses the following `nrfxlib`_ libraries:
+It uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:softdevice_controller`
 

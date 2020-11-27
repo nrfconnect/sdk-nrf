@@ -377,18 +377,18 @@ Crypto
     * Renamed include files from :file:`nrf_cc310_platform_xxxx.h` to :file:`nrf_cc3xx_platform_xxxx.h`.
     * Added experimental support for Arm CryptoCell CC312 available on nRF5340 devices.
     * Added APIs to store cryptographic keys in the KMU hardware peripheral available on nRF9160 and nRF5340 devices.
-      For details, see :file:`crypto/nrf_cc310_platform/include/nrf_cc3xx_platform_kmu.h` in `nrfxlib`_.
+      For details, see :file:`crypto/nrf_cc310_platform/include/nrf_cc3xx_platform_kmu.h` in `sdk-nrfxlib`_.
     * Added APIs to generate CSPRNG.
-      For details, see :file:`crypto/nrf_cc310_platform/include/nrf_cc3xx_platform_ctr_drbg.h` in `nrfxlib`_.
+      For details, see :file:`crypto/nrf_cc310_platform/include/nrf_cc3xx_platform_ctr_drbg.h` in `sdk-nrfxlib`_.
 
     See the :ref:`crypto_changelog_nrf_cc3xx_platform` for detailed information.
   * nrf_cc3xx_mbedcrypto version v0.9.4, with the following highlights:
 
     * Added experimental support for Arm CryptoCell CC312 available on nRF5340 devices.
     * Added APIs to derive cryptographic key material from KDR on nRF52840 and nRF9160 devices.
-      For details, see :file:`crypto/nrf_cc310_mbedcrypto/include/mbedtls/cc3xx_kmu.h` in `nrfxlib`_.
+      For details, see :file:`crypto/nrf_cc310_mbedcrypto/include/mbedtls/cc3xx_kmu.h` in `sdk-nrfxlib`_.
     * Added APIs to use keys stored in KMU on nRF9160 and nRF5340 devices.
-      For details, see :file:`crypto/nrf_cc310_mbedcrypto/include/mbedtls/cc3xx_kmu.h` in `nrfxlib`_.
+      For details, see :file:`crypto/nrf_cc310_mbedcrypto/include/mbedtls/cc3xx_kmu.h` in `sdk-nrfxlib`_.
 
     See the :ref:`crypto_changelog_nrf_cc3xx_mbedcrypto` for detailed information.
   * RNG support in nRF5340 application core (using Secure Partition Manager's :ref:`lib_secure_services` and nrf_cc312_platform library).

@@ -133,7 +133,7 @@ It makes transferring data fast and easy when devices are in close proximity.
 The range of NFC is typically <10 cm.
 
 |NCS| provides two protocol stacks for developing NFC applications: Type 2 Tag and Type 4 Tag.
-These stacks are provided in binary format in the `nrfxlib`_ repository.
+These stacks are provided in binary format in the `sdk-nrfxlib`_ repository.
 See :ref:`nrfxlib:nfc` for documentation about the NFC stacks, and :ref:`ug_nfc` for general information.
 
 The NFC stack requires the NFCT driver for nRF52 devices, which is available as part of `nrfx`_.

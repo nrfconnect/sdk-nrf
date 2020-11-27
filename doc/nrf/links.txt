@@ -12,7 +12,7 @@
 .. ### Links to MCUboot
 
 .. _`MCUboot`: https://mcuboot.com
-.. _`MCUboot repository`: https://github.com/JuulLabs-OSS/mcuboot
+.. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
 
 .. ### Link to the NCS repositories
 
@@ -23,8 +23,8 @@
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
 
-.. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/nrfxlib
-.. _`nrfxlib`: https://github.com/nrfconnect/nrfxlib
+.. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/sdk-nrfxlib
+.. _`sdk-nrfxlib`: https://github.com/nrfconnect/sdk-nrfxlib
 
 .. ### Links to Nordic documentation
 
@@ -150,7 +150,7 @@
 
 .. _`SUPL client download`: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF9160-DK/Download#supl-c
 
-.. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160-SiP
+.. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
 
 .. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
 
@@ -207,7 +207,7 @@
 .. ### Links to Nordic mobile applications
 
 .. _`nRF Mesh mobile app`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Mesh
-.. _`nRF Mesh mobile app for iOS`: https://itunes.apple.com/us/app/nrf-mesh/id1380726771?mt=8
+.. _`nRF Mesh mobile app for iOS`: https://apps.apple.com/us/app/nrf-mesh/id1380726771
 .. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner
 
 .. ### Links to other websites and software
@@ -224,7 +224,7 @@
 
 .. _`openSSL`: https://www.openssl.org/
 
-.. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
+.. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
 
@@ -270,9 +270,9 @@
 .. _`NMEA`: https://www.gpsworld.com/what-exactly-is-gps-nmea-data/
 
 .. _`EnOcean`: https://www.enocean.com
-.. _`Easyfit Single/Double Rocker Wall Switch for Bluetooth LE - EWSSB/EWSDB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-wall-switch-for-ble-ewssb-ewsdb
-.. _`Easyfit Single/Double Rocker Pad for Bluetooth LE - ESRPB/EDRPB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-pad-for-ble-esrpb-edrpb
-.. _`Easyfit Motion Detector with Illumination Sensor - EMDCB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-motion-detector-with-illumination-sensor-emdcb
+.. _`Easyfit Single/Double Rocker Wall Switch for Bluetooth LE - EWSSB/EWSDB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-wall-switch-for-ble-ewssb-ewsdb/
+.. _`Easyfit Single/Double Rocker Pad for Bluetooth LE - ESRPB/EDRPB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-pad-for-ble-esrpb-edrpb/
+.. _`Easyfit Motion Detector with Illumination Sensor - EMDCB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-motion-detector-with-illumination-sensor-emdcb/
 
 .. _`ISO/IEC 7816-4`: https://www.iso.org/standard/54550.html
 
@@ -308,7 +308,7 @@
 
 .. ### Links to Bluetooth specs
 
-.. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/bluetooth-core-specification
+.. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/bluetooth-core-specification/
 
 .. _`HID Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245140
 
@@ -345,7 +345,7 @@
 .. ### Links to Thread and OpenThread
 
 .. _`Creative Commons 4.0 Attribution License`: https://creativecommons.org/licenses/by/4.0/
-.. _`shared by Google`: https://developers.google.com/readme/policies/
+.. _`shared by Google`: https://developers.google.com/terms/site-policies
 
 .. _`OpenThread CoAP API`: https://openthread.io/reference/group/api-coap
 .. _`OpenThread CLI Reference`: https://github.com/openthread/openthread/blob/master/src/cli/README.md
@@ -387,7 +387,7 @@
 
 .. ### Links to Zigbee
 
-.. _`Zigbee Alliance`: https://www.zigbeealliance.org
+.. _`Zigbee Alliance`: https://zigbeealliance.org
 
 .. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/
 
@@ -486,7 +486,7 @@
 .. _`Verizon's Thingspace`: https://thingspace.verizon.com
 .. _`Verizon's Get certified program`: https://opendevelopment.verizonwireless.com/get-certified
 .. _`AT&T's Get network ready program`: https://iotdevices.att.com/networkready.aspx
-.. _`AT&T's IoT Platform`: https://iotplatform.att.com
+.. _`AT&T's IoT Platform`: https://iotdevices.att.com/default.aspx
 .. _`Pre-Shared Key (PSK)`: https://en.wikipedia.org/wiki/Pre-shared_key
 .. _`Mbed TLS`: https://en.wikipedia.org/wiki/Mbed_TLS
 
@@ -494,7 +494,7 @@
 
 .. _`RFC 7252 - The Constrained Application Protocol`: https://tools.ietf.org/html/rfc7252
 
-.. _`tutorial on SSL.com`: https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them
+.. _`tutorial on SSL.com`: https://www.ssl.com/guide/pem-der-crt-and-cer-x-509-encodings-and-conversions/
 
 .. _`RFC959 File Transfer Protocol (FTP)`: https://tools.ietf.org/html/rfc959
 
@@ -532,7 +532,7 @@
 
 .. _`POSIX Programmer's Manual`: https://man7.org/linux/man-pages/dir_section_3.html
 
-.. _`LwM2M`: https://www.omaspecworks.org/what-is-oma-specworks/iot/lightweight-m2m-lwm2m/
+.. _`LwM2M`: https://omaspecworks.org/what-is-oma-specworks/iot/lightweight-m2m-lwm2m/
 
 .. _`Private addresses`: https://en.wikipedia.org/wiki/IP_address#Private_addresses
 
