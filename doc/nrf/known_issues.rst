@@ -635,8 +635,6 @@ Closing sockets
 Multiprotocol Service Layer (MPSL)
 ==================================
 
-The following known issues and limitations have been moved from :ref:`MPSL's changelog <nrfxlib:mpsl_changelog>` for the |NCS| v1.4.0 release.
-
 .. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 DRGN-6362: Do not use the synthesized low frequency clock source
@@ -663,8 +661,6 @@ DRGN-11963: LL control procedures cannot be initiated at the same time
   The controller will return an HCI error code "Controller Busy (0x3a)", as per specification's chapter 2.55.
 
   **Workaround:** Do not initiate these procedures at the same time.
-
-The following known issues and limitations have been moved from :ref:`SD Controller's changelog <nrfxlib:softdevice_controller_changelog>` for the |NCS| v1.4.0 release.
 
 .. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
