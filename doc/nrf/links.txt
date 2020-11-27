@@ -80,7 +80,7 @@
 
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
 
-.. _`nRF5340 PDK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_pdk/UG/nrf5340_PDK/intro.html
+.. _`nRF5340 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_dk/UG/dk/intro.html
 
 .. _`Getting started with nRF Connect SDK (nRF53 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs/UG/gsg/intro.html
 .. _`Getting started with nRF Connect SDK (nRF52 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs52/UG/gsg/intro.html
@@ -228,11 +228,11 @@
 
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
 
-.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x86`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x86
-.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x64`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x64
-.. _`SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_macos
-.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x86
-.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x64
+.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x86`: https://segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v530a_win_x86.zip
+.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x64`: https://segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v530a_win_x64.zip
+.. _`SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`: https://segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v530a_macos_x64.dmg
+.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: https://segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v530a_linux_x86.tar.gz
+.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: https://segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v530a_linux_x64.tar.gz
 
 .. _`HID usage tables`: https://www.usb.org/hid
 

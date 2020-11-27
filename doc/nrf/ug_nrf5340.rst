@@ -9,7 +9,7 @@ Working with nRF53 Series
 
 The |NCS| provides support for developing on the nRF5340 System on Chip (SoC) using the nRF5340 DK (PCA10095).
 
-See the `nRF5340 PDK User Guide`_ for detailed information about the nRF5340 DK hardware.
+See the `nRF5340 DK User Guide`_ for detailed information about the nRF5340 DK hardware.
 To get started with the nRF5340 DK, follow the steps in the `Getting started with nRF Connect SDK (nRF53 Series)`_ guide.
 
 .. note::
@@ -27,8 +27,7 @@ nRF5340 is a wireless ultra-low power multicore System on Chip (SoC) with two fu
 The |NCS| supports Bluetooth Low Energy and NFC communication on the nRF5340 SoC.
 
 See the `nRF5340 Product Specification`_ for more information about the nRF5340 SoC.
-
-:ref:`zephyr:nrf5340dk_nrf5340` gives an overview of the nRF5340 PDK support in Zephyr.
+:ref:`zephyr:nrf5340dk_nrf5340` gives an overview of the nRF5340 DK support in Zephyr.
 
 Network core
 ============
