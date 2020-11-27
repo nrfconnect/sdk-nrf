@@ -19,6 +19,7 @@
 
 #define AT_CMD_CGSN_LEN         5
 #define AT_CMD_CGEV_LEN         5
+#define AT_CMD_CPIN_LEN         5
 #define AT_CMD_SHORTSWVER_LEN   11
 #define AT_CMD_HWVERSION_LEN    10
 #define AT_CMD_XMODEMUUID_LEN   11
@@ -69,7 +70,8 @@ static inline bool check_response_for_forced_string(const char *tmpstr)
 	bool retval = false;
 
 	if (!strncmp(tmpstr, "+CGSN", AT_CMD_CGSN_LEN) ||
-		!strncmp(tmpstr, "+CGEV", AT_CMD_CGEV_LEN) ||
+	    !strncmp(tmpstr, "+CGEV", AT_CMD_CGEV_LEN) ||
+	    !strncmp(tmpstr, "+CPIN", AT_CMD_CPIN_LEN) ||
 	    !strncmp(tmpstr, "%SHORTSWVER", AT_CMD_SHORTSWVER_LEN) ||
 	    !strncmp(tmpstr, "%HWVERSION", AT_CMD_HWVERSION_LEN) ||
 	    !strncmp(tmpstr, "%XMODEMUUID", AT_CMD_XMODEMUUID_LEN) ||
