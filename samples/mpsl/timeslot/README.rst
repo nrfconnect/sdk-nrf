@@ -63,7 +63,7 @@ After programming the sample to your board, test it by performing the following 
 Dependencies
 ************
 
-This sample uses the following `nrfxlib`_ libraries:
+This sample uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:mpsl`
 

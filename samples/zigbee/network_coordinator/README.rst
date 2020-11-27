@@ -97,7 +97,7 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`dk_buttons_and_leds_readme`
 
-This sample uses the following `nrfxlib`_ libraries:
+This sample uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:zboss`
 

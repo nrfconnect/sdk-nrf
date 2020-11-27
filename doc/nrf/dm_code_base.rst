@@ -54,7 +54,7 @@ nRF repositories are stand-alone and have no upstreams, since they are unique to
 Some examples of repositories of this type are:
 
 * `sdk-nrf`_: The main repository for Nordic-developed software.
-* `nrfxlib`_: A repository containing linkable libraries developed by Nordic.
+* `sdk-nrfxlib`_: A repository containing linkable libraries developed by Nordic.
 
 OSS repositories, on the other hand, are typically soft forks of an upstream open source project, which Nordic maintains in order to keep a small set of changes that do not belong, or have not been merged, to the upstream official open-source repository.
 For example:

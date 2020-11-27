@@ -2347,7 +2347,7 @@ This application uses the following |NCS| libraries:
 * :ref:`lib_ftp_client`
 * :ref:`supl_client`
 
-It uses the following `nrfxlib`_ libraries:
+It uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:bsdlib`
 

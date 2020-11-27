@@ -260,7 +260,7 @@ This application uses the following |NCS| libraries and drivers:
   :start-after: lwm2m_osal_mod_list_start
   :end-before: lwm2m_osal_mod_list_end
 
-It uses the following `nrfxlib`_ libraries:
+It uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:bsdlib`
 
