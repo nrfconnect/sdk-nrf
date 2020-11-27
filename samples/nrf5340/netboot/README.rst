@@ -62,11 +62,11 @@ To test the network core bootloader sample run the following commands:
 
 #. |connect_terminal|
 
-   Note that on the nRF5340 PDK has multiple UART instances, so the correct port must be identified.
+   Note that on the nRF5340 DK has multiple UART instances, so the correct port must be identified.
 
 #. ``west build -b nrf5340dk_nrf5340_cpuapp -d build_netboot samples/bluetooth/peripheral_uart -f -- -DCONFIG_BOOTLOADER_MCUBOOT=y -Dmcuboot_CONFIG_PCD=y``
 
-   This sample (:file:`samples/bluetooth/peripheral_uart`) will automatically include the network core sample ``hci_rpmsg`` when built for the nRF5340 PDK.
+   This sample (:file:`samples/bluetooth/peripheral_uart`) will automatically include the network core sample ``hci_rpmsg`` when built for the nRF5340 DK.
    Since we enable MCUBoot (``-DCONFIG_BOOTLOADER_MCUBOOT=y``) in the application core, the network core bootloader is automatically included as well.
    In addition to this, it is necessary to enable the :ref:`subsys_pcd` subsys for the MCUBoot image (``-Dmcuboot_CONFIG_PCD=y``).
 

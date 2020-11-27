@@ -49,7 +49,7 @@ MCUboot bootloader
 
 nRF5340 support
    nRF5340 contains two separate processors: a network core and an application core.
-   When programming applications to the nRF5340 PDK, they must be divided into at least two images, one for each core.
+   When programming applications to the nRF5340 DK, they must be divided into at least two images, one for each core.
    See :ref:`ug_nrf5340` for more information.
 
 Default configuration
