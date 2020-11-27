@@ -116,6 +116,8 @@ Each partition is defined as follows:
 
 The following partition properties and property values are available:
 
+.. _partition_manager_placement:
+
 placement: dict
    This property specifies the placement of the partition relative to other partitions, to the start or end of flash, or to the root image ``app``.
 
@@ -307,48 +309,60 @@ region: string
 RAM partition configuration
    RAM partitions are partitions located in the ``sram_primary`` region.
    A RAM partition is specified by having the partition name end with ``_sram``.
-   If a partition name consists of an image name and the ending ``_sram``, it is used as a permanent image RAM partition for the image.
+   If a partition name is composed of an image name plus the ``_sram`` ending, it is used as a permanent image RAM partition for the image.
+
+The following 2 examples are equivalent:
 
    .. code-block:: yaml
-      :caption: RAM partitions configuration
+      :caption: RAM partition configuration, without the ``_sram`` ending.
 
-      # This ...
       some_permament_sram_block_used_for_logging:
          size: 0x1000
          region: sram_primary
 
-      # ... is equivalent to
+   .. code-block:: yaml
+      :caption: RAM partition configuration, using the ``_sram`` ending.
+
       some_permament_sram_block_used_for_logging_sram:
          size: 0x1000
 
-      # Specify permanent image RAM partition for MCUboot.
-      # This will be used by the MCUboot linker script.
+The following example specifies a permanent image RAM partition for MCUboot, that will be used by the MCUboot linker script.
+
+   .. code-block:: yaml
+
       mcuboot_sram:
           size: 0xa000
 
-All occurrences of a partition name can be replaced with a dict with the key ``one_of``, which is resolved to the first existing partition in the ``one_of`` value.
-An error is raised if no partition inside the ``one_of`` dict exists.
+All occurrences of a partition name can be replaced by a dict with the key ``one_of``.
+This dict is resolved to the first existing partition in the ``one_of`` value.
+
+See the following 2 examples, they are equivalent:
 
    .. code-block:: yaml
       :caption: Example use of a ``one_of`` dict
 
-      # Using 'one_of' in a list like this ...
       some_span:
          span: [something, {one_of: [does_not_exist_0, does_not_exist_1, exists1, exists2]}]
 
-      # ... is equivalent to:
+   .. code-block:: yaml
+      :caption: Example not using a ``one_of`` dict
+
       some_span:
          span: [something, exists1]
 
-      # Using 'one_of' as a dict value like this ...
-      some_partition:
-         placement:
-            before: {one_of: [does_not_exist_0, does_not_exist_1, exists1, exists2]}
+An error is triggered if none of the partitions listed inside the ``one_of`` dict exists.
 
-      # ... is equivalent to:
-      some_partition:
-         placement:
-            before: exists1
+To use this functionality, the properties that must explicitly define the ``one_of`` keyword are the following:
+
+* ``span``
+* ``share_size``
+
+The :ref:`placement property <partition_manager_placement>` contains the functionality of ``one_of`` by default.
+As such, you must not use ``one_of`` with the ``placement`` property.
+Doing so will trigger a build error.
+
+The keywords ``before`` and ``after`` already check for the first existing partition in their list.
+Therefore, you can pass a list of partitions into these keywords.
 
 
 .. _pm_yaml_preprocessing:
