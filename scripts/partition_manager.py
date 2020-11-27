@@ -14,11 +14,7 @@ PERMITTED_STR_KEYS = ['size', 'region']
 END_TO_START = 'end_to_start'
 START_TO_END = 'start_to_end'
 COMPLEX = 'complex'
-
-
-class PartitionError(Exception):
-    pass
-
+INVALID_ONE_OF_PROPERTIES = ['placement']
 
 ALIGNMENT_ERROR = """Unable to fulfill alignment requirement automatically.
 Please re-size the configured partition sizes to get a valid configuration.
@@ -26,6 +22,20 @@ If you are not able to get a valid configuration either re-evaluate th e
 alignment requirements, or use 'static configuration' (see docs) to specify the
  partitioning. Note that aligning more than one partition which shares size
  with the dynamic partition (e.g. 'app')  is not supported."""
+
+
+INVALID_ONE_OF_ERROR = """'one_of' was detected in one of the following
+properties:
+
+{}
+
+'one of' cannot be used with these properties because its functionality is
+supported in their keywords by default. Lists should be used instead.
+""".format('\n'.join(f'- {x}' for x in INVALID_ONE_OF_PROPERTIES))
+
+
+class PartitionError(Exception):
+    pass
 
 
 def remove_item_not_in_list(list_to_remove_from, list_to_check, dp):
@@ -38,7 +48,14 @@ def item_is_placed(d, item, after_or_before):
     return after_or_before in d['placement'] and d['placement'][after_or_before][0] == item
 
 
-def resolve_one_of(reqs, partitions):
+def resolve_one_of(reqs, partitions, invalid=False):
+    """
+    Recursively search for and handle `one_of` values in configuration keys.
+
+    :kwarg bool invalid:    `one_of` has been marked as invalid for use in this
+                            iteration of resolving, and should raise an
+                            exception if found.
+    """
     def empty_one_of(one_of_list):
         return "'one_of' dict did not evaluate to any partition." \
                f" Available partitions {partitions}, one_of {one_of_list}"
@@ -46,6 +63,8 @@ def resolve_one_of(reqs, partitions):
     for k, v in reqs.items():
         if isinstance(v, dict):
             if 'one_of' in v.keys():
+                if invalid:
+                    raise PartitionError(INVALID_ONE_OF_ERROR)
                 if len(v.keys()) != 1:
                     raise PartitionError(
                         "'one_of' must be the only key in its dict")
@@ -55,7 +74,10 @@ def resolve_one_of(reqs, partitions):
                 if len(reqs[k]) == 0:
                     raise PartitionError(empty_one_of(v['one_of']))
             else:
-                resolve_one_of(v, partitions)
+                # Mark as invalid in the next recursion if already invalid or
+                # descending into values of invalid keys.
+                resolve_one_of(v, partitions, invalid=(
+                    invalid or k in INVALID_ONE_OF_PROPERTIES))
         # 'one_of' dicts can occur inside lists of partitions.
         # dicts with 'one_of' key is the only dict supported inside lists
         elif isinstance(v, list):
@@ -64,6 +86,8 @@ def resolve_one_of(reqs, partitions):
             to_add = list()
             for i in v:
                 if isinstance(i, dict):
+                    if invalid:
+                        raise PartitionError(INVALID_ONE_OF_ERROR)
                     if 'one_of' not in i.keys():
                         raise PartitionError(
                             "Found illegal dict inside list. Only 'one_of' "
