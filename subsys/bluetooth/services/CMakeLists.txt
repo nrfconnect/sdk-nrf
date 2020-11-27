@@ -6,6 +6,7 @@
 
 zephyr_sources_ifdef(CONFIG_BT_BAS_CLIENT bas_client.c)
 zephyr_sources_ifdef(CONFIG_BT_BMS bms.c)
+zephyr_sources_ifdef(CONFIG_BT_CTS_CLIENT cts_client.c)
 zephyr_sources_ifdef(CONFIG_BT_DFU_SMP dfu_smp.c)
 zephyr_sources_ifdef(CONFIG_BT_HIDS hids.c)
 zephyr_sources_ifdef(CONFIG_BT_HOGP hogp.c)

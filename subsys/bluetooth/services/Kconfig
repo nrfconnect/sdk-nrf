@@ -14,6 +14,7 @@ config BT_NRF_SERVICES
 
 rsource "Kconfig.bas_client"
 rsource "Kconfig.bms"
+rsource "Kconfig.cts_client"
 rsource "Kconfig.dfu_smp"
 rsource "Kconfig.hids"
 rsource "Kconfig.hogp"
