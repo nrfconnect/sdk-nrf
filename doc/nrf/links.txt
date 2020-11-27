@@ -323,6 +323,8 @@
 
 .. _`Bond Management Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=293524
 
+.. _`Current Time Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=292957
+
 .. ### Links to Bluetooth Mesh
 
 .. _`Mesh Model Specification`:
