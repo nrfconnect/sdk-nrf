@@ -44,6 +44,27 @@ Common
 
 The following changes are relevant for all device families.
 
+Crypto
+------
+
+* Added:
+
+  * nrf_cc3xx_platform v0.9.5, with the following highlights:
+
+    * Added correct TRNG characterization values for nRF5340 devices.
+
+    See the :ref:`crypto_changelog_nrf_cc3xx_platform` for detailed information.
+  * nrf_cc3xx_mbedcrypto version v0.9.5, with the following highlights:
+
+    * Built to match the nrf_cc3xx_platform v0.9.5 including correct TRNG characterization values for nRF5340 devices.
+
+    See the :ref:`crypto_changelog_nrf_cc3xx_mbedcrypto` for detailed information.
+
+* Updated:
+
+  * Rewrote the :ref:`nrfxlib:nrf_security`'s library stripping mechanism to not use the POST_BUILD option in a custom build rule.
+    The library stripping mechanism was non-functional in certain versions of SEGGER Embedded Studio Nordic Edition.
+
 MCUboot
 =======
 
