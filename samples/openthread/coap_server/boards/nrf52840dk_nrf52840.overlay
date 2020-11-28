@@ -3,11 +3,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-&uart0 {
-	status = "okay";
-	hw-flow-control;
-};
-
 / {
 	/*
 	* In some default configurations within the nRF Connect SDK,
