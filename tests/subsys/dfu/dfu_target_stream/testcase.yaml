@@ -1,0 +1,6 @@
+tests:
+  dfu.target_stream:
+    tags: target_stream
+  dfu.target_stream.store_progress:
+    tags: target_stream
+    extra_args: OVERLAY_CONFIG=overlay-store-progress.conf

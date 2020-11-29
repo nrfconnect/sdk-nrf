@@ -7,7 +7,11 @@ DFU target
    :local:
    :depth: 2
 
-The DFU target library provides a common API for different types of firmware upgrades, for example, an MCUboot style upgrade or a modem delta upgrade.
+The DFU target library provides a common API for the following types of firmware upgrades:
+
+* An MCUboot style upgrade
+* A modem delta upgrade.
+
 Use this library in your component to do different types of firmware upgrades against a single interface.
 
 When initializing the DFU target library, you must provide information about the type of firmware upgrade.
@@ -15,9 +19,8 @@ To do so automatically, send the first fragment of the firmware to the function 
 This function can identify all supported firmware upgrade types.
 The result of this call can then be given as input to the :c:func:`dfu_target_init` function.
 
-
 .. note::
-   After starting a DFU procedure for a given target, you cannot initialize a new DFU procedure with a different firmware file for the same target until the DFU procedure has completed successfully or the device has been restarted.
+   After starting a DFU procedure for a given target, you cannot initialize a new DFU procedure with a different firmware file for the same target, until the DFU procedure has completed successfully or the device has been restarted.
 
 
 Supported DFU targets
@@ -44,19 +47,19 @@ When the complete transfer is done, call the :c:func:`dfu_target_done` function 
 On the next reboot, the device will run the new firmware.
 
 .. note::
-   To maintain the write progress in case the device reboots, enable the configuration options :option:`CONFIG_SETTINGS` and :option:`CONFIG_DFU_TARGET_MCUBOOT_SAVE_PROGRESS`.
+   To maintain the write progress in case the device reboots, enable the configuration options :option:`CONFIG_SETTINGS` and :option:`CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS`.
    The MCUboot target then uses the :ref:`zephyr:settings_api` subsystem in Zephyr to store the current progress used by the :c:func:`dfu_target_write` function across power failures and device resets.
 
 
 Modem delta upgrades
-=============================
+====================
 
 This type of firmware upgrade opens a socket into the modem and passes the data given to the :c:func:`dfu_target_write` function through the socket.
 The modem stores the data in the memory location for firmware patches.
 If there is already a firmware patch stored in the modem, the library requests the modem to delete the old firmware patch, to make space for the new patch.
 
 When the complete transfer is done, call the :c:func:`dfu_target_done` function to request the modem to apply the patch, and to close the socket.
-On the next reboot, the modem will to try to apply the patch.
+On the next reboot, the modem will try to apply the patch.
 
 
 Configuration

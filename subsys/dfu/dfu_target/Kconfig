@@ -16,23 +16,39 @@ config DFU_TARGET_MCUBOOT
 	default y
 	depends on IMG_MANAGER
 	depends on BOOTLOADER_MCUBOOT
-	depends on IMG_ERASE_PROGRESSIVELY
+	select DFU_TARGET_STREAM
 	imply MPU_ALLOW_FLASH_WRITE
 	help
 	  Enable support for updates that are performed by MCUboot.
 
+config DFU_TARGET_STREAM
+	bool "Generic DFU stream target"
+	depends on STREAM_FLASH_ERASE
+	depends on STREAM_FLASH
+
 config DFU_TARGET_MCUBOOT_SAVE_PROGRESS
-	bool "Store write progress to flash (MCUboot)"
-	depends on DFU_TARGET_MCUBOOT
+	bool "Store write progress to flash (MCUboot) [DEPRECATED]"
+	select DFU_TARGET_STREAM_SAVE_PROGRESS
+	help
+	  DFU_TARGET_MCUBOOT_SAVE_PROGRESS is deprecated, please use
+	  DFU_TARGET_STREAM_SAVE_PROGRESS instead.
+
+if DFU_TARGET_MCUBOOT_SAVE_PROGRESS
+	comment "DFU_TARGET_MCUBOOT_SAVE_PROGRESS is deprecated, please use DFU_TARGET_STREAM_SAVE_PROGRESS instead"
+endif
+
+config DFU_TARGET_STREAM_SAVE_PROGRESS
+	bool "Store write progress to flash stream"
+	depends on DFU_TARGET_STREAM || ZTEST # ZTEST for testing purposes
 	depends on SETTINGS
 	depends on !SETTINGS_NONE
 	help
-	  Enable this option to cause dfu_target_mcuboot to store the current
+	  Enable this option to cause dfu_target_stream to store the current
 	  write progress to flash. In case of power failure or device reset,
 	  the operation can then resume from the latest state.
 
 config DFU_TARGET_MODEM_DELTA
-	bool "Modem update support"
+	bool "Modem delta update support"
 	imply DOWNLOAD_CLIENT_RANGE_REQUESTS
 	default y
 	depends on SOC_NRF9160_SICA
@@ -40,10 +56,10 @@ config DFU_TARGET_MODEM_DELTA
 	  Enable support for updates to the modem firmware.
 
 if (DFU_TARGET_MODEM_DELTA)
-
 config DFU_TARGET_MODEM_TIMEOUT
 	int "Erase pending timeout"
 	default 60
+	depends on DFU_TARGET_MODEM_DELTA
 	help
 	  Set the timeout in seconds for how long the code will wait when
 	  reading DFU_ERASE_PENDING from the modem. If the timeout is reached
