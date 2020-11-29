@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "DFU"
+
+menuconfig DFU_TARGET
+	bool "Device Firmware Upgrade target API"
+
+if (DFU_TARGET)
+
+config DFU_TARGET_MCUBOOT
+	bool "MCUBoot update support"
+	default y
+	depends on IMG_MANAGER
+	depends on BOOTLOADER_MCUBOOT
+	depends on IMG_ERASE_PROGRESSIVELY
+	imply MPU_ALLOW_FLASH_WRITE
+	help
+	  Enable support for updates that are performed by MCUboot.
+
+config DFU_TARGET_MCUBOOT_SAVE_PROGRESS
+	bool "Store write progress to flash (MCUboot)"
+	depends on DFU_TARGET_MCUBOOT
+	depends on SETTINGS
+	depends on !SETTINGS_NONE
+	help
+	  Enable this option to cause dfu_target_mcuboot to store the current
+	  write progress to flash. In case of power failure or device reset,
+	  the operation can then resume from the latest state.
+
+config DFU_TARGET_MODEM_DELTA
+	bool "Modem update support"
+	imply DOWNLOAD_CLIENT_RANGE_REQUESTS
+	default y
+	depends on SOC_NRF9160_SICA
+	help
+	  Enable support for updates to the modem firmware.
+
+if (DFU_TARGET_MODEM_DELTA)
+
+config DFU_TARGET_MODEM_TIMEOUT
+	int "Erase pending timeout"
+	default 60
+	help
+	  Set the timeout in seconds for how long the code will wait when
+	  reading DFU_ERASE_PENDING from the modem. If the timeout is reached
+	  an DFU_TARGET_EVT_TIMEOUT is issued and a disconnect of the LTE link
+	  is recommended so that the modem has time to service the
+	  DFU_ERASE_PENDING request. It's also possible to reboot the device to
+	  achive the same desired behavior.
+
+
+endif # DFU_TARGET_MODEM_DELTA
+
+module=DFU_TARGET
+module-dep=LOG
+module-str=Device Firmware Upgrade
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # DFU_TARGET
+
+endmenu

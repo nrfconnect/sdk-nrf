@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-/** @file dfu_target_modem.h
+/** @file dfu_target_modem_delta.h
  *
- * @defgroup dfu_target_modem Modem DFU Target
+ * @defgroup dfu_target_modem_delta Modem DFU Target
  * @{
  * @brief DFU Target for upgrades performed by Modem
  */
@@ -21,11 +21,11 @@ extern "C" {
 #endif
 
 /**
- * @brief See if data in buf indicates modem upgrade.
+ * @brief See if data in buf indicates modem delta upgrade.
  *
  * @retval true if data matches, false otherwise.
  */
-bool dfu_target_modem_identify(const void *const buf);
+bool dfu_target_modem_delta_identify(const void *const buf);
 
 /**
  * @brief Initialize dfu target, perform steps necessary to receive firmware.
@@ -36,7 +36,8 @@ bool dfu_target_modem_identify(const void *const buf);
  *
  * @retval 0 If successful, negative errno otherwise.
  */
-int dfu_target_modem_init(size_t file_size, dfu_target_callback_t callback);
+int dfu_target_modem_delta_init(size_t file_size,
+				dfu_target_callback_t callback);
 
 /**
  * @brief Get offset of firmware
@@ -45,7 +46,7 @@ int dfu_target_modem_init(size_t file_size, dfu_target_callback_t callback);
  *
  * @return 0 if success, otherwise negative value if unable to get the offset
  */
-int dfu_target_modem_offset_get(size_t *offset);
+int dfu_target_modem_delta_offset_get(size_t *offset);
 
 /**
  * @brief Write firmware data.
@@ -55,7 +56,7 @@ int dfu_target_modem_offset_get(size_t *offset);
  *
  * @return 0 on success, negative errno otherwise.
  */
-int dfu_target_modem_write(const void *const buf, size_t len);
+int dfu_target_modem_delta_write(const void *const buf, size_t len);
 
 /**
  * @brief Deinitialize resources and finalize firmware upgrade if successful.
@@ -64,7 +65,7 @@ int dfu_target_modem_write(const void *const buf, size_t len);
  *
  * @return 0 on success, negative errno otherwise.
  */
-int dfu_target_modem_done(bool successful);
+int dfu_target_modem_delta_done(bool successful);
 
 #endif /* DFU_TARGET_MODEM_H__ */
 
