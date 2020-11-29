@@ -7,7 +7,7 @@ DFU target
    :local:
    :depth: 2
 
-The DFU target library provides a common API for different types of firmware upgrades, for example, an MCUboot style upgrade or a modem firmware upgrade.
+The DFU target library provides a common API for different types of firmware upgrades, for example, an MCUboot style upgrade or a modem delta upgrade.
 Use this library in your component to do different types of firmware upgrades against a single interface.
 
 When initializing the DFU target library, you must provide information about the type of firmware upgrade.
@@ -48,8 +48,8 @@ On the next reboot, the device will run the new firmware.
    The MCUboot target then uses the :ref:`zephyr:settings_api` subsystem in Zephyr to store the current progress used by the :c:func:`dfu_target_write` function across power failures and device resets.
 
 
-Modem firmware upgrades
-=======================
+Modem delta upgrades
+=============================
 
 This type of firmware upgrade opens a socket into the modem and passes the data given to the :c:func:`dfu_target_write` function through the socket.
 The modem stores the data in the memory location for firmware patches.
@@ -65,7 +65,7 @@ Configuration
 You can disable support for specific DFU targets with the following parameters:
 
 * :option:`CONFIG_DFU_TARGET_MCUBOOT`
-* :option:`CONFIG_DFU_TARGET_MODEM`
+* :option:`CONFIG_DFU_TARGET_MODEM_DELTA`
 
 By default, all DFU targets are enabled, but you can only select the targets that are supported by your device and application.
 
@@ -74,7 +74,7 @@ API documentation
 *****************
 
 | Header file: :file:`include/dfu/dfu_target.h`
-| Source files: :file:`subsys/dfu/src/`
+| Source files: :file:`subsys/dfu/dfu_target/src/`
 
 .. doxygengroup:: dfu_target
    :project: nrf

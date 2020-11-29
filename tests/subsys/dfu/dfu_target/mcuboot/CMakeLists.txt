@@ -14,7 +14,7 @@ target_sources(app PRIVATE ${app_sources})
 
 target_sources(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/subsys/dfu/src/dfu_target.c
+  ${ZEPHYR_BASE}/../nrf/subsys/dfu/dfu_target/src/dfu_target.c
   )
 
 target_include_directories(app
