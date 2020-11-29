@@ -20,19 +20,17 @@ LOG_MODULE_REGISTER(httpc, CONFIG_SLM_LOG_LEVEL);
 #define HTTPC_METHOD_LEN	20
 #define HTTPC_RES_LEN		256
 #define HTTPC_HEADER_LEN	512
-#define HTTPC_REQ_LEN           (HTTPC_METHOD_LEN + HTTPC_RES_LEN \
+#define HTTPC_REQ_LEN		(HTTPC_METHOD_LEN + HTTPC_RES_LEN \
 				+ HTTPC_HEADER_LEN + 3)
 #define HTTPC_FRAG_SIZE		NET_IPV4_MTU
-
-#if HTTPC_REQ_LEN > HTTPC_FRAG_SIZE
-#define HTTPC_BUF_LEN HTTPC_REQ_LEN
-#else
-#define HTTPC_BUF_LEN HTTPC_FRAG_SIZE
+#define HTTPC_BUF_LEN		1024
+#if HTTPC_REQ_LEN > HTTPC_BUF_LEN
+# error "Please specify larger HTTPC_BUF_LEN"
 #endif
 #define HTTPC_REQ_TO_S		10
 
 /* Buffers for HTTP client. */
-static uint8_t data_buf[HTTPC_BUF_LEN + 1];
+static uint8_t data_buf[HTTPC_BUF_LEN];
 
 /**@brief List of supported AT commands. */
 enum slm_httpc_at_cmd_type {
@@ -276,14 +274,20 @@ static void response_cb(struct http_response *rsp,
 {
 	static size_t data_received;
 
+	if (rsp->data_len > HTTPC_BUF_LEN) {
+		/* Increase HTTPC_BUF_LEN in case of overflow */
+		LOG_WRN("HTTP parser buffer overflow!");
+		return;
+	}
+
 	data_received += rsp->data_len;
 	if (final_data == HTTP_DATA_MORE) {
 		LOG_DBG("Partial data received (%zd bytes)", rsp->data_len);
-		if (data_received == HTTPC_FRAG_SIZE) {
+		if (data_received == HTTPC_BUF_LEN) {
 			sprintf(rsp_buf, "#XHTTPCRSP:%d,1\r\n",
-				HTTPC_FRAG_SIZE);
+				HTTPC_BUF_LEN);
 			rsp_send(rsp_buf, strlen(rsp_buf));
-			rsp_send(data_buf, HTTPC_FRAG_SIZE);
+			rsp_send(data_buf, HTTPC_BUF_LEN);
 			data_received = 0;
 		}
 	} else if (final_data == HTTP_DATA_FINAL) {
@@ -456,8 +460,7 @@ static int do_http_request(void)
 	req.protocol = "HTTP/1.1";
 	req.response = response_cb;
 	req.recv_buf = data_buf;
-	/* To improve throughput, replace NET_IPV4_MTU as MSS if possible */
-	req.recv_buf_len = HTTPC_FRAG_SIZE;
+	req.recv_buf_len = HTTPC_BUF_LEN;
 	req.payload_cb =  payload_cb;
 	req.optional_headers_cb = headers_cb;
 	err = http_client_req(httpc.fd, &req, timeout, "");
