@@ -30,6 +30,13 @@ nRF5340 SoC
   * ``bl_boot`` library - Disabled clock interrupts before booting the application.
     This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
 
+DFU Target
+----------
+
+* Renamed ``dfu_target_modem`` to ``dfu_target_modem_delta``.
+* Moved all ``dfu_target`` code up one directory from :file:`subsys/dfu` to :file:`subsys/dfu/dfu_target`.
+* Extracted stream flash functionality from ``dfu_target_mcuboot`` into ``dfu_target_stream_flash`` to facilitate code re-use for other ``dfu_targets`` which writes large objects to flash.
+
 Thread
 ------
 

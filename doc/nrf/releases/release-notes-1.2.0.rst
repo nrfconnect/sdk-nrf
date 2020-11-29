@@ -267,7 +267,7 @@ Updated libraries
 
 * :ref:`lib_dfu_target`:
 
-  * Added the configuration option :option:`CONFIG_DFU_TARGET_MCUBOOT_SAVE_PROGRESS`, which uses Zephyr's :ref:`zephyr:settings_api` subsystem.
+  * Added the configuration option ``CONFIG_DFU_TARGET_MCUBOOT_SAVE_PROGRESS``, which uses Zephyr's :ref:`zephyr:settings_api` subsystem.
     When this option is enabled, the write progress of an MCUboot style upgrade is stored, so that the progress is retained when the device reboots.
   * Fixed a bug where :c:func:`dfu_target_done` logged the error message ``unable to deinitialize dfu resource`` when no target was initialized.
 

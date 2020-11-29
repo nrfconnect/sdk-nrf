@@ -15,6 +15,7 @@
 #define DFU_TARGET_MCUBOOT_H__
 
 #include <stddef.h>
+#include <dfu/dfu_target.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,6 +41,13 @@ extern "C" {
  */
 int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active,
 				const char **update);
+
+/**
+ * @brief Set buffer to use for flash write operations.
+ *
+ * @retval Non-negative value if successful, negative errno otherwise.
+ */
+int dfu_target_mcuboot_set_buf(uint8_t *buf, size_t len);
 
 /**
  * @brief See if data in buf indicates MCUBoot style upgrade.
