@@ -109,6 +109,8 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 	static uint32_t bytes_downloaded;
 	uint8_t curent_percent;
 	uint32_t current_bytes;
+	size_t offset;
+	size_t skip = 0;
 	int ret = 0;
 
 	if (!data_len) {
@@ -116,7 +118,6 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 		return -EINVAL;
 	}
 
-	/* Erase bank 1 before starting the write process */
 	if (bytes_downloaded == 0) {
 		image_type = dfu_target_img_type(data, data_len);
 
@@ -130,6 +131,12 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 			image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ?
 				"Modem" :
 				"Application");
+	}
+
+	ret = dfu_target_offset_get(&offset);
+	if (ret < 0) {
+		LOG_ERR("Failed to obtain current offset, err: %d", ret);
+		goto cleanup;
 	}
 
 	/* Display a % downloaded or byte progress, if no total size was
@@ -149,9 +156,21 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 		}
 	}
 
+	if (bytes_downloaded < offset) {
+		skip = MIN(data_len, offset - bytes_downloaded);
+
+		LOG_INF("Skipping bytes %d-%d, already written.",
+			bytes_downloaded, bytes_downloaded + skip);
+	}
+
 	bytes_downloaded += data_len;
 
-	ret = dfu_target_write(data, data_len);
+	if (skip == data_len) {
+		/* Nothing to do. */
+		return 0;
+	}
+
+	ret = dfu_target_write(data + skip, data_len - skip);
 	if (ret < 0) {
 		LOG_ERR("dfu_target_write error, err %d", ret);
 		goto cleanup;
