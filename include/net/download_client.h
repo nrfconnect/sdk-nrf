@@ -100,6 +100,8 @@ struct download_client_cfg {
 	 *  values shall be used.
 	 */
 	size_t frag_size_override;
+	/** Set hostname for TLS Server Name Indication extension */
+	bool set_tls_hostname;
 };
 
 /**
