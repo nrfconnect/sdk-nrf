@@ -210,6 +210,9 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 	case AZURE_IOT_HUB_EVT_PUBACK:
 		printk("AZURE_IOT_HUB_EVT_PUBACK\n");
 		break;
+	case AZURE_IOT_HUB_EVT_ERROR:
+		printk("AZURE_IOT_HUB_EVT_ERROR\n");
+		break;
 	default:
 		printk("Unknown Azure IoT Hub event type: %d\n", evt->type);
 		break;
