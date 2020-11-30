@@ -1032,8 +1032,8 @@ def test():
 
     # Verify that all 'end' and 'start' are valid references in 'one_of' dicts
     td = {
-        'a': {'placement': {'after': {'one_of': ['x0', 'x1', 'start']}}, 'size': 100},
-        'b': {'placement': {'before': {'one_of': ['x0', 'x1', 'end']}}, 'size': 200},
+        'a': {'placement': {'after': ['x0', 'x1', 'start']}, 'size': 100},
+        'b': {'placement': {'before': ['x0', 'x1', 'end']}, 'size': 200},
         'app': {},
     }
     s, sub_partitions = resolve(td, 'app')
@@ -1184,7 +1184,7 @@ def test():
     # Verify that all 'one_of' dicts are replaced with the first entry which corresponds to an existing partition
     td = {
         'a': {'placement': {'after': 'start'}, 'size': 100},
-        'b': {'placement': {'after': {'one_of': ['x0', 'x1', 'a', 'x2']}}, 'size': 200},
+        'b': {'placement': {'after': ['x0', 'x1', 'a', 'x2']}, 'size': 200},
         'c': {'placement': {'after': 'b'}, 'share_size': {'one_of': ['x0', 'x1', 'b', 'a']}},
         'd': {'placement': {'after': 'c'}, 'share_size': {'one_of': ['a', 'b']}},  # Should take first existing
         # We can use  several 'one_of' - dicts inside lists
@@ -1206,14 +1206,14 @@ def test():
     # Verify that all 'share_size' with value partition that has size 0 is compatible with 'one_of' dicts
     td = {
         'a': {'placement': {'after': 'start'}, 'size': 0},
-        'b': {'placement': {'after': {'one_of': ['a', 'start']}},
+        'b': {'placement': {'after': ['a', 'start']},
               'share_size': ['a']},
-        'c': {'placement': {'after': {'one_of': ['a', 'b', 'start']}},
+        'c': {'placement': {'after': ['a', 'b', 'start']},
               'share_size': {'one_of': ['a', 'b']}},
-        'd': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'start']}},
+        'd': {'placement': {'after': ['a', 'b', 'c', 'start']},
               'share_size': {'one_of': ['a', 'b', 'c']}},
         # You get the point
-        'e': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'd', 'start']}}, 'size': 100}
+        'e': {'placement': {'after': ['a', 'b', 'c', 'd', 'start']}, 'size': 100}
     }
     remove_all_zero_sized_partitions(td, 'app')
     assert 'a' not in td
@@ -1224,16 +1224,16 @@ def test():
     # Verify that all 'share_size' with value partition that has size 0 is compatible withe 'one_of' dicts.
     td = {
         'a': {'placement': {'after': 'start'}, 'size': 0},
-        'b': {'placement': {'after': {'one_of': ['a', 'start']}},
+        'b': {'placement': {'after': ['a', 'start']},
               'share_size': ['a']},
-        'c': {'placement': {'after': {'one_of': ['a', 'b', 'start']}},
+        'c': {'placement': {'after': ['a', 'b', 'start']},
               'share_size': {'one_of': ['a', 'b']}},
-        'd': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'start']}},
+        'd': {'placement': {'after': ['a', 'b', 'c', 'start']},
               'share_size': {'one_of': ['a', 'b', 'c']}},
         # Empty spans should be removed
         'e': {'span': [], 'region': 'sram'},
         # You get the point
-        'f': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'd', 'start']}}, 'size': 100},
+        'f': {'placement': {'after': ['a', 'b', 'c', 'd', 'start']}, 'size': 100},
         'app': {}
     }
     # Perform the same test as above, but run it through the 'resolve' function this time.
@@ -1249,7 +1249,7 @@ def test():
     # Verify that an error is raised when no partition inside 'one_of' dicts exist as dict value
     failed = False
     td = {
-        'a': {'placement': {'after': {'one_of': ['x0', 'x1']}}, 'size': 100},
+        'a': {'placement': {'after': ['x0', 'x1']}, 'size': 100},
         'app': {}
     }
     try:
