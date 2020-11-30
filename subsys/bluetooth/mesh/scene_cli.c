@@ -234,7 +234,7 @@ int bt_mesh_scene_cli_recall(struct bt_mesh_scene_cli *cli,
 			       BT_MESH_SCENE_OP_STATUS, rsp);
 }
 
-int bt_esh_scene_cli_recall_unack(
+int bt_mesh_scene_cli_recall_unack(
 	struct bt_mesh_scene_cli *cli, struct bt_mesh_msg_ctx *ctx,
 	uint16_t scene, const struct bt_mesh_model_transition *transition)
 {
