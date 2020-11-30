@@ -98,10 +98,14 @@ static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_light_ctl_gen_cb_set set;
 	struct bt_mesh_model_transition transition;
 	uint16_t light = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
-	uint16_t temp =
-		set_temp(&(srv->temp_srv), net_buf_simple_pull_le16(buf));
+	uint16_t temp = net_buf_simple_pull_le16(buf);
 	uint16_t delta_uv = net_buf_simple_pull_le16(buf);
 	uint8_t tid = net_buf_simple_pull_u8(buf);
+
+	if ((temp < BT_MESH_LIGHT_TEMP_MIN) ||
+	    (temp > BT_MESH_LIGHT_TEMP_MAX)) {
+		return;
+	}
 
 	if (light != 0) {
 		light = CLAMP(light, srv->lightness_srv.range.min,
@@ -228,10 +232,10 @@ static void temp_range_set(struct bt_mesh_model *model,
 	uint16_t new_min = net_buf_simple_pull_le16(buf);
 	uint16_t new_max = net_buf_simple_pull_le16(buf);
 
-	if ((new_min < BT_MESH_LIGHT_TEMP_RANGE_MIN) || (new_min >= new_max)) {
+	if ((new_min < BT_MESH_LIGHT_TEMP_MIN) || (new_min > new_max)) {
 		status = BT_MESH_MODEL_ERROR_INVALID_RANGE_MIN;
 		goto respond;
-	} else if (new_max > BT_MESH_LIGHT_TEMP_RANGE_MAX) {
+	} else if (new_max > BT_MESH_LIGHT_TEMP_MAX) {
 		status = BT_MESH_MODEL_ERROR_INVALID_RANGE_MAX;
 		goto respond;
 	}
@@ -313,9 +317,9 @@ static void default_set(struct bt_mesh_model *model,
 	uint16_t temp = net_buf_simple_pull_le16(buf);
 	uint16_t delta_uv = net_buf_simple_pull_le16(buf);
 
-	if ((temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
-	    (temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
-		goto respond;
+	if ((temp < BT_MESH_LIGHT_TEMP_MIN) ||
+	    (temp > BT_MESH_LIGHT_TEMP_MAX)) {
+		return;
 	}
 
 	srv->default_params.light = light;
@@ -329,7 +333,6 @@ static void default_set(struct bt_mesh_model *model,
 
 	(void)bt_mesh_light_ctl_default_pub(srv, NULL);
 
-respond:
 	if (ack) {
 		default_rsp(model, ctx);
 	}
@@ -611,7 +614,7 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *mod)
 		.time = srv->lightness_srv.ponoff.dtt.transition_time,
 		.delay = 0,
 	};
-	uint16_t temp = set_temp(&(srv->temp_srv), srv->default_params.temp);
+	uint16_t temp = srv->default_params.temp;
 
 	switch (srv->lightness_srv.ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_ON:

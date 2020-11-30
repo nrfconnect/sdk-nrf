@@ -48,9 +48,14 @@ static void temp_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_light_temp_cb_set cb_msg;
 	struct bt_mesh_light_temp_status status = { 0 };
 	struct bt_mesh_model_transition transition;
-	uint16_t temp = set_temp(srv, net_buf_simple_pull_le16(buf));
+	uint16_t temp = net_buf_simple_pull_le16(buf);
 	int16_t delta_uv = net_buf_simple_pull_le16(buf);
 	uint8_t tid = net_buf_simple_pull_u8(buf);
+
+	if ((temp < BT_MESH_LIGHT_TEMP_MIN) ||
+	    (temp > BT_MESH_LIGHT_TEMP_MAX)) {
+		return;
+	}
 
 	if (tid_check_and_update(&srv->prev_transaction, tid, ctx) != 0) {
 		/* If this is the same transaction, we don't need to send it
