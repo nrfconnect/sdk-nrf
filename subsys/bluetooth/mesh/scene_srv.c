@@ -514,6 +514,23 @@ static int scene_srv_init(struct bt_mesh_model *mod)
 				      sizeof(srv->buf));
 	srv->pub.msg = &srv->pub_msg;
 	srv->pub.update = scene_srv_pub_update;
+
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
+		/* Model extensions:
+		 * To simplify the model extension tree, we're flipping the
+		 * relationship between the scene server and the Scene
+		 * Setup Server. In the specification, the Scene Setup
+		 * Server extends the Scene Server, which is the opposite of
+		 * what we're doing here. This makes no difference for the mesh
+		 * stack, but it makes it a lot easier to extend this model, as
+		 * we won't have to support multiple extenders.
+		 */
+		bt_mesh_model_extend(
+			mod,
+			bt_mesh_model_find(bt_mesh_model_elem(mod),
+					   BT_MESH_MODEL_ID_SCENE_SETUP_SRV));
+	}
+
 	return 0;
 }
 
