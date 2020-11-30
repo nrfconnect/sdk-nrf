@@ -305,6 +305,12 @@ foreach(container ${containers} ${merged})
     list(APPEND ${container}targets ${${part}_PM_TARGET})
   endforeach()
 
+  # Do not merge hex files for empty partitions
+  if(NOT ${container}hex_files)
+    list(REMOVE_ITEM PM_${MERGED}_SPAN ${container})
+    continue()
+  endif()
+
   # If overlapping is enabled, add the appropriate argument.
   if(${${container}_overlap})
     set(${container}overlap_arg --overlap=replace)
