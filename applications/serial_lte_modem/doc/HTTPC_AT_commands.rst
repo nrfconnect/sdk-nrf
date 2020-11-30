@@ -28,8 +28,8 @@ Syntax
 
 * The ``<op>`` parameter can accept one of the following values:
 
-  * ``0`` - Connect to the HTTP server
-  * ``1`` - Disconnect from the HTTP server
+  * ``0`` - Disconnect from the HTTP server
+  * ``1`` - Connect to the HTTP server
 
 * The ``<host>`` parameter is a string.
   It represents the HTTP server hostname.
