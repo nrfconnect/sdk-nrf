@@ -21,10 +21,19 @@ static void ctl_status_handle(struct bt_mesh_model *model,
 
 	status.current_light = net_buf_simple_pull_le16(buf);
 	status.current_temp = net_buf_simple_pull_le16(buf);
+	if ((status.current_temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
+	    (status.current_temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
+		return;
+	}
 
 	if (buf->len == 5) {
 		status.target_light = net_buf_simple_pull_le16(buf);
 		status.target_temp = net_buf_simple_pull_le16(buf);
+		if ((status.target_temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
+		    (status.target_temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
+			return;
+		}
+
 		status.remaining_time =
 			model_transition_decode(net_buf_simple_pull_u8(buf));
 	} else {
@@ -88,10 +97,20 @@ static void temp_status_handle(struct bt_mesh_model *model,
 	struct bt_mesh_light_temp_status status;
 
 	status.current.temp = net_buf_simple_pull_le16(buf);
+	if ((status.current.temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
+	    (status.current.temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
+		return;
+	}
+
 	status.current.delta_uv = net_buf_simple_pull_le16(buf);
 
 	if (buf->len == 5) {
 		status.target.temp = net_buf_simple_pull_le16(buf);
+		if ((status.target.temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
+		    (status.target.temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
+			return;
+		}
+
 		status.target.delta_uv = net_buf_simple_pull_le16(buf);
 		status.remaining_time =
 			model_transition_decode(net_buf_simple_pull_u8(buf));
@@ -128,6 +147,11 @@ static void default_status_handle(struct bt_mesh_model *model,
 
 	status.light = net_buf_simple_pull_le16(buf);
 	status.temp = net_buf_simple_pull_le16(buf);
+	if ((status.temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
+	    (status.temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
+		return;
+	}
+
 	status.delta_uv = net_buf_simple_pull_le16(buf);
 
 	if (model_ack_match(&cli->ack_ctx, BT_MESH_LIGHT_CTL_DEFAULT_STATUS,

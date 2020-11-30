@@ -8,19 +8,31 @@
 #include <bluetooth/mesh/gen_onoff_cli.h>
 #include "model_utils.h"
 
-static void decode_status(struct net_buf_simple *buf,
+static int decode_status(struct net_buf_simple *buf,
 			  struct bt_mesh_onoff_status *status)
 {
-	status->present_on_off = net_buf_simple_pull_u8(buf);
+	uint8_t on_off;
+
+	on_off = net_buf_simple_pull_u8(buf);
+	if (on_off > 1) {
+		return -EINVAL;
+	}
+	status->present_on_off = on_off;
 
 	if (buf->len == 2) {
-		status->target_on_off = net_buf_simple_pull_u8(buf);
+		on_off = net_buf_simple_pull_u8(buf);
+		if (on_off > 1) {
+			return -EINVAL;
+		}
+		status->target_on_off = on_off;
 		status->remaining_time =
 			model_transition_decode(net_buf_simple_pull_u8(buf));
 	} else {
 		status->target_on_off = status->present_on_off;
 		status->remaining_time = 0;
 	}
+
+	return 0;
 }
 
 static void handle_status(struct bt_mesh_model *model,
@@ -35,7 +47,9 @@ static void handle_status(struct bt_mesh_model *model,
 	struct bt_mesh_onoff_cli *cli = model->user_data;
 	struct bt_mesh_onoff_status status;
 
-	decode_status(buf, &status);
+	if (decode_status(buf, &status)) {
+		return;
+	}
 
 	if (model_ack_match(&cli->ack_ctx, BT_MESH_ONOFF_OP_STATUS, ctx)) {
 		struct bt_mesh_onoff_status *rsp =
