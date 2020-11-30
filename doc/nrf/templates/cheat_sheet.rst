@@ -174,6 +174,8 @@ www.nordicsemi.com http://www.nordicsemi.com
 
 Use :ref: to link to IDs and :doc: to link to files.
 
+If you have a link ID in :file:`links.txt` that consists of only one word, you cannot have a heading anywhere that is the same.
+If you do, you'll get an error about a duplicate ID in :file:`links.txt`.
 
 Images
 ======

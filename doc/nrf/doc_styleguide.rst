@@ -23,10 +23,12 @@ More information about RST is available in the `reStructuredText Primer`_.
 
 The |NCS| documentation follows the Zephyr |sg|, and adds a few more restrictive rules that are described below.
 
-Titles and headings
-===================
+Page structure
+==============
 
 Keep titles and headings as short and to the point as possible.
+Add table of contents if the page has sections.
+If you want to list subpages, do not add sections to the page with the list.
 
 Titles
 ------
@@ -74,6 +76,46 @@ The only exception are proper names, for example Bluetooth specification termino
 
 Do not use consecutive headings without intervening text.
 
+Table of contents
+-----------------
+
+If your page uses sections, add the ``.. contents::`` directive just under the page title:
+
+.. code-block:: none
+
+    1 .. _lib_aws_fota:
+    2
+    3 AWS FOTA
+    4 ########
+    5
+    6 .. contents::
+    7    :local:
+    8    :depth: 2
+
+This will add a clickable table of contents at the top of the page.
+
+.. note::
+    Do not use table of contents if the page has a list of `Subpages`_.
+    To make the page hierarchy easier to navigate, using heading-based sections with the subpages section on one page is not allowed.
+
+Subpages
+--------
+
+Use the ``.. toctree::`` directive at the bottom of a page to list pages that are located further down in the hierarchy.
+For example, the :ref:`documentation` page has the following list of subpages, which includes this very page you are reading:
+
+.. code-block:: none
+
+   .. toctree::
+      :maxdepth: 2
+      :caption: Subpages:
+
+      doc_build
+      doc_styleguide
+      doc_templates
+
+For clarity of structure, pages with the subpages section must not contain sections.
+
 RST file formatting
 ===================
 
@@ -95,26 +137,50 @@ Use the following highlighing rules in the RST conceptual documentation:
 
 .. content_highlighting_table:
 
-+------------------------+------------------------+-----------------------------------------------------------------+
-| Markup                 | Example                | Usage criteria                                                  |
-+========================+========================+=================================================================+
-| ``*emphasis*``         | *relaying*             | Emphasis or new terms.                                          |
-+------------------------+------------------------+-----------------------------------------------------------------+
-| ````code````           | ``west update``        | Code within text.                                               |
-+------------------------+------------------------+-----------------------------------------------------------------+
-| ``**PCB**``            | **SW3**                | PCB names.                                                      |
-+------------------------+------------------------+-----------------------------------------------------------------+
-| ``:guilabel:`GUI```    | :guilabel:`Cancel`     | Clickable graphical user interface elements.                    |
-+------------------------+------------------------+-----------------------------------------------------------------+
-| ``:file:`filename```   | :file:`conf.py`        | Filenames, file paths, directory names, and file extensions.    |
-+------------------------+------------------------+-----------------------------------------------------------------+
++------------------------+------------------------+----------------------------------------------------------------------+
+| Markup                 | Example                | Usage criteria                                                       |
++========================+========================+======================================================================+
+| ``*emphasis*``         | *relaying*             | Emphasis, new terms, variables that need to be replaced.             |
++------------------------+------------------------+----------------------------------------------------------------------+
+| ````code````           | ``west update``        | Code within text.                                                    |
++------------------------+------------------------+----------------------------------------------------------------------+
+| ``**PCB**``            | **SW3**                | PCB names.                                                           |
++------------------------+------------------------+----------------------------------------------------------------------+
+| ``:guilabel:`GUI```    | :guilabel:`Cancel`     | Graphical user interface elements (buttons, text fields, and so on). |
++------------------------+------------------------+----------------------------------------------------------------------+
+| ``:file:`filename```   | :file:`conf.py`        | Filenames, file paths, directory names, and file extensions.         |
++------------------------+------------------------+----------------------------------------------------------------------+
 
-.. note:: Do not use the following markup for italics: ```..```.
+Additional markup rules
+-----------------------
 
-For readability reasons, do not use any code highlighting for titles of other pages or headings when they are mentioned in the text.
-For example, do not write "The ``bl_crypto`` library".
-Use the complete name of the library: "The bootloader crypto library", and always link to the page you mention.
-If the page you are linking to is mentioned several times in the text, place the link on the first occurrence and on every occurrence where linking to the page is useful.
+Pay attention to the following rules when highlighting content:
+
+* Emphasis
+
+  * Do not use the following markup for emphasis: ```..```.
+  * When using emphasis within a longer word, use backslash and space.
+    For example, ``high\ **light**\ ing`` will be rendered as "high\ **light**\ ing".
+
+* Code
+
+  * Use the ``.. code-block::`` directive for code fragments that do not include variables.
+    Specify the language type after the directive, for example ``.. code-block:: c``.
+  * Use the ``.. parsed-literal::`` directive for code fragments that include variable names, for example installation paths or board names.
+    With this directive, you can apply the emphasis markup for variables, for example ``*board name*``.
+
+* GUI
+
+  * When writing about a sequence of GUI elements, use -> between them.
+    Do not use > or other markup.
+    For example: "Select :guilabel:`File` -> :guilabel:`Save as...`".
+
+* Filenames and titles
+
+  * For readability reasons, do not use any code highlighting for titles of other pages or headings when they are mentioned in the text.
+    For example, do not write "The ``bl_crypto`` library".
+    Use the complete name of the library: "The bootloader crypto library", and always link to the page you mention.
+  * If the page you are linking to is mentioned several times in the text, place the link on the first occurrence and on every occurrence where linking to the page is useful.
 
 Diagrams
 ========
@@ -229,9 +295,9 @@ For example, see the following code sample taken the source of this page:
 
 .. code-block:: none
 
-    1 .. _doc_styleguide:
+    1 .. |sg| replace:: style guide
     2
-    3 .. |sg| replace:: style guide
+    3 .. _doc_styleguide:
     4
     5 Documentation |sg|
     6 ##################
