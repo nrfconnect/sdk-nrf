@@ -158,7 +158,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			}
 
 			send_progress((offset * 100) / file_size);
-			LOG_DBG("Progress: %d/%d%%", offset, file_size);
+			LOG_DBG("Progress: %d/%d bytes", offset, file_size);
 		}
 	break;
 	}
