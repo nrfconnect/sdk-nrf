@@ -14,18 +14,6 @@
 #include <bluetooth/mesh/light_temp_srv.h>
 #include "model_utils.h"
 
-static inline uint16_t set_temp(struct bt_mesh_light_temp_srv *srv,
-				uint16_t temp_val)
-{
-	if (temp_val < srv->temp_range.min) {
-		return srv->temp_range.min;
-	} else if (temp_val > srv->temp_range.max) {
-		return srv->temp_range.max;
-	} else {
-		return temp_val;
-	}
-}
-
 static inline uint16_t lvl_to_temp(struct bt_mesh_light_temp_srv *srv,
 				   int16_t lvl)
 {

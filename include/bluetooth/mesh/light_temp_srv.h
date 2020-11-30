@@ -40,8 +40,8 @@ struct bt_mesh_light_temp_srv;
 				 BT_MESH_LIGHT_TEMP_STATUS,                    \
 				 BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_STATUS)) }, \
 		.temp_range = {                                                \
-			.min = BT_MESH_LIGHT_TEMP_RANGE_MIN,                   \
-			.max = BT_MESH_LIGHT_TEMP_RANGE_MAX                    \
+			.min = BT_MESH_LIGHT_TEMP_MIN,                         \
+			.max = BT_MESH_LIGHT_TEMP_MAX,                         \
 		}                                                              \
 	}
 
