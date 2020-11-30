@@ -18,6 +18,10 @@ static void handle_status(struct bt_mesh_model *model,
 	struct bt_mesh_ponoff_cli *cli = model->user_data;
 	enum bt_mesh_on_power_up on_power_up = net_buf_simple_pull_u8(buf);
 
+	if (on_power_up >= BT_MESH_ON_POWER_UP_INVALID) {
+		return;
+	}
+
 	if (model_ack_match(&cli->ack_ctx, BT_MESH_PONOFF_OP_STATUS, ctx)) {
 		enum bt_mesh_on_power_up *rsp =
 			(enum bt_mesh_on_power_up *)cli->ack_ctx.user_data;
