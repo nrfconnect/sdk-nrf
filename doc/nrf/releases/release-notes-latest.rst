@@ -65,9 +65,12 @@ nRF9160
 
 * Updated:
 
-  * :ref:`lib_download_client` library - Re-introduced optional TCP timeout, which is enabled by default.
-    This change re-introduces the optional timeout on the TCP socket used for the download.
-    Upon timeout on a TCP socket, the HTTP download will fail and the ``ETIMEDOUT`` error will be returned via the callback handler.
+  * :ref:`lib_download_client` library:
+
+    * Re-introduced optional TCP timeout (enabled by default) on the TCP socket used for the download.
+      Upon timeout on a TCP socket, the HTTP download will fail and the ``ETIMEDOUT`` error will be returned via the callback handler.
+    * Added an option to set the hostname for TLS Server Name Indication (SNI) extension.
+      This option is valid only when TLS is enabled.
 
 Common
 ======

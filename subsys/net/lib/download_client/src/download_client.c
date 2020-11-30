@@ -108,6 +108,30 @@ static int socket_sectag_set(int fd, int sec_tag)
 	return 0;
 }
 
+static int socket_tls_hostname_set(int fd, const char * const hostname)
+{
+	__ASSERT_NO_MSG(hostname);
+
+	char parsed_host[HOSTNAME_SIZE];
+	int err;
+
+	err = url_parse_host(hostname, parsed_host, sizeof(parsed_host));
+	if (err) {
+		LOG_ERR("Failed to parse host, err %d", err);
+		return err;
+	}
+
+	err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, parsed_host,
+			 strlen(parsed_host));
+	if (err) {
+		LOG_ERR("Failed to setup TLS hostname (%s), errno %d",
+			log_strdup(parsed_host), errno);
+		return -errno;
+	}
+
+	return 0;
+}
+
 static int socket_apn_set(int fd, const char *apn)
 {
 	int err;
@@ -202,6 +226,11 @@ static int client_connect(struct download_client *dl, const char *host,
 		}
 	}
 
+	if (dl->config.sec_tag == -1 && dl->config.set_tls_hostname) {
+		LOG_WRN("set_tls_hostname flag is set for non-TLS connection");
+		return -EINVAL;
+	}
+
 	err = url_parse_port(host, &port);
 	if (err) {
 		switch (dl->proto) {
@@ -255,6 +284,13 @@ static int client_connect(struct download_client *dl, const char *host,
 		err = socket_sectag_set(*fd, dl->config.sec_tag);
 		if (err) {
 			goto cleanup;
+		}
+
+		if (dl->config.set_tls_hostname) {
+			err = socket_tls_hostname_set(*fd, host);
+			if (err) {
+				goto cleanup;
+			}
 		}
 	}
 
