@@ -86,6 +86,8 @@ enum azure_iot_hub_evt_type {
 	AZURE_IOT_HUB_EVT_FOTA_ERASE_DONE,
 	/** FOTA failed */
 	AZURE_IOT_HUB_EVT_FOTA_ERROR,
+	/** Internal library error */
+	AZURE_IOT_HUB_EVT_ERROR
 };
 
 /** @brief Azure IoT Hub topic type, used to route messages to the correct

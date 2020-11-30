@@ -96,6 +96,12 @@ static void api_event_handler(struct azure_iot_hub_evt *evt)
 		cloud_notify_event(azure_iot_hub_backend, &cloud_evt,
 				   config->user_data);
 		break;
+	case AZURE_IOT_HUB_EVT_ERROR:
+		cloud_evt.type = CLOUD_EVT_ERROR;
+		cloud_evt.data.err = evt->data.err;
+		cloud_notify_event(azure_iot_hub_backend, &cloud_evt,
+				   config->user_data);
+		break;
 	default:
 		break;
 	}
