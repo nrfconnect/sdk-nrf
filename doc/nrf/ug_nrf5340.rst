@@ -177,9 +177,132 @@ See :ref:`ug_multi_image_defining` for details.
 The network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` is automatically added to all Bluetooth Low Energy samples in the |NCS|.
 When :option:`CONFIG_BT_RPMSG_NRF53` is set to ``y`` (the default), the build system automatically includes the sample as a child image in the ``nrf5340_dk_nrf5340_cpunet`` core.
 
-If the image in the network core is not added to the application core build, you can build and program both samples separately by following the instructions in :ref:`gs_programming_ses`.
-Make sure to use ``nrf5340dk_nrf5340_cpunet`` as build target when building the network sample, and ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuappns`` when building the application sample.
+SES is unable to automatically program the network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` to the network core when it is added as a child image.
+To program the network sample to the network core, see `Programming the network sample from SES`_.
 
+A dedicated network sample can be built and flashed by following the instructions in :ref:`gs_programming_ses`.
+Make sure to use ``nrf5340dk_nrf5340_cpunet`` as the build target when building the network sample, and ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuappns`` when building the application sample.
+
+Programming the network sample from SES
+=======================================
+
+Follow the instructions in :ref:`gs_programming_ses`, use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuappns`` as the build target, and open the Bluetooth Low Energy sample to work with.
+
+Build the sample as described in :ref:`gs_programming_ses`.
+This also creates the network core image.
+
+.. note::
+   You must reprogram the network core sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` only when changes are made to it.
+   You can modify and program the application core sample without reprogramming the network core.
+
+Follow these steps to program the network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` to the network core when it is included as a child image:
+
+1. Select :guilabel:`File` -> :guilabel:`New Project...`.
+
+    .. figure:: images/ses_nrf5340_netcore_new_project.png
+       :alt: Create New Project menu
+
+       Create New Project menu
+
+#. Select :guilabel:`Add the project to the current solution`.
+
+    .. figure:: images/ses_nrf5340_netcore_add_project.png
+       :alt: Adding a project target for programming the network core
+
+       Adding a project target for programming the network core
+
+#. Select the project template, project name, and project location.
+
+   * :guilabel:`An externally built executable for Nordic Semiconductor nRF`:
+     This allows to specify the network core hex file created by the build system to be flashed.
+
+   * :guilabel:`Name`: Specify the name of the project as it will appear in SES. In this example, ``hci_rpmsg_nrf5340_netcore`` is used.
+
+   * :guilabel:`Location`: Specify the location of the project.
+     This must be the same location as the current project / build folder.
+     Click :guilabel:`Browse` to open a dialog where you can navigate to the current project / build folder and click :guilabel:`Select Folder`.
+
+   Click :guilabel:`Next`.
+
+    .. figure:: images/ses_nrf5340_netcore_project_template.png
+       :alt: Creating a new project for programming the network core
+
+       Creating a new project for programming the network core
+
+#. Configure the project settings.
+
+   * :guilabel:`Target Processor`: Select ``nRF5340_xxAA_Network``.
+
+   * :guilabel:`Load File`: Specify ``$(ProjectDir)/hci_rpmsg/zephyr/merged_CPUNET.hex``.
+     This is the merged hex file for the network core that will be programmed.
+
+   Click :guilabel:`Next`.
+
+    .. figure:: images/ses_nrf5340_netcore_project_settings.png
+       :alt: Project settings for programming the network core
+
+       Project settings for programming the network core
+
+#. Add the project files.
+
+   This project will only be used for programming the network core so you must only add the default :guilabel:`Script Files`.
+
+   Click :guilabel:`Next`
+
+    .. figure:: images/ses_nrf5340_netcore_files.png
+       :alt: Adding script files for programming the network core
+
+       Adding script files for programming the network core
+
+
+#. Add the project configurations.
+
+   This project will only be used for programming the network core so no build configurations are needed.
+
+   Deselect :guilabel:`Debug` and :guilabel:`Release`.
+
+   Click :guilabel:`Finish`.
+
+    .. figure:: images/ses_nrf5340_netcore_conf.png
+       :alt: Deselecting configurations and finishing the configuration
+
+       Deselecting configurations and finishing the configuration
+
+   A new project has been created for programming the network core with the network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample`.
+
+#. To program the network sample, the ``hci_rpmsg_nrf5340_netcore`` project must be active.
+   If the ``hci_rpmsg_nrf5340_netcore`` project is not the current active project, then set it as active using :guilabel:`Project` -> :guilabel:`Set Active Project` -> :guilabel:`hci_rpmsg_nrf5340_netcore`.
+
+   .. figure:: images/ses_nrf5340_netcore_set_active.png
+     :alt: Set the hci_rpmsg_nrf5340_netcore programming target as active
+
+     Set the hci_rpmsg_nrf5340_netcore programming target as active
+
+#. You can now program the network sample using :guilabel:`Target` -> :guilabel:`Download hci_rpmsg_nrf5340_netcore`.
+
+   .. figure:: images/ses_nrf5340_netcore_flash_active.png
+     :alt: Program the network sample hci_rpmsg_nrf5340_netcore
+
+     Program the network sample hci_rpmsg_nrf5340_netcore
+
+   Ignore any warnings regarding project being out of date.
+   The ``hci_rpmsg_nrf5340_netcore`` is a pure programming target so it cannot build.
+
+   .. figure:: images/ses_nrf5340_netcore_download.png
+     :alt: Ignore any 'Project out of date' warning
+
+     Ignore any 'Project out of date' warning
+
+#. After the network core is programmed, make sure to make the application target active again.
+
+   To do this, select :guilabel:`Project` -> :guilabel:`Set Active Project` -> :guilabel:`zephyr/merged.hex`.
+
+   .. figure:: images/ses_nrf5340_appcore_set_active.png
+     :alt: Set the zephyr/merged.hex target as active
+
+     Set the zephyr/merged.hex target as active
+
+.. note:: Flashing the network core erases the application which must be therefore programmed again.
 
 Programming from the command line
 =================================
