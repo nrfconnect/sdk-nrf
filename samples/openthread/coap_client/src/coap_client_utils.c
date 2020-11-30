@@ -186,11 +186,15 @@ static void send_provisioning_request(struct k_work *item)
 static void toggle_minimal_sleepy_end_device(struct k_work *item)
 {
 	otError error;
-	struct otInstance *instance = openthread_get_default_instance();
-	otLinkModeConfig mode = otThreadGetLinkMode(instance);
+	otLinkModeConfig mode;
+	struct openthread_context *context = openthread_get_default_context();
 
+	openthread_api_mutex_lock(context);
+	mode = otThreadGetLinkMode(context->instance);
 	mode.mRxOnWhenIdle = !mode.mRxOnWhenIdle;
-	error = otThreadSetLinkMode(instance, mode);
+	error = otThreadSetLinkMode(context->instance, mode);
+	openthread_api_mutex_unlock(context);
+
 	if (error != OT_ERROR_NONE) {
 		LOG_ERR("Failed to set MLE link mode configuration");
 	} else {
