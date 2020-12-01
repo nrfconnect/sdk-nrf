@@ -7,9 +7,8 @@ nRF9160: HTTP application update
    :local:
    :depth: 2
 
-The HTTP application update sample demonstrates how to do a basic FOTA (firmware over-the-air) update.
+The HTTP application update sample demonstrates how to do a basic firmware over-the-air (FOTA) update.
 It uses the :ref:`lib_fota_download` library to download a file from a remote server and write it to flash.
-
 
 Overview
 ********
@@ -18,9 +17,8 @@ The sample connects to an HTTP server to download a signed firmware image.
 The image is generated when building the sample, but you must upload it to a server and configure where it can be downloaded.
 See `Specifying the image file`_ for more information.
 
-By default, the image is saved to `MCUboot`_ bootloader secondary slot.
-The downloaded image must be signed for use by MCUboot with imgtool.
-
+By default, the image is saved to the `MCUboot`_ bootloader secondary slot.
+To be used by MCUboot, the downloaded image must be signed using imgtool.
 
 Requirements
 ************
@@ -36,7 +34,6 @@ This image is automatically generated when building the application.
 
 .. include:: /includes/spm.txt
 
-
 Building and running
 ********************
 
@@ -48,7 +45,6 @@ The sample is built as a non-secure firmware image for the nrf9160dk_nrf9160ns b
 Because of this, it automatically includes the :ref:`secure_partition_manager`.
 The sample also uses MCUboot, which is automatically built and merged into the final HEX file when building the sample.
 
-
 Specifying the image file
 =========================
 
@@ -59,7 +55,7 @@ See `Setting up an AWS S3 bucket`_ for instructions.
 To specify the location in |SES|:
 
 1. Select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project`.
-#. Navigate to :guilabel:`HTTP application update sample` and specify the download host name (``CONFIG_DOWNLOAD_HOST``) and the file to download (``CONFIG_DOWNLOAD_FILE``).
+#. Navigate to :guilabel:`HTTP application update sample` and specify the download hostname (``CONFIG_DOWNLOAD_HOST``) and the file to download (``CONFIG_DOWNLOAD_FILE``).
 #. Click :guilabel:`Configure` to save the configuration.
 
 .. include:: /includes/aws_s3_bucket.txt
@@ -69,13 +65,13 @@ Hosting your image on an AWS S3 Server
 
 1. Go to `AWS S3 console`_ and sign in.
 #. Go to the bucket you have created.
-#. Click :guilabel:`Upload` and select the file :file:`app_update.bin` (located in the :file:`zephyr` subfolder of your build directory).
+#. Click :guilabel:`Upload` and select the file :file:`app_update.bin`.
+   It is located in the :file:`zephyr` subfolder of your build directory.
 #. Click the file you uploaded in the bucket and check the :guilabel:`Object URL` field to find the download URL for the file.
 
 When specifying the image file, use the ``<bucket-name>.s3.<region>.amazonaws.com`` part of the URL for the download hostname.
-Make sure to not include the ``https``.
-Specify the rest of the URL as file name.
-
+Make sure to not include ``https``.
+Specify the file name as the remaining part of the URL.
 
 Testing
 =======
@@ -89,10 +85,12 @@ After programming the sample to the board, test it by performing the following s
    To upload the file on nRF Cloud, click :guilabel:`Upload` for the firmware URL that you generated earlier.
    Then select the file :file:`update.bin` and upload it.
 #. Reset your nRF9160 DK to start the application.
-#. Open a terminal emulator and observe that an output similar to this is printed::
+#. Open a terminal emulator and observe that an output similar to this is printed:
 
-    SPM: prepare to jump to Non-Secure image
-    ***** Booting Zephyr OS v1.13.99 *****
+.. code-block::
+
+   SPM: prepare to jump to Non-Secure image
+   ***** Booting Zephyr OS v1.13.99 *****
 
 #. Observe that **LED 1** is lit.
    This indicates that version 1 of the application is running.
@@ -121,6 +119,6 @@ It uses the following Zephyr libraries:
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:gpio_api`
 
-In addition, it uses the following MCUboot library:
+Also, it uses the following MCUboot library:
 
 * `MCUboot`_
