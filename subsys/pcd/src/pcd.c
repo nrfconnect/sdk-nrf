@@ -162,7 +162,7 @@ int pcd_network_core_update(const void *src_addr, size_t len)
 
 void pcd_lock_ram(void)
 {
-	uint32_t region = (PCD_CMD_ADDRESS/CONFIG_NRF_SPU_RAM_REGION_SIZE) + 1;
+	uint32_t region = PCD_CMD_ADDRESS/CONFIG_NRF_SPU_RAM_REGION_SIZE;
 
 	nrf_spu_ramregion_set(NRF_SPU, region, true, NRF_SPU_MEM_PERM_READ,
 			true);
