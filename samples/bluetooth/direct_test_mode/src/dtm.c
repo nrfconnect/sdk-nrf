@@ -19,6 +19,19 @@
 #include <nrfx/helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 
+#if defined(CONFIG_HAS_HW_NRF_PPI)
+#include <nrfx_ppi.h>
+#define gppi_channel_t nrf_ppi_channel_t
+#define gppi_channel_alloc nrfx_ppi_channel_alloc
+#elif defined(CONFIG_HAS_HW_NRF_DPPIC)
+#include <nrfx_dppi.h>
+#define gppi_channel_t uint8_t
+#define gppi_channel_alloc nrfx_dppi_channel_alloc
+#else
+#error "No PPI or DPPI"
+#endif
+
+
 /* DT definition for clock required in DT_INST_LABEL macro */
 #define DT_DRV_COMPAT nordic_nrf_clock
 
@@ -315,6 +328,9 @@ static struct dtm_instance {
 
 	/* Constant Tone Extension configuration. */
 	struct dtm_cte_info cte_info;
+
+	/* Radio TX Enable PPI channel. */
+	gppi_channel_t ppi_radio_txen;
 } dtm_inst = {
 	.state = STATE_UNINITIALIZED,
 	.packet_hdr_plen = NRF_RADIO_PREAMBLE_LENGTH_8BIT,
@@ -548,9 +564,22 @@ static int anomaly_timer_init(void)
 	return 0;
 }
 
+static int gppi_init(void)
+{
+	nrfx_err_t err;
+
+	err = gppi_channel_alloc(&dtm_inst.ppi_radio_txen);
+	if (err != NRFX_SUCCESS) {
+		printk("gppi_channel_alloc failed with: %d\n", err);
+		return -EAGAIN;
+	}
+
+	return 0;
+}
+
 static void radio_reset(void)
 {
-	nrfx_gppi_channels_disable_all();
+	nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_txen));
 
 	nrf_radio_shorts_set(NRF_RADIO, 0);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
@@ -640,6 +669,11 @@ int dtm_init(void)
 	 * affected device.
 	 */
 	err = anomaly_timer_init();
+	if (err) {
+		return err;
+	}
+
+	err = gppi_init();
 	if (err) {
 		return err;
 	}
@@ -1776,13 +1810,13 @@ static enum dtm_err_code on_test_transmit_cmd(uint32_t length, uint32_t freq)
 	 * 625 us
 	 */
 	nrfx_gppi_channel_endpoints_setup(
-			0,
+			dtm_inst.ppi_radio_txen,
 			(uint32_t) nrf_timer_event_address_get(
 						dtm_inst.timer.p_reg,
 						NRF_TIMER_EVENT_COMPARE0),
 			nrf_radio_task_address_get(NRF_RADIO,
 						   NRF_RADIO_TASK_TXEN));
-	nrfx_gppi_channels_enable(0x01);
+	nrfx_gppi_channels_enable(BIT(dtm_inst.ppi_radio_txen));
 
 	dtm_inst.state = STATE_TRANSMITTER_TEST;
 
