@@ -489,7 +489,7 @@ static int hci_driver_open(void)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_BT_DATA_LEN_UPDATE)) {
+	if (IS_ENABLED(CONFIG_BT_CTLR_DATA_LENGTH)) {
 		err = sdc_support_dle();
 		if (err) {
 			return -ENOTSUP;
