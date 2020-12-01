@@ -91,6 +91,7 @@ set(KI_SCRIPT ${ZEPHYR_BASE}/scripts/filter-known-issues.py)
 set(SPHINXOPTS -c ${NRF_BASE}/doc/zephyr)
 set(SPHINX_OUTPUT_DIR ${HTML_DIR}/zephyr)
 set(KCONFIG_OUTPUT ${HTML_DIR}/kconfig)
+set(GEN_DEVICETREE_REST_ZEPHYR_DOCSET " ")
 
 # Get access to the 'html' target from doc/CMakeLists.txt in Zephyr
 add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
