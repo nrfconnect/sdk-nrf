@@ -24,6 +24,35 @@
 #define LOG_MODULE_NAME sdc_hci_driver
 #include "common/log.h"
 
+/* As per the section "SoftDevice Controller/Integration with applications"
+ * in the nrfxlib documentation, the controller uses the following channels:
+ */
+#if defined(PPI_PRESENT)
+	/* PPI channels 17 - 31, for the nRF52 Series */
+	#define PPI_CHANNELS_USED_BY_CTLR (BIT_MASK(15) << 17)
+#else
+	/* DPPI channels 0 - 13, for the nRF53 Series */
+	#define PPI_CHANNELS_USED_BY_CTLR BIT_MASK(14)
+#endif
+
+/* Additionally, MPSL requires the following channels (as per the section
+ * "Multiprotocol Service Layer/Integration notes"):
+ */
+#if defined(PPI_PRESENT)
+	/* PPI channel 19, 30, 31, for the nRF52 Series */
+	#define PPI_CHANNELS_USED_BY_MPSL (BIT(19) | BIT(30) | BIT(31))
+#else
+	/* DPPI channels 0 - 2, for the nRF53 Series */
+	#define PPI_CHANNELS_USED_BY_MPSL BIT_MASK(3)
+#endif
+
+/* The following two constants are used in nrfx_glue.h for marking these PPI
+ * channels and groups as occupied and thus unavailable to other modules.
+ */
+const uint32_t z_bt_ctlr_used_nrf_ppi_channels =
+	PPI_CHANNELS_USED_BY_CTLR | PPI_CHANNELS_USED_BY_MPSL;
+const uint32_t z_bt_ctlr_used_nrf_ppi_groups;
+
 static K_SEM_DEFINE(sem_recv, 0, 1);
 
 static struct k_thread recv_thread_data;
