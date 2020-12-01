@@ -35,6 +35,7 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    :glob:
 
    ../../samples/nrf9160/*/README
+   ../../samples/nrf9160/http_update/*/README
 
 .. _nrf5340_samples:
 

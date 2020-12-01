@@ -40,7 +40,7 @@ This image is automatically generated when building the application.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf9160/http_application_update`
+.. |sample path| replace:: :file:`samples/nrf9160/http_update/application_update`
 
 .. include:: /includes/build_and_run.txt
 
