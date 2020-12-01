@@ -89,21 +89,57 @@ sdk-zephyr
 
 .. NOTE TO MAINTAINERS: The latest Zephyr commit appears in multiple places; make sure you update them all.
 
-The Zephyr fork in |NCS| contains all commits from the upstream Zephyr repository up to and including ``7a3b253ced``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| contains all commits from the upstream Zephyr repository up to and including ``35264cc214fd``, plus some |NCS| specific additions.
 
 For a complete list of upstream Zephyr commits incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 7a3b253ced ^v2.3.0-rc1-ncs1
+   git log --oneline 35264cc214fd ^v2.4.0-ncs1
 
 For a complete list of |NCS| specific commits, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^7a3b253ced
+   git log --oneline manifest-rev ^35264cc214fd
 
-The current |NCS| release is based on Zephyr 2.4.0.
-See the :ref:`Zephyr 2.4.0 release notes <zephyr:zephyr_2.4>` for a list of changes.
+The current |NCS| release is based on Zephyr v2.4.99.
 
-For the list of the most recent additions specific to |NCS|, see :ref:`ncs_release_notes_140`.
+The following list summarizes the most important changes inherited from upstream Zephyr:
+
+* Kernel:
+
+  * Restricted thread-local storage, which is now available only when the toolchain supports it.
+    Toolchain support is initially limited to the toolchains bundled with the Zephyr SDK.
+  * Fixed a race condition between :c:func:`k_queue_append` and :c:func:`k_queue_alloc_append`.
+  * Updated the kernel to no longer try to resume threads that are not suspended.
+  * Updated the kernel to no longer attempt to queue threads that are already in the run queue.
+  * Updated :c:func:`k_busy_wait` to return immediately on a zero time-out, and improved accuracy on nonzero time-outs.
+  * Removed the following deprecated `kernel APIs <https://github.com/nrfconnect/sdk-zephyr/commit/c8b94f468a94c9d8d6e6e94013aaef00b914f75b>`_:
+
+    * ``k_enable_sys_clock_always_on()``
+    * ``k_disable_sys_clock_always_on()``
+    * ``k_uptime_delta_32()``
+    * ``K_FIFO_INITIALIZER``
+    * ``K_LIFO_INITIALIZER``
+    * ``K_MBOX_INITIALIZER``
+    * ``K_MEM_SLAB_INITIALIZER``
+    * ``K_MSGQ_INITIALIZER``
+    * ``K_MUTEX_INITIALIZER``
+    * ``K_PIPE_INITIALIZER``
+    * ``K_SEM_INITIALIZER``
+    * ``K_STACK_INITIALIZER``
+    * ``K_TIMER_INITIALIZER``
+    * ``K_WORK_INITIALIZER``
+    * ``K_QUEUE_INITIALIZER``
+
+  * Removed the following deprecated `system clock APIs <https://github.com/nrfconnect/sdk-zephyr/commit/d28f04110dcc7d1aadf1d791088af9aca467bd70>`_:
+
+    * ``__ticks_to_ms()``
+    * ``__ticks_to_us()``
+    * ``sys_clock_hw_cycles_per_tick()``
+    * ``z_us_to_ticks()``
+    * ``SYS_CLOCK_HW_CYCLES_TO_NS64()``
+    * ``SYS_CLOCK_HW_CYCLES_TO_NS()``
+
+  * Updated :c:func:`k_timer_user_data_get` to take a ``const struct k_timer *timer`` instead of a non-\ ``const`` pointer.
