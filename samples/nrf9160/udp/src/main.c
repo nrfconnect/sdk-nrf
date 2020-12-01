@@ -131,16 +131,32 @@ static int configure_low_power(void)
 	return err;
 }
 
-static void modem_configure(void)
+static void modem_init(void)
 {
 	int err;
 
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
 		/* Do nothing, modem is already configured and LTE connected. */
 	} else {
-		err = lte_lc_init_and_connect_async(lte_handler);
+		err = lte_lc_init();
 		if (err) {
-			printk("Modem configuration, error: %d\n", err);
+			printk("Modem initialization failed, error: %d\n", err);
+			return;
+		}
+	}
+}
+
+static void modem_connect(void)
+{
+	int err;
+
+	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
+		/* Do nothing, modem is already configured and LTE connected. */
+	} else {
+		err = lte_lc_connect_async(lte_handler);
+		if (err) {
+			printk("Connecting to LTE network failed, error: %d\n",
+			       err);
 			return;
 		}
 	}
@@ -199,13 +215,20 @@ void main(void)
 	work_init();
 
 #if defined(CONFIG_BSD_LIBRARY)
+
+	/* Initialize the modem before calling configure_low_power(). This is
+	 * because the enabling of RAI is dependent on the
+	 * configured network mode which is set during modem initialization.
+	 */
+	modem_init();
+
 	err = configure_low_power();
 	if (err) {
 		printk("Unable to set low power configuration, error: %d\n",
 		       err);
 	}
 
-	modem_configure();
+	modem_connect();
 
 	k_sem_take(&lte_connected, K_FOREVER);
 #endif
