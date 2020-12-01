@@ -142,6 +142,11 @@ nRF5
 nRF5340
 =======
 
+.. rst-class:: v1-4-99-dev1
+
+802.15.4 Service Layer (SL) library support for the nRF53
+  The nRF53 support in the 802.15.4 Service Layer (SL) library is available only in the open-source version of the library.
+
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0
 
 FOTA does not work
@@ -659,6 +664,15 @@ DRGN-14153: Radio Notification power performance penalty
 
 Front-End Modules API implementation missing
   Front-End Modules API is currently not implemented by any protocol.
+
+802.15.4 Radio driver
+=====================
+
+.. rst-class:: v1-4-99-dev1
+
+KRKNWK-8133: CSMA-CA issues
+  Using CSMA-CA with the open-source variant of the 802.15.4 Service Layer (SL) library causes an assertion fault.
+  CSMA-CA support is currently not available in the open-source SL library.
 
 SoftDevice Controller
 =====================
