@@ -171,12 +171,22 @@ Missing :file:`CMakeLists.txt`
 Thread
 ======
 
-.. rst-class:: v1-4-0
+.. rst-class:: v1-4-99-dev1
+
+KRKNWK-8262: CoAP Client Sample crashes for nRF5340
+  For nRF5340, the :ref:`coap_client_sample` sample crashes when changing from SED to MED mode.
+  Other devices are not affected.
+  The crash is caused by mode switching and IPC communication being handled by the system workqueue, which causes a deadlock.
+
+  **Workaround:** Use the application default thread, a dedicated workqueue, or a new thread to handle operations that require radio interactions.
+  If you cannot avoid using the system workqueue, cherry-pick the upstream `Zephyr commit f12536`_.
+
+.. rst-class:: v1-4-99-dev1 v1-4-0
 
 KRKNWK-6848: Reduced throughput
   Performance testing for :ref:`NCP sample <ot_ncp_sample>` shows a decrease of throughput of around 10-20% compared with the standard OpenThread.
 
-.. rst-class:: v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-0
 
 KRKNWK-7885: Throughput is lower when using CC310 nrf_security backend
   A decrease of throughput of around 5-10% has been observed for the :ref:`CC310 nrf_security backend <nrfxlib:nrf_security_backends_cc3xx>` when compared with :ref:`nrf_oberon <nrf_security_backends_oberon>` or :ref:`the standard mbedtls backend <nrf_security_backends_orig_mbedtls>`.
@@ -197,7 +207,7 @@ KRKNWK-7721: MAC counter updating issue
 
   **Workaround:** To fix the error, cherry-pick commits from the upstream `Zephyr PR #29226 <https://github.com/zephyrproject-rtos/zephyr/pull/29226>`_.
 
-.. rst-class:: v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-0
 
 KRKNWK-7962: Logging interferes with shell output
   :option:`CONFIG_LOG_MINIMAL` is configured by default for most OpenThread samples.
@@ -205,7 +215,7 @@ KRKNWK-7962: Logging interferes with shell output
 
   **Workaround:** Disable logging or enable a more advanced logging option.
 
-.. rst-class:: v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-0
 
 KRKNWK-7803: Automatically generated libraries are missing otPlatLog for NCP
   When building OpenThread libraries using a different sample than the :ref:`Thread NCP sample <ot_ncp_sample>`, the :file:`ncp_base.cpp` is not compiled with the :c:func:`otPlatLog` function.

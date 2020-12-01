@@ -556,3 +556,7 @@
 .. _`tests/unity/example_test/CMakeLists.txt`: https://github.com/nrfconnect/sdk-nrf/blob/master/tests/unity/example_test/CMakeLists.txt
 
 .. _`nRF52820 CMakeLists.txt`: https://github.com/zephyrproject-rtos/zephyr/blob/master/boards/arm/nrf52833dk_nrf52820/CMakeLists.txt
+
+.. ### Links to commits
+
+.. _`Zephyr commit f12536`: https://github.com/zephyrproject-rtos/hal_nordic/commit/f12536cbfb27b7bb05b40b97bd8a8857f2bf23ec
