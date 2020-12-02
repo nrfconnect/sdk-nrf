@@ -14,7 +14,11 @@ To get started with the nRF5340 DK, follow the steps in the `Getting started wit
 
 .. note::
    The nRF5340 PDK has been deprecated with the introduction of the production-level nRF5340 DK.
-   See `nRF Connect SDK v1.4.0 documentation`_ for the last release supporting nRF5340 PDK.
+   To determine if you have a PDK or DK, check the version number on the sticker on your kit.
+   If the version is 0.11.0 or higher, the kit is an nRF5340 DK.
+
+   See the `nRF Connect SDK v1.4.0 documentation`_ for the last release supporting the nRF5340 PDK.
+
 
 Introduction
 ************
@@ -306,6 +310,9 @@ Follow these steps to program the network sample :ref:`zephyr:bluetooth-hci-rpms
 
 Programming from the command line
 =================================
+
+.. note::
+   Programming the nRF5340 DK from the command line requires the `nRF Command Line Tools`_ v10.12.0 or later.
 
 To program a HEX file after building it with |SES|, open a command prompt in the build folder of the sample that you want to program and enter the following command::
 
