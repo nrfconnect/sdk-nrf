@@ -36,6 +36,8 @@ static int image_type;
 
 static struct k_delayed_work reboot_work;
 
+void client_acknowledge(void);
+
 static void reboot_work_handler(struct k_work *work)
 {
 	LOG_PANIC();
@@ -119,6 +121,8 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 	}
 
 	if (bytes_downloaded == 0) {
+		client_acknowledge();
+
 		image_type = dfu_target_img_type(data, data_len);
 
 		ret = dfu_target_init(image_type, total_size, dfu_target_cb);
