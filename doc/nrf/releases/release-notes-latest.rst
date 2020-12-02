@@ -52,6 +52,14 @@ Zigbee
   * Updated :ref:`zboss` to version ``3_3_0_6+11_30_2020``.
     See :ref:`nrfxlib:zboss_changelog` for detailed information.
 
+Bluetooth Mesh
+--------------
+
+* Added:
+
+  * Time client model callbacks for all message types.
+  * Support for the nRF52833 DK in the :ref:`bluetooth_mesh_light` and :ref:`bluetooth_mesh_light_switch` samples.
+
 Common
 ======
 
@@ -271,3 +279,15 @@ The following list summarizes the most important changes inherited from upstream
     * Enabled Maximum Fragment Length (MFL) extension on TLS sockets.
     * Added a :c:macro:`TLS_ALPN_LIST` socket option for TLS sockets.
     * Fixed a ``tls_context`` leak on ``ztls_socket()`` failure.
+
+* Bluetooth Mesh:
+
+  * Replaced the Configuration Server structure with Kconfig entries and a standalone Heartbeat API.
+  * Added a separate API for adding keys and configuring features locally.
+  * Fixed a potential infinite loop in model extension tree walk.
+  * Added LPN and Friendship event handler callbacks.
+  * Created separate internal submodules for keys, labels, Heartbeat, replay protection, and feature management.
+  * :ref:`bluetooth_mesh_models_cfg_cli`:
+
+    * Added an API for resetting a node (:c:func:`bt_mesh_cfg_node_reset`).
+    * Added an API for setting network transmit parameters (:c:func:`bt_mesh_cfg_net_transmit_set`).
