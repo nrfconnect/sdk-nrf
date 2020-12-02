@@ -521,10 +521,10 @@ static void reg_step(struct k_work *work)
 	}
 
 	srv->reg.i += (input * ki) * ((float)REG_INT / (float)MSEC_PER_SEC);
-	srv->reg.i = MIN(UINT16_MAX, MAX(0, srv->reg.i));
+	srv->reg.i = CLAMP(srv->reg.i, 0, UINT16_MAX);
 
 	float p = input * kp;
-	uint16_t output = MIN(UINT16_MAX, MAX(0, (srv->reg.i + p)));
+	uint16_t output = CLAMP(srv->reg.i + p, 0, UINT16_MAX);
 
 	/* The regulator output is always in linear format. We'll convert to
 	 * the configured representation again before calling the Lightness

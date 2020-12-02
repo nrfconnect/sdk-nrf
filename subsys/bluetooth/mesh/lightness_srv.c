@@ -180,12 +180,7 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 		 (set->lvl == 0));
 
 	if (set->lvl != 0) {
-		if (set->lvl > srv->range.max) {
-			set->lvl = srv->range.max;
-		} else if (set->lvl < srv->range.min) {
-			set->lvl = srv->range.min;
-		}
-
+		set->lvl = CLAMP(set->lvl, srv->range.min, srv->range.max);
 		state_change |= (srv->last != set->lvl);
 		srv->last = set->lvl;
 	}
