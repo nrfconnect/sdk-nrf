@@ -888,6 +888,11 @@ tx_buffer_length set incorrectly
 Zephyr
 ******
 
+.. rst-class:: v1-4-99-dev1
+
+Disabling USB causes crash
+  Disabling USB by calling :c:func:`usb_disable` with a subsequent call to :c:func:`usb_dc_detach` tries to free unallocated memory and crashes.
+
 .. rst-class:: v1-4-99-dev1 v1-4-0
 
 NCSDK-6330: USB Mass Storage Sample Application fails MSC Tests from USB3CV test tool
