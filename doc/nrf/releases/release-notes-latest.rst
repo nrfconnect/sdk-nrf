@@ -39,6 +39,8 @@ Thread
 
 * Optimized ROM and RAM used by Thread samples.
 
+* Disabled Hardware Flow Control on the serial port in :ref:`coap_client_sample` and :ref:`coap_server_sample` Samples.
+
 Common
 ======
 
