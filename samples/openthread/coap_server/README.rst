@@ -92,9 +92,6 @@ Running OpenThread CLI commands
 You can connect to any of the Simple CoAP Server or Simple CoAP Client nodes through a serial port.
 For more details, see :ref:`putty`.
 
-.. note::
-     |thread_hwfc_enabled|
-
 Once the serial connection is ready, you can run OpenThread CLI commands.
 For complete CLI documentation, refer to `OpenThread CLI Reference`_.
 
