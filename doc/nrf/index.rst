@@ -16,8 +16,12 @@ The SDK contains optimized cellular IoT (LTE-M and NB-IoT), Bluetooth Low Energy
 The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is built for connected low power products.
 
 .. note::
-   nRF53 Series devices (which are pre-production) and Zigbee and Bluetooth Mesh protocols are supported for development in |release| for prototyping and evaluation.
-   Support for production and deployment in end products is coming soon.
+
+   |NCS| v1.4.99-dev1 supports prototyping and evaluation, but should not be used for production and deployment in end products.
+
+.. previous note about development and production support
+..   nRF53 Series devices (which are pre-production) and Zigbee and Bluetooth Mesh protocols are supported for development in |release| for prototyping and evaluation.
+..   Support for production and deployment in end products is coming soon.
 
 To access different versions of the |NCS| documentation, use the version drop-down in the top-left corner.
 
