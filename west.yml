@@ -33,6 +33,8 @@ manifest:
       url-base: https://github.com/nanopb
     - name: alexa
       url-base: https://github.com/alexa
+    - name: kyberdin
+      url-base: https://github.com/kyberdin
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -92,8 +94,9 @@ manifest:
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
     - name: mcuboot
+      remote: kyberdin
       repo-path: sdk-mcuboot
-      revision: 853e11283805ec66f157bc27a5286edb36046725
+      revision: default_minimal_log
       path: bootloader/mcuboot
     - name: mcumgr
       repo-path: sdk-mcumgr
