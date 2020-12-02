@@ -132,7 +132,7 @@ function NCS () {
       "You are looking at an older version of the documentation. " + SWITCH_MSG;
 
     const DEV_RELEASE_MSG =
-      "You are looking at the documentation for a development release. " + SWITCH_MSG;
+      "You are looking at the documentation for a development tag. " + SWITCH_MSG;
 
     const LAST_RELEASE_MSG =
       "You are looking at the documentation for the latest official release.";
