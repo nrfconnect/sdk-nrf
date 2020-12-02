@@ -23,7 +23,7 @@ When used on nRF5340, the driver behavior depends on whether it is used in a sec
 API documentation
 *****************
 
-| Header file: :file:`<NCS>/zephyr/include/drivers/entropy.h`
+| Header file: :file:`zephyr/include/drivers/entropy.h` (in the |NCS| project)
 | Source file: :file:`drivers/entropy_cc310/entropy_cc310.c`
 
 The entropy_cc3xx driver implements the Zephyr :ref:`zephyr:entropy_api` API.

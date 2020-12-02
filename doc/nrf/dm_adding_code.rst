@@ -131,16 +131,16 @@ For example:
      self:
        path: application
 
-The ``name`` variable values starting with ``your-`` in the above code block are just examples and you can replace them as needed.
+The variable values starting with *your-* in the above code block are just examples and you can replace them as needed.
 The above example includes a fork of the ``mcuboot`` project, but you can fork any project in :file:`nrf/west.yml`.
 
 Once you have your new manifest repository hosted online, you can use it with west just like you use the `sdk-nrf`_  repository when :ref:`getting <dm-wf-get-ncs>` and later :ref:`updating <dm-wf-update-ncs>` the source code.
-You just need to replace ``sdk-nrf`` and ``nrf`` with the repository name and path you have chosen for your manifest repository as shown in the following code:
+You just need to replace ``sdk-nrf`` and ``nrf`` with the repository name and path you have chosen for your manifest repository (*your-name/your-application* and *your-ncs-fork*, respectively), as shown in the following code:
 
-.. code-block:: none
+.. parsed-literal::
 
-   west init -m https://github.com/your-name/your-application your-ncs-fork
-   cd your-ncs-fork
+   west init -m https://github.com/*your-name/your-application* *your-ncs-fork*
+   cd *your-ncs-fork*
    west update
 
 After that, to modify the |NCS| version associated with your app, change the ``revision`` value in the manifest file to the `sdk-nrf`_ Git tag, SHA, or the branch you want to use, save the file, and run ``west update``.

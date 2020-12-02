@@ -167,7 +167,12 @@ Pay attention to the following rules when highlighting content:
   * Use the ``.. code-block::`` directive for code fragments that do not include variables.
     Specify the language type after the directive, for example ``.. code-block:: c``.
   * Use the ``.. parsed-literal::`` directive for code fragments that include variable names, for example installation paths or board names.
-    With this directive, you can apply the emphasis markup for variables, for example ``*board name*``.
+    With this directive, you can apply the emphasis markup for variables, for example ``*board_name*``:
+
+    .. parsed-literal::
+       :class: highlight
+
+       > set VERBOSE=True && set CMAKE_BUILD_PARALLEL_LEVEL=1 && west build -b *board_name*
 
 * GUI
 

@@ -209,13 +209,14 @@ Optionally, if you are using more than one NCP board, you can test the network j
 #. Get the board's serial port name.
 #. Open a shell and run another wpantund process for the second board by using the following command:
 
-   .. code-block:: console
+   .. parsed-literal::
+      :class: highlight
 
-      wpantund -I <network_interface_name_board2> -s <serial_port_name_board2> -b <baudrate>
+      wpantund -I *network_interface_name_board2* -s *serial_port_name_board2* -b *baudrate*
 
-   For `baudrate`, use value 1000000.
-   For `serial_port_name_board2`, use the value from the previous step.
-   For `network_interface_name_board2`, use a name of your choice.
+   For *baudrate*, use value 1000000.
+   For *serial_port_name_board2*, use the value from the previous step.
+   For *network_interface_name_board2*, use a name of your choice.
    In this testing procedure, this will be `joiner_if`.
 #. Open another shell and run another wpanctl process for the second board by using following command:
 
