@@ -1,0 +1,9 @@
+sample:
+  name: BLE CTS client sample
+  description: Bluetooth Low Energy CTS client sample
+tests:
+  samples.bluetooth.peripheral_cts_client.build:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuappns
+    tags: bluetooth ci_build
