@@ -108,8 +108,8 @@ Activating sample extensions
 To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
 
 * For the experimental Thread 1.2 variant, set :file:`overlay-thread_1_2.conf`.
-* For the minimal single protocol variant, set :file:`"overlay-minimal_singleprotocol.conf"`.
-* For the minimal multiprotocol variant, set :file:`"overlay-minimal_multiprotocol.conf"`.
+* For the minimal single protocol variant, set :file:`overlay-minimal_singleprotocol.conf`.
+* For the minimal multiprotocol variant, set :file:`overlay-minimal_multiprotocol.conf`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
