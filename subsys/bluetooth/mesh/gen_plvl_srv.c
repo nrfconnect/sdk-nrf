@@ -447,16 +447,20 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_plvl_srv *srv =
 		CONTAINER_OF(lvl_srv, struct bt_mesh_plvl_srv, lvl);
 	struct bt_mesh_plvl_status status = { 0 };
-
-	uint16_t start_value = srv->last;
+	uint16_t start_lvl;
 
 	if (delta_set->new_transaction) {
 		srv->handlers->power_get(srv, NULL, &status);
-		start_value = status.current;
+		start_lvl = status.current;
+	} else {
+		start_lvl = srv->last;
 	}
 
 	struct bt_mesh_plvl_set set = {
-		.power_lvl = start_value + delta_set->delta,
+		/* Clamp the target value before storing it in a uint16_t to
+		 * avoid overflow:
+		 */
+		.power_lvl = CLAMP(start_lvl + delta_set->delta, 0, UINT16_MAX),
 		.transition = delta_set->transition,
 	};
 
@@ -467,7 +471,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	 * storage will still be the target value, allowing us to recover
 	 * correctly on power loss.
 	 */
-	srv->last = start_value;
+	srv->last = start_lvl;
 
 	if (rsp) {
 		rsp->current = POWER_TO_LVL(status.current);

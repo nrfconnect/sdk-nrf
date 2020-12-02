@@ -189,23 +189,22 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		CONTAINER_OF(lvl_srv, struct bt_mesh_light_temp_srv, lvl);
 	struct bt_mesh_light_temp_status status = { 0 };
 	struct bt_mesh_light_temp_cb_set cb_msg;
-	int16_t start_value = temp_to_lvl(srv, srv->temp_last);
-	int16_t target_value;
+	int16_t start_lvl, target_lvl;
 
 	if (delta_set->new_transaction) {
 		srv->handlers->get(srv, NULL, &status);
-		start_value = temp_to_lvl(srv, status.current.temp);
-	}
-
-	if (delta_set->delta > (INT16_MAX - start_value)) {
-		target_value = INT16_MAX;
-	} else if (delta_set->delta < (INT16_MIN - start_value)) {
-		target_value = INT16_MIN;
+		start_lvl = temp_to_lvl(srv, status.current.temp);
 	} else {
-		target_value = start_value + delta_set->delta;
+		start_lvl = temp_to_lvl(srv, srv->temp_last);
 	}
 
-	uint16_t new_temp = lvl_to_temp(srv, target_value);
+	/* Clamp to int16_t range before storing the value in a 16 bit integer
+	 * to prevent overflow.
+	 */
+	target_lvl = CLAMP(start_lvl + delta_set->delta, BT_MESH_LVL_MIN,
+			   BT_MESH_LVL_MAX);
+
+	uint16_t new_temp = lvl_to_temp(srv, target_lvl);
 
 	cb_msg.temp = &new_temp;
 	cb_msg.delta_uv = NULL;
@@ -218,7 +217,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	 * persistent storage will still be the target value, allowing us to
 	 * recover Scorrectly on power loss.
 	 */
-	srv->temp_last = lvl_to_temp(srv, start_value);
+	srv->temp_last = lvl_to_temp(srv, start_lvl);
 
 	(void)bt_mesh_light_temp_srv_pub(srv, NULL, &status);
 
