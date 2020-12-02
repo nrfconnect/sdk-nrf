@@ -38,8 +38,7 @@ Thread
   * Development support for the nRF5340 DK in single-protocol configuration for the :ref:`ot_cli_sample`, :ref:`coap_client_sample`, and :ref:`coap_server_sample` samples.
 
 * Optimized ROM and RAM used by Thread samples.
-
-* Disabled Hardware Flow Control on the serial port in :ref:`coap_client_sample` and :ref:`coap_server_sample` Samples.
+* Disabled Hardware Flow Control on the serial port in :ref:`coap_client_sample` and :ref:`coap_server_sample` samples.
 
 Zigbee
 ------
@@ -58,8 +57,13 @@ Common
 
 The following changes are relevant for all device families.
 
+sdk-nrfxlib
+-----------
+
+See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for the most current information.
+
 Crypto
-------
+~~~~~~
 
 * Added:
 
@@ -79,6 +83,11 @@ Crypto
   * Rewrote the :ref:`nrfxlib:nrf_security`'s library stripping mechanism to not use the POST_BUILD option in a custom build rule.
     The library stripping mechanism was non-functional in certain versions of SEGGER Embedded Studio Nordic Edition.
 
+BSD library
+~~~~~~~~~~~
+
+* Added information about low accuracy mode to the :ref:`nrfxlib:gnss_extension` documentation.
+
 MCUboot
 =======
 
@@ -88,10 +97,6 @@ sdk-mcuboot
 The MCUboot fork in |NCS| contains all commits from the upstream MCUboot repository up to and including ``5a6e18148d``, plus some |NCS| specific additions.
 The list of the most important recent changes can be found in :ref:`ncs_release_notes_140`.
 
-sdk-nrfxlib
-===========
-
-See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for the most current information.
 
 Zephyr
 ======
