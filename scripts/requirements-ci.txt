@@ -1,7 +1,7 @@
 alabaster==0.7.12
 anytree==2.8.0
 appdirs==1.4.3
-arrow==0.15.6
+arrow==0.17.0
 astroid==2.4.1
 attrs==19.3.0
 Babel==2.8.0
@@ -65,7 +65,7 @@ pyusb==1.0.2
 PyYAML==5.3.1
 recommonmark==0.4.0
 requests==2.23.0
-sh==1.12.14
+sh==1.14.1
 six==1.14.0
 snowballstemmer==2.0.0
 sortedcontainers==2.1.0
