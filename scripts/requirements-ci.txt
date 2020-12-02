@@ -22,7 +22,7 @@ docutils==0.16
 ecdsa==0.15
 future==0.18.2
 gcovr==4.2
-gitlint==0.13.1
+gitlint==0.15.0
 idna==2.9
 imagesize==1.2.0
 imgtool==1.7.0
