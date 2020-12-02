@@ -122,6 +122,9 @@ Network samples
 
 The nRF5340 network core supports samples that directly use the radio peripheral, for example, :ref:`radio_test`.
 
+Bluetooth Low Energy
+--------------------
+
 For Bluetooth Low Energy, the |NCS| provides the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample.
 This Zephyr sample is designed specifically to enable the Bluetooth LE Controller functionality on a remote MCU (for example, the nRF5340 network core) using the `RPMsg Messaging Protocol`_ as a transport for Bluetooth HCI.
 The sample implements the RPMsg transport using the `OpenAMP`_ library to communicate with a Bluetooth Host stack that runs on a separate core (for example, the nRF5340 application core).
@@ -142,6 +145,14 @@ For example:
 
   This configuration guarantees that the network sample can handle the Bluetooth LE DLE update procedure, which is used in the :ref:`ble_throughput` sample.
 
+IEEE 802.15.4
+-------------
+
+For IEEE 802.15.4, the nRF Connect SDK makes use of Zephyr's :ref:`zephyr:nrf-ieee802154-rpmsg-sample` sample.
+This Zephyr sample is designed specifically to enable the nRF IEEE 802.15.4 radio driver and its serialization library on a remote MCU (for example, the nRF5340 network core) using the `RPMsg Messaging Protocol`_ as a transport for the nRF 802.15.4 radio driver serialization.
+The sample implements the RPMsg transport using the `OpenAMP`_ library to communicate with the nRF IEEE 802.15.4 radio driver serialization host that runs on a separate core (for example, the nRF5340 application core).
+
+This sample must be programmed to the network core to run samples for 802.15.4-based protocols like Thread or Zigbee on nRF5340.
 
 Application samples
 ===================
@@ -150,6 +161,10 @@ The |NCS| provides a series of :ref:`Bluetooth Low Energy samples <ble_samples>`
 Most of these samples should run on the nRF5340 DK, but not all have been thoroughly tested.
 
 Some Bluetooth LE samples require configuration adjustments to the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample as described in the `Network samples`_ section.
+
+The |NCS| also provides :ref:`Thread <ug_thread>` and :ref:`Zigbee <ug_zigbee>` samples that can be run on the nRF5340 DK.
+These samples are built for the application core, but make use of both cores.
+The network core application is built and flashed automatically.
 
 Additionally, the |NCS| provides :ref:`NFC samples <nfc_samples>` that are available for nRF5340.
 These samples run only on the application core and do not require any firmware for the network core.
@@ -180,6 +195,9 @@ See :ref:`ug_multi_image_defining` for details.
 
 The network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` is automatically added to all Bluetooth Low Energy samples in the |NCS|.
 When :option:`CONFIG_BT_RPMSG_NRF53` is set to ``y`` (the default), the build system automatically includes the sample as a child image in the ``nrf5340_dk_nrf5340_cpunet`` core.
+
+The network sample :ref:`nrf-ieee802154-rpmsg-sample` is built automatically by the |NCS| build system and included as a child image in the ``nrf5340_dk_nrf5340_cpunet`` core if your application is built for the application core and has the :option:`CONFIG_NRF_802154_SER_HOST` option enabled.
+This option is enabled automatically for Thread and Zigbee samples in the |NCS|.
 
 SES is unable to automatically program the network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` to the network core when it is added as a child image.
 To program the network sample to the network core, see `Programming the network sample from SES`_.
