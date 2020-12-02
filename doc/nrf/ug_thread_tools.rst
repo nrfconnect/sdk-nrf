@@ -64,14 +64,15 @@ When working with samples that support wpantund, complete the following steps to
 
 1. Open a shell and run the wpantund process by using the following command:
 
-   .. code-block:: console
+   .. parsed-literal::
+      :class: highlight
 
-      wpantund -I <network_interface_name> -s <serial_port_name> -b <baudrate>
+      wpantund -I *network_interface_name* -s *serial_port_name* -b *baudrate*
 
-   For ``baudrate``, use value ``1000000``.
-   For ``serial_port_name``, use the value that is valid for the sample.
-   For ``network_interface_name``, use a name of your choice.
-   For example, `leader_if`.
+   For *baudrate*, use value ``1000000``.
+   For *serial_port_name*, use the value that is valid for the sample.
+   For *network_interface_name*, use a name of your choice.
+   For example, ``leader_if``.
 #. Open another shell and run the wpanctl process by using the following command:
 
    .. code-block:: console
@@ -97,11 +98,11 @@ The output will be different depending on the board and the sample.
 The most common wpanctl commands are the following:
 
 * ``status`` - Checks the board state.
-* ``form "My_OpenThread_network"`` - Sets up a Thread network with the name ``My_OpenThread_network``.
+* ``form "*My_OpenThread_network*"`` - Sets up a Thread network with the name ``My_OpenThread_network``.
 * ``get`` - Gets the values of all properties.
-* ``get <property>`` - Gets the value of the requested property.
+* ``get *property*`` - Gets the value of the requested property.
   For example, ``get NCP:SleepyPollInterval`` will list the value of the ``NCP:SleepyPollInterval`` property.
-* ``set <property> <value>`` - Sets the value of the requested property to the required value.
+* ``set *property* *value*`` - Sets the value of the requested property to the required value.
   For example, ``set NCP:SleepyPollInterval 1000`` will set the value of the ``NCP:SleepyPollInterval`` property to ``1000``.
 
 For the full list of commands, run the ``help`` command in wpanctl.

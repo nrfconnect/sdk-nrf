@@ -45,7 +45,7 @@ The following image shows an abstract representation of the memory layout, assum
 
    Memory layout
 
-For detailed information about the memory layout, see the partition configuration in the :file:`<build folder>/partitions.yml` file or run ``ninja partition_manager_report``.
+For detailed information about the memory layout, see the partition configuration in the :file:`partitions.yml` file (located in the build folder directory) or run ``ninja partition_manager_report``.
 
 .. _immutable_bootloader:
 

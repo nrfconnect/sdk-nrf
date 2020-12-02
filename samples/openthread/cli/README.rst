@@ -180,7 +180,13 @@ To test communication between boards, complete the following steps:
    .. note::
         |thread_hwfc_enabled|
 
-#. Test communication between the boards with the ``ot ping <ip_address_of_the_first_board>`` command.
+#. Test communication between the boards with the following command:
+
+   .. parsed-literal::
+      :class: highlight
+
+      ot ping *ip_address_of_the_first_board*
+
    For example:
 
    .. code-block:: console

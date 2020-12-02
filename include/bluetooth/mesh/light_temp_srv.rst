@@ -30,11 +30,12 @@ Temperature: ``uint16_t``
 
     The Temperature state is bound to the Generic Level State of the extended :ref:`bt_mesh_lvl_srv_readme`:
 
-    .. code-block:: console
+    .. parsed-literal::
+       :class: highlight
 
-       Light CTL Temperature = T_MIN + (Generic Level + 32768) * (T_MAX - T_MIN) / 65535
+       Light CTL Temperature = *T_MIN* + (Generic Level + 32768) * (*T_MAX* - *T_MIN*) / 65535
 
-    In the above formula, T_MIN and T_MAX are values representing the Light CTL Temperature Range Min and Light CTL Temperature Range Max states.
+    In the above formula, *T_MIN* and *T_MAX* are values representing the Light CTL Temperature Range Min and Light CTL Temperature Range Max states.
 
     Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_light_ctl_srv_handlers` handler structure.
 
