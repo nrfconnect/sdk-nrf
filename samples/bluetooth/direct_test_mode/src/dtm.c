@@ -1016,13 +1016,13 @@ uint32_t dtm_wait(void)
 
 static void dtm_test_done(void)
 {
-	nrfx_gppi_channels_disable(0x01);
+	nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_txen));
 	/* Break connection from timer to radio to stop transmit loop */
-	nrfx_gppi_event_endpoint_clear(0,
+	nrfx_gppi_event_endpoint_clear(dtm_inst.ppi_radio_txen,
 			(uint32_t) nrf_timer_event_address_get(
 			       dtm_inst.timer.p_reg,
 			       NRF_TIMER_EVENT_COMPARE0));
-	nrfx_gppi_task_endpoint_clear(0,
+	nrfx_gppi_task_endpoint_clear(dtm_inst.ppi_radio_txen,
 			nrf_radio_task_address_get(NRF_RADIO,
 				NRF_RADIO_TASK_TXEN));
 
