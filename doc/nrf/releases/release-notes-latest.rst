@@ -35,11 +35,23 @@ Thread
 
 * Added:
 
-  * Development support for the nRF5340 in single-protocol configuration for the :ref:`ot_cli_sample`, :ref:`coap_client_sample`, and :ref:`coap_server_sample` samples.
+  * Development support for the nRF5340 DK in single-protocol configuration for the :ref:`ot_cli_sample`, :ref:`coap_client_sample`, and :ref:`coap_server_sample` samples.
 
 * Optimized ROM and RAM used by Thread samples.
 
 * Disabled Hardware Flow Control on the serial port in :ref:`coap_client_sample` and :ref:`coap_server_sample` Samples.
+
+Zigbee
+------
+
+* Added:
+
+  * Development support for the nRF5340 DK in single-protocol configuration for the :ref:`zigbee_light_switch_sample`, :ref:`zigbee_light_bulb_sample`, and :ref:`zigbee_network_coordinator_sample` samples.
+
+* Updated:
+
+  * Updated :ref:`zboss` to version ``3_3_0_6+11_30_2020``.
+    See :ref:`nrfxlib:zboss_changelog` for detailed information.
 
 Common
 ======
