@@ -535,19 +535,27 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_lightness_srv *srv =
 		CONTAINER_OF(lvl_srv, struct bt_mesh_lightness_srv, lvl);
 	struct bt_mesh_lightness_status status = { 0 };
-
-	uint16_t start_value = srv->last;
+	int32_t target_actual;
+	uint16_t start_lvl;
 
 	if (delta_set->new_transaction) {
 		srv->handlers->light_get(srv, NULL, &status);
-		start_value = status.current;
+		start_lvl = status.current;
+	} else {
+		start_lvl = srv->last;
 	}
 
 	/* Delta lvl is bound to the lightness actual state, so the calculation
 	 * must happen in that space:
 	 */
-	uint16_t target_actual =
-		light_to_repr(start_value, ACTUAL) + delta_set->delta;
+	start_lvl = light_to_repr(start_lvl, ACTUAL);
+
+	/* Clamp the value to the lightness range before storing it in an
+	 * unsigned 16 bit value, as this would overflow if the target is beyond
+	 * its storage limits, causing invalid values.
+	 */
+	target_actual = CLAMP(start_lvl + delta_set->delta,
+			      BT_MESH_LIGHTNESS_MIN, BT_MESH_LIGHTNESS_MAX);
 
 	struct bt_mesh_lightness_set set = {
 		/* Converting back to configured space: */
@@ -562,7 +570,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	 * storage will still be the target value, allowing us to recover
 	 * correctly on power loss.
 	 */
-	srv->last = start_value;
+	srv->last = start_lvl;
 
 	if (rsp) {
 		rsp->current = LIGHT_TO_LVL(status.current);
