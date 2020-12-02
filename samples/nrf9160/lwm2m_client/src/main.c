@@ -58,6 +58,11 @@ static struct k_sem lwm2m_restart;
 static void rd_client_event(struct lwm2m_ctx *client,
 			    enum lwm2m_rd_client_event client_event);
 
+void client_acknowledge(void)
+{
+	lwm2m_acknowledge(&client);
+}
+
 /**@brief User interface event handler. */
 static void ui_evt_handler(struct ui_evt *evt)
 {
