@@ -104,11 +104,8 @@ static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	uint8_t tid = net_buf_simple_pull_u8(buf);
 
 	if (light != 0) {
-		if (light > srv->lightness_srv.range.max) {
-			light = srv->lightness_srv.range.max;
-		} else if (light < srv->lightness_srv.range.min) {
-			light = srv->lightness_srv.range.min;
-		}
+		light = CLAMP(light, srv->lightness_srv.range.min,
+			      srv->lightness_srv.range.max);
 	}
 
 	if (tid_check_and_update(&srv->prev_transaction, tid, ctx) != 0) {
