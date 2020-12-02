@@ -313,4 +313,4 @@ Below is a measurement from Power Profiler Kit II with the PSM active timer havi
 As seen in the above image, LTE activity is extended by 10 seconds with a lower duty cycle operation (RRC Idle)  compared to the previous measurements.
 
 
-For additional information on power optimization for nRF52-based devices, see `Optimizing Power on nRF52 Designs`_ respectively.
+For additional information on power optimization for nRF52-based devices, see `Optimizing Power on nRF52 Designs`_.
