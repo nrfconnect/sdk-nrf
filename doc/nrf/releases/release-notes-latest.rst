@@ -124,6 +124,14 @@ The current |NCS| release is based on Zephyr v2.4.99.
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
+* Boards:
+
+  * Fixed arguments for the J-Link runners for nRF5340 DK and added the DAP Link (CMSIS-DAP) interface to the OpenOCD runner for nRF5340.
+  * Marked the nRF5340 PDK as deprecated and updated the nRF5340 documentation to point to the :ref:`zephyr:nrf5340dk_nrf5340`.
+  * Added enabling of LFXO pins (XL1 and XL2) for nRF5340.
+  * Removed non-existing documentation links from partition definitions in the board devicetree files.
+  * Updated documentation related to QSPI use.
+
 * Kernel:
 
   * Restricted thread-local storage, which is now available only when the toolchain supports it.
