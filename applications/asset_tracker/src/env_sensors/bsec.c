@@ -194,11 +194,17 @@ static uint32_t state_load(uint8_t *state_buffer, uint32_t n_buffer)
 
 static void state_save(const uint8_t *state_buffer, uint32_t length)
 {
+	LOG_INF("Storing state to flash");
 	if (length > sizeof(s_state_buffer)) {
 		LOG_ERR("State buffer too big to save: %d", length);
 		return;
 	}
-	settings_save_one(SETTINGS_BSEC_STATE, state_buffer, length);
+
+	int err = settings_save_one(SETTINGS_BSEC_STATE, state_buffer, length);
+
+	if (err) {
+		LOG_ERR("Storing state to flash failed");
+	}
 }
 
 static uint32_t config_load(uint8_t *config_buffer, uint32_t n_buffer)
@@ -209,7 +215,7 @@ static uint32_t config_load(uint8_t *config_buffer, uint32_t n_buffer)
 
 static void bsec_thread(void)
 {
-	bsec_iot_loop((void *)k_sleep, get_timestamp_us, output_ready,
+	bsec_iot_loop(delay_ms, get_timestamp_us, output_ready,
 			state_save, BSEC_STATE_SAVE_INTERVAL);
 }
 
