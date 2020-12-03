@@ -23,14 +23,14 @@ static int decode_status(struct net_buf_simple *buf,
 	uint8_t *discharge_minutes = net_buf_simple_pull_mem(buf, 3);
 
 	status->discharge_minutes =
-		((discharge_minutes[0] >> 16) | (discharge_minutes[1] >> 8) |
-		 (discharge_minutes[2]));
+		((discharge_minutes[2] << 16) | (discharge_minutes[1] << 8) |
+		 (discharge_minutes[0]));
 
 	uint8_t *charge_minutes = net_buf_simple_pull_mem(buf, 3);
 
 	status->charge_minutes =
-		((charge_minutes[0] >> 16) | (charge_minutes[1] >> 8) |
-		 (charge_minutes[2]));
+		((charge_minutes[2] << 16) | (charge_minutes[1] << 8) |
+		 (charge_minutes[0]));
 
 	uint8_t flags = net_buf_simple_pull_u8(buf);
 
