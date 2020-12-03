@@ -607,6 +607,14 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *mod)
 		return -EINVAL;
 	}
 
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
+		/* Breaking the pattern of extending models in the init
+		 * function, as the Light Temperature model's position in the
+		 * composition data isn't necessarily known at that point.
+		 */
+		bt_mesh_model_extend(srv->model, srv->temp_srv.model);
+	}
+
 	struct bt_mesh_light_ctl_rsp dummy;
 	struct bt_mesh_light_ctl_gen_cb_set set = {
 		.light = NULL,

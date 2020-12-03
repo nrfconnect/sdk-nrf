@@ -1385,6 +1385,10 @@ static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 
 	net_buf_simple_init(srv->pub.msg, 0);
 
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
+		bt_mesh_model_extend(mod, srv->onoff.model);
+	}
+
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 		bt_mesh_scene_entry_add(mod, &srv->scene, &scene_type, false);
 	}
@@ -1438,6 +1442,15 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 	if (srv->lightness->lightness_model->elem_idx == mod->elem_idx) {
 		BT_ERR("Lightness: Invalid element index");
 		return -EINVAL;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
+		/* Breaking the pattern of extending models in the init
+		 * function, as the lightness model's position in the
+		 * composition data isn't necessarily known at that point.
+		 */
+		bt_mesh_model_extend(srv->model,
+				     srv->lightness->lightness_model);
 	}
 
 	switch (srv->lightness->ponoff.on_power_up) {
@@ -1504,6 +1517,20 @@ static int lc_setup_srv_init(struct bt_mesh_model *mod)
 
 	srv->setup_srv = mod;
 	net_buf_simple_init(srv->setup_pub.msg, 0);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
+		/* Model extensions:
+		 * To simplify the model extension tree, we're flipping the
+		 * relationship between the light ctrl server and the light ctrl
+		 * setup server. In the specification, the light ctrl setup
+		 * server extends the light ctrl server, which is the opposite
+		 * of what we're doing here. This makes no difference for the
+		 * mesh stack, but it makes it a lot easier to extend this
+		 * model, as we won't have to support multiple extenders.
+		 */
+		 bt_mesh_model_extend(srv->model, srv->setup_srv);
+	}
+
 	return 0;
 }
 
