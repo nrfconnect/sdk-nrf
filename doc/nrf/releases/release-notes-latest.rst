@@ -132,6 +132,11 @@ The current |NCS| release is based on Zephyr v2.4.99.
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
+* Architectures:
+
+  * Enabled interrupts before ``main()`` in single-thread kernel mode for Cortex-M architecture.
+  * Introduced functionality for forcing core architecture HW initialization during system boot, for chain-loadable images.
+
 * Boards:
 
   * Fixed arguments for the J-Link runners for nRF5340 DK and added the DAP Link (CMSIS-DAP) interface to the OpenOCD runner for nRF5340.
