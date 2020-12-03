@@ -230,6 +230,29 @@ The following list summarizes the most important changes inherited from upstream
 
     * Improved the default routine that provides sampling intervals, to allow intervals shorter than 1 millisecond.
 
+  * Bluetooth Controller:
+
+    * Fixed and improved an issue where a connection event closed too early when more data could have been sent in the same connection event.
+    * Fixed missing slave latency cancellation when initiating control procedures.
+      Connection terminations are faster now.
+    * Added experimental support for non-connectable non-scannable Extended Advertising with 255 byte PDU (without chaining).
+    * Added experimental support for non-connectable scannable Extended Advertising with 255 byte PDU (without chaining).
+    * Added experimental support for Extended Scanning with duration and period parameters (without active scanning for scan response or chained PDU).
+    * Added experimental support for Periodic Advertising and Periodic Advertising Synchronization Establishment.
+
+  * Bluetooth Host:
+
+    * Updated the :c:enumerator:`BT_LE_ADV_OPT_DIR_ADDR_RPA` option.
+      It must now be set when advertising towards a privacy-enabled peer, independent of whether privacy has been enabled or disabled.
+    * Updated the signature of the :c:type:`bt_gatt_indicate_func_t` callback type by replacing the ``attr`` pointer with a pointer to the :c:struct:`bt_gatt_indicate_params` struct that was used to start the indication.
+    * Added a destroy callback to the :c:struct:`bt_gatt_indicate_params` struct, which is called when the struct is no longer referenced by the stack.
+    * Added advertising options to disable individual advertising channels.
+    * Added experimental support for Periodic Advertising Sync Transfer.
+    * Added experimental support for Periodic Advertising List.
+    * Changed the permission bits in the discovery callback to always be set to zero since this is not valid information.
+    * Fixed a regression in lazy loading of the Client Configuration Characteristics.
+    * Fixed an issue where a security procedure failure could terminate the current GATT transaction when the transaction did not require security.
+
   * Display:
 
     * Added support for the ILI9488 display.
