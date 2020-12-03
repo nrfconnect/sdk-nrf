@@ -348,41 +348,14 @@ Then navigate to the build folder of the application sample and enter the follow
 
     nrfjprog --pinreset
 
+.. _logging_cpunet:
+
 Getting logging output
 **********************
 
 When connected to the computer, the nRF5340 DK emulates three virtual COM ports.
-In the default configuration, logging output of the application core sample is available on the third (last) COM port.
-The first two COM ports are silent.
+In the default configuration:
 
-.. _logging_cpunet:
-
-Logging output on the network core
-==================================
-
-In the default configuration, you cannot access the logging output of the network core sample.
-
-To get logging output on the second COM port, you must connect certain pins on the nRF5340 DK.
-The following table lists which pins must be shorted:
-
-.. list-table::
-   :header-rows: 1
-
-   * - 1st connection point
-     - 2nd connection point
-   * - P0.25
-     - RxD
-   * - P0.26
-     - TxD
-
-If you use flow control, you must also connect the RTS and CTS line as described in the next table:
-
-.. list-table::
-   :header-rows: 1
-
-   * - 1st connection point
-     - 2nd connection point
-   * - P0.10
-     - RTS
-   * - P0.12
-     - CTS
+* Logging output from the application core sample is available on the third (last) COM port.
+* Logging output from the network core (if available) is routed to the first COM port.
+* The second (middle) COM port is silent.
