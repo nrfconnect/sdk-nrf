@@ -141,6 +141,11 @@ int pcd_network_core_update(const void *src_addr, size_t len)
 	LOG_INF("Turned on network core");
 
 	do {
+		/* Wait for 1 second to avoid issue where network core
+		 * is unable to write to shared RAM.
+		 */
+		k_busy_wait(1 * USEC_PER_SEC);
+
 		err = pcd_fw_copy_status_get();
 	} while (err == PCD_STATUS_COPY);
 
