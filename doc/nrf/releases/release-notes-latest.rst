@@ -155,3 +155,57 @@ The following list summarizes the most important changes inherited from upstream
     * ``SYS_CLOCK_HW_CYCLES_TO_NS()``
 
   * Updated :c:func:`k_timer_user_data_get` to take a ``const struct k_timer *timer`` instead of a non-\ ``const`` pointer.
+
+* Drivers:
+
+  * Deprecated the ``DEVICE_INIT()`` macro.
+    Use :c:macro:`DEVICE_DEFINE` instead.
+
+  * ADC:
+
+    * Improved the default routine that provides sampling intervals, to allow intervals shorter than 1 millisecond.
+
+  * Display:
+
+    * Added support for the ILI9488 display.
+    * Refactored the ILI9340 driver to support multiple instances, rotation, and pixel format changing at runtime.
+      Configuration of the driver instances is now done in devicetree.
+    * Enhanced the SSD1306 driver to support communication via both SPI and I2C.
+
+  * Flash:
+
+    * Modified the nRF QSPI NOR driver so that it supports also nRF53 Series SoCs.
+
+  * IEEE 802.15.4:
+
+    * Updated the nRF5 IEEE 802.15.4 driver to version 1.9.
+
+  * Modem:
+
+    * Reworked the command handler reading routine, to prevent data loss and reduce RAM usage.
+    * Added the possibility of locking TX in the command handler.
+    * Improved handling of HW flow control on the RX side of the UART interface.
+
+  * Sensor:
+
+    * Added support for the IIS2ICLX 2-axis digital inclinometer.
+    * Enhanced the BMI160 driver to support communication via both SPI and I2C.
+    * Added device power management in the LIS2MDL magnetometer driver.
+
+  * Serial:
+
+    * Fixed an issue in the nRF UARTE driver where spurious data could be received when the asynchronous API with hardware byte counting was used and the UART was switched back from the low power to the active state.
+    * Removed the following deprecated definitions:
+
+      * ``UART_ERROR_BREAK``
+      * ``LINE_CTRL_BAUD_RATE``
+      * ``LINE_CTRL_RTS``
+      * ``LINE_CTRL_DTR``
+      * ``LINE_CTRL_DCD``
+      * ``LINE_CTRL_DSR``
+
+  * USB:
+
+    * Fixed handling of zero-length packets (ZLP) in the Nordic Semiconductor USB Device Controller driver (usb_dc_nrfx).
+    * Fixed initialization of the workqueue in the usb_dc_nrfx driver, to prevent fatal errors when the driver is reattached.
+    * Fixed handling of the SUSPEND and RESUME events in the Bluetooth classes.
