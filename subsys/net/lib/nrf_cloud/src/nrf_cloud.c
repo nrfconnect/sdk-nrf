@@ -223,7 +223,6 @@ void nrf_cloud_process(void)
 #if defined(CONFIG_CLOUD_API)
 /* Cloud API specific wrappers. */
 
-#define POLL_TIMEOUT_MS 500
 static struct cloud_backend *nrf_cloud_backend;
 static K_SEM_DEFINE(connection_poll_sem, 0, 1);
 static atomic_t connection_poll_active;
@@ -281,12 +280,6 @@ static void api_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		evt.data.err = CLOUD_DISCONNECT_MISC;
 
 		if (atomic_get(&disconnect_requested)) {
-#if IS_ENABLED(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD)
-			if (atomic_get(&connection_poll_active)) {
-				/* Poll thread will send disconnect event */
-				break;
-			}
-#endif
 			evt.data.err = CLOUD_DISCONNECT_USER_REQUEST;
 		}
 
@@ -535,18 +528,23 @@ start:
 	atomic_set(&transport_disconnected, 0);
 
 	while (true) {
-		ret = poll(fds, ARRAY_SIZE(fds), POLL_TIMEOUT_MS);
+		ret = poll(fds, ARRAY_SIZE(fds),
+			   api_keepalive_time_left(nrf_cloud_backend));
 
+		/* If poll returns 0 the timeout has expired. */
 		if (ret == 0) {
-			if (cloud_keepalive_time_left(nrf_cloud_backend) <
-			    POLL_TIMEOUT_MS) {
-				api_ping(nrf_cloud_backend);
-			}
+			api_ping(nrf_cloud_backend);
 			continue;
 		}
 
 		if ((fds[0].revents & POLLIN) == POLLIN) {
 			api_input(nrf_cloud_backend);
+
+			if (atomic_get(&transport_disconnected) == 1) {
+				LOG_DBG("The cloud socket is already closed.");
+				break;
+			}
+
 			continue;
 		}
 
@@ -554,14 +552,6 @@ start:
 			LOG_ERR("poll() returned an error: %d", ret);
 			cloud_evt.data.err = CLOUD_DISCONNECT_MISC;
 			break;
-		}
-
-		if (atomic_get(&disconnect_requested)) {
-			atomic_set(&disconnect_requested, 0);
-			LOG_DBG("Expected disconnect event.");
-			cloud_evt.data.err = CLOUD_DISCONNECT_USER_REQUEST;
-			cloud_notify_event(nrf_cloud_backend, &cloud_evt, NULL);
-			goto reset;
 		}
 
 		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {

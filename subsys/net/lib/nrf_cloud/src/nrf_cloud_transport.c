@@ -1128,7 +1128,7 @@ void nct_process(void)
 
 int nct_keepalive_time_left(void)
 {
-	return (int)mqtt_keepalive_time_left(&nct.client);
+	return mqtt_keepalive_time_left(&nct.client);
 }
 
 int nct_socket_get(void)

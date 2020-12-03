@@ -948,8 +948,6 @@ static int connect_client(struct azure_iot_hub_config *cfg)
 	/* Set the current socket and start reading from it in polling thread */
 	conn_config.socket = client.transport.tls.sock;
 
-	k_sem_give(&connection_poll_sem);
-
 	return 0;
 }
 
@@ -1006,9 +1004,12 @@ static void dps_handler(enum dps_reg_state state)
 	LOG_DBG("Connecting to assigned IoT hub (%s)",
 		log_strdup(dps_hostname_get()));
 
-	err = azure_iot_hub_connect();
+	connection_state_set(STATE_CONNECTING);
+
+	err = connect_client(&conn_config);
 	if (err) {
-		LOG_ERR("Failed connection to IoT hub, err: %d", err);
+		LOG_ERR("Failed to connect MQTT client, error: %d", err);
+		connection_state_set(STATE_INIT);
 	}
 }
 #endif
@@ -1093,7 +1094,7 @@ int azure_iot_hub_ping(void)
 	return mqtt_live(&client);
 }
 
-uint32_t azure_iot_hub_keepalive_time_left(void)
+int azure_iot_hub_keepalive_time_left(void)
 {
 	return mqtt_keepalive_time_left(&client);
 }
@@ -1226,6 +1227,8 @@ int azure_iot_hub_connect(void)
 		return err;
 	}
 
+	k_sem_give(&connection_poll_sem);
+
 	return 0;
 }
 
@@ -1341,11 +1344,11 @@ start:
 
 	while (true) {
 		ret = poll(fds, ARRAY_SIZE(fds),
-			mqtt_keepalive_time_left(&client));
+			   azure_iot_hub_keepalive_time_left());
+
+		/* If poll returns 0 the timeout has expired. */
 		if (ret == 0) {
-			if (mqtt_keepalive_time_left(&client) < 1000) {
-				azure_iot_hub_ping();
-			}
+			azure_iot_hub_ping();
 			continue;
 		}
 
@@ -1361,6 +1364,16 @@ start:
 			 * account for the event that it has changed.
 			 */
 			fds[0].fd = conn_config.socket;
+
+			if (connection_state_verify(STATE_INIT)) {
+				/* If connection state is set to STATE_INIT at
+				 * this point we know that the socket has
+				 * been closed and we can break out of poll.
+				 */
+				LOG_DBG("The socket is already closed");
+				break;
+			}
+
 			continue;
 		}
 
