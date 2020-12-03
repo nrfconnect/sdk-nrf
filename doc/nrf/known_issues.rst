@@ -56,6 +56,11 @@ nRF9160
 Asset tracker
 =============
 
+.. rst-class:: v1-4-99-dev1
+
+CIA-163: Errors with flash writes
+   There are occasional errors during flash writes in Thingy:91 when BSEC library is enabled.
+
 .. rst-class:: v1-4-99-dev1 v1-4-0
 
 NCSDK-6898: Setting :option:`CONFIG_SECURE_BOOT` does not work
