@@ -264,26 +264,4 @@ function(add_child_image_from_source)
       )
   endif()
 
-  if (ACI_DOMAIN)
-    add_custom_target(${ACI_NAME}_flash
-      COMMAND
-      ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}/${ACI_NAME}
-      --target flash
-      DEPENDS
-      ${ACI_NAME}_subimage
-      USES_TERMINAL
-      )
-
-    # If the dynamic partition has child images, their hex files will be
-    # included in the 'merged_{DOMAIN_NAME}.hex' file which is flashed
-    # by the flash target of the dynamic partition. Hence, we only add a
-    # dependency to the flash target of the dynamic partition in the domain.
-    if ("${ACI_NAME}" STREQUAL "${${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION}")
-      set_property(TARGET zephyr_property_target
-        APPEND PROPERTY FLASH_DEPENDENCIES
-        ${ACI_NAME}_flash
-        )
-    endif()
-  endif()
-
 endfunction()

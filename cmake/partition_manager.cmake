@@ -515,6 +515,11 @@ if (final_merged)
   # Multiple domains are included in the build, point to the result of
   # merging the merged hex file for all domains.
   set(merged_hex_to_flash ${final_merged})
+  set_property(
+    TARGET zephyr_property_target
+    APPEND PROPERTY FLASH_DEPENDENCIES
+    ${final_merged}
+    )
 else()
   set(merged_hex_to_flash ${PROJECT_BINARY_DIR}/${merged}.hex)
 endif()
