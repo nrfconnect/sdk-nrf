@@ -54,9 +54,12 @@ if BT_RPMSG_NRF53 && SOC_NRF5340_CPUAPP
 module=HCI_RPMSG
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
 
-partition=RPMSG_NRF53_SRAM
-partition-size=0x10000
-rsource "Kconfig.template.partition_size"
+DT_CHOSEN_Z_IPC_SHM := zephyr,ipc_shm
+
+config RPMSG_NRF53_SRAM_SIZE
+	# Hidden configuration to expose DT property as kconfig variable
+	hex
+	default "$(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_IPC_SHM))"
 
 endif
 
