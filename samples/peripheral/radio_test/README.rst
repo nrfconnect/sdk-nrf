@@ -134,7 +134,7 @@ Testing
 After programming the sample to your board, you can test it in one of two ways.
 
 .. note::
-   For the |nRF5340DKnoref|, see :ref:`logging_cpunet` for information on how to make the PC terminal work with the network core.
+   For the |nRF5340DKnoref|, see :ref:`logging_cpunet` for information about the COM terminals on which the logging output is available.
 
 .. _radio_test_testing_board:
 
