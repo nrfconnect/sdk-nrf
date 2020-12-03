@@ -16,15 +16,15 @@
 # (https://jpa.kapsi.fi/nanopb/download/)
 
 
-# Check system for protoc and nanopb binaries presence.
+# Check system for protoc and nanopb binaries presence, needed to build the gadget profile files.
 # Prefer local variable to make version matching easier
-find_program(PROTOC_BIN protoc HINTS "${PROJECT_SOURCE_DIR}/*/generator-bin/")
-find_program(NANOPB_BIN protoc-gen-nanopb HINTS "${PROJECT_SOURCE_DIR}/*/generator-bin/")
+find_program(PROTOC_BIN protoc HINTS "${CMAKE_SOURCE_DIR}/*/generator-bin/")
+find_program(NANOPB_BIN protoc-gen-nanopb HINTS "${CMAKE_SOURCE_DIR}/*/generator-bin/")
 
-if ((NOT NANOPB_BIN) OR (NOT PROTOC_BIN))
+if (((NOT NANOPB_BIN) OR (NOT PROTOC_BIN)) AND CONFIG_GADGETS_PROFILE_ENABLE)
     message(STATUS "nanopb not found.")
     message(STATUS "Please download platform-specific nanopb from here https://jpa.kapsi.fi/nanopb/download/")
-    message(STATUS "Extract the files to `${PROJECT_SOURCE_DIR}`, or add `<path-to>/nanopb-x.y.z-<platform>/generator-bin` to system PATH.")
+    message(STATUS "Extract the files to `${CMAKE_SOURCE_DIR}`, or add `<path-to>/nanopb-x.y.z-<platform>/generator-bin` to system PATH.")
     message(STATUS "Alternatively, specify install location using: `-DCMAKE_PROGRAM_PATH=<path-to>/nanopb-x.y.z-<platform>/generator-bin` when running CMake.")
     message(FATAL_ERROR "nanopb required by this project.")
 endif()
@@ -159,9 +159,12 @@ endforeach()
 
 zephyr_library_named(ALEXA_GADGETS_PROFILE)
 
-zephyr_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 zephyr_include_directories(${PROTO_COMPILATION_DIR})
 zephyr_include_directories(${NANOPB_PATH})
+
+zephyr_library_sources_ifdef(CONFIG_BT_GADGETS
+    ${CMAKE_CURRENT_SOURCE_DIR}/gadgets.c
+)
 
 zephyr_library_sources_ifdef(CONFIG_GADGETS_PROFILE_ENABLE
     ${CMAKE_CURRENT_SOURCE_DIR}/gadgets_profile.c
