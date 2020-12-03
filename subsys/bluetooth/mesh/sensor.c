@@ -388,7 +388,7 @@ uint8_t sensor_powtime_encode(uint64_t raw)
 	     i++) {
 	}
 
-	return ARRAY_SIZE(powtime_mul) * (seed - &powtime_lookup[0]) + i - 1;
+	return ARRAY_SIZE(powtime_mul) * (seed - &powtime_lookup[0]) + i;
 }
 
 uint64_t sensor_powtime_decode_ns(uint8_t val)
