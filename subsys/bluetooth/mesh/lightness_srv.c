@@ -719,6 +719,7 @@ static int bt_mesh_lightness_srv_init(struct bt_mesh_model *mod)
 		 * we won't have to support multiple extenders.
 		 */
 		bt_mesh_model_extend(mod, srv->ponoff.ponoff_model);
+		bt_mesh_model_extend(mod, srv->lvl.model);
 		bt_mesh_model_extend(
 			mod,
 			bt_mesh_model_find(

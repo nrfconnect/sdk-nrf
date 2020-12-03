@@ -609,6 +609,7 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *mod)
 		 * to support multiple extenders.
 		 */
 		bt_mesh_model_extend(mod, srv->ponoff.ponoff_model);
+		bt_mesh_model_extend(mod, srv->lvl.model);
 		bt_mesh_model_extend(
 			mod,
 			bt_mesh_model_find(
