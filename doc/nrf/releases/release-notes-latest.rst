@@ -188,6 +188,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Restricted thread-local storage, which is now available only when the toolchain supports it.
     Toolchain support is initially limited to the toolchains bundled with the Zephyr SDK.
+  * Added support for gathering basic thread runtime statistics.
   * Fixed a race condition between :c:func:`k_queue_append` and :c:func:`k_queue_alloc_append`.
   * Updated the kernel to no longer try to resume threads that are not suspended.
   * Updated the kernel to no longer attempt to queue threads that are already in the run queue.
@@ -220,6 +221,12 @@ The following list summarizes the most important changes inherited from upstream
     * ``SYS_CLOCK_HW_CYCLES_TO_NS()``
 
   * Updated :c:func:`k_timer_user_data_get` to take a ``const struct k_timer *timer`` instead of a non-\ ``const`` pointer.
+
+* Devicetree:
+
+  * Removed the legacy DT macros.
+  * Started exposing dependency ordinals for walking the dependency hierarchy.
+  * Added documentation for the :ref:`DTS bindings <zephyr:devicetree_binding_index>`.
 
 * Drivers:
 
@@ -268,11 +275,23 @@ The following list summarizes the most important changes inherited from upstream
 
     * Updated the nRF5 IEEE 802.15.4 driver to version 1.9.
 
+  * LED PWM:
+
+    * Added a driver interface and implementation for PWM-driven LEDs.
+
   * Modem:
 
     * Reworked the command handler reading routine, to prevent data loss and reduce RAM usage.
     * Added the possibility of locking TX in the command handler.
     * Improved handling of HW flow control on the RX side of the UART interface.
+
+  * Power:
+
+    * Added multiple ``nrfx_power``-related fixes to reduce power consumption.
+
+  * Regulator:
+
+    * Introduced a new regulator driver infrastructure.
 
   * Sensor:
 
@@ -282,6 +301,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Serial:
 
+    * Replaced the usage of ``k_delayed_work`` with ``k_timer`` in the nRF UART driver.
     * Fixed an issue in the nRF UARTE driver where spurious data could be received when the asynchronous API with hardware byte counting was used and the UART was switched back from the low power to the active state.
     * Removed the following deprecated definitions:
 
@@ -291,6 +311,10 @@ The following list summarizes the most important changes inherited from upstream
       * ``LINE_CTRL_DTR``
       * ``LINE_CTRL_DCD``
       * ``LINE_CTRL_DSR``
+
+  * SPI:
+
+    * Added support for SPI emulators.
 
   * USB:
 
@@ -362,10 +386,6 @@ The following list summarizes the most important changes inherited from upstream
     * Added an API for resetting a node (:c:func:`bt_mesh_cfg_node_reset`).
     * Added an API for setting network transmit parameters (:c:func:`bt_mesh_cfg_net_transmit_set`).
 
-* Trusted Firmware-M:
-
-  * Updated the Trusted Firmware-M (TF-M) module to include support for the nRF5340 and nRF9160 platforms.
-
 
 * Libraries/subsystems:
 
@@ -387,3 +407,44 @@ The following list summarizes the most important changes inherited from upstream
       This flag removes formatting capabilities from the FAT/exFAT file system driver and prevents unformatted devices to be formatted, to FAT or exFAT, on mount attempt.
     * Added support for the following :c:func:`fs_mount` flags: :c:macro:`FS_MOUNT_FLAG_READ_ONLY`, :c:macro:`FS_MOUNT_FLAG_NO_FORMAT`
     * Updated the FS API to not perform a runtime check of a driver interface when the :option:`CONFIG_NO_RUNTIME_CHECKS` option is enabled.
+
+* Build system:
+
+  * Ensured that shields can be placed in other BOARD_ROOT folders.
+  * Added basic support for Clang 10 with x86.
+
+* System:
+
+  * Added an API that provides a printf family of functions (for example, :c:func:`cbprintf`) with a callback on character output, to perform in-place streaming of the formatted string.
+  * Updated minimal libc to print stderr just like stdout.
+  * Added an ``abort()`` function to minimal libc.
+  * Updated the ring buffer to allow using the full buffer capacity instead of forcing an empty slot.
+  * Added a :c:macro:`CLAMP` macro.
+  * Added a feature for post-mortem analysis to the tracing library.
+
+* Samples:
+
+  * Added :ref:`zephyr:nrf-ieee802154-rpmsg-sample`.
+  * Added :ref:`zephyr:cloud-tagoio-http-post-sample`.
+  * Added :ref:`zephyr:sockets-civetweb-websocket-server-sample`.
+  * :ref:`zephyr:led_ws2812_sample`: Updated to force SPIM on nRF52 DK.
+  * :ref:`zephyr:cfb_custom_fonts`: Added support for ssd1306fb.
+  * :ref:`zephyr:gsm-modem-sample`: Added suspend/resume shell commands.
+
+* Logging:
+
+  * Added STP transport and raw data output support for systrace.
+
+* Modules:
+
+  * Introduced a :option:`CONFIG_MBEDTLS_MEMORY_DEBUG` option for mbedtls.
+  * Updated LVGL to v7.6.1.
+  * Updated libmetal and openamp to v2020.10.
+  * Updated nrfx in hal-nordic to version 2.4.0.
+  * Updated the Trusted Firmware-M (TF-M) module to include support for the nRF5340 and nRF9160 platforms.
+
+
+* Other:
+
+  * Added initial LoRaWAN support.
+  * Updated ``west flash`` support for ``nrfjprog`` to fail if a HEX file has UICR data and ``--erase`` was not specified.
