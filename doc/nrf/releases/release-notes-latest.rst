@@ -96,6 +96,12 @@ BSD library
 
 * Added information about low accuracy mode to the :ref:`nrfxlib:gnss_extension` documentation.
 
+Trusted Firmware-M:
+-------------------
+
+* Added a simple sample that demonstrates how to integrate TF-M in an application.
+
+
 MCUboot
 =======
 
@@ -296,3 +302,7 @@ The following list summarizes the most important changes inherited from upstream
 
     * Added an API for resetting a node (:c:func:`bt_mesh_cfg_node_reset`).
     * Added an API for setting network transmit parameters (:c:func:`bt_mesh_cfg_net_transmit_set`).
+
+* Trusted Firmware-M:
+
+  * Updated the Trusted Firmware-M (TF-M) module to include support for the nRF5340 and nRF9160 platforms.
