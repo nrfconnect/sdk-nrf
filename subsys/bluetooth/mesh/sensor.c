@@ -131,7 +131,7 @@ static uint16_t tolerance_encode(const struct sensor_value *tol)
 	if (tol_mill > (1000000L * 100L)) {
 		return 0;
 	}
-	return (tol_mill * 4095L) / (1000000L * 100L);
+	return (tol_mill * 4095L + (1000000L * 50L)) / (1000000L * 100L);
 }
 
 void sensor_descriptor_decode(struct net_buf_simple *buf,
