@@ -24,6 +24,6 @@ rsource "Kconfig.nus_client"
 rsource "Kconfig.throughput"
 rsource "Kconfig.latency"
 rsource "Kconfig.latency_c"
-rsource "Kconfig.gadgets"
+rsource "alexa_gadgets/Kconfig.gadgets"
 
 endmenu

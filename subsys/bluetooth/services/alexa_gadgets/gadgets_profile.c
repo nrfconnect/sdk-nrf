@@ -5,11 +5,11 @@
  */
 
 #include <zephyr.h>
-#include "gadgets_profile.h"
 
 #include <drivers/hwinfo.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/services/gadgets.h>
+#include <bluetooth/services/gadgets_profile.h>
 #include <tinycrypt/constants.h>
 #include <tinycrypt/sha256.h>
 #include <sys/byteorder.h>
@@ -32,6 +32,17 @@ LOG_MODULE_REGISTER(gadgets_profile, CONFIG_GADGETS_PROFILE_LOG_LEVEL);
 
 #if IS_ENABLED(CONFIG_GADGETS_OTA_ENABLE)
 #error OTA Not yet supported
+#endif
+
+#if CONFIG_BT_MAX_CONN > 1
+#error Only one connection currently supported
+/* To add support for multiple connections,
+ * API must be updated to specify target bt_conn, and some logic has to be
+ * added to keep track of separate connection states.
+ * Additionally consider whether buffers to hold encoded and decoded protobuf
+ * structs should be duplicated for other connections to avoid potential
+ * buffer starvation.
+ */
 #endif
 
 #define GADGETS_FEATURE_FLAGS \

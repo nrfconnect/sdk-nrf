@@ -13,11 +13,10 @@
 #include <stdio.h>
 
 #include <bluetooth/bluetooth.h>
+#include <bluetooth/services/gadgets_profile.h>
 #include <bluetooth/gatt.h>
 #include <dk_buttons_and_leds.h>
 #include <settings/settings.h>
-
-#include "gadgets_profile.h"
 
 #ifndef CONFIG_GADGETS_CAPABILITY_CUSTOM_NAMESPACE
 #define CONFIG_GADGETS_CAPABILITY_CUSTOM_NAMESPACE ""

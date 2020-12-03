@@ -1,12 +1,24 @@
 #
-# Copyright (c) 2020 Nordic Semiconductor
+# Copyright (c) 2020 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "Alexa Gadget Profile"
+config BT_GADGETS
+	bool "Gadgets service"
+	select BT_NRF_SERVICES
+	help
+	  Enable Gadgets service.
 
-config GADGETS_PROFILE_ENABLE
+if BT_GADGETS
+
+module = BT_GADGETS
+module-str = GADGETS SERVICE
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_GADGETS
+
+menuconfig GADGETS_PROFILE_ENABLE
 	bool "Enable Alexa Gadgets profile"
 	select BT_GADGETS
 	select BT_SMP
@@ -18,7 +30,7 @@ config GADGETS_PROFILE_ENABLE
 if GADGETS_PROFILE_ENABLE
 
 module = GADGETS_PROFILE
-module-str = GADGETS
+module-str = GADGETS PROFILE
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 config GADGETS_MODEL_NAME
@@ -105,5 +117,3 @@ config GADGETS_CAPABILITY_CUSTOM_NAMESPACE
 endmenu
 
 endif # GADGETS_PROFILE_ENABLE
-
-endmenu
