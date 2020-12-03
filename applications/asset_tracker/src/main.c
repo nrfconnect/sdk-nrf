@@ -1488,6 +1488,8 @@ void connection_evt_handler(const struct cloud_event *const evt)
 
 		switch (evt->data.err) {
 		case CLOUD_DISCONNECT_INVALID_REQUEST:
+			/* Fall through */
+		case CLOUD_DISCONNECT_MISC:
 			LOG_INF("Cloud connection closed.");
 			if ((atomic_get(&cloud_connect_attempts) == 1) &&
 			    (atomic_get(&cloud_association) ==
@@ -1519,7 +1521,6 @@ void connection_evt_handler(const struct cloud_event *const evt)
 		case CLOUD_DISCONNECT_CLOSED_BY_REMOTE:
 			LOG_INF("Disconnected by the cloud.");
 			break;
-		case CLOUD_DISCONNECT_MISC:
 		default:
 			break;
 		}

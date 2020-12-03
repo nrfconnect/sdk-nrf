@@ -324,6 +324,7 @@ static inline int cloud_ping(const struct cloud_backend *const backend)
  *
  * @return Time in milliseconds until next keep alive message is expected to
  *         be sent.
+ * @return -1 if keep alive messages are not enabled.
  */
 static inline int cloud_keepalive_time_left(const struct cloud_backend *const backend)
 {
