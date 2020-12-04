@@ -296,8 +296,8 @@ DESK-978: Directed advertising issues with SoftDevice Link Layer
 Subsystems
 **********
 
-|BLE|
-=====
+Bluetooth LE
+============
 
 .. rst-class:: v1-4-99-dev1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
@@ -322,7 +322,7 @@ NCSDK-5711: High-throughput transmission can deadlock the receive thread
 
 .. rst-class:: v1-2-1 v1-2-0
 
-Only secure applications can use |BLE|
+Only secure applications can use Bluetooth LE
   Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` board.
 
   **Workaround:** Use the ``nrf5340_dk_nrf5340_cpuapp`` board instead.
@@ -374,7 +374,7 @@ Reconnection issues on some operating systems
 .. rst-class:: v1-1-0 v1-0-0
 
 Samples crashing on nRF51 when using GPIO
-  On nRF51 devices, |BLE| samples that use GPIO might crash when buttons are pressed frequently.
+  On nRF51 devices, Bluetooth LE samples that use GPIO might crash when buttons are pressed frequently.
   In such case, the GPIO ISR introduces latency that violates real-time requirements of the Radio ISR.
   nRF51 is more sensitive to this issue than nRF52 (faster core).
 
@@ -386,7 +386,7 @@ GATT Discovery Manager missing support
 .. rst-class:: v0-4-0
 
 Samples do not work with SD Controller v0.1.0
-  |BLE| samples cannot be built with the :ref:`nrfxlib:softdevice_controller` v0.1.0.
+  Bluetooth LE samples cannot be built with the :ref:`nrfxlib:softdevice_controller` v0.1.0.
 
 .. rst-class:: v1-0-0 v0-4-0 v0-3-0
 

@@ -1,15 +1,15 @@
 .. _nrf_desktop_ble_qos:
 
-|BLE| Quality of Service module
-###############################
+Bluetooth LE Quality of Service module
+######################################
 
 .. contents::
    :local:
    :depth: 2
 
-Use the |BLE| Quality of Service (QoS) module to achieve better connection quality and higher report rate by avoiding congested RF channels.
+Use the Bluetooth LE Quality of Service (QoS) module to achieve better connection quality and higher report rate by avoiding congested RF channels.
 The module can be used by both nRF Desktop peripheral and nRF Desktop central with the SoftDevice Link Layer (:option:`CONFIG_BT_LL_SOFTDEVICE`).
-However, only the Bluetooth central can update the |BLE| channel map that is in use.
+However, only the Bluetooth central can update the Bluetooth LE channel map that is in use.
 
 Module events
 *************
@@ -61,7 +61,7 @@ The module is a configuration channel listener and provides the following config
 * ``sample_count_min``
    Minimum number of samples needed for channel map processing.
 * ``min_channel_count``
-   Minimum |BLE| channel count.
+   Minimum Bluetooth LE channel count.
 * ``weight_crc_ok``
    Weight of CRC OK.
    Fixed point value with 1/100 scaling.
@@ -78,7 +78,7 @@ The module is a configuration channel listener and provides the following config
 * ``eval_keepout_duration``
    Duration during which a channel will be blocked before it is considered for re-evaluation (in seconds).
 * ``eval_success_threshold``
-   Average rating threshold for approving a blocked |BLE| channel that is under evaluation by the QoS module.
+   Average rating threshold for approving a blocked Bluetooth LE channel that is under evaluation by the QoS module.
    Fixed point value with 1/100 scaling.
 * ``wifi_rating_inc``
    Wi-Fi strength rating multiplier.
@@ -121,7 +121,7 @@ The thread is used to periodically perform the following operations:
 * Process channel map filter.
 * Get channel map suggested by the ``chmap_filter`` library.
 * Submit the suggested channel map as ``ble_qos_event``.
-* If the device is a Bluetooth central, update the used |BLE| channel map.
+* If the device is a Bluetooth central, update the used Bluetooth LE channel map.
 
 If the :option:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE` Kconfig option is set, the module prints the following information through the virtual COM port:
 

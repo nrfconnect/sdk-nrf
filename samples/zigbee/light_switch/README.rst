@@ -32,23 +32,23 @@ The sleepy behavior can be enabled by pressing **Button 3** while the light swit
 
 .. _zigbee_light_switch_sample_nus:
 
-Multiprotocol |BLE| extension
-=============================
+Multiprotocol Bluetooth LE extension
+====================================
 
-This optional extension demonstrates dynamic concurrent switching between two protocols, |BLE| and Zigbee.
+This optional extension demonstrates dynamic concurrent switching between two protocols, Bluetooth LE and Zigbee.
 It uses :ref:`nus_service_readme` library.
 
 When this extension is enabled, you can use:
 
 * Buttons on the light switch device to operate on the Zigbee network
-* Nordic UART Service to operate on the |BLE| network
+* Nordic UART Service to operate on the Bluetooth LE network
 
 Both networks are independent from each other.
 
-To support both protocols at the same time, the Zigbee stack uses the :ref:`zephyr:ieee802154_interface` radio during the inactive time of the |BLE| radio (using :ref:`nrfxlib:mpsl`'s Timeslot API).
-Depending on the |BLE| connection interval, the nRF52 development kits can spend up to 99% of the radio time on the Zigbee protocol.
+To support both protocols at the same time, the Zigbee stack uses the :ref:`zephyr:ieee802154_interface` radio during the inactive time of the Bluetooth LE radio (using :ref:`nrfxlib:mpsl`'s Timeslot API).
+Depending on the Bluetooth LE connection interval, the nRF52 development kits can spend up to 99% of the radio time on the Zigbee protocol.
 
-Transmitting and receiving data when using this example does not break connection from any of the used radio protocols, either |BLE| or Zigbee.
+Transmitting and receiving data when using this example does not break connection from any of the used radio protocols, either Bluetooth LE or Zigbee.
 
 For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
 
@@ -76,8 +76,8 @@ For this sample to work, the following samples also need to be programmed:
 * The :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` sample on one separate device.
 * The :ref:`zigbee_light_bulb_sample` sample on one or more separate devices.
 
-Multiprotocol |BLE| extension requirements
-==========================================
+Multiprotocol Bluetooth LE extension requirements
+=================================================
 
 .. note::
    The multiprotocol variant is not supported on nRF53 Series devices.
@@ -118,11 +118,11 @@ Sleepy End Device behavior assignments
 Button 3:
     When pressed while resetting the board, enable the :ref:`zigbee_ug_sed`.
 
-Multiprotocol |BLE| extension assignments
-=========================================
+Multiprotocol Bluetooth LE extension assignments
+================================================
 
 LED 1:
-    On and solid when a |BLE| Central is connected to the NUS service.
+    On and solid when a Bluetooth LE Central is connected to the NUS service.
     Available when using :ref:`nus_service_readme` in the multiprotocol configuration.
 
 UART command assignments:
@@ -189,10 +189,10 @@ You can now use buttons on the development kit to control the light bulb, as des
 
 .. _zigbee_light_switch_testing_ble:
 
-Testing multiprotocol |BLE| extension
--------------------------------------
+Testing multiprotocol Bluetooth LE extension
+--------------------------------------------
 
-To test the multiprotocol |BLE| extension, complete the following steps after the standard `Testing`_ procedure:
+To test the multiprotocol Bluetooth LE extension, complete the following steps after the standard `Testing`_ procedure:
 
 #. Set up nRF Toolbox by completing the following steps:
 
@@ -238,7 +238,7 @@ To test the multiprotocol |BLE| extension, complete the following steps after th
             The UART application of nRF Toolbox after establishing the connection
 
          .. note::
-            Observe that **LED 1** on the light switch node is solid, which indicates that the |BLE| connection is established.
+            Observe that **LED 1** on the light switch node is solid, which indicates that the Bluetooth LE connection is established.
    ..
 
 #. In nRF Toolbox, tap the buttons you assigned:
@@ -279,7 +279,7 @@ In addition, it uses the following Zephyr libraries:
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:pwm_api`
 
-The following dependencies are added by the multiprotocol |BLE| extension:
+The following dependencies are added by the multiprotocol Bluetooth LE extension:
 
 * :ref:`nrfxlib:softdevice_controller`
 * :ref:`nus_service_readme`

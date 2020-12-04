@@ -27,20 +27,20 @@ To enable the multiprotocol support for either Thread or Zigbee, set the followi
 This option activates the :ref:`nrfxlib:softdevice_controller`, which by default supports the multiprotocol features.
 Disabling the SoftDevice Controller also disables the multiprotocol support.
 
-After enabling this option, the application can start configuring |BLE|'s API options alongside Thread's or Zigbee's in the respective :file:`.conf` file.
+After enabling this option, the application can start configuring Bluetooth LE's API options alongside Thread's or Zigbee's in the respective :file:`.conf` file.
 
 Multiprotocol limitations in application development
 ****************************************************
 
 Given the nature of the dynamic multiprotocol solution, take into account the following considerations when developing your Thread or Zigbee application:
 
-* Any kind of application or Thread/Zigbee stack logic can be interrupted by the |BLE| activity.
+* Any kind of application or Thread/Zigbee stack logic can be interrupted by the Bluetooth LE activity.
   This is the primary difference between a Thread/Zigbee-only application and a multiprotocol one.
   As a result, it is acceptable that the node can sometimes miss a frame and not respond with a MAC-level acknowledgment.
-* |BLE| scanning requires a lot of time to process |BLE| traffic and thus blocks 802.15.4 traffic.
+* Bluetooth LE scanning requires a lot of time to process Bluetooth LE traffic and thus blocks 802.15.4 traffic.
   When the scanning is used, it is recommended to use the Sleepy End Device role for Thread or Zigbee applications.
 * Be aware that flash operations require more time to complete.
-  A flash operation may be performed only in a free timeslot, so it has to wait until the current timeslot finishes (it may be a 802.15.4 timeslot or a |BLE| one).
+  A flash operation may be performed only in a free timeslot, so it has to wait until the current timeslot finishes (it may be a 802.15.4 timeslot or a Bluetooth LE one).
   Moreover, the Thread or Zigbee stacks cannot operate while the flash operation is being performed.
   Avoid an application design that involves a continuous series of small flash operations.
   The time the stack will be blocked by such a series of operations can be estimated using the following formula:
@@ -54,7 +54,7 @@ Given the nature of the dynamic multiprotocol solution, take into account the fo
   * ``n_of_frames`` is the number of flash operations to be performed in a sequence.
 
 * The Zigbee stack has a limited TX queue.
-  This queue can get full in case of heavy application traffic and |BLE| activity.
+  This queue can get full in case of heavy application traffic and Bluetooth LE activity.
   The application logic must take this into account by providing a callback for all crucial transmissions and handle the ``MAC_TRANSACTION_OVERFLOW (== 241)`` status code.
 * The most time-critical part of the Zigbee stack operation is the BDB commissioning process.
   Postpone time-consuming operations until the ``ZB_BDB_SIGNAL_DEVICE_FIRST_START`` or ``ZB_BDB_SIGNAL_DEVICE_REBOOT`` signal is received.

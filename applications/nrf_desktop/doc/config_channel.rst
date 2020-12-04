@@ -80,7 +80,7 @@ Each feature report contains the following components:
   Needed to route requests in a multi-device setup.
 
      * A recipient value that equals ``0`` means that configuration channel frame is intended for a HID device that is directly connected.
-     * Other recipient value means that the frame should be forwarded to the peripheral connected over |BLE|.
+     * Other recipient value means that the frame should be forwarded to the peripheral connected over Bluetooth LE.
 
 * Event ID - Identifier of the value that should be set or fetched; consists of a module ID and an option ID.
 * Status - Value used to exchange status of the request; also used by sender to specify the requested operation.

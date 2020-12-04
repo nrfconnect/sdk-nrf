@@ -6,8 +6,6 @@
 
 .. |SES| replace:: SEGGER Embedded Studio
 
-.. |BLE| replace:: Bluetooth LE
-
 .. |config| replace:: See :ref:`configure_application` for information about how to permanently or temporarily change the configuration.
 
 .. |test_sample| replace:: After programming the sample to your development kit, test it by performing the following steps:

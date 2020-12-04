@@ -81,23 +81,23 @@ This platform design is suitable for the following development kits:
 Single-chip, multiprotocol (SoC)
 ================================
 
-With nRF52840 and nRF52833 supporting multiple wireless technologies, including IEEE 802.15.4 and Bluetooth Low Energy (|BLE|), the application layer and OpenThread still run on the same processor.
+With nRF52840 and nRF52833 supporting multiple wireless technologies, including IEEE 802.15.4 and Bluetooth Low Energy (Bluetooth LE), the application layer and OpenThread still run on the same processor.
 
-In this multiprotocol design, the SoC ensures either dynamic or switched Thread and |BLE| connectivity.
+In this multiprotocol design, the SoC ensures either dynamic or switched Thread and Bluetooth LE connectivity.
 
 This design has the following advantages:
 
 * It leverages the benefits of highly integrated SoC, resulting in the lowest cost and the lowest power consumption.
-* It allows to run Thread and |BLE| simultaneously on a single chip, which reduces the overall BOM cost.
+* It allows to run Thread and Bluetooth LE simultaneously on a single chip, which reduces the overall BOM cost.
 
 It also has the following disadvantages:
 
-* |BLE| activity can degrade the connectivity on Thread if not implemented with efficiency in mind.
+* Bluetooth LE activity can degrade the connectivity on Thread if not implemented with efficiency in mind.
 
 .. figure:: /images/thread_platform_design_multi.svg
-   :alt: Multiprotocol Thread and |BLE| architecture
+   :alt: Multiprotocol Thread and Bluetooth LE architecture
 
-   Multiprotocol Thread and |BLE| architecture
+   Multiprotocol Thread and Bluetooth LE architecture
 
 For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
 

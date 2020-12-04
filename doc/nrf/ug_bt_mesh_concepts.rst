@@ -11,14 +11,14 @@ Bluetooth Mesh is a profile specification developed and published by the Bluetoo
 This document explains the basic concepts of the Bluetooth Mesh and gives an overview of the operation and capabilities of the profile, as well as the life cycle of a mesh device.
 For more information about the |NCS| implementation of the Bluetooth Mesh, see :ref:`Bluetooth Mesh architecture documentation <mesh_architecture>`.
 
-The Bluetooth Mesh is based on the |BLE| part of the Bluetooth 4.0 Specification, and shares the lowest layers with this protocol.
-On-air, the Bluetooth Mesh physical representation is compatible with existing |BLE| devices, as mesh messages are contained inside the payload of |BLE| *advertisement* packets.
-However, Bluetooth Mesh specifies a completely new host layer, and although some concepts are shared, Bluetooth Mesh is incompatible with the |BLE| host layer.
+The Bluetooth Mesh is based on the Bluetooth LE part of the Bluetooth 4.0 Specification, and shares the lowest layers with this protocol.
+On-air, the Bluetooth Mesh physical representation is compatible with existing Bluetooth LE devices, as mesh messages are contained inside the payload of Bluetooth LE *advertisement* packets.
+However, Bluetooth Mesh specifies a completely new host layer, and although some concepts are shared, Bluetooth Mesh is incompatible with the Bluetooth LE host layer.
 
 .. figure:: /images/bt_mesh_and_ble.svg
-   :alt: Relationship between Bluetooth Mesh and |BLE| specifications
+   :alt: Relationship between Bluetooth Mesh and Bluetooth LE specifications
 
-   Relationship between Bluetooth Mesh and |BLE| specifications
+   Relationship between Bluetooth Mesh and Bluetooth LE specifications
 
 This page describes basic Bluetooth Mesh concepts.
 Check the official `Bluetooth Mesh glossary`_ for definitions of the most important Bluetooth Mesh-related terms used in this documentation.
@@ -31,9 +31,9 @@ Application areas
 Bluetooth Mesh primarily targets simple control and monitoring applications, like light control or sensor data gathering.
 The packet format is optimized for small control packets, issuing single commands or reports, and is not intended for data streaming or other high-bandwidth applications.
 
-Using Bluetooth Mesh causes higher power consumption than when using traditional |BLE| applications.
+Using Bluetooth Mesh causes higher power consumption than when using traditional Bluetooth LE applications.
 This is mainly due to the need for keeping the radio running constantly.
-Therefore, unlike the |BLE| advertisers, active mesh devices cannot be powered by coin-cell batteries for extended periods of time.
+Therefore, unlike the Bluetooth LE advertisers, active mesh devices cannot be powered by coin-cell batteries for extended periods of time.
 
 Bluetooth Mesh supports up to 32767 devices in a network, with a maximum network diameter of 126 hops.
 
@@ -54,11 +54,11 @@ This feature also allows devices to move around, and drop in and out of the netw
 Mesh transport
 ==============
 
-Bluetooth Mesh utilizes the |BLE| advertiser and scanner roles, communicating through |BLE| advertisement packets.
-The advertisement packets are picked up by nearby mesh devices and handled like other |BLE| advertisement packets.
+Bluetooth Mesh utilizes the Bluetooth LE advertiser and scanner roles, communicating through Bluetooth LE advertisement packets.
+The advertisement packets are picked up by nearby mesh devices and handled like other Bluetooth LE advertisement packets.
 The mesh packets are represented with a unique AD (advertisement data) type and added to the advertisement packet payload.
 
-|BLE| devices send advertisement packets at regular *advertisement intervals*, and mesh packets are no exception.
+Bluetooth LE devices send advertisement packets at regular *advertisement intervals*, and mesh packets are no exception.
 However, unlike traditional advertisers, mesh devices will change their advertisement payload on every transmission, broadcasting new mesh packets as they are queued up in the stack.
 
 If there is no traffic in the mesh network or the mesh stack, or if the application does not generate any messages, the devices stay silent until there is something to transmit.
@@ -95,7 +95,7 @@ Power consumption
 =================
 
 To enable broadcast-based communication, the devices must continuously keep their radio in listening mode.
-This causes significantly higher power consumption than in a typical |BLE| device.
+This causes significantly higher power consumption than in a typical Bluetooth LE device.
 
 To enable low-power devices to take part in the mesh network, Bluetooth Mesh contains a *friendship* feature.
 This protocol lets low-power devices establish a relationship with a regular mesh device, which will then cache and forward messages to the low-power device at regular intervals.
@@ -106,9 +106,9 @@ This saves the low-power device from having to stay on to listen for incoming me
 GATT proxy
 ==========
 
-To enable support for legacy |BLE| devices that do not support receiving mesh packets, Bluetooth Mesh defines a separate protocol for tunneling mesh messages over the |BLE| GATT protocol.
+To enable support for legacy Bluetooth LE devices that do not support receiving mesh packets, Bluetooth Mesh defines a separate protocol for tunneling mesh messages over the Bluetooth LE GATT protocol.
 For this purpose, the Mesh Profile Specification defines a GATT bearer and the corresponding GATT Proxy Protocol.
-This protocol allows legacy |BLE| devices to participate in the mesh network by establishing a GATT connection to a mesh device that has the proxy feature enabled.
+This protocol allows legacy Bluetooth LE devices to participate in the mesh network by establishing a GATT connection to a mesh device that has the proxy feature enabled.
 
 The legacy device gets assigned an address and the necessary keys to become a full-fledged member of the network.
 The device receives the security credentials through the regular provisioning procedure or through some out-of-band mechanism.
@@ -118,7 +118,7 @@ The device receives the security credentials through the regular provisioning pr
 Addressing
 **********
 
-The Bluetooth Mesh addressing scheme is different from the |BLE| addressing scheme.
+The Bluetooth Mesh addressing scheme is different from the Bluetooth LE addressing scheme.
 It features three types of addresses:
 
 * *Unicast addresses*: Unique for every device

@@ -53,8 +53,8 @@ The following process takes place at this stage:
   #. The model includes an on/off message in a publishing packet with an opcode and sends it to the access layer.
   #. The access layer fetches the necessary publish parameters, like destination address, encryption keys and time to live value (TTL value), and passes the packet to the transport layer, the highest of the core layers.
   #. The transport layer then encrypts the message with the selected application key, and splits the message into segments if necessary.
-     Each segment is passed to the network layer, which attaches a network header with a sequence number and encrypts the packet with the network key before passing it to the |BLE| controller.
-  #. The |BLE| controller includes the network message in an advertisement packet, and schedules a time slot for the packet to be broadcasted.
+     Each segment is passed to the network layer, which attaches a network header with a sequence number and encrypts the packet with the network key before passing it to the Bluetooth LE Controller.
+  #. The Bluetooth LE Controller includes the network message in an advertisement packet, and schedules a time slot for the packet to be broadcasted.
 
 Relay node
 ==========
@@ -62,7 +62,7 @@ Relay node
 The following process takes place at this stage:
 
   1. The broadcast is received by all mesh nodes within range, and is passed from their bearer layers to their network layers.
-  #. The network packet is decrypted, and if the receiving node is not its destination, the packet's TTL value is decreased by one, before being re-encrypted with the same network key and passed back to the |BLE| controller to be relayed.
+  #. The network packet is decrypted, and if the receiving node is not its destination, the packet's TTL value is decreased by one, before being re-encrypted with the same network key and passed back to the Bluetooth LE Controller to be relayed.
 
 Destination node with a light bulb
 ==================================
@@ -82,7 +82,7 @@ Models
 ******
 
 The models define the behavior and communication formats of all data that is transmitted across the mesh.
-Equivalent to |BLE|'s GATT services, the Bluetooth Mesh models are independent, immutable implementations of specific behaviors or services.
+Equivalent to Bluetooth LE's GATT services, the Bluetooth Mesh models are independent, immutable implementations of specific behaviors or services.
 All mesh communication happens through models, and any application that exposes its behavior through the mesh must channel the communication through one or more models.
 
 The Bluetooth Mesh Specification defines a set of immutable models for typical usage scenarios, but vendors are also free to implement their own models.
