@@ -1,6 +1,6 @@
 #include <autoconf.h>
 
-b0n_image:
+b0n:
 
 # If minimal config is enabled the binary will be around 5kB.
 # Since locking granularity is 2kB, ensure that size of `b0n` span is aligned.
@@ -13,10 +13,10 @@ b0n_image:
   placement:
     after: start
 
-b0n:
-  span: [b0n_image, provision]
+b0n_container:
+  span: [b0n, provision]
 
 provision:
   size: 0x200
   placement:
-    after: b0n_image
+    after: b0n

@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(pcd, CONFIG_PCD_LOG_LEVEL);
 #include <hal/nrf_reset.h>
 #include <hal/nrf_spu.h>
 /** Offset which the application should be copied into */
-#define NET_CORE_APP_OFFSET PM_CPUNET_B0N_SIZE
+#define NET_CORE_APP_OFFSET PM_CPUNET_B0N_CONTAINER_SIZE
 #endif
 
 struct pcd_cmd {

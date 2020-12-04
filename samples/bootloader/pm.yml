@@ -1,17 +1,17 @@
 #include <autoconf.h>
 
-b0_image:
+b0:
   size: CONFIG_PM_PARTITION_SIZE_B0_IMAGE
   placement:
     after: start
 
-b0:
-  span: [b0_image, provision]
+b0_container:
+  span: [b0, provision]
 
 s0_pad:
   share_size: mcuboot_pad
   placement:
-    after: b0
+    after: b0_container
     align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
 
 spm_app:
@@ -48,6 +48,6 @@ provision:
   region: otp
 #else
   placement:
-    after: b0_image
+    after: b0
     align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
 #endif

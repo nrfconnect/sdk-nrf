@@ -19,7 +19,8 @@
 
 void main(void)
 {
-	int err = fprotect_area(PM_B0N_ADDRESS, PM_B0N_SIZE);
+	int err = fprotect_area(PM_B0N_CONTAINER_ADDRESS,
+				PM_B0N_CONTAINER_SIZE);
 	const struct device *fdev = device_get_binding(FLASH_NAME);
 
 	if (err) {
