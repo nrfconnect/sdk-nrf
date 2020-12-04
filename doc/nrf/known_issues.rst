@@ -152,6 +152,10 @@ nRF5340
 FOTA does not work
   FOTA with the :ref:`zephyr:smp_svr_sample` does not work.
 
+The hci_uart-example supports maximum 69 bytes of HCI Data packet payload.
+  **Workaround** Modify :file:`ncs/zephyr/include/bluetooth/hci_raw.h`::
+  Change BT_L2CAP_MTU from 65 to 247.
+
 nRF52820
 ========
 
