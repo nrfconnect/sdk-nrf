@@ -408,7 +408,7 @@ static void handle_settings_status(struct bt_mesh_model *mod,
 	uint32_t count = buf->len / 2;
 
 	memcpy(ids, net_buf_simple_pull_mem(buf, buf->len),
-	       count * sizeof(ids));
+	       count * sizeof(uint16_t));
 
 	if (cli->cb && cli->cb->settings) {
 		cli->cb->settings(cli, ctx, type, ids, count);
