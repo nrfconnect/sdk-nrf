@@ -55,7 +55,7 @@ After programming the sample to your development kits, test it by performing the
 1. Start a console application, like PuTTY, and connect through UART to the ``shell_bt_nus`` application running on the development kit to check the log.
    See :ref:`gs_testing` for more information on how to connect with PuTTY through UART.
 #. On the host PC, install *Python 2*.
-#. Run the following command to install the |BLE| driver:
+#. Run the following command to install the Bluetooth LE driver:
 
    .. code-block:: console
 
