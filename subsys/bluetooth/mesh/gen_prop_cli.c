@@ -103,7 +103,7 @@ static void property_status(struct bt_mesh_model *mod,
 	val.meta.id = net_buf_simple_pull_le16(buf);
 	val.meta.user_access = net_buf_simple_pull_u8(buf);
 	val.size = buf->len;
-	val.value = net_buf_simple_tail(buf);
+	val.value = net_buf_simple_pull_mem(buf, val.size);
 
 	if (model_ack_match(&cli->ack_ctx,
 			    op_get(BT_MESH_PROP_OP_PROP_STATUS, kind), ctx)) {
