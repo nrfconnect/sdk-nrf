@@ -75,6 +75,14 @@ HTTP Update
   * Extracted certificate, button, and LED handling functionality from :ref:`http_application_update_sample` to :file:`samples/nrf9160/http_update/common`, to share them with :ref:`http_modem_delta_update_sample`.
   * Moved the :ref:`http_application_update_sample` sample from :file:`samples/nrf9160/http_application_update/` to :file:`samples/nrf9160/http_update/application_update`
 
+Full modem serial update
+------------------------
+
+* Added:
+
+  * New sample :ref:`fmfu_smp_svr_sample` which shows how to add the full modem serial update functionality to an application.
+  * New module called :ref:`lib_fmfu_mgmt` which implements parts of the MCUMgr management protocol for doing full modem serial updates.
+
 Thread
 ------
 
