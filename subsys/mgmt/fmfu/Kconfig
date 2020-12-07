@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Full Modem Firmware Update Management(FMFU)"
+
+config MGMT_FMFU
+	bool "Serial Modem Firmware Update support"
+	depends on MCUMGR_SMP_UART
+	depends on MCUMGR
+	depends on NRF_MODEM_LIB && !NRF_MODEM_LIB_SYS_INIT
+
+module=MGMT_FMFU
+module-dep=LOG
+module-str=FMFU
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+endmenu

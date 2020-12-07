@@ -113,6 +113,7 @@ Kconfig*                                  @tejlmand
 /subsys/bootloader/                       @hakonfam @ioannisg
 /subsys/debug/                            @nordic-krch @anangl
 /subsys/dfu/                              @hakonfam @sigvartmh
+/subsys/mgmt/                             @hakonfam @sigvartmh
 /subsys/esb/                              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/fw_info/                          @hakonfam
