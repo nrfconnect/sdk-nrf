@@ -422,8 +422,14 @@ static void handle_store(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 {
 	struct bt_mesh_scene_srv *srv = mod->user_data;
 	enum bt_mesh_scene_status status;
+	uint16_t scene_number;
 
-	status = scene_store(srv, net_buf_simple_pull_le16(buf));
+	scene_number = net_buf_simple_pull_le16(buf);
+	if (scene_number == BT_MESH_SCENE_NONE) {
+		return;
+	}
+
+	status = scene_store(srv, scene_number);
 	scene_register_status_send(srv, ctx, status);
 }
 
@@ -432,8 +438,14 @@ static void handle_store_unack(struct bt_mesh_model *mod,
 			       struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_srv *srv = mod->user_data;
+	uint16_t scene_number;
 
-	(void)scene_store(srv, net_buf_simple_pull_le16(buf));
+	scene_number = net_buf_simple_pull_le16(buf);
+	if (scene_number == BT_MESH_SCENE_NONE) {
+		return;
+	}
+
+	(void)scene_store(srv, scene_number);
 }
 
 static void handle_delete(struct bt_mesh_model *mod,
