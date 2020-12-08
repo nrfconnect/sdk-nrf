@@ -133,8 +133,8 @@ struct bt_mesh_light_temp_srv {
  * Asynchronously publishes a CTL Temperature status message with the configured
  * publish parameters.
  *
- * @note This API is only used publishing unprompted status messages. Response
- * messages for get and set messages are handled internally.
+ * @note This API is only used for publishing unprompted status messages.
+ * Response messages for get and set messages are handled internally.
  *
  * @param[in] srv Server instance to publish on.
  * @param[in] ctx Message context to send with, or NULL to send with the

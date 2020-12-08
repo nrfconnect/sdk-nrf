@@ -144,8 +144,8 @@ struct bt_mesh_loc_srv {
  * Asynchronously publishes a Global Location status message with the
  * configured publish parameters.
  *
- * @note This API is only used publishing unprompted status messages. Response
- * messages for get and set are handled internally.
+ * @note This API is only used for publishing unprompted status messages.
+ * Response messages for get and set messages are handled internally.
  *
  * @note The server will only publish one state at the time. Calling this
  * function will terminate any publishing of the Local Location state.
@@ -169,8 +169,8 @@ int32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
  * Asynchronously publishes a Local Location status message with the configured
  * publish parameters.
  *
- * @note This API is only used publishing unprompted status messages. Response
- * messages for get and set are handled internally.
+ * @note This API is only used for publishing unprompted status messages.
+ * Response messages for get and set messages are handled internally.
  *
  * @note The server will only publish one state at the time. Calling this
  * function will terminate any publishing of the Global Location state.
