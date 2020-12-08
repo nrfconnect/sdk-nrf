@@ -91,9 +91,6 @@ You can enable the following additional configuration options:
 
 * :option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` - MAC Address Block Large is set to Nordic Semiconductor's MA-L block (f4-ce-36) by default.
   To set a different MA-L, enable this option and edit the :option:`CONFIG_IEEE802154_VENDOR_OUI` to the desired value.
-* :option:`CONFIG_ZIGBEE_SHELL_LOG_ENABLED` - Enables logging of the incoming ZCL frames.
-  This option is enabled by default, and it uses the logging level set in :option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL`.
-  See :ref:`zigbee_ug_logging_logger_options` for more information.
 
 ZBOSS stack start options
 =========================
