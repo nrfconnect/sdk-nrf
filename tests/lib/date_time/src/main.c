@@ -253,6 +253,30 @@ static void test_date_time_conversion(void)
 	zassert_equal(ts_expect, uptime, "uptime equal ts_expect");
 }
 
+static void test_date_time_validity(void)
+{
+	int ret;
+	struct tm date_time_dummy = {
+		.tm_year = 120,
+		.tm_mon = 7,
+		.tm_mday = 7,
+		.tm_hour = 15,
+		.tm_min = 11,
+		.tm_sec = 30
+	};
+
+	ret = date_time_is_valid();
+	zassert_equal(false, ret, "date_time_is_valid should equal false");
+
+	/** UNIX timestamp equavivalent to tm structure date_time_dummy. */
+	/** Fri Aug 07 2020 15:11:30 UTC. */
+	ret = date_time_set(&date_time_dummy);
+	zassert_equal(0, ret, "date_time_set should equal 0");
+
+	ret = date_time_is_valid();
+	zassert_equal(true, ret, "date_time_is_valid should equal true");
+}
+
 static void test_date_time_setup(void)
 {
 	/** */
@@ -287,6 +311,10 @@ void test_main(void)
 					test_date_time_teardown),
 		ztest_unit_test_setup_teardown(
 					test_date_time_conversion,
+					test_date_time_setup,
+					test_date_time_teardown),
+		ztest_unit_test_setup_teardown(
+					test_date_time_validity,
 					test_date_time_setup,
 					test_date_time_teardown)
 	);

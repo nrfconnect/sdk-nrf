@@ -413,6 +413,11 @@ int date_time_now(int64_t *unix_time_ms)
 	return err;
 }
 
+bool date_time_is_valid(void)
+{
+	return initial_valid_time;
+}
+
 void date_time_register_handler(date_time_evt_handler_t evt_handler)
 {
 	if (evt_handler == NULL) {
