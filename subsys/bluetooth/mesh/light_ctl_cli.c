@@ -21,16 +21,16 @@ static void ctl_status_handle(struct bt_mesh_model *model,
 
 	status.current_light = net_buf_simple_pull_le16(buf);
 	status.current_temp = net_buf_simple_pull_le16(buf);
-	if ((status.current_temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
-	    (status.current_temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
+	if ((status.current_temp < BT_MESH_LIGHT_TEMP_MIN) ||
+	    (status.current_temp > BT_MESH_LIGHT_TEMP_MAX)) {
 		return;
 	}
 
 	if (buf->len == 5) {
 		status.target_light = net_buf_simple_pull_le16(buf);
 		status.target_temp = net_buf_simple_pull_le16(buf);
-		if ((status.target_temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
-		    (status.target_temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
+		if ((status.target_temp < BT_MESH_LIGHT_TEMP_MIN) ||
+		    (status.target_temp > BT_MESH_LIGHT_TEMP_MAX)) {
 			return;
 		}
 
@@ -97,8 +97,8 @@ static void temp_status_handle(struct bt_mesh_model *model,
 	struct bt_mesh_light_temp_status status;
 
 	status.current.temp = net_buf_simple_pull_le16(buf);
-	if ((status.current.temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
-	    (status.current.temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
+	if ((status.current.temp < BT_MESH_LIGHT_TEMP_MIN) ||
+	    (status.current.temp > BT_MESH_LIGHT_TEMP_MAX)) {
 		return;
 	}
 
@@ -106,8 +106,8 @@ static void temp_status_handle(struct bt_mesh_model *model,
 
 	if (buf->len == 5) {
 		status.target.temp = net_buf_simple_pull_le16(buf);
-		if ((status.target.temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
-		    (status.target.temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
+		if ((status.target.temp < BT_MESH_LIGHT_TEMP_MIN) ||
+		    (status.target.temp > BT_MESH_LIGHT_TEMP_MAX)) {
 			return;
 		}
 
@@ -147,8 +147,8 @@ static void default_status_handle(struct bt_mesh_model *model,
 
 	status.light = net_buf_simple_pull_le16(buf);
 	status.temp = net_buf_simple_pull_le16(buf);
-	if ((status.temp < BT_MESH_LIGHT_TEMP_RANGE_MIN) ||
-	    (status.temp > BT_MESH_LIGHT_TEMP_RANGE_MAX)) {
+	if ((status.temp < BT_MESH_LIGHT_TEMP_MIN) ||
+	    (status.temp > BT_MESH_LIGHT_TEMP_MAX)) {
 		return;
 	}
 
