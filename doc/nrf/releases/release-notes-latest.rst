@@ -60,6 +60,15 @@ Bluetooth Mesh
   * Time client model callbacks for all message types.
   * Support for the nRF52833 DK in the :ref:`bluetooth_mesh_light` and :ref:`bluetooth_mesh_light_switch` samples.
 
+nRF9160
+=======
+
+* Updated:
+
+  * :ref:`lib_download_client` library - Re-introduced optional TCP timeout, which is enabled by default.
+    This change re-introduces the optional timeout on the TCP socket used for the download.
+    Upon timeout on a TCP socket, the HTTP download will fail and the ``ETIMEDOUT`` error will be returned via the callback handler.
+
 Common
 ======
 
