@@ -10,11 +10,9 @@
 #include <logging/log.h>
 
 #include <zigbee/zigbee_app_utils.h>
-#include "zigbee_logger_eprxzcl.h"
+#include <zigbee/zigbee_logger_eprxzcl.h>
 
-#if defined(CONFIG_LOG) && defined(CONFIG_ZIGBEE_SHELL_LOG_ENABLED)
-
-LOG_LEVEL_SET(CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
+LOG_LEVEL_SET(CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL);
 
 /**@brief Name of the log module related to Zigbee. */
 #define LOG_MODULE_NAME zboss_osif
@@ -23,7 +21,7 @@ LOG_LEVEL_SET(CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 #define LOG_SUBMODULE_NAME eprxzcl
 
 LOG_INSTANCE_REGISTER(LOG_MODULE_NAME, LOG_SUBMODULE_NAME,
-		      CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
+		      CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL);
 
 /* This structure keeps reference to the logger instance used by this module. */
 struct log_ctx {
@@ -117,7 +115,7 @@ static char *prv_log_circ_buffer_get_next_buffer(void)
 
 zb_uint8_t zigbee_logger_eprxzcl_ep_handler(zb_bufid_t bufid)
 {
-	if (CONFIG_ZIGBEE_SHELL_LOG_LEVEL >= LOG_LEVEL_INF) {
+	if (CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL >= LOG_LEVEL_INF) {
 		int status;
 		char *log_message = prv_log_circ_buffer_get_next_buffer();
 		char *log_message_curr = log_message;
@@ -255,4 +253,3 @@ zb_uint8_t zigbee_logger_eprxzcl_ep_handler(zb_bufid_t bufid)
 
 	return ZB_FALSE;
 }
-#endif /* defined(CONFIG_LOG) && defined(CONFIG_ZIGBEE_SHELL_LOG_ENABLED) */

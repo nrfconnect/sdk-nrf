@@ -118,12 +118,6 @@ config ZIGBEE_ERROR_TO_STRING_ENABLED
 	help
 	  Include functions for mapping ZBOSS errors to string.
 
-config ZIGBEE_SHELL_LOG_ENABLED
-	bool "Include functions for Zigbee Shell logging"
-	default y
-	help
-	  Include functions for Zigbee Shell logging.
-
 # Configure ZBOSS_TRACE_LOG_LEVEL
 choice
 	prompt "Max compiled-in log level for ZBOSS trace"
@@ -277,6 +271,7 @@ if ZIGBEE_SHELL
 config ZIGBEE_SHELL_DEBUG_CMD
 	bool "Enable debug shell commands"
 	select ZIGBEE_DEBUG_FUNCTIONS
+	imply ZIGBEE_LOGGER_EP
 	help
 	  This option enables:
 
