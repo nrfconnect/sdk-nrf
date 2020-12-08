@@ -55,7 +55,7 @@ To disable serial output, you must change the project configuration associated w
 	      CONFIG_SERIAL=n
 
 
-   #. Add the entry ``set(spm_CONF_FILE ${CMAKE_CURRENT_SOURCE_DIR}/spm.conf)`` in the :file:`CMakeLists.txt` file.
+   #. Add the entry ``set(spm_CONF_FILE ${CMAKE_CURRENT_SOURCE_DIR}/spm.conf)`` below the ``cmake_minimum_required(<VERSION x.x.x>)`` entry in the :file:`CMakeLists.txt` file.
 
 
 The following output on Power Profiler Kit II shows the power consumption on an nRF9160 DK with the sample compiled for the ``nrf9160dk_nrf9160`` build target with ``CONFIG_SERIAL=n``.
@@ -117,6 +117,8 @@ Assumptions:
 * Data is assumed to be sent on a regular basis.
 * The network is not assumed to be present in the drop-down list corresponding to :guilabel:`Preset network parameters` in Online Power Profiler.
 
+.. note::
+   All the measurements and calculations in the example use case are based on nRF9160 Revision 1.
 
 Simulation using Online Power Profiler
 --------------------------------------
