@@ -27,13 +27,12 @@ To extend a sample with the Zigbee shell command support, set the following KCon
 * :option:`CONFIG_ZIGBEE_SHELL` - This option enables Zigbee shell and Zephyr's :ref:`zephyr:shell_api`.
 * :option:`CONFIG_ZIGBEE_SHELL_ENDPOINT` - This option specifies the endpoint number to be used by the Zigbee shell instance.
   Endpoint must be present at the device and you must not register an endpoint handler for this endpoint.
-* :option:`CONFIG_ZIGBEE_SHELL_DEBUG_CMD` - This option enables commands useful for testing and debugging.
-
+* :option:`CONFIG_ZIGBEE_SHELL_DEBUG_CMD` - This option enables commands useful for testing and debugging. This option also enables logging of the incoming ZCL frames.
+  Logging of the incoming ZCL frames uses the logging level set in :option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL`.
   .. note::
         Using debug commands can make the device unstable.
 
-* :option:`CONFIG_ZIGBEE_SHELL_LOG_ENABLED` - This option enables logging of the incoming ZCL frames.
-  This option is enabled by default, and it uses the logging level set in :option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL` for logging of the incoming ZCL frames and Zigbee shell logs.
+* :option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL` - This option sets the logging level of Zigbee Shell logs.
   See :ref:`zigbee_ug_logging_logger_options` for more information.
 
 Running Zigbee shell commands
