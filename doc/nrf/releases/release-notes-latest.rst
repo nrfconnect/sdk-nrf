@@ -95,6 +95,9 @@ nRF9160
     * Added an option to set the hostname for TLS Server Name Indication (SNI) extension.
       This option is valid only when TLS is enabled.
 
+  * :ref:`lib_date_time` library - Added an API to check if the Date-Time library has obtained a valid date-time.
+    If the function returns false, it implies that the library has not yet obtained valid date-time to base its calculations and time conversions on and hence other API calls that depend on the internal date-time will fail.
+
 Common
 ======
 
