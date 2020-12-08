@@ -46,15 +46,20 @@ static const char *str_family(int family)
 	}
 }
 
-static int socket_timeout_set(int fd)
+static int socket_timeout_set(int fd, int type)
 {
 	int err;
+	uint32_t timeout_ms;
 
-	if (CONFIG_DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS == SYS_FOREVER_MS) {
-		return 0;
+	if (type == SOCK_STREAM) {
+		timeout_ms = CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS;
+	} else {
+		timeout_ms = CONFIG_DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS;
 	}
 
-	const uint32_t timeout_ms = CONFIG_DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS;
+	if (timeout_ms <= 0) {
+		return 0;
+	}
 
 	struct timeval timeo = {
 		.tv_sec = (timeout_ms / 1000),
@@ -253,6 +258,12 @@ static int client_connect(struct download_client *dl, const char *host,
 		}
 	}
 
+	/* Set socket timeout, if configured */
+	err = socket_timeout_set(*fd, type);
+	if (err) {
+		goto cleanup;
+	}
+
 	LOG_INF("Connecting to %s", log_strdup(host));
 	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
 		*fd, addrlen, str_family(sa->sa_family), port);
@@ -357,6 +368,7 @@ static int reconnect(struct download_client *dl)
 void download_thread(void *client, void *a, void *b)
 {
 	int rc = 0;
+	int error_cause;
 	size_t len;
 	struct download_client *const dl = client;
 
@@ -395,10 +407,16 @@ restart_and_suspend:
 				}
 			}
 
+			error_cause = ECONNRESET;
+
 			if (len == -1) {
 				if (errno == ETIMEDOUT) {
-					LOG_DBG("Socket timeout, resending");
-					goto send_again;
+					if (dl->proto == IPPROTO_UDP ||
+					    dl->proto == IPPROTO_DTLS_1_2) {
+						LOG_DBG("Socket timeout, resending");
+						goto send_again;
+					}
+					error_cause = ETIMEDOUT;
 				}
 				LOG_ERR("Error in recv(), errno %d", errno);
 			}
@@ -411,7 +429,7 @@ restart_and_suspend:
 			 * Attempt to reconnect and resume the download
 			 * if the application returns Zero via the event.
 			 */
-			rc = error_evt_send(dl, ECONNRESET);
+			rc = error_evt_send(dl, error_cause);
 			if (rc) {
 				/* Restart and suspend */
 				break;
@@ -614,12 +632,9 @@ int download_client_start(struct download_client *client, const char *file,
 	client->offset = 0;
 	client->http.has_header = false;
 
-	if (IS_ENABLED(CONFIG_COAP)) {
-		coap_block_init(client, from);
-		/* Set socket timeout, if configured */
-		err = socket_timeout_set(client->fd);
-		if (err) {
-			return err;
+	if (client->proto == IPPROTO_UDP || client->proto == IPPROTO_DTLS_1_2) {
+		if (IS_ENABLED(CONFIG_COAP)) {
+			coap_block_init(client, from);
 		}
 	}
 

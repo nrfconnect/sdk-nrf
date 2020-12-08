@@ -105,6 +105,16 @@ config DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
 	range 8 256
 	default 192
 
+config DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS
+	int "Receive timeout on TCP sockets, in milliseconds"
+	default 30000
+	range -1 600000
+	help
+	  Socket timeout for recv() calls, in milliseconds.
+	  When using HTTP or HTTPS, set a timeout to be able to detect
+	  when the server is not responding and client should give up.
+	  Set to -1 disable.
+
 config DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS
 	int "Receive timeout on UDP sockets, in milliseconds"
 	default 4000
