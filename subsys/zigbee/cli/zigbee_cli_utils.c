@@ -12,7 +12,7 @@
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>
-#include <zigbee_logger_eprxzcl.h>
+#include <zigbee/zigbee_logger_eprxzcl.h>
 #include "zigbee_cli_utils.h"
 
 zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid);

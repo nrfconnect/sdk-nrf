@@ -7,7 +7,7 @@
 #ifndef ZIGBEE_COMMON_ZIGBEE_LOGGER_EPRXZCL_H_
 #define ZIGBEE_COMMON_ZIGBEE_LOGGER_EPRXZCL_H_
 
-#include "zboss_api.h"
+#include <zboss_api.h>
 
 /** @file zigbee_logger_eprxzcl.h
  *
