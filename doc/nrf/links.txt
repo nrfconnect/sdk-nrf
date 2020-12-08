@@ -565,3 +565,4 @@
 .. ### Links to commits
 
 .. _`Zephyr commit f12536`: https://github.com/zephyrproject-rtos/hal_nordic/commit/f12536cbfb27b7bb05b40b97bd8a8857f2bf23ec
+.. _`Zephyr commit 2db49c`: https://github.com/zephyrproject-rtos/zephyr/commit/2db49c4b99850b3e7a53667fe7bb9ba6fc2a5b7d

@@ -173,6 +173,13 @@ Thread
 
 .. rst-class:: v1-4-99-dev1
 
+KRKNWK-8286: Faulty UART responsiveness in Thread NCP sample
+  A race condition in the UARTE driver causes the retrieval of Spinel responses to fail sometimes for the :ref:`ot_ncp_sample` sample.
+
+  **Workaround:** Build the sample with :option:`CONFIG_UART_0_ENHANCED_POLL_OUT` set to ``n`` or cherry-pick the upstream `Zephyr commit 2db49c`_.
+
+.. rst-class:: v1-4-99-dev1
+
 KRKNWK-8262: CoAP Client Sample crashes for nRF5340
   For nRF5340, the :ref:`coap_client_sample` sample crashes when changing from SED to MED mode.
   Other devices are not affected.
