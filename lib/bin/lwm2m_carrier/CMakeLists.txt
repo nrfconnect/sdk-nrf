@@ -29,7 +29,7 @@ endif()
 
 set(                    LWM2M_CARRIER_TARGET liblwm2m_carrier)
 zephyr_library_import(${LWM2M_CARRIER_TARGET} ${LWM2M_CARRIER_LIB_PATH}/liblwm2m_carrier.a)
-target_link_libraries(${LWM2M_CARRIER_TARGET} INTERFACE bsd_nrf9160_xxaa -lc)
+target_link_libraries(${LWM2M_CARRIER_TARGET} INTERFACE modem -lc)
 
 zephyr_include_directories(include)
 zephyr_library()

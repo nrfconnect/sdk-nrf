@@ -119,7 +119,7 @@ nRF9160
   * Updated to version 0.8.2.
     See the :ref:`liblwm2m_carrier_changelog` for detailed information.
 
-* :ref:`nrfxlib:bsdlib`:
+* BSD library:
 
   * Updated to version 0.6.1.2.
-    See the :ref:`bsdlib_changelog` for detailed information.
+    See the :ref:`nrf_modem_changelog` for detailed information.

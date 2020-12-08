@@ -6,8 +6,8 @@
 
 #include <zephyr.h>
 #include <stdio.h>
-#include <bsd.h>
-#include <modem/bsdlib.h>
+#include <nrf_modem.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
@@ -201,10 +201,10 @@ void main(void)
 	int err;
 
 	printk("Azure FOTA sample started\n");
-	printk("Initializing BSDlib\n");
+	printk("Initializing modem library\n");
 	printk("This may take a while if a modem firmware update is pending\n");
 
-	err = bsdlib_init();
+	err = nrf_modem_lib_init();
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
 		printk("Modem firmware update successful!\n");
@@ -222,14 +222,14 @@ void main(void)
 		printk("Fatal error.\n");
 		break;
 	case -1:
-		printk("Could not initialize bsdlib.\n");
+		printk("Could not initialize modem library.\n");
 		printk("Fatal error.\n");
 		return;
 	default:
 		break;
 	}
 
-	printk("BSDlib initialized\n");
+	printk("Modem library initialized\n");
 
 	k_delayed_work_init(&reboot_work, reboot_work_fn);
 	at_configure();

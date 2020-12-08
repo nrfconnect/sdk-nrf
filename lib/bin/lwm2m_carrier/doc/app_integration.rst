@@ -70,7 +70,7 @@ LwM2M carrier library events
 ****************************
 
 :c:macro:`LWM2M_CARRIER_EVENT_BSDLIB_INIT`
-   This event indicates that the :ref:`bsdlib` is initialized and can be used.
+   This event indicates that the :ref:`nrf_modem` is initialized and can be used.
    (See :ref:`req_appln_limitations`).
 
 :c:macro:`LWM2M_CARRIER_EVENT_CONNECTING`, :c:macro:`LWM2M_CARRIER_EVENT_CONNECTED`, :c:macro:`LWM2M_CARRIER_EVENT_DISCONNECTING`, :c:macro:`LWM2M_CARRIER_EVENT_DISCONNECTED`
@@ -151,7 +151,7 @@ LwM2M carrier library events
    :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PKG`
       This error indicates that the update package has been rejected.
       The integrity check has failed because of a wrong package sent from the server, or a wrong package received by client.
-      The :c:member:`value` field will have an error of type :c:type:`nrf_dfu_err_t` from the file :file:`nrfxlib\\bsdlib\\include\\nrf_socket.h`.
+      The :c:member:`value` field will have an error of type :c:type:`nrf_dfu_err_t` from the file :file:`nrfxlib\\nrf_modem\\include\\nrf_socket.h`.
 
    :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PROTO`
       This error indicates a protocol error.

@@ -45,7 +45,7 @@ static void work_init(void)
 			    server_transmission_work_fn);
 }
 
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 static void lte_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
@@ -214,7 +214,7 @@ void main(void)
 
 	work_init();
 
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 
 	/* Initialize the modem before calling configure_low_power(). This is
 	 * because the enabling of RAI is dependent on the

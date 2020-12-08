@@ -9,10 +9,10 @@ TCP and UDP AT commands
 
 The following commands list contains TCP and UDP related AT commands.
 
-For more information on the BSD networking services, visit the `BSD Networking Services Spec Reference`_.
+For more information on the networking services, visit the `BSD Networking Services Spec Reference`_.
 
-BSD socket #XSOCKET
-===================
+Socket #XSOCKET
+===============
 
 The ``#XSOCKET`` command allows you to open or close a socket, or to check the socket handle.
 
@@ -239,8 +239,8 @@ Examples
    #XSOCKET: (0, 1), (1, 2),<sec_tag>
    OK
 
-BSD socket options #XSOCKETOPT
-==============================
+Socket options #XSOCKETOPT
+==========================
 
 The ``#XSOCKETOPT`` command allows you to get and set socket options.
 

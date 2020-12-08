@@ -10,9 +10,9 @@
 #include <zephyr.h>
 
 #ifdef CONFIG_LWM2M_CARRIER
-void bsd_recoverable_error_handler(uint32_t err)
+void nrf_modem_recoverable_error_handler(uint32_t err)
 {
-	printk("bsdlib recoverable error: %u\n", (unsigned int)err);
+	printk("Modem library recoverable error: %u\n", (unsigned int)err);
 }
 
 void print_err(const lwm2m_carrier_event_t *evt)

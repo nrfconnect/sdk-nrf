@@ -9,10 +9,10 @@
 #include <drivers/uart.h>
 #include <string.h>
 
-/**@brief Recoverable BSD library error. */
-void bsd_recoverable_error_handler(uint32_t err)
+/**@brief Recoverable modem library error. */
+void nrf_modem_recoverable_error_handler(uint32_t err)
 {
-	printk("bsdlib recoverable error: %u\n", err);
+	printk("Modem library recoverable error: %u\n", err);
 }
 
 void main(void)

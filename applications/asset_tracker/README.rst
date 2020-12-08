@@ -134,7 +134,7 @@ LED 3 and LED 4:
     Application state indicated by LEDs
 
 All LEDs (1-4):
-    * Blinking in groups of two (LED 1 and 3, LED 2 and 4): Recoverable error in the BSD library.
+    * Blinking in groups of two (LED 1 and 3, LED 2 and 4): Recoverable error in the Modem library.
     * Blinking in cross pattern (LED 1 and 4, LED 2 and 3): Communication error with the nRF Cloud.
 
 On the Thingy:91, the application state is indicated by a single RGB LED as follows:
@@ -262,7 +262,7 @@ This application uses the following |NCS| libraries and drivers:
 
 It uses the following `sdk-nrfxlib`_ libraries:
 
-* :ref:`nrfxlib:bsdlib`
+* :ref:`nrfxlib:nrf_modem`
 
 In addition, it uses the following sample:
 

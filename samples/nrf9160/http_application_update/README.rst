@@ -106,19 +106,21 @@ After programming the sample to the board, test it by performing the following s
 Dependencies
 ************
 
-This sample uses the following libraries:
+This sample uses the following |NCS| libraries:
 
-From |NCS|
-  * :ref:`lib_fota_download`
-  * :ref:`secure_partition_manager`
+* :ref:`lib_fota_download`
+* :ref:`secure_partition_manager`
 
-From nrfxlib
-  * :ref:`nrfxlib:bsdlib`
+It uses the following `sdk-nrfxlib`_ library:
 
-From Zephyr
-  * :ref:`zephyr:flash_api`
-  * :ref:`zephyr:logging_api`
-  * :ref:`zephyr:gpio_api`
+* :ref:`nrfxlib:nrf_modem`
 
-From MCUboot
-  * `MCUboot`_
+It uses the following Zephyr libraries:
+
+* :ref:`zephyr:flash_api`
+* :ref:`zephyr:logging_api`
+* :ref:`zephyr:gpio_api`
+
+In addition, it uses the following MCUboot library:
+
+* `MCUboot`_

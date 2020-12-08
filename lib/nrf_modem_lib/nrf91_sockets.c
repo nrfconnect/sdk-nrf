@@ -10,8 +10,8 @@
  * @brief nrf91 socket offload provider
  */
 
-#include <bsd_limits.h>
-#include <bsd_os.h>
+#include <nrf_modem_limits.h>
+#include <nrf_modem_os.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <init.h>
@@ -256,7 +256,7 @@ static int z_to_nrf_flags(int z_flags)
 	}
 
 	/* TODO: Handle missing flags, missing from zephyr,
-	 * may also be missing from bsd socket library.
+	 * may also be missing from nrf_modem_lib.
 	 * Missing flags from "man recv" or "man recvfrom":
 	 *	MSG_CMSG_CLOEXEC
 	 *	MSG_ERRQUEUE
@@ -544,7 +544,7 @@ static int nrf91_socket_offload_accept(void *obj, struct sockaddr *addr,
 		nrf_addr_ptr = (struct nrf_sockaddr *)&nrf_addr;
 		nrf_addrlen_ptr = &nrf_addrlen;
 
-		/* Workaround for the bsdlib issue, making `nrf_accept` to
+		/* Workaround for the nrf_modem_lib issue, making `nrf_accept` to
 		 * expect `nrf_addrlen` to be exactly of
 		 * sizeof(struct nrf_sockaddr_in) size for IPv4
 		 */
@@ -725,10 +725,10 @@ static int nrf91_socket_offload_getsockopt(void *obj, int level, int optname,
 
 		if (level == SOL_SOCKET) {
 			if (optname == SO_ERROR) {
-				/* Use bsd_os_errno_set() to translate from nRF
+				/* Use nrf_modem_os_errno_set() to translate from nRF
 				 * error to native error.
 				 */
-				bsd_os_errno_set(*(int *)optval);
+				nrf_modem_os_errno_set(*(int *)optval);
 				*(int *)optval = errno;
 			} else if ((optname == SO_RCVTIMEO) ||
 				(optname == SO_SNDTIMEO)) {
@@ -829,7 +829,7 @@ static ssize_t nrf91_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
 	ssize_t offset;
 	int i;
 	static K_MUTEX_DEFINE(sendmsg_lock);
-	static uint8_t buf[CONFIG_BSD_LIBRARY_SENDMSG_BUF_SIZE];
+	static uint8_t buf[CONFIG_NRF_MODEM_LIB_SENDMSG_BUF_SIZE];
 
 	if (msg == NULL) {
 		errno = EINVAL;
@@ -909,7 +909,7 @@ static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
 					    int timeout)
 {
 	int retval = 0;
-	struct nrf_pollfd tmp[BSD_MAX_SOCKET_COUNT] = { 0 };
+	struct nrf_pollfd tmp[NRF_MODEM_MAX_SOCKET_COUNT] = { 0 };
 	void *obj;
 
 	for (int i = 0; i < nfds; i++) {
@@ -1227,7 +1227,7 @@ NET_SOCKET_REGISTER(nrf91_socket, AF_UNSPEC, nrf91_socket_is_supported,
 
 /* Create a network interface for nRF91 */
 
-static int nrf91_bsdlib_socket_offload_init(const struct device *arg)
+static int nrf91_nrf_modem_lib_socket_offload_init(const struct device *arg)
 {
 	ARG_UNUSED(arg);
 
@@ -1258,7 +1258,7 @@ static struct net_if_api nrf91_if_api = {
 
 /* TODO Get the actual MTU for the nRF91 LTE link. */
 NET_DEVICE_OFFLOAD_INIT(nrf91_socket, "nrf91_socket",
-			nrf91_bsdlib_socket_offload_init,
+			nrf91_nrf_modem_lib_socket_offload_init,
 			device_pm_control_nop,
 			&nrf91_socket_iface_data, NULL,
 			0, &nrf91_if_api, 1280);

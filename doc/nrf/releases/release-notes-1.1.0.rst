@@ -224,8 +224,8 @@ Updated drivers
 BSD library
 -----------
 
-* Updated the :ref:`nrfxlib:bsdlib` to version 0.5.0.
-* Updated bsdlib_init() to return the value of :c:func:`bsd_init` instead of (only) zero.
+* Updated the BSD library to version 0.5.0.
+* Updated bsdlib_init() to return the value of bsd_init() instead of (only) zero.
 * Added functionality that overrides untranslated errnos set by the BSD library with a magic word (0xBAADBAAD), instead of EINVAL, and prints a log message.
   If ASSERTs are enabled, the application will assert.
 * Made DFU, PDN, and RAW socket available through the socket offloading mechanism.
@@ -483,7 +483,7 @@ Documentation
   * :ref:`dev-model`
   * :ref:`ug_nrf9160`
   * :ref:`nrfxlib:softdevice_controller`
-  * :ref:`nrfxlib:bsdlib`
+  * BSD library
   * :ref:`nrfxlib:nrf_cc310_platform_readme`
   * :ref:`nrfxlib:nrf_security`
   * :ref:`mcuboot:mcuboot_wrapper`
@@ -497,7 +497,7 @@ Known issues
 nRF9160
 =======
 
-* Deprecation warning: The nrf_inbuilt_key API in the :ref:`nrfxlib:bsdlib` will be removed in a future release.
+* Deprecation warning: The nrf_inbuilt_key API in the BSD library will be removed in a future release.
   A replacement library that wraps the AT commands for ``AT%CMNG`` will be available in the |NCS|.
 * The :ref:`asset_tracker` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
 * The SEGGER Control Block cannot be found by automatic search by the RTT Viewer/Logger.

@@ -9,9 +9,9 @@ Requirements and application limitations
 
 Below are some of the requirements and limitations of the application while running this module.
 
-* The application should not call the :c:func:`bsdlib_init` function.
+* The application should not call the :c:func:`nrf_modem_lib_init` function.
 
-   * The LwM2M carrier library initializes and uses the :ref:`bsdlib`.
+   * The LwM2M carrier library initializes and uses the :ref:`nrf_modem`.
      This library is needed to track the modem FOTA states.
 
 * The application should not use the *NB-IoT* LTE mode.
@@ -56,7 +56,7 @@ The following library sizes are reported in the :ref:`liblwm2m_carrier_changelog
 
  * Library size (binary): This shows the standalone size of the library. This size includes all objects, since the library is not linked. This size will change when linking the library to an application.
  * Library size (reference application): This size shows the *total* memory impact of enabling the LwM2M carrier library in the :ref:`lwm2m_carrier` sample.
-   This size accounts for the library, abstraction layer and the associated heap and stack requirements. It also includes all the resources for all the dependencies, except :ref:`bsdlib`.
+   This size accounts for the library, abstraction layer and the associated heap and stack requirements. It also includes all the resources for all the dependencies, except :ref:`nrf_modem`.
    See :ref:`lwm2m_app_int` for more information.
 
 .. note::

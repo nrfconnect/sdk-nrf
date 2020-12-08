@@ -151,16 +151,17 @@ After programming the sample and all the prerequisites to the board, you can tes
 Dependencies
 ************
 
-This sample uses the following libraries:
+This sample uses the following |NCS| libraries:
 
-From |NCS|
-  * :ref:`secure_partition_manager`
-  * :ref:`at_cmd_readme`
-  * :ref:`at_notif_readme`
-  * :ref:`supl_client`
+* :ref:`secure_partition_manager`
+* :ref:`at_cmd_readme`
+* :ref:`at_notif_readme`
+* :ref:`supl_client`
 
-From nrfxlib
-  * :ref:`nrfxlib:bsdlib`
+It uses the following `sdk-nrfxlib`_ library:
 
-From Zephyr
-  * :ref:`net_socket_offloading`
+* :ref:`nrfxlib:nrf_modem`
+
+It uses the following Zephyr library:
+
+* :ref:`net_socket_offloading`

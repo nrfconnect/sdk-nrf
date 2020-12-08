@@ -13,12 +13,12 @@
 #include <console/console.h>
 #include <power/reboot.h>
 #include <logging/log_ctrl.h>
-#if defined(CONFIG_BSD_LIBRARY)
-#include <modem/bsdlib.h>
-#include <bsd.h>
+#if defined(CONFIG_NRF_MODEM_LIB)
+#include <modem/nrf_modem_lib.h>
+#include <nrf_modem.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
-#endif /* CONFIG_BSD_LIBRARY */
+#endif /* CONFIG_NRF_MODEM_LIB */
 #include <net/cloud.h>
 #include <net/socket.h>
 #include <net/nrf_cloud.h>
@@ -62,12 +62,12 @@ LOG_MODULE_REGISTER(asset_tracker, CONFIG_ASSET_TRACKER_LOG_LEVEL);
 #endif /* CONFIG_ACCEL_CALIBRATE */
 #endif /* CONFIG_ACCEL_USE_SIM */
 
-#if defined(CONFIG_BSD_LIBRARY) && \
+#if defined(CONFIG_NRF_MODEM_LIB) && \
 !defined(CONFIG_LTE_LINK_CONTROL)
 #error "Missing CONFIG_LTE_LINK_CONTROL"
 #endif
 
-#if defined(CONFIG_BSD_LIBRARY) && \
+#if defined(CONFIG_NRF_MODEM_LIB) && \
 defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT) && \
 defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #error "PROVISION_CERTIFICATES \
@@ -175,7 +175,7 @@ static K_SEM_DEFINE(modem_at_cmd_sem, 1, 1);
 static K_SEM_DEFINE(cloud_disconnected, 0, 1);
 #if defined(CONFIG_LWM2M_CARRIER)
 static void app_disconnect(void);
-static K_SEM_DEFINE(bsdlib_initialized, 0, 1);
+static K_SEM_DEFINE(nrf_modem_lib_initialized, 0, 1);
 static K_SEM_DEFINE(lte_connected, 0, 1);
 static K_SEM_DEFINE(cloud_ready_to_connect, 0, 1);
 #endif
@@ -186,8 +186,8 @@ static struct k_delayed_work rsrp_work;
 
 enum error_type {
 	ERROR_CLOUD,
-	ERROR_BSD_RECOVERABLE,
-	ERROR_BSD_IRRECOVERABLE,
+	ERROR_MODEM_RECOVERABLE,
+	ERROR_MODEM_IRRECOVERABLE,
 	ERROR_LTE_LC,
 	ERROR_SYSTEM_FAULT
 };
@@ -223,9 +223,9 @@ static void shutdown_modem(void)
 		LOG_ERR("lte_lc_power_off failed: %d", err);
 	}
 #endif /* CONFIG_LTE_LINK_CONTROL */
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 	LOG_ERR("Shutdown modem");
-	bsdlib_shutdown();
+	nrf_modem_lib_shutdown();
 #endif
 }
 
@@ -235,7 +235,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	switch (event->type) {
 	case LWM2M_CARRIER_EVENT_BSDLIB_INIT:
 		LOG_INF("LWM2M_CARRIER_EVENT_BSDLIB_INIT");
-		k_sem_give(&bsdlib_initialized);
+		k_sem_give(&nrf_modem_lib_initialized);
 		break;
 	case LWM2M_CARRIER_EVENT_CONNECTING:
 		LOG_INF("LWM2M_CARRIER_EVENT_CONNECTING\n");
@@ -341,18 +341,18 @@ void error_handler(enum error_type err_type, int err_code)
 		ui_led_set_pattern(UI_LED_ERROR_CLOUD);
 		LOG_ERR("Error of type ERROR_CLOUD: %d", err_code);
 	break;
-	case ERROR_BSD_RECOVERABLE:
+	case ERROR_MODEM_RECOVERABLE:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 3, 2 and 4)
 		 * if there is a recoverable error.
 		 */
-		ui_led_set_pattern(UI_LED_ERROR_BSD_REC);
-		LOG_ERR("Error of type ERROR_BSD_RECOVERABLE: %d", err_code);
+		ui_led_set_pattern(UI_LED_ERROR_MODEM_REC);
+		LOG_ERR("Error of type ERROR_MODEM_RECOVERABLE: %d", err_code);
 	break;
-	case ERROR_BSD_IRRECOVERABLE:
+	case ERROR_MODEM_IRRECOVERABLE:
 		/* Blinking all LEDs ON/OFF if there is an irrecoverable error.
 		 */
 		ui_led_set_pattern(UI_LED_ERROR_BSD_IRREC);
-		LOG_ERR("Error of type ERROR_BSD_IRRECOVERABLE: %d", err_code);
+		LOG_ERR("Error of type ERROR_MODEM_IRRECOVERABLE: %d", err_code);
 	break;
 	default:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 2, 3 and 4)
@@ -490,10 +490,10 @@ void cloud_connect_error_handler(enum cloud_connect_result err)
 	k_thread_suspend(k_current_get());
 }
 
-/**@brief Recoverable BSD library error. */
-void bsd_recoverable_error_handler(uint32_t err)
+/**@brief Recoverable modem library error. */
+void nrf_modem_recoverable_error_handler(uint32_t err)
 {
-	error_handler(ERROR_BSD_RECOVERABLE, (int)err);
+	error_handler(ERROR_MODEM_RECOVERABLE, (int)err);
 }
 
 static void send_gps_data_work_fn(struct k_work *work)
@@ -1629,7 +1629,7 @@ static void cloud_api_init(void)
  */
 static int modem_configure(void)
 {
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
 		/* Do nothing, modem is already turned on */
 		/* and connected */
@@ -1656,7 +1656,7 @@ connected:
 	LOG_INF("Connected to LTE network.");
 	ui_led_set_pattern(UI_LTE_CONNECTED);
 
-#endif /* defined(CONFIG_BSD_LIBRARY) */
+#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 	return 0;
 }
 
@@ -1788,10 +1788,10 @@ static void ui_evt_handler(struct ui_evt evt)
 }
 #endif /* defined(CONFIG_USE_UI_MODULE) */
 
-void handle_bsdlib_init_ret(void)
+void handle_nrf_modem_lib_init_ret(void)
 {
-#if defined(CONFIG_BSD_LIBRARY)
-	int ret = bsdlib_get_init_ret();
+#if defined(CONFIG_NRF_MODEM_LIB)
+	int ret = nrf_modem_lib_get_init_ret();
 
 	/* Handle return values relating to modem firmware update */
 	switch (ret) {
@@ -1817,23 +1817,23 @@ void handle_bsdlib_init_ret(void)
 		 * considered irrecoverable and a reboot is needed.
 		 */
 		LOG_ERR("BSDlib initialization failed, error: %d", ret);
-		error_handler(ERROR_BSD_IRRECOVERABLE, ret);
+		error_handler(ERROR_MODEM_IRRECOVERABLE, ret);
 
 		CODE_UNREACHABLE;
 	}
-#endif /* CONFIG_BSD_LIBRARY */
+#endif /* CONFIG_NRF_MODEM_LIB */
 }
 
 static void no_sim_go_offline(struct k_work *work)
 {
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 	lte_lc_offline();
 	/* Wait for lte_lc events to be processed before printing info message */
 	k_sleep(K_MSEC(100));
 	LOG_INF("No SIM card detected.");
 	LOG_INF("Insert SIM and reset device to run the asset tracker.");
 	ui_led_set_pattern(UI_LED_ERROR_LTE_LC);
-#endif /* CONFIG_BSD_LIBRARY */
+#endif /* CONFIG_NRF_MODEM_LIB */
 }
 
 #if defined(CONFIG_LTE_LINK_CONTROL)
@@ -1919,9 +1919,9 @@ void main(void)
 #endif
 
 #if defined(CONFIG_LWM2M_CARRIER)
-	k_sem_take(&bsdlib_initialized, K_FOREVER);
+	k_sem_take(&nrf_modem_lib_initialized, K_FOREVER);
 #else
-	handle_bsdlib_init_ret();
+	handle_nrf_modem_lib_init_ret();
 #endif
 
 	cloud_api_init();

@@ -74,10 +74,10 @@ nRF9160
     * Reimplemented the library to enable asynchronous handling of commands and reduce memory usage.
     * Updated all commands to only match ``OK`` or ``ERROR`` in the response if they are at the end (in case those strings are part of the response, like in certificate).
 
-  * :ref:`nrfxlib:bsdlib`:
+  * BSD library:
 
     * Updated to version 0.8.1.
-      See the :ref:`nrfxlib:bsdlib_changelog` for detailed information.
+      See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
 
   * :ref:`coap_utils_readme` library:
 
@@ -521,7 +521,7 @@ Additions specific to |NCS|
 The following list contains |NCS| specific additions:
 
 * Added support for the |NCS|'s :ref:`partition_manager`, which can be used for flash partitioning.
-* Added the following network socket and address extensions to the :ref:`zephyr:bsd_sockets_interface` interface to support the functionality provided by the :ref:`nrfxlib:bsdlib`:
+* Added the following network socket and address extensions to the :ref:`zephyr:bsd_sockets_interface` interface to support the functionality provided by the BSD library:
 
   * AF_LTE
   * NPROTO_AT

@@ -124,22 +124,24 @@ After programming the main controller with the sample, you can test it as follow
 Dependencies
 ************
 
-This sample uses the following libraries:
+This sample uses the following |NCS| libraries:
 
-From |NCS|
-  * :ref:`lib_nrf_cloud`
-  * ``drivers/gps_sim``
-  * ``lib/bsd_lib``
-  * ``drivers/sensor/sensor_sim``
-  * :ref:`dk_buttons_and_leds_readme`
-  * ``drivers/lte_link_control``
-  * :ref:`uart_nrf_sw_lpuart`
+* :ref:`lib_nrf_cloud`
+* ``drivers/gps_sim``
+* ``drivers/sensor/sensor_sim``
+* :ref:`dk_buttons_and_leds_readme`
+* :ref:`lte_lc_readme`
+* :ref:`uart_nrf_sw_lpuart`
 
-From Zephyr
-  * :ref:`zephyr:bluetooth_api`
+It uses the following `sdk-nrfxlib`_ library:
+
+* :ref:`nrfxlib:nrf_modem`
+
+It uses the following Zephyr library:
+
+* :ref:`zephyr:bluetooth_api`
 
 It also uses the following samples:
 
-From |NCS|
-  * :ref:`secure_partition_manager`
-  * :ref:`bluetooth-hci-lpuart-sample`
+* :ref:`secure_partition_manager`
+* :ref:`bluetooth-hci-lpuart-sample`

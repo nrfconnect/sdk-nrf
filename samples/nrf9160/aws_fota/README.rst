@@ -271,19 +271,19 @@ Content range is not defined:
 Dependencies
 ************
 
-This sample uses the following libraries:
+This sample uses the following |NCS| libraries:
 
-From |NCS|
-  * :ref:`lib_aws_fota`
-  * ``drivers/lte_link_control``
+* :ref:`lib_aws_fota`
+* :ref:`lte_lc_readme`
 
-From nrfxlib
-  * :ref:`nrfxlib:bsdlib`
+It uses the following `sdk-nrfxlib`_ library:
 
-From Zephyr
-  * :ref:`MQTT <zephyr:networking_api>`
+* :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following samples:
+It uses the following Zephyr library:
 
-From |NCS|
-  * :ref:`secure_partition_manager`
+* :ref:`MQTT <zephyr:networking_api>`
+
+In addition, it uses the following sample:
+
+* :ref:`secure_partition_manager`

@@ -17,7 +17,7 @@
 #include <sys/util.h>
 #include <settings/settings.h>
 
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_socket.h>
 #endif
 
@@ -310,7 +310,7 @@ static bool control_channel_topic_match(uint32_t list_id,
 static int nct_client_id_get(char *id)
 {
 #if !defined(NRF_CLOUD_CLIENT_ID)
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 	int at_socket_fd;
 	int bytes_written;
 	int bytes_read;
@@ -333,7 +333,7 @@ static int nct_client_id_get(char *id)
 	__ASSERT_NO_MSG(ret == 0);
 #else
 #error Missing NRF_CLOUD_CLIENT_ID
-#endif /* defined(CONFIG_BSD_LIBRARY) */
+#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 #else
 	memcpy(id, NRF_CLOUD_CLIENT_ID, NRF_CLOUD_CLIENT_ID_LEN + 1);
 #endif /* !defined(NRF_CLOUD_CLIENT_ID) */
@@ -410,7 +410,7 @@ static int nct_provision(void)
 	nct.tls_config.hostname = NRF_CLOUD_HOSTNAME;
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 	{
 		int err;
 
@@ -488,7 +488,7 @@ static int nct_provision(void)
 			return err;
 		}
 	}
-#endif /* defined(CONFIG_BSD_LIBRARY) */
+#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 #endif /* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) */
 
 	return 0;

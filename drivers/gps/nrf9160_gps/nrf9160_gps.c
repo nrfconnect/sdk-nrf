@@ -20,7 +20,7 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/lte_lc.h>
 #endif
-#include <modem/bsdlib.h>
+#include <modem/nrf_modem_lib.h>
 
 LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);
 
@@ -309,7 +309,7 @@ wait:
 				atomic_set(&drv_data->is_shutdown, 1);
 				nrf_close(drv_data->socket);
 
-				bsdlib_shutdown_wait();
+				nrf_modem_lib_shutdown_wait();
 				if (open_socket(drv_data) != 0) {
 					LOG_ERR("Failed to open socket after "
 						"shutdown sleep, killing thread");
@@ -679,7 +679,7 @@ set_configuration:
 
 	/* The GPS is started before setting NRF_SO_GNSS_ENABLE_PRIORITY or
 	 * NRF_SO_GNSS_DISABLE_PRIORITY as that's currently a requirement
-	 * by bsdlib.
+	 * in Modem library.
 	 */
 	retval = nrf_setsockopt(drv_data->socket,
 				NRF_SOL_GNSS,

@@ -119,7 +119,7 @@ nRF9160
   * :ref:`lib_aws_iot` - enables applications to connect to and exchange messages with the AWS IoT message broker.
     The library supports TLS-secured MQTT transmissions and firmware over-the-air upgrades.
   * :ref:`modem_key_mgmt` - provides functions to provision security credentials to the nRF9160 modem.
-    The library replaces the ``nrf_inbuilt_key`` APIs from the :ref:`nrfxlib:bsdlib`.
+    The library replaces the ``nrf_inbuilt_key`` APIs from the BSD library.
   * :ref:`lib_zzhc` - implements the self-registration functionality that is required to connect to the China Telecom network.
   * :ref:`supl_client` - integrates the externally hosted SUPL client library.
     This library implements A-GPS data downloading from a SUPL server.
@@ -203,7 +203,7 @@ Updated drivers
 BSD library
 -----------
 
-* Updated the :ref:`nrfxlib:bsdlib` to version 0.6.1.
+* Updated the BSD library to version 0.6.1.
 
 
 nRF5340
@@ -518,7 +518,7 @@ Documentation
 
   * nrfxlib:
 
-    * :ref:`nrfxlib:bsdlib` - extended and restructured the content
+    * BSD library - extended and restructured the content
     * :ref:`nrfxlib:mpsl` - added
     * :ref:`nrfxlib:softdevice_controller_readme` - updated to match current version of the nRF Bluetooth LE Controller
 
@@ -530,7 +530,7 @@ Known issues
 nRF9160
 =======
 
-* The :c:func:`nrf_send` function in the :ref:`nrfxlib:bsdlib` might be blocking for several minutes, even if the socket is configured for non-blocking operation.
+* The :c:func:`nrf_send` function in the BSD library might be blocking for several minutes, even if the socket is configured for non-blocking operation.
   The behavior depends on the cellular network connection.
 * The :ref:`gps_with_supl_support_sample` sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
   As a workaround, insert a delay (``k_sleep()``) of a few seconds after the ``printf`` on line 294 in :file:`main.c`.

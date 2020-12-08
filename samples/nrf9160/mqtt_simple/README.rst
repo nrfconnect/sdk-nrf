@@ -165,18 +165,18 @@ If you experience problems connecting to the MQTT broker, try switching to anoth
 Dependencies
 ************
 
-This sample uses the following |NCS| libraries:
+This sample uses the following |NCS| library:
 
 * :ref:`lte_lc_readme`
 
-It uses the following `sdk-nrfxlib`_ libraries:
+It uses the following `sdk-nrfxlib`_ library:
 
-* :ref:`nrfxlib:bsdlib`
+* :ref:`nrfxlib:nrf_modem`
 
-It uses the following Zephyr libraries:
+It uses the following Zephyr library:
 
 * :ref:`MQTT <zephyr:networking_api>`
 
-In addition, it uses the following |NCS| samples:
+In addition, it uses the following |NCS| sample:
 
 * :ref:`secure_partition_manager`

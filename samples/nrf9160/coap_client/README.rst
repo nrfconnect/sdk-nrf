@@ -85,21 +85,21 @@ For the above sample output, the information displayed on the terminal conveys t
 Dependencies
 ************
 
-This sample uses the following libraries:
+This sample uses the following |NCS| libraries:
 
-From |NCS|
-  * ``drivers/lte_link_control``
+* :ref:`lte_lc_readme`
 
-From nrfxlib
-  * :ref:`nrfxlib:bsdlib`
+It uses the following `sdk-nrfxlib`_ library:
 
-From Zephyr
-  * :ref:`CoAP <zephyr:networking_api>`
+* :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following samples:
+It uses the following Zephyr library:
 
-From |NCS|
-  * :ref:`secure_partition_manager`
+* :ref:`CoAP <zephyr:networking_api>`
+
+In addition, it uses the following sample:
+
+* :ref:`secure_partition_manager`
 
 References
 **********

@@ -171,7 +171,7 @@ Changes
 =======
 
 * Numerous stability fixes and improvements.
-* Updated bsdlib version dependency.
+* Updated Modem library version dependency.
 * Fixed an issue where high LTE network activity could prevent modem firmware updates over LwM2M.
 
 * Added the following library events:
