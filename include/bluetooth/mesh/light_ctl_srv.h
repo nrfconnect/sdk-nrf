@@ -189,8 +189,8 @@ struct bt_mesh_light_ctl_srv {
  * Asynchronously publishes a CTL status message with the configured
  * publish parameters.
  *
- * @note This API is only used publishing unprompted status messages. Response
- * messages for get and set messages are handled internally.
+ * @note This API is only used for publishing unprompted status messages.
+ * Response messages for get and set messages are handled internally.
  *
  * @param[in] srv Server instance to publish on.
  * @param[in] ctx Message context to send with, or NULL to send with the
@@ -211,8 +211,8 @@ int32_t bt_mesh_light_ctl_pub(struct bt_mesh_light_ctl_srv *srv,
  * Asynchronously publishes a CTL Range status message with the configured
  * publish parameters.
  *
- * @note This API is only used publishing unprompted status messages. Response
- * messages for get and set messages are handled internally.
+ * @note This API is only used for publishing unprompted status messages.
+ * Response messages for get and set messages are handled internally.
  *
  * @param[in] srv Server instance to publish on.
  * @param[in] ctx Message context to send with, or NULL to send with the
@@ -233,8 +233,8 @@ int32_t bt_mesh_light_ctl_range_pub(struct bt_mesh_light_ctl_srv *srv,
  * Asynchronously publishes a CTL Default status message with the configured
  * publish parameters.
  *
- * @note This API is only used publishing unprompted status messages. Response
- * messages for get and set messages are handled internally.
+ * @note This API is only used for publishing unprompted status messages.
+ * Response messages for get and set messages are handled internally.
  *
  * @param[in] srv Server instance to publish on.
  * @param[in] ctx Message context to send with, or NULL to send with the

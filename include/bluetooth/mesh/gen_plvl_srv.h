@@ -165,8 +165,8 @@ struct bt_mesh_plvl_srv {
  * Publishes a Generic Power Level status message with the configured publish
  * parameters, or using the given message context.
  *
- * @note This API is only used publishing unprompted status messages. Response
- * messages for get and set messages are handled internally.
+ * @note This API is only used for publishing unprompted status messages.
+ * Response messages for get and set messages are handled internally.
  *
  * @param[in] srv Server instance to publish with.
  * @param[in] ctx Message context, or NULL to publish with the configured
