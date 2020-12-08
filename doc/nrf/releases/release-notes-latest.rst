@@ -72,6 +72,7 @@ nRF9160
 
 * Updated:
 
+  * :ref:`nrfxlib:nrf_modem` - BSD library has been renamed to ``nrf_modem`` (Modem library) and ``nrf_modem_lib`` (glue).
   * :ref:`lib_download_client` library:
 
     * Re-introduced optional TCP timeout (enabled by default) on the TCP socket used for the download.

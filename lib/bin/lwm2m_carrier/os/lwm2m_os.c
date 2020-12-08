@@ -11,13 +11,13 @@
 #include <stdbool.h>
 #include <zephyr.h>
 #include <string.h>
-#include <bsd.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
+#include <nrf_modem.h>
 #include <modem/lte_lc.h>
-#include <modem/bsdlib.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/download_client.h>
 #include <power/reboot.h>
@@ -296,7 +296,7 @@ int lwm2m_os_bsdlib_init(void)
 {
 	int err;
 
-	err = bsdlib_init();
+	err = nrf_modem_lib_init();
 
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
@@ -317,7 +317,7 @@ int lwm2m_os_bsdlib_init(void)
 		lwm2m_os_log(LOG_LEVEL_ERR, "Fatal error.");
 		break;
 	case -1:
-		lwm2m_os_log(LOG_LEVEL_ERR, "Could not initialize bsdlib.");
+		lwm2m_os_log(LOG_LEVEL_ERR, "Could not initialize modem library.");
 		lwm2m_os_log(LOG_LEVEL_ERR, "Fatal error.");
 		break;
 	default:
@@ -329,7 +329,7 @@ int lwm2m_os_bsdlib_init(void)
 
 int lwm2m_os_bsdlib_shutdown(void)
 {
-	return bsdlib_shutdown();
+	return nrf_modem_lib_shutdown();
 }
 
 /* AT command module abstractions. */

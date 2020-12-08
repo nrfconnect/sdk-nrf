@@ -43,8 +43,8 @@ if (CONFIG_NVS AND NOT CONFIG_SETTINGS_NVS)
   ncs_add_partition_manager_config(pm.yml.nvs)
 endif()
 
-if (CONFIG_BSD_LIBRARY)
-  ncs_add_partition_manager_config(pm.yml.bsdlib)
+if (CONFIG_NRF_MODEM_LIB)
+  ncs_add_partition_manager_config(pm.yml.libmodem)
 endif()
 
 if (CONFIG_BT_RPMSG_NRF53)

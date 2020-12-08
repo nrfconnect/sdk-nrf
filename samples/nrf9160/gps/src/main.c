@@ -68,7 +68,7 @@ static nrf_gnss_data_frame_t last_pvt;
 
 K_SEM_DEFINE(lte_ready, 0, 1);
 
-void bsd_recoverable_error_handler(uint32_t error)
+void nrf_modem_recoverable_error_handler(uint32_t error)
 {
 	printf("Err: %lu\n", (unsigned long)error);
 }

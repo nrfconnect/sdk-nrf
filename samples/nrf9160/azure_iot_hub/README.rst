@@ -150,10 +150,10 @@ This sample uses the following |NCS| libraries and drivers:
 * :ref:`lib_azure_iot_hub`
 * :ref:`lte_lc_readme`
 
-It uses the following `sdk-nrfxlib`_ libraries:
+It uses the following `sdk-nrfxlib`_ library:
 
-* :ref:`nrfxlib:bsdlib`
+* :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following |NCS| sample:
+In addition, it uses the following sample:
 
 * :ref:`secure_partition_manager`

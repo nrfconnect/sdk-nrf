@@ -107,21 +107,21 @@ The following is a sample output of the command: :command:`AT%XMONITOR`
 Dependencies
 ************
 
-This sample uses the following libraries:
+This sample uses the following |NCS| libraries:
 
-From |NCS|
-  * ``lib/at_host`` which includes:
 
-    * :ref:`at_cmd_readme`
-    * :ref:`at_notif_readme`
+* :ref:`lib_at_host` which includes:
 
-From nrfxlib
-  * :ref:`nrfxlib:bsdlib`
+   * :ref:`at_cmd_readme`
+   * :ref:`at_notif_readme`
 
-In addition, it uses the following samples:
+It uses the following `sdk-nrfxlib`_ library:
 
-From |NCS|
-  * :ref:`secure_partition_manager`
+* :ref:`nrfxlib:nrf_modem`
+
+In addition, it uses the following sample:
+
+* :ref:`secure_partition_manager`
 
 
 References

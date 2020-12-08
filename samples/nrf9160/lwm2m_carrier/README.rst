@@ -54,19 +54,18 @@ To completely restart and trigger a new bootstrap, the device must be erased and
 Dependencies
 ************
 
-This sample uses the following libraries:
+This sample uses the following |NCS| libraries:
 
-From |NCS|
-  * |NCS| modules abstracted via the LwM2M carrier OS abstraction layer (:file:`lwm2m_os.h`)
+* |NCS| modules abstracted via the LwM2M carrier OS abstraction layer (:file:`lwm2m_os.h`)
 
   .. include:: /../../lib/bin/lwm2m_carrier/doc/app_integration.rst
     :start-after: lwm2m_osal_mod_list_start
     :end-before: lwm2m_osal_mod_list_end
 
-From nrfxlib
-  * :ref:`nrfxlib:bsdlib`
+It uses the following `sdk-nrfxlib`_ library:
 
-In addition, it uses the following samples:
+* :ref:`nrfxlib:nrf_modem`
 
-From |NCS|
-  * :ref:`secure_partition_manager`
+In addition, it uses the following sample:
+
+* :ref:`secure_partition_manager`

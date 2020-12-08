@@ -46,7 +46,7 @@ static int certificates_provision(void)
 
 	LOG_INF("Provisioning certificates");
 
-#if defined(CONFIG_BSD_LIBRARY) && defined(CONFIG_MODEM_KEY_MGMT)
+#if defined(CONFIG_NRF_MODEM_LIB) && defined(CONFIG_MODEM_KEY_MGMT)
 
 	err = modem_key_mgmt_write(CONFIG_MQTT_TLS_SEC_TAG,
 				   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
@@ -74,15 +74,15 @@ static int certificates_provision(void)
 }
 #endif /* defined(CONFIG_MQTT_LIB_TLS) */
 
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 
-/**@brief Recoverable BSD library error. */
-void bsd_recoverable_error_handler(uint32_t err)
+/**@brief Recoverable modem library error. */
+void nrf_modem_recoverable_error_handler(uint32_t err)
 {
-	LOG_ERR("bsdlib recoverable error: %u", (unsigned int)err);
+	LOG_ERR("Modem library recoverable error: %u", (unsigned int)err);
 }
 
-#endif /* defined(CONFIG_BSD_LIBRARY) */
+#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 
 #if defined(CONFIG_LWM2M_CARRIER)
 K_SEM_DEFINE(carrier_registered, 0, 1);
@@ -392,7 +392,7 @@ static int client_init(struct mqtt_client *client)
 	tls_cfg->sec_tag_list = sec_tag_list;
 	tls_cfg->hostname = CONFIG_MQTT_BROKER_HOSTNAME;
 
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 	tls_cfg->session_cache = IS_ENABLED(CONFIG_MQTT_TLS_SESSION_CACHING) ?
 					    TLS_SESSION_CACHE_ENABLED :
 					    TLS_SESSION_CACHE_DISABLED;

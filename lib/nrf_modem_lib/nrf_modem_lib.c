@@ -8,16 +8,16 @@
 #include <device.h>
 #include <zephyr.h>
 #include <zephyr/types.h>
-
-#include <bsd.h>
-#include <bsd_platform.h>
+#include <nrfx_ipc.h>
+#include <nrf_modem.h>
+#include <nrf_modem_platform.h>
 
 #ifdef CONFIG_LTE_LINK_CONTROL
 #include <modem/lte_lc.h>
 #endif
 
 #ifndef CONFIG_TRUSTED_EXECUTION_NONSECURE
-#error  bsdlib must be run as non-secure firmware.\
+#error  nrf_modem_lib must be run as non-secure firmware.\
 	Are you building for the correct board ?
 #endif
 
@@ -30,11 +30,9 @@ static sys_slist_t shutdown_threads;
 static bool first_time_init;
 static struct k_mutex slist_mutex;
 
-extern void ipc_proxy_irq_handler(void);
-
 static int init_ret;
 
-static int _bsdlib_init(const struct device *unused)
+static int _nrf_modem_lib_init(const struct device *unused)
 {
 	if (!first_time_init) {
 		sys_slist_init(&shutdown_threads);
@@ -42,19 +40,19 @@ static int _bsdlib_init(const struct device *unused)
 		first_time_init = true;
 	}
 
-	/* Setup the network IRQ used by the BSD library.
-	 * Note: No call to irq_enable() here, that is done through bsd_init().
+	/* Setup the network IRQ used by the Modem library.
+	 * Note: No call to irq_enable() here, that is done through nrf_modem_init().
 	 */
-	IRQ_DIRECT_CONNECT(BSD_NETWORK_IRQ, BSD_NETWORK_IRQ_PRIORITY,
-			   ipc_proxy_irq_handler, 0);
+	IRQ_CONNECT(NRF_MODEM_NETWORK_IRQ, NRF_MODEM_NETWORK_IRQ_PRIORITY,
+		    nrfx_isr, nrfx_ipc_irq_handler, 0);
 
-	const bsd_init_params_t init_params = {
+	const nrf_modem_init_params_t init_params = {
 		.trace_on = true,
-		.bsd_memory_address = BSD_RESERVED_MEMORY_ADDRESS,
-		.bsd_memory_size = BSD_RESERVED_MEMORY_SIZE
+		.memory_address = NRF_MODEM_RESERVED_MEMORY_ADDRESS,
+		.memory_size = NRF_MODEM_RESERVED_MEMORY_SIZE
 	};
 
-	init_ret = bsd_init(&init_params);
+	init_ret = nrf_modem_init(&init_params);
 
 	k_mutex_lock(&slist_mutex, K_FOREVER);
 	if (sys_slist_peek_head(&shutdown_threads) != NULL) {
@@ -68,8 +66,8 @@ static int _bsdlib_init(const struct device *unused)
 	}
 	k_mutex_unlock(&slist_mutex);
 
-	if (IS_ENABLED(CONFIG_BSD_LIBRARY_SYS_INIT)) {
-		/* bsd_init() returns values from a different namespace
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
+		/* nrf_modem_init() returns values from a different namespace
 		 * than Zephyr's. Make sure to return something in Zephyr's
 		 * namespace, in this case 0, when called during SYS_INIT.
 		 * Non-zero values in SYS_INIT are currently ignored.
@@ -80,7 +78,7 @@ static int _bsdlib_init(const struct device *unused)
 	return init_ret;
 }
 
-void bsdlib_shutdown_wait(void)
+void nrf_modem_lib_shutdown_wait(void)
 {
 	struct shutdown_thread thread;
 
@@ -97,27 +95,27 @@ void bsdlib_shutdown_wait(void)
 	k_mutex_unlock(&slist_mutex);
 }
 
-int bsdlib_init(void)
+int nrf_modem_lib_init(void)
 {
-	return _bsdlib_init(NULL);
+	return _nrf_modem_lib_init(NULL);
 }
 
-int bsdlib_get_init_ret(void)
+int nrf_modem_lib_get_init_ret(void)
 {
 	return init_ret;
 }
 
-int bsdlib_shutdown(void)
+int nrf_modem_lib_shutdown(void)
 {
 #ifdef CONFIG_LTE_LINK_CONTROL
 	lte_lc_deinit();
 #endif
-	bsd_shutdown();
+	nrf_modem_shutdown();
 
 	return 0;
 }
 
-#if defined(CONFIG_BSD_LIBRARY_SYS_INIT)
+#if defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
 /* Initialize during SYS_INIT */
-SYS_INIT(_bsdlib_init, POST_KERNEL, 0);
+SYS_INIT(_nrf_modem_lib_init, POST_KERNEL, 0);
 #endif

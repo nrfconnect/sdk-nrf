@@ -5,19 +5,18 @@
  */
 
 #include <string.h>
-#include <bsd_os.h>
-#include <bsd_platform.h>
-
-#include <nrf.h>
-#include <nrf_errno.h>
-
 #include <init.h>
 #include <zephyr.h>
 #include <zephyr/types.h>
+#include <nrf_modem_os.h>
+#include <nrf_modem_platform.h>
+#include <nrf.h>
+#include <nrfx_ipc.h>
+#include <nrf_errno.h>
 #include <errno.h>
 #include <logging/log.h>
 
-#ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
 #include <nrfx_uarte.h>
 #endif
 
@@ -43,7 +42,7 @@
 #define TRACE_IRQ EGU2_IRQn
 #define TRACE_IRQ_PRIORITY 6
 
-#ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
 /* Use UARTE1 as a dedicated peripheral to print traces. */
 static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 #endif
@@ -52,7 +51,7 @@ void IPC_IRQHandler(void);
 
 #define THREAD_MONITOR_ENTRIES 10
 
-LOG_MODULE_REGISTER(bsdlib);
+LOG_MODULE_REGISTER(nrf_modem_lib);
 
 struct sleeping_thread {
 	sys_snode_t node;
@@ -74,7 +73,7 @@ static sys_slist_t sleeping_threads;
 static atomic_t rpc_event_cnt;
 
 /* Get thread monitor structure assigned to a specific thread id, with a RPC
- * counter value at which bsdlib last checked the 'readiness' of a thread
+ * counter value at which nrf_modem_lib last checked the 'readiness' of a thread
  */
 static struct thread_monitor_entry *thread_monitor_entry_get(k_tid_t id)
 {
@@ -112,7 +111,7 @@ static void thread_monitor_entry_update(struct thread_monitor_entry *entry)
 }
 
 /* Verify that thread can be put into sleep (no RPC event occured in a
- * meantime), or whether we should return to bsdlib to re-verify if a sleep is
+ * meantime), or whether we should return to nrf_modem_lib to re-verify if a sleep is
  * needed.
  */
 static bool can_thread_sleep(struct thread_monitor_entry *entry)
@@ -170,7 +169,7 @@ static void sleeping_thread_remove(struct sleeping_thread *thread)
 	irq_unlock(key);
 }
 
-int32_t bsd_os_timedwait(uint32_t context, int32_t *timeout)
+int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 {
 	struct sleeping_thread thread;
 	int64_t start, remaining;
@@ -211,7 +210,7 @@ int32_t bsd_os_timedwait(uint32_t context, int32_t *timeout)
 	return 0;
 }
 
-void bsd_os_errno_set(int err_code)
+void nrf_modem_os_errno_set(int err_code)
 {
 	switch (err_code) {
 	case NRF_EPERM:
@@ -330,47 +329,38 @@ void bsd_os_errno_set(int err_code)
 		 * Log the untranslated errno and return a magic value
 		 * to make sure this situation is clearly distinguishable.
 		 */
-		__ASSERT(false, "Untranslated errno %d set by bsdlib!", err_code);
-		LOG_ERR("Untranslated errno %d set by bsdlib!", err_code);
+		__ASSERT(false, "Untranslated errno %d set by nrf_modem_lib!", err_code);
+		LOG_ERR("Untranslated errno %d set by nrf_modem_lib!", err_code);
 		errno = 0xBAADBAAD;
 		break;
 	}
 }
 
-void bsd_os_application_irq_set(void)
+void nrf_modem_os_application_irq_set(void)
 {
-	NVIC_SetPendingIRQ(BSD_APPLICATION_IRQ);
+	NVIC_SetPendingIRQ(NRF_MODEM_APPLICATION_IRQ);
 }
 
-void bsd_os_application_irq_clear(void)
+void nrf_modem_os_application_irq_clear(void)
 {
-	NVIC_ClearPendingIRQ(BSD_APPLICATION_IRQ);
+	NVIC_ClearPendingIRQ(NRF_MODEM_APPLICATION_IRQ);
 }
 
-void bsd_os_trace_irq_set(void)
+void nrf_modem_os_trace_irq_set(void)
 {
 	NVIC_SetPendingIRQ(TRACE_IRQ);
 }
 
-void bsd_os_trace_irq_clear(void)
+void nrf_modem_os_trace_irq_clear(void)
 {
 	NVIC_ClearPendingIRQ(TRACE_IRQ);
-}
-
-ISR_DIRECT_DECLARE(ipc_proxy_irq_handler)
-{
-	IPC_IRQHandler();
-	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
-			  */
-
-	return 1; /* We should check if scheduling decision should be made */
 }
 
 ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 {
 	atomic_inc(&rpc_event_cnt);
 
-	bsd_os_application_irq_handler();
+	nrf_modem_os_application_irq_handler();
 
 	struct sleeping_thread *thread;
 
@@ -390,7 +380,7 @@ ISR_DIRECT_DECLARE(trace_proxy_irq_handler)
 	 * Process traces.
 	 * The function has to be called even if UART traces are disabled.
 	 */
-	bsd_os_trace_irq_handler();
+	nrf_modem_os_trace_irq_handler();
 	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
 			  */
 	return 1; /* We should check if scheduling decision should be made */
@@ -405,14 +395,14 @@ void trace_task_create(void)
 
 void read_task_create(void)
 {
-	IRQ_DIRECT_CONNECT(BSD_APPLICATION_IRQ, BSD_APPLICATION_IRQ_PRIORITY,
+	IRQ_DIRECT_CONNECT(NRF_MODEM_APPLICATION_IRQ, NRF_MODEM_APPLICATION_IRQ_PRIORITY,
 			   rpc_proxy_irq_handler, UNUSED_FLAGS);
-	irq_enable(BSD_APPLICATION_IRQ);
+	irq_enable(NRF_MODEM_APPLICATION_IRQ);
 }
 
 void trace_uart_init(void)
 {
-#ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
 	/* UART pins are defined in "nrf9160dk_nrf9160.dts". */
 	const nrfx_uarte_config_t config = {
 		/* Use UARTE1 pins routed on VCOM2. */
@@ -436,8 +426,8 @@ void trace_uart_init(void)
 #endif
 }
 
-/* This function is called by bsd_init and must not be called explicitly. */
-void bsd_os_init(void)
+/* This function is called by nrf_modem_init and must not be called explicitly. */
+void nrf_modem_os_init(void)
 {
 	sys_slist_init(&sleeping_threads);
 	atomic_clear(&rpc_event_cnt);
@@ -449,9 +439,9 @@ void bsd_os_init(void)
 	trace_task_create();
 }
 
-int32_t bsd_os_trace_put(const uint8_t * const data, uint32_t len)
+int32_t nrf_modem_os_trace_put(const uint8_t * const data, uint32_t len)
 {
-#ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
 	/* Max DMA transfers are 255 bytes.
 	 * Split RAM buffer into smaller chunks
 	 * to be transferred using DMA.

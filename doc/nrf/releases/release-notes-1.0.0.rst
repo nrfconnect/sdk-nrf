@@ -115,7 +115,7 @@ nRF9160
 BSD library
 -----------
 
-* Updated bsdlib to version 0.3.3.
+* Updated BSD library to version 0.3.3.
 * Introduced a new header :file:`bsdlib.h` to be used by the application to initialize and shut down the library.
 * Library initialization during system initialization (``SYS_INIT``) is now optional, and controlled via ``Kconfig``. The default behavior is unchanged.
 

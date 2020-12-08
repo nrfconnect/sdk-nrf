@@ -9,7 +9,7 @@ config COAP_UTILS
 	depends on NET_SOCKETS
 	help
 	  Send and receive CoAP non-confirmable requests.
-	  Utilize CoAP and BSD Socket libraries.
+	  Utilize CoAP and Modem libraries.
 
 if COAP_UTILS
 

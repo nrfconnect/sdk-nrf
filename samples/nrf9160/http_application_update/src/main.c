@@ -6,11 +6,11 @@
 #include <zephyr.h>
 #include <drivers/gpio.h>
 #include <drivers/flash.h>
-#include <bsd.h>
+#include <nrf_modem.h>
 #include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
-#include <modem/bsdlib.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/fota_download.h>
 #include <dfu/mcuboot.h>
@@ -23,10 +23,10 @@ static struct		gpio_callback gpio_cb;
 static struct k_work	fota_work;
 
 
-/**@brief Recoverable BSD library error. */
-void bsd_recoverable_error_handler(uint32_t err)
+/**@brief Recoverable modem library error. */
+void nrf_modem_recoverable_error_handler(uint32_t err)
 {
-	printk("bsdlib recoverable error: %u\n", err);
+	printk("Modem library recoverable error: %u\n", err);
 }
 
 int cert_provision(void)
@@ -195,8 +195,8 @@ static void modem_configure(void)
 	BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			"This sample does not support auto init and connect");
 	int err;
-#if !defined(CONFIG_BSD_LIBRARY_SYS_INIT)
-	/* Initialize AT only if bsdlib_init() is manually
+#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
+	/* Initialize AT only if nrf_modem_lib_init() is manually
 	 * called by the main application
 	 */
 	err = at_notif_init();
@@ -244,14 +244,14 @@ void main(void)
 	int err;
 
 	printk("HTTP application update sample started\n");
-	printk("Initializing bsdlib\n");
-#if !defined(CONFIG_BSD_LIBRARY_SYS_INIT)
-	err = bsdlib_init();
+	printk("Initializing modem library\n");
+#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
+	err = nrf_modem_lib_init();
 #else
-	/* If bsdlib is initialized on post-kernel we should
-	 * fetch the returned error code instead of bsdlib_init
+	/* If nrf_modem_lib is initialized on post-kernel we should
+	 * fetch the returned error code instead of nrf_modem_lib_init
 	 */
-	err = bsdlib_get_init_ret();
+	err = nrf_modem_lib_get_init_ret();
 #endif
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
@@ -270,13 +270,13 @@ void main(void)
 		printk("Fatal error.\n");
 		break;
 	case -1:
-		printk("Could not initialize bsdlib.\n");
+		printk("Could not initialize momdem library.\n");
 		printk("Fatal error.\n");
 		return;
 	default:
 		break;
 	}
-	printk("Initialized bsdlib\n");
+	printk("Initialized modem library\n");
 
 	modem_configure();
 

@@ -7,7 +7,7 @@
 #include <string.h>
 #include <zephyr.h>
 #include <stdlib.h>
-#include <modem/bsdlib.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
@@ -194,9 +194,9 @@ void main(void)
 
 	printk("Download client sample started\n");
 
-	err = bsdlib_init();
+	err = nrf_modem_lib_init();
 	if (err) {
-		printk("Failed to initialize bsdlib!");
+		printk("Failed to initialize modem library!");
 		return;
 	}
 

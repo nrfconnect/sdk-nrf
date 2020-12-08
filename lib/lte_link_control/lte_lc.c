@@ -97,7 +97,7 @@ static int parse_psm_cfg(struct at_param_list *at_params,
 static lte_lc_evt_handler_t evt_handler;
 static bool is_initialized;
 
-#if defined(CONFIG_BSD_LIBRARY_TRACE_ENABLED)
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
 /* Enable modem trace */
 static const char mdm_trace[] = "AT%XMODEMTRACE=1,2";
 #endif
@@ -176,14 +176,14 @@ static const char *const system_mode_params[] = {
 	[LTE_LC_SYSTEM_MODE_NBIOT_GPS]	= "0,1,1,0",
 };
 
-#if !defined(CONFIG_BSD_LIBRARY_SYS_INIT) && \
+#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT) && \
 	defined(CONFIG_BOARD_THINGY91_NRF9160NS)
 static const char thingy91_magpio[] = {
 	"AT%XMAGPIO=1,1,1,7,1,746,803,2,698,748,"
 	"2,1710,2200,3,824,894,4,880,960,5,791,849,"
 	"7,1565,1586"
 };
-#endif /* !CONFIG_BSD_LIBRARY_SYS_INIT && CONFIG_BOARD_THINGY91_NRF9160NS */
+#endif /* !CONFIG_NRF_MODEM_LIB_SYS_INIT && CONFIG_BOARD_THINGY91_NRF9160NS */
 
 static struct k_sem link;
 
@@ -544,7 +544,7 @@ static int w_lte_lc_init(void)
 			sys_mode_current);
 	}
 
-#if !defined(CONFIG_BSD_LIBRARY_SYS_INIT) && \
+#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT) && \
 	defined(CONFIG_BOARD_THINGY91_NRF9160NS)
 	/* Configuring MAGPIO, so that the correct antenna
 	 * matching network is used for each LTE band and GPS.
@@ -560,7 +560,7 @@ static int w_lte_lc_init(void)
 		return -EIO;
 	}
 #endif
-#if defined(CONFIG_BSD_LIBRARY_TRACE_ENABLED)
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
 	if (at_cmd_write(mdm_trace, NULL, 0, NULL) != 0) {
 		return -EIO;
 	}

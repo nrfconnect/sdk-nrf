@@ -9,10 +9,10 @@
 #include <stdio.h>
 #include <net/socket.h>
 #include <init.h>
-#include <bsd_limits.h>
+#include <nrf_modem_limits.h>
 
 #include <modem/at_cmd.h>
-#include <modem/bsdlib.h>
+#include <modem/nrf_modem_lib.h>
 
 LOG_MODULE_REGISTER(at_cmd, CONFIG_AT_CMD_LOG_LEVEL);
 
@@ -250,13 +250,13 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 				LOG_DBG("AT host is going down, sleeping");
 				atomic_set(&shutdown_mode, 1);
 				close(common_socket_fd);
-				bsdlib_shutdown_wait();
+				nrf_modem_lib_shutdown_wait();
 				LOG_DBG("AT host available, "
 					"starting the thread again");
 				atomic_clear(&shutdown_mode);
 				if (open_socket() != 0) {
 					LOG_ERR("Failed to open AT socket "
-						"after bsdlib init, "
+						"after nrf_modem_lib init, "
 						"err: %d", errno);
 				}
 

@@ -8,7 +8,7 @@ menu "Libraries"
 
 rsource "agps/Kconfig"
 rsource "bin/Kconfig"
-rsource "bsdlib/Kconfig"
+rsource "nrf_modem_lib/Kconfig"
 rsource "adp536x/Kconfig"
 rsource "at_cmd/Kconfig"
 rsource "st25r3911b/Kconfig"

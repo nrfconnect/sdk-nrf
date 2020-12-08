@@ -20,7 +20,7 @@ extern "C"
  * @defgroup lwm2m_carrier_event LWM2M carrier library events
  * @{
  */
-/** BSD library initialized. */
+/** Modem library initialized. */
 #define LWM2M_CARRIER_EVENT_BSDLIB_INIT   1
 /** Connecting to the LTE network. */
 #define LWM2M_CARRIER_EVENT_CONNECTING    2

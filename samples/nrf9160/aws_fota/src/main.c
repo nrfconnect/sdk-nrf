@@ -6,13 +6,13 @@
 
 #include <zephyr.h>
 #include <stdio.h>
-#include <bsd.h>
+#include <nrf_modem.h>
 #include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
 #include <net/mqtt.h>
 #include <net/socket.h>
-#include <modem/bsdlib.h>
+#include <modem/nrf_modem_lib.h>
 #include <net/aws_jobs.h>
 #include <net/aws_fota.h>
 #include <dfu/mcuboot.h>
@@ -63,14 +63,14 @@ static bool do_reboot;
 /* Set to true when application should reconnect the LTE link*/
 static bool link_offline;
 
-#if defined(CONFIG_BSD_LIBRARY)
-/**@brief Recoverable BSD library error. */
-void bsd_recoverable_error_handler(uint32_t err)
+#if defined(CONFIG_NRF_MODEM_LIB)
+/**@brief Recoverable modem library error. */
+void nrf_modem_recoverable_error_handler(uint32_t err)
 {
-	printk("bsdlib recoverable error: %u\n", err);
+	printk("Modem library recoverable error: %u\n", err);
 }
 
-#endif /* defined(CONFIG_BSD_LIBRARY) */
+#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 
 #if !defined(CONFIG_USE_NRF_CLOUD)
 /* Topic for updating shadow topic with version number */
@@ -529,8 +529,8 @@ void main(void)
 	struct mqtt_client client;
 
 	printk("MQTT AWS Jobs FOTA Sample, version: %s\n", CONFIG_APP_VERSION);
-	printk("Initializing bsdlib\n");
-	err = bsdlib_init();
+	printk("Initializing modem library\n");
+	err = nrf_modem_lib_init();
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
 		printk("Modem firmware update successful!\n");
@@ -548,13 +548,13 @@ void main(void)
 		printk("Fatal error.\n");
 		break;
 	case -1:
-		printk("Could not initialize bsdlib.\n");
+		printk("Could not initialize modem library.\n");
 		printk("Fatal error.\n");
 		return;
 	default:
 		break;
 	}
-	printk("Initialized bsdlib\n");
+	printk("Initialized modem library\n");
 
 	at_configure();
 #if defined(CONFIG_PROVISION_CERTIFICATES)

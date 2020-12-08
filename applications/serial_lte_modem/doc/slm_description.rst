@@ -2349,7 +2349,7 @@ This application uses the following |NCS| libraries:
 
 It uses the following `sdk-nrfxlib`_ libraries:
 
-* :ref:`nrfxlib:bsdlib`
+* :ref:`nrfxlib:nrf_modem`
 
 In addition, it uses the following samples:
 

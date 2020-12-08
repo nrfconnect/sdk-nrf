@@ -10,7 +10,7 @@
 #include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
-#include <bsd_limits.h>
+#include <nrf_modem_limits.h>
 #include <modem/modem_key_mgmt.h>
 #include <logging/log.h>
 

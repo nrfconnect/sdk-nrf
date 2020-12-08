@@ -9,7 +9,7 @@
 #include <drivers/gpio.h>
 #include <stdio.h>
 #include <net/lwm2m.h>
-#include <modem/bsdlib.h>
+#include <modem/nrf_modem_lib.h>
 #include <settings/settings.h>
 
 #include <logging/log.h>

@@ -8,7 +8,7 @@
 #include <zephyr.h>
 #include <stdlib.h>
 #include <net/socket.h>
-#include <modem/bsdlib.h>
+#include <modem/nrf_modem_lib.h>
 #include <net/tls_credentials.h>
 #include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
@@ -155,9 +155,9 @@ void main(void)
 
 	printk("HTTPS client sample started\n\r");
 
-	err = bsdlib_init();
+	err = nrf_modem_lib_init();
 	if (err) {
-		printk("Failed to initialize bsdlib!");
+		printk("Failed to initialize modem library!");
 		return;
 	}
 

@@ -7,7 +7,7 @@
 menuconfig LWM2M_CARRIER
 	bool "LwM2M carrier library"
 	depends on NEWLIB_LIBC
-	depends on BSD_LIBRARY && !BSD_LIBRARY_SYS_INIT
+	depends on NRF_MODEM_LIB && !NRF_MODEM_LIB_SYS_INIT
 	# Need a source of entropy
 	depends on ENTROPY_HAS_DRIVER
 	# Flash settings

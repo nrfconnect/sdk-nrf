@@ -10,13 +10,13 @@
 #include <drivers/uart.h>
 #include <drivers/gpio.h>
 #include <string.h>
-#include <bsd.h>
+#include <nrf_modem.h>
 #include <modem/lte_lc.h>
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_power.h>
 #include <hal/nrf_regulators.h>
 #include <modem/modem_info.h>
-#include <modem/bsdlib.h>
+#include <modem/nrf_modem_lib.h>
 #include <dfu/mcuboot.h>
 #include <power/reboot.h>
 #include <drivers/clock_control.h>
@@ -39,10 +39,10 @@ struct modem_param_info modem_param;
 char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 struct k_work_q slm_work_q;
 
-/**@brief Recoverable BSD library error. */
-void bsd_recoverable_error_handler(uint32_t err)
+/**@brief Recoverable modem library error. */
+void nrf_modem_recoverable_error_handler(uint32_t err)
 {
-	LOG_ERR("bsdlib recoverable error: %u", err);
+	LOG_ERR("Modem library recoverable error: %u", err);
 }
 
 static void exit_idle(struct k_work *work)
@@ -130,9 +130,9 @@ void enter_sleep(bool wake_up)
 #endif	/* CONFIG_SLM_GPIO_WAKEUP */
 }
 
-void handle_bsdlib_init_ret(void)
+void handle_nrf_modem_lib_init_ret(void)
 {
-	int ret = bsdlib_get_init_ret();
+	int ret = nrf_modem_lib_get_init_ret();
 
 	/* Handle return values relating to modem firmware update */
 	switch (ret) {
@@ -173,7 +173,7 @@ void start_execute(void)
 	}
 
 	/* check FOTA result */
-	handle_bsdlib_init_ret();
+	handle_nrf_modem_lib_init_ret();
 
 	err = modem_info_init();
 	if (err) {

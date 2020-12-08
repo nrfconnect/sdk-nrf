@@ -36,11 +36,11 @@ choice
 	  using HTTP or HTTPS. Use the largest fragment size when using HTTPS
 	  to reduce the bandwidth overhead due to the HTTP headers, which are
 	  sent for each fragment.
-	  When using the BSD library and TLS, the fragment size cannot exceed 2 kB.
+	  When using the Modem library and TLS, the fragment size cannot exceed 2 kB.
 
 config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_4096
 	bool "4096"
-	depends on !BSD_LIBRARY
+	depends on !NRF_MODEM_LIB
 	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 4096
 
 config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_2048

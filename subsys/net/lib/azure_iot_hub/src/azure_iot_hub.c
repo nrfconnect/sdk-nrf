@@ -751,7 +751,7 @@ static int broker_init(bool dps)
 }
 #endif /* !defined(CONFIG_AZURE_IOT_HUB_STATIC_IPV4) */
 
-#if !defined(CONFIG_BSD_LIBRARY)
+#if !defined(CONFIG_NRF_MODEM_LIB)
 static int certificates_provision(void)
 {
 	static bool certs_added;
@@ -794,7 +794,7 @@ static int certificates_provision(void)
 
 	return 0;
 }
-#endif /* !defined(CONFIG_BSD_LIBRARY) */
+#endif /* !defined(CONFIG_NRF_MODEM_LIB) */
 
 static int client_broker_init(struct mqtt_client *const client, bool dps)
 {
@@ -832,7 +832,7 @@ static int client_broker_init(struct mqtt_client *const client, bool dps)
 	tls_cfg->sec_tag_count		= ARRAY_SIZE(sec_tag_list);
 	tls_cfg->sec_tag_list		= sec_tag_list;
 
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 	tls_cfg->session_cache		=
 		IS_ENABLED(CONFIG_AZURE_IOT_HUB_TLS_SESSION_CACHING) ?
 			TLS_SESSION_CACHE_ENABLED : TLS_SESSION_CACHE_DISABLED;
@@ -845,7 +845,7 @@ static int client_broker_init(struct mqtt_client *const client, bool dps)
 		LOG_ERR("Could not provision certificates, error: %d", err);
 		return err;
 	}
-#endif /* !defined(CONFIG_BSD_LIBRARY) */
+#endif /* !defined(CONFIG_NRF_MODEM_LIB) */
 
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 	if (dps_get_reg_state() == DPS_STATE_REGISTERING) {

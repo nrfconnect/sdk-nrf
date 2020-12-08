@@ -119,7 +119,7 @@ nRF9160
 
 * :ref:`http_application_update_sample` sample:
 
-  * Added support for :ref:`nrfxlib:bsdlib` initialization at system startup.
+  * Added support for BSD library initialization at system startup.
   * Changed default download host and file name.
 
 * :ref:`lwm2m_client` sample:
@@ -150,10 +150,10 @@ nRF9160
   * Updated to version 0.9.0.
     See the :ref:`liblwm2m_carrier_changelog` for detailed information.
 
-* :ref:`nrfxlib:bsdlib`:
+* BSD library:
 
   * Updated to version 0.7.3.
-    See the :ref:`nrfxlib:bsdlib_changelog` for detailed information.
+    See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
 
 * :ref:`supl_client`:
 
@@ -444,7 +444,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`coap_utils_readme` - added
 * :ref:`tnep_poller_readme` and :ref:`tnep_tag_readme` - updated
 * :ref:`nrf_desktop_config_channel_script` - updated
-* :ref:`nrfxlib:bsdlib` - added documentation about :ref:`nrfxlib:gnss_extension`
+* BSD library - added documentation about :ref:`nrfxlib:gnss_extension`
 * :ref:`nrfxlib:mpsl` - added documentation about :ref:`nrfxlib:mpsl_timeslot`, :ref:`nrfxlib:mpsl_radio_notification`, and :ref:`nrfxlib:mpsl_tx_power_control`
 * :ref:`nrfxlib:nfc` - added documentation about :ref:`nrfxlib:type_2_tag` and :ref:`nrfxlib:type_4_tag`, updated the :ref:`nrfxlib:nfc_integration_notes`
 * :ref:`nrfxlib:nrf_security` - updated
@@ -461,7 +461,7 @@ nRF9160
 From v1.2.0
 -----------
 
-* The :c:func:`nrf_send` function in the :ref:`nrfxlib:bsdlib` might be blocking for several minutes, even if the socket is configured for non-blocking operation.
+* The :c:func:`nrf_send` function in the BSD library might be blocking for several minutes, even if the socket is configured for non-blocking operation.
   The behavior depends on the cellular network connection.
 * The :ref:`asset_tracker` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
 * The SEGGER Control Block cannot be found by automatic search by the RTT Viewer/Logger.

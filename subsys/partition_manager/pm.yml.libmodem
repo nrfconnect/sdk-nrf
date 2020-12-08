@@ -1,6 +1,6 @@
 #include <autoconf.h>
 
-bsdlib_sram:
+nrf_modem_lib_sram:
   placement: {after: [spm_sram, start]}
-  size: CONFIG_PM_PARTITION_SIZE_BSDLIB_SRAM
+  size: CONFIG_PM_PARTITION_SIZE_NRF_MODEM_LIB_SRAM
   region: sram_primary

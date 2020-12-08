@@ -14,7 +14,7 @@
 #include <net/aws_fota.h>
 #endif
 
-#if defined(CONFIG_BOARD_QEMU_X86) && !defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_BOARD_QEMU_X86) && !defined(CONFIG_NRF_MODEM_LIB)
 #include "certificates.h"
 #endif
 
@@ -230,7 +230,7 @@ static int api_connect_error_translate(const int err)
 		return -ENODATA;
 	}
 }
-#endif /* defined(CONFIG_BSD_LIBRARY) */
+#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 
 static void aws_iot_notify_event(const struct aws_iot_evt *aws_iot_evt)
 {
@@ -806,7 +806,7 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 	}
 }
 
-#if !defined(CONFIG_BSD_LIBRARY)
+#if !defined(CONFIG_NRF_MODEM_LIB)
 static int certificates_provision(void)
 {
 	static bool certs_added;
@@ -848,7 +848,7 @@ static int certificates_provision(void)
 
 	return 0;
 }
-#endif /* !defined(CONFIG_BSD_LIBRARY) */
+#endif /* !defined(CONFIG_NRF_MODEM_LIB) */
 
 #if defined(CONFIG_AWS_IOT_STATIC_IPV4)
 static int broker_init(void)
@@ -986,7 +986,7 @@ static int client_broker_init(struct mqtt_client *const client)
 	tls_cfg->sec_tag_list		= sec_tag_list;
 	tls_cfg->hostname		= CONFIG_AWS_IOT_BROKER_HOST_NAME;
 
-#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_NRF_MODEM_LIB)
 	tls_cfg->session_cache		=
 		IS_ENABLED(CONFIG_AWS_IOT_TLS_SESSION_CACHING) ?
 			TLS_SESSION_CACHE_ENABLED : TLS_SESSION_CACHE_DISABLED;
@@ -999,7 +999,7 @@ static int client_broker_init(struct mqtt_client *const client)
 		LOG_ERR("Could not provision certificates, error: %d", err);
 		return err;
 	}
-#endif /* !defined(CONFIG_BSD_LIBRARY) */
+#endif /* !defined(CONFIG_NRF_MODEM_LIB) */
 
 	return err;
 }

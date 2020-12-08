@@ -197,16 +197,16 @@ void lwm2m_os_log(int level, const char *fmt, ...);
 void lwm2m_os_logdump(const char *msg, const void *data, size_t len);
 
 /**
- * @brief Initialize BSD library.
+ * @brief Initialize modem library.
  *
  * @return 0  on success
  * @return -1 on error
- * @return an error from @em bsd_modem_dfu in case of modem DFU.
+ * @return an error from @em nrf_modem_dfu in case of modem DFU.
  */
 int lwm2m_os_bsdlib_init(void);
 
 /**
- * @brief Shutdown BSD library.
+ * @brief Shutdown the Modem library.
  *
  * @return 0 on success, -1 otherwise.
  */

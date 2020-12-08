@@ -1,0 +1,89 @@
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig NRF_MODEM_LIB
+	bool "Enable Modem library"
+	imply NRFX_IPC
+	imply NET_SOCKETS_OFFLOAD
+	imply NET_SOCKETS_POSIX_NAMES
+	select NRF_MODEM
+	help
+	  Use Nordic Modem library.
+
+if NRF_MODEM_LIB
+
+config NRF_MODEM_LIB_SYS_INIT
+	bool "Initialize during SYS_INIT"
+	default y
+	help
+	  Initialize the Modem library automatically during the SYS_INIT sequence.
+	  Please note that initialization is synchronous and can take up to one
+	  minute in case the modem firmware is updated.
+
+config NRF_MODEM_LIB_TRACE_ENABLED
+	bool
+	prompt "Enable proprietary traces over UART"
+	# Modem tracing over UART use the UARTE1 as dedicated peripheral.
+	# This enable UARTE1 peripheral and includes nrfx UARTE driver.
+	select NRFX_UARTE1
+
+config NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS
+	bool "Split large blocks passed to send() or sendto()"
+	default n
+	help
+	  Workaround a limitation in the Modem library regarding the return
+	  value for send() or sendto() calls larger than the module can handle.
+	  It should send the data up to the maximum, and return that as the return value.
+	  Instead, it returns error 22.
+
+config NRF91_SOCKET_BLOCK_LIMIT
+	int "Maximum size the modem can send"
+	default 2048
+	help
+	  Blocks larger than this value will be split into two or more
+	  send() or sendto() calls. This may not work for certain kinds
+	  of sockets or certain flag parameter values.
+
+config NRF_MODEM_LIB_SENDMSG_BUF_SIZE
+	int "Size of the sendmsg intermediate buffer"
+	default 128
+	help
+	  Size of an intermediate buffer used by `sendmsg` to repack data and
+	  therefore limit the number of `sendto` calls. The buffer is created
+	  in a static memory, so it does not impact stack/heap usage. In case
+	  the repacked message would not fit into the buffer, `sendmsg` sends
+	  each message part separately.
+
+endif # NRF_MODEM_LIB
+
+# Leave a set of deprecated entries to smooth transition to NRF_MODEM_LIB
+
+menu "BSD library (deprecated)"
+comment "All the configs below are deprecated, please use NRF_MODEM_LIB equivalents instead"
+
+config BSD_LIBRARY
+	bool "Enable BSD Library"
+	select NRF_MODEM_LIB
+	help
+	  This setting is deprecated.
+	  Use NRF_MODEM_LIB instead.
+
+if BSD_LIBRARY
+config BSD_LIBRARY_SYS_INIT
+	bool "Initialize during SYS_INIT"
+	select NRF_MODEM_LIB_SYS_INIT
+	help
+	  This setting is deprecated.
+	  Use NRF_MODEM_LIB_SYS_INIT instead.
+
+config BSD_LIBRARY_TRACE_ENABLED
+	bool "Enable proprietary traces over UART"
+	select NRF_MODEM_LIB_TRACE_ENABLED
+	help
+	  This setting is deprecated.
+	  Use NRF_MODEM_LIB_TRACE_ENABLED instead.
+endif
+
+endmenu
