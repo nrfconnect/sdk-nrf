@@ -263,7 +263,7 @@ This sample uses the following |NCS| libraries:
 * Zigbee subsystem:
 
   * :file:`zb_nrf_platform.h`
-  * :file:`zigbee_helpers.h`
+  * :file:`zigbee_app_utils.h`
   * :file:`zb_error_handler.h`
 
 * :ref:`dk_buttons_and_leds_readme`

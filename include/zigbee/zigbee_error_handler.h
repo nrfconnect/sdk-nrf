@@ -14,8 +14,8 @@
  * @brief This file defines the error handler for ZBOSS error codes.
  */
 
-#ifndef ZB_ERROR_HANDLER_H__
-#define ZB_ERROR_HANDLER_H__
+#ifndef ZIGBEE_ERROR_HANDLER_H__
+#define ZIGBEE_ERROR_HANDLER_H__
 
 #include <kernel.h>
 
@@ -85,4 +85,4 @@
  *
  */
 
-#endif /* ZB_ERROR_HANDLER_H__ */
+#endif /* ZIGBEE_ERROR_HANDLER_H__ */

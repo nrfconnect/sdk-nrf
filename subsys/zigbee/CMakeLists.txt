@@ -10,7 +10,6 @@ zephyr_interface_library_named(zigbee)
 
 target_include_directories(zigbee INTERFACE common)
 target_include_directories(zigbee INTERFACE osif)
-target_include_directories(zigbee INTERFACE zb_error)
 target_include_directories_ifdef(CONFIG_ZIGBEE_SHELL zigbee INTERFACE cli)
 
 zephyr_library()
@@ -26,7 +25,6 @@ zephyr_library_sources(osif/zb_nrf_transceiver.c)
 zephyr_library_sources(osif/zb_nrf_crypto.c)
 zephyr_library_sources(osif/zb_nrf_pwr_mgmt.c)
 zephyr_library_sources(common/zigbee_logger_eprxzcl.c)
-zephyr_library_sources_ifndef(CONFIG_ZB_TEST_MODE common/zigbee_helpers.c)
 zephyr_library_sources_ifdef(CONFIG_ZIGBEE_HAVE_SERIAL osif/zb_nrf_serial.c)
 zephyr_library_sources_ifndef(CONFIG_ZIGBEE_HAVE_SERIAL osif/zb_nrf_logger.c)
 zephyr_library_sources_ifdef(

@@ -205,11 +205,6 @@ module = ZBOSS_OSIF
 module-str = ZBOSS osif layer
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-# Configure ZIGBEE_HELPERS_LOG_LEVEL
-module = ZIGBEE_HELPERS
-module-str = Zigbee helper routines
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
-
 endmenu #menu "Zigbee Log configuration"
 
 menu "ZBOSS osif configuration"

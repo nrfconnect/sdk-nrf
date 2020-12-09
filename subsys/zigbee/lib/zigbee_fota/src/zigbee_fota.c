@@ -9,7 +9,7 @@
 #include <dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
 #include <zboss_api.h>
-#include <zb_error_handler.h>
+#include <zigbee/zigbee_error_handler.h>
 #include <zb_nrf_platform.h>
 #include <zigbee/zigbee_fota.h>
 #include "zigbee_ota.h"
