@@ -85,6 +85,11 @@ config SLM_INTERFACE_PIN
 #
 # TCP/TLS proxy
 #
+config SLM_TCP_FILTER_SIZE
+	int "Size of IPv4 address allowlist"
+	range 1 6
+	default 6
+
 config SLM_TCP_POLL_TIME
 	int "Poll time-out in seconds for TCP connection"
 	default 10

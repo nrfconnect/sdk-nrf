@@ -318,8 +318,7 @@ static int handle_at_slmuart(const char *at_cmd, uint32_t *baudrate)
 
 static void cmd_send(struct k_work *work)
 {
-	size_t chars;
-	char str[24];
+	char str[32];
 	static char buf[AT_MAX_CMD_LEN];
 	enum at_cmd_state state;
 	int err;
@@ -504,12 +503,12 @@ static void cmd_send(struct k_work *work)
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		break;
 	case AT_CMD_ERROR_CMS:
-		chars = sprintf(str, "+CMS: %d\r\n", err);
-		rsp_send(str, ++chars);
+		sprintf(str, "+CMS ERROR: %d\r\n", err);
+		rsp_send(str, strlen(str));
 		break;
 	case AT_CMD_ERROR_CME:
-		chars = sprintf(str, "+CME: %d\r\n", err);
-		rsp_send(str, ++chars);
+		sprintf(str, "+CME ERROR: %d\r\n", err);
+		rsp_send(str, strlen(str));
 		break;
 	default:
 		break;
