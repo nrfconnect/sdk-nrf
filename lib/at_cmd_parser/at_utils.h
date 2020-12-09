@@ -242,6 +242,40 @@ static inline bool is_command(const char *str)
 	return false;
 }
 
+/**
+ * @brief Check if a string is a beginning of an AT CLAC response
+ *
+ * This function will check if the string is a CLAC response prefix.
+ * Valid prefixes: AT+ and AT%, except AT%X
+ *
+ * @param[in] str String to examine
+ *
+ * @retval true  If the string is a CLAC response
+ * @retval false Otherwise
+ */
+static bool is_clac(const char *str)
+{
+	if (strlen(str) < 4) {
+		return false;
+	}
+
+	if ((toupper(str[0]) != 'A') || (toupper(str[1]) != 'T')) {
+		/* Not an AT command */
+		return false;
+	}
+
+	if ((toupper(str[2]) != '+') && (toupper(str[2]) != '%')) {
+		/* Neither AT+ nor AT% */
+		return false;
+	}
+
+	if ((toupper(str[2]) == '%') && (toupper(str[3]) == 'X')) {
+		/* Ignore AT%X to avoid false detect (read resp XCOEX0 etc.) */
+		return false;
+	}
+
+	return true;
+}
 /** @} */
 
 #endif /* AT_UTILS_H__ */
