@@ -1541,8 +1541,10 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode)
 
 	/* We skip the first parameter, as that's the response prefix,
 	 * "%XSYSTEMMODE:" in this case."
+	 * The last parameter sets the preferred mode, and is not implemented
+	 * yet on the modem side, so we ignore it.
 	 */
-	for (size_t i = 1; i < AT_XSYSTEMMODE_PARAMS_COUNT; i++) {
+	for (size_t i = 1; i < AT_XSYSTEMMODE_PARAMS_COUNT - 1; i++) {
 		int param;
 
 		err = at_params_int_get(&resp_list, i, &param);
