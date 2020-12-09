@@ -43,6 +43,9 @@ static struct bt_mesh_light_temp_srv light_temp_srv =
 	BT_MESH_LIGHT_TEMP_SRV_INIT(NULL);
 static struct bt_mesh_sensor_cli sensor_cli = BT_MESH_SENSOR_CLI_INIT(NULL);
 static struct bt_mesh_scene_cli scene_cli;
+static struct bt_mesh_light_xyl_srv xyl_srv =
+	BT_MESH_LIGHT_XYL_SRV_INIT(NULL, NULL);
+static struct bt_mesh_light_xyl_cli xyl_cli;
 
 /* Settings dependent models: */
 #ifdef CONFIG_BT_SETTINGS
@@ -81,7 +84,9 @@ static struct bt_mesh_elem elems[] = {
 		BT_MESH_MODEL_LIGHT_CTL_CLI(&light_ctl_cli),
 		BT_MESH_MODEL_LIGHT_TEMP_SRV(&light_temp_srv),
 		BT_MESH_MODEL_SENSOR_CLI(&sensor_cli),
-		BT_MESH_MODEL_SCENE_CLI(&scene_cli)
+		BT_MESH_MODEL_SCENE_CLI(&scene_cli),
+		BT_MESH_MODEL_LIGHT_XYL_SRV(&xyl_srv),
+		BT_MESH_MODEL_LIGHT_XYL_CLI(&xyl_cli),
 	), BT_MESH_MODEL_NONE),
 };
 
