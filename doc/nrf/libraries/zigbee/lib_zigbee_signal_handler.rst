@@ -44,7 +44,7 @@ In general, using the default signal handler is worth considering because of the
 * It provides Zigbee role specific behavior (for example, finite join/rejoin time)
 * It makes the application less sensitive to changes in the Zigbee stack commissioning API.
 
-Apart from that, the default signal handler serves as a good starting point for a custom signal handler implementation.
+The default signal handler also serves as a good starting point for a custom signal handler implementation.
 
 .. _zarco_signal_handler_full:
 
@@ -53,7 +53,7 @@ Complete zboss_signal_handler implementation
 
 In its complete implementation, the ``zboss_signal_handler`` allows the application to control a broader set of basic functionalities, including joining, commissioning, and network formation.
 
-There are in fact cases in which the default handler will not be sufficient and needs to be extended.
+There are cases in which the default handler will not be sufficient and needs to be extended.
 For example, when the application wants to use the procedure of the initiator of finding & binding or use the production configuration feature.
 
 Extending zboss_signal_handler
@@ -381,7 +381,7 @@ The period is limited to 15 minutes if the result is higher than that.
   It is safe to call this function from an interrupt and to call it multiple times.
 
 
-.. warning::
+.. note::
     The Zigbee network rejoin procedure is managed from multiple signals in :c:func:`default_signal_handler`.
     If the application controls the network joining, rejoining, or leaving, each signal in which the Zigbee network rejoin procedure is managed should be handled in the application.
     In this case, :c:func:`user_input_indicate` must not be called.

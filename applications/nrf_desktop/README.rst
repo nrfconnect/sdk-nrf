@@ -14,7 +14,7 @@ Depending on the configuration, this application can work as desktop mouse, gami
     To get started with hardware that has pre-configured software, go to the `User interface`_ section.
 
 The nRF Desktop application supports common input hardware interfaces like motion sensors, rotation sensors, and buttons scanning module.
-The firmware can be configured at runtime using a dedicated configuration channel established with the HID feature report.
+You can configure the firmware at runtime using a dedicated configuration channel established with the HID feature report.
 The same channel is used to transmit DFU packets.
 
 .. _nrf_desktop_architecture:
@@ -527,7 +527,7 @@ The assignments of hardware interface elements depend on the device type.
       The following predefined buttons are assigned to peer control operations for the desktop mouse:
 
       Scroll wheel button
-        * The scroll wheel must be pressed before the mouse is powered up with the on/off switch.
+        * Press the scroll wheel before the mouse is powered up with the on/off switch.
           Long-press to initialize and confirm the peer erase.
 
           .. figure:: /images/nrf_desktop_desktop_mouse_side_scroll.svg
@@ -543,7 +543,7 @@ The assignments of hardware interface elements depend on the device type.
       The following predefined buttons or button combinations are assigned to peer control operations for the keyboard:
 
       Page Down key
-        * The Page Down key must be pressed while keeping the Fn modifier key pressed.
+        * Press the Page Down key while keeping the Fn modifier key pressed.
 
           .. figure:: /images/nrf_desktop_keyboard_top.svg
              :alt: nRF Desktop keyboard - top view
@@ -949,7 +949,7 @@ To use the nRF Desktop application with your custom board:
      * Each of the logical LEDs can have either one (monochromatic) or three color channels (RGB).
        Such color channel is a physical LED.
      * The project uses Pulse-Width Modulation (PWM) channels to control the brightness of each physical LED.
-       The PWM peripheral must be configured in DTS files, and the :file:`_def` file of the LEDs module must be configured to indicate which PWM channel is assigned to each LED color.
+       Configure the PWM peripheral in DTS files, and configure the :file:`_def` file of the LEDs module to indicate which PWM channel is assigned to each LED color.
        Ensure that PWM channels are correctly configured in DTS and PWM driver is enabled in the Kconfig file.
 
 #. Review Bluetooth options in Kconfig:
@@ -1075,11 +1075,11 @@ You can translate the new sensor-specific attributes to a generic abstraction by
 5. Select the new sensor
 ------------------------
 
-After all the previous steps are done, the new sensor can be used by the application.
+The application can now use the new sensor.
 Edit the application configuration files for your board to enable it.
 See :ref:`nrf_desktop_board_configuration` for details.
 
-At this point, you can start using the new sensor by completing the following steps:
+To start using the new sensor, complete the following steps:
 
 1. Enable all dependencies required by the driver (for example, bus driver).
 #. Enable the new sensor driver.
@@ -1160,7 +1160,7 @@ Since the nRF Desktop application uses the partition manager when the bootloader
     The nRF Desktop application automatically adds the overlay file if the :file:`dts.overlay` file is present in the project's board configuration directory.
     See more in the `Board configuration`_ section.
 
-.. warning::
+.. important::
     By default, Zephyr does not use the code partition defined in the DTS files.
     It is only used if :option:`CONFIG_USE_DT_CODE_PARTITION` is enabled.
     If this option is disabled, the code is loaded at the address defined by :option:`CONFIG_FLASH_LOAD_OFFSET` and can spawn for :option:`CONFIG_FLASH_LOAD_SIZE` (or for the whole flash if the load size is set to zero).
@@ -1257,11 +1257,11 @@ For detailed information about every option, see the Kconfig help.
 
 * :option:`CONFIG_BT_MAX_CONN`
 
-  * nRF Desktop central: The option must be set to the maximum number of simultaneously connected devices.
+  * nRF Desktop central: Set the option to the maximum number of simultaneously connected devices.
   * nRF Desktop peripheral: The default value (one) is used.
 
 .. note::
-   After changing the number of Bluetooth peers for the nRF Desktop peripheral device, you must update the LED effects used to represent the Bluetooth connection state.
+   After changing the number of Bluetooth peers for the nRF Desktop peripheral device, update the LED effects used to represent the Bluetooth connection state.
    For details, see :ref:`nrf_desktop_led_state`.
 
 .. _nrf_desktop_bluetooth_guide_configuration_ll:
@@ -1398,7 +1398,7 @@ The nRF Desktop application can use one of the following bootloaders:
 
 .. important::
     Make sure that you use your own private key for the release version of the devices.
-    The debug key should never be used for production.
+    Do not use the debug key for production.
 
 Configuring the B0 bootloader
 -----------------------------
@@ -1501,7 +1501,7 @@ This mode can so be used on devices with a limited amount of flash memory availa
 
 The serial recovery DFU is a feature of the bootloader.
 For the serial recovery DFU to be performed, the bootloader must be able to access the USB subsystem.
-This is not possible for the B0, and :ref:`MCUboot <mcuboot:mcuboot_wrapper>` must be used instead.
+This is not possible for the B0, and you have to use :ref:`MCUboot <mcuboot:mcuboot_wrapper>` instead.
 
 As only one application slot is available, the transfer of the new version of the application cannot be done while the application is running.
 To start the serial recovery DFU, the device should boot into recovery mode, in which the bootloader will be waiting for a new image upload to start.
@@ -1511,7 +1511,7 @@ If the transfer is interrupted, the device will not be able to boot the applicat
 Configuring serial recovery DFU
 -------------------------------
 
-:ref:`MCUboot <mcuboot:mcuboot_wrapper>` must be configured to enable the serial recovery DFU through USB.
+Configure :ref:`MCUboot <mcuboot:mcuboot_wrapper>` to enable the serial recovery DFU through USB.
 The MCUBoot configuration for a given board and :ref:`build type <nrf_desktop_requirements_build_types>` should be written to :file:`applications/nrf_desktop/configuration/your_board_name/mcuboot_buildtype.conf`.
 For an example of the configuration, see the ``ZReleaseMCUBoot`` build type of the nRF52820 or the nRF52833 dongle.
 
@@ -1528,7 +1528,7 @@ Select the following Kconfig options to enable the serial recovery DFU:
         See :ref:`usb_api` for more information.
 
 * ``CONFIG_BOOT_SERIAL_DETECT_PORT`` and ``CONFIG_BOOT_SERIAL_DETECT_PIN`` - These options select the pin used for triggering the serial recovery mode.
-  To enter the serial recovery mode, the pin must be set to a logic value defined by ``CONFIG_BOOT_SERIAL_DETECT_PIN_VAL`` when the device boots.
+  To enter the serial recovery mode, set the pin to a logic value defined by ``CONFIG_BOOT_SERIAL_DETECT_PIN_VAL`` when the device boots.
   By default, the selected GPIO pin should be set to low.
 
 Once the device enters the serial recovery mode, you can use the :ref:`mcumgr <zephyr:device_mgmt>` to:
@@ -1567,7 +1567,7 @@ The nRF Desktop application uses its own set of internal modules.
 See `Module and component overview`_ for more information.
 More information about each application module and its configuration details is available on the subpages.
 
-Each module documentation page has a table that shows the relations between module event.
+Each module documentation page has a table that shows the relations between module events.
 `Module event tables`_ for some modules include extensive lists of source and sink modules.
 These are valid for events that have many listeners or sources, and are gathered on the :ref:`nrf_desktop_event_rel_modules` subpage.
 

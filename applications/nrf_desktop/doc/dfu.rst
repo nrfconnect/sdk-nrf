@@ -26,11 +26,11 @@ Configuration
 *************
 
 To perform the firmware upgrade, you must enable the bootloader.
-The DFU module can be used with either MCUboot or B0 bootloader.
+You can use the DFU module with either MCUboot or B0 bootloader.
 For more information on how to enable the bootloader, see the :ref:`nrf_desktop_bootloader` documentation.
 
 .. note::
-   If the MCUboot bootloader is selected, the DFU module:
+   If you selected the MCUboot bootloader, the DFU module:
 
    * Requests the image upgrade after the whole image is transferred over the :ref:`nrf_desktop_config_channel`.
    * Confirms the running image after device reboot.
@@ -38,7 +38,7 @@ For more information on how to enable the bootloader, see the :ref:`nrf_desktop_
 Enable the DFU module using the :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE` option.
 It requires the transport option :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` to be selected, as it uses :ref:`nrf_desktop_config_channel` for the transmission of the update image.
 
-You can set the value of :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE` to specify the size of the sync buffer (in words).
+Set the value of :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE` to specify the size of the sync buffer (in words).
 During the DFU, the data is initially stored in the buffer and then it is moved to flash.
 The buffer is located in RAM, so increasing the buffer size increases the RAM usage.
 If the buffer is small, the host must perform the DFU progress synchronization more often.
@@ -147,7 +147,7 @@ sync
    * Checksum of the update image.
    * Offset at which the update process currently is.
    * Size of the RAM buffer used to store the data.
-     The host must perform the synchronization of the firmware image transfer progress at least on every synchronization buffer byte count.
+     The host must synchronize the firmware image transfer progress at least on every synchronization buffer byte count.
 
    The update tool can fetch the ``sync`` option before starting the update process to see at which offset the update is to be restarted.
 
@@ -174,6 +174,6 @@ This operation is done in the background.
 To ensure that the memory erase will not interfere with the device usability, the memory pages are erased only if there are no HID reports transmitted and the Bluetooth connection state does not change.
 For example, the memory is not erased right after the Bluetooth connection is established.
 
-.. warning::
+.. note::
     The DFU process cannot be started before the entire partition used for storing the update image is erased.
     If the DFU command is rejected, you must wait until the flash area used for the update image is erased.

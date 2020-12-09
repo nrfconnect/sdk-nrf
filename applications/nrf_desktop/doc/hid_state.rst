@@ -53,7 +53,7 @@ This can be associated with:
 * Receiving input events from :ref:`nrf_desktop_buttons`, :ref:`nrf_desktop_wheel`, and :ref:`nrf_desktop_motion`.
 * Sending out HID reports to :ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state`.
 
-For the routing mechanism to work, the module performs the following activities:
+For the routing mechanism to work, the module performs the following operations:
 
 * `Linking input data with the right HID report`_
 * `Storing input data before the connection`_
@@ -61,7 +61,6 @@ For the routing mechanism to work, the module performs the following activities:
 * `Tracking state of HID report notifications`_
 * `Forming HID reports`_
 
-These activities are described in the following sections.
 
 Linking input data with the right HID report
 ============================================
@@ -134,7 +133,7 @@ Discarding events
     If a key release is missed, the host could stay with a key that is permanently pressed.
     The discarding mechanism ensures that the host will always receive the correct key sequence.
 
-    .. warning::
+    .. note::
         The |hid_state| can only discard an event if the event does not overlap any button that was pressed but not released, or if the button itself is pressed.
         The event is released only when the following conditions are met:
 
