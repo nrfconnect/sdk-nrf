@@ -873,6 +873,135 @@ Test command
 
 The test command is not supported.
 
+TCP filtering #XTCPFILTER
+=========================
+
+The ``#XTCPFILTER`` command allows you to set or clear an allowlist for the TCP server.
+If the allowlist is set, only IPv4 addresses in the list are allowed for connection.
+
+Set command
+-----------
+
+The set command allows you to set or clear an allowlist for the TCP server.
+
+Syntax
+~~~~~~
+
+::
+
+   #XTCPFILTER=<op>[,<ip_addr1>[,<ip_addr2>[,...]]]
+
+* The ``<op>`` parameter can accept one of the following values:
+
+  * ``0`` - clear list and turn filtering mode off
+  * ``1`` - set list and turn filtering mode on
+
+* The ``<ip_addr#>`` value is a string.
+  It indicates the IPv4 address of an allowed TCP/TLS client.
+  The maximum number of IPv4 addresses that can be specified in the list is six.
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XTCPFILTER=1,"192.168.1.1"
+   OK
+
+::
+
+   AT#XTCPFILTER=1,"192.168.1.1","192.168.1.2","192.168.1.3","192.168.1.4","192.168.1.5","192.168.1.6"
+   OK
+
+::
+
+   AT#XTCPFILTER=0
+   OK
+
+::
+
+   AT#XTCPFILTER=1
+   OK
+
+Read command
+------------
+
+The read command allows you to check TCP filtering settings.
+
+Syntax
+~~~~~~
+
+::
+
+   #XTCPFILTER?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XTCPFILTER: <filter_mode>[,<ip_addr1>[,<ip_addr2>[,...]]]
+
+* The ``<filter_mode>`` value can assume one of the following values:
+
+  * ``0`` - Disabled
+  * ``1`` - Enabled
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XTCPFILTER?
+   #XTCPFILTER: 1,"192.168.1.1"
+   OK
+
+::
+
+   AT#XTCPFILTER?
+   #XTCPFILTER: 1,"192.168.1.1","192.168.1.2","192.168.1.3","192.168.1.4","192.168.1.5","192.168.1.6"
+   OK
+
+::
+
+   AT#XTCPFILTER?
+   #XTCPFILTER: 0
+   OK
+
+::
+
+   AT#XTCPFILTER?
+   #XTCPFILTER: 1
+   OK
+
+Test command
+------------
+
+The test command tests the existence of the command and provides information about the type of its subparameters.
+
+Syntax
+~~~~~~
+
+::
+
+   #XTCPFILTER=?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XTCPFILTER: (list of op value),",<IP_ADDR#1>[,<IP_ADDR#2>[,...]]
+
+Examples
+~~~~~~~~
+
+::
+
+   at#XTCPFILTER=?
+   #XTCPFILTER: (0, 1),<IP_ADDR#1>[,<IP_ADDR#2>[,...]]
+   OK
+
 TCP server #XTCPSVR
 ===================
 

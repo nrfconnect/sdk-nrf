@@ -99,6 +99,13 @@ nRF9160
   * :ref:`lib_date_time` library - Added an API to check if the Date-Time library has obtained a valid date-time.
     If the function returns false, it implies that the library has not yet obtained valid date-time to base its calculations and time conversions on and hence other API calls that depend on the internal date-time will fail.
 
+  * :ref:`serial_lte_modem` application:
+
+    * Fixed an issue where FOTA downloads were interrupted if an AT command was issued.
+    * Fixed an issue with overflowing HTTP request buffers.
+    * Fixed issues with TCP/UDP server restart.
+    * Added support for allowing only specified TCP/TLS client IP addresses (using the #XTCPFILTER command).
+
 Common
 ======
 
