@@ -7,6 +7,7 @@
 #include <string.h>
 #include <bluetooth/mesh/gen_battery_srv.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
+#include "gen_battery_internal.h"
 #include "model_utils.h"
 
 #define BATTERY_STATUS_DEFAULT                                                 \
@@ -20,8 +21,8 @@
 		.service = BT_MESH_BATTERY_SERVICE_UNKNOWN,                    \
 	}
 
-static void encode_status(struct net_buf_simple *buf,
-			  const struct bt_mesh_battery_status *status)
+void bt_mesh_gen_bat_encode_status(struct net_buf_simple *buf,
+				   const struct bt_mesh_battery_status *status)
 {
 	net_buf_simple_add_u8(buf, status->battery_lvl);
 
@@ -52,7 +53,7 @@ static void rsp_status(struct bt_mesh_model *model,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_BATTERY_OP_STATUS,
 				 BT_MESH_BATTERY_MSG_LEN_STATUS);
 	bt_mesh_model_msg_init(&msg, BT_MESH_BATTERY_OP_STATUS);
-	encode_status(&msg, status);
+	bt_mesh_gen_bat_encode_status(&msg, status);
 
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
@@ -101,7 +102,7 @@ int _bt_mesh_battery_srv_update_handler(struct bt_mesh_model *model)
 	srv->get(srv, NULL, &status);
 
 	bt_mesh_model_msg_init(model->pub->msg, BT_MESH_BATTERY_OP_STATUS);
-	encode_status(model->pub->msg, &status);
+	bt_mesh_gen_bat_encode_status(model->pub->msg, &status);
 
 	return 0;
 }
@@ -113,6 +114,6 @@ int32_t bt_mesh_battery_srv_pub(struct bt_mesh_battery_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_BATTERY_OP_STATUS,
 				 BT_MESH_BATTERY_MSG_LEN_STATUS);
 	bt_mesh_model_msg_init(&msg, BT_MESH_BATTERY_OP_STATUS);
-	encode_status(&msg, status);
+	bt_mesh_gen_bat_encode_status(&msg, status);
 	return model_send(srv->model, ctx, &msg);
 }
