@@ -97,7 +97,7 @@ static inline uint16_t actual_to_linear(uint16_t actual)
 	/* Conversion:
 	 * linear = CEIL(65535 * (actual * actual) / (65535 * 65535)))
 	 */
-	return ceiling_fraction((uint32_t) actual * (uint32_t) actual, 65535UL);
+	return ceiling_fraction((uint32_t)actual * (uint32_t)actual, 65535UL);
 }
 
 /** @brief Convert light from the specified representation to the configured.
@@ -162,6 +162,8 @@ int lightness_cli_light_set_unack(struct bt_mesh_lightness_cli *cli,
 				  struct bt_mesh_msg_ctx *ctx,
 				  enum light_repr repr,
 				  const struct bt_mesh_lightness_set *set);
+void lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
+			       struct bt_mesh_msg_ctx *ctx, uint16_t set);
 
 #ifdef __cplusplus
 }

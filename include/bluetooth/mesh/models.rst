@@ -23,6 +23,7 @@ For more information about these and other models, see also `Mesh Model Overview
    ../../../include/bluetooth/mesh/lightness.rst
    ../../../include/bluetooth/mesh/light_ctrl.rst
    ../../../include/bluetooth/mesh/light_ctl.rst
+   ../../../include/bluetooth/mesh/light_xyl.rst
    ../../../include/bluetooth/mesh/sensor_models.rst
    ../../../include/bluetooth/mesh/time.rst
    ../../../include/bluetooth/mesh/scene.rst
