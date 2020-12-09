@@ -571,21 +571,45 @@ static void timeout(struct k_work *work)
 
 		if (srv->state == LIGHT_CTRL_STATE_ON) {
 			restart_timer(srv, srv->cfg.on);
-		} else if (srv->state == LIGHT_CTRL_STATE_PROLONG) {
-			restart_timer(srv, srv->cfg.prolong);
-		} else if (atomic_test_bit(&srv->flags, FLAG_MANUAL)) {
-			restart_timer(
-				srv, CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL -
-					     srv->cfg.fade_standby_manual);
+			return;
 		}
-	} else if (srv->state == LIGHT_CTRL_STATE_ON) {
-		prolong(srv);
-	} else if (srv->state == LIGHT_CTRL_STATE_PROLONG) {
-		turn_off_auto(srv);
-	} else {
-		/* Ends the sensor cooldown period: */
-		atomic_clear_bit(&srv->flags, FLAG_MANUAL);
+
+		if (srv->state == LIGHT_CTRL_STATE_PROLONG) {
+			restart_timer(srv, srv->cfg.prolong);
+			return;
+		}
+
+		/* If we're in manual mode, wait until the end of the cooldown
+		 * period before disabling it:
+		 */
+		if (!atomic_test_bit(&srv->flags, FLAG_MANUAL)) {
+			return;
+		}
+
+		uint32_t cooldown = MSEC_PER_SEC *
+				    CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL;
+
+		if (srv->fade.duration >= cooldown) {
+			atomic_clear_bit(&srv->flags, FLAG_MANUAL);
+			return;
+		}
+
+		restart_timer(srv, cooldown - srv->fade.duration);
+		return;
 	}
+
+	if (srv->state == LIGHT_CTRL_STATE_ON) {
+		prolong(srv);
+		return;
+	}
+
+	if (srv->state == LIGHT_CTRL_STATE_PROLONG) {
+		turn_off_auto(srv);
+		return;
+	}
+
+	/* Ends the sensor cooldown period: */
+	atomic_clear_bit(&srv->flags, FLAG_MANUAL);
 }
 
 static void delayed_action_timeout(struct k_work *work)
