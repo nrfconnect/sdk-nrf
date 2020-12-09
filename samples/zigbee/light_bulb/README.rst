@@ -84,11 +84,11 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
+* :file:`include/zigbee/zigbee_error_handler.h`
+* :ref:`lib_zigbee_application_utilities`
 * Zigbee subsystem:
 
   * :file:`zb_nrf_platform.h`
-  * :file:`zigbee_app_utils.h`
-  * :file:`zb_error_handler.h`
 
 * :ref:`dk_buttons_and_leds_readme`
 
