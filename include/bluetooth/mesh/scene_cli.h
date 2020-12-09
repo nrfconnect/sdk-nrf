@@ -33,7 +33,7 @@ struct bt_mesh_scene_cli;
 			 &(_cli)->pub,                                         \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_scene_cli,     \
 						 _cli),                        \
-			 &_bt_mesh_scene_cli_cb),
+			 &_bt_mesh_scene_cli_cb)
 
 /** Scene state */
 struct bt_mesh_scene_state {
