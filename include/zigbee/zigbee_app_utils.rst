@@ -1,7 +1,23 @@
-﻿.. _lib_zigbee_signal_handler:
+.. _lib_zigbee_application_utilities:
+
+Zigbee application utilities
+############################
+
+.. contents::
+   :local:
+   :depth: 2
+
+Zigbee application utilities library provides a set of components ready to use in Zigbee applications:
+
+* :ref:`lib_zigbee_signal_handler` for handling common ZBOSS stack signals.
+* API for parsing and converting Zigbee data types, all functions are listed in :file:`include/zigbee/zigbee_app_utils.h`.
+* :c:func:`zigbee_led_status_update` for indicating status of the device at a network using onboard LEDs.
+
+
+.. _lib_zigbee_signal_handler:
 
 Zigbee default signal handler
-#############################
+*****************************
 
 .. contents::
    :local:
@@ -18,7 +34,7 @@ Because most of Zigbee devices behave in a similar way, :c:func:`zigbee_default_
 .. _zarco_signal_handler_minimal:
 
 Minimal zboss_signal_handler implementation
-*******************************************
+===========================================
 
 This function can be called in the application's :c:func:`zboss_signal_handler` to simplify the implementation.
 In such case, this minimal implementation includes only a call to the default signal handler:
@@ -49,7 +65,7 @@ The default signal handler also serves as a good starting point for a custom sig
 .. _zarco_signal_handler_full:
 
 Complete zboss_signal_handler implementation
-********************************************
+============================================
 
 In its complete implementation, the ``zboss_signal_handler`` allows the application to control a broader set of basic functionalities, including joining, commissioning, and network formation.
 
@@ -57,7 +73,7 @@ There are cases in which the default handler will not be sufficient and needs to
 For example, when the application wants to use the procedure of the initiator of finding & binding or use the production configuration feature.
 
 Extending zboss_signal_handler
-================================
+++++++++++++++++++++++++++++++
 
 If you want to extend ``zboss_signal_handler`` to cover additional functionalities, write signal handler implementation for the required ZBOSS signal.
 For example for a device that initiates a F&B procedure, extend ``zboss_signal_handler`` with a case for ``ZB_BDB_SIGNAL_FINDING_AND_BINDING_INITIATOR_FINISHED``:
@@ -119,7 +135,7 @@ For example for a device that initiates a F&B procedure, extend ``zboss_signal_h
 
 
 Custom commissioning behavior
-=============================
++++++++++++++++++++++++++++++
 
 For the application to use a custom commissioning behavior, the default ``rejoin_procedure`` should be overwritten by writing a custom signal handler implementation for the following signals:
 
@@ -220,7 +236,7 @@ Use the following code as reference:
 .. _zarco_signal_handler_startup:
 
 Behavior on stack start
-***********************
+=======================
 
 When the stack is started through :c:func:`zigbee_enable`, the stack generates the following signals:
 
@@ -249,7 +265,7 @@ The reception of these signals determines the behavior of the default signal han
 .. _zarco_signal_handler_bdb_initialization:
 
 Zigbee Base Device Behavior initialization
-******************************************
+==========================================
 
 Once the BDB initialization procedure is finished, depending on the data stored inside the Zigbee persistent storage, the stack will complete one of the following scenarios:
 
@@ -261,7 +277,7 @@ Both scenarios will cause different behavior of the the default signal handler.
 .. _zarco_signal_handler_bdb_initialization_new_devices:
 
 New device scenario
-===================
++++++++++++++++++++
 
 For factory new devices, the default signal handler will:
 
@@ -283,7 +299,7 @@ Once handling of the signal is finished, the stack will generate the ``ZB_BDB_SI
 .. _zarco_signal_handler_bdb_initialization_commissioned:
 
 Commissioned device scenario
-============================
+++++++++++++++++++++++++++++
 
 For devices that have been already commissioned, the default handler will:
 
@@ -308,7 +324,7 @@ Once finished, the stack will generate the ``ZB_BDB_SIGNAL_STEERING`` signal, an
 .. _zarco_signal_handler_network:
 
 Zigbee network formation and commissioning
-==========================================
+++++++++++++++++++++++++++++++++++++++++++
 
 According to the logic implemented inside the default signal handler, the devices can either form a network or join an existing network:
 
@@ -334,7 +350,7 @@ According to the logic implemented inside the default signal handler, the device
 .. _zarco_signal_handler_leave:
 
 Zigbee network leaving
-**********************
+======================
 
 The default signal handler implements the same behavior for handling ``ZB_ZDO_SIGNAL_LEAVE`` for both routers and end devices.
 When leaving the network, the default handler calls :c:func:`start_network_rejoin` to start :ref:`zarco_network_rejoin` to join a new network.
@@ -349,7 +365,7 @@ Once :c:func:`start_network_rejoin` is called, the stack will generate the ``ZB_
 .. _zarco_network_rejoin:
 
 Zigbee network rejoining
-************************
+========================
 
 The Zigee network rejoin procedure is a mechanism that is similar to the ZDO rejoin back-off procedure.
 It is implemented to work with both routers and end devices and simplify handling of cases such as device joining, rejoining, or leaving the network.
@@ -389,7 +405,7 @@ The period is limited to 15 minutes if the result is higher than that.
 .. _zarco_sleep:
 
 Zigbee stack sleep routines
-***************************
+===========================
 
 For all device types, the Zigbee stack informs the application about periods of inactivity by generating a ``ZB_COMMON_SIGNAL_CAN_SLEEP`` signal.
 
@@ -416,3 +432,23 @@ If the default behavior is not applicable for the application, you can customize
    :alt: Implementing a custom logic for putting the stack into the sleep mode
 
    Implementing a custom logic for putting the stack into the sleep mode
+
+
+.. _lib_zigbee_application_utilities_options:
+
+Configuration
+*************
+
+To enable the Zigbee application utilities library, set the :option:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
+
+To configure logging level of the library, use the following :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
+
+API documentation
+*****************
+
+| Header file: :file:`include/zigbee/zigbee_app_utils.h`
+| Source file: :file:`subsys/zigbee/lib/zigbee_app_utils/zigbee_app_utils.c`
+
+.. doxygengroup:: zigbee_app_utils
+   :project: nrf
+   :members:

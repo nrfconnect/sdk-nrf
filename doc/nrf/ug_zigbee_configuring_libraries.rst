@@ -11,11 +11,19 @@ The Zigbee protocol in |NCS| can be customized by enabling and configuring sever
 
 This page lists options and steps required for configuring the available libraries.
 
-.. _ug_zigbee_configuring_components_handler:
+.. _ug_zigbee_configuring_components_application_utilities:
 
-Configuring default signal handler
-**********************************
+Configuring Zigbee application utilities
+****************************************
 
+Zigbee application utilities library provides a set of components ready to use in Zigbee applications.
+
+To enable and use library, you must set the :option:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
+Additional logs for the library can be configured using :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
+See :ref:`zigbee_ug_logging_logger_options` for more information.
+
+Default signal handler
+======================
 The default signal handler provides a default logic to handle ZBOSS stack signals.
 
 The default signal handler can be used by calling the :c:func:`zigbee_default_signal_handler` in the application's :c:func:`zboss_signal_handler` implementation.
