@@ -6,10 +6,11 @@
 
 #include <string.h>
 #include <bluetooth/mesh/gen_battery_cli.h>
+#include "gen_battery_internal.h"
 #include "model_utils.h"
 
-static int decode_status(struct net_buf_simple *buf,
-			  struct bt_mesh_battery_status *status)
+int bt_mesh_gen_bat_decode_status(struct net_buf_simple *buf,
+				  struct bt_mesh_battery_status *status)
 {
 	uint8_t battery_lvl = net_buf_simple_pull_u8(buf);
 
@@ -49,7 +50,7 @@ static void handle_status(struct bt_mesh_model *model,
 	struct bt_mesh_battery_cli *cli = model->user_data;
 	struct bt_mesh_battery_status status;
 
-	if (decode_status(buf, &status)) {
+	if (bt_mesh_gen_bat_decode_status(buf, &status)) {
 		return;
 	}
 
