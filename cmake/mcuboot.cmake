@@ -37,6 +37,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       ${CMAKE_OBJCOPY}
       --input-target=ihex
       --output-target=binary
+      --gap-fill=0xff
       ${to_sign_hex}
       ${to_sign_bin}
 
@@ -67,6 +68,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       --input-target=ihex
       --output-target=ihex
       --change-address ${offset}
+      --gap-fill=0xff
       ${test_update_hex}
       ${moved_test_update_hex}
 
