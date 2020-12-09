@@ -41,7 +41,7 @@ Single-chip, single protocol (SoC)
 In this design, the application layer and OpenThread run on the same processor.
 The application uses the OpenThread APIs and IPv6 stack directly.
 
-This is the SoC design most commonly used for applications that do not make heavy computations or are battery powered.
+This is the SoC design most commonly used for applications that do not make heavy computations or are battery-powered.
 
 This design has the following advantages:
 
@@ -178,7 +178,7 @@ This platform design is suitable for the following development kits:
 Radio Co-Processor (RCP)
 ========================
 
-.. warning::
+.. note::
     The RCP architecture is currently not supported in |NCS|.
 
 This is a variant of the NCP design where the core of OpenThread lives on the host processor with only a minimal "controller" on the device with the Thread radio.

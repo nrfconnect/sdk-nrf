@@ -17,7 +17,7 @@ Adding support for Zigbee shell commands
 
 The Zigbee shell commands are implemented using Zephyr's :ref:`zephyr:shell_api` interface.
 By default, it uses the UART backend.
-To change this and other Zephyr's shell settings (for example, the prompt or the maximum amount of accepted command arguments), check the documentation page in Zephyr.
+To change this and other Zephyr's shell settings (for example, the prompt or the maximum amount of accepted command arguments), read the documentation page in Zephyr.
 
 Zigbee shell command support can be added to any Zigbee sample.
 Some of the commands use an endpoint to send packets from, so no endpoint handler is allowed to be registered for this endpoint.
@@ -669,7 +669,7 @@ Enable or disable the debug mode in the CLI.
 
 This command unblocks several additional commands in the CLI.
 
-.. warning::
+.. note::
     When used, the additional commands can render the device unstable.
 
 ----

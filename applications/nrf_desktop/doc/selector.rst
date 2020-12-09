@@ -36,7 +36,7 @@ For every hardware selector, define the following parameters:
 * :c:member:`selector_config.pins` - Pointer to the array of :c:struct:`gpio_pin`.
 * :c:member:`selector_config.pins_size` - Size of the array of :c:struct:`gpio_pin`.
 
-.. warning::
+.. note::
     Each source of ``selector_event`` must have a unique ID to properly distinguish events from different sources.
 
 Implementation details
@@ -47,7 +47,7 @@ The ``selector_event`` that the module sends to inform about the current hardwar
 * System start or wake-up (for every defined selector).
 * Selector state change when the application is running (only for the selector that changed state).
 
-When the application goes to sleep, selectors are not informing about state change (interrupts are disabled).
+When the application goes to sleep, selectors are not informing about the state change (interrupts are disabled).
 
 If a selector is placed between states, it is in unknown state and ``selector_event`` is not sent.
 

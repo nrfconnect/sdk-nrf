@@ -77,7 +77,7 @@ If you set the :option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY` option, the |ble_stat
 The callbacks can be used to achieve higher security levels.
 The passkey input is handled in the :ref:`nrf_desktop_passkey`.
 
-.. warning::
+.. note::
     By default, Zephyr's Bluetooth Peripheral demands the security level 3 in case the passkey authentication is enabled.
     If the nRF Desktop dongle is unable to achieve the security level 3, it will be unable to connect with the peripheral.
     Disable the :option:`CONFIG_BT_SMP_ENFORCE_MITM` option to allow the dongle to connect without the authentication.

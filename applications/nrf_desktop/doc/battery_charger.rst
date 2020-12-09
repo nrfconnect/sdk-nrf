@@ -47,7 +47,7 @@ As required by the USB specification, the module disables the battery charging w
 In addition, it also disables charging when USB is disconnected.
 The module enables charging when USB is powered or active.
 
-.. warning::
+.. note::
     Make sure that the hardware configuration enables charging by default (for example, when the pin to enable charging is not configured).
     Otherwise it will be impossible to enable charging when the battery is empty.
 
