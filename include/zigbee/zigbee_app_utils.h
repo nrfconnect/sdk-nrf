@@ -4,18 +4,33 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef ZIGBEE_HELPERS_H__
-#define ZIGBEE_HELPERS_H__
+#ifndef ZIGBEE_APP_UTILS_H__
+#define ZIGBEE_APP_UTILS_H__
 
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "zboss_api.h"
+#include <zboss_api.h>
+
+/** @file zigbee_app_utils.h
+ *
+ * @defgroup zigbee_app_utils Zigbee application utilities library.
+ * @{
+ * @brief  Library with helper functions and routines.
+ *
+ * @details Provides Zigbee default handler, helper functions for parsing
+ * and converting Zigbee data, indicating status of the device at a network
+ * using onboard LEDs.
+ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**@brief Function for setting the Erase persistent storage,
  *        depending on the erase pin.
  *
- * If the erase pin (1.39 by default, defined in zigbee_helpers.c)
+ * If the erase pin (1.39 by default, defined in zigbee_app_utils.c)
  * is shortened to the ground, then the persistent storage is erased.
  * Otherwise, whether the storage is erased is decided upon the input
  * parameter 'erase'. This behaviour is only valid if PCA10056 is used.
@@ -143,7 +158,7 @@ addr_type_t parse_address(const char *input, zb_addr_u *output,
  *
  * @param input   Pointer to the input string representing the address
  *                in big endian.
- * @param output  Variable where the address will be placed.
+ * @param addr    Variable where the address will be placed.
  *
  * @retval true   if the conversion succeed
  * @retval false  if the conversion failed
@@ -161,7 +176,7 @@ static inline bool parse_long_address(const char *input, zb_ieee_addr_t addr)
  *
  * @param input   Pointer to the input string representing
  *                the address in big endian.
- * @param output  Pointer to the a variable where address will be placed.
+ * @param addr    Pointer to the a variable where address will be placed.
  *
  * @retval true   if the conversion succeed
  * @retval false  if the conversion failed
@@ -207,7 +222,7 @@ void zigbee_led_status_update(zb_bufid_t bufid, uint32_t led_idx);
  * @note This function is to be used with End Devices only.
  *
  */
-#if defined ZB_ED_ROLE
+#if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
 void user_input_indicate(void);
 
 /**@brief Function for enabling sleepy behavior of End Device. Must be called
@@ -222,4 +237,10 @@ void user_input_indicate(void);
 void zigbee_configure_sleepy_behavior(bool enable);
 #endif
 
-#endif /* ZIGBEE_HELPERS_H__ */
+#endif /* ZIGBEE_APP_UTILS_H__ */
+
+#ifdef __cplusplus
+}
+#endif
+
+/**@} */

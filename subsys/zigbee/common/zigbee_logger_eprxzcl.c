@@ -9,7 +9,7 @@
 
 #include <logging/log.h>
 
-#include "zigbee_helpers.h"
+#include <zigbee/zigbee_app_utils.h>
 #include "zigbee_logger_eprxzcl.h"
 
 #if defined(CONFIG_LOG) && defined(CONFIG_ZIGBEE_SHELL_LOG_ENABLED)

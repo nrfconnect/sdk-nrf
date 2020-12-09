@@ -9,7 +9,7 @@
 #include <zephyr.h>
 
 #include <zboss_api.h>
-#include <zigbee_helpers.h>
+#include <zigbee/zigbee_app_utils.h>
 #include <zb_nrf_platform.h>
 
 

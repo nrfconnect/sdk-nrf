@@ -11,10 +11,9 @@
 
 #include <dk_buttons_and_leds.h>
 #include <logging/log.h>
-#include <hal/nrf_power.h>
 
-#include "zigbee_helpers.h"
-#include <zb_error_handler.h>
+#include <zigbee/zigbee_app_utils.h>
+#include <zigbee/zigbee_error_handler.h>
 #include <zb_nrf_platform.h>
 #include <zboss_api.h>
 
@@ -33,7 +32,7 @@
 
 #define IEEE_ADDR_BUF_SIZE       17
 
-LOG_MODULE_REGISTER(zigbee_helpers, CONFIG_ZIGBEE_HELPERS_LOG_LEVEL);
+LOG_MODULE_REGISTER(zigbee_app_utils, CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL);
 
 /* Rejoin-procedure related variables. */
 static bool           stack_initialised;
@@ -41,7 +40,7 @@ static bool           is_rejoin_procedure_started;
 static bool           is_rejoin_stop_requested;
 static bool           is_rejoin_in_progress;
 static uint8_t           rejoin_attempt_cnt;
-#if defined ZB_ED_ROLE
+#if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
 static volatile bool  wait_for_user_input;
 static volatile bool  is_rejoin_start_scheduled;
 #endif
@@ -334,9 +333,9 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 					status);
 			}
 		}
-#ifndef ZB_ED_ROLE
-		zb_enable_auto_pan_id_conflict_resolution(ZB_FALSE);
-#endif
+		if (!IS_ENABLED(CONFIG_ZIGBEE_ROLE_END_DEVICE)) {
+			zb_enable_auto_pan_id_conflict_resolution(ZB_FALSE);
+		}
 		break;
 
 	case ZB_BDB_SIGNAL_FORMATION:
@@ -417,9 +416,9 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		} else {
 			LOG_ERR("Unable to leave network (status: %d)", status);
 		}
-#ifndef ZB_ED_ROLE
-		zb_enable_auto_pan_id_conflict_resolution(ZB_FALSE);
-#endif
+		if (!IS_ENABLED(CONFIG_ZIGBEE_ROLE_END_DEVICE)) {
+			zb_enable_auto_pan_id_conflict_resolution(ZB_FALSE);
+		}
 		break;
 
 	case ZB_ZDO_SIGNAL_LEAVE_INDICATION: {
@@ -511,7 +510,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		break;
 	}
 
-#ifndef ZB_ED_ROLE
+#ifndef CONFIG_ZIGBEE_ROLE_END_DEVICE
 	case ZB_ZDO_SIGNAL_DEVICE_AUTHORIZED: {
 		/* This signal notifies the Zigbee Trust center application
 		 * (usually implemented on the coordinator node) about
@@ -579,7 +578,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		LOG_INF("Find and bind target finished (status: %d)", status);
 		break;
 
-#ifndef ZB_ED_ROLE
+#ifndef CONFIG_ZIGBEE_ROLE_END_DEVICE
 	case ZB_NWK_SIGNAL_PANID_CONFLICT_DETECTED: {
 		/* This signal informs the Router and Coordinator that conflict
 		 * PAN ID has been detected and needs to be resolved. In order
@@ -671,10 +670,10 @@ static void rejoin_the_network(zb_uint8_t param)
 			is_rejoin_procedure_started = false;
 			is_rejoin_stop_requested = false;
 
-#if defined ZB_ED_ROLE
+#if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
 			LOG_INF("Network rejoin procedure stopped as %sscheduled.",
 				(wait_for_user_input) ? "" : "NOT ");
-#elif defined ZB_ROUTER_ROLE
+#elif defined CONFIG_ZIGBEE_ROLE_ROUTER
 			LOG_INF("Network rejoin procedure stopped.");
 #endif
 		} else if (!is_rejoin_in_progress) {
@@ -713,9 +712,9 @@ static void rejoin_the_network(zb_uint8_t param)
  */
 static void start_network_rejoin(void)
 {
-#if defined ZB_ED_ROLE
+#if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
 	if (!ZB_JOINED() && stack_initialised && !wait_for_user_input) {
-#elif defined ZB_ROUTER_ROLE
+#else
 	if (!ZB_JOINED() && stack_initialised) {
 #endif
 		is_rejoin_in_progress = false;
@@ -726,7 +725,7 @@ static void start_network_rejoin(void)
 			is_rejoin_in_progress         = false;
 			rejoin_attempt_cnt            = 0;
 
-#if defined ZB_ED_ROLE
+#if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
 			wait_for_user_input           = false;
 			is_rejoin_start_scheduled     = false;
 
@@ -764,12 +763,12 @@ static void stop_network_rejoin(zb_uint8_t was_scheduled)
 
 	zb_ret_t zb_err_code;
 
-#if defined ZB_ED_ROLE
+#if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
 	/* Set wait_for_user_input depending on if the device should retry
 	 * joining on user_input_indication().
 	 */
 	wait_for_user_input = was_scheduled;
-#elif defined ZB_ROUTER_ROLE
+#elif defined CONFIG_ZIGBEE_ROLE_ROUTER
 	ZVUNUSED(was_scheduled);
 #endif
 
@@ -781,10 +780,10 @@ static void stop_network_rejoin(zb_uint8_t was_scheduled)
 			/* Stop rejoin procedure */
 			is_rejoin_procedure_started = false;
 			is_rejoin_stop_requested = false;
-#if defined ZB_ED_ROLE
+#if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
 			LOG_INF("Network rejoin procedure stopped as %sscheduled.",
 				(wait_for_user_input) ? "" : "not ");
-#elif defined ZB_ROUTER_ROLE
+#elif defined CONFIG_ZIGBEE_ROLE_ROUTER
 			LOG_INF("Network rejoin procedure stopped.");
 #endif
 		} else {
@@ -793,18 +792,18 @@ static void stop_network_rejoin(zb_uint8_t was_scheduled)
 		}
 	}
 
-#if defined ZB_ED_ROLE
-	/* Make sure scheduled stop alarm is canceled. */
-	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(
-		stop_network_rejoin,
-		ZB_ALARM_ANY_PARAM);
-	if (zb_err_code != RET_NOT_FOUND) {
-		ZB_ERROR_CHECK(zb_err_code);
+	if (IS_ENABLED(CONFIG_ZIGBEE_ROLE_END_DEVICE)) {
+		/* Make sure scheduled stop alarm is canceled. */
+		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(
+			stop_network_rejoin,
+			ZB_ALARM_ANY_PARAM);
+		if (zb_err_code != RET_NOT_FOUND) {
+			ZB_ERROR_CHECK(zb_err_code);
+		}
 	}
-#endif
 }
 
-#if defined ZB_ED_ROLE
+#if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
 /* Function to be scheduled when user_input_indicate() is called
  * and wait_for_user_input is true.
  */

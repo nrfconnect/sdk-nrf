@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig ZIGBEE_APP_UTILS
+	bool "Enable API for Zigbee application utilities"
+	help
+	  This allows Zigbee applications to call API:
+
+	  - for parsing and converting Zigbee data types
+	  - for handling common ZBOSS signals, with behavior depending on the device role
+	  - for indicating the device status at the network using onboard LEDs
+
+if ZIGBEE_APP_UTILS
+
+# Configure ZIGBEE_APP_UTILS_LOG_LEVEL
+module = ZIGBEE_APP_UTILS
+module-str = Zigbee application utilities
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # ZIGBEE_APP_UTILS

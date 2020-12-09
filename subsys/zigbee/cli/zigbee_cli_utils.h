@@ -14,7 +14,7 @@
 #include <shell/shell.h>
 
 #include <zboss_api.h>
-#include <zigbee_helpers.h>
+#include <zigbee/zigbee_app_utils.h>
 
 /**@brief Finish the command by dumping 'Done'.
  *

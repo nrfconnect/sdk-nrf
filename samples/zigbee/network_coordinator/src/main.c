@@ -15,8 +15,8 @@
 
 #include <zboss_api.h>
 #include <zb_mem_config_max.h>
-#include <zb_error_handler.h>
-#include <zigbee_helpers.h>
+#include <zigbee/zigbee_error_handler.h>
+#include <zigbee/zigbee_app_utils.h>
 #include <zb_nrf_platform.h>
 
 

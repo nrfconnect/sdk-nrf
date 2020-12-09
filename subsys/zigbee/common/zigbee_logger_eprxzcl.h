@@ -9,11 +9,25 @@
 
 #include "zboss_api.h"
 
+/** @file zigbee_logger_eprxzcl.h
+ *
+ * @defgroup zigbee_logger_ep Zigbee endpoint logger library.
+ * @{
+ * @brief  Library for logging incoming ZCL packets.
+ *
+ * @details Provides Zigbee endpoint handler for parsing incoming ZCL packets
+ * and logging packet's fields and payload.
+ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**@brief Handler function which may be called to log an incoming frame
  *        onto zigbee endpoint.
  *
  * @details When this function is called as a callback bound to endpoint
- *          via @ref ZB_AF_SET_ENDPOINT_HANDLER,
+ *          via ZB_AF_SET_ENDPOINT_HANDLER(),
  *          (directly or indirectly) it produces a log line similar
  *          to the following:
  * @code
@@ -33,3 +47,9 @@
 zb_uint8_t zigbee_logger_eprxzcl_ep_handler(zb_bufid_t bufid);
 
 #endif /* ZIGBEE_COMMON_ZIGBEE_LOGGER_EPRXZCL_H_ */
+
+#ifdef __cplusplus
+}
+#endif
+
+/**@} */
