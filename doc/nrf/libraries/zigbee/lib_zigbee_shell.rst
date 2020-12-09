@@ -12,31 +12,26 @@ Enabling a device to work with these commands simplifies testing and debugging o
 
 .. _zigbee_shell_extending_samples:
 
-Adding support for Zigbee shell commands
-****************************************
+Configuration
+*************
 
 The Zigbee shell commands are implemented using Zephyr's :ref:`zephyr:shell_api` interface.
-By default, it uses the UART backend.
+By default, Zephyr shell uses the UART backend.
 To change this and other Zephyr's shell settings (for example, the prompt or the maximum amount of accepted command arguments), read the documentation page in Zephyr.
 
-Zigbee shell command support can be added to any Zigbee sample.
-Some of the commands use an endpoint to send packets from, so no endpoint handler is allowed to be registered for this endpoint.
+|zigbee_shell_config|
 
-To extend a sample with the Zigbee shell command support, set the following KConfig options:
+To configure the Zigbee shell library, use the following options:
 
-* :option:`CONFIG_ZIGBEE_SHELL` - This option enables Zigbee shell and Zephyr's :ref:`zephyr:shell_api`.
-* :option:`CONFIG_ZIGBEE_SHELL_ENDPOINT` - This option specifies the endpoint number to be used by the Zigbee shell instance.
-  Endpoint must be present at the device and you must not register an endpoint handler for this endpoint.
-* :option:`CONFIG_ZIGBEE_SHELL_DEBUG_CMD` - This option enables commands useful for testing and debugging. This option also enables logging of the incoming ZCL frames.
-  Logging of the incoming ZCL frames uses the logging level set in :option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL`.
-  .. note::
-        Using debug commands can make the device unstable.
+* :option:`CONFIG_ZIGBEE_SHELL`
+* :option:`CONFIG_ZIGBEE_SHELL_ENDPOINT`
+* :option:`CONFIG_ZIGBEE_SHELL_DEBUG_CMD`
+* :option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL`
 
-* :option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL` - This option sets the logging level of Zigbee Shell logs.
-  See :ref:`zigbee_ug_logging_logger_options` for more information.
+For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_logger_ep`.
 
-Running Zigbee shell commands
-*****************************
+Supported backends
+******************
 
 Zigbee shell commands are available for the following backends when testing samples:
 

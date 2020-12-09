@@ -79,7 +79,7 @@ To configure the Zigbee FOTA library, use the following options:
 * :option:`CONFIG_ENABLE_ZIGBEE_FOTA_MAX_HW_VERSION`
 * :option:`CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION`
 
-For detailed steps about configuring the Zigbee FOTA in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_ota`.
+For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_ota`.
 
 Limitations
 ***********
