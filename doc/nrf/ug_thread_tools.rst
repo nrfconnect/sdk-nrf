@@ -53,7 +53,16 @@ The interaction is possible using commands proper to wpanctl, a module installed
 Installing wpantund
 ===================
 
-For installation and initial configuration, see `wpantund Installation Guide`_.
+To ensure that the interaction with the samples works as expected, install the version of wpantund that has been used for testing the |NCS|.
+
+See the `wpantund Installation Guide`_ for general installation instructions.
+To install the verified version, replace the ``git checkout full/latest-release`` command with the following command:
+
+.. parsed-literal::
+
+   git checkout 87c90eedce0c75cb68a1cbc34ff36223400862f1
+
+When installing on macOS, follow the instructions for the manual installation and replace the above command to ensure that the correct version is installed.
 
 .. _ug_thread_tools_wpantund_configuring:
 
