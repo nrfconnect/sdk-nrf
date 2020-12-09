@@ -228,10 +228,9 @@ static void lightness_set(struct bt_mesh_model *mod,
 
 	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
 		/* According to the Mesh Model Specification section 6.2.3.1,
-		 * receiving a lightness set message should disable control.
+		 * manual changes to the lightness should disable control.
 		 */
 		atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
-
 		lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
@@ -506,6 +505,10 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_lightness_status status = { 0 };
 
 	if (lvl_set->new_transaction) {
+		/* According to the Mesh Model Specification section 6.2.3.1,
+		 * manual changes to the lightness should disable control.
+		 */
+		atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
 		lightness_srv_change_lvl(srv, ctx, &set, &status);
 	} else if (rsp) {
 		srv->handlers->light_get(srv, NULL, &status);
@@ -556,6 +559,10 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		.transition = delta_set->transition,
 	};
 
+	/* According to the Mesh Model Specification section 6.2.3.1,
+	 * manual changes to the lightness should disable control.
+	 */
+	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	/* Override "last" value to be able to make corrective deltas when
@@ -619,6 +626,10 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		}
 	}
 
+	/* According to the Mesh Model Specification section 6.2.3.1,
+	 * manual changes to the lightness should disable control.
+	 */
+	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {
@@ -657,6 +668,10 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 		set.lvl = 0;
 	}
 
+	/* According to the Mesh Model Specification section 6.2.3.1,
+	 * manual changes to the lightness should disable control.
+	 */
+	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {
