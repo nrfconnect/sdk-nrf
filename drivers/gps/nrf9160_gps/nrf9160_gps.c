@@ -916,7 +916,9 @@ static int init(const struct device *dev, gps_event_handler_t handler)
 	return 0;
 }
 
-static struct gps_drv_data gps_drv_data;
+static struct gps_drv_data gps_drv_data = {
+	.socket = -1,
+};
 
 static const struct gps_driver_api gps_api_funcs = {
 	.init = init,
@@ -926,5 +928,5 @@ static const struct gps_driver_api gps_api_funcs = {
 };
 
 DEVICE_AND_API_INIT(nrf9160_gps, CONFIG_NRF9160_GPS_DEV_NAME, setup,
-		    &gps_drv_data, NULL, APPLICATION,
+		    &gps_drv_data, NULL, POST_KERNEL,
 		    CONFIG_NRF9160_GPS_INIT_PRIO, &gps_api_funcs);
