@@ -16,6 +16,7 @@
 #include <logging/log.h>
 #include <sys/util.h>
 #include <settings/settings.h>
+#include <modem/at_cmd.h>
 
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_socket.h>
@@ -36,7 +37,9 @@ LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 #if !defined(NRF_CLOUD_CLIENT_ID)
 #define NRF_IMEI_LEN 15
-#define NRF_CLOUD_CLIENT_ID_LEN (sizeof(CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX) - 1 + NRF_IMEI_LEN)
+#define CGSN_RESPONSE_LENGTH 19
+#define NRF_CLOUD_CLIENT_ID_LEN \
+	(sizeof(CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX) - 1 + NRF_IMEI_LEN)
 #else
 #define NRF_CLOUD_CLIENT_ID_LEN (sizeof(NRF_CLOUD_CLIENT_ID) - 1)
 #endif
@@ -311,26 +314,19 @@ static int nct_client_id_get(char *id)
 {
 #if !defined(NRF_CLOUD_CLIENT_ID)
 #if defined(CONFIG_NRF_MODEM_LIB)
-	int at_socket_fd;
-	int bytes_written;
-	int bytes_read;
-	char imei_buf[NRF_IMEI_LEN + 1];
-	int ret;
+	char imei_buf[CGSN_RESPONSE_LENGTH + 1];
+	int err;
 
-	at_socket_fd = nrf_socket(NRF_AF_LTE, NRF_SOCK_DGRAM, NRF_PROTO_AT);
-	__ASSERT_NO_MSG(at_socket_fd >= 0);
+	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
+	if (err) {
+		LOG_ERR("Failed to obtain IMEI, error: %d", err);
+		return err;
+	}
 
-	bytes_written = nrf_write(at_socket_fd, "AT+CGSN", 7);
-	__ASSERT_NO_MSG(bytes_written == 7);
-
-	bytes_read = nrf_read(at_socket_fd, imei_buf, NRF_IMEI_LEN);
-	__ASSERT_NO_MSG(bytes_read == NRF_IMEI_LEN);
 	imei_buf[NRF_IMEI_LEN] = 0;
 
-	snprintf(id, NRF_CLOUD_CLIENT_ID_LEN + 1, "%s%s", CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX, imei_buf);
-
-	ret = nrf_close(at_socket_fd);
-	__ASSERT_NO_MSG(ret == 0);
+	snprintf(id, NRF_CLOUD_CLIENT_ID_LEN + 1, "%s%.*s",
+		 CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX, NRF_IMEI_LEN, imei_buf);
 #else
 #error Missing NRF_CLOUD_CLIENT_ID
 #endif /* defined(CONFIG_NRF_MODEM_LIB) */
