@@ -7,27 +7,8 @@ Configuring Zigbee libraries in |NCS|
    :local:
    :depth: 2
 
-The Zigbee protocol in |NCS| can be customized by enabling and configuring several libraries.
-
-This page lists options and steps required for configuring the available libraries.
-
-.. _ug_zigbee_configuring_components_application_utilities:
-
-Configuring Zigbee application utilities
-****************************************
-
-Zigbee application utilities library provides a set of components ready to use in Zigbee applications.
-
-To enable and use library, you must set the :option:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
-Additional logs for the library can be configured using :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
-See :ref:`zigbee_ug_logging_logger_options` for more information.
-
-Default signal handler
-======================
-The default signal handler provides a default logic to handle ZBOSS stack signals.
-
-The default signal handler can be used by calling the :c:func:`zigbee_default_signal_handler` in the application's :c:func:`zboss_signal_handler` implementation.
-For more information, see :ref:`lib_zigbee_signal_handler`.
+The Zigbee protocol in |NCS| can be customized by enabling and configuring several Zigbee libraries.
+This page lists options and steps required for configuring each of them.
 
 .. _ug_zigbee_configuring_components_ota:
 
@@ -120,3 +101,74 @@ To specify the target device of the generated image, use the following Kconfig o
 The manufacturer ID, image type and version of the generated image are obtained from the application settings.
 
 The upgrade image will be created in a dedicated directory in the :file:`build/zephyr/` directory.
+
+.. _ug_zigbee_configuring_components_application_utilities:
+
+Configuring Zigbee application utilities
+****************************************
+The :ref:`lib_zigbee_application_utilities` library provides a set of components that are ready for use in Zigbee applications.
+
+To enable and use this library, set the :option:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
+
+For additional logs for this library, configure the :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
+See :ref:`zigbee_ug_logging_logger_options` for more information.
+
+Default signal handler
+======================
+The default signal handler provides the default logic for handling ZBOSS stack signals.
+For more information, see :ref:`lib_zigbee_signal_handler`.
+
+Afer enabling the Zigbee application utilities library, you can use this component by calling the :c:func:`zigbee_default_signal_handler` in the application's :c:func:`zboss_signal_handler` implementation.
+
+.. _ug_zigbee_configuring_components_logger_ep:
+
+Configuring Zigbee endpoint logger
+**********************************
+
+The Zigbee endpoint logger library provides an endpoint handler for parsing and logging incoming ZCL frames with all their fields.
+
+To enable the endpoint logger library in your application, complete the following steps:
+
+1. Enable the library by setting the :option:`CONFIG_ZIGBEE_LOGGER_EP` Kconfig option.
+2. Define the logging level for the library by setting the :option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL` Kconfig option.
+   See :ref:`zigbee_ug_logging_logger_options` for more information.
+3. Include the required header file :file:`include/zigbee/zigbee_logger_eprxzcl.h` into your project.
+4. Register :c:func:`zigbee_logger_eprxzcl_ep_handler` as handler for the given *your_ep_number* endpoint using :c:macro:`ZB_AF_SET_ENDPOINT_HANDLER`, after the device context is registered with :c:macro:`ZB_AF_REGISTER_DEVICE_CTX`, but before starting the Zigbee stack:
+
+   .. parsed-literal::
+      :class: highlight
+
+      ZB_AF_REGISTER_DEVICE_CTX(&your_device_ctx);
+      ZB_AF_SET_ENDPOINT_HANDLER(*your_ep_number*, zigbee_logger_eprxzcl_ep_handler);
+
+   For applications that implement multiple handlers, :c:func:`zigbee_logger_eprxzcl_ep_handler` can be registered as handler for each endpoint.
+
+   .. note::
+      If :ref:`lib_zigbee_shell` is already enabled and configured for the given endpoint, set the :option:`CONFIG_ZIGBEE_SHELL_DEBUG_CMD` Kconfig option to enable the endpoint logger instead of registering a handler.
+      This is because the Zigbee shell library registers its own handler for the endpoint.
+
+For more information about the library, see :ref:`lib_zigbee_logger_endpoint`.
+
+.. _ug_zigbee_configuring_components_shell:
+
+Configuring Zigbee shell
+************************
+
+The Zigbee shell library implements a set of :ref:`Zigbee shell commands <zigbee_cli_reference>` that can be used with all Zigbee samples for testing and debugging.
+
+|zigbee_shell_config|
+
+To extend a sample with the Zigbee shell command support, set the following KConfig options:
+
+* :option:`CONFIG_ZIGBEE_SHELL` - This option enables Zigbee shell and Zephyr's :ref:`zephyr:shell_api`.
+* :option:`CONFIG_ZIGBEE_SHELL_ENDPOINT` - This option specifies the endpoint number to be used by the Zigbee shell instance.
+  The endpoint must be present at the device and you must not register an endpoint handler for this endpoint.
+* :option:`CONFIG_ZIGBEE_SHELL_DEBUG_CMD` - This option enables commands useful for testing and debugging.
+  This option also enables logging of the incoming ZCL frames.
+  Logging of the incoming ZCL frames uses the logging level set in :option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL`.
+
+  .. note::
+     Using debug commands can make the device unstable.
+
+* :option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL` - This option sets the logging level for Zigbee shell logs.
+  See :ref:`zigbee_ug_logging_logger_options` for more information.

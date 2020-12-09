@@ -81,6 +81,10 @@ Zigbee
 
   * Development support for the nRF5340 DK in single-protocol configuration for the :ref:`zigbee_light_switch_sample`, :ref:`zigbee_light_bulb_sample`, and :ref:`zigbee_network_coordinator_sample` samples.
   * New ``zcl ping`` command in the :ref:`lib_zigbee_shell` library.
+  * New libraries there were extracted from common code under :file:`subsys/zigbee/common`:
+
+    * :ref:`lib_zigbee_application_utilities` library
+    * :ref:`lib_zigbee_logger_endpoint` library
 
 * Updated:
 

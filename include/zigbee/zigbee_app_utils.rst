@@ -7,21 +7,17 @@ Zigbee application utilities
    :local:
    :depth: 2
 
-Zigbee application utilities library provides a set of components ready to use in Zigbee applications:
+Zigbee application utilities library provides a set of components that are ready for use in Zigbee applications:
 
 * :ref:`lib_zigbee_signal_handler` for handling common ZBOSS stack signals.
-* API for parsing and converting Zigbee data types, all functions are listed in :file:`include/zigbee/zigbee_app_utils.h`.
-* :c:func:`zigbee_led_status_update` for indicating status of the device at a network using onboard LEDs.
-
+* API for parsing and converting Zigbee data types.
+  Available functions are listed in :file:`include/zigbee/zigbee_app_utils.h`.
+* :c:func:`zigbee_led_status_update` for indicating the status of the device in a network using LEDs.
 
 .. _lib_zigbee_signal_handler:
 
 Zigbee default signal handler
 *****************************
-
-.. contents::
-   :local:
-   :depth: 2
 
 The :ref:`nrfxlib:zboss` interacts with the user application by invoking the :c:func:`zboss_signal_handler` function whenever a stack event, such as network steering, occurs.
 It is mandatory to define :c:func:`zboss_signal_handler` in the application.
@@ -433,7 +429,6 @@ If the default behavior is not applicable for the application, you can customize
 
    Implementing a custom logic for putting the stack into the sleep mode
 
-
 .. _lib_zigbee_application_utilities_options:
 
 Configuration
@@ -441,7 +436,9 @@ Configuration
 
 To enable the Zigbee application utilities library, set the :option:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
 
-To configure logging level of the library, use the following :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
+To configure the logging level of the library, use the :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
+
+For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_application_utilities`.
 
 API documentation
 *****************
