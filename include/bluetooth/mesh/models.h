@@ -48,6 +48,8 @@
 #include <bluetooth/mesh/light_ctl_cli.h>
 #include <bluetooth/mesh/light_temp_srv.h>
 #include <bluetooth/mesh/light_ctl_srv.h>
+#include <bluetooth/mesh/light_xyl_cli.h>
+#include <bluetooth/mesh/light_xyl_srv.h>
 
 /* Time and Scene models */
 #include <bluetooth/mesh/time_cli.h>

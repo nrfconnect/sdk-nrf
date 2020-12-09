@@ -59,4 +59,7 @@ zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_CTL_SRV light_ctl_srv.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_SCENE_SRV scene_srv.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_SCENE_CLI scene_cli.c)
 
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_XYL_CLI light_xyl_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_XYL_SRV light_xyl_srv.c)
+
 zephyr_linker_sources(SECTIONS sensor_types.ld)

@@ -310,6 +310,25 @@ static void handle_default_get(struct bt_mesh_model *mod,
 	bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
 }
 
+void lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
+			       struct bt_mesh_msg_ctx *ctx, uint16_t set)
+{
+	uint16_t old = srv->default_light;
+
+	if (set == old) {
+		return;
+	}
+
+	BT_DBG("%u", set);
+
+	srv->default_light = set;
+	if (srv->handlers->default_update) {
+		srv->handlers->default_update(srv, ctx, old, set);
+	}
+
+	store_state(srv);
+}
+
 static void set_default(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf, bool ack)
 {
@@ -320,19 +339,7 @@ static void set_default(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_lightness_srv *srv = mod->user_data;
 	uint16_t new = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
 
-	if (new != srv->default_light) {
-		uint16_t old = srv->default_light;
-
-		srv->default_light = new;
-		if (srv->handlers->default_update) {
-			srv->handlers->default_update(srv, ctx, old, new);
-		}
-
-		store_state(srv);
-	}
-
-	BT_DBG("%u", new);
-
+	lightness_srv_default_set(srv, ctx, new);
 	if (!ack) {
 		return;
 	}
@@ -612,9 +619,9 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		 * server's transition as non-linear. The transition time and
 		 * end points are unaffected by this.
 		 */
-		uint32_t time_to_edge =
-			((uint64_t)distance * (uint64_t)move_set->transition->time) /
-			abs(move_set->delta);
+		uint32_t time_to_edge = ((uint64_t)distance *
+					 (uint64_t)move_set->transition->time) /
+					abs(move_set->delta);
 
 		BT_DBG("Move: distance: %u delta: %u step: %u ms time: %u ms",
 		       (uint32_t)distance, move_set->delta,
@@ -696,11 +703,10 @@ static void onoff_get(struct bt_mesh_onoff_srv *onoff_srv,
 	rsp->target_on_off = (status.target > 0);
 }
 
-const struct bt_mesh_onoff_srv_handlers
-	_bt_mesh_lightness_srv_onoff_handlers = {
-		.set = onoff_set,
-		.get = onoff_get,
-	};
+const struct bt_mesh_onoff_srv_handlers _bt_mesh_lightness_srv_onoff_handlers = {
+	.set = onoff_set,
+	.get = onoff_get,
+};
 
 static void lightness_srv_reset(struct bt_mesh_lightness_srv *srv)
 {
@@ -756,8 +762,7 @@ static int bt_mesh_lightness_srv_init(struct bt_mesh_model *mod)
 
 #ifdef CONFIG_BT_SETTINGS
 static int bt_mesh_lightness_srv_settings_set(struct bt_mesh_model *mod,
-					      const char *name,
-					      size_t len_rd,
+					      const char *name, size_t len_rd,
 					      settings_read_cb read_cb,
 					      void *cb_arg)
 {

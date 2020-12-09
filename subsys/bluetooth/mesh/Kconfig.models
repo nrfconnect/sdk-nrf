@@ -497,6 +497,19 @@ config BT_MESH_LIGHT_TEMP_SRV
 	help
 	  Enable Mesh Light CTL Temperature Server model.
 
+config BT_MESH_LIGHT_XYL_CLI
+	bool "xyL Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable Mesh Light xyL Client model.
+
+config BT_MESH_LIGHT_XYL_SRV
+	bool "xyL Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHTNESS_SRV
+	help
+	  Enable Mesh Light xyL Server model.
+
 menuconfig BT_MESH_SENSOR_SRV
 	bool "Sensor Server"
 	select BT_MESH_NRF_MODELS
