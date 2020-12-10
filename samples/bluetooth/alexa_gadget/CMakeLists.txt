@@ -13,7 +13,4 @@ target_sources(app PRIVATE
   src/main.c
 )
 
-# Explicit linking needed to ensure protobuffer files are compiled before sample
-target_link_libraries(app PRIVATE ALEXA_GADGETS_PROFILE)
-
 # NORDIC SDK APP END

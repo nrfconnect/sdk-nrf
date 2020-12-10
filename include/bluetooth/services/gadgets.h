@@ -87,7 +87,7 @@ typedef void (*bt_gadgets_sent_cb_t)(struct bt_conn *conn,
 				     bool success);
 
 /** @brief Callback type for CCCD updated. */
-typedef void (*bt_gadgets_ccc_update_cb_t)(bool enabled);
+typedef void (*bt_gadgets_ccc_update_cb_t)(struct bt_conn *conn, bool enabled);
 
 /** @brief Pointers to the callback functions for service events. */
 struct bt_gadgets_cb {

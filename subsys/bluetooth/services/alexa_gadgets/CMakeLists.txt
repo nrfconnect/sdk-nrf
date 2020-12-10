@@ -18,10 +18,22 @@
 
 # Check system for protoc and nanopb binaries presence, needed to build the gadget profile files.
 # Prefer local variable to make version matching easier
-find_program(PROTOC_BIN protoc HINTS "${CMAKE_SOURCE_DIR}/*/generator-bin/")
-find_program(NANOPB_BIN protoc-gen-nanopb HINTS "${CMAKE_SOURCE_DIR}/*/generator-bin/")
+find_program(PROTOC_BIN
+    protoc
+    HINTS
+    "${CMAKE_SOURCE_DIR}/*/generator-bin/"
+    "${ZEPHYR_BASE}/../*/generator-bin/"
+    "${ZEPHYR_BASE}/../tools/*/generator-bin/"
+)
+find_program(NANOPB_BIN
+    protoc-gen-nanopb
+    HINTS
+    "${CMAKE_SOURCE_DIR}/*/generator-bin/"
+    "${ZEPHYR_BASE}/../*/generator-bin/"
+    "${ZEPHYR_BASE}/../tools/*/generator-bin/"
+)
 
-if (((NOT NANOPB_BIN) OR (NOT PROTOC_BIN)) AND CONFIG_GADGETS_PROFILE_ENABLE)
+if (((NOT NANOPB_BIN) OR (NOT PROTOC_BIN)) AND CONFIG_BT_ALEXA_GADGETS_PROFILE)
     message(STATUS "nanopb not found.")
     message(STATUS "Please download platform-specific nanopb from here https://jpa.kapsi.fi/nanopb/download/")
     message(STATUS "Extract the files to `${CMAKE_SOURCE_DIR}`, or add `<path-to>/nanopb-x.y.z-<platform>/generator-bin` to system PATH.")
@@ -157,16 +169,16 @@ foreach(GROUP BASE NOTIFICATIONS ALERTS STATELISTENER SPEECHDATA MUSICDATA CUSTO
     endforeach()
 endforeach()
 
-zephyr_library_named(ALEXA_GADGETS_PROFILE)
+zephyr_library_named(alexa_gadgets_lib)
 
 zephyr_include_directories(${PROTO_COMPILATION_DIR})
 zephyr_include_directories(${NANOPB_PATH})
 
-zephyr_library_sources_ifdef(CONFIG_BT_GADGETS
+zephyr_library_sources_ifdef(CONFIG_BT_ALEXA_GADGETS
     ${CMAKE_CURRENT_SOURCE_DIR}/gadgets.c
 )
 
-zephyr_library_sources_ifdef(CONFIG_GADGETS_PROFILE_ENABLE
+zephyr_library_sources_ifdef(CONFIG_BT_ALEXA_GADGETS_PROFILE
     ${CMAKE_CURRENT_SOURCE_DIR}/gadgets_profile.c
     ${NANOPB_PATH}/pb_common.c
     ${NANOPB_PATH}/pb_encode.c
@@ -174,26 +186,35 @@ zephyr_library_sources_ifdef(CONFIG_GADGETS_PROFILE_ENABLE
     ${BASE_PROTO_OUTPUTS}
 )
 
-zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_NOTIFICATIONS_ENABLE
+zephyr_library_sources_ifdef(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS
     ${NOTIFICATIONS_PROTO_OUTPUTS}
 )
 
-zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_ALERTS_ENABLE
+zephyr_library_sources_ifdef(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_ALERTS
     ${ALERTS_PROTO_OUTPUTS}
 )
 
-zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_STATELISTENER_ENABLE
+zephyr_library_sources_ifdef(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER
     ${STATELISTENER_PROTO_OUTPUTS}
 )
 
-zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_SPEECHDATA_ENABLE
+zephyr_library_sources_ifdef(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA
     ${SPEECHDATA_PROTO_OUTPUTS}
 )
 
-zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_MUSICDATA_ENABLE
+zephyr_library_sources_ifdef(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA
     ${MUSICDATA_PROTO_OUTPUTS}
 )
 
-zephyr_library_sources_ifdef(CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE
+zephyr_library_sources_ifdef(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
     ${CUSTOM_PROTO_OUTPUTS}
 )
+
+#
+# Give the main application access to the generated proto headers
+#
+# NOTE: This library corresponds to APP_LINK_WITH_ALEXA_GADGETS_PROTO in Kconfig
+#       which is default set to "true".
+#
+zephyr_interface_library_named(alexa_gadgets_proto)
+target_link_libraries(alexa_gadgets_proto INTERFACE alexa_gadgets_lib)
