@@ -276,7 +276,6 @@
 .. _`Secure Location Protocol (SLP)`: https://en.wikipedia.org/wiki/Service_Location_Protocol
 
 .. _`Pre-Shared Key (PSK)`: https://en.wikipedia.org/wiki/Pre-shared_key
-.. _`Mbed TLS`: https://en.wikipedia.org/wiki/Mbed_TLS
 
 .. _`Remote Procedure Calls (RPC)`: https://en.wikipedia.org/wiki/Remote_procedure_call
 
@@ -457,6 +456,7 @@
 .. _`Platform Security Architecture (PSA)`: https://www.psacertified.org/what-is-psa-certified/
 
 .. _`TF-M documentation`: https://ci-builds.trustedfirmware.org/static-files/DkdCrQzFZSnnOE237JnAP31qbSUWnEhVzQwxZ_NIpaExNjA2NDMwMTIxODMyOjk6YW5vbnltb3VzOnZpZXcvVEYtTS9qb2IvdGYtbS1idWlsZC1kb2NzLW5pZ2h0bHkvbGFzdFN0YWJsZUJ1aWxkL2FydGlmYWN0/trusted-firmware-m/build/install/doc/user_guide/html/docs/introduction/readme.html
+.. _`Mbed TLS`: https://developer.trustedfirmware.org/w/mbed-tls/
 
 .. _`Nanopb`: https://jpa.kapsi.fi/nanopb/
 .. _`Nanopb Downloads`: https://jpa.kapsi.fi/nanopb/download/
