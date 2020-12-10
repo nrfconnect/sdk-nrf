@@ -23,31 +23,20 @@
 #include "alexaDiscoveryDiscoverResponseEvent.pb.h"
 #include "alexaDiscoveryDiscoverResponseEventPayload.pb.h"
 
-#if CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
 #include "custom_event.pb.h"
 #endif
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(gadgets_profile, CONFIG_GADGETS_PROFILE_LOG_LEVEL);
+LOG_MODULE_REGISTER(gadgets_profile, CONFIG_BT_ALEXA_GADGETS_PROFILE_LOG_LEVEL);
 
-#if IS_ENABLED(CONFIG_GADGETS_OTA_ENABLE)
+#if IS_ENABLED(CONFIG_BT_ALEXA_GADGETS_OTA)
 #error OTA Not yet supported
-#endif
-
-#if CONFIG_BT_MAX_CONN > 1
-#error Only one connection currently supported
-/* To add support for multiple connections,
- * API must be updated to specify target bt_conn, and some logic has to be
- * added to keep track of separate connection states.
- * Additionally consider whether buffers to hold encoded and decoded protobuf
- * structs should be duplicated for other connections to avoid potential
- * buffer starvation.
- */
 #endif
 
 #define GADGETS_FEATURE_FLAGS \
 	(BIT(0)) |	      \
-	(BIT(1) * IS_ENABLED(CONFIG_GADGETS_OTA_ENABLE))
+	(BIT(1) * IS_ENABLED(CONFIG_BT_ALEXA_GADGETS_OTA))
 
 /* DSN = Device Serial Number */
 #define GADGETS_DSN_LENGTH_BYTES 8
@@ -63,12 +52,12 @@ LOG_MODULE_REGISTER(gadgets_profile, CONFIG_GADGETS_PROFILE_LOG_LEVEL);
 
 /* Number of supported Gadget capabilities */
 #define GADGETS_CAP_COUNT					      \
-	(IS_ENABLED(CONFIG_GADGETS_CAPABILITY_STATELISTENER_ENABLE) + \
-	 IS_ENABLED(CONFIG_GADGETS_CAPABILITY_ALERTS_ENABLE) +	      \
-	 IS_ENABLED(CONFIG_GADGETS_CAPABILITY_NOTIFICATIONS_ENABLE) + \
-	 IS_ENABLED(CONFIG_GADGETS_CAPABILITY_MUSICDATA_ENABLE) +     \
-	 IS_ENABLED(CONFIG_GADGETS_CAPABILITY_SPEECHDATA_ENABLE) +    \
-	 IS_ENABLED(CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE))
+	(IS_ENABLED(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER) + \
+	 IS_ENABLED(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_ALERTS) +	      \
+	 IS_ENABLED(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS) + \
+	 IS_ENABLED(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA) +     \
+	 IS_ENABLED(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA) +    \
+	 IS_ENABLED(CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM))
 
 #define GADGETS_CAP_DSN_PLACEHOLDER "DSN PLACEHOLDER-"
 #define GADGETS_CAP_DEV_TOKEN_PLACEHOLDER \
@@ -82,41 +71,41 @@ BUILD_ASSERT(sizeof(GADGETS_CAP_DEV_TOKEN_PLACEHOLDER) ==
 static int directive_handler_discovery(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len);
-#if CONFIG_GADGETS_CAPABILITY_MUSICDATA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA
 static int directive_handler_musicdata(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len);
 #endif
-#if CONFIG_GADGETS_CAPABILITY_SPEECHDATA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA
 static int directive_handler_speechdata(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len);
 #endif
-#if CONFIG_GADGETS_CAPABILITY_STATELISTENER_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER
 static int directive_handler_statelistener(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len);
 #endif
-#if CONFIG_GADGETS_CAPABILITY_NOTIFICATIONS_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS
 static int directive_handler_notifications(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len);
 #endif
-#if CONFIG_GADGETS_CAPABILITY_ALERTS_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_ALERTS
 static int directive_handler_alerts(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len);
 #endif
-#if CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
 static int directive_handler_custom(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len);
 #endif
 
 
-#ifndef CONFIG_GADGETS_CAPABILITY_CUSTOM_NAMESPACE
+#ifndef CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE
 /* Dummy value for handler list below */
-#define CONFIG_GADGETS_CAPABILITY_CUSTOM_NAMESPACE "-"
+#define CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE "-"
 #endif
 
 /* struct array containing directive namespaces with corresponding handlers */
@@ -126,23 +115,27 @@ static const struct {
 		       const uint8_t *data, uint16_t len);
 } namespace_handlers[] = {
 	{.namespace = "Alexa.Discovery", .handler = directive_handler_discovery},
-#if CONFIG_GADGETS_CAPABILITY_MUSICDATA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA
 	{.namespace = "Alexa.Gadget.MusicData", .handler = directive_handler_musicdata},
 #endif
-#if CONFIG_GADGETS_CAPABILITY_SPEECHDATA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA
 	{.namespace = "Alexa.Gadget.SpeechData", .handler = directive_handler_speechdata},
 #endif
-#if CONFIG_GADGETS_CAPABILITY_STATELISTENER_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER
 	{.namespace = "Alexa.Gadget.StateListener", .handler = directive_handler_statelistener},
 #endif
-#if CONFIG_GADGETS_CAPABILITY_NOTIFICATIONS_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS
 	{.namespace = "Notifications", .handler = directive_handler_notifications},
 #endif
-#if CONFIG_GADGETS_CAPABILITY_ALERTS_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_ALERTS
 	{.namespace = "Alerts", .handler = directive_handler_alerts},
 #endif
-#if CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE
-	{.namespace = CONFIG_GADGETS_CAPABILITY_CUSTOM_NAMESPACE, .handler = directive_handler_custom},
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
+	{
+		.namespace =
+			CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE,
+		.handler = directive_handler_custom
+	},
 #endif
 };
 
@@ -166,12 +159,12 @@ static const alexaDiscovery_DiscoverResponseEventProto
 		/* Placeholder for unique serial number */
 		.endpointId = GADGETS_CAP_DSN_PLACEHOLDER,
 		.friendlyName = CONFIG_BT_DEVICE_NAME,
-		.description = CONFIG_GADGETS_DEVICE_DESCRIPTION,
+		.description = CONFIG_BT_ALEXA_GADGETS_DEVICE_DESCRIPTION,
 
 		/* List of configurable capabilities */
 		.capabilities_count = GADGETS_CAP_COUNT,
 		.capabilities = {
-#if CONFIG_GADGETS_CAPABILITY_STATELISTENER_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER
 			{
 				.type = "AlexaInterface",
 				.interface = "Alexa.Gadget.StateListener",
@@ -188,7 +181,7 @@ static const alexaDiscovery_DiscoverResponseEventProto
 			},
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_ALERTS_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_ALERTS
 			{
 				.type = "AlexaInterface",
 				.interface = "Alerts",
@@ -198,7 +191,7 @@ static const alexaDiscovery_DiscoverResponseEventProto
 			},
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_NOTIFICATIONS_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS
 			{
 				.type = "AlexaInterface",
 				.interface = "Notifications",
@@ -208,7 +201,7 @@ static const alexaDiscovery_DiscoverResponseEventProto
 			},
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_MUSICDATA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA
 			{
 				.type = "AlexaInterface",
 				.interface = "Alexa.Gadget.MusicData",
@@ -219,7 +212,7 @@ static const alexaDiscovery_DiscoverResponseEventProto
 			},
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_SPEECHDATA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA
 			{
 				.type = "AlexaInterface",
 				.interface = "Alexa.Gadget.SpeechData",
@@ -230,10 +223,10 @@ static const alexaDiscovery_DiscoverResponseEventProto
 			},
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
 			{
 				.type = "AlexaInterface",
-				.interface = CONFIG_GADGETS_CAPABILITY_CUSTOM_NAMESPACE,
+	.interface = CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE,
 				.version = "1.0",
 				.has_configuration = true,
 				.configuration.supportedTypes_count = 0,
@@ -246,8 +239,8 @@ static const alexaDiscovery_DiscoverResponseEventProto
 			.firmwareVersion = "1",
 			.deviceToken = GADGETS_CAP_DEV_TOKEN_PLACEHOLDER,
 			.deviceTokenEncryptionType = "1",
-			.amazonDeviceType = CONFIG_GADGETS_AMAZON_ID,
-			.modelName = CONFIG_GADGETS_MODEL_NAME,
+			.amazonDeviceType = CONFIG_BT_ALEXA_GADGETS_AMAZON_ID,
+			.modelName = CONFIG_BT_ALEXA_GADGETS_MODEL_NAME,
 			.radioAddress = "default",
 		},
 	} },
@@ -269,7 +262,7 @@ enum buf_user {
  * Note that this buffer is used for both incoming and outgoing data.
  * Incoming data must be parsed before encoding the outgoing message
  */
-static uint8_t protobuf_encoded[CONFIG_GADGETS_TRANSACTION_BUF_SIZE];
+static uint8_t protobuf_encoded[CONFIG_BT_ALEXA_GADGETS_TRANSACTION_BUF_SIZE];
 static atomic_t protobuf_encoded_user;
 static size_t protobuf_offset;
 
@@ -281,35 +274,35 @@ static union {
 	/* Top-level directive */
 	directive_DirectiveParserProto directive_parser;
 
-#if CONFIG_GADGETS_CAPABILITY_NOTIFICATIONS_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS
 	/* Indications */
 	notifications_ClearIndicatorDirectiveProto clear_indicator;
 	notifications_SetIndicatorDirectiveProto set_indicator;
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_ALERTS_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_ALERTS
 	/* Alerts */
 	alerts_SetAlertDirectiveProto set_alert;
 	alerts_DeleteAlertDirectiveProto delete_alert;
 #endif
 
 
-#if CONFIG_GADGETS_CAPABILITY_STATELISTENER_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER
 	/* State listener updates */
 	alexaGadgetStateListener_StateUpdateDirectiveProto state_update;
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_SPEECHDATA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA
 	/* Speech marks */
 	alexaGadgetSpeechData_SpeechmarksDirectiveProto speech_marks;
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_MUSICDATA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA
 	/* Music data */
 	alexaGadgetMusicData_TempoDirectiveProto music_tempo;
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
 	custom_event_proto custom_event;
 #endif
 } protobuf_decoded;
@@ -352,7 +345,8 @@ static struct {
 	uint8_t mtu_exchanged : 1;
 } conn_state;
 
-static gadgets_profile_cb_t callback;
+static bt_gadgets_profile_cb_t callback;
+static atomic_t profile_active;
 
 static bool gadgets_alexa_stream_cb(
 	struct bt_conn *conn, const uint8_t *const data, uint16_t len,
@@ -362,15 +356,12 @@ static bool gadgets_control_stream_cb(
 	bool more_data);
 static void gadgets_sent_cb(
 	struct bt_conn *conn, const void *buf, bool success);
-static void gadgets_cccd_cb(bool enabled);
+static void gadgets_cccd_cb(struct bt_conn *conn, bool enabled);
 
 static void connected(struct bt_conn *conn, uint8_t err);
 static void disconnected(struct bt_conn *conn, uint8_t reason);
 static void security_changed(
 	struct bt_conn *conn, bt_security_t level, enum bt_security_err err);
-static void pairing_confirm(struct bt_conn *conn);
-static void exchange_func(
-	struct bt_conn *conn, uint8_t err, struct bt_gatt_exchange_params *params);
 
 static struct bt_gadgets_cb gadgets_service_cb = {
 	.control_stream_cb = gadgets_control_stream_cb,
@@ -383,14 +374,6 @@ static struct bt_conn_cb conn_callbacks = {
 	.connected = connected,
 	.disconnected = disconnected,
 	.security_changed = security_changed,
-};
-
-static struct bt_conn_auth_cb conn_auth_callbacks = {
-	.pairing_confirm = pairing_confirm,
-};
-
-static struct bt_gatt_exchange_params exchange_params = {
-	.func = exchange_func,
 };
 
 /* strstr that ignores null characters in str1 before len is reached.
@@ -433,7 +416,7 @@ static void serial_number_string_get(char *serial_number)
 static void device_token_get(char *device_token)
 {
 	struct tc_sha256_state_struct sha_ctx;
-	uint8_t sha_input[sizeof(CONFIG_GADGETS_DEVICE_SECRET) +
+	uint8_t sha_input[sizeof(CONFIG_BT_ALEXA_GADGETS_DEVICE_SECRET) +
 			  GADGETS_DSN_LENGTH_CHARS + 1];
 	uint8_t sha_digest[TC_SHA256_DIGEST_SIZE];
 	size_t pos;
@@ -446,8 +429,8 @@ static void device_token_get(char *device_token)
 
 	serial_number_string_get(sha_input);
 	pos += GADGETS_DSN_LENGTH_CHARS;
-	strcpy(&sha_input[pos], CONFIG_GADGETS_DEVICE_SECRET);
-	pos += strlen(CONFIG_GADGETS_DEVICE_SECRET);
+	strcpy(&sha_input[pos], CONFIG_BT_ALEXA_GADGETS_DEVICE_SECRET);
+	pos += strlen(CONFIG_BT_ALEXA_GADGETS_DEVICE_SECRET);
 
 	err = tc_sha256_init(&sha_ctx);
 	__ASSERT_NO_MSG(err == TC_CRYPTO_SUCCESS);
@@ -505,7 +488,7 @@ static int gadgets_command_respond(struct bt_conn *conn)
 			CONFIG_BT_DEVICE_NAME,
 			sizeof(dev_info->name));
 		strncpy(dev_info->device_type,
-			CONFIG_GADGETS_AMAZON_ID,
+			CONFIG_BT_ALEXA_GADGETS_AMAZON_ID,
 			sizeof(dev_info->device_type));
 		dev_info->supported_transports[0] =
 			Transport_BLUETOOTH_LOW_ENERGY;
@@ -522,7 +505,7 @@ static int gadgets_command_respond(struct bt_conn *conn)
 
 		response->which_payload = Response_device_features_tag;
 		break;
-#if CONFIG_GADGETS_OTA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_OTA
 	case Command_UPDATE_COMPONENT_SEGMENT:
 		/* Not yet supported */
 		LOG_DBG("Command_UPDATE_COMPONENT_SEGMENT");
@@ -578,7 +561,7 @@ static void protocol_version_send(void)
 	/* [effective] MTU */
 	sys_put_be16(att_payload, &pv[4]);
 	/* Maximum transactional data size */
-	sys_put_be16(CONFIG_GADGETS_TRANSACTION_BUF_SIZE, &pv[6]);
+	sys_put_be16(CONFIG_BT_ALEXA_GADGETS_TRANSACTION_BUF_SIZE, &pv[6]);
 	/* Remainder of pv is reserved: leave at value 0 */
 
 	err = bt_gadgets_send(conn_state.conn, pv, sizeof(pv));
@@ -634,18 +617,26 @@ static void gadgets_sent_cb(struct bt_conn *conn, const void *buf, bool success)
 {
 	enum buf_user user;
 
+	if (conn != conn_state.conn) {
+		return;
+	}
+
 	user = encoded_buffer_release();
 	if (user == BUF_USER_CUSTOM_EVT) {
-		struct gadgets_evt evt = {
-			.type = GADGETS_EVT_CUSTOM_SENT,
+		struct bt_gadgets_evt evt = {
+			.type = BT_GADGETS_EVT_CUSTOM_SENT,
 		};
 
 		callback(&evt);
 	}
 }
 
-static void gadgets_cccd_cb(bool enabled)
+static void gadgets_cccd_cb(struct bt_conn *conn, bool enabled)
 {
+	if (conn != conn_state.conn) {
+		return;
+	}
+
 	LOG_DBG("%s: %d", __func__, enabled);
 
 	conn_state.cccd_enabled = enabled ? 1 : 0;
@@ -665,6 +656,10 @@ static bool gadgets_control_stream_cb(struct bt_conn *conn,
 {
 	bool ret;
 	int err;
+
+	if (conn != conn_state.conn) {
+		return false;
+	}
 
 	err = encoded_data_append(data, len, BUF_USER_CONTROL_STREAM);
 	if (err == -EBUSY) {
@@ -702,6 +697,10 @@ static bool gadgets_alexa_stream_cb(struct bt_conn *conn,
 {
 	bool ret;
 	int err;
+
+	if (conn != conn_state.conn) {
+		return false;
+	}
 
 	err = encoded_data_append(data, len, BUF_USER_ALEXA_STREAM);
 	if (err == -EBUSY) {
@@ -819,8 +818,8 @@ static int directive_handler_discovery(
 			protobuf_encoded,
 			stream_out.bytes_written);
 	if (err == 0) {
-		struct gadgets_evt evt = {
-			.type = GADGETS_EVT_READY,
+		struct bt_gadgets_evt evt = {
+			.type = BT_GADGETS_EVT_READY,
 		};
 
 		/* Consider Gadget setup complete once Discovery is done */
@@ -830,7 +829,7 @@ static int directive_handler_discovery(
 	return err;
 }
 
-#if CONFIG_GADGETS_CAPABILITY_MUSICDATA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA
 static int directive_handler_musicdata(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len)
@@ -849,8 +848,8 @@ static int directive_handler_musicdata(
 			LOG_ERR("Music tempo decode error");
 			return -EINVAL;
 		}
-		struct gadgets_evt evt = {
-			.type = GADGETS_EVT_MUSICTEMPO,
+		struct bt_gadgets_evt evt = {
+			.type = BT_GADGETS_EVT_MUSICTEMPO,
 			.parameters.music_tempo = NULL,
 		};
 
@@ -868,7 +867,7 @@ static int directive_handler_musicdata(
 }
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_SPEECHDATA_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA
 static int directive_handler_speechdata(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len)
@@ -887,8 +886,8 @@ static int directive_handler_speechdata(
 			LOG_ERR("Speechmarks decode error");
 			return -EINVAL;
 		}
-		struct gadgets_evt evt = {
-			.type = GADGETS_EVT_SPEECHMARKS,
+		struct bt_gadgets_evt evt = {
+			.type = BT_GADGETS_EVT_SPEECHMARKS,
 			.parameters.speech_marks = NULL,
 		};
 
@@ -906,7 +905,7 @@ static int directive_handler_speechdata(
 }
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_STATELISTENER_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER
 static int directive_handler_statelistener(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len)
@@ -926,8 +925,8 @@ static int directive_handler_statelistener(
 			return -EINVAL;
 		}
 
-		struct gadgets_evt evt = {
-			.type = GADGETS_EVT_STATEUPDATE,
+		struct bt_gadgets_evt evt = {
+			.type = BT_GADGETS_EVT_STATEUPDATE,
 			.parameters.state_update = NULL,
 		};
 
@@ -945,7 +944,7 @@ static int directive_handler_statelistener(
 }
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_NOTIFICATIONS_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS
 static int directive_handler_notifications(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len)
@@ -965,8 +964,8 @@ static int directive_handler_notifications(
 			return -EINVAL;
 		}
 
-		struct gadgets_evt evt = {
-			.type = GADGETS_EVT_SETINDICATOR,
+		struct bt_gadgets_evt evt = {
+			.type = BT_GADGETS_EVT_SETINDICATOR,
 			.parameters.set_indicator = NULL,
 		};
 
@@ -980,8 +979,8 @@ static int directive_handler_notifications(
 		return 0;
 	} else if (strcmp(name, "ClearIndicator") == 0) {
 		/* No data in payload: don't do protobuf decode */
-		struct gadgets_evt evt = {
-			.type = GADGETS_EVT_CLEARINDICATOR,
+		struct bt_gadgets_evt evt = {
+			.type = BT_GADGETS_EVT_CLEARINDICATOR,
 		};
 
 		callback(&evt);
@@ -992,7 +991,7 @@ static int directive_handler_notifications(
 }
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_ALERTS_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_ALERTS
 static int directive_handler_alerts(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len)
@@ -1012,8 +1011,8 @@ static int directive_handler_alerts(
 			return -EINVAL;
 		}
 
-		struct gadgets_evt evt = {
-			.type = GADGETS_EVT_SETALERT,
+		struct bt_gadgets_evt evt = {
+			.type = BT_GADGETS_EVT_SETALERT,
 			.parameters.set_alert = NULL,
 		};
 
@@ -1034,8 +1033,8 @@ static int directive_handler_alerts(
 			return -EINVAL;
 		}
 
-		struct gadgets_evt evt = {
-			.type = GADGETS_EVT_DELETEALERT,
+		struct bt_gadgets_evt evt = {
+			.type = BT_GADGETS_EVT_DELETEALERT,
 			.parameters.delete_alert = NULL,
 		};
 
@@ -1053,7 +1052,7 @@ static int directive_handler_alerts(
 }
 #endif
 
-#if CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
 static int directive_handler_custom(
 	struct bt_conn *conn, const char *name,
 	const uint8_t *data, uint16_t len)
@@ -1063,8 +1062,8 @@ static int directive_handler_custom(
 		return 0;
 	}
 
-	struct gadgets_evt evt = {
-		.type = GADGETS_EVT_CUSTOM,
+	struct bt_gadgets_evt evt = {
+		.type = BT_GADGETS_EVT_CUSTOM,
 		.parameters.custom_directive.name = name,
 		.parameters.custom_directive.payload =
 			protobuf_decoded.directive_parser.directive.payload.bytes,
@@ -1081,6 +1080,13 @@ static int directive_handler_custom(
 
 static void connected(struct bt_conn *conn, uint8_t err)
 {
+	if (!atomic_get(&profile_active) || conn_state.conn) {
+		/* Ignore connections when Profile is not active,
+		 * or when Profile already has one connection.
+		 */
+		return;
+	}
+
 	if (err) {
 		LOG_WRN("Connection error: %d", err);
 		return;
@@ -1091,6 +1097,10 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
+	if (conn != conn_state.conn) {
+		return;
+	}
+
 	if (conn_state.conn) {
 		bt_conn_unref(conn_state.conn);
 	}
@@ -1103,7 +1113,9 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err err)
 {
-	int mtu_err;
+	if (conn != conn_state.conn) {
+		return;
+	}
 
 	LOG_DBG("%s: %u", __func__, level);
 
@@ -1118,42 +1130,9 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	}
 
 	conn_state.encrypted = 1;
-
-	mtu_err = bt_gatt_exchange_mtu(conn_state.conn, &exchange_params);
-	if (mtu_err) {
-		LOG_WRN("bt_gatt_exchange_mtu: %d", err);
-	}
 }
 
-static void pairing_confirm(struct bt_conn *conn)
-{
-	int err;
-
-	LOG_DBG("%s", __func__);
-
-	err = bt_conn_auth_pairing_confirm(conn);
-	if (err) {
-		LOG_ERR("bt_conn_auth_pairing_confirm: %d", err);
-	}
-}
-
-static void exchange_func(struct bt_conn *conn, uint8_t err,
-			  struct bt_gatt_exchange_params *params)
-{
-	if (err) {
-		LOG_ERR("%s: %d", __func__, err);
-	}
-
-	LOG_DBG("%s", __func__);
-
-	conn_state.mtu_exchanged = 1;
-
-	if (conn_state.encrypted && conn_state.cccd_enabled) {
-		protocol_version_send();
-	}
-}
-
-int gadgets_profile_init(gadgets_profile_cb_t evt_handler)
+int bt_gadgets_profile_init(bt_gadgets_profile_cb_t evt_handler)
 {
 	if (evt_handler == NULL) {
 		return -EINVAL;
@@ -1164,13 +1143,16 @@ int gadgets_profile_init(gadgets_profile_cb_t evt_handler)
 	encoded_buffer_release();
 
 	bt_conn_cb_register(&conn_callbacks);
-	bt_conn_auth_cb_register(&conn_auth_callbacks);
 
 	return bt_gadgets_init(&gadgets_service_cb);
 }
 
-int gadgets_profile_adv_start(bool bondable_type)
+int bt_gadgets_profile_adv_start(bool bondable_type)
 {
+	if (atomic_set(&profile_active, true)) {
+		return -EBUSY;
+	}
+
 	if (bondable_type) {
 		return bt_le_adv_start(
 			BT_LE_ADV_CONN,
@@ -1184,9 +1166,31 @@ int gadgets_profile_adv_start(bool bondable_type)
 	}
 }
 
-int gadgets_profile_custom_event_json_send(uint8_t *name, uint8_t *json)
+void bt_gadgets_profile_adv_stop(void)
 {
-#if CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE
+	if (atomic_clear(&profile_active)) {
+		(void) bt_le_adv_stop();
+	}
+}
+
+void bt_gadgets_profile_mtu_exchanged(struct bt_conn *conn)
+{
+	if (conn == NULL ||
+		conn != conn_state.conn ||
+		conn_state.mtu_exchanged == 1) {
+		return;
+	}
+
+	conn_state.mtu_exchanged = 1;
+
+	if (conn_state.encrypted && conn_state.cccd_enabled) {
+		protocol_version_send();
+	}
+}
+
+int bt_gadgets_profile_custom_event_json_send(uint8_t *name, uint8_t *json)
+{
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
 	int err;
 	bool success;
 
@@ -1208,7 +1212,7 @@ int gadgets_profile_custom_event_json_send(uint8_t *name, uint8_t *json)
 	protobuf_decoded.custom_event.event.header.messageId[0] = '\0';
 	strcpy(protobuf_decoded.custom_event.event.header.name, name);
 	strcpy(protobuf_decoded.custom_event.event.header.namespace,
-	       CONFIG_GADGETS_CAPABILITY_CUSTOM_NAMESPACE);
+	       CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE);
 	strcpy(protobuf_decoded.custom_event.event.payload, json);
 
 	pb_ostream_t stream_out =
@@ -1239,9 +1243,9 @@ int gadgets_profile_custom_event_json_send(uint8_t *name, uint8_t *json)
 #endif
 }
 
-int gadgets_profile_custom_event_send(uint8_t *encoded_data, size_t len)
+int bt_gadgets_profile_custom_event_send(uint8_t *encoded_data, size_t len)
 {
-#if CONFIG_GADGETS_CAPABILITY_CUSTOM_ENABLE
+#if CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
 	int err;
 
 	if (len > sizeof(protobuf_encoded)) {

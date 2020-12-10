@@ -12,7 +12,7 @@
 #include <sys/byteorder.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(bt_gadgets, CONFIG_BT_GADGETS_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_gadgets, CONFIG_BT_ALEXA_GADGETS_LOG_LEVEL);
 
 #define GADGETS_TRANSACTION_TYPE_FIRST 0b00
 #define GADGETS_TRANSACTION_TYPE_CONT 0b01
@@ -405,7 +405,7 @@ static ssize_t on_cccd_write(
 {
 	bool notif_enabled = (value & BT_GATT_CCC_NOTIFY) != 0;
 
-	gadgets_cb->ccc_cb(notif_enabled);
+	gadgets_cb->ccc_cb(conn, notif_enabled);
 
 	return sizeof(value);
 }
