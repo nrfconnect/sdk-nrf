@@ -120,6 +120,14 @@ foreach (image ${PM_IMAGES})
   list(APPEND images ${image})
   list(APPEND input_files  ${${image}_PM_YML_FILES})
   list(APPEND header_files ${${image}_ZEPHYR_BINARY_DIR}/${generated_path}/pm_config.h)
+
+  # Re-configure (Re-execute all CMakeLists.txt code) when original
+  # (not preprocessed) configuration file changes.
+  set_property(
+    DIRECTORY APPEND PROPERTY
+    CMAKE_CONFIGURE_DEPENDS
+    ${${image}_PM_YML_DEP_FILES}
+    )
 endforeach()
 
 # Explicitly add the dynamic partition image
