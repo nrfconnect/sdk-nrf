@@ -63,6 +63,11 @@ int download_client_disconnect(struct download_client *client)
 	return 0;
 }
 
+int dfu_target_reset(void)
+{
+	return 0;
+}
+
 int download_client_start(struct download_client *client, const char *file,
 			  size_t from)
 {
@@ -111,7 +116,7 @@ int dfu_ctx_mcuboot_set_b1_file(char *file, bool s0_active, char **update)
 
 /* END stubs and mocks */
 
-void client_callback(enum fota_download_evt_id evt_id) { }
+void client_callback(const struct fota_download_evt *evt) { }
 
 static void init(void)
 {
