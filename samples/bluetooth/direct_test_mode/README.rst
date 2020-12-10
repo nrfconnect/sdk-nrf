@@ -117,9 +117,18 @@ The RADIO can control up to 8 GPIO pins for the purpose of controlling the exter
 
 The antenna is chosen by writing consecutive numbers to the SWITCHPATTERN register.
 This means that the antenna GPIO pins act like 8-bit registers.
-In other words, for the first antena, antenna pin 1 is active, for the second antenna, pin 2 is active, for the third antenna, pins 1 and 2 are active, and so on.
+In other words, for the first antenna, antenna pin 1 is active, for the second antenna, pin 2 is active, for the third antenna, pins 1 and 2 are active, and so on.
 
-Vendor-Specific packet payload
+nRF21540 front-end module
+=========================
+
+.. |fem_file_path| replace:: :file:`samples/bluetooth/direct_test_mode`
+
+.. include:: /includes/sample_fem_support.txt
+
+You can configure the transmitted power gain and activation delay in nRF21540 using vendor-specific commands, see `Vendor-specific packet payload`_.
+
+Vendor-specific packet payload
 ==============================
 
 The Bluetooth Low Energy 2-wire UART DTM interface standard reserves the Packet Type, also called payload parameter, with binary value ``11`` for a Vendor Specific packet payload.
@@ -142,6 +151,16 @@ Vendor specific commands can be divided into different categories as follows:
   The two most significant bits are calculated by the DTM module.
   This is possible because the 6 least significant bits of all valid TX power values are unique.
   The TX power can be modified only when no Transmitter Test or Receiver Test is running.
+* If the Length field is set to ``3``(symbol ``NRF21540_ANTENNA_SELECT``), the Frequency field sets the nRF21540 FEM antenna.
+  The valid values are:
+
+     * 0 - ANT1 enabled, ANT2 disabled
+     * 1 - ANT1 disabled, ANT2 enabled
+
+* If the Length field is set to ``4`` (symbol ``NRF21540_GAIN_SET``), the Frequency field sets the nRF21540 FEM TX gain value in arbitrary units.
+  The valid gain values are specified in the nRF21540 product-specific range from 0 to 31.
+* If the Length field is set to ``5`` (symbol ``NRF21540_ACTIVE_DELAY_SET``), the Frequency field sets the nRF21540 FEM activation delay in microseconds relative to a radio start.
+  By default, this value is set to (radio ramp-up time - nRF21540 TX/RX settling time).
 * All other values of Frequency and Length field are reserved.
 
 The DTM-to-Serial adaptation layer
@@ -168,7 +187,7 @@ The sample supports the following development kit:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet
+   :rows: nrf5340dk_nrf5340_cpunet, nrf21540dk_nrf52840
 
 Additionally, the sample requires one of the following testing devices:
 
