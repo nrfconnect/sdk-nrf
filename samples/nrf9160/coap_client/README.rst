@@ -18,7 +18,7 @@ The nRF CoAP Client sample performs the following actions:
 #. Send periodic GET request for a test resource (specified by the Kconfig parameter ``CONFIG_COAP_RESOURCE``) that is available on the server.
 #. Display the received data about the resource on a terminal emulator.
 
-The public CoAP server used in this sample is Californium CoAP server (``coap://californium.eclipse.org:5683``).
+The public CoAP server used in this sample is Californium CoAP server (``coap://californium.eclipseprojects.io:5683``).
 This server runs Eclipse Californium, which is an open source implementation of the CoAP protocol that is targeted at the development and testing of IoT applications.
 An nRF9160 DK board is used as the CoAP client.
 
