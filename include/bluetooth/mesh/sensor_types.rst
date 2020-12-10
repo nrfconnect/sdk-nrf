@@ -15,7 +15,7 @@ Note that if the Sensor Client is enabled, :option:`CONFIG_BT_MESH_SENSOR_ALL_TY
 
 Sensor types can be forced into the build by the :c:macro:`BT_MESH_SENSOR_TYPE_FORCE` macro.
 
-Sensor types may only be declared in the ``bt_mesh_sensor_types`` static linker section, and any additional, proprietary sensor types should be added to sensor_types.c, following the existing pattern.
+Sensor types may only be declared in the ``bt_mesh_sensor_types`` static linker section.
 
 .. doxygengroup:: bt_mesh_sensor_types
    :project: nrf
