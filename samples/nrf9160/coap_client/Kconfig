@@ -12,7 +12,7 @@ config COAP_RESOURCE
 
 config COAP_SERVER_HOSTNAME
 	string "CoAP server hostname"
-	default "californium.eclipse.org"
+	default "californium.eclipseprojects.io"
 
 config COAP_SERVER_PORT
 	int "CoAP server port"
