@@ -21,6 +21,12 @@ function(preprocess_pm_yml in_file out_file)
     message(FATAL_ERROR "command failed with return code: ${ret}")
   endif()
 
+  if (IMAGE_NAME)
+    # Share location of preprocessed pm.yml file so that the parent image can
+    # use it as source for partition manager configuration.
+    share("list(APPEND ${IMAGE_NAME}PM_YML_FILES ${out_file})")
+  endif()
+
 endfunction()
 
 

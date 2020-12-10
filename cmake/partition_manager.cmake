@@ -118,7 +118,7 @@ foreach (image ${PM_IMAGES})
   include(${shared_vars_file})
   list(APPEND prefixed_images ${DOMAIN}:${image})
   list(APPEND images ${image})
-  list(APPEND input_files  ${${image}_ZEPHYR_BINARY_DIR}/${generated_path}/pm.yml)
+  list(APPEND input_files  ${${image}_PM_YML_FILES})
   list(APPEND header_files ${${image}_ZEPHYR_BINARY_DIR}/${generated_path}/pm_config.h)
 endforeach()
 
