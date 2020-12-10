@@ -187,6 +187,7 @@ static struct k_delayed_work rsrp_work;
 enum error_type {
 	ERROR_CLOUD,
 	ERROR_BSD_RECOVERABLE,
+	ERROR_BSD_IRRECOVERABLE,
 	ERROR_LTE_LC,
 	ERROR_SYSTEM_FAULT
 };
@@ -346,6 +347,12 @@ void error_handler(enum error_type err_type, int err_code)
 		 */
 		ui_led_set_pattern(UI_LED_ERROR_BSD_REC);
 		LOG_ERR("Error of type ERROR_BSD_RECOVERABLE: %d", err_code);
+	break;
+	case ERROR_BSD_IRRECOVERABLE:
+		/* Blinking all LEDs ON/OFF if there is an irrecoverable error.
+		 */
+		ui_led_set_pattern(UI_LED_ERROR_BSD_IRREC);
+		LOG_ERR("Error of type ERROR_BSD_IRRECOVERABLE: %d", err_code);
 	break;
 	default:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 2, 3 and 4)
@@ -1788,6 +1795,9 @@ void handle_bsdlib_init_ret(void)
 
 	/* Handle return values relating to modem firmware update */
 	switch (ret) {
+	case 0:
+		/* Initialization successful, no action required. */
+		break;
 	case MODEM_DFU_RESULT_OK:
 		LOG_INF("MODEM UPDATE OK. Will run new firmware");
 		sys_reboot(SYS_REBOOT_COLD);
@@ -1803,7 +1813,13 @@ void handle_bsdlib_init_ret(void)
 		sys_reboot(SYS_REBOOT_COLD);
 		break;
 	default:
-		break;
+		/* All non-zero return codes other than DFU result codes are
+		 * considered irrecoverable and a reboot is needed.
+		 */
+		LOG_ERR("BSDlib initialization failed, error: %d", ret);
+		error_handler(ERROR_BSD_IRRECOVERABLE, ret);
+
+		CODE_UNREACHABLE;
 	}
 #endif /* CONFIG_BSD_LIBRARY */
 }
@@ -1898,6 +1914,10 @@ void main(void)
 		watchdog_init_and_start(&application_work_q);
 	}
 
+#if defined(CONFIG_USE_UI_MODULE)
+	ui_init(ui_evt_handler);
+#endif
+
 #if defined(CONFIG_LWM2M_CARRIER)
 	k_sem_take(&bsdlib_initialized, K_FOREVER);
 #else
@@ -1906,9 +1926,6 @@ void main(void)
 
 	cloud_api_init();
 
-#if defined(CONFIG_USE_UI_MODULE)
-	ui_init(ui_evt_handler);
-#endif
 	work_init();
 #if defined(CONFIG_LTE_LINK_CONTROL)
 	lte_lc_register_handler(lte_handler);
