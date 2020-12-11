@@ -328,24 +328,101 @@ Follow these steps to program the network sample :ref:`zephyr:bluetooth-hci-rpms
 Programming from the command line
 =================================
 
+To program the nRF5340 DK from the command line, you can use either :ref:`west <zephyr:west>` or nrfjprog (which is part of the `nRF Command Line Tools`_).
+
 .. note::
-   Programming the nRF5340 DK from the command line requires the `nRF Command Line Tools`_ v10.12.0 or later.
+   Programming the nRF5340 DK from the command line (with west or nrfjprog) requires the `nRF Command Line Tools`_ v10.12.0 or later.
 
-To program a HEX file after building it with |SES|, open a command prompt in the build folder of the sample that you want to program and enter the following command::
 
-    west flash
+Multi-image build
+-----------------
 
-If you prefer to use nrfjprog (which is part of the `nRF Command Line Tools`_) instead, open a command prompt in the build folder of the network sample and enter the following commands to program the network sample::
+To program a :ref:`multi-image <ug_multi_image>` HEX file that includes images for both the application sample and the network sample, you must use west.
+Programming multi-image builds for different cores is not yet supported in nrfjprog.
 
-    nrfjprog -f NRF53 --coprocessor CP_NETWORK --eraseall
-    nrfjprog -f NRF53 --coprocessor CP_NETWORK --program zephyr/zephyr.hex
+.. tabs::
 
-Then navigate to the build folder of the application sample and enter the following commands to program the application sample and reset the board::
+   .. group-tab:: west
 
-    nrfjprog -f NRF53 --eraseall
-    nrfjprog -f NRF53 --program zephyr/zephyr.hex
+      Open a command prompt in the build folder of the application sample and enter the following command to erase the whole flash and program both the application sample and the network sample::
 
-    nrfjprog --pinreset
+        west flash --erase
+
+See :ref:`readback_protection_error` if you encounter an error.
+
+
+Separate images
+---------------
+
+If you built the application sample and the network sample as separate images, you must program them separately.
+
+.. tabs::
+
+   .. group-tab:: west
+
+      First, open a command prompt in the build folder of the network sample and enter the following command to erase the flash of the network core and program the network sample::
+
+        west flash --erase
+
+      Then navigate to the build folder of the application sample and enter the same command to erase the flash of the application core and program the application sample::
+
+        west flash --erase
+
+   .. group-tab:: nrfjprog
+
+      First, open a command prompt in the build folder of the network sample and enter the following command to erase the flash of the network core and program the network sample::
+
+        nrfjprog -f NRF53 --coprocessor CP_NETWORK --program zephyr/zephyr.hex --chiperase
+
+      Then navigate to the build folder of the application sample and enter the following command to erase the flash of the application core and program the application sample::
+
+        nrfjprog -f NRF53 --program zephyr/zephyr.hex --chiperase
+
+      Finally, reset the board::
+
+        nrfjprog --pinreset
+
+See :ref:`readback_protection_error` if you encounter an error.
+
+.. _readback_protection_error:
+
+Readback protection
+-------------------
+
+When programming the device, you might get an error similar to the following message::
+
+    ERROR: The operation attempted is unavailable due to readback protection in
+    ERROR: your device. Please use --recover to unlock the device.
+
+This error occurs when readback protection is enabled.
+To disable the readback protection, you must *recover* your device.
+See the following instructions.
+
+.. tabs::
+
+   .. group-tab:: west
+
+      Enter the following command to recover both cores::
+
+        west flash --recover
+
+   .. group-tab:: nrfjprog
+
+      Enter the following commands to recover first the network core and then the application core::
+
+        nrfjprog --recover --coprocessor CP_NETWORK
+        nrfjprog --recover
+
+      .. note::
+         Make sure to recover the network core before you recover the application core.
+
+         The ``--recover`` command erases the flash and then writes a small binary into the recovered flash.
+         This binary prevents the readback protection from enabling itself again after a pin reset or power cycle.
+
+         Recovering the network core erases the flash of both cores.
+         Recovering the application core erases the flash of only the application core.
+         Therefore, you must recover the network core first.
+         Otherwise, if you recover the application core first and the network core last, the binary written to the application core is deleted and readback protection is enabled again after a reset.
 
 .. _logging_cpunet:
 
