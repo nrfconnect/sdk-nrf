@@ -179,3 +179,6 @@
   - "modules/nrfxlib/nrf_802154/**/*"
   - "modules/mcuboot/**/*"
   - "samples/matter/**/*"
+
+"no-changelog":
+  - "!doc/nrf/releases/release-notes-latest.rst"
