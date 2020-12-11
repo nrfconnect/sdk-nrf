@@ -186,9 +186,6 @@ If the MQTT client successfully subscribes to a topic, the following unsolicited
 
   * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
 
 * The ``<topic_length>`` value is an integer.
   It indicates the length of the ``<topic_received>`` field.
@@ -311,9 +308,6 @@ Syntax
 
   * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
 
 * The ``<msg>`` parameter is a string.
   It contains the payload on the topic being published.
