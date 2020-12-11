@@ -157,7 +157,7 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 
 	if (default_conn) {
 		printk("Connection exists, disconnect second connection\n");
-		bt_conn_disconnect(conn, BT_HCI_ERR_LOCALHOST_TERM_CONN);
+		bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 		return;
 	}
 
