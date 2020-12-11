@@ -38,7 +38,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf52dk_nrf52832
+   :rows: nrf5340dk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
 
 You can use any one of the development kits listed above.
 
@@ -53,8 +53,17 @@ The sample also requires one of the following testing devices:
     See :ref:`radio_test_testing_rssi`.
 
 .. note::
-   The radio test can be also performed using a spectrum analyzer.
+   You can perform the radio test also using a spectrum analyzer.
    This method of testing is not covered by this documentation.
+
+nRF21540 front-end module
+=========================
+
+.. |fem_file_path| replace:: :file:`samples/peripheral/radio_test`
+
+.. include:: /includes/sample_fem_support.txt
+
+The nRF21540 transmitted power gain, antenna and an activation delay can be configured using the user interface :ref:`radio_test_ui`.
 
 .. _radio_test_ui:
 
@@ -75,6 +84,9 @@ User interface
    * - end_channel
      - <channel>
      - End the channel for the sweep.
+   * - nRF21540
+     - <sub_cmd>
+     - Set nRF21540 Front-End-Module parameters.
    * - output_power
      - <sub_cmd>
      - Output power set.
