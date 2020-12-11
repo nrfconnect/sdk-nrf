@@ -318,6 +318,8 @@
 
 .. _`TLS`: https://www.ietf.org/rfc/rfc5246.txt
 
+.. _`Bluetooth SIG Company Identifiers`: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
+
 .. _`RFC 5639 - ECC Brainpool Standard Curves and Curve Generation`: https://tools.ietf.org/html/rfc5639
 .. _`RFC 5869 - HMAC-based Extract-and-Expand Key Derivation Function (HKDF)`: https://tools.ietf.org/html/rfc5869
 .. _`RFC 7027 - ECC Brainpool Curves for TLS`: https://tools.ietf.org/html/rfc7027
