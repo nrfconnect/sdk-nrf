@@ -430,8 +430,8 @@ def _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynami
             continue
 
         if align_if_required(i, dynamic_partitions,
-                             insert_empty_partition_before, reqs, dp,
-                             solution):
+                             insert_empty_partition_before, reqs, sub_partitions,
+                             dp, solution):
             _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions, dp)
 
     for i in range(len(solution) - 1, solution.index(dp), -1):
@@ -443,7 +443,7 @@ def _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynami
             higher_partition = solution[i + 1]
             reqs[current]['address'] = reqs[higher_partition]['address'] - reqs[current]['size']
 
-        if align_if_required(i, dynamic_partitions, False, reqs, dp, solution):
+        if align_if_required(i, dynamic_partitions, False, reqs, sub_partitions, dp, solution):
             try:
                 _set_addresses_and_align(reqs, sub_partitions, solution, size,
                                          start, dynamic_partitions, dp)
@@ -451,7 +451,19 @@ def _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynami
                 raise PartitionError(ALIGNMENT_ERROR)
 
 
-def align_if_required(i, dynamic_partitions, move_up, reqs, dp, solution):
+def add_to_parent_spans(partition, current, move_up, sub_partitions, solution):
+    parent_spans = [d['span'] for d in sub_partitions.values() if current in d['span']]
+    for parent_span in parent_spans:
+        # Sort the partitions in the parent span by their actual placements.
+        sorted_span = [p for p in solution if p in parent_span]
+        child_index = sorted_span.index(current)
+        part_index = child_index if move_up else child_index + 1
+        # Only add the partition if it is not at the edge of the span - this leaves the span size unchanged.
+        if 0 < part_index < len(sorted_span):
+            parent_span.append(partition)
+
+
+def align_if_required(i, dynamic_partitions, move_up, reqs, sub_partitions, dp, solution):
     current = solution[i]
     if 'placement' in reqs[current] and 'align' in reqs[current]['placement']:
         required_offset = align_partition(current, reqs, move_up,
@@ -459,6 +471,7 @@ def align_if_required(i, dynamic_partitions, move_up, reqs, dp, solution):
         if required_offset:
             solution_index = i if move_up else i + 1
             solution.insert(solution_index, required_offset)
+            add_to_parent_spans(required_offset, current, move_up, sub_partitions, solution)
             return True
     return False
 
