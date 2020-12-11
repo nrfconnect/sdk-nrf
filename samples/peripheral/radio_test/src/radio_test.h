@@ -136,6 +136,11 @@ struct radio_test_config {
 			uint32_t duty_cycle;
 		} modulated_tx_duty_cycle;
 	} params;
+
+#if CONFIG_NRF21540_FEM
+	/* nRF21540 activation delay. */
+	uint32_t nrf21540_active_delay;
+#endif /* CONFIG_NRF21540_FEM */
 };
 
 /**@brief Radio RX statistics. */
@@ -157,8 +162,11 @@ struct radio_rx_stats {
  * @brief Function for initializing the Radio Test module.
  *
  * @param[in] config  Radio test configuration.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
-void radio_test_init(struct radio_test_config *config);
+int radio_test_init(struct radio_test_config *config);
 
 /**
  * @brief Function for starting radio test.
