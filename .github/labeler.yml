@@ -6,3 +6,6 @@
 "doc-required":
   - "doc/**/*"
   - "**/*.rst"
+
+"no-changelog":
+  - "!doc/nrf/releases/release-notes-latest.rst"
