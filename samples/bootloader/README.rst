@@ -7,7 +7,7 @@ Immutable bootloader
    :local:
    :depth: 2
 
-The bootloader sample implements an immutable first stage bootloader that has the capability to verify and boot a second stage bootloader or an application.
+The bootloader sample implements an immutable first stage bootloader that can verify and boot either a second stage bootloader or an application.
 
 If the second stage bootloader is upgradable, it can reside in one of two slots.
 In this case, the sample chooses the second stage bootloader with the highest version number.
@@ -15,26 +15,27 @@ In this case, the sample chooses the second stage bootloader with the highest ve
 Overview
 ********
 
-The bootloader sample provides a simple *root of trust* (RoT) as well as support for an upgradable second stage bootloader.
+The bootloader sample provides both a simple *Root of Trust* (RoT) and support for an upgradable second stage bootloader.
 
-This is accomplished by the following steps:
+This is accomplished as follows:
 
-1. Lock the flash.
-     To enable the RoT, the bootloader sample locks the flash that contains the sample bootloader and its configuration.
+1. Locking the flash memory.
+     To enable the RoT, the bootloader sample locks the flash memory that contains the sample bootloader and its configuration.
      Locking is done using the hardware that is available on the given architecture.
 
-     For details on locking, see the :ref:`fprotect_readme` driver.
+     For additional details on locking, see the :ref:`fprotect_readme` driver.
 
-#. Select the next stage in the boot chain.
-     The next stage in the boot chain can be another bootloader or the application.
+#. Selecting the next stage in the boot chain.
+     The next stage in the boot chain can either be another bootloader or an application.
 
-     When the bootloader sample is enabled and MCUboot is used as second stage bootloader, there are two slots in which the second stage bootloader can reside.
+     When the bootloader sample is enabled and MCUboot is used as the second stage bootloader, there are two slots in which the second stage bootloader can reside.
      The second stage bootloader in each slot has a version number associated with it, and the bootloader sample selects the second stage bootloader that has the highest version number.
 
-     See :ref:`ug_bootloader` for more information about the full bootloader chain. For information about creating a second stage bootloader, see :doc:`mcuboot:index`.
+     For more information on the full bootloader chain, see :ref:`ug_bootloader`.
+     For more information on creating a second stage bootloader, see :ref:`mcuboot:mcuboot_wrapper`.
 
-#. Verify the next stage in the boot chain.
-     After selecting the image to be booted next, the bootloader sample verifies its validity using one of the provisioned public keys hashes.
+#. Verifying the next stage in the boot chain.
+     After selecting the image to be booted next, the bootloader sample verifies the validity of the image using one of the provisioned public keys hashes.
 
      The image for the next boot stage has a set of metadata associated with it.
      This metadata contains the full public key corresponding to the private key that was used to sign the firmware.
@@ -44,60 +45,68 @@ This is accomplished by the following steps:
         To save space, only the hashes of the provisioned keys are stored, and only the hashes of the keys are compared.
 
      If the public key in the metadata matches one of the valid provisioned public key hashes, the image is considered valid.
+
      All public key hashes at lower indices than the matching hash are permanently invalidated at this point, which means that images can no longer be validated with those public keys.
      For example, if an image is successfully validated with the public key at index 2, the public keys 0 and 1 are invalidated.
      This mechanism can be used to decommission broken keys.
 
      If the public key does not match any of the still valid provisioned hashes, validation fails.
 
-#. Boot the next stage in the boot chain.
-    After verifying the next boot stage, the bootloader sample uninitializes all peripherals that it used and boots the next boot stage.
+#. Booting the next stage in the boot chain.
+     After verifying the next boot stage, the bootloader sample uninitializes all the peripherals that it used and boots the next boot stage.
 
-#. Share the cryptographic library over EXT_API.
-     The bootloader sample shares some of its functionality through an external API (EXT_API, see :ref:`doc_fw_info_ext_api`).
+#. Sharing the cryptographic library over EXT_API.
+     The bootloader sample shares some of its functionality through an external API (EXT_API).
 
-     For more information, see :file:`bl_crypto.h`.
+     For more information on the process, see the :file:`bl_crypto.h` file.
+     For more information on EXT_API, see :ref:`doc_fw_info_ext_api`.
 
+Flash memory layout
+===================
 
-Flash layout
-============
-
-The flash layout is defined by :file:`samples/bootloader/pm.yml`.
+The flash memory layout is defined by the :file:`samples/bootloader/pm.yml` file.
 
 The bootloader sample defines four main areas:
 
-1. **B0** - Contains the bootloader sample
-#. **Provision** - Stores the provisioned data
-#. **S0** - One of two potential storage areas for the second stage bootloader
-#. **S1** - One of two potential storage areas for the second stage bootloader
-
+1. *B0* - Contains the bootloader sample.
+#. *Provision* - Stores the provisioned data.
+#. *S0* - Defines one of the two potential storage areas for the second stage bootloader.
+#. *S1* - Defines the other one of the two potential storage areas for the second stage bootloader.
 
 .. _bootloader_provisioning:
 
 Provisioning
 ============
 
-The public key hashes are not compiled in with the source code of the bootloader sample.
+The public key hashes are not compiled with the source code of the bootloader sample.
 Instead, they must be stored in a separate memory region through a process called *provisioning*.
 
 By default, the bootloader sample will automatically generate and provision public key hashes directly into the bootloader HEX file, based on the specified private key and additional public keys.
 
 Alternatively, to facilitate the manufacturing process of a device with the bootloader sample, it is possible to decouple this process and program the sample HEX file and the HEX file containing the public key hashes separately.
-If you choose to do so, use the Python scripts located in ``scripts\bootloader`` to create and provision the keys manually.
+If you choose to do so, use the Python scripts located in the :file:`scripts/bootloader` folder to create and provision the keys manually.
 
-   .. note::
-      On some chips (for example, nRF9160 or nRF5340), the provisioned data is held in the OTP region in UICR.
-      Because of this, you must erase the UICR before programming the bootloader.
-      On nRF9160, the UICR can only be erased by erasing the whole chip.
-      To do so on the command line, call ``west flash`` with the ``--erase`` option.
-      This will erase the whole chip before programming the new image.
-      In |SES|, choose :guilabel:`Target` -> :guilabel:`Connect J-Link` and then :guilabel:`Target` -> :guilabel:`Erase All` to erase the whole chip.
+.. note::
+   On some SoCs/SiPs, like the nRF5340 or the nRF9160, the provisioned data is held in the *One-time programmable* (OTP) region in the *User Information Configuration Registers* (UICR).
+   For this reason, please note the following:
 
-   .. note::
-      On some chips (for example, nRF9160 or nRF5340), the provisioned data is held in the OTP region in UICR.
-      Because of this, the public key hash cannot contain half-words with the value 0xFFFF, because half-words are writeable when they are 0xFFFF, so such hashes cannot be guaranteed to be immutable.
-      The bootloader will refuse to boot if any hash contains a half-word with the value 0xFFFF.
-      If your public key hash is found to have 0xFFFF, please regenerate it or use another public key.
+   * You must erase the UICR before programming the bootloader.
+     On the nRF9160, the UICR can only be erased by erasing the entire chip:
+
+     * On the command line, call ``west flash`` with the ``--erase`` option to erase the chip, like in the following example:
+
+     .. parsed-literal::
+        :class: highlight
+
+        west flash -d *build_directory* --erase
+
+       This will erase the whole chip before programming the new image.
+
+     * In |SES|, choose :guilabel:`Target` -> :guilabel:`Connect J-Link` and then :guilabel:`Target` -> :guilabel:`Erase All` to erase the whole chip.
+
+   * The public key hash cannot contain half-words with the value ``0xFFFF``, because half-words are writeable when they are ``0xFFFF``, so such hashes cannot be guaranteed to be immutable.
+     The bootloader will refuse to boot if any hash contains a half-word with the value ``0xFFFF``.
+     If your public key hash is found to have ``0xFFFF``, please regenerate it or use another public key.
 
 The bootloader uses the :ref:`doc_bl_storage` library to access provisioned data.
 
@@ -112,20 +121,29 @@ The sample supports the following development kits:
 
 .. _bootloader_build_and_run:
 
-Building and running using |SES|
-********************************
+Building and running
+********************
 
-The source code of the sample can be found under :file:`samples/bootloader/` in the |NCS| folder structure.
+.. |sample path| replace:: :file:`samples/bootloader`
+
+.. include:: /includes/build_and_run_bootloader.txt
+
+Add it to any other sample, then build and program that sample as described in the following sections.
+
+Building with |SES|
+===================
 
 The most common use case for the bootloader sample is to be included as a child image in a multi-image build, rather than being built stand-alone.
-Complete the following steps to add the bootloader sample as child image to your application:
+Complete the following steps to add the bootloader sample as a child image to your application:
 
-1. Create a private key in PEM format.
-   To do so, run the following command, which stores your private key in a file name :file:`priv.pem` in the current folder::
+1. Create a private key in PEM format by running the following command:
 
-       openssl ecparam -name prime256v1 -genkey -noout -out priv.pem
+   .. code-block:: console
 
-   OpenSSL is installed with GIT, so it should be available in your GIT bash.
+      openssl ecparam -name prime256v1 -genkey -noout -out priv.pem
+
+   It will store your private key in a file named :file:`priv.pem` in the current folder.
+   As OpenSSL is installed with GIT, it should be available in your GIT bash.
    See `OpenSSL`_ for more information.
 
    .. note::
@@ -133,7 +151,7 @@ Complete the following steps to add the bootloader sample as child image to your
       If you do not provide your own keys, debug keys are created automatically.
       However, you should never go into production with an application that is not protected by secure keys.
 
-#. Run ``menuconfig`` on your application to enable Secure Boot:
+#. Enable Secure Boot by running ``menuconfig`` on your application:
 
    a. Select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK project`.
    #. Go to :guilabel:`Modules` -> :guilabel:`Nordic nRF Connect` -> :guilabel:`Bootloader` and set :guilabel:`Use Secure Bootloader` to enable :option:`CONFIG_SECURE_BOOT`.
@@ -152,27 +170,50 @@ Complete the following steps to add the bootloader sample as child image to your
 
 #. Select :guilabel:`Build` -> :guilabel:`Build Solution` to compile your application.
    The build process creates two images, one for the bootloader and one for the application, and merges them together.
-#.  Select :guilabel:`Build` -> :guilabel:`Build and Run` to program the resulting image to your device.
+#. Select :guilabel:`Build` -> :guilabel:`Build and Run` to program the resulting image to your device.
 
+Building on the command line
+============================
+
+You can easily add an immutable bootloader to most Zephyr or |NCS| samples by enabling :option:`CONFIG_SECURE_BOOT` in the sample's ``prj.conf`` file, or directly to the build command as follows:
+
+.. code-block:: console
+
+   west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- -DCONFIG_SECURE_BOOT=y
+
+For more information, see :ref:`gs_programming_cmd`.
+
+Bootloader Overlays
+-------------------
+
+Overlays specific to bootloaders can be used to further modify the bootloader child image when compiling with an application:
+
+.. code-block:: console
+
+   west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- -DCONFIG_SECURE_BOOT=y -Db0_OVERLAY_CONFIG=overlay-minimal-size.conf
+
+The image-specific overlay will be grabbed from the child image's respective source directory, such as :file:`samples/bootloader` in the |NCS| folder structure for ``b0``.
+
+For more information, see :ref:`ug_multi_image_variables`.
 
 Testing
 =======
 
-To test the bootloader sample, add it to any other sample, build and program that sample as described in :ref:`bootloader_build_and_run`.
-
-Then test it by performing the following steps:
+To test the bootloader sample, perform the following steps:
 
 1. |connect_terminal|
-#. Reset the board.
-#. Observe that the kit prints the following information::
+#. Reset the development kit.
+#. Observe that the development kit prints the following information (hash and boot address may vary):
 
-      Attempting to boot from address 0x8000.
+.. code-block:: console
 
-      Verifying signature against key 0.
-
-      Signature verified.
-
-      Booting (0x8000).
+   Attempting to boot slot 0.
+   Attempting to boot from address 0x9000.
+   Verifying signature against key 0.
+   Hash: 0x18...3f
+   Firmware signature verified.
+   Firmware version 1
+   Setting monotonic counter (version: 1, slot: 0)
 
 Dependencies
 ************
