@@ -253,6 +253,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 		.sec_tag = sec_tag,
 		.apn = apn,
 		.frag_size_override = fragment_size,
+		.set_tls_hostname = (sec_tag != -1),
 	};
 
 	if (host == NULL || file == NULL || callback == NULL) {
