@@ -687,11 +687,6 @@ int dtm_init(void)
 	dtm_inst.new_event = false;
 	dtm_inst.packet_len = 0;
 
-	if (IS_ENABLED(NVMC_FEATURE_CACHE_PRESENT)) {
-		/* Enable cache. */
-		nrf_nvmc_icache_config_set(NRF_NVMC, NRF_NVMC_ICACHE_ENABLE);
-	}
-
 	return 0;
 }
 
