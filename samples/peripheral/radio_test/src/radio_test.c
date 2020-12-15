@@ -569,10 +569,6 @@ void radio_test_init(struct radio_test_config *config)
 {
 	nrf_rng_task_trigger(NRF_RNG, NRF_RNG_TASK_START);
 
-#if defined(NVMC_FEATURE_CACHE_PRESENT)
-	nrf_nvmc_icache_config_set(NRF_NVMC, NRF_NVMC_ICACHE_ENABLE);
-#endif /* NVMC_FEATURE_CACHE_PRESENT */
-
 	timer_init(config);
 	IRQ_CONNECT(TIMER0_IRQn, NRFX_TIMER_DEFAULT_CONFIG_IRQ_PRIORITY,
 		nrfx_timer_0_irq_handler, NULL, 0);
