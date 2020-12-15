@@ -309,9 +309,8 @@ int process_gps_data(nrf_gnss_data_frame_t *gps_data)
 			nmea_string_cnt = 0;
 			got_fix = false;
 
-			if ((gps_data->pvt.flags &
-				NRF_GNSS_PVT_FLAG_FIX_VALID_BIT)
-				== NRF_GNSS_PVT_FLAG_FIX_VALID_BIT) {
+			if (gps_data->pvt.flags
+					& NRF_GNSS_PVT_FLAG_FIX_VALID_BIT) {
 
 				got_fix = true;
 				fix_timestamp = k_uptime_get();
@@ -343,7 +342,7 @@ int process_gps_data(nrf_gnss_data_frame_t *gps_data)
 			}
 			activate_lte(false);
 			gnss_ctrl(GNSS_RESTART);
-			k_sleep(K_MSEC(2000));
+			k_msleep(2000);
 #endif
 			break;
 
@@ -446,7 +445,7 @@ int main(void)
 			printk("---------------------------------");
 		}
 
-		k_sleep(K_MSEC(500));
+		k_msleep(500);
 	}
 
 	return 0;
