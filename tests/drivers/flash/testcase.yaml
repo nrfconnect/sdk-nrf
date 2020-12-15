@@ -1,0 +1,9 @@
+tests:
+  drivers.bt_ll_softdevice.flash:
+    platform_allow: nrf52840dk_nrf52840
+    tags: nrf52 soc_flash_nrf_ll_softdevice
+    extra_args: OVERLAY_CONFIG="conf/nrf52840_flash_sdc.conf"
+  drivers.mpsl.flash_sync:
+    platform_allow: nrf52840dk_nrf52840
+    tags: nrf52 soc_flash_nrf
+    extra_args: OVERLAY_CONFIG="conf/nrf52840_flash_mpsl.conf"
