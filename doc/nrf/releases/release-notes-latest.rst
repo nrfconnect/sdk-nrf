@@ -122,6 +122,18 @@ nRF9160
     * Fixed issues with TCP/UDP server restart.
     * Added support for allowing only specified TCP/TLS client IP addresses (using the #XTCPFILTER command).
 
+  * :ref:`lib_fota_download` library:
+
+    * Enabled SNI TLS extension for HTTPS downloads.
+
+  * :ref:`lib_nrf_cloud` library:
+
+    * AWS Jobs replaced by nRF Cloud FOTA as the FOTA mechanism for devices connected to nRF Cloud.
+
+  * :ref:`asset_tracker` application:
+
+    * Updated to use the new FOTA (fota_v2) based on nRF Cloud.
+
 Common
 ======
 
