@@ -449,6 +449,16 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
  */
 static int modem_configure(void)
 {
+
+	/* Turn off LTE power saving features for a more responsive demo. Also,
+	 * request power saving features before network registration. Some
+	 * networks rejects timer updates after the device has registered to the
+	 * LTE network.
+	 */
+	LOG_INF("Disabling PSM and eDRX");
+	lte_lc_psm_req(false);
+	lte_lc_edrx_req(false);
+
 #if defined(CONFIG_LTE_LINK_CONTROL)
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
 		/* Do nothing, modem is already turned on
@@ -475,11 +485,6 @@ static int modem_configure(void)
 #endif /* defined(CONFIG_LWM2M_CARRIER) */
 	}
 #endif /* defined(CONFIG_LTE_LINK_CONTROL) */
-
-	/* Turn off power saving modes for a more responsive demo */
-	LOG_INF("Disabling PSM and eDRX");
-	lte_lc_psm_req(false);
-	lte_lc_edrx_req(false);
 
 	return 0;
 }
