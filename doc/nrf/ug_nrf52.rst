@@ -90,8 +90,7 @@ The nRF52 Series multi-protocol radio supports Bluetooth Low Energy, proprietary
 Standard interface protocols like NFC and USB are supported on a range of the devices in the series and with supporting software.
 
 .. note::
-   |NCS| currently has limited support for Thread.
-   It does not support ANT or Zigbee.
+   |NCS| currently has no support for ANT.
 
 The following sections give pointers on where to start when working with these protocols.
 
@@ -151,6 +150,15 @@ See :ref:`zephyr:usb_api` for documentation and :ref:`zephyr:usb-samples` for a 
 The USB stack requires the USBD driver for nRF52 devices, which is available as part of `nrfx`_.
 The nrfx repository is included in the |NCS| as a module of the Zephyr repository.
 
+Zigbee
+======
+
+.. include:: ug_zigbee.rst
+   :start-after: zigbee_ug_intro_start
+   :end-before: zigbee_ug_intro_end
+
+See the :ref:`Zigbee user guide <ug_zigbee>` for information about how to work with the Zigbee protocol and stack.
+To start developing, check out the :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample.
 
 Multi-protocol support
 **********************

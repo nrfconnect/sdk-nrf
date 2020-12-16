@@ -616,7 +616,7 @@ Zigbee
 * :ref:`zigbee_light_switch_sample` - added a note about :file:`overlay.conf`
 * :ref:`ug_zigbee` - updated by reorganizing structure and adding new pages
 
-  * :ref:`zigbee_ug_intro` - added as a separate page (was a section of :ref:`ug_zigbee`)
+  * Zigbee overview - added as a separate page (was a section of :ref:`ug_zigbee`)
   * :ref:`ug_zigbee_architectures` - added
   * :ref:`ug_zigbee_configuring` - added as a separate page (was a section of :ref:`ug_zigbee`)
   * :ref:`ug_zigbee_configuring_libraries` - added

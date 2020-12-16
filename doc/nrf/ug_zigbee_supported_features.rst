@@ -22,3 +22,5 @@ The stack comes with the following features:
 See :ref:`nrfxlib:zboss` and pages in this user guide for more information.
 
 The |NCS|'s Zigbee protocol also supports :ref:`Zigbee firmware over-the-air updates <lib_zigbee_fota>`.
+
+For more information about Zigbee, visit the `Zigbee Alliance`_ page and read `Zigbee Specification`_.
