@@ -28,7 +28,7 @@ static int thingy91_magpio_configure(void)
 	int buffer;
 	uint8_t read_buffer[AT_CMD_MAX_READ_LENGTH];
 
-	if (!IS_ENABLED(CONFIG_BSD_LIBRARY_SYS_INIT)) {
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
 		LOG_INF("Modem library is not yet initialized, AT commands not sent");
 		LOG_INF("Configuration of MAGPIO and COEX0 is left to drivers");
 		return 0;
