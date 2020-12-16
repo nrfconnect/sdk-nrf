@@ -102,7 +102,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 8243ed209863ee1a3bf2a5d2735a939e8f890f4f
+      revision: 1b2e29f0c4b5a1276d6dacf754c4fdb6e6245953
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
@@ -115,7 +115,7 @@ manifest:
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: mbedtls
-      revision: mbedtls-2.23.0
+      revision: mbedtls-2.24.0
       remote: armmbed
     - name: nanopb
       path: modules/lib/nanopb
