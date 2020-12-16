@@ -11,11 +11,11 @@
 #include <dfu/dfu_target.h>
 #include <pm_config.h>
 
-#ifdef PM_S1_ADDRESS
+#if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
 /* MCUBoot support is required */
 #include <fw_info.h>
 #include <secure_services.h>
-#include <dfu_target_mcuboot.h>
+#include <dfu/dfu_target_mcuboot.h>
 #endif
 
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
@@ -24,7 +24,9 @@ static fota_download_callback_t callback;
 static struct download_client   dlc;
 static struct k_delayed_work    dlc_with_offset_work;
 static int socket_retries_left;
-
+#ifdef CONFIG_DFU_TARGET_MCUBOOT
+static uint8_t mcuboot_buf[CONFIG_FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ];
+#endif
 static void send_evt(enum fota_download_evt_id id)
 {
 	__ASSERT(id != FOTA_DOWNLOAD_EVT_PROGRESS, "use send_progress");
@@ -309,12 +311,23 @@ int fota_download_init(fota_download_callback_t client_callback)
 		return -EINVAL;
 	}
 
+	int err;
+
 	callback = client_callback;
+
+#ifdef CONFIG_DFU_TARGET_MCUBOOT
+	/* Set the required buffer for MCUboot targets */
+	err = dfu_target_mcuboot_set_buf(mcuboot_buf, sizeof(mcuboot_buf));
+	if (err) {
+		LOG_ERR("%s failed to set MCUboot flash buffer %d",
+			__func__, err);
+		return err;
+	}
+#endif
 
 	k_delayed_work_init(&dlc_with_offset_work, download_with_offset);
 
-	int err = download_client_init(&dlc, download_client_callback);
-
+	err = download_client_init(&dlc, download_client_callback);
 	if (err != 0) {
 		return err;
 	}
