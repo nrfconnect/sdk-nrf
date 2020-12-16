@@ -220,4 +220,20 @@ int adp536x_oc_chg_current_set(u8_t value);
  */
 int adp536x_buck_discharge_set(bool enable);
 
+/**
+ * @brief Enable or disable the fuel gauge
+ * @param[in] enable Boolean value to enable or disable the fuel gauge
+ * @return 0 If the operation was successful,
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_fuel_gauge_enable_set(bool enable);
+
+/**
+ * @brief Read the value of the fuel gauge
+ * @param[out] gauge Fuel gauge value in percent if read was successful
+ * @return 0 If operation was successful,
+ *           Otherwise a (negative) error code is returned.
+ */
+int adp536x_fuel_gauge_get(u8_t *gauge);
+
 #endif /* ADP536X_H_ */

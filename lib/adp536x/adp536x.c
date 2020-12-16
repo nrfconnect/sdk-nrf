@@ -24,6 +24,8 @@
 #define ADP536X_CHG_STATUS_2				0x09
 #define ADP536X_BAT_PROTECT_CTRL			0x11
 #define ADP536X_BAT_OC_CHG				0x15
+#define ADP536X_BAT_SOC				0x21
+#define ADP536X_FUEL_GAUGE_MODE				0x27
 #define ADP536X_BUCK_CFG				0x29
 #define ADP536X_BUCK_OUTPUT				0x2A
 #define ADP536X_BUCKBST_CFG				0x2B
@@ -112,6 +114,18 @@
 #define ADP536X_BAT_OC_CHG_OC_CHG(x)			(((x) & 0x07) << 5)
 #define ADP536X_BAT_OC_CHG_DGT_OC_CHG_MSK		GENMASK(4, 3)
 #define ADP536X_BAT_OC_CHG_DGT_OC_CHG(x)		(((x) & 0x03) << 3)
+
+/* Fuel gauge mode register */
+#define ADP536X_FUEL_GAUGE_MODE_SOC_LOW_TH_MASK		GENMASK(7,6)
+#define ADP536X_FUEL_GAUGE_MODE_SOC_LOW_TH(x)		(((x) & 0x03) << 6)
+#define ADP536X_FUEL_GAUGE_MODE_SLP_CURR_MASK		GENMASK(5,4)
+#define ADP536X_FUEL_GAUGE_MODE_SLP_CURR(x)		(((x) & 0x03) << 4)
+#define ADP536X_FUEL_GAUGE_MODE_SLP_TIME_MASK		GENMASK(3,2)
+#define ADP536X_FUEL_GAUGE_MODE_SLP_TIME(x)		(((x) & 0x03) << 2)
+#define ADP536X_FUEL_GAUGE_MODE_FG_MODE_MASK		BIT(1)
+#define ADP536X_FUEL_GAUGE_MODE_FG_MODE(x)		(((x) & 0x01) << 1)
+#define ADP536X_FUEL_GAUGE_MODE_EN_FG_MASK		BIT(0)
+#define ADP536X_FUEL_GAUGE_MODE_EN_FG(x)		(((x) & 0x01) << 0)
 
 /* Buck configure register. */
 #define ADP536X_BUCK_CFG_DISCHG_BUCK_MSK		BIT(1)
@@ -260,6 +274,18 @@ int adp536x_buck_discharge_set(bool enable)
 	return adp536x_reg_write_mask(ADP536X_BUCK_CFG,
 				ADP536X_BUCK_CFG_DISCHG_BUCK_MSK,
 				ADP536X_BUCK_CFG_DISCHG_BUCK(enable));
+}
+
+int adp536x_fuel_gauge_enable_set(bool enable)
+{
+		return adp536x_reg_write_mask(ADP536X_FUEL_GAUGE_MODE,
+																	ADP536X_FUEL_GAUGE_MODE_EN_FG_MASK,
+																	ADP536X_FUEL_GAUGE_MODE_EN_FG(enable));
+}
+
+int adp536x_fuel_gauge_get(u8_t *gauge)
+{
+		return adp536x_reg_read(ADP536X_BAT_SOC, gauge);
 }
 
 int adp536x_buckbst_3v3_set(void)
