@@ -144,14 +144,14 @@ For example:
 
   This configuration guarantees that the network sample can handle the Bluetooth LE DLE update procedure, which is used in the :ref:`ble_throughput` sample.
 
-IEEE 802.15.4
--------------
+IEEE 802.15.4 (Thread and Zigbee)
+---------------------------------
 
 For IEEE 802.15.4, the nRF Connect SDK makes use of Zephyr's :ref:`zephyr:nrf-ieee802154-rpmsg-sample` sample.
 This Zephyr sample is designed specifically to enable the nRF IEEE 802.15.4 radio driver and its serialization library on a remote MCU (for example, the nRF5340 network core) using the `RPMsg Messaging Protocol`_ as a transport for the nRF 802.15.4 radio driver serialization.
 The sample implements the RPMsg transport using the `OpenAMP`_ library to communicate with the nRF IEEE 802.15.4 radio driver serialization host that runs on a separate core (for example, the nRF5340 application core).
 
-This sample must be programmed to the network core to run samples for 802.15.4-based protocols like Thread or Zigbee on nRF5340.
+When working with 802.15.4-based protocols like Thread or Zigbee, program the :ref:`zephyr:nrf-ieee802154-rpmsg-sample` sample to the network core to run :ref:`Thread and Zigbee samples <samples>` on nRF5340.
 
 Application samples
 ===================
