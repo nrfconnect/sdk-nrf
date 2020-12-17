@@ -15,7 +15,7 @@ Introduction
 ************
 
 The nRF52 Series of System-on-Chip (SoC) devices embed a powerful yet low-power Arm Cortex-M4 processor with our industry leading 2.4 GHz RF transceivers.
-All of the nRF52 Series SoCs have support for Bluetooth 5 features, in addition to multi-protocol capabilities.
+All of the nRF52 Series SoCs have support for Bluetooth 5 features, in addition to multiprotocol capabilities.
 
 See `nRF52 Series`_ for the technical documentation on the nRF52 Series chips and associated kits.
 
@@ -86,7 +86,7 @@ See :ref:`ug_bootloader` for more information and instructions on how to enable 
 Supported protocols
 *******************
 
-The nRF52 Series multi-protocol radio supports Bluetooth Low Energy, proprietary (including Enhanced Shock Burst), ANT, Thread, Zigbee, and 802.15.4.
+The nRF52 Series multiprotocol radio supports Bluetooth Low Energy, proprietary (including Enhanced Shock Burst), ANT, Thread, Zigbee, and 802.15.4.
 Standard interface protocols like NFC and USB are supported on a range of the devices in the series and with supporting software.
 
 .. note::
@@ -170,12 +170,13 @@ Zigbee
 See the :ref:`Zigbee user guide <ug_zigbee>` for information about how to work with the Zigbee protocol and stack.
 To start developing, check out the :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample.
 
-Multi-protocol support
-**********************
+Multiprotocol support
+*********************
 
 The nRF52 Series devices support running another protocol in parallel with the SoftDevice Controller.
+See the :ref:`ug_multiprotocol_support` user guide for instructions on how to enable multiprotocol support for Thread or Zigbee in combination with Bluetooth.
 
-The :ref:`Multi-Protocol Service Layer (MPSL) <nrfxlib:mpsl>` library provides services for multi-protocol applications.
+The :ref:`nrfxlib:mpsl` library provides services for multiprotocol applications.
 
 
 .. |note| replace:: There is currently no support for upgrading the bootloader (:doc:`mcuboot:index`) on nRF52 Series devices.
