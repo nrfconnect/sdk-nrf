@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-description: >
+description: |
     This is a representation of the BH1749 sensor
 
 compatible: "rohm,bh1749"
