@@ -5,7 +5,7 @@
 #
 
 
-description: >
+description: |
     This is a representation of the PMW3360 optical motion sensor
 
 compatible: "pixart,pmw3360"
