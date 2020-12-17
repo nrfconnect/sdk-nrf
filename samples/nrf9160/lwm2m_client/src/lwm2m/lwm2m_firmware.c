@@ -38,8 +38,12 @@ static void reboot_work_handler(struct k_work *work)
 }
 
 #if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
-static int firmware_update_cb(uint16_t obj_inst_id)
+static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
+			    uint16_t args_len)
 {
+	ARG_UNUSED(args);
+	ARG_UNUSED(args_len);
+
 	struct update_counter update_counter;
 	int ret = 0;
 

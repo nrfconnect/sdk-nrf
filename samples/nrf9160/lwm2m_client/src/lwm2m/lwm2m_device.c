@@ -39,8 +39,12 @@ static void reboot_work_handler(struct k_work *work)
 	sys_reboot(0);
 }
 
-static int device_reboot_cb(uint16_t obj_inst_id)
+static int device_reboot_cb(uint16_t obj_inst_id, uint8_t *args,
+			    uint16_t args_len)
 {
+	ARG_UNUSED(args);
+	ARG_UNUSED(args_len);
+
 	LOG_INF("DEVICE: Reboot in progress");
 
 	k_delayed_work_submit(&reboot_work, REBOOT_DELAY);
@@ -48,8 +52,12 @@ static int device_reboot_cb(uint16_t obj_inst_id)
 	return 0;
 }
 
-static int device_factory_default_cb(uint16_t obj_inst_id)
+static int device_factory_default_cb(uint16_t obj_inst_id, uint8_t *args,
+				     uint16_t args_len)
 {
+	ARG_UNUSED(args);
+	ARG_UNUSED(args_len);
+
 	LOG_INF("DEVICE: FACTORY DEFAULT (TODO)");
 
 	return 0;
