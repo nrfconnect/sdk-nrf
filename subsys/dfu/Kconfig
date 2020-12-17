@@ -8,4 +8,6 @@ menu "DFU"
 
 rsource "dfu_target/Kconfig"
 
+rsource "fmfu_fdev/Kconfig"
+
 endmenu
