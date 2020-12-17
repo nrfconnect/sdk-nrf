@@ -150,6 +150,16 @@ See :ref:`zephyr:usb_api` for documentation and :ref:`zephyr:usb-samples` for a 
 The USB stack requires the USBD driver for nRF52 devices, which is available as part of `nrfx`_.
 The nrfx repository is included in the |NCS| as a module of the Zephyr repository.
 
+Thread
+======
+
+.. include:: ug_thread.rst
+   :start-after: thread_intro_start
+   :end-before: thread_intro_end
+
+See the :ref:`ug_thread` user guide for information about how to work with Thread.
+To start developing, check out the :ref:`openthread_samples`.
+
 Zigbee
 ======
 

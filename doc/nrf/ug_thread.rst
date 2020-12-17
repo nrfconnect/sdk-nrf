@@ -3,8 +3,16 @@
 Thread
 ######
 
-The |NCS| provides support for developing applications using the Thread protocol.
-This support is based on the OpenThread stack, which is integrated into Zephyr.
+.. thread_intro_start
+
+Thread is a low-power mesh networking technology, designed specifically for home automation applications.
+It is an IPv6-based standard that uses 6LoWPAN technology over the IEEE 802.15.4 protocol.
+You can connect a Thread mesh network to the Internet with a Thread Border Router.
+
+The |NCS| provides support for developing Thread applications based on the OpenThread stack.
+The OpenThread stack is integrated into Zephyr.
+
+.. thread_intro_end
 
 See :ref:`openthread_samples` for the list of available Thread samples.
 
