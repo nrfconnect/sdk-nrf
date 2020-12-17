@@ -218,7 +218,7 @@ FOTA upgrades
 *************
 
 |fota_upgrades_def|
-FOTA upgrades can be used to apply delta patches to the `LTE modem`_ firmware and to replace the upgradable bootloader or the application.
+FOTA upgrades can be used to apply delta patches to the `LTE modem`_ firmware, full `LTE modem`_ firmware upgrades, and to replace the upgradable bootloader or the application.
 
 .. note::
    Even though the Secure Partition Manager and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware upgrades.
@@ -229,17 +229,18 @@ To perform a FOTA upgrade, complete the following steps:
 1. Make sure that your application supports FOTA upgrades.
       To download and apply FOTA upgrades, your application must use the :ref:`lib_fota_download` library.
       This library deduces the type of upgrade by inspecting the header of the firmware and invokes the :ref:`lib_dfu_target` library to apply the firmware upgrade.
-      By default, the DFU target library supports all kinds of FOTA upgrades, but you can disable support for specific targets.
+      By default, the DFU target library supports all kinds of FOTA upgrades except full modem firmware upgrades, but you can disable support for specific targets.
 
       In addition, the following requirements apply:
 
       * |fota_upgrades_req_mcuboot|
       * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:option:`CONFIG_SECURE_BOOT`).
-      * If you want to upgrade the modem firmware, neither MCUboot nor the immutable bootloader are required, because the modem firmware upgrade is handled by the modem itself.
+      * If you want to upgrade the modem firmware through modem delta updates, neither MCUboot nor the immutable bootloader are required, because the modem firmware upgrade is handled by the modem itself.
+      * If you want to perform a full modem firmware upgrade, an external flash memory with minimum 2MB is required.
 
 #. Create a binary file that contains the new image.
       This step does not apply for upgrades of the modem firmware.
-      You can download delta patches for the modem firmware from the `nRF9160 product website (compatible downloads)`_.
+      You can download delta patches and full modem firmware upgrade binaries for the modem firmware from the `nRF9160 product website (compatible downloads)`_.
 
       |fota_upgrades_building|
       The :file:`app_update.bin` file is the file that should be uploaded to the server.
