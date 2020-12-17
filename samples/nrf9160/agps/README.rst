@@ -61,7 +61,7 @@ During the defined intervals of PSM and eDRX, LTE communication does not occur, 
 In this sample, both PSM and eDRX are enabled by default.
 You can enable or disable these features by using the :option:`CONFIG_LTE_POWER_SAVING_MODE` and :option:`CONFIG_LTE_EDRX_REQ` configuration options.
 
-.. include:: /applications/asset_tracker/README.rst
+.. include:: /../../applications/asset_tracker/README.rst
    :start-after: external_antenna_note_start
    :end-before: external_antenna_note_end
 
