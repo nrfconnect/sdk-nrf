@@ -138,6 +138,8 @@
 
 .. ### Source: infocenter.nordicsemi.com
 
+.. _`AES - Advanced Encryption Standard`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fsdk_nrf5_v17.0.2%2Flib_crypto_aes.html
+
 .. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/
 
 .. _`LTE Link Monitor`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_intro.html
