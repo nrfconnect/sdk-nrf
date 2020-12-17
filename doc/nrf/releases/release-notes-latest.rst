@@ -76,6 +76,8 @@ HTTP Update
 * Added:
 
   * New sample :ref:`http_modem_delta_update_sample` which shows how to add modem delta upgrade support to an application.
+  * New sample :ref:`http_full_modem_update_sample` which shows how to add full modem upgrade support to an application.
+    Note that this requires an external flash memory of a minimum of 2MB to work, hence the sample will only work on the nRF9160 DK version ``0.14.0`` or later.
 
 * Updated:
 
