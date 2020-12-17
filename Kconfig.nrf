@@ -23,6 +23,7 @@ config PRIVILEGED_STACK_SIZE
 
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
+rsource "modules/Kconfig.mcuboot"
 rsource "lib/Kconfig"
 rsource "drivers/Kconfig"
 rsource "ext/Kconfig"

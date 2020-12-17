@@ -110,8 +110,17 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     set(CONFIG_BOOT_SIGNATURE_KEY_FILE ${mcuboot_SIGNATURE_KEY_FILE})
   endif ()
 
-  if (DEFINED mcuboot_CONF_FILE)
-    get_filename_component(mcuboot_CONF_DIR ${mcuboot_CONF_FILE} DIRECTORY)
+  foreach (filepath ${mcuboot_CONF_FILE})
+    file(STRINGS ${filepath} mcuboot_CONFIG_BOOT_SIGNATURE_KEY_FILE
+         REGEX "^CONFIG_BOOT_SIGNATURE_KEY_FILE=")
+    if (mcuboot_CONFIG_BOOT_SIGNATURE_KEY_FILE)
+      get_filename_component(mcuboot_CONF_DIR ${filepath} DIRECTORY)
+    endif()
+  endforeach()
+
+  if(IS_ABSOLUTE ${CONFIG_BOOT_SIGNATURE_KEY_FILE})
+    set(mcuboot_key_file ${CONFIG_BOOT_SIGNATURE_KEY_FILE})
+  elseif (DEFINED mcuboot_CONF_DIR)
     if (EXISTS ${mcuboot_CONF_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
       set(mcuboot_key_file ${mcuboot_CONF_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
     endif()
@@ -129,171 +138,189 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     set(mcuboot_key_file ${MCUBOOT_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
   endif()
 
-  set(sign_cmd
-    ${PYTHON_EXECUTABLE}
-    ${MCUBOOT_DIR}/scripts/imgtool.py
-    sign
-    --key ${mcuboot_key_file}
-    --header-size $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PAD_SIZE>
-    --align       ${CONFIG_MCUBOOT_FLASH_WRITE_BLOCK_SIZE}
-    --version     ${CONFIG_MCUBOOT_IMAGE_VERSION}
-    --slot-size   $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>
-    --pad-header
-    )
-
-  if(CONFIG_ZIGBEE)
-    set(zb_add_ota_header_cmd
+  if(CONFIG_SIGN_IMAGES)
+    execute_process(COMMAND
       ${PYTHON_EXECUTABLE}
-      ${NRF_DIR}/scripts/bootloader/zb_add_ota_header.py
-      --application ${PROJECT_BINARY_DIR}/app_update.bin
-      --application-version-string ${CONFIG_MCUBOOT_IMAGE_VERSION}
-      --zigbee-manufacturer-id ${CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID}
-      --zigbee-image-type ${CONFIG_ZIGBEE_FOTA_IMAGE_TYPE}
-      --zigbee-comment ${CONFIG_ZIGBEE_FOTA_COMMENT}
-      --zigbee-ota-min-hw-version ${CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION}
-      --zigbee-ota-max-hw-version ${CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION}
-      --out-directory ${PROJECT_BINARY_DIR}
-      )
-    else()
-      set(zb_add_ota_header_cmd "")
-    endif(CONFIG_ZIGBEE)
-
-  set(app_offset $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>)
-
-  sign(${app_to_sign_hex}     # Hex to sign
-    ${PROJECT_BINARY_DIR}/app # Prefix for generated files
-    ${app_offset}             # Offset
-    ${app_sign_depends}       # Dependencies
-    app_signed_hex            # Generated hex output variable
+      ${MCUBOOT_DIR}/scripts/imgtool.py
+      getpriv -k ${mcuboot_key_file}
+      OUTPUT_QUIET
+      ERROR_QUIET
+      RESULT_VARIABLE ret_val
     )
 
-  add_custom_target(mcuboot_sign_target DEPENDS ${app_signed_hex})
+    if(${ret_val} EQUAL 2)
+      message(WARNING "Key file `${mcuboot_key_file}` does not contain a valid \
+                       private key. Signing of images will be disabled.")
+      message("Disable signing with `CONFIG_SIGN_IMAGES=n` to silence this warning.")
+      return()
+    endif()
 
-  set_property(GLOBAL PROPERTY
-    mcuboot_primary_app_PM_HEX_FILE
-    ${app_signed_hex}
-    )
-  set_property(GLOBAL PROPERTY
-    mcuboot_primary_app_PM_TARGET
-    mcuboot_sign_target
-    )
-
-  generate_dfu_zip(
-    TARGET mcuboot_sign_target
-    OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip
-    BIN_FILES ${PROJECT_BINARY_DIR}/app_update.bin
-    TYPE application
-    SCRIPT_PARAMS
-    "load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
-    "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
-    )
-
-  if (CONFIG_NRF53_UPGRADE_NETWORK_CORE
-      AND CONFIG_HCI_RPMSG_BUILD_STRATEGY_FROM_SOURCE)
-    # Network core application updates are enabled.
-    # We know this since MCUBoot is enabled on the application core, and
-    # a network core child image is included in the build.
-    # These updates are verified by the application core MCUBoot.
-    # Create a signed variant of the network core application.
-
-    # Load the shared vars to get the path to the hex file to sign.
-    include(${CMAKE_BINARY_DIR}/hci_rpmsg/shared_vars.cmake)
-
-    sign(${CPUNET_PM_SIGNED_APP_HEX}
-      ${PROJECT_BINARY_DIR}/net_core_app
-      $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
-      hci_rpmsg_subimage
-      net_core_app_signed_hex
+    set(sign_cmd
+      ${PYTHON_EXECUTABLE}
+      ${MCUBOOT_DIR}/scripts/imgtool.py
+      sign
+      --key ${mcuboot_key_file}
+      --header-size $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PAD_SIZE>
+      --align       ${CONFIG_MCUBOOT_FLASH_WRITE_BLOCK_SIZE}
+      --version     ${CONFIG_MCUBOOT_IMAGE_VERSION}
+      --slot-size   $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>
+      --pad-header
       )
 
-    add_custom_target(
-      net_core_app_sign_target
-      DEPENDS ${net_core_app_signed_hex}
+    if(CONFIG_ZIGBEE)
+      set(zb_add_ota_header_cmd
+        ${PYTHON_EXECUTABLE}
+        ${NRF_DIR}/scripts/bootloader/zb_add_ota_header.py
+        --application ${PROJECT_BINARY_DIR}/app_update.bin
+        --application-version-string ${CONFIG_MCUBOOT_IMAGE_VERSION}
+        --zigbee-manufacturer-id ${CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID}
+        --zigbee-image-type ${CONFIG_ZIGBEE_FOTA_IMAGE_TYPE}
+        --zigbee-comment ${CONFIG_ZIGBEE_FOTA_COMMENT}
+        --zigbee-ota-min-hw-version ${CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION}
+        --zigbee-ota-max-hw-version ${CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION}
+        --out-directory ${PROJECT_BINARY_DIR}
+        )
+      else()
+        set(zb_add_ota_header_cmd "")
+      endif(CONFIG_ZIGBEE)
+
+    set(app_offset $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>)
+
+    sign(${app_to_sign_hex}     # Hex to sign
+      ${PROJECT_BINARY_DIR}/app # Prefix for generated files
+      ${app_offset}             # Offset
+      ${app_sign_depends}       # Dependencies
+      app_signed_hex            # Generated hex output variable
       )
 
-    add_dependencies(
+    add_custom_target(mcuboot_sign_target DEPENDS ${app_signed_hex})
+
+    set_property(GLOBAL PROPERTY
+      mcuboot_primary_app_PM_HEX_FILE
+      ${app_signed_hex}
+      )
+    set_property(GLOBAL PROPERTY
+      mcuboot_primary_app_PM_TARGET
       mcuboot_sign_target
-      net_core_app_sign_target
-      )
-
-  endif()
-
-  if (CONFIG_BUILD_S1_VARIANT AND ("${CONFIG_S1_VARIANT_IMAGE_NAME}" STREQUAL "mcuboot"))
-    # Secure Boot (B0) is enabled, and we have to build update candidates
-    # for both S1 and S0.
-
-    # We need to override some attributes of the parent slot S0/S1.
-    # Which contains both the S0/S1 image and the padding/header.
-    foreach(parent_slot s0;s1)
-      set(slot ${parent_slot}_image)
-
-      # Fetch the target and hex file for the current slot.
-      # Note that these hex files are already signed by B0.
-      get_property(${slot}_target GLOBAL PROPERTY ${slot}_PM_TARGET)
-      get_property(${slot}_hex GLOBAL PROPERTY ${slot}_PM_HEX_FILE)
-
-      # The gap from S0/S1 partition is calculated by partition manager
-      # and stored in its target.
-      set(slot_offset
-        $<TARGET_PROPERTY:partition_manager,${parent_slot}_TO_SECONDARY>)
-
-      # Depend on both the target for the hex file, and the hex file itself.
-      set(dependencies "${${slot}_target};${${slot}_hex}")
-
-      set(out_path ${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_${slot})
-
-      sign(${${slot}_hex} # Hex file to sign
-        ${out_path}
-        ${slot_offset}
-        "${dependencies}" # Need "..." to make it a list.
-        signed_hex        # Created file variable
-        )
-
-      # We now have to override the S0/S1 partition, so use `parent_slot`
-      # variable, which is "s0" and "s1" respectively. This to get partition
-      # manager to override the implicitly assigned container hex files.
-
-      # Wrapper target for the generated hex file.
-      add_custom_target(signed_${parent_slot}_target DEPENDS ${signed_hex})
-
-      # Override the container hex file.
-      set_property(GLOBAL PROPERTY
-        ${parent_slot}_PM_HEX_FILE
-        ${signed_hex}
-        )
-
-      # Override the container hex file target.
-      set_property(GLOBAL PROPERTY
-        ${parent_slot}_PM_TARGET
-        signed_${parent_slot}_target
-        )
-    endforeach()
-
-    # Generate zip file with both update candidates
-    set(s0_name signed_by_mcuboot_and_b0_s0_image_update.bin)
-    set(s0_bin_path ${PROJECT_BINARY_DIR}/${s0_name})
-    set(s1_name signed_by_mcuboot_and_b0_s1_image_update.bin)
-    set(s1_bin_path ${PROJECT_BINARY_DIR}/${s1_name})
-
-    # Create dependency to ensure explicit build order. This is needed to have
-    # a single target represent the state when both s0 and s1 imags are built.
-    add_dependencies(
-      signed_s1_target
-      signed_s0_target
       )
 
     generate_dfu_zip(
-      TARGET signed_s1_target
-      OUTPUT ${PROJECT_BINARY_DIR}/dfu_mcuboot.zip
-      BIN_FILES ${s0_bin_path} ${s1_bin_path}
-      TYPE mcuboot
+      TARGET mcuboot_sign_target
+      OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip
+      BIN_FILES ${PROJECT_BINARY_DIR}/app_update.bin
+      TYPE application
       SCRIPT_PARAMS
-      "${s0_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>"
-      "${s1_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>"
+      "load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
       "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
-      "version_B0=${CONFIG_FW_INFO_FIRMWARE_VERSION}"
       )
-  endif()
+
+    if (CONFIG_NRF53_UPGRADE_NETWORK_CORE
+        AND CONFIG_HCI_RPMSG_BUILD_STRATEGY_FROM_SOURCE)
+      # Network core application updates are enabled.
+      # We know this since MCUBoot is enabled on the application core, and
+      # a network core child image is included in the build.
+      # These updates are verified by the application core MCUBoot.
+      # Create a signed variant of the network core application.
+
+      # Load the shared vars to get the path to the hex file to sign.
+      include(${CMAKE_BINARY_DIR}/hci_rpmsg/shared_vars.cmake)
+
+      sign(${CPUNET_PM_SIGNED_APP_HEX}
+        ${PROJECT_BINARY_DIR}/net_core_app
+        $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
+        hci_rpmsg_subimage
+        net_core_app_signed_hex
+        )
+
+      add_custom_target(
+        net_core_app_sign_target
+        DEPENDS ${net_core_app_signed_hex}
+        )
+
+      add_dependencies(
+        mcuboot_sign_target
+        net_core_app_sign_target
+        )
+
+    endif()
+
+    if (CONFIG_BUILD_S1_VARIANT AND ("${CONFIG_S1_VARIANT_IMAGE_NAME}" STREQUAL "mcuboot"))
+      # Secure Boot (B0) is enabled, and we have to build update candidates
+      # for both S1 and S0.
+
+      # We need to override some attributes of the parent slot S0/S1.
+      # Which contains both the S0/S1 image and the padding/header.
+      foreach(parent_slot s0;s1)
+        set(slot ${parent_slot}_image)
+
+        # Fetch the target and hex file for the current slot.
+        # Note that these hex files are already signed by B0.
+        get_property(${slot}_target GLOBAL PROPERTY ${slot}_PM_TARGET)
+        get_property(${slot}_hex GLOBAL PROPERTY ${slot}_PM_HEX_FILE)
+
+        # The gap from S0/S1 partition is calculated by partition manager
+        # and stored in its target.
+        set(slot_offset
+          $<TARGET_PROPERTY:partition_manager,${parent_slot}_TO_SECONDARY>)
+
+        # Depend on both the target for the hex file, and the hex file itself.
+        set(dependencies "${${slot}_target};${${slot}_hex}")
+
+        set(out_path ${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_${slot})
+
+        sign(${${slot}_hex} # Hex file to sign
+          ${out_path}
+          ${slot_offset}
+          "${dependencies}" # Need "..." to make it a list.
+          signed_hex        # Created file variable
+          )
+
+        # We now have to override the S0/S1 partition, so use `parent_slot`
+        # variable, which is "s0" and "s1" respectively. This to get partition
+        # manager to override the implicitly assigned container hex files.
+
+        # Wrapper target for the generated hex file.
+        add_custom_target(signed_${parent_slot}_target DEPENDS ${signed_hex})
+
+        # Override the container hex file.
+        set_property(GLOBAL PROPERTY
+          ${parent_slot}_PM_HEX_FILE
+          ${signed_hex}
+          )
+
+        # Override the container hex file target.
+        set_property(GLOBAL PROPERTY
+          ${parent_slot}_PM_TARGET
+          signed_${parent_slot}_target
+          )
+      endforeach()
+
+      # Generate zip file with both update candidates
+      set(s0_name signed_by_mcuboot_and_b0_s0_image_update.bin)
+      set(s0_bin_path ${PROJECT_BINARY_DIR}/${s0_name})
+      set(s1_name signed_by_mcuboot_and_b0_s1_image_update.bin)
+      set(s1_bin_path ${PROJECT_BINARY_DIR}/${s1_name})
+
+      # Create dependency to ensure explicit build order. This is needed to have
+      # a single target represent the state when both s0 and s1 imags are built.
+      add_dependencies(
+        signed_s1_target
+        signed_s0_target
+        )
+
+      generate_dfu_zip(
+        TARGET signed_s1_target
+        OUTPUT ${PROJECT_BINARY_DIR}/dfu_mcuboot.zip
+        BIN_FILES ${s0_bin_path} ${s1_bin_path}
+        TYPE mcuboot
+        SCRIPT_PARAMS
+        "${s0_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>"
+        "${s1_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>"
+        "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+        "version_B0=${CONFIG_FW_INFO_FIRMWARE_VERSION}"
+        )
+    endif()
+  endif(CONFIG_SIGN_IMAGES)
 endif()
 
 # Zephyr has a Kconfig option used for signing an application image
