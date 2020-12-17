@@ -1,0 +1,6 @@
+config SIGN_IMAGES
+	bool "Sign images for MCUBoot"
+	default y
+	help
+	  Sign images for MCUBoot as integrated part of the build stages using
+	  the private key.
