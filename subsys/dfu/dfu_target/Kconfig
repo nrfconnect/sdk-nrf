@@ -71,6 +71,16 @@ config DFU_TARGET_MODEM_TIMEOUT
 
 endif # DFU_TARGET_MODEM_DELTA
 
+config DFU_TARGET_FULL_MODEM
+	bool "Full Modem update support"
+	depends on SOC_NRF9160_SICA
+	depends on DFU_TARGET_STREAM
+	depends on STREAM_FLASH
+	depends on FMFU_FDEV
+	help
+	  Enable support for full updates to the modem firmware.
+	  Note that this requires an external flash.
+
 module=DFU_TARGET
 module-dep=LOG
 module-str=Device Firmware Upgrade

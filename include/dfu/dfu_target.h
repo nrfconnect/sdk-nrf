@@ -20,8 +20,11 @@
 extern "C" {
 #endif
 
-#define DFU_TARGET_IMAGE_TYPE_MCUBOOT 1
-#define DFU_TARGET_IMAGE_TYPE_MODEM_DELTA 2
+enum dfu_target_image_type {
+	DFU_TARGET_IMAGE_TYPE_MCUBOOT = 1,
+	DFU_TARGET_IMAGE_TYPE_MODEM_DELTA,
+	DFU_TARGET_IMAGE_TYPE_FULL_MODEM
+};
 
 enum dfu_target_evt_id {
 	DFU_TARGET_EVT_TIMEOUT,

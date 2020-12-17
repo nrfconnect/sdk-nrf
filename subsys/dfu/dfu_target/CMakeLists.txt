@@ -17,6 +17,9 @@ zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_STREAM
 zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_MODEM_DELTA
   src/dfu_target_modem_delta.c
   )
+zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_FULL_MODEM
+  src/dfu_target_full_modem.c
+  )
 zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_MCUBOOT
   src/dfu_target_mcuboot.c
   )
