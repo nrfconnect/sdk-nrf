@@ -9,7 +9,7 @@ Thread: NCP
 
 The :ref:`Thread <ug_thread>` NCP sample demonstrates the usage of OpenThread's :ref:`thread_architectures_designs_cp_ncp` architecture inside the Zephyr environment.
 
-The sample is based on Zephyr's :ref:`zephyr:ncp-sample` sample.
+The sample is based on Zephyr's :ref:`zephyr:coprocessor-sample` sample.
 However, it customizes Zephyr's sample to the NCS requirements (for example, by increasing the stack size dedicated for the user application), and also extends it with several features:
 
 * Increased mbedTLS heap size.
