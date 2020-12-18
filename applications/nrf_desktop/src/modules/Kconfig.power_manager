@@ -8,9 +8,9 @@ menu "Power manager"
 
 config DESKTOP_POWER_MANAGER_ENABLE
 	bool "Enable power management"
-	depends on HAS_SYS_POWER_STATE_DEEP_SLEEP_1
+	depends on HAS_POWER_STATE_DEEP_SLEEP_1
 	select DEVICE_POWER_MANAGEMENT
-	select SYS_POWER_DEEP_SLEEP_STATES
+	select PM_DEEP_SLEEP_STATES
 	help
 	  Enable power management, which will put the device to low-power mode
 	  if it is idle.
