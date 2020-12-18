@@ -126,6 +126,7 @@ After building the sample and programming it to your development kit, test it by
    .. note::
         |thread_hwfc_enabled|
 
+#. .. include:: /includes/thread_enable_network.txt
 #. Invoke some of the OpenThread commands:
 
    a. Test the state of the Thread network with the ``ot state`` command.
@@ -134,7 +135,7 @@ After building the sample and programming it to your development kit, test it by
       .. code-block:: console
 
          uart:~$ ot state
-         router
+         leader
          Done
 
    #. Get the Thread network name with the ``ot networkname`` command.
@@ -180,6 +181,7 @@ To test communication between boards, complete the following steps:
    .. note::
         |thread_hwfc_enabled|
 
+#. .. include:: /includes/thread_enable_network.txt
 #. Test communication between the boards with the following command:
 
    .. parsed-literal::
@@ -256,6 +258,7 @@ To test the Thread Specification v1.2 features, complete the following steps:
 #. Turn on the developments kits.
 #. Set up the serial connection with both development kits.
    For more details, see :ref:`putty`.
+#. .. include:: /includes/thread_enable_network.txt
 #. Test the state of the Thread network with the ``ot state`` command to see which board is the leader:
 
    .. code-block:: console
