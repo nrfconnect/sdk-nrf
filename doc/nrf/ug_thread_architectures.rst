@@ -73,9 +73,6 @@ This platform design is suitable for the following development kits:
 |                                |           |                                                |``nrf5340dk_nrf5340_cpuappns`` |
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
 
-.. note::
-    |5340_not_supported|
-
 .. _thread_architectures_designs_soc_designs_multiprotocol:
 
 Single-chip, multiprotocol (SoC)
@@ -111,12 +108,8 @@ This platform design is suitable for the following development kits:
 |:ref:`nRF52833 DK <ug_nrf52>`   |PCA10010   |:ref:`nrf52833dk_nrf52833 <nrf52833dk_nrf52833>`|``nrf52833dk_nrf52833``        |
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
 |:ref:`nRF5340 DK <ug_nrf5340>`  |PCA10095   |:ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>`    |``nrf5340dk_nrf5340_cpuapp``   |
-|                                |           |                                                |                               |
 |                                |           |                                                |``nrf5340dk_nrf5340_cpuappns`` |
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
-
-.. note::
-    |5340_not_supported|
 
 .. _thread_architectures_designs_cp:
 
@@ -165,13 +158,6 @@ This platform design is suitable for the following development kits:
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
 |:ref:`nRF52833 DK <ug_nrf52>`   |PCA10010   |:ref:`nrf52833dk_nrf52833 <nrf52833dk_nrf52833>`|``nrf52833dk_nrf52833``        |
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
-|:ref:`nRF5340 DK <ug_nrf5340>`  |PCA10095   |:ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>`    |``nrf5340dk_nrf5340_cpuapp``   |
-|                                |           |                                                |                               |
-|                                |           |                                                |``nrf5340dk_nrf5340_cpuappns`` |
-+--------------------------------+-----------+------------------------------------------------+-------------------------------+
-
-.. note::
-    |5340_not_supported|
 
 .. _thread_architectures_designs_cp_rcp:
 
@@ -391,4 +377,3 @@ This exception applies mainly to log messages and is done by turning off UART in
 The source page is available `here <https://openthread.io/platforms#system_architecture>`_.
 
 .. |connection_options_limited| replace:: Spinel connections through SPI and USB are not currently available.
-.. |5340_not_supported| replace:: :ref:`nRF5340 DK <ug_nrf5340>` is not yet supported by Thread in |NCS|.
