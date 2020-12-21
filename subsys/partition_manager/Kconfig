@@ -6,6 +6,15 @@
 
 menu "Partition Manager"
 
+config PARTITION_MANAGER_ENABLED
+	bool "Partition manager is enabled (read-only option)"
+	help
+	  Option which can be checked to see whether or not the
+	  partition manager is enabled in the current build. Note that this
+	  should ideally be a hidden option, but it can't due to limitations
+	  in how parent images impose options on child images. Don't
+	  change the value of this option.
+
 menu "Zephyr subsystem configurations"
 
 if FILE_SYSTEM_LITTLEFS
@@ -86,6 +95,7 @@ endmenu # NCS samples configurations
 
 config PM_SINGLE_IMAGE
 	bool "Use the Partition Manager for single image builds"
+	select PARTITION_MANAGER_ENABLED
 	help
 	  Use the Partition Manager feature to partition the device even if
 	  only a single image is included in the build. This is typically set
