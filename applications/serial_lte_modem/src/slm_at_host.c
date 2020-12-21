@@ -43,6 +43,7 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #define OK_STR		"\r\nOK\r\n"
 #define ERROR_STR	"\r\nERROR\r\n"
 #define FATAL_STR	"FATAL ERROR\r\n"
+#define OVERFLOW_STR	"Buffer overflow\r\n"
 #define SLM_SYNC_STR	"Ready\r\n"
 
 #define SLM_VERSION	"#XSLMVER: 1.5\r\n"
@@ -81,8 +82,8 @@ static enum term_modes term_mode;
 static const struct device *uart_dev;
 static uint8_t at_buf[AT_MAX_CMD_LEN];
 static size_t at_buf_len;
+static bool at_buf_overflow;
 static struct k_work cmd_send_work;
-static const char termination[3] = { '\0', '\r', '\n' };
 
 static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
 static uint8_t *next_buf = uart_rx_buf[1];
@@ -325,8 +326,11 @@ static void cmd_send(struct k_work *work)
 
 	ARG_UNUSED(work);
 
-	/* Make sure the string is 0-terminated */
-	at_buf[MIN(at_buf_len, AT_MAX_CMD_LEN - 1)] = 0;
+	if (at_buf_overflow) {
+		rsp_send(OVERFLOW_STR, sizeof(OVERFLOW_STR) - 1);
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
 
 	LOG_HEXDUMP_DBG(at_buf, at_buf_len, "RX");
 
@@ -515,6 +519,7 @@ static void cmd_send(struct k_work *work)
 	}
 
 done:
+	at_buf_overflow = false;
 	err = uart_rx_enable(uart_dev, uart_rx_buf[0],
 				sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT);
 	if (err) {
@@ -523,81 +528,82 @@ done:
 	}
 }
 
-static void uart_rx_handler(uint8_t character)
+static int uart_rx_handler(uint8_t character)
 {
 	static bool inside_quotes;
-	static size_t cmd_len;
-	size_t pos;
+	static size_t at_cmd_len;
 
-	cmd_len += 1;
-	pos = cmd_len - 1;
-
-	/* Handle special characters. */
+	/* Handle control characters */
 	switch (character) {
 	case 0x08: /* Backspace. */
 		/* Fall through. */
 	case 0x7F: /* DEL character */
-		pos = pos ? pos - 1 : 0;
-		at_buf[pos] = 0;
-		cmd_len = cmd_len <= 1 ? 0 : cmd_len - 2;
-		break;
-	case '"':
-		inside_quotes = !inside_quotes;
-		 /* Fall through. */
-	default:
-		/* Detect AT command buffer overflow or zero length */
-		if (cmd_len > AT_MAX_CMD_LEN) {
-			LOG_ERR("Buffer overflow, dropping '%c'\n", character);
-			cmd_len = AT_MAX_CMD_LEN;
-			return;
-		} else if (cmd_len < 1) {
-			LOG_ERR("Invalid AT command length: %d", cmd_len);
-			cmd_len = 0;
-			return;
+		if (at_cmd_len > 0) {
+			at_cmd_len--;
 		}
-
-		at_buf[pos] = character;
-		break;
+		return 0;
 	}
 
-	if (inside_quotes) {
-		return;
+	/* Handle termination characters, if outside quotes. */
+	if (!inside_quotes) {
+		switch (character) {
+		case '\0':
+			if (term_mode == MODE_NULL_TERM) {
+				goto send;
+			}
+			LOG_WRN("Ignored null; would terminate string early.");
+			return 0;
+		case '\r':
+			if (term_mode == MODE_CR) {
+				goto send;
+			}
+			break;
+		case '\n':
+			if (term_mode == MODE_LF) {
+				goto send;
+			}
+			if (term_mode == MODE_CR_LF &&
+			    at_cmd_len > 0 &&
+			    at_buf[at_cmd_len - 1] == '\r') {
+				at_cmd_len -= 1;  /* for data mode support */
+				goto send;
+			}
+			break;
+		}
 	}
 
-	/* Check if the character marks line termination. */
-	switch (term_mode) {
-	case MODE_NULL_TERM:
+	/* Write character to AT buffer */
+	at_buf[at_cmd_len] = character;
+	at_cmd_len++;
+
+	/* Detect AT command buffer overflow, leaving space for null */
+	if (at_cmd_len > sizeof(at_buf) - 1) {
+		LOG_ERR("Buffer overflow");
+		at_cmd_len--;
+		at_buf_overflow = true;
 		goto send;
-	case MODE_CR:
-		if (character == termination[term_mode]) {
-			cmd_len--;
-			goto send;
-		}
-		break;
-	case MODE_LF:
-		if ((at_buf[pos - 1]) &&
-			character == termination[term_mode]) {
-			cmd_len--;
-			goto send;
-		}
-		break;
-	case MODE_CR_LF:
-		if ((at_buf[pos - 1] == '\r') && (character == '\n')) {
-			cmd_len -= 2;
-			goto send;
-		}
-		break;
-	default:
-		LOG_ERR("Invalid termination mode: %d", term_mode);
-		break;
 	}
 
-	return;
+	/* Handle special written character */
+	if (character == '"') {
+		inside_quotes = !inside_quotes;
+	}
+
+	return 0;
+
 send:
 	uart_rx_disable(uart_dev);
+
+	at_buf[at_cmd_len] = '\0';
+	at_buf_len = at_cmd_len;
 	k_work_submit(&cmd_send_work);
-	at_buf_len = cmd_len;
-	cmd_len = 0;
+
+	inside_quotes = false;
+	at_cmd_len = 0;
+	if (at_buf_overflow) {
+		return -1;
+	}
+	return 0;
 }
 
 static void uart_callback(const struct device *dev, struct uart_event *evt,
@@ -622,7 +628,10 @@ static void uart_callback(const struct device *dev, struct uart_event *evt,
 		break;
 	case UART_RX_RDY:
 		for (int i = pos; i < (pos + evt->data.rx.len); i++) {
-			uart_rx_handler(evt->data.rx.buf[i]);
+			err = uart_rx_handler(evt->data.rx.buf[i]);
+			if (err) {
+				return;
+			}
 		}
 		pos += evt->data.rx.len;
 		break;
