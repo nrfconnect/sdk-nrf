@@ -178,7 +178,7 @@ void supl_handler(struct k_work *work)
 		return;
 	}
 	k_thread_suspend(gps_thread_id);
-	sprintf(rsp_buf, "GPS suspended\r\n");
+	sprintf(rsp_buf, "#XGPSS: \"GPS suspended\"\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	/* SUPL injection */
@@ -189,7 +189,7 @@ void supl_handler(struct k_work *work)
 		LOG_DBG("SUPL session done");
 		close(supl_fd);
 	}
-	sprintf(rsp_buf, "SUPL injection done\r\n");
+	sprintf(rsp_buf, "#XGPSS: \"SUPL injection done\"\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	/* Resume GPS */
@@ -200,7 +200,7 @@ void supl_handler(struct k_work *work)
 		LOG_ERR("Failed to resume GPS (err: %d)", -errno);
 	} else {
 		ttft_start = k_uptime_get();
-		sprintf(rsp_buf, "GPS resumed\r\n");
+		sprintf(rsp_buf, "#XGPSS: \"GPS resumed\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 }
@@ -235,7 +235,8 @@ static void gps_satellite_stats(void)
 	}
 
 	if (last_tracked != tracked) {
-		sprintf(rsp_buf, "#XGPSS: track %d use %d unhealthy %d\r\n",
+		sprintf(rsp_buf,
+			"#XGPSS: \"track %d use %d unhealthy %d\"\r\n",
 			tracked, in_fix, unhealthy);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		last_tracked = tracked;
@@ -244,11 +245,11 @@ static void gps_satellite_stats(void)
 
 static void gps_pvt_notify(void)
 {
-	sprintf(rsp_buf, "#XGPSP: long %f lat %f\r\n",
+	sprintf(rsp_buf, "#XGPSP: \"long %f lat %f\"\r\n",
 		gps_data.pvt.longitude,
 		gps_data.pvt.latitude);
 	rsp_send(rsp_buf, strlen(rsp_buf));
-	sprintf(rsp_buf, "#XGPSP: %04u-%02u-%02u %02u:%02u:%02u\r\n",
+	sprintf(rsp_buf, "#XGPSP: \"%04u-%02u-%02u %02u:%02u:%02u\"\r\n",
 		gps_data.pvt.datetime.year,
 		gps_data.pvt.datetime.month,
 		gps_data.pvt.datetime.day,
@@ -282,7 +283,8 @@ static void gps_thread_fn(void *arg1, void *arg2, void *arg3)
 				if (!client.has_fix) {
 					uint64_t now = k_uptime_get();
 
-					sprintf(rsp_buf, "#XGPSP: TTFF %ds\r\n",
+					sprintf(rsp_buf,
+						"#XGPSP: \"TTFF %ds\"\r\n",
 						(int)(now - ttft_start)/1000);
 					rsp_send(rsp_buf, strlen(rsp_buf));
 					client.has_fix = true;
@@ -444,7 +446,7 @@ static int handle_at_gps(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (client.running) {
-			sprintf(rsp_buf, "#XGPS: 1,%d\r\n", client.mask);
+			sprintf(rsp_buf, "#XGPS: 1, %d\r\n", client.mask);
 		} else {
 			sprintf(rsp_buf, "#XGPS: 0\r\n");
 		}

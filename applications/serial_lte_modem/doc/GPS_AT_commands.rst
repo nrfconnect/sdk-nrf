@@ -94,24 +94,24 @@ Example
 
    #XGPS: 1,3
    OK
-   GPS suspended
-   SUPL injection done
-   GPS resumed
-   #XGPSS: track 3 use 3 unhealthy 0
-   #XGPSS: track 4 use 4 unhealthy 0
-   #XGPSS: track 5 use 5 unhealthy 0
-   #XGPSS: track 4 use 4 unhealthy 0
-   #XGPSS: track 5 use 5 unhealthy 0
-   #XGPSS: track 6 use 6 unhealthy 0
-   #XGPSS: track 7 use 7 unhealthy 0
-   #XGPSS: track 6 use 6 unhealthy 0
-   #XGPSP: long 139.721966 lat 35.534159
-   #XGPSP: 2020-04-30 00:11:55
-   #XGPSP: TTFF 57s
+   #XGPSS: "GPS suspended"
+   #XGPSS: "SUPL injection done"
+   #XGPSS: "GPS resumed"
+   #XGPSS: "track 3 use 3 unhealthy 0"
+   #XGPSS: "track 4 use 4 unhealthy 0"
+   #XGPSS: "track 5 use 5 unhealthy 0"
+   #XGPSS: "track 4 use 4 unhealthy 0"
+   #XGPSS: "track 5 use 5 unhealthy 0"
+   #XGPSS: "track 6 use 6 unhealthy 0"
+   #XGPSS: "track 7 use 7 unhealthy 0"
+   #XGPSS: "track 6 use 6 unhealthy 0"
+   #XGPSP: "long 139.721966 lat 35.534159"
+   #XGPSP: "2020-04-30 00:11:55"
+   #XGPSP: "TTFF 57s"
    $GPGGA,001155.87,3532.04954,N,13943.31794,E,1,06,17.40,109.53,M,0,,*19
    $GPGLL,3532.04954,N,13943.31794,E,001155.87,A,A*69
-   #XGPSP: long 139.721969 lat 35.534148
-   #XGPSP: 2020-04-30 00:11:56
+   #XGPSP: "long 139.721969 lat 35.534148"
+   #XGPSP: "2020-04-30 00:11:56"
 
 Read command
 ------------

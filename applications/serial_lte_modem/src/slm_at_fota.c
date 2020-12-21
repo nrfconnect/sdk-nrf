@@ -148,12 +148,12 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 {
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
-		sprintf(rsp_buf, "#XFOTA: %d%% downloaded\r\n",
+		sprintf(rsp_buf, "#XFOTA: \"%d%%\"\r\n",
 				evt->progress);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		sprintf(rsp_buf, "#XFOTA: downloaded, reset to apply.\r\n");
+		sprintf(rsp_buf, "#XFOTA: \"downloaded\", \"reset now\".\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
@@ -163,7 +163,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 		LOG_INF("FOTA_DOWNLOAD_EVT_ERASE_DONE");
 		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
-		sprintf(rsp_buf, "#XFOTA: download error.\r\n");
+		sprintf(rsp_buf, "#XFOTA: \"download error\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		break;
 

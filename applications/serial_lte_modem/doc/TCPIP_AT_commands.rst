@@ -95,7 +95,7 @@ Unsolicited notification
 
 ::
 
-   #XSOCKET: <error> closed
+   #XSOCKET: <error>, "closed"
 
 The ``<error>`` value is a negative integer.
 It represents the error value according to the standard POSIX *errorno*.
@@ -112,7 +112,7 @@ Examples
    #XSOCKET: 3, 17, 0
    OK
    AT#XSOCKET=0
-   #XSOCKET: 0, closed
+   #XSOCKET: 0, "closed"
    OK
    at#xsocket=1,1,0,16842753
    #XSOCKET: 2, 1, 0, 258
@@ -279,7 +279,7 @@ Unsolicited Notification
 
 ::
 
-   #XSOCKET: <error> closed
+   #XSOCKET: <error>, "closed"
 
 ``SO_ERROR(4)``, the ``<error>`` response is the *Error Status*.
 
@@ -849,7 +849,7 @@ Response syntax
 
 ::
 
-   #XGETADDRINFO=<ip_addr>
+   #XGETADDRINFO: "<ip_addr>"
 
 * The ``<ip_addr>`` value is a string.
   It indicates the IPv4 address of the resolved hostname.
@@ -860,7 +860,7 @@ Examples
 ::
 
    at#xgetaddrinfo="www.google.com"
-   #XGETADDRINFO: 172.217.174.100
+   #XGETADDRINFO: "172.217.174.100"
    OK
 
 Read command
@@ -1037,7 +1037,7 @@ Response syntax
 
 ::
 
-   #XTCPSVR: <handle> started
+   #XTCPSVR: <handle>, "started"
 
 The ``<handle>`` value is an integer.
 When positive, it indicates that it opened successfully.
@@ -1048,7 +1048,7 @@ Unsolicited notification
 
 ::
 
-   #XTCPSVR: <error> stopped
+   #XTCPSVR: <error>, "stopped"
 
 The ``<error>`` value is a negative integer.
 It represents the error value according to the standard POSIX *errorno*.
@@ -1073,9 +1073,9 @@ Examples
 ::
 
    at#xtcpsvr=1,3442,600
-   #XTCPSVR: 2 started
+   #XTCPSVR: 2, "started"
    OK
-   #XTCPSVR: 5.123.123.99 connected
+   #XTCPSVR: "5.123.123.99", "connected"
    #XTCPRECV: 1, 13
    Hello, TCP#1!
    #XTCPRECV: 1, 13
@@ -1117,7 +1117,7 @@ Examples
    at#xtcpsvr?
    #XTCPSVR: 1, 2, 0
    OK
-   #XTCPSVR: timeout
+   #XTCPSVR: "timeout"
    at#xtcpsvr?
    #XTCPSVR: 1, -1
    OK
@@ -1188,14 +1188,14 @@ Response syntax
 
 ::
 
-   #XTCPCLI: <handle> connected
+   #XTCPCLI: <handle>, "connected"
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
-   #XTCPCLI: <error> disconnected
+   #XTCPCLI: <error>, "disconnected"
 
 The ``<error>`` value is a negative integer.
 It represents the error value according to the standard POSIX *errorno*.
@@ -1223,7 +1223,7 @@ Examples
 ::
 
    at#xtcpcli=1,"remote.ip",1234
-   #XTCPCLI: 2 connected
+   #XTCPCLI: 2, "connected"
    OK
    #XTCPRECV: 1, 31
    PONG: b'Test TCP by IP address'
@@ -1416,7 +1416,7 @@ Response syntax
 
 ::
 
-   #XUDPSVR: <handle> started
+   #XUDPSVR: <handle>, "started"
 
 The ``<handle>`` value is an integer.
 When positive, it indicates that it opened successfully.
@@ -1427,7 +1427,7 @@ Unsolicited notification
 
 ::
 
-   #XUDPSVR: <error> stopped
+   #XUDPSVR: <error>, "stopped"
 
 The ``<error>`` value is a negative integer.
 It represents the error value according to the standard POSIX *errorno*.
@@ -1455,7 +1455,7 @@ Examples
 ::
 
    at#xudpsvr=1,3442
-   #XUDPSVR: 2 started
+   #XUDPSVR: 2, "started"
    OK
    #XUDPRECV: 1, 13
    Hello, UDP#1!
@@ -1555,14 +1555,14 @@ Response syntax
 
 ::
 
-   #XUDPCLI: <handle> connected
+   #XUDPCLI: <handle>, "connected"
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
-   #XUDPCLI: <error> disconnected
+   #XUDPCLI: <error>, "disconnected"
 
 The ``<error>`` value is a negative integer.
 It represents the error value according to the standard POSIX *errorno*.
@@ -1589,7 +1589,7 @@ Examples
 ::
 
    at#xudpcli=1,"remote.host",2442
-   #XUDPCLI: 2 connected
+   #XUDPCLI: 2, "connected"
    OK
    at#xudpsend=1,"Test UDP by hostname"
    #XUDPSEND: 20

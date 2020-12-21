@@ -141,7 +141,7 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c,
 		if (ret < 0) {
 			return ret;
 		}
-		sprintf(rsp_buf, "#XMQTTMSG: %d,%d,%d\r\n",
+		sprintf(rsp_buf, "#XMQTTMSG: %d, %d, %d\r\n",
 			DATATYPE_HEXADECIMAL,
 			evt->param.publish.message.topic.topic.size,
 			ret);
@@ -152,7 +152,7 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c,
 		rsp_send(data_hex, ret);
 		rsp_send("\r\n", 2);
 	} else {
-		sprintf(rsp_buf, "#XMQTTMSG: %d,%d,%d\r\n",
+		sprintf(rsp_buf, "#XMQTTMSG: %d, %d, %d\r\n",
 			DATATYPE_PLAINTEXT,
 			evt->param.publish.message.topic.topic.size,
 			evt->param.publish.message.payload.len);
@@ -257,7 +257,7 @@ void mqtt_evt_handler(struct mqtt_client *const c,
 		break;
 	}
 
-	sprintf(rsp_buf, "#XMQTTEVT: %d,%d\r\n",
+	sprintf(rsp_buf, "#XMQTTEVT: %d, %d\r\n",
 		evt->type, ret);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 }
@@ -673,14 +673,15 @@ static int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (ctx.sec_transport) {
 			sprintf(rsp_buf,
-				"#XMQTTCON: %d,\"%s\",\"%s\",\"%s\","
-				"\"%s\",%d,%d\r\n",
+				"#XMQTTCON: %d, \"%s\", \"%s\", \"%s\", "
+				"\"%s\", %d, %d\r\n",
 				ctx.connected, ctx.cid, ctx.uname,
 				ctx.pword, ctx.url, ctx.port,
 				ctx.sec_tag);
 		} else {
-			sprintf(rsp_buf, "#XMQTTCON: %d,\"%s\",\"%s\",\"%s\""
-				",\"%s\",%d\r\n",
+			sprintf(rsp_buf,
+				"#XMQTTCON: %d, \"%s\", \"%s\", \"%s\""
+				", \"%s\", %d\r\n",
 				ctx.connected, ctx.cid, ctx.uname, ctx.pword,
 				ctx.url, ctx.port);
 		}
