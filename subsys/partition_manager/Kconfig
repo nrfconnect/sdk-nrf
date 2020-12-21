@@ -15,6 +15,16 @@ config PARTITION_MANAGER_ENABLED
 	  in how parent images impose options on child images. Don't
 	  change the value of this option.
 
+# These values are now set by partition manager, so hide the option.
+config SRAM_SIZE
+	int
+	depends on !PARTITION_MANAGER_ENABLED
+
+# These values are now set by partition manager, so hide the option.
+config SRAM_BASE_ADDRESS
+	hex
+	depends on !PARTITION_MANAGER_ENABLED
+
 menu "Zephyr subsystem configurations"
 
 if FILE_SYSTEM_LITTLEFS
