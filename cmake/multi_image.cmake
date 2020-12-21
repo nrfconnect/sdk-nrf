@@ -60,6 +60,14 @@ function(add_child_image)
     message(FATAL_ERROR "Missing parameter, required: NAME SOURCE_DIR")
   endif()
 
+  if (NOT CONFIG_PARTITION_MANAGER_ENABLED)
+    message(FATAL_ERROR
+      "CONFIG_PARTITION_MANAGER_ENABLED was not set for image ${ACI_NAME}."
+      "This option must be set for an image to support being added as a child"
+      "image through 'add_child_image'. This is typically done by invoking the"
+      " `build_strategy` kconfig template for the child image.")
+  endif()
+
   string(TOUPPER ${ACI_NAME} UPNAME)
 
   if (CONFIG_${UPNAME}_BUILD_STRATEGY_USE_HEX_FILE)
@@ -84,6 +92,12 @@ function(add_child_image_from_source)
   if (NOT ACI_NAME OR NOT ACI_SOURCE_DIR)
     message(FATAL_ERROR "Missing parameter, required: NAME SOURCE_DIR")
   endif()
+
+  # Pass information that the partition manager is enabled to Kconfig.
+  add_overlay_config(
+    ${ACI_NAME}
+    ${NRF_DIR}/subsys/partition_manager/partition_manager_enabled.conf
+    )
 
   if (${ACI_NAME}_BOARD)
     message(FATAL_ERROR
