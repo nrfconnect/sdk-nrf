@@ -209,7 +209,7 @@ static uint32_t send_ping_wait_reply(void)
 	ret = nrf_poll(fds, 1, ping_argv.waitms);
 	if (ret <= 0) {
 		LOG_ERR("nrf_poll() failed: (%d) (%d)", -errno, ret);
-		sprintf(rsp_buf, "#XPING: timeout\r\n");
+		sprintf(rsp_buf, "#XPING: \"timeout\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		goto close_end;
 	}
@@ -293,7 +293,8 @@ void ping_task(struct k_work *item)
 		int avg_s = avg / 1000;
 		int avg_f = avg % 1000;
 
-		sprintf(rsp_buf, "#XPING: average %d.%03d\r\n", avg_s, avg_f);
+		sprintf(rsp_buf, "#XPING: \"average %d.%03d\"\r\n",
+			avg_s, avg_f);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
@@ -339,8 +340,7 @@ static int ping_test_handler(const char *url, int length, int waittime,
 	res = NULL;
 	st = getaddrinfo(url, NULL, NULL, &res);
 	if (st != 0) {
-		LOG_ERR("getaddrinfo(dest) error: %d", st);
-		sprintf(rsp_buf, "Cannot resolve remote host\r\n");
+		sprintf(rsp_buf, "\"resolve host error: %d\"\r\n", st);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		freeaddrinfo(ping_argv.src);
 		return -st;

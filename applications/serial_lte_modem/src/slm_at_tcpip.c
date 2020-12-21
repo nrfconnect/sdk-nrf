@@ -228,8 +228,7 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 		}
 #else
 		if (role == AT_SOCKET_ROLE_SERVER) {
-			sprintf(rsp_buf,
-				"#XSOCKET: (D)TLS Server not supported\r\n");
+			sprintf(rsp_buf, "#XSOCKET: \"not supported\"\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			ret = -ENOTSUP;
 			goto error_exit;
@@ -285,7 +284,7 @@ static int do_socket_close(int error)
 			close(client.sock_peer);
 		}
 		slm_at_tcpip_init();
-		sprintf(rsp_buf, "#XSOCKET: %d, closed\r\n", error);
+		sprintf(rsp_buf, "#XSOCKET: %d, \"closed\"\r\n", error);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		LOG_DBG("Socket closed");
 	}
@@ -300,7 +299,7 @@ static int do_socketopt_set(int name, int value)
 	switch (name) {
 	case SO_REUSEADDR:	/* Ignored by Zephyr */
 	case SO_ERROR:		/* Ignored by Zephyr */
-		sprintf(rsp_buf, "#XSOCKETOPT: ignored\r\n");
+		sprintf(rsp_buf, "#XSOCKETOPT: \"ignored\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 		break;
@@ -320,7 +319,7 @@ static int do_socketopt_set(int name, int value)
 	case SO_TXTIME:		/* Not supported by SLM for now */
 	case SO_SOCKS5:		/* Not supported by SLM for now */
 	default:
-		sprintf(rsp_buf, "#XSOCKETOPT: not supported\r\n");
+		sprintf(rsp_buf, "#XSOCKETOPT: \"not supported\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 		break;
@@ -336,7 +335,7 @@ static int do_socketopt_get(int name)
 	switch (name) {
 	case SO_REUSEADDR:	/* Ignored by Zephyr */
 	case SO_ERROR:		/* Ignored by Zephyr */
-		sprintf(rsp_buf, "#XSOCKETOPT: ignored\r\n");
+		sprintf(rsp_buf, "#XSOCKETOPT: \"ignored\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		break;
 
@@ -349,7 +348,7 @@ static int do_socketopt_get(int name)
 		if (ret) {
 			LOG_ERR("getsockopt() error: %d", -errno);
 		} else {
-			sprintf(rsp_buf, "#XSOCKETOPT: %d sec\r\n",
+			sprintf(rsp_buf, "#XSOCKETOPT: \"%d sec\"\r\n",
 				(int)tmo.tv_sec);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		}
@@ -360,7 +359,7 @@ static int do_socketopt_get(int name)
 	case SO_TXTIME:		/* Not supported by SLM for now */
 	case SO_SOCKS5:		/* Not supported by SLM for now */
 	default:
-		sprintf(rsp_buf, "#XSOCKETOPT: not supported\r\n");
+		sprintf(rsp_buf, "#XSOCKETOPT: \"not supported\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		break;
 	}
@@ -484,7 +483,7 @@ static int do_accept(void)
 		LOG_WRN("Parse peer IP address failed: %d", -errno);
 		return -EINVAL;
 	}
-	sprintf(rsp_buf, "#XACCEPT: connected with %s\r\n",
+	sprintf(rsp_buf, "#XACCEPT: \"connected with %s\"\r\n",
 		peer_addr);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	client.sock_peer = ret;
@@ -1241,13 +1240,11 @@ static int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 		}
 		err = getaddrinfo(url, NULL, &hints, &result);
 		if (err) {
-			LOG_ERR("getaddrinfo() failed %d", err);
 			sprintf(rsp_buf, "#XGETADDRINFO: %d\r\n", -err);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			return err;
 		} else if (result == NULL) {
-			LOG_ERR("Address not found\n");
-			sprintf(rsp_buf, "#XGETADDRINFO: not found\r\n");
+			sprintf(rsp_buf, "#XGETADDRINFO: \"not found\"\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			return -ENOENT;
 		}
@@ -1255,7 +1252,7 @@ static int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 		host = (struct sockaddr_in *)result->ai_addr;
 		inet_ntop(AF_INET, &(host->sin_addr.s_addr),
 			ipv4addr, sizeof(ipv4addr));
-		sprintf(rsp_buf, "#XGETADDRINFO: %s\r\n", ipv4addr);
+		sprintf(rsp_buf, "#XGETADDRINFO: \"%s\"\r\n", ipv4addr);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		freeaddrinfo(result);
 		break;

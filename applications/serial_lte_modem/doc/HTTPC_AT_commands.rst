@@ -85,7 +85,7 @@ Example
 ::
 
    AT#XHTTPCCON?
-   #XHTTPCCON: 1,"postman-echo.com",80
+   #XHTTPCCON: 1, "postman-echo.com", 80
    OK
 
 Test command
@@ -154,8 +154,8 @@ The following example sends a GET request to retrieve data from the server witho
 
    AT#XHTTPCREQ="GET","/get?foo1=bar1&foo2=bar2",""
    OK
-   #XHTTPCREQ:0
-   #XHTTPCRSP:576,0
+   #XHTTPCREQ: 0
+   #XHTTPCRSP: 576, 0
    HTTP/1.1 200 OK
    Date: Wed, 09 Sep 2020 08:08:45 GMT
    Content-Type: application/json; charset=utf-8
@@ -214,11 +214,11 @@ The following example sends a POST request to send data to the server with an op
    Content-Length: 20
    ",20
    OK
-   #XHTTPCREQ:1
+   #XHTTPCREQ: 1
    12345678901234567890
    OK
-   #XHTTPCREQ:0
-   #XHTTPCRSP:576,1
+   #XHTTPCREQ: 0
+   #XHTTPCRSP: 576, 1
    HTTP/1.1 200 OK
    Date: Wed, 09 Sep 2020 08:21:03 GMT
    Content-Type: application/json; charset=utf-8

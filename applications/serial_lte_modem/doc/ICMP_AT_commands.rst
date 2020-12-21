@@ -56,7 +56,7 @@ This is the response syntax when an echo reply is not received:
 
 ::
 
-   #XPING: timeout
+   #XPING: "timeout"
 
 Example
 ~~~~~~~
@@ -69,7 +69,7 @@ Example
    #XPING: 0.353
    #XPING: 0.313
    #XPING: 0.313
-   #XPING: average 0.341
+   #XPING: "average 0.341"
    OK
 
 Read command

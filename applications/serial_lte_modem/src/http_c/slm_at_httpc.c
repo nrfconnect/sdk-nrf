@@ -284,7 +284,7 @@ static void response_cb(struct http_response *rsp,
 	if (final_data == HTTP_DATA_MORE) {
 		LOG_DBG("Partial data received (%zd bytes)", rsp->data_len);
 		if (data_received == HTTPC_BUF_LEN) {
-			sprintf(rsp_buf, "#XHTTPCRSP:%d,1\r\n",
+			sprintf(rsp_buf, "#XHTTPCRSP: %d, 1\r\n",
 				HTTPC_BUF_LEN);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			rsp_send(data_buf, HTTPC_BUF_LEN);
@@ -292,7 +292,7 @@ static void response_cb(struct http_response *rsp,
 		}
 	} else if (final_data == HTTP_DATA_FINAL) {
 		LOG_DBG("All the data received (%zd bytes)", data_received);
-		sprintf(rsp_buf, "#XHTTPCRSP:%d,0\r\n", data_received);
+		sprintf(rsp_buf, "#XHTTPCRSP: %d, 0\r\n", data_received);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		rsp_send(data_buf, data_received);
 		httpc.rsp_completed = true;
@@ -324,7 +324,7 @@ static int payload_cb(int sock, struct http_request *req, void *user_data)
 	size_t total_sent = 0;
 
 	if (httpc.pl_len > 0) {
-		sprintf(rsp_buf, "#XHTTPCREQ:1\r\n");
+		sprintf(rsp_buf, "#XHTTPCREQ: 1\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		do {
 			/* Wait until payload is ready */
@@ -361,10 +361,10 @@ static int payload_cb(int sock, struct http_request *req, void *user_data)
 			}
 			k_sem_give(&http_data_sem);
 		} while (total_sent < httpc.pl_len);
-		sprintf(rsp_buf, "#XHTTPCREQ:0\r\n");
+		sprintf(rsp_buf, "#XHTTPCREQ: 0\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	} else {
-		sprintf(rsp_buf, "#XHTTPCREQ:0\r\n");
+		sprintf(rsp_buf, "#XHTTPCREQ: 0\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
@@ -379,10 +379,10 @@ static int do_http_connect(void)
 		if (httpc.fd < 0) {
 			LOG_ERR("server_connect fail.");
 			httpc.fd = INVALID_SOCKET;
-			sprintf(rsp_buf, "#XHTTPCCON:0\r\n");
+			sprintf(rsp_buf, "#XHTTPCCON: 0\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		} else {
-			sprintf(rsp_buf, "#XHTTPCCON:1\r\n");
+			sprintf(rsp_buf, "#XHTTPCCON: 1\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		}
 	} else {
@@ -410,7 +410,7 @@ static int do_http_disconnect(void)
 		httpc.pl_len = 0;
 		k_sem_give(&http_req_sem);
 	}
-	sprintf(rsp_buf, "#XHTTPCCON:0\r\n");
+	sprintf(rsp_buf, "#XHTTPCCON: 0\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	return err;
@@ -466,12 +466,12 @@ static int do_http_request(void)
 	err = http_client_req(httpc.fd, &req, timeout, "");
 	if (err < 0) {
 		/* Socket send/recv error */
-		sprintf(rsp_buf, "#XHTTPCREQ:%d\r\n", err);
+		sprintf(rsp_buf, "#XHTTPCREQ: %d\r\n", err);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	} else if (httpc.rsp_completed == false) {
 		/* Socket was closed by remote */
 		err = -ECONNRESET;
-		sprintf(rsp_buf, "#XHTTPCRSP:0,%d\r\n", err);
+		sprintf(rsp_buf, "#XHTTPCRSP: 0, %d\r\n", err);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	} else {
 		err = 0;
@@ -550,11 +550,11 @@ static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (httpc.sec_transport) {
-			sprintf(rsp_buf, "#XHTTPCCON: %d,\"%s\",%d,%d\r\n",
+			sprintf(rsp_buf, "#XHTTPCCON: %d, \"%s\", %d, %d\r\n",
 				(httpc.fd == INVALID_SOCKET)?0:1, httpc.host,
 				httpc.port, httpc.sec_tag);
 		} else {
-			sprintf(rsp_buf, "#XHTTPCCON: %d,\"%s\",%d\r\n",
+			sprintf(rsp_buf, "#XHTTPCCON: %d, \"%s\", %d\r\n",
 				(httpc.fd == INVALID_SOCKET)?0:1, httpc.host,
 				httpc.port);
 		}

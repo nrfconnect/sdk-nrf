@@ -40,8 +40,8 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #include "slm_at_httpc.h"
 #endif
 
-#define OK_STR		"OK\r\n"
-#define ERROR_STR	"ERROR\r\n"
+#define OK_STR		"\r\nOK\r\n"
+#define ERROR_STR	"\r\nERROR\r\n"
 #define FATAL_STR	"FATAL ERROR\r\n"
 #define SLM_SYNC_STR	"Ready\r\n"
 
@@ -503,11 +503,11 @@ static void cmd_send(struct k_work *work)
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		break;
 	case AT_CMD_ERROR_CMS:
-		sprintf(str, "+CMS ERROR: %d\r\n", err);
+		sprintf(str, "\r\n+CMS ERROR: %d\r\n", err);
 		rsp_send(str, strlen(str));
 		break;
 	case AT_CMD_ERROR_CME:
-		sprintf(str, "+CME ERROR: %d\r\n", err);
+		sprintf(str, "\r\n+CME ERROR: %d\r\n", err);
 		rsp_send(str, strlen(str));
 		break;
 	default:

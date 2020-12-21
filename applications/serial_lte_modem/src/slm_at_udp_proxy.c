@@ -136,7 +136,7 @@ static int do_udp_server_start(uint16_t port)
 			udp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	sprintf(rsp_buf, "#XUDPSVR: %d started\r\n", udp_sock);
+	sprintf(rsp_buf, "#XUDPSVR: %d, \"started\"\r\n", udp_sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	LOG_DBG("UDP server started");
 
@@ -154,11 +154,7 @@ static int do_udp_server_stop(int error)
 			ret = -errno;
 		}
 		(void)slm_at_udp_proxy_init();
-		if (error) {
-			sprintf(rsp_buf, "#XUDPSVR: %d stopped\r\n", error);
-		} else {
-			sprintf(rsp_buf, "#XUDPSVR: stopped\r\n");
-		}
+		sprintf(rsp_buf, "#XUDPSVR: %d, \"stopped\"\r\n", error);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
@@ -245,7 +241,7 @@ static int do_udp_client_connect(const char *url, uint16_t port, int sec_tag)
 			udp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	sprintf(rsp_buf, "#XUDPCLI: %d connected\r\n", udp_sock);
+	sprintf(rsp_buf, "#XUDPCLI: %d, \"connected\"\r\n", udp_sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	return ret;
@@ -262,7 +258,7 @@ static int do_udp_client_disconnect(void)
 			ret = -errno;
 		}
 		(void)slm_at_udp_proxy_init();
-		sprintf(rsp_buf, "#XUDPCLI: disconnected\r\n");
+		sprintf(rsp_buf, "#XUDPCLI: \"disconnected\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
