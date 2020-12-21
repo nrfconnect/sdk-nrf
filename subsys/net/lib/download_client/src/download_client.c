@@ -10,7 +10,6 @@
 #include <zephyr/types.h>
 #include <toolchain/common.h>
 #include <net/socket.h>
-#include <nrf_socket.h>
 #include <net/tls_credentials.h>
 #include <net/download_client.h>
 #include <logging/log.h>
