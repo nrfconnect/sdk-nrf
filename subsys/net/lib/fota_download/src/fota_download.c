@@ -14,7 +14,9 @@
 #if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
 /* MCUBoot support is required */
 #include <fw_info.h>
+#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
 #include <secure_services.h>
+#endif
 #include <dfu/dfu_target_mcuboot.h>
 #endif
 
@@ -268,6 +270,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 	struct fw_info s0;
 	struct fw_info s1;
 
+#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
 	err = spm_firmware_info(PM_S0_ADDRESS, &s0);
 	if (err != 0) {
 		return err;
@@ -277,6 +280,21 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 	if (err != 0) {
 		return err;
 	}
+#else /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
+	const struct fw_info *tmp_info;
+
+	tmp_info = fw_info_find(PM_S0_ADDRESS);
+	if (tmp_info == NULL) {
+		return -EFAULT;
+	}
+	memcpy(&s0, tmp_info, sizeof(s0));
+
+	tmp_info = fw_info_find(PM_S1_ADDRESS);
+	if (tmp_info == NULL) {
+		return -EFAULT;
+	}
+	memcpy(&s1, tmp_info, sizeof(s1));
+#endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
 
 	bool s0_active = s0.version >= s1.version;
 
