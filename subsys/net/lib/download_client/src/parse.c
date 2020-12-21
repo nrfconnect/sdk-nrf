@@ -52,11 +52,21 @@ int url_parse_host(const char *url, char *host, size_t len)
 
 	(void)swallow(&cur, "://");
 
-	end = strchr(cur, ':');
-	if (!end) {
-		end = strchr(cur, '/');
+	if (cur[0] == '[') {
+		/* literal IPv6 address */
+		end = strchr(cur, ']');
+
 		if (!end) {
-			end = url + strlen(url) + 1;
+			return -EINVAL;
+		}
+		++end;
+	} else {
+		end = strchr(cur, ':');
+		if (!end) {
+			end = strchr(cur, '/');
+			if (!end) {
+				end = url + strlen(url) + 1;
+			}
 		}
 	}
 
@@ -83,6 +93,11 @@ int url_parse_port(const char *url, uint16_t *port)
 	cur = url;
 
 	(void)swallow(&cur, "://");
+
+	if (cur[0] == '[') {
+		/* literal IPv6 address */
+		swallow(&cur, "]");
+	}
 
 	err = swallow(&cur, ":");
 	if (err) {
