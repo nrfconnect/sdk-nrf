@@ -33,6 +33,10 @@ LOG_MODULE_REGISTER(nrf_cloud_codec, CONFIG_NRF_CLOUD_LOG_LEVEL);
 bool initialized;
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
+#ifdef CONFIG_NRF_CLOUD_GATEWAY
+static gateway_state_handler_t gateway_state_handler;
+#endif
+
 static const char *const sensor_type_str[] = {
 	[NRF_CLOUD_SENSOR_GPS] = "GPS",
 	[NRF_CLOUD_SENSOR_FLIP] = "FLIP",
@@ -71,8 +75,13 @@ static const char *const sensor_type_str[] = {
 #define JSON_KEY_KEEPALIVE	"keepalive"
 #define JSON_KEY_CONN		"connection"
 
-#define JSON_KEY_D2C		"d2c"
-#define JSON_KEY_C2D		"c2d"
+#ifndef CONFIG_NRF_CLOUD_GATEWAY
+#define JSON_KEY_DEVICE_TO_CLOUD "d2c"
+#define JSON_KEY_CLOUD_TO_DEVICE "c2d"
+#else
+#define JSON_KEY_DEVICE_TO_CLOUD "g2c"
+#define JSON_KEY_CLOUD_TO_DEVICE "c2g"
+#endif
 
 #define JSON_KEY_MSGTYPE	"messageType"
 #define JSON_KEY_APPID		"appId"
@@ -336,6 +345,13 @@ int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *sensor,
 	return 0;
 }
 
+#ifdef CONFIG_NRF_CLOUD_GATEWAY
+void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler)
+{
+	gateway_state_handler = handler;
+}
+#endif
+
 int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 				     enum nfsm_state *requested_state)
 {
@@ -357,11 +373,29 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 		return -ENOENT;
 	}
 
+#ifdef CONFIG_NRF_CLOUD_GATEWAY
+	int ret;
+
+	if (gateway_state_handler) {
+		ret = gateway_state_handler(root_obj);
+		if (ret != 0) {
+			LOG_ERR("Error from gateway_state_handler: %d", ret);
+			cJSON_Delete(root_obj);
+			return ret;
+		}
+	} else {
+		LOG_ERR("No gateway state handler registered");
+		cJSON_Delete(root_obj);
+		return -EINVAL;
+	}
+#endif /* CONFIG_NRF_CLOUD_GATEWAY */
+
 	nrf_cloud_decode_desired_obj(root_obj, &desired_obj);
 
 	topic_prefix_obj =
 		json_object_decode(desired_obj, JSON_KEY_TOPIC_PRFX);
 	if (topic_prefix_obj != NULL) {
+		nct_set_topic_prefix(topic_prefix_obj->valuestring);
 		(*requested_state) = STATE_UA_PIN_COMPLETE;
 		cJSON_Delete(root_obj);
 		return 0;
@@ -371,11 +405,13 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 	pairing_state_obj = json_object_decode(pairing_obj, JSON_KEY_STATE);
 
 	if (!pairing_state_obj || pairing_state_obj->type != cJSON_String) {
+#ifndef CONFIG_NRF_CLOUD_GATEWAY
 		if (cJSON_HasObjectItem(desired_obj, JSON_KEY_CFG) == false) {
 			LOG_WRN("Unhandled data received from nRF Cloud.");
 			LOG_INF("Ensure device firmware is up to date.");
 			LOG_INF("Delete and re-add device to nRF Cloud if problem persists.");
 		}
+#endif
 		cJSON_Delete(root_obj);
 		return -ENOENT;
 	}
@@ -516,8 +552,8 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 		/* Report pairing topics. */
 		cJSON *topics_obj = cJSON_AddObjectToObjectCS(pairing_obj, JSON_KEY_TOPICS);
 
-		ret += json_add_str_cs(topics_obj, JSON_KEY_D2C, tx_endp.ptr);
-		ret += json_add_str_cs(topics_obj, JSON_KEY_C2D, rx_endp.ptr);
+		ret += json_add_str_cs(topics_obj, JSON_KEY_DEVICE_TO_CLOUD, tx_endp.ptr);
+		ret += json_add_str_cs(topics_obj, JSON_KEY_CLOUD_TO_DEVICE, rx_endp.ptr);
 
 		if (ret != 0) {
 			cJSON_Delete(root_obj);
@@ -604,19 +640,21 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 		}
 	}
 
-	cJSON *tx_obj = json_object_decode(topic_obj, JSON_KEY_D2C);
+	cJSON *tx_obj = json_object_decode(topic_obj, JSON_KEY_DEVICE_TO_CLOUD);
 
 	err = json_decode_and_alloc(tx_obj, tx_endpoint);
 	if (err) {
 		cJSON_Delete(root_obj);
+		LOG_ERR("could not decode topic for %s", JSON_KEY_DEVICE_TO_CLOUD);
 		return err;
 	}
 
-	cJSON *rx_obj = json_object_decode(topic_obj, JSON_KEY_C2D);
+	cJSON *rx_obj = json_object_decode(topic_obj, JSON_KEY_CLOUD_TO_DEVICE);
 
 	err = json_decode_and_alloc(rx_obj, rx_endpoint);
 	if (err) {
 		cJSON_Delete(root_obj);
+		LOG_ERR("could not decode topic for %s", JSON_KEY_CLOUD_TO_DEVICE);
 		return err;
 	}
 

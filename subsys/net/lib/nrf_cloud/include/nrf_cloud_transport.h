@@ -7,6 +7,7 @@
 #ifndef NRF_CLOUD_TRANSPORT_H__
 #define NRF_CLOUD_TRANSPORT_H__
 
+#include <stddef.h>
 #include <net/nrf_cloud.h>
 
 #ifdef __cplusplus
@@ -130,8 +131,29 @@ int nct_keepalive_time_left(void);
 /**@brief Input from the cloud module. */
 int nct_input(const struct nct_evt *evt);
 
+/**@brief Retrieve the device id. */
+int nct_client_id_get(char *id, size_t id_len);
+
 /**@brief Signal to apply FOTA update. */
 void nct_apply_update(const struct nrf_cloud_evt * const evt);
+
+/**@brief Troubleshooting function to overrule the persistent session setting. */
+int nct_save_session_state(const int session_valid);
+
+/**@brief Troubleshooting function to determine if persistent sessions are on. */
+int nct_get_session_state(void);
+
+/**@brief Set the topic prefix for the rx and tx topics. String passed
+ * must be in the form "<stage>/<tenantId>/". The topic strings
+ * will be constructed.
+ */
+void nct_set_topic_prefix(const char *topic_prefix);
+
+/**@brief Troubleshooting function to retrieve the current nrfcloud stage. */
+int nct_stage_get(char *cur_stage, const int cur_stage_len);
+
+/**@brief Troubleshooting function to query the current nrfcloud tenant ID. */
+int nct_tenant_id_get(char *cur_tenant, const int cur_tenant_len);
 
 #ifdef __cplusplus
 }

@@ -37,6 +37,12 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
+config NRF_CLOUD_GATEWAY
+	bool "nRF Cloud Gateway"
+	help
+	  Enables functionality in this device to be compatible with
+	  nRF Cloud LTE gateway support.
+
 module=NRF_CLOUD
 module-dep=LOG
 module-str=Log level for nRF Cloud

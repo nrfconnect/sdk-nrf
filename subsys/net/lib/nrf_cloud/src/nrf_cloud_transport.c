@@ -75,6 +75,10 @@ BUILD_ASSERT(IMEI_CLIENT_ID_LEN <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
 #define NCT_UPDATE_TOPIC AWS "%s/shadow/update"
 #define NCT_SHADOW_GET AWS "%s/shadow/get"
 
+/* Buffers to hold stage and tenant strings. */
+static char stage[NRF_CLOUD_STAGE_ID_MAX_LEN];
+static char tenant[NRF_CLOUD_TENANT_ID_MAX_LEN];
+
 /* Null-terminated MQTT client ID */
 static char *client_id_buf;
 
@@ -331,6 +335,72 @@ static int nct_client_id_set(const char * const client_id)
 	return -ENOTRECOVERABLE;
 }
 
+int nct_client_id_get(char *id, size_t id_len)
+{
+	int len = strlen(client_id_buf);
+
+	if (id_len <= len) {
+		return -EMSGSIZE;
+	} else if (client_id_buf && (id != NULL) && len) {
+		strncpy(id, client_id_buf, id_len);
+		return 0;
+	}
+	return -EINVAL;
+}
+
+int nct_stage_get(char *cur_stage, const int cur_stage_len)
+{
+	int len = strlen(stage);
+
+	if (cur_stage_len <= len) {
+		return -EMSGSIZE;
+	} else if ((cur_stage != NULL) && len) {
+		strncpy(cur_stage, stage, cur_stage_len);
+		return 0;
+	}
+	return -EINVAL;
+}
+
+int nct_tenant_id_get(char *cur_tenant, const int cur_tenant_len)
+{
+	int len = strlen(tenant);
+
+	if (cur_tenant_len <= len) {
+		return -EMSGSIZE;
+	} else if ((cur_tenant != NULL) && len) {
+		strncpy(cur_tenant, tenant, cur_tenant_len);
+		return 0;
+	}
+	return -EINVAL;
+}
+
+void nct_set_topic_prefix(const char *topic_prefix)
+{
+	char *end_of_stage = strchr(topic_prefix, '/');
+	int len;
+
+	if (end_of_stage) {
+		len = end_of_stage - topic_prefix;
+		if (len >= sizeof(stage)) {
+			LOG_WRN("Truncating copy of stage string length "
+				"from %d to %zd",
+				len, sizeof(stage));
+			len = sizeof(stage) - 1;
+		}
+		memcpy(stage, topic_prefix, len);
+		stage[len] = '\0';
+		len = strlen(topic_prefix) - len - 2; /* skip both / */
+		if (len > sizeof(tenant)) {
+			LOG_WRN("Truncating copy of tenant id string length "
+				"from %d to %zd",
+				len, sizeof(tenant));
+			len = sizeof(tenant) - 1;
+		}
+		memcpy(tenant, end_of_stage + 1, len);
+		tenant[len] = '\0';
+	}
+}
+
 static int allocate_and_format_topic(char **topic_buf, const char * const topic_template)
 {
 	int ret;
@@ -575,7 +645,7 @@ static int nct_settings_set(const char *key, size_t len_rd,
 	return -ENOTSUP;
 }
 
-int save_session_state(const int session_valid)
+int nct_save_session_state(const int session_valid)
 {
 	int ret = 0;
 
@@ -586,6 +656,11 @@ int save_session_state(const int session_valid)
 				&session_valid, sizeof(session_valid));
 #endif
 	return ret;
+}
+
+int nct_get_session_state(void)
+{
+	return persistent_session;
 }
 
 static int nct_settings_init(void)
@@ -737,6 +812,8 @@ int nct_mqtt_connect(void)
 static int publish_get_payload(struct mqtt_client *client, size_t length)
 {
 	if (length > (sizeof(nct.payload_buf) - 1)) {
+		LOG_ERR("Length specified:%zd larger than payload_buf:%zd",
+			length, sizeof(nct.payload_buf));
 		return -EMSGSIZE;
 	}
 
@@ -779,7 +856,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 
 		if (persistent_session && (p->session_present_flag == 0)) {
 			/* Session not present, clear saved state */
-			save_session_state(0);
+			nct_save_session_state(0);
 		}
 
 		evt.type = NCT_EVT_CONNECTED;
@@ -853,7 +930,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			event_notify = true;
 
 			/* Subscribing complete, session is now valid */
-			err = save_session_state(1);
+			err = nct_save_session_state(1);
 			if (err) {
 				LOG_ERR("Failed to save session state: %d",
 					err);
@@ -925,7 +1002,7 @@ int nct_init(const char * const client_id)
 		return err;
 	} else if (err && persistent_session) {
 		/* After a completed FOTA, use clean session */
-		save_session_state(0);
+		nct_save_session_state(0);
 	}
 #endif
 
