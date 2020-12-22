@@ -1,4 +1,3 @@
 tests:
   dfu.dfu_target_mcuboot:
-    platform_allow: qemu_cortex_m3 native_posix
     tags: dfu mcuboot
