@@ -48,6 +48,10 @@ nRF9160
     * Added function :c:func:`nrf_cloud_shadow_device_status_update`, which sets the device status in the device's shadow.
     * Added function :c:func:`nrf_cloud_modem_info_json_encode`, which encodes modem information into a cJSON object formatted for use with nRF Cloud.
     * Added function :c:func:`nrf_cloud_service_info_json_encode`, which encodes service information into a cJSON object formatted for use with nRF Cloud.
+    * Added function :c:func:`nrf_cloud_client_id_get`, which returns the client ID used to identify the device with nRF Cloud.
+    * Added function :c:func:`nrf_cloud_tenant_id_get`, which returns the tenant ID used to identify a customer account with nRF Cloud.
+    * Added function :c:func:`nrf_cloud_register_gateway_state_handler` to implement a custom callback on shadow update events.
+    * Added Kconfig option :kconfig:`CONFIG_NRF_CLOUD_GATEWAY`, which enables functionality to behave as an nRF Cloud gateway.
     * Removed function ``nrf_cloud_sensor_attach()``, the associated structure ``nrf_cloud_sa_param``, and event ``NRF_CLOUD_EVT_SENSOR_ATTACHED``. These items provided no useful functionality.
 
   * :ref:`serial_lte_modem` application:

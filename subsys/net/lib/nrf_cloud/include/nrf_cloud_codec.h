@@ -166,6 +166,18 @@ int json_send_to_cloud(cJSON * const request);
  */
 cJSON *json_create_req_obj(const char *const app_id, const char *const msg_type);
 
+#ifdef CONFIG_NRF_CLOUD_GATEWAY
+typedef int (*gateway_state_handler_t)(void *root_obj);
+
+/** @brief Registers a callback, which is called whenever the shadow changes.
+ *  The callback is passed a pointer to the shadow JSON document.  The callback
+ *  should return 0 to allow further processing of shadow changes in
+ *  nrf_cloud_codec.c.  It should return a negative error code only when the
+ *  shadow is malformed.
+ */
+void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

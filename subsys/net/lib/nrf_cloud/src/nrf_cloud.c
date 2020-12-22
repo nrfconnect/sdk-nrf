@@ -383,6 +383,16 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 	return 0;
 }
 
+int nrf_cloud_client_id_get(char *id_buf, int id_len)
+{
+	return nct_client_id_get(id_buf, id_len);
+}
+
+int nrf_cloud_tenant_id_get(char *id_buf, int id_len)
+{
+	return nct_tenant_id_get(id_buf, id_len);
+}
+
 int nct_input(const struct nct_evt *evt)
 {
 	return nfsm_handle_incoming_event(evt, current_state);
@@ -807,6 +817,12 @@ static int api_user_data_set(const struct cloud_backend *const backend,
 	return 0;
 }
 
+static int api_id_get(const struct cloud_backend *const backend,
+		      char *id, size_t id_len)
+{
+	return nrf_cloud_client_id_get(id, id_len);
+}
+
 static const struct cloud_api nrf_cloud_api = {
 	.init = api_init,
 	.uninit = api_uninit,
@@ -816,7 +832,8 @@ static const struct cloud_api nrf_cloud_api = {
 	.ping = api_ping,
 	.keepalive_time_left = api_keepalive_time_left,
 	.input = api_input,
-	.user_data_set = api_user_data_set
+	.user_data_set = api_user_data_set,
+	.id_get = api_id_get
 };
 
 CLOUD_BACKEND_DEFINE(NRF_CLOUD, nrf_cloud_api);

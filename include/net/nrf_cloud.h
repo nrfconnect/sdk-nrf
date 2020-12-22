@@ -47,10 +47,12 @@ extern "C" {
 
 #define NRF_CLOUD_SETTINGS_NAME "nrf_cloud"
 
-#define NRF_CLOUD_FOTA_VER	2
+#define NRF_CLOUD_FOTA_VER              2
 #define NRF_CLOUD_FOTA_VER_STR "fota_v" STRINGIFY(NRF_CLOUD_FOTA_VER)
 
-#define NRF_CLOUD_CLIENT_ID_MAX_LEN 64
+#define NRF_CLOUD_STAGE_ID_MAX_LEN      8
+#define NRF_CLOUD_TENANT_ID_MAX_LEN     64
+#define NRF_CLOUD_CLIENT_ID_MAX_LEN     64
 
 /** @brief Asynchronous nRF Cloud events notified by the module. */
 enum nrf_cloud_evt_type {
@@ -307,6 +309,14 @@ struct nrf_cloud_device_status {
 	struct nrf_cloud_svc_info *svc;
 };
 
+#ifdef CONFIG_NRF_CLOUD_GATEWAY
+/**@brief Structure to hold message received from nRF Cloud. */
+struct nrf_cloud_gw_data {
+	struct nrf_cloud_data data;
+	uint16_t id;
+};
+#endif
+
 /**
  * @brief  Event handler registered with the module to handle asynchronous
  * events from the module.
@@ -492,6 +502,28 @@ int nrf_cloud_service_info_json_encode(const struct nrf_cloud_svc_info * const s
  */
 int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info * const mod_inf,
 				     cJSON * const mod_inf_obj);
+
+/**
+ * @brief Function to retrieve the current device ID.
+ *
+ * @param[in,out] id_buf Buffer to receive the device ID.
+ * @param[in] id_len     Size of buffer (NRF_CLOUD_CLIENT_ID_MAX_LEN).
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_client_id_get(char *id_buf, int id_len);
+
+/**
+ * @brief Function to retrieve the current customer tenant ID.
+ *
+ * @param[in,out] id_buf Buffer to receive the tenant ID.
+ * @param[in] id_len     Size of buffer (NRF_CLOUD_TENANT_ID_MAX_LEN).
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_tenant_id_get(char *id_buf, int id_len);
 
 /** @} */
 
