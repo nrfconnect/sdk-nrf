@@ -55,12 +55,12 @@ User interface
 Button 1:
    Sends one character of the predefined input ("hello\\n") to the computer.
 
-   When pairing/bonding, press this button to confirm the passkey value that is printed on the COM listener to pair/bond with the other device.
+   When pairing, press this button to confirm the passkey value that is printed on the COM listener to pair with the other device.
 
 Button 2:
    Simulates the Shift key.
 
-   When pairing/bonding, press this button to reject the passkey value which is printed on the COM listener to prevent pairing/bonding with the other device.
+   When pairing, press this button to reject the passkey value which is printed on the COM listener to prevent pairing with the other device.
 
 LED 1:
    Blinks with a period of 2 seconds (duty cycle 50%) when the device is advertising.

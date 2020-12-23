@@ -41,12 +41,12 @@ User interface
 Button 1:
    Simulate moving the mouse pointer 5 pixels to the left.
 
-   When pairing/bonding, press this button to confirm the passkey value that is printed on the COM listener to pair/bond with the other device.
+   When pairing, press this button to confirm the passkey value that is printed on the COM listener to pair with the other device.
 
 Button 2:
    Simulate moving the mouse pointer 5 pixels upward.
 
-   When pairing/bonding, press this button to reject the passkey value that is printed on the COM listener to prevent pairing/bonding with the other device.
+   When pairing, press this button to reject the passkey value that is printed on the COM listener to prevent pairing with the other device.
 
 Button 3:
    Simulate moving the mouse pointer 5 pixels to the right.
