@@ -1,0 +1,7 @@
+sample:
+  description: TBD
+  name: TBD
+tests:
+  sample.bluetooth.scanner.rssi:
+    platform_allow: nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuappns, nrf5340pdk_nrf5340_cpuapp, nrf5340pdk_nrf5340_cpuappns, nrf52dk_nrf52832, nrf52840dk_nrf52840, nrf52833dk_nrf52820, nrf52833dk_nrf52833
+    tags: bluetooth
