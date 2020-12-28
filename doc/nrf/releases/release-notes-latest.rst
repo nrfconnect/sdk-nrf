@@ -32,7 +32,6 @@ nRF52832 SoC
     * Removed support for nRF52832 revision 1 workarounds for Errata 102, Errata 106, and Errata 107.
     * Removed support for nRF52832 revision 2 workarounds for Errata 143.
 
-
 nRF5340 SoC
 -----------
 
@@ -44,6 +43,13 @@ nRF5340 SoC
 
   * ``bl_boot`` library - Disabled clock interrupts before booting the application.
     This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
+
+Connected Home over IP (CHIP)
+-----------------------------
+
+* Added:
+
+  * :ref:`ug_chip` protocol user guide
 
 DFU Target
 ----------
@@ -522,3 +528,20 @@ The following list summarizes the most important changes inherited from upstream
 
   * Added initial LoRaWAN support.
   * Updated ``west flash`` support for ``nrfjprog`` to fail if a HEX file has UICR data and ``--erase`` was not specified.
+
+Documentation
+=============
+
+In addition to documentation related to the changes listed above, the following documentation has been updated:
+
+User guides
+-----------
+
+* :ref:`ug_nrf52` - updated with information about support for CHIP
+* :ref:`ug_chip` - added
+
+Known issues
+************
+
+Known issues are only tracked for the latest official release.
+See `known issues for nRF Connect SDK v1.4.1`_ for the list of issues valid for this release.
