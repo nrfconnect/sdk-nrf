@@ -11,9 +11,9 @@
 # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
 
 manifest:
-  # This west.yml requires west 0.7 or later, because the "import"
+  # This west.yml requires west 0.9 or later, because the "submodules"
   # feature used below was introduced then.
-  version: 0.7
+  version: 0.9
 
   # "remotes" is a list of locations where git repositories are cloned
   # and fetched from.
@@ -107,6 +107,17 @@ manifest:
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
       revision: 81d19f017f18f1bc6bea906d96fd45fba3672064
+    - name: connectedhomeip
+      repo-path: sdk-connectedhomeip
+      path: modules/lib/connectedhomeip
+      revision: ff13bdcd03a7e1da7539e75578f0dc069e5e4d76
+      submodules:
+        - name: nlio
+          path: third_party/nlio/repo
+        - name: nlassert
+          path: third_party/nlassert/repo
+        - name: pigweed
+          path: third_party/pigweed/repo
     # Other third-party repositories.
     - name: cmock
       path: test/cmock

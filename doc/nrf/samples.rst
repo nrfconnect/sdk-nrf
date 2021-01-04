@@ -47,6 +47,15 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    ../../samples/nrf5340/*/README
    ../../samples/nrf_rpc/entropy_nrf53/README
 
+.. _chip_samples:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: CHIP samples
+   :glob:
+
+   ../../samples/connectedhomeip/*/README
+
 .. _openthread_samples:
 
 .. toctree::

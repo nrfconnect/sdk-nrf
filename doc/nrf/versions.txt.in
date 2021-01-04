@@ -46,6 +46,11 @@
 .. |west_recommended_ver_darwin| replace:: @WEST_VERSION_DARWIN@
 .. |west_recommended_ver_linux| replace:: @WEST_VERSION_LINUX@
 
+.. |gn_min_ver| replace:: @GN_VERSION_MINIMUM@
+.. |gn_recommended_ver_win10| replace:: @GN_VERSION_WIN10@
+.. |gn_recommended_ver_darwin| replace:: @GN_VERSION_DARWIN@
+.. |gn_recommended_ver_linux| replace:: @GN_VERSION_LINUX@
+
 .. |anytree_ver| replace:: @ANYTREE_VERSION@
 .. |canopen_ver| replace:: @CANOPEN_VERSION@
 .. |click_ver| replace:: @CLICK_VERSION@

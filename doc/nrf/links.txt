@@ -81,6 +81,11 @@
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
+.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/ff13bd/src/android/CHIPTool
+.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md
+.. _`CHIP Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/README.md
+.. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_platform_overview.md
+
 .. ### Source: developer.nordicsemi.com
 
 .. _`nRF Connect SDK v1.4.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.4.0/nrf/index.html
@@ -507,8 +512,6 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
-.. _`Connected Home over IP`: https://www.connectedhomeip.com/
-
 .. _`BH1749NUC-E`: https://www.rohm.com/datasheet/BH1749NUC/bh1749nuc-e
 
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
@@ -524,4 +527,7 @@
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
 
-.. _`GN` : https://gn.googlesource.com/gn/
+.. _`Connected Home over IP`: https://www.connectedhomeip.com/
+
+.. _`GN`: https://gn.googlesource.com/gn/
+.. _`GN website`: https://gn.googlesource.com/gn/#getting-a-binary

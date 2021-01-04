@@ -79,6 +79,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
 /samples/bootloader/                      @hakonfam @ioannisg
+/samples/connectedhomeip/                 @Damian-Nordic @kkasperczyk-no
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
 /samples/esb/                             @lemrey
 /samples/mpsl/                            @joerchan @hurricaneFromMoscow

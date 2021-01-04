@@ -32,7 +32,6 @@ nRF52832 SoC
     * Removed support for nRF52832 revision 1 workarounds for Errata 102, Errata 106, and Errata 107.
     * Removed support for nRF52832 revision 2 workarounds for Errata 143.
 
-
 nRF5340 SoC
 -----------
 
@@ -44,6 +43,15 @@ nRF5340 SoC
 
   * ``bl_boot`` library - Disabled clock interrupts before booting the application.
     This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
+
+Connected Home over IP (CHIP)
+-----------------------------
+
+* CHIP is now supported for development as an |NCS| submodule for Windows, Linux, and macOS.
+* Added:
+
+  * :ref:`ug_chip` protocol user guide
+  * :ref:`Bolt lock <chip_lock_sample>` sample
 
 DFU Target
 ----------
@@ -590,6 +598,11 @@ Samples
 -------
 
 * :ref:`zigbee_samples` - updated the structure to match the template
+
+User guides
+-----------
+
+* :ref:`ug_nrf52` - updated with information about support for CHIP
 
 Known issues
 ************
