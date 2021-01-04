@@ -116,7 +116,7 @@ See the following example code:
 
 In this code, ``add_child_image`` registers the child image with the given name and file path and executes the build scripts of the child image.
 Note that both the child image's application build scripts and the core build scripts are executed.
-The core build scripts might use a different configuration and possibly different DeviceTree settings.
+The core build scripts might use a different configuration and possibly different devicetree settings.
 
 If a child image is to be executed on a different core, you must specify the name space for the child image as *domain* when adding the child image.
 For example:
