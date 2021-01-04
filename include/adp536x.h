@@ -72,6 +72,18 @@ int adp536x_init(const char *dev_name);
 int adp536x_get_reg(u8_t reg, u8_t *buff);
 
 /**
+ * @brief Arbitrary register write function
+ *
+ * @param[in] reg Register address
+ *
+ * @param[in] val Value to write
+ *
+ * @return 0 If the operation was successful,
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_write_reg(u8_t reg, u8_t val);
+
+/**
  * @brief Set the VBUS current limit.
  *
  * @param[in] value The upper current threshold in LSB.

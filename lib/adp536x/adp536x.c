@@ -189,6 +189,11 @@ int adp536x_get_reg(u8_t reg, u8_t *buff){
 	return adp536x_reg_read(reg, buff);
 }
 
+int adp536x_write_reg(u8_t reg, u8_t val) {
+    return adp536x_reg_write(reg, val);
+}
+
+
 int adp536x_charger_current_set(u8_t value)
 {
 	return adp536x_reg_write_mask(ADP536X_CHG_CURRENT_SET,
