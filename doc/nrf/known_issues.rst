@@ -686,8 +686,8 @@ DRGN-14153: Radio Notification power performance penalty
 
 .. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
 
-Front-End Modules API implementation missing
-  Front-End Modules API is currently not implemented by any protocol.
+Front-end modules API implementation missing
+  Front-end modules API is currently not implemented by any protocol.
 
 802.15.4 Radio driver
 =====================

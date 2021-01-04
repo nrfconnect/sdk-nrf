@@ -30,7 +30,7 @@ Note that the SPU peripheral is the nRF version of an IDAU (Implementation-Defin
 Use Kconfig to configure the security attributions for the peripherals.
 Modify the source code of the SPM subsystem to configure the security attributions of SRAM.
 If Partition Manager is used, the security attributions of the flash regions are deduced from the generated file :file:`pm.config`.
-Otherwise, the security attributions of the flash regions are deduced from Device Tree information.
+Otherwise, the security attributions of the flash regions are deduced from devicetree information.
 
 For SRAM and peripherals, the following security attribution configuration is applied:
 

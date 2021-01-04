@@ -1,12 +1,12 @@
 .. _ug_radio_fem:
 
-Radio Front-end Module (FEM) support
+Radio front-end module (FEM) support
 ####################################
 
-This guide describes how to add support for 2 different Front-End Modules (FEM) implementations to your application in |NCS|.
+This guide describes how to add support for 2 different front-end module (FEM) implementations to your application in |NCS|.
 
-|NCS| allows you to extend the radio range of your board with an implementation of the Front-End Modules.
-Front end modules are range extenders, used for boosting the link robustness and link budget of wireless SoCs.
+|NCS| allows you to extend the radio range of your board with an implementation of the front-end modules.
+Front-end modules are range extenders, used for boosting the link robustness and link budget of wireless SoCs.
 
 The FEM support is based on the :ref:`nrfxlib:mpsl_fem`, which is integrated in the nrfxlib's MPSL library.
 This library provides nRF21540 GPIO and Simple GPIO implementations, for 3-pin and 2-pin PA/LNA interfaces, respectively.
@@ -22,9 +22,9 @@ To avoid conflicts, check the protocol documentation to see if it uses FEM suppo
 
 Work is underway to make the protocols shipped with |NCS| use FEM, but none of them currently have this feature.
 
-|NCS| provides a friendly wrapper that configures FEM based on Devicetree (DTS) and Kconfig information.
-To enable FEM support, you must enable FEM and MPSL, and add an ``nrf_radio_fem`` node in the Devicetree file.
-The node can also be provided by the target board Devicetree file or by an overlay file.
+|NCS| provides a friendly wrapper that configures FEM based on devicetree (DTS) and Kconfig information.
+To enable FEM support, you must enable FEM and MPSL, and add an ``nrf_radio_fem`` node in the devicetree file.
+The node can also be provided by the target board devicetree file or by an overlay file.
 See :ref:`zephyr:dt-guide` for more information about the DTS data structure, and :ref:`zephyr:dt_vs_kconfig` for information about differences between DTS and Kconfig.
 
 .. _ug_radio_fem_requirements:
@@ -32,7 +32,7 @@ See :ref:`zephyr:dt-guide` for more information about the DTS data structure, an
 Enabling FEM and MPSL
 *********************
 
-Before you add the Devicetree node in your application, complete the following steps:
+Before you add the devicetree node in your application, complete the following steps:
 
 1. Add support for the MPSL library in your application.
    The MPSL library provides API to configure FEM.
@@ -54,7 +54,7 @@ The nRF21540 GPIO mode implementation of FEM is compatible with this device and 
 
 To use nRF21540 in GPIO mode, complete the following steps:
 
-1. Add the following node in the Devicetree file:
+1. Add the following node in the devicetree file:
 
 .. code-block::
 
@@ -76,7 +76,7 @@ To use nRF21540 in GPIO mode, complete the following steps:
 
    These properties correspond to ``TX_EN``, ``RX_EN``, and ``PDN`` pins of nRF21540 that are supported by software FEM.
 
-   Type ``phandle-array`` is used here, which is common in Zephyr's Devicetree to describe GPIO signals.
+   Type ``phandle-array`` is used here, which is common in Zephyr's devicetree to describe GPIO signals.
    The first element ``&gpio0`` refers to the GPIO port ("port 0" has been selected in the example shown).
    The second element is the pin number on that port.
    The last element must be ``GPIO_ACTIVE_HIGH`` for nRF21540, but for a different FEM module you can use ``GPIO_ACTIVE_LOW``.
@@ -97,7 +97,7 @@ To use nRF21540 in GPIO mode, complete the following steps:
 Optional properties
 ===================
 
-The following properties are optional and can be added to the Devicetree node if needed:
+The following properties are optional and can be added to the devicetree node if needed:
 
 * Properties that control the timing of interface signals:
 
@@ -114,7 +114,7 @@ The following properties are optional and can be added to the Devicetree node if
 
   The default values of these properties are appropriate for default hardware and most use cases.
   You can override them if you need additional capacitors, for example when using custom hardware.
-  In such cases, add the property name under the required properties in the device tree node and set a new custom value.
+  In such cases, add the property name under the required properties in the devicetree node and set a new custom value.
 
   .. note::
     These values have some constraints.
@@ -132,7 +132,7 @@ SKY66112-11 is one of many FEM devices that support the 2-pin PA/LNA interface.
 
 To use the Simple GPIO implementation of FEM with SKY66112-11, complete the following steps:
 
-1. Add the following node in the Devicetree file:
+1. Add the following node in the devicetree file:
 
 .. code-block::
 
@@ -152,7 +152,7 @@ To use the Simple GPIO implementation of FEM with SKY66112-11, complete the foll
 
    These properties correspond to ``CTX`` and ``CRX`` pins of SKY66112-11 that are supported by software FEM.
 
-   Type ``phandle-array`` is used here, which is common in Zephyr's Devicetree to describe GPIO signals.
+   Type ``phandle-array`` is used here, which is common in Zephyr's devicetree to describe GPIO signals.
    The first element ``&gpio0`` refers to the GPIO port ("port 0" has been selected in the example shown).
    The second element is the pin number on that port.
    The last element must be ``GPIO_ACTIVE_HIGH`` for SKY66112-11, but for a different FEM module you can use ``GPIO_ACTIVE_LOW``.
@@ -172,7 +172,7 @@ To use the Simple GPIO implementation of FEM with SKY66112-11, complete the foll
 Optional properties
 ===================
 
-The following properties are optional and can be added to the Devicetree node if needed:
+The following properties are optional and can be added to the devicetree node if needed:
 
 * Properties that control the timing of interface signals:
 
@@ -181,7 +181,7 @@ The following properties are optional and can be added to the Devicetree node if
 
   The default values of these properties are appropriate for default hardware and most use cases.
   You can override them if you need additional capacitors, for example when using custom hardware.
-  In such cases, add the property name under the required properties in the device tree node and set a new custom value.
+  In such cases, add the property name under the required properties in the devicetree node and set a new custom value.
 
   .. note::
     These values have some constraints.
@@ -199,9 +199,9 @@ The following properties are optional and can be added to the Devicetree node if
 Use case of incomplete physical connections to the FEM module
 *************************************************************
 
-The method of configuring FEM using the Devicetree file allows you to opt out of using some pins.
+The method of configuring FEM using the devicetree file allows you to opt out of using some pins.
 For example if power consumption is not critical, the nRF21540 module PDN pin can be connected to a fixed logic level.
-Then there is no need to define a GPIO to control the PDN signal. The line ``pdn-gpios = < .. >;`` can then be removed from the Devicetree file.
+Then there is no need to define a GPIO to control the PDN signal. The line ``pdn-gpios = < .. >;`` can then be removed from the devicetree file.
 
 Generally, if pin ``X`` is not used, the ``X-gpios = < .. >;`` property can be removed.
 This applies to all properties with a ``-gpios`` suffix, for both nRF21540 and SKY66112-11.
