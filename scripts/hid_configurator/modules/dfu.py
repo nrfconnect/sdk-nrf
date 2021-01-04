@@ -507,7 +507,7 @@ def send_chunks(dev, img_csum, img_file, img_length, offset, sync_buffer_size, p
             if (dfu_info.get_img_length() != img_length) or (dfu_info.get_img_csum() != img_csum):
                 print('Invalid sync information {}'.format(dfu_info))
                 return False
-            if (not dfu_info.is_busy()) and (dfu_info.get_img_length() != img_length):
+            if not dfu_info.is_busy():
                 print('DFU interrupted by device')
                 return False
             if dfu_info.is_storing():
