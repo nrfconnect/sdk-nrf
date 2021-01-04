@@ -809,7 +809,7 @@ Examples
 
 ::
 
-   AT#UDPRECVFROM="test.server.com",1234
+   AT#XRECVFROM
    Test OK
    #XRECVFROM: 1, 7
    OK
