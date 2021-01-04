@@ -10,3 +10,4 @@ ses=5.30a
 ccache=3.4.1-1
 dfu_util=0.9-1
 west=0.8.0
+gn=1880
