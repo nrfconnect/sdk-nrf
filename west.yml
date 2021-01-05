@@ -86,6 +86,7 @@ manifest:
           - tinycbor
           - tinycrypt
           - trusted-firmware-m
+          - tfm-mcuboot
 
     # NCS repositories.
     #
