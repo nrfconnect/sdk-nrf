@@ -31,23 +31,37 @@ Using multiple images has the following advantages:
 
 In the |NCS|, multiple images are required in the following scenarios:
 
-nRF9160 SPU configuration
+Configuring the nRF9160 SPU
    The nRF9160 SiP application MCU is divided into a secure and a non-secure domain.
    The code in the secure domain can configure the System Protection Unit (SPU) to allow non-secure access to the CPU resources that are required by the application, and then jump to the code in the non-secure domain.
    Therefore, the nRF9160 samples (the parent image) require the :ref:`secure_partition_manager` (the child image) to be programmed in addition to the actual application.
 
    See :ref:`zephyr:nrf9160dk_nrf9160` and :ref:`ug_nrf9160` for more information.
 
-MCUboot bootloader
-   The MCUboot bootloader establishes a root of trust by verifying the next step in the boot sequence.
-   This first-stage bootloader is immutable, which means it must never be updated or deleted.
-   However, it allows to update the application, and therefore MCUboot and the application must be located in different images.
-   In this scenario, the application is the parent image and MCUboot is the child image.
+Using a bootloader
+   Bootloaders establish a root of trust by cryptographically verifying the next image in the boot sequence, before booting it.
+   If an application's configuration includes bootloaders, the build system adds these to the target application image as standalone child images of that target.
+
+   In a secure boot chain, the first bootloader is always non-upgradable and non-deletable.
+   This is also called an *immutable* bootloader.
+   You can use the MCUboot bootloader as either the first or the second bootloader:
+
+   * As a first-stage bootloader, it is immutable, but it allows you to update the application.
+     In this scenario, the application is the parent image and MCUboot is the child image.
+   * As a second-stage bootloader, it can be updated.
+     It can use a small immutable bootloader, like b0, as a simple first-stage bootloader.
+     In this scenario, the application is the parent image.
+     MCUboot and b0 are both children of the application image.
+
+   The application and the bootloaders are all built using a single command, and they are merged into a single HEX file as image partitions.
+   However, it is possible to exclude images from the build process to create upgrade packages.
+   For example, you may want to update just the application or, when b0 is present, both the application and MCUboot.
+   As the immutable bootloader cannot change, it can be provided to the build as a HEX file instead of being built again.
 
    See :ref:`about_mcuboot` for more information.
    The MCUboot bootloader is used in the :ref:`http_application_update_sample` sample.
 
-nRF5340 support
+Supporting the nRF5340
    nRF5340 contains two separate processors: a network core and an application core.
    When programming applications to the nRF5340 DK, they must be divided into at least two images, one for each core.
    See :ref:`ug_nrf5340` for more information.
