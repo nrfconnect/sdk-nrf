@@ -58,11 +58,13 @@ endif()
 if (CONFIG_BUILD_WITH_TFM)
   ncs_add_partition_manager_config(pm.yml.tfm)
 
-  # Add the mcuboot hex file built by TFM as the contents of the bl2 partitions,
-  # so it can be flashed together with the app/tfm hex files.
-  set_property(GLOBAL PROPERTY
-    bl2_PM_HEX_FILE ${CMAKE_BINARY_DIR}/tfm/bin/bl2.hex
-    )
+  if (NOT CONFIG_TFM_BL2_FALSE)
+    # Add the mcuboot hex file built by TFM as the contents of the bl2 partitions,
+    # so it can be flashed together with the app/tfm hex files.
+    set_property(GLOBAL PROPERTY
+      bl2_PM_HEX_FILE ${CMAKE_BINARY_DIR}/tfm/bin/bl2.hex
+      )
+  endif()
 endif()
 
 # We are using partition manager if we are a child image or if we are
