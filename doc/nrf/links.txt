@@ -506,6 +506,8 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
+.. _`Connected Home over IP`: https://www.connectedhomeip.com/
+
 .. _`BH1749NUC-E`: https://www.rohm.com/datasheet/BH1749NUC/bh1749nuc-e
 
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
@@ -520,3 +522,5 @@
 .. _`Baltimore CyberTrust Root certificate`: https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
+
+.. _`GN` : https://gn.googlesource.com/gn/
