@@ -97,3 +97,7 @@
 | :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>` | ``nrf5340dk_nrf5340_cpuapp`` |
 |                                |          |                                              |                              |
 |                                |          |                                              | ``nrf5340dk_nrf5340_cpunet`` |
+
+.. nrf21540dk_nrf52840
+
+| nRF21540 DK | PCA10112 | :ref:`nrf21540dk_nrf52840 <nrf21540dk_nrf52840>` | ``nrf21540dk_nrf52840`` |
