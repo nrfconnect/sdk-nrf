@@ -20,7 +20,8 @@ These methods are only available to protocol drivers that are using FEM features
 They are also valid for cases where an application uses just one protocol, but benefits from features provided by MPSL.
 To avoid conflicts, check the protocol documentation to see if it uses FEM support provided by MPSL.
 
-Work is underway to make the protocols shipped with |NCS| use FEM, but none of them currently have this feature.
+Work is underway to make the protocols shipped with |NCS| use FEM.
+At the moment, :ref:`ug_thread` supports the :ref:`nrf21540 DK <nrf21540dk_nrf52840>`, but there is no multiprotocol support yet.
 
 |NCS| provides a friendly wrapper that configures FEM based on devicetree (DTS) and Kconfig information.
 To enable FEM support, you must enable FEM and MPSL, and add an ``nrf_radio_fem`` node in the devicetree file.
