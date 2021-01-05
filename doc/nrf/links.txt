@@ -170,11 +170,11 @@
 
 .. _`nRF52840 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/keyfeatures_html5.html
 .. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1227688711
-.. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/nrf52840_DK/intro.html
+.. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/dk/intro.html
 .. _`nRF52840 Dongle User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dongle/UG/nrf52840_Dongle/intro.html
 
 .. _`nRF52833 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52833/keyfeatures_html5.html
-.. _`nRF52833 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52833_dk/UG/nrf52833_DK/intro.html
+.. _`nRF52833 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52833_dk/UG/dk/intro.html
 
 .. _`nRF52 Series`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52.html
 .. _`nRF52832 Product Specification`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52832_ps.html
