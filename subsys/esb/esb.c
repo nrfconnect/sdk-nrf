@@ -16,6 +16,7 @@
 #include <helpers/nrfx_gppi.h>
 #include <stddef.h>
 #include <string.h>
+#include <nrf_erratas.h>
 
 /* Constants */
 
@@ -243,6 +244,46 @@ static uint32_t addr_conv(const uint8_t *addr)
 	return __REV(bytewise_bit_swap(addr));
 }
 
+static inline void apply_errata143_workaround(void)
+{
+	/* Workaround for Errata 143
+	 * Check if the most significant bytes of address 0 (including
+	 * prefix) match those of another address. It's recommended to
+	 * use a unique address 0 since this will avoid the 3dBm penalty
+	 * incurred from the workaround.
+	 */
+	uint32_t base_address_mask =
+		esb_addr.addr_length == 5 ? 0xFFFF0000 : 0xFF000000;
+
+	/* Load the two addresses before comparing them to ensure
+	 * defined ordering of volatile accesses.
+	 */
+	uint32_t addr0 = NRF_RADIO->BASE0 & base_address_mask;
+	uint32_t addr1 = NRF_RADIO->BASE1 & base_address_mask;
+
+	if (addr0 == addr1) {
+		uint32_t prefix0 = NRF_RADIO->PREFIX0 & 0x000000FF;
+		uint32_t prefix1 = (NRF_RADIO->PREFIX0 & 0x0000FF00) >> 8;
+		uint32_t prefix2 = (NRF_RADIO->PREFIX0 & 0x00FF0000) >> 16;
+		uint32_t prefix3 = (NRF_RADIO->PREFIX0 & 0xFF000000) >> 24;
+		uint32_t prefix4 = NRF_RADIO->PREFIX1 & 0x000000FF;
+		uint32_t prefix5 = (NRF_RADIO->PREFIX1 & 0x0000FF00) >> 8;
+		uint32_t prefix6 = (NRF_RADIO->PREFIX1 & 0x00FF0000) >> 16;
+		uint32_t prefix7 = (NRF_RADIO->PREFIX1 & 0xFF000000) >> 24;
+
+		if (prefix0 == prefix1 || prefix0 == prefix2 ||
+			prefix0 == prefix3 || prefix0 == prefix4 ||
+			prefix0 == prefix5 || prefix0 == prefix6 ||
+			prefix0 == prefix7) {
+			/* This will cause a 3dBm sensitivity loss,
+			 * avoid using such address combinations if possible.
+			 */
+			*(volatile uint32_t *)0x40001774 =
+				((*(volatile uint32_t *)0x40001774) & 0xfffffffe) | 0x01000000;
+		}
+	}
+}
+
 static void update_rf_payload_format_esb_dpl(uint32_t payload_length)
 {
 #if (CONFIG_ESB_MAX_PAYLOAD_LENGTH <= 32)
@@ -294,6 +335,13 @@ static void update_radio_addresses(uint8_t update_mask)
 		NRF_RADIO->PREFIX1 =
 			bytewise_bit_swap(&esb_addr.pipe_prefixes[4]);
 	}
+
+	/* Workaround for Errata 143 */
+#if NRF52_ERRATA_143_ENABLE_WORKAROUND
+	if (nrf52_errata_143()) {
+		apply_errata143_workaround();
+	}
+#endif
 }
 
 static void update_radio_tx_power(void)
