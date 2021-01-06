@@ -57,7 +57,7 @@ struct bt_mesh_light_ctl_srv;
 						 _srv),                        \
 			 &_bt_mesh_light_ctl_srv_cb),                          \
 	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_CTL_SETUP_SRV,                 \
-			 _bt_mesh_light_ctl_setup_srv_op, &(_srv)->setup_pub,  \
+			 _bt_mesh_light_ctl_setup_srv_op, NULL,                \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_light_ctl_srv, \
 						 _srv),                        \
 			 NULL)
@@ -77,8 +77,6 @@ struct bt_mesh_light_ctl_srv {
 	struct bt_mesh_model_pub pub;
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx prev_transaction;
-	/** Setup model publish parameters */
-	struct bt_mesh_model_pub setup_pub;
 };
 
 /** @brief Publish the current CTL status.
