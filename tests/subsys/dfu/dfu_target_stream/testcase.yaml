@@ -1,6 +1,8 @@
 tests:
   dfu.target_stream:
     tags: target_stream
+    platform_exclude: qemu_cortex_m3 qemu_x86
   dfu.target_stream.store_progress:
     tags: target_stream
     extra_args: OVERLAY_CONFIG=overlay-store-progress.conf
+    platform_exclude: qemu_cortex_m3 qemu_x86

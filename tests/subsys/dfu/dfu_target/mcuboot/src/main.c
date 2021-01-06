@@ -52,11 +52,12 @@ static void init(void)
 {
 	int err;
 	int ret;
+	uint8_t buf[64];
 
 	/* Return 'true' when dfu_target_mcuboot_identify() is called */
 	identify_retval = true;
 
-	ret = dfu_target_img_type(0, 0);
+	ret = dfu_target_img_type(buf, sizeof(buf));
 
 	zassert_true(ret > 0, "Valid type not recognized");
 
@@ -73,13 +74,14 @@ static void test_init(void)
 {
 	int ret;
 	int err;
+	uint8_t buf[64];
 
 	done();
 	init_retval = 0;
 	done_retval = 0;
 
 	identify_retval = true;
-	ret = dfu_target_img_type(0, 0);
+	ret = dfu_target_img_type(buf, sizeof(buf));
 	zassert_true(ret > 0, "Valid type not recognized");
 
 	err = dfu_target_init(ret, FILE_SIZE, NULL);
