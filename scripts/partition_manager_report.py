@@ -41,13 +41,23 @@ def print_region(region, size, pm_config):
     sorted_pm_config = sorted(sorted_pm_config, key=lambda x: pm_config[x]['address'])
 
     # Create text lines
-    lines = ['{}{}: {} ({}){}'.format(
+    lines = []
+    endspan = 0
+    for name in sorted_pm_config:
+        lines.append('{}{}: {} ({}){}'.format(
                 '| '+bcolors['WARNING'] if 'span' not in pm_config[name] else '+---'+bcolors['OKBLUE'],
                 hex(pm_config[name]['address']),
                 name,
                 hex(pm_config[name]['size']),
-                bcolors['ENDC'])
-            for name in sorted_pm_config]
+                bcolors['ENDC']))
+        if name == sorted_pm_config[-1]:
+            continue
+        if 'span' in pm_config[name]:
+            endspan = pm_config[name]['end_address']
+        if pm_config[name]['end_address'] == endspan and ('span' not in pm_config[name]) \
+                and 'span' not in pm_config[sorted_pm_config[sorted_pm_config.index(name)+1]]:
+            lines.append('+' + bcolors['OKBLUE'] + bcolors['ENDC'])
+
     maxlen = max(map(len, lines)) + 1
 
     # Add top and bottom of frame. Add dummy color so alignment always works.
