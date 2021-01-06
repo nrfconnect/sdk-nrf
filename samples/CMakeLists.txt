@@ -44,7 +44,7 @@ if (CONFIG_SECURE_BOOT)
   else()
     add_child_image(
       NAME b0
-      SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/bootloader
+      SOURCE_DIR ${CONFIG_B0_SOURCE_DIR}
       )
   endif()
   if (CONFIG_SOC_NRF5340_CPUAPP AND CONFIG_BOOTLOADER_MCUBOOT)
