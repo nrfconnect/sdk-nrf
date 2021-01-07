@@ -7,7 +7,7 @@
 #include <shell/shell.h>
 
 #include <zboss_api.h>
-#include <zb_error_handler.h>
+#include <zigbee/zigbee_error_handler.h>
 #include "zigbee_cli.h"
 #include "zigbee_cli_cmd_zcl.h"
 
