@@ -642,6 +642,45 @@ The Partition Manager stores all variables as target properties on the ``partiti
 
    --slot-size $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PARTITIONS_PRIMARY_SIZE>
 
+.. _pm_partition_reports:
+
+Partition placement reports
+---------------------------
+
+You can generate an ASCII-art map report to get an overview of how the partition manager creates flash memory partitions.
+This is especially useful when using multiple bootloaders.
+
+To generate the report, use the ``ninja partition_manager_report`` or ``west build -t partition_manager_report`` commands.
+
+For example, if you generate a partition placement report on the build of :file:`zephyr/samples/hello_world` with the nRF52840 development kit using |NSIB| and MCUboot, you would get as an output an ASCII partition map that looks like the following:
+
+.. code-block:: console
+
+    (0x100000 - 1024.0kB):
+   +------------------------------------------+
+   +---0x0: b0 (0x9000)-----------------------+
+   | 0x0: b0_image (0x8000)                   |
+   | 0x8000: provision (0x1000)               |
+   +---0x9000: s0 (0xc200)--------------------+
+   | 0x9000: s0_pad (0x200)                   |
+   +---0x9200: s0_image (0xc000)--------------+
+   | 0x9200: mcuboot (0xc000)                 |
+   | 0x15200: EMPTY_0 (0xe00)                 |
+   +---0x16000: s1 (0xc200)-------------------+
+   | 0x16000: s1_pad (0x200)                  |
+   | 0x16200: EMPTY_1 (0xe00)                 |
+   | 0x17000: s1_image (0xc000)               |
+   +---0x23000: mcuboot_primary (0x6e000)-----+
+   | 0x23000: mcuboot_pad (0x200)             |
+   +---0x23200: mcuboot_primary_app (0x6de00)-+
+   +---0x23200: spm_app (0x6de00)-------------+
+   | 0x23200: app (0x6de00)                   |
+   | 0x91000: mcuboot_secondary (0x6e000)     |
+   | 0xff000: EMPTY_2 (0x1000)                |
+   +------------------------------------------+
+
+The sizes of each partition are determined by the associated `pm.yml` file, such as :file:`nrf/samples/bootloader/pm.yml` for |NSIB| and :file:`bootloader/mcuboot/boot/zephyr/pm.yml` for MCUboot.
+
 .. _ug_pm_static:
 
 Static configuration

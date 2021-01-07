@@ -11,7 +11,7 @@ The firmware programmed to a device can be composed of either one application or
 In the latter, one of the images, the *parent image*, requires one or more other images, the *child images*, to be present.
 The child image then *chain-loads*, or *boots*, the parent image, which could also be a child image to another parent image, and boots that one.
 
-The most common use cases for builds consisting of multiple images are applications that require a bootloader to be present or applications for multi-core CPUs.
+The most common use cases for builds composed of multiple images are applications that require a bootloader to be present or applications for multi-core CPUs.
 
 When to use multiple images
 ***************************
@@ -37,22 +37,22 @@ In the |NCS|, multiple images are required in the following scenarios:
 nRF9160 SPU configuration
    The nRF9160 SiP application MCU is divided into a secure and non-secure domain.
    The code in the secure domain can configure the System Protection Unit (SPU) to allow non-secure access to the CPU resources that are required by the application, and then jump to the code in the non-secure domain.
-   Therefore, each nRF9160 sample, the parent image, requires the :ref:`secure_partition_manager` (or :ref:`TF-M <ug_tfm>`), the child image, to be programmed together with the actual application.
+   Therefore, each nRF9160 sample (the parent image) requires the :ref:`secure_partition_manager` (the child image) to be programmed together with the actual application.
 
    See :ref:`zephyr:nrf9160dk_nrf9160` and :ref:`ug_nrf9160` for more information.
 
-MCUboot bootloader
-   The MCUboot bootloader establishes a root of trust by verifying the next step in the boot sequence.
-   This first-stage bootloader is immutable, which means it must never be updated or deleted.
-   However, it allows to update the application, and therefore MCUboot and the application must be located in different images.
-   In this scenario, the application is the parent image and MCUboot is the child image.
+First-stage and second-stage bootloaders
+   The first-stage bootloader establishes a root of trust by verifying the next step in the boot sequence.
+   This first-stage bootloader is immutable, which means it cannot be updated or deleted.
+   If a second-stage bootloader is present, then the first-stage bootloader is responsible for booting and updating the second-stage bootloader, which in turn is responsible for booting and updating the application.
+   As such, the first-stage bootloader, the second-stage bootloader, and the application must be located in different images.
+   In this scenario, the application is the parent image and the bootloaders are two separate child images.
 
-   See :doc:`MCUboot documentation <mcuboot:index>` for more information.
-   The MCUboot bootloader is used in the :ref:`http_application_update_sample` sample.
+   See :ref:`ug_bootloader` and :ref:`ug_bootloader_adding` for more information.
 
-nRF5340 support
-   nRF5340 contains two separate processors: a network core and an application core.
-   When programming applications to the nRF5340 DK, they must be divided into at least two images, one for each core.
+nRF5340 development kit support
+   The nRF5340 development kit (DK) contains two separate processors: a network core and an application core.
+   When programming an application for the nRF5340 DK, the application must be divided into at least two images, one for each core.
 
    See :ref:`ug_nrf5340` for more information.
 
@@ -69,7 +69,7 @@ When building the parent image, you can configure how the child image should be 
 * Use a prebuilt HEX file of the child image and include it with the parent image.
 * Ignore the child image.
 
-When building the child image from the source or using a prebuilt HEX file, the build system merges the HEX files of the parent and child image together, so that they can easily be programmed in one single step.
+When building the child image from the source or using a prebuilt HEX file, the build system merges the HEX files of both the parent and child image, so that they can be programmed in one single step.
 This means that you can enable and integrate an additional image just by using the default configuration.
 
 To change the default configuration and configure how a child image is handled, locate the BUILD_STRATEGY configuration options for the child image in the parent image configuration.
@@ -91,7 +91,7 @@ Updating the build scripts
 
 To make it possible to enable a child image from a parent image, you must include the child image in the build script.
 
-To do so, place the code in the following example in the cmake tree that is conditional on a configuration option.
+To do so, place the code from the following example in the CMake tree that is conditional on a configuration option.
 In the |NCS|, the code is included in the :file:`CMakeLists.txt` file for the samples, and in the MCUboot repository.
 
 .. code-block:: cmake
@@ -132,7 +132,7 @@ See the following example:
       DOMAIN CPUNET
       )
 
-A *domain* is well-defined if there is a configuration ``CONFIG_DOMAIN_${DOMAIN}_BOARD`` in Kconfig.
+A *domain* is well-defined if there is the ``CONFIG_DOMAIN_${DOMAIN}_BOARD`` configuration option in Kconfig.
 
 Adding configuration options
 ============================
@@ -140,17 +140,16 @@ Adding configuration options
 When enabling a child image, you must select the build strategy to define how the image should be included.
 The following three options are available:
 
-* Build the child image from source along with the parent image - ``<IMAGE_NAME>\_BUILD_STRATEGY_FROM_SOURCE``.
-* Merge the specified HEX file of the child image with the parent image - ``<IMAGE_NAME>\_BUILD_STRATEGY_USE_HEX_FILE``, using ``<IMAGE_NAME>\_HEX_FILE`` to specify the HEX file.
-* Ignore the child image when building and build only the parent image - ``<IMAGE_NAME>\_BUILD_STRATEGY_SKIP_BUILD``.
+* ``<IMAGE_NAME>_BUILD_STRATEGY_FROM_SOURCE`` - Build the child image from source along with the parent image.
+* ``<IMAGE_NAME>_BUILD_STRATEGY_USE_HEX_FILE`` - Merge the specified HEX file of the child image with the parent image, using ``<IMAGE_NAME>_HEX_FILE`` to specify the HEX file.
+* ``<IMAGE_NAME>_BUILD_STRATEGY_SKIP_BUILD`` - Ignore the child image when building and build only the parent image.
 
 .. note::
 
-   Child images that are built with the build strategy ``<IMAGE_NAME>\ _BUILD_STRATEGY_SKIP_BUILD`` or ``<IMAGE_NAME>\ _BUILD_STRATEGY_USE_HEX_FILE`` must define a :ref:`static partition <ug_pm_static_providing>`.
+   Child images that are built with the build strategy ``<IMAGE_NAME>_BUILD_STRATEGY_SKIP_BUILD`` or ``<IMAGE_NAME>_BUILD_STRATEGY_USE_HEX_FILE`` must define a :ref:`static partition <ug_pm_static_providing>`.
 
-Add these configuration options to the Kconfig file of your child image, replacing ``<IMAGE_NAME>`` with the uppercase name of your child image, as specified in ``add_child_image``.
-
-This can be done by including the :file:`Kconfig.template.build_strategy` template as follows:
+Add these configuration options to the Kconfig file of your child image, replacing ``<IMAGE_NAME>`` with the uppercase name of your child image that is specified in ``add_child_image``.
+To do this, include the :file:`Kconfig.template.build_strategy` template as follows:
 
 .. code-block:: Kconfig
 
@@ -166,25 +165,30 @@ The child and parent images are executed in different CMake processes and thus h
 
 Variables in the parent image are not propagated to the child image, with the following exceptions:
 
-* Any variable named ``<IMAGE_NAME>\_FOO`` in a parent image is propagated to the child image named ``<IMAGE_NAME>`` as ``FOO``.
+* Any variable named ``<IMAGE_NAME>_VARIABLEONE`` in a parent image is propagated to the child image named ``<IMAGE_NAME>`` as ``VARIABLEONE``.
 * CMake build settings, such as ``BOARD_DIR``, build type, toolchain info, partition manager info, and similar are always passed to child images.
 
-With these two mechanisms, it is possible to set variables in child images from either parent images or the command line, and it is possible to set variables globally across all images.
-For example, to change the ``FOO`` variable for the ``bar`` child image and the parent image, specify the CMake command as follows::
+With these two mechanisms, you can set variables in child images from either parent images or the command line, and you can also set variables globally across all images.
+For example, to change the ``VARIABLEONE`` variable for the ``childimageone`` child image and the parent image, specify the CMake command as follows:
 
-   cmake -Dbar_FOO=value -DFOO=value
+  .. parsed-literal::
+    :class: highlight
 
-You can extend the CMake command that is used to create the child images by adding flags to the CMake variable ``EXTRA_MULTI_IMAGE_CMAKE_ARGS``.
+     cmake -D*childimageone*_*VARIABLEONE*=value -D*VARIABLEONE*=value
+
+You can extend the CMake command used to create the child images by adding flags to the CMake variable ``EXTRA_MULTI_IMAGE_CMAKE_ARGS``.
 For example, add ``--trace-expand`` to that variable to output more debug information.
 
-With ``west``, these configuration variables are passed into CMake by using the ``--`` separator:
+With ``west``, you can pass these configuration variables into CMake by using the ``--`` separator:
 
 .. code-block:: console
 
-   west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- -Dmcuboot_CONF_FILE=prj_a.conf -DCONF_FILE=app_prj.conf
+   west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
+   -Dmcuboot_CONF_FILE=prj_a.conf \
+   -DCONF_FILE=app_prj.conf
 
-It is possible for a project to pass Kconfig configuration files and fragments to child images by placing them in a :file:`child_image` folder in the application source directory.
-The listing below describes how leverage this functionality, ``ACI_NAME`` is the name of the child image that the configuration will be applied to.
+You can make a project pass Kconfig configuration files and fragments to child images by placing them in the :file:`child_image` folder in the application source directory.
+The listing below describes how to leverage this functionality, where ``ACI_NAME`` is the name of the child image to which the configuration will be applied.
 
 .. literalinclude:: ../../cmake/multi_image.cmake
     :language: c
@@ -197,46 +201,64 @@ Variables in child images
 It is possible to provide configuration settings for child images, either as individual settings or using Kconfig fragments.
 Each child image is referenced using its image name.
 
-The following example sets the configuration option ``CONFIG_FOO=val`` in the child image ``bar``:
+The following example sets the configuration option ``CONFIG_VARIABLEONE=val`` in the child image ``childimageone``:
 
   .. parsed-literal::
     :class: highlight
 
-     cmake -D*bar*_CONFIG_FOO=val [...]
+     cmake -D*childimageone*_*CONFIG_VARIABLEONE=val* [...]
 
 You can add a Kconfig fragment to the child image default configuration in a similar way.
-The following example adds an extra Kconfig fragment ``baz.conf`` to ``bar``:
+The following example adds an extra Kconfig fragment ``extrafragment.conf`` to ``childimageone``:
 
   .. parsed-literal::
     :class: highlight
 
-     cmake -D*bar*_OVERLAY_CONFIG=*baz.conf* [...]
+     cmake -D*childimageone*_OVERLAY_CONFIG=*extrafragment.conf* [...]
 
 It is also possible to provide a custom configuration file as a replacement for the default Kconfig file for the child image.
-The following example uses the custom configuration file ``myfile.conf`` when building ``bar``:
+The following example uses the custom configuration file ``myfile.conf`` when building ``childimageone``:
 
   .. parsed-literal::
     :class: highlight
 
-     cmake -D*bar*_CONF_FILE=*myfile.conf* [...]
+     cmake -D*childimageone*_CONF_FILE=*myfile.conf* [...]
 
 If your application includes multiple child images, then you can combine all the above as follows:
 
-* Setting ``CONFIG_FOO=val`` in main application.
-* Adding a Kconfig fragment ``baz.conf`` to ``bar`` child image, using ``-Dbar_OVERLAY_CONFIG=baz.conf``.
+* Setting ``CONFIG_VARIABLEONE=val`` in the main application.
+* Adding a Kconfig fragment ``extrafragment.conf`` to the ``childimageone`` child image, using ``-Dchildimageone_OVERLAY_CONFIG=extrafragment.conf``.
 * Using ``myfile.conf`` as configuration for the ``quz`` child image, using ``-Dquz_CONF_FILE=myfile.conf``.
 
   .. parsed-literal::
     :class: highlight
 
-     cmake -DCONFIG_FOO=val -D*bar*_OVERLAY_CONFIG=*baz.conf* -Dquz_CONF_FILE=*myfile.conf* [...]
+     cmake -DCONFIG_VARIABLEONE=val -D*childimageone*_OVERLAY_CONFIG=*extrafragment.conf* -Dquz_CONF_FILE=*myfile.conf* [...]
 
 See :ref:`ug_bootloader` for more details.
 
 .. note::
 
-   The build system will grab the overlay or configuration file specified in a CMake argument relative to that image's application directory.
-   For example, the build system would use :file:`nrf/samples/bootloader/overlay-minimal-size.conf` when building with the ``-Db0_OVERLAY_CONFIG_FILE=overlay-minimal-size.conf`` option, whereas ``-DOVERLAY_CONFIG=...`` would grab the overlay from the main application's directory, such as :file:`zephyr/samples/hello_world`.
+   The build system grabs the Kconfig fragment or configuration file specified in a CMake argument relative to that image's application directory.
+   For example, the build system uses ``nrf/samples/bootloader/my-fragment.conf`` when building with the ``-Db0_OVERLAY_CONFIG=my-fragment.conf`` option, whereas ``-DOVERLAY_CONFIG=my-fragment.conf`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-fragment.conf``.
+
+You can also merge multiple fragments into the overall configuration for an image by giving a list of kconfig fragments as a string, separated using ``;``.
+The following example shows how to combine ``abc.conf``, Kconfig fragment of the ``childimageone`` child image, with the ``extrafragment.conf`` fragment:
+
+  .. parsed-literal::
+    :class: highlight
+
+     cmake -D*childimageone*_OVERLAY_CONFIG='*extrafragment.conf*;*abc.conf*'
+
+When the build system finds the fragment, it outputs their merge during the CMake build output as follows:
+
+.. parsed-literal::
+   :class: highlight
+
+   ...
+   Merged configuration '*extrafragment.conf*'
+   Merged configuration '*abc.conf*'
+   ...
 
 Child image targets
 ===================
@@ -244,8 +266,8 @@ Child image targets
 You can indirectly invoke a selection of child image targets from the parent image.
 Currently, the child targets that can be invoked from the parent targets are ``menuconfig``, ``guiconfig``, and any targets listed in ``EXTRA_KCONFIG_TARGETS``.
 
-To disambiguate targets, the same prefix convention used for variables is also used here.
-This means that to run menuconfig, for example, you invoke the ``menuconfig`` target to configure the parent image and ``mcuboot_menuconfig`` to configure the MCUboot child image.
+To disambiguate targets, use the same prefix convention used for variables.
+For example, to run menuconfig, invoke the ``menuconfig`` target to configure the parent image and ``mcuboot_menuconfig`` to configure the MCUboot child image.
 
 You can also invoke any child target directly from its build directory.
 Child build directories are located at the root of the parent's build directory.
@@ -277,25 +299,18 @@ CMake environment variables
 
 Unlike CMake options, CMake environment variables allow you to control the build process without re-invoking CMake.
 
-You can use the CMake environment variables `VERBOSE`_ and `CMAKE_BUILD_PARALLEL_LEVEL`_ to control the verbosity and the number of parallel jobs for a build.
+You can use the CMake environment variables `VERBOSE`_ and `CMAKE_BUILD_PARALLEL_LEVEL`_ to control the verbosity and the number of parallel jobs for a build:
 
-When using |SES|, you must set these environment variables before starting SES, and they will apply only to the build of the child images.
-On the command line, you must set them before invoking ``west``, and they will apply to both the parent image and the child images.
-For example, to build with verbose output and one parallel job, use the following commands (where *build_target* is the target for the board for which you are building):
+* When using |SES|, you must set these environment variables before starting SES.
+  They apply only to the build of the child images.
+* When using the command line, you must set them before invoking ``west``.
+  They apply to both the parent and child images.
+  For example, to build with verbose output and one parallel job, use the following commands, where *build_target* is the target for the development kit for which you are building:
 
-* Linux/macOS:
+  .. parsed-literal::
+     :class: highlight
 
-     .. parsed-literal::
-        :class: highlight
-
-        $ VERBOSE=True CMAKE_BUILD_PARALLEL_LEVEL=1 west build -b *build_target*
-
-* Windows:
-
-     .. parsed-literal::
-        :class: highlight
-
-        > set VERBOSE=True && set CMAKE_BUILD_PARALLEL_LEVEL=1 && west build -b *build_target*
+     west build -b *build_target* -- -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_PARALLEL_LEVEL=1
 
 Memory placement
 ****************

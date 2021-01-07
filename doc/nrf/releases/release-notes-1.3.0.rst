@@ -387,7 +387,7 @@ MCUboot
 =======
 
 * Added external flash secondary slot MCUboot.
-  See :ref:`ug_bootloader_flash`.
+  See :ref:`ug_bootloader_external_flash`.
 * Added an option to build Ed25519 signature validation without using mbedTLS, by relying on a bundled tinycrypt-based SHA-512 implementation.
 * Replaced CBOR decoding in serial recovery with code generated from a CDDL description.
   This results in a flash footprint reduction of more than 1 KB while serial recovery is enabled.

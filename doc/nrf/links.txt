@@ -335,6 +335,8 @@
 
 .. _`MQTT`: https://en.wikipedia.org/wiki/MQTT
 
+.. _`HSM`: https://en.wikipedia.org/wiki/Hardware_security_module
+
 .. ### Source: doc.microsoft.com
 
 .. _`Azure Firmware Over The Air (FOTA)`: https://docs.microsoft.com/en-us/azure/iot-hub/tutorial-firmware-update
@@ -605,3 +607,5 @@
 .. _`Thread Group's Confluence wiki page`: https://threadgroup.atlassian.net/wiki/spaces/THREADTEST/pages/25900869/Supporting+Material
 
 .. _`JSON Web Token (JWT)`: https://jwt.io/introduction
+
+.. _`Semantic versioning`: https://semver.org/
