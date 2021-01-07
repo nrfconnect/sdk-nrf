@@ -150,7 +150,7 @@ config PM_PARTITION_SIZE_TFM_RAM
 
 config PM_PARTITION_SIZE_BL2
 	hex
-	default 0x10000
+	default 0x8000
 	help
 	  Memory set aside for the BL2 partition.
 	  The prompt has been removed since the value is dictated by TFM and
