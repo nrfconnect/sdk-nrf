@@ -84,6 +84,10 @@ static void test_erase(void)
 				page_info.size);
 	zassert_equal(rc, 0, "Cannot erase flash");
 
+	rc = flash_erase(flash_dev, page_info.start_offset,
+				2 * page_info.size);
+	zassert_equal(rc, 0, "Cannot erase flash");
+
 	rc = flash_read(flash_dev, page_info.start_offset,
 			buf, EXPECTED_SIZE);
 	zassert_equal(rc, 0, "Cannot read flash");
@@ -165,6 +169,10 @@ static void test_out_of_bounds(void)
 
 	rc = flash_write(flash_dev, flash_size - 4,
 					data, 4);
+	zassert_equal(rc, 0, NULL);
+
+	rc = flash_write(flash_dev, flash_size - 2 * page_size,
+					data, 2 * page_size);
 	zassert_equal(rc, 0, NULL);
 
 	rc = flash_write(flash_dev, flash_size - 4,
