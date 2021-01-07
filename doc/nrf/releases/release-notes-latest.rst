@@ -145,6 +145,12 @@ nRF9160
     * Fixed an issue with overflowing HTTP request buffers.
     * Fixed issues with TCP/UDP server restart.
     * Added support for allowing only specified TCP/TLS client IP addresses (using the #XTCPFILTER command).
+    * Fixed the unsolicited result code (URC) message format following the 3GPP TS27.007 specification.
+    * Fixed a bug that occurred when the size of an AT command was exactly the maximum buffer size.
+    * Optimized SRAM usage.
+    * Disabled external XTAL usage for UARTE by default.
+    * Added a recovery mechanism for cases where a UART frame error happens.
+    * Enhanced data mode support for TCP/UDP proxy.
 
   * :ref:`lib_fota_download` library:
 

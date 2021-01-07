@@ -63,10 +63,13 @@ static k_tid_t udp_thread_id;
 
 static struct sockaddr_in remote;
 static int udp_sock;
+static bool udp_server_role;
 static bool udp_datamode;
 
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
+void enter_datamode(void);
+bool check_uart_flowcontrol(void);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -132,6 +135,7 @@ static int do_udp_server_start(uint16_t port)
 			udp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
+	udp_server_role = true;
 	sprintf(rsp_buf, "#XUDPSVR: %d,\"started\"\r\n", udp_sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	LOG_DBG("UDP server started");
@@ -237,6 +241,7 @@ static int do_udp_client_connect(const char *url, uint16_t port, int sec_tag)
 			udp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
+	udp_server_role = false;
 	sprintf(rsp_buf, "#XUDPCLI: %d,\"connected\"\r\n", udp_sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
@@ -272,8 +277,13 @@ static int do_udp_send(const uint8_t *data, int datalen)
 	}
 
 	while (offset < datalen) {
-		ret = sendto(udp_sock, data + offset, datalen - offset, 0,
-			(struct sockaddr *)&remote, sizeof(remote));
+		if (udp_server_role) {
+			ret = sendto(udp_sock, data + offset, datalen - offset,
+				0, (struct sockaddr *)&remote, sizeof(remote));
+		} else {
+			ret = send(udp_sock, data + offset, datalen - offset,
+				0);
+		}
 		if (ret < 0) {
 			LOG_ERR("send() failed: %d", -errno);
 			if (errno != EAGAIN && errno != ETIMEDOUT) {
@@ -303,8 +313,13 @@ static int do_udp_send_datamode(const uint8_t *data, int datalen)
 	uint32_t offset = 0;
 
 	while (offset < datalen) {
-		ret = sendto(udp_sock, data + offset, datalen - offset, 0,
-			(struct sockaddr *)&remote, sizeof(remote));
+		if (udp_server_role) {
+			ret = sendto(udp_sock, data + offset, datalen - offset,
+				0, (struct sockaddr *)&remote, sizeof(remote));
+		} else {
+			ret = send(udp_sock, data + offset, datalen - offset,
+				0);
+		}
 		if (ret < 0) {
 			LOG_ERR("send() failed: %d", -errno);
 			ret = -errno;
@@ -350,8 +365,14 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 		if ((fds.revents & POLLIN) != POLLIN) {
 			continue;
 		} else {
-			ret = recvfrom(udp_sock, rx_data, sizeof(rx_data), 0,
-				(struct sockaddr *)&remote, &size);
+			if (udp_server_role) {
+				ret = recvfrom(udp_sock, rx_data,
+					sizeof(rx_data), 0,
+					(struct sockaddr *)&remote, &size);
+			} else {
+				ret = recv(udp_sock, rx_data,
+					sizeof(rx_data), 0);
+			}
 		}
 		if (ret < 0) {
 			LOG_WRN("recv() error: %d", -errno);
@@ -415,9 +436,16 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 				LOG_WRN("Server is running");
 				return -EINVAL;
 			}
+#if defined(CONFIG_SLM_DATAMODE_HWFC)
+			if (op == AT_SERVER_START_WITH_DATAMODE &&
+			    !check_uart_flowcontrol()) {
+				return -EINVAL;
+			}
+#endif
 			err = do_udp_server_start(port);
 			if (err == 0 && op == AT_SERVER_START_WITH_DATAMODE) {
 				udp_datamode = true;
+				enter_datamode();
 			}
 		} else if (op == AT_SERVER_STOP) {
 			if (udp_sock < 0) {
@@ -463,7 +491,6 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
-	int param_count = at_params_valid_count_get(&at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -486,13 +513,20 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 			if (err) {
 				return err;
 			}
-			if (param_count > 4) {
+			if (at_params_valid_count_get(&at_param_list) > 4) {
 				at_params_int_get(&at_param_list, 4, &sec_tag);
 			}
+#if defined(CONFIG_SLM_DATAMODE_HWFC)
+			if (op == AT_CLIENT_CONNECT_WITH_DATAMODE &&
+			    !check_uart_flowcontrol()) {
+				return -EINVAL;
+			}
+#endif
 			err = do_udp_client_connect(url, port, sec_tag);
 			if (err == 0 &&
 			    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				udp_datamode = true;
+				enter_datamode();
 			}
 		} else if (op == AT_CLIENT_DISCONNECT) {
 			if (udp_sock < 0) {
@@ -542,7 +576,8 @@ static int handle_at_udp_send(enum at_cmd_type cmd_type)
 	char data[NET_IPV4_MTU];
 	int size = NET_IPV4_MTU;
 
-	if (remote.sin_family == AF_UNSPEC || remote.sin_port == INVALID_PORT) {
+	if (remote.sin_family == AF_UNSPEC ||
+	    remote.sin_port == INVALID_PORT) {
 		return err;
 	}
 
@@ -577,7 +612,7 @@ static int handle_at_udp_send(enum at_cmd_type cmd_type)
 
 /**@brief API to handle UDP Proxy AT commands
  */
-int slm_at_udp_proxy_parse(const char *at_cmd, uint16_t length)
+int slm_at_udp_proxy_parse(const char *at_cmd)
 {
 	int ret = -ENOENT;
 	enum at_cmd_type type;
@@ -595,11 +630,6 @@ int slm_at_udp_proxy_parse(const char *at_cmd, uint16_t length)
 			ret = udp_proxy_at_list[i].handler(type);
 			break;
 		}
-	}
-
-	/* handle sending in data mode */
-	if (ret == -ENOENT && udp_datamode) {
-		ret = do_udp_send_datamode(at_cmd, length);
 	}
 
 	return ret;
@@ -621,6 +651,7 @@ int slm_at_udp_proxy_init(void)
 {
 	udp_sock = INVALID_SOCKET;
 	udp_datamode = false;
+	udp_server_role = false;
 	remote.sin_family = AF_UNSPEC;
 	remote.sin_port = INVALID_PORT;
 
@@ -644,4 +675,30 @@ int slm_at_udp_proxy_uninit(void)
 	}
 
 	return 0;
+}
+
+/**@brief API to get datamode from external
+ */
+bool slm_udp_get_datamode(void)
+{
+	return udp_datamode;
+}
+
+/**@brief API to set datamode from external
+ */
+void slm_udp_set_datamode_off(void)
+{
+	if (udp_sock != INVALID_SOCKET) {
+		udp_datamode = false;
+	}
+}
+
+/**@brief API to send UDP data in datamode
+ */
+int slm_udp_send_datamode(const uint8_t *data, int len)
+{
+	int size = do_udp_send_datamode(data, len);
+
+	LOG_DBG("datamode %d sent", size);
+	return size;
 }
