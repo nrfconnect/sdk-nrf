@@ -182,7 +182,6 @@ endmenu
 
 config NRF_CLOUD_CONNECTION_POLL_THREAD
 	bool "Poll cloud connection in a separate thread"
-	depends on CLOUD_API
 
 module=NRF_CLOUD
 module-dep=LOG

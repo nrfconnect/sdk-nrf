@@ -302,9 +302,14 @@ static int disconnection_handler(const struct nct_evt *nct_evt)
 	/* Set the state to INITIALIZED and notify the application of
 	 * disconnection.
 	 */
-	const struct nrf_cloud_evt evt = {
-		.type = NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED
+	struct nrf_cloud_evt evt = {
+		.type = NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED,
+		.status = NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE,
 	};
+
+	if (nfsm_get_disconnect_requested()) {
+		evt.status = NRF_CLOUD_DISCONNECT_USER_REQUEST;
+	}
 
 	nfsm_set_current_state_and_notify(STATE_INITIALIZED, &evt);
 
