@@ -1246,18 +1246,6 @@ def test():
     assert 'e' not in td
     expect_addr_size(td, 'f', 0, 100)
 
-    # Verify that an error is raised when no partition inside 'one_of' dicts exist as dict value
-    failed = False
-    td = {
-        'a': {'placement': {'after': ['x0', 'x1']}, 'size': 100},
-        'app': {}
-    }
-    try:
-        resolve(td, 'app')
-    except PartitionError:
-        failed = True
-    assert failed
-
     # Verify that an error is raised when no partition inside 'one_of' dicts exist as list item
     failed = False
     td = {
