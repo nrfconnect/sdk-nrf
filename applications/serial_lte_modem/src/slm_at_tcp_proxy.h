@@ -20,13 +20,11 @@
  * @brief TCP proxy AT command parser.
  *
  * @param at_cmd AT command or data string.
- * @param length AT command or data string length.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, negative code means error.
- *           Otherwise, positive code means data is sent in data mode.
  */
-int slm_at_tcp_proxy_parse(const char *at_cmd, uint16_t length);
+int slm_at_tcp_proxy_parse(const char *at_cmd);
 
 /**
  * @brief List TCP proxy AT commands.
@@ -51,4 +49,21 @@ int slm_at_tcp_proxy_init(void);
 int slm_at_tcp_proxy_uninit(void);
 /** @} */
 
+/**@brief API to get datamode from external
+ */
+bool slm_tcp_get_datamode(void);
+
+/**@brief API to set datamode off from external
+ */
+void slm_tcp_set_datamode_off(void);
+
+/**@brief API to send TCP data in datamode
+ *
+ * @param data Raw data string to send.
+ * @param len  Length of the raw data.
+ *
+ * @retval positive code means data is sent in data mode.
+ *           Otherwise, negative code means error.
+ */
+int slm_tcp_send_datamode(const uint8_t *data, int len);
 #endif /* SLM_AT_TCP_PROXY_ */

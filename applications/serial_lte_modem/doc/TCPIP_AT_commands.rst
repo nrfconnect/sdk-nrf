@@ -1117,7 +1117,7 @@ Examples
    at#xtcpsvr?
    #XTCPSVR: 1,2,0
    OK
-   #XTCPSVR: "timeout"
+   #XTCPSVR: -110,"disconnected"
    at#xtcpsvr?
    #XTCPSVR: 1,-1
    OK
