@@ -109,7 +109,7 @@ nRF9160
   * :ref:`lwm2m_carrier` - demonstrates how to use the :ref:`liblwm2m_carrier_readme` library to connect to the operator LwM2M network.
   * :ref:`lwm2m_client` - demonstrates how to use Zephyr's :ref:`zephyr:lwm2m_interface` interface to implement a sample LwM2M application.
     This sample can run against an LwM2M demo server, but cannot connect to the operator network.
-  * :ref:`usb_uart_bridge_sample` - acts as a serial adapter for Thingy:91, providing USB serial ports for debug output and the ability to send AT commands to the modem.
+  * USB-UART bridge sample - acts as a serial adapter for Thingy:91, providing USB serial ports for debug output and the ability to send AT commands to the modem.
     This sample runs on the nRF52840 SoC on Thingy:91.
 
 * Added the following libraries:
@@ -439,7 +439,7 @@ Documentation
   * Other:
 
     * :ref:`bootloader`
-    * :ref:`usb_uart_bridge_sample`
+    * USB-UART bridge sample
 
 * Added or updated documentation for the following libraries:
 

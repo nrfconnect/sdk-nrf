@@ -1,7 +1,0 @@
-&uart0 {
-	compatible = "nordic,nrf-uarte";
-	status = "okay";
-};
-&uart1 {
-	status = "okay";
-};
