@@ -16,6 +16,8 @@
 	  DT_GPIO_FLAGS(DT_NODELABEL(nrf_radio_fem), dt_property)) \
 	 ? false : true)
 
+#define MPSL_FEM_SPI_IF DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), spi_if)
+
 #define MPSL_FEM_GPIO_INVALID_PIN        0xFFU
 #define MPSL_FEM_GPIOTE_INVALID_CHANNEL  0xFFU
 #define MPSL_FEM_DISABLED_GPIO_CONFIG_INIT \
@@ -53,6 +55,40 @@ static void fem_pin_num_correction(uint8_t *p_gpio_pin, const char *gpio_lbl)
 	__ASSERT(false, "Unknown GPIO port DT label");
 }
 
+static int inactive_pin_configure(uint8_t pin, const char *gpio_lbl,
+				  gpio_flags_t flags)
+{
+	const struct device *port;
+
+	if (gpio_lbl != NULL) {
+		port = device_get_binding(gpio_lbl);
+	} else {
+		if (pin < 32) {
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio0), okay)
+			port = device_get_binding(
+				DT_LABEL(DT_NODELABEL(gpio0)));
+#else
+			__ASSERT(false, "Unknown GPIO port DT label");
+#endif
+		} else {
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio1), okay)
+			pin -= 32;
+			port = device_get_binding(
+				DT_LABEL(DT_NODELABEL(gpio1)));
+#else
+			__ASSERT(false, "Unknown GPIO port DT label");
+#endif
+		}
+	}
+
+	if (!port) {
+		return -EIO;
+	} else {
+		return gpio_pin_configure(
+			port, pin, GPIO_OUTPUT_INACTIVE | flags);
+	}
+}
+
 #if IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_GPIO)
 static int fem_nrf21540_gpio_configure(void)
 {
@@ -70,6 +106,7 @@ static int fem_nrf21540_gpio_configure(void)
 #if !DT_NODE_EXISTS(DT_NODELABEL(nrf_radio_fem))
 #error Node with label 'nrf_radio_fem' not found in the devicetree.
 #endif
+	int err;
 
 	mpsl_fem_nrf21540_gpio_interface_config_t cfg = {
 		.fem_config = {
@@ -156,6 +193,67 @@ static int fem_nrf21540_gpio_configure(void)
 			       DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem),
 					     pdn_gpios));
 #endif
+
+#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), mode_gpios)
+	err = inactive_pin_configure(
+		DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), mode_gpios),
+		DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), mode_gpios),
+		DT_GPIO_FLAGS(DT_NODELABEL(nrf_radio_fem), mode_gpios));
+
+	if (err) {
+		return err;
+	}
+#endif
+
+#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios)
+	err = inactive_pin_configure(
+		DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios),
+		DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios),
+		DT_GPIO_FLAGS(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios));
+
+	if (err) {
+		return err;
+	}
+#endif
+
+#if DT_NODE_HAS_STATUS(MPSL_FEM_SPI_IF, okay)
+	err = inactive_pin_configure(
+		DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), sck_pin),
+		NULL,
+		0);
+
+	if (err) {
+		return err;
+	}
+
+	err = inactive_pin_configure(
+		DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), miso_pin),
+		NULL,
+		0);
+
+	if (err) {
+		return err;
+	}
+
+	err = inactive_pin_configure(
+		DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), mosi_pin),
+		NULL,
+		0);
+
+	if (err) {
+		return err;
+	}
+
+	err = inactive_pin_configure(
+		DT_SPI_DEV_CS_GPIOS_PIN(MPSL_FEM_SPI_IF),
+		DT_SPI_DEV_CS_GPIOS_LABEL(MPSL_FEM_SPI_IF),
+		DT_SPI_DEV_CS_GPIOS_FLAGS(MPSL_FEM_SPI_IF));
+
+	if (err) {
+		return err;
+	}
+#endif
+	(void)err;
 
 	return mpsl_fem_nrf21540_gpio_interface_config_set(&cfg);
 }
