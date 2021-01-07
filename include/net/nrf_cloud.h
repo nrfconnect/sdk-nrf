@@ -34,6 +34,8 @@ extern "C" {
 enum nrf_cloud_evt_type {
 	/** The transport to the nRF Cloud is established. */
 	NRF_CLOUD_EVT_TRANSPORT_CONNECTED = 0x1,
+	/** In the process of connecting to nRF Cloud. */
+	NRF_CLOUD_EVT_TRANSPORT_CONNECTING,
 	/** There was a request from nRF Cloud to associate the device
 	 * with a user on the nRF Cloud.
 	 */
@@ -56,6 +58,35 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_FOTA_DONE,
 	/** There was an error communicating with the cloud. */
 	NRF_CLOUD_EVT_ERROR = 0xFF
+};
+
+/**@ nRF Cloud disconnect status. */
+enum nrf_cloud_disconnect_status {
+	NRF_CLOUD_DISCONNECT_USER_REQUEST,
+	NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE,
+	NRF_CLOUD_DISCONNECT_INVALID_REQUEST,
+	NRF_CLOUD_DISCONNECT_MISC,
+	NRF_CLOUD_DISCONNECT_COUNT
+};
+
+/**@ nRF Cloud connect result. */
+enum nrf_cloud_connect_result {
+	NRF_CLOUD_CONNECT_RES_SUCCESS = 0,
+	NRF_CLOUD_CONNECT_RES_ERR_NOT_INITD = -1,
+	NRF_CLOUD_CONNECT_RES_ERR_INVALID_PARAM = -2,
+	NRF_CLOUD_CONNECT_RES_ERR_NETWORK = -3,
+	NRF_CLOUD_CONNECT_RES_ERR_BACKEND = -4,
+	NRF_CLOUD_CONNECT_RES_ERR_MISC = -5,
+	NRF_CLOUD_CONNECT_RES_ERR_NO_MEM = -6,
+	/* Invalid private key */
+	NRF_CLOUD_CONNECT_RES_ERR_PRV_KEY = -7,
+	/* Invalid CA or client cert */
+	NRF_CLOUD_CONNECT_RES_ERR_CERT = -8,
+	/* Other cert issue */
+	NRF_CLOUD_CONNECT_RES_ERR_CERT_MISC = -9,
+	/* Timeout, SIM card may be out of data */
+	NRF_CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA = -10,
+	NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED = -11,
 };
 
 /** @brief Sensor types supported by the nRF Cloud. */
@@ -177,8 +208,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param);
  *
  * @param[in] param Parameters to be used for the connection.
  *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval Connect result defined by enum nrf_cloud_connect_result.
  */
 int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
 
