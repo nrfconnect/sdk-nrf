@@ -38,7 +38,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52dk_nrf52832
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810
 
 
 The sample also requires a phone or tablet running a compatible application.
@@ -68,6 +68,15 @@ Building and running
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_uart`
 
 .. include:: /includes/build_and_run.txt
+
+Minimal build
+=============
+
+You can build the sample with a minimum configuration as a demonstration of how to reduce code size and RAM usage.
+
+.. code-block:: console
+
+   west build samples/bluetooth/peripheral_uart -- -DCONF_FILE='prj_minimal.conf'
 
 .. _peripheral_uart_testing:
 
