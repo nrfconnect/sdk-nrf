@@ -107,11 +107,11 @@ manifest:
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
-      revision: c243b9a7a7b3c471023193992b46cf1bd1910450
+      revision: 9d092898ef26ece140d9225e037274b64d4f851e
       remote: throwtheswitch
     - name: unity
       path: test/cmock/vendor/unity
-      revision: 031f3bbe45f8adf504ca3d13e6f093869920b091
+      revision: cf949f45ca6d172a177b00da21310607b97bc7a7
       remote: throwtheswitch
     - name: mbedtls-nrf
       path: mbedtls
