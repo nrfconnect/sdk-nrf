@@ -487,6 +487,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Ensured that shields can be placed in other BOARD_ROOT folders.
   * Added basic support for Clang 10 with x86.
+  * Fixed a bug that prevented compiling the :ref:`bootloader` with :option:`CONFIG_SB_SIGNING_PUBLIC_KEY`
 
 * System:
 
