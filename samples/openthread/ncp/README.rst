@@ -53,6 +53,10 @@ By default, the log levels for all modules are set to critical to not engage the
 To make the solution flexible, you can change independently the log levels for your modules, for the whole Zephyr system, and for OpenThread.
 Use the :file:`overlay-logging.conf` overlay file as reference for this purpose.
 
+.. include:: ../cli/README.rst
+   :start-after: ot_cli_sample_fem_support_start
+   :end-before: ot_cli_sample_fem_support_end
+
 Requirements
 ************
 
