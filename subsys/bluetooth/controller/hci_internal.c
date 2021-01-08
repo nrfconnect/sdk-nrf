@@ -330,6 +330,14 @@ static void vs_supported_commands(sdc_hci_vs_zephyr_supported_commands_t *cmds)
 }
 #endif	/* CONFIG_BT_HCI_VS */
 
+static void supported_features(sdc_hci_ip_lmp_features_t *features)
+{
+	memset(features, 0, sizeof(*features));
+
+	features->bdedr_not_supported = 1;
+	features->le_supported = 1;
+}
+
 static void le_read_supported_states(uint8_t *buf)
 {
 	/* Use 2*uint32_t instead of uint64_t to reduce code size. */
@@ -477,7 +485,8 @@ static uint8_t info_param_cmd_put(uint8_t const * const cmd,
 		return 0;
 	case SDC_HCI_OPCODE_CMD_IP_READ_LOCAL_SUPPORTED_FEATURES:
 		*param_length_out += sizeof(sdc_hci_cmd_ip_read_local_supported_features_return_t);
-		return sdc_hci_cmd_ip_read_local_supported_features((void *)event_out_params);
+		supported_features((void *)event_out_params);
+		return 0;
 	case SDC_HCI_OPCODE_CMD_IP_READ_BD_ADDR:
 		*param_length_out += sizeof(sdc_hci_cmd_ip_read_bd_addr_return_t);
 		return sdc_hci_cmd_ip_read_bd_addr((void *)event_out_params);
