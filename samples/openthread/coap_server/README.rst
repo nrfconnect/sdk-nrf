@@ -26,6 +26,10 @@ This sample uses the native `OpenThread CoAP API`_ for communication.
 For new application development, use :ref:`Zephyr's CoAP API<zephyr:coap_sock_interface>`.
 For example usage of the Zephyr CoAp API, see the :ref:`coap_client_sample` sample.
 
+.. include:: ../cli/README.rst
+   :start-after: ot_cli_sample_fem_support_start
+   :end-before: ot_cli_sample_fem_support_end
+
 Requirements
 ************
 
