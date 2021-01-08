@@ -9,7 +9,7 @@ Sensor Client
 
 The Sensor Client model reads and configures the sensors exposed by :ref:`bt_mesh_sensor_srv_readme` models.
 
-Unlike the Server model, the Client only creates a single model instance in the mesh composition data.
+Unlike the Sensor Server model, the Sensor Client only creates a single model instance in the mesh composition data.
 The Sensor Client can send messages to both the Sensor Server and the Sensor Setup Server, as long as it has the right application keys.
 
 Configuration

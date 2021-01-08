@@ -6,7 +6,7 @@
 
 if BT_MESH
 
-menu "Bluetooth Mesh"
+menu "Bluetooth mesh"
 
 rsource "Kconfig.models"
 rsource "Kconfig.dk_prov"

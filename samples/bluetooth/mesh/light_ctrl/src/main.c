@@ -5,7 +5,7 @@
  */
 
 /** @file
- *  @brief Nordic Mesh light control sample
+ *  @brief Nordic mesh light fixture sample
  */
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>

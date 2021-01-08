@@ -1,14 +1,14 @@
 .. _ug_bt_mesh:
 
-Bluetooth Mesh
+Bluetooth mesh
 ##############
 
-The |NCS| provides support for developing applications using the Bluetooth Mesh protocol.
+The |NCS| provides support for developing applications using the Bluetooth mesh protocol.
 The support is based on Zephyr's :ref:`bluetooth_mesh` implementation.
 
-See :ref:`samples` for the list of available Bluetooth Mesh samples.
+See :ref:`samples` for the list of available Bluetooth mesh samples.
 
-The Bluetooth Mesh samples use the `nRF Mesh mobile app`_ to perform provisioning and configuration.
+The Bluetooth mesh samples use the `nRF Mesh mobile app`_ to perform provisioning and configuration.
 
 .. toctree::
    :maxdepth: 1

@@ -12,7 +12,7 @@ The Property Client can talk directly to all types of Property Servers, but only
 
 Generally, the Property Client should only target User Property Servers, unless it is part of a network administrator node that is responsible for configuring the other mesh nodes.
 
-To ease configuration, the Property Client can be paired with a Client Property Server that lists which properties this Client will request.
+To ease the configuration, the Property Client can be paired with a Client Property Server that lists which properties this Property Client will request.
 
 Extended models
 ===============

@@ -9,7 +9,7 @@ Time Client
 
 The Time Client model provides time sources for and configures :ref:`bt_mesh_time_srv_readme` models.
 
-Unlike the server model, the client only creates a single model instance in the mesh composition data.
+Unlike the Time Server model, the Time Client only creates a single model instance in the mesh composition data.
 The Time Client can send messages to both the Time Server and the Time Setup Server, as long as it has the right application keys.
 
 Extended models

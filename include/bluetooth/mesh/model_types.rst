@@ -1,15 +1,15 @@
 .. _bt_mesh_models_overview:
 
-Bluetooth Mesh models overview
+Bluetooth mesh models overview
 ##############################
 
 .. contents::
    :local:
    :depth: 2
 
-A Bluetooth Mesh model is a standardized component that defines a series of states and related behaviors.
-Models encapsulate a single feature of a Mesh node, and expose this feature to the mesh network.
-Each Mesh-based product implements several models.
+A Bluetooth mesh model is a standardized component that defines a series of states and related behaviors.
+Models encapsulate a single feature of a mesh node, and expose this feature to the mesh network.
+Each mesh-based product implements several models.
 
 States, either simple or complex, are used to indicate the condition of a device, for example whether it is on or off.
 Some states are bound to other, which causes them to mutually update their values.
@@ -38,7 +38,7 @@ All server models store changes to their configuration persistently using the :r
 Configuration
 *************
 
-You can configure Mesh models in |NCS| using Kconfig options.
+You can configure mesh models in |NCS| using Kconfig options.
 See :ref:`configure_application` for more information.
 
 The options related to each model configuration are listed in the respective documentation pages.
@@ -48,7 +48,7 @@ The options related to each model configuration are listed in the respective doc
 Common types for all models
 ***************************
 
-All models in the Bluetooth Mesh Model Specification share some common types, which are collected in a single header file.
+All models in the Bluetooth mesh model specification share some common types, which are collected in a single header file.
 These include transitions, common IDs and other types that are rarely actively used.
 
 Each model can also contain its own common types, listed in the respective documentation pages.

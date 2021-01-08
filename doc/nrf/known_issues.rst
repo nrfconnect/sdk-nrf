@@ -429,13 +429,13 @@ Reconnection issues after bonding
   The peripheral samples (:ref:`peripheral_uart`, :ref:`peripheral_lbs`, :ref:`peripheral_hids_mouse`) have reconnection issues after performing bonding (LE Secure Connection pairing enable) with nRF Connect for Desktop.
   These issues result in disconnection.
 
-Bluetooth Mesh
+Bluetooth mesh
 ==============
 
 .. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-5580: nRF5340 only supports SoftDevice Controller
-  On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth Mesh.
+  On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth mesh.
 
 Bootloader
 ==========

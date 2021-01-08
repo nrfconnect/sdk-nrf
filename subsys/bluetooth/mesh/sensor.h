@@ -20,8 +20,8 @@ extern "C" {
 
 /**
  * @defgroup BT_MESH_SENSOR_FORMATS Sensor channel formats
- * @brief All available sensor channel formats in the Mesh Device Properties
- *        Specification.
+ * @brief All available sensor channel formats in the mesh device properties
+ * Specification.
  * @{
  */
 
@@ -95,8 +95,8 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_coefficient;
 
 /**
  * @defgroup BT_MESH_SENSOR_UNITS Sensor value units
- * @brief All available sensor value units in the Mesh Device Properties
- *        Specification.
+ * @brief All available sensor value units in the mesh device properties
+ * specification.
  * @{
  */
 extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_hours;

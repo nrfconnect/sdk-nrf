@@ -1,17 +1,17 @@
 .. _bluetooth_mesh_light:
 
-Bluetooth: Mesh Light
+Bluetooth: Mesh light
 #####################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth Mesh Light sample demonstrates how to set up a basic Mesh server model application and control LEDs with the Bluetooth Mesh, using the :ref:`bt_mesh_onoff_readme`.
+The Bluetooth mesh light sample demonstrates how to set up a basic mesh server model application, and control LEDs with the Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
 
 .. note::
-    This sample is self-contained and can be tested on its own.
-    However, it is required when testing the the :ref:`bluetooth_mesh_light_switch` sample.
+   This sample is self-contained, and can be tested on its own.
+   However, it is required when testing the :ref:`bluetooth_mesh_light_switch` sample.
 
 Overview
 ********
@@ -19,9 +19,9 @@ Overview
 This sample is split into two source files:
 
 * A :file:`main.c` file to handle initialization.
-* One additional file for handling Mesh models, :file:`model_handler.c`.
+* One additional file for handling mesh models, :file:`model_handler.c`.
 
-After provisioning and configuring the Mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the LEDs on the development kit from the app.
+After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the LEDs on the development kit from the app.
 
 Provisioning
 ============
@@ -31,7 +31,7 @@ The provisioning is handled by the :ref:`bt_mesh_dk_prov`.
 Models
 ======
 
-The following table shows the Mesh light composition data for this sample:
+The following table shows the mesh light composition data for this sample:
 
 .. table::
    :align: center
@@ -77,7 +77,7 @@ Buttons:
 
 LEDs:
    Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
-   Show the OnOff state of the Generic OnOff server of the corresponding element.
+   Show the OnOff state of the Generic OnOff Server of the corresponding element.
 
 
 Building and running
@@ -115,7 +115,7 @@ Complete the following steps in the nRF Mesh app to configure models:
 
 1. On the Network screen, tap the :guilabel:`Mesh Light` node.
    Basic information about the mesh node and its configuration is displayed.
-#. In the Mesh node view, expand the first element.
+#. In the mesh node view, expand the first element.
    It contains the list of models in the first element of the node.
 #. Tap :guilabel:`Generic OnOff Server` to see the model's configuration.
 #. Bind the model to application keys to make it open for communication:

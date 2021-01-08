@@ -10,7 +10,7 @@ Sensor Server
 The Sensor Server model holds a list of sensors, and exposes them to the mesh network.
 There may be multiple Sensor Server models on a single mesh node, and each model may hold up to 47 sensors.
 
-The Sensor Server Model adds two model instances in the composition data:
+The Sensor Server model adds two model instances in the composition data:
 
 * Sensor Server
 * Sensor Setup Server
@@ -19,8 +19,8 @@ The two model instances share the states of the Sensor Server, but accept differ
 This allows for a fine-grained control of the access rights for the Sensor Server states, as the two model instances can be bound to different application keys.
 
 * Sensor Server is the user-facing model in the pair.
-  It provides access to the Sensor Descriptors, the Sensor Data, and Sensor Series, all of which are read-only states.
-* Sensor Setup Server provides access to the Sensor Cadence and Sensor Settings, allowing configurator devices to set up the publish rate and parameters for each sensor.
+  It provides access to read-only states Sensor Descriptors, Sensor Data, and Sensor Series.
+* Sensor Setup Server provides access to Sensor Cadence and Sensor Settings, allowing configurator devices to set up the publish rate and parameters for each sensor.
 
 Configuration
 =============

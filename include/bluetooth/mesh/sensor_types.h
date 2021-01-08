@@ -7,8 +7,8 @@
 /** @file
  *  @defgroup bt_mesh_sensor_types Sensor types
  *  @{
- *  @brief All available sensor types from the Mesh Device Properties
- *        Specification.
+ *  @brief All available sensor types from the mesh device properties
+ *  specification.
  */
 
 #ifndef BT_MESH_SENSOR_TYPES_H__
