@@ -84,7 +84,7 @@ enum bt_mesh_rgb_ch {
  * otherwise very hard to detect, and relatively easy to make:
  *
  * As the @ref bt_mesh_model::user_data is a void pointer, it does not have
- * any type checking. The Mesh model implementations wrap this macro, often
+ * any type checking. The mesh model implementations wrap this macro, often
  * taking a pointer parameter to a context structure, passing it to the model
  * user data. As the @c BT_MESH_MODEL_ macros are used in listing of models,
  * users are likely to copy and paste them, but only change the suffix.

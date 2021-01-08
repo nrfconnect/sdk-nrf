@@ -44,7 +44,7 @@ struct bt_mesh_time_tai {
 struct bt_mesh_time_status {
 	/** TAI time. */
 	struct bt_mesh_time_tai tai;
-	/** Accumulated uncertainty of the Mesh Timestamp in milliseconds. */
+	/** Accumulated uncertainty of the mesh Timestamp in milliseconds. */
 	uint64_t uncertainty;
 	/** Current TAI-UTC Delta (leap seconds). */
 	int16_t tai_utc_delta;

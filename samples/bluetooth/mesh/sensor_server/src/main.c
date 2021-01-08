@@ -5,7 +5,7 @@
  */
 
 /** @file
- *  @brief Nordic Mesh Sensor Server sample
+ *  @brief Nordic mesh sensor sample
  */
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
