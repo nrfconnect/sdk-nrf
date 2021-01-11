@@ -675,6 +675,11 @@ def get_dynamic_area_start_and_size(static_config, base, size, dp):
     return start, end - start
 
 
+def get_end_address(pm_config):
+    for part in pm_config:
+        pm_config[part]['end_address'] = pm_config[part]['address'] + pm_config[part]['size']
+
+
 def get_region_config(pm_config, region_config, static_conf=None):
     start = region_config['base_address']
     size = region_config['size']
@@ -703,8 +708,7 @@ def get_region_config(pm_config, region_config, static_conf=None):
 
         solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf, dp)
 
-    for part in pm_config:
-        pm_config[part]['end_address'] = pm_config[part]['address'] + pm_config[part]['size']
+    get_end_address(pm_config)
 
 
 def solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf):
@@ -965,7 +969,7 @@ def expect_addr_size(td, name, expected_address, expected_size):
     if expected_address:
         assert td[name]['address'] == expected_address, \
             'Address of {} was {}, expected {}.\ntd:{}'.format(name, td[name]['address'], expected_address, pformat(td))
-    if expected_size and expected_address and 'end_address' in td[name]:
+    if expected_size and expected_address:
         assert td[name]['end_address'] == expected_address + expected_size, \
             'End address of {} was {}, expected {}.\ntd:{}'.format(name, td[name]['end_address'], expected_address + expected_size, pformat(td))
 
@@ -1039,6 +1043,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'a', 0, 100)
     expect_addr_size(td, 'app', 100, 700)
     expect_addr_size(td, 'b', 800, 200)
@@ -1195,6 +1200,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'a', 0, 100)  # b is after a
     expect_addr_size(td, 'b', 100, 200)  # b is after a
     expect_addr_size(td, 'c', 300, 200)  # c shares size with b
@@ -1239,6 +1245,7 @@ def test():
     # Perform the same test as above, but run it through the 'resolve' function this time.
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
+    get_end_address(td)
     assert 'a' not in td
     assert 'b' not in td
     assert 'c' not in td
@@ -1302,6 +1309,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'EMPTY_0', 100, 700)
     expect_addr_size(td, 'app', 800, 200)
 
@@ -1329,6 +1337,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'EMPTY_0', 100, 100)
     expect_addr_size(td, 'with_alignment', 200, 100)
 
@@ -1339,6 +1348,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'app', 0, 700)
     expect_addr_size(td, 'with_alignment', 800, 100)
     expect_addr_size(td, 'EMPTY_0', 900, 100)
@@ -1351,6 +1361,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 10000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'EMPTY_0', 100, 200)
     expect_addr_size(td, 'with_alignment', 300, 100)
     expect_addr_size(td, 'EMPTY_1', 400, 600)
@@ -1364,6 +1375,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 10000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'EMPTY_0', 10000, 300)
     expect_addr_size(td, 'with_alignment', 10300, 100)
     expect_addr_size(td, 'EMPTY_1', 10400, 600)
@@ -1413,6 +1425,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 0x100000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'EMPTY_0', 0x14200, 0xe00)
     expect_addr_size(td, 'EMPTY_1', 0x21200, 0xe00)
     expect_addr_size(td, 'EMPTY_2', 0xdc000, 0x1000)
@@ -1436,6 +1449,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'should_exist', 0, 200)
 
     td = {'spm': {'placement': {'before': ['app']}, 'size': 100},
@@ -1444,6 +1458,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'mcuboot', 0, None)
     expect_addr_size(td, 'spm', 200, None)
     expect_addr_size(td, 'app', 300, 700)
@@ -1455,6 +1470,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'mcuboot', 0, None)
     expect_addr_size(td, 'spm', 200, 100)
     expect_addr_size(td, 'app', 300, 700)
@@ -1472,6 +1488,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'mcuboot', 0, None)
     expect_addr_size(td, 'spm', 210, None)
     expect_addr_size(td, 'mcuboot_slot0', 200, 200)
@@ -1493,6 +1510,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'mcuboot', 0, None)
     expect_addr_size(td, 'spm', 210, None)
     expect_addr_size(td, 'mcuboot_slot0', 200, 200)
@@ -1518,6 +1536,7 @@ def test():
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, {}, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
+    get_end_address(td)
     expect_addr_size(td, 'a', 0, None)
     expect_addr_size(td, 'b', 100, None)
     expect_addr_size(td, 'c', 120, None)
@@ -1536,6 +1555,7 @@ def test():
           'app': {}}
     s, _ = resolve(td, 'app')
     set_addresses_and_align(td, {}, s, 1000, 'app')
+    get_end_address(td)
     expect_addr_size(td, 'b0', 0, None)
     expect_addr_size(td, 'mcuboot', 100, None)
     expect_addr_size(td, 'app', 300, 700)
@@ -1543,6 +1563,7 @@ def test():
     td = {'b0': {'placement': {'before': ['mcuboot', 'app']}, 'size': 100}, 'app': {}}
     s, _ = resolve(td, 'app')
     set_addresses_and_align(td, {}, s, 1000, 'app')
+    get_end_address(td)
     expect_addr_size(td, 'b0', 0, None)
     expect_addr_size(td, 'app', 100, 900)
 
@@ -1551,6 +1572,7 @@ def test():
           'app': {}}
     s, _ = resolve(td, 'app')
     set_addresses_and_align(td, {}, s, 1000, 'app')
+    get_end_address(td)
     expect_addr_size(td, 'mcuboot', 0, None)
     expect_addr_size(td, 'spu', 200, None)
     expect_addr_size(td, 'app', 300, 700)
@@ -1562,6 +1584,7 @@ def test():
           'app': {}}
     s, _ = resolve(td, 'app')
     set_addresses_and_align(td, {}, s, 1000, 'app')
+    get_end_address(td)
     expect_addr_size(td, 'b0', 0, None)
     expect_addr_size(td, 'mcuboot', 50, None)
     expect_addr_size(td, 'spu', 150, None)
