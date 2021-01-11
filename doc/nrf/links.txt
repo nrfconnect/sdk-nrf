@@ -1,7 +1,7 @@
 .. ### This page lists links used in NCS docs.
-       Links are grouped by source URL if three or more have the same source URL.
-       Otherwise, they are placed in "Source: other".
-       Links not separated by blank line are related to one another.
+.. ### Links are grouped by source URL if three or more have the same source URL.
+.. ### Otherwise, they are placed in "Source: other".
+.. ### Links not separated by blank line are related to one another.
 
 .. ### Source: zephyrproject.org
 
@@ -12,11 +12,11 @@
 .. ### Source: github.com
 
 .. _`GitHub`: https://github.com/
-.. _`GitHub fork`: https://help.github.com/en/articles/fork-a-repo
-.. _`GitHub duplicate`: https://help.github.com/en/articles/duplicating-a-repository
+.. _`GitHub fork`: https://docs.github.com/en/github/getting-started-with-github/fork-a-repo
+.. _`GitHub duplicate`: https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/duplicating-a-repository
 
 .. _`sdk-zephyr`: https://github.com/nrfconnect/sdk-zephyr
-.. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
+.. _`official Zephyr repository`:
 .. _`Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 .. _`Zephyr commit f12536`: https://github.com/zephyrproject-rtos/hal_nordic/commit/f12536cbfb27b7bb05b40b97bd8a8857f2bf23ec
 .. _`Zephyr commit 2db49c`: https://github.com/zephyrproject-rtos/zephyr/commit/2db49c4b99850b3e7a53667fe7bb9ba6fc2a5b7d
@@ -130,7 +130,7 @@
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
 .. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
-.. _`Energy efficiency` : https://www.nordicsemi.com/Products/Low-power-cellular-IoT#Cellular-performance-for-the-IoT
+.. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT#Cellular-performance-for-the-IoT
 
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
 .. _`Thingy:91 product page`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91
@@ -140,7 +140,7 @@
 
 .. ### Source: infocenter.nordicsemi.com
 
-.. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/
+.. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
 
 .. _`LTE Link Monitor`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_intro.html
 .. _`Managing credentials`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_certificate_manager.html
@@ -362,9 +362,9 @@
 
 .. _`Alexa Gadgets Bluetooth LE`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/bluetooth-le-pair-connect.html
 .. _`Alexa Gadgets Bluetooth LE Packet Format`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/packet-ble.html
-.. _`Alexa Gadgets Setup`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/steps-to-set-up-gadget.html
 .. _`Alexa Gadgets Interfaces`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/defined-interfaces.html
 .. _`Alexa Gadgets Custom Event`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/custom-interface.html#events
+.. _`Alexa Gadgets Setup`:
 .. _`Alexa Gadgets Registration`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/steps-to-set-up-gadget.html
 .. _`Alerts interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/alerts-interface.html
 .. _`Alexa.Gadget.MusicData interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/alexa-gadget-musicdata-interface.html
@@ -399,15 +399,15 @@
 .. ### Source: nist.gov
 
 .. _`NIST - AES`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/block-ciphers#AES
-.. _`NIST - CCM`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/CAVP-TESTING-BLOCK-CIPHER-MODES#CCM
-.. _`NIST - GCM`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/CAVP-TESTING-BLOCK-CIPHER-MODES#GCMVS
+.. _`NIST - CCM`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/CAVP-TESTING-BLOCK-CIPHER-MODES#CCM
+.. _`NIST - GCM`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/CAVP-TESTING-BLOCK-CIPHER-MODES#GCMVS
 .. _`NIST - HMAC`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/message-authentication
-.. _`NIST - SHA`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#shavs
+.. _`NIST - SHA`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/Secure-Hashing#shavs
 
 .. _`The EAX Mode of Operation`: https://csrc.nist.gov/csrc/media/projects/block-cipher-techniques/documents/bcm/proposed-modes/eax/eax-spec.pdf
 
-.. _`NIST - ECDH`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Component-Testing#ECCCDH
-.. _`NIST - ECDSA`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Digital-Signatures#ecdsa2vs
+.. _`NIST - ECDH`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/Component-Testing#ECCCDH
+.. _`NIST - ECDSA`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/Digital-Signatures#ecdsa2vs
 
 .. _`NIST SP 800-38A`: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38a.pdf
 .. _`NIST SP 800-38B`: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38b.pdf
@@ -506,7 +506,7 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
-.. _`BH1749NUC-E`: https://www.rohm.com/datasheet/BH1749NUC/bh1749nuc-e
+.. _`BH1749NUC-E`: https://d1d2qsbl8m0m72.cloudfront.net/en/products/databook/datasheet/ic/sensor/light/bh1749nuc-e.pdf
 
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 
