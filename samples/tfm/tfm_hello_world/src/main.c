@@ -8,7 +8,6 @@
 #include <sys/printk.h>
 #include <string.h>
 #include <stdio.h>
-#include <tfm_ns_interface.h>
 #include "psa/crypto.h"
 
 #define HELLO_PATTERN "Hello World! %s\n"
@@ -19,17 +18,12 @@ void main(void)
 	char hello_digest[32];
 	size_t len;
 	psa_status_t status;
-	enum tfm_status_e tfm_status;
 
 	len = snprintf(hello_string, sizeof(hello_string),
 		HELLO_PATTERN, CONFIG_BOARD);
 
 	printk("%s", hello_string);
 
-	tfm_status = tfm_ns_interface_init();
-	if (tfm_status != TFM_SUCCESS) {
-		printk("tfm_ns_interface_init failed with status %d\n", tfm_status);
-	}
 	status = psa_crypto_init();
 	if (status != PSA_SUCCESS) {
 		printk("psa_crypto_init failed with status %d\n", status);
