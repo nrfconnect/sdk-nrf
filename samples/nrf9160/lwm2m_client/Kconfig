@@ -27,6 +27,13 @@ config APP_HOLD_TIME_GPS
 	  The minimum time in seconds that notifications can be sent to
 	  observers of the Location data.
 
+config APP_MCUBOOT_FLASH_BUF_SZ
+	int "Size of buffer used for flash write operations during MCUboot updates"
+	depends on DFU_TARGET_MCUBOOT
+	default 512
+	help
+	  Buffer size must be aligned to the minimal flash write block size.
+
 choice
 	prompt "GPS device"
 	default GPS_USE_SIM

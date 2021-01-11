@@ -9,6 +9,7 @@
 #include <nrf_modem.h>
 #include <drivers/flash.h>
 #include <dfu/dfu_target.h>
+#include <dfu/dfu_target_mcuboot.h>
 #include <dfu/mcuboot.h>
 #include <logging/log_ctrl.h>
 #include <net/lwm2m.h>
@@ -25,6 +26,10 @@ LOG_MODULE_REGISTER(app_lwm2m_firmware, CONFIG_APP_LOG_LEVEL);
 
 #if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
 static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
+#endif
+
+#ifdef CONFIG_DFU_TARGET_MCUBOOT
+static uint8_t mcuboot_buf[CONFIG_APP_MCUBOOT_FLASH_BUF_SZ];
 #endif
 
 static int image_type;
@@ -294,6 +299,14 @@ int lwm2m_init_image(void)
 		LOG_INF("Firmware failed to be updated");
 		lwm2m_engine_set_u8("5/0/5", RESULT_UPDATE_FAILED);
 	}
+
+#ifdef CONFIG_DFU_TARGET_MCUBOOT
+	/* Set the required buffer for MCUboot targets */
+	ret = dfu_target_mcuboot_set_buf(mcuboot_buf, sizeof(mcuboot_buf));
+	if (ret) {
+		LOG_ERR("Failed to set MCUboot flash buffer %d", ret);
+	}
+#endif
 
 	return ret;
 }
