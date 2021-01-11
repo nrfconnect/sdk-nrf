@@ -122,14 +122,14 @@ foreach (slot ${slots})
       > ${signature_file}
       )
   elseif (CONFIG_SB_SIGNING_CUSTOM)
-    set(sign_cmd
-      ${CONFIG_SB_SIGNING_COMMAND}
-      ${hash_file}
-      > ${signature_file}
-      )
-    if (sign_cmd STREQUAL "" OR NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE})
-      message(WARNING "You must specify a signing command and valid public key file.")
+    set(custom_sign_cmd "${CONFIG_SB_SIGNING_COMMAND}")
+
+    if ((custom_sign_cmd STREQUAL "") OR (NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE}))
+      message(FATAL_ERROR "You must specify a signing command and valid public key file for custom signing.")
     endif()
+
+    string(APPEND custom_sign_cmd " ${hash_file} > ${signature_file}")
+    string(REPLACE " " ";" sign_cmd ${custom_sign_cmd})
   else ()
     message(WARNING "Unable to parse signing config.")
   endif()
@@ -148,6 +148,7 @@ foreach (slot ${slots})
     COMMENT
     "Creating signature of application"
     USES_TERMINAL
+    COMMAND_EXPAND_LISTS
     )
 
   add_custom_target(
