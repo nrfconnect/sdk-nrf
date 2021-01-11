@@ -74,10 +74,14 @@ External antenna performance setting
   **Workaround:** If you are using nRF9160 DK v0.15.0 or higher and Thingy:91 v1.4.0 or higher, set :option:`CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL` to ``y``.
   Alternatively, for nRF9160 DK v0.15.0, you can set the :option:`CONFIG_NRF9160_GPS_COEX0_STRING` option to ``AT%XCOEX0`` when building the preprogrammed Asset Tracker to achieve the best external antenna performance.
 
-.. rst-class:: v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
-NCSDK-5574: Warnings during FOTA
-   The :ref:`asset_tracker` application prints warnings and error messages during successful FOTA.
+Missing support for FOTA on nRF Cloud
+  The :ref:`asset_tracker` sample does not support the nRFCloud FOTA_v2 protocol.
+  The implementation for supporting FOTA_v2 is found in the following commits:
+  * cef289b559b92186cc54f0257b8c9adc0997f334
+  * 156d4cf3a568869adca445d43a786d819ae10250
+  * f520159f0415f011ae66efb816384a8f7bade83d
 
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
