@@ -338,6 +338,41 @@ static void supported_features(sdc_hci_ip_lmp_features_t *features)
 	features->le_supported = 1;
 }
 
+static void le_supported_features(sdc_hci_le_le_features_t *features)
+{
+	memset(features, 0, sizeof(*features));
+
+	features->le_encryption = 1;
+	features->extended_reject_indication = 1;
+	features->le_ping = 1;
+
+#ifdef CONFIG_BT_CTLR_DATA_LENGTH
+	features->le_data_packet_length_extension = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_PRIVACY
+	features->ll_privacy = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_EXT_SCAN_FP
+	features->extended_scanner_filter_policies = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_PHY_2M
+	features->le_2m_phy = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_PHY_CODED
+	features->le_coded_phy = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_ADV_EXT
+	features->le_extended_advertising = 1;
+#endif
+
+	features->channel_selection_algorithm_2 = 1;
+}
+
 static void le_read_supported_states(uint8_t *buf)
 {
 	/* Use 2*uint32_t instead of uint64_t to reduce code size. */
@@ -535,7 +570,8 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 
 	case SDC_HCI_OPCODE_CMD_LE_READ_LOCAL_SUPPORTED_FEATURES:
 		*param_length_out += sizeof(sdc_hci_cmd_le_read_local_supported_features_return_t);
-		return sdc_hci_cmd_le_read_local_supported_features((void *)event_out_params);
+		le_supported_features((void *)event_out_params);
+		return 0;
 
 	case SDC_HCI_OPCODE_CMD_LE_SET_RANDOM_ADDRESS:
 		return sdc_hci_cmd_le_set_random_address((void *)cmd_params);
