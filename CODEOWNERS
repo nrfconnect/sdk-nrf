@@ -121,6 +121,8 @@ Kconfig*                                  @tejlmand
 /subsys/shell/                            @nordic-krch
 /subsys/spm/                              @ioannisg
 /subsys/nonsecure/                        @ioannisg
+/modules/                                 @tejlmand
+/modules/tfm/                             @oyvindronningstad @ioannisg @hakonfam
 /subsys/zigbee/                           @maciekfabia @mariuszpos
 /tests/                                   @rakons
 /tests/subsys/zigbee/                     @rakons @maciekfabia @mariuszpos
