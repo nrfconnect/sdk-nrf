@@ -922,8 +922,8 @@ def load_static_configuration(args, pm_config):
     # This is done since all partitions in pm_config will be resolved.
     for statically_defined_image in static_config:
         if statically_defined_image in pm_config and statically_defined_image:
-            print(f"Dropping partition '{statically_defined_image}' "
-                  f"since it is statically defined.")
+            print(f"Partition '{statically_defined_image}' is not included "
+                  "in the dynamic resolving since it is statically defined.")
             del pm_config[statically_defined_image]
     return static_config
 
