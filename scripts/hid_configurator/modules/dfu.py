@@ -179,7 +179,7 @@ def b0_get_dfu_image_version(dfu_bin):
 
 
 def mcuboot_is_dfu_file_correct(dfu_bin):
-    res, _ = imgtool.image.Image.verify(dfu_bin, None)
+    res, _, _ = imgtool.image.Image.verify(dfu_bin, None)
 
     if res != imgtool.image.VerifyResult.OK:
         print('DFU image is invalid')
@@ -193,7 +193,7 @@ def mcuboot_get_dfu_image_name(dfu_slot_id):
 
 
 def mcuboot_get_dfu_image_version(dfu_bin):
-    res, ver = imgtool.image.Image.verify(dfu_bin, None)
+    res, ver, _ = imgtool.image.Image.verify(dfu_bin, None)
 
     if res != imgtool.image.VerifyResult.OK:
         print('Image in file is invalid')
