@@ -20,7 +20,8 @@ Use the drop-down filter to see known issues for previous releases and check if 
    <select name="versions" id="versions-select">
      <option value="all">All versions</option>
      <option value="v1-4-99-dev1">v1.4.99-dev1</option>
-     <option value="v1-4-1" selected>v1.4.1</option>
+     <option value="v1-4-2" selected>v1.4.2</option>
+     <option value="v1-4-1">v1.4.1</option>
      <option value="v1-4-0">v1.4.0</option>
      <option value="v1-3-2">v1.3.2</option>
      <option value="v1-3-1">v1.3.1</option>
