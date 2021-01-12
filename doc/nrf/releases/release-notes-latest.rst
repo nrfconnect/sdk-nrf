@@ -432,6 +432,8 @@ The following list summarizes the most important changes inherited from upstream
     * Deprecated legacy TCP stack (TCP1).
     * Added multiple minor TCP2 bugfixes and improvements.
     * Added network management events for DHCPv4.
+    * Added periodic throughput printout to the :ref:`zephyr:sockets-echo-server-sample` sample.
+    * Added an experimental option to set preemptive priority for networking threads (:option:`CONFIG_NET_TC_THREAD_PREEMPTIVE`).
 
   * LwM2M:
 
@@ -444,9 +446,14 @@ The following list summarizes the most important changes inherited from upstream
     * Added a new event (:c:enumerator:`LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR`) that notifies the application about underlying socket errors.
       The event is reported after several failed registration attempts.
     * Improved integers packing in TLVs.
+    * Added support for arguments of the LwM2M execute command.
+    * Fixed buffer length check in :c:func:`lwm2m_engine_set`.
+    * Added a possibility to acknowledge LwM2M requests early from the callback (:c:func:`lwm2m_acknowledge`).
+    * Reworked the Bootstrap Delete operation to support all cases defined by the LwM2M specification.
 
   * OpenThread:
 
+    * Updated the OpenThread version to commit ``69e97581e71a340776493dd9f5b65e11caec7954``.
     * Removed obsolete flash driver from the OpenThread platform.
     * Added new OpenThread options:
 
@@ -461,17 +468,26 @@ The following list summarizes the most important changes inherited from upstream
       * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_RETRANSMIT_ENABLE`
       * :option:`CONFIG_OPENTHREAD_PLATFORM_USEC_TIMER_ENABLE`
       * :option:`CONFIG_OPENTHREAD_CONFIG_PLATFORM_INFO`
+      * :option:`CONFIG_OPENTHREAD_RADIO_LINK_IEEE_802_15_4_ENABLE`
+      * :option:`CONFIG_OPENTHREAD_RADIO_LINK_TREL_ENABLE`
+      * :option:`CONFIG_OPENTHREAD_CSL_SAMPLE_WINDOW`
+      * :option:`CONFIG_OPENTHREAD_CSL_RECEIVE_TIME_AHEAD`
+      * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_CSMA_BACKOFF_ENABLE`
+
+    * Added support for RCP co-processor mode.
 
   * MQTT:
 
     * Fixed mutex protection on :c:func:`mqtt_disconnect`.
     * Switched the library to use ``zsock_*`` socket functions instead of POSIX names.
+    * Changed the return value of :c:func:`mqtt_keepalive_time_left` to -1 when keep alive is disabled.
 
   * Sockets:
 
     * Enabled Maximum Fragment Length (MFL) extension on TLS sockets.
     * Added a :c:macro:`TLS_ALPN_LIST` socket option for TLS sockets.
     * Fixed a ``tls_context`` leak on ``ztls_socket()`` failure.
+    * Fixed ``getaddrinfo()`` hints handling with AI_PASSIVE flag.
 
 * Bluetooth Mesh:
 
