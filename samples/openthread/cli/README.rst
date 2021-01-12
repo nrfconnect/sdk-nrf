@@ -74,6 +74,7 @@ See :ref:`ug_radio_fem` for more information.
 
 To add support for the nRF21540 FEM, add the provided :file:`dts-nrf21540-fem.overlay` devicetree overlay file when building.
 The file is located in the :file:`samples/openthread/common` folder.
+Make sure that the GPIOs in the file correspond to those in which your front-end module is connected.
 
 .. note::
    You must add the provided overlay file if you use the nRF21540 EK.
