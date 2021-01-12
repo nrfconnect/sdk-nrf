@@ -134,6 +134,23 @@ nRF9160
 
     * Updated to use the new FOTA (fota_v2) based on nRF Cloud.
 
+  * :ref:`lwm2m_client` sample:
+
+    * Added handling of network failures.
+      The sample now tries to reconnect to the LTE network when a failure is reported.
+
+  * :ref:`lib_azure_iot_hub` library:
+
+    * Improved internal connection state handling.
+
+  * :ref:`nrf_coap_client_sample` sample:
+
+    * Updated the default server URL to ``californium.eclipseprojects.io``.
+
+  * :ref:`mqtt_simple_sample` sample:
+
+    * Updated the default server URL to ``mqtt.eclipseprojects.io``.
+
 Common
 ======
 
@@ -169,6 +186,8 @@ BSD library
 ~~~~~~~~~~~
 
 * Added information about low accuracy mode to the :ref:`nrfxlib:gnss_extension` documentation.
+* Added mutex protection for the :c:func:`nrf_getaddrinfo` function.
+
 
 Trusted Firmware-M:
 -------------------
