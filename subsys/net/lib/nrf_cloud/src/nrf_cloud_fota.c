@@ -723,12 +723,14 @@ static int parse_job_info(struct nrf_cloud_fota_job_info *const job_info,
 		char *ble_str;
 
 		if (get_string_from_array(array, RCV_ITEM_IDX_BLE_ID,
-					   &ble_str)) {
+					  &ble_str)) {
+			LOG_ERR("Failed to get BLE ID from job");
 			goto cleanup;
 		}
 
 		if (bt_addr_from_str(ble_str, ble_id)) {
 			err = -EADDRNOTAVAIL;
+			LOG_ERR("Invalid BLE ID: %s", log_strdup(ble_str));
 			goto cleanup;
 		}
 	}
@@ -744,6 +746,7 @@ static int parse_job_info(struct nrf_cloud_fota_job_info *const job_info,
 				  (int *)&job_info->type) ||
 	    get_number_from_array(array, RCV_ITEM_IDX_FILE_SIZE - offset,
 				  &job_info->file_size)) {
+		LOG_ERR("Error parsing job info");
 		goto cleanup;
 	}
 
@@ -1048,8 +1051,7 @@ static int handle_mqtt_evt_publish(const struct mqtt_evt *evt)
 	}
 
 	ret = parse_job_info(job_info, ble_id, payload, &payload_array);
-
-	if (strcmp(last_job, job_info->id) == 0) {
+	if (ret == 0 && strcmp(last_job, job_info->id) == 0) {
 		skip = true;
 		LOG_INF("Job %s already completed... skipping",
 			log_strdup(last_job));
