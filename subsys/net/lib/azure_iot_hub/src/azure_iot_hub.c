@@ -70,16 +70,26 @@ static struct azure_iot_hub_config conn_config = {
 static azure_iot_hub_evt_handler_t evt_handler;
 
 /* If DPS is used, the IoT hub hostname is obtained through that service,
- * otherwise it has to be set compile time using
+ * otherwise it has to be set in compile time using
  * @option{CONFIG_AZURE_IOT_HUB_HOSTNAME}. The maximal size is length of hub
- * name + device ID length + lengths of ".azure-devices-provisioning.net/"
- * and "/?api-version=2018-06-30"
+ * name + device ID length + length of "/?api-version=2018-06-30". In the case of DPS,
+ * the length of ".azure-devices-provisioning.net/" is also added.
+ * When @option{CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP} is used, the app sets the
+ * device ID in runtime, and the hostname is derived from that.
  */
+#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS) || IS_ENABLED(CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP)
+
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 #define USER_NAME_BUF_LEN	(CONFIG_AZURE_IOT_HUB_HOSTNAME_MAX_LEN + \
 				CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + \
 				sizeof(".azure-devices-provisioning.net/") + \
 				sizeof("/?api-version=2018-06-30"))
+#else
+#define USER_NAME_BUF_LEN	(sizeof(CONFIG_AZURE_IOT_HUB_HOSTNAME "/") + \
+				CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + \
+				sizeof("/?api-version=2018-06-30"))
+#endif
+
 static char user_name_buf[USER_NAME_BUF_LEN];
 static struct mqtt_utf8 user_name = {
 	.utf8 = user_name_buf,
@@ -645,13 +655,18 @@ static void mqtt_evt_handler(struct mqtt_client *const client,
 	}
 }
 
-#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
+#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS) || IS_ENABLED(CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP)
 static struct mqtt_utf8 *user_name_get(void)
 {
 	ssize_t len;
 
+#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 	len = snprintk(user_name_buf, sizeof(user_name_buf), USER_NAME_TEMPLATE,
 		       dps_hostname_get(), conn_config.device_id);
+#else
+	len = snprintk(user_name_buf, sizeof(user_name_buf), USER_NAME_TEMPLATE,
+		       CONFIG_AZURE_IOT_HUB_HOSTNAME, conn_config.device_id);
+#endif
 	if ((len < 0) || (len > sizeof(user_name_buf))) {
 		LOG_ERR("Failed to create user name");
 		return NULL;
@@ -879,6 +894,9 @@ static int client_broker_init(struct mqtt_client *const client, bool dps)
 		tls_cfg->hostname = dps_hostname_get();
 		client->user_name = user_name_get();
 	}
+#elif IS_ENABLED(CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP)
+	tls_cfg->hostname = CONFIG_AZURE_IOT_HUB_HOSTNAME;
+	client->user_name = user_name_get();
 #else /* IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS) */
 	tls_cfg->hostname = CONFIG_AZURE_IOT_HUB_HOSTNAME;
 	client->user_name = &user_name;
