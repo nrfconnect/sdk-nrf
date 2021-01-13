@@ -1077,6 +1077,7 @@ static void fota_evt_handler(struct azure_fota_event *fota_evt)
 		LOG_ERR("AZURE_FOTA_EVT_ERROR");
 		fota_report_send(fota_evt);
 		evt.type = AZURE_IOT_HUB_EVT_FOTA_ERROR;
+		azure_iot_hub_notify_event(&evt);
 		break;
 	default:
 		LOG_ERR("Unhandled FOTA event, type: %d", fota_evt->type);
