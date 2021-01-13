@@ -64,8 +64,7 @@ static struct k_work my_work;
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern struct modem_param_info modem_param;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 
 static inline void setip(uint8_t *buffer, uint32_t ipaddr)
 {
@@ -300,7 +299,7 @@ void ping_task(struct k_work *item)
 
 	freeaddrinfo(si);
 	freeaddrinfo(di);
-	sprintf(rsp_buf, "OK\r\n");
+	sprintf(rsp_buf, "\r\nOK\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
 }
 
@@ -310,26 +309,25 @@ static int ping_test_handler(const char *url, int length, int waittime,
 	int st;
 	struct addrinfo *res;
 	int addr_len;
+	char ipv4_addr[NET_IPV4_ADDR_LEN];
 
 	if (length > ICMP_MAX_LEN) {
 		LOG_ERR("Payload size exceeds limit");
 		return -1;
 	}
 
-	st = modem_info_params_get(&modem_param);
-	if (st < 0) {
-		LOG_ERR("Unable to obtain modem parameters (%d)", st);
+	if (!util_get_ipv4_addr(ipv4_addr)) {
+		LOG_ERR("Unable to obtain local IPv4 address");
 		return -1;
 	}
 
 	/* Check network connection status by checking local IP address */
-	addr_len = strlen(modem_param.network.ip_address.value_string);
+	addr_len = strlen(ipv4_addr);
 	if (addr_len == 0) {
 		LOG_ERR("LTE not connected yet");
 		return -1;
 	}
-	st = getaddrinfo(modem_param.network.ip_address.value_string,
-			NULL, NULL, &res);
+	st = getaddrinfo(ipv4_addr, NULL, NULL, &res);
 	if (st != 0) {
 		LOG_ERR("getaddrinfo(src) error: %d", st);
 		return -st;

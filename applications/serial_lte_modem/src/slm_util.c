@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include "slm_util.h"
+#include <modem/at_cmd.h>
+#include <net/socket.h>
 
 #define PRINTABLE_ASCII(ch) (ch > 0x1f && ch < 0x7f)
 
@@ -141,5 +143,33 @@ bool check_for_ipv4(const char *address, uint8_t length)
 		}
 	}
 
+	return true;
+}
+
+/**brief use AT command to get IPv4 address
+ */
+bool util_get_ipv4_addr(char *address)
+{
+	int err;
+	char at_rsp[128];
+	char *tmp1, *tmp2;
+
+	err = at_cmd_write("AT+CGPADDR", at_rsp, sizeof(at_rsp), NULL);
+	if (err) {
+		return false;
+	}
+	/* parse +CGPADDR: 0,"10.145.192.136" */
+	tmp1 = strstr(at_rsp, "\"");
+	if (tmp1 == NULL) {
+		return false;
+	}
+	tmp1++;
+	tmp2 = strstr(tmp1, "\"");
+	if (tmp2 == NULL) {
+		return false;
+	}
+
+	memcpy(address, tmp1, tmp2 - tmp1);
+	address[tmp2 - tmp1] = '\0';
 	return true;
 }

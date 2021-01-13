@@ -57,7 +57,12 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 	"#XSLMUART: (1200, 2400, 4800, 9600, 14400, 19200, 38400, " \
 	"57600, 115200, 230400, 460800, 921600, 1000000)\r\n"
 
-#define AT_MAX_CMD_LEN	CONFIG_AT_CMD_RESPONSE_MAX_LEN
+
+/** The maximum allowed length of an AT command passed through the SLM
+ *  The space is allocated statically. This limit is in turn limited by
+ *  Modem library's NRF_MODEM_AT_MAX_CMD_SIZE */
+#define AT_MAX_CMD_LEN	4096
+
 #define UART_RX_BUF_NUM	2
 #define UART_RX_LEN	256
 #define UART_RX_TIMEOUT 1
@@ -104,6 +109,10 @@ void slm_at_host_uninit(void);
 void rsp_send(const uint8_t *str, size_t len)
 {
 	int ret;
+
+	if (len == 0) {
+		return;
+	}
 
 	k_sem_take(&tx_done, K_FOREVER);
 
@@ -320,7 +329,6 @@ static int handle_at_slmuart(const char *at_cmd, uint32_t *baudrate)
 static void cmd_send(struct k_work *work)
 {
 	char str[32];
-	static char buf[AT_MAX_CMD_LEN];
 	enum at_cmd_state state;
 	int err;
 
@@ -492,7 +500,7 @@ static void cmd_send(struct k_work *work)
 #endif
 
 	/* Send to modem */
-	err = at_cmd_write(at_buf, buf, AT_MAX_CMD_LEN, &state);
+	err = at_cmd_write(at_buf, at_buf, sizeof(at_buf), &state);
 	if (err < 0) {
 		LOG_ERR("AT command error: %d", err);
 		state = AT_CMD_ERROR;
@@ -500,7 +508,7 @@ static void cmd_send(struct k_work *work)
 
 	switch (state) {
 	case AT_CMD_OK:
-		rsp_send(buf, strlen(buf));
+		rsp_send(at_buf, strlen(at_buf));
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		break;
 	case AT_CMD_ERROR:

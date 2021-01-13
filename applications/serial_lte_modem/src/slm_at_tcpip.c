@@ -107,8 +107,8 @@ void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern struct modem_param_info modem_param;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
+extern uint8_t rx_data[CONFIG_SLM_SOCKET_RX_MAX];
 
 /**@brief Resolves host IPv4 address and port
  */
@@ -372,30 +372,28 @@ static int do_bind(uint16_t port)
 	int ret;
 	struct sockaddr_in local;
 	int addr_len;
+	char ipv4_addr[NET_IPV4_ADDR_LEN];
 
 	local.sin_family = AF_INET;
 	local.sin_port = htons(port);
 
-	ret = modem_info_params_get(&modem_param);
-	if (ret) {
-		LOG_ERR("Unable to obtain modem parameters (%d)", ret);
+	if (!util_get_ipv4_addr(ipv4_addr)) {
+		LOG_ERR("Unable to obtain local IPv4 address");
 		return -1;
 	}
 	/* Check network connection status by checking local IP address */
-	addr_len = strlen(modem_param.network.ip_address.value_string);
+	addr_len = strlen(ipv4_addr);
 	if (addr_len == 0) {
 		LOG_ERR("LTE not connected yet");
 		return -1;
 	}
-	if (!check_for_ipv4(modem_param.network.ip_address.value_string,
-			addr_len)) {
+	if (!check_for_ipv4(ipv4_addr, addr_len)) {
 		LOG_ERR("Invalid local address");
 		return -1;
 	}
 
 	/* NOTE inet_pton() returns 1 as success */
-	if (inet_pton(AF_INET, modem_param.network.ip_address.value_string,
-		&local.sin_addr) != 1) {
+	if (inet_pton(AF_INET, ipv4_addr, &local.sin_addr) != 1) {
 		LOG_ERR("Parse local IP address failed: %d", -errno);
 		return -EINVAL;
 	}
@@ -541,7 +539,6 @@ static int do_send(const uint8_t *data, int datalen)
 static int do_recv(uint16_t length)
 {
 	int ret;
-	char data[NET_IPV4_MTU];
 	int sock = client.sock;
 
 	/* For TCP/TLS Server, receive from imcoming socket */
@@ -554,7 +551,7 @@ static int do_recv(uint16_t length)
 		}
 	}
 
-	ret = recv(sock, data, length, 0);
+	ret = recv(sock, rx_data, length, 0);
 	if (ret < 0) {
 		LOG_WRN("recv() error: %d", -errno);
 		if (errno != EAGAIN && errno != ETIMEDOUT) {
@@ -575,11 +572,11 @@ static int do_recv(uint16_t length)
 	if (ret == 0) {
 		LOG_WRN("recv() return 0");
 	}
-	if (slm_util_hex_check(data, ret)) {
+	if (slm_util_hex_check(rx_data, ret)) {
 		char data_hex[ret * 2];
 		int size = ret * 2;
 
-		ret = slm_util_htoa(data, ret, data_hex, size);
+		ret = slm_util_htoa(rx_data, ret, data_hex, size);
 		if (ret > 0) {
 			rsp_send(data_hex, ret);
 			sprintf(rsp_buf, "\r\n#XRECV: %d, %d\r\n",
@@ -590,7 +587,7 @@ static int do_recv(uint16_t length)
 			LOG_ERR("hex convert error: %d", ret);
 		}
 	} else {
-		rsp_send(data, ret);
+		rsp_send(rx_data, ret);
 		sprintf(rsp_buf, "\r\n#XRECV: %d, %d\r\n",
 			DATATYPE_PLAINTEXT, ret);
 		rsp_send(rsp_buf, strlen(rsp_buf));
@@ -663,9 +660,8 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data,
 static int do_recvfrom(uint16_t length)
 {
 	int ret;
-	char data[NET_IPV4_MTU];
 
-	ret = recvfrom(client.sock, data, length, 0, NULL, NULL);
+	ret = recvfrom(client.sock, rx_data, length, 0, NULL, NULL);
 	if (ret < 0) {
 		LOG_ERR("recvfrom() error: %d", -errno);
 		if (errno != EAGAIN && errno != ETIMEDOUT) {
@@ -681,11 +677,11 @@ static int do_recvfrom(uint16_t length)
 	 * datagrams. When such a datagram is received, the return
 	 * value is 0. Treat as normal case
 	 */
-	if (slm_util_hex_check(data, ret)) {
+	if (slm_util_hex_check(rx_data, ret)) {
 		char data_hex[ret * 2];
 		int size = ret * 2;
 
-		ret = slm_util_htoa(data, ret, data_hex, size);
+		ret = slm_util_htoa(rx_data, ret, data_hex, size);
 		if (ret > 0) {
 			rsp_send(data_hex, ret);
 			sprintf(rsp_buf, "\r\n#XRECVFROM: %d, %d\r\n",
@@ -696,7 +692,7 @@ static int do_recvfrom(uint16_t length)
 			LOG_ERR("hex convert error: %d", ret);
 		}
 	} else {
-		rsp_send(data, ret);
+		rsp_send(rx_data, ret);
 		sprintf(rsp_buf, "\r\n#XRECVFROM: %d, %d\r\n",
 			DATATYPE_PLAINTEXT, ret);
 		rsp_send(rsp_buf, strlen(rsp_buf));
@@ -1077,7 +1073,7 @@ static int handle_at_send(enum at_cmd_type cmd_type)
 static int handle_at_recv(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	uint16_t length = NET_IPV4_MTU;
+	uint16_t length = CONFIG_SLM_SOCKET_RX_MAX;
 
 	if (!client.connected) {
 		LOG_ERR("Not connected yet");
@@ -1177,7 +1173,7 @@ static int handle_at_sendto(enum at_cmd_type cmd_type)
 static int handle_at_recvfrom(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	uint16_t length = NET_IPV4_MTU;
+	uint16_t length = CONFIG_SLM_SOCKET_RX_MAX;
 
 	if (client.sock < 0) {
 		LOG_ERR("Socket not opened yet");

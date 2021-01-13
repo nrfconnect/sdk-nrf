@@ -139,6 +139,14 @@ Check and configure the following configuration options for the sample:
 
    Note that when :option:`CONFIG_SLM_CONNECT_UART_0` is selected, Button 1 can be used to exit idle mode, but not to wake up from sleep mode.
 
+.. option:: CONFIG_SLM_SOCKET_RX_MAX - Maximum RX buffer size for receiving socket data
+
+   This option specifies the maximum buffer size for receiving data through the socket interface.
+   By default, this size is set to :c:enumerator:`NET_IPV4_MTU` (576), which is defined in Zephyr.
+   The maximum value is 708, which is the maximum segment size (MSS) defined for the modem.
+
+   This option impacts the total RAM usage.
+
 .. option:: CONFIG_SLM_NULL_TERMINATION - NULL termination
 
    This option configures the application to accept AT commands without a termination character.

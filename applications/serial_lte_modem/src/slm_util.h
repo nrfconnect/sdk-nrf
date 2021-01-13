@@ -92,6 +92,15 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len,
  */
 bool check_for_ipv4(const char *address, uint8_t length);
 
+
+/**brief use AT command to get IPv4 address
+ *
+ * @param[in] address buffer to hold the IPv4 address
+ *
+ * @return true if IPv4 address obtained, false otherwise
+ */
+bool util_get_ipv4_addr(char *address);
+
 /** @} */
 
 #endif /* SLM_UTIL_ */
