@@ -500,7 +500,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Added :ref:`zephyr:nrf-ieee802154-rpmsg-sample`.
   * Added :ref:`zephyr:cloud-tagoio-http-post-sample`.
-  * Added :ref:`zephyr:sockets-civetweb-websocket-server-sample`.
+  * Added :ref:`zephyr:civetweb-websocket-server-sample`.
   * :ref:`zephyr:led_ws2812_sample`: Updated to force SPIM on nRF52 DK.
   * :ref:`zephyr:cfb_custom_fonts`: Added support for ssd1306fb.
   * :ref:`zephyr:gsm-modem-sample`: Added suspend/resume shell commands.
