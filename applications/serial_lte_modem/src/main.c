@@ -35,9 +35,9 @@ static struct k_work exit_idle_work;
 
 /* global variable used across different files */
 struct at_param_list at_param_list;
-struct modem_param_info modem_param;
-char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 struct k_work_q slm_work_q;
+char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2]; /* SLM URC and socket data */
+uint8_t rx_data[CONFIG_SLM_SOCKET_RX_MAX];  /* socket RX raw data */
 
 /**@brief Recoverable modem library error. */
 void nrf_modem_recoverable_error_handler(uint32_t err)
@@ -174,14 +174,6 @@ void start_execute(void)
 
 	/* check FOTA result */
 	handle_nrf_modem_lib_init_ret();
-
-	err = modem_info_init();
-	if (err) {
-		LOG_ERR("Modem info could not be established: %d", err);
-		return;
-	}
-
-	modem_info_params_init(&modem_param);
 
 	/* Initialize AT Parser */
 	err = at_params_list_init(&at_param_list, CONFIG_SLM_AT_MAX_PARAM);

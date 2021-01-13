@@ -18,7 +18,6 @@ LOG_MODULE_REGISTER(udp_proxy, CONFIG_SLM_LOG_LEVEL);
 
 #define THREAD_STACK_SIZE	(KB(1) + NET_IPV4_MTU)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
-#define DATA_HEX_MAX_SIZE	(2 * NET_IPV4_MTU)
 
 /*
  * Known limitation in this version
@@ -58,7 +57,6 @@ static slm_at_cmd_list_t udp_proxy_at_list[AT_UDP_PROXY_MAX] = {
 	{AT_UDP_SEND, "AT#XUDPSEND", handle_at_udp_send},
 };
 
-static uint8_t data_hex[DATA_HEX_MAX_SIZE];
 static struct k_thread udp_thread;
 static K_THREAD_STACK_DEFINE(udp_thread_stack, THREAD_STACK_SIZE);
 static k_tid_t udp_thread_id;
@@ -72,8 +70,8 @@ void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern struct modem_param_info modem_param;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
+extern uint8_t rx_data[CONFIG_SLM_SOCKET_RX_MAX];
 
 /** forward declaration of thread function **/
 static void udp_thread_func(void *p1, void *p2, void *p3);
@@ -83,6 +81,7 @@ static int do_udp_server_start(uint16_t port)
 	int ret = 0;
 	struct sockaddr_in local;
 	int addr_len;
+	char ipv4_addr[NET_IPV4_ADDR_LEN];
 
 	/* Open socket */
 	udp_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -96,26 +95,23 @@ static int do_udp_server_start(uint16_t port)
 	/* Bind to local port */
 	local.sin_family = AF_INET;
 	local.sin_port = htons(port);
-	ret = modem_info_params_get(&modem_param);
-	if (ret) {
-		LOG_ERR("Unable to obtain modem parameters (%d)", ret);
+	if (!util_get_ipv4_addr(ipv4_addr)) {
+		LOG_ERR("Unable to obtain local IPv4 address");
 		close(udp_sock);
 		return ret;
 	}
-	addr_len = strlen(modem_param.network.ip_address.value_string);
+	addr_len = strlen(ipv4_addr);
 	if (addr_len == 0) {
 		LOG_ERR("LTE not connected yet");
 		close(udp_sock);
 		return -EINVAL;
 	}
-	if (!check_for_ipv4(modem_param.network.ip_address.value_string,
-			addr_len)) {
+	if (!check_for_ipv4(ipv4_addr, addr_len)) {
 		LOG_ERR("Invalid local address");
 		close(udp_sock);
 		return -EINVAL;
 	}
-	if (inet_pton(AF_INET, modem_param.network.ip_address.value_string,
-		&local.sin_addr) != 1) {
+	if (inet_pton(AF_INET, ipv4_addr, &local.sin_addr) != 1) {
 		LOG_ERR("Parse local IP address failed: %d", -errno);
 		close(udp_sock);
 		return -EINVAL;
@@ -325,7 +321,6 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 	int ret;
 	int size = sizeof(struct sockaddr_in);
 	struct pollfd fds;
-	char data[NET_IPV4_MTU];
 
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
@@ -355,7 +350,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 		if ((fds.revents & POLLIN) != POLLIN) {
 			continue;
 		} else {
-			ret = recvfrom(udp_sock, data, NET_IPV4_MTU, 0,
+			ret = recvfrom(udp_sock, rx_data, sizeof(rx_data), 0,
 				(struct sockaddr *)&remote, &size);
 		}
 		if (ret < 0) {
@@ -366,10 +361,11 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 			continue;
 		}
 		if (udp_datamode) {
-			rsp_send(data, ret);
-		} else if (slm_util_hex_check(data, ret)) {
-			ret = slm_util_htoa(data, ret, data_hex,
-				DATA_HEX_MAX_SIZE);
+			rsp_send(rx_data, ret);
+		} else if (slm_util_hex_check(rx_data, ret)) {
+			uint8_t data_hex[ret * 2];
+
+			ret = slm_util_htoa(rx_data, ret, data_hex, ret * 2);
 			if (ret > 0) {
 				sprintf(rsp_buf, "#XUDPRECV: %d, %d\r\n",
 					DATATYPE_HEXADECIMAL, ret);
@@ -383,7 +379,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 			sprintf(rsp_buf, "#XUDPRECV: %d, %d\r\n",
 				DATATYPE_PLAINTEXT, ret);
 			rsp_send(rsp_buf, strlen(rsp_buf));
-			rsp_send(data, ret);
+			rsp_send(rx_data, ret);
 			rsp_send("\r\n", 2);
 		}
 	} while (true);

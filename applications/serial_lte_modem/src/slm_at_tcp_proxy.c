@@ -19,7 +19,6 @@ LOG_MODULE_REGISTER(tcp_proxy, CONFIG_SLM_LOG_LEVEL);
 
 #define THREAD_STACK_SIZE	(KB(3) + NET_IPV4_MTU)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
-#define DATA_HEX_MAX_SIZE	(2 * NET_IPV4_MTU)
 
 /* max 2, listening and incoming sockets */
 #define MAX_POLL_FD		2
@@ -72,8 +71,7 @@ static slm_at_cmd_list_t tcp_proxy_at_list[AT_TCP_PROXY_MAX] = {
 };
 
 static char ip_allowlist[CONFIG_SLM_TCP_FILTER_SIZE][INET_ADDRSTRLEN];
-RING_BUF_DECLARE(data_buf, CONFIG_AT_CMD_RESPONSE_MAX_LEN / 2);
-static uint8_t data_hex[DATA_HEX_MAX_SIZE];
+RING_BUF_DECLARE(data_buf, CONFIG_SLM_SOCKET_RX_MAX * 2);
 static struct k_thread tcp_thread;
 static K_THREAD_STACK_DEFINE(tcp_thread_stack, THREAD_STACK_SIZE);
 K_TIMER_DEFINE(conn_timer, NULL, NULL);
@@ -95,8 +93,8 @@ void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern struct modem_param_info modem_param;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
+extern uint8_t rx_data[CONFIG_SLM_SOCKET_RX_MAX];
 
 /** forward declaration of thread function **/
 static void tcpcli_thread_func(void *p1, void *p2, void *p3);
@@ -107,6 +105,7 @@ static int do_tcp_server_start(uint16_t port)
 	int ret = 0;
 	struct sockaddr_in local;
 	int addr_len;
+	char ipv4_addr[NET_IPV4_ADDR_LEN];
 #if SLM_TCP_PROXY_FUTURE_FEATURE
 	int addr_reuse = 1;
 #endif
@@ -164,25 +163,22 @@ static int do_tcp_server_start(uint16_t port)
 	/* Bind to local port */
 	local.sin_family = AF_INET;
 	local.sin_port = htons(port);
-	ret = modem_info_params_get(&modem_param);
-	if (ret) {
-		LOG_ERR("Unable to obtain modem parameters (%d)", ret);
+	if (!util_get_ipv4_addr(ipv4_addr)) {
+		LOG_ERR("Unable to obtain local IPv4 address");
 		goto exit;
 	}
-	addr_len = strlen(modem_param.network.ip_address.value_string);
+	addr_len = strlen(ipv4_addr);
 	if (addr_len == 0) {
 		LOG_ERR("LTE not connected yet");
 		ret = -EINVAL;
 		goto exit;
 	}
-	if (!check_for_ipv4(modem_param.network.ip_address.value_string,
-			addr_len)) {
+	if (!check_for_ipv4(ipv4_addr, addr_len)) {
 		LOG_ERR("Invalid local address");
 		ret = -EINVAL;
 		goto exit;
 	}
-	if (inet_pton(AF_INET, modem_param.network.ip_address.value_string,
-		&local.sin_addr) != 1) {
+	if (inet_pton(AF_INET, ipv4_addr, &local.sin_addr) != 1) {
 		LOG_ERR("Parse local IP address failed: %d", -errno);
 		ret = -EINVAL;
 		goto exit;
@@ -455,7 +451,9 @@ static void tcp_data_handle(uint8_t *data, uint32_t length)
 	if (proxy.datamode) {
 		rsp_send(data, length);
 	} else if (slm_util_hex_check(data, length)) {
-		ret = slm_util_htoa(data, length, data_hex, DATA_HEX_MAX_SIZE);
+		uint8_t data_hex[length * 2];
+
+		ret = slm_util_htoa(data, length, data_hex, length * 2);
 		if (ret < 0) {
 			LOG_ERR("hex convert error: %d", ret);
 			return;
@@ -536,12 +534,10 @@ int tcpsvr_input(int infd)
 			      K_SECONDS(CONFIG_SLM_TCP_CONN_TIME),
 			      K_NO_WAIT);
 	} else {
-		char data[NET_IPV4_MTU];
-
 		k_timer_stop(&conn_timer);
-		ret = recv(fds[infd].fd, data, NET_IPV4_MTU, 0);
+		ret = recv(fds[infd].fd, rx_data, sizeof(rx_data), 0);
 		if (ret > 0) {
-			tcp_data_handle(data, ret);
+			tcp_data_handle(rx_data, ret);
 		}
 		if (ret < 0) {
 			LOG_WRN("recv() error: %d", -errno);
@@ -714,9 +710,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 			goto exit;
 		}
 		if ((fds[0].revents & POLLIN) == POLLIN) {
-			char data[NET_IPV4_MTU];
-
-			ret = recv(fds[0].fd, data, NET_IPV4_MTU, 0);
+			ret = recv(fds[0].fd, rx_data, sizeof(rx_data), 0);
 			if (ret < 0) {
 				LOG_WRN("recv() error: %d", -errno);
 				continue;
@@ -724,7 +718,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 			if (ret == 0) {
 				continue;
 			}
-			tcp_data_handle(data, ret);
+			tcp_data_handle(rx_data, ret);
 		}
 	}
 exit:

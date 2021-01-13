@@ -39,15 +39,12 @@ enum slm_fota_operation {
 	AT_FOTA_STOP
 };
 
-static char path[URI_PATH_MAX];
-static char hostname[URI_HOST_MAX];
-
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 extern struct k_work_q slm_work_q;
 
 static int do_fota_erase(void)
@@ -92,6 +89,8 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 	int ret = -EINVAL;
 	struct http_parser_url parser;
 	char schema[8];
+	char path[URI_PATH_MAX];
+	char hostname[URI_HOST_MAX];
 
 	http_parser_url_init(&parser);
 	ret = http_parser_parse_url(file_uri, strlen(file_uri), 0, &parser);

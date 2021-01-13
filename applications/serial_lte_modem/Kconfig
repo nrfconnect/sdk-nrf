@@ -14,7 +14,6 @@ config SLM_AT_MODE
 	select AT_CMD
 	select AT_NOTIF
 	select AT_CMD_PARSER
-	select MODEM_INFO
 
 config SLM_AT_MAX_PARAM
 	int "Maximum number of parameters in AT command"
@@ -81,6 +80,17 @@ config SLM_INTERFACE_PIN
 	int "Interface GPIO to wake up or exit idle mode"
 	default 6 if SLM_CONNECT_UART_0
 	default 31 if SLM_CONNECT_UART_2
+
+#
+# Socket
+#
+config SLM_SOCKET_RX_MAX
+	int "Maximum RX buffer size for socket data receive"
+	range 576 708
+	default 576
+	help
+	  Default: NET_IPV4_MTU (576)
+	  Maximum: MSS setting in modem (708)
 
 #
 # TCP/TLS proxy
