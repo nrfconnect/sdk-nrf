@@ -399,7 +399,7 @@ int bt_mesh_sensor_cli_cadence_set_unack(
 
 /** @brief Get the list of settings for the given sensor.
  *
- *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
+ *  This call is blocking if the @c ids buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
  *  bt_mesh_sensor_cli_handlers::settings callback.
  *
