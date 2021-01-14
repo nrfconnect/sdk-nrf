@@ -158,10 +158,10 @@ Complete the following steps to build |NCS| projects on the command line after c
 
       .. note::
 
-	     To build from a directory other than the sample or application directory, run the west build command with an additional parameter *directory_name*,  specifying the sample or application directory.
+	     To build from a directory other than the application directory, run the west build command with an additional parameter *directory_name*,  specifying the application directory.
 
       See :ref:`gs_programming_board_names` for more information on the development boards.
-      To reuse an existing build directory for building another sample or application for another board, pass ``-p=auto`` to ``west build``.
+      To reuse an existing build directory for building another application for another board, pass ``-p=auto`` to ``west build``.
 
       If you want to configure your application, run the following west command:
 
@@ -186,12 +186,16 @@ Complete the following steps to build |NCS| projects on the command line after c
 
          west flash
 
-      To fully erase the board before programming the new sample or application, use the command:
+      This command clears only the flash memory pages that are overwritten with the new application.
+      If the application depends on other flash areas (for example, if it uses the :ref:`zephyr:settings_api` partition), erase the full board before programming to ensure that these areas are updated with the new content.
+      If you do not fully erase the board, the old data in these areas will be retained.
+
+      To fully erase the board before programming the new application, use the following command:
 
       .. code-block:: console
 
          west flash --erase
 
-      The ``west flash`` command automatically resets the board and starts the sample or application.
+      The ``west flash`` command automatically resets the board and starts the application.
 
 For more information on building and programming using the command line, see the Zephyr documentation on :ref:`zephyr:west-build-flash-debug`.
