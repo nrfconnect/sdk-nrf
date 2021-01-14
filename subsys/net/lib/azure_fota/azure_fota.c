@@ -71,7 +71,7 @@ static char *status_str[STATUS_COUNT] = {
 
 #if IS_ENABLED(CONFIG_AZURE_FOTA_APP_VERSION_AUTO)
 static char current_version[CONFIG_AZURE_FOTA_VERSION_MAX_LEN] =
-	STRINGIFY(APP_VERSION);
+	STRINGIFY(AZURE_FOTA_APP_VERSION);
 #else
 BUILD_ASSERT(sizeof(CONFIG_AZURE_FOTA_APP_VERSION) > 1, "No app version given");
 static char current_version[CONFIG_AZURE_FOTA_VERSION_MAX_LEN] =

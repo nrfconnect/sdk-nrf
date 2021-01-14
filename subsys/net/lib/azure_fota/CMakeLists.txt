@@ -9,11 +9,11 @@ zephyr_library_sources(
 )
 
 find_package(Git QUIET)
-if(NOT APP_VERSION AND GIT_FOUND)
+if(NOT AZURE_FOTA_APP_VERSION AND GIT_FOUND)
   execute_process(
     COMMAND ${GIT_EXECUTABLE} describe
     WORKING_DIRECTORY                ${NRF_DIR}
-    OUTPUT_VARIABLE                  APP_VERSION
+    OUTPUT_VARIABLE                  AZURE_FOTA_APP_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_STRIP_TRAILING_WHITESPACE
     ERROR_VARIABLE                   stderr
@@ -21,15 +21,15 @@ if(NOT APP_VERSION AND GIT_FOUND)
   )
   if(return_code)
     message(STATUS "git describe failed: ${stderr};
-    APP_VERSION is left undefined")
+    AZURE_FOTA_APP_VERSION is left undefined")
   elseif(CMAKE_VERBOSE_MAKEFILE)
     message(STATUS "git describe stderr: ${stderr}")
   endif()
 endif()
 
-if(APP_VERSION)
+if(AZURE_FOTA_APP_VERSION)
   zephyr_compile_definitions(
-    APP_VERSION=${APP_VERSION}
+    AZURE_FOTA_APP_VERSION=${AZURE_FOTA_APP_VERSION}
   )
 endif()
 
