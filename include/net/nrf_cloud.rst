@@ -33,6 +33,12 @@ Connecting
 The application can use :c:func:`nrf_cloud_connect` to connect to the cloud.
 This API triggers a series of events and actions in the system.
 If the API fails, the application must retry to connect.
+If the :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled, an nRF Cloud library thread monitors the connection socket.
+When :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` is enabled, an additional event, :c:enumerator:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING`, is sent to the application.
+The status field of :c:struct:`nrf_cloud_evt` contains connection status defined by :c:enumerator:`nrf_cloud_connect_result`.
+The event :c:enumerator:`NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED` also contains additional information in the status field, defined by :c:enumerator:`nrf_cloud_disconnect_status`.
+Additional details for :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` can be found in the Cloud API section below.
+When the poll thread option is used directly with the nRF Cloud library the enumeration values are prefixed with "NRF_".
 
 First, the library tries to establish the transport for communicating with the cloud.
 This procedure involves a TLS handshake that might take up to three seconds.
