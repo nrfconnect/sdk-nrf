@@ -47,6 +47,11 @@ config OPENTHREAD_MBEDTLS_LIB_NAME
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_oberon" if OBERON_BACKEND
 	default "mbedtls_common" if OPENTHREAD_NRF_SECURITY
 
+config OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE
+	int "OpenThread radio transmit workqueue stack size"
+	default 640 if NRF_802154_SER_HOST
+	default 512
+
 endmenu
 
 endif
