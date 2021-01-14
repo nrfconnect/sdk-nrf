@@ -1488,9 +1488,19 @@ void connection_evt_handler(const struct cloud_event *const evt)
 
 		switch (evt->data.err) {
 		case CLOUD_DISCONNECT_INVALID_REQUEST:
-			/* Fall through */
-		case CLOUD_DISCONNECT_MISC:
 			LOG_INF("Cloud connection closed.");
+			break;
+		case CLOUD_DISCONNECT_USER_REQUEST:
+			if (atomic_get(&cloud_association) ==
+			    CLOUD_ASSOCIATION_STATE_RECONNECT ||
+			    atomic_get(&cloud_association) ==
+			    CLOUD_ASSOCIATION_STATE_REQUESTED ||
+			    (atomic_get(&carrier_requested_disconnect))) {
+				connect_wait_s = 10;
+			}
+			break;
+		case CLOUD_DISCONNECT_CLOSED_BY_REMOTE:
+			LOG_INF("Disconnected by the cloud.");
 			if ((atomic_get(&cloud_connect_attempts) == 1) &&
 			    (atomic_get(&cloud_association) ==
 			     CLOUD_ASSOCIATION_STATE_INIT)) {
@@ -1506,21 +1516,11 @@ void connection_evt_handler(const struct cloud_event *const evt)
 #endif
 				connect_wait_s = 10;
 			} else {
-				LOG_INF("This can occur if the device has the wrong nRF Cloud certificates.");
+				LOG_INF("This can occur if the device has the wrong nRF Cloud certificates");
+				LOG_INF("or if the device has been removed from nRF Cloud.");
 			}
 			break;
-		case CLOUD_DISCONNECT_USER_REQUEST:
-			if (atomic_get(&cloud_association) ==
-			    CLOUD_ASSOCIATION_STATE_RECONNECT ||
-			    atomic_get(&cloud_association) ==
-			    CLOUD_ASSOCIATION_STATE_REQUESTED ||
-			    (atomic_get(&carrier_requested_disconnect))) {
-				connect_wait_s = 10;
-			}
-			break;
-		case CLOUD_DISCONNECT_CLOSED_BY_REMOTE:
-			LOG_INF("Disconnected by the cloud.");
-			break;
+		case CLOUD_DISCONNECT_MISC:
 		default:
 			break;
 		}
