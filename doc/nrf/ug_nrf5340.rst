@@ -40,6 +40,7 @@ With regards to the nRF5340 samples, this means that the network core runs the r
 Currently, the |NCS| provides the following solutions for the network core:
 
 * :ref:`ug_ble_controller` (both the SoftDevice Controller and the Zephyr Bluetooth LE Controller)
+* IEEE 802.15.4 radio driver (for Thread and Zigbee protocols)
 * Samples that directly use the radio peripheral
 
 See `Network samples`_ for more information.
@@ -55,7 +56,7 @@ The application core is a full-featured Arm Cortex-M33 processor including DSP i
 
 Currently, the |NCS| provides the following solutions for the application core:
 
-* High-level radio stack (the host part of the Bluetooth Low Energy stack) and application logic
+* High-level radio stack (the host part of the Bluetooth Low Energy, Thread, and Zigbee stacks) and application logic
 * Samples running only on the application core (for example, NFC samples with nRF5340 support)
 
 See `Application samples`_ for more information.
