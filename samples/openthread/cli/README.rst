@@ -97,6 +97,9 @@ Alternatively, you can copy the contents of :file:`dts-nrf21540-fem.overlay` to 
 
 To add support for other front-end modules, add the respective overlay files in the same way.
 
+.. note::
+   Software FEM support is not present on nRF53 Series devices yet.
+
 .. ot_cli_sample_fem_support_end
 
 Requirements
