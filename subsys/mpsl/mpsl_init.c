@@ -19,6 +19,12 @@
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
+/* The following two constants are used in nrfx_glue.h for marking these PPI
+ * channels and groups as occupied and thus unavailable to other modules.
+ */
+const uint32_t z_mpsl_used_nrf_ppi_channels = MPSL_RESERVED_PPI_CHANNELS;
+const uint32_t z_mpsl_used_nrf_ppi_groups;
+
 #if IS_ENABLED(CONFIG_SOC_SERIES_NRF52X)
 	#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
 #elif IS_ENABLED(CONFIG_SOC_SERIES_NRF53X)
