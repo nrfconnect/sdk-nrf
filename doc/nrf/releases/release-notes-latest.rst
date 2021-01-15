@@ -522,3 +522,19 @@ The following list summarizes the most important changes inherited from upstream
 
   * Added initial LoRaWAN support.
   * Updated ``west flash`` support for ``nrfjprog`` to fail if a HEX file has UICR data and ``--erase`` was not specified.
+
+Documentation
+=============
+
+In addition to documentation related to the changes listed above, the following documentation has been updated:
+
+Samples
+-------
+
+* :ref:`zigbee_samples` - updated the structure to match the template
+
+Known issues
+************
+
+Known issues are only tracked for the latest official release.
+See `known issues for nRF Connect SDK v1.4.2`_ for the list of issues valid for this release.

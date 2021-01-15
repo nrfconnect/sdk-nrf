@@ -11,13 +11,6 @@ This :ref:`Zigbee <ug_zigbee>` light bulb sample demonstrates a simple light bul
 
 You can use this sample with the :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` and the :ref:`Zigbee light switch <zigbee_light_switch_sample>` to set up a basic Zigbee network.
 
-Overview
-********
-
-The Zigbee light bulb sample takes the Zigbee Router role and implements the Dimmable Light profile.
-This profile allows changing the brightness level of a LED of the light bulb.
-In the default sample configuration, the changes to the light bulb brightness are reflected on **LED 4**.
-
 Requirements
 ************
 
@@ -34,6 +27,12 @@ For this sample to work, the following samples also need to be programmed:
 * The :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` sample on one separate device.
 * The :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample on one or more separate devices.
 
+Overview
+********
+
+The Zigbee light bulb sample takes the Zigbee Router role and implements the Dimmable Light profile.
+This profile allows changing the brightness level of a LED of the light bulb.
+
 User interface
 **************
 
@@ -41,7 +40,7 @@ LED 3:
     Turns on when the light bulb joins the network.
 
 LED 4:
-    Indicates the dimmable light option.
+    Indicates the dimmable light option, that is changes to the light bulb brightness.
     It can be controlled by another Zigbee device in the network, for example a light switch.
 
 Button 4:

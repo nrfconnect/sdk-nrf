@@ -11,12 +11,6 @@ This :ref:`Zigbee <ug_zigbee>` network coordinator sample establishes the Zigbee
 
 You can use this sample together with the :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` and the :ref:`Zigbee light switch <zigbee_light_switch_sample>` to set up a basic Zigbee network.
 
-Overview
-********
-
-This Zigbee network coordinator sample demonstrates the Zigbee Coordinator role.
-It is a minimal implementation that supports only the network steering commissioning mechanism.
-
 Requirements
 ************
 
@@ -34,6 +28,12 @@ Optionally, you can use this sample with one or both of the following samples:
 * The :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample programmed on one or more separate devices.
 
 You can mix different development kits.
+
+Overview
+********
+
+This Zigbee network coordinator sample demonstrates the Zigbee Coordinator role.
+It is a minimal implementation that supports only the network steering commissioning mechanism.
 
 User interface
 **************
