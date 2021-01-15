@@ -21,7 +21,7 @@ They are also valid for cases where an application uses just one protocol, but b
 To avoid conflicts, check the protocol documentation to see if it uses FEM support provided by MPSL.
 
 Work is underway to make the protocols shipped with |NCS| use FEM.
-At the moment, :ref:`ug_thread` supports the :ref:`nrf21540 DK <nrf21540dk_nrf52840>`, but there is no multiprotocol support yet.
+At the moment, :ref:`ug_thread` supports the :ref:`nrf21540 DK <nrf21540dk_nrf52840>` and the nRF21540 EK for nRF52 Series devices, but there is no multiprotocol support or support for nRF5340 yet.
 
 |NCS| provides a friendly wrapper that configures FEM based on devicetree (DTS) and Kconfig information.
 To enable FEM support, you must enable FEM and MPSL, and add an ``nrf_radio_fem`` node in the devicetree file.
@@ -45,8 +45,9 @@ Before you add the devicetree node in your application, complete the following s
 Adding support for nRF21540 in GPIO mode
 ****************************************
 
-The nRF21540 device is a range extender that can be used with the nRF52 and nRF53 Series devices.
-For more information about this device, see the `nRF21540`_ documentation.
+The nRF21540 device is a range extender that can be used with nRF52 and nRF53 Series devices.
+However, software support for nRF21540 is currently available for nRF52 Series devices only.
+For more information about nRF21540, see the `nRF21540`_ documentation.
 
 The nRF21540 GPIO mode implementation of FEM is compatible with this device and implements the 3-pin PA/LNA interface.
 
