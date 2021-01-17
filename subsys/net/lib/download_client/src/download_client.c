@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
@@ -445,7 +445,8 @@ restart_and_suspend:
 			error_cause = ECONNRESET;
 
 			if (len == -1) {
-				if (errno == ETIMEDOUT) {
+				if ((errno == ETIMEDOUT) || (errno == EWOULDBLOCK) ||
+				    (errno == EAGAIN)) {
 					if (dl->proto == IPPROTO_UDP ||
 					    dl->proto == IPPROTO_DTLS_1_2) {
 						LOG_DBG("Socket timeout, resending");
