@@ -70,6 +70,7 @@ Thread
 * Added:
 
   * Development support for the nRF5340 DK in single-protocol configuration for the :ref:`ot_cli_sample`, :ref:`coap_client_sample`, and :ref:`coap_server_sample` samples.
+  * Development support for nRF21540 FEM (front-end module) in the Thread samples.
 
 * Optimized ROM and RAM used by Thread samples.
 * Disabled Hardware Flow Control on the serial port in :ref:`coap_client_sample` and :ref:`coap_server_sample` samples.
@@ -98,6 +99,10 @@ Bluetooth Mesh
 
   * Time client model callbacks for all message types.
   * Support for the nRF52833 DK in the :ref:`bluetooth_mesh_light` and :ref:`bluetooth_mesh_light_switch` samples.
+  * Support for :ref:`bt_mesh_light_xyl_readme`.
+
+* Updated the :ref:`bt_mesh_lightness_srv_readme` to disable the light control server when manual control has taken effect.
+  This follows the Mesh Model Specification section 6.2.3.
 
 nRF9160
 =======
@@ -238,7 +243,7 @@ The following list summarizes the most important changes inherited from upstream
 Mcumgr
 ======
 
-The mcumgr library fork in |NCS| (``sdk-mcumgr``) contains all commits from the upstream mcumgr repository up to and including snapshot ``a3d5117b08``.
+The mcumgr library fork in |NCS| (``sdk-mcumgr``) contains all commits from the upstream mcumgr repository up to and including snapshot ``449bee75750e``.
 
 The following list summarizes the most important changes inherited from upstream mcumgr:
 
@@ -252,19 +257,19 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: The latest Zephyr commit appears in multiple places; make sure you update them all.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``35264cc214fd``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``856fd652dab9``, plus some |NCS| specific additions.
 
 For a complete list of upstream Zephyr commits incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 35264cc214fd ^v2.4.0-ncs1
+   git log --oneline 856fd652dab9 ^v2.4.0-ncs1
 
 For a complete list of |NCS| specific commits, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^35264cc214fd
+   git log --oneline manifest-rev ^856fd652dab9
 
 The current |NCS| release is based on Zephyr v2.4.99.
 
@@ -388,6 +393,12 @@ The following list summarizes the most important changes inherited from upstream
 
     * Added multiple ``nrfx_power``-related fixes to reduce power consumption.
 
+  * PWM:
+
+    * Changed the GPIO configuration to use Nordic HAL, which allows support for GPIO pins above 31.
+    * Added a check to ensure that the PWM period does not exceed a 16-bit value to prevent erroneous behavior.
+    * Changed the PWM DT configuration to use a timer phandle instead of the previously used timer instance.
+
   * Regulator:
 
     * Introduced a new regulator driver infrastructure.
@@ -467,12 +478,12 @@ The following list summarizes the most important changes inherited from upstream
       * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_ACK_TIMEOUT_ENABLE`
       * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_RETRANSMIT_ENABLE`
       * :option:`CONFIG_OPENTHREAD_PLATFORM_USEC_TIMER_ENABLE`
-      * :option:`CONFIG_OPENTHREAD_CONFIG_PLATFORM_INFO`
       * :option:`CONFIG_OPENTHREAD_RADIO_LINK_IEEE_802_15_4_ENABLE`
       * :option:`CONFIG_OPENTHREAD_RADIO_LINK_TREL_ENABLE`
       * :option:`CONFIG_OPENTHREAD_CSL_SAMPLE_WINDOW`
       * :option:`CONFIG_OPENTHREAD_CSL_RECEIVE_TIME_AHEAD`
       * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_CSMA_BACKOFF_ENABLE`
+      * :option:`CONFIG_OPENTHREAD_PLATFORM_INFO`
 
     * Added support for RCP co-processor mode.
 
