@@ -6,6 +6,7 @@
 #include <net/socket.h>
 #include <net/cloud.h>
 #include <net/nrf_cloud.h>
+#include <net/mqtt.h>
 #include "nrf_cloud_codec.h"
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_transport.h"
@@ -264,6 +265,52 @@ int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param)
 	nrf_cloud_free((void *)sensor_data.data.ptr);
 
 	return err;
+}
+
+int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
+{
+	int err;
+
+	switch (msg->topic_type) {
+	case NRF_CLOUD_TOPIC_STATE: {
+		const struct nct_cc_data shadow_data = {
+			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+			.data.ptr = msg->data.ptr,
+			.data.len = msg->data.len
+		};
+
+		err = nct_cc_send(&shadow_data);
+		if (err) {
+			LOG_ERR("nct_cc_send failed, error: %d\n", err);
+			return err;
+		}
+
+		break;
+	}
+	case NRF_CLOUD_TOPIC_MESSAGE: {
+		const struct nct_dc_data buf = {
+			.data.ptr = msg->data.ptr,
+			.data.len = msg->data.len
+		};
+
+		if (msg->qos == MQTT_QOS_0_AT_MOST_ONCE) {
+			err = nct_dc_stream(&buf);
+		} else if (msg->qos == MQTT_QOS_1_AT_LEAST_ONCE) {
+			err = nct_dc_send(&buf);
+		} else {
+			err = -EINVAL;
+			LOG_ERR("Unsupported QoS setting.");
+			return err;
+		}
+
+		break;
+	}
+	default:
+		LOG_ERR("Unknown topic type");
+		return -ENODATA;
+	}
+
+	return 0;
 }
 
 int nct_input(const struct nct_evt *evt)
@@ -600,34 +647,43 @@ static int api_send(const struct cloud_backend *const backend,
 
 	switch (msg->endpoint.type) {
 	case CLOUD_EP_MSG: {
-		const struct nct_dc_data buf = {
+		struct nrf_cloud_tx_data buf = {
 			.data.ptr = msg->buf,
-			.data.len = msg->len
+			.data.len = msg->len,
+			.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
 		};
 
 		if (msg->qos == CLOUD_QOS_AT_MOST_ONCE) {
-			err = nct_dc_stream(&buf);
+			buf.qos = MQTT_QOS_0_AT_MOST_ONCE;
 		} else if (msg->qos == CLOUD_QOS_AT_LEAST_ONCE) {
-			err = nct_dc_send(&buf);
+			buf.qos = MQTT_QOS_1_AT_LEAST_ONCE;
 		} else {
 			err = -EINVAL;
 			LOG_ERR("Unsupported QoS setting.");
 			return err;
 		}
+
+		err = nrf_cloud_send(&buf);
+		if (err) {
+			LOG_ERR("nrf_cloud_send failed, error: %d", err);
+			return err;
+		}
+
 		break;
 	}
 	case CLOUD_EP_STATE: {
-		struct nct_cc_data shadow_data = {
-			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+		struct nrf_cloud_tx_data shadow_data = {
 			.data.ptr = msg->buf,
-			.data.len = msg->len
+			.data.len = msg->len,
+			.topic_type = NRF_CLOUD_TOPIC_STATE,
 		};
 
-		err = nct_cc_send(&shadow_data);
+		err = nrf_cloud_send(&shadow_data);
 		if (err) {
-			LOG_ERR("nct_cc_send failed, error: %d\n", err);
+			LOG_ERR("nrf_cloud_send failed, error: %d", err);
 			return err;
 		}
+
 		break;
 	}
 	default:

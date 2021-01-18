@@ -8,6 +8,7 @@
 #define NRF_CLOUD_H__
 
 #include <zephyr/types.h>
+#include <net/mqtt.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -111,6 +112,14 @@ enum nrf_cloud_sensor {
 	NRF_CLOUD_DEVICE_INFO,
 };
 
+/** @brief Topic types supported by nRF Cloud. */
+enum nrf_cloud_topic_type {
+	/** Endpoint used to update the cloud-side device shadow state . */
+	NRF_CLOUD_TOPIC_STATE = 0x1,
+	/** Endpoint used to directly message the nRF Cloud Web UI. */
+	NRF_CLOUD_TOPIC_MESSAGE,
+};
+
 /**@brief Generic encapsulation for any data that is sent to the cloud. */
 struct nrf_cloud_data {
 	/** Length of the data. */
@@ -169,6 +178,16 @@ struct nrf_cloud_evt {
 	struct nrf_cloud_data data;
 	/** Topic on which data was received. */
 	struct nrf_cloud_topic topic;
+};
+
+/**@brief Structure used to send pre-encoded data to nRF Cloud. */
+struct nrf_cloud_tx_data {
+	/** Data that is to be published. */
+	struct nrf_cloud_data data;
+	/** Endpoint topic type published to. */
+	enum nrf_cloud_topic_type topic_type;
+	/** Quality of Service of the message. */
+	enum mqtt_qos qos;
 };
 
 /**
@@ -264,6 +283,19 @@ int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param);
  *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
+
+/**
+ * @brief Send data to nRF Cloud.
+ *
+ * This API is used to send pre-encoded data to nRF Cloud.
+ *
+ * @param[in] msg Pointer to a structure containting data and topic
+ *                information.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_send(const struct nrf_cloud_tx_data *msg);
 
 /**
  * @brief Disconnect from the cloud.

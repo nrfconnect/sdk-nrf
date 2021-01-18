@@ -130,6 +130,7 @@ nRF9160
 
     * AWS Jobs replaced by nRF Connect for Cloud FOTA as the FOTA mechanism for devices connected to nRF Connect for Cloud.
     * Removed :option:`CONFIG_CLOUD_API` dependency from :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
+    * Added a new API :c:func:`nrf_cloud_send` that can be used for sending pre-encoded data to specified endpoint topics in nRF Connect for Cloud.
 
   * :ref:`asset_tracker` application:
 
