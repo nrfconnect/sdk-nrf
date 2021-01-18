@@ -2,6 +2,10 @@ name: Documentation Build
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - master
+  push:
     branches:
       - master
 
@@ -89,12 +93,20 @@ jobs:
       - name: Archive documentation
         working-directory: ncs/_build
         run: |
-          # FIXME: must be updated once push (master) is added to events
-          mkdir pr && cd pr
-          tar -C ../html -zcf doc_build_pr-${{ github.event.number }}.tar.gz .
+          mkdir doc && cd doc
+          file="doc_build_${GITHUB_RUN_ID}.tgz"
+          tar -C ../html -zcf $file .
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "publish PR-${{ github.event.number }} $file" > monitor_$GITHUB_RUN_ID.txt
+            echo "${{ github.event.number }}" > pr.txt
+          else
+            # basename will work for both branches and tags
+            branch=$(basename "${{ github.ref }}")
+            echo "publish ${branch} $file" > monitor_$GITHUB_RUN_ID.txt
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: pr
-          path: ncs/_build/pr/
+          name: doc
+          path: ncs/_build/doc
