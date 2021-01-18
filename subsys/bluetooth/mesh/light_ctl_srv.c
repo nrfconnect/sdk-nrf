@@ -383,14 +383,6 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *mod)
 		return -EINVAL;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
-		/* Breaking the pattern of extending models in the init
-		 * function, as the Light Temperature model's position in the
-		 * composition data isn't necessarily known at that point.
-		 */
-		bt_mesh_model_extend(srv->model, srv->temp_srv.model);
-	}
-
 	bt_mesh_dtt_srv_transition_get(mod, &transition);
 
 	switch (srv->lightness_srv.ponoff.on_power_up) {
