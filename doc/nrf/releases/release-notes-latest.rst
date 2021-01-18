@@ -128,12 +128,12 @@ nRF9160
 
   * :ref:`lib_nrf_cloud` library:
 
-    * AWS Jobs replaced by nRF Cloud FOTA as the FOTA mechanism for devices connected to nRF Cloud.
+    * AWS Jobs replaced by nRF Connect for Cloud FOTA as the FOTA mechanism for devices connected to nRF Connect for Cloud.
     * Removed :option:`CONFIG_CLOUD_API` dependency from :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
 
   * :ref:`asset_tracker` application:
 
-    * Updated to use the new FOTA (fota_v2) based on nRF Cloud.
+    * Updated to use the new FOTA (fota_v2) based on nRF Connect for Cloud.
 
 Common
 ======

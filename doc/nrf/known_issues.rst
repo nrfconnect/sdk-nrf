@@ -86,16 +86,16 @@ NCSDK-6689: High current consumption in Asset Tracker
 
 .. rst-class:: v1-0-0 v0-4-0 v0-3-0
 
-Sending data before connecting to nRF Cloud
-  The :ref:`asset_tracker` application does not wait for connection to nRF Cloud before trying to send data.
+Sending data before connecting to nRF Connect for Cloud
+  The :ref:`asset_tracker` application does not wait for connection to nRF Connect for Cloud before trying to send data.
   This causes the application to crash if the user toggles one of the switches before the board is connected to the cloud.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
-IRIS-2676: Missing support for FOTA on nRF Cloud
-  The :ref:`asset_tracker` application does not support the nRF Cloud FOTA_v2 protocol.
+IRIS-2676: Missing support for FOTA on nRF Connect for Cloud
+  The :ref:`asset_tracker` application does not support the nRF Connect for Cloud FOTA_v2 protocol.
 
-  **Workaround:** The implementation for supporting the nRF Cloud FOTA_v2 can be found in the following commits:
+  **Workaround:** The implementation for supporting the nRF Connect for Cloud FOTA_v2 can be found in the following commits:
 
 					* cef289b559b92186cc54f0257b8c9adc0997f334
 					* 156d4cf3a568869adca445d43a786d819ae10250
