@@ -178,7 +178,7 @@
 
 .. _`GitHub duplicate`: https://help.github.com/en/articles/duplicating-a-repository
 
-.. _`nRF Cloud`: https://nrfcloud.com/
+.. _`nRF Connect for Cloud`: https://nrfcloud.com/
 
 .. _`openSSL`: https://www.openssl.org/
 

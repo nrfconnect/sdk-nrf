@@ -7,7 +7,7 @@ nRF Cloud
    :local:
    :depth: 2
 
-The nRF Cloud library enables applications to connect to Nordic Semiconductor's `nRF Cloud`_.
+The nRF Cloud library enables applications to connect to Nordic Semiconductor's `nRF Connect for Cloud`_.
 It abstracts and hides the details of the transport and the encoding scheme that is used for the payload and provides a simplified API interface for sending data from supported sensor types to the cloud.
 The current implementation supports the following technology:
 
@@ -43,9 +43,9 @@ The cloud uses the device's certificates for authentication.
 See `Updating the nRF Connect for Cloud certificate`_ and the :ref:`modem_key_mgmt` library for more information on modem credentials.
 The certificates are generated using the device's ID and PIN/HWID.
 
-Every time nRF Cloud starts a communication session with a device, it verifies whether the device is uniquely associated with a user.
+Every time nRF Connect for Cloud starts a communication session with a device, it verifies whether the device is uniquely associated with a user.
 If not, the user association procedure is triggered.
-When adding the device to an nRF cloud account, the user must provide the correct device ID and PIN (for Thingy:91) or HWID (for nRF9160 DK) to nRF Cloud.
+When adding the device to an nRF Connect for Cloud account, the user must provide the correct device ID and PIN (for Thingy:91) or HWID (for nRF9160 DK) to nRF Connect for Cloud.
 
 The following message sequence chart shows the flow of events and expected application responses to each event during the user association procedure:
 
@@ -67,7 +67,7 @@ The following message sequence chart shows the flow of events and expected appli
 
 .. note::
    This chart shows the sequence of successful user association of an unassociated device.
-   Currently, nRF Cloud requires that communication is re-established to update the device's permission to send user data.
+   Currently, nRF Connect for Cloud requires that communication is re-established to update the device's permission to send user data.
    The application must disconnect using :c:func:`nrf_cloud_disconnect` and then reconnect using :c:func:`nrf_cloud_connect`.
 
 When the device is successfully associated with a user on the cloud, subsequent connections to the cloud (also across power cycles) follow this sequence:
@@ -99,7 +99,7 @@ It triggers the event :c:enumerator:`NRF_CLOUD_EVT_SENSOR_ATTACHED` if the execu
 
 Removing the link between device and user
 *****************************************
-If you want to remove the link between a device and an nRF Cloud user, you must do this from the nRF Cloud.
+If you want to remove the link between a device and an nRF Connect for Cloud user, you must do this from the nRF Connect for Cloud.
 It is not possible for a device to unlink itself.
 
 When a user disassociates a device, the library disallows any further sensor data to be sent to the cloud and generates an :c:enumerator:`NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST` event.
@@ -120,7 +120,7 @@ See the following message sequence chart:
 Using Cloud API with nRF Cloud library
 **************************************
 You can use this library in conjunction with :ref:`cloud_api_readme`.
-The following sections describe the various stages in the process of connection to the nRF Cloud.
+The following sections describe the various stages in the process of connection to the nRF Connect for Cloud.
 
 Initialization
 ==============
@@ -130,7 +130,7 @@ The nRF Cloud library defines the Cloud API backend as ``NRF_CLOUD`` via the :c:
 
 The backend must be initialized using the :c:func:`cloud_init` function, with the binding, and a function pointer to user defined Cloud API event handler as parameters.
 If :c:func:`cloud_init` returns success, the backend is ready for use.
-The return values for a failure scenario of the :c:func:`cloud_init` function are described below for the nRF Cloud backend:
+The return values for a failure scenario of the :c:func:`cloud_init` function are described below for the nRF Connect for Cloud backend:
 
 *	-EACCES: invalid state; already initialized
 *	-EINVAL: invalid event handler provided
@@ -174,7 +174,7 @@ The dual functionalities of the :c:func:`cloud_connect` function in the two scen
    * :c:enumerator:`CLOUD_CONNECT_RES_ERR_CERT_MISC`: Miscellaneous certificate error
    * :c:enumerator:`CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA`: Timeout; typically occurs when the inserted SIM card has no data
 
-  For both connection methods, when a device with JITP certificates attempts to connect to nRF Cloud for the first time, the cloud rejects the connection attempt so that it can provision the device.
+  For both connection methods, when a device with JITP certificates attempts to connect to nRF Connect for Cloud for the first time, the cloud rejects the connection attempt so that it can provision the device.
   When this occurs, the Cloud API generates a :c:enumerator:`CLOUD_EVT_DISCONNECTED` event with the ``err`` field set to :c:enumerator:`CLOUD_DISCONNECT_INVALID_REQUEST`.
   The device should restart the connection process upon receipt of the :c:enumerator:`CLOUD_EVT_DISCONNECTED` event.
 
@@ -182,7 +182,7 @@ Connected to the Cloud
 ======================
 
 When the connection between the device and the cloud has been successfully established, the Cloud API dispatches a :c:enumerator:`CLOUD_EVT_CONNECTED` event.
-If the device is not associated with an nRF Cloud account, a :c:enumerator:`CLOUD_EVT_PAIR_REQUEST` event is generated.
+If the device is not associated with an nRF Connect for Cloud account, a :c:enumerator:`CLOUD_EVT_PAIR_REQUEST` event is generated.
 The device must wait until it is added to an account, which is indicated by the :c:enumerator:`CLOUD_EVT_PAIR_DONE` event.
 If a device pair request is received, the device must disconnect and reconnect after receiving the :c:enumerator:`CLOUD_EVT_PAIR_DONE` event.
 This is necessary because the updated policy of the cloud becomes effective only on a new connection.

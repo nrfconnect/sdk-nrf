@@ -71,8 +71,8 @@ NCSDK-6689: High current consumption in Asset Tracker
 
 .. rst-class:: v1-0-0 v0-4-0 v0-3-0
 
-Sending data before connecting to nRF Cloud
-  The :ref:`asset_tracker` sample does not wait for connection to nRF Cloud before trying to send data.
+Sending data before connecting to nRF Connect for Cloud
+  The :ref:`asset_tracker` sample does not wait for connection to nRF Connect for Cloud before trying to send data.
   This causes the sample to crash if the user toggles one of the switches before the board is connected to the cloud.
 
 Other issues
