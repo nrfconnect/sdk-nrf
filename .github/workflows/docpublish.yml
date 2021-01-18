@@ -2,17 +2,14 @@ name: Documentation Publish
 
 on:
   workflow_run:
-    workflows: ["Documentation Build"]
+    workflows: ["Documentation Build", "Documentation Remove"]
     types:
       - completed
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: >
-      ${{ github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success' }}
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: 'Download artifact'
         uses: actions/github-script@v3.1.0
@@ -24,7 +21,7 @@ jobs:
                run_id: ${{ github.event.workflow_run.id }},
             });
             var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "pr"
+              return artifact.name == "doc"
             })[0];
             var download = await github.actions.downloadArtifact({
                owner: context.repo.owner,
@@ -33,16 +30,27 @@ jobs:
                archive_format: 'zip',
             });
             var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+            fs.writeFileSync('${{github.workspace}}/doc.zip', Buffer.from(download.data));
 
       - name: Upload documentation
         env:
           SSHUSER: ${{ secrets.NCS_TRANSFER_DOC_USR }}
           SSHPASS: ${{ secrets.NCS_TRANSFER_DOC_PWD }}
         run: |
-          unzip pr.zip
-          file=$(ls doc_build_pr-*.tar.gz)
+          unzip doc.zip
+          # Don't upload the archive and workflow metadata
+          files=$(ls -I doc.zip -I pr.txt)
           mkdir -p ~/.ssh && \
             ssh-keyscan -p 2222 transfer.nordicsemi.no >> ~/.ssh/known_hosts
-          echo "put ${file}" | \
-            sshpass -e sftp -P 2222 -o BatchMode=no -b - $SSHUSER@transfer.nordicsemi.no
+          for file in $files; do
+            echo "put ${file}" | \
+              sshpass -e sftp -P 2222 -o BatchMode=no -b - $SSHUSER@transfer.nordicsemi.no
+          done
+
+      - name: Add preview URL comment for PRs
+        uses: carlescufi/action-doc-url@main
+        with:
+          github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
+          urlroot: ${{ secrets.NCS_DOC_URL_ROOT }}
+          pr-prefix: "PR-"
+          pr-file: pr.txt

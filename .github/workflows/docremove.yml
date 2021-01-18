@@ -1,0 +1,23 @@
+name: Documentation Remove
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Remove documentation
+        run: |
+          mkdir doc && cd doc
+          echo "remove PR-${{ github.event.number }}" > monitor_$GITHUB_RUN_ID.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: doc
+          path: doc
