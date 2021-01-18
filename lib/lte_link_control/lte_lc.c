@@ -265,7 +265,8 @@ static int parse_cereg(const char *notification,
 
 	*reg_status = status;
 
-	if (*reg_status != LTE_LC_NW_REG_UICC_FAIL) {
+	if ((*reg_status != LTE_LC_NW_REG_UICC_FAIL) &&
+	    (at_params_valid_count_get(&resp_list) > AT_CEREG_CELL_ID_INDEX)) {
 		/* Parse tracking area code */
 		err = at_params_string_get(&resp_list,
 					AT_CEREG_TAC_INDEX,
@@ -297,8 +298,9 @@ static int parse_cereg(const char *notification,
 	}
 
 	/* Parse PSM configuration only when registered */
-	if ((*reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
-	    (*reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+	if (((*reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+	    (*reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) &&
+	     (at_params_valid_count_get(&resp_list) > AT_CEREG_TAU_INDEX)) {
 		err = parse_psm_cfg(&resp_list, true, psm_cfg);
 		if (err) {
 			LOG_ERR("Failed to parse PSM configuration, error: %d",
@@ -380,6 +382,11 @@ static void at_handler(void *context, const char *response)
 			memcpy(&prev_cell, &cell, sizeof(struct lte_lc_cell));
 			memcpy(&evt.cell, &cell, sizeof(struct lte_lc_cell));
 			evt_handler(&evt);
+		}
+
+		if ((reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
+		    (reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+			return;
 		}
 
 		/* PSM configuration update event */
