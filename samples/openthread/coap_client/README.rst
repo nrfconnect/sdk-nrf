@@ -38,9 +38,12 @@ This optional extension can demonstrate the OpenThread stack and :ref:`nrfxlib:s
 It uses the :ref:`nus_service_readme` library to control the LED states over Bluetooth LE in a Thread network.
 For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
 
-.. include:: ../cli/README.rst
-   :start-after: ot_cli_sample_fem_support_start
-   :end-before: ot_cli_sample_fem_support_end
+FEM support
+===========
+
+.. |fem_file_path| replace:: :file:`samples/openthread/common`
+
+.. include:: /includes/sample_fem_support.txt
 
 Requirements
 ************
