@@ -115,6 +115,11 @@ Check and configure the following configuration options for the sample:
    It requires additional configuration.
    See :ref:`slm_native_tls` for more information.
 
+.. option:: CONFIG_SLM_EXTERNAL_XTAL - Use external XTAL for UARTE
+
+   This option configures the application to use an external XTAL for UARTE.
+   See the `nRF9160 Product Specification`_ (section 6.19 UARTE) for more information.
+
 .. option:: CONFIG_SLM_CONNECT_UART_0 - UART 0
 
    This option selects UART 0 for the UART connection.
