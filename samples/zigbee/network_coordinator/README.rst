@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp
+   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
 
 You can use one of the development kits listed above.
 
@@ -34,6 +34,18 @@ Overview
 
 This Zigbee network coordinator sample demonstrates the Zigbee Coordinator role.
 It is a minimal implementation that supports only the network steering commissioning mechanism.
+
+Configuration
+*************
+
+|config|
+
+FEM support
+===========
+
+.. |fem_file_path| replace:: :file:`samples/zigbee/common`
+
+.. include:: /includes/sample_fem_support.txt
 
 User interface
 **************

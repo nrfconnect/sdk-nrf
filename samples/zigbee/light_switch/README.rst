@@ -22,7 +22,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp
+   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
 
 You can use one or more of the development kits listed above and mix different development kits.
 
@@ -118,6 +118,13 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
+FEM support
+===========
+
+.. |fem_file_path| replace:: :file:`samples/zigbee/common`
+
+.. include:: /includes/sample_fem_support.txt
 
 .. _zigbee_light_switch_user_interface:
 
