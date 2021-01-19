@@ -85,7 +85,6 @@ manifest:
           - segger
           - tinycbor
           - tinycrypt
-          - trusted-firmware-m
           - tfm-mcuboot
 
     # NCS repositories.
@@ -104,6 +103,10 @@ manifest:
       repo-path: sdk-nrfxlib
       path: nrfxlib
       revision: f83fb7180c1ea50c5b719708802c2d79e14481b0
+    - name: trusted-firmware-m
+      repo-path: sdk-trusted-firmware-m
+      path: modules/tee/tfm
+      revision: dcfa70e66e91d9bf31fd6f083e2fba19b4305f4e
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
