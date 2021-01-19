@@ -7,6 +7,7 @@
 #include <bluetooth/mesh/lightness_srv.h>
 #include "model_utils.h"
 #include "lightness_internal.h"
+#include <bluetooth/mesh/light_ctrl_srv.h>
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
 #define LOG_MODULE_NAME bt_mesh_light_srv
@@ -46,6 +47,15 @@ static int store_state(struct bt_mesh_lightness_srv *srv)
 
 	return bt_mesh_model_data_store(srv->lightness_model, false, NULL,
 					&data, sizeof(data));
+}
+
+static void disable_control(struct bt_mesh_lightness_srv *srv)
+{
+#if defined(CONFIG_BT_MESH_LIGHT_CTRL_SRV)
+	if (srv->ctrl) {
+		bt_mesh_light_ctrl_srv_disable(srv->ctrl);
+	}
+#endif
 }
 
 static void lvl_status_encode(struct net_buf_simple *buf,
@@ -230,7 +240,7 @@ static void lightness_set(struct bt_mesh_model *mod,
 		/* According to the Mesh Model Specification section 6.2.3.1,
 		 * manual changes to the lightness should disable control.
 		 */
-		atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+		disable_control(srv);
 		lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
@@ -515,7 +525,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 		/* According to the Mesh Model Specification section 6.2.3.1,
 		 * manual changes to the lightness should disable control.
 		 */
-		atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+		disable_control(srv);
 		lightness_srv_change_lvl(srv, ctx, &set, &status);
 	} else if (rsp) {
 		srv->handlers->light_get(srv, NULL, &status);
@@ -569,7 +579,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	/* According to the Mesh Model Specification section 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
-	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+	disable_control(srv);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	/* Override "last" value to be able to make corrective deltas when
@@ -636,7 +646,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	/* According to the Mesh Model Specification section 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
-	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+	disable_control(srv);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {
@@ -678,7 +688,7 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 	/* According to the Mesh Model Specification section 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
-	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+	disable_control(srv);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {

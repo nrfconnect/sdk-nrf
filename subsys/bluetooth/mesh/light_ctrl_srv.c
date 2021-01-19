@@ -90,13 +90,16 @@ static void store(struct bt_mesh_light_ctrl_srv *srv, enum flags kind)
 
 static bool is_enabled(const struct bt_mesh_light_ctrl_srv *srv)
 {
-	return atomic_test_bit(&srv->lightness->flags,
-			       LIGHTNESS_SRV_FLAG_CONTROLLED);
+	return srv->lightness->ctrl == srv;
 }
 
 static int delayed_change(struct bt_mesh_light_ctrl_srv *srv, bool value,
 			  uint32_t delay)
 {
+	if (!is_enabled(srv)) {
+		return -EBUSY;
+	}
+
 	if (((value && (atomic_test_bit(&srv->flags, FLAG_ON_PENDING) ||
 			atomic_test_bit(&srv->flags, FLAG_OCC_PENDING))) ||
 	     (!value && atomic_test_bit(&srv->flags, FLAG_OFF_PENDING))) &&
@@ -104,7 +107,7 @@ static int delayed_change(struct bt_mesh_light_ctrl_srv *srv, bool value,
 		/* Trying to do a second delayed change that will finish later
 		 * with the same result. Can be safely ignored.
 		 */
-		return -EBUSY;
+		return -EALREADY;
 	}
 
 	/* Clear all pending transitions - the last one triggered should be the
@@ -458,7 +461,7 @@ static void prolong(struct bt_mesh_light_ctrl_srv *srv)
 
 static void ctrl_enable(struct bt_mesh_light_ctrl_srv *srv)
 {
-	atomic_set_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+	srv->lightness->ctrl = srv;
 	BT_DBG("Light Control Enabled");
 	transition_start(srv, LIGHT_CTRL_STATE_STANDBY, 0);
 	reg_start(srv);
@@ -472,7 +475,7 @@ static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 
 	/* Clear transient state: */
 	atomic_and(&srv->flags, FLAGS_CONFIGURATION);
-	atomic_clear_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+	srv->lightness->ctrl = NULL;
 	srv->state = LIGHT_CTRL_STATE_STANDBY;
 
 	k_delayed_work_cancel(&srv->action_delay);
@@ -555,6 +558,10 @@ static void timeout(struct k_work *work)
 {
 	struct bt_mesh_light_ctrl_srv *srv =
 		CONTAINER_OF(work, struct bt_mesh_light_ctrl_srv, timer.work);
+
+	if (!is_enabled(srv)) {
+		return;
+	}
 
 	/* According to test spec, we should publish the OnOff state at the end
 	 * of the transition:
@@ -1459,8 +1466,7 @@ static int light_ctrl_srv_settings_set(struct bt_mesh_model *mod,
 	}
 
 	if (atomic_test_bit(&data, STORED_FLAG_ENABLED)) {
-		atomic_set_bit(&srv->lightness->flags,
-			       LIGHTNESS_SRV_FLAG_CONTROLLED);
+		srv->lightness->ctrl = srv;
 	}
 
 	return 0;

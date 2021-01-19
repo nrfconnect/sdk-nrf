@@ -159,6 +159,11 @@ struct bt_mesh_lightness_srv {
 	uint16_t last;
 	/** Internal flag state. */
 	atomic_t flags;
+
+#if defined(CONFIG_BT_MESH_LIGHT_CTRL_SRV)
+	/** Acting controller, if enabled. */
+	struct bt_mesh_light_ctrl_srv *ctrl;
+#endif
 };
 
 /** @brief Publish the current Light state.
