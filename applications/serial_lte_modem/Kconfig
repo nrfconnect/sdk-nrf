@@ -23,6 +23,13 @@ config SLM_NATIVE_TLS
 	bool "Use Zephyr mbedTLS"
 
 #
+# external XTAL for UART
+#
+config SLM_EXTERNAL_XTAL
+	bool "Use external XTAL for UARTE"
+	default y
+
+#
 # Inter-Connect
 #
 choice

@@ -158,11 +158,14 @@ void handle_nrf_modem_lib_init_ret(void)
 void start_execute(void)
 {
 	int err;
+#if defined(CONFIG_SLM_EXTERNAL_XTAL)
 	struct onoff_manager *clk_mgr;
 	struct onoff_client cli = {};
+#endif
 
 	LOG_INF("Serial LTE Modem");
 
+#if defined(CONFIG_SLM_EXTERNAL_XTAL)
 	/* request external XTAL for UART */
 	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
 	sys_notify_init_spinwait(&cli.notify);
@@ -171,6 +174,7 @@ void start_execute(void)
 		LOG_ERR("Clock request failed: %d", err);
 		return;
 	}
+#endif
 
 	/* check FOTA result */
 	handle_nrf_modem_lib_init_ret();
