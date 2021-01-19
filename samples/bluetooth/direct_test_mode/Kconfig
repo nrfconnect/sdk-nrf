@@ -7,5 +7,34 @@
 source "Kconfig.zephyr"
 
 menu "Nordic DTM sample"
+
+config DTM_RADIO_IRQ_PRIORITY
+	int "Radio interrupt priority"
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 2
+	help
+	  Sets Radio interrupt priority.
+	  Levels are from 0 (highest priority) to 6 (lowest priority)
+
+config DTM_TIMER_IRQ_PRIORITY
+	int "DTM timer interrupt priority"
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 3
+	help
+	  Sets DTM timer interrupt priority.
+	  Levels are from 0 (highest priority) to 6 (lowest priority)
+
+config ANOMALY_172_TIMER_IRQ_PRIORITY
+	int "Anomaly 172 timer interrupt priority"
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 2
+	help
+	  Sets anomaly 172 timer interrupt priority.
+	  Levels are from 0 (highest priority) to 6 (lowest priority)
+
 rsource "src/fem/Kconfig"
+
 endmenu

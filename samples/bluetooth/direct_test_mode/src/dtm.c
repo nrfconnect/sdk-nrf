@@ -296,8 +296,11 @@ static struct dtm_instance {
 	/* Number of valid packets received. */
 	uint16_t rx_pkt_count;
 
-	/**< RX/TX PDU. */
-	struct dtm_pdu pdu;
+	/* RX/TX PDU. */
+	struct dtm_pdu pdu[2];
+
+	/* Current RX/TX PDU buffer. */
+	struct dtm_pdu *current_pdu;
 
 	/* Payload length of TX PDU, bits 2:7 of 16-bit dtm command. */
 	uint32_t packet_len;
@@ -315,11 +318,6 @@ static struct dtm_instance {
 
 	/* Address. */
 	uint32_t address;
-
-	/* Counter for interrupts from timer to ensure that the 2 bytes forming
-	 * a DTM command are received within the time window.
-	 */
-	uint32_t current_time;
 
 	/* Timer to be used for scheduling TX packets. */
 	const nrfx_timer_t timer;
@@ -492,6 +490,10 @@ static void radio_cte_prepare(bool rx)
 }
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
+static void anomaly_timer_handler(nrf_timer_event_t event_type, void *context);
+static void dtm_timer_handler(nrf_timer_event_t event_type, void *context);
+static void radio_handler(const void *context);
+
 static int clock_init(void)
 {
 	int err;
@@ -524,11 +526,6 @@ static int clock_init(void)
 	return err;
 }
 
-static void timer_handler(nrf_timer_event_t event_type, void *context)
-{
-	/* Do nothing, use timer in polling mode. */
-}
-
 static int timer_init(void)
 {
 	nrfx_err_t err;
@@ -538,29 +535,21 @@ static int timer_init(void)
 		.bit_width = NRF_TIMER_BIT_WIDTH_16,
 	};
 
-	err = nrfx_timer_init(&dtm_inst.timer, &timer_cfg, timer_handler);
+	err = nrfx_timer_init(&dtm_inst.timer, &timer_cfg, dtm_timer_handler);
 	if (err != NRFX_SUCCESS) {
 		printk("nrfx_timer_init failed with: %d\n", err);
 		return -EAGAIN;
 	}
 
-	IRQ_CONNECT(DEFAULT_TIMER_IRQ, 6, DEFAULT_TIMER_IRQ_HANDLER, NULL, 0);
+	IRQ_CONNECT(DEFAULT_TIMER_IRQ, CONFIG_DTM_TIMER_IRQ_PRIORITY,
+		    DEFAULT_TIMER_IRQ_HANDLER, NULL, 0);
 
-	/* Timer is polled, but enable the compare0 interrupt in order to
-	 * wakeup from CPU sleep.
-	 */
 	nrfx_timer_extended_compare(&dtm_inst.timer,
 			NRF_TIMER_CC_CHANNEL0,
 			nrfx_timer_us_to_ticks(&dtm_inst.timer, TX_INTERVAL),
 			NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK,
 			false);
 
-	nrfx_timer_compare(&dtm_inst.timer,
-		NRF_TIMER_CC_CHANNEL1,
-		nrfx_timer_us_to_ticks(&dtm_inst.timer, DTM_UART_POLL_CYCLE),
-		false);
-
-	dtm_inst.current_time = 0;
 	nrfx_timer_enable(&dtm_inst.timer);
 
 	return 0;
@@ -576,13 +565,15 @@ static int anomaly_timer_init(void)
 	};
 
 	err = nrfx_timer_init(&dtm_inst.anomaly_timer, &timer_cfg,
-			      timer_handler);
+			      anomaly_timer_handler);
 	if (err != NRFX_SUCCESS) {
 		printk("nrfx_timer_init failed with: %d\n", err);
 		return -EAGAIN;
 	}
 
-	IRQ_CONNECT(ANOMALY_172_TIMER_IRQ, 6, ANOMALY_172_TIMER_IRQ_HANDLER,
+	IRQ_CONNECT(ANOMALY_172_TIMER_IRQ,
+		    CONFIG_ANOMALY_172_TIMER_IRQ_PRIORITY,
+		    ANOMALY_172_TIMER_IRQ_HANDLER,
 		    NULL, 0);
 
 	nrfx_timer_compare(&dtm_inst.anomaly_timer,
@@ -619,6 +610,12 @@ static void radio_reset(void)
 		/* Do nothing */
 	}
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+
+	irq_disable(RADIO_IRQn);
+	nrf_radio_int_disable(NRF_RADIO,
+			NRF_RADIO_INT_READY_MASK |
+			NRF_RADIO_INT_ADDRESS_MASK |
+			NRF_RADIO_INT_END_MASK);
 
 	dtm_inst.rx_pkt_count = 0;
 }
@@ -708,6 +705,11 @@ int dtm_init(void)
 		return err;
 	}
 
+	/** Connect radio interrupts. */
+	IRQ_CONNECT(RADIO_IRQn, CONFIG_DTM_RADIO_IRQ_PRIORITY, radio_handler,
+		    NULL, 0);
+	irq_enable(RADIO_IRQn);
+
 	err = radio_init();
 	if (err) {
 		return err;
@@ -729,7 +731,7 @@ int dtm_init(void)
 /* Function for verifying that a received PDU has the expected structure and
  * content.
  */
-static bool check_pdu(void)
+static bool check_pdu(const struct dtm_pdu *pdu)
 {
 	/* Repeating octet value in payload */
 	uint8_t pattern;
@@ -739,8 +741,8 @@ static bool check_pdu(void)
 	uint8_t header_len;
 
 	pdu_packet_type = (uint32_t)
-			  (dtm_inst.pdu.content[DTM_HEADER_OFFSET] & 0x0F);
-	length = dtm_inst.pdu.content[DTM_LENGTH_OFFSET];
+			  (pdu->content[DTM_HEADER_OFFSET] & 0x0F);
+	length = pdu->content[DTM_LENGTH_OFFSET];
 
 	header_len = (dtm_inst.cte_info.mode != DTM_CTE_MODE_OFF) ?
 		     DTM_HEADER_WITH_CTE_SIZE : DTM_HEADER_SIZE;
@@ -771,7 +773,7 @@ static bool check_pdu(void)
 		/* Payload does not consist of one repeated octet; must
 		 * compare it with entire block.
 		 */
-		uint8_t *payload = dtm_inst.pdu.content + header_len;
+		const uint8_t *payload = pdu->content + header_len;
 
 		return (memcmp(payload, dtm_prbs_content, length) == 0);
 	}
@@ -793,7 +795,7 @@ static bool check_pdu(void)
 
 	for (uint8_t k = 0; k < length; k++) {
 		/* Check repeated pattern filling the PDU payload */
-		if (dtm_inst.pdu.content[k + 2] != pattern) {
+		if (pdu->content[k + 2] != pattern) {
 			return false;
 		}
 	}
@@ -805,7 +807,7 @@ static bool check_pdu(void)
 		uint8_t cte_sample_cnt;
 		uint8_t expected_sample_cnt;
 
-		cte_info = dtm_inst.pdu.content[DTM_HEADER_CTEINFO_OFFSET];
+		cte_info = pdu->content[DTM_HEADER_CTEINFO_OFFSET];
 
 		expected_sample_cnt =
 			DTM_CTE_REF_SAMPLE_CNT +
@@ -877,186 +879,6 @@ static void anomaly_172_strict_mode_set(bool enable)
 	dtm_inst.strict_mode = enable;
 }
 
-static bool dtm_wait_internal(void)
-{
-	if (dtm_inst.state == STATE_RECEIVER_TEST &&
-	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS)) {
-		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
-		if (dtm_inst.anomaly_172_wa_enabled) {
-			nrfx_timer_disable(&dtm_inst.anomaly_timer);
-		}
-	}
-
-	/* Event may be the reception of a packet -
-	 * handle radio first, to give it highest priority.
-	 */
-	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_END)) {
-		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
-
-		NVIC_ClearPendingIRQ(RADIO_IRQn);
-
-		if (dtm_inst.state == STATE_RECEIVER_TEST) {
-#if CONFIG_NRF21540_FEM
-			(void) nrf21540_txrx_configuration_clear();
-			(void) nrf21540_txrx_stop();
-
-			(void) nrf21540_rx_configure(NRF21540_EXECUTE_NOW,
-					nrf_radio_event_address_get(
-						NRF_RADIO,
-						NRF_RADIO_EVENT_DISABLED),
-					dtm_inst.nrf21540.active_delay);
-#else
-			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
-#endif /* CONFIG_NRF21540_FEM */
-			if (dtm_inst.anomaly_172_wa_enabled) {
-				nrfx_timer_compare(&dtm_inst.anomaly_timer,
-					NRF_TIMER_CC_CHANNEL0,
-					nrfx_timer_ms_to_ticks(
-						&dtm_inst.anomaly_timer,
-						BLOCKER_FIX_WAIT_DEFAULT),
-					false);
-				nrfx_timer_compare(&dtm_inst.anomaly_timer,
-					NRF_TIMER_CC_CHANNEL1,
-					nrfx_timer_us_to_ticks(
-						&dtm_inst.anomaly_timer,
-						BLOCKER_FIX_WAIT_END),
-					false);
-				nrfx_timer_clear(&dtm_inst.anomaly_timer);
-				nrfx_timer_enable(&dtm_inst.anomaly_timer);
-			}
-
-			if (nrf_radio_crc_status_check(NRF_RADIO) &&
-			    check_pdu()) {
-				/* Count the number of successfully received
-				 * packets.
-				 */
-				dtm_inst.rx_pkt_count++;
-			}
-
-			/* Note that failing packets are simply ignored (CRC or
-			 * contents error).
-			 */
-
-			/* Zero fill all pdu fields to avoid stray data */
-			memset(&dtm_inst.pdu, 0, DTM_PDU_MAX_MEMORY_SIZE);
-		}
-		/* If no RECEIVER_TEST is running, ignore incoming packets
-		 * (but do clear IRQ!)
-		 */
-	}
-
-	if (dtm_inst.state == STATE_RECEIVER_TEST &&
-	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_READY)) {
-		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
-
-		if (dtm_inst.anomaly_172_wa_enabled) {
-			nrfx_timer_clear(&dtm_inst.anomaly_timer);
-			if (!nrfx_timer_is_enabled(&dtm_inst.anomaly_timer)) {
-				nrfx_timer_enable(&dtm_inst.anomaly_timer);
-			}
-		}
-	}
-
-	/* Check for timeouts from core timer */
-	if (nrf_timer_event_check(dtm_inst.timer.p_reg,
-				  NRF_TIMER_EVENT_COMPARE0)) {
-		nrf_timer_event_clear(dtm_inst.timer.p_reg,
-				      NRF_TIMER_EVENT_COMPARE0);
-	} else if (nrf_timer_event_check(dtm_inst.timer.p_reg,
-					 NRF_TIMER_EVENT_COMPARE1)) {
-		/* Reset timeout event flag for next iteration. */
-		nrf_timer_event_clear(dtm_inst.timer.p_reg,
-				      NRF_TIMER_EVENT_COMPARE1);
-		NRFX_IRQ_PENDING_CLEAR(
-			nrfx_get_irq_number(dtm_inst.timer.p_reg));
-
-		++dtm_inst.current_time;
-
-		return false;
-	}
-
-	/* Check for timeouts from anomaly timer */
-	if (nrf_timer_event_check(dtm_inst.anomaly_timer.p_reg,
-				  NRF_TIMER_EVENT_COMPARE0)) {
-		uint8_t rssi = anomaly_172_rssi_check();
-
-		if (dtm_inst.strict_mode) {
-			if (rssi > BLOCKER_FIX_RSSI_THRESHOLD) {
-				anomaly_172_strict_mode_set(false);
-			}
-		} else {
-			bool too_many_detects = false;
-			uint32_t packetcnt2 = *(volatile uint32_t *) 0x40001574;
-			uint32_t detect_cnt = packetcnt2 & 0xffff;
-			uint32_t addr_cnt = (packetcnt2 >> 16) & 0xffff;
-
-			if ((detect_cnt > BLOCKER_FIX_CNTDETECTTHR) &&
-			    (addr_cnt < BLOCKER_FIX_CNTADDRTHR)) {
-				too_many_detects = true;
-			}
-
-			if ((rssi < BLOCKER_FIX_RSSI_THRESHOLD) ||
-			    too_many_detects) {
-				anomaly_172_strict_mode_set(true);
-			}
-		}
-
-		anomaly_172_radio_operation();
-
-		nrfx_timer_disable(&dtm_inst.anomaly_timer);
-
-		nrfx_timer_compare(&dtm_inst.anomaly_timer,
-			NRF_TIMER_CC_CHANNEL0,
-			nrfx_timer_ms_to_ticks(&dtm_inst.anomaly_timer,
-					       BLOCKER_FIX_WAIT_DEFAULT),
-			false);
-
-		nrfx_timer_clear(&dtm_inst.anomaly_timer);
-		nrf_timer_event_clear(dtm_inst.anomaly_timer.p_reg,
-				      NRF_TIMER_EVENT_COMPARE0);
-		nrfx_timer_enable(&dtm_inst.anomaly_timer);
-
-		NRFX_IRQ_PENDING_CLEAR(
-			nrfx_get_irq_number(dtm_inst.anomaly_timer.p_reg));
-	}
-
-	if (nrf_timer_event_check(dtm_inst.anomaly_timer.p_reg,
-				  NRF_TIMER_EVENT_COMPARE1)) {
-		uint8_t rssi = anomaly_172_rssi_check();
-
-		if (rssi >= BLOCKER_FIX_RSSI_THRESHOLD) {
-			anomaly_172_strict_mode_set(false);
-		} else {
-			anomaly_172_strict_mode_set(true);
-		}
-
-		anomaly_172_radio_operation();
-
-		/* Disable this event. */
-		nrfx_timer_compare(&dtm_inst.anomaly_timer,
-				   NRF_TIMER_CC_CHANNEL1,
-				   0,
-				   false);
-
-		NRFX_IRQ_PENDING_CLEAR(
-			nrfx_get_irq_number(dtm_inst.anomaly_timer.p_reg));
-	}
-
-	/* Other events: No processing */
-	return true;
-}
-
-uint32_t dtm_wait(void)
-{
-	for (;;) {
-		if (!dtm_wait_internal()) {
-			break;
-		}
-	}
-
-	return dtm_inst.current_time;
-}
-
 static void dtm_test_done(void)
 {
 	nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_txen));
@@ -1092,7 +914,7 @@ static void radio_prepare(bool rx)
 	nrf_radio_frequency_set(NRF_RADIO, (dtm_inst.phys_ch << 1) + 2402);
 
 	/* Setting packet pointer will start the radio */
-	nrf_radio_packetptr_set(NRF_RADIO, &dtm_inst.pdu);
+	nrf_radio_packetptr_set(NRF_RADIO, dtm_inst.current_pdu);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
 
 	/* Set shortcuts:
@@ -1121,6 +943,13 @@ static void radio_prepare(bool rx)
 				dtm_inst.nrf21540.vendor_active_delay;
 	}
 #endif
+	NVIC_ClearPendingIRQ(RADIO_IRQn);
+	irq_enable(RADIO_IRQn);
+	nrf_radio_int_enable(NRF_RADIO,
+			NRF_RADIO_INT_READY_MASK |
+			NRF_RADIO_INT_ADDRESS_MASK |
+			NRF_RADIO_INT_END_MASK);
+
 	if (rx) {
 		/* Enable strict mode for anomaly 172 */
 		if (dtm_inst.anomaly_172_wa_enabled) {
@@ -1808,10 +1637,12 @@ static enum dtm_err_code on_test_end_cmd(void)
 
 static enum dtm_err_code on_test_receive_cmd(void)
 {
+	dtm_inst.current_pdu = dtm_inst.pdu;
+
 	/* Zero fill all pdu fields to avoid stray data from earlier
 	 * test run.
 	 */
-	memset(&dtm_inst.pdu, 0, DTM_PDU_MAX_MEMORY_SIZE);
+	memset(&dtm_inst.pdu, 0, sizeof(dtm_inst.pdu));
 
 	/* Reinitialize "everything"; RF interrupts OFF */
 	radio_prepare(RX_MODE);
@@ -1823,6 +1654,8 @@ static enum dtm_err_code on_test_receive_cmd(void)
 static enum dtm_err_code on_test_transmit_cmd(uint32_t length, uint32_t freq)
 {
 	uint8_t header_len;
+
+	dtm_inst.current_pdu = dtm_inst.pdu;
 
 	/* Check for illegal values of packet_len. Skip the check
 	 * if the packet is vendor spesific.
@@ -1837,44 +1670,44 @@ static enum dtm_err_code on_test_transmit_cmd(uint32_t length, uint32_t freq)
 	header_len = (dtm_inst.cte_info.mode != DTM_CTE_MODE_OFF) ?
 		     DTM_HEADER_WITH_CTE_SIZE : DTM_HEADER_SIZE;
 
-	dtm_inst.pdu.content[DTM_LENGTH_OFFSET] = dtm_inst.packet_len;
+	dtm_inst.current_pdu->content[DTM_LENGTH_OFFSET] = dtm_inst.packet_len;
 	/* Note that PDU uses 4 bits even though BLE DTM uses only 2
 	 * (the HCI SDU uses all 4)
 	 */
 	switch (dtm_inst.packet_type) {
 	case DTM_PKT_PRBS9:
-		dtm_inst.pdu.content[DTM_HEADER_OFFSET] =
+		dtm_inst.current_pdu->content[DTM_HEADER_OFFSET] =
 			DTM_PDU_TYPE_PRBS9;
 		/* Non-repeated, must copy entire pattern to PDU */
-		memcpy(dtm_inst.pdu.content + header_len,
+		memcpy(dtm_inst.current_pdu->content + header_len,
 		       dtm_prbs_content, dtm_inst.packet_len);
 		break;
 
 	case DTM_PKT_0X0F:
-		dtm_inst.pdu.content[DTM_HEADER_OFFSET] =
+		dtm_inst.current_pdu->content[DTM_HEADER_OFFSET] =
 			DTM_PDU_TYPE_0X0F;
 		/* Bit pattern 00001111 repeated */
-		memset(dtm_inst.pdu.content + header_len,
+		memset(dtm_inst.current_pdu->content + header_len,
 		       RFPHY_TEST_0X0F_REF_PATTERN,
 		       dtm_inst.packet_len);
 		break;
 
 	case DTM_PKT_0X55:
-		dtm_inst.pdu.content[DTM_HEADER_OFFSET] =
+		dtm_inst.current_pdu->content[DTM_HEADER_OFFSET] =
 			DTM_PDU_TYPE_0X55;
 		/* Bit pattern 01010101 repeated */
-		memset(dtm_inst.pdu.content + header_len,
+		memset(dtm_inst.current_pdu->content + header_len,
 		       RFPHY_TEST_0X55_REF_PATTERN,
 		       dtm_inst.packet_len);
 		break;
 
 	case DTM_PKT_TYPE_0xFF:
-		dtm_inst.pdu.content[DTM_HEADER_OFFSET] =
+		dtm_inst.current_pdu->content[DTM_HEADER_OFFSET] =
 			DTM_PDU_TYPE_0XFF;
 		/* Bit pattern 11111111 repeated. Only available in
 		 * coded PHY (Long range).
 		 */
-		memset(dtm_inst.pdu.content + header_len,
+		memset(dtm_inst.current_pdu->content + header_len,
 		       RFPHY_TEST_0XFF_REF_PATTERN,
 		       dtm_inst.packet_len);
 		break;
@@ -1893,8 +1726,9 @@ static enum dtm_err_code on_test_transmit_cmd(uint32_t length, uint32_t freq)
 	}
 
 	if (dtm_inst.cte_info.mode != DTM_CTE_MODE_OFF) {
-		dtm_inst.pdu.content[DTM_HEADER_OFFSET] |= DTM_PKT_CP_BIT;
-		dtm_inst.pdu.content[DTM_HEADER_CTEINFO_OFFSET] =
+		dtm_inst.current_pdu->content[DTM_HEADER_OFFSET] |=
+							DTM_PKT_CP_BIT;
+		dtm_inst.current_pdu->content[DTM_HEADER_CTEINFO_OFFSET] =
 							dtm_inst.cte_info.info;
 	}
 
@@ -2053,4 +1887,188 @@ bool dtm_event_get(uint16_t *dtm_event)
 
 	/* return value indicates whether this value was already retrieved. */
 	return was_new;
+}
+
+static struct dtm_pdu *radio_buffer_swap(void)
+{
+	struct dtm_pdu *received_pdu = dtm_inst.current_pdu;
+	uint32_t packet_index = (dtm_inst.current_pdu == dtm_inst.pdu);
+
+	dtm_inst.current_pdu = &dtm_inst.pdu[packet_index];
+
+	nrf_radio_packetptr_set(NRF_RADIO, dtm_inst.current_pdu);
+
+	return received_pdu;
+}
+
+static void on_radio_end_event(void)
+{
+	if (dtm_inst.state != STATE_RECEIVER_TEST) {
+		return;
+	}
+
+	struct dtm_pdu *received_pdu = radio_buffer_swap();
+
+#if CONFIG_NRF21540_FEM
+	(void) nrf21540_txrx_configuration_clear();
+	(void) nrf21540_txrx_stop();
+
+	(void) nrf21540_rx_configure(NRF21540_EXECUTE_NOW,
+				     nrf_radio_event_address_get(
+						NRF_RADIO,
+						NRF_RADIO_EVENT_DISABLED),
+				     dtm_inst.nrf21540.active_delay);
+#else
+	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+#endif /* CONFIG_NRF21540_FEM */
+
+	if (dtm_inst.anomaly_172_wa_enabled) {
+		nrfx_timer_compare(&dtm_inst.anomaly_timer,
+			NRF_TIMER_CC_CHANNEL0,
+			nrfx_timer_ms_to_ticks(
+				&dtm_inst.anomaly_timer,
+				BLOCKER_FIX_WAIT_DEFAULT),
+			true);
+		nrfx_timer_compare(&dtm_inst.anomaly_timer,
+			NRF_TIMER_CC_CHANNEL1,
+			nrfx_timer_us_to_ticks(
+				&dtm_inst.anomaly_timer,
+				BLOCKER_FIX_WAIT_END),
+			true);
+		nrf_timer_event_clear(dtm_inst.anomaly_timer.p_reg,
+				      NRF_TIMER_EVENT_COMPARE0);
+		nrf_timer_event_clear(dtm_inst.anomaly_timer.p_reg,
+				      NRF_TIMER_EVENT_COMPARE1);
+		nrfx_timer_clear(&dtm_inst.anomaly_timer);
+		nrfx_timer_enable(&dtm_inst.anomaly_timer);
+	}
+
+	if (nrf_radio_crc_status_check(NRF_RADIO) &&
+	    check_pdu(received_pdu)) {
+		/* Count the number of successfully received
+		 * packets.
+		 */
+		dtm_inst.rx_pkt_count++;
+	}
+
+	/* Note that failing packets are simply ignored (CRC or
+	 * contents error).
+	 */
+
+	/* Zero fill all pdu fields to avoid stray data */
+	memset(received_pdu, 0, DTM_PDU_MAX_MEMORY_SIZE);
+}
+
+static void radio_handler(const void *context)
+{
+	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS)) {
+		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
+		if (dtm_inst.state == STATE_RECEIVER_TEST &&
+		    dtm_inst.anomaly_172_wa_enabled) {
+			nrfx_timer_disable(&dtm_inst.anomaly_timer);
+		}
+	}
+
+	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_END)) {
+		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
+
+		NVIC_ClearPendingIRQ(RADIO_IRQn);
+
+		on_radio_end_event();
+	}
+
+	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_READY)) {
+		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
+
+		if (dtm_inst.state == STATE_RECEIVER_TEST &&
+		    dtm_inst.anomaly_172_wa_enabled) {
+			nrfx_timer_clear(&dtm_inst.anomaly_timer);
+			nrfx_timer_enable(&dtm_inst.anomaly_timer);
+		}
+	}
+}
+
+static void dtm_timer_handler(nrf_timer_event_t event_type, void *context)
+{
+	// Do nothing
+}
+
+static void anomaly_timer_handler(nrf_timer_event_t event_type, void *context)
+{
+	switch (event_type) {
+	case NRF_TIMER_EVENT_COMPARE0:
+	{
+		uint8_t rssi = anomaly_172_rssi_check();
+
+		if (dtm_inst.strict_mode) {
+			if (rssi > BLOCKER_FIX_RSSI_THRESHOLD) {
+				anomaly_172_strict_mode_set(false);
+			}
+		} else {
+			bool too_many_detects = false;
+			uint32_t packetcnt2 = *(volatile uint32_t *) 0x40001574;
+			uint32_t detect_cnt = packetcnt2 & 0xffff;
+			uint32_t addr_cnt = (packetcnt2 >> 16) & 0xffff;
+
+			if ((detect_cnt > BLOCKER_FIX_CNTDETECTTHR) &&
+			    (addr_cnt < BLOCKER_FIX_CNTADDRTHR)) {
+				too_many_detects = true;
+			}
+
+			if ((rssi < BLOCKER_FIX_RSSI_THRESHOLD) ||
+			    too_many_detects) {
+				anomaly_172_strict_mode_set(true);
+			}
+		}
+
+		anomaly_172_radio_operation();
+
+		nrfx_timer_disable(&dtm_inst.anomaly_timer);
+
+		nrfx_timer_compare(&dtm_inst.anomaly_timer,
+			NRF_TIMER_CC_CHANNEL0,
+			nrfx_timer_ms_to_ticks(&dtm_inst.anomaly_timer,
+					       BLOCKER_FIX_WAIT_DEFAULT),
+			true);
+
+		nrfx_timer_clear(&dtm_inst.anomaly_timer);
+		nrf_timer_event_clear(dtm_inst.anomaly_timer.p_reg,
+				      NRF_TIMER_EVENT_COMPARE0);
+		nrfx_timer_enable(&dtm_inst.anomaly_timer);
+
+		NRFX_IRQ_PENDING_CLEAR(
+			nrfx_get_irq_number(dtm_inst.anomaly_timer.p_reg));
+	} break;
+
+	case NRF_TIMER_EVENT_COMPARE1:
+	{
+		uint8_t rssi = anomaly_172_rssi_check();
+
+		if (dtm_inst.strict_mode) {
+			if (rssi >= BLOCKER_FIX_RSSI_THRESHOLD) {
+				anomaly_172_strict_mode_set(false);
+			}
+		} else {
+			if (rssi < BLOCKER_FIX_RSSI_THRESHOLD) {
+				anomaly_172_strict_mode_set(true);
+			}
+		}
+
+		anomaly_172_radio_operation();
+
+		nrf_timer_event_clear(dtm_inst.anomaly_timer.p_reg,
+				      NRF_TIMER_EVENT_COMPARE1);
+		/* Disable this event. */
+		nrfx_timer_compare(&dtm_inst.anomaly_timer,
+				   NRF_TIMER_CC_CHANNEL1,
+				   0,
+				   false);
+
+		NRFX_IRQ_PENDING_CLEAR(
+			nrfx_get_irq_number(dtm_inst.anomaly_timer.p_reg));
+	} break;
+
+	default:
+		break;
+	}
 }

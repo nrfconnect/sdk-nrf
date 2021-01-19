@@ -4,34 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
 #include <errno.h>
 #include <drivers/uart.h>
+#include <zephyr.h>
 
 #include "dtm.h"
-
-/* Maximum iterations needed in the main loop between stop bit 1st byte and
- * start bit 2nd byte. DTM standard allows 5000us delay between stop bit 1st
- * byte and start bit 2nd byte. As the time is only known when a byte is
- * received, then the time between stop bit 1st byte and stop bit 2nd byte
- * becomes:
- *   5000us + transmission time of 2nd byte.
- *
- * Byte transmission time is (Baud rate of 19200):
- *   10bits * 1/19200 = approx. 520 us/byte (8 data bits + start & stop bit).
- *
- * Loop time on polling UART register for received byte is defined in dtm.c as:
- *   DTM_UART_POLL_CYCLE = 260 us
- *
- * The max time between two bytes thus becomes (loop time: 260us / iteration):
- *   (5000us + 520us) / 260us / iteration = 21.2 iterations.
- *
- * This is rounded down to 21.
- *
- * If UART bit rate is changed, this value should be recalculated as well.
- */
-#define MAX_ITERATIONS_NEEDED_FOR_NEXT_BYTE \
-	((5000 + 2 * DTM_UART_POLL_CYCLE) / DTM_UART_POLL_CYCLE)
 
 void main(void)
 {
@@ -41,7 +18,7 @@ void main(void)
 	uint8_t rx_byte;
 	uint16_t dtm_cmd;
 	uint16_t dtm_evt;
-	uint32_t current_time, msb_time;
+	int64_t msb_time;
 
 	printk("Starting Direct Test Mode example\n");
 
@@ -56,8 +33,7 @@ void main(void)
 	}
 
 	for (;;) {
-		/* Will return every timeout, 625 us. */
-		current_time = dtm_wait();
+		k_busy_wait(DTM_UART_POLL_CYCLE);
 
 		err = uart_poll_in(uart, &rx_byte);
 		if (err) {
@@ -73,7 +49,7 @@ void main(void)
 			/* This is first byte of two-byte command. */
 			is_msb_read = true;
 			dtm_cmd = rx_byte << 8;
-			msb_time = current_time;
+			msb_time = k_uptime_get();
 
 			/* Go back and wait for 2nd byte of command word. */
 			continue;
@@ -82,15 +58,14 @@ void main(void)
 		/* This is the second byte read; combine it with the first and
 		 * process command.
 		 */
-		if (current_time >
-			(msb_time + MAX_ITERATIONS_NEEDED_FOR_NEXT_BYTE)) {
+		if ((k_uptime_get() - msb_time) >
+		    DTM_UART_SECOND_BYTE_MAX_DELAY) {
 			/* More than ~5mS after msb: Drop old byte, take the
 			 * new byte as MSB. The variable is_msb_read will
 			 * remain true.
 			 */
 			dtm_cmd = rx_byte << 8;
-			msb_time = current_time;
-
+			msb_time = k_uptime_get();
 			/* Go back and wait for 2nd byte of command word. */
 			continue;
 		}
