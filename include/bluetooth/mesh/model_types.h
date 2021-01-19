@@ -22,7 +22,17 @@ extern "C" {
 /** Maximum permissible transition time in milliseconds */
 #define BT_MESH_MODEL_TRANSITION_TIME_MAX_MS (10 * 60 * MSEC_PER_SEC * 0x3e)
 
-/** Generic Transition parameters for the model messages. */
+/** Delay field step factor in milliseconds */
+#define BT_MESH_MODEL_DELAY_TIME_STEP_FACTOR_MS (5)
+/** Maximum permissible delay time in milliseconds */
+#define BT_MESH_MODEL_DELAY_TIME_MAX_MS                                        \
+	(UINT8_MAX * BT_MESH_MODEL_DELAY_TIME_STEP_FACTOR_MS)
+
+/** Generic Transition parameters for the model messages.
+ *
+ * @note Time can not be larger than @ref BT_MESH_MODEL_TRANSITION_TIME_MAX_MS
+ *       and delay can not be larger than @ref BT_MESH_MODEL_DELAY_TIME_MAX_MS.
+ */
 struct bt_mesh_model_transition {
 	uint32_t time; /**< Transition time value in milliseconds */
 	uint32_t delay; /**< Message execution delay in milliseconds */
