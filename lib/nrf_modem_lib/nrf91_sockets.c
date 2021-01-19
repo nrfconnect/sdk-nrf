@@ -726,10 +726,13 @@ static int nrf91_socket_offload_getsockopt(void *obj, int level, int optname,
 		if (level == SOL_SOCKET) {
 			if (optname == SO_ERROR) {
 				/* Use nrf_modem_os_errno_set() to translate from nRF
-				 * error to native error.
+				 * error to native error. If there is no error,
+				 * don't translate it.
 				 */
-				nrf_modem_os_errno_set(*(int *)optval);
-				*(int *)optval = errno;
+				if (*(int *)optval != 0) {
+					nrf_modem_os_errno_set(*(int *)optval);
+					*(int *)optval = errno;
+				}
 			} else if ((optname == SO_RCVTIMEO) ||
 				(optname == SO_SNDTIMEO)) {
 				((struct timeval *)optval)->tv_sec =
