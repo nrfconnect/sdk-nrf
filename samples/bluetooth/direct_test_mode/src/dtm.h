@@ -348,20 +348,14 @@ enum dtm_err_code {
 #error "DTM UART node not found"
 #endif /* DT_NODE_HAS_PROP(DT_NODELABEL(uart0), currrent_speed) */
 
+/* The DTM maximum wait time for the UART command second byte. */
+#define DTM_UART_SECOND_BYTE_MAX_DELAY 5
+
 /**@brief Function for initializing DTM module.
  *
  *  @return 0 in case of success or negative value in case of error
  */
 int dtm_init(void);
-
-
-/**@brief Function for giving control to DTM module for handling timer and
- *        radio events. It will return to caller at 625us intervals.
- *
- * @return Time counter, incremented every 625 us.
- */
-uint32_t dtm_wait(void);
-
 
 /**@brief Function for calling when a complete command has been prepared by the
  *        Tester.
@@ -371,7 +365,6 @@ uint32_t dtm_wait(void);
  * @return DTM_SUCCESS or one of the DTM_ERROR_ values
  */
 enum dtm_err_code dtm_cmd_put(uint16_t cmd);
-
 
 /**@brief Function for reading the result of a DTM command.
  *
