@@ -1581,19 +1581,6 @@ static int lc_setup_srv_init(struct bt_mesh_model *mod)
 
 	net_buf_simple_init(srv->setup_pub.msg, 0);
 
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
-		/* Model extensions:
-		 * To simplify the model extension tree, we're flipping the
-		 * relationship between the light ctrl server and the light ctrl
-		 * setup server. In the specification, the light ctrl setup
-		 * server extends the light ctrl server, which is the opposite
-		 * of what we're doing here. This makes no difference for the
-		 * mesh stack, but it makes it a lot easier to extend this
-		 * model, as we won't have to support multiple extenders.
-		 */
-		 bt_mesh_model_extend(srv->model, srv->setup_srv);
-	}
-
 	return 0;
 }
 
