@@ -25,7 +25,7 @@ jobs:
         pip3 install  -U setuptools
         export PATH="$HOME/.local/bin:$PATH"
         pip3 install  -U wheel
-        pip3 install  -U python-magic junitparser gitlint pylint pykwalify
+        pip3 install  -U python-magic junitparser==1.6.3 gitlint pylint pykwalify
         pip3 install --user -U west
         pip3 show -f west
 
