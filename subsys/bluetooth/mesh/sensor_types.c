@@ -354,10 +354,11 @@ static int exp_1_1_decode(const struct bt_mesh_sensor_format *format,
 		return -ENOMEM;
 	}
 
-	uint64_t time_ns = sensor_powtime_decode_ns(net_buf_simple_pull_u8(buf));
+	uint64_t time_us =
+		sensor_powtime_decode_us(net_buf_simple_pull_u8(buf));
 
-	val->val1 = time_ns / 1000000L;
-	val->val2 = time_ns % 1000000L;
+	val->val1 = time_us / USEC_PER_SEC;
+	val->val2 = time_us % USEC_PER_SEC;
 	return 0;
 }
 

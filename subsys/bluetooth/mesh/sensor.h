@@ -175,7 +175,7 @@ uint8_t sensor_value_len(const struct bt_mesh_sensor_type *type);
 
 uint8_t sensor_powtime_encode(uint64_t raw);
 uint64_t sensor_powtime_decode(uint8_t encoded);
-uint64_t sensor_powtime_decode_ns(uint8_t val);
+uint64_t sensor_powtime_decode_us(uint8_t val);
 
 uint8_t sensor_pub_div_get(const struct bt_mesh_sensor *s, uint32_t base_period);
 
