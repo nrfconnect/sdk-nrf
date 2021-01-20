@@ -27,7 +27,7 @@ The following Bluetooth mesh sensor types are used in this sample:
 
 * :c:var:`bt_mesh_sensor_present_dev_op_temp` - Published by the server according to its publishing period.
 * :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` - Periodically requested by the client.
-* :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server board.
+* :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server.
 * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period.
 
 
@@ -103,9 +103,9 @@ Testing
 
 .. note::
    The mesh sensor observer sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_sensor_server` sample running in the same mesh network.
-   Before testing the mesh sensor observer, go through the mesh sensor's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>` with a different board.
+   Before testing the mesh sensor observer, go through the mesh sensor's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>` with a different kit.
 
-After programming the sample to your board, you can test it by using a smartphone with Nordic Semiconductor’s nRF Mesh app installed.
+After programming the sample to your development kit, you can test it by using a smartphone with Nordic Semiconductor’s nRF Mesh app installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
 All sensor values gathered from the server are printed over UART.

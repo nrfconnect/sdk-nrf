@@ -71,7 +71,7 @@ User interface
 You can send a predefined message to nRF Connect for Cloud by pressing button 1.
 The message can be changed by setting the :option:`CONFIG_CLOUD_MESSAGE` to a new message.
 
-To ease outdoors and remote testing of A-GPS feature, two methods for resetting the board are provided, if the default A-GPS source is used.
+To ease outdoors and remote testing of A-GPS feature, two methods for resetting the kit are provided, if the default A-GPS source is used.
 Both are equivalent to pressing the reset button on the nRF9160 DK, or power-cycling the nRF9160 DK or Thingy:91.
 
 Button 1:

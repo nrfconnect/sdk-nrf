@@ -212,8 +212,8 @@ One device will act as a Commissioner and the other will be a Joiner.
 Requirements
 ============
 
-To configure on-mesh Thread commissioning, you need at least two development kit boards that are compatible with either the CLI or the NCP samples.
-Check the sample documentation pages for the list of compatible development kit boards.
+To configure on-mesh Thread commissioning, you need at least two development kits that are compatible with either the CLI or the NCP samples.
+Check the sample documentation pages for the list of compatible development kits.
 
 .. _thread_ot_commissioning_configuring_on-mesh_flashing:
 

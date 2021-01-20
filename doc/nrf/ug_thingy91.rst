@@ -284,9 +284,9 @@ To build and program the source code from the command line, complete the followi
    .. parsed-literal::
       :class: highlight
 
-	  west build -b *board_name* -d *destination_directory_name*
+	  west build -b *build_target* -d *destination_directory_name*
 
-   The parameter *board_name* should be ``thingy91_nrf9160`` or ``thingy91_nrf9160ns`` if building for the nRF9160 SiP component and ``thingy91_nrf52840`` if building for the nRF52840 SoC component.
+   The parameter *build_target* should be ``thingy91_nrf9160`` or ``thingy91_nrf9160ns`` if building for the nRF9160 SiP component and ``thingy91_nrf52840`` if building for the nRF52840 SoC component.
 
    .. note::
 

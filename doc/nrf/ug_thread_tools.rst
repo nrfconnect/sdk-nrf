@@ -88,25 +88,25 @@ When working with samples that support wpantund, complete the following steps to
 
       wpanctl -I leader_if
 
-   This process can be used to control the connected NCP board.
+   This process can be used to control the connected NCP kit.
 
-Once wpantund and wpanctl are started, you can start running wpanctl commands to interact with the board.
+Once wpantund and wpanctl are started, you can start running wpanctl commands to interact with the development kit.
 
 Using wpanctl commands
 ======================
 
 To issue a wpanctl command, run it in the wpanctl shell.
-For example, the following command checks the the NCP board state:
+For example, the following command checks the the NCP kit state:
 
 .. code-block:: console
 
    wpanctl:leader_if> status
 
-The output will be different depending on the board and the sample.
+The output will be different depending on the kit and the sample.
 
 The most common wpanctl commands are the following:
 
-* ``status`` - Checks the board state.
+* ``status`` - Checks the kit state.
 * ``form "*My_OpenThread_network*"`` - Sets up a Thread network with the name ``My_OpenThread_network``.
 * ``get`` - Gets the values of all properties.
 * ``get *property*`` - Gets the value of the requested property.

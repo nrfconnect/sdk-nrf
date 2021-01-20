@@ -7,7 +7,7 @@ nRF9160: Asset Tracker
    :local:
    :depth: 2
 
-The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based board to the `nRF Connect for Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the device.
+The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based kit to the `nRF Connect for Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the device.
 
 
 Overview
@@ -47,7 +47,7 @@ The collected data includes the GPS position, accelerometer readings (the device
 
 On the nRF9160 DK, the application uses simulated sensor data by default, but it can be configured with Kconfig options to use real sensors to collect data.
 On the Thingy:91, onboard sensors are used by default.
-GPS is enabled by default on both the boards.
+GPS is enabled by default on both the kits.
 
 In addition to the sensor data, the application retrieves information from the LTE modem, such as the signal strength, battery voltage, and current operator.
 This information is available in nRF Connect for Cloud under the section **Cellular Link Monitor**.
@@ -114,7 +114,7 @@ Button 1 (SW3 on Thingy:91):
     * Enable or disable GPS operation (long press the button for a minimum of 10 seconds).
 
 Switch 1 (only on nRF9160 DK):
-    * Toggle to simulate orientation change (flipping) of the board.
+    * Toggle to simulate orientation change (flipping) of the kit.
 
 Switch 2 (only on nRF9160 DK):
     * Set power optimization mode, see :ref:`power_opt`.
@@ -209,13 +209,13 @@ The overlay can be found in :file:`mcuboot_overlay-rsa.conf`.
 Testing
 =======
 
-After programming the application and all prerequisites to your board, test the Asset Tracker application by performing the following steps:
+After programming the application and all prerequisites to your kit, test the Asset Tracker application by performing the following steps:
 
-1. Connect the board to the computer using a USB cable.
-   The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
-#. Connect to the board with a terminal emulator, for example, LTE Link Monitor.
-#. Reset the board.
-#. Observe in the terminal window that the board starts up in the Secure Partition Manager and that the application starts.
+1. Connect the kit to the computer using a USB cable.
+   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+#. Connect to the kit with a terminal emulator, for example, LTE Link Monitor.
+#. Reset the kit.
+#. Observe in the terminal window that the kit starts up in the Secure Partition Manager and that the application starts.
    This is indicated by output similar to the following lines::
 
       SPM: prepare to jump to Non-Secure image
@@ -234,10 +234,10 @@ After programming the application and all prerequisites to your board, test the 
       The device must be power-cycled to restart the association procedure.
 #. Observe that the LED(s) indicate that the connection is established.
 #. Observe that the device count on your nRF Connect for Cloud dashboard is incremented by one.
-#. Select the device from your device list on nRF Connect for Cloud, and observe that sensor data and modem information is received from the board.
+#. Select the device from your device list on nRF Connect for Cloud, and observe that sensor data and modem information is received from the kit.
 #. Press Button 1 (SW3 on Thingy:91) to send BUTTON data to nRF Connect for Cloud.
 #. Press Button 1 (SW3 on Thingy:91) for a minimum of 10 seconds to enable GPS tracking.
-   The board must be outdoors in clear space for a few minutes to get the first position fix.
+   The kit must be outdoors in clear space for a few minutes to get the first position fix.
 #. Optionally send AT commands from the terminal, and observe that the response is received.
 
 

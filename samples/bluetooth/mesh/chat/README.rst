@@ -95,7 +95,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, you can test it by using a smartphone with Nordic Semiconductor's nRF Mesh app installed.
+After programming the sample to your development kit, you can test it by using a smartphone with Nordic Semiconductor's nRF Mesh app installed.
 Testing consists of provisioning the device and configuring it for communication with other nodes.
 
 After configuring the device, you can interact with the sample using the terminal emulator.
@@ -158,8 +158,8 @@ Repeat steps 6-11 for each mesh node in the mesh network.
 Interacting with the sample
 ---------------------------
 
-1. Connect the board to the computer using a USB cable.
-   The board is assigned a COM port (Windows), ttyACM device (Linux) or tty.usbmodem (MacOS).
+1. Connect the kit to the computer using a USB cable.
+   The kit is assigned a COM port (Windows), ttyACM device (Linux) or tty.usbmodem (MacOS).
 #. |connect_terminal_specific|
 #. Enable local echo in the terminal to see the text you are typing.
 

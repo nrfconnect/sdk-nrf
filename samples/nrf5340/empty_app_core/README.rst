@@ -47,7 +47,7 @@ Testing
 =======
 1. Program this sample to the application core.
 #. Program the Zephyr's :ref:`zephyr:blinky-sample` to the network core.
-#. Observe the LEDs on the board.
+#. Observe the LEDs on the kit.
 
 Dependencies
 ************

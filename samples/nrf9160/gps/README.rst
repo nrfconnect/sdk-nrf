@@ -61,7 +61,7 @@ The SUPL client library is not required, and the sample will work without `A-GPS
 Testing
 =======
 
-After programming the sample and all the prerequisites to the board, you can test the sample by performing the following steps:
+After programming the sample and all the prerequisites to the development kit, you can test the sample by performing the following steps:
 
 1. Connect your nRF9160 DK to the PC using a USB cable and power on or reset your nRF9160 DK.
 2. Open a terminal emulator.

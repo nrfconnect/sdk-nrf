@@ -14,7 +14,7 @@ If you want to retrieve information about the button state, initialize the libra
 You can pass a callback function during initialization.
 This function is then called every time the button state changes.
 
-If you want to control the LEDs on the board, initialize the library with :c:func:`dk_leds_init`.
+If you want to control the LEDs on the development kit, initialize the library with :c:func:`dk_leds_init`.
 You can then set the value of a single LED, or set all of them to a state specified through bitmasks.
 
 API documentation

@@ -134,15 +134,15 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Optionally, set up log monitoring:
 
-  a. Connect the board to the computer using a USB cable.
-     The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+  a. Connect the kit to the computer using a USB cable.
+     The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
   b. |connect_terminal|
 
-2. Reset the board.
+2. Reset the kit.
 3. Follow these instructions to pair your Echo device with the sample: `Alexa Gadgets Pairing`_.
 4. Observe that LED 1 turns on to indicate that a connection has been established.
 5. Observe that LED 2 turns on to indicate that the Alexa Gadgets handshake has completed.

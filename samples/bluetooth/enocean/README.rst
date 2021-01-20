@@ -16,7 +16,7 @@ The EnOcean sample sets up a basic Bluetooth observer for both EnOcean switches 
 
 The observer device forwards incoming advertisements to the EnOcean library for processing.
 The application receives events from the EnOcean library through callbacks, and prints the outcome to console.
-The LEDs of the board also respond to button presses from an EnOcean switch.
+The LEDs of the kit also respond to button presses from an EnOcean switch.
 
 
 Requirements
@@ -31,12 +31,12 @@ The sample supports the following development kits:
 The sample also requires at least one :ref:`supported EnOcean device <bt_enocean_devices>`.
 
 .. note::
-    The sample supports up to four devices at a time that work with one board.
+    The sample supports up to four devices at a time that work with one kit.
 
 User interface
 **************
 
-The following board LEDs are used by this sample:
+The following LEDs are used by this sample:
 
 LED 1 and LED 2:
    At the end of commissioning, blink four times to indicate a new EnOcean device has been commissioned.
@@ -61,17 +61,17 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. :ref:`Commission one or more EnOcean devices <bt_enocean_commissioning>`.
-   The board LEDs will blink when each of the devices has been successfully commissioned.
-#. Connect the board to the computer with an USB cable.
-   The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+   The LEDs will blink when each of the devices has been successfully commissioned.
+#. Connect the kit to the computer with an USB cable.
+   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal_specific|
 #. Depending on the EnOcean devices you commissioned:
 
-    * If you commissioned a light switch, press any of its buttons or toggle the rocker to control the board LEDs.
-      The board LEDs light on and off as detailed in `User interface`_, and the received values are printed to the console.
+    * If you commissioned a light switch, press any of its buttons or toggle the rocker to control the LEDs.
+      The LEDs light on and off as detailed in `User interface`_, and the received values are printed to the console.
     * Sensor devices will automatically start reporting their sensor values to the application.
       The values are printed to the console.
 

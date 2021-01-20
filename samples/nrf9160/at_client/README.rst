@@ -43,10 +43,10 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test the sample by performing the following steps:
+After programming the sample to your development kit, test the sample by performing the following steps:
 
-1. Press the reset button on the nRF9160 DK to reboot the board and start the AT Client sample.
-#. :ref:`Connect to the nRF9160 DK board with LTE Link Monitor<lte_connect>`.
+1. Press the reset button on the nRF9160 DK to reboot the kit and start the AT Client sample.
+#. :ref:`Connect to the nRF9160 DK with LTE Link Monitor<lte_connect>`.
 
    .. note::
 

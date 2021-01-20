@@ -77,7 +77,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Observe that LED 2 on the Tag device turns off after 3 seconds after the programming is complete.
    This indicates that the system is in the System OFF mode.
