@@ -238,7 +238,7 @@ To select the build type when building the application from command line, specif
 
    -- -DCMAKE_BUILD_TYPE=\ *selected_build_type*\
 
-For example, you can replace the *selected_build_type* variable to build the ``ZRelease`` firmware for the PCA20041 board by running the following command in the project directory:
+For example, you can replace the *selected_build_type* variable to build the ``ZRelease`` firmware for PCA20041 by running the following command in the project directory:
 
 .. parsed-literal::
    :class: highlight

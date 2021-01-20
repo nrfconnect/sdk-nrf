@@ -48,10 +48,10 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, you can test it with `nRF Connect for Desktop`_ by performing the following steps.
+After programming the sample to your development kit, you can test it with `nRF Connect for Desktop`_ by performing the following steps.
 
 1. |connect_terminal_specific|
-#. Reset the board.
+#. Reset the kit.
 #. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Go to the :guilabel:`Server setup` tab.
    Click the dongle configuration and select :guilabel:`Load setup`.
@@ -69,7 +69,8 @@ After programming the sample to your board, you can test it with `nRF Connect fo
       Security changed: xx:xx:xx:xx:xx:xx (random) level 2
       Pairing completed: xx:xx:xx:xx:xx:xx (random), bonded: 1
 
-#. Press **Button 1** on the board. Verify that the current time printed on the UART matches the time that was input in the Current Time characteristic (UUID 0x2A2B)::
+#. Press **Button 1** on the kit.
+   Verify that the current time printed on the UART matches the time that was input in the Current Time characteristic (UUID 0x2A2B)::
 
       Current Time:
 

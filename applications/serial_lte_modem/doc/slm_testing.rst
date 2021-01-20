@@ -55,7 +55,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       *[...]*
       OK
 
-#. Check the supported values for the sleep command, then put the board in sleep mode.
+#. Check the supported values for the sleep command, then put the kit in sleep mode.
 
    .. parsed-literal::
       :class: highlight
@@ -66,7 +66,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
 
       **AT#XSLEEP=1**
 
-   Reset the board to exit sleep mode.
+   Reset the kit to exit sleep mode.
    If you are testing with an external MCU and :option:`CONFIG_SLM_GPIO_WAKEUP` is enabled, you can wake up by GPIO as well.
 
 

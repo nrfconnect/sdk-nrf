@@ -5,7 +5,7 @@ Radio front-end module (FEM) support
 
 This guide describes how to add support for 2 different front-end module (FEM) implementations to your application in |NCS|.
 
-|NCS| allows you to extend the radio range of your board with an implementation of the front-end modules.
+|NCS| allows you to extend the radio range of your development kit with an implementation of the front-end modules.
 Front-end modules are range extenders, used for boosting the link robustness and link budget of wireless SoCs.
 
 The FEM support is based on the :ref:`nrfxlib:mpsl_fem`, which is integrated in the nrfxlib's MPSL library.

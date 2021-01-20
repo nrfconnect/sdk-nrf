@@ -47,7 +47,7 @@ The model implements the :c:member:`bt_mesh_model_cb.start` handler to notify a 
    :start-after: include_startingpoint_chat_cli_rst_5
    :end-before: include_endpoint_chat_cli_rst_5
 
-The presence value of the model needs to be stored in the persistent storage, so it can be restored at the board reboot.
+The presence value of the model needs to be stored in the persistent storage, so it can be restored at the kit reboot.
 The :c:func:`bt_mesh_model_data_store` function is called to store the presence value:
 
 .. literalinclude:: ../../samples/bluetooth/mesh/chat/src/chat_cli.c

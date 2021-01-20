@@ -88,7 +88,7 @@ NCSDK-6689: High current consumption in Asset Tracker
 
 Sending data before connecting to nRF Connect for Cloud
   The :ref:`asset_tracker` application does not wait for connection to nRF Connect for Cloud before trying to send data.
-  This causes the application to crash if the user toggles one of the switches before the board is connected to the cloud.
+  This causes the application to crash if the user toggles one of the switches before the kit is connected to the cloud.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
@@ -343,9 +343,9 @@ NCSDK-5711: High-throughput transmission can deadlock the receive thread
 .. rst-class:: v1-2-1 v1-2-0
 
 Only secure applications can use Bluetooth LE
-  Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` board.
+  Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` build target.
 
-  **Workaround:** Use the ``nrf5340_dk_nrf5340_cpuapp`` board instead.
+  **Workaround:** Use the ``nrf5340_dk_nrf5340_cpuapp`` build target instead.
 
 .. rst-class:: v1-2-1 v1-2-0
 

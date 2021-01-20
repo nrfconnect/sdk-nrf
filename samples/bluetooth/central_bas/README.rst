@@ -51,15 +51,15 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, you can test it either by connecting to another board that is running the :ref:`peripheral_hids_keyboard` or :ref:`peripheral_hids_mouse` sample, or by using `nRF Connect for Desktop`_ that emulates a BAS Server.
+After programming the sample to your development kit, you can test it either by connecting to another kit that is running the :ref:`peripheral_hids_keyboard` or :ref:`peripheral_hids_mouse` sample, or by using `nRF Connect for Desktop`_ that emulates a BAS Server.
 
 
-Testing with another board
---------------------------
+Testing with another kit
+------------------------
 
 1. |connect_terminal_specific|
-#. Reset the board.
-#. Program the other board with the :ref:`peripheral_hids_keyboard` or :ref:`peripheral_hids_mouse` sample and reset it.
+#. Reset the kit.
+#. Program the other development kit with the :ref:`peripheral_hids_keyboard` or :ref:`peripheral_hids_mouse` sample and reset it.
 #. Wait until the BAS Server is detected by the central.
    In the terminal window, check for information similar to the following::
 
@@ -81,7 +81,7 @@ Testing with nRF Connect for Desktop
 ------------------------------------
 
 1. |connect_terminal_specific|
-#. Reset the board.
+#. Reset the kit.
 #. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Go to the :guilabel:`Server setup` tab.
    Click the dongle configuration and select :guilabel:`Load setup`.
@@ -111,7 +111,7 @@ Testing with nRF Connect for Desktop
    #. Click :guilabel:`Apply` and :guilabel:`Close`.
 
 #. In the Adapter settings, choose :guilabel:`Start advertising`.
-#. Wait until the board that runs the Central BAS sample connects.
+#. Wait until the kit that runs the Central BAS sample connects.
    In the terminal window, check for information similar to the following::
 
       The discovery procedure succeeded

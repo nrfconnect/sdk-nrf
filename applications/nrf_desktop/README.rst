@@ -323,7 +323,7 @@ For example, if the ``ZDebugWithShell`` build type is not supported on the selec
   Configuration file for build type ZDebugWithShell is missing.
 
 In addition to the build types mentioned above, some boards can provide more build types, which can be used to generate an application in a specific variant.
-For example, such additional configurations are used to allow generation of application with different role (such as mouse, keyboard, or dongle on a DK board) or to select a different link layer (such as LLPM capable Nordic SoftDevice LL or standard Zephyr SW LL).
+For example, such additional configurations are used to allow generation of application with different role (such as mouse, keyboard, or dongle on a DK) or to select a different link layer (such as LLPM capable Nordic SoftDevice LL or standard Zephyr SW LL).
 
 See :ref:`nrf_desktop_porting_guide` for detailed information about the application configuration and how to create build type files for your hardware.
 

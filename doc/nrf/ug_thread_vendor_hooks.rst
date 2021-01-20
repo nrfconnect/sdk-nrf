@@ -178,7 +178,7 @@ To test the vendor hook feature, you need a development kit that is programmed w
 Complete the following steps:
 
 1. Connect the Thread NCP development kit's SEGGER J-Link USB port to the USB port on your PC with an USB cable.
-#. Get the board's serial port name (for example, :file:`/dev/ttyACM0`).
+#. Get the development kit's serial port name (for example, :file:`/dev/ttyACM0`).
 #. Open a shell and run PySpinel by using the following command, with *baudrate* set to ``1000000`` and *serial_port_name* set to the port name from the previous step:
 
    .. parsed-literal::

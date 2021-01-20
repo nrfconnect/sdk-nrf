@@ -42,10 +42,10 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, you can test it with an NFC-A Tag device that supports NFC's TNEP.
+After programming the sample to your development kit, you can test it with an NFC-A Tag device that supports NFC's TNEP.
 
 1. |connect_terminal|
-#. Reset the board.
+#. Reset the kit.
 #. Put the NFC Tag device anntena in the range of the NFC polling device.
    The NFC polling device selects the first service and exchanges basic data with it.
    After that, the service is deselected.

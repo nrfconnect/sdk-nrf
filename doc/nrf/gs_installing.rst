@@ -690,5 +690,5 @@ Define the required environment variables as follows, depending on your operatin
       This file is loaded automatically when you run the above command.
 
 You must also make sure that nrfjprog (part of the `nRF Command Line Tools`_) is installed and its path is added to the environment variables.
-The west command programs the board by using nrfjprog by default.
-For more information on nrfjprog, see `programming development boards using nrfjprog <Programming DK boards using nrfjprog_>`_.
+The west command programs the kit by using nrfjprog by default.
+For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.

@@ -281,21 +281,21 @@ You can use the CMake environment variables `VERBOSE`_ and `CMAKE_BUILD_PARALLEL
 
 When using |SES|, you must set these environment variables before starting SES, and they will apply only to the build of the child images.
 On the command line, you must set them before invoking ``west``, and they will apply to both the parent image and the child images.
-For example, to build with verbose output and one parallel job, use the following commands (where *devkit_name* is the name of the development kit for which you are building):
+For example, to build with verbose output and one parallel job, use the following commands (where *build_target* is the target for the board for which you are building):
 
 * Linux/macOS:
 
      .. parsed-literal::
         :class: highlight
 
-        $ VERBOSE=True CMAKE_BUILD_PARALLEL_LEVEL=1 west build -b *devkit_name*
+        $ VERBOSE=True CMAKE_BUILD_PARALLEL_LEVEL=1 west build -b *build_target*
 
 * Windows:
 
      .. parsed-literal::
         :class: highlight
 
-        > set VERBOSE=True && set CMAKE_BUILD_PARALLEL_LEVEL=1 && west build -b *devkit_name*
+        > set VERBOSE=True && set CMAKE_BUILD_PARALLEL_LEVEL=1 && west build -b *build_target*
 
 Memory placement
 ****************

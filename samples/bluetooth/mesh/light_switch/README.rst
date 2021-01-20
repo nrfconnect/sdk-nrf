@@ -45,7 +45,7 @@ The models are used for the following purposes:
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to detect button presses on the board.
+The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to detect button presses on the development kit.
 
 If the model is configured to publish to a unicast address, the model handler calls :c:func:`bt_mesh_onoff_cli_set` to turn the LEDs of a mesh light device on or off.
 The response from the target device updates the corresponding LED on the mesh light switch device.
@@ -75,7 +75,7 @@ Buttons:
    When pressed, the button toggles the LED state on a :ref:`mesh light <bluetooth_mesh_light>` device.
 
 LEDs:
-   Show the last known OnOff state of the targeted :ref:`bluetooth_mesh_light` board.
+   Show the last known OnOff state of the targeted :ref:`bluetooth_mesh_light` kit.
 
 
 Building and running
@@ -92,9 +92,9 @@ Testing
 
 .. note::
    The light switch sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_light` sample running in the same mesh network.
-   Before testing mesh light switch, go through the mesh light's :ref:`testing guide <bluetooth_mesh_light_testing>` with a different board.
+   Before testing mesh light switch, go through the mesh light's :ref:`testing guide <bluetooth_mesh_light_testing>` with a different kit.
 
-After programming the sample to your board, you can test it by using a smartphone with Nordic Semiconductor's nRF Mesh app installed.
+After programming the sample to your development kit, you can test it by using a smartphone with Nordic Semiconductor's nRF Mesh app installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
 Provisioning the device

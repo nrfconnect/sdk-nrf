@@ -45,10 +45,9 @@ Building and Running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
-1. Connect to the board with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+1. |connect_terminal|
 #. Follow the instructions in the terminal to open a session and start requesting timeslots.
    The terminal then prints the signal type for each timeslot callback:
 

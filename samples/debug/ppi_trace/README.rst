@@ -50,7 +50,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Connect a logic analyzer to the pins that are used for tracing.
    Check the sample configuration for information about which pins are used.

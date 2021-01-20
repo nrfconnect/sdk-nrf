@@ -41,11 +41,11 @@ Building and Running
 Testing
 =======
 
-After programming the sample to your board, you can test it by connecting to another board that runs the :ref:`bluetooth_central_hr_coded`.
+After programming the sample to your development kit, you can test it by connecting to another development kit that runs the :ref:`bluetooth_central_hr_coded`.
 
 1. |connect_terminal_specific|
-#. Reset the board.
-#. Program the other board with the :ref:`bluetooth_central_hr_coded`.
+#. Reset the kit.
+#. Program the other kit with the :ref:`bluetooth_central_hr_coded` sample.
 #. Wait until the Coded advertiser is detected by the Central.
    In the terminal window, check for information similar to the following::
 

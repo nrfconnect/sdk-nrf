@@ -17,7 +17,7 @@ Overview
 After connecting, the sample starts MTU size negotiation, discovers the GATT database of the server, and configures the DFU SMP Client.
 When configuration is complete, the sample is ready to send SMP commands.
 
-To send an echo command, press Button 1 on the board.
+To send an echo command, press Button 1 on the development kit
 The string that is sent contains a number that is automatically incremented.
 This way, you can easily verify if the correct response is received.
 The response is decoded and displayed using the `TinyCBOR`_ library (which is part of Zephyr).
@@ -32,7 +32,7 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns , nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810
 
-The sample also requires a device running `MCUmgr`_ with transport protocol over Bluetooth Low Energy, for example, another board running the :ref:`smp_svr_sample`.
+The sample also requires a device running `MCUmgr`_ with transport protocol over Bluetooth Low Energy, for example, another development kit running the :ref:`smp_svr_sample`.
 
 User interface
 **************
@@ -53,19 +53,19 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
-1. Connect the board to the computer using a USB cable.
-   The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+1. Connect the kit to the computer using a USB cable.
+   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal|
-#. Reset the board.
-#. Observe that the text "Starting DFU SMP Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripheral boards with SMP.
-#. Program the :ref:`smp_svr_sample` to another board.
+#. Reset the kit.
+#. Observe that the text "Starting DFU SMP Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with SMP.
+#. Program the :ref:`smp_svr_sample` to another development kit.
    See the documentation for that sample for more information.
-#. Observe that the boards connect.
-   When service discovery is completed, the event logs are printed on the Central board's terminal.
-   If you connect to the Server board with a terminal emulator, you can observe that it prints "connected".
-#. Press Button 1 on the Client board.
+#. Observe that the kits connect.
+   When service discovery is completed, the event logs are printed on the Central's terminal.
+   If you connect to the Server with a terminal emulator, you can observe that it prints "connected".
+#. Press Button 1 on the Client.
    Observe messages similar to the following::
 
       Echo test: 1
@@ -73,8 +73,8 @@ After programming the sample to your board, test it by performing the following 
       Total response received - decoding
       {_"r": "Echo message: 1"}
 
-#. Disconnect the devices by, for example, pressing the Reset button on the Central board.
-   Observe that the boards automatically reconnect and that it is again possible to send data between the two boards.
+#. Disconnect the devices by, for example, pressing the Reset button on the Central.
+   Observe that the kits automatically reconnect and that it is again possible to send data between the two kits.
 
 Dependencies
 ************

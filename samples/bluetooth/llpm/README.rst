@@ -57,7 +57,7 @@ GATT Latency Service
      - BT_UUID_LATENCY_CHAR
      - BT_GATT_CHRC_WRITE, BT_GATT_PERM_WRITE
 
-This sample transmits data between two boards to measure the transmission latency in between.
+This sample transmits data between two development kits to measure the transmission latency in between.
 One of the devices is connected as a *master* and another is connected as a *slave*.
 The performance is evaluated with the transmission latency dividing the estimated round-trip time in half (RTT / 2).
 
@@ -101,12 +101,12 @@ Building and running
 Testing
 =======
 
-After programming the sample to both boards, test it by performing the following steps:
+After programming the sample to both development kits, test it by performing the following steps:
 
-1. Connect to both boards with a terminal emulator (for example, PuTTY).
+1. Connect to both kits with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
-#. Reset both boards.
-#. Observe that the boards establish a connection.
+#. Reset both kits.
+#. Observe that the kits establish a connection.
    When they are connected, one of them serves as *master* and the other one as *slave*.
 
    - The master outputs the following information::

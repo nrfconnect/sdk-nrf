@@ -155,7 +155,7 @@ Sleepy End Device behavior assignments
 ======================================
 
 Button 3:
-    When pressed while resetting the board, enable the :ref:`zigbee_ug_sed`.
+    When pressed while resetting the kit, enable the :ref:`zigbee_ug_sed`.
 
 Multiprotocol Bluetooth LE extension assignments
 ================================================

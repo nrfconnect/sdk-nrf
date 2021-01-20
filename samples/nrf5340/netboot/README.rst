@@ -81,7 +81,7 @@ To test the network core bootloader sample run the following commands:
    Hence, the firmware is also verified by MCUBoot on the application core.
    See :ref:`subsys_pcd` for more details.
 
-#. Reset the board.
+#. Reset the kit.
 #. Observe that the output includes ``Done updating network core``
 
 Dependencies

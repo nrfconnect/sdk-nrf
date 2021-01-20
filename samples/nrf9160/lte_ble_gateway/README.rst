@@ -40,7 +40,7 @@ The sample also requires a `Nordic Thingy:52`_.
 User interface
 **************
 
-Two buttons and two switches are used to enter a pairing pattern to associate a specific board with an nRF Connect for Cloud user account.
+Two buttons and two switches are used to enter a pairing pattern to associate a specific development kit with an nRF Connect for Cloud user account.
 
 When the connection is established, set switch 2 to **N.C.** to send simulated GPS data to nRF Connect for Cloud once every 2 seconds.
 
@@ -90,8 +90,8 @@ After programming the main controller with the sample, you can test it as follow
 #. Open a web browser and navigate to https://nrfcloud.com/.
    Follow the instructions to set up your account and to add an LTE device.
    A pattern of switch and button actions is displayed on the webpage.
-#. Power on or reset the board.
-#. Observe in the terminal window connected to the first serial port that the board starts up in the Secure Partition Manager.
+#. Power on or reset the kit.
+#. Observe in the terminal window connected to the first serial port that the kit starts up in the Secure Partition Manager.
    This is indicated by an output similar to the following lines:
 
    .. code-block:: console
@@ -107,17 +107,17 @@ After programming the main controller with the sample, you can test it as follow
    a. Observe that both LED 3 and 4 start blinking, indicating that the pairing procedure has been initiated.
    #. Follow the instructions on `nRF Connect for Cloud`_ and enter the displayed pattern.
       In the terminal window, you can see the pattern that you have entered.
-   #. If the pattern is entered correctly, the board and your nRF Connect for Cloud account are paired and the device reboots.
+   #. If the pattern is entered correctly, the kit and your nRF Connect for Cloud account are paired and the device reboots.
       If the LEDs start blinking in pairs, check in the terminal window which error occurred.
       The device must be power-cycled to restart the pairing procedure.
-   #. After reboot, the board connects to nRF Connect for Cloud, and the pattern disappears from the web page.
+   #. After reboot, the kit connects to nRF Connect for Cloud, and the pattern disappears from the web page.
 #. Observe that LED 4 is turned on to indicate that the connection is established.
 #. Observe that the device count on your nRF Connect for Cloud dashboard is incremented by one.
 #. Set switch 2 in the position marked as **N.C.** and observe that simulated GPS data is sent to nRF Connect for Cloud.
 #. Make sure that the Thingy:52 has established a connection to the application.
    This is indicated by its led blinking green.
 #. Flip the Thingy:52, with the USB port pointing upward, to trigger the sending of the sensor data to nRF Connect for Cloud.
-#. Select the device from your device list on nRF Connect for Cloud, and observe that the sensor data is received from the board.
+#. Select the device from your device list on nRF Connect for Cloud, and observe that the sensor data is received from the kit.
 #. Observe that the data is updated in nRF Connect for Cloud.
 
 

@@ -72,7 +72,7 @@ In Zephyr, :ref:`zephyr:nrf5340dk_nrf5340` is divided into two different build t
 * ``nrf5340dk_nrf5340_cpuapp`` for the secure domain
 * ``nrf5340dk_nrf5340_cpuappns`` for the non-secure domain
 
-When built for the ``nrf5340dk_nrf5340_cpuappns`` board, the :ref:`secure_partition_manager` sample is automatically included in the build.
+When built for the ``nrf5340dk_nrf5340_cpuappns`` build target, the :ref:`secure_partition_manager` sample is automatically included in the build.
 
 .. tfm_support_start
 
@@ -379,7 +379,7 @@ If you built the application sample and the network sample as separate images, y
 
         nrfjprog -f NRF53 --program zephyr/zephyr.hex --chiperase
 
-      Finally, reset the board::
+      Finally, reset the development kit::
 
         nrfjprog --pinreset
 

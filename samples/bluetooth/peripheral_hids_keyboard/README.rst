@@ -14,7 +14,7 @@ The sample also shows how to perform LE Secure Connections Out-of-Band pairing u
 Overview
 ********
 
-The sample uses the buttons on a development board to simulate keys on a keyboard.
+The sample uses the buttons on a development kit to simulate keys on a keyboard.
 One button simulates the letter keys by generating letter keystrokes for a predefined string.
 A second button simulates the Shift button and shows how to modify the letter keystrokes.
 An LED displays the Caps Lock state, which can be modified by another connected keyboard.
@@ -89,20 +89,20 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, you can test it either by connecting the board as keyboard device to a Microsoft Windows computer or by connecting to it with `nRF Connect for Desktop`_.
+After programming the sample to your development kit, you can test it either by connecting the kit as keyboard device to a Microsoft Windows computer or by connecting to it with `nRF Connect for Desktop`_.
 
 Testing with a Microsoft Windows computer
 -----------------------------------------
 
 To test with a Microsoft Windows computer that has a Bluetooth radio, complete the following steps:
 
-1. Power on your development board.
-#. Press Button 4 on the board if the device is not advertising.
+1. Power on your development kit.
+#. Press Button 4 on the kit if the device is not advertising.
    Advertising is indicated by blinking **LED 1**.
 #. On your Windows computer, search for Bluetooth devices and connect to the device named "NCS HIDS keyboard".
 #. Observe that the connection state is indicated by **LED 2**.
 #. Open a text editor (for example, Notepad).
-#. Repeatedly press **Button 1** on the board.
+#. Repeatedly press **Button 1** on the kit.
    Every button press sends one character of the test message "hello" (the test message includes a carriage return) to the computer, and this will be displayed in the text editor.
 #. Press **Button 2** and hold it while pressing **Button 1**.
    Observe that the next letter of the "hello" message appears as capital letter.
@@ -120,8 +120,8 @@ Testing with nRF Connect for Desktop
 
 To test with `nRF Connect for Desktop`_, complete the following steps:
 
-1. Power on your development board.
-#. Press **Button 4** on the board if the device is not advertising.
+1. Power on your development kit.
+#. Press **Button 4** on the kit if the device is not advertising.
    Advertising is indicated by blinking **LED 1**.
 #. Connect to the device from nRF Connect (the device is advertising as "NCS HIDS keyboard").
 #. Optionally, bond to the device.
@@ -132,7 +132,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 #. Observe that the connection state is indicated by **LED 2**.
 #. Observe that the services of the connected device are shown.
 #. Enable notifications for all HID characteristics.
-#. Press **Button 1** on the board.
+#. Press **Button 1** on the kit.
    Observe that two notifications are received on one of the HID Report characteristics, denoting press and release for one character of the test message.
 
    The first notification has the value ``00000B0000000000``, the second has the value ``0000000000000000``.
@@ -171,7 +171,7 @@ To test with an Android smartphone/tablet, complete the following steps:
 #. Observe that the device is advertising, as indicated by blinking **LED 1**.
 #. Confirm pairing with 'Nordic_Mouse_NFC' in a pop-up window on the smartphone/tablet.
 #. Observe that the connection state is indicated by **LED 2**.
-#. Repeatedly press **Button 1** on the board.
+#. Repeatedly press **Button 1** on the kit.
    Every button press sends one character of the test message "hello" to the smartphone (the test message includes a carriage return).
 #. Press **Button 2** and hold it while pressing **Button 1**.
    Observe that the next letter of the "hello" message appears as a capital letter.
