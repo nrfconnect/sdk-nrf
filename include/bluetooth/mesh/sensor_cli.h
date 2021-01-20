@@ -432,7 +432,7 @@ int bt_mesh_sensor_cli_cadence_set_unack(
  */
 int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
-				    struct bt_mesh_sensor_type *sensor,
+				    const struct bt_mesh_sensor_type *sensor,
 				    uint16_t *ids, uint32_t *count);
 
 /** @brief Get a setting value for a sensor.
