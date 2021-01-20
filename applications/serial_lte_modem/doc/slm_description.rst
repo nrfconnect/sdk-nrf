@@ -95,7 +95,10 @@ UART configuration:
 * Parity bit: no
 * Operation mode: IRQ
 
-Note that the GPIO output level on nRF9160 side must be 3 V.
+.. note::
+   The GPIO output level on nRF9160 side must be 3 V.
+   You can set the VDD voltage with the **VDD IO** switch (**SW9**).
+   See the `VDD supply rail section in the nRF9160 DK User Guide`_ for more information.
 
 Configuration
 *************
