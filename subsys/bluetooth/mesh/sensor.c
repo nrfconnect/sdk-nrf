@@ -384,7 +384,7 @@ uint8_t sensor_powtime_encode(uint64_t raw)
 	int i;
 
 	for (i = 0; (i < ARRAY_SIZE(powtime_mul) &&
-		     raw_us >= (*seed * powtime_mul[i]) / 100000);
+		     raw_us > (*seed * powtime_mul[i]) / 100000);
 	     i++) {
 	}
 
