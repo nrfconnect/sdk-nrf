@@ -863,6 +863,11 @@ static bool report_send(struct report_data *rd, bool check_state, bool send_alwa
 		}
 	}
 
+	/* Ensure that report marked as send_always will be sent. */
+	if (send_always && !report_sent) {
+		rd->update_needed = true;
+	}
+
 	return report_sent;
 }
 
