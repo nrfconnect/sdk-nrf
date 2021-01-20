@@ -11,6 +11,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         path: ncs/nrf
+        ref: ${{ github.event.pull_request.head.sha }}
         fetch-depth: 0
 
     - name: cache-pip
@@ -52,6 +53,9 @@ jobs:
         git remote -v
         git branch
         git rebase origin/${BASE_REF}
+        # debug
+        ls -la
+        git log --pretty=oneline | head -n 10
         $ZEPHYR_BASE/scripts/ci/check_compliance.py -m Codeowners -m Devicetree -m Gitlint -m Identity -m Nits -m pylint -m checkpatch -m Kconfig -c origin/${BASE_REF}.. || true
 
     - name: upload-results
