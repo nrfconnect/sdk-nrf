@@ -31,10 +31,6 @@ NRF_NSE(int, spm_request_random_number, uint8_t *output, size_t len,
 NRF_NSE(int, spm_request_read, void *destination, uint32_t addr, size_t len);
 #endif /* CONFIG_SPM_SERVICE_READ */
 
-#ifdef CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO
-NRF_NSE(int, spm_firmware_info, uint32_t fw_address, struct fw_info *info);
-#endif /* CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO */
-
 #ifdef CONFIG_SPM_SERVICE_PREVALIDATE
 NRF_NSE(int, spm_prevalidate_b1_upgrade, uint32_t dst_addr, uint32_t src_addr);
 #endif /* CONFIG_SPM_SERVICE_PREVALIDATE */

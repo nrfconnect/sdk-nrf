@@ -47,7 +47,6 @@ static int read_ficr_word(uint32_t *result, const volatile uint32_t *addr)
 
 void main(void)
 {
-	struct fw_info info_app;
 	const int sleep_time_s = 5;
 	const int random_number_count = 16;
 	const int random_number_len = 144;
@@ -75,13 +74,6 @@ void main(void)
 #else
 	printk("CONFIG_SPM_SERVICE_RNG is disabled.\n\n");
 #endif
-
-	ret = spm_firmware_info(PM_APP_ADDRESS, &info_app);
-	if (ret != 0) {
-		printk("Could find firmware info (err: %d)\n", ret);
-	}
-
-	printk("App FW version: %d\n\n", info_app.version);
 
 #ifdef CONFIG_BOOTLOADER_MCUBOOT
 	const int num_bytes_to_read = PM_MCUBOOT_PAD_SIZE;

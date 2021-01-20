@@ -100,14 +100,6 @@ config SPM_SERVICE_REBOOT
 	  service will allow it to issue a request to do a system reset through
 	  a secure service.
 
-config SPM_SERVICE_FIND_FIRMWARE_INFO
-	bool "Find firmware info"
-	default y if SPM
-	help
-	  The Non-Secure Firmware is not allowed to read the memory
-	  marked as secure. This service allows it to request firmware info
-	  about image stored at a given address.
-
 config SPM_SERVICE_S0_ACTIVE
 	bool "Enable secure service to check if S0 is active B1 slot"
 	default y

@@ -97,17 +97,6 @@ int spm_request_read(void *destination, uint32_t addr, size_t len);
  */
 int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active);
 
-/** Search for the fw_info structure in firmware image located at address.
- *
- * @param[in]   fw_address  Address where firmware image is stored.
- * @param[out]  info        Pointer to where found info is stored.
- *
- * @retval 0        If successful.
- * @retval -EINVAL  If info is NULL.
- * @retval -EFAULT  If no info is found.
- */
-int spm_firmware_info(uint32_t fw_address, struct fw_info *info);
-
 /** Prevalidate a B1 update
  *
  * This is performed by the B0 bootloader.

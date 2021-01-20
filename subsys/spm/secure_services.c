@@ -154,27 +154,6 @@ int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active)
 }
 #endif /* CONFIG_SPM_SERVICE_S0_ACTIVE */
 
-#ifdef CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO
-__TZ_NONSECURE_ENTRY_FUNC
-int spm_firmware_info_nse(uint32_t fw_address, struct fw_info *info)
-{
-	const struct fw_info *tmp_info;
-
-	if (info == NULL) {
-		return -EINVAL;
-	}
-
-	tmp_info = fw_info_find(fw_address);
-
-	if (tmp_info != NULL) {
-		memcpy(info, tmp_info, sizeof(*tmp_info));
-		return 0;
-	}
-
-	return -EFAULT;
-}
-#endif /* CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO */
-
 
 #ifdef CONFIG_SPM_SERVICE_PREVALIDATE
 __TZ_NONSECURE_ENTRY_FUNC
