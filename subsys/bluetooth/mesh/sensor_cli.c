@@ -845,7 +845,9 @@ int bt_mesh_sensor_cli_all_get(struct bt_mesh_sensor_cli *cli,
 	struct sensor_data_list_rsp rsp_data = { .count = *count,
 						 .sensors = sensors };
 
-	memset(sensors, 0, sizeof(*sensors) * (*count));
+	if (sensors) {
+		memset(sensors, 0, sizeof(*sensors) * (*count));
+	}
 
 	err = model_ackd_send(cli->mod, ctx, &msg, sensors ? &cli->ack : NULL,
 			      BT_MESH_SENSOR_OP_STATUS, &rsp_data);
