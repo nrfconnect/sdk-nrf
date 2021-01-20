@@ -575,9 +575,9 @@ void zigbee_enable(void)
 /**
  * @brief Get the reason that triggered the last reset
  *
- * @return zb_reset_source_t
+ * @return zb_uint8_t
  * */
-zb_reset_source_t zb_get_reset_source(void)
+zb_uint8_t zb_get_reset_source(void)
 {
 	uint32_t reas;
 
