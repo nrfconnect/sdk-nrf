@@ -715,6 +715,12 @@ SoftDevice Controller
 
 .. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
+DRGN-15226: Link disconnects with reason "LMP Response Timeout (0x22)"
+  If the slave receives an encryption request while the "HCI LE Long Term Key Request" event is disabled, the link disconnects with the reason "LMP Response Timeout (0x22)".
+  The event is disabled when :option:`CONFIG_BT_SMP` and/or :option:`CONFIG_BT_CTLR_LE_ENC` is disabled.
+
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
 DRGN-11963: LL control procedures cannot be initiated at the same time
   The LL control procedures (LE start encryption and LE connection parameter update) cannot be initiated at the same time or more than once.
   The controller will return an HCI error code "Controller Busy (0x3a)", as per specification's chapter 2.55.
