@@ -34,7 +34,7 @@ Jinja2==2.11.2
 junit2html==23
 junitparser==1.4.1
 lazy-object-proxy==1.4.3
-lxml==4.5.0
+lxml==4.6.2
 MarkupSafe==1.1.1
 mccabe==0.6.1
 milksnake==0.1.5
