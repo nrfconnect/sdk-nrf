@@ -40,6 +40,7 @@ jobs:
         west zephyr-export
 
     - name: Run Compliance Tests
+      continue-on-error: true
       id: compliance
       env:
         BASE_REF: ${{ github.base_ref }}
@@ -56,7 +57,7 @@ jobs:
         # debug
         ls -la
         git log --pretty=oneline | head -n 10
-        $ZEPHYR_BASE/scripts/ci/check_compliance.py -m Codeowners -m Devicetree -m Gitlint -m Identity -m Nits -m pylint -m checkpatch -m Kconfig -c origin/${BASE_REF}.. || true
+        $ZEPHYR_BASE/scripts/ci/check_compliance.py -m Codeowners -m Devicetree -m Gitlint -m Identity -m Nits -m pylint -m checkpatch -m Kconfig -c origin/${BASE_REF}..
 
     - name: upload-results
       uses: actions/upload-artifact@v2
@@ -68,6 +69,10 @@ jobs:
     - name: check-warns
       working-directory: ncs/nrf
       run: |
+        if [[ ! -s "compliance.xml" ]]; then
+          exit 1;
+        fi
+
         for file in Nits.txt checkpatch.txt Identity.txt Gitlint.txt pylint.txt Devicetree.txt Kconfig.txt Codeowners.txt; do
           if [[ -s $file ]]; then
              errors=$(cat $file)
