@@ -277,19 +277,23 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 		return err;
 	}
 #else /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
-	const struct fw_info *tmp_info;
+	const struct fw_info *s0;
+	const struct fw_info *s1;
 
-	tmp_info = fw_info_find(PM_S0_ADDRESS);
-	if (tmp_info == NULL) {
+	s0 = fw_info_find(PM_S0_ADDRESS);
+	if (s0 == NULL) {
 		return -EFAULT;
 	}
-	memcpy(&s0, tmp_info, sizeof(s0));
 
-	tmp_info = fw_info_find(PM_S1_ADDRESS);
-	if (tmp_info == NULL) {
-		return -EFAULT;
+	s1 = fw_info_find(PM_S1_ADDRESS);
+	if (s1 == NULL) {
+		/* No s1 found, s0 is active */
+		s0_active = true;
+	} else {
+		/* Both s0 and s1 found, check who is active */
+		s0_active = s0->version >= s1->version;
 	}
-	memcpy(&s1, tmp_info, sizeof(s1));
+
 #endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
 
 	err = dfu_ctx_mcuboot_set_b1_file(file, s0_active, &update);
