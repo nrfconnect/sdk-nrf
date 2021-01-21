@@ -60,7 +60,8 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 
 #define UART_RX_BUF_NUM	2
 #define UART_RX_LEN	256
-#define UART_RX_TIMEOUT 1
+#define UART_RX_TIMEOUT_MS	1
+#define UART_ERROR_DELAY_MS	500
 
 /** @brief Termination Modes. */
 enum term_modes {
@@ -84,6 +85,8 @@ static uint8_t at_buf[AT_MAX_CMD_LEN];
 static size_t at_buf_len;
 static bool at_buf_overflow;
 static struct k_work cmd_send_work;
+static struct k_delayed_work uart_recovery_work;
+static bool uart_recovery_pending;
 
 static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
 static uint8_t *next_buf = uart_rx_buf[1];
@@ -319,6 +322,23 @@ static int handle_at_slmuart(const char *at_cmd, uint32_t *baudrate)
 	return ret;
 }
 
+static void uart_recovery(struct k_work *work)
+{
+	int err;
+
+	ARG_UNUSED(work);
+
+	at_buf_overflow = false;
+	err = uart_rx_enable(uart_dev, uart_rx_buf[0],
+				sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
+	if (err) {
+		LOG_ERR("UART RX failed: %d", err);
+		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
+	}
+	uart_recovery_pending = false;
+	LOG_DBG("UART recovered");
+}
+
 static void cmd_send(struct k_work *work)
 {
 	char str[32];
@@ -522,7 +542,7 @@ static void cmd_send(struct k_work *work)
 done:
 	at_buf_overflow = false;
 	err = uart_rx_enable(uart_dev, uart_rx_buf[0],
-				sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT);
+				sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
 	if (err) {
 		LOG_ERR("UART RX failed: %d", err);
 		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
@@ -610,6 +630,8 @@ send:
 static void uart_callback(const struct device *dev, struct uart_event *evt,
 			  void *user_data)
 {
+	static bool enable_rx_retry;
+
 	ARG_UNUSED(dev);
 
 	int err;
@@ -649,9 +671,19 @@ static void uart_callback(const struct device *dev, struct uart_event *evt,
 		break;
 	case UART_RX_STOPPED:
 		LOG_WRN("RX_STOPPED (%d)", evt->data.rx_stop.reason);
+		/* Retry automatically in case of UART ERROR interrupt */
+		if (evt->data.rx_stop.reason != 0) {
+			enable_rx_retry = true;
+		}
 		break;
 	case UART_RX_DISABLED:
 		LOG_DBG("RX_DISABLED");
+		if (enable_rx_retry && !uart_recovery_pending) {
+			k_delayed_work_submit(&uart_recovery_work,
+				K_MSEC(UART_ERROR_DELAY_MS));
+			enable_rx_retry = false;
+			uart_recovery_pending = true;
+		}
 		break;
 	default:
 		break;
@@ -681,11 +713,13 @@ int slm_at_host_init(void)
 	do {
 		err = uart_err_check(uart_dev);
 		if (err) {
-			if (k_uptime_get_32() - start_time > 500) {
-				LOG_ERR("UART check failed: %d. "
-					"UART initialization timed out.", err);
+			uint32_t now = k_uptime_get_32();
+
+			if (now - start_time > UART_ERROR_DELAY_MS) {
+				LOG_ERR("UART check failed: %d", err);
 				return -EIO;
 			}
+			k_sleep(K_MSEC(10));
 		}
 	} while (err);
 	/* Register async handling callback */
@@ -699,7 +733,7 @@ int slm_at_host_init(void)
 				NULL, NULL);
 	term_mode = CONFIG_SLM_AT_HOST_TERMINATION;
 	err = uart_rx_enable(uart_dev, uart_rx_buf[0],
-				sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT);
+				sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
 	if (err) {
 		LOG_ERR("Cannot enable rx: %d", err);
 		return -EFAULT;
@@ -772,6 +806,7 @@ int slm_at_host_init(void)
 	}
 #endif
 	k_work_init(&cmd_send_work, cmd_send);
+	k_delayed_work_init(&uart_recovery_work, uart_recovery);
 	k_sem_give(&tx_done);
 	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
 
