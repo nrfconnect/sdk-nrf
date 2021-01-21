@@ -98,6 +98,7 @@ static void handle_light_onoff(struct bt_mesh_model *mod,
 		status.remaining_time =
 			model_transition_decode(net_buf_simple_pull_u8(buf));
 	} else if (buf->len == 0) {
+		status.target_on_off = onoff;
 		status.remaining_time = 0;
 	} else {
 		return;
