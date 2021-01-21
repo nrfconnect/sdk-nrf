@@ -739,6 +739,19 @@ static void bt_mesh_lightness_srv_reset(struct bt_mesh_model *mod)
 	}
 }
 
+static int update_handler(struct bt_mesh_model *model)
+{
+	struct bt_mesh_lightness_srv *srv = model->user_data;
+	struct bt_mesh_lightness_status status = { 0 };
+
+	srv->handlers->light_get(srv, NULL, &status);
+	BT_DBG("Republishing: %u -> %u [%u ms]", status.current, status.target,
+	       status.remaining_time);
+	lvl_status_encode(model->pub->msg, &status, LIGHT_USER_REPR);
+	return 0;
+}
+
+
 static int bt_mesh_lightness_srv_init(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_lightness_srv *srv = mod->user_data;
@@ -746,7 +759,10 @@ static int bt_mesh_lightness_srv_init(struct bt_mesh_model *mod)
 	srv->lightness_model = mod;
 
 	lightness_srv_reset(srv);
-	net_buf_simple_init(mod->pub->msg, 0);
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
 		/* Model extensions:
@@ -856,16 +872,4 @@ int bt_mesh_lightness_srv_pub(struct bt_mesh_lightness_srv *srv,
 			      const struct bt_mesh_lightness_status *status)
 {
 	return pub(srv, ctx, status, LIGHT_USER_REPR);
-}
-
-int _bt_mesh_lightness_srv_update_handler(struct bt_mesh_model *model)
-{
-	struct bt_mesh_lightness_srv *srv = model->user_data;
-	struct bt_mesh_lightness_status status = { 0 };
-
-	srv->handlers->light_get(srv, NULL, &status);
-	BT_DBG("Republishing: %u -> %u [%u ms]", status.current, status.target,
-	       status.remaining_time);
-	lvl_status_encode(model->pub->msg, &status, LIGHT_USER_REPR);
-	return 0;
 }

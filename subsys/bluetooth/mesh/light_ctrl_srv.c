@@ -1388,6 +1388,18 @@ static const struct bt_mesh_scene_entry_type scene_type = {
 	.recall = scene_recall,
 };
 
+static int update_handler(struct bt_mesh_model *mod)
+{
+	BT_DBG("");
+
+	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
+
+	onoff_encode(srv, srv->pub.msg, srv->state);
+
+	return 0;
+}
+
+
 static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
@@ -1423,7 +1435,10 @@ static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 		bt_mesh_model_extend(mod, srv->lightness->lightness_model);
 	}
 
-	net_buf_simple_init(srv->pub.msg, 0);
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
 		bt_mesh_model_extend(mod, srv->onoff.model);
@@ -1585,7 +1600,10 @@ static int lc_setup_srv_init(struct bt_mesh_model *mod)
 		bt_mesh_model_extend(srv->model, srv->setup_srv);
 	}
 
-	net_buf_simple_init(srv->setup_pub.msg, 0);
+
+	srv->setup_pub.msg = &srv->setup_pub_buf;
+	net_buf_simple_init_with_data(&srv->setup_pub_buf, srv->setup_pub_data,
+				      sizeof(srv->setup_pub_data));
 
 	return 0;
 }
@@ -1624,17 +1642,6 @@ const struct bt_mesh_model_cb _bt_mesh_light_ctrl_setup_srv_cb = {
 	.init = lc_setup_srv_init,
 	.settings_set = lc_setup_srv_settings_set,
 };
-
-int _bt_mesh_light_ctrl_srv_update(struct bt_mesh_model *mod)
-{
-	BT_DBG("");
-
-	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
-
-	onoff_encode(srv, srv->pub.msg, srv->state);
-
-	return 0;
-}
 
 /*******************************************************************************
  * Public API
