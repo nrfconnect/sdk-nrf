@@ -13,7 +13,7 @@ For more information about the |NCS| implementation of the Bluetooth mesh, see :
 
 The Bluetooth mesh is based on the Bluetooth LE part of the Bluetooth 4.0 Specification, and shares the lowest layers with this protocol.
 On-air, the Bluetooth mesh physical representation is compatible with existing Bluetooth LE devices, as mesh messages are contained inside the payload of Bluetooth LE *advertisement* packets.
-However, Bluetooth mesh specifies a completely new host layer, and although some concepts are shared, Bluetooth mesh is incompatible with the Bluetooth LE host layer.
+However, Bluetooth mesh specifies a completely new host stack, and although some concepts are shared, Bluetooth mesh is incompatible with the Bluetooth Host.
 
 .. figure:: /images/bt_mesh_and_ble.svg
    :alt: Relationship between Bluetooth mesh and Bluetooth LE specifications

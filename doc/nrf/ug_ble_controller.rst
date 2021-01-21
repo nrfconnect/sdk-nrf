@@ -19,7 +19,7 @@ The |NCS| contains two implementations of a Bluetooth LE Controller:
 The SoftDevice Controller is implemented by Nordic Semiconductor.
 The Zephyr Bluetooth LE Controller is an open source Link Layer developed in `Zephyr`_, to which Nordic Semiconductor is a contributor.
 
-Both Link Layers integrate with the Zephyr Bluetooth LE Host, which completes the full Bluetooth LE protocol stack solution in the |NCS|.
+Both Link Layers integrate with the Zephyr Bluetooth Host, which completes the full Bluetooth LE protocol stack solution in the |NCS|.
 It is possible to select either Bluetooth LE Controller for application development.
 See `Usage in samples`_ for more information.
 
