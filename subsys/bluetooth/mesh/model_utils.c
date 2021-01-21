@@ -102,7 +102,7 @@ uint8_t model_delay_encode(uint32_t delay)
 
 int32_t model_delay_decode(uint8_t encoded_delay)
 {
-	return encoded_delay * 5;
+	return encoded_delay * DELAY_TIME_STEP_MS;
 }
 
 int model_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
