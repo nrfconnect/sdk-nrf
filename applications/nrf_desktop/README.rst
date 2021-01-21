@@ -175,7 +175,6 @@ The application uses dynamic allocation to:
 When configuring HEAP, make sure that the values for the following options match the typical event size and the system needs:
 
 * :option:`CONFIG_HEAP_MEM_POOL_SIZE` - The size must be big enough to handle the worst possible use case for the given device.
-* :option:`CONFIG_HEAP_MEM_POOL_MIN_SIZE`
 
 .. important::
     The nRF Desktop uses ``k_heap`` as the backend for dynamic allocation.
