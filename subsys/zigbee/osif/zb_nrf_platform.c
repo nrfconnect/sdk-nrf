@@ -263,7 +263,7 @@ int zigbee_init(void)
 #endif /* CONFIG_ZBOSS_TRAF_DUMP */
 #endif /* ZB_TRACE_LEVEL */
 
-#ifndef CONFIG_ZB_TEST_MODE
+#ifndef CONFIG_ZB_TEST_MODE_MAC
 	/* Initialize Zigbee stack. */
 	ZB_INIT("zigbee_thread");
 
@@ -298,7 +298,7 @@ int zigbee_init(void)
 #error Zigbee device role undefined!
 #endif
 
-#endif /* CONFIG_ZB_TEST_MODE */
+#endif /* CONFIG_ZB_TEST_MODE_MAC */
 
 	return 0;
 }
