@@ -381,13 +381,13 @@ The information extracted from devicetree is the alignment value for some partit
    #include <autoconf.h>
    #include <devicetree_legacy_unfixed.h>
 
-   b0_image:
+   b0:
      size: CONFIG_PM_PARTITION_SIZE_B0_IMAGE
      placement:
        after: start
 
-   b0:
-     span: [b0_image, provision]
+   b0_provision:
+     span: [b0, provision]
 
    s0_pad:
      share_size: mcuboot_pad
@@ -429,7 +429,7 @@ The information extracted from devicetree is the alignment value for some partit
      region: otp
    #else
      placement:
-       after: b0_image
+       after: b0
        align: {start: DT_FLASH_ERASE_BLOCK_SIZE}
    #endif
 

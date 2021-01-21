@@ -8,6 +8,7 @@
 import argparse
 import yaml
 from os import path
+from partition_manager import PartitionError
 
 
 def get_header_guard_start(filename):
@@ -107,8 +108,36 @@ def write_gpm_config(gpm_config, regions_config, name, out_path):
     config_lines = get_config_lines(gpm_config, regions_config, '#define ', ' ', DEST_HEADER, domain)
     image_config_lines = list.copy(config_lines)
 
-    image_config_lines.append('#define PM_ADDRESS {}'.format(hex(gpm_config[domain][image]['address'])))
-    image_config_lines.append('#define PM_SIZE {}'.format(hex(gpm_config[domain][image]['size'])))
+    pm_image = image
+    if any('span' in x for x in gpm_config[domain][image]):
+        # Check for deprecated <name>_image images that may still linger
+        # in static configurations
+        deprecated = f'{image}_image'
+        if gpm_config[domain].get(deprecated):
+            pm_image = deprecated
+            print(f"""\n
+        ----------------------------------------------------------
+        --- WARNING: Partition image '{image}' is a container  ---
+        --- partition with a span of one or more images, but   ---
+        --- has the same name of its child image. Container    ---
+        --- partitions are not allowed to share the name of    ---
+        --- the child image that defines it.                   ---
+        ---                                                    ---
+        --- A pm_static.yml file defining appears to be        ---
+        --- overriding this. If possible, please rename the    ---
+        --- container partition in this file and use the child ---
+        --- image name for its actual image partition.         ---
+        ----------------------------------------------------------\n""")
+        else:
+            raise PartitionError(
+                f"Partition image '{image}' is a container with a span of one "
+                "or more images, but has the same name of its child image. "
+                "Container partitions are not allowed to share the name of the "
+                " child image that defines it. Please rename the span "
+                f"'{image}' in the pm.yml file of child '{image}'.")
+
+    image_config_lines.append('#define PM_ADDRESS {}'.format(hex(gpm_config[domain][pm_image]['address'])))
+    image_config_lines.append('#define PM_SIZE {}'.format(hex(gpm_config[domain][pm_image]['size'])))
 
     image_sram_partition = f'{image}_sram'
     image_has_custom_sram = image_sram_partition in gpm_config[domain]
