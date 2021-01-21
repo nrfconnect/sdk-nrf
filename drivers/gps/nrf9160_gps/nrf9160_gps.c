@@ -952,6 +952,7 @@ static const struct gps_driver_api gps_api_funcs = {
 	.agps_write = agps_write,
 };
 
-DEVICE_AND_API_INIT(nrf9160_gps, CONFIG_NRF9160_GPS_DEV_NAME, setup,
-		    &gps_drv_data, NULL, POST_KERNEL,
-		    CONFIG_NRF9160_GPS_INIT_PRIO, &gps_api_funcs);
+DEVICE_DEFINE(nrf9160_gps, CONFIG_NRF9160_GPS_DEV_NAME,
+	      setup, device_pm_control_nop,
+	      &gps_drv_data, NULL, POST_KERNEL,
+	      CONFIG_NRF9160_GPS_INIT_PRIO, &gps_api_funcs);

@@ -38,8 +38,8 @@ static int hw_cc3xx_init(const struct device *dev)
 	return res;
 }
 
-DEVICE_AND_API_INIT(hw_cc3xx, CONFIG_HW_CC3XX_NAME, hw_cc3xx_init, NULL, NULL,
-		    POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, NULL);
+SYS_DEVICE_DEFINE(CONFIG_HW_CC3XX_NAME, hw_cc3xx_init, device_pm_control_nop,
+		  POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 
 #endif /* CONFIG_HW_CC3XX */
 
