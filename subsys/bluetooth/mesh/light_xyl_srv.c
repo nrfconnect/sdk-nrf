@@ -32,6 +32,23 @@ static int store_state(struct bt_mesh_light_xyl_srv *srv)
 					sizeof(data));
 }
 
+static void xyl_get(struct bt_mesh_light_xyl_srv *srv,
+		    struct bt_mesh_msg_ctx *ctx,
+		    struct bt_mesh_light_xyl_status *status)
+{
+	struct bt_mesh_lightness_status lightness = { 0 };
+	struct bt_mesh_light_xy_status xy = { 0 };
+
+	srv->lightness_srv.handlers->light_get(&srv->lightness_srv, ctx,
+					       &lightness);
+	srv->handlers->xy_get(srv, ctx, &xy);
+
+	status->params.xy = xy.current;
+	status->params.lightness = lightness.current;
+	status->remaining_time =
+		MAX(xy.remaining_time, lightness.remaining_time);
+}
+
 static void xyl_encode_status(struct net_buf_simple *buf,
 			      struct bt_mesh_light_xyl_status *status,
 			      uint32_t opcode)
@@ -96,12 +113,7 @@ static void xyl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		 * to the app, but we still have to respond with a status.
 		 */
 		if (ack) {
-			srv->handlers->xy_get(srv, NULL, &status);
-			srv->lightness_srv.handlers->light_get(
-				&srv->lightness_srv, ctx, &light_rsp);
-			xyl_status.params.xy = status.current;
-			xyl_status.params.lightness = light_rsp.current;
-			xyl_status.remaining_time = status.remaining_time;
+			xyl_get(srv, NULL, &xyl_status);
 			xyl_rsp(model, ctx, &xyl_status,
 				BT_MESH_LIGHT_XYL_OP_STATUS);
 			return;
@@ -144,19 +156,10 @@ static void xyl_get_handle(struct bt_mesh_model *model,
 	}
 
 	struct bt_mesh_light_xyl_srv *srv = model->user_data;
-	struct bt_mesh_light_xy_status status = { 0 };
-	struct bt_mesh_lightness_status light;
+	struct bt_mesh_light_xyl_status status = { 0 };
 
-	srv->lightness_srv.handlers->light_get(&srv->lightness_srv, ctx,
-					       &light);
-	srv->handlers->xy_get(srv, ctx, &status);
-
-	struct bt_mesh_light_xyl_status xyl_status = {
-		.params = { .xy = status.current, .lightness = light.current },
-		.remaining_time = status.remaining_time,
-	};
-
-	xyl_rsp(model, ctx, &xyl_status, BT_MESH_LIGHT_XYL_OP_STATUS);
+	xyl_get(srv, ctx, &status);
+	xyl_rsp(model, ctx, &status, BT_MESH_LIGHT_XYL_OP_STATUS);
 }
 
 static void xyl_set_handle(struct bt_mesh_model *model,
@@ -428,12 +431,26 @@ static const struct bt_mesh_scene_entry_type scene_type = {
 	.recall = scene_recall,
 };
 
+static int update_handler(struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_status status = { 0 };
+
+	xyl_get(srv, NULL, &status);
+	xyl_encode_status(srv->pub.msg, &status, BT_MESH_LIGHT_XYL_OP_STATUS);
+
+	return 0;
+}
+
 static int bt_mesh_light_xyl_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_xyl_srv *srv = model->user_data;
 
 	srv->model = model;
-	net_buf_simple_init(srv->pub.msg, 0);
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
 		/* Model extensions:

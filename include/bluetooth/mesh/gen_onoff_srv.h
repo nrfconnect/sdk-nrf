@@ -33,12 +33,6 @@ struct bt_mesh_onoff_srv;
 #define BT_MESH_ONOFF_SRV_INIT(_handlers)                                      \
 	{                                                                      \
 		.handlers = _handlers,                                         \
-		.pub = {                                                       \
-			.update = _bt_mesh_onoff_srv_update_handler,           \
-			.msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(           \
-				BT_MESH_ONOFF_OP_STATUS,                       \
-				BT_MESH_ONOFF_MSG_MAXLEN_STATUS)),             \
-		},                                                             \
 	}
 
 /** @def BT_MESH_MODEL_ONOFF_SRV
@@ -99,6 +93,11 @@ struct bt_mesh_onoff_srv {
 	struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
+		BT_MESH_ONOFF_OP_STATUS, BT_MESH_ONOFF_MSG_MAXLEN_STATUS)];
 	/* Scene entry */
 	struct bt_mesh_scene_entry scene;
 };
@@ -128,7 +127,6 @@ int32_t bt_mesh_onoff_srv_pub(struct bt_mesh_onoff_srv *srv,
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_onoff_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_onoff_srv_cb;
-int _bt_mesh_onoff_srv_update_handler(struct bt_mesh_model *model);
 /** @endcond */
 
 #ifdef __cplusplus

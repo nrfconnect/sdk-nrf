@@ -36,9 +36,6 @@ struct bt_mesh_light_xyl_srv;
 		.handlers = _light_xyl_handlers,                               \
 		.lightness_srv =                                               \
 			BT_MESH_LIGHTNESS_SRV_INIT(_lightness_handlers),       \
-		.pub = { .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(          \
-				 BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,            \
-				 BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS)) },   \
 		.range = {                                                     \
 			.min = { .x = 0, .y = 0 },                             \
 			.max = { .x = UINT16_MAX, .y = UINT16_MAX }            \
@@ -146,6 +143,12 @@ struct bt_mesh_light_xyl_srv {
 	struct bt_mesh_lightness_srv lightness_srv;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
+		BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,
+		BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS)];
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx prev_transaction;
 	/** Current range parameters */

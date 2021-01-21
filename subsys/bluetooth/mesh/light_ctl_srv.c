@@ -321,12 +321,26 @@ const struct bt_mesh_model_op _bt_mesh_light_ctl_setup_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+static int update_handler(struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_status status = { 0 };
+
+	ctl_get(srv, NULL, &status);
+	ctl_encode_status(srv->pub.msg, &status);
+
+	return 0;
+}
+
 static int bt_mesh_light_ctl_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_ctl_srv *srv = model->user_data;
 
 	srv->model = model;
-	net_buf_simple_init(srv->pub.msg, 0);
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 	/* Disable On power up procedure on lightness server */
 	atomic_set_bit(&srv->lightness_srv.flags, LIGHTNESS_SRV_FLAG_NO_START);

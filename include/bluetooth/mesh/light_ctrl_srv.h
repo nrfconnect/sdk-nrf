@@ -40,11 +40,6 @@ struct bt_mesh_light_ctrl_srv;
 		.onoff = BT_MESH_ONOFF_SRV_INIT(                               \
 			&_bt_mesh_light_ctrl_srv_onoff),                       \
 		.lightness = _lightness_srv,                                   \
-		.pub = { .update = _bt_mesh_light_ctrl_srv_update,             \
-			 .msg = NET_BUF_SIMPLE(                                \
-				 BT_MESH_LIGHT_CTRL_SRV_BUF_MAXLEN) },         \
-		.setup_pub.msg = NET_BUF_SIMPLE(                               \
-			BT_MESH_LIGHT_CTRL_SETUP_SRV_BUF_MAXLEN),              \
 		BT_MESH_LIGHT_CTRL_SRV_REG_INIT                                \
 	}
 
@@ -162,8 +157,19 @@ struct bt_mesh_light_ctrl_srv {
 	struct bt_mesh_light_ctrl_srv_cfg cfg;
 	/** Publish parameters */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
+		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS, 3)];
 	/** Setup model publish parameters */
 	struct bt_mesh_model_pub setup_pub;
+	/* Publication buffer */
+	struct net_buf_simple setup_pub_buf;
+	/* Publication data */
+	uint8_t setup_pub_data[BT_MESH_MODEL_BUF_LEN(
+		BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,
+		2 + CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX)];
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	/** Illuminance regulator */
@@ -269,7 +275,6 @@ extern const struct bt_mesh_model_op _bt_mesh_light_ctrl_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_light_ctrl_setup_srv_cb;
 extern const struct bt_mesh_model_op _bt_mesh_light_ctrl_setup_srv_op[];
 extern const struct bt_mesh_onoff_srv_handlers _bt_mesh_light_ctrl_srv_onoff;
-int _bt_mesh_light_ctrl_srv_update(struct bt_mesh_model *mod);
 /** @endcond */
 
 #ifdef __cplusplus

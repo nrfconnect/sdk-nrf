@@ -33,12 +33,6 @@ struct bt_mesh_sensor_cli_handlers;
 #define BT_MESH_SENSOR_CLI_INIT(_handlers)                                     \
 	{                                                                      \
 		.cb = _handlers,                                               \
-		.pub = {                                                       \
-			.msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(           \
-				BT_MESH_SENSOR_OP_CADENCE_SET,                 \
-				MAX(BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_SET,     \
-				    BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET)))   \
-		},                                                             \
 	}
 
 /** @def BT_MESH_MODEL_SENSOR_CLI
@@ -63,6 +57,14 @@ struct bt_mesh_sensor_cli {
 	struct bt_mesh_model *mod;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[MAX(
+		BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_CADENCE_SET,
+				      BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_SET),
+		BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_SETTING_SET,
+				      BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET))];
 	/** Response context for acknowledged messages. */
 	struct bt_mesh_model_ack_ctx ack;
 	/** Client callback functions. */
