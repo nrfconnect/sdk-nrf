@@ -213,6 +213,19 @@ Trusted Firmware-M:
 
 * Added a simple sample that demonstrates how to integrate TF-M in an application.
 
+Partition Manager:
+------------------
+
+* Changed naming convention for partition names in ``pm.yml`` and ``pm_static.yml``.
+* Updated Partition Manager to prevent users from using partition names in ``pm.yml`` and ``pm_static.yml`` that match the names of the child images that define them in ``CMakeLists.txt``:
+
+  * If the invalid naming scheme is used in ``pm.yml`` files, Partition Manager will now fail the builds.
+  * If the invalid naming scheme is used in ``pm_static.yml`` files, the build will instead print a warning prompting the user to change this, if possible.
+* Renamed ``b0`` and ``b0n`` container partitions to ``b0_provision`` and ``b0n_provision``, respectively.
+* Renamed ``b0_image`` and ``b0n_image`` image partitions to appropriately match their child image name, ``b0`` and ``b0n``, respectively.
+
+  **Migration notes:** While in development, you should rename partitions appropriately.
+  You can still build firmware updates under the invalid scheme, but they will still be built with the improper sizes for the related partitions.
 
 MCUboot
 =======

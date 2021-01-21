@@ -476,6 +476,12 @@ Immutable bootloader board restrictions
   * nrf52840_pca10056
   * nrf9160_pca10090
 
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+Immutable bootloader and netboot can overwrite non-OTP provisioning data
+  In architectures that do not have OTP regions, b0 and b0n images incorrectly linked to the size of their container can overwrite provisioning partition data from their image sizes.
+  Issue related to NCSDK-7982.
+
 Build system
 ============
 
@@ -534,6 +540,14 @@ Flash commands only program one core
 
 Secure Partition Manager and application building together
   It is not possible to build and program :ref:`secure_partition_manager` and the application individually.
+
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+NCSDK-7982: partition manager: Incorrect partition size linkage from name conflict
+  Partition manager will incorrectly link a partition's size to the size of its container if the container partition's name matches its child image's name in ``CMakeLists.txt``.
+  This can cause the inappropriately-sized partition to overwrite another partition beyond its intended boundary.
+
+  **Workaround:** Rename the container partitions in the ``pm.yml`` and ``pm_static.yml`` files to something that does not match the child images' names, and rename the child images' main image partition to its name in ``CMakeLists.txt``.
 
 DFU and FOTA
 ============
