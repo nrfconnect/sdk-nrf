@@ -11,7 +11,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Kconfig reference'
-copyright = '2019, Nordic Semiconductor'
+copyright = '2019-2021, Nordic Semiconductor'
 author = 'Nordic Semiconductor'
 
 # Get rid of version number while keeping the spacing the same as for other
