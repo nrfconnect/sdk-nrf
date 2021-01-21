@@ -24,16 +24,22 @@ target_include_directories(app
   . # To get 'pm_config.h'
   )
 
+if (NOT CONFIG_TRUSTED_EXECUTION_NONSECURE)
+  # If non secure then fw_info will be pulled in automatically.
+  set(info_magic "-DFIRMWARE_INFO_MAGIC=0xbabababa,0xbabababa,0xbabababa")
+  set(ext_api_magic "-DEXT_API_MAGIC=0xdededede")
+endif()
+
 target_compile_options(app
   PRIVATE
   -DCONFIG_DOWNLOAD_CLIENT_BUF_SIZE=500
   -DCONFIG_DOWNLOAD_CLIENT_STACK_SIZE=500
   -DCONFIG_FW_MAGIC_LEN=32
-  -DFIRMWARE_INFO_MAGIC=0xbabababa,0xbabababa,0xbabababa
   -DABI_INFO_MAGIC=0xdededede
-  -DEXT_API_MAGIC=0xdededede
   -DCONFIG_FW_FIRMWARE_INFO_OFFSET=0x200
   -DCONFIG_FOTA_DOWNLOAD_LOG_LEVEL=2
   -DCONFIG_FOTA_SOCKET_RETRIES=2
   -DCONFIG_FW_INFO_MAGIC_LEN=12
+  ${info_magic}
+  ${ext_api_magic}
   )
