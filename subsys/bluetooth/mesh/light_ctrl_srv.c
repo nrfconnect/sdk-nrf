@@ -14,7 +14,7 @@
 #include "model_utils.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
-#define LOG_MODULE_NAME bt_mesh_light_ctrl
+#define LOG_MODULE_NAME bt_mesh_light_ctrl_srv
 #include "common/log.h"
 
 #define REG_INT CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_INTERVAL
