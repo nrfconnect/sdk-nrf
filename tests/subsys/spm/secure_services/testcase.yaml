@@ -1,0 +1,4 @@
+tests:
+  spm.secure_services:
+    platform_allow: nrf9160dk_nrf9160ns nrf5340dk_nrf5340_cpuappns
+    tags: spm secure_services
