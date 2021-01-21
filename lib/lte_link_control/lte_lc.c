@@ -1670,8 +1670,7 @@ clean_exit:
 }
 
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
-DEVICE_DECLARE(lte_link_control);
-DEVICE_AND_API_INIT(lte_link_control, "LTE_LINK_CONTROL",
-		    w_lte_lc_init_and_connect, NULL, NULL, APPLICATION,
-		    CONFIG_APPLICATION_INIT_PRIORITY, NULL);
+SYS_DEVICE_DEFINE("LTE_LINK_CONTROL", w_lte_lc_init_and_connect,
+		  device_pm_control_nop,
+		  APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 #endif /* CONFIG_LTE_AUTO_INIT_AND_CONNECT */

@@ -402,6 +402,8 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 #endif
 };
 
-DEVICE_AND_API_INIT(sensor_sim, CONFIG_SENSOR_SIM_DEV_NAME, sensor_sim_init,
-		    &sensor_sim_data, NULL, POST_KERNEL,
-		    CONFIG_SENSOR_INIT_PRIORITY, &sensor_sim_api_funcs);
+DEVICE_DEFINE(sensor_sim, CONFIG_SENSOR_SIM_DEV_NAME,
+	      sensor_sim_init, device_pm_control_nop,
+	      &sensor_sim_data, NULL,
+	      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
+	      &sensor_sim_api_funcs);
