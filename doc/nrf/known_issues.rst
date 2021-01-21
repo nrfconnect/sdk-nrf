@@ -679,6 +679,19 @@ Closing sockets
 Multiprotocol Service Layer (MPSL)
 ==================================
 
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1
+
+DRGN-15223: `CONFIG_SYSTEM_CLOCK_NO_WAIT` is not supported for nRF5340
+  Using :option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` with nRF5340 devices might not work as expected.
+
+.. rst-class:: v1-4-2 v1-4-1
+
+DRGN-15176: `CONFIG_SYSTEM_CLOCK_NO_WAIT` is ignored when Low Frequency Clock is started before initializing MPSL
+  If the application starts the Low Frequency Clock before calling :c:func:`mpsl_init()`, the clock configuration option :option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` has no effect.
+  MPSL will wait for the Low Frequency Clock to start.
+
+  **Workaround:** When :option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` is set, do not start the Low Frequency Clock.
+
 .. rst-class:: v1-4-99-dev1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 DRGN-15064: External Full swing and External Low swing not working
