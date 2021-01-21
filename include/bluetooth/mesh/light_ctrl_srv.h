@@ -56,17 +56,17 @@ struct bt_mesh_light_ctrl_srv;
  */
 #define BT_MESH_MODEL_LIGHT_CTRL_SRV(_srv)                                     \
 	BT_MESH_MODEL_ONOFF_SRV(&(_srv)->onoff),                               \
-		BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_LC_SRV,                \
-				 _bt_mesh_light_ctrl_srv_op, &(_srv)->pub,     \
-				 BT_MESH_MODEL_USER_DATA(                      \
-					 struct bt_mesh_light_ctrl_srv, _srv), \
-				 &_bt_mesh_light_ctrl_srv_cb),                 \
-		BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_LC_SETUPSRV,           \
-				 _bt_mesh_light_ctrl_setup_srv_op,             \
-				 &(_srv)->setup_pub,                           \
-				 BT_MESH_MODEL_USER_DATA(                      \
-					 struct bt_mesh_light_ctrl_srv, _srv), \
-				 &_bt_mesh_light_ctrl_setup_srv_cb)
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_LC_SRV,                        \
+			 _bt_mesh_light_ctrl_srv_op, &(_srv)->pub,             \
+			 BT_MESH_MODEL_USER_DATA(                              \
+				 struct bt_mesh_light_ctrl_srv, _srv),         \
+			 &_bt_mesh_light_ctrl_srv_cb),                         \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_LC_SETUPSRV,                   \
+			 _bt_mesh_light_ctrl_setup_srv_op,                     \
+			 &(_srv)->setup_pub,                                   \
+			 BT_MESH_MODEL_USER_DATA(                              \
+				 struct bt_mesh_light_ctrl_srv, _srv),         \
+			 &_bt_mesh_light_ctrl_setup_srv_cb)
 
 /** Light Lightness Control Server state */
 enum bt_mesh_light_ctrl_srv_state {
