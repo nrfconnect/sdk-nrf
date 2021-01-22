@@ -304,6 +304,14 @@ static int nct_client_id_get(char *id)
 	char imei_buf[CGSN_RESPONSE_LENGTH + 1];
 	int err;
 
+	if (!IS_ENABLED(CONFIG_AT_CMD_SYS_INIT)) {
+		err = at_cmd_init();
+		if (err) {
+			LOG_ERR("at_cmd failed to initialize, error: %d", err);
+			return err;
+		}
+	}
+
 	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
 	if (err) {
 		LOG_ERR("Failed to obtain IMEI, error: %d", err);
