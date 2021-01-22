@@ -73,6 +73,8 @@ Kconfig*                                  @tejlmand
 /lib/st25r3911b/                          @grochu
 /lib/supl/                                @rlubos @evenl
 /lib/date_time/                           @simensrostad
+/modules/                                 @tejlmand
+/modules/mcuboot/                         @nvlsianpu
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
