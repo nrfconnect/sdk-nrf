@@ -264,7 +264,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 				continue;
 			} else {
 				LOG_ERR("AT socket recv failed with err %d",
-					bytes_read);
+					errno);
 			}
 
 			if ((close(common_socket_fd) == 0) &&
