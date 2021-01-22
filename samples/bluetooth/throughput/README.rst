@@ -77,15 +77,7 @@ The sample supports the following development kits:
 
 You can use any two of the development kits listed above and mix different development kits.
 
-.. note::
-
-  If you use nRF5340 DK, add the following options to the configuration of the network sample:
-
-  .. code-block:: none
-
-       CONFIG_BT_CTLR_TX_BUFFER_SIZE=251
-       CONFIG_BT_CTLR_DATA_LENGTH_MAX=251
-       CONFIG_BT_RX_BUF_LEN=255
+.. include:: /includes/hci_rpmsg_overlay.txt
 
 The sample also requires a connection to a computer with a serial terminal for each of the development kits.
 
