@@ -72,7 +72,7 @@ The sample can be built with a minimum configuration as a demonstration of how t
 
 .. code-block:: console
 
-   west build samples/bluetooth/peripheral_lbs -- -DOVERLAY_CONFIG='minimal.conf'
+   west build samples/bluetooth/peripheral_lbs -- -DCONF_FILE='prj_minimal.conf'
 
 
 Testing
