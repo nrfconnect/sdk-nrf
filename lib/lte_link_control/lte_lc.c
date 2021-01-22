@@ -528,6 +528,8 @@ static int w_lte_lc_init(void)
 		return -EALREADY;
 	}
 
+	k_sem_init(&link, 0, 1);
+
 	err = lte_lc_system_mode_get(&sys_mode_current);
 	if (err) {
 		LOG_ERR("Could not get current system mode, error: %d", err);
