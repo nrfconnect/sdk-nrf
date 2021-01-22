@@ -1,5 +1,6 @@
-# Included by mcuboot/zephyr/CMakeLists.txt
-set(MCUBOOT_DIR ${ZEPHYR_BASE}/../bootloader/mcuboot)
+add_subdirectory(${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/bootutil/zephyr
+                 ${CMAKE_CURRENT_BINARY_DIR}/boot/bootutil/zephyr
+)
 
 if(CONFIG_BOOTLOADER_MCUBOOT)
 
@@ -91,7 +92,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
   add_child_image(
     NAME mcuboot
-    SOURCE_DIR ${MCUBOOT_DIR}/boot/zephyr
+    SOURCE_DIR ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr
     )
 
   set(merged_hex_file
@@ -135,13 +136,13 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       ---------------------------------------------------------
       \n"
     )
-    set(mcuboot_key_file ${MCUBOOT_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
+    set(mcuboot_key_file ${ZEPHYR_MCUBOOT_MODULE_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
   endif()
 
   if(CONFIG_SIGN_IMAGES)
     execute_process(COMMAND
       ${PYTHON_EXECUTABLE}
-      ${MCUBOOT_DIR}/scripts/imgtool.py
+      ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/imgtool.py
       getpriv -k ${mcuboot_key_file}
       OUTPUT_QUIET
       ERROR_QUIET
@@ -157,7 +158,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
     set(sign_cmd
       ${PYTHON_EXECUTABLE}
-      ${MCUBOOT_DIR}/scripts/imgtool.py
+      ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/imgtool.py
       sign
       --key ${mcuboot_key_file}
       --header-size $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PAD_SIZE>
