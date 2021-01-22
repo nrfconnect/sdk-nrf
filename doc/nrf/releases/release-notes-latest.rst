@@ -136,6 +136,10 @@ nRF9160
 
     * Updated to use the new FOTA (fota_v2) based on nRF Connect for Cloud.
 
+  * :ref:`at_cmd_parser_readme` library:
+
+    * The library can now parse AT command strings with negative numbers in the range supported by the int32_t type.
+
 Common
 ======
 
