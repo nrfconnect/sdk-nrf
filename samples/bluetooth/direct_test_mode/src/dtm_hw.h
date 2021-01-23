@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <zephyr/types.h>
 
-#include <nrfx/hal/nrf_radio.h>
+#include <hal/nrf_radio.h>
 
 #ifdef __cplusplus
 extern "C" {

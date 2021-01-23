@@ -8,7 +8,7 @@
 #define RADIO_TEST_H_
 
 #include <zephyr/types.h>
-#include <nrfx/hal/nrf_radio.h>
+#include <hal/nrf_radio.h>
 
 /** Maximum radio RX or TX payload. */
 #define RADIO_MAX_PAYLOAD_LEN	256

@@ -10,7 +10,7 @@
 #include <init.h>
 #include <shell/shell.h>
 #include <zephyr/types.h>
-#include <nrfx/hal/nrf_power.h>
+#include <hal/nrf_power.h>
 
 #include "radio_test.h"
 

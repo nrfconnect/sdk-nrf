@@ -12,7 +12,7 @@ LOG_MODULE_REGISTER(ram_pwrdn, CONFIG_RAM_POWERDOWN_LOG_LEVEL);
 #if defined CONFIG_BOARD_NRF52840DK_NRF52840 || \
 	defined CONFIG_BOARD_NRF52833DK_NRF52833
 
-#include <nrfx/hal/nrf_power.h>
+#include <hal/nrf_power.h>
 
 /* Start address of RAM. */
 #define RAM_START_ADDR              0x20000000UL
