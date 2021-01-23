@@ -7,9 +7,9 @@
 #include "radio_test.h"
 
 #include <string.h>
-#include <nrfx/hal/nrf_nvmc.h>
-#include <nrfx/hal/nrf_power.h>
-#include <nrfx/hal/nrf_rng.h>
+#include <hal/nrf_nvmc.h>
+#include <hal/nrf_power.h>
+#include <hal/nrf_rng.h>
 #include <nrfx_timer.h>
 #include <zephyr.h>
 
