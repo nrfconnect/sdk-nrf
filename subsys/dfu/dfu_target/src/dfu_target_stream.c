@@ -23,7 +23,7 @@ static const char *current_id;
 
 #ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
 
-static char current_name_key[12];
+static char current_name_key[32];
 
 /**
  * @brief Store the information stored in the stream_flash instance so that it
@@ -54,12 +54,27 @@ static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
 	if (!strcmp(key, current_id)) {
+		int err;
+		struct flash_pages_info page;
 		ssize_t len = read_cb(cb_arg, &stream.bytes_written,
 				      sizeof(stream.bytes_written));
+
 		if (len != sizeof(stream.bytes_written)) {
 			LOG_ERR("Can't read stream.bytes_written from storage");
 			return len;
 		}
+
+		err = flash_get_page_info_by_offs(stream.fdev,
+						  stream.bytes_written, &page);
+		if (err != 0) {
+			LOG_ERR("Error %d while getting page info", err);
+			return err;
+		}
+
+		/* Update the last erased page to avoid deleting already
+		 * written data.
+		 */
+		stream.last_erased_page_start_offset = page.start_offset;
 	}
 
 	return 0;
