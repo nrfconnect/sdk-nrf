@@ -3,12 +3,16 @@
 Radio front-end module (FEM) support
 ####################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This guide describes how to add support for 2 different front-end module (FEM) implementations to your application in |NCS|.
 
 |NCS| allows you to extend the radio range of your development kit with an implementation of the front-end modules.
-Front-end modules are range extenders, used for boosting the link robustness and link budget of wireless SoCs.
+Front-end modules are range extenders used for boosting the link robustness and link budget of wireless SoCs.
 
-The FEM support is based on the :ref:`nrfxlib:mpsl_fem`, which is integrated in the nrfxlib's MPSL library.
+The FEM support is based on the :ref:`nrfxlib:mpsl_fem`, which is integrated into the nrfxlib's MPSL library.
 This library provides nRF21540 GPIO and Simple GPIO implementations, for 3-pin and 2-pin PA/LNA interfaces, respectively.
 
 The implementations described in this guide are the following:
@@ -25,7 +29,7 @@ At the moment, :ref:`ug_thread` and :ref:`ug_zigbee` support the :ref:`nrf21540 
 
 |NCS| provides a friendly wrapper that configures FEM based on devicetree (DTS) and Kconfig information.
 To enable FEM support, you must enable FEM and MPSL, and add an ``nrf_radio_fem`` node in the devicetree file.
-The node can also be provided by the target board devicetree file or by an overlay file.
+The node can also be provided by the devicetree file of the target devkit or by an overlay file.
 See :ref:`zephyr:dt-guide` for more information about the DTS data structure, and :ref:`zephyr:dt_vs_kconfig` for information about differences between DTS and Kconfig.
 
 .. _ug_radio_fem_requirements:
@@ -84,11 +88,6 @@ To use nRF21540 in GPIO mode, complete the following steps:
    The last element must be ``GPIO_ACTIVE_HIGH`` for nRF21540, but for a different FEM module you can use ``GPIO_ACTIVE_LOW``.
 
    The state of the remaining control pins should be set in other ways and according to `nRF21540 Product Specification`_.
-#. Set the following Kconfig parameters to assign unique GPIOTE channel numbers to be used exclusively by the FEM driver:
-
-   * :option:`CONFIG_MPSL_FEM_NRF21540_GPIO_GPIOTE_TX_EN`
-   * :option:`CONFIG_MPSL_FEM_NRF21540_GPIO_GPIOTE_RX_EN`
-   * :option:`CONFIG_MPSL_FEM_NRF21540_GPIO_GPIOTE_PDN`
 
 Optional properties
 ===================
@@ -155,10 +154,6 @@ To use the Simple GPIO implementation of FEM with SKY66112-11, complete the foll
 
    The state of the other control pins should be set according to the SKY66112-11 documentation.
    See the official `SKY66112-11 page`_ for more information.
-#. Set the following Kconfig parameters to assign unique GPIOTE channel numbers to be used exclusively by the FEM driver:
-
-   * :option:`CONFIG_MPSL_FEM_SIMPLE_GPIO_GPIOTE_CTX`
-   * :option:`CONFIG_MPSL_FEM_SIMPLE_GPIO_GPIOTE_CRX`
 
 Optional properties
 ===================
