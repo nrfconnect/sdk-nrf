@@ -132,7 +132,7 @@ static int do_udp_server_start(uint16_t port)
 			udp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	sprintf(rsp_buf, "#XUDPSVR: %d, \"started\"\r\n", udp_sock);
+	sprintf(rsp_buf, "#XUDPSVR: %d,\"started\"\r\n", udp_sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	LOG_DBG("UDP server started");
 
@@ -150,7 +150,7 @@ static int do_udp_server_stop(int error)
 			ret = -errno;
 		}
 		(void)slm_at_udp_proxy_init();
-		sprintf(rsp_buf, "#XUDPSVR: %d, \"stopped\"\r\n", error);
+		sprintf(rsp_buf, "#XUDPSVR: %d,\"stopped\"\r\n", error);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
@@ -237,7 +237,7 @@ static int do_udp_client_connect(const char *url, uint16_t port, int sec_tag)
 			udp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	sprintf(rsp_buf, "#XUDPCLI: %d, \"connected\"\r\n", udp_sock);
+	sprintf(rsp_buf, "#XUDPCLI: %d,\"connected\"\r\n", udp_sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	return ret;
@@ -367,7 +367,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 
 			ret = slm_util_htoa(rx_data, ret, data_hex, ret * 2);
 			if (ret > 0) {
-				sprintf(rsp_buf, "#XUDPRECV: %d, %d\r\n",
+				sprintf(rsp_buf, "#XUDPRECV: %d,%d\r\n",
 					DATATYPE_HEXADECIMAL, ret);
 				rsp_send(rsp_buf, strlen(rsp_buf));
 				rsp_send(data_hex, ret);
@@ -376,7 +376,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 				LOG_WRN("hex convert error: %d", ret);
 			}
 		} else {
-			sprintf(rsp_buf, "#XUDPRECV: %d, %d\r\n",
+			sprintf(rsp_buf, "#XUDPRECV: %d,%d\r\n",
 				DATATYPE_PLAINTEXT, ret);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			rsp_send(rx_data, ret);
@@ -436,7 +436,7 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (udp_sock != INVALID_SOCKET) {
-			sprintf(rsp_buf, "#XUDPSVR: %d, %d\r\n",
+			sprintf(rsp_buf, "#XUDPSVR: %d,%d\r\n",
 				udp_sock, udp_datamode);
 		} else {
 			sprintf(rsp_buf, "#XUDPSVR: %d\r\n",
@@ -447,7 +447,7 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XUDPSVR: (%d, %d, %d),<port>,<sec_tag>\r\n",
+		sprintf(rsp_buf, "#XUDPSVR: (%d,%d,%d),<port>,<sec_tag>\r\n",
 			AT_SERVER_STOP, AT_SERVER_START,
 			AT_SERVER_START_WITH_DATAMODE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
@@ -519,7 +519,7 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (udp_sock != INVALID_SOCKET) {
-			sprintf(rsp_buf, "#XUDPCLI: %d, %d\r\n",
+			sprintf(rsp_buf, "#XUDPCLI: %d,%d\r\n",
 				udp_sock, udp_datamode);
 		} else {
 			sprintf(rsp_buf, "#XUDPCLI: %d\r\n",

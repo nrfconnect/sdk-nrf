@@ -245,7 +245,7 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 	}
 
 	client.role = role;
-	sprintf(rsp_buf, "#XSOCKET: %d, %d, %d, %d\r\n", client.sock,
+	sprintf(rsp_buf, "#XSOCKET: %d,%d,%d,%d\r\n", client.sock,
 		type, role, client.ip_proto);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
@@ -284,7 +284,7 @@ static int do_socket_close(int error)
 			close(client.sock_peer);
 		}
 		slm_at_tcpip_init();
-		sprintf(rsp_buf, "#XSOCKET: %d, \"closed\"\r\n", error);
+		sprintf(rsp_buf, "#XSOCKET: %d,\"closed\"\r\n", error);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		LOG_DBG("Socket closed");
 	}
@@ -579,7 +579,7 @@ static int do_recv(uint16_t length)
 		ret = slm_util_htoa(rx_data, ret, data_hex, size);
 		if (ret > 0) {
 			rsp_send(data_hex, ret);
-			sprintf(rsp_buf, "\r\n#XRECV: %d, %d\r\n",
+			sprintf(rsp_buf, "\r\n#XRECV: %d,%d\r\n",
 				DATATYPE_HEXADECIMAL, ret);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			ret = 0;
@@ -588,7 +588,7 @@ static int do_recv(uint16_t length)
 		}
 	} else {
 		rsp_send(rx_data, ret);
-		sprintf(rsp_buf, "\r\n#XRECV: %d, %d\r\n",
+		sprintf(rsp_buf, "\r\n#XRECV: %d,%d\r\n",
 			DATATYPE_PLAINTEXT, ret);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
@@ -684,7 +684,7 @@ static int do_recvfrom(uint16_t length)
 		ret = slm_util_htoa(rx_data, ret, data_hex, size);
 		if (ret > 0) {
 			rsp_send(data_hex, ret);
-			sprintf(rsp_buf, "\r\n#XRECVFROM: %d, %d\r\n",
+			sprintf(rsp_buf, "\r\n#XRECVFROM: %d,%d\r\n",
 				DATATYPE_HEXADECIMAL, ret);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			ret = 0;
@@ -693,7 +693,7 @@ static int do_recvfrom(uint16_t length)
 		}
 	} else {
 		rsp_send(rx_data, ret);
-		sprintf(rsp_buf, "\r\n#XRECVFROM: %d, %d\r\n",
+		sprintf(rsp_buf, "\r\n#XRECVFROM: %d,%d\r\n",
 			DATATYPE_PLAINTEXT, ret);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
@@ -758,7 +758,7 @@ static int handle_at_socket(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (client.sock != INVALID_SOCKET) {
-			sprintf(rsp_buf, "#XSOCKET: %d, %d, %d\r\n",
+			sprintf(rsp_buf, "#XSOCKET: %d,%d,%d\r\n",
 				client.sock, client.ip_proto, client.role);
 		} else {
 			sprintf(rsp_buf, "#XSOCKET: 0\r\n");
@@ -768,12 +768,12 @@ static int handle_at_socket(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XSOCKET: (%d, %d), (%d, %d), (%d, %d)",
+		sprintf(rsp_buf, "#XSOCKET: (%d,%d),(%d,%d),(%d,%d)",
 			AT_SOCKET_CLOSE, AT_SOCKET_OPEN,
 			SOCK_STREAM, SOCK_DGRAM,
 			AT_SOCKET_ROLE_CLIENT, AT_SOCKET_ROLE_SERVER);
 		rsp_send(rsp_buf, strlen(rsp_buf));
-		sprintf(rsp_buf, ", <sec-tag>\r\n");
+		sprintf(rsp_buf, ",<sec-tag>\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -833,7 +833,7 @@ static int handle_at_socketopt(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XSOCKETOPT: (%d, %d), <name>, <value>\r\n",
+		sprintf(rsp_buf, "#XSOCKETOPT: (%d,%d),<name>,<value>\r\n",
 			AT_SOCKETOPT_GET, AT_SOCKETOPT_SET);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;

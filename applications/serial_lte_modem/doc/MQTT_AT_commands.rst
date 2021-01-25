@@ -68,13 +68,13 @@ Examples
 
    AT#XMQTTCON=1,"MyMQTT-Client-ID","","","mqtt.server.com",1883
    OK
-   #XMQTTEVT: 0, 0
+   #XMQTTEVT: 0,0
 
 ::
 
    AT#XMQTTCON=0
    OK
-   #XMQTTEVT: 1, 0
+   #XMQTTEVT: 1,0
 
 Read command
 ------------
@@ -204,19 +204,19 @@ Examples
 
    AT#XMQTTSUB="nrf91/slm/mqtt/topic0",0
    OK
-   #XMQTTEVT: 7, 0
+   #XMQTTEVT: 7,0
 
 ::
 
    AT#XMQTTSUB="nrf91/slm/mqtt/topic1",1
    OK
-   #XMQTTEVT: 7, 0
+   #XMQTTEVT: 7,0
 
 ::
 
    AT#XMQTTSUB="nrf91/slm/mqtt/topic2",2
    OK
-   #XMQTTEVT: 7, 0
+   #XMQTTEVT: 7,0
 
 Read command
 ------------
@@ -272,7 +272,7 @@ Examples
 
    AT#XMQTTUNSUB="nrf91/slm/mqtt/topic0"
    OK
-   #XMQTTEVT: 8, 0
+   #XMQTTEVT: 8,0
 
 Read command
 ------------
@@ -356,30 +356,30 @@ Examples
 
    AT#XMQTTPUB="nrf91/slm/mqtt/topic0",1,"Test message with QoS 0",0,0
    OK
-   #XMQTTMSG: 1, 21, 23
+   #XMQTTMSG: 1,21,23
    nrf91/slm/mqtt/topic0
    Test message with QoS 0
-   #XMQTTEVT: 2, 0
+   #XMQTTEVT: 2,0
 
 ::
 
    AT#XMQTTPUB="nrf91/slm/mqtt/topic1",1,"Test message with QoS 1",1,0
    OK
-   #XMQTTEVT: 3, 0
-   #XMQTTMSG: 1, 21, 23
+   #XMQTTEVT: 3,0
+   #XMQTTMSG: 1,21,23
    nrf91/slm/mqtt/topic1
    Test message with QoS 1
-   #XMQTTEVT: 2, 0
+   #XMQTTEVT: 2,0
 
 ::
 
    AT#XMQTTPUB="nrf91/slm/mqtt/topic2",1,"Test message with QoS 2",2,0
    OK
-   #XMQTTEVT: 4, 0
-   #XMQTTEVT: 6, 0
-   #XMQTTMSG: 1, 21, 23
+   #XMQTTEVT: 4,0
+   #XMQTTEVT: 6,0
+   #XMQTTMSG: 1,21,23
    nrf91/slm/mqtt/topic2Test message with QoS 2
-   #XMQTTEVT: 2, 0
+   #XMQTTEVT: 2,0
 
 Read command
 ------------

@@ -152,7 +152,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		sprintf(rsp_buf, "#XFOTA: \"downloaded\", \"reset now\".\r\n");
+		sprintf(rsp_buf, "#XFOTA: \"downloaded\",\"reset now\".\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:

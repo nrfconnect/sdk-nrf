@@ -53,11 +53,6 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #define AT_CMD_CLAC	"AT#XCLAC"
 #define AT_CMD_SLMUART	"AT#XSLMUART"
 
-#define SLM_UART_BAUDRATE                                           \
-	"#XSLMUART: (1200, 2400, 4800, 9600, 14400, 19200, 38400, " \
-	"57600, 115200, 230400, 460800, 921600, 1000000)\r\n"
-
-
 /** The maximum allowed length of an AT command passed through the SLM
  *  The space is allocated statically. This limit is in turn limited by
  *  Modem library's NRF_MODEM_AT_MAX_CMD_SIZE */
@@ -102,6 +97,7 @@ void enter_sleep(bool wake_up);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
+extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 
 /* forward declaration */
 void slm_at_host_uninit(void);
@@ -254,11 +250,9 @@ static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
 	}
 
 	if (type == AT_CMD_TYPE_TEST_COMMAND) {
-		char buf[64];
-
-		sprintf(buf, "#XSLEEP: (%d, %d)\r\n", SHUTDOWN_MODE_IDLE,
+		sprintf(rsp_buf, "#XSLEEP: (%d,%d)\r\n", SHUTDOWN_MODE_IDLE,
 			SHUTDOWN_MODE_SLEEP);
-		rsp_send(buf, strlen(buf));
+		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 	}
 
@@ -309,17 +303,16 @@ static int handle_at_slmuart(const char *at_cmd, uint32_t *baudrate)
 	}
 
 	if (type == AT_CMD_TYPE_READ_COMMAND) {
-		char buf[32];
-
-		sprintf(buf, "#SLMUART: %d\r\n", get_uart_baudrate());
-		rsp_send(buf, strlen(buf));
+		sprintf(rsp_buf, "#XSLMUART: %d\r\n", get_uart_baudrate());
+		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 	}
 
 	if (type == AT_CMD_TYPE_TEST_COMMAND) {
-		char buf[] = SLM_UART_BAUDRATE;
-
-		rsp_send(buf, sizeof(buf));
+		sprintf(rsp_buf, "#XSLMUART: (1200,2400,4800,9600,14400,"
+				 "19200,38400,57600,115200,230400,460800,"
+				 "921600,1000000)\r\n");
+		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 	}
 

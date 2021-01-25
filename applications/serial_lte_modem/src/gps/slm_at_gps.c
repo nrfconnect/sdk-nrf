@@ -446,7 +446,7 @@ static int handle_at_gps(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (client.running) {
-			sprintf(rsp_buf, "#XGPS: 1, %d\r\n", client.mask);
+			sprintf(rsp_buf, "#XGPS: 1,%d\r\n", client.mask);
 		} else {
 			sprintf(rsp_buf, "#XGPS: 0\r\n");
 		}
@@ -455,7 +455,7 @@ static int handle_at_gps(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XGPS: (0, 1), (bitmask)\r\n");
+		sprintf(rsp_buf, "#XGPS: (0,1),(bitmask)\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
