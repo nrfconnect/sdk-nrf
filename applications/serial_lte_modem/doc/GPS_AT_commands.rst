@@ -172,7 +172,7 @@ Example
 
 ::
 
-   #XGPS: (0, 1), <mask>
+   #XGPS: (0,1),<mask>
    NMEA data mask:
    Bit 0 - Global Positioning System fix data
    Bit 1 - Geographic position latitude/longitude and time

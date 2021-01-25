@@ -35,7 +35,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       :class: highlight
 
       **AT#XSLMUART?**
-      #SLMUART: 115200
+      #XSLMUART: 115200
       OK
 
    You can change the used baud rate with the corresponding set command, but note that LTE Link Monitor requires 115200 bps for communication.
@@ -61,7 +61,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       :class: highlight
 
       **AT#XSLEEP=?**
-      #XSLEEP: (0, 1)
+      #XSLEEP: (0,1)
       OK
 
       **AT#XSLEEP=1**
@@ -87,7 +87,7 @@ TCP client
          :class: highlight
 
          **AT#XSOCKET=?**
-         #XSOCKET: (0, 1), (1, 2), (0, 1), <sec-tag>
+         #XSOCKET: (0,1),(1,2),(0,1),<sec-tag>
          OK
 
    #. Open a TCP socket, read information (handle, protocol, and role) about the open socket, and set the receive time-out of the open socket to 30 seconds.
@@ -96,11 +96,11 @@ TCP client
          :class: highlight
 
          **AT#XSOCKET=1,1,0**
-         #XSOCKET: 1, 1, 0, 6
+         #XSOCKET: 1,1,0,6
          OK
 
          **AT#XSOCKET?**
-         #XSOCKET: 1, 6, 0
+         #XSOCKET: 1,6,0
          OK
 
          **AT#XSOCKETOPT=1,20,30**
@@ -133,7 +133,7 @@ TCP client
 
          **AT#XRECV**
          PONG: b'Test TCP'
-         #XRECV: 1, 17
+         #XRECV: 1,17
          OK
 
    #. Send hexadecimal data to the TCP server and retrieve the returned data.
@@ -147,7 +147,7 @@ TCP client
 
          **AT#XRECV**
          PONG: b'\\xde\\xad\\xbe\\xef'
-         #XRECV: 1, 25
+         #XRECV: 1,25
          OK
 
    #. Close the socket and confirm its state.
@@ -156,7 +156,7 @@ TCP client
          :class: highlight
 
          **AT#XSOCKET=0**
-         #XSOCKET: 0, "closed"
+         #XSOCKET: 0,"closed"
          OK
 
          **AT#XSOCKET?**
@@ -171,7 +171,7 @@ TCP client
          :class: highlight
 
          **AT#XSOCKET=1,1,0**
-         #XSOCKET: 1, 1, 0, 6
+         #XSOCKET: 1,1,0,6
          OK
 
          **AT#XCONNECT="google.com",80**
@@ -216,13 +216,13 @@ TCP client
          HTTP/1.1 200 OK
          Content-Type: text/html; charset=ISO-8859-1
          *[...]*
-         #XRECV: 1, 576
+         #XRECV: 1,576
          OK
 
          **AT#XRECV**
          *[...]*
          Connection: close
-         #XRECV: 1, 147
+         #XRECV: 1,147
          OK
 
    #. Close the socket.
@@ -231,7 +231,7 @@ TCP client
          :class: highlight
 
          **AT#XSOCKET=0**
-         #XSOCKET: 0, "closed"
+         #XSOCKET: 0,"closed"
          OK
 
 #. Test a TCP client with TCP proxy service:
@@ -242,7 +242,7 @@ TCP client
          :class: highlight
 
          **AT#XTCPCLI=?**
-         #XTCPCLI: (0, 1, 2),<url>,<port>,<sec_tag>
+         #XTCPCLI: (0,1,2),<url>,<port>,<sec_tag>
          OK
 
    #. Create a TCP/TLS client and connect to a server.
@@ -253,11 +253,11 @@ TCP client
          :class: highlight
 
          **AT#XTCPCLI=1,"**\ *example.com*\ **",**\ *1234*
-         #XTCPCLI: 2, "connected"
+         #XTCPCLI: 2,"connected"
          OK
 
          **AT#XTCPCLI?**
-         #XTCPCLI: 1, 0
+         #XTCPCLI: 1,0
          OK
 
    #. Send plain text data to the TCP server and retrieve ten bytes of the returned data.
@@ -312,11 +312,11 @@ TCP client
          :class: highlight
 
          **AT#XTCPCLI=2,"**\ *example.com*\ **",**\ *1234*
-         #XTCPCLI: 1, "connected"
+         #XTCPCLI: 1,"connected"
          OK
 
          **AT#XTCPCLI?**
-         #XTCPCLI: 1, 1
+         #XTCPCLI: 1,1
          OK
 
    #. Send plain text data to the TCP server and retrieve the returned data.
@@ -347,10 +347,10 @@ UDP client
          :class: highlight
 
          **AT#XSOCKET=1,2,0**
-         #XSOCKET: 1, 2, 0, 17
+         #XSOCKET: 1,2,0,17
          OK
          **AT#XSOCKET?**
-         #XSOCKET: 1, 17, 0
+         #XSOCKET: 1,17,0
          OK
 
    #. Send plain text data to a UDP server on a specified port.
@@ -365,7 +365,7 @@ UDP client
          OK
          **AT#XRECVFROM**
          PONG: Test UDP
-         #XRECVFROM: 1, 14
+         #XRECVFROM: 1,14
          OK
 
    #. Send hexadecimal data to a UDP server on a specified port.
@@ -380,7 +380,7 @@ UDP client
          OK
          **AT#XRECVFROM**
          504F4E473A20DEADBEEF
-         #XRECVFROM: 0, 20
+         #XRECVFROM: 0,20
          OK
 
    #. Close the socket.
@@ -389,7 +389,7 @@ UDP client
          :class: highlight
 
          **AT#XSOCKET=0**
-         #XSOCKET: 0, "closed"
+         #XSOCKET: 0,"closed"
          OK
 
 #. Test a UDP client with connection-based UDP:
@@ -401,7 +401,7 @@ UDP client
          :class: highlight
 
          **AT#XSOCKET=1,2,0**
-         #XSOCKET: 1, 2, 0, 17
+         #XSOCKET: 1,2,0,17
          OK
 
          **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
@@ -419,7 +419,7 @@ UDP client
 
          **AT#XRECV**
          PONG: Test UDP
-         #XRECV: 1, 14
+         #XRECV: 1,14
          OK
 
    #. Close the socket.
@@ -428,7 +428,7 @@ UDP client
          :class: highlight
 
          **AT#XSOCKET=0**
-         #XSOCKET: 0, "closed"
+         #XSOCKET: 0,"closed"
          OK
 
 #. Test a connection-based UDP client with UDP proxy service:
@@ -439,7 +439,7 @@ UDP client
          :class: highlight
 
          **AT#XUDPCLI=?**
-         #XUDPCLI: (0, 1, 2),<url>,<port>,<sec_tag>
+         #XUDPCLI: (0,1,2),<url>,<port>,<sec_tag>
          OK
 
    #. Create a UDP client and connect to a server.
@@ -449,7 +449,7 @@ UDP client
          :class: highlight
 
          **AT#XUDPCLI=1,"**\ *example.com*\ **",**\ *1234*
-         #XUDPCLI: 2, "connected"
+         #XUDPCLI: 2,"connected"
          OK
 
    #. Send plain text data to the UDP server and check the returned data.
@@ -460,7 +460,7 @@ UDP client
          **AT#XUDPSEND=1,"Test UDP"**
          #XUDPSEND: 8
          OK
-         #XUDPRECV: 1, 14
+         #XUDPRECV: 1,14
          PONG: Test UDP
 
    #. Send hexadecimal data to the UDP server and check the returned data.
@@ -471,7 +471,7 @@ UDP client
          **AT#XUDPSEND=0,"DEADBEEF"**
          #XUDPSEND: 4
          OK
-         #XUDPRECV: 0, 20
+         #XUDPRECV: 0,20
          504F4E473A20DEADBEEF
 
    #. Disconnect from the server.
@@ -492,11 +492,11 @@ UDP client
          :class: highlight
 
          **AT#XUDPCLI=2,"**\ *example.com*\ **",**\ *1234*
-         #XUDPCLI: 1, "connected"
+         #XUDPCLI: 1,"connected"
          OK
 
          **AT#XUDPCLI?**
-         #XUDPCLI: 1, 1
+         #XUDPCLI: 1,1
          OK
 
    #. Send plain text data to the UDP server and retrieve the returned data.
@@ -548,7 +548,7 @@ You must register the corresponding credentials on the server side.
          :class: highlight
 
          **AT#XSOCKET=1,1,0,16842755**
-         #XSOCKET: 1, 1, 0, 258
+         #XSOCKET: 1,1,0,258
          OK
 
          **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
@@ -566,7 +566,7 @@ You must register the corresponding credentials on the server side.
 
          **AT#XRECV**
          PONG: b'Test TLS client'
-         #XRECV: 1, 24
+         #XRECV: 1,24
          OK
 
    #. Close the socket.
@@ -575,7 +575,7 @@ You must register the corresponding credentials on the server side.
          :class: highlight
 
          **AT#XSOCKET=0**
-         #XSOCKET: 0, "closed"
+         #XSOCKET: 0,"closed"
          OK
 
 #. Test a TLS client with TCP proxy service:
@@ -588,11 +588,11 @@ You must register the corresponding credentials on the server side.
          :class: highlight
 
          **AT#XTCPCLI=1,"**\ *example.com*\ **",**\ *1234*
-         #XTCPCLI: 2, "connected"
+         #XTCPCLI: 2,"connected"
          OK
 
          **AT#XTCPCLI?**
-         #XTCPCLI: 1, 0
+         #XTCPCLI: 1,0
          OK
 
    #. Send plain text data to the TLS server and retrieve the returned data.
@@ -603,7 +603,7 @@ You must register the corresponding credentials on the server side.
          **AT#XTCPSEND=1,"Test TLS client"**
          #XTCPSEND: 15
          OK
-         #XTCPDATA: 1, 24
+         #XTCPDATA: 1,24
 
          **AT#XTCPRECV**
          PONG: b'Test TLS client'
@@ -658,7 +658,7 @@ You must register the corresponding credentials on the server side.
 	     :class: highlight
 
 	     **AT#XSOCKET=1,2,0,16842756**
-	     #XSOCKET: 1, 2, 0, 273
+	     #XSOCKET: 1,2,0,273
 	     OK
 
 	     **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
@@ -676,7 +676,7 @@ You must register the corresponding credentials on the server side.
 
 	     **AT#XRECV**
 	     PONG: b'Test DTLS client'
-	     #XRECV: 1, 25
+	     #XRECV: 1,25
 	     OK
 
        #. Close the socket.
@@ -685,7 +685,7 @@ You must register the corresponding credentials on the server side.
 	     :class: highlight
 
 	     **AT#XSOCKET=0**
-	     #XSOCKET: 0, "closed"
+	     #XSOCKET: 0,"closed"
 	     OK
 
     #. Test a DTLS client with UDP proxy service:
@@ -698,7 +698,7 @@ You must register the corresponding credentials on the server side.
 	     :class: highlight
 
 	     **AT#XUDPCLI=1,"**\ *example.com*\ **",**\ *1234*\ **,16842756**
-	     #XUDPCLI: 2, "connected"
+	     #XUDPCLI: 2,"connected"
 	     OK
 
        #. Disconnect from the server.
@@ -769,7 +769,7 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XSOCKET=1,1,1**
-         #XSOCKET: 2, 1, 1, 6
+         #XSOCKET: 2,1,1,6
          OK
 
          **AT#XBIND=**\ *1234*
@@ -792,7 +792,7 @@ To act as a TCP server, |global_private_address|
 
          **AT#XRECV**
          Hello, TCP#1!Hello, TCP#2!
-         #XRECV: 1, 26
+         #XRECV: 1,26
          OK
 
          **AT#XSEND=1,"TCP1/2 received"**
@@ -801,7 +801,7 @@ To act as a TCP server, |global_private_address|
 
          **AT#XRECV**
          Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!
-         #XRECV: 1, 39
+         #XRECV: 1,39
          OK
 
          **AT#XSEND=1,"TCP3/4/5 received"**
@@ -839,11 +839,11 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XTCPSVR=?**
-         #XTCPSVR: (0, 1, 2),<port>,<sec_tag>
+         #XTCPSVR: (0,1,2),<port>,<sec_tag>
          OK
 
          **AT#XTCPSVR?**
-         #XTCPSVR: -1, -1
+         #XTCPSVR: -1,-1
          OK
 
    #. Create a TCP server and read information about the current state.
@@ -853,11 +853,11 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XTCPSVR=1,**\ *1234*
-         #XTCPSVR: 2 started
+         #XTCPSVR: 2,"started"
          OK
 
          **AT#XTCPSVR?**
-         #XTCPSVR: 1, -1, 0
+         #XTCPSVR: 1,-1,0
          OK
 
    #. Run the :file:`client_tcp.py` script to start sending data to the server.
@@ -869,11 +869,11 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          #XTCPSVR: *IP address* connected
-         #XTCPDATA: 1, 13
-         #XTCPDATA: 1, 13
+         #XTCPDATA: 1,13
+         #XTCPDATA: 1,13
 
          **AT#XTCPSVR?**
-         #XTCPSVR: 1, 2, 0
+         #XTCPSVR: 1,2,0
          OK
 
    #. Start receiving and acknowledging the data.
@@ -889,12 +889,12 @@ To act as a TCP server, |global_private_address|
          **AT#XTCPSEND=1,"TCP1/2 received"**
          #XTCPSEND: 15
          OK
-         #XTCPDATA: 1, 13
-         #XTCPDATA: 1, 13
-         #XTCPDATA: 1, 13
+         #XTCPDATA: 1,13
+         #XTCPDATA: 1,13
+         #XTCPDATA: 1,13
 
          **AT#XTCPSVR?**
-         #XTCPSVR: 1, 2, 0
+         #XTCPSVR: 1,2,0
          OK
 
          **AT#XTCPRECV**
@@ -925,12 +925,12 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XTCPSVR?**
-         #XTCPSVR: 1, 2, 0
+         #XTCPSVR: 1,2,0
          OK
          #XTCPSVR: "timeout"
 
          **AT#XTCPSVR?**
-         #XTCPSVR: 1, -1, 0
+         #XTCPSVR: 1,-1,0
          OK
 
    #. Stop the server.
@@ -939,11 +939,11 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XTCPSVR=0**
-         #XTCPSVR: "stopped"
+         #XTCPSVR:-1,"stopped"
          OK
 
          **AT#XTCPSVR?**
-         #XTCPSVR: -1, -1
+         #XTCPSVR: -1,-1
          OK
 
 #. Test the TCP server with TCP proxy service in data mode:
@@ -955,11 +955,11 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XTCPSVR=2,**\ *1234*
-         #XTCPSVR: 1, "started"
+         #XTCPSVR: 1,"started"
          OK
 
          **AT#XTCPSVR?**
-         #XTCPSVR: 1, -1, 1
+         #XTCPSVR: 1,-1,1
          OK
 
    #. Run the :file:`client_tcp.py` script to start sending data to the server.
@@ -993,7 +993,7 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XTCPSVR=0**
-         #XTCPSVR: "stopped"
+         #XTCPSVR: -1,"stopped"
          OK
 
 UDP server
@@ -1052,7 +1052,7 @@ To act as a UDP server, |global_private_address|
          :class: highlight
 
          **AT#XSOCKET=1,2,1**
-         #XSOCKET: 2, 2, 1, 17
+         #XSOCKET: 2,2,1,17
          OK
 
          **AT#XBIND=**\ *1234*
@@ -1068,12 +1068,12 @@ To act as a UDP server, |global_private_address|
 
          **AT#XRECVFROM**
          Hello, UDP#1!
-         #XRECVFROM: 1, 13
+         #XRECVFROM: 1,13
          OK
 
          **AT#XRECVFROM**
          Hello, UDP#2!
-         #XRECVFROM: 1, 13
+         #XRECVFROM: 1,13
          OK
 
          **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,1,"UDP1/2 received"**
@@ -1082,17 +1082,17 @@ To act as a UDP server, |global_private_address|
 
          **AT#XRECVFROM**
          Hello, UDP#3!
-         #XRECVFROM: 1, 13
+         #XRECVFROM: 1,13
          OK
 
          **AT#XRECVFROM**
          Hello, UDP#4!
-         #XRECVFROM: 1, 13
+         #XRECVFROM: 1,13
          OK
 
          **AT#XRECVFROM**
          Hello, UDP#5!
-         #XRECVFROM: 1, 13
+         #XRECVFROM: 1,13
          OK
 
          **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,1,"UDP3/4/5 received"**
@@ -1130,7 +1130,7 @@ To act as a UDP server, |global_private_address|
          :class: highlight
 
          **AT#XSOCKET=0**
-         #XSOCKET: 0, "closed"
+         #XSOCKET: 0,"closed"
          OK
 
 #. Test the UDP server with UDP proxy service:
@@ -1142,11 +1142,11 @@ To act as a UDP server, |global_private_address|
          :class: highlight
 
          **AT#XUDPSVR=?**
-         #XUDPSVR: (0, 1, 2),<port>,<sec_tag>
+         #XUDPSVR: (0,1,2),<port>,<sec_tag>
          OK
 
          **AT#XUDPSVR=1,**\ *1234*
-         #XUDPSVR: 2, "started"
+         #XUDPSVR: 2,"started"
          OK
 
    #. Run the :file:`client_udp.py` script to start sending data to the server.
@@ -1156,20 +1156,20 @@ To act as a UDP server, |global_private_address|
       .. parsed-literal::
          :class: highlight
 
-         #XUDPRECV: 1, 13
+         #XUDPRECV: 1,13
          Hello, UDP#1!
-         #XUDPRECV: 1, 13
+         #XUDPRECV: 1,13
          Hello, UDP#2!
 
          **AT#XUDPSEND=1,"UDP1/2 received"**
          #XUDPSEND: 15
          OK
 
-         #XUDPRECV: 1, 13
+         #XUDPRECV: 1,13
          Hello, UDP#3!
-         #XUDPRECV: 1, 13
+         #XUDPRECV: 1,13
          Hello, UDP#4!
-         #XUDPRECV: 1, 13
+         #XUDPRECV: 1,13
          Hello, UDP#5!
 
          **AT#XUDPSEND=1,"UDP3/4/5 received"**
@@ -1209,11 +1209,11 @@ To act as a UDP server, |global_private_address|
          :class: highlight
 
          **AT#XUDPSVR=2,**\ *1234*
-         #XUDPSVR: 1, "started"
+         #XUDPSVR: 1,"started"
          OK
 
          **AT#XUDPSVR?**
-         #XUDPSVR: 1, 1
+         #XUDPSVR: 1,1
          OK
 
    #. Run the :file:`client_udp.py` script to start sending data to the server.
@@ -1310,7 +1310,7 @@ After opening a client-role socket, you can configure various options.
       :class: highlight
 
       **AT#XSOCKETOPT=?**
-      #XSOCKETOPT: (0, 1), <name>, <value>
+      #XSOCKETOPT: (0,1),<name>,<value>
       OK
 
 #. Open a client socket.
@@ -1319,7 +1319,7 @@ After opening a client-role socket, you can configure various options.
       :class: highlight
 
       **AT#XSOCKET=1,1,0**
-      #XSOCKET: 2, 1, 0, 6
+      #XSOCKET: 2,1,0,6
       OK
 
 #. Test to set and get socket options.

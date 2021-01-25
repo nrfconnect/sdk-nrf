@@ -147,8 +147,8 @@ static int handle_at_xcmng(enum at_cmd_type cmd_type)
 					err);
 			} else {
 				*(content + len) = '\0';
-				sprintf(rsp_buf, "%%CMNG: %d, %d, \"\","
-					" \"%s\"\r\n", sec_tag, type, content);
+				sprintf(rsp_buf, "%%CMNG: %d,%d,\"\","
+					"\"%s\"\r\n", sec_tag, type, content);
 				rsp_send(rsp_buf, strlen(rsp_buf));
 			}
 			k_free(content);

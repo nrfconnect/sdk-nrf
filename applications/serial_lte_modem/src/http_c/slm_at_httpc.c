@@ -284,7 +284,7 @@ static void response_cb(struct http_response *rsp,
 	if (final_data == HTTP_DATA_MORE) {
 		LOG_DBG("Partial data received (%zd bytes)", rsp->data_len);
 		if (data_received == HTTPC_BUF_LEN) {
-			sprintf(rsp_buf, "#XHTTPCRSP: %d, 1\r\n",
+			sprintf(rsp_buf, "#XHTTPCRSP: %d,1\r\n",
 				HTTPC_BUF_LEN);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			rsp_send(data_buf, HTTPC_BUF_LEN);
@@ -292,7 +292,7 @@ static void response_cb(struct http_response *rsp,
 		}
 	} else if (final_data == HTTP_DATA_FINAL) {
 		LOG_DBG("All the data received (%zd bytes)", data_received);
-		sprintf(rsp_buf, "#XHTTPCRSP: %d, 0\r\n", data_received);
+		sprintf(rsp_buf, "#XHTTPCRSP: %d,0\r\n", data_received);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		rsp_send(data_buf, data_received);
 		httpc.rsp_completed = true;
@@ -471,7 +471,7 @@ static int do_http_request(void)
 	} else if (httpc.rsp_completed == false) {
 		/* Socket was closed by remote */
 		err = -ECONNRESET;
-		sprintf(rsp_buf, "#XHTTPCRSP: 0, %d\r\n", err);
+		sprintf(rsp_buf, "#XHTTPCRSP: 0,%d\r\n", err);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	} else {
 		err = 0;
@@ -550,11 +550,11 @@ static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (httpc.sec_transport) {
-			sprintf(rsp_buf, "#XHTTPCCON: %d, \"%s\", %d, %d\r\n",
+			sprintf(rsp_buf, "#XHTTPCCON: %d,\"%s\",%d,%d\r\n",
 				(httpc.fd == INVALID_SOCKET)?0:1, httpc.host,
 				httpc.port, httpc.sec_tag);
 		} else {
-			sprintf(rsp_buf, "#XHTTPCCON: %d, \"%s\", %d\r\n",
+			sprintf(rsp_buf, "#XHTTPCCON: %d,\"%s\",%d\r\n",
 				(httpc.fd == INVALID_SOCKET)?0:1, httpc.host,
 				httpc.port);
 		}
@@ -564,7 +564,7 @@ static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf,
-			"#XHTTPCCON: (%d, %d),<host>,<port>,<sec_tag>\r\n",
+			"#XHTTPCCON: (%d,%d),<host>,<port>,<sec_tag>\r\n",
 			AT_HTTPCCON_DISCONNECT, AT_HTTPCCON_CONNECT);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
