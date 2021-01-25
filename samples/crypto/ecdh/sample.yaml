@@ -1,0 +1,14 @@
+sample:
+    description: This app provides an example of performing Elliptic-curve
+        Diffie–Hellman key echange which allows two parties to obtain a common
+        secret
+    name: ECDH example
+tests:
+    sample.ecdh:
+        tags: introduction
+        platform_allow: nrf5340dk_nrf5340_cpuappns nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160ns nrf9160dk_nrf9160 nrf52840dk_nrf52840
+        harness: console
+        harness_config:
+          type: multi_line
+          regex:
+            - ".*Example finished successfully!.*"
