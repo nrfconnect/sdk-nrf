@@ -35,6 +35,8 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820
 
+.. include:: /includes/hci_rpmsg_overlay.txt
+
 User interface
 **************
 
