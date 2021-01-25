@@ -69,8 +69,8 @@ With the sleepy behavior enabled, the unused part of RAM memory is powered off, 
 The sleep current of MCU can be lowered to about 1.8 uA by completing the following steps:
 
 1. Turn off UART by setting :option:`CONFIG_SERIAL` to ``n``.
-#. Enable Zephyr's tickless kernel by setting :option:`CONFIG_TICKLESS_KERNEL` to ``y``.
-#. For current measurements for |nRF52840DK| or |nRF52833DK|, set **SW6** to ``nRF ONLY`` position to get the desired results.
+#. For current measurements for nRF52840 DK board (PCA10056) or nRF52833 DK board (PCA10100), set **SW6** to ``nRF ONLY`` position to get the desired results.
+   See :ref:`ug_nrf52` for more information about these kits.
 
 Optional configuration
 **********************
