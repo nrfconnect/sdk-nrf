@@ -314,7 +314,8 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 	case ZB_MAC_TX_WAIT_ZGP: {
 		struct net_pkt *pkt = NULL;
 
-		if (!(radio_api->get_capabilities(radio_dev)
+		if (IS_ENABLED(NET_PKT_TXTIME) &&
+		    !(radio_api->get_capabilities(radio_dev)
 		      & IEEE802154_HW_TXTIME)) {
 			return ZB_FALSE;
 		}
