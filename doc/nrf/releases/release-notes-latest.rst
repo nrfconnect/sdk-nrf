@@ -523,6 +523,11 @@ The following list summarizes the most important changes inherited from upstream
     * Added support for the following :c:func:`fs_mount` flags: :c:macro:`FS_MOUNT_FLAG_READ_ONLY`, :c:macro:`FS_MOUNT_FLAG_NO_FORMAT`
     * Updated the FS API to not perform a runtime check of a driver interface when the :option:`CONFIG_NO_RUNTIME_CHECKS` option is enabled.
 
+  * DFU:
+
+    * Added shell module for MCUboot enabled application.
+      See :option:`CONFIG_MCUBOOT_SHELL`.
+
 * Build system:
 
   * Ensured that shields can be placed in other BOARD_ROOT folders.
