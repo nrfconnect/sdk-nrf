@@ -276,6 +276,7 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 		    saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_UNKNOWN) &&
 		    saved_job.type == NRF_CLOUD_FOTA_MODEM) {
 		/* Device has just rebooted from a modem FOTA */
+		LOG_INF("FOTA updated modem");
 		ret = 1;
 	}
 
@@ -506,6 +507,12 @@ static int save_validate_status(const char *const job_id,
 			   const enum nrf_cloud_fota_type job_type,
 			   const enum fota_validate_status validate)
 {
+#if defined(CONFIG_SHELL)
+	if (job_id == NULL) {
+		LOG_WRN("No job_id; assuming CLI-invoked FOTA.");
+		return 0;
+	}
+#endif
 	__ASSERT_NO_MSG(job_id != NULL);
 
 	int ret;
@@ -930,9 +937,11 @@ static bool is_job_status_terminal(const enum nrf_cloud_fota_status status)
 		return false;
 	}
 }
+
 static int send_job_update(struct nrf_cloud_fota_job *const job)
 {
-	if (job == NULL) {
+	/* ensure shell-invoked fota doesn't crash below */
+	if ((job == NULL) || (job->info.id == NULL)) {
 		return -EINVAL;
 	} else if (client_mqtt == NULL) {
 		return -ENXIO;

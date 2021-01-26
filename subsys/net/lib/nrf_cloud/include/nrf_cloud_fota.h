@@ -79,7 +79,7 @@ struct nrf_cloud_fota_ble_job {
 	bt_addr_t ble_id;
 	struct nrf_cloud_fota_job_info info;
 	enum nrf_cloud_fota_error error;
-	const int dl_progress; /* Download progress percent, 0-100. */
+	int dl_progress; /* Download progress percent, 0-100. */
 };
 
 /**@brief FOTA event data provided to @ref nrf_cloud_fota_callback_t */
