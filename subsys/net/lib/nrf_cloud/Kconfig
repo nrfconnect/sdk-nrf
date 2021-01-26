@@ -173,6 +173,19 @@ if NRF_CLOUD_AGPS
 config NRF_CLOUD_AGPS_AUTO
 	bool "Automatically request A-GPS on bootup"
 
+config NRF_CLOUD_AGPS_SINGLE_CELL_ONLY
+	bool "Obtain approximate location using a single cell tower instead of GPS"
+
+config NRF_CLOUD_AGPS_REQ_CELL_BASED_LOC
+	bool "Request the cell-based location from nRF Cloud"
+	depends on NRF_CLOUD_AGPS_SINGLE_CELL_ONLY
+	default y
+	help
+		When disabled, nRF Cloud will obtain and store the approximate
+		cell-based location but will not send it to the device.
+		When enabled, nRF Cloud will also send the location to the
+		device.
+
 module = NRF_CLOUD_AGPS
 module-str = nRF Cloud A-GPS
 source "subsys/logging/Kconfig.template.log_config"
