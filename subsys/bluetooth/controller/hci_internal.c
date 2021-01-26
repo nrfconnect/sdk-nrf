@@ -325,6 +325,7 @@ static void vs_supported_commands(sdc_hci_vs_zephyr_supported_commands_t *cmds)
 
 #if defined(CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL)
 	cmds->write_tx_power_level = 1;
+	cmds->read_tx_power_level = 1;
 #endif /* CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL */
 #endif /* CONFIG_BT_HCI_VS_EXT */
 }
@@ -824,6 +825,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_WRITE_TX_POWER:
 		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_write_tx_power_return_t);
 		return sdc_hci_cmd_vs_zephyr_write_tx_power((void *)cmd_params,
+							    (void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_TX_POWER:
+		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_read_tx_power_return_t);
+		return sdc_hci_cmd_vs_zephyr_read_tx_power((void *)cmd_params,
 							    (void *)event_out_params);
 #endif /* CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL */
 #endif /* CONFIG_BT_HCI_VS_EXT */
