@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,entropy = &rng;
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+		rst_button0: rst_button_0 {
+			gpios = <&gpio0 19 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Reset button";
+		};
+	};
+
+	aliases {
+		rst0 = &rst_button0;
+	};
+};
+
+&sram0 {
+	reg = <0x20000400 DT_SIZE_K(255)>;
+};
+
+&flash0 {
+	reg = <0x00001000 DT_SIZE_K(1024 - 128)>;
+};

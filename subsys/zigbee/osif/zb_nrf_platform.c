@@ -277,6 +277,9 @@ int zigbee_init(void)
 	 */
 	zb_set_nvram_erase_at_start(ZB_FALSE);
 
+	/* Don't set zigbee role for NCP device */
+#ifndef CONFIG_ZIGBEE_LIBRARY_NCP_DEV
+
 	/* Set channels on which the coordinator will try
 	 * to create a new network
 	 */
@@ -288,6 +291,7 @@ int zigbee_init(void)
 #error Channel mask undefined!
 #endif
 
+
 #if defined(CONFIG_ZIGBEE_ROLE_COORDINATOR)
 	zb_set_network_coordinator_role(channel_mask);
 #elif defined(CONFIG_ZIGBEE_ROLE_ROUTER)
@@ -297,6 +301,8 @@ int zigbee_init(void)
 #else
 #error Zigbee device role undefined!
 #endif
+
+#endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
 
 #endif /* CONFIG_ZB_TEST_MODE_MAC */
 
