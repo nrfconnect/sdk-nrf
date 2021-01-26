@@ -37,6 +37,12 @@ config AGPS_SRC_SUPL
 
 endchoice
 
+config AGPS_SINGLE_CELL_ONLY
+	bool "Obtain approximate location using a single cell tower instead of GPS"
+	depends on AGPS_SRC_NRF_CLOUD
+	depends on NRF_CLOUD_AGPS
+	select NRF_CLOUD_AGPS_SINGLE_CELL_ONLY
+
 if AGPS_SRC_SUPL
 
 config AGPS_SUPL_HOST_NAME

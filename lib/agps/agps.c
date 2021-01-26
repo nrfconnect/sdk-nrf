@@ -351,7 +351,12 @@ int gps_agps_request(struct gps_agps_request request, int socket)
 	}
 
 #elif defined(CONFIG_AGPS_SRC_NRF_CLOUD)
+#if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
+	err = nrf_cloud_agps_request_cell_location(CELL_LOC_TYPE_SINGLE,
+		(bool)IS_ENABLED(CONFIG_NRF_CLOUD_AGPS_REQ_CELL_BASED_LOC));
+#else
 	err = nrf_cloud_agps_request(request);
+#endif
 	if (err) {
 		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
 		return err;
@@ -376,4 +381,12 @@ int gps_process_agps_data(const uint8_t *buf, size_t len)
 #endif /* CONFIG_AGPS_SRC_NRF_CLOUD && CONFIG_NRF_CLOUD_AGPS */
 
 	return err;
+}
+
+int gps_get_last_cell_location(double *const lat, double *const lon)
+{
+#if defined(CONFIG_AGPS_SRC_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGPS)
+	return nrf_cloud_agps_get_last_cell_location(lat, lon);
+#endif
+	return -ESRCH;
 }
