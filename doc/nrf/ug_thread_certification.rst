@@ -66,8 +66,13 @@ Complete the following steps to run the certification tests:
          west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG="harness/overlay-cert.conf"
 
    .. note::
-      The overlay file selects the precompiled OpenThread libraries by default.
-      It also enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth LE advertising.
+      The overlay file selects the precompiled OpenThread libraries.
+
+      For nRF52 Series devices, use :file:`harness/overlay-cert.conf`.
+      This file also enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth LE advertising.
+
+      For nRF53 Series devices, use :file:`harness/overlay-cert-nrf53.conf`.
+      This file does not enable multiprotocol support, because there is no multiprotocol support for nRF53 Series devices yet.
 
 #. Prepare Thread Test Harness.
 
