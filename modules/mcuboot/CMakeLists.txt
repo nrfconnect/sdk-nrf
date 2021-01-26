@@ -6,14 +6,33 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
   include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
 
-  function(sign to_sign_hex output_prefix offset sign_depends signed_hex_out)
-    set(op ${output_prefix})
-    set(signed_hex ${op}_signed.hex)
-    set(${signed_hex_out} ${signed_hex} PARENT_SCOPE)
-    set(to_sign_bin ${op}_to_sign.bin)
-    set(update_bin ${op}_update.bin)
-    set(moved_test_update_hex ${op}_moved_test_update.hex)
-    set(test_update_hex ${op}_test_update.hex)
+  function(sign)
+    # Signs a hex image
+    #
+    # Required arguments are:
+    # SIGNED_BIN_FILE_IN - (required) Hex image to sign
+    # SIGNED_HEX_FILE_NAME_PREFIX - (required) Prefix of the output image
+    # START_ADDRESS_OFFSET - (required) Offset
+    # SIGNED_HEX_FILE_OUT - (required) Signed hex output image
+    # DEPENDS - (optional) One or more dependencies for signing the hex image
+
+    set(oneValueArgs SIGNED_BIN_FILE_IN SIGNED_HEX_FILE_NAME_PREFIX START_ADDRESS_OFFSET SIGNED_HEX_FILE_OUT)
+    set(multiValueArgs DEPENDS)
+    cmake_parse_arguments(SIGN_ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if (NOT DEFINED SIGN_ARG_SIGNED_BIN_FILE_IN
+        OR NOT DEFINED SIGN_ARG_SIGNED_HEX_FILE_OUT
+        OR NOT DEFINED SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX
+        OR NOT DEFINED SIGN_ARG_START_ADDRESS_OFFSET)
+      message(FATAL_ERROR "Missing parameter, required: SIGNED_BIN_FILE_IN SIGNED_HEX_FILE_NAME_PREFIX START_ADDRESS_OFFSET SIGNED_HEX_FILE_OUT")
+    endif()
+
+    set(signed_hex ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_signed.hex)
+    set(${SIGN_ARG_SIGNED_HEX_FILE_OUT} ${signed_hex} PARENT_SCOPE)
+    set(to_sign_bin ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_to_sign.bin)
+    set(update_bin ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_update.bin)
+    set(moved_test_update_hex ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_moved_test_update.hex)
+    set(test_update_hex ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_test_update.hex)
 
     add_custom_command(
       OUTPUT
@@ -28,7 +47,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # to be applied by mcuboot, the application is required to write the
       # IMAGE_MAGIC into the image trailer.
       ${sign_cmd}
-      ${to_sign_hex}
+      ${SIGN_ARG_SIGNED_BIN_FILE_IN}
       ${signed_hex}
 
       COMMAND
@@ -39,7 +58,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       --input-target=ihex
       --output-target=binary
       --gap-fill=0xff
-      ${to_sign_hex}
+      ${SIGN_ARG_SIGNED_BIN_FILE_IN}
       ${to_sign_bin}
 
       COMMAND
@@ -57,7 +76,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # it needs to be moved.
       ${sign_cmd}
       --pad # Adds IMAGE_MAGIC to end of slot.
-      ${to_sign_hex}
+      ${SIGN_ARG_SIGNED_BIN_FILE_IN}
       ${test_update_hex}
 
       COMMAND
@@ -68,7 +87,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       ${CMAKE_OBJCOPY}
       --input-target=ihex
       --output-target=ihex
-      --change-address ${offset}
+      --change-address ${SIGN_ARG_START_ADDRESS_OFFSET}
       --gap-fill=0xff
       ${test_update_hex}
       ${moved_test_update_hex}
@@ -78,7 +97,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       ${zb_add_ota_header_cmd}
 
       DEPENDS
-      ${sign_depends}
+      ${SIGN_ARG_DEPENDS}
       )
   endfunction()
 
@@ -187,11 +206,12 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
     set(app_offset $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>)
 
-    sign(${app_to_sign_hex}     # Hex to sign
-      ${PROJECT_BINARY_DIR}/app # Prefix for generated files
-      ${app_offset}             # Offset
-      ${app_sign_depends}       # Dependencies
-      app_signed_hex            # Generated hex output variable
+    sign(
+      SIGNED_BIN_FILE_IN ${app_to_sign_hex}
+      SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/app
+      START_ADDRESS_OFFSET ${app_offset}
+      SIGNED_HEX_FILE_OUT app_signed_hex
+      DEPENDS ${app_sign_depends}
       )
 
     add_custom_target(mcuboot_sign_target DEPENDS ${app_signed_hex})
@@ -226,11 +246,12 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # Load the shared vars to get the path to the hex file to sign.
       include(${CMAKE_BINARY_DIR}/hci_rpmsg/shared_vars.cmake)
 
-      sign(${CPUNET_PM_SIGNED_APP_HEX}
-        ${PROJECT_BINARY_DIR}/net_core_app
-        $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
-        hci_rpmsg_subimage
-        net_core_app_signed_hex
+      sign(
+        SIGNED_BIN_FILE_IN ${CPUNET_PM_SIGNED_APP_HEX}
+        SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/net_core_app
+        START_ADDRESS_OFFSET $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
+        SIGNED_HEX_FILE_OUT net_core_app_signed_hex
+        DEPENDS hci_rpmsg_subimage
         )
 
       add_custom_target(
@@ -264,16 +285,14 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         set(slot_offset
           $<TARGET_PROPERTY:partition_manager,${parent_slot}_TO_SECONDARY>)
 
-        # Depend on both the target for the hex file, and the hex file itself.
-        set(dependencies "${${slot}_target};${${slot}_hex}")
-
         set(out_path ${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_${slot})
 
-        sign(${${slot}_hex} # Hex file to sign
-          ${out_path}
-          ${slot_offset}
-          "${dependencies}" # Need "..." to make it a list.
-          signed_hex        # Created file variable
+        sign(
+          SIGNED_BIN_FILE_IN ${${slot}_hex}
+          SIGNED_HEX_FILE_NAME_PREFIX ${out_path}
+          START_ADDRESS_OFFSET ${slot_offset}
+          SIGNED_HEX_FILE_OUT signed_hex
+          DEPENDS ${${slot}_target} ${${slot}_hex}
           )
 
         # We now have to override the S0/S1 partition, so use `parent_slot`
