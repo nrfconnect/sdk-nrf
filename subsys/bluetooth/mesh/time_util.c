@@ -11,32 +11,10 @@
 #include <sys/util.h>
 #include "time_util.h"
 
-#define TAI_START_YEAR 2000
-#define TM_START_YEAR 1900
-#define TAI_START_DAY 6
-
-#define DAYS_YEAR 365ULL
-#define DAYS_LEAP_YEAR 366ULL
-#define SEC_PER_MIN (60ULL)
-#define SEC_PER_HOUR (60ULL * SEC_PER_MIN)
-#define SEC_PER_DAY (24ULL * SEC_PER_HOUR)
-
-#define SEC_PER_YEAR (DAYS_YEAR * SEC_PER_DAY)
-#define SEC_PER_LEAP_YEAR (DAYS_LEAP_YEAR * SEC_PER_DAY)
-#define FEB_DAYS 28
-#define FEB_LEAP_DAYS 29
-#define WEEKDAY_CNT 7
-
 static const uint8_t month_cfg[12] = { 31, 28, 31, 30, 31, 30,
 				    31, 31, 30, 31, 30, 31 };
 static const uint8_t month_leap_cfg[12] = { 31, 29, 31, 30, 31, 30,
 					 31, 31, 30, 31, 30, 31 };
-
-static inline bool is_leap_year(uint32_t year)
-{
-	return ((year % 4) == 0) &&
-	       (((year % 100) != 0) || ((year % 400) == 0));
-}
 
 int ts_to_tai(struct bt_mesh_time_tai *tai, struct tm *timeptr)
 {

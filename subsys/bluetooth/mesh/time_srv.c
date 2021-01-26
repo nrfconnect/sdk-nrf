@@ -10,7 +10,6 @@
 #include "model_utils.h"
 #include "time_util.h"
 
-#define SEC_PER_MIN 60U
 #define SUBSEC_STEPS 256U
 
 struct bt_mesh_time_srv_settings_data {

@@ -53,16 +53,19 @@ static struct bt_mesh_light_hue_srv light_hue_srv =
 	BT_MESH_LIGHT_HUE_SRV_INIT(NULL);
 static struct bt_mesh_light_sat_srv light_sat_srv =
 	BT_MESH_LIGHT_SAT_SRV_INIT(NULL);
-
+static struct bt_mesh_scheduler_cli scheduler_cli;
 /* Settings dependent models: */
 #ifdef CONFIG_BT_SETTINGS
 static struct bt_mesh_scene_srv scene_srv;
+static struct bt_mesh_scheduler_srv scheduler_srv =
+	BT_MESH_SCHEDULER_SRV_INIT(NULL, &time_srv);
 #endif
 
 static struct bt_mesh_elem elems[] = {
 	BT_MESH_ELEM(0, BT_MESH_MODEL_LIST(
 #ifdef CONFIG_BT_SETTINGS
 		BT_MESH_MODEL_SCENE_SRV(&scene_srv),
+		BT_MESH_MODEL_SCHEDULER_SRV(&scheduler_srv),
 #endif
 
 		BT_MESH_MODEL_LVL_SRV(&lvl_srv),
@@ -98,6 +101,7 @@ static struct bt_mesh_elem elems[] = {
 		BT_MESH_MODEL_LIGHT_HSL_SRV(&light_hsl_srv),
 		BT_MESH_MODEL_LIGHT_HUE_SRV(&light_hue_srv),
 		BT_MESH_MODEL_LIGHT_SAT_SRV(&light_sat_srv),
+		BT_MESH_MODEL_SCHEDULER_CLI(&scheduler_cli)
 	), BT_MESH_MODEL_NONE),
 };
 

@@ -60,6 +60,8 @@
 #include <bluetooth/mesh/time_srv.h>
 #include <bluetooth/mesh/scene_cli.h>
 #include <bluetooth/mesh/scene_srv.h>
+#include <bluetooth/mesh/scheduler_cli.h>
+#include <bluetooth/mesh/scheduler_srv.h>
 
 /** @brief Check whether the model publishes to a unicast address.
  *
