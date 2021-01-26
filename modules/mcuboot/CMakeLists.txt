@@ -251,7 +251,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/net_core_app
         START_ADDRESS_OFFSET $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
         SIGNED_HEX_FILE_OUT net_core_app_signed_hex
-        DEPENDS hci_rpmsg_subimage
+        DEPENDS hci_rpmsg_subimage ${hci_rpmsg_BUILD_BYPRODUCTS}
         )
 
       add_custom_target(
