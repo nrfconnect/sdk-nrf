@@ -94,6 +94,7 @@ set(KCONFIG_OUTPUT ${HTML_DIR}/kconfig)
 set(GEN_DEVICETREE_REST_ZEPHYR_DOCSET " ")
 
 # Get access to the 'html' target from doc/CMakeLists.txt in Zephyr
+set(MODULES_EXT_ROOT ${NRF_BASE})
 add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
 
 add_custom_target(zephyr)
@@ -432,6 +433,7 @@ add_dependencies(nrfxlib-inventory nrfxlib-content nrfxlib-doxy)
 # into a separate page for each module.
 
 set(KCONFIG_RST_OUT ${KCONFIG_BINARY_DIR}/rst)
+get_directory_property(ZEPHYR_KCONFIG_MODULES DIRECTORY ${ZEPHYR_BASE}/doc DEFINITION ZEPHYR_KCONFIG_MODULES)
 
 # The 'kconfig-content' target uses gen_kconfig_rest.py to generate .rst files
 # for all Kconfig symbols, as well as index pages that point to them
@@ -450,6 +452,7 @@ add_custom_target(
     KCONFIG_WARN_UNDEF=y
     KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
     KCONFIG_DOC_MODE=1
+    ${ZEPHYR_KCONFIG_MODULES}
       ${PYTHON_EXECUTABLE}
         ${ZEPHYR_BASE}/doc/scripts/gen_kconfig_rest.py ${KCONFIG_RST_OUT}
         --separate-all-index
