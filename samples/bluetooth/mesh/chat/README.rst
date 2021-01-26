@@ -3,6 +3,10 @@
 Bluetooth: Mesh chat
 ####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The Bluetooth mesh chat sample demonstrates how the mesh network can be used to facilitate communication between nodes by text, using the :ref:`bt_mesh_chat_client_model`.
 By means of the mesh network, the clients as mesh nodes can communicate with each other without the need of a server.
 The sample is mainly designed for group communication, but it also supports one-on-one communication, as well as sharing the nodes presence.
@@ -103,57 +107,27 @@ After configuring the device, you can interact with the sample using the termina
 Provisioning the device
 -----------------------
 
-The provisioning assigns an address range to the device, and adds it to the mesh network.
-Complete the following steps in the nRF Mesh app:
+.. |device name| replace:: :guilabel:`Mesh Chat`
 
-1. Tap :guilabel:`Add node` to start scanning for unprovisioned mesh devices.
-#. Select the :guilabel:`Mesh Chat` device to connect to it.
-#. Tap :guilabel:`Identify` and then :guilabel:`Provision` to provision the device.
-#. When prompted, select the OOB method and follow the instructions in the app.
-
-Once the provisioning is complete, the app returns to the Network screen.
+.. include:: /includes/mesh_device_provisioning.txt
 
 Configuring models
 ------------------
 
-Complete the following steps in the nRF Mesh app to configure models:
+See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-1. On the Groups screen, tap the :guilabel:`CREATE GROUP` button.
-#. Ensure that the group address type is selected from the drop-down menu.
-#. In the :guilabel:`Name` field, enter the group name, e.g. :guilabel: `Chat Channel`.
-#. Enter the group address in the :guilabel:`Address` field.
-#. Tap :guilabel:`OK`.
+Create a new group and name it *Chat Channel*, then configure the Vendor model on the :guilabel:`Mesh Chat` node:
 
-#. On the Network screen, tap the :guilabel:`Mesh Chat` node.
-   Basic information about the mesh node and its configuration is displayed.
-#. In the Mesh node view, expand the element.
-   It contains the list of models instantiated on the node.
-#. Tap :guilabel:`Vendor Model` to see the model's configuration.
-#. Bind the model to application keys to make it open for communication:
+* Bind the model to :guilabel:`Application Key 1`.
+* Set the publication parameters:
 
-   1. Tap :guilabel:`BIND KEY` at the top of the screen.
-   #. Select :guilabel:`Application Key 1` from the list.
+  * Destination/publish address: Select just created group :guilabel:`Chat Channel`.
+  * Publication interval: Set the interval to recommended value of 10 seconds.
+  * Retransmit count: Change the count as preferred.
 
-#. Set a model publication address:
+* Set the subscription parameters: Select just created group :guilabel:`Chat Channel`.
 
-   1. Tap :guilabel:`SET PUBLICATION` under the :guilabel:`Publish` section.
-   #. Tap :guilabel:`Publish Address` under the :guilabel:`Address` section.
-   #. Select :guilabel:`Groups`
-   #. Select just created group :guilabel:`Chat Channel`.
-   #. Tap :guilabel:`OK`.
-   #. Scroll down to the :guilabel:`Publish Period` view and set the publication interval.
-      This will make the node publish its presence status periodically at the defined interval. Recommended value is 10 seconds.
-   #. You can also change the publication retransmission configuration under the :guilabel:`Publish Retransmission` section.
-   #. Tap :guilabel:`APPLY` button in the right bottom corner of the screen to apply the changes.
-
-#. Set a model subscription:
-
-   1. Tap :guilabel:`SUBSCRIBE` under the :guilabel:`Subscriptions` section.
-   #. Select :guilabel:`Groups`
-   #. Select just created group :guilabel:`Chat Channel`.
-   #. Tap :guilabel:`OK`.
-
-Repeat steps 6-11 for each mesh node in the mesh network.
+Make sure to configure the parameters for each mesh node in the mesh network.
 
 Interacting with the sample
 ---------------------------

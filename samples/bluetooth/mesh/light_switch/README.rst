@@ -100,42 +100,24 @@ Testing consists of provisioning the device and configuring it for communication
 Provisioning the device
 -----------------------
 
-The provisioning assigns an address range to the device, and adds it to the mesh network.
-Complete the following steps in the nRF Mesh app:
+.. |device name| replace:: :guilabel:`Mesh Light Switch`
 
-1. Tap :guilabel:`Add node` to start scanning for unprovisioned mesh devices.
-#. Select the :guilabel:`Mesh Light Switch` device to connect to it.
-#. Tap :guilabel:`Identify` and then :guilabel:`Provision` to provision the device.
-#. When prompted, select the OOB method and follow the instructions in the app.
-
-Once the provisioning and initial configuration is complete, the app will go back to the Network screen.
+.. include:: /includes/mesh_device_provisioning.txt
 
 Configuring models
 ------------------
 
-Complete the following steps in the nRF Mesh app to configure models:
+See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-1. On the Network screen, tap the :guilabel:`Mesh Light Switch` node.
-   Basic information about the mesh node and its configuration is displayed.
-#. In the mesh node view, expand the first element.
-   It contains the list of models in the first element of the node.
-#. Tap :guilabel:`Generic OnOff Client` to see the model's configuration.
-#. Bind the model to application keys to make it open for communication:
+Configure the Generic OnOff Client model on each element on the :guilabel:`Mesh Light Switch` node:
 
-   1. Tap :guilabel:`BIND KEY` at the top of the screen.
-   #. Select :guilabel:`Application Key 1` from the list.
+* Bind the model to :guilabel:`Application Key 1`.
+* Set the publication parameters:
 
-#. Configure the Client model publish parameters, which define how the model will send its messages:
+  * Destination/publish address: Set the :guilabel:`Publish Address` to the first unicast address of the Mesh Light node.
+  * Retransmit count: Set the count to zero (:guilabel:`Disabled`), to prevent the model from sending each button press multiple times.
 
-   1. Tap :guilabel:`SET PUBLICATION`.
-   #. Set the Publish Address to the first unicast address of the Mesh Light node.
-   #. Set the Retransmit Count to zero (:guilabel:`Disabled`) to prevent the model from sending each button press multiple times.
-   #. Leave the rest of the publish parameters at their default values.
-   #. Tap :guilabel:`APPLY` to confirm the configuration.
-
-You are now be able to control the first LED on the mesh light device by pressing Button 1 on the mesh light switch development kit.
-
-Repeat steps 3-5 for each of the elements on the node to control each of the remaining three LEDs on the mesh light device.
+You can now control the first LED on the mesh light device by pressing Button 1 on the mesh light switch development kit.
 
 Dependencies
 ************

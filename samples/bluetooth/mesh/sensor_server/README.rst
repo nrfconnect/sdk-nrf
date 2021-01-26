@@ -112,59 +112,26 @@ Testing consists of provisioning the device, and configuring it for communicatio
 Provisioning the device
 -----------------------
 
-The provisioning assigns an address range to the device, and adds it to the mesh network.
-Complete the following steps in the nRF Mesh app:
+.. |device name| replace:: :guilabel:`Mesh Sensor`
 
-1. Tap :guilabel:`Add node` to start scanning for unprovisioned mesh devices.
-#. Select the :guilabel:`Mesh Sensor` device to connect to it.
-#. Tap :guilabel:`Identify` and then :guilabel:`Provision` to provision the device.
-#. When prompted, select an OOB method and follow the instructions in the app.
-
-Once the provisioning is complete, the app returns to the Network screen.
+.. include:: /includes/mesh_device_provisioning.txt
 
 .. _bluetooth_mesh_sensor_server_conf_models:
 
 Configuring models
 ------------------
 
-Complete the following steps in the nRF Mesh app to configure models:
+See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-1. On the Network screen, tap the :guilabel:`Mesh Sensor` node.
-   Basic information about the mesh node and its configuration is displayed.
-#. In the mesh node view, expand the element.
-   It contains the list of models in the first and only element of the node.
-#. Tap :guilabel:`Sensor Server` to see the model's configuration.
-#. Bind the model to application keys to make it open for communication:
+Configure the Sensor Server model on the :guilabel:`Mesh Sensor` node:
 
-   a. Tap :guilabel:`BIND KEY` at the top of the screen.
-   #. Select :guilabel:`Application Key 1` from the list.
+* Bind the model to :guilabel:`Application Key 1`.
+* Set the publication parameters:
 
-#. Set the publishing parameters:
+  * Destination/publish address: Select an existing group or create a new one, but make sure that the Sensor Client subscribes to the same group.
+  * Retransmit count: Set the count to zero (:guilabel:`Disabled`), to avoid duplicate logging in the :ref:`bt_mesh_sensor_cli_readme`'s UART terminal.
 
-   a. Tap :guilabel:`SET PUBLICATION`.
-   #. Tap :guilabel:`Publish Address`.
-   #. Select :guilabel:`Groups` from the drop-down menu.
-   #. Select an existing group or create a new one.
-
-      .. note::
-         The Sensor Client must subscribe to the same group.
-
-   #. Tap :guilabel:`OK`.
-   #. Select a publishing period by using the :guilabel:`Interval` slider.
-   #. Set the Retransmit Count to zero (:guilabel:`Disabled`) to avoid duplicate logging in the :ref:`bt_mesh_sensor_cli_readme`'s UART terminal.
-   #. Tap the confirmation button at the bottom right corner of the app to save the parameters.
-
-#. Set subscription parameters:
-
-   a. Tap :guilabel:`SUBSCRIBE`.
-   #. Select an existing group or create a new one.
-
-      .. note::
-         The Sensor Client must publish to the same group.
-
-   #. Tap :guilabel:`OK`.
-
-#. Double-tap the back arrow button at the top left corner of the app to get back to the main application screen.
+* Set the subscription parameters: Select an existing group or create a new one, but make sure that the Sensor Client publishes to the same group.
 
 The Sensor Server model is now configured and able to send data to the Sensor Client.
 
