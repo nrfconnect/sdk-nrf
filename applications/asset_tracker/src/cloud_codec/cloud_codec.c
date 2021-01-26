@@ -890,6 +890,7 @@ static int cloud_search_config(cJSON * const root_obj)
 	struct cmd const *const group = &group_cfg_set;
 	cJSON *state_obj = NULL;
 	cJSON *config_obj = NULL;
+	bool found = false;
 
 	if (root_obj == NULL) {
 		return -EINVAL;
@@ -901,7 +902,7 @@ static int cloud_search_config(cJSON * const root_obj)
 		state_obj ? state_obj : root_obj, "config");
 
 	if (config_obj == NULL) {
-		return 0;
+		return -ENOTSUP;
 	}
 
 	/* Search all channels */
@@ -942,6 +943,8 @@ static int cloud_search_config(cJSON * const root_obj)
 				log_strdup(channel_type_str[found_config_item.channel]),
 				log_strdup(cmd_type_str[found_config_item.type]));
 
+			found = true;
+
 			/* Handle cfg commands */
 			(void)cloud_cmd_handle_sensor_set_chan_cfg(
 				&found_config_item);
@@ -955,11 +958,12 @@ static int cloud_search_config(cJSON * const root_obj)
 	/* Config was detached, must be deleted */
 	cJSON_Delete(config_obj);
 
-	return 0;
+	return found ? 0 : -ENOTSUP;
 }
 
 int cloud_decode_command(char const *input)
 {
+	int ret = 0;
 	cJSON *root_obj = NULL;
 
 	if (input == NULL) {
@@ -969,16 +973,17 @@ int cloud_decode_command(char const *input)
 	root_obj = cJSON_Parse(input);
 	if (root_obj == NULL) {
 		LOG_DBG("[%s:%d] Unable to parse input", __func__, __LINE__);
-		return -ENOENT;
+		return 1;
 	}
 
-	cloud_search_cmd(root_obj);
-
-	cloud_search_config(root_obj);
+	if (cloud_search_cmd(root_obj) == -ENOTSUP &&
+	    cloud_search_config(root_obj) == -ENOTSUP) {
+		ret = 1;
+	}
 
 	cJSON_Delete(root_obj);
 
-	return 0;
+	return ret;
 }
 
 int cloud_decode_init(cloud_cmd_cb_t cb)
