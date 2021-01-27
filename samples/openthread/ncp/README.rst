@@ -122,7 +122,7 @@ For this sample, handling of extension commands and properties is done through t
 To enable the feature:
 
 1. Provide the implementation of this file.
-#. Insert information about the file location in the ``CONFIG_OPENTHREAD_NCP_VENDOR_HOOK_SOURCE`` field.
+#. Insert information about the file location in the ``CONFIG_OPENTHREAD_COPROCESSOR_VENDOR_HOOK_SOURCE`` field.
    This field is located in the overlay configuration file (see :file:`overlay-vendor_hook.conf`).
    The inserted path must be relative to the NCP sample directory.
 
@@ -130,7 +130,7 @@ The NCP sample provides the vendor hook :file:`user_vendor_hook.cpp` file in the
 You can either:
 
 * Use the provided :file:`user_vendor_hook.cpp` file.
-* Provide your own implementation and replace the ``CONFIG_OPENTHREAD_NCP_VENDOR_HOOK_SOURCE`` option value in the overlay file with the path to your file.
+* Provide your own implementation and replace the ``CONFIG_OPENTHREAD_COPROCESSOR_VENDOR_HOOK_SOURCE`` option value in the overlay file with the path to your file.
 
 For information about how to test the vendor hook feature, see :ref:`ug_thread_vendor_hooks_testing`.
 
