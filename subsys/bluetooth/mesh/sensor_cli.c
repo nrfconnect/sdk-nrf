@@ -817,9 +817,9 @@ int bt_mesh_sensor_cli_setting_set_unack(
 {
 	int err;
 
-	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_SENSOR_OP_SETTING_GET,
-				 BT_MESH_SENSOR_MSG_LEN_SETTING_GET);
-	bt_mesh_model_msg_init(&msg, BT_MESH_SENSOR_OP_SETTING_GET);
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_SENSOR_OP_SETTING_SET_UNACKNOWLEDGED,
+				 BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET);
+	bt_mesh_model_msg_init(&msg, BT_MESH_SENSOR_OP_SETTING_SET_UNACKNOWLEDGED);
 
 	net_buf_simple_add_le16(&msg, sensor->id);
 	net_buf_simple_add_le16(&msg, setting->id);
