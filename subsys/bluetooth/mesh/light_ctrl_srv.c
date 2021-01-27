@@ -483,6 +483,8 @@ static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	k_delayed_work_cancel(&srv->reg.timer);
 #endif
+
+	onoff_pub(srv, srv->state, true);
 }
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
