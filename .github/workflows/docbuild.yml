@@ -97,12 +97,16 @@ jobs:
           file="doc_build_${GITHUB_RUN_ID}.tgz"
           tar -C ../html -zcf $file .
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "publish PR-${{ github.event.number }} $file" > monitor_$GITHUB_RUN_ID.txt
+            echo "publish2 dev PR-${{ github.event.number }} $file" > monitor_$GITHUB_RUN_ID.txt
             echo "${{ github.event.number }}" > pr.txt
           else
             # basename will work for both branches and tags
             branch=$(basename "${{ github.ref }}")
-            echo "publish ${branch} $file" > monitor_$GITHUB_RUN_ID.txt
+            if [[ $branch == "master" ]]; then
+              echo "publish2 main latest $file" > monitor_$GITHUB_RUN_ID.txt
+            else
+              echo "publish2 main ${branch} $file" > monitor_$GITHUB_RUN_ID.txt
+            fi
           fi
 
       - name: Upload artifact
