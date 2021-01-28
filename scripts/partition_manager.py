@@ -203,17 +203,6 @@ def solve_direction(reqs, sub_partitions, unsolved, solution, ab):
             current = pool[current_index]
 
 
-def solve_first_last(reqs, unsolved, solution):
-    for fl in [('after', 'start', lambda x: solution.insert(0, x)), ('before', 'end', solution.append)]:
-        first_or_last = [x for x in reqs.keys() if 'placement' in reqs[x]
-                         and fl[0] in reqs[x]['placement'].keys()
-                         and fl[1] in reqs[x]['placement'][fl[0]]]
-        if first_or_last:
-            fl[2](first_or_last[0])
-            if first_or_last[0] in unsolved:
-                unsolved.remove(first_or_last[0])
-
-
 def solve_inside(reqs, sub_partitions):
     for key, value in reqs.items():
         if 'inside' in value.keys():
@@ -289,7 +278,7 @@ def resolve_ambiguous_requirements(reqs, unsolved):
 
 def resolve(reqs, dp):
     convert_str_to_list(reqs)
-    solution = list([dp])
+    solution = ["start", dp, "end"]
 
     remove_irrelevant_requirements(reqs, dp)
     sub_partitions = {k: v for k, v in reqs.items() if 'span' in v}
@@ -302,7 +291,6 @@ def resolve(reqs, dp):
 
     unsolved = get_images_which_need_resolving(reqs, sub_partitions)
     resolve_ambiguous_requirements(reqs, unsolved)
-    solve_first_last(reqs, unsolved, solution)
 
     while unsolved:
         current_len = len(unsolved)
@@ -311,6 +299,10 @@ def resolve(reqs, dp):
         if current_len == len(unsolved):
             raise PartitionError('Unable to solve the following partitions (endless loop):\n'
                                  + pformat(unsolved))
+
+    assert(solution[0] == "start" and solution[-1] == "end"), "invalid solution wrt. start and end."
+    solution.remove("start")
+    solution.remove("end")
 
     # Validate partition spanning.
     for sub in sub_partitions:
