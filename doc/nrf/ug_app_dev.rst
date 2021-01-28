@@ -20,3 +20,4 @@ The following user guides introduce important concepts that you should be  famil
    ug_unity_testing
    ug_tfm
    ug_radio_fem
+   ug_edge_impulse
