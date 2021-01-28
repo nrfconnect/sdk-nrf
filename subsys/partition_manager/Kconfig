@@ -139,13 +139,13 @@ config BUILD_WITH_TFM
 
 if BUILD_WITH_TFM
 
-config PM_PARTITION_SIZE_TFM_RAM
+config PM_PARTITION_SIZE_TFM_SRAM
 	hex "Memory reserved for TFM_RAM."
 	default 0x10000 if NRF_MODEM_LIB
 	default 0x16000 if SOC_NRF9160
 	default 0x40000 if SOC_NRF5340_CPUAPP
 	help
-	  Memory set aside for the TFM_RAM partition.
+	  Memory set aside for the TFM_SRAM partition.
 
 partition=BL2
 partition-size=0x8000

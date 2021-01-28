@@ -82,8 +82,8 @@
 #define S_CODE_SIZE     (IMAGE_S_CODE_SIZE)
 #define S_CODE_LIMIT    (S_CODE_START + S_CODE_SIZE - 1)
 
-#define S_DATA_START    (PM_TFM_RAM_ADDRESS)
-#define S_DATA_SIZE     (PM_TFM_RAM_SIZE)
+#define S_DATA_START    (PM_TFM_SRAM_ADDRESS)
+#define S_DATA_SIZE     (PM_TFM_SRAM_SIZE)
 #define S_DATA_LIMIT    (S_DATA_START + S_DATA_SIZE - 1)
 
 /* The CMSE veneers shall be placed in an NSC region
@@ -131,8 +131,8 @@
 #define BL2_CODE_SIZE     (FLASH_AREA_BL2_SIZE)
 #define BL2_CODE_LIMIT    (BL2_CODE_START + BL2_CODE_SIZE - 1)
 
-#define BL2_DATA_START    (PM_TFM_RAM_ADDRESS)
-#define BL2_DATA_SIZE     (PM_TFM_RAM_SIZE)
+#define BL2_DATA_START    (PM_TFM_SRAM_ADDRESS)
+#define BL2_DATA_SIZE     (PM_TFM_SRAM_SIZE)
 #define BL2_DATA_LIMIT    (BL2_DATA_START + BL2_DATA_SIZE - 1)
 #endif /* BL2 */
 
@@ -140,7 +140,7 @@
  * Shared data area is allocated at the beginning of the RAM, it is overlapping
  * with TF-M Secure code's MSP stack
  */
-#define BOOT_TFM_SHARED_DATA_BASE PM_TFM_RAM_ADDRESS
+#define BOOT_TFM_SHARED_DATA_BASE PM_TFM_SRAM_ADDRESS
 #define BOOT_TFM_SHARED_DATA_SIZE (0x400)
 #define BOOT_TFM_SHARED_DATA_LIMIT (BOOT_TFM_SHARED_DATA_BASE + \
 				    BOOT_TFM_SHARED_DATA_SIZE - 1)

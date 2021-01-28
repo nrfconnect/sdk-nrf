@@ -1,8 +1,8 @@
 #include <autoconf.h>
 
-tfm_ram:
+tfm_sram:
   placement: {after: [start]}
-  size: CONFIG_PM_PARTITION_SIZE_TFM_RAM
+  size: CONFIG_PM_PARTITION_SIZE_TFM_SRAM
   region: sram_primary
 
 tfm:
