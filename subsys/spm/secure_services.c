@@ -32,14 +32,9 @@
  */
 
 #ifdef CONFIG_SPM_SERVICE_RNG
-#ifdef MBEDTLS_CONFIG_FILE
-#include MBEDTLS_CONFIG_FILE
-#else
-#include "mbedtls/config.h"
-#endif /* MBEDTLS_CONFIG_FILE */
+#include "nrf_cc3xx_platform_ctr_drbg.h"
 
-#include <mbedtls/platform.h>
-#include <mbedtls/entropy_poll.h>
+static nrf_cc3xx_platform_ctr_drbg_context_t ctr_drbg_ctx;
 #endif /* CONFIG_SPM_SERVICE_RNG */
 
 static bool ptr_in_secure_area(intptr_t ptr)
@@ -52,10 +47,9 @@ int spm_secure_services_init(void)
 	int err = 0;
 
 #ifdef CONFIG_SPM_SERVICE_RNG
-	mbedtls_platform_context platform_ctx = {0};
-
-	err = mbedtls_platform_setup(&platform_ctx);
+	err = nrf_cc3xx_platform_ctr_drbg_init(&ctr_drbg_ctx, NULL, 0);
 #endif
+
 	return err;
 }
 
@@ -131,11 +125,11 @@ int spm_request_random_number_nse(uint8_t *output, size_t len, size_t *olen)
 		return -EINVAL;
 	}
 
-	if (len != MBEDTLS_ENTROPY_MAX_GATHER) {
+	err = nrf_cc3xx_platform_ctr_drbg_get(&ctr_drbg_ctx, output, len, olen);
+	if (*olen != len) {
 		return -EINVAL;
 	}
 
-	err = mbedtls_hardware_poll(NULL, output, len, olen);
 	return err;
 }
 #endif /* CONFIG_SPM_SERVICE_RNG */
