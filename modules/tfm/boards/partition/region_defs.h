@@ -110,8 +110,8 @@
 #define NS_CODE_SIZE    (IMAGE_NS_CODE_SIZE)
 #define NS_CODE_LIMIT   (NS_CODE_START + NS_CODE_SIZE - 1)
 
-#define NS_DATA_START   (PM_SRAM_PRIMARY_ADDRESS)
-#define NS_DATA_SIZE    (PM_SRAM_PRIMARY_SIZE)
+#define NS_DATA_START   (PM_SRAM_NONSECURE_ADDRESS)
+#define NS_DATA_SIZE    (PM_SRAM_NONSECURE_SIZE)
 #define NS_DATA_LIMIT   (NS_DATA_START + NS_DATA_SIZE - 1)
 
 /* NS partition information is used for SPU configuration */

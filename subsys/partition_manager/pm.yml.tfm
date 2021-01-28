@@ -2,6 +2,7 @@
 
 tfm_sram:
   placement: {after: [start]}
+  inside: sram_secure
   size: CONFIG_PM_PARTITION_SIZE_TFM_SRAM
   region: sram_primary
 
