@@ -29,7 +29,7 @@ if IS_SPM
 # Unable to use the size template due to non-trivial defaults.
 config PM_PARTITION_SIZE_SPM
 	hex "Flash space reserved for SPM"
-	default 0xc000 if SPM_SERVICE_RNG # To build correctly with MCUboot.
+	default 0x10000 if SPM_SERVICE_RNG # To build correctly with MCUboot.
 	default 0x8000
 	help
 	  Flash space set aside for the SPM. Note, the name
