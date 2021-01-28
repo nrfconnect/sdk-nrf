@@ -5,6 +5,7 @@
  */
 
 #include <hal/nrf_gpiote.h>
+#include <nrfx_gpiote.h>
 #ifdef DPPI_PRESENT
 #include <nrfx_dppi.h>
 #else
@@ -108,17 +109,18 @@ static void ppi_disable(uint32_t channel_mask)
  */
 static int gpiote_channel_alloc(uint32_t pin)
 {
-	for (uint8_t channel = 0; channel < GPIOTE_CH_NUM; ++channel) {
-		if (!nrf_gpiote_te_is_enabled(NRF_GPIOTE, channel)) {
-			nrf_gpiote_task_configure(NRF_GPIOTE, channel, pin,
-						  NRF_GPIOTE_POLARITY_TOGGLE,
-						  NRF_GPIOTE_INITIAL_VALUE_LOW);
-			nrf_gpiote_task_enable(NRF_GPIOTE, channel);
-			return channel;
-		}
+	uint8_t channel;
+
+	if (nrfx_gpiote_channel_alloc(&channel) != NRFX_SUCCESS) {
+		return -1;
 	}
 
-	return -1;
+	nrf_gpiote_task_configure(NRF_GPIOTE, channel, pin,
+				  NRF_GPIOTE_POLARITY_TOGGLE,
+				  NRF_GPIOTE_INITIAL_VALUE_LOW);
+	nrf_gpiote_task_enable(NRF_GPIOTE, channel);
+
+	return channel;
 }
 
 void *ppi_trace_config(uint32_t pin, uint32_t evt)
@@ -184,7 +186,6 @@ void *ppi_trace_pair_config(uint32_t pin, uint32_t start_evt, uint32_t stop_evt)
 
 	task_set_id = offsetof(NRF_GPIOTE_Type, TASKS_SET[gpiote_ch]);
 	task_clr_id = offsetof(NRF_GPIOTE_Type, TASKS_CLR[gpiote_ch]);
-
 
 	task = nrf_gpiote_task_address_get(NRF_GPIOTE, task_set_id);
 	ppi_assign(start_ch, start_evt, task);

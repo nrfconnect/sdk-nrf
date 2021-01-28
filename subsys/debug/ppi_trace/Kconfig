@@ -6,6 +6,7 @@
 
 menuconfig PPI_TRACE
 	bool "Enable PPI trace"
+	select NRFX_GPIOTE
 	select NRFX_PPI if HAS_HW_NRF_PPI
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	help
