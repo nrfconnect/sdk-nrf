@@ -305,8 +305,12 @@ def resolve(reqs, dp):
     solve_first_last(reqs, unsolved, solution)
 
     while unsolved:
+        current_len = len(unsolved)
         solve_direction(reqs, sub_partitions, unsolved, solution, 'before')
         solve_direction(reqs, sub_partitions, unsolved, solution, 'after')
+        if current_len == len(unsolved):
+            raise PartitionError('Unable to solve the following partitions (endless loop):\n'
+                                 + pformat(unsolved))
 
     # Validate partition spanning.
     for sub in sub_partitions:
