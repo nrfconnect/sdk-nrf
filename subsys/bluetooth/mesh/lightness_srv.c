@@ -720,7 +720,7 @@ const struct bt_mesh_onoff_srv_handlers _bt_mesh_lightness_srv_onoff_handlers = 
 
 static void lightness_srv_reset(struct bt_mesh_lightness_srv *srv)
 {
-	srv->range.min = 0;
+	srv->range.min = 1;
 	srv->range.max = UINT16_MAX;
 	srv->default_light = 0;
 	srv->last = UINT16_MAX;
