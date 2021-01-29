@@ -25,7 +25,6 @@
 static struct k_work start_advertising_worker;
 
 static struct bt_le_ext_adv *adv;
-static struct bt_conn *default_conn;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -45,8 +44,6 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 		return;
 	}
 
-	default_conn = bt_conn_ref(conn);
-
 	err = bt_conn_get_info(conn, &info);
 
 	if (err) {
@@ -63,11 +60,6 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	printk("Disconnected (reason 0x%02x)\n", reason);
-
-	if (default_conn) {
-		bt_conn_unref(default_conn);
-		default_conn = NULL;
-	}
 
 	k_work_submit(&start_advertising_worker);
 }
