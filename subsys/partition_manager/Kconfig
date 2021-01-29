@@ -141,6 +141,7 @@ if BUILD_WITH_TFM
 
 config PM_PARTITION_SIZE_TFM_RAM
 	hex "Memory reserved for TFM_RAM."
+	default 0x10000 if NRF_MODEM_LIB
 	default 0x16000 if SOC_NRF9160
 	default 0x40000 if SOC_NRF5340_CPUAPP
 	help
@@ -158,6 +159,17 @@ partition=TFM_EXTRA
 partition-size=0x10000
 rsource "Kconfig.template.partition_size"
 
+if NRF_MODEM_LIB
+
+config TFM_PROFILE
+	string "The build profile used for TFM Secure image."
+	default "profile_small"
+	help
+	  Use profile_small when the modem is enabled to get the RAM usage below
+	  64 kB, so the Modem's IPC RAM area can fit at 0x10000.
+	  This overrides the default TFM_PROFILE.
+
+endif # TFM_PROFILE
 endif # BUILD_WITH_TFM
 
 config PM_IMAGE_NOT_BUILT_FROM_SOURCE
