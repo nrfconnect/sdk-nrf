@@ -104,6 +104,11 @@ IRIS-2676: Missing support for FOTA on nRF Connect for Cloud
 Other issues
 ============
 
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0
+
+NRF91-989: Unable to bootstrap after changing SIMs
+  In some cases, swapping the SIM card may trigger the bootstrap Pre-Shared Key to be deleted from the device. This can prevent future bootstraps from succeeding.
+
 .. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-5666: LTE Sensor Gateway
