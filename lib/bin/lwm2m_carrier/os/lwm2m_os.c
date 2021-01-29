@@ -797,7 +797,26 @@ int lwm2m_os_sec_psk_write(uint32_t sec_tag, const void *buf, uint16_t len)
 
 int lwm2m_os_sec_psk_delete(uint32_t sec_tag)
 {
-	return modem_key_mgmt_delete(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK);
+	char xoperid[20];
+	char oper_id = 0;
+
+	int code = at_cmd_write("AT%XOPERID", xoperid, sizeof(xoperid),
+				(enum at_cmd_state *)NULL);
+
+	/* Expected result: "%XOPERID: <oper_id>" */
+	if ((code == 0) && (strncmp(xoperid, "%XOPERID: ", 10) == 0) &&
+	    (strlen(xoperid) >= 11)) {
+		oper_id = xoperid[10] - '0';
+	}
+
+	/* Delete only for specific operators. */
+	if ((oper_id == 2) || (oper_id == 3) || (oper_id == 4) ||
+	    (oper_id == 5)) {
+		return modem_key_mgmt_delete(sec_tag,
+					     MODEM_KEY_MGMT_CRED_TYPE_PSK);
+	}
+
+	return 0;
 }
 
 int lwm2m_os_sec_identity_exists(uint32_t sec_tag, bool *exists,
