@@ -86,7 +86,6 @@ manifest:
           - segger
           - tinycbor
           - tinycrypt
-          - tfm-mcuboot
 
     # NCS repositories.
     #
@@ -104,6 +103,10 @@ manifest:
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
       revision: d4e45c1d254c2aea3f842a7221a92202a50ad35b
+    - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
+      repo-path: sdk-mcuboot
+      path: modules/tee/tfm-mcuboot
+      revision: 81d19f017f18f1bc6bea906d96fd45fba3672064
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
