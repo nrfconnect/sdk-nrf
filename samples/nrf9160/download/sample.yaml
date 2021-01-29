@@ -10,3 +10,9 @@ tests:
       - CONFIG_SHELL=y
       - CONFIG_COAP=y
       - CONFIG_DOWNLOAD_CLIENT_SHELL=y
+  samples.nrf9160.download.tfm:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf9160dk_nrf9160ns
+    tags: ci_build
+    extra_args: OVERLAY_CONFIG="overlay-tfm.conf"
