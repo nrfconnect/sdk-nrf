@@ -18,6 +18,7 @@ The stack comes with the following features:
 * Devices, described in former Zigbee Home Automation and Light Link profiles.
 * Zigbee Green Power Proxy Basic.
 * Experimental support for ``ZB_ZCL_WWAH``.
+* Experimental support for Green Power Combo.
 
 See :ref:`nrfxlib:zboss` and pages in this user guide for more information.
 
