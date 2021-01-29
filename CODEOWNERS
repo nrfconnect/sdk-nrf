@@ -30,6 +30,7 @@
 Kconfig*                                  @tejlmand
 # All doc related files
 /doc/CMakeLists.txt                       @carlescufi
+/doc/update_versions.cmake                @carlescufi
 /doc/scripts/                             @carlescufi
 /doc/static/                              @carlescufi
 /doc/themes/                              @carlescufi
