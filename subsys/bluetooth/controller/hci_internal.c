@@ -927,9 +927,11 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 		 * by mixing legacy and extended commands.
 		 */
 		if (command_generates_command_complete_event(opcode)) {
+			uint8_t param_length = sizeof(struct bt_hci_evt_cmd_complete)
+					     + sizeof(struct bt_hci_evt_cc_status);
 			(void)encode_command_complete_header(cmd_complete_or_status.raw_event,
 							     opcode,
-							     CMD_COMPLETE_MIN_SIZE,
+							     param_length,
 							     BT_HCI_ERR_CMD_DISALLOWED);
 		} else {
 			(void)encode_command_status(cmd_complete_or_status.raw_event,
