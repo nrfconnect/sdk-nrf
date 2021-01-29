@@ -652,9 +652,13 @@ int modem_info_rsrp_register(rsrp_cb_t cb)
 
 int modem_info_init(void)
 {
-	/* Init at_cmd_parser storage module */
-	int err = at_params_list_init(&m_param_list,
-				CONFIG_MODEM_INFO_MAX_AT_PARAMS_RSP);
+	int err = 0;
+
+	if (m_param_list.params == NULL) {
+		/* Init at_cmd_parser storage module */
+		err = at_params_list_init(&m_param_list,
+					  CONFIG_MODEM_INFO_MAX_AT_PARAMS_RSP);
+	}
 
 	return err;
 }
