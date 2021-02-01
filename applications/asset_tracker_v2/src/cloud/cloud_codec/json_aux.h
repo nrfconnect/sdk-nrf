@@ -5,6 +5,7 @@
  */
 
 #include "cJSON.h"
+#include <stdbool.h>
 
 int json_add_obj(cJSON *parent, const char *str, cJSON *item);
 

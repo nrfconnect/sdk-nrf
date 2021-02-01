@@ -4,6 +4,34 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config BUFFER_GPS_MAX
+	int "GPS data ringbuffer entries"
+	default 8
+
+config BUFFER_SENSOR_MAX
+	int "Sensor data ringbuffer entries"
+	default 8
+
+config BUFFER_MODEM_DYNAMIC_MAX
+	int "Dynamic modem data ringbuffer entries"
+	default 1
+
+config BUFFER_MODEM_STATIC_MAX
+	int "Static modem data ringbuffer entries"
+	default 1
+
+config BUFFER_UI_MAX
+	int "UI data ringbuffer entries"
+	default 1
+
+config BUFFER_ACCEL_MAX
+	int "Accelerometer data ringbuffer entries"
+	default 1
+
+config BUFFER_BATTERY_MAX
+	int "Battery data ringbuffer entries"
+	default 1
+
 module = CLOUD_CODEC
 module-str = Cloud codec
 source "subsys/logging/Kconfig.template.log_config"

@@ -12,8 +12,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cJSON.h"
+#include "cJSON_os.h"
 #include "json_aux.h"
 #include <date_time.h>
+#include "buffer.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
@@ -63,9 +65,21 @@ LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 #define DATA_GPS_SPEED		"spd"
 #define DATA_GPS_HEADING	"hdg"
 
+/* List of JSON object labels associated with a buffer. */
+static char *object_label[BUFFER_COUNT] = {
+	[BUFFER_UI]		= DATA_BUTTON,
+	[BUFFER_MODEM_STATIC]	= DATA_MODEM_STATIC,
+	[BUFFER_MODEM_DYNAMIC]	= DATA_MODEM_DYNAMIC,
+	[BUFFER_GPS]		= DATA_GPS,
+	[BUFFER_SENSOR]		= DATA_ENVIRONMENTALS,
+	[BUFFER_ACCELEROMETER]	= DATA_MOVEMENT,
+	[BUFFER_BATTERY]	= DATA_BATTERY,
+};
+
 /* Static functions */
-static int static_modem_data_add(cJSON *parent,
-				 struct cloud_data_modem_static *data)
+static int modem_static_data_add(cJSON *parent,
+				 struct cloud_data_modem_static *data,
+				 bool batch_entry)
 {
 	int err = 0;
 	char nw_mode[50];
@@ -73,11 +87,6 @@ static int static_modem_data_add(cJSON *parent,
 	static const char lte_string[] = "LTE-M";
 	static const char nbiot_string[] = "NB-IoT";
 	static const char gps_string[] = " GPS";
-
-	if (!data->queued) {
-		LOG_DBG("Head of modem buffer not indexing a queued entry");
-		goto exit;
-	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->ts);
 	if (err) {
@@ -113,29 +122,26 @@ static int static_modem_data_add(cJSON *parent,
 
 	err += json_add_obj(static_m, OBJECT_VALUE, static_m_v);
 	err += json_add_number(static_m, OBJECT_TIMESTAMP, data->ts);
-	err += json_add_obj(parent, DATA_MODEM_STATIC, static_m);
+
+	if (batch_entry) {
+		err += json_add_obj_array(parent, static_m);
+	} else {
+		err += json_add_obj(parent, DATA_MODEM_STATIC, static_m);
+	}
 
 	if (err) {
 		return err;
 	}
 
-	data->queued = false;
-
-exit:
 	return 0;
 }
 
-static int dynamic_modem_data_add(cJSON *parent,
+static int modem_dynamic_data_add(cJSON *parent,
 				  struct cloud_data_modem_dynamic *data,
 				  bool batch_entry)
 {
 	int err = 0;
 	long mccmnc;
-
-	if (!data->queued) {
-		LOG_DBG("Head of modem buffer not indexing a queued entry");
-		goto exit;
-	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->ts);
 	if (err) {
@@ -173,9 +179,6 @@ static int dynamic_modem_data_add(cJSON *parent,
 		return err;
 	}
 
-	data->queued = false;
-
-exit:
 	return 0;
 }
 
@@ -183,11 +186,6 @@ static int sensor_data_add(cJSON *parent, struct cloud_data_sensors *data,
 			   bool batch_entry)
 {
 	int err = 0;
-
-	if (!data->queued) {
-		LOG_DBG("Head of sensor buffer not indexing a queued entry");
-		goto exit;
-	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->env_ts);
 	if (err) {
@@ -219,9 +217,6 @@ static int sensor_data_add(cJSON *parent, struct cloud_data_sensors *data,
 		return err;
 	}
 
-	data->queued = false;
-
-exit:
 	return 0;
 }
 
@@ -229,11 +224,6 @@ static int gps_data_add(cJSON *parent, struct cloud_data_gps *data,
 			bool batch_entry)
 {
 	int err = 0;
-
-	if (!data->queued) {
-		LOG_DBG("Head of gps buffer not indexing a queued entry");
-		goto exit;
-	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->gps_ts);
 	if (err) {
@@ -270,9 +260,6 @@ static int gps_data_add(cJSON *parent, struct cloud_data_gps *data,
 		return err;
 	}
 
-	data->queued = false;
-
-exit:
 	return 0;
 }
 
@@ -280,11 +267,6 @@ static int accel_data_add(cJSON *parent, struct cloud_data_accelerometer *data,
 			  bool batch_entry)
 {
 	int err = 0;
-
-	if (!data->queued) {
-		LOG_DBG("Head of accel buffer not indexing a queued entry");
-		goto exit;
-	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->ts);
 	if (err) {
@@ -318,9 +300,6 @@ static int accel_data_add(cJSON *parent, struct cloud_data_accelerometer *data,
 		return err;
 	}
 
-	data->queued = false;
-
-exit:
 	return 0;
 }
 
@@ -328,11 +307,6 @@ static int ui_data_add(cJSON *parent, struct cloud_data_ui *data,
 		       bool batch_entry)
 {
 	int err = 0;
-
-	if (!data->queued) {
-		LOG_DBG("Head of UI buffer not indexing a queued entry");
-		goto exit;
-	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->btn_ts);
 	if (err) {
@@ -360,21 +334,13 @@ static int ui_data_add(cJSON *parent, struct cloud_data_ui *data,
 		return err;
 	}
 
-	data->queued = false;
-
-exit:
 	return 0;
 }
 
-static int bat_data_add(cJSON *parent, struct cloud_data_battery *data,
-			bool batch_entry)
+static int battery_data_add(cJSON *parent, struct cloud_data_battery *data,
+			    bool batch_entry)
 {
 	int err = 0;
-
-	if (!data->queued) {
-		LOG_DBG("Head of battery buffer not indexing a queued entry");
-		goto exit;
-	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->bat_ts);
 	if (err) {
@@ -402,10 +368,115 @@ static int bat_data_add(cJSON *parent, struct cloud_data_battery *data,
 		return err;
 	}
 
-	data->queued = false;
-
-exit:
 	return 0;
+}
+
+static int data_batch_add(cJSON *parent,
+			 enum buffer_type type,
+			 char *entry_name)
+{
+	int err;
+	void *item;
+	size_t item_len = buffer_get_item_size(type);
+	cJSON *array_obj = cJSON_CreateArray();
+
+	if (array_obj == NULL) {
+		cJSON_Delete(array_obj);
+		return -ENOMEM;
+	}
+
+	while (buffer_is_empty(type) == 0) {
+		err = buffer_get_data(type, &item, item_len);
+		if (err) {
+			LOG_ERR("buffer_get_data, error: %d", err);
+			break;
+		}
+
+		switch (type) {
+		case BUFFER_UI:
+			err = ui_data_add(array_obj,
+					 (struct cloud_data_ui *)item,
+					 true);
+			if (err) {
+				LOG_ERR("ui_data_add, error: %d", err);
+			}
+			break;
+		case BUFFER_MODEM_STATIC:
+			err = modem_static_data_add(
+					array_obj,
+					(struct cloud_data_modem_static *)item,
+					true);
+			if (err) {
+				LOG_ERR("modem_static_data_add, error: %d",
+					err);
+			}
+			break;
+		case BUFFER_MODEM_DYNAMIC:
+			err = modem_dynamic_data_add(
+				array_obj,
+				(struct cloud_data_modem_dynamic *)item,
+				true);
+			if (err) {
+				LOG_ERR("modem_dynamic_data_add, error: %d",
+					err);
+			}
+			break;
+		case BUFFER_ACCELEROMETER:
+			err = accel_data_add(
+				array_obj,
+				(struct cloud_data_accelerometer *)item,
+				true);
+			if (err) {
+				LOG_ERR("accel_data_add, error: %d", err);
+			}
+			break;
+		case BUFFER_GPS:
+			err = gps_data_add(array_obj,
+					  (struct cloud_data_gps *)item,
+					  true);
+			if (err) {
+				LOG_ERR("gps_data_add, error: %d", err);
+			}
+			break;
+		case BUFFER_SENSOR:
+			err = sensor_data_add(
+					array_obj,
+					(struct cloud_data_sensors *)item,
+					true);
+			if (err) {
+				LOG_ERR("sensor_data_add, error: %d", err);
+			}
+			break;
+		case BUFFER_BATTERY:
+			err = battery_data_add(
+					array_obj,
+					(struct cloud_data_battery *)item,
+					true);
+			if (err) {
+				LOG_ERR("battery_data_add, error: %d", err);
+			}
+			break;
+		default:
+			LOG_WRN("Unknown buffer");
+			break;
+		}
+
+		err = buffer_get_data_finished(type, item_len);
+		if (err) {
+			LOG_ERR("buffer_get_data_finished, error: %d", err);
+			break;
+		}
+	}
+
+	if (cJSON_GetArraySize(array_obj) > 0) {
+		json_add_obj(parent, entry_name, array_obj);
+	} else {
+		/* No data added to the array. Delete array object. */
+		err = -ENODATA;
+		cJSON_Delete(array_obj);
+	}
+
+	return err;
 }
 
 /* Public interface */
@@ -552,18 +623,11 @@ exit:
 	return err;
 }
 
-int cloud_codec_encode_data(struct cloud_codec_data *output,
-			    struct cloud_data_gps *gps_buf,
-			    struct cloud_data_sensors *sensor_buf,
-			    struct cloud_data_modem_static *modem_stat_buf,
-			    struct cloud_data_modem_dynamic *modem_dyn_buf,
-			    struct cloud_data_ui *ui_buf,
-			    struct cloud_data_accelerometer *mov_buf,
-			    struct cloud_data_battery *bat_buf)
+int cloud_codec_encode_data(struct cloud_codec_data *output)
 {
 	int err = 0;
 	char *buffer;
-	bool data_encoded = false;
+	bool objects_added = false;
 
 	cJSON *root_obj = cJSON_CreateObject();
 	cJSON *state_obj = cJSON_CreateObject();
@@ -576,47 +640,96 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		return -ENOMEM;
 	}
 
-	if (bat_buf->queued) {
-		err += bat_data_add(rep_obj, bat_buf, false);
-		data_encoded = true;
+	struct cloud_data_ui *ui;
+
+	if (buffer_last_known_get(BUFFER_UI, &ui)) {
+		err = ui_data_add(rep_obj, ui, false);
+		if (err) {
+			LOG_ERR("ui_data_add, error: %d", err);
+			goto add_obj;
+		}
+		objects_added = true;
 	}
 
-	if (modem_stat_buf->queued) {
-		err += static_modem_data_add(rep_obj, modem_stat_buf);
-		data_encoded = true;
+	struct cloud_data_modem_static *modem_static;
+
+	if (buffer_last_known_get(BUFFER_MODEM_STATIC, &modem_static)) {
+		err = modem_static_data_add(rep_obj, modem_static, false);
+		if (err) {
+			LOG_ERR("modem_static_data_add, error: %d", err);
+			goto add_obj;
+		}
+		objects_added = true;
 	}
 
-	if (modem_dyn_buf->queued) {
-		err += dynamic_modem_data_add(rep_obj, modem_dyn_buf, false);
-		data_encoded = true;
+	struct cloud_data_modem_dynamic *modem_dynamic;
+
+	if (buffer_last_known_get(BUFFER_MODEM_DYNAMIC, &modem_dynamic)) {
+		err = modem_dynamic_data_add(rep_obj, modem_dynamic, false);
+		if (err) {
+			LOG_ERR("modem_dynamic_data_add, error: %d", err);
+			goto add_obj;
+		}
+		objects_added = true;
 	}
 
-	if (sensor_buf->queued) {
-		err += sensor_data_add(rep_obj, sensor_buf, false);
-		data_encoded = true;
+	struct cloud_data_sensors *sensor;
+
+	if (buffer_last_known_get(BUFFER_SENSOR, &sensor)) {
+		err = sensor_data_add(rep_obj, sensor, false);
+		if (err) {
+			LOG_ERR("sensor_data_add, error: %d", err);
+			goto add_obj;
+		}
+		objects_added = true;
 	}
 
-	if (gps_buf->queued) {
-		err += gps_data_add(rep_obj, gps_buf, false);
-		data_encoded = true;
+	struct cloud_data_gps *gps;
+
+	if (buffer_last_known_get(BUFFER_GPS, &gps)) {
+		err = gps_data_add(rep_obj, gps, false);
+		if (err) {
+			LOG_ERR("gps_data_add, error: %d", err);
+			goto add_obj;
+		}
+		objects_added = true;
 	}
 
-	if (mov_buf->queued) {
-		err += accel_data_add(rep_obj, mov_buf, false);
-		data_encoded = true;
+	struct cloud_data_battery *battery;
+
+	if (buffer_last_known_get(BUFFER_BATTERY, &battery)) {
+		err = battery_data_add(rep_obj, battery, false);
+		if (err) {
+			LOG_ERR("battery_data_add, error: %d", err);
+			goto add_obj;
+		}
+		objects_added = true;
 	}
 
-	err += json_add_obj(state_obj, OBJECT_REPORTED, rep_obj);
-	err += json_add_obj(root_obj, OBJECT_STATE, state_obj);
+	struct cloud_data_accelerometer *accel;
 
-	/* Exit upon encoding errors or no data encoded. */
+	if (buffer_last_known_get(BUFFER_ACCELEROMETER, &accel)) {
+		err = accel_data_add(rep_obj, accel, false);
+		if (err) {
+			LOG_ERR("accel_data_add, error: %d", err);
+			goto add_obj;
+		}
+		objects_added = true;
+	}
+
+add_obj:
+
+	json_add_obj(state_obj, OBJECT_REPORTED, rep_obj);
+	json_add_obj(root_obj, OBJECT_STATE, state_obj);
+
 	if (err) {
 		goto exit;
 	}
 
-	if (!data_encoded) {
+	if (!objects_added) {
+		LOG_DBG("No data added to encoded message");
+
 		err = -ENODATA;
-		LOG_DBG("No data to encode...");
 		goto exit;
 	}
 
@@ -637,12 +750,10 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 exit:
 	cJSON_Delete(root_obj);
-
 	return err;
 }
 
-int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
-			       struct cloud_data_ui *ui_buf)
+int cloud_codec_encode_ui_data(struct cloud_codec_data *output)
 {
 	int err = 0;
 	char *buffer;
@@ -654,13 +765,18 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 		return -ENOMEM;
 	}
 
-	if (ui_buf->queued) {
-		err += ui_data_add(root_obj, ui_buf, false);
-	} else {
-		goto exit;
-	}
+	struct cloud_data_ui *ui;
 
-	if (err) {
+	if (buffer_last_known_get(BUFFER_UI, &ui)) {
+		err = ui_data_add(root_obj, ui, false);
+		if (err) {
+			LOG_ERR("ui_data_add, error: %d", err);
+			goto exit;
+		}
+	} else {
+		LOG_DBG("No data added to encoded UI message");
+
+		err = -ENODATA;
 		goto exit;
 	}
 
@@ -681,143 +797,35 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 
 exit:
 	cJSON_Delete(root_obj);
-
 	return err;
 }
 
-int cloud_codec_encode_batch_data(
-				struct cloud_codec_data *output,
-				struct cloud_data_gps *gps_buf,
-				struct cloud_data_sensors *sensor_buf,
-				struct cloud_data_modem_dynamic *modem_dyn_buf,
-				struct cloud_data_ui *ui_buf,
-				struct cloud_data_accelerometer *accel_buf,
-				struct cloud_data_battery *bat_buf,
-				size_t gps_buf_count,
-				size_t sensor_buf_count,
-				size_t modem_dyn_buf_count,
-				size_t ui_buf_count,
-				size_t accel_buf_count,
-				size_t bat_buf_count)
+int cloud_codec_encode_batch_data(struct cloud_codec_data *output)
 {
-	int err = 0;
+	int err;
 	char *buffer;
-	bool data_encoded = false;
+	bool object_added = false;
 
 	cJSON *root_obj = cJSON_CreateObject();
-	cJSON *gps_obj = cJSON_CreateArray();
-	cJSON *sensor_obj = cJSON_CreateArray();
-	cJSON *modem_obj = cJSON_CreateArray();
-	cJSON *ui_obj = cJSON_CreateArray();
-	cJSON *accel_obj = cJSON_CreateArray();
-	cJSON *bat_obj = cJSON_CreateArray();
 
-	if (root_obj == NULL || gps_obj == NULL || sensor_obj == NULL ||
-	    modem_obj == NULL || ui_obj == NULL || accel_obj == NULL ||
-	    bat_obj == NULL) {
-		cJSON_Delete(root_obj);
-		cJSON_Delete(gps_obj);
-		cJSON_Delete(sensor_obj);
-		cJSON_Delete(modem_obj);
-		cJSON_Delete(ui_obj);
-		cJSON_Delete(accel_obj);
-		cJSON_Delete(bat_obj);
+	if (root_obj == NULL) {
 		return -ENOMEM;
 	}
 
-	/* GPS data */
-	for (int i = 0; i < gps_buf_count; i++) {
-		if (gps_buf[i].queued) {
-			err += gps_data_add(gps_obj, &gps_buf[i], true);
+	for (int i = 0; i < ARRAY_SIZE(object_label); i++) {
+		err = data_batch_add(root_obj, i, object_label[i]);
+		if (err == -ENODATA) {
+			/* No data in buffer. */
+			continue;
+		} else if (err) {
+			goto exit;
 		}
+		object_added = true;
 	}
 
-	if (cJSON_GetArraySize(gps_obj) > 0) {
-		err += json_add_obj(root_obj, DATA_GPS, gps_obj);
-		data_encoded = true;
-	} else {
-		cJSON_Delete(gps_obj);
-	}
+	if (!object_added) {
+		LOG_DBG("No data added to encoded batch message");
 
-	/* Environmental sensor data */
-	for (int i = 0; i < sensor_buf_count; i++) {
-		if (sensor_buf[i].queued) {
-			err += sensor_data_add(sensor_obj,
-					       &sensor_buf[i],
-					       true);
-		}
-	}
-
-	if (cJSON_GetArraySize(sensor_obj) > 0) {
-		err += json_add_obj(root_obj, DATA_ENVIRONMENTALS, sensor_obj);
-		data_encoded = true;
-	} else {
-		cJSON_Delete(sensor_obj);
-	}
-
-	/* UI data */
-	for (int i = 0; i < ui_buf_count; i++) {
-		if (ui_buf[i].queued) {
-			err += ui_data_add(ui_obj, &ui_buf[i], true);
-		}
-	}
-
-	if (cJSON_GetArraySize(ui_obj) > 0) {
-		err += json_add_obj(root_obj, DATA_BUTTON, ui_obj);
-		data_encoded = true;
-	} else {
-		cJSON_Delete(ui_obj);
-	}
-
-	/* Movement data */
-	for (int i = 0; i < accel_buf_count; i++) {
-		if (accel_buf[i].queued) {
-			err += accel_data_add(accel_obj,
-					      &accel_buf[i],
-					      true);
-		}
-	}
-
-	if (cJSON_GetArraySize(accel_obj) > 0) {
-		err += json_add_obj(root_obj, DATA_MOVEMENT, accel_obj);
-		data_encoded = true;
-	} else {
-		cJSON_Delete(accel_obj);
-	}
-
-	/* Battery data */
-	for (int i = 0; i < bat_buf_count; i++) {
-		if (bat_buf[i].queued) {
-			err += bat_data_add(bat_obj, &bat_buf[i], true);
-		}
-	}
-
-	if (cJSON_GetArraySize(bat_obj) > 0) {
-		err += json_add_obj(root_obj, DATA_BATTERY, bat_obj);
-		data_encoded = true;
-	} else {
-		cJSON_Delete(bat_obj);
-	}
-
-	/* Dynamic modem data */
-	for (int i = 0; i < modem_dyn_buf_count; i++) {
-		if (modem_dyn_buf[i].queued) {
-			err += dynamic_modem_data_add(modem_obj,
-						     &modem_dyn_buf[i],
-						     true);
-		}
-	}
-
-	if (cJSON_GetArraySize(modem_obj) > 0) {
-		err += json_add_obj(root_obj, DATA_MODEM_DYNAMIC, modem_obj);
-		data_encoded = true;
-	} else {
-		cJSON_Delete(modem_obj);
-	}
-
-	if (err) {
-		goto exit;
-	} else if (!data_encoded) {
 		err = -ENODATA;
 		goto exit;
 	}
@@ -838,8 +846,6 @@ int cloud_codec_encode_batch_data(
 	output->len = strlen(buffer);
 
 exit:
-
 	cJSON_Delete(root_obj);
-
 	return err;
 }

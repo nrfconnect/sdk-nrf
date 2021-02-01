@@ -31,8 +31,6 @@ struct cloud_data_battery {
 	uint16_t bat;
 	/** Battery data timestamp. UNIX milliseconds. */
 	int64_t bat_ts;
-	/** Flag signifying that the data entry is to be encoded. */
-	bool queued;
 };
 
 /** @brief Structure containing GPS data published to cloud. */
@@ -51,8 +49,6 @@ struct cloud_data_gps {
 	float spd;
 	/** Heading of movement in degrees. */
 	float hdg;
-	/** Flag signifying that the data entry is to be encoded. */
-	bool queued;
 };
 
 struct cloud_data_cfg {
@@ -77,8 +73,6 @@ struct cloud_data_accelerometer {
 	int64_t ts;
 	/** Accelerometer readings. */
 	double values[3];
-	/** Flag signifying that the data entry is to be published. */
-	bool queued;
 };
 
 struct cloud_data_sensors {
@@ -88,8 +82,6 @@ struct cloud_data_sensors {
 	double temp;
 	/** Humidity level in percentage */
 	double hum;
-	/** Flag signifying that the data entry is to be encoded. */
-	bool queued;
 };
 
 struct cloud_data_modem_static {
@@ -111,8 +103,6 @@ struct cloud_data_modem_static {
 	const char *brdv;
 	/** Modem firmware. */
 	char *fw;
-	/** Flag signifying that the data entry is to be encoded. */
-	bool queued;
 };
 
 struct cloud_data_modem_dynamic {
@@ -128,8 +118,6 @@ struct cloud_data_modem_dynamic {
 	char *ip;
 	/* Mobile Country Code*/
 	char *mccmnc;
-	/** Flag signifying that the data entry is to be encoded. */
-	bool queued;
 };
 
 struct cloud_data_ui {
@@ -137,8 +125,6 @@ struct cloud_data_ui {
 	int btn;
 	/** Button data timestamp. UNIX milliseconds. */
 	int64_t btn_ts;
-	/** Flag signifying that the data entry is to be encoded. */
-	bool queued;
 };
 
 struct cloud_codec_data {
@@ -158,65 +144,11 @@ int cloud_codec_decode_config(char *input, struct cloud_data_cfg *cfg);
 int cloud_codec_encode_config(struct cloud_codec_data *output,
 			      struct cloud_data_cfg *cfg);
 
-int cloud_codec_encode_data(struct cloud_codec_data *output,
-			    struct cloud_data_gps *gps_buf,
-			    struct cloud_data_sensors *sensor_buf,
-			    struct cloud_data_modem_static *modem_stat_buf,
-			    struct cloud_data_modem_dynamic *modem_dyn_buf,
-			    struct cloud_data_ui *ui_buf,
-			    struct cloud_data_accelerometer *accel_buf,
-			    struct cloud_data_battery *bat_buf);
+int cloud_codec_encode_data(struct cloud_codec_data *output);
 
-int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
-			       struct cloud_data_ui *ui_buf);
+int cloud_codec_encode_ui_data(struct cloud_codec_data *output);
 
-int cloud_codec_encode_batch_data(
-				struct cloud_codec_data *output,
-				struct cloud_data_gps *gps_buf,
-				struct cloud_data_sensors *sensor_buf,
-				struct cloud_data_modem_dynamic *modem_dyn_buf,
-				struct cloud_data_ui *ui_buf,
-				struct cloud_data_accelerometer *accel_buf,
-				struct cloud_data_battery *bat_buf,
-				size_t gps_buf_count,
-				size_t sensor_buf_count,
-				size_t modem_dyn_buf_count,
-				size_t ui_buf_count,
-				size_t accel_buf_count,
-				size_t bat_buf_count);
-
-void cloud_codec_populate_sensor_buffer(
-				struct cloud_data_sensors *sensor_buffer,
-				struct cloud_data_sensors *new_sensor_data,
-				int *head_sensor_buf,
-				size_t buffer_count);
-
-void cloud_codec_populate_ui_buffer(struct cloud_data_ui *ui_buffer,
-				    struct cloud_data_ui *new_ui_data,
-				    int *head_ui_buf,
-				    size_t buffer_count);
-
-void cloud_codec_populate_accel_buffer(
-				struct cloud_data_accelerometer *accel_buf,
-				struct cloud_data_accelerometer *new_accel_data,
-				int *head_accel_buf,
-				size_t buffer_count);
-
-void cloud_codec_populate_bat_buffer(struct cloud_data_battery *bat_buffer,
-				     struct cloud_data_battery *new_bat_data,
-				     int *head_bat_buf,
-				     size_t buffer_count);
-
-void cloud_codec_populate_gps_buffer(struct cloud_data_gps *gps_buffer,
-				     struct cloud_data_gps *new_gps_data,
-				     int *head_gps_buf,
-				     size_t buffer_count);
-
-void cloud_codec_populate_modem_dynamic_buffer(
-				struct cloud_data_modem_dynamic *modem_buffer,
-				struct cloud_data_modem_dynamic *new_modem_data,
-				int *head_modem_buf,
-				size_t buffer_count);
+int cloud_codec_encode_batch_data(struct cloud_codec_data *output);
 
 static inline void cloud_codec_release_data(struct cloud_codec_data *output)
 {
