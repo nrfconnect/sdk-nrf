@@ -2,28 +2,35 @@
 
 import argparse
 from contextlib import closing
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 import getpass
 import netrc
 import os
 import sqlite3
 import sys
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, NamedTuple, Optional, Union
 
 import pygit2
 import github
 
 from pygit2_helpers import zephyr_commit_area, commit_shortlog
 
-# A container for pull request information. The commits attribute
-# is a list of pygit2.Commit objects.
-pr_info = namedtuple('pr_info', 'number title html_url commits')
+# A container for pull request information.
+class pr_info(NamedTuple):
+    number: int
+    title: str
+    html_url: str
+    commits: List[pygit2.Commit]
 
 # A tuple describing the results of querying the file system and
 # GitHub API for information about a commit.
-commit_result = namedtuple('commit_result',
-                           'sha remote_org remote_repo '
-                           'pr_num pr_title pr_url')
+class commit_result(NamedTuple):
+    sha: str
+    remote_org: str
+    remote_repo: str
+    pr_num: int
+    pr_title: str
+    pr_url: str
 
 class ResultsDatabase:
     '''Object oriented interface for accessing the results database.
