@@ -307,6 +307,8 @@ The following list summarizes the most important changes inherited from upstream
 
 * Boards:
 
+  * Added support for :ref:`board versioning <zephyr:application_board_version>`.
+    With this concept, multiple board revisions can now share a single folder and board name.
   * Fixed arguments for the J-Link runners for nRF5340 DK and added the DAP Link (CMSIS-DAP) interface to the OpenOCD runner for nRF5340.
   * Marked the nRF5340 PDK as deprecated and updated the nRF5340 documentation to point to the :ref:`zephyr:nrf5340dk_nrf5340`.
   * Added enabling of LFXO pins (XL1 and XL2) for nRF5340.
@@ -378,6 +380,7 @@ The following list summarizes the most important changes inherited from upstream
   * ADC:
 
     * Improved the default routine that provides sampling intervals, to allow intervals shorter than 1 millisecond.
+    * Reworked, extended, and improved the ``adc_shell`` driver to make testing an ADC peripheral simpler.
 
   * Bluetooth Controller:
 
@@ -600,6 +603,7 @@ The following list summarizes the most important changes inherited from upstream
   * :ref:`zephyr:led_ws2812_sample`: Updated to force SPIM on nRF52 DK.
   * :ref:`zephyr:cfb_custom_fonts`: Added support for ssd1306fb.
   * :ref:`zephyr:gsm-modem-sample`: Added suspend/resume shell commands.
+  * :ref:`zephyr:updatehub_fota_sample`: Added support for Bluetooth LE IPSP, 802.15.4, modem, and Wi-Fi.
 
 * Logging:
 
@@ -613,11 +617,31 @@ The following list summarizes the most important changes inherited from upstream
   * Updated nrfx in hal-nordic to version 2.4.0.
   * Updated the Trusted Firmware-M (TF-M) module to include support for the nRF5340 and nRF9160 platforms.
 
-
 * Other:
 
+  * Renamed the ``sanitycheck`` script to ``twister``.
   * Added initial LoRaWAN support.
   * Updated ``west flash`` support for ``nrfjprog`` to fail if a HEX file has UICR data and ``--erase`` was not specified.
+
+* Power management:
+
+  * Overhauled the naming and did some general cleanup.
+
+* Shell:
+
+  * Updated documentation.
+  * Optimized the tab feature and the select command.
+  * Enhanced and improved the help command.
+
+* Toolchain:
+
+  * Added initial support for LLVM/Clang (version 10, on the x86 architecture).
+  * Added the environment variable ``LLVM_TOOLCHAIN_PATH`` for locating the LLVM toolchain.
+
+* USB:
+
+  * Fixed the handling of zero-length packet (ZLP) in the nRF USB Device Controller Driver.
+  * Changed the USB DFU wait delay to be configurable with Kconfig (:option:`CONFIG_USB_DFU_WAIT_DELAY_MS`).
 
 Documentation
 =============
