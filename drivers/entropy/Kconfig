@@ -6,7 +6,7 @@
 
 config ENTROPY_CC3XX
 	bool "Arm CC3XX RNG driver for Nordic devices"
-	depends on HW_CC3XX || (SOC_NRF9160 && SPM) || (SOC_NRF5340_CPUAPP && SPM)
+	depends on HW_CC3XX || (SOC_NRF9160 && (SPM || BUILD_WITH_TFM)) || (SOC_NRF5340_CPUAPP && (SPM || BUILD_WITH_TFM))
 	depends on ENTROPY_GENERATOR
 	select ENTROPY_HAS_DRIVER
 	default y
