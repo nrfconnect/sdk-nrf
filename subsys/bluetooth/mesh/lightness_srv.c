@@ -830,12 +830,8 @@ static int bt_mesh_lightness_srv_start(struct bt_mesh_model *mod)
 
 	switch (srv->ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:
-		/* Not calling the lightness server's callback when the value is
-		 * supposed to be zero, so we'll just set the "last" value for
-		 * correctness:
-		 */
 		srv->last = 0;
-		return 0;
+		break;
 	case BT_MESH_ON_POWER_UP_ON:
 		set.lvl = (srv->default_light ? srv->default_light : srv->last);
 		break;
