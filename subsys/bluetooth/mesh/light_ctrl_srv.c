@@ -1547,6 +1547,8 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 			reg_start(srv);
 			if (atomic_test_bit(&srv->flags, FLAG_ON)) {
 				turn_on(srv, NULL, true);
+			} else {
+				onoff_pub(srv, srv->state, true);
 			}
 		} else if (atomic_test_bit(&srv->lightness->flags,
 					   LIGHTNESS_SRV_FLAG_IS_ON)) {
