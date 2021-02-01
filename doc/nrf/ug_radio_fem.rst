@@ -90,12 +90,6 @@ To use nRF21540 in GPIO mode, complete the following steps:
    * :option:`CONFIG_MPSL_FEM_NRF21540_GPIO_GPIOTE_RX_EN`
    * :option:`CONFIG_MPSL_FEM_NRF21540_GPIO_GPIOTE_PDN`
 
-#. Set the following Kconfig parameters to assign unique PPI channel numbers to be used exclusively by the FEM driver:
-
-   * :option:`CONFIG_MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_0`
-   * :option:`CONFIG_MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_1`
-   * :option:`CONFIG_MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_2`
-
 Optional properties
 ===================
 
@@ -165,11 +159,6 @@ To use the Simple GPIO implementation of FEM with SKY66112-11, complete the foll
 
    * :option:`CONFIG_MPSL_FEM_SIMPLE_GPIO_GPIOTE_CTX`
    * :option:`CONFIG_MPSL_FEM_SIMPLE_GPIO_GPIOTE_CRX`
-
-#. Set the following Kconfig parameters to assign unique PPI channel numbers to be used exclusively by the FEM driver:
-
-   * :option:`CONFIG_MPSL_FEM_SIMPLE_GPIO_PPI_CHANNEL_0`
-   * :option:`CONFIG_MPSL_FEM_SIMPLE_GPIO_PPI_CHANNEL_1`
 
 Optional properties
 ===================
