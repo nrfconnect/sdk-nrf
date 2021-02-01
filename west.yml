@@ -103,7 +103,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: dcfa70e66e91d9bf31fd6f083e2fba19b4305f4e
+      revision: 96340fb6c0b7e31c2070e1f428ca24076d2700a6
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
