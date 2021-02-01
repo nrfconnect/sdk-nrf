@@ -61,7 +61,7 @@ Complete the following actions to optimize the Bluetooth part of your applicatio
   * :option:`CONFIG_BT_CTLR_TX_BUFFERS`
   * :option:`CONFIG_BT_CTLR_TX_BUFFER_SIZE`
 
-For reference, you can find a minimal footprint configuration of the :ref:`peripheral_lbs` sample in :file:`nrf/samples/bluetooth/peripheral_lbs/minimal.conf`.
+For reference, you can find minimal footprint configurations of the :ref:`peripheral_lbs` sample in :file:`nrf/samples/bluetooth/peripheral_lbs/minimal.conf` and the :ref:`peripheral_uart` sample in :file:`nrf/samples/bluetooth/peripheral_uart/minimal.conf`.
 
 
 Thread
