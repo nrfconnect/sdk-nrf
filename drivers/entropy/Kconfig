@@ -5,11 +5,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 config ENTROPY_CC3XX
-	bool "Arm CC3XX RNG driver for Nordic devices"
-	depends on HW_CC3XX || (SOC_NRF9160 && SPM) || (SOC_NRF5340_CPUAPP && SPM)
+	bool "Arm CC3XX RNG driver for Nordic devices" if !BUILD_WITH_TFM
+	depends on CRYPTOCELL_USABLE || SPM || BUILD_WITH_TFM
 	depends on ENTROPY_GENERATOR
 	select ENTROPY_HAS_DRIVER
 	default y
 	help
 	  This option enables the Arm CC3xx RNG devices in nRF52840, nRF5340, and nRF9160
 	  devices. This is dependent on CC3xx being enabled in nrf_security.
+	  This is required for TF-M builds using NORDIC_SECURITY_BACKEND.

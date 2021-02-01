@@ -33,7 +33,7 @@ config BOARD_THINGY91_NRF9160NS
 #  - For CC3XX RNG
 config MAIN_STACK_SIZE
 	default 2048 if ZTEST
-	default 2048 if ENTROPY_CC3XX
+	default 2048 if ENTROPY_CC3XX && !(SPM || BUILD_WITH_TFM)
 
 config ZTEST_STACKSIZE
 	default 2048 if ZTEST
