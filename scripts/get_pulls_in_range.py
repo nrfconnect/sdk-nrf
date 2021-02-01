@@ -122,7 +122,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument('gh_repo',
                         help='''repository in <organization>/<repo> format,
-                        like nrfconnect/sdk-nrf''')
+                        like zephyrproject-rtos/zephyr''')
     parser.add_argument('local_path',
                         help='path to repository on the file system')
     parser.add_argument('start', help='start commit ref in the range')
