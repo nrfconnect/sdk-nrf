@@ -16,6 +16,10 @@
 
 #if defined(CONFIG_SPM)
 #include "secure_services.h"
+#elif defined(CONFIG_BUILD_WITH_TFM)
+#include <psa/crypto.h>
+#include <psa/crypto_extra.h>
+#include <tfm_ns_interface.h>
 #else
 #include "nrf_cc3xx_platform_ctr_drbg.h"
 
@@ -35,6 +39,14 @@ static int entropy_cc3xx_rng_get_entropy(
 	__ASSERT_NO_MSG(buffer != NULL);
 
 
+#if defined(CONFIG_BUILD_WITH_TFM)
+
+	res = psa_generate_random(buffer, length);
+	if (res != PSA_SUCCESS) {
+		return -EINVAL;
+	}
+
+#else
 	size_t olen;
 	size_t offset = 0;
 	size_t chunk_size = CTR_DRBG_MAX_REQUEST;
@@ -78,6 +90,7 @@ static int entropy_cc3xx_rng_get_entropy(
 
 		offset += chunk_size;
 	}
+#endif
 
 	return res;
 }
@@ -86,7 +99,21 @@ static int entropy_cc3xx_rng_init(const struct device *dev)
 {
 	(void)dev;
 
-	#if !defined(CONFIG_SPM)
+	#if defined(CONFIG_BUILD_WITH_TFM)
+		int ret = -1;
+		enum tfm_status_e tfm_status;
+
+		tfm_status = tfm_ns_interface_init();
+		if (tfm_status != TFM_SUCCESS) {
+			return -EINVAL;
+		}
+
+		ret = psa_crypto_init();
+		if (ret != PSA_SUCCESS) {
+			return -EINVAL;
+		}
+
+	#elif !defined(CONFIG_SPM)
 		int ret = 0;
 
 		ret = nrf_cc3xx_platform_ctr_drbg_init(&ctr_drbg_ctx, NULL, 0);
