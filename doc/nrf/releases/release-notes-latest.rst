@@ -328,6 +328,9 @@ The following list summarizes the most important changes inherited from upstream
     * ``SYS_CLOCK_HW_CYCLES_TO_NS64()``
     * ``SYS_CLOCK_HW_CYCLES_TO_NS()``
 
+  * Removed the deprecated ``CONFIG_LEGACY_TIMEOUT_API`` option.
+    All time-outs must now be specified using the ``k_timeout_t`` type.
+
   * Updated :c:func:`k_timer_user_data_get` to take a ``const struct k_timer *timer`` instead of a non-\ ``const`` pointer.
   * Added a :c:macro:`K_DELAYED_WORK_DEFINE` macro.
   * Added a :option:`CONFIG_MEM_SLAB_TRACE_MAX_UTILIZATION` option.
