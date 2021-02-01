@@ -72,27 +72,6 @@ config MPSL_FEM_NRF21540_GPIO_GPIOTE_PDN
 	  Unique GPIOTE channel number to be used exclusively by the FEM driver
 	  for PDN pin control.
 
-config MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_0
-	int "PPI channel reserved for the front-end module"
-	default 15
-	help
-	  The first of three unique PPI channel numbers to be used exclusively
-	  by the FEM driver.
-
-config MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_1
-	int "PPI channel reserved for the front-end module"
-	default 16
-	help
-	  The second of three unique PPI channel numbers to be used exclusively
-	  by the FEM driver.
-
-config MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_2
-	int "PPI channel reserved for the front-end module"
-	default 5
-	help
-	  Third of three unique PPI channel numbers to be used exclusively
-	  by the FEM driver.
-
 config MPSL_FEM_NRF21540_TX_GAIN_DB
 	int "TX gain of the nRF21540 PA amplifier in dB"
 	default 20
@@ -125,20 +104,6 @@ config MPSL_FEM_SIMPLE_GPIO_GPIOTE_CRX
 	help
 	  Unique GPIOTE channel number to be used exclusively by the FEM driver
 	  for RTX pin control.
-
-config MPSL_FEM_SIMPLE_GPIO_PPI_CHANNEL_0
-	int "PPI channel reserved for the front-end module"
-	default 15
-	help
-	  The first of two unique PPI channel numbers to be used exclusively
-	  by the FEM driver.
-
-config MPSL_FEM_SIMPLE_GPIO_PPI_CHANNEL_1
-	int "PPI channel reserved for the front-end module"
-	default 16
-	help
-	  The second of two unique PPI channel numbers to be used exclusively
-	  by the FEM driver.
 
 endif
 

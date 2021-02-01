@@ -10,6 +10,11 @@
 #include <sys/__assert.h>
 #include <mpsl_fem_config_nrf21540_gpio.h>
 #include <mpsl_fem_config_simple_gpio.h>
+#if IS_ENABLED(CONFIG_HAS_HW_NRF_PPI)
+#include <nrfx_ppi.h>
+#elif IS_ENABLED(CONFIG_HAS_HW_NRF_DPPIC)
+#include <nrfx_dppi.h>
+#endif
 
 #define MPSL_FEM_GPIO_POLARITY_GET(dt_property) \
 	((GPIO_ACTIVE_LOW & \
@@ -89,20 +94,26 @@ static int inactive_pin_configure(uint8_t pin, const char *gpio_lbl,
 	}
 }
 
+static int ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
+{
+	nrfx_err_t err = NRFX_ERROR_NOT_SUPPORTED;
+
+	for (int i = 0; i < size; i++) {
+		IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
+			(err = nrfx_ppi_channel_alloc(&ppi_channels[i]);));
+		IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
+			(err = nrfx_dppi_channel_alloc(&ppi_channels[i]);));
+		if (err != NRFX_SUCCESS) {
+			return -ENOMEM;
+		}
+	}
+
+	return 0;
+}
+
 #if IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_GPIO)
 static int fem_nrf21540_gpio_configure(void)
 {
-	/* FEM configuration requires gpiote and ppi channels.
-	 * Currently there is no reliable common method to dynamically
-	 * allocate such channels. FEM module needs only "some" channels
-	 * to use whichever they are, but FEM needs them for exclusive use
-	 * and does not enable them immediately.
-	 *
-	 * When common api to assign gpiote and ppi channels is available
-	 * current solution based on macros coming from Kconfig should be
-	 * reworked.
-	 */
-
 #if !DT_NODE_EXISTS(DT_NODELABEL(nrf_radio_fem))
 #error Node with label 'nrf_radio_fem' not found in the devicetree.
 #endif
@@ -168,13 +179,13 @@ static int fem_nrf21540_gpio_configure(void)
 #else
 			MPSL_FEM_DISABLED_GPIO_CONFIG_INIT
 #endif
-		},
-		.ppi_channels = {
-			CONFIG_MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_0,
-			CONFIG_MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_1,
-			CONFIG_MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_2
 		}
 	};
+
+	err = ppi_channel_alloc(cfg.ppi_channels, ARRAY_SIZE(cfg.ppi_channels));
+	if (err) {
+		return err;
+	}
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
 	fem_pin_num_correction(&cfg.pa_pin_config.gpio_pin,
@@ -262,20 +273,10 @@ static int fem_nrf21540_gpio_configure(void)
 #if IS_ENABLED(CONFIG_MPSL_FEM_SIMPLE_GPIO)
 static int fem_simple_gpio_configure(void)
 {
-	/* FEM configuration requires gpiote and ppi channels.
-	 * Currently there is no reliable common method to dynamically
-	 * allocate such channels. FEM module needs only "some" channels
-	 * to use whichever they are, but FEM needs them for exclusive use
-	 * and does not enable them immediately.
-	 *
-	 * When common api to assign gpiote and ppi channels is available
-	 * current solution based on macros coming from Kconfig should be
-	 * reworked.
-	 */
-
 #if !DT_NODE_EXISTS(DT_NODELABEL(nrf_radio_fem))
 #error Node with label 'nrf_radio_fem' not found in the devicetree.
 #endif
+	int err;
 
 	mpsl_fem_simple_gpio_interface_config_t cfg = {
 		.fem_config = {
@@ -319,12 +320,13 @@ static int fem_simple_gpio_configure(void)
 #else
 			MPSL_FEM_DISABLED_GPIO_CONFIG_INIT
 #endif
-		},
-		.ppi_channels = {
-			CONFIG_MPSL_FEM_SIMPLE_GPIO_PPI_CHANNEL_0,
-			CONFIG_MPSL_FEM_SIMPLE_GPIO_PPI_CHANNEL_1
 		}
 	};
+
+	err = ppi_channel_alloc(cfg.ppi_channels, ARRAY_SIZE(cfg.ppi_channels));
+	if (err) {
+		return err;
+	}
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
 	fem_pin_num_correction(&cfg.pa_pin_config.gpio_pin,
