@@ -301,10 +301,6 @@ The following list summarizes the most important changes inherited from upstream
   * Restricted thread-local storage, which is now available only when the toolchain supports it.
     Toolchain support is initially limited to the toolchains bundled with the Zephyr SDK.
   * Added support for gathering basic thread runtime statistics.
-  * Fixed a race condition between :c:func:`k_queue_append` and :c:func:`k_queue_alloc_append`.
-  * Updated the kernel to no longer try to resume threads that are not suspended.
-  * Updated the kernel to no longer attempt to queue threads that are already in the run queue.
-  * Updated :c:func:`k_busy_wait` to return immediately on a zero time-out, and improved accuracy on nonzero time-outs.
   * Removed the following deprecated `kernel APIs <https://github.com/nrfconnect/sdk-zephyr/commit/c8b94f468a94c9d8d6e6e94013aaef00b914f75b>`_:
 
     * ``k_enable_sys_clock_always_on()``
@@ -333,6 +329,20 @@ The following list summarizes the most important changes inherited from upstream
     * ``SYS_CLOCK_HW_CYCLES_TO_NS()``
 
   * Updated :c:func:`k_timer_user_data_get` to take a ``const struct k_timer *timer`` instead of a non-\ ``const`` pointer.
+  * Added a :c:macro:`K_DELAYED_WORK_DEFINE` macro.
+  * Added a :option:`CONFIG_MEM_SLAB_TRACE_MAX_UTILIZATION` option.
+    If enabled, :c:func:`k_mem_slab_max_used_get` can be used to get a memory slab's maximum utilization in blocks.
+
+  * Bug fixes:
+
+    * Fixed a race condition between :c:func:`k_queue_append` and :c:func:`k_queue_alloc_append`.
+    * Updated the kernel to no longer try to resume threads that are not suspended.
+    * Updated the kernel to no longer attempt to queue threads that are already in the run queue.
+    * Updated :c:func:`k_busy_wait` to return immediately on a zero time-out, and improved accuracy on nonzero time-outs.
+    * The idle loop no longer unlocks and locks IRQs.
+      This avoids a race condition; see `Zephyr issue 30573 <https://github.com/zephyrproject-rtos/zephyr/issues/30573>`_.
+    * An arithmetic overflow that prevented long sleep times or absolute time-outs from working properly has been fixed; see `Zephyr issue #29066 <https://github.com/zephyrproject-rtos/zephyr/issues/29066>`_.
+    * A logging issue where some kernel debug logs could not be removed was fixed; see `Zephyr issue #28955 <https://github.com/zephyrproject-rtos/zephyr/issues/28955>`_.
 
 * Devicetree:
 
