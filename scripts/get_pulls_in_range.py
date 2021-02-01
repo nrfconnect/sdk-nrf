@@ -131,12 +131,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('-z', '--zephyr-areas', action='store_true',
                         help='''local_path is zephyr; also try to figure
                         out what areas the pull requests affect''')
+    parser.add_argument('-A', '--zephyr-only-areas', metavar='AREA',
+                        action='append',
+                        help='''local_path is zephyr; just output changes for
+                        area AREA (may be given more than once)''')
 
     parser.add_argument('-d', '--sqlite-db',
                         help='''sqlite database file for storing results;
                         will be created if it does not exist''')
 
-    return parser.parse_args()
+    ret = parser.parse_args()
+
+    if ret.zephyr_only_areas:
+        ret.zephyr_areas = True
+
+    return ret
 
 def get_gh_credentials() -> Dict:
     # Get github.Github credentials.
@@ -334,6 +343,8 @@ def main():
 
         print('Pull requests grouped by a guess of the zephyr area:')
         for area, infos in area_to_pr_infos.items():
+            if args.zephyr_only_areas and area not in args.zephyr_only_areas:
+                continue
             print(f'\n{area}')
             print('-' * len(area))
             print()
