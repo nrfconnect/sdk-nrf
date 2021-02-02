@@ -37,7 +37,8 @@ nRF5340 SoC
 
 * Added:
 
-  * ``esb`` subsystem - Added support for nRF5340 SoC (CPUNET) in ESB subsystem.
+  * ``esb`` subsystem - Added support for nRF5340 (CPUNET) in the ESB subsystem.
+  * ``spm`` subsystem - Added support for nRF5340 peripherals in non-secure applications.
 
 * Updated:
 

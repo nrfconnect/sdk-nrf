@@ -161,10 +161,6 @@ config SPM_NRF_IPC_NS
 	bool "IPC is Non-Secure"
 	default y
 
-config SPM_NRF_NFCT_NS
-	bool "NFCT is Non-Secure"
-	default y
-
 config SPM_NRF_NVMC_NS
 	bool "NVMC is Non-Secure"
 	default y
@@ -245,14 +241,94 @@ config SPM_NRF_REGULATORS_NS
 	bool "Regulators is Non-Secure"
 	default y
 
+if SOC_NRF9160
 config SPM_NRF_WDT_NS
 	bool "WDT is Non-Secure"
 	default y
-endmenu
+endif #SOC_NRF9160
 
 config SPM_NRF_DPPIC_NS
 	bool "DPPIC is Non-Secure"
 	default y
+
+if SOC_NRF5340_CPUAPP
+config SPM_NRF_DCNF_NS
+	bool "DCNF is Non-Secure"
+	default y
+
+config SPM_NRF_OSCILLATORS_NS
+	bool "Oscillators is Non-Secure"
+	default y
+
+config SPM_NRF_RESET_NS
+	bool "Reset is Non-Secure"
+	default y
+
+config SPM_NRF_CTRLAP_NS
+	bool "CTRLAP is Non-Secure"
+	default y
+
+config SPM_NRF_SPIM4_NS
+	bool "SPIM4 is Non-Secure"
+	default y
+
+config SPM_NRF_WDT0_NS
+	bool "WDT0 is Non-Secure"
+	default y
+
+config SPM_NRF_WDT1_NS
+	bool "WDT1 is Non-Secure"
+	default y
+
+config SPM_NRF_COMP_NS
+	bool "COMP is Non-Secure"
+	default y
+
+config SPM_NRF_LPCOMP_NS
+	bool "LPCOMP is Non-Secure"
+	default y
+
+config SPM_NRF_PDM0_NS
+	bool "PDM0 is Non-Secure"
+	default y
+
+config SPM_NRF_I2S0_NS
+	bool "I2S0 is Non-Secure"
+	default y
+
+config SPM_NRF_QSPI_NS
+	bool "QSPI is Non-Secure"
+	default y
+
+config SPM_NRF_NFCT_NS
+	bool "NFCT is Non-Secure"
+	default y
+
+config SPM_NRF_MUTEX_NS
+	bool "Mutex is Non-Secure"
+	default y
+
+config SPM_NRF_QDEC0_NS
+	bool "QDEC0 is Non-Secure"
+	default y
+
+config SPM_NRF_QDEC1_NS
+	bool "QUDEC1 is Non-Secure"
+	default y
+
+config SPM_NRF_USBD_NS
+	bool "USBD is Non-Secure"
+	default y
+
+config SPM_NRF_USBREGULATOR_NS
+	bool "USB Regulator is Non-Secure"
+	default y
+
+config SPM_NRF_P1_NS
+	bool "P1 is Non-Secure"
+	default y
+endif #SOC_NRF5340_CPUAPP
+endmenu
 
 config SPM_NRF_DPPIC_PERM_MASK
 	hex "Set DPPIC PERM mask for Non-secure"
