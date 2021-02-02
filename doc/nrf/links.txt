@@ -434,6 +434,11 @@
 .. _`Easyfit Single/Double Rocker Pad for Bluetooth LE - ESRPB/EDRPB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-pad-for-ble-esrpb-edrpb/
 .. _`Easyfit Motion Detector with Illumination Sensor - EMDCB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-motion-detector-with-illumination-sensor-emdcb/
 
+.. ### Source: edgeimpulse.com
+
+.. _`Edge Impulse`: https://www.edgeimpulse.com/
+.. _`Edge Impulse studio`: https://studio.edgeimpulse.com/login
+
 .. ### Source: other
 
 .. _`Ninja documentation`: https://ninja-build.org/manual.html
