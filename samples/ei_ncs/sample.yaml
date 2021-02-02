@@ -1,0 +1,3 @@
+sample:
+  description: Sample showing Edge Impulse wrapper usage
+  name: Edge Impulse wrapper sample
