@@ -50,3 +50,11 @@ config FPROTECT_BLOCK_SIZE
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 	help
 	  Block size of fprotect
+
+config FPROTECT_ENABLE_NO_ACCESS
+	bool
+	default y if HAS_HW_NRF_ACL
+	depends on FPROTECT
+	help
+	  Allows to protect flash pages both from reading and writing until the
+	  next reboot.
