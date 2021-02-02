@@ -524,4 +524,5 @@
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
 
-.. _`GN` : https://gn.googlesource.com/gn/
+.. _`GN`: https://gn.googlesource.com/gn/
+.. _`GN website`: https://gn.googlesource.com/gn/#getting-a-binary
