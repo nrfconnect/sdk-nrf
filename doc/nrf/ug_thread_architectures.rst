@@ -51,14 +51,19 @@ This design has the following advantages:
 
 It also has the following disadvantages:
 
-* For some uses, the nRF528xx MCU can be too slow. For example, when the application would like to do complex data processing.
+* For some use cases, the nRF52 Series and nRF53 Series MCUs can be too slow (for example, when the application does complex data processing).
 * The application and the network share Flash and RAM space, which can limit the application functionality.
 * Dual-bank DFU or an external flash is needed to update the firmware.
 
 .. figure:: /images/thread_platform_design_soc.svg
-   :alt: Thread-only architecture
+   :alt: Thread-only architecture (nRF52)
 
-   Thread-only architecture
+   Thread-only architecture on nRF52 Series devices
+
+.. figure:: /images/thread_platform_design_nRF53.svg
+   :alt: Thread-only architecture (nRF53)
+
+   Thread-only architecture on nRF53 Series devices
 
 This platform design is suitable for the following development kits:
 
@@ -81,7 +86,7 @@ This platform design is suitable for the following development kits:
 Single-chip, multiprotocol (SoC)
 ================================
 
-With nRF52840 and nRF52833 supporting multiple wireless technologies, including IEEE 802.15.4 and Bluetooth Low Energy (Bluetooth LE), the application layer and OpenThread still run on the same processor.
+With nRF52 and nRF53 Series devices supporting multiple wireless technologies, including IEEE 802.15.4 and Bluetooth Low Energy (Bluetooth LE), the application layer and OpenThread still run on the same processor.
 
 In this multiprotocol design, the SoC ensures either dynamic or switched Thread and Bluetooth LE connectivity.
 
@@ -95,9 +100,14 @@ It also has the following disadvantages:
 * Bluetooth LE activity can degrade the connectivity on Thread if not implemented with efficiency in mind.
 
 .. figure:: /images/thread_platform_design_multi.svg
-   :alt: Multiprotocol Thread and Bluetooth LE architecture
+   :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52)
 
-   Multiprotocol Thread and Bluetooth LE architecture
+   Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series devices
+
+.. figure:: /images/thread_platform_design_nRF53_multi.svg
+   :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF53)
+
+   Multiprotocol Thread and Bluetooth LE architecture on nRF53 Series devices
 
 For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
 
