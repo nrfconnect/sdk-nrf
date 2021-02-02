@@ -81,6 +81,7 @@ Kconfig*                                  @tejlmand
 /samples/bootloader/                      @hakonfam @ioannisg
 /samples/connectedhomeip/                 @Damian-Nordic @kkasperczyk-no
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
+/samples/ei_ncs/                          @pdunaj
 /samples/esb/                             @lemrey
 /samples/mpsl/                            @joerchan @hurricaneFromMoscow
 /samples/nfc/                             @grochu
