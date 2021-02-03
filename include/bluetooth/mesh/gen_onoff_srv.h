@@ -58,8 +58,7 @@ struct bt_mesh_onoff_srv_handlers {
 	 * @param[in] ctx Message context for the message that triggered the
 	 * change, or NULL if the change is not coming from a message.
 	 * @param[in] set Parameters of the state change.
-	 * @param[out] rsp Response structure to be filled, or NULL if no
-	 * response is required.
+	 * @param[out] rsp Response structure to be filled.
 	 */
 	void (*const set)(struct bt_mesh_onoff_srv *srv,
 			  struct bt_mesh_msg_ctx *ctx,

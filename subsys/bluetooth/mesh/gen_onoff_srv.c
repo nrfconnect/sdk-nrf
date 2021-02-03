@@ -139,12 +139,13 @@ static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
 		       size_t len, struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_onoff_srv *srv = mod->user_data;
+	struct bt_mesh_onoff_status dummy;
 	struct bt_mesh_onoff_set set = {
 		.on_off = data[0],
 		.transition = transition,
 	};
 
-	srv->handlers->set(srv, NULL, &set, NULL);
+	srv->handlers->set(srv, NULL, &set, &dummy);
 }
 
 static const struct bt_mesh_scene_entry_type scene_type = {
