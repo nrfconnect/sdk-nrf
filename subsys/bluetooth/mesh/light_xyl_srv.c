@@ -84,8 +84,7 @@ static void xyl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_light_xy_set set;
 	struct bt_mesh_light_xy_status status = { 0 };
-
-	struct bt_mesh_lightness_status light_rsp;
+	struct bt_mesh_lightness_status light_rsp = { 0 };
 	struct bt_mesh_lightness_set light = {
 		.transition = &transition,
 	};
@@ -186,7 +185,7 @@ static void target_get_handle(struct bt_mesh_model *model,
 
 	struct bt_mesh_light_xyl_srv *srv = model->user_data;
 	struct bt_mesh_light_xy_status status = { 0 };
-	struct bt_mesh_lightness_status light;
+	struct bt_mesh_lightness_status light = { 0 };
 
 	srv->lightness_srv.handlers->light_get(&srv->lightness_srv, ctx,
 					       &light);
@@ -395,7 +394,7 @@ const struct bt_mesh_model_op _bt_mesh_light_xyl_setup_srv_op[] = {
 static ssize_t scene_store(struct bt_mesh_model *mod, uint8_t data[])
 {
 	struct bt_mesh_light_xyl_srv *srv = mod->user_data;
-	struct bt_mesh_light_xy_status xy_rsp;
+	struct bt_mesh_light_xy_status xy_rsp = { 0 };
 
 	srv->handlers->xy_get(srv, NULL, &xy_rsp);
 
