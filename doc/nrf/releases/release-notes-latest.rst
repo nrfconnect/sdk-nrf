@@ -30,7 +30,27 @@ There are no entries for this section yet.
 nRF9160
 =======
 
-There are no entries for this section yet.
+* Updated:
+
+  * :ref:`lib_nrf_cloud` library:
+
+    * Added cell-based location support to :ref:`lib_nrf_cloud_agps`.
+    * Added Kconfig option ``CONFIG_NRF_CLOUD_AGPS_SINGLE_CELL_ONLY`` to obtain cell-based location from nRF Connect for Cloud instead of using the modem's GPS.
+
+  * :ref:`asset_tracker` application:
+
+    * Updated to handle new Kconfig options:
+
+      * :option:`CONFIG_NRF_CLOUD_AGPS_SINGLE_CELL_ONLY`
+      * :option:`CONFIG_NRF_CLOUD_AGPS_REQ_CELL_BASED_LOC`
+
+  * A-GPS library:
+
+    * Added the Kconfig option :option:`CONFIG_AGPS_SINGLE_CELL_ONLY` to support cell-based location instead of using the modem's GPS.
+
+  * :ref:`modem_info_readme` library:
+
+    * Updated to prevent reinitialization of param list in :c:func:`modem_info_init`.
 
 Common
 ======
