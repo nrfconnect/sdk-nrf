@@ -477,6 +477,9 @@ static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 	atomic_and(&srv->flags, FLAGS_CONFIGURATION);
 	srv->lightness->ctrl = NULL;
 	srv->state = LIGHT_CTRL_STATE_STANDBY;
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	srv->reg.i = 0;
+#endif
 
 	k_delayed_work_cancel(&srv->action_delay);
 	k_delayed_work_cancel(&srv->timer);
