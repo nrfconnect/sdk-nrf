@@ -83,6 +83,20 @@ enum nrf21540_trx {
 	NRF21540_RX
 };
 
+/* nRF21540 state */
+enum nrf21540_state {
+	/* nRF21540 Power-Down state */
+	NRF21540_STATE_OFF,
+
+	/* nRF21540 is powered and ready for PA/LNA operation
+	 * (program state).
+	 */
+	NRF21540_STATE_READY,
+
+	/* nRF21540 is in PA/LNA state or processes command. */
+	NRF21540_STATE_BUSY
+};
+
 struct gpio_data {
 	const struct device *port;
 	gpio_pin_t pin;
@@ -106,7 +120,6 @@ static struct nrf21540 {
 	gppi_channel_t pin_set_ch;
 	gppi_channel_t pin_clr_ch;
 	const nrfx_timer_t timer;
-	bool busy;
 } nrf21540_cfg = {
 	.spi_cs = {
 		.gpio_pin = DT_SPI_DEV_CS_GPIOS_PIN(NRF21540_SPI),
@@ -128,6 +141,8 @@ enum nrf21540_reg {
 
 static uint32_t active_evt;
 static uint32_t deactive_evt;
+
+static atomic_t state = NRF21540_STATE_OFF;
 
 static uint32_t radio_tx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode)
 {
@@ -419,29 +434,62 @@ int nrf21540_init(void)
 		return err;
 	}
 
+	return 0;
+}
+
+int nrf21540_power_up(void)
+{
+	int err;
+
+	if (!atomic_cas(&state, NRF21540_STATE_OFF, NRF21540_STATE_BUSY)) {
+		return -EBUSY;
+	}
+
 	/* Power-up nRF21540 */
 	err = gpio_pin_set(nrf21540_cfg.pdn.port, nrf21540_cfg.pdn.pin, 1);
 	if (err) {
-		return err;
+		goto error;
 	}
 
 	/* Set CSN Pin */
 	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
 			   nrf21540_cfg.spi_cs.gpio_pin, 0);
 	if (err) {
-		return err;
+		goto error;
 	}
 
 	k_busy_wait(NRF21540_PD_PG_TIME_US);
 
-	return 0;
+error:
+	atomic_set(&state, err ? NRF21540_STATE_OFF : NRF21540_STATE_READY);
+
+	return err;
+}
+
+int nrf21540_power_down(void)
+{
+	int err;
+
+	if (!atomic_cas(&state, NRF21540_STATE_READY, NRF21540_STATE_BUSY)) {
+		return -EBUSY;
+	}
+
+	/* Power-down nRF21540 */
+	err = gpio_pin_set(nrf21540_cfg.pdn.port, nrf21540_cfg.pdn.pin, 0);
+
+	atomic_set(&state, err ? NRF21540_STATE_READY : NRF21540_STATE_OFF);
+
+	return err;
 }
 
 int nrf21540_antenna_select(enum nrf21540_ant ant)
 {
 	int err = 0;
+	uint32_t prev_state;
 
-	if (nrf21540_cfg.busy) {
+	prev_state = atomic_set(&state, NRF21540_STATE_BUSY);
+
+	if (prev_state == NRF21540_STATE_BUSY) {
 		return -EBUSY;
 	}
 
@@ -462,6 +510,8 @@ int nrf21540_antenna_select(enum nrf21540_ant ant)
 		break;
 	}
 
+	atomic_set(&state, prev_state);
+
 	return err;
 }
 
@@ -470,18 +520,19 @@ int nrf21540_tx_gain_set(uint8_t gain)
 	int err;
 	uint8_t buf[NRF21540_SPI_LENGTH_BYTES];
 
-	if (nrf21540_cfg.busy) {
+	if (!atomic_cas(&state, NRF21540_STATE_READY, NRF21540_STATE_BUSY)) {
 		return -EBUSY;
 	}
 
 	if (gain > NRF21540_TX_GAIN_Max) {
-		return -EINVAL;
+		err = -EINVAL;
+		goto error;
 	}
 
 	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
 			   nrf21540_cfg.spi_cs.gpio_pin, 0);
 	if (err) {
-		return err;
+		goto error;
 	}
 
 	buf[NRF21540_SPI_COMMAND_ADDR_BYTE] =
@@ -502,26 +553,24 @@ int nrf21540_tx_gain_set(uint8_t gain)
 	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
 			   nrf21540_cfg.spi_cs.gpio_pin, 1);
 	if (err) {
-		return err;
+		goto error;
 	}
 
 	err = spi_transceive(nrf21540_cfg.spi_dev, &nrf21540_cfg.spi_cfg,
 			     &tx, NULL);
-	if (err) {
-		return err;
-	}
 
-	return 0;
+error:
+	atomic_set(&state, NRF21540_STATE_READY);
+	return err;
 }
 
 int nrf21540_tx_configure(uint32_t active_event, uint32_t deactive_event,
 			  uint32_t active_delay)
 {
-	if (nrf21540_cfg.busy) {
+	if (!atomic_cas(&state, NRF21540_STATE_READY, NRF21540_STATE_BUSY)) {
 		return -EBUSY;
 	}
 
-	nrf21540_cfg.busy = true;
 	active_evt = active_event;
 	deactive_evt = deactive_event;
 
@@ -542,7 +591,7 @@ int nrf21540_rx_configure(uint32_t active_event, uint32_t deactive_event,
 {
 	int err;
 
-	if (nrf21540_cfg.busy) {
+	if (!atomic_cas(&state, NRF21540_STATE_READY, NRF21540_STATE_BUSY)) {
 		return -EBUSY;
 	}
 
@@ -553,7 +602,6 @@ int nrf21540_rx_configure(uint32_t active_event, uint32_t deactive_event,
 		return err;
 	}
 
-	nrf21540_cfg.busy = true;
 	active_evt = active_event;
 	deactive_evt = deactive_event;
 
@@ -594,7 +642,7 @@ void nrf21540_txrx_configuration_clear(void)
 	nrfx_gppi_channels_disable(BIT(nrf21540_cfg.pin_set_ch));
 	nrfx_gppi_channel_endpoints_setup(nrf21540_cfg.pin_set_ch, 0, 0);
 	nrfx_gppi_channels_disable(BIT(nrf21540_cfg.timer_ch));
-	nrfx_gppi_channel_endpoints_setup(BIT(nrf21540_cfg.timer_ch), 0, 0);
+	nrfx_gppi_channel_endpoints_setup(nrf21540_cfg.timer_ch, 0, 0);
 	nrfx_gppi_fork_endpoint_clear(nrf21540_cfg.timer_ch, 0);
 
 	if (deactive_evt != NRF21540_EVENT_UNUSED) {
@@ -603,7 +651,7 @@ void nrf21540_txrx_configuration_clear(void)
 						  0, 0);
 	}
 
-	nrf21540_cfg.busy = false;
+	atomic_set(&state, NRF21540_STATE_READY);
 }
 
 uint32_t nrf21540_default_active_delay_calculate(bool rx, nrf_radio_mode_t mode)

@@ -53,14 +53,36 @@ enum nrf21540_ant {
 
 /**@brief Initialize nrf21540
  *
- * This function initializes modules needed by the nRF21540 and powers them up.
+ * This function initializes modules needed by the nRF21540 without
+ * powering it up.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf21540_init(void);
+
+/*@brief Power-up nRF21540.
+ *
  * The function is synchronous and waits @ref NRF21540_PD_PG_TIME_US for the
  * device to be activated.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf21540_init(void);
+int nrf21540_power_up(void);
+
+/**@brief Switch nRF21540 to the Power Down state.
+ *
+ * This function switches off the Front End Module. The gain setting
+ * will be reset to the default after calling this function. It can be called
+ * after nrf21540 configuration is cleared by
+ * @ref nrf21540_txrx_configuration_clear. The device will turn off after 10 us.
+ * This function doesn't wait that settling time.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf21540_power_down(void);
 
 /**@brief Chooses one of two physical antenna outputs.
  *
@@ -75,7 +97,7 @@ int nrf21540_antenna_select(enum nrf21540_ant ant);
  *
  * Tx gain value is set by the SPI interface in blocking mode.
  *
- * @param[in] gain Tx gain in arbitrary units. The gain value must be beetwen
+ * @param[in] gain Tx gain in arbitrary units. The gain value must be between
  *                 0 - @ref NRF21540_TX_GAIN_Max.
  *
  * @retval 0 If the operation was successful.

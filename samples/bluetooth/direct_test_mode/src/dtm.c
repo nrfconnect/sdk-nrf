@@ -172,6 +172,8 @@ BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 
 #define DTM_MAX_ANTENNA_COUNT DT_PROP(DT_PATH(zephyr_user), dtm_antenna_count)
 
+#define NRF21540_USE_DEFAULT_GAIN 0xFF
+
 /* States used for the DTM test implementation */
 enum dtm_state {
 	/* DTM is uninitialized */
@@ -274,6 +276,9 @@ struct nrf21540_parameters {
 
 	/* nRF21540 Vendor activation delay. */
 	uint32_t vendor_active_delay;
+
+	/* nRF21540 Tx gain. */
+	uint8_t gain;
 };
 
 /* DTM instance definition */
@@ -353,6 +358,7 @@ static struct dtm_instance {
 	.anomaly_timer = NRFX_TIMER_INSTANCE(ANOMALY_172_TIMER_INSTANCE),
 	.radio_mode = NRF_RADIO_MODE_BLE_1MBIT,
 	.txpower = NRF_RADIO_TXPOWER_0DBM,
+	.nrf21540.gain = NRF21540_USE_DEFAULT_GAIN,
 };
 
 /* The PRBS9 sequence used as packet payload.
@@ -881,8 +887,8 @@ static bool dtm_wait_internal(void)
 
 		if (dtm_inst.state == STATE_RECEIVER_TEST) {
 #if CONFIG_NRF21540_FEM
-			nrf21540_txrx_configuration_clear();
-			nrf21540_txrx_stop();
+			(void) nrf21540_txrx_configuration_clear();
+			(void) nrf21540_txrx_stop();
 
 			(void) nrf21540_rx_configure(NRF21540_EXECUTE_NOW,
 					nrf_radio_event_address_get(
@@ -1057,8 +1063,9 @@ static void dtm_test_done(void)
 
 	radio_reset();
 #if CONFIG_NRF21540_FEM
-	nrf21540_txrx_configuration_clear();
-	nrf21540_txrx_stop();
+	(void) nrf21540_txrx_configuration_clear();
+	(void) nrf21540_txrx_stop();
+	(void) nrf21540_power_down();
 #endif /* CONFIG_NRF21540_FEM */
 	dtm_inst.state = STATE_IDLE;
 }
@@ -1113,6 +1120,7 @@ static void radio_prepare(bool rx)
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
 
 #if CONFIG_NRF21540_FEM
+		(void) nrf21540_power_up();
 		(void) nrf21540_rx_configure(NRF21540_EXECUTE_NOW,
 			nrf_radio_event_address_get(
 						NRF_RADIO,
@@ -1190,6 +1198,15 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 				     NRF_RADIO_SHORT_READY_START_MASK);
 
 #if CONFIG_NRF21540_FEM
+		(void) nrf21540_power_up();
+
+		if (dtm_inst.nrf21540.gain != NRF21540_USE_DEFAULT_GAIN) {
+			if (nrf21540_tx_gain_set(dtm_inst.nrf21540.gain) != 0) {
+				dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
+				return DTM_ERROR_ILLEGAL_CONFIGURATION;
+			}
+		}
+
 		(void) nrf21540_tx_configure(NRF21540_EXECUTE_NOW,
 			nrf_radio_event_address_get(NRF_RADIO,
 						    NRF_RADIO_EVENT_DISABLED),
@@ -1218,10 +1235,8 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 		break;
 
 	case NRF21540_GAIN_SET:
-		if (nrf21540_tx_gain_set(vendor_option) != 0) {
-			dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
-			return DTM_ERROR_ILLEGAL_CONFIGURATION;
-		}
+		dtm_inst.nrf21540.gain = vendor_option;
+
 		break;
 
 	case NRF21540_ACTIVE_DELAY_SET:
@@ -1699,6 +1714,7 @@ static enum dtm_err_code on_test_setup_cmd(enum dtm_ctrl_code control,
 		dtm_inst.packet_hdr_plen =
 			NRF_RADIO_PREAMBLE_LENGTH_8BIT;
 		dtm_inst.nrf21540.vendor_active_delay = 0;
+		dtm_inst.nrf21540.gain = NRF21540_USE_DEFAULT_GAIN;
 
 #if DIRECTION_FINDING_SUPPORTED
 		memset(&dtm_inst.cte_info, 0, sizeof(dtm_inst.cte_info));
@@ -1887,6 +1903,15 @@ static enum dtm_err_code on_test_transmit_cmd(uint32_t length, uint32_t freq)
 			   false);
 
 #if CONFIG_NRF21540_FEM
+	(void) nrf21540_power_up();
+
+	if (dtm_inst.nrf21540.gain != NRF21540_USE_DEFAULT_GAIN) {
+		if (nrf21540_tx_gain_set(dtm_inst.nrf21540.gain) != 0) {
+			dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
+			return DTM_ERROR_ILLEGAL_CONFIGURATION;
+		}
+	}
+
 	(void) nrf21540_tx_configure(nrf_timer_event_address_get(
 						dtm_inst.timer.p_reg,
 						NRF_TIMER_EVENT_COMPARE0),
