@@ -404,19 +404,17 @@ static void handle_user_property_get(struct bt_mesh_model *mod,
 
 	net_buf_simple_add_u8(&rsp, prop->user_access);
 
-	if (!(prop->user_access & BT_MESH_PROP_ACCESS_READ)) {
-		goto respond;
+	if (prop->user_access & BT_MESH_PROP_ACCESS_READ) {
+		struct bt_mesh_prop_val value = {
+			.meta = *prop,
+			.value = net_buf_simple_tail(&rsp),
+			.size = CONFIG_BT_MESH_PROP_MAXSIZE,
+		};
+
+		srv->get(srv, ctx, &value);
+
+		net_buf_simple_add(&rsp, value.size);
 	}
-
-	struct bt_mesh_prop_val value = {
-		.meta = *prop,
-		.value = net_buf_simple_tail(&rsp),
-		.size = CONFIG_BT_MESH_PROP_MAXSIZE,
-	};
-
-	srv->get(srv, ctx, &value);
-
-	net_buf_simple_add(&rsp, value.size);
 
 respond:
 	bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
