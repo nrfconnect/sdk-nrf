@@ -133,6 +133,7 @@ After building the sample and programming it to your development kit, test it by
    .. note::
         |thread_hwfc_enabled|
 
+#. .. include:: /includes/thread_configure_network.txt
 #. .. include:: /includes/thread_enable_network.txt
 #. Invoke some of the OpenThread commands:
 
@@ -188,6 +189,7 @@ To test communication between kits, complete the following steps:
    .. note::
         |thread_hwfc_enabled|
 
+#. .. include:: /includes/thread_configure_network.txt
 #. .. include:: /includes/thread_enable_network.txt
 #. Test communication between the kits with the following command:
 
@@ -265,6 +267,7 @@ To test the Thread Specification v1.2 features, complete the following steps:
 #. Turn on the developments kits.
 #. Set up the serial connection with both development kits.
    For more details, see :ref:`putty`.
+#. .. include:: /includes/thread_configure_network.txt
 #. .. include:: /includes/thread_enable_network.txt
 #. Test the state of the Thread network with the ``ot state`` command to see which kit is the leader:
 
