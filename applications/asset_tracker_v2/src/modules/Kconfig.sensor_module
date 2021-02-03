@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SENSOR_MODULE
+	bool "Sensor module"
+	select EXTERNAL_SENSORS if BOARD_THINGY91_NRF9160NS
+	default y
+
+if SENSOR_MODULE
+
+config SENSOR_THREAD_STACK_SIZE
+	int "Sensor module thread stack size"
+	default 1024
+
+rsource "../ext_sensors/Kconfig"
+
+endif # SENSOR_MODULE
+
+module = SENSOR_MODULE
+module-str = Sensor module
+source "subsys/logging/Kconfig.template.log_config"

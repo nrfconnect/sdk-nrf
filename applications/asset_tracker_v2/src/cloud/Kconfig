@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module = CLOUD_INTEGRATION
+module-str = Cloud integration layer
+source "subsys/logging/Kconfig.template.log_config"

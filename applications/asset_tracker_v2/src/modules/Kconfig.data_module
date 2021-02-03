@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DATA_MODULE
+	bool "Data module"
+	select DATE_TIME
+	default y
+
+if DATA_MODULE
+
+config PENDING_DATA_COUNT
+	int "Number of entries in pending data list"
+	default 10
+
+config FAILED_DATA_COUNT
+	int "Number of entries in failed data list"
+	default 10
+
+config DATA_THREAD_STACK_SIZE
+	int "Data module thread stack size"
+	default 2048
+
+config GPS_BUFFER_MAX
+	int "GPS data ringbuffer entries"
+	default 10
+
+config SENSOR_BUFFER_MAX
+	int "Sensor data ringbuffer entries"
+	default 10
+
+config MODEM_BUFFER_DYNAMIC_MAX
+	int "Dynamic modem data ringbuffer entries"
+	default 10
+
+config UI_BUFFER_MAX
+	int "UI data ringbuffer entries"
+	default 10
+
+config ACCEL_BUFFER_MAX
+	int "Accelerometer data ringbuffer entries"
+	default 10
+
+config BAT_BUFFER_MAX
+	int "Battery data ringbuffer entries"
+	default 10
+
+endif # DATA_MODULE
+
+module = DATA_MODULE
+module-str = Data module
+source "subsys/logging/Kconfig.template.log_config"
