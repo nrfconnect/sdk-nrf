@@ -80,6 +80,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
 /samples/bootloader/                      @hakonfam @ioannisg
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
+/samples/ei_data_forwarder/               @pdunaj
 /samples/esb/                             @lemrey
 /samples/mpsl/                            @joerchan @hurricaneFromMoscow
 /samples/nfc/                             @grochu

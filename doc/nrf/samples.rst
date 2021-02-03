@@ -65,6 +65,17 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
    ../../samples/zigbee/*/README
 
+.. _ei_samples:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Edge Impulse samples
+   :glob:
+
+   ../../samples/ei_data_forwarder/README
+
+.. _other_samples:
+
 .. toctree::
    :maxdepth: 1
    :caption: Other samples
