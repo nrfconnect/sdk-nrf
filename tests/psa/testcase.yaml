@@ -1,0 +1,4 @@
+tests:
+  psa.its.zephyr_backend:
+    tags: tfm ci_build
+    platform_allow: nrf52840dk_nrf52840
