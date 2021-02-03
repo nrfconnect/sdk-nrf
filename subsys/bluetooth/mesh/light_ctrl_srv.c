@@ -57,7 +57,7 @@ static void restart_timer(struct bt_mesh_light_ctrl_srv *srv, uint32_t delay)
 static void reg_start(struct bt_mesh_light_ctrl_srv *srv)
 {
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	k_delayed_work_submit(&srv->reg.timer, K_MSEC(REG_INT));
+	k_timer_start(&srv->reg.timer, 0, K_MSEC(REG_INT));
 #endif
 }
 
@@ -481,27 +481,41 @@ static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 	k_delayed_work_cancel(&srv->action_delay);
 	k_delayed_work_cancel(&srv->timer);
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	k_delayed_work_cancel(&srv->reg.timer);
+	k_timer_stop(&srv->reg.timer);
 #endif
 }
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-static void reg_step(struct k_work *work)
+static void reg_work_handler(struct k_work *work)
 {
-	struct bt_mesh_light_ctrl_srv *srv = CONTAINER_OF(
-		work, struct bt_mesh_light_ctrl_srv, reg.timer.work);
+	struct bt_mesh_light_ctrl_srv *srv =
+		CONTAINER_OF(work, struct bt_mesh_light_ctrl_srv, reg.work);
+	uint16_t cfg_lvl = light_get(srv);
 
-	if (!is_enabled(srv)) {
-		/* The server might be disabled asynchronously. */
+	/* Output value is max out of regulator and configured level. */
+	if (srv->reg.out > cfg_lvl) {
+		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
+	} else {
+		/* Suspend the regulator until the level goes above the
+		 * configured output light level.
+		 */
+		if (atomic_test_and_clear_bit(&srv->flags, FLAG_REGULATOR)) {
+			light_set(srv, light_to_repr(cfg_lvl, LINEAR), 0);
+		}
+
 		return;
 	}
 
-	k_delayed_work_submit(&srv->reg.timer, K_MSEC(REG_INT));
+	light_set(srv, light_to_repr(srv->reg.out, LINEAR), 0);
+}
 
+static void reg_step(struct k_timer *timer)
+{
+	struct bt_mesh_light_ctrl_srv *srv =
+		CONTAINER_OF(timer, struct bt_mesh_light_ctrl_srv, reg.timer);
 	float target = lux_getf(srv);
 	float ambient = sensor_to_float(&srv->ambient_lux);
 	float error = target - ambient;
-
 	/* Accuracy should be in percent and both up and down: */
 	float accuracy = (srv->reg.cfg.accuracy * target) / (2 * 100.0f);
 
@@ -527,26 +541,9 @@ static void reg_step(struct k_work *work)
 	srv->reg.i = CLAMP(srv->reg.i, 0, UINT16_MAX);
 
 	float p = input * kp;
-	uint16_t output = CLAMP(srv->reg.i + p, 0, UINT16_MAX);
 
-	/* The regulator output is always in linear format. We'll convert to
-	 * the configured representation again before calling the Lightness
-	 * server.
-	 */
-	uint16_t lvl = light_get(srv);
-
-	/* Output value is max out of regulator and configured level. */
-	if (output > lvl) {
-		if (output == srv->reg.prev) {
-			return;
-		}
-
-		srv->reg.prev = output;
-		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
-		light_set(srv, light_to_repr(output, LINEAR), REG_INT);
-	} else if (atomic_test_and_clear_bit(&srv->flags, FLAG_REGULATOR)) {
-		light_set(srv, light_to_repr(lvl, LINEAR), REG_INT);
-	}
+	srv->reg.out = CLAMP(srv->reg.i + p, 0, UINT16_MAX);
+	k_work_submit(&srv->reg.work);
 }
 #endif
 
@@ -972,7 +969,9 @@ static void handle_sensor_status(struct bt_mesh_model *mod,
 		BT_DBG("Sensor 0x%04x: %s", id, bt_mesh_sensor_ch_str(&value));
 
 		if (id == BT_MESH_PROP_ID_PRESENT_AMB_LIGHT_LEVEL) {
+			int key = irq_lock();
 			srv->ambient_lux = value;
+			irq_unlock(key);
 			continue;
 		}
 
@@ -1427,7 +1426,8 @@ static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 #endif
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	k_delayed_work_init(&srv->reg.timer, reg_step);
+	k_timer_init(&srv->reg.timer, reg_step, NULL);
+	k_work_init(&srv->reg.work, reg_work_handler);
 #endif
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
