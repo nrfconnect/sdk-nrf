@@ -8,6 +8,7 @@
 #include <time.h>
 #include "model_utils.h"
 #include <zephyr/types.h>
+#include <sys/util.h>
 #include "time_util.h"
 
 #define TAI_START_YEAR 2000
@@ -100,7 +101,9 @@ void tai_to_ts(const struct bt_mesh_time_tai *tai, struct tm *timeptr)
 
 	const uint8_t *months = is_leap ? month_leap_cfg : month_cfg;
 
-	for (timeptr->tm_mon = 0; months[timeptr->tm_mon] <= day_cnt;
+	for (timeptr->tm_mon = 0;
+	     timeptr->tm_mon < ARRAY_SIZE(month_cfg) &&
+	     months[timeptr->tm_mon] <= day_cnt;
 	     timeptr->tm_mon++) {
 		day_cnt -= months[timeptr->tm_mon];
 	}
