@@ -1,13 +1,12 @@
 .. _bt_mesh_thingy52_orientation_handler:
 
-Thingy:52 Orientation Handler
-######################
+Thingy:52 orientation handler
+#############################
 
-The Orientation Handler is a simple API to extract the current orientation of a Thingy:52 device, using it's
-on board low power accelerometer (lis2dh12).
+The orientation handler is a simple API to extract the current orientation of a Thingy:52 device, using it's on-board, low-power accelerometer (``lis2dh12``).
 
 
-The following code block examplifies the initialization and usage of the API.
+The following code block exemplifies the initialization and usage of the API:
 
 .. code-block:: console
 
@@ -21,7 +20,7 @@ The following code block examplifies the initialization and usage of the API.
    	uint8_t orr = orientation_get(orientation_dev);
    }
 
-In addition, the user must ensure that the concatination buffer size is defined in the :file:`app.overlay` file of the project:
+In addition, ensure that the concatenation buffer size is defined in the :file:`app.overlay` file of the project:
 
 .. code-block:: console
 

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "Thingy:52 Bluetooth Mesh models"
+menu "Thingy:52 Bluetooth mesh models"
 rsource "../common/model/Kconfig"
 endmenu
 

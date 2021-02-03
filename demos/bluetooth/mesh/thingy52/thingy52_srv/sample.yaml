@@ -1,6 +1,6 @@
 sample:
-  name: Bluetooth Mesh Thingy:52 Server
-  description: Bluetooth Mesh Thingy:52 Server
+  name: Bluetooth mesh Thingy:52 server
+  description: Bluetooth mesh Thingy:52 server
 tests:
   samples.bluetooth.mesh.thingy52_srv:
     build_only: true

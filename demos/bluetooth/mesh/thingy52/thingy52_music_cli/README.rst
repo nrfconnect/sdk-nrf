@@ -1,15 +1,20 @@
 .. _bluetooth_mesh_thingy52_music_cli:
 
-Bluetooth: Mesh Thingy:52 Music Client
-#######################################
+Bluetooth: Mesh Thingy:52 music client
+######################################
 
-The Thingy:52 music client demonstrates how to send different audio frequency ranges to different groups using Bluetooth Mesh.
-In this way one or more :ref:`bluetooth_mesh_thingy52_srv` nodes can act as a simple real time analyzer (RTA) for music, by displaying different frequency ranges with different colors.
+.. contents::
+   :local:
+   :depth: 2
+
+The Thingy:52 music client demonstrates how to send different audio frequency ranges to different groups using Bluetooth mesh.
+In this way, one or more :ref:`bluetooth_mesh_thingy52_srv` nodes can act as a simple real-time analyzer (RTA) for music, by displaying different frequency ranges with different colors.
 
 Overview
 ********
 
-By pushing the button on the Thingy:52, the on-board microphone starts sapling incoming sound. Pushing the button again deactivates the sampling.
+By pushing the button on Thingy:52, the on-board microphone starts sampling the incoming sound.
+Pushing the button again deactivates the sampling.
 
 Three frequency ranges are used as default:
 
@@ -38,24 +43,26 @@ The following table shows the Thingy:52 client composition data for this demo:
    =================  ================= ================= =================
    Element 1          Element 2         Element 3         Element4
    =================  ================= ================= =================
-   Config Server      Thingy:52 client  Thingy:52 client  Thingy:52 client
+   Config Server      Thingy:52         Thingy:52         Thingy:52
    Health Server
    =================  ================= ================= =================
 
 The models are used for the following purposes:
 
-* :ref:`bt_mesh_thingy52_mod_readme` instances to control RGB messages. One client per frequency range.
+* :ref:`bt_mesh_thingy52_mod_readme` instances control the RGB messages, one per frequency range.
 * Config Server allows configurator devices to configure the node remotely.
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
 
-
 Audio processing
 =================
 
-The Thingy:52 microphone outputs PDM data that must be processed. This is done by ARM DSP. By doing Fast Fourier Transform (FFT) and computing magnitue for each array element,
-raw PDM data is converted to a discrete spectrum array. Each element of the spectrum array represents one frequency, and the value of the element is magnitue.
-As default, a PDM buffer size of 512 is used. This generates a discrete spectrum array of 256 (half of the PDM buffer size).
+The Thingy:52 microphone outputs PDM data that must be processed.
+This is done by ARM DSP.
+By doing Fast Fourier Transform (FFT) and computing magnitude for each array element, raw PDM data is converted to a discrete spectrum array.
+Each element of the spectrum array represents one frequency, and the value of the element is the magnitude.
+PDM buffer size of 512 is used as a default.
+This generates a discrete spectrum array of 256 (half the PDM buffer size).
 To find what frequency each element of the spectrum array represents, use this formula:
 
 .. math::
@@ -74,15 +81,16 @@ The demo requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app i
   * `nRF Mesh mobile app for Android`_
   * `nRF Mesh mobile app for iOS`_
 
-An additional requirement is one or more :ref:`bluetooth_mesh_thingy52_srv` demo(s) programmed on a separate Thingy:52
-device(s) and configured according to the :ref:`bluetooth_mesh_thingy52_music_cli_testing` guide.
+An additional requirement is one or more :ref:`bluetooth_mesh_thingy52_srv` demo(s) programmed on (a) separate Thingy:52 device(s) and configured according to the :ref:`bluetooth_mesh_thingy52_music_cli_testing` guide.
 
 User interface
 **************
 
-When Button 0 (the only button) on the Thingy:52 is pressed, the on-board microphone starts sapling incoming sound. The main LED lights up when the microphone is sampling.
+When Button 0 (the only button) on Thingy:52 is pressed, the on-board microphone starts sampling the incoming sound.
+The main LED lights up when the microphone is sampling.
 If the total volume of a frequency range is above a threshold, a message is sent with the corresponding client.
-The message contains an RGB value that is mapped according to the total frequency range volume. When Button 0 is pressed again the sampling stops.
+The message contains an RGB value that is mapped according to the total frequency range volume.
+When Button 0 is pressed again, the sampling stops.
 
 Building and running
 ********************
@@ -96,55 +104,41 @@ Building and running
 Testing
 =======
 
-.. important::
-   The Mesh music client for Thingy:52 cannot demonstrate any functionality on its own, and needs at least one device with the :ref:`bluetooth_mesh_thingy52_srv` demo running in the same mesh network.
+.. note::
+   The Bluetooth mesh music client for Thingy:52 cannot demonstrate any functionality on its own, and needs at least one device with the :ref:`bluetooth_mesh_thingy52_srv` demo running in the same mesh network.
    If less than three server devices are used, not all default frequency ranges can be displayed.
+
 After programming the demo to your Thingy:52, you can test it by using a smartphone with Nordic Semiconductor’s nRF Mesh app installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
 Provisioning the device
 -----------------------
 
-The provisioning assigns an address range to the device, and adds it to the mesh network.
-Complete the following steps in the nRF Mesh app:
-1. Tap :guilabel:`Add node` to start scanning for unprovisioned mesh devices.
-#. Select the :guilabel:`Thingy:52 Music Client` device to connect to it.
-#. Tap :guilabel:`Identify` and then :guilabel:`Provision` to provision the device.
-#. When prompted, select an OOB method and follow the instructions in the app.
+.. |device name| replace:: :guilabel:`Thingy:52 Music Client`
 
-Once the provisioning is complete, the app returns to the Network screen.
+.. include:: /includes/mesh_device_provisioning.txt
 
 .. _bluetooth_mesh_thingy52_music_cli_config_models:
 
 Configuring models
 ------------------
 
-Complete the following steps in the nRF Mesh app to configure models:
+See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-1. On the Network screen, tap the :guilabel:`Thingy:52 Music Client` node.
-   Basic information about the mesh node and its configuration is displayed.
-#. For the three last elements in the Elements list do the following:
-    * Tap :guilabel:`Vendor Model` to see the model's configuration.
-    * Bind the model to application keys to make it open for communication:
+Configure the Vendor model in the three last elements of the :guilabel:`Thingy:52 Music Client` node:
 
-        a. Tap :guilabel:`BIND KEY` at the top of the screen.
-        #. Select :guilabel:`Application Key 1` from the list.
+* Bind the model to :guilabel:`Application Key 1`.
+* Set the publication parameters:
 
-    * Set the publishing parameters:
+  * Destination/publish address: Select an existing group or create a new one.
 
-        a. Tap :guilabel:`SET PUBLICATION`.
-        #. Tap :guilabel:`Publish Address`.
-        #. Select :guilabel:`Groups` from the drop-down menu.
-        #. Select an existing group or create a new one.
+    .. note::
+       A group represents one frequency range.
+	   Servers displaying this range must subscribe to the same group.
 
-        .. note::
-            A group represents one frequency range. Servers displaying this range must subscribe to the same group.
+  * Retransmit count: Set the count to zero (:guilabel:`Disabled`), to reduce the amount of messages sent.
 
-    #. Tap :guilabel:`OK`.
-    #. Set the Retransmit Count to zero (:guilabel:`Disabled`) to reduce the amount of messages sent.
-    #. Tap the confirmation button at the bottom right corner of the app to save the parameters.
-
-The vendor client model is now configured and should be able to send data to servers.
+The Vendor model is now configured and able to send data to servers.
 
 
 Dependencies

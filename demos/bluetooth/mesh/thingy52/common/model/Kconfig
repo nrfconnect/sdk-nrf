@@ -5,13 +5,13 @@
 #
 
 config BT_MESH_THINGY52_MOD
-	bool "Bluetooth Mesh Thingy:52 model"
+	bool "Bluetooth mesh Thingy:52 model"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Thingy:52 model.
+	  Enable Bluetooth mesh Thingy:52 model.
 
 config BT_MESH_THINGY52_CLI
-	bool "Bluetooth Mesh Thingy:52 Client model"
+	bool "Bluetooth mesh Thingy:52 Client model"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Thingy:52 Client model.
+	  Enable Bluetooth mesh Thingy:52 Client model.

@@ -1,6 +1,6 @@
 sample:
-  name: Bluetooth Mesh Thingy:52 Music Client
-  description: Bluetooth Mesh Thingy:52 Music Client
+  name: Bluetooth mesh Thingy:52 music client
+  description: Bluetooth mesh Thingy:52 music client
 tests:
   samples.bluetooth.mesh.thingy52_music_cli:
     build_only: true

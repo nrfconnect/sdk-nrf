@@ -5,9 +5,9 @@
  */
 
 /** @file
- *  @defgroup bt_mesh_thingy52_orientation_handler Thingy52 Orientation Handler
+ *  @defgroup bt_mesh_thingy52_orientation_handler Thingy:52 orientation handler
  *  @{
- *  @brief API for the Thingy52 Thingy52 Orientation Handler.
+ *  @brief API for the Thingy:52 orientation handler.
  */
 
 #ifndef ORIENT_HANDLER_H__

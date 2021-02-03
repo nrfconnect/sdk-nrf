@@ -5,9 +5,9 @@
  */
 
 /** @file
- *  @defgroup bt_mesh_thingy52_mod Thingy52 model
+ *  @defgroup bt_mesh_thingy52_mod Thingy:52 model
  *  @{
- *  @brief API for the Thingy52 Model.
+ *  @brief API for the Thingy:52 model.
  */
 
 #ifndef BT_MESH_THINGY52_MOD_H__
@@ -29,7 +29,7 @@ struct bt_mesh_thingy52_rgb {
 	uint8_t blue;
 };
 
-/** Thingy52 RGB message */
+/** Thingy:52 RGB message */
 struct bt_mesh_thingy52_rgb_msg {
 	/** Remaining hops of the message */
 	uint8_t ttl;
@@ -61,7 +61,7 @@ struct bt_mesh_thingy52_mod;
 
 /** @def BT_MESH_MODEL_THINGY52_MOD
  *
- * @brief Thingy:52 Model model composition data entry.
+ * @brief Thingy:52 model model composition data entry.
  *
  * @param[in] _mod Pointer to a @ref bt_mesh_thingy52_mod instance.
  */
@@ -72,7 +72,7 @@ struct bt_mesh_thingy52_mod;
 		BT_MESH_MODEL_USER_DATA(struct bt_mesh_thingy52_mod, _mod),    \
 		&_bt_mesh_thingy52_mod_cb)
 
-/** Handler callbacks for the Thingy52 Model. */
+/** Handler callbacks for the Thingy:52 model. */
 struct bt_mesh_thingy52_cb {
 	/** @brief RGB message handler.
 	 *
@@ -88,7 +88,7 @@ struct bt_mesh_thingy52_cb {
 };
 
 /**
- * Thingy:52 Model instance. Should primarily be initialized with the
+ * Thingy:52 model instance. Should primarily be initialized with the
  * @ref BT_MESH_THINGY52_MOD_INIT macro.
  */
 struct bt_mesh_thingy52_mod {

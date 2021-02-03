@@ -1,6 +1,6 @@
 sample:
-  name: Bluetooth Mesh Thingy:52 Client
-  description: Bluetooth Mesh Thingy:52 Client
+  name: Bluetooth mesh Thingy:52 client
+  description: Bluetooth mesh Thingy:52 client
 tests:
   demos.bluetooth.mesh.thingy52.thingy52_cli:
     build_only: true

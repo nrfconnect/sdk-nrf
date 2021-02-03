@@ -433,6 +433,8 @@
 .. _`nRF Mesh mobile app for iOS`: https://apps.apple.com/us/app/nrf-mesh/id1380726771
 .. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner
 
+.. _`Google color picker`: https://www.google.com/search?q=color+picker
+
 .. _`nRF Cloud`: https://nrfcloud.com/
 
 .. _`NFC Forum specification overview`: https://nfc-forum.org/our-work/specification-releases/specifications/
