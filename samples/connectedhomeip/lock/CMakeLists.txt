@@ -14,9 +14,6 @@ find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(chip-lock)
 
-# Temporary get rid of compilation warnings till zephyrproject-rtos/zephyr/pull/31471 is fetched
-zephyr_compile_options(-Wno-parentheses)
-
 target_include_directories(app PRIVATE src ${COMMON_ROOT}/src)
 
 target_sources(app PRIVATE
