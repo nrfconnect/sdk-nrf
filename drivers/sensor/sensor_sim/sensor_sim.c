@@ -15,6 +15,9 @@
 
 #if defined(CONFIG_SENSOR_SIM_DYNAMIC_VALUES)
 	#include <math.h>
+	#ifndef M_PI
+		#define M_PI 3.14159265358979323846
+	#endif
 #endif
 
 LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
@@ -211,9 +214,13 @@ static double generate_pseudo_random(void)
  */
 static double generate_sine(double offset, double amplitude)
 {
-	uint32_t time = k_uptime_get_32();
+	/* Predefined period for generated sine function. */
+	static const uint32_t period_ms = 10000;
 
-	return offset + amplitude * sin(time % 65535);
+	double time = k_uptime_get_32() % period_ms;
+	double angle = 2 * M_PI * (time / period_ms);
+
+	return offset + amplitude * sin(angle);
 }
 
 /*
