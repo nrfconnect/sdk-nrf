@@ -18,6 +18,15 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    ../../samples/bluetooth/*/README
    ../../samples/bluetooth/mesh/*/README
 
+.. _crypto_samples:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Crypto samples
+   :glob:
+
+   ../../samples/crypto/aes/README
+
 .. _nfc_samples:
 
 .. toctree::
