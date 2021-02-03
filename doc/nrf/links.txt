@@ -363,6 +363,7 @@
 .. _`AWS Simple Storage Service (S3)`: https://docs.aws.amazon.com/s3/index.html
 .. _`AWS S3 Developer Guide: Using Bucket Policies and User Policies`: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
 .. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
+.. _`AWS IoT Core`: https://aws.amazon.com/iot-core/
 
 .. ### Source: developer.amazon.com & www.amazon.com
 
@@ -541,3 +542,19 @@
 
 .. _`GN`: https://gn.googlesource.com/gn/
 .. _`GN website`: https://gn.googlesource.com/gn/#getting-a-binary
+
+.. _`Timestamping`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/device-cloud-protocol/FourKindsOfData.html#timestamping
+
+.. _`Power Saving Mode (PSM)`: https://www.sharetechnote.com/html/Handbook_LTE_PSM.html
+
+.. _`MQTT`: https://en.wikipedia.org/wiki/MQTT
+
+.. ### Source: Asset Tracker Cloud Example
+
+.. _`Asset Tracker Cloud Example for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/aws/Index.html
+
+.. _`Asset Tracker Cloud Example web application`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/app/Index.html
+
+.. _`Getting started guide for Asset Tracker Cloud Example for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/aws/GettingStarted.html
+
+.. _`Azure support for Asset Tracker v2`: https://github.com/NordicSemiconductor/asset-tracker-cloud-docs/discussions/12

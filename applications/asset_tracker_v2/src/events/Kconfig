@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig EVENTS
+	bool "Event options"
+	default y
+
+if EVENTS
+
+config APP_EVENTS_LOG
+	bool "Enable logging for application module events"
+	default y
+
+config MODEM_EVENTS_LOG
+	bool "Enable logging for modem module events"
+	default y
+
+config CLOUD_EVENTS_LOG
+	bool "Enable logging for Cloud module events"
+	default y
+
+config SENSOR_EVENTS_LOG
+	bool "Enable logging for sensor module events"
+	default y
+
+config UI_EVENTS_LOG
+	bool "Enable logging for UI module events"
+	default y
+
+config UTIL_EVENTS_LOG
+	bool "Enable logging for utility module events"
+	default y
+
+config GPS_EVENTS_LOG
+	bool "Enable logging for GPS module events"
+	default y
+
+config DATA_EVENTS_LOG
+	bool "Enable logging for data module events"
+	default y
+
+if PROFILER
+
+choice
+	prompt "Event type format for profiler"
+	default PROFILER_EVENT_TYPE_INT
+
+config PROFILER_EVENT_TYPE_STRING
+	bool "Event type as string"
+
+config PROFILER_EVENT_TYPE_INT
+	bool "Event type as integer"
+
+endchoice
+
+endif # PROFILER
+
+endif # EVENTS

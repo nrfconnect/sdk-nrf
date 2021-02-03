@@ -119,6 +119,10 @@ Bluetooth Mesh
 nRF9160
 =======
 
+* Added:
+
+  * Asset Tracker v2 application for nRF9160 DK and Thingy:91, which is a low-power asset tracking example.
+
 * Updated:
 
   * :ref:`nrfxlib:nrf_modem` - BSD library has been renamed to ``nrf_modem`` (Modem library) and ``nrf_modem_lib`` (glue).

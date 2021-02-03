@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig GPS_MODULE
+	bool "GPS module"
+	select NRF9160_GPS
+	select DATE_TIME
+	default y
+
+if GPS_MODULE
+
+config GPS_DEV_NAME
+	string "GPS device name"
+	default "NRF9160_GPS"
+
+endif # GPS_MODULE
+
+module = GPS_MODULE
+module-str = GPS module
+source "subsys/logging/Kconfig.template.log_config"

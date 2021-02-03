@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig CLOUD_MODULE
+	bool "Cloud module"
+	default y
+
+if CLOUD_MODULE
+
+config CLOUD_THREAD_STACK_SIZE
+	int "Cloud module thread stack size"
+	default 2560
+
+config CLOUD_CLIENT_ID_USE_CUSTOM
+	bool "Use custom cloud client ID"
+	help
+	  By default the device's IMEI is used as the client ID
+	  for the cloud connection. This allows to use a fixed
+	  value instead. This is mostly useful when providing
+	  firmware builds to continuous integration tests on
+	  real hardware.
+	  Note: you must only run this firmware build on one
+	  device at a time.
+
+config CLOUD_CLIENT_ID
+	depends on CLOUD_CLIENT_ID_USE_CUSTOM
+	string	"Cloud client ID"
+
+config CLOUD_CONNECT_RETRIES
+	int "Cloud reconnection attempts"
+	default 10
+	help
+	  If the cloud module exceeds the number of reconnection attempts it will
+	  send out a reboot request event.
+
+rsource "../cloud/Kconfig"
+
+endif # CLOUD_MODULE
+
+module = CLOUD_MODULE
+module-str = Cloud module
+source "subsys/logging/Kconfig.template.log_config"

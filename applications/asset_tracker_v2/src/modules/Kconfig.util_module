@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig UTIL_MODULE
+	bool "Utility module"
+	default y
+
+if UTIL_MODULE
+
+config REBOOT_TIMEOUT
+	int "Fatal error reboot timeout"
+	default 30
+	help
+	  This option specifies the timeout that the utility module will
+	  initiate a reboot regardless if the other modules has reported
+	  that they are ready for a reboot or not.
+
+endif # UTIL_MODULE
+
+module = UTIL_MODULE
+module-str = Utility module
+source "subsys/logging/Kconfig.template.log_config"

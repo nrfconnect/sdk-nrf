@@ -3,12 +3,16 @@
 nRF9160: Asset Tracker
 ######################
 
+.. admonition:: Maintenance notice
+
+   The Asset Tracker application was deprecated in nRF Connect SDK version 1.5 and will be removed in future versions.
+   It is succeeded by the :ref:`asset_tracker_v2` application.
+
 .. contents::
    :local:
    :depth: 2
 
 The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based kit to the `nRF Connect for Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the device.
-
 
 Overview
 ********
