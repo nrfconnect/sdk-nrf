@@ -217,7 +217,9 @@ Trusted Firmware-M:
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``c74c551ed6``, plus some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``3f49b5abf3``, plus some |NCS| specific additions.
+
+The code for integrating MCUboot into |NCS| is located in :file:`ncs/nrf/modules/mcuboot`.
 
 The following list summarizes the most important changes inherited from upstream MCUboot:
 
@@ -251,7 +253,7 @@ The following list summarizes the most important changes inherited from upstream
 Mcumgr
 ======
 
-The mcumgr library fork in |NCS| (``sdk-mcumgr``) contains all commits from the upstream mcumgr repository up to and including snapshot ``449bee75750e``.
+The mcumgr library contains all commits from the upstream mcumgr repository up to and including snapshot ``74e77ad08``.
 
 The following list summarizes the most important changes inherited from upstream mcumgr:
 
@@ -265,19 +267,19 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: The latest Zephyr commit appears in multiple places; make sure you update them all.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``856fd652dab9``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``ff720cd9b343``, plus some |NCS| specific additions.
 
 For a complete list of upstream Zephyr commits incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 856fd652dab9 ^v2.4.0-ncs1
+   git log --oneline ff720cd9b343 ^v2.4.0-ncs1
 
 For a complete list of |NCS| specific commits, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^856fd652dab9
+   git log --oneline manifest-rev ^ff720cd9b343
 
 The current |NCS| release is based on Zephyr v2.4.99.
 
