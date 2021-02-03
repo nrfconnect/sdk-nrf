@@ -66,6 +66,7 @@ static void sensor_sim_gpio_callback(const struct device *dev,
 }
 #endif /* CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON */
 
+#if defined(CONFIG_SENSOR_SIM_TRIGGER)
 /*
  * @brief Function that runs in the sensor simulator thread when using trigger.
  *
@@ -167,6 +168,7 @@ static int sensor_sim_trigger_set(const struct device *dev,
 #endif
 	return ret;
 }
+#endif /* CONFIG_SENSOR_SIM_TRIGGER */
 
 /*
  * @brief Initializes sensor simulator
