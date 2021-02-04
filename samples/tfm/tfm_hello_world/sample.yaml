@@ -9,8 +9,10 @@ common:
     harness_config:
       type: multi_line
       regex:
-        - "Hello World! (.*)"
-        - "SHA256 Digest: 0x.*"
+        - "Hello World! .*"
+        - "SHA256 digest:"
+        - "[0-9a-f]{32}"
+        - "[0-9a-f]{32}"
 tests:
   sample.tfm.helloworld:
     tags: tfm ci_build
