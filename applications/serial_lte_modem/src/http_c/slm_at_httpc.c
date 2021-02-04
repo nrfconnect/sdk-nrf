@@ -11,6 +11,7 @@
 #include <net/tls_credentials.h>
 #include <net/http_client.h>
 #include <nrf_socket.h>
+#include "slm_at_host.h"
 #include "slm_at_httpc.h"
 #include "slm_util.h"
 
@@ -32,27 +33,10 @@ LOG_MODULE_REGISTER(httpc, CONFIG_SLM_LOG_LEVEL);
 /* Buffers for HTTP client. */
 static uint8_t data_buf[HTTPC_BUF_LEN];
 
-/**@brief List of supported AT commands. */
-enum slm_httpc_at_cmd_type {
-	AT_HTTPC_CONNECT,
-	AT_HTTPC_REQUEST,
-	AT_HTTPC_MAX
-};
-
 /**@brief HTTP connect operations. */
 enum slm_httpccon_operation {
 	AT_HTTPCCON_DISCONNECT,
 	AT_HTTPCCON_CONNECT
-};
-
-/** forward declaration of cmd handlers **/
-static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type);
-static int handle_AT_HTTPC_REQUEST(enum at_cmd_type cmd_type);
-
-/**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t http_at_list[AT_HTTPC_MAX] = {
-	{AT_HTTPC_CONNECT, "AT#XHTTPCCON", handle_AT_HTTPC_CONNECT},
-	{AT_HTTPC_REQUEST, "AT#XHTTPCREQ", handle_AT_HTTPC_REQUEST},
 };
 
 static struct slm_httpc_ctx {
@@ -483,7 +467,7 @@ static int do_http_request(void)
  *  AT#XHTTPCCON? READ command not supported
  *  AT#XHTTPCCON=?
  */
-static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type)
+int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 
@@ -586,7 +570,7 @@ static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type)
  *  AT#XHTTPCREQ? READ command not supported
  *  AT#XHTTPCREQ=?
  */
-static int handle_AT_HTTPC_REQUEST(enum at_cmd_type cmd_type)
+int handle_at_httpc_request(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	int param_count;
@@ -654,33 +638,14 @@ static int handle_AT_HTTPC_REQUEST(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief API to handle HTTP AT commands
- */
-int slm_at_httpc_parse(const char *at_cmd, size_t length)
+int handle_at_httpc_send(const char *data, size_t length)
 {
-	int ret = -ENOENT;
-	enum at_cmd_type type;
-
-	for (int i = 0; i < AT_HTTPC_MAX; i++) {
-		if (slm_util_cmd_casecmp(at_cmd, http_at_list[i].string)) {
-			ret = at_parser_params_from_str(at_cmd, NULL,
-						&at_param_list);
-			if (ret) {
-				LOG_ERR("Failed to parse AT command %d", ret);
-				return -EINVAL;
-			}
-			type = at_parser_cmd_type_get(at_cmd);
-			ret = http_at_list[i].handler(type);
-			break;
-		}
-	}
-
 	/* Return if no payload to send */
-	if (ret != -ENOENT || (httpc.pl_len == 0)) {
-		return ret;
+	if (httpc.pl_len == 0) {
+		return -ENOENT;
 	}
 	/* Process input data as payload */
-	httpc.payload = (char *)at_cmd;
+	httpc.payload = (char *)data;
 	httpc.pl_to_send = length;
 	httpc.pl_sent = 0;
 	/* start sending payload */
@@ -731,16 +696,6 @@ int slm_at_httpc_uninit(void)
 	}
 
 	return err;
-}
-
-/**@brief API to list HTTP AT commands
- */
-void slm_at_httpc_clac(void)
-{
-	for (int i = 0; i < AT_HTTPC_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", http_at_list[i].string);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-	}
 }
 
 K_THREAD_DEFINE(httpc_thread, K_THREAD_STACK_SIZEOF(httpc_thread_stack),

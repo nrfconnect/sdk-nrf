@@ -14,7 +14,6 @@
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_power.h>
 #include <hal/nrf_regulators.h>
-#include <modem/modem_info.h>
 #include <modem/nrf_modem_lib.h>
 #include <dfu/mcuboot.h>
 #include <power/reboot.h>
@@ -34,13 +33,10 @@ static struct k_work exit_idle_work;
 static bool full_idle_mode;
 
 /* global variable used across different files */
-struct at_param_list at_param_list;
 struct k_work_q slm_work_q;
-char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2]; /* SLM URC and socket data */
-uint8_t rx_data[CONFIG_SLM_SOCKET_RX_MAX];  /* socket RX raw data */
 
 /* global functions defined in different files */
-int wakeup_uart(void);
+int poweron_uart(void);
 
 /**@brief Recoverable modem library error. */
 void nrf_modem_recoverable_error_handler(uint32_t err)
@@ -66,8 +62,8 @@ static void exit_idle(struct k_work *work)
 			LOG_ERR("Failed to init at_host: %d", err);
 		}
 	} else {
-		/* Wake up UART only */
-		err = wakeup_uart();
+		/* Power on UART only */
+		err = poweron_uart();
 		if (err) {
 			LOG_ERR("Failed to wake up uart: %d", err);
 		}
@@ -173,13 +169,6 @@ void start_execute(void)
 
 	/* check FOTA result */
 	handle_nrf_modem_lib_init_ret();
-
-	/* Initialize AT Parser */
-	err = at_params_list_init(&at_param_list, CONFIG_SLM_AT_MAX_PARAM);
-	if (err) {
-		LOG_ERR("Failed to init AT Parser: %d", err);
-		return;
-	}
 
 	err = slm_at_host_init();
 	if (err) {

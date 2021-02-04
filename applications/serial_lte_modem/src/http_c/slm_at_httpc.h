@@ -12,21 +12,17 @@
  * @brief Vendor-specific AT command for HTTP service.
  * @{
  */
-
-#include <zephyr/types.h>
-#include "slm_at_host.h"
-
 /**
- * @brief HTTPC AT command parser.
+ * @brief HTTPC raw data send.
  *
- * @param at_cmd AT command or data string.
- * @param length AT command or data string length.
+ * @param data Raw data string.
+ * @param length Raw data string length.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, negative code means error.
  *           Otherwise, positive code means data is sent in passthrough mode.
  */
-int slm_at_httpc_parse(const char *at_cmd, size_t length);
+int handle_at_httpc_send(const char *data, size_t length);
 
 /**
  * @brief Initialize HTTPC AT command parser.
@@ -43,12 +39,6 @@ int slm_at_httpc_init(void);
  *           Otherwise, a (negative) error code is returned.
  */
 int slm_at_httpc_uninit(void);
-
-/**
- * @brief List HTTPC AT commands.
- *
- */
-void slm_at_httpc_clac(void);
 
 /** @} */
 

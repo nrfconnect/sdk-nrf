@@ -12,26 +12,6 @@
  * @brief Vendor-specific AT command for MQTT service.
  * @{
  */
-
-#include <zephyr/types.h>
-#include "slm_at_host.h"
-
-/**
- * @brief MQTT AT command parser.
- *
- * @param at_cmd  AT command string.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int slm_at_mqtt_parse(const char *at_cmd);
-
-/**
- * @brief List MQTT AT commands.
- *
- */
-void slm_at_mqtt_clac(void);
-
 /**
  * @brief Initialize MQTT AT command parser.
  *

@@ -17,12 +17,6 @@
 
 LOG_MODULE_REGISTER(cmng, CONFIG_SLM_LOG_LEVEL);
 
-/**@brief List of supported AT commands. */
-enum slm_cmng_at_cmd {
-	AT_XCMNG,
-	AT_CMNG_MAX
-};
-
 /**@brief List of supported opcode */
 enum slm_cmng_opcode {
 	AT_CMNG_OP_WRITE,
@@ -43,14 +37,6 @@ enum slm_cmng_type {
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
 
-/** forward declaration of cmd handlers **/
-static int handle_at_xcmng(enum at_cmd_type cmd_type);
-
-/**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t cmng_at_list[AT_CMNG_MAX] = {
-	{AT_XCMNG, "AT%CMNG", handle_at_xcmng},
-};
-
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
@@ -60,7 +46,7 @@ extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
  *  AT#XCMNG? READ command not supported
  *  AT#XCMNG=? READ command not supported
  */
-static int handle_at_xcmng(enum at_cmd_type cmd_type)
+int handle_at_xcmng(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op, type;
@@ -166,38 +152,6 @@ static int handle_at_xcmng(enum at_cmd_type cmd_type)
 	}
 
 	return err;
-}
-
-
-/**@brief API to handle SLM credential management AT commands
- */
-int slm_at_cmng_parse(const char *at_cmd)
-{
-	int ret = -ENOENT;
-	enum at_cmd_type type;
-
-	for (int i = 0; i < AT_CMNG_MAX; i++) {
-		if (slm_util_cmd_casecmp(at_cmd, cmng_at_list[i].string)) {
-			ret = at_parser_params_from_str(at_cmd, NULL,
-						&at_param_list);
-			if (ret < 0) {
-				LOG_ERR("Failed to parse AT command %d", ret);
-				return -EINVAL;
-			}
-			type = at_parser_cmd_type_get(at_cmd);
-			ret = cmng_at_list[i].handler(type);
-			break;
-		}
-	}
-
-	return ret;
-}
-
-/**@brief API to list CMNG AT commands
- */
-void slm_at_cmng_clac(void)
-{
-	/* Let modem list CMNG command. */
 }
 
 /**@brief API to initialize CMNG AT commands handler

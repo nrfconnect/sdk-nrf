@@ -13,25 +13,6 @@
  * @{
  */
 
-#include <zephyr/types.h>
-#include <modem/at_cmd.h>
-
-/**
- * @brief TCP/IP AT command parser.
- *
- * @param at_cmd AT command string.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int slm_at_tcpip_parse(const char *at_cmd);
-
-/**
- * @brief List TCP/IP AT commands.
- *
- */
-void slm_at_tcpip_clac(void);
-
 /**
  * @brief Initialize TCP/IP AT command parser.
  *

@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <net/socket.h>
-#include <modem/modem_info.h>
 #include <net/tls_credentials.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
@@ -35,26 +34,6 @@ enum slm_udp_proxy_operation {
 	AT_CLIENT_CONNECT = AT_SERVER_START,
 	AT_SERVER_START_WITH_DATAMODE,
 	AT_CLIENT_CONNECT_WITH_DATAMODE = AT_SERVER_START_WITH_DATAMODE
-};
-
-/**@brief List of supported AT commands. */
-enum slm_udp_proxy_at_cmd_type {
-	AT_UDP_SERVER,
-	AT_UDP_CLIENT,
-	AT_UDP_SEND,
-	AT_UDP_PROXY_MAX
-};
-
-/** forward declaration of cmd handlers **/
-static int handle_at_udp_server(enum at_cmd_type cmd_type);
-static int handle_at_udp_client(enum at_cmd_type cmd_type);
-static int handle_at_udp_send(enum at_cmd_type cmd_type);
-
-/**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t udp_proxy_at_list[AT_UDP_PROXY_MAX] = {
-	{AT_UDP_SERVER, "AT#XUDPSVR", handle_at_udp_server},
-	{AT_UDP_CLIENT, "AT#XUDPCLI", handle_at_udp_client},
-	{AT_UDP_SEND, "AT#XUDPSEND", handle_at_udp_send},
 };
 
 static struct k_thread udp_thread;
@@ -91,7 +70,7 @@ static int do_udp_server_start(uint16_t port)
 	udp_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (udp_sock < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
-		sprintf(rsp_buf, "#XUDPSVR: %d\r\n", -errno);
+		sprintf(rsp_buf, "\r\n#XUDPSVR: %d\r\n", -errno);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		return -errno;
 	}
@@ -125,7 +104,7 @@ static int do_udp_server_start(uint16_t port)
 		 sizeof(struct sockaddr_in));
 	if (ret) {
 		LOG_ERR("bind() failed: %d", -errno);
-		sprintf(rsp_buf, "#XUDPSVR: %d\r\n", -errno);
+		sprintf(rsp_buf, "\r\n#XUDPSVR: %d\r\n", -errno);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		close(udp_sock);
 		return -errno;
@@ -137,7 +116,7 @@ static int do_udp_server_start(uint16_t port)
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
 	udp_server_role = true;
-	sprintf(rsp_buf, "#XUDPSVR: %d,\"started\"\r\n", udp_sock);
+	sprintf(rsp_buf, "\r\n#XUDPSVR: %d,\"started\"\r\n", udp_sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	LOG_DBG("UDP server started");
 
@@ -155,7 +134,7 @@ static int do_udp_server_stop(int error)
 			ret = -errno;
 		}
 		(void)slm_at_udp_proxy_init();
-		sprintf(rsp_buf, "#XUDPSVR: %d,\"stopped\"\r\n", error);
+		sprintf(rsp_buf, "\r\n#XUDPSVR: %d,\"stopped\"\r\n", error);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
@@ -175,7 +154,7 @@ static int do_udp_client_connect(const char *url, uint16_t port, int sec_tag)
 	}
 	if (udp_sock < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
-		sprintf(rsp_buf, "#XUDPCLI: %d\r\n", -errno);
+		sprintf(rsp_buf, "\r\n#XUDPCLI: %d\r\n", -errno);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		return -errno;
 	}
@@ -186,7 +165,7 @@ static int do_udp_client_connect(const char *url, uint16_t port, int sec_tag)
 				sec_tag_list, sizeof(sec_tag_t));
 		if (ret) {
 			LOG_ERR("set tag list failed: %d", -errno);
-			sprintf(rsp_buf, "#XUDPCLI: %d\r\n", -errno);
+			sprintf(rsp_buf, "\r\n#XUDPCLI: %d\r\n", -errno);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			close(udp_sock);
 			return -errno;
@@ -231,7 +210,7 @@ static int do_udp_client_connect(const char *url, uint16_t port, int sec_tag)
 		sizeof(struct sockaddr_in));
 	if (ret < 0) {
 		LOG_ERR("connect() failed: %d", -errno);
-		sprintf(rsp_buf, "#XUDPCLI: %d\r\n", -errno);
+		sprintf(rsp_buf, "\r\n#XUDPCLI: %d\r\n", -errno);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		close(udp_sock);
 		return -errno;
@@ -243,7 +222,7 @@ static int do_udp_client_connect(const char *url, uint16_t port, int sec_tag)
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
 	udp_server_role = false;
-	sprintf(rsp_buf, "#XUDPCLI: %d,\"connected\"\r\n", udp_sock);
+	sprintf(rsp_buf, "\r\n#XUDPCLI: %d,\"connected\"\r\n", udp_sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	return ret;
@@ -260,7 +239,7 @@ static int do_udp_client_disconnect(void)
 			ret = -errno;
 		}
 		(void)slm_at_udp_proxy_init();
-		sprintf(rsp_buf, "#XUDPCLI: \"disconnected\"\r\n");
+		sprintf(rsp_buf, "\r\n#XUDPCLI: \"disconnected\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
@@ -288,7 +267,7 @@ static int do_udp_send(const uint8_t *data, int datalen)
 		if (ret < 0) {
 			LOG_ERR("send() failed: %d", -errno);
 			if (errno != EAGAIN && errno != ETIMEDOUT) {
-				sprintf(rsp_buf, "#XUDPSEND: %d\r\n", -errno);
+				sprintf(rsp_buf, "\r\n#XUDPSEND: %d\r\n", -errno);
 				rsp_send(rsp_buf, strlen(rsp_buf));
 				if (udp_server_role) {
 					do_udp_server_stop(-errno);
@@ -303,7 +282,7 @@ static int do_udp_send(const uint8_t *data, int datalen)
 	}
 
 	if (ret >= 0) {
-		sprintf(rsp_buf, "#XUDPSEND: %d\r\n", offset);
+		sprintf(rsp_buf, "\r\n#XUDPSEND: %d\r\n", offset);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		return 0;
 	} else {
@@ -397,7 +376,8 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 
 			ret = slm_util_htoa(rx_data, ret, data_hex, ret * 2);
 			if (ret > 0) {
-				sprintf(rsp_buf, "#XUDPDATA: %d,%d\r\n", DATATYPE_HEXADECIMAL, ret);
+				sprintf(rsp_buf, "\r\n#XUDPDATA: %d,%d\r\n", DATATYPE_HEXADECIMAL,
+					ret);
 				rsp_send(rsp_buf, strlen(rsp_buf));
 				rsp_send(data_hex, ret);
 				rsp_send("\r\n", 2);
@@ -405,7 +385,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 				LOG_WRN("hex convert error: %d", ret);
 			}
 		} else {
-			sprintf(rsp_buf, "#XUDPDATA: %d,%d\r\n", DATATYPE_PLAINTEXT, ret);
+			sprintf(rsp_buf, "\r\n#XUDPDATA: %d,%d\r\n", DATATYPE_PLAINTEXT, ret);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			rsp_send(rx_data, ret);
 			rsp_send("\r\n", 2);
@@ -420,7 +400,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
  *  AT#XUDPSVR? READ command not supported
  *  AT#XUDPSVR=?
  */
-static int handle_at_udp_server(enum at_cmd_type cmd_type)
+int handle_at_udp_server(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
@@ -466,13 +446,13 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "#XUDPSVR: %d,%d\r\n", udp_sock, udp_datamode);
+		sprintf(rsp_buf, "\r\n#XUDPSVR: %d,%d\r\n", udp_sock, udp_datamode);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XUDPSVR: (%d,%d,%d),<port>,<sec_tag>\r\n",
+		sprintf(rsp_buf, "\r\n#XUDPSVR: (%d,%d,%d),<port>,<sec_tag>\r\n",
 			AT_SERVER_STOP, AT_SERVER_START, AT_SERVER_START_WITH_DATAMODE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
@@ -490,7 +470,7 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
  *  AT#XUDPCLI? READ command not supported
  *  AT#XUDPCLI=?
  */
-static int handle_at_udp_client(enum at_cmd_type cmd_type)
+int handle_at_udp_client(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
@@ -542,13 +522,13 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "#XUDPCLI: %d,%d\r\n", udp_sock, udp_datamode);
+		sprintf(rsp_buf, "\r\n#XUDPCLI: %d,%d\r\n", udp_sock, udp_datamode);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XUDPCLI: (%d, %d, %d),<url>,<port>,<sec_tag>\r\n",
+		sprintf(rsp_buf, "\r\n#XUDPCLI: (%d, %d, %d),<url>,<port>,<sec_tag>\r\n",
 			AT_CLIENT_DISCONNECT, AT_CLIENT_CONNECT, AT_CLIENT_CONNECT_WITH_DATAMODE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
@@ -566,7 +546,7 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
  *  AT#XUDPSEND? READ command not supported
  *  AT#XUDPSEND=? TEST command not supported
  */
-static int handle_at_udp_send(enum at_cmd_type cmd_type)
+int handle_at_udp_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t datatype;
@@ -604,41 +584,6 @@ static int handle_at_udp_send(enum at_cmd_type cmd_type)
 	}
 
 	return err;
-}
-
-/**@brief API to handle UDP Proxy AT commands
- */
-int slm_at_udp_proxy_parse(const char *at_cmd)
-{
-	int ret = -ENOENT;
-	enum at_cmd_type type;
-
-	for (int i = 0; i < AT_UDP_PROXY_MAX; i++) {
-		if (slm_util_cmd_casecmp(at_cmd,
-					udp_proxy_at_list[i].string)) {
-			ret = at_parser_params_from_str(at_cmd, NULL,
-						&at_param_list);
-			if (ret) {
-				LOG_ERR("Failed to parse AT command %d", ret);
-				return -EINVAL;
-			}
-			type = at_parser_cmd_type_get(at_cmd);
-			ret = udp_proxy_at_list[i].handler(type);
-			break;
-		}
-	}
-
-	return ret;
-}
-
-/**@brief API to list UDP Proxy AT commands
- */
-void slm_at_udp_proxy_clac(void)
-{
-	for (int i = 0; i < AT_UDP_PROXY_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", udp_proxy_at_list[i].string);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-	}
 }
 
 /**@brief API to initialize UDP Proxy AT commands handler
