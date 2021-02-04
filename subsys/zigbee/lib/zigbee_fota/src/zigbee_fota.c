@@ -134,7 +134,7 @@ static void send_progress(zb_uint8_t progress)
 static void ota_client_attr_init(void)
 {
 	struct mcuboot_img_header mcuboot_header;
-	union zb_ota_app_ver app_image_ver;
+	union zb_ota_app_ver app_image_ver = {0};
 
 	int err = boot_read_bank_header(PM_MCUBOOT_PRIMARY_ID,
 					&mcuboot_header,
