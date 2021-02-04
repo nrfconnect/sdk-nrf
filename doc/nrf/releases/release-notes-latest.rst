@@ -357,6 +357,8 @@ The following list summarizes the most important changes inherited from upstream
 
   * Deprecated the ``DEVICE_INIT()`` macro.
     Use :c:macro:`DEVICE_DEFINE` instead.
+  * Introduced macros (:c:macro:`DEVICE_DT_DEFINE` and related ones) that allow defining devices using information from devicetree nodes directly and referencing structures of such devices at build time.
+    Most drivers have been updated to use these new macros for creating their instances.
 
   * ADC:
 
@@ -385,6 +387,16 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed a regression in lazy loading of the Client Configuration Characteristics.
     * Fixed an issue where a security procedure failure could terminate the current GATT transaction when the transaction did not require security.
 
+  * Clock control:
+
+    * Changed the definition (parameters and return values) of the API function :c:func:`clock_control_async_on`.
+    * Added support for the audio clock in nRF53 Series SoCs.
+    * Added missing handling of the HFCLK192M_STARTED event in nRF53 Series SoCs.
+
+  * Counter:
+
+    * Excluded selection of nRF TIMER0 and RTC0 when the Bluetooth Controller is enabled.
+
   * Display:
 
     * Added support for the ILI9488 display.
@@ -392,13 +404,23 @@ The following list summarizes the most important changes inherited from upstream
       Configuration of the driver instances is now done in devicetree.
     * Enhanced the SSD1306 driver to support communication via both SPI and I2C.
 
+  * Ethernet:
+
+    * Added driver for the W5500 Ethernet controller.
+
   * Flash:
 
     * Modified the nRF QSPI NOR driver so that it supports also nRF53 Series SoCs.
+    * Added missing selection of :option:`CONFIG_FLASH_HAS_PAGE_LAYOUT` for the SPI NOR and AT45 family flash drivers.
+    * Refactored the nRF QSPI NOR driver so that it no longer depends on :option:`CONFIG_MULTITHREADING`.
 
   * IEEE 802.15.4:
 
     * Updated the nRF5 IEEE 802.15.4 driver to version 1.9.
+    * Added support for IEEE 802.15.4 on nRF5340.
+    * Added reservation of the TIMER peripheral used by the nRF5 IEEE 802.15.4 driver.
+    * Added support for sending packets with specified TX time using the nRF5 IEEE 802.15.4 driver.
+    * Implemented the RX failed notification for the nRF5 IEEE 802.15.4 driver.
 
   * LED PWM:
 
@@ -409,6 +431,9 @@ The following list summarizes the most important changes inherited from upstream
     * Reworked the command handler reading routine, to prevent data loss and reduce RAM usage.
     * Added the possibility of locking TX in the command handler.
     * Improved handling of HW flow control on the RX side of the UART interface.
+    * Added the possibility of defining commands with a variable number of arguments.
+    * Introduced :c:func:`gsm_ppp_start` and :c:func:`gsm_ppp_stop` functions to allow restarting the networking stack without rebooting the device.
+    * Added support for Quectel BG9x modems.
 
   * Power:
 
@@ -429,6 +454,7 @@ The following list summarizes the most important changes inherited from upstream
     * Added support for the IIS2ICLX 2-axis digital inclinometer.
     * Enhanced the BMI160 driver to support communication via both SPI and I2C.
     * Added device power management in the LIS2MDL magnetometer driver.
+    * Refactored the FXOS8700 driver to support multiple instances.
 
   * Serial:
 
@@ -443,9 +469,15 @@ The following list summarizes the most important changes inherited from upstream
       * ``LINE_CTRL_DCD``
       * ``LINE_CTRL_DSR``
 
+    * Refactored the :c:func:`uart_poll_out` implementation in the nRF UARTE driver to fix incorrect handling of HW flow control and power management.
+
   * SPI:
 
     * Added support for SPI emulators.
+
+  * Timer:
+
+    * Extended the nRF RTC Timer driver with vendor-specific API that allows using the remaining compare channels of the RTC that provides the system clock.
 
   * USB:
 
@@ -454,7 +486,6 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed handling of the SUSPEND and RESUME events in the Bluetooth classes.
     * Made the USB DFU class compatible with the target configuration that does not have a secondary image slot.
     * Added support for using USB DFU within MCUboot with single application slot mode.
-
 
 * Networking:
 
