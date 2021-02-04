@@ -25,6 +25,7 @@ Introduction
 
 nRF5340 is a wireless ultra-low power multicore System on Chip (SoC) with two fully programmable Arm Cortex-M33 processors: a network core and an application core.
 The |NCS| supports Bluetooth Low Energy and NFC communication on the nRF5340 SoC.
+In addition, Thread and Zigbee protocols can use the SoC in the multiprotocol configuration.
 
 See the `nRF5340 Product Specification`_ for more information about the nRF5340 SoC.
 :ref:`zephyr:nrf5340dk_nrf5340` gives an overview of the nRF5340 DK support in Zephyr.
@@ -108,6 +109,13 @@ The OpenAMP library uses the IPM SHIM layer, which in turn uses the IPC driver i
    :start-after: fota_upgrades_start
    :end-before: fota_upgrades_end
 
+Multiprotocol support
+*********************
+
+nRF5340 supports running another protocol in parallel with the :ref:`nrfxlib:softdevice_controller`.
+See the :ref:`ug_multiprotocol_support` user guide for instructions on how to enable multiprotocol support for Thread or Zigbee in combination with Bluetooth.
+
+The :ref:`nrfxlib:mpsl` library provides services for multiprotocol applications.
 
 Available samples
 *****************

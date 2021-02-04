@@ -34,9 +34,6 @@ For this sample to work, the following samples also need to be programmed:
 Multiprotocol Bluetooth LE extension requirements
 =================================================
 
-.. note::
-   The multiprotocol variant is not supported on nRF53 Series devices.
-
 If you enable the :ref:`zigbee_light_switch_sample_nus`, make sure you have a phone or a tablet with the `nRF Toolbox`_ application installed.
 
 .. note::
