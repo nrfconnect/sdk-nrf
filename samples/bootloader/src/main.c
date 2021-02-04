@@ -13,6 +13,12 @@
 #include <bl_boot.h>
 #include <bl_validation.h>
 
+#if defined(CONFIG_HW_UNIQUE_KEY_LOAD)
+#include <init.h>
+#include <hw_unique_key.h>
+SYS_INIT(hw_unique_key_load, PRE_KERNEL_2, 0);
+#endif
+
 
 static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 {
