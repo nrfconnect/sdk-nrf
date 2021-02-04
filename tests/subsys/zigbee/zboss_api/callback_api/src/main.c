@@ -80,7 +80,7 @@ void test_zboss_startup_signals(void)
 
 K_MSGQ_DEFINE(zb_callback_queue, sizeof(uint32_t), N_THREADS, 4);
 
-void add_to_queue_from_callback(uint8_t int_to_put)
+static void add_to_queue_from_callback(uint8_t int_to_put)
 {
 	const uint32_t ref_int[N_THREADS] = {0, 1, 2, 3};
 	int ret_val;
