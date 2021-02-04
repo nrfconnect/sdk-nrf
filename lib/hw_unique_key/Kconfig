@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config HW_UNIQUE_KEY_LOAD
+	bool "Load the Hardware Unique Key in the secure bootloader"
+	depends on SOC_NRF52840
+	depends on IS_SECURE_BOOTLOADER
+	select FPROTECT_ENABLE_NO_ACCESS
+	help
+	  This option will load the Hardware Unique Key (HUK) in the KDR
+	  registers of the CryptoCell peripheral and sets the LCS. It will also
+	  lock its flash page so that it's not accesible by the CPU until the
+	  next reboot.
