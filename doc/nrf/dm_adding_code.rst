@@ -90,6 +90,7 @@ This is demonstrated by the following code:
          url-base: https://github.com/nrfconnect
      projects:
        - name: nrf
+         repo-path: sdk-nrf
          remote: ncs
          revision: v1.4.2
          import: true
