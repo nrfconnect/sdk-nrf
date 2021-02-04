@@ -53,8 +53,8 @@ static struct radio_param_config {
 	uint32_t duty_cycle;
 
 #if CONFIG_NRF21540_FEM
-	/* nRF21540 activation delay. */
-	uint32_t nrf21540_active_delay;
+	/* nRF21540 configuration. */
+	struct radio_test_nrf21540 nrf21540;
 #endif /* CONFIG_NRF21540_FEM */
 } config = {
 	.tx_pattern = TRANSMIT_PATTERN_RANDOM,
@@ -64,6 +64,9 @@ static struct radio_param_config {
 	.channel_end = 80,
 	.delay_ms = 10,
 	.duty_cycle = 50,
+#if CONFIG_NRF21540_FEM
+	.nrf21540.gain = NRF21540_USE_DEFAULT_GAIN
+#endif /* CONFIG_NRF21540_FEM */
 };
 
 /* Radio test configuration. */
@@ -220,7 +223,8 @@ static int cmd_tx_carrier_start(const struct shell *shell, size_t argc,
 	test_config.params.unmodulated_tx.txpower = config.txpower;
 	test_config.params.unmodulated_tx.channel = config.channel_start;
 #if CONFIG_NRF21540_FEM
-	test_config.nrf21540_active_delay = config.nrf21540_active_delay;
+	test_config.nrf21540.active_delay = config.nrf21540.active_delay;
+	test_config.nrf21540.gain = config.nrf21540.gain;
 #endif
 	radio_test_start(&test_config);
 
@@ -258,7 +262,8 @@ static int cmd_tx_modulated_carrier_start(const struct shell *shell,
 	test_config.params.modulated_tx.channel = config.channel_start;
 	test_config.params.modulated_tx.pattern = config.tx_pattern;
 #if CONFIG_NRF21540_FEM
-	test_config.nrf21540_active_delay = config.nrf21540_active_delay;
+	test_config.nrf21540.active_delay = config.nrf21540.active_delay;
+	test_config.nrf21540.gain = config.nrf21540.gain;
 #endif
 
 	if (argc == 2) {
@@ -310,7 +315,8 @@ static int cmd_duty_cycle_set(const struct shell *shell, size_t argc,
 	test_config.params.modulated_tx_duty_cycle.duty_cycle =
 		config.duty_cycle;
 #if CONFIG_NRF21540_FEM
-	test_config.nrf21540_active_delay = config.nrf21540_active_delay;
+	test_config.nrf21540.active_delay = config.nrf21540.active_delay;
+	test_config.nrf21540.gain = config.nrf21540.gain;
 #endif
 
 	radio_test_start(&test_config);
@@ -674,7 +680,8 @@ static int cmd_rx_sweep_start(const struct shell *shell, size_t argc,
 	test_config.params.rx_sweep.channel_end = config.channel_end;
 	test_config.params.rx_sweep.delay_ms = config.delay_ms;
 #if CONFIG_NRF21540_FEM
-	test_config.nrf21540_active_delay = config.nrf21540_active_delay;
+	test_config.nrf21540.active_delay = config.nrf21540.active_delay;
+	test_config.nrf21540.gain = config.nrf21540.gain;
 #endif
 
 	radio_test_start(&test_config);
@@ -696,7 +703,8 @@ static int cmd_tx_sweep_start(const struct shell *shell, size_t argc,
 	test_config.params.tx_sweep.delay_ms = config.delay_ms;
 	test_config.params.tx_sweep.txpower = config.txpower;
 #if CONFIG_NRF21540_FEM
-	test_config.nrf21540_active_delay = config.nrf21540_active_delay;
+	test_config.nrf21540.active_delay = config.nrf21540.active_delay;
+	test_config.nrf21540.gain = config.nrf21540.gain;
 #endif
 
 	radio_test_start(&test_config);
@@ -724,7 +732,8 @@ static int cmd_rx_start(const struct shell *shell, size_t argc, char **argv)
 	test_config.params.rx.channel = config.channel_start;
 	test_config.params.rx.pattern = config.tx_pattern;
 #if CONFIG_NRF21540_FEM
-	test_config.nrf21540_active_delay = config.nrf21540_active_delay;
+	test_config.nrf21540.active_delay = config.nrf21540.active_delay;
+	test_config.nrf21540.gain = config.nrf21540.gain;
 #endif
 
 	radio_test_start(&test_config);
@@ -1120,9 +1129,11 @@ static int cmd_nrf21540_gain_set(const struct shell *shell, size_t argc,
 		return -EINVAL;
 	}
 
+	config.nrf21540.gain = gain;
+
 	shell_print(shell, "nRF21540 Tx gain set to %d", gain);
 
-	return nrf21540_tx_gain_set((uint8_t) gain);
+	return 0;
 }
 
 static int cmd_nrf21540_antenna_select(const struct shell *shell, size_t argc,
@@ -1179,7 +1190,7 @@ static int cmd_nrf21540_active_delay_set(const struct shell *shell, size_t argc,
 
 	delay = atoi(argv[1]);
 
-	config.nrf21540_active_delay = delay;
+	config.nrf21540.active_delay = delay;
 
 	shell_print(shell, "nRF21540 activation delay set to %d us", delay);
 
