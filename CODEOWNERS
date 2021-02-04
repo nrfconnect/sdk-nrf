@@ -77,6 +77,7 @@ Kconfig*                                  @tejlmand
 /lib/supl/                                @rlubos @evenl
 /lib/date_time/                           @simensrostad
 /lib/wave_gen/                            @MarekPieta
+/lib/hw_unique_key/                       @Vge0rge
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @nvlsianpu
 /samples/sensor/bh1749/                   @wlgrd
