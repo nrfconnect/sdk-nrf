@@ -24,8 +24,6 @@ LOG_MODULE_REGISTER(ftp, CONFIG_SLM_LOG_LEVEL);
 #define FTP_MAX_OPTION		32
 #define FTP_MAX_FILEPATH	128
 
-#define AT_FTP_STR		"AT#XFTP"
-
 /**@brief Socketopt operations. */
 enum slm_ftp_operation {
 	/* FTP Session Management */
@@ -119,7 +117,6 @@ bool check_uart_flowcontrol(void);
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 extern uint8_t rx_data[CONFIG_SLM_SOCKET_RX_MAX];
-extern struct k_work_q slm_work_q;
 
 void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 {
@@ -131,27 +128,27 @@ void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 	if (FTP_PROPRIETARY(code)) {
 		switch (code) {
 		case FTP_CODE_901:
-			sprintf(rsp_buf, "#XFTP: %d,\"disconnected\"\r\n", -ECONNRESET);
+			sprintf(rsp_buf, "\r\n#XFTP: %d,\"disconnected\"\r\n", -ECONNRESET);
 			break;
 		case FTP_CODE_902:
-			sprintf(rsp_buf, "#XFTP: %d,\"disconnected\"\r\n", -ECONNABORTED);
+			sprintf(rsp_buf, "\r\n#XFTP: %d,\"disconnected\"\r\n", -ECONNABORTED);
 			break;
 		case FTP_CODE_903:
-			sprintf(rsp_buf, "#XFTP: %d,\"disconnected\"\r\n", -EIO);
+			sprintf(rsp_buf, "\r\n#XFTP: %d,\"disconnected\"\r\n", -EIO);
 			break;
 		case FTP_CODE_904:
-			sprintf(rsp_buf, "#XFTP: %d,\"disconnected\"\r\n", -EAGAIN);
+			sprintf(rsp_buf, "\r\n#XFTP: %d,\"disconnected\"\r\n", -EAGAIN);
 			break;
 		case FTP_CODE_905:
-			sprintf(rsp_buf, "#XFTP: %d,\"disconnected\"\r\n", -ENETDOWN);
+			sprintf(rsp_buf, "\r\n#XFTP: %d,\"disconnected\"\r\n", -ENETDOWN);
 			break;
 		default:
-			sprintf(rsp_buf, "#XFTP: %d,\"disconnected\"\r\n", -ENOEXEC);
+			sprintf(rsp_buf, "\r\n#XFTP: %d,\"disconnected\"\r\n", -ENOEXEC);
 			break;
 		}
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		if (ftp_data_mode_handler && exit_datamode()) {
-			sprintf(rsp_buf, "#XFTP: 0,\"datamode\"\r\n");
+			sprintf(rsp_buf, "\r\n#XFTP: 0,\"datamode\"\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			ftp_data_mode_handler = NULL;
 		}
@@ -308,10 +305,10 @@ static int do_ftp_verbose(void)
 
 	if (slm_util_cmd_casecmp(vb_mode, "ON")) {
 		ftp_verbose_on = true;
-		sprintf(rsp_buf, "Verbose mode on\r\n");
+		sprintf(rsp_buf, "\r\nVerbose mode on\r\n");
 	} else if (slm_util_cmd_casecmp(vb_mode, "OFF")) {
 		ftp_verbose_on = false;
-		sprintf(rsp_buf, "Verbose mode off\r\n");
+		sprintf(rsp_buf, "\r\nVerbose mode off\r\n");
 	} else {
 		return -EINVAL;
 	}
@@ -485,7 +482,7 @@ static int ftp_put_handler(const uint8_t *data, int len)
 	}
 
 	if (exit_datamode()) {
-		sprintf(rsp_buf, "#XFTP: 0,\"datamode\"\r\n");
+		sprintf(rsp_buf, "\r\n#XFTP: 0,\"datamode\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ftp_data_mode_handler = NULL;
 	}
@@ -565,7 +562,7 @@ static int ftp_uput_handler(const uint8_t *data, int len)
 	}
 
 	if (exit_datamode()) {
-		sprintf(rsp_buf, "#XFTP: 0,\"datamode\"\r\n");
+		sprintf(rsp_buf, "\r\n#XFTP: 0,\"datamode\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ftp_data_mode_handler = NULL;
 	}
@@ -704,44 +701,28 @@ static int do_ftp_mput(void)
 
 /**@brief API to handle FTP AT command
  */
-int slm_at_ftp_parse(const char *at_cmd)
+int handle_at_ftp(enum at_cmd_type cmd_type)
 {
-	int ret = -ENOENT;
+	int ret;
 	char op_str[16];
 	int size = 16;
 
-	if (slm_util_cmd_casecmp(at_cmd, AT_FTP_STR)) {
-		ret = at_parser_params_from_str(at_cmd, NULL, &at_param_list);
-		if (ret) {
-			LOG_ERR("Failed to parse AT command %d", ret);
-			return -EINVAL;
-		}
-		if (at_parser_cmd_type_get(at_cmd) != AT_CMD_TYPE_SET_COMMAND) {
-			return -EINVAL;
-		}
-		ret = util_string_get(&at_param_list, 1, op_str, &size);
-		if (ret) {
-			return ret;
-		}
-		ret = -EINVAL;
-		for (int i = 0; i < FTP_OP_MAX; i++) {
-			if (slm_util_casecmp(op_str,
-				ftp_op_list[i].op_str)) {
-				ret = ftp_op_list[i].handler();
-				break;
-			}
+	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
+		return -EINVAL;
+	}
+	ret = util_string_get(&at_param_list, 1, op_str, &size);
+	if (ret) {
+		return ret;
+	}
+	ret = -EINVAL;
+	for (int i = 0; i < FTP_OP_MAX; i++) {
+		if (slm_util_casecmp(op_str, ftp_op_list[i].op_str)) {
+			ret = ftp_op_list[i].handler();
+			break;
 		}
 	}
 
 	return ret;
-}
-
-/**@brief API to list FTP AT commands
- */
-void slm_at_ftp_clac(void)
-{
-	sprintf(rsp_buf, "%s\r\n", AT_FTP_STR);
-	rsp_send(rsp_buf, strlen(rsp_buf));
 }
 
 /**@brief API to initialize FTP AT commands handler

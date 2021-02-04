@@ -9,7 +9,6 @@
 #include <string.h>
 #include <net/socket.h>
 #include <nrf_socket.h>
-#include <modem/modem_info.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_icmp.h"
@@ -30,12 +29,6 @@ LOG_MODULE_REGISTER(icmp, CONFIG_SLM_LOG_LEVEL);
  * - IPv6 support
  */
 
-/**@brief List of supported AT commands. */
-enum slm_icmp_at_cmd_type {
-	AT_ICMP_PING,
-	AT_ICMP_MAX
-};
-
 /**@ ICMP Ping command arguments */
 static struct ping_argv_t {
 	struct addrinfo *src;
@@ -51,14 +44,6 @@ void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct k_work_q slm_work_q;
-
-/** forward declaration of cmd handlers **/
-static int handle_at_icmp_ping(enum at_cmd_type cmd_type);
-
-/**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t icmp_at_list[AT_ICMP_MAX] = {
-	{AT_ICMP_PING, "AT#XPING", handle_at_icmp_ping},
-};
 
 static struct k_work my_work;
 
@@ -372,7 +357,7 @@ static int ping_test_handler(const char *url, int length, int waittime,
  *  AT#XPING? READ command not supported
  *  AT#XPING=? TEST command not supported
  */
-static int handle_at_icmp_ping(enum at_cmd_type cmd_type)
+int handle_at_icmp_ping(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	char url[ICMP_MAX_URL];
@@ -417,40 +402,6 @@ static int handle_at_icmp_ping(enum at_cmd_type cmd_type)
 	}
 
 	return err;
-}
-
-/**@brief API to handle TCP/IP AT commands
- */
-int slm_at_icmp_parse(const char *at_cmd)
-{
-	int ret = -ENOENT;
-	enum at_cmd_type type;
-
-	for (int i = 0; i < AT_ICMP_MAX; i++) {
-		if (slm_util_cmd_casecmp(at_cmd, icmp_at_list[i].string)) {
-			ret = at_parser_params_from_str(at_cmd, NULL,
-						&at_param_list);
-			if (ret < 0) {
-				LOG_ERR("Failed to parse AT command %d", ret);
-				return -EINVAL;
-			}
-			type = at_parser_cmd_type_get(at_cmd);
-			ret = icmp_at_list[i].handler(type);
-			break;
-		}
-	}
-
-	return ret;
-}
-
-/**@brief API to list ICMP AT commands
- */
-void slm_at_icmp_clac(void)
-{
-	for (int i = 0; i < AT_ICMP_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", icmp_at_list[i].string);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-	}
 }
 
 /**@brief API to initialize ICMP AT commands handler

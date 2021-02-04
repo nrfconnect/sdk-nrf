@@ -21,16 +21,6 @@
 /**@brief Data mode sending handler type. */
 typedef int (*slm_data_mode_handler_t) (const uint8_t *data, int len);
 
-/**@brief AT command handler type. */
-typedef int (*slm_at_handler_t) (enum at_cmd_type);
-
-/**@brief AT command list item type. */
-typedef struct slm_at_cmd_list {
-	uint8_t type;
-	char *string;
-	slm_at_handler_t handler;
-} slm_at_cmd_list_t;
-
 /**@brief Arbitrary data type over AT channel. */
 enum slm_data_type_t {
 	DATATYPE_HEXADECIMAL,
@@ -48,6 +38,12 @@ enum slm_data_type_t {
  *           Otherwise, a (negative) error code is returned.
  */
 int slm_at_host_init(void);
+
+/**
+ * @brief Uninitialize AT host for serial LTE modem
+ *
+ */
+void slm_at_host_uninit(void);
 
 /** @} */
 

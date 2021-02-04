@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <net/socket.h>
-#include <modem/modem_info.h>
 #include <sys/ring_buffer.h>
 #include "slm_util.h"
 #include "slm_native_tls.h"
@@ -42,32 +41,6 @@ enum slm_tcp_proxy_operation {
 enum slm_tcp_proxy_role {
 	AT_TCP_ROLE_CLIENT,
 	AT_TCP_ROLE_SERVER
-};
-
-/**@brief List of supported AT commands. */
-enum slm_tcp_proxy_at_cmd_type {
-	AT_TCP_FILTER,
-	AT_TCP_SERVER,
-	AT_TCP_CLIENT,
-	AT_TCP_SEND,
-	AT_TCP_RECV,
-	AT_TCP_PROXY_MAX
-};
-
-/** forward declaration of cmd handlers **/
-static int handle_at_tcp_filter(enum at_cmd_type cmd_type);
-static int handle_at_tcp_server(enum at_cmd_type cmd_type);
-static int handle_at_tcp_client(enum at_cmd_type cmd_type);
-static int handle_at_tcp_send(enum at_cmd_type cmd_type);
-static int handle_at_tcp_recv(enum at_cmd_type cmd_type);
-
-/**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t tcp_proxy_at_list[AT_TCP_PROXY_MAX] = {
-	{AT_TCP_FILTER, "AT#XTCPFILTER", handle_at_tcp_filter},
-	{AT_TCP_SERVER, "AT#XTCPSVR", handle_at_tcp_server},
-	{AT_TCP_CLIENT, "AT#XTCPCLI", handle_at_tcp_client},
-	{AT_TCP_SEND, "AT#XTCPSEND", handle_at_tcp_send},
-	{AT_TCP_RECV, "AT#XTCPRECV", handle_at_tcp_recv},
 };
 
 static char ip_allowlist[CONFIG_SLM_TCP_FILTER_SIZE][INET_ADDRSTRLEN];
@@ -210,7 +183,7 @@ static int do_tcp_server_start(uint16_t port)
 			tcpsvr_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 	proxy.role = AT_TCP_ROLE_SERVER;
-	sprintf(rsp_buf, "#XTCPSVR: %d,\"started\"\r\n", proxy.sock);
+	sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"started\"\r\n", proxy.sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 exit:
@@ -226,7 +199,7 @@ exit:
 		}
 #endif
 		slm_at_tcp_proxy_init();
-		sprintf(rsp_buf, "#XTCPSVR: %d\r\n", ret);
+		sprintf(rsp_buf, "\r\n#XTCPSVR: %d\r\n", ret);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
@@ -324,7 +297,7 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
 	proxy.role = AT_TCP_ROLE_CLIENT;
-	sprintf(rsp_buf, "#XTCPCLI: %d,\"connected\"\r\n", proxy.sock);
+	sprintf(rsp_buf, "\r\n#XTCPCLI: %d,\"connected\"\r\n", proxy.sock);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 exit:
@@ -333,7 +306,7 @@ exit:
 			close(proxy.sock);
 		}
 		slm_at_tcp_proxy_init();
-		sprintf(rsp_buf, "#XTCPCLI: %d\r\n", ret);
+		sprintf(rsp_buf, "\r\n#XTCPCLI: %d\r\n", ret);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
@@ -371,7 +344,7 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 		ret = send(sock, data + offset, datalen - offset, 0);
 		if (ret < 0) {
 			LOG_ERR("send() failed: %d", -errno);
-			sprintf(rsp_buf, "#XTCPSEND: %d\r\n", -errno);
+			sprintf(rsp_buf, "\r\n#XTCPSEND: %d\r\n", -errno);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			if (errno != EAGAIN && errno != ETIMEDOUT) {
 				if (proxy.role == AT_TCP_ROLE_CLIENT) {
@@ -387,7 +360,7 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 	}
 
 	if (ret >= 0) {
-		sprintf(rsp_buf, "#XTCPSEND: %d\r\n", offset);
+		sprintf(rsp_buf, "\r\n#XTCPSEND: %d\r\n", offset);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		/* restart activity timer */
 		if (proxy.role == AT_TCP_ROLE_SERVER) {
@@ -466,18 +439,16 @@ static void tcp_data_handle(uint8_t *data, uint32_t length)
 			return;
 		}
 		if (tcp_data_save(data_hex, ret) < 0) {
-			sprintf(rsp_buf, "#XTCPDATA: \"overrun\"\r\n");
+			sprintf(rsp_buf, "\r\n#XTCPDATA: \"overrun\"\r\n");
 		} else {
-			sprintf(rsp_buf, "#XTCPDATA: %d,%d\r\n",
-				DATATYPE_HEXADECIMAL, ret);
+			sprintf(rsp_buf, "\r\n#XTCPDATA: %d,%d\r\n", DATATYPE_HEXADECIMAL, ret);
 		}
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	} else {
 		if (tcp_data_save(data, length) < 0) {
-			sprintf(rsp_buf, "#XTCPDATA: \"overrun\"\r\n");
+			sprintf(rsp_buf, "\r\n#XTCPDATA: \"overrun\"\r\n");
 		} else {
-			sprintf(rsp_buf, "#XTCPDATA: %d,%d\r\n",
-			DATATYPE_PLAINTEXT, length);
+			sprintf(rsp_buf, "\r\n#XTCPDATA: %d,%d\r\n", DATATYPE_PLAINTEXT, length);
 		}
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
@@ -495,8 +466,7 @@ static void tcp_terminate_connection(int cause)
 	proxy.sock_peer = INVALID_SOCKET;
 	nfds--;
 	/* Send URC for server-initiated disconnect */
-	sprintf(rsp_buf,
-		"#XTCPSVR: %d,\"disconnected\"\r\n", cause);
+	sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"disconnected\"\r\n", cause);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 }
 
@@ -551,8 +521,7 @@ static int tcpsvr_input(int infd)
 				return -ECONNREFUSED;
 			}
 		}
-		sprintf(rsp_buf, "#XTCPSVR: \"%s\",\"connected\"\r\n",
-			peer_addr);
+		sprintf(rsp_buf, "\r\n#XTCPSVR: \"%s\",\"connected\"\r\n", peer_addr);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		proxy.sock_peer = ret;
 		if (proxy.datamode) {
@@ -563,9 +532,7 @@ static int tcpsvr_input(int infd)
 		fds[nfds].events = POLLIN;
 		nfds++;
 		/* Start a one-shot timer to close the connection */
-		k_timer_start(&conn_timer,
-			      K_SECONDS(CONFIG_SLM_TCP_CONN_TIME),
-			      K_NO_WAIT);
+		k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME), K_NO_WAIT);
 	} else {
 		k_timer_stop(&conn_timer);
 		ret = recv(fds[infd].fd, rx_data, sizeof(rx_data), 0);
@@ -577,9 +544,7 @@ static int tcpsvr_input(int infd)
 		}
 		/* Restart conn timer */
 		LOG_DBG("restart timer: POLLIN");
-		k_timer_start(&conn_timer,
-			      K_SECONDS(CONFIG_SLM_TCP_CONN_TIME),
-			      K_NO_WAIT);
+		k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME), K_NO_WAIT);
 	}
 
 	return ret;
@@ -675,11 +640,11 @@ exit:
 #endif
 	in_datamode = proxy.datamode;
 	slm_at_tcp_proxy_init();
-	sprintf(rsp_buf, "#XTCPSVR: %d,\"stopped\"\r\n", ret);
+	sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	if (in_datamode) {
 		if (exit_datamode()) {
-			sprintf(rsp_buf, "#XTCPSVR: 0,\"datamode\"\r\n");
+			sprintf(rsp_buf, "\r\n#XTCPSVR: 0,\"datamode\"\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		}
 	}
@@ -744,11 +709,11 @@ exit:
 	}
 	in_datamode = proxy.datamode;
 	slm_at_tcp_proxy_init();
-	sprintf(rsp_buf, "#XTCPCLI: %d,\"disconnected\"\r\n", ret);
+	sprintf(rsp_buf, "\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	if (in_datamode) {
 		if (exit_datamode()) {
-			sprintf(rsp_buf, "#XTCPCLI: 0,\"datamode\"\r\n");
+			sprintf(rsp_buf, "\r\n#XTCPCLI: 0,\"datamode\"\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		}
 	}
@@ -759,7 +724,7 @@ exit:
  *  AT#XTCPFILTER?
  *  AT#XTCPFILTER=?
  */
-static int handle_at_tcp_filter(enum at_cmd_type cmd_type)
+int handle_at_tcp_filter(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
@@ -800,7 +765,7 @@ static int handle_at_tcp_filter(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "#XTCPFILTER: %d", proxy.filtermode);
+		sprintf(rsp_buf, "\r\n#XTCPFILTER: %d", proxy.filtermode);
 		for (int i = 0; i < CONFIG_SLM_TCP_FILTER_SIZE; i++) {
 			if (strlen(ip_allowlist[i]) > 0) {
 				strcat(rsp_buf, ",\"");
@@ -814,7 +779,7 @@ static int handle_at_tcp_filter(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XTCPFILTER: (%d,%d)",
+		sprintf(rsp_buf, "\r\n#XTCPFILTER: (%d,%d)",
 			AT_FILTER_CLEAR, AT_FILTER_SET);
 		strcat(rsp_buf, ",<IP_ADDR#1>[,<IP_ADDR#2>[,...]]\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
@@ -833,7 +798,7 @@ static int handle_at_tcp_filter(enum at_cmd_type cmd_type)
  *  AT#XTCPSVR?
  *  AT#XTCPSVR=?
  */
-static int handle_at_tcp_server(enum at_cmd_type cmd_type)
+int handle_at_tcp_server(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
@@ -880,22 +845,15 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		if (proxy.sock != INVALID_SOCKET &&
-		    proxy.role == AT_TCP_ROLE_SERVER) {
-			sprintf(rsp_buf, "#XTCPSVR: %d,%d,%d\r\n",
-				proxy.sock, proxy.sock_peer, proxy.datamode);
-		} else {
-			sprintf(rsp_buf, "#XTCPSVR: %d,%d\r\n",
-				INVALID_SOCKET, INVALID_SOCKET);
-		}
+		sprintf(rsp_buf, "\r\n#XTCPSVR: %d,%d,%d\r\n",
+			proxy.sock, proxy.sock_peer, proxy.datamode);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XTCPSVR: (%d,%d,%d),<port>,<sec_tag>\r\n",
-			AT_SERVER_STOP, AT_SERVER_START,
-			AT_SERVER_START_WITH_DATAMODE);
+		sprintf(rsp_buf, "\r\n#XTCPSVR: (%d,%d,%d),<port>,<sec_tag>\r\n",
+			AT_SERVER_STOP, AT_SERVER_START, AT_SERVER_START_WITH_DATAMODE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -912,7 +870,7 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
  *  AT#XTCPCLI?
  *  AT#XTCPCLI=?
  */
-static int handle_at_tcp_client(enum at_cmd_type cmd_type)
+int handle_at_tcp_client(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
@@ -966,17 +924,14 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "#XTCPCLI: %d,%d\r\n",
-			proxy.sock, proxy.datamode);
+		sprintf(rsp_buf, "\r\n#XTCPCLI: %d,%d\r\n", proxy.sock, proxy.datamode);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf,
-			"#XTCPCLI: (%d,%d,%d),<url>,<port>,<sec_tag>\r\n",
-			AT_CLIENT_DISCONNECT, AT_CLIENT_CONNECT,
-			AT_CLIENT_CONNECT_WITH_DATAMODE);
+		sprintf(rsp_buf, "\r\n#XTCPCLI: (%d,%d,%d),<url>,<port>,<sec_tag>\r\n",
+			AT_CLIENT_DISCONNECT, AT_CLIENT_CONNECT, AT_CLIENT_CONNECT_WITH_DATAMODE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -993,7 +948,7 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
  *  AT#XTCPSEND? READ command not supported
  *  AT#XTCPSEND=? TEST command not supported
  */
-static int handle_at_tcp_send(enum at_cmd_type cmd_type)
+int handle_at_tcp_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t datatype;
@@ -1034,7 +989,7 @@ static int handle_at_tcp_send(enum at_cmd_type cmd_type)
  *  AT#XTCPRECV? READ command not supported
  *  AT#XTCPRECV=? TEST command not supported
  */
-static int handle_at_tcp_recv(enum at_cmd_type cmd_type)
+int handle_at_tcp_recv(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t length = 0;
@@ -1059,7 +1014,7 @@ static int handle_at_tcp_recv(enum at_cmd_type cmd_type)
 			rsp_send(rsp_buf, sz_send);
 			rsp_send("\r\n", 2);
 		}
-		sprintf(rsp_buf, "#XTCPRECV: %d\r\n", sz_send);
+		sprintf(rsp_buf, "\r\n#XTCPRECV: %d\r\n", sz_send);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 	} break;
@@ -1069,41 +1024,6 @@ static int handle_at_tcp_recv(enum at_cmd_type cmd_type)
 	}
 
 	return err;
-}
-
-/**@brief API to handle TCP proxy AT commands
- */
-int slm_at_tcp_proxy_parse(const char *at_cmd)
-{
-	int ret = -ENOENT;
-	enum at_cmd_type type;
-
-	for (int i = 0; i < AT_TCP_PROXY_MAX; i++) {
-		if (slm_util_cmd_casecmp(at_cmd,
-			tcp_proxy_at_list[i].string)) {
-			ret = at_parser_params_from_str(at_cmd, NULL,
-						&at_param_list);
-			if (ret) {
-				LOG_ERR("Failed to parse AT command %d", ret);
-				return -EINVAL;
-			}
-			type = at_parser_cmd_type_get(at_cmd);
-			ret = tcp_proxy_at_list[i].handler(type);
-			break;
-		}
-	}
-
-	return ret;
-}
-
-/**@brief API to list TCP proxy AT commands
- */
-void slm_at_tcp_proxy_clac(void)
-{
-	for (int i = 0; i < AT_TCP_PROXY_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", tcp_proxy_at_list[i].string);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-	}
 }
 
 /**@brief API to initialize TCP proxy AT commands handler

@@ -12,26 +12,6 @@
  * @brief Vendor-specific AT command for TCP proxy service.
  * @{
  */
-
-#include <zephyr/types.h>
-#include <modem/at_cmd.h>
-
-/**
- * @brief TCP proxy AT command parser.
- *
- * @param at_cmd AT command or data string.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, negative code means error.
- */
-int slm_at_tcp_proxy_parse(const char *at_cmd);
-
-/**
- * @brief List TCP proxy AT commands.
- *
- */
-void slm_at_tcp_proxy_clac(void);
-
 /**
  * @brief Initialize TCP proxy AT command parser.
  *

@@ -11,6 +11,7 @@
 #include <net/socket.h>
 #include <random/rand32.h>
 #include "slm_util.h"
+#include "slm_at_host.h"
 #include "slm_native_tls.h"
 #include "slm_at_mqtt.h"
 
@@ -35,29 +36,6 @@ enum slm_mqttcon_operation {
 enum slm_mqttsub_operation {
 	AT_MQTTSUB_UNSUB,
 	AT_MQTTSUB_SUB
-};
-
-/**@brief List of supported AT commands. */
-enum slm_mqtt_at_cmd_type {
-	AT_MQTT_CONNECT,
-	AT_MQTT_PUBLISH,
-	AT_MQTT_SUBSCRIBE,
-	AT_MQTT_UNSUBSCRIBE,
-	AT_MQTT_MAX
-};
-
-/** forward declaration of cmd handlers **/
-static int handle_at_mqtt_connect(enum at_cmd_type cmd_type);
-static int handle_at_mqtt_publish(enum at_cmd_type cmd_type);
-static int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type);
-static int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type);
-
-/**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t mqtt_at_list[AT_MQTT_MAX] = {
-	{AT_MQTT_CONNECT, "AT#XMQTTCON", handle_at_mqtt_connect},
-	{AT_MQTT_PUBLISH, "AT#XMQTTPUB", handle_at_mqtt_publish},
-	{AT_MQTT_SUBSCRIBE, "AT#XMQTTSUB", handle_at_mqtt_subscribe},
-	{AT_MQTT_UNSUBSCRIBE, "AT#XMQTTUNSUB", handle_at_mqtt_unsubscribe},
 };
 
 static struct slm_mqtt_ctx {
@@ -587,7 +565,7 @@ static int do_mqtt_subscribe(uint16_t op,
  *  AT#XMQTTCON?
  *  AT#XMQTTCON=?
  */
-static int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
+int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 
@@ -711,7 +689,7 @@ static int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
  *  AT#XMQTTPUB? READ command not supported
  *  AT#XMQTTPUB=?
  */
-static int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
+int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 
@@ -786,7 +764,7 @@ static int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
  *  AT#XMQTTSUB? READ command not supported
  *  AT#XMQTTSUB=?
  */
-static int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
+int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t qos;
@@ -830,7 +808,7 @@ static int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
  *  AT#XMQTTUNSUB? READ command not supported
  *  AT#XMQTTUNSUB=?
  */
-static int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type)
+int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	char topic[MQTT_MAX_TOPIC_LEN];
@@ -862,40 +840,6 @@ static int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type)
 	}
 
 	return err;
-}
-
-/**@brief API to handle MQTT AT commands
- */
-int slm_at_mqtt_parse(const char *at_cmd)
-{
-	int ret = -ENOENT;
-	enum at_cmd_type type;
-
-	for (int i = 0; i < AT_MQTT_MAX; i++) {
-		if (slm_util_cmd_casecmp(at_cmd, mqtt_at_list[i].string)) {
-			ret = at_parser_params_from_str(at_cmd, NULL,
-						&at_param_list);
-			if (ret) {
-				LOG_ERR("Failed to parse AT command %d", ret);
-				return -EINVAL;
-			}
-			type = at_parser_cmd_type_get(at_cmd);
-			ret = mqtt_at_list[i].handler(type);
-			break;
-		}
-	}
-
-	return ret;
-}
-
-/**@brief API to list MQTT AT commands
- */
-void slm_at_mqtt_clac(void)
-{
-	for (int i = 0; i < AT_MQTT_MAX; i++) {
-		sprintf(rsp_buf, "%s\r\n", mqtt_at_list[i].string);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-	}
 }
 
 int slm_at_mqtt_init(void)

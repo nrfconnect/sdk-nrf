@@ -32,8 +32,6 @@ enum slm_gps_mode {
 	GPS_MODE_AGPS
 };
 
-#define AT_GPS	"AT#XGPS"
-
 static struct gps_client {
 	int sock; /* Socket descriptor. */
 	uint16_t mask; /* NMEA mask */
@@ -409,7 +407,7 @@ static int do_gps_stop(void)
  *  AT#XGPS?
  *  AT#XGPS=? TEST command not supported
  */
-static int handle_at_gps(enum at_cmd_type cmd_type)
+int handle_at_gps(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
@@ -462,32 +460,6 @@ static int handle_at_gps(enum at_cmd_type cmd_type)
 	}
 
 	return err;
-}
-
-/**@brief API to handle GPS AT commands
- */
-int slm_at_gps_parse(const char *at_cmd)
-{
-	int ret = -ENOENT;
-
-	if (slm_util_cmd_casecmp(at_cmd, AT_GPS)) {
-		ret = at_parser_params_from_str(at_cmd, NULL, &at_param_list);
-		if (ret < 0) {
-			LOG_ERR("Failed to parse AT command %d", ret);
-			return -EINVAL;
-		}
-		ret = handle_at_gps(at_parser_cmd_type_get(at_cmd));
-	}
-
-	return ret;
-}
-
-/**@brief API to list GPS AT commands
- */
-void slm_at_gps_clac(void)
-{
-	sprintf(rsp_buf, "%s\r\n", AT_GPS);
-	rsp_send(rsp_buf, strlen(rsp_buf));
 }
 
 /**@brief API to initialize GPS AT commands handler

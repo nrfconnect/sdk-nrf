@@ -27,8 +27,6 @@ LOG_MODULE_REGISTER(fota, CONFIG_SLM_LOG_LEVEL);
 
 #define APN_MAX		32
 
-#define AT_FOTA	"AT#XFOTA"
-
 /* Some features need fota_download update */
 #define FOTA_FUTURE_FEATURE	0
 
@@ -177,7 +175,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
  *  AT#XFOTA? TEST command not supported
  *  AT#XFOTA=?
  */
-static int handle_at_fota(enum at_cmd_type cmd_type)
+int handle_at_fota(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
@@ -252,32 +250,6 @@ static int handle_at_fota(enum at_cmd_type cmd_type)
 	}
 
 	return err;
-}
-
-/**@brief API to handle FOTA AT commands
- */
-int slm_at_fota_parse(const char *at_cmd)
-{
-	int ret = -ENOENT;
-
-	if (slm_util_cmd_casecmp(at_cmd, AT_FOTA)) {
-		ret = at_parser_params_from_str(at_cmd, NULL, &at_param_list);
-		if (ret < 0) {
-			LOG_ERR("Failed to parse AT command %d", ret);
-			return -EINVAL;
-		}
-		ret = handle_at_fota(at_parser_cmd_type_get(at_cmd));
-	}
-
-	return ret;
-}
-
-/**@brief API to list FOTA AT commands
- */
-void slm_at_fota_clac(void)
-{
-	sprintf(rsp_buf, "%s\r\n", AT_FOTA);
-	rsp_send(rsp_buf, strlen(rsp_buf));
 }
 
 /**@brief API to initialize FOTA AT commands handler
