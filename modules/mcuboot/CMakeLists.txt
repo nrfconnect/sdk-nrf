@@ -187,7 +187,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       --pad-header
       )
 
-    if(CONFIG_ZIGBEE)
+    if(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
       set(zb_add_ota_header_cmd
         ${PYTHON_EXECUTABLE}
         ${NRF_DIR}/scripts/bootloader/zb_add_ota_header.py
@@ -202,7 +202,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         )
       else()
         set(zb_add_ota_header_cmd "")
-      endif(CONFIG_ZIGBEE)
+      endif(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
 
     set(app_offset $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>)
 
