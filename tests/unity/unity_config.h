@@ -1,6 +1,6 @@
 /* Copyright (c) 2021 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #ifndef UNITY_CONFIG_H__
 #define UNITY_CONFIG_H__

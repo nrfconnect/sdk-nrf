@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2020 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 function(get_board_without_ns_suffix board_in board_out)

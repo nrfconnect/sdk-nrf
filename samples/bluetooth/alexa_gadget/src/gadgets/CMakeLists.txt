@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2020 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 # The Gadgets Profile relies on the nanopb generator tool, which must be
