@@ -9,4 +9,3 @@ menu "External libraries"
 rsource "cjson/Kconfig"
 
 endmenu
-

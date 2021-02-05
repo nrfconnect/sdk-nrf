@@ -26,5 +26,3 @@ module-str = nfc_platform
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_PLATFORM
-
-

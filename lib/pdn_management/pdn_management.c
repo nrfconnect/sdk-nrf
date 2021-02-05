@@ -33,4 +33,3 @@ void pdn_disconnect(int pdn_fd)
 {
 	close(pdn_fd);
 }
-
