@@ -1,0 +1,4 @@
+tests:
+  modules.lib.cddl_gen:
+    build_only: true
+    tags: cddl-gen
