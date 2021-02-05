@@ -111,7 +111,7 @@ int url_parse_port(const char *url, uint16_t *port)
 		len = end - cur;
 	}
 
-	len = MAX(len, sizeof(aport) - 1);
+	len = MIN(len, sizeof(aport) - 1);
 
 	memcpy(aport, cur, len);
 	aport[len] = '\0';
