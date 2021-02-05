@@ -618,6 +618,7 @@ int download_client_connect(struct download_client *client, const char *host,
 		return -E2BIG;
 	}
 
+	err = 0;
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
 		err = host_lookup(host, AF_INET6, config->apn, &sa);
