@@ -214,9 +214,10 @@ int lte_lc_normal(void);
  * to be used when psm mode is subsequently enabled using `lte_lc_psm_req`.
  * For reference see 3GPP 27.007 Ch. 7.38.
  *
- * @param rptau Requested periodic TAU.
- * @param rat Requested active time
- *
+ * @param rptau Requested periodic TAU as null-terminated string.
+ *        Set NULL to use manufacturer-specific default value.
+ * @param rat Requested active time as null-terminated string.
+ *         Set NULL to use manufacturer-specific default value.
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_psm_param_set(const char *rptau, const char *rat);
@@ -247,6 +248,7 @@ int lte_lc_psm_get(int *tau, int *active_time);
  *	   For reference see subclause 10.5.5.32 of 3GPP TS 24.008.
  *
  * @param ptw Paging Time Window value as null-terminated string.
+ *        Set NULL to use manufacturer-specific default value.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
@@ -256,7 +258,8 @@ int lte_lc_ptw_set(const char *ptw);
  * eDRX is subsequently enabled using `lte_lc_edrx_req`.
  * For reference see 3GPP 27.007 Ch. 7.40.
  *
- * @param edrx eDRX value.
+ * @param edrx eDRX value as null-terminated string.
+ *        Set NULL to use manufacturer-specific default.
  *
  * @return Zero on success or (negative) error code otherwise.
  */

@@ -172,6 +172,10 @@ nRF9160
 
     * Updated the default server URL to ``mqtt.eclipseprojects.io``.
 
+  * :ref:`lte_lc_readme` library:
+
+    * Added support for manufacturer-specific default eDRX/PSM values.
+
 Common
 ======
 

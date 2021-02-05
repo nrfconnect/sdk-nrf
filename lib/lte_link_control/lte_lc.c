@@ -814,13 +814,27 @@ int lte_lc_normal(void)
 
 int lte_lc_psm_param_set(const char *rptau, const char *rat)
 {
-	if (rptau == NULL || strlen(rptau) != 8 ||
-		rat == NULL || strlen(rat) != 8) {
+	if ((rptau != NULL && strlen(rptau) != 8) ||
+	    (rat != NULL && strlen(rat) != 8)) {
 		return -EINVAL;
 	}
 
-	memcpy(psm_param_rptau, rptau, sizeof(psm_param_rptau));
-	memcpy(psm_param_rat, rat, sizeof(psm_param_rat));
+	if (rptau != NULL) {
+		strcpy(psm_param_rptau, rptau);
+		LOG_DBG("RPTAU set to %s", log_strdup(psm_param_rptau));
+	} else {
+		*psm_param_rptau = '\0';
+		LOG_DBG("RPTAU use default");
+	}
+
+	if (rat != NULL) {
+		strcpy(psm_param_rat, rat);
+		LOG_DBG("RAT set to %s", log_strdup(psm_param_rat));
+	} else {
+		*psm_param_rat = '\0';
+		LOG_DBG("RAT use default");
+	}
+
 	return 0;
 }
 
@@ -831,10 +845,23 @@ int lte_lc_psm_req(bool enable)
 	if (enable) {
 		char psm_req[40];
 
-		snprintf(psm_req, sizeof(psm_req),
+		if (strlen(psm_param_rptau) == 8 &&
+		    strlen(psm_param_rat) == 8) {
+			snprintf(psm_req, sizeof(psm_req),
 			"AT+CPSMS=1,,,\"%s\",\"%s\"",
 			psm_param_rptau, psm_param_rat);
-
+		} else if (strlen(psm_param_rptau) == 8) {
+			snprintf(psm_req, sizeof(psm_req),
+				"AT+CPSMS=1,,,\"%s\"",
+				psm_param_rptau);
+		} else if (strlen(psm_param_rat) == 8) {
+			snprintf(psm_req, sizeof(psm_req),
+				"AT+CPSMS=1,,,,\"%s\"",
+				psm_param_rat);
+		} else {
+			snprintf(psm_req, sizeof(psm_req),
+				"AT+CPSMS=1");
+		}
 		err = at_cmd_write(psm_req, NULL, 0, NULL);
 	} else {
 		err = at_cmd_write(psm_disable, NULL, 0, NULL);
@@ -906,24 +933,34 @@ parse_psm_clean_exit:
 
 int lte_lc_edrx_param_set(const char *edrx)
 {
-	if (edrx == NULL || strlen(edrx) != 4) {
+	if (edrx != NULL && strlen(edrx) != 4) {
 		return -EINVAL;
 	}
 
-	memcpy(edrx_param, edrx, sizeof(edrx_param));
+	if (edrx != NULL) {
+		strcpy(edrx_param, edrx);
+		LOG_DBG("eDRX set to %s", log_strdup(edrx_param));
+	} else {
+		*edrx_param = '\0';
+		LOG_DBG("eDRX use default");
+	}
 
 	return 0;
 }
 
 int lte_lc_ptw_set(const char *ptw)
 {
-	if (ptw == NULL || strlen(ptw) != 4) {
+	if (ptw != NULL && strlen(ptw) != 4) {
 		return -EINVAL;
 	}
 
-	strncpy(ptw_param, ptw, sizeof(ptw_param));
-
-	LOG_DBG("PTW set to %s", log_strdup(ptw_param));
+	if (ptw != NULL) {
+		strcpy(ptw_param, ptw);
+		LOG_DBG("PTW set to %s", log_strdup(ptw_param));
+	} else {
+		*ptw_param = '\0';
+		LOG_DBG("PTW use default");
+	}
 
 	return 0;
 }
@@ -931,6 +968,7 @@ int lte_lc_ptw_set(const char *ptw)
 int lte_lc_edrx_req(bool enable)
 {
 	int err, actt;
+	char req[25];
 
 	if (sys_mode_current == LTE_LC_SYSTEM_MODE_NONE) {
 		err = lte_lc_system_mode_get(&sys_mode_current);
@@ -955,39 +993,36 @@ int lte_lc_edrx_req(bool enable)
 	}
 
 	if (enable) {
-		char edrx_req[25];
-
-		snprintf(edrx_req, sizeof(edrx_req),
-			 "AT+CEDRXS=2,%d,\"%s\"", actt, edrx_param);
-		err = at_cmd_write(edrx_req, NULL, 0, NULL);
+		if (strlen(edrx_param) == 4) {
+			snprintf(req, sizeof(req),
+				"AT+CEDRXS=2,%d,\"%s\"", actt, edrx_param);
+		} else {
+			snprintf(req, sizeof(req),
+				"AT+CEDRXS=2,%d", actt);
+		}
+		err = at_cmd_write(req, NULL, 0, NULL);
 	} else {
 		err = at_cmd_write(edrx_disable, NULL, 0, NULL);
 	}
-
 	if (err) {
 		LOG_ERR("Failed to %s eDRX, error: %d",
 			enable ? "enable" : "disable", err);
 		return err;
 	}
 
-	/* PTW must be requested after AT+CEDRXS is sent, and the length of the
-	 * string must be 4 to be valid.
-	 */
-	if (strlen(ptw_param) == 4) {
-		char ptw[25];
-		ssize_t len;
-
-		len = snprintf(ptw, sizeof(ptw),
-			       "AT%%XPTW=%d,\"%s\"", actt, ptw_param);
-		if ((len < 0) || (len >= sizeof(ptw))) {
-			LOG_ERR("Failed to create PTW request");
-			return -ENOMEM;
+	/* PTW must be requested after eDRX is enabled */
+	if (enable) {
+		if (strlen(ptw_param) == 4) {
+			snprintf(req, sizeof(req),
+				"AT%%XPTW=%d,\"%s\"", actt, ptw_param);
+		} else {
+			snprintf(req, sizeof(req),
+				"AT%%XPTW=%d", actt);
 		}
-
-		err = at_cmd_write(ptw, NULL, 0, NULL);
+		err = at_cmd_write(req, NULL, 0, NULL);
 		if (err) {
 			LOG_ERR("Failed to request PTW (%s), error: %d",
-				log_strdup(ptw), err);
+				log_strdup(req), err);
 			return err;
 		}
 	}
