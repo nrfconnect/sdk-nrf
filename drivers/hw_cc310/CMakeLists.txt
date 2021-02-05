@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2019-2020 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 if(CONFIG_HW_CC3XX OR CONFIG_HW_CC3XX_INTERRUPT)
   zephyr_library()
