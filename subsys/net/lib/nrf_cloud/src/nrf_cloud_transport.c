@@ -193,7 +193,7 @@ static void dc_endpoint_reset(void)
 }
 
 /* Get the next unused message id. */
-static uint32_t dc_get_next_message_id(void)
+static uint32_t get_next_message_id(void)
 {
 	nct.message_id++;
 
@@ -255,7 +255,7 @@ static uint32_t dc_send(const struct nct_dc_data *dc_data, uint8_t qos)
 	if (dc_data->id != 0) {
 		publish.message_id = dc_data->id;
 	} else {
-		publish.message_id = dc_get_next_message_id();
+		publish.message_id = get_next_message_id();
 	}
 
 	return mqtt_publish(&nct.client, &publish);
@@ -957,8 +957,6 @@ int nct_cc_connect(void)
 
 int nct_cc_send(const struct nct_cc_data *cc_data)
 {
-	static uint32_t msg_id;
-
 	if (cc_data == NULL) {
 		LOG_ERR("cc_data == NULL");
 		return -EINVAL;
@@ -983,7 +981,7 @@ int nct_cc_send(const struct nct_cc_data *cc_data)
 		publish.message.payload.len = cc_data->data.len;
 	}
 
-	publish.message_id = cc_data->id ? cc_data->id : ++msg_id;
+	publish.message_id = cc_data->id ? cc_data->id : get_next_message_id();
 
 	LOG_DBG("mqtt_publish: id = %d opcode = %d len = %d", publish.message_id,
 		cc_data->opcode, cc_data->data.len);
