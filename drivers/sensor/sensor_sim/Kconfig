@@ -34,6 +34,24 @@ config SENSOR_SIM_ACCEL_TOGGLE
 
 endchoice
 
+config SENSOR_SIM_BASE_TEMPERATURE
+	int "Base temperature value"
+	default 21
+	help
+	  Sensor reports base temperature value with a simulated noise.
+
+config SENSOR_SIM_BASE_HUMIDITY
+	int "Base humidity value"
+	default 52
+	help
+	  Sensor reports base humidity value with a simulated noise.
+
+config SENSOR_SIM_BASE_PRESSURE
+	int "Base pressure value"
+	default 98
+	help
+	  Sensor reports base pressure value with a simulated noise.
+
 config SENSOR_SIM_TRIGGER
 	bool "Sensor simulator trigger"
 	help

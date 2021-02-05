@@ -23,12 +23,6 @@ LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
 static const double base_accel_samples[3] = {0.0, 0.0, 0.0};
 static double accel_samples[3];
 
-/* TODO: Make base sensor data configurable from Kconfig, along with more
- * detailed control over the sensor data data generation.
- */
-static const double base_temp_sample = 21.0;
-static const double base_humidity_sample = 52.0;
-static const double base_pressure_sample = 98.2;
 static double temp_sample;
 static double humidity_sample;
 static double pressure_sample;
@@ -298,7 +292,8 @@ static int generate_accel_data(enum sensor_channel chan)
  */
 static void generate_temp_data(void)
 {
-	temp_sample = base_temp_sample + generate_pseudo_random();
+	temp_sample = CONFIG_SENSOR_SIM_BASE_TEMPERATURE +
+		      generate_pseudo_random();
 }
 
 /**
@@ -306,7 +301,8 @@ static void generate_temp_data(void)
  */
 static void generate_humidity_data(void)
 {
-	humidity_sample = base_humidity_sample + generate_pseudo_random();
+	humidity_sample = CONFIG_SENSOR_SIM_BASE_HUMIDITY +
+			  generate_pseudo_random();
 }
 
 /**
@@ -314,7 +310,8 @@ static void generate_humidity_data(void)
  */
 static void generate_pressure_data(void)
 {
-	pressure_sample = base_pressure_sample + generate_pseudo_random();
+	pressure_sample = CONFIG_SENSOR_SIM_BASE_PRESSURE +
+			  generate_pseudo_random();
 }
 
 /*
