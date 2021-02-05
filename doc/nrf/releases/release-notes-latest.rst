@@ -367,13 +367,17 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed and improved an issue where a connection event closed too early when more data could have been sent in the same connection event.
     * Fixed missing slave latency cancellation when initiating control procedures.
       Connection terminations are faster now.
-    * Added experimental support for non-connectable non-scannable Extended Advertising with 255 byte PDU (without chaining).
-    * Added experimental support for non-connectable scannable Extended Advertising with 255 byte PDU (without chaining).
+    * Added experimental support for non-connectable scannable Extended Advertising with 255 byte PDU (without chaining and privacy support).
+    * Added experimental support for connectable non-scannable Extended Advertising with 255 byte PDU (without chaining and privacy support).
+    * Added experimental support for non-connectable non-scannable Extended Advertising with 255 byte PDU (without chaining and privacy support).
     * Added experimental support for Extended Scanning with duration and period parameters (without active scanning for scan response or chained PDU).
     * Added experimental support for Periodic Advertising and Periodic Advertising Synchronization Establishment.
 
   * Bluetooth Host:
 
+    * Added an API to unregister scanner callbacks.
+    * Fixed an issue where ATT activity after the ATT time-out expired led to invalid memory access.
+    * Added support for LE Secure connections pairing in parallel on multiple connections.
     * Updated the :c:enumerator:`BT_LE_ADV_OPT_DIR_ADDR_RPA` option.
       It must now be set when advertising towards a privacy-enabled peer, independent of whether privacy has been enabled or disabled.
     * Updated the signature of the :c:type:`bt_gatt_indicate_func_t` callback type by replacing the ``attr`` pointer with a pointer to the :c:struct:`bt_gatt_indicate_params` struct that was used to start the indication.
