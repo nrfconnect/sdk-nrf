@@ -35,7 +35,7 @@ nRF9160
   * :ref:`lib_nrf_cloud` library:
 
     * Added cell-based location support to :ref:`lib_nrf_cloud_agps`.
-    * Added Kconfig option ``CONFIG_NRF_CLOUD_AGPS_SINGLE_CELL_ONLY`` to obtain cell-based location from nRF Connect for Cloud instead of using the modem's GPS.
+    * Added Kconfig option :option:`CONFIG_NRF_CLOUD_AGPS_SINGLE_CELL_ONLY` to obtain cell-based location from nRF Connect for Cloud instead of using the modem's GPS.
 
   * :ref:`asset_tracker` application:
 
