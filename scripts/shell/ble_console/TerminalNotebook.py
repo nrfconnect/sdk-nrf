@@ -178,4 +178,3 @@ class TerminalNotebook(object):
     def delete(self, widget, event=None):
         Gtk.main_quit()
         return False
-

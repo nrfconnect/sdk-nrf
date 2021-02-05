@@ -199,5 +199,3 @@ class BluetoothConnection(object):
                 self.display_message("Timeout exceeded " + device)
             else:
                 raise
-
-
