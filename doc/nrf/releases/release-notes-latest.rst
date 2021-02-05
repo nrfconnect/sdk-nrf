@@ -78,6 +78,7 @@ Thread
 * Added:
 
   * Development support for the nRF5340 DK in single-protocol configuration for the :ref:`ot_cli_sample`, :ref:`coap_client_sample`, and :ref:`coap_server_sample` samples.
+  * Development support for the nRF5340 DK in the multiprotocol configuration for the :ref:`ot_cli_sample` and :ref:`coap_client_sample` samples.
   * Development support for nRF21540 FEM (front-end module) in the Thread samples.
 
 * Optimized ROM and RAM used by Thread samples.
@@ -88,8 +89,8 @@ Zigbee
 
 * Added:
 
-  * Development support for the nRF5340 DK in single-protocol configuration for the :ref:`zigbee_light_switch_sample`, :ref:`zigbee_light_bulb_sample`, and :ref:`zigbee_network_coordinator_sample` samples.
-  * Development support for the nRF5340 DK in multi-protocol configuration for the :ref:`zigbee_light_switch_sample` sample.
+  * Development support for the nRF5340 DK in the single-protocol configuration for the :ref:`zigbee_light_switch_sample`, :ref:`zigbee_light_bulb_sample`, and :ref:`zigbee_network_coordinator_sample` samples.
+  * Development support for the nRF5340 DK in the multiprotocol configuration for the :ref:`zigbee_light_switch_sample` sample.
   * New ``zcl ping`` command in the :ref:`lib_zigbee_shell` library.
   * New libraries there were extracted from common code under :file:`subsys/zigbee/common`:
 

@@ -80,9 +80,6 @@ The sample supports the following development kits for testing the network statu
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
 
-.. note::
-   The multiprotocol variant is not supported on nRF53 Series devices yet.
-
 Optionally, you can use one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for :ref:`testing communication or diagnostics <ot_cli_sample_testing_multiple>` and :ref:`thread_ot_commissioning_configuring_on-mesh`.
 
 Thread v1.2 extension requirements
@@ -348,3 +345,14 @@ This sample uses the following Zephyr libraries:
   * ``include/kernel.h``
 
 * :ref:`zephyr:thread_protocol_interface`
+
+The following dependencies are added by the optional multiprotocol Bluetooth LE extension:
+
+* :ref:`nrfxlib:softdevice_controller`
+* :ref:`nus_service_readme`
+* Zephyr's :ref:`zephyr:bluetooth_api`:
+
+  * ``include/bluetooth/bluetooth.h``
+  * ``include/bluetooth/gatt.h``
+  * ``include/bluetooth/hci.h``
+  * ``include/bluetooth/uuid.h``
