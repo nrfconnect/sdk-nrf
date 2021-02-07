@@ -109,6 +109,7 @@ After programming the sample to your development kit, test it by performing the 
 	{
 	    "firmware": {
 	        "fwVersion": "v0.0.0-dev",
+	        "jobId": "ca186d4b-4171-4209-a49d-700c35567d1d",
 	        "fwLocation": {
 	            "host": "my-storage-account.blob.core.windows.net",
 	            "path": "my-app-update.bin"

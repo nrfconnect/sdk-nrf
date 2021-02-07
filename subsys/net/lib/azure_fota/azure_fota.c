@@ -23,51 +23,80 @@
 
 LOG_MODULE_REGISTER(azure_fota, CONFIG_AZURE_FOTA_LOG_LEVEL);
 
-#define STATUS_CURRENT_STR "\"currentFwVersion\":\"%s\""
-#define STATUS_PENDING_STR "\"pendingFwVersion\":\"%s\""
-#define STATUS_UPDATE_STR "\"fwUpdateStatus\":\"%s\""
-#define STATUS_UPDATE_SUB_STR "\"fwUpdateSubstatus\":\"%s\""
+#define STATUS_CURRENT_STR	"\"currentFwVersion\":\"%s\""
+#define STATUS_PENDING_STR	"\"pendingFwVersion\":\"%s\""
+#define STATUS_UPDATE_STR	"\"fwUpdateStatus\":\"%s\""
+#define STATUS_UPDATE_SUB_STR	"\"fwUpdateSubstatus\":\"%s\""
+#define STATUS_JOB_ID		"\"jobId\":\"%s\""
 
 #define STATUS_REPORT					\
 	"{"						\
 		"\"firmware\":{"			\
 			STATUS_UPDATE_STR ","		\
-			STATUS_CURRENT_STR ","		\
-			STATUS_PENDING_STR		\
+			STATUS_CURRENT_STR		\
 		"}"					\
 	"}"
 
-/* Enum to keep the fota status */
-enum fota_status {
-	STATUS_CURRENT = 0,
-	STATUS_DOWNLOADING,
-	STATUS_APPLYING,
-	STATUS_REBOOTING,
-	STATUS_ERROR,
-	STATUS_ROLLEDBACK,
+#define STATUS_REPORT_UPDATING					\
+	"{"						\
+		"\"firmware\":{"			\
+			STATUS_UPDATE_STR ","		\
+			STATUS_CURRENT_STR ","		\
+			STATUS_PENDING_STR ","		\
+			STATUS_JOB_ID			\
+		"}"					\
+	"}"
 
-	STATUS_COUNT,
-};
+/* Static variables */
 
-struct fota_object {
+/* Enum to keep track of the internal state. */
+static enum internal_state {
+	/* Library is uninitialized, no messages can be processed. */
+	STATE_UNINIT,
+	/* Initialized and waiting for incoming messages to process. */
+	STATE_INIT,
+	/* Downloading FOTA image. */
+	STATE_DOWNLOADING,
+} internal_state = STATE_UNINIT;
+
+/* Enum to keep track of the reported fota status */
+static enum fota_status {
+	REP_STATUS_CURRENT,
+	REP_STATUS_DOWNLOADING,
+	REP_STATUS_APPLYING,
+	REP_STATUS_REBOOTING,
+	REP_STATUS_ERROR,
+	REP_STATUS_ROLLEDBACK,
+
+	REP_STATUS_INVALID,
+
+	REP_STATUS_COUNT,
+} current_status = REP_STATUS_CURRENT;
+
+static struct fota_object {
 	char host[CONFIG_AZURE_FOTA_HOSTNAME_MAX_LEN];
 	char path[CONFIG_AZURE_FOTA_FILE_PATH_MAX_LEN];
 	char version[CONFIG_AZURE_FOTA_VERSION_MAX_LEN];
+	char job_id[CONFIG_AZURE_FOTA_JOB_ID_MAX_LEN];
 	size_t fragment_size;
+} fota_object;
+
+static azure_fota_callback_t callback;
+static char *internal_state_str[] = {
+	[STATE_UNINIT]		= "STATE_UNINIT",
+	[STATE_INIT]		= "STATE_INIT",
+	[STATE_DOWNLOADING]	= "STATE_DOWNLOADING",
+};
+static char *rep_status_str[REP_STATUS_COUNT] = {
+	[REP_STATUS_CURRENT]		= "current",
+	[REP_STATUS_DOWNLOADING]	= "downloading",
+	[REP_STATUS_APPLYING]		= "applying",
+	[REP_STATUS_REBOOTING]		= "rebooting",
+	[REP_STATUS_ERROR]		= "error",
+	[REP_STATUS_ROLLEDBACK]		= "rolledback",
 };
 
-/* Static variables */
-static azure_fota_callback_t callback;
-static enum fota_status fota_state;
-static struct fota_object fota_object;
-static char *status_str[STATUS_COUNT] = {
-	[STATUS_CURRENT]	= "current",
-	[STATUS_DOWNLOADING]	= "downloading",
-	[STATUS_APPLYING]	= "applying",
-	[STATUS_REBOOTING]	= "rebooting",
-	[STATUS_ERROR]		= "error",
-	[STATUS_ROLLEDBACK]	= "rolledback",
-};
+static char reported_job_id[CONFIG_AZURE_FOTA_JOB_ID_MAX_LEN];
 
 #if IS_ENABLED(CONFIG_AZURE_FOTA_APP_VERSION_AUTO)
 static char current_version[CONFIG_AZURE_FOTA_VERSION_MAX_LEN] =
@@ -82,10 +111,51 @@ static char current_version[CONFIG_AZURE_FOTA_VERSION_MAX_LEN] =
 BUILD_ASSERT(0, "CONFIG_AZURE_FOTA_SEC_TAG must be defined");
 #endif
 
+static void rep_status_set(enum fota_status new_status)
+{
+	current_status = new_status;
+}
+
+static void state_set(enum internal_state new_state)
+{
+	if (internal_state == new_state) {
+		return;
+	}
+
+	LOG_DBG("State transition: %s --> %s",
+		internal_state_str[internal_state],
+		internal_state_str[new_state]);
+
+	internal_state = new_state;
+}
+
+static enum internal_state state_get(void)
+{
+	return internal_state;
+}
+
+static char *reported_status_str_get(void)
+{
+	return rep_status_str[current_status];
+}
+
+static enum fota_status reported_status_get(const char *status)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(rep_status_str); i++) {
+		if (strcmp(rep_status_str[i], status) == 0) {
+			return i;
+		}
+	}
+
+	return REP_STATUS_INVALID;
+}
+
+/* Create update report. Buffer must be freed by the user. */
 static char *create_report(void)
 {
-	size_t buf_size = sizeof(STATUS_REPORT) +
-			2 * CONFIG_AZURE_FOTA_VERSION_MAX_LEN + 15;
+	size_t buf_size = sizeof(STATUS_REPORT_UPDATING) +
+			2 * CONFIG_AZURE_FOTA_VERSION_MAX_LEN +
+			CONFIG_AZURE_FOTA_JOB_ID_MAX_LEN + 15;
 	ssize_t len;
 	char *buf = k_malloc(buf_size);
 
@@ -94,9 +164,18 @@ static char *create_report(void)
 		return NULL;
 	}
 
-	len = snprintk(buf, buf_size, STATUS_REPORT, status_str[fota_state],
-		       current_version, fota_object.version);
-	if ((len == 0) || (len >= buf_size)) {
+	if (strlen(fota_object.job_id) > 0) {
+		len = snprintk(buf, buf_size, STATUS_REPORT_UPDATING,
+			       rep_status_str[current_status],
+			       current_version, fota_object.version,
+			       fota_object.job_id);
+	} else {
+		len = snprintk(buf, buf_size, STATUS_REPORT,
+			       rep_status_str[current_status],
+			       current_version);
+	}
+
+	if ((len <= 0) || (len >= buf_size)) {
 		LOG_WRN("Failed to create FOTA report");
 		k_free(buf);
 
@@ -133,6 +212,19 @@ static bool is_update(void)
 		       strlen(get_current_version())) != 0;
 }
 
+static bool is_new_job(void)
+{
+	/* If no jobId is present, we consider the desired job as a new job.
+	 * This is to support solutions built with previous version of Azure
+	 * FOTA that don't have the concept of job IDs.
+	 */
+	if (strlen(reported_job_id) == 0) {
+		return true;
+	}
+
+	return strncmp(reported_job_id, fota_object.job_id,
+		       strlen(reported_job_id)) != 0;
+}
 
 static void fota_dl_handler(const struct fota_download_evt *fota_evt)
 {
@@ -142,7 +234,8 @@ static void fota_dl_handler(const struct fota_download_evt *fota_evt)
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		LOG_DBG("FOTA download completed evt received");
 
-		fota_state = STATUS_APPLYING;
+		state_set(STATE_INIT);
+		rep_status_set(REP_STATUS_APPLYING);
 		evt.type = AZURE_FOTA_EVT_DONE;
 
 		callback_with_report(&evt);
@@ -160,7 +253,8 @@ static void fota_dl_handler(const struct fota_download_evt *fota_evt)
 
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		LOG_ERR("FOTA download failed");
-		fota_state = STATUS_ERROR;
+		state_set(STATE_INIT);
+		rep_status_set(REP_STATUS_ERROR);
 		evt.type = AZURE_FOTA_EVT_ERROR;
 
 		callback_with_report(&evt);
@@ -175,21 +269,98 @@ static void fota_dl_handler(const struct fota_download_evt *fota_evt)
 	}
 }
 
+/* Process the reported status and determine if a new status must be reported
+ * back.
+ *
+ * Returns true if report is needed, otherwise false.
+ */
+static bool reported_status_process(const char *status,
+				    const char *current_fw,
+				    const char *pending_fw)
+{
+	bool report_needed;
+
+	switch (reported_status_get(status)) {
+	case REP_STATUS_CURRENT:
+		/* "current" status indicates no FOTA was in progress, check if the
+		 * reported version matches the actual version of running firmware.
+		 */
+		if (strcmp(get_current_version(), current_fw) == 0) {
+			LOG_DBG("Currently reported version is correct");
+			rep_status_set(REP_STATUS_CURRENT);
+			report_needed = false;
+		} else {
+			/* Reported current version should be updated. */
+			LOG_DBG("Currently reported version must be updated");
+			rep_status_set(REP_STATUS_CURRENT);
+			report_needed = true;
+		}
+
+		break;
+	case REP_STATUS_APPLYING:
+		/* "applying" indicates firmware was downloaded and would be
+		 * used after reboot. Check if running version matches the
+		 * pending version.
+		 */
+		report_needed = true;
+
+		if (strcmp(get_current_version(), pending_fw) == 0) {
+			LOG_DBG("FOTA firmware was successfully applied");
+			rep_status_set(REP_STATUS_CURRENT);
+		} else if (strcmp(get_current_version(), current_fw) == 0) {
+			LOG_WRN("FOTA image was not applied, rolled back");
+			rep_status_set(REP_STATUS_ROLLEDBACK);
+		} else {
+			/* Current version matches neither of the reported
+			 * current or pending versions, which indicate that
+			 * the firmware has been changed by other means.
+			 */
+			rep_status_set(REP_STATUS_CURRENT);
+		}
+
+		break;
+	case REP_STATUS_DOWNLOADING:
+		/* A download was in progress and must have failed for this
+		 * situation to occur. Therefore, the error must be reported.
+		 */
+		report_needed = true;
+
+		rep_status_set(REP_STATUS_ERROR);
+
+		break;
+	default:
+		/* In all other cases, the current firmware should be reported
+		 * back, and the status is "current".
+		 */
+		report_needed = true;
+
+		rep_status_set(REP_STATUS_CURRENT);
+
+		break;
+	}
+
+	return report_needed;
+}
+
 /* Checks the 'reported' object for current FOTA state
- * Returns true if the fota_state has been updated and should be reported to
+ * Returns true if the current_status has been updated and should be reported to
  * the device twin. If no action is needed, false is returned.
  */
 static bool parse_reported_status(const char *msg)
 {
 	struct cJSON *root_obj, *reported_obj, *fw_obj, *fw_status_obj,
-		*fw_current_obj, *fw_pending_obj;
+		*fw_current_obj, *fw_pending_obj, *job_id_obj;
 	bool report_needed = false;
 
-	/* The 'reported' object has the excpected structure if it exists:
+	/* The 'reported' object has the expected structure if it exists:
 	 *	properties.reported.firmware : {
-			"fwUpdateStatus": <status>,
-			"currentFwVersion": <current firmware version>,
-			"pendingFwVersion": <FOTA version in progress (if any)>
+	 *		"fwUpdateStatus": <status>,
+	 *		"currentFwVersion": <current firmware version>,
+	 *		"pendingFwVersion": <FOTA version in progress (if any)>,
+	 *		"jobId": <FOTA update ID, formatted according to
+	 *			 RFC4122. Expected to be 36 characters, of
+	 *			 which 32 are hexadecimal characters, and 4
+	 *			 dashes.>
 	 *	}
 	 */
 
@@ -214,6 +385,26 @@ static bool parse_reported_status(const char *msg)
 		report_needed = true;
 
 		goto clean_exit;
+	}
+
+	/* Firmware update job ID. If jobId is not present, it's not considered
+	 * a failure, as we want to support previous versions of Azure FOTA
+	 * that don't use the jobId.
+	 */
+	job_id_obj = cJSON_GetObjectItemCaseSensitive(fw_obj, "jobId");
+	if (job_id_obj == NULL) {
+		LOG_WRN("No job ID found");
+	} else {
+		if (strlen(job_id_obj->valuestring) >=
+		    sizeof(reported_job_id)) {
+			LOG_ERR("Received job ID larger (%d) than buffer (%d)",
+				strlen(job_id_obj->valuestring),
+				sizeof(reported_job_id));
+			goto clean_exit;
+		}
+
+		strncpy(reported_job_id, job_id_obj->valuestring,
+			sizeof(reported_job_id));
 	}
 
 	/* Firmware update status object (fwUpdateStatus) */
@@ -251,49 +442,13 @@ static bool parse_reported_status(const char *msg)
 		       log_strdup(fw_pending_obj->valuestring) :
 		       "(none)");
 
-	/* "current" status indicates no FOTA was in progress, check if the
-	 * reported version matches the actual version of running firmware.
-	 */
-	if (strcmp("current", fw_status_obj->valuestring) == 0) {
-		if (strcmp(get_current_version(),
-			   fw_current_obj->valuestring) == 0) {
-			LOG_DBG("Currently reported version is correct");
-			fota_state = STATUS_CURRENT;
-			report_needed = false;
-		} else {
-			/* Reported current version should be updated. */
-			LOG_DBG("Currently reported version must be updated");
-			fota_state = STATUS_CURRENT;
-			report_needed = true;
-		}
-	} else if (strcmp("applying", fw_status_obj->valuestring) == 0) {
-		report_needed = true;
-
-		/* "applying" indicates firmware was downloaded and would be
-		 * used after reboot. Check if running version matches the
-		 * pending version.
-		 */
-		if (strcmp(get_current_version(),
-			   fw_pending_obj->valuestring) == 0) {
-			LOG_DBG("FOTA firmware was successfully applied");
-			fota_state = STATUS_CURRENT;
-		} else if (strcmp(get_current_version(),
-				  fw_current_obj->valuestring) == 0) {
-			LOG_WRN("FOTA image was not applied, rolled back");
-			fota_state = STATUS_ROLLEDBACK;
-		} else {
-			/* Current version matches neither of the reported
-			 * current or pending versions, which indicate that
-			 * the firmware has been changed by other means.
-			 */
-			fota_state = STATUS_CURRENT;
-		}
-	} else {
-		/* In all other cases, the current firmware should be reported
-		 * back, and the status is "current".
-		 */
-		fota_state = STATUS_CURRENT;
-		report_needed = true;
+	report_needed = reported_status_process(fw_status_obj->valuestring,
+						fw_current_obj->valuestring,
+						fw_pending_obj->valuestring);
+	if (report_needed) {
+		LOG_DBG("Reported status was \"%s\", reporting back \"%s\"",
+			log_strdup(fw_status_obj->valuestring),
+			reported_status_str_get());
 	}
 
 clean_exit:
@@ -313,9 +468,9 @@ static int extract_fw_details(const char *msg)
 	int err = -ENOMEM;
 	struct cJSON *root_obj, *desired_obj, *fw_obj, *fw_version_obj,
 		*fw_location_obj, *fw_hostname_obj, *fw_path_obj,
-		*fw_fragment_obj;
+		*fw_fragment_obj, *job_id_obj;
 
-	/* The properties.desired.firmware object has the excpected structure:
+	/* The properties.desired.firmware object has the expected structure:
 	 *	properties.desired.firmware : {
 	 *		fwVersion : <version>,
 	 *		fwLocation : {
@@ -383,6 +538,25 @@ static int extract_fw_details(const char *msg)
 	} else {
 		LOG_DBG("Invalid fwVersion format received");
 		goto clean_exit;
+	}
+
+	/* Firmware update job ID */
+	job_id_obj = cJSON_GetObjectItemCaseSensitive(fw_obj, "jobId");
+	if (job_id_obj == NULL) {
+		LOG_WRN("No job ID found");
+	} else {
+		if (strlen(job_id_obj->valuestring) >=
+		    sizeof(fota_object.job_id)) {
+			LOG_ERR("Received job ID larger (%d) than buffer (%d)",
+				strlen(job_id_obj->valuestring),
+				sizeof(fota_object.job_id));
+			goto clean_exit;
+		}
+
+		strncpy(fota_object.job_id, job_id_obj->valuestring,
+			sizeof(fota_object.job_id));
+
+		LOG_DBG("Job ID: %s", log_strdup(job_id_obj->valuestring));
 	}
 
 	/* Firmware image location */
@@ -466,7 +640,7 @@ int azure_fota_init(azure_fota_callback_t evt_handler)
 
 	cJSON_Init();
 
-	fota_state = STATUS_CURRENT;
+	state_set(STATE_INIT);
 
 	LOG_INF("Current firmware version: %s",
 		log_strdup(get_current_version()));
@@ -481,10 +655,15 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 		.type = AZURE_FOTA_EVT_START
 	};
 
+	if (state_get() == STATE_UNINIT) {
+		LOG_ERR("Azure FOTA is not initialized");
+		return -EINVAL;
+	}
+
 	/* Ensure that FOTA download is not started multiple times, which
 	 * would corrupt the downloaded image.
 	 */
-	if (fota_state == STATUS_DOWNLOADING) {
+	if (state_get() == STATE_DOWNLOADING) {
 		LOG_INF("Firmware download is ongoing, message ignored");
 		return 0;
 	}
@@ -507,6 +686,14 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 		return 0;
 	}
 
+	if (!is_new_job()) {
+		LOG_WRN("Update job (ID: %s) was already attempted, aborting",
+			log_strdup(reported_job_id));
+		rep_status_set(REP_STATUS_CURRENT);
+
+		return 0;
+	}
+
 	/* Check version to see if the firmware image should be downloaded */
 	if (!is_update()) {
 		LOG_DBG("Image is not an update, skipping download");
@@ -514,12 +701,13 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 			log_strdup(get_current_version()));
 		LOG_DBG("FOTA version: %s", log_strdup(fota_object.version));
 
-		fota_state = STATUS_CURRENT;
+		rep_status_set(REP_STATUS_CURRENT);
 
 		return 0;
 	}
 
-	fota_state = STATUS_DOWNLOADING;
+	state_set(STATE_DOWNLOADING);
+	rep_status_set(REP_STATUS_DOWNLOADING);
 
 	LOG_INF("Attempting to download firmware (version '%s') from %s/%s",
 		log_strdup(fota_object.version),
@@ -533,13 +721,18 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 		LOG_ERR("Error (%d) when trying to start firmware download",
 			err);
 
-		fota_state = STATUS_ERROR;
+		state_set(STATE_INIT);
+		rep_status_set(REP_STATUS_ERROR);
 		evt.type = AZURE_FOTA_EVT_ERROR;
 
 		callback_with_report(&evt);
 		memset(&fota_object, 0, sizeof(fota_object));
 
 		return err;
+	}
+
+	if (strlen(fota_object.job_id) > 0) {
+		strcpy(reported_job_id, fota_object.job_id);
 	}
 
 	/* Callback with AZURE_FOTA_EVT_START */

@@ -23,6 +23,10 @@ config AZURE_FOTA_VERSION_MAX_LEN
 	int "Version string buffer size"
 	default 64
 
+config AZURE_FOTA_JOB_ID_MAX_LEN
+	int "Job ID string buffer size"
+	default 40
+
 config AZURE_FOTA_APP_VERSION_AUTO
 	bool "Automatically create application version"
 	help
