@@ -142,18 +142,6 @@ This sample must be programmed to the network core to run standard Bluetooth Low
 You can choose whether to use the SoftDevice Controller or the Zephyr Bluetooth LE Controller for this sample.
 See :ref:`ug_ble_controller` for more information.
 
-You might need to adjust the Kconfig configuration of this sample to make it compatible with the peer application.
-For example:
-
-* :option:`CONFIG_BT_MAX_CONN` must be greater than or equal to the maximum number of connections configured for the Bluetooth Host in the application core firmware.
-* If the application sample uses specific Bluetooth LE functionalities, these functionalities must be enabled in the network sample as well.
-  For example, you must modify the configuration of the network sample to make it compatible with the :ref:`ble_throughput` sample::
-
-    CONFIG_BT_CTLR_TX_BUFFER_SIZE=251
-    CONFIG_BT_CTLR_DATA_LENGTH_MAX=251
-
-  This configuration guarantees that the network sample can handle the Bluetooth LE DLE update procedure, which is used in the :ref:`ble_throughput` sample.
-
 IEEE 802.15.4 (Thread and Zigbee)
 ---------------------------------
 
@@ -182,6 +170,15 @@ Separate RPMsg endpoints are used to obtain independent inter-core connections f
 
 When working with 802.15.4-based protocols like Thread or Zigbee running in parallel with Bluetooth LE, program the :ref:`multiprotocol-rpmsg-sample` sample to the network core to run :ref:`Thread and Zigbee samples <samples>` on nRF5340.
 See the :ref:`ug_multiprotocol_support` user guide for more information.
+
+Configuration of network samples
+--------------------------------
+
+When a network sample is built automatically as a child image in a multi-image build (see :ref:`ug_nrf5340_building`), you can define the relevant Kconfig options (if required) in a :file:`.conf` file.
+Name the file *network_sample*\ .conf, where *network_sample* is the name of the child image (for example, ``hci_rpmsg.conf``).
+Place the file in a :file:`child_image` subfolder of the application sample directory.
+This allows alignment of the configurations of both images.
+For example, see the :ref:`ble_throughput` child image configuration in :file:`nrf/samples/bluetooth/throughput/child_image/hci_rpmsg.conf`.
 
 Application samples
 ===================
