@@ -136,7 +136,7 @@ static int establish_data_channel(const char *pasv_msg)
  */
 static int do_ftp_send_ctrl(const uint8_t *message, int length)
 {
-	int ret;
+	int ret = 0;
 	uint32_t offset = 0;
 
 	LOG_HEXDUMP_DBG(message, length, "TXC");
@@ -529,7 +529,7 @@ int ftp_list(const char *options, const char *target)
 		if (strlen(target) != 0) {
 			sprintf(list_cmd, CMD_LIST_FILE, target);
 		} else {
-			memcpy(list_cmd, CMD_NLST, sizeof(CMD_NLST) - 1);
+			strcpy(list_cmd, CMD_NLST);
 		}
 	}
 	ret = do_ftp_send_ctrl(list_cmd, strlen(list_cmd));
