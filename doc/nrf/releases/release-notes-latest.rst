@@ -466,7 +466,8 @@ The following list summarizes the most important changes inherited from upstream
   * IEEE 802.15.4:
 
     * Updated the nRF5 IEEE 802.15.4 driver to version 1.9.
-    * Added support for IEEE 802.15.4 on nRF5340.
+    * Production support for IEEE 802.15.4 in single-protocol configuration on nRF5340.
+    * Development support for IEEE 802.15.4 in multi-protocol configuration on nRF5340.
     * Added reservation of the TIMER peripheral used by the nRF5 IEEE 802.15.4 driver.
     * Added support for sending packets with specified TX time using the nRF5 IEEE 802.15.4 driver.
     * Implemented the RX failed notification for the nRF5 IEEE 802.15.4 driver.
