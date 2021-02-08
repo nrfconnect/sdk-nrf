@@ -14,10 +14,6 @@ rsource "sensor/Kconfig"
 rsource "gps/Kconfig"
 rsource "serial/Kconfig"
 
-if BT_LL_SOFTDEVICE
-rsource "bt_ll_softdevice/Kconfig"
-endif
-
 if MPSL
 rsource "mpsl/Kconfig"
 endif

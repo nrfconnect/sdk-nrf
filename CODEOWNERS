@@ -42,7 +42,6 @@ Kconfig*                                  @tejlmand
 /.known-issues/                           @carlescufi
 # All subfolders
 /drivers/                                 @anangl
-/drivers/bt_ll_softdevice/                @anangl @rugeGerritsen
 /dts/                                     @anangl
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos @pizi-nordic
