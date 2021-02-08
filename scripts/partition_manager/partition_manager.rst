@@ -386,7 +386,7 @@ The information extracted from devicetree is the alignment value for some partit
      placement:
        after: start
 
-   b0_provision:
+   b0_container:
      span: [b0, provision]
 
    s0_pad:

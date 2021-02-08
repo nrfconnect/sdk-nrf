@@ -223,7 +223,7 @@ Partition Manager:
 
   * If the invalid naming scheme is used in ``pm.yml`` files, Partition Manager will now fail the builds.
   * If the invalid naming scheme is used in ``pm_static.yml`` files, the build will instead print a warning prompting the user to change this, if possible.
-* Renamed ``b0`` and ``b0n`` container partitions to ``b0_provision`` and ``b0n_provision``, respectively.
+* Renamed ``b0`` and ``b0n`` container partitions to ``b0_container`` and ``b0n_container``, respectively.
 * Renamed ``b0_image`` and ``b0n_image`` image partitions to appropriately match their child image name, ``b0`` and ``b0n``, respectively.
 
   **Migration notes:** While in development, you should rename partitions appropriately.
