@@ -17,6 +17,15 @@
 #define NUM_LEDS 1
 #endif
 
+static const char *get_file(void)
+{
+#if CONFIG_APPLICATION_VERSION == 2
+	return CONFIG_DOWNLOAD_FILE_V1;
+#else
+	return CONFIG_DOWNLOAD_FILE_V2;
+#endif
+}
+
 static void fota_dl_handler(const struct fota_download_evt *evt)
 {
 	switch (evt->id) {
@@ -35,8 +44,9 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 static void update_start(void)
 {
 	int err;
+	const char *filename = get_file();
 
-	err = fota_download_start(CONFIG_DOWNLOAD_HOST, CONFIG_DOWNLOAD_FILE,
+	err = fota_download_start(CONFIG_DOWNLOAD_HOST, filename,
 				  SEC_TAG, 0, 0);
 	if (err != 0) {
 		update_sample_done();

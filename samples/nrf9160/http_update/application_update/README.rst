@@ -8,17 +8,20 @@ nRF9160: HTTP application update
    :depth: 2
 
 The HTTP application update sample demonstrates how to do a basic firmware over-the-air (FOTA) update.
-It uses the :ref:`lib_fota_download` library to download a file from a remote server and write it to flash.
+It uses the :ref:`lib_fota_download` library to download two image files from a remote server and program them to flash memory.
 
 Overview
 ********
 
-The sample connects to an HTTP server to download a signed firmware image.
-The image is generated when building the sample, but you must upload it to a server and configure where it can be downloaded.
-See `Specifying the image file`_ for more information.
+The sample connects to an HTTP server to download one of two signed firmware images:
 
-By default, the image is saved to the `MCUboot`_ bootloader secondary slot.
-To be used by MCUboot, the downloaded image must be signed using imgtool.
+* One image has the ``application version`` set to ``1``.
+* The other has the ``application version`` set to ``2``.
+
+The sample updates between the two images, either from *version 1* to *version 2* or from *version 2* to *version 1*.
+
+By default, the images are saved to the `MCUboot`_ second-stage bootloader secondary slot.
+To be used by MCUboot, the downloaded images must be signed using imgtool.
 
 Requirements
 ************
@@ -29,10 +32,8 @@ The sample supports the following development kit:
    :header: heading
    :rows: nrf9160dk_nrf9160_ns
 
-The sample also requires a signed firmware image that is available for download from an HTTP server.
-This image is automatically generated when building the application.
-
-.. include:: /includes/spm.txt
+The sample also requires two signed firmware images that have to be available for download from an HTTP server.
+The images are generated automatically when building the sample, but you must upload them to a server and configure the location from where they can be downloaded.
 
 Building and running
 ********************
@@ -41,33 +42,34 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-The sample is built as a non-secure firmware image for the ``nrf9160dk_nrf9160_ns`` build target.
-Because of this, it automatically includes the :ref:`secure_partition_manager`.
-The sample also uses MCUboot, which is automatically built and merged into the final HEX file when building the sample.
+.. include:: /includes/spm.txt
 
-Specifying the image file
-=========================
+Specifying the image files
+==========================
 
-Before building the sample, you must specify where the image file will be located by configuring the following Kconfig options:
+Before building the sample, you must specify where the image files are located.
+If you do not want to host the files yourself, you can upload them to a public S3 bucket on Amazon Web Services (AWS).
 
-* ``CONFIG_DOWNLOAD_HOST`` - it specifies the hostname of the server where the image file is located.
-* ``CONFIG_DOWNLOAD_FILE`` - it specifies the name of the image file.
+Two options configure the names of the updated image files:
 
-To configure these Kconfig options, follow these steps:
+- ``CONFIG_DOWNLOAD_FILE_V1`` - it configures the file name of the *version 1* of the update image.
+- ``CONFIG_DOWNLOAD_FILE_V2`` - it configures the file name of the *version 2* of the update image.
+
+To set these Kconfig options, follow these steps:
 
 .. tabs::
 
    .. group-tab:: From |SES|
 
       1. Select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
-      #. Navigate to :guilabel:`HTTP application update sample` and specify the download hostname (``CONFIG_DOWNLOAD_HOST``) and the file to download (``CONFIG_DOWNLOAD_FILE``).
+      #. Navigate to :guilabel:`HTTP application update sample` and specify both the download hostname (``CONFIG_DOWNLOAD_HOST``) and the names of the files that have to be downloaded (``CONFIG_DOWNLOAD_FILE_V1`` and ``CONFIG_DOWNLOAD_FILE_V2``).
       #. Click :guilabel:`Configure` to save the configuration.
 
    .. group-tab:: From the :file:`prj.conf` configuration file
 
       1. Locate your :file:`prj.conf` project configuration file.
       #. Change the ``CONFIG_DOWNLOAD_HOST`` option to indicate the hostname of the server where the image file is located (for example ``website.net``).
-      #. Change the ``CONFIG_DOWNLOAD_FILE`` option to indicate the name and path of the image file (for example ``download/app_update.bin``).
+      #. Change the ``CONFIG_DOWNLOAD_FILE_V1`` and ``CONFIG_DOWNLOAD_FILE_V2`` options to indicate the names and paths of the image files (for example ``download/app_update.bin``).
 
       You can then use the :file:`prj.conf` project configuration file in your builds from the command line or using the *nRF Connect for Visual Studio Code* extension.
       See the `Building and running`_ section for more information.
@@ -87,25 +89,25 @@ To upload the file to a public S3 bucket, do the following:
    It is located in the :file:`zephyr` subfolder of your build directory.
 #. Click the file you uploaded in the bucket and check the :guilabel:`Object URL` field to find the download URL for the file.
 
-You can then configure the ``CONFIG_DOWNLOAD_HOST`` and ``CONFIG_DOWNLOAD_FILE`` options as mentioned in the `Specifying the image file`_ section, noting the following:
+Remember to do the following when specifying the filenames:
 
-* Use the ``<bucket-name>.s3.<region>.amazonaws.com`` part of the URL for the download hostname.
-  Do not include ``https://``.
-* Use the remaining part of the URL as the file name.
+* Use the ``<bucket-name>.s3.<region>.amazonaws.com`` part of the URL as the hostname of the server hosting the images, without including ``https://``.
+* Specify the file names as the remaining part of the URL.
+
+You can then use the steps mentioned in the `Specifying the image files`_ section above to upload both images.
 
 Testing
 =======
 
 After programming the sample to your development kit, test it by performing the following steps:
 
-1. Configure the application version to be 2.
-   To do so, either change ``CONFIG_APPLICATION_VERSION`` to 2 in the :file:`prj.conf` file, or select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project` > :guilabel:`HTTP application update sample` in |SES| and change the value for :guilabel:`Application version`.
-   Then rebuild the application.
-#. Upload the file :file:`app_update.bin` to the server you have chosen.
-   To upload the file on nRF Cloud, click :guilabel:`Upload` for the firmware URL that you generated earlier.
-   Then select the file :file:`app_update.bin` and upload it.
+1. Upload the file :file:`app_update.bin` with the application image version 1 to the server you have chosen.
+   To upload the file on *nRF Connect for Cloud*, click :guilabel:`Upload` for the firmware URL that you generated earlier, then select the file :file:`app_update.bin` and upload it.
+   Remember to rename the file to match the ``CONFIG_DOWNLOAD_FILE_V1`` configuration option.
+#. Configure the application image version to be 2 and rebuild the application.
+#. Upload the file :file:`app_update.bin` with the application image version 2 to the server you have chosen.
 #. Reset your nRF9160 DK to start the application.
-#. Open a terminal emulator and observe that an output similar to this is printed:
+#. Open a terminal emulator and observe that an output similar to the following is printed:
 
    .. code-block::
 
@@ -114,12 +116,17 @@ After programming the sample to your development kit, test it by performing the 
 
 #. Observe that **LED 1** is lit.
    This indicates that version 1 of the application is running.
-#. Press **Button 1** on the nRF9160 DK to start the download process and wait until "Download complete" is printed in the terminal.
+#. Press **Button 1** on the nRF9160 DK to start the download process, and wait until ``Download complete`` is printed in the terminal.
 #. Press the **RESET** button on the kit.
-   MCUboot will now detect the downloaded image and write it to flash.
-   This can take up to a minute and nothing is printed in the terminal while this is processing.
-#. Observe that **LED 1** and **LED 2** is lit.
+   MCUboot will now detect the downloaded image and program it to flash memory.
+   This can take up to a minute.
+   Nothing is printed in the terminal while the writing is in progress.
+#. Observe that **LED 1** and **LED 2** are lit.
    This indicates that version 2 or higher of the application is running.
+#. You can now downgrade the application by repeating the button presses mentioned above.
+   Observe that after the second update only **LED 1** is lit.
+   This indicates that the application image has been downgraded to version 1.
+   Any further updates will toggle between the versions.
 
 Dependencies
 ************
@@ -139,6 +146,4 @@ It uses the following Zephyr libraries:
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:gpio_api`
 
-Also, it uses the following MCUboot library:
-
-* `MCUboot`_
+It also uses the `MCUboot`_ bootloader.

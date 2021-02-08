@@ -13,13 +13,19 @@ config DOWNLOAD_HOST
 	  if the file is stored in http://foo.bar/update.bin the value
 	  of this configuration should be 'foo.bar'
 
-config DOWNLOAD_FILE
-	string "Application update file name"
+config DOWNLOAD_FILE_V2
+	string "Application update file name (application version 2)"
 	help
-	  File part of URL to application update binary. For example
+	  File part of URL to application update binary version 2. For example
 	  if the file is stored in http://foo.bar/update.bin the value
 	  of this configuration should be 'update.bin'
 
+config DOWNLOAD_FILE_V1
+	string "Application downgrade file name (application version 1)"
+	help
+	  File part of URL to application update binary version 1. For example
+	  if the file is stored in http://foo.bar/downgrade.bin the value
+	  of this configuration should be 'downgrade.bin'
 
 config APPLICATION_VERSION
 	int "Application version"

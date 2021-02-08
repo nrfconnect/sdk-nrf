@@ -105,6 +105,11 @@ nRF9160 samples
 
   * Added a new shell command ``cloud`` for establishing an MQTT connection to nRF Cloud.
 
+* :ref:`http_application_update_sample` sample:
+
+  * Added support for application downgrade.
+    The sample now alternates updates between two different application images.
+
 * :ref:`gnss_sample` sample:
 
   * Added support for minimal assistance using factory almanac, time and location.
