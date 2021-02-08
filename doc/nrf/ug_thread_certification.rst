@@ -76,15 +76,15 @@ Complete the following steps to run the certification tests:
 
 #. Prepare Thread Test Harness.
 
-   a. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nrf52840-ncs.py` file into :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI`.
+   a. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nRF_Connect_SDK.py` file into :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI`.
 
-   b. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nrf52840.jpg` file into :file:`C:\\GRL\\Thread1.1\\Web\\images`.
+   b. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nRF_Connect_SDK.jpg` file into :file:`C:\\GRL\\Thread1.1\\Web\\images`.
 
    c. Edit :file:`C:\\GRL\\Thread1.1\\Web\\data\\deviceInputFields.xml` and prepend it with the following code:
 
       .. code-block::
 
-         <DEVICE name="nRF52840-ncs" thumbnail="nRF52840.jpg" description = "Nordic Semiconductor: nRF52840 (NCS) Baudrate:115200" THCI="nRF52840-ncs">
+         <DEVICE name="nRF Connect SDK" thumbnail="nRF_Connect_SDK.jpg" description = "Nordic Semiconductor: NCS Baudrate:115200" THCI="nRF_Connect_SDK">
             <ITEM label="Serial Line"
                type="text"
                forParam="SerialPort"
