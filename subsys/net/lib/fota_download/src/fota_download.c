@@ -100,6 +100,7 @@ static int download_client_callback(const struct download_client_evt *event)
 					      dfu_target_callback_handler);
 			if ((err < 0) && (err != -EBUSY)) {
 				LOG_ERR("dfu_target_init error %d", err);
+				(void)download_client_disconnect(&dlc);
 				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 				int res = dfu_target_reset();
 
