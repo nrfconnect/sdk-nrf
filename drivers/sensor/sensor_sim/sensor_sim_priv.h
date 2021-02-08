@@ -4,11 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef __SENSOR_SENSOR_SIM_H__
-#define __SENSOR_SENSOR_SIM_H__
+#ifndef _SENSOR_SIM_PRIV_H_
+#define _SENSOR_SIM_PRIV_H_
 
 #include <zephyr/types.h>
 #include <device.h>
+#include <drivers/sensor.h>
 
 struct sensor_sim_data {
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
@@ -27,4 +28,4 @@ struct sensor_sim_data {
 #endif  /* CONFIG_SENSOR_SIM_TRIGGER */
 };
 
-#endif /* __SENSOR_SENSOR_SIM_H__ */
+#endif /* _SENSOR_SIM_PRIV_H_ */
