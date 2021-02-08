@@ -61,7 +61,7 @@ psutil==5.8.0
 py==1.10.0
 pycparser==2.20
 pyelftools==0.27
-PyGithub==1.54
+PyGithub==1.54.1
 PyJWT==1.7.1
 Pygments==2.7.4
 pykwalify==1.8.0
