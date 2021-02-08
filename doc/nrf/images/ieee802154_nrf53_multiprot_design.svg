@@ -1,0 +1,852 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   style="font-size:12px;overflow:visible;color-interpolation-filters:sRGB;fill:none;fill-rule:evenodd;stroke-linecap:square;stroke-miterlimit:3"
+   id="svg314"
+   version="1.1"
+   class="st20"
+   xml:space="preserve"
+   viewBox="0 0 981.24923 568.31773"
+   height="757.75684"
+   width="1308.3325"><metadata
+   id="metadata320"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs318"><marker
+     style="overflow:visible"
+     id="marker1212"
+     refX="0"
+     refY="0"
+     orient="auto"><path
+       transform="scale(-0.6)"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       id="path1210" /></marker><marker
+     style="overflow:visible"
+     id="marker1208"
+     refX="0"
+     refY="0"
+     orient="auto"><path
+       transform="scale(0.6)"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       id="path1206" /></marker><marker
+     orient="auto"
+     refY="0"
+     refX="0"
+     id="marker1200"
+     style="overflow:visible"><path
+       id="path1198"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       transform="scale(-0.6)" /></marker><marker
+     orient="auto"
+     refY="0"
+     refX="0"
+     id="marker1196"
+     style="overflow:visible"><path
+       id="path1194"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       transform="scale(0.6)" /></marker><marker
+     orient="auto"
+     refY="0"
+     refX="0"
+     id="marker1121"
+     style="overflow:visible"><path
+       id="path1119"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       transform="scale(-0.6)" /></marker><marker
+     orient="auto"
+     refY="0"
+     refX="0"
+     id="marker1117"
+     style="overflow:visible"><path
+       id="path1115"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       transform="scale(0.6)" /></marker><marker
+     style="overflow:visible"
+     id="marker1111"
+     refX="0"
+     refY="0"
+     orient="auto"><path
+       transform="scale(-0.6)"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       id="path1109" /></marker><marker
+     style="overflow:visible"
+     id="marker1107"
+     refX="0"
+     refY="0"
+     orient="auto"><path
+       transform="scale(0.6)"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       id="path1105" /></marker><marker
+     orient="auto"
+     refY="0"
+     refX="0"
+     id="marker1089"
+     style="overflow:visible"><path
+       id="path1087"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       transform="scale(-0.6)" /></marker><marker
+     orient="auto"
+     refY="0"
+     refX="0"
+     id="marker1085"
+     style="overflow:visible"><path
+       id="path1083"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       transform="scale(0.6)" /></marker><marker
+     style="overflow:visible"
+     id="marker981"
+     refX="0"
+     refY="0"
+     orient="auto"><path
+       transform="scale(-0.6)"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       id="path979" /></marker><marker
+     style="overflow:visible"
+     id="marker977"
+     refX="0"
+     refY="0"
+     orient="auto"><path
+       transform="scale(0.6)"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       id="path975" /></marker><marker
+     orient="auto"
+     refY="0"
+     refX="0"
+     id="marker2319"
+     style="overflow:visible"><path
+       id="path2317"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       transform="scale(-0.6)" /></marker><marker
+     orient="auto"
+     refY="0"
+     refX="0"
+     id="marker2273"
+     style="overflow:visible"><path
+       id="path2271"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       transform="scale(0.6)" /></marker><marker
+     style="overflow:visible"
+     id="Arrow2Mend"
+     refX="0"
+     refY="0"
+     orient="auto"><path
+       transform="scale(-0.6)"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       id="path1284" /></marker><marker
+     style="overflow:visible"
+     id="marker1597"
+     refX="0"
+     refY="0"
+     orient="auto"><path
+       transform="scale(0.6)"
+       d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+       style="fill:#0075c8;fill-opacity:1;fill-rule:evenodd;stroke:#0075c8;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+       id="path1595" /></marker></defs>
+	<v:documentProperties
+   v:viewMarkup="false"
+   v:metric="true"
+   v:langID="1033">
+		<v:userDefs>
+			<v:ud
+   v:val="VT0(1):26"
+   v:nameU="msvNoAutoConnect" />
+		</v:userDefs>
+	</v:documentProperties>
+
+	<style
+   id="style10"
+   type="text/css">
+	<![CDATA[
+		.st1 {fill:#0077c8;fill-opacity:0.58;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st2 {fill:#ff0000;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st3 {stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st4 {fill:#ffffff;font-family:Gotham Light;font-size:1.12521em}
+		.st5 {fill:#0077c8;fill-opacity:0.52;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st6 {fill:#ffffff;font-family:Gotham Light;font-size:1.64637em}
+		.st7 {fill:#ffffff;font-family:Gotham Light;font-size:1.01919em}
+		.st8 {fill:#6ad1e3;stroke:none;stroke-width:1}
+		.st9 {fill:#0033a0;stroke:none;stroke-width:1}
+		.st10 {fill:#0075c8;stroke:#0075c8;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.0587766}
+		.st11 {fill:#333f48;font-family:Gotham Light;font-size:1.25439em}
+		.st12 {fill:#ffffff;font-family:Gotham Light;font-size:1.81764em}
+		.st13 {fill:#ffffff;font-family:Gotham Light;font-size:1.29833em}
+		.st14 {fill:#00a9ce;stroke:#feffff;stroke-width:1}
+		.st15 {fill:#ffffff;font-family:Gotham Light;font-size:0.778999em}
+		.st16 {fill:#ffffff;font-family:Gotham Light;font-size:0.833336em}
+		.st17 {fill:#ffffff;font-family:Gotham Light;font-size:0.75em}
+		.st18 {font-size:1em}
+		.st19 {fill:#00a9ce;stroke:none;stroke-width:1}
+		.st20 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+
+<g
+   transform="translate(3.8972361,31.199003)"
+   style="display:inline"
+   id="layer1"><rect
+   y="-8.6990032"
+   x="18.602764"
+   height="523.31763"
+   width="936.24939"
+   id="rect323"
+   style="fill:#dbdbdb;fill-opacity:1;stroke:none;stroke-width:2.02691936;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" /><text
+   style="font-size:21.81167984px;font-family:'Gotham Light';fill:#000000;fill-opacity:1;stroke-width:1"
+   id="text109-7"
+   v:langID="1033"
+   class="st12"
+   y="20.50104"
+   x="29.431671"><v:paragraph
+   v:horizAlign="1" /><v:tabList />nRF53 SoC</text>
+
+
+
+
+
+
+<g
+   transform="matrix(1.4986008,0,0,0.7259045,31.943712,88.143625)"
+   v:groupContext="shape"
+   v:mID="55"
+   id="shape55-1-0"><title
+     id="title14-0">Sheet.55</title><path
+     style="fill:#0077c8;fill-opacity:0.57999998;stroke:none;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round"
+     id="path16-6"
+     class="st1"
+     d="M 293.81,159.89 H 0 v 353.75 h 293.81 z" /></g><g
+   id="g263"
+   v:mID="55"
+   v:groupContext="shape"
+   transform="matrix(1.3588836,0,0,0.823369,543.03715,-115.28618)"><title
+     id="title259">Sheet.55</title><path
+     d="M 293.81,159.89 H 0 v 353.75 h 293.81 z"
+     class="st1"
+     id="path261"
+     style="fill:#0077c8;fill-opacity:0.57999998;stroke:none;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round" /></g></g><g
+   transform="translate(113.43497,-245.60143)"
+   v:groupContext="shape"
+   v:mID="242"
+   id="shape242-39-0"><title
+   id="title103-4">Sheet.242</title><desc
+   id="desc105-4">nRF SoC</desc><v:textBlock
+   v:tabSpace="42.5197"
+   v:margins="rect(0,0,0,0)" /><v:textRect
+   height="23.0975"
+   width="118.37"
+   cy="502.089"
+   cx="59.183" /><path
+   style="stroke:none;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round"
+   id="path107-2"
+   class="st3"
+   d="M 118.37,490.54 H 0 v 23.1 h 118.37 v -23.1" /><text
+   style="font-size:21.81167984px;font-family:'Gotham Light';fill:#ffffff"
+   id="text109-1"
+   v:langID="1033"
+   class="st12"
+   y="507.21149"
+   x="-67.317322">NET Core<v:paragraph
+   v:horizAlign="1" /><v:tabList /></text>
+
+
+
+
+
+
+</g><g
+   transform="matrix(0.92121774,0,0,1,44.965828,-62.626097)"
+   v:groupContext="shape"
+   v:mID="251"
+   id="shape251-61-7"><title
+     id="title154-2">Sheet.251</title><path
+     style="fill:#6ad1e3;stroke:none;stroke-width:1"
+     id="path156-0"
+     class="st8"
+     d="M 192.06,465.45 H 0 v 48.19 h 192.06 z" /></g><text
+   x="59.09037"
+   y="415.2619"
+   class="st16"
+   v:langID="1033"
+   id="text165-3"
+   style="font-size:10.00003242px;font-family:'Gotham Light';fill:#ffffff"><v:paragraph
+   v:horizAlign="1" /><v:tabList />nRF IEEE 802.15.4 radio driver</text>
+
+<g
+   transform="matrix(0.63281688,0,0,0.99786501,77.995609,-67.013237)"
+   v:groupContext="shape"
+   v:mID="253"
+   id="shape253-67-8"><title
+     id="title168-9">Sheet.253</title><path
+     style="fill:#00a9ce;stroke:#feffff;stroke-width:1"
+     id="path170-9"
+     class="st14"
+     d="M 175.2,490.54 H 0 v 23.1 h 175.2 z" /></g><text
+   x="91.339546"
+   y="436.70721"
+   class="st17"
+   v:langID="1033"
+   id="text179-1"
+   style="font-size:9px;font-family:'Gotham Light';fill:#ffffff"><v:paragraph
+   v:horizAlign="1" /><v:tabList />IEEE 802.15.4 PHY</text>
+
+
+
+
+
+
+<g
+   v:groupContext="group"
+   v:mID="255"
+   transform="translate(161.99036,-28.085617)"
+   id="group255-73-1"><v:userDefs /><title
+     id="title182-1">Sheet.255</title><desc
+     id="desc184-8">Secure boot</desc><g
+     v:groupContext="shape"
+     v:mID="256"
+     id="shape256-74-6"><title
+       id="title186-3">Sheet.256</title><rect
+       style="fill:#6ad1e3;stroke:none;stroke-width:1"
+       id="rect188-6"
+       class="st8"
+       height="28.997801"
+       width="130.159"
+       y="484.64001"
+       x="0" /></g><g
+     v:groupContext="groupContent"
+     v:mID="255"
+     id="shape255-76-5"><v:textBlock
+   v:tabSpace="42.5197"
+   v:margins="rect(0,0,0,0)" /><v:textRect
+   height="28.9978"
+   width="132.42"
+   cy="499.139"
+   cx="66.2063" /><text
+   style="font-size:10.00003242px;font-family:'Gotham Light';fill:#ffffff"
+   id="text193-4"
+   v:langID="1033"
+   class="st16"
+   y="496.14001"
+   x="13.76"><v:paragraph
+   v:horizAlign="1" /><v:tabList />Multiprotocol Service <tspan
+   style="font-size:10.00003242px"
+   id="tspan191-8"
+   class="st18"
+   dy="1.2em"
+   x="32.66">Layer (MPSL)</tspan></text>
+
+
+
+
+
+
+</g></g>
+
+<g
+   transform="translate(3.8972361,31.199003)"
+   id="layer2"><path
+   d="M 743.75476,110.1313 H 580.63051 v 45.28033 h 163.12425 z"
+   class="st8"
+   id="path63-6"
+   style="fill:#6ad1e3;stroke:none;stroke-width:0.74066675" /><text
+   x="662.19562"
+   y="123.14732"
+   class="st7"
+   v:langID="1033"
+   id="text72-8"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.22999954px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     y="123.14732"
+     x="662.19562"
+     id="tspan662">Protocol stack</tspan><tspan
+     y="138.43483"
+     x="662.19562"
+     id="tspan664">(Thread | Zigbee)</tspan></text>
+
+
+
+
+
+<rect
+   y="315.30936"
+   x="40.023922"
+   height="15.663842"
+   width="385.16919"
+   id="rect985"
+   style="fill:#98aace;fill-opacity:1;stroke:none;stroke-width:1.68436301;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1" /><text
+   style="font-size:10.00003242px;font-family:'Gotham Light';overflow:visible;color-interpolation-filters:sRGB;fill:#e8e8e8;fill-opacity:1;fill-rule:evenodd;stroke-linecap:square;stroke-miterlimit:3"
+   id="text220-4"
+   v:langID="1033"
+   class="st16"
+   y="325.62418"
+   x="190.76819"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     id="tspan5205"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Italic';fill:#e8e8e8;fill-opacity:1">Zephyr integration</tspan></text>
+
+<rect
+   style="fill:#98aace;fill-opacity:1;stroke:none;stroke-width:1.09614801;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1"
+   id="rect987"
+   width="163.12425"
+   height="15.663842"
+   x="580.53485"
+   y="159.23814" /><text
+   transform="scale(0.94589249,1.0572026)"
+   x="660.39417"
+   y="160.37888"
+   class="st16"
+   v:langID="1033"
+   id="text991"
+   style="font-size:9.45895576px;font-family:'Gotham Light';overflow:visible;color-interpolation-filters:sRGB;fill:#e8e8e8;fill-opacity:1;fill-rule:evenodd;stroke-width:0.94589251;stroke-linecap:square;stroke-miterlimit:3"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.51303196px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Italic';fill:#e8e8e8;fill-opacity:1;stroke-width:0.94589251"
+     id="tspan989">Zephyr integration</tspan></text>
+
+<rect
+   y="90.640938"
+   x="580.63055"
+   height="15.663842"
+   width="351.50098"
+   id="rect993"
+   style="fill:#98aace;fill-opacity:1;stroke:none;stroke-width:1.60906363;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1" /><text
+   style="font-size:10.00003242px;font-family:'Gotham Light';overflow:visible;color-interpolation-filters:sRGB;fill:#e8e8e8;fill-opacity:1;fill-rule:evenodd;stroke-linecap:square;stroke-miterlimit:3"
+   id="text997"
+   v:langID="1033"
+   class="st16"
+   y="100.95576"
+   x="714.54071"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     id="tspan995"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Italic';fill:#e8e8e8;fill-opacity:1">Zephyr integration</tspan></text>
+
+<path
+   style="fill:#0033a0;fill-opacity:1;stroke:none;stroke-width:0.87420887"
+   id="path2750"
+   class="st8"
+   d="M 932.64519,57.582847 H 580.63051 v 29.231558 h 352.01468 z" /><text
+   id="text1196"
+   class="TextShape"
+   x="207.52936"
+   y="21.309023"
+   style="font-size:0.34015754px;display:inline;overflow:visible;color-interpolation-filters:sRGB;fill:none;fill-rule:evenodd;stroke-width:0.02834646;stroke-linecap:square;stroke-miterlimit:3"><tspan
+     style="font-weight:400;font-size:13.49291515px;font-family:'Gotham Light';stroke-width:0.02834646"
+     id="tspan1194"
+     font-weight="400"
+     font-size="476px"
+     class="TextParagraph"><tspan
+       id="tspan1192"
+       y="75.252335"
+       x="719.46649"
+       class="TextPosition"
+       style="stroke-width:0.02834646"><tspan
+         style="fill:#ffffff;stroke:none;stroke-width:0.02834646"
+         id="tspan1190">Application</tspan></tspan></tspan></text>
+
+<path
+   style="fill:#6ad1e3;stroke:none;stroke-width:1.07680476"
+   id="path1140"
+   class="st8"
+   d="M 933.0014,110.1313 H 777.05934 V 210.24491 H 933.0014 Z" /><text
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.22999954px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff"
+   id="text1146"
+   v:langID="1033"
+   class="st7"
+   y="132.50911"
+   x="854.4541"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     id="tspan1144"
+     x="854.4541"
+     y="132.50911">Bluetooth LE stack</tspan></text>
+
+</g>
+
+
+<g
+   transform="translate(-108.32916,3.9473735)"
+   id="g1101"><g
+   style="fill:#d6b500;fill-opacity:1"
+   id="g5243"
+   v:mID="251"
+   v:groupContext="shape"
+   transform="matrix(0.52928601,0,0,1.1361428,470.37001,-259.38593)"><title
+     id="title5239">Sheet.251</title><path
+     d="M 192.06,465.45 H 0 v 48.19 h 192.06 z"
+     class="st8"
+     id="path5241"
+     style="fill:#d6b500;fill-opacity:1;stroke:none;stroke-width:1" /></g><text
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff"
+   id="text5237"
+   v:langID="1033"
+   class="st16"
+   y="290.97672"
+   x="496.97861"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     id="tspan644"
+     x="496.97861"
+     y="290.97672">OpenAMP</tspan></text>
+
+</g>
+
+
+
+
+<g
+   transform="matrix(1.0898585,0,0,1,-109.68471,142.79806)"
+   id="g2835"><path
+   d="M 305.02368,221.78214 H 141.89965 v 33.9654 h 163.12403 z"
+   class="st8"
+   id="path5225"
+   style="fill:#d68f00;fill-opacity:1;stroke:none;stroke-width:0.77371389" /><text
+   x="146.71361"
+   y="238.11588"
+   class="st16"
+   v:langID="1033"
+   id="text5217"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     id="tspan652"
+     x="146.71361"
+     y="238.11588"
+     style="text-align:start;text-anchor:start">IEEE 802.15.4 API Serialization</tspan><tspan
+     id="tspan654"
+     x="146.71361"
+     y="250.61588"
+     style="text-align:start;text-anchor:start">(Spinel)</tspan></text>
+
+
+
+<g
+   style="fill:#d68f00;fill-opacity:1"
+   id="g5263"
+   v:mID="251"
+   v:groupContext="shape"
+   transform="matrix(0.27746258,0,0,1.9870198,141.89965,-670.5412)"><title
+     id="title5259">Sheet.251</title></g><text
+   x="278.14343"
+   y="250.40976"
+   class="st16"
+   v:langID="1033"
+   id="text5247"
+   style="font-size:10.00003242px;font-family:'Gotham Light';text-align:center;text-anchor:middle;fill:#ffffff"><tspan
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';fill:#000000;fill-opacity:1"
+     id="tspan5249">/radio</tspan><v:paragraph
+     v:horizAlign="1" /><v:tabList /></text>
+
+
+
+</g>
+
+
+
+
+
+
+
+<g
+   id="g273"
+   v:mID="242"
+   v:groupContext="shape"
+   transform="translate(623.19101,-434.78503)"><title
+   id="title265">Sheet.242</title><desc
+   id="desc267">nRF SoC</desc><v:textBlock
+   v:margins="rect(0,0,0,0)"
+   v:tabSpace="42.5197" /><v:textRect
+   cx="59.183"
+   cy="502.089"
+   width="118.37"
+   height="23.0975" /><path
+   d="M 118.37,490.54 H 0 v 23.1 h 118.37 v -23.1"
+   class="st3"
+   id="path269"
+   style="stroke:none;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round" /><text
+   x="-67.317322"
+   y="507.21149"
+   class="st12"
+   v:langID="1033"
+   id="text271"
+   style="font-size:21.81167984px;font-family:'Gotham Light';fill:#ffffff">APP Core<v:paragraph
+   v:horizAlign="1" /><v:tabList /></text>
+
+
+
+
+
+
+</g>
+
+
+
+
+<g
+   transform="matrix(0.53677434,0,0,0.73635048,177.17076,159.15439)"
+   v:groupContext="shape"
+   v:mID="251"
+   id="g301"
+   style="fill:#ab2b9e;fill-opacity:1"><title
+     id="title297">Sheet.251</title><path
+     style="fill:#ab2b9e;fill-opacity:1;stroke:none;stroke-width:1"
+     id="path299"
+     class="st8"
+     d="M 192.06,465.45 H 0 v 48.19 h 192.06 z" /></g><text
+   x="192.98463"
+   y="523.33038"
+   class="st16"
+   v:langID="1033"
+   id="text303"
+   style="font-size:10.00003242px;font-family:'Gotham Light';fill:#ffffff">Radio 2.4 GHz<v:paragraph
+   v:horizAlign="1" /><v:tabList /></text>
+
+
+
+
+
+
+
+
+
+
+<path
+   id="path1255"
+   d="m 125.80815,454.74386 v 55.17985 h 47.81194"
+   style="fill:none;fill-opacity:1;stroke:#0075c8;stroke-width:0.74999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker1597);marker-end:url(#Arrow2Mend)" /><path
+   style="fill:#0075c8;fill-opacity:1;stroke:#0075c8;stroke-width:0.93724436;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker2273);marker-end:url(#marker2319)"
+   d="M 555.06395,319.20279 H 467.77761"
+   id="path2269" />
+
+<g
+   transform="translate(184.32043,-12.960807)"
+   id="g2770"><g
+   style="fill:#d68f00;fill-opacity:1"
+   id="g279"
+   v:mID="251"
+   v:groupContext="shape"
+   transform="matrix(0.8493389,0,0,0.70482246,400.11161,-105.17129)"><title
+     id="title275">Sheet.251</title><path
+     d="M 192.06,465.45 H 0 v 48.19 h 192.06 z"
+     class="st8"
+     id="path277"
+     style="fill:#d68f00;fill-opacity:1;stroke:none;stroke-width:1" /></g><text
+   style="font-size:10.00003242px;font-family:'Gotham Light';text-align:center;text-anchor:middle;fill:#ffffff"
+   id="text295"
+   v:langID="1033"
+   class="st16"
+   y="251.07846"
+   x="539.69885"><tspan
+     id="tspan293"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';fill:#000000;fill-opacity:1">/host</tspan><v:paragraph
+     v:horizAlign="1" /><v:tabList /></text>
+
+
+
+<text
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff"
+   id="text660"
+   v:langID="1033"
+   class="st16"
+   y="238.11588"
+   x="404.9256"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     style="text-align:start;text-anchor:start"
+     y="238.11588"
+     x="404.9256"
+     id="tspan656">IEEE 802.15.4 API Serialization</tspan><tspan
+     style="text-align:start;text-anchor:start"
+     y="250.61588"
+     x="404.9256"
+     id="tspan658">(Spinel)</tspan></text>
+
+
+
+</g>
+<g
+   transform="matrix(0.29436386,0,0,0.56289683,482.66655,44.582593)"
+   v:groupContext="shape"
+   v:mID="251"
+   id="g959"
+   style="fill:#ab2b9e;fill-opacity:1"><title
+     id="title955">Sheet.251</title><path
+     style="fill:#ab2b9e;fill-opacity:1;stroke:none;stroke-width:1"
+     id="path957"
+     class="st8"
+     d="M 192.06,465.45 H 0 v 48.19 h 192.06 z" /></g><text
+   x="511.11743"
+   y="317.23553"
+   class="st16"
+   v:langID="1033"
+   id="text946"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;line-height:125%;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     style="font-size:9px"
+     id="tspan944"
+     x="511.11743"
+     y="317.23553">IPC</tspan><tspan
+     style="font-size:9px"
+     id="tspan953"
+     x="511.11743"
+     y="329.9953">signaling</tspan></text>
+
+
+
+<path
+   id="path973"
+   d="M 555.06395,283.30858 H 467.77761"
+   style="fill:#0075c8;fill-opacity:1;stroke:#0075c8;stroke-width:0.93724436;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker977);marker-end:url(#marker981)" /><g
+   style="fill:#ab2b9e;fill-opacity:1"
+   id="g419"
+   v:mID="251"
+   v:groupContext="shape"
+   transform="matrix(0.29436386,0,0,0.83348452,482.66655,-125.1622)"><title
+     id="title415">Sheet.251</title><path
+     d="M 192.06,465.45 H 0 v 48.19 h 192.06 z"
+     class="st8"
+     id="path417"
+     style="fill:#ab2b9e;fill-opacity:1;stroke:none;stroke-width:1" /></g><text
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;line-height:125%;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff"
+   id="text630"
+   v:langID="1033"
+   class="st16"
+   y="273.42526"
+   x="510.62915"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     style="font-size:9px"
+     y="273.42526"
+     x="510.62915"
+     id="tspan636">shared</tspan><tspan
+     style="font-size:9px"
+     y="286.18503"
+     x="510.62915"
+     id="tspan638">memory</tspan><tspan
+     style="font-size:9px"
+     y="298.94479"
+     x="510.62915"
+     id="tspan640">area</tspan></text>
+
+
+
+<g
+   id="g1020"
+   v:mID="251"
+   v:groupContext="shape"
+   transform="matrix(1,0,0,1.7947736,237.06424,-470.85362)"><title
+     id="title1016">Sheet.251</title><path
+     d="M 192.06,465.45 H 0 v 48.19 h 192.06 z"
+     class="st8"
+     id="path1018"
+     style="fill:#6ad1e3;stroke:none;stroke-width:1" /></g><path
+   style="fill:#00a9ce;stroke:#feffff;stroke-width:1.30528831"
+   id="path1041"
+   class="st14"
+   d="M 403.30179,395.30955 H 262.63697 v 49.02003 h 140.66482 z" /><text
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff"
+   id="text1045"
+   v:langID="1033"
+   class="st17"
+   y="423.1748"
+   x="270.33853"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     y="423.1748"
+     x="270.33853"
+     id="tspan1047">nRF Bluetooth LE Controller</tspan></text>
+
+<path
+   d="M 394.79692,371.19997 H 271.39155 v 16.94312 h 123.40537 z"
+   class="st8"
+   id="path1050"
+   style="fill:#d68f00;fill-opacity:1;stroke:none;stroke-width:0.47529876" /><text
+   transform="scale(1.0439629,0.95788845)"
+   x="282.94641"
+   y="400.25488"
+   class="st16"
+   v:langID="1033"
+   id="text1056"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.4396286px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;stroke-width:1.04396284"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     id="tspan1054"
+     x="282.94641"
+     y="400.25488"
+     style="text-align:start;text-anchor:start;stroke-width:1.04396284">Bluetooth HCI</tspan></text>
+
+<g
+   style="fill:#d68f00;fill-opacity:1"
+   id="g1060"
+   v:mID="251"
+   v:groupContext="shape"
+   transform="matrix(0.30239495,0,0,1.9870198,279.96793,-525.85178)"><title
+     id="title1058">Sheet.251</title></g><path
+   style="fill:none;fill-opacity:1;stroke:#0075c8;stroke-width:0.74999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker1085);marker-end:url(#marker1089)"
+   d="m 331.39983,454.74386 v 55.17985 h -47.81194"
+   id="path1081" /><path
+   id="path1103"
+   d="M 331.39983,342.93496 V 303.515 h 27.59843"
+   style="fill:none;fill-opacity:1;stroke:#0075c8;stroke-width:0.74999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker1107);marker-end:url(#marker1111)" /><path
+   style="fill:none;fill-opacity:1;stroke:#0075c8;stroke-width:0.75118113;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker1117);marker-end:url(#marker1121)"
+   d="m 125.79374,342.93496 v -44.9822 h 233.20452"
+   id="path1113" /><g
+   id="g1133"
+   transform="translate(89.679983,3.9473735)"><g
+   transform="matrix(0.52928601,0,0,1.1361428,470.37001,-259.38593)"
+   v:groupContext="shape"
+   v:mID="251"
+   id="g1127"
+   style="fill:#d6b500;fill-opacity:1"><title
+     id="title1123">Sheet.251</title><path
+     style="fill:#d6b500;fill-opacity:1;stroke:none;stroke-width:1"
+     id="path1125"
+     class="st8"
+     d="M 192.06,465.45 H 0 v 48.19 h 192.06 z" /></g><text
+   x="496.97861"
+   y="290.97672"
+   class="st16"
+   v:langID="1033"
+   id="text1131"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     y="290.97672"
+     x="496.97861"
+     id="tspan1129">OpenAMP</tspan></text>
+
+</g><path
+   style="fill:#d68f00;fill-opacity:1;stroke:none;stroke-width:0.47529876"
+   id="path1156"
+   class="st8"
+   d="M 920.63029,217.0945 H 797.22492 v 16.94312 h 123.40537 z" /><text
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.4396286px;font-family:'Gotham Light';-inkscape-font-specification:'Gotham Light, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;stroke-width:1.04396284"
+   id="text1160"
+   v:langID="1033"
+   class="st16"
+   y="239.37447"
+   x="786.63617"
+   transform="scale(1.0439629,0.95788845)"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     style="text-align:start;text-anchor:start;stroke-width:1.04396284"
+     y="239.37447"
+     x="786.63617"
+     id="tspan1158">Bluetooth HCI</tspan></text>
+
+<g
+   transform="rotate(-180,797.28023,420.38671)"
+   id="g1204"><path
+     id="path1190"
+     d="m 915.11223,593.60132 v -50.29531 h 13.88603"
+     style="fill:none;fill-opacity:1;stroke:#0075c8;stroke-width:0.74999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker1196);marker-end:url(#marker1200)" /><path
+     style="fill:none;fill-opacity:1;stroke:#0075c8;stroke-width:0.75118113;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker1208);marker-end:url(#marker1212)"
+     d="M 736.58435,595.60742 V 537.74377 H 928.99826"
+     id="path1192" /></g></svg>
