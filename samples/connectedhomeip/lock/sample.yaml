@@ -1,0 +1,8 @@
+sample:
+  name: CHIP Lock
+  description: CHIP Lock example
+tests:
+  connectedhomeip.lock:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    tags: ci_build
