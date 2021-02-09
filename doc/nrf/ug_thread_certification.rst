@@ -58,7 +58,7 @@ Complete the following steps to run the certification tests:
 
 #. Build the certification image.
 
-   The :ref:`ot_cli_sample` sample is used as a base, modified with an overlay file.
+   The :ref:`ot_cli_sample` sample is used as a base, modified with the :file:`harness/overlay-cert.conf` overlay file.
 
    .. code-block::
 
@@ -67,12 +67,7 @@ Complete the following steps to run the certification tests:
 
    .. note::
       The overlay file selects the precompiled OpenThread libraries.
-
-      For nRF52 Series devices, use :file:`harness/overlay-cert.conf`.
-      This file also enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth LE advertising.
-
-      For nRF53 Series devices, use :file:`harness/overlay-cert-nrf53.conf`.
-      This file does not enable multiprotocol support, because there is no multiprotocol support for nRF53 Series devices yet.
+      It also enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth LE advertising.
 
 #. Prepare Thread Test Harness.
 
