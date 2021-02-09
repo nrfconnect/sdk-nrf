@@ -181,8 +181,8 @@ static int sensor_sim_init(const struct device *dev)
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
 	struct sensor_sim_data *drv_data = dev->data;
 
-	drv_data->gpio_port = SW0_GPIO_CONTROLLER;
-	drv_data->gpio_pin = SW0_GPIO_PIN;
+	drv_data->gpio_port = DT_GPIO_LABEL(DT_ALIAS(sw0), gpios);
+	drv_data->gpio_pin = DT_GPIO_PIN(DT_ALIAS(sw0), gpios);
 #endif
 	if (sensor_sim_init_thread(dev) < 0) {
 		LOG_ERR("Failed to initialize trigger interrupt");
