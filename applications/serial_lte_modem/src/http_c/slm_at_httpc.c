@@ -232,17 +232,17 @@ static int socket_timeout_set(int fd)
 
 static int server_connect(const char *host, int sec_tag)
 {
-	int fd = -1;
+	int fd;
 	int err;
 
 	if (host == NULL) {
 		LOG_ERR("Empty remote host.");
-		return -EINVAL;
+		return INVALID_SOCKET;
 	}
 
 	if ((httpc.sec_transport == true) && (sec_tag == -1)) {
 		LOG_ERR("Empty secure tag.");
-		return -EINVAL;
+		return INVALID_SOCKET;
 	}
 
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
@@ -253,16 +253,15 @@ static int server_connect(const char *host, int sec_tag)
 
 	if (fd < 0) {
 		LOG_ERR("Fail to resolve and connect");
-		return -EINVAL;
+		return INVALID_SOCKET;
 	}
 	LOG_INF("Connected to %s", log_strdup(host));
 
 	/* Set socket timeout, if configured */
 	err = socket_timeout_set(fd);
 	if (err) {
-		close(httpc.fd);
-		httpc.fd = INVALID_SOCKET;
-		return err;
+		close(fd);
+		return INVALID_SOCKET;
 	}
 
 	return fd;
@@ -376,9 +375,8 @@ static int do_http_connect(void)
 	/* Connect to server if it is not connected yet. */
 	if (httpc.fd == INVALID_SOCKET) {
 		httpc.fd = server_connect(httpc.host, httpc.sec_tag);
-		if (httpc.fd < 0) {
+		if (httpc.fd == INVALID_SOCKET) {
 			LOG_ERR("server_connect fail.");
-			httpc.fd = INVALID_SOCKET;
 			sprintf(rsp_buf, "#XHTTPCCON: 0\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		} else {

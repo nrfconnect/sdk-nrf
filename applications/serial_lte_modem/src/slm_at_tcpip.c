@@ -466,25 +466,26 @@ static int do_listen(void)
 
 static int do_accept(void)
 {
-	int ret;
+	int fd;
 	char peer_addr[INET_ADDRSTRLEN];
 	socklen_t len = sizeof(struct sockaddr_in);
 
-	ret = accept(client.sock, (struct sockaddr *)&remote, &len);
-	if (ret < 0) {
-		LOG_ERR("accept() failed: %d/%d", -errno, ret);
+	fd = accept(client.sock, (struct sockaddr *)&remote, &len);
+	if (fd == -1) {
+		LOG_ERR("accept() failed: %d", -errno);
 		do_socket_close(-errno);
 		return -errno;
 	}
 	if (inet_ntop(AF_INET, &remote.sin_addr, peer_addr, INET_ADDRSTRLEN)
 		== NULL) {
 		LOG_WRN("Parse peer IP address failed: %d", -errno);
+		close(fd);
 		return -EINVAL;
 	}
 	sprintf(rsp_buf, "#XACCEPT: \"connected with %s\"\r\n",
 		peer_addr);
 	rsp_send(rsp_buf, strlen(rsp_buf));
-	client.sock_peer = ret;
+	client.sock_peer = fd;
 	client.connected = true;
 
 	sprintf(rsp_buf, "#XACCEPT: %d\r\n", client.sock_peer);
