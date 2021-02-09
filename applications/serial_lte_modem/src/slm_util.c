@@ -8,7 +8,6 @@
 #include <errno.h>
 #include <stdio.h>
 #include "slm_util.h"
-#include <modem/at_cmd.h>
 #include <net/socket.h>
 
 #define PRINTABLE_ASCII(ch) (ch > 0x1f && ch < 0x7f)
@@ -172,4 +171,26 @@ bool util_get_ipv4_addr(char *address)
 	memcpy(address, tmp1, tmp2 - tmp1);
 	address[tmp2 - tmp1] = '\0';
 	return true;
+}
+
+/**
+ * @brief Get string value from AT command with length check
+ */
+int util_string_get(const struct at_param_list *list, size_t index,
+			 char *value, size_t *len)
+{
+	int ret;
+	size_t size = *len;
+
+	/* at_params_string_get calls "memcpy" instead of "strcpy" */
+	ret = at_params_string_get(list, index, value, len);
+	if (ret) {
+		return ret;
+	}
+	if (*len < size) {
+		*(value + *len) = '\0';
+		return 0;
+	}
+
+	return -ENOMEM;
 }

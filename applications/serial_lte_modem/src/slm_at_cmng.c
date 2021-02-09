@@ -114,14 +114,13 @@ static int handle_at_xcmng(enum at_cmd_type cmd_type)
 				return -EINVAL;
 			}
 			content = k_malloc(CONFIG_AT_CMD_RESPONSE_MAX_LEN);
-			err = at_params_string_get(&at_param_list, 4, content,
+			err = util_string_get(&at_param_list, 4, content,
 						   &len);
 			if (err != 0) {
 				LOG_ERR("Failed to get content");
 				k_free(content);
 				return err;
 			}
-			*(content + len) = '\0';
 			err = modem_key_mgmt_write(
 				slm_tls_map_sectag(sec_tag, type),
 				0, content, len);

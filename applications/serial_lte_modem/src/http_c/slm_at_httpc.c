@@ -508,14 +508,13 @@ static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type)
 			if (httpc.fd != INVALID_SOCKET) {
 				return -EINPROGRESS;
 			}
-			err = at_params_string_get(&at_param_list, 2,
+			err = util_string_get(&at_param_list, 2,
 							httpc.host, &host_sz);
 			if (err < 0) {
 				LOG_ERR("Fail to get host: %d", err);
 				return err;
 			}
 
-			httpc.host[host_sz] = '\0';
 			err = at_params_int_get(&at_param_list, 3, &httpc.port);
 			if (err < 0) {
 				LOG_ERR("Fail to get port: %d", err);
@@ -603,33 +602,30 @@ static int handle_AT_HTTPC_REQUEST(enum at_cmd_type cmd_type)
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
 		param_count = at_params_valid_count_get(&at_param_list);
-		err = at_params_string_get(&at_param_list, 1,
+		err = util_string_get(&at_param_list, 1,
 					   data_buf, &method_sz);
 		if (err < 0) {
 			LOG_ERR("Fail to get method string: %d", err);
 			return err;
 		}
-		data_buf[method_sz] = '\0';
 		httpc.method_str = data_buf;
 		offset = method_sz + 1;
 		/* Get resource path string */
-		err = at_params_string_get(&at_param_list, 2,
+		err = util_string_get(&at_param_list, 2,
 					   data_buf + offset, &resource_sz);
 		if (err < 0) {
 			LOG_ERR("Fail to get resource string: %d", err);
 			return err;
 		}
-		data_buf[offset + resource_sz] = '\0';
 		httpc.resource = data_buf + offset;
 		offset = offset + resource_sz + 1;
 		/* Get header string */
-		err = at_params_string_get(&at_param_list, 3,
+		err = util_string_get(&at_param_list, 3,
 					   data_buf + offset, &headers_sz);
 		if (err < 0) {
 			LOG_ERR("Fail to get option string: %d", err);
 			return err;
 		}
-		data_buf[offset + headers_sz] = '\0';
 		httpc.headers = data_buf + offset;
 		if (param_count >= 5) {
 			err = at_params_int_get(&at_param_list, 4,

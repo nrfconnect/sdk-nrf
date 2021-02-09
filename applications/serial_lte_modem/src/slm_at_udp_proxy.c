@@ -478,12 +478,10 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 			int size = TCPIP_MAX_URL;
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 
-			err = at_params_string_get(&at_param_list,
-						2, url, &size);
+			err = util_string_get(&at_param_list, 2, url, &size);
 			if (err) {
 				return err;
 			}
-			url[size] = '\0';
 			err = at_params_short_get(&at_param_list, 3, &port);
 			if (err) {
 				return err;
@@ -554,7 +552,7 @@ static int handle_at_udp_send(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		err = at_params_string_get(&at_param_list, 2, data, &size);
+		err = util_string_get(&at_param_list, 2, data, &size);
 		if (err) {
 			return err;
 		}
