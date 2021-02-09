@@ -603,9 +603,6 @@ static int handle_AT_HTTPC_REQUEST(enum at_cmd_type cmd_type)
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
 		param_count = at_params_valid_count_get(&at_param_list);
-		if (param_count < 3) {
-			return -EINVAL;
-		}
 		err = at_params_string_get(&at_param_list, 1,
 					   data_buf, &method_sz);
 		if (err < 0) {

@@ -164,13 +164,9 @@ static int do_ftp_open(void)
 	int sz_hostname = FTP_MAX_HOSTNAME;
 	uint16_t port = CONFIG_SLM_FTP_SERVER_PORT;
 	sec_tag_t sec_tag = INVALID_SEC_TAG;
-	int param_count;
+	int param_count = at_params_valid_count_get(&at_param_list);
 
 	/* Parse AT command */
-	param_count = at_params_valid_count_get(&at_param_list);
-	if (param_count < 5) {
-		return -EINVAL;
-	}
 	memset(username, 0x00, sz_username); /* Important for optional params*/
 	ret = at_params_string_get(&at_param_list, 2, username, &sz_username);
 	if (ret || strlen(username) == 0) {
@@ -268,12 +264,11 @@ static int do_ftp_ls(void)
 	int sz_options = FTP_MAX_OPTION;
 	char target[FTP_MAX_FILEPATH];
 	int sz_target = FTP_MAX_FILEPATH;
-	int param_count;
+	int param_count = at_params_valid_count_get(&at_param_list);
 
 	memset(options, 0x00, sz_options);
 	memset(target, 0x00, sz_target);
 	/* Parse AT command */
-	param_count = at_params_valid_count_get(&at_param_list);
 	if (param_count > 2) {
 		ret = at_params_string_get(&at_param_list, 2,
 				options, &sz_options);
@@ -307,13 +302,8 @@ static int do_ftp_cd(void)
 	int ret;
 	char folder[FTP_MAX_FILEPATH];
 	int sz_folder = FTP_MAX_FILEPATH;
-	int param_count;
 
 	/* Parse AT command */
-	param_count = at_params_valid_count_get(&at_param_list);
-	if (param_count < 3) {
-		return -EINVAL;
-	}
 	ret = at_params_string_get(&at_param_list, 2, folder, &sz_folder);
 	if (ret) {
 		return ret;
@@ -330,13 +320,8 @@ static int do_ftp_mkdir(void)
 	int ret;
 	char folder[FTP_MAX_FILEPATH];
 	int sz_folder = FTP_MAX_FILEPATH;
-	int param_count;
 
 	/* Parse AT command */
-	param_count = at_params_valid_count_get(&at_param_list);
-	if (param_count < 3) {
-		return -EINVAL;
-	}
 	ret = at_params_string_get(&at_param_list, 2, folder, &sz_folder);
 	if (ret) {
 		return ret;
@@ -353,13 +338,8 @@ static int do_ftp_rmdir(void)
 	int ret;
 	char folder[FTP_MAX_FILEPATH];
 	int sz_folder = FTP_MAX_FILEPATH;
-	int param_count;
 
 	/* Parse AT command */
-	param_count = at_params_valid_count_get(&at_param_list);
-	if (param_count < 3) {
-		return -EINVAL;
-	}
 	ret = at_params_string_get(&at_param_list, 2, folder, &sz_folder);
 	if (ret) {
 		return ret;
@@ -378,13 +358,8 @@ static int do_ftp_rename(void)
 	int sz_file_old = FTP_MAX_FILEPATH;
 	char file_new[FTP_MAX_FILEPATH];
 	int sz_file_new = FTP_MAX_FILEPATH;
-	int param_count;
 
 	/* Parse AT command */
-	param_count = at_params_valid_count_get(&at_param_list);
-	if (param_count < 4) {
-		return -EINVAL;
-	}
 	ret = at_params_string_get(&at_param_list, 2, file_old, &sz_file_old);
 	if (ret) {
 		return ret;
@@ -406,13 +381,8 @@ static int do_ftp_delete(void)
 	int ret;
 	char file[FTP_MAX_FILEPATH];
 	int sz_file = 128;
-	int param_count;
 
 	/* Parse AT command */
-	param_count = at_params_valid_count_get(&at_param_list);
-	if (param_count < 3) {
-		return -EINVAL;
-	}
 	ret = at_params_string_get(&at_param_list, 2, file, &sz_file);
 	if (ret) {
 		return ret;
@@ -429,13 +399,8 @@ static int do_ftp_get(void)
 	int ret;
 	char file[FTP_MAX_FILEPATH];
 	int sz_file = FTP_MAX_FILEPATH;
-	int param_count;
 
 	/* Parse AT command */
-	param_count = at_params_valid_count_get(&at_param_list);
-	if (param_count < 3) {
-		return -EINVAL;
-	}
 	ret = at_params_string_get(&at_param_list, 2, file, &sz_file);
 	if (ret) {
 		return ret;
@@ -458,13 +423,9 @@ static int do_ftp_put(void)
 	int ret;
 	char file[FTP_MAX_FILEPATH];
 	int sz_file = FTP_MAX_FILEPATH;
-	int param_count;
+	int param_count = at_params_valid_count_get(&at_param_list);
 
 	/* Parse AT command */
-	param_count = at_params_valid_count_get(&at_param_list);
-	if (param_count < 3) {
-		return -EINVAL;
-	}
 	ret = at_params_string_get(&at_param_list, 2, file, &sz_file);
 	if (ret) {
 		return ret;
@@ -517,9 +478,6 @@ int slm_at_ftp_parse(const char *at_cmd)
 			return -EINVAL;
 		}
 		if (at_parser_cmd_type_get(at_cmd) != AT_CMD_TYPE_SET_COMMAND) {
-			return -EINVAL;
-		}
-		if (at_params_valid_count_get(&at_param_list) < 2) {
 			return -EINVAL;
 		}
 		ret = at_params_string_get(&at_param_list, 1, op_str, &size);

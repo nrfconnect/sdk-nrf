@@ -416,9 +416,6 @@ static int handle_at_gps(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 2) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &op);
 		if (err < 0) {
 			return err;

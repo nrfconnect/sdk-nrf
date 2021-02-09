@@ -186,9 +186,6 @@ static int handle_at_fota(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) <= 1) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
@@ -201,9 +198,6 @@ static int handle_at_fota(enum at_cmd_type cmd_type)
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 			char apn[APN_MAX];
 
-			if (at_params_valid_count_get(&at_param_list) <= 2) {
-				return -EINVAL;
-			}
 			size = FILE_URI_MAX;
 			err = at_params_string_get(&at_param_list, 2, uri,
 						&size);
