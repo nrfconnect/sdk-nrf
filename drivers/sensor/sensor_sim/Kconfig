@@ -23,7 +23,7 @@ config SENSOR_SIM_DEV_NAME
 
 choice
 	prompt "Select simulated acceleration type"
-	default SENSOR_SIM_ACCEL_SINE
+	default SENSOR_SIM_ACCEL_TOGGLE
 
 config SENSOR_SIM_ACCEL_SINE
 	bool "Sine wave"
