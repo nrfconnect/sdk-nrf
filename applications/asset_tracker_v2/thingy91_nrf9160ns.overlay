@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+        aliases {
+                temp-sensor = &bme680;
+                humidity-sensor = &bme680;
+                accelerometer = &adxl362;
+        };
+};
+
+&i2c2 {
+        bme680: bme680@76 {};
+};
+
+&spi3 {
+        adxl362: adxl362@0 {};
+};
