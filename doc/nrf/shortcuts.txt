@@ -68,3 +68,5 @@
 .. |how_to_configure| replace:: See :ref:`configure_application` for information on how to set the required configuration options temporarily or permanently.
 
 .. |trusted_execution| replace:: nRF5340 and nRF9160
+
+.. |chip_sample_button3_note| replace:: Use **Button 3** to enable this mode after building and running the sample.

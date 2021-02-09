@@ -13,7 +13,7 @@
 
 #include <cstring>
 
-void StartDefaultThreadNetwork()
+void StartDefaultThreadNetwork(uint64_t datasetTimestamp)
 {
 	using namespace chip::DeviceLayer;
 
@@ -29,6 +29,7 @@ void StartDefaultThreadNetwork()
 	memcpy(deviceNetworkInfo.ThreadMasterKey, masterKey, sizeof(masterKey));
 	deviceNetworkInfo.ThreadPANId = CONFIG_OPENTHREAD_PANID;
 	deviceNetworkInfo.ThreadChannel = CONFIG_OPENTHREAD_CHANNEL;
+	deviceNetworkInfo.ThreadDatasetTimestamp = datasetTimestamp;
 
 	ThreadStackMgr().SetThreadEnabled(false);
 	ThreadStackMgr().SetThreadProvision(deviceNetworkInfo);

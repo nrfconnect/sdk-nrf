@@ -6,4 +6,6 @@
 
 #pragma once
 
-void StartDefaultThreadNetwork();
+#include <cstdint>
+
+void StartDefaultThreadNetwork(uint64_t datasetTimestamp = 0);

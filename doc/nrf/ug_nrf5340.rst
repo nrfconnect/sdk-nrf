@@ -162,7 +162,7 @@ Most of these samples should run on the nRF5340 DK, but not all have been thorou
 
 Some Bluetooth LE samples require configuration adjustments to the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample as described in the `Network samples`_ section.
 
-The |NCS| also provides :ref:`Thread <ug_thread>` and :ref:`Zigbee <ug_zigbee>` samples that can be run on the nRF5340 DK.
+The |NCS| also provides :ref:`Thread <ug_thread>`, :ref:`Zigbee <ug_zigbee>`, and :ref:`CHIP <ug_chip>` samples that can be run on the nRF5340 DK.
 These samples are built for the application core, but make use of both cores.
 The network core application is built and flashed automatically.
 
