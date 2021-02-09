@@ -115,6 +115,10 @@ zb_ret_t zb_osif_nvram_write(zb_uint8_t page, zb_uint32_t pos, void *buf,
 		return RET_INVALID_PARAMETER_3;
 	}
 
+	if (len == 0) {
+		return RET_OK;
+	}
+
 	if (!(len >> 2)) {
 		return RET_INVALID_PARAMETER_4;
 	}
