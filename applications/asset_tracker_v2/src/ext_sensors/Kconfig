@@ -9,16 +9,8 @@ menuconfig EXTERNAL_SENSORS
 
 if EXTERNAL_SENSORS
 
-config ACCELEROMETER_DEV_NAME
-	string "Accelerometer device name"
-	default "ADXL362" if BOARD_THINGY91_NRF9160NS
-
-config MULTISENSOR_DEV_NAME
-	string "Multisensor device name"
-	default "BME680" if BOARD_THINGY91_NRF9160NS
-
-endif # EXTERNAL_SENSORS
-
 module = EXTERNAL_SENSORS
 module-str = External sensors
 source "subsys/logging/Kconfig.template.log_config"
+
+endif # EXTERNAL_SENSORS

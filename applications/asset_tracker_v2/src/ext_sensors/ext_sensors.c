@@ -32,24 +32,24 @@ double threshold = ADXL362_RANGE_MAX_M_S2;
 
 struct env_sensor {
 	enum sensor_channel channel;
-	const char *dev_name;
 	const struct device *dev;
 	struct k_spinlock lock;
 };
 
 static struct env_sensor temp_sensor = {
 	.channel = SENSOR_CHAN_AMBIENT_TEMP,
-	.dev_name = CONFIG_MULTISENSOR_DEV_NAME
+	.dev = DEVICE_DT_GET(DT_ALIAS(temp_sensor)),
+
 };
 
 static struct env_sensor humid_sensor = {
 	.channel = SENSOR_CHAN_HUMIDITY,
-	.dev_name = CONFIG_MULTISENSOR_DEV_NAME
+	.dev = DEVICE_DT_GET(DT_ALIAS(humidity_sensor)),
 };
 
 static struct env_sensor accel_sensor = {
 	.channel = SENSOR_CHAN_ACCEL_XYZ,
-	.dev_name = CONFIG_ACCELEROMETER_DEV_NAME
+	.dev = DEVICE_DT_GET(DT_ALIAS(accelerometer)),
 };
 
 static ext_sensor_handler_t evt_handler;
@@ -115,25 +115,19 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		return -EINVAL;
 	}
 
-	temp_sensor.dev = device_get_binding(temp_sensor.dev_name);
-	if (temp_sensor.dev == NULL) {
-		LOG_ERR("Could not get device binding %s",
-			temp_sensor.dev_name);
-		return -ENODATA;
+	if (!device_is_ready(temp_sensor.dev)) {
+		LOG_ERR("Temperature sensor device is not ready");
+		return -ENODEV;
 	}
 
-	humid_sensor.dev = device_get_binding(humid_sensor.dev_name);
-	if (humid_sensor.dev == NULL) {
-		LOG_ERR("Could not get device binding %s",
-			humid_sensor.dev_name);
-		return -ENODATA;
+	if (!device_is_ready(humid_sensor.dev)) {
+		LOG_ERR("Humidity sensor device is not ready");
+		return -ENODEV;
 	}
 
-	accel_sensor.dev = device_get_binding(accel_sensor.dev_name);
-	if (accel_sensor.dev == NULL) {
-		LOG_ERR("Could not get device binding %s",
-			accel_sensor.dev_name);
-		return -ENODATA;
+	if (!device_is_ready(accel_sensor.dev)) {
+		LOG_ERR("Accelerometer device is not ready");
+		return -ENODEV;
 	}
 
 	struct sensor_trigger trig = { .chan = SENSOR_CHAN_ACCEL_XYZ };
@@ -142,7 +136,7 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 	if (sensor_trigger_set(accel_sensor.dev, &trig,
 			       accelerometer_trigger_handler)) {
 		LOG_ERR("Could not set trigger for device %s",
-			accel_sensor.dev_name);
+			accel_sensor.dev->name);
 		return -ENODATA;
 	}
 
@@ -159,14 +153,14 @@ int ext_sensors_temperature_get(double *ext_temp)
 	err = sensor_sample_fetch_chan(temp_sensor.dev, SENSOR_CHAN_ALL);
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
-			temp_sensor.dev_name, err);
+			temp_sensor.dev->name, err);
 		return -ENODATA;
 	}
 
 	err = sensor_channel_get(temp_sensor.dev, temp_sensor.channel, &data);
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
-			temp_sensor.dev_name, err);
+			temp_sensor.dev->name, err);
 		return -ENODATA;
 	}
 
@@ -185,14 +179,14 @@ int ext_sensors_humidity_get(double *ext_hum)
 	err = sensor_sample_fetch_chan(humid_sensor.dev, SENSOR_CHAN_ALL);
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
-			humid_sensor.dev_name, err);
+			humid_sensor.dev->name, err);
 		return -ENODATA;
 	}
 
 	err = sensor_channel_get(humid_sensor.dev, humid_sensor.channel, &data);
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
-			humid_sensor.dev_name, err);
+			humid_sensor.dev->name, err);
 		return -ENODATA;
 	}
 
@@ -241,7 +235,7 @@ int ext_sensors_mov_thres_set(double threshold_new)
 	if (err) {
 		LOG_ERR("Failed to set accelerometer x-axis threshold value");
 		LOG_ERR("Device: %s, error: %d",
-			accel_sensor.dev_name, err);
+			accel_sensor.dev->name, err);
 		return err;
 	}
 
@@ -250,7 +244,7 @@ int ext_sensors_mov_thres_set(double threshold_new)
 	if (err) {
 		LOG_ERR("Failed to set accelerometer y-axis threshold value");
 		LOG_ERR("Device: %s, error: %d",
-			accel_sensor.dev_name, err);
+			accel_sensor.dev->name, err);
 		return err;
 	}
 
@@ -259,7 +253,7 @@ int ext_sensors_mov_thres_set(double threshold_new)
 	if (err) {
 		LOG_ERR("Failed to set accelerometer z-axis threshold value");
 		LOG_ERR("Device: %s, error: %d",
-			accel_sensor.dev_name, err);
+			accel_sensor.dev->name, err);
 		return err;
 	}
 
