@@ -1,7 +1,7 @@
 .. _bt_mesh_models:
 
 Bluetooth mesh models
-######################
+#####################
 
 Nordic Semiconductor provides a variety of model implementations from the `Bluetooth mesh model specification`_, including API documentation.
 
@@ -28,3 +28,4 @@ For more information about these and other models, see also `Bluetooth mesh mode
    ../../../include/bluetooth/mesh/sensor_models.rst
    ../../../include/bluetooth/mesh/time.rst
    ../../../include/bluetooth/mesh/scene.rst
+   ../../../include/bluetooth/mesh/scheduler.rst
