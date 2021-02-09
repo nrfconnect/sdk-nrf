@@ -259,5 +259,9 @@ void nrf_802154_serialization_error(const nrf_802154_ser_err_data_t *err)
 	__ASSERT(false, "802.15.4 serialization error");
 }
 
+void nrf_802154_sl_fault_handler(uint32_t id, int32_t line, const char *err)
+{
+	__ASSERT(false, "module_id: %u, line: %d, %s", id, line, err);
+}
 
 SYS_INIT(register_endpoint, POST_KERNEL, CONFIG_RPMSG_SERVICE_EP_REG_PRIORITY);
