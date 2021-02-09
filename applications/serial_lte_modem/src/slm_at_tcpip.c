@@ -889,11 +889,10 @@ static int handle_at_connect(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_string_get(&at_param_list, 1, url, &size);
+		err = util_string_get(&at_param_list, 1, url, &size);
 		if (err) {
 			return err;
 		}
-		url[size] = '\0';
 		err = at_params_short_get(&at_param_list, 2, &port);
 		if (err) {
 			return err;
@@ -1022,7 +1021,7 @@ static int handle_at_send(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		err = at_params_string_get(&at_param_list, 2, data, &size);
+		err = util_string_get(&at_param_list, 2, data, &size);
 		if (err) {
 			return err;
 		}
@@ -1087,10 +1086,10 @@ static int handle_at_sendto(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	char url[TCPIP_MAX_URL];
+	int size = TCPIP_MAX_URL;
 	uint16_t port;
 	uint16_t datatype;
 	char data[NET_IPV4_MTU];
-	int size;
 
 	if (client.sock < 0) {
 		LOG_ERR("Socket not opened yet");
@@ -1104,12 +1103,10 @@ static int handle_at_sendto(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		size = TCPIP_MAX_URL;
-		err = at_params_string_get(&at_param_list, 1, url, &size);
+		err = util_string_get(&at_param_list, 1, url, &size);
 		if (err) {
 			return err;
 		}
-		url[size] = '\0';
 		err = at_params_short_get(&at_param_list, 2, &port);
 		if (err) {
 			return err;
@@ -1119,7 +1116,7 @@ static int handle_at_sendto(enum at_cmd_type cmd_type)
 			return err;
 		}
 		size = NET_IPV4_MTU;
-		err = at_params_string_get(&at_param_list, 4, data, &size);
+		err = util_string_get(&at_param_list, 4, data, &size);
 		if (err) {
 			return err;
 		}
@@ -1199,11 +1196,10 @@ static int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_string_get(&at_param_list, 1, url, &size);
+		err = util_string_get(&at_param_list, 1, url, &size);
 		if (err) {
 			return err;
 		}
-		url[size] = '\0';
 		if (check_for_ipv4(url, strlen(url))) {
 			LOG_ERR("already IPv4 address");
 			return -EINVAL;

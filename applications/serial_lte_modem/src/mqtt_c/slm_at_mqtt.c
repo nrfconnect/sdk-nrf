@@ -617,34 +617,30 @@ static int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 			memset(&ctx, 0, sizeof(ctx));
 			ctx.sec_tag = INVALID_SEC_TAG;
 
-			err = at_params_string_get(&at_param_list, 2,
+			err = util_string_get(&at_param_list, 2,
 							ctx.cid, &cid_sz);
 			if (err < 0) {
 				return err;
 			}
-			ctx.cid[cid_sz] = '\0';
-			err = at_params_string_get(&at_param_list, 3,
+			err = util_string_get(&at_param_list, 3,
 						ctx.uname, &username_sz);
 			if (err < 0) {
 				return err;
 			}
-			ctx.uname[username_sz] = '\0';
-			err = at_params_string_get(&at_param_list, 4,
+			err = util_string_get(&at_param_list, 4,
 						ctx.pword, &password_sz);
 			if (err < 0) {
 				return err;
 			}
-			ctx.pword[password_sz] = '\0';
 			if ((username_sz == 0) && (password_sz > 0)) {
 				/* Password without username is invalid. */
 				return -EINVAL;
 			}
-			err = at_params_string_get(&at_param_list, 5,
+			err = util_string_get(&at_param_list, 5,
 						ctx.url, &url_sz);
 			if (err < 0) {
 				return err;
 			}
-			ctx.url[url_sz] = '\0';
 			err = at_params_int_get(&at_param_list, 6, &ctx.port);
 			if (err < 0) {
 				return err;
@@ -723,20 +719,18 @@ static int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 		if (at_params_valid_count_get(&at_param_list) != 6) {
 			return -EINVAL;
 		}
-		err = at_params_string_get(&at_param_list, 1, topic, &topic_sz);
+		err = util_string_get(&at_param_list, 1, topic, &topic_sz);
 		if (err < 0) {
 			return err;
 		}
-		topic[topic_sz] = '\0';
 		err = at_params_short_get(&at_param_list, 2, &datatype);
 		if (err < 0) {
 			return err;
 		}
-		err = at_params_string_get(&at_param_list, 3, msg, &msg_sz);
+		err = util_string_get(&at_param_list, 3, msg, &msg_sz);
 		if (err < 0) {
 			return err;
 		}
-		msg[msg_sz] = '\0';
 		err = at_params_short_get(&at_param_list, 4, &qos);
 		if (err < 0) {
 			return err;
@@ -795,12 +789,11 @@ static int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
 		if (at_params_valid_count_get(&at_param_list) == 3) {
-			err = at_params_string_get(&at_param_list, 1,
+			err = util_string_get(&at_param_list, 1,
 							topic, &topic_sz);
 			if (err < 0) {
 				return err;
 			}
-			topic[topic_sz] = '\0';
 			err = at_params_short_get(&at_param_list, 2, &qos);
 			if (err < 0) {
 				return err;
@@ -839,12 +832,11 @@ static int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type)
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
 		if (at_params_valid_count_get(&at_param_list) == 2) {
-			err = at_params_string_get(&at_param_list, 1,
+			err = util_string_get(&at_param_list, 1,
 							topic, &topic_sz);
 			if (err < 0) {
 				return err;
 			}
-			topic[topic_sz] = '\0';
 			err = do_mqtt_subscribe(AT_MQTTSUB_UNSUB,
 						topic, topic_sz, 0);
 		} else {

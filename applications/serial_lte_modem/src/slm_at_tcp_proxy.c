@@ -760,7 +760,7 @@ static int handle_at_tcp_filter(enum at_cmd_type cmd_type)
 			memset(ip_allowlist, 0x00, sizeof(ip_allowlist));
 			for (int i = 2; i < param_count; i++) {
 				size = INET_ADDRSTRLEN;
-				err = at_params_string_get(&at_param_list, i,
+				err = util_string_get(&at_param_list, i,
 							   address, &size);
 				if (err) {
 					return err;
@@ -903,12 +903,11 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 				LOG_ERR("Client is already running.");
 				return -EINVAL;
 			}
-			err = at_params_string_get(&at_param_list,
+			err = util_string_get(&at_param_list,
 						2, url, &size);
 			if (err) {
 				return err;
 			}
-			url[size] = '\0';
 			err = at_params_short_get(&at_param_list, 3, &port);
 			if (err) {
 				return err;
@@ -972,7 +971,7 @@ static int handle_at_tcp_send(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		err = at_params_string_get(&at_param_list, 2, data, &size);
+		err = util_string_get(&at_param_list, 2, data, &size);
 		if (err) {
 			return err;
 		}

@@ -167,27 +167,23 @@ static int do_ftp_open(void)
 	int param_count = at_params_valid_count_get(&at_param_list);
 
 	/* Parse AT command */
-	memset(username, 0x00, sz_username); /* Important for optional params*/
-	ret = at_params_string_get(&at_param_list, 2, username, &sz_username);
+	ret = util_string_get(&at_param_list, 2, username, &sz_username);
 	if (ret || strlen(username) == 0) {
 		memcpy(username, CONFIG_SLM_FTP_USER_ANONYMOUS,
 			sizeof(CONFIG_SLM_FTP_USER_ANONYMOUS) - 1);
 		memcpy(password, CONFIG_SLM_FTP_PASSWORD_ANONYMOUS,
 			sizeof(CONFIG_SLM_FTP_PASSWORD_ANONYMOUS) - 1);
 	} else {
-		username[sz_username] = '\0';
-		ret = at_params_string_get(&at_param_list, 3, password,
+		ret = util_string_get(&at_param_list, 3, password,
 					&sz_password);
 		if (ret) {
 			return -EINVAL;
 		}
-		password[sz_password] = '\0';
 	}
-	ret = at_params_string_get(&at_param_list, 4, hostname, &sz_hostname);
+	ret = util_string_get(&at_param_list, 4, hostname, &sz_hostname);
 	if (ret) {
 		return ret;
 	}
-	hostname[sz_hostname] = '\0';
 	if (param_count > 5) {
 		ret = at_params_short_get(&at_param_list, 5, &port);
 		if (ret) {
@@ -266,24 +262,20 @@ static int do_ftp_ls(void)
 	int sz_target = FTP_MAX_FILEPATH;
 	int param_count = at_params_valid_count_get(&at_param_list);
 
-	memset(options, 0x00, sz_options);
-	memset(target, 0x00, sz_target);
 	/* Parse AT command */
 	if (param_count > 2) {
-		ret = at_params_string_get(&at_param_list, 2,
+		ret = util_string_get(&at_param_list, 2,
 				options, &sz_options);
 		if (ret) {
 			return ret;
 		}
-		options[sz_options] = '\0';
 	}
 	if (param_count > 3) {
-		ret = at_params_string_get(&at_param_list, 3,
+		ret = util_string_get(&at_param_list, 3,
 				target, &sz_target);
 		if (ret) {
 			return ret;
 		}
-		target[sz_target] = '\0';
 	}
 
 	ring_buf_reset(&ftp_data_buf);
@@ -304,11 +296,10 @@ static int do_ftp_cd(void)
 	int sz_folder = FTP_MAX_FILEPATH;
 
 	/* Parse AT command */
-	ret = at_params_string_get(&at_param_list, 2, folder, &sz_folder);
+	ret = util_string_get(&at_param_list, 2, folder, &sz_folder);
 	if (ret) {
 		return ret;
 	}
-	folder[sz_folder] = '\0';
 
 	ret = ftp_cwd(folder);
 	return (ret == FTP_CODE_250) ? 0 : -1;
@@ -322,11 +313,10 @@ static int do_ftp_mkdir(void)
 	int sz_folder = FTP_MAX_FILEPATH;
 
 	/* Parse AT command */
-	ret = at_params_string_get(&at_param_list, 2, folder, &sz_folder);
+	ret = util_string_get(&at_param_list, 2, folder, &sz_folder);
 	if (ret) {
 		return ret;
 	}
-	folder[sz_folder] = '\0';
 
 	ret = ftp_mkd(folder);
 	return (ret == FTP_CODE_257) ? 0 : -1;
@@ -340,11 +330,10 @@ static int do_ftp_rmdir(void)
 	int sz_folder = FTP_MAX_FILEPATH;
 
 	/* Parse AT command */
-	ret = at_params_string_get(&at_param_list, 2, folder, &sz_folder);
+	ret = util_string_get(&at_param_list, 2, folder, &sz_folder);
 	if (ret) {
 		return ret;
 	}
-	folder[sz_folder] = '\0';
 
 	ret = ftp_rmd(folder);
 	return (ret == FTP_CODE_250) ? 0 : -1;
@@ -360,16 +349,14 @@ static int do_ftp_rename(void)
 	int sz_file_new = FTP_MAX_FILEPATH;
 
 	/* Parse AT command */
-	ret = at_params_string_get(&at_param_list, 2, file_old, &sz_file_old);
+	ret = util_string_get(&at_param_list, 2, file_old, &sz_file_old);
 	if (ret) {
 		return ret;
 	}
-	file_old[sz_file_old] = '\0';
-	ret = at_params_string_get(&at_param_list, 3, file_new, &sz_file_new);
+	ret = util_string_get(&at_param_list, 3, file_new, &sz_file_new);
 	if (ret) {
 		return ret;
 	}
-	file_new[sz_file_new] = '\0';
 
 	ret = ftp_rename(file_old, file_new);
 	return (ret == FTP_CODE_250) ? 0 : -1;
@@ -383,11 +370,10 @@ static int do_ftp_delete(void)
 	int sz_file = 128;
 
 	/* Parse AT command */
-	ret = at_params_string_get(&at_param_list, 2, file, &sz_file);
+	ret = util_string_get(&at_param_list, 2, file, &sz_file);
 	if (ret) {
 		return ret;
 	}
-	file[sz_file] = '\0';
 
 	ret = ftp_delete(file);
 	return (ret == FTP_CODE_250) ? 0 : -1;
@@ -401,11 +387,10 @@ static int do_ftp_get(void)
 	int sz_file = FTP_MAX_FILEPATH;
 
 	/* Parse AT command */
-	ret = at_params_string_get(&at_param_list, 2, file, &sz_file);
+	ret = util_string_get(&at_param_list, 2, file, &sz_file);
 	if (ret) {
 		return ret;
 	}
-	file[sz_file] = '\0';
 
 	ring_buf_reset(&ftp_data_buf);
 	ret = ftp_get(file);
@@ -426,11 +411,10 @@ static int do_ftp_put(void)
 	int param_count = at_params_valid_count_get(&at_param_list);
 
 	/* Parse AT command */
-	ret = at_params_string_get(&at_param_list, 2, file, &sz_file);
+	ret = util_string_get(&at_param_list, 2, file, &sz_file);
 	if (ret) {
 		return ret;
 	}
-	file[sz_file] = '\0';
 
 	if (param_count > 4) {
 		uint16_t type;
@@ -442,7 +426,7 @@ static int do_ftp_put(void)
 			return ret;
 		}
 		size = NET_IPV4_MTU;
-		ret = at_params_string_get(&at_param_list, 4, data, &size);
+		ret = util_string_get(&at_param_list, 4, data, &size);
 		if (ret) {
 			return ret;
 		}
@@ -480,11 +464,10 @@ int slm_at_ftp_parse(const char *at_cmd)
 		if (at_parser_cmd_type_get(at_cmd) != AT_CMD_TYPE_SET_COMMAND) {
 			return -EINVAL;
 		}
-		ret = at_params_string_get(&at_param_list, 1, op_str, &size);
+		ret = util_string_get(&at_param_list, 1, op_str, &size);
 		if (ret) {
 			return ret;
 		}
-		op_str[size] = '\0';
 		ret = -EINVAL;
 		for (int i = 0; i < FTP_OP_MAX; i++) {
 			if (slm_util_casecmp(op_str,
