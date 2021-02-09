@@ -441,6 +441,8 @@
 .. _`Edge Impulse getting started guide`: https://docs.edgeimpulse.com/docs/getting-started
 .. _`embedded machine learning`: https://docs.edgeimpulse.com/docs/what-is-embedded-machine-learning-anyway
 .. _`Continuous motion recognition tutorial`: https://docs.edgeimpulse.com/docs/continuous-motion-recognition
+.. _`Edge Impulse's data forwarder`: https://docs.edgeimpulse.com/docs/cli-data-forwarder
+.. _`Edge Impulse CLI installation guide`: https://docs.edgeimpulse.com/docs/cli-installation
 
 .. ### Source: other
 

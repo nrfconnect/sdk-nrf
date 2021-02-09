@@ -1,0 +1,9 @@
+sample:
+  description: Sample showing Edge Impulse data forwarder usage
+  name: Edge Impulse data forwarder sample
+tests:
+  samples.ei_data_forwarder:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
+    tags: ci_build
