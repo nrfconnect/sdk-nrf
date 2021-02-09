@@ -82,6 +82,7 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    :glob:
 
    ../../samples/ei_ncs/README
+   ../../samples/ei_data_forwarder/README
 
 .. _other_samples:
 
