@@ -24,6 +24,9 @@ ATT_MTU size
    In *Bluetooth* Low Energy, the default Maximum Transmission Unit (MTU) is 23 bytes.
    When increasing this value, longer ATT payloads can be achieved, increasing ATT throughput.
 
+.. note::
+   To configure the ATT_MTU size, use menuconfig and compile and program the sample again.
+
 Data length
    In *Bluetooth* Low Energy, the default data length for a radio packet is 27 bytes.
    Data length extension allows to use larger radio packets, so that more data can be sent in one packet, increasing throughput.
@@ -119,7 +122,9 @@ After programming the sample to both kits, test it by performing the following s
 #. Observe that the kits establish a connection.
    The tester outputs the following information::
 
-       Ready, press any key to start
+      Type 'config' to change the configuration parameters.
+      You can use the Tab key to autocomplete your input.
+      Type 'run' when you are ready to run the test.
 
 #. Type ``config print`` in the terminal to print the current configuration.
    Type ``config`` in the terminal to configure the test parameters to your choice.
