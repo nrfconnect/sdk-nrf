@@ -52,6 +52,8 @@ Connected Home over IP (CHIP)
 
   * :ref:`ug_chip` protocol user guide
   * :ref:`Bolt lock <chip_lock_sample>` sample
+  * :ref:`Light switch <chip_light_switch_sample>` sample
+  * :ref:`Light bulb <chip_light_bulb_sample>` sample
 
 DFU Target
 ----------

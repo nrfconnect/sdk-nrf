@@ -31,7 +31,7 @@ void LEDWidget::Invert()
 
 void LEDWidget::Set(bool state)
 {
-	mBlinkOnTimeMS = mBlinkOffTimeMS = 0;
+	mLastChangeTimeMS = mBlinkOnTimeMS = mBlinkOffTimeMS = 0;
 	DoSet(state);
 }
 

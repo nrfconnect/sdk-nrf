@@ -14,7 +14,6 @@ Connected Home over IP is in an early development stage and must be treated as a
 
 The |NCS| allows you to develop applications that are compatible with the Connected Home over IP project.
 
-
 Architecture
 ************
 
