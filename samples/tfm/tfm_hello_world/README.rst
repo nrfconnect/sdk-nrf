@@ -3,7 +3,7 @@
 TF-M Hello World
 ################
 
-A simple sample based on Hello World that demonstrates adding TF-M to an application.
+A simple sample based on Hello World that demonstrates adding Trusted Firmware-M (TF-M) to an application.
 
 Overview
 ********

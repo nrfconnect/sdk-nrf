@@ -489,7 +489,7 @@
 
 .. _`Platform Security Architecture (PSA)`: https://www.psacertified.org/what-is-psa-certified/
 
-.. _`TF-M documentation`: https://ci-builds.trustedfirmware.org/static-files/DkdCrQzFZSnnOE237JnAP31qbSUWnEhVzQwxZ_NIpaExNjA2NDMwMTIxODMyOjk6YW5vbnltb3VzOnZpZXcvVEYtTS9qb2IvdGYtbS1idWlsZC1kb2NzLW5pZ2h0bHkvbGFzdFN0YWJsZUJ1aWxkL2FydGlmYWN0/trusted-firmware-m/build/install/doc/user_guide/html/docs/introduction/readme.html
+.. _`TF-M documentation`: https://ci-builds.trustedfirmware.org/static-files/I3OU6LcW0o-1dDVVXuFbYv7isMCBp1lR-H72D6ZbdoAxNjEyODcwMjYwODk0Ojk6YW5vbnltb3VzOmpvYi90Zi1tLWJ1aWxkLWRvY3MtbmlnaHRseS9sYXN0U3RhYmxlQnVpbGQvYXJ0aWZhY3Q=/trusted-firmware-m/build/docs/user_guide/html/index.html
 .. _`Mbed TLS`: https://developer.trustedfirmware.org/w/mbed-tls/
 
 .. _`Nanopb`: https://jpa.kapsi.fi/nanopb/

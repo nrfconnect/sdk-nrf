@@ -83,6 +83,11 @@ Trusted Firmware-M (TF-M) support
 
 You can use Trusted Firmware-M (TF-M) as an alternative to :ref:`secure_partition_manager` for running an application from the non-secure area of the memory.
 
+Support for TF-M in |NCS| is currently experimental.
+TF-M is a framework which will be extended for new functions and use cases beyond the scope of SPM.
+
+If your application does not depend or does not use the secure services developed in SPM, then TF-M can replace SPM as the secure firmware component in your application.
+
 For more information and instructions on how to do this, see :ref:`ug_tfm`.
 
 .. tfm_support_finish
