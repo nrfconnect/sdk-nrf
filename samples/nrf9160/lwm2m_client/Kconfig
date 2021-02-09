@@ -87,7 +87,6 @@ config ACCEL_USE_SIM
 	select SENSOR
 	select SENSOR_SIM
 	select SENSOR_SIM_TRIGGER
-	select SENSOR_SIM_STATIC_VALUES
 	help
 		Use sensor simulator to generate accelerometer data for
 		flip detection data sent to nRF Cloud.
