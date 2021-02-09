@@ -157,13 +157,14 @@ static int set_uart_baudrate(uint32_t baudrate)
 
 static int get_uart_baudrate(void)
 {
-	int err = -EINVAL;
-	struct uart_config cfg;
+	int err;
+	struct uart_config cfg = {
+		.baudrate = 0
+	};
 
 	err = uart_config_get(uart_dev, &cfg);
 	if (err) {
 		LOG_ERR("uart_config_get: %d", err);
-		return err;
 	}
 	return (int)cfg.baudrate;
 }
