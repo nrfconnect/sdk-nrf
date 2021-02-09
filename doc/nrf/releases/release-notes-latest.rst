@@ -517,6 +517,8 @@ The following list summarizes the most important changes inherited from upstream
     * Added network management events for DHCPv4.
     * Added periodic throughput printout to the :ref:`zephyr:sockets-echo-server-sample` sample.
     * Added an experimental option to set preemptive priority for networking threads (:option:`CONFIG_NET_TC_THREAD_PREEMPTIVE`).
+    * Added a Kconfig option that enables a hostname update on link address change (:option:`CONFIG_NET_HOSTNAME_UNIQUE_UPDATE`).
+    * Added multiple fixes to the DHCP implementation.
 
   * LwM2M:
 
@@ -533,10 +535,11 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed buffer length check in :c:func:`lwm2m_engine_set`.
     * Added a possibility to acknowledge LwM2M requests early from the callback (:c:func:`lwm2m_acknowledge`).
     * Reworked the Bootstrap Delete operation to support all cases defined by the LwM2M specification.
+    * Added support for Bootstrap Discovery.
 
   * OpenThread:
 
-    * Updated the OpenThread version to commit ``69e97581e71a340776493dd9f5b65e11caec7954``.
+    * Updated the OpenThread version to commit ``f7825b96476989ae506a79963613f971095c8ae0``.
     * Removed obsolete flash driver from the OpenThread platform.
     * Added new OpenThread options:
 
@@ -556,8 +559,10 @@ The following list summarizes the most important changes inherited from upstream
       * :option:`CONFIG_OPENTHREAD_CSL_RECEIVE_TIME_AHEAD`
       * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_CSMA_BACKOFF_ENABLE`
       * :option:`CONFIG_OPENTHREAD_PLATFORM_INFO`
+      * :option:`CONFIG_OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE`
 
     * Added support for RCP co-processor mode.
+    * Fixed multicast packet reception.
 
   * MQTT:
 
@@ -571,6 +576,12 @@ The following list summarizes the most important changes inherited from upstream
     * Added a :c:macro:`TLS_ALPN_LIST` socket option for TLS sockets.
     * Fixed a ``tls_context`` leak on ``ztls_socket()`` failure.
     * Fixed ``getaddrinfo()`` hints handling with AI_PASSIVE flag.
+
+  * CoAP:
+
+    * Added a retransmission counter to the :c:struct:`coap_pending` structure to simplify the retransmission logic.
+    * Added a Kconfig option to randomize the initial ACK time-out, as specified in RFC 7252 (:option:`CONFIG_COAP_RANDOMIZE_ACK_TIMEOUT`).
+    * Fixed encoding of long options (larger than 268 bytes).
 
 * Bluetooth Mesh:
 
