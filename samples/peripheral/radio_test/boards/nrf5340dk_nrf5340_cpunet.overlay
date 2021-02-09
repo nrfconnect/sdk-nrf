@@ -1,0 +1,3 @@
+&spi0 {
+	status = "disabled";
+};
