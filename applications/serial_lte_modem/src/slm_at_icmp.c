@@ -381,22 +381,19 @@ static int handle_at_icmp_ping(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 4) {
-			return -EINVAL;
-		}
 		err = at_params_string_get(&at_param_list, 1, url, &size);
 		if (err < 0) {
 			return err;
-		};
+		}
 		url[size] = '\0';
 		err = at_params_short_get(&at_param_list, 2, &length);
 		if (err < 0) {
 			return err;
-		};
+		}
 		err = at_params_short_get(&at_param_list, 3, &timeout);
 		if (err < 0) {
 			return err;
-		};
+		}
 		if (at_params_valid_count_get(&at_param_list) > 4) {
 			err = at_params_short_get(&at_param_list, 4, &count);
 			if (err < 0) {

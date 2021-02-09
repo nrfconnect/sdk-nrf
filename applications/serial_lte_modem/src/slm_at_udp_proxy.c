@@ -396,13 +396,9 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
-	int param_count = at_params_valid_count_get(&at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (param_count < 2) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
@@ -411,9 +407,6 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 		    op == AT_SERVER_START_WITH_DATAMODE) {
 			uint16_t port;
 
-			if (param_count < 3) {
-				return -EINVAL;
-			}
 			err = at_params_short_get(&at_param_list, 2, &port);
 			if (err) {
 				return err;
@@ -474,9 +467,6 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (param_count < 2) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
@@ -488,9 +478,6 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 			int size = TCPIP_MAX_URL;
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 
-			if (param_count < 4) {
-				return -EINVAL;
-			}
 			err = at_params_string_get(&at_param_list,
 						2, url, &size);
 			if (err) {
@@ -563,9 +550,6 @@ static int handle_at_udp_send(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 3) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &datatype);
 		if (err) {
 			return err;

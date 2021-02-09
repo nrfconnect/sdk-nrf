@@ -717,9 +717,6 @@ static int handle_at_socket(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 2) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
@@ -728,9 +725,6 @@ static int handle_at_socket(enum at_cmd_type cmd_type)
 			uint16_t type;
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 
-			if (at_params_valid_count_get(&at_param_list) < 4) {
-				return -EINVAL;
-			}
 			err = at_params_short_get(&at_param_list, 2, &type);
 			if (err) {
 				return err;
@@ -807,9 +801,6 @@ static int handle_at_socketopt(enum at_cmd_type cmd_type)
 			LOG_ERR("Invalid role");
 			return err;
 		}
-		if (at_params_valid_count_get(&at_param_list) < 3) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
@@ -821,9 +812,6 @@ static int handle_at_socketopt(enum at_cmd_type cmd_type)
 		if (op == AT_SOCKETOPT_SET) {
 			int value;
 
-			if (at_params_valid_count_get(&at_param_list) < 4) {
-				return -EINVAL;
-			}
 			err = at_params_int_get(&at_param_list, 3, &value);
 			if (err) {
 				return err;
@@ -864,9 +852,6 @@ static int handle_at_bind(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 2) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &port);
 		if (err < 0) {
 			return err;
@@ -904,9 +889,6 @@ static int handle_at_connect(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 3) {
-			return -EINVAL;
-		}
 		err = at_params_string_get(&at_param_list, 1, url, &size);
 		if (err) {
 			return err;
@@ -1036,9 +1018,6 @@ static int handle_at_send(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 3) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &datatype);
 		if (err) {
 			return err;
@@ -1125,9 +1104,6 @@ static int handle_at_sendto(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 5) {
-			return -EINVAL;
-		}
 		size = TCPIP_MAX_URL;
 		err = at_params_string_get(&at_param_list, 1, url, &size);
 		if (err) {
@@ -1223,9 +1199,6 @@ static int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 2) {
-			return -EINVAL;
-		}
 		err = at_params_string_get(&at_param_list, 1, url, &size);
 		if (err) {
 			return err;
