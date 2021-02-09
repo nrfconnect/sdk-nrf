@@ -37,7 +37,7 @@ In the |NCS|, multiple images are required in the following scenarios:
 nRF9160 SPU configuration
    The nRF9160 SiP application MCU is divided into a secure and non-secure domain.
    The code in the secure domain can configure the System Protection Unit (SPU) to allow non-secure access to the CPU resources that are required by the application, and then jump to the code in the non-secure domain.
-   Therefore, each nRF9160 sample, the parent image, requires the :ref:`secure_partition_manager`, the child image, to be programmed together with the actual application.
+   Therefore, each nRF9160 sample, the parent image, requires the :ref:`secure_partition_manager` (or :ref:`TF-M <ug_tfm>`), the child image, to be programmed together with the actual application.
 
    See :ref:`zephyr:nrf9160dk_nrf9160` and :ref:`ug_nrf9160` for more information.
 

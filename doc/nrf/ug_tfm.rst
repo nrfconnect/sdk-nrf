@@ -18,6 +18,9 @@ It provides a highly configurable set of software components to create a Trusted
 This is achieved by a set of secure run time services such as Secure Storage, Cryptography, Audit Logs, and Attestation.
 Additionally, secure boot via MCUboot in TF-M ensures integrity of run time software and supports firmware upgrade.
 
+Support for TF-M in |NCS| is currently experimental.
+TF-M is a framework which will be extended for new functions and use cases beyond the scope of SPM.
+
 For official documentation, see `TF-M documentation`_.
 
 The TF-M implementation in |NCS| is currently demonstrated in the :ref:`tfm_hello_world` sample.
@@ -26,6 +29,7 @@ Building
 ********
 
 TF-M is one of the images that are built as part of a multi-image application.
+If TF-M is used in the your application, SPM will not be included in it.
 For more information about multi-image builds, see :ref:`ug_multi_image`.
 
 To add TF-M to your build, enable the :option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
@@ -60,3 +64,8 @@ The logs arrive on different COM ports on the host PC.
 
 On the nRF5340 DK, you must connect specific wires on the kit to receive secure logs on the host PC.
 Wire the pins P0.25 and P0.26 to RxD and TxD respectively.
+
+Limitations
+***********
+
+TF-M cannot be used in applications whose code has dependencies on SPM :ref:`lib_secure_services` to operate properly.

@@ -17,6 +17,9 @@ The SPM, being the secure app, is responsible for configuring the permissions an
 Such configuration is required to run non-secure apps.
 The SPM also provides the non-secure app with access to features (:ref:`lib_spm_secure_services`) that are normally only available to secure apps.
 
+.. note::
+   If your application is using :ref:`TF-M <ug_tfm>`, SPM is not included in the build.
+
 The SPM library is used in the :ref:`secure_partition_manager` sample.
 
 .. _lib_spm_configuration:
