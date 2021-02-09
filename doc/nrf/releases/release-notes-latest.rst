@@ -232,7 +232,7 @@ Partition Manager:
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``3f49b5abf3``, plus some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``3fc59410b6``, plus some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in :file:`ncs/nrf/modules/mcuboot`.
 
@@ -256,6 +256,13 @@ The following list summarizes the most important changes inherited from upstream
   * Updated the ARM core configuration to only be initialized when selected by the user.
     See the ``CONFIG_MCUBOOT_CLEANUP_ARM_CORE`` option.
   * Allowed the final data chunk in the image to be unaligned in the serial-recovery protocol.
+  * Updated the ``CONFIG_BOOT_DIRECT_XIP_REVERT`` option to be valid only in xip-mode.
+  * Added an offset parameter to the tinycrypt ctr mode so that it can be properly used as a streaming cipher.
+  * Configured the bootloader to use a minimal CBPRINTF (:option:`CONFIG_CBPRINTF_NANO`) implementation.
+  * Configured logging to use :option:`CONFIG_LOG_MINIMAL` by default.
+  * Fixed a vulnerability with nokogiri<=1.11.0.rc4.
+  * Introduced a bootutil_public library that contains code common to MCUboot and the DFU application.
+    See :option:`CONFIG_MCUBOOT_BOOTUTIL_LIB`.
 
 * Image tool:
 
@@ -263,6 +270,7 @@ The following list summarizes the most important changes inherited from upstream
   * Added a possibility to set a confirm flag for HEX files as well.
   * Updated the usage of ``--confirm`` to imply ``--pad``.
   * Fixed the argument handling of ``custom_tlvs``.
+  * Added support for setting a fixed ROM address in the image header.
 
 
 Mcumgr
@@ -275,6 +283,8 @@ The following list summarizes the most important changes inherited from upstream
 * Fixed an issue with devices running MCUboot v1.6.0 or earlier where a power outage during erase of a corrupted image in slot 1 could result in the device not being able to boot.
   In this case, it was not possible to update the device and mcumgr would return error code 6 (``MGMT_ERR_EBADSTATE``).
 * Added support for invoking shell commands (shell management) from the mcumgr command line.
+* Added optional verification of an uploaded direct-xip binary, which will reject any binary that cannot boot from the base address of the offered upload slot.
+  This verification can be enabled through :option:`CONFIG_IMG_MGMT_REJECT_DIRECT_XIP_MISMATCHED_SLOT`.
 
 
 Zephyr
@@ -433,6 +443,8 @@ The following list summarizes the most important changes inherited from upstream
     * Modified the nRF QSPI NOR driver so that it supports also nRF53 Series SoCs.
     * Added missing selection of :option:`CONFIG_FLASH_HAS_PAGE_LAYOUT` for the SPI NOR and AT45 family flash drivers.
     * Refactored the nRF QSPI NOR driver so that it no longer depends on :option:`CONFIG_MULTITHREADING`.
+    * Removed ``CONFIG_NORDIC_QSPI_NOR_QE_BIT``.
+      Use the ``quad-enable-requirements`` devicetree property instead.
 
   * IEEE 802.15.4:
 
@@ -610,6 +622,7 @@ The following list summarizes the most important changes inherited from upstream
 
     * Added shell module for MCUboot enabled application.
       See :option:`CONFIG_MCUBOOT_SHELL`.
+    * Reworked the implementation to use MCUboot's bootutil_public library instead of the Zephyr implementation of the same API.
 
 * Build system:
 
