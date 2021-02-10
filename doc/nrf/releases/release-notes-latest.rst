@@ -12,6 +12,13 @@ The most relevant changes that are present on the master branch of the |NCS|, as
 .. note::
     This file is a work in progress and might not cover all relevant changes.
 
+
+Highlights
+**********
+
+* Integrated Apple HomeKit Ecosystem support into the |NCS|.
+  It is distributed as a private repository available to Apple MFi Program members.
+
 Changelog
 *********
 
@@ -135,6 +142,13 @@ Bluetooth Mesh
 
 * Updated the :ref:`bt_mesh_lightness_srv_readme` to disable the light control server when manual control has taken effect.
   This follows the Mesh Model Specification section 6.2.3.
+
+Apple HomeKit Ecosystem support
+-------------------------------
+
+* Integrated HomeKit Accessory Development Kit (ADK) v5.1.
+* Enabled Thread certification by inheritance.
+* HomeKit samples now use qualified Bluetooth libraries.
 
 nRF9160
 =======
