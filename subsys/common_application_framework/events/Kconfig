@@ -17,4 +17,22 @@ config CAF_INIT_LOG_MODULE_STATE_EVENTS
 	depends on LOG
 	default y
 
+config CAF_PM_EVENTS
+	bool "Enable power management events"
+	help
+	  Enable support for power management events.
+	  If this config is enabled, predefined modules can create power management events.
+
+config CAF_INIT_LOG_POWER_DOWN_EVENTS
+	bool "Log power down events"
+	depends on CAF_PM_EVENTS
+	depends on LOG
+	default y
+
+config CAF_INIT_LOG_WAKE_UP_EVENTS
+	bool "Log wake up events"
+	depends on CAF_PM_EVENTS
+	depends on LOG
+	default y
+
 endmenu
