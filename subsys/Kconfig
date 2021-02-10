@@ -40,3 +40,5 @@ rsource "nrf_rpc/Kconfig"
 rsource "zigbee/Kconfig"
 
 rsource "mgmt/fmfu/Kconfig"
+
+rsource "common_application_framework/Kconfig"

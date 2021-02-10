@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Event options"
+
+config CAF_MODULE_STATE_EVENTS
+	bool "Enable module state events"
+	help
+	  Enable support for module state events.
+
+config CAF_INIT_LOG_MODULE_STATE_EVENTS
+	bool "Log module state events"
+	depends on CAF_MODULE_STATE_EVENTS
+	depends on LOG
+	default y
+
+endmenu
