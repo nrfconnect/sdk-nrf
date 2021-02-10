@@ -31,11 +31,19 @@ jobs:
         pip3 show -f west
 
     - name: West init and update
-      working-directory: ncs
+      env:
+        BASE_REF: ${{ github.base_ref }}
+      working-directory: ncs/nrf
       run: |
         export PATH="$HOME/.local/bin:$PATH"
         export PATH="$HOME/bin:$PATH"
-        west init -l nrf
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+        git remote -v
+        git rebase origin/${BASE_REF}
+        # debug
+        git log  --pretty=oneline | head -n 10
+        west init -l .
         west update
         west zephyr-export
 
@@ -49,11 +57,6 @@ jobs:
         export PATH="$HOME/.local/bin:$PATH"
         export PATH="$HOME/bin:$PATH"
         export ZEPHYR_BASE="$(dirname "$(pwd)")/zephyr"
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your Name"
-        git remote -v
-        git branch
-        git rebase origin/${BASE_REF}
         # debug
         ls -la
         git log --pretty=oneline | head -n 10
