@@ -282,12 +282,13 @@ The application contains examples of Kconfig overlays.
 
 The following configuration files are available in the application folder:
 
-* :file:`prj_nrf9160dk_nrf9160ns.conf`  - Configuration file for nRF9160 DK
-* :file:`prj_thingy91_nrf9160ns.conf` - Configuration file for Thingy:91
-* :file:`overlay-low-power.conf` - Configuration file to achieve the lowest power consumption, which disables features like LED control and logging that consume extra power.
+* :file:`prj.conf` - Configuration file common for all build targets
+* :file:`boards/thingy91_nrf9160ns.conf` - Configuration file specific for Thingy:91. The file is automatically merged with :file:`prj.conf` when you build for the ``thingy91_nrf9160ns`` build target.
+* :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features  that consume extra power like LED control and logging.
 * :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities to the application
 
 Generally, Kconfig overlays have an ``overlay-`` prefix and a ``.conf`` extension.
+Board-specific configuration files are placed in the :file:`boards` folder and are named as :file:`<BOARD>.conf`.
 DTS overlay files are named the same as the build target and use the file extension ``.overlay``.
 When the DTS overlay filename matches the build target, the overlay is automatically chosen and applied by the build system.
 
