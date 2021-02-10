@@ -135,6 +135,7 @@ Kconfig*                                  @tejlmand
 /modules/tfm/                             @oyvindronningstad @ioannisg @hakonfam
 /subsys/zigbee/                           @maciekfabia @mariuszpos
 /tests/                                   @rakons
+/tests/bluetooth/tester/                  @joerchan @carlescufi @trond-snekvik
 /tests/subsys/zigbee/                     @rakons @maciekfabia @mariuszpos
 /tests/subsys/bluetooth/mesh/             @joerchan @trond-snekvik
 /zephyr/                                  @carlescufi
