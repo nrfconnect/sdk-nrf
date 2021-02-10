@@ -1515,8 +1515,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
 			ctrl_enable(srv);
 		} else {
-			light_set(srv, 0,
-				  srv->lightness->ponoff.dtt.transition_time);
+			lightness_on_power_up(srv->lightness);
 			ctrl_disable(srv);
 		}
 
@@ -1533,11 +1532,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
 			ctrl_enable(srv);
 		} else {
-			light_set(srv,
-				  (srv->lightness->default_light ?
-					   srv->lightness->default_light :
-					   srv->lightness->last),
-				  srv->lightness->ponoff.dtt.transition_time);
+			lightness_on_power_up(srv->lightness);
 			ctrl_disable(srv);
 		}
 		store(srv, FLAG_STORE_STATE);
@@ -1552,8 +1547,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 			}
 		} else if (atomic_test_bit(&srv->lightness->flags,
 					   LIGHTNESS_SRV_FLAG_IS_ON)) {
-			light_set(srv, srv->lightness->last,
-				  srv->lightness->ponoff.dtt.transition_time);
+			lightness_on_power_up(srv->lightness);
 		}
 		break;
 	default:
