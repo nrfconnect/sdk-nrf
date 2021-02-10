@@ -814,19 +814,15 @@ static int bt_mesh_lightness_srv_settings_set(struct bt_mesh_model *mod,
 
 	return 0;
 }
+#endif
 
-static int bt_mesh_lightness_srv_start(struct bt_mesh_model *mod)
+int lightness_on_power_up(struct bt_mesh_lightness_srv *srv)
 {
-	struct bt_mesh_lightness_srv *srv = mod->user_data;
 	struct bt_mesh_lightness_status dummy = { 0 };
 	struct bt_mesh_model_transition transition = {
 		.time = srv->ponoff.dtt.transition_time,
 	};
 	struct bt_mesh_lightness_set set = { .transition = &transition };
-
-	if (atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_NO_START)) {
-		return 0;
-	}
 
 	switch (srv->ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:
@@ -851,6 +847,18 @@ static int bt_mesh_lightness_srv_start(struct bt_mesh_model *mod)
 
 	lightness_srv_change_lvl(srv, NULL, &set, &dummy);
 	return 0;
+}
+
+#ifdef CONFIG_BT_SETTINGS
+static int bt_mesh_lightness_srv_start(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_lightness_srv *srv = mod->user_data;
+
+	if (atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_NO_START)) {
+		return 0;
+	}
+
+	return lightness_on_power_up(srv);
 }
 #endif
 
