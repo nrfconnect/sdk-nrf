@@ -6,13 +6,11 @@
 
 cmake_minimum_required(VERSION 3.13.1)
 
-get_filename_component(CHIP_ROOT ../../../../modules/lib/connectedhomeip REALPATH)
-get_filename_component(COMMON_ROOT ../common REALPATH)
-
-list(APPEND ZEPHYR_EXTRA_MODULES ${CHIP_ROOT}/config/nrfconnect/chip-module)
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(chip-lock)
+
+set(COMMON_ROOT ${CMAKE_CURRENT_LIST_DIR}/../common)
 
 target_include_directories(app PRIVATE src ${COMMON_ROOT}/src)
 
@@ -26,21 +24,21 @@ target_sources(app PRIVATE
                ${COMMON_ROOT}/src/led_widget.cpp
                ${COMMON_ROOT}/src/nfc_widget.cpp
                ${COMMON_ROOT}/src/thread_util.cpp
-               ${CHIP_ROOT}/src/app/reporting/reporting-default-configuration.cpp
-               ${CHIP_ROOT}/src/app/reporting/reporting.cpp
-               ${CHIP_ROOT}/src/app/server/DataModelHandler.cpp
-               ${CHIP_ROOT}/src/app/util/af-event.cpp
-               ${CHIP_ROOT}/src/app/util/af-main-common.cpp
-               ${CHIP_ROOT}/src/app/util/attribute-size.cpp
-               ${CHIP_ROOT}/src/app/util/attribute-storage.cpp
-               ${CHIP_ROOT}/src/app/util/attribute-table.cpp
-               ${CHIP_ROOT}/src/app/util/binding-table.cpp
-               ${CHIP_ROOT}/src/app/util/chip-message-send.cpp
-               ${CHIP_ROOT}/src/app/util/client-api.cpp
-               ${CHIP_ROOT}/src/app/util/ember-print.cpp
-               ${CHIP_ROOT}/src/app/util/message.cpp
-               ${CHIP_ROOT}/src/app/util/process-cluster-message.cpp
-               ${CHIP_ROOT}/src/app/util/process-global-message.cpp
-               ${CHIP_ROOT}/src/app/util/util.cpp
-               ${CHIP_ROOT}/src/app/clusters/bindings/bindings.cpp
-               ${CHIP_ROOT}/src/app/clusters/on-off-server/on-off.cpp)
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/reporting/reporting-default-configuration.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/reporting/reporting.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/server/DataModelHandler.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/af-event.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/af-main-common.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/attribute-size.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/attribute-storage.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/attribute-table.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/binding-table.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/chip-message-send.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/client-api.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/ember-print.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/message.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/process-cluster-message.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/process-global-message.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/util.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/clusters/bindings/bindings.cpp
+               ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/clusters/on-off-server/on-off.cpp)

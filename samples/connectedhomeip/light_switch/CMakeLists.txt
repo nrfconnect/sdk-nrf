@@ -6,15 +6,13 @@
 
 cmake_minimum_required(VERSION 3.13.1)
 
-get_filename_component(CHIP_ROOT ../../../../modules/lib/connectedhomeip REALPATH)
-get_filename_component(COMMON_ROOT ../common REALPATH)
-
-list(APPEND ZEPHYR_EXTRA_MODULES ${CHIP_ROOT}/config/nrfconnect/chip-module)
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(chip-light-switch)
 
-target_include_directories(app PRIVATE src ${COMMON_ROOT}/src ${CHIP_ROOT}/src/app)
+set(COMMON_ROOT ${CMAKE_CURRENT_LIST_DIR}/../common)
+
+target_include_directories(app PRIVATE src ${COMMON_ROOT}/src ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app)
 
 target_compile_options(app PRIVATE -Wno-deprecated-declarations)
 
