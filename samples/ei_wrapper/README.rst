@@ -1,4 +1,4 @@
-.. _ei_ncs_sample:
+.. _ei_wrapper_sample:
 
 Edge Impulse: Wrapper
 #####################
@@ -7,7 +7,7 @@ Edge Impulse: Wrapper
    :local:
    :depth: 2
 
-The Edge Impulse wrapper sample demonstrates the functionality of the :ref:`ei_ncs`.
+The Edge Impulse wrapper sample demonstrates the functionality of the :ref:`ei_wrapper`.
 It shows how to use the wrapper to run a custom `Edge Impulse`_ machine learning model when :ref:`ug_edge_impulse`.
 
 Requirements
@@ -44,8 +44,8 @@ Before running the sample, you must complete the following setup:
    a. Prepare your own machine learning model using `Edge Impulse studio`_.
    #. Set the :option:`CONFIG_EDGE_IMPULSE_URI` to URI of your machine learning model.
 
-   See the :ref:`ei_ncs` page for detailed configuration steps.
-#. Define the input data for the machine learning model in :file:`samples/ei_ncs/src/include/input_data.h`.
+   See the :ref:`ei_wrapper` page for detailed configuration steps.
+#. Define the input data for the machine learning model in :file:`samples/ei_wrapper/src/include/input_data.h`.
 #. Check the example input data in your Edge Impulse studio project:
 
    a. Go to the :guilabel:`Live classification` tab.
@@ -76,7 +76,7 @@ Before running the sample, you must complete the following setup:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/ei_ncs`
+.. |sample path| replace:: :file:`samples/ei_wrapper`
 
 .. include:: /includes/build_and_run.txt
 
@@ -108,4 +108,4 @@ Dependencies
 
 This sample uses the following |NCS| subsystems:
 
-* :ref:`ei_ncs`
+* :ref:`ei_wrapper`

@@ -6,22 +6,22 @@
 
 #include <assert.h>
 #include <ei_run_classifier.h>
-#include <ei_ncs.h>
+#include <ei_wrapper.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(ei_ncs, CONFIG_EI_NCS_LOG_LEVEL);
+LOG_MODULE_REGISTER(ei_wrapper, CONFIG_EI_WRAPPER_LOG_LEVEL);
 
 #define INPUT_FRAME_SIZE	EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME
 #define INPUT_WINDOW_SIZE	EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE
 #define HAS_ANOMALY		EI_CLASSIFIER_HAS_ANOMALY
 #define RESULT_LABEL_COUNT	EI_CLASSIFIER_LABEL_COUNT
 
-BUILD_ASSERT(CONFIG_EI_NCS_THREAD_STACK_SIZE > 0);
+BUILD_ASSERT(CONFIG_EI_WRAPPER_THREAD_STACK_SIZE > 0);
 
-#define DATA_BUFFER_SIZE	CONFIG_EI_NCS_DATA_BUF_SIZE
-#define THREAD_STACK_SIZE	CONFIG_EI_NCS_THREAD_STACK_SIZE
-#define THREAD_PRIORITY 	CONFIG_EI_NCS_THREAD_PRIORITY
-#define DEBUG_MODE		IS_ENABLED(CONFIG_EI_NCS_DEBUG_MODE)
+#define DATA_BUFFER_SIZE	CONFIG_EI_WRAPPER_DATA_BUF_SIZE
+#define THREAD_STACK_SIZE	CONFIG_EI_WRAPPER_THREAD_STACK_SIZE
+#define THREAD_PRIORITY 	CONFIG_EI_WRAPPER_THREAD_PRIORITY
+#define DEBUG_MODE		IS_ENABLED(CONFIG_EI_WRAPPER_DEBUG_MODE)
 
 enum state {
 	STATE_DISABLED,
@@ -46,7 +46,7 @@ static K_SEM_DEFINE(ei_sem, 0, 1);
 
 static struct data_buffer ei_input;
 static ei_impulse_result_t ei_result;
-static ei_ncs_result_ready_cb user_cb;
+static ei_wrapper_result_ready_cb user_cb;
 
 
 BUILD_ASSERT(DATA_BUFFER_SIZE > INPUT_WINDOW_SIZE);
@@ -210,22 +210,22 @@ static int buf_processing_move(struct data_buffer *b, size_t move,
 	return 0;
 }
 
-bool ei_ncs_classifier_has_anomaly(void)
+bool ei_wrapper_classifier_has_anomaly(void)
 {
 	return (HAS_ANOMALY) ? (true) : (false);
 }
 
-size_t ei_ncs_get_frame_size(void)
+size_t ei_wrapper_get_frame_size(void)
 {
 	return INPUT_FRAME_SIZE;
 }
 
-size_t ei_ncs_get_window_size(void)
+size_t ei_wrapper_get_window_size(void)
 {
 	return INPUT_WINDOW_SIZE;
 }
 
-int ei_ncs_add_data(const float *data, size_t data_size)
+int ei_wrapper_add_data(const float *data, size_t data_size)
 {
 	if (data_size % INPUT_FRAME_SIZE) {
 		return -EINVAL;
@@ -241,15 +241,15 @@ int ei_ncs_add_data(const float *data, size_t data_size)
 	return err;
 }
 
-int ei_ncs_clear_data(void)
+int ei_wrapper_clear_data(void)
 {
 	return buf_cleanup(&ei_input);
 }
 
-int ei_ncs_start_prediction(size_t window_shift, size_t frame_shift)
+int ei_wrapper_start_prediction(size_t window_shift, size_t frame_shift)
 {
-	size_t sample_shift = window_shift * ei_ncs_get_window_size() +
-			      frame_shift * ei_ncs_get_frame_size();
+	size_t sample_shift = window_shift * ei_wrapper_get_window_size() +
+			      frame_shift * ei_wrapper_get_frame_size();
 
 	bool process_buf;
 	int err = buf_processing_move(&ei_input, sample_shift, &process_buf);
@@ -304,8 +304,8 @@ static bool can_read_result(void)
 	return (k_current_get() == ei_thread_id);
 }
 
-int ei_ncs_get_classification_results(const char **label, float *value,
-				      float *anomaly)
+int ei_wrapper_get_classification_results(const char **label, float *value,
+					  float *anomaly)
 {
 	if (!can_read_result()) {
 		LOG_WRN("Result can be read only from callback context");
@@ -333,8 +333,8 @@ int ei_ncs_get_classification_results(const char **label, float *value,
 	return 0;
 }
 
-int ei_ncs_get_timing(int *dsp_time, int *classification_time,
-		      int *anomaly_time)
+int ei_wrapper_get_timing(int *dsp_time, int *classification_time,
+			  int *anomaly_time)
 {
 	if (!can_read_result()) {
 		LOG_WRN("Result can be read only from callback context");
@@ -353,7 +353,7 @@ int ei_ncs_get_timing(int *dsp_time, int *classification_time,
 	return 0;
 }
 
-int ei_ncs_init(ei_ncs_result_ready_cb cb)
+int ei_wrapper_init(ei_wrapper_result_ready_cb cb)
 {
 	if (!cb) {
 		return -EINVAL;

@@ -13,8 +13,8 @@ You can use this platform to collect data from sensors, train machine learning m
 Overview
 ********
 
-Support for `Edge Impulse`_ in |NCS| is centered around the :ref:`ei_ncs`, which is used for integrating the Edge Impulse machine learning model into an |NCS| application.
-The usage of the wrapper is demonstrated by the :ref:`ei_ncs_sample` sample.
+Support for `Edge Impulse`_ in |NCS| is centered around the :ref:`ei_wrapper`, which is used for integrating the Edge Impulse machine learning model into an |NCS| application.
+The usage of the wrapper is demonstrated by the :ref:`ei_wrapper_sample` sample.
 
 Before integrating the Edge Impulse machine learning model to an |NCS| application, you must prepare and deploy the machine learning model for your embedded device.
 This model is prepared using the `Edge Impulse studio`_ external web tool.
@@ -65,7 +65,7 @@ Complete the following steps to configure the building process:
    * :option:`CONFIG_FPU`
 
 #. Enable building the downloaded library by setting the :option:`CONFIG_EDGE_IMPULSE` Kconfig option.
-   Setting this option also enables the :ref:`ei_ncs`.
+   Setting this option also enables the :ref:`ei_wrapper`.
 #. Enable and specify the Uniform Resource Identifier (URI) in the :option:`CONFIG_EDGE_IMPULSE_URI` Kconfig option.
    You can set it to one of the following values:
 
