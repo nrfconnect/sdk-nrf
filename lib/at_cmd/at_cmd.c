@@ -132,6 +132,7 @@ static int get_return_code(char *buf, size_t bytes_read, struct resp_item *ret)
 		/* must match `ERROR` at the end of the response */
 		tmpstr = buf + bytes_read - ARRAY_SIZE(AT_CMD_ERROR_STR);
 		match = !strncmp(tmpstr, AT_CMD_ERROR_STR, strlen(AT_CMD_ERROR_STR));
+		match = !strncmp(tmpstr, AT_CMD_ERROR_STR, strlen(AT_CMD_ERROR_STR));
 		if (match) {
 			ret->state = AT_CMD_ERROR;
 			ret->code  = -ENOEXEC;
