@@ -8,12 +8,12 @@
  * @brief Edge Impulse wrapper header.
  */
 
-#ifndef _EI_NCS_H_
-#define _EI_NCS_H_
+#ifndef _EI_WRAPPER_H_
+#define _EI_WRAPPER_H_
 
 
 /**
- * @defgroup ei_ncs Edge Impulse wrapper
+ * @defgroup ei_wrapper Edge Impulse wrapper
  * @brief Wrapper that uses Edge Impulse lib to run machine learning on device.
  *
  * @{
@@ -26,12 +26,12 @@ extern "C" {
 #endif
 
 /**
- * @typedef ei_ncs_result_ready_cb
+ * @typedef ei_wrapper_result_ready_cb
  * @brief Callback executed by the wrapper when the result is ready.
  *
  * @param[in] err Zero (if operation was successful) or negative error code.
  */
-typedef void (*ei_ncs_result_ready_cb)(int err);
+typedef void (*ei_wrapper_result_ready_cb)(int err);
 
 
 /** Check if classifier calculates anomaly value.
@@ -39,7 +39,7 @@ typedef void (*ei_ncs_result_ready_cb)(int err);
  * @retval true If the classifier calculates the anomaly value.
  *              Otherwise, false is returned.
  */
-bool ei_ncs_classifier_has_anomaly(void);
+bool ei_wrapper_classifier_has_anomaly(void);
 
 
 /** Get the size of the input frame.
@@ -47,7 +47,7 @@ bool ei_ncs_classifier_has_anomaly(void);
  * @return Size of the input frame, expressed as a number of floating-point
  *         values.
  */
-size_t ei_ncs_get_frame_size(void);
+size_t ei_wrapper_get_frame_size(void);
 
 
 /** Get the size of the input window.
@@ -55,7 +55,7 @@ size_t ei_ncs_get_frame_size(void);
  * @return Size of the input window, expressed as a number of floating-point
  *         values.
  */
-size_t ei_ncs_get_window_size(void);
+size_t ei_wrapper_get_window_size(void);
 
 
 /** Add input data for the library.
@@ -68,7 +68,7 @@ size_t ei_ncs_get_window_size(void);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int ei_ncs_add_data(const float *data, size_t data_size);
+int ei_wrapper_add_data(const float *data, size_t data_size);
 
 
 /** Clear all buffered data.
@@ -76,7 +76,7 @@ int ei_ncs_add_data(const float *data, size_t data_size);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int ei_ncs_clear_data(void);
+int ei_wrapper_clear_data(void);
 
 
 /** Start a prediction using the Edge Impulse library.
@@ -92,7 +92,7 @@ int ei_ncs_clear_data(void);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int ei_ncs_start_prediction(size_t window_shift, size_t frame_shift);
+int ei_wrapper_start_prediction(size_t window_shift, size_t frame_shift);
 
 
 /** Get classification results.
@@ -113,8 +113,8 @@ int ei_ncs_start_prediction(size_t window_shift, size_t frame_shift);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int ei_ncs_get_classification_results(const char **label, float *value,
-				      float *anomaly);
+int ei_wrapper_get_classification_results(const char **label, float *value,
+					  float *anomaly);
 
 
 /** Get execution times for operations performed by the library.
@@ -138,7 +138,8 @@ int ei_ncs_get_classification_results(const char **label, float *value,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int ei_ncs_get_timing(int *dsp_time, int *classification_time, int *anomaly_time);
+int ei_wrapper_get_timing(int *dsp_time, int *classification_time,
+			  int *anomaly_time);
 
 
 /** Initialize the Edge Impulse wrapper.
@@ -148,7 +149,7 @@ int ei_ncs_get_timing(int *dsp_time, int *classification_time, int *anomaly_time
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int ei_ncs_init(ei_ncs_result_ready_cb cb);
+int ei_wrapper_init(ei_wrapper_result_ready_cb cb);
 
 
 #ifdef __cplusplus
@@ -159,4 +160,4 @@ int ei_ncs_init(ei_ncs_result_ready_cb cb);
  * @}
  */
 
-#endif /* _EI_NCS_H_ */
+#endif /* _EI_WRAPPER_H_ */

@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <ei_ncs.h>
+#include <ei_wrapper.h>
 
 #include "input_data.h"
 
@@ -25,7 +25,7 @@ static void result_ready_cb(int err)
 	float value;
 	float anomaly;
 
-	err = ei_ncs_get_classification_results(&label, &value, &anomaly);
+	err = ei_wrapper_get_classification_results(&label, &value, &anomaly);
 
 	if (err) {
 		printk("Cannot get classification results (err: %d)", err);
@@ -34,13 +34,13 @@ static void result_ready_cb(int err)
 		printk("======================\n");
 		printk("Label: %s\n", label);
 		printk("Value: %.2f\n", value);
-		if (ei_ncs_classifier_has_anomaly()) {
+		if (ei_wrapper_classifier_has_anomaly()) {
 			printk("Anomaly: %.2f\n", anomaly);
 		}
 	}
 
 	if (frame_surplus > 0) {
-		err = ei_ncs_start_prediction(0, 1);
+		err = ei_wrapper_start_prediction(0, 1);
 		if (err) {
 			printk("Cannot restart prediction (err: %d)\n", err);
 		} else {
@@ -53,7 +53,7 @@ static void result_ready_cb(int err)
 
 void main(void)
 {
-	int err = ei_ncs_init(result_ready_cb);
+	int err = ei_wrapper_init(result_ready_cb);
 
 	if (err) {
 		printk("Edge Impulse wrapper failed to initialize (err: %d)\n",
@@ -61,12 +61,12 @@ void main(void)
 		return;
 	};
 
-	if (ARRAY_SIZE(input_data) < ei_ncs_get_window_size()) {
+	if (ARRAY_SIZE(input_data) < ei_wrapper_get_window_size()) {
 		printk("Not enough input data\n");
 		return;
 	}
 
-	if (ARRAY_SIZE(input_data) % ei_ncs_get_frame_size() != 0) {
+	if (ARRAY_SIZE(input_data) % ei_wrapper_get_frame_size() != 0) {
 		printk("Improper number of input samples\n");
 		return;
 	}
@@ -74,16 +74,16 @@ void main(void)
 	size_t cnt = 0;
 
 	/* input_data is defined in input_data.h file. */
-	err = ei_ncs_add_data(&input_data[cnt],
-			      ei_ncs_get_window_size());
+	err = ei_wrapper_add_data(&input_data[cnt],
+				  ei_wrapper_get_window_size());
 	if (err) {
 		printk("Cannot provide input data (err: %d)\n", err);
-		printk("Increase CONFIG_EI_NCS_DATA_BUF_SIZE\n");
+		printk("Increase CONFIG_EI_WRAPPER_DATA_BUF_SIZE\n");
 		return;
 	}
-	cnt += ei_ncs_get_window_size();
+	cnt += ei_wrapper_get_window_size();
 
-	err = ei_ncs_start_prediction(0, 0);
+	err = ei_wrapper_start_prediction(0, 0);
 	if (err) {
 		printk("Cannot start prediction (err: %d)\n", err);
 	} else {
@@ -95,18 +95,18 @@ void main(void)
 	 * data is provided. In that case the prediction is started right
 	 * after the prediction window is filled with data.
 	 */
-	frame_surplus = (ARRAY_SIZE(input_data) - ei_ncs_get_window_size())
-			/ ei_ncs_get_frame_size();
+	frame_surplus = (ARRAY_SIZE(input_data) - ei_wrapper_get_window_size())
+			/ ei_wrapper_get_frame_size();
 
 	while (cnt < ARRAY_SIZE(input_data)) {
-		err = ei_ncs_add_data(&input_data[cnt],
-				      ei_ncs_get_frame_size());
+		err = ei_wrapper_add_data(&input_data[cnt],
+					  ei_wrapper_get_frame_size());
 		if (err) {
 			printk("Cannot provide input data (err: %d)\n", err);
-			printk("Increase CONFIG_EI_NCS_DATA_BUF_SIZE\n");
+			printk("Increase CONFIG_EI_WRAPPER_DATA_BUF_SIZE\n");
 			return;
 		}
-		cnt += ei_ncs_get_frame_size();
+		cnt += ei_wrapper_get_frame_size();
 
 		k_sleep(K_MSEC(FRAME_ADD_INTERVAL_MS));
 	}
