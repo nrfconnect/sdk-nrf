@@ -56,6 +56,82 @@ config NRF_MODEM_LIB_SENDMSG_BUF_SIZE
 	  the repacked message would not fit into the buffer, `sendmsg` sends
 	  each message part separately.
 
+comment "Heap and buffers"
+
+config NRF_MODEM_LIB_HEAP_SIZE
+	int "Library heap size"
+	default 512
+	range 512 2048
+	help
+	  Size of the heap buffer used by the library.
+	  This heap is allocated in the application's RAM.
+
+config NRF_MODEM_LIB_SHMEM_CTRL_SIZE
+	hex
+	default NRF_MODEM_SHMEM_CTRL_SIZE
+	help
+	  Size of the shared memory area used for control structures.
+	  This is a constant for a given library build, and is exported
+	  by the library via NRF_MODEM_SHMEM_CTRL_SIZE.
+
+config NRF_MODEM_LIB_SHMEM_TX_SIZE
+	int "TX region size"
+	range 1024 16384
+	default 8192
+	help
+	  Size of the shared memory area owned by the application.
+	  This area holds all outgoing data from the application, e.g. buffers passed to `send()`.
+	  The size of this buffer affects directly the largest payload that can sent be on AT sockets.
+
+config NRF_MODEM_LIB_SHMEM_RX_SIZE
+	int "RX region size"
+	range 1544 16384
+	default 8192
+	help
+	  Size of the shared memory area owned by the modem.
+	  This area holds all incoming data from the modem, plus the modem's own control structures.
+	  The minimum memory requirements stem from the size of the RPC lists (264 bytes = 8 + (32 * 8)),
+	  plus the RPC messages and data buffers (1280 bytes = 256 + 1024).
+
+config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
+	int "Trace region size" if NRF_MODEM_LIB_TRACE_ENABLED
+	default 16384 if NRF_MODEM_LIB_TRACE_ENABLED
+	default 0
+	help
+	  Size of the shared memory area used to receive modem traces.
+
+menu "Diagnostics"
+
+config NRF_MODEM_LIB_DEBUG_ALLOC
+	depends on LOG
+	bool "Print allocations on the library heap"
+
+config NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC
+	depends on LOG
+	bool "Print allocations on the TX region"
+
+config NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
+	bool "Periodically dump library heap contents"
+
+config NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS
+	depends on NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
+	int "Period (millisec)"
+	default 20000
+
+config NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
+	bool "Periodically dump the TX memory region contents"
+
+config NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS
+	depends on NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
+	int "Period (millisec)"
+	default 20000
+
+endmenu
+
+module = NRF_MODEM_LIB
+module-str = Modem library
+source "subsys/logging/Kconfig.template.log_config"
+
 endif # NRF_MODEM_LIB
 
 # Leave a set of deprecated entries to smooth transition to NRF_MODEM_LIB

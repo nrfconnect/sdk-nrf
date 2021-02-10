@@ -53,7 +53,7 @@ void main(void)
 
 	printk("HTTP application update sample started\n");
 
-	err = nrf_modem_lib_init();
+	err = nrf_modem_lib_init(NORMAL_MODE);
 	if (err) {
 		printk("Failed to initialize modem library!");
 		return;

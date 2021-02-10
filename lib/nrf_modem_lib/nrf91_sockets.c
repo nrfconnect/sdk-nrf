@@ -21,6 +21,7 @@
 #include <sockets_internal.h>
 #include <sys/fdtable.h>
 #include <zephyr.h>
+#include <nrf_gai_errors.h>
 
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)
 
@@ -414,16 +415,20 @@ static int z_to_nrf_protocol(int proto)
 static int nrf_to_z_dns_error_code(int nrf_error)
 {
 	switch (nrf_error) {
-	case NRF_ENOMEM:
-		return DNS_EAI_MEMORY;
-	case NRF_EAGAIN:
+	case NRF_EAI_AGAIN:
 		return DNS_EAI_AGAIN;
-	case NRF_EAFNOSUPPORT:
+	case NRF_EAI_BADFLAGS:
+		return DNS_EAI_BADFLAGS;
+	case NRF_EAI_FAMILY:
+		return DNS_EAI_FAMILY;
+	case NRF_EAI_MEMORY:
+		return DNS_EAI_MEMORY;
+	case NRF_EAI_NONAME:
 		return DNS_EAI_NONAME;
-	case NRF_EINPROGRESS:
-		return DNS_EAI_INPROGRESS;
-	case NRF_ENETUNREACH:
-		errno = ENETUNREACH;
+	case NRF_EAI_SERVICE:
+		return DNS_EAI_SERVICE;
+	case NRF_EAI_SOCKTYPE:
+		return DNS_EAI_SOCKTYPE;
 	default:
 		return DNS_EAI_SYSTEM;
 	}

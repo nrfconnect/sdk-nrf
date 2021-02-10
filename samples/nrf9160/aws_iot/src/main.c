@@ -396,7 +396,7 @@ static void nrf_modem_lib_dfu_handler(void)
 {
 	int err;
 
-	err = nrf_modem_lib_init();
+	err = nrf_modem_lib_init(NORMAL_MODE);
 
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:

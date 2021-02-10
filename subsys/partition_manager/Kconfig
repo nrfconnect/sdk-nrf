@@ -86,12 +86,6 @@ endmenu # Zephyr samples configurations
 
 menu "NCS subsystem configurations"
 
-if NRF_MODEM_LIB
-partition=NRF_MODEM_LIB_SRAM
-partition-size=0x10000
-rsource "Kconfig.template.partition_size"
-endif
-
 endmenu # NCS subsystem configurations
 
 menu "NCS samples configurations"

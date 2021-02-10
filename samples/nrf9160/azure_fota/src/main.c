@@ -204,7 +204,7 @@ void main(void)
 	printk("Initializing modem library\n");
 	printk("This may take a while if a modem firmware update is pending\n");
 
-	err = nrf_modem_lib_init();
+	err = nrf_modem_lib_init(NORMAL_MODE);
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
 		printk("Modem firmware update successful!\n");
