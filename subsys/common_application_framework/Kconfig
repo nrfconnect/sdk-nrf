@@ -8,6 +8,7 @@ menuconfig CAF
 	bool "Common Application Framework"
 	select EVENT_MANAGER
 	select CAF_MODULE_STATE_EVENTS
+	select CAF_PM_EVENTS
 	help
 	  Enable Common Application Framework for use with the application.
 

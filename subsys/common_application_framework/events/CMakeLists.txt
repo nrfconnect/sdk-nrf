@@ -7,3 +7,7 @@
 zephyr_sources_ifdef(CONFIG_CAF_MODULE_STATE_EVENTS
 	module_state_event.c
 )
+
+zephyr_sources_ifdef(CONFIG_CAF_PM_EVENTS
+	power_event.c
+)
