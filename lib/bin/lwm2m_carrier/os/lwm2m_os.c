@@ -296,7 +296,7 @@ int lwm2m_os_bsdlib_init(void)
 {
 	int err;
 
-	err = nrf_modem_lib_init();
+	err = nrf_modem_lib_init(NORMAL_MODE);
 
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
