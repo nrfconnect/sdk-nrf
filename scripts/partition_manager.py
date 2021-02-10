@@ -45,7 +45,9 @@ def remove_item_not_in_list(list_to_remove_from, list_to_check, dp):
 
 def item_is_placed(d, item, after_or_before):
     assert after_or_before in ['after', 'before']
-    return after_or_before in d['placement'] and d['placement'][after_or_before][0] == item
+    return (('placement' in d) and
+            (after_or_before in d['placement']) and
+            (d['placement'][after_or_before][0] == item))
 
 
 def resolve_one_of(reqs, partitions, invalid=False):
@@ -291,6 +293,10 @@ def resolve(reqs, dp):
 
     unsolved = get_images_which_need_resolving(reqs, sub_partitions)
     resolve_ambiguous_requirements(reqs, unsolved)
+
+    for name, req in reqs.items():
+        if (item_is_placed(req, "start", "before") or item_is_placed(req, "end", "after")):
+            raise PartitionError(f'Partition "{name}" was placed before start or after end.')
 
     while unsolved:
         current_len = len(unsolved)
@@ -1615,6 +1621,32 @@ def test():
     }
     s, _ = resolve(td, 'app')
     expect_list(['app', '1', '2'], s)
+
+    # Verify that partitions cannot be placed after end.
+    td = {
+        '2': {'placement': {'before': ['end']}},
+        '1': {'placement': {'after': ['end']}},
+        'app': {'region': 'flash_primary'}
+    }
+    try:
+        resolve(td, 'app')
+    except PartitionError:
+        failed = True
+
+    assert failed
+
+    # Verify that partitions cannot be placed before start.
+    td = {
+        '2': {'placement': {'before': ['start']}},
+        '1': {'placement': {'before': ['end']}},
+        'app': {'region': 'flash_primary'}
+    }
+    try:
+        resolve(td, 'app')
+    except PartitionError:
+        failed = True
+
+    assert failed
 
     td = {
         '6': {'placement': {'after': ['3']}},
