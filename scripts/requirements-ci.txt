@@ -79,6 +79,7 @@ pytz==2020.5
 pyusb==1.1.1
 PyYAML==5.4.1
 recommonmark==0.6.0
+regex==2020.11.13
 requests==2.25.1
 ruamel.yaml==0.16.12
 ruamel.yaml.clib==0.2.2
