@@ -679,6 +679,12 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 	};
 	struct bt_mesh_lightness_status status;
 
+	if (!bt_mesh_is_provisioned()) {
+		/* Avoid picking up Power OnOff loaded onoff, we'll use our own.
+		 */
+		return;
+	}
+
 	if (onoff_set->on_off) {
 		set.lvl = (srv->default_light ? srv->default_light : srv->last);
 	} else {
