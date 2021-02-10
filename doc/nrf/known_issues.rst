@@ -736,6 +736,13 @@ Front-end modules API implementation missing
 802.15.4 Radio driver
 =====================
 
+.. rst-class:: v1-5-0 v1-4-2 v1-4-2 v1-4-0
+
+KRKNWK-6255: RSSI parameter adjustment is not applied
+  The RADIO: RSSI parameter adjustment erratas (153 for nRF52840, 225 for nRF52833 and nRF52820, 87 for nRF5340) are not applied for RSSI, LQI, Enerdy Detection, and CCA values used by the 802.15.4 protocol. There is expected offset up to +/- 6 dB in extreme temperatures of values based on RSSI measurement.
+
+    **Workaround:** To apply RSSI parameter adjustment, cherry-pick commits in `hal_nordic PR #88 <https://github.com/zephyrproject-rtos/hal_nordic/pull/88>`_, `sdk-nrfxlib PR #381 <https://github.com/nrfconnect/sdk-nrfxlib/pull/381>`_, and `sdk-zephyr PR #430 <https://github.com/nrfconnect/sdk-zephyr/pull/430>`_.
+
 .. rst-class:: v1-4-99-dev1
 
 KRKNWK-8133: CSMA-CA issues
