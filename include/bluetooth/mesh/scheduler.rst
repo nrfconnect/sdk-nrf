@@ -27,7 +27,7 @@ For types common to all models, see :ref:`bt_mesh_models`.
    scheduler_cli.rst
 
 Common types
-============
+************
 
 This section lists the types common to the Scheduler mesh models.
 

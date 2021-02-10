@@ -25,7 +25,7 @@ This allows for a fine-grained control of the access rights for the Scheduler Se
 * Scheduler Setup Server provides functionality for configuration and recalling of actions in the Scheduler Server's Scheduler Register state.
 
 Operation
-=========
+*********
 
 The Scheduler models perform conversion of the configuration parameters from incoming client messages into :ref:`international atomic time (TAI) <bt_mesh_time_tai_readme>`.
 The configuration parameters with calculated time closest to the current time are scheduled as actions.
@@ -44,7 +44,7 @@ The application should notify the Scheduler Server if the Time Zone or the UTC t
 The Scheduler Server will recalculate time for the actions.
 
 States
-======
+******
 
 Schedule Register: :c:type:`bt_mesh_schedule_entry`
    The Scheduler Server model offers a Schedule Register that contains up to sixteen registered action entries.
@@ -141,18 +141,18 @@ Each entry has the following fields:
   +------------------+--------------+
 
 Extended models
-===============
+***************
 
 The Scheduler Server extends the :ref:`bt_mesh_scene_srv_readme`.
 In addition, the Scheduler Setup Server extends the Scene Setup Server (see the :ref:`bt_mesh_scene_srv_readme` documentation) and the Generic Power OnOff Setup Server (see the :ref:`bt_mesh_ponoff_srv_readme` documentation).
 
 Persistent storage
-==================
+******************
 
 None
 
 API documentation
-==================
+*****************
 
 | Header file: :file:`include/bluetooth/mesh/scheduler_srv.h`
 | Source file: :file:`subsys/bluetooth/mesh/scheduler_srv.c`
