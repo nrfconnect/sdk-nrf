@@ -13,10 +13,10 @@ Unlike the Scheduler Server model, the Scheduler Client only creates a single mo
 The Scheduler Client can send messages to both the Scheduler Server and the Scheduler Setup Server, as long as it has the right application keys.
 
 Action scheduling example
-=========================
+*************************
 
-This is a simple example of how the Scheduler Client can configure the Scheduler Server models managing the light system.
-The Scheduler Server will turn the light on every working day at 8:00 and turn the light off at 16:00 every year whole year.
+This simple example shows how the Scheduler Client can configure the Scheduler Server models managing the light system.
+Every year, and every working day throughout the year, the Scheduler Server will turn the light on at 8:00 and turn it off again at 16:00.
 
 .. code-block:: c
 
@@ -52,17 +52,17 @@ The Scheduler Server will turn the light on every working day at 8:00 and turn t
    }
 
 Extended models
-===============
+***************
 
 None.
 
 Persistent storage
-==================
+******************
 
 None.
 
 API documentation
-=================
+*****************
 
 | Header file: :file:`include/bluetooth/mesh/scheduler_cli.h`
 | Source file: :file:`subsys/bluetooth/mesh/scheduler_cli.c`
