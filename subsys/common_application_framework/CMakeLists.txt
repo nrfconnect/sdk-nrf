@@ -6,6 +6,7 @@
 
 zephyr_include_directories(
 	events
+	include
 )
 
 add_subdirectory(events)
