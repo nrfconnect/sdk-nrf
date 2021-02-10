@@ -14,12 +14,11 @@ target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END
 
 # Include source directory
-zephyr_include_directories(src)
+target_include_directories(app PRIVATE src)
 
 # Application directories
 add_subdirectory(src/modules)
 add_subdirectory(src/events)
-add_subdirectory(src/cloud/cloud_codec)
 
 add_subdirectory_ifdef(CONFIG_CLOUD_MODULE src/cloud)
 add_subdirectory_ifdef(CONFIG_UI_MODULE src/led)
