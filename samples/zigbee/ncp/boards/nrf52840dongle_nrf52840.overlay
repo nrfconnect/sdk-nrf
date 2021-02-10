@@ -21,11 +21,3 @@
 		rst0 = &rst_button0;
 	};
 };
-
-&sram0 {
-	reg = <0x20000400 DT_SIZE_K(255)>;
-};
-
-&flash0 {
-	reg = <0x00001000 DT_SIZE_K(1024 - 128)>;
-};

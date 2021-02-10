@@ -151,6 +151,7 @@
 .. _`Managing credentials`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_certificate_manager.html
 
 .. _`nRF Connect Programmer`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_introduction.html
+.. _`Programming the nRF52840 Dongle`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_programming_dongle.html
 
 .. _`nRF9160 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/nRF9160_html5_keyfeatures.html
 
@@ -224,6 +225,9 @@
 .. _`Power Profiler Kit II (PPK2)`: https://infocenter.nordicsemi.com/topic/ug_ppk2/UG/ppk/PPK_user_guide_Intro.html
 
 .. _`anomaly 19`: https://infocenter.nordicsemi.com/topic/errata_nRF5340_EngA/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
+
+.. _`nRF5 SDK Bootloader`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html
+.. _`nRF5 Bootloader DFU Mode`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html#lib_bootloader_dfu_mode
 
 .. ### Source: devzone.nordicsemi.com
 

@@ -25,6 +25,9 @@ The sample supports the following development kits:
 
 You can use any of the development kits listed above.
 
+.. note::
+    The nRF52840 Dongle uses a :ref:`different bootloader <zigbee_ncp_bootloader>` than other development kits.
+
 For this sample to work, you also need the following:
 
 * `NCP Host for Zigbee`_ tool, which is based on the ZBOSS stack and available for download as a standalone :file:`zip` package as one of :ref:`ug_zigbee_tools`.
@@ -44,6 +47,8 @@ The sample demonstrates using a Nordic Semiconductor's Development Kit as Zigbee
 The sample uses the :option:`CONFIG_ZIGBEE_LIBRARY_NCP_DEV` Kconfig option, which is available in the :ref:`development version of the ZBOSS stack libraries <nrfxlib:zboss_configuration>` (managed by the :option:`CONFIG_ZIGBEE_LIBRARY_DEVELOPMENT` Kconfig option, also enabled by default).
 The NCP Kconfig option extends the compilation process with an implementation of the ZBOSS API serialization through NCP commands.
 It also implements the ZBOSS default signal handler function, which controls the ZBOSS and commissioning logic.
+
+The sample is built to work with bootloader, see :ref:`zigbee_ncp_bootloader` for more information.
 
 The NCP application creates and starts a ZBOSS thread as well as the communication channel for NCP commands that are exchanged between the connectivity device and the host processor.
 
@@ -71,6 +76,52 @@ Optional communication through USB
 You can change the communication channel from the default UART to nRF USB by using the :file:`usb.overlay` configuration file.
 
 The USB device VID and PID are configured by the sample's Kconfig file.
+
+.. _zigbee_ncp_bootloader:
+
+Bootloader support
+==================
+
+The bootloader support in the NCP sample depends on the development kit, its respective build target, and `Serial communication setup`_:
+
+* For the ``nrf52840dongle_nrf52840`` build target, `nRF5 SDK Bootloader`_ is used by default because the dongle comes with this bootloader preinstalled.
+* For the ``nrf52840dk_nrf52840``, ``nrf52833dk_nrf52833``, and ``nrf21540dk_nrf52840`` build targets, the following scenarios are possible when building for these build targets:
+
+  * If the `Optional communication through USB`_ is selected, `MCUboot`_ is enabled by default.
+  * If the default UART serial communication channel is used, the bootloader support is not enabled, but it can be enabled by the user.
+
+MCUboot
+-------
+
+When the `Optional communication through USB`_ is selected, MCUboot in this sample is built with support for single application slot, and uses the USB DFU class driver to allow uploading image over USB.
+This is achieved with the following Kconfig overlay files, available in the :file:`configuration` directory for the build target of your choice:
+
+* :file:`app_with_mcuboot.conf` - This file enables MCUboot for the application.
+* :file:`mcuboot.conf` - This file configures MCUboot to have single application slot and use USB DFU.
+* :file:`pm_static.yml` - This Partition Manager file increases MCUboot's partition size.
+
+To learn more about configuring bootloader for an application in |NCS|, see the :ref:`bootloader` sample.
+
+When the default UART serial communication channel is used, MCUboot can be enabled and configured similarly to when the `Optional communication through USB`_ is selected by using the same overlay files.
+
+When building the sample, the build system also generates the signed :file:`app_update.bin` image file in the :file:`build` directory.
+This file can be used to upgrade a device.
+See :ref:`mcuboot_ncs` for more information about this and other automatically generated files.
+
+After every reset, the sample first boots to MCUboot and then, after a couple of seconds, the NCP sample is booted.
+When booted to MCUboot, the new image can be uploaded with the dfu-util tool.
+See :ref:`USB DFU sample documentation <zephyr:usb_dfu>` for a reference.
+
+nRF5 SDK Bootloader
+-------------------
+
+When the sample is built for ``nrf52840dongle_nrf52840``, the build system does not produce an upgrade image.
+You can use the nRF Connect Programmer application (part of `nRF Connect for Desktop`_) to generate and upload a new application image to the dongle.
+For more details, see `Programming the nRF52840 Dongle`_ in the nRF Connect Programmer user guide.
+
+To boot to the bootloader on the dongle, an additional action is required.
+For example, you can trigger the pin reset procedure to reboot the device to the bootloader DFU mode, in which the new application image can be uploaded.
+See `nRF5 Bootloader DFU Mode`_ for the list of possible conditions for activating the DFU mode.
 
 FEM support
 ===========
