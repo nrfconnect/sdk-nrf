@@ -20,8 +20,11 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
 
-If you want to commission and control the lock device remotely :ref:`through a Thread network <chip_lock_sample_network_mode>`, use the `Android CHIPTool`_ application as the CHIP controller.
-You will need a smartphone compatible with Android for this purpose.
+For remote testing scenarios, you also need the following:
+
+* If you want to commission the lock device and :ref:`control it remotely <chip_lock_sample_network_mode>` through a Thread network:
+
+  * A smartphone compatible with Android for using the `Android CHIPTool`_ application as the CHIP controller.
 
 Overview
 ********
