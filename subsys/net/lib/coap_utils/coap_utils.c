@@ -155,7 +155,7 @@ static int coap_init_request(enum coap_method method,
 
 	for (opt = uri_path_options; opt && *opt; opt++) {
 		ret = coap_packet_append_option(request, COAP_OPTION_URI_PATH,
-						*opt, strlen(*opt));
+						*(const uint8_t *const *)opt, strlen(*opt));
 		if (ret < 0) {
 			LOG_ERR("Unable add option to request");
 			goto end;
