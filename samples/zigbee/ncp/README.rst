@@ -57,7 +57,7 @@ Configuration
 
 |config|
 
-The IEEE address of the device is configured in the same way as for other Zigbee samples.
+See :ref:`ug_zigbee_configuring_eui64` for information about how to configure the IEEE address for this sample.
 
 Serial communication setup
 ==========================
