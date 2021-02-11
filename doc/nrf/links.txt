@@ -83,6 +83,10 @@
 
 .. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/ff13bd/src/android/CHIPTool
 .. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md
+.. _`Building and programming OpenThread RCP firmware`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#building-rcp-firmware
+.. _`Building and installing Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#building-chiptool
+.. _`Configuring PC as Thread Border Router`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#configuring-pc
+.. _`Preparing and commissioning accessory device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#preparing-accessory
 .. _`CHIP Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/README.md
 .. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_platform_overview.md
 

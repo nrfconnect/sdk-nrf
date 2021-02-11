@@ -24,10 +24,15 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
 
-If you want to commission the light bulb device and :ref:`control it remotely <chip_light_bulb_network_mode>` through a Thread network, use the `Android CHIPTool`_ application as the CHIP controller.
-You will need a smartphone compatible with Android for this purpose.
+For remote testing scenarios, you also need the following:
 
-If you want to use the :ref:`test mode <chip_light_bulb_sample_test_mode>` and control the light bulb using light switch, the :ref:`CHIP light switch <chip_light_switch_sample>` sample also needs to be programmed to another supported development kit.
+* If you want to commission the light bulb device and :ref:`control it remotely <chip_light_bulb_network_mode>` through a Thread network:
+
+  * A smartphone compatible with Android for using the `Android CHIPTool`_ application as the CHIP controller.
+
+* If you want to use the :ref:`test mode <chip_light_bulb_sample_test_mode>` and control the light bulb using light switch:
+
+  * :ref:`CHIP light switch <chip_light_switch_sample>` programmed to another supported development kit.
 
 Overview
 ********
