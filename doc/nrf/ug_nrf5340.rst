@@ -23,7 +23,7 @@ To get started with the nRF5340 DK, follow the steps in the `Getting started wit
 Introduction
 ************
 
-nRF5340 is a wireless ultra-low power multicore System on Chip (SoC) with two fully programmable Arm Cortex-M33 processors: a network core and an application core.
+nRF5340 is a wireless ultra-low-power multicore System on Chip (SoC) with two fully programmable Arm Cortex-M33 processors: a network core and an application core.
 The |NCS| supports Bluetooth Low Energy and NFC communication on the nRF5340 SoC.
 In addition, Thread and Zigbee protocols can use the SoC in the multiprotocol configuration.
 
@@ -33,23 +33,23 @@ See the `nRF5340 Product Specification`_ for more information about the nRF5340 
 Network core
 ============
 
-The network core is an Arm Cortex-M33 processor with a reduced feature set, designed for ultra-low power operation.
+The network core is an Arm Cortex-M33 processor with a reduced feature set, designed for ultra-low-power operation.
 
 This core is used for radio communication.
 With regards to the nRF5340 samples, this means that the network core runs the radio stack and real-time procedures.
 
 Currently, the |NCS| provides the following solutions for the network core:
 
-* :ref:`ug_ble_controller` (both the SoftDevice Controller and the Zephyr Bluetooth LE Controller)
-* IEEE 802.15.4 radio driver (for Thread and Zigbee protocols)
-* :ref:`Multiprotocol <ug_multiprotocol_support>` (Thread and Zigbee protocols running in parallel with the :ref:`nrfxlib:softdevice_controller`)
-* Samples that directly use the radio peripheral
+* :ref:`ug_ble_controller` - both the SoftDevice Controller and the Zephyr Bluetooth LE Controller.
+* IEEE 802.15.4 radio driver - for Thread and Zigbee protocols.
+* :ref:`Multiprotocol <ug_multiprotocol_support>` - Thread and Zigbee protocols running in parallel with the :ref:`nrfxlib:softdevice_controller`.
+* Samples that directly use the radio peripheral.
 
 See `Network samples`_ for more information.
 
 In general, this core should be used for real-time processing tasks involving low-level radio protocol layers.
 
-The board name for the network core in Zephyr is ``nrf5340dk_nrf5340_cpunet``.
+The development kit name for the network core in Zephyr is ``nrf5340dk_nrf5340_cpunet``.
 
 Application core
 ================
@@ -95,13 +95,13 @@ The application core memory is mapped to the network core memory map.
 This means that the network core can access and use the application core memory for shared memory communication.
 
 Interprocessor Communication (IPC) is used to indicate to the other core that there is new data available to pick up.
-The actual data exchange is handled by Open Asymmetric Multi Processing (OpenAMP).
+The actual data exchange is handled by Open Asymmetric Multi-Processing (OpenAMP).
 
 Zephyr includes the `OpenAMP`_ library, which provides a complete solution for exchanging messages between the cores.
 The IPC peripheral is presented to Zephyr as an Interprocessor Mailbox (IPM) device.
 The OpenAMP library uses the IPM SHIM layer, which in turn uses the IPC driver in `nrfx`_.
 
-.. |note| replace:: To upgrade firmware on the network core, perform the steps for FOTA upgrade described below, replacing :file:`app_update.bin` (file used when upgrading firmware on the application core) with :file:`net_core_app_update.bin`.
+.. |note| replace:: To upgrade the firmware on the network core, perform the steps for FOTA upgrade described below, replacing :file:`app_update.bin`, which is the file used when upgrading firmware on the application core, with :file:`net_core_app_update.bin`.
    In addition, ensure that :option:`CONFIG_PCD` is enabled for the MCUBoot child image.
    For more details, see :ref:`nc_bootloader`.
 
@@ -171,8 +171,8 @@ When working with 802.15.4-based protocols like Thread or Zigbee, program the :r
 Multiprotocol (Thread or Zigbee in combination with Bluetooth LE)
 -----------------------------------------------------------------
 
-The :ref:`multiprotocol-rpmsg-sample` sample is a combination of the two samples previously described (i.e. :ref:`zephyr:bluetooth-hci-rpmsg-sample` and :ref:`zephyr:nrf-ieee802154-rpmsg-sample`).
-This means that it enables both the Bluetooth LE Controller and nRF IEEE 802.15.4 radio driver and simultaneously exposes the functionality of both stacks to application core using the `RPMsg Messaging Protocol`_.
+The :ref:`multiprotocol-rpmsg-sample` sample is a combination of the two samples previously described, namely, :ref:`zephyr:bluetooth-hci-rpmsg-sample` and :ref:`zephyr:nrf-ieee802154-rpmsg-sample`.
+This means that it enables both the Bluetooth LE Controller and nRF IEEE 802.15.4 radio driver and simultaneously exposes the functionality of both stacks to the application core using the `RPMsg Messaging Protocol`_.
 Separate RPMsg endpoints are used to obtain independent inter-core connections for each stack.
 
 .. figure:: /images/ieee802154_nrf53_multiprot_design.svg
@@ -193,7 +193,7 @@ Some Bluetooth LE samples require configuration adjustments to the :ref:`zephyr:
 
 The |NCS| also provides :ref:`Thread <ug_thread>`, :ref:`Zigbee <ug_zigbee>`, and :ref:`CHIP <ug_chip>` samples that can be run on the nRF5340 DK.
 These samples are built for the application core, but make use of both cores.
-The network core application is built and flashed automatically.
+The network core application is built and programmed automatically.
 
 Additionally, the |NCS| provides :ref:`NFC samples <nfc_samples>` that are available for nRF5340.
 These samples run only on the application core and do not require any firmware for the network core.
@@ -222,14 +222,14 @@ In a multi-image build, the image for the application core is the parent image, 
 For this to work, the network core image must be explicitly added as a child image to one of the application core images.
 See :ref:`ug_multi_image_defining` for details.
 
-Depending on which of the Bluetooth LE and IEEE 802.15.4 protocol stacks have been enabled for building, the build system automatically includes appropriate sample as a child image in the ``nrf5340_dk_nrf5340_cpunet`` core.
+Depending on which of the Bluetooth LE and IEEE 802.15.4 protocol stacks have been enabled for building, the build system automatically includes the appropriate sample as a child image in the ``nrf5340_dk_nrf5340_cpunet`` core.
 
 +-----+--------------------------+-------------------------------+--------------------------------------------+
 |     |``CONFIG_BT_RPMSG_NRF53`` |``CONFIG_NRF_802154_SER_HOST`` | Child image sample for the network core    |
 +=====+==========================+===============================+============================================+
 |`a)` |``y``                     |``n``                          |:ref:`zephyr:bluetooth-hci-rpmsg-sample`    |
 +-----+--------------------------+-------------------------------+--------------------------------------------+
-|`b)` |``n``                     |``y``                          |:ref:`nrf-ieee802154-rpmsg-sample`          |
+|`b)` |``n``                     |``y``                          |:ref:`zephyr:nrf-ieee802154-rpmsg-sample`   |
 +-----+--------------------------+-------------------------------+--------------------------------------------+
 |`c)` |``y``                     |``y``                          |:ref:`multiprotocol-rpmsg-sample`           |
 +-----+--------------------------+-------------------------------+--------------------------------------------+
@@ -245,7 +245,7 @@ Depending on which of the Bluetooth LE and IEEE 802.15.4 protocol stacks have be
 SES is unable to automatically program the network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` to the network core when it is added as a child image.
 To program the network sample to the network core, see `Programming the network sample from SES`_.
 
-A dedicated network sample can be built and flashed by following the instructions in :ref:`gs_programming_ses`.
+A dedicated network sample can be built and programmed by following the instructions in :ref:`gs_programming_ses`.
 Make sure to use ``nrf5340dk_nrf5340_cpunet`` as the build target when building the network sample, and ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuappns`` when building the application sample.
 
 Programming the network sample from SES
@@ -279,13 +279,13 @@ Follow these steps to program the network sample :ref:`zephyr:bluetooth-hci-rpms
 #. Select the project template, project name, and project location.
 
    * :guilabel:`An externally built executable for Nordic Semiconductor nRF`:
-     This allows to specify the network core hex file created by the build system to be flashed.
+     This allows specifying the network core hex file created by the build system to be programmed.
 
    * :guilabel:`Name`: Specify the name of the project as it will appear in SES. In this example, ``hci_rpmsg_nrf5340_netcore`` is used.
 
    * :guilabel:`Location`: Specify the location of the project.
-     This must be the same location as the current project / build folder.
-     Click :guilabel:`Browse` to open a dialog where you can navigate to the current project / build folder and click :guilabel:`Select Folder`.
+     This must be the same location as the current project/build folder.
+     Click :guilabel:`Browse` to open a dialog where you can navigate to the current project/build folder and click :guilabel:`Select Folder`.
 
    Click :guilabel:`Next`.
 
@@ -350,7 +350,7 @@ Follow these steps to program the network sample :ref:`zephyr:bluetooth-hci-rpms
 
      Program the network sample hci_rpmsg_nrf5340_netcore
 
-   Ignore any warnings regarding project being out of date.
+   Ignore any warnings regarding the project being out of date.
    The ``hci_rpmsg_nrf5340_netcore`` is a pure programming target so it cannot build.
 
    .. figure:: images/ses_nrf5340_netcore_download.png
@@ -367,7 +367,7 @@ Follow these steps to program the network sample :ref:`zephyr:bluetooth-hci-rpms
 
      Set the zephyr/merged.hex target as active
 
-.. note:: Flashing the network core erases the application which must be therefore programmed again.
+.. note:: Programming the network core erases the application which must be therefore programmed again.
 
 Programming from the command line
 =================================
@@ -388,7 +388,7 @@ Programming multi-image builds for different cores is not yet supported in nrfjp
 
    .. group-tab:: west
 
-      Open a command prompt in the build folder of the application sample and enter the following command to erase the whole flash and program both the application sample and the network sample::
+      Open a command prompt in the build folder of the application sample and enter the following command to erase the whole flash memory and program both the application sample and the network sample::
 
         west flash --erase
 
@@ -404,21 +404,21 @@ If you built the application sample and the network sample as separate images, y
 
    .. group-tab:: west
 
-      First, open a command prompt in the build folder of the network sample and enter the following command to erase the flash of the network core and program the network sample::
+      First, open a command prompt in the build folder of the network sample and enter the following command to erase the flash memory of the network core and program the network sample::
 
         west flash --erase
 
-      Then navigate to the build folder of the application sample and enter the same command to erase the flash of the application core and program the application sample::
+      Then navigate to the build folder of the application sample and enter the same command to erase the flash memory of the application core and program the application sample::
 
         west flash --erase
 
    .. group-tab:: nrfjprog
 
-      First, open a command prompt in the build folder of the network sample and enter the following command to erase the flash of the network core and program the network sample::
+      First, open a command prompt in the build folder of the network sample and enter the following command to erase the flash memory of the network core and program the network sample::
 
         nrfjprog -f NRF53 --coprocessor CP_NETWORK --program zephyr/zephyr.hex --chiperase
 
-      Then navigate to the build folder of the application sample and enter the following command to erase the flash of the application core and program the application sample::
+      Then navigate to the build folder of the application sample and enter the following command to erase the flash memory of the application core and program the application sample::
 
         nrfjprog -f NRF53 --program zephyr/zephyr.hex --chiperase
 
@@ -460,11 +460,11 @@ See the following instructions.
       .. note::
          Make sure to recover the network core before you recover the application core.
 
-         The ``--recover`` command erases the flash and then writes a small binary into the recovered flash.
+         The ``--recover`` command erases the flash memory and then writes a small binary into the recovered flash memory.
          This binary prevents the readback protection from enabling itself again after a pin reset or power cycle.
 
-         Recovering the network core erases the flash of both cores.
-         Recovering the application core erases the flash of only the application core.
+         Recovering the network core erases the flash memory of both cores.
+         Recovering the application core erases only the flash memory of the application core.
          Therefore, you must recover the network core first.
          Otherwise, if you recover the application core first and the network core last, the binary written to the application core is deleted and readback protection is enabled again after a reset.
 
