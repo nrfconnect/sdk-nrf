@@ -25,7 +25,7 @@ config DESKTOP_MOTION_SENSOR_PAW3212_ENABLE
 
 config DESKTOP_MOTION_BUTTONS_ENABLE
 	bool "Motion from buttons"
-	depends on !DESKTOP_BUTTONS_NONE
+	depends on CAF_BUTTON_EVENTS
 
 config DESKTOP_MOTION_SIMULATED_ENABLE
 	bool "Simulated motion"

@@ -15,9 +15,6 @@ target_sources_ifdef(CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE app
 target_sources_ifdef(CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE app PRIVATE
                      ${CMAKE_CURRENT_SOURCE_DIR}/motion_simulated.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_BUTTONS_ENABLE app
-                     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/buttons.c)
-
 target_sources_ifdef(CONFIG_DESKTOP_BUTTONS_SIM_ENABLE app
 		     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/buttons_sim.c)
 
