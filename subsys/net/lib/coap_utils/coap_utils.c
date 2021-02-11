@@ -107,6 +107,7 @@ static void coap_receive(void)
 			continue;
 		}
 
+		from_addr_len = sizeof(from_addr);
 		len = recvfrom(fds.fd, buf, sizeof(buf) - 1, 0, &from_addr,
 			       &from_addr_len);
 
