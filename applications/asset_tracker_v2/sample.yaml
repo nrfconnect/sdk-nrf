@@ -7,4 +7,6 @@ tests:
     platform_allow: nrf9160dk_nrf9160ns thingy91_nrf9160ns
     extra_configs:
       - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
+      - CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME="global.azure-devices-provisioning.net"
+      - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="IDSCOPE"
     tags: ci_build
