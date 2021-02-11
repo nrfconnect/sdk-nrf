@@ -17,12 +17,8 @@
 #if defined(CONFIG_SPM)
 #include "secure_services.h"
 #else
-#include "nrf_cc3xx_platform_ctr_drbg.h"
-
-static nrf_cc3xx_platform_ctr_drbg_context_t ctr_drbg_ctx;
+#include "nrf_cc3xx_platform_entropy.h"
 #endif
-
-#define CTR_DRBG_MAX_REQUEST 1024
 
 static int entropy_cc3xx_rng_get_entropy(
 	const struct device *dev,
@@ -30,70 +26,57 @@ static int entropy_cc3xx_rng_get_entropy(
 	uint16_t length)
 {
 	int res = -EINVAL;
+	size_t olen;
 
 	__ASSERT_NO_MSG(dev != NULL);
 	__ASSERT_NO_MSG(buffer != NULL);
 
-
-	size_t olen;
+#if defined(CONFIG_SPM)
 	size_t offset = 0;
-	size_t chunk_size = CTR_DRBG_MAX_REQUEST;
-	/** This is a call from a secure app, in which case entropy is
-	 *  gathered using CC3xx HW using the CTR_DRBG features of the
-	 *  nrf_cc310_platform/nrf_cc312_platform library.
-	 */
-	while (offset < length) {
+	size_t to_copy;
+	uint8_t spm_buf[144]; /* 144 is the only length supported by
+			       * spm_request_random_number.
+			       */
 
-		if ((length - offset) < CTR_DRBG_MAX_REQUEST) {
-			chunk_size = length - offset;
+	/** This is a call from a non-secure app that enables secure services,
+	 *  in which case entropy is gathered by calling through SPM
+	 */
+	while (length > 0) {
+		res = spm_request_random_number(spm_buf, sizeof(spm_buf),
+						&olen);
+		if (res < 0) {
+			return res;
 		}
 
-		#if defined(CONFIG_SPM)
-			/** This is a call from a non-secure app that
-			 * enables secure services, in which case entropy
-			 * is gathered by calling through SPM.
-			 */
-			res = spm_request_random_number(buffer + offset,
-								chunk_size,
-								&olen);
-		#else
-			/** This is a call from a secure app, in which
-			 * case entropy is gathered using CC3xx HW
-			 * using the CTR_DRBG features of the
-			 * nrf_cc310_platform/nrf_cc312_platform library.
-			 */
-			res = nrf_cc3xx_platform_ctr_drbg_get(&ctr_drbg_ctx,
-								buffer + offset,
-								chunk_size,
-								&olen);
-		#endif
-
-		if (olen != chunk_size) {
+		if (olen != sizeof(spm_buf)) {
 			return -EINVAL;
 		}
 
-		if (res != 0) {
-			break;
-		}
+		to_copy = MIN(length, sizeof(spm_buf));
 
-		offset += chunk_size;
+		memcpy(buffer + offset, spm_buf, to_copy);
+		length -= to_copy;
+		offset += to_copy;
 	}
+
+#else
+	/** This is a call from a secure app, in which case entropy is
+	 *  gathered using CC3xx HW using the
+	 *  nrf_cc310_platform/nrf_cc312_platform library.
+	 */
+	res = nrf_cc3xx_platform_entropy_get(buffer, length, &olen);
+	if (olen != length) {
+		return -EINVAL;
+	}
+#endif
 
 	return res;
 }
 
 static int entropy_cc3xx_rng_init(const struct device *dev)
 {
+	/* No initialization is required */
 	(void)dev;
-
-	#if !defined(CONFIG_SPM)
-		int ret = 0;
-
-		ret = nrf_cc3xx_platform_ctr_drbg_init(&ctr_drbg_ctx, NULL, 0);
-		if (ret != 0) {
-			return -EINVAL;
-		}
-	#endif
 
 	return 0;
 }
