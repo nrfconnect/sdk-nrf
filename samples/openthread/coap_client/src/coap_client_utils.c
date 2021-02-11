@@ -110,8 +110,11 @@ static int on_provisioning_reply(const struct coap_packet *response,
 
 	payload = coap_packet_get_payload(response, &payload_size);
 
-	if (payload_size != sizeof(unique_local_addr.sin6_addr)) {
-		LOG_ERR("Received data size is invalid");
+	if (payload == NULL ||
+	    payload_size != sizeof(unique_local_addr.sin6_addr)) {
+		LOG_ERR("Received data is invalid");
+		ret = -EINVAL;
+		goto exit;
 	}
 
 	memcpy(&unique_local_addr.sin6_addr, payload, payload_size);
@@ -188,6 +191,8 @@ static void toggle_minimal_sleepy_end_device(struct k_work *item)
 	otError error;
 	otLinkModeConfig mode;
 	struct openthread_context *context = openthread_get_default_context();
+
+	__ASSERT_NO_MSG(context != NULL);
 
 	openthread_api_mutex_lock(context);
 	mode = otThreadGetLinkMode(context->instance);
