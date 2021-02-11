@@ -1,3 +1,5 @@
+#include <nrf9160dk_nrf52840_reset_on_if5.dtsi>
+
 / {
 	chosen {
 		zephyr,bt-uart=&lpuart;
@@ -7,8 +9,8 @@
 &uart2 {
 	current-speed = <1000000>;
 	status = "okay";
-	tx-pin = <18>;
-	rx-pin = <17>;
+	tx-pin = <18>; /* <&interface_to_nrf52840 1 0>; */
+	rx-pin = <17>; /* <&interface_to_nrf52840 0 0>; */
 	/delete-property/ rts-pin;
 	/delete-property/ cts-pin;
 	/delete-property/ hw-flow-control;
@@ -17,7 +19,7 @@
 		compatible = "nordic,nrf-sw-lpuart";
 		status = "okay";
 		label = "LPUART";
-		req-pin = <21>;
-		rdy-pin = <19>;
+		req-pin = <21>; /* <&interface_to_nrf52840 3 0>; */
+		rdy-pin = <19>; /* <&interface_to_nrf52840 2 0>; */
 	};
 };
