@@ -250,6 +250,9 @@ Trusted Firmware-M:
 -------------------
 
 * Added a simple sample that demonstrates how to integrate TF-M in an application.
+* Enabled using platform code that resides outside of the Trusted Firmware-M repository.
+  This allows for providing configurable memory partitioning in the nRF Connect SDK.
+* Added support for running the nRF9160 Download Client sample with TF-M.
 
 Partition Manager:
 ------------------
@@ -712,7 +715,7 @@ The following list summarizes the most important changes inherited from upstream
   * Updated LVGL to v7.6.1.
   * Updated libmetal and openamp to v2020.10.
   * Updated nrfx in hal-nordic to version 2.4.0.
-  * Updated the Trusted Firmware-M (TF-M) module to include support for the nRF5340 and nRF9160 platforms.
+  * Updated the Trusted Firmware-M (TF-M) module to v1.2.0.
 
 * Other:
 
