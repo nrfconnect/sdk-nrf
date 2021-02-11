@@ -1,16 +1,11 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
-/ {
-	chosen {
-		zephyr,bt-c2h-uart=&lpuart;
-	};
-};
+#include <nrf9160dk_nrf52840_reset_on_if5.dtsi>
+
+#include <nrf9160dk_uart1_on_if0_3.dtsi>
 
 &uart1 {
 	current-speed = <1000000>;
-	status = "okay";
-	tx-pin = <17>;
-	rx-pin = <20>;
 	/delete-property/ rts-pin;
 	/delete-property/ cts-pin;
 
@@ -18,8 +13,14 @@
 		compatible = "nordic,nrf-sw-lpuart";
 		status = "okay";
 		label = "LPUART";
-		req-pin = <15>;
-		rdy-pin = <22>;
+		req-pin = <15>; /* <&interface_to_nrf9160 2 0>; */
+		rdy-pin = <22>; /* <&interface_to_nrf9160 3 0>; */
+	};
+};
+
+/ {
+	chosen {
+		zephyr,bt-c2h-uart=&lpuart;
 	};
 };
 
