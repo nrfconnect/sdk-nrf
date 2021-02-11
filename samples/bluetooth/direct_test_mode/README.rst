@@ -122,9 +122,9 @@ In other words, for the first antenna, antenna pin 1 is active, for the second a
 nRF21540 front-end module
 =========================
 
-.. |fem_file_path| replace:: :file:`samples/bluetooth/direct_test_mode`
+.. |fem_file_path| replace:: :file:`samples/bluetooth/direct_test_mode/configuration`
 
-.. include:: /includes/sample_fem_support.txt
+.. include:: /includes/sample_dtm_radio_test_fem.txt
 
 You can configure the transmitted power gain and activation delay in nRF21540 using vendor-specific commands, see `Vendor-specific packet payload`_.
 
