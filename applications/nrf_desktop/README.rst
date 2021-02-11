@@ -24,7 +24,7 @@ Overview: Firmware architecture
 
 The nRF Desktop application design aims at high performance, while still providing configurability and extensibility.
 
-The application architecture is modular and event-driven.
+The application architecture is modular, event-driven and build around :ref:`lib_caf`.
 This means that parts of the application functionality are separated into isolated modules that communicate with each other using application events, which are handled by the :ref:`event_manager`.
 Modules register themselves as listeners of those events that they are configured to react to.
 An application event can be submitted by multiple modules and it can have multiple listeners.
@@ -188,7 +188,7 @@ The nRF Desktop mouse sends HID input reports to host after the host connects an
 
 The :ref:`nrf_desktop_motion` sensor sampling is synchronized with sending the HID mouse input reports to the host.
 
-The :ref:`nrf_desktop_wheel` and :ref:`nrf_desktop_buttons` provide data to the :ref:`nrf_desktop_hid_state` when the mouse wheel is used or a button is pressed, respectively.
+The :ref:`nrf_desktop_wheel` and :ref:`caf_buttons` provide data to the :ref:`nrf_desktop_hid_state` when the mouse wheel is used or a button is pressed, respectively.
 These inputs are not synchronized with the HID report transmission to the host.
 
 When the mouse is constantly in use, the motion module is kept in the fetching state.
@@ -923,9 +923,9 @@ To use the nRF Desktop application with your custom board:
    In such case, the overlay file can be left empty.
 #. In Kconfig, ensure that the following modules that are specific for gaming mouse are enabled:
 
+   * :ref:`caf_buttons`
    * :ref:`nrf_desktop_motion`
    * :ref:`nrf_desktop_wheel`
-   * :ref:`nrf_desktop_buttons`
    * :ref:`nrf_desktop_battery_meas`
    * :ref:`nrf_desktop_leds`
 
@@ -1548,6 +1548,7 @@ Dependencies
 
 This application uses the following |NCS| libraries and drivers:
 
+* :ref:`lib_caf`
 * :ref:`event_manager`
 * :ref:`profiler`
 * :ref:`hids_readme`
