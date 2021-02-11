@@ -432,11 +432,14 @@ The following list summarizes the most important changes inherited from upstream
     Use :c:macro:`DEVICE_DEFINE` instead.
   * Introduced macros (:c:macro:`DEVICE_DT_DEFINE` and related ones) that allow defining devices using information from devicetree nodes directly and referencing structures of such devices at build time.
     Most drivers have been updated to use these new macros for creating their instances.
+  * Deprecated the ``DEVICE_AND_API_INIT()`` macro.
+    Use :c:macro:`DEVICE_DEFINE` or :c:macro:`DEVICE_DT_INST_DEFINE` instead.
 
   * ADC:
 
     * Improved the default routine that provides sampling intervals, to allow intervals shorter than 1 millisecond.
     * Reworked, extended, and improved the ``adc_shell`` driver to make testing an ADC peripheral simpler.
+    * Introduced the ``adc_sequence_options::user_data`` field.
 
   * Bluetooth Controller:
 
@@ -448,6 +451,11 @@ The following list summarizes the most important changes inherited from upstream
     * Added experimental support for non-connectable non-scannable Extended Advertising with 255 byte PDU (without chaining and privacy support).
     * Added experimental support for Extended Scanning with duration and period parameters (without active scanning for scan response or chained PDU).
     * Added experimental support for Periodic Advertising and Periodic Advertising Synchronization Establishment.
+
+  * Bluetooth HCI:
+
+    * Added support for ISO packets to the RPMsg driver.
+    * Added the possibility of discarding advertising reports to avoid time-outs in the User Channel, STM32 IPM, and SPI based drivers.
 
   * Bluetooth Host:
 
@@ -493,6 +501,12 @@ The following list summarizes the most important changes inherited from upstream
     * Refactored the nRF QSPI NOR driver so that it no longer depends on :option:`CONFIG_MULTITHREADING`.
     * Removed ``CONFIG_NORDIC_QSPI_NOR_QE_BIT``.
       Use the ``quad-enable-requirements`` devicetree property instead.
+    * Added JESD216 support to the nRF QSPI NOR driver.
+
+  * GPIO:
+
+    * Added support for controlling LED intensity to the SX1509B driver.
+    * Added an emulated GPIO driver.
 
   * IEEE 802.15.4:
 
@@ -569,6 +583,8 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed handling of the SUSPEND and RESUME events in the Bluetooth classes.
     * Made the USB DFU class compatible with the target configuration that does not have a secondary image slot.
     * Added support for using USB DFU within MCUboot with single application slot mode.
+    * Removed heap allocations from the usb_dc_nrfx driver to fix problems with improper memory sizes.
+      Now the driver uses static buffers for OUT endpoints and memory slabs for FIFO elements.
 
 * Networking:
 
