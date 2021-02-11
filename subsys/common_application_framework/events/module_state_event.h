@@ -54,7 +54,7 @@ EVENT_TYPE_DECLARE(module_state_event);
 
 #define MODULE_NAME STRINGIFY(MODULE)
 
-extern const void * const _CONCAT(__module_, MODULE);
+extern const void * const (_CONCAT(__module_, MODULE));
 const void * const _CONCAT(__module_, MODULE) = MODULE_NAME;
 
 static inline void module_set_state(enum module_state state)
