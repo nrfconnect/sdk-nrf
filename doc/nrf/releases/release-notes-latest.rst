@@ -350,6 +350,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Enabled interrupts before ``main()`` in single-thread kernel mode for Cortex-M architecture.
   * Introduced functionality for forcing core architecture HW initialization during system boot, for chain-loadable images.
+  * Fixed inline assembly code in Cortex-M system calls.
 
 * Boards:
 
