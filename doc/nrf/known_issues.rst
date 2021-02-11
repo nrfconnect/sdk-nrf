@@ -326,6 +326,22 @@ Bluetooth LE
 
 .. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
+NCSDK-8224: Callbacks for "security changed" and "pairing failed" are not always called
+  The pairing failed and security changed callbacks are not called when the connection is disconnected during the pairing procedure or the required security is not met.
+
+  **Workaround:** Application should use the disconnected callback to handle pairing failed.
+
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-8223: GATT requests might deadlock RX thread
+  GATT requests might deadlock the RX thread when all TX buffers are taken by GATT requests and the RX thread tries to allocate a TX buffer for a response.
+  This causes a deadlock because only the RX thread releases the TX buffers for the GATT requests.
+  The deadlock is resolved by a 30 second time-out, but the ATT bearer cannot transmit without reconnecting.
+
+  **Workaround:** Set :option:`CONFIG_BT_L2CAP_TX_BUF_COUNT` >= :option:`CONFIG_BT_ATT_TX_MAX` + 2.
+
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
 NCSDK-6845: Pairing failure with simultaneous pairing on multiple connections
   When using LE Secure Connections pairing, the pairing fails with simultaneous pairing on multiple connections.
   The failure reason is unspecified.
