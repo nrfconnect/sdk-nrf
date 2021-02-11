@@ -710,6 +710,11 @@ static void on_cloud_state_connected(struct data_msg_data *msg)
 		return;
 	}
 
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONFIG_EMPTY)) {
+		config_send();
+		return;
+	}
+
 	/* Distribute new configuration received from cloud. */
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONFIG_RECEIVED)) {
 

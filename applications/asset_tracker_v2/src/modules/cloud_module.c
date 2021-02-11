@@ -239,6 +239,7 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 			break;
 		} else if (err == -ENODATA) {
 			LOG_WRN("Device configuration empty!");
+			SEND_EVENT(cloud, CLOUD_EVT_CONFIG_EMPTY);
 		} else {
 			LOG_ERR("Decoding of device configuration, error: %d",
 				err);
