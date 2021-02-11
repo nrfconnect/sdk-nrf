@@ -1,0 +1,52 @@
+# The west manifest file (west-homekit.yml) for the nRF Connect SDK (NCS)
+# including homekit repository.
+#
+# The per-workspace west configuration file, ncs/.west/config,
+# specifies the location of this manifest file like this:
+#
+#     [manifest]
+#     path = nrf
+#     file = west-homekit.yml
+#
+# See the west documentation for more information:
+#
+# https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
+
+manifest:
+  # This west.yml requires west 0.9 or later, because the "submodules"
+  # feature used below was introduced then.
+  version: 0.9
+
+  # "remotes" is a list of locations where git repositories are cloned
+  # and fetched from.
+  remotes:
+    # nRF Connect SDK GitHub organization.
+    # NCS repositories are hosted here.
+    - name: ncs
+      url-base: https://github.com/nrfconnect
+
+  # If not otherwise specified, the projects below should be obtained
+  # from the ncs remote.
+  defaults:
+    remote: ncs
+
+  group-filter: [+homekit]
+
+
+  # "projects" is a list of git repositories which make up the NCS with homekit
+  # source code.
+  projects:
+    - name: homekit
+      repo-path: sdk-homekit
+      revision: 8d68bb07b9217960767f7c5030ea9a4ec37af5df
+      groups:
+      - homekit
+
+  # West-related configuration for the nrf repository.
+  self:
+    # This repository should be cloned to ncs/nrf.
+    path: nrf
+    # This line configures west extensions which are currently only
+    # for internal use by NCS maintainers.
+    west-commands: scripts/west-commands.yml
+    import: west.yml

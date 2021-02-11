@@ -12,6 +12,7 @@
 /README.rst                               @carlescufi
 /Jenkinsfile                              @thst-nordic
 /west.yml                                 @carlescufi @tejlmand
+/west-homekit.yml                         @carlescufi @tejlmand
 
 # Github Actions
 /.github/                                 @thst-nordic
