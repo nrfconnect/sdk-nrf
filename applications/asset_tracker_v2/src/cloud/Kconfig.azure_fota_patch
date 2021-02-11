@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# This Kconfig file contains redefinitions of Kconfig options that are used when Azure IoT Hub and
+# Azure FOTA libraries are enabled.
+
+config AZURE_FOTA_APP_VERSION
+	default ASSET_TRACKER_V2_APP_VERSION if AZURE_IOT_HUB && AZURE_FOTA && !AZURE_FOTA_APP_VERSION_AUTO
+	help
+	  Kconfig redefinition that aligns the azure fota and application version strings.
+	  When updating the application firmware the ASSET_TRACKER_V2_APP_VERSION option should be
+	  used as it takes precedence over the AZURE_FOTA_APP_VERSION option.
+
+config AZURE_FOTA_VERSION_MAX_LEN
+	default ASSET_TRACKER_V2_APP_VERSION_MAX_LEN if AZURE_IOT_HUB && AZURE_FOTA && !AZURE_FOTA_APP_VERSION_AUTO
+	help
+	  Kconfig redefinition that aligns the azure fota and application version string length.
