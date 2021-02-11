@@ -4,10 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_include_directories(
-	events
-	include
-)
-
-add_subdirectory(events)
-add_subdirectory(modules)
+zephyr_sources_ifdef(CONFIG_CAF_BUTTONS buttons.c)
