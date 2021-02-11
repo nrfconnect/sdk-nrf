@@ -73,7 +73,13 @@ The ``UART0`` pins are configured by Devicetree :file:`overlay` files for each s
 Optional communication through USB
 ----------------------------------
 
-You can change the communication channel from the default UART to nRF USB by using the :file:`usb.overlay` configuration file.
+You can change the communication channel from the default UART to nRF USB by using the :file:`prj_usb.conf` configuration file.
+This configuration file can be passed into CMake by using the ``--`` separator when building the sample.
+For example:
+
+.. code-block:: console
+
+   west build samples/zigbee/ncp -b nrf52840dk_nrf52840 -- -DCONF_FILE='prj_usb.conf'
 
 The USB device VID and PID are configured by the sample's Kconfig file.
 
@@ -88,21 +94,25 @@ The bootloader support in the NCP sample depends on the development kit, its res
 * For the ``nrf52840dk_nrf52840``, ``nrf52833dk_nrf52833``, and ``nrf21540dk_nrf52840`` build targets, the following scenarios are possible when building for these build targets:
 
   * If the `Optional communication through USB`_ is selected, `MCUboot`_ is enabled by default.
-  * If the default UART serial communication channel is used, the bootloader support is not enabled, but it can be enabled by the user.
+  * If the default UART serial communication channel is used, the bootloader support is not enabled, but MCUboot can be enabled by the user.
 
 MCUboot
 -------
 
 When the `Optional communication through USB`_ is selected, MCUboot in this sample is built with support for single application slot, and uses the USB DFU class driver to allow uploading image over USB.
-This is achieved with the following Kconfig overlay files, available in the :file:`configuration` directory for the build target of your choice:
 
-* :file:`app_with_mcuboot.conf` - This file enables MCUboot for the application.
-* :file:`mcuboot.conf` - This file configures MCUboot to have single application slot and use USB DFU.
-* :file:`pm_static.yml` - This Partition Manager file increases MCUboot's partition size.
+If you want to use the default UART serial communication channel, you can enable MCUboot by setting the :option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
+To use the same MCUboot configuration as in `Optional communication through USB`_, you need to provide MCUboot with the Kconfig options included in the :file:`child_image/mcuboot_usb.conf` file.
+See :ref:`ug_multi_image_variables` for how to set the required options.
 
-To learn more about configuring bootloader for an application in |NCS|, see the :ref:`bootloader` sample.
+MCUboot with the USB DFU requires a larger partition.
+To increase the partition, define the ``PM_STATIC_YML_FILE`` variable that provides the path to the :file:`pm_static.yml` static configuration file in the :file:`configuration` directory for the build target of your choice.
+These additional options and configuration file can be passed into CMake by using the ``--`` separator when building the sample.
+For example:
 
-When the default UART serial communication channel is used, MCUboot can be enabled and configured similarly to when the `Optional communication through USB`_ is selected by using the same overlay files.
+.. code-block:: console
+
+   west build samples/zigbee/ncp -b nrf52840dk_nrf52840 -- -DCONFIG_BOOTLOADER_MCUBOOT=y  -Dmcuboot_CONFIG_MULTITHREADING=y -Dmcuboot_CONFIG_BOOT_WAIT_FOR_USB_DFU=y -Dmcuboot_CONFIG_SINGLE_APPLICATION_SLOT=y -DPM_STATIC_YML_FILE=samples/zigbee/ncp/configuration/nrf52840dk_nrf52840/pm_static.yml
 
 When building the sample, the build system also generates the signed :file:`app_update.bin` image file in the :file:`build` directory.
 This file can be used to upgrade a device.
@@ -111,6 +121,8 @@ See :ref:`mcuboot_ncs` for more information about this and other automatically g
 After every reset, the sample first boots to MCUboot and then, after a couple of seconds, the NCP sample is booted.
 When booted to MCUboot, the new image can be uploaded with the dfu-util tool.
 See :ref:`USB DFU sample documentation <zephyr:usb_dfu>` for a reference.
+
+To learn more about configuring bootloader for an application in |NCS|, see the :ref:`ug_bootloader` page.
 
 nRF5 SDK Bootloader
 -------------------
