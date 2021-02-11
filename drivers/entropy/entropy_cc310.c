@@ -20,10 +20,12 @@
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
 #include <tfm_ns_interface.h>
-#else
+#elif defined(CONFIG_HARDWARE_DEVICE_CS_GENERATOR)
 #include "nrf_cc3xx_platform_ctr_drbg.h"
 
 static nrf_cc3xx_platform_ctr_drbg_context_t ctr_drbg_ctx;
+#else
+#include "nrf_cc3xx_platform_entropy.h"
 #endif
 
 #define CTR_DRBG_MAX_REQUEST 1024
@@ -68,13 +70,22 @@ static int entropy_cc3xx_rng_get_entropy(
 			res = spm_request_random_number(buffer + offset,
 								chunk_size,
 								&olen);
-		#else
+		#elif defined(CONFIG_HARDWARE_DEVICE_CS_GENERATOR)
 			/** This is a call from a secure app, in which
 			 * case entropy is gathered using CC3xx HW
 			 * using the CTR_DRBG features of the
 			 * nrf_cc310_platform/nrf_cc312_platform library.
 			 */
 			res = nrf_cc3xx_platform_ctr_drbg_get(&ctr_drbg_ctx,
+								buffer + offset,
+								chunk_size,
+								&olen);
+		#else
+			/** This is a call from a secure app, but with
+			 * a configuration to calculate CSPRNG using
+			 * CTR_DRBG_CSPRNG_GENERATOR.
+			 */
+			res = nrf_cc3xx_platform_entropy_get(
 								buffer + offset,
 								chunk_size,
 								&olen);
@@ -113,13 +124,15 @@ static int entropy_cc3xx_rng_init(const struct device *dev)
 			return -EINVAL;
 		}
 
-	#elif !defined(CONFIG_SPM)
+	#elif !defined(CONFIG_SPM) && defined(CONFIG_HARDWARE_DEVICE_CS_GENERATOR)
 		int ret = 0;
 
 		ret = nrf_cc3xx_platform_ctr_drbg_init(&ctr_drbg_ctx, NULL, 0);
 		if (ret != 0) {
 			return -EINVAL;
 		}
+	#else
+		/* Nothing to do. */
 	#endif
 
 	return 0;
