@@ -369,6 +369,8 @@ The following list summarizes the most important changes inherited from upstream
 
   * Restricted thread-local storage, which is now available only when the toolchain supports it.
     Toolchain support is initially limited to the toolchains bundled with the Zephyr SDK.
+  * Added support for :ref:`condition variables <zephyr:condvar>`.
+  * Added support for aligned allocators.
   * Added support for gathering basic thread runtime statistics.
   * Removed the following deprecated `kernel APIs <https://github.com/nrfconnect/sdk-zephyr/commit/c8b94f468a94c9d8d6e6e94013aaef00b914f75b>`_:
 
@@ -421,6 +423,8 @@ The following list summarizes the most important changes inherited from upstream
   * Removed the legacy DT macros.
   * Started exposing dependency ordinals for walking the dependency hierarchy.
   * Added documentation for the :ref:`DTS bindings <zephyr:devicetree_binding_index>`.
+  * Added the ``UICR`` and ``FICR`` peripherals to the devicetree.
+  * Changed the interrupt priorities in devicetree for Nordic Semiconductor devices to default to ``NRF_DEFAULT_IRQ_PRIORITY`` instead of hard-coded values.
 
 * Drivers:
 
@@ -532,6 +536,8 @@ The following list summarizes the most important changes inherited from upstream
     * Enhanced the BMI160 driver to support communication via both SPI and I2C.
     * Added device power management in the LIS2MDL magnetometer driver.
     * Refactored the FXOS8700 driver to support multiple instances.
+    * Added support for the Invensense ICM42605 motion sensor.
+    * Added support for power management in the BME280 sensor driver.
 
   * Serial:
 
@@ -571,11 +577,13 @@ The following list summarizes the most important changes inherited from upstream
     * Added support for DNS Service Discovery.
     * Deprecated legacy TCP stack (TCP1).
     * Added multiple minor TCP2 bugfixes and improvements.
+    * Added support for RX packet queueing in TCP2.
     * Added network management events for DHCPv4.
     * Added periodic throughput printout to the :ref:`zephyr:sockets-echo-server-sample` sample.
     * Added an experimental option to set preemptive priority for networking threads (:option:`CONFIG_NET_TC_THREAD_PREEMPTIVE`).
     * Added a Kconfig option that enables a hostname update on link address change (:option:`CONFIG_NET_HOSTNAME_UNIQUE_UPDATE`).
     * Added multiple fixes to the DHCP implementation.
+    * Added support for the Distributed Switch Architecture (DSA).
 
   * LwM2M:
 
@@ -680,6 +688,10 @@ The following list summarizes the most important changes inherited from upstream
       See :option:`CONFIG_MCUBOOT_SHELL`.
     * Reworked the implementation to use MCUboot's bootutil_public library instead of the Zephyr implementation of the same API.
 
+  * IPC:
+
+    * Added a ``subsys/ipc`` subsystem that provides multi-endpoint capabilities to the OpenAMP integration.
+
 * Build system:
 
   * Ensured that shields can be placed in other BOARD_ROOT folders.
@@ -716,16 +728,20 @@ The following list summarizes the most important changes inherited from upstream
   * Updated libmetal and openamp to v2020.10.
   * Updated nrfx in hal-nordic to version 2.4.0.
   * Updated the Trusted Firmware-M (TF-M) module to v1.2.0.
+  * Moved the nrfx glue code from the hal_nordic module repository to the main Zephyr repository.
+  * Updated the Trusted Firmware-M (TF-M) module to include support for the nRF5340 and nRF9160 platforms.
 
 * Other:
 
   * Renamed the ``sanitycheck`` script to ``twister``.
   * Added initial LoRaWAN support.
   * Updated ``west flash`` support for ``nrfjprog`` to fail if a HEX file has UICR data and ``--erase`` was not specified.
+  * Added an API to correlate system time with external time sources (see :ref:`zephyr:timeutil_api`).
 
 * Power management:
 
   * Overhauled the naming and did some general cleanup.
+  * Added a notifier API to register an object to receive notifications when the system changes power state.
 
 * Shell:
 
