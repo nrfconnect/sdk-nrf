@@ -14,4 +14,5 @@ menuconfig CAF
 
 if CAF
 rsource "events/Kconfig"
+rsource "modules/Kconfig"
 endif # CAF

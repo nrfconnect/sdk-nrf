@@ -35,4 +35,15 @@ config CAF_INIT_LOG_WAKE_UP_EVENTS
 	depends on LOG
 	default y
 
+config CAF_BUTTON_EVENTS
+	bool "Enable button events"
+	help
+	  Enable support for button events.
+
+config CAF_INIT_LOG_BUTTON_EVENTS
+	bool "Log button events"
+	depends on CAF_BUTTON_EVENTS
+	depends on LOG
+	default y
+
 endmenu
