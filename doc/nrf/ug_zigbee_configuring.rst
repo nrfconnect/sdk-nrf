@@ -83,9 +83,10 @@ Optional configuration
 
 After enabling the Zigbee protocol and defining the Zigbee device role, you can enable additional options in Kconfig and modify `ZBOSS stack start options`_.
 
-You can enable the following additional configuration options:
+Device operational channel
+==========================
 
-* One of the following alternative options for selecting the channel on which the Zigbee device can operate:
+You can enable one of the following alternative options to select the channel on which the Zigbee device can operate:
 
   * :option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE` - Single mode is enabled by default.
     The default channel is set to 16.
@@ -95,8 +96,29 @@ You can enable the following additional configuration options:
     For example, you can set channels 13, 16, and 21.
     You must have at least one channel enabled with this option.
 
-* :option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` - MAC Address Block Large is set to Nordic Semiconductor's MA-L block (f4-ce-36) by default.
-  To set a different MA-L, enable this option and edit the :option:`CONFIG_IEEE802154_VENDOR_OUI` to the desired value.
+.. _ug_zigbee_configuring_eui64:
+
+IEEE 802.15.4 EUI-64 configuration
+==================================
+
+The Zigbee stack uses the EUI-64 address that is configured in the IEEE 802.15.4 shim layer.
+By default, it uses an address from Nordic Semiconductor's pool.
+
+If your devices should use different address, you can change the address according to your company's addressing scheme.
+
+.. include:: /includes/ieee802154_eui64_conf.txt
+
+At the end of the configuration process, you can check the EUI-64 value using :ref:`lib_zigbee_shell`:
+
+.. code-block:: console
+
+   > zdo eui64
+   8877665544332211
+   Done
+
+.. note::
+    Alternatively, you may use the Production Configuration feature to change the address.
+    The Production Configuration takes precedence over the shim's configuration.
 
 ZBOSS stack start options
 =========================

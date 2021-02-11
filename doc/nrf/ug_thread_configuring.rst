@@ -78,6 +78,21 @@ Default configuration reference
 
 For other optional configuration options, see the following sections.
 
+.. _ug_thread_configuring_eui64:
+
+IEEE 802.15.4 EUI-64 configuration
+==================================
+
+.. include:: /includes/ieee802154_eui64_conf.txt
+
+At the end of the configuration process, you can check the EUI-64 value using OpenThread CLI:
+
+.. code-block:: console
+
+   uart:~$ ot eui64
+   8877665544332211
+   Done
+
 .. _ug_thread_configuring_crypto:
 
 Hardware-accelerated cryptography
