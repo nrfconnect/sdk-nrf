@@ -15,7 +15,7 @@ config DESKTOP_PASSKEY_NONE
 
 config DESKTOP_PASSKEY_BUTTONS
 	bool "Passkey based on button presses"
-	depends on !DESKTOP_BUTTONS_NONE
+	depends on CAF_BUTTON_EVENTS
 
 endchoice
 

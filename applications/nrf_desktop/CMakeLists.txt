@@ -65,6 +65,9 @@ target_sources(app PRIVATE
 zephyr_library_include_directories(
   src/events
   src/util
+  )
+
+zephyr_include_directories(
   configuration/common
   configuration/${BOARD}
   )

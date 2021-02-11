@@ -46,10 +46,6 @@ config DESKTOP_INIT_LOG_BLE_QOS_EVENT
 	bool "BLE QOS event"
 	default y
 
-config DESKTOP_INIT_LOG_BUTTON_EVENT
-	bool "Button event"
-	default y
-
 config DESKTOP_INIT_LOG_CPU_LOAD_EVENT
 	bool "CPU load event"
 	default y
@@ -94,20 +90,8 @@ config DESKTOP_INIT_LOG_LED_READY_EVENT
 	bool "LED ready event"
 	default y
 
-config DESKTOP_INIT_LOG_MODULE_STATE_EVENT
-	bool "Module state event"
-	default y
-
 config DESKTOP_INIT_LOG_MOTION_EVENT
 	bool "Motion event"
-	default y
-
-config DESKTOP_INIT_LOG_POWER_DOWN_EVENT
-	bool "Power down event"
-	default y
-
-config DESKTOP_INIT_LOG_WAKE_UP_EVENT
-	bool "Wake up event"
 	default y
 
 config DESKTOP_INIT_LOG_USB_STATE_EVENT

@@ -1423,7 +1423,7 @@ static bool event_handler(const struct event_header *eh)
 		return handle_wheel_event(cast_wheel_event(eh));
 	}
 
-	if (!IS_ENABLED(CONFIG_DESKTOP_BUTTONS_NONE) &&
+	if (IS_ENABLED(CONFIG_CAF_BUTTON_EVENTS) &&
 	    is_button_event(eh)) {
 		return handle_button_event(cast_button_event(eh));
 	}
