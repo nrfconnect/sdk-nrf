@@ -160,15 +160,15 @@ To force line-breaks in a table, use a line block:
 Links
 =====
 
-Nulla aliquam lacinia risus `eget congue <http://www.nordicsemi.com>`_. Morbi posuere a nisi id `vulputate`_. Curabitur ac lacus magna. Aliquam urna lacus, ornare non iaculis vel, ullamcorper vel dolor. Nunc vel dui vulputate, imperdiet metus eget, tristique dui. Etiam non lorem vel magna dictum aliquam. Nunc hendrerit facilisis diam, non mollis leo commodo nec.
+Nulla aliquam lacinia risus `eget congue <https://www.nordicsemi.com>`_. Morbi posuere a nisi id `vulputate`_. Curabitur ac lacus magna. Aliquam urna lacus, ornare non iaculis vel, ullamcorper vel dolor. Nunc vel dui vulputate, imperdiet metus eget, tristique dui. Etiam non lorem vel magna dictum aliquam. Nunc hendrerit facilisis diam, non mollis leo commodo nec.
 
-.. _vulputate: http://www.nordicsemi.com
+.. _vulputate: https://www.nordicsemi.com
 
-www.nordicsemi.com http://www.nordicsemi.com
+www.nordicsemi.com https://www.nordicsemi.com
 
 :ref:`tables`
 
-`override <tables>`_
+`override <tables_>`_
 
 :ref:`Overriding link text <table>`
 
