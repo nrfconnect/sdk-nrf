@@ -7,7 +7,7 @@ nRF5340: Multiprotocol RPMsg
    :local:
    :depth: 2
 
-This sample exposes the :ref:`softdevice_controller` and the IEEE 802.15.4 radio driver support to the nRF5340 application CPU, using RPMsg transport as part of `OpenAMP <https://github.com/OpenAMP/open-amp/>`__.
+This sample exposes the :ref:`softdevice_controller` and the IEEE 802.15.4 radio driver support to the nRF5340 application CPU, using RPMsg transport as part of `OpenAMP`_.
 
 Overview
 ********
