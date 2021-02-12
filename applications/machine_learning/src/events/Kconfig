@@ -10,6 +10,10 @@ menu "Event options"
 
 comment "Initially logged events"
 
+config ML_APP_INIT_LOG_SENSOR_EVENT
+	bool "Sensor event"
+	default y
+
 endmenu
 
 endif
