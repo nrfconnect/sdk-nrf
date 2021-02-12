@@ -3,6 +3,10 @@
 Light xyL Client
 ################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The xyl Client model remotely controls the state of the :ref:`bt_mesh_light_xyl_srv_readme` model.
 
 Unlike the server model, the client only creates a single model instance in the mesh composition data.
