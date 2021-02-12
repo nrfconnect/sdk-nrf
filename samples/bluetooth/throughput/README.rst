@@ -16,7 +16,7 @@ Overview
 The sample transmits data between two development kits, the *tester* and the *peer*, and measures the throughput performance.
 It uses the :ref:`throughput_readme` for this.
 To run the tests, connect to the kit using the serial port and send shell commands.
-Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands
+Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands.
 
 The sample demonstrates the interaction of the following connection parameters:
 

@@ -1,13 +1,13 @@
 .. _ble_console_readme:
 
-BLE Console
-###########
+Bluetooth LE Console
+####################
 
 .. contents::
    :local:
    :depth: 2
 
-Bluetooth LE Console is a desktop application that can be used to communicate with an nRF device over Bluetooth Low Energy using the :ref:`shell_bt_nus_readme`.
+Bluetooth LE Console (located in :file:`scripts/shell/ble_console`) is a desktop application that can be used to communicate with an nRF device over Bluetooth Low Energy using the :ref:`shell_bt_nus_readme`.
 
 The application supports Linux only and cannot be run on Windows.
 You should run it on a natively installed Linux.
@@ -34,7 +34,7 @@ Make sure to install the following Python dependencies::
 BlueZ configuration
 *******************
 
-BLE Console requires the Bluetooth daemon to be run in experimental mode.
+Bluetooth LE Console requires the Bluetooth daemon to be run in experimental mode.
 
 If you want the Bluetooth daemon to start in experimental mode by default, complete the following steps:
 
@@ -64,4 +64,4 @@ Pairing with the device
 After configuring the Bluetooth daemon, you can pair with the device using the Bluetooth tools provided by your Linux vendor.
 For example, in Ubuntu simply go to :guilabel:`Settings` -> :guilabel:`Bluetooth`.
 
-After pairing successfully, you can start using BLE Console.
+After pairing successfully, you can start using Bluetooth LE Console.

@@ -48,7 +48,7 @@ This is the design most commonly used for End Devices and Routers.
 Single-chip, multiprotocol (SoC)
 ================================
 
-With the nRF devices supporting multiple wireless technologies, including IEEE 802.15.4 and Bluetooth Low Energy (Bluetooth LE), the application layer and the Zigbee and BLE stack run on the same processor.
+With the nRF devices supporting multiple wireless technologies, including IEEE 802.15.4 and Bluetooth Low Energy (Bluetooth LE), the application layer and the Zigbee and Bluetooth LE stack run on the same processor.
 
 This design has the following advantages:
 

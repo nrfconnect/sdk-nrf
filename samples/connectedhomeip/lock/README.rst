@@ -172,7 +172,7 @@ Commissioning the device
 .. chip_door_lock_sample_commissioning_start
 
 To commission the device, go to the `Commissioning nRF Connect Accessory using Android CHIPTool`_ tutorial and complete the steps described there.
-As part of this tutorial, you will build and flash OpenThread RCP firmware, configure Thread Border Router, build and install `Android CHIPTool`_, commission the device, and send Project CHIP commands that cover scenarios described in the `Testing`_ section.
+As part of this tutorial, you will build and program OpenThread RCP firmware, configure Thread Border Router, build and install `Android CHIPTool`_, commission the device, and send Project CHIP commands that cover scenarios described in the `Testing`_ section.
 
 In Project CHIP, the commissioning procedure (called rendezvous) is done over Bluetooth LE between a Project CHIP device and the Project CHIP controller, where the controller has the commissioner role.
 When the procedure is finished, the device should be equipped with all information needed to securely operate in the Project CHIP network.

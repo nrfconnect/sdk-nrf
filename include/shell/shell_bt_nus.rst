@@ -84,12 +84,15 @@ Perform the following steps to use the :file:`bt_nus_shell.py` script:
 Bluetooth LE Console
 ====================
 
-The BLE Console is a stand-alone Linux application that uses a standard Bluetooth device, like an HCI dongle or a built-in Bluetooth device, and the BlueZ stack to communicate over Bluetooth with the device that runs the NUS shell transport.
+The Bluetooth LE Console is a stand-alone Linux application that uses a standard Bluetooth device, like an HCI dongle or a built-in Bluetooth device, and the BlueZ stack to communicate over Bluetooth with the device that runs the NUS shell transport.
 
 See :ref:`ble_console_readme` for more information.
 
 API documentation
 *****************
+
+| Header file: :file:`include/shell/shell_bt_nus.h`
+| Source file: :file:`subsys/shell/shell_bt_nus.c`
 
 .. doxygengroup:: shell_bt_nus
    :project: nrf

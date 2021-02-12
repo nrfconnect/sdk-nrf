@@ -25,7 +25,7 @@ They are also valid for cases where an application uses just one protocol, but b
 To avoid conflicts, check the protocol documentation to see if it uses FEM support provided by MPSL.
 
 Work is underway to make the protocols shipped with |NCS| use FEM.
-At the moment, :ref:`ug_thread` and :ref:`ug_zigbee` support the :ref:`nrf21540 DK <nrf21540dk_nrf52840>` and the nRF21540 EK for nRF52 Series devices, but there is no multiprotocol support or support for nRF5340 yet.
+At the moment, :ref:`ug_thread` and :ref:`ug_zigbee` support the :ref:`nRF21540 DK <nrf21540dk_nrf52840>` and the nRF21540 EK for nRF52 Series devices, but there is no multiprotocol support or support for nRF5340 yet.
 
 |NCS| provides a friendly wrapper that configures FEM based on devicetree (DTS) and Kconfig information.
 To enable FEM support, you must enable FEM and MPSL, and add an ``nrf_radio_fem`` node in the devicetree file.

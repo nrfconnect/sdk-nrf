@@ -307,10 +307,10 @@ The following build types are available for various boards in nRF Desktop:
 
 * ``ZRelease`` -- Release version of the application with no debugging features.
 * ``ZReleaseB0`` -- ``ZRelease`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
-* ``ZReleaseMCUBoot`` -- ``ZRelease`` build type with the support for the MCUBoot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
+* ``ZReleaseMCUBoot`` -- ``ZRelease`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``ZDebug`` -- Debug version of the application; the same as the ``ZRelease`` build type, but with debug options enabled.
 * ``ZDebugB0`` -- ``ZDebug`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
-* ``ZDebugMCUBoot`` -- ``ZDebug`` build type with the support for the MCUBoot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
+* ``ZDebugMCUBoot`` -- ``ZDebug`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``ZDebugWithShell`` -- ``ZDebug`` build type with the shell enabled.
 
 In nRF Desktop, not every development kit can support every build type mentioned above.
@@ -1380,8 +1380,8 @@ The nRF Desktop application can use one of the following bootloaders:
     Because of this, the image is not booted directly from the secondary image slot.
     The swap operation takes additional time, but an external FLASH can be used as the secondary image slot.
 
-    You can use the MCUBoot for the background DFU through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
-    The MCUBoot can also be used for the background DFU over Simple Management Protocol (SMP).
+    You can use the MCUboot for the background DFU through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
+    The MCUboot can also be used for the background DFU over Simple Management Protocol (SMP).
     The SMP can be used to transfer the new firmware image in the background from an Android device.
     In that case, the :ref:`nrf_desktop_smp` is used to handle the image transfer.
 
@@ -1411,7 +1411,7 @@ The B0 bootloader requires the following options enabled:
 * :option:`CONFIG_FW_INFO_FIRMWARE_VERSION` - Enable this option to set the version of the application after you enabled :option:`CONFIG_FW_INFO`.
 * :option:`CONFIG_BUILD_S1_VARIANT` - Required for the build system to be able to construct the application binaries for both application's slots in flash memory.
 
-Configuring the MCUBoot bootloader
+Configuring the MCUboot bootloader
 ----------------------------------
 
 To enable the MCUboot bootloader, select the :option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
@@ -1419,7 +1419,7 @@ To enable the MCUboot bootloader, select the :option:`CONFIG_BOOTLOADER_MCUBOOT`
 Configure the MCUboot bootloader with the following options:
 
 * ``CONFIG_BOOT_SIGNATURE_KEY_FILE`` - This option defines the path to the private key that is used to sign the application and that is used by the bootloader to verify the application signature.
-  The key must be defined only in the MCUBoot bootloader configuration file.
+  The key must be defined only in the MCUboot bootloader configuration file.
 * :option:`CONFIG_IMG_MANAGER` and :option:`CONFIG_MCUBOOT_IMG_MANAGER` - These options allow the application to manage the DFU image.
   Enable both of them only for configurations that support :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.
   For these configurations, the :ref:`nrf_desktop_dfu` uses the provided API to request firmware upgrade and confirm the running image.
@@ -1436,7 +1436,7 @@ At the end of these three stages, the nRF Desktop application will be rebooted w
 .. note::
     The background DFU mode requires two application slots in the flash memory.
     For this reason, the feature is not available for devices with smaller flash size, because the size of the flash memory required is essentially doubled.
-    The devices with smaller flash size can use either :ref:`nrf_desktop_bootloader_serial_dfu` or MCUBoot bootloader with the secondary image partition located on an external flash.
+    The devices with smaller flash size can use either :ref:`nrf_desktop_bootloader_serial_dfu` or MCUboot bootloader with the secondary image partition located on an external flash.
 
 The background firmware upgrade can also be performed over the Simple Management Protocol (SMP).
 For more detailed information about the DFU over SMP, read the :ref:`nrf_desktop_smp` documentation.
@@ -1511,10 +1511,10 @@ Configuring serial recovery DFU
 -------------------------------
 
 Configure :ref:`MCUboot <mcuboot:mcuboot_wrapper>` to enable the serial recovery DFU through USB.
-The MCUBoot configuration for a given board and :ref:`build type <nrf_desktop_requirements_build_types>` should be written to :file:`applications/nrf_desktop/configuration/your_board_name/mcuboot_buildtype.conf`.
+The MCUboot configuration for a given board and :ref:`build type <nrf_desktop_requirements_build_types>` should be written to :file:`applications/nrf_desktop/configuration/your_board_name/mcuboot_buildtype.conf`.
 For an example of the configuration, see the ``ZReleaseMCUBoot`` build type of the nRF52820 or the nRF52833 dongle.
 
-Not every configuration with MCUBoot in the nRF Desktop supports the USB serial recovery.
+Not every configuration with MCUboot in the nRF Desktop supports the USB serial recovery.
 For example, the ``ZDebugMCUBootSMP`` configuration for the nRF52840 Development Kit supports the MCUboot bootloader with background firmware upgrade.
 
 Select the following Kconfig options to enable the serial recovery DFU:

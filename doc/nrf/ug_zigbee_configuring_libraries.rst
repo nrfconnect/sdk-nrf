@@ -158,7 +158,7 @@ The Zigbee shell library implements a set of :ref:`Zigbee shell commands <zigbee
 
 |zigbee_shell_config|
 
-To extend a sample with the Zigbee shell command support, set the following KConfig options:
+To extend a sample with the Zigbee shell command support, set the following Kconfig options:
 
 * :option:`CONFIG_ZIGBEE_SHELL` - This option enables Zigbee shell and Zephyr's :ref:`zephyr:shell_api`.
 * :option:`CONFIG_ZIGBEE_SHELL_ENDPOINT` - This option specifies the endpoint number to be used by the Zigbee shell instance.

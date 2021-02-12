@@ -36,8 +36,6 @@ While the conversion between HSL and RGB is universal, the properties of the lig
 For instance, although changing the hue of the light should only affect its color, the perceived lightness and saturation may also fluctuate if the light emitting hardware has a non-linear response, as perceived by the human eye.
 These fluctuations cannot be modeled efficiently in the model code, and must be accounted for and calibrated in the driver.
 
----
-
 .. toctree::
    :maxdepth: 1
    :glob:

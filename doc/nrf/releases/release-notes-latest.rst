@@ -97,7 +97,7 @@ Full modem serial update
 * Added:
 
   * New sample :ref:`fmfu_smp_svr_sample` which shows how to add the full modem serial update functionality to an application.
-  * New module called :ref:`lib_fmfu_mgmt` which implements parts of the MCUMgr management protocol for doing full modem serial updates.
+  * New module called :ref:`lib_fmfu_mgmt` which implements parts of the mcumgr management protocol for doing full modem serial updates.
 
 Thread
 ------

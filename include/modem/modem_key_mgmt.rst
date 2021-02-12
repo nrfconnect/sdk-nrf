@@ -26,7 +26,7 @@ See :ref:`nrfxlib:security_tags` for more information about how security tags ar
 .. _cert_dwload:
 
 Certificates
-============
+************
 
 You can download a certificate for a given server using your web browser.
 Alternatively, you can obtain it from a dedicated website like `SSL Labs`_.

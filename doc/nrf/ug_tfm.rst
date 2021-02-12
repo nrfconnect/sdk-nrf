@@ -29,7 +29,7 @@ Building
 ********
 
 TF-M is one of the images that are built as part of a multi-image application.
-If TF-M is used in the your application, SPM will not be included in it.
+If TF-M is used in the application, SPM will not be included in it.
 For more information about multi-image builds, see :ref:`ug_multi_image`.
 
 To add TF-M to your build, enable the :option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
