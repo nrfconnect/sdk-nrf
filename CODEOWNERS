@@ -20,6 +20,7 @@
 /applications/asset_tracker/              @jhn-nordic @jtguggedal @rlubos
 /applications/asset_tracker_v2/           @simensrostad @jtguggedal @jhn-nordic @coderbyheart
 /applications/connectivity_bridge/        @jtguggedal @nordic-auko
+/applications/machine_learning/           @pdunaj
 /applications/nrf_desktop/                @pdunaj
 /applications/serial_lte_modem/           @junqingzou @lats1980 @rlubos
 # Boards
