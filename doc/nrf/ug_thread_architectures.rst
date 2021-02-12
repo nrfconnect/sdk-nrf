@@ -390,6 +390,6 @@ This exception applies mainly to log messages and is done by turning off UART in
 ----
 
 |Google_CCLicense|
-The source page is available `here <https://openthread.io/platforms#system_architecture>`_.
+The source page is available `here <OpenThread system architecture_>`_.
 
 .. |connection_options_limited| replace:: Spinel connections through SPI and USB are not currently available.
