@@ -68,4 +68,4 @@ Wire the pins P0.25 and P0.26 to RxD and TxD respectively.
 Limitations
 ***********
 
-TF-M cannot be used in applications whose code has dependencies on SPM :ref:`lib_secure_services` to operate properly.
+Application code that uses SPM :ref:`lib_secure_services` cannot use TF-M because the interface to TF-M is different and, at this time, not all SPM functions are available in TF-M.
