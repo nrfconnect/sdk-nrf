@@ -1393,6 +1393,23 @@ void on_pairing_done(void)
 	}
 }
 
+void fota_done_handler(const struct cloud_event *const evt)
+{
+#if defined(CONFIG_NRF_CLOUD_FOTA)
+	enum nrf_cloud_fota_type fota_type = NRF_CLOUD_FOTA_TYPE__INVALID;
+
+	if (evt && evt->data.msg.buf) {
+		fota_type = *(enum nrf_cloud_fota_type *)evt->data.msg.buf;
+		LOG_INF("FOTA type: %d", fota_type);
+	}
+#endif
+#if defined(CONFIG_LTE_LINK_CONTROL)
+		lte_lc_power_off();
+#endif
+		LOG_INF("Rebooting to complete FOTA update");
+		sys_reboot(SYS_REBOOT_COLD);
+}
+
 void cloud_event_handler(const struct cloud_backend *const backend,
 			 const struct cloud_event *const evt,
 			 void *user_data)
@@ -1471,10 +1488,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		break;
 	case CLOUD_EVT_FOTA_DONE:
 		LOG_INF("CLOUD_EVT_FOTA_DONE");
-#if defined(CONFIG_LTE_LINK_CONTROL)
-		lte_lc_power_off();
-#endif
-		sys_reboot(SYS_REBOOT_COLD);
+		fota_done_handler(evt);
 		break;
 	default:
 		LOG_WRN("Unknown cloud event type: %d", evt->type);
