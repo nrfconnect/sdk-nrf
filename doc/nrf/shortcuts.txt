@@ -59,8 +59,8 @@
 .. |zigbee_library| replace:: This is a Zigbee library.
    See :ref:`ug_zigbee_configuring_libraries` for information about how to configure it for you Zigbee application.
 .. |zigbee_ncp_package| replace:: It contains the full development-ready source code for host and evaluation-ready firmware for the nRF52840 DK and the nRF52840 Dongle (nRF SoC; not subject to modification), which is not yet feature-complete.
-   The reference examples are provided for a Linux-based host that requires an operating system compatible with the 64-bit Ubuntu 18.04 Linux distribution.
-   This Ubuntu Linux version was used for building and testing the precompiled ZBOSS libraries in the package.
+   The package comes with prebuilt libraries compatible with 64-bit Ubuntu 18.04 Linux.
+   For information about how to recompile the library for different host architecture or operating system, see the `README.rst` in the host package.
 .. |zigbee_shell_config| replace:: You can add support for Zigbee shell commands to any of the available :ref:`Zigbee samples <zigbee_samples>`.
    Some of the commands use an endpoint for sending packets, so no endpoint handler is allowed to be registered for this endpoint.
 
