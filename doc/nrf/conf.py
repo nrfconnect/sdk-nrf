@@ -248,3 +248,17 @@ def setup(app):
     app.add_css_file("css/common.css")
     app.add_css_file("css/nrf.css")
     app.add_js_file("js/ncs.js")
+
+
+# Configuration for checking links
+
+linkcheck_ignore = [r'(\.\.(\\|/))+(zephyr|kconfig|nrfxlib|mcuboot)', # intersphinx links
+                    'https://github.com/nrfconnect/nrfxlib', # redirecting and used in release notes
+                    'http://localhost:8000/latest/index.html', # link to access local documentation
+                    r'https://(www.)?segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_.+(_x\d+)?', # SES download links
+                    'https://portal.azure.com/', # requires login
+                    'https://threadgroup.atlassian.net/wiki/spaces/', # requires login
+                    'https://google.com:443' # used as example in doxygen
+]
+
+linkcheck_anchors_ignore = [r'page=']

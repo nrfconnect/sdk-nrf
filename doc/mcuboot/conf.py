@@ -184,3 +184,7 @@ def setup(app):
     app.add_css_file("css/common.css")
     app.add_css_file("css/mcuboot.css")
     app.add_js_file("js/ncs.js")
+
+# Configuration for checking links
+
+linkcheck_ignore = [r'(\.\.(\\|/))+(kconfig|zephyr)']
