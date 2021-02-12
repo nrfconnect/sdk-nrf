@@ -11,9 +11,17 @@ menu "Nordic nRF Connect"
 config BOARD_THINGY91_NRF9160NS
 	bool
 
-# nRF Connect SDK needs a larger default stacks for running certain tests.
+# Handle default to ensure that BT only will disable ENTROPY_CC3XX,
+# while multi protocol does not.
+config ENTROPY_CC3XX
+	default y if ZIGBEE || OPENTHREAD_NRF_SECURITY
+	default n if BT
+
+# nRF Connect SDK needs a larger default stacks for running certain tests
+# or if ENTROPY_CC3XX is enabled.
 config MAIN_STACK_SIZE
 	default 2048 if ZTEST
+	default 2048 if ENTROPY_CC3XX && !(SPM || BUILD_WITH_TFM)
 
 config ZTEST_STACKSIZE
 	default 2048 if ZTEST

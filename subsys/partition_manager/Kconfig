@@ -130,6 +130,7 @@ endif
 config BUILD_WITH_TFM
 	bool
 	select PM_SINGLE_IMAGE
+	select ENTROPY_CC3XX
 
 if BUILD_WITH_TFM
 
