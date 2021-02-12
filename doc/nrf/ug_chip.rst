@@ -3,6 +3,10 @@
 Project Connected Home over IP
 ##############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. chip_intro_start
 
 `Project Connected Home over IP`_  (Project CHIP) is an open-source application layer that aims at creating a unified communication standard across smart home devices, mobile applications, and cloud services.
