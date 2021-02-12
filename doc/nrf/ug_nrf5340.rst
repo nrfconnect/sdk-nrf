@@ -107,7 +107,7 @@ The IPC peripheral is presented to Zephyr as an Interprocessor Mailbox (IPM) dev
 The OpenAMP library uses the IPM SHIM layer, which in turn uses the IPC driver in `nrfx`_.
 
 .. |note| replace:: To upgrade the firmware on the network core, perform the steps for FOTA upgrade described below, replacing :file:`app_update.bin`, which is the file used when upgrading firmware on the application core, with :file:`net_core_app_update.bin`.
-   In addition, ensure that :option:`CONFIG_PCD` is enabled for the MCUBoot child image.
+   In addition, ensure that :option:`CONFIG_PCD` is enabled for the MCUboot child image.
    For more details, see :ref:`nc_bootloader`.
 
 

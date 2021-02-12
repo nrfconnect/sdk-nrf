@@ -61,7 +61,7 @@ Testing
       west build -b nrf5340dk_nrf5340_cpuapp -p -- -DOVERLAY_CONFIG="overlay-802154.conf;overlay-bt.conf"
 
    During the build, the :ref:`multiprotocol-rpmsg-sample` image will be automatically included.
-#. Run this command to flash both the application and network core firmwares to the nRF5340 SoC:
+#. Run this command to program both the application and network core firmwares to the nRF5340 SoC:
 
    .. code-block:: console
 

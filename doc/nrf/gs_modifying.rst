@@ -13,21 +13,21 @@ After programming and testing a sample application, you probably want to make so
 Adding files and changing compiler settings
 *******************************************
 
-All files that your application uses must be specified in the :file:`CMakeList.txt` file.
+All files that your application uses must be specified in the :file:`CMakeLists.txt` file.
 By default, most samples include only the main application file :file:`src/main.c`.
 This means that you must add all other files that you are using.
 
-You can also configure compiler options, application defines, or include directories, or set :ref:`build types <gs_modifying_build_types>` in :file:`CMakeList.txt`.
+You can also configure compiler options, application defines, or include directories, or set :ref:`build types <gs_modifying_build_types>` in :file:`CMakeLists.txt`.
 
-To update the :file:`CMakeList.txt` file, either edit it directly or use |SES| (SES) to maintain it.
+To update the :file:`CMakeLists.txt` file, either edit it directly or use |SES| (SES) to maintain it.
 
 
-Editing :file:`CMakeList.txt` directly
-======================================
+Editing CMakeLists.txt directly
+===============================
 
-Add all files that your application uses to the ``target_sources`` function in :file:`CMakeList.txt`.
+Add all files that your application uses to the ``target_sources`` function in :file:`CMakeLists.txt`.
 To include several files, it can be useful to specify them with a wildcard.
-For example, to include all :file:`.c` files from the :file:`src` folder, add the following lines to your :file:`CMakeList.txt`::
+For example, to include all :file:`.c` files from the :file:`src` folder, add the following lines to your :file:`CMakeLists.txt`::
 
    FILE(GLOB app_sources src/*.c)
    target_sources(app PRIVATE ${app_sources})
@@ -36,11 +36,11 @@ Instead of specifying each file (explicitly or with a wildcard), you can include
 
    target_include_directories(app PRIVATE src)
 
-See the `CMake documentation`_ and :ref:`zephyr:cmake-details` in the Zephyr documentation for more information about how to edit :file:`CMakeList.txt`.
+See the `CMake documentation`_ and :ref:`zephyr:cmake-details` in the Zephyr documentation for more information about how to edit :file:`CMakeLists.txt`.
 
 
-Maintaining :file:`CMakeList.txt` in SES
-========================================
+Maintaining CMakeLists.txt in SES
+=================================
 
 To add a file in SES, right-click :guilabel:`Project 'app/libapp.a'` in the Project Explorer.
 Select either :guilabel:`Add new file to CMakeLists.txt` to create a file and add it or :guilabel:`Add existing file to CMakeLists.txt` to add a file that already exists.

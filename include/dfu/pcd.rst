@@ -7,7 +7,7 @@ Peripheral CPU DFU (PCD)
    :local:
    :depth: 2
 
-The peripheral CPU DFU (PCD) provides functionality for transferring DFU images from the application core to the network core on the nRF5340 System on Chip (SoC).
+The peripheral CPU DFU (PCD) library provides functionality for transferring DFU images from the application core to the network core on the nRF5340 System on Chip (SoC).
 
 Overview
 ********

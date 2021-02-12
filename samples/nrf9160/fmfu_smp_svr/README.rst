@@ -1,15 +1,15 @@
 .. _fmfu_smp_svr_sample:
 
-Full Modem firmware update using SMP Server Sample
-##################################################
+nRF9160: Full modem firmware update using SMP Server
+####################################################
 
 .. contents::
    :local:
    :depth: 2
 
-This sample application implements a Simple Management Protocol (SMP) Server, using the SMP transfer encoding with the MCUMgr management protocol, to provide an interface over UART which enables the device to do full modem firmware updates.
+This sample application implements a Simple Management Protocol (SMP) Server, using the SMP transfer encoding with the MCU manager (mcumgr) management protocol, to provide an interface over UART which enables the device to do full modem firmware updates.
 
-For more information about MCUmgr and SMP, see :ref:`device_mgmt`.
+For more information about mcumgr and SMP, see :ref:`device_mgmt`.
 
 Requirements
 ************
@@ -28,7 +28,7 @@ Overview
 The sample does the following:
 
 1. It deinitializes the :ref:`nrfxlib:nrf_modem`.
-#. It registers to MCUMgr a ``stat`` command.
+#. It registers to mcumgr a ``stat`` command.
 #. It then registers the commands to upload the firmware and to get the hash.
 #. It finally enters an idle loop, waiting for any communication over the serial line.
 
@@ -52,23 +52,24 @@ After programming the sample to your development kit, perform the following step
 1. Connect the USB cable and power on or reset your nRF9160 DK.
 #. Open a terminal emulator, observe that the sample starts, and then close the terminal emulator.
 #. Call the provided :file:`update_modem.py` script specifying the COM port, the firmware ZIP file, and the UART baud rate shown in the following examples.
+
    * If you used the default baud rate:
 
-   .. parsed-literal::
-     :class: highlight
+     .. parsed-literal::
+        :class: highlight
 
-      python update_modem.py mfw_nrf9160_1.2.2.zip /dev/ttyACM0 *115200*
+        python update_modem.py mfw_nrf9160_1.2.2.zip /dev/ttyACM0 *115200*
 
-   * If you used the `-DOVERLAY_FILE=uart.overlay` flag:
+   * If you used the ``-DOVERLAY_FILE=uart.overlay`` flag:
 
-   .. parsed-literal::
-     :class: highlight
+     .. parsed-literal::
+        :class: highlight
 
-      python update_modem.py mfw_nrf9160_1.2.2.zip /dev/ttyACM0 *1000000*
+        python update_modem.py mfw_nrf9160_1.2.2.zip /dev/ttyACM0 *1000000*
 
 
 
-Sample Output
+Sample output
 -------------
 
 The python script should print the following output:
@@ -102,7 +103,7 @@ The python script should print the following output:
 Troubleshooting
 ===============
 
-You can use the MCUMgr CLI tool to test if the sample is running correctly, as follows:
+You can use the mcumgr CLI tool to test if the sample is running correctly, as follows:
 
 .. parsed-literal::
   :class: highlight

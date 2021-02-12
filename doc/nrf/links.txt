@@ -77,7 +77,7 @@
 .. _`OpenAMP`: https://github.com/OpenAMP/open-amp/
 .. _`RPMsg Messaging Protocol`: https://github.com/OpenAMP/open-amp/wiki/RPMsg-Messaging-Protocol
 
-.. _`MCUmgr`: https://github.com/apache/mynewt-mcumgr
+.. _`mcumgr`: https://github.com/apache/mynewt-mcumgr
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
