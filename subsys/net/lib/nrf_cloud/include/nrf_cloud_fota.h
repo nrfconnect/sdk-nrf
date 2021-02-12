@@ -8,25 +8,12 @@
 #define NRF_CLOUD_FOTA_H__
 
 #include <net/mqtt.h>
+#include <net/nrf_cloud.h>
 #include <bluetooth/bluetooth.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**@brief FOTA update type. */
-enum nrf_cloud_fota_type {
-	NRF_CLOUD_FOTA_TYPE__FIRST = 0,
-
-	/** Application update. */
-	NRF_CLOUD_FOTA_APPLICATION = NRF_CLOUD_FOTA_TYPE__FIRST,
-	/** Modem update. */
-	NRF_CLOUD_FOTA_MODEM = 1,
-	/** Bootloader update. */
-	NRF_CLOUD_FOTA_BOOTLOADER = 2,
-
-	NRF_CLOUD_FOTA_TYPE__INVALID
-};
 
 /**@brief FOTA status reported to nRF Cloud. */
 enum nrf_cloud_fota_status {

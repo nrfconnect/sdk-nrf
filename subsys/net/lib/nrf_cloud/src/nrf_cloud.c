@@ -318,13 +318,9 @@ int nct_input(const struct nct_evt *evt)
 	return nfsm_handle_incoming_event(evt, current_state);
 }
 
-void nct_apply_update(void)
+void nct_apply_update(const struct nrf_cloud_evt * const evt)
 {
-	static const struct nrf_cloud_evt evt = {
-		.type = NRF_CLOUD_EVT_FOTA_DONE
-	};
-
-	app_event_handler(&evt);
+	app_event_handler(evt);
 }
 
 void nrf_cloud_process(void)
@@ -589,6 +585,8 @@ static void api_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		LOG_DBG("NRF_CLOUD_EVT_FOTA_DONE");
 
 		evt.type = CLOUD_EVT_FOTA_DONE;
+		evt.data.msg.buf = (char *)nrf_cloud_evt->data.ptr;
+		evt.data.msg.len = nrf_cloud_evt->data.len;
 
 		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;

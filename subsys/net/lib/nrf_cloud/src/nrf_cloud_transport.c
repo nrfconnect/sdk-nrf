@@ -556,8 +556,23 @@ static void nrf_cloud_fota_cb_handler(const struct nrf_cloud_fota_evt
 		break;
 	}
 	case NRF_CLOUD_FOTA_EVT_DONE: {
+		enum nrf_cloud_fota_type fota_type;
+		struct nrf_cloud_evt cloud_evt = {
+			.type = NRF_CLOUD_EVT_FOTA_DONE,
+		};
+
 		LOG_DBG("NRF_CLOUD_FOTA_EVT_DONE: rebooting");
-		nct_apply_update();
+
+		if (evt) {
+			fota_type = evt->type;
+			cloud_evt.data.ptr = &fota_type;
+			cloud_evt.data.len = sizeof(fota_type);
+		} else {
+			cloud_evt.data.ptr = NULL;
+			cloud_evt.data.len = 0;
+		}
+
+		nct_apply_update(&cloud_evt);
 		break;
 	}
 	case NRF_CLOUD_FOTA_EVT_ERROR: {
