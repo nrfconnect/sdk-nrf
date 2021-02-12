@@ -8,10 +8,11 @@ cmake_minimum_required(VERSION 3.13.1)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
-project("Zigbee light bulb")
+project("Zigbee light bulb with Scenes")
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE
   src/main.c
+  src/zcl_scenes.c
 )
 # NORDIC SDK APP END
