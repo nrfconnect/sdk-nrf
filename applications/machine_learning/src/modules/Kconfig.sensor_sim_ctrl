@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Sensor sim controller"
+
+config ML_APP_SENSOR_SIM_CTRL_ENABLE
+	bool "Enable simulated sensor controller"
+	depends on SENSOR_SIM_ACCEL_WAVE
+
+if ML_APP_SENSOR_SIM_CTRL_ENABLE
+
+choice
+	prompt "Select wave signal change trigger"
+	default ML_APP_SENSOR_SIM_CTRL_TRIG_TIMEOUT
+
+config ML_APP_SENSOR_SIM_CTRL_TRIG_TIMEOUT
+	bool "Timeout"
+
+config ML_APP_SENSOR_SIM_CTRL_TRIG_BUTTON
+	bool "Button press"
+	depends on CAF_BUTTONS
+
+endchoice
+
+config ML_APP_SENSOR_SIM_CTRL_TRIG_TIMEOUT_MS
+	int "Wave signal change timeout [ms]"
+	default 1000
+	depends on ML_APP_SENSOR_SIM_CTRL_TRIG_TIMEOUT
+	help
+	  The timeout triggers selecting next simulated wave signal.
+
+config ML_APP_SENSOR_SIM_CTRL_TRIG_BUTTON_ID
+	hex "ID of button used to change wave signal"
+	range 0x0000 0xffff
+	default 0xffff
+	depends on ML_APP_SENSOR_SIM_CTRL_TRIG_BUTTON
+	help
+	  Pressing the button triggers selecting next simulated wave signal.
+
+module = ML_APP_SENSOR_SIM_CTRL
+module-str = sensor sim controller
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # ML_APP_SENSOR_SIM_CTRL_ENABLE
+
+endmenu
