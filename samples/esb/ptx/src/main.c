@@ -18,8 +18,6 @@ LOG_MODULE_REGISTER(esb_ptx, CONFIG_ESB_PTX_APP_LOG_LEVEL);
 #define LED_ON 0
 #define LED_OFF 1
 
-#define DT_DRV_COMPAT nordic_nrf_clock
-
 static bool ready = true;
 static const struct device *led_port;
 static struct esb_payload rx_payload;
@@ -60,26 +58,31 @@ void event_handler(struct esb_evt const *event)
 int clocks_start(void)
 {
 	int err;
-	const struct device *clk;
+	int res;
+	struct onoff_manager *clk_mgr;
+	struct onoff_client clk_cli;
 
-	clk = device_get_binding(DT_INST_LABEL(0));
-	if (!clk) {
-		LOG_ERR("Clock device not found!");
-		return -EIO;
+	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+	if (!clk_mgr) {
+		LOG_ERR("Unable to get the Clock manager");
+		return -ENXIO;
 	}
 
-	err = clock_control_on(clk, CLOCK_CONTROL_NRF_SUBSYS_HF);
-	if (err && (err != -EINPROGRESS)) {
-		LOG_ERR("HF clock start fail: %d", err);
+	sys_notify_init_spinwait(&clk_cli.notify);
+
+	err = onoff_request(clk_mgr, &clk_cli);
+	if (err < 0) {
+		LOG_ERR("Clock request failed: %d", err);
 		return err;
 	}
 
-	/* Block until clock is started.
-	 */
-	while (clock_control_get_status(clk, CLOCK_CONTROL_NRF_SUBSYS_HF) !=
-		CLOCK_CONTROL_STATUS_ON) {
-
-	}
+	do {
+		err = sys_notify_fetch_result(&clk_cli.notify, &res);
+		if (!err && res) {
+			LOG_ERR("Clock could not be started: %d", res);
+			return res;
+		}
+	} while (err);
 
 	LOG_DBG("HF clock started");
 	return 0;
