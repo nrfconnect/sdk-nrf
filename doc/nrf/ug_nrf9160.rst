@@ -80,14 +80,6 @@ Depending on the configuration, all these images can be built at the same time i
 All nRF9160 samples include the :ref:`secure_partition_manager` sample, which can be enabled or disabled with the :option:`CONFIG_SPM` option.
 Some also include the :ref:`bootloader` sample (:option:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index` (:option:`CONFIG_BOOTLOADER_MCUBOOT`).
 
-Socket API
-----------
-
-All nRF9160 applications must include the Modem library.
-The Modem library is the primary interface for operating the nRF9160 modem to establish LTE-M, NBIOT, and GNSS connections.
-
-The Modem library is Nordic Semiconductor's implementation of the Socket API.
-See :ref:`nrfxlib:nrf_modem` for detailed information.
 
 LTE modem
 =========
@@ -99,7 +91,7 @@ The firmware for the modem is available as a precompiled binary.
 You can download the firmware from the `nRF9160 product website (compatible downloads)`_.
 The zip file contains both the full firmware and patches to upgrade from one version to another.
 
-Different versions of the LTE modem firmware are available and these versions are certified for the mobile network operators who have their own certification programs.
+Different versions of the LTE modem firmware are available, and these versions are certified for the mobile network operators who have their own certification programs.
 See the `Mobile network operator certifications`_ for more information.
 
 .. note::
@@ -131,6 +123,16 @@ Delta patches
   Delta patches are applied as firmware over-the-air (FOTA) upgrades.
   See :ref:`nrf9160_ug_fota` for more information.
 
+Modem library
+=============
+
+The |NCS| applications for the nRF9160 DK that communicate with the nRF9160 modem firmware must include the Modem library.
+The :ref:`nrfxlib:nrf_modem` is released as an OS-independent binary library in the :ref:`nrfxlib` repository and it is integrated into |NCS| via an integration layer, ``nrf_modem_lib``.
+
+The Modem library integration layer fulfills the integration requirements of the Modem library in |NCS|.
+For more information on the integration, see :ref:`nrf_modem_lib_readme`.
+
+
 .. _nrf9160_ug_band_lock:
 
 Band lock
@@ -149,7 +151,7 @@ To set the LTE band lock, enable the *LTE Link Control Library* in your project 
 
    CONFIG_LTE_LINK_CONTROL=y
 
-Then, enable the LTE band lock feature and the band lock mask in your projects configuration file, as follows::
+Then, enable the LTE band lock feature and the band lock mask in the configuration file of your project, as follows::
 
    CONFIG_LTE_LOCK_BANDS=y
    CONFIG_LTE_LOCK_BAND_MASK="10000001000000001100"
@@ -162,8 +164,8 @@ The band lock is a non-volatile setting that must be set before activating the m
 It disappears when the modem is reset.
 To prevent this, you can set the modem in *power off* mode, by either:
 
-* sending directly the AT command ``AT+CFUN=0``.
-* calling the ``lte_lc_power_off`` function while the *LTE Link Control Library* is enabled.
+* Sending the AT command ``AT+CFUN=0`` directly.
+* Calling the :c:func:`lte_lc_power_off` function while the *LTE Link Control Library* is enabled.
 
 Both these options save the configurations and historical data in the Non-Volatile Storage before powering off the modem.
 
@@ -206,7 +208,7 @@ Concurrent GPS and LTE
 ======================
 
 |An nRF9160-based device| supports GPS in LTE-M and NB-IoT.
-Concurrent operation of GPS with optional power-saving features, such as extended Discontinuous Reception (eDRX) and Power Saving Mode (PSM), is also supported and recommended.
+Concurrent operation of GPS with optional power-saving features, such as extended Discontinuous Reception (eDRX) and Power Saving Mode (PSM), is also supported, and recommended.
 
 The following figure shows how the data transfer occurs in |an nRF9160-based device| with power-saving in place.
 
@@ -217,7 +219,7 @@ See `Energy efficiency`_ for more information.
 
 Asset Tracker enables the concurrent working of GPS and LTE in eDRX and PSM modes when the device is in `RRC idle mode`_.
 The time between the transition of a device from RRC connected mode (data transfer mode) to RRC idle mode is dependent on the network.
-Typically the time ranges between 5 seconds to 70 seconds after the last data transfer on LTE.
+Typically, the time ranges between 5 seconds to 70 seconds after the last data transfer on LTE.
 Sensor and GPS data is sent to the cloud only during the data transfer phase.
 
 .. nrf9160_gps_lte_end
