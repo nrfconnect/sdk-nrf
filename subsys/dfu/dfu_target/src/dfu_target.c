@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <zephyr.h>
 #include <logging/log.h>
@@ -23,6 +23,10 @@ DEF_DFU_TARGET(modem_delta);
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
 #include "dfu/dfu_target_mcuboot.h"
 DEF_DFU_TARGET(mcuboot);
+#endif
+#ifdef CONFIG_DFU_TARGET_FULL_MODEM
+#include "dfu/dfu_target_full_modem.h"
+DEF_DFU_TARGET(full_modem);
 #endif
 
 #define MIN_SIZE_IDENTIFY_BUF 32
@@ -46,6 +50,11 @@ int dfu_target_img_type(const void *const buf, size_t len)
 		return DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
 	}
 #endif
+#ifdef CONFIG_DFU_TARGET_FULL_MODEM
+	if (dfu_target_full_modem_identify(buf)) {
+		return DFU_TARGET_IMAGE_TYPE_FULL_MODEM;
+	}
+#endif
 	LOG_ERR("No supported image type found");
 	return -ENOTSUP;
 }
@@ -64,6 +73,11 @@ int dfu_target_init(int img_type, size_t file_size, dfu_target_callback_t cb)
 		new_target = &dfu_target_modem_delta;
 	}
 #endif
+#ifdef CONFIG_DFU_TARGET_FULL_MODEM
+	if (img_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM) {
+		new_target = &dfu_target_full_modem;
+	}
+#endif
 	if (new_target == NULL) {
 		LOG_ERR("Unknown image type");
 		return -ENOTSUP;
@@ -71,8 +85,9 @@ int dfu_target_init(int img_type, size_t file_size, dfu_target_callback_t cb)
 
 	/* The user is re-initializing with an previously aborted target.
 	 * Avoid re-initializing generally to ensure that the download can
-	 * continue where it left off. Re-initializing is required for modem
-	 * upgrades to re-open the DFU socket that is closed on abort.
+	 * continue where it left off. Re-initializing is required for
+	 * modem_delta upgrades to re-open the DFU socket that is closed on
+	 * abort.
 	 */
 	if (new_target == current_target
 	   && img_type != DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {

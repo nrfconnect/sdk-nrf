@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <string.h>
@@ -394,6 +394,6 @@ static int flash_init(const struct device *dev)
 }
 
 // TODO TORA: upmerge confirmation from Robert needed.
-DEVICE_AND_API_INIT(flash, DT_LABEL(SOC_NV_FLASH_CONTROLLER_NODE),
-		    flash_init, NULL, NULL, POST_KERNEL,
-		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &flash_api);
+DEVICE_DT_DEFINE(SOC_NV_FLASH_CONTROLLER_NODE, flash_init,
+		 device_pm_control_nop, NULL, NULL, POST_KERNEL,
+		 CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &flash_api);

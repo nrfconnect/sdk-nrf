@@ -1,5 +1,5 @@
 # Copyright (c) 2019 Nordic Semiconductor ASA
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 # Builds combined documentation for all documentation sets: nRF (including
 # Doxygen documentation), Zephyr, MCUboot, etc.
@@ -94,6 +94,7 @@ set(KCONFIG_OUTPUT ${HTML_DIR}/kconfig)
 set(GEN_DEVICETREE_REST_ZEPHYR_DOCSET " ")
 
 # Get access to the 'html' target from doc/CMakeLists.txt in Zephyr
+set(MODULES_EXT_ROOT ${NRF_BASE})
 add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
 
 add_custom_target(zephyr)
@@ -141,47 +142,38 @@ set(NRF_KI_DIR ${NRF_BASE}/.known-issues/doc)
 
 configure_file(${NRF_DOXYFILE_IN} ${NRF_DOXYFILE_OUT} @ONLY)
 
-file(STRINGS ${NRF_BASE}/scripts/tools-versions-minimum.txt MINIMUM_VERSIONS_ALL REGEX "^[a-zA-Z0-9_-]*=.*")
-file(STRINGS ${NRF_BASE}/scripts/tools-versions-darwin.txt DARWIN_VERSIONS_ALL REGEX "^[a-zA-Z0-9_-]*=.*")
-file(STRINGS ${NRF_BASE}/scripts/tools-versions-win10.txt WIN10_VERSIONS_ALL REGEX "^[a-zA-Z0-9_-]*=.*")
-file(STRINGS ${NRF_BASE}/scripts/tools-versions-linux.txt LINUX_VERSIONS_ALL REGEX "^[a-zA-Z0-9_-]*=.*")
-
-foreach(os MINIMUM DARWIN WIN10 LINUX)
-  foreach(program ${${os}_VERSIONS_ALL})
-    string(REGEX REPLACE "(^[^=]*)=([^\;]*)\;*.*" "\\1" program_name "${program}")
-    string(TOUPPER ${program_name} PROGRAM_NAME_UPPER)
-    set(${PROGRAM_NAME_UPPER}_VERSION_${os} ${CMAKE_MATCH_2})
-  endforeach()
-endforeach()
-
-# Loading Zephyr requirements-base.txt first, then mcuboot, and afterwards NCS
-# specific ensures that any packages present in multiple files will present the
-# version defined by NCS.
-file(STRINGS ${ZEPHYR_BASE}/scripts/requirements-base.txt ZEPHYR_BASE_PACKAGE_VERSIONS REGEX "^[^#].*")
-file(STRINGS ${ZEPHYR_BASE}/scripts/requirements-doc.txt ZEPHYR_DOCS_PACKAGE_VERSIONS REGEX "^[^#].*")
-file(STRINGS ${MCUBOOT_BASE}/scripts/requirements.txt MCUBOOT_PACKAGE_VERSIONS REGEX "^[^#].*")
-file(STRINGS ${NRF_BASE}/scripts/requirements-base.txt NRF_BASE_PACKAGE_VERSIONS REGEX "^[^#].*")
-file(STRINGS ${NRF_BASE}/scripts/requirements-doc.txt NRF_DOC_PACKAGE_VERSIONS REGEX "^[^#].*")
-file(STRINGS ${NRF_BASE}/scripts/requirements-build.txt NRF_BUILD_PACKAGE_VERSIONS REGEX "^[^#].*")
-
-foreach(package ${ZEPHYR_BASE_PACKAGE_VERSIONS}
-                ${ZEPHYR_DOCS_PACKAGE_VERSIONS}
-                ${MCUBOOT_PACKAGE_VERSIONS}
-                ${NRF_BASE_PACKAGE_VERSIONS}
-                ${NRF_DOC_PACKAGE_VERSIONS}
-                ${NRF_BUILD_PACKAGE_VERSIONS}
+set(tools_version_files
+    ${NRF_BASE}/scripts/tools-versions-minimum.txt
+    ${NRF_BASE}/scripts/tools-versions-darwin.txt
+    ${NRF_BASE}/scripts/tools-versions-win10.txt
+    ${NRF_BASE}/scripts/tools-versions-linux.txt
 )
-  string(REGEX REPLACE "(^[^>=\;]*)([\;]|([>=][^\;]*))\;*.*" "\\1" package_name "${package}")
-  string(TOUPPER ${package_name} PACKAGE_NAME_UPPER)
-  set(${PACKAGE_NAME_UPPER}_VERSION ${CMAKE_MATCH_3})
-  if("${${PACKAGE_NAME_UPPER}_VERSION}" STREQUAL "")
-    set(${PACKAGE_NAME_UPPER}_VERSION "\\ ")
-  endif()
-endforeach()
 
-set(NRF_VERSION_IN ${NRF_DOC_DIR}/versions.txt.in)
-set(NRF_RST_VERSION_OUT ${NRF_RST_OUT}/doc/nrf/versions.txt)
-configure_file(${NRF_VERSION_IN} ${NRF_RST_VERSION_OUT} @ONLY)
+set(pip_requirements_files
+    ${ZEPHYR_BASE}/scripts/requirements-base.txt
+    ${ZEPHYR_BASE}/scripts/requirements-doc.txt
+    ${MCUBOOT_BASE}/scripts/requirements.txt
+    ${NRF_BASE}/scripts/requirements-base.txt
+    ${NRF_BASE}/scripts/requirements-doc.txt
+    ${NRF_BASE}/scripts/requirements-build.txt
+)
+
+string(REPLACE ";" "\\;" tools_files_escaped "${tools_version_files}")
+string(REPLACE ";" "\\;" pip_files_escaped "${pip_requirements_files}")
+
+add_custom_command(
+  OUTPUT ${NRF_RST_OUT}/doc/nrf/versions.txt
+  COMMAND ${CMAKE_COMMAND}
+    -DTOOLS_VERSION_FILES="${tools_files_escaped}"
+    -DPIP_REQUIREMENTS_FILES="${pip_files_escaped}"
+    -DVERSION_IN=${NRF_DOC_DIR}/versions.txt.in
+    -DVERSION_OUT=${NRF_RST_OUT}/doc/nrf/versions.txt
+    -P ${NRF_BASE}/doc/update_versions.cmake
+  DEPENDS
+    ${NRF_DOC_DIR}/versions.txt.in
+    ${tools_version_files}
+    ${pip_requirements_files}
+)
 
 add_custom_target(
   nrf-doxy
@@ -225,6 +217,7 @@ add_custom_target(
   # Copy all files in doc/ to the rst folder
   COMMAND ${NRF_EXTRACT_CONTENT_COMMAND}
   WORKING_DIRECTORY ${NRF_DOC_DIR}
+  DEPENDS ${NRF_RST_OUT}/doc/nrf/versions.txt
 )
 
 if(WIN32)
@@ -243,6 +236,7 @@ set(NRF_SPHINX_BUILD_HTML_COMMAND
   NRF_OUTPUT=${HTML_DIR}/nrf
   KCONFIG_OUTPUT=${HTML_DIR}/kconfig
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
+  ZEPHYR_RST_SRC=${ZEPHYR_BINARY_DIR}/rst/doc
   MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
   NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
   ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
@@ -432,6 +426,7 @@ add_dependencies(nrfxlib-inventory nrfxlib-content nrfxlib-doxy)
 # into a separate page for each module.
 
 set(KCONFIG_RST_OUT ${KCONFIG_BINARY_DIR}/rst)
+get_directory_property(ZEPHYR_KCONFIG_MODULES DIRECTORY ${ZEPHYR_BASE}/doc DEFINITION ZEPHYR_KCONFIG_MODULES)
 
 # The 'kconfig-content' target uses gen_kconfig_rest.py to generate .rst files
 # for all Kconfig symbols, as well as index pages that point to them
@@ -450,6 +445,7 @@ add_custom_target(
     KCONFIG_WARN_UNDEF=y
     KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
     KCONFIG_DOC_MODE=1
+    ${ZEPHYR_KCONFIG_MODULES}
       ${PYTHON_EXECUTABLE}
         ${ZEPHYR_BASE}/doc/scripts/gen_kconfig_rest.py ${KCONFIG_RST_OUT}
         --separate-all-index

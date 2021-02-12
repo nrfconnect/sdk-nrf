@@ -86,7 +86,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Touch the :ref:`st25r3911b_nfc_readme` with a Type 2 Tag or Tag 4 Tag.
    The Tag Device can support the TNEP protocol.

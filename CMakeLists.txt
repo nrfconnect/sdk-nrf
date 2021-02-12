@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 # Point to NCS root directory.
@@ -18,5 +18,6 @@ add_subdirectory(ext)
 add_subdirectory(lib)
 add_subdirectory(samples)
 add_subdirectory(subsys)
+add_subdirectory(modules)
 add_subdirectory(drivers)
 add_subdirectory(tests)

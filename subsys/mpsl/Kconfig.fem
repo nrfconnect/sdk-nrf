@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2019 - 2020 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 DT_COMPAT_NORDIC_NRF21540_GPIO := nordic,nrf21540-fem
@@ -33,6 +33,7 @@ choice MPSL_FEM_CHOICE
 
 config MPSL_FEM_NRF21540_GPIO
 	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT
+	select NRFX_GPIOTE
 	bool "nRF21540 front-end module in GPIO mode"
 	help
 	  FEM device is nRF21540 and its control mode is GPIO.
@@ -40,6 +41,7 @@ config MPSL_FEM_NRF21540_GPIO
 
 config MPSL_FEM_SIMPLE_GPIO
 	depends on MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
+	select NRFX_GPIOTE
 	bool "Generic front-end module with two-pin control"
 	help
 	  FEM device has a generic two-pin control interface.
@@ -50,48 +52,6 @@ config MPSL_FEM_SIMPLE_GPIO
 endchoice	# MPSL_FEM_CHOICE
 
 if MPSL_FEM_NRF21540_GPIO
-
-config MPSL_FEM_NRF21540_GPIO_GPIOTE_TX_EN
-	int "GPIOTE channel number used to control TX_EN pin"
-	default 7
-	help
-	  Unique GPIOTE channel number to be used exclusively by the FEM driver
-	  for TX_EN pin control.
-
-config MPSL_FEM_NRF21540_GPIO_GPIOTE_RX_EN
-	int "GPIOTE channel number used to control RX_EN pin"
-	default 6
-	help
-	  Unique GPIOTE channel number to be used exclusively by the FEM driver
-	  for RX_EN pin control.
-
-config MPSL_FEM_NRF21540_GPIO_GPIOTE_PDN
-	int "GPIOTE channel number used to control PDN pin"
-	default 5
-	help
-	  Unique GPIOTE channel number to be used exclusively by the FEM driver
-	  for PDN pin control.
-
-config MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_0
-	int "PPI channel reserved for the front-end module"
-	default 15
-	help
-	  The first of three unique PPI channel numbers to be used exclusively
-	  by the FEM driver.
-
-config MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_1
-	int "PPI channel reserved for the front-end module"
-	default 16
-	help
-	  The second of three unique PPI channel numbers to be used exclusively
-	  by the FEM driver.
-
-config MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_2
-	int "PPI channel reserved for the front-end module"
-	default 5
-	help
-	  Third of three unique PPI channel numbers to be used exclusively
-	  by the FEM driver.
 
 config MPSL_FEM_NRF21540_TX_GAIN_DB
 	int "TX gain of the nRF21540 PA amplifier in dB"
@@ -107,38 +67,6 @@ config MPSL_FEM_NRF21540_RX_GAIN_DB
 	help
 	  The default value of 13 dB is based on nRF21540 Product Specification
 	  (v1.0)
-
-endif
-
-if MPSL_FEM_SIMPLE_GPIO
-
-config MPSL_FEM_SIMPLE_GPIO_GPIOTE_CTX
-	int "GPIOTE channel number used to control CTX pin"
-	default 7
-	help
-	  Unique GPIOTE channel number to be used exclusively by the FEM driver
-	  for CTX pin control.
-
-config MPSL_FEM_SIMPLE_GPIO_GPIOTE_CRX
-	int "GPIOTE channel number used to control CRX pin"
-	default 6
-	help
-	  Unique GPIOTE channel number to be used exclusively by the FEM driver
-	  for RTX pin control.
-
-config MPSL_FEM_SIMPLE_GPIO_PPI_CHANNEL_0
-	int "PPI channel reserved for the front-end module"
-	default 15
-	help
-	  The first of two unique PPI channel numbers to be used exclusively
-	  by the FEM driver.
-
-config MPSL_FEM_SIMPLE_GPIO_PPI_CHANNEL_1
-	int "PPI channel reserved for the front-end module"
-	default 16
-	help
-	  The second of two unique PPI channel numbers to be used exclusively
-	  by the FEM driver.
 
 endif
 

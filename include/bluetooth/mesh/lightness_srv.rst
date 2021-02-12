@@ -45,13 +45,17 @@ Light: ``uint16_t``
     If the Generic OnOff state is changed to ``On`` and the Default Light state is set, the Light state is set to the value of the Default Light state.
     If the Generic OnOff state is changed to ``On`` and the Default Light state is not set, the Light state is set to the last known non-zero value.
 
-    The Light state power up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
+    The Light state power-up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
 
-    * :c:enumerator:`BT_MESH_ON_POWER_UP_OFF` - The Light state is set to ``0`` on power up.
-    * :c:enumerator:`BT_MESH_ON_POWER_UP_ON` - The Light state is set to Default Light on power up, or to the last known non-zero Light state if the Default Light is not set.
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_OFF` - The Light state is set to ``0`` on power-up.
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_ON` - The Light state is set to Default Light on power-up, or to the last known non-zero Light state if the Default Light is not set.
     * :c:enumerator:`BT_MESH_ON_POWER_UP_RESTORE` - The Light state is set to the last known Light level (zero or non-zero).
 
     Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_lightness_srv_handlers` handler structure.
+
+    ..note::
+        If the Lightness Server is part of an xyL, CTL or HSL Server, it will publish the xyL, CTL or HSL status whenever the Light state changes.
+        This is not handled automatically by the xyL, CTL or HSL Servers.
 
 Default Light: ``int16_t``
     The Default Light state is a meta state that controls the default non-zero Light level.

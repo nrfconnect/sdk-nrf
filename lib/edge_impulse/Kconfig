@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2020 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 menuconfig EDGE_IMPULSE
@@ -19,6 +19,7 @@ if EDGE_IMPULSE
 
 config APP_LINK_WITH_EDGE_IMPULSE
 	bool "Link 'app' with Edge Impulse"
+	depends on !EI_WRAPPER
 	default y
 	help
 	  Add Edge Impulse header files to the 'app' include path. It may be
@@ -46,3 +47,44 @@ config EDGE_IMPULSE_URI
 	  You can also specify absolute file path of a local file.
 
 endif # EDGE_IMPULSE
+
+menuconfig EI_WRAPPER
+	bool "Enable Edge Impulse wrapper"
+	depends on EDGE_IMPULSE
+	default y
+	help
+	  Enable Edge Impulse library wrapper in NCS.
+
+if EI_WRAPPER
+
+config EI_WRAPPER_DATA_BUF_SIZE
+	int "Size of input data buffer"
+	default 2500
+	help
+	  The buffer is used to store input data for the Edge Impulse library.
+	  Size of the buffer is expressed as number of floats.
+
+config EI_WRAPPER_THREAD_STACK_SIZE
+	int "Size of EI wrapper thread stack"
+	default 12000
+	help
+	  Edge Impulse library processes the data in a low-priority thread.
+	  The stack size needs to be sufficient for used impulse.
+
+config EI_WRAPPER_THREAD_PRIORITY
+	int "Priority of EI wrapper thread"
+	default 5
+	help
+	  It is recommended to use preemptive thread priority to make sure
+	  that the thread will not block other operations in system for
+	  a long time.
+
+config EI_WRAPPER_DEBUG_MODE
+	bool "Run Edge Impulse library in debug mode"
+
+module=EI_WRAPPER
+module-dep=LOG
+module-str=Edge Impulse NCS wrapper
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # EI_WRAPPER

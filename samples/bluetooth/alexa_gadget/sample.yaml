@@ -6,4 +6,4 @@ tests:
     build_only: true
     build_on_all: true
     platform_allow: nrf52840dk_nrf52840 nrf52dk_nrf52810
-    tags: bluetooth
+    tags: bluetooth ci_build

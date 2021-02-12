@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <init.h>
@@ -11,6 +11,7 @@
 #include <nrfx_ipc.h>
 #include <nrf_modem.h>
 #include <nrf_modem_platform.h>
+#include <pm_config.h>
 
 #ifdef CONFIG_LTE_LINK_CONTROL
 #include <modem/lte_lc.h>
@@ -32,6 +33,28 @@ static struct k_mutex slist_mutex;
 
 static int init_ret;
 
+static const nrf_modem_init_params_t init_params = {
+	.ipc_irq_prio = NRF_MODEM_NETWORK_IRQ_PRIORITY,
+	.shmem.ctrl = {
+		.base = PM_NRF_MODEM_LIB_CTRL_ADDRESS,
+		.size = CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE,
+	},
+	.shmem.tx = {
+		.base = PM_NRF_MODEM_LIB_TX_ADDRESS,
+		.size = CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE,
+	},
+	.shmem.rx = {
+		.base = PM_NRF_MODEM_LIB_RX_ADDRESS,
+		.size = CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE,
+	},
+#if CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+	.shmem.trace = {
+		.base = PM_NRF_MODEM_LIB_TRACE_ADDRESS,
+		.size = CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE,
+	},
+#endif
+};
+
 static int _nrf_modem_lib_init(const struct device *unused)
 {
 	if (!first_time_init) {
@@ -46,13 +69,7 @@ static int _nrf_modem_lib_init(const struct device *unused)
 	IRQ_CONNECT(NRF_MODEM_NETWORK_IRQ, NRF_MODEM_NETWORK_IRQ_PRIORITY,
 		    nrfx_isr, nrfx_ipc_irq_handler, 0);
 
-	const nrf_modem_init_params_t init_params = {
-		.trace_on = true,
-		.memory_address = NRF_MODEM_RESERVED_MEMORY_ADDRESS,
-		.memory_size = NRF_MODEM_RESERVED_MEMORY_SIZE
-	};
-
-	init_ret = nrf_modem_init(&init_params);
+	init_ret = nrf_modem_init(&init_params, NORMAL_MODE);
 
 	k_mutex_lock(&slist_mutex, K_FOREVER);
 	if (sys_slist_peek_head(&shutdown_threads) != NULL) {
@@ -95,9 +112,13 @@ void nrf_modem_lib_shutdown_wait(void)
 	k_mutex_unlock(&slist_mutex);
 }
 
-int nrf_modem_lib_init(void)
+int nrf_modem_lib_init(enum nrf_modem_mode_t mode)
 {
-	return _nrf_modem_lib_init(NULL);
+	if (mode == NORMAL_MODE) {
+		return _nrf_modem_lib_init(NULL);
+	} else {
+		return nrf_modem_init(&init_params, FULL_DFU_MODE);
+	}
 }
 
 int nrf_modem_lib_get_init_ret(void)

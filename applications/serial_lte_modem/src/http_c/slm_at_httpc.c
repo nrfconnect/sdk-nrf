@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <logging/log.h>
@@ -76,7 +76,7 @@ void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different resources */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 
 #define THREAD_STACK_SIZE       KB(2)
 #define THREAD_PRIORITY         K_LOWEST_APPLICATION_THREAD_PRIO
@@ -232,17 +232,17 @@ static int socket_timeout_set(int fd)
 
 static int server_connect(const char *host, int sec_tag)
 {
-	int fd = -1;
+	int fd;
 	int err;
 
 	if (host == NULL) {
 		LOG_ERR("Empty remote host.");
-		return -EINVAL;
+		return INVALID_SOCKET;
 	}
 
 	if ((httpc.sec_transport == true) && (sec_tag == -1)) {
 		LOG_ERR("Empty secure tag.");
-		return -EINVAL;
+		return INVALID_SOCKET;
 	}
 
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
@@ -253,16 +253,15 @@ static int server_connect(const char *host, int sec_tag)
 
 	if (fd < 0) {
 		LOG_ERR("Fail to resolve and connect");
-		return -EINVAL;
+		return INVALID_SOCKET;
 	}
 	LOG_INF("Connected to %s", log_strdup(host));
 
 	/* Set socket timeout, if configured */
 	err = socket_timeout_set(fd);
 	if (err) {
-		close(httpc.fd);
-		httpc.fd = INVALID_SOCKET;
-		return err;
+		close(fd);
+		return INVALID_SOCKET;
 	}
 
 	return fd;
@@ -284,7 +283,7 @@ static void response_cb(struct http_response *rsp,
 	if (final_data == HTTP_DATA_MORE) {
 		LOG_DBG("Partial data received (%zd bytes)", rsp->data_len);
 		if (data_received == HTTPC_BUF_LEN) {
-			sprintf(rsp_buf, "#XHTTPCRSP:%d,1\r\n",
+			sprintf(rsp_buf, "#XHTTPCRSP: %d,1\r\n",
 				HTTPC_BUF_LEN);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			rsp_send(data_buf, HTTPC_BUF_LEN);
@@ -292,7 +291,7 @@ static void response_cb(struct http_response *rsp,
 		}
 	} else if (final_data == HTTP_DATA_FINAL) {
 		LOG_DBG("All the data received (%zd bytes)", data_received);
-		sprintf(rsp_buf, "#XHTTPCRSP:%d,0\r\n", data_received);
+		sprintf(rsp_buf, "#XHTTPCRSP: %d,0\r\n", data_received);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		rsp_send(data_buf, data_received);
 		httpc.rsp_completed = true;
@@ -324,7 +323,7 @@ static int payload_cb(int sock, struct http_request *req, void *user_data)
 	size_t total_sent = 0;
 
 	if (httpc.pl_len > 0) {
-		sprintf(rsp_buf, "#XHTTPCREQ:1\r\n");
+		sprintf(rsp_buf, "#XHTTPCREQ: 1\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		do {
 			/* Wait until payload is ready */
@@ -361,10 +360,10 @@ static int payload_cb(int sock, struct http_request *req, void *user_data)
 			}
 			k_sem_give(&http_data_sem);
 		} while (total_sent < httpc.pl_len);
-		sprintf(rsp_buf, "#XHTTPCREQ:0\r\n");
+		sprintf(rsp_buf, "#XHTTPCREQ: 0\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	} else {
-		sprintf(rsp_buf, "#XHTTPCREQ:0\r\n");
+		sprintf(rsp_buf, "#XHTTPCREQ: 0\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
@@ -376,13 +375,12 @@ static int do_http_connect(void)
 	/* Connect to server if it is not connected yet. */
 	if (httpc.fd == INVALID_SOCKET) {
 		httpc.fd = server_connect(httpc.host, httpc.sec_tag);
-		if (httpc.fd < 0) {
+		if (httpc.fd == INVALID_SOCKET) {
 			LOG_ERR("server_connect fail.");
-			httpc.fd = INVALID_SOCKET;
-			sprintf(rsp_buf, "#XHTTPCCON:0\r\n");
+			sprintf(rsp_buf, "#XHTTPCCON: 0\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		} else {
-			sprintf(rsp_buf, "#XHTTPCCON:1\r\n");
+			sprintf(rsp_buf, "#XHTTPCCON: 1\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		}
 	} else {
@@ -410,7 +408,7 @@ static int do_http_disconnect(void)
 		httpc.pl_len = 0;
 		k_sem_give(&http_req_sem);
 	}
-	sprintf(rsp_buf, "#XHTTPCCON:0\r\n");
+	sprintf(rsp_buf, "#XHTTPCCON: 0\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	return err;
@@ -466,12 +464,12 @@ static int do_http_request(void)
 	err = http_client_req(httpc.fd, &req, timeout, "");
 	if (err < 0) {
 		/* Socket send/recv error */
-		sprintf(rsp_buf, "#XHTTPCREQ:%d\r\n", err);
+		sprintf(rsp_buf, "#XHTTPCREQ: %d\r\n", err);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	} else if (httpc.rsp_completed == false) {
 		/* Socket was closed by remote */
 		err = -ECONNRESET;
-		sprintf(rsp_buf, "#XHTTPCRSP:0,%d\r\n", err);
+		sprintf(rsp_buf, "#XHTTPCRSP: 0,%d\r\n", err);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	} else {
 		err = 0;
@@ -510,14 +508,13 @@ static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type)
 			if (httpc.fd != INVALID_SOCKET) {
 				return -EINPROGRESS;
 			}
-			err = at_params_string_get(&at_param_list, 2,
+			err = util_string_get(&at_param_list, 2,
 							httpc.host, &host_sz);
 			if (err < 0) {
 				LOG_ERR("Fail to get host: %d", err);
 				return err;
 			}
 
-			httpc.host[host_sz] = '\0';
 			err = at_params_int_get(&at_param_list, 3, &httpc.port);
 			if (err < 0) {
 				LOG_ERR("Fail to get port: %d", err);
@@ -564,7 +561,7 @@ static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf,
-			"#XHTTPCCON: (%d, %d),<host>,<port>,<sec_tag>\r\n",
+			"#XHTTPCCON: (%d,%d),<host>,<port>,<sec_tag>\r\n",
 			AT_HTTPCCON_DISCONNECT, AT_HTTPCCON_CONNECT);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
@@ -605,36 +602,30 @@ static int handle_AT_HTTPC_REQUEST(enum at_cmd_type cmd_type)
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
 		param_count = at_params_valid_count_get(&at_param_list);
-		if (param_count < 3) {
-			return -EINVAL;
-		}
-		err = at_params_string_get(&at_param_list, 1,
+		err = util_string_get(&at_param_list, 1,
 					   data_buf, &method_sz);
 		if (err < 0) {
 			LOG_ERR("Fail to get method string: %d", err);
 			return err;
 		}
-		data_buf[method_sz] = '\0';
 		httpc.method_str = data_buf;
 		offset = method_sz + 1;
 		/* Get resource path string */
-		err = at_params_string_get(&at_param_list, 2,
+		err = util_string_get(&at_param_list, 2,
 					   data_buf + offset, &resource_sz);
 		if (err < 0) {
 			LOG_ERR("Fail to get resource string: %d", err);
 			return err;
 		}
-		data_buf[offset + resource_sz] = '\0';
 		httpc.resource = data_buf + offset;
 		offset = offset + resource_sz + 1;
 		/* Get header string */
-		err = at_params_string_get(&at_param_list, 3,
+		err = util_string_get(&at_param_list, 3,
 					   data_buf + offset, &headers_sz);
 		if (err < 0) {
 			LOG_ERR("Fail to get option string: %d", err);
 			return err;
 		}
-		data_buf[offset + headers_sz] = '\0';
 		httpc.headers = data_buf + offset;
 		if (param_count >= 5) {
 			err = at_params_int_get(&at_param_list, 4,

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
@@ -38,10 +38,6 @@ struct bt_mesh_plvl_srv;
 		.lvl = BT_MESH_LVL_SRV_INIT(&bt_mesh_plvl_srv_lvl_handlers),   \
 		.ponoff = BT_MESH_PONOFF_SRV_INIT(                             \
 			&bt_mesh_plvl_srv_onoff_handlers, NULL, NULL),         \
-		.pub = { .update = _bt_mesh_plvl_srv_update_handler,           \
-			 .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(          \
-				 BT_MESH_PLVL_OP_LEVEL_STATUS,                 \
-				 BT_MESH_PLVL_MSG_MAXLEN_LEVEL_STATUS)) },     \
 		.handlers = _handlers,                                         \
 	}
 
@@ -145,6 +141,12 @@ struct bt_mesh_plvl_srv {
 	struct bt_mesh_model *plvl_model;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
+		BT_MESH_PLVL_OP_LEVEL_STATUS,
+		BT_MESH_PLVL_MSG_MAXLEN_LEVEL_STATUS)];
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx tid;
 	/** User handler functions. */
@@ -188,7 +190,6 @@ extern const struct bt_mesh_model_op _bt_mesh_plvl_srv_op[];
 extern const struct bt_mesh_model_op _bt_mesh_plvl_setup_srv_op[];
 extern const struct bt_mesh_lvl_srv_handlers bt_mesh_plvl_srv_lvl_handlers;
 extern const struct bt_mesh_onoff_srv_handlers bt_mesh_plvl_srv_onoff_handlers;
-int _bt_mesh_plvl_srv_update_handler(struct bt_mesh_model *model);
 /** @endcond */
 
 #ifdef __cplusplus

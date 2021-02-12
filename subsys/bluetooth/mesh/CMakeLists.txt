@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 zephyr_library()
@@ -56,7 +56,19 @@ zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_CTL_CLI light_ctl_cli.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_TEMP_SRV light_temp_srv.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_CTL_SRV light_ctl_srv.c)
 
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_HSL light_hsl.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_HSL_CLI light_hsl_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_HSL_SRV light_hsl_srv.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_SAT_SRV light_sat_srv.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_HUE_SRV light_hue_srv.c)
+
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_SCENE_SRV scene_srv.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_SCENE_CLI scene_cli.c)
+
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_XYL_CLI light_xyl_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_XYL_SRV light_xyl_srv.c)
+
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_SCHEDULER_CLI scheduler_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_SCHEDULER_SRV scheduler_srv.c)
 
 zephyr_linker_sources(SECTIONS sensor_types.ld)

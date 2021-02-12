@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2019 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 # Configuration for Unity and CMock
@@ -20,6 +20,7 @@
         - :expect_any_args
     :treat_externs: :include
     :callback_after_arg_check: true
+    :exclude_setjmp_h: true
     :treat_as:
         'int8_t': 'INT8'
         'uint8_t': 'HEX8'

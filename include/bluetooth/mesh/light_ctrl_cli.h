@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /** @file
@@ -35,8 +35,6 @@ struct bt_mesh_light_ctrl_cli;
  */
 #define BT_MESH_LIGHT_CTRL_CLI_INIT(_handlers)                                 \
 	{                                                                      \
-		.pub = { .msg = NET_BUF_SIMPLE(                                \
-				 BT_MESH_LIGHT_CTRL_CLI_BUF_MAXLEN) },         \
 		.handlers = _handlers,                                         \
 	}
 
@@ -136,6 +134,12 @@ struct bt_mesh_light_ctrl_cli {
 	struct bt_mesh_model *model;
 	/** Publication parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
+		BT_MESH_LIGHT_CTRL_OP_PROP_SET,
+		2 + CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX)];
 	/** Acknowledged message tracking. */
 	struct bt_mesh_model_ack_ctx ack;
 	/** Collection of handler callbacks. */

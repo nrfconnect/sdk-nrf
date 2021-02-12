@@ -23,7 +23,7 @@ The Time Server model builds an ad-hoc time synchronization hierarchy through th
 
 To ensure consistent synchronization, the Time Server model should be configured to publish its Time Status with regular intervals using a :ref:`zephyr:bluetooth_mesh_models_cfg_cli` model.
 
-..note::
+.. note::
 
    To ensure a high level of accuracy, Time Status messages are always transmitted one hop at a time.
    This means that every mesh node that needs access to the common time reference must be within radio range of at least one other node with the Time Server model.

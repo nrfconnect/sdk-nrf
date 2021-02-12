@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig EXTERNAL_SENSORS
+	bool "External sensors"
+
+if EXTERNAL_SENSORS
+
+module = EXTERNAL_SENSORS
+module-str = External sensors
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # EXTERNAL_SENSORS

@@ -9,7 +9,7 @@ Light Lightness Control Server
 
 The Light Lightness Control (LC) Server controls a single :ref:`bt_mesh_lightness_srv_readme` instance on the same device with a state machine.
 
-The state machine defines common behavior for a Light fixture through three states, each with its own timing parameters and light levels.
+The state machine defines common behavior for a light fixture through three states, each with its own timing parameters and light levels.
 As input to its state machine, the Light LC Server listens for Sensor and OnOff messages.
 
 In addition to the state machine, the Light LC Server may optionally use a regulator to control the ambient illuminance in the room.
@@ -20,7 +20,7 @@ The Lightness Control Server is always disabled by default, and must be enabled 
 Overview
 ********
 
-In this section, you can find more detailed information about the following aspects of Light LC Server:
+In this section, you can find more detailed information about the following aspects of the Light LC Server:
 
 * `Composition data structure`_
 * `Relationship with other nodes`_
@@ -283,7 +283,7 @@ Illuminance regulator
 =====================
 
 The illuminance regulator complements the light level state machine by adding an ambient illuminance sensor feedback loop.
-This allows the lightness server to adjust its output level that is based on the room's ambient light, and as a result conserve energy and achieve more consistent light levels.
+This allows the Lightness Server to adjust its output level that is based on the room's ambient light, and as a result conserve energy and achieve more consistent light levels.
 
 .. figure:: /images/bt_mesh_light_ctrl_reg.svg
    :alt: Light Lightness Control Server illuminance regulator
@@ -324,7 +324,7 @@ The regulator depends on frequent readings from the sensor server to provide a s
 If the sensor reports are too slow, the regulator might oscillate, as it attempts to compensate for outdated feedback.
 
 .. tip::
-   Use the Sensor :ref:`bt_mesh_sensor_publishing_delta` feature for Ambient Light sensors feeding the regulator.
+   Use the Sensor :ref:`bt_mesh_sensor_publishing_delta` feature for ambient light sensors feeding the regulator.
    This makes the sensor send frequent reports when the regulator is compensating for large errors, while keeping the mesh traffic low in stable periods.
 
 The Sensor Server may be instantiated on the same mesh node as the Light LC Server, or on a different mesh node in the same area.
@@ -415,9 +415,9 @@ Persistent Storage
 If :option:`CONFIG_BT_SETTINGS` is enabled, the Light LC Server stores all its states persistently using a configurable storage delay to stagger storing.
 See :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_STORE_TIMEOUT`.
 
-Changes to the configuration properties are stored and restored on power up, so the compile time configuration is only valid the first time the devices powers up, until the configuration is changed.
+Changes to the configuration properties are stored and restored on power-up, so the compile time configuration is only valid the first time the device powers up, until the configuration is changed.
 
-Power up behavior
+Power-up behavior
 =================
 
 When powering up, the Light LC Server behavior depends on the controlled Lightness Server's extended :ref:`bt_mesh_ponoff_srv_readme`'s state:

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <bluetooth/mesh/light_ctrl_cli.h>
@@ -98,6 +98,7 @@ static void handle_light_onoff(struct bt_mesh_model *mod,
 		status.remaining_time =
 			model_transition_decode(net_buf_simple_pull_u8(buf));
 	} else if (buf->len == 0) {
+		status.target_on_off = onoff;
 		status.remaining_time = 0;
 	} else {
 		return;
@@ -180,7 +181,9 @@ static int light_ctrl_cli_init(struct bt_mesh_model *mod)
 	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
 
 	cli->model = mod;
-	net_buf_simple_init(cli->pub.msg, 0);
+	cli->pub.msg = &cli->pub_buf;
+	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
+				      sizeof(cli->pub_data));
 	model_ack_init(&cli->ack);
 
 	return 0;

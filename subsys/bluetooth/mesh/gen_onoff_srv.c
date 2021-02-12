@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <string.h>
@@ -139,12 +139,13 @@ static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
 		       size_t len, struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_onoff_srv *srv = mod->user_data;
+	struct bt_mesh_onoff_status dummy;
 	struct bt_mesh_onoff_set set = {
 		.on_off = data[0],
 		.transition = transition,
 	};
 
-	srv->handlers->set(srv, NULL, &set, NULL);
+	srv->handlers->set(srv, NULL, &set, &dummy);
 }
 
 static const struct bt_mesh_scene_entry_type scene_type = {
@@ -154,12 +155,26 @@ static const struct bt_mesh_scene_entry_type scene_type = {
 };
 /* .. include_endpoint_scene_srv_rst_1 */
 
+static int update_handler(struct bt_mesh_model *model)
+{
+	struct bt_mesh_onoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_status status = { 0 };
+
+	srv->handlers->get(srv, NULL, &status);
+	encode_status(model->pub->msg, &status);
+
+	return 0;
+}
+
 static int bt_mesh_onoff_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_onoff_srv *srv = model->user_data;
 
 	srv->model = model;
-	net_buf_simple_init(model->pub->msg, 0);
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
@@ -177,17 +192,6 @@ const struct bt_mesh_model_cb _bt_mesh_onoff_srv_cb = {
 	.init = bt_mesh_onoff_srv_init,
 	.reset = bt_mesh_onoff_srv_reset,
 };
-
-int _bt_mesh_onoff_srv_update_handler(struct bt_mesh_model *model)
-{
-	struct bt_mesh_onoff_srv *srv = model->user_data;
-	struct bt_mesh_onoff_status status = { 0 };
-
-	srv->handlers->get(srv, NULL, &status);
-	encode_status(model->pub->msg, &status);
-
-	return 0;
-}
 
 int32_t bt_mesh_onoff_srv_pub(struct bt_mesh_onoff_srv *srv,
 			    struct bt_mesh_msg_ctx *ctx,

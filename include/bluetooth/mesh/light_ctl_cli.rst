@@ -9,7 +9,7 @@ Light CTL Client
 
 The Color-Tunable Light (CTL) Client model remotely controls the state of the :ref:`bt_mesh_light_ctl_srv_readme` model, and the :ref:`bt_mesh_light_temp_srv_readme` model.
 
-Unlike the server models, the client only creates a single model instance in the mesh composition data.
+Unlike the server models, the Light CTL Client only creates a single model instance in the mesh composition data.
 The Light CTL Client can send messages to the Light CTL Server, the Light CTL Setup Server and the Light CTL Temperature Server, as long as it has the right application keys.
 
 .. note::

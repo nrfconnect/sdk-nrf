@@ -1,0 +1,125 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_ALEXA_GADGETS
+	bool "Alexa Gadgets service"
+	select BT_NRF_SERVICES
+	help
+	  Enable Alexa Gadgets service.
+
+if BT_ALEXA_GADGETS
+
+module = BT_ALEXA_GADGETS
+module-str = ALEXA GADGETS SERVICE
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_ALEXA_GADGETS
+
+menuconfig BT_ALEXA_GADGETS_PROFILE
+	bool "Enable Alexa Gadgets profile"
+	select BT_ALEXA_GADGETS
+	select BT_SMP
+	select HWINFO
+	select TINYCRYPT_SHA256
+	help
+	  Enable Alexa Gadgets profile.
+
+if BT_ALEXA_GADGETS_PROFILE
+
+module = BT_ALEXA_GADGETS_PROFILE
+module-str = ALEXA GADGETS PROFILE
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config BT_ALEXA_GADGETS_MODEL_NAME
+	string "Alexa Gadget device model name"
+	default "BLE Gadget"
+	help
+	  Alexa Gadget model name. Not a token allocated by Amazon.
+
+config BT_ALEXA_GADGETS_DEVICE_DESCRIPTION
+	string "Alexa Gadget device description"
+	default "Nordic DK"
+	help
+	  Short device description.
+
+config BT_ALEXA_GADGETS_AMAZON_ID
+	string "Alexa Gadget Amazon ID"
+	default "1234567890"
+	help
+	  Device type identifier allocated by Amazon.
+
+config BT_ALEXA_GADGETS_DEVICE_SECRET
+	string "Alexa Gadget device secret"
+	default "1234567890"
+	help
+	  Device secret allocated by Amazon.
+	  As this is considered a secret value,
+	  enable flash readback protection accordingly.
+
+
+config BT_ALEXA_GADGETS_TRANSACTION_BUF_SIZE
+	int "Alexa Gadgets maximum transaction size"
+	default 600
+	help
+	  Maximum size of a single transaction.
+	  This should be big enough to cover the Discovery handshake,
+	  which is normally the largest transaction.
+	  Note that capability count, device name, model name, etc. affects this.
+
+config BT_ALEXA_GADGETS_OTA
+	bool "Enable Alexa Gadgets OTA protocol"
+	select BOOTLOADER_MCUBOOT
+	help
+	  Enable Alexa Gadgets OTA protocol.
+
+menu "Alexa Gadget capabilities"
+
+config BT_ALEXA_GADGETS_CAPABILITY_ALERTS
+	bool "Enable Alerts capability"
+	help
+	  Enable support for Alerts capability.
+
+config BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS
+	bool "Enable Notifications capability"
+	help
+	  Enable support for Notifications capability.
+
+config BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER
+	bool "Enable StateListener capability"
+	help
+	  Enable support for StateListener capability.
+
+config BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA
+	bool "Enable MusicData capability"
+	help
+	  Enable support for Music Data capability.
+
+config BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA
+	bool "Enable SpeechData capability"
+	help
+	  Enable support for SpeechData capability.
+
+config BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
+	bool "Enable Custom capability"
+	help
+	  Enable support for SpeechData capability.
+
+config BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE
+	string "Set Custom capability interface name"
+	default "Custom.MyCustomInterface"
+	depends on BT_ALEXA_GADGETS_CAPABILITY_CUSTOM
+	help
+	  Specify name of the custom interface.
+
+endmenu
+
+config APP_LINK_WITH_ALEXA_GADGETS_PROTO
+	bool "Link 'app' with Alexa Gadgets Proto headers"
+	default y
+	help
+	  Add Alexa Gadgets Proto header files to the 'app' include path.
+
+endif # BT_ALEXA_GADGETS_PROFILE

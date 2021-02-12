@@ -1,13 +1,10 @@
 #include <autoconf.h>
 
-tfm_ram:
+tfm_sram:
   placement: {after: [start]}
-  size: CONFIG_PM_PARTITION_SIZE_TFM_RAM
+  inside: sram_secure
+  size: CONFIG_PM_PARTITION_SIZE_TFM_SRAM
   region: sram_primary
-
-bl2:
-  placement: {before: [tfm]}
-  size: CONFIG_PM_PARTITION_SIZE_BL2
 
 tfm:
   placement: {before: [app]}
@@ -19,8 +16,13 @@ tfm_primary:
 app_primary:
   span: [app]
 
+#ifndef CONFIG_TFM_BL2_FALSE
+bl2:
+  placement: {before: [tfm]}
+  size: CONFIG_PM_PARTITION_SIZE_BL2
+
 signed_tfm_app:
-  span: [app, tfm]
+  span: [app_primary, tfm_primary]
 
 tfm_secondary:
   placement: {after: [app_primary]}
@@ -29,8 +31,9 @@ tfm_secondary:
 app_secondary:
   placement: {after: [tfm_secondary]}
   share_size: app_primary
+#endif
 
 tfm_extra:
-  placement: {after: [app_secondary]}
+  placement: {after: [app_secondary, app]}
   size: CONFIG_PM_PARTITION_SIZE_TFM_EXTRA
   align: {start: CONFIG_FPROTECT_BLOCK_SIZE}

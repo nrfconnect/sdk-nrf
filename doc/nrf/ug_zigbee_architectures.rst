@@ -79,8 +79,8 @@ The split stack architectures are most commonly used to design a Zigbee gateway,
 Network Co-Processor (NCP)
 ==========================
 
-In this design, the host processor runs the Zigbee application layer (ZCL) and and the Zigbee commissioning logic.
-The connectivity device (nRF SoC) runs the NCP application that contains lower parts of the Zigbee stack (802.15.4 PHY/MAC and the Zigbee PRO network layer), as well as provides commands to execute BDB commissioning primitives.
+In this design, the host processor runs the Zigbee application layer (ZCL) and the Zigbee commissioning logic.
+The connectivity device (nRF SoC) runs the :ref:`NCP application <zigbee_ncp_sample>` that contains lower parts of the Zigbee stack (802.15.4 PHY/MAC and the Zigbee PRO network layer), as well as provides commands to execute BDB commissioning primitives.
 The host processor communicates with the NCP through a serial interface (USB or UART).
 
 .. figure:: /images/zigbee_platform_design_ncp.svg

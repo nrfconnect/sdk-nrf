@@ -54,12 +54,12 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Touch the NFC antenna with the smartphone or tablet and observe that LED 1 and LED 4 are lit.
 #. Observe that the smartphone/tablet tries to open the URL "http\://www.nordicsemi.com" in a web browser.
 #. Use a proper application (for example, NFC Tools for Android) to overwrite the existing NDEF message with your own message.
-#. Power-cycle your board and touch the antenna again.
+#. Power-cycle your kit and touch the antenna again.
    Observe that the new message is displayed.
 
 Dependencies

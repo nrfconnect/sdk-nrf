@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <logging/log.h>
 
@@ -56,7 +56,7 @@ void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 extern struct k_work_q slm_work_q;
 
 #ifdef CONFIG_SUPL_CLIENT_LIB
@@ -178,7 +178,7 @@ void supl_handler(struct k_work *work)
 		return;
 	}
 	k_thread_suspend(gps_thread_id);
-	sprintf(rsp_buf, "GPS suspended\r\n");
+	sprintf(rsp_buf, "#XGPSS: \"GPS suspended\"\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	/* SUPL injection */
@@ -189,7 +189,7 @@ void supl_handler(struct k_work *work)
 		LOG_DBG("SUPL session done");
 		close(supl_fd);
 	}
-	sprintf(rsp_buf, "SUPL injection done\r\n");
+	sprintf(rsp_buf, "#XGPSS: \"SUPL injection done\"\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	/* Resume GPS */
@@ -200,7 +200,7 @@ void supl_handler(struct k_work *work)
 		LOG_ERR("Failed to resume GPS (err: %d)", -errno);
 	} else {
 		ttft_start = k_uptime_get();
-		sprintf(rsp_buf, "GPS resumed\r\n");
+		sprintf(rsp_buf, "#XGPSS: \"GPS resumed\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 }
@@ -235,7 +235,8 @@ static void gps_satellite_stats(void)
 	}
 
 	if (last_tracked != tracked) {
-		sprintf(rsp_buf, "#XGPSS: track %d use %d unhealthy %d\r\n",
+		sprintf(rsp_buf,
+			"#XGPSS: \"track %d use %d unhealthy %d\"\r\n",
 			tracked, in_fix, unhealthy);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		last_tracked = tracked;
@@ -244,11 +245,11 @@ static void gps_satellite_stats(void)
 
 static void gps_pvt_notify(void)
 {
-	sprintf(rsp_buf, "#XGPSP: long %f lat %f\r\n",
+	sprintf(rsp_buf, "#XGPSP: \"long %f lat %f\"\r\n",
 		gps_data.pvt.longitude,
 		gps_data.pvt.latitude);
 	rsp_send(rsp_buf, strlen(rsp_buf));
-	sprintf(rsp_buf, "#XGPSP: %04u-%02u-%02u %02u:%02u:%02u\r\n",
+	sprintf(rsp_buf, "#XGPSP: \"%04u-%02u-%02u %02u:%02u:%02u\"\r\n",
 		gps_data.pvt.datetime.year,
 		gps_data.pvt.datetime.month,
 		gps_data.pvt.datetime.day,
@@ -282,7 +283,8 @@ static void gps_thread_fn(void *arg1, void *arg2, void *arg3)
 				if (!client.has_fix) {
 					uint64_t now = k_uptime_get();
 
-					sprintf(rsp_buf, "#XGPSP: TTFF %ds\r\n",
+					sprintf(rsp_buf,
+						"#XGPSP: \"TTFF %ds\"\r\n",
 						(int)(now - ttft_start)/1000);
 					rsp_send(rsp_buf, strlen(rsp_buf));
 					client.has_fix = true;
@@ -414,9 +416,6 @@ static int handle_at_gps(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 2) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
@@ -453,7 +452,7 @@ static int handle_at_gps(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XGPS: (0, 1), (bitmask)\r\n");
+		sprintf(rsp_buf, "#XGPS: (0,1),(bitmask)\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;

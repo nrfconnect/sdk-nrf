@@ -81,6 +81,15 @@
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
+.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/ff13bd/src/android/CHIPTool
+.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md
+.. _`Building and programming OpenThread RCP firmware`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#building-rcp-firmware
+.. _`Building and installing Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#building-chiptool
+.. _`Configuring PC as Thread Border Router`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#configuring-pc
+.. _`Preparing and commissioning accessory device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#preparing-accessory
+.. _`CHIP Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/README.md
+.. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_platform_overview.md
+
 .. ### Source: developer.nordicsemi.com
 
 .. _`nRF Connect SDK v1.4.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.4.0/nrf/index.html
@@ -95,6 +104,7 @@
 
 .. _`known issues page on the master branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html
 .. _`known issues for nRF Connect SDK v1.4.99-dev1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-99-dev1
+.. _`known issues for nRF Connect SDK v1.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-2
 .. _`known issues for nRF Connect SDK v1.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-1
 .. _`known issues for nRF Connect SDK v1.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-0
 
@@ -145,6 +155,7 @@
 .. _`Managing credentials`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_certificate_manager.html
 
 .. _`nRF Connect Programmer`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_introduction.html
+.. _`Programming the nRF52840 Dongle`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_programming_dongle.html
 
 .. _`nRF9160 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/nRF9160_html5_keyfeatures.html
 
@@ -155,6 +166,7 @@
 .. _`nRF9160 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/intro.html
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/board_controller.html
 .. _`Device programming section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/mcu_device_programming.html
+.. _`VDD supply rail section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/power_sources_vdd.html
 
 .. _`AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/intro.html
 .. _`band lock section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
@@ -170,11 +182,11 @@
 
 .. _`nRF52840 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/keyfeatures_html5.html
 .. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1227688711
-.. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/nrf52840_DK/intro.html
+.. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/dk/intro.html
 .. _`nRF52840 Dongle User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dongle/UG/nrf52840_Dongle/intro.html
 
 .. _`nRF52833 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52833/keyfeatures_html5.html
-.. _`nRF52833 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52833_dk/UG/nrf52833_DK/intro.html
+.. _`nRF52833 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52833_dk/UG/dk/intro.html
 
 .. _`nRF52 Series`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52.html
 .. _`nRF52832 Product Specification`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52832_ps.html
@@ -190,7 +202,7 @@
 .. _`nRF21540`: https://infocenter.nordicsemi.com/topic/struct_fem/struct/nrf21540.html
 .. _`nRF21540 Product Specification`: https://infocenter.nordicsemi.com/topic/struct_fem/struct/nrf21540_ps.html
 
-.. _`Programming DK boards using nrfjprog`: https://infocenter.nordicsemi.com/topic/ug_nrf5x_cltools/UG/cltools/nrf5x_nrfjprogexe.html
+.. _`Programming SoCs with nrfjprog`: https://infocenter.nordicsemi.com/topic/ug_nrf_cltools/UG/cltools/nrf_nrfjprogexe.html
 
 .. _`Nordic Thingy:91 User Guide`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/intro/frontpage.html
 
@@ -217,6 +229,9 @@
 .. _`Power Profiler Kit II (PPK2)`: https://infocenter.nordicsemi.com/topic/ug_ppk2/UG/ppk/PPK_user_guide_Intro.html
 
 .. _`anomaly 19`: https://infocenter.nordicsemi.com/topic/errata_nRF5340_EngA/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
+
+.. _`nRF5 SDK Bootloader`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html
+.. _`nRF5 Bootloader DFU Mode`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html#lib_bootloader_dfu_mode
 
 .. ### Source: devzone.nordicsemi.com
 
@@ -252,13 +267,15 @@
 .. _`Bond Management Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=293524
 .. _`Current Time Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=292957
 
-.. _`Mesh Model Specification`:
-.. _`Bluetooth Mesh Profile Specification`: https://www.bluetooth.com/specifications/mesh-specifications/
+.. _`Bluetooth SIG company identifiers`: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
 
-.. _`Mesh Model Overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
-.. _`Bluetooth Mesh Glossary`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-glossary/
-.. _`Bluetooth Mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
-.. _`Bluetooth Mesh Study Guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
+.. _`Bluetooth mesh model specification`:
+.. _`Bluetooth mesh profile specification`: https://www.bluetooth.com/specifications/mesh-specifications/
+
+.. _`Bluetooth mesh model overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
+.. _`Bluetooth mesh glossary`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-glossary/
+.. _`Bluetooth mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
+.. _`Bluetooth mesh study guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
 
 .. _`Bluetooth Secure Simple Pairing Using NFC`: https://www.bluetooth.com/bluetooth-resources/bluetooth-secure-simple-pairing-using-nfc-application-document/
 
@@ -354,6 +371,7 @@
 .. _`AWS Simple Storage Service (S3)`: https://docs.aws.amazon.com/s3/index.html
 .. _`AWS S3 Developer Guide: Using Bucket Policies and User Policies`: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
 .. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
+.. _`AWS IoT Core`: https://aws.amazon.com/iot-core/
 
 .. ### Source: developer.amazon.com & www.amazon.com
 
@@ -417,6 +435,7 @@
 
 .. _`generator expressions`: https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html
 
+
 .. ### Source: EnOcean.com
 
 .. _`EnOcean`: https://www.enocean.com
@@ -424,14 +443,28 @@
 .. _`Easyfit Single/Double Rocker Pad for Bluetooth LE - ESRPB/EDRPB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-pad-for-ble-esrpb-edrpb/
 .. _`Easyfit Motion Detector with Illumination Sensor - EMDCB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-motion-detector-with-illumination-sensor-emdcb/
 
+.. ### Source: edgeimpulse.com
+
+.. _`Edge Impulse`: https://www.edgeimpulse.com/
+.. _`Edge Impulse studio`: https://studio.edgeimpulse.com/login
+.. _`Edge Impulse getting started guide`: https://docs.edgeimpulse.com/docs/getting-started
+.. _`embedded machine learning`: https://docs.edgeimpulse.com/docs/what-is-embedded-machine-learning-anyway
+.. _`Continuous motion recognition tutorial`: https://docs.edgeimpulse.com/docs/continuous-motion-recognition
+.. _`Edge Impulse's data forwarder`: https://docs.edgeimpulse.com/docs/cli-data-forwarder
+.. _`Edge Impulse CLI installation guide`: https://docs.edgeimpulse.com/docs/cli-installation
+
 .. ### Source: other
+
+.. _`Ninja documentation`: https://ninja-build.org/manual.html
+
+.. _`GCC compiler`: https://gcc.gnu.org/
 
 .. _`MCUboot`: https://mcuboot.com
 
 .. _`nRF Mesh mobile app for iOS`: https://apps.apple.com/us/app/nrf-mesh/id1380726771
 .. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner
 
-.. _`nRF Cloud`: https://nrfcloud.com/
+.. _`nRF Connect for Cloud`: https://nrfcloud.com/
 
 .. _`NFC Forum specification overview`: https://nfc-forum.org/our-work/specification-releases/specifications/
 
@@ -460,7 +493,7 @@
 
 .. _`Platform Security Architecture (PSA)`: https://www.psacertified.org/what-is-psa-certified/
 
-.. _`TF-M documentation`: https://ci-builds.trustedfirmware.org/static-files/DkdCrQzFZSnnOE237JnAP31qbSUWnEhVzQwxZ_NIpaExNjA2NDMwMTIxODMyOjk6YW5vbnltb3VzOnZpZXcvVEYtTS9qb2IvdGYtbS1idWlsZC1kb2NzLW5pZ2h0bHkvbGFzdFN0YWJsZUJ1aWxkL2FydGlmYWN0/trusted-firmware-m/build/install/doc/user_guide/html/docs/introduction/readme.html
+.. _`TF-M documentation`: https://ci-builds.trustedfirmware.org/static-files/I3OU6LcW0o-1dDVVXuFbYv7isMCBp1lR-H72D6ZbdoAxNjEyODcwMjYwODk0Ojk6YW5vbnltb3VzOmpvYi90Zi1tLWJ1aWxkLWRvY3MtbmlnaHRseS9sYXN0U3RhYmxlQnVpbGQvYXJ0aWZhY3Q=/trusted-firmware-m/build/docs/user_guide/html/index.html
 .. _`Mbed TLS`: https://developer.trustedfirmware.org/w/mbed-tls/
 
 .. _`Nanopb`: https://jpa.kapsi.fi/nanopb/
@@ -512,3 +545,24 @@
 .. _`Baltimore CyberTrust Root certificate`: https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
+
+.. _`Connected Home over IP`: https://www.connectedhomeip.com/
+
+.. _`GN`: https://gn.googlesource.com/gn/
+.. _`GN website`: https://gn.googlesource.com/gn/#getting-a-binary
+
+.. _`Timestamping`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/device-cloud-protocol/FourKindsOfData.html#timestamping
+
+.. _`Power Saving Mode (PSM)`: https://www.sharetechnote.com/html/Handbook_LTE_PSM.html
+
+.. _`MQTT`: https://en.wikipedia.org/wiki/MQTT
+
+.. ### Source: Asset Tracker Cloud Example
+
+.. _`Asset Tracker Cloud Example for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/aws/Index.html
+
+.. _`Asset Tracker Cloud Example web application`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/app/Index.html
+
+.. _`Getting started guide for Asset Tracker Cloud Example for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/aws/GettingStarted.html
+
+.. _`Azure support for Asset Tracker v2`: https://github.com/NordicSemiconductor/asset-tracker-cloud-docs/discussions/12

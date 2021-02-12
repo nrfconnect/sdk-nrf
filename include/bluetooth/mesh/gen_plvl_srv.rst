@@ -7,7 +7,7 @@ Generic Power Level Server
    :local:
    :depth: 2
 
-The Generic Power Level Server controls the output power level of a peripheral on the Mesh-enabled device.
+The Generic Power Level Server controls the output power level of a peripheral on the mesh-enabled device.
 
 Generic Power Level Server adds two model instances in the composition data:
 
@@ -17,7 +17,7 @@ Generic Power Level Server adds two model instances in the composition data:
 The two model instances share the states of the Generic Power Level Server, but accept different messages.
 This allows fine-grained control of the access rights for the Generic Power Level states, as the two model instances can be bound to different application keys.
 
-The Generic Power Level Server is the "user facing" model instance in the pair, and only provides access to the Generic Power Level state, and its last non-zero value.
+The Generic Power Level Server is the user-facing model instance in the pair, and only provides access to the Generic Power Level state, and its last non-zero value.
 
 The Generic Power Level Setup Server provides access to the two metastates, Default Power and Power Range, allowing configurator devices to set up the range and default value for the Generic Power Level state.
 
@@ -26,7 +26,7 @@ States
 
 **Generic Power Level**: ``uint16_t``
 
-The Generic Power Level state controls the Power level of an element, and ranges from 0 to 65535.
+The Generic Power Level state controls the power level of an element, and ranges from 0 to 65535.
 The Generic Power Level state is bound to the Generic Level State of the :ref:`bt_mesh_lvl_srv_readme`:
 
 ::
@@ -40,13 +40,13 @@ The Generic OnOff state of the :ref:`bt_mesh_onoff_srv_readme` (extended through
   Generic OnOff = (Generic Power Level > 0)
 
 Conversely, if the Generic OnOff state is changed to Off, the Generic Power Level is set to 0.
-If the Generic OnOff state is changed to On and the Default Level state is set, the Generic Power level is set to the value of the Default level state.
+If the Generic OnOff state is changed to On and the Default Level state is set, the Generic Power Level is set to the value of the Default Level state.
 If the Generic OnOff state is changed to On and the Default Level state is not set, the Generic Power Level state is set to the last known non-zero value.
 
-The Power state power up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
+The Power state power-up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
 
-- :c:enumerator:`BT_MESH_ON_POWER_UP_OFF`: The Power level is set to 0 on power up.
-- :c:enumerator:`BT_MESH_ON_POWER_UP_ON`: The Power level is set to Default Level on power up, or the last known   non-zero Power level if the Default level is not set.
+- :c:enumerator:`BT_MESH_ON_POWER_UP_OFF`: The Power level is set to 0 on power-up.
+- :c:enumerator:`BT_MESH_ON_POWER_UP_ON`: The Power level is set to Default Level on power-up, or the last known non-zero Power level if the Default Level is not set.
 - :c:enumerator:`BT_MESH_ON_POWER_UP_RESTORE`: The Power level is set to the last known Power level (zero or otherwise).
 
 The user is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_plvl_srv_handlers` handler structure.

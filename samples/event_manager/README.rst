@@ -51,10 +51,10 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. |connect_terminal|
-#. Reset the board.
+#. Reset the kit.
 #. Observe that output similar to the following is logged on UART::
 
       ***** Booting Zephyr OS v1.13.99-ncs1-4741-g1d6219f *****

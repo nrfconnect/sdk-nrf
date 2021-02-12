@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
@@ -39,10 +39,6 @@ struct bt_mesh_lightness_srv;
 			&_bt_mesh_lightness_srv_lvl_handlers),                 \
 		.ponoff = BT_MESH_PONOFF_SRV_INIT(                             \
 			&_bt_mesh_lightness_srv_onoff_handlers, NULL, NULL),   \
-		.pub = { .update = _bt_mesh_lightness_srv_update_handler,      \
-			 .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(          \
-				 BT_MESH_LIGHTNESS_OP_STATUS,                  \
-				 BT_MESH_LIGHTNESS_MSG_MAXLEN_STATUS)) },      \
 		.handlers = _handlers,                                         \
 	}
 
@@ -146,6 +142,12 @@ struct bt_mesh_lightness_srv {
 	struct bt_mesh_model *lightness_model;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
+		BT_MESH_LIGHTNESS_OP_STATUS,
+		BT_MESH_LIGHTNESS_MSG_MAXLEN_STATUS)];
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx tid;
 	/** User handler functions. */
@@ -159,6 +161,11 @@ struct bt_mesh_lightness_srv {
 	uint16_t last;
 	/** Internal flag state. */
 	atomic_t flags;
+
+#if defined(CONFIG_BT_MESH_LIGHT_CTRL_SRV)
+	/** Acting controller, if enabled. */
+	struct bt_mesh_light_ctrl_srv *ctrl;
+#endif
 };
 
 /** @brief Publish the current Light state.
@@ -191,7 +198,6 @@ extern const struct bt_mesh_lvl_srv_handlers
 	_bt_mesh_lightness_srv_lvl_handlers;
 extern const struct bt_mesh_onoff_srv_handlers
 	_bt_mesh_lightness_srv_onoff_handlers;
-int _bt_mesh_lightness_srv_update_handler(struct bt_mesh_model *model);
 /** @endcond */
 
 #ifdef __cplusplus

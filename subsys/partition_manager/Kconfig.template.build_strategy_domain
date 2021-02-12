@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2020 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 # We need a separate template for domain images since we can not merge
@@ -15,9 +15,11 @@ config $(module)_BUILD_STRATEGY_SKIP_BUILD
 	# Mandatory option when being built through add_child_image'
 	bool "Skip building $(module)"
 	select PM_IMAGE_NOT_BUILT_FROM_SOURCE
+	select PARTITION_MANAGER_ENABLED
 
 config $(module)_BUILD_STRATEGY_FROM_SOURCE
 	# Mandatory option when being built through add_child_image'
 	bool "Build from source"
+	select PARTITION_MANAGER_ENABLED
 
 endchoice

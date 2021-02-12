@@ -4,6 +4,5 @@ sample:
 tests:
   zigbee.light_bulb:
     build_only: true
-    build_on_all: true
-    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
-    tags: ci_build
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build smoke

@@ -53,22 +53,22 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
-1. Connect the board to the computer using a USB cable. The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+1. Connect the kit to the computer using a USB cable. The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal_specific|
 #. Optionally, connect the RTT console to display debug messages. See :ref:`central_uart_debug`.
-#. Reset the board.
-#. Observe that the text "Starting NUS Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripheral boards with NUS.
-#. Program the :ref:`peripheral_uart` sample to the second board.
+#. Reset the kit.
+#. Observe that the text "Starting NUS Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with NUS.
+#. Program the :ref:`peripheral_uart` sample to the second development kit.
    See the documentation for that sample for detailed instructions.
-#. Observe that the boards connect.
-   When service discovery is completed, the event logs are printed on the Central board's terminal.
-#. Now you can send data between the two boards.
-   To do so, type some characters in the terminal of one of the boards and hit Enter.
-   Observe that the data is displayed on the UART on the other board.
-#. Disconnect the devices by, for example, pressing the Reset button on the Central board.
-   Observe that the boards automatically reconnect and that it is again possible to send data between the two boards.
+#. Observe that the kits connect.
+   When service discovery is completed, the event logs are printed on the Central's terminal.
+#. Now you can send data between the two kits.
+   To do so, type some characters in the terminal of one of the kits and hit Enter.
+   Observe that the data is displayed on the UART on the other kit.
+#. Disconnect the devices by, for example, pressing the Reset button on the Central.
+   Observe that the kits automatically reconnect and that it is again possible to send data between the two kits.
 
 Dependencies
 ************

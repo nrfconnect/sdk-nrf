@@ -58,7 +58,7 @@ Complete the following steps to run the certification tests:
 
 #. Build the certification image.
 
-   The :ref:`ot_cli_sample` sample is used as a base, modified with an overlay file.
+   The :ref:`ot_cli_sample` sample is used as a base, modified with the :file:`harness/overlay-cert.conf` overlay file.
 
    .. code-block::
 
@@ -66,20 +66,20 @@ Complete the following steps to run the certification tests:
          west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG="harness/overlay-cert.conf"
 
    .. note::
-      The overlay file selects the precompiled OpenThread libraries by default.
+      The overlay file selects the precompiled OpenThread libraries.
       It also enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth LE advertising.
 
 #. Prepare Thread Test Harness.
 
-   a. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nrf52840-ncs.py` file into :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI`.
+   a. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nRF_Connect_SDK.py` file into :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI`.
 
-   b. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nrf52840.jpg` file into :file:`C:\\GRL\\Thread1.1\\Web\\images`.
+   b. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nRF_Connect_SDK.jpg` file into :file:`C:\\GRL\\Thread1.1\\Web\\images`.
 
    c. Edit :file:`C:\\GRL\\Thread1.1\\Web\\data\\deviceInputFields.xml` and prepend it with the following code:
 
       .. code-block::
 
-         <DEVICE name="nRF52840-ncs" thumbnail="nRF52840.jpg" description = "Nordic Semiconductor: nRF52840 (NCS) Baudrate:115200" THCI="nRF52840-ncs">
+         <DEVICE name="nRF Connect SDK" thumbnail="nRF_Connect_SDK.jpg" description = "Nordic Semiconductor: NCS Baudrate:115200" THCI="nRF_Connect_SDK">
             <ITEM label="Serial Line"
                type="text"
                forParam="SerialPort"

@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 /**
  * @file
- * @brief Bluetooth Mesh Provisioning handler for Nordic DKs.
- * @defgroup bt_mesh_dk_prov Bluetooth Mesh Provisioning handler for Nordic DKs
+ * @brief Bluetooth mesh provisioning handler for Nordic DKs.
+ * @defgroup bt_mesh_dk_prov Bluetooth mesh provisioning handler for Nordic DKs
  * @{
  */
 

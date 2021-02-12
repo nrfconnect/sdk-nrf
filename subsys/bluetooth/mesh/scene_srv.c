@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <stdio.h>
@@ -33,22 +33,47 @@ static char *scene_path(char *buf, uint16_t scene, bool vnd, uint8_t page)
 	return buf;
 }
 
+static uint16_t current_scene(const struct bt_mesh_scene_srv *srv, int64_t now)
+{
+	if (model_transition_is_active(&srv->transition) &&
+	    srv->prev != srv->next && now < srv->transition_end) {
+		if (now < srv->transition_end - srv->transition.time) {
+			return srv->prev;
+		} else {
+			return BT_MESH_SCENE_NONE;
+		}
+	}
+
+	return srv->next;
+}
+
+static uint16_t target_scene(const struct bt_mesh_scene_srv *srv, int64_t now)
+{
+	if (model_transition_is_active(&srv->transition) &&
+	    srv->prev != srv->next && now < srv->transition_end) {
+		return srv->next;
+	}
+
+	return BT_MESH_SCENE_NONE;
+}
+
 static void scene_status_encode(struct bt_mesh_scene_srv *srv,
 				struct net_buf_simple *buf,
 				enum bt_mesh_scene_status status)
 {
 	int64_t now = k_uptime_get();
+	uint16_t current = current_scene(srv, now);
+	uint16_t target = target_scene(srv, now);
 
 	bt_mesh_model_msg_init(buf, BT_MESH_SCENE_OP_STATUS);
 	net_buf_simple_add_u8(buf, status);
-
-	if (now < srv->transition_end) {
-		net_buf_simple_add_le16(buf, srv->prev);
-		net_buf_simple_add_le16(buf, srv->curr);
+	if (target != BT_MESH_SCENE_NONE) {
+		net_buf_simple_add_le16(buf, current);
+		net_buf_simple_add_le16(buf, target);
 		net_buf_simple_add_u8(buf, model_transition_encode(
 						   srv->transition_end - now));
 	} else {
-		net_buf_simple_add_le16(buf, srv->curr);
+		net_buf_simple_add_le16(buf, current);
 	}
 }
 
@@ -74,14 +99,14 @@ static void handle_get(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 
 static void scene_set(struct bt_mesh_scene_srv *srv, uint16_t scene)
 {
-	if (srv->curr == scene) {
+	if (srv->next == scene) {
 		return;
 	}
 
-	srv->curr = scene;
-	if (scene) {
+	srv->next = scene;
+	if (scene != BT_MESH_SCENE_NONE) {
 		(void)bt_mesh_model_data_store(srv->mod, false, CURR_SCENE_PATH,
-					       &srv->curr, sizeof(srv->curr));
+					       &srv->next, sizeof(srv->next));
 	} else {
 		(void)bt_mesh_model_data_store(srv->mod, false, CURR_SCENE_PATH,
 					       NULL, 0);
@@ -99,10 +124,6 @@ static void scene_recall(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	int err;
 
 	scene = net_buf_simple_pull_le16(buf);
-	if (scene == BT_MESH_SCENE_NONE) {
-		return; /* Prohibited */
-	}
-
 	tid = net_buf_simple_pull_u8(buf);
 	if (buf->len == 2) {
 		model_transition_buf_pull(buf, &transition);
@@ -110,6 +131,11 @@ static void scene_recall(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 		bt_mesh_dtt_srv_transition_get(mod, &transition);
 	} else {
 		return;
+	}
+
+	if (scene == BT_MESH_SCENE_NONE ||
+	    model_transition_is_invalid(&transition)) {
+		return; /* Prohibited */
 	}
 
 	if (tid_check_and_update(&srv->tid, tid, ctx)) {
@@ -155,7 +181,7 @@ static int scene_register_status_send(struct bt_mesh_scene_srv *srv,
 					 2 * CONFIG_BT_MESH_SCENES_MAX);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCENE_OP_REGISTER_STATUS);
 	net_buf_simple_add_u8(&buf, status);
-	net_buf_simple_add_le16(&buf, srv->curr);
+	net_buf_simple_add_le16(&buf, current_scene(srv, k_uptime_get()));
 
 	for (int i = 0; i < srv->count; i++) {
 		net_buf_simple_add_le16(&buf, srv->all[i]);
@@ -409,9 +435,17 @@ static void scene_delete(struct bt_mesh_scene_srv *srv, uint16_t *scene)
 		(void)bt_mesh_model_data_store(srv->mod, false, path, NULL, 0);
 	}
 
-	if (srv->curr == *scene) {
+	int64_t now = k_uptime_get();
+	uint16_t target = target_scene(srv, now);
+	uint16_t current = current_scene(srv, now);
+
+	if (target == *scene ||
+	    (current == *scene && target == BT_MESH_SCENE_NONE)) {
 		scene_set(srv, BT_MESH_SCENE_NONE);
 		srv->transition_end = 0U;
+		srv->prev = BT_MESH_SCENE_NONE;
+	} else if (current == *scene && target != *scene) {
+		srv->prev = BT_MESH_SCENE_NONE;
 	}
 
 	*scene = srv->all[--srv->count];
@@ -457,12 +491,11 @@ static void handle_delete(struct bt_mesh_model *mod,
 	uint16_t *scene;
 
 	scene = scene_find(srv, net_buf_simple_pull_le16(buf));
-	if (scene == BT_MESH_SCENE_NONE) {
-		status = BT_MESH_SCENE_NOT_FOUND;
-	} else {
+	if (scene != BT_MESH_SCENE_NONE) {
 		scene_delete(srv, scene);
-		status = BT_MESH_SCENE_SUCCESS;
 	}
+
+	status = BT_MESH_SCENE_SUCCESS;
 
 	scene_register_status_send(srv, ctx, status);
 }
@@ -475,7 +508,7 @@ static void handle_delete_unack(struct bt_mesh_model *mod,
 	uint16_t *scene;
 
 	scene = scene_find(srv, net_buf_simple_pull_le16(buf));
-	if (scene) {
+	if (scene != BT_MESH_SCENE_NONE) {
 		scene_delete(srv, scene);
 	}
 }
@@ -550,8 +583,8 @@ static int scene_srv_set(struct bt_mesh_model *mod, const char *path,
 	 * - Path "XXXX/sYY": Scene XXXX sig model page YY
 	 */
 	if (!strcmp(path, CURR_SCENE_PATH)) {
-		(void)read_cb(cb_arg, &srv->curr, sizeof(srv->curr));
-		BT_DBG("Current scene 0x%x", srv->curr);
+		(void)read_cb(cb_arg, &srv->next, sizeof(srv->next));
+		BT_DBG("Next scene 0x%x", srv->next);
 		return 0;
 	}
 
@@ -609,16 +642,17 @@ static int scene_srv_start(struct bt_mesh_model *mod)
 	struct bt_mesh_model_transition transition = { 0 };
 	struct bt_mesh_scene_srv *srv = mod->user_data;
 
-	if (!srv->curr || !scene_find(srv, srv->curr)) {
-		srv->curr = BT_MESH_SCENE_NONE;
+	if (!srv->next || !scene_find(srv, srv->next)) {
+		srv->next = BT_MESH_SCENE_NONE;
+		srv->transition_end = 0;
 		return 0;
 	}
 
-	BT_DBG("Restoring active scene 0x%x", srv->curr);
+	BT_DBG("Restoring active scene 0x%x", srv->next);
 
 	(void)bt_mesh_dtt_srv_transition_get(mod, &transition);
 
-	bt_mesh_scene_srv_set(srv, srv->curr, &transition);
+	(void)bt_mesh_scene_srv_set(srv, srv->next, &transition);
 
 	return 0;
 }
@@ -633,7 +667,7 @@ static void scene_srv_reset(struct bt_mesh_model *mod)
 		scene_delete(srv, &srv->all[0]);
 	}
 
-	srv->prev = 0;
+	srv->prev = BT_MESH_SCENE_NONE;
 	srv->transition_end = 0;
 	srv->sigpages = 0;
 	srv->vndpages = 0;
@@ -692,6 +726,7 @@ void bt_mesh_scene_entry_add(struct bt_mesh_model *mod,
 
 	entry->mod = mod;
 	entry->type = type;
+	entry->srv = NULL;
 
 	/* A scene server covers all elements from its own until the next scene
 	 * server. Find the last scene server before this model:
@@ -701,12 +736,10 @@ void bt_mesh_scene_entry_add(struct bt_mesh_model *mod,
 
 		srv_mod = bt_mesh_model_find(&comp->elem[elem_idx],
 					     BT_MESH_MODEL_ID_SCENE_SRV);
-		if (!srv_mod) {
-			continue;
+		if (srv_mod) {
+			entry->srv = srv_mod->user_data;
+			break;
 		}
-
-		entry->srv = srv_mod->user_data;
-		break;
 	}
 
 	if (!entry->srv) {
@@ -727,6 +760,8 @@ void bt_mesh_scene_invalidate(struct bt_mesh_scene_entry *entry)
 		return;
 	}
 
+	entry->srv->prev = BT_MESH_SCENE_NONE;
+	entry->srv->transition_end = 0U;
 	scene_set(entry->srv, BT_MESH_SCENE_NONE);
 }
 
@@ -735,9 +770,9 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 {
 	char path[25];
 
-	if (srv->curr == scene) {
-		BT_DBG("Already on Scene 0x%x", scene);
-		return -EALREADY;
+	if (scene == BT_MESH_SCENE_NONE ||
+	    model_transition_is_invalid(transition)) {
+		return -EINVAL;
 	}
 
 	if (!scene_find(srv, scene)) {
@@ -745,9 +780,7 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 		return -ENOENT;
 	}
 
-	BT_DBG("0x%x", scene);
-
-	srv->prev = srv->curr;
+	srv->prev = current_scene(srv, k_uptime_get());
 	if (transition && model_transition_is_active(transition)) {
 		srv->transition_end =
 			k_uptime_get() + transition->delay + transition->time;
@@ -773,4 +806,15 @@ int bt_mesh_scene_srv_pub(struct bt_mesh_scene_srv *srv,
 			 struct bt_mesh_msg_ctx *ctx)
 {
 	return scene_status_send(srv, ctx, BT_MESH_SCENE_SUCCESS);
+}
+
+uint16_t
+bt_mesh_scene_srv_current_scene_get(const struct bt_mesh_scene_srv *srv)
+{
+	return current_scene(srv, k_uptime_get());
+}
+
+uint16_t bt_mesh_scene_srv_target_scene_get(const struct bt_mesh_scene_srv *srv)
+{
+	return target_scene(srv, k_uptime_get());
 }

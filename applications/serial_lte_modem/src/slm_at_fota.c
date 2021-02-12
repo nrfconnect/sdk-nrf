@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <logging/log.h>
 
@@ -39,15 +39,12 @@ enum slm_fota_operation {
 	AT_FOTA_STOP
 };
 
-static char path[URI_PATH_MAX];
-static char hostname[URI_HOST_MAX];
-
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 extern struct k_work_q slm_work_q;
 
 static int do_fota_erase(void)
@@ -92,6 +89,8 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 	int ret = -EINVAL;
 	struct http_parser_url parser;
 	char schema[8];
+	char path[URI_PATH_MAX];
+	char hostname[URI_HOST_MAX];
 
 	http_parser_url_init(&parser);
 	ret = http_parser_parse_url(file_uri, strlen(file_uri), 0, &parser);
@@ -148,12 +147,12 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 {
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
-		sprintf(rsp_buf, "#XFOTA: %d%% downloaded\r\n",
+		sprintf(rsp_buf, "#XFOTA: \"%d%%\"\r\n",
 				evt->progress);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		sprintf(rsp_buf, "#XFOTA: downloaded, reset to apply.\r\n");
+		sprintf(rsp_buf, "#XFOTA: \"downloaded\",\"reset now\".\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
@@ -163,7 +162,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 		LOG_INF("FOTA_DOWNLOAD_EVT_ERASE_DONE");
 		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
-		sprintf(rsp_buf, "#XFOTA: download error.\r\n");
+		sprintf(rsp_buf, "#XFOTA: \"download error\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		break;
 
@@ -187,9 +186,6 @@ static int handle_at_fota(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) <= 1) {
-			return -EINVAL;
-		}
 		err = at_params_short_get(&at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
@@ -198,28 +194,24 @@ static int handle_at_fota(enum at_cmd_type cmd_type)
 			err = do_fota_erase();
 		} else if (op == AT_FOTA_START) {
 			char uri[FILE_URI_MAX];
-			int size;
-			sec_tag_t sec_tag = INVALID_SEC_TAG;
 			char apn[APN_MAX];
+			int size = FILE_URI_MAX;
+			sec_tag_t sec_tag = INVALID_SEC_TAG;
 
-			if (at_params_valid_count_get(&at_param_list) <= 2) {
-				return -EINVAL;
-			}
-			size = FILE_URI_MAX;
-			err = at_params_string_get(&at_param_list, 2, uri,
-						&size);
+			err = util_string_get(&at_param_list, 2, uri, &size);
 			if (err) {
 				return err;
 			}
-			uri[size] = '\0';
 			if (at_params_valid_count_get(&at_param_list) > 3) {
 				at_params_int_get(&at_param_list, 3, &sec_tag);
 			}
 			if (at_params_valid_count_get(&at_param_list) > 4) {
 				size = APN_MAX;
-				at_params_string_get(&at_param_list, 4, apn,
-							&size);
-				apn[size] = '\0';
+				err = util_string_get(&at_param_list, 4, apn,
+						&size);
+				if (err) {
+					return err;
+				}
 				err = do_fota_start(op, uri, sec_tag, apn);
 			} else {
 				err = do_fota_start(op, uri, sec_tag, NULL);

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <kernel.h>
@@ -325,11 +325,7 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 			return ZB_FALSE;
 		}
 
-		struct net_ptp_time timestamp = {
-			.second = tx_at / USEC_PER_SEC,
-			.nanosecond = (tx_at % USEC_PER_SEC) * NSEC_PER_USEC
-		};
-		net_pkt_set_timestamp(pkt, &timestamp);
+		net_pkt_set_txtime(pkt, (uint64_t)tx_at * NSEC_PER_USEC);
 		state_cache.radio_state = RADIO_802154_STATE_TRANSMIT;
 		err = radio_api->tx(radio_dev,
 				    IEEE802154_TX_MODE_TXTIME,

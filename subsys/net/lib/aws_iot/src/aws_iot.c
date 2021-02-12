@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <net/aws_iot.h>
@@ -104,8 +104,6 @@ static char delete_rejected_topic[DELETE_REJECTED_TOPIC_LEN + 1];
 #if defined(CONFIG_CLOUD_API)
 static struct cloud_backend *aws_iot_backend;
 #endif
-
-#define AWS_IOT_POLL_TIMEOUT_MS 500
 
 /* Empty string used to request the AWS IoT shadow document. */
 #define AWS_IOT_SHADOW_REQUEST_STRING ""
@@ -724,14 +722,6 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		aws_iot_evt.data.err = AWS_IOT_DISCONNECT_MISC;
 
 		if (atomic_get(&disconnect_requested)) {
-#if defined(CONFIG_AWS_IOT_CONNECTION_POLL_THREAD)
-			if (atomic_get(&connection_poll_active)) {
-				/* The connection poll event will handle the
-				 * disconnect.
-				 */
-				break;
-			}
-#endif
 			aws_iot_evt.data.err = AWS_IOT_DISCONNECT_USER_REQUEST;
 		}
 
@@ -1024,7 +1014,7 @@ int aws_iot_ping(void)
 
 int aws_iot_keepalive_time_left(void)
 {
-	return (int)mqtt_keepalive_time_left(&client);
+	return mqtt_keepalive_time_left(&client);
 }
 
 int aws_iot_input(void)
@@ -1242,18 +1232,22 @@ start:
 	atomic_set(&aws_iot_disconnected, 0);
 
 	while (true) {
-		err = poll(fds, ARRAY_SIZE(fds), AWS_IOT_POLL_TIMEOUT_MS);
+		err = poll(fds, ARRAY_SIZE(fds), aws_iot_keepalive_time_left());
 
+		/* If poll returns 0 the timeout has expired. */
 		if (err == 0) {
-			if (aws_iot_keepalive_time_left() <
-			    AWS_IOT_POLL_TIMEOUT_MS) {
-				aws_iot_ping();
-			}
+			aws_iot_ping();
 			continue;
 		}
 
 		if ((fds[0].revents & POLLIN) == POLLIN) {
 			aws_iot_input();
+
+			if (atomic_get(&aws_iot_disconnected) == 1) {
+				LOG_DBG("The cloud socket is already closed.");
+				break;
+			}
+
 			continue;
 		}
 
@@ -1261,14 +1255,6 @@ start:
 			LOG_ERR("poll() returned an error: %d", err);
 			aws_iot_evt.data.err = AWS_IOT_DISCONNECT_MISC;
 			break;
-		}
-
-		if (atomic_get(&disconnect_requested)) {
-			atomic_set(&disconnect_requested, 0);
-			LOG_DBG("Expected disconnect event.");
-			aws_iot_evt.data.err = AWS_IOT_DISCONNECT_USER_REQUEST;
-			aws_iot_notify_event(&aws_iot_evt);
-			goto reset;
 		}
 
 		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {

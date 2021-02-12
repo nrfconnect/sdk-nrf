@@ -8,17 +8,20 @@ See the release notes for information about specific |NCS| releases.
 Known issues for each release are listed on the `known issues page on the master branch`_.
 This page is included only in the latest documentation, because it might contain issues that are discovered after a release is tagged.
 
-.. important::
+.. note::
    A "99" at the end of the version number of this documentation indicates continuous updates on the master branch since the previous major.minor release.
-   Changes between releases that are merged into the master branch are tracked on the :ref:`ncs_release_notes_latest` page, which is available only in the "99" version of documentation.
+   When looking at this latest documentation, be aware of the following aspects:
 
-   Note that there might be additional changes on the master branch that are not listed on that page.
+   * Changes between releases are tracked on the :ref:`ncs_release_notes_latest` page, but the master branch might contain additional changes that are not listed on that page.
+   * The release note pages that are available in the latest documentation might differ slightly from the release notes that were included in the respective |NCS| release at its release date.
+     Therefore, to see the official version of the release notes for a specific |NCS| release, switch to the documentation for the corresponding |NCS| version using the selector in the upper left-hand corner.
 
 .. toctree::
    :maxdepth: 1
    :caption: Subpages:
 
    releases/release-notes-latest
+   releases/release-notes-1.4.2
    releases/release-notes-1.4.1
    releases/release-notes-1.4.0
    releases/release-notes-1.3.2

@@ -321,7 +321,7 @@ For example, Button 1, Switch 3, LED 1.
 
 If you are referring to a generic PCB element, do *not* use capitalization: *button*, *switch*, *LEDs*.
 
-If you want to provide the short name of a specific PCB element as printed on the board, write it in bold and follow the spelling and capitalization from the board: **Button 1**, **SW3**, **LED1**.
+If you want to provide the short name of a specific PCB element as printed on the kit, write it in bold and follow the spelling and capitalization from the kit: **Button 1**, **SW3**, **LED1**.
 
 .. note::
    Use bold for button elements only when you are using the short names for other PCB elements in your document.

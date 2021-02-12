@@ -28,7 +28,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/hci_lpuart`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run.txt
 
 Programming the sample
 ======================

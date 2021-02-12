@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
  * @file
- * @defgroup bt_mesh_lvl Bluetooth Mesh Generic Level models
+ * @defgroup bt_mesh_lvl Bluetooth mesh Generic Level models
  * @{
- * @brief Common API for the Bluetooth Mesh Generic Level models.
+ * @brief Common API for the Bluetooth mesh Generic Level models.
  */
 #ifndef BT_MESH_GEN_LVL_H__
 #define BT_MESH_GEN_LVL_H__

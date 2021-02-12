@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2019-2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LED_CONTROL
+	bool "LED control library"
+	default y if UI_MODULE
+
+if LED_CONTROL
+
+config LED_USE_PWM
+	bool "Use PWM to control LEDs"
+	default y if BOARD_THINGY91_NRF9160NS
+	select PWM if BOARD_THINGY91_NRF9160NS
+	select PWM_0 if BOARD_THINGY91_NRF9160NS
+
+if LED_USE_PWM
+
+config LED_PWM_DEV_NAME
+	string "PWM device name for RGB LED"
+	default "PWM_0" if BOARD_THINGY91_NRF9160NS
+
+config LED_RED_PIN
+	int "Red LED pin number"
+	default 29 if BOARD_THINGY91_NRF9160NS
+
+config LED_GREEN_PIN
+	int "Green LED pin number"
+	default 30 if BOARD_THINGY91_NRF9160NS
+
+config LED_BLUE_PIN
+	int "Blue LED pin number"
+	default 31 if BOARD_THINGY91_NRF9160NS
+
+endif # LED_USE_PWM
+
+endif # LED_CONTROL
+
+module = LED_CONTROL
+module-str = LED control library
+source "subsys/logging/Kconfig.template.log_config"

@@ -51,14 +51,19 @@ This design has the following advantages:
 
 It also has the following disadvantages:
 
-* For some uses, the nRF528xx MCU can be too slow. For example, when the application would like to do complex data processing.
+* For some use cases, the nRF52 Series and nRF53 Series MCUs can be too slow (for example, when the application does complex data processing).
 * The application and the network share Flash and RAM space, which can limit the application functionality.
 * Dual-bank DFU or an external flash is needed to update the firmware.
 
 .. figure:: /images/thread_platform_design_soc.svg
-   :alt: Thread-only architecture
+   :alt: Thread-only architecture (nRF52)
 
-   Thread-only architecture
+   Thread-only architecture on nRF52 Series devices
+
+.. figure:: /images/thread_platform_design_nRF53.svg
+   :alt: Thread-only architecture (nRF53)
+
+   Thread-only architecture on nRF53 Series devices
 
 This platform design is suitable for the following development kits:
 
@@ -70,18 +75,18 @@ This platform design is suitable for the following development kits:
 |:ref:`nRF52833 DK <ug_nrf52>`   |PCA10010   |:ref:`nrf52833dk_nrf52833 <nrf52833dk_nrf52833>`|``nrf52833dk_nrf52833``        |
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
 |:ref:`nRF5340 DK <ug_nrf5340>`  |PCA10095   |:ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>`    |``nrf5340dk_nrf5340_cpuapp``   |
+|                                |           |                                                |                               |
 |                                |           |                                                |``nrf5340dk_nrf5340_cpuappns`` |
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
-
-.. note::
-    |5340_not_supported|
+|nRF21540 DK                     |PCA10112   |:ref:`nrf21540dk_nrf52840 <nrf21540dk_nrf52840>`|``nrf21540dk_nrf52840``        |
++--------------------------------+-----------+------------------------------------------------+-------------------------------+
 
 .. _thread_architectures_designs_soc_designs_multiprotocol:
 
 Single-chip, multiprotocol (SoC)
 ================================
 
-With nRF52840 and nRF52833 supporting multiple wireless technologies, including IEEE 802.15.4 and Bluetooth Low Energy (Bluetooth LE), the application layer and OpenThread still run on the same processor.
+With nRF52 and nRF53 Series devices supporting multiple wireless technologies, including IEEE 802.15.4 and Bluetooth Low Energy (Bluetooth LE), the application layer and OpenThread still run on the same processor.
 
 In this multiprotocol design, the SoC ensures either dynamic or switched Thread and Bluetooth LE connectivity.
 
@@ -95,9 +100,14 @@ It also has the following disadvantages:
 * Bluetooth LE activity can degrade the connectivity on Thread if not implemented with efficiency in mind.
 
 .. figure:: /images/thread_platform_design_multi.svg
-   :alt: Multiprotocol Thread and Bluetooth LE architecture
+   :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52)
 
-   Multiprotocol Thread and Bluetooth LE architecture
+   Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series devices
+
+.. figure:: /images/thread_platform_design_nRF53_multi.svg
+   :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF53)
+
+   Multiprotocol Thread and Bluetooth LE architecture on nRF53 Series devices
 
 For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
 
@@ -114,9 +124,6 @@ This platform design is suitable for the following development kits:
 |                                |           |                                                |                               |
 |                                |           |                                                |``nrf5340dk_nrf5340_cpuappns`` |
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
-
-.. note::
-    |5340_not_supported|
 
 .. _thread_architectures_designs_cp:
 
@@ -165,13 +172,8 @@ This platform design is suitable for the following development kits:
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
 |:ref:`nRF52833 DK <ug_nrf52>`   |PCA10010   |:ref:`nrf52833dk_nrf52833 <nrf52833dk_nrf52833>`|``nrf52833dk_nrf52833``        |
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
-|:ref:`nRF5340 DK <ug_nrf5340>`  |PCA10095   |:ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>`    |``nrf5340dk_nrf5340_cpuapp``   |
-|                                |           |                                                |                               |
-|                                |           |                                                |``nrf5340dk_nrf5340_cpuappns`` |
+|nRF21540 DK                     |PCA10112   |:ref:`nrf21540dk_nrf52840 <nrf21540dk_nrf52840>`|``nrf21540dk_nrf52840``        |
 +--------------------------------+-----------+------------------------------------------------+-------------------------------+
-
-.. note::
-    |5340_not_supported|
 
 .. _thread_architectures_designs_cp_rcp:
 
@@ -391,4 +393,3 @@ This exception applies mainly to log messages and is done by turning off UART in
 The source page is available `here <https://openthread.io/platforms#system_architecture>`_.
 
 .. |connection_options_limited| replace:: Spinel connections through SPI and USB are not currently available.
-.. |5340_not_supported| replace:: :ref:`nRF5340 DK <ug_nrf5340>` is not yet supported by Thread in |NCS|.

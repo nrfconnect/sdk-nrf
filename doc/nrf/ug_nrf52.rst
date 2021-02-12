@@ -113,6 +113,15 @@ In addition, you can run the :ref:`zephyr:bluetooth-samples` that are included f
 
 For available libraries, see :ref:`lib_bluetooth_services` (|NCS|) and :ref:`zephyr:bluetooth_api` (Zephyr).
 
+Connected Home over IP (CHIP)
+=============================
+
+.. include:: ug_chip.rst
+   :start-after: chip_intro_start
+   :end-before: chip_intro_end
+
+See the :ref:`ug_chip` user guide for information about how to work with Connected Home over IP applications.
+To start developing, check out :ref:`chip_samples`.
 
 Enhanced ShockBurst
 ===================

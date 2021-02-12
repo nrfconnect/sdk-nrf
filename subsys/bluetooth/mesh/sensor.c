@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <bluetooth/mesh/sensor.h>
 #include <bluetooth/mesh/properties.h>
@@ -366,16 +366,16 @@ uint8_t sensor_powtime_encode(uint64_t raw)
 	/* Search through the lookup table to find the highest encoding lower
 	 * than the raw value.
 	 */
-	uint64_t raw_ns = raw * 1000;
+	uint64_t raw_us = raw * USEC_PER_MSEC;
 
-	if (raw_ns < powtime_lookup[0]) {
+	if (raw_us < powtime_lookup[0]) {
 		return 1;
 	}
 
 	const uint64_t *seed = &powtime_lookup[0];
 
 	for (int i = 1; i < ARRAY_SIZE(powtime_lookup); ++i) {
-		if (raw_ns < powtime_lookup[i]) {
+		if (raw_us < powtime_lookup[i]) {
 			seed = &powtime_lookup[i - 1];
 			break;
 		}
@@ -384,14 +384,14 @@ uint8_t sensor_powtime_encode(uint64_t raw)
 	int i;
 
 	for (i = 0; (i < ARRAY_SIZE(powtime_mul) &&
-		     raw_ns >= (*seed * powtime_mul[i]) / 100000);
+		     raw_us > (*seed * powtime_mul[i]) / 100000);
 	     i++) {
 	}
 
 	return ARRAY_SIZE(powtime_mul) * (seed - &powtime_lookup[0]) + i;
 }
 
-uint64_t sensor_powtime_decode_ns(uint8_t val)
+uint64_t sensor_powtime_decode_us(uint8_t val)
 {
 	if (val == 0) {
 		return 0;
@@ -404,7 +404,7 @@ uint64_t sensor_powtime_decode_ns(uint8_t val)
 
 uint64_t sensor_powtime_decode(uint8_t val)
 {
-	return sensor_powtime_decode_ns(val) / 1000L;
+	return sensor_powtime_decode_us(val) / USEC_PER_MSEC;
 }
 
 int sensor_cadence_encode(struct net_buf_simple *buf,

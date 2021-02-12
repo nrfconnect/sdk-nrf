@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 /**
  * @file
- * @defgroup bt_mesh_properties Bluetooth Mesh Properties
+ * @defgroup bt_mesh_properties Bluetooth mesh properties
  * @{
  * @brief Device properties definitions.
  */
@@ -16,8 +16,8 @@
 
 /**
  * @defgroup bt_mesh_property_ids Property IDs
- * All available Mesh Property IDs. See the Bluetooth Mesh Device Properties
- * Specification for details.
+ * All available mesh Property IDs. See the Bluetooth mesh device properties
+ * specification for details.
  * @{
  */
 /** Prohibited. */

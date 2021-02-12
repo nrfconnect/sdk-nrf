@@ -64,7 +64,7 @@ This sample consists of the following sample applications, one each for the appl
 Both of these sample applications must be built and programmed to the dual core device before testing.
 For details on building samples for a dual core device, see :ref:`ug_nrf5340_building`.
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Connect the dual core development kit to the computer using a USB cable.
    The development kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.

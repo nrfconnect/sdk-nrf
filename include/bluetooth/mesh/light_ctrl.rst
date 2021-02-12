@@ -11,7 +11,7 @@ The Light Lightness Control models implement common energy saving behavior for l
 While :ref:`bt_mesh_lightness_srv_readme` instances can be operated directly by dimmers and light switches, these devices are not time-aware, and cannot provide any dynamic behavior without extensive application logic on top.
 By adding an inactivity timer and a regulator for the ambient light level, the Light Lightness Control models make light fixtures behave dynamically and conserve energy.
 
-The Server implements the dynamic behavior, while the client allows configuration of the server's parameters.
+The dynamic behavior is implemented by the server, while the client allows the configuration of the server's parameters.
 
 The Light Lightness Control mesh models also feature their own common types, listed below.
 For types common to all models, see :ref:`bt_mesh_models`.

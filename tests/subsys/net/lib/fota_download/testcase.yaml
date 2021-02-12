@@ -1,3 +1,8 @@
 tests:
   net.lib.fota_download:
     tags: aws fota
+    platform_allow: nrf9160dk_nrf9160 nrf9160dk_nrf9160ns
+  net.lib.fota_download_build_only:
+    tags: aws fota
+    build_only: true
+    platform_allow: qemu_x86

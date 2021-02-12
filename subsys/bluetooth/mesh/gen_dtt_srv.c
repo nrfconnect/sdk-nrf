@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <string.h>
@@ -91,12 +91,23 @@ const struct bt_mesh_model_op _bt_mesh_dtt_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+static int update_handler(struct bt_mesh_model *model)
+{
+	struct bt_mesh_dtt_srv *srv = model->user_data;
+
+	encode_status(srv->model->pub->msg, srv->transition_time);
+	return 0;
+}
+
 static int bt_mesh_dtt_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_dtt_srv *srv = model->user_data;
 
 	srv->model = model;
-	net_buf_simple_init(model->pub->msg, 0);
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 	return 0;
 }
@@ -147,14 +158,6 @@ const struct bt_mesh_model_cb _bt_mesh_dtt_srv_cb = {
 	.settings_set = bt_mesh_dtt_srv_settings_set,
 #endif
 };
-
-int _bt_mesh_dtt_srv_update_handler(struct bt_mesh_model *model)
-{
-	struct bt_mesh_dtt_srv *srv = model->user_data;
-
-	encode_status(srv->model->pub->msg, srv->transition_time);
-	return 0;
-}
 
 void bt_mesh_dtt_srv_set(struct bt_mesh_dtt_srv *srv, uint32_t transition_time)
 {

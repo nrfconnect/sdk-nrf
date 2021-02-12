@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2020 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 function(get_board_without_ns_suffix board_in board_out)
@@ -58,3 +58,63 @@ function(ncs_add_partition_manager_config config_file)
     )
 endfunction()
 
+# Usage:
+#   ncs_file(<mode> <arg> ...)
+#
+# NCS file function extension.
+# This function extends the zephyr_file(CONF_FILES <arg>) function to support
+# switching BOARD for child images.
+#
+# This function currently support the following <modes>.
+#
+# BOARD <board>: Board name to use when searching for board specific Kconfig
+#                fragments.
+#
+# CONF_FILES <path>: Find all configuration files in path and return them in a
+#                    list. Configuration files will be:
+#                    - DTS:       Overlay files (.overlay)
+#                    - Kconfig:   Config fragments (.conf)
+#                    The conf file search will return existing configuration
+#                    files for BOARD or the current board if BOARD argument is
+#                    not given.
+#                    CONF_FILES takes the following additional arguments:
+#                    DTS <list>:   List to populate with DTS overlay files
+#                    KCONF <list>: List to populate with Kconfig fragment files
+#                    BUILD <type>: Build type to include for search.
+#                                  For example:
+#                                  BUILD debug, will look for <board>_debug.conf
+#                                  and <board>_debug.overlay, instead of <board>.conf
+#
+function(ncs_file)
+  set(file_options CONF_FILES)
+  if((ARGC EQUAL 0) OR (NOT (ARGV0 IN_LIST file_options)))
+    message(FATAL_ERROR "No <mode> given to `ncs_file(<mode> <args>...)` function,\n \
+Please provide one of following: CONF_FILES")
+  endif()
+
+  set(single_args CONF_FILES BOARD)
+  cmake_parse_arguments(FILE "" "${single_args}" "" ${ARGN})
+  cmake_parse_arguments(ZEPHYR_FILE "" "KCONF;DTS;BUILD" "" ${ARGN})
+
+  if(FILE_BOARD)
+    set(BOARD ${FILE_BOARD})
+  endif()
+
+  if(ZEPHYR_FILE_KCONF)
+    if(ZEPHYR_FILE_BUILD AND EXISTS ${FILE_CONF_FILES}/prj_${ZEPHYR_FILE_BUILD}.conf)
+      set(${ZEPHYR_FILE_KCONF} ${FILE_CONF_FILES}/prj_${ZEPHYR_FILE_BUILD}.conf)
+    elseif(NOT ZEPHYR_FILE_BUILD AND EXISTS ${FILE_CONF_FILES}/prj.conf)
+      set(${ZEPHYR_FILE_KCONF} ${FILE_CONF_FILES}/prj.conf)
+    endif()
+  endif()
+
+  zephyr_file(CONF_FILES ${FILE_CONF_FILES}/boards ${FILE_UNPARSED_ARGUMENTS})
+
+  if(ZEPHYR_FILE_KCONF)
+    set(${ZEPHYR_FILE_KCONF} ${${ZEPHYR_FILE_KCONF}} PARENT_SCOPE)
+  endif()
+
+  if(ZEPHYR_FILE_DTS)
+    set(${ZEPHYR_FILE_DTS} ${${ZEPHYR_FILE_DTS}} PARENT_SCOPE)
+  endif()
+endfunction()

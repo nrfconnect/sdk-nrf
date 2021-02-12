@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef NRF_CLOUD_TRANSPORT_H__
@@ -117,6 +117,10 @@ void nct_process(void);
 /**
  * @brief Helper function to determine when next keep alive message should be
  *        sent. Can be used for instance as a source for `poll` timeout.
+ *
+ * @return Time in milliseconds until next keep alive message is expected to
+ *         be sent.
+ * @return -1 if keep alive messages are not enabled.
  */
 int nct_keepalive_time_left(void);
 

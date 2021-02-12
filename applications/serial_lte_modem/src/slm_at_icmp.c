@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <logging/log.h>
 #include <zephyr.h>
@@ -64,8 +64,7 @@ static struct k_work my_work;
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern struct modem_param_info modem_param;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 
 static inline void setip(uint8_t *buffer, uint32_t ipaddr)
 {
@@ -209,7 +208,7 @@ static uint32_t send_ping_wait_reply(void)
 	ret = nrf_poll(fds, 1, ping_argv.waitms);
 	if (ret <= 0) {
 		LOG_ERR("nrf_poll() failed: (%d) (%d)", -errno, ret);
-		sprintf(rsp_buf, "#XPING: timeout\r\n");
+		sprintf(rsp_buf, "#XPING: \"timeout\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		goto close_end;
 	}
@@ -293,13 +292,14 @@ void ping_task(struct k_work *item)
 		int avg_s = avg / 1000;
 		int avg_f = avg % 1000;
 
-		sprintf(rsp_buf, "#XPING: average %d.%03d\r\n", avg_s, avg_f);
+		sprintf(rsp_buf, "#XPING: \"average %d.%03d\"\r\n",
+			avg_s, avg_f);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
 	freeaddrinfo(si);
 	freeaddrinfo(di);
-	sprintf(rsp_buf, "OK\r\n");
+	sprintf(rsp_buf, "\r\nOK\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
 }
 
@@ -309,26 +309,25 @@ static int ping_test_handler(const char *url, int length, int waittime,
 	int st;
 	struct addrinfo *res;
 	int addr_len;
+	char ipv4_addr[NET_IPV4_ADDR_LEN];
 
 	if (length > ICMP_MAX_LEN) {
 		LOG_ERR("Payload size exceeds limit");
 		return -1;
 	}
 
-	st = modem_info_params_get(&modem_param);
-	if (st < 0) {
-		LOG_ERR("Unable to obtain modem parameters (%d)", st);
+	if (!util_get_ipv4_addr(ipv4_addr)) {
+		LOG_ERR("Unable to obtain local IPv4 address");
 		return -1;
 	}
 
 	/* Check network connection status by checking local IP address */
-	addr_len = strlen(modem_param.network.ip_address.value_string);
+	addr_len = strlen(ipv4_addr);
 	if (addr_len == 0) {
 		LOG_ERR("LTE not connected yet");
 		return -1;
 	}
-	st = getaddrinfo(modem_param.network.ip_address.value_string,
-			NULL, NULL, &res);
+	st = getaddrinfo(ipv4_addr, NULL, NULL, &res);
 	if (st != 0) {
 		LOG_ERR("getaddrinfo(src) error: %d", st);
 		return -st;
@@ -339,8 +338,7 @@ static int ping_test_handler(const char *url, int length, int waittime,
 	res = NULL;
 	st = getaddrinfo(url, NULL, NULL, &res);
 	if (st != 0) {
-		LOG_ERR("getaddrinfo(dest) error: %d", st);
-		sprintf(rsp_buf, "Cannot resolve remote host\r\n");
+		sprintf(rsp_buf, "\"resolve host error: %d\"\r\n", st);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		freeaddrinfo(ping_argv.src);
 		return -st;
@@ -383,22 +381,18 @@ static int handle_at_icmp_ping(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 4) {
-			return -EINVAL;
-		}
-		err = at_params_string_get(&at_param_list, 1, url, &size);
+		err = util_string_get(&at_param_list, 1, url, &size);
 		if (err < 0) {
 			return err;
-		};
-		url[size] = '\0';
+		}
 		err = at_params_short_get(&at_param_list, 2, &length);
 		if (err < 0) {
 			return err;
-		};
+		}
 		err = at_params_short_get(&at_param_list, 3, &timeout);
 		if (err < 0) {
 			return err;
-		};
+		}
 		if (at_params_valid_count_get(&at_param_list) > 4) {
 			err = at_params_short_get(&at_param_list, 4, &count);
 			if (err < 0) {

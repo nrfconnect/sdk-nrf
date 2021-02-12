@@ -17,11 +17,11 @@ The sample provides a set of predefined commands that allow you to configure the
 Overview
 ********
 
-You can run the tests by connecting to the board through the serial port and sending shell commands.
+You can run the tests by connecting to the development kit through the serial port and sending shell commands.
 Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands.
 At any time during the tests, you can dynamically set the radio parameters, such as output power, bit rate, and channel.
 In sweep mode, you can set the time for which the radio scans each channel from 1 millisecond to 99 milliseconds, in steps of 1 millisecond.
-The sample also allows you to send a data pattern to another board.
+The sample also allows you to send a data pattern to another development kit.
 
 The sample starts with enabling the high frequency crystal oscillator and configuring the shell.
 You can then start running commands to set up and control the radio.
@@ -38,7 +38,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf52dk_nrf52832
+   :rows: nrf5340dk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
 
 You can use any one of the development kits listed above.
 
@@ -47,14 +47,23 @@ You can use any one of the development kits listed above.
 
 The sample also requires one of the following testing devices:
 
-  * Another board with the same sample.
+  * Another development kit with the same sample.
     See :ref:`radio_test_testing_board`.
-  * Another board connected to a PC with RSSI Viewer application (available in the `nRF Connect for Desktop`_).
+  * Another development kit connected to a PC with RSSI Viewer application (available in the `nRF Connect for Desktop`_).
     See :ref:`radio_test_testing_rssi`.
 
 .. note::
-   The radio test can be also performed using a spectrum analyzer.
+   You can perform the radio test also using a spectrum analyzer.
    This method of testing is not covered by this documentation.
+
+nRF21540 front-end module
+=========================
+
+.. |fem_file_path| replace:: :file:`samples/peripheral/radio_test`
+
+.. include:: /includes/sample_fem_support.txt
+
+The nRF21540 transmitted power gain, antenna and an activation delay can be configured using the user interface :ref:`radio_test_ui`.
 
 .. _radio_test_ui:
 
@@ -75,6 +84,9 @@ User interface
    * - end_channel
      - <channel>
      - End the channel for the sweep.
+   * - nRF21540
+     - <sub_cmd>
+     - Set nRF21540 Front-End-Module parameters.
    * - output_power
      - <sub_cmd>
      - Output power set.
@@ -131,27 +143,27 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, you can test it in one of two ways.
+After programming the sample to your development kit, you can test it in one of two ways.
 
 .. note::
    For the |nRF5340DKnoref|, see :ref:`logging_cpunet` for information about the COM terminals on which the logging output is available.
 
 .. _radio_test_testing_board:
 
-Testing with another board
---------------------------
+Testing with another development kit
+------------------------------------
 
-1. Connect both boards to the computer using a USB cable.
-   The boards are assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+1. Connect both development kits to the computer using a USB cable.
+   The kits are assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal_both|
-#. Run the following commands on one of the boards:
+#. Run the following commands on one of the kits:
    #. Set the data rate with the ``data_rate`` command to ``ble_2Mbit``.
    #. Set the transmission pattern with the ``transmit_pattern`` command to ``pattern_11110000``.
    #. Set the radio channel with the ``start_channel`` command to 40.
-#. Repeat all steps for the second board.
-#. On both boards, run the ``parameters_print`` command to confirm that the radio configuration is the same on both boards.
-#. Set one board in the Modulated TX Carrier mode using the ``start_tx_modulated_carrier`` command.
-#. Set the other board in the RX Carrier mode using the ``start_rx`` command.
+#. Repeat all steps for the second kit.
+#. On both kits, run the ``parameters_print`` command to confirm that the radio configuration is the same on both kits.
+#. Set one kit in the Modulated TX Carrier mode using the ``start_tx_modulated_carrier`` command.
+#. Set the other kit in the RX Carrier mode using the ``start_rx`` command.
 #. Print the received data with the ``print_rx`` command and confirm that they match the transmission pattern (0xF0).
 
 .. _radio_test_testing_rssi:
@@ -159,14 +171,14 @@ Testing with another board
 Testing with RSSI Viewer
 ------------------------
 
-1. Connect the board to the computer using a USB cable.
-   The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+1. Connect the kit to the computer using a USB cable.
+   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal|
 #. Set the start channel with the ``start_channel`` command to 20.
 #. Set the end channel with the ``end_channel`` command to 60.
 #. Set the time on channel with the ``time_on_channel`` command to 50ms.
-#. Set the board in the TX sweep mode using the ``start_tx_sweep`` command.
-#. Start the RSSI Viewer application and select the board to communicate with.
+#. Set the kit in the TX sweep mode using the ``start_tx_sweep`` command.
+#. Start the RSSI Viewer application and select the kit to communicate with.
 #. On the application chart, observe the TX sweep in the form of a wave that starts at 2420 MHz frequency and ends with 2480MHz.
 
 Dependencies

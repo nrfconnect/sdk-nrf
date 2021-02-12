@@ -12,8 +12,8 @@ The peripheral LBS sample demonstrates how to use the :ref:`lbs_readme`.
 Overview
 ********
 
-When connected, the sample sends the state of **Button 1** on the development board to the connected device, such as a phone or tablet.
-The mobile application on the device can display the received button state and can control the state of **LED 3** on the development board.
+When connected, the sample sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
+The mobile application on the device can display the received button state and can control the state of **LED 3** on the development kit.
 
 Alternatively, you can use this sample to control the color of RGB LED on the nRF52840 Dongle.
 
@@ -43,7 +43,7 @@ RGB LED:
 Button 1:
    * Sends a notification with the button state: "pressed" or "released".
 
-For Development Kit boards:
+For development kits:
 
 LED 1:
    * When the main loop is running (device is advertising), blinks with a period of 2 seconds, duty cycle 50%.
@@ -72,31 +72,31 @@ The sample can be built with a minimum configuration as a demonstration of how t
 
 .. code-block:: console
 
-   west build samples/bluetooth/peripheral_lbs -- -DOVERLAY_CONFIG='minimal.conf'
+   west build samples/bluetooth/peripheral_lbs -- -DCONF_FILE='prj_minimal.conf'
 
 
 Testing
 =======
 
-After programming the sample to your dongle or development board, test it by performing the following steps.
+After programming the sample to your dongle or development kit, test it by performing the following steps.
 This testing procedure assumes that you are using `nRF Connect for Mobile`_.
 
-1. Power on your development board or plug in your dongle.
+1. Power on your development kit or plug in your dongle.
 #. Connect to the device from nRF Connect (the device is advertising as "Nordic_Blinky").
 #. Observe that the services of the connected device are shown.
 #. In "Nordic LED Button Service", click the :guilabel:`Play` button for the "Button" characteristic.
-#. Press **Button 1** either on the dongle or on the development board.
+#. Press **Button 1** either on the dongle or on the development kit.
 #. Observe that notifications with the following values are received:
 
    * ``00`` when **Button 1** is released,
    * ``01`` when **Button 1** is pressed.
 
-#. Control the color of RGB LED on the dongle or status of **LED 3** on the board by writing the following values to the "LED" characteristic in the "Nordic LED Button Service":
+#. Control the color of RGB LED on the dongle or status of **LED 3** on the kit by writing the following values to the "LED" characteristic in the "Nordic LED Button Service":
 
-   * ``00`` to switch the LED off on the board or turn on the red RGB LED on the dongle.
-   * ``01`` to switch the LED on on the board or turn on the green RGB LED on the dongle.
+   * ``00`` to switch the LED off on the kit or turn on the red RGB LED on the dongle.
+   * ``01`` to switch the LED on on the kit or turn on the green RGB LED on the dongle.
 
-#. Observe that RGB LED on the dongle or **LED 3** on the board corresponds to the value of the "LED" characteristic.
+#. Observe that RGB LED on the dongle or **LED 3** on the kit corresponds to the value of the "LED" characteristic.
 
 Dependencies
 ************

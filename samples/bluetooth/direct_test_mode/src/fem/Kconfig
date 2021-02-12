@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+DT_COMPAT_NORDIC_NRF21540 := nordic,nrf21540-fem
+
+config NRF21540_FEM
+	bool "nRF21540 Front-End-Module"
+	depends on $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540))
+	default y
+	select SPI
+	select NRFX_TIMER2
+	help
+	  Enable nRF21540 Front-End-Module support
+
+if NRF21540_FEM
+
+config NRF21540_FEM_GPIOTE_TX_EN
+	int "GPIOTE channel number used to control TX_EN pin of the front-end module"
+	default 7
+
+config NRF21540_FEM_GPIOTE_RX_EN
+	int "GPIOTE channel number used to control RX_EN pin of the front-end module"
+	default 6
+
+endif # NRF21540_FEM

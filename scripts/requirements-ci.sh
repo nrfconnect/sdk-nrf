@@ -21,15 +21,11 @@ rmvirtualenv pip-freeze-ci-venv
 mkvirtualenv pip-freeze-ci-venv
 workon pip-freeze-ci-venv
 
-
-# Convert static ci-tools req to a floating tools list
-sed 's/[>=].*//' tools/ci-tools/requirements.txt > tools/ci-tools/requirements-float.txt
-
 pip3 install --isolated \
     -r bootloader/mcuboot/scripts/requirements.txt \
     -r zephyr/scripts/requirements.txt  \
-    -r tools/ci-tools/requirements-float.txt  \
-    -r nrf/scripts/requirements.txt
+    -r nrf/scripts/requirements-base.txt \
+    -r nrf/scripts/requirements-build.txt
 pip3 freeze > $OUT_FILE
 
 deactivate

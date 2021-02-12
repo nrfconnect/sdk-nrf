@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <sys/byteorder.h>
 #include <bluetooth/mesh/models.h>
@@ -231,7 +231,8 @@ int bt_mesh_scene_cli_recall(struct bt_mesh_scene_cli *cli,
 				 BT_MESH_SCENE_MSG_MAXLEN_RECALL);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCENE_OP_RECALL);
 
-	if (scene == BT_MESH_SCENE_NONE) {
+	if (scene == BT_MESH_SCENE_NONE ||
+	    model_transition_is_invalid(transition)) {
 		return -EINVAL;
 	}
 
@@ -253,7 +254,8 @@ int bt_mesh_scene_cli_recall_unack(
 				 BT_MESH_SCENE_MSG_MAXLEN_RECALL);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCENE_OP_RECALL_UNACK);
 
-	if (scene == BT_MESH_SCENE_NONE) {
+	if (scene == BT_MESH_SCENE_NONE ||
+	    model_transition_is_invalid(transition)) {
 		return -EINVAL;
 	}
 

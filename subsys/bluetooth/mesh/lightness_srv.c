@@ -1,12 +1,13 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <stdlib.h>
 #include <bluetooth/mesh/lightness_srv.h>
 #include "model_utils.h"
 #include "lightness_internal.h"
+#include <bluetooth/mesh/light_ctrl_srv.h>
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
 #define LOG_MODULE_NAME bt_mesh_light_srv
@@ -46,6 +47,15 @@ static int store_state(struct bt_mesh_lightness_srv *srv)
 
 	return bt_mesh_model_data_store(srv->lightness_model, false, NULL,
 					&data, sizeof(data));
+}
+
+static void disable_control(struct bt_mesh_lightness_srv *srv)
+{
+#if defined(CONFIG_BT_MESH_LIGHT_CTRL_SRV)
+	if (srv->ctrl) {
+		bt_mesh_light_ctrl_srv_disable(srv->ctrl);
+	}
+#endif
 }
 
 static void lvl_status_encode(struct net_buf_simple *buf,
@@ -230,7 +240,7 @@ static void lightness_set(struct bt_mesh_model *mod,
 		/* According to the Mesh Model Specification section 6.2.3.1,
 		 * manual changes to the lightness should disable control.
 		 */
-		atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+		disable_control(srv);
 		lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
@@ -310,6 +320,25 @@ static void handle_default_get(struct bt_mesh_model *mod,
 	bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
 }
 
+void lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
+			       struct bt_mesh_msg_ctx *ctx, uint16_t set)
+{
+	uint16_t old = srv->default_light;
+
+	if (set == old) {
+		return;
+	}
+
+	BT_DBG("%u", set);
+
+	srv->default_light = set;
+	if (srv->handlers->default_update) {
+		srv->handlers->default_update(srv, ctx, old, set);
+	}
+
+	store_state(srv);
+}
+
 static void set_default(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf, bool ack)
 {
@@ -320,19 +349,7 @@ static void set_default(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_lightness_srv *srv = mod->user_data;
 	uint16_t new = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
 
-	if (new != srv->default_light) {
-		uint16_t old = srv->default_light;
-
-		srv->default_light = new;
-		if (srv->handlers->default_update) {
-			srv->handlers->default_update(srv, ctx, old, new);
-		}
-
-		store_state(srv);
-	}
-
-	BT_DBG("%u", new);
-
+	lightness_srv_default_set(srv, ctx, new);
 	if (!ack) {
 		return;
 	}
@@ -508,7 +525,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 		/* According to the Mesh Model Specification section 6.2.3.1,
 		 * manual changes to the lightness should disable control.
 		 */
-		atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+		disable_control(srv);
 		lightness_srv_change_lvl(srv, ctx, &set, &status);
 	} else if (rsp) {
 		srv->handlers->light_get(srv, NULL, &status);
@@ -562,7 +579,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	/* According to the Mesh Model Specification section 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
-	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+	disable_control(srv);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	/* Override "last" value to be able to make corrective deltas when
@@ -612,9 +629,9 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		 * server's transition as non-linear. The transition time and
 		 * end points are unaffected by this.
 		 */
-		uint32_t time_to_edge =
-			((uint64_t)distance * (uint64_t)move_set->transition->time) /
-			abs(move_set->delta);
+		uint32_t time_to_edge = ((uint64_t)distance *
+					 (uint64_t)move_set->transition->time) /
+					abs(move_set->delta);
 
 		BT_DBG("Move: distance: %u delta: %u step: %u ms time: %u ms",
 		       (uint32_t)distance, move_set->delta,
@@ -629,7 +646,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	/* According to the Mesh Model Specification section 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
-	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+	disable_control(srv);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {
@@ -671,7 +688,7 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 	/* According to the Mesh Model Specification section 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
-	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+	disable_control(srv);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {
@@ -696,15 +713,14 @@ static void onoff_get(struct bt_mesh_onoff_srv *onoff_srv,
 	rsp->target_on_off = (status.target > 0);
 }
 
-const struct bt_mesh_onoff_srv_handlers
-	_bt_mesh_lightness_srv_onoff_handlers = {
-		.set = onoff_set,
-		.get = onoff_get,
-	};
+const struct bt_mesh_onoff_srv_handlers _bt_mesh_lightness_srv_onoff_handlers = {
+	.set = onoff_set,
+	.get = onoff_get,
+};
 
 static void lightness_srv_reset(struct bt_mesh_lightness_srv *srv)
 {
-	srv->range.min = 0;
+	srv->range.min = 1;
 	srv->range.max = UINT16_MAX;
 	srv->default_light = 0;
 	srv->last = UINT16_MAX;
@@ -723,6 +739,19 @@ static void bt_mesh_lightness_srv_reset(struct bt_mesh_model *mod)
 	}
 }
 
+static int update_handler(struct bt_mesh_model *model)
+{
+	struct bt_mesh_lightness_srv *srv = model->user_data;
+	struct bt_mesh_lightness_status status = { 0 };
+
+	srv->handlers->light_get(srv, NULL, &status);
+	BT_DBG("Republishing: %u -> %u [%u ms]", status.current, status.target,
+	       status.remaining_time);
+	lvl_status_encode(model->pub->msg, &status, LIGHT_USER_REPR);
+	return 0;
+}
+
+
 static int bt_mesh_lightness_srv_init(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_lightness_srv *srv = mod->user_data;
@@ -730,7 +759,10 @@ static int bt_mesh_lightness_srv_init(struct bt_mesh_model *mod)
 	srv->lightness_model = mod;
 
 	lightness_srv_reset(srv);
-	net_buf_simple_init(mod->pub->msg, 0);
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
 		/* Model extensions:
@@ -756,8 +788,7 @@ static int bt_mesh_lightness_srv_init(struct bt_mesh_model *mod)
 
 #ifdef CONFIG_BT_SETTINGS
 static int bt_mesh_lightness_srv_settings_set(struct bt_mesh_model *mod,
-					      const char *name,
-					      size_t len_rd,
+					      const char *name, size_t len_rd,
 					      settings_read_cb read_cb,
 					      void *cb_arg)
 {
@@ -799,6 +830,11 @@ static int bt_mesh_lightness_srv_start(struct bt_mesh_model *mod)
 
 	switch (srv->ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:
+		/* Not calling the lightness server's callback when the value is
+		 * supposed to be zero, so we'll just set the "last" value for
+		 * correctness:
+		 */
+		srv->last = 0;
 		return 0;
 	case BT_MESH_ON_POWER_UP_ON:
 		set.lvl = (srv->default_light ? srv->default_light : srv->last);
@@ -836,16 +872,4 @@ int bt_mesh_lightness_srv_pub(struct bt_mesh_lightness_srv *srv,
 			      const struct bt_mesh_lightness_status *status)
 {
 	return pub(srv, ctx, status, LIGHT_USER_REPR);
-}
-
-int _bt_mesh_lightness_srv_update_handler(struct bt_mesh_model *model)
-{
-	struct bt_mesh_lightness_srv *srv = model->user_data;
-	struct bt_mesh_lightness_status status = { 0 };
-
-	srv->handlers->light_get(srv, NULL, &status);
-	BT_DBG("Republishing: %u -> %u [%u ms]", status.current, status.target,
-	       status.remaining_time);
-	lvl_status_encode(model->pub->msg, &status, LIGHT_USER_REPR);
-	return 0;
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <zephyr.h>
 #include <errno.h>
@@ -11,6 +11,7 @@
 #include <autoconf.h>
 #include <string.h>
 #include <bl_validation.h>
+#include <aarch32/cortex_m/cmse.h>
 
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
@@ -31,25 +32,24 @@
  */
 
 #ifdef CONFIG_SPM_SERVICE_RNG
-#ifdef MBEDTLS_CONFIG_FILE
-#include MBEDTLS_CONFIG_FILE
-#else
-#include "mbedtls/config.h"
-#endif /* MBEDTLS_CONFIG_FILE */
+#include "nrf_cc3xx_platform_ctr_drbg.h"
 
-#include <mbedtls/platform.h>
-#include <mbedtls/entropy_poll.h>
+static nrf_cc3xx_platform_ctr_drbg_context_t ctr_drbg_ctx;
 #endif /* CONFIG_SPM_SERVICE_RNG */
 
+static bool ptr_in_secure_area(intptr_t ptr)
+{
+	return arm_cmse_addr_is_secure(ptr) == 1;
+}
 
 int spm_secure_services_init(void)
 {
 	int err = 0;
 
 #ifdef CONFIG_SPM_SERVICE_RNG
-	mbedtls_platform_context platform_ctx = {0};
-	err = mbedtls_platform_setup(&platform_ctx);
+	err = nrf_cc3xx_platform_ctr_drbg_init(&ctr_drbg_ctx, NULL, 0);
 #endif
+
 	return err;
 }
 
@@ -86,6 +86,10 @@ int spm_request_read_nse(void *destination, uint32_t addr, size_t len)
 		return -EINVAL;
 	}
 
+	if (ptr_in_secure_area((intptr_t)destination)) {
+		return -EINVAL;
+	}
+
 	for (size_t i = 0; i < ARRAY_SIZE(ranges); i++) {
 		uint32_t start = ranges[i].start;
 		uint32_t size = ranges[i].size;
@@ -114,17 +118,54 @@ void spm_request_system_reboot_nse(void)
 __TZ_NONSECURE_ENTRY_FUNC
 int spm_request_random_number_nse(uint8_t *output, size_t len, size_t *olen)
 {
-	int err;
+	int err = -EINVAL;
 
-	if (len != MBEDTLS_ENTROPY_MAX_GATHER) {
+	if (ptr_in_secure_area((intptr_t)output) ||
+	    ptr_in_secure_area((intptr_t)olen)) {
 		return -EINVAL;
 	}
 
-	err = mbedtls_hardware_poll(NULL, output, len, olen);
+	err = nrf_cc3xx_platform_ctr_drbg_get(&ctr_drbg_ctx, output, len, olen);
+	if (*olen != len) {
+		return -EINVAL;
+	}
+
 	return err;
 }
 #endif /* CONFIG_SPM_SERVICE_RNG */
 
+#ifdef CONFIG_SPM_SERVICE_S0_ACTIVE
+__TZ_NONSECURE_ENTRY_FUNC
+int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active)
+{
+	const struct fw_info *s0;
+	const struct fw_info *s1;
+	bool s0_valid;
+	bool s1_valid;
+
+	if (ptr_in_secure_area((intptr_t)s0_active)) {
+		return -EINVAL;
+	}
+
+	s0 = fw_info_find(s0_address);
+	s1 = fw_info_find(s1_address);
+
+	s0_valid = (s0 != NULL) && (s0->valid == CONFIG_FW_INFO_VALID_VAL);
+	s1_valid = (s1 != NULL) && (s1->valid == CONFIG_FW_INFO_VALID_VAL);
+
+	if (!s1_valid && !s0_valid) {
+		return -EINVAL;
+	} else if (!s1_valid) {
+		*s0_active = true;
+	} else if (!s0_valid) {
+		*s0_active = false;
+	} else {
+		*s0_active = s0->version >= s1->version;
+	}
+
+	return 0;
+}
+#endif /* CONFIG_SPM_SERVICE_S0_ACTIVE */
 
 #ifdef CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO
 __TZ_NONSECURE_ENTRY_FUNC
@@ -133,6 +174,16 @@ int spm_firmware_info_nse(uint32_t fw_address, struct fw_info *info)
 	const struct fw_info *tmp_info;
 
 	if (info == NULL) {
+		return -EINVAL;
+	}
+
+	/* Ensure that fw_address is within secure area */
+	if (!ptr_in_secure_area(fw_address)) {
+		return -EINVAL;
+	}
+
+	/* Ensure that *info is in non-secure RAM */
+	if (ptr_in_secure_area((intptr_t)info)) {
 		return -EINVAL;
 	}
 

@@ -36,11 +36,11 @@ Building and Running
 Testing
 =======
 
-After programming the sample to your dongle or development board, test it by performing the following steps.
+After programming the sample to your dongle or development kit, test it by performing the following steps.
 This testing procedure assumes that you are using `nRF Connect for Mobile`_.
 
-1. Connect the board to the computer using a USB cable.
-   The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+1. Connect the kit to the computer using a USB cable.
+   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal|
 #. Connect to the device from nRF Connect (the device is advertising as "Nordic Discovery Sample").
    When connected, the sample starts discovering the services of the connected device.

@@ -19,7 +19,7 @@ Overview
 
 When connected, the sample performs the handshake procedure and informs the peer of its supported capabilities.
 Directives sent by the connected peer are printed as log messages when :option:`CONFIG_LOG` is set.
-Additionally, when the "wakeword" State Update directive is received, LED 3 on the development kit is turned on.
+Additionally, when the "wake word" State Update directive is received, LED 3 on the development kit is turned on.
 
 Gadget capabilities
 *******************
@@ -35,30 +35,30 @@ The following table shows the mapping between capability configuration and suppo
 
    * - Capability option
      - Interface
-   * - ``CONFIG_GADGETS_CAPABILITY_ALERTS_ENABLE``
+   * - ``CONFIG_BT_ALEXA_GADGETS_CAPABILITY_ALERTS``
      - `Alerts interface`_
-   * - ``CONFIG_GADGETS_CAPABILITY_MUSICDATA_ENABLE``
+   * - ``CONFIG_BT_ALEXA_GADGETS_CAPABILITY_MUSICDATA``
      - `Alexa.Gadget.MusicData interface`_
-   * - ``CONFIG_GADGETS_CAPABILITY_SPEECHDATA_ENABLE``
+   * - ``CONFIG_BT_ALEXA_GADGETS_CAPABILITY_SPEECHDATA``
      - `Alexa.Gadget.SpeechData interface`_
-   * - ``CONFIG_GADGETS_CAPABILITY_STATELISTENER_ENABLE``
+   * - ``CONFIG_BT_ALEXA_GADGETS_CAPABILITY_STATELISTENER``
      - `Alexa.Gadget.StateListener interface`_
-   * - ``CONFIG_GADGETS_CAPABILITY_NOTIFICATIONS_ENABLE``
+   * - ``CONFIG_BT_ALEXA_GADGETS_CAPABILITY_NOTIFICATIONS``
      - `Alexa Gadgets Notifications interface`_
 
 Gadget Custom Directives and Events
 ***********************************
-Custom directives sent from the peer to the Gadget are propagated via the ``GADGETS_EVT_CUSTOM`` event.
+Custom directives sent from the peer to the Gadget are propagated via the ``BT_GADGETS_EVT_CUSTOM`` event.
 Custom directives do not require defining any additional data format.
 
-This sample includes a rudimentary custom event type that lets you send a JSON-formatted string with your chosen custom event name and namespace, using the function ``gadgets_profile_custom_event_json_send``.
+This sample includes a rudimentary custom event type that lets you send a JSON-formatted string with your chosen custom event name and namespace, using the function ``bt_gadgets_profile_custom_event_json_send``.
 
 By default, the sample is configured to respond to the "Color cycler" custom skill.
 For instructions on how to create this custom skill, see `Alexa Gadgets Github color cycler`_.
 Note that the skill code and configuration procedure is the same, even though the sample from this link uses a Raspberry Pi as a Gadget.
 
 For more complex custom event types, you must define a custom event structure as described in `Alexa Gadgets Custom Event`_.
-The custom event protobuf must be encoded using ``pb_encode()`` and the encoded buffer must be transmitted using ``gadgets_profile_custom_event_send``.
+The custom event *protobuf* must be encoded using ``pb_encode()`` and the encoded buffer must be transmitted using ``bt_gadgets_profile_custom_event_send``.
 
 Requirements
 ************
@@ -87,7 +87,7 @@ This sample depends on an external protobuf compiler tool - `Nanopb`_.
 
 This tool must be downloaded manually.
 
-Download Nanopb version **0.4.2** for your platform from the `Nanopb Downloads`_ site and extract the downloaded file to either this sample directory, or some other location where CMake can find it via a standard system PATH.
+Download Nanopb version **0.4.2** for your platform from the `Nanopb Downloads`_ site and extract the downloaded file to either this sample directory, the |NCS| installation directory, the tools folder in the |NCS| installation directory, or any other location where CMake can find it via a standard system PATH.
 Note that this sample directory is searched automatically for the presence of Nanopb.
 For example, if you are using Windows, download and extract **nanopb-0.4.2-windows-x86.zip** to this sample directory.
 
@@ -102,7 +102,7 @@ When registering the Gadget, you will receive two identifier strings:
 1) Device Amazon ID
 2) Device secret
 
-You must update the ``CONFIG_GADGETS_AMAZON_ID`` and ``CONFIG_GADGETS_DEVICE_SECRET`` configuration options in :file:`prj.conf` with the values that you received during registration.
+You must update the ``CONFIG_BT_ALEXA_GADGETS_AMAZON_ID`` and ``CONFIG_BT_ALEXA_GADGETS_DEVICE_SECRET`` configuration options in :file:`prj.conf` with the values that you received during the registration.
 
 User interface
 **************
@@ -111,16 +111,16 @@ LED 1:
    On when connected.
 
 LED 2:
-   On when handshake with peer is completed.
+   On when the handshake with a peer is completed.
 
 LED 3:
-   On when wakeword directive (``Alexa.Gadget.StateListener``) is received.
+   On when the wake word directive (``Alexa.Gadget.StateListener``) is received.
 
 LED 4:
-   Toggles when Color Cycler skill is used.
+   Toggles when the Color Cycler skill is used.
 
 Button 4:
-   Erases bond information when button is held during power cycle or reset.
+   Erases all bond information when a button is held during a power cycle or reset.
 
 Building and running
 ********************
@@ -134,19 +134,19 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Optionally, set up log monitoring:
 
-  a. Connect the board to the computer using a USB cable.
-     The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+  a. Connect the kit to the computer using a USB cable.
+     The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
   b. |connect_terminal|
 
-2. Reset the board.
+2. Reset the kit.
 3. Follow these instructions to pair your Echo device with the sample: `Alexa Gadgets Pairing`_.
 4. Observe that LED 1 turns on to indicate that a connection has been established.
-5. Observe that LED 2 turns on to indicate that the Alexa Gadgets handshake has completed.
-6. Speak the "Alexa" wakeword to your Echo device and observe that LED 3 turns on.
+5. Observe that LED 2 turns on to indicate that the Alexa Gadgets handshake has been completed.
+6. Say the "Alexa" wake word to your Echo device and observe that LED 3 turns on.
 7. If you are monitoring the log output from the COM port, observe log activity during Alexa queries.
 
 Dependencies

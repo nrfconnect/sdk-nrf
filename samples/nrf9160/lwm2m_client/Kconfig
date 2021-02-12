@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 menu "Application sample"
@@ -26,6 +26,13 @@ config APP_HOLD_TIME_GPS
 	help
 	  The minimum time in seconds that notifications can be sent to
 	  observers of the Location data.
+
+config APP_MCUBOOT_FLASH_BUF_SZ
+	int "Size of buffer used for flash write operations during MCUboot updates"
+	depends on DFU_TARGET_MCUBOOT
+	default 512
+	help
+	  Buffer size must be aligned to the minimal flash write block size.
 
 choice
 	prompt "GPS device"
@@ -80,7 +87,6 @@ config ACCEL_USE_SIM
 	select SENSOR
 	select SENSOR_SIM
 	select SENSOR_SIM_TRIGGER
-	select SENSOR_SIM_STATIC_VALUES
 	help
 		Use sensor simulator to generate accelerometer data for
 		flip detection data sent to nRF Cloud.

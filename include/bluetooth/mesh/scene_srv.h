@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
@@ -48,17 +48,17 @@ struct bt_mesh_scene_srv;
 
 /** Scene Server model instance */
 struct bt_mesh_scene_srv {
-	/** Current scene. */
-	uint16_t curr;
-	/** Previous scene. */
-	uint16_t prev;
-
 	/** All known scenes. */
 	uint16_t all[CONFIG_BT_MESH_SCENES_MAX];
 	/** Number of known scenes. */
 	uint16_t count;
 
 	/** @cond INTERNAL_HIDDEN */
+
+	/** Next scene. */
+	uint16_t next;
+	/** Previous scene. */
+	uint16_t prev;
 
 	/** Largest number of pages used to store vendor model scene data. */
 	uint8_t vndpages;
@@ -194,7 +194,7 @@ void bt_mesh_scene_invalidate(struct bt_mesh_scene_entry *entry);
  *                        parameters.
  *
  *  @retval 0 Successfully transitioned to the given scene.
- *  @retval -EINVAL Invalid scene number.
+ *  @retval -EINVAL Invalid scene number or transition parameters.
  *  @retval -ENOENT No such scene.
  */
 int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
@@ -213,6 +213,30 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
  */
 int bt_mesh_scene_srv_pub(struct bt_mesh_scene_srv *srv,
 			 struct bt_mesh_msg_ctx *ctx);
+
+/** @brief Get the current scene.
+ *
+ * This will return the scene that the scene servers is currently in. If
+ * there is no currently active scene this will return @ref BT_MESH_SCENE_NONE.
+ *
+ *  @param[in] srv Scene Server model.
+ *
+ * @return Return the current scene for the scene server.
+ */
+uint16_t
+bt_mesh_scene_srv_current_scene_get(const struct bt_mesh_scene_srv *srv);
+
+/** @brief Get the target scene.
+ *
+ * This will return the scene that the scene servers is transiting into. If
+ * there is no transition running this will return @ref BT_MESH_SCENE_NONE.
+ *
+ *  @param[in] srv Scene Server model.
+ *
+ * @return Return the target scene for the scene server.
+ */
+uint16_t
+bt_mesh_scene_srv_target_scene_get(const struct bt_mesh_scene_srv *srv);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_cb _bt_mesh_scene_srv_cb;

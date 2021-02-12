@@ -1,14 +1,14 @@
 .. _bt_mesh_sensors_readme:
 
-Bluetooth Mesh Sensors
+Bluetooth mesh sensors
 ######################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth Mesh specification provides a common scheme for representing all sensors.
-A single Bluetooth Mesh Sensor instance represents a single physical sensor, and a mesh device may present any number of sensors to the network through a Sensor Server model.
+The Bluetooth mesh specification provides a common scheme for representing all sensors.
+A single Bluetooth mesh sensor instance represents a single physical sensor, and a mesh device may present any number of sensors to the network through a Sensor Server model.
 Sensors represent their measurements as a list of sensor channels, as described by the sensor's assigned type.
 
 Sensors are accessed through the Sensor models, which are documented separately:
@@ -23,7 +23,7 @@ Sensors are accessed through the Sensor models, which are documented separately:
 Basic example
 =============
 
-A sensor reporting the device operating temperature could combine the Bluetooth Mesh :c:var:`Present Device Operating Temperature <bt_mesh_sensor_present_dev_op_temp>` sensor type with the on-chip ``TEMP_NRF5`` temperature sensor driver:
+A sensor reporting the device operating temperature could combine the Bluetooth mesh :c:var:`Present Device Operating Temperature <bt_mesh_sensor_present_dev_op_temp>` sensor type with the on-chip ``TEMP_NRF5`` temperature sensor driver:
 
 .. code-block:: c
 
@@ -55,27 +55,27 @@ See :ref:`bt_mesh_sensor_srv_readme` for details.
 Sensor types
 ============
 
-Sensor types are the specification defined data types for the various Bluetooth Mesh sensor parameters.
-Each sensor type is assigned its own Device Property ID, as specified in the Bluetooth Mesh Device Properties Specification.
+Sensor types are the specification defined data types for the various Bluetooth mesh sensor parameters.
+Each sensor type is assigned its own Device Property ID, as specified in the Bluetooth mesh device properties specification.
 Like the Device Properties, the Sensor types are connected to a Bluetooth GATT Characteristic, which describes the unit, range, resolution and encoding scheme of the sensor type.
 
 .. note::
-   The Bluetooth Mesh specification only allows sensor types that have a Device Property ID in the Bluetooth Mesh Device Properties Specification.
+   The Bluetooth mesh specification only allows sensor types that have a Device Property ID in the Bluetooth mesh device properties specification.
    It's not possible to represent vendor specific sensor values.
 
 The sensor types may either be used as the data types of the sensor output values, or as configuration parameters for the sensors.
 
-The Bluetooth Mesh Sensor type API is built to mirror and integrate well with the Zephyr :ref:`zephyr:sensor_api` API.
-Some concepts in the Bluetooth Mesh Specification are changed slightly to fit better with the Zephyr Sensor API, with focus on making integration as simple as possible.
+The Bluetooth mesh Sensor type API is built to mirror and integrate well with the Zephyr :ref:`zephyr:sensor_api` API.
+Some concepts in the Bluetooth mesh specification are changed slightly to fit better with the Zephyr Sensor API, with focus on making integration as simple as possible.
 
 .. _bt_mesh_sensor_types_channels:
 
-Sensor Channels
+Sensor channels
 ***************
 
 Each sensor type may consist of one or more channels.
 The list of sensor channels in each sensor type is immutable, and all channels must always have a valid value when the sensor data is passed around.
-This is slightly different from the sensor type representation in the Bluetooth Mesh Specification, which represents multi-channel sensors as structures, rather than flat lists.
+This is slightly different from the sensor type representation in the Bluetooth mesh specification, which represents multi-channel sensors as structures, rather than flat lists.
 
 Each channel in a sensor type is represented by a single :c:struct:`sensor_value`.
 For sensor values that are represented as whole numbers, the fractional part of the value (:c:member:`sensor_value.val2`) is ignored.
@@ -85,17 +85,10 @@ Every sensor channel has a name and a unit, as listed in the sensor type documen
 The name and unit are only available if :option:`CONFIG_BT_MESH_SENSOR_LABELS` option is set, and can aid in debugging and presentation of the sensor output.
 Both the channel name and unit is also listed in the documentation for each sensor type.
 
-Most sensor values are reported as scalars with some scaling factor applied to
-them during encoding.
-This scaling factor and the encoded data type determines
-the resolution and range of the sensor data in a specific channel.
-For instance,
-if a sensor channel measuring electric current has a resolution of 0.5 Ampere,
-this is the highest resolution value other mesh devices will be able to read out
-from the sensor.
-Before encoding, the sensor values are rounded to their nearest
-available representation, so the following sensor value would be read as 7.5
-Ampere:
+Most sensor values are reported as scalars with some scaling factor applied to them during encoding.
+This scaling factor and the encoded data type determines the resolution and range of the sensor data in a specific channel.
+For instance, if a sensor channel measuring electric current has a resolution of 0.5 Ampere, this is the highest resolution value other mesh devices will be able to read out from the sensor.
+Before encoding, the sensor values are rounded to their nearest available representation, so the following sensor value would be read as 7.5 Ampere:
 
 .. code-block:: c
 
@@ -208,7 +201,7 @@ The sensor has separate delta thresholds for positive and negative changes.
 .. _bt_mesh_sensor_descriptors:
 
 Descriptors
-============
+===========
 
 Descriptors are optional meta information structures for every sensor.
 A sensor's Descriptor contains parameters that may aid other mesh nodes in interpreting the data:

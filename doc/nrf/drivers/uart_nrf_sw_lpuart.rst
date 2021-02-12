@@ -56,7 +56,7 @@ Configuration
 *************
 
 The low power UART driver is built on top of the standard UART driver extended with the control lines protocol.
-It is configured in the device tree as a child node of the UART instance that extends standard UART configuration with REQ and RDY lines.
+It is configured in the devicetree as a child node of the UART instance that extends standard UART configuration with REQ and RDY lines.
 Additionally, the standard UART configuration must have flow control and flow control pins disabled.
 
 See the following configuration example:

@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 if USB_DEVICE_HID
@@ -10,9 +10,19 @@ menu "USB state"
 
 config DESKTOP_USB_ENABLE
 	bool "Enable USB module"
-	depends on USB_DEVICE_HID
 	help
 	  Enables USB module.
+
+config DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
+	bool "Subscribe only for predefined subset of HID reports"
+	depends on DESKTOP_USB_ENABLE
+	depends on DESKTOP_HID_STATE_ENABLE
+	help
+	  By default, every USB HID instance subscribes for all the HID reports.
+	  Enable this option to specify a subset of HID reports for every USB
+	  HID instance. The subset of HID reports must be specified in
+	  usb_state_def.h file in application configuration directory for given
+	  board and configuration.
 
 if DESKTOP_USB_ENABLE
 

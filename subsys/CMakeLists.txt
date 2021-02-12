@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 - 2020 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 if (CONFIG_BT)
@@ -24,6 +24,7 @@ add_subdirectory_ifdef(CONFIG_IS_SPM		spm)
 add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
 add_subdirectory_ifdef(CONFIG_MPSL mpsl)
 add_subdirectory_ifdef(CONFIG_ZIGBEE zigbee)
+add_subdirectory_ifdef(CONFIG_MGMT_FMFU mgmt/fmfu)
 
 if (CONFIG_NFC_T2T_NRFXLIB OR
     CONFIG_NFC_T4T_NRFXLIB OR

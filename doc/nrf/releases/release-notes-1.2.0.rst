@@ -131,10 +131,10 @@ Updated samples and applications
 * :ref:`asset_tracker`:
 
   * Added functionality to configure high/low thresholds for sensor data, so that only data below/above the threshold is sent to the cloud.
-  * Modified the command format to match the format that is used by nRF Cloud.
+  * Modified the command format to match the format that is used by nRF Connect for Cloud.
   * Implemented support for receiving modem AT commands from the cloud and returning the modem's response.
   * Added functionality to configure the interval at which sensor data is sent to the cloud.
-    This makes it possible to change the poll/send interval for environmental and light sensors from the terminal card in nRF Cloud.
+    This makes it possible to change the poll/send interval for environmental and light sensors from the terminal card in nRF connect for Cloud.
   * Replaced ``printk`` calls with calls to the :ref:`zephyr:logging_api` subsystem.
   * Added a separate workqueue for the application, instead of using the system workqueue.
 
@@ -209,7 +209,7 @@ BSD library
 nRF5340
 =======
 
-This release demonstrates a dual-core solution with the Bluetooth LE Controller running on the network core and the Bluetooth LE Host and application running on the application core of the nRF5340.
+This release demonstrates a dual-core solution with the Bluetooth LE Controller running on the network core and the Bluetooth Host and application running on the application core of the nRF5340.
 
 Both Nordic Semiconductor's nRF Bluetooth LE Controller and Zephyr's Bluetooth LE Controller have been ported to run on the network core (nrf5340_dk_nrf5340_cpunet).
 The application core (nrf5340_dk_nrf5340_cpuapp) can run Bluetooth LE samples from both the |NCS| and Zephyr.
@@ -344,7 +344,7 @@ Bluetooth Low Energy
 * Enabled UART flow control in the :ref:`peripheral_uart` sample to avoid data loss.
 
 * Changed the :ref:`ble_throughput` sample to prevent it from running Bluetooth LE scanning and advertising in parallel.
-  The feature to establish a connection in both master and slave role at the same time is not supported by the Zephyr Bluetooth LE Host.
+  The feature to establish a connection in both master and slave role at the same time is not supported by the Zephyr Bluetooth Host.
 
 * :ref:`nrf_bt_scan_readme`:
 

@@ -123,7 +123,7 @@ Complete the following steps to build the documentation output:
 
          ninja nrfxlib
 
-The documentation output is written to :file:`_build\html`.
+The documentation output is written to the :file:`_build/html` folder.
 Double-click the :file:`index.html` file to display the documentation in your browser.
 
 .. tip::

@@ -47,11 +47,11 @@ Building and running
 
 Testing
 =======
-After programming the sample to your board, you can test it with an NFC-A Type 2 Tag or Tag 4 Type.
+After programming the sample to your development kit, you can test it with an NFC-A Type 2 Tag or Tag 4 Type.
 
-1. Connect the Nucleo expansion board to the development kit board.
+1. Connect the Nucleo expansion board to the development kit.
 #. |connect_terminal|
-#. Reset the board.
+#. Reset the kit.
 #. Touch the ST25R3911B NFC reader with a Type 2 Tag or Type 4 Tag.
 #. Observe the output in the terminal.
    The content of the tag is printed there.

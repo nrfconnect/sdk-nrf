@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 /**
  * @file
@@ -22,7 +22,17 @@ extern "C" {
 /** Maximum permissible transition time in milliseconds */
 #define BT_MESH_MODEL_TRANSITION_TIME_MAX_MS (10 * 60 * MSEC_PER_SEC * 0x3e)
 
-/** Generic Transition parameters for the model messages. */
+/** Delay field step factor in milliseconds */
+#define BT_MESH_MODEL_DELAY_TIME_STEP_FACTOR_MS (5)
+/** Maximum permissible delay time in milliseconds */
+#define BT_MESH_MODEL_DELAY_TIME_MAX_MS                                        \
+	(UINT8_MAX * BT_MESH_MODEL_DELAY_TIME_STEP_FACTOR_MS)
+
+/** Generic Transition parameters for the model messages.
+ *
+ * @note Time can not be larger than @ref BT_MESH_MODEL_TRANSITION_TIME_MAX_MS
+ *       and delay can not be larger than @ref BT_MESH_MODEL_DELAY_TIME_MAX_MS.
+ */
 struct bt_mesh_model_transition {
 	uint32_t time; /**< Transition time value in milliseconds */
 	uint32_t delay; /**< Message execution delay in milliseconds */
@@ -62,6 +72,15 @@ enum bt_mesh_model_status {
 	BT_MESH_MODEL_STATUS_INVALID,
 };
 
+/** RGB color channels */
+enum bt_mesh_rgb_ch {
+	BT_MESH_RGB_CH_RED,
+	BT_MESH_RGB_CH_GREEN,
+	BT_MESH_RGB_CH_BLUE,
+
+	BT_MESH_RGB_CHANNELS,
+};
+
 /** @cond INTERNAL_HIDDEN
  * @def BT_MESH_MODEL_USER_DATA
  *
@@ -75,7 +94,7 @@ enum bt_mesh_model_status {
  * otherwise very hard to detect, and relatively easy to make:
  *
  * As the @ref bt_mesh_model::user_data is a void pointer, it does not have
- * any type checking. The Mesh model implementations wrap this macro, often
+ * any type checking. The mesh model implementations wrap this macro, often
  * taking a pointer parameter to a context structure, passing it to the model
  * user data. As the @c BT_MESH_MODEL_ macros are used in listing of models,
  * users are likely to copy and paste them, but only change the suffix.

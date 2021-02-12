@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /** @file
@@ -33,12 +33,6 @@ struct bt_mesh_sensor_cli_handlers;
 #define BT_MESH_SENSOR_CLI_INIT(_handlers)                                     \
 	{                                                                      \
 		.cb = _handlers,                                               \
-		.pub = {                                                       \
-			.msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(           \
-				BT_MESH_SENSOR_OP_CADENCE_SET,                 \
-				MAX(BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_SET,     \
-				    BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET)))   \
-		},                                                             \
 	}
 
 /** @def BT_MESH_MODEL_SENSOR_CLI
@@ -63,6 +57,14 @@ struct bt_mesh_sensor_cli {
 	struct bt_mesh_model *mod;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[MAX(
+		BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_CADENCE_SET,
+				      BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_SET),
+		BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_SETTING_SET,
+				      BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET))];
 	/** Response context for acknowledged messages. */
 	struct bt_mesh_model_ack_ctx ack;
 	/** Client callback functions. */
@@ -399,7 +401,7 @@ int bt_mesh_sensor_cli_cadence_set_unack(
 
 /** @brief Get the list of settings for the given sensor.
  *
- *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
+ *  This call is blocking if the @c ids buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
  *  bt_mesh_sensor_cli_handlers::settings callback.
  *
@@ -432,7 +434,7 @@ int bt_mesh_sensor_cli_cadence_set_unack(
  */
 int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
-				    struct bt_mesh_sensor_type *sensor,
+				    const struct bt_mesh_sensor_type *sensor,
 				    uint16_t *ids, uint32_t *count);
 
 /** @brief Get a setting value for a sensor.

@@ -43,10 +43,10 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test the sample by performing the following steps:
+After programming the sample to your development kit, test the sample by performing the following steps:
 
-1. Press the reset button on the nRF9160 DK to reboot the board and start the AT Client sample.
-#. :ref:`Connect to the nRF9160 DK board with LTE Link Monitor<lte_connect>`.
+1. Press the reset button on the nRF9160 DK to reboot the kit and start the AT Client sample.
+#. :ref:`Connect to the nRF9160 DK with LTE Link Monitor<lte_connect>`.
 
    .. note::
 
@@ -89,7 +89,7 @@ After programming the sample to your board, test the sample by performing the fo
    #. Enter the command: :command:`AT%CMNG=1`
 
       This command displays a list of all certificates that are stored on your device.
-      If the device has been added to nRF Cloud, a CA certificate, a client certificate, and a private key with security tag 16842753 (which is the security tag for nRF Cloud credentials) are displayed.
+      If the device has been added to nRF Connect for Cloud, a CA certificate, a client certificate, and a private key with security tag 16842753 (which is the security tag for nRF Connect for Cloud credentials) are displayed.
 
 
 Sample output

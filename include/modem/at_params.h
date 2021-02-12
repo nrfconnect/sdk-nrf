@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
@@ -51,7 +51,7 @@ enum at_param_type {
 /** @brief Parameter value. */
 union at_param_value {
 	/** Integer value. */
-	uint32_t int_val;
+	int32_t int_val;
 	/** String value. */
 	char *str_val;
 	/** Array of uint32_t */
@@ -124,7 +124,7 @@ void at_params_list_free(struct at_param_list *list);
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_short_put(const struct at_param_list *list, size_t index,
-			uint16_t value);
+			int16_t value);
 
 /**
  * @brief Add a parameter in the list at the specified index and assign it an
@@ -140,7 +140,7 @@ int at_params_short_put(const struct at_param_list *list, size_t index,
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_int_put(const struct at_param_list *list, size_t index,
-		      uint32_t value);
+		      int32_t value);
 
 /**
  * @brief Add a parameter in the list at the specified index and assign it a
@@ -226,7 +226,7 @@ int at_params_size_get(const struct at_param_list *list, size_t index,
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_short_get(const struct at_param_list *list, size_t index,
-			uint16_t *value);
+			int16_t *value);
 
 /**
  * @brief Get a parameter value as an integer number.
@@ -242,7 +242,7 @@ int at_params_short_get(const struct at_param_list *list, size_t index,
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_int_get(const struct at_param_list *list, size_t index,
-		      uint32_t *value);
+		      int32_t *value);
 
 /**
  * @brief Get a parameter value as a string.

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr.h>
@@ -177,8 +177,6 @@ static int (* const async_init_fn[ASYNC_INIT_STEP_COUNT])(struct pmw3360_data *d
 
 
 static struct pmw3360_data pmw3360_data;
-DEVICE_DECLARE(pmw3360);
-
 
 static int spi_cs_ctrl(struct pmw3360_data *dev_data, bool enable)
 {
@@ -711,7 +709,7 @@ static void trigger_handler(struct k_work *work)
 		.chan = SENSOR_CHAN_ALL,
 	};
 
-	handler(DEVICE_GET(pmw3360), &trig);
+	handler(DEVICE_DT_INST_GET(0), &trig);
 
 	key = k_spin_lock(&pmw3360_data.lock);
 	if (pmw3360_data.data_ready_handler) {
@@ -1074,6 +1072,6 @@ static const struct sensor_driver_api pmw3360_driver_api = {
 	.attr_set     = pmw3360_attr_set,
 };
 
-DEVICE_AND_API_INIT(pmw3360, DT_INST_LABEL(0), pmw3360_init,
-		    NULL, NULL, POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
-		    &pmw3360_driver_api);
+DEVICE_DT_INST_DEFINE(0, pmw3360_init, device_pm_control_nop,
+		      NULL, NULL, POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
+		      &pmw3360_driver_api);

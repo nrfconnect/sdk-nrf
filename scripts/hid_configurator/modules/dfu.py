@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2019 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import struct
 import zlib
@@ -179,7 +179,7 @@ def b0_get_dfu_image_version(dfu_bin):
 
 
 def mcuboot_is_dfu_file_correct(dfu_bin):
-    res, _ = imgtool.image.Image.verify(dfu_bin, None)
+    res, _, _ = imgtool.image.Image.verify(dfu_bin, None)
 
     if res != imgtool.image.VerifyResult.OK:
         print('DFU image is invalid')
@@ -193,7 +193,7 @@ def mcuboot_get_dfu_image_name(dfu_slot_id):
 
 
 def mcuboot_get_dfu_image_version(dfu_bin):
-    res, ver = imgtool.image.Image.verify(dfu_bin, None)
+    res, ver, _ = imgtool.image.Image.verify(dfu_bin, None)
 
     if res != imgtool.image.VerifyResult.OK:
         print('Image in file is invalid')
@@ -507,7 +507,7 @@ def send_chunks(dev, img_csum, img_file, img_length, offset, sync_buffer_size, p
             if (dfu_info.get_img_length() != img_length) or (dfu_info.get_img_csum() != img_csum):
                 print('Invalid sync information {}'.format(dfu_info))
                 return False
-            if (not dfu_info.is_busy()) and (dfu_info.get_img_length() != img_length):
+            if (not dfu_info.is_busy()) and (dfu_info.get_offset() != img_length):
                 print('DFU interrupted by device')
                 return False
             if dfu_info.is_storing():

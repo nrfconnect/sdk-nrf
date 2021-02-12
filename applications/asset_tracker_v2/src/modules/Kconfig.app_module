@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Application control module"
+
+config APP_REQUEST_GPS_ON_INITIAL_SAMPLING
+	bool "Request GPS on initial data sampling after connection"
+	default y if GPS_MODULE
+
+endmenu

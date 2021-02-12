@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Asset Tracker"
+
+config ASSET_TRACKER_V2_APP_VERSION
+	string "Asset Tracker application firmware version"
+	default "0.0.0-development"
+
+rsource "src/modules/Kconfig.modules_common"
+rsource "src/modules/Kconfig.app_module"
+rsource "src/modules/Kconfig.cloud_module"
+rsource "src/modules/Kconfig.data_module"
+rsource "src/modules/Kconfig.gps_module"
+rsource "src/modules/Kconfig.modem_module"
+rsource "src/modules/Kconfig.sensor_module"
+rsource "src/modules/Kconfig.ui_module"
+rsource "src/modules/Kconfig.util_module"
+
+rsource "src/cloud/cloud_codec/Kconfig"
+rsource "src/watchdog/Kconfig"
+rsource "src/events/Kconfig"
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = APPLICATION_MODULE
+module-str = Application module
+source "subsys/logging/Kconfig.template.log_config"

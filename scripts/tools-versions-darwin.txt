@@ -1,10 +1,11 @@
 python=3.8.2;hash=b703318dd9eb7bc5e8d97c8b95e9445f754ca22f
 git=2.26.2;hash=fd0766dbc0032ff22914cae6530440c48757c4e1
-cmake=3.13.4;hash=018b2743c40b6ed3ad033788df9c829771f38fda
-ninja=1.8.2;hash=e12c3d678a6e10a922928eeefcca2824dd56ae2f
+cmake=3.17.3
+ninja=1.9.0
 gperf=3.1;hash=258483ea2fd445d42d869d495504f960202fe0c3
 dtc=1.4.7;hash=0747cc9d6b50ac8a3b1b576e4509494f2258aef2
 gnuarmemb=9-2019-q4-major
 gnuarmemb-short=9-2019q4
-ses=5.30a
-west=0.8.0
+ses=5.34a
+west=0.9.0
+gn=1880

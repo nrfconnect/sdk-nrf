@@ -1,0 +1,8 @@
+# Create a span for the RAM to be configured as SECURE by the spm.
+sram_secure:
+  span: []
+  region: sram_primary
+
+sram_nonsecure:
+  span: [sram_primary] /* Here, sram_primary refers to the (NS) app's RAM. */
+  region: sram_primary

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
@@ -43,8 +43,12 @@ enum state {
 	STATE_CONNECTED_BUSY	/**< Connected, report is generated. */
 };
 
+#ifndef CONFIG_USB_HID_DEVICE_COUNT
+  #define CONFIG_USB_HID_DEVICE_COUNT	0
+#endif
+
 #define SUBSCRIBER_COUNT (IS_ENABLED(CONFIG_DESKTOP_HIDS_ENABLE) + \
-			  IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE))
+			  CONFIG_USB_HID_DEVICE_COUNT)
 
 #define INPUT_REPORT_DATA_COUNT (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) +		\
 				 IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) +	\
@@ -126,7 +130,6 @@ struct subscriber {
 struct hid_state {
 	struct report_data report_data[INPUT_REPORT_DATA_COUNT];
 	struct subscriber subscriber[SUBSCRIBER_COUNT];
-	struct subscriber *selected;
 };
 
 
@@ -463,120 +466,6 @@ static struct subscriber *get_subscriber(const void *subscriber_id)
 	return NULL;
 }
 
-static struct subscriber *get_subscriber_by_type(bool is_usb)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
-		if (state.subscriber[i].id &&
-		    (state.subscriber[i].is_usb == is_usb)) {
-			return &state.subscriber[i];
-		}
-	}
-	LOG_WRN("No subscriber of type %s", (is_usb)?("USB"):("BLE"));
-	return NULL;
-}
-
-static void connect_subscriber(const void *subscriber_id, bool is_usb, uint8_t report_max)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
-		if (!state.subscriber[i].id) {
-			state.subscriber[i].id = subscriber_id;
-			state.subscriber[i].is_usb = is_usb;
-			state.subscriber[i].report_max = report_max;
-			state.subscriber[i].report_cnt = 0;
-			LOG_INF("Subscriber %p connected", subscriber_id);
-
-			if (state.selected && is_usb) {
-				/* If USB is connected force disconnect report
-				 * data from the connected report states. */
-				for (size_t j = 0; j < ARRAY_SIZE(state.report_data); j++) {
-					struct report_data *rd = &state.report_data[j];
-
-					rd->linked_rs = NULL;
-					clear_report_data(rd);
-				}
-				state.selected = NULL;
-			}
-
-			if (!state.selected) {
-				state.selected = &state.subscriber[i];
-				LOG_INF("Active subscriber %p",
-					state.selected->id);
-			}
-			return;
-		}
-	}
-	LOG_WRN("Cannot connect subscriber");
-}
-
-static void disconnect_subscriber(const void *subscriber_id)
-{
-	struct subscriber *s = NULL;
-
-	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
-		if (subscriber_id == state.subscriber[i].id) {
-			s = &state.subscriber[i];
-			break;
-		}
-	}
-
-	if (s == NULL) {
-		LOG_WRN("Subscriber %p was not connected", subscriber_id);
-		return;
-	}
-
-	if (s == state.selected) {
-		for (size_t i = 0; i < ARRAY_SIZE(s->state); i++) {
-			struct report_state *rs = &s->state[i];
-
-			/* Disconnect report data from report state. */
-			if (rs->linked_rd) {
-				struct report_data *rd = rs->linked_rd;
-
-				__ASSERT_NO_MSG((rs->report_id > 0) &&
-						(rs->report_id < REPORT_ID_COUNT));
-				__ASSERT_NO_MSG(rd->linked_rs == rs);
-
-				clear_report_data(rd);
-
-				rd->linked_rs = NULL;
-			}
-		}
-	}
-
-	memset(s, 0, sizeof(*s));
-
-	LOG_INF("Subscriber %p disconnected", subscriber_id);
-
-	if (s == state.selected) {
-
-		/* Select subscriber - USB has priority. */
-		state.selected = get_subscriber_by_type(true);
-		if (!state.selected) {
-			state.selected = get_subscriber_by_type(false);
-		}
-
-		if (!state.selected) {
-			LOG_INF("No active subscriber");
-		} else {
-			LOG_INF("Active subscriber %p", state.selected->id);
-
-			/* Route report data to subscriber report states. */
-			for (size_t i = 0; i < ARRAY_SIZE(state.selected->state); i++) {
-				struct report_state *rs = &state.selected->state[i];
-
-				if (rs->linked_rd) {
-					LOG_INF("Report data %p routed to report state %p",
-						rs->linked_rd, rs);
-					rs->linked_rd->linked_rs = rs;
-
-					/* Refresh state of the newly routed subscriber. */
-					report_send(rs->linked_rd, true, true);
-				}
-			}
-		}
-	}
-}
-
 static bool key_value_set(struct items *items, uint16_t usage_id, int16_t value)
 {
 	const uint8_t prev_item_count = items->item_count;
@@ -668,7 +557,7 @@ static void send_report_keyboard(uint8_t report_id, struct report_data *rd)
 
 	struct hid_report_event *event = new_hid_report_event(sizeof(report_id) + REPORT_SIZE_KEYBOARD_KEYS);
 
-	event->subscriber = state.selected->id;
+	event->subscriber = rd->linked_rs->subscriber->id;
 
 	event->dyndata.data[0] = report_id;
 	event->dyndata.data[2] = 0; /* Reserved byte */
@@ -756,7 +645,7 @@ static void send_report_mouse(uint8_t report_id, struct report_data *rd)
 
 	struct hid_report_event *event = new_hid_report_event(sizeof(report_id) + REPORT_SIZE_MOUSE);
 
-	event->subscriber = state.selected->id;
+	event->subscriber = rd->linked_rs->subscriber->id;
 
 	/* Convert to little-endian. */
 	uint8_t x_buff[sizeof(dx)];
@@ -823,7 +712,7 @@ static void send_report_boot_mouse(uint8_t report_id, struct report_data *rd)
 			     sizeof(button_bm);
 	struct hid_report_event *event = new_hid_report_event(report_size);
 
-	event->subscriber = state.selected->id;
+	event->subscriber = rd->linked_rs->subscriber->id;
 
 	event->dyndata.data[0] = report_id;
 	event->dyndata.data[1] = button_bm;
@@ -859,7 +748,7 @@ static void send_report_ctrl(uint8_t report_id, struct report_data *rd)
 
 	struct hid_report_event *event = new_hid_report_event(report_size);
 
-	event->subscriber = state.selected->id;
+	event->subscriber = rd->linked_rs->subscriber->id;
 
 	/* Only one item can fit in the consumer control report. */
 	__ASSERT_NO_MSG(report_size == sizeof(report_id) +
@@ -915,8 +804,6 @@ static bool report_send(struct report_data *rd, bool check_state, bool send_alwa
 	}
 
 	struct report_state *rs = rd->linked_rs;
-	__ASSERT_NO_MSG(rs->subscriber == state.selected);
-	__ASSERT_NO_MSG(state.selected);
 
 	if (!check_state || (rs->state != STATE_DISCONNECTED)) {
 		unsigned int pipeline_depth;
@@ -974,6 +861,11 @@ static bool report_send(struct report_data *rd, bool check_state, bool send_alwa
 		if (rs->cnt != 0) {
 			rs->state = STATE_CONNECTED_BUSY;
 		}
+	}
+
+	/* Ensure that report marked as send_always will be sent. */
+	if (send_always && !report_sent) {
+		rd->update_needed = true;
 	}
 
 	return report_sent;
@@ -1035,7 +927,6 @@ static void report_issued(const void *subscriber_id, uint8_t report_id, bool err
 		if ((next_rs->state != STATE_DISCONNECTED) &&
 		    (next_rs->linked_rd->linked_rs == next_rs) &&
 		    (next_rs->cnt == 0)) {
-			__ASSERT_NO_MSG(state.selected == subscriber);
 			if (report_send(next_rs->linked_rd, false, false)) {
 				break;
 			}
@@ -1051,6 +942,39 @@ static void report_issued(const void *subscriber_id, uint8_t report_id, bool err
 			next_rs = &subscriber->state[0];
 		}
 	}
+}
+
+static int8_t get_subscriber_priority(const struct subscriber *sub)
+{
+	return (sub->is_usb) ? (1) : (0);
+}
+
+static struct report_state *find_next_report_state(const struct report_data *rd)
+{
+	struct report_state *rs_result = NULL;
+	int8_t sub_prio_result = -1;
+
+	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
+		if (!state.subscriber[i].id) {
+			continue;
+		}
+
+		struct subscriber *sub = &state.subscriber[i];
+		int8_t sub_prio = get_subscriber_priority(sub);
+
+		for (size_t j = 0; j < ARRAY_SIZE(sub->state); j++) {
+			struct report_state *rs = &sub->state[j];
+
+			if ((rs->linked_rd == rd) &&
+			    (sub_prio_result <= sub_prio)) {
+				__ASSERT_NO_MSG(sub_prio_result != sub_prio);
+				rs_result = rs;
+				sub_prio_result = sub_prio;
+			}
+		}
+	}
+
+	return rs_result;
 }
 
 static void connect(const void *subscriber_id, uint8_t report_id)
@@ -1087,11 +1011,21 @@ static void connect(const void *subscriber_id, uint8_t report_id)
 
 	rs->linked_rd = rd;
 
-	if (state.selected == subscriber) {
-		/* Route report data to report state. */
-		if (rd->linked_rs) {
+	if (rd->linked_rs) {
+		__ASSERT_NO_MSG(rd->linked_rs != rs);
+
+		int8_t cur_sub_prio = get_subscriber_priority(rd->linked_rs->subscriber);
+		int8_t new_sub_prio = get_subscriber_priority(subscriber);
+
+		__ASSERT_NO_MSG(cur_sub_prio != new_sub_prio);
+		if (cur_sub_prio < new_sub_prio) {
 			LOG_WRN("Force report data unlink");
+			rd->linked_rs = NULL;
+			clear_report_data(rd);
 		}
+	}
+
+	if (!rd->linked_rs) {
 		rd->linked_rs = rs;
 
 		if (!eventq_is_empty(&rd->eventq)) {
@@ -1123,12 +1057,80 @@ static void disconnect(const void *subscriber_id, uint8_t report_id)
 
 	struct report_data *rd = rs->linked_rd;
 
+	rs->linked_rd = NULL;
+
 	if (rd->linked_rs == rs) {
-		rd->linked_rs = NULL;
 		clear_report_data(rd);
+		rd->linked_rs = find_next_report_state(rd);
+		__ASSERT_NO_MSG(rd->linked_rs != rs);
+
+		if (rd->linked_rs) {
+			/* Refresh state of the newly routed subscriber. */
+			report_send(rd, true, true);
+		}
+	}
+}
+
+static void connect_subscriber(const void *subscriber_id, bool is_usb, uint8_t report_max)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
+		if (!state.subscriber[i].id) {
+			state.subscriber[i].id = subscriber_id;
+			state.subscriber[i].is_usb = is_usb;
+			state.subscriber[i].report_max = report_max;
+			state.subscriber[i].report_cnt = 0;
+			LOG_INF("Subscriber %p connected", subscriber_id);
+			return;
+		}
+	}
+	LOG_WRN("Cannot connect subscriber");
+	/* Should not happen. */
+	__ASSERT_NO_MSG(false);
+}
+
+static void disconnect_subscriber(const void *subscriber_id)
+{
+	struct subscriber *s = NULL;
+
+	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
+		if (subscriber_id == state.subscriber[i].id) {
+			s = &state.subscriber[i];
+			break;
+		}
 	}
 
-	rs->linked_rd = NULL;
+	if (s == NULL) {
+		LOG_WRN("Subscriber %p was not connected", subscriber_id);
+		return;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(s->state); i++) {
+		struct report_state *rs = &s->state[i];
+
+		/* Disconnect report data from report state. */
+		if (rs->linked_rd) {
+			struct report_data *rd = rs->linked_rd;
+
+			__ASSERT_NO_MSG((rs->report_id > 0) &&
+					(rs->report_id < REPORT_ID_COUNT));
+			if (rd->linked_rs == rs) {
+				clear_report_data(rd);
+				rs->linked_rd = NULL;
+
+				rd->linked_rs = find_next_report_state(rd);
+				__ASSERT_NO_MSG(rd->linked_rs != rs);
+
+				if (rd->linked_rs) {
+					/* Refresh state of the newly routed subscriber. */
+					report_send(rd, true, true);
+				}
+			}
+		}
+	}
+
+	memset(s, 0, sizeof(*s));
+
+	LOG_INF("Subscriber %p disconnected", subscriber_id);
 }
 
 /**@brief Enqueue event that updates a given usage. */
@@ -1381,9 +1383,7 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 static bool handle_usb_hid_event(const struct usb_hid_event *event)
 {
 	if (event->enabled) {
-		if (!get_subscriber_by_type(true)) {
-			connect_subscriber(event->id, true, 1);
-		}
+		connect_subscriber(event->id, true, 1);
 	} else {
 		disconnect_subscriber(event->id);
 	}

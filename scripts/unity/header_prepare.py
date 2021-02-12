@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2019 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 import re
 import argparse
@@ -56,7 +56,7 @@ def header_prepare(in_file, out_file, out_wrap_file):
     # Prepare file with functions prefixed with __wrap_ that will be used for
     # mock generation.
     func_pattern = re.compile(
-        r"^\s*((?:\w+[*\s]+)+)(\w+?\(.*?\);)", re.M | re.S)
+        r"^\s*((?:\w+[*\s]+)+)(\w+?\([^\\{}#]*?\);)", re.M | re.S)
     content2 = func_pattern.sub(r"\n\1__wrap_\2", content)
 
     with open(out_wrap_file, 'w') as f_wrap:

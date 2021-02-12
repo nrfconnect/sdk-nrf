@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 /**
  * @file
@@ -160,6 +160,14 @@ static inline bool
 model_transition_is_active(const struct bt_mesh_model_transition *transition)
 {
 	return (transition->time > 0 || transition->delay > 0);
+}
+
+static inline bool
+model_transition_is_invalid(const struct bt_mesh_model_transition *transition)
+{
+	return (transition != NULL &&
+		(transition->time > BT_MESH_MODEL_TRANSITION_TIME_MAX_MS ||
+		 transition->delay > BT_MESH_MODEL_DELAY_TIME_MAX_MS));
 }
 
 #endif /* MODEL_UTILS_H__ */

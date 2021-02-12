@@ -1,11 +1,11 @@
-b0:
+b0_container:
   address: 0x0
   orig_span: &id001
-  - b0_image
+  - b0
   - provision
   size: 0x6000
   span: *id001
-b0_image:
+b0:
   address: 0x0
   size: 0x5000
 provision:

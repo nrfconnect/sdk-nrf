@@ -1,7 +1,7 @@
 /*
- * Copyright (client) 2020 Nordic Semiconductor ASA
+ * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <net/mqtt.h>
@@ -70,16 +70,26 @@ static struct azure_iot_hub_config conn_config = {
 static azure_iot_hub_evt_handler_t evt_handler;
 
 /* If DPS is used, the IoT hub hostname is obtained through that service,
- * otherwise it has to be set compile time using
+ * otherwise it has to be set in compile time using
  * @option{CONFIG_AZURE_IOT_HUB_HOSTNAME}. The maximal size is length of hub
- * name + device ID length + lengths of ".azure-devices-provisioning.net/"
- * and "/?api-version=2018-06-30"
+ * name + device ID length + length of "/?api-version=2018-06-30". In the case of DPS,
+ * the length of ".azure-devices-provisioning.net/" is also added.
+ * When @option{CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP} is used, the app sets the
+ * device ID in runtime, and the hostname is derived from that.
  */
+#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS) || IS_ENABLED(CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP)
+
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 #define USER_NAME_BUF_LEN	(CONFIG_AZURE_IOT_HUB_HOSTNAME_MAX_LEN + \
 				CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + \
 				sizeof(".azure-devices-provisioning.net/") + \
 				sizeof("/?api-version=2018-06-30"))
+#else
+#define USER_NAME_BUF_LEN	(sizeof(CONFIG_AZURE_IOT_HUB_HOSTNAME "/") + \
+				CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + \
+				sizeof("/?api-version=2018-06-30"))
+#endif
+
 static char user_name_buf[USER_NAME_BUF_LEN];
 static struct mqtt_utf8 user_name = {
 	.utf8 = user_name_buf,
@@ -645,13 +655,18 @@ static void mqtt_evt_handler(struct mqtt_client *const client,
 	}
 }
 
-#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
+#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS) || IS_ENABLED(CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP)
 static struct mqtt_utf8 *user_name_get(void)
 {
 	ssize_t len;
 
+#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 	len = snprintk(user_name_buf, sizeof(user_name_buf), USER_NAME_TEMPLATE,
 		       dps_hostname_get(), conn_config.device_id);
+#else
+	len = snprintk(user_name_buf, sizeof(user_name_buf), USER_NAME_TEMPLATE,
+		       CONFIG_AZURE_IOT_HUB_HOSTNAME, conn_config.device_id);
+#endif
 	if ((len < 0) || (len > sizeof(user_name_buf))) {
 		LOG_ERR("Failed to create user name");
 		return NULL;
@@ -879,6 +894,9 @@ static int client_broker_init(struct mqtt_client *const client, bool dps)
 		tls_cfg->hostname = dps_hostname_get();
 		client->user_name = user_name_get();
 	}
+#elif IS_ENABLED(CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP)
+	tls_cfg->hostname = CONFIG_AZURE_IOT_HUB_HOSTNAME;
+	client->user_name = user_name_get();
 #else /* IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS) */
 	tls_cfg->hostname = CONFIG_AZURE_IOT_HUB_HOSTNAME;
 	client->user_name = &user_name;
@@ -929,8 +947,6 @@ static int connect_client(struct azure_iot_hub_config *cfg)
 
 	/* Set the current socket and start reading from it in polling thread */
 	conn_config.socket = client.transport.tls.sock;
-
-	k_sem_give(&connection_poll_sem);
 
 	return 0;
 }
@@ -988,9 +1004,12 @@ static void dps_handler(enum dps_reg_state state)
 	LOG_DBG("Connecting to assigned IoT hub (%s)",
 		log_strdup(dps_hostname_get()));
 
-	err = azure_iot_hub_connect();
+	connection_state_set(STATE_CONNECTING);
+
+	err = connect_client(&conn_config);
 	if (err) {
-		LOG_ERR("Failed connection to IoT hub, err: %d", err);
+		LOG_ERR("Failed to connect MQTT client, error: %d", err);
+		connection_state_set(STATE_INIT);
 	}
 }
 #endif
@@ -1059,6 +1078,7 @@ static void fota_evt_handler(struct azure_fota_event *fota_evt)
 		LOG_ERR("AZURE_FOTA_EVT_ERROR");
 		fota_report_send(fota_evt);
 		evt.type = AZURE_IOT_HUB_EVT_FOTA_ERROR;
+		azure_iot_hub_notify_event(&evt);
 		break;
 	default:
 		LOG_ERR("Unhandled FOTA event, type: %d", fota_evt->type);
@@ -1074,7 +1094,7 @@ int azure_iot_hub_ping(void)
 	return mqtt_live(&client);
 }
 
-uint32_t azure_iot_hub_keepalive_time_left(void)
+int azure_iot_hub_keepalive_time_left(void)
 {
 	return mqtt_keepalive_time_left(&client);
 }
@@ -1207,6 +1227,8 @@ int azure_iot_hub_connect(void)
 		return err;
 	}
 
+	k_sem_give(&connection_poll_sem);
+
 	return 0;
 }
 
@@ -1322,11 +1344,11 @@ start:
 
 	while (true) {
 		ret = poll(fds, ARRAY_SIZE(fds),
-			mqtt_keepalive_time_left(&client));
+			   azure_iot_hub_keepalive_time_left());
+
+		/* If poll returns 0 the timeout has expired. */
 		if (ret == 0) {
-			if (mqtt_keepalive_time_left(&client) < 1000) {
-				azure_iot_hub_ping();
-			}
+			azure_iot_hub_ping();
 			continue;
 		}
 
@@ -1342,6 +1364,16 @@ start:
 			 * account for the event that it has changed.
 			 */
 			fds[0].fd = conn_config.socket;
+
+			if (connection_state_verify(STATE_INIT)) {
+				/* If connection state is set to STATE_INIT at
+				 * this point we know that the socket has
+				 * been closed and we can break out of poll.
+				 */
+				LOG_DBG("The socket is already closed");
+				break;
+			}
+
 			continue;
 		}
 

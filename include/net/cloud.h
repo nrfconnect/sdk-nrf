@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef ZEPHYR_INCLUDE_CLOUD_H_
@@ -324,6 +324,7 @@ static inline int cloud_ping(const struct cloud_backend *const backend)
  *
  * @return Time in milliseconds until next keep alive message is expected to
  *         be sent.
+ * @return -1 if keep alive messages are not enabled.
  */
 static inline int cloud_keepalive_time_left(const struct cloud_backend *const backend)
 {

@@ -9,8 +9,8 @@ Thread: NCP
 
 The :ref:`Thread <ug_thread>` NCP sample demonstrates the usage of OpenThread's :ref:`thread_architectures_designs_cp_ncp` architecture inside the Zephyr environment.
 
-The sample is based on Zephyr's :ref:`zephyr:ncp-sample` sample.
-However, it customizes Zephyr's sample to the NCS requirements (for example, by increasing the stack size dedicated for the user application), and also extends it with several features:
+The sample is based on Zephyr's :ref:`zephyr:coprocessor-sample` sample.
+However, it customizes Zephyr's sample to the |NCS| requirements (for example, by increasing the stack size dedicated for the user application), and also extends it with several features:
 
 * Increased mbedTLS heap size.
 * Lowered main stack size to increase user application space.
@@ -53,6 +53,13 @@ By default, the log levels for all modules are set to critical to not engage the
 To make the solution flexible, you can change independently the log levels for your modules, for the whole Zephyr system, and for OpenThread.
 Use the :file:`overlay-logging.conf` overlay file as reference for this purpose.
 
+FEM support
+===========
+
+.. |fem_file_path| replace:: :file:`samples/openthread/common`
+
+.. include:: /includes/sample_fem_support.txt
+
 Requirements
 ************
 
@@ -60,10 +67,10 @@ The sample supports the following development kits for testing the network statu
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833
+   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
 
-To test the sample, you need at least one development kit NCP board.
-Additional NCP boards can be used for the :ref:`optional testing of network joining <ot_ncp_sample_testing_more_boards>`.
+To test the sample, you need at least one development kit.
+Additional development kits programmed with the NCP sample can be used for the :ref:`optional testing of network joining <ot_ncp_sample_testing_more_boards>`.
 
 Moreover, the sample requires a Userspace higher layer process running on user's device in order to communicate with the MCU NCP part.
 This sample uses `wpantund`_ as reference.
@@ -74,7 +81,7 @@ User interface
 All the interactions with the application are handled using serial communication.
 
 For the interaction with the application, this sample uses :ref:`ug_thread_tools_wpantund` process with ``wpanctl`` commands.
-It is also possible to communicate with NCP board using `PySpinel`_ commands.
+It is also possible to communicate with the kit using `PySpinel`_ commands.
 
 You can use your own application instead of wpantund and PySpinel provided that it supports the spinel communication protocol.
 
@@ -115,7 +122,7 @@ For this sample, handling of extension commands and properties is done through t
 To enable the feature:
 
 1. Provide the implementation of this file.
-#. Insert information about the file location in the ``CONFIG_OPENTHREAD_NCP_VENDOR_HOOK_SOURCE`` field.
+#. Insert information about the file location in the ``CONFIG_OPENTHREAD_COPROCESSOR_VENDOR_HOOK_SOURCE`` field.
    This field is located in the overlay configuration file (see :file:`overlay-vendor_hook.conf`).
    The inserted path must be relative to the NCP sample directory.
 
@@ -123,7 +130,7 @@ The NCP sample provides the vendor hook :file:`user_vendor_hook.cpp` file in the
 You can either:
 
 * Use the provided :file:`user_vendor_hook.cpp` file.
-* Provide your own implementation and replace the ``CONFIG_OPENTHREAD_NCP_VENDOR_HOOK_SOURCE`` option value in the overlay file with the path to your file.
+* Provide your own implementation and replace the ``CONFIG_OPENTHREAD_COPROCESSOR_VENDOR_HOOK_SOURCE`` option value in the overlay file with the path to your file.
 
 For information about how to test the vendor hook feature, see :ref:`ug_thread_vendor_hooks_testing`.
 
@@ -132,10 +139,10 @@ Testing
 
 After building the sample and programming it to your development kit, test it by performing the following steps:
 
-1. Connect the NCP board's SEGGER J-Link USB port to the PC USB port with an USB cable.
-#. Get the board's serial port name (e.g. /dev/ttyACM0).
+1. Connect the development kit's SEGGER J-Link USB port to the PC USB port with an USB cable.
+#. Get the kit's serial port name (e.g. /dev/ttyACM0).
 #. Run and configure wpantund and wpanctl as described in :ref:`ug_thread_tools_wpantund_configuring`.
-#. In the wpanctl shell, run the following command to check the NCP board state:
+#. In the wpanctl shell, run the following command to check the kit state:
 
    .. code-block:: console
 
@@ -200,31 +207,31 @@ This output means that you have successfully formed the Thread network.
 
 .. _ot_ncp_sample_testing_more_boards:
 
-Testing network joining with more NCP boards
---------------------------------------------
+Testing network joining with more kits
+--------------------------------------
 
-Optionally, if you are using more than one NCP board, you can test the network joining process by completing the following steps:
+Optionally, if you are using more than one kit, you can test the network joining process by completing the following steps:
 
-1. Connect the second NCP board's SEGGER J-Link USB port to the PC USB port with an USB cable.
-#. Get the board's serial port name.
-#. Open a shell and run another wpantund process for the second board by using the following command:
+1. Connect the second kit's SEGGER J-Link USB port to the PC USB port with an USB cable.
+#. Get the kit's serial port name.
+#. Open a shell and run another wpantund process for the second kit by using the following command:
 
    .. parsed-literal::
       :class: highlight
 
-      wpantund -I *network_interface_name_board2* -s *serial_port_name_board2* -b *baudrate*
+      wpantund -I *network_interface_name_kit2* -s *serial_port_name_kit2* -b *baudrate*
 
    For *baudrate*, use value 1000000.
-   For *serial_port_name_board2*, use the value from the previous step.
-   For *network_interface_name_board2*, use a name of your choice.
+   For *serial_port_name_kit2*, use the value from the previous step.
+   For *network_interface_name_kit2*, use a name of your choice.
    In this testing procedure, this will be `joiner_if`.
-#. Open another shell and run another wpanctl process for the second board by using following command:
+#. Open another shell and run another wpanctl process for the second kit by using following command:
 
    .. code-block:: console
 
       wpanctl -I joiner_if
 
-#. In the wpanctl shell, run the following command to check the NCP board state:
+#. In the wpanctl shell, run the following command to check the kit state:
 
    .. code-block:: console
 
@@ -244,7 +251,7 @@ Optionally, if you are using more than one NCP board, you can test the network j
       ]
 
    This output means that NCP is offline.
-#. In the wpanctl shell of the first NCP board, run the following command to get the network key from the leader NCP board:
+#. In the wpanctl shell of the first kit, run the following command to get the network key from the leader kit:
 
    .. code-block:: console
 
@@ -256,13 +263,13 @@ Optionally, if you are using more than one NCP board, you can test the network j
 
       Network:Key = [2429EFAF21421AE3CB30B9204016EDC9]
 
-#. Copy the network key form the output and set it on the second (joiner) NCP board by running the following command in the second board's wpanctl shell:
+#. Copy the network key form the output and set it on the second (joiner) kit by running the following command in the second kit's wpanctl shell:
 
    .. code-block:: console
 
       wpanctl:joiner_if> set Network:Key 2429EFAF21421AE3CB30B9204016EDC9
 
-#. In the second board's wpanctl shell, run the following command to scan your neighborhood and find the network formed with the leader NCP board:
+#. In the second kit's wpanctl shell, run the following command to scan your neighborhood and find the network formed with the leader kit:
 
    .. code-block:: console
 
@@ -279,7 +286,7 @@ Optionally, if you are using more than one NCP board, you can test the network j
 
    The first column is the network ID number.
    For the network formed for this testing procedure, the ID equals ``2``.
-#. In the second board's wpanctl shell, run the following command with the network ID as variable to join your joiner NCP board to the network:
+#. In the second kit's wpanctl shell, run the following command with the network ID as variable to join your joiner kit to the network:
 
    .. code-block:: console
 
@@ -292,7 +299,7 @@ Optionally, if you are using more than one NCP board, you can test the network j
       Joining WPAN "My_OpenThread_network" as node type "end-device", channel:13, panid:0xF54B, xpanid:0x77969855F947758D [scanned network index 2]
       Successfully Joined!
 
-This output means that the joiner board node has successfully joined the network.
+This output means that the joiner kit node has successfully joined the network.
 
 Dependencies
 ************

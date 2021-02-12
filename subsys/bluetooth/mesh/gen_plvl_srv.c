@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <stdlib.h>
 #include <bluetooth/mesh/gen_plvl_srv.h>
@@ -600,13 +600,26 @@ static void bt_mesh_plvl_srv_reset(struct bt_mesh_model *mod)
 	}
 }
 
+static int update_handler(struct bt_mesh_model *model)
+{
+	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_status status = { 0 };
+
+	srv->handlers->power_get(srv, NULL, &status);
+	lvl_status_encode(model->pub->msg, &status);
+	return 0;
+}
+
 static int bt_mesh_plvl_srv_init(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_plvl_srv *srv = mod->user_data;
 
 	srv->plvl_model = mod;
 	plvl_srv_reset(srv);
-	net_buf_simple_init(mod->pub->msg, 0);
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
 		/* Model extensions:
@@ -697,14 +710,4 @@ int bt_mesh_plvl_srv_pub(struct bt_mesh_plvl_srv *srv,
 			 const struct bt_mesh_plvl_status *status)
 {
 	return pub(srv, ctx, status);
-}
-
-int _bt_mesh_plvl_srv_update_handler(struct bt_mesh_model *model)
-{
-	struct bt_mesh_plvl_srv *srv = model->user_data;
-	struct bt_mesh_plvl_status status = { 0 };
-
-	srv->handlers->power_get(srv, NULL, &status);
-	lvl_status_encode(model->pub->msg, &status);
-	return 0;
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef SERVICE_INFO_H__
@@ -17,7 +17,7 @@
  * @defgroup service_info API to generate service info JSON for device shadow.
  * @{
  */
-#define SERVICE_INFO_FOTA_VER_CURRENT 1
+#define SERVICE_INFO_FOTA_VER_CURRENT 2
 #define SERVICE_INFO_FOTA_STR_BOOTLOADER "BOOT"
 #define SERVICE_INFO_FOTA_STR_MODEM "MODEM"
 #define SERVICE_INFO_FOTA_STR_APP "APP"

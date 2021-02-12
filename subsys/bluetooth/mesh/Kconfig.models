@@ -1,15 +1,15 @@
 #
 # Copyright (c) 2019 - 2020 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "nRF BT Mesh Models"
+menu "nRF BT mesh models"
 
 config BT_MESH_NRF_MODELS
 	bool
 	help
-	  Common Mesh model support modules, required by all Nordic BT Mesh
+	  Common mesh model support modules, required by all Nordic BT mesh
 	  models.
 
 
@@ -17,13 +17,13 @@ config BT_MESH_ONOFF_SRV
 	bool "Generic OnOff Server"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic OnOff Server model.
+	  Enable mesh Generic OnOff Server model.
 
 config BT_MESH_ONOFF_CLI
 	bool "Generic OnOff Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic OnOff Client model.
+	  Enable mesh Generic OnOff Client model.
 
 config BT_MESH_TIME
 	bool
@@ -33,7 +33,7 @@ menuconfig BT_MESH_TIME_SRV
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_TIME
 	help
-	  Enable Mesh Time Server model.
+	  Enable mesh Time Server model.
 
 if BT_MESH_TIME_SRV
 
@@ -62,7 +62,7 @@ config BT_MESH_TIME_SRV_CLOCK_ACCURACY
 	default 500
 	help
 	  This value defines the clock drift in microseconds per second, and is
-	  used to calculate overall time uncertainty for the Bluetooth Mesh
+	  used to calculate overall time uncertainty for the Bluetooth mesh
 	  Time Server model.
 
 endif
@@ -72,26 +72,26 @@ config BT_MESH_TIME_CLI
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_TIME
 	help
-	  Enable Mesh Time Client model.
+	  Enable mesh Time Client model.
 
 config BT_MESH_LVL_SRV
 	bool "Generic Level Server"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Level Server model.
+	  Enable mesh Generic Level Server model.
 
 config BT_MESH_LVL_CLI
 	bool "Generic Level Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Level Client model.
+	  Enable mesh Generic Level Client model.
 
 
 menuconfig BT_MESH_DTT_SRV
 	bool "Generic Default Transition Time Server"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Default Transition Time Server model.
+	  Enable mesh Generic Default Transition Time Server model.
 
 if BT_MESH_DTT_SRV && BT_SETTINGS
 
@@ -107,7 +107,7 @@ config BT_MESH_DTT_CLI
 	bool "Generic Default Transition Time Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Default Transition Time Client model.
+	  Enable mesh Generic Default Transition Time Client model.
 
 
 config BT_MESH_PONOFF_SRV
@@ -117,13 +117,13 @@ config BT_MESH_PONOFF_SRV
 	select BT_MESH_ONOFF_SRV
 	imply BT_SETTINGS
 	help
-	  Enable Mesh Generic Power OnOff Server model.
+	  Enable mesh Generic Power OnOff Server model.
 
 config BT_MESH_PONOFF_CLI
 	bool "Generic Power OnOff Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Power OnOff Client model.
+	  Enable mesh Generic Power OnOff Client model.
 
 
 config BT_MESH_PLVL_SRV
@@ -132,51 +132,51 @@ config BT_MESH_PLVL_SRV
 	select BT_MESH_LVL_SRV
 	select BT_MESH_PONOFF_SRV
 	help
-	  Enable Mesh Generic Power Level Server model.
+	  Enable mesh Generic Power Level Server model.
 
 config BT_MESH_PLVL_CLI
 	bool "Generic Power Level Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Power Level Client model.
+	  Enable mesh Generic Power Level Client model.
 
 
 config BT_MESH_BATTERY_SRV
 	bool "Generic Battery Server"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Battery Server model.
+	  Enable mesh Generic Battery Server model.
 
 config BT_MESH_BATTERY_CLI
 	bool "Generic Battery Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Battery Client model.
+	  Enable mesh Generic Battery Client model.
 
 
 config BT_MESH_LOC_SRV
 	bool "Generic Location Server"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Location Server model.
+	  Enable mesh Generic Location Server model.
 
 config BT_MESH_LOC_CLI
 	bool "Generic Location Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Location Client model.
+	  Enable mesh Generic Location Client model.
 
 config BT_MESH_PROP_SRV
 	bool "Generic Property Server"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Property Server models.
+	  Enable mesh Generic Property Server models.
 
 config BT_MESH_PROP_CLI
 	bool "Generic Property Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Generic Property Client model.
+	  Enable mesh Generic Property Client model.
 
 if BT_MESH_PROP_SRV || BT_MESH_PROP_CLI
 menu "Generic Property Model configuration"
@@ -196,7 +196,7 @@ config BT_MESH_PROP_MAXCOUNT
 	range 1 189
 	help
 	  The largest number of Generic Property values that can be listed by
-	  a Generic Property server. Each property ID is 2 bytes long, and
+	  a Generic Property Server. Each Property ID is 2 bytes long, and
 	  the full list plus a 1 byte overhead must fit within a full TX packet
 	  payload (see BT_MESH_TX_SEG_MAX).
 
@@ -210,13 +210,13 @@ config BT_MESH_LIGHTNESS_SRV
 	select BT_MESH_LVL_SRV
 	select BT_MESH_PONOFF_SRV
 	help
-	  Enable Mesh Light Lightness Server model.
+	  Enable mesh Light Lightness Server model.
 
 config BT_MESH_LIGHTNESS_CLI
 	bool "Light Lightness Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Light Lightness Client model.
+	  Enable mesh Light Lightness Client model.
 
 if BT_MESH_LIGHTNESS_SRV || BT_MESH_LIGHTNESS_CLI
 menu "Light Lightness Model configuration"
@@ -246,7 +246,7 @@ menuconfig BT_MESH_LIGHT_CTRL_SRV
 	select BT_MESH_LIGHTNESS_SRV
 	select BT_MESH_SENSOR
 	help
-	  Enable Mesh Light Lightness Control Server model.
+	  Enable mesh Light Lightness Control Server model.
 
 if BT_MESH_LIGHT_CTRL_SRV
 
@@ -256,7 +256,7 @@ menuconfig BT_MESH_LIGHT_CTRL_SRV_REG
 	default y
 	help
 	  Enable the Lightness PI Regulator for controlling the lightness level
-	  through a illuminance sensor feedback loop.
+	  through an illuminance sensor feedback loop.
 
 if BT_MESH_LIGHT_CTRL_SRV_REG
 
@@ -312,7 +312,7 @@ config BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY
 	  Default value for the regulator's accuracy (in percent). The accuracy
 	  determines the regulator's dead zone around the target value, where
 	  no corrections are made for fluctuating sensor values. The accuracy
-	  should account both for sensor inaccuracies and system instability,
+	  should account for both sensor inaccuracies and system instability,
 	  to avoid making constant adjustments. May be reconfigured at runtime
 	  by other models in the mesh network.
 
@@ -474,13 +474,13 @@ config BT_MESH_LIGHT_CTRL_CLI
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_SENSOR
 	help
-	  Enable Mesh Light Lightness Control Client model.
+	  Enable mesh Light Lightness Control Client model.
 
 config BT_MESH_LIGHT_CTL_CLI
 	bool "Color Tunable Light (CTL) Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Light CTL Client model.
+	  Enable mesh Light CTL Client model.
 
 config BT_MESH_LIGHT_CTL_SRV
 	bool "Color Tunable Light (CTL) Server"
@@ -488,21 +488,70 @@ config BT_MESH_LIGHT_CTL_SRV
 	select BT_MESH_LIGHTNESS_SRV
 	select BT_MESH_LIGHT_TEMP_SRV
 	help
-	  Enable Mesh Light CTL Server model.
+	  Enable mesh Light CTL Server model.
 
 config BT_MESH_LIGHT_TEMP_SRV
 	bool "Color Tunable Light (CTL) Temperature Server"
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_LVL_SRV
 	help
-	  Enable Mesh Light CTL Temperature Server model.
+	  Enable mesh Light CTL Temperature Server model.
+
+config BT_MESH_LIGHT_XYL_CLI
+	bool "xyL Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable Mesh Light xyL Client model.
+
+config BT_MESH_LIGHT_XYL_SRV
+	bool "xyL Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHTNESS_SRV
+	help
+	  Enable Mesh Light xyL Server model.
+
+config BT_MESH_LIGHT_HSL
+	bool # Hidden entry
+
+config BT_MESH_LIGHT_HSL_CLI
+	bool "Light HSL Client"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHT_HSL
+	help
+	  Enable Mesh Light HSL Client model.
+
+config BT_MESH_LIGHT_HSL_SRV
+	bool "Light HSL Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHTNESS_SRV
+	select BT_MESH_LIGHT_SAT_SRV
+	select BT_MESH_LIGHT_HUE_SRV
+	select BT_MESH_LIGHT_HSL
+	help
+	  Enable Mesh Light HSL Server model.
+
+config BT_MESH_LIGHT_SAT_SRV
+	bool "Light Saturation Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LVL_SRV
+	select BT_MESH_LIGHT_HSL
+	help
+	  Enable Mesh Light Saturation Server model.
+
+config BT_MESH_LIGHT_HUE_SRV
+	bool "Light Hue Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LVL_SRV
+	select BT_MESH_LIGHT_HSL
+	help
+	  Enable Mesh Light Hue Server model.
 
 menuconfig BT_MESH_SENSOR_SRV
 	bool "Sensor Server"
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_SENSOR
 	help
-	  Enable Mesh Sensor Server model.
+	  Enable mesh Sensor Server model.
 
 if BT_MESH_SENSOR_SRV
 
@@ -530,7 +579,7 @@ config BT_MESH_SENSOR_CLI
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_SENSOR
 	help
-	  Enable Mesh Sensor Client model.
+	  Enable mesh Sensor Client model.
 
 rsource "Kconfig.sensor"
 
@@ -539,7 +588,7 @@ menuconfig BT_MESH_SCENE_SRV
 	select BT_MESH_NRF_MODELS
 	depends on BT_SETTINGS
 	help
-	  Enable Mesh Scene Server model.
+	  Enable mesh Scene Server model.
 
 config BT_MESH_SCENES_MAX
 	int "Max number of scenes"
@@ -553,6 +602,21 @@ config BT_MESH_SCENE_CLI
 	bool "Scene Client"
 	select BT_MESH_NRF_MODELS
 	help
-	  Enable Mesh Scene Client model.
+	  Enable mesh Scene Client model.
 
 endmenu
+
+config BT_MESH_SCHEDULER_CLI
+	bool "Scheduler Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable Mesh Scheduler Client model.
+
+config BT_MESH_SCHEDULER_SRV
+	bool "Scheduler Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_ONOFF_SRV
+	select BT_MESH_SCENE_SRV
+	select BT_MESH_TIME_SRV
+	help
+	  Enable Mesh Scheduler Server model.

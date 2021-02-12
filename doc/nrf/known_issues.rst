@@ -20,7 +20,8 @@ Use the drop-down filter to see known issues for previous releases and check if 
    <select name="versions" id="versions-select">
      <option value="all">All versions</option>
      <option value="v1-4-99-dev1">v1.4.99-dev1</option>
-     <option value="v1-4-1" selected>v1.4.1</option>
+     <option value="v1-4-2" selected>v1.4.2</option>
+     <option value="v1-4-1">v1.4.1</option>
      <option value="v1-4-0">v1.4.0</option>
      <option value="v1-3-2">v1.3.2</option>
      <option value="v1-3-1">v1.3.1</option>
@@ -57,7 +58,7 @@ nRF9160
 Asset tracker
 =============
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6898: Setting :option:`CONFIG_SECURE_BOOT` does not work
   The immutable bootloader is not able to find the required metadata in the MCUboot image.
@@ -65,7 +66,7 @@ NCSDK-6898: Setting :option:`CONFIG_SECURE_BOOT` does not work
 
   **Workaround:** Set :option:`CONFIG_FW_INFO` in MCUboot.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 External antenna performance setting
   The preprogrammed Asset Tracker does not come with the best external antenna performance.
@@ -81,23 +82,39 @@ NCSDK-5574: Warnings during FOTA
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
 NCSDK-6689: High current consumption in Asset Tracker
-  The :ref:`asset_tracker` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
+  The :ref:`asset_tracker` application might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
 
 .. rst-class:: v1-0-0 v0-4-0 v0-3-0
 
-Sending data before connecting to nRF Cloud
-  The :ref:`asset_tracker` sample does not wait for connection to nRF Cloud before trying to send data.
-  This causes the sample to crash if the user toggles one of the switches before the board is connected to the cloud.
+Sending data before connecting to nRF Connect for Cloud
+  The :ref:`asset_tracker` application does not wait for connection to nRF Connect for Cloud before trying to send data.
+  This causes the application to crash if the user toggles one of the switches before the kit is connected to the cloud.
+
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+
+IRIS-2676: Missing support for FOTA on nRF Connect for Cloud
+  The :ref:`asset_tracker` application does not support the nRF Connect for Cloud FOTA_v2 protocol.
+
+  **Workaround:** The implementation for supporting the nRF Connect for Cloud FOTA_v2 can be found in the following commits:
+
+					* cef289b559b92186cc54f0257b8c9adc0997f334
+					* 156d4cf3a568869adca445d43a786d819ae10250
+					* f520159f0415f011ae66efb816384a8f7bade83d
 
 Other issues
 ============
+
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0
+
+NRF91-989: Unable to bootstrap after changing SIMs
+  In some cases, swapping the SIM card may trigger the bootstrap Pre-Shared Key to be deleted from the device. This can prevent future bootstraps from succeeding.
 
 .. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-5666: LTE Sensor Gateway
   The :ref:`lte_sensor_gateway` sample crashes when Thingy:52 is flipped.
 
-.. rst-class:: v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 NCSDK-6073: ``nrf_send`` is blocking
   The :cpp:func:`nrf_send` function in the :ref:`nrfxlib:nrf_modem` might be blocking for several minutes, even if the socket is configured for non-blocking operation.
@@ -126,7 +143,7 @@ Problems with RTT Viewer/Logger
   **Workaround:** Set the RTT Control Block address to 0 and it will try to search from address 0 and upwards.
   If this does not work, look in the ``builddir/zephyr/zephyr.map`` file to find the address of the ``_SEGGER_RTT`` symbol in the map file and use that as input to the viewer/logger.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 Receive error with large packets
   nRF91 fails to receive large packets (over 4000 bytes).
@@ -189,12 +206,12 @@ KRKNWK-8262: CoAP Client Sample crashes for nRF5340
   **Workaround:** Use the application default thread, a dedicated workqueue, or a new thread to handle operations that require radio interactions.
   If you cannot avoid using the system workqueue, cherry-pick the upstream `Zephyr commit f12536`_.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-6848: Reduced throughput
   Performance testing for :ref:`NCP sample <ot_ncp_sample>` shows a decrease of throughput of around 10-20% compared with the standard OpenThread.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7885: Throughput is lower when using CC310 nrf_security backend
   A decrease of throughput of around 5-10% has been observed for the :ref:`CC310 nrf_security backend <nrfxlib:nrf_security_backends_cc3xx>` when compared with :ref:`nrf_oberon <nrf_security_backends_oberon>` or :ref:`the standard mbedtls backend <nrf_security_backends_orig_mbedtls>`.
@@ -207,7 +224,7 @@ KRKNWK-7885: Throughput is lower when using CC310 nrf_security backend
   * :option:`CONFIG_OBERON_MBEDTLS_CCM_C` to ``y``
   * :option:`CONFIG_CC3XX_MBEDTLS_AES_C` to ``n``
 
-.. rst-class:: v1-4-1 v1-4-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7721: MAC counter updating issue
   The ``RxDestAddrFiltered`` MAC counter is not being updated.
@@ -215,7 +232,7 @@ KRKNWK-7721: MAC counter updating issue
 
   **Workaround:** To fix the error, cherry-pick commits from the upstream `Zephyr PR #29226 <https://github.com/zephyrproject-rtos/zephyr/pull/29226>`_.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7962: Logging interferes with shell output
   :option:`CONFIG_LOG_MINIMAL` is configured by default for most OpenThread samples.
@@ -223,7 +240,7 @@ KRKNWK-7962: Logging interferes with shell output
 
   **Workaround:** Disable logging or enable a more advanced logging option.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7803: Automatically generated libraries are missing otPlatLog for NCP
   When building OpenThread libraries using a different sample than the :ref:`Thread NCP sample <ot_ncp_sample>`, the :file:`ncp_base.cpp` is not compiled with the :c:func:`otPlatLog` function.
@@ -251,36 +268,36 @@ KRKNWK-6408: ``diag`` command not supported
 Zigbee
 ======
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7836: Coordinator asserting when flooded with ZDO commands
   Executing a high number of ZDO commands can cause assert on the coordinator with the :ref:`lib_zigbee_shell` component enabled.
 
-.. rst-class:: v1-4-1 v1-4-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7831: Factory reset broken on coordinator with Zigbee shell
   A coordinator with the :ref:`lib_zigbee_shell` component enabled could assert after executing the ``bdb factory_reset`` command.
 
   **Workaround:** Call the ``bdb_reset_via_local_action`` function twice to remove all the network information.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7723: OTA upgrade process restarting after client reset
   After the reset of OTA Upgrade Client, the client will start the OTA upgrade process from the beginning instead of continuing the previous process.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 KRKNWK-6318: Device assert after multiple Leave requests
   If a device that rejoins the network receives Leave requests several times in a row, the device could assert.
 
-.. rst-class:: v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 KRKNWK-6071: ZBOSS alarms inaccurate
   On average, ZBOSS alarms last longer by 6.4 percent than Zephyr alarms.
 
   **Workaround:** Use Zephyr alarms.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 KRKNWK-5535: Device assert if flooded with multiple Network Address requests
   The device could assert if it receives Network Address requests every 0.2 second or more frequently.
@@ -293,7 +310,7 @@ KRKNWK-6073: Potential delay during FOTA
 nRF Desktop
 ===========
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 DESK-978: Directed advertising issues with SoftDevice Link Layer
   Directed advertising (:option:`CONFIG_DESKTOP_BLE_DIRECT_ADV`) should not be used by the :ref:`nrf_desktop` application when the :ref:`nrfxlib:softdevice_controller` is in use, because that leads to reconnection problems.
@@ -307,7 +324,7 @@ Subsystems
 Bluetooth LE
 ============
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 NCSDK-6845: Pairing failure with simultaneous pairing on multiple connections
   When using LE Secure Connections pairing, the pairing fails with simultaneous pairing on multiple connections.
@@ -315,7 +332,7 @@ NCSDK-6845: Pairing failure with simultaneous pairing on multiple connections
 
   **Workaround:** Retry the pairing on the connections that failed one by one after the pairing procedure has finished.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-6844: Security procedure failure can terminate GATT client request
   A security procedure terminates the GATT client request that is currently in progress, unless the request was the reason to initiate the security procedure.
@@ -331,9 +348,9 @@ NCSDK-5711: High-throughput transmission can deadlock the receive thread
 .. rst-class:: v1-2-1 v1-2-0
 
 Only secure applications can use Bluetooth LE
-  Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` board.
+  Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` build target.
 
-  **Workaround:** Use the ``nrf5340_dk_nrf5340_cpuapp`` board instead.
+  **Workaround:** Use the ``nrf5340_dk_nrf5340_cpuapp`` build target instead.
 
 .. rst-class:: v1-2-1 v1-2-0
 
@@ -417,13 +434,13 @@ Reconnection issues after bonding
   The peripheral samples (:ref:`peripheral_uart`, :ref:`peripheral_lbs`, :ref:`peripheral_hids_mouse`) have reconnection issues after performing bonding (LE Secure Connection pairing enable) with nRF Connect for Desktop.
   These issues result in disconnection.
 
-Bluetooth Mesh
+Bluetooth mesh
 ==============
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-5580: nRF5340 only supports SoftDevice Controller
-  On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth Mesh.
+  On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth mesh.
 
 Bootloader
 ==========
@@ -459,17 +476,23 @@ Immutable bootloader board restrictions
   * nrf52840_pca10056
   * nrf9160_pca10090
 
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+Immutable bootloader and netboot can overwrite non-OTP provisioning data
+  In architectures that do not have OTP regions, b0 and b0n images incorrectly linked to the size of their container can overwrite provisioning partition data from their image sizes.
+  Issue related to NCSDK-7982.
+
 Build system
 ============
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6898: Overriding child images
   Adding child image overlay from the :file:`CMakeLists.txt` top-level file located in the :file:`samples` directory overrides the existing child image overlay.
 
   **Workaround:** Apply the configuration from the overlay to the child image manually.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6777: Project out of date when :option:`CONFIG_SECURE_BOOT` is set
   The DFU :file:`.zip` file is regenerated even when no changes are made to the files it depends on.
@@ -477,14 +500,14 @@ NCSDK-6777: Project out of date when :option:`CONFIG_SECURE_BOOT` is set
 
   **Workaround:** Apply the fix from `sdk-nrf PR #3241 <https://github.com/nrfconnect/sdk-nrf/pull/3241>`_.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6848: MCUboot must be built from source when included
   The build will fail if either :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_SKIP_BUILD` or :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_USE_HEX_FILE` is set.
 
   **Workaround:** Set :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE` instead.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
 KRKNWK-7827: Application build system is not aware of the settings partition
   The application build system is not aware of partitions, including the settings partition, which can result in application code overlapping with other partitions.
@@ -499,7 +522,7 @@ KRKNWK-7827: Application build system is not aware of the settings partition
     Set :option:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option to ``y``.
     Make sure that the code partition is defined and chosen correctly (``offset`` and ``size``).
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 Build configuration issues
   The build configuration consisting of :ref:`bootloader`, :ref:`secure_partition_manager`, and application does not work.
@@ -513,15 +536,23 @@ Flash commands only program one core
 
   **Workaround:** Execute the flash command from inside the build directory of the child image that is placed on the other core (for example, :file:`build/hci_rpmsg`).
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 Secure Partition Manager and application building together
   It is not possible to build and program :ref:`secure_partition_manager` and the application individually.
 
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+NCSDK-7982: partition manager: Incorrect partition size linkage from name conflict
+  Partition manager will incorrectly link a partition's size to the size of its container if the container partition's name matches its child image's name in ``CMakeLists.txt``.
+  This can cause the inappropriately-sized partition to overwrite another partition beyond its intended boundary.
+
+  **Workaround:** Rename the container partitions in the ``pm.yml`` and ``pm_static.yml`` files to something that does not match the child images' names, and rename the child images' main image partition to its name in ``CMakeLists.txt``.
+
 DFU and FOTA
 ============
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6238: Socket API calls may hang when using Download client
   When using the :ref:`lib_download_client` library with HTTP (without TLS), the application might not process incoming fragments fast enough, which can starve the :ref:`nrfxlib:nrf_modem` buffers and make calls to the Modem library hang.
@@ -588,7 +619,7 @@ Unstable NFC tag samples
 Secure Partition Manager (SPM)
 ==============================
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSIDB-114: Default logging causes crash
   Enabling default logging in the :ref:`secure_partition_manager` sample makes it crash if the sample logs any data after the application has booted (for example, during a SecureFault, or in a secure service).
@@ -667,30 +698,51 @@ Closing sockets
 Multiprotocol Service Layer (MPSL)
 ==================================
 
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1
+
+DRGN-15223: `CONFIG_SYSTEM_CLOCK_NO_WAIT` is not supported for nRF5340
+  Using :option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` with nRF5340 devices might not work as expected.
+
+.. rst-class:: v1-4-2 v1-4-1
+
+DRGN-15176: `CONFIG_SYSTEM_CLOCK_NO_WAIT` is ignored when Low Frequency Clock is started before initializing MPSL
+  If the application starts the Low Frequency Clock before calling :c:func:`mpsl_init()`, the clock configuration option :option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` has no effect.
+  MPSL will wait for the Low Frequency Clock to start.
+
+  **Workaround:** When :option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` is set, do not start the Low Frequency Clock.
+
 .. rst-class:: v1-4-99-dev1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 DRGN-15064: External Full swing and External Low swing not working
   Even though the MPSL Clock driver accepts a Low Frequency Clock source configuration for External Full swing and External Low swing, the clock control system is not configured correctly.
   For this reason, do not use :c:macro:`CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING` and :c:macro:`CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING`.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 DRGN-6362: Do not use the synthesized low frequency clock source
   The synthesized low frequency clock source is neither tested nor intended for usage with MPSL.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 DRGN-14153: Radio Notification power performance penalty
   The Radio Notification feature has a power performance penalty proportional to the notification distance.
   This means an additional average current consumption of about 600 µA for the duration of the radio notification.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
-Front-End Modules API implementation missing
-  Front-End Modules API is currently not implemented by any protocol.
+Front-end modules API implementation missing
+  Front-end modules API is currently not implemented by any protocol.
 
 802.15.4 Radio driver
 =====================
+
+.. rst-class:: v1-5-0 v1-4-2 v1-4-2 v1-4-0
+
+KRKNWK-6255: RSSI parameter adjustment is not applied
+  The RADIO: RSSI parameter adjustment errata (153 for nRF52840, 225 for nRF52833 and nRF52820, 87 for nRF5340) are not applied for RSSI, LQI, Energy Detection, and CCA values used by the 802.15.4 protocol.
+  There is an expected offset up to +/- 6 dB in extreme temperatures of values based on RSSI measurement.
+
+    **Workaround:** To apply RSSI parameter adjustments, cherry-pick the commits in `hal_nordic PR #88 <https://github.com/zephyrproject-rtos/hal_nordic/pull/88>`_, `sdk-nrfxlib PR #381 <https://github.com/nrfconnect/sdk-nrfxlib/pull/381>`_, and `sdk-zephyr PR #430 <https://github.com/nrfconnect/sdk-zephyr/pull/430>`_.
 
 .. rst-class:: v1-4-99-dev1
 
@@ -701,7 +753,13 @@ KRKNWK-8133: CSMA-CA issues
 SoftDevice Controller
 =====================
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+DRGN-15226: Link disconnects with reason "LMP Response Timeout (0x22)"
+  If the slave receives an encryption request while the "HCI LE Long Term Key Request" event is disabled, the link disconnects with the reason "LMP Response Timeout (0x22)".
+  The event is disabled when :option:`CONFIG_BT_SMP` and/or :option:`CONFIG_BT_CTLR_LE_ENC` is disabled.
+
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 DRGN-11963: LL control procedures cannot be initiated at the same time
   The LL control procedures (LE start encryption and LE connection parameter update) cannot be initiated at the same time or more than once.
@@ -709,24 +767,24 @@ DRGN-11963: LL control procedures cannot be initiated at the same time
 
   **Workaround:** Do not initiate these procedures at the same time.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-8476: Long packets not supported in connections on Coded PHY
   In connections, the Link Layer payload size is limited to 27 bytes on LE Coded PHY.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-9083: AAR populated with zero IRK
   If the application has set an all zeroes IRK for a device in the resolving list, then a resolvable address that can be resolved with the all zeroes IRK will be reported to the application as that device in the advertisement report or the connected event.
 
-.. rst-class:: v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-13921: Directed advertising issues using RPA in TargetA
   The SoftDevice Controller will generate a resolvable address for the TargetA field in directed advertisements if the target device address is in the resolving list with a non-zero IRK, even if privacy is not enabled and the local device address is set to a public address.
 
   **Workaround:** Remove the device address from the resolving list.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-11297: Maximum CI before entering LLPM-mode
   The maximum connection interval that can be active when switching to a connection interval of 1 ms is 10 ms.
@@ -736,27 +794,27 @@ DRGN-11297: Maximum CI before entering LLPM-mode
   * A first update to 10 ms connection interval.
   * A second update to 1 ms connection interval.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-10305: Scanner can't have more than 16 seconds scan window
   If the scanner is configured with a scan window larger than 16 seconds, the scanner will truncate the scan window to 16 seconds.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-8569: SEVONPEND flag must not be modified
   Applications must not modify the SEVONPEND flag in the SCR register when running in priority levels higher than 6 (priority level numerical values lower than 6) as this can lead to undefined behavior.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 DRGN-6362: Synthesized low frequency clock source not tested
   Synthesized low frequency clock source is not tested or intended for use with the Bluetooth LE stack.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-10367: Advertiser times out earlier than expected
   If an extended advertiser is configured with limited duration, it will time out after the first primary channel packet in the last advertising event.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-12259: HCI Receiver and Transmitter Test commands not available
   The HCI Receiver and Transmitter Test commands are not available.
@@ -901,17 +959,17 @@ Zephyr
 Disabling USB causes crash
   Disabling USB by calling :c:func:`usb_disable` with a subsequent call to :c:func:`usb_dc_detach` tries to free unallocated memory and crashes.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6330: USB Mass Storage Sample Application fails MSC Tests from USB3CV test tool
   :ref:`zephyr:usb_mass` fails the USB3CV compliance Command Set Test from the MSC Tests suite.
 
-.. rst-class:: v1-4-1 v1-4-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6328: USB CDC ACM Composite Sample Application fails Chapter 9 Tests from USB3CV test tool
   :ref:`zephyr:usb_cdc-acm_composite` fails the USB3CV compliance TD 9.1: Device Descriptor Test from the Chapter 9 Test suite.
 
-.. rst-class:: v1-4-1 v1-4-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6331: WebUSB sample application fails Chapter 9 Tests from USB3CV test tool
   :ref:`zephyr:webusb-sample` fails the USB3CV compliance TD 9.21: LPM L1 Suspend Resume Test from the Chapter 9 Test suite.
@@ -933,7 +991,7 @@ Counter Alarm sample does not work
 USB Mass Storage Sample Application compilation issues
   :ref:`zephyr:usb_mass` does not compile.
 
-.. rst-class:: v1-4-99-dev1 v1-4-1 v1-4-0
+.. rst-class:: v1-4-99-dev1 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6832: SMP Server sample fails upon initialization
   The :ref:`zephyr:smp_svr_sample` will fail upon initialization when using the :file:`bt-overlay.conf` Kconfig overlay file.
@@ -942,9 +1000,9 @@ NCSDK-6832: SMP Server sample fails upon initialization
   **Workaround:** Set :option:`CONFIG_MAIN_STACK_SIZE` to ``2048``.
 
 SEGGER Embedded Studio Nordic Edition
-***************************************
+*************************************
 
-.. rst-class:: v1-4-1 v1-4-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6852: Extra CMake options might not be applied in version 5.10d
   If you specify :guilabel:`Extra CMake Build Options` in the :guilabel:`Open nRF Connect SDK Project` dialog and at the same time select an :guilabel:`nRF Connect Toolchain Version` of the form ``X.Y.Z``, the additional CMake options are discarded.

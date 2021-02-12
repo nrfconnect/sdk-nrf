@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <init.h>
@@ -19,10 +19,16 @@
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
+/* The following two constants are used in nrfx_glue.h for marking these PPI
+ * channels and groups as occupied and thus unavailable to other modules.
+ */
+const uint32_t z_mpsl_used_nrf_ppi_channels = MPSL_RESERVED_PPI_CHANNELS;
+const uint32_t z_mpsl_used_nrf_ppi_groups;
+
 #if IS_ENABLED(CONFIG_SOC_SERIES_NRF52X)
 	#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
 #elif IS_ENABLED(CONFIG_SOC_SERIES_NRF53X)
-	#define MPSL_LOW_PRIO_IRQn EGU0_IRQn
+	#define MPSL_LOW_PRIO_IRQn SWI0_IRQn
 #endif
 #define MPSL_LOW_PRIO (4)
 
@@ -159,9 +165,13 @@ static int mpsl_lib_init(const struct device *dev)
 	clock_cfg.skip_wait_lfclk_started =
 		IS_ENABLED(CONFIG_SYSTEM_CLOCK_NO_WAIT);
 
-#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
-	clock_cfg.rc_ctiv = MPSL_RECOMMENDED_RC_CTIV;
-	clock_cfg.rc_temp_ctiv = MPSL_RECOMMENDED_RC_TEMP_CTIV;
+#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION
+	/* clock_cfg.rc_ctiv is given in 1/4 seconds units.
+	 * CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD is given in ms. */
+	clock_cfg.rc_ctiv = (CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD * 4 / 1000);
+	clock_cfg.rc_temp_ctiv = CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_MAX_SKIP + 1;
+	BUILD_ASSERT(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_TEMP_DIFF == 2,
+		     "MPSL always uses a temperature diff threshold of 0.5 degrees");
 #else
 	clock_cfg.rc_ctiv = 0;
 	clock_cfg.rc_temp_ctiv = 0;

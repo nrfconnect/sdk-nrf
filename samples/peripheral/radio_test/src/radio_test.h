@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef RADIO_TEST_H_
 #define RADIO_TEST_H_
 
 #include <zephyr/types.h>
-#include <nrfx/hal/nrf_radio.h>
+#include <hal/nrf_radio.h>
 
 /** Maximum radio RX or TX payload. */
 #define RADIO_MAX_PAYLOAD_LEN	256
@@ -18,6 +18,8 @@
 #define IEEE_MIN_CHANNEL	11
 /** IEEE 802.15.4 maximum channel. */
 #define IEEE_MAX_CHANNEL	26
+
+#define NRF21540_USE_DEFAULT_GAIN 0xFF
 
 /**@brief Radio transmit and address pattern. */
 enum transmit_pattern {
@@ -50,6 +52,15 @@ enum radio_test_mode {
 
 	/** Duty-cycled modulated TX carrier. */
 	MODULATED_TX_DUTY_CYCLE,
+};
+
+/**@brief Radio test nRF21540 configuration */
+struct radio_test_nrf21540 {
+	/* nRF21540 activation delay. */
+	uint32_t active_delay;
+
+	/* nRF21540 TX gain. */
+	uint8_t gain;
 };
 
 /**@brief Radio test configuration. */
@@ -136,6 +147,11 @@ struct radio_test_config {
 			uint32_t duty_cycle;
 		} modulated_tx_duty_cycle;
 	} params;
+
+#if CONFIG_NRF21540_FEM
+	/* nRF21540 configuration. */
+	struct radio_test_nrf21540 nrf21540;
+#endif /* CONFIG_NRF21540_FEM */
 };
 
 /**@brief Radio RX statistics. */
@@ -157,8 +173,11 @@ struct radio_rx_stats {
  * @brief Function for initializing the Radio Test module.
  *
  * @param[in] config  Radio test configuration.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
-void radio_test_init(struct radio_test_config *config);
+int radio_test_init(struct radio_test_config *config);
 
 /**
  * @brief Function for starting radio test.

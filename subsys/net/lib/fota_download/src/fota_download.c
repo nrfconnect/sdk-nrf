@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr.h>
@@ -100,6 +100,7 @@ static int download_client_callback(const struct download_client_evt *event)
 					      dfu_target_callback_handler);
 			if ((err < 0) && (err != -EBUSY)) {
 				LOG_ERR("dfu_target_init error %d", err);
+				(void)download_client_disconnect(&dlc);
 				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 				int res = dfu_target_reset();
 
@@ -253,6 +254,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 		.sec_tag = sec_tag,
 		.apn = apn,
 		.frag_size_override = fragment_size,
+		.set_tls_hostname = (sec_tag != -1),
 	};
 
 	if (host == NULL || file == NULL || callback == NULL) {
@@ -267,36 +269,32 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 	 * space separated file is given.
 	 */
 	const char *update;
-	struct fw_info s0;
-	struct fw_info s1;
-
+	bool s0_active;
 #ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
-	err = spm_firmware_info(PM_S0_ADDRESS, &s0);
-	if (err != 0) {
-		return err;
-	}
 
-	err = spm_firmware_info(PM_S1_ADDRESS, &s1);
+	err = spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
 	if (err != 0) {
 		return err;
 	}
 #else /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
-	const struct fw_info *tmp_info;
+	const struct fw_info *s0;
+	const struct fw_info *s1;
 
-	tmp_info = fw_info_find(PM_S0_ADDRESS);
-	if (tmp_info == NULL) {
+	s0 = fw_info_find(PM_S0_ADDRESS);
+	if (s0 == NULL) {
 		return -EFAULT;
 	}
-	memcpy(&s0, tmp_info, sizeof(s0));
 
-	tmp_info = fw_info_find(PM_S1_ADDRESS);
-	if (tmp_info == NULL) {
-		return -EFAULT;
+	s1 = fw_info_find(PM_S1_ADDRESS);
+	if (s1 == NULL) {
+		/* No s1 found, s0 is active */
+		s0_active = true;
+	} else {
+		/* Both s0 and s1 found, check who is active */
+		s0_active = s0->version >= s1->version;
 	}
-	memcpy(&s1, tmp_info, sizeof(s1));
+
 #endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
-
-	bool s0_active = s0.version >= s1.version;
 
 	err = dfu_ctx_mcuboot_set_b1_file(file, s0_active, &update);
 	if (err != 0) {

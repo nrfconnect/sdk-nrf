@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  */
 
@@ -21,6 +21,7 @@
 #include <sockets_internal.h>
 #include <sys/fdtable.h>
 #include <zephyr.h>
+#include <nrf_gai_errors.h>
 
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)
 
@@ -414,16 +415,20 @@ static int z_to_nrf_protocol(int proto)
 static int nrf_to_z_dns_error_code(int nrf_error)
 {
 	switch (nrf_error) {
-	case NRF_ENOMEM:
-		return DNS_EAI_MEMORY;
-	case NRF_EAGAIN:
+	case NRF_EAI_AGAIN:
 		return DNS_EAI_AGAIN;
-	case NRF_EAFNOSUPPORT:
+	case NRF_EAI_BADFLAGS:
+		return DNS_EAI_BADFLAGS;
+	case NRF_EAI_FAMILY:
+		return DNS_EAI_FAMILY;
+	case NRF_EAI_MEMORY:
+		return DNS_EAI_MEMORY;
+	case NRF_EAI_NONAME:
 		return DNS_EAI_NONAME;
-	case NRF_EINPROGRESS:
-		return DNS_EAI_INPROGRESS;
-	case NRF_ENETUNREACH:
-		errno = ENETUNREACH;
+	case NRF_EAI_SERVICE:
+		return DNS_EAI_SERVICE;
+	case NRF_EAI_SOCKTYPE:
+		return DNS_EAI_SOCKTYPE;
 	default:
 		return DNS_EAI_SYSTEM;
 	}
@@ -726,10 +731,13 @@ static int nrf91_socket_offload_getsockopt(void *obj, int level, int optname,
 		if (level == SOL_SOCKET) {
 			if (optname == SO_ERROR) {
 				/* Use nrf_modem_os_errno_set() to translate from nRF
-				 * error to native error.
+				 * error to native error. If there is no error,
+				 * don't translate it.
 				 */
-				nrf_modem_os_errno_set(*(int *)optval);
-				*(int *)optval = errno;
+				if (*(int *)optval != 0) {
+					nrf_modem_os_errno_set(*(int *)optval);
+					*(int *)optval = errno;
+				}
 			} else if ((optname == SO_RCVTIMEO) ||
 				(optname == SO_SNDTIMEO)) {
 				((struct timeval *)optval)->tv_sec =

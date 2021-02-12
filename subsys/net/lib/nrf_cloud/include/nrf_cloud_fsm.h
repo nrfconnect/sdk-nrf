@@ -1,12 +1,13 @@
 /*
  * Copyright (c) 2017 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef NRF_CLOUD_FSM_H__
 #define NRF_CLOUD_FSM_H__
 
+#include <stdbool.h>
 #include <net/nrf_cloud.h>
 #include "nrf_cloud_transport.h"
 
@@ -57,6 +58,13 @@ void nfsm_set_current_state_and_notify(enum nfsm_state state,
  * To be implemented by the user application.
  */
 void nfsm_disconnect(void);
+
+/**@brief Get flag which indicates if user/app requested a disconnect.
+ *
+ * @retval true  User/application requested a disconnect.
+ *         false Unexpected disconnect.
+ */
+bool nfsm_get_disconnect_requested(void);
 
 #ifdef __cplusplus
 }

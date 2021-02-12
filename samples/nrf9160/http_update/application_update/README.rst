@@ -76,13 +76,13 @@ Specify the file name as the remaining part of the URL.
 Testing
 =======
 
-After programming the sample to the board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Configure the application version to be 2.
    To do so, either change ``CONFIG_APPLICATION_VERSION`` to 2 in the :file:`prj.conf` file, or select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project` -> :guilabel:`HTTP application update sample` in |SES| and change the value for :guilabel:`Application version`.
    Then rebuild the application.
 #. Upload the file :file:`update.bin` to the server you have chosen.
-   To upload the file on nRF Cloud, click :guilabel:`Upload` for the firmware URL that you generated earlier.
+   To upload the file on nRF Connect for Cloud, click :guilabel:`Upload` for the firmware URL that you generated earlier.
    Then select the file :file:`update.bin` and upload it.
 #. Reset your nRF9160 DK to start the application.
 #. Open a terminal emulator and observe that an output similar to this is printed:
@@ -95,7 +95,7 @@ After programming the sample to the board, test it by performing the following s
 #. Observe that **LED 1** is lit.
    This indicates that version 1 of the application is running.
 #. Press **Button 1** on the nRF9160 DK to start the download process and wait until "Download complete" is printed in the terminal.
-#. Press the **RESET** button on the board.
+#. Press the **RESET** button on the kit.
    MCUboot will now detect the downloaded image and write it to flash.
    This can take up to a minute and nothing is printed in the terminal while this is processing.
 #. Observe that **LED 1** and **LED 2** is lit.

@@ -50,7 +50,7 @@ Testing
 After programming the sample to your development kit, test it by performing the following steps:
 
 1. |connect_terminal_specific|
-#. Reset the board.
+#. Reset the kit.
 #. Start `nRF Connect for Desktop`_ and select the connected device that is used for communication.
 #. Connect to the device from nRF Connect.
    The device is advertising as "Nordic_BMS".

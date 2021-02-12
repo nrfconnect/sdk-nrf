@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 zephyr_sources_ifdef(CONFIG_BT_BAS_CLIENT bas_client.c)
@@ -16,4 +16,4 @@ zephyr_sources_ifdef(CONFIG_BT_NUS_CLIENT nus_client.c)
 zephyr_sources_ifdef(CONFIG_BT_LBS lbs.c)
 zephyr_sources_ifdef(CONFIG_BT_LATENCY latency.c)
 zephyr_sources_ifdef(CONFIG_BT_LATENCY_CLIENT latency_client.c)
-zephyr_sources_ifdef(CONFIG_BT_GADGETS gadgets.c)
+add_subdirectory_ifdef(CONFIG_BT_ALEXA_GADGETS alexa_gadgets)

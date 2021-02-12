@@ -44,7 +44,7 @@ Because of this, it automatically includes the :ref:`secure_partition_manager`.
 Testing
 =======
 
-After programming the sample to the board, test it by performing the following steps:
+After programming the sample to your development kit,, test it by performing the following steps:
 
 1. Note the LED pattern (1 or 2 LEDs).
 #. Press button 1 to download the delta for the alternative firmware version.

@@ -11,9 +11,9 @@
 # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
 
 manifest:
-  # This west.yml requires west 0.7 or later, because the "import"
+  # This west.yml requires west 0.9 or later, because the "submodules"
   # feature used below was introduced then.
-  version: 0.7
+  version: 0.9
 
   # "remotes" is a list of locations where git repositories are cloned
   # and fetched from.
@@ -33,6 +33,8 @@ manifest:
       url-base: https://github.com/nanopb
     - name: alexa
       url-base: https://github.com/alexa
+    - name: nordicsemi
+      url-base: https://github.com/NordicSemiconductor
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -50,7 +52,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 3366927a54986ad0ddf060d0e08ecc578adf11f0
+      revision: v2.4.99-ncs1-rc1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -65,7 +67,6 @@ manifest:
         # Please keep this list sorted alphabetically.
         name-whitelist:
           - canopennode
-          - ci-tools
           - cmsis
           - civetweb
           - edtt
@@ -77,6 +78,7 @@ manifest:
           - loramac-node
           - lvgl
           - mbedtls
+          - mcumgr
           - mipi-sys-t
           - net-tools
           - nrf_hw_models
@@ -85,7 +87,6 @@ manifest:
           - segger
           - tinycbor
           - tinycrypt
-          - trusted-firmware-m
 
     # NCS repositories.
     #
@@ -93,29 +94,44 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: b95e49304a9ee82f83668d51c1d95c6f2faaf983
+      revision: v1.7.99-ncs1-rc1
       path: bootloader/mcuboot
-    - name: mcumgr
-      repo-path: sdk-mcumgr
-      revision: c811bcbd446c4589496fc96237c0a286ea2e7f10
-      path: modules/lib/mcumgr
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 8243ed209863ee1a3bf2a5d2735a939e8f890f4f
+      revision: v1.5.0-rc1
+    - name: trusted-firmware-m
+      repo-path: sdk-trusted-firmware-m
+      path: modules/tee/tfm
+      revision: v1.2.99-ncs1-rc1
+    - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
+      repo-path: sdk-mcuboot
+      path: modules/tee/tfm-mcuboot
+      revision: 81d19f017f18f1bc6bea906d96fd45fba3672064
+    - name: connectedhomeip
+      repo-path: sdk-connectedhomeip
+      path: modules/lib/connectedhomeip
+      revision: v1.5.0-rc1
+      submodules:
+        - name: nlio
+          path: third_party/nlio/repo
+        - name: nlassert
+          path: third_party/nlassert/repo
+        - name: pigweed
+          path: third_party/pigweed/repo
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
-      revision: c243b9a7a7b3c471023193992b46cf1bd1910450
+      revision: 9d092898ef26ece140d9225e037274b64d4f851e
       remote: throwtheswitch
     - name: unity
       path: test/cmock/vendor/unity
-      revision: 031f3bbe45f8adf504ca3d13e6f093869920b091
+      revision: cf949f45ca6d172a177b00da21310607b97bc7a7
       remote: throwtheswitch
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: mbedtls
-      revision: mbedtls-2.23.0
+      revision: mbedtls-2.24.0
       remote: armmbed
     - name: nanopb
       path: modules/lib/nanopb
@@ -125,6 +141,10 @@ manifest:
       path: modules/alexa-embedded
       revision: face92d8c62184832793f518bb1f19379538c5c1
       remote: alexa
+    - name: cddl-gen
+      remote: nordicsemi
+      revision: 24f1b2b0c64c694b7f9ac1b7eab60b39236ca0bf
+      path: modules/lib/cddl-gen
 
   # West-related configuration for the nrf repository.
   self:

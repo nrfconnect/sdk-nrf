@@ -1,6 +1,6 @@
 .. _bt_mesh_dk_prov:
 
-Bluetooth Mesh provisioning handler for Nordic DKs
+Bluetooth mesh provisioning handler for Nordic DKs
 ##################################################
 
 .. contents::
@@ -8,10 +8,10 @@ Bluetooth Mesh provisioning handler for Nordic DKs
    :depth: 2
 
 This application-side module is a basic implementation of the provisioning process handling for Development Kits from Nordic Semiconductor.
-It supports four types of Out Of Band (OOB) authentication methods and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
-For more information about provisioning in Bluetooth Mesh, see the :ref:`zephyr:bluetooth_mesh_provisioning` page in Zephyr.
+It supports four types of out-of-band (OOB) authentication methods and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
+For more information about provisioning in Bluetooth mesh, see the :ref:`zephyr:bluetooth_mesh_provisioning` page in Zephyr.
 
-Used primarily in :ref:`Bluetooth Mesh sample applications <ble_samples>`, this handler acts as a reference implementation for the application-specific part of provisioning.
+Used primarily in :ref:`Bluetooth mesh sample applications <ble_samples>`, this handler acts as a reference implementation for the application-specific part of provisioning.
 It is enabled with the :option:`CONFIG_BT_MESH_DK_PROV` option and by calling :c:func:`bt_mesh_dk_prov_init` in main.
 
 The handling of the OOB authentication methods is closely tied to the hardware parameters of the Development Kits from Nordic Semiconductor.
@@ -52,7 +52,7 @@ Input: Push button
 
     .. note::
         It is also possible for the provisioner to select "No authentication" and skip the OOB authentication.
-        This is not recommended, as it compromises the Mesh network security.
+        This is not recommended, as it compromises the mesh network security.
 
 UUID
 ====

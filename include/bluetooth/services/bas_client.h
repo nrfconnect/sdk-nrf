@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #ifndef __BAS_C_H
 #define __BAS_C_H

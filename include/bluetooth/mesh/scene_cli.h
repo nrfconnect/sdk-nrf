@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
@@ -33,7 +33,7 @@ struct bt_mesh_scene_cli;
 			 &(_cli)->pub,                                         \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_scene_cli,     \
 						 _cli),                        \
-			 &_bt_mesh_scene_cli_cb),
+			 &_bt_mesh_scene_cli_cb)
 
 /** Scene state */
 struct bt_mesh_scene_state {
@@ -247,7 +247,7 @@ int bt_mesh_scene_cli_delete_unack(struct bt_mesh_scene_cli *cli,
  *  @param[out] rsp        Response buffer, or NULL to keep from blocking.
  *
  *  @retval 0 Successfully sent the recall message and processed the response.
- *  @retval -EINVAL Invalid scene number.
+ *  @retval -EINVAL Invalid scene number or transition parameters.
  *  @retval -EALREADY A blocking request is already in progress.
  *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  *  not configured.
@@ -272,7 +272,7 @@ int bt_mesh_scene_cli_recall(struct bt_mesh_scene_cli *cli,
  *                        the target's default parameters.
  *
  *  @retval 0 Successfully sent the recall message.
- *  @retval -EINVAL Invalid scene number.
+ *  @retval -EINVAL Invalid scene number or transition parameters.
  *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  *  not configured.
  *  @retval -EAGAIN The device has not been provisioned.

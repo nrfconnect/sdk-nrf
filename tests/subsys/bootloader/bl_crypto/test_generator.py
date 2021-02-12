@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2019 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 from ecdsa import SigningKey, NIST256p
 import random
@@ -132,4 +132,3 @@ if __name__ == "__main__":
 		f.write(c_code_declare_array("const_public_key", fw_pubkey))
 		f.write(c_code_declare_array("const_fw_hash", fw_hash))
 		f.write(c_code_declare_array("const_fw_data", hexstr_to_array(fw_hex.hex())))
-

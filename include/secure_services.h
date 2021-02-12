@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /** @file
@@ -58,18 +58,13 @@ void spm_request_system_reboot(void);
 
 /** Request a random number from the Secure Firmware.
  *
- * This provides a True Random Number from the on-board random number generator.
+ * This provides a CTR_DRBG number from the CC3XX platform libraries.
  *
- * @note Currently, the RNG hardware is run each time this is called. This
- *       spends significant time and power.
- *
- * @param[out] output  The random number. Must be at least @c len long.
- * @param[in]  len     The length of the output array. Currently, @c len must be
- *                     144.
+ * @param[out] output  The CTR_DRBG number. Must be at least @c len long.
+ * @param[in]  len     The length of the output array.
  * @param[out] olen    The length of the random number provided.
  *
- * @retval 0        If successful.
- * @retval -EINVAL  If @c len is invalid. Currently, @c len must be 144.
+ * @return non-negative on success, negative errno code on fail
  */
 int spm_request_random_number(uint8_t *output, size_t len, size_t *olen);
 
@@ -85,6 +80,17 @@ int spm_request_random_number(uint8_t *output, size_t len, size_t *olen);
  * @retval -EPERM   If source is outside of allowed ranges.
  */
 int spm_request_read(void *destination, uint32_t addr, size_t len);
+
+/** Check if S0 is the active B1 slot.
+ *
+ * @param[in]   s0_address Address of s0 slot.
+ * @param[in]   s1_address Address of s1 slot.
+ * @param[out]  s0_active  Set to 'true' if s0 is active slot, 'false' otherwise
+ *
+ * @retval 0        If successful.
+ * @retval -EINVAL  If info for both slots are NULL.
+ */
+int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active);
 
 /** Search for the fw_info structure in firmware image located at address.
  *

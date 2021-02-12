@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <ztest.h>
@@ -165,6 +165,19 @@ static void test_number_detection(void)
 	zassert_true(is_number('-'), "Number was not detected");
 }
 
+static void test_is_clac(void)
+{
+	char str[5] = "AT+ ";
+
+	zassert_true(is_clac(str), "AT+ was not detected");
+
+	str[2] = '%';
+	zassert_true(is_clac(str), "AT%  was not detected");
+
+	str[3] = 'X';
+	zassert_false(is_clac(str), "AT%X was detected");
+}
+
 void test_main(void)
 {
 	ztest_test_suite(at_cmd_parser,
@@ -176,7 +189,8 @@ void test_main(void)
 			ztest_unit_test(test_lfcr),
 			ztest_unit_test(test_dblquote),
 			ztest_unit_test(test_array_detection),
-			ztest_unit_test(test_number_detection)
+			ztest_unit_test(test_number_detection),
+			ztest_unit_test(test_is_clac)
 			);
 
 	ztest_run_test_suite(at_cmd_parser);

@@ -1,13 +1,14 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef NRF_CLOUD_H__
 #define NRF_CLOUD_H__
 
 #include <zephyr/types.h>
+#include <net/mqtt.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,10 +18,25 @@ extern "C" {
  * @{
  */
 
+#define DEFAULT_REPORT_ID		1
+#define NCT_CC_SUBSCRIBE_ID		1234
+#define CLOUD_STATE_REQ_ID		5678
+#define PAIRING_STATUS_REPORT_ID	7890
+#define NCT_DC_SUBSCRIBE_ID		8765
+#define NRF_CLOUD_FOTA_SUBSCRIBE_ID	8766
+#define NRF_CLOUD_FOTA_REQUEST_ID	8767
+#define NRF_CLOUD_FOTA_UPDATE_ID	8768
+#define NRF_CLOUD_FOTA_BLE_REQUEST_ID	8769
+#define NRF_CLOUD_FOTA_BLE_UPDATE_ID	8770
+
+#define NRF_CLOUD_SETTINGS_NAME "nrf_cloud"
+
 /** @brief Asynchronous nRF Cloud events notified by the module. */
 enum nrf_cloud_evt_type {
 	/** The transport to the nRF Cloud is established. */
 	NRF_CLOUD_EVT_TRANSPORT_CONNECTED = 0x1,
+	/** In the process of connecting to nRF Cloud. */
+	NRF_CLOUD_EVT_TRANSPORT_CONNECTING,
 	/** There was a request from nRF Cloud to associate the device
 	 * with a user on the nRF Cloud.
 	 */
@@ -45,6 +61,35 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_ERROR = 0xFF
 };
 
+/**@ nRF Cloud disconnect status. */
+enum nrf_cloud_disconnect_status {
+	NRF_CLOUD_DISCONNECT_USER_REQUEST,
+	NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE,
+	NRF_CLOUD_DISCONNECT_INVALID_REQUEST,
+	NRF_CLOUD_DISCONNECT_MISC,
+	NRF_CLOUD_DISCONNECT_COUNT
+};
+
+/**@ nRF Cloud connect result. */
+enum nrf_cloud_connect_result {
+	NRF_CLOUD_CONNECT_RES_SUCCESS = 0,
+	NRF_CLOUD_CONNECT_RES_ERR_NOT_INITD = -1,
+	NRF_CLOUD_CONNECT_RES_ERR_INVALID_PARAM = -2,
+	NRF_CLOUD_CONNECT_RES_ERR_NETWORK = -3,
+	NRF_CLOUD_CONNECT_RES_ERR_BACKEND = -4,
+	NRF_CLOUD_CONNECT_RES_ERR_MISC = -5,
+	NRF_CLOUD_CONNECT_RES_ERR_NO_MEM = -6,
+	/* Invalid private key */
+	NRF_CLOUD_CONNECT_RES_ERR_PRV_KEY = -7,
+	/* Invalid CA or client cert */
+	NRF_CLOUD_CONNECT_RES_ERR_CERT = -8,
+	/* Other cert issue */
+	NRF_CLOUD_CONNECT_RES_ERR_CERT_MISC = -9,
+	/* Timeout, SIM card may be out of data */
+	NRF_CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA = -10,
+	NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED = -11,
+};
+
 /** @brief Sensor types supported by the nRF Cloud. */
 enum nrf_cloud_sensor {
 	/** The GPS sensor on the device. */
@@ -65,6 +110,14 @@ enum nrf_cloud_sensor {
 	NRF_CLOUD_LTE_LINK_RSRP,
 	/** The descriptive DEVICE data indicating its status. */
 	NRF_CLOUD_DEVICE_INFO,
+};
+
+/** @brief Topic types supported by nRF Cloud. */
+enum nrf_cloud_topic_type {
+	/** Endpoint used to update the cloud-side device shadow state . */
+	NRF_CLOUD_TOPIC_STATE = 0x1,
+	/** Endpoint used to directly message the nRF Cloud Web UI. */
+	NRF_CLOUD_TOPIC_MESSAGE,
 };
 
 /**@brief Generic encapsulation for any data that is sent to the cloud. */
@@ -127,6 +180,16 @@ struct nrf_cloud_evt {
 	struct nrf_cloud_topic topic;
 };
 
+/**@brief Structure used to send pre-encoded data to nRF Cloud. */
+struct nrf_cloud_tx_data {
+	/** Data that is to be published. */
+	struct nrf_cloud_data data;
+	/** Endpoint topic type published to. */
+	enum nrf_cloud_topic_type topic_type;
+	/** Quality of Service of the message. */
+	enum mqtt_qos qos;
+};
+
 /**
  * @brief  Event handler registered with the module to handle asynchronous
  * events from the module.
@@ -164,8 +227,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param);
  *
  * @param[in] param Parameters to be used for the connection.
  *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval Connect result defined by enum nrf_cloud_connect_result.
  */
 int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
 
@@ -221,6 +283,19 @@ int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param);
  *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
+
+/**
+ * @brief Send data to nRF Cloud.
+ *
+ * This API is used to send pre-encoded data to nRF Cloud.
+ *
+ * @param[in] msg Pointer to a structure containting data and topic
+ *                information.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_send(const struct nrf_cloud_tx_data *msg);
 
 /**
  * @brief Disconnect from the cloud.

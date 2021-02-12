@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /* Event manager private header.
@@ -89,7 +89,7 @@ extern "C" {
 #define _EVENT_ALLOCATOR_FN(ename)					\
 	static inline struct ename *_CONCAT(new_, ename)(void)		\
 	{								\
-		struct ename *event = k_malloc(sizeof(*event));		\
+		struct ename *event = (struct ename *)k_malloc(sizeof(*event));\
 		BUILD_ASSERT(offsetof(struct ename, header) == 0,	\
 				 "");					\
 		if (unlikely(!event)) {					\
@@ -111,8 +111,8 @@ extern "C" {
 #define _EVENT_ALLOCATOR_DYNDATA_FN(ename)				\
 	static inline struct ename *_CONCAT(new_, ename)(size_t size)	\
 	{								\
-		struct ename *event = k_malloc(sizeof(*event) + size);	\
-		BUILD_ASSERT((offsetof(struct ename, dyndata) +	\
+		struct ename *event = (struct ename *)k_malloc(sizeof(*event) + size);\
+		BUILD_ASSERT((offsetof(struct ename, dyndata) +		\
 				  sizeof(event->dyndata.size)) ==	\
 				 sizeof(*event), "");			\
 		BUILD_ASSERT(offsetof(struct ename, header) == 0,	\

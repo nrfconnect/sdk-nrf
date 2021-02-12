@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <stdio.h>
 #include "service_info.h"
@@ -75,6 +75,12 @@ int service_info_json_object_encode(
 			 fota_version);
 		err = add_array_obj(fota, fota_count, fota_name,
 				    service_info_obj);
+		if (fota_version > 1) {
+			/* Clear previous fota version in the shadow */
+			snprintf(fota_name, sizeof(fota_name), "%s%hu",
+				 FOTAS_JSON_NAME, fota_version - 1);
+			cJSON_AddNullToObject(service_info_obj, fota_name);
+		}
 	}
 
 	if (!err) {

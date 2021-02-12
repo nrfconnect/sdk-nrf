@@ -55,6 +55,64 @@ The installation process is different depending on your operating system.
 
       Also see :ref:`zephyr:mac-setup-alts` for additional information.
 
+If you are interested in building `Connected Home over IP`_ applications, install also the `GN`_ meta-build system to generate the Ninja files that the |NCS| uses.
+
+.. tabs::
+
+   .. group-tab:: Windows
+
+      To install the GN tool, complete the following steps:
+
+      1. Download the latest version of the GN binary archive for Windows from the `GN website`_.
+      2. Extract the :file:`zip` archive.
+      3. Ensure that the GN tool is added to your :envvar:`PATH` :ref:`environment variable <zephyr:env_vars>`.
+
+   .. group-tab:: Linux
+
+      To install the GN tool, complete the following steps:
+
+      1. Download the GN binary archive and extract it by using the following commands:
+
+         .. parsed-literal::
+            :class: highlight
+
+            mkdir ${HOME}/gn && cd ${HOME}/gn
+            wget -O gn.zip https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/latest
+            unzip gn.zip
+            rm gn.zip
+
+      #. Add the location of the GN tool to the system PATH.
+         For example, if you are using ``bash``, run the following commands:
+
+         .. parsed-literal::
+            :class: highlight
+
+            echo 'export PATH=${HOME}/gn:"$PATH"' >> ${HOME}/.bashrc
+            source ${HOME}/.bashrc
+
+   .. group-tab:: macOS
+
+      To install the GN tool, complete the following steps:
+
+      1. Download the GN binary archive and extract it by using the following commands:
+
+         .. parsed-literal::
+            :class: highlight
+
+            mkdir ${HOME}/gn && cd ${HOME}/gn
+            wget -O gn.zip https://chrome-infra-packages.appspot.com/dl/gn/gn/mac-amd64/+/latest
+            unzip gn.zip
+            rm gn.zip
+
+      #. Add the location of the GN tool to the system PATH.
+         For example, if you are using ``bash``, run the following commands:
+
+         .. parsed-literal::
+            :class: highlight
+
+            echo 'export PATH=${HOME}/gn:"$PATH"' >> ${HOME}/.bashrc
+            source ${HOME}/.bashrc
+
 .. _gs_installing_toolchain:
 
 Installing the toolchain
@@ -217,7 +275,6 @@ Therefore, remember to regularly check for updates:
          :class: highlight
 
          pip3 install -U west
-
 
 Cloning the repositories
 ========================
@@ -636,5 +693,5 @@ Define the required environment variables as follows, depending on your operatin
       This file is loaded automatically when you run the above command.
 
 You must also make sure that nrfjprog (part of the `nRF Command Line Tools`_) is installed and its path is added to the environment variables.
-The west command programs the board by using nrfjprog by default.
-For more information on nrfjprog, see `programming development boards using nrfjprog <Programming DK boards using nrfjprog_>`_.
+The west command programs the kit by using nrfjprog by default.
+For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.

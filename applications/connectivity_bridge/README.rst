@@ -7,7 +7,7 @@ Connectivity bridge
    :local:
    :depth: 2
 
-The Connectivity bridge application demonstrates the bridge functionality for the Thingy:91 hardware and is an enhancement to the :ref:`usb_uart_bridge_sample` sample.
+The Connectivity bridge application demonstrates the bridge functionality for the Thingy:91 hardware.
 
 Additionally, the application also provides an option of adding the bluetooth functionality by making use of the :ref:`nus_service_readme`.
 
@@ -75,11 +75,11 @@ The overlay can be found in :file:`mcuboot_overlay-rsa.conf`.
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your kit, test it by performing the following steps:
 
-1. Connect the board to the host via a USB cable.
+1. Connect the kit to the host via a USB cable.
 #. Observe that the CDC ACM devices enumerate on the USB host (COM ports on Windows, /dev/tty* on Linux).
-#. Use a serial client on the USB host to communicate over the board's UART pins.
+#. Use a serial client on the USB host to communicate over the kit's UART pins.
 
 
 Dependencies

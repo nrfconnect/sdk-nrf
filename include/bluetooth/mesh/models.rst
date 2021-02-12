@@ -1,11 +1,11 @@
 .. _bt_mesh_models:
 
-Bluetooth Mesh models
-######################
+Bluetooth mesh models
+#####################
 
-Nordic Semiconductor provides a variety of model implementations from the `Mesh Model Specification`_, including API documentation.
+Nordic Semiconductor provides a variety of model implementations from the `Bluetooth mesh model specification`_, including API documentation.
 
-For more information about these and other models, see also `Mesh Model Overview`_.
+For more information about these and other models, see also `Bluetooth mesh model overview`_.
 
 .. toctree::
    :maxdepth: 1
@@ -23,6 +23,9 @@ For more information about these and other models, see also `Mesh Model Overview
    ../../../include/bluetooth/mesh/lightness.rst
    ../../../include/bluetooth/mesh/light_ctrl.rst
    ../../../include/bluetooth/mesh/light_ctl.rst
+   ../../../include/bluetooth/mesh/light_xyl.rst
+   ../../../include/bluetooth/mesh/light_hsl.rst
    ../../../include/bluetooth/mesh/sensor_models.rst
    ../../../include/bluetooth/mesh/time.rst
    ../../../include/bluetooth/mesh/scene.rst
+   ../../../include/bluetooth/mesh/scheduler.rst

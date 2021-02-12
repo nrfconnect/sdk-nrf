@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <bluetooth/mesh/gen_dtt_cli.h>
@@ -40,7 +40,9 @@ static int bt_mesh_dtt_init(struct bt_mesh_model *mod)
 	struct bt_mesh_dtt_cli *cli = mod->user_data;
 
 	cli->model = mod;
-	net_buf_simple_init(mod->pub->msg, 0);
+	cli->pub.msg = &cli->pub_buf;
+	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
+				      sizeof(cli->pub_data));
 	model_ack_init(&cli->ack_ctx);
 
 	return 0;

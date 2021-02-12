@@ -1,13 +1,14 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr.h>
 #include <logging/log.h>
 #include <dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
+#include <dfu/dfu_target_mcuboot.h>
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>
 #include <zb_nrf_platform.h>
@@ -21,7 +22,7 @@ LOG_MODULE_REGISTER(zigbee_fota, CONFIG_ZIGBEE_FOTA_LOG_LEVEL);
 #define OPTIONAL_HEADER_LEN    sizeof(zb_zcl_ota_upgrade_file_header_optional_t)
 #define TOTAL_HEADER_LEN       (MANDATORY_HEADER_LEN + OPTIONAL_HEADER_LEN)
 
-#define MAGIC_WORD_SIZE 4
+#define MAGIC_WORD_SIZE 32
 
 struct zb_ota_dfu_context {
 	uint32_t        ota_header_size;
@@ -72,6 +73,7 @@ union zb_ota_app_ver {
 	};
 };
 
+static uint8_t zb_ota_buf[CONFIG_ZIGBEE_FOTA_DATA_BLOCK_SIZE];
 static struct zb_ota_dfu_context ota_ctx;
 static struct zb_ota_client_ctx dev_ctx;
 static zigbee_fota_callback_t callback;
@@ -132,7 +134,7 @@ static void send_progress(zb_uint8_t progress)
 static void ota_client_attr_init(void)
 {
 	struct mcuboot_img_header mcuboot_header;
-	union zb_ota_app_ver app_image_ver;
+	union zb_ota_app_ver app_image_ver = {0};
 
 	int err = boot_read_bank_header(PM_MCUBOOT_PRIMARY_ID,
 					&mcuboot_header,
@@ -193,6 +195,12 @@ static uint8_t ota_dfu_target_init(const uint8_t *magic_word_buf)
 {
 	int err = 0;
 	int img_type = dfu_target_img_type(magic_word_buf, MAGIC_WORD_SIZE);
+
+	err = dfu_target_mcuboot_set_buf(zb_ota_buf, sizeof(zb_ota_buf));
+	if (err < 0) {
+		LOG_ERR("dfu_target_mcuboot_set_buf err %d", err);
+		return err;
+	}
 
 	err = dfu_target_init(img_type, ota_ctx.bin_size,
 			      ota_dfu_target_callback_handler);

@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,entropy = &rng;
+	};
+
+	pwmleds {
+		pwm_led3: pwm_led_3 {
+			pwms = <&pwm0 16>;
+		};
+	};
+};
+
+&pwm0 {
+	ch1-pin = <16>;
+	ch1-inverted;
+};

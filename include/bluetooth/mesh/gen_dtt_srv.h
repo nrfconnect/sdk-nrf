@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
@@ -35,10 +35,6 @@ struct bt_mesh_dtt_srv;
 #define BT_MESH_DTT_SRV_INIT(_update)                                          \
 	{                                                                      \
 		.update = _update,                                             \
-		.pub = {.update = _bt_mesh_dtt_srv_update_handler,             \
-			.msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(           \
-				BT_MESH_DTT_OP_STATUS,                         \
-				BT_MESH_DTT_MSG_LEN_STATUS)) }                 \
 	}
 
 /** @def BT_MESH_MODEL_DTT_SRV
@@ -79,6 +75,11 @@ struct bt_mesh_dtt_srv {
 	struct bt_mesh_model *model;
 	/** Model publish parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_DTT_OP_STATUS,
+					       BT_MESH_DTT_MSG_LEN_STATUS)];
 };
 
 /** @brief Set the Default Transition Time of the DTT server.
@@ -144,7 +145,6 @@ bt_mesh_dtt_srv_transition_get(struct bt_mesh_model *mod,
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_dtt_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_dtt_srv_cb;
-int _bt_mesh_dtt_srv_update_handler(struct bt_mesh_model *model);
 /** @endcond */
 
 #ifdef __cplusplus

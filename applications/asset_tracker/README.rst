@@ -3,19 +3,23 @@
 nRF9160: Asset Tracker
 ######################
 
+.. admonition:: Maintenance notice
+
+   The Asset Tracker application was deprecated in nRF Connect SDK version 1.5 and will be removed in future versions.
+   It is succeeded by the :ref:`asset_tracker_v2` application.
+
 .. contents::
    :local:
    :depth: 2
 
-The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based board to the `nRF Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the device.
-
+The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based kit to the `nRF Connect for Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the device.
 
 Overview
 ********
 
 The application uses the LTE link control driver to establish a network connection.
-It then collects various data locally, and transmits the data to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
-The data is visualized in nRF Cloud's web interface.
+It then collects various data locally, and transmits the data to Nordic Semiconductor's cloud solution, `nRF Connect for Cloud`_.
+The data is visualized in nRF Connect for Cloud's web interface.
 
 The collected data includes the GPS position, accelerometer readings (the device's physical orientation), and data from various environment sensors.
 
@@ -47,13 +51,13 @@ The collected data includes the GPS position, accelerometer readings (the device
 
 On the nRF9160 DK, the application uses simulated sensor data by default, but it can be configured with Kconfig options to use real sensors to collect data.
 On the Thingy:91, onboard sensors are used by default.
-GPS is enabled by default on both the boards.
+GPS is enabled by default on both the kits.
 
 In addition to the sensor data, the application retrieves information from the LTE modem, such as the signal strength, battery voltage, and current operator.
-This information is available in nRF Cloud under the section **Cellular Link Monitor**.
+This information is available in nRF Connect for Cloud under the section **Cellular Link Monitor**.
 
 The `LTE Link Monitor`_ application, implemented as part of `nRF Connect for Desktop`_  can be used to send AT commands to the device and receive the responses.
-You can also send AT commands from the **Terminal** card on nRF Cloud when the device is connected.
+You can also send AT commands from the **Terminal** card on nRF Connect for Cloud when the device is connected.
 
 By default, the Asset Tracker supports firmware updates through :ref:`lib_aws_fota`.
 
@@ -110,11 +114,11 @@ User interface
 The buttons and switches have the following functions when the connection is established:
 
 Button 1 (SW3 on Thingy:91):
-    * Send a BUTTON event to the nRF Cloud.
+    * Send a BUTTON event to the nRF Connect for Cloud.
     * Enable or disable GPS operation (long press the button for a minimum of 10 seconds).
 
 Switch 1 (only on nRF9160 DK):
-    * Toggle to simulate orientation change (flipping) of the board.
+    * Toggle to simulate orientation change (flipping) of the kit.
 
 Switch 2 (only on nRF9160 DK):
     * Set power optimization mode, see :ref:`power_opt`.
@@ -124,8 +128,8 @@ On the nRF9160 DK, the application state is indicated by the LEDs.
 LED 3 and LED 4:
     * LED 3 blinking: The device is connecting to the LTE network.
     * LED 3 ON: The device is connected to the LTE network.
-    * LED 4 blinking: The device is connecting to nRF Cloud.
-    * LED 3 and LED 4 blinking: The MQTT connection has been established and the user association procedure with nRF Cloud has been initiated.
+    * LED 4 blinking: The device is connecting to nRF Connect for Cloud.
+    * LED 3 and LED 4 blinking: The MQTT connection has been established and the user association procedure with nRF Connect for Cloud has been initiated.
     * LED 4 ON: The device is connected and ready for sensor data transfer.
 
     .. figure:: /images/nrf_cloud_led_states.svg
@@ -135,7 +139,7 @@ LED 3 and LED 4:
 
 All LEDs (1-4):
     * Blinking in groups of two (LED 1 and 3, LED 2 and 4): Recoverable error in the Modem library.
-    * Blinking in cross pattern (LED 1 and 4, LED 2 and 3): Communication error with the nRF Cloud.
+    * Blinking in cross pattern (LED 1 and 4, LED 2 and 3): Communication error with the nRF Connect for Cloud.
 
 On the Thingy:91, the application state is indicated by a single RGB LED as follows:
 
@@ -150,7 +154,7 @@ On the Thingy:91, the application state is indicated by a single RGB LED as foll
    * - White
      - Connecting to network
    * - Cyan
-     - Connecting to the nRF Cloud
+     - Connecting to nRF Connect for Cloud
    * - Yellow
      - Waiting for user association
    * - Blue
@@ -209,35 +213,35 @@ The overlay can be found in :file:`mcuboot_overlay-rsa.conf`.
 Testing
 =======
 
-After programming the application and all prerequisites to your board, test the Asset Tracker application by performing the following steps:
+After programming the application and all prerequisites to your kit, test the Asset Tracker application by performing the following steps:
 
-1. Connect the board to the computer using a USB cable.
-   The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
-#. Connect to the board with a terminal emulator, for example, LTE Link Monitor.
-#. Reset the board.
-#. Observe in the terminal window that the board starts up in the Secure Partition Manager and that the application starts.
+1. Connect the kit to the computer using a USB cable.
+   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+#. Connect to the kit with a terminal emulator, for example, LTE Link Monitor.
+#. Reset the kit.
+#. Observe in the terminal window that the kit starts up in the Secure Partition Manager and that the application starts.
    This is indicated by output similar to the following lines::
 
       SPM: prepare to jump to Non-Secure image
       ***** Booting Zephyr OS v1.13.99 *****
       Application started
 
-#. Observe in the terminal window that the connection to the nRF Cloud is established. This may take several minutes.
+#. Observe in the terminal window that the connection to nRF Connect for Cloud is established. This may take several minutes.
 #. Open a web browser and navigate to https://nrfcloud.com/.
    Follow the instructions to set up your account and add an LTE device.
 #. The first time you start the application, add the device to your account:
 
    a. Observe that the LED(s) indicate that the device is waiting for user association.
-   #. Follow the instructions on `nRF Cloud`_ to add your device.
-   #. If association is successful, the device reconnects to nRF Cloud.
+   #. Follow the instructions on `nRF Connect for Cloud`_ to add your device.
+   #. If association is successful, the device reconnects to nRF Connect for Cloud.
       If the LED(s) indicate an error, check the details of the error in the terminal window.
       The device must be power-cycled to restart the association procedure.
 #. Observe that the LED(s) indicate that the connection is established.
-#. Observe that the device count on your nRF Cloud dashboard is incremented by one.
-#. Select the device from your device list on nRF Cloud, and observe that sensor data and modem information is received from the board.
-#. Press Button 1 (SW3 on Thingy:91) to send BUTTON data to the nRF Cloud.
+#. Observe that the device count on your nRF Connect for Cloud dashboard is incremented by one.
+#. Select the device from your device list on nRF Connect for Cloud, and observe that sensor data and modem information is received from the kit.
+#. Press Button 1 (SW3 on Thingy:91) to send BUTTON data to nRF Connect for Cloud.
 #. Press Button 1 (SW3 on Thingy:91) for a minimum of 10 seconds to enable GPS tracking.
-   The board must be outdoors in clear space for a few minutes to get the first position fix.
+   The kit must be outdoors in clear space for a few minutes to get the first position fix.
 #. Optionally send AT commands from the terminal, and observe that the response is received.
 
 

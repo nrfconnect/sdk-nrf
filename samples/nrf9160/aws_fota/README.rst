@@ -31,12 +31,12 @@ The `AWS IoT Developer Guide`_ contains all required information about the Amazo
 Creating a thing in AWS IoT
 ===========================
 
-Before you can run this sample, you must create a *thing* for your board in AWS IoT so that AWS knows about your board.
+Before you can run this sample, you must create a *thing* for your development kit in AWS IoT so that AWS knows about your kit.
 This thing must be connected to a security policy.
 For testing, you can use a permissive policy, but make sure to update the policy to be more restrictive before you go into production.
 See `AWS IoT Developer Guide: Basic Policy Variables`_ and `AWS IoT Developer Guide: Security Best Practices`_ for more information about policies.
 
-To create a thing for your board:
+To create a thing for your kit:
 
 1. Log on to the `AWS IoT console`_.
 #. Go to :guilabel:`Secure` -> :guilabel:`Policies` and select :guilabel:`Create a policy`.
@@ -58,7 +58,7 @@ To create a thing for your board:
 #. Go to :guilabel:`Manage` -> :guilabel:`Things` and select :guilabel:`Register a thing` or :guilabel:`Create` (depending on whether you already have a thing registered).
 #. Select :guilabel:`Create a single thing`.
 #. Enter a name.
-   The default name used by the sample is ``nrf-IMEI``, where *IMEI* is the IMEI number of your board.
+   The default name used by the sample is ``nrf-IMEI``, where *IMEI* is the IMEI number of your kit.
    If you choose a different name, make sure to :ref:`configure a custom client ID <configuring>` in the sample before you build it.
 #. Accept the defaults and continue to the next step.
 #. Select :guilabel:`Create certificate` to generate new certificates.
@@ -73,11 +73,11 @@ To create a thing for your board:
 Updating the certificates
 =========================
 
-The certificates that you created or added for your thing in AWS IoT must be stored on your board so that it can connect to AWS IoT.
+The certificates that you created or added for your thing in AWS IoT must be stored on your kit so that it can connect to AWS IoT.
 There are two different ways of doing this:
 
 Add the certificates to the sample code:
-   If you add the certificates to the sample code, the sample will store them on your board automatically.
+   If you add the certificates to the sample code, the sample will store them on your kit automatically.
 
    .. warning_start
 
@@ -93,10 +93,10 @@ Add the certificates to the sample code:
       Make sure to not add whitespace except for the ``\n`` line breaks.
    #. Before programming the sample, configure it to provision the certificates from the :file:`certificates.h` file (:option:`PROVISION_CERTIFICATES`) and to use a different security tag (:option:`CLOUD_CERT_SEC_TAG`).
 
-Use LTE Link Monitor to write the certificates to the board:
-   The nRF Connect `LTE Link Monitor`_ provides a certificate manager that you can use to store the certificates on your board:
+Use LTE Link Monitor to write the certificates to the kit:
+   The nRF Connect `LTE Link Monitor`_ provides a certificate manager that you can use to store the certificates on your kit:
 
-   1. Make sure that you have the AT client sample programmed on your board.
+   1. Make sure that you have the AT client sample programmed on your kit.
    #. Put the modem in offline state.
    #. Paste the three certificates into the respective fields.
    #. Choose a security tag.
@@ -140,25 +140,25 @@ Before you build the sample, check and update the following configuration option
 
 .. option:: CLOUD_CERT_SEC_TAG - Security tag for TLS credentials
 
-   By default, the sample uses the certificates that are stored with the security tag for nRF Cloud.
+   By default, the sample uses the certificates that are stored with the security tag for nRF Connect for Cloud.
    To use different certificates, configure a different security tag.
    If you used LTE Link Monitor to store the certificates, make sure to configure the security tag to the same that you used to store them.
 
 .. option:: MQTT_BROKER_HOSTNAME - AWT IoT MQTT broker hostname
 
-   By default, the sample uses nRF Cloud's MQTT broker.
+   By default, the sample uses nRF Connect for Cloud's MQTT broker.
    Change this value to AWS IoT's MQTT broker.
    To find the address of the AWS IoT MQTT broker, open the AWS IoT console, go to :guilabel:`Test` and select :guilabel:`View endpoint` from the :guilabel:`Connected as XXX` drop-down menu.
 
 .. option:: USE_CLOUD_CLIENT_ID - Custom MQTT client ID
 
-   The client ID links your board to the thing in AWS IoT.
-   By default, the client ID is ``nrf-IMEI``, where *IMEI* is the IMEI number of your board.
+   The client ID links your kit to the thing in AWS IoT.
+   By default, the client ID is ``nrf-IMEI``, where *IMEI* is the IMEI number of your kit.
    If you chose a different name for your thing in AWS IoT, check this option and specify the AWS IoT thing name as client ID.
 
-.. option:: USE_NRF_CLOUD - Use nRF Cloud
+.. option:: USE_NRF_CLOUD - Use nRF Connect for Cloud
 
-   If this option is checked, the sample uses the certificates that are stored in the modem with the nRF Cloud security tag.
+   If this option is checked, the sample uses the certificates that are stored in the modem with the nRF Connect for Cloud security tag.
 
    Uncheck this option if you want to use the certificates added to the :file:`certificates.h` file.
 
@@ -175,10 +175,10 @@ For all other values, use the default values unless you are using a custom MQTT 
 Testing
 =======
 
-After programming the sample to the board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. |connect_terminal|
-#. Reset the board.
+#. Reset the kit.
 #. Confirm that the sample prints the configured application version and connects to AWS IoT.
    You should see output like the following::
 
@@ -248,7 +248,7 @@ After programming the sample to the board, test it by performing the following s
       [00:05:20.585,266] <inf> aws_fota: Firmware download completed
 
 
-#. When the board resets, observe that the sample prints the new application version.
+#. When the kit resets, observe that the sample prints the new application version.
 #. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` -> :guilabel:`Things`, and select your thing.
 #. Go to :guilabel:`Shadow` and confirm that the application version has updated.
 

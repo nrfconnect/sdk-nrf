@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 config NCS_SAMPLES_DEFAULTS
@@ -20,6 +20,7 @@ config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
 	bool "Enable empty_app_core as a child image"
 	default n
 	depends on SOC_NRF5340_CPUNET
+	select PARTITION_MANAGER_ENABLED
 	help
 	  Add the empty_app_core as a child image for the given sample.
 	  Used by samples that only require SOC_NRF5340_CPUNET.

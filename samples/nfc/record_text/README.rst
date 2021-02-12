@@ -46,7 +46,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Touch the NFC antenna with the smartphone or tablet and observe that LED 1 is lit.
 #. Observe that the smartphone/tablet displays the encoded text (in the most

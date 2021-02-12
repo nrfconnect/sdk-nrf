@@ -1,7 +1,7 @@
 # UART configuration
 
 # Copyright (c) 2020, Nordic Semiconductor ASA
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 config NRF_SW_LPUART
 	bool "Low Power UART using REQ/RDY lines"
@@ -12,6 +12,15 @@ config NRF_SW_LPUART
 	  communication with 2 pins protocol for receiver wake up and flow control.
 
 if NRF_SW_LPUART
+
+config NRF_SW_LPUART_HFXO_ON_RX
+	bool "Turn on HFXO for RX"
+	default y
+	help
+	  According to the UART specification high frequency RC oscillator is
+	  not accurate enough. However, in normal conditions and accurate clock
+	  on the transmitter side it may be accepted to disable it. Turning on
+	  HFXO prolongs receiver activation for up to 3 milliseconds.
 
 config NRF_SW_LPUART_MAX_PACKET_SIZE
 	int "Maximum RX packet size"

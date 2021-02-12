@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <ctype.h>
@@ -249,12 +249,12 @@ static int at_parse_process_element(const char **str, int index,
 		tmpstr++;
 	} else if (state == NUMBER) {
 		char *next;
-		int value = (uint32_t)strtoul(tmpstr, &next, 10);
+		int32_t value = (int32_t)strtol(tmpstr, &next, 10);
 
 		tmpstr = next;
 
-		if (value <= USHRT_MAX) {
-			at_params_short_put(list, index, (uint16_t)value);
+		if ((value <= SHRT_MAX) && (value >= SHRT_MIN)) {
+			at_params_short_put(list, index, (int16_t)value);
 		} else {
 			at_params_int_put(list, index, value);
 		}

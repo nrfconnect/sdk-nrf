@@ -1,6 +1,6 @@
 # Copyright (c) 2020 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 # The purpose of this file is to override and extend settings related to
@@ -23,6 +23,8 @@ config OPENTHREAD_NRF_SECURITY
 	select MBEDTLS_CTR_DRBG_C
 	select MBEDTLS_ECDH_C if OPENTHREAD_ECDSA
 	select MBEDTLS_ECDSA_C if OPENTHREAD_ECDSA
+	select MBEDTLS_PK_C if OPENTHREAD_ECDSA
+	select MBEDTLS_PK_WRITE_C if OPENTHREAD_ECDSA
 	select MBEDTLS_ECJPAKE_C
 	select MBEDTLS_ECP_C
 	select MBEDTLS_ECP_DP_SECP256R1_ENABLED
@@ -46,6 +48,16 @@ config OPENTHREAD_MBEDTLS_LIB_NAME
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx " if CC3XX_BACKEND
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_oberon" if OBERON_BACKEND
 	default "mbedtls_common" if OPENTHREAD_NRF_SECURITY
+
+config OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE
+	int "OpenThread radio transmit workqueue stack size"
+	default 640 if NRF_802154_SER_HOST
+	default 512
+
+choice CC3XX_LOCK_VARIANT
+	default CC3XX_ATOMIC_LOCK if SOC_NRF52840
+	default CC3XX_HW_MUTEX_LOCK if SOC_NRF5340_CPUAPP
+endchoice
 
 endmenu
 

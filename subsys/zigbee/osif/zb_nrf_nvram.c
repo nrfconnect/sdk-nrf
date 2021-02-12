@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <pm_config.h>
@@ -113,6 +113,10 @@ zb_ret_t zb_osif_nvram_write(zb_uint8_t page, zb_uint32_t pos, void *buf,
 
 	if (!buf) {
 		return RET_INVALID_PARAMETER_3;
+	}
+
+	if (len == 0) {
+		return RET_OK;
 	}
 
 	if (!(len >> 2)) {

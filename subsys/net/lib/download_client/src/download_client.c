@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2021 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <stdio.h>
@@ -10,7 +10,6 @@
 #include <zephyr/types.h>
 #include <toolchain/common.h>
 #include <net/socket.h>
-#include <nrf_socket.h>
 #include <net/tls_credentials.h>
 #include <net/download_client.h>
 #include <logging/log.h>
@@ -446,7 +445,8 @@ restart_and_suspend:
 			error_cause = ECONNRESET;
 
 			if (len == -1) {
-				if (errno == ETIMEDOUT) {
+				if ((errno == ETIMEDOUT) || (errno == EWOULDBLOCK) ||
+				    (errno == EAGAIN)) {
 					if (dl->proto == IPPROTO_UDP ||
 					    dl->proto == IPPROTO_DTLS_1_2) {
 						LOG_DBG("Socket timeout, resending");
@@ -582,6 +582,8 @@ int download_client_init(struct download_client *const client,
 				K_THREAD_STACK_SIZEOF(client->thread_stack),
 				download_thread, client, NULL, NULL,
 				K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
+
+	k_thread_name_set(client->tid, "download_client");
 
 	return 0;
 }

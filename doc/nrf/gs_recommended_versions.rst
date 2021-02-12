@@ -47,6 +47,9 @@ It lists the minimum version that is required and the version that is installed 
          * - west
            - |west_min_ver|
            - |west_recommended_ver_win10|
+         * - GN
+           - |gn_min_ver|
+           - |gn_recommended_ver_win10|
 
    .. group-tab:: Linux
 
@@ -89,6 +92,9 @@ It lists the minimum version that is required and the version that is installed 
          * - west
            - |west_min_ver|
            - |west_recommended_ver_linux|
+         * - GN
+           - |gn_min_ver|
+           - |gn_recommended_ver_linux|
 
    .. group-tab:: macOS
 
@@ -125,7 +131,9 @@ It lists the minimum version that is required and the version that is installed 
          * - west
            - |west_min_ver|
            - |west_recommended_ver_darwin|
-
+         * - GN
+           - |gn_min_ver|
+           - |gn_recommended_ver_darwin|
 
 Required Python dependencies
 ****************************

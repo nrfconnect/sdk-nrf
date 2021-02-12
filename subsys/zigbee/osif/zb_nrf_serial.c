@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <kernel.h>
@@ -280,6 +280,9 @@ void zb_osif_uart_wake_up(void)
 
 void zb_osif_serial_put_bytes(zb_uint8_t *buf, zb_short_t len)
 {
+#if !(defined(ZB_HAVE_ASYNC_SERIAL) && \
+	defined(CONFIG_ZBOSS_TRACE_LOG_LEVEL_OFF))
+
 	if ((uart_dev == NULL) || is_sleeping) {
 		return;
 	}
@@ -289,8 +292,8 @@ void zb_osif_serial_put_bytes(zb_uint8_t *buf, zb_short_t len)
 	}
 
 	/*
-	 * Wait forever since there is no way to inform higher layer about
-	 * TX busy state.
+	 * Wait forever since there is no way to inform higher layer
+	 * about TX busy state.
 	 */
 	(void)k_sem_take(&tx_done_sem, K_FOREVER);
 	memcpy(uart_tx_buf, buf, len);
@@ -300,6 +303,8 @@ void zb_osif_serial_put_bytes(zb_uint8_t *buf, zb_short_t len)
 
 	/* Enable tx interrupts. */
 	uart_irq_tx_enable(uart_dev);
+
+#endif /* !(ZB_HAVE_ASYNC_SERIAL && CONFIG_ZBOSS_TRACE_LOG_LEVEL_OFF) */
 }
 
 void zb_osif_serial_recv_data(zb_uint8_t *buf, zb_ushort_t len)

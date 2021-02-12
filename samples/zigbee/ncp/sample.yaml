@@ -1,0 +1,21 @@
+sample:
+  name: Zigbee NCP
+  description: Zigbee network co-processor
+
+tests:
+  zigbee.ncp:
+    build_only: true
+    platform_allow: nrf52833dk_nrf52833 nrf52840dk_nrf52840 nrf21540dk_nrf52840
+    tags: ci_build
+
+  zigbee.ncp.usb:
+    build_only: true
+    platform_allow: nrf52833dk_nrf52833 nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf21540dk_nrf52840
+    tags: ci_build
+    extra_args: DOVERLAY_CONFIG=usb.overlay
+
+  zigbee.ncp.with_nrf21540ek:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    tags: ci_build
+    extra_args: DTC_OVERLAY_FILE=boards/nrf52840dk_nrf52840.overlay;../common/dts-nrf21540-fem.overlay

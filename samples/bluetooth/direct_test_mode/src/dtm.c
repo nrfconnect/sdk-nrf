@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <string.h>
@@ -11,12 +11,16 @@
 #include "dtm_hw.h"
 #include "dtm_hw_config.h"
 
+#if CONFIG_NRF21540_FEM
+#include "nrf21540.h"
+#endif
+
 #include <drivers/clock_control.h>
 #include <drivers/clock_control/nrf_clock_control.h>
 
-#include <nrfx/hal/nrf_nvmc.h>
-#include <nrfx/hal/nrf_radio.h>
-#include <nrfx/helpers/nrfx_gppi.h>
+#include <hal/nrf_nvmc.h>
+#include <hal/nrf_radio.h>
+#include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 
 #if defined(CONFIG_HAS_HW_NRF_PPI)
@@ -30,7 +34,6 @@
 #else
 #error "No PPI or DPPI"
 #endif
-
 
 /* DT definition for clock required in DT_INST_LABEL macro */
 #define DT_DRV_COMPAT nordic_nrf_clock
@@ -169,6 +172,8 @@ BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 
 #define DTM_MAX_ANTENNA_COUNT DT_PROP(DT_PATH(zephyr_user), dtm_antenna_count)
 
+#define NRF21540_USE_DEFAULT_GAIN 0xFF
+
 /* States used for the DTM test implementation */
 enum dtm_state {
 	/* DTM is uninitialized */
@@ -265,6 +270,17 @@ struct dtm_cte_info {
 	uint8_t info;
 };
 
+struct nrf21540_parameters {
+	/* nRF21540 activation delay. */
+	uint32_t active_delay;
+
+	/* nRF21540 Vendor activation delay. */
+	uint32_t vendor_active_delay;
+
+	/* nRF21540 Tx gain. */
+	uint8_t gain;
+};
+
 /* DTM instance definition */
 static struct dtm_instance {
 	/* Current machine state. */
@@ -329,6 +345,9 @@ static struct dtm_instance {
 	/* Constant Tone Extension configuration. */
 	struct dtm_cte_info cte_info;
 
+	/* nRF21540 FEM parameters. */
+	struct nrf21540_parameters nrf21540;
+
 	/* Radio TX Enable PPI channel. */
 	gppi_channel_t ppi_radio_txen;
 } dtm_inst = {
@@ -339,6 +358,7 @@ static struct dtm_instance {
 	.anomaly_timer = NRFX_TIMER_INSTANCE(ANOMALY_172_TIMER_INSTANCE),
 	.radio_mode = NRF_RADIO_MODE_BLE_1MBIT,
 	.txpower = NRF_RADIO_TXPOWER_0DBM,
+	.nrf21540.gain = NRF21540_USE_DEFAULT_GAIN,
 };
 
 /* The PRBS9 sequence used as packet payload.
@@ -682,6 +702,12 @@ int dtm_init(void)
 	if (err) {
 		return err;
 	}
+#if CONFIG_NRF21540_FEM
+	err = nrf21540_init();
+	if (err) {
+		return err;
+	}
+#endif /* CONFIG_NRF21540_FEM */
 
 	dtm_inst.state = STATE_IDLE;
 	dtm_inst.new_event = false;
@@ -860,8 +886,18 @@ static bool dtm_wait_internal(void)
 		NVIC_ClearPendingIRQ(RADIO_IRQn);
 
 		if (dtm_inst.state == STATE_RECEIVER_TEST) {
-			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+#if CONFIG_NRF21540_FEM
+			(void) nrf21540_txrx_configuration_clear();
+			(void) nrf21540_txrx_stop();
 
+			(void) nrf21540_rx_configure(NRF21540_EXECUTE_NOW,
+					nrf_radio_event_address_get(
+						NRF_RADIO,
+						NRF_RADIO_EVENT_DISABLED),
+					dtm_inst.nrf21540.active_delay);
+#else
+			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+#endif /* CONFIG_NRF21540_FEM */
 			if (dtm_inst.anomaly_172_wa_enabled) {
 				nrfx_timer_compare(&dtm_inst.anomaly_timer,
 					NRF_TIMER_CC_CHANNEL0,
@@ -905,7 +941,9 @@ static bool dtm_wait_internal(void)
 
 		if (dtm_inst.anomaly_172_wa_enabled) {
 			nrfx_timer_clear(&dtm_inst.anomaly_timer);
-			nrfx_timer_enable(&dtm_inst.anomaly_timer);
+			if (!nrfx_timer_is_enabled(&dtm_inst.anomaly_timer)) {
+				nrfx_timer_enable(&dtm_inst.anomaly_timer);
+			}
 		}
 	}
 
@@ -1024,6 +1062,11 @@ static void dtm_test_done(void)
 	nrfx_timer_disable(&dtm_inst.anomaly_timer);
 
 	radio_reset();
+#if CONFIG_NRF21540_FEM
+	(void) nrf21540_txrx_configuration_clear();
+	(void) nrf21540_txrx_stop();
+	(void) nrf21540_power_down();
+#endif /* CONFIG_NRF21540_FEM */
 	dtm_inst.state = STATE_IDLE;
 }
 
@@ -1057,6 +1100,17 @@ static void radio_prepare(bool rx)
 			     NRF_RADIO_SHORT_READY_START_MASK |
 			     NRF_RADIO_SHORT_END_DISABLE_MASK);
 #endif /* DIRECTION_FINDING_SUPPORTED */
+
+#if CONFIG_NRF21540_FEM
+	if (dtm_inst.nrf21540.vendor_active_delay == 0) {
+		dtm_inst.nrf21540.active_delay =
+			nrf21540_default_active_delay_calculate(rx,
+							dtm_inst.radio_mode);
+	} else {
+		dtm_inst.nrf21540.active_delay =
+				dtm_inst.nrf21540.vendor_active_delay;
+	}
+#endif
 	if (rx) {
 		/* Enable strict mode for anomaly 172 */
 		if (dtm_inst.anomaly_172_wa_enabled) {
@@ -1064,8 +1118,18 @@ static void radio_prepare(bool rx)
 		}
 
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
+
+#if CONFIG_NRF21540_FEM
+		(void) nrf21540_power_up();
+		(void) nrf21540_rx_configure(NRF21540_EXECUTE_NOW,
+			nrf_radio_event_address_get(
+						NRF_RADIO,
+						NRF_RADIO_EVENT_DISABLED),
+			dtm_inst.nrf21540.active_delay);
+#else
 		/* Shorts will start radio in RX mode when it is ready */
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+#endif /* CONFIG_NRF21540_FEM */
 	} else { /* tx */
 		nrf_radio_txpower_set(NRF_RADIO, dtm_inst.txpower);
 
@@ -1133,8 +1197,24 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 		nrf_radio_shorts_set(NRF_RADIO,
 				     NRF_RADIO_SHORT_READY_START_MASK);
 
+#if CONFIG_NRF21540_FEM
+		(void) nrf21540_power_up();
+
+		if (dtm_inst.nrf21540.gain != NRF21540_USE_DEFAULT_GAIN) {
+			if (nrf21540_tx_gain_set(dtm_inst.nrf21540.gain) != 0) {
+				dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
+				return DTM_ERROR_ILLEGAL_CONFIGURATION;
+			}
+		}
+
+		(void) nrf21540_tx_configure(NRF21540_EXECUTE_NOW,
+			nrf_radio_event_address_get(NRF_RADIO,
+						    NRF_RADIO_EVENT_DISABLED),
+			dtm_inst.nrf21540.active_delay);
+#else
 		/* Shortcut will start radio in Tx mode when it is ready */
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
+#endif /* CONFIG_NRF21540_FEM */
 		dtm_inst.state = STATE_CARRIER_TEST;
 		break;
 
@@ -1145,6 +1225,25 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 		}
 		break;
 
+#if CONFIG_NRF21540_FEM
+	case NRF21540_ANTENNA_SELECT:
+		if (nrf21540_antenna_select(vendor_option) != 0) {
+			dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
+			return DTM_ERROR_ILLEGAL_CONFIGURATION;
+		}
+
+		break;
+
+	case NRF21540_GAIN_SET:
+		dtm_inst.nrf21540.gain = vendor_option;
+
+		break;
+
+	case NRF21540_ACTIVE_DELAY_SET:
+		dtm_inst.nrf21540.vendor_active_delay = vendor_option;
+
+		break;
+#endif /* CONFIG_NRF21540_FEM */
 	}
 
 	/* Event code is unchanged, successful */
@@ -1614,6 +1713,8 @@ static enum dtm_err_code on_test_setup_cmd(enum dtm_ctrl_code control,
 		dtm_inst.radio_mode = NRF_RADIO_MODE_BLE_1MBIT;
 		dtm_inst.packet_hdr_plen =
 			NRF_RADIO_PREAMBLE_LENGTH_8BIT;
+		dtm_inst.nrf21540.vendor_active_delay = 0;
+		dtm_inst.nrf21540.gain = NRF21540_USE_DEFAULT_GAIN;
 
 #if DIRECTION_FINDING_SUPPORTED
 		memset(&dtm_inst.cte_info, 0, sizeof(dtm_inst.cte_info));
@@ -1801,6 +1902,24 @@ static enum dtm_err_code on_test_transmit_cmd(uint32_t length, uint32_t freq)
 				   dtm_inst.radio_mode),
 			   false);
 
+#if CONFIG_NRF21540_FEM
+	(void) nrf21540_power_up();
+
+	if (dtm_inst.nrf21540.gain != NRF21540_USE_DEFAULT_GAIN) {
+		if (nrf21540_tx_gain_set(dtm_inst.nrf21540.gain) != 0) {
+			dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
+			return DTM_ERROR_ILLEGAL_CONFIGURATION;
+		}
+	}
+
+	(void) nrf21540_tx_configure(nrf_timer_event_address_get(
+						dtm_inst.timer.p_reg,
+						NRF_TIMER_EVENT_COMPARE0),
+				     nrf_radio_event_address_get(
+						NRF_RADIO,
+						NRF_RADIO_EVENT_DISABLED),
+				     dtm_inst.nrf21540.active_delay);
+#else
 	/* Configure PPI so that timer will activate radio every
 	 * 625 us
 	 */
@@ -1812,6 +1931,7 @@ static enum dtm_err_code on_test_transmit_cmd(uint32_t length, uint32_t freq)
 			nrf_radio_task_address_get(NRF_RADIO,
 						   NRF_RADIO_TASK_TXEN));
 	nrfx_gppi_channels_enable(BIT(dtm_inst.ppi_radio_txen));
+#endif /* CONFIG_NRF21540_FEM */
 
 	dtm_inst.state = STATE_TRANSMITTER_TEST;
 

@@ -9,16 +9,16 @@ Mesh model template
 
 .. tip::
    This is the mesh model overview page.
-   On this page, explain what this model allows you to do within the broader context of the mesh network and list server and client models that are part of this Mesh model.
+   On this page, explain what this model allows you to do within the broader context of the mesh network and list server and client models that are part of this mesh model.
    Use max two sentences (full sentences, not sentence fragments) for the explanation.
    You can go into more detail on the model pages.
 
    Make sure you link to the server and client model pages and include them in the ``.. toctree:`` below by listing their file names.
    To create these pages, use the :ref:`server and client model template<bt_mesh_model_server_client_template>`.
 
-The XYZ Mesh models allow to remotely control a disco light with a mesh device.
+The XYZ mesh models allow to remotely control a disco light with a mesh device.
 
-The XYZ Mesh models also feature their own common types, listed below.
+The XYZ mesh models also feature their own common types, listed below.
 For types common to all models, see :ref:`bt_mesh_models`.
 
 .. toctree::

@@ -7,24 +7,24 @@ Partition Manager
    :local:
    :depth: 2
 
-The Partition Manager is a Python script that sets the start address and size of all flash and RAM partitions in a multi-image build context.
-When creating an application that requires child images (for example, a bootloader), you can configure the Partition Manager to control where in memory each image should be placed, and how the RAM should be shared.
+The Partition Manager is a Python script that sets the start address and size of all the flash and RAM partitions in a multi-image build context.
+When creating an application that requires child images, like a bootloader, you can configure the Partition Manager to control where each image should be placed in memory, and how the RAM should be shared.
 
 See :ref:`ug_multi_image` for more information about multi-image builds.
 
-The Partition Manager is activated for all multi-image builds, no matter what build strategy is used for the child image.
+The Partition Manager is activated for all multi-image builds, regardless of which build strategy is used for the child image.
 
 .. _pm_overview:
 
 Overview
 ********
 
-The Partition Manager script reads configuration files named :file:`pm.yml`, which define flash and RAM partitions.
-A flash partition's definition includes its name and constraints on its size and placement in flash.
-A RAM partition's definition includes its name and constraints on its size.
-The Partition Manager allocates a start address and sometimes a size to each partition in a way that satisfies these constraints.
+The Partition Manager script reads the configuration files named :file:`pm.yml`, which define flash and RAM partitions.
+A definition of a flash partition includes the name and the constraints on both size and placement in the flash.
+A definition of a RAM partition includes the name and the constraints on its size.
+The Partition Manager allocates a start address and, when set, a size to each partition in a way that complies with these constraints.
 
-There are different kinds of **flash partitions** and **RAM partitions**, as described below.
+There are different types of **flash partitions** and **RAM partitions**, as described below.
 
 Flash partition types
 =====================
@@ -42,7 +42,7 @@ Placeholder partitions
    For example, you might want to reserve space in flash to hold an updated application image while it is being downloaded and before it is copied to the application image partition.
 
 Container partitions
-   A container partition does not reserve space, but is used to logically and/or physically group other partitions.
+   A container partition does not reserve space but is used to logically and/or physically group other partitions.
 
 The start addresses and sizes of image partitions are used in the preprocessing of the linker script for each image.
 
@@ -50,7 +50,7 @@ RAM partition types
 =====================
 
 Default image RAM partition
-   The default image RAM partition consists of all RAM that is not defined as a permanent image RAM partition or placeholder RAM partition.
+   The default image RAM partition consists of all the RAM that is not defined as a permanent image RAM partition or placeholder RAM partition.
    It is the default RAM partition associated with an image and is set as the RAM region when linking the image.
    If an image must reserve its RAM area permanently (i.e. at the same time as other images are running), it must use a permanent image RAM partition, described below.
 
@@ -59,7 +59,7 @@ Default image RAM partition
 Permanent image RAM partitions
    A permanent image RAM partition reserves RAM for an image permanently.
    It is typically used for images that will remain active after they have booted the next step in the boot chain.
-   If an image has configured a permanent image RAM partition, it is set as the RAM region when linking the image instead of the default image RAM partition.
+   If an image has configured a permanent image RAM partition, it is set as the RAM region when linking the image, instead of the default image RAM partition.
 
 .. _pm_permanent_placeholder_ram_partition:
 
@@ -70,6 +70,7 @@ Permanent placeholder RAM partitions
 
 Configuration
 *************
+
 Each child image must define its Partition Manager configuration in a file called :file:`pm.yml`.
 This file must be stored in the same folder as the main :file:`CMakeLists.txt` file of the child image.
 
@@ -78,12 +79,12 @@ This file must be stored in the same folder as the main :file:`CMakeLists.txt` f
    The root application does not need to define a :file:`pm.yml` file, because its partition size and placement is implied by the size and placement of the child image partitions.
    If a root application defines a :file:`pm.yml` file, it is silently ignored.
 
-The Partition Manager configuration can be also provided by a subsystem.
-(Here, *subsystem* means a software component, like support for a file system.)
+The Partition Manager configuration can be also provided by a *subsystem*, intended as a software component.
+For example, the support for a file system.
 Subsystem Partition Manager configurations cannot define image partitions.
 
 See :file:`subsys/partition_manager/CMakeLists.txt` for details on how to add the subsystem-specific Partition Manager configuration files.
-The code below shows how the ``settings`` subsystem configuration is added.
+The following code shows how the ``settings`` subsystem configuration is added.
 
 .. code-block:: cmake
 
@@ -91,12 +92,12 @@ The code below shows how the ``settings`` subsystem configuration is added.
      add_partition_manager_config(pm.yml.settings)
    endif()
 
-There are some limitations when multiple application images within the same domain build the same subsystem code if it adds a Partition Manager configuration file in this way.
-In particular, partition definitions are global per domain, and must be identical across calls to ``add_partition_manager_config()``.
+When multiple application images, within the same domain, build the same subsystem code, there are some limitations if the code adds a Partition Manager configuration file using this methodology.
+In particular, partition definitions are global per domain, and must be identical across all the calls to ``add_partition_manager_config()``.
 If the same partition is defined twice with different configurations within a domain, the Partition Manager will fail.
 
 .. note::
-   If Partition Manager configurations are only defined by subsystems (i.e. only one image is included in the build), the option :option:`CONFIG_PM_SINGLE_IMAGE` must be set for the Partition Manager script to be executed.
+   If Partition Manager configurations are only defined by subsystems, so that only one image is included in the build, you must set the option :option:`CONFIG_PM_SINGLE_IMAGE` to execute the Partition Manager script.
 
 .. _pm_yaml_format:
 
@@ -119,7 +120,7 @@ The following partition properties and property values are available:
 .. _partition_manager_placement:
 
 placement: dict
-   This property specifies the placement of the partition relative to other partitions, to the start or end of flash, or to the root image ``app``.
+   This property specifies the placement of the partition relative to other partitions, to the start or end of the flash, or to the root image ``app``.
 
    A partition with the placement property set is either an image partition or a placeholder partition.
    If the partition name is the same as the image name (as defined in a ``CMakeLists.txt``; see :ref:`ug_multi_image_defining` for details), this partition is the image partition.
@@ -144,7 +145,7 @@ placement: dict
          Ensure alignment of start or end of partition by specifying a dict with a ``start`` or ``end`` key respectively, where the value is the number of bytes to align to.
          If necessary, empty partitions are inserted in front of or behind the partition to ensure that the alignment is correct.
          Only one key can be specified.
-         Partitions which directly or indirectly (through :ref:`spans <partition_manager_spans>`) share size with the ``app`` partitions can only be aligned if they are placed directly after the ``app`` partition.
+         Partitions that directly or indirectly (through :ref:`spans <partition_manager_spans>`) share size with the ``app`` partitions can only be aligned if they are placed directly after the ``app`` partition.
 
 .. _partition_manager_spans:
 
@@ -156,21 +157,21 @@ span: list OR span: string
 
    If the value is a list, its elements are the names of the partitions that should be placed in the container:
 
+The following example shows a partition that *spans*, or contains, ``partition_1`` through ``partition_n``, in any order:
+
    .. code-block:: yaml
 
-      # This partition spans, or contains, partition_1 through partition_n,
-      # in any order:
       container_partition_name:
         span: [partition_1, partition_2, ..., partition_n]
 
-   The list elements are interpreted as the set of potential partitions in the container, which the Partition Manager may place in flash in any order.
+   The list elements are interpreted as the set of potential partitions in the container, which the Partition Manager may place in the flash in any order.
    For example, ``partition_2`` could be placed before ``partition_1``.
 
    If the value is a string, it is interpreted as a list with one item:
 
-   .. code-block:: yaml
+The following 2 examples are equivalent:
 
-      # The following are equivalent:
+   .. code-block:: yaml
 
       container_partition_name:
         span: foo
@@ -178,95 +179,90 @@ span: list OR span: string
       container_partition_name:
         span: [foo]
 
-   Non-existent partitions are removed from the ``span`` list before processing, and partitions with empty ``span`` lists are removed altogether (unless filled by the :ref:`inside property <partition_manager_inside>`).
+   Non-existent partitions are removed from the ``span`` list before processing.
+   Partitions with empty ``span`` lists are removed altogether, unless filled by the :ref:`inside property <partition_manager_inside>`.
 
    If the Partition Manager is forced to place a partition that is not declared in the ``span`` list between two partitions that are in the list, the configuration is unsatisfiable and therefore invalid.
    See :ref:`Span property example 1 <partition_manager_span_ex1>` for an example of an invalid configuration.
 
    .. note::
-      You can specify configurations with an ambiguous ordering (see the following examples).
+      You can specify configurations with an ambiguous ordering.
       Different versions of the Partition Manager script may produce different partition orders for such configurations, or fail to find a solution even if one is possible.
       The Partition Manager always detects unsatisfiable configurations (no false positives), but it might fail on some valid inputs (false negatives).
 
-   Here are some examples of valid and invalid configurations.
+   Here are 3 examples of valid and invalid configurations:
 
    .. _partition_manager_span_ex1:
 
-   .. code-block:: yaml
-      :caption: Span property example 1 (invalid)
+   * In the following example, the mcuboot and spm configurations result in this partition order: ``mcuboot``, ``spm``, ``app``.
+     Therefore, the foo partition configuration is invalid, because ``spm`` must be placed between ``mcuboot`` and ``app``, but is not in the span list.
 
-      # The mcuboot and spm configurations result in this partition order:
-      # mcuboot, spm, app
+     .. code-block:: yaml
+        :caption: Span property example 1 (invalid)
 
-      mcuboot:
-         placement:
-            before: [spm, app]
+        mcuboot:
+           placement:
+              before: [spm, app]
 
-      spm:
-         placement:
-            before: [app]
+        spm:
+           placement:
+              before: [app]
 
-      # Therefore, the foo partition configuration is invalid, because spm
-      # must be placed between mcuboot and app, but is not in the span list:
+        foo:
+           span: [mcuboot, app]
 
-      foo:
-         span: [mcuboot, app]
+   * In the following example, these mcuboot, spm, and app configurations have two possible orders:
 
-   .. code-block:: yaml
-      :caption: Span property example 2 (valid)
+     * Order 1: mcuboot, spm, app
+     * Order 2: mcuboot, app, spm
 
-      # These mcuboot, spm, and app configurations have two possible orders:
-      # Order 1: mcuboot, spm, app
-      # Order 2: mcuboot, app, spm
-      #
-      # In the absence of additional configuration, the Partition Manager may
-      # choose either order.
+     In the absence of additional configuration, the Partition Manager may choose either order.
+     However, since a span configuring the foo partition is present, the Partition Manager should choose order 2, since it is the only order that results in a valid configuration for the foo partition.
 
-      mcuboot:
-         placement:
+     .. code-block:: yaml
+        :caption: Span property example 2 (valid)
 
-      spm:
-         placement:
-            after: [mcuboot]
+        mcuboot:
+           placement:
 
-      app:
-         placement:
-            after: [mcuboot]
+        spm:
+           placement:
+              after: [mcuboot]
 
-      # However, since the following span exists, the Partition Manager should
-      # choose order 2, since it's the only order that results in a valid
-      # configuration for the foo partition:
+        app:
+           placement:
+              after: [mcuboot]
 
-      foo:
-         span: [mcuboot, app]
+        foo:
+           span: [mcuboot, app]
 
 
-   .. code-block:: yaml
-      :caption: Span property example 3 (invalid)
+   * In the following example, these mcuboot, spm, and app configurations have two possible orders:
 
-      # These mcuboot, spm, and app configurations have two possible orders:
-      # Order 1: mcuboot, spm, app
-      # Order 2: mcuboot, app, spm
+     * Order 1: mcuboot, spm, app
+     * Order 2: mcuboot, app, spm
 
-      mcuboot:
-         placement:
+     However, the overall configuration is unsatisfiable: foo requires order 2, while bar requires order 1.
 
-      spm:
-         placement:
-            after: [mcuboot]
+     .. code-block:: yaml
+        :caption: Span property example 3 (invalid)
 
-      app:
-         placement:
-            after: [mcuboot]
+        mcuboot:
+           placement:
 
-      # However, the overall configuration is unsatisfiable:
-      # foo requires order 2, while bar requires order 1.
+        spm:
+           placement:
+              after: [mcuboot]
 
-      foo:
-         span: [mcuboot, app]
+        app:
+           placement:
+              after: [mcuboot]
 
-      bar:
-         span: [mcuboot, spm]
+        foo:
+           span: [mcuboot, app]
+
+        bar:
+           span: [mcuboot, spm]
 
 .. _partition_manager_inside:
 
@@ -286,7 +282,7 @@ inside: list
 
 size: hexadecimal value
    This property defines the size of the partition.
-   You can provide a Kconfig option as value, which allows the user to easily modify the size (see :ref:`pm_yaml_preprocessing` for an example).
+   You can provide a Kconfig option as the value, which allows the user to easily modify the size (see :ref:`pm_yaml_preprocessing` for an example).
 
 share_size: list
    This property defines the size of the current partition to be the same as the size of the first existing partition in the list.
@@ -335,6 +331,7 @@ The following example specifies a permanent image RAM partition for MCUboot, tha
 
 All occurrences of a partition name can be replaced by a dict with the key ``one_of``.
 This dict is resolved to the first existing partition in the ``one_of`` value.
+The value of the ``one_of`` key must be a list of placeholder or image partitions, and it cannot be a span.
 
 See the following 2 examples, they are equivalent:
 
@@ -384,13 +381,13 @@ The information extracted from devicetree is the alignment value for some partit
    #include <autoconf.h>
    #include <devicetree_legacy_unfixed.h>
 
-   b0_image:
+   b0:
      size: CONFIG_PM_PARTITION_SIZE_B0_IMAGE
      placement:
        after: start
 
-   b0:
-     span: [b0_image, provision]
+   b0_container:
+     span: [b0, provision]
 
    s0_pad:
      share_size: mcuboot_pad
@@ -432,7 +429,7 @@ The information extracted from devicetree is the alignment value for some partit
      region: otp
    #else
      placement:
-       after: b0_image
+       after: b0
        align: {start: DT_FLASH_ERASE_BLOCK_SIZE}
    #endif
 
@@ -494,7 +491,7 @@ For example, see the following definitions for default regions:
 External flash
 ==============
 
-The Partition Manager supports partitions in external flash memory through the use of :ref:`pm_regions`.
+The Partition Manager supports partitions in the external flash memory through the use of :ref:`pm_regions`.
 Any placeholder partition can specify that it should be stored in the external flash region.
 External flash regions always use the start_to_end placement strategy.
 
@@ -522,7 +519,7 @@ To enable external flash support in the Partition Manager, configure the followi
    CONFIG_PM_EXTERNAL_FLASH_BASE=0x1000  # Don't touch magic stuff at the start
    CONFIG_PM_EXTERNAL_FLASH_SIZE=0x7F000 # Total size of external flash from base
 
-Now partitions can be placed in external flash:
+Now partitions can be placed in the external flash:
 
 .. code-block:: yaml
 
@@ -535,6 +532,7 @@ Now partitions can be placed in external flash:
 
 Build system
 ************
+
 The build system finds the child images that have been enabled and their configurations.
 
 For each image, the Partition Manager's CMake code infers the paths to the following files and folders from the name and from other global properties:
@@ -543,7 +541,7 @@ For each image, the Partition Manager's CMake code infers the paths to the follo
 * The compiled HEX file
 * The generated include folder
 
-After CMake finishes configuring the child images, the Partition Manager script is executed in configure time (``execute_process``) with the lists of names and paths as argument.
+After CMake finishes configuring the child images, the Partition Manager script is executed in configure time (``execute_process``) with the lists of names and paths as arguments.
 The configurations generated by the Partition Manager script are imported as CMake variables (see :ref:`pm_cmake_usage`).
 
 The Partition Manager script outputs a :file:`partitions.yml` file.
@@ -556,6 +554,7 @@ This means it contains the merged contents of all :file:`pm.yml` files, the size
 
 Generated output
 ================
+
 After the main Partition Manager script has finished, another script runs.
 This script takes the :file:`partitions.yml` file as input and creates the following output files:
 
@@ -567,10 +566,12 @@ Both kinds of files contain, among other information, the start address and size
 
 Usage
 =====
+
 The output that the Partition Manager generates can be used in various areas of your code.
 
 C code
 ------
+
 When the Partition Manager is enabled, all source files are compiled with the define ``USE_PARTITION_MANAGER`` set to 1.
 If you use this define in your code, the preprocessor can choose what code to include depending on whether the Partition Manager is being used.
 
@@ -612,7 +613,7 @@ See the following example, which assigns a cryptographically signed HEX file bui
    )
 
 
-As output, the Partition Manager creates a HEX file called :file:`merged.hex`, which is programmed to the board when calling ``ninja flash``.
+As output, the Partition Manager creates a HEX file called :file:`merged.hex`, which is programmed to the development kit when calling ``ninja flash``.
 When creating :file:`merged.hex`, all assigned HEX files are included in the merge operation.
 If the HEX files overlap, the conflict is resolved as follows:
 
@@ -624,16 +625,17 @@ This means that you can overwrite a partition's HEX file by wrapping that partit
 
 ROM report
 ----------
+
 When using the Partition Manager, run ``ninja rom_report`` to see the addresses and sizes of flash partitions.
 
 .. _pm_cmake_usage:
 
 CMake
 -----
+
 The CMake variables from the Partition Manager are typically used through `generator expressions`_, because these variables are only made available late in the CMake configure stage.
 To read a Partition Manager variable through a generator expression, the variable must be assigned as a target property.
-The Partition Manager stores all variables as target properties on the ``partition_manager`` target,
-which means they can be used in generator expressions in the following way.
+The Partition Manager stores all variables as target properties on the ``partition_manager`` target, which means they can be used in generator expressions in the following way:
 
 .. code-block:: none
    :caption: Reading Partition Manager variables in generator expressions
@@ -644,6 +646,7 @@ which means they can be used in generator expressions in the following way.
 
 Static configuration
 ********************
+
 By default, the Partition Manager dynamically places the partitions in memory.
 However, if you have a deployed product that consists of multiple images, where only a subset of the included images can be upgraded through a firmware update mechanism, the upgradable images must be statically configured.
 For example, if a device includes a non-upgradable first-stage bootloader and an upgradable application, the application image to be upgraded must be linked to the same address as the one that is deployed.
@@ -661,20 +664,20 @@ The dynamic area is resized as required when updating the static configuration.
 
 Configuring static partitions
 =============================
+
 Static partitions are defined through a YAML-formatted configuration file in the root application's source directory.
 This file is similar to the regular :file:`pm.yml` configuration files, except that it also defines the start address for all partitions.
 
 The static configuration can be provided through a :file:`pm_static.yml` file in the application's source directory.
-Alternatively, define a ``PM_STATIC_YML_FILE`` variable that provides the path and file name for the static configuration in the application's :file:`CMakeLists.txt` file, as shown in the excerpt below.
-
+Alternatively, define a ``PM_STATIC_YML_FILE`` variable that provides the path and file name for the static configuration in the application's :file:`CMakeLists.txt` file, as shown in the example below.
 
 .. code-block:: cmake
 
-   # Use static partition layout to ensure consistency between builds.
-   # This is to ensure settings storage will be at the same location after the DFU.
    set(PM_STATIC_YML_FILE
      ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_${CMAKE_BUILD_TYPE}.yml
      )
+
+Use a static partition layout to ensure consistency between builds, as the settings storage will be at the same location after the DFU.
 
 The current partition configuration for a build can be found in :file:`${BUILD_DIR}/partitions.yml`.
 To apply the current configuration as a static configuration, copy this file to :file:`${APPLICATION_SOURCE_DIR}/pm_static.yml`.
@@ -684,7 +687,7 @@ It is also possible to build a :file:`pm_static.yml` from scratch by following t
 When modifying static configurations, keep in mind the following:
 
 * There can only be one unoccupied gap per region.
-* All statically defined partitions in regions with ``end_to_start`` or ``start_to_end`` placement strategy must be packed at the end or start of the region, respectively.
+* All statically defined partitions in regions with ``end_to_start`` or ``start_to_end`` placement strategy must be packed at the end or the start of the region, respectively.
 
 The default ``flash_primary`` region uses the ``complex`` placement strategy, so these limitations do not apply there.
 
@@ -697,8 +700,9 @@ You can add or remove partitions as described in the following sections.
 
 Adding a dynamic partition
 --------------------------
+
 New dynamic partitions that are listed in a :file:`pm.yml` file are automatically added.
-However, if a partition is defined both as static partition and as dynamic partition, the dynamic definition is ignored.
+However, if a partition is defined both as a static partition and as a dynamic partition, the dynamic definition is ignored.
 
 .. note::
    When resolving the relative placement of dynamic partitions, any placement properties referencing static partitions are ignored.
@@ -707,6 +711,7 @@ However, if a partition is defined both as static partition and as dynamic parti
 
 Adding a static partition
 -------------------------
+
 To add a static partition, add an entry for it in :file:`pm_static.yml`.
 This entry must define the properties ``address``, ``size``, and - if applicable - ``span``.
 The region defaults to ``flash_primary`` if no ``region`` property is specified.
@@ -726,6 +731,7 @@ The region defaults to ``flash_primary`` if no ``region`` property is specified.
 
 Removing a static partition
 ---------------------------
+
 To remove a static partition, delete its entry in :file:`pm_static.yml`.
 
 Only partitions adjacent to the ``app`` partition or other removed partitions can be removed.

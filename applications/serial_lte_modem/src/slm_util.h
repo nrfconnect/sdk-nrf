@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef SLM_UTIL_
@@ -16,6 +16,8 @@
 #include <zephyr/types.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <modem/at_cmd.h>
+#include <modem/at_cmd_parser.h>
 
 #define INVALID_SOCKET	-1
 #define INVALID_PORT	-1
@@ -91,6 +93,34 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len,
  * @return true if text string is IPv4 address, false otherwise
  */
 bool check_for_ipv4(const char *address, uint8_t length);
+
+
+/**brief use AT command to get IPv4 address
+ *
+ * @param[in] address buffer to hold the IPv4 address
+ *
+ * @return true if IPv4 address obtained, false otherwise
+ */
+bool util_get_ipv4_addr(char *address);
+
+/**
+ * @brief Get string value from AT command with length check.
+ *
+ * @p len must be bigger than the string length, or an error is returned.
+ * The copied string is null-terminated.
+ *
+ * @param[in]     list    Parameter list.
+ * @param[in]     index   Parameter index in the list.
+ * @param[out]    value   Pointer to the buffer where to copy the value.
+ * @param[in,out] len     Available space in @p value, returns actual length
+ *                        copied into string buffer in bytes, excluding the
+ *                        terminating null character.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int util_string_get(const struct at_param_list *list, size_t index,
+			 char *value, size_t *len);
 
 /** @} */
 

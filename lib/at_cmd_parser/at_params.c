@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <limits.h>
@@ -112,7 +112,7 @@ void at_params_list_free(struct at_param_list *list)
 }
 
 int at_params_short_put(const struct at_param_list *list, size_t index,
-			uint16_t value)
+			int16_t value)
 {
 	if (list == NULL || list->params == NULL) {
 		return -EINVAL;
@@ -127,7 +127,7 @@ int at_params_short_put(const struct at_param_list *list, size_t index,
 	at_param_clear(param);
 
 	param->type = AT_PARAM_TYPE_NUM_SHORT;
-	param->value.int_val = (uint32_t)(value & USHRT_MAX);
+	param->value.int_val = value;
 	return 0;
 }
 
@@ -152,7 +152,7 @@ int at_params_empty_put(const struct at_param_list *list, size_t index)
 }
 
 int at_params_int_put(const struct at_param_list *list, size_t index,
-		      uint32_t value)
+		      int32_t value)
 {
 	if (list == NULL || list->params == NULL) {
 		return -EINVAL;
@@ -247,7 +247,7 @@ int at_params_size_get(const struct at_param_list *list, size_t index,
 }
 
 int at_params_short_get(const struct at_param_list *list, size_t index,
-			uint16_t *value)
+			int16_t *value)
 {
 	if (list == NULL || list->params == NULL || value == NULL) {
 		return -EINVAL;
@@ -263,12 +263,12 @@ int at_params_short_get(const struct at_param_list *list, size_t index,
 		return -EINVAL;
 	}
 
-	*value = (uint16_t)param->value.int_val;
+	*value = (int16_t)param->value.int_val;
 	return 0;
 }
 
 int at_params_int_get(const struct at_param_list *list, size_t index,
-		      uint32_t *value)
+		      int32_t *value)
 {
 	if (list == NULL || list->params == NULL || value == NULL) {
 		return -EINVAL;

@@ -1,5 +1,5 @@
 # Copyright (c) 2019 Nordic Semiconductor ASA
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import os
 import sys
@@ -178,4 +178,3 @@ class TerminalNotebook(object):
     def delete(self, widget, event=None):
         Gtk.main_quit()
         return False
-

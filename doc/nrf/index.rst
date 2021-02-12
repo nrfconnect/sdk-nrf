@@ -5,7 +5,7 @@ Welcome to the |NCS|!
 
 The |NCS| is where you begin building low power wireless applications with Nordic Semiconductor nRF52, nRF53, and nRF91 Series devices.
 
-The SDK contains optimized cellular IoT (LTE-M and NB-IoT), Bluetooth Low Energy, Thread, Zigbee, and Bluetooth Mesh stacks, a range of applications, samples, and reference implementations, as well as a full suite of drivers for Nordic Semiconductor's devices.
+The SDK contains optimized cellular IoT (LTE-M and NB-IoT), Bluetooth Low Energy, Thread, Zigbee, and Bluetooth mesh stacks, a range of applications, samples, and reference implementations, as well as a full suite of drivers for Nordic Semiconductor's devices.
 The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is built for connected low power products.
 
 .. note::
@@ -13,7 +13,7 @@ The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is bui
    This version of the |NCS| supports prototyping and evaluation, but should not be used for production and deployment in end products.
 
 .. previous note about development and production support
-..   nRF53 Series devices (which are pre-production) and Zigbee and Bluetooth Mesh protocols are supported for development in |release| for prototyping and evaluation.
+..   nRF53 Series devices (which are pre-production) and Zigbee and Bluetooth mesh protocols are supported for development in |release| for prototyping and evaluation.
 ..   Support for production and deployment in end products is coming soon.
 
 To access different versions of the |NCS| documentation, use the version drop-down in the top-left corner.

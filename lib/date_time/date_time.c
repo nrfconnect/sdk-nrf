@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <date_time.h>
@@ -145,7 +145,11 @@ static int sntp_time_request(struct ntp_servers *server, uint32_t timeout,
 	static struct addrinfo hints;
 	struct sntp_ctx sntp_ctx;
 
-	hints.ai_family = AF_INET;
+	if (IS_ENABLED(CONFIG_DATE_TIME_IPV6)) {
+		hints.ai_family = AF_INET6;
+	} else {
+		hints.ai_family = AF_INET;
+	}
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_protocol = 0;
 

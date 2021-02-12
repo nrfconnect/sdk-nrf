@@ -30,9 +30,9 @@ The Light Temperature Server should reference the :c:member:`bt_mesh_light_ctl_s
 
 Conventionally, the Light Temperature Server model is instantiated on the very next element, and the composition data looks as presented below.
 
-.. code-block:: console
+.. code-block:: c
 
-    static struct bt_mesh_light_ctl_srv light_ctl_srv = BT_MESH_LIGHT_CTL_SRV_INIT(&light_ctl_handlers);
+    static struct bt_mesh_light_ctl_srv light_ctl_srv = BT_MESH_LIGHT_CTL_SRV_INIT(&lightness_handlers, &light_temp_handlers);
 
     static struct bt_mesh_elem elements[] = {
         BT_MESH_ELEM(
@@ -45,11 +45,13 @@ Conventionally, the Light Temperature Server model is instantiated on the very n
             BT_MESH_MODEL_NONE),
     };
 
+The Light CTL Server does not require any message handler callbacks, as all its states are bound to the included :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_light_temp_srv_readme` models.
+The Lightness and Light Temperature Server callbacks will pass pointers to :c:member:`bt_mesh_light_ctl_srv.lightness_srv` and :c:member:`bt_mesh_light_ctl_srv.temp_srv`, respectively.
+
 .. note::
 
     The Light CTL Server will verify that its internal Light Temperature Server is instantiated on a subsequent element on startup.
-    If the Light Temperature Server is missing or instantiated on the same or a preceding element, the Bluetooth Mesh startup procedure will
-    fail, and the device will not be responsive.
+    If the Light Temperature Server is missing or instantiated on the same or a preceding element, the Bluetooth mesh startup procedure will fail, and the device will not be responsive.
 
 States
 ======
@@ -128,7 +130,7 @@ The state of the extended Lightness Server model is for the most part bound to s
 The only exception is the Lightness range state, which is exposed to the application through the :c:member:`bt_mesh_light_ctl_srv_handlers.lightness_range_update` callback of the Light CTL Server model.
 
 In addition to the extended Lightness Server model, the Light CTL Server model is associated with a Light Temperature model on a subsequent element.
-Contrary to the extended models, the associated models do not share subscription lists, but still share states.
+Unlike the extended models, the associated models do not share subscription lists, but still share states.
 
 Persistent storage
 ===================
@@ -138,7 +140,7 @@ The Light CTL Server stores the following information:
 * Any changes to the Default CTL and Temperature Range states
 * The last known Lightness, Temperature and Delta UV level
 
-This information is used to reestablish the correct Light configuration when the device powers up.
+This information is used to reestablish the correct light configuration when the device powers up.
 
 API documentation
 ==================

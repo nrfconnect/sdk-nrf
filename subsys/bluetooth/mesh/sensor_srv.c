@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <string.h>
@@ -681,6 +681,125 @@ const struct bt_mesh_model_op _bt_mesh_sensor_setup_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+/** @brief Get the sensor publication interval (in number of publish messages).
+ *
+ *  @param sensor      Sensor instance
+ *  @param period_div  Server's period divisor
+ *
+ *  @return The publish interval of the sensor measured in number of published
+ *          messages by the server.
+ */
+static uint16_t pub_int_get(const struct bt_mesh_sensor *sensor,
+			    uint8_t period_div)
+{
+	uint8_t div = (sensor->state.pub_div * sensor->state.fast_pub);
+
+	return (1U << MAX(0, period_div - div));
+}
+
+/** @brief Get the sensor minimum interval (in number of publish messages).
+ *
+ *  @param sensor      Sensor instance
+ *  @param period_div  Server's period divisor
+ *  @param base_period Server's base period
+ *
+ *  @return The minimum interval of the sensor measured in number of published
+ *          messages by the server.
+ */
+static uint16_t min_int_get(const struct bt_mesh_sensor *sensor,
+			    uint8_t period_div, uint32_t base_period)
+{
+	uint32_t pub_int = (base_period >> period_div);
+	uint32_t min_int = (1 << sensor->state.min_int);
+
+	return ceiling_fraction(min_int, pub_int);
+}
+
+/** @brief Conditionally add a sensor value to a publication.
+ *
+ *  A sensor message will be added to the publication if its minimum interval
+ *  has expired and the value is outside its delta threshold or the
+ *  publication interval has expired.
+ *
+ *  @param srv         Server sending the publication.
+ *  @param s           Sensor to add data of.
+ *  @param period_div  Server's original period divisor.
+ *  @param base_period Server's original base period.
+ */
+static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
+			struct bt_mesh_sensor *s, uint8_t period_div,
+			uint32_t base_period)
+{
+	uint16_t min_int = min_int_get(s, period_div, base_period);
+	int err;
+
+	if (srv->seq - s->state.seq < min_int) {
+		return;
+	}
+
+	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
+
+	err = value_get(s, NULL, value);
+	if (err) {
+		return;
+	}
+
+	bool delta_triggered = bt_mesh_sensor_delta_threshold(s, value);
+	uint16_t interval = pub_int_get(s, period_div);
+
+	if (!delta_triggered && srv->seq - s->state.seq < interval) {
+		return;
+	}
+
+	err = sensor_status_encode(srv->pub.msg, s, value);
+	if (err) {
+		return;
+	}
+
+	s->state.prev = value[0];
+	s->state.seq = srv->seq;
+}
+
+static int update_handler(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_sensor_srv *srv = mod->user_data;
+	struct bt_mesh_sensor *s;
+
+	bt_mesh_model_msg_init(srv->pub.msg, BT_MESH_SENSOR_OP_STATUS);
+
+	uint32_t original_len = srv->pub.msg->len;
+	uint8_t period_div = srv->pub.period_div;
+
+	BT_DBG("#%u Period: %u ms Divisor: %u (%s)", srv->seq,
+	       bt_mesh_model_pub_period_get(mod), period_div,
+	       srv->pub.fast_period ? "fast" : "normal");
+
+	srv->pub.period_div = 0;
+	srv->pub.fast_period = 0;
+
+	uint32_t base_period = bt_mesh_model_pub_period_get(mod);
+
+	SENSOR_FOR_EACH(&srv->sensors, s)
+	{
+		pub_msg_add(srv, s, period_div, base_period);
+
+		if (s->state.fast_pub) {
+			srv->pub.fast_period = true;
+			srv->pub.period_div =
+				MAX(srv->pub.period_div, s->state.pub_div);
+		}
+	}
+
+	if (period_div != srv->pub.period_div) {
+		BT_DBG("New interval: %u",
+		       bt_mesh_model_pub_period_get(srv->model));
+	}
+
+	srv->seq++;
+
+	return (srv->pub.msg->len > original_len) ? 0 : -ENOENT;
+}
+
 static int sensor_srv_init(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_sensor_srv *srv = mod->user_data;
@@ -716,8 +835,13 @@ static int sensor_srv_init(struct bt_mesh_model *mod)
 
 	srv->model = mod;
 
-	net_buf_simple_init(srv->pub.msg, 0);
-	net_buf_simple_init(srv->setup_pub.msg, 0);
+	srv->pub.update = update_handler;
+	srv->pub.msg = &srv->pub_buf;
+	srv->setup_pub.msg = &srv->setup_pub_buf;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
+	net_buf_simple_init_with_data(&srv->setup_pub_buf, srv->setup_pub_data,
+				      sizeof(srv->setup_pub_data));
 
 	return 0;
 }
@@ -801,124 +925,6 @@ const struct bt_mesh_model_cb _bt_mesh_sensor_srv_cb = {
 	.reset = sensor_srv_reset,
 	.settings_set = sensor_srv_settings_set,
 };
-
-/** @brief Get the sensor publication interval (in number of publish messages).
- *
- *  @param sensor      Sensor instance
- *  @param period_div  Server's period divisor
- *
- *  @return The publish interval of the sensor measured in number of published
- *          messages by the server.
- */
-static uint16_t pub_int_get(const struct bt_mesh_sensor *sensor, uint8_t period_div)
-{
-	uint8_t div = (sensor->state.pub_div * sensor->state.fast_pub);
-
-	return (1U << MAX(0, period_div - div));
-}
-
-/** @brief Get the sensor minimum interval (in number of publish messages).
- *
- *  @param sensor      Sensor instance
- *  @param period_div  Server's period divisor
- *  @param base_period Server's base period
- *
- *  @return The minimum interval of the sensor measured in number of published
- *          messages by the server.
- */
-static uint16_t min_int_get(const struct bt_mesh_sensor *sensor, uint8_t period_div,
-			 uint32_t base_period)
-{
-	uint32_t pub_int = (base_period >> period_div);
-	uint32_t min_int = (1 << sensor->state.min_int);
-
-	return ceiling_fraction(min_int, pub_int);
-}
-
-/** @brief Conditionally add a sensor value to a publication.
- *
- *  A sensor message will be added to the publication if its minimum interval
- *  has expired and the value is outside its delta threshold or the
- *  publication interval has expired.
- *
- *  @param srv         Server sending the publication.
- *  @param s           Sensor to add data of.
- *  @param period_div  Server's original period divisor.
- *  @param base_period Server's original base period.
- */
-static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
-			struct bt_mesh_sensor *s, uint8_t period_div,
-			uint32_t base_period)
-{
-	uint16_t min_int = min_int_get(s, period_div, base_period);
-	int err;
-
-	if (srv->seq - s->state.seq < min_int) {
-		return;
-	}
-
-	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
-
-	err = value_get(s, NULL, value);
-	if (err) {
-		return;
-	}
-
-	bool delta_triggered = bt_mesh_sensor_delta_threshold(s, value);
-	uint16_t interval = pub_int_get(s, period_div);
-
-	if (!delta_triggered && srv->seq - s->state.seq < interval) {
-		return;
-	}
-
-	err = sensor_status_encode(srv->pub.msg, s, value);
-	if (err) {
-		return;
-	}
-
-	s->state.prev = value[0];
-	s->state.seq = srv->seq;
-}
-
-int _bt_mesh_sensor_srv_update_handler(struct bt_mesh_model *mod)
-{
-	struct bt_mesh_sensor_srv *srv = mod->user_data;
-	struct bt_mesh_sensor *s;
-
-	bt_mesh_model_msg_init(srv->pub.msg, BT_MESH_SENSOR_OP_STATUS);
-
-	uint32_t original_len = srv->pub.msg->len;
-	uint8_t period_div = srv->pub.period_div;
-
-	BT_DBG("#%u Period: %u ms Divisor: %u (%s)", srv->seq,
-	       bt_mesh_model_pub_period_get(mod), period_div,
-	       srv->pub.fast_period ? "fast" : "normal");
-
-	srv->pub.period_div = 0;
-	srv->pub.fast_period = 0;
-
-	uint32_t base_period = bt_mesh_model_pub_period_get(mod);
-
-	SENSOR_FOR_EACH(&srv->sensors, s)
-	{
-		pub_msg_add(srv, s, period_div, base_period);
-
-		if (s->state.fast_pub) {
-			srv->pub.fast_period = true;
-			srv->pub.period_div =
-				MAX(srv->pub.period_div, s->state.pub_div);
-		}
-	}
-
-	if (period_div != srv->pub.period_div) {
-		BT_DBG("New interval: %u",
-		       bt_mesh_model_pub_period_get(srv->model));
-	}
-
-	srv->seq++;
-
-	return (srv->pub.msg->len > original_len) ? 0 : -ENOENT;
-}
 
 int bt_mesh_sensor_srv_pub(struct bt_mesh_sensor_srv *srv,
 			   struct bt_mesh_msg_ctx *ctx,

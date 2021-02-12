@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if USB
+config USB_DEVICE_PID
+	default USB_PID_CDC_ACM_SAMPLE
+endif
+
+source "Kconfig.zephyr"

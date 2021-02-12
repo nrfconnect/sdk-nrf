@@ -36,6 +36,10 @@ if "ZEPHYR_OUTPUT" not in os.environ:
     sys.exit("$ZEPHYR_OUTPUT environment variable undefined.")
 ZEPHYR_OUTPUT = os.path.abspath(os.environ["ZEPHYR_OUTPUT"])
 
+if "ZEPHYR_RST_SRC" not in os.environ:
+    sys.exit("$ZEPHYR_RST_SRC environment variable undefined.")
+ZEPHYR_RST_SRC = os.path.abspath(os.environ["ZEPHYR_RST_SRC"])
+
 if "NRF_BASE" not in os.environ:
     sys.exit("$NRF_BASE environment variable undefined.")
 NRF_BASE = os.path.abspath(os.environ["NRF_BASE"])
@@ -85,6 +89,7 @@ extensions = ['sphinx.ext.intersphinx',
               'interbreathe',
               'table_from_rows',
               'options_from_kconfig',
+              'ncs_include',
               'sphinx.ext.ifconfig',
               'sphinxcontrib.mscgen',
               'sphinx_tabs.tabs',
@@ -104,7 +109,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'nRF Connect SDK'
-copyright = '2019-2020, Nordic Semiconductor'
+copyright = '2019-2021, Nordic Semiconductor'
 author = 'Nordic Semiconductor'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -204,6 +209,11 @@ breathe_domain_by_extension = {
     "c": "c",
 }
 breathe_separate_member_pages = True
+
+ncs_include_mapping = {
+    'nrf': '{}'.format(NRF_RST_SRC),
+    'zephyr': '{}'.format(ZEPHYR_RST_SRC),
+}
 
 # Qualifiers to a function are causing Sphinx/Breathe to warn about
 # Error when parsing function declaration and more.  This is a list

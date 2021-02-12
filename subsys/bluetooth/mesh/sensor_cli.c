@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <stdlib.h>
@@ -512,8 +512,9 @@ static int sensor_cli_init(struct bt_mesh_model *mod)
 	struct bt_mesh_sensor_cli *cli = mod->user_data;
 
 	cli->mod = mod;
-
-	net_buf_simple_init(cli->pub.msg, 0);
+	cli->pub.msg = &cli->pub_buf;
+	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
+				      sizeof(cli->pub_data));
 	model_ack_init(&cli->ack);
 
 	return 0;
@@ -705,7 +706,7 @@ int bt_mesh_sensor_cli_cadence_set_unack(
 
 int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
-				    struct bt_mesh_sensor_type *sensor,
+				    const struct bt_mesh_sensor_type *sensor,
 				    uint16_t *ids, uint32_t *count)
 {
 	int err;
@@ -817,9 +818,9 @@ int bt_mesh_sensor_cli_setting_set_unack(
 {
 	int err;
 
-	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_SENSOR_OP_SETTING_GET,
-				 BT_MESH_SENSOR_MSG_LEN_SETTING_GET);
-	bt_mesh_model_msg_init(&msg, BT_MESH_SENSOR_OP_SETTING_GET);
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_SENSOR_OP_SETTING_SET_UNACKNOWLEDGED,
+				 BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET);
+	bt_mesh_model_msg_init(&msg, BT_MESH_SENSOR_OP_SETTING_SET_UNACKNOWLEDGED);
 
 	net_buf_simple_add_le16(&msg, sensor->id);
 	net_buf_simple_add_le16(&msg, setting->id);
@@ -845,7 +846,9 @@ int bt_mesh_sensor_cli_all_get(struct bt_mesh_sensor_cli *cli,
 	struct sensor_data_list_rsp rsp_data = { .count = *count,
 						 .sensors = sensors };
 
-	memset(sensors, 0, sizeof(*sensors) * (*count));
+	if (sensors) {
+		memset(sensors, 0, sizeof(*sensors) * (*count));
+	}
 
 	err = model_ackd_send(cli->mod, ctx, &msg, sensors ? &cli->ack : NULL,
 			      BT_MESH_SENSOR_OP_STATUS, &rsp_data);

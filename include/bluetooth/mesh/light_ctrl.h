@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /** @file
@@ -201,19 +201,6 @@ enum bt_mesh_light_ctrl_coeff {
 #define BT_MESH_LIGHT_CTRL_OP_PROP_SET BT_MESH_MODEL_OP_1(0x62)
 #define BT_MESH_LIGHT_CTRL_OP_PROP_SET_UNACK BT_MESH_MODEL_OP_1(0x63)
 #define BT_MESH_LIGHT_CTRL_OP_PROP_STATUS BT_MESH_MODEL_OP_1(0x64)
-
-#define BT_MESH_LIGHT_CTRL_CLI_BUF_MAXLEN                                      \
-	(BT_MESH_MODEL_BUF_LEN(                                                \
-		BT_MESH_LIGHT_CTRL_OP_PROP_SET,                                \
-		2 + CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX))
-
-#define BT_MESH_LIGHT_CTRL_SRV_BUF_MAXLEN                                      \
-	(BT_MESH_MODEL_BUF_LEN(BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS, 3))
-
-#define BT_MESH_LIGHT_CTRL_SETUP_SRV_BUF_MAXLEN                                \
-	(BT_MESH_MODEL_BUF_LEN(                                                \
-		BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,                             \
-		2 + CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX))
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 #define BT_MESH_LIGHT_CTRL_SRV_REG_INIT .reg = {                               \

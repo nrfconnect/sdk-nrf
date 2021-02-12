@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2019 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 zephyr_library()
@@ -21,6 +21,7 @@ endif()
 zephyr_include_directories(
 	${CMOCK_DIR}/vendor/unity/src
 	${CMOCK_DIR}/src
+	${CMAKE_CURRENT_LIST_DIR}
 )
 
 zephyr_library_sources(
@@ -29,6 +30,7 @@ zephyr_library_sources(
 )
 
 zephyr_library_sources_ifdef(CONFIG_BOARD_NATIVE_POSIX src/native_posix.c)
+zephyr_compile_definitions(UNITY_INCLUDE_CONFIG_H)
 
 # Generate test runner file.
 function(test_runner_generate test_file_path)

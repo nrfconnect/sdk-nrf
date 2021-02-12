@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 - 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <stdio.h>
 
@@ -28,18 +28,30 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #include "config_event.h"
 #include "power_event.h"
 
+#if CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
+  #include "usb_state_def.h"
+#else
+  #if (CONFIG_DESKTOP_HID_STATE_ENABLE) && (CONFIG_USB_HID_DEVICE_COUNT > 1)
+    #error USB selective HID subscription must be enabled.
+  #endif
+#endif /* CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION */
+
 #define REPORT_TYPE_INPUT	0x01
 #define REPORT_TYPE_OUTPUT	0x02
 #define REPORT_TYPE_FEATURE	0x03
 
 
 #ifndef CONFIG_USB_HID_PROTOCOL_CODE
-#define CONFIG_USB_HID_PROTOCOL_CODE -1
+  #define CONFIG_USB_HID_PROTOCOL_CODE -1
 #endif
 
+#if DT_PROP(DT_NODELABEL(usbd), num_in_endpoints) < (CONFIG_USB_HID_DEVICE_COUNT + 1)
+  #error Too few USB IN Endpoints enabled. Modify dts.overlay file.
+#endif
 
 struct usb_hid_device {
 	const struct device *dev;
+	uint32_t report_bm;
 	uint8_t hid_protocol;
 	uint8_t sent_report_id;
 	bool report_enabled[REPORT_ID_COUNT];
@@ -297,7 +309,8 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 				(usb_hid->hid_protocol == HID_PROTOCOL_BOOT);
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) &&
-	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_MOUSE])) {
+	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_MOUSE]) &&
+	    (usb_hid->report_bm & BIT(REPORT_ID_MOUSE))) {
 		struct hid_report_subscription_event *event =
 			new_hid_report_subscription_event();
 
@@ -310,7 +323,8 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		usb_hid->report_enabled[REPORT_ID_MOUSE] = new_rep_enabled;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) &&
-	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_KEYBOARD_KEYS])) {
+	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_KEYBOARD_KEYS]) &&
+	    (usb_hid->report_bm & BIT(REPORT_ID_KEYBOARD_KEYS))) {
 		struct hid_report_subscription_event *event =
 			new_hid_report_subscription_event();
 
@@ -323,7 +337,8 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		usb_hid->report_enabled[REPORT_ID_KEYBOARD_KEYS] = new_rep_enabled;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT) &&
-	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_SYSTEM_CTRL])) {
+	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_SYSTEM_CTRL]) &&
+	    (usb_hid->report_bm & BIT(REPORT_ID_SYSTEM_CTRL))) {
 		struct hid_report_subscription_event *event =
 			new_hid_report_subscription_event();
 
@@ -335,7 +350,8 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		usb_hid->report_enabled[REPORT_ID_SYSTEM_CTRL] = new_rep_enabled;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT) &&
-	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_CONSUMER_CTRL])) {
+	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_CONSUMER_CTRL]) &&
+	    (usb_hid->report_bm & BIT(REPORT_ID_CONSUMER_CTRL))) {
 		struct hid_report_subscription_event *event =
 			new_hid_report_subscription_event();
 
@@ -347,7 +363,8 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		usb_hid->report_enabled[REPORT_ID_CONSUMER_CTRL] = new_rep_enabled;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) &&
-	    (new_boot_enabled != usb_hid->report_enabled[REPORT_ID_BOOT_MOUSE])) {
+	    (new_boot_enabled != usb_hid->report_enabled[REPORT_ID_BOOT_MOUSE]) &&
+	    (usb_hid->report_bm & BIT(REPORT_ID_BOOT_MOUSE))) {
 		struct hid_report_subscription_event *event =
 			new_hid_report_subscription_event();
 
@@ -359,7 +376,8 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		usb_hid->report_enabled[REPORT_ID_BOOT_MOUSE] = new_boot_enabled;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) &&
-	    (new_boot_enabled != usb_hid->report_enabled[REPORT_ID_BOOT_KEYBOARD])) {
+	    (new_boot_enabled != usb_hid->report_enabled[REPORT_ID_BOOT_KEYBOARD]) &&
+	    (usb_hid->report_bm & BIT(REPORT_ID_BOOT_KEYBOARD))) {
 		struct hid_report_subscription_event *event =
 			new_hid_report_subscription_event();
 
@@ -533,6 +551,37 @@ static void usb_wakeup(void)
 	}
 }
 
+static uint32_t get_report_bm(size_t hid_id)
+{
+	BUILD_ASSERT(REPORT_ID_COUNT <=
+		     sizeof(usb_hid_device[0].report_bm) * CHAR_BIT);
+#if CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
+	BUILD_ASSERT(ARRAY_SIZE(usb_hid_report_bm) ==
+		     CONFIG_USB_HID_DEVICE_COUNT);
+	return usb_hid_report_bm[hid_id];
+#else
+	return UINT32_MAX;
+#endif
+}
+
+static void verify_report_bm(void)
+{
+#if defined(CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION) && defined(CONFIG_ASSERT)
+	/* Make sure that selected reports bitmasks are proper. */
+	uint32_t common_bitmask = 0;
+
+	for (size_t i = 0; i < CONFIG_USB_HID_DEVICE_COUNT; i++) {
+		/* USB HID instance that does not subscribe to any report
+		 * should be removed. On nRF Desktop peripheral device, given
+		 * HID report can be handled only by one USB HID instance.
+		 */
+		__ASSERT_NO_MSG(usb_hid_report_bm[i] != 0);
+		__ASSERT_NO_MSG((common_bitmask & usb_hid_report_bm[i]) == 0);
+		common_bitmask |= usb_hid_report_bm[i];
+	}
+#endif
+}
+
 static int usb_init(void)
 {
 	static const struct hid_ops hid_ops = {
@@ -541,6 +590,8 @@ static int usb_init(void)
 		.int_in_ready = report_sent_cb,
 		.protocol_change = protocol_change,
 	};
+
+	verify_report_bm();
 
 	for (size_t i = 0; i < CONFIG_USB_HID_DEVICE_COUNT; i++) {
 		char name[32];
@@ -552,6 +603,7 @@ static int usb_init(void)
 
 		usb_hid_device[i].hid_protocol = HID_PROTOCOL_REPORT;
 		usb_hid_device[i].sent_report_id = REPORT_ID_COUNT;
+		usb_hid_device[i].report_bm = get_report_bm(i);
 
 		usb_hid_register_device(usb_hid_device[i].dev, hid_report_desc,
 					hid_report_desc_size, &hid_ops);

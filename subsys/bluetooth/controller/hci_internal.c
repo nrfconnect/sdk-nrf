@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <bluetooth/hci.h>
@@ -310,6 +310,70 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #endif
 }
 
+#if defined(CONFIG_BT_HCI_VS)
+static void vs_supported_commands(sdc_hci_vs_zephyr_supported_commands_t *cmds)
+{
+	memset(cmds, 0, sizeof(*cmds));
+
+	cmds->read_version_info = 1;
+	cmds->read_supported_commands = 1;
+
+#if defined(CONFIG_BT_HCI_VS_EXT)
+	cmds->write_bd_addr = 1;
+	cmds->read_static_addresses = 1;
+	cmds->read_chip_temperature = 1;
+
+#if defined(CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL)
+	cmds->write_tx_power_level = 1;
+	cmds->read_tx_power_level = 1;
+#endif /* CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL */
+#endif /* CONFIG_BT_HCI_VS_EXT */
+}
+#endif	/* CONFIG_BT_HCI_VS */
+
+static void supported_features(sdc_hci_ip_lmp_features_t *features)
+{
+	memset(features, 0, sizeof(*features));
+
+	features->bdedr_not_supported = 1;
+	features->le_supported = 1;
+}
+
+static void le_supported_features(sdc_hci_le_le_features_t *features)
+{
+	memset(features, 0, sizeof(*features));
+
+	features->le_encryption = 1;
+	features->extended_reject_indication = 1;
+	features->le_ping = 1;
+
+#ifdef CONFIG_BT_CTLR_DATA_LENGTH
+	features->le_data_packet_length_extension = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_PRIVACY
+	features->ll_privacy = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_EXT_SCAN_FP
+	features->extended_scanner_filter_policies = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_PHY_2M
+	features->le_2m_phy = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_PHY_CODED
+	features->le_coded_phy = 1;
+#endif
+
+#ifdef CONFIG_BT_CTLR_ADV_EXT
+	features->le_extended_advertising = 1;
+#endif
+
+	features->channel_selection_algorithm_2 = 1;
+}
+
 static void le_read_supported_states(uint8_t *buf)
 {
 	/* Use 2*uint32_t instead of uint64_t to reduce code size. */
@@ -457,7 +521,8 @@ static uint8_t info_param_cmd_put(uint8_t const * const cmd,
 		return 0;
 	case SDC_HCI_OPCODE_CMD_IP_READ_LOCAL_SUPPORTED_FEATURES:
 		*param_length_out += sizeof(sdc_hci_cmd_ip_read_local_supported_features_return_t);
-		return sdc_hci_cmd_ip_read_local_supported_features((void *)event_out_params);
+		supported_features((void *)event_out_params);
+		return 0;
 	case SDC_HCI_OPCODE_CMD_IP_READ_BD_ADDR:
 		*param_length_out += sizeof(sdc_hci_cmd_ip_read_bd_addr_return_t);
 		return sdc_hci_cmd_ip_read_bd_addr((void *)event_out_params);
@@ -506,7 +571,8 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 
 	case SDC_HCI_OPCODE_CMD_LE_READ_LOCAL_SUPPORTED_FEATURES:
 		*param_length_out += sizeof(sdc_hci_cmd_le_read_local_supported_features_return_t);
-		return sdc_hci_cmd_le_read_local_supported_features((void *)event_out_params);
+		le_supported_features((void *)event_out_params);
+		return 0;
 
 	case SDC_HCI_OPCODE_CMD_LE_SET_RANDOM_ADDRESS:
 		return sdc_hci_cmd_le_set_random_address((void *)cmd_params);
@@ -743,7 +809,8 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_zephyr_read_version_info((void *)event_out_params);
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_SUPPORTED_COMMANDS:
 		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_read_supported_commands_return_t);
-		return sdc_hci_cmd_vs_zephyr_read_supported_commands((void *)event_out_params);
+		vs_supported_commands((void *)event_out_params);
+		return 0;
 
 #if defined(CONFIG_BT_HCI_VS_EXT)
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_STATIC_ADDRESSES:
@@ -758,6 +825,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_WRITE_TX_POWER:
 		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_write_tx_power_return_t);
 		return sdc_hci_cmd_vs_zephyr_write_tx_power((void *)cmd_params,
+							    (void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_TX_POWER:
+		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_read_tx_power_return_t);
+		return sdc_hci_cmd_vs_zephyr_read_tx_power((void *)cmd_params,
 							    (void *)event_out_params);
 #endif /* CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL */
 #endif /* CONFIG_BT_HCI_VS_EXT */
@@ -856,9 +927,11 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 		 * by mixing legacy and extended commands.
 		 */
 		if (command_generates_command_complete_event(opcode)) {
+			uint8_t param_length = sizeof(struct bt_hci_evt_cmd_complete)
+					     + sizeof(struct bt_hci_evt_cc_status);
 			(void)encode_command_complete_header(cmd_complete_or_status.raw_event,
 							     opcode,
-							     CMD_COMPLETE_MIN_SIZE,
+							     param_length,
 							     BT_HCI_ERR_CMD_DISALLOWED);
 		} else {
 			(void)encode_command_status(cmd_complete_or_status.raw_event,

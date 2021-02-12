@@ -1,7 +1,7 @@
 # Copyright (c) 2020 Nordic Semiconductor ASA
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-description: >
+description: |
     This is a representation of the Skyworks SKY66112-11 Radio Front-End module.
     It is supplementing the generic representation of FEM with settling time and
     gain values appropriate for SKY66112-11 device.
@@ -14,7 +14,7 @@ properties:
     ctx-settle-time-us:
         type: int
         default: 23
-        description: >
+        description: |
             Settling time in microseconds from activation of CTX to transmit.
 
             The default value has been determined experimentally: it is the
@@ -27,7 +27,7 @@ properties:
     crx-settle-time-us:
         type: int
         default: 5
-        description: >
+        description: |
             Settling time in microseconds from activation of CRX to receive.
 
             The default value has been determined experimentally: it is the
@@ -41,7 +41,7 @@ properties:
     tx-gain-db:
         type: int
         default: 22
-        description: >
+        description: |
             TX gain of the PA amplifier of SKY66112-11 in dB.
 
             Default value is based on Table 5 of the SKY66112-11 data sheet
@@ -53,7 +53,7 @@ properties:
     rx-gain-db:
         type: int
         default: 11
-        description: >
+        description: |
             RX gain of the LNA amplifier of SKY66112-11 in dB.
 
             Default value is based on Table 5 of the SKY66112-11 data sheet

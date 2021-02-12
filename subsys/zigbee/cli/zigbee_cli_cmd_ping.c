@@ -9,7 +9,7 @@
 #include <shell/shell.h>
 
 #include <zb_nrf_platform.h>
-#include <zb_error_handler.h>
+#include <zigbee/zigbee_error_handler.h>
 #include "zigbee_cli.h"
 #include "zigbee_cli_ping_types.h"
 #include "zigbee_cli_utils.h"

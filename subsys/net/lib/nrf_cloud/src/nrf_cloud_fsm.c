@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include "nrf_cloud_fsm.h"
@@ -12,21 +12,6 @@
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_fsm, CONFIG_NRF_CLOUD_LOG_LEVEL);
-
-/**@brief Identifier for cloud state request.
- * Can be any unique unsigned 16-bit integer value except zero.
- */
-#define CLOUD_STATE_REQ_ID 5678
-
-/**@brief Identifier for message sent to report status in UA_COMPLETE state.
- * Can be any unique unsigned 16-bit integer value except zero.
- */
-#define PAIRING_STATUS_REPORT_ID 7890
-
-/**@brief Default message identifier.
- * Can be any unique unsigned 16-bit integer value except zero.
- */
-#define DEFAULT_REPORT_ID 1
 
 typedef int (*fsm_transition)(const struct nct_evt *nct_evt);
 
@@ -51,6 +36,7 @@ static const fsm_transition not_implemented_fsm_transition[NCT_EVT_TOTAL];
 
 static const fsm_transition initialized_fsm_transition[NCT_EVT_TOTAL] = {
 	[NCT_EVT_CONNECTED] = connection_handler,
+	[NCT_EVT_DISCONNECTED] = disconnection_handler,
 };
 
 static const fsm_transition connected_fsm_transition[NCT_EVT_TOTAL] = {
@@ -316,9 +302,14 @@ static int disconnection_handler(const struct nct_evt *nct_evt)
 	/* Set the state to INITIALIZED and notify the application of
 	 * disconnection.
 	 */
-	const struct nrf_cloud_evt evt = {
-		.type = NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED
+	struct nrf_cloud_evt evt = {
+		.type = NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED,
+		.status = NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE,
 	};
+
+	if (nfsm_get_disconnect_requested()) {
+		evt.status = NRF_CLOUD_DISCONNECT_USER_REQUEST;
+	}
 
 	nfsm_set_current_state_and_notify(STATE_INITIALIZED, &evt);
 

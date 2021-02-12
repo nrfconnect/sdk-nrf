@@ -1,0 +1,4 @@
+sample:
+  description: Allows Zephyr to provide Bluetooth and IEEE 802.15.4 connectivity
+    via RPMsg.
+  name: Multiprotocol RPMsg

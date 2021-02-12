@@ -98,7 +98,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Connect the development kit to your PC using a USB cable and power on or reset the kit.
 #. Open a terminal emulator and observe that the sample starts, provisions certificates, and starts to download.

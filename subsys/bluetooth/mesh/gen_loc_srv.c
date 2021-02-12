@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <bluetooth/mesh/gen_loc_srv.h>
@@ -187,27 +187,7 @@ const struct bt_mesh_model_op _bt_mesh_loc_setup_srv_op[] = {
 	BT_MESH_MODEL_OP_END
 };
 
-static int bt_mesh_loc_srv_init(struct bt_mesh_model *model)
-{
-	struct bt_mesh_loc_srv *srv = model->user_data;
-
-	srv->model = model;
-	net_buf_simple_init(model->pub->msg, 0);
-
-	return 0;
-}
-
-static void bt_mesh_loc_srv_reset(struct bt_mesh_model *model)
-{
-	net_buf_simple_reset(model->pub->msg);
-}
-
-const struct bt_mesh_model_cb _bt_mesh_loc_srv_cb = {
-	.init = bt_mesh_loc_srv_init,
-	.reset = bt_mesh_loc_srv_reset,
-};
-
-int _bt_mesh_loc_srv_update_handler(struct bt_mesh_model *model)
+static int update_handler(struct bt_mesh_model *model)
 {
 	struct bt_mesh_loc_srv *srv = model->user_data;
 
@@ -233,6 +213,29 @@ int _bt_mesh_loc_srv_update_handler(struct bt_mesh_model *model)
 
 	return 0;
 }
+
+static int bt_mesh_loc_srv_init(struct bt_mesh_model *model)
+{
+	struct bt_mesh_loc_srv *srv = model->user_data;
+
+	srv->model = model;
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
+
+	return 0;
+}
+
+static void bt_mesh_loc_srv_reset(struct bt_mesh_model *model)
+{
+	net_buf_simple_reset(model->pub->msg);
+}
+
+const struct bt_mesh_model_cb _bt_mesh_loc_srv_cb = {
+	.init = bt_mesh_loc_srv_init,
+	.reset = bt_mesh_loc_srv_reset,
+};
 
 int32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
 				 struct bt_mesh_msg_ctx *ctx,

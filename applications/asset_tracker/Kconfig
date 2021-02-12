@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Nordic Semiconductor ASA
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 menu "Asset tracker"
@@ -173,7 +173,6 @@ config ACCEL_USE_SIM
 	select SENSOR
 	select SENSOR_SIM
 	select SENSOR_SIM_TRIGGER
-	select SENSOR_SIM_STATIC_VALUES
 	help
 	  Use sensor simulator to generate accelerometer data for
 	  flip detection data sent to nRF Cloud.
@@ -277,19 +276,19 @@ config CLOUD_WAIT_DURATION
 
 config CLOUD_FOTA_APP
 	bool "Enable firmware over-the-air upgrades for application"
-	depends on AWS_FOTA
+	depends on AWS_FOTA || NRF_CLOUD_FOTA
 	depends on DFU_TARGET_MCUBOOT
 	default y
 
 config CLOUD_FOTA_MODEM
 	bool "Enable firmware over-the-air upgrades for modem"
-	depends on AWS_FOTA
-	depends on DFU_TARGET_MODEM
+	depends on AWS_FOTA || NRF_CLOUD_FOTA
+	depends on DFU_TARGET_MODEM_DELTA
 	default y
 
 config CLOUD_FOTA_BOOT
 	bool "Enable firmware over-the-air upgrades for bootloader"
-	depends on AWS_FOTA
+	depends on AWS_FOTA || NRF_CLOUD_FOTA
 	depends on DFU_TARGET_MCUBOOT
 	depends on SECURE_BOOT
 	default y

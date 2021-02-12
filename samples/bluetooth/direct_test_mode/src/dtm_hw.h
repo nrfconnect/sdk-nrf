@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef DTM_HW_H_
@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <zephyr/types.h>
 
-#include <nrfx/hal/nrf_radio.h>
+#include <hal/nrf_radio.h>
 
 #ifdef __cplusplus
 extern "C" {

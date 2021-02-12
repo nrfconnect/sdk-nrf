@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
@@ -33,13 +33,6 @@ struct bt_mesh_loc_cli;
 #define BT_MESH_LOC_CLI_INIT(_handlers)                                        \
 	{                                                                      \
 		.handlers = _handlers,                                         \
-		.pub = {.msg = NET_BUF_SIMPLE(MAX(                             \
-				BT_MESH_MODEL_BUF_LEN(                         \
-					BT_MESH_LOC_OP_LOCAL_SET,              \
-					BT_MESH_LOC_MSG_LEN_LOCAL_SET),        \
-				BT_MESH_MODEL_BUF_LEN(                         \
-					BT_MESH_LOC_OP_GLOBAL_SET,             \
-					BT_MESH_LOC_MSG_LEN_GLOBAL_SET))) }    \
 	}
 
 /** @def BT_MESH_MODEL_LOC_CLI
@@ -90,8 +83,15 @@ struct bt_mesh_loc_cli {
 	const struct bt_mesh_loc_cli_handlers *const handlers;
 	/** Response context for tracking acknowledged messages. */
 	struct bt_mesh_model_ack_ctx ack_ctx;
-	struct bt_mesh_model_pub pub; /**< Publish parameters. */
-	struct bt_mesh_model *model; /**< Access model pointer. */
+	/** Publish parameters. */
+	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_LOC_OP_GLOBAL_SET,
+					       BT_MESH_LOC_MSG_LEN_GLOBAL_SET)];
+	/** Composition data model entry pointer. */
+	struct bt_mesh_model *model;
 };
 
 /** @brief Get the global location of the bound srv.

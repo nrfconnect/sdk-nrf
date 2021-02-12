@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr/types.h>
@@ -51,6 +51,7 @@
 
 static struct bt_conn *default_conn;
 static struct bt_hogp hogp;
+static struct bt_conn *auth_conn;
 static uint8_t capslock_state;
 
 static void hids_on_ready(struct k_work *work);
@@ -213,6 +214,11 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	int err;
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	if (auth_conn) {
+		bt_conn_unref(auth_conn);
+		auth_conn = NULL;
+	}
 
 	printk("Disconnected: %s (reason %u)\n", addr, reason);
 
@@ -526,9 +532,36 @@ static void button_capslock_rsp(void)
 }
 
 
+static void num_comp_reply(bool accept)
+{
+	if (accept) {
+		bt_conn_auth_passkey_confirm(auth_conn);
+		printk("Numeric Match, conn %p\n", auth_conn);
+	} else {
+		bt_conn_auth_cancel(auth_conn);
+		printk("Numeric Reject, conn %p\n", auth_conn);
+	}
+
+	bt_conn_unref(auth_conn);
+	auth_conn = NULL;
+}
+
+
 static void button_handler(uint32_t button_state, uint32_t has_changed)
 {
 	uint32_t button = button_state & has_changed;
+
+	if (auth_conn) {
+		if (button & KEY_PAIRING_ACCEPT) {
+			num_comp_reply(true);
+		}
+
+		if (button & KEY_PAIRING_REJECT) {
+			num_comp_reply(false);
+		}
+
+		return;
+	}
 
 	if (button & KEY_BOOTMODE_MASK) {
 		button_bootmode();
@@ -539,6 +572,29 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	if (button & KEY_CAPSLOCK_RSP_MASK) {
 		button_capslock_rsp();
 	}
+}
+
+
+static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Passkey for %s: %06u\n", addr, passkey);
+}
+
+
+static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	auth_conn = bt_conn_ref(conn);
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Passkey for %s: %06u\n", addr, passkey);
+	printk("Press Button 1 to confirm, Button 2 to reject.\n");
 }
 
 
@@ -584,6 +640,8 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {
+	.passkey_display = auth_passkey_display,
+	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
 	.pairing_confirm = pairing_confirm,
 	.pairing_complete = pairing_complete,

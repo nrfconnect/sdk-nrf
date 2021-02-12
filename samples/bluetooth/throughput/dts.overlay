@@ -1,0 +1,4 @@
+&uart0 {
+     /delete-property/ rts-pin;
+     /delete-property/ cts-pin;
+};

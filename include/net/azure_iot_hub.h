@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**@file
@@ -302,8 +302,9 @@ int azure_iot_hub_method_respond(struct azure_iot_hub_result *result);
  *	   automatically by the library.
  *
  *  @return Time in milliseconds until next keepalive ping will be sent.
+ *  @return -1 if keepalive messages are not enabled.
  */
-uint32_t azure_iot_hub_keepalive_time_left(void);
+int azure_iot_hub_keepalive_time_left(void);
 
 #ifdef __cplusplus
 }

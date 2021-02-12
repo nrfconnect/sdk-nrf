@@ -1,0 +1,11 @@
+/* Copyright (c) 2020 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Default Zephyr configuration already provides GPIO support for FEM. */
+
+&uart0 {
+	status = "okay";
+	hw-flow-control;
+};

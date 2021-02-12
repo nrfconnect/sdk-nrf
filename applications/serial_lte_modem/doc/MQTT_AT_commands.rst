@@ -29,8 +29,8 @@ Syntax
 * The ``<op>`` parameter is an integer.
   It can accept one of the following values:
 
-  * ``0`` - Connect to the MQTT broker.
-  * ``1`` - Disconnect from the MQTT broker.
+  * ``0`` - Disconnect from the MQTT broker.
+  * ``1`` - Connect to the MQTT broker.
 
 * The ``<client_id>`` parameter is a string.
   It indicates the MQTT Client ID.

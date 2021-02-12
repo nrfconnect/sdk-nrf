@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <zephyr.h>
 #include <stdio.h>
@@ -102,7 +102,7 @@ void main(void)
 
 	printk("Initializing modem library\n");
 #if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
-	err = nrf_modem_lib_init();
+	err = nrf_modem_lib_init(NORMAL_MODE);
 #else
 	/* If nrf_modem_lib is initialized on post-kernel we should
 	 * fetch the returned error code instead of nrf_modem_lib_init

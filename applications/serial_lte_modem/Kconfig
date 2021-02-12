@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2019 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 source "Kconfig.zephyr"
@@ -14,7 +14,6 @@ config SLM_AT_MODE
 	select AT_CMD
 	select AT_NOTIF
 	select AT_CMD_PARSER
-	select MODEM_INFO
 
 config SLM_AT_MAX_PARAM
 	int "Maximum number of parameters in AT command"
@@ -22,6 +21,13 @@ config SLM_AT_MAX_PARAM
 
 config SLM_NATIVE_TLS
 	bool "Use Zephyr mbedTLS"
+
+#
+# external XTAL for UART
+#
+config SLM_EXTERNAL_XTAL
+	bool "Use external XTAL for UARTE"
+	default y
 
 #
 # Inter-Connect
@@ -83,6 +89,17 @@ config SLM_INTERFACE_PIN
 	default 31 if SLM_CONNECT_UART_2
 
 #
+# Socket
+#
+config SLM_SOCKET_RX_MAX
+	int "Maximum RX buffer size for receiving socket data"
+	range 576 708
+	default 576
+	help
+	  Default: NET_IPV4_MTU (576)
+	  Maximum: MSS setting in modem (708)
+
+#
 # TCP/TLS proxy
 #
 config SLM_TCP_FILTER_SIZE
@@ -101,6 +118,24 @@ config SLM_UDP_POLL_TIME
 config SLM_TCP_CONN_TIME
 	int "Connection time-out in seconds for TCP server"
 	default 60
+
+config SLM_DATAMODE_HWFC
+	bool "UART HWFC for data mode"
+	default y
+	help
+	  Require UART hardware flow control for data mode
+
+config SLM_DATAMODE_TERMINATOR
+	string "Pattern string to terminate data mode"
+	default "+++"
+	help
+	  Use a pattern to terminate data mode
+
+config SLM_DATAMODE_SILENCE
+	int "Silence time to exit data mode"
+	default 1
+	help
+	  Exit data mode after the specified time (in seconds) of UART silence
 
 #
 # Configurable services

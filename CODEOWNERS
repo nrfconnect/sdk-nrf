@@ -18,6 +18,7 @@
 
 # Applications
 /applications/asset_tracker/              @jhn-nordic @jtguggedal @rlubos
+/applications/asset_tracker_v2/           @simensrostad @jtguggedal @jhn-nordic @coderbyheart
 /applications/connectivity_bridge/        @jtguggedal @nordic-auko
 /applications/nrf_desktop/                @pdunaj
 /applications/serial_lte_modem/           @junqingzou @lats1980 @rlubos
@@ -30,6 +31,7 @@
 Kconfig*                                  @tejlmand
 # All doc related files
 /doc/CMakeLists.txt                       @carlescufi
+/doc/update_versions.cmake                @carlescufi
 /doc/scripts/                             @carlescufi
 /doc/static/                              @carlescufi
 /doc/themes/                              @carlescufi
@@ -73,11 +75,16 @@ Kconfig*                                  @tejlmand
 /lib/st25r3911b/                          @grochu
 /lib/supl/                                @rlubos @evenl
 /lib/date_time/                           @simensrostad
+/modules/                                 @tejlmand
+/modules/mcuboot/                         @nvlsianpu
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
 /samples/bootloader/                      @hakonfam @ioannisg
+/samples/connectedhomeip/                 @Damian-Nordic @kkasperczyk-no
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
+/samples/ei_wrapper/                      @pdunaj
+/samples/ei_data_forwarder/               @pdunaj
 /samples/esb/                             @lemrey
 /samples/mpsl/                            @joerchan @hurricaneFromMoscow
 /samples/nfc/                             @grochu
@@ -91,10 +98,10 @@ Kconfig*                                  @tejlmand
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/tfm/tfm_hello_world/             @oyvindronningstad
-/samples/usb/usb_uart_bridge/             @jhn-nordic @jtguggedal
 /samples/zigbee/                          @maciekfabia @mariuszpos
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
+/samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
 /scripts/                                 @mbolivar @tejlmand
 /scripts/hid_configurator/                @pdunaj
 /scripts/tools-versions-*.txt             @tejlmand @asle-nordic @grho @shanta-14
@@ -106,6 +113,7 @@ Kconfig*                                  @tejlmand
 /subsys/bootloader/                       @hakonfam @ioannisg
 /subsys/debug/                            @nordic-krch @anangl
 /subsys/dfu/                              @hakonfam @sigvartmh
+/subsys/mgmt/                             @hakonfam @sigvartmh
 /subsys/esb/                              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/fw_info/                          @hakonfam
@@ -120,6 +128,8 @@ Kconfig*                                  @tejlmand
 /subsys/shell/                            @nordic-krch
 /subsys/spm/                              @ioannisg
 /subsys/nonsecure/                        @ioannisg
+/modules/                                 @tejlmand
+/modules/tfm/                             @oyvindronningstad @ioannisg @hakonfam
 /subsys/zigbee/                           @maciekfabia @mariuszpos
 /tests/                                   @rakons
 /tests/subsys/zigbee/                     @rakons @maciekfabia @mariuszpos

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <bluetooth/mesh/gen_prop_srv.h>
 #include <sys/util.h>
@@ -404,19 +404,17 @@ static void handle_user_property_get(struct bt_mesh_model *mod,
 
 	net_buf_simple_add_u8(&rsp, prop->user_access);
 
-	if (!(prop->user_access & BT_MESH_PROP_ACCESS_READ)) {
-		goto respond;
+	if (prop->user_access & BT_MESH_PROP_ACCESS_READ) {
+		struct bt_mesh_prop_val value = {
+			.meta = *prop,
+			.value = net_buf_simple_tail(&rsp),
+			.size = CONFIG_BT_MESH_PROP_MAXSIZE,
+		};
+
+		srv->get(srv, ctx, &value);
+
+		net_buf_simple_add(&rsp, value.size);
 	}
-
-	struct bt_mesh_prop_val value = {
-		.meta = *prop,
-		.value = net_buf_simple_tail(&rsp),
-		.size = CONFIG_BT_MESH_PROP_MAXSIZE,
-	};
-
-	srv->get(srv, ctx, &value);
-
-	net_buf_simple_add(&rsp, value.size);
 
 respond:
 	bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
@@ -514,12 +512,52 @@ const struct bt_mesh_model_op _bt_mesh_prop_user_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+static int update_handler(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_prop_srv *srv = mod->user_data;
+	struct bt_mesh_prop_val value;
+	struct bt_mesh_prop *prop;
+
+	switch (srv->pub_state) {
+	case BT_MESH_PROP_SRV_STATE_NONE:
+		return 0;
+	case BT_MESH_PROP_SRV_STATE_LIST:
+		pub_list_build(srv, srv->pub.msg, 0);
+		return 0;
+	case BT_MESH_PROP_SRV_STATE_PROP:
+		bt_mesh_model_msg_init(srv->pub.msg,
+				       op_get(BT_MESH_PROP_OP_PROP_STATUS,
+					      srv_kind(mod)));
+		net_buf_simple_add_le16(srv->pub.msg, srv->pub_id);
+
+		prop = prop_get(srv, srv->pub_id);
+		if (!prop) {
+			return -ENOENT;
+		}
+
+		net_buf_simple_add_u8(srv->pub.msg, prop->user_access);
+
+		value.meta = *prop;
+		value.value = net_buf_simple_tail(srv->pub.msg);
+		value.size = CONFIG_BT_MESH_PROP_MAXSIZE;
+
+		srv->get(srv, NULL, &value);
+
+		net_buf_simple_add(srv->pub.msg, value.size);
+	}
+
+	return 0;
+}
+
 static int bt_mesh_prop_srv_init(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_prop_srv *srv = mod->user_data;
 
 	srv->mod = mod;
-	net_buf_simple_init(mod->pub->msg, 0);
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS) &&
 	    (mod->id == BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV ||
@@ -587,43 +625,6 @@ const struct bt_mesh_model_cb _bt_mesh_prop_srv_cb = {
 	.settings_set = bt_mesh_prop_srv_settings_set,
 #endif
 };
-
-int _bt_mesh_prop_srv_update_handler(struct bt_mesh_model *mod)
-{
-	struct bt_mesh_prop_srv *srv = mod->user_data;
-	struct bt_mesh_prop_val value;
-	struct bt_mesh_prop *prop;
-
-	switch (srv->pub_state) {
-	case BT_MESH_PROP_SRV_STATE_NONE:
-		return 0;
-	case BT_MESH_PROP_SRV_STATE_LIST:
-		pub_list_build(srv, srv->pub.msg, 0);
-		return 0;
-	case BT_MESH_PROP_SRV_STATE_PROP:
-		bt_mesh_model_msg_init(srv->pub.msg,
-				       op_get(BT_MESH_PROP_OP_PROP_STATUS,
-					      srv_kind(mod)));
-		net_buf_simple_add_le16(srv->pub.msg, srv->pub_id);
-
-		prop = prop_get(srv, srv->pub_id);
-		if (!prop) {
-			return -ENOENT;
-		}
-
-		net_buf_simple_add_u8(srv->pub.msg, prop->user_access);
-
-		value.meta = *prop;
-		value.value = net_buf_simple_tail(srv->pub.msg);
-		value.size = CONFIG_BT_MESH_PROP_MAXSIZE;
-
-		srv->get(srv, NULL, &value);
-
-		net_buf_simple_add(srv->pub.msg, value.size);
-	}
-
-	return 0;
-}
 
 int bt_mesh_prop_srv_pub_list(struct bt_mesh_prop_srv *srv,
 			      struct bt_mesh_msg_ctx *ctx)

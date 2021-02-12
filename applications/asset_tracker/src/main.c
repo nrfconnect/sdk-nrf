@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr.h>
@@ -1404,7 +1404,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		LOG_INF("CLOUD_EVT_READY");
 		ui_led_set_pattern(UI_CLOUD_CONNECTED);
 
-#if defined(CONFIG_BOOTLOADER_MCUBOOT)
+#if defined(CONFIG_BOOTLOADER_MCUBOOT) && !defined(CONFIG_NRF_CLOUD_FOTA)
 		/* Mark image as good to avoid rolling back after update */
 		boot_write_img_confirmed();
 #endif
@@ -1489,6 +1489,18 @@ void connection_evt_handler(const struct cloud_event *const evt)
 		switch (evt->data.err) {
 		case CLOUD_DISCONNECT_INVALID_REQUEST:
 			LOG_INF("Cloud connection closed.");
+			break;
+		case CLOUD_DISCONNECT_USER_REQUEST:
+			if (atomic_get(&cloud_association) ==
+			    CLOUD_ASSOCIATION_STATE_RECONNECT ||
+			    atomic_get(&cloud_association) ==
+			    CLOUD_ASSOCIATION_STATE_REQUESTED ||
+			    (atomic_get(&carrier_requested_disconnect))) {
+				connect_wait_s = 10;
+			}
+			break;
+		case CLOUD_DISCONNECT_CLOSED_BY_REMOTE:
+			LOG_INF("Disconnected by the cloud.");
 			if ((atomic_get(&cloud_connect_attempts) == 1) &&
 			    (atomic_get(&cloud_association) ==
 			     CLOUD_ASSOCIATION_STATE_INIT)) {
@@ -1504,20 +1516,9 @@ void connection_evt_handler(const struct cloud_event *const evt)
 #endif
 				connect_wait_s = 10;
 			} else {
-				LOG_INF("This can occur if the device has the wrong nRF Cloud certificates.");
+				LOG_INF("This can occur if the device has the wrong nRF Cloud certificates");
+				LOG_INF("or if the device has been removed from nRF Cloud.");
 			}
-			break;
-		case CLOUD_DISCONNECT_USER_REQUEST:
-			if (atomic_get(&cloud_association) ==
-			    CLOUD_ASSOCIATION_STATE_RECONNECT ||
-			    atomic_get(&cloud_association) ==
-			    CLOUD_ASSOCIATION_STATE_REQUESTED ||
-			    (atomic_get(&carrier_requested_disconnect))) {
-				connect_wait_s = 10;
-			}
-			break;
-		case CLOUD_DISCONNECT_CLOSED_BY_REMOTE:
-			LOG_INF("Disconnected by the cloud.");
 			break;
 		case CLOUD_DISCONNECT_MISC:
 		default:
@@ -1790,7 +1791,7 @@ static void ui_evt_handler(struct ui_evt evt)
 
 void handle_nrf_modem_lib_init_ret(void)
 {
-#if defined(CONFIG_NRF_MODEM_LIB)
+#if defined(CONFIG_NRF_MODEM_LIB) && !defined(CONFIG_NRF_CLOUD_FOTA)
 	int ret = nrf_modem_lib_get_init_ret();
 
 	/* Handle return values relating to modem firmware update */

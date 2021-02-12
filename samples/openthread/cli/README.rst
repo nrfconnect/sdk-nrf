@@ -64,6 +64,13 @@ The provided configurations optimize the memory footprint of the sample for sing
 
 For more information, see :ref:`app_memory`.
 
+FEM support
+===========
+
+.. |fem_file_path| replace:: :file:`samples/openthread/common`
+
+.. include:: /includes/sample_fem_support.txt
+
 Requirements
 ************
 
@@ -71,17 +78,14 @@ The sample supports the following development kits for testing the network statu
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf52840dk_nrf52840, nrf52833dk_nrf52833
-
-.. note::
-   The multiprotocol variant is not supported on nRF53 Series devices yet.
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
 
 Optionally, you can use one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for :ref:`testing communication or diagnostics <ot_cli_sample_testing_multiple>` and :ref:`thread_ot_commissioning_configuring_on-mesh`.
 
 Thread v1.2 extension requirements
 ==================================
 
-If you enable the :ref:`experimental Thread v1.2 extension <ot_cli_sample_thread_v12>`, you will need `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ to observe messages sent from the router to the leader board when :ref:`testing v1.2 features <ot_cli_sample_testing_multiple_v12>`.
+If you enable the :ref:`experimental Thread v1.2 extension <ot_cli_sample_thread_v12>`, you will need `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ to observe messages sent from the router to the leader kit when :ref:`testing v1.2 features <ot_cli_sample_testing_multiple_v12>`.
 
 User interface
 **************
@@ -126,6 +130,8 @@ After building the sample and programming it to your development kit, test it by
    .. note::
         |thread_hwfc_enabled|
 
+#. .. include:: /includes/thread_configure_network.txt
+#. .. include:: /includes/thread_enable_network.txt
 #. Invoke some of the OpenThread commands:
 
    a. Test the state of the Thread network with the ``ot state`` command.
@@ -134,7 +140,7 @@ After building the sample and programming it to your development kit, test it by
       .. code-block:: console
 
          uart:~$ ot state
-         router
+         leader
          Done
 
    #. Get the Thread network name with the ``ot networkname`` command.
@@ -159,18 +165,18 @@ After building the sample and programming it to your development kit, test it by
 
 .. _ot_cli_sample_testing_multiple:
 
-Testing with more boards
-------------------------
+Testing with more kits
+----------------------
 
 If you are using more than one development kit for testing the CLI sample, you can also complete additional testing procedures.
 
 .. note::
     The following testing procedures assume you are using two development kits.
 
-Testing communication between boards
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Testing communication between kits
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To test communication between boards, complete the following steps:
+To test communication between kits, complete the following steps:
 
 #. Make sure both development kits are programmed with the CLI sample.
 #. Turn on the developments kits.
@@ -180,12 +186,14 @@ To test communication between boards, complete the following steps:
    .. note::
         |thread_hwfc_enabled|
 
-#. Test communication between the boards with the following command:
+#. .. include:: /includes/thread_configure_network.txt
+#. .. include:: /includes/thread_enable_network.txt
+#. Test communication between the kits with the following command:
 
    .. parsed-literal::
       :class: highlight
 
-      ot ping *ip_address_of_the_first_board*
+      ot ping *ip_address_of_the_first_kit*
 
    For example:
 
@@ -256,7 +264,9 @@ To test the Thread Specification v1.2 features, complete the following steps:
 #. Turn on the developments kits.
 #. Set up the serial connection with both development kits.
    For more details, see :ref:`putty`.
-#. Test the state of the Thread network with the ``ot state`` command to see which board is the leader:
+#. .. include:: /includes/thread_configure_network.txt
+#. .. include:: /includes/thread_enable_network.txt
+#. Test the state of the Thread network with the ``ot state`` command to see which kit is the leader:
 
    .. code-block:: console
 
@@ -264,7 +274,7 @@ To test the Thread Specification v1.2 features, complete the following steps:
       leader
       Done
 
-#. On the leader board, enable the Backbone Router function:
+#. On the leader kit, enable the Backbone Router function:
 
    .. code-block:: console
 
@@ -274,7 +284,7 @@ To test the Thread Specification v1.2 features, complete the following steps:
       I: State changed! Flags: 0x00000200 Current role: 4
       I: State changed! Flags: 0x02000001 Current role: 4
 
-#. On the leader board, configure the Domain prefix:
+#. On the leader kit, configure the Domain prefix:
 
    .. code-block:: console
 
@@ -285,7 +295,7 @@ To test the Thread Specification v1.2 features, complete the following steps:
       I: State changed! Flags: 0x00000200 Current role: 4
       I: State changed! Flags: 0x00001001 Current role: 4
 
-#. On the router board, display the autoconfigured Domain Unicast Address and set another one manually:
+#. On the router kit, display the autoconfigured Domain Unicast Address and set another one manually:
 
    .. code-block:: console
 
@@ -304,7 +314,7 @@ To test the Thread Specification v1.2 features, complete the following steps:
       fe80:0:0:0:acbd:53bf:1461:a861
       Done
 
-#. On the router board, configure a multicast address with a scope greater than realm-local:
+#. On the router kit, configure a multicast address with a scope greater than realm-local:
 
    .. code-block:: console
 
@@ -322,7 +332,7 @@ To test the Thread Specification v1.2 features, complete the following steps:
       ff03:0:0:0:0:0:0:fc
       Done
 
-   The router board will send an ``MLR.req`` message to the leader board (Backbone Router).
+   The router kit will send an ``MLR.req`` message to the leader kit (Backbone Router).
    This can be observed using the `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_.
 
    .. note::
@@ -338,3 +348,14 @@ This sample uses the following Zephyr libraries:
   * ``include/kernel.h``
 
 * :ref:`zephyr:thread_protocol_interface`
+
+The following dependencies are added by the optional multiprotocol Bluetooth LE extension:
+
+* :ref:`nrfxlib:softdevice_controller`
+* :ref:`nus_service_readme`
+* Zephyr's :ref:`zephyr:bluetooth_api`:
+
+  * ``include/bluetooth/bluetooth.h``
+  * ``include/bluetooth/gatt.h``
+  * ``include/bluetooth/hci.h``
+  * ``include/bluetooth/uuid.h``

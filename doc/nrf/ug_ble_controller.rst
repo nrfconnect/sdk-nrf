@@ -19,7 +19,7 @@ The |NCS| contains two implementations of a Bluetooth LE Controller:
 The SoftDevice Controller is implemented by Nordic Semiconductor.
 The Zephyr Bluetooth LE Controller is an open source Link Layer developed in `Zephyr`_, to which Nordic Semiconductor is a contributor.
 
-Both Link Layers integrate with the Zephyr Bluetooth LE Host, which completes the full Bluetooth LE protocol stack solution in the |NCS|.
+Both Link Layers integrate with the Zephyr Bluetooth Host, which completes the full Bluetooth LE protocol stack solution in the |NCS|.
 It is possible to select either Bluetooth LE Controller for application development.
 See `Usage in samples`_ for more information.
 
@@ -58,5 +58,5 @@ Usage in samples
 Most :ref:`Bluetooth LE samples <ble_samples>` in the |NCS| can use either Bluetooth LE Controller.
 An exception is the :ref:`ble_llpm` sample, which requires the SoftDevice Controller that supports LLPM.
 
-By default, all samples except for the Bluetooth Mesh samples are currently configured to use SoftDevice Controller.
+By default, all samples except for the Bluetooth mesh samples are currently configured to use SoftDevice Controller.
 To use the Zephyr Bluetooth LE Controller instead, set :option:`CONFIG_BT_LL_SW_SPLIT` to ``y`` in the :file:`prj.conf` file (see :ref:`configure_application`) and make sure to build from a clean build directory.

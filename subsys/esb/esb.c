@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <errno.h>
 #include <irq.h>
@@ -16,6 +16,7 @@
 #include <helpers/nrfx_gppi.h>
 #include <stddef.h>
 #include <string.h>
+#include <nrf_erratas.h>
 
 /* Constants */
 
@@ -103,6 +104,16 @@ struct pipe_info {
 	bool ack_payload; /* State of the transmission of ACK payloads. */
 };
 
+/* Structure used by the PRX to organize ACK payloads for multiple pipes. */
+struct payload_wrap {
+	/* Pointer to the ACK payload. */
+	struct esb_payload  *p_payload;
+	/* Value used to determine if the current payload pointer is used. */
+	bool in_use;
+	/* Pointer to the next ACK payload queued on the same pipe. */
+	struct payload_wrap *p_next;
+};
+
 /* First-in, first-out queue of payloads to be transmitted. */
 struct payload_tx_fifo {
 	 /* Payload queue */
@@ -168,6 +179,10 @@ static struct payload_rx_fifo rx_fifo;
 static uint8_t tx_payload_buffer[CONFIG_ESB_MAX_PAYLOAD_LENGTH + 2];
 static uint8_t rx_payload_buffer[CONFIG_ESB_MAX_PAYLOAD_LENGTH + 2];
 
+/* Random access buffer variables for ACK payload handling */
+struct payload_wrap ack_pl_wrap[CONFIG_ESB_TX_FIFO_SIZE];
+struct payload_wrap *ack_pl_wrap_pipe[CONFIG_ESB_PIPE_COUNT];
+
 /* Run time variables */
 static uint8_t pids[CONFIG_ESB_PIPE_COUNT];
 static struct pipe_info rx_pipe_info[CONFIG_ESB_PIPE_COUNT];
@@ -229,6 +244,46 @@ static uint32_t addr_conv(const uint8_t *addr)
 	return __REV(bytewise_bit_swap(addr));
 }
 
+static inline void apply_errata143_workaround(void)
+{
+	/* Workaround for Errata 143
+	 * Check if the most significant bytes of address 0 (including
+	 * prefix) match those of another address. It's recommended to
+	 * use a unique address 0 since this will avoid the 3dBm penalty
+	 * incurred from the workaround.
+	 */
+	uint32_t base_address_mask =
+		esb_addr.addr_length == 5 ? 0xFFFF0000 : 0xFF000000;
+
+	/* Load the two addresses before comparing them to ensure
+	 * defined ordering of volatile accesses.
+	 */
+	uint32_t addr0 = NRF_RADIO->BASE0 & base_address_mask;
+	uint32_t addr1 = NRF_RADIO->BASE1 & base_address_mask;
+
+	if (addr0 == addr1) {
+		uint32_t prefix0 = NRF_RADIO->PREFIX0 & 0x000000FF;
+		uint32_t prefix1 = (NRF_RADIO->PREFIX0 & 0x0000FF00) >> 8;
+		uint32_t prefix2 = (NRF_RADIO->PREFIX0 & 0x00FF0000) >> 16;
+		uint32_t prefix3 = (NRF_RADIO->PREFIX0 & 0xFF000000) >> 24;
+		uint32_t prefix4 = NRF_RADIO->PREFIX1 & 0x000000FF;
+		uint32_t prefix5 = (NRF_RADIO->PREFIX1 & 0x0000FF00) >> 8;
+		uint32_t prefix6 = (NRF_RADIO->PREFIX1 & 0x00FF0000) >> 16;
+		uint32_t prefix7 = (NRF_RADIO->PREFIX1 & 0xFF000000) >> 24;
+
+		if (prefix0 == prefix1 || prefix0 == prefix2 ||
+			prefix0 == prefix3 || prefix0 == prefix4 ||
+			prefix0 == prefix5 || prefix0 == prefix6 ||
+			prefix0 == prefix7) {
+			/* This will cause a 3dBm sensitivity loss,
+			 * avoid using such address combinations if possible.
+			 */
+			*(volatile uint32_t *)0x40001774 =
+				((*(volatile uint32_t *)0x40001774) & 0xfffffffe) | 0x01000000;
+		}
+	}
+}
+
 static void update_rf_payload_format_esb_dpl(uint32_t payload_length)
 {
 #if (CONFIG_ESB_MAX_PAYLOAD_LENGTH <= 32)
@@ -280,6 +335,13 @@ static void update_radio_addresses(uint8_t update_mask)
 		NRF_RADIO->PREFIX1 =
 			bytewise_bit_swap(&esb_addr.pipe_prefixes[4]);
 	}
+
+	/* Workaround for Errata 143 */
+#if NRF52_ERRATA_143_ENABLE_WORKAROUND
+	if (nrf52_errata_143()) {
+		apply_errata143_workaround();
+	}
+#endif
 }
 
 static void update_radio_tx_power(void)
@@ -406,6 +468,16 @@ static void initialize_fifos(void)
 
 	for (size_t i = 0; i < CONFIG_ESB_RX_FIFO_SIZE; i++) {
 		rx_fifo.payload[i] = &rx_payload[i];
+	}
+
+	for (size_t i = 0; i < CONFIG_ESB_TX_FIFO_SIZE; i++) {
+		ack_pl_wrap[i].p_payload = &tx_payload[i];
+		ack_pl_wrap[i].in_use = false;
+		ack_pl_wrap[i].p_next = 0;
+	}
+
+	for (size_t i = 0; i < CONFIG_ESB_PIPE_COUNT; i++) {
+		ack_pl_wrap_pipe[i] = 0;
 	}
 }
 
@@ -730,33 +802,40 @@ static void clear_events_restart_rx(void)
 static void on_radio_disabled_rx_dpl(bool retransmit_payload,
 				     struct pipe_info *pipe_info)
 {
-	if (tx_fifo.count > 0 &&
-	    (tx_fifo.payload[tx_fifo.front]->pipe == NRF_RADIO->RXMATCH)) {
+	uint32_t pipe = NRF_RADIO->RXMATCH;
+
+	if (tx_fifo.count > 0 && ack_pl_wrap_pipe[pipe] != 0) {
+		current_payload = ack_pl_wrap_pipe[pipe]->p_payload;
+
 		/* Pipe stays in ACK with payload until TX FIFO is empty */
-		/* Do not report TX success on first ack payload or retransmit
-		 */
-		if (pipe_info->ack_payload && !retransmit_payload) {
-			if (++tx_fifo.front >= CONFIG_ESB_TX_FIFO_SIZE) {
-				tx_fifo.front = 0;
+		/* Do not report TX success on first ack payload or retransmit */
+		if (pipe_info->ack_payload == true && !retransmit_payload) {
+			ack_pl_wrap_pipe[pipe]->in_use = false;
+			ack_pl_wrap_pipe[pipe] = ack_pl_wrap_pipe[pipe]->p_next;
+			tx_fifo.count--;
+			if (tx_fifo.count > 0 && ack_pl_wrap_pipe[pipe] != 0) {
+				current_payload = ack_pl_wrap_pipe[pipe]->p_payload;
+			} else {
+				current_payload = 0;
 			}
 
-			tx_fifo.count--;
-
 			/* ACK payloads also require TX_DS */
-			/* (page 40 of the
-			 * 'nRF24LE1_Product_Specification_rev1_6.pdf').
-			 */
+			/* (page 40 of the 'nRF24LE1_Product_Specification_rev1_6.pdf') */
 			interrupt_flags |= INT_TX_SUCCESS_MSK;
 		}
 
-		pipe_info->ack_payload = true;
-
-		current_payload = tx_fifo.payload[tx_fifo.front];
-
-		update_rf_payload_format(current_payload->length);
-		tx_payload_buffer[0] = current_payload->length;
-		memcpy(&tx_payload_buffer[2], current_payload->data,
-		       current_payload->length);
+		if (current_payload != 0) {
+			pipe_info->ack_payload = true;
+			update_rf_payload_format(current_payload->length);
+			tx_payload_buffer[0] = current_payload->length;
+			memcpy(&tx_payload_buffer[2],
+					current_payload->data,
+					current_payload->length);
+		} else {
+			pipe_info->ack_payload = false;
+			update_rf_payload_format(0);
+			tx_payload_buffer[0] = 0;
+		}
 	} else {
 		pipe_info->ack_payload = false;
 		update_rf_payload_format(0);
@@ -1014,6 +1093,15 @@ bool esb_is_idle(void)
 	return (esb_state == ESB_STATE_IDLE);
 }
 
+static struct payload_wrap *find_free_payload_cont(void)
+{
+	for (int i = 0; i < CONFIG_ESB_TX_FIFO_SIZE; i++) {
+		if (!ack_pl_wrap[i].in_use)
+			return &ack_pl_wrap[i];
+	}
+	return 0;
+}
+
 int esb_write_payload(const struct esb_payload *payload)
 {
 	if (!esb_initialized) {
@@ -1037,17 +1125,42 @@ int esb_write_payload(const struct esb_payload *payload)
 
 	uint32_t key = irq_lock();
 
-	memcpy(tx_fifo.payload[tx_fifo.back], payload,
-	       sizeof(struct esb_payload));
+	if (esb_cfg.mode == ESB_MODE_PTX) {
+		memcpy(tx_fifo.payload[tx_fifo.back], payload,
+			sizeof(struct esb_payload));
 
-	pids[payload->pipe] = (pids[payload->pipe] + 1) % (PID_MAX + 1);
-	tx_fifo.payload[tx_fifo.back]->pid = pids[payload->pipe];
+		pids[payload->pipe] = (pids[payload->pipe] + 1) % (PID_MAX + 1);
+		tx_fifo.payload[tx_fifo.back]->pid = pids[payload->pipe];
 
-	if (++tx_fifo.back >= CONFIG_ESB_TX_FIFO_SIZE) {
-		tx_fifo.back = 0;
+		if (++tx_fifo.back >= CONFIG_ESB_TX_FIFO_SIZE) {
+			tx_fifo.back = 0;
+		}
+
+		tx_fifo.count++;
+	} else {
+		struct payload_wrap *new_ack_payload = find_free_payload_cont();
+
+		if (new_ack_payload != 0) {
+			new_ack_payload->in_use = true;
+			new_ack_payload->p_next = 0;
+			memcpy(new_ack_payload->p_payload, payload, sizeof(struct esb_payload));
+
+			pids[payload->pipe] = (pids[payload->pipe] + 1) % (PID_MAX + 1);
+			new_ack_payload->p_payload->pid = pids[payload->pipe];
+
+			if (ack_pl_wrap_pipe[payload->pipe] == 0) {
+				ack_pl_wrap_pipe[payload->pipe] = new_ack_payload;
+			} else {
+				struct payload_wrap *pl = ack_pl_wrap_pipe[payload->pipe];
+
+				while (pl->p_next != 0) {
+					pl = (struct payload_wrap *)pl->p_next;
+				}
+				pl->p_next = (struct payload_wrap *)new_ack_payload;
+			}
+			tx_fifo.count++;
+		}
 	}
-
-	tx_fifo.count++;
 
 	irq_unlock(key);
 

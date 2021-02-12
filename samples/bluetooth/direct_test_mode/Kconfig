@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic DTM sample"
+rsource "src/fem/Kconfig"
+endmenu

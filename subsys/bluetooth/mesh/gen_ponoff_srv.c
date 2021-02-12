@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <bluetooth/mesh/gen_ponoff_srv.h>
@@ -175,12 +175,26 @@ const struct bt_mesh_onoff_srv_handlers _bt_mesh_ponoff_onoff_intercept = {
 	.get = onoff_intercept_get,
 };
 
+static int update_handler(struct bt_mesh_model *model)
+{
+	struct bt_mesh_ponoff_srv *srv = model->user_data;
+
+	bt_mesh_model_msg_init(srv->ponoff_model->pub->msg,
+			       BT_MESH_PONOFF_OP_STATUS);
+	net_buf_simple_add_u8(srv->ponoff_model->pub->msg, srv->on_power_up);
+	return 0;
+}
+
+
 static int bt_mesh_ponoff_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 
 	srv->ponoff_model = model;
-	net_buf_simple_init(model->pub->msg, 0);
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
 		/* Model extensions:
@@ -224,6 +238,7 @@ static int bt_mesh_ponoff_srv_settings_set(struct bt_mesh_model *model,
 					   void *cb_arg)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_status dummy;
 	struct ponoff_settings_data data;
 
 	if (name) {
@@ -252,7 +267,7 @@ static int bt_mesh_ponoff_srv_settings_set(struct bt_mesh_model *model,
 		return -EINVAL;
 	}
 
-	srv->onoff.handlers->set(&srv->onoff, NULL, &onoff_set, NULL);
+	srv->onoff.handlers->set(&srv->onoff, NULL, &onoff_set, &dummy);
 
 	return 0;
 }
@@ -265,16 +280,6 @@ const struct bt_mesh_model_cb _bt_mesh_ponoff_srv_cb = {
 	.settings_set = bt_mesh_ponoff_srv_settings_set,
 #endif
 };
-
-int _bt_mesh_ponoff_srv_update_handler(struct bt_mesh_model *model)
-{
-	struct bt_mesh_ponoff_srv *srv = model->user_data;
-
-	bt_mesh_model_msg_init(srv->ponoff_model->pub->msg,
-			       BT_MESH_PONOFF_OP_STATUS);
-	net_buf_simple_add_u8(srv->ponoff_model->pub->msg, srv->on_power_up);
-	return 0;
-}
 
 void bt_mesh_ponoff_srv_set(struct bt_mesh_ponoff_srv *srv,
 			    enum bt_mesh_on_power_up on_power_up)

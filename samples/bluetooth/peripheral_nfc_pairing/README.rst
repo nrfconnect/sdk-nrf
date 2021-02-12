@@ -100,7 +100,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 Testing with NFC Poller Device
 ------------------------------

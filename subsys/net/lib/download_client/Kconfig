@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 menuconfig  DOWNLOAD_CLIENT
@@ -35,8 +35,9 @@ choice
 	  Size of the data fragments reported to the application when
 	  using HTTP or HTTPS. Use the largest fragment size when using HTTPS
 	  to reduce the bandwidth overhead due to the HTTP headers, which are
-	  sent for each fragment.
-	  When using the Modem library and TLS, the fragment size cannot exceed 2 kB.
+	  sent for each fragment. When using the Modem library and TLS,
+	  the fragment size may not exceed 2 kB minus the largest HTTP header
+	  the application expects to receive.
 
 config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_4096
 	bool "4096"
@@ -102,7 +103,7 @@ config DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
 
 config DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
 	int "Maximum filename length (stack)"
-	range 8 256
+	range 8 2048
 	default 192
 
 config DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS

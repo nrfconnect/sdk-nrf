@@ -1,0 +1,31 @@
+.. note::
+   Software FEM support is not present on nRF53 Series devices yet.
+   For now, it also cannot be combined with multiprotocol operation.
+
+You can add support for the nRF21540 front-end module to the sample.
+See :ref:`ug_radio_fem` for more information.
+
+To add support for the nRF21540 FEM, add the provided :file:`dts-nrf21540-fem.overlay` devicetree overlay file when building.
+The file is located in the |fem_file_path| folder.
+Make sure that the GPIOs in the file correspond to those in which your front-end module is connected.
+
+.. note::
+   You must add the provided overlay file if you use the nRF21540 EK.
+   If you use the nRF21540 DK, build your application for the :ref:`nrf21540dk_nrf52840 <zephyr:nrf21540dk_nrf52840>` board.
+   The devicetree for the nRF21540 DK already contains the required FEM configuration, so you do not need to add the overlay file.
+
+See :ref:`zephyr:set-devicetree-overlays` for different ways of adding the overlay file.
+
+The easiest way to add the file when building is to set it in the ``DTC_OVERLAY_FILE`` variable.
+However, doing so will override the default settings.
+For some boards, this sample requires additional overlay files, which are automatically included when building with the default settings.
+When you set the ``DTC_OVERLAY_FILE`` variable, you must specify all overlay files that are needed for building.
+Check the :file:`boards` folder to see the additional overlay files.
+
+Follow the instructions in :ref:`cmake_options` to specify the ``DTC_OVERLAY_FILE`` variable.
+For example, to build the sample from the command line for an nRF52833 DK with an attached nRF21540 EK, invoke the following command within the sample directory:
+``west build -b nrf52833dk_nrf52833 -- -DDTC_OVERLAY_FILE="boards/nrf52833dk_nrf52833.overlay;../common/dts-nrf21540-fem.overlay"``
+
+Alternatively, you can copy the contents of :file:`dts-nrf21540-fem.overlay` to the board's overlay file.
+
+To add support for other front-end modules, add the respective overlay files in the same way.

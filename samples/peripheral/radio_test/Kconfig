@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Radio test sample"
+rsource "../../bluetooth/direct_test_mode/src/fem/Kconfig"
+endmenu

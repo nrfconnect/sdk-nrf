@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
@@ -42,6 +42,14 @@ extern "C" {
 #define BT_MESH_PROP_OP_USER_PROP_STATUS BT_MESH_MODEL_OP_1(0x4E)
 #define BT_MESH_PROP_OP_CLIENT_PROPS_GET BT_MESH_MODEL_OP_1(0x4F)
 #define BT_MESH_PROP_OP_CLIENT_PROPS_STATUS BT_MESH_MODEL_OP_1(0x50)
+
+#ifndef CONFIG_BT_MESH_PROP_MAXSIZE
+#define CONFIG_BT_MESH_PROP_MAXSIZE 0
+#endif
+
+#ifndef CONFIG_BT_MESH_PROP_MAXCOUNT
+#define CONFIG_BT_MESH_PROP_MAXCOUNT 0
+#endif
 
 #define BT_MESH_PROP_MSG_LEN_PROPS_GET 0
 #define BT_MESH_PROP_MSG_LEN_CLIENT_PROPS_GET 2

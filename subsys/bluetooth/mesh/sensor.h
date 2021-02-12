@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 /**
  * @file
@@ -20,8 +20,8 @@ extern "C" {
 
 /**
  * @defgroup BT_MESH_SENSOR_FORMATS Sensor channel formats
- * @brief All available sensor channel formats in the Mesh Device Properties
- *        Specification.
+ * @brief All available sensor channel formats in the mesh device properties
+ * Specification.
  * @{
  */
 
@@ -95,8 +95,8 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_coefficient;
 
 /**
  * @defgroup BT_MESH_SENSOR_UNITS Sensor value units
- * @brief All available sensor value units in the Mesh Device Properties
- *        Specification.
+ * @brief All available sensor value units in the mesh device properties
+ * specification.
  * @{
  */
 extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_hours;
@@ -175,7 +175,7 @@ uint8_t sensor_value_len(const struct bt_mesh_sensor_type *type);
 
 uint8_t sensor_powtime_encode(uint64_t raw);
 uint64_t sensor_powtime_decode(uint8_t encoded);
-uint64_t sensor_powtime_decode_ns(uint8_t val);
+uint64_t sensor_powtime_decode_us(uint8_t val);
 
 uint8_t sensor_pub_div_get(const struct bt_mesh_sensor *s, uint32_t base_period);
 

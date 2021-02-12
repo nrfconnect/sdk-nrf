@@ -1,19 +1,19 @@
 .. _bluetooth_mesh_sensor_client:
 
-Bluetooth: Mesh sensor client
-#############################
+Bluetooth: Mesh sensor observer
+###############################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth Mesh sensor client sample demonstrates how to set up a basic Bluetooth Mesh :ref:`sensor client <bt_mesh_sensor_cli_readme>` model application that gets sensor data from one :ref:`sensor server <bt_mesh_sensor_srv_readme>` model.
+The Bluetooth mesh sensor observer sample demonstrates how to set up a basic Bluetooth mesh :ref:`bt_mesh_sensor_cli_readme` model application that gets sensor data from one :ref:`bt_mesh_sensor_srv_readme` model.
 Four different sensor types are used to showcase different ways for the server to publish data.
 In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`.
 
 .. note::
-    This sample must be paired with :ref:`bluetooth_mesh_sensor_server` to show any functionality.
-    A client has no sensor data and is dependent on a server to provide it.
+   This sample must be paired with :ref:`bluetooth_mesh_sensor_server` to show any functionality.
+   The observer has no sensor data, and is dependent on a mesh sensor to provide it.
 
 Overview
 ********
@@ -21,13 +21,13 @@ Overview
 This sample is split into the following source files:
 
 * A :file:`main.c` file to handle initialization.
-* One additional file for handling Mesh models, :file:`model_handler.c`.
+* One additional file for handling Bluetooth mesh models, :file:`model_handler.c`.
 
-The following Mesh sensor types are used in this sample:
+The following Bluetooth mesh sensor types are used in this sample:
 
 * :c:var:`bt_mesh_sensor_present_dev_op_temp` - Published by the server according to its publishing period.
 * :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` - Periodically requested by the client.
-* :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server board.
+* :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server.
 * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period.
 
 
@@ -40,7 +40,7 @@ Use `nRF Mesh mobile app`_ for provisioning and configuring of models supported 
 Models
 ======
 
-The following table shows the Mesh sensor client composition data for this sample:
+The following table shows the mesh sensor observer composition data for this sample:
 
    +---------------+
    |  Element 1    |
@@ -57,7 +57,7 @@ The models are used for the following purposes:
 * Config Server allows configurator devices to configure the node remotely.
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
-* Mesh sensor client gets sensor data from one or more :ref:`Mesh sensor server(s) <bt_mesh_sensor_srv_readme>`.
+* Sensor Client gets sensor data from one or more :ref:`Sensor Server(s) <bt_mesh_sensor_srv_readme>`.
 
 The model handling is implemented in :file:`src/model_handler.c`.
 A :c:struct:`k_delayed_work` item is submitted recursively to periodically request sensor data.
@@ -76,7 +76,7 @@ The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobil
 * `nRF Mesh mobile app for Android`_
 * `nRF Mesh mobile app for iOS`_
 
-Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_server` sample application, programmed on a separate development kit and configured according to the Mesh sensor server sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
+Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_server` sample application, programmed on a separate development kit and configured according to mesh sensor sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
 
 User interface
 **************
@@ -102,10 +102,10 @@ Testing
 =======
 
 .. note::
-   The Mesh sensor client sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_sensor_server` sample running in the same mesh network.
-   Before testing the Mesh sensor client, go through the Mesh sensor server's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>` with a different board.
+   The mesh sensor observer sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_sensor_server` sample running in the same mesh network.
+   Before testing the mesh sensor observer, go through the mesh sensor's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>` with a different kit.
 
-After programming the sample to your board, you can test it by using a smartphone with Nordic Semiconductor’s nRF Mesh app installed.
+After programming the sample to your development kit, you can test it by using a smartphone with Nordic Semiconductor’s nRF Mesh app installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
 All sensor values gathered from the server are printed over UART.
@@ -114,58 +114,26 @@ For more details, see :ref:`gs_testing`.
 Provisioning the device
 -----------------------
 
-The provisioning assigns an address range to the device, and adds it to the mesh network.
-Complete the following steps in the nRF Mesh app:
+.. |device name| replace:: :guilabel:`Mesh Sensor Observer`
 
-1. Tap :guilabel:`Add node` to start scanning for unprovisioned mesh devices.
-#. Select the :guilabel:`Mesh Sensor Client` device to connect to it.
-#. Tap :guilabel:`Identify` and then :guilabel:`Provision` to provision the device.
-#. When prompted, select an OOB method and follow the instructions in the app.
-
-Once the provisioning is complete, the app returns to the Network screen.
+.. include:: /includes/mesh_device_provisioning.txt
 
 Configuring models
 ------------------
 
-Complete the following steps in the nRF Mesh app to configure models:
+See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-1. On the Network screen, tap the :guilabel:`Mesh Sensor Client` node.
-   Basic information about the mesh node and its configuration is displayed.
-#. In the Mesh node view, expand the element.
-   It contains the list of models in the first and only element of the node.
-#. Tap :guilabel:`Sensor Client` to see the model's configuration.
-#. Bind the model to application keys to make it open for communication:
+Configure the Sensor Client model on the :guilabel:`Mesh Sensor Observer` node:
 
-   a. Tap :guilabel:`BIND KEY` at the top of the screen.
-   #. Select :guilabel:`Application Key 1` from the list.
+* Bind the model to :guilabel:`Application Key 1`.
+* Set the publication parameters:
 
-#. Set the publishing parameters:
+  * Destination/publish address: Select an existing group or create a new one, but make sure that the Sensor Server subscribes to the same group.
+  * Retransmit count: Set the count to zero (:guilabel:`Disabled`), to avoid duplicate logging in the UART terminal.
 
-   a. Tap :guilabel:`SET PUBLICATION`.
-   #. Tap :guilabel:`Publish Address`.
-   #. Select :guilabel:`Groups` from the drop-down menu.
-   #. Select an existing group or create a new one.
+* Set the subscription parameters: Select an existing group or create a new one, but make sure that the Sensor Server publishes to the same group.
 
-      .. note::
-        The sensor server must subscribe to the same group.
-
-   #. Tap :guilabel:`OK`.
-   #. Set the Retransmit Count to zero (:guilabel:`Disabled`) to avoid duplicate logging in the UART terminal.
-   #. Tap the confirmation button at the bottom right corner of the app to save the parameters.
-
-#. Set subscription parameters:
-
-   a. Tap :guilabel:`SUBSCRIBE`.
-   #. Select an existing group or create a new one.
-
-      .. note::
-        The sensor server must publish to the same group.
-
-   #. Tap :guilabel:`OK`.
-
-#. Double-tap the back arrow button at the top left corner of the app to get back to the main application screen.
-
-The sensor client model is now configured and able to receive data from the server.
+The Sensor Client model is now configured and able to receive data from the Sensor Server.
 
 Dependencies
 ************

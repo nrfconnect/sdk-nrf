@@ -26,7 +26,7 @@ Setting up a connection to AWS IoT
 Setting up a secure MQTT connection to the AWS IoT message broker consists of the following steps:
 
 1. :ref:`creating_a_thing_in_AWS_IoT` and generating certificates for the TLS connection.
-#. Programming the certificates to the on-board modem of the nRF9160 based board.
+#. Programming the certificates to the on-board modem of the nRF9160-based kit.
 #. Configuring the required library options.
 #. Configuring the optional library options.
 
@@ -35,14 +35,14 @@ Setting up a secure MQTT connection to the AWS IoT message broker consists of th
 
 .. _flash_certi_device:
 
-Programming the certificates to the on-board modem of the nRF9160 based board
-=============================================================================
+Programming the certificates to the on-board modem of the nRF9160-based kit
+===========================================================================
 
 To program the certificates, complete the following steps:
 
 1. `Download nRF Connect for Desktop`_.
-#. Update the modem firmware on the on-board modem of the nRF9160 based board to the latest version by following the steps in `Updating the nRF9160 DK cellular modem`_.
-#. Build and program the :ref:`at_client_sample` sample to the nRF9160 based board as explained in :ref:`gs_programming`.
+#. Update the modem firmware on the on-board modem of the nRF9160-based kit to the latest version by following the steps in `Updating the nRF9160 DK cellular modem`_.
+#. Build and program the :ref:`at_client_sample` sample to the nRF9160-based kit as explained in :ref:`gs_programming`.
 #. Launch the `LTE Link Monitor`_ application, which is implemented as part of `nRF Connect for Desktop`_.
 #. Click :guilabel:`Certificate manager` located at the top right corner.
 #. Copy and paste the certificates downloaded earlier from the AWS IoT console into the respective entries (``CA certificate``, ``Client certificate``, ``Private key``).
@@ -65,7 +65,7 @@ To configure the required library options, complete the following steps:
 1. In the `AWS IoT console`_, navigate to :guilabel:`IoT core` -> :guilabel:`Manage` -> :guilabel:`things` and click on the entry for the *thing* created during the steps of :ref:`creating_a_thing_in_AWS_IoT`.
 #. Navigate to :guilabel:`interact`, find the ``Rest API Endpoint`` and set the configurable option :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` to this address string.
 #. Set the option :option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` to the name of the *thing* created during the aforementioned steps.
-#. Set the security tag configuration :option:`CONFIG_AWS_IOT_SEC_TAG` to the security tag, chosen while `Programming the certificates to the on-board modem of the nRF9160 based board`_.
+#. Set the security tag configuration :option:`CONFIG_AWS_IOT_SEC_TAG` to the security tag, chosen while `Programming the certificates to the on-board modem of the nRF9160-based kit`_.
 
 Configuring the optional library options
 ========================================

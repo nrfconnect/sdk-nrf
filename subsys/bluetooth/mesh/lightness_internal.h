@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 /**
  * @file
@@ -27,8 +27,6 @@ extern "C" {
 #define LIGHTNESS_SRV_FLAG_IS_ON 0
 /** Flag for preventing startup behavior on the server */
 #define LIGHTNESS_SRV_FLAG_NO_START 1
-/** The Lightness server is being controlled by a Light Control Server */
-#define LIGHTNESS_SRV_FLAG_CONTROLLED 2
 
 enum light_repr {
 	ACTUAL,
@@ -97,7 +95,7 @@ static inline uint16_t actual_to_linear(uint16_t actual)
 	/* Conversion:
 	 * linear = CEIL(65535 * (actual * actual) / (65535 * 65535)))
 	 */
-	return ceiling_fraction((uint32_t) actual * (uint32_t) actual, 65535UL);
+	return ceiling_fraction((uint32_t)actual * (uint32_t)actual, 65535UL);
 }
 
 /** @brief Convert light from the specified representation to the configured.
@@ -162,6 +160,9 @@ int lightness_cli_light_set_unack(struct bt_mesh_lightness_cli *cli,
 				  struct bt_mesh_msg_ctx *ctx,
 				  enum light_repr repr,
 				  const struct bt_mesh_lightness_set *set);
+
+void lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
+			       struct bt_mesh_msg_ctx *ctx, uint16_t set);
 
 #ifdef __cplusplus
 }

@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /** @file
- *  @defgroup bt_mesh_sensor Bluetooth Mesh Sensors
+ *  @defgroup bt_mesh_sensor Bluetooth mesh Sensors
  *  @{
- *  @brief API for Bluetooth Mesh Sensors.
+ *  @brief API for Bluetooth mesh Sensors.
  */
 
 #ifndef BT_MESH_SENSOR_H__
@@ -273,7 +273,7 @@ struct bt_mesh_sensor_setting {
  *  inside which a set of sensor measurements were made. The range is
  *  interpreted as a half-open interval (i.e. start <= value < end).
  *
- *  @note Contrary to the Bluetooth Mesh specification, the column has an end
+ *  @note Contrary to the Bluetooth mesh specification, the column has an end
  *        value instead of a width, to match the conventional property format.
  *        This reduces implementation complexity for sensor series values that
  *        include the start and end (or min and max) of the measurement range,
@@ -505,6 +505,18 @@ const char *bt_mesh_sensor_ch_str_real(const struct sensor_value *ch);
 #define BT_MESH_SENSOR_OP_SETTING_SET BT_MESH_MODEL_OP_1(0x59)
 #define BT_MESH_SENSOR_OP_SETTING_SET_UNACKNOWLEDGED BT_MESH_MODEL_OP_1(0x5A)
 #define BT_MESH_SENSOR_OP_SETTING_STATUS BT_MESH_MODEL_OP_1(0x5B)
+
+#ifndef CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX
+#define CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX 0
+#endif
+
+#ifndef CONFIG_BT_MESH_SENSOR_CHANNELS_MAX
+#define CONFIG_BT_MESH_SENSOR_CHANNELS_MAX 0
+#endif
+
+#ifndef CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX
+#define CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX 0
+#endif
 
 #define BT_MESH_SENSOR_ENCODED_VALUE_MAXLEN                                    \
 	(CONFIG_BT_MESH_SENSOR_CHANNELS_MAX *                                  \

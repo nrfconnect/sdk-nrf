@@ -1,41 +1,20 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <bluetooth/mesh/time_srv.h>
 #include <time.h>
 #include "model_utils.h"
 #include <zephyr/types.h>
+#include <sys/util.h>
 #include "time_util.h"
-
-#define TAI_START_YEAR 2000
-#define TM_START_YEAR 1900
-#define TAI_START_DAY 6
-
-#define DAYS_YEAR 365ULL
-#define DAYS_LEAP_YEAR 366ULL
-#define SEC_PER_MIN (60ULL)
-#define SEC_PER_HOUR (60ULL * SEC_PER_MIN)
-#define SEC_PER_DAY (24ULL * SEC_PER_HOUR)
-
-#define SEC_PER_YEAR (DAYS_YEAR * SEC_PER_DAY)
-#define SEC_PER_LEAP_YEAR (DAYS_LEAP_YEAR * SEC_PER_DAY)
-#define FEB_DAYS 28
-#define FEB_LEAP_DAYS 29
-#define WEEKDAY_CNT 7
 
 static const uint8_t month_cfg[12] = { 31, 28, 31, 30, 31, 30,
 				    31, 31, 30, 31, 30, 31 };
 static const uint8_t month_leap_cfg[12] = { 31, 29, 31, 30, 31, 30,
 					 31, 31, 30, 31, 30, 31 };
-
-static inline bool is_leap_year(uint32_t year)
-{
-	return ((year % 4) == 0) &&
-	       (((year % 100) != 0) || ((year % 400) == 0));
-}
 
 int ts_to_tai(struct bt_mesh_time_tai *tai, struct tm *timeptr)
 {
@@ -100,7 +79,9 @@ void tai_to_ts(const struct bt_mesh_time_tai *tai, struct tm *timeptr)
 
 	const uint8_t *months = is_leap ? month_leap_cfg : month_cfg;
 
-	for (timeptr->tm_mon = 0; months[timeptr->tm_mon] <= day_cnt;
+	for (timeptr->tm_mon = 0;
+	     timeptr->tm_mon < ARRAY_SIZE(month_cfg) &&
+	     months[timeptr->tm_mon] <= day_cnt;
 	     timeptr->tm_mon++) {
 		day_cnt -= months[timeptr->tm_mon];
 	}

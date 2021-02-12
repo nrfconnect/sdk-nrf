@@ -1,0 +1,14 @@
+/* Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+    nrf_radio_fem: nrf21540_fem {
+        compatible = "nordic,nrf21540-fem";
+        tx-en-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
+        rx-en-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+        pdn-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+        ant-sel-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
+    };
+};

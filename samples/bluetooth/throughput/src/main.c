@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <kernel.h>
@@ -21,11 +21,20 @@
 #include <bluetooth/scan.h>
 #include <bluetooth/gatt_dm.h>
 
+#include <shell/shell_uart.h>
+
+#include <dk_buttons_and_leds.h>
+
 #define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 #define INTERVAL_MIN	0x140	/* 320 units, 400 ms */
 #define INTERVAL_MAX	0x140	/* 320 units, 400 ms */
 
+#define THROUGHPUT_CONFIG_TIMEOUT K_SECONDS(20)
+
+static K_SEM_DEFINE(throughput_sem, 0, 1);
+
+static volatile bool data_length_req;
 static volatile bool test_ready;
 static struct bt_conn *default_conn;
 static struct bt_throughput throughput;
@@ -48,6 +57,26 @@ static const struct bt_data sd[] = {
 static const char img[][81] = {
 #include "img.file"
 };
+
+static void button_handler_cb(uint32_t button_state, uint32_t has_changed);
+
+static const char *phy2str(uint8_t phy)
+{
+	switch (phy) {
+	case 0: return "No packets";
+	case BT_GAP_LE_PHY_1M: return "LE 1M";
+	case BT_GAP_LE_PHY_2M: return "LE 2M";
+	case BT_GAP_LE_PHY_CODED: return "LE Coded";
+	default: return "Unknown";
+	}
+}
+
+static void instruction_print(void)
+{
+	printk("\nType 'config' to change the configuration parameters.\n");
+	printk("You can use the Tab key to autocomplete your input.\n");
+	printk("Type 'run' when you are ready to run the test.\n");
+}
 
 void scan_filter_match(struct bt_scan_device_info *device_info,
 		       struct bt_scan_filter_match *filter_match,
@@ -95,6 +124,7 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 	}
 
 	if (info.role == BT_CONN_ROLE_MASTER) {
+		instruction_print();
 		test_ready = true;
 	}
 }
@@ -273,6 +303,50 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	}
 }
 
+static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
+{
+	printk("Connection parameters update request received.\n");
+	printk("Minimum interval: %d, Maximum interval: %d\n",
+	       param->interval_min, param->interval_max);
+	printk("Latency: %d, Timeout: %d\n", param->latency, param->timeout);
+
+	return true;
+}
+
+static void le_param_updated(struct bt_conn *conn, uint16_t interval,
+			     uint16_t latency, uint16_t timeout)
+{
+	printk("Connection parameters updated.\n"
+	       " interval: %d, latency: %d, timeout: %d\n",
+	       interval, latency, timeout);
+
+	k_sem_give(&throughput_sem);
+}
+
+static void le_phy_updated(struct bt_conn *conn,
+			   struct bt_conn_le_phy_info *param)
+{
+	printk("LE PHY updated: TX PHY %s, RX PHY %s\n",
+	       phy2str(param->tx_phy), phy2str(param->rx_phy));
+
+	k_sem_give(&throughput_sem);
+}
+
+static void le_data_length_updated(struct bt_conn *conn,
+				   struct bt_conn_le_data_len_info *info)
+{
+	if (!data_length_req) {
+		return;
+	}
+
+	printk("LE data len updated: TX (len: %d time: %d)"
+	       " RX (len: %d time: %d)\n", info->tx_max_len,
+	       info->tx_max_time, info->rx_max_len, info->rx_max_time);
+
+	data_length_req = false;
+	k_sem_give(&throughput_sem);
+}
+
 static uint8_t throughput_read(const struct bt_throughput_metrics *met)
 {
 	printk("[peer] received %u bytes (%u KB)"
@@ -280,7 +354,7 @@ static uint8_t throughput_read(const struct bt_throughput_metrics *met)
 	       met->write_len, met->write_len / 1024, met->write_count,
 	       met->write_rate);
 
-	test_ready = true;
+	k_sem_give(&throughput_sem);
 
 	return BT_GATT_ITER_STOP;
 }
@@ -316,7 +390,123 @@ static const struct bt_throughput_cb throughput_cb = {
 	.data_send = throughput_send
 };
 
-static void test_run(void)
+static struct button_handler button = {
+	.cb = button_handler_cb,
+};
+
+static void button_handler_cb(uint32_t button_state, uint32_t has_changed)
+{
+	int err;
+	uint32_t buttons = button_state & has_changed;
+
+	if (buttons & DK_BTN1_MSK) {
+		printk("\nMaster role. Starting scanning\n");
+		scan_start();
+	} else if (buttons & DK_BTN2_MSK) {
+		printk("\nSlave role. Starting advertising\n");
+		adv_start();
+	} else {
+		return;
+	}
+
+	/* The role has been selected, button are not needed any more. */
+	err = dk_button_handler_remove(&button);
+	if (err) {
+		printk("Button disable error: %d\n", err);
+	}
+}
+
+static void buttons_init(void)
+{
+	int err;
+
+	err = dk_buttons_init(NULL);
+	if (err) {
+		printk("Buttons initialization failed.\n");
+		return;
+	}
+
+	/* Add dynamic buttons handler. Buttons should be activated only when
+	 * during the board role choosing.
+	 */
+	dk_button_handler_add(&button);
+}
+
+static int connection_configuration_set(const struct shell *shell,
+			const struct bt_le_conn_param *conn_param,
+			const struct bt_conn_le_phy_param *phy,
+			const struct bt_conn_le_data_len_param *data_len)
+{
+	int err;
+	struct bt_conn_info info = {0};
+
+	err = bt_conn_get_info(default_conn, &info);
+	if (err) {
+		shell_error(shell, "Failed to get connection info %d", err);
+		return err;
+	}
+
+	if (info.role != BT_CONN_ROLE_MASTER) {
+		shell_error(shell,
+		"'run' command shall be executed only on the master board");
+	}
+
+	err = bt_conn_le_phy_update(default_conn, phy);
+	if (err) {
+		shell_error(shell, "PHY update failed: %d\n", err);
+		return err;
+	}
+
+	shell_print(shell, "PHY update pending");
+	err = k_sem_take(&throughput_sem, THROUGHPUT_CONFIG_TIMEOUT);
+	if (err) {
+		shell_error(shell, "PHY update timeout");
+		return err;
+	}
+
+	if (info.le.data_len->tx_max_len != data_len->tx_max_len) {
+		data_length_req = true;
+
+		err = bt_conn_le_data_len_update(default_conn, data_len);
+		if (err) {
+			shell_error(shell, "LE data length update failed: %d",
+				    err);
+			return err;
+		}
+
+		shell_print(shell, "LE Data length update pending");
+		err = k_sem_take(&throughput_sem, THROUGHPUT_CONFIG_TIMEOUT);
+		if (err) {
+			shell_error(shell, "LE Data Length update timeout");
+			return err;
+		}
+	}
+
+	if (info.le.interval != conn_param->interval_max) {
+		err = bt_conn_le_param_update(default_conn, conn_param);
+		if (err) {
+			shell_error(shell,
+				    "Connection parameters update failed: %d",
+				    err);
+			return err;
+		}
+
+		shell_print(shell, "Connection parameters update pending");
+		err = k_sem_take(&throughput_sem, THROUGHPUT_CONFIG_TIMEOUT);
+		if (err) {
+			shell_error(shell,
+				    "Connection parameters update timeout");
+			return err;
+		}
+	}
+
+	return 0;
+}
+
+int test_run(const struct shell *shell,
+	     const struct bt_le_conn_param *conn_param,
+	     const struct bt_conn_le_phy_param *phy,
+	     const struct bt_conn_le_data_len_param *data_len)
 {
 	int err;
 	uint64_t stamp;
@@ -327,24 +517,34 @@ static void test_run(void)
 	/* a dummy data buffer */
 	static char dummy[256];
 
-
-	/* wait for user input to continue */
-	printk("Ready, press any key to start\n");
-	console_getchar();
-
-	if (!test_ready) {
-		/* disconnected while blocking inside _getchar() */
-		return;
+	if (!default_conn) {
+		shell_error(shell, "Device is disconnected %s",
+			    "Connect to the peer device before running test");
+		return -EFAULT;
 	}
 
-	test_ready = false;
+	if (!test_ready) {
+		shell_error(shell, "Device is not ready."
+			"Please wait for the service discovery and MTU exchange end");
+		return 0;
+	}
+
+	shell_print(shell, "\n==== Starting throughput test ====");
+
+	err = connection_configuration_set(shell, conn_param, phy, data_len);
+	if (err) {
+		return err;
+	}
 
 	/* reset peer metrics */
 	err = bt_throughput_write(&throughput, dummy, 1);
 	if (err) {
-		printk("Reset peer metrics failed.\n");
-		return;
+		shell_error(shell, "Reset peer metrics failed.");
+		return err;
 	}
+
+	/* Make sure that all BLE procedures are finished. */
+	k_sleep(K_MSEC(500));
 
 	/* get cycle stamp */
 	stamp = k_uptime_get_32();
@@ -352,7 +552,7 @@ static void test_run(void)
 	while (prog < IMG_SIZE) {
 		err = bt_throughput_write(&throughput, dummy, 244);
 		if (err) {
-			printk("GATT write failed (err %d)\n", err);
+			shell_error(shell, "GATT write failed (err %d)", err);
 			break;
 		}
 
@@ -371,38 +571,15 @@ static void test_run(void)
 	/* read back char from peer */
 	err = bt_throughput_read(&throughput);
 	if (err) {
-		printk("GATT read failed (err %d)\n", err);
+		shell_error(shell, "GATT read failed (err %d)", err);
+		return err;
 	}
-}
 
-static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
-{
-	/* reject peer conn param request */
-	return false;
-}
+	k_sem_take(&throughput_sem, THROUGHPUT_CONFIG_TIMEOUT);
 
-static void device_role_select(void)
-{
-	char role;
+	instruction_print();
 
-	while (true) {
-		printk("Choose device role - type s (slave role) or m (master role): ");
-
-		role = console_getchar();
-		printk("\n");
-
-		if (role == 's') {
-			printk("Slave role. Starting advertising\n");
-			adv_start();
-			break;
-		} else if (role == 'm') {
-			printk("Master role. Starting scanning\n");
-			scan_start();
-			break;
-		}
-
-		printk("Invalid role\n");
-	}
+	return 0;
 }
 
 void main(void)
@@ -413,11 +590,12 @@ void main(void)
 	    .connected = connected,
 	    .disconnected = disconnected,
 	    .le_param_req = le_param_req,
+	    .le_param_updated = le_param_updated,
+	    .le_phy_updated = le_phy_updated,
+	    .le_data_len_updated = le_data_length_updated
 	};
 
 	printk("Starting Bluetooth Throughput example\n");
-
-	console_init();
 
 	bt_conn_cb_register(&conn_callbacks);
 
@@ -437,11 +615,9 @@ void main(void)
 		return;
 	}
 
-	device_role_select();
+	printk("\n");
+	printk("Press button 1 on the master board.\n");
+	printk("Press button 2 on the slave board.\n");
 
-	for (;;) {
-		if (test_ready) {
-			test_run();
-		}
-	}
+	buttons_init();
 }

@@ -20,7 +20,7 @@ The nRF CoAP Client sample performs the following actions:
 
 The public CoAP server used in this sample is Californium CoAP server (``coap://californium.eclipseprojects.io:5683``).
 This server runs Eclipse Californium, which is an open source implementation of the CoAP protocol that is targeted at the development and testing of IoT applications.
-An nRF9160 DK board is used as the CoAP client.
+An nRF9160 DK is used as the CoAP client.
 
 This sample uses the resource **obs** (Californium observable resource) in the communication between the CoAP client and the public CoAP server.
 The communication follows the standard request/response pattern and is based on the change in the state of the value of the resource.
@@ -51,7 +51,7 @@ Building and running
 Testing
 =======
 
-After programming the sample and all prerequisites to the board, test it by performing the following steps:
+After programming the sample and all prerequisites to the development kit, test it by performing the following steps:
 
 1. Connect your nRF9160 DK to the PC using a USB cable and power on or reset your nRF9160 DK.
 #. Open a terminal emulator and observe that the following information is displayed::

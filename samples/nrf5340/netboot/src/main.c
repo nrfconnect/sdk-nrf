@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr/types.h>
@@ -19,7 +19,8 @@
 
 void main(void)
 {
-	int err = fprotect_area(PM_B0N_ADDRESS, PM_B0N_SIZE);
+	int err = fprotect_area(PM_B0N_CONTAINER_ADDRESS,
+				PM_B0N_CONTAINER_SIZE);
 	const struct device *fdev = device_get_binding(FLASH_NAME);
 
 	if (err) {

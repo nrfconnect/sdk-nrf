@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
@@ -31,9 +31,6 @@ struct bt_mesh_ponoff_cli;
 #define BT_MESH_PONOFF_CLI_INIT(_power_onoff_status_handler)                   \
 	{                                                                      \
 		.status_handler = _power_onoff_status_handler,                 \
-		.pub = { .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(          \
-				 BT_MESH_PONOFF_OP_SET,                        \
-				 BT_MESH_PONOFF_MSG_LEN_SET)) },               \
 	}
 
 /** @def BT_MESH_MODEL_PONOFF_CLI
@@ -59,6 +56,11 @@ struct bt_mesh_ponoff_cli {
 	struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_PONOFF_OP_SET,
+					       BT_MESH_PONOFF_MSG_LEN_SET)];
 	/** Response context for tracking acknowledged messages. */
 	struct bt_mesh_model_ack_ctx ack_ctx;
 

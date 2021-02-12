@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 /**
  * @file
@@ -32,9 +32,6 @@ struct bt_mesh_prop_cli;
  */
 #define BT_MESH_PROP_CLI_INIT(_prop_list_handler, _prop_status_handler)        \
 	{                                                                      \
-		.pub = { .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(          \
-				 BT_MESH_PROP_OP_ADMIN_PROP_SET,               \
-				 BT_MESH_PROP_MSG_MAXLEN_ADMIN_PROP_SET)) },   \
 		.prop_list = _prop_list_handler,                               \
 		.prop_status = _prop_status_handler,                           \
 	}
@@ -67,6 +64,12 @@ struct bt_mesh_prop_cli {
 	struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
+		BT_MESH_PROP_OP_ADMIN_PROP_SET,
+		BT_MESH_PROP_MSG_MAXLEN_ADMIN_PROP_SET)];
 	/** Acknowledged message tracking. */
 	struct bt_mesh_model_ack_ctx ack_ctx;
 

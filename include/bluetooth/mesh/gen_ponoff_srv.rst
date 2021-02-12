@@ -7,7 +7,7 @@ Generic Power OnOff Server
    :local:
    :depth: 2
 
-The Generic Power OnOff Server controls the power up behavior of other models on its element.
+The Generic Power OnOff Server controls the power-up behavior of other models on its element.
 
 The Generic Power OnOff Server adds the following model instances in the composition data:
 
@@ -18,7 +18,7 @@ These model instances share the states of the Generic Power OnOff Server, but ac
 This allows for a fine-grained control of the access rights for the Generic Power OnOff state, as the two model instances can be bound to different application keys:
 
 * The Generic Power OnOff Server only provides read access to the Generic On Power Up state.
-* The Generic Power OnOff Setup Server provides write access to the Generic On Power Up state, allowing configurator devices to change the power up behavior of the element.
+* The Generic Power OnOff Setup Server provides write access to the Generic On Power Up state, allowing configurator devices to change the power-up behavior of the element.
 
 Configuration
 =============
@@ -53,7 +53,7 @@ The Generic Power OnOff Server extends the following models:
 * :ref:`bt_mesh_onoff_srv_readme`
 * :ref:`bt_mesh_dtt_srv_readme`
 
-The On Power Up state is bound to the Generic OnOff state of the extended Generic OnOff model through its power up behavior.
+The On Power Up state is bound to the Generic OnOff state of the extended Generic OnOff model through its power-up behavior.
 No other state bindings are present, and the callbacks for both the Generic OnOff server and the Generic DTT server are forwarded to the application as they are.
 
 Persistent storage

@@ -1,13 +1,13 @@
 .. _bluetooth_mesh_light_lc:
 
-Bluetooth: Mesh Light Control
+Bluetooth: Mesh light fixture
 #############################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth Mesh Light Control sample demonstrates how to set up a light control Mesh server model application and control a dimmable LED with the Bluetooth Mesh, using the :ref:`bt_mesh_onoff_readme`.
+The Bluetooth mesh light fixture sample demonstrates how to set up a light control mesh server model application, and control a dimmable LED with Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
 
 Overview
 ********
@@ -15,10 +15,10 @@ Overview
 This sample is split into three source files:
 
 * A :file:`main.c` file to handle initialization.
-* A file for handling Mesh models, :file:`model_handler.c`.
+* A file for handling mesh models, :file:`model_handler.c`.
 * A file for handling PWM driven control of the dimmable LED, :file:`lc_pwm_led.c`.
 
-After provisioning and configuring the Mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the dimmable LED on the development kit from the app.
+After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the dimmable LED on the development kit from the app.
 
 Provisioning
 ============
@@ -28,7 +28,7 @@ The provisioning is handled by the :ref:`bt_mesh_dk_prov`.
 Models
 ======
 
-The following table shows the Mesh light controller composition data for this sample:
+The following table shows the mesh light fixture composition data for this sample:
 
 .. table::
    :align: center
@@ -38,9 +38,9 @@ The following table shows the Mesh light controller composition data for this sa
    +===============================+============================+
    | Config Server                 | Gen. OnOff Server          |
    +-------------------------------+----------------------------+
-   | Health Server                 | Light Control Server       |
+   | Health Server                 | Light LC Server            |
    +-------------------------------+----------------------------+
-   | Gen. Level Server             | Light Control Setup Server |
+   | Gen. Level Server             | Light LC Setup Server      |
    +-------------------------------+----------------------------+
    | Gen. OnOff Server             |                            |
    +-------------------------------+----------------------------+
@@ -63,18 +63,18 @@ The models are used for the following purposes:
   These callbacks trigger blinking of the LEDs.
 - The seven other models in the first element are the product of a single instance of the Light Lightness Server.
   The application implements callbacks for the Light Lightness Server to control the first LED on the device using the PWM (pulse width modulation) driver.
-- The three models in the second element are the product of a single instance of the Light Control Server.
-  The Light Control Server controls the Light Lightness Server in the first element, deciding on parameters such as fade time, lighting levels for different states, and inactivity timing.
-  In this sample, the Light Control Server is enabled by default on startup.
+- The three models in the second element are the product of a single instance of the Light Lightness Control (LC) Server.
+  The Light LC Server controls the Light Lightness Server in the first element, deciding on parameters such as fade time, lighting levels for different states, and inactivity timing.
+  In this sample, the Light LC Server is enabled by default on startup.
 
-Other nodes can control the Light Lightness Server through the Light Control Server by sending On/Off messages to the Light Control Server or to the Generic OnOff Server in the second element.
+Other nodes can control the Light Lightness Server through the Light LC Server, by sending On/Off messages to the Light LC Server or to the Generic OnOff Server in the second element.
 
 .. note::
-    It is possible to bypass the Light Controller Server by directly communicating with the Lightness Server on the first element.
+   It is possible to bypass the Light LC Server by directly communicating with the Light Lightness Server on the first element.
 
 For more details, see :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_light_ctrl_srv_readme`.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the board.
+The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the development kit.
 
 Requirements
 ************
@@ -114,39 +114,27 @@ Building and running
 Testing
 =======
 
-After programming the sample to your board, you can test it by using a smartphone with Nordic Semiconductor's nRF Mesh app installed.
+After programming the sample to your development kit, you can test it by using a smartphone with Nordic Semiconductor's nRF Mesh app installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
 Provisioning the device
 -----------------------
 
-The provisioning assigns an address range to the device, and adds it to the mesh network.
-Complete the following steps in the nRF Mesh app:
+.. |device name| replace:: :guilabel:`Mesh Light Fixture`
 
-1. Tap :guilabel:`Add node` to start scanning for unprovisioned mesh devices.
-#. Select the :guilabel:`Mesh Light LC` device to connect to it.
-#. Tap :guilabel:`Identify` and then :guilabel:`Provision` to provision the device.
-#. When prompted, select the OOB method and follow the instructions in the app.
-
-Once the provisioning is complete, the app returns to the Network screen.
+.. include:: /includes/mesh_device_provisioning.txt
 
 Configuring models
 ------------------
 
-Complete the following steps in the nRF Mesh app to configure models:
+See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-1. On the Network screen, tap the :guilabel:`Mesh Light LC` node.
-   Basic information about the mesh node and its configuration is displayed.
-#. In the Mesh node view, expand the second element.
-   It contains the list of models in the second element of the node.
-#. Tap :guilabel:`Generic OnOff Server` to see the model's configuration.
-#. Bind the model to application keys to make it open for communication:
+Configure the Generic OnOff Client model on each element on the :guilabel:`Mesh Light Fixture` node:
 
-   1. Tap :guilabel:`BIND KEY` at the top of the screen.
-   #. Select :guilabel:`Application Key 1` from the list.
+* Bind the model to :guilabel:`Application Key 1`.
 
-   You are now able to control the first LED on the device by using the Generic On Off Controls in the model view.
-#. Tap :guilabel:`ON` to light up the first LED on the development kit.
+  Once the model is bound to the application key, you can control the first LED on the device.
+* In the model view, tap :guilabel:`ON` (one of the Generic On Off Controls) to light up the first LED on the development kit.
 
 You should now see the following actions:
 
@@ -162,8 +150,7 @@ You should now see the following actions:
    Light level transitions over time
 
 .. note::
-    The configuration of light levels, fade time and timeouts can be changed by altering the configuration parameters
-    in :file:`prj.conf`, and rebuilding the sample.
+   The configuration of light levels, fade time, and timeouts can be changed by altering the configuration parameters in the :file:`prj.conf` file, and rebuilding the sample.
 
 Dependencies
 ************

@@ -2,28 +2,35 @@
 
 import argparse
 from contextlib import closing
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 import getpass
 import netrc
 import os
 import sqlite3
 import sys
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, NamedTuple, Optional, Union
 
 import pygit2
 import github
 
 from pygit2_helpers import zephyr_commit_area, commit_shortlog
 
-# A container for pull request information. The commits attribute
-# is a list of pygit2.Commit objects.
-pr_info = namedtuple('pr_info', 'number title html_url commits')
+# A container for pull request information.
+class pr_info(NamedTuple):
+    number: int
+    title: str
+    html_url: str
+    commits: List[pygit2.Commit]
 
 # A tuple describing the results of querying the file system and
 # GitHub API for information about a commit.
-commit_result = namedtuple('commit_result',
-                           'sha remote_org remote_repo '
-                           'pr_num pr_title pr_url')
+class commit_result(NamedTuple):
+    sha: str
+    remote_org: str
+    remote_repo: str
+    pr_num: int
+    pr_title: str
+    pr_url: str
 
 class ResultsDatabase:
     '''Object oriented interface for accessing the results database.
@@ -115,7 +122,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument('gh_repo',
                         help='''repository in <organization>/<repo> format,
-                        like nrfconnect/sdk-nrf''')
+                        like zephyrproject-rtos/zephyr''')
     parser.add_argument('local_path',
                         help='path to repository on the file system')
     parser.add_argument('start', help='start commit ref in the range')
@@ -124,12 +131,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('-z', '--zephyr-areas', action='store_true',
                         help='''local_path is zephyr; also try to figure
                         out what areas the pull requests affect''')
+    parser.add_argument('-A', '--zephyr-only-areas', metavar='AREA',
+                        action='append',
+                        help='''local_path is zephyr; just output changes for
+                        area AREA (may be given more than once)''')
 
     parser.add_argument('-d', '--sqlite-db',
                         help='''sqlite database file for storing results;
                         will be created if it does not exist''')
 
-    return parser.parse_args()
+    ret = parser.parse_args()
+
+    if ret.zephyr_only_areas:
+        ret.zephyr_areas = True
+
+    return ret
 
 def get_gh_credentials() -> Dict:
     # Get github.Github credentials.
@@ -327,6 +343,8 @@ def main():
 
         print('Pull requests grouped by a guess of the zephyr area:')
         for area, infos in area_to_pr_infos.items():
+            if args.zephyr_only_areas and area not in args.zephyr_only_areas:
+                continue
             print(f'\n{area}')
             print('-' * len(area))
             print()

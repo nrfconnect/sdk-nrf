@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2020 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 menuconfig AZURE_FOTA
@@ -22,6 +22,10 @@ config AZURE_FOTA_FILE_PATH_MAX_LEN
 config AZURE_FOTA_VERSION_MAX_LEN
 	int "Version string buffer size"
 	default 64
+
+config AZURE_FOTA_JOB_ID_MAX_LEN
+	int "Job ID string buffer size"
+	default 40
 
 config AZURE_FOTA_APP_VERSION_AUTO
 	bool "Automatically create application version"

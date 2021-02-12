@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "Kconfig.mcuboot"
+rsource "tfm/Kconfig"
+rsource "cddl-gen/Kconfig"

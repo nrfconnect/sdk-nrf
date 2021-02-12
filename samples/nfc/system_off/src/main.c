@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <stdio.h>
@@ -137,7 +137,7 @@ static void system_off(struct k_work *work)
 	/* Before we disabled entry to deep sleep. Here we need to override
 	 * that, then force a sleep so that the deep sleep takes effect.
 	 */
-	sys_pm_force_power_state(SYS_POWER_STATE_DEEP_SLEEP_1);
+	pm_power_state_force(POWER_STATE_DEEP_SLEEP_1);
 
 	dk_set_led_off(SYSTEM_ON_LED);
 
@@ -222,7 +222,7 @@ void main(void)
 	}
 
 	/* Prevent deep sleep (system off) from being entered */
-	sys_pm_ctrl_disable_state(SYS_POWER_STATE_DEEP_SLEEP_1);
+	pm_ctrl_disable_state(POWER_STATE_DEEP_SLEEP_1);
 
 	/* Exit main function - the rest will be done by the callbacks */
 }

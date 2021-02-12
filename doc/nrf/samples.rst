@@ -47,6 +47,15 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    ../../samples/nrf5340/*/README
    ../../samples/nrf_rpc/entropy_nrf53/README
 
+.. _chip_samples:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: CHIP samples
+   :glob:
+
+   ../../samples/connectedhomeip/*/README
+
 .. _openthread_samples:
 
 .. toctree::
@@ -65,6 +74,18 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
    ../../samples/zigbee/*/README
 
+.. _ei_samples:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Edge Impulse samples
+   :glob:
+
+   ../../samples/ei_wrapper/README
+   ../../samples/ei_data_forwarder/README
+
+.. _other_samples:
+
 .. toctree::
    :maxdepth: 1
    :caption: Other samples
@@ -75,7 +96,6 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    ../../samples/mpsl/*/README
    ../../samples/peripheral/*/README
    ../../samples/sensor/*/README
-   ../../samples/usb/*/README
    ../../samples/tfm/*/README
 
 For more complex examples, see :ref:`applications`.

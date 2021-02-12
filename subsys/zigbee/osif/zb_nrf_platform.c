@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <stdlib.h>
@@ -9,6 +9,11 @@
 #include <power/reboot.h>
 #include <logging/log.h>
 #include <init.h>
+
+#include <hal/nrf_power.h>
+#if !NRF_POWER_HAS_RESETREAS
+#include <hal/nrf_reset.h>
+#endif
 
 #ifdef CONFIG_ZIGBEE_SHELL
 #include <zigbee_cli.h>
@@ -258,7 +263,7 @@ int zigbee_init(void)
 #endif /* CONFIG_ZBOSS_TRAF_DUMP */
 #endif /* ZB_TRACE_LEVEL */
 
-#ifndef CONFIG_ZB_TEST_MODE
+#ifndef CONFIG_ZB_TEST_MODE_MAC
 	/* Initialize Zigbee stack. */
 	ZB_INIT("zigbee_thread");
 
@@ -272,6 +277,9 @@ int zigbee_init(void)
 	 */
 	zb_set_nvram_erase_at_start(ZB_FALSE);
 
+	/* Don't set zigbee role for NCP device */
+#ifndef CONFIG_ZIGBEE_LIBRARY_NCP_DEV
+
 	/* Set channels on which the coordinator will try
 	 * to create a new network
 	 */
@@ -283,6 +291,7 @@ int zigbee_init(void)
 #error Channel mask undefined!
 #endif
 
+
 #if defined(CONFIG_ZIGBEE_ROLE_COORDINATOR)
 	zb_set_network_coordinator_role(channel_mask);
 #elif defined(CONFIG_ZIGBEE_ROLE_ROUTER)
@@ -293,7 +302,9 @@ int zigbee_init(void)
 #error Zigbee device role undefined!
 #endif
 
-#endif /* CONFIG_ZB_TEST_MODE */
+#endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
+
+#endif /* CONFIG_ZB_TEST_MODE_MAC */
 
 	return 0;
 }
@@ -565,4 +576,58 @@ void zigbee_enable(void)
 				    CONFIG_ZBOSS_DEFAULT_THREAD_PRIORITY,
 				    0, K_NO_WAIT);
 	k_thread_name_set(&zboss_thread_data, "zboss");
+}
+
+/**
+ * @brief Get the reason that triggered the last reset
+ *
+ * @return @ref reset_source
+ * */
+zb_uint8_t zb_get_reset_source(void)
+{
+	uint32_t reas;
+
+#if NRF_POWER_HAS_RESETREAS
+
+	reas = nrf_power_resetreas_get(NRF_POWER);
+	nrf_power_resetreas_clear(NRF_POWER, reas);
+	if (reas & NRF_POWER_RESETREAS_RESETPIN_MASK) {
+		return ZB_RESET_SRC_RESET_PIN;
+	} else if (reas & NRF_POWER_RESETREAS_SREQ_MASK) {
+		return ZB_RESET_SRC_SW_RESET;
+	} else if (reas) {
+		return ZB_RESET_SRC_OTHER;
+	} else {
+		return ZB_RESET_SRC_POWER_ON;
+	}
+
+#else
+
+	reas = nrf_reset_resetreas_get(NRF_RESET);
+	nrf_reset_resetreas_clear(NRF_RESET, reas);
+	if (reas & NRF_RESET_RESETREAS_RESETPIN_MASK) {
+		return ZB_RESET_SRC_RESET_PIN;
+	} else if (reas & NRF_RESET_RESETREAS_SREQ_MASK) {
+		return ZB_RESET_SRC_SW_RESET;
+	} else if (reas) {
+		return ZB_RESET_SRC_OTHER;
+	} else {
+		return ZB_RESET_SRC_POWER_ON;
+	}
+
+#endif
+}
+
+ZB_WEAK_PRE zb_uint32_t ZB_WEAK zb_osif_get_fw_version(void)
+{
+	return 0x01;
+}
+
+ZB_WEAK_PRE zb_uint32_t ZB_WEAK zb_osif_get_ncp_protocol_version(void)
+{
+#ifdef ZB_NCP_PROTOCOL_VERSION
+	return ZB_NCP_PROTOCOL_VERSION;
+#else /* ZB_NCP_PROTOCOL_VERSION */
+	return 0x01;
+#endif /* ZB_NCP_PROTOCOL_VERSION */
 }
