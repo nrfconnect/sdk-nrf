@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if LOG
+
+menu "Event options"
+
+comment "Initially logged events"
+
+endmenu
+
+endif
