@@ -91,7 +91,7 @@ Complete the following steps to do this:
    .. parsed-literal::
       :class: highlight
 
-      CONFIG_EDGE_IMPULSE_URI="https://studio.edgeimpulse.com/v1/api/*XXXXX*/deployment/download?type=zip"
+      CONFIG_EDGE_IMPULSE_URI="https:\ //studio.edgeimpulse.com/v1/api/*XXXXX*/deployment/download?type=zip"
 
    The *XXXXX* must be set to the project ID of your Edge Impulse project.
    You can check the project ID of your project in the :guilabel:`Project info` panel under :guilabel:`Dashboard`.
