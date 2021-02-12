@@ -99,6 +99,8 @@ struct bt_mesh_onoff_srv {
 		BT_MESH_ONOFF_OP_STATUS, BT_MESH_ONOFF_MSG_MAXLEN_STATUS)];
 	/* Scene entry */
 	struct bt_mesh_scene_entry scene;
+	/** Internal flag state. */
+	atomic_t flags;
 };
 
 /** @brief Publish the Generic OnOff Server model status.

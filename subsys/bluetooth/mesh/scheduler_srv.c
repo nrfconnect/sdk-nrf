@@ -440,7 +440,7 @@ static void scheduled_action_handle(struct k_work *work)
 	struct bt_mesh_model_transition transition = {
 		.time = model_transition_decode(
 				srv->sch_reg[srv->idx].transition_time),
-		.delay = 0
+		.delay = 0,
 	};
 	uint16_t scene = srv->sch_reg[srv->idx].scene_number;
 	struct bt_mesh_elem *elem = bt_mesh_model_elem(srv->mod);

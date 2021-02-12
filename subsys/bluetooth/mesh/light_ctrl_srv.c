@@ -10,6 +10,7 @@
 #include <bluetooth/mesh/properties.h>
 #include "lightness_internal.h"
 #include "light_ctrl_internal.h"
+#include "gen_onoff_internal.h"
 #include "sensor.h"
 #include "model_utils.h"
 
@@ -1316,7 +1317,7 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff,
 		CONTAINER_OF(onoff, struct bt_mesh_light_ctrl_srv, onoff);
 	enum bt_mesh_light_ctrl_srv_state prev_state = srv->state;
 
-	if (set->transition->delay) {
+	if (set->transition && set->transition->delay > 0) {
 		delayed_set(srv, set->transition, set->on_off);
 	} else if (set->on_off) {
 		turn_on(srv, set->transition, false);
@@ -1450,6 +1451,8 @@ static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
 		bt_mesh_model_extend(mod, srv->onoff.model);
 	}
+
+	atomic_set_bit(&srv->onoff.flags, GEN_ONOFF_SRV_NO_DTT);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 		bt_mesh_scene_entry_add(mod, &srv->scene, &scene_type, false);

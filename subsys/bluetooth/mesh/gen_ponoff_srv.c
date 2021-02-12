@@ -251,7 +251,8 @@ static int bt_mesh_ponoff_srv_settings_set(struct bt_mesh_model *model,
 
 	set_on_power_up(srv, NULL, (enum bt_mesh_on_power_up)data.on_power_up);
 
-	struct bt_mesh_onoff_set onoff_set = { 0 };
+	struct bt_mesh_model_transition transition = { 0 };
+	struct bt_mesh_onoff_set onoff_set = { .transition = &transition };
 
 	switch (data.on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:

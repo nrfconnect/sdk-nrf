@@ -139,7 +139,7 @@ bt_mesh_dtt_srv_transition_get(struct bt_mesh_model *mod,
 
 	transition->time = srv ? srv->transition_time : 0;
 	transition->delay = 0;
-	return (transition->time != 0);
+	return (srv != NULL);
 }
 
 /** @cond INTERNAL_HIDDEN */
