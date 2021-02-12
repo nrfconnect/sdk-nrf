@@ -9,3 +9,6 @@ target_sources_ifdef(CONFIG_ML_APP_EI_DATA_FORWARDER_ENABLE
 
 target_sources_ifdef(CONFIG_ML_APP_ML_RUNNER_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ml_runner.c)
+
+target_sources_ifdef(CONFIG_ML_APP_SENSOR_SIM_CTRL
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sensor_sim_ctrl.c)
