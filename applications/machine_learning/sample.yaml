@@ -1,0 +1,9 @@
+sample:
+  name: Machine learning
+  description: Machine learning application reference design
+tests:
+  applications.machine_learning.zdebug:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf52840dk_nrf52840
+    tags: ci_build
