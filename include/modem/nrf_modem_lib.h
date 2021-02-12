@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/**
+ * @file nrf_modem_lib.h
+ *
+ * @defgroup nrf_modem_lib nRF Modem library wrapper
+ *
+ * @{
+ *
+ * @brief API of the SMS nRF Modem library wrapper module.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,7 +26,7 @@ extern "C" {
  * This function synchronously turns on the modem; it could block
  * for a few minutes when the modem firmware is being updated.
  *
- * If you application supports modem firmware updates, consider
+ * If your application supports modem firmware updates, consider
  * initializing the library manually to have control of what
  * the application should do while initialization is ongoing.
  *
@@ -24,7 +34,7 @@ extern "C" {
  * The full DFU mode is used to update the whole modem firmware.
  *
  * When the library is initialized in full DFU mode, all shared memory regions
- * are reserverd for the firmware update operation, and no other functionality
+ * are reserved for the firmware update operation, and no other functionality
  * can be used. In particular, sockets won't be available to the application.
  *
  * To switch between the full DFU mode and normal mode,
@@ -72,6 +82,8 @@ void nrf_modem_lib_shm_tx_diagnose(void);
  * @brief Print diagnostic information for the library heap.
  */
 void nrf_modem_lib_heap_diagnose(void);
+
+/** @} */
 
 #ifdef __cplusplus
 }
