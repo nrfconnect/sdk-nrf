@@ -11,13 +11,13 @@ The Asset Tracker v2 is a real-time configurable ultra-low-power capable applica
 It is a complete rework of the :ref:`asset_tracker` application.
 This application introduces a set of new features, which are not present in the :ref:`asset_tracker` application:
 
-* **Ultra-low power by design** - The application highlights the power saving features of the nRF9160 SiP, which is critical for successfully developing small form-factor devices and/or products which need very long battery lifetime.
-* **Offline first** - Highly-mobile cellular IoT products need to handle unreliable connections gracefully by implementing mechanisms to retry the failed sending of data.
-* **Timestamping on the device** - Sensor data is timestamped on the device using multiple time sources. When the device is offline (planned or unplanned), the timestamping does not rely on the cloud side.
-* **Batching of data** - Data can be batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
-* **Configurable at run-time** - The application behavior (for example, accelerometer sensitivity, or GPS timeout) can be configured at run-time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
+* *Ultra-low power by design* - The application highlights the power saving features of the nRF9160 SiP, which is critical for successfully developing small form-factor devices and/or products which need very long battery lifetime.
+* *Offline first* - Highly-mobile cellular IoT products need to handle unreliable connections gracefully by implementing mechanisms to retry the failed sending of data.
+* *Timestamping on the device* - Sensor data is timestamped on the device using multiple time sources. When the device is offline (planned or unplanned), the timestamping does not rely on the cloud side.
+* *Batching of data* - Data can be batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
+* *Configurable at run-time* - The application behavior (for example, accelerometer sensitivity or GPS timeout) can be configured at run-time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
 
-To implement the above features, a rework of the existing application was necessary.
+Implementation of the above features required a rework of the existing application.
 Hence, this application is not backward compatible to the :ref:`asset_tracker` application.
 
 .. note::
@@ -256,17 +256,11 @@ You must check and configure the following :ref:`lib_aws_iot` library options th
 * :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
 * :option:`CONFIG_AWS_IOT_SEC_TAG`
 
-The application makes use of the heap when encoding and sending data to the cloud.
-More information can be found in :ref:`memory_allocation`
-For configuring the heap size, check and configure the following configuration option:
+Additionally, you can add the following optional configurations to configure the heap or to provide additional information such as APN to the modem for registering with an LTE network:
 
-* :option:`CONFIG_HEAP_MEM_POOL_SIZE`
-
-In some cases, you might need to provide additional information such as APN, to the modem for registering with an LTE network.
-To manually configure the APN, set the following options:
-
-* :option:`CONFIG_LTE_PDP_CMD` - Set the option to ``y``
-* :option:`CONFIG_LTE_PDP_CONTEXT` - Set the option to ``0,\"IP\",\"apn.example.com\"``
+* :option:`CONFIG_HEAP_MEM_POOL_SIZE` - Configures the size of the heap that is used by the application when encoding and sending data to the cloud. More information can be found in :ref:`memory_allocation`.
+* :option:`CONFIG_LTE_PDP_CMD` - Used for manual configuration of the APN. Set the option to ``y`` to enable PDP define using ``AT+CGDCONT``.
+* :option:`CONFIG_LTE_PDP_CONTEXT` - Used for manual configuration of the APN. An example is ``0,\"IP\",\"apn.example.com\"``.
 
 Configuration files
 ===================
@@ -293,6 +287,7 @@ Building and running
 ********************
 
 Before building and running the firmware ensure that the cloud side is set up.
+Also, the device must be provisioned and configured with the certificates according to the instructions for the respective cloud for the connection attempt to succeed.
 
 .. note::
 
@@ -322,9 +317,6 @@ If some options are defined in both files, the options set in the overlay take p
 
 Testing
 =======
-
-Before running the application, the cloud must be configured.
-Also, the device must be provisioned and configured with certificates according to the instructions for the respective cloud for the connection attempt to succeed.
 
 After programming the application and all the prerequisites to your development kit, test the application by performing the following steps:
 
@@ -403,7 +395,7 @@ When an event is sent from a module, all subscribers receive that event in the r
 
 Modules may also receive events from other sources such as drivers and libraries.
 For instance, the cloud module will also receive events from the configured cloud backend.
-The eventhandler converts the events to messages.
+The event handler converts the events to messages.
 The messages are then queued in the case of the cloud module or processed directly in the case of modules that do not have a processing thread.
 
 .. figure:: /images/asset_tracker_v2_module_structure.svg
@@ -457,7 +449,7 @@ Following is the basic structure for all the threads:
 
                    switch (state) {
                    case STATE_DISCONNECTED:
-                           on_tate_disconnected(&msg);
+                           on_state_disconnected(&msg);
                            break;
                    case STATE_CONNECTED:
                            on_state_connected(&msg);
