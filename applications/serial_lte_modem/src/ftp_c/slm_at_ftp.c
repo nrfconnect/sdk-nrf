@@ -255,9 +255,9 @@ static int do_ftp_pwd(void)
 static int do_ftp_ls(void)
 {
 	int ret;
-	char options[FTP_MAX_OPTION];
+	char options[FTP_MAX_OPTION] = "";
 	int sz_options = FTP_MAX_OPTION;
-	char target[FTP_MAX_FILEPATH];
+	char target[FTP_MAX_FILEPATH] = "";
 	int sz_target = FTP_MAX_FILEPATH;
 	int param_count = at_params_valid_count_get(&at_param_list);
 
