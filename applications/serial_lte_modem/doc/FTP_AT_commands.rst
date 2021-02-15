@@ -38,7 +38,6 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XFTP="ls"[,<options>[,<folder or file>]]``
 * ``AT#XFTP="mkdir",<folder>``
 * ``AT#XFTP="rmdir",<folder>``
-* ``AT#XFTP="info",<file>``
 * ``AT#XFTP="rename",<filename_old>,<filename_new>``
 * ``AT#XFTP="delete",<file>``
 * ``AT#XFTP="get",<file>``

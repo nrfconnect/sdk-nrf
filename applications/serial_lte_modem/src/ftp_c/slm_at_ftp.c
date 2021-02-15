@@ -38,7 +38,6 @@ enum slm_ftp_operation {
 	FTP_OP_STATUS,
 	FTP_OP_ASCII,
 	FTP_OP_BINARY,
-	FTP_OP_CLEAR,
 	/* FTP Directory Operation */
 	FTP_OP_PWD,
 	FTP_OP_LS,
