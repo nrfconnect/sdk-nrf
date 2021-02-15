@@ -5,3 +5,4 @@
 #
 
 rsource "Kconfig.ei_data_forwarder"
+rsource "Kconfig.ml_runner"
