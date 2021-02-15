@@ -68,7 +68,7 @@ static int static_modem_data_add(cJSON *parent,
 				 struct cloud_data_modem_static *data)
 {
 	int err = 0;
-	char nw_mode[50];
+	char nw_mode[50] = {0};
 
 	static const char lte_string[] = "LTE-M";
 	static const char nbiot_string[] = "NB-IoT";
