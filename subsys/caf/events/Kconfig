@@ -57,6 +57,28 @@ config CAF_INIT_LOG_CLICK_EVENTS
 	depends on LOG
 	default y
 
+config CAF_LED_EVENTS
+	bool "Enable LED events"
+	help
+	  Enable support for LED event.
+
+config CAF_INIT_LOG_LED_EVENTS
+	bool "Log LED events"
+	depends on CAF_LED_EVENTS
+	depends on LOG
+	default y
+	help
+	  Log LED events used to change LED operating mode and color.
+
+config CAF_INIT_LOG_LED_READY_EVENTS
+	bool "Log LED ready event"
+	depends on CAF_LED_EVENTS
+	depends on LOG
+	default y
+	help
+	  Log LED events used to notify that LED is ready for next stream
+	  effect.
+
 config CAF_SENSOR_EVENTS
 	bool "Enable sensor events"
 	help
