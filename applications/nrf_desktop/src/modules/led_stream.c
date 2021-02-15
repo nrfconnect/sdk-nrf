@@ -10,7 +10,7 @@
 #define MODULE led_stream
 #include <caf/events/module_state_event.h>
 
-#include "led_event.h"
+#include <caf/events/led_event.h>
 #include "config_event.h"
 
 #include <logging/log.h>
@@ -34,7 +34,7 @@ struct led {
 	bool streaming;
 };
 
-static struct led leds[CONFIG_DESKTOP_LED_COUNT];
+static struct led leds[CONFIG_CAF_LEDS_COUNT];
 static bool initialized;
 
 enum led_stream_opt {
@@ -57,7 +57,8 @@ static size_t next_index(size_t index)
 
 static bool queue_data(const uint8_t *data, const size_t size, struct led *led)
 {
-	static const size_t min_len = CONFIG_DESKTOP_LED_COLOR_COUNT * sizeof(led->steps_queue[led->rx_idx].color.c[0])
+	static const size_t min_len = CONFIG_CAF_LEDS_COLOR_COUNT
+			 * sizeof(led->steps_queue[led->rx_idx].color.c[0])
 			 + sizeof(led->steps_queue[led->rx_idx].substep_count)
 			 + sizeof(led->steps_queue[led->rx_idx].substep_time)
 			 + sizeof(uint8_t); /* LED ID */
@@ -75,7 +76,7 @@ static bool queue_data(const uint8_t *data, const size_t size, struct led *led)
 
 	/* Fill only leds available in the system */
 	memcpy(led->steps_queue[led->rx_idx].color.c, &data[pos],
-	       CONFIG_DESKTOP_LED_COLOR_COUNT);
+	       CONFIG_CAF_LEDS_COLOR_COUNT);
 	pos += INCOMING_LED_COLOR_COUNT;
 
 	led->steps_queue[led->rx_idx].substep_count = sys_get_le16(&data[pos]);

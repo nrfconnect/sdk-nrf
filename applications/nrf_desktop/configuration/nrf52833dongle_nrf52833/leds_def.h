@@ -14,8 +14,8 @@
 const struct {} leds_def_include_once;
 
 /* Mapping the PWM channels to pin numbers */
-static const size_t led_pins[CONFIG_DESKTOP_LED_COUNT]
-			    [CONFIG_DESKTOP_LED_COLOR_COUNT] = {
+static const size_t led_pins[CONFIG_CAF_LEDS_COUNT]
+			    [CONFIG_CAF_LEDS_COLOR_COUNT] = {
 	{
 		DT_PROP(DT_NODELABEL(pwm0), ch0_pin),
 	},

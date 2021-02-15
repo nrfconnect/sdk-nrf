@@ -61,7 +61,7 @@ The configuration consists of the following elements:
 * ``led_peer_state_effect`` - Defines the LED effects used to show the Bluetooth peer states.
   The effect must be defined for every state of every peer.
 
-The LED effects are defined in the :file:`led_effect.h` file in the common configuration directory.
+The LED effects are defined in the :file:`caf/led_effect.h` file in the common configuration directory.
 
 LED effect API
 **************

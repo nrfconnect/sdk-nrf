@@ -9,7 +9,7 @@
 #include <drivers/pwm.h>
 
 #include <caf/events/power_event.h>
-#include "led_event.h"
+#include <caf/events/led_event.h>
 
 #include "leds_def.h"
 

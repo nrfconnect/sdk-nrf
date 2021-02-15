@@ -8,7 +8,7 @@ menu "LED stream"
 
 config DESKTOP_LED_STREAM_ENABLE
 	bool "Enable LED stream"
-	depends on DESKTOP_LED_ENABLE && DESKTOP_CONFIG_CHANNEL_ENABLE
+	depends on CAF_LED_EVENTS && DESKTOP_CONFIG_CHANNEL_ENABLE
 	help
 	  Enable RGB LED effect streaming.
 
