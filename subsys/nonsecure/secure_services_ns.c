@@ -42,3 +42,7 @@ NRF_NSE(int, spm_prevalidate_b1_upgrade, uint32_t dst_addr, uint32_t src_addr);
 #ifdef CONFIG_SPM_SERVICE_BUSY_WAIT
 NRF_NSE(void, spm_busy_wait, uint32_t busy_wait_us);
 #endif /* CONFIG_SPM_SERVICE_BUSY_WAIT */
+
+#ifdef CONFIG_SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT
+NRF_NSE(int, spm_set_ns_fatal_error_handler, spm_ns_on_fatal_error_t handler);
+#endif /* CONFIG_SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT */

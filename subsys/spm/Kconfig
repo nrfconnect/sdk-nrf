@@ -16,6 +16,17 @@ config SPM
 if SPM
 module=SPM
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
+
+config SPM_NS_DEBUG_LOGS_DUMP
+	bool "Enable dumping non-secure logs on secure fault"
+	depends on SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT
+	help
+	  When enabled secure fault handler is calling a non-secure handler to
+	  synchronously dump all pending logs. Feature is only for debugging
+	  purposes and is considered a security violation. It requires specific
+	  spm configuration with SPM_SHARE_CONSOLE_UART and
+	  SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT enabled.
+
 endif
 
 
@@ -62,8 +73,7 @@ config SPM_SHARE_CONSOLE_UART
 	help
 	  When enabled, UARTE0 can be used for printing from secure domain
 	  after jumping to the non-secure application, e.g. from exception
-	  handler. If enabled, zephyr console must be changed do spm_uart in
-	  the device tree configuration.
+	  handler. If enabled, zephyr console must be changed do spm_uart.
 
 endif #IS_SPM
 
@@ -140,6 +150,17 @@ config SPM_SERVICE_BUSY_WAIT
 	help
 	  Busy wait in secure mode. Will keep the CPU in secure mode for the
 	  duration specified. Use to write tests that require secure mode.
+
+config SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT
+	bool "Call non-secure handler from secure fault context"
+	help
+	  When enabled, non-secure handler is called from spm fatal error
+	  handler. Non-secure handler is registered through secure service API.
+
+if SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT
+comment "*** WARNING ***"
+comment "SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT can only be used for debugging"
+endif
 
 endif # SPM_SECURE_SERVICES
 

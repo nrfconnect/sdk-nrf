@@ -225,3 +225,31 @@ void spm_busy_wait_nse(uint32_t busy_wait_us)
 	k_busy_wait(busy_wait_us);
 }
 #endif /* CONFIG_SPM_SERVICE_BUSY_WAIT */
+
+#if CONFIG_SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT
+#include <secure_services.h>
+
+static spm_ns_on_fatal_error_t ns_on_fatal_handler;
+
+__TZ_NONSECURE_ENTRY_FUNC
+int spm_set_ns_fatal_error_handler_nse(spm_ns_on_fatal_error_t handler)
+{
+	ns_on_fatal_handler = handler;
+
+	return 0;
+}
+
+void z_spm_ns_fatal_error_handler(void)
+{
+	if (!ns_on_fatal_handler) {
+		return;
+	}
+
+	TZ_NONSECURE_FUNC_PTR_DECLARE(fatal_handler_ns);
+	fatal_handler_ns = TZ_NONSECURE_FUNC_PTR_CREATE(ns_on_fatal_handler);
+
+	if (TZ_NONSECURE_FUNC_PTR_IS_NS(fatal_handler_ns)) {
+		fatal_handler_ns();
+	}
+}
+#endif /* CONFIG_SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT */
