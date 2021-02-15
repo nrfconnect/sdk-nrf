@@ -163,7 +163,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	int err;
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
-	char imei_buf[50];
+	char imei_buf[20];
 
 	/* Retrieve device IMEI from modem. */
 	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
@@ -175,7 +175,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	/* Set null character at the end of the device IMEI. */
 	imei_buf[AWS_CLOUD_CLIENT_ID_LEN] = 0;
 
-	strncpy(client_id_buf, imei_buf, sizeof(client_id_buf));
+	strncpy(client_id_buf, imei_buf, sizeof(client_id_buf) - 1);
 
 #else
 	snprintf(client_id_buf, sizeof(client_id_buf), "%s",

@@ -604,7 +604,7 @@ static void data_ui_send(void)
 {
 	int err;
 	struct data_module_event *evt;
-	struct cloud_codec_data codec;
+	struct cloud_codec_data codec = {0};
 
 	if (!date_time_is_valid()) {
 		/* Date time library does not have valid time to
