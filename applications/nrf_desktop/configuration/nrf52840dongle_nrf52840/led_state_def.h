@@ -5,7 +5,7 @@
  */
 
 #include "led_state.h"
-#include "led_effect.h"
+#include <caf/led_effect.h>
 
 /* This configuration file is included only once from led_state module and holds
  * information about LED effect associated with each state.

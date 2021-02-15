@@ -78,14 +78,6 @@ config DESKTOP_INIT_LOG_HID_REPORT_SENT_EVENT
 	bool "HID report sent event"
 	default y
 
-config DESKTOP_INIT_LOG_LED_EVENT
-	bool "LED event"
-	default y
-
-config DESKTOP_INIT_LOG_LED_READY_EVENT
-	bool "LED ready event"
-	default y
-
 config DESKTOP_INIT_LOG_MOTION_EVENT
 	bool "Motion event"
 	default y
