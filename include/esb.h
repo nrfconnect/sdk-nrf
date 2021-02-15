@@ -127,7 +127,7 @@ enum esb_bitrate {
 #endif
 	/** 1 Mb radio mode using @e Bluetooth low energy radio parameters. */
 	ESB_BITRATE_1MBPS_BLE = RADIO_MODE_MODE_Ble_1Mbit,
-#if defined(CONFIG_SOC_SERIES_NRF52X)
+#if defined(CONFIG_SOC_SERIES_NRF52X) || defined(CONFIG_SOC_NRF5340_CPUNET)
 	/** 2 Mb radio mode using @e Bluetooth low energy radio parameters. */
 	ESB_BITRATE_2MBPS_BLE = 4,
 #endif

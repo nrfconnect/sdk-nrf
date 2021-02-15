@@ -356,7 +356,7 @@ static bool update_radio_bitrate(void)
 
 	switch (esb_cfg.bitrate) {
 	case ESB_BITRATE_2MBPS:
-#ifdef CONFIG_SOC_SERIES_NRF52X
+#if defined(CONFIG_SOC_SERIES_NRF52X) || defined(CONFIG_SOC_NRF5340_CPUNET)
 	case ESB_BITRATE_2MBPS_BLE:
 #endif
 		wait_for_ack_timeout_us = RX_ACK_TIMEOUT_US_2MBPS;
