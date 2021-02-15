@@ -6,3 +6,6 @@
 
 target_sources_ifdef(CONFIG_ML_APP_EI_DATA_FORWARDER_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ei_data_forwarder.c)
+
+target_sources_ifdef(CONFIG_ML_APP_ML_RUNNER_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ml_runner.c)
