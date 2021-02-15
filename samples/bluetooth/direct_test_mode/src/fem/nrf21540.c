@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include <string.h>
 
 #include <device.h>
 #include <drivers/gpio.h>
@@ -13,8 +14,13 @@
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_gpiote.h>
 #include <hal/nrf_radio.h>
+#include <hal/nrf_uarte.h>
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
+
+#if defined(NRF5340_XXAA_NETWORK)
+#include <nrfx_spim.h>
+#endif
 
 #if defined(CONFIG_HAS_HW_NRF_PPI)
 #include <nrfx_ppi.h>
@@ -68,8 +74,14 @@
 #define ANT_SEL_PIN DT_GPIO_PIN(NRF21540_NODE, ant_sel_gpios)
 #define ANT_SEL_FLAGS DT_GPIO_FLAGS(NRF21540_NODE, ant_sel_gpios)
 
+#if defined(NRF5340_XXAA_NETWORK)
+/* NRF5340 Network Core has only one SPIM0 instance. */
+static nrfx_spim_t spim = NRFX_SPIM_INSTANCE(0);
+#endif
+
 #define NRF21540_SPI DT_PHANDLE(NRF21540_NODE, spi_if)
-#define NRF21540_SPI_LABEL DT_LABEL(DT_BUS(NRF21540_SPI))
+#define NRF21540_SPI_BUS DT_BUS(NRF21540_SPI)
+#define NRF21540_SPI_LABEL DT_LABEL(NRF21540_SPI_BUS)
 #define CS_GPIO_PORT DT_SPI_DEV_CS_GPIOS_LABEL(NRF21540_SPI)
 
 #define T_NCS_SCLK 1
@@ -138,6 +150,22 @@ static struct nrf21540 {
 enum nrf21540_reg {
 	NRF21540_REG_CONFREG0 = 0x00,
 } nrf21540_reg;
+
+#if defined(NRF5340_XXAA_NETWORK)
+struct nrf_uarte_config {
+	uint32_t tx_pin;
+	uint32_t rx_pin;
+	uint32_t cts_pin;
+	uint32_t rts_pin;
+	uint32_t baudrate;
+	uint32_t config;
+	uint32_t rxd_maxcnt;
+	uint32_t rxd_ptr;
+	uint32_t txd_maxcnt;
+	uint32_t txd_ptr;
+	uint32_t inten;
+};
+#endif /* defined(NRF5340_XXAA_NETWORK) */
 
 static uint32_t active_evt;
 static uint32_t deactive_evt;
@@ -382,10 +410,12 @@ static int spi_config(void)
 		return err;
 	}
 
+#if !defined(NRF5340_XXAA_NETWORK)
 	nrf21540_cfg.spi_dev = device_get_binding(NRF21540_SPI_LABEL);
 	if (!nrf21540_cfg.spi_dev) {
 		return -ENXIO;
 	}
+#endif
 
 	return 0;
 }
@@ -514,7 +544,207 @@ int nrf21540_antenna_select(enum nrf21540_ant ant)
 
 	return err;
 }
+#if defined(NRF5340_XXAA_NETWORK)
+static inline nrf_spim_frequency_t get_nrf_spim_frequency(uint32_t frequency)
+{
+	/* Get the highest supported frequency not exceeding the requested one.
+	 */
+	if (frequency < 250000) {
+		return NRF_SPIM_FREQ_125K;
+	} else if (frequency < 500000) {
+		return NRF_SPIM_FREQ_250K;
+	} else if (frequency < 1000000) {
+		return NRF_SPIM_FREQ_500K;
+	} else if (frequency < 2000000) {
+		return NRF_SPIM_FREQ_1M;
+	} else if (frequency < 4000000) {
+		return NRF_SPIM_FREQ_2M;
+	} else if (frequency < 8000000) {
+		return NRF_SPIM_FREQ_4M;
+	} else {
+		return NRF_SPIM_FREQ_8M;
+	}
+}
 
+static void uarte_events_clear(NRF_UARTE_Type *uarte)
+{
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_ENDRX);
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_CTS);
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_NCTS);
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_RXDRDY);
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_TXDRDY);
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_ENDTX);
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_ERROR);
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_RXTO);
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_RXSTARTED);
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_TXSTARTED);
+	nrf_uarte_event_clear(uarte, NRF_UARTE_EVENT_TXSTOPPED);
+}
+
+static void spim_events_clear(NRF_SPIM_Type *spim)
+{
+	nrf_spim_event_clear(spim, NRF_SPIM_EVENT_STOPPED);
+	nrf_spim_event_clear(spim, NRF_SPIM_EVENT_ENDRX);
+	nrf_spim_event_clear(spim, NRF_SPIM_EVENT_END);
+	nrf_spim_event_clear(spim, NRF_SPIM_EVENT_ENDTX);
+	nrf_spim_event_clear(spim, NRF_SPIM_EVENT_STARTED);
+}
+
+static void uarte_configuration_store(NRF_UARTE_Type const *uarte,
+				      struct nrf_uarte_config *cfg)
+{
+	cfg->tx_pin = nrf_uarte_tx_pin_get(uarte);
+	cfg->rx_pin = nrf_uarte_rx_pin_get(uarte);
+	cfg->cts_pin = nrf_uarte_cts_pin_get(uarte);
+	cfg->rts_pin = nrf_uarte_rts_pin_get(uarte);
+	cfg->baudrate = uarte->BAUDRATE;
+	cfg->config = uarte->CONFIG;
+	cfg->rxd_maxcnt = uarte->RXD.MAXCNT;
+	cfg->rxd_ptr = uarte->RXD.PTR;
+	cfg->txd_maxcnt = uarte->TXD.MAXCNT;
+	cfg->txd_ptr = uarte->TXD.PTR;
+	cfg->inten = nrf_uarte_int_enable_check(uarte, 0xFFFFFFFF);
+}
+
+static void uarte_configuration_restore(NRF_UARTE_Type *uarte,
+					const struct nrf_uarte_config *cfg)
+{
+	nrf_uarte_txrx_pins_set(uarte, cfg->tx_pin, cfg->rx_pin);
+	nrf_uarte_hwfc_pins_set(uarte, cfg->rts_pin, cfg->cts_pin);
+	uarte->CONFIG = cfg->config;
+	nrf_uarte_baudrate_set(uarte, cfg->baudrate);
+	nrf_uarte_rx_buffer_set(uarte, (uint8_t *) cfg->rxd_ptr,
+				cfg->rxd_maxcnt);
+	nrf_uarte_tx_buffer_set(uarte, (uint8_t *) cfg->txd_ptr,
+				cfg->txd_maxcnt);
+	nrf_uarte_int_enable(uarte, cfg->inten);
+}
+
+static int spim_gain_transfer(uint8_t gain)
+{
+	int err;
+	nrfx_err_t nrfx_err;
+	uint8_t buf[NRF21540_SPI_LENGTH_BYTES];
+	nrfx_spim_config_t spim_config = NRFX_SPIM_DEFAULT_CONFIG(
+					DT_PROP(NRF21540_SPI_BUS, sck_pin),
+					DT_PROP(NRF21540_SPI_BUS, mosi_pin),
+					DT_PROP(NRF21540_SPI_BUS, miso_pin),
+					NRFX_SPIM_PIN_NOT_USED);
+
+	spim_config.frequency =
+		get_nrf_spim_frequency(nrf21540_cfg.spi_cfg.frequency);
+
+	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
+			   nrf21540_cfg.spi_cs.gpio_pin, 0);
+	if (err) {
+		return err;
+	}
+
+	nrfx_err = nrfx_spim_init(&spim, &spim_config, NULL, NULL);
+	if (nrfx_err != NRFX_SUCCESS) {
+		return -ENXIO;
+	}
+
+	buf[NRF21540_SPI_COMMAND_ADDR_BYTE] =
+		NRF21540_SPI_WRITE(NRF21540_REG_CONFREG0);
+	buf[NRF21540_SPI_DATA_BYTE] =
+		(gain << NRF21540_BITS_CONFREG0_TX_GAIN_Pos) &
+		NRF21540_BITS_CONFREG0_TX_GAIN_Msk;
+
+	/* Prepare transfer */
+	nrfx_spim_xfer_desc_t xfer_desc = NRFX_SPIM_XFER_TX(buf, sizeof(buf));
+
+	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
+			   nrf21540_cfg.spi_cs.gpio_pin, 1);
+	if (err) {
+		return err;
+	}
+
+	nrfx_err = nrfx_spim_xfer(&spim, &xfer_desc,
+				  NRFX_SPIM_FLAG_NO_XFER_EVT_HANDLER);
+	if (nrfx_err != NRFX_SUCCESS) {
+		return -ENXIO;
+	}
+
+	nrfx_spim_uninit(&spim);
+	spim_events_clear(spim.p_reg);
+
+	return 0;
+}
+
+int nrf21540_tx_gain_set(uint8_t gain)
+{
+	int err;
+	NRF_UARTE_Type *uarte_inst = NRF_UARTE0;
+	const struct device *uart;
+	struct nrf_uarte_config uarte_cfg;
+	bool uart_ready = false;
+	bool uart_irq = false;
+	unsigned int key;
+
+	if (gain > NRF21540_TX_GAIN_Max) {
+		return -EINVAL;
+	}
+
+	if (!atomic_cas(&state, NRF21540_STATE_READY, NRF21540_STATE_BUSY)) {
+		return -EBUSY;
+	}
+
+	memset(&uarte_cfg, 0, sizeof(uarte_cfg));
+
+	key = irq_lock();
+
+	/* Disable UART_0 */
+	uart = DEVICE_DT_GET(DT_NODELABEL(uart0));
+	if (uart) {
+		uart_ready = device_is_ready(uart);
+	}
+
+	uart_irq = irq_is_enabled(nrfx_get_irq_number(uarte_inst));
+	if (uart_irq) {
+		irq_disable(nrfx_get_irq_number(uarte_inst));
+	}
+
+	if (uart_ready) {
+		err = device_set_power_state(uart, DEVICE_PM_OFF_STATE,
+					     NULL, NULL);
+		if (err) {
+			goto error;
+		}
+
+		uarte_events_clear(uarte_inst);
+	}
+
+	uarte_configuration_store(uarte_inst, &uarte_cfg);
+	nrf_uarte_int_disable(uarte_inst, 0xFFFFFFFF);
+
+	/* Initialize SPI, make a transfer with it and deinitialize. */
+	err = spim_gain_transfer(gain);
+	if (err) {
+		goto error;
+	}
+
+	/* Restore UART_0 */
+	uarte_configuration_restore(uarte_inst, &uarte_cfg);
+
+	if (uart_ready) {
+		err = device_set_power_state(uart, DEVICE_PM_ACTIVE_STATE,
+					     NULL, NULL);
+	}
+
+	if (uart_irq) {
+		NVIC_ClearPendingIRQ(nrfx_get_irq_number(uarte_inst));
+		irq_enable(nrfx_get_irq_number(uarte_inst));
+	}
+
+error:
+	irq_unlock(key);
+	atomic_set(&state, NRF21540_STATE_READY);
+
+	return err;
+}
+
+#else
 int nrf21540_tx_gain_set(uint8_t gain)
 {
 	int err;
@@ -563,6 +793,7 @@ error:
 	atomic_set(&state, NRF21540_STATE_READY);
 	return err;
 }
+#endif
 
 int nrf21540_tx_configure(uint32_t active_event, uint32_t deactive_event,
 			  uint32_t active_delay)
@@ -640,15 +871,40 @@ int nrf21540_txrx_stop(void)
 void nrf21540_txrx_configuration_clear(void)
 {
 	nrfx_gppi_channels_disable(BIT(nrf21540_cfg.pin_set_ch));
-	nrfx_gppi_channel_endpoints_setup(nrf21540_cfg.pin_set_ch, 0, 0);
-	nrfx_gppi_channels_disable(BIT(nrf21540_cfg.timer_ch));
-	nrfx_gppi_channel_endpoints_setup(nrf21540_cfg.timer_ch, 0, 0);
-	nrfx_gppi_fork_endpoint_clear(nrf21540_cfg.timer_ch, 0);
+	nrfx_gppi_event_endpoint_clear(nrf21540_cfg.pin_set_ch,
+			nrf_timer_event_address_get(nrf21540_cfg.timer.p_reg,
+						    NRF_TIMER_EVENT_COMPARE0));
+	nrfx_gppi_task_endpoint_clear(nrf21540_cfg.pin_set_ch,
+		nrf_gpiote_task_address_get(NRF_GPIOTE,
+			nrf_gpiote_set_task_get(nrf21540_cfg.tx_en.gpiote_channel)));
+
+	nrfx_gppi_task_endpoint_clear(nrf21540_cfg.pin_set_ch,
+		nrf_gpiote_task_address_get(NRF_GPIOTE,
+			nrf_gpiote_set_task_get(nrf21540_cfg.rx_en.gpiote_channel)));
+
+	if (active_evt != NRF21540_EXECUTE_NOW) {
+		nrfx_gppi_channels_disable(BIT(nrf21540_cfg.timer_ch));
+		nrfx_gppi_event_endpoint_clear(nrf21540_cfg.timer_ch,
+					       active_evt);
+		nrfx_gppi_task_endpoint_clear(nrf21540_cfg.timer_ch,
+			nrf_timer_task_address_get(nrf21540_cfg.timer.p_reg,
+						   NRF_TIMER_TASK_START));
+		nrfx_gppi_fork_endpoint_clear(nrf21540_cfg.timer_ch,
+			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_RXEN));
+		nrfx_gppi_fork_endpoint_clear(nrf21540_cfg.timer_ch,
+			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+	}
 
 	if (deactive_evt != NRF21540_EVENT_UNUSED) {
 		nrfx_gppi_channels_disable(BIT(nrf21540_cfg.pin_clr_ch));
-		nrfx_gppi_channel_endpoints_setup(nrf21540_cfg.pin_clr_ch,
-						  0, 0);
+		nrfx_gppi_event_endpoint_clear(nrf21540_cfg.pin_clr_ch, deactive_evt);
+		nrfx_gppi_task_endpoint_clear(nrf21540_cfg.pin_clr_ch,
+			nrf_gpiote_task_address_get(NRF_GPIOTE,
+				nrf_gpiote_clr_task_get(nrf21540_cfg.tx_en.gpiote_channel)));
+
+		nrfx_gppi_task_endpoint_clear(nrf21540_cfg.pin_clr_ch,
+			nrf_gpiote_task_address_get(NRF_GPIOTE,
+				nrf_gpiote_clr_task_get(nrf21540_cfg.rx_en.gpiote_channel)));
 	}
 
 	atomic_set(&state, NRF21540_STATE_READY);

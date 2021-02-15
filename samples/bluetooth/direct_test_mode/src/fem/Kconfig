@@ -10,7 +10,8 @@ config NRF21540_FEM
 	bool "nRF21540 Front-End-Module"
 	depends on $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540))
 	default y
-	select SPI
+	select SPI if !SOC_NRF5340_CPUNET
+	select NRFX_SPIM0 if SOC_NRF5340_CPUNET
 	select NRFX_TIMER2
 	help
 	  Enable nRF21540 Front-End-Module support
