@@ -176,7 +176,9 @@ bool exit_datamode(void)
 bool check_uart_flowcontrol(void)
 {
 	int err = -EINVAL;
-	struct uart_config cfg;
+	struct uart_config cfg = {
+		.flow_ctrl = UART_CFG_FLOW_CTRL_NONE
+	};
 
 	err = uart_config_get(uart_dev, &cfg);
 	if (err) {
