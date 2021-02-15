@@ -431,6 +431,10 @@ int sensor_cadence_encode(struct net_buf_simple *buf,
 		return err;
 	}
 
+	if (min_int > BT_MESH_SENSOR_INTERVAL_MAX) {
+		return -EINVAL;
+	}
+
 	net_buf_simple_add_u8(buf, min_int);
 
 	/* Flip the order if the cadence is fast outside. */
