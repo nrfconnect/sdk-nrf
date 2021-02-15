@@ -56,6 +56,15 @@ config PM_PARTITION_SIZE_SPM_SRAM
 config SPM_BOOT_SILENTLY
 	bool "Boot silently"
 	default n
+
+config SPM_SHARE_CONSOLE_UART
+	bool "Enable sharing console between domains"
+	help
+	  When enabled, UARTE0 can be used for printing from secure domain
+	  after jumping to the non-secure application, e.g. from exception
+	  handler. If enabled, zephyr console must be changed do spm_uart in
+	  the device tree configuration.
+
 endif #IS_SPM
 
 if IS_SPM || SPM

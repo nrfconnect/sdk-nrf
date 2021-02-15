@@ -111,10 +111,20 @@ extern "C" {
 	  << SPU_PERIPHID_PERM_SECATTR_Pos) &                                  \
 	 SPU_PERIPHID_PERM_SECATTR_Msk)
 
+#define PERIPH_SEC                                                             \
+	((SPU_PERIPHID_PERM_SECATTR_Secure                                     \
+	  << SPU_PERIPHID_PERM_SECATTR_Pos) &                                  \
+	 SPU_PERIPHID_PERM_SECATTR_Msk)
+
 #define PERIPH_DMA_NOSEP                                                       \
 	((SPU_PERIPHID_PERM_DMA_NoSeparateAttribute                            \
 	  << SPU_PERIPHID_PERM_DMA_Pos) &                                      \
 	 SPU_PERIPHID_PERM_DMA_Msk)
+
+#define PERIPH_DMASEC                                                          \
+	((SPU_PERIPHID_PERM_DMASEC_Secure                                      \
+	  << SPU_PERIPHID_PERM_DMASEC_Pos) &                                   \
+	 SPU_PERIPHID_PERM_DMASEC_Msk)
 
 #define PERIPH_LOCK                                                            \
 	((SPU_PERIPHID_PERM_LOCK_Locked << SPU_PERIPHID_PERM_LOCK_Pos) &       \
