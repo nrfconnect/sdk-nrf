@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
 /** @file
@@ -146,6 +146,8 @@ struct bt_mesh_light_ctrl_srv {
 	struct sensor_value ambient_lux;
 	/** State timer */
 	struct k_delayed_work timer;
+	/** Manual override timer */
+	struct k_delayed_work manual_override_timer;
 
 #if CONFIG_BT_SETTINGS
 	/** Storage timer */
@@ -189,6 +191,10 @@ struct bt_mesh_light_ctrl_srv {
 	/** Scene entry */
 	struct bt_mesh_scene_entry scene;
 };
+
+void start_manual_override_timer(struct bt_mesh_light_ctrl_srv *srv);
+void stop_manual_override_timer(struct bt_mesh_light_ctrl_srv *srv);
+bool is_manual_override_timer_running(struct bt_mesh_light_ctrl_srv *srv);
 
 /** @brief Turn the light on.
  *

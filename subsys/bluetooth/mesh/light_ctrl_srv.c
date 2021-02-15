@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
 #include <stdlib.h>
@@ -461,6 +461,7 @@ static void prolong(struct bt_mesh_light_ctrl_srv *srv)
 
 static void ctrl_enable(struct bt_mesh_light_ctrl_srv *srv)
 {
+	stop_manual_override_timer(srv);
 	srv->lightness->ctrl = srv;
 	BT_DBG("Light Control Enabled");
 	transition_start(srv, LIGHT_CTRL_STATE_STANDBY, 0);
@@ -477,12 +478,14 @@ static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 	atomic_and(&srv->flags, FLAGS_CONFIGURATION);
 	srv->lightness->ctrl = NULL;
 	srv->state = LIGHT_CTRL_STATE_STANDBY;
+	srv->reg.i = srv->cfg.light[LIGHT_CTRL_STATE_STANDBY];
 
 	k_delayed_work_cancel(&srv->action_delay);
 	k_delayed_work_cancel(&srv->timer);
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	k_delayed_work_cancel(&srv->reg.timer);
 #endif
+	start_manual_override_timer(srv);
 }
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
@@ -543,16 +546,48 @@ static void reg_step(struct k_work *work)
 
 		srv->reg.prev = output;
 		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
-		light_set(srv, light_to_repr(output, LINEAR), REG_INT);
+		light_set(srv, light_to_repr(output, LINEAR), 0/*REG_INT*/);
 	} else if (atomic_test_and_clear_bit(&srv->flags, FLAG_REGULATOR)) {
-		light_set(srv, light_to_repr(lvl, LINEAR), REG_INT);
+		light_set(srv, light_to_repr(lvl, LINEAR), 0/*REG_INT*/);
 	}
 }
 #endif
 
+void start_manual_override_timer(struct bt_mesh_light_ctrl_srv *srv)
+{
+	BT_DBG("LC start_manual_override_timer");
+	k_delayed_work_submit(&srv->manual_override_timer, 
+		K_MSEC(CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL*1000));
+}
+
+void stop_manual_override_timer(struct bt_mesh_light_ctrl_srv *srv)
+{
+	BT_DBG("LC stop_manual_override_timer");
+	k_delayed_work_cancel(&srv->manual_override_timer);
+}
+
+bool is_manual_override_timer_running(struct bt_mesh_light_ctrl_srv *srv)
+{
+	if(k_delayed_work_remaining_get(&srv->manual_override_timer)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 /*******************************************************************************
  * Timeouts
  ******************************************************************************/
+
+static void manual_override_timeout(struct k_work *work)
+{
+	BT_DBG("LC manual_override_timeout");
+
+	struct bt_mesh_light_ctrl_srv *srv = CONTAINER_OF(
+		work, struct bt_mesh_light_ctrl_srv, manual_override_timer.work);
+
+	ctrl_enable(srv);
+}
 
 static void timeout(struct k_work *work)
 {
@@ -978,6 +1013,12 @@ static void handle_sensor_status(struct bt_mesh_model *mod,
 
 		/* Occupancy sensor */
 
+		if(id == BT_MESH_PROP_ID_PRESENCE_DETECTED && value.val1 > 0) {
+			if(is_manual_override_timer_running(srv)) {
+				start_manual_override_timer(srv);
+			}
+		}
+
 		/* OCC_MODE must be enabled for the occupancy sensors to be
 		 * able to turn on the light:
 		 */
@@ -1376,9 +1417,13 @@ static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
 	srv->reg.cfg = scene->reg;
 #endif
 	if (scene->enabled) {
-		ctrl_enable(srv);
+		stop_manual_override_timer(srv);
+		srv->lightness->ctrl = srv;
+		turn_on(srv, transition, false);
+		reg_start(srv);
 	} else {
-		ctrl_disable(srv);
+		start_manual_override_timer(srv);
+		turn_off(srv, transition, false);
 	}
 }
 
@@ -1421,6 +1466,7 @@ static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 
 	k_delayed_work_init(&srv->timer, timeout);
 	k_delayed_work_init(&srv->action_delay, delayed_action_timeout);
+	k_delayed_work_init(&srv->manual_override_timer, manual_override_timeout);
 
 #if CONFIG_BT_SETTINGS
 	k_delayed_work_init(&srv->store_timer, store_timeout);
@@ -1604,6 +1650,18 @@ static int lc_setup_srv_init(struct bt_mesh_model *mod)
 	srv->setup_pub.msg = &srv->setup_pub_buf;
 	net_buf_simple_init_with_data(&srv->setup_pub_buf, srv->setup_pub_data,
 				      sizeof(srv->setup_pub_data));
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
+		/* Model extensions:
+		 * To simplify the model extension tree, we're flipping the
+		 * relationship between the light ctrl server and the light ctrl
+		 * setup server. In the specification, the light ctrl setup
+		 * server extends the light ctrl server, which is the opposite
+		 * of what we're doing here. This makes no difference for the
+		 * mesh stack, but it makes it a lot easier to extend this
+		 * model, as we won't have to support multiple extenders.
+		 */
+		 bt_mesh_model_extend(srv->model, srv->setup_srv);
+	}
 
 	return 0;
 }
