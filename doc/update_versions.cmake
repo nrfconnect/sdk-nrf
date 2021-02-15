@@ -1,5 +1,5 @@
 # Copyright (c) 2021 Nordic Semiconductor ASA
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 foreach(file ${TOOLS_VERSION_FILES})
   file(STRINGS ${file} VERSIONS_ALL REGEX "^[a-zA-Z0-9_-]*=.*")

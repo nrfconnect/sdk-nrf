@@ -41,8 +41,6 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-homekit]
-
   # "projects" is a list of git repositories which make up the NCS
   # source code.
   projects:
@@ -101,7 +99,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: v1.5.0-rc1
+      revision: ab6988f3659405cd5dc8201f77417430c9644497
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
@@ -147,11 +145,6 @@ manifest:
       remote: nordicsemi
       revision: 24f1b2b0c64c694b7f9ac1b7eab60b39236ca0bf
       path: modules/lib/cddl-gen
-    - name: homekit
-      repo-path: sdk-homekit
-      revision: 8d68bb07b9217960767f7c5030ea9a4ec37af5df
-      groups:
-      - homekit
 
   # West-related configuration for the nrf repository.
   self:
