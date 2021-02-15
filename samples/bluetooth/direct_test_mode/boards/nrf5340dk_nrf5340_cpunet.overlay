@@ -3,6 +3,10 @@
 	current-speed = <19200>;
 };
 
+&spi0 {
+	status = "disabled";
+};
+
 / {
      zephyr,user {
 	     dtm_antenna_count = <12>;
