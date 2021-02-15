@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2019-2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig CAF_LEDS
+	bool "LEDs module"
+	select CAF_LED_EVENTS
+	depends on PWM
+	help
+	  Enable LED hardware interface.
+
+if CAF_LEDS
+
+config CAF_LEDS_DEF_PATH
+	string "Configuration file"
+	default "leds_def.h"
+	help
+	  Location of configuration file for LEDs module.
+
+config CAF_LEDS_PM_EVENTS
+	bool "Power management events support"
+	select DEVICE_POWER_MANAGEMENT
+	depends on CAF_PM_EVENTS
+	help
+	  React on power management events in LEDs module.
+
+config CAF_LEDS_COUNT
+	int "Number of LEDs in use"
+	default 0
+
+config CAF_LEDS_COLOR_COUNT
+	int "Number of color channels per diode"
+	default 3
+
+config CAF_LEDS_BRIGHTNESS_MAX
+	int "Maximum value for LED brightness"
+	default 255
+
+module = CAF_LEDS
+module-str = caf module leds
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # CAF_LEDS
