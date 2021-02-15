@@ -5,17 +5,6 @@
 
 /* Default Zephyr configuration already provides GPIO support for FEM. */
 
-&uart0 {
-	current-speed = <1000000>;
-	status = "okay";
-	hw-flow-control;
-};
-
-&uart1 {
-	current-speed = <1000000>;
-	status = "okay";
-};
-
 / {
 	/*
 	* In some default configurations within the nRF Connect SDK,
