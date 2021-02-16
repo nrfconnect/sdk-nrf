@@ -29,5 +29,6 @@ rsource "supl/Kconfig"
 rsource "date_time/Kconfig"
 rsource "ram_pwrdn/Kconfig"
 rsource "edge_impulse/Kconfig"
+rsource "wave_gen/Kconfig"
 
 endmenu
