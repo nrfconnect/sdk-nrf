@@ -19,6 +19,11 @@ See the following configuration options for more information:
 You might need to adjust the Kconfig configuration of this sample to make it compatible with the peer application.
 For example, :option:`CONFIG_BT_MAX_CONN` must be equal to the maximum number of connections supported by the peer application.
 
+The following components have been disabled to make this sample energy-efficient:
+
+* Serial console (in :file:`prj.conf`)
+* Logger (in :file:`prj.conf`)
+
 Requirements
 ************
 
