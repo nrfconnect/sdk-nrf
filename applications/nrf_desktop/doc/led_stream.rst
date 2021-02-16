@@ -23,8 +23,8 @@ Module events
 Configuration
 *************
 
-The module receives LED effects through the :ref:`nrf_desktop_config_channel` and displays them using the :ref:`nrf_desktop_leds`.
-For this reason, make sure that :option:`CONFIG_DESKTOP_LED_ENABLE` and :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` are both set.
+The module receives LED effects through the :ref:`nrf_desktop_config_channel` and displays them using the :ref:`caf_leds`.
+For this reason, make sure that :option:`CONFIG_CAF_LEDS` and :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` are both set.
 
 To enable the module, use the :option:`CONFIG_DESKTOP_LED_STREAM_ENABLE` Kconfig option.
 
@@ -41,15 +41,15 @@ Configuration channel
 The module is a :ref:`nrf_desktop_config_channel` listener and provides the following options:
 
 * ``set_led_effect``
-    The :ref:`nrf_desktop_config_channel_script` performs the set operation on this option to send the LED effect step that will be displayed by the :ref:`nrf_desktop_leds`.
+    The :ref:`nrf_desktop_config_channel_script` performs the set operation on this option to send the LED effect step that will be displayed by the :ref:`caf_leds`.
     The selected LED is identified using the ``LED ID`` provided in the data received from the host.
-    The module queues the received LED effect steps and forwards them to :ref:`nrf_desktop_leds` one after another.
-    See the :ref:`nrf_desktop_leds` documentation for more detailed information about the LED effect and LED effect step.
+    The module queues the received LED effect steps and forwards them to :ref:`caf_leds` one after another.
+    See the :ref:`caf_leds` documentation for more detailed information about the LED effect and LED effect step.
 * ``get_leds_state``
     The :ref:`nrf_desktop_config_channel_script` performs the fetch operation on this option to get the number of available free places in the queue of LED effect steps for every LED.
     This information can be used, for example, to synchronize the displayed LED effects with music.
 
-    Fetching this option also provides information whether the :ref:`nrf_desktop_leds` is ready.
+    Fetching this option also provides information whether the :ref:`caf_leds` is ready.
     If the device is suspended by :ref:`nrf_desktop_power_manager`, the LEDs are turned off and the effects cannot be displayed.
     You then must wake up the device before displaying the LED stream.
 
@@ -57,7 +57,7 @@ Implementation details
 **********************
 
 The module receives LED effects as ``config_event``.
-The effects are sent to :ref:`nrf_desktop_leds` as ``led_event``.
+The effects are sent to :ref:`caf_leds` as ``led_event``.
 Displaying the sequence begins when the first LED effect is received by the |led_stream|.
 
 Every received LED effect has a predefined duration.
