@@ -129,20 +129,22 @@ Configuring models
 
 See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-Configure the Generic OnOff Client model on each element on the :guilabel:`Mesh Light Fixture` node:
+Configure the Generic OnOff Server model on each element on the :guilabel:`Mesh Light Fixture` node:
 
 * Bind the model to :guilabel:`Application Key 1`.
 
   Once the model is bound to the application key, you can control the first LED on the device.
-* In the model view, tap :guilabel:`ON` (one of the Generic On Off Controls) to light up the first LED on the development kit.
+* Open the Generic OnOff Server in the second element, then tap :guilabel:`ON` at the bottom of the Generic On Off Controls.
 
 You should now see the following actions:
 
 1. The LED fades from 0% to 100% over 500ms :guilabel:`Standby -> On`.
 #. The LED stays at 100% for three seconds :guilabel:`On`.
-#. The LED fades from 100% to 50% over five seconds :guilabel:`On -> Prolong`.
-#. The LED stays at 50% for three seconds :guilabel:`Prolong`.
-#. The LED fades from 50% to 0% over five seconds :guilabel:`Prolong -> Standby`.
+#. The LED fades from 100% to :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` over five seconds :guilabel:`On -> Prolong`.
+#. The LED stays at :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` for three seconds :guilabel:`Prolong`.
+#. The LED fades from :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` to 0% over five seconds :guilabel:`Prolong -> Standby`.
+
+The default value of :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` is 10000 (~15%).
 
 .. figure:: /images/bt_mesh_light_ctrl_levels.svg
    :alt: Light level transitions over time
