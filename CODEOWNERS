@@ -75,6 +75,7 @@ Kconfig*                                  @tejlmand
 /lib/st25r3911b/                          @grochu
 /lib/supl/                                @rlubos @evenl
 /lib/date_time/                           @simensrostad
+/lib/wave_gen/                            @MarekPieta
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @nvlsianpu
 /samples/sensor/bh1749/                   @wlgrd
