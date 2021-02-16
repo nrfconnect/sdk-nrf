@@ -46,16 +46,16 @@ Module events
 Configuration
 *************
 
-The |led_state| is enabled when you set the :option:`CONFIG_DESKTOP_LED_ENABLE` option.
-You must also configure :ref:`nrf_desktop_leds`, which is used as sink module for ``led_state``.
+The |led_state| is enabled when you set the :option:`CONFIG_CAF_LEDS` option.
+You must also configure :ref:`caf_leds`, which is used as sink module for ``led_state``.
 
 For every board that has this option enabled, you must define the module configuration.
 Do this in the :file:`led_state_def.h` file located in the board-specific directory in the application configuration directory.
 
 The configuration consists of the following elements:
 
-* ``led_map`` - Maps the :c:enum:`led_id` values to IDs used by :ref:`nrf_desktop_leds`.
-  If no physical LED is assigned to a :c:enum:`led_id` value, assign :c:macro:`LED_UNAVAILABLE` as the ID used by :ref:`nrf_desktop_leds`.
+* ``led_map`` - Maps the :c:enum:`led_id` values to IDs used by :ref:`caf_leds`.
+  If no physical LED is assigned to a :c:enum:`led_id` value, assign :c:macro:`LED_UNAVAILABLE` as the ID used by :ref:`caf_leds`.
 * ``led_system_state_effect`` - Defines the LED effects used to show the system states.
   The effect must be defined for every system state.
 * ``led_peer_state_effect`` - Defines the LED effects used to show the Bluetooth peer states.
@@ -66,7 +66,7 @@ The LED effects are defined in the :file:`caf/led_effect.h` file in the common c
 LED effect API
 **************
 
-.. doxygengroup:: led_effect_DESK
+.. doxygengroup:: led_effect_CAF
    :project: nrf
    :members:
 

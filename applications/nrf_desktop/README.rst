@@ -924,10 +924,10 @@ To use the nRF Desktop application with your custom board:
 #. In Kconfig, ensure that the following modules that are specific for gaming mouse are enabled:
 
    * :ref:`caf_buttons`
+   * :ref:`caf_leds`
    * :ref:`nrf_desktop_motion`
    * :ref:`nrf_desktop_wheel`
    * :ref:`nrf_desktop_battery_meas`
-   * :ref:`nrf_desktop_leds`
 
 #. For each module enabled, change its :file:`_def` file to match your hardware.
    Apply the following changes, depending on the module:
