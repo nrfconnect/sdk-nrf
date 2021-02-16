@@ -20,6 +20,14 @@
 #include <dfu/dfu_target_mcuboot.h>
 #endif
 
+/* If bootloader upgrades are supported we need room for two file strings. */
+#ifdef PM_S1_ADDRESS
+#define FILE_BUF_LEN (CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE)
+#else
+/* One file string for each of s0 and s1, and a space separator */
+#define FILE_BUF_LEN ((CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE*2)+1)
+#endif
+
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
 static fota_download_callback_t callback;
@@ -248,6 +256,13 @@ static void download_with_offset(struct k_work *unused)
 int fota_download_start(const char *host, const char *file, int sec_tag,
 			const char *apn, size_t fragment_size)
 {
+	/* We need a static file buffer since the download client structure
+	 * only keeps a pointer to the file buffer. This is problematic when
+	 * a download needs to be restarted for some reason (e.g. if
+	 * continuing a download operation from an offset).
+	 */
+	static char file_buf[FILE_BUF_LEN];
+	const char *file_buf_ptr = file_buf;
 	int err = -1;
 
 	struct download_client_cfg config = {
@@ -262,6 +277,8 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 	}
 
 	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
+
+	strncpy(file_buf, file, sizeof(file_buf));
 
 #ifdef PM_S1_ADDRESS
 	/* B1 upgrade is supported, check what B1 slot is active,
@@ -296,14 +313,14 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 
 #endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
 
-	err = dfu_ctx_mcuboot_set_b1_file(file, s0_active, &update);
+	err = dfu_ctx_mcuboot_set_b1_file(file_buf, s0_active, &update);
 	if (err != 0) {
 		return err;
 	}
 
 	if (update != NULL) {
 		LOG_INF("B1 update, selected file:\n%s", update);
-		file = update;
+		file_buf_ptr = update;
 	}
 #endif /* PM_S1_ADDRESS */
 
@@ -312,7 +329,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 		return err;
 	}
 
-	err = download_client_start(&dlc, file, 0);
+	err = download_client_start(&dlc, file_buf_ptr, 0);
 	if (err != 0) {
 		download_client_disconnect(&dlc);
 		return err;
