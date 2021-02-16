@@ -17,6 +17,14 @@ void setUp(void)
 	runtime_CONFIG_UUT_PARAM_CHECK = false;
 }
 
+/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
+extern int generic_suiteTearDown(int num_failures);
+
+int test_suiteTearDown(int num_failures)
+{
+	return generic_suiteTearDown(num_failures);
+}
+
 void test_uut_init(void)
 {
 	int err;
