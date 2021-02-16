@@ -49,7 +49,6 @@ It also shows the modules with thread and the modules without thread.
 
 See :ref:`asset_tracker_v2_internal_modules` for more information.
 
-
 Data types
 ==========
 
@@ -72,26 +71,12 @@ The application supports the following data types:
 
 The sets of sensor data that are published to the cloud service consist of relative timestamps that originate from the time of sampling.
 
-Supported cloud services
-========================
-
-The application is designed to support communication with different cloud services, a single service at a time.
-Currently, the application supports Amazon Web Services IoT Core cloud service and the following technologies in the cloud connection:
-
-* `MQTT <AWS IoT MQTT_>`_
-* `TLS`_
-* :ref:`FOTA <nrf9160_ug_fota>`
-
-To configure the application to use AWS IoT Core, see `Asset Tracker Cloud Example for AWS`_ .
-`Azure support for Asset Tracker v2`_ is currently under implementation.
-
 Device modes
 ============
 
 The application can be either in an active or in a passive state depending on the applied device mode.
 The device mode is a part of the application's real-time configurations.
 The device modes and their descriptions are listed in the following table:
-
 
 +-------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------+----------------+
 | Real-time Configurations            | Description                                                                                                                                 | Default values |
@@ -204,7 +189,6 @@ The following table shows the LED behavior demonstrated by the application:
 | Error                      | Red solid               | all 4 LEDs flashing  |
 +----------------------------+-------------------------+----------------------+
 
-
 Requirements
 ************
 
@@ -226,16 +210,28 @@ These options can be used to enable and disable modules and modify their behavio
 Setup
 =====
 
-The application is compatible with the `Asset Tracker Cloud Example for AWS`_, which is an open source, serverless cloud backend and Web UI framework that is designed to store and graphically represent data sent from the application firmware.
-The `Asset Tracker Cloud Example web application`_ supports the manipulation of real-time configurations of the application.
+The application is designed to support communication with different cloud services, a single service at a time.
+Currently, the application supports Amazon Web Services IoT Core cloud service and the following technologies in the cloud connection:
 
+* `MQTT <AWS IoT MQTT_>`_
+* `TLS`_
+* :ref:`FOTA <nrf9160_ug_fota>`
+
+`Azure support for Asset Tracker v2`_ is currently under implementation.
+
+Setting up the Asset Tracker Cloud Example for AWS
+--------------------------------------------------
+
+The application is compatible with the `Asset Tracker Cloud Example for AWS`_, which is an open source reference implementation of a serverless backend for an IoT product.
 To set up the application to work with the Asset Tracker Cloud Example for AWS, see the `Getting started guide for Asset Tracker Cloud Example for AWS`_.
+
+Once you have finished the setup, you must provide the broker hostname to the firmware using the :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` Kconfig option.
+Configure the secTag using the :option:`CONFIG_AWS_IOT_SEC_TAG` Kconfig option. For example, you can use the default value of ``42`` that is used in the Asset Tracker Cloud Example for AWS .
 
 Configuration options
 =====================
 
 Check and configure the following configuration options for the application:
-
 
 .. option:: CONFIG_ASSET_TRACKER_V2_APP_VERSION - Configuration for providing the application version
 
@@ -249,14 +245,13 @@ Check and configure the following configuration options for the application:
 
    This application configuration sets a custom client ID for the respective cloud. For setting a custom client ID, you need to set :option:`CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM` to ``y``.
 
-
 Additional configuration
 ========================
 
 To get the application to communicate with a specified cloud service, configure the Kconfig options specific to each *cloud library*.
 Every cloud service supported in |NCS| has a corresponding *cloud library* that needs to be selected and properly configured.
 
-If you are using your own instance of AWS IoT core cloud service, you must check and configure the following :ref:`lib_aws_iot` library options that are used by the application:
+You must check and configure the following :ref:`lib_aws_iot` library options that are used by the application:
 
 * :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
 * :option:`CONFIG_AWS_IOT_SEC_TAG`
@@ -272,7 +267,6 @@ To manually configure the APN, set the following options:
 
 * :option:`CONFIG_LTE_PDP_CMD` - Set the option to ``y``
 * :option:`CONFIG_LTE_PDP_CONTEXT` - Set the option to ``0,\"IP\",\"apn.example.com\"``
-
 
 Configuration files
 ===================
@@ -295,7 +289,6 @@ Board-specific configuration files are placed in the :file:`boards` folder and a
 DTS overlay files are named the same as the build target and use the file extension ``.overlay``.
 When the DTS overlay filename matches the build target, the overlay is automatically chosen and applied by the build system.
 
-
 Building and running
 ********************
 
@@ -317,8 +310,6 @@ Before building and running the firmware ensure that the cloud side is set up.
 
 .. external_antenna_note_end
 
-
-
 Building with overlays
 ======================
 
@@ -329,7 +320,7 @@ To build with Kconfig overlay, it must be based to the build system, as shown in
 The above command will build for nRF9160 DK using the configurations found in :file:`overlay-low-power.conf`, in addition to the configurations found in :file:`prj_nrf9160dk_nrf9160ns.conf`.
 If some options are defined in both files, the options set in the overlay take precedence.
 
-Running
+Testing
 =======
 
 Before running the application, the cloud must be configured.
@@ -372,7 +363,6 @@ After programming the application and all the prerequisites to your development 
     <inf> event_manager: DATA_EVT_DATA_SEND
     <wrn> data_module: No batch data to encode, ringbuffers empty
     <inf> event_manager: CLOUD_EVT_DATA_ACK
-
 
 Dependencies
 ************
