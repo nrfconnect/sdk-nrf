@@ -281,7 +281,7 @@ static void deactivate_rx(struct lpuart_data *data)
 	/* abort rx */
 	data->rx_state = RX_TO_IDLE;
 	err = uart_rx_disable(data->uart);
-	if (err < 0) {
+	if (err < 0 && err != -EFAULT) {
 		LOG_ERR("RX: Failed to disable (err: %d)", err);
 	}
 }
@@ -476,16 +476,17 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 
 	case UART_RX_DISABLED:
 		LOG_DBG("Rx disabled");
-		__ASSERT_NO_MSG((data->rx_state != RX_ACTIVE) &&
-			 (data->rx_state != RX_IDLE) &&
+		__ASSERT_NO_MSG((data->rx_state != RX_IDLE) &&
 			 (data->rx_state != RX_OFF));
 
 		if (data->rx_state == RX_TO_IDLE) {
 			/* Need to request new buffer since uart was disabled */
 			evt->type = UART_RX_BUF_REQUEST;
-		} else if (data->rx_state == RX_TO_OFF) {
+		} else {
+			data->rx_buf = NULL;
 			data->rx_state = RX_OFF;
 		}
+
 		user_callback(dev, evt);
 		break;
 	case UART_RX_STOPPED:
@@ -730,11 +731,6 @@ static int api_fifo_read(const struct device *dev,
 		       &data->int_driven.rxbuf[data->int_driven.rxrd],
 		       cpylen);
 		data->int_driven.rxrd += cpylen;
-		if ((data->rx_state == RX_IDLE)
-		    && !int_driven_rd_available(data)) {
-			/* Whole packet read, RX can be re-enabled. */
-			int_driven_rx_feed(dev, data);
-		}
 	}
 
 	return cpylen;
@@ -807,6 +803,16 @@ static void api_irq_rx_enable(const struct device *dev)
 	data->int_driven.rx_enabled = true;
 	if (int_driven_rd_available(data)) {
 		data->int_driven.callback(dev, data->int_driven.user_data);
+	}
+
+	/* If RX was disabled and there were pending data, it may have been
+	 * processed above after re-enabling. If whole data has been processed
+	 * we must feed the buffer back to the uart to allow reception of the
+	 * next packet.
+	 */
+	if (!int_driven_rd_available(data) && data->rx_state == RX_TO_IDLE) {
+		/* Whole packet read, RX can be re-enabled. */
+		int_driven_rx_feed(dev, data);
 	}
 }
 
