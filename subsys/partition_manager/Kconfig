@@ -15,6 +15,13 @@ config PARTITION_MANAGER_ENABLED
 	  in how parent images impose options on child images. Don't
 	  change the value of this option.
 
+# Override this option to use custom flash map implementation when partition
+# manager is enabled.
+config FLASH_MAP_CUSTOM
+	bool
+	default y
+	depends on PARTITION_MANAGER_ENABLED
+
 # These values are now set by partition manager, so hide the option.
 config SRAM_SIZE
 	int
