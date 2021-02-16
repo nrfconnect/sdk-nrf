@@ -140,7 +140,7 @@ Interacting with the sample
 After completing the steps above, a command can be sent to the sample.
 The sample supports the following commands:
 
-chat help
+chat --help
    Prints help message together with the list of supported commands.
 
 chat presence set <presence>
@@ -152,11 +152,11 @@ chat presence get <node>
 
 chat private <node> <message>
    Sends a private text message to a specified chat client.
-   Remember to embrance the message in double quotes if it has 2 or more words.
+   Remember to wrap the message in double quotes if it has 2 or more words.
 
 chat msg <message>
    Sends a text message to the chat.
-   Remember to embrance the message in double quotes if it has 2 or more words.
+   Remember to wrap the message in double quotes if it has 2 or more words.
 
 Whenever the node changes its presence, or the local node receives another model's presence the first time, you will see the following message:
 
