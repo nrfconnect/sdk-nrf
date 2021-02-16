@@ -20,6 +20,9 @@ This application introduces a set of new features, which are not present in the 
 To implement the above features, a rework of the existing application was necessary.
 Hence, this application is not backward compatible to the :ref:`asset_tracker` application.
 
+.. note::
+    The code is currently a work in progress and is not fully optimized yet. It will undergo changes and improvements in the future.
+
 Overview
 ********
 
