@@ -221,22 +221,36 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 Crypto
 ~~~~~~
 
-* Added:
+  * Added nrf_cc3xx_platform v0.9.7, with the following highlights:
 
-  * nrf_cc3xx_platform v0.9.5, with the following highlights:
-
-    * Added correct TRNG characterization values for nRF5340 devices.
+    * Fixed an issue with mutex slab allocation in Zephyr RTOS platform file.
+    * The library is built against mbed TLS v2.24.0.
 
     See the :ref:`crypto_changelog_nrf_cc3xx_platform` for detailed information.
-  * nrf_cc3xx_mbedcrypto version v0.9.5, with the following highlights:
 
-    * Built to match the nrf_cc3xx_platform v0.9.5 including correct TRNG characterization values for nRF5340 devices.
+  * Added nrf_cc3xx_mbedcrypto v0.9.7, with the following highlights:
+
+    * Fixed issues where mbedtls_rsa_complete was not able to deduce missing parameters.
+    * Fixed an issue with calculating the correct salt length for certain combinations of RSA key and digest sizes.
+    * Adding missing function: mbedtls_ecp_write_key.
+    * The library is built against mbed TLS v2.24.0.
 
     See the :ref:`crypto_changelog_nrf_cc3xx_mbedcrypto` for detailed information.
 
+  * Added nrf_oberon v3.0.8, with the following highlights:
+
+    * Added APIs for doing ECDH calculation using secp256r1 in incremental steps.
+    * Added ``ocrypto_`` APIs for SHA-224 and SHA-384.
+    * Added ``ocrypto_`` APIs for pbkdf2 for SHA-1 and SHA-256.
+    * The library is built against mbed TLS v2.24.0.
+
+    See the :ref:`nrfxlib:crypto_changelog_oberon` for detailed information.
+
 * Updated:
 
-  * Rewrote the :ref:`nrfxlib:nrf_security`'s library stripping mechanism to not use the POST_BUILD option in a custom build rule.
+  * Added Kconfig options for TLS/DTLS and x509 certificates in :ref:`nrfxlib:nrf_security`.
+  * Added Kconfig options for PK and PK_WRITE in :ref:`nrfxlib:nrf_security`.
+  * Rewrote the stripping mechanism of the :ref:`nrfxlib:nrf_security` library to not use the POST_BUILD option in a custom build rule.
     The library stripping mechanism was non-functional in certain versions of SEGGER Embedded Studio Nordic Edition.
 
 BSD library
