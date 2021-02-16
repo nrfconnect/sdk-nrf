@@ -833,6 +833,8 @@ static int sensor_srv_init(struct bt_mesh_model *mod)
 		min_id = best->type->id + 1;
 	}
 
+	srv->seq = 1;
+
 	srv->model = mod;
 
 	srv->pub.update = update_handler;
