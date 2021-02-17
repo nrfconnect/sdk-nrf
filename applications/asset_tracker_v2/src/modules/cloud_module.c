@@ -44,7 +44,8 @@ struct cloud_msg_data {
 /* Cloud module super states. */
 static enum state_type {
 	STATE_LTE_DISCONNECTED,
-	STATE_LTE_CONNECTED
+	STATE_LTE_CONNECTED,
+	STATE_SHUTDOWN
 } state;
 
 /* Cloud module sub states. */
@@ -99,6 +100,8 @@ static char *state2str(enum state_type state)
 		return "STATE_LTE_DISCONNECTED";
 	case STATE_LTE_CONNECTED:
 		return "STATE_LTE_CONNECTED";
+	case STATE_SHUTDOWN:
+		return "STATE_SHUTDOWN";
 	default:
 		return "Unknown";
 	}
@@ -560,7 +563,11 @@ static void on_sub_state_cloud_disconnected(struct cloud_msg_data *msg)
 static void on_all_states(struct cloud_msg_data *msg)
 {
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
+		/* The module doesn't have anything to shut down and can
+		 * report back immediately.
+		 */
 		SEND_EVENT(cloud, CLOUD_EVT_SHUTDOWN_READY);
+		state_set(STATE_SHUTDOWN);
 	}
 
 	if (is_data_module_event(&msg->module.data.header)) {
@@ -617,6 +624,9 @@ static void module_thread_fn(void)
 			break;
 		case STATE_LTE_DISCONNECTED:
 			on_state_lte_disconnected(&msg);
+			break;
+		case STATE_SHUTDOWN:
+			/* The shutdown state has no transition. */
 			break;
 		default:
 			LOG_ERR("Unknown Cloud module state.");

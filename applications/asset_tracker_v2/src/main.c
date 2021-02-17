@@ -50,7 +50,8 @@ struct app_msg_data {
 /* Application module super states. */
 static enum state_type {
 	STATE_INIT,
-	STATE_RUNNING
+	STATE_RUNNING,
+	STATE_SHUTDOWN
 } state;
 
 /* Application sub states. The application can be in either active or passive
@@ -111,6 +112,8 @@ static char *state2str(enum state_type new_state)
 		return "STATE_INIT";
 	case STATE_RUNNING:
 		return "STATE_RUNNING";
+	case STATE_SHUTDOWN:
+		return "STATE_SHUTDOWN";
 	default:
 		return "Unknown";
 	}
@@ -421,6 +424,7 @@ static void on_all_events(struct app_msg_data *msg)
 		k_timer_stop(&movement_resolution_timer);
 
 		SEND_EVENT(app, APP_EVT_SHUTDOWN_READY);
+		state_set(STATE_SHUTDOWN);
 	}
 }
 
@@ -473,6 +477,9 @@ void main(void)
 			}
 
 			on_state_running(&msg);
+			break;
+		case STATE_SHUTDOWN:
+			/* The shutdown state has no transition. */
 			break;
 		default:
 			LOG_WRN("Unknown application state");

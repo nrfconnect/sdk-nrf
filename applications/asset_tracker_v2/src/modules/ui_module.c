@@ -39,7 +39,7 @@ struct ui_msg_data {
 static enum state_type {
 	STATE_ACTIVE,
 	STATE_PASSIVE,
-	STATE_ERROR
+	STATE_SHUTDOWN
 } state;
 
 /* UI module sub states. */
@@ -91,8 +91,8 @@ static char *state2str(enum state_type new_state)
 		return "STATE_ACTIVE";
 	case STATE_PASSIVE:
 		return "STATE_PASSIVE";
-	case STATE_ERROR:
-		return "STATE_ERROR";
+	case STATE_SHUTDOWN:
+		return "STATE_SHUTDOWN";
 	default:
 		return "Unknown";
 	}
@@ -369,10 +369,8 @@ static void on_all_states(struct ui_msg_data *msg)
 
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
 		update_led_pattern(LED_ERROR_SYSTEM_FAULT);
-
-		state_set(STATE_ERROR);
-
 		SEND_EVENT(ui, UI_EVT_SHUTDOWN_READY);
+		state_set(STATE_SHUTDOWN);
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTING)) {
@@ -415,8 +413,8 @@ static void message_handler(struct ui_msg_data *msg)
 			break;
 		}
 		break;
-	case STATE_ERROR:
-		/* The error state has no transition. */
+	case STATE_SHUTDOWN:
+		/* The shutdown state has no transition. */
 		break;
 	default:
 		LOG_WRN("Unknown ui module state.");

@@ -58,7 +58,8 @@ struct data_msg_data {
 /* Data module super states. */
 static enum state_type {
 	STATE_CLOUD_DISCONNECTED,
-	STATE_CLOUD_CONNECTED
+	STATE_CLOUD_CONNECTED,
+	STATE_SHUTDOWN
 } state;
 
 /* Ringbuffers. All data received by the Data module are stored in ringbuffers.
@@ -165,6 +166,8 @@ static char *state2str(enum state_type new_state)
 		return "STATE_CLOUD_DISCONNECTED";
 	case STATE_CLOUD_CONNECTED:
 		return "STATE_CLOUD_CONNECTED";
+	case STATE_SHUTDOWN:
+		return "STATE_SHUTDOWN";
 	default:
 		return "Unknown";
 	}
@@ -856,6 +859,7 @@ static void on_all_states(struct data_msg_data *msg)
 		 * report back immediately.
 		 */
 		SEND_EVENT(data, DATA_EVT_SHUTDOWN_READY);
+		state_set(STATE_SHUTDOWN);
 	}
 
 	if (IS_EVENT(msg, app, APP_EVT_DATA_GET)) {
@@ -1049,6 +1053,9 @@ static void module_thread_fn(void)
 			break;
 		case STATE_CLOUD_CONNECTED:
 			on_cloud_state_connected(&msg);
+			break;
+		case STATE_SHUTDOWN:
+			/* The shutdown state has no transition. */
 			break;
 		default:
 			LOG_WRN("Unknown sub state.");
