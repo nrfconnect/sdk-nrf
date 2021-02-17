@@ -689,7 +689,8 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		aws_iot_evt.type = AWS_IOT_EVT_CONNECTED;
 		aws_iot_notify_event(&aws_iot_evt);
 
-		if (!mqtt_evt->param.connack.session_present_flag) {
+		if (!mqtt_evt->param.connack.session_present_flag ||
+		    IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION)) {
 			err = topic_subscribe();
 
 			if (err < 0) {
