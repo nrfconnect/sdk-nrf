@@ -181,3 +181,13 @@ For each of the modules, you can set the following logging options:
 * ``LOG_LEVEL_DBG`` - Enables logging for debug messages, informational messages, errors, and warnings.
 
 For example, setting :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_INF` will enable logging of informational messages, errors, and warnings for the ZBOSS Trace module.
+
+.. _zigbee_ug_static_partition:
+
+Upgrading Zigbee application
+****************************
+
+When upgrading the Zigbee application, use the :ref:`ug_pm_static` of the Partition Manager to ensure that ZBOSS' NVRAM is placed in the same area of flash.
+This is because enabling additional features (for example, Zephyr's :ref:`zephyr:nvs_api`) can change the placement of the partition in the flash and the ZBOSS settings can be lost, as the application is not able to find the partition.
+
+The static configuration is required regardless of the application version and the upgrading method (:ref:`lib_zigbee_fota` or :ref:`ug_bootloader`).
