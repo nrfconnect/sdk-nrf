@@ -39,7 +39,8 @@ struct gps_msg_data {
 /* GPS module super states. */
 static enum state_type {
 	STATE_INIT,
-	STATE_RUNNING
+	STATE_RUNNING,
+	STATE_SHUTDOWN
 } state;
 
 /* GPS module sub states. */
@@ -78,6 +79,8 @@ static char *state2str(enum state_type new_state)
 		return "STATE_INIT";
 	case STATE_RUNNING:
 		return "STATE_RUNNING";
+	case STATE_SHUTDOWN:
+		return "STATE_SHUTDOWN";
 	default:
 		return "Unknown";
 	}
@@ -378,7 +381,11 @@ static void on_all_states(struct gps_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
+		/* The module doesn't have anything to shut down and can
+		 * report back immediately.
+		 */
 		SEND_EVENT(gps, GPS_EVT_SHUTDOWN_READY);
+		state_set(STATE_SHUTDOWN);
 	}
 }
 
@@ -402,6 +409,9 @@ static void message_handler(struct gps_msg_data *msg)
 		}
 
 		on_state_running(msg);
+		break;
+	case STATE_SHUTDOWN:
+		/* The shutdown state has no transition. */
 		break;
 	default:
 		LOG_ERR("Unknown GPS module state.");
