@@ -846,15 +846,9 @@ static int client_broker_init(struct mqtt_client *const client, bool dps)
 	tls_cfg->cipher_list		= NULL; /* Use default */
 	tls_cfg->sec_tag_count		= ARRAY_SIZE(sec_tag_list);
 	tls_cfg->sec_tag_list		= sec_tag_list;
+	tls_cfg->session_cache		= TLS_SESSION_CACHE_DISABLED;
 
-#if defined(CONFIG_NRF_MODEM_LIB)
-	tls_cfg->session_cache		=
-		IS_ENABLED(CONFIG_AZURE_IOT_HUB_TLS_SESSION_CACHING) ?
-			TLS_SESSION_CACHE_ENABLED : TLS_SESSION_CACHE_DISABLED;
-#else
-	/* TLS session caching is not supported by the Zephyr network stack */
-	tls_cfg->session_cache = TLS_SESSION_CACHE_DISABLED;
-
+#if !defined(CONFIG_NRF_MODEM_LIB)
 	err = certificates_provision();
 	if (err) {
 		LOG_ERR("Could not provision certificates, error: %d", err);
