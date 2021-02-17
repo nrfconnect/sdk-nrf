@@ -94,8 +94,14 @@ static int get_published_payload(struct mqtt_client *client, uint8_t *write_buf,
  */
 static inline void wait_for_update_accepted(void)
 {
+	uint32_t timeout = CONFIG_AWS_FOTA_UPDATE_TIMEOUT;
+
 	while (!accepted) {
-		k_yield();
+		k_sleep(K_SECONDS(1));
+		timeout--;
+		if (timeout == 0) {
+			break;
+		}
 	};
 }
 
@@ -352,7 +358,8 @@ static int on_publish_evt(struct mqtt_client *const client,
 	LOG_DBG("Received topic: %s", log_strdup(debug_log));
 #endif
 
-	if (is_notify_next_topic || is_get_next_topic || is_get_accepted) {
+	if ((is_notify_next_topic && (fota_state == NONE))
+	   || is_get_next_topic || is_get_accepted) {
 		LOG_DBG("Checking for an available job");
 		return get_job_execution(client, payload_len);
 	} else if (doc_update_accepted) {
