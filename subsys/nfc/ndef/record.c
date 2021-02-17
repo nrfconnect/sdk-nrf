@@ -95,7 +95,9 @@ int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 		record_payload_len = (*record_len - record_header_len);
 	}
 	/* PAYLOAD */
-	if (ndef_record_desc->payload_constructor) {
+	if (ndef_record_desc->tnf == TNF_EMPTY) {
+		record_payload_len = 0;
+	} else if (ndef_record_desc->payload_constructor) {
 		int err;
 
 		err = ndef_record_desc->payload_constructor(
