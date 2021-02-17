@@ -55,6 +55,7 @@ static int settings_set(const char *key, size_t len_rd,
 {
 	if (!strcmp(key, current_id)) {
 		int err;
+		int absolute_offset;
 		struct flash_pages_info page;
 		ssize_t len = read_cb(cb_arg, &stream.bytes_written,
 				      sizeof(stream.bytes_written));
@@ -64,8 +65,11 @@ static int settings_set(const char *key, size_t len_rd,
 			return len;
 		}
 
+		absolute_offset = stream.offset + stream.bytes_written;
+
 		err = flash_get_page_info_by_offs(stream.fdev,
-						  stream.bytes_written, &page);
+						  absolute_offset,
+						  &page);
 		if (err != 0) {
 			LOG_ERR("Error %d while getting page info", err);
 			return err;
