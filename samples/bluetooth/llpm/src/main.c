@@ -9,6 +9,11 @@
 #include <sys/printk.h>
 #include <zephyr/types.h>
 
+#if defined(CONFIG_USB)
+#include <usb/usb_device.h>
+#include <drivers/uart.h>
+#endif
+
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
 #include <bluetooth/gatt.h>
@@ -403,9 +408,25 @@ void main(void)
 		.le_param_updated = le_param_updated,
 	};
 
-	printk("Starting Bluetooth LLPM example\n");
+#if defined(CONFIG_USB)
+	const struct device *uart_dev = device_get_binding(
+			CONFIG_UART_CONSOLE_ON_DEV_NAME);
+	uint32_t dtr = 0;
+
+	if (usb_enable(NULL)) {
+		return;
+	}
+
+	/* Poll if the DTR flag was set, optional */
+	while (!dtr) {
+		uart_line_ctrl_get(uart_dev, UART_LINE_CTRL_DTR, &dtr);
+		k_msleep(100);
+	}
+#endif
 
 	console_init();
+
+	printk("Starting Bluetooth LLPM example\n");
 
 	bt_conn_cb_register(&conn_callbacks);
 
