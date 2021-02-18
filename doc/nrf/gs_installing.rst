@@ -55,7 +55,7 @@ The installation process is different depending on your operating system.
 
       Also see :ref:`zephyr:mac-setup-alts` for additional information.
 
-If you are interested in building `Connected Home over IP`_ applications, install also the `GN`_ meta-build system to generate the Ninja files that the |NCS| uses.
+If you are interested in building `Project Connected Home over IP`_ applications, install also the `GN`_ meta-build system to generate the Ninja files that the |NCS| uses.
 
 .. tabs::
 

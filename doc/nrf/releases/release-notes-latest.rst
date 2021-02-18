@@ -52,16 +52,16 @@ nRF5340 SoC
   * ``bl_boot`` library - Disabled clock interrupts before booting the application.
     This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
 
-Connected Home over IP (CHIP)
------------------------------
+Project Connected Home over IP (Project CHIP)
+---------------------------------------------
 
-* CHIP is now supported for development as an |NCS| submodule for Windows, Linux, and macOS.
+* Project CHIP is now supported for development as an |NCS| submodule for Windows, Linux, and macOS.
 * Added:
 
   * :ref:`ug_chip` protocol user guide
-  * :ref:`Bolt lock <chip_lock_sample>` sample
-  * :ref:`Light switch <chip_light_switch_sample>` sample
-  * :ref:`Light bulb <chip_light_bulb_sample>` sample
+  * :ref:`Project CHIP door lock <chip_lock_sample>` sample
+  * :ref:`Project CHIP light switch <chip_light_switch_sample>` sample
+  * :ref:`Project CHIP light bulb <chip_light_bulb_sample>` sample
 
 DFU Target
 ----------
