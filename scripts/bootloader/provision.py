@@ -57,15 +57,17 @@ def parse_args():
                         help='Maximum total size of the provision data, including the counter slots.')
     parser.add_argument('--num-counter-slots-version', required=False, type=int, default=0,
                         help='Number of monotonic counter slots for version number.')
+    parser.add_argument('--no-verify-hashes', required=False, action="store_true",
+                        help="Don't check hashes for applicability. Use this option only for testing.")
     return parser.parse_args()
 
 
-def get_hashes(public_key_files):
+def get_hashes(public_key_files, verify_hashes):
     hashes = list()
     for fn in public_key_files:
         with open(fn, 'rb') as f:
             digest = sha256(VerifyingKey.from_pem(f.read()).to_string()).digest()[:16]
-            if any([digest[n:n+2] == b'\xff\xff' for n in range(0, len(digest), 2)]):
+            if verify_hashes and any([digest[n:n+2] == b'\xff\xff' for n in range(0, len(digest), 2)]):
                 raise RuntimeError("Hash of key in '%s' contains 0xffff. Please regenerate the key." %
                                    os.path.abspath(f.name))
             hashes.append(digest)
@@ -84,7 +86,8 @@ def main():
     s1_address = args.s1_addr if args.s1_addr is not None else s0_address
     provision_address = args.provision_addr
 
-    hashes = get_hashes(args.public_key_files.split(',')) if args.public_key_files else list()
+    hashes = get_hashes(args.public_key_files.split(','),
+                        not args.no_verify_hashes) if args.public_key_files else list()
     generate_provision_hex_file(s0_address=s0_address,
                                 s1_address=s1_address,
                                 hashes=hashes,

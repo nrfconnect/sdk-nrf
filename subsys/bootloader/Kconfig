@@ -117,6 +117,11 @@ config SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
 	  first. This is meant to be used for testing looping through the
 	  public keys.
 
+config SB_DEBUG_NO_VERIFY_HASHES
+	bool "[DEBUG] Don't check public key hashes for applicability"
+	help
+	  Use this only for negative testing.
+
 config SB_MONOTONIC_COUNTER
 	bool "Enable HW monotonic version counter"
 	default y
