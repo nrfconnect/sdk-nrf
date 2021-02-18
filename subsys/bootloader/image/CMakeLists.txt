@@ -78,6 +78,10 @@ else()
   set(s1_arg --s1-addr $<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>)
 endif()
 
+if (CONFIG_SB_DEBUG_NO_VERIFY_HASHES)
+  set(no_verify_hashes_arg --no-verify-hashes)
+endif()
+
 add_custom_command(
   OUTPUT
   ${PROVISION_HEX}
@@ -91,6 +95,7 @@ add_custom_command(
   --output ${PROVISION_HEX}
   ${monotonic_counter_arg}
   --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
+  ${no_verify_hashes_arg}
   DEPENDS
   ${PROVISION_KEY_DEPENDS}
   WORKING_DIRECTORY
