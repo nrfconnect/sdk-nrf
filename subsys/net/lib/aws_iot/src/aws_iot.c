@@ -281,6 +281,8 @@ static void aws_iot_notify_event(const struct aws_iot_evt *aws_iot_evt)
 	case AWS_IOT_EVT_ERROR:
 		cloud_evt.data.err = aws_iot_evt->data.err;
 		cloud_evt.type = CLOUD_EVT_ERROR;
+	case AWS_IOT_EVT_FOTA_ERROR:
+		cloud_evt.type = CLOUD_EVT_FOTA_ERROR;
 		break;
 	case AWS_IOT_EVT_FOTA_DL_PROGRESS:
 		cloud_evt.type = CLOUD_EVT_FOTA_DL_PROGRESS;
@@ -330,7 +332,7 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 		break;
 	case AWS_FOTA_EVT_ERROR:
 		LOG_ERR("AWS_FOTA_EVT_ERROR");
-		aws_iot_evt.type = AWS_IOT_EVT_ERROR;
+		aws_iot_evt.type = AWS_IOT_EVT_FOTA_ERROR;
 		break;
 	case AWS_FOTA_EVT_DL_PROGRESS:
 		LOG_DBG("AWS_FOTA_EVT_DL_PROGRESS, (%d%%)",
