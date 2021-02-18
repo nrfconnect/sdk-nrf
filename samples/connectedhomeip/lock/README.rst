@@ -1,14 +1,14 @@
 .. _chip_lock_sample:
 
-Connected Home over IP: Door lock
-#################################
+Project Connected Home over IP: Door lock
+#########################################
 
 .. contents::
    :local:
    :depth: 2
 
-This door lock sample demonstrates the usage of the `Connected Home over IP`_ application layer to build a door lock device with one basic bolt.
-This device works as a CHIP accessory, meaning it can be paired and controlled remotely over a CHIP network built on top of a low-power, 802.15.4 Thread network.
+This door lock sample demonstrates the usage of the `Project Connected Home over IP`_ application layer to build a door lock device with one basic bolt.
+This device works as a Project CHIP accessory, meaning it can be paired and controlled remotely over a Project CHIP network built on top of a low-power, 802.15.4 Thread network.
 You can use this sample as a reference for creating your own application.
 
 Requirements
@@ -24,7 +24,7 @@ For remote testing scenarios, you also need the following:
 
 * If you want to commission the lock device and :ref:`control it remotely <chip_lock_sample_network_mode>` through a Thread network:
 
-  * A smartphone compatible with Android for using the `Android CHIPTool`_ application as the CHIP controller.
+  * A smartphone compatible with Android for using the `Android CHIPTool`_ application as the Project CHIP controller.
 
 Overview
 ********
@@ -35,7 +35,7 @@ It can be tested in the following ways:
 * Standalone, by using a single DK that runs the door lock application.
 * Remotely over the Thread protocol, which requires more devices.
 
-The remote control testing requires either commissioning by the CHIP controller device into a network or using the test mode.
+The remote control testing requires either commissioning by the Project CHIP controller device into a network or using the test mode.
 Both methods can be enabled after :ref:`building and running the sample <chip_lock_sample_remote_control>`.
 
 .. _chip_lock_sample_network_mode:
@@ -45,8 +45,8 @@ Remote testing in a network
 
 .. chip_door_lock_sample_remote_testing_start
 
-By default, the CHIP device has Thread disabled, and it must be paired with the CHIP controller over Bluetooth LE to get configuration from it if you want to use the device within a Thread network.
-To do this, the device must be made discoverable manually (for security reasons) and the controller must get the commissioning information from the CHIP device and provision the device into the network.
+By default, the Project CHIP device has Thread disabled, and it must be paired with the Project CHIP controller over Bluetooth LE to get configuration from it if you want to use the device within a Thread network.
+To do this, the device must be made discoverable manually (for security reasons) and the controller must get the commissioning information from the Project CHIP device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
 
 .. chip_door_lock_sample_remote_testing_end
@@ -62,7 +62,7 @@ Alternatively to the commissioning procedure, you can use the test mode, which a
 |chip_sample_button3_note|
 
 .. note::
-    The test mode is not CHIP-compliant and it only works together with CHIP controller and other devices which use the same default configuration.
+    The test mode is not compliant with Project CHIP and it only works together with Project CHIP controller and other devices which use the same default configuration.
 
 .. chip_door_lock_sample_test_mode_end
 
@@ -107,7 +107,7 @@ SEGGER J-Link USB port:
     Used for getting logs from the device or for communicating with it through the command-line interface.
 
 NFC port with antenna attached:
-    Optionally used for obtaining the commissioning information from the CHIP device to start the :ref:`commissioning procedure <chip_lock_sample_remote_control>`.
+    Optionally used for obtaining the commissioning information from the Project CHIP device to start the :ref:`commissioning procedure <chip_lock_sample_remote_control>`.
 
 Building and running
 ********************
@@ -152,13 +152,13 @@ The device is rebooted after all its settings are erased.
 Enabling remote control
 =======================
 
-Remote control allows you to control the CHIP door lock device from a Thread network.
+Remote control allows you to control the Project CHIP door lock device from a Thread network.
 
 .. chip_door_lock_sample_remote_control_start
 
 You can use one of the following options to enable this option:
 
-* `Commissioning the device`_, which allows you to set up testing environment and remotely control the sample over a CHIP-enabled Thread network.
+* `Commissioning the device`_, which allows you to set up testing environment and remotely control the sample over a Project-CHIP-enabled Thread network.
 * `Remote testing using test mode`_, which allows you to test the sample functionalities in a Thread network with default parameters, without commissioning.
   |chip_sample_button3_note|
 
@@ -172,18 +172,18 @@ Commissioning the device
 .. chip_door_lock_sample_commissioning_start
 
 To commission the device, go to the `Commissioning nRF Connect Accessory using Android CHIPTool`_ tutorial and complete the steps described there.
-As part of this tutorial, you will build and flash OpenThread RCP firmware, configure Thread Border Router, build and install `Android CHIPTool`_, commission the device, and send CHIP commands that cover scenarios described in the `Testing`_ section.
+As part of this tutorial, you will build and flash OpenThread RCP firmware, configure Thread Border Router, build and install `Android CHIPTool`_, commission the device, and send Project CHIP commands that cover scenarios described in the `Testing`_ section.
 
-In CHIP, the commissioning procedure (called rendezvous) is done over Bluetooth LE between a CHIP device and the CHIP controller, where the controller has the commissioner role.
-When the procedure is finished, the device should be equipped with all information needed to securely operate in the CHIP network.
+In Project CHIP, the commissioning procedure (called rendezvous) is done over Bluetooth LE between a Project CHIP device and the Project CHIP controller, where the controller has the commissioner role.
+When the procedure is finished, the device should be equipped with all information needed to securely operate in the Project CHIP network.
 
-During the last part of the commissioning procedure (the provisioning operation), Thread network credentials are sent from the CHIP controller to the CHIP device.
+During the last part of the commissioning procedure (the provisioning operation), Thread network credentials are sent from the Project CHIP controller to the Project CHIP device.
 As a result, the device is able to join the Thread network and communicate with other Thread devices in the network.
 
 .. note::
-    Currently, CHIP samples do not support storing CHIP operational credentials exchanged during commissioning in the non-volatile memory.
+    Currently, Project CHIP samples do not support storing Project CHIP operational credentials exchanged during commissioning in the non-volatile memory.
 
-To start the commissioning procedure, the controller must get the commissioning information from the CHIP device.
+To start the commissioning procedure, the controller must get the commissioning information from the Project CHIP device.
 The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, printed to the UART console, and can be shared using an NFC tag.
 
 .. chip_door_lock_sample_commissioning_end
@@ -193,7 +193,7 @@ Dependencies
 
 This sample uses Connected Home over IP library which includes the |NCS| platform integration layer:
 
-* `Connected Home over IP`_
+* `Project Connected Home over IP`_
 
 In addition, the sample uses the following |NCS| components:
 

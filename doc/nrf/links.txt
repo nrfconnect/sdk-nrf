@@ -87,7 +87,7 @@
 .. _`Building and installing Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#building-chiptool
 .. _`Configuring PC as Thread Border Router`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#configuring-pc
 .. _`Preparing and commissioning accessory device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#preparing-accessory
-.. _`CHIP Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/README.md
+.. _`Project CHIP Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/README.md
 .. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_platform_overview.md
 
 .. ### Source: developer.nordicsemi.com
@@ -546,7 +546,7 @@
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
 
-.. _`Connected Home over IP`: https://www.connectedhomeip.com/
+.. _`Project Connected Home over IP`: https://www.connectedhomeip.com/
 
 .. _`GN`: https://gn.googlesource.com/gn/
 .. _`GN website`: https://gn.googlesource.com/gn/#getting-a-binary

@@ -104,7 +104,7 @@
 			<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 			<v:textRect cx="84.5418" cy="570.209" width="169.09" height="31.7385"/>
 			<text x="16.8" y="567.21" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Multiprotocol Service Layer<v:newlineChar/><tspan
-						x="49.63" dy="1.2em" class="st12">(MPSL) [NCS]</tspan></text>		</g>
+						x="66.29" dy="1.2em" class="st12">(MPSL)</tspan></text>		</g>
 		<g id="shape118-29" v:mID="118" v:groupContext="shape" transform="translate(199.276,-124.764)">
 			<title>Sheet.118</title>
 			<desc>SoftDevice Controller</desc>
@@ -170,11 +170,11 @@
 		</g>
 		<g id="shape102-56" v:mID="102" v:groupContext="shape" transform="translate(472.146,-112.591)">
 			<title>Sheet.102</title>
-			<desc>[NCS] nRF IEEE 802.15.4 radio driver</desc>
+			<desc>nRF IEEE 802.15.4 radio driver</desc>
 			<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 			<v:textRect cx="84.5418" cy="567.654" width="169.09" height="36.8504"/>
 			<path d="M169.08 549.23 L0 549.23 L0 586.08 L169.08 586.08 L169.08 549.23" class="st3"/>
-			<text x="11.32" y="564.05" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>[NCS] nRF IEEE 802.15.4 <tspan
+			<text x="31.32" y="564.05" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>nRF IEEE 802.15.4<v:newlineChar/><tspan
 						x="50.35" dy="1.2em" class="st12">radio driver</tspan></text>		</g>
 		<g id="shape189-61" v:mID="189" v:groupContext="shape" transform="translate(388.913,-354.317)">
 			<title>Sheet.189</title>
@@ -306,11 +306,11 @@
 		</g>
 		<g id="shape223-123" v:mID="223" v:groupContext="shape" transform="translate(191.524,-491.813)">
 			<title>Sheet.223</title>
-			<desc>CHIP stack</desc>
+			<desc>Project CHIP stack</desc>
 			<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 			<v:textRect cx="225.677" cy="579.852" width="451.36" height="12.4539"/>
 			<path d="M451.35 573.62 L0 573.62 L0 586.08 L451.35 586.08 L451.35 573.62" class="st3"/>
-			<text x="189.58" y="583.9" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>CHIP stack</text>		</g>
+			<text x="163.84" y="583.9" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Project CHIP stack</text>		</g>
 		<g id="shape224-127" v:mID="224" v:groupContext="shape" transform="translate(191.325,-439.34)">
 			<title>Sheet.224</title>
 			<path d="M0 550.96 L0 586.08 L451.55 586.08 L451.55 550.96 L0 550.96 L0 550.96 Z" class="st24"/>
@@ -335,11 +335,11 @@
 			<text x="16.99" y="575.38" class="st15" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>SMP</text>		</g>
 		<g id="shape231-138" v:mID="231" v:groupContext="shape" transform="translate(539.219,-19)">
 			<title>Sheet.231</title>
-			<desc>CHIP (built with GN)</desc>
+			<desc>Project CHIP (built with GN)</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="55.4533" cy="566.657" width="110.91" height="38.8425"/>
 			<path d="M0 586.08 L110.91 586.08 L110.91 547.24 L0 547.24 L0 586.08 Z" class="st24"/>
-			<text x="40.78" y="563.06" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>CHIP<v:lf/><tspan
+			<text x="17.91" y="563.06" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Project CHIP<v:lf/><tspan
 						x="11.49" dy="1.2em" class="st12">(built with GN)</tspan></text>		</g>
 		<g id="shape232-142" v:mID="232" v:groupContext="shape" transform="translate(278.61,-19)">
 			<title>Sheet.232</title>
@@ -350,11 +350,11 @@
 			<text x="16.32" y="570.86" class="st25" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Third-party</text>		</g>
 		<g id="shape233-145" v:mID="233" v:groupContext="shape" transform="translate(407.231,-19)">
 			<title>Sheet.233</title>
-			<desc>CHIP</desc>
+			<desc>Project CHIP</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="55.4533" cy="566.657" width="110.91" height="38.8425"/>
 			<rect x="0" y="547.236" width="110.907" height="38.8425" class="st26"/>
-			<text x="35.89" y="571.46" class="st27" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>CHIP</text>		</g>
+			<text x="5.4" y="571.46" class="st27" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Project CHIP</text>		</g>
 		<g id="shape234-148" v:mID="234" v:groupContext="shape" transform="translate(148.305,-19)">
 			<title>Sheet.234</title>
 			<desc>Zephyr</desc>
