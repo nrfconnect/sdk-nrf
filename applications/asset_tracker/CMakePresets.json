@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 19,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Asset Tracker build (prj.conf)",
+      "description": "Asset Tracker build",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build"
+    },
+    {
+      "name": "test",
+      "inherits": "default",
+      "displayName": "Asset Tracker Test build (prj_test.conf)",
+      "description": "Asset Tracker Test build",
+      "cacheVariables": {
+        "CONF_FILE": {
+          "type": "STRING",
+          "value": "prj_test.conf"
+        }
+      }
+    }
+  ],
+  "vendor": {
+    "zephyr": {
+      "twister": {
+        "sample": {
+           "name": "Asset Tracker Application"
+        },
+        "tests": {
+          "applications.asset_tracker": {
+            "build_only": true,
+            "build_on_all": true,
+            "platform_allow": "nrf9160dk_nrf9160ns thingy91_nrf9160ns qemu_x86",
+            "tags": "ci_build"
+          }
+        }
+      }
+    }
+  }
+}
