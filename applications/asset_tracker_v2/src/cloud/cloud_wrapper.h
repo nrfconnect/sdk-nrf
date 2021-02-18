@@ -25,6 +25,8 @@ enum cloud_wrap_event_type {
 	CLOUD_WRAP_EVT_FOTA_ERASE_PENDING,
 	/** Image erase done. */
 	CLOUD_WRAP_EVT_FOTA_ERASE_DONE,
+	/** An error occurred during FOTA. */
+	CLOUD_WRAP_EVT_FOTA_ERROR,
 	/** Irrecoverable error has occurred in the cloud integration layer. */
 	CLOUD_WRAP_EVT_ERROR,
 
