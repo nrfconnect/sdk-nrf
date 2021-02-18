@@ -24,7 +24,10 @@ Check the :file:`boards` folder to see the additional overlay files.
 
 Follow the instructions in :ref:`cmake_options` to specify the ``DTC_OVERLAY_FILE`` variable.
 For example, to build the sample from the command line for an nRF52833 DK with an attached nRF21540 EK, invoke the following command within the sample directory:
-``west build -b nrf52833dk_nrf52833 -- -DDTC_OVERLAY_FILE="boards/nrf52833dk_nrf52833.overlay;../common/dts-nrf21540-fem.overlay"``
+
+.. code-block:: console
+
+    west build -b nrf52833dk_nrf52833 -- -DDTC_OVERLAY_FILE="boards/nrf52833dk_nrf52833.overlay;../common/dts-nrf21540-fem.overlay"
 
 Alternatively, you can copy the contents of :file:`dts-nrf21540-fem.overlay` to the board's overlay file.
 
