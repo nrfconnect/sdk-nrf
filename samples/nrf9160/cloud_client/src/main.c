@@ -125,7 +125,8 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		break;
 	case CLOUD_EVT_DATA_RECEIVED:
 		LOG_INF("CLOUD_EVT_DATA_RECEIVED");
-		LOG_INF("Data received from cloud: %s",
+		LOG_INF("Data received from cloud: %.*s",
+			evt->data.msg.len,
 			log_strdup(evt->data.msg.buf));
 		break;
 	case CLOUD_EVT_PAIR_REQUEST:
