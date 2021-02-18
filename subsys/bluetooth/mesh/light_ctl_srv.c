@@ -46,7 +46,7 @@ static void ctl_get(struct bt_mesh_light_ctl_srv *srv,
 	status->current_light = light.current;
 	status->target_temp = temp.target.temp;
 	status->target_light = light.target;
-	status->remaining_time = temp.remaining_time;
+	status->remaining_time = MAX(temp.remaining_time, light.remaining_time);
 }
 
 static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
