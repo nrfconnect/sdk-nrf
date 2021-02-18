@@ -993,10 +993,6 @@ static const struct lpuart_config lpuart_config = {
 
 static struct lpuart_data lpuart_data;
 
-#define INT_DRIVEN_API_SET(fp, func) \
-	.fp = IS_ENABLED(CONFIG_NRF_SW_LPUART_INT_DRIVEN) ? func : NULL
-
-
 static const struct uart_driver_api lpuart_api = {
 	.callback_set = api_callback_set,
 	.tx = api_tx,
@@ -1008,21 +1004,21 @@ static const struct uart_driver_api lpuart_api = {
 	.poll_out = api_poll_out,
 	.configure = api_configure,
 	.config_get = api_config_get,
-#if CONFIG_UART_INTERRUPT_DRIVEN
-	INT_DRIVEN_API_SET(fifo_fill, api_fifo_fill),
-	INT_DRIVEN_API_SET(fifo_read, api_fifo_read),
-	INT_DRIVEN_API_SET(irq_tx_enable, api_irq_tx_enable),
-	INT_DRIVEN_API_SET(irq_tx_disable, api_irq_tx_disable),
-	INT_DRIVEN_API_SET(irq_tx_ready, api_irq_tx_ready),
-	INT_DRIVEN_API_SET(irq_rx_enable, api_irq_rx_enable),
-	INT_DRIVEN_API_SET(irq_rx_disable, api_irq_rx_disable),
-	INT_DRIVEN_API_SET(irq_tx_complete, api_irq_tx_complete),
-	INT_DRIVEN_API_SET(irq_rx_ready, api_irq_rx_ready),
-	INT_DRIVEN_API_SET(irq_err_enable, api_irq_err_enable),
-	INT_DRIVEN_API_SET(irq_err_disable, api_irq_err_disable),
-	INT_DRIVEN_API_SET(irq_is_pending, api_irq_is_pending),
-	INT_DRIVEN_API_SET(irq_update, api_irq_update),
-	INT_DRIVEN_API_SET(irq_callback_set, api_irq_callback_set)
+#if CONFIG_NRF_SW_LPUART_INT_DRIVEN
+	.fifo_fill = api_fifo_fill,
+	.fifo_read = api_fifo_read,
+	.irq_tx_enable = api_irq_tx_enable,
+	.irq_tx_disable = api_irq_tx_disable,
+	.irq_tx_ready = api_irq_tx_ready,
+	.irq_rx_enable = api_irq_rx_enable,
+	.irq_rx_disable = api_irq_rx_disable,
+	.irq_tx_complete = api_irq_tx_complete,
+	.irq_rx_ready = api_irq_rx_ready,
+	.irq_err_enable = api_irq_err_enable,
+	.irq_err_disable = api_irq_err_disable,
+	.irq_is_pending = api_irq_is_pending,
+	.irq_update = api_irq_update,
+	.irq_callback_set = api_irq_callback_set
 #endif
 };
 
