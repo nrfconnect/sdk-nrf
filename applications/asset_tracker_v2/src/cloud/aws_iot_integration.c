@@ -143,9 +143,15 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 	case AWS_IOT_EVT_FOTA_DL_PROGRESS:
 		/* Dont spam FOTA progress events. */
 		break;
+	case AWS_IOT_EVT_FOTA_ERROR:
+		LOG_DBG("AWS_IOT_EVT_FOTA_ERROR");
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_FOTA_ERROR;
+		notify = true;
+		break;
 	case AWS_IOT_EVT_ERROR:
 		LOG_DBG("AWS_IOT_EVT_ERROR");
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
+		cloud_wrap_evt.err = evt->data.err;
 		notify = true;
 		break;
 	default:
