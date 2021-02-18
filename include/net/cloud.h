@@ -48,6 +48,8 @@ enum cloud_event_type {
 	CLOUD_EVT_FOTA_ERASE_DONE,
 	/** FOTA download progress event. */
 	CLOUD_EVT_FOTA_DL_PROGRESS,
+	/** FOTA error. */
+	CLOUD_EVT_FOTA_ERROR,
 
 	CLOUD_EVT_COUNT
 };

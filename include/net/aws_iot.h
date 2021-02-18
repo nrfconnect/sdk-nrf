@@ -98,7 +98,12 @@ enum aws_iot_evt_type {
 	AWS_IOT_EVT_FOTA_ERASE_DONE,
 	/** FOTA progress notification. */
 	AWS_IOT_EVT_FOTA_DL_PROGRESS,
-	/** AWS IoT library error. */
+	/** FOTA error. Used to propagate FOTA-related errors to the
+	 *  application. This is to distinguish between AWS_IOT irrecoverable
+	 *  errors and FOTA errors, so they can be handled differently.
+	 */
+	AWS_IOT_EVT_FOTA_ERROR,
+	/** AWS IoT library irrecoverable error. */
 	AWS_IOT_EVT_ERROR
 };
 
