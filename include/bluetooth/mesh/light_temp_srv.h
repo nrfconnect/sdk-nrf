@@ -39,10 +39,6 @@ struct bt_mesh_light_temp_srv;
 				 BT_MESH_LIGHT_TEMP_STATUS,                    \
 				 BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_STATUS)) }, \
 		.handlers = _handlers,                                         \
-		.range = {                                                     \
-			.min = BT_MESH_LIGHT_TEMP_MIN,                         \
-			.max = BT_MESH_LIGHT_TEMP_MAX,                         \
-		},                                                             \
 	}
 
 /** @def BT_MESH_MODEL_LIGHT_TEMP_SRV
