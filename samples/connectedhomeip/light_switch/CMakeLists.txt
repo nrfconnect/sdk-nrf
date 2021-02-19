@@ -12,6 +12,7 @@ project(chip-light-switch)
 
 set(COMMON_ROOT ${CMAKE_CURRENT_LIST_DIR}/../common)
 
+# NORDIC SDK APP START
 target_include_directories(app PRIVATE src ${COMMON_ROOT}/src ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app)
 
 target_compile_options(app PRIVATE -Wno-deprecated-declarations)
@@ -22,3 +23,4 @@ target_sources(app PRIVATE
                src/main.cpp
                ${COMMON_ROOT}/src/led_widget.cpp
                ${COMMON_ROOT}/src/thread_util.cpp)
+# NORDIC SDK APP END

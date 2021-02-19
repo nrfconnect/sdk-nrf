@@ -15,6 +15,8 @@ target_sources_ifdef(CONFIG_NRF21540_FEM app
 zephyr_include_directories(../../bluetooth/direct_test_mode/src/fem/)
 
 FILE(GLOB app_sources src/*.c)
+# NORDIC SDK APP START
 target_sources(app PRIVATE
 	${app_sources}
 )
+# NORDIC SDK APP END
