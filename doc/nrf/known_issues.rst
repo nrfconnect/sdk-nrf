@@ -485,6 +485,13 @@ Immutable bootloader and netboot can overwrite non-OTP provisioning data
 Build system
 ============
 
+.. rst-class:: v1-5-0
+
+Missing files or permissions when building on Windows
+  Because of the Windows path length limitiations, the build can fail with errors related to permissions or missing files if some paths in the build are too long.
+
+  **Workaround:** Shorten the build folder name, e.g. from "build_nrf5340dk_nrf5340_cpuappns" to "build", or shorten the path to the build folder in some other way.
+
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6898: Overriding child images
