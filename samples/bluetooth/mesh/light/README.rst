@@ -107,7 +107,7 @@ Configuring models
 
 See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-Configure the Generic OnOff Client model on each element on the :guilabel:`Mesh Light` node:
+Configure the Generic OnOff Server model on each element on the :guilabel:`Mesh Light` node:
 
 * Bind the model to :guilabel:`Application Key 1`.
 
