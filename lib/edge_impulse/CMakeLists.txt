@@ -59,8 +59,14 @@ ExternalProject_Add(edge_impulse_project
 # causes the Edge impulse library to be fetched on each build invocation.
 # Note: This also results in the `ALL` target to always be considered out-of-date.
 if(CONFIG_EDGE_IMPULSE_DOWNLOAD_ALWAYS)
+  if(${CMAKE_VERSION} VERSION_LESS "3.17")
+    set(REMOVE_COMMAND remove)
+  else()
+    set(REMOVE_COMMAND rm)
+  endif()
+
   add_custom_target(edge_impulse_project_download
-                    COMMAND ${CMAKE_COMMAND} -E rm -f
+                    COMMAND ${CMAKE_COMMAND} -E ${REMOVE_COMMAND} -f
                             ${EDGE_IMPULSE_STAMP_DIR}/edge_impulse_project-download
                     DEPENDS edge_impulse_project
   )
