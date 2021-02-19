@@ -76,9 +76,9 @@ void main(void)
 	printk("CONFIG_SPM_SERVICE_RNG is disabled.\n\n");
 #endif
 
-	ret = spm_firmware_info(PM_APP_ADDRESS, &info_app);
+	ret = spm_firmware_info(PM_SPM_ADDRESS, &info_app);
 	if (ret != 0) {
-		printk("Could find firmware info (err: %d)\n", ret);
+		printk("Could not find SPM firmware info (err: %d)\n", ret);
 	}
 
 	printk("App FW version: %d\n\n", info_app.version);
