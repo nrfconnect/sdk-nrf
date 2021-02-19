@@ -1440,11 +1440,6 @@ static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 	k_delayed_work_init(&srv->reg.timer, reg_step);
 #endif
 
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
-		bt_mesh_model_extend(mod, srv->onoff.model);
-		bt_mesh_model_extend(mod, srv->lightness->lightness_model);
-	}
-
 	srv->pub.msg = &srv->pub_buf;
 	srv->pub.update = update_handler;
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
