@@ -42,6 +42,7 @@ ExternalProject_Add(edge_impulse_project
     PATCH_COMMAND    ${CMAKE_COMMAND} -E copy
                      ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.ei.template
                      ${EDGE_IMPULSE_SOURCE_DIR}/CMakeLists.txt
+    DEPENDS          zephyr_interface
     CMAKE_ARGS -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                -DCMAKE_AR=${CMAKE_AR}
