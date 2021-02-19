@@ -302,6 +302,14 @@ DESK-978: Directed advertising issues with SoftDevice Link Layer
 
   **Workaround:** Directed advertising is disabled by default for nRF Desktop.
 
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth LE to Linux host
+  Using :ref:`nrf_desktop_config_channel_script` for peripherals connected to host directly over Bluetooth LE may result in receiving improper HID feature report ID.
+  In such case, the device will provide HID input reports, but it cannot be configured with the HID configurator.
+
+  **Workaround:** Connect the nRF Desktop peripheral through USB or using the nRF Desktop dongle.
+
 Subsystems
 **********
 
