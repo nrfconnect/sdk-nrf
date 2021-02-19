@@ -357,9 +357,30 @@ static int on_publish_evt(struct mqtt_client *const client,
 	debug_log[topic_len] = '\0';
 	LOG_DBG("Received topic: %s", log_strdup(debug_log));
 #endif
+	if (is_notify_next_topic) {
+		if (fota_state == NONE) {
+			LOG_DBG("Checking for an available job");
 
-	if ((is_notify_next_topic && (fota_state == NONE))
-	   || is_get_next_topic || is_get_accepted) {
+			return get_job_execution(client, payload_len);
+		}
+
+		/* If we get here, a job is already being handled. The incoming
+		 * message is most likely a duplicate and must be dropped
+		 * to not interfere with the job being processed.
+		 * The payload must still be read out in order to clear the
+		 * MQTT buffer for next incoming message.
+		 */
+		int err = get_published_payload(client, payload_buf, payload_len);
+
+		if (err) {
+			LOG_ERR("Error when getting the payload: %d", err);
+			return err;
+		}
+
+		LOG_DBG("FOTA already in progress, message is ignored");
+
+		return 0;
+	} else if (is_get_next_topic || is_get_accepted) {
 		LOG_DBG("Checking for an available job");
 		return get_job_execution(client, payload_len);
 	} else if (doc_update_accepted) {
