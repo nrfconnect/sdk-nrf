@@ -291,6 +291,13 @@ KRKNWK-5535: Device assert if flooded with multiple Network Address requests
 KRKNWK-6073: Potential delay during FOTA
   There might be a noticeable delay (~220 ms) between calling the ZBOSS API and on-the-air activity.
 
+.. rst-class:: v1-5-0
+
+KRKNWK-9119: Zigbee shell does not work with ZBOSS development libraries
+    Because of changes to the ZBOSS API, the :ref:`lib_zigbee_shell` library cannot be enabled when :ref:`zigbee_samples` are built with the :ref:`nrfxlib:zboss` development libraries.
+
+    **Workaround:** Use only the production version of :ref:`nrfxlib:zboss` when using :ref:`lib_zigbee_shell`.
+
 nRF Desktop
 ===========
 
