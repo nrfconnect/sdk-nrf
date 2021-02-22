@@ -61,6 +61,7 @@
 .. _`Sphinx parser issue`: https://github.com/sphinx-doc/sphinx/issues/2683
 
 .. _`Leshan Demo Server`: https://github.com/eclipse/leshan/blob/master/README.md
+.. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io
 
 .. _`wpantund`: https://github.com/openthread/wpantund/blob/master/README.md
 .. _`wpantund Installation Guide`: https://github.com/openthread/wpantund/blob/master/INSTALL.md

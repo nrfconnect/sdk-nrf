@@ -88,7 +88,7 @@ Check and configure the following configuration options for the sample:
 .. option:: CONFIG_APP_LWM2M_SERVER - LWM2M Server configuration
 
    The sample configuration specifies the LWM2M Server to be used.
-   In this sample, this option is set to ``leshan.eclipseprojects.io``.
+   In this sample, you can set this option to ``leshan.eclipseprojects.io`` (`public Leshan Demo Server`_).
 
 
 
