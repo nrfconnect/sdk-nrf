@@ -351,7 +351,7 @@ class NcsCompare(NcsWestCommand):
                 f"  To add to NCS:\n"
                 f"    1. do the zephyr mergeup\n"
                 f"    2. update zephyr revision in {west_yml}\n"
-                f"    3. add projects to zephyr's name_whitelist in "
+                f"    3. add projects to zephyr's name-allowlist in "
                 f"{west_yml}\n"
                 f"    4. run west {self.name} again to check your work\n"
                 f"  To block: edit _BLOCKED_PROJECTS in {__file__}")

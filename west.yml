@@ -57,7 +57,7 @@ manifest:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
         # revision. Only the projects explicitly named in the
-        # following whitelist are imported.
+        # following allowlist are imported.
         #
         # Note that the zephyr west extensions (like 'build', 'flash',
         # 'debug', etc.) are automatically provided by this import, so
@@ -65,7 +65,7 @@ manifest:
         # the zephyr project.
         #
         # Please keep this list sorted alphabetically.
-        name-whitelist:
+        name-allowlist:
           - canopennode
           - cmsis
           - civetweb
