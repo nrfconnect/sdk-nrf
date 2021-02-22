@@ -91,7 +91,7 @@ static int nfds;
 
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
-void enter_datamode(void);
+int enter_datamode(slm_data_mode_handler_t handler);
 bool exit_datamode(void);
 bool check_uart_flowcontrol(void);
 
@@ -556,7 +556,7 @@ static int tcpsvr_input(int infd)
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		proxy.sock_peer = ret;
 		if (proxy.datamode) {
-			enter_datamode();
+			enter_datamode(do_tcp_send_datamode);
 		}
 		LOG_DBG("New connection - %d", proxy.sock_peer);
 		fds[nfds].fd = proxy.sock_peer;
@@ -866,8 +866,8 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 						  &proxy.sec_tag);
 			}
 #if defined(CONFIG_SLM_DATAMODE_HWFC)
-			if (op == AT_SERVER_START_WITH_DATAMODE &&
-			    !check_uart_flowcontrol()) {
+			if (op == AT_SERVER_START_WITH_DATAMODE && !check_uart_flowcontrol()) {
+				LOG_ERR("Data mode requires HWFC.");
 				return -EINVAL;
 			}
 #endif
@@ -934,8 +934,7 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 				LOG_ERR("Client is already running.");
 				return -EINVAL;
 			}
-			err = util_string_get(&at_param_list,
-						2, url, &size);
+			err = util_string_get(&at_param_list, 2, url, &size);
 			if (err) {
 				return err;
 			}
@@ -948,12 +947,11 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 				return -EINVAL;
 			}
 			if (param_count > 4) {
-				at_params_int_get(&at_param_list,
-						  4, &proxy.sec_tag);
+				at_params_int_get(&at_param_list, 4, &proxy.sec_tag);
 			}
 #if defined(CONFIG_SLM_DATAMODE_HWFC)
-			if (op == AT_CLIENT_CONNECT_WITH_DATAMODE &&
-			    !check_uart_flowcontrol()) {
+			if (op == AT_CLIENT_CONNECT_WITH_DATAMODE && !check_uart_flowcontrol()) {
+				LOG_ERR("Data mode requires HWFC.");
 				return -EINVAL;
 			}
 #endif
@@ -961,7 +959,7 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 			if (err == 0 &&
 			    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				proxy.datamode = true;
-				enter_datamode();
+				enter_datamode(do_tcp_send_datamode);
 			}
 		} else if (op == AT_CLIENT_DISCONNECT) {
 			err = do_tcp_client_disconnect();
@@ -1142,17 +1140,15 @@ int slm_at_tcp_proxy_uninit(void)
 	return 0;
 }
 
-/**@brief API to get datamode from external
- */
-bool slm_tcp_get_datamode(void)
-{
-	return proxy.datamode;
-}
-
 /**@brief API to set datamode off from external
  */
 void slm_tcp_set_datamode_off(void)
 {
+	/* do nothing if data mode not configured */
+	if (!proxy.datamode) {
+		return;
+	}
+
 	if (proxy.role == AT_TCP_ROLE_CLIENT &&
 	    proxy.sock != INVALID_SOCKET) {
 		proxy.datamode = false;
@@ -1161,14 +1157,4 @@ void slm_tcp_set_datamode_off(void)
 	    proxy.sock_peer != INVALID_SOCKET) {
 		k_work_submit(&disconnect_work);
 	}
-}
-
-/**@brief API to send TCP data in datamode
- */
-int slm_tcp_send_datamode(const uint8_t *data, int len)
-{
-	int size = do_tcp_send_datamode(data, len);
-
-	LOG_DBG("datamode %d sent", size);
-	return size;
 }
