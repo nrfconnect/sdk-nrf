@@ -1,177 +1,75 @@
-:orphan:
+.. _ncs_release_notes_150:
 
-.. _ncs_release_notes_latest:
-
-Changes in |NCS| v1.4.99
-########################
+|NCS| v1.5.0 Release Notes
+##########################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the master branch of the |NCS|, as compared to the latest release, are tracked in this file.
+|NCS| delivers reference software and supporting libraries for developing low-power wireless applications with Nordic Semiconductor products.
+It includes the TF-M, MCUboot and the Zephyr RTOS open source projects, which are continuously integrated and re-distributed with the SDK.
 
-.. note::
-    This file is a work in progress and might not cover all relevant changes.
-
+The |NCS| is where you begin building low-power wireless applications with Nordic Semiconductor nRF52, nRF53, and nRF91 Series devices.
+nRF53 Series devices are now supported for production.
+Wireless protocol stacks and libraries may indicate support for development or support for production for different series of devices based on verification and certification status. See the release notes and documentation for those protocols and libraries for further information.
 
 Highlights
 **********
 
-* Integrated Apple HomeKit Ecosystem support into the |NCS|.
-  It is distributed as a private repository available to Apple MFi Program members.
+* Introduced support for nRF5340 DK.
+* Added minimal configuration to Bluetooth: Peripheral UART sample for nRF52810 and nRF52811 SoCs.
+* All the models in Bluetooth Mesh Models v1.0.x are now supported for development.
+* Added experimental support for Trusted Firmware-M (TF-M) for nRF5340 and nRF9160.
+* Integrated Apple HomeKit ecosystem support into the |NCS|.
+* Integrated Project Connected Home over IP, which is supported for development.
+* Added production support for nRF5340 for Thread in single protocol configuration, and development support for Thread in multiprotocol operation with Bluetooth LE.
+* Added development support for nRF5340 for Zigbee, including multiprotocol operation with Bluetooth LE.
+* Added nRF9160: Asset Tracker v2 as an ultra-low-power, real-time configurable application.
+* Implemented major updates to Modem library (previously called BSD library).
+* Added support for full modem DFU for nRF9160, over-the-air (OTA) and via UART.
+* Introduced support for Edge Impulse machine learning models.
+
+Release tag
+***********
+
+The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.5.0**.
+Check the :file:`west.yml` file for the corresponding tags in the project repositories.
+
+To use this release, check out the tag in the manifest repository and run ``west update``.
+See :ref:`cloning_the_repositories` for more information.
+
+Supported modem firmware
+************************
+
+This version of the |NCS| has been tested with the following modem firmware for cellular IoT applications:
+
+* mfw_nrf9160_1.2.3
+* mfw_nrf9160_1.1.4
+
+
+Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
+See `Updating the nRF9160 DK cellular modem`_ for instructions.
 
 Changelog
 *********
 
 The following sections provide detailed lists of changes by component.
 
-nRF5
-====
-
-The following changes are relevant for the nRF52 and nRF53 Series.
-
-nRF52832 SoC
-------------
-
-* Removed:
-
-  * ``esb`` subystem - Removed support for older SoC revision workarounds.
-
-    * Removed support for nRF52832 revision 1 workarounds for Errata 102, Errata 106, and Errata 107.
-    * Removed support for nRF52832 revision 2 workarounds for Errata 143.
-
-nRF5340 SoC
------------
-
-* Added:
-
-  * ``esb`` subsystem - Added support for nRF5340 (CPUNET) in the ESB subsystem.
-  * ``spm`` subsystem - Added support for nRF5340 peripherals in non-secure applications.
-
-* Updated:
-
-  * ``bl_boot`` library - Disabled clock interrupts before booting the application.
-    This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
-
-Project Connected Home over IP (Project CHIP)
----------------------------------------------
-
-* Project CHIP is now supported for development as an |NCS| submodule for Windows, Linux, and macOS.
-* Added:
-
-  * :ref:`ug_chip` protocol user guide
-  * :ref:`Project CHIP door lock <chip_lock_sample>` sample
-  * :ref:`Project CHIP light switch <chip_light_switch_sample>` sample
-  * :ref:`Project CHIP light bulb <chip_light_bulb_sample>` sample
-
-DFU Target
-----------
-
-* Added:
-
-  * New target ``dfu_target_full_modem`` which is used for full modem firmware updates.
-    Note that this requires an external flash memory of a minimum of 2MB to work.
-
-* Updated:
-
-  * Renamed ``dfu_target_modem`` to ``dfu_target_modem_delta``.
-  * Moved all ``dfu_target`` code up one directory from :file:`subsys/dfu` to :file:`subsys/dfu/dfu_target`.
-  * Extracted the stream flash memory functionality from ``dfu_target_mcuboot`` to ``dfu_target_stream_flash`` to facilitate code re-use for other ``dfu_targets`` which write large objects to the flash memory.
-
-HTTP Update
------------
-
-* Added:
-
-  * New sample :ref:`http_modem_delta_update_sample` which shows how to add modem delta upgrade support to an application.
-  * New sample :ref:`http_full_modem_update_sample` which shows how to add full modem upgrade support to an application.
-    Note that this requires an external flash memory of a minimum of 2MB to work, hence the sample will only work on the nRF9160 DK version ``0.14.0`` or later.
-
-* Updated:
-
-  * Extracted certificate, button, and LED handling functionality from :ref:`http_application_update_sample` to :file:`samples/nrf9160/http_update/common`, to share them with :ref:`http_modem_delta_update_sample`.
-  * Moved the :ref:`http_application_update_sample` sample from :file:`samples/nrf9160/http_application_update/` to :file:`samples/nrf9160/http_update/application_update`
-
-Full modem serial update
-------------------------
-
-* Added:
-
-  * New sample :ref:`fmfu_smp_svr_sample` which shows how to add the full modem serial update functionality to an application.
-  * New module called :ref:`lib_fmfu_mgmt` which implements parts of the mcumgr management protocol for doing full modem serial updates.
-
-Thread
-------
-
-* Added:
-
-  * Development support for the nRF5340 DK in single-protocol configuration for the :ref:`ot_cli_sample`, :ref:`coap_client_sample`, and :ref:`coap_server_sample` samples.
-  * Development support for the nRF5340 DK in the multiprotocol configuration for the :ref:`ot_cli_sample` and :ref:`coap_client_sample` samples.
-  * Development support for nRF21540 FEM (front-end module) in the Thread samples.
-
-* Optimized ROM and RAM used by Thread samples.
-* Disabled Hardware Flow Control on the serial port in :ref:`coap_client_sample` and :ref:`coap_server_sample` samples.
-
-Zigbee
-------
-
-* Added:
-
-  * Development support for the nRF5340 DK in the single-protocol configuration for the :ref:`zigbee_light_switch_sample`, :ref:`zigbee_light_bulb_sample`, and :ref:`zigbee_network_coordinator_sample` samples.
-  * Development support for the nRF5340 DK in the multiprotocol configuration for the :ref:`zigbee_light_switch_sample` sample.
-  * Development support for :ref:`NCP (Network Co-Processor) <ug_zigbee_platform_design_ncp_details>`.
-  * New sample :ref:`zigbee_ncp_sample`.
-  * New ``zcl ping`` command in the :ref:`lib_zigbee_shell` library.
-  * New libraries there were extracted from common code under :file:`subsys/zigbee/common`:
-
-    * :ref:`lib_zigbee_application_utilities` library
-    * :ref:`lib_zigbee_logger_endpoint` library
-
-* Updated:
-
-  * Updated :ref:`zboss` to version ``3_3_0_6+11_30_2020``.
-    See :ref:`nrfxlib:zboss_changelog` for detailed information.
-
-Bluetooth Mesh
---------------
-
-* Added:
-
-  * Time client model callbacks for all message types.
-  * Support for the nRF52833 DK in the :ref:`bluetooth_mesh_light` and :ref:`bluetooth_mesh_light_switch` samples.
-  * Support for :ref:`bt_mesh_light_xyl_readme`.
-
-* Updated the :ref:`bt_mesh_lightness_srv_readme` to disable the light control server when manual control has taken effect.
-  This follows the Mesh Model Specification section 6.2.3.
-
-Apple HomeKit Ecosystem support
--------------------------------
-
-* Integrated HomeKit Accessory Development Kit (ADK) v5.1.
-* Enabled Thread certification by inheritance.
-* HomeKit samples now use qualified Bluetooth libraries.
-
 nRF9160
 =======
 
 * Added:
 
-  * Asset Tracker v2 application for nRF9160 DK and Thingy:91, which is a low-power asset tracking example.
+  * :ref:`asset_tracker_v2` application, which is a low-power asset tracking example for nRF9160 DK and Thingy:91.
+  * :ref:`fmfu_smp_svr_sample` sample, which shows how to add the full modem serial update functionality to an application using SMP Server.
+  * :ref:`http_full_modem_update_sample` sample, which demonstrates how to add full modem upgrade support to an application. Note that this requires an external flash memory of a minimum of 2 MB to work, hence the sample will only work on the nRF9160 DK v0.14.0 or later.
+  * :ref:`http_modem_delta_update_sample` sample, which demonstrates how to add delta modem upgrade support to an application.
+  * :ref:`lib_fmfu_mgmt`, which is a new library that implements parts of the mcumgr management protocol for doing full modem serial updates.
 
 * Updated:
 
-  * :ref:`nrfxlib:nrf_modem` - BSD library has been renamed to ``nrf_modem`` (Modem library) and ``nrf_modem_lib`` (glue).
-  * :ref:`lib_download_client` library:
-
-    * Re-introduced optional TCP timeout (enabled by default) on the TCP socket used for the download.
-      Upon timeout on a TCP socket, the HTTP download will fail and the ``ETIMEDOUT`` error will be returned via the callback handler.
-    * Added an option to set the hostname for TLS Server Name Indication (SNI) extension.
-      This option is valid only when TLS is enabled.
-
-  * :ref:`lib_date_time` library - Added an API to check if the Date-Time library has obtained a valid date-time.
-    If the function returns false, it implies that the library has not yet obtained valid date-time to base its calculations and time conversions on and hence other API calls that depend on the internal date-time will fail.
-
+  * :ref:`asset_tracker` application - Updated to use the new FOTA (fota_v2) based on nRF Connect for Cloud.
   * :ref:`serial_lte_modem` application:
 
     * Fixed an issue where FOTA downloads were interrupted if an AT command was issued.
@@ -185,59 +83,263 @@ nRF9160
     * Added a recovery mechanism for cases where a UART frame error happens.
     * Enhanced data mode support for TCP/UDP proxy.
 
-  * :ref:`lib_fota_download` library:
+  * :ref:`lwm2m_client` sample - Added handling of network failures. The sample now tries to reconnect to the LTE network when a failure is reported.
+  * :ref:`nrf_coap_client_sample` sample - Updated the default server URL to ``californium.eclipseprojects.io``.
+  * :ref:`mqtt_simple_sample` sample - Updated the default server URL to ``mqtt.eclipseprojects.io``.
+  * Extracted the certificate, button, and LED handling functionality from :ref:`http_application_update_sample` sample to :file:`samples/nrf9160/http_update/common`, to share them with :ref:`http_modem_delta_update_sample` sample.
+  * Moved the :ref:`http_application_update_sample` sample from :file:`samples/nrf9160/http_application_update/` to :file:`samples/nrf9160/http_update/application_update`.
+  * :ref:`lib_download_client` library:
 
-    * Enabled SNI TLS extension for HTTPS downloads.
+    * Reintroduced the optional TCP timeout (enabled by default) on the TCP socket that is used for the download.
+      Upon timeout on a TCP socket, the HTTP download will fail and the ``ETIMEDOUT`` error will be returned via the callback handler.
+    * Added an option to set the hostname for TLS Server Name Indication (SNI) extension.
+      This option is valid only when TLS is enabled.
 
+  * :ref:`lib_date_time` library :
+
+    * Added an API to check if the Date-Time library has obtained a valid date-time. If the function returns false, it implies that the library has not yet obtained valid date-time to base its calculations and time conversions on, and hence other API calls that depend on the internal date-time will fail.
+
+
+  * :ref:`lib_fota_download` library - Enabled SNI TLS extension for HTTPS downloads.
   * :ref:`lib_nrf_cloud` library:
 
-    * AWS Jobs replaced by nRF Connect for Cloud FOTA as the FOTA mechanism for devices connected to nRF Connect for Cloud.
+    * nRF Connect for Cloud FOTA replaced AWS Jobs as the FOTA mechanism for devices connected to nRF Connect for Cloud.
     * Removed :option:`CONFIG_CLOUD_API` dependency from :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
     * Added a new API :c:func:`nrf_cloud_send` that can be used for sending pre-encoded data to specified endpoint topics in nRF Connect for Cloud.
 
-  * :ref:`asset_tracker` application:
+  * :ref:`at_cmd_parser_readme` library - The library can now parse AT command strings with negative numbers in the range supported by the int32_t type.
+  * :ref:`lib_azure_iot_hub` library - Improved the internal connection state handling.
+  * :ref:`lte_lc_readme` library - Added support for manufacturer-specific default eDRX/PSM values.
+  * :ref:`liblwm2m_carrier_readme` library - Updated to v0.10.2. See :ref:`liblwm2m_carrier_changelog` for details.
 
-    * Updated to use the new FOTA (fota_v2) based on nRF Connect for Cloud.
+* Removed:
 
-  * :ref:`at_cmd_parser_readme` library:
+  * USB-UART bridge sample
 
-    * The library can now parse AT command strings with negative numbers in the range supported by the int32_t type.
+DFU target
+----------
 
-  * :ref:`lwm2m_client` sample:
+* Added:
 
-    * Added handling of network failures.
-      The sample now tries to reconnect to the LTE network when a failure is reported.
+  * New target ``dfu_target_full_modem``, which is used for full modem firmware updates. This requires an external flash memory of a minimum of 2 MB to work.
 
-  * :ref:`lib_azure_iot_hub` library:
+* Updated:
 
-    * Improved internal connection state handling.
+  * Renamed ``dfu_target_modem`` to ``dfu_target_modem_delta``.
+  * Moved the ``dfu_target`` code from :file:`subsys/dfu` to :file:`subsys/dfu/dfu_target`.
+  * Extracted the stream flash memory functionality from ``dfu_target_mcuboot`` to ``dfu_target_stream_flash`` to facilitate code reuse for other ``dfu_targets``, which write large objects to the flash memory.
 
-  * :ref:`nrf_coap_client_sample` sample:
+nRF5
+====
 
-    * Updated the default server URL to ``californium.eclipseprojects.io``.
+The following changes are relevant for the nRF52 and nRF53 Series.
 
-  * :ref:`mqtt_simple_sample` sample:
+nRF52832 SoC
+------------
 
-    * Updated the default server URL to ``mqtt.eclipseprojects.io``.
+* Updated:
 
-  * :ref:`lte_lc_readme` library:
+  * Removed support for nRF52832 revision 1 workarounds in :ref:`esb_readme` for Errata 102, Errata 106, and Errata 107.
 
-    * Added support for manufacturer-specific default eDRX/PSM values.
+nRF5340 SoC
+-----------
+
+* Added:
+
+  * :ref:`multiprotocol-rpmsg-sample` sample for network core, which enables support for multiprotocol, IEEE 802.15.4, and Bluetooth LE applications.
+
+* Updated:
+
+
+  * :ref:`esb_readme` subsystem - Added support for nRF5340 (CPUNET) in the ESB subsystem.
+  * :ref:`lib_spm` subsystem - Added support for nRF5340 peripherals in non-secure applications.
+  * :ref:`ble_samples` - Added configuration overlays for child image to the required Bluetooth LE samples so that no Kconfig updates in the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample are needed by default.
+  * :ref:`nrf5340_empty_app_core` sample - Disabled the kernel memory pool option :option:`CONFIG_KERNEL_MEM_POOL` to reduce the memory footprint.
+  * ``bl_boot`` library - Disabled clock interrupts before booting the application. This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
+
+
+Front-end module (FEM)
+----------------------
+
+* Added support for nRF21540 revision 1 or older to :ref:`direct_test_mode` and :ref:`radio_test` samples.
+* Added support for RF front-end Modules (FEM) in :ref:`mpsl` library. The front-end module feature in MPSL currently supports the SKY66112-11 device, but does not support nRF21540 revision 1 or older.
+
+
+Bluetooth LE
+------------
+
+* Added:
+
+  * Support for nRF21540 front-end module (revision 1 or older) to :ref:`direct_test_mode` sample.
+  * Minimal configuration (:file:`prj_minimal.conf`) to the :ref:`peripheral_uart` sample, thus enabling support for building for nRF52810 and nRF52811 devices.
+  * :ref:`cts_client_readme` service that is used to retrieve the current time from a connected peer that is running the GATT server with the `Current Time Service <Current Time Service Specification_>`_.
+  * :ref:`peripheral_cts_client` sample that demonstrates how to use the :ref:`cts_client_readme`.
+
+* Updated:
+
+  * :ref:`ble_throughput` sample:
+
+    * Uses :ref:`Zephyr's Shell <zephyr:shell_api>` for setting up the test parameters.
+    * Role selection can be done using buttons instead of UART.
+    * Fixed the throughput calculation on the application level by removing the dependency from remote terminal speed (disabled UART flow control).
+
+  * :ref:`bluetooth_central_hids` sample - Restored *numeric comparison* pairing.
+
+Project Connected Home over IP (Project CHIP)
+---------------------------------------------
+
+* Project CHIP is now supported for development as an |NCS| submodule for Windows, Linux, and macOS.
+* Added:
+
+  * :ref:`ug_chip` protocol user guide
+  * :ref:`Project CHIP door lock <chip_lock_sample>` sample
+  * :ref:`Project CHIP light switch <chip_light_switch_sample>` sample
+  * :ref:`Project CHIP light bulb <chip_light_bulb_sample>` sample
+
+Bluetooth Mesh
+--------------
+
+* Added:
+
+  * Time client model callbacks for all message types.
+  * Support for the nRF52833 DK in the :ref:`bluetooth_mesh_light` and :ref:`bluetooth_mesh_light_switch` samples.
+  * Support for the following mesh models:
+
+    * :ref:`bt_mesh_light_xyl_readme`
+    * :ref:`bt_mesh_light_hsl_readme`
+    * :ref:`bt_mesh_scheduler_readme`
+  * Scene Current/Target Scene Get API (Gets the current/target scene that the scene server is set to).
+  * Sensor Client All Get API (Reads sensor data from all sensors on a server).
+  * Generic Client Properties Get API (Gets the list of Generic Client Properties on the bound server).
+
+* Updated:
+
+  * :ref:`bt_mesh_lightness_srv_readme` to disable the light control server when manual control has taken effect.
+    This follows the Mesh Model Specification section 6.2.3.
+  * Deleting a non-existing scene from the Scene Server returns success, instead of not found.
+  * Removed the Light CTL setup server publications, which was not in use.
+  * Disabled light control on all changes in lightness.
+  * Added model reset callbacks so that the Mesh stack can be reset.
+  * Implemented missing Light Linear Level Get/Set API functions.
+  * Fixed several bugs.
+
+Apple HomeKit Ecosystem support
+-------------------------------
+
+* Integrated HomeKit Accessory Development Kit (ADK) v5.1.
+  MFi licensees can get access to the HomeKit repository by contacting us via Nordic `DevZone`_ private ticket.
+* Enabled Thread certification by inheritance.
+* HomeKit samples now use qualified Bluetooth LE libraries.
+
+nRF IEEE 802.15.4 radio driver
+------------------------------
+
+* Production support for nRF5340 in single protocol configuration.
+* Development support for nRF5340 in multiprotocol configuration (IEEE 802.15.4 and Bluetooth LE).
+* Added PA/LNA GPIO interface support for RF front-end modules (FEM) in the radio driver. The front-end module feature in the radio driver currently has support for the SKY66112-11 device, but does not support nRF21540 revision 1 or older.
+
+Thread
+------
+
+* Added:
+
+  * Production support for nRF5340 in single protocol configuration.
+  * Development support for nRF5340 in multiprotocol configuration (Thread and Bluetooth LE).
+  * Support for nRF5340 for all samples except the :ref:`ot_ncp_sample` sample.
+  * PA/LNA GPIO interface support for RF front-end modules (FEM) in Thread. The front-end module feature in Thread currently has support for SKY66112-11 device, but does not support nRF21540 revision 1 or older.
+
+* Updated:
+
+  * Optimized ROM and RAM used by Thread samples.
+  * Disabled Hardware Flow Control on the serial port in :ref:`coap_client_sample` and :ref:`coap_server_sample` samples.
+  * Thread 1.1 pre-built libraries:
+
+    * Included the latest OpenThread changes.
+    * Added libraries for nRF5340 platform.
+    * Libraries will be certified after the release in multiple feature variants (certification IDs and status can be found in the compatibility matrices in the `Nordic Semiconductor Infocenter`_).
+
+Zigbee
+------
+
+* Added:
+
+  * Development support for :ref:`NCP (Network Co-Processor) <ug_zigbee_platform_design_ncp_details>`.
+  * Development support for the nRF5340 DK in single and multi-protocol (Zigbee and Bluetooth LE) configuration for the :ref:`zigbee_light_switch_sample`, :ref:`zigbee_light_bulb_sample`, and :ref:`zigbee_network_coordinator_sample` samples.
+  * PA/LNA GPIO interface support for RF front-end modules (FEM) in Zigbee. The front-end module feature in Zigbee currently has support for SKY66112-11 device, but does not support nRF21540 revision 1 or older.
+  * :ref:`zigbee_ncp_sample` sample, which is a Network Co-Processor example for nRF52840 (DK and dongle) and nRF52833 DK.
+
+	* Supports USB and UART transports.
+	* Enables USB DFU when USB transport is used.
+
+  * New ``zcl ping`` command in the :ref:`lib_zigbee_shell` library.
+  * New libraries that were extracted from common code under :file:`subsys/zigbee/common`:
+
+    * :ref:`lib_zigbee_application_utilities` library
+    * :ref:`lib_zigbee_logger_endpoint` library
+
+* Updated:
+
+  * ZBOSS Zigbee stack to version 3_3_0_6+11_30_2020. See :ref:`zboss_configuration` for detailed information.
+  * Added development (unstable) :ref:`zboss` libraries (v3.5.0.0). See :ref:`zboss_configuration` for detailed information.
+
+nRF Desktop
+-----------
+
+Added selective HID report subscription in the USB state.
+This allows the USB HID instance on the peripheral to subscribe only for a subset of HID reports.
+If USB does not subscribe for the given HID report, Bluetooth LE HIDs can still receive it.
 
 Common
 ======
 
 The following changes are relevant for all device families.
 
+Edge Impulse
+------------
+
+* Added :ref:`ei_wrapper` library that runs the machine learning model.
+* Added :ref:`ei_wrapper_sample` sample that demonstrates the functionality of :ref:`ei_wrapper`.
+* Added :ref:`ei_data_forwarder_sample` sample that demonstrates the usage of `Edge Impulse's data forwarder`_ to provide sensor data to `Edge Impulse studio`_ when :ref:`ug_edge_impulse` respectively.
+
+Trusted Firmware-M
+------------------
+
+* Added a simple sample :ref:`tfm_hello_world` that demonstrates how to integrate TF-M in an application.
+* Enabled the use of platform code that resides outside of the Trusted Firmware-M repository.
+  This allows configurable memory partitioning in the |NCS|.
+* Added support for running the :ref:`download_sample` sample with TF-M.
+
+Partition Manager
+-----------------
+
+* Changed the naming convention for partition names in ``pm.yml`` and ``pm_static.yml``.
+* Updated Partition Manager to prevent users from using partition names in ``pm.yml`` and ``pm_static.yml`` that match the names of the child images that define them in ``CMakeLists.txt``:
+
+  * If the invalid naming scheme is used in ``pm.yml`` files, Partition Manager will now fail the builds.
+  * If the invalid naming scheme is used in ``pm_static.yml`` files, the build will instead print a warning prompting the user to change this, if possible.
+* Renamed ``b0`` and ``b0n`` container partitions to ``b0_container`` and ``b0n_container``, respectively.
+* Renamed ``b0_image`` and ``b0n_image`` image partitions to appropriately match their child image name, ``b0`` and ``b0n``, respectively.
+
+  **Migration notes:** While in development, you should rename partitions appropriately.
+  You can still build firmware updates under the invalid scheme, but they will still be built with the improper sizes for the related partitions.
+
 sdk-nrfxlib
 -----------
 
-See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for the most current information.
+See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
+
+Modem library
++++++++++++++
+
+* BSD library has been renamed to ``nrf_modem`` (Modem library) and ``nrf_modem_lib`` (glue).
+* Updated to version 1.0.1. See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
 
 Crypto
-~~~~~~
+++++++
 
-  * Added nrf_cc3xx_platform v0.9.7, with the following highlights:
+* Added:
+
+  * nrf_cc3xx_platform v0.9.7, with the following highlights:
 
     * Fixed an issue with mutex slab allocation in Zephyr RTOS platform file.
     * The library is built against mbed TLS v2.24.0.
@@ -246,9 +348,9 @@ Crypto
 
   * Added nrf_cc3xx_mbedcrypto v0.9.7, with the following highlights:
 
-    * Fixed issues where mbedtls_rsa_complete was not able to deduce missing parameters.
+    * Fixed issues where ``mbedtls_rsa_complete`` was not able to deduce missing parameters.
     * Fixed an issue with calculating the correct salt length for certain combinations of RSA key and digest sizes.
-    * Adding missing function: mbedtls_ecp_write_key.
+    * Added missing function: ``mbedtls_ecp_write_key``.
     * The library is built against mbed TLS v2.24.0.
 
     See the :ref:`crypto_changelog_nrf_cc3xx_mbedcrypto` for detailed information.
@@ -264,42 +366,48 @@ Crypto
 
 * Updated:
 
-  * Added Kconfig options for TLS/DTLS and x509 certificates in :ref:`nrfxlib:nrf_security`.
-  * Added Kconfig options for PK and PK_WRITE in :ref:`nrfxlib:nrf_security`.
-  * Rewrote the stripping mechanism of the :ref:`nrfxlib:nrf_security` library to not use the POST_BUILD option in a custom build rule.
-    The library stripping mechanism was non-functional in certain versions of SEGGER Embedded Studio Nordic Edition.
+  * :ref:`nrfxlib:nrf_security`:
 
-BSD library
-~~~~~~~~~~~
+    * Added Kconfig options for TLS/DTLS and x509 certificates.
+    * Added Kconfig options for ``PK`` and ``PK_WRITE`` (:option:`CONFIG_MBEDTLS_PK_C` and :option:`CONFIG_MBEDTLS_PK_WRITE_C`).
+    * Rewrote the stripping mechanism of the library to not use the ``POST_BUILD`` option in a custom build rule.
+      The library stripping mechanism was non-functional in certain versions of |SES| Nordic Edition.
 
-* Added information about low accuracy mode to the :ref:`nrfxlib:gnss_extension` documentation.
-* Added mutex protection for the :c:func:`nrf_getaddrinfo` function.
+SoftDevice Controller
++++++++++++++++++++++
+
+See the :ref:`nrfxlib:softdevice_controller_changelog` for detailed information.
+
+* Renamed and reconfigured the libraries. Following are the new names of the libraries:
+
+  * :file:`libsoftdevice_controller_peripheral.a`
+  * :file:`libsoftdevice_controller_central.a`
+  * :file:`libsoftdevice_controller_multirole.a`
+
+* All libraries are now compatible with all the platforms within a given device family.
+  The smallest sized library fitting the use case of the application will automatically be selected.
+  In most cases, the final binary size is reduced.
+
+Multiprotocol Service Layer
++++++++++++++++++++++++++++
+
+See the :ref:`mpsl_changelog` for detailed information.
+
+* Added a new signal ``MPSL_TIMESLOT_SIGNAL_OVERSTAYED`` to the MPSL timeslot. This signal is given to the application when the closing of timeslot session is delayed beyond a limit.
+* Added a new clock configuration option :c:member:`skip_wait_lfclk_started` in :c:struct:`mpsl_clock_lfclk_cfg_t`, which does not wait for the start of Low Frequency Clock.
+* Added support for RF front-end modules (FEM) in MPSL. The front-end module feature in MPSL currently supports the SKY66112-11 device, but does not support nRF21540 revision 1 or older.
 
 
-Trusted Firmware-M:
--------------------
+nrfx
+----
 
-* Added a simple sample that demonstrates how to integrate TF-M in an application.
-* Enabled using platform code that resides outside of the Trusted Firmware-M repository.
-  This allows for providing configurable memory partitioning in the nRF Connect SDK.
-* Added support for running the nRF9160 Download Client sample with TF-M.
-
-Partition Manager:
-------------------
-
-* Changed naming convention for partition names in ``pm.yml`` and ``pm_static.yml``.
-* Updated Partition Manager to prevent users from using partition names in ``pm.yml`` and ``pm_static.yml`` that match the names of the child images that define them in ``CMakeLists.txt``:
-
-  * If the invalid naming scheme is used in ``pm.yml`` files, Partition Manager will now fail the builds.
-  * If the invalid naming scheme is used in ``pm_static.yml`` files, the build will instead print a warning prompting the user to change this, if possible.
-* Renamed ``b0`` and ``b0n`` container partitions to ``b0_container`` and ``b0n_container``, respectively.
-* Renamed ``b0_image`` and ``b0n_image`` image partitions to appropriately match their child image name, ``b0`` and ``b0n``, respectively.
-
-  **Migration notes:** While in development, you should rename partitions appropriately.
-  You can still build firmware updates under the invalid scheme, but they will still be built with the improper sizes for the related partitions.
+See the `Changelog for nrfx 2.4.0`_ for detailed information.
 
 MCUboot
 =======
+
+sdk-mcuboot
+-----------
 
 The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``3fc59410b6``, plus some |NCS| specific additions.
 
@@ -341,7 +449,6 @@ The following list summarizes the most important changes inherited from upstream
   * Fixed the argument handling of ``custom_tlvs``.
   * Added support for setting a fixed ROM address in the image header.
 
-
 Mcumgr
 ======
 
@@ -355,9 +462,11 @@ The following list summarizes the most important changes inherited from upstream
 * Added optional verification of an uploaded direct-xip binary, which will reject any binary that cannot boot from the base address of the offered upload slot.
   This verification can be enabled through :option:`CONFIG_IMG_MGMT_REJECT_DIRECT_XIP_MISMATCHED_SLOT`.
 
-
 Zephyr
 ======
+
+sdk-zephyr
+----------
 
 .. NOTE TO MAINTAINERS: The latest Zephyr commit appears in multiple places; make sure you update them all.
 
@@ -526,7 +635,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Flash:
 
-    * Modified the nRF QSPI NOR driver so that it supports also nRF53 Series SoCs.
+    * Modified the nRF QSPI NOR driver so that it also supports nRF53 Series SoCs.
     * Added missing selection of :option:`CONFIG_FLASH_HAS_PAGE_LAYOUT` for the SPI NOR and AT45 family flash drivers.
     * Refactored the nRF QSPI NOR driver so that it no longer depends on :option:`CONFIG_MULTITHREADING`.
     * Removed ``CONFIG_NORDIC_QSPI_NOR_QE_BIT``.
@@ -568,7 +677,7 @@ The following list summarizes the most important changes inherited from upstream
 
     * Changed the GPIO configuration to use Nordic HAL, which allows support for GPIO pins above 31.
     * Added a check to ensure that the PWM period does not exceed a 16-bit value to prevent erroneous behavior.
-    * Changed the PWM DT configuration to use a timer phandle instead of the previously used timer instance.
+    * Changed the PWM DT configuration to use a timer handle instead of the previously used timer instance.
 
   * Regulator:
 
@@ -604,7 +713,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Timer:
 
-    * Extended the nRF RTC Timer driver with vendor-specific API that allows using the remaining compare channels of the RTC that provides the system clock.
+    * Extended the nRF RTC Timer driver with a vendor-specific API that allows using the remaining compare channels of the RTC that provides the system clock.
 
   * USB:
 
@@ -740,6 +849,8 @@ The following list summarizes the most important changes inherited from upstream
 
 * Build system:
 
+  * Updated west to v0.9.0.
+  * Renamed sanitycheck to Twister.
   * Ensured that shields can be placed in other BOARD_ROOT folders.
   * Added basic support for Clang 10 with x86.
   * Fixed a bug that prevented compiling the :ref:`bootloader` with :option:`CONFIG_SB_SIGNING_PUBLIC_KEY`
@@ -805,23 +916,138 @@ The following list summarizes the most important changes inherited from upstream
   * Fixed the handling of zero-length packet (ZLP) in the nRF USB Device Controller Driver.
   * Changed the USB DFU wait delay to be configurable with Kconfig (:option:`CONFIG_USB_DFU_WAIT_DELAY_MS`).
 
+Additions specific to |NCS|
++++++++++++++++++++++++++++
+
+The following list contains |NCS| specific additions:
+
+* Added support for the |NCS|'s :ref:`partition_manager`, which can be used for flash partitioning.
+* Added the following network socket and address extensions to the :ref:`zephyr:bsd_sockets_interface` interface to support the functionality provided by the BSD library:
+
+  * AF_LTE family.
+  * NPROTO_AT protocol.
+  * NPROTO_PDN protocol to be used in conjunction with AF_LTE.
+  * NPROTO_DFU protocol to be used in conjunction with AF_LOCAL.
+  * SOCK_MGMT socket type, used in conjunction with AF_LTE.
+  * SOL_PDN protocol level and associated socket option values (SO_PDN_CONTEXT_ID option for PDN sockets, SO_PDN_STATE option for PDN sockets to retrieve the state of the PDN connection).
+  * SOL_DFU protocol level and associated socket options. This includes a SO_DFU_ERROR socket option for DFU socket that can be used when an operation on a DFU socket returns -ENOEXEC, indicating that the modem has rejected the operation to retrieve the reason for the error.
+  * TLS_SESSION_CACHE socket option for TLS session caching.
+  * SO_BINDTODEVICE socket option.
+  * SO_SNDTIMEO socket option.
+  * SO_SILENCE_ALL to disable/enable all the replies to unexpected traffics.
+  * SO_IP_ECHO_REPLY to disable/enable replies to IPv4 ICMPs.
+  * SO_IPV6_ECHO_REPLY to disable/enable replies to IPv6 ICMPs.
+  * MSG_TRUNC socket flag.
+  * MSG_WAITALL socket flag required to support the corresponding NRF counterpart flag, for translation within the offloading interface.
+
+* Added support for enabling TLS caching when using the :ref:`zephyr:mqtt_socket_interface` library.
+  See :c:macro:`TLS_SESSION_CACHE`.
+* Modified the SoC devicetree :file:`.dtsi` files to prefer the CryptoCell CC310 hardware as the system entropy source on SoCs where support is available (nRF52840, nRF5340, nRF9160).
+* Added Zigbee L2 layer.
+* Added readout of IEEE 802.15.4 EUI-64 address in the non-secure build from the FICR registers in the secure zone (nRF IEEE 802.15.4 Radio Driver).
+* Added TF-M adjustments to support TF-M in |NCS|.
+* Disabled the automatic printing of OpenThread settings when building OpenThread.
+
 Documentation
 =============
 
 In addition to documentation related to the changes listed above, the following documentation has been updated:
 
-Samples
+* :ref:`ncs_introduction` - Added information about the repositories, tools and configuration, and west.
+* :ref:`gs_installing` - Updated with information about installing GN tools.
+* :ref:`gs_programming` -  Added more information about west flash.
+* Restructured the User guides section and moved the content to :ref:`dev-model`, :ref:`ug_app_dev`, :ref:`protocols`, and the root level.
+* Added the following user guides:
+
+  * :ref:`app_memory`
+  * :ref:`app_power_opt`
+  * :ref:`ug_tfm`
+  * :ref:`ug_radio_fem`
+  * :ref:`ug_edge_impulse`
+  * :ref:`ug_chip`
+* :ref:`ug_nrf9160` - Added information about TF-M, board revisions, and full modem firmware update.
+* :ref:`ug_nrf5340` - Added and updated information about:
+
+  * TF-M, multiprotocol support, and available samples for Thread and Zigbee.
+  * Building and programming using |SES|, multi-image build using west, and disabling readback protection.
+
+* :ref:`ug_nrf52` - Added sections on Project CHIP, Thread, and Zigbee support.
+* :ref:`ug_bt_mesh` - Added :ref:`ug_bt_mesh_model_config_app`, :ref:`bt_mesh_ug_reserved_ids`, and :ref:`ug_bt_mesh_vendor_model` (plus subpages).
+* :ref:`ug_thread`:
+
+  * Added information about nRF5340 to :ref:`thread_ot_memory` and :ref:`ug_thread_architectures`.
+  * :ref:`ug_thread_configuring` - Updated information about IEEE 802.15.4 EUI-64 configuration.
+  * :ref:`ug_thread_tools` - Added information on installing :ref:`ug_thread_tools_wpantund`.
+* :ref:`ug_zigbee`:
+
+  * Updated :ref:`zigbee_ug_supported_features`, :ref:`ug_zigbee_platform_design_ncp`, and :ref:`ug_zigbee_tools`.
+  * :ref:`ug_zigbee_configuring` - Updated mandatory and optional configuration options, logger options, section on power saving during sleep and added IEEE 802.15.4 EUI-64 configuration.
+* Documentation updates for Homekit.
+
+
+Applications and samples
+------------------------
+
+* nRF9160:
+
+  * :ref:`serial_lte_modem` - Added documentation for new commands.
+    Fixed the syntax and examples of some existing commands.
+  * Added a note about :option:`CONFIG_MQTT_KEEPALIVE` option to the :ref:`aws_iot`, :ref:`azure_iot_hub`, and :ref:`cloud_client` samples.
+* Bluetooth:
+
+  * Added a note about child-image overlay to the :ref:`bluetooth_central_hr_coded` and :ref:`peripheral_hr_coded` samples.
+  * :ref:`shell_bt_nus` - Updated the testing section.
+  * :ref:`ble_throughput` - Updated to reflect the new implementation and usage.
+* Bluetooth mesh:
+
+  * Moved the contents in Configuring models to :ref:`ug_bt_mesh_model_config_app`.
+  * Renamed the following samples:
+
+    * Bluetooth: Mesh light control sample to :ref:`bluetooth_mesh_light_lc`.
+    * Bluetooth: Mesh sensor client to :ref:`bluetooth_mesh_sensor_client`.
+    * Bluetooth: Mesh sensor server to :ref:`bluetooth_mesh_sensor_server`.
+* Thread:
+
+  * Added information on FEM support.
+  * :ref:`ot_cli_sample` - Added information about minimal configuration and updated the information on activating sample extensions, testing, and dependencies.
+* Zigbee:
+
+  * Added information on FEM support and updated the dependencies sections.
+  * :ref:`zigbee_light_switch_sample` - Added a section on :ref:`zigbee_light_switch_activating_variants`.
+* Updated the configuration sections of the following samples:
+
+  * :ref:`download_sample`
+  * :ref:`mqtt_simple_sample`
+  * :ref:`peripheral_alexa_gadgets`
+* :ref:`bootloader` - Added information on bootloader overlays and building the sample from |SES| and command line.
+* Added information about FEM support to the :ref:`radio_test` and :ref:`direct_test_mode` samples.
+
+Libraries and drivers
+---------------------
+
+* :ref:`liblwm2m_carrier_readme` - Removed the version dependency table from :ref:`lwm2m_certification`.
+* :ref:`lib_dfu_target` - Added information about full modem upgrade and updated the configuration.
+* :ref:`lib_aws_iot` - Added information on initializing the library and connecting to AWS IoT broker.
+* :ref:`event_manager` - Updated the documentation to describe events with dynamic data size.
+* :ref:`lib_entropy_cc310` - Updated information about driver behavior in secure and non-secure applications.
+
+nrfxlib
 -------
 
-* :ref:`zigbee_samples` - updated the structure to match the template
+* :ref:`nrf_cc310_mbedcrypto_readme` - Added API.
+* :ref:`nrf_modem`:
 
-User guides
------------
+  * :ref:`architecture` - Added information on shared memory configuration.
+  * :ref:`tls_dtls_configuration` - Added information on supported cipher suites.
+  * :ref:`nrf_modem_ug_porting` - Added information about the modem functions.
+* :ref:`mpsl` - Added :ref:`mpsl_fem`.
+* :ref:`nrf_802154_sl` - Added.
+* :ref:`nrf_security` - Updated to reflect the features supported by different backends.
+* :ref:`softdevice_controller` - Updated the Bluetooth LE feature support.
+* :ref:`zboss` - Added the types of ZBOSS libraries that are available.
 
-* :ref:`ug_nrf52` - updated with information about support for CHIP
 
 Known issues
 ************
 
-Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v1.4.2`_ for the list of issues valid for this release.
+See `known issues for nRF Connect SDK v1.5.0`_ for the list of issues valid for this release.

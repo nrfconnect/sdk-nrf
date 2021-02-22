@@ -1,7 +1,7 @@
 .. _lib_fota_download:
 
-FOTA download library
-#####################
+FOTA download
+#############
 
 .. contents::
    :local:
