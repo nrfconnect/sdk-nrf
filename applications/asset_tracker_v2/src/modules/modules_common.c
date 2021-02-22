@@ -19,6 +19,11 @@ struct event_prototype {
 
 static atomic_t active_module_count;
 
+void module_purge_queue(struct module_data *module)
+{
+	k_msgq_purge(module->msg_q);
+}
+
 int module_get_next_msg(struct module_data *module, void *msg)
 {
 	int err = k_msgq_get(module->msg_q, msg, K_FOREVER);
@@ -48,7 +53,15 @@ int module_enqueue_msg(struct module_data *module, void *msg)
 	if (err) {
 		LOG_WRN("%s: Message could not be enqueued, error code: %d",
 			module->name, err);
-
+			/* Purge message queue before reporting an error. This
+			 * makes sure that the calling module can
+			 * enqueue and process new events and is not being
+			 * blocked by a full message queue.
+			 *
+			 * This error is concidered irrecoverable and should be
+			 * rebooted on.
+			 */
+			module_purge_queue(module);
 		return err;
 	}
 
