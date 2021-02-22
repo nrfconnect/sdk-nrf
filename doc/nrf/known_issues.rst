@@ -104,6 +104,28 @@ IRIS-2676: Missing support for FOTA on nRF Connect for Cloud
 Other issues
 ============
 
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+NCSDK-7856: Faulty indirection on ``nrf_cc3xx`` memory slab when freeing the platform mutex
+  The :cpp:func:`mutex_free_platform` function has a bug where a call to :cpp:func:`k_mem_slab_free` provides wrong indirection on a parameter to free the platform mutex.
+
+  **Workaround:** Write the call to free the mutex in the following way: ``k_mem_slab_free(&mutex_slab, &mutex->mutex)``.
+  The change adds ``&`` before the parameter ``mutex->mutex``.
+
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+NCSDK-7914: The ``nrf_cc3xx`` RSA implementation does not deduce missing parameters
+  The calls to :cpp:func:`mbedtls_rsa_complete` will not deduce all types of missing RSA parameters when using ``nrf_cc3xx`` v0.9.6 or earlier.
+
+  **Workaround:** Calculate the missing parameters outside of this function or update to ``nrf_cc3xx`` v0.9.7 or later.
+
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+NCSDK-8075: Invalid initialization of ``mbedtls_entropy_context`` mutex type
+  The calls to :cpp:func:`mbedtls_entropy_init` do not zero-initialize the member variable ``mutex`` when ``nrf_cc3xx`` is enabled.
+
+  **Workaround:** Zero-initialize the structure type before using it or make it a static variable to ensure that it is zero-initialized.
+
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NRF91-989: Unable to bootstrap after changing SIMs
