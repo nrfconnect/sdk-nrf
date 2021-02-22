@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <event_manager.h>
+#include <modem/nrf_modem_lib.h>
 
 #if defined(CONFIG_WATCHDOG_APPLICATION)
 #include "watchdog.h"
@@ -157,6 +158,43 @@ static void sub_state_set(enum sub_state_type new_state)
 		sub_state2str(new_state));
 
 	sub_state = new_state;
+}
+
+/* Check the return code from nRF modem library initializaton to ensure that
+ * the modem is rebooted if a modem firmware update is ready to be applied or
+ * an error condition occurred during firmware update or library initialization.
+ */
+static void handle_nrf_modem_lib_init_ret(void)
+{
+	int ret = nrf_modem_lib_get_init_ret();
+
+	/* Handle return values relating to modem firmware update */
+	switch (ret) {
+	case 0:
+		/* Initialization successful, no action required. */
+		return;
+	case MODEM_DFU_RESULT_OK:
+		LOG_INF("MODEM UPDATE OK. Will run new firmware after reboot");
+		break;
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+		LOG_ERR("MODEM UPDATE ERROR %d. Will run old firmware", ret);
+		break;
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", ret);
+		break;
+	default:
+		/* All non-zero return codes other than DFU result codes are
+		 * considered irrecoverable and a reboot is needed.
+		 */
+		LOG_ERR("nRF modem lib initialization failed, error: %d", ret);
+		break;
+	}
+
+	LOG_WRN("Rebooting...");
+	LOG_PANIC();
+	sys_reboot(SYS_REBOOT_COLD);
 }
 
 /* Event manager handler. Puts event data into messages and adds them to the
@@ -435,6 +473,7 @@ void main(void)
 	self.thread_id = k_current_get();
 
 	module_start(&self);
+	handle_nrf_modem_lib_init_ret();
 
 	if (event_manager_init()) {
 		/* Without the event manager, the application will not work
