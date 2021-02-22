@@ -26,7 +26,7 @@ if(NOT NO_BOILERPLATE)
   if(NOT ${NCS_TOOLCHAIN_MINIMUM_REQUIRED} STREQUAL NONE)
     find_package(NcsToolchain ${NCS_TOOLCHAIN_MINIMUM_REQUIRED} ${EXACT} QUIET)
     if(${NcsToolchain_FOUND})
-      message("-- Using NCS Toolchain ${NCS_TOOLCHAIN_MINIMUM_REQUIRED} for building. (${NcsToolchain_DIR})")
+      message("-- Using NCS Toolchain ${NcsToolchain_VERSION} for building. (${NcsToolchain_DIR})")
       set(GIT_EXECUTABLE           ${NCS_TOOLCHAIN_GIT}     CACHE FILEPATH "NCS Toolchain Git")
 
       set(DTC                      ${NCS_TOOLCHAIN_DTC}     CACHE FILEPATH "NCS Toolchain DTC")
