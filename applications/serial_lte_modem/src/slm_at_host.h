@@ -18,6 +18,9 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_cmd.h>
 
+/**@brief Data mode sending handler type. */
+typedef int (*slm_data_mode_handler_t) (const uint8_t *data, int len);
+
 /**@brief AT command handler type. */
 typedef int (*slm_at_handler_t) (enum at_cmd_type);
 
@@ -34,7 +37,8 @@ enum slm_data_type_t {
 	DATATYPE_PLAINTEXT,
 	DATATYPE_JSON,
 	DATATYPE_HTML,
-	DATATYPE_OMATLV
+	DATATYPE_OMATLV,
+	DATATYPE_ARBITRARY = 9 /* reserved for data mode */
 };
 
 /**

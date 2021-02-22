@@ -92,6 +92,7 @@ static bool datamode_active;
 static bool datamode_off_pending;
 static uint16_t datamode_size_limit;
 static uint16_t datamode_time_limit;
+static slm_data_mode_handler_t datamode_handler;
 static int64_t rx_start;
 static struct k_work raw_send_work;
 static struct k_work cmd_send_work;
@@ -143,10 +144,18 @@ void rsp_send(const uint8_t *str, size_t len)
 	}
 }
 
-void enter_datamode(void)
+int enter_datamode(slm_data_mode_handler_t handler)
 {
+	if (handler == NULL || datamode_handler != NULL) {
+		LOG_INF("Invalid, not enter datamode");
+		return -EINVAL;
+	}
+
+	datamode_handler = handler;
 	datamode_active = true;
 	LOG_INF("Enter datamode");
+
+	return 0;
 }
 
 bool exit_datamode(void)
@@ -167,6 +176,7 @@ bool exit_datamode(void)
 		rx_start = k_uptime_get();
 
 		datamode_active = false;
+		datamode_handler = NULL;
 		LOG_INF("Exit datamode");
 		return true;
 	}
@@ -520,17 +530,12 @@ static void raw_send(struct k_work *work)
 
 	LOG_HEXDUMP_DBG(at_buf, at_buf_len, "RX");
 
-	if (slm_tcp_get_datamode()) {
-		(void)slm_tcp_send_datamode(at_buf, at_buf_len);
-		goto sent;
+	if (datamode_handler) {
+		(void)datamode_handler(at_buf, at_buf_len);
+	} else {
+		LOG_WRN("data dropped in data mode");
 	}
 
-	if (slm_udp_get_datamode()) {
-		(void)slm_udp_send_datamode(at_buf, at_buf_len);
-		goto sent;
-	}
-
-sent:
 	err = uart_rx_enable(uart_dev, uart_rx_buf[0],
 			     sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
 	if (err) {
@@ -566,12 +571,11 @@ static void silence_timer_handler(struct k_timer *timer)
 
 	/* quit datamode */
 	(void)exit_datamode();
-	if (slm_tcp_get_datamode()) {
-		slm_tcp_set_datamode_off();
-	}
-	if (slm_udp_get_datamode()) {
-		slm_udp_set_datamode_off();
-	}
+	slm_tcp_set_datamode_off();
+	slm_udp_set_datamode_off();
+#if defined(CONFIG_SLM_FTPC)
+	slm_ftp_set_datamode_off();
+#endif
 	datamode_off_pending = false;
 	/* send URC */
 	rsp_send(OK_STR, sizeof(OK_STR) - 1);
@@ -1073,6 +1077,7 @@ int slm_at_host_init(void)
 	datamode_active = false;
 	datamode_time_limit = 0;
 	datamode_size_limit = 0;
+	datamode_handler = NULL;
 
 	err = slm_at_tcp_proxy_init();
 	if (err) {

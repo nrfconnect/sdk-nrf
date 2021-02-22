@@ -68,7 +68,7 @@ static bool udp_datamode;
 
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
-void enter_datamode(void);
+int enter_datamode(slm_data_mode_handler_t handler);
 bool check_uart_flowcontrol(void);
 bool exit_datamode(void);
 
@@ -448,13 +448,14 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 			}
 #if defined(CONFIG_SLM_DATAMODE_HWFC)
 			if (op == AT_SERVER_START_WITH_DATAMODE && !check_uart_flowcontrol()) {
+				LOG_ERR("Data mode requires HWFC.");
 				return -EINVAL;
 			}
 #endif
 			err = do_udp_server_start((uint16_t)port);
 			if (err == 0 && op == AT_SERVER_START_WITH_DATAMODE) {
 				udp_datamode = true;
-				enter_datamode();
+				enter_datamode(do_udp_send_datamode);
 			}
 		} else if (op == AT_SERVER_STOP) {
 			if (udp_sock < 0) {
@@ -523,13 +524,14 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 			}
 #if defined(CONFIG_SLM_DATAMODE_HWFC)
 			if (op == AT_CLIENT_CONNECT_WITH_DATAMODE && !check_uart_flowcontrol()) {
+				LOG_ERR("Data mode requires HWFC.");
 				return -EINVAL;
 			}
 #endif
 			err = do_udp_client_connect(url, (uint16_t)port, sec_tag);
 			if (err == 0 && op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				udp_datamode = true;
-				enter_datamode();
+				enter_datamode(do_udp_send_datamode);
 			}
 		} else if (op == AT_CLIENT_DISCONNECT) {
 			if (udp_sock < 0) {
@@ -671,28 +673,17 @@ int slm_at_udp_proxy_uninit(void)
 	return 0;
 }
 
-/**@brief API to get datamode from external
- */
-bool slm_udp_get_datamode(void)
-{
-	return udp_datamode;
-}
 
 /**@brief API to set datamode from external
  */
 void slm_udp_set_datamode_off(void)
 {
+	/* do nothing if data mode not configured */
+	if (!udp_datamode) {
+		return;
+	}
+
 	if (udp_sock != INVALID_SOCKET) {
 		udp_datamode = false;
 	}
-}
-
-/**@brief API to send UDP data in datamode
- */
-int slm_udp_send_datamode(const uint8_t *data, int len)
-{
-	int size = do_udp_send_datamode(data, len);
-
-	LOG_DBG("datamode %d sent", size);
-	return size;
 }
