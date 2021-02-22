@@ -133,8 +133,12 @@ Syntax
 The ``<shutdown_mode>`` parameter accepts only the following integer values:
 
 * ``0`` - Enter Idle.
+  In this mode, the SLM service is terminated, but the LTE connection is maintained.
   You can also use the syntax ``AT#XSLEEP``.
 * ``1`` - Enter Sleep.
+  In this mode, both the SLM service and the LTE connection are terminated.
+* ``2`` - Power off UART.
+  In this mode, both the SLM service and the LTE connection are maintained.
 
 The default value is 0.
 
@@ -143,8 +147,9 @@ Response syntax
 
 There is no response:
 
-* In case of Idle, it will exit by sending data over UART.
-* In case of Sleep, it will wake up by GPIO or reset.
+* In case of Idle, it will exit by GPIO.
+* In case of Sleep, it will wake up by GPIO.
+* In case of UART power off, it will be powered on by GPIO or by SLM when needed.
 
 Examples
 ~~~~~~~~
@@ -160,6 +165,10 @@ Examples
 ::
 
    AT#XSLEEP=1
+
+::
+
+   AT#XSLEEP=2
 
 ::
 
@@ -195,7 +204,7 @@ Example
 
 ::
 
-   #XSLEEP: (0,1)
+   #XSLEEP: (0,1,2)
    OK
 
 SLM UART #XSLMUART

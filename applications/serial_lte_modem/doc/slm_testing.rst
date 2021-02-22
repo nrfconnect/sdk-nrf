@@ -26,7 +26,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       :class: highlight
 
       **AT#XSLMVER**
-      #XSLMVER: 1.4
+      #XSLMVER: "1.5"
       OK
 
 #. Read the current baud rate.
@@ -61,15 +61,18 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       :class: highlight
 
       **AT#XSLEEP=?**
-      #XSLEEP: (0,1)
+      #XSLEEP: (0,1,2)
       OK
 
-      **AT#XSLEEP=1**
+   ``AT#XSLEEP`` puts the kit in idle mode, and you can wake up by GPIO.
 
-   Reset the kit to exit sleep mode.
-   If you are testing with an external MCU and :option:`CONFIG_SLM_GPIO_WAKEUP` is enabled, you can wake up by GPIO as well.
+   Alternatively, you can use different modes for #XSLEEP:
 
+   * ``AT#XSLEEP=1`` puts the kit in sleep mode.
+     If you are testing with :option:`CONFIG_SLM_GPIO_WAKEUP` enabled, you can wake up by GPIO.
 
+   * ``AT#XSLEEP=2`` powers off UART.
+     You can power on UART by GPIO.
 
 TCP/IP AT commands
 ******************

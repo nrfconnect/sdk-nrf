@@ -11,7 +11,6 @@
 #include <drivers/gpio.h>
 #include <string.h>
 #include <nrf_modem.h>
-#include <modem/lte_lc.h>
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_power.h>
 #include <hal/nrf_regulators.h>
@@ -32,12 +31,16 @@ static K_THREAD_STACK_DEFINE(slm_wq_stack_area, SLM_WQ_STACK_SIZE);
 static const struct device *gpio_dev;
 static struct gpio_callback gpio_cb;
 static struct k_work exit_idle_work;
+static bool full_idle_mode;
 
 /* global variable used across different files */
 struct at_param_list at_param_list;
 struct k_work_q slm_work_q;
 char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2]; /* SLM URC and socket data */
 uint8_t rx_data[CONFIG_SLM_SOCKET_RX_MAX];  /* socket RX raw data */
+
+/* global functions defined in different files */
+int wakeup_uart(void);
 
 /**@brief Recoverable modem library error. */
 void nrf_modem_recoverable_error_handler(uint32_t err)
@@ -49,16 +52,25 @@ static void exit_idle(struct k_work *work)
 {
 	int err;
 
-	LOG_INF("Exit Idle");
+	LOG_INF("Exit idle, full mode: %d", full_idle_mode);
 	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN,
 				     GPIO_INT_DISABLE);
 	gpio_remove_callback(gpio_dev, &gpio_cb);
 	/* Do the same as nrf_gpio_cfg_default() */
 	gpio_pin_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN, GPIO_INPUT);
-	/* Restart SLM services */
-	err = slm_at_host_init();
-	if (err) {
-		LOG_ERR("Failed to init at_host: %d", err);
+
+	if (full_idle_mode) {
+		/* Restart SLM services */
+		err = slm_at_host_init();
+		if (err) {
+			LOG_ERR("Failed to init at_host: %d", err);
+		}
+	} else {
+		/* Wake up UART only */
+		err = wakeup_uart();
+		if (err) {
+			LOG_ERR("Failed to wake up uart: %d", err);
+		}
 	}
 }
 
@@ -68,7 +80,7 @@ static void gpio_callback(const struct device *dev,
 	k_work_submit_to_queue(&slm_work_q, &exit_idle_work);
 }
 
-void enter_idle(void)
+void enter_idle(bool full_idle)
 {
 	int err;
 
@@ -94,40 +106,23 @@ void enter_idle(void)
 					   GPIO_INT_LEVEL_LOW);
 	if (err) {
 		LOG_ERR("GPIO_0 enable callback error: %d", err);
+		return;
 	}
+
+	full_idle_mode = full_idle;
 }
 
-void enter_sleep(bool wake_up)
+void enter_sleep(void)
 {
-#if defined(CONFIG_SLM_GPIO_WAKEUP)
 	/*
-	 * Due to errata 4, Always configure PIN_CNF[n].INPUT before
-	 *  PIN_CNF[n].SENSE.
+	 * Due to errata 4, Always configure PIN_CNF[n].INPUT before PIN_CNF[n].SENSE.
 	 */
-	if (wake_up) {
-		nrf_gpio_cfg_input(CONFIG_SLM_INTERFACE_PIN,
-			NRF_GPIO_PIN_PULLUP);
-		nrf_gpio_cfg_sense_set(CONFIG_SLM_INTERFACE_PIN,
-			NRF_GPIO_PIN_SENSE_LOW);
-	}
-#endif	/* CONFIG_SLM_GPIO_WAKEUP */
+	nrf_gpio_cfg_input(CONFIG_SLM_INTERFACE_PIN,
+		NRF_GPIO_PIN_PULLUP);
+	nrf_gpio_cfg_sense_set(CONFIG_SLM_INTERFACE_PIN,
+		NRF_GPIO_PIN_SENSE_LOW);
 
-	/*
-	 * The LTE modem also needs to be stopped by issuing a command
-	 * through the modem API, before entering System OFF mode.
-	 * Once the command is issued, one should wait for the modem
-	 * to respond that it actually has stopped as there may be a
-	 * delay until modem is disconnected from the network.
-	 * Refer to https://infocenter.nordicsemi.com/topic/ps_nrf9160/
-	 * pmu.html?cp=2_0_0_4_0_0_1#system_off_mode
-	 */
-	lte_lc_power_off();
-	k_sleep(K_SECONDS(1));
-#if defined(CONFIG_SLM_GPIO_WAKEUP)
-	if (wake_up) {
-		nrf_regulators_system_off(NRF_REGULATORS_NS);
-	}
-#endif	/* CONFIG_SLM_GPIO_WAKEUP */
+	nrf_regulators_system_off(NRF_REGULATORS_NS);
 }
 
 void handle_nrf_modem_lib_init_ret(void)
@@ -202,7 +197,7 @@ void start_execute(void)
 	boot_write_img_confirmed();
 }
 
-#if defined(CONFIG_SLM_GPIO_WAKEUP)
+#if defined(CONFIG_SLM_START_SLEEP)
 void main(void)
 {
 	uint32_t rr = nrf_power_resetreas_get(NRF_POWER_NS);
@@ -213,7 +208,7 @@ void main(void)
 		start_execute();
 	} else {
 		LOG_INF("Sleep");
-		enter_sleep(true);
+		enter_sleep();
 	}
 }
 #else

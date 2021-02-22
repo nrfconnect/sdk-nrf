@@ -80,8 +80,18 @@ config SLM_AT_HOST_TERMINATION
 #
 config SLM_GPIO_WAKEUP
 	bool "Support of GPIO wakeup"
+	default y
 	help
 	  Enable GPIO wakeup on nRF9160 side.
+
+if SLM_GPIO_WAKEUP
+
+config SLM_START_SLEEP
+	bool "Enter sleep on startup"
+	help
+	  Put nRF9160 into deep sleep mode after startup.
+
+endif
 
 config SLM_INTERFACE_PIN
 	int "Interface GPIO to wake up or exit idle mode"
