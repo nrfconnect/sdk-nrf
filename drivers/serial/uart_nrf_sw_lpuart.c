@@ -44,11 +44,17 @@ enum rx_state {
 	/* RX is in low power, idle state with pin detection armed. */
 	RX_IDLE,
 
+	/* RX request is pending, recevier is in preparation. */
+	RX_PREPARE,
+
 	/* RX is in active state, receiver is running. */
 	RX_ACTIVE,
 
 	/* RX is transitioning to from active idle state. */
 	RX_TO_IDLE,
+
+	/* RX is waiting for a new buffer. */
+	RX_BLOCKED,
 
 	/* RX is transitioning to off state. */
 	RX_TO_OFF,
@@ -247,6 +253,8 @@ static void rx_hfclk_request(struct lpuart_data *data)
 
 static void start_rx_activation(struct lpuart_data *data)
 {
+	data->rx_state = RX_PREPARE;
+
 	if (IS_ENABLED(CONFIG_NRF_SW_LPUART_HFXO_ON_RX)) {
 		rx_hfclk_request(data);
 	} else {
@@ -480,6 +488,7 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 			 (data->rx_state != RX_OFF));
 
 		if (data->rx_state == RX_TO_IDLE) {
+			data->rx_state = RX_BLOCKED;
 			/* Need to request new buffer since uart was disabled */
 			evt->type = UART_RX_BUF_REQUEST;
 		} else {
@@ -626,7 +635,7 @@ static int api_rx_buf_rsp(const struct device *dev, uint8_t *buf, size_t len)
 	__ASSERT_NO_MSG((data->rx_state != RX_OFF) &&
 		 (data->rx_state != RX_TO_OFF));
 
-	if (data->rx_state == RX_TO_IDLE) {
+	if (data->rx_state == RX_TO_IDLE || data->rx_state == RX_BLOCKED) {
 		data->rx_buf = buf;
 		data->rx_len = len;
 
@@ -810,7 +819,7 @@ static void api_irq_rx_enable(const struct device *dev)
 	 * we must feed the buffer back to the uart to allow reception of the
 	 * next packet.
 	 */
-	if (!int_driven_rd_available(data) && data->rx_state == RX_TO_IDLE) {
+	if (!int_driven_rd_available(data) && data->rx_state == RX_BLOCKED) {
 		/* Whole packet read, RX can be re-enabled. */
 		int_driven_rx_feed(dev, data);
 	}
