@@ -1044,12 +1044,24 @@ NCSDK-6832: SMP Server sample fails upon initialization
 SEGGER Embedded Studio Nordic Edition
 *************************************
 
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6852: Extra CMake options might not be applied in version 5.10d
   If you specify :guilabel:`Extra CMake Build Options` in the :guilabel:`Open nRF Connect SDK Project` dialog and at the same time select an :guilabel:`nRF Connect Toolchain Version` of the form ``X.Y.Z``, the additional CMake options are discarded.
 
   **Workaround:** Select ``NONE (Use SES settings / environment PATH)`` from the  :guilabel:`nRF Connect Toolchain Version` drop-down if you want to specify :guilabel:`Extra CMake Build Options`.
+
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
+
+NCSDK-8372: Project name collision causes SES Nordic Edition to load the wrong project
+  Some samples that are located in different folders use the same project name.
+  For example, there is a ``light_switch`` project both in the :file:`samples/bluetooth/mesh/` folder and in the :file:`samples/zigbee/` folder.
+  When you select one of these samples from the project list in the :guilabel:`Open nRF Connect SDK Project` dialog, the wrong sample might be selected.
+  Check the :guilabel:`Build Directory` field in the dialog to see if this is the case.
+  The field indicates the path to the project that SES Nordic Edition will load.
+
+  **Workaround:** If the path in :guilabel:`Build Directory` points to the wrong project, select the correct project by using the :guilabel:`...` button for :guilabel:`Projects` and navigating to the correct project location.
+  The build directory will update automatically.
 
 ----
 
