@@ -34,6 +34,9 @@ For remote testing scenarios, you also need the following:
 
   * :ref:`Project CHIP light switch <chip_light_switch_sample>` programmed to another supported development kit.
 
+.. note::
+    |chip_gn_required_note|
+
 Overview
 ********
 

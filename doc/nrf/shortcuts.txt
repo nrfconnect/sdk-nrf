@@ -72,3 +72,5 @@
 .. |trusted_execution| replace:: nRF5340 and nRF9160
 
 .. |chip_sample_button3_note| replace:: Use **Button 3** to enable this mode after building and running the sample.
+.. |chip_gn_required_note| replace:: Project CHIP requires the GN tool.
+   If you are updating from the |NCS| version earlier than v1.5.0, see :ref:`gs_installing_tools` for installation instructions.

@@ -80,3 +80,6 @@ Samples
 *******
 
 See :ref:`chip_samples` for the list of available samples.
+
+.. note::
+    |chip_gn_required_note|

@@ -22,6 +22,9 @@ The sample supports the following development kits:
 
 For this sample to work, you also need the :ref:`Project CHIP light bulb <chip_light_bulb_sample>` sample programmed to another supported development kit.
 
+.. note::
+    |chip_gn_required_note|
+
 Overview
 ********
 

@@ -26,6 +26,9 @@ For remote testing scenarios, you also need the following:
 
   * A smartphone compatible with Android for using the `Android CHIPTool`_ application as the Project CHIP controller.
 
+.. note::
+    |chip_gn_required_note|
+
 Overview
 ********
 
