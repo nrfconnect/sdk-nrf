@@ -222,6 +222,7 @@ KRKNWK-6848: Reduced throughput
 KRKNWK-7885: Throughput is lower when using CC310 nrf_security backend
   A decrease of throughput of around 5-10% has been observed for the :ref:`CC310 nrf_security backend <nrfxlib:nrf_security_backends_cc3xx>` when compared with :ref:`nrf_oberon <nrf_security_backends_oberon>` or :ref:`the standard mbedtls backend <nrf_security_backends_orig_mbedtls>`.
   CC310 nrf_security backend is used by default for nRF52840 boards.
+  The source of throughput decrease is coupled to the cost of RTOS mutex locking when using the :ref:`CC310 nrf_security backend <nrfxlib:nrf_security_backends_cc3xx>` when the APIs are called with shorter inputs.
 
   **Workaround:** Use AES-CCM ciphers from the nrf_oberon backend by setting the following options:
 
