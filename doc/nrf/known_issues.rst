@@ -321,6 +321,13 @@ KRKNWK-9119: Zigbee shell does not work with ZBOSS development libraries
 
     **Workaround:** Use only the production version of :ref:`nrfxlib:zboss` when using :ref:`lib_zigbee_shell`.
 
+.. rst-class:: v1-5-0
+
+KRKNWK-9145: Corrupted payload in commands of the Scenes cluster
+  When receiving Scenes cluster commands, the payload is corrupted when using the :ref:`nrfxlib:zboss` production libraries.
+
+  **Workaround:** Use the development version of :ref:`nrfxlib:zboss`.
+
 nRF Desktop
 ===========
 
