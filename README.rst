@@ -26,6 +26,6 @@ Official documentation at:
 * All versions: http://developer.nordicsemi.com/nRF_Connect_SDK/doc/
 
 Supported Devices
-**********
+*****************
 
 The nRF Connect SDK enables you to develop applications for nRF52, nRF53, and nRF91 Series devices.
