@@ -15,6 +15,17 @@ LOG_MODULE_REGISTER(bt_nus, CONFIG_BT_NUS_LOG_LEVEL);
 
 static struct bt_nus_cb nus_cb;
 
+static void nus_ccc_cfg_changed(const struct bt_gatt_attr *attr,
+				  uint16_t value)
+{
+	if (nus_cb.send_enabled) {
+		LOG_DBG("Notification has been turned %s",
+			value == BT_GATT_CCC_NOTIFY ? "on" : "off");
+		nus_cb.send_enabled(value == BT_GATT_CCC_NOTIFY ?
+			BT_NUS_SEND_STATUS_ENABLED : BT_NUS_SEND_STATUS_DISABLED);
+	}
+}
+
 static ssize_t on_receive(struct bt_conn *conn,
 			  const struct bt_gatt_attr *attr,
 			  const void *buf,
@@ -49,7 +60,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_NUS_SERVICE),
 			       BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ,
 			       NULL, NULL, NULL),
-	BT_GATT_CCC(NULL, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+	BT_GATT_CCC(nus_ccc_cfg_changed, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 	BT_GATT_CHARACTERISTIC(BT_UUID_NUS_RX,
 			       BT_GATT_CHRC_WRITE |
 			       BT_GATT_CHRC_WRITE_WITHOUT_RESP,
@@ -62,6 +73,7 @@ int bt_nus_init(struct bt_nus_cb *callbacks)
 	if (callbacks) {
 		nus_cb.received = callbacks->received;
 		nus_cb.sent = callbacks->sent;
+		nus_cb.send_enabled = callbacks->send_enabled;
 	}
 
 	return 0;
