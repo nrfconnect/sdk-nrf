@@ -39,6 +39,14 @@ extern "C" {
 #define BT_UUID_NUS_RX        BT_UUID_DECLARE_128(BT_UUID_NUS_RX_VAL)
 #define BT_UUID_NUS_TX        BT_UUID_DECLARE_128(BT_UUID_NUS_TX_VAL)
 
+/** @brief NUS send status. */
+enum bt_nus_send_status {
+	/** Send notification enabled. */
+	BT_NUS_SEND_STATUS_ENABLED,
+	/** Send notification disabled. */
+	BT_NUS_SEND_STATUS_DISABLED,
+};
+
 /** @brief Pointers to the callback functions for service events. */
 struct bt_nus_cb {
 	/** @brief Data received callback.
@@ -62,6 +70,15 @@ struct bt_nus_cb {
 	 *                 connected peers.
 	 */
 	void (*sent)(struct bt_conn *conn);
+
+	/** @brief Send state callback.
+	 *
+	 * Indicate the CCCD descriptor status of the NUS TX characteristic.
+	 *
+	 * @param[in] status Send notification status.
+	 */
+	void (*send_enabled)(enum bt_nus_send_status status);
+
 };
 
 /**@brief Initialize the service.
