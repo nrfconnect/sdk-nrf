@@ -214,6 +214,13 @@ Thread
 
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
+KRKNWK-9094: Possible deadlock in shell subsystem
+  Issuing OpenThread commands too fast might cause a deadlock in the shell subsystem.
+
+  **Workaround:** If possible, avoid invoking a new command before execution of the previous one has completed.
+
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
+
 KRKNWK-6848: Reduced throughput
   Performance testing for :ref:`NCP sample <ot_ncp_sample>` shows a decrease of throughput of around 10-20% compared with the standard OpenThread.
 
