@@ -25,6 +25,7 @@
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
 
+.. _`nrfconnect GitHub organization`: https://github.com/nrfconnect
 .. |ncs_repo| replace:: https://github.com/nrfconnect/sdk-nrf
 .. _`sdk-nrf`: https://github.com/nrfconnect/sdk-nrf
 
@@ -416,7 +417,7 @@
 
 .. ### Source: openthread.io
 
-.. _`OpenThread.io`: https://openthread.io
+.. _`OpenThread.io`: https://www.openthread.io
 .. _`Device Types on OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
 .. _`OpenThread logging`: https://openthread.io/guides/build/logs
@@ -484,6 +485,8 @@
 .. ### Source: other
 
 .. _`ARM TrustZone`: https://developer.arm.com/documentation/100690/0200/ARM-TrustZone-technology?lang=en
+
+.. _`Kconfig language`: https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html
 
 .. _`Ninja documentation`: https://ninja-build.org/manual.html
 
