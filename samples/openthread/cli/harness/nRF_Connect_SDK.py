@@ -230,7 +230,7 @@ class OpenThreadTHCI(object):
                 break
 
         if line != 'Done':
-            raise Exception('%s: failed to find end of response: %s' % (self.port, response))
+            raise Exception('%s: failed to find end of response: %s' % (self, response))
 
         return response
 
@@ -241,7 +241,7 @@ class OpenThreadTHCI(object):
             expected    str: the expected string
             times       int: number of tries
         """
-        print('[%s] Expecting [%s]' % (self.port, expected))
+        print('[%s] Expecting [%s]' % (self, expected))
 
         deadline = time.time() + timeout
         while True:
@@ -258,7 +258,7 @@ class OpenThreadTHCI(object):
 
             matched = line.endswith(expected) if endswith else line == expected
             if matched:
-                print('[%s] Expected [%s]' % (self.port, expected))
+                print('[%s] Expected [%s]' % (self, expected))
                 return
 
         raise Exception('failed to find expected string[%s]' % expected)
@@ -271,7 +271,7 @@ class OpenThreadTHCI(object):
     def log(self, fmt, *args):
         try:
             msg = fmt % args
-            logging.info('%s - %s', self.port, msg)
+            logging.info('%s - %s', self, msg)
         except Exception:
             pass
 
@@ -283,7 +283,16 @@ class OpenThreadTHCI(object):
     @API
     def intialize(self, params):
         """initialize the serial port with baudrate, timeout parameters"""
-        self.log('%s intialize: %s', self.__class__.__name__, params)
+        self.log('%s intialize: %r', self.__class__.__name__, params)
+        # params example: {'EUI': 1616240311388864514L, 'SerialBaudRate': None, 'TelnetIP': '192.168.8.181', 'SerialPort': None, 'Param7': None, 'Param6': None, 'Param5': 'ip', 'TelnetPort': '22', 'Param9': None, 'Param8': None}
+
+        self.connectType = (params.get('Param5') or 'usb').lower()
+        self.telnetIp = params.get('TelnetIP')
+        self.telnetPort = int(params.get('TelnetPort')) if params.get('TelnetPort') else 22
+        # username for SSH
+        self.telnetUsername = 'pi' if params.get('Param6') is None else params.get('Param6')
+        # password for SSH
+        self.telnetPassword = 'raspberry' if params.get('Param7') is None else params.get('Param7')
 
         self.mac = params.get('EUI')
         self.port = params.get('SerialPort')
@@ -318,6 +327,12 @@ class OpenThreadTHCI(object):
             self.UIStatusMsg = ('Firmware Not Matching Expecting ' + self.firmwarePrefix + ', Now is ' +
                                 self.UIStatusMsg)
             ModuleHelper.WriteIntoDebugLogger('Err: OpenThread device Firmware not matching..')
+
+    def __repr__(self):
+        if self.connectType == 'ip':
+            return '[%s:%d]' % (self.telnetIp, self.telnetPort)
+        else:
+            return '[%s]' % self.port
 
     @API
     def closeConnection(self):
@@ -675,7 +690,7 @@ class OpenThreadTHCI(object):
             True: successful to set key switch guard time
             False: fail to set key switch guard time
         """
-        print('%s call setKeySwitchGuardTime' % self.port)
+        print('%s call setKeySwitchGuardTime' % self)
         print(iKeySwitchGuardTime)
         try:
             cmd = 'keysequence guardtime %s' % str(iKeySwitchGuardTime)
@@ -689,7 +704,7 @@ class OpenThreadTHCI(object):
 
     def __getCommissionerSessionId(self):
         """ get the commissioner session id allocated from Leader """
-        print('%s call getCommissionerSessionId' % self.port)
+        print('%s call getCommissionerSessionId' % self)
         return self.__executeCommand('commissioner sessionid')[0]
 
     # pylint: disable=no-self-use
@@ -718,7 +733,7 @@ class OpenThreadTHCI(object):
             True: successful to set the Thread Networkname
             False: fail to set the Thread Networkname
         """
-        print('%s call setNetworkName' % self.port)
+        print('%s call setNetworkName' % self)
         print(networkName)
         networkName = self.__escapeEscapable(networkName)
         try:
@@ -743,7 +758,7 @@ class OpenThreadTHCI(object):
             True: successful to set the channel
             False: fail to set the channel
         """
-        print('%s call setChannel' % self.port)
+        print('%s call setChannel' % self)
         print(channel)
         try:
             cmd = 'channel %s' % channel
@@ -756,7 +771,7 @@ class OpenThreadTHCI(object):
     @API
     def getChannel(self):
         """get current channel"""
-        print('%s call getChannel' % self.port)
+        print('%s call getChannel' % self)
         return self.__executeCommand('channel')[0]
 
     @API
@@ -770,7 +785,7 @@ class OpenThreadTHCI(object):
             True: successful to set the extended address
             False: fail to set the extended address
         """
-        print('%s call setMAC' % self.port)
+        print('%s call setMAC' % self)
         print(xEUI)
         address64 = ''
         try:
@@ -800,7 +815,7 @@ class OpenThreadTHCI(object):
         Returns:
             specific type of MAC address
         """
-        print('%s call getMAC' % self.port)
+        print('%s call getMAC' % self)
         print(bType)
         # if power down happens, return extended address assigned previously
         if self.isPowerDown:
@@ -819,27 +834,27 @@ class OpenThreadTHCI(object):
     @API
     def getLL64(self):
         """get link local unicast IPv6 address"""
-        print('%s call getLL64' % self.port)
+        print('%s call getLL64' % self)
         return self.__executeCommand('ipaddr linklocal')[0]
 
     @API
     def getRloc16(self):
         """get rloc16 short address"""
-        print('%s call getRloc16' % self.port)
+        print('%s call getRloc16' % self)
         rloc16 = self.__executeCommand('rloc16')[0]
         return int(rloc16, 16)
 
     @API
     def getRloc(self):
         """get router locator unicast Ipv6 address"""
-        print('%s call getRloc' % self.port)
+        print('%s call getRloc' % self)
         return self.__executeCommand('ipaddr rloc')[0]
 
     def __getGlobal(self):
         """get global unicast IPv6 address set
            if configuring multiple entries
         """
-        print('%s call getGlobal' % self.port)
+        print('%s call getGlobal' % self)
         globalAddrs = []
         rlocAddr = self.getRloc()
 
@@ -881,7 +896,7 @@ class OpenThreadTHCI(object):
             False: fail to set the Thread Network master key
         """
         masterKey = ''
-        print('%s call setNetworkKey' % self.port)
+        print('%s call setNetworkKey' % self)
         print(key)
         try:
             if not isinstance(key, str):
@@ -910,7 +925,7 @@ class OpenThreadTHCI(object):
             True: successful to add a given extended address to the denylist entry
             False: fail to add a given extended address to the denylist entry
         """
-        print('%s call addBlockedMAC' % self.port)
+        print('%s call addBlockedMAC' % self)
         print(xEUI)
         if isinstance(xEUI, str):
             macAddr = xEUI
@@ -951,7 +966,7 @@ class OpenThreadTHCI(object):
             True: successful to add a given extended address to the allowlist entry
             False: fail to add a given extended address to the allowlist entry
         """
-        print('%s call addAllowMAC' % self.port)
+        print('%s call addAllowMAC' % self)
         print(xEUI)
         if isinstance(xEUI, str):
             macAddr = xEUI
@@ -984,7 +999,7 @@ class OpenThreadTHCI(object):
             True: successful to clear the denylist
             False: fail to clear the denylist
         """
-        print('%s call clearBlockList' % self.port)
+        print('%s call clearBlockList' % self)
 
         # remove all entries in denylist
         try:
@@ -1012,7 +1027,7 @@ class OpenThreadTHCI(object):
             True: successful to clear the allowlist
             False: fail to clear the allowlist
         """
-        print('%s call clearAllowList' % self.port)
+        print('%s call clearAllowList' % self)
 
         # remove all entries in allowlist
         try:
@@ -1035,7 +1050,7 @@ class OpenThreadTHCI(object):
     @API
     def getDeviceRole(self):
         """get current device role in Thread Network"""
-        print('%s call getDeviceRole' % self.port)
+        print('%s call getDeviceRole' % self)
         return self.__executeCommand('state')[0]
 
     @API
@@ -1048,7 +1063,7 @@ class OpenThreadTHCI(object):
         Returns:
             True: ready to set Thread Network parameter for joining desired Network
         """
-        print('%s call joinNetwork' % self.port)
+        print('%s call joinNetwork' % self)
         print(eRoleId)
 
         self.deviceRole = eRoleId
@@ -1117,7 +1132,7 @@ class OpenThreadTHCI(object):
         Returns:
             The Thread network Partition Id
         """
-        print('%s call getNetworkFragmentID' % self.port)
+        print('%s call getNetworkFragmentID' % self)
         if not self.__isOpenThreadRunning():
             print('OpenThread is not running')
             return None
@@ -1133,7 +1148,7 @@ class OpenThreadTHCI(object):
         Returns:
             The extended address of parent in hex format
         """
-        print('%s call getParentAddress' % self.port)
+        print('%s call getParentAddress' % self)
         parentInfo = []
         parentInfo = self.__executeCommand('parent')
 
@@ -1154,14 +1169,14 @@ class OpenThreadTHCI(object):
     @API
     def powerDown(self):
         """power down the Thread device"""
-        print('%s call powerDown' % self.port)
+        print('%s call powerDown' % self)
         self.__sendCommand('reset', expectEcho=False)
         self.isPowerDown = True
 
     @API
     def powerUp(self):
         """power up the Thread device"""
-        print('%s call powerUp' % self.port)
+        print('%s call powerUp' % self)
         self.isPowerDown = False
 
         if not self.__isOpenThreadRunning():
@@ -1175,7 +1190,7 @@ class OpenThreadTHCI(object):
             True: successful to reset and rejoin the Thread Network
             False: fail to reset and rejoin the Thread Network
         """
-        print('%s call reboot' % self.port)
+        print('%s call reboot' % self)
         try:
             self.__sendCommand('reset', expectEcho=False)
             self.isPowerDown = True
@@ -1201,7 +1216,7 @@ class OpenThreadTHCI(object):
             destination: the unicast destination address of ICMPv6 echo request
             length: the size of ICMPv6 echo request payload
         """
-        print('%s call ping' % self.port)
+        print('%s call ping' % self)
         print('destination: %s' % destination)
         try:
             cmd = 'ping %s %s' % (destination, str(length))
@@ -1221,7 +1236,7 @@ class OpenThreadTHCI(object):
             destination: the multicast destination address of ICMPv6 echo request
             length: the size of ICMPv6 echo request payload
         """
-        print('%s call multicast_Ping' % self.port)
+        print('%s call multicast_Ping' % self)
         print('destination: %s' % destination)
         try:
             cmd = 'ping %s %s' % (destination, str(length))
@@ -1243,7 +1258,7 @@ class OpenThreadTHCI(object):
             True: successful to set the Thread Network PAN ID
             False: fail to set the Thread Network PAN ID
         """
-        print('%s call setPANID' % self.port)
+        print('%s call setPANID' % self)
         print(xPAN)
         panid = ''
         try:
@@ -1261,7 +1276,7 @@ class OpenThreadTHCI(object):
     @API
     def reset(self):
         """factory reset"""
-        print('%s call reset' % self.port)
+        print('%s call reset' % self)
         self.__sendCommand('factoryreset', expectEcho=False)
         self.sleep(0.5)
 
@@ -1276,7 +1291,7 @@ class OpenThreadTHCI(object):
             True: successful to remove the router from the Thread Network
             False: fail to remove the router from the Thread Network
         """
-        print('%s call removeRouter' % self.port)
+        print('%s call removeRouter' % self)
         print(xRouterId)
         routerId = ''
         routerId = self.__convertRlocToRouterId(xRouterId)
@@ -1295,7 +1310,7 @@ class OpenThreadTHCI(object):
     @API
     def setDefaultValues(self):
         """set default mandatory Thread Network parameter value"""
-        print('%s call setDefaultValues' % self.port)
+        print('%s call setDefaultValues' % self)
 
         # initialize variables
         self.networkName = ModuleHelper.Default_NwkName
@@ -1347,7 +1362,7 @@ class OpenThreadTHCI(object):
     @API
     def getDeviceConncetionStatus(self):
         """check if serial port connection is ready or not"""
-        print('%s call getDeviceConnectionStatus' % self.port)
+        print('%s call getDeviceConnectionStatus' % self)
         return self.deviceConnected
 
     @API
@@ -1361,7 +1376,7 @@ class OpenThreadTHCI(object):
             True: successful to set the data polling rate for sleepy end device
             False: fail to set the data polling rate for sleepy end device
         """
-        print('%s call setPollingRate' % self.port)
+        print('%s call setPollingRate' % self)
 
         iPollingRate = int(iPollingRate * 1000)
         print(iPollingRate)
@@ -1409,7 +1424,7 @@ class OpenThreadTHCI(object):
             True: successful to set the link quality
             False: fail to set the link quality
         """
-        print('%s call setLinkQuality' % self.port)
+        print('%s call setLinkQuality' % self)
         print(EUIadr)
         print(LinkQuality)
         try:
@@ -1447,7 +1462,7 @@ class OpenThreadTHCI(object):
             True: successful to set the link quality
             False: fail to set the link quality
         """
-        print('%s call setOutBoundLinkQuality' % self.port)
+        print('%s call setOutBoundLinkQuality' % self)
         print(LinkQuality)
         try:
             cmd = 'macfilter rss add-lqi * %s' % str(LinkQuality)
@@ -1467,7 +1482,7 @@ class OpenThreadTHCI(object):
             True: successful to remove the prefix entry from border router
             False: fail to remove the prefix entry from border router
         """
-        print('%s call removeRouterPrefix' % self.port)
+        print('%s call removeRouterPrefix' % self)
         print(prefixEntry)
         prefix = self.__convertIp6PrefixStringToIp6Address(str(prefixEntry))
         try:
@@ -1493,7 +1508,7 @@ class OpenThreadTHCI(object):
             True: successful to reset and rejoin Thread Network
             False: fail to reset and rejoin the Thread Network
         """
-        print('%s call resetAndRejoin' % self.port)
+        print('%s call resetAndRejoin' % self)
         print(timeout)
         try:
             self.__sendCommand('reset', expectEcho=False)
@@ -1541,7 +1556,7 @@ class OpenThreadTHCI(object):
             True: successful to configure the border router with a given prefix entry
             False: fail to configure the border router with a given prefix entry
         """
-        print('%s call configBorderRouter' % self.port)
+        print('%s call configBorderRouter' % self)
         prefix = self.__convertIp6PrefixStringToIp6Address(str(P_Prefix))
         print(prefix)
         try:
@@ -1599,7 +1614,7 @@ class OpenThreadTHCI(object):
             True: successful to set NETWORK_ID_TIMEOUT
             False: fail to set NETWORK_ID_TIMEOUT
         """
-        print('%s call setNetworkIDTimeout' % self.port)
+        print('%s call setNetworkIDTimeout' % self)
         print(iNwkIDTimeOut)
         iNwkIDTimeOut /= 1000
         try:
@@ -1621,7 +1636,7 @@ class OpenThreadTHCI(object):
             True: successful to set the data poll period for SED
             False: fail to set the data poll period for SED
         """
-        print('%s call setKeepAliveTimeOut' % self.port)
+        print('%s call setKeepAliveTimeOut' % self)
         iTimeOut *= 1000
         print(int(iTimeOut))
         try:
@@ -1642,7 +1657,7 @@ class OpenThreadTHCI(object):
             True: successful to set the key sequence
             False: fail to set the key sequence
         """
-        print('%s call setKeySequenceCounter' % self.port)
+        print('%s call setKeySequenceCounter' % self)
         print(iKeySequenceValue)
         try:
             # avoid key switch guard timer protection for reference device
@@ -1660,7 +1675,7 @@ class OpenThreadTHCI(object):
     @API
     def getKeySequenceCounter(self):
         """get current Thread Network key sequence"""
-        print('%s call getKeySequenceCounter' % self.port)
+        print('%s call getKeySequenceCounter' % self)
         keySequence = ''
         keySequence = self.__executeCommand('keysequence counter')[0]
         return keySequence
@@ -1676,7 +1691,7 @@ class OpenThreadTHCI(object):
             True: successful to increment the key sequence with a given value
             False: fail to increment the key sequence with a given value
         """
-        print('%s call incrementKeySequenceCounter' % self.port)
+        print('%s call incrementKeySequenceCounter' % self)
         print(iIncrementValue)
         currentKeySeq = ''
         try:
@@ -1700,7 +1715,7 @@ class OpenThreadTHCI(object):
         Returns:
             True: successful to set the network requirement
         """
-        print('%s call setNetworkDataRequirement' % self.port)
+        print('%s call setNetworkDataRequirement' % self)
         print(eDataRequirement)
 
         if eDataRequirement == Device_Data_Requirement.ALL_DATA:
@@ -1723,7 +1738,7 @@ class OpenThreadTHCI(object):
             True: successful to configure the border router with a given external route prefix
             False: fail to configure the border router with a given external route prefix
         """
-        print('%s call configExternalRouter' % self.port)
+        print('%s call configExternalRouter' % self)
         print(P_Prefix)
         stable = ''
         prefix = self.__convertIp6PrefixStringToIp6Address(str(P_Prefix))
@@ -1757,7 +1772,7 @@ class OpenThreadTHCI(object):
         Returns:
             neighboring routers' extended address
         """
-        print('%s call getNeighbouringRouters' % self.port)
+        print('%s call getNeighbouringRouters' % self)
         try:
             routerInfo = []
             routerList = []
@@ -1800,7 +1815,7 @@ class OpenThreadTHCI(object):
         Returns:
             children's extended address
         """
-        print('%s call getChildrenInfo' % self.port)
+        print('%s call getChildrenInfo' % self)
         try:
             childrenInfoAll = []
             childrenInfo = {'EUI': 0, 'Rloc16': 0, 'MLEID': ''}
@@ -1854,7 +1869,7 @@ class OpenThreadTHCI(object):
             False: fail to set the extended PAN ID
         """
         xpanid = ''
-        print('%s call setXpanId' % self.port)
+        print('%s call setXpanId' % self)
         print(xPanId)
         try:
             if not isinstance(xPanId, str):
@@ -1881,7 +1896,7 @@ class OpenThreadTHCI(object):
             A list including extended address of neighboring routers, parent
             as well as children
         """
-        print('%s call getNeighbouringDevices' % self.port)
+        print('%s call getNeighbouringDevices' % self)
         neighbourList = []
 
         # get parent info
@@ -1915,10 +1930,10 @@ class OpenThreadTHCI(object):
             True: successful to set the Partition ID
             False: fail to set the Partition ID
         """
-        print('%s call setPartationId' % self.port)
+        print('%s call setPartationId' % self)
         print(partationId)
 
-        cmd = 'leaderpartitionid %s' % (str(hex(partationId)).rstrip('L'))
+        cmd = 'partitionid preferred %s' % (str(hex(partationId)).rstrip('L'))
         print(cmd)
         return self.__executeCommand(cmd)[-1] == 'Done'
 
@@ -1935,7 +1950,7 @@ class OpenThreadTHCI(object):
         Returns:
             a global IPv6 address
         """
-        print('%s call getGUA' % self.port)
+        print('%s call getGUA' % self)
         print(filterByPrefix)
         globalAddrs = []
         try:
@@ -1957,19 +1972,19 @@ class OpenThreadTHCI(object):
     @API
     def getShortAddress(self):
         """get Rloc16 short address of Thread device"""
-        print('%s call getShortAddress' % self.port)
+        print('%s call getShortAddress' % self)
         return self.getRloc16()
 
     @API
     def getULA64(self):
         """get mesh local EID of Thread device"""
-        print('%s call getULA64' % self.port)
+        print('%s call getULA64' % self)
         return self.__executeCommand('ipaddr mleid')[0]
 
     @API
     def setMLPrefix(self, sMeshLocalPrefix):
         """set mesh local prefix"""
-        print('%s call setMLPrefix' % self.port)
+        print('%s call setMLPrefix' % self)
         try:
             cmd = 'dataset meshlocalprefix %s' % sMeshLocalPrefix
             self.hasActiveDatasetToCommit = True
@@ -1980,7 +1995,7 @@ class OpenThreadTHCI(object):
     @API
     def getML16(self):
         """get mesh local 16 unicast address (Rloc)"""
-        print('%s call getML16' % self.port)
+        print('%s call getML16' % self)
         return self.getRloc()
 
     @API
@@ -2002,7 +2017,7 @@ class OpenThreadTHCI(object):
             True: successful to set slaac address to Thread interface
             False: fail to set slaac address to Thread interface
         """
-        print('%s call forceSetSlaac' % self.port)
+        print('%s call forceSetSlaac' % self)
         print(slaacAddress)
         try:
             cmd = 'ipaddr add %s' % str(slaacAddress)
@@ -2018,13 +2033,13 @@ class OpenThreadTHCI(object):
     @API
     def enableAutoDUTObjectFlag(self):
         """set AutoDUTenable flag"""
-        print('%s call enableAutoDUTObjectFlag' % self.port)
+        print('%s call enableAutoDUTObjectFlag' % self)
         self.AutoDUTEnable = True
 
     @API
     def getChildTimeoutValue(self):
         """get child timeout"""
-        print('%s call getChildTimeoutValue' % self.port)
+        print('%s call getChildTimeoutValue' % self)
         childTimeout = self.__executeCommand('childtimeout')[0]
         return int(childTimeout)
 
@@ -2069,7 +2084,7 @@ class OpenThreadTHCI(object):
         # TODO: Support the whole Native Commissioner functionality
         # Currently it only aims to trigger a Discovery Request message to pass
         # Certification test 5.8.4
-        print('%s call startNativeCommissioner' % self.port)
+        print('%s call startNativeCommissioner' % self)
         self.__executeCommand('ifconfig up')
         cmd = 'joiner start %s' % (strPSKc)
         print(cmd)
@@ -2083,7 +2098,7 @@ class OpenThreadTHCI(object):
             True: successful to start Commissioner
             False: fail to start Commissioner
         """
-        print('%s call startCollapsedCommissioner' % self.port)
+        print('%s call startCollapsedCommissioner' % self)
         if self.__startOpenThread():
             self.sleep(20)
             cmd = 'commissioner start'
@@ -2145,7 +2160,7 @@ class OpenThreadTHCI(object):
             True: successful to set provisioning Url
             False: fail to set provisioning Url
         """
-        print('%s call setProvisioningUrl' % self.port)
+        print('%s call setProvisioningUrl' % self)
         self.provisioningUrl = strURL
         if self.deviceRole == Thread_Device_Role.Commissioner:
             cmd = 'commissioner provisioningurl %s' % (strURL)
@@ -2160,7 +2175,7 @@ class OpenThreadTHCI(object):
             True: successful to start commissioner candidate petition process
             False: fail to start commissioner candidate petition process
         """
-        print('%s call allowCommission' % self.port)
+        print('%s call allowCommission' % self)
         try:
             cmd = 'commissioner start'
             print(cmd)
@@ -2290,7 +2305,7 @@ class OpenThreadTHCI(object):
             True: successful to send MGMT_ED_SCAN message.
             False: fail to send MGMT_ED_SCAN message
         """
-        print('%s call MGMT_ED_SCAN' % self.port)
+        print('%s call MGMT_ED_SCAN' % self)
         channelMask = ''
         channelMask = '0x' + self.__convertLongToHex(self.__convertChannelMask(listChannelMask))
         try:
@@ -2317,7 +2332,7 @@ class OpenThreadTHCI(object):
             True: successful to send MGMT_PANID_QUERY message.
             False: fail to send MGMT_PANID_QUERY message.
         """
-        print('%s call MGMT_PANID_QUERY' % self.port)
+        print('%s call MGMT_PANID_QUERY' % self)
         panid = ''
         channelMask = ''
         channelMask = '0x' + self.__convertLongToHex(self.__convertChannelMask(listChannelMask))
@@ -2340,7 +2355,7 @@ class OpenThreadTHCI(object):
             True: successful to send MGMT_ANNOUNCE_BEGIN message.
             False: fail to send MGMT_ANNOUNCE_BEGIN message.
         """
-        print('%s call MGMT_ANNOUNCE_BEGIN' % self.port)
+        print('%s call MGMT_ANNOUNCE_BEGIN' % self)
         channelMask = ''
         channelMask = '0x' + self.__convertLongToHex(self.__convertChannelMask(listChannelMask))
         try:
@@ -2363,7 +2378,7 @@ class OpenThreadTHCI(object):
             True: successful to send MGMT_ACTIVE_GET
             False: fail to send MGMT_ACTIVE_GET
         """
-        print('%s call MGMT_ACTIVE_GET' % self.port)
+        print('%s call MGMT_ACTIVE_GET' % self)
         try:
             cmd = 'dataset mgmtgetcommand active'
 
@@ -2410,7 +2425,7 @@ class OpenThreadTHCI(object):
             True: successful to send MGMT_ACTIVE_SET
             False: fail to send MGMT_ACTIVE_SET
         """
-        print('%s call MGMT_ACTIVE_SET' % self.port)
+        print('%s call MGMT_ACTIVE_SET' % self)
         try:
             cmd = 'dataset mgmtsetcommand active'
 
@@ -2548,7 +2563,7 @@ class OpenThreadTHCI(object):
             True: successful to send MGMT_PENDING_GET
             False: fail to send MGMT_PENDING_GET
         """
-        print('%s call MGMT_PENDING_GET' % self.port)
+        print('%s call MGMT_PENDING_GET' % self)
         try:
             cmd = 'dataset mgmtgetcommand pending'
 
@@ -2588,7 +2603,7 @@ class OpenThreadTHCI(object):
             True: successful to send MGMT_PENDING_SET
             False: fail to send MGMT_PENDING_SET
         """
-        print('%s call MGMT_PENDING_SET' % self.port)
+        print('%s call MGMT_PENDING_SET' % self)
         try:
             cmd = 'dataset mgmtsetcommand pending'
 
@@ -2652,7 +2667,7 @@ class OpenThreadTHCI(object):
             True: successful to send MGMT_COMM_GET
             False: fail to send MGMT_COMM_GET
         """
-        print('%s call MGMT_COMM_GET' % self.port)
+        print('%s call MGMT_COMM_GET' % self)
         try:
             cmd = 'commissioner mgmtget'
 
@@ -2684,7 +2699,7 @@ class OpenThreadTHCI(object):
             True: successful to send MGMT_COMM_SET
             False: fail to send MGMT_COMM_SET
         """
-        print('%s call MGMT_COMM_SET' % self.port)
+        print('%s call MGMT_COMM_SET' % self)
         try:
             cmd = 'commissioner mgmtset'
 
@@ -2721,15 +2736,15 @@ class OpenThreadTHCI(object):
 
     @API
     def setActiveDataset(self, listActiveDataset=[]):
-        print('%s call setActiveDataset' % self.port)
+        print('%s call setActiveDataset' % self)
 
     @API
     def setCommisionerMode(self):
-        print('%s call setCommissionerMode' % self.port)
+        print('%s call setCommissionerMode' % self)
 
     @API
     def setPSKc(self, strPSKc):
-        print('%s call setPSKc' % self.port)
+        print('%s call setPSKc' % self)
         try:
             cmd = 'dataset pskc %s' % strPSKc
             self.hasActiveDatasetToCommit = True
@@ -2739,7 +2754,7 @@ class OpenThreadTHCI(object):
 
     @API
     def setActiveTimestamp(self, xActiveTimestamp):
-        print('%s call setActiveTimestamp' % self.port)
+        print('%s call setActiveTimestamp' % self)
         try:
             self.activetimestamp = xActiveTimestamp
             cmd = 'dataset activetimestamp %s' % str(xActiveTimestamp)
@@ -2759,7 +2774,7 @@ class OpenThreadTHCI(object):
             True: successful to set Joiner UDP Port
             False: fail to set Joiner UDP Port
         """
-        print('%s call setUdpJoinerPort' % self.port)
+        print('%s call setUdpJoinerPort' % self)
         cmd = 'joinerport %d' % portNumber
         print(cmd)
         return self.__executeCommand(cmd)[-1] == 'Done'
@@ -2772,14 +2787,14 @@ class OpenThreadTHCI(object):
             True: successful to stop commissioner
             False: fail to stop commissioner
         """
-        print('%s call commissionerUnregister' % self.port)
+        print('%s call commissionerUnregister' % self)
         cmd = 'commissioner stop'
         print(cmd)
         return self.__executeCommand(cmd)[-1] == 'Done'
 
     @API
     def sendBeacons(self, sAddr, xCommissionerSessionId, listChannelMask, xPanId):
-        print('%s call sendBeacons' % self.port)
+        print('%s call sendBeacons' % self)
         self.__sendCommand('scan', expectEcho=False)
         return True
 
@@ -2790,7 +2805,7 @@ class OpenThreadTHCI(object):
 
     @API
     def __updateRouterStatus(self):
-        print('%s call updateRouterStatus' % self.port)
+        print('%s call updateRouterStatus' % self)
         cmd = 'state'
         while True:
             state = self.__executeCommand(cmd)[0]
@@ -2806,21 +2821,191 @@ class OpenThreadTHCI(object):
 
     @API
     def setRouterThresholdValues(self, upgradeThreshold, downgradeThreshold):
-        print('%s call setRouterThresholdValues' % self.port)
+        print('%s call setRouterThresholdValues' % self)
         self.__setRouterUpgradeThreshold(upgradeThreshold)
         self.__setRouterDowngradeThreshold(downgradeThreshold)
 
     @API
     def setMinDelayTimer(self, iSeconds):
-        print('%s call setMinDelayTimer' % self.port)
+        print('%s call setMinDelayTimer' % self)
         cmd = 'delaytimermin %s' % iSeconds
         print(cmd)
         return self.__executeCommand(cmd)[-1] == 'Done'
 
     @API
     def ValidateDeviceFirmware(self):
-        print('%s call ValidateDeviceFirmware' % self.port)
+        print('%s call ValidateDeviceFirmware' % self)
         return 'OPENTHREAD' in self.UIStatusMsge
+
+    # Low power THCI
+    @API
+    def setCSLtout(self, tout=30):
+        self.log('call setCSLtout')
+        cmd = 'csl timeout %u' % tout
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    @API
+    def setCSLchannel(self, ch=11):
+        self.log('call setCSLchannel')
+        cmd = 'csl channel %u' % ch
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    @API
+    def setCSLperiod(self, period=500):
+        """set Csl Period
+        Args:
+            period: csl period in ms
+
+        note: OT command 'csl period' accepts parameter in unit of 10 symbols,
+        period is converted from unit ms to ten symbols (160us per 10 symbols).
+
+        """
+        self.log('call setCSLperiod')
+        cmd = 'csl period %u' % (period * 6.25)
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    def getForwardSeriesFlagsFromHexStr(self, flags):
+        hexFlags = int(flags, 16)
+        strFlags = ''
+        if hexFlags == 0:
+            strFlags = 'X'
+        else:
+            if hexFlags & 0x1 != 0:
+                strFlags += 'l'
+            if hexFlags & 0x2 != 0:
+                strFlags += 'd'
+            if hexFlags & 0x4 != 0:
+                strFlags += 'r'
+            if hexFlags & 0x8 != 0:
+                strFlags += 'a'
+
+        return strFlags
+
+    def mapMetricsHexToChar(self, metrics):
+        metricsFlagMap = {
+            0x40: 'p',
+            0x09: 'q',
+            0x0a: 'm',
+            0x0b: 'r',
+        }
+        return metricsFlagMap.get(metrics, '?')
+
+    def getMetricsFlagsFromHexStr(self, metrics):
+        if metrics.startswith('0x'):
+            metrics = metrics[2:]
+        hexMetricsArray = bytearray.fromhex(metrics)
+
+        strMetrics = ''
+        for metric in hexMetricsArray:
+            strMetrics += mapMetricsHexToChar(metric)
+
+        return strMetrics
+
+    @API
+    def LinkMetricsSingleReq(self, dst_addr, metrics):
+        self.log('call LinkMetricsSingleReq')
+        cmd = 'linkmetrics query %s single %s' % (dst_addr, getMetricsFlagsFromHexStr(metrics))
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    @API
+    def LinkMetricsMgmtReq(self, dst_addr, type_, flags, metrics, series_id):
+        self.log('call LinkMetricsMgmtReq')
+        cmd = 'linkmetrics mgmt %s ' % dst_addr
+        if type_ == 'FWD':
+            cmd += 'forward %d %s' % (series_id, getForwardSeriesFlagsFromHexStr(flags))
+            if flags != 0:
+                cmd += ' %s' % (getMetricsFlagsFromHexStr(metrics))
+        elif type_ == 'ENH':
+            cmd += 'enhanced-ack'
+            if flags != 0:
+                cmd += ' register'
+                metricsFlags = getMetricsFlagsFromHexStr(metrics)
+                if '?' in metricsFlags:
+                    cmd += ' %s r' % metricsFlags.replace('?', '')
+                else:
+                    cmd += ' %s' % metricsFlags
+            else:
+                cmd += ' clear'
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    @API
+    def LinkMetricsGetReport(self, dst_addr, series_id):
+        self.log('call LinkMetricsGetReport')
+        cmd = 'linkmetrics query %s forward %d' % (dst_addr, series_id)
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    #TODO: Series Id is not in this API.
+    @API
+    def LinkMetricsSendProbe(self, dst_addr, ack=True, size=0):
+        self.log('call LinkMetricsSendProbe')
+        cmd = 'linkmetrics probe %s %d' % (dst_addr, size)
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    @API
+    def setTxPower(self, level):
+        self.log('call setTxPower')
+        cmd = 'txpower '
+        if level == 'HIGH':
+            cmd += '127'
+        elif level == 'MEDIUM':
+            cmd += '0'
+        elif level == 'LOW':
+            cmd += '-128'
+        else:
+            print('wrong Tx Power level')
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    @API
+    def sendUdp(self, destination, port, payload='hello'):
+        self.log('call sendUdp')
+        assert payload is not None, 'payload should not be none'
+        cmd1 = 'udp open'
+        print(cmd1)
+        cmd2 = 'udp send %s %d %s' % (destination, port, payload)
+        print(cmd2)
+        return (self.__executeCommand(cmd1)[-1] == 'Done' and self.__executeCommand(cmd2)[-1] == 'Done')
+
+    @API
+    def send_udp(self, interface, destination, port, payload='12ABcd'):
+        ''' payload hexstring
+        '''
+        self.log('call send_udp')
+        assert payload is not None, 'payload should not be none'
+        cmd1 = 'udp open'
+        print(cmd1)
+        cmd2 = 'udp send %s %s -x %s' % (destination, port, payload)
+        print(cmd2)
+        return (self.__executeCommand(cmd1)[-1] == 'Done' and self.__executeCommand(cmd2)[-1] == 'Done')
+
+    @API
+    def sendMACcmd(self, enh=False):
+        self.log('call sendMACcmd')
+        cmd = 'mac send datarequest'
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    @API
+    def sendMACdata(self, enh=False):
+        self.log('call sendMACdata')
+        cmd = 'mac send emptydata'
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    @API
+    def setCSLsuspension(self, suspend):
+        self.log('call setCSLsuspension')
+        if suspend:
+            self.__setPollPeriod(1000000)
+        else:
+            self.__setPollPeriod(self.__sedPollPeriod)
 
     @staticmethod
     def __lstrip0x(s):
@@ -2845,12 +3030,12 @@ class nRF_Connect_SDK(OpenThreadTHCI, IThci):
     # officially released.
 
     def _connect(self):
-        print('My port is %s' % self.port)
+        print('My port is %s' % self)
         self.__lines = []
         if self.port.startswith('COM'):
             self.__handle = serial.Serial(self.port, 115200, timeout=0)
             self.sleep(1)
-            self.__handle.write('\r')
+            self.__handle.write('\r\n')
             self.sleep(0.1)
             self._is_net = False
         elif ':' in self.port:
@@ -2889,7 +3074,7 @@ class nRF_Connect_SDK(OpenThreadTHCI, IThci):
         try:
             tail += self.__socRead()
         except socket.error:
-            logging.exception('%s: No new data', self.port)
+            logging.exception('%s: No new data', self)
             self.sleep(0.1)
 
         self.__lines += LINESEPX.split(tail)
