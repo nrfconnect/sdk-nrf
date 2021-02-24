@@ -31,7 +31,7 @@ When you create a GitHub fork, GitHub copies the original repository and tags th
 GitHub also supports creating forks without linking them to the upstream respository.
 See the `GitHub documentation <GitHub duplicate_>`_ for information about how to do this.
 
-.. _dm-repo-types:
+.. _dm_repo_types:
 
 Repository types
 ****************
@@ -121,7 +121,7 @@ These are identified by a ``-devN`` suffix.
 OSS repositories downstream project history
 *******************************************
 
-As described in :ref:`dm-repo-types`, the |NCS| contains OSS repositories, which are based on third-party, open-source Git repositories and may contain additional patches not present upstream.
+As described in :ref:`dm_repo_types`, the |NCS| contains OSS repositories, which are based on third-party, open-source Git repositories and may contain additional patches not present upstream.
 Examples include `sdk-zephyr`_ and `sdk-mcuboot`_, which have upstream open-source projects used as a basis for downstream repositories distributed with the |NCS|.
 This section describes how the history of these OSS repositories is maintained, and how they are synchronized with their upstreams.
 

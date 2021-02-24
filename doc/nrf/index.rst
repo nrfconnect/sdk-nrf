@@ -52,6 +52,7 @@ In addition to the |NCS| documentation, information is available in the followin
 
    introduction
    documentation
+   glossary
    getting_started
    ug_dev_model
    ug_app_dev
