@@ -506,6 +506,5 @@ void main(void)
 		nrf_cloud_process();
 		send_aggregated_data();
 		k_sleep(K_MSEC(10));
-		k_cpu_idle();
 	}
 }
