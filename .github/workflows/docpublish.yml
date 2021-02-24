@@ -37,6 +37,7 @@ jobs:
           SSHUSER: ${{ secrets.NCS_TRANSFER_DOC_USR }}
           SSHPASS: ${{ secrets.NCS_TRANSFER_DOC_PWD }}
         run: |
+          sudo apt install -y sshpass
           unzip doc.zip
           # Don't upload the archive and workflow metadata
           files=$(ls -I doc.zip -I pr.txt)
