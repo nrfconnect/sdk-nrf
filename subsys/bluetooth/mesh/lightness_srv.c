@@ -135,7 +135,9 @@ static void rsp_lightness_status(struct bt_mesh_model *mod,
 	lvl_status_encode(&rsp, status, repr);
 
 	BT_DBG("Light %s Response: %u -> %u [%u ms]", repr_str[repr],
-	       status->current, status->target, status->remaining_time);
+		light_to_repr(status->current, repr),
+		light_to_repr(status->target, repr),
+		status->remaining_time);
 
 	bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
 }
@@ -504,7 +506,7 @@ static void lvl_get(struct bt_mesh_lvl_srv *lvl_srv,
 	rsp->current = LIGHT_TO_LVL(status.current);
 	rsp->target = LIGHT_TO_LVL(status.target);
 	rsp->remaining_time = status.remaining_time;
-	BT_DBG("%u -> %u [%u ms]", rsp->current, rsp->target,
+	BT_DBG("%i -> %i [%u ms]", rsp->current, rsp->target,
 	       rsp->remaining_time);
 }
 
@@ -535,7 +537,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 		rsp->current = LIGHT_TO_LVL(status.current);
 		rsp->target = LIGHT_TO_LVL(status.target);
 		rsp->remaining_time = status.remaining_time;
-		BT_DBG("%u -> %u [%u ms]", rsp->current, rsp->target,
+		BT_DBG("%i -> %i [%u ms]", rsp->current, rsp->target,
 		       rsp->remaining_time);
 	}
 }
@@ -593,6 +595,9 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		rsp->current = LIGHT_TO_LVL(status.current);
 		rsp->target = LIGHT_TO_LVL(status.target);
 		rsp->remaining_time = status.remaining_time;
+		BT_DBG("Delta set rsp: %i (light: %u) -> %i (light: %u) [%u ms]",
+			rsp->current, status.current, rsp->target, status.target,
+			status.remaining_time);
 	}
 }
 
@@ -633,7 +638,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 					 (uint64_t)move_set->transition->time) /
 					abs(move_set->delta);
 
-		BT_DBG("Move: distance: %u delta: %u step: %u ms time: %u ms",
+		BT_DBG("Move: distance: %u delta: %i step: %u ms time: %u ms",
 		       (uint32_t)distance, move_set->delta,
 		       move_set->transition->time, time_to_edge);
 
@@ -654,7 +659,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		rsp->target = LIGHT_TO_LVL(status.target);
 		rsp->remaining_time = status.remaining_time;
 
-		BT_DBG("Move rsp: %u (light: %u) -> %u (light: %u) [%u ms]",
+		BT_DBG("Move set rsp: %i (light: %u) -> %i (light: %u) [%u ms]",
 		       rsp->current, status.current, rsp->target, status.target,
 		       status.remaining_time);
 	}
