@@ -52,7 +52,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 4ce908a2342494c19df09f347ce79ab81b415185
+      revision: v2.4.99-ncs1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -94,16 +94,16 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v1.7.99-ncs1-rc1
+      revision: v1.7.99-ncs1
       path: bootloader/mcuboot
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: df3d5aa6381fc42d4d429fa2974d8d901b897a12
+      revision: v1.5.0
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: 3bc9506f48adbb0450fd6862e7fc34cd40f31763
+      revision: v1.2.99-ncs1
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -111,7 +111,7 @@ manifest:
     - name: connectedhomeip
       repo-path: sdk-connectedhomeip
       path: modules/lib/connectedhomeip
-      revision: c73b8e0ada5b38b0b9fdb73b582b09b62f242b60
+      revision: v1.5.0
       submodules:
         - name: nlio
           path: third_party/nlio/repo
