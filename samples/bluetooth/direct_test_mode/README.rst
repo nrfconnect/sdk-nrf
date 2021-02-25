@@ -211,16 +211,7 @@ Building and running
    However, you must still program the application core to boot up the network core.
    You can use any sample for this, for example, the :ref:`nrf5340_empty_app_core`.
 
-The Bluetooth Low Energy DTM UART interface standard specifies:
-
-* 8 data bits
-* No parity
-* 1 stop bit
-* No hardware flow control
-* A selection of bit rates from 9600 to 1000000, one of which must be supported by the DUT.
-  It might be possible to run other bit rates by experimenting with parameters.
-
-The default bit rate of the DTM UART driver is 19200 bps, which is supported by most certified testers.
+.. _dtm_testing:
 
 Testing
 =======
@@ -247,7 +238,8 @@ Testing with another development kit
 
 1. Connect both development kits to the computer using a USB cable.
    The computer assigns to the development kit a COM port on Windows or a ttyACM device on Linux, which is visible in the Device Manager.
-#. |connect_terminal_both|
+#. Connect to both kits with a terminal emulator.
+   See `Direct Test Mode terminal connection`_ for the required settings.
 #. Start ``TRANSMITTER_TEST`` by sending the ``0x80 0x96`` DTM command to one of the connected development kits.
    This command will trigger TX activity on the 2402 MHz frequency (1st channel) with ``10101010`` packet pattern and 37-byte packet length.
 #. Observe that you received the ``TEST_STATUS_EVENT`` packet in response with the SUCCESS status field: ``0x00 0x00``.
@@ -266,7 +258,8 @@ Testing with nRF Connect for Desktop
 
 1. Connect the development kit to the computer using a USB cable.
    The computer assigns to the development kit a COM port on Windows or a ttyACM device on Linux, which is visible in the Device Manager.
-#. |connect_terminal|
+#. Connect to the kit with a terminal emulator.
+   See `Direct Test Mode terminal connection`_ for the required settings.
 #. Start the ``TRANSMITTER_TEST`` by sending the ``0x80 0x96`` DTM command to the connected development kit.
    This command triggers TX activity on 2402 MHz frequency (1st channel) with ``10101010`` packet pattern and 37-byte packet length.
 #. Observe that you received the ``TEST_STATUS_EVENT`` packet in response with the SUCCESS status field: ``0x00 0x00``.
@@ -277,6 +270,127 @@ Testing with nRF Connect for Desktop
 #. Stop the test.
 #. Swap roles.
    Set the application to the RX mode and the connected development kit to the TX mode.
+
+Direct Test Mode terminal connection
+------------------------------------
+
+To send commands to and receive responses from the development kit that runs the Direct Test Mode sample, connect to it with RealTerm in Windows or Minicom in Linux.
+
+The Bluetooth Low Energy DTM UART interface standard specifies the following configuration:
+
+* Eight data bits
+* No parity
+* One stop bit
+* No hardware flow control
+* A selection of bit rates from 9600 to 1000000, one of which must be supported by the DUT.
+  It might be possible to run other bit rates by experimenting with parameters.
+
+.. note::
+   The default bit rate of the DTM UART driver is 19200 bps, which is supported by most certified testers.
+
+You must send all commands as two-byte HEX numbers.
+The responses must have the same format.
+
+Connect with RealTerm (Windows)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The RealTerm terminal program offers a graphical interface for setting up your connection.
+
+.. figure:: /images/realterm.png
+   :alt: RealTerm start window
+
+   The RealTerm start window
+
+To test DTM with RealTerm, complete the following steps:
+
+1. On the :guilabel:`Display` tab, set :guilabel:`Display As` to :guilabel:`Hex[space]`.
+
+   .. figure:: /images/realterm_hex_display.png
+      :alt: Set the RealTerm display format
+
+#. Open the :guilabel:`Port` tab and configure the serial port parameters:
+
+   a. Set the :guilabel:`Baud` to 19200 **(1)**.
+   #. Select your J-Link serial port from the :guilabel:`Port` list **(2)**.
+   #. Set the port status to "Open" **(3)**.
+
+   .. figure:: /images/real_term_serial_port.png
+      :alt: RealTerm serial port settings
+
+#. Open the :guilabel:`Send` tab:
+
+   a. Write the command as a hexadecimal number in the field **(1)**.
+      For example, write **0x00 0x00** to send a **Reset** command.
+   #. Click the :guilabel:`Send Numbers` button **(2)** to send the command.
+   #. Observe the response in the DTM in area **(3)**.
+      The response is encoded as hexadecimal numbers.
+
+   .. figure:: /images/realterm_commands.png
+      :alt: RealTerm commands sending
+
+Connect with Minicom (Linux)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Minicom is a serial communication program that connects to the DTM device.
+
+On the Linux operating system, install a Minicom terminal.
+On Ubuntu, run:
+
+.. code-block:: console
+
+   sudo apt-get install minicom
+
+1. Run the Minicom terminal:
+
+   .. parsed-literal::
+      :class: highlight
+
+      sudo minicom -D *DTM serial port* -s
+
+   For example:
+
+   .. code-block:: console
+
+      sudo minicom -D /dev/serial/by-id/usb-SEGGER_J-Link_000683580193-if00 -s
+
+   The **-s** option switches you to Minicom setup mode.
+
+#. Configure the Minicom terminal:
+
+   .. figure:: /images/minicom_setup_window.png
+      :alt: minicom configuration window
+
+      Configuration window
+
+   a. Select :guilabel:`Serial port setup` and set UART baudrate to 19200.
+
+      .. figure:: /images/minicom_serial_port.png
+         :alt: minicom serial port settings
+
+   #. Select :guilabel:`Screen and keyboard` and press **S** on the keyboard to enable the **Hex Display**.
+   #. Press **Q** on the keyboard to enable **Local echo**.
+
+      .. figure:: /images/minicom_terminal_cfg.png
+         :alt: minicom terminal screen and keyboard settings
+
+   Minicom is now configured for receiving data.
+   However, you cannot use it for sending DTM commands.
+
+#. Send DTM commands:
+
+   To send DTM commands, use **echo** with **-ne** options in another terminal.
+   You must encode the data as hexadecimal numbers (\xHH, byte with hexadecimal value HH, 1 to 2 digits).
+
+   .. parsed-literal::
+      :class: highlight
+
+      sudo echo -ne "*encoded command*" > *DTM serial port*
+
+   To send a **Reset** command, for example, run the following command:
+
+   .. code-block:: console
+
+      sudo echo -ne "\x00\x00" > /dev/serial/by-id/usb-SEGGER_J-Link_000683580193-if00
 
 Dependencies
 ************
