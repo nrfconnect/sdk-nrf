@@ -1,13 +1,13 @@
-.. _ot_ncp_sample:
+.. _ot_coprocessor_sample:
 
-Thread: NCP
-###########
+Thread: Co-Processor
+####################
 
 .. contents::
    :local:
    :depth: 2
 
-The :ref:`Thread <ug_thread>` NCP sample demonstrates the usage of OpenThread's :ref:`thread_architectures_designs_cp_ncp` architecture inside the Zephyr environment.
+The :ref:`Thread <ug_thread>` Co-Processor sample demonstrates the usage of OpenThread's :ref:`thread_architectures_designs_cp_ncp` and :ref:`thread_architectures_designs_cp_rcp` architectures inside the Zephyr environment.
 
 The sample is based on Zephyr's :ref:`zephyr:coprocessor-sample` sample.
 However, it customizes Zephyr's sample to the |NCS| requirements (for example, by increasing the stack size dedicated for the user application), and also extends it with several features:
@@ -17,19 +17,19 @@ However, it customizes Zephyr's sample to the |NCS| requirements (for example, b
 * No obsolete configuration options.
 * Vendor hooks for NCP allowing User to extend handled properties by its own, customized functionalities.
 
-This sample supports optional :ref:`ot_ncp_sample_vendor_hook_extension` and :ref:`logging extension <ot_ncp_sample_logging>`, which can be turned on or off independently.
-See :ref:`ot_ncp_sample_features_enabling` for details.
+This sample supports optional :ref:`ot_coprocessor_sample_vendor_hook_extension` and :ref:`logging extension <ot_coprocessor_sample_logging>`, which can be turned on or off independently.
+See :ref:`ot_coprocessor_sample_features_enabling` for details. 
 
 Overview
 ********
 
-The sample demonstrates using an NCP target on the MCU to communicate with Userspace WPAN Network Daemon (`wpantund`_) on Unix-like operating system.
-According to the NCP architecture, the MCU part needs to cooperate with user higher layer process to establish the complete full stack application.
-The sample shows how to set connection between NCP and wpantund.
+The sample demonstrates using an Co-Processor target on the MCU to communicate with Userspace WPAN Network Daemon (`wpantund`_) on Unix-like operating system.
+According to the Co-Processor architecture, the MCU part needs to cooperate with user higher layer process to establish the complete full stack application.
+The sample shows how to set connection between the Co-Processor and wpantund.
 
 This sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
 
-.. _ot_ncp_sample_vendor_hook_extension:
+.. _ot_coprocessor_sample_vendor_hook_extension:
 
 Vendor hooks extension
 ======================
@@ -38,9 +38,9 @@ The vendor hook feature extension allows you to define your own commands and pro
 Thanks to this feature, you can add new custom functionalities and manage them from host device by using serial interface - in the same way as the default functionalities.
 
 For more detailed information about the vendor hooks feature and host device configuration, see :ref:`ug_thread_vendor_hooks`.
-For information about how to enable the vendor hook feature for this sample, see :ref:`ot_ncp_sample_features_enabling_hooks`.
+For information about how to enable the vendor hook feature for this sample, see :ref:`ot_coprocessor_sample_features_enabling_hooks`.
 
-.. _ot_ncp_sample_logging:
+.. _ot_coprocessor_sample_logging:
 
 Logging extension
 =================
@@ -70,7 +70,7 @@ The sample supports the following development kits for testing the network statu
    :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
 
 To test the sample, you need at least one development kit.
-Additional development kits programmed with the NCP sample can be used for the :ref:`optional testing of network joining <ot_ncp_sample_testing_more_boards>`.
+Additional development kits programmed with the Co-Processor sample can be used for the :ref:`optional testing of network joining <ot_coprocessor_sample_testing_more_boards>`.
 
 Moreover, the sample requires a Userspace higher layer process running on user's device in order to communicate with the MCU NCP part.
 This sample uses `wpantund`_ as reference.
@@ -87,18 +87,18 @@ You can use your own application instead of wpantund and PySpinel provided that 
 
 .. note::
     |thread_hwfc_enabled|
-    In addition, the NCP sample by default reconfigures the baud rate to 1000000 bit/s.
+    In addition, the Co-Processor sample by default reconfigures the baud rate to 1000000 bit/s.
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/openthread/ncp`
+.. |sample path| replace:: :file:`samples/openthread/coprocessor`
 
 |enable_thread_before_testing|
 
 .. include:: /includes/build_and_run.txt
 
-.. _ot_ncp_sample_features_enabling:
+.. _ot_coprocessor_sample_features_enabling:
 
 Activating sample extensions
 ============================
@@ -106,13 +106,13 @@ Activating sample extensions
 To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
 
 * For the vendor hooks feature support, set :file:`overlay-vendor_hook.conf`.
-  See :ref:`ot_ncp_sample_features_enabling_hooks` for more information.
+  See :ref:`ot_coprocessor_sample_features_enabling_hooks` for more information.
 * For the logging variant that presents how to change log levels of specific modules, set :file:`overlay-logging.conf`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
-.. _ot_ncp_sample_features_enabling_hooks:
+.. _ot_coprocessor_sample_features_enabling_hooks:
 
 Activating vendor hook feature
 ------------------------------
@@ -205,7 +205,7 @@ The final output will be similar to the following:
 
 This output means that you have successfully formed the Thread network.
 
-.. _ot_ncp_sample_testing_more_boards:
+      .. _ot_coprocessor_sample_testing_more_boards:
 
 Testing network joining with more kits
 --------------------------------------

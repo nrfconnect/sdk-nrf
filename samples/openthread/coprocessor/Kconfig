@@ -8,6 +8,6 @@ menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
 
-module = OT_NCP
-module-str = ot_ncp
+module = OT_COPROCESSOR
+module-str = ot_coprocessor
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

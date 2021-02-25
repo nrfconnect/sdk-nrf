@@ -12,7 +12,7 @@ list(INSERT OVERLAY_CONFIG 0 ../common/overlay-ot-defaults.conf)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
-project(openthread_ncp)
+project(openthread_coprocessor)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c src/nrf_802154_radio_wrapper.c)

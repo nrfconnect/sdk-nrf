@@ -245,7 +245,7 @@ Thread
 
   * Production support for nRF5340 in single protocol configuration.
   * Development support for nRF5340 in multiprotocol configuration (Thread and Bluetooth LE).
-  * Support for nRF5340 for all samples except the :ref:`ot_ncp_sample` sample.
+  * Support for nRF5340 for all samples except the :ref:`ot_coprocessor_sample` sample.
   * PA/LNA GPIO interface support for RF front-end modules (FEM) in Thread. The front-end module feature in Thread currently has support for SKY66112-11 device, but does not support nRF21540 revision 1 or older.
 
 * Updated:
