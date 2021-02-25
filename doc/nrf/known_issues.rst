@@ -362,6 +362,14 @@ Bluetooth LE
 
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
+NCSDK-8321: NUS shell transport sample does not display the initial shell prompt *uart:~$* on the remote terminal.
+  Also few logs with sending errors are displayed on the terminal connected directly to the DK.
+  This issue is caused by the shell being enabled before turning on the notifications for the NUS service by the remote peer.
+
+  **Workaround:** Enable the shell after turning on the NUS notifications or block it until turning on the notifications.
+
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
 NCSDK-8224: Callbacks for "security changed" and "pairing failed" are not always called
   The pairing failed and security changed callbacks are not called when the connection is disconnected during the pairing procedure or the required security is not met.
 
