@@ -997,7 +997,9 @@ static void handle_sensor_status(struct bt_mesh_model *mod,
 		 * able to turn on the light:
 		 */
 		if (srv->state == LIGHT_CTRL_STATE_STANDBY &&
-		    !atomic_test_bit(&srv->flags, FLAG_OCC_MODE)) {
+		    !atomic_test_bit(&srv->flags, FLAG_OCC_MODE) &&
+		    !(atomic_test_bit(&srv->flags, FLAG_TRANSITION) &&
+		      !atomic_test_bit(&srv->flags, FLAG_MANUAL))) {
 			continue;
 		}
 
