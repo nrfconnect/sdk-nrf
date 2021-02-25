@@ -520,8 +520,7 @@ static void data_send(void)
 		/* This error might occurs when data has not been obtained prior
 		 * to data encoding.
 		 */
-		LOG_DBG("Ringbuffers empty...");
-		LOG_DBG("No data to encode, error: %d", err);
+		LOG_DBG("No new data to encode, error: %d", err);
 		return;
 	} else if (err) {
 		LOG_ERR("Error encoding message %d", err);
@@ -618,7 +617,10 @@ static void data_ui_send(void)
 	}
 
 	err = cloud_codec_encode_ui_data(&codec, &ui_buf[head_ui_buf]);
-	if (err) {
+	if (err == -ENODATA) {
+		LOG_DBG("No new UI data to encode, error: %d", err);
+		return;
+	} else if (err) {
 		LOG_ERR("Encoding button press, error: %d", err);
 		SEND_ERROR(data, DATA_EVT_ERROR, err);
 		return;

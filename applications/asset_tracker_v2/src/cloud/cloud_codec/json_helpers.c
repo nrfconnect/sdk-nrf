@@ -5,25 +5,22 @@
  */
 
 #include <errno.h>
-#include "json_aux.h"
+
+#include "json_helpers.h"
 #include "cJSON.h"
 #include "cJSON_os.h"
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(cloud_codec_utils, CONFIG_CLOUD_CODEC_LOG_LEVEL);
+LOG_MODULE_REGISTER(json_helpers, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
-int json_add_obj(cJSON *parent, const char *str, cJSON *item)
+void json_add_obj(cJSON *parent, const char *str, cJSON *item)
 {
 	cJSON_AddItemToObject(parent, str, item);
-
-	return 0;
 }
 
-int json_add_obj_array(cJSON *parent, cJSON *item)
+void json_add_obj_array(cJSON *parent, cJSON *item)
 {
 	cJSON_AddItemToArray(parent, item);
-
-	return 0;
 }
 
 int json_add_number(cJSON *parent, const char *str, double item)
@@ -35,7 +32,9 @@ int json_add_number(cJSON *parent, const char *str, double item)
 		return -ENOMEM;
 	}
 
-	return json_add_obj(parent, str, json_num);
+	json_add_obj(parent, str, json_num);
+
+	return 0;
 }
 
 int json_add_bool(cJSON *parent, const char *str, int item)
@@ -47,7 +46,9 @@ int json_add_bool(cJSON *parent, const char *str, int item)
 		return -ENOMEM;
 	}
 
-	return json_add_obj(parent, str, json_bool);
+	json_add_obj(parent, str, json_bool);
+
+	return 0;
 }
 
 cJSON *json_object_decode(cJSON *obj, const char *str)
@@ -64,7 +65,9 @@ int json_add_str(cJSON *parent, const char *str, const char *item)
 		return -ENOMEM;
 	}
 
-	return json_add_obj(parent, str, json_str);
+	json_add_obj(parent, str, json_str);
+
+	return 0;
 }
 
 void json_print_obj(const char *prefix, const cJSON *obj)
