@@ -47,9 +47,10 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define AT_XSYSTEMMODE_RESPONSE_PREFIX		"%XSYSTEMMODE"
 #define AT_XSYSTEMMODE_PROTO			"AT%%XSYSTEMMODE=%d,%d,%d,%d"
 /* The indices are for the set command. Add 1 for the read command indices. */
-#define AT_XSYSTEMMODE_LTEM_INDEX		0
-#define AT_XSYSTEMMODE_NBIOT_INDEX		1
-#define AT_XSYSTEMMODE_GPS_INDEX		2
+#define AT_XSYSTEMMODE_READ_LTEM_INDEX		1
+#define AT_XSYSTEMMODE_READ_NBIOT_INDEX		2
+#define AT_XSYSTEMMODE_READ_GPS_INDEX		3
+#define AT_XSYSTEMMODE_READ_PREFERENCE_INDEX	4
 #define AT_XSYSTEMMODE_PARAMS_COUNT		5
 #define AT_XSYSTEMMODE_RESPONSE_MAX_LEN		30
 /* CEDRXS command parameters */
@@ -69,14 +70,18 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define AT_CSCON_READ_RRC_MODE_INDEX		2
 
 #define SYS_MODE_PREFERRED \
-	(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)	? \
-		LTE_LC_SYSTEM_MODE_LTEM			: \
-	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT)	? \
-		LTE_LC_SYSTEM_MODE_NBIOT		: \
-	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)	? \
-		LTE_LC_SYSTEM_MODE_LTEM_GPS		: \
-	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)	? \
-		LTE_LC_SYSTEM_MODE_NBIOT_GPS		: \
+	(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)		? \
+		LTE_LC_SYSTEM_MODE_LTEM				: \
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT)		? \
+		LTE_LC_SYSTEM_MODE_NBIOT			: \
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)		? \
+		LTE_LC_SYSTEM_MODE_LTEM_GPS			: \
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)		? \
+		LTE_LC_SYSTEM_MODE_NBIOT_GPS			: \
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTEM_NBIOT)		? \
+		LTE_LC_SYSTEM_MODE_LTEM_NBIOT			: \
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTEM_NBIOT_GPS)	? \
+		LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS		: \
 	LTE_LC_SYSTEM_MODE_NONE)
 
 /* Forward declarations */
@@ -152,6 +157,9 @@ static const enum lte_lc_system_mode sys_mode_preferred = SYS_MODE_PREFERRED;
  */
 static enum lte_lc_system_mode sys_mode_target = SYS_MODE_PREFERRED;
 
+/* System mode preference to set when configuring system mode. */
+static enum lte_lc_system_mode_preference mode_preference = CONFIG_LTE_MODE_PREFERENCE;
+
 static const enum lte_lc_system_mode sys_mode_fallback =
 #if IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK)
 	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)	?
@@ -167,13 +175,30 @@ static const enum lte_lc_system_mode sys_mode_fallback =
 
 static enum lte_lc_system_mode sys_mode_current = LTE_LC_SYSTEM_MODE_NONE;
 
-/* Parameters to be passed when using AT%XSYSTEMMMODE=<params> */
+/* Parameters to be passed using AT%XSYSTEMMMODE=<params>,<preference> */
 static const char *const system_mode_params[] = {
-	[LTE_LC_SYSTEM_MODE_LTEM]	= "1,0,0,0",
-	[LTE_LC_SYSTEM_MODE_NBIOT]	= "0,1,0,0",
-	[LTE_LC_SYSTEM_MODE_GPS]	= "0,0,1,0",
-	[LTE_LC_SYSTEM_MODE_LTEM_GPS]	= "1,0,1,0",
-	[LTE_LC_SYSTEM_MODE_NBIOT_GPS]	= "0,1,1,0",
+	[LTE_LC_SYSTEM_MODE_NONE]		= "0,0,0",
+	[LTE_LC_SYSTEM_MODE_LTEM]		= "1,0,0",
+	[LTE_LC_SYSTEM_MODE_NBIOT]		= "0,1,0",
+	[LTE_LC_SYSTEM_MODE_GPS]		= "0,0,1",
+	[LTE_LC_SYSTEM_MODE_LTEM_GPS]		= "1,0,1",
+	[LTE_LC_SYSTEM_MODE_NBIOT_GPS]		= "0,1,1",
+	[LTE_LC_SYSTEM_MODE_LTEM_NBIOT]		= "1,1,0",
+	[LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS]	= "1,1,1",
+};
+
+/* LTE preference to be passed using AT%XSYSTEMMMODE=<params>,<preference> */
+static const char system_mode_preference[] = {
+	/* No LTE preference, automatically selected by the modem. */
+	[LTE_LC_SYSTEM_MODE_PREFER_AUTO]		= '0',
+	/* LTE-M has highest priority. */
+	[LTE_LC_SYSTEM_MODE_PREFER_LTEM]		= '1',
+	/* NB-IoT has highest priority. */
+	[LTE_LC_SYSTEM_MODE_PREFER_NBIOT]		= '2',
+	/* Equal priority, but prefer LTE-M. */
+	[LTE_LC_SYSTEM_MODE_PREFER_LTEM_PLMN_PRIO]	= '3',
+	/* Equal priority, but prefer NB-IoT. */
+	[LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO]	= '4',
 };
 
 #if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT) && \
@@ -530,7 +555,7 @@ static int w_lte_lc_init(void)
 
 	k_sem_init(&link, 0, 1);
 
-	err = lte_lc_system_mode_get(&sys_mode_current);
+	err = lte_lc_system_mode_get(&sys_mode_current, NULL);
 	if (err) {
 		LOG_ERR("Could not get current system mode, error: %d", err);
 		return err;
@@ -543,7 +568,7 @@ static int w_lte_lc_init(void)
 	}
 
 	if (sys_mode_current != sys_mode_target) {
-		err = lte_lc_system_mode_set(sys_mode_target);
+		err = lte_lc_system_mode_set(sys_mode_target, mode_preference);
 		if (err) {
 			LOG_ERR("Could not set system mode, error: %d", err);
 			return err;
@@ -661,7 +686,7 @@ static int w_lte_lc_connect(bool blocking)
 	do {
 		retry = false;
 
-		err = lte_lc_system_mode_set(sys_mode_target);
+		err = lte_lc_system_mode_set(sys_mode_target, mode_preference);
 		if (err) {
 			return err;
 		}
@@ -971,7 +996,7 @@ int lte_lc_edrx_req(bool enable)
 	char req[25];
 
 	if (sys_mode_current == LTE_LC_SYSTEM_MODE_NONE) {
-		err = lte_lc_system_mode_get(&sys_mode_current);
+		err = lte_lc_system_mode_get(&sys_mode_current, NULL);
 		if (err) {
 			return err;
 		}
@@ -1035,7 +1060,7 @@ int lte_lc_rai_req(bool enable)
 	int err;
 	enum lte_lc_system_mode mode;
 
-	err = lte_lc_system_mode_get(&mode);
+	err = lte_lc_system_mode_get(&mode, NULL);
 	if (err) {
 		return err;
 	}
@@ -1494,28 +1519,42 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 	return err;
 }
 
-int lte_lc_system_mode_set(enum lte_lc_system_mode mode)
+int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
+			   enum lte_lc_system_mode_preference preference)
 {
 	int err, len;
 	char cmd[50];
 
 	switch (mode) {
 	case LTE_LC_SYSTEM_MODE_NONE:
-		LOG_DBG("No system mode set");
-		return 0;
 	case LTE_LC_SYSTEM_MODE_LTEM:
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
 	case LTE_LC_SYSTEM_MODE_NBIOT:
 	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
 	case LTE_LC_SYSTEM_MODE_GPS:
+	case LTE_LC_SYSTEM_MODE_LTEM_NBIOT:
+	case LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS:
 		break;
 	default:
 		LOG_ERR("Invalid system mode requested");
 		return -EINVAL;
 	}
 
-	len = snprintk(cmd, sizeof(cmd), "AT%%XSYSTEMMODE=%s",
-		       system_mode_params[mode]);
+	switch (preference) {
+	case LTE_LC_SYSTEM_MODE_PREFER_AUTO:
+	case LTE_LC_SYSTEM_MODE_PREFER_LTEM:
+	case LTE_LC_SYSTEM_MODE_PREFER_NBIOT:
+	case LTE_LC_SYSTEM_MODE_PREFER_LTEM_PLMN_PRIO:
+	case LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO:
+		break;
+	default:
+		LOG_ERR("Invalid LTE preference requested");
+		return -EINVAL;
+	}
+
+	len = snprintf(cmd, sizeof(cmd), "AT%%XSYSTEMMODE=%s,%c",
+		       system_mode_params[mode],
+		       system_mode_preference[preference]);
 	if (len < 0) {
 		LOG_ERR("Could not construct system mode command");
 		return -EFAULT;
@@ -1534,9 +1573,10 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode)
 	return err;
 }
 
-int lte_lc_system_mode_get(enum lte_lc_system_mode *mode)
+int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
+			   enum lte_lc_system_mode_preference *preference)
 {
-	int err, bitmask = 0;
+	int err, temp_pref, mode_bitmask = 0;
 	struct at_param_list resp_list = {0};
 	char response[AT_XSYSTEMMODE_RESPONSE_MAX_LEN] = {0};
 	char response_prefix[sizeof(AT_XSYSTEMMODE_RESPONSE_PREFIX)] = {0};
@@ -1597,32 +1637,70 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode)
 			goto clean_exit;
 		}
 
-		bitmask = param ? bitmask | BIT(i) : bitmask;
+		mode_bitmask = param ? mode_bitmask | BIT(i) : mode_bitmask;
 	}
 
-	/* When checking the bitmask, we need to add 1 to the indices,
-	 * as the response prefix is also counted as a parameter.
-	 */
-	switch (bitmask) {
+	/* Get LTE preference. */
+	if (preference != NULL) {
+		err = at_params_int_get(&resp_list, AT_XSYSTEMMODE_READ_PREFERENCE_INDEX,
+					&temp_pref);
+		if (err) {
+			LOG_ERR("Could not parse LTE preference parameter, err: %d", err);
+			goto clean_exit;
+		}
+
+		switch (temp_pref) {
+		case 0:
+			*preference = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
+			break;
+		case 1:
+			*preference = LTE_LC_SYSTEM_MODE_PREFER_LTEM;
+			break;
+		case 2:
+			*preference = LTE_LC_SYSTEM_MODE_PREFER_NBIOT;
+			break;
+		case 3:
+			*preference = LTE_LC_SYSTEM_MODE_PREFER_LTEM_PLMN_PRIO;
+			break;
+		case 4:
+			*preference = LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO;
+			break;
+		default:
+			LOG_ERR("Unsupported LTE preference: %d", temp_pref);
+			err = -EFAULT;
+			goto clean_exit;
+		}
+	}
+
+	switch (mode_bitmask) {
 	case 0:
 		*mode = LTE_LC_SYSTEM_MODE_NONE;
 		break;
-	case BIT(AT_XSYSTEMMODE_LTEM_INDEX + 1):
+	case BIT(AT_XSYSTEMMODE_READ_LTEM_INDEX):
 		*mode = LTE_LC_SYSTEM_MODE_LTEM;
 		break;
-	case BIT(AT_XSYSTEMMODE_NBIOT_INDEX + 1):
+	case BIT(AT_XSYSTEMMODE_READ_NBIOT_INDEX):
 		*mode = LTE_LC_SYSTEM_MODE_NBIOT;
 		break;
-	case BIT(AT_XSYSTEMMODE_GPS_INDEX + 1):
+	case BIT(AT_XSYSTEMMODE_READ_GPS_INDEX):
 		*mode = LTE_LC_SYSTEM_MODE_GPS;
 		break;
-	case (BIT(AT_XSYSTEMMODE_LTEM_INDEX + 1) |
-	      BIT(AT_XSYSTEMMODE_GPS_INDEX + 1)):
+	case (BIT(AT_XSYSTEMMODE_READ_LTEM_INDEX) |
+	      BIT(AT_XSYSTEMMODE_READ_GPS_INDEX)):
 		*mode = LTE_LC_SYSTEM_MODE_LTEM_GPS;
 		break;
-	case (BIT(AT_XSYSTEMMODE_NBIOT_INDEX + 1) |
-	      BIT(AT_XSYSTEMMODE_GPS_INDEX + 1)):
+	case (BIT(AT_XSYSTEMMODE_READ_NBIOT_INDEX) |
+	      BIT(AT_XSYSTEMMODE_READ_GPS_INDEX)):
 		*mode = LTE_LC_SYSTEM_MODE_NBIOT_GPS;
+		break;
+	case (BIT(AT_XSYSTEMMODE_READ_LTEM_INDEX) |
+	      BIT(AT_XSYSTEMMODE_READ_NBIOT_INDEX)):
+		*mode = LTE_LC_SYSTEM_MODE_LTEM_NBIOT;
+		break;
+	case (BIT(AT_XSYSTEMMODE_READ_LTEM_INDEX) |
+	      BIT(AT_XSYSTEMMODE_READ_NBIOT_INDEX) |
+	      BIT(AT_XSYSTEMMODE_READ_GPS_INDEX)):
+		*mode = LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS;
 		break;
 	default:
 		LOG_ERR("Invalid system mode, assuming parsing error");
@@ -1634,6 +1712,12 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode)
 		LOG_DBG("Current system mode updated from %d to %d",
 			sys_mode_current, *mode);
 		sys_mode_current = *mode;
+	}
+
+	if ((preference != NULL) && (mode_preference != *preference)) {
+		LOG_DBG("Current system mode preference updated from %d to %d",
+			mode_preference, *preference);
+		mode_preference = *preference;
 	}
 
 clean_exit:

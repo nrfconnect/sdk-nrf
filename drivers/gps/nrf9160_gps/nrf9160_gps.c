@@ -474,8 +474,9 @@ static int enable_gps(const struct device *dev)
 	int err;
 	enum lte_lc_system_mode system_mode;
 	enum lte_lc_func_mode functional_mode;
+	enum lte_lc_system_mode_preference preference;
 
-	err = lte_lc_system_mode_get(&system_mode);
+	err = lte_lc_system_mode_get(&system_mode, &preference);
 	if (err) {
 		LOG_ERR("Could not get modem system mode, error: %d", err);
 		return err;
@@ -483,7 +484,8 @@ static int enable_gps(const struct device *dev)
 
 	if ((system_mode != LTE_LC_SYSTEM_MODE_GPS) &&
 	    (system_mode != LTE_LC_SYSTEM_MODE_LTEM_GPS) &&
-	    (system_mode != LTE_LC_SYSTEM_MODE_NBIOT_GPS)) {
+	    (system_mode != LTE_LC_SYSTEM_MODE_NBIOT_GPS) &&
+	    (system_mode != LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS)) {
 		enum lte_lc_system_mode new_mode = LTE_LC_SYSTEM_MODE_GPS;
 
 		if (system_mode == LTE_LC_SYSTEM_MODE_LTEM) {
@@ -494,7 +496,7 @@ static int enable_gps(const struct device *dev)
 
 		LOG_DBG("GPS mode is not enabled, attempting to enable it");
 
-		err = lte_lc_system_mode_set(new_mode);
+		err = lte_lc_system_mode_set(new_mode, preference);
 		if (err) {
 			LOG_ERR("Could not enable GPS mode, error: %d", err);
 			return err;

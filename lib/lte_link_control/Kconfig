@@ -155,7 +155,63 @@ config LTE_NETWORK_MODE_NBIOT
 config LTE_NETWORK_MODE_NBIOT_GPS
 	bool "NB-IoT and GPS"
 
+config LTE_NETWORK_MODE_LTEM_NBIOT
+	bool "LTE-M and NB-IoT"
+
+config LTE_NETWORK_MODE_LTEM_NBIOT_GPS
+	bool "LTE-M, NB-IoT and GPS"
+
 endchoice
+
+choice
+	prompt "LTE mode preference"
+	default LTE_MODE_PREFERENCE_LTE_M
+	help
+	  Selects which LTE mode the modem should use if more than one is
+	  available.
+
+config LTE_MODE_PREFERENCE_AUTO
+	bool "No preference"
+	help
+	  No LTE preference, automatically selected by the modem.
+
+config LTE_MODE_PREFERENCE_LTE_M
+	bool "LTE-M"
+	help
+	  LTE-M is preferred over PLMN selection. The modem will prioritize to
+	  use LTE-M and switch over to a PLMN where LTE-M is available whenever
+	  possible.
+
+config LTE_MODE_PREFERENCE_NBIOT
+	bool "NB-IoT"
+	help
+	  NB-IoT is preferred over PLMN selection. The modem will prioritize to
+	  use NB-IoT and switch over to a PLMN where NB-IoT is available
+	  whenever possible.
+
+config LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO
+	bool "LTE-M, PLMN prioritized"
+	help
+	  LTE-M is preferred, but PLMN selection is more important. The modem
+	  will prioritize to stay on home network and switch over to NB-IoT
+	  if LTE-M is not available.
+
+config LTE_MODE_PREFERENCE_NBIOT_PLMN_PRIO
+	bool "NB-IoT, PLMN prioritized"
+	help
+	  NB-IoT is preferred, but PLMN selection is more important. The modem
+	  will prioritize to stay on home network and switch over to LTE-M
+	  if NB-IoT is not available.
+
+endchoice
+
+config LTE_MODE_PREFERENCE
+	int
+	default 0 if LTE_MODE_PREFERENCE_AUTO
+	default 1 if LTE_MODE_PREFERENCE_LTE_M
+	default 2 if LTE_MODE_PREFERENCE_NBIOT
+	default 3 if LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO
+	default 4 if LTE_MODE_PREFERENCE_NBIOT_PLMN_PRIO
 
 config LTE_RAI_REQ_VALUE
 	string "Requested RAI value"
