@@ -307,7 +307,7 @@ Thread
   * Dynamic multiprotocol support with Bluetooth LE.
   * Support for :ref:`thread_architectures_designs_cp_ncp` architecture.
   * Support for :ref:`ug_thread_vendor_hooks`.
-  * :ref:`ot_ncp_sample` sample - This sample demonstrates the usage of OpenThread Network Co-Processor architecture inside the Zephyr environment.
+  * :ref:`ot_coprocessor_sample` sample - This sample demonstrates the usage of OpenThread Network Co-Processor architecture inside the Zephyr environment.
     It has the following characteristics:
 
     * Extendable with vendor hooks

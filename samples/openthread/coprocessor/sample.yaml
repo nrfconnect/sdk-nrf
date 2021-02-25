@@ -1,8 +1,8 @@
 sample:
-  name: OpenThread NCP sample
-  description: Test OpenThread NCP
+  name: OpenThread Co-Processor sample
+  description: Test OpenThread Co-Processor
 tests:
-  samples.openthread.ncp:
+  samples.openthread.coprocessor:
     build_only: true
     build_on_all: true
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833

@@ -43,7 +43,7 @@ wpantund
 `wpantund`_ is a utility for providing a native IPv6 interface to a Network Co-Processor.
 When working with Thread, it is used for the interaction with the application by the following samples:
 
-* :ref:`ot_ncp_sample`
+* :ref:`ot_coprocessor_sample`
 
 The interaction is possible using commands proper to wpanctl, a module installed with wpantund.
 
