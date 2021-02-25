@@ -94,6 +94,10 @@ struct bt_mesh_light_ctrl_srv_cfg {
 	uint32_t fade_standby_manual;
 	/** State-wise light levels */
 	uint16_t light[LIGHT_CTRL_STATE_COUNT];
+	// Manual Override Time (TimeMillisecond with resolution 0.001)
+	uint32_t override_time;
+	// Indication if Manual Override Timer is enabled (Boolean)
+	uint8_t override_time_enabled;
 };
 
 /** Illumination regulator configuration */
@@ -115,11 +119,13 @@ struct bt_mesh_light_ctrl_srv_reg_cfg {
 /** Illumination regulator */
 struct bt_mesh_light_ctrl_srv_reg {
 	/** Regulator step timer */
-	struct k_delayed_work timer;
+	struct k_timer timer;
+	/** Regulator work handler */
+	struct k_work work;
 	/** Internal integral sum. */
 	float i;
 	/** Previous output */
-	uint16_t prev;
+	uint16_t out;
 	/** Regulator configuration */
 	struct bt_mesh_light_ctrl_srv_reg_cfg cfg;
 };
