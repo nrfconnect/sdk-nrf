@@ -14,10 +14,8 @@ The module can handle both matrix keyboard and buttons directly connected to GPI
 Configuration
 *************
 
-Configuration
-*************
-
 To use the module, you must enable the following Kconfig options:
+
 * :option:`CONFIG_CAF_BUTTONS` - This option enables the buttons module.
 * :option:`CONFIG_GPIO` - This option enables Zephyr's :ref:`zephyr:gpio_api` driver, which is required for interacting with the GPIO pins.
 
