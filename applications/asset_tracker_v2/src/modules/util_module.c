@@ -305,9 +305,10 @@ static void on_all_states(struct util_msg_data *msg)
 	 * that the application is ready to shutdown. This ensures a graceful
 	 * shutdown.
 	 */
-	if (reboot_ack_cnt >= module_active_count_get()) {
-		k_delayed_work_submit(&reboot_work,
-				      K_SECONDS(50));
+	if (reboot_ack_cnt >= module_active_count_get() - 1) {
+		LOG_WRN("All modules have ACKed the reboot request.");
+		LOG_WRN("Reboot in 5 seconds.");
+		k_delayed_work_submit(&reboot_work, K_SECONDS(5));
 	}
 }
 

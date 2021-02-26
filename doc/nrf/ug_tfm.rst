@@ -29,7 +29,7 @@ Building
 ********
 
 TF-M is one of the images that are built as part of a multi-image application.
-If TF-M is used in the your application, SPM will not be included in it.
+If TF-M is used in the application, SPM will not be included in it.
 For more information about multi-image builds, see :ref:`ug_multi_image`.
 
 To add TF-M to your build, enable the :option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
@@ -68,4 +68,4 @@ Wire the pins P0.25 and P0.26 to RxD and TxD respectively.
 Limitations
 ***********
 
-TF-M cannot be used in applications whose code has dependencies on SPM :ref:`lib_secure_services` to operate properly.
+Application code that uses SPM :ref:`lib_secure_services` cannot use TF-M because the interface to TF-M is different and, at this time, not all SPM functions are available in TF-M.

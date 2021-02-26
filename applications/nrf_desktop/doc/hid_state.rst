@@ -50,7 +50,7 @@ Implementation details
 The |hid_state| provides a routing mechanism between sources of input data and transport modules.
 This can be associated with:
 
-* Receiving input events from :ref:`nrf_desktop_buttons`, :ref:`nrf_desktop_wheel`, and :ref:`nrf_desktop_motion`.
+* Receiving input events from :ref:`caf_buttons`, :ref:`nrf_desktop_wheel`, and :ref:`nrf_desktop_motion`.
 * Sending out HID reports to :ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state`.
 
 For the routing mechanism to work, the module performs the following operations:

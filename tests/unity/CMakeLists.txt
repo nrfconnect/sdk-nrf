@@ -29,7 +29,7 @@ zephyr_library_sources(
 	${CMOCK_DIR}/src/cmock.c
 )
 
-zephyr_library_sources_ifdef(CONFIG_BOARD_NATIVE_POSIX src/native_posix.c)
+zephyr_library_sources(src/generic_teardown.c)
 zephyr_compile_definitions(UNITY_INCLUDE_CONFIG_H)
 
 # Generate test runner file.
@@ -43,9 +43,9 @@ function(test_runner_generate test_file_path)
   add_custom_command(
     COMMAND ${RUBY_EXECUTABLE}
     ${CMOCK_DIR}/vendor/unity/auto/generate_test_runner.rb
-    --main_name=unity_main
+    ${UNITY_CONFIG_FILE}
     ${test_file_path} ${output_file}
-    DEPENDS ${test_file_path}
+    DEPENDS ${test_file_path} ${UNITY_CONFIG_FILE}
     OUTPUT ${output_file}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   )

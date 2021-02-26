@@ -12,6 +12,7 @@ project(chip-lock)
 
 set(COMMON_ROOT ${CMAKE_CURRENT_LIST_DIR}/../common)
 
+# NORDIC SDK APP START
 target_include_directories(app PRIVATE src ${COMMON_ROOT}/src)
 
 target_sources(app PRIVATE
@@ -42,3 +43,4 @@ target_sources(app PRIVATE
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/util.cpp
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/clusters/bindings/bindings.cpp
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/clusters/on-off-server/on-off.cpp)
+# NORDIC SDK APP END

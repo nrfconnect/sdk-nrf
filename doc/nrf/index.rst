@@ -10,7 +10,9 @@ The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is bui
 
 .. note::
 
-   This version of the |NCS| supports prototyping and evaluation, but should not be used for production and deployment in end products.
+   nRF53 Series devices are now supported for production.
+   Wireless protocol stacks and libraries may indicate support for development or support for production for different series of devices based on verification and certification status.
+
 
 .. previous note about development and production support
 ..   nRF53 Series devices (which are pre-production) and Zigbee and Bluetooth mesh protocols are supported for development in |release| for prototyping and evaluation.

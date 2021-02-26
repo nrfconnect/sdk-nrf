@@ -41,7 +41,7 @@ static enum state_type {
 	STATE_DISCONNECTED,
 	STATE_CONNECTING,
 	STATE_CONNECTED,
-	STATE_SHUTTING_DOWN,
+	STATE_SHUTDOWN,
 } state;
 
 /* Struct that holds data from the modem information module. */
@@ -78,8 +78,8 @@ static char *state2str(enum state_type state)
 		return "STATE_CONNECTING";
 	case STATE_CONNECTED:
 		return "STATE_CONNECTED";
-	case STATE_SHUTTING_DOWN:
-		return "STATE_SHUTTING_DOWN";
+	case STATE_SHUTDOWN:
+		return "STATE_SHUTDOWN";
 	default:
 		return "Unknown state";
 	}
@@ -608,7 +608,7 @@ static void on_all_states(struct modem_msg_data *msg)
 
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
 		lte_lc_power_off();
-		state_set(STATE_SHUTTING_DOWN);
+		state_set(STATE_SHUTDOWN);
 		SEND_EVENT(modem, MODEM_EVT_SHUTDOWN_READY);
 	}
 }
@@ -643,8 +643,8 @@ static void module_thread_fn(void)
 		case STATE_CONNECTED:
 			on_state_connected(&msg);
 			break;
-		case STATE_SHUTTING_DOWN:
-			LOG_WRN("No action allowed in STATE_SHUTTING_DOWN");
+		case STATE_SHUTDOWN:
+			/* The shutdown state has no transition. */
 			break;
 		default:
 			LOG_WRN("Invalid state: %d", state);

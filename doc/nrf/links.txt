@@ -6,17 +6,17 @@
 .. ### Source: zephyrproject.org
 
 .. _`Zephyr`: https://zephyrproject.org/
-.. _`Zephyr Project documentation`: https://docs.zephyrproject.org/
+.. _`Zephyr Project documentation`: https://docs.zephyrproject.org/latest/
 .. _`Zephyr Network APIs`: https://docs.zephyrproject.org/latest/reference/networking/apis.html
 
 .. ### Source: github.com
 
 .. _`GitHub`: https://github.com/
-.. _`GitHub fork`: https://help.github.com/en/articles/fork-a-repo
-.. _`GitHub duplicate`: https://help.github.com/en/articles/duplicating-a-repository
+.. _`GitHub fork`: https://docs.github.com/en/github/getting-started-with-github/fork-a-repo
+.. _`GitHub duplicate`: https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/duplicating-a-repository
 
 .. _`sdk-zephyr`: https://github.com/nrfconnect/sdk-zephyr
-.. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
+.. _`official Zephyr repository`:
 .. _`Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 .. _`Zephyr commit f12536`: https://github.com/zephyrproject-rtos/hal_nordic/commit/f12536cbfb27b7bb05b40b97bd8a8857f2bf23ec
 .. _`Zephyr commit 2db49c`: https://github.com/zephyrproject-rtos/zephyr/commit/2db49c4b99850b3e7a53667fe7bb9ba6fc2a5b7d
@@ -33,8 +33,9 @@
 .. _`nRF Blinky`: https://github.com/NordicSemiconductor/Android-nRF-Blinky
 
 .. _`nrfx`: https://github.com/NordicSemiconductor/nrfx/
-.. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#220---2020-04-28
-.. _`Changelog for nrfx 2.3.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#230---2020-08-19
+.. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-220---2020-04-28
+.. _`Changelog for nrfx 2.3.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-230---2020-08-19
+.. _`Changelog for nrfx 2.4.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-240---2020-11-13
 
 .. _`nRF52 client for serial LTE modem application`: https://github.com/NordicPlayground/nRF52-clients-for-serial-LTE-modem
 
@@ -42,7 +43,7 @@
 .. _`HIDAPI releases`: https://github.com/libusb/hidapi/releases
 .. _`pyhidapi Python wrapper`: https://github.com/apmorton/pyhidapi
 
-.. _`Alexa Gadgets Github color cycler`: https://github.com/alexa/Alexa-Gadgets-Raspberry-Pi-Samples/tree/v2.0.0/src/examples/color_cycler#step-4-create-your-custom-skill
+.. _`Alexa Gadgets Github color cycler`: https://github.com/alexa/Alexa-Gadgets-Raspberry-Pi-Samples/tree/v2.0.0/src/examples/color_cycler#user-content-step-4-create-your-custom-skill
 
 .. _`nrf9160dk_nrf9160_partition_conf.dts`: https://github.com/nrfconnect/sdk-zephyr/blob/master/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_partition_conf.dts
 
@@ -61,10 +62,11 @@
 .. _`Sphinx parser issue`: https://github.com/sphinx-doc/sphinx/issues/2683
 
 .. _`Leshan Demo Server`: https://github.com/eclipse/leshan/blob/master/README.md
+.. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io
 
 .. _`wpantund`: https://github.com/openthread/wpantund/blob/master/README.md
 .. _`wpantund Installation Guide`: https://github.com/openthread/wpantund/blob/master/INSTALL.md
-.. _`wpantund Usage Overview`: https://github.com/openthread/wpantund#usage-overview
+.. _`wpantund Usage Overview`: https://github.com/openthread/wpantund#user-content-usage-overview
 .. _`CLI wpantund wrapper`: https://github.com/openthread/wpantund/blob/master/doc/wpanctl.1
 
 .. _`PySpinel`: https://github.com/openthread/pyspinel/blob/master/README.md
@@ -77,18 +79,18 @@
 .. _`OpenAMP`: https://github.com/OpenAMP/open-amp/
 .. _`RPMsg Messaging Protocol`: https://github.com/OpenAMP/open-amp/wiki/RPMsg-Messaging-Protocol
 
-.. _`MCUmgr`: https://github.com/apache/mynewt-mcumgr
+.. _`mcumgr`: https://github.com/apache/mynewt-mcumgr
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
-.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/ff13bd/src/android/CHIPTool
-.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md
-.. _`Building and programming OpenThread RCP firmware`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#building-rcp-firmware
-.. _`Building and installing Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#building-chiptool
-.. _`Configuring PC as Thread Border Router`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#configuring-pc
-.. _`Preparing and commissioning accessory device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_android_commissioning.md#preparing-accessory
-.. _`CHIP Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/README.md
-.. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ff13bd/docs/guides/nrfconnect_platform_overview.md
+.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/c73b8e0/src/android/CHIPTool
+.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md
+.. _`Building and programming OpenThread RCP firmware`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#user-content-building-and-programming-openthread-rcp-firmware
+.. _`Building and installing Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#user-content-building-and-installing-android-chiptool
+.. _`Configuring PC as Thread Border Router`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#user-content-configuring-pc-as-thread-border-router
+.. _`Preparing and commissioning accessory device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#user-content-preparing-accessory-device
+.. _`Project CHIP Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/README.md
+.. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_platform_overview.md
 
 .. ### Source: developer.nordicsemi.com
 
@@ -103,13 +105,13 @@
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
 .. _`known issues page on the master branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html
-.. _`known issues for nRF Connect SDK v1.4.99-dev1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-99-dev1
+.. _`known issues for nRF Connect SDK v1.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-5-0
 .. _`known issues for nRF Connect SDK v1.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-2
 .. _`known issues for nRF Connect SDK v1.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-1
 .. _`known issues for nRF Connect SDK v1.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-0
 
 .. _`Stack commissioning start sequence`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss_api_doc/using_zigbee__z_c_l.html#stack_start_initiation
-.. _`NCP Host for Zigbee`: https://developer.nordicsemi.com/Zigbee/ncp_sdk_for_host/ncp_sdk_v0.9.2.zip
+.. _`NCP Host for Zigbee`: https://developer.nordicsemi.com/Zigbee/ncp_sdk_for_host/ncp_sdk_v0.9.3.zip
 .. _`process the frame`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.3.0.6/using_zigbee__z_c_l.html#process_zcl_cmd
 
 .. ### Source: www.nordicsemi.com
@@ -139,7 +141,7 @@
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
 .. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
-.. _`Energy efficiency` : https://www.nordicsemi.com/Products/Low-power-cellular-IoT#Cellular-performance-for-the-IoT
+.. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT
 
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
 .. _`Thingy:91 product page`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91
@@ -149,7 +151,7 @@
 
 .. ### Source: infocenter.nordicsemi.com
 
-.. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/
+.. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
 
 .. _`LTE Link Monitor`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_intro.html
 .. _`Managing credentials`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_certificate_manager.html
@@ -181,7 +183,7 @@
 .. _`Getting started with nRF Connect SDK (nRF52 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs52/UG/gsg/intro.html
 
 .. _`nRF52840 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/keyfeatures_html5.html
-.. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1227688711
+.. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1384365742
 .. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/dk/intro.html
 .. _`nRF52840 Dongle User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dongle/UG/nrf52840_Dongle/intro.html
 
@@ -247,11 +249,11 @@
 
 .. ### Source: www.segger.com
 
-.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x86`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x86
-.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x64`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x64
-.. _`SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_macos
-.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x86
-.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x64
+.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x86`: https://www.segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x86
+.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x64`: https://www.segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x64
+.. _`SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`: https://www.segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_macos
+.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: https://www.segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x86
+.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: https://www.segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x64
 
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
 
@@ -259,7 +261,7 @@
 
 .. ### Source: bluetooth.org and bluetooth.com
 
-.. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/bluetooth-core-specification/
+.. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/specs/
 
 .. _`HID Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245140
 .. _`Battery Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245138
@@ -270,14 +272,14 @@
 .. _`Bluetooth SIG company identifiers`: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
 
 .. _`Bluetooth mesh model specification`:
-.. _`Bluetooth mesh profile specification`: https://www.bluetooth.com/specifications/mesh-specifications/
+.. _`Bluetooth mesh profile specification`: https://www.bluetooth.com/specifications/specs/
 
 .. _`Bluetooth mesh model overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
-.. _`Bluetooth mesh glossary`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-glossary/
+.. _`Bluetooth mesh glossary`: https://www.bluetooth.com/learn-about-bluetooth/recent-enhancements/mesh/mesh-glossary/
 .. _`Bluetooth mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
 .. _`Bluetooth mesh study guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
 
-.. _`Bluetooth Secure Simple Pairing Using NFC`: https://www.bluetooth.com/bluetooth-resources/bluetooth-secure-simple-pairing-using-nfc-application-document/
+.. _`Bluetooth Secure Simple Pairing Using NFC`: https://nfc-forum.org/our-work/specification-releases/specifications/#010ea0b1006cf5b44
 
 .. ### Source: openmobilealliance.org
 
@@ -369,17 +371,17 @@
 .. _`AWS IoT Developer Guide: Jobs`: https://docs.aws.amazon.com/iot/latest/developerguide/iot-jobs.html
 
 .. _`AWS Simple Storage Service (S3)`: https://docs.aws.amazon.com/s3/index.html
-.. _`AWS S3 Developer Guide: Using Bucket Policies and User Policies`: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
-.. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
+.. _`AWS S3 Developer Guide: Using Bucket Policies and User Policies`: https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-iam-policies.html
+.. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html
 .. _`AWS IoT Core`: https://aws.amazon.com/iot-core/
 
 .. ### Source: developer.amazon.com & www.amazon.com
 
 .. _`Alexa Gadgets Bluetooth LE`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/bluetooth-le-pair-connect.html
 .. _`Alexa Gadgets Bluetooth LE Packet Format`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/packet-ble.html
-.. _`Alexa Gadgets Setup`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/steps-to-set-up-gadget.html
 .. _`Alexa Gadgets Interfaces`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/defined-interfaces.html
 .. _`Alexa Gadgets Custom Event`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/custom-interface.html#events
+.. _`Alexa Gadgets Setup`:
 .. _`Alexa Gadgets Registration`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/steps-to-set-up-gadget.html
 .. _`Alerts interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/alerts-interface.html
 .. _`Alexa.Gadget.MusicData interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/alexa-gadget-musicdata-interface.html
@@ -400,6 +402,8 @@
 .. _`Openthread acting as a new reference platform`: https://openthread.io/certification/automation-setup#acting_as_a_new_reference_platform
 .. _`OpenThread Border Router`: https://openthread.io/guides/border-router
 
+.. _`OpenThread system architecture`: https://openthread.io/platforms#system_architecture
+
 .. ### Source: threadgroup.*
 
 .. _`Thread Group`: https://www.threadgroup.org
@@ -414,15 +418,14 @@
 .. ### Source: nist.gov
 
 .. _`NIST - AES`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/block-ciphers#AES
-.. _`NIST - CCM`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/CAVP-TESTING-BLOCK-CIPHER-MODES#CCM
-.. _`NIST - GCM`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/CAVP-TESTING-BLOCK-CIPHER-MODES#GCMVS
+.. _`NIST - CCM`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/CAVP-TESTING-BLOCK-CIPHER-MODES#CCM
+.. _`NIST - GCM`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/CAVP-TESTING-BLOCK-CIPHER-MODES#GCMVS
 .. _`NIST - HMAC`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/message-authentication
-.. _`NIST - SHA`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#shavs
+.. _`NIST - SHA`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/Secure-Hashing#shavs
+.. _`NIST - ECDH`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/Component-Testing#ECCCDH
+.. _`NIST - ECDSA`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/Digital-Signatures#ecdsa2vs
 
 .. _`The EAX Mode of Operation`: https://csrc.nist.gov/csrc/media/projects/block-cipher-techniques/documents/bcm/proposed-modes/eax/eax-spec.pdf
-
-.. _`NIST - ECDH`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Component-Testing#ECCCDH
-.. _`NIST - ECDSA`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Digital-Signatures#ecdsa2vs
 
 .. _`NIST SP 800-38A`: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38a.pdf
 .. _`NIST SP 800-38B`: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38b.pdf
@@ -493,7 +496,7 @@
 
 .. _`Platform Security Architecture (PSA)`: https://www.psacertified.org/what-is-psa-certified/
 
-.. _`TF-M documentation`: https://ci-builds.trustedfirmware.org/static-files/I3OU6LcW0o-1dDVVXuFbYv7isMCBp1lR-H72D6ZbdoAxNjEyODcwMjYwODk0Ojk6YW5vbnltb3VzOmpvYi90Zi1tLWJ1aWxkLWRvY3MtbmlnaHRseS9sYXN0U3RhYmxlQnVpbGQvYXJ0aWZhY3Q=/trusted-firmware-m/build/docs/user_guide/html/index.html
+.. _`TF-M documentation`: https://ci-builds.trustedfirmware.org/static-files/0drI7HdfhXRLQIHCgkYFMOKtBnxcqzzWcM17DKWogmUxNjEzMTM1MzM5MTI1Ojk6YW5vbnltb3VzOmpvYi90Zi1tLWJ1aWxkLWRvY3MtbmlnaHRseS9sYXN0U3RhYmxlQnVpbGQvYXJ0aWZhY3Q=/trusted-firmware-m/build/docs/user_guide/html/index.html
 .. _`Mbed TLS`: https://developer.trustedfirmware.org/w/mbed-tls/
 
 .. _`Nanopb`: https://jpa.kapsi.fi/nanopb/
@@ -531,7 +534,7 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
-.. _`BH1749NUC-E`: https://www.rohm.com/datasheet/BH1749NUC/bh1749nuc-e
+.. _`BH1749NUC-E`: https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1749nuc-e.pdf
 
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 
@@ -542,11 +545,11 @@
 
 .. _`NMEA`: https://www.gpsworld.com/what-exactly-is-gps-nmea-data/
 
-.. _`Baltimore CyberTrust Root certificate`: https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
+.. _`Baltimore CyberTrust Root certificate`: https://cacerts.digicert.com/BaltimoreCyberTrustRoot.crt.pem
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
 
-.. _`Connected Home over IP`: https://www.connectedhomeip.com/
+.. _`Project Connected Home over IP`: https://www.connectedhomeip.com/
 
 .. _`GN`: https://gn.googlesource.com/gn/
 .. _`GN website`: https://gn.googlesource.com/gn/#getting-a-binary
@@ -565,4 +568,4 @@
 
 .. _`Getting started guide for Asset Tracker Cloud Example for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/aws/GettingStarted.html
 
-.. _`Azure support for Asset Tracker v2`: https://github.com/NordicSemiconductor/asset-tracker-cloud-docs/discussions/12
+.. _`Azure support for Asset Tracker v2`: https://github.com/nrfconnect/sdk-nrf/pull/3950

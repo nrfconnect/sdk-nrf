@@ -278,7 +278,7 @@ static bool reported_status_process(const char *status,
 				    const char *current_fw,
 				    const char *pending_fw)
 {
-	bool report_needed;
+	bool report_needed = false;
 
 	switch (reported_status_get(status)) {
 	case REP_STATUS_CURRENT:
@@ -320,6 +320,12 @@ static bool reported_status_process(const char *status,
 
 		break;
 	case REP_STATUS_DOWNLOADING:
+		if (state_get() == STATE_DOWNLOADING) {
+			LOG_DBG("Status \"downloading\" was reported, no update needed");
+			/* Download is in progress, no update needed */
+			break;
+		}
+
 		/* A download was in progress and must have failed for this
 		 * situation to occur. Therefore, the error must be reported.
 		 */
@@ -327,6 +333,10 @@ static bool reported_status_process(const char *status,
 
 		rep_status_set(REP_STATUS_ERROR);
 
+		break;
+	case REP_STATUS_ERROR:
+		LOG_DBG("Status \"error\" was reported, no update will be sent");
+		rep_status_set(REP_STATUS_ERROR);
 		break;
 	default:
 		/* In all other cases, the current firmware should be reported

@@ -34,10 +34,15 @@ For this sample to work, you also need the following:
   It contains the source code for all parts of the ZBOSS library for the NCP host.
   This allows you to recompile the library for the designated hardware platform.
   Running the NCP Host for Zigbee requires a PC with an operating system compatible with the 64-bit Ubuntu 18.04 Linux.
-* The :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` sample on one separate device.
-* The :ref:`zigbee_light_bulb_sample` sample on one separate device.
+* The :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` sample programmed on one separate device.
+* The :ref:`zigbee_light_bulb_sample` sample programmed on one separate device.
 
 This means that you need at least three development kits for testing this sample.
+
+.. figure:: /images/zigbee_ncp_sample_overview.svg
+   :alt: Zigbee NCP sample setup overview
+
+   Zigbee NCP sample setup overview
 
 Overview
 ********
@@ -48,7 +53,8 @@ The sample uses the :option:`CONFIG_ZIGBEE_LIBRARY_NCP_DEV` Kconfig option, whic
 The NCP Kconfig option extends the compilation process with an implementation of the ZBOSS API serialization through NCP commands.
 It also implements the ZBOSS default signal handler function, which controls the ZBOSS and commissioning logic.
 
-The sample is built to work with bootloader, see :ref:`zigbee_ncp_bootloader` for more information.
+The sample is built to work with bootloader.
+See :ref:`zigbee_ncp_bootloader` for more information.
 
 The NCP application creates and starts a ZBOSS thread as well as the communication channel for NCP commands that are exchanged between the connectivity device and the host processor.
 
@@ -66,16 +72,25 @@ The communication channel uses Zephyr's :ref:`zephyr:uart_api` API.
 This serial device is selected with :option:`CONFIG_ZIGBEE_UART_DEVICE_NAME`.
 
 By default, the NCP sample communicates through the UART serialization (``UART0``).
-As a result, Zephyr's logger is configured to use ``UART1``, which is available through GPIO pins (``P1.00`` and ``P1.01``).
+As a result, Zephyr's logger is configured to use ``UART1``, which is available through GPIO pins (**P1.00** and **P1.01**).
 
 The ``UART0`` pins are configured by Devicetree :file:`overlay` files for each supported development kit in the :file:`boards` directory.
 
-Optional communication through USB
-----------------------------------
+Communication through USB
+-------------------------
 
-You can change the communication channel from the default UART to nRF USB by using the :file:`usb.overlay` configuration file.
+You can change the communication channel from the default UART to nRF USB by using the :file:`prj_usb.conf` configuration file.
+This configuration file is not applied automatically and can be passed into CMake by using the ``--`` separator when building the sample.
+For example:
+
+.. code-block:: console
+
+   west build samples/zigbee/ncp -b nrf52840dk_nrf52840 -- -DCONF_FILE='prj_usb.conf'
 
 The USB device VID and PID are configured by the sample's Kconfig file.
+
+.. note::
+    If you want to use the USB as the NCP communication channel when using the nRF52840 Dongle, building the sample with the :file:`prj_usb.conf` configuration file is mandatory.
 
 .. _zigbee_ncp_bootloader:
 
@@ -87,22 +102,26 @@ The bootloader support in the NCP sample depends on the development kit, its res
 * For the ``nrf52840dongle_nrf52840`` build target, `nRF5 SDK Bootloader`_ is used by default because the dongle comes with this bootloader preinstalled.
 * For the ``nrf52840dk_nrf52840``, ``nrf52833dk_nrf52833``, and ``nrf21540dk_nrf52840`` build targets, the following scenarios are possible when building for these build targets:
 
-  * If the `Optional communication through USB`_ is selected, `MCUboot`_ is enabled by default.
-  * If the default UART serial communication channel is used, the bootloader support is not enabled, but it can be enabled by the user.
+  * If the `Communication through USB`_ is selected, `MCUboot`_ is enabled by default.
+  * If the default UART serial communication channel is used, the bootloader support is not enabled, but MCUboot can be enabled by the user.
 
 MCUboot
 -------
 
-When the `Optional communication through USB`_ is selected, MCUboot in this sample is built with support for single application slot, and uses the USB DFU class driver to allow uploading image over USB.
-This is achieved with the following Kconfig overlay files, available in the :file:`configuration` directory for the build target of your choice:
+When the `Communication through USB`_ is selected, MCUboot in this sample is built with support for single application slot, and uses the USB DFU class driver to allow uploading image over USB.
 
-* :file:`app_with_mcuboot.conf` - This file enables MCUboot for the application.
-* :file:`mcuboot.conf` - This file configures MCUboot to have single application slot and use USB DFU.
-* :file:`pm_static.yml` - This Partition Manager file increases MCUboot's partition size.
+If you want to use the default UART serial communication channel, you can enable MCUboot by setting the :option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
+To use the same MCUboot configuration as in `Communication through USB`_, you need to provide MCUboot with the Kconfig options included in the :file:`child_image/mcuboot_usb.conf` file.
+See :ref:`ug_multi_image_variables` for how to set the required options.
 
-To learn more about configuring bootloader for an application in |NCS|, see the :ref:`bootloader` sample.
+MCUboot with the USB DFU requires a larger partition.
+To increase the partition, define the ``PM_STATIC_YML_FILE`` variable that provides the path to the :file:`pm_static.yml` static configuration file in the :file:`configuration` directory for the build target of your choice.
+These additional options and configuration file can be passed into CMake by using the ``--`` separator when building the sample.
+For example:
 
-When the default UART serial communication channel is used, MCUboot can be enabled and configured similarly to when the `Optional communication through USB`_ is selected by using the same overlay files.
+.. code-block:: console
+
+   west build samples/zigbee/ncp -b nrf52840dk_nrf52840 -- -DCONFIG_BOOTLOADER_MCUBOOT=y  -Dmcuboot_CONFIG_MULTITHREADING=y -Dmcuboot_CONFIG_BOOT_WAIT_FOR_USB_DFU=y -Dmcuboot_CONFIG_SINGLE_APPLICATION_SLOT=y -DPM_STATIC_YML_FILE=samples/zigbee/ncp/configuration/nrf52840dk_nrf52840/pm_static.yml
 
 When building the sample, the build system also generates the signed :file:`app_update.bin` image file in the :file:`build` directory.
 This file can be used to upgrade a device.
@@ -111,6 +130,8 @@ See :ref:`mcuboot_ncs` for more information about this and other automatically g
 After every reset, the sample first boots to MCUboot and then, after a couple of seconds, the NCP sample is booted.
 When booted to MCUboot, the new image can be uploaded with the dfu-util tool.
 See :ref:`USB DFU sample documentation <zephyr:usb_dfu>` for a reference.
+
+To learn more about configuring bootloader for an application in |NCS|, see the :ref:`ug_bootloader` page.
 
 nRF5 SDK Bootloader
 -------------------
@@ -158,7 +179,7 @@ After building the sample and programming it to your development kit, test it by
    .. note::
       If you are using an Linux distribution different than the 64-bit Ubuntu 18.04, make sure to rebuild the package libraries and applications by following the instructions described in the :file:`README.rst`  file in the NCP Host for Zigbee package.
 
-#. If you are using `Optional communication through USB`_, connect the nRF USB port of the NCP sample's development kit to the PC USB port with an USB cable.
+#. If you are using `Communication through USB`_, connect the nRF USB port of the NCP sample's development kit to the PC USB port with an USB cable.
 #. Get the kit’s serial port name (for example, /dev/ttyACM0).
    If you are communicating through the nRF USB, get the nRF USB serial port name.
 #. Turn on the development kit that runs the network coordinator sample.

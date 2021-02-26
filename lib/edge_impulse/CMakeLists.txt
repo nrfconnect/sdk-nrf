@@ -42,6 +42,7 @@ ExternalProject_Add(edge_impulse_project
     PATCH_COMMAND    ${CMAKE_COMMAND} -E copy
                      ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.ei.template
                      ${EDGE_IMPULSE_SOURCE_DIR}/CMakeLists.txt
+    DEPENDS          zephyr_interface
     CMAKE_ARGS -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                -DCMAKE_AR=${CMAKE_AR}
@@ -59,8 +60,14 @@ ExternalProject_Add(edge_impulse_project
 # causes the Edge impulse library to be fetched on each build invocation.
 # Note: This also results in the `ALL` target to always be considered out-of-date.
 if(CONFIG_EDGE_IMPULSE_DOWNLOAD_ALWAYS)
+  if(${CMAKE_VERSION} VERSION_LESS "3.17")
+    set(REMOVE_COMMAND remove)
+  else()
+    set(REMOVE_COMMAND rm)
+  endif()
+
   add_custom_target(edge_impulse_project_download
-                    COMMAND ${CMAKE_COMMAND} -E rm -f
+                    COMMAND ${CMAKE_COMMAND} -E ${REMOVE_COMMAND} -f
                             ${EDGE_IMPULSE_STAMP_DIR}/edge_impulse_project-download
                     DEPENDS edge_impulse_project
   )

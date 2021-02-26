@@ -67,8 +67,8 @@ To test the network core bootloader sample run the following commands:
 #. ``west build -b nrf5340dk_nrf5340_cpuapp -d build_netboot samples/bluetooth/peripheral_uart -f -- -DCONFIG_BOOTLOADER_MCUBOOT=y -Dmcuboot_CONFIG_PCD=y``
 
    This sample (:file:`samples/bluetooth/peripheral_uart`) will automatically include the network core sample ``hci_rpmsg`` when built for the nRF5340 DK.
-   Since we enable MCUBoot (``-DCONFIG_BOOTLOADER_MCUBOOT=y``) in the application core, the network core bootloader is automatically included as well.
-   In addition to this, it is necessary to enable the :ref:`subsys_pcd` subsys for the MCUBoot image (``-Dmcuboot_CONFIG_PCD=y``).
+   Since we enable MCUboot (``-DCONFIG_BOOTLOADER_MCUBOOT=y``) in the application core, the network core bootloader is automatically included as well.
+   In addition to this, it is necessary to enable the :ref:`subsys_pcd` subsys for the MCUboot image (``-Dmcuboot_CONFIG_PCD=y``).
 
 #. ``west flash -d build_netboot``
 
@@ -76,9 +76,9 @@ To test the network core bootloader sample run the following commands:
 
 #. ``nrfjprog --program build_netboot/zephyr/net_core_app_moved_test_update.hex --sectorerase -r``
 
-   This command will program the update firmware for the network core to the secondary slot of MCUBoot in the application core.
+   This command will program the update firmware for the network core to the secondary slot of MCUboot in the application core.
    The firmware is signed the same way that the application firmware is signed.
-   Hence, the firmware is also verified by MCUBoot on the application core.
+   Hence, the firmware is also verified by MCUboot on the application core.
    See :ref:`subsys_pcd` for more details.
 
 #. Reset the kit.

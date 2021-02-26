@@ -226,8 +226,7 @@ else()
   set(SEP :)
 endif()
 
-set(NRF_SPHINX_BUILD_HTML_COMMAND
-  ${CMAKE_COMMAND} -E env
+set(nrf_sphinx_environment
   ZEPHYR_BASE=${ZEPHYR_BASE}
   ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
   ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
@@ -239,6 +238,11 @@ set(NRF_SPHINX_BUILD_HTML_COMMAND
   ZEPHYR_RST_SRC=${ZEPHYR_BINARY_DIR}/rst/doc
   MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
   NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
+)
+
+
+set(NRF_SPHINX_BUILD_HTML_COMMAND
+  ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
   ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
 )
 
@@ -296,9 +300,7 @@ add_custom_target(
   WORKING_DIRECTORY ${MCUBOOT_DOC_DIR}
 )
 
-add_custom_target(
-  mcuboot-html
-  COMMAND ${CMAKE_COMMAND} -E env
+set(mcuboot_sphinx_environment
   NRF_BASE=${NRF_BASE}
   ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
   NRF_OUTPUT=${HTML_DIR}/nrf
@@ -306,6 +308,11 @@ add_custom_target(
   MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
   MCUBOOT_RST_SRC=${MCUBOOT_RST_OUT}/doc/mcuboot
   KCONFIG_OUTPUT=${HTML_DIR}/kconfig
+)
+
+add_custom_target(
+  mcuboot-html
+  COMMAND ${CMAKE_COMMAND} -E env ${mcuboot_sphinx_environment}
   ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html ${MCUBOOT_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${HTML_DIR}/mcuboot
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
@@ -376,9 +383,7 @@ add_custom_target(
   WORKING_DIRECTORY ${NRFXLIB_BASE}
 )
 
-add_custom_target(
-  nrfxlib-html
-  COMMAND ${CMAKE_COMMAND} -E env
+set(nrfxlib_sphinx_environment
   NRF_BASE=${NRF_BASE}
   NRF_OUTPUT=${HTML_DIR}/nrf
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
@@ -386,6 +391,11 @@ add_custom_target(
   NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
   NRFXLIB_RST_SRC=${NRFXLIB_RST_OUT}
   KCONFIG_OUTPUT=${HTML_DIR}/kconfig
+)
+
+add_custom_target(
+  nrfxlib-html
+  COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
   ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
 
   # Merge the Doxygen and Sphinx logs into a single file
@@ -400,14 +410,7 @@ add_dependencies(nrfxlib nrfxlib-html)
 
 add_custom_target(
   nrfxlib-inventory
-  COMMAND ${CMAKE_COMMAND} -E env
-  NRF_BASE=${NRF_BASE}
-  NRF_OUTPUT=${HTML_DIR}/nrf
-  NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
-  NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
-  NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
-  NRFXLIB_RST_SRC=${NRFXLIB_RST_OUT}
-  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
+  COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
   ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b inventory ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
@@ -488,3 +491,38 @@ add_custom_target(
   COMMAND ${CMAKE_MAKE_PROGRAM} nrf
   COMMAND ${CMAKE_MAKE_PROGRAM} nrfxlib
 )
+
+
+#
+# Add targets for checking links
+#
+
+add_custom_target(
+  nrf-linkcheck
+  COMMAND ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b linkcheck ${NRF_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${NRF_BINARY_DIR}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)
+
+add_dependencies(nrf-linkcheck nrf-content nrf-doxy)
+
+add_custom_target(
+  nrfxlib-linkcheck
+  COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b linkcheck ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT}  ${NRFXLIB_BINARY_DIR}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)
+
+add_dependencies(nrfxlib-linkcheck nrfxlib-content nrfxlib-doxy)
+
+add_custom_target(
+  mcuboot-linkcheck
+  COMMAND ${CMAKE_COMMAND} -E env ${mcuboot_sphinx_environment}
+  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b linkcheck ${MCUBOOT_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${MCUBOOT_BINARY_DIR}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)
+
+add_dependencies(mcuboot-linkcheck mcuboot-content)
+
+add_custom_target(linkcheck)
+add_dependencies(linkcheck nrf-linkcheck nrfxlib-linkcheck mcuboot-linkcheck)

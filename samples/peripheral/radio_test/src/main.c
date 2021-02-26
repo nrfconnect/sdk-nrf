@@ -8,29 +8,34 @@
 #include <drivers/clock_control.h>
 #include <drivers/clock_control/nrf_clock_control.h>
 
-#define DT_DRV_COMPAT nordic_nrf_clock
-
 static void clock_init(void)
 {
 	int err;
-	const struct device *clock;
-	enum clock_control_status clock_status;
+	int res;
+	struct onoff_manager *clk_mgr;
+	struct onoff_client clk_cli;
 
-	clock = device_get_binding(DT_INST_LABEL(0));
-	if (!clock) {
-		printk("Unable to find clock device binding\n");
+	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+	if (!clk_mgr) {
+		printk("Unable to get the Clock manager\n");
 		return;
 	}
 
-	err = clock_control_on(clock, CLOCK_CONTROL_NRF_SUBSYS_HF);
-	if (err) {
-		printk("Unable to turn on the clock: %d", err);
+	sys_notify_init_spinwait(&clk_cli.notify);
+
+	err = onoff_request(clk_mgr, &clk_cli);
+	if (err < 0) {
+		printk("Clock request failed: %d\n", err);
+		return;
 	}
 
 	do {
-		clock_status = clock_control_get_status(clock,
-			CLOCK_CONTROL_NRF_SUBSYS_HF);
-	} while (clock_status != CLOCK_CONTROL_STATUS_ON);
+		err = sys_notify_fetch_result(&clk_cli.notify, &res);
+		if (!err && res) {
+			printk("Clock could not be started: %d\n", res);
+			return;
+		}
+	} while (err);
 
 	printk("Clock has started\n");
 }

@@ -75,6 +75,7 @@ Kconfig*                                  @tejlmand
 /lib/st25r3911b/                          @grochu
 /lib/supl/                                @rlubos @evenl
 /lib/date_time/                           @simensrostad
+/lib/wave_gen/                            @MarekPieta
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @nvlsianpu
 /samples/sensor/bh1749/                   @wlgrd
@@ -111,6 +112,7 @@ Kconfig*                                  @tejlmand
 /subsys/bluetooth/mesh/                   @trond-snekvik @joerchan
 /subsys/bluetooth/controller/             @joerchan @rugeGerritsen
 /subsys/bootloader/                       @hakonfam @ioannisg
+/subsys/common_application_framework/     @pdunaj
 /subsys/debug/                            @nordic-krch @anangl
 /subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/mgmt/                             @hakonfam @sigvartmh

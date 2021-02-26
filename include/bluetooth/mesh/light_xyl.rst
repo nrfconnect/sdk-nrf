@@ -2,6 +2,11 @@
 
 Light xyL models
 ################
+
+.. contents::
+   :local:
+   :depth: 2
+
 The xyL models represent a light source based on a modified CIE xyY color space, one of the CIE1931 color spaces.
 The CIE1931 color spaces are the first defined quantitative links between distributions of wavelengths in the electromagnetic visible spectrum, and physiologically perceived colors in human color vision.
 The CIE1931 color space chart is utilized by the models to determine the color light emitted by an element.

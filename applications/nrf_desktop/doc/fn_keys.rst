@@ -22,7 +22,7 @@ Module events
 Configuration
 *************
 
-The module uses ``button_event`` sent by :ref:`nrf_desktop_buttons`.
+The module uses ``button_event`` sent by :ref:`caf_buttons`.
 Make sure mentioned hardware interface is defined.
 
 The module is enabled with :option:`CONFIG_DESKTOP_FN_KEYS_ENABLE` option.

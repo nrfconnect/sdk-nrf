@@ -7,6 +7,9 @@ Bluetooth: Throughput
    :local:
    :depth: 2
 
+.. note::
+   The implementation and usage of this sample has changed considerably with |NCS| v1.5.0.
+
 The Bluetooth Throughput sample uses the :ref:`throughput_readme` to measure *Bluetooth* Low Energy throughput performance.
 You can use it to determine the maximum throughput, or to experiment with different connection parameters and check their influence on the throughput.
 
@@ -14,9 +17,9 @@ Overview
 ********
 
 The sample transmits data between two development kits, the *tester* and the *peer*, and measures the throughput performance.
-To do so, it uses the :ref:`throughput_readme`.
+It uses the :ref:`throughput_readme` for this.
 To run the tests, connect to the kit using the serial port and send shell commands.
-Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands
+Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands.
 
 The sample demonstrates the interaction of the following connection parameters:
 
@@ -62,6 +65,7 @@ Changing connection parameter values
 To experiment with different connection parameter values, reconfigure the values using the :ref:`zephyr:shell_api` interface before running a test.
 
 You can adjust the following parameters:
+
 * PHY
 * LE Data Length
 * LE Connection interval

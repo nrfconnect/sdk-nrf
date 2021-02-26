@@ -254,7 +254,11 @@ config SPM_NRF_DPPIC_NS
 if SOC_NRF5340_CPUAPP
 config SPM_NRF_DCNF_NS
 	bool "DCNF is Non-Secure"
-	default y
+	default n
+
+config SPM_NRF_CTRLAP_NS
+	bool "CTRLAP is Non-Secure"
+	default n
 
 config SPM_NRF_OSCILLATORS_NS
 	bool "Oscillators is Non-Secure"
@@ -262,10 +266,6 @@ config SPM_NRF_OSCILLATORS_NS
 
 config SPM_NRF_RESET_NS
 	bool "Reset is Non-Secure"
-	default y
-
-config SPM_NRF_CTRLAP_NS
-	bool "CTRLAP is Non-Secure"
 	default y
 
 config SPM_NRF_SPIM4_NS

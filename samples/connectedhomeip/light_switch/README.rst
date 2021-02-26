@@ -1,14 +1,14 @@
 .. _chip_light_switch_sample:
 
-Connected Home over IP: Light switch
-####################################
+Project Connected Home over IP: Light switch
+############################################
 
 .. contents::
    :local:
    :depth: 2
 
-This light switch sample demonstrates the usage of the `Connected Home over IP`_ application layer to build a basic controller device for the :ref:`CHIP light bulb <chip_light_bulb_sample>` sample.
-This device works as a CHIP controller, meaning that it can control a light bulb remotely over a CHIP network built on top of a low-power, 802.15.4 Thread network.
+This light switch sample demonstrates the usage of the `Project Connected Home over IP`_ application layer to build a basic controller device for the :ref:`CHIP light bulb <chip_light_bulb_sample>` sample.
+This device works as a Project CHIP controller, meaning that it can control a light bulb remotely over a Project CHIP network built on top of a low-power, 802.15.4 Thread network.
 You can use this sample as a reference for creating your own application.
 
 Requirements
@@ -20,20 +20,23 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
 
-For this sample to work, you also need the :ref:`CHIP light bulb <chip_light_bulb_sample>` sample programmed to another supported development kit.
+For this sample to work, you also need the :ref:`Project CHIP light bulb <chip_light_bulb_sample>` sample programmed to another supported development kit.
+
+.. note::
+    |chip_gn_required_note|
 
 Overview
 ********
 
-The light switch must be put into the test mode and paired with a light bulb device to be able to send CHIP light bulb control commands such as toggling the light and setting its brightness level.
+The light switch must be put into the test mode and paired with a light bulb device to be able to send Project CHIP light bulb control commands such as toggling the light and setting its brightness level.
 
 .. _chip_light_switch_sample_test_mode:
 
 Test mode
 =========
 
-Unlike other samples, such as :ref:`CHIP door lock <chip_lock_sample>`, the light switch sample does not support CHIP commissioning over Bluetooth LE.
-To make the light switch and the light bulb devices able to communicate with each other, they must be initialized with the same static Thread network parameters and static CHIP cryptographic keys.
+Unlike other samples, such as :ref:`Project CHIP door lock <chip_lock_sample>`, the light switch sample does not support Project CHIP commissioning over Bluetooth LE.
+To make the light switch and the light bulb devices able to communicate with each other, they must be initialized with the same static Thread network parameters and static Project CHIP cryptographic keys.
 
 Pressing **Button 3** activates the test mode before enabling the pairing phase on the device.
 
@@ -147,7 +150,7 @@ Dependencies
 
 This sample uses Connected Home over IP library which includes the |NCS| platform integration layer:
 
-* `Connected Home over IP`_
+* `Project Connected Home over IP`_
 
 In addition, the sample uses the following |NCS| components:
 

@@ -1,19 +1,19 @@
 .. _chip_light_bulb_sample:
 
-Connected Home over IP: Light bulb
-##################################
+Project Connected Home over IP: Light bulb
+##########################################
 
 .. contents::
    :local:
    :depth: 2
 
-This light bulb sample demonstrates the usage of the `Connected Home over IP`_ application layer to build a white dimmable light bulb device.
-This device works as a CHIP accessory, meaning it can be paired and controlled remotely over a CHIP network built on top of a low-power, 802.15.4 Thread network.
+This light bulb sample demonstrates the usage of the `Project Connected Home over IP`_ application layer to build a white dimmable light bulb device.
+This device works as a Project CHIP accessory, meaning it can be paired and controlled remotely over a Project CHIP network built on top of a low-power, 802.15.4 Thread network.
 You can use this sample as a reference for creating your own application.
 
 .. note::
     This sample is self-contained and can be tested on its own.
-    However, it is required when testing the :ref:`CHIP light switch <chip_light_switch_sample>` sample.
+    However, it is required when testing the :ref:`Project CHIP light switch <chip_light_switch_sample>` sample.
 
 Requirements
 ************
@@ -32,7 +32,10 @@ For remote testing scenarios, you also need the following:
 
 * If you want to use the :ref:`test mode <chip_light_bulb_sample_test_mode>` and control the light bulb using light switch:
 
-  * :ref:`CHIP light switch <chip_light_switch_sample>` programmed to another supported development kit.
+  * :ref:`Project CHIP light switch <chip_light_switch_sample>` programmed to another supported development kit.
+
+.. note::
+    |chip_gn_required_note|
 
 Overview
 ********
@@ -43,7 +46,7 @@ It can be tested in the following ways:
 * Standalone, by using a single DK that runs the light bulb application.
 * Remotely over the Thread protocol, which requires more devices.
 
-The remote control testing requires either commissioning by the CHIP controller device into a network or using the test mode.
+The remote control testing requires either commissioning by the Project CHIP controller device into a network or using the test mode.
 Both methods can be enabled after :ref:`building and running the sample <chip_light_bulb_sample_remote_control>`.
 
 .. _chip_light_bulb_network_mode:
@@ -65,7 +68,7 @@ Remote testing using test mode
     :end-before: chip_door_lock_sample_test_mode_end
 
 Using the test mode allows you to control the light bulb remotely without using a smartphone compatible with Android.
-The light bulb device programmed with this sample can be used with the light switch device programmed with the :ref:`CHIP light switch <chip_light_switch_sample>` sample to create a simplified Thread network.
+The light bulb device programmed with this sample can be used with the light switch device programmed with the :ref:`Project CHIP light switch <chip_light_switch_sample>` sample to create a simplified Thread network.
 
 Configuration
 *************
@@ -106,7 +109,7 @@ SEGGER J-Link USB port:
     Used for getting logs from the device or communicating with it through the command-line interface.
 
 NFC port with antenna attached:
-    Optionally used for obtaining the commissioning information from the CHIP device to start the :ref:`commissioning procedure <chip_light_bulb_sample_remote_control_commissioning>`.
+    Optionally used for obtaining the commissioning information from the Project CHIP device to start the :ref:`commissioning procedure <chip_light_bulb_sample_remote_control_commissioning>`.
 
 Building and running
 ********************
@@ -153,7 +156,7 @@ After building the sample and programming it to your development kit, test its b
 Testing communication with another device
 -----------------------------------------
 
-After building this sample and the :ref:`CHIP light switch <chip_light_switch_sample>` sample and programming them to development kits, test communication between both devices by completing the following steps:
+After building this sample and the :ref:`Project CHIP light switch <chip_light_switch_sample>` sample and programming them to development kits, test communication between both devices by completing the following steps:
 
 .. include:: ../light_switch/README.rst
     :start-after: chip_light_switch_sample_testing_start
@@ -164,7 +167,7 @@ After building this sample and the :ref:`CHIP light switch <chip_light_switch_sa
 Enabling remote control
 =======================
 
-Remote control allows you to control the CHIP light bulb device from a Thread network.
+Remote control allows you to control the Project CHIP light bulb device from a Thread network.
 
 .. include:: ../lock/README.rst
     :start-after: chip_door_lock_sample_remote_control_start
@@ -184,7 +187,7 @@ Dependencies
 
 This sample uses Connected Home over IP library which includes the |NCS| platform integration layer:
 
-* `Connected Home over IP`_
+* `Project Connected Home over IP`_
 
 In addition, the sample uses the following |NCS| components:
 

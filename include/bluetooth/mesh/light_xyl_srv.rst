@@ -2,6 +2,11 @@
 
 Light xyL Server
 ################
+
+.. contents::
+   :local:
+   :depth: 2
+
 The Light xyL Server represents a single light on a mesh device.
 This model is well suited for implementation in light sources with multi-color light emission.
 It should be instantiated in the light fixture node.

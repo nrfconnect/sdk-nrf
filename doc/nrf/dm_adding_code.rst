@@ -92,7 +92,7 @@ This is demonstrated by the following code:
        - name: nrf
          repo-path: sdk-nrf
          remote: ncs
-         revision: v1.4.2
+         revision: v1.5.0
          import: true
      self:
        path: application
@@ -119,7 +119,7 @@ For example:
      projects:
        - name: nrf
          remote: ncs
-         revision: v1.4.2
+         revision: v1.5.0
          import: true
        # Example for how to override a repository in the NCS with your own:
        - name: mcuboot
@@ -139,8 +139,9 @@ Once you have your new manifest repository hosted online, you can use it with we
 You just need to replace ``sdk-nrf`` and ``nrf`` with the repository name and path you have chosen for your manifest repository (*your-name/your-application* and *your-ncs-fork*, respectively), as shown in the following code:
 
 .. parsed-literal::
+   :class: highlight
 
-   west init -m https://github.com/*your-name/your-application* *your-ncs-fork*
+   west init -m https:\ //github.com/*your-name/your-application* *your-ncs-fork*
    cd *your-ncs-fork*
    west update
 

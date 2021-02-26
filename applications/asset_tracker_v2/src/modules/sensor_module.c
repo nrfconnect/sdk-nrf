@@ -35,7 +35,8 @@ struct sensor_msg_data {
 /* Sensor module super states. */
 static enum state_type {
 	STATE_INIT,
-	STATE_RUNNING
+	STATE_RUNNING,
+	STATE_SHUTDOWN
 } state;
 
 /* Sensor module message queue. */
@@ -63,6 +64,8 @@ static char *state2str(enum state_type new_state)
 		return "STATE_INIT";
 	case STATE_RUNNING:
 		return "STATE_RUNNING";
+	case STATE_SHUTDOWN:
+		return "STATE_SHUTDOWN";
 	default:
 		return "Unknown";
 	}
@@ -284,7 +287,11 @@ static void on_state_running(struct sensor_msg_data *msg)
 static void on_all_states(struct sensor_msg_data *msg)
 {
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
+		/* The module doesn't have anything to shut down and can
+		 * report back immediately.
+		 */
 		SEND_EVENT(sensor, SENSOR_EVT_SHUTDOWN_READY);
+		state_set(STATE_SHUTDOWN);
 	}
 }
 
@@ -313,6 +320,9 @@ static void module_thread_fn(void)
 			break;
 		case STATE_RUNNING:
 			on_state_running(&msg);
+			break;
+		case STATE_SHUTDOWN:
+			/* The shutdown state has no transition. */
 			break;
 		default:
 			LOG_WRN("Unknown sensor module state.");

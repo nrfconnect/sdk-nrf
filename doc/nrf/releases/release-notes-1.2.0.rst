@@ -428,7 +428,7 @@ MCUboot
   * New swap method that removes the need for a scratch partition
   * Bug fixes
 
-  See the `MCUboot release notes <https://github.com/JuulLabs-OSS/mcuboot/blob/master/docs/release-notes.md#version-150>`_ for more information.
+  See the `MCUboot release notes <https://github.com/mcu-tools/mcuboot/blob/master/docs/release-notes.md#user-content-version-150>`_ for more information.
   Note that not all features from v1.5.0 are included.
 
 Documentation

@@ -14,4 +14,6 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(openthread_ncp)
 
+# NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c src/nrf_802154_radio_wrapper.c)
+# NORDIC SDK APP END

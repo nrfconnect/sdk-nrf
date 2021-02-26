@@ -36,6 +36,8 @@ void module_set_name(struct module_data *module, char *name);
 
 void module_set_queue(struct module_data *module,  struct k_msgq *msg_q);
 
+void module_purge_queue(struct module_data *module);
+
 int module_get_next_msg(struct module_data *module, void *msg);
 
 /** @brief Enqueue message to a module's queue.

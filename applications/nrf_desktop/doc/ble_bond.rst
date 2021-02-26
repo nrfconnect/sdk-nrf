@@ -147,7 +147,7 @@ Peer control using a button
 Complete the following steps to let the user control Bluetooth peers using the dedicated button:
 
 1. Set the :option:`CONFIG_DESKTOP_BLE_PEER_CONTROL` option to enable the feature.
-#. Configure the :ref:`nrf_desktop_buttons`.
+#. Configure the :ref:`caf_buttons`.
 #. Define the button's key ID as :option:`CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON`.
 #. Add the button to the :ref:`nrf_desktop_click_detector` configuration, because the |ble_bond| reacts on ``click_event``.
 

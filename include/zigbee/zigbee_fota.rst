@@ -20,7 +20,7 @@ The library uses the endpoint to:
 When used, the Zigbee FOTA library replaces the :ref:`lib_fota_download` library in |NCS|.
 
 .. note::
-    The Zigbee FOTA functionality has been added to the :ref:`zigbee_light_switch_sample` sample.
+    The Zigbee FOTA functionality is available for the :ref:`zigbee_light_switch_sample` sample.
 
 OTA upgrade entities
 ********************

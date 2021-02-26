@@ -10,6 +10,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(low_power_uart)
 
 FILE(GLOB app_sources src/*.c)
+# NORDIC SDK APP START
 target_sources(app PRIVATE
 	${app_sources}
 )
+# NORDIC SDK APP END

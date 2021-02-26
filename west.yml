@@ -52,12 +52,12 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: v2.4.99-ncs1-rc1
+      revision: v2.4.99-ncs1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
         # revision. Only the projects explicitly named in the
-        # following whitelist are imported.
+        # following allowlist are imported.
         #
         # Note that the zephyr west extensions (like 'build', 'flash',
         # 'debug', etc.) are automatically provided by this import, so
@@ -65,7 +65,7 @@ manifest:
         # the zephyr project.
         #
         # Please keep this list sorted alphabetically.
-        name-whitelist:
+        name-allowlist:
           - canopennode
           - cmsis
           - civetweb
@@ -94,16 +94,16 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v1.7.99-ncs1-rc1
+      revision: v1.7.99-ncs1
       path: bootloader/mcuboot
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: ab6988f3659405cd5dc8201f77417430c9644497
+      revision: v1.5.0
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: v1.2.99-ncs1-rc1
+      revision: v1.2.99-ncs1
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -111,7 +111,7 @@ manifest:
     - name: connectedhomeip
       repo-path: sdk-connectedhomeip
       path: modules/lib/connectedhomeip
-      revision: v1.5.0-rc1
+      revision: v1.5.0
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -126,7 +126,7 @@ manifest:
       remote: throwtheswitch
     - name: unity
       path: test/cmock/vendor/unity
-      revision: cf949f45ca6d172a177b00da21310607b97bc7a7
+      revision: 74cde089e65c3435ce9aa87d5c69f4f16b7f6ade
       remote: throwtheswitch
     - name: mbedtls-nrf
       path: mbedtls

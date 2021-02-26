@@ -34,10 +34,6 @@ config AZURE_IOT_HUB_PORT
 	int "Azure IoT Hub port"
 	default 8883
 
-config AZURE_IOT_HUB_TLS_SESSION_CACHING
-	bool "Enable TLS session caching"
-	default y
-
 config AZURE_IOT_HUB_MQTT_RX_TX_BUFFER_LEN
 	int "Buffer sizes for the MQTT library"
 	default 256

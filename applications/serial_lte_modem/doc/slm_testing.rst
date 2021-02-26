@@ -1620,7 +1620,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
 
          **AT#XFTP="status"**
          215 UNIX Type: L8
-         211 https://www.pureftpd.org/
+         211 https:\ //www.pureftpd.org/
          OK
 
    #. Retrieve information about the existing files and folders.

@@ -183,7 +183,7 @@ You can easily add an immutable bootloader to most Zephyr or |NCS| samples by en
 
 For more information, see :ref:`gs_programming_cmd`.
 
-Bootloader Overlays
+Bootloader overlays
 -------------------
 
 Overlays specific to bootloaders can be used to further modify the bootloader child image when compiling with an application:

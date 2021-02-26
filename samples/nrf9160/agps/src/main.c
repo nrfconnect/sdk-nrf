@@ -165,6 +165,9 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_FOTA_DONE:
 		LOG_INF("CLOUD_EVT_FOTA_DONE");
 		break;
+	case CLOUD_EVT_FOTA_ERROR:
+		LOG_INF("CLOUD_EVT_FOTA_ERROR");
+		break;
 	default:
 		LOG_INF("Unknown cloud event type: %d", evt->type);
 		break;

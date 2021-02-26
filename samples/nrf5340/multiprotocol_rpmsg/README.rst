@@ -3,7 +3,11 @@
 nRF5340: Multiprotocol RPMsg
 ############################
 
-This sample exposes the :ref:`softdevice_controller` and the IEEE 802.15.4 radio driver support to the nRF5340 application CPU, using RPMsg transport as part of `OpenAMP <https://github.com/OpenAMP/open-amp/>`__.
+.. contents::
+   :local:
+   :depth: 2
+
+This sample exposes the :ref:`softdevice_controller` and the IEEE 802.15.4 radio driver support to the nRF5340 application CPU, using RPMsg transport as part of `OpenAMP`_.
 
 Overview
 ********
@@ -18,6 +22,11 @@ See the following configuration options for more information:
 
 You might need to adjust the Kconfig configuration of this sample to make it compatible with the peer application.
 For example, :option:`CONFIG_BT_MAX_CONN` must be equal to the maximum number of connections supported by the peer application.
+
+The following components have been disabled to make this sample energy-efficient:
+
+* Serial console (in :file:`prj.conf`)
+* Logger (in :file:`prj.conf`)
 
 Requirements
 ************
@@ -57,7 +66,7 @@ Testing
       west build -b nrf5340dk_nrf5340_cpuapp -p -- -DOVERLAY_CONFIG="overlay-802154.conf;overlay-bt.conf"
 
    During the build, the :ref:`multiprotocol-rpmsg-sample` image will be automatically included.
-#. Run this command to flash both the application and network core firmwares to the nRF5340 SoC:
+#. Run this command to program both the application and network core firmwares to the nRF5340 SoC:
 
    .. code-block:: console
 

@@ -21,7 +21,7 @@ nRF52840 DK RAM and flash memory requirements
 The following table lists memory requirements for samples running on the :ref:`nRF52840 DK <gs_programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`).
 
 +----------------------------------------------------------------+----------------------------+------------------------+-------------------------------+--------------------------+----------------------------+-----------+-----------+
-| Sample                                                         | ROM ZBOSS stack + App [kB] | ROM MCUBoot bootloader | ROM ZBOSS non-volatile memory | ROM ZBOSS product config | RAM ZBOSS stack + App [kB] | Total ROM | Total RAM |
+| Sample                                                         | ROM ZBOSS stack + App [kB] | ROM MCUboot bootloader | ROM ZBOSS non-volatile memory | ROM ZBOSS product config | RAM ZBOSS stack + App [kB] | Total ROM | Total RAM |
 +================================================================+============================+========================+===============================+==========================+============================+===========+===========+
 | :ref:`Network coordinator <zigbee_network_coordinator_sample>` | 292                        | 0                      | 32                            | 4                        | 59                         | 328       | 59        |
 +----------------------------------------------------------------+----------------------------+------------------------+-------------------------------+--------------------------+----------------------------+-----------+-----------+
@@ -44,7 +44,7 @@ nRF52833 DK RAM and flash memory requirements
 The following table lists memory requirements for samples running on the :ref:`nRF52833 DK <gs_programming_board_names>` (:ref:`nrf52833dk_nrf52833 <zephyr:nrf52833dk_nrf52833>`).
 
 +----------------------------------------------------------------+--------------------------------------+------------------------+-------------------------------+--------------------------+----------------------------+-----------+-----------+
-| Sample                                                         | ROM ZBOSS stack + App [kB]           | ROM MCUBoot bootloader | ROM ZBOSS non-volatile memory | ROM ZBOSS product config | RAM ZBOSS stack + App [kB] | Total ROM | Total RAM |
+| Sample                                                         | ROM ZBOSS stack + App [kB]           | ROM MCUboot bootloader | ROM ZBOSS non-volatile memory | ROM ZBOSS product config | RAM ZBOSS stack + App [kB] | Total ROM | Total RAM |
 +================================================================+======================================+========================+===============================+==========================+============================+===========+===========+
 | :ref:`Network coordinator <zigbee_network_coordinator_sample>` | 297                                  | 0                      | 16                            | 4                        | 59                         | 317       | 59        |
 +----------------------------------------------------------------+--------------------------------------+------------------------+-------------------------------+--------------------------+----------------------------+-----------+-----------+

@@ -19,6 +19,7 @@
 #include <zephyr.h>
 #include <pm_config.h>
 #include <logging/log.h>
+#include <nrfx.h>
 #include <dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_stream.h>
@@ -37,11 +38,18 @@ int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active,
 				const char **update)
 {
 	if (file == NULL || update == NULL) {
+		LOG_ERR("Got NULL pointer");
 		return -EINVAL;
+	}
+
+	if (!nrfx_is_in_ram(file)) {
+		LOG_ERR("'file' pointer is not located in RAM");
+		return -EFAULT;
 	}
 
 	/* Ensure that 'file' is null-terminated. */
 	if (strnlen(file, MAX_FILE_SEARCH_LEN) == MAX_FILE_SEARCH_LEN) {
+		LOG_ERR("Input is not null terminated");
 		return -ENOTSUP;
 	}
 

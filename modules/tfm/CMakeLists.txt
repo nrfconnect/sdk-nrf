@@ -20,31 +20,3 @@ endif()
 set_property(GLOBAL PROPERTY
   tfm_PM_HEX_FILE $<TARGET_PROPERTY:tfm,TFM_S_HEX_FILE>
   )
-
-
-# Set srec_cat binary name
-find_program(SREC_CAT srec_cat)
-if(${SREC_CAT} STREQUAL SREC_CAT-NOTFOUND)
-    message(FATAL_ERROR "'srec_cat' not found. Please install it, or add it to $PATH.")
-endif()
-
-set_property(GLOBAL APPEND PROPERTY extra_post_build_commands
-  # Generate an intel hex file from the signed output binary
-  COMMAND ${SREC_CAT} ${CMAKE_BINARY_DIR}/tfm_s_signed.bin
-    -binary
-    -offset $<TARGET_PROPERTY:partition_manager,PM_TFM_ADDRESS>
-    -o ${CMAKE_BINARY_DIR}/tfm_s_signed.hex
-    -intel
-
-  # Generate an intel hex file from the signed output binary
-  COMMAND ${SREC_CAT} ${CMAKE_BINARY_DIR}/zephyr_ns_signed.bin
-    -binary
-    -offset $<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>
-    -o ${CMAKE_BINARY_DIR}/zephyr_ns_signed.hex
-    -intel
-)
-
-set_property(GLOBAL APPEND PROPERTY extra_post_build_byproducts
-  ${CMAKE_BINARY_DIR}/tfm_s_signed.hex
-  ${CMAKE_BINARY_DIR}/zephyr_ns_signed.hex
-)
