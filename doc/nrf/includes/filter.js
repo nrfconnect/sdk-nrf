@@ -20,6 +20,10 @@
 
     };
 
+    /** Fix a bug in the theme that displays the dl > dt in different
+        font sizes depending on if the dd has one or more paragraphs  **/
+    $( "dl:not(.simple)" ).addClass( "simple" );
+
     /** Display classes of the format vX-X-X as tag vX.X.X **/
     $("#known-issues dl").each(function() {
 
