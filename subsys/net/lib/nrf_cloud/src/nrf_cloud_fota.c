@@ -22,6 +22,7 @@
 #include <settings/settings.h>
 #include <power/reboot.h>
 #include <cJSON.h>
+#include <cJSON_os.h>
 
 #if defined(CONFIG_BOOTLOADER_MCUBOOT)
 #include <dfu/mcuboot.h>
@@ -715,7 +716,7 @@ static int parse_job_info(struct nrf_cloud_fota_job_info *const job_info,
 	temp = cJSON_PrintUnformatted(array);
 	if (temp) {
 		LOG_DBG("JSON array: %s", log_strdup(temp));
-		cJSON_free(temp);
+		cJSON_FreeString(temp);
 	}
 
 #if CONFIG_NRF_CLOUD_FOTA_BLE_DEVICES
@@ -780,7 +781,7 @@ cleanup:
 	memset(job_info, 0, sizeof(*job_info));
 	job_info->type = NRF_CLOUD_FOTA_TYPE__INVALID;
 	if (array) {
-		cJSON_free(array);
+		cJSON_Delete(array);
 	}
 	return err;
 }
@@ -844,7 +845,7 @@ static void cleanup_job(struct nrf_cloud_fota_job *const job)
 		job->info.id ? log_strdup(job->info.id) : "N/A");
 
 	if (job->parsed_payload) {
-		cJSON_free(job->parsed_payload);
+		cJSON_Delete(job->parsed_payload);
 	}
 	memset(job, 0, sizeof(*job));
 	job->info.type = NRF_CLOUD_FOTA_TYPE__INVALID;
@@ -879,7 +880,7 @@ static int publish_and_free_array(cJSON *const array,
 	int ret;
 	char *array_str = cJSON_PrintUnformatted(array);
 
-	cJSON_free(array);
+	cJSON_Delete(array);
 
 	if (array_str == NULL) {
 		return -ENOMEM;
@@ -894,7 +895,7 @@ static int publish_and_free_array(cJSON *const array,
 		ret = -EINVAL;
 	}
 
-	cJSON_free(array_str);
+	cJSON_FreeString(array_str);
 
 	return ret;
 }
@@ -963,7 +964,7 @@ static int send_job_update(struct nrf_cloud_fota_job *const job)
 	}
 
 	if (!result) {
-		cJSON_free(array);
+		cJSON_Delete(array);
 		return -ENOMEM;
 	}
 
@@ -1077,7 +1078,7 @@ send_ack:
 
 	if (skip || job_info->type == NRF_CLOUD_FOTA_TYPE__INVALID) {
 		if (payload_array) {
-			cJSON_free(payload_array);
+			cJSON_Delete(payload_array);
 		}
 		return ret;
 	}
@@ -1087,7 +1088,7 @@ send_ack:
 		if (ble_cb) {
 			ble_cb(&ble_job);
 		}
-		cJSON_free(payload_array);
+		cJSON_Delete(payload_array);
 #endif
 	} else {
 		/* Save JSON to current fota and start update */
@@ -1229,7 +1230,7 @@ int nrf_cloud_fota_ble_update_check(const bt_addr_t *const ble_id)
 	}
 
 	if (!add_string_to_array(array, ble_id_str)) {
-		cJSON_free(array);
+		cJSON_Delete(array);
 		return -ENOMEM;
 	}
 
@@ -1280,7 +1281,7 @@ int nrf_cloud_fota_ble_job_update(const struct nrf_cloud_fota_ble_job
 	}
 
 	if (!result) {
-		cJSON_free(array);
+		cJSON_Delete(array);
 		return -ENOMEM;
 	}
 
