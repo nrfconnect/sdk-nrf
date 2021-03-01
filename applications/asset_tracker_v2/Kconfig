@@ -10,6 +10,10 @@ config ASSET_TRACKER_V2_APP_VERSION
 	string "Asset Tracker application firmware version"
 	default "0.0.0-development"
 
+config ASSET_TRACKER_V2_APP_VERSION_MAX_LEN
+	int "Maximum length of application firmware version"
+	default 150
+
 rsource "src/modules/Kconfig.modules_common"
 rsource "src/modules/Kconfig.app_module"
 rsource "src/modules/Kconfig.cloud_module"

@@ -12,7 +12,7 @@ if CLOUD_MODULE
 
 config CLOUD_THREAD_STACK_SIZE
 	int "Cloud module thread stack size"
-	default 2560
+	default 2688
 
 config CLOUD_CLIENT_ID_USE_CUSTOM
 	bool "Use custom cloud client ID"

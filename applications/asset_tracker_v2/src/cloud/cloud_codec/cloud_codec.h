@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cJSON_os.h"
+#include <net/net_ip.h>
 
 /**@file
  *
@@ -104,13 +105,13 @@ struct cloud_data_modem_static {
 	/** Network mode NB-IoT. */
 	uint16_t nw_nb_iot;
 	/** Integrated Circuit Card Identifier. */
-	char *iccid;
+	char iccid[23];
 	/** Application version and Mobile Network Code. */
-	char *appv;
+	char appv[CONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN];
 	/** Device board version. */
-	const char *brdv;
+	char brdv[30];
 	/** Modem firmware. */
-	char *fw;
+	char fw[40];
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued;
 };
@@ -121,13 +122,13 @@ struct cloud_data_modem_dynamic {
 	/** Area code. */
 	uint16_t area;
 	/** Cell id. */
-	uint16_t cell;
+	uint32_t cell;
 	/** Reference Signal Received Power. */
 	uint16_t rsrp;
 	/** Internet Protocol Address. */
-	char *ip;
+	char ip[INET6_ADDRSTRLEN];
 	/* Mobile Country Code*/
-	char *mccmnc;
+	char mccmnc[7];
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued;
 };

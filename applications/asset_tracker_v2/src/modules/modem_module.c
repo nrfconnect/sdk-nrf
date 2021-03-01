@@ -293,39 +293,45 @@ static int static_modem_data_get(void)
 
 	check_modem_fw_version();
 
-	struct modem_module_event *modem_module_event =
-			new_modem_module_event();
+	struct modem_module_event *modem_module_event = new_modem_module_event();
 
-	modem_module_event->data.modem_static.app_version =
-			CONFIG_ASSET_TRACKER_V2_APP_VERSION;
+	modem_module_event->data.modem_static.nw_mode_ltem = modem_param.network.lte_mode.value;
+	modem_module_event->data.modem_static.nw_mode_nbiot = modem_param.network.nbiot_mode.value;
+	modem_module_event->data.modem_static.nw_mode_gps = modem_param.network.gps_mode.value;
+	modem_module_event->data.modem_static.band = modem_param.network.current_band.value;
 
-	modem_module_event->data.modem_static.board_version =
-			modem_param.device.board;
+	strncpy(modem_module_event->data.modem_static.app_version,
+		CONFIG_ASSET_TRACKER_V2_APP_VERSION,
+		sizeof(modem_module_event->data.modem_static.app_version) - 1);
 
-	modem_module_event->data.modem_static.modem_fw =
-			modem_param.device.modem_fw.value_string;
+	strncpy(modem_module_event->data.modem_static.board_version,
+		modem_param.device.board,
+		sizeof(modem_module_event->data.modem_static.board_version) - 1);
 
-	modem_module_event->data.modem_static.iccid =
-			modem_param.sim.iccid.value_string;
+	strncpy(modem_module_event->data.modem_static.modem_fw,
+		modem_param.device.modem_fw.value_string,
+		sizeof(modem_module_event->data.modem_static.modem_fw) - 1);
 
-	modem_module_event->data.modem_static.nw_mode_ltem =
-			modem_param.network.lte_mode.value;
+	strncpy(modem_module_event->data.modem_static.iccid,
+		modem_param.sim.iccid.value_string,
+		sizeof(modem_module_event->data.modem_static.iccid) - 1);
 
-	modem_module_event->data.modem_static.nw_mode_nbiot =
-			modem_param.network.nbiot_mode.value;
+	modem_module_event->data.modem_static.app_version
+		[sizeof(modem_module_event->data.modem_static.app_version) - 1] = '\0';
 
-	modem_module_event->data.modem_static.nw_mode_gps =
-			modem_param.network.gps_mode.value;
+	modem_module_event->data.modem_static.board_version
+		[sizeof(modem_module_event->data.modem_static.board_version) - 1] = '\0';
 
-	modem_module_event->data.modem_static.band =
-			modem_param.network.current_band.value;
+	modem_module_event->data.modem_static.modem_fw
+		[sizeof(modem_module_event->data.modem_static.modem_fw) - 1] = '\0';
+
+	modem_module_event->data.modem_static.iccid
+		[sizeof(modem_module_event->data.modem_static.iccid) - 1] = '\0';
 
 	modem_module_event->data.modem_static.timestamp = k_uptime_get();
-
 	modem_module_event->type = MODEM_EVT_MODEM_STATIC_DATA_READY;
 
 	EVENT_SUBMIT(modem_module_event);
-
 	return 0;
 }
 
@@ -340,30 +346,30 @@ static int dynamic_modem_data_get(void)
 		return err;
 	}
 
-	struct modem_module_event *modem_module_event =
-			new_modem_module_event();
+	struct modem_module_event *modem_module_event = new_modem_module_event();
 
-	modem_module_event->data.modem_dynamic.rsrp =
-			rsrp_value_latest;
+	modem_module_event->data.modem_dynamic.rsrp = rsrp_value_latest;
+	modem_module_event->data.modem_dynamic.cell_id = modem_param.network.cellid_dec;
+	modem_module_event->data.modem_dynamic.area_code = modem_param.network.area_code.value;
 
-	modem_module_event->data.modem_dynamic.ip_address =
-			modem_param.network.ip_address.value_string;
+	strncpy(modem_module_event->data.modem_dynamic.ip_address,
+		modem_param.network.ip_address.value_string,
+		sizeof(modem_module_event->data.modem_dynamic.ip_address) - 1);
 
-	modem_module_event->data.modem_dynamic.cell_id =
-			modem_param.network.cellid_dec;
+	strncpy(modem_module_event->data.modem_dynamic.mccmnc,
+		modem_param.network.current_operator.value_string,
+		sizeof(modem_module_event->data.modem_dynamic.mccmnc) - 1);
 
-	modem_module_event->data.modem_dynamic.mccmnc =
-			modem_param.network.current_operator.value_string;
+	modem_module_event->data.modem_dynamic.ip_address
+		[sizeof(modem_module_event->data.modem_dynamic.ip_address) - 1] = '\0';
 
-	modem_module_event->data.modem_dynamic.area_code =
-			modem_param.network.area_code.value;
+	modem_module_event->data.modem_dynamic.mccmnc
+		[sizeof(modem_module_event->data.modem_dynamic.mccmnc) - 1] = '\0';
 
 	modem_module_event->data.modem_dynamic.timestamp = k_uptime_get();
-
 	modem_module_event->type = MODEM_EVT_MODEM_DYNAMIC_DATA_READY;
 
 	EVENT_SUBMIT(modem_module_event);
-
 	return 0;
 }
 
