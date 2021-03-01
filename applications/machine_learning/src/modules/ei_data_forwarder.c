@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <drivers/uart.h>
 
-#include "sensor_event.h"
+#include <caf/events/sensor_event.h>
 
 #define MODULE ei_data_forwarder
 #include <caf/events/module_state_event.h>

@@ -46,4 +46,15 @@ config CAF_INIT_LOG_BUTTON_EVENTS
 	depends on LOG
 	default y
 
+config CAF_SENSOR_EVENTS
+	bool "Enable sensor events"
+	help
+	  Enable support for sensor events.
+
+config CAF_INIT_LOG_SENSOR_EVENTS
+	bool "Log sensor events"
+	depends on CAF_SENSOR_EVENTS
+	depends on LOG
+	default y
+
 endmenu

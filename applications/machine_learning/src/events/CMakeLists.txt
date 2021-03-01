@@ -6,5 +6,4 @@
 
 target_sources(app PRIVATE
 	       ${CMAKE_CURRENT_SOURCE_DIR}/ml_result_event.c
-	       ${CMAKE_CURRENT_SOURCE_DIR}/sensor_event.c
 )

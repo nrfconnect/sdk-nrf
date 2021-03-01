@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <ei_wrapper.h>
 
-#include "sensor_event.h"
+#include <caf/events/sensor_event.h>
 #include "ml_result_event.h"
 
 #define MODULE ml_runner

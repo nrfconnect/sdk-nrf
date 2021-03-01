@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-#include "sensor_event.h"
+#include <caf/events/sensor_event.h>
 
 
 static int log_sensor_event(const struct event_header *eh, char *buf, size_t buf_len)
@@ -26,6 +26,6 @@ EVENT_INFO_DEFINE(sensor_event,
 		  profile_sensor_event);
 
 EVENT_TYPE_DEFINE(sensor_event,
-		  IS_ENABLED(CONFIG_ML_APP_INIT_LOG_SENSOR_EVENT),
+		  IS_ENABLED(CONFIG_CAF_INIT_LOG_SENSOR_EVENTS),
 		  log_sensor_event,
 		  &sensor_event_info);
