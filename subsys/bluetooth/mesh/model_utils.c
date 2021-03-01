@@ -17,9 +17,6 @@
 /** Delay field step factor in milliseconds */
 #define DELAY_TIME_STEP_MS (5)
 
-#define MOD_ACKD_TIMEOUT_BASE 200
-#define MOD_ACKD_TIMEOUT_PER_HOP 50
-
 int tid_check_and_update(struct bt_mesh_tid_ctx *prev_transaction, uint8_t tid,
 			 const struct bt_mesh_msg_ctx *ctx)
 {
@@ -138,8 +135,8 @@ int model_ackd_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	if (ack) {
 		if (retval == 0) {
 			uint8_t ttl = (ctx ? ctx->send_ttl : mod->pub->ttl);
-			int32_t time = (MOD_ACKD_TIMEOUT_BASE +
-				      ttl * MOD_ACKD_TIMEOUT_PER_HOP);
+			int32_t time = (CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_BASE +
+				ttl * CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_PER_HOP);
 			return model_ack_wait(ack, time);
 		}
 
