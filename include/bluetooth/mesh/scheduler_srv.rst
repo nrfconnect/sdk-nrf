@@ -143,8 +143,8 @@ Each entry has the following fields:
 Extended models
 ***************
 
-The Scheduler Server extends the :ref:`bt_mesh_scene_srv_readme`.
-In addition, the Scheduler Setup Server extends the Scene Setup Server (see the :ref:`bt_mesh_scene_srv_readme` documentation) and the Generic Power OnOff Setup Server (see the :ref:`bt_mesh_ponoff_srv_readme` documentation).
+The Scheduler Server is implemented as a root model.
+When a Scheduler Server model is present on an element, the Scene Server model (see the :ref:`bt_mesh_scene_srv_readme` documentation) shall also be present on the same element.
 
 Persistent storage
 ******************
