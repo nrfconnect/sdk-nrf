@@ -622,8 +622,6 @@ config BT_MESH_SCENE_CLI
 	help
 	  Enable mesh Scene Client model.
 
-endmenu
-
 config BT_MESH_SCHEDULER_CLI
 	bool "Scheduler Client"
 	select BT_MESH_NRF_MODELS
@@ -638,3 +636,5 @@ config BT_MESH_SCHEDULER_SRV
 	select BT_MESH_TIME_SRV
 	help
 	  Enable Mesh Scheduler Server model.
+
+endmenu
