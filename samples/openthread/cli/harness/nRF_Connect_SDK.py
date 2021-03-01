@@ -2086,7 +2086,7 @@ class OpenThreadTHCI(object):
         # Certification test 5.8.4
         print('%s call startNativeCommissioner' % self)
         self.__executeCommand('ifconfig up')
-        cmd = 'joiner start %s' % (strPSKc)
+        cmd = 'joiner start %s' % (self.__normalize_pskd(strPSKc))
         print(cmd)
         return self.__executeCommand(cmd)[-1] == 'Done'
 
@@ -2202,7 +2202,7 @@ class OpenThreadTHCI(object):
         """
         self.log("joinCommissioned on channel %s", self.getChannel())
         self.__executeCommand('ifconfig up')
-        cmd = 'joiner start %s %s' % (strPSKd, self.provisioningUrl)
+        cmd = 'joiner start %s %s' % (self.__normalize_pskd(strPSKd), self.provisioningUrl)
         print(cmd)
         if self.__executeCommand(cmd)[-1] == 'Done':
             maxDuration = 150  # seconds
@@ -3010,6 +3010,122 @@ class OpenThreadTHCI(object):
         else:
             self.__setPollPeriod(self.__sedPollPeriod)
 
+    # DUA and Multicast THCI
+    def getDUA(self):
+        self.log('call getDUA')
+        return self.getGUA('fd00:7d03')
+
+    def registerMulticast(self, sAddr='ff04::1234:777a:1'):
+        """subscribe to the given ipv6 address (sAddr) in interface and send MLR.req OTA
+
+        note: workaround agreed before finial decision discussed in the DEV-1819.
+
+        Args:
+            sAddr   : str : Multicast address to be subscribed and notified OTA.
+        """
+        self.log('call registerMulticast')
+
+        # convert to list for single element, for possible extension
+        # requirements.
+        if not isinstance(sAddr, list):
+            sAddr = [sAddr]
+
+        # subscribe address one by one
+        for addr in sAddr:
+            cmd = 'ipmaddr add ' + str(addr)
+            # Ignore the impact of possible `OT_ERROR_ALREADY` error code in case
+            # `registerMulticast` would be called more than once on the same MA
+            self.__sendCommand(cmd, expectEcho=True)
+
+    def stopListeningToAddr(self, sAddr):
+        self.log('call stopListeningToAddr')
+
+        # convert to list for single element, for possible extension
+        # requirements.
+        if not isinstance(sAddr, list):
+            sAddr = [sAddr]
+
+        for addr in sAddr:
+            cmd = 'ipmaddr del ' + addr
+            if self.__executeCommand(cmd)[-1] != 'Done':
+                return False
+
+        return True
+
+    def registerDUA(self, destAddr='', sMleId='', sAddr=''):
+        """only used for explicitly registration (DEV-1916/DEV-1923) """
+        self.log('call registerDUA')
+        mleid = ModuleHelper.GetFullIpv6Address(sAddr).lower()
+        mliid = mleid[-19:].replace(':', '')
+        return self.__setMlIid(mliid)
+
+    def __setMlIid(self, sMlIid=''):
+        """specify the Mesh Local IID before Thread Starts."""
+        self.log('call __setMlIid')
+        cmd = 'dua iid %s' % sMlIid
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
+    def __getMlIid(self, ula=None):
+        """get the Mesh Local IID."""
+        self.log('call __getMlIid')
+        if ula is None:
+            ula = self.getULA64()
+        # getULA64() would return the full string representation
+        mleid = ModuleHelper.GetFullIpv6Address(ula).lower()
+        mliid = mleid[-19:].replace(':', '')
+        print('mliid: %s' % mliid)
+        return mliid
+
+    def migrateNetwork(self, channel=None, net_name=None):
+        """migrate to another Thread Partition 'net_name' (could be None)
+            on specified 'channel'. Make sure same Mesh Local IID and DUA
+            after migration for DUA-TC-06/06b (DEV-1923)
+        """
+        self.log('call migrateNetwork')
+        try:
+            if channel is None:
+                raise Exception('channel None')
+
+            if channel not in range(11, 27):
+                raise Exception('channel %d not in [11, 26] Invalid' % channel)
+
+            print('new partition %s on channel %d' % (net_name, channel))
+
+            mliid = self.__getMlIid()
+            self.reset()
+            deviceRole = self.deviceRole
+            self.setDefaultValues()
+            self.setChannel(channel)
+            if net_name is not None:
+                self.setNetworkName(net_name)
+            self.__setMlIid(mliid)
+            return self.joinNetwork(deviceRole)
+
+        except Exception as e:
+            ModuleHelper.WriteIntoDebugLogger(
+                'migrateNetwork() Error: ' + str(e)
+            )
+
+    def clear_cache(self):
+        self.log('call clear_cache')
+        if self.deviceRole in [
+            Thread_Device_Role.Leader,
+            Thread_Device_Role.Router,
+            Thread_Device_Role.REED,
+        ]:
+            cmd = 'eidcache clear'
+            print(cmd)
+            return self.__executeCommand(cmd)[-1] == 'Done'
+        else:
+            return False
+
+    def set_max_addrs_per_child(self, num):
+        self.log('call set_max_addrs_per_child')
+        cmd = 'childipmax %d' % int(num)
+        print(cmd)
+        return self.__executeCommand(cmd)[-1] == 'Done'
+
     @staticmethod
     def __lstrip0x(s):
         """strip 0x at the beginning of a hex string if it exists
@@ -3025,6 +3141,15 @@ class OpenThreadTHCI(object):
 
         return s
 
+    @staticmethod
+    def __normalize_pskd(strPSKd):
+        return (
+            strPSKd.upper()
+            .replace('I', '1')
+            .replace('O', '0')
+            .replace('Q', '0')
+            .replace('Z', '2')
+        )
 
 class nRF_Connect_SDK(OpenThreadTHCI, IThci):
 
