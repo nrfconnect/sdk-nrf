@@ -2835,7 +2835,7 @@ class OpenThreadTHCI(object):
     @API
     def ValidateDeviceFirmware(self):
         print('%s call ValidateDeviceFirmware' % self)
-        return 'OPENTHREAD' in self.UIStatusMsge
+        return 'OPENTHREAD' in self.UIStatusMsg
 
     # Low power THCI
     @API
@@ -2867,7 +2867,8 @@ class OpenThreadTHCI(object):
         print(cmd)
         return self.__executeCommand(cmd)[-1] == 'Done'
 
-    def getForwardSeriesFlagsFromHexStr(self, flags):
+    @staticmethod
+    def getForwardSeriesFlagsFromHexStr(flags):
         hexFlags = int(flags, 16)
         strFlags = ''
         if hexFlags == 0:
@@ -2884,7 +2885,8 @@ class OpenThreadTHCI(object):
 
         return strFlags
 
-    def mapMetricsHexToChar(self, metrics):
+    @staticmethod
+    def mapMetricsHexToChar(metrics):
         metricsFlagMap = {
             0x40: 'p',
             0x09: 'q',
@@ -2893,21 +2895,22 @@ class OpenThreadTHCI(object):
         }
         return metricsFlagMap.get(metrics, '?')
 
-    def getMetricsFlagsFromHexStr(self, metrics):
+    @staticmethod
+    def getMetricsFlagsFromHexStr(metrics):
         if metrics.startswith('0x'):
             metrics = metrics[2:]
         hexMetricsArray = bytearray.fromhex(metrics)
 
         strMetrics = ''
         for metric in hexMetricsArray:
-            strMetrics += mapMetricsHexToChar(metric)
+            strMetrics += OpenThreadTHCI.mapMetricsHexToChar(metric)
 
         return strMetrics
 
     @API
     def LinkMetricsSingleReq(self, dst_addr, metrics):
         self.log('call LinkMetricsSingleReq')
-        cmd = 'linkmetrics query %s single %s' % (dst_addr, getMetricsFlagsFromHexStr(metrics))
+        cmd = 'linkmetrics query %s single %s' % (dst_addr, self.getMetricsFlagsFromHexStr(metrics))
         print(cmd)
         return self.__executeCommand(cmd)[-1] == 'Done'
 
@@ -2916,14 +2919,14 @@ class OpenThreadTHCI(object):
         self.log('call LinkMetricsMgmtReq')
         cmd = 'linkmetrics mgmt %s ' % dst_addr
         if type_ == 'FWD':
-            cmd += 'forward %d %s' % (series_id, getForwardSeriesFlagsFromHexStr(flags))
+            cmd += 'forward %d %s' % (series_id, self.getForwardSeriesFlagsFromHexStr(flags))
             if flags != 0:
-                cmd += ' %s' % (getMetricsFlagsFromHexStr(metrics))
+                cmd += ' %s' % (self.getMetricsFlagsFromHexStr(metrics))
         elif type_ == 'ENH':
             cmd += 'enhanced-ack'
             if flags != 0:
                 cmd += ' register'
-                metricsFlags = getMetricsFlagsFromHexStr(metrics)
+                metricsFlags = self.getMetricsFlagsFromHexStr(metrics)
                 if '?' in metricsFlags:
                     cmd += ' %s r' % metricsFlags.replace('?', '')
                 else:
@@ -2971,7 +2974,7 @@ class OpenThreadTHCI(object):
         print(cmd1)
         cmd2 = 'udp send %s %d %s' % (destination, port, payload)
         print(cmd2)
-        return (self.__executeCommand(cmd1)[-1] == 'Done' and self.__executeCommand(cmd2)[-1] == 'Done')
+        return self.__executeCommand(cmd1)[-1] == 'Done' and self.__executeCommand(cmd2)[-1] == 'Done'
 
     @API
     def send_udp(self, interface, destination, port, payload='12ABcd'):
@@ -2983,7 +2986,7 @@ class OpenThreadTHCI(object):
         print(cmd1)
         cmd2 = 'udp send %s %s -x %s' % (destination, port, payload)
         print(cmd2)
-        return (self.__executeCommand(cmd1)[-1] == 'Done' and self.__executeCommand(cmd2)[-1] == 'Done')
+        return self.__executeCommand(cmd1)[-1] == 'Done' and self.__executeCommand(cmd2)[-1] == 'Done'
 
     @API
     def sendMACcmd(self, enh=False):
