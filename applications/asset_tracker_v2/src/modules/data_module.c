@@ -898,19 +898,28 @@ static void on_all_states(struct data_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_MODEM_STATIC_DATA_READY)) {
-		modem_stat.appv =
-			msg->module.modem.data.modem_static.app_version;
-		modem_stat.brdv =
-			msg->module.modem.data.modem_static.board_version;
-		modem_stat.nw_lte_m =
-			msg->module.modem.data.modem_static.nw_mode_ltem;
-		modem_stat.nw_nb_iot =
-			msg->module.modem.data.modem_static.nw_mode_nbiot;
+		modem_stat.nw_lte_m = msg->module.modem.data.modem_static.nw_mode_ltem;
+		modem_stat.nw_nb_iot = msg->module.modem.data.modem_static.nw_mode_nbiot;
 		modem_stat.bnd = msg->module.modem.data.modem_static.band;
-		modem_stat.fw = msg->module.modem.data.modem_static.modem_fw;
-		modem_stat.iccid = msg->module.modem.data.modem_static.iccid;
 		modem_stat.ts = msg->module.modem.data.modem_static.timestamp;
 		modem_stat.queued = true;
+
+		BUILD_ASSERT(sizeof(modem_stat.appv) >=
+			     sizeof(msg->module.modem.data.modem_static.app_version));
+
+		BUILD_ASSERT(sizeof(modem_stat.brdv) >=
+			     sizeof(msg->module.modem.data.modem_static.board_version));
+
+		BUILD_ASSERT(sizeof(modem_stat.fw) >=
+			     sizeof(msg->module.modem.data.modem_static.modem_fw));
+
+		BUILD_ASSERT(sizeof(modem_stat.iccid) >=
+			     sizeof(msg->module.modem.data.modem_static.iccid));
+
+		strcpy(modem_stat.appv, msg->module.modem.data.modem_static.app_version);
+		strcpy(modem_stat.brdv, msg->module.modem.data.modem_static.board_version);
+		strcpy(modem_stat.fw, msg->module.modem.data.modem_static.modem_fw);
+		strcpy(modem_stat.iccid, msg->module.modem.data.modem_static.iccid);
 
 		requested_data_status_set(APP_DATA_MODEM_STATIC);
 	}
@@ -923,12 +932,19 @@ static void on_all_states(struct data_msg_data *msg)
 		struct cloud_data_modem_dynamic new_modem_data = {
 			.area = msg->module.modem.data.modem_dynamic.area_code,
 			.cell = msg->module.modem.data.modem_dynamic.cell_id,
-			.ip = msg->module.modem.data.modem_dynamic.ip_address,
-			.mccmnc = msg->module.modem.data.modem_dynamic.mccmnc,
 			.rsrp = msg->module.modem.data.modem_dynamic.rsrp,
 			.ts = msg->module.modem.data.modem_dynamic.timestamp,
 			.queued = true
 		};
+
+		BUILD_ASSERT(sizeof(new_modem_data.ip) >=
+			     sizeof(msg->module.modem.data.modem_dynamic.ip_address));
+
+		BUILD_ASSERT(sizeof(new_modem_data.mccmnc) >=
+			     sizeof(msg->module.modem.data.modem_dynamic.mccmnc));
+
+		strcpy(new_modem_data.ip, msg->module.modem.data.modem_dynamic.ip_address);
+		strcpy(new_modem_data.mccmnc, msg->module.modem.data.modem_dynamic.mccmnc);
 
 		cloud_codec_populate_modem_dynamic_buffer(
 						modem_dyn_buf,

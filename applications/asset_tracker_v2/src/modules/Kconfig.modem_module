@@ -14,7 +14,7 @@ if MODEM_MODULE
 
 config MODEM_THREAD_STACK_SIZE
 	int "Modem module thread stack size"
-	default 1024
+	default 1280
 
 config MODEM_AUTO_REQUEST_POWER_SAVING_FEATURES
 	bool "Auto request power saving features"
