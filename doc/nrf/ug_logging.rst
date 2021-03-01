@@ -114,7 +114,7 @@ For information about how to run SEGGER's J-Link RTT on your PC and see the logs
 Spinel
 ======
 
-Using `Spinel protocol`_ as a logging backend is specific to OpenThread's :ref:`thread_architectures_designs_cp_ncp` architecture.
+Using `Spinel protocol`_ as a logging backend is specific to OpenThread's :ref:`thread_architectures_designs_cp_ncp` and :ref:`thread_architectures_designs_cp_rcp` architectures.
 The Spinel protocol can be configured as a logging backend using the following Kconfig options:
 
 * :option:`CONFIG_LOG_BACKEND_SPINEL` - This option enables the Spinel logging backend.

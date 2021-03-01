@@ -74,6 +74,9 @@
 .. _`Spinel specification properties for Thread`: https://github.com/openthread/spinel-spec/blob/master/thread/detail-properties.md
 .. _`Spinel protocol`: https://github.com/openthread/spinel-spec
 
+.. _`OpenThread Daemon`: https://openthread.io/platforms/co-processor/ot-daemon
+.. _`OpenThread POSIX app`: https://github.com/zephyrproject-rtos/openthread/tree/zephyr/src/posix
+
 .. _`OpenThread THCI`: https://github.com/openthread/openthread/tree/master/tools/harness-thci
 
 .. _`OpenAMP`: https://github.com/OpenAMP/open-amp/

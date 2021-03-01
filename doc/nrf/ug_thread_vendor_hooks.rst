@@ -166,14 +166,14 @@ You should define these methods beforehand.
 Handlers methods can check property ID and perform different actions depending on their value.
 They can also ignore the value, if for example the property was defined by other vendor and you want to filter it out.
 
-For detailed description about how to enable the vendor hook feature in a sample, see the :ref:`Thread NCP sample <ot_coprocessor_sample>` documentation.
+For detailed description about how to enable the vendor hook feature in a sample, see the :ref:`ot_coprocessor_sample` sample documentation.
 
 .. _ug_thread_vendor_hooks_testing:
 
 Testing vendor hooks after configuration
 ****************************************
 
-To test the vendor hook feature, you need a development kit that is programmed with either the :ref:`Thread NCP <ot_coprocessor_sample>` or another compatible sample.
+To test the vendor hook feature, you need a development kit that is programmed with either the :ref:`ot_coprocessor_sample` sample or another compatible sample.
 
 Complete the following steps:
 

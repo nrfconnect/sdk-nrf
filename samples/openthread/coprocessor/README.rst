@@ -1,13 +1,14 @@
 .. _ot_coprocessor_sample:
 
-Thread: Co-Processor
+Thread: Co-processor
 ####################
 
 .. contents::
    :local:
    :depth: 2
 
-The :ref:`Thread <ug_thread>` Co-Processor sample demonstrates the usage of OpenThread's :ref:`thread_architectures_designs_cp_ncp` and :ref:`thread_architectures_designs_cp_rcp` architectures inside the Zephyr environment.
+The :ref:`Thread <ug_thread>` Co-processor sample demonstrates how to implement OpenThread's :ref:`thread_architectures_designs_cp` inside the Zephyr environment.
+Depending on the configuration, the sample uses the :ref:`thread_architectures_designs_cp_ncp` architecture or :ref:`thread_architectures_designs_cp_rcp` architecture.
 
 The sample is based on Zephyr's :ref:`zephyr:coprocessor-sample` sample.
 However, it customizes Zephyr's sample to the |NCS| requirements (for example, by increasing the stack size dedicated for the user application), and also extends it with several features:
@@ -15,17 +16,17 @@ However, it customizes Zephyr's sample to the |NCS| requirements (for example, b
 * Increased mbedTLS heap size.
 * Lowered main stack size to increase user application space.
 * No obsolete configuration options.
-* Vendor hooks for NCP allowing User to extend handled properties by its own, customized functionalities.
+* Vendor hooks for co-processor architecture allowing users to extend handled properties by their own, customized functionalities.
 
 This sample supports optional :ref:`ot_coprocessor_sample_vendor_hook_extension` and :ref:`logging extension <ot_coprocessor_sample_logging>`, which can be turned on or off independently.
-See :ref:`ot_coprocessor_sample_features_enabling` for details. 
+See :ref:`ot_coprocessor_sample_config_files` for details.
 
 Overview
 ********
 
-The sample demonstrates using an Co-Processor target on the MCU to communicate with Userspace WPAN Network Daemon (`wpantund`_) on Unix-like operating system.
-According to the Co-Processor architecture, the MCU part needs to cooperate with user higher layer process to establish the complete full stack application.
-The sample shows how to set connection between the Co-Processor and wpantund.
+The sample demonstrates using a co-processor target on the MCU to communicate with Userspace WPAN Network Daemon (`wpantund`_) on Unix-like operating system.
+According to the co-processor architecture, the MCU part must cooperate with user higher layer process to establish the complete full stack application.
+The sample shows how to set up the connection between the co-processor and wpantund.
 
 This sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
 
@@ -34,7 +35,7 @@ This sample comes with the :ref:`full set of OpenThread functionalities <thread_
 Vendor hooks extension
 ======================
 
-The vendor hook feature extension allows you to define your own commands and properties for the `Spinel protocol`_, and extend the standard set used in communication with NCP.
+The vendor hook feature extension allows you to define your own commands and properties for the `Spinel protocol`_, and extend the standard set used in communication with the co-processor.
 Thanks to this feature, you can add new custom functionalities and manage them from host device by using serial interface - in the same way as the default functionalities.
 
 For more detailed information about the vendor hooks feature and host device configuration, see :ref:`ug_thread_vendor_hooks`.
@@ -46,7 +47,7 @@ Logging extension
 =================
 
 This sample by default uses :ref:`Spinel logging backend <ug_logging_backends_spinel>`, which allows sending log messages to the host device using the Spinel protocol.
-This feature is very useful, because it does not require having separate interfaces to communicate with NCP through the Spinel protocol and collect log messages.
+This feature is very useful, because it does not require having separate interfaces to communicate with the co-processor through the Spinel protocol and collect log messages.
 Moreover, selecting the Spinel logging backend (by setting :option:`CONFIG_LOG_BACKEND_SPINEL`) does not exclude using another backend like UART or RTT at the same time.
 
 By default, the log levels for all modules are set to critical to not engage the microprocessor in unnecessary activities.
@@ -70,9 +71,9 @@ The sample supports the following development kits for testing the network statu
    :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
 
 To test the sample, you need at least one development kit.
-Additional development kits programmed with the Co-Processor sample can be used for the :ref:`optional testing of network joining <ot_coprocessor_sample_testing_more_boards>`.
+Additional development kits programmed with the Co-processor sample can be used for the :ref:`optional testing of network joining <ot_coprocessor_sample_testing_more_boards>`.
 
-Moreover, the sample requires a Userspace higher layer process running on user's device in order to communicate with the MCU NCP part.
+Moreover, the sample requires a Userspace higher layer process running on user's device in order to communicate with the MCU co-processor part.
 This sample uses `wpantund`_ as reference.
 
 User interface
@@ -80,14 +81,51 @@ User interface
 
 All the interactions with the application are handled using serial communication.
 
-For the interaction with the application, this sample uses :ref:`ug_thread_tools_wpantund` process with ``wpanctl`` commands.
-It is also possible to communicate with the kit using `PySpinel`_ commands.
+You can interact with the sample through :ref:`ug_thread_tools_wpantund`, using ``wpanctl`` commands.
+If you use the RCP architecture (see :option:`CONFIG_OPENTHREAD_COPROCESSOR_RCP`), you can alternatively use ``ot-daemon`` or ``ot-cli`` with commands listed in `OpenThread CLI Reference`_.
+See :ref:`ug_thread_tools_ot_apps` for more information.
 
-You can use your own application instead of wpantund and PySpinel provided that it supports the spinel communication protocol.
+Both NCP and RCP support communication with the kit using `PySpinel`_ commands.
+
+You can use your own application instead of the ones listed above, provided that it supports the Spinel communication protocol.
 
 .. note::
     |thread_hwfc_enabled|
-    In addition, the Co-Processor sample by default reconfigures the baud rate to 1000000 bit/s.
+    In addition, the Co-processor sample by default reconfigures the baud rate to 1000000 bit/s.
+
+Configuration
+*************
+
+|config|
+
+Check and configure the following library options that are used by the sample:
+
+* :option:`CONFIG_OPENTHREAD_COPROCESSOR_NCP` - Selects the NCP architecture for the sample.
+  This is the default.
+* :option:`CONFIG_OPENTHREAD_COPROCESSOR_RCP` - Selects the RCP architecture for the sample.
+
+.. _ot_coprocessor_sample_config_files:
+
+Configuration files
+===================
+
+The sample provides predefined configuration files for typical use cases, and to activate sample extensions.
+You can find the configuration files in the root directory of the sample.
+
+Specify the corresponding file names in the :makevar:`OVERLAY_CONFIG` option when building.
+See :ref:`cmake_options` for instructions on how to add this option.
+For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
+The following configuration files are available:
+
+* :file:`overlay-vendor_hook.conf` - Enables the vendor hooks extension.
+  This file enables the vendor hooks feature and specifies the source file to use.
+  See :ref:`ot_coprocessor_sample_features_enabling_hooks` for more information.
+* :file:`overlay-logging.conf` - Enables the logging extension.
+  This file configures different log levels for the sample, the Zephyr system, and OpenThread.
+* :file:`overlay-rcp.conf` - Enables the RCP architecture.
+  This file configures the sample to use the RCP architecture instead of the NCP architecture.
+
 
 Building and running
 ********************
@@ -98,35 +136,21 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-.. _ot_coprocessor_sample_features_enabling:
-
-Activating sample extensions
-============================
-
-To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
-
-* For the vendor hooks feature support, set :file:`overlay-vendor_hook.conf`.
-  See :ref:`ot_coprocessor_sample_features_enabling_hooks` for more information.
-* For the logging variant that presents how to change log levels of specific modules, set :file:`overlay-logging.conf`.
-
-See :ref:`cmake_options` for instructions on how to add this option.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
-
 .. _ot_coprocessor_sample_features_enabling_hooks:
 
-Activating vendor hook feature
-------------------------------
+Activating the vendor hook feature
+==================================
 
-For this sample, handling of extension commands and properties is done through the vendor hook :file:`.cpp` file, which is dynamically attached to the NCP component during the compilation.
+Handling of extension commands and properties is done through the vendor hook :file:`.cpp` file, which is attached to the Co-processor sample during the linking.
 
 To enable the feature:
 
 1. Provide the implementation of this file.
 #. Insert information about the file location in the ``CONFIG_OPENTHREAD_COPROCESSOR_VENDOR_HOOK_SOURCE`` field.
    This field is located in the overlay configuration file (see :file:`overlay-vendor_hook.conf`).
-   The inserted path must be relative to the NCP sample directory.
+   The inserted path must be relative to the Co-processor sample directory.
 
-The NCP sample provides the vendor hook :file:`user_vendor_hook.cpp` file in the :file:`src` directory that demonstrates the proposed implementation of handler methods.
+The Co-processor sample provides the vendor hook :file:`user_vendor_hook.cpp` file in the :file:`src` directory that demonstrates the proposed implementation of handler methods.
 You can either:
 
 * Use the provided :file:`user_vendor_hook.cpp` file.
@@ -140,7 +164,7 @@ Testing
 After building the sample and programming it to your development kit, test it by performing the following steps:
 
 1. Connect the development kit's SEGGER J-Link USB port to the PC USB port with an USB cable.
-#. Get the kit's serial port name (e.g. /dev/ttyACM0).
+#. Get the kit's serial port name (for example, :file:`/dev/ttyACM0`).
 #. Run and configure wpantund and wpanctl as described in :ref:`ug_thread_tools_wpantund_configuring`.
 #. In the wpanctl shell, run the following command to check the kit state:
 
@@ -205,7 +229,7 @@ The final output will be similar to the following:
 
 This output means that you have successfully formed the Thread network.
 
-      .. _ot_coprocessor_sample_testing_more_boards:
+.. _ot_coprocessor_sample_testing_more_boards:
 
 Testing network joining with more kits
 --------------------------------------
@@ -214,17 +238,8 @@ Optionally, if you are using more than one kit, you can test the network joining
 
 1. Connect the second kit's SEGGER J-Link USB port to the PC USB port with an USB cable.
 #. Get the kit's serial port name.
-#. Open a shell and run another wpantund process for the second kit by using the following command:
-
-   .. parsed-literal::
-      :class: highlight
-
-      wpantund -I *network_interface_name_kit2* -s *serial_port_name_kit2* -b *baudrate*
-
-   For *baudrate*, use value 1000000.
-   For *serial_port_name_kit2*, use the value from the previous step.
-   For *network_interface_name_kit2*, use a name of your choice.
-   In this testing procedure, this will be `joiner_if`.
+#. Open a shell and run another wpantund process for the second kit as described in :ref:`ug_thread_tools_wpantund_configuring`.
+   Make sure to use the correct serial port name for the second kit (for example, :file:`/dev/ACM1`) and a different network interface name (for example, ``joiner_if``).
 #. Open another shell and run another wpanctl process for the second kit by using following command:
 
    .. code-block:: console

@@ -201,7 +201,7 @@ The NCP commands are available through `wpantund`_, which provides a `CLI wpantu
 Configuring on-mesh Thread commissioning
 ****************************************
 
-You can configure on-mesh Thread commissioning using the :ref:`Thread CLI sample <ot_cli_sample>` or the :ref:`Thread NCP sample <ot_coprocessor_sample>` with two devices to form a Thread network.
+You can configure on-mesh Thread commissioning using the :ref:`ot_cli_sample` sample or the :ref:`ot_coprocessor_sample` sample with two devices to form a Thread network.
 One device will act as a Commissioner and the other will be a Joiner.
 
 .. note::
@@ -222,7 +222,7 @@ Check the sample documentation pages for the list of compatible development kits
 Programming the DKs
 ===================
 
-Program both development kits with the :ref:`Thread CLI sample <ot_cli_sample>` or program both of them with the :ref:`Thread NCP sample <ot_coprocessor_sample>`.
+Program both development kits with the :ref:`ot_cli_sample` sample or program both of them with the :ref:`ot_coprocessor_sample` sample.
 See the sample's page for details.
 
 After programming the DKs and turning them on, both devices will be pre-commissioned and will form a Thread network.

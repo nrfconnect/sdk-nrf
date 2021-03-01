@@ -11,9 +11,10 @@ When working with Thread in |NCS|, you can use the following tools during Thread
 
 * `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ - Tool for analyzing network traffic during development.
 * `nRF Thread Topology Monitor`_ - This desktop application helps to visualize the current network topology.
-* `PySpinel`_ - Tool for controlling OpenThread Network Co-Processor instances through command line interface.
 * :ref:`ug_thread_tools_tbr`
 * :ref:`ug_thread_tools_wpantund`
+* :ref:`ug_thread_tools_pyspinel`
+* :ref:`ug_thread_tools_ot_apps`
 
 Using Thread tools is optional.
 
@@ -71,22 +72,48 @@ Configuring wpantund
 
 When working with samples that support wpantund, complete the following steps to start the wpantund processes:
 
-1. Open a shell and run the wpantund process by using the following command:
+1. Open a shell and run the wpantund process.
+   The required command depends on if you want to connect to a network co-processor (NCP) node or a radio co-processor (RCP) node.
+
+   Replace the following parameters:
+
+   * *network_interface_name* - Specifies the name of the network interface, for example, ``leader_if``.
+   * *ncp_socket_name* - Specifies the location of the socket, for example, :file:`/dev/ACM0`.
+   * *baudrate* - Specifies the baud rate to use.
+     The Thread samples support baud rate ``1000000``.
+
+   Network co-processor (NCP)
+     When connecting to an NCP node, use the following command:
+
+     .. parsed-literal::
+        :class: highlight
+
+        wpantund -I *network_interface_name* -s *ncp_socket_name* -b *baudrate*
+
+     For example::
+
+        sudo wpantund -I leader_if -s /dev/ACM0 -b 1000000
+
+   Radio co-processor (RCP)
+     When connecting to an RCP node, you must use the ``ot-ncp`` tool to establish the connection.
+     See :ref:`ug_thread_tools_ot_apps` for more information.
+     Use the following command:
+
+     .. parsed-literal::
+        :class: highlight
+
+        wpantund -I *network_interface_name* -s 'system:./output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_socket_name*\ ?uart-baudrate=\ *baudrate*
+
+     For example::
+
+        sudo wpantund -I leader_if -s 'system:./output/posix/bin/ot-ncp spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=1000000'
+
+#. Open another shell and run the wpanctl process by using the following command:
 
    .. parsed-literal::
       :class: highlight
 
-      wpantund -I *network_interface_name* -s *serial_port_name* -b *baudrate*
-
-   For *baudrate*, use value ``1000000``.
-   For *serial_port_name*, use the value that is valid for the sample.
-   For *network_interface_name*, use a name of your choice.
-   For example, ``leader_if``.
-#. Open another shell and run the wpanctl process by using the following command:
-
-   .. code-block:: console
-
-      wpanctl -I leader_if
+      wpanctl -I *network_interface_name*
 
    This process can be used to control the connected NCP kit.
 
@@ -115,3 +142,118 @@ The most common wpanctl commands are the following:
   For example, ``set NCP:SleepyPollInterval 1000`` will set the value of the ``NCP:SleepyPollInterval`` property to ``1000``.
 
 For the full list of commands, run the ``help`` command in wpanctl.
+
+.. _ug_thread_tools_pyspinel:
+
+PySpinel
+********
+
+`PySpinel`_ is a tool for controlling OpenThread co-processor instances through a command-line interface.
+
+.. note::
+    The tool is available for Linux and macOS and is not supported on Windows.
+
+Installing PySpinel
+===================
+
+See the `PySpinel`_ documentation for general installation instructions.
+
+Configuring PySpinel
+====================
+
+When working with samples that support PySpinel, complete the following steps to communicate with the device:
+
+1. Open a shell in a PySpinel root directory.
+#. Run PySpinel to connect to the node.
+   The required command depends on if you want to connect to a network co-processor (NCP) node or a radio co-processor (RCP) node.
+
+   Replace the following parameters:
+
+   * *debug_level* - Specifies the debug level, range: ``0-5``.
+   * *ncp_socket_name* - Specifies the location of the socket, for example, :file:`/dev/ACM0`.
+   * *baudrate* - Specifies the baud rate to use.
+     The Thread samples support baud rate ``1000000``.
+
+   Network co-processor (NCP)
+     When connecting to an NCP node, use the following command:
+
+     .. parsed-literal::
+        :class: highlight
+
+        sudo python3 spinel-cli.py -d *debug_level* -p *ncp_socket_name* -b *baudrate*
+
+     For example::
+
+        sudo python3 spinel-cli.py -d 4 -p /dev/ACM0 -b 1000000
+
+   Radio co-processor (RCP)
+     When connecting to an RCP node, you must use the ``ot-ncp`` tool to establish the connection.
+     See :ref:`ug_thread_tools_ot_apps` for more information.
+     To enable logs from the RCP Spinel backend, you must build the ``ot-ncp`` tool with option ``LOG_OUTPUT=APP``.
+     See :ref:`ug_thread_tools_building_ot_apps` for information on how to build the tool.
+
+     Use the following command to connect to an RCP node:
+
+     .. parsed-literal::
+        :class: highlight
+
+        sudo python3 spinel-cli.py -d *debug_level* -p './output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_socket_name*\ ?uart-baudrate=\ *baudrate*
+
+     For example::
+
+        sudo python3 spinel-cli.py -d 4 -p './output/posix/bin/ot-ncp spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=1000000'
+
+.. _ug_thread_tools_ot_apps:
+
+OpenThread POSIX applications
+*****************************
+
+OpenThread POSIX applications allow to communicate with a radio co-processor in a comfortable way.
+
+OpenThread provides the following applications:
+
+* ``ot-ncp`` - Supports :ref:`ug_thread_tools_wpantund` for the RCP architecture.
+* ``ot-cli`` - Works like the :ref:`ot_cli_sample` sample for the RCP architecture.
+* ``ot-daemon`` and ``ot-ctl`` - Provides the same functionality as ``ot-cli``, but keeps the daemon running in the background all the time.
+  See `OpenThread Daemon`_ for more information.
+
+When working with Thread, you can use these tools to interact with the following sample:
+
+* :ref:`ot_coprocessor_sample`
+
+See `OpenThread POSIX app`_ for more information.
+
+.. _ug_thread_tools_building_ot_apps:
+
+Building the OpenThread POSIX applications
+==========================================
+
+Build the OpenThread POSIX applications by performing the following steps:
+
+#. Open a shell in the OpenThread source code directory :file:`ncs/modules/lib/openthread`.
+#. Initialize the build and clean previous artifacts by running the following commands:
+
+     .. code-block:: console
+
+        # initialize GNU Autotools
+        ./bootstrap
+
+        # clean previous artifacts
+        make -f src/posix/Makefile-posix clean
+
+#. Build the applications with the required options.
+   For example, to build POSIX applications like ``ot-cli`` or ``ot-ncp`` with log output being redirected to the application, run the following command:
+
+     .. code-block:: console
+
+        # build core for POSIX (ot-cli, ot-ncp)
+        make -f src/posix/Makefile-posix LOG_OUTPUT=APP
+
+   Alternatively, to build POSIX applications like ``ot-daemon`` or ``ot-ctl``, run the following command:
+
+     .. code-block:: console
+
+        # build daemon mode core stack for POSIX (ot-daemon, ot-ctl)
+        make -f src/posix/Makefile-posix DAEMON=1
+
+You can find the generated applications in :file:`./output/posix/bin/`.

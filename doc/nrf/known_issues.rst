@@ -222,7 +222,7 @@ KRKNWK-9094: Possible deadlock in shell subsystem
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-6848: Reduced throughput
-  Performance testing for :ref:`NCP sample <ot_coprocessor_sample>` shows a decrease of throughput of around 10-20% compared with the standard OpenThread.
+  Performance testing for the :ref:`ot_coprocessor_sample` sample shows a decrease of throughput of around 10-20% compared with the standard OpenThread.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
@@ -257,10 +257,10 @@ KRKNWK-7962: Logging interferes with shell output
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7803: Automatically generated libraries are missing otPlatLog for NCP
-  When building OpenThread libraries using a different sample than the :ref:`Thread NCP sample <ot_coprocessor_sample>`, the :file:`ncp_base.cpp` is not compiled with the :c:func:`otPlatLog` function.
+  When building OpenThread libraries using a different sample than the :ref:`ot_coprocessor_sample` sample, the :file:`ncp_base.cpp` is not compiled with the :c:func:`otPlatLog` function.
   This results in a linking failure when building the NCP with these libraries.
 
-  **Workaround:** Use the :ref:`Thread NCP sample <ot_coprocessor_sample>` to create OpenThread libraries.
+  **Workaround:** Use the :ref:`ot_coprocessor_sample` sample to create OpenThread libraries.
 
 .. rst-class:: v1-3-1 v1-3-0
 
