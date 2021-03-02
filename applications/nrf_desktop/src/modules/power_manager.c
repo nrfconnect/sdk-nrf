@@ -13,13 +13,13 @@
 
 #include <profiler.h>
 
-#include "power_event.h"
+#include <caf/events/power_event.h>
 #include "ble_event.h"
 #include "usb_event.h"
 #include "hid_event.h"
 
 #define MODULE power_manager
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log_ctrl.h>
 #include <logging/log.h>

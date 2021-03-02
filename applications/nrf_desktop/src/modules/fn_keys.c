@@ -10,8 +10,8 @@
 #include <settings/settings.h>
 
 #define MODULE fn_keys
-#include "module_state_event.h"
-#include "button_event.h"
+#include <caf/events/module_state_event.h>
+#include <caf/events/button_event.h>
 
 #include "key_id.h"
 

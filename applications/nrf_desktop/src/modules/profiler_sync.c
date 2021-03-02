@@ -8,10 +8,10 @@
 #include <drivers/gpio.h>
 #include <profiler.h>
 
-#include "gpio_pins.h"
+#include <caf/gpio_pins.h>
 
 #define MODULE profiler_sync
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_PROFILER_SYNC_LOG_LEVEL);

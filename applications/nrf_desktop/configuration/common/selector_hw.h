@@ -7,7 +7,7 @@
 #ifndef _SELECTOR_HW_H_
 #define _SELECTOR_HW_H_
 
-#include "gpio_pins.h"
+#include <caf/gpio_pins.h>
 
 struct selector_config {
 	uint8_t id;

@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <sys/util.h>
 
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 
 static const char * const state_name[] = {

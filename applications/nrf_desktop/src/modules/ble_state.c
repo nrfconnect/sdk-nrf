@@ -22,7 +22,7 @@
 #endif /* CONFIG_BT_LL_SOFTDEVICE */
 
 #define MODULE ble_state
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_STATE_LOG_LEVEL);

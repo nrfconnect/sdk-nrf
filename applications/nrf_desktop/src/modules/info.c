@@ -11,7 +11,7 @@
 #include "config_event.h"
 
 #define MODULE info
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #define BOARD_NAME_SEPARATOR	'_'
 

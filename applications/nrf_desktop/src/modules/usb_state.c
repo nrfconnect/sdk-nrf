@@ -15,7 +15,7 @@
 
 
 #define MODULE usb_state
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #include "hid_event.h"
 #include "usb_event.h"
 #include "config_event.h"
-#include "power_event.h"
+#include <caf/events/power_event.h>
 
 #if CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
   #include "usb_state_def.h"

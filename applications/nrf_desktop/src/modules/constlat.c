@@ -8,9 +8,9 @@
 #include <hal/nrf_power.h>
 
 #define MODULE constlat
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
-#include "power_event.h"
+#include <caf/events/power_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE);
