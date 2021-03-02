@@ -45,14 +45,14 @@ Before running the sample, you must complete the following setup:
    #. Set the :option:`CONFIG_EDGE_IMPULSE_URI` to URI of your machine learning model.
 
    See the :ref:`ei_wrapper` page for detailed configuration steps.
-#. Define the input data for the machine learning model in :file:`samples/ei_wrapper/src/include/input_data.h`.
+#. Define the input data for the machine learning model in :file:`samples/edge_impulse/wrapper/src/include/input_data.h`.
 #. Check the example input data in your Edge Impulse studio project:
 
    a. Go to the :guilabel:`Live classification` tab.
    #. In the :guilabel:`Classifying existing test sample` panel, select one of the test samples.
    #. Press :guilabel:`Load sample` to display the raw data preview.
 
-      .. figure:: ../../doc/nrf/images/ei_loading_test_sample.png
+      .. figure:: ../../../doc/nrf/images/ei_loading_test_sample.png
          :scale: 50 %
          :alt: Loading test sample input data in Edge Impulse studio
 
@@ -60,7 +60,7 @@ Before running the sample, you must complete the following setup:
 
       The classification results will be displayed, with raw data preview.
 
-      .. figure:: ../../doc/nrf/images/ei_raw_features.png
+      .. figure:: ../../../doc/nrf/images/ei_raw_features.png
          :scale: 50 %
          :alt: Raw data preview in Edge Impulse studio
 
@@ -76,7 +76,7 @@ Before running the sample, you must complete the following setup:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/ei_wrapper`
+.. |sample path| replace:: :file:`samples/edge_impulse/wrapper`
 
 .. include:: /includes/build_and_run.txt
 
