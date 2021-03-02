@@ -34,7 +34,9 @@ void test_spm_firmware_info(void)
 	zassert_true(!is_secure((intptr_t)&ns_fw_info),
 		     "Test fw-info is not stored in non-secure firmware");
 
-	/* Normal execution */
+	/* Verify that normal execution with the firmware info in
+	 * secure flash and output info in non-secure flash.
+	 */
 	err = spm_firmware_info(PM_SPM_ADDRESS, &info);
 	zassert_equal(err, 0, "Got unexpected failure");
 
@@ -42,17 +44,14 @@ void test_spm_firmware_info(void)
 	 * is not in secure firmware.
 	 */
 	err = spm_firmware_info((uint32_t)&ns_fw_info, &info);
-	zassert_true(err != 0, "Did not fail for fw_address in secure fw");
+	zassert_equal(err, -EINVAL, "Did not fail for fw_address in secure fw");
 
 	/* Verify that the function fails if the output argument for the info
-	 * is in secure RAM. First verify that it passes when it is in
-	 * non-secure, indicating that a valid fw_info is found at the
-	 * specified address, then verify that it fails for an output pointer
-	 * in secure RAM.
+	 * is in secure firmware.
 	 */
 	err = spm_firmware_info(PM_SPM_ADDRESS,
 				(struct fw_info *)PM_SPM_SRAM_ADDRESS);
-	zassert_true(err != 0, "Did not fail when passing invalid output ptr");
+	zassert_equal(err, -EINVAL, "Did not fail when passing invalid output ptr");
 }
 
 void test_spm_s0_active(void)
@@ -73,11 +72,12 @@ void test_spm_s0_active(void)
 	err = spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &output);
 	zassert_equal(err, 0, "Got unexpected failure");
 
-	/* Verify that the function fails if it is passed secure pointers */
+	/* Verify that the function fails if it is passed a secure pointer */
 	err = spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, secure_ptr);
-	zassert_true(err != 0, "Did not fail for secure pointer");
+	zassert_equal(err, -EINVAL, "Did not fail for secure pointer");
 }
 
+#ifdef CONFIG_SPM_SERVICE_RNG
 void test_spm_request_random_number(void)
 {
 	int err;
@@ -104,17 +104,26 @@ void test_spm_request_random_number(void)
 
 	/* Verify that the function fails if it is passed secure pointers */
 	err = spm_request_random_number(secure_ptr, sizeof(output), &olen);
-	zassert_true(err != 0, "Did not fail for secure pointer");
+	zassert_equal(err, -EINVAL, "Did not fail for secure pointer");
 
 	err = spm_request_random_number(output, sizeof(output), secure_ptr);
-	zassert_true(err != 0, "Got unexpected failure");
+	zassert_equal(err, -EINVAL, "Got unexpected failure");
 }
+#else
+void test_spm_request_random_number(void)
+{
+	ztest_test_skip();
+}
+#endif
 
 void test_spm_request_read(void)
 {
-	const uint32_t valid_read_addr = (NRF_FICR_S_BASE + 0x204);
+	const uint32_t ficr_start = (NRF_FICR_S_BASE + 0x204);
+	const uint32_t ficr_end = ficr_start + 0xA1C;
+
 	int err;
 	uint8_t output[32];
+	uint8_t data_length = sizeof(output);
 	void *secure_ptr = (size_t *)PM_SPM_SRAM_ADDRESS;
 
 	/* Prove that test objects is stored in non-secure addresses. */
@@ -129,18 +138,24 @@ void test_spm_request_read(void)
 	zassert_true(is_secure((intptr_t)secure_ptr),
 		     "Test object is not secure");
 
-	/* Normal execution */
-	err = spm_request_read(output, valid_read_addr, sizeof(output));
-	zassert_equal(err, 0, "Got unexpected failure");
-
 	/* Verify that the function fails if it is passed secure pointers */
-	err = spm_request_read(secure_ptr, valid_read_addr, sizeof(output));
-	zassert_true(err != 0, "Did not fail for secure pointer");
+	err = spm_request_read(secure_ptr, ficr_start, data_length);
+	zassert_equal(err, -EINVAL, "Did not fail for secure pointer");
 
-	/* Verify that the function fails if it is passed non-secure address */
-	err = spm_request_read(output, (intptr_t)&non_secure_buf,
-			       sizeof(output));
-	zassert_true(err != 0, "Did not fail for non secure read addr");
+	/* Verify that edge addresses in FICR will return expected values */
+	/* Normal execution */
+	err = spm_request_read(output, ficr_start, data_length);
+	zassert_equal(err, 0, "Valid address returned an error!");
+
+	err = spm_request_read(output, ficr_end - data_length, data_length);
+	zassert_equal(err, 0, "Valid address returned an error!");
+
+	/* Expect invalid addresses to return "operation not permitted" */
+	err = spm_request_read(output, ficr_start-1, data_length);
+	zassert_equal(err, -EPERM, "Invalid address did not return -EPERM!");
+
+	err = spm_request_read(output, ficr_end - data_length + 1, data_length);
+	zassert_equal(err, -EPERM, "Invalid address did not return -EPERM!");
 }
 
 void test_main(void)
