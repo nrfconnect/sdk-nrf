@@ -158,6 +158,7 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
 	int err;
 	uint32_t mccmnc;
 	char *end_ptr;
+	bool values_added = false;
 
 	if (!data->queued) {
 		return -ENODATA;
@@ -181,42 +182,65 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	/* Convert mccmnc to unsigned long integer. */
-	errno = 0;
-	mccmnc = strtoul(data->mccmnc, &end_ptr, 10);
-	if ((errno == ERANGE) || (*end_ptr != '\0')) {
-		LOG_ERR("MCCMNC string could not be converted.");
-		err = -ENOTEMPTY;
-		goto exit;
+	if (data->rsrp_fresh) {
+		err = json_add_number(modem_val_obj, MODEM_RSRP, data->rsrp);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
-	err = json_add_number(modem_val_obj, MODEM_RSRP, data->rsrp);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (data->area_code_fresh) {
+		err = json_add_number(modem_val_obj, MODEM_AREA_CODE, data->area);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
-	err = json_add_number(modem_val_obj, MODEM_AREA_CODE, data->area);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (data->mccmnc_fresh) {
+		/* Convert mccmnc to unsigned long integer. */
+		errno = 0;
+		mccmnc = strtoul(data->mccmnc, &end_ptr, 10);
+
+		if ((errno == ERANGE) || (*end_ptr != '\0')) {
+			LOG_ERR("MCCMNC string could not be converted.");
+			err = -ENOTEMPTY;
+			goto exit;
+		}
+
+		err = json_add_number(modem_val_obj, MODEM_MCCMNC, mccmnc);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
-	err = json_add_number(modem_val_obj, MODEM_MCCMNC, mccmnc);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (data->cell_id_fresh) {
+		err = json_add_number(modem_val_obj, MODEM_CELL_ID, data->cell);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
-	err = json_add_number(modem_val_obj, MODEM_CELL_ID, data->cell);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (data->ip_address_fresh) {
+		err = json_add_str(modem_val_obj, MODEM_IP_ADDRESS, data->ip);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
-	err = json_add_str(modem_val_obj, MODEM_IP_ADDRESS, data->ip);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+	if (!values_added) {
+		err = -ENODATA;
+		data->queued = false;
+		LOG_WRN("No valid dynamic modem data values present, entry unqueued");
 		goto exit;
 	}
 
@@ -584,6 +608,7 @@ exit:
 int json_common_config_add(cJSON *parent, struct cloud_data_cfg *data, const char *object_label)
 {
 	int err;
+	bool values_added = false;
 
 	if (object_label == NULL) {
 		LOG_WRN("Missing object label");
@@ -597,39 +622,69 @@ int json_common_config_add(cJSON *parent, struct cloud_data_cfg *data, const cha
 		goto exit;
 	}
 
-	err = json_add_bool(config_obj, CONFIG_DEVICE_MODE, data->active_mode);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (data->active_mode_fresh) {
+		err = json_add_bool(config_obj, CONFIG_DEVICE_MODE,
+				    data->active_mode);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
-	err = json_add_number(config_obj, CONFIG_GPS_TIMEOUT, data->gps_timeout);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (data->gps_timeout_fresh) {
+		err = json_add_number(config_obj, CONFIG_GPS_TIMEOUT,
+				      data->gps_timeout);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
-	err = json_add_number(config_obj, CONFIG_ACTIVE_TIMEOUT, data->active_wait_timeout);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (data->active_wait_timeout_fresh) {
+		err = json_add_number(config_obj, CONFIG_ACTIVE_TIMEOUT,
+				      data->active_wait_timeout);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
-	err = json_add_number(config_obj, CONFIG_MOVE_RES, data->movement_resolution);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (data->movement_resolution_fresh) {
+		err = json_add_number(config_obj, CONFIG_MOVE_RES,
+				      data->movement_resolution);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
-	err = json_add_number(config_obj, CONFIG_MOVE_TIMEOUT, data->movement_timeout);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (data->movement_timeout_fresh) {
+		err = json_add_number(config_obj, CONFIG_MOVE_TIMEOUT,
+				      data->movement_timeout);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
-	err = json_add_number(config_obj, CONFIG_ACC_THRESHOLD, data->accelerometer_threshold);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+	if (data->accelerometer_threshold_fresh) {
+		err = json_add_number(config_obj, CONFIG_ACC_THRESHOLD,
+				      data->accelerometer_threshold);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
+	}
+
+	if (!values_added) {
+		err = -ENODATA;
+		LOG_WRN("No valid configuration data values present");
 		goto exit;
 	}
 
