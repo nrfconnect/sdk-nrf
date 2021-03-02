@@ -187,7 +187,7 @@ Complete the following steps to build |NCS| projects on the command line after c
          west flash
 
       This command clears only the flash memory pages that are overwritten with the new application.
-      If the application depends on other flash areas (for example, if it uses the :ref:`zephyr:settings_api` partition), erase the full kit before programming to ensure that these areas are updated with the new content.
+      If the application depends on other flash areas (for example, if it uses the :ref:`zephyr:settings_api` partition where bonding information is stored), erase the full kit before programming to ensure that these areas are updated with the new content.
       If you do not fully erase the kit, the old data in these areas will be retained.
 
       To fully erase the kit before programming the new application, use the following command:

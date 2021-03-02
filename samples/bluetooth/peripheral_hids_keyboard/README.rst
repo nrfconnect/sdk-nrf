@@ -98,8 +98,9 @@ Testing with a Microsoft Windows computer
 To test with a Microsoft Windows computer that has a Bluetooth radio, complete the following steps:
 
 1. Power on your development kit.
-#. Press Button 4 on the kit if the device is not advertising.
+#. Press **Button 4** on the kit if the device is not advertising.
    Advertising is indicated by blinking **LED 1**.
+#. |connect_terminal|
 #. On your Windows computer, search for Bluetooth devices and connect to the device named "NCS HIDS keyboard".
 #. Observe that the connection state is indicated by **LED 2**.
 #. Open a text editor (for example, Notepad).
@@ -124,12 +125,18 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 1. Power on your development kit.
 #. Press **Button 4** on the kit if the device is not advertising.
    Advertising is indicated by blinking **LED 1**.
+#. |connect_terminal|
 #. Connect to the device from nRF Connect (the device is advertising as "NCS HIDS keyboard").
-#. Optionally, bond to the device.
-   To bond, click the settings button for the device in nRF Connect, select :guilabel:`Pair`, check :guilabel:`Perform Bonding`, and click :guilabel:`Pair`.
+#. Pair the devices:
+
+   a. Click the settings button for the device in nRF Connect.
+   b. Select :guilabel:`Pair`.
+   c. Optionally, check :guilabel:`Perform Bonding`.
+
    Optionally, check :guilabel:`Enable MITM protection` to pair with MITM protection and use a button on the device to confirm or reject the passkey value.
-#. Click :guilabel:`Match` in the nRF Connect app.
+
    Wait until the bond is established before you continue.
+
 #. Observe that the connection state is indicated by **LED 2**.
 #. Observe that the services of the connected device are shown.
 #. Enable notifications for all HID characteristics.
@@ -138,7 +145,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 
    The first notification has the value ``00000B0000000000``, the second has the value ``0000000000000000``.
    The received values correspond to press and release of character "h".
-   The format used for keyboard reports is the following byte array: ``[modifier, reserved, Key1, Key2, Key3, Key4, Key6]``.
+   The format used for keyboard reports is the following byte array: ``[modifier, reserved, Key1, Key2, Key3, Key4, Key5, Key6]``.
 
    Similarly, further press and release events will result in press and release notifications of subsequent characters of the test string.
    Therefore, pressing **Button 1** again will result in notification of press and release reports for character "e".
@@ -149,7 +156,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
    The first one has the value ``02000F0000000000``, the second has the value ``0200000000000000``.
    These values correspond to press and release of character "l" with the Shift key pressed.
 #. In nRF Connect, select the HID Report (which has UUID 0x2A4D and the properties Read, WriteWithoutResponse, and Write).
-   Enter ``02`` in the text box and click the :guilabel:`Write` button.
+   Enter ``02`` in the text box and click the :guilabel:`tick mark` button.
    This sets the modifier bit of the Output Report to 02, which simulates turning Caps Lock ON.
 
    Observe that **LED 3** turns on.
@@ -159,7 +166,8 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 
    Observe that **LED 3** turns off.
 #. Disconnect the device in nRF Connect.
-   Observe that no new notifications are received and the device is advertising.
+   Observe that no new notifications are received.
+#. If the advertising did not start automatically, press **Button 4** to continue advertising.
 #. As bond information is preserved by nRF Connect, you can immediately reconnect to the device by clicking the Connect button again.
 
 
@@ -170,7 +178,7 @@ To test with an Android smartphone/tablet, complete the following steps:
 
 1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 4** is lit.
 #. Observe that the device is advertising, as indicated by blinking **LED 1**.
-#. Confirm pairing with 'Nordic_Mouse_NFC' in a pop-up window on the smartphone/tablet.
+#. Confirm pairing with 'Nordic_HIDS_keyboard' in a pop-up window on the smartphone/tablet.
 #. Observe that the connection state is indicated by **LED 2**.
 #. Repeatedly press **Button 1** on the kit.
    Every button press sends one character of the test message "hello" to the smartphone (the test message includes a carriage return).
