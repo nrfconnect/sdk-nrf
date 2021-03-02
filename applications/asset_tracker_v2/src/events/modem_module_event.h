@@ -80,6 +80,15 @@ struct modem_module_dynamic_modem_data {
 	uint16_t rsrp;
 	char ip_address[INET6_ADDRSTRLEN];
 	char mccmnc[7];
+
+	/* Flags to signify if the corresponding data value has been updated and is concidered
+	 * fresh.
+	 */
+	bool area_code_fresh	: 1;
+	bool cell_id_fresh	: 1;
+	bool rsrp_fresh		: 1;
+	bool ip_address_fresh	: 1;
+	bool mccmnc_fresh	: 1;
 };
 
 struct modem_module_battery_data {

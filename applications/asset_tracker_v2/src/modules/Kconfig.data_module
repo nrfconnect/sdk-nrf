@@ -19,6 +19,14 @@ config FAILED_DATA_COUNT
 	int "Number of entries in failed data list"
 	default 10
 
+config DATA_SEND_ALL_DEVICE_CONFIGURATIONS
+	bool "Encode and send all device configurations regardless if they have changed or not"
+	help
+	  If this option is disabled the data module will only include device configuration values
+	  that have changed from the last configuration update. This is to save costs related to
+	  data transfers and to lower the device's overall current consumption due to less CPU and
+	  radio-activity.
+
 config DATA_THREAD_STACK_SIZE
 	int "Data module thread stack size"
 	default 2560

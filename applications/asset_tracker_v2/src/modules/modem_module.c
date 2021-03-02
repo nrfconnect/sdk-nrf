@@ -335,6 +335,99 @@ static int static_modem_data_get(void)
 	return 0;
 }
 
+static void populate_event_with_dynamic_modem_data(struct modem_module_event *event,
+						   struct modem_param_info *param)
+{
+	/* If this flag is set all sampled parameter values will be included in the event regardless
+	 * if they have changed or not.
+	 */
+	bool include = IS_ENABLED(CONFIG_MODEM_SEND_ALL_SAMPLED_DATA);
+
+	/* Flag that checks if parameters has been added to the event. */
+	bool params_added = false;
+
+	/* Set all entries in the dynamic modem data structure to 0 to be sure that all 'fresh'
+	 * flags become false by default. This is to avoid sending garbage or old data due to a flag
+	 * being accidently set to true.
+	 */
+	memset(&event->data.modem_dynamic, 0, sizeof(struct modem_module_dynamic_modem_data));
+
+	/* Structure that holds previous sampled dynamic modem data. By default, set all members of
+	 * the structure to invalid values.
+	 */
+	static struct modem_module_dynamic_modem_data prev = { .rsrp = UINT8_MAX };
+
+	/* Compare the latest sampled parameters with the previous. If there has been a change we
+	 * want to include the parameters in the event.
+	 */
+	if ((prev.rsrp != rsrp_value_latest) || include) {
+		event->data.modem_dynamic.rsrp = rsrp_value_latest;
+		prev.rsrp = rsrp_value_latest;
+
+		event->data.modem_dynamic.rsrp_fresh = true;
+		params_added = true;
+	}
+
+	if ((strcmp(prev.ip_address, param->network.ip_address.value_string) != 0) || include) {
+		strncpy(event->data.modem_dynamic.ip_address,
+			modem_param.network.ip_address.value_string,
+			sizeof(event->data.modem_dynamic.ip_address) - 1);
+
+		strncpy(prev.ip_address,
+			param->network.ip_address.value_string,
+			sizeof(prev.ip_address) - 1);
+
+		event->data.modem_dynamic.ip_address
+			[sizeof(event->data.modem_dynamic.ip_address) - 1] = '\0';
+
+		prev.ip_address[sizeof(prev.ip_address) - 1] = '\0';
+
+		event->data.modem_dynamic.ip_address_fresh = true;
+		params_added = true;
+	}
+
+	if ((prev.cell_id != param->network.cellid_dec) || include) {
+		event->data.modem_dynamic.cell_id = param->network.cellid_dec;
+		prev.cell_id = param->network.cellid_dec;
+
+		event->data.modem_dynamic.cell_id_fresh = true;
+		params_added = true;
+	}
+
+	if ((strcmp(prev.mccmnc, param->network.current_operator.value_string) != 0) || include) {
+		strncpy(event->data.modem_dynamic.mccmnc,
+			modem_param.network.current_operator.value_string,
+			sizeof(event->data.modem_dynamic.mccmnc));
+
+		strncpy(prev.mccmnc, param->network.current_operator.value_string,
+			sizeof(prev.mccmnc));
+
+		event->data.modem_dynamic.mccmnc
+			[sizeof(event->data.modem_dynamic.mccmnc) - 1] = '\0';
+
+		prev.mccmnc[sizeof(prev.mccmnc) - 1] = '\0';
+
+		event->data.modem_dynamic.mccmnc_fresh = true;
+		params_added = true;
+	}
+
+	if ((prev.area_code != modem_param.network.area_code.value) || include) {
+		event->data.modem_dynamic.area_code = param->network.area_code.value;
+		prev.area_code = param->network.area_code.value;
+
+		event->data.modem_dynamic.area_code_fresh = true;
+		params_added = true;
+	}
+
+	if (params_added) {
+		event->type = MODEM_EVT_MODEM_DYNAMIC_DATA_READY;
+		event->data.modem_dynamic.timestamp = k_uptime_get();
+	} else {
+		LOG_DBG("No dynamic modem parameters have changed from the last sample request.");
+		event->type = MODEM_EVT_MODEM_DYNAMIC_DATA_NOT_READY;
+	}
+}
+
 static int dynamic_modem_data_get(void)
 {
 	int err;
@@ -348,26 +441,7 @@ static int dynamic_modem_data_get(void)
 
 	struct modem_module_event *modem_module_event = new_modem_module_event();
 
-	modem_module_event->data.modem_dynamic.rsrp = rsrp_value_latest;
-	modem_module_event->data.modem_dynamic.cell_id = modem_param.network.cellid_dec;
-	modem_module_event->data.modem_dynamic.area_code = modem_param.network.area_code.value;
-
-	strncpy(modem_module_event->data.modem_dynamic.ip_address,
-		modem_param.network.ip_address.value_string,
-		sizeof(modem_module_event->data.modem_dynamic.ip_address) - 1);
-
-	strncpy(modem_module_event->data.modem_dynamic.mccmnc,
-		modem_param.network.current_operator.value_string,
-		sizeof(modem_module_event->data.modem_dynamic.mccmnc) - 1);
-
-	modem_module_event->data.modem_dynamic.ip_address
-		[sizeof(modem_module_event->data.modem_dynamic.ip_address) - 1] = '\0';
-
-	modem_module_event->data.modem_dynamic.mccmnc
-		[sizeof(modem_module_event->data.modem_dynamic.mccmnc) - 1] = '\0';
-
-	modem_module_event->data.modem_dynamic.timestamp = k_uptime_get();
-	modem_module_event->type = MODEM_EVT_MODEM_DYNAMIC_DATA_READY;
+	populate_event_with_dynamic_modem_data(modem_module_event, &modem_param);
 
 	EVENT_SUBMIT(modem_module_event);
 	return 0;
