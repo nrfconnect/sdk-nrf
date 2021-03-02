@@ -7,12 +7,12 @@
 #include <zephyr.h>
 
 #include "event_manager.h"
-#include "button_event.h"
+#include <caf/events/button_event.h>
 #include "motion_event.h"
 #include "hid_event.h"
 
 #define MODULE motion
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);

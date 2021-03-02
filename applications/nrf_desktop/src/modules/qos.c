@@ -15,7 +15,7 @@
 #include "ble_event.h"
 
 #define MODULE qos
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_QOS_LOG_LEVEL);

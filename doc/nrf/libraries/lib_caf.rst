@@ -20,4 +20,4 @@ You can then enable each CAF module separately.
    :glob:
    :caption: Subpages:
 
-   caf/buttons
+   ../../../include/caf/*

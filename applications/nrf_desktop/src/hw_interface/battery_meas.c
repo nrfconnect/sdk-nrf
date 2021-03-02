@@ -15,12 +15,12 @@
 #include <hal/nrf_saadc.h>
 
 #include "event_manager.h"
-#include "power_event.h"
+#include <caf/events/power_event.h>
 #include "battery_event.h"
 #include "battery_def.h"
 
 #define MODULE battery_meas
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_MEAS_LOG_LEVEL);

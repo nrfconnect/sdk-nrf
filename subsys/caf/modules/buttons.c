@@ -13,15 +13,15 @@
 #include <sys/util.h>
 
 #include "key_id.h"
-#include "gpio_pins.h"
+#include <caf/gpio_pins.h>
 #include CONFIG_CAF_BUTTONS_DEF_PATH
 
 #include "event_manager.h"
-#include "button_event.h"
-#include "power_event.h"
+#include <caf/events/button_event.h>
+#include <caf/events/power_event.h>
 
 #define MODULE buttons
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BUTTONS_LOG_LEVEL);

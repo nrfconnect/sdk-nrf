@@ -7,9 +7,9 @@
 #include <zephyr.h>
 
 #define MODULE passkey
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
-#include "button_event.h"
+#include <caf/events/button_event.h>
 #include "passkey_event.h"
 
 #include "passkey_buttons_def.h"

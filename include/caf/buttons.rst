@@ -28,7 +28,7 @@ For example, the file contents should look like follows:
 
 .. code-block:: c
 
-	#include "gpio_pins.h"
+	#include <caf/gpio_pins.h>
 
 	static const struct gpio_pin col[] = {
 		{ .port = 0, .pin = 31 },

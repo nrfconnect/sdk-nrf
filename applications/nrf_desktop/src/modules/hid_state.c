@@ -18,7 +18,7 @@
 #include <sys/util.h>
 #include <sys/byteorder.h>
 
-#include "button_event.h"
+#include <caf/events/button_event.h>
 #include "motion_event.h"
 #include "wheel_event.h"
 #include "hid_event.h"
@@ -30,7 +30,7 @@
 #include "hid_report_desc.h"
 
 #define MODULE hid_state
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_STATE_LOG_LEVEL);

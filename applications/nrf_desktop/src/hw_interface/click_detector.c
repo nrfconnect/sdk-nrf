@@ -7,10 +7,10 @@
 #include <zephyr.h>
 
 #define MODULE click_detector
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
-#include "button_event.h"
-#include "power_event.h"
+#include <caf/events/button_event.h>
+#include <caf/events/power_event.h>
 #include "click_event.h"
 
 #include "click_detector_def.h"

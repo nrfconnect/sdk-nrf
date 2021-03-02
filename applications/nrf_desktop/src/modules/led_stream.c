@@ -8,7 +8,7 @@
 #include <sys/byteorder.h>
 
 #define MODULE led_stream
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include "led_event.h"
 #include "config_event.h"

@@ -8,7 +8,7 @@
 #include <debug/cpu_load.h>
 
 #define MODULE cpu_meas
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include "cpu_load_event.h"
 

@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-#include "button_event.h"
+#include <caf/events/button_event.h>
 
 static int log_button_event(const struct event_header *eh, char *buf,
 			    size_t buf_len)

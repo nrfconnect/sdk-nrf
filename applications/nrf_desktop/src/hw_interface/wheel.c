@@ -15,10 +15,10 @@
 
 #include "event_manager.h"
 #include "wheel_event.h"
-#include "power_event.h"
+#include <caf/events/power_event.h>
 
 #define MODULE wheel
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_WHEEL_LOG_LEVEL);

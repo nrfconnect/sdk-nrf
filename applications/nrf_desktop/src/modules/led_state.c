@@ -7,7 +7,7 @@
 #include <zephyr.h>
 
 #define MODULE led_state
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include "led_event.h"
 #include "ble_event.h"
