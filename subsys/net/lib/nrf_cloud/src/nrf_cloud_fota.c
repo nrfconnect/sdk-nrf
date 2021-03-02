@@ -1031,12 +1031,6 @@ static int handle_mqtt_evt_publish(const struct mqtt_evt *evt)
 		p->message_id,
 		p->message.payload.len);
 
-	if (is_fota_active() && !ble_id) {
-		LOG_INF("Job in progress... skipping");
-		skip = true;
-		goto send_ack;
-	}
-
 	payload = nrf_cloud_calloc(p->message.payload.len + 1, 1);
 	if (!payload) {
 		LOG_ERR("Unable to allocate memory for job");
@@ -1044,10 +1038,17 @@ static int handle_mqtt_evt_publish(const struct mqtt_evt *evt)
 		goto send_ack;
 	}
 
+	/* Always read the MQTT payload even if it is not needed */
 	ret = mqtt_readall_publish_payload(client_mqtt, payload,
 					   p->message.payload.len);
 	if (ret) {
 		LOG_ERR("Error reading MQTT payload: %d", ret);
+		goto send_ack;
+	}
+
+	if (is_fota_active() && !ble_id) {
+		LOG_INF("Job in progress... skipping");
+		skip = true;
 		goto send_ack;
 	}
 
