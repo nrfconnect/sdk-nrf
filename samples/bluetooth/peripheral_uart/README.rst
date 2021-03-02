@@ -89,22 +89,21 @@ After programming the sample to your development kit, test it by performing the 
 #. |connect_terminal|
 #. Optionally, connect the RTT console to display debug messages. See :ref:`peripheral_uart_debug`.
 #. Reset the kit.
-#. Observe that LED 1 is blinking and that the device is advertising with the device name that is configured in :option:`CONFIG_BT_DEVICE_NAME`.
+#. Observe that **LED 1** is blinking and that the device is advertising with the device name that is configured in :option:`CONFIG_BT_DEVICE_NAME`.
 #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
 #. Connect to the device using nRF Connect for Mobile.
-   Observe that LED 2 is on.
-#. Optionally, pair/bond with the device with MITM protection. This requires :ref:`RTT connection <testing_rtt_connect>`.
-   To confirm pairing/bonding, press Button 1 on the device and accept the passkey value on the smartphone.
-#. In the app, observe that the services are shown in the connected device.
+   Observe that **LED 2** is on.
+#. Optionally, pair or bond with the device with MITM protection. This requires :ref:`RTT connection <testing_rtt_connect>`.
+   To confirm pairing or bonding, press **Button 1** on the device and accept the passkey value on the smartphone.
+#. In the application, observe that the services are shown in the connected device.
 #. Select the UART RX characteristic value in nRF Connect.
-   You can write hexadecimal ASCII values to the UART RX and get the text displayed on the COM listener.
-#. Type '30 31 32 33 34 35 36 37 38 39' (the hexadecimal value for the string "0123456789") and tap **write**.
+   You can write to the UART RX and get the text displayed on the COM listener.
+#. Type '0123456789' and tap :guilabel:`Write`.
    Verify that the text "0123456789" is displayed on the COM listener.
 #. To send data from the device to your phone or tablet, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
-   Observe that a notification with the corresponding ASCII values is sent to the peer on handle 0x12.
-   For the string "Hello", the notification is '48 65 6C 6C 6F'.
+   Observe that a notification is sent to the peer.
 #. Disconnect the device in nRF Connect.
-   Observe that LED 2 turns off.
+   Observe that **LED 2** turns off.
 
 Dependencies
 ************
