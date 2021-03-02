@@ -69,7 +69,7 @@ static struct slm_mqtt_ctx {
 	struct mqtt_utf8 password;
 	uint8_t pword[MQTT_MAX_PASSWORD_LEN + 1];
 	char url[MQTT_MAX_URL_LEN + 1];
-	uint32_t port;
+	uint16_t port;
 	sec_tag_t sec_tag;
 } ctx;
 
@@ -607,6 +607,8 @@ static int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (op == AT_MQTTCON_CONNECT) {
+			int32_t port;
+
 			if (at_params_valid_count_get(&at_param_list) <= 6) {
 				return -EINVAL;
 			}
@@ -641,10 +643,15 @@ static int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 			if (err < 0) {
 				return err;
 			}
-			err = at_params_int_get(&at_param_list, 6, &ctx.port);
+			err = at_params_int_get(&at_param_list, 6, &port);
 			if (err < 0) {
 				return err;
 			}
+			if (!check_port_range(port)) {
+				LOG_ERR("Invalid port");
+				return -EINVAL;
+			}
+			ctx.port = (uint16_t)port;
 			if (at_params_valid_count_get(&at_param_list) == 8) {
 				err = at_params_int_get(&at_param_list, 7,
 							&ctx.sec_tag);

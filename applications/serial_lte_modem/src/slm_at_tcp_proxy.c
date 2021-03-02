@@ -845,15 +845,19 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 		}
 		if (op == AT_SERVER_START ||
 		    op == AT_SERVER_START_WITH_DATAMODE) {
-			uint16_t port;
+			int32_t port;
 
 			if (proxy.sock != INVALID_SOCKET) {
 				LOG_ERR("Server is already running.");
 				return -EINVAL;
 			}
-			err = at_params_short_get(&at_param_list, 2, &port);
+			err = at_params_int_get(&at_param_list, 2, &port);
 			if (err) {
 				return err;
+			}
+			if (!check_port_range(port)) {
+				LOG_ERR("Invalid port");
+				return -EINVAL;
 			}
 			if (param_count > 3) {
 				at_params_int_get(&at_param_list, 3,
@@ -865,7 +869,7 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 				return -EINVAL;
 			}
 #endif
-			err = do_tcp_server_start(port);
+			err = do_tcp_server_start((uint16_t)port);
 			if (err == 0 && op == AT_SERVER_START_WITH_DATAMODE) {
 				proxy.datamode = true;
 			}
@@ -920,7 +924,7 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 		}
 		if (op == AT_CLIENT_CONNECT ||
 		    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
-			uint16_t port;
+			int32_t port;
 			char url[TCPIP_MAX_URL];
 			int size = TCPIP_MAX_URL;
 
@@ -933,9 +937,13 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 			if (err) {
 				return err;
 			}
-			err = at_params_short_get(&at_param_list, 3, &port);
+			err = at_params_int_get(&at_param_list, 3, &port);
 			if (err) {
 				return err;
+			}
+			if (!check_port_range(port)) {
+				LOG_ERR("Invalid port");
+				return -EINVAL;
 			}
 			if (param_count > 4) {
 				at_params_int_get(&at_param_list,
@@ -947,7 +955,7 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 				return -EINVAL;
 			}
 #endif
-			err = do_tcp_client_connect(url, port);
+			err = do_tcp_client_connect(url, (uint16_t)port);
 			if (err == 0 &&
 			    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				proxy.datamode = true;
