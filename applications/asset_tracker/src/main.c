@@ -1465,6 +1465,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_PAIR_DONE:
 		LOG_INF("CLOUD_EVT_PAIR_DONE");
 		on_pairing_done();
+		break;
 	case CLOUD_EVT_FOTA_ERROR:
 		LOG_INF("CLOUD_EVT_FOTA_ERROR");
 		break;
