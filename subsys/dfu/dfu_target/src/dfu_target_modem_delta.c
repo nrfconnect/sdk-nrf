@@ -7,7 +7,12 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <drivers/flash.h>
+#if defined(CONFIG_POSIX_API)
+#include <posix/unistd.h>
+#include <posix/sys/socket.h>
+#else
 #include <net/socket.h>
+#endif
 #include <nrf_socket.h>
 #include <logging/log.h>
 #include <dfu/dfu_target.h>

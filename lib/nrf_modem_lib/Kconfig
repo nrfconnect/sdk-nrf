@@ -7,7 +7,7 @@ menuconfig NRF_MODEM_LIB
 	bool "Enable Modem library"
 	imply NRFX_IPC
 	imply NET_SOCKETS_OFFLOAD
-	imply NET_SOCKETS_POSIX_NAMES
+	imply NET_SOCKETS_POSIX_NAMES if !POSIX_API
 	select NRF_MODEM
 	help
 	  Use Nordic Modem library.

@@ -11,7 +11,14 @@ LOG_MODULE_REGISTER(zzhc, CONFIG_ZZHC_LOG_LEVEL);
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#if defined(CONFIG_POSIX_API)
+#include <posix/unistd.h>
+#include <posix/netdb.h>
+#include <posix/sys/socket.h>
+#else
 #include <net/socket.h>
+#endif
+
 #include "zzhc_internal.h"
 
 #define REGVER            2         /** Self-registration protocol version */
