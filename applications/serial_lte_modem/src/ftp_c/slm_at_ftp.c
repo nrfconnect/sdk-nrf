@@ -161,7 +161,7 @@ static int do_ftp_open(void)
 	int sz_password = FTP_MAX_PASSWORD;
 	char hostname[FTP_MAX_HOSTNAME];
 	int sz_hostname = FTP_MAX_HOSTNAME;
-	uint16_t port = CONFIG_SLM_FTP_SERVER_PORT;
+	int32_t port = CONFIG_SLM_FTP_SERVER_PORT;
 	sec_tag_t sec_tag = INVALID_SEC_TAG;
 	int param_count = at_params_valid_count_get(&at_param_list);
 
@@ -184,10 +184,14 @@ static int do_ftp_open(void)
 		return ret;
 	}
 	if (param_count > 5) {
-		ret = at_params_short_get(&at_param_list, 5, &port);
+		ret = at_params_int_get(&at_param_list, 5, &port);
 		if (ret) {
 			return ret;
 		}
+	}
+	if (!check_port_range(port)) {
+		LOG_ERR("Invalid port");
+		return -EINVAL;
 	}
 	if (param_count > 6) {
 		ret = at_params_int_get(&at_param_list, 6, &sec_tag);
@@ -197,7 +201,7 @@ static int do_ftp_open(void)
 	}
 
 	/* FTP open */
-	ret = ftp_open(hostname, port, sec_tag);
+	ret = ftp_open(hostname, (uint16_t)port, sec_tag);
 	if (ret != FTP_CODE_200) {
 		return -ENETUNREACH;
 	}

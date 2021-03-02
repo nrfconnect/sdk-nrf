@@ -60,7 +60,7 @@ static struct slm_httpc_ctx {
 	bool sec_transport;		/* secure session flag */
 	uint32_t sec_tag;		/* security tag to be used */
 	char host[HTTPC_HOST_LEN + 1];	/* HTTP server address */
-	uint32_t port;			/* HTTP server port */
+	uint16_t port;			/* HTTP server port */
 	char *method_str;		/* request method */
 	char *resource;			/* resource */
 	char *headers;			/* headers */
@@ -502,6 +502,8 @@ static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type)
 		}
 
 		if (op == AT_HTTPCCON_CONNECT) {
+			int32_t port;
+
 			if (at_params_valid_count_get(&at_param_list) <= 3) {
 				return -EINVAL;
 			}
@@ -515,12 +517,16 @@ static int handle_AT_HTTPC_CONNECT(enum at_cmd_type cmd_type)
 				return err;
 			}
 
-			err = at_params_int_get(&at_param_list, 3, &httpc.port);
+			err = at_params_int_get(&at_param_list, 3, &port);
 			if (err < 0) {
 				LOG_ERR("Fail to get port: %d", err);
 				return err;
 			}
-
+			if (!check_port_range(port)) {
+				LOG_ERR("Invalid port");
+				return -EINVAL;
+			}
+			httpc.port = (uint16_t)port;
 			if (at_params_valid_count_get(&at_param_list) == 5) {
 				err = at_params_int_get(&at_param_list, 4,
 							&httpc.sec_tag);

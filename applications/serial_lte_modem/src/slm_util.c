@@ -145,6 +145,17 @@ bool check_for_ipv4(const char *address, uint8_t length)
 	return true;
 }
 
+/**@brief Check whether an integer value is in valid port range
+ */
+bool check_port_range(int32_t port)
+{
+	if (port > 65535 || port < 0) {
+		return false;
+	}
+
+	return true;
+}
+
 /**brief use AT command to get IPv4 address
  */
 bool util_get_ipv4_addr(char *address)

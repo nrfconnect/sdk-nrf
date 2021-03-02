@@ -347,7 +347,7 @@ Syntax
 
    #XBIND=<port>
 
-* The ``<port>`` parameter is an integer.
+* The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the specific port to use to bind the socket with.
 
 Examples
@@ -391,7 +391,7 @@ Syntax
   Its maximum size can be 128 bytes.
   When the parameter is an IP address, it supports IPv4 only, not IPv6.
 
-* The ``<port>`` parameter is an integer.
+* The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the port of the TCP service.
 
 Response syntax
@@ -717,7 +717,7 @@ Syntax
   It indicates the hostname or the IP address to connect to.
   Its maximum size can be 128 bytes.
   When the parameter is an IP address, it supports IPv4 only, not IPv6.
-* The ``<port>`` parameter is an integer.
+* The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the port of the TCP service.
 * The ``<datatype>`` parameter can accept one of the following values:
 
@@ -1026,7 +1026,7 @@ Syntax
   * ``1`` - Start the server
   * ``2`` - Start the server with data mode support
 
-* The ``<port>`` parameter is an integer.
+* The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the TCP service port.
   It is mandatory to set it when starting the server.
 * The ``<sec_tag>`` parameter is an integer.
@@ -1177,7 +1177,7 @@ Syntax
   It indicates the hostname or the IP address to connect to.
   Its maximum size is 128 bytes.
   When the parameter is an IP address, it supports IPv4 only, not IPv6.
-* The ``<port>`` parameter is an integer.
+* The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the TCP/TLS service port.
   It is mandatory for starting the server.
 * The ``<sec_tag>`` parameter is an integer.
@@ -1406,7 +1406,7 @@ Syntax
   * ``1`` - Start the server
   * ``2`` - Start the server with data mode support
 
-* The ``<port>`` parameter is an integer.
+* The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the UDP service port.
   It is mandatory for starting the server.
   The data mode is enabled when the TCP/TLS server is started.
@@ -1545,7 +1545,7 @@ Syntax
   It indicates the hostname or the IP address to connect to.
   Its maximum size can be 128 bytes.
   When the parameter is an IP address, it supports IPv4 only, not IPv6.
-* The ``<port>`` parameter is an integer.
+* The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the UDP/DTLS service port.
 * The ``<sec_tag>`` parameter is an integer.
   It indicates to the modem the credential of the security tag used for establishing a secure connection.

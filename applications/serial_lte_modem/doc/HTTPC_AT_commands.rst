@@ -33,7 +33,7 @@ Syntax
 
 * The ``<host>`` parameter is a string.
   It represents the HTTP server hostname.
-* The ``<port>`` parameter is an integer.
+* The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the HTTP server port.
 * The ``<sec_tag>`` parameter is an integer.
   It indicates to the modem the credential of the security tag used for establishing a secure connection.
