@@ -18,6 +18,15 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    ../../samples/bluetooth/*/README
    ../../samples/bluetooth/mesh/*/README
 
+.. _edge_impulse_samples:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Edge Impulse samples
+   :glob:
+
+   ../../samples/edge_impulse/*/README
+
 .. _nfc_samples:
 
 .. toctree::
