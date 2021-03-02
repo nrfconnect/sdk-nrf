@@ -22,6 +22,12 @@
 #include <sys/fdtable.h>
 #include <zephyr.h>
 
+#if defined(CONFIG_POSIX_API)
+#include <posix/poll.h>
+#include <posix/sys/time.h>
+#include <posix/sys/socket.h>
+#endif
+
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)
 
 #if defined(CONFIG_NRF91_SOCKET_ENABLE_DEBUG_LOGS)
