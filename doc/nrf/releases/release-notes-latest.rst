@@ -52,6 +52,10 @@ nRF9160
 
     * Updated to prevent reinitialization of param list in :c:func:`modem_info_init`.
 
+  * :ref:`lib_fota_download` library:
+
+    * Added an API to retrieve the image type that is being downloaded.
+
 Common
 ======
 

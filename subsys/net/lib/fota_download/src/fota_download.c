@@ -37,6 +37,8 @@ static int socket_retries_left;
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
 static uint8_t mcuboot_buf[CONFIG_FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ];
 #endif
+static enum dfu_target_image_type img_type;
+
 static void send_evt(enum fota_download_evt_id id)
 {
 	__ASSERT(id != FOTA_DOWNLOAD_EVT_PROGRESS, "use send_progress");
@@ -102,7 +104,7 @@ static int download_client_callback(const struct download_client_evt *event)
 				return err;
 			}
 			first_fragment = false;
-			int img_type = dfu_target_img_type(event->fragment.buf,
+			img_type = dfu_target_img_type(event->fragment.buf,
 							event->fragment.len);
 			err = dfu_target_init(img_type, file_size,
 					      dfu_target_callback_handler);
@@ -366,4 +368,9 @@ int fota_download_init(fota_download_callback_t client_callback)
 	}
 
 	return 0;
+}
+
+int fota_download_target(void)
+{
+	return img_type;
 }
