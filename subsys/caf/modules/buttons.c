@@ -12,7 +12,7 @@
 #include <drivers/gpio.h>
 #include <sys/util.h>
 
-#include "key_id.h"
+#include <caf/key_id.h>
 #include <caf/gpio_pins.h>
 #include CONFIG_CAF_BUTTONS_DEF_PATH
 

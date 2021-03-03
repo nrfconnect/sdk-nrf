@@ -5,7 +5,7 @@
  */
 
 #include "hid_keymap.h"
-#include "key_id.h"
+#include <caf/key_id.h>
 
 /* This configuration file is included only once from hid_state module and holds
  * information about mapping between buttons and generated reports.
