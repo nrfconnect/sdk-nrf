@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "gpio_pins.h"
+#include <caf/gpio_pins.h>
 
 /* This configuration file is included only once from buttons module and holds
  * information about pins forming keyboard matrix.

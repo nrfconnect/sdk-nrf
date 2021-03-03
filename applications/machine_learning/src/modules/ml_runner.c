@@ -11,7 +11,7 @@
 #include "ml_result_event.h"
 
 #define MODULE ml_runner
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_ML_RUNNER_LOG_LEVEL);
