@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "key_id.h"
+#include <caf/key_id.h>
 
 /* This configuration file is included only once from buttons_sim module
  * and holds information about generated button presses sequence.

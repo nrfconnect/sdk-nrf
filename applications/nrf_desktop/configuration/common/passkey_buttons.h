@@ -7,7 +7,7 @@
 #ifndef _PASSKEY_BUTTONS_H_
 #define _PASSKEY_BUTTONS_H_
 
-#include "key_id.h"
+#include <caf/key_id.h>
 
 #define DIGIT_CNT 10
 

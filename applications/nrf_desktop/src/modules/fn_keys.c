@@ -13,7 +13,7 @@
 #include <caf/events/module_state_event.h>
 #include <caf/events/button_event.h>
 
-#include "key_id.h"
+#include <caf/key_id.h>
 
 #include "fn_keys_def.h"
 
