@@ -11,7 +11,7 @@
 
 #define MODULE ble_bond
 #include <caf/events/module_state_event.h>
-#include "click_event.h"
+#include <caf/events/click_event.h>
 #include "ble_event.h"
 #include "selector_event.h"
 #include "config_event.h"

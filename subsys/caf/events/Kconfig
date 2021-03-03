@@ -46,6 +46,17 @@ config CAF_INIT_LOG_BUTTON_EVENTS
 	depends on LOG
 	default y
 
+config CAF_CLICK_EVENTS
+	bool "Enable click events"
+	help
+	  Enable support for click events.
+
+config CAF_INIT_LOG_CLICK_EVENTS
+	bool "Log click events"
+	depends on CAF_CLICK_EVENTS
+	depends on LOG
+	default y
+
 config CAF_SENSOR_EVENTS
 	bool "Enable sensor events"
 	help

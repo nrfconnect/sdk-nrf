@@ -50,10 +50,6 @@ config DESKTOP_INIT_LOG_CPU_LOAD_EVENT
 	bool "CPU load event"
 	default y
 
-config DESKTOP_INIT_LOG_CLICK_EVENT
-	bool "Click event"
-	default y
-
 config DESKTOP_INIT_LOG_SELECTOR_EVENT
 	bool "Selector event"
 	default y

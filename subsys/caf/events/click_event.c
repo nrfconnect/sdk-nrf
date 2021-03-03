@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <stdio.h>
 
-#include "click_event.h"
+#include <caf/events/click_event.h>
 
 static const char * const click_name[] = {
 #define X(name) STRINGIFY(name),
@@ -40,6 +40,6 @@ EVENT_INFO_DEFINE(click_event,
 		  profile_click_event);
 
 EVENT_TYPE_DEFINE(click_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_CLICK_EVENT),
+		  IS_ENABLED(CONFIG_CAF_INIT_LOG_CLICK_EVENTS),
 		  log_click_event,
 		  &click_event_info);
