@@ -35,3 +35,4 @@ nRF53 Series devices (which are pre-production) and Zigbee and Bluetooth mesh pr
 Support for production and deployment in end products is coming soon.
  
  
+ 
