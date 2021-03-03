@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -13,15 +13,15 @@
 #include <caf/events/power_event.h>
 #include <caf/events/click_event.h>
 
-#include "click_detector_def.h"
+#include CONFIG_CAF_CLICK_DETECTOR_DEF_PATH
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CLICK_DETECTOR_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_CLICK_DETECTOR_LOG_LEVEL);
 
-#define CLICK_CHECK_PERIOD	100 /* ms */
+#define CLICK_CHECK_PERIOD	100	/* ms */
 
-#define SHORT_CLICK_MAX		500 /* ms */
-#define LONG_CLICK_MIN		5000 /*ms */
+#define SHORT_CLICK_MAX		500	/* ms */
+#define LONG_CLICK_MIN		5000	/* ms */
 
 #define TIMER_INACTIVE		-1
 
@@ -212,14 +212,16 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
+	if (IS_ENABLED(CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS) &&
+	    is_power_down_event(eh)) {
 		if (state != STATE_OFF) {
 			power_down();
 		}
 		return false;
 	}
 
-	if (is_wake_up_event(eh)) {
+	if (IS_ENABLED(CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS) &&
+	    is_wake_up_event(eh)) {
 		if (state != STATE_ACTIVE) {
 			wake_up();
 		}
@@ -234,5 +236,7 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, button_event);
+#if CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS
 EVENT_SUBSCRIBE(MODULE, power_down_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
+#endif /* CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS */

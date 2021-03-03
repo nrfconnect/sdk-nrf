@@ -8,7 +8,6 @@ menu "Hardware interface modules"
 
 rsource "Kconfig.motion"
 rsource "Kconfig.buttons_sim"
-rsource "Kconfig.click_detector"
 rsource "Kconfig.selector"
 rsource "Kconfig.wheel"
 rsource "Kconfig.leds"
