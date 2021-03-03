@@ -41,39 +41,68 @@ static void test_params_put_get_int_setup(void)
 
 static void test_params_put_get_int(void)
 {
-	uint16_t tmp_short = 0;
-	uint32_t tmp_int   = 0;
-
-	zassert_equal(-EINVAL, at_params_short_put(NULL, 0, 1),
-		      "at_params_short_put should return -EINVAL");
+	int16_t tmp_short = 0;
+	uint16_t tmp_ushort = 0;
+	int32_t tmp_int   = 0;
+	uint32_t tmp_uint   = 0;
 
 	zassert_equal(-EINVAL, at_params_int_put(NULL, 0, 1),
 		      "at_params_int_put should return -EINVAL");
 
-	zassert_equal(-EINVAL, at_params_short_put(NULL, TEST_PARAMS, 1),
-		      "at_params_short_put should return -EINVAL");
-
 	zassert_equal(-EINVAL, at_params_int_put(NULL, TEST_PARAMS, 1),
 		      "at_params_int_put should return -EINVAL");
 
-	zassert_equal(0, at_params_short_put(&test_list, 0, 65535),
-		      "at_params_short_put should return 0");
-	zassert_equal(0, at_params_int_put(&test_list, 1, 65536),
+	zassert_equal(0, at_params_int_put(&test_list, 1, 32768),
 		      "at_params_int_put should return 0");
 
-	zassert_equal(-EINVAL, at_params_short_get(&test_list, 1, &tmp_short),
+	zassert_equal(0, at_params_int_put(&test_list, 2, 65536),
+		      "at_params_int_put should return 0");
+
+	zassert_equal(0, at_params_int_put(&test_list, 3, -1),
+		      "at_params_int_put should return 0");
+
+	zassert_equal(-EINVAL, at_params_int_get(&test_list, 0, &tmp_int),
+		      "at_params_int_get should return -EINVAL");
+	zassert_equal(-EINVAL, at_params_unsigned_int_get(&test_list, 0, &tmp_uint),
+		      "at_params_unsigned_int_get should return -EINVAL");
+	zassert_equal(-EINVAL, at_params_short_get(&test_list, 0, &tmp_short),
 		      "at_params_short_get should return -EINVAL");
-
-	zassert_equal(0, at_params_int_get(&test_list, 0, &tmp_int),
-		      "at_params_int_get should return 0");
-
-	zassert_equal(0, at_params_short_get(&test_list, 0, &tmp_short),
-		      "at_params_short_get should return 0");
-	zassert_equal(65535, tmp_short, "Short should be 65535");
+	zassert_equal(-EINVAL, at_params_unsigned_short_get(&test_list, 0, &tmp_ushort),
+		      "at_params_unsigned_short_get should return -EINVAL");
 
 	zassert_equal(0, at_params_int_get(&test_list, 1, &tmp_int),
 		      "at_params_int_get should return 0");
-	zassert_equal(65536, tmp_int, "Integer should be 65536");
+	zassert_equal(32768, tmp_int, "at_params_int_get should get 32768");
+	zassert_equal(0, at_params_unsigned_int_get(&test_list, 1, &tmp_uint),
+		      "at_params_unsigned_int_get should return 0");
+	zassert_equal(32768, tmp_uint, "at_params_unsigned_int_get should get 32768");
+	zassert_equal(-EINVAL, at_params_short_get(&test_list, 1, &tmp_short),
+		      "at_params_short_get should return -EINVAL");
+	zassert_equal(0, at_params_unsigned_short_get(&test_list, 1, &tmp_ushort),
+		      "at_params_unsigned_short_get should return 0");
+	zassert_equal(32768, tmp_ushort, "at_params_unsigned_short_get should get 32768");
+
+	zassert_equal(0, at_params_int_get(&test_list, 2, &tmp_int),
+		      "at_params_int_get should return 0");
+	zassert_equal(65536, tmp_int, "at_params_int_get should get 65536");
+	zassert_equal(0, at_params_unsigned_int_get(&test_list, 2, &tmp_uint),
+		      "at_params_unsigned_int_get should return 0");
+	zassert_equal(65536, tmp_uint, "at_params_unsigned_int_get should get 65536");
+	zassert_equal(-EINVAL, at_params_short_get(&test_list, 2, &tmp_short),
+		      "at_params_short_get should return -EINVAL");
+	zassert_equal(-EINVAL, at_params_unsigned_short_get(&test_list, 2, &tmp_ushort),
+		      "at_params_unsigned_short_get should return -EINVAL");
+
+	zassert_equal(0, at_params_int_get(&test_list, 3, &tmp_int),
+		      "at_params_int_get should return 0");
+	zassert_equal(-1, tmp_int, "at_params_int_get should get -1");
+	zassert_equal(-EINVAL, at_params_unsigned_int_get(&test_list, 3, &tmp_uint),
+		      "at_params_unsigned_int_get should return -EINVAL");
+	zassert_equal(0, at_params_short_get(&test_list, 3, &tmp_short),
+		      "at_params_short_get should return 0");
+	zassert_equal(-1, tmp_short, "at_params_short_get should get -1");
+	zassert_equal(-EINVAL, at_params_unsigned_short_get(&test_list, 3, &tmp_ushort),
+		      "at_params_unsigned_short_get should return -EINVAL");
 }
 
 static void test_params_put_get_int_teardown(void)
@@ -211,7 +240,6 @@ static void test_params_get_type_setup(void)
 	const uint32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
 
 	at_params_list_init(&test_list, TEST_PARAMS);
-	at_params_short_put(&test_list, 0, 2);
 	at_params_int_put(&test_list, 1, 1);
 	at_params_string_put(&test_list, 2, test_str, sizeof(test_str));
 	at_params_array_put(&test_list, 3, test_array, sizeof(test_array));
@@ -224,10 +252,6 @@ static void test_params_get_type(void)
 
 	zassert_equal(AT_PARAM_TYPE_INVALID, at_params_type_get(&test_list, 4),
 		      "Get type should return AT_PARAM_TYPE_INVALID");
-
-	zassert_equal(AT_PARAM_TYPE_NUM_SHORT, at_params_type_get(&test_list,
-								  0),
-		      "Get type should return AT_PARAM_TYPE_NUM_SHORT");
 
 	zassert_equal(AT_PARAM_TYPE_NUM_INT, at_params_type_get(&test_list, 1),
 		      "Get type should return AT_PARAM_TYPE_NUM_INT");
@@ -293,10 +317,6 @@ static void test_params_get_count(void)
 	zassert_equal(1, at_params_valid_count_get(&test_list),
 		      "Get count should return 1");
 
-	at_params_short_put(&test_list, 0, 1);
-	zassert_equal(1, at_params_valid_count_get(&test_list),
-		      "Get count should return 1");
-
 	at_params_int_put(&test_list, 1, 1);
 	zassert_equal(2, at_params_valid_count_get(&test_list),
 		      "Get count should return 2");
@@ -335,11 +355,6 @@ static void test_params_get_size(void)
 	zassert_equal(0, at_params_size_get(&test_list, 0, &len),
 		      "Get size should return 0");
 
-	at_params_short_put(&test_list, 0, 1);
-
-	at_params_size_get(&test_list, 0, &len);
-	zassert_equal(sizeof(uint16_t), len,
-		      "Get size should return sizeof(uint16_t)");
 
 	at_params_int_put(&test_list, 0, 1);
 
@@ -422,7 +437,7 @@ static void test_params_list_management_teardown(void)
 
 void test_main(void)
 {
-	ztest_test_suite(at_cmd_parser,
+	ztest_test_suite(at_params,
 			 ztest_unit_test(test_init_free_params_list),
 			 ztest_unit_test_setup_teardown(
 					test_params_put_get_int,
@@ -458,5 +473,5 @@ void test_main(void)
 					test_params_list_management_teardown)
 			);
 
-	ztest_run_test_suite(at_cmd_parser);
+	ztest_run_test_suite(at_params);
 }

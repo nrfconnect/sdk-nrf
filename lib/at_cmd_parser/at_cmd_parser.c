@@ -257,12 +257,7 @@ static int at_parse_process_element(const char **str, int index,
 
 		tmpstr = next;
 
-		if ((value <= SHRT_MAX) && (value >= SHRT_MIN)) {
-			at_params_short_put(list, index, (int16_t)value);
-		} else {
-			at_params_int_put(list, index, value);
-		}
-
+		at_params_int_put(list, index, value);
 	} else if (state == SMS_PDU) {
 		const char *start_ptr = tmpstr;
 

@@ -180,7 +180,7 @@ static void test_is_clac(void)
 
 void test_main(void)
 {
-	ztest_test_suite(at_cmd_parser,
+	ztest_test_suite(at_utils,
 			ztest_unit_test(test_notification_detection),
 			ztest_unit_test(test_command_detection),
 			ztest_unit_test(test_valid_notification_char_detection),
@@ -193,5 +193,5 @@ void test_main(void)
 			ztest_unit_test(test_is_clac)
 			);
 
-	ztest_run_test_suite(at_cmd_parser);
+	ztest_run_test_suite(at_utils);
 }

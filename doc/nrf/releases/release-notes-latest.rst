@@ -77,6 +77,10 @@ nRF9160
     * Enabled all SLM services by default.
     * Updated the HTTP client service code to handle chunked HTTP responses.
 
+  * :ref:`at_cmd_parser_readme`:
+
+    * Added support for parsing parameters of type unsigned int or unsigned short.
+
 Common
 ======
 

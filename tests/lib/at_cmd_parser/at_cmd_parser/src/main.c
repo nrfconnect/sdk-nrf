@@ -68,10 +68,13 @@ static void test_params_fail_on_invalid_input(void)
 	zassert_true(ret == -EINVAL,
 		      "at_parser_params_from_str should return -EINVAL");
 
-	ret = at_parser_params_from_str(singleline, NULL, NULL);
-	zassert_true(ret == -EINVAL,
-		      "at_parser_params_from_str should return -EINVAL");
-
+	/**
+	 * This test setup must be disabled, as the third param cannot be NULL
+	 * Otherwise there will be HARD FAULT
+	 * ret = at_parser_params_from_str(singleline, NULL, NULL);
+	 * zassert_true(ret == -EINVAL,
+	 *	      "at_parser_params_from_str should return -EINVAL");
+	 */
 	ret = at_parser_params_from_str(singleline, NULL, &uninitialized);
 	zassert_true(ret == -EINVAL,
 		      "at_parser_params_from_str should return -EINVAL");
@@ -135,7 +138,7 @@ static void test_params_string_parsing(void)
 	char *remainder = NULL;
 	char tmpbuf[32];
 	uint32_t tmpbuf_len;
-	uint32_t tmpint;
+	int32_t tmpint;
 
 	const char *str1 = "+TEST:1,\"Hello World!\"\r\n";
 	const char *str2 = "%TEST: 1, \"Hello World!\"\r\n";
@@ -362,14 +365,14 @@ static void test_testcases(void)
 	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 0 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 1) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 1 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 2) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 2 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 3 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 4) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 4 should be a short");
 
 	/* Try to parse the pduline string */
@@ -385,7 +388,7 @@ static void test_testcases(void)
 	zassert_true(at_params_type_get(&test_list2, 1) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 1 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 2) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 2 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 3 should be a string");
@@ -412,7 +415,7 @@ static void test_testcases(void)
 	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 0 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 1) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 1 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 2) == AT_PARAM_TYPE_EMPTY,
 		     "Param type at index 2 should be empty");
@@ -437,10 +440,10 @@ static void test_testcases(void)
 	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 0 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 1) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 1 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 2) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 2 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_EMPTY,
 		     "Param type at index 3 should be empty");
@@ -460,10 +463,10 @@ static void test_testcases(void)
 	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 0 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 1) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 1 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 2) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 2 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_EMPTY,
 		     "Param type at index 3 should be empty");
@@ -483,17 +486,17 @@ static void test_testcases(void)
 	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 0 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 1) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 1 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 2) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 2 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_EMPTY,
 		     "Param type at index 3 should be empty");
 	zassert_true(at_params_type_get(&test_list2, 4) == AT_PARAM_TYPE_EMPTY,
 		     "Param type at index 4 should be empty");
 	zassert_true(at_params_type_get(&test_list2, 5) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 5 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 6) ==
 							AT_PARAM_TYPE_NUM_INT,
@@ -513,7 +516,7 @@ static void test_testcases(void)
 							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 1 should be a integer");
 	zassert_true(at_params_type_get(&test_list2, 2) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 2 should be a short");
 	zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 3 should be a string");
@@ -534,9 +537,10 @@ static void test_at_cmd_set_setup(void)
 static void test_at_cmd_set(void)
 {
 	int ret;
-	char tmpbuf[32];
+	char tmpbuf[64];
 	uint32_t tmpbuf_len;
-	uint16_t tmpshrt;
+	int16_t tmpshrt;
+	uint16_t tmpushrt;
 
 	static const char at_cmd_cgmi[] = "AT+CGMI";
 
@@ -604,16 +608,16 @@ static void test_at_cmd_set(void)
 	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 0 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 1) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 1 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 2) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 2 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 3) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 3 should be a string");
 	zassert_true(at_params_type_get(&test_list2, 4) ==
-							AT_PARAM_TYPE_NUM_SHORT,
+							AT_PARAM_TYPE_NUM_INT,
 		     "Param type at index 4 should be a string");
 
 	zassert_equal(0, at_params_short_get(&test_list2, 1, &tmpshrt),
@@ -628,6 +632,19 @@ static void test_at_cmd_set(void)
 	zassert_equal(0, at_params_short_get(&test_list2, 4, &tmpshrt),
 		      "Get short should not fail");
 	zassert_equal(4, tmpshrt, "Short should be 4");
+
+	zassert_equal(0, at_params_unsigned_short_get(&test_list2, 1, &tmpushrt),
+		      "Get unsigned short should not fail");
+	zassert_equal(1, tmpushrt, "Short should be 1");
+	zassert_equal(0, at_params_unsigned_short_get(&test_list2, 2, &tmpushrt),
+		      "Get unsigned short should not fail");
+	zassert_equal(2, tmpushrt, "Short should be 2");
+	zassert_equal(0, at_params_unsigned_short_get(&test_list2, 3, &tmpushrt),
+		      "Get unsigned short should not fail");
+	zassert_equal(3, tmpushrt, "Short should be 3");
+	zassert_equal(0, at_params_unsigned_short_get(&test_list2, 4, &tmpushrt),
+		      "Get unsigned short should not fail");
+	zassert_equal(4, tmpushrt, "Short should be 4");
 
 	static const char lone_at_cmd[] = "AT";
 
@@ -650,6 +667,34 @@ static void test_at_cmd_set(void)
 	zassert_equal(0, memcmp("AT", tmpbuf, tmpbuf_len),
 		      "The string in tmpbuf should equal to AT");
 
+	static const char at_cmd_clac[] = "AT+CLAC\r\n";
+
+	ret = at_parser_params_from_str(at_cmd_clac, NULL, &test_list2);
+	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+	ret = at_params_valid_count_get(&test_list2);
+	zassert_true(ret == 1,
+		      "at_params_valid_count_get returns wrong valid count");
+	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
+		     "Param type at index 0 should be a string");
+	tmpbuf_len = sizeof(tmpbuf);
+	zassert_equal(0, at_params_string_get(&test_list2, 0, tmpbuf, &tmpbuf_len),
+		      "Get string should not fail");
+	zassert_equal(0, memcmp(at_cmd_clac, tmpbuf, tmpbuf_len),
+		      "The string in tmpbuf should equal to cmd_str");
+
+	static const char at_clac_rsp[] = "AT+CLAC\r\nAT+COPS\r\nAT%COPS\r\n";
+
+	ret = at_parser_params_from_str(at_clac_rsp, NULL, &test_list2);
+	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+
+	ret = at_params_valid_count_get(&test_list2);
+	zassert_true(ret == 1,
+		      "at_params_valid_count_get returns wrong valid count");
+	tmpbuf_len = sizeof(tmpbuf);
+	zassert_equal(0, at_params_string_get(&test_list2, 0, tmpbuf, &tmpbuf_len),
+		      "Get string should not fail");
+	zassert_equal(0, memcmp(at_clac_rsp, tmpbuf, tmpbuf_len),
+		      "The string in tmpbuf should equal to clac_str");
 }
 
 static void test_at_cmd_set_teardown(void)

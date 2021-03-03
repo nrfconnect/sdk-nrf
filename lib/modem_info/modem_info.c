@@ -144,7 +144,7 @@ static const struct modem_info_data rsrp_data = {
 	.data_name	= RSRP_DATA_NAME,
 	.param_index	= RSRP_PARAM_INDEX,
 	.param_count	= RSRP_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data band_data = {
@@ -152,7 +152,7 @@ static const struct modem_info_data band_data = {
 	.data_name	= CUR_BAND_DATA_NAME,
 	.param_index	= BAND_PARAM_INDEX,
 	.param_count	= BAND_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data band_sup_data = {
@@ -168,7 +168,7 @@ static const struct modem_info_data mode_data = {
 	.data_name	= UE_MODE_DATA_NAME,
 	.param_index	= MODE_PARAM_INDEX,
 	.param_count	= MODE_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data operator_data = {
@@ -184,7 +184,7 @@ static const struct modem_info_data mcc_data = {
 	.data_name	= MCC_DATA_NAME,
 	.param_index	= OPERATOR_PARAM_INDEX,
 	.param_count	= OPERATOR_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data mnc_data = {
@@ -192,7 +192,7 @@ static const struct modem_info_data mnc_data = {
 	.data_name	= MNC_DATA_NAME,
 	.param_index	= OPERATOR_PARAM_INDEX,
 	.param_count	= OPERATOR_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data cellid_data = {
@@ -224,7 +224,7 @@ static const struct modem_info_data uicc_data = {
 	.data_name	= UICC_DATA_NAME,
 	.param_index	= UICC_PARAM_INDEX,
 	.param_count	= UICC_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data battery_data = {
@@ -232,7 +232,7 @@ static const struct modem_info_data battery_data = {
 	.data_name	= BATTERY_DATA_NAME,
 	.param_index	= VBAT_PARAM_INDEX,
 	.param_count	= VBAT_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data temp_data = {
@@ -240,7 +240,7 @@ static const struct modem_info_data temp_data = {
 	.data_name	= TEMPERATURE_DATA_NAME,
 	.param_index	= TEMP_PARAM_INDEX,
 	.param_count	= TEMP_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data fw_data = {
@@ -264,7 +264,7 @@ static const struct modem_info_data lte_mode_data = {
 	.data_name	= LTE_MODE_DATA_NAME,
 	.param_index	= LTE_MODE_PARAM_INDEX,
 	.param_count	= SYSTEMMODE_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data nbiot_mode_data = {
@@ -272,7 +272,7 @@ static const struct modem_info_data nbiot_mode_data = {
 	.data_name	= NBIOT_MODE_DATA_NAME,
 	.param_index	= NBIOT_MODE_PARAM_INDEX,
 	.param_count	= SYSTEMMODE_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data gps_mode_data = {
@@ -280,7 +280,7 @@ static const struct modem_info_data gps_mode_data = {
 	.data_name	= GPS_MODE_DATA_NAME,
 	.param_index	= GPS_MODE_PARAM_INDEX,
 	.param_count	= SYSTEMMODE_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+	.data_type	= AT_PARAM_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data imsi_data = {
@@ -446,9 +446,9 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf)
 		return err;
 	}
 
-	err = at_params_short_get(&m_param_list,
-				  modem_data[info]->param_index,
-				  buf);
+	err = at_params_unsigned_short_get(&m_param_list,
+					   modem_data[info]->param_index,
+					   buf);
 
 	if (err) {
 		return err;
@@ -522,10 +522,10 @@ parse:
 		return err;
 	}
 
-	if (modem_data[info]->data_type == AT_PARAM_TYPE_NUM_SHORT) {
-		err = at_params_short_get(&m_param_list,
-					  modem_data[info]->param_index,
-					  &param_value);
+	if (modem_data[info]->data_type == AT_PARAM_TYPE_NUM_INT) {
+		err = at_params_unsigned_short_get(&m_param_list,
+						    modem_data[info]->param_index,
+						    &param_value);
 		if (err) {
 			LOG_ERR("Unable to obtain short: %d", err);
 			return err;
@@ -611,7 +611,7 @@ static void modem_info_rsrp_subscribe_handler(void *context, const char *respons
 		.data_name	= RSRP_DATA_NAME,
 		.param_index	= RSRP_NOTIFY_PARAM_INDEX,
 		.param_count	= RSRP_NOTIFY_PARAM_COUNT,
-		.data_type	= AT_PARAM_TYPE_NUM_SHORT,
+		.data_type	= AT_PARAM_TYPE_NUM_INT,
 	};
 
 	err = modem_info_parse(&rsrp_notify_data, response);
@@ -621,9 +621,9 @@ static void modem_info_rsrp_subscribe_handler(void *context, const char *respons
 		return;
 	}
 
-	err = at_params_short_get(&m_param_list,
-				  rsrp_notify_data.param_index,
-				  &param_value);
+	err = at_params_unsigned_short_get(&m_param_list,
+					   rsrp_notify_data.param_index,
+					   &param_value);
 	if (err != 0) {
 		LOG_ERR("Failed to obtain RSRP value, %d", err);
 		return;
