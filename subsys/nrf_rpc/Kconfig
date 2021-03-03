@@ -8,6 +8,32 @@ menu "nRF RPC (Remote Procedure Call) library"
 
 if NRF_RPC
 
+# Zephyr port dependencies selection
+
+config _NRF_RPC_DUMMY_SELECT
+	bool
+	default y
+	select THREAD_CUSTOM_DATA
+
+config NRF_RPC_TR_RPMSG
+	bool
+	select IPM
+	select IPM_NRFX
+	select IPM_MSG_CH_0_ENABLE
+	select IPM_MSG_CH_0_TX if SOC_NRF5340_CPUNET
+	select IPM_MSG_CH_0_RX if !SOC_NRF5340_CPUNET
+	select IPM_MSG_CH_1_ENABLE
+	select IPM_MSG_CH_1_TX if !SOC_NRF5340_CPUNET
+	select IPM_MSG_CH_1_RX if SOC_NRF5340_CPUNET
+	select OPENAMP
+	select BOARD_ENABLE_CPUNET if SOC_NRF5340_CPUAPP
+
+config NRF_RPC_CBOR
+	bool
+	select TINYCBOR
+
+# End of Zephyr port dependencies selection
+
 config NRF_RPC_THREAD_STACK_SIZE
 	int "Stack size of thread from thread pool"
 	default 1024
@@ -20,9 +46,12 @@ config NRF_RPC_THREAD_PRIORITY
 	help
 	  Thread priority of each thread in local thread pool.
 
+if NRF_RPC_TR_RPMSG
+
 choice
 	prompt "RPMSG device role"
-	default RPMSG_REMOTE
+	default RPMSG_REMOTE if SOC_NRF5340_CPUNET
+	default RPMSG_MASTER
 
 config RPMSG_REMOTE
 	bool "Remote"
@@ -51,6 +80,8 @@ config NRF_RPC_TR_PRMSG_RX_PRIORITY
 	help
 	  Priority of the thread that is responsible for receiving incoming
 	  messages from rpmsg.
+
+endif # NRF_RPC_TR_RPMSG
 
 module = NRF_RPC
 module-str = NRF_RPC

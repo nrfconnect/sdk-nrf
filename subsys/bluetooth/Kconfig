@@ -33,4 +33,10 @@ rsource "services/Kconfig"
 
 endif # BT
 
+menu "BLE over nRF RPC"
+
+rsource "rpc/Kconfig"
+
+endmenu
+
 endmenu
