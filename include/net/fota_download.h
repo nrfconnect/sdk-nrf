@@ -105,6 +105,15 @@ int fota_download_init(fota_download_callback_t client_callback);
 int fota_download_start(const char *host, const char *file, int sec_tag,
 			const char *apn, size_t fragment_size);
 
+/**@brief Get target image type.
+ *
+ * Image type becomes known after download starts.
+ *
+ * @retval 0 Unknown type before download starts.
+ *           Otherwise, a type defined in enum dfu_target_image_type.
+ */
+int fota_download_target(void);
+
 #ifdef __cplusplus
 }
 #endif
