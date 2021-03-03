@@ -8,14 +8,14 @@
 
 #include "event_manager.h"
 #include "motion_event.h"
-#include "power_event.h"
+#include <caf/events/power_event.h>
 #include "hid_event.h"
 
 #include <shell/shell.h>
 #include <shell/shell_rtt.h>
 
 #define MODULE motion
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);

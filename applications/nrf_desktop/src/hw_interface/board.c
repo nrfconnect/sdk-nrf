@@ -12,10 +12,10 @@
 #include "port_state.h"
 #include "port_state_def.h"
 
-#include "power_event.h"
+#include <caf/events/power_event.h>
 
 #define MODULE board
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BOARD_LOG_LEVEL);

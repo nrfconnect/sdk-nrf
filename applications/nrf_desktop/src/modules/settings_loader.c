@@ -10,7 +10,7 @@
 #include "event_manager.h"
 
 #define MODULE settings_loader
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_SETTINGS_LOADER_LOG_LEVEL);

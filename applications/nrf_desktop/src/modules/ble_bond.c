@@ -10,12 +10,12 @@
 #include <settings/settings.h>
 
 #define MODULE ble_bond
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 #include "click_event.h"
 #include "ble_event.h"
 #include "selector_event.h"
 #include "config_event.h"
-#include "power_event.h"
+#include <caf/events/power_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);

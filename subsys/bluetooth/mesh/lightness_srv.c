@@ -135,7 +135,9 @@ static void rsp_lightness_status(struct bt_mesh_model *mod,
 	lvl_status_encode(&rsp, status, repr);
 
 	BT_DBG("Light %s Response: %u -> %u [%u ms]", repr_str[repr],
-	       status->current, status->target, status->remaining_time);
+		light_to_repr(status->current, repr),
+		light_to_repr(status->target, repr),
+		status->remaining_time);
 
 	bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
 }
@@ -504,7 +506,7 @@ static void lvl_get(struct bt_mesh_lvl_srv *lvl_srv,
 	rsp->current = LIGHT_TO_LVL(status.current);
 	rsp->target = LIGHT_TO_LVL(status.target);
 	rsp->remaining_time = status.remaining_time;
-	BT_DBG("%u -> %u [%u ms]", rsp->current, rsp->target,
+	BT_DBG("%i -> %i [%u ms]", rsp->current, rsp->target,
 	       rsp->remaining_time);
 }
 
@@ -535,7 +537,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 		rsp->current = LIGHT_TO_LVL(status.current);
 		rsp->target = LIGHT_TO_LVL(status.target);
 		rsp->remaining_time = status.remaining_time;
-		BT_DBG("%u -> %u [%u ms]", rsp->current, rsp->target,
+		BT_DBG("%i -> %i [%u ms]", rsp->current, rsp->target,
 		       rsp->remaining_time);
 	}
 }
@@ -593,6 +595,9 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		rsp->current = LIGHT_TO_LVL(status.current);
 		rsp->target = LIGHT_TO_LVL(status.target);
 		rsp->remaining_time = status.remaining_time;
+		BT_DBG("Delta set rsp: %i (light: %u) -> %i (light: %u) [%u ms]",
+			rsp->current, status.current, rsp->target, status.target,
+			status.remaining_time);
 	}
 }
 
@@ -633,7 +638,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 					 (uint64_t)move_set->transition->time) /
 					abs(move_set->delta);
 
-		BT_DBG("Move: distance: %u delta: %u step: %u ms time: %u ms",
+		BT_DBG("Move: distance: %u delta: %i step: %u ms time: %u ms",
 		       (uint32_t)distance, move_set->delta,
 		       move_set->transition->time, time_to_edge);
 
@@ -654,7 +659,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		rsp->target = LIGHT_TO_LVL(status.target);
 		rsp->remaining_time = status.remaining_time;
 
-		BT_DBG("Move rsp: %u (light: %u) -> %u (light: %u) [%u ms]",
+		BT_DBG("Move set rsp: %i (light: %u) -> %i (light: %u) [%u ms]",
 		       rsp->current, status.current, rsp->target, status.target,
 		       status.remaining_time);
 	}
@@ -678,6 +683,12 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 		.transition = onoff_set->transition,
 	};
 	struct bt_mesh_lightness_status status;
+
+	if (!bt_mesh_is_provisioned()) {
+		/* Avoid picking up Power OnOff loaded onoff, we'll use our own.
+		 */
+		return;
+	}
 
 	if (onoff_set->on_off) {
 		set.lvl = (srv->default_light ? srv->default_light : srv->last);
@@ -814,28 +825,20 @@ static int bt_mesh_lightness_srv_settings_set(struct bt_mesh_model *mod,
 
 	return 0;
 }
+#endif
 
-static int bt_mesh_lightness_srv_start(struct bt_mesh_model *mod)
+int lightness_on_power_up(struct bt_mesh_lightness_srv *srv)
 {
-	struct bt_mesh_lightness_srv *srv = mod->user_data;
 	struct bt_mesh_lightness_status dummy = { 0 };
 	struct bt_mesh_model_transition transition = {
 		.time = srv->ponoff.dtt.transition_time,
 	};
 	struct bt_mesh_lightness_set set = { .transition = &transition };
 
-	if (atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_NO_START)) {
-		return 0;
-	}
-
 	switch (srv->ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:
-		/* Not calling the lightness server's callback when the value is
-		 * supposed to be zero, so we'll just set the "last" value for
-		 * correctness:
-		 */
 		srv->last = 0;
-		return 0;
+		break;
 	case BT_MESH_ON_POWER_UP_ON:
 		set.lvl = (srv->default_light ? srv->default_light : srv->last);
 		break;
@@ -855,6 +858,18 @@ static int bt_mesh_lightness_srv_start(struct bt_mesh_model *mod)
 
 	lightness_srv_change_lvl(srv, NULL, &set, &dummy);
 	return 0;
+}
+
+#ifdef CONFIG_BT_SETTINGS
+static int bt_mesh_lightness_srv_start(struct bt_mesh_model *mod)
+{
+	struct bt_mesh_lightness_srv *srv = mod->user_data;
+
+	if (atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_NO_START)) {
+		return 0;
+	}
+
+	return lightness_on_power_up(srv);
 }
 #endif
 

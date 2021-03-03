@@ -95,8 +95,6 @@ enum bt_mesh_sensor_delta {
 	 *  old value (resolution: 0.01 %).
 	 */
 	BT_MESH_SENSOR_DELTA_PERCENT,
-	/** Delta threshold is disabled. */
-	BT_MESH_SENSOR_DELTA_DISABLED,
 };
 
 /** Sensor sampling cadence */

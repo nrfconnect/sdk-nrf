@@ -394,8 +394,13 @@ static void send_agps_request(struct k_work *work)
 	int err;
 	static int64_t last_request_timestamp;
 
+#if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
+/* Cell-based location has a smaller payload, allow more frequent updates */
+#define AGPS_UPDATE_PERIOD (10 * 60 * MSEC_PER_SEC)
+#else
 /* Request A-GPS data no more often than every hour (time in milliseconds). */
-#define AGPS_UPDATE_PERIOD (60 * 60 * 1000)
+#define AGPS_UPDATE_PERIOD (60 * 60 * MSEC_PER_SEC)
+#endif
 
 	if ((last_request_timestamp != 0) &&
 	    (k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD) {
@@ -1422,9 +1427,13 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 
 		LOG_INF("CLOUD_EVT_DATA_RECEIVED");
 		err = cloud_decode_command(evt->data.msg.buf);
-		if (err == 0) {
+		if (err <= 0) {
 			/* Cloud decoder has handled the data */
-			return;
+			if (err < 0) {
+				LOG_ERR("cloud_decode_command() failed: %d",
+					err);
+			}
+			break;
 		}
 
 #if defined(CONFIG_AGPS)
@@ -1434,7 +1443,17 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 			LOG_WRN("Data was not valid A-GPS data, err: %d", err);
 			break;
 		}
+#if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
+		double lat, lon;
 
+		err = gps_get_last_cell_location(&lat, &lon);
+		if (err) {
+			LOG_ERR("Could not get cell-based location, err: %d",
+				err);
+		} else {
+			LOG_INF("Cell-based location: %lf, %lf", lat, lon);
+		}
+#endif /* defined(CONFIG_AGPS_SINGLE_CELL_ONLY) */
 		LOG_INF("A-GPS data processed");
 #endif /* defined(CONFIG_AGPS) */
 		break;
@@ -1446,6 +1465,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_PAIR_DONE:
 		LOG_INF("CLOUD_EVT_PAIR_DONE");
 		on_pairing_done();
+		break;
 	case CLOUD_EVT_FOTA_ERROR:
 		LOG_INF("CLOUD_EVT_FOTA_ERROR");
 		break;
@@ -1536,10 +1556,12 @@ static void set_gps_enable(const bool enable)
 	int32_t delay_ms = 0;
 	bool changing = (enable != gps_control_is_enabled());
 
-	/* Exit early if the link is not ready or if the cloud
-	 * state is defined and the local state is not changing.
+	/* Exit early if the link is not ready or if cell-based location
+	 * only is enabled or if the cloud state is defined and the local
+	 * state is not changing.
 	 */
 	if (!data_send_enabled() ||
+	    IS_ENABLED(CONFIG_AGPS_SINGLE_CELL_ONLY) ||
 	    ((cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS) !=
 	    CLOUD_CMD_STATE_UNDEFINED) && !changing)) {
 		return;
@@ -1734,6 +1756,12 @@ static void sensors_init(void)
 		LOG_ERR("GPS could not be initialized");
 		return;
 	}
+#if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
+	/* Make initial cell-based location request */
+	k_delayed_work_submit_to_queue(&application_work_q,
+					&send_agps_request_work,
+					K_SECONDS(1));
+#endif
 }
 
 #if defined(CONFIG_USE_UI_MODULE)
@@ -1880,6 +1908,14 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_CELL_UPDATE:
 		LOG_INF("LTE cell changed: Cell ID: %d, Tracking area: %d",
 			evt->cell.id, evt->cell.tac);
+#if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
+		/* Request location based on new network info */
+		if (data_send_enabled() && evt->cell.id != -1) {
+			k_delayed_work_submit_to_queue(&application_work_q,
+						       &send_agps_request_work,
+						       K_SECONDS(1));
+		}
+#endif
 		break;
 	default:
 		break;

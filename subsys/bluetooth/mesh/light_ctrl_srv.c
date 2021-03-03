@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <stdlib.h>
@@ -10,6 +10,7 @@
 #include <bluetooth/mesh/properties.h>
 #include "lightness_internal.h"
 #include "light_ctrl_internal.h"
+#include "gen_onoff_internal.h"
 #include "sensor.h"
 #include "model_utils.h"
 
@@ -57,7 +58,7 @@ static void restart_timer(struct bt_mesh_light_ctrl_srv *srv, uint32_t delay)
 static void reg_start(struct bt_mesh_light_ctrl_srv *srv)
 {
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	k_timer_start(&srv->reg.timer, K_MSEC(0), K_MSEC(REG_INT));
+	k_delayed_work_submit(&srv->reg.timer, K_MSEC(REG_INT));
 #endif
 }
 
@@ -202,9 +203,9 @@ static bool state_is_on(const struct bt_mesh_light_ctrl_srv *srv,
 	return srv->state != LIGHT_CTRL_STATE_STANDBY;
 }
 
-static void onoff_encode(struct bt_mesh_light_ctrl_srv *srv,
-			 struct net_buf_simple *buf,
-			 enum bt_mesh_light_ctrl_srv_state prev_state)
+static void light_onoff_encode(struct bt_mesh_light_ctrl_srv *srv,
+			       struct net_buf_simple *buf,
+			       enum bt_mesh_light_ctrl_srv_state prev_state)
 {
 	bt_mesh_model_msg_init(buf, BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS);
 	net_buf_simple_add_u8(buf, state_is_on(srv, prev_state));
@@ -232,27 +233,21 @@ static void onoff_encode(struct bt_mesh_light_ctrl_srv *srv,
 	}
 }
 
-static int onoff_status_send(struct bt_mesh_light_ctrl_srv *srv,
-			     struct bt_mesh_msg_ctx *ctx,
-			     enum bt_mesh_light_ctrl_srv_state prev_state)
+static int light_onoff_status_send(struct bt_mesh_light_ctrl_srv *srv,
+				   struct bt_mesh_msg_ctx *ctx,
+				   enum bt_mesh_light_ctrl_srv_state prev_state)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,
 				 3);
-	onoff_encode(srv, &buf, prev_state);
+	light_onoff_encode(srv, &buf, prev_state);
 
 	return model_send(srv->model, ctx, &buf);
 }
 
-static void onoff_pub(struct bt_mesh_light_ctrl_srv *srv,
-		      enum bt_mesh_light_ctrl_srv_state prev_state,
-		      bool pub_gen_onoff)
+static void onoff_encode(struct bt_mesh_light_ctrl_srv *srv,
+			 enum bt_mesh_light_ctrl_srv_state prev_state,
+			 struct bt_mesh_onoff_status *status)
 {
-	onoff_status_send(srv, NULL, prev_state);
-
-	if (!pub_gen_onoff) {
-		return;
-	}
-
 	uint32_t remaining_fade;
 
 	if (atomic_test_bit(&srv->flags, FLAG_ON_PENDING) ||
@@ -260,17 +255,32 @@ static void onoff_pub(struct bt_mesh_light_ctrl_srv *srv,
 		remaining_fade =
 			k_delayed_work_remaining_get(&srv->action_delay) +
 			srv->fade.duration;
+		status->target_on_off = atomic_test_bit(&srv->flags,
+							FLAG_ON_PENDING);
 	} else {
 		remaining_fade = remaining_fade_time(srv);
+		status->target_on_off = srv->state != LIGHT_CTRL_STATE_STANDBY;
 	}
 
-	const struct bt_mesh_onoff_status status = {
-		state_is_on(srv, prev_state),
-		state_is_on(srv, srv->state),
-		remaining_fade,
-	};
+	status->present_on_off = state_is_on(srv, prev_state);
+	status->remaining_time = remaining_fade;
+}
 
-	bt_mesh_onoff_srv_pub(&srv->onoff, NULL, &status);
+static void light_onoff_pub(struct bt_mesh_light_ctrl_srv *srv,
+			    enum bt_mesh_light_ctrl_srv_state prev_state,
+			    bool pub_gen_onoff)
+{
+	struct bt_mesh_onoff_status status;
+
+	(void)light_onoff_status_send(srv, NULL, prev_state);
+
+	if (!pub_gen_onoff) {
+		return;
+	}
+
+	onoff_encode(srv, prev_state, &status);
+
+	(void)bt_mesh_onoff_srv_pub(&srv->onoff, NULL, &status);
 }
 
 static uint16_t light_get(struct bt_mesh_light_ctrl_srv *srv)
@@ -391,7 +401,7 @@ static int turn_on(struct bt_mesh_light_ctrl_srv *srv,
 		}
 
 		transition_start(srv, LIGHT_CTRL_STATE_ON, fade_time);
-		onoff_pub(srv, prev_state, pub_gen_onoff);
+		light_onoff_pub(srv, prev_state, pub_gen_onoff);
 	} else if (!atomic_test_bit(&srv->flags, FLAG_TRANSITION)) {
 		/* Delay the move to prolong */
 		restart_timer(srv, srv->cfg.on);
@@ -413,7 +423,7 @@ static void turn_off_auto(struct bt_mesh_light_ctrl_srv *srv)
 
 	atomic_clear_bit(&srv->flags, FLAG_ON);
 	store(srv, FLAG_STORE_STATE);
-	onoff_pub(srv, LIGHT_CTRL_STATE_PROLONG, true);
+	light_onoff_pub(srv, LIGHT_CTRL_STATE_PROLONG, true);
 }
 
 static int turn_off(struct bt_mesh_light_ctrl_srv *srv,
@@ -436,7 +446,7 @@ static int turn_off(struct bt_mesh_light_ctrl_srv *srv,
 		transition_start(srv, LIGHT_CTRL_STATE_STANDBY, fade_time);
 		atomic_clear_bit(&srv->flags, FLAG_ON);
 		store(srv, FLAG_STORE_STATE);
-		onoff_pub(srv, prev_state, pub_gen_onoff);
+		light_onoff_pub(srv, prev_state, pub_gen_onoff);
 	} else if (fade_time < remaining_fade_time(srv)) {
 		/* Replacing current transition with a manual transition if it's
 		 * faster. This ensures that the manual override looks
@@ -461,7 +471,6 @@ static void prolong(struct bt_mesh_light_ctrl_srv *srv)
 
 static void ctrl_enable(struct bt_mesh_light_ctrl_srv *srv)
 {
-	stop_manual_override_timer(srv);
 	srv->lightness->ctrl = srv;
 	BT_DBG("Light Control Enabled");
 	transition_start(srv, LIGHT_CTRL_STATE_STANDBY, 0);
@@ -478,47 +487,36 @@ static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 	atomic_and(&srv->flags, FLAGS_CONFIGURATION);
 	srv->lightness->ctrl = NULL;
 	srv->state = LIGHT_CTRL_STATE_STANDBY;
-	srv->reg.i = srv->cfg.light[LIGHT_CTRL_STATE_STANDBY];
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	srv->reg.i = 0;
+#endif
 
 	k_delayed_work_cancel(&srv->action_delay);
 	k_delayed_work_cancel(&srv->timer);
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	k_timer_stop(&srv->reg.timer);
+	k_delayed_work_cancel(&srv->reg.timer);
 #endif
-	start_manual_override_timer(srv);
+
+	light_onoff_pub(srv, srv->state, true);
 }
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-static void reg_work_handler(struct k_work *work)
+static void reg_step(struct k_work *work)
 {
-	struct bt_mesh_light_ctrl_srv *srv =
-		CONTAINER_OF(work, struct bt_mesh_light_ctrl_srv, reg.work);
-	uint16_t cfg_lvl = light_get(srv);
+	struct bt_mesh_light_ctrl_srv *srv = CONTAINER_OF(
+		work, struct bt_mesh_light_ctrl_srv, reg.timer.work);
 
-	/* Output value is max out of regulator and configured level. */
-	if (srv->reg.out > cfg_lvl) {
-		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
-	} else {
-		/* Suspend the regulator until the level goes above the
-		 * configured output light level.
-		 */
-		if (atomic_test_and_clear_bit(&srv->flags, FLAG_REGULATOR)) {
-			light_set(srv, light_to_repr(cfg_lvl, LINEAR), 0);
-		}
-
+	if (!is_enabled(srv)) {
+		/* The server might be disabled asynchronously. */
 		return;
 	}
 
-	light_set(srv, light_to_repr(srv->reg.out, LINEAR), 0);
-}
+	k_delayed_work_submit(&srv->reg.timer, K_MSEC(REG_INT));
 
-static void reg_step(struct k_timer *timer)
-{
-	struct bt_mesh_light_ctrl_srv *srv =
-		CONTAINER_OF(timer, struct bt_mesh_light_ctrl_srv, reg.timer);
 	float target = lux_getf(srv);
 	float ambient = sensor_to_float(&srv->ambient_lux);
 	float error = target - ambient;
+
 	/* Accuracy should be in percent and both up and down: */
 	float accuracy = (srv->reg.cfg.accuracy * target) / (2 * 100.0f);
 
@@ -544,49 +542,32 @@ static void reg_step(struct k_timer *timer)
 	srv->reg.i = CLAMP(srv->reg.i, 0, UINT16_MAX);
 
 	float p = input * kp;
+	uint16_t output = CLAMP(srv->reg.i + p, 0, UINT16_MAX);
 
-	srv->reg.out = CLAMP(srv->reg.i + p, 0, UINT16_MAX);
-	k_work_submit(&srv->reg.work);
+	/* The regulator output is always in linear format. We'll convert to
+	 * the configured representation again before calling the Lightness
+	 * server.
+	 */
+	uint16_t lvl = light_get(srv);
+
+	/* Output value is max out of regulator and configured level. */
+	if (output > lvl) {
+		if (output == srv->reg.prev) {
+			return;
+		}
+
+		srv->reg.prev = output;
+		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
+		light_set(srv, light_to_repr(output, LINEAR), REG_INT);
+	} else if (atomic_test_and_clear_bit(&srv->flags, FLAG_REGULATOR)) {
+		light_set(srv, light_to_repr(lvl, LINEAR), REG_INT);
+	}
 }
 #endif
-
-void start_manual_override_timer(struct bt_mesh_light_ctrl_srv *srv)
-{
-	BT_DBG("LC start_manual_override_timer");
-	if(srv->cfg.override_time_enabled) {
-	    k_delayed_work_submit(&srv->manual_override_timer, 
-		    K_MSEC(srv->cfg.override_time));
-	}
-}
-
-void stop_manual_override_timer(struct bt_mesh_light_ctrl_srv *srv)
-{
-	BT_DBG("LC stop_manual_override_timer");
-	k_delayed_work_cancel(&srv->manual_override_timer);
-}
-
-bool is_manual_override_timer_running(struct bt_mesh_light_ctrl_srv *srv)
-{
-	if(k_delayed_work_remaining_get(&srv->manual_override_timer)) {
-		return true;
-	} else {
-		return false;
-	}
-}
 
 /*******************************************************************************
  * Timeouts
  ******************************************************************************/
-
-static void manual_override_timeout(struct k_work *work)
-{
-	BT_DBG("LC manual_override_timeout");
-
-	struct bt_mesh_light_ctrl_srv *srv = CONTAINER_OF(
-		work, struct bt_mesh_light_ctrl_srv, manual_override_timer.work);
-
-	ctrl_enable(srv);
-}
 
 static void timeout(struct k_work *work)
 {
@@ -607,7 +588,7 @@ static void timeout(struct k_work *work)
 		 * steady state in the state change function.
 		 */
 		if (srv->fade.duration > 0) {
-			onoff_pub(srv, srv->state, true);
+			light_onoff_pub(srv, srv->state, true);
 		}
 
 		if (srv->state == LIGHT_CTRL_STATE_ON) {
@@ -627,7 +608,8 @@ static void timeout(struct k_work *work)
 			return;
 		}
 
-		uint32_t cooldown = srv->cfg.override_time;
+		uint32_t cooldown = MSEC_PER_SEC *
+				    CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL;
 
 		if (srv->fade.duration >= cooldown) {
 			atomic_clear_bit(&srv->flags, FLAG_MANUAL);
@@ -888,7 +870,7 @@ static void handle_light_onoff_get(struct bt_mesh_model *mod,
 
 	BT_DBG("");
 
-	onoff_status_send(srv, ctx, srv->state);
+	light_onoff_status_send(srv, ctx, srv->state);
 }
 
 static void light_onoff_set(struct bt_mesh_light_ctrl_srv *srv,
@@ -933,7 +915,7 @@ static void light_onoff_set(struct bt_mesh_light_ctrl_srv *srv,
 	}
 
 	if (ack) {
-		onoff_status_send(srv, ctx, prev_state);
+		light_onoff_status_send(srv, ctx, prev_state);
 	}
 }
 
@@ -1005,25 +987,19 @@ static void handle_sensor_status(struct bt_mesh_model *mod,
 		BT_DBG("Sensor 0x%04x: %s", id, bt_mesh_sensor_ch_str(&value));
 
 		if (id == BT_MESH_PROP_ID_PRESENT_AMB_LIGHT_LEVEL) {
-			int key = irq_lock();
 			srv->ambient_lux = value;
-			irq_unlock(key);
 			continue;
 		}
 
 		/* Occupancy sensor */
 
-		if(id == BT_MESH_PROP_ID_PRESENCE_DETECTED && value.val1 > 0) {
-			if(is_manual_override_timer_running(srv)) {
-				start_manual_override_timer(srv);
-			}
-		}
-
 		/* OCC_MODE must be enabled for the occupancy sensors to be
 		 * able to turn on the light:
 		 */
 		if (srv->state == LIGHT_CTRL_STATE_STANDBY &&
-		    !atomic_test_bit(&srv->flags, FLAG_OCC_MODE)) {
+		    !atomic_test_bit(&srv->flags, FLAG_OCC_MODE) &&
+		    !(atomic_test_bit(&srv->flags, FLAG_TRANSITION) &&
+		      !atomic_test_bit(&srv->flags, FLAG_MANUAL))) {
 			continue;
 		}
 
@@ -1341,26 +1317,21 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff,
 {
 	struct bt_mesh_light_ctrl_srv *srv =
 		CONTAINER_OF(onoff, struct bt_mesh_light_ctrl_srv, onoff);
-
-	const struct bt_mesh_model_transition *transition =
-		set->transition->time ? set->transition : NULL;
 	enum bt_mesh_light_ctrl_srv_state prev_state = srv->state;
 
-	if (set->transition->delay) {
+	if (set->transition && set->transition->delay > 0) {
 		delayed_set(srv, set->transition, set->on_off);
 	} else if (set->on_off) {
-		turn_on(srv, transition, false);
+		turn_on(srv, set->transition, false);
 	} else {
-		turn_off(srv, transition, false);
+		turn_off(srv, set->transition, false);
 	}
 
 	if (!rsp) {
 		return;
 	}
 
-	rsp->present_on_off = state_is_on(srv, prev_state);
-	rsp->target_on_off = set->on_off;
-	rsp->remaining_time = remaining_fade_time(srv);
+	onoff_encode(srv, prev_state, rsp);
 }
 
 static void onoff_get(struct bt_mesh_onoff_srv *onoff,
@@ -1370,9 +1341,7 @@ static void onoff_get(struct bt_mesh_onoff_srv *onoff,
 	struct bt_mesh_light_ctrl_srv *srv =
 		CONTAINER_OF(onoff, struct bt_mesh_light_ctrl_srv, onoff);
 
-	rsp->present_on_off = bt_mesh_light_ctrl_srv_is_on(srv);
-	rsp->target_on_off = (srv->state != LIGHT_CTRL_STATE_STANDBY);
-	rsp->remaining_time = remaining_fade_time(srv);
+	onoff_encode(srv, bt_mesh_light_ctrl_srv_is_on(srv), rsp);
 }
 
 const struct bt_mesh_onoff_srv_handlers _bt_mesh_light_ctrl_srv_onoff = {
@@ -1417,13 +1386,9 @@ static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
 	srv->reg.cfg = scene->reg;
 #endif
 	if (scene->enabled) {
-		stop_manual_override_timer(srv);
-		srv->lightness->ctrl = srv;
-		turn_on(srv, transition, false);
-		reg_start(srv);
+		ctrl_enable(srv);
 	} else {
-		start_manual_override_timer(srv);
-		turn_off(srv, transition, false);
+		ctrl_disable(srv);
 	}
 }
 
@@ -1439,7 +1404,7 @@ static int update_handler(struct bt_mesh_model *mod)
 
 	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
 
-	onoff_encode(srv, srv->pub.msg, srv->state);
+	light_onoff_encode(srv, srv->pub.msg, srv->state);
 
 	return 0;
 }
@@ -1466,21 +1431,14 @@ static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 
 	k_delayed_work_init(&srv->timer, timeout);
 	k_delayed_work_init(&srv->action_delay, delayed_action_timeout);
-	k_delayed_work_init(&srv->manual_override_timer, manual_override_timeout);
 
 #if CONFIG_BT_SETTINGS
 	k_delayed_work_init(&srv->store_timer, store_timeout);
 #endif
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	k_timer_init(&srv->reg.timer, reg_step, NULL);
-	k_work_init(&srv->reg.work, reg_work_handler);
+	k_delayed_work_init(&srv->reg.timer, reg_step);
 #endif
-
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
-		bt_mesh_model_extend(mod, srv->onoff.model);
-		bt_mesh_model_extend(mod, srv->lightness->lightness_model);
-	}
 
 	srv->pub.msg = &srv->pub_buf;
 	srv->pub.update = update_handler;
@@ -1490,6 +1448,8 @@ static int light_ctrl_srv_init(struct bt_mesh_model *mod)
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
 		bt_mesh_model_extend(mod, srv->onoff.model);
 	}
+
+	atomic_set_bit(&srv->onoff.flags, GEN_ONOFF_SRV_NO_DTT);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 		bt_mesh_scene_entry_add(mod, &srv->scene, &scene_type, false);
@@ -1560,8 +1520,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
 			ctrl_enable(srv);
 		} else {
-			light_set(srv, 0,
-				  srv->lightness->ponoff.dtt.transition_time);
+			lightness_on_power_up(srv->lightness);
 			ctrl_disable(srv);
 		}
 
@@ -1578,11 +1537,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
 			ctrl_enable(srv);
 		} else {
-			light_set(srv,
-				  (srv->lightness->default_light ?
-					   srv->lightness->default_light :
-					   srv->lightness->last),
-				  srv->lightness->ponoff.dtt.transition_time);
+			lightness_on_power_up(srv->lightness);
 			ctrl_disable(srv);
 		}
 		store(srv, FLAG_STORE_STATE);
@@ -1592,11 +1547,12 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 			reg_start(srv);
 			if (atomic_test_bit(&srv->flags, FLAG_ON)) {
 				turn_on(srv, NULL, true);
+			} else {
+				light_onoff_pub(srv, srv->state, true);
 			}
 		} else if (atomic_test_bit(&srv->lightness->flags,
 					   LIGHTNESS_SRV_FLAG_IS_ON)) {
-			light_set(srv, srv->lightness->last,
-				  srv->lightness->ponoff.dtt.transition_time);
+			lightness_on_power_up(srv->lightness);
 		}
 		break;
 	default:
@@ -1760,5 +1716,5 @@ bool bt_mesh_light_ctrl_srv_is_on(struct bt_mesh_light_ctrl_srv *srv)
 int bt_mesh_light_ctrl_srv_pub(struct bt_mesh_light_ctrl_srv *srv,
 			       struct bt_mesh_msg_ctx *ctx)
 {
-	return onoff_status_send(srv, ctx, srv->state);
+	return light_onoff_status_send(srv, ctx, srv->state);
 }

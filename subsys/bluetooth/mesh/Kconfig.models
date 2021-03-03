@@ -12,6 +12,24 @@ config BT_MESH_NRF_MODELS
 	  Common mesh model support modules, required by all Nordic BT mesh
 	  models.
 
+menu "Configuration of the waiting time for acknowledged messages"
+
+config BT_MESH_MOD_ACKD_TIMEOUT_BASE
+	int "The base timeout for acknowledged messages"
+	default 3000
+	help
+	  The base timeout in milliseconds that the model waits for the response
+	  if it is required. The response is typically a status message.
+	  Mesh Profile recommends the waiting time a minimum of 30 seconds.
+
+config BT_MESH_MOD_ACKD_TIMEOUT_PER_HOP
+	int "The per hop timeout for acknowledged messages"
+	default 50
+	help
+	  The timeout in milliseconds that the model adds per hop
+	  to the base response time.
+
+endmenu
 
 config BT_MESH_ONOFF_SRV
 	bool "Generic OnOff Server"
@@ -604,8 +622,6 @@ config BT_MESH_SCENE_CLI
 	help
 	  Enable mesh Scene Client model.
 
-endmenu
-
 config BT_MESH_SCHEDULER_CLI
 	bool "Scheduler Client"
 	select BT_MESH_NRF_MODELS
@@ -620,3 +636,5 @@ config BT_MESH_SCHEDULER_SRV
 	select BT_MESH_TIME_SRV
 	help
 	  Enable Mesh Scheduler Server model.
+
+endmenu

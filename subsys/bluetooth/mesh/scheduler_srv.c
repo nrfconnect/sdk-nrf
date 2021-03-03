@@ -6,9 +6,6 @@
 
 #include <stdio.h>
 #include <bluetooth/mesh/models.h>
-#include <bluetooth/mesh/scheduler_srv.h>
-#include <bluetooth/mesh/scene_srv.h>
-#include <bluetooth/mesh/gen_onoff_srv.h>
 #include <sys/byteorder.h>
 #include <sys/util.h>
 #include <sys/math_extras.h>
@@ -440,7 +437,7 @@ static void scheduled_action_handle(struct k_work *work)
 	struct bt_mesh_model_transition transition = {
 		.time = model_transition_decode(
 				srv->sch_reg[srv->idx].transition_time),
-		.delay = 0
+		.delay = 0,
 	};
 	uint16_t scene = srv->sch_reg[srv->idx].scene_number;
 	struct bt_mesh_elem *elem = bt_mesh_model_elem(srv->mod);
@@ -689,28 +686,6 @@ static int scheduler_srv_init(struct bt_mesh_model *mod)
 		 * this model, as we won't have to support multiple extenders.
 		 */
 		bt_mesh_model_extend(mod, srv->setup_mod);
-
-		/* The Scheduler Server is a main model that extends
-		 * the Scene Server model.
-		 */
-		bt_mesh_model_extend(srv->scene_srv.mod, mod);
-
-		/* The Scheduler Setup Server is a main model that extends
-		 * the Scene Setup Server model.
-		 */
-		bt_mesh_model_extend(srv->scene_srv.setup_mod, srv->setup_mod);
-
-		/* The Scheduler Setup Server is a main model that extends
-		 * the Generic Power OnOff Setup Server.
-		 */
-		struct bt_mesh_model *gen_ponoff_setup_mod =
-			bt_mesh_model_find(bt_mesh_model_elem(mod),
-				BT_MESH_MODEL_ID_GEN_POWER_ONOFF_SETUP_SRV);
-
-		if (gen_ponoff_setup_mod) {
-			bt_mesh_model_extend(gen_ponoff_setup_mod,
-					srv->setup_mod);
-		}
 	}
 
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;

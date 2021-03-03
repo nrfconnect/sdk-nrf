@@ -23,7 +23,7 @@
 #include "config_channel_transport.h"
 
 #define MODULE hids
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HIDS_LOG_LEVEL);

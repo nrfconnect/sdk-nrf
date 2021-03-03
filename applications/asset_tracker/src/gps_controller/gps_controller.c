@@ -154,6 +154,11 @@ int gps_control_init(struct k_work_q *work_q, gps_event_handler_t handler)
 		return -EINVAL;
 	}
 
+	if (IS_ENABLED(CONFIG_AGPS_SINGLE_CELL_ONLY)) {
+		LOG_INF("Cell-based location enabled, skipping GPS init");
+		return 0;
+	}
+
 	app_work_q = work_q;
 
 	gps_dev = device_get_binding(CONFIG_GPS_DEV_NAME);

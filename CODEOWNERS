@@ -20,6 +20,7 @@
 /applications/asset_tracker/              @jhn-nordic @jtguggedal @rlubos
 /applications/asset_tracker_v2/           @simensrostad @jtguggedal @jhn-nordic @coderbyheart
 /applications/connectivity_bridge/        @jtguggedal @nordic-auko
+/applications/machine_learning/           @pdunaj
 /applications/nrf_desktop/                @pdunaj
 /applications/serial_lte_modem/           @junqingzou @lats1980 @rlubos
 # Boards
@@ -48,6 +49,7 @@ Kconfig*                                  @tejlmand
 /include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
 /include/bluetooth/                       @joerchan
 /include/bluetooth/mesh/                  @trond-snekvik @joerchan
+/include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
 /include/net/                             @rlubos
@@ -81,11 +83,11 @@ Kconfig*                                  @tejlmand
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
+/samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @joerchan
 /samples/bootloader/                      @hakonfam @ioannisg
 /samples/connectedhomeip/                 @Damian-Nordic @kkasperczyk-no
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
-/samples/ei_wrapper/                      @pdunaj
-/samples/ei_data_forwarder/               @pdunaj
+/samples/edge_impulse/                    @pdunaj
 /samples/esb/                             @lemrey
 /samples/mpsl/                            @joerchan @hurricaneFromMoscow
 /samples/nfc/                             @grochu
@@ -112,7 +114,7 @@ Kconfig*                                  @tejlmand
 /subsys/bluetooth/mesh/                   @trond-snekvik @joerchan
 /subsys/bluetooth/controller/             @joerchan @rugeGerritsen
 /subsys/bootloader/                       @hakonfam @ioannisg
-/subsys/common_application_framework/     @pdunaj
+/subsys/caf/                              @pdunaj
 /subsys/debug/                            @nordic-krch @anangl
 /subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/mgmt/                             @hakonfam @sigvartmh

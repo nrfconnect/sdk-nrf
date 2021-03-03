@@ -318,11 +318,22 @@ static const struct bt_mesh_scene_entry_type scene_type = {
 	.maxlen = sizeof(int16_t),
 };
 
+static void light_temp_srv_reset(struct bt_mesh_light_temp_srv *srv)
+{
+	srv->dflt.delta_uv = 0;
+	srv->dflt.temp = BT_MESH_LIGHT_TEMP_MIN;
+	srv->last.delta_uv = 0;
+	srv->last.temp = BT_MESH_LIGHT_TEMP_MIN;
+	srv->range.min = BT_MESH_LIGHT_TEMP_MIN;
+	srv->range.max = BT_MESH_LIGHT_TEMP_MAX;
+}
+
 static int bt_mesh_light_temp_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_temp_srv *srv = model->user_data;
 
 	srv->model = model;
+	light_temp_srv_reset(srv);
 	net_buf_simple_init(srv->pub.msg, 0);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
@@ -361,6 +372,7 @@ static void bt_mesh_light_temp_srv_reset(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_temp_srv *srv = model->user_data;
 
+	light_temp_srv_reset(srv);
 	net_buf_simple_reset(srv->pub.msg);
 }
 

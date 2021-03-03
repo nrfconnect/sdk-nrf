@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Machine learning model runner"
+
+config ML_APP_ML_RUNNER_ENABLE
+	bool "Machine learning model runner"
+	depends on EI_WRAPPER
+
+if ML_APP_ML_RUNNER_ENABLE
+
+config ML_APP_ML_RUNNER_WINDOW_SHIFT
+	int "Prediction window shift [windows]"
+	range 0 4096
+	default 1
+	help
+	  Number of windows the prediction window is shifted between predictions.
+
+config ML_APP_ML_RUNNER_FRAME_SHIFT
+	int "Prediction window shift [frames]"
+	range 0 4096
+	default 0
+	help
+	  Number of frames the prediction window is shifted between predictions.
+
+module = ML_APP_ML_RUNNER
+module-str = machine learning model runner
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # ML_APP_ML_RUNNER_ENABLE
+
+endmenu

@@ -13,7 +13,7 @@
 #endif /* CONFIG_BT_LL_SOFTDEVICE */
 
 #define MODULE ble_conn_params
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 #include "ble_event.h"
 
 #include <logging/log.h>

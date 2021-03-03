@@ -94,6 +94,13 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len,
  */
 bool check_for_ipv4(const char *address, uint8_t length);
 
+/**@brief Check whether an integer value is in valid port range
+ *
+ * @param port value to be checked
+ *
+ * @return true if integer value is in valid port range, false otherwise
+ */
+bool check_port_range(int32_t port);
 
 /**brief use AT command to get IPv4 address
  *

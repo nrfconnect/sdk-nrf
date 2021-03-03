@@ -13,12 +13,12 @@
 #include <spinlock.h>
 
 #include "event_manager.h"
-#include "power_event.h"
+#include <caf/events/power_event.h>
 #include "battery_event.h"
 #include "usb_event.h"
 
 #define MODULE battery_charger
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_CHARGER_LOG_LEVEL);

@@ -164,6 +164,8 @@ int lightness_cli_light_set_unack(struct bt_mesh_lightness_cli *cli,
 void lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
 			       struct bt_mesh_msg_ctx *ctx, uint16_t set);
 
+int lightness_on_power_up(struct bt_mesh_lightness_srv *srv);
+
 #ifdef __cplusplus
 }
 #endif
