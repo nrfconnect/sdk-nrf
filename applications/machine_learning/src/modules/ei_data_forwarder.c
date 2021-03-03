@@ -11,7 +11,7 @@
 #include "sensor_event.h"
 
 #define MODULE ei_data_forwarder
-#include "module_state_event.h"
+#include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_EI_DATA_FORWARDER_LOG_LEVEL);
