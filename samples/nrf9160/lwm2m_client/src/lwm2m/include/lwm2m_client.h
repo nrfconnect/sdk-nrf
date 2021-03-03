@@ -34,7 +34,7 @@ int lwm2m_verify_modem_fw_update(void);
 
 #if defined(CONFIG_LWM2M_CONN_MON_OBJ_SUPPORT)
 int lwm2m_init_connmon(void);
-int lwm2m_start_connmon(void);
+int lwm2m_update_connmon(void);
 #endif
 
 #if defined(CONFIG_LWM2M_IPSO_LIGHT_CONTROL)

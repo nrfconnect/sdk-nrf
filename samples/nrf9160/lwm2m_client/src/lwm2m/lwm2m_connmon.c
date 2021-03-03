@@ -19,7 +19,10 @@ static struct k_work modem_signal_work;
 static int32_t modem_rsrp;
 
 /* LTE-FDD bearer & NB-IoT bearer */
-static uint8_t bearers[2] = { 6U, 7U };
+#define LTE_FDD_BEARER 6U
+#define NB_IOT_BEARER 7U
+
+static uint8_t bearers[2] = { LTE_FDD_BEARER, NB_IOT_BEARER };
 
 static void modem_data_update(struct k_work *work)
 {
@@ -31,11 +34,16 @@ static void modem_data_update(struct k_work *work)
 		return;
 	}
 
-	/* TODO: Make this less hard-coded */
-	lwm2m_engine_set_s8("4/0/0", bearers[0]);
+	if (modem_param.network.lte_mode.value != 0) {
+		lwm2m_engine_set_u8("4/0/0", LTE_FDD_BEARER);
+	} else if (modem_param.network.nbiot_mode.value != 0) {
+		lwm2m_engine_set_u8("4/0/0", NB_IOT_BEARER);
+	}
+
 	lwm2m_engine_create_res_inst("4/0/1/0");
 	lwm2m_engine_set_res_data("4/0/1/0", &bearers[0], sizeof(bearers[0]),
 				  LWM2M_RES_DATA_FLAG_RO);
+
 	lwm2m_engine_create_res_inst("4/0/1/1");
 	lwm2m_engine_set_res_data("4/0/1/1", &bearers[1], sizeof(bearers[1]),
 				  LWM2M_RES_DATA_FLAG_RO);
@@ -111,7 +119,7 @@ int lwm2m_init_connmon(void)
 	return 0;
 }
 
-int lwm2m_start_connmon(void)
+int lwm2m_update_connmon(void)
 {
 	k_work_submit(&modem_data_work);
 	return modem_info_rsrp_register(modem_signal_handler);

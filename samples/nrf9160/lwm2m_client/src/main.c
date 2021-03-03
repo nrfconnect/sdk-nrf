@@ -475,14 +475,14 @@ void main(void)
 
 	modem_connect();
 
+	while (true) {
 #if defined(CONFIG_LWM2M_CONN_MON_OBJ_SUPPORT)
-	ret = lwm2m_start_connmon();
-	if (ret < 0) {
-		LOG_ERR("Error registering rsrp handler (%d)", ret);
-	}
+		ret = lwm2m_update_connmon();
+		if (ret < 0) {
+			LOG_ERR("Error registering rsrp handler (%d)", ret);
+		}
 #endif
 
-	while (true) {
 		lwm2m_rd_client_start(&client, endpoint_name, flags,
 				      rd_client_event);
 
