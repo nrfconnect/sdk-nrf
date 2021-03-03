@@ -13,7 +13,7 @@
 #include <metal/device.h>
 #include <metal/alloc.h>
 
-#include <nrf_errno.h>
+#include <nrf_rpc_errno.h>
 
 #include "rp_ll.h"
 

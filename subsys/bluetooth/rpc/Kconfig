@@ -1,0 +1,87 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_RPC
+	bool "Bluetooth over RPC"
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	help
+	  Enables Bluetooth serialization over RPC
+
+if BT_RPC
+
+choice BT_RPC_ROLE_CHOICE
+	prompt "Bluetooth over RPC role selection"
+	default BT_RPC_HOST if SOC_NRF5340_CPUNET
+	default BT_RPC_CLIENT
+	help
+	  Select the device role for Bluetooth over RPC. The default role is
+	  a client role.
+
+config BT_RPC_CLIENT
+	bool "Bluetooth over RPC Client"
+	select BT
+	help
+	  Bluetooth Low Energy API will use nRF RPC library to access host on
+	  the remote core.
+
+config BT_RPC_HOST
+	bool "Bluetooth over RPC Host"
+	select BT
+	help
+	  Bluetooth Low Energy API will use nRF RPC library to provide API for
+	  client on the remote core.
+
+endchoice
+
+config BT_RPC_INITIALIZE_NRF_RPC
+	bool "Automatically initialize nRF RPC library"
+	default y
+	help
+	  Initialize nRF RPC library during the system startup. Disabling this
+	  option allow user to initialize it in a different way.
+
+config CBKPROXY_OUT_SLOTS
+	int "Maximum number of RPC callback proxy output slots"
+	default 16
+	range 0 16383
+	help
+	  Output slot is used to save context for one callback that is called
+	  on local side, encoded, sent and finally executed on the remote side.
+	  Each output slot takes 8 bytes of flash memory. Maximum number of
+	  input slots on the remote side should be the same as this value.
+
+
+config CBKPROXY_IN_SLOTS
+	int "Maximum number of RPC callback proxy input slots"
+	default 16
+	range 0 16383
+	help
+	  Input slot is used to save context for one callback that is called
+	  on remote side, encoded, sent and finally executed on the local side.
+	  Each output slot takes 8 bytes of RAM memory. Maximum number of
+	  output slots on the remote side should be the same as this value.
+
+module = BT_RPC
+module-str = BLE over nRF RPC
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+if BT_RPC_CLIENT
+
+# Overrides the default Bluetooth HCI driver
+choice BT_HCI_BUS_TYPE
+	default BT_NO_DRIVER
+endchoice
+
+config HEAP_MEM_POOL_SIZE
+	default 4096
+
+# Overrides the Bluetooth Controller to disable it
+config BT_CTLR
+	default n
+
+endif # BT_RPC_CLIENT
+endif # BT_RPC
