@@ -375,7 +375,6 @@ static void at_params_list_get(struct at_param_list *dst,
 		case AT_PARAM_TYPE_INVALID:
 		case AT_PARAM_TYPE_EMPTY:
 			break;
-		case AT_PARAM_TYPE_NUM_SHORT:
 		case AT_PARAM_TYPE_NUM_INT:
 			dst->params[i].value.int_val =
 				src_param[i].value.int_val;
@@ -407,7 +406,6 @@ static void at_params_list_translate(struct lwm2m_os_at_param_list *dst,
 		case AT_PARAM_TYPE_INVALID:
 		case AT_PARAM_TYPE_EMPTY:
 			break;
-		case AT_PARAM_TYPE_NUM_SHORT:
 		case AT_PARAM_TYPE_NUM_INT:
 			dst_param[i].value.int_val =
 				src->params[i].value.int_val;

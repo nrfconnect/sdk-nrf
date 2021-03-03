@@ -36,8 +36,6 @@ extern "C" {
 enum at_param_type {
 	/** Invalid parameter, typically a parameter that does not exist. */
 	AT_PARAM_TYPE_INVALID,
-	/** Parameter of type short. */
-	AT_PARAM_TYPE_NUM_SHORT,
 	/** Parameter of type integer. */
 	AT_PARAM_TYPE_NUM_INT,
 	/** Parameter of type string. */
@@ -109,22 +107,6 @@ void at_params_list_clear(struct at_param_list *list);
  * @param[in] list Parameter list to free.
  */
 void at_params_list_free(struct at_param_list *list);
-
-/**
- * @brief Add a parameter in the list at the specified index and assign it a
- * short value.
- *
- * If a parameter exists at this index, it is replaced.
- *
- * @param[in] list      Parameter list.
- * @param[in] index     Index in the list where to put the parameter.
- * @param[in] value     Parameter value.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int at_params_short_put(const struct at_param_list *list, size_t index,
-			int16_t value);
 
 /**
  * @brief Add a parameter in the list at the specified index and assign it an
@@ -229,6 +211,22 @@ int at_params_short_get(const struct at_param_list *list, size_t index,
 			int16_t *value);
 
 /**
+ * @brief Get a parameter value as a unsigned short number.
+ *
+ * Numeric values are stored as unsigned number. The parameter type must be a
+ * unsigned short, or an error is returned.
+ *
+ * @param[in] list    Parameter list.
+ * @param[in] index   Parameter index in the list.
+ * @param[out] value  Parameter value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int at_params_unsigned_short_get(const struct at_param_list *list, size_t index,
+			uint16_t *value);
+
+/**
  * @brief Get a parameter value as an integer number.
  *
  * Numeric values are stored as unsigned number. The parameter type must be an
@@ -243,6 +241,22 @@ int at_params_short_get(const struct at_param_list *list, size_t index,
  */
 int at_params_int_get(const struct at_param_list *list, size_t index,
 		      int32_t *value);
+
+/**
+ * @brief Get a parameter value as an unsigned integer number.
+ *
+ * Numeric values are stored as unsigned number. The parameter type must be an
+ * unsigned integer, or an error is returned.
+ *
+ * @param[in] list    Parameter list.
+ * @param[in] index   Parameter index in the list.
+ * @param[out] value  Parameter value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int at_params_unsigned_int_get(const struct at_param_list *list, size_t index,
+		      uint32_t *value);
 
 /**
  * @brief Get a parameter value as a string.

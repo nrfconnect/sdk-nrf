@@ -117,7 +117,7 @@ static int modem_data_get(struct lte_param *param)
 			LOG_ERR("Link data not obtained: %d %d", param->type, ret);
 			return ret;
 		}
-	} else if (data_type == AT_PARAM_TYPE_NUM_SHORT) {
+	} else if (data_type == AT_PARAM_TYPE_NUM_INT) {
 		ret = modem_info_short_get(param->type, &param->value);
 		if (ret < 0) {
 			LOG_ERR("Link data not obtained: %d", ret);
