@@ -463,7 +463,7 @@ UDP client
          **AT#XUDPSEND=1,"Test UDP"**
          #XUDPSEND: 8
          OK
-         #XUDPRECV: 1,14
+         #XUDPDATA: 1,14
          PONG: Test UDP
 
    #. Send hexadecimal data to the UDP server and check the returned data.
@@ -474,7 +474,7 @@ UDP client
          **AT#XUDPSEND=0,"DEADBEEF"**
          #XUDPSEND: 4
          OK
-         #XUDPRECV: 0,20
+         #XUDPDATA: 0,20
          504F4E473A20DEADBEEF
 
    #. Disconnect from the server.
@@ -1159,20 +1159,20 @@ To act as a UDP server, |global_private_address|
       .. parsed-literal::
          :class: highlight
 
-         #XUDPRECV: 1,13
+         #XUDPDATA: 1,13
          Hello, UDP#1!
-         #XUDPRECV: 1,13
+         #XUDPDATA: 1,13
          Hello, UDP#2!
 
          **AT#XUDPSEND=1,"UDP1/2 received"**
          #XUDPSEND: 15
          OK
 
-         #XUDPRECV: 1,13
+         #XUDPDATA: 1,13
          Hello, UDP#3!
-         #XUDPRECV: 1,13
+         #XUDPDATA: 1,13
          Hello, UDP#4!
-         #XUDPRECV: 1,13
+         #XUDPDATA: 1,13
          Hello, UDP#5!
 
          **AT#XUDPSEND=1,"UDP3/4/5 received"**
