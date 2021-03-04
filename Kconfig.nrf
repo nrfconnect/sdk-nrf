@@ -11,9 +11,12 @@ menu "Nordic nRF Connect"
 config BOARD_THINGY91_NRF9160NS
 	bool
 
-# nRF Connect SDK needs a larger default stacks for running certain tests.
+# nRF Connect SDK needs a larger default stacks in certain configurations
+#  - For running tests.
+#  - For CC3XX RNG
 config MAIN_STACK_SIZE
 	default 2048 if ZTEST
+	default 2048 if ENTROPY_CC3XX
 
 config ZTEST_STACKSIZE
 	default 2048 if ZTEST
