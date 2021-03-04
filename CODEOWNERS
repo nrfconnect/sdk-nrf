@@ -81,7 +81,7 @@ Kconfig*                                  @tejlmand
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @nvlsianpu
 /samples/sensor/bh1749/                   @wlgrd
-/samples/bluetooth/                       @joerchan @lemrey @carlescufi
+/samples/bluetooth/                       @joerchan @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @joerchan
 /samples/bootloader/                      @hakonfam @ioannisg
@@ -110,7 +110,7 @@ Kconfig*                                  @tejlmand
 /scripts/tools-versions-*.txt             @tejlmand @asle-nordic @grho @shanta-14
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
-/subsys/bluetooth/                        @joerchan @carlescufi
+/subsys/bluetooth/                        @joerchan @carlescufi @KAGA164
 /subsys/bluetooth/mesh/                   @trond-snekvik @joerchan
 /subsys/bluetooth/controller/             @joerchan @rugeGerritsen
 /subsys/bootloader/                       @hakonfam @ioannisg
