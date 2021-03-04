@@ -35,3 +35,31 @@ if(BL2)
     PRIVATE ${board_includes}
     )
 endif()
+
+if(TFM_PARTITION_PLATFORM)
+  set(src_dir ${CMAKE_CURRENT_LIST_DIR}/src)
+  set(nrf_dir ${CMAKE_CURRENT_LIST_DIR}/../../../../)
+
+  target_include_directories(platform_s
+    PUBLIC
+    include
+    ${nrf_dir}/include/tfm
+    )
+
+  target_sources(platform_s
+    PRIVATE
+    ${src_dir}/tfm_platform_system.c
+    ${src_dir}/tfm_ioctl_s_api.c
+    )
+
+  target_include_directories(platform_ns
+    PUBLIC
+    include
+    ${nrf_dir}/include/tfm
+    )
+
+  target_sources(platform_ns
+    PRIVATE
+    ${src_dir}/tfm_ioctl_ns_api.c
+    )
+endif()
