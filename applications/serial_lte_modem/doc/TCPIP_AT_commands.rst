@@ -1076,9 +1076,9 @@ Examples
    #XTCPSVR: 2,"started"
    OK
    #XTCPSVR: "5.123.123.99","connected"
-   #XTCPRECV: 1,13
+   #XTCPDATA: 1,13
    Hello, TCP#1!
-   #XTCPRECV: 1,13
+   #XTCPDATA: 1,13
    Hello, TCP#2!
 
 Read command
@@ -1225,7 +1225,7 @@ Examples
    at#xtcpcli=1,"remote.ip",1234
    #XTCPCLI: 2,"connected"
    OK
-   #XTCPRECV: 1,31
+   #XTCPDATA: 1,31
    PONG: b'Test TCP by IP address'
 
    at#xtcpcli=0
@@ -1437,7 +1437,7 @@ It is reported to the client as follows:
 
 ::
 
-   #XUDPRECV: <datatype>,<size>
+   #XUDPDATA: <datatype>,<size>
    <data>
 
 * The ``<datatype>`` parameter can accept one of the following values:
@@ -1457,9 +1457,9 @@ Examples
    at#xudpsvr=1,3442
    #XUDPSVR: 2,"started"
    OK
-   #XUDPRECV: 1,13
+   #XUDPDATA: 1,13
    Hello, UDP#1!
-   #XUDPRECV: 1,13
+   #XUDPDATA: 1,13
    Hello, UDP#2!
 
 Read command
@@ -1572,7 +1572,7 @@ It is reported to the client as follows:
 
 ::
 
-   #XTCPCLI: <datatype>,<size>
+   #XUDPDATA: <datatype>,<size>
    <data>
 
 * The ``<datatype>`` parameter can accept one of the following values:
@@ -1594,7 +1594,7 @@ Examples
    at#xudpsend=1,"Test UDP by hostname"
    #XUDPSEND: 20
    OK
-   #XUDPRECV: 1,26
+   #XUDPDATA: 1,26
    PONG: Test UDP by hostname
    at#xudpcli=0
    OK
