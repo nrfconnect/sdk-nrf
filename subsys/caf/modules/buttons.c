@@ -404,7 +404,9 @@ static void button_pressed_fn(struct k_work *work)
 
 	switch (state) {
 	case STATE_IDLE:
-		EVENT_SUBMIT(new_wake_up_event());
+		if (IS_ENABLED(CONFIG_CAF_BUTTONS_PM_EVENTS)) {
+			EVENT_SUBMIT(new_wake_up_event());
+		}
 		break;
 
 	case STATE_ACTIVE:
