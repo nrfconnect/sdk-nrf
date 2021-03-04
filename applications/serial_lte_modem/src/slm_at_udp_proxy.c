@@ -70,6 +70,7 @@ static bool udp_datamode;
 void rsp_send(const uint8_t *str, size_t len);
 void enter_datamode(void);
 bool check_uart_flowcontrol(void);
+bool exit_datamode(void);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -287,10 +288,13 @@ static int do_udp_send(const uint8_t *data, int datalen)
 		if (ret < 0) {
 			LOG_ERR("send() failed: %d", -errno);
 			if (errno != EAGAIN && errno != ETIMEDOUT) {
-				do_udp_server_stop(-errno);
-			} else {
 				sprintf(rsp_buf, "#XUDPSEND: %d\r\n", -errno);
 				rsp_send(rsp_buf, strlen(rsp_buf));
+				if (udp_server_role) {
+					do_udp_server_stop(-errno);
+				} else {
+					do_udp_client_disconnect();
+				}
 			}
 			ret = -errno;
 			break;
@@ -298,9 +302,9 @@ static int do_udp_send(const uint8_t *data, int datalen)
 		offset += ret;
 	}
 
-	sprintf(rsp_buf, "#XUDPSEND: %d\r\n", offset);
-	rsp_send(rsp_buf, strlen(rsp_buf));
 	if (ret >= 0) {
+		sprintf(rsp_buf, "#XUDPSEND: %d\r\n", offset);
+		rsp_send(rsp_buf, strlen(rsp_buf));
 		return 0;
 	} else {
 		return ret;
@@ -322,7 +326,14 @@ static int do_udp_send_datamode(const uint8_t *data, int datalen)
 		}
 		if (ret < 0) {
 			LOG_ERR("send() failed: %d", -errno);
-			ret = -errno;
+			if (errno != EAGAIN && errno != ETIMEDOUT) {
+				(void)exit_datamode();
+				if (udp_server_role) {
+					do_udp_server_stop(-errno);
+				} else {
+					do_udp_client_disconnect();
+				}
+			}
 			break;
 		}
 		offset += ret;
@@ -366,12 +377,10 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 			continue;
 		} else {
 			if (udp_server_role) {
-				ret = recvfrom(udp_sock, rx_data,
-					sizeof(rx_data), 0,
+				ret = recvfrom(udp_sock, rx_data, sizeof(rx_data), 0,
 					(struct sockaddr *)&remote, &size);
 			} else {
-				ret = recv(udp_sock, rx_data,
-					sizeof(rx_data), 0);
+				ret = recv(udp_sock, rx_data, sizeof(rx_data), 0);
 			}
 		}
 		if (ret < 0) {
@@ -388,8 +397,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 
 			ret = slm_util_htoa(rx_data, ret, data_hex, ret * 2);
 			if (ret > 0) {
-				sprintf(rsp_buf, "#XUDPRECV: %d,%d\r\n",
-					DATATYPE_HEXADECIMAL, ret);
+				sprintf(rsp_buf, "#XUDPDATA: %d,%d\r\n", DATATYPE_HEXADECIMAL, ret);
 				rsp_send(rsp_buf, strlen(rsp_buf));
 				rsp_send(data_hex, ret);
 				rsp_send("\r\n", 2);
@@ -397,8 +405,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 				LOG_WRN("hex convert error: %d", ret);
 			}
 		} else {
-			sprintf(rsp_buf, "#XUDPRECV: %d,%d\r\n",
-				DATATYPE_PLAINTEXT, ret);
+			sprintf(rsp_buf, "#XUDPDATA: %d,%d\r\n", DATATYPE_PLAINTEXT, ret);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			rsp_send(rx_data, ret);
 			rsp_send("\r\n", 2);
@@ -424,8 +431,7 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		if (op == AT_SERVER_START ||
-		    op == AT_SERVER_START_WITH_DATAMODE) {
+		if (op == AT_SERVER_START || op == AT_SERVER_START_WITH_DATAMODE) {
 			int32_t port;
 
 			err = at_params_int_get(&at_param_list, 2, &port);
@@ -441,8 +447,7 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 				return -EINVAL;
 			}
 #if defined(CONFIG_SLM_DATAMODE_HWFC)
-			if (op == AT_SERVER_START_WITH_DATAMODE &&
-			    !check_uart_flowcontrol()) {
+			if (op == AT_SERVER_START_WITH_DATAMODE && !check_uart_flowcontrol()) {
 				return -EINVAL;
 			}
 #endif
@@ -460,21 +465,14 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		if (udp_sock != INVALID_SOCKET) {
-			sprintf(rsp_buf, "#XUDPSVR: %d,%d\r\n",
-				udp_sock, udp_datamode);
-		} else {
-			sprintf(rsp_buf, "#XUDPSVR: %d\r\n",
-				INVALID_SOCKET);
-		}
+		sprintf(rsp_buf, "#XUDPSVR: %d,%d\r\n", udp_sock, udp_datamode);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf, "#XUDPSVR: (%d,%d,%d),<port>,<sec_tag>\r\n",
-			AT_SERVER_STOP, AT_SERVER_START,
-			AT_SERVER_START_WITH_DATAMODE);
+			AT_SERVER_STOP, AT_SERVER_START, AT_SERVER_START_WITH_DATAMODE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -502,8 +500,7 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		if (op == AT_CLIENT_CONNECT ||
-		    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
+		if (op == AT_CLIENT_CONNECT || op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 			int32_t port;
 			char url[TCPIP_MAX_URL];
 			int size = TCPIP_MAX_URL;
@@ -525,14 +522,12 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 				at_params_int_get(&at_param_list, 4, &sec_tag);
 			}
 #if defined(CONFIG_SLM_DATAMODE_HWFC)
-			if (op == AT_CLIENT_CONNECT_WITH_DATAMODE &&
-			    !check_uart_flowcontrol()) {
+			if (op == AT_CLIENT_CONNECT_WITH_DATAMODE && !check_uart_flowcontrol()) {
 				return -EINVAL;
 			}
 #endif
 			err = do_udp_client_connect(url, (uint16_t)port, sec_tag);
-			if (err == 0 &&
-			    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
+			if (err == 0 && op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				udp_datamode = true;
 				enter_datamode();
 			}
@@ -545,22 +540,14 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		if (udp_sock != INVALID_SOCKET) {
-			sprintf(rsp_buf, "#XUDPCLI: %d,%d\r\n",
-				udp_sock, udp_datamode);
-		} else {
-			sprintf(rsp_buf, "#XUDPCLI: %d\r\n",
-				INVALID_SOCKET);
-		}
+		sprintf(rsp_buf, "#XUDPCLI: %d,%d\r\n", udp_sock, udp_datamode);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf,
-			"#XUDPCLI: (%d, %d, %d),<url>,<port>,<sec_tag>\r\n",
-			AT_CLIENT_DISCONNECT, AT_CLIENT_CONNECT,
-			AT_CLIENT_CONNECT_WITH_DATAMODE);
+		sprintf(rsp_buf, "#XUDPCLI: (%d, %d, %d),<url>,<port>,<sec_tag>\r\n",
+			AT_CLIENT_DISCONNECT, AT_CLIENT_CONNECT, AT_CLIENT_CONNECT_WITH_DATAMODE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -584,8 +571,7 @@ static int handle_at_udp_send(enum at_cmd_type cmd_type)
 	char data[NET_IPV4_MTU];
 	int size = NET_IPV4_MTU;
 
-	if (remote.sin_family == AF_UNSPEC ||
-	    remote.sin_port == INVALID_PORT) {
+	if (remote.sin_family == AF_UNSPEC || remote.sin_port == INVALID_PORT) {
 		return err;
 	}
 
