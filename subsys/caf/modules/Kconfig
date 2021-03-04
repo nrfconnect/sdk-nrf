@@ -5,3 +5,4 @@
 #
 
 rsource "Kconfig.buttons"
+rsource "Kconfig.sensor_sampler"
