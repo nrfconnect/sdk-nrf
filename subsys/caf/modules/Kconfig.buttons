@@ -21,8 +21,6 @@ string "Configuration file"
 config CAF_BUTTONS_PM_EVENTS
 	bool "Power management events support"
 	depends on CAF_PM_EVENTS
-	help
-	  React on power management events in buttons module.
 
 config CAF_BUTTONS_SCAN_INTERVAL
 	int "Buttons scan interval in ms"

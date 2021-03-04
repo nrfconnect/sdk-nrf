@@ -90,7 +90,8 @@ If any button state change occurs, the module sends related event.
 Power management states
 =======================
 
-If the :option:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module can react to power management events and the following additional states are available:
+If the :option:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module can react to power management events and submit ``wake_up_event``.
+In that case, the following additional states are available:
 
 * ``STATE_SUSPENDING``
 * ``STATE_IDLE``
@@ -106,4 +107,3 @@ Then, it switches to ``STATE_IDLE``.
 If a ``power_down_event`` comes while the module is in the ``STATE_ACTIVE`` state, the module switches to ``STATE_IDLE`` immediately.
 Similarly as in ``STATE_ACTIVE``, in ``STATE_IDLE`` the module enables the GPIO interrupts and waits for the pin state to change.
 However, in ``STATE_IDLE`` the module can also invoke ``wake_up_event`` and send it to all subscribing modules.
-This functionality can be enabled by :option:`CONFIG_CAF_PM_EVENTS`.
