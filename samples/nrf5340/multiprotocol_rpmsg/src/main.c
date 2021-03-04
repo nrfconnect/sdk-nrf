@@ -12,7 +12,6 @@
 #include <zephyr.h>
 #include <arch/cpu.h>
 #include <sys/byteorder.h>
-#include <logging/log.h>
 #include <sys/util.h>
 #include <drivers/ipm.h>
 
@@ -27,9 +26,9 @@
 
 #include <nrf_802154_serialization_error.h>
 
-#define LOG_LEVEL LOG_LEVEL_INFO
+#define BT_DBG_ENABLED 0
 #define LOG_MODULE_NAME hci_rpmsg
-LOG_MODULE_REGISTER(LOG_MODULE_NAME);
+#include "common/log.h"
 
 static int endpoint_id;
 
@@ -192,7 +191,7 @@ static int hci_rpmsg_send(struct net_buf *buf)
 #if defined(CONFIG_BT_CTLR_ASSERT_HANDLER)
 void bt_ctlr_assert_handle(char *file, uint32_t line)
 {
-	LOG_ERR("Controller assert in: %s at %d", file, line);
+	BT_ASSERT_MSG(false, "Controller assert in: %s at %d", file, line);
 }
 #endif /* CONFIG_BT_CTLR_ASSERT_HANDLER */
 
