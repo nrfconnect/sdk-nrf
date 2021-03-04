@@ -357,11 +357,9 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 	uint32_t offset = 0;
 	int sock;
 
-	if (proxy.role == AT_TCP_ROLE_CLIENT &&
-	    proxy.sock != INVALID_SOCKET) {
+	if (proxy.role == AT_TCP_ROLE_CLIENT && proxy.sock != INVALID_SOCKET) {
 		sock = proxy.sock;
-	} else if (proxy.role == AT_TCP_ROLE_SERVER &&
-		   proxy.sock_peer != INVALID_SOCKET) {
+	} else if (proxy.role == AT_TCP_ROLE_SERVER && proxy.sock_peer != INVALID_SOCKET) {
 		sock = proxy.sock_peer;
 		k_timer_stop(&conn_timer);
 	} else {
@@ -379,7 +377,7 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 				if (proxy.role == AT_TCP_ROLE_CLIENT) {
 					do_tcp_client_disconnect();
 				} else {
-					do_tcp_server_stop();
+					k_work_submit(&disconnect_work);
 				}
 			}
 			ret = -errno;
@@ -393,9 +391,7 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		/* restart activity timer */
 		if (proxy.role == AT_TCP_ROLE_SERVER) {
-			k_timer_start(&conn_timer,
-				      K_SECONDS(CONFIG_SLM_TCP_CONN_TIME),
-				      K_NO_WAIT);
+			k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME), K_NO_WAIT);
 		}
 		return 0;
 	} else {
@@ -409,11 +405,9 @@ static int do_tcp_send_datamode(const uint8_t *data, int datalen)
 	uint32_t offset = 0;
 	int sock;
 
-	if (proxy.role == AT_TCP_ROLE_CLIENT &&
-	    proxy.sock != INVALID_SOCKET) {
+	if (proxy.role == AT_TCP_ROLE_CLIENT && proxy.sock != INVALID_SOCKET) {
 		sock = proxy.sock;
-	} else if (proxy.role == AT_TCP_ROLE_SERVER &&
-		   proxy.sock_peer != INVALID_SOCKET) {
+	} else if (proxy.role == AT_TCP_ROLE_SERVER && proxy.sock_peer != INVALID_SOCKET) {
 		sock = proxy.sock_peer;
 		k_timer_stop(&conn_timer);
 	} else {
@@ -425,16 +419,24 @@ static int do_tcp_send_datamode(const uint8_t *data, int datalen)
 		ret = send(sock, data + offset, datalen - offset, 0);
 		if (ret < 0) {
 			LOG_ERR("send() failed: %d", -errno);
+			if (errno != EAGAIN && errno != ETIMEDOUT) {
+				if (proxy.role == AT_TCP_ROLE_CLIENT) {
+					do_tcp_client_disconnect();
+				} else {
+					k_work_submit(&disconnect_work);
+				}
+			}
 			ret = -errno;
 			break;
 		}
 		offset += ret;
 	}
 
-	/* restart activity timer */
-	if (proxy.role == AT_TCP_ROLE_SERVER) {
-		k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME),
-			K_NO_WAIT);
+	if (ret >= 0) {
+		/* restart activity timer */
+		if (proxy.role == AT_TCP_ROLE_SERVER) {
+			k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME), K_NO_WAIT);
+		}
 	}
 
 	return offset;
