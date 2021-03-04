@@ -28,7 +28,7 @@ Overview
 
 The application samples sensor data and publishes the data to a connected cloud service over TCP/IP via LTE.
 As of now, the application supports `AWS IoT Core`_.
-The application is intended to be used with an instance of `Asset Tracker Cloud Example for AWS`_ running on the cloud side.
+The application is intended to be used with an instance of the `nRF Asset Tracker for AWS`_ running on the cloud side.
 
 Firmware architecture
 =====================
@@ -219,14 +219,14 @@ Currently, the application supports Amazon Web Services IoT Core cloud service a
 
 `Azure support for Asset Tracker v2`_ is currently under implementation.
 
-Setting up the Asset Tracker Cloud Example for AWS
---------------------------------------------------
+Setting up the nRF Asset Tracker for AWS
+----------------------------------------
 
-The application is compatible with the `Asset Tracker Cloud Example for AWS`_, which is an open source reference implementation of a serverless backend for an IoT product.
-To set up the application to work with the Asset Tracker Cloud Example for AWS, see the `Getting started guide for Asset Tracker Cloud Example for AWS`_.
+The application is compatible with the `nRF Asset Tracker for AWS`_, which is an open source reference implementation of a serverless backend for an IoT product.
+To set up the application to work with the nRF Asset Tracker for AWS, see the `Getting started guide for nRF Asset Tracker for AWS`_.
 
 Once you have finished the setup, you must provide the broker hostname to the firmware using the :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` Kconfig option.
-Configure the secTag using the :option:`CONFIG_AWS_IOT_SEC_TAG` Kconfig option. For example, you can use the default value of ``42`` that is used in the Asset Tracker Cloud Example for AWS .
+Configure the secTag using the :option:`CONFIG_AWS_IOT_SEC_TAG` Kconfig option. For example, you can use the default value of ``42`` that is used in the nRF Asset Tracker for AWS .
 
 Configuration options
 =====================
