@@ -162,6 +162,8 @@
 .. _`nRF Connect Programmer`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_introduction.html
 .. _`Programming the nRF52840 Dongle`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_programming_dongle.html
 
+.. _`nRF pynrfjprog`: https://infocenter.nordicsemi.com/topic/ug_pynrfjprog/UG/pynrfjprog/pynrfjprog_lpage.html
+
 .. _`nRF9160 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/nRF9160_html5_keyfeatures.html
 
 .. _`nRF9160 DK Getting Started`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/intro.html
