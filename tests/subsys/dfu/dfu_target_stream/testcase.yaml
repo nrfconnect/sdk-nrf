@@ -1,8 +1,11 @@
+# Since we need the storage partition we limit the set of allowed platforms.
 tests:
   dfu.target_stream:
     tags: target_stream
-    platform_exclude: qemu_cortex_m3 qemu_x86
+    platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp
   dfu.target_stream.store_progress:
     tags: target_stream
     extra_args: OVERLAY_CONFIG=overlay-store-progress.conf
-    platform_exclude: qemu_cortex_m3 qemu_x86
+    # Since we need the storage partition (and hence PM) allow some nRF devices
+    # only.
+    platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp
