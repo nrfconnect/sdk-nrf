@@ -7,3 +7,12 @@ tests:
     build_on_all: true
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
     tags: ci_build
+    extra_args: OVERLAY_CONFIG=overlay-logging.conf;overlay-vendor_hook.conf
+
+
+  samples.openthread.coprocessor.rcp:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
+    tags: ci_build
+    extra_args: OVERLAY_CONFIG=overlay-rcp.conf;overlay-logging.conf;overlay-vendor_hook.conf
