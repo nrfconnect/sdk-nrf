@@ -96,7 +96,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
 /samples/spm/                             @lemrey @hakonfam @ioannisg
-/samples/openthread/                      @MarekPorwisz @lmaciejonczyk
+/samples/openthread/                      @MarekPorwisz @lmaciejonczyk @rlubos
 /samples/profiler/                        @pdunaj @pizi-nordic
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/lpuart/               @nordic-krch
