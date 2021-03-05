@@ -15,7 +15,7 @@ The messages are encrypted with two layers of 128-bit AES-CCM encryption, allowi
 The end-user applications are implemented as a set of mesh models.
 The Bluetooth SIG defines some generic and reusable models in the `Bluetooth mesh model specification`_, but vendors are free to define their own models.
 
-Read more about the Bluetooth mesh in the Bluetooth SIG's `Bluetooth mesh study guide`_ and `Bluetooth mesh FAQ`_.
+Read more about the Bluetooth mesh in the Bluetooth SIG's `Bluetooth mesh introduction blog`_, `Bluetooth mesh study guide`_ and `Bluetooth mesh FAQ`_.
 Make also sure to check the official `Bluetooth mesh glossary`_.
 
 .. _mesh_ug_supported features:
