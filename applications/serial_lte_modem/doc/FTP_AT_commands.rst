@@ -33,6 +33,7 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XFTP="ascii"``
 * ``AT#XFTP="binary"``
 * ``AT#XFTP="close"``
+* ``AT#XFTP="verbose","on|off"``
 * ``AT#XFTP="pwd"``
 * ``AT#XFTP="cd",<folder>``
 * ``AT#XFTP="ls"[,<options>[,<folder or file>]]``
@@ -41,7 +42,9 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XFTP="rename",<filename_old>,<filename_new>``
 * ``AT#XFTP="delete",<file>``
 * ``AT#XFTP="get",<file>``
-* ``AT#XFTP="put",<file>[<datatype>,<data>]``
+* ``AT#XFTP="put",<file>,<datatype>[,<data>]``
+* ``AT#XFTP="uput",<datatype>[,<data>]``
+* ``AT#XFTP="mput",<file>,<datatype>[,<data>]``
 
 The values of the parameters depend on the command string used.
 
