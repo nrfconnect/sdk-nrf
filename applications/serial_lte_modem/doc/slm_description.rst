@@ -241,6 +241,9 @@ Check and configure the following configuration options for the sample:
 
    This option enables additional AT commands for using the HTTP client service.
 
+.. option:: CONFIG_SLM_TWI - TWI support in SLM
+
+   This option enables additional AT commands for using the TWI service.
 
 Additional configuration
 ========================

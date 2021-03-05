@@ -145,6 +145,7 @@ rsource "src/gps/Kconfig"
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"
 rsource "src/http_c/Kconfig"
+rsource "src/twi/Kconfig"
 
 module = SLM
 module-str = serial modem

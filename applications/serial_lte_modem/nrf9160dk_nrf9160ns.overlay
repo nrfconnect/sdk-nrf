@@ -8,3 +8,8 @@
 	cts-pin = <13>;
 	hw-flow-control;
 };
+
+
+&i2c2 {
+	status = "disabled";
+};
