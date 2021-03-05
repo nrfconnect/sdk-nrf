@@ -56,6 +56,21 @@ nRF9160
 
     * Added an API to retrieve the image type that is being downloaded.
 
+  * :ref:`lib_ftp_client` library:
+
+    * Support subset of RFC959 FTP commands only.
+    * Added support of STOU and APPE (besides STOR) for "put".
+    * Added detection of socket errors, report with proprietary reply message.
+    * Increased FTP payload size from NET_IPV4_MTU(576) to MSS as defined on modem side (708).
+    * Added polling "226 Transfer complete" after data channel TX/RX, with a configurable timeout of 60 seconds.
+    * Ignored the reply code of "UTF8 ON" command as some FTP server returns abnormal reply.
+
+  * :ref:`serial_lte_modem` application:
+
+    * Fixed TCP/UDP port range issue (0~65535).
+    * Added AT#XSLEEP=2 to power off UART interface.
+    * Added data mode to FTP service.
+
 Common
 ======
 
