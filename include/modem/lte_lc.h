@@ -97,7 +97,7 @@ enum lte_lc_system_mode_preference {
 	LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO
 };
 
-/** @brief Functional modes, used to contol RF functionality in the modem.
+/** @brief Functional modes, used to control RF functionality in the modem.
  *
  *  @note The functional modes map directly to the functional modes as described
  *	  in "nRF91 AT Commands - Command Reference Guide". Please refer to the
