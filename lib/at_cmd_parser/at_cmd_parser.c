@@ -367,6 +367,100 @@ static int at_parse_param(const char **at_params_str,
 	return 0;
 }
 
+/*
+ * Internal function.
+ * Check AT command grammar based on below.
+ *  AT<terminator>
+ *  AT<separator><body><terminator>
+ *  AT<separator><body>=<terminator>
+ *  AT<separator><body>?<terminator>
+ *  AT<separator><body>=?<terminator>
+ *  AT<separator><body>=<parameters><terminator>
+ * In which
+ * <terminator>: CR, LF, CRLF, NULL
+ * <separator>: +, %, #
+ * <body>: alphabetic char only, size > 0
+ * <parameters>: arbitrary, size > 0
+ */
+static int command_grammar_check(const char *at_params_str)
+{
+	const char *cmd = at_params_str;
+	const char *body = NULL;
+
+	/* check AT (if not, no check) */
+	if (strlen(cmd) < 2 || toupper((int)cmd[0]) != 'A' || toupper((int)cmd[1]) != 'T') {
+		return 0;
+	}
+
+	/* check AT<terminator> */
+	cmd += 2;
+	if (is_lfcr(*cmd) || is_terminated(*cmd)) {
+		return 0;
+	}
+
+	/* check AT<separator> */
+	if ((*cmd != AT_STANDARD_NOTIFICATION_PREFIX) && (*cmd != AT_PROP_NOTIFICATION_PREFX) &&
+	    (*cmd != AT_CUSTOM_COMMAND_PREFX)) {
+		return -EINVAL;
+	}
+
+	/* check AT<separator><body> */
+	cmd += 1;
+	body = cmd;
+	do {
+		/* check body is alphabetic */
+		if (is_valid_notification_char(*cmd)) {
+			cmd++;
+		} else {
+			break;
+		}
+	} while (true);
+
+	/* check body size > 0 */
+	if (cmd == body) {
+		return -EINVAL;
+	}
+
+	/* check AT<separator><body><terminator> */
+	if (is_lfcr(*cmd) || is_terminated(*cmd)) {
+		return 0;
+	}
+
+	/* check AT<separator><body>= or check AT<separator><body>? */
+	if (*cmd != AT_CMD_SEPARATOR && *cmd != AT_CMD_READ_TEST_IDENTIFIER) {
+		return -EINVAL;
+	}
+
+	/* check AT<separator><body>?<terminator> */
+	if (*cmd == AT_CMD_READ_TEST_IDENTIFIER) {
+		cmd += 1;
+		if (is_lfcr(*cmd) || is_terminated(*cmd)) {
+			return 0;
+		} else {
+			return -EINVAL;
+		}
+	}
+
+	/* check AT<separator><body>=<terminator> */
+	cmd += 1;
+	if (is_lfcr(*cmd) || is_terminated(*cmd)) {
+		return 0;
+	}
+
+	/* check AT<separator><body>=?<terminator> */
+	if (*cmd == AT_CMD_READ_TEST_IDENTIFIER) {
+		cmd += 1;
+		if (is_lfcr(*cmd) || is_terminated(*cmd)) {
+			return 0;
+		} else {
+			return -EINVAL;
+		}
+	}
+
+	/* no need to check AT<separator><body>=<parameters><terminator> */
+	return 0;
+}
+
 int at_parser_params_from_str(const char *at_params_str, char **next_params_str,
 			      struct at_param_list *const list)
 {
@@ -389,8 +483,12 @@ int at_parser_max_params_from_str(const char *at_params_str,
 
 	max_params_count = MIN(max_params_count, list->param_count);
 
-	err = at_parse_param(&at_params_str, list, max_params_count);
+	err = command_grammar_check(at_params_str);
+	if (err) {
+		return err;
+	}
 
+	err = at_parse_param(&at_params_str, list, max_params_count);
 	if (next_param_str) {
 		*next_param_str = (char *)at_params_str;
 	}

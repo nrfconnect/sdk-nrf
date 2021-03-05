@@ -25,6 +25,22 @@ Probing which type of element is stored on which index can be done using the :c:
 Before using the AT command parser, you must initialize a list of AT command/response parameters by calling :c:func:`at_params_list_init`.
 Then, to parse a string, simply pass the returned AT command string to the library function :c:func:`at_parser_params_from_str`.
 
+NOTE before parsing an AT command with the library function :c:func:`at_parser_params_from_str`, AT command grammar is checked internally.
+An AT command has below grammar:
+
+AT<terminator>
+AT<separator><body><terminator>
+AT<separator><body>=<terminator>
+AT<separator><body>?<terminator>
+AT<separator><body>=?<terminator>
+AT<separator><body>=<parameters><terminator>
+
+<terminator>: CR, LF, CRLF, NULL
+<separator>: +, %, #
+<body>: alphabetic char only, size > 0
+<parameters>: arbitrary, size > 0
+
+No grammar check for AT command response and AT unsolicited message.
 
 API documentation
 *****************
