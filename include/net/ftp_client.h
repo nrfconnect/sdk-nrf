@@ -24,10 +24,10 @@ extern "C" {
 #endif
 
 /**
- * @brief List of FTP server return codes
- * Reference https://en.wikipedia.org/wiki/List_of_FTP_server_return_codes
+ * @brief List of FTP server reply codes
+ * Reference RFC959 FTP Transfer Protocol
  */
-enum ftp_return_code {
+enum ftp_reply_code {
 	/* 100 Series	The requested action is being initiated, expect another
 	 * reply before proceeding with a new command
 	 */
@@ -37,7 +37,7 @@ enum ftp_return_code {
 	 * where yyyy is User-process data stream marker, and mmmm server's
 	 * equivalent marker (note the spaces between markers and "=")
 	 */
-	FTP_CODE_110 = 100,
+	FTP_CODE_110 = 110,
 	/* Service ready in nnn minutes */
 	FTP_CODE_120 = 120,
 	/* Data connection already open; transfer starting */
@@ -178,6 +178,29 @@ enum ftp_return_code {
 	/* Confidentiality protected reply */
 	FTP_CODE_633 = 633,
 
+	/*** Nordic proprietary reply codes */
+
+	/* DUMMY */
+	FTP_CODE_900 = 900,
+
+	/** Fatal errors */
+	/* Disconnected by remote server */
+	FTP_CODE_901 = 901,
+	/* Connection aborted */
+	FTP_CODE_902 = 902,
+	/* Socket poll error */
+	FTP_CODE_903 = 903,
+	/* Unexpected poll event */
+	FTP_CODE_904 = 904,
+	/* Network down */
+	FTP_CODE_905 = 905,
+	/* Unexpected error */
+	FTP_CODE_909 = 909,
+
+	/** Non-fatal errors */
+	/* Data transfer timeout */
+	FTP_CODE_910 = 910,
+
 	/* 10000 Series Common Winsock Error Codes[2] (These are not FTP
 	 * return codes)
 	 */
@@ -204,11 +227,18 @@ enum ftp_return_code {
 #define FTP_TRANSIENT_NEG(code)		(code > 400 && code < 500)
 #define FTP_COMPLETION_NEG(code)	(code > 500 && code < 600)
 #define FTP_PROTECTED(code)		(code > 600 && code < 700)
+#define FTP_PROPRIETARY(code)		(code > 900 && code < 1000)
 #define FTP_WINSOCK_ERR(code)		(code > 10000)
 
 enum ftp_trasfer_type {
 	FTP_TYPE_ASCII,
 	FTP_TYPE_BINARY
+};
+
+enum ftp_put_type {
+	FTP_PUT_NORMAL,
+	FTP_PUT_UNIQUE,
+	FTP_PUT_APPEND
 };
 
 /**
@@ -227,8 +257,7 @@ typedef void (*ftp_client_callback_t)(const uint8_t *msg, uint16_t len);
  * @retval 0 If successfully initialized.
  *           Otherwise, a negative value is returned.
  */
-int ftp_init(ftp_client_callback_t ctrl_callback,
-		ftp_client_callback_t data_callback);
+int ftp_init(ftp_client_callback_t ctrl_callback, ftp_client_callback_t data_callback);
 
 /**@brief Uninitialize the FTP client library.
  *
@@ -243,7 +272,7 @@ int ftp_uninit(void);
  * @param port FTP service port on server
  * @param sec_tag If FTP over TLS is required (-1 means no TLS)
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_open(const char *hostname, uint16_t port, int sec_tag);
 
@@ -252,20 +281,20 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag);
  * @param username user name
  * @param password passoword
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_login(const char *username, const char *password);
 
 /**@brief Close FTP connection.
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_close(void);
 
 /**@brief Get FTP server and connection status
  * Also returns server system type
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_status(void);
 
@@ -273,13 +302,13 @@ int ftp_status(void);
  *
  * @param type transfer type
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_type(enum ftp_trasfer_type type);
 
 /**@brief Print working directory
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_pwd(void);
 
@@ -288,7 +317,7 @@ int ftp_pwd(void);
  * @param options List options, refer to Linux "man ls"
  * @param target file or diretory to list. If not specified, list current folder
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_list(const char *options, const char *target);
 
@@ -296,7 +325,7 @@ int ftp_list(const char *options, const char *target);
  *
  * @param folder Target folder
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_cwd(const char *folder);
 
@@ -304,7 +333,7 @@ int ftp_cwd(const char *folder);
  *
  * @param folder New folder name
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_mkd(const char *folder);
 
@@ -312,7 +341,7 @@ int ftp_mkd(const char *folder);
  *
  * @param folder Target folder name
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_rmd(const char *folder);
 
@@ -321,7 +350,7 @@ int ftp_rmd(const char *folder);
  * @param old_name Old file name
  * @param new_name New file name
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_rename(const char *old_name, const char *new_name);
 
@@ -329,7 +358,7 @@ int ftp_rename(const char *old_name, const char *new_name);
  *
  * @param file Target file name
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_delete(const char *file);
 
@@ -337,7 +366,7 @@ int ftp_delete(const char *file);
  *
  * @param file Target file name
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
 int ftp_get(const char *file);
 
@@ -347,11 +376,11 @@ int ftp_get(const char *file);
  * @param file Target file name
  * @param data Data to be stored
  * @param length Length of data to be stored
+ * @param type specify FTP put types, see enum ftp_reply_code
  *
- * @retval ftp_return_code or negative if error
+ * @retval ftp_reply_code or negative if error
  */
-int ftp_put(const char *file, const uint8_t *data, uint16_t length);
-
+int ftp_put(const char *file, const uint8_t *data, uint16_t length, int type);
 
 #ifdef __cplusplus
 }
