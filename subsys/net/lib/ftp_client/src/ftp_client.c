@@ -20,6 +20,8 @@ LOG_MODULE_REGISTER(ftp_client, CONFIG_FTP_CLIENT_LOG_LEVEL);
 #define FTP_MAX_HOSTNAME	64
 #define FTP_MAX_USERNAME	32
 #define FTP_MAX_PASSWORD	32
+#define FTP_MAX_BUFFER_SIZE	708 /* align with MSS on modem side */
+#define FTP_DATA_TIMEOUT_SEC	60  /* time in seconds to wait for "Transfer complete" */
 
 #define FTP_CODE_ANY		0
 
@@ -28,7 +30,8 @@ LOG_MODULE_REGISTER(ftp_client, CONFIG_FTP_CLIENT_LOG_LEVEL);
 static K_THREAD_STACK_DEFINE(ftp_stack_area, FTP_STACK_SIZE);
 
 static struct ftp_client {
-	int sock; /* Socket descriptor. */
+	int cmd_sock;
+	int data_sock;
 	bool connected; /* Server connected flag */
 	struct sockaddr_in remote; /* Server */
 	int sec_tag;
@@ -37,8 +40,7 @@ static struct ftp_client {
 } client;
 
 static struct k_work_q ftp_work_q;
-static char ctrl_buf[NET_IPV4_MTU];
-static K_SEM_DEFINE(tx_done, 0, 1);
+static char ctrl_buf[FTP_MAX_BUFFER_SIZE];
 
 enum data_task_type {
 	TASK_SEND,
@@ -58,6 +60,10 @@ static int parse_return_code(const uint8_t *message, int success_code)
 	char code_str[6]; /* max 1xxxx*/
 	int ret = FTP_CODE_500;
 
+	if (success_code == FTP_CODE_ANY) {
+		return success_code;
+	}
+
 	sprintf(code_str, "%d ", success_code);
 	if (strstr(message, code_str)) {
 		ret = success_code;
@@ -72,7 +78,6 @@ static int establish_data_channel(const char *pasv_msg)
 	char tmp[16];
 	char *tmp1, *tmp2;
 	uint16_t data_port;
-	int data_sock;
 
 	/* Parse Server port from passive message
 	 * e.g. "227 Entering Passive Mode (90,130,70,73,86,111)"
@@ -99,11 +104,11 @@ static int establish_data_channel(const char *pasv_msg)
 
 	/* Establish the second connect for data */
 	if (client.sec_tag <= 0) {
-		data_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		client.data_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	} else {
-		data_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
+		client.data_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
 	}
-	if (data_sock < 0) {
+	if (client.data_sock < 0) {
 		LOG_ERR("socket(data) failed: %d", -errno);
 		ret = -errno;
 	}
@@ -111,25 +116,61 @@ static int establish_data_channel(const char *pasv_msg)
 	if (client.sec_tag > 0) {
 		sec_tag_t sec_tag_list[1] = { client.sec_tag };
 
-		ret = setsockopt(data_sock, SOL_TLS, TLS_SEC_TAG_LIST,
+		ret = setsockopt(client.data_sock, SOL_TLS, TLS_SEC_TAG_LIST,
 				sec_tag_list, sizeof(sec_tag_t));
 		if (ret) {
 			LOG_ERR("set tag list failed: %d", -errno);
-			close(data_sock);
+			close(client.data_sock);
 			return -errno;
 		}
 
 	}
 	client.remote.sin_port = htons(data_port);
-	ret = connect(data_sock, (struct sockaddr *)&client.remote,
+	ret = connect(client.data_sock, (struct sockaddr *)&client.remote,
 		 sizeof(struct sockaddr_in));
 	if (ret < 0) {
 		LOG_ERR("connect(data) failed: %d", -errno);
-		close(data_sock);
+		close(client.data_sock);
 		return -errno;
 	}
 
-	return data_sock;
+	return ret;
+}
+
+static void close_connection(int code, int error)
+{
+	if (FTP_PROPRIETARY(code)) {
+		switch (code) {
+		case FTP_CODE_901:
+			sprintf(ctrl_buf, "901 Disconnected(%d).\r\n", error);
+			break;
+		case FTP_CODE_902:
+			sprintf(ctrl_buf, "902 Connection aborted(%d).\r\n", error);
+			break;
+		case FTP_CODE_903:
+			sprintf(ctrl_buf, "903 Poll error(%d).\r\n", error);
+			break;
+		case FTP_CODE_904:
+			sprintf(ctrl_buf, "904 Unexpected poll event(%d).\r\n", error);
+			break;
+		case FTP_CODE_905:
+			sprintf(ctrl_buf, "905 Network down (%d).\r\n", error);
+			break;
+		default:
+			sprintf(ctrl_buf, "900 Unknown error(%d).\r\n", -ENOEXEC);
+			break;
+		}
+		client.ctrl_callback(ctrl_buf, strlen(ctrl_buf));
+	}
+	/* Should be impossble, just in case */
+	if (client.data_sock != INVALID_SOCKET) {
+		close(client.data_sock);
+	}
+	close(client.cmd_sock);
+	client.cmd_sock = INVALID_SOCKET;
+	client.data_sock = INVALID_SOCKET;
+	client.connected = false;
+	client.sec_tag = INVALID_SEC_TAG;
 }
 
 /**@brief Send FTP message via socket
@@ -142,17 +183,21 @@ static int do_ftp_send_ctrl(const uint8_t *message, int length)
 	LOG_HEXDUMP_DBG(message, length, "TXC");
 
 	while (offset < length) {
-		ret = send(client.sock, message + offset, length - offset, 0);
+		ret = send(client.cmd_sock, message + offset, length - offset, 0);
 		if (ret < 0) {
-			LOG_ERR("send(ctrl) failed: %d", -errno);
+			LOG_ERR("send cmd failed: %d", -errno);
 			ret = -errno;
 			break;
 		}
 		offset += ret;
 		ret = 0;
 	}
-
-	LOG_DBG("CMD sent");
+	/* Detect network down */
+	if (ret == -ENETDOWN) {
+		close_connection(FTP_CODE_905, ret);
+	} else {
+		LOG_DBG("CMD sent");
+	}
 	return ret;
 }
 
@@ -160,7 +205,6 @@ static int do_ftp_send_ctrl(const uint8_t *message, int length)
  */
 static int do_ftp_send_data(const char *pasv_msg, uint8_t *message, uint16_t length)
 {
-	int data_sock;
 	int ret;
 	uint32_t offset = 0;
 
@@ -172,11 +216,10 @@ static int do_ftp_send_data(const char *pasv_msg, uint8_t *message, uint16_t len
 
 	LOG_HEXDUMP_DBG(message, length, "TXD");
 
-	data_sock = ret;
 	while (offset < length) {
-		ret = send(data_sock, message + offset, length - offset, 0);
+		ret = send(client.data_sock, message + offset, length - offset, 0);
 		if (ret < 0) {
-			LOG_ERR("send(data) failed: %d", -errno);
+			LOG_ERR("send data failed: %d", -errno);
 			ret = -errno;
 			break;
 		}
@@ -185,7 +228,7 @@ static int do_ftp_send_data(const char *pasv_msg, uint8_t *message, uint16_t len
 	}
 
 	LOG_DBG("DATA sent");
-	close(data_sock);
+	close(client.data_sock);
 	return ret;
 }
 
@@ -197,21 +240,37 @@ static int do_ftp_recv_ctrl(bool post_result, int success_code)
 	struct pollfd fds[1];
 
 	/* Receive FTP control message */
-	fds[0].fd = client.sock;
+	fds[0].fd = client.cmd_sock;
 	fds[0].events = POLLIN;
 	ret = poll(fds, 1, MSEC_PER_SEC * CONFIG_FTP_CLIENT_LISTEN_TIME);
-	if (ret <= 0) {
-		LOG_ERR("poll(ctrl) failed: (%d)", -errno);
-		return -ETIMEDOUT;
-	}
-	ret = recv(client.sock, ctrl_buf, sizeof(ctrl_buf), 0);
 	if (ret < 0) {
-		LOG_ERR("recv(ctrl) failed: (%d)", -errno);
-		return -errno;
+		LOG_ERR("poll(ctrl) failed: (%d)", -errno);
+		close_connection(FTP_CODE_903, -errno);
+		return -EIO;
 	}
 	if (ret == 0) {
-		/* Server close connection */
+		LOG_DBG("poll(ctrl) timeout");
+		return -ETIMEDOUT;   /* allow retry */
+	}
+	if ((fds[0].revents & POLLHUP) == POLLHUP) {
+		LOG_ERR("POLLHUP");
+		close_connection(FTP_CODE_901, -ECONNRESET);
 		return -ECONNRESET;
+	}
+	if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
+		LOG_ERR("POLLNVAL");
+		close_connection(FTP_CODE_902, -ECONNABORTED);
+		return -ECONNABORTED;
+	}
+	if ((fds[0].revents & POLLIN) != POLLIN) {
+		LOG_ERR("POLL 0x%08x", fds[0].revents);
+		close_connection(FTP_CODE_904, -EAGAIN);
+		return -EAGAIN;
+	}
+	ret = recv(client.cmd_sock, ctrl_buf, sizeof(ctrl_buf), 0);
+	if (ret <= 0) {
+		LOG_ERR("recv(ctrl) failed: (%d)", -errno);
+		return -errno;   /* allow retry */
 	}
 
 	ctrl_buf[ret] = 0x00;
@@ -230,9 +289,8 @@ static int do_ftp_recv_ctrl(bool post_result, int success_code)
 static void do_ftp_recv_data(const char *pasv_msg)
 {
 	int ret;
-	int data_sock;
 	struct pollfd fds[1];
-	char data_buf[NET_IPV4_MTU];
+	char data_buf[FTP_MAX_BUFFER_SIZE];
 
 	/* Establish data channel */
 	ret = establish_data_channel(pasv_msg);
@@ -241,12 +299,10 @@ static void do_ftp_recv_data(const char *pasv_msg)
 	}
 
 	/* Receive FTP data message */
-	data_sock = ret;
-	fds[0].fd = data_sock;
+	fds[0].fd = client.data_sock;
 	fds[0].events = POLLIN;
 	do {
-		ret = poll(fds, 1,
-			MSEC_PER_SEC * CONFIG_FTP_CLIENT_LISTEN_TIME);
+		ret = poll(fds, 1, MSEC_PER_SEC * CONFIG_FTP_CLIENT_LISTEN_TIME);
 		if (ret <= 0) {
 			LOG_ERR("poll(data) failed: (%d)", -errno);
 			break;
@@ -255,7 +311,7 @@ static void do_ftp_recv_data(const char *pasv_msg)
 			LOG_INF("No more data");
 			break;
 		}
-		ret = recv(data_sock, data_buf, sizeof(data_buf), 0);
+		ret = recv(client.data_sock, data_buf, sizeof(data_buf), 0);
 		if (ret < 0) {
 			LOG_ERR("recv(data) failed: (%d)", -errno);
 			break;
@@ -269,22 +325,45 @@ static void do_ftp_recv_data(const char *pasv_msg)
 		client.data_callback(data_buf, ret);
 	} while (true);
 
-	close(data_sock);
+	close(client.data_sock);
 	LOG_DBG("DATA received");
+}
+
+static int poll_data_task_done(void)
+{
+	int ret = -ENODATA;
+	int wait_time = 0;
+
+	do {
+		ret = do_ftp_recv_ctrl(true, FTP_CODE_226);
+		if (ret < 0) {
+			break;
+		}
+		if (ret == FTP_CODE_226) {
+			break;
+		}
+		if (ret == -ETIMEDOUT) {
+			if (wait_time < FTP_DATA_TIMEOUT_SEC) {
+				wait_time += CONFIG_FTP_CLIENT_LISTEN_TIME;
+			} else {
+				sprintf(ctrl_buf, "%d Transfer timeout.\r\n", FTP_CODE_910);
+				client.ctrl_callback(ctrl_buf, strlen(ctrl_buf));
+				break;
+			}
+		}
+	} while (1);
+
+	return ret;
 }
 
 static void data_task(struct k_work *item)
 {
-	struct data_task *task_param =
-		CONTAINER_OF(item, struct data_task, work);
+	struct data_task *task_param = CONTAINER_OF(item, struct data_task, work);
 
 	if (task_param->task == TASK_RECEIVE) {
 		do_ftp_recv_data(task_param->ctrl_msg);
 	} else if (task_param->task == TASK_SEND) {
-		do_ftp_send_data(task_param->ctrl_msg,
-				task_param->data,
-				task_param->length);
-		k_sem_give(&tx_done);
+		do_ftp_send_data(task_param->ctrl_msg, task_param->data, task_param->length);
 	}
 }
 
@@ -298,14 +377,18 @@ static void keepalive_handler(struct k_work *work)
 	}
 }
 
+static void keepalive_timeout(struct k_timer *dummy);
 K_WORK_DEFINE(keepalive_work, keepalive_handler);
+K_TIMER_DEFINE(keepalive_timer, keepalive_timeout, NULL);
 
 static void keepalive_timeout(struct k_timer *dummy)
 {
-	k_work_submit_to_queue(&ftp_work_q, &keepalive_work);
+	if (client.cmd_sock != INVALID_SOCKET) {
+		k_work_submit_to_queue(&ftp_work_q, &keepalive_work);
+	} else {
+		k_timer_stop(&keepalive_timer);
+	}
 }
-
-K_TIMER_DEFINE(keepalive_timer, keepalive_timeout, NULL);
 
 int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 {
@@ -321,13 +404,11 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 	}
 	/* open control socket */
 	if (sec_tag <= 0) {
-		client.sock = socket(AF_INET, SOCK_STREAM,
-				IPPROTO_TCP);
+		client.cmd_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	} else {
-		client.sock = socket(AF_INET, SOCK_STREAM,
-				IPPROTO_TLS_1_2);
+		client.cmd_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
 	}
-	if (client.sock < 0) {
+	if (client.cmd_sock < 0) {
 		LOG_ERR("socket(ctrl) failed: %d", -errno);
 		ret = -errno;
 	}
@@ -335,11 +416,11 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 	if (sec_tag > 0) {
 		sec_tag_t sec_tag_list[1] = { sec_tag };
 
-		ret = setsockopt(client.sock, SOL_TLS, TLS_SEC_TAG_LIST,
+		ret = setsockopt(client.cmd_sock, SOL_TLS, TLS_SEC_TAG_LIST,
 				sec_tag_list, sizeof(sec_tag_t));
 		if (ret) {
 			LOG_ERR("set tag list failed: %d", -errno);
-			close(client.sock);
+			close(client.cmd_sock);
 			return -errno;
 		}
 		client.sec_tag = sec_tag;
@@ -349,18 +430,18 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 	ret = getaddrinfo(hostname, NULL, &hints, &result);
 	if (ret || result == NULL) {
 		LOG_ERR("ERROR: getaddrinfo(ctrl) failed %d", ret);
-		close(client.sock);
+		close(client.cmd_sock);
 		return ret;
 	}
 	client.remote.sin_family = AF_INET;
 	client.remote.sin_port = htons(port);
 	client.remote.sin_addr.s_addr =
 		((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
-	ret = connect(client.sock, (struct sockaddr *)&client.remote,
+	ret = connect(client.cmd_sock, (struct sockaddr *)&client.remote,
 		 sizeof(struct sockaddr_in));
 	if (ret < 0) {
 		LOG_ERR("connect(ctrl) failed: %d", -errno);
-		close(client.sock);
+		close(client.cmd_sock);
 		freeaddrinfo(result);
 		return -errno;
 	}
@@ -370,7 +451,7 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 	/* Receive server greeting */
 	ret = do_ftp_recv_ctrl(true, FTP_CODE_220);
 	if (ret != FTP_CODE_220) {
-		close(client.sock);
+		close(client.cmd_sock);
 		return ret;
 	}
 
@@ -378,17 +459,13 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 	sprintf(ctrl_buf, CMD_OPTS, "UTF8 ON");
 	ret = do_ftp_send_ctrl(ctrl_buf, strlen(ctrl_buf));
 	if (ret) {
-		close(client.sock);
+		close(client.cmd_sock);
 		return ret;
 	}
-	ret = do_ftp_recv_ctrl(true, FTP_CODE_200);
-	if (ret != FTP_CODE_200) {
-		close(client.sock);
-		return ret;
-	}
+	(void)do_ftp_recv_ctrl(true, FTP_CODE_ANY);
 
 	LOG_DBG("FTP opened");
-	return ret;
+	return FTP_CODE_200;
 }
 
 int ftp_login(const char *username, const char *password)
@@ -419,8 +496,7 @@ int ftp_login(const char *username, const char *password)
 	client.connected = true;
 	/* Start keep alive timer */
 	if (keepalive_time > 0) {
-		k_timer_start(&keepalive_timer, K_SECONDS(1),
-			K_SECONDS(keepalive_time));
+		k_timer_start(&keepalive_timer, K_SECONDS(1), K_SECONDS(keepalive_time));
 	}
 
 	return ret;
@@ -434,13 +510,9 @@ int ftp_close(void)
 		ret = do_ftp_send_ctrl(CMD_QUIT, sizeof(CMD_QUIT) - 1);
 		if (ret == 0) {
 			ret = do_ftp_recv_ctrl(true, FTP_CODE_221);
-			k_timer_stop(&keepalive_timer);
 		}
 	}
-
-	close(client.sock);
-	client.connected = false;
-	client.sec_tag = INVALID_SEC_TAG;
+	close_connection(FTP_CODE_200, 0);
 	return ret;
 }
 
@@ -537,16 +609,7 @@ int ftp_list(const char *options, const char *target)
 	/* Set up data connection */
 	k_work_submit_to_queue(&ftp_work_q, &data_task_param.work);
 
-	if (ret == 0) {
-		do {
-			ret = do_ftp_recv_ctrl(true, FTP_CODE_226);
-			if (ret == -ETIMEDOUT || ret == FTP_CODE_226) {
-				break;
-			}
-		} while (1);
-	}
-
-	return ret;
+	return poll_data_task_done();
 }
 
 int ftp_cwd(const char *folder)
@@ -654,14 +717,7 @@ int ftp_get(const char *file)
 	/* Set up data connection */
 	k_work_submit_to_queue(&ftp_work_q, &data_task_param.work);
 
-	/* Receive control */
-	do {
-		ret = do_ftp_recv_ctrl(false, FTP_CODE_226);
-		if (ret == -ETIMEDOUT || ret == FTP_CODE_226) {
-			break;
-		}
-	} while (1);
-
+	ret = poll_data_task_done();
 	if (ret == FTP_CODE_226) {
 		client.ctrl_callback(ctrl_buf, strlen(ctrl_buf));
 	}
@@ -669,12 +725,29 @@ int ftp_get(const char *file)
 	return ret;
 }
 
-int ftp_put(const char *file, const uint8_t *data, uint16_t length)
+int ftp_put(const char *file, const uint8_t *data, uint16_t length, int type)
 {
 	int ret;
 	char put_cmd[128];
 
-	if (data && length) {
+	if (type != FTP_PUT_NORMAL && type != FTP_PUT_UNIQUE && type != FTP_PUT_APPEND) {
+		return -EINVAL;
+	}
+	if ((type == FTP_PUT_NORMAL || type == FTP_PUT_APPEND) &&
+	   ((file == NULL) || data == NULL)) {
+		return -EINVAL;
+	}
+
+	/** Typical sequence:
+	 * FTP		51	Request: PASV
+	 * FTP		96	Response: 227 Entering Passive Mode (90,130,70,73,105,177).
+	 * FTP		63	Request: STOR upload2.txt
+	 * FTP-DATA	53	FTP Data: 8 bytes (PASV) (STOR upload2.txt)
+	 * FTP		67	Response: 150 Ok to send data.
+	 * FTP		69	Response: 226 Transfer complete.
+	 */
+
+	if (data != NULL && length > 0) {
 		/* Always set Passive mode to act as TCP client */
 		ret = do_ftp_send_ctrl(CMD_PASV, sizeof(CMD_PASV) - 1);
 		if (ret) {
@@ -690,35 +763,41 @@ int ftp_put(const char *file, const uint8_t *data, uint16_t length)
 		data_task_param.length = length;
 	}
 
-	/* Send STOR command in control channel */
-	sprintf(put_cmd, CMD_STOR, file);
-	ret = do_ftp_send_ctrl(put_cmd, strlen(put_cmd));
-
-	/* Now send data */
-	if (data && length) {
-		k_work_submit_to_queue(&ftp_work_q, &data_task_param.work);
-		k_sem_take(&tx_done, K_FOREVER);
+	if (type == FTP_PUT_NORMAL) {
+		/* Send STOR command in control channel */
+		sprintf(put_cmd, CMD_STOR, file);
+		ret = do_ftp_send_ctrl(put_cmd, strlen(put_cmd));
+	} else if (type == FTP_PUT_UNIQUE) {
+		/* Send STOU command in control channel */
+		sprintf(put_cmd, CMD_STOU);
+		ret = do_ftp_send_ctrl(put_cmd, strlen(put_cmd));
+	} else {
+		/* Send APPE command in control channel */
+		sprintf(put_cmd, CMD_APPE, file);
+		ret = do_ftp_send_ctrl(put_cmd, strlen(put_cmd));
+	}
+	if (ret != 0) {
+		return ret;
 	}
 
-	if (ret == 0) {
-		do {
-			ret = do_ftp_recv_ctrl(true, FTP_CODE_226);
-			if (ret == -ETIMEDOUT || ret == FTP_CODE_226) {
-				break;
-			}
-		} while (1);
+	/* Now send data if any */
+	if (data != NULL && length > 0) {
+		k_work_submit_to_queue(&ftp_work_q, &data_task_param.work);
+		ret = poll_data_task_done();
+	} else {
+		ret = FTP_CODE_226;
 	}
 
 	return ret;
 }
 
-int ftp_init(ftp_client_callback_t ctrl_callback,
-	ftp_client_callback_t data_callback)
+int ftp_init(ftp_client_callback_t ctrl_callback, ftp_client_callback_t data_callback)
 {
 	if (ctrl_callback == NULL || data_callback == NULL) {
 		return -EINVAL;
 	}
-	client.sock = INVALID_SOCKET;
+	client.cmd_sock = INVALID_SOCKET;
+	client.data_sock = INVALID_SOCKET;
 	client.connected = false;
 	client.sec_tag = INVALID_SEC_TAG;
 	client.ctrl_callback = ctrl_callback;
@@ -735,7 +814,7 @@ int ftp_uninit(void)
 {
 	int ret = 0;
 
-	if (client.sock != INVALID_SOCKET) {
+	if (client.cmd_sock != INVALID_SOCKET) {
 		ret = ftp_close();
 	}
 
