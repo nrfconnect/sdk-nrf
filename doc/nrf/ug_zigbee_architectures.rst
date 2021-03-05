@@ -41,9 +41,14 @@ The application uses the :ref:`nrfxlib:zboss` APIs directly.
 This is the design most commonly used for End Devices and Routers.
 
 .. figure:: /images/zigbee_platform_design_soc.svg
-   :alt: Zigbee-only architecture
+   :alt: Zigbee-only architecture (nRF52 Series devices)
 
-   Zigbee-only architecture
+   Zigbee-only architecture on nRF52 Series devices
+
+.. figure:: /images/zigbee_platform_design_nRF53.svg
+   :alt: Zigbee-only architecture (nRF53 Series devices)
+
+   Zigbee-only architecture on nRF53 Series devices
 
 Single-chip, multiprotocol (SoC)
 ================================
@@ -59,9 +64,14 @@ It also has the following disadvantages:
 * Bluetooth LE activity can degradate the connectivity on Zigbee if not implemented with efficiency in mind.
 
 .. figure:: /images/zigbee_platform_design_multi.svg
-   :alt: Multiprotocol Zigbee and Bluetooth LE architecture
+   :alt: Multiprotocol Zigbee and Bluetooth LE architecture (nRF52 Series devices)
 
-   Multiprotocol Zigbee and Bluetooth LE architecture
+   Multiprotocol Zigbee and Bluetooth LE architecture on nRF52 Series devices
+
+.. figure:: /images/zigbee_platform_design_nRF5340_multi.svg
+   :alt: Multiprotocol Zigbee and Bluetooth LE architecture (nRF53 Series devices)
+
+   Multiprotocol Zigbee and Bluetooth LE architecture on nRF53 Series devices
 
 For more information, see :ref:`ug_multiprotocol_support` and :ref:`zigbee_light_switch_sample_nus`.
 
