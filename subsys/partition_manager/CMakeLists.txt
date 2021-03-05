@@ -73,6 +73,10 @@ if (CONFIG_BT_RPMSG_NRF53)
   ncs_add_partition_manager_config(pm.yml.bt_rpmsg_nrf53)
 endif()
 
+if (CONFIG_BT_RPC AND SOC_NRF5340_CPUAPP)
+  ncs_add_partition_manager_config(pm.yaml.bt_rpc_host_nrf53)
+endif()
+
 if (CONFIG_NRF53_UPGRADE_NETWORK_CORE)
   ncs_add_partition_manager_config(pm.yml.pcd)
 endif()
