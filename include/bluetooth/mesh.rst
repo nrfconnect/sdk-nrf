@@ -3,9 +3,21 @@
 Bluetooth mesh profile
 ######################
 
-The nRF Connect SDK has experimental support for the Bluetooth mesh specification through the Zephyr :ref:`zephyr:bluetooth_mesh` implementation.
+Bluetooth mesh is supported for development in |NCS|, through the Zephyr :ref:`zephyr:bluetooth_mesh` implementation.
+Nordic Semiconductor's implementation of the Bluetooth mesh allows applications to use the features provided by the Bluetooth mesh when running on supported Nordic devices.
 
-Nordic Semiconductor additionally provides some modules to aid in the development of Bluetooth mesh-based applications:
+The `Bluetooth mesh profile specification`_ is developed and published by the Bluetooth SIG.
+It's a solution that allows one-to-one, one-to-many, and many-to-many communication, using the Bluetooth Low Energy protocol to exchange messages between the nodes in the network.
+The nodes can communicate with each other as long as they are in direct radio range of each other, or there are enough devices available that are capable of listening and forwarding these messages.
+See the :ref:`Bluetooth mesh user guide <ug_bt_mesh>` for an overview of the technology, like supported features, concepts and architecture.
+
+The end-user applications (such as Luminaire control) are defined with the help of client-server Bluetooth mesh models defined in the `Bluetooth mesh model specification`_.
+Bluetooth mesh libraries contain modules, including the Bluetooth mesh models, provided by Nordic Semiconductor to aid in the development of Bluetooth mesh-based applications.
+They implement default behavior of a Bluetooth mesh device, and are used in :ref:`Bluetooth mesh samples <ble_samples>`.
+
+For information on how to use the supplied libraries for Bluetooth mesh, see :ref:`ug_bt_mesh_configuring`.
+
+Information about the changes and known issues for Bluetooth mesh in each release can be found in |NCS|'s :ref:`release_notes` and on the :ref:`known_issues` page.
 
 .. toctree::
    :maxdepth: 1
