@@ -17,7 +17,7 @@ To get started with the nRF9160 DK, follow the steps in the `nRF9160 DK Getting 
 Introduction
 ************
 
-The nRF9160 SiP integrates an application MCU, a full LTE modem, RF front end, and power management.
+The nRF9160 SiP integrates an application MCU, a full LTE modem, an RF front end, and power management.
 With built-in GPS support, it is dedicated to asset tracking applications.
 
 For more details on the SiP, see the `nRF9160 product website`_ and the `nRF9160 Product Specification`_.
@@ -34,7 +34,7 @@ Application MCU
 
 The M33 TrustZone divides the application MCU into secure and non-secure domains.
 When the MCU boots, it always starts executing from the secure area.
-The secure bootloader chain starts the :ref:`nrf9160_ug_secure_partition_manager` or :ref:`TF-M <ug_tfm>`, which configures a part of memory and peripherals to be non-secure and then jumps to the main application located in the non-secure area.
+The secure bootloader chain starts the :ref:`nrf9160_ug_secure_partition_manager` or the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`, which configures a part of memory and peripherals to be non-secure and then jumps to the main application located in the non-secure area.
 
 In Zephyr, :ref:`zephyr:nrf9160dk_nrf9160` is divided into two different build targets:
 
@@ -110,9 +110,19 @@ See the `Mobile network operator certifications`_ for more information.
 There are two ways to update the modem firmware:
 
 Full upgrade
-  A full upgrade of the modem firmware requires a wired connection.
-  The upgrade is done through the nRF Connect Programmer, which is part of `nRF Connect for Desktop`_.
-  See `Updating the nRF9160 DK cellular modem`_ in the nRF Connect Programmer User Guide for instructions.
+  You can use either a wired or a wireless connection to do a full upgrade of the modem firmware:
+
+  * When using a wired connection, you can use either the `nRF Connect Programmer`_, which is part of `nRF Connect for Desktop`_, or the `nRF pynrfjprog`_ Python package.
+    Both methods use the Simple Management Protocol (SMP) to provide an interface over UART, which enables the device to perform the update.
+
+    * You can use the nRF Connect Programmer to perform the update, regardless of the images that are part of the existing firmware of the device.
+      See `Updating the nRF9160 DK cellular modem`_ in the nRF Connect Programmer user guide for more details.
+
+    * You can also use the nRF pynrfjprog Python package to perform the update, as long as a custom application image integrating the ``lib_fmfu_mgmt`` subsystem is included in the existing firmware of the device.
+      See the :ref:`fmfu_smp_svr_sample` sample for an example on how to integrate the :ref:`subsystem <lib_fmfu_mgmt>` in your custom application.
+
+  * When using a wireless connection, the upgrade is applied over-the-air (OTA).
+    See :ref:`nrf9160_ug_fota` for more information.
 
 Delta patches
   Delta patches are upgrades that contain only the difference from the last version.
@@ -259,7 +269,14 @@ To perform a FOTA upgrade, complete the following steps:
      You can hardcode the information in the application, or you can use functionality like AWS jobs to provide the URL dynamically.
 
 The full FOTA procedure depends on where the binary files are hosted for download.
-See the :ref:`aws_fota_sample` sample for a full implementation using AWS.
+
+You can refer to the following implementation samples:
+
+* :ref:`http_full_modem_update_sample` - performs a full firmware OTA update of the modem.
+* :ref:`http_modem_delta_update_sample` - performs a delta OTA update of the modem firmware.
+* :ref:`http_application_update_sample` - performs a basic application FOTA update.
+* :ref:`aws_fota_sample` - performs a FOTA update via MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
+
 
 Board controller
 ****************
