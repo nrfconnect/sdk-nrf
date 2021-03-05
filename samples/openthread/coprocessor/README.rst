@@ -125,6 +125,9 @@ The following configuration files are available:
   This file configures different log levels for the sample, the Zephyr system, and OpenThread.
 * :file:`overlay-rcp.conf` - Enables the RCP architecture.
   This file configures the sample to use the RCP architecture instead of the NCP architecture.
+* :file:`overlay-minimal_rcp.conf` - Enables a minimal configuration that reduces the code size and RAM usage.
+  This file enables the RCP architecture with basic functionality and optimizes stacks and buffer sizes.
+  For more information, see :ref:`app_memory`.
 
 
 Building and running
