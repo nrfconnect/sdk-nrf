@@ -22,10 +22,10 @@
 
 /* If bootloader upgrades are supported we need room for two file strings. */
 #ifdef PM_S1_ADDRESS
-#define FILE_BUF_LEN (CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE)
-#else
 /* One file string for each of s0 and s1, and a space separator */
 #define FILE_BUF_LEN ((CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE*2)+1)
+#else
+#define FILE_BUF_LEN (CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE)
 #endif
 
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
