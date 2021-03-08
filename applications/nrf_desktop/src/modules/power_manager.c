@@ -77,7 +77,7 @@ static void system_off(void)
 	LOG_WRN("System turned off");
 	LOG_PANIC();
 
-	pm_power_state_force(POWER_STATE_DEEP_SLEEP_1);
+	pm_power_state_force((struct pm_state_info){PM_STATE_SOFT_OFF, 0, 0});
 }
 
 static void power_down(struct k_work *work)
@@ -124,12 +124,12 @@ static void power_down_counter_reset(void)
 	}
 }
 
-enum power_states pm_policy_next_state(int32_t ticks)
+struct pm_state_info pm_policy_next_state(int32_t ticks)
 {
-	return POWER_STATE_ACTIVE;
+	return (struct pm_state_info){PM_STATE_ACTIVE, 0, 0};
 }
 
-bool pm_policy_low_power_devices(enum power_states pm_state)
+bool pm_policy_low_power_devices(enum pm_state pm_state)
 {
 	return pm_is_sleep_state(pm_state);
 }
@@ -324,7 +324,8 @@ static bool event_handler(const struct event_header *eh)
 
 			LOG_INF("Activate power manager");
 
-			pm_power_state_force(POWER_STATE_ACTIVE);
+			pm_power_state_force(
+				(struct pm_state_info){PM_STATE_ACTIVE, 0, 0});
 
 			k_delayed_work_init(&error_trigger, error);
 			k_delayed_work_init(&power_down_trigger, power_down);
