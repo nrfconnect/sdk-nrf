@@ -27,7 +27,7 @@
 static bool pub_in_progress(struct bt_mesh_loc_srv *srv)
 {
 	return (k_delayed_work_remaining_get(&srv->pub.timer) > 0) ||
-	       k_work_pending(&srv->pub.timer.work);
+	       k_delayed_work_pending(&srv->pub.timer);
 }
 
 /* Global location */
