@@ -5,6 +5,7 @@
 '''The "ncs-xyz" extension commands.'''
 
 import argparse
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -177,6 +178,10 @@ class NcsLoot(NcsWestCommand):
         parser.add_argument('-s', '--sha', dest='sha_only',
                             action='store_true',
                             help='only print SHAs of OOT commits')
+        parser.add_argument('-j', '--json', type=Path,
+                            help='''save per-project info in the given
+                            JSON file; the format is internal and may
+                            change''')
         parser.add_argument('-f', '--file', dest='files', metavar='FILE',
                             action='append',
                             help='''list patches changing this file;
@@ -190,6 +195,7 @@ class NcsLoot(NcsWestCommand):
                               f'but got: {len(args.projects)}')
         self.setup_upstream_downstream(args)
 
+        json_data = {}
         for name, project in self.ncs_pmap.items():
             if name in self.z_pmap and name != 'manifest':
                 z_project = self.z_pmap[name]
@@ -199,9 +205,13 @@ class NcsLoot(NcsWestCommand):
                 log.dbg(f'skipping downstream project {name}',
                         level=log.VERBOSE_VERY)
                 continue
-            self.print_loot(name, project, z_project, args)
+            self.print_loot(name, project, z_project, args, json_data)
 
-    def print_loot(self, name, project, z_project, args):
+        if args.json:
+            with open(args.json, 'w') as f:
+                json.dump(json_data, f)
+
+    def print_loot(self, name, project, z_project, args, json_data):
         # Print a list of out of tree outstanding patches in the given
         # project.
         #
@@ -256,15 +266,31 @@ class NcsLoot(NcsWestCommand):
         log.inf('OOT patches: ' +
                 (f'{len(loot)} total' if loot else 'none') +
                 (', output limited by --file' if args.files else ''))
+
+        json_sha_list = []
+        json_shortlog_list = []
         for c in loot:
             if args.files and not commit_affects_files(c, args.files):
                 log.dbg(f"skipping {c.oid}; it doesn't affect file filter",
                         level=log.VERBOSE_VERY)
                 continue
+
+            sha = str(c.oid)
+            shortlog = commit_shortlog(c)
             if args.sha_only:
-                log.inf(str(c.oid))
+                log.inf(sha)
             else:
-                log.inf(f'- {c.oid} {commit_shortlog(c)}')
+                log.inf(f'- {sha} {shortlog}')
+
+            if args.json:
+                json_sha_list.append(sha)
+                json_shortlog_list.append(shortlog)
+
+        if args.json:
+            json_data[name] = {
+                'shas': json_sha_list,
+                'shortlogs': json_shortlog_list,
+            }
 
 class NcsCompare(NcsWestCommand):
     def __init__(self):
