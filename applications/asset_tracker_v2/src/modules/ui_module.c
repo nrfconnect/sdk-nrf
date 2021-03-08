@@ -56,17 +56,9 @@ static void led_pat_gps_work_fn(struct k_work *work);
 /* Delayed works that is used to make sure the device always reverts back to the
  * device mode or GPS search LED pattern.
  */
-static struct k_delayed_work led_pat_active_work = {
-	.work = Z_WORK_INITIALIZER(led_pat_active_work_fn)
-};
-
-static struct k_delayed_work led_pat_passive_work = {
-	.work = Z_WORK_INITIALIZER(led_pat_passive_work_fn)
-};
-
-static struct k_delayed_work led_pat_gps_work = {
-	.work = Z_WORK_INITIALIZER(led_pat_gps_work_fn)
-};
+static K_DELAYED_WORK_DEFINE(led_pat_active_work, led_pat_active_work_fn);
+static K_DELAYED_WORK_DEFINE(led_pat_passive_work, led_pat_passive_work_fn);
+static K_DELAYED_WORK_DEFINE(led_pat_gps_work, led_pat_gps_work_fn);
 
 /* UI module message queue. */
 #define UI_QUEUE_ENTRY_COUNT		10
