@@ -90,7 +90,7 @@ static void on_ot_disconnect(struct k_work *item)
 
 static void on_mtd_mode_toggle(uint32_t med)
 {
-#if IS_ENABLED(CONFIG_DEVICE_POWER_MANAGEMENT)
+#if IS_ENABLED(CONFIG_PM_DEVICE)
 	const struct device *cons = device_get_binding(CONSOLE_LABEL);
 
 	if (med) {

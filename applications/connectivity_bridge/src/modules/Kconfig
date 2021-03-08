@@ -63,7 +63,7 @@ config BRIDGE_BLE_ALWAYS_ON
 
 endif
 
-if DEVICE_POWER_MANAGEMENT
+if PM_DEVICE
 
 module = BRIDGE_POWER_MGMT
 module-str = Bridge power management

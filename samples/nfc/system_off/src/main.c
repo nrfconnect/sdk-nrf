@@ -137,7 +137,7 @@ static void system_off(struct k_work *work)
 	/* Before we disabled entry to deep sleep. Here we need to override
 	 * that, then force a sleep so that the deep sleep takes effect.
 	 */
-	pm_power_state_force(POWER_STATE_DEEP_SLEEP_1);
+	pm_power_state_force((struct pm_state_info){PM_STATE_SOFT_OFF, 0, 0});
 
 	dk_set_led_off(SYSTEM_ON_LED);
 
@@ -222,7 +222,7 @@ void main(void)
 	}
 
 	/* Prevent deep sleep (system off) from being entered */
-	pm_ctrl_disable_state(POWER_STATE_DEEP_SLEEP_1);
+	pm_constraint_set(PM_STATE_SOFT_OFF);
 
 	/* Exit main function - the rest will be done by the callbacks */
 }
