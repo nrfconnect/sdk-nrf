@@ -90,7 +90,7 @@
 
 #if DT_NODE_HAS_STATUS(PWM_DK_LED4_NODE, okay)
 /* Get the defines from overlay file. */
-#define PWM_DK_LED4_DRIVER              DT_PWMS_LABEL(PWM_DK_LED4_NODE)
+#define PWM_DK_LED4_CTLR                DT_PWMS_CTLR(PWM_DK_LED4_NODE)
 #define PWM_DK_LED4_CHANNEL             DT_PWMS_CHANNEL(PWM_DK_LED4_NODE)
 #define PWM_DK_LED4_FLAGS               FLAGS_OR_ZERO(PWM_DK_LED4_NODE)
 #else
@@ -218,10 +218,10 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 /**@brief Function for initializing additional PWM leds. */
 static void pwm_led_init(void)
 {
-	led_pwm_dev = device_get_binding(PWM_DK_LED4_DRIVER);
-
-	if (!led_pwm_dev) {
-		LOG_ERR("Cannot find %s!", PWM_DK_LED4_DRIVER);
+	led_pwm_dev = DEVICE_DT_GET(PWM_DK_LED4_CTLR);
+	if (!device_is_ready(led_pwm_dev)) {
+		LOG_ERR("Error: PWM device %s is not ready",
+			led_pwm_dev->name);
 	}
 }
 
