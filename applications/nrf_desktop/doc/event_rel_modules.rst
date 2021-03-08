@@ -83,6 +83,7 @@ Source modules for module_state_event
 * :ref:`nrf_desktop_ble_conn_params`
 * :ref:`nrf_desktop_ble_discovery`
 * :ref:`nrf_desktop_ble_latency`
+* :ref:`nrf_desktop_ble_passkey`
 * :ref:`nrf_desktop_ble_qos`
 * :ref:`nrf_desktop_ble_scan`
 * :ref:`nrf_desktop_ble_state`
@@ -127,6 +128,7 @@ Sink modules for module_state_event
 * :ref:`nrf_desktop_ble_conn_params`
 * :ref:`nrf_desktop_ble_discovery`
 * :ref:`nrf_desktop_ble_latency`
+* :ref:`nrf_desktop_ble_passkey`
 * :ref:`nrf_desktop_ble_qos`
 * :ref:`nrf_desktop_ble_scan`
 * :ref:`nrf_desktop_ble_state`

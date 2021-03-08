@@ -1583,6 +1583,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/ble_conn_params.rst
    doc/ble_discovery.rst
    doc/ble_latency.rst
+   doc/ble_passkey.rst
    doc/ble_qos.rst
    doc/ble_scan.rst
    doc/ble_state.rst

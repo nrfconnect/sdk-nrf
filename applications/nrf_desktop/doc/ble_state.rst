@@ -11,7 +11,6 @@ Use the Bluetooth LE state module to:
 
 * Enable Bluetooth (:c:func:`bt_enable`).
 * Handle Zephyr connection callbacks (:c:struct:`bt_conn_cb`).
-* Handle Zephyr authenticated pairing callbacks (:c:struct:`bt_conn_auth_cb`).
 * Propagate information about the connection state and parameters by using :ref:`event_manager` events.
 
 Module events
@@ -28,9 +27,6 @@ Configuration
 *************
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-
-You can use the option :option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY` to enable pairing based on passkey for increased security.
-Make sure to enable and configure the :ref:`nrf_desktop_passkey` if you decide to use this option.
 
 Implementation details
 **********************
@@ -69,18 +65,6 @@ After ``ble_peer_event`` regarding disconnection or connection failure is receiv
 
 For Bluetooth Peripheral, the |ble_state| is used to request the connection security level 2.
 If the connection security level 2 is not established, the peripheral device disconnects.
-
-Passkey enabled
-===============
-
-If you set the :option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY` option, the |ble_state| registers the set of authenticated pairing callbacks (:c:struct:`bt_conn_auth_cb`).
-The callbacks can be used to achieve higher security levels.
-The passkey input is handled in the :ref:`nrf_desktop_passkey`.
-
-.. note::
-    By default, Zephyr's Bluetooth Peripheral demands the security level 3 in case the passkey authentication is enabled.
-    If the nRF Desktop dongle is unable to achieve the security level 3, it will be unable to connect with the peripheral.
-    Disable the :option:`CONFIG_BT_SMP_ENFORCE_MITM` option to allow the dongle to connect without the authentication.
 
 SoftDevice Link Layer
 =====================
