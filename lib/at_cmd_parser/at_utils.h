@@ -255,6 +255,11 @@ static inline bool is_command(const char *str)
  */
 static bool is_clac(const char *str)
 {
+	/* skip leading <CR><LF>, if any, as check not from index 0 */
+	while (is_lfcr(*str)) {
+		str++;
+	}
+
 	if (strlen(str) < 4) {
 		return false;
 	}
