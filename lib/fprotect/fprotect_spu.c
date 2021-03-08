@@ -12,12 +12,7 @@
 #include <nrf_erratas.h>
 
 
-#if defined(CONFIG_SOC_NRF5340_CPUAPP) \
-	&& defined(CONFIG_NRF5340_CPUAPP_ERRATUM19)
-#define SPU_BLOCK_SIZE (nrf53_errata_19() ? 32*1024 : 16*1024)
-#else
 #define SPU_BLOCK_SIZE CONFIG_FPROTECT_BLOCK_SIZE
-#endif
 
 int fprotect_area(uint32_t start, size_t length)
 {
