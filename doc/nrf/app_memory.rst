@@ -56,7 +56,6 @@ Complete the following actions to optimize the Bluetooth part of your applicatio
   * :option:`CONFIG_BT_RX_BUF_COUNT`
   * :option:`CONFIG_BT_CONN_TX_MAX`
   * :option:`CONFIG_BT_L2CAP_TX_BUF_COUNT`
-  * :option:`CONFIG_BT_ATT_TX_MAX`
   * :option:`CONFIG_BT_CTLR_RX_BUFFERS`
   * :option:`CONFIG_BT_CTLR_TX_BUFFERS`
   * :option:`CONFIG_BT_CTLR_TX_BUFFER_SIZE`
