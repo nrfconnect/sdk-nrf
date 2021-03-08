@@ -156,7 +156,7 @@ int led_pwm_init(void)
 
 void led_pwm_start(void)
 {
-#if defined(CONFIG_DEVICE_POWER_MANAGEMENT)
+#if defined(CONFIG_PM_DEVICE)
 	int err = device_set_power_state(leds.pwm_dev, DEVICE_PM_ACTIVE_STATE,
 					 NULL, NULL);
 	if (err) {
@@ -169,7 +169,7 @@ void led_pwm_start(void)
 void led_pwm_stop(void)
 {
 	k_delayed_work_cancel(&leds.work);
-#if defined(CONFIG_DEVICE_POWER_MANAGEMENT)
+#if defined(CONFIG_PM_DEVICE)
 	int err = device_set_power_state(leds.pwm_dev, DEVICE_PM_SUSPEND_STATE,
 					 NULL, NULL);
 	if (err) {
