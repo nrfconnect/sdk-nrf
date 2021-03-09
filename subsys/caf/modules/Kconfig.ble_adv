@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig CAF_BLE_ADV
+	bool "Enable Bluetooth LE advertising"
+	depends on BT_PERIPHERAL
+	depends on CAF_BLE_COMMON_EVENTS
+
+if CAF_BLE_ADV
+
+config CAF_BLE_ADV_DEF_PATH
+	string "Configuration file"
+	default "ble_adv_def.h"
+	help
+	  Location of configuration file for ble_adv module.
+
+config CAF_BLE_ADV_PM_EVENTS
+	bool "Power management events support"
+	depends on CAF_PM_EVENTS
+
+config CAF_BLE_ADV_DIRECT_ADV
+	bool "Advertise to bonded peer directly"
+	depends on SETTINGS
+	depends on CAF_BLE_BOND_SUPPORTED
+	help
+	  Device will use direct advertising if bonded. The device will not advertise directly
+	  towards a central that uses Resolvable Private Address (RPA). The module does not read
+	  the Central Address Resolution GATT characteristic of the central, so it does not know
+	  if the remote device supports the address resolution of directed advertisements.
+
+config CAF_BLE_ADV_FAST_ADV
+	bool "Enable period of fast advertising"
+
+config CAF_BLE_ADV_FAST_ADV_TIMEOUT
+	int "Time of initial fast advertising [s]"
+	default 30
+	depends on CAF_BLE_ADV_FAST_ADV
+	help
+	  Device will initially advertise with shorter interval to enable quicker discovery by
+	  hosts. After this time it will shift to normal cadence advertising.
+
+config CAF_BLE_ADV_SWIFT_PAIR
+	bool "Enable Swift Pair feature"
+	depends on CAF_BLE_ADV_FAST_ADV
+	help
+	  Enable quick pairing with Microsoft Swift Pair. Make sure to add Swift Pair data to
+	  advertising packets used by your device when it's not bonded. The Swift Pair data
+	  must be added as the last member of advertising data.
+
+config CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD
+	int "No Swift Pair time gap before suspend [s]"
+	default 30
+	depends on CAF_BLE_ADV_PM_EVENTS
+	depends on CAF_BLE_ADV_SWIFT_PAIR
+	help
+	  To ensure users will not try to connect to a device which is no longer available,
+	  Swift Pair vendor section will be removed before exiting from advertising mode.
+
+module = CAF_BLE_ADV
+module-str = caf module BLE advertising
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # CAF_BLE_ADV
