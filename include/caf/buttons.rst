@@ -45,8 +45,8 @@ For example, the file contents should look like follows:
 You must define both arrays in this configuration file, and specify its location with the :option:`CONFIG_CAF_BUTTONS_DEF_PATH` Kconfig option.
 
 .. note::
-	Include the configuration file in the build only once.
-	Including the file several times will trigger a multiple definition error at link time.
+	The configuration file should be included only by the configured module.
+	Do not include the configuration file in other source files.
 
 The following Kconfig options are available for this module:
 
