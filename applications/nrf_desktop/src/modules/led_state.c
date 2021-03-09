@@ -10,7 +10,7 @@
 #include <caf/events/module_state_event.h>
 
 #include "led_event.h"
-#include "ble_event.h"
+#include <caf/events/ble_common_event.h>
 #include "battery_event.h"
 
 #include <logging/log.h>

@@ -14,7 +14,7 @@
 #include "event_manager.h"
 #include "config_event.h"
 #include "hid_event.h"
-#include "ble_event.h"
+#include <caf/events/ble_common_event.h>
 #include "dfu_lock.h"
 
 #define MODULE dfu

@@ -68,4 +68,34 @@ config CAF_INIT_LOG_SENSOR_EVENTS
 	depends on LOG
 	default y
 
+config CAF_BLE_COMMON_EVENTS
+	bool "Enable BLE common events"
+	default y if BT && CAF
+	help
+	  Enable support for BLE common events.
+
+config CAF_INIT_LOG_BLE_PEER_EVENTS
+	bool "Log BLE peer events"
+	depends on CAF_BLE_COMMON_EVENTS
+	depends on LOG
+	default y
+
+config CAF_INIT_LOG_BLE_PEER_SEARCH_EVENTS
+	bool "Log BLE peer search events"
+	depends on CAF_BLE_COMMON_EVENTS
+	depends on LOG
+	default y
+
+config CAF_INIT_LOG_BLE_PEER_OPERATION_EVENTS
+	bool "Log BLE peer operation events"
+	depends on CAF_BLE_COMMON_EVENTS
+	depends on LOG
+	default y
+
+config CAF_INIT_LOG_BLE_PEER_CONN_PARAMS_EVENTS
+	bool "Log BLE peer connection parameters events"
+	depends on CAF_BLE_COMMON_EVENTS
+	depends on LOG
+	default y
+
 endmenu

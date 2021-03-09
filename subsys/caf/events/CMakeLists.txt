@@ -23,3 +23,7 @@ zephyr_sources_ifdef(CONFIG_CAF_CLICK_EVENTS
 zephyr_sources_ifdef(CONFIG_CAF_SENSOR_EVENTS
 	sensor_event.c
 )
+
+zephyr_sources_ifdef(CONFIG_CAF_BLE_COMMON_EVENTS
+	ble_common_event.c
+)
