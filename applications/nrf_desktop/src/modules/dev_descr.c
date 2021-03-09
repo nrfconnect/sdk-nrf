@@ -15,7 +15,7 @@
 #include "dev_descr.h"
 
 static uint8_t device_descr[] = {
-	[DEV_DESCR_LLPM_SUPPORT_POS] = IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM),
+	[DEV_DESCR_LLPM_SUPPORT_POS] = IS_ENABLED(CONFIG_CAF_BLE_STATE_USE_LLPM),
 };
 
 static ssize_t read_hwid(struct bt_conn *conn,

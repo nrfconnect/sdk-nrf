@@ -1,16 +1,12 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018-2021 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 menu "BLE"
 
-comment "BLE State"
-
-module = DESKTOP_BLE_STATE
-module-str = BLE state
-source "subsys/logging/Kconfig.template.log_config"
+comment "BLE Passkey"
 
 config DESKTOP_BLE_ENABLE_PASSKEY
 	bool "Enable passkey based pairing"
@@ -257,17 +253,6 @@ source "subsys/logging/Kconfig.template.log_config"
 endif
 
 comment "BLE connection parameters"
-
-config DESKTOP_BLE_USE_LLPM
-	bool "Use LLPM connection parameters"
-	depends on BT_LL_SOFTDEVICE
-	default y
-	help
-	  LLPM connection interval is necessary to achieve high report rates
-	  (up to 1000 reports/second). With standard BLE connection, the lowest
-	  available connection interval is 7.5 ms. LLPM parameters can be used
-	  for given connection only if it's supported by both peripheral and
-	  central.
 
 if BT_PERIPHERAL
 

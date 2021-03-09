@@ -70,7 +70,6 @@ config CAF_INIT_LOG_SENSOR_EVENTS
 
 config CAF_BLE_COMMON_EVENTS
 	bool "Enable BLE common events"
-	default y if BT && CAF
 	help
 	  Enable support for BLE common events.
 
