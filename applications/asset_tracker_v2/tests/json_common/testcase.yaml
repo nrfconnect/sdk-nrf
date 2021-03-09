@@ -1,0 +1,4 @@
+tests:
+  applications.asset_tracker_v2.cloud.cloud_codec.json_common:
+    platform_allow: nrf9160dk_nrf9160 native_posix
+    tags: json_common_test
