@@ -821,6 +821,13 @@ KRKNWK-8133: CSMA-CA issues
 SoftDevice Controller
 =====================
 
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-8628: Setting Filter_Duplicates in LE Set Scan Enable and LE Set Extended Scan Enable commands does not take effect
+  The host will receive all advertisements from advertisers in advertising report events.
+
+  **Workaround:** The duplicate advertising reports can be filtered out by the application.
+
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 DRGN-15226: Link disconnects with reason "LMP Response Timeout (0x22)"
