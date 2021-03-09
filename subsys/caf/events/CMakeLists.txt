@@ -12,6 +12,10 @@ zephyr_sources_ifdef(CONFIG_CAF_PM_EVENTS
 	power_event.c
 )
 
+zephyr_sources_ifdef(CONFIG_CAF_BLE_COMMON_EVENTS
+	ble_common_event.c
+)
+
 zephyr_sources_ifdef(CONFIG_CAF_BUTTON_EVENTS
 	button_event.c
 )

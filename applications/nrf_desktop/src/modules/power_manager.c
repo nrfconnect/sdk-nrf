@@ -14,7 +14,7 @@
 #include <profiler.h>
 
 #include <caf/events/power_event.h>
-#include "ble_event.h"
+#include <caf/events/ble_common_event.h>
 #include "usb_event.h"
 #include "hid_event.h"
 

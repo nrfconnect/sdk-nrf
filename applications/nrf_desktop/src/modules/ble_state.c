@@ -14,7 +14,7 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_vs.h>
 
-#include "ble_event.h"
+#include <caf/events/ble_common_event.h>
 
 #ifdef CONFIG_BT_LL_SOFTDEVICE
 #include "sdc_hci_vs.h"
