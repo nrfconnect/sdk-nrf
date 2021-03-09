@@ -902,6 +902,7 @@ static void on_all_states(struct data_msg_data *msg)
 	if (IS_EVENT(msg, modem, MODEM_EVT_MODEM_STATIC_DATA_READY)) {
 		modem_stat.nw_lte_m = msg->module.modem.data.modem_static.nw_mode_ltem;
 		modem_stat.nw_nb_iot = msg->module.modem.data.modem_static.nw_mode_nbiot;
+		modem_stat.nw_gps = msg->module.modem.data.modem_static.nw_mode_gps;
 		modem_stat.bnd = msg->module.modem.data.modem_static.band;
 		modem_stat.ts = msg->module.modem.data.modem_static.timestamp;
 		modem_stat.queued = true;
