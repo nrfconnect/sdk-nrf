@@ -18,6 +18,7 @@
 #include "config_channel_transport.h"
 
 #include "hid_event.h"
+#include <caf/events/ble_common_event.h>
 #include "ble_event.h"
 #include "usb_event.h"
 #include "config_event.h"

@@ -13,7 +13,7 @@
 
 #define MODULE ble_adv
 #include <caf/events/module_state_event.h>
-#include "ble_event.h"
+#include <caf/events/ble_common_event.h>
 #include <caf/events/power_event.h>
 
 #include <logging/log.h>
