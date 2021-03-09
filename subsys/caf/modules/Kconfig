@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+rsource "Kconfig.ble_adv"
+rsource "Kconfig.ble_bond"
 rsource "Kconfig.ble_state"
 rsource "Kconfig.buttons"
 rsource "Kconfig.click_detector"

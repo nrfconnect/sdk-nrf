@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2018-2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -17,14 +17,14 @@
 #include <caf/events/power_event.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_ADV_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_ADV_LOG_LEVEL);
 
-#ifndef CONFIG_DESKTOP_BLE_FAST_ADV_TIMEOUT
-#define CONFIG_DESKTOP_BLE_FAST_ADV_TIMEOUT 0
+#ifndef CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT
+#define CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT 0
 #endif
 
-#ifndef CONFIG_DESKTOP_BLE_SWIFT_PAIR_GRACE_PERIOD
-#define CONFIG_DESKTOP_BLE_SWIFT_PAIR_GRACE_PERIOD 0
+#ifndef CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD
+#define CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD 0
 #endif
 
 #define SWIFT_PAIR_SECTION_SIZE 1 /* number of struct bt_data objects */
@@ -32,38 +32,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_ADV_LOG_LEVEL);
 #define MAX_KEY_LEN 30
 #define PEER_IS_RPA_STORAGE_NAME "peer_is_rpa_"
 
-
-static const struct bt_data ad_unbonded[] = {
-	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
-#if CONFIG_DESKTOP_HIDS_ENABLE
-			  0x12, 0x18,	/* HID Service */
-#endif
-#if CONFIG_DESKTOP_BAS_ENABLE
-			  0x0f, 0x18,	/* Battery Service */
-#endif
-	),
-
-#if CONFIG_DESKTOP_BLE_SWIFT_PAIR
-	BT_DATA_BYTES(BT_DATA_MANUFACTURER_DATA,
-			  0x06, 0x00,	/* Microsoft Vendor ID */
-			  0x03,		/* Microsoft Beacon ID */
-			  0x00,		/* Microsoft Beacon Sub Scenario */
-			  0x80),	/* Reserved RSSI Byte */
-#endif
-};
-
-static const struct bt_data ad_bonded[] = {
-	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
-#if CONFIG_DESKTOP_HIDS_ENABLE
-			  0x12, 0x18,	/* HID Service */
-#endif
-#if CONFIG_DESKTOP_BAS_ENABLE
-			  0x0f, 0x18,	/* Battery Service */
-#endif
-	),
-};
+#include CONFIG_CAF_BLE_ADV_DEF_PATH
 
 
 enum state {
@@ -86,10 +55,6 @@ struct bond_find_data {
 	uint8_t peer_count;
 };
 
-/* When using BT_LE_ADV_OPT_USE_NAME, device name is added to scan response
- * data by controller.
- */
-static const struct bt_data sd[] = {};
 
 static enum state state;
 static bool adv_swift_pair;
@@ -107,8 +72,7 @@ enum peer_rpa {
 static enum peer_rpa peer_is_rpa[CONFIG_BT_ID_MAX];
 
 
-static int settings_set(const char *key, size_t len_rd,
-			settings_read_cb read_cb, void *cb_arg)
+static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb, void *cb_arg)
 {
 	/* Assuming ID is written as one digit */
 	if (!strncmp(key, PEER_IS_RPA_STORAGE_NAME,
@@ -134,10 +98,9 @@ static int settings_set(const char *key, size_t len_rd,
 	return 0;
 }
 
-#ifdef CONFIG_DESKTOP_BLE_DIRECT_ADV
-SETTINGS_STATIC_HANDLER_DEFINE(ble_adv, MODULE_NAME, NULL, settings_set, NULL,
-			       NULL);
-#endif /* CONFIG_DESKTOP_BLE_DIRECT_ADV */
+#ifdef COFNIG_CAF_BLE_ADV_DIRECT_ADV
+SETTINGS_STATIC_HANDLER_DEFINE(ble_adv, MODULE_NAME, NULL, settings_set, NULL, NULL);
+#endif /* CONFIG_CAF_BLE_ADV_DIRECT_ADV */
 
 static void broadcast_adv_state(bool active)
 {
@@ -156,8 +119,8 @@ static int ble_adv_stop(void)
 	} else {
 		k_delayed_work_cancel(&adv_update);
 
-		if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR) &&
-		    IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE)) {
+		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_SWIFT_PAIR) &&
+		    IS_ENABLED(CONFIG_CAF_BLE_ADV_PM_EVENTS)) {
 			k_delayed_work_cancel(&sp_grace_period_to);
 		}
 
@@ -274,7 +237,7 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 	} else {
 		ad = ad_unbonded;
 		ad_size = ARRAY_SIZE(ad_unbonded);
-		adv_swift_pair = IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR);
+		adv_swift_pair = IS_ENABLED(CONFIG_CAF_BLE_ADV_SWIFT_PAIR);
 	}
 
 	return bt_le_adv_start(&adv_param, ad, ad_size, sd, ARRAY_SIZE(sd));
@@ -282,7 +245,7 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 
 static int ble_adv_start(bool can_fast_adv)
 {
-	bool fast_adv = IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV) && can_fast_adv;
+	bool fast_adv = IS_ENABLED(CONFIG_CAF_BLE_ADV_FAST_ADV) && can_fast_adv;
 
 	struct bond_find_data bond_find_data = {
 		.peer_id = 0,
@@ -308,18 +271,16 @@ static int ble_adv_start(bool can_fast_adv)
 	bool direct = false;
 
 	if (bond_find_data.peer_id < bond_find_data.peer_count) {
-		if (IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV)) {
+		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_DIRECT_ADV)) {
 			/* Direct advertising only to peer without RPA. */
 			direct = (peer_is_rpa[cur_identity] != PEER_RPA_YES);
 		}
 	}
 
 	if (direct) {
-		err = ble_adv_start_directed(&bond_find_data.peer_address,
-					     fast_adv);
+		err = ble_adv_start_directed(&bond_find_data.peer_address, fast_adv);
 	} else {
-		err = ble_adv_start_undirected(&bond_find_data.peer_address,
-					       fast_adv);
+		err = ble_adv_start_undirected(&bond_find_data.peer_address, fast_adv);
 	}
 
 	if (err) {
@@ -336,7 +297,7 @@ static int ble_adv_start(bool can_fast_adv)
 	} else {
 		if (fast_adv) {
 			k_delayed_work_submit(&adv_update,
-					      K_SECONDS(CONFIG_DESKTOP_BLE_FAST_ADV_TIMEOUT));
+					      K_SECONDS(CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT));
 			state = STATE_ACTIVE_FAST;
 		} else {
 			state = STATE_ACTIVE_SLOW;
@@ -374,7 +335,7 @@ static int remove_swift_pair_section(void)
 		k_delayed_work_cancel(&adv_update);
 
 		k_delayed_work_submit(&sp_grace_period_to,
-				      K_SECONDS(CONFIG_DESKTOP_BLE_SWIFT_PAIR_GRACE_PERIOD));
+				      K_SECONDS(CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD));
 
 		state = STATE_GRACE_PERIOD;
 	} else if (err == -EAGAIN) {
@@ -419,14 +380,14 @@ static void ble_adv_update_fn(struct k_work *work)
 static void init(void)
 {
 	/* These things will be opt-out by the compiler. */
-	if (!IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV)) {
+	if (!IS_ENABLED(CONFIG_CAF_BLE_ADV_DIRECT_ADV)) {
 		ARG_UNUSED(settings_set);
 	}
 
 	k_delayed_work_init(&adv_update, ble_adv_update_fn);
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR) &&
-	    IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE)) {
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_SWIFT_PAIR) &&
+	    IS_ENABLED(CONFIG_CAF_BLE_ADV_PM_EVENTS)) {
 		k_delayed_work_init(&sp_grace_period_to, sp_grace_period_fn);
 	}
 
@@ -450,7 +411,7 @@ static void start(void)
 static void update_peer_is_rpa(enum peer_rpa new_peer_rpa)
 {
 	if (IS_ENABLED(CONFIG_SETTINGS) &&
-	    IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV)) {
+	    IS_ENABLED(CONFIG_CAF_BLE_ADV_DIRECT_ADV)) {
 		peer_is_rpa[cur_identity] = new_peer_rpa;
 		/* Assuming ID is written using only one digit. */
 		__ASSERT_NO_MSG(cur_identity < 10);
@@ -492,6 +453,31 @@ static void disconnect_peer(struct bt_conn *conn)
 	}
 }
 
+static void start_adv(void)
+{
+	static bool started;
+
+	if (started) {
+		return;
+	}
+
+	switch (state) {
+	case STATE_DISABLED:
+		state = STATE_OFF;
+		start();
+		break;
+	case STATE_DISABLED_OFF:
+		state = STATE_OFF;
+		break;
+	default:
+		/* Should not happen. */
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	started = true;
+}
+
 static bool handle_module_state_event(const struct module_state_event *event)
 {
 	if (check_state(event, MODULE_ID(ble_state), MODULE_STATE_READY)) {
@@ -501,27 +487,14 @@ static bool handle_module_state_event(const struct module_state_event *event)
 
 		init();
 		initialized = true;
-	} else if (check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
-		static bool started;
 
-		if (!started) {
-			/* Settings need to be loaded before advertising start */
-			switch (state) {
-			case STATE_DISABLED:
-				state = STATE_OFF;
-				start();
-				break;
-			case STATE_DISABLED_OFF:
-				state = STATE_OFF;
-				break;
-			default:
-				/* Should not happen. */
-				__ASSERT_NO_MSG(false);
-				break;
-			}
-
-			started = true;
+		if (!IS_ENABLED(CONFIG_CAF_BLE_BOND_SUPPORTED)) {
+			start_adv();
 		}
+	} else if (IS_ENABLED(CONFIG_CAF_BLE_BOND_SUPPORTED) &&
+		   check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
+		/* Settings need to be loaded before advertising start */
+		start_adv();
 	}
 
 	return false;
@@ -636,7 +609,7 @@ static bool handle_power_down_event(const struct power_down_event *event)
 	switch (state) {
 	case STATE_ACTIVE_FAST:
 	case STATE_ACTIVE_SLOW:
-		if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR) &&
+		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_SWIFT_PAIR) &&
 		    adv_swift_pair) {
 			err = remove_swift_pair_section();
 		} else {
@@ -742,17 +715,17 @@ static bool event_handler(const struct event_header *eh)
 		return handle_ble_peer_event(cast_ble_peer_event(eh));
 	}
 
-	if (is_ble_peer_operation_event(eh)) {
-		return handle_ble_peer_operation_event(
-				cast_ble_peer_operation_event(eh));
+	if (IS_ENABLED(CONFIG_CAF_BLE_BOND_SUPPORTED) &&
+	    is_ble_peer_operation_event(eh)) {
+		return handle_ble_peer_operation_event(cast_ble_peer_operation_event(eh));
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE) &&
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_PM_EVENTS) &&
 	    is_power_down_event(eh)) {
 		return handle_power_down_event(cast_power_down_event(eh));
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE) &&
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_PM_EVENTS) &&
 	    is_wake_up_event(eh)) {
 		return handle_wake_up_event(cast_wake_up_event(eh));
 	}
@@ -765,6 +738,10 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+#if CONFIG_CAF_BLE_BOND_SUPPORTED
 EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
+#endif /* CONFIG_CAF_BLE_BOND_SUPPORTED */
+#if CONFIG_CAF_BLE_ADV_PM_EVENTS
 EVENT_SUBSCRIBE(MODULE, power_down_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
+#endif /* CONFIG_CAF_BLE_ADV_PM_EVENTS */
