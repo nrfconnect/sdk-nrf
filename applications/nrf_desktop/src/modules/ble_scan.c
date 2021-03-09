@@ -279,7 +279,7 @@ static bool is_llpm_peer_connected(void)
 {
 	bool llpm_peer_connected = false;
 
-	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM));
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM));
 
 	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
 		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, BT_ADDR_LE_NONE)) {
@@ -345,7 +345,7 @@ static void scan_start(void)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM) &&
+	if (IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM) &&
 	    (CONFIG_BT_MAX_CONN == 2)) {
 		/* If the central supports the LLPM and more than two
 		 * simultaneous Bluetooth connections, the BLE peers use the
@@ -482,7 +482,7 @@ static void scan_init(void)
 		.timeout = 400,
 	};
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM) &&
+	if (IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM) &&
 	    (CONFIG_BT_MAX_CONN > 2)) {
 		cp.interval_min = 8;
 		cp.interval_max = 8;

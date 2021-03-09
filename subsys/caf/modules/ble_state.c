@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2018-2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -24,7 +24,7 @@
 #include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_STATE_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_STATE_LOG_LEVEL);
 
 
 struct bond_find_data {
@@ -74,8 +74,7 @@ static void set_tx_power(struct bt_conn *conn)
 		struct net_buf *buf;
 		struct net_buf *rsp = NULL;
 
-		buf = bt_hci_cmd_create(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL,
-					sizeof(*cp));
+		buf = bt_hci_cmd_create(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL, sizeof(*cp));
 		if (!buf) {
 			LOG_ERR("Cannot allocate buffer to set TX power");
 			return;
@@ -84,12 +83,11 @@ static void set_tx_power(struct bt_conn *conn)
 		cp = net_buf_add(buf, sizeof(*cp));
 		cp->handle = sys_cpu_to_le16(conn_handle);
 		cp->handle_type = BT_HCI_VS_LL_HANDLE_TYPE_CONN;
-		cp->tx_power_level = CONFIG_DESKTOP_BLE_TX_PWR;
+		cp->tx_power_level = CONFIG_CAF_BLE_STATE_TX_PWR;
 
 		LOG_INF("Setting TX power to: %" PRId8, cp->tx_power_level);
 
-		err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL,
-					   buf, &rsp);
+		err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL, buf, &rsp);
 		if (err) {
 			uint8_t reason = rsp ?
 			  ((struct bt_hci_rp_vs_write_tx_power_level *)rsp->data)->status : 0;
@@ -98,8 +96,7 @@ static void set_tx_power(struct bt_conn *conn)
 				err, reason);
 		} else {
 			rp = (struct bt_hci_rp_vs_write_tx_power_level *)rsp->data;
-			LOG_INF("TX power returned by command: %" PRId8,
-				rp->selected_tx_power);
+			LOG_INF("TX power returned by command: %" PRId8, rp->selected_tx_power);
 		}
 
 		if (rsp) {
@@ -269,19 +266,11 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	event->state = PEER_STATE_SECURED;
 	EVENT_SUBMIT(event);
 
-	struct bt_conn_info info;
-
-	err = bt_conn_get_info(conn, &info);
-	if (err) {
-		LOG_WRN("Cannot get conn info");
-	} else {
-		if (IS_ENABLED(CONFIG_BT_CENTRAL) &&
-		    (info.role == BT_CONN_ROLE_MASTER)) {
-			exchange_params.func = exchange_func;
-			err = bt_gatt_exchange_mtu(conn, &exchange_params);
-			if (err) {
-				LOG_ERR("MTU exchange failed");
-			}
+	if (IS_ENABLED(CONFIG_CAF_BLE_STATE_EXCHANGE_MTU)) {
+		exchange_params.func = exchange_func;
+		err = bt_gatt_exchange_mtu(conn, &exchange_params);
+		if (err) {
+			LOG_ERR("MTU exchange failed");
 		}
 	}
 }
@@ -330,7 +319,7 @@ static void bt_ready(int err)
 
 	LOG_INF("Bluetooth initialized");
 
-#ifdef CONFIG_DESKTOP_BLE_USE_LLPM
+#ifdef CONFIG_CAF_BLE_USE_LLPM
 	sdc_hci_cmd_vs_llpm_mode_set_t *p_cmd_enable;
 
 	struct net_buf *buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_LLPM_MODE_SET,
@@ -345,7 +334,7 @@ static void bt_ready(int err)
 	} else {
 		LOG_INF("LLPM enabled");
 	}
-#endif /* CONFIG_DESKTOP_BLE_USE_LLPM */
+#endif /* CONFIG_CAF_BLE_USE_LLPM */
 
 	module_set_state(MODULE_STATE_READY);
 }
