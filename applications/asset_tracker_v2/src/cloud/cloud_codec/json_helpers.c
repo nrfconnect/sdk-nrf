@@ -5,6 +5,7 @@
  */
 
 #include <errno.h>
+#include <sys/printk.h>
 
 #include "json_helpers.h"
 #include "cJSON.h"
