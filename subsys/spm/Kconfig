@@ -25,10 +25,15 @@ menuconfig IS_SPM
 	select TRUSTED_EXECUTION_SECURE
 
 if IS_SPM
+
+config SPM_MIN_PARTITION_SIZE
+	bool "Use minimimal partition size for SPM"
+
 # Define used by partition_manager.py to deduce size of partition.
 # Unable to use the size template due to non-trivial defaults.
 config PM_PARTITION_SIZE_SPM
 	hex "Flash space reserved for SPM"
+	default 0x8000 if SPM_MIN_PARTITION_SIZE
 	default 0x10000
 	help
 	  Flash space set aside for the SPM. Note, the name
