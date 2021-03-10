@@ -763,7 +763,7 @@ The following list summarizes the most important changes inherited from upstream
     * Removed obsolete flash driver from the OpenThread platform.
     * Added new OpenThread options:
 
-      * :option:`CONFIG_OPENTHREAD_NCP_BUFFER_SIZE`
+      * ``CONFIG_OPENTHREAD_NCP_BUFFER_SIZE``
       * :option:`CONFIG_OPENTHREAD_NUM_MESSAGE_BUFFERS`
       * :option:`CONFIG_OPENTHREAD_MAX_STATECHANGE_HANDLERS`
       * :option:`CONFIG_OPENTHREAD_TMF_ADDRESS_CACHE_ENTRIES`
