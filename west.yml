@@ -11,9 +11,7 @@
 # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
 
 manifest:
-  # This west.yml requires west 0.9 or later, because the "submodules"
-  # feature used below was introduced then.
-  version: 0.9
+  version: "0.10"
 
   # "remotes" is a list of locations where git repositories are cloned
   # and fetched from.
@@ -40,6 +38,8 @@ manifest:
   # from the ncs remote.
   defaults:
     remote: ncs
+
+  group-filter: [-homekit]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -145,6 +145,11 @@ manifest:
       remote: nordicsemi
       revision: 24f1b2b0c64c694b7f9ac1b7eab60b39236ca0bf
       path: modules/lib/cddl-gen
+    - name: homekit
+      repo-path: sdk-homekit
+      revision: pull/64/head
+      groups:
+      - homekit
 
   # West-related configuration for the nrf repository.
   self:
