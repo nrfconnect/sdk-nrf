@@ -6,3 +6,9 @@ tests:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
     tags: ci_build smoke
+
+  zigbee.light_bulb.with_shell:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+    extra_args: CONFIG_ZIGBEE_SHELL=y CONFIG_ZIGBEE_DEBUG_FUNCTIONS=y CONFIG_ZIGBEE_SHELL_ENDPOINT=10
