@@ -1,8 +1,46 @@
 # https://github.com/actions/labeler/blob/main/README.md
 
+# When extending this, remember that in the PR, the labeler will run against
+# the labeler.yml in master, more info:
+# https://github.com/actions/labeler/issues/12
+# This means your changes won't be tested. To test your branch, make a second
+# branch with dummy changes, and open a PR on your own fork, against the
+# first branch.
+
 "manifest":
   - "west.yml"
 
 "doc-required":
   - "doc/**/*"
   - "**/*.rst"
+
+"CI-dfu-test":
+  - "include/bl*"
+  - "include/fprotect.h"
+  - "include/fw_info.*"
+  - "include/dfu/**/*"
+  - "include/net/**/*"
+  - "modules/mcuboot/**/*"
+  - "samples/nrf9160/*fota/**/*"
+  - "samples/nrf9160/fmfu_smp_svr/**/*"
+  - "samples/nrf9160/http_update/**/*"
+  - "samples/bootloader/**/*"
+  - "scripts/bootloader/**/*"
+  - "subsys/bootloader/**/*"
+  - "subsys/fw_info/**/*"
+  - "subsys/mgmt/**/*"
+  - "subsys/net/lib/*fota*/**/*"
+  - "subsys/net/lib/download_client/**/*"
+  - "tests/subsys/bootloader/**/*"
+  - "tests/subsys/dfu/**/*"
+  - "tests/subsys/fw_info/**/*"
+  - "tests/subsys/net/**/*"
+
+"CI-all-test":
+  - "west.yml"
+  - "**/*partition_manager*/**/*"
+  - "**/*partition_manager*"
+
+"CI-tfm-test":
+  - "modules/tfm/**/*"
+  - "samples/tfm/**/*"
