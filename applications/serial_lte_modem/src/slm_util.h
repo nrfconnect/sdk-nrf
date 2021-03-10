@@ -20,7 +20,6 @@
 #include <modem/at_cmd_parser.h>
 
 #define INVALID_SOCKET	-1
-#define INVALID_PORT	-1
 #define INVALID_SEC_TAG	-1
 #define INVALID_ROLE	-1
 

@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <nrf_socket.h>
 #include "slm_util.h"
-#include "slm_at_host.h"
 #include "slm_at_gps.h"
 #ifdef CONFIG_SUPL_CLIENT_LIB
 #include <net/socket.h>

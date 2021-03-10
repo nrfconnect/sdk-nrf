@@ -10,7 +10,6 @@
 #include <net/socket.h>
 #include <nrf_socket.h>
 #include "slm_util.h"
-#include "slm_at_host.h"
 #include "slm_at_icmp.h"
 
 LOG_MODULE_REGISTER(icmp, CONFIG_SLM_LOG_LEVEL);
@@ -114,7 +113,7 @@ static void calc_ics(uint8_t *buffer, int len, int hcs_pos)
 
 static uint32_t send_ping_wait_reply(void)
 {
-	static uint8_t seqnr;
+	static uint16_t seqnr;
 	uint16_t total_length;
 	uint8_t ip_buf[NET_IPV4_MTU];
 	uint8_t *data = NULL;
@@ -161,7 +160,7 @@ static uint32_t send_ping_wait_reply(void)
 	data[4] = 0x00;                         /* Identifier */
 	data[5] = 0x00;                         /* Identifier */
 	data[6] = seqnr >> 8;                   /* seqnr */
-	data[7] = ++seqnr;                      /* seqr */
+	data[7] = (++seqnr) & 0xFF;             /* seqr */
 
 	/* Payload */
 	for (int i = 8; i < total_length - header_len; i++) {
@@ -230,7 +229,7 @@ static uint32_t send_ping_wait_reply(void)
 	pllen = (ip_buf[2] << 8) + ip_buf[3];
 
 	/* Check seqnr and length */
-	plseqnr = data[7];
+	plseqnr = (data[6] << 8) + data[7];
 	if (plseqnr != seqnr) {
 		LOG_WRN("error sequence numbers %d %d", plseqnr, seqnr);
 		delta_t = 0;

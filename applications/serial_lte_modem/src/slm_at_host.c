@@ -49,7 +49,7 @@ enum term_modes {
 	MODE_COUNT      /* Counter of term_modes */
 };
 
-static enum term_modes term_mode;
+static uint16_t term_mode;
 static const struct device *uart_dev;
 static uint8_t at_buf[AT_MAX_CMD_LEN];
 static size_t at_buf_len;
@@ -192,7 +192,7 @@ int poweron_uart(void)
 
 bool check_uart_flowcontrol(void)
 {
-	int err = -EINVAL;
+	int err;
 	struct uart_config cfg = {
 		.flow_ctrl = UART_CFG_FLOW_CTRL_NONE
 	};
@@ -207,7 +207,7 @@ bool check_uart_flowcontrol(void)
 
 int set_uart_baudrate(uint32_t baudrate)
 {
-	int err = -EINVAL;
+	int err;
 	struct uart_config cfg;
 
 	LOG_DBG("Set uart baudrate to: %d", baudrate);

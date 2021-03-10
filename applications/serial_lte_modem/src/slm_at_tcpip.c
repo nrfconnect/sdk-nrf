@@ -276,7 +276,6 @@ static int do_socketopt_set(int name, int value)
 	default:
 		sprintf(rsp_buf, "\r\n#XSOCKETOPT: \"not supported\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
-		ret = 0;
 		break;
 	}
 
@@ -366,7 +365,7 @@ static int do_bind(uint16_t port)
 
 static int do_connect(const char *url, uint16_t port)
 {
-	int ret;
+	int ret = 0;
 
 	LOG_DBG("%s:%d", log_strdup(url), port);
 
@@ -400,7 +399,7 @@ static int do_connect(const char *url, uint16_t port)
 	client.connected = true;
 	sprintf(rsp_buf, "\r\n#XCONNECT: 1\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
-	return 0;
+	return ret;
 }
 
 static int do_listen(void)
@@ -507,7 +506,7 @@ static int do_recv(uint16_t length)
 		}
 	}
 
-	ret = recv(sock, rx_data, length, 0);
+	ret = recv(sock, (void *)rx_data, length, 0);
 	if (ret < 0) {
 		LOG_WRN("recv() error: %d", -errno);
 		if (errno != EAGAIN && errno != ETIMEDOUT) {
@@ -614,8 +613,11 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data,
 static int do_recvfrom(uint16_t length)
 {
 	int ret;
+	/* Below two are not used, just for static code analysis */
+	struct sockaddr src_addr;
+	socklen_t addrlen = sizeof(struct sockaddr);
 
-	ret = recvfrom(client.sock, rx_data, length, 0, NULL, NULL);
+	ret = recvfrom(client.sock, (void *)rx_data, length, 0, &src_addr, &addrlen);
 	if (ret < 0) {
 		LOG_ERR("recvfrom() error: %d", -errno);
 		if (errno != EAGAIN && errno != ETIMEDOUT) {
@@ -652,7 +654,7 @@ static int do_recvfrom(uint16_t length)
 	}
 
 	LOG_DBG("UDP received");
-	return 0;
+	return ret;
 }
 
 /**@brief handle AT#XSOCKET commands
@@ -674,7 +676,7 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 		}
 		if (op == AT_SOCKET_OPEN) {
 			uint16_t type;
-			sec_tag_t sec_tag = INVALID_SEC_TAG;
+			sec_tag_t sec_tag;
 
 			err = at_params_short_get(&at_param_list, 2, &type);
 			if (err) {
@@ -684,8 +686,9 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 			if (err) {
 				return err;
 			}
-			if (at_params_valid_count_get(&at_param_list) > 4) {
-				at_params_int_get(&at_param_list, 4, &sec_tag);
+			err = at_params_int_get(&at_param_list, 4, &sec_tag);
+			if (err) {
+				sec_tag = INVALID_SEC_TAG;
 			}
 			if (client.sock > 0) {
 				LOG_WRN("Socket is already opened");
@@ -1011,7 +1014,7 @@ int handle_at_send(enum at_cmd_type cmd_type)
 int handle_at_recv(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	uint16_t length = CONFIG_SLM_SOCKET_RX_MAX;
+	int16_t length;
 
 	if (!client.connected) {
 		LOG_ERR("Not connected yet");
@@ -1020,11 +1023,9 @@ int handle_at_recv(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) > 1) {
-			err = at_params_short_get(&at_param_list, 1, &length);
-			if (err) {
-				return err;
-			}
+		err = at_params_short_get(&at_param_list, 1, &length);
+		if (err) {
+			length = CONFIG_SLM_SOCKET_RX_MAX;
 		}
 		err = do_recv(length);
 		break;
@@ -1110,7 +1111,7 @@ int handle_at_sendto(enum at_cmd_type cmd_type)
 int handle_at_recvfrom(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	uint16_t length = CONFIG_SLM_SOCKET_RX_MAX;
+	int16_t length;
 
 	if (client.sock < 0) {
 		LOG_ERR("Socket not opened yet");
@@ -1124,11 +1125,9 @@ int handle_at_recvfrom(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) > 1) {
-			err = at_params_short_get(&at_param_list, 1, &length);
-			if (err) {
-				return err;
-			}
+		err = at_params_short_get(&at_param_list, 1, &length);
+		if (err) {
+			length = CONFIG_SLM_SOCKET_RX_MAX;
 		}
 		err = do_recvfrom(length);
 		break;

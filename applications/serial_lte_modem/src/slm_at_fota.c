@@ -11,9 +11,7 @@
 #include <net/tls_credentials.h>
 #include <net/http_parser_url.h>
 #include <net/fota_download.h>
-#include <dfu/mcuboot.h>
 #include "slm_util.h"
-#include "slm_at_host.h"
 #include "slm_at_fota.h"
 
 LOG_MODULE_REGISTER(fota, CONFIG_SLM_LOG_LEVEL);
@@ -87,7 +85,7 @@ static int do_fota_erase(void)
 static int do_fota_start(int op, const char *file_uri, int sec_tag,
 			const char *apn)
 {
-	int ret = -EINVAL;
+	int ret;
 	struct http_parser_url parser;
 	char schema[8];
 

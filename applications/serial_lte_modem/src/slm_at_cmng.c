@@ -11,7 +11,6 @@
 #include <modem/modem_info.h>
 #include <modem/modem_key_mgmt.h>
 #include "slm_util.h"
-#include "slm_at_host.h"
 #include "slm_native_tls.h"
 #include "slm_at_cmng.h"
 
