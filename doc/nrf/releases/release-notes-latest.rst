@@ -101,21 +101,21 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: The latest Zephyr commit appears in multiple places; make sure you update them all.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``ff720cd9b343``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``7074254937ae``, plus some |NCS| specific additions.
 
 For a complete list of upstream Zephyr commits incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline ff720cd9b343 ^v2.4.99-ncs1
+   git log --oneline 7074254937ae ^v2.4.99-ncs1
 
 For a complete list of |NCS| specific commits, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^ff720cd9b343
+   git log --oneline manifest-rev ^7074254937ae
 
-The current |NCS| release is based on Zephyr v2.4.99.
+The current |NCS| release is based on Zephyr v2.5.99.
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
