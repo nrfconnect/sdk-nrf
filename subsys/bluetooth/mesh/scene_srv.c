@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <bluetooth/mesh/models.h>
 #include <sys/byteorder.h>
@@ -31,6 +32,16 @@ static char *scene_path(char *buf, uint16_t scene, bool vnd, uint8_t page)
 {
 	sprintf(buf, "%x/%c%x", scene, vnd ? 'v' : 's', page);
 	return buf;
+}
+
+static inline void update_page_count(struct bt_mesh_scene_srv *srv, bool vnd,
+			       uint8_t page)
+{
+	if (vnd) {
+		srv->vndpages = MAX(page + 1, srv->vndpages);
+	} else {
+		srv->sigpages = MAX(page + 1, srv->sigpages);
+	}
 }
 
 static uint16_t current_scene(const struct bt_mesh_scene_srv *srv, int64_t now)
@@ -334,12 +345,7 @@ static void page_store(struct bt_mesh_scene_srv *srv, uint16_t scene,
 	int err;
 
 	scene_path(path, scene, vnd, page);
-
-	if (vnd) {
-		srv->vndpages = MAX(page, srv->vndpages);
-	} else {
-		srv->sigpages = MAX(page, srv->sigpages);
-	}
+	update_page_count(srv, vnd, page);
 
 	err = bt_mesh_model_data_store(srv->mod, false, path, buf, len);
 	if (err) {
@@ -404,7 +410,6 @@ static enum bt_mesh_scene_status scene_store(struct bt_mesh_scene_srv *srv,
 		}
 
 		len += size;
-
 	}
 
 	if (len) {
@@ -601,11 +606,7 @@ static int scene_srv_set(struct bt_mesh_model *mod, const char *path,
 
 	vnd = path[0] == 'v';
 	page = strtol(&path[1], NULL, 16);
-	if (vnd) {
-		srv->vndpages = MAX(page, srv->vndpages);
-	} else {
-		srv->sigpages = MAX(page, srv->sigpages);
-	}
+	update_page_count(srv, vnd, page);
 
 	/* Before starting the mesh, we'll just register that the scene exists:
 	 * Once the mesh starts, we'll load the current scene, and end up in
@@ -803,7 +804,7 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 }
 
 int bt_mesh_scene_srv_pub(struct bt_mesh_scene_srv *srv,
-			 struct bt_mesh_msg_ctx *ctx)
+			  struct bt_mesh_msg_ctx *ctx)
 {
 	return scene_status_send(srv, ctx, BT_MESH_SCENE_SUCCESS);
 }
