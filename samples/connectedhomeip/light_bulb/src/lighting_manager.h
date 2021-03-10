@@ -19,7 +19,7 @@ public:
 
 	using LightingCallback_fn = void (*)(Action);
 
-	int Init(const char *pwmDeviceName, uint32_t pwmChannel);
+	int Init(const device *pwmDevice, uint32_t pwmChannel);
 	bool IsTurnedOn() const { return mState == State::On; }
 	uint8_t GetLevel() const { return mLevel; }
 	bool IsActionChipInitiated() const { return mChipInitiatedAction; }
