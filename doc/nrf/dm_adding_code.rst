@@ -146,4 +146,4 @@ You just need to replace ``sdk-nrf`` and ``nrf`` with the repository name and pa
    west update
 
 After that, to modify the |NCS| version associated with your app, change the ``revision`` value in the manifest file to the `sdk-nrf`_ Git tag, SHA, or the branch you want to use, save the file, and run ``west update``.
-See :ref:`zephyr:west-multi-repo` for more details.
+See :ref:`zephyr:west-basics` for more details.

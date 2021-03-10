@@ -212,7 +212,7 @@ The revision of each of those repositories is determined by the current revision
 
 To manage the combination of repositories and versions, the |NCS| uses :ref:`zephyr:west`.
 The main repository, `sdk-nrf`_, contains a `west manifest file`_, :file:`west.yml`, that determines the revision of all other repositories.
-This means that sdk-nrf acts as the :ref:`manifest repository <zephyr:west-multi-repo>`, while the other repositories are project repositories.
+This means that sdk-nrf acts as the :ref:`manifest repository <zephyr:west-basics>`, while the other repositories are project repositories.
 
 You can find additional information about the repository and development model in the :ref:`development model section <dev-model>`.
 
