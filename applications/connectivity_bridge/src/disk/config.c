@@ -344,6 +344,7 @@ static void parse_file(const char *mnt_point)
 		return;
 	}
 
+	fs_file_t_init(&file);
 	err = fs_open(&file, fname, FS_O_CREATE | FS_O_RDWR);
 	if (err) {
 		LOG_ERR("fs_open: %d", err);

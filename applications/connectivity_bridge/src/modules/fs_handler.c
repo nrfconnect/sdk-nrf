@@ -44,6 +44,7 @@ static int fs_init(void)
 	/* The default RAM disk may contain unwanted files. Erase these. */
 	struct fs_dir_t dir;
 
+	fs_dir_t_init(&dir);
 	err = fs_opendir(&dir, FATFS_MNTP "/");
 	if (err) {
 		LOG_ERR("fs_opendir: %d", err);
