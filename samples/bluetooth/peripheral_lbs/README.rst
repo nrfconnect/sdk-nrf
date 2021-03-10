@@ -82,7 +82,7 @@ After programming the sample to your dongle or development kit, test it by perfo
 This testing procedure assumes that you are using `nRF Connect for Mobile`_.
 
 1. Power on your development kit or plug in your dongle.
-#. Connect to the device from nRF Connect (the device is advertising as "Nordic_Blinky").
+#. Connect to the device from nRF Connect (the device is advertising as "Nordic_LBS").
 #. Observe that the services of the connected device are shown.
 #. In "Nordic LED Button Service", click the :guilabel:`Play` button for the "Button" characteristic.
 #. Press **Button 1** either on the dongle or on the development kit.
