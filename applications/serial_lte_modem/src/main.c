@@ -187,7 +187,7 @@ void start_execute(void)
 }
 
 #if defined(CONFIG_SLM_START_SLEEP)
-void main(void)
+int main(void)
 {
 	uint32_t rr = nrf_power_resetreas_get(NRF_POWER_NS);
 
@@ -199,10 +199,14 @@ void main(void)
 		LOG_INF("Sleep");
 		enter_sleep();
 	}
+
+	return 0;
 }
 #else
-void main(void)
+int main(void)
 {
 	start_execute();
+
+	return 0;
 }
 #endif	/* CONFIG_SLM_GPIO_WAKEUP */

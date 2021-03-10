@@ -535,7 +535,7 @@ static int tcpsvr_input(int infd)
 		k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME), K_NO_WAIT);
 	} else {
 		k_timer_stop(&conn_timer);
-		ret = recv(fds[infd].fd, rx_data, sizeof(rx_data), 0);
+		ret = recv(fds[infd].fd, (void *)rx_data, sizeof(rx_data), 0);
 		if (ret > 0) {
 			tcp_data_handle(rx_data, ret);
 		}
@@ -689,7 +689,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 			goto exit;
 		}
 		if ((fds[0].revents & POLLIN) == POLLIN) {
-			ret = recv(fds[0].fd, rx_data, sizeof(rx_data), 0);
+			ret = recv(fds[0].fd, (void *)rx_data, sizeof(rx_data), 0);
 			if (ret < 0) {
 				LOG_WRN("recv() error: %d", -errno);
 				continue;

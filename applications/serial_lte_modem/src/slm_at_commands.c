@@ -5,7 +5,6 @@
  */
 #include <zephyr/types.h>
 #include <sys/util.h>
-#include <ctype.h>
 #include <zephyr.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -15,7 +14,6 @@
 #include <init.h>
 #include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
-#include <modem/at_notif.h>
 #include <power/reboot.h>
 
 #include "slm_util.h"
@@ -256,7 +254,7 @@ static int handle_at_slmuart(enum at_cmd_type type)
  */
 static int handle_at_datactrl(enum at_cmd_type cmd_type)
 {
-	int ret;
+	int ret = 0;
 	uint16_t size_limit;
 	uint16_t time_limit;
 

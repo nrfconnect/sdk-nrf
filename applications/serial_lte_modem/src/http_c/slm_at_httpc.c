@@ -377,13 +377,10 @@ static int do_http_connect(void)
 
 static int do_http_disconnect(void)
 {
-	int err = -EINVAL;
-
 	/* Close socket if it is connected. */
 	if (httpc.fd != INVALID_SOCKET) {
 		close(httpc.fd);
 		httpc.fd = INVALID_SOCKET;
-		err = 0;
 	} else {
 		return -ENOTCONN;
 	}
@@ -395,7 +392,7 @@ static int do_http_disconnect(void)
 	sprintf(rsp_buf, "#XHTTPCCON: 0\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
-	return err;
+	return 0;
 }
 
 static int http_method_str_enum(uint8_t *method_str)
@@ -419,7 +416,7 @@ static int http_method_str_enum(uint8_t *method_str)
 
 static int do_http_request(void)
 {
-	int err = -EINVAL;
+	int err;
 	struct http_request req;
 	int method;
 	int32_t timeout = SYS_FOREVER_MS;
@@ -598,7 +595,7 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 			LOG_ERR("Fail to get method string: %d", err);
 			return err;
 		}
-		httpc.method_str = data_buf;
+		httpc.method_str = (char *)data_buf;
 		offset = method_sz + 1;
 		/* Get resource path string */
 		err = util_string_get(&at_param_list, 2,
@@ -607,7 +604,7 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 			LOG_ERR("Fail to get resource string: %d", err);
 			return err;
 		}
-		httpc.resource = data_buf + offset;
+		httpc.resource = (char *)(data_buf + offset);
 		offset = offset + resource_sz + 1;
 		/* Get header string */
 		err = util_string_get(&at_param_list, 3,
@@ -616,7 +613,7 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 			LOG_ERR("Fail to get option string: %d", err);
 			return err;
 		}
-		httpc.headers = data_buf + offset;
+		httpc.headers = (char *)(data_buf + offset);
 		if (param_count >= 5) {
 			err = at_params_int_get(&at_param_list, 4,
 						  &httpc.pl_len);
@@ -673,6 +670,7 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 			if (err) {
 				LOG_ERR("Fail to disconnect. Error: %d", err);
 			}
+			break;
 		}
 	}
 }

@@ -135,9 +135,7 @@ bool check_for_ipv4(const char *address, uint8_t length)
 	for (index = 0; index < length; index++) {
 		char ch = *(address + index);
 
-		if ((ch == '.') || (ch >= '0' && ch <= '9')) {
-			continue;
-		} else {
+		if ((ch != '.') && (ch < '0' || ch > '9')) {
 			return false;
 		}
 	}

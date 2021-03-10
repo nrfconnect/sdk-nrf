@@ -242,7 +242,7 @@ void mqtt_evt_handler(struct mqtt_client *const c,
 
 static void mqtt_thread_fn(void *arg1, void *arg2, void *arg3)
 {
-	int err;
+	int err = 0;
 
 	while (1) {
 		/* Don't go any further until MQTT is connected */
@@ -269,13 +269,24 @@ static void mqtt_thread_fn(void *arg1, void *arg2, void *arg3)
 			if ((fds.revents & POLLERR) == POLLERR) {
 				LOG_ERR("POLLERR");
 				mqtt_abort(&client);
+				err = -EIO;
+				break;
+			}
+			if ((fds.revents & POLLHUP) == POLLHUP) {
+				LOG_ERR("POLLHUP");
+				mqtt_abort(&client);
+				err = -ECONNRESET;
 				break;
 			}
 			if ((fds.revents & POLLNVAL) == POLLNVAL) {
 				LOG_ERR("POLLNVAL");
 				mqtt_abort(&client);
+				err = -ECONNABORTED;
 				break;
 			}
+		}
+		if (err) {
+			break;
 		}
 	}
 }
@@ -285,7 +296,7 @@ static void mqtt_thread_fn(void *arg1, void *arg2, void *arg3)
  */
 static int broker_init(void)
 {
-	int err = -EINVAL;
+	int err;
 	char addr_str[INET6_ADDRSTRLEN];
 	struct addrinfo *result;
 	struct addrinfo *addr;
@@ -355,7 +366,7 @@ static int broker_init(void)
  */
 static int client_init(void)
 {
-	int err = -EINVAL;
+	int err;
 
 	/* Init MQTT client */
 	mqtt_client_init(&client);
@@ -431,7 +442,7 @@ static int fds_init(struct mqtt_client *c)
 
 static int do_mqtt_connect(void)
 {
-	int err = -EINVAL;
+	int err;
 
 	if (ctx.connected) {
 		return -EINPROGRESS;
