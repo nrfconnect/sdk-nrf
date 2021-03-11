@@ -44,6 +44,9 @@ target_sources_ifdef(CONFIG_DESKTOP_HID_STATE_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_USB_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/usb_state.c)
 
+target_sources_ifdef(CONFIG_CAF_LEDS
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led_state.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_LED_STREAM_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led_stream.c)
 
