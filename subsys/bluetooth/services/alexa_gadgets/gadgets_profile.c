@@ -6,13 +6,17 @@
 
 #include <zephyr.h>
 
-#include <drivers/hwinfo.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/services/gadgets.h>
 #include <bluetooth/services/gadgets_profile.h>
 #include <tinycrypt/constants.h>
 #include <tinycrypt/sha256.h>
 #include <sys/byteorder.h>
+#if CONFIG_SPM_SERVICE_READ
+#include <secure_services.h>
+#else
+#include <drivers/hwinfo.h>
+#endif
 
 #include <stdio.h>
 
@@ -399,11 +403,30 @@ static char *strnstr(const char *str1, size_t len, const char *str2)
 static void serial_number_string_get(char *serial_number)
 {
 	uint8_t device_id[GADGETS_DSN_LENGTH_BYTES];
-	ssize_t device_id_len;
 	int len;
+
+#if CONFIG_SPM_SERVICE_READ
+	int err;
+	uint32_t device_id_reg[2];
+	/* Cannot access device_id directly from non-secure domain. */
+	err = spm_request_read(
+		&device_id_reg[0], (uint32_t) &NRF_FICR_S->INFO.DEVICEID[0], sizeof(uint32_t));
+	__ASSERT_NO_MSG(err == 0);
+	err = spm_request_read(
+		&device_id_reg[1], (uint32_t) &NRF_FICR_S->INFO.DEVICEID[1], sizeof(uint32_t));
+	__ASSERT_NO_MSG(err == 0);
+
+	BUILD_ASSERT(sizeof(device_id) >= sizeof(device_id_reg));
+
+	/* Convert endianness the same way as hwinfo does */
+	((uint32_t *) device_id)[0] = sys_cpu_to_be32(device_id_reg[1]);
+	((uint32_t *) device_id)[1] = sys_cpu_to_be32(device_id_reg[0]);
+#else
+	ssize_t device_id_len;
 
 	device_id_len = hwinfo_get_device_id(device_id, sizeof(device_id));
 	__ASSERT_NO_MSG(device_id_len == GADGETS_DSN_LENGTH_BYTES);
+#endif
 
 	/* Expand binary device ID to hex string */
 	len = bin2hex(device_id, sizeof(device_id), serial_number,
