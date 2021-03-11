@@ -42,7 +42,13 @@ Building and running
 
 .. include:: /includes/build_and_run_nrf9160.txt
 
-To use the UART overlay for increasing the transfer speed, add the ``-DOVERLAY_FILE=uart.overlay`` flag to your build.
+To use the UART overlay for increasing the transfer speed, add the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag to your build.
+See :ref:`cmake_options` for instructions on how to add this flag.
+For example, when building on the command line, add the UART overlay for nRF9160 DK in the following way:
+
+  .. code-block:: console
+
+     west build -b nrf9160dk_nrf9160ns -- -DDTC_OVERLAY_FILE=uart.overlay
 
 Testing
 =======
@@ -60,7 +66,7 @@ After programming the sample to your development kit, perform the following step
 
         python update_modem.py mfw_nrf9160_1.2.2.zip /dev/ttyACM0 *115200*
 
-   * If you used the ``-DOVERLAY_FILE=uart.overlay`` flag:
+   * If you used the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag:
 
      .. parsed-literal::
         :class: highlight
