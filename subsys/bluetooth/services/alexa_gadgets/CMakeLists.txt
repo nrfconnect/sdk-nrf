@@ -84,7 +84,7 @@ endif()
 
 # Protobuf generation setup
 
-set(PROTO_COMPILATION_DIR ${CMAKE_BINARY_DIR}/generated/alexa/protobuf)
+set(PROTO_COMPILATION_DIR ${CMAKE_BINARY_DIR}/gen/proto)
 
 # Populate lists of .proto files that should be compiled at build time
 set(BASE_PROTO_FILES
