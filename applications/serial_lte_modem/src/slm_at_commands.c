@@ -59,10 +59,6 @@ static struct slm_work_info {
 	uint32_t data;
 } slm_work;
 
-/* varable shared globally */
-#define DATAMODE_SIZE_LIMIT_MAX	1024	/* byte */
-#define DATAMODE_TIME_LIMIT_MAX	10000	/* msec */
-
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
@@ -76,6 +72,7 @@ int set_uart_baudrate(uint32_t baudrate);
 int get_uart_baudrate(void);
 void rsp_send(const uint8_t *str, size_t len);
 int poweroff_uart(void);
+bool verify_datamode_control(uint16_t size_limit, uint16_t time_limit);
 
 #define SLM_VERSION	"\r\n#XSLMVER: \"1.6\"\r\n"
 
@@ -270,8 +267,7 @@ static int handle_at_datactrl(enum at_cmd_type cmd_type)
 		if (ret) {
 			return ret;
 		}
-		if (datamode_time_limit < DATAMODE_TIME_LIMIT_MAX &&
-		    datamode_size_limit < DATAMODE_SIZE_LIMIT_MAX) {
+		if (verify_datamode_control(size_limit, time_limit)) {
 			datamode_size_limit = size_limit;
 			datamode_time_limit = time_limit;
 		} else {
