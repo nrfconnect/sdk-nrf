@@ -22,7 +22,8 @@ menuconfig BT_ALEXA_GADGETS_PROFILE
 	bool "Enable Alexa Gadgets profile"
 	select BT_ALEXA_GADGETS
 	select BT_SMP
-	select HWINFO
+	select HWINFO if !ARCH_HAS_TRUSTED_EXECUTION || (ARCH_HAS_TRUSTED_EXECUTION && !TRUSTED_EXECUTION_NONSECURE)
+	select SPM_SERVICE_READ if TRUSTED_EXECUTION_NONSECURE
 	select TINYCRYPT_SHA256
 	help
 	  Enable Alexa Gadgets profile.
