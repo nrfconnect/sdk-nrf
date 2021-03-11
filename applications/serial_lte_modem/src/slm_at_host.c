@@ -35,10 +35,14 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
  *  Modem library's NRF_MODEM_AT_MAX_CMD_SIZE */
 #define AT_MAX_CMD_LEN	4096
 
-#define UART_RX_BUF_NUM	2
-#define UART_RX_LEN	256
-#define UART_RX_TIMEOUT_MS	1
-#define UART_ERROR_DELAY_MS	500
+#define UART_RX_BUF_NUM         2
+#define UART_RX_LEN             256
+#define UART_RX_TIMEOUT_MS      1
+#define UART_ERROR_DELAY_MS     500
+#define UART_RX_MARGIN_MS       10
+
+#define DATAMODE_SIZE_LIMIT_MAX	1024	/* byte */
+#define DATAMODE_TIME_LIMIT_MAX	10000	/* msec */
 
 /** @brief Termination Modes. */
 enum term_modes {
@@ -237,8 +241,38 @@ int get_uart_baudrate(void)
 	err = uart_config_get(uart_dev, &cfg);
 	if (err) {
 		LOG_ERR("uart_config_get: %d", err);
+		return -1;
 	}
 	return (int)cfg.baudrate;
+}
+
+bool verify_datamode_control(uint16_t size_limit, uint16_t time_limit)
+{
+	if (size_limit > DATAMODE_SIZE_LIMIT_MAX || time_limit > DATAMODE_TIME_LIMIT_MAX) {
+		return false;
+	}
+
+	if (size_limit > 0  && time_limit > 0) {
+		int baudrate;
+		int min_time;
+
+		baudrate = get_uart_baudrate();
+		if (baudrate <= 0) {
+			return false;
+		}
+
+		if (size_limit >= UART_RX_LEN) {
+			min_time = UART_RX_LEN * (8 + 1 + 1) * 1000 / baudrate + UART_RX_MARGIN_MS;
+		} else {
+			min_time = size_limit * (8 + 1 + 1) * 1000 / baudrate + UART_RX_MARGIN_MS;
+		}
+		if (min_time > time_limit) {
+			LOG_ERR("Invalid time_limit: %d, min: %d", time_limit, min_time);
+			return false;
+		}
+	}
+
+	return true;
 }
 
 static void response_handler(void *context, const char *response)
@@ -338,8 +372,7 @@ static int raw_rx_handler(const uint8_t *data, int datalen)
 	int quit_str_len = strlen(quit_str);
 	int64_t silence = CONFIG_SLM_DATAMODE_SILENCE * MSEC_PER_SEC;
 
-	/* First, check conditions for quiting datamode
-	 */
+	/* First, check conditions for quitting datamode */
 	if (silence > k_uptime_delta(&rx_start)) {
 		if (datamode_off_pending) {
 			/* quit procedure aborted */
@@ -351,21 +384,18 @@ static int raw_rx_handler(const uint8_t *data, int datalen)
 		}
 	} else {
 		/* leading silence confirmed */
-		if (datalen == quit_str_len &&
-		    strncmp(data, quit_str, quit_str_len) == 0) {
+		if (datalen == quit_str_len && strncmp(data, quit_str, quit_str_len) == 0) {
 			datamode_off_pending = true;
 			/* check subordinate silence */
-			k_timer_start(&silence_timer,
-			      K_SECONDS(CONFIG_SLM_DATAMODE_SILENCE),
-			      K_NO_WAIT);
+			k_timer_start(&silence_timer, K_SECONDS(CONFIG_SLM_DATAMODE_SILENCE),
+				      K_NO_WAIT);
 			LOG_INF("datamode off pending");
 			rx_start = k_uptime_get();
 			return 0;
 		}
 	}
 
-	/* Second, check conditions for sending
-	 */
+	/* Second, check conditions for sending */
 	if (datamode_time_limit > 0) {
 		k_timer_stop(&inactivity_timer);
 	}
@@ -374,19 +404,16 @@ static int raw_rx_handler(const uint8_t *data, int datalen)
 	at_buf_len += datalen;
 
 	if (datamode_size_limit > 0 && at_buf_len >= datamode_size_limit) {
-		LOG_INF("size limit reached");
+		LOG_INF("size limit reached, size: %d", at_buf_len);
 		goto transit;
 	}
 
-	/* (re)start inactivity timer */
+	/* start/restart inactivity timer */
 	if (datamode_time_limit > 0) {
-		k_timer_start(&inactivity_timer,
-		      K_MSEC(datamode_time_limit),
-		      K_NO_WAIT);
+		k_timer_start(&inactivity_timer, K_MSEC(datamode_time_limit), K_NO_WAIT);
 	}
 
-	/* Third, check the condition of no size/time limit
-	 */
+	/* Third, check the condition of no size/time limit */
 	if (datamode_size_limit > 0 || datamode_time_limit > 0) {
 		rx_start = k_uptime_get();
 		return 0;
