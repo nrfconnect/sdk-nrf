@@ -73,6 +73,7 @@ nRF9160
     * Added AT#XSLEEP=2 to power off UART interface.
     * Added data mode to FTP service.
     * Enabled all SLM services by default.
+    * Updated the HTTP client service code to handle chunked HTTP responses.
 
 Common
 ======

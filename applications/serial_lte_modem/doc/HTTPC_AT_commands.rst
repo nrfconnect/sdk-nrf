@@ -153,17 +153,28 @@ The following example sends a GET request to retrieve data from the server witho
 ::
 
    AT#XHTTPCREQ="GET","/get?foo1=bar1&foo2=bar2",""
+
    OK
+
+
    #XHTTPCREQ: 0
-   #XHTTPCRSP: 576,0
+
+   #XHTTPCRSP:341,1
    HTTP/1.1 200 OK
-   Date: Wed, 09 Sep 2020 08:08:45 GMT
+   Date: Thu, 11 Mar 2021 04:36:19 GMT
    Content-Type: application/json; charset=utf-8
    Content-Length: 244
    Connection: keep-alive
-   ETag: W/"f4-8qqGYUH6MF4k5ssZjXy/pQ2Wv2M"
+   ETag: W/"f4-ZKlqfH53aEj3f4zb0kDtYvHD+XU"
    Vary: Accept-Encoding
-   set-cookie: sails.sid=s%3Awm7Yy6ZHF1L9bhf5GQFyOfskldPnP1AU.3tM0APxqLZLEaHtZMlUi9OJH8AR7OI%2F9qNV8h1NQOj8; Path=/; HttpOnly
+   set-cookie: sails.sid=s%3AHGcBwpqlDDUZhU16VzuQkfTMhWhA4W1T.%2Bgm1%2BezKGo2JnWxaB5yYDo%2FNh0NbnJzJjEnkMcrfdEI; Path=/; HttpOnly
+
+
+   #XHTTPCRSP:243,1
+   {"args":{"foo1":"bar1","foo2":"bar2"},"headers":{"x-forwarded-proto":"http","x-forwarded-port":"80","host":"postman-echo.com","x-amzn-trace-id":"Root=1-60499e43-67a96f1e18fec45b1db78c25"},"url":"http://postman-echo.com/get?foo1=bar1&foo2=bar2"
+   #XHTTPCRSP:1,1
+   }
+   #XHTTPCRSP:0,0
 
 Read command
 ------------
@@ -213,19 +224,31 @@ The following example sends a POST request to send data to the server with an op
    Content-Type: application/x-www-form-urlencoded
    Content-Length: 20
    ",20
+
    OK
+
    #XHTTPCREQ: 1
    12345678901234567890
+
    OK
+
    #XHTTPCREQ: 0
-   #XHTTPCRSP: 576,1
+
+   #XHTTPCRSP:342,1
    HTTP/1.1 200 OK
-   Date: Wed, 09 Sep 2020 08:21:03 GMT
+   Date: Thu, 11 Mar 2021 04:48:40 GMT
    Content-Type: application/json; charset=utf-8
-   Content-Length: 405
+   Content-Length: 402
    Connection: keep-alive
-   ETag: W/"195-JTHehAiV7LQRCKihfzcZBX1rgGM"
+   ETag: W/"192-M03zprKgFyLUNjiEI1RVdT9hTiQ"
    Vary: Accept-Encoding
-   set-cookie: sails.sid=s%3AtApCs6p2Ja2on5dYO8QvhQSEEfnvkjOX.31HKOpZcip6MzzUoqPw2WZib0rPpimc5y10Mjczukoc; Path=/; HttpOnly
-   {"args":{},"data":"","files":{},"form":{"12345678901234567890":""},"headers":{"x-forwarded-proto":"https","x-forwarded-port":"443","host":"postman-echo.com","x-amzn-trace-id":"Root=1-5f589067-d61d0850c65f3568f9c9e050","content-length":"20",#XHTTPCRSP:165,0
-   "user-agent":"SLM/1.2.0","accept":"*/*","content-type":"application/x-www-form-urlencoded"},"json":{"12345678901234567890":""},"url":"https://postman-echo.com/post"}
+   set-cookie: sails.sid=s%3AnqNP2vvtUzX8Yjty19rZmvDI9MUKLa_V.rMf6q%2BKs%2FTL4cRPwCoHAbdlvEiu0sugyRF%2B3AErgBMs; Path=/; HttpOnly
+
+
+   #XHTTPCRSP:366,1
+   {"args":{},"data":"","files":{},"form":{"12345678901234567890":""},"headers":{"x-forwarded-proto":"http","x-forwarded-port":"80","host":"postman-echo.com","x-amzn-trace-id":"Root=1-6049a11f-187acd3f4ab56df7250ba74f","content-length":"20","user-agent":"SLM/1.2.0","accept":"*/*","content-type":"application/x-www-form-urlencoded"},"json":{"12345678901234567890":""},"
+   #XHTTPCRSP:35,1
+   url":"http://postman-echo.com/post"
+   #XHTTPCRSP:1,1
+   }
+   #XHTTPCRSP:0,0
