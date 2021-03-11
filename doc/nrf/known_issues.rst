@@ -821,6 +821,13 @@ KRKNWK-8133: CSMA-CA issues
 SoftDevice Controller
 =====================
 
+.. rst-class:: v1-5-0
+
+DRGN-15382: The SoftDevice Controller cannot be qualified on nRF52832
+  The SoftDevice Controller cannot be qualified on nRF52832.
+
+  **Workaround:** Upgrade to v1.5.1 (once available) or use the master branch.
+
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 DRGN-15226: Link disconnects with reason "LMP Response Timeout (0x22)"
