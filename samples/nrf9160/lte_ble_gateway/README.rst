@@ -66,10 +66,11 @@ When you connect the nRF9160 development kit to your computer, three virtual ser
 You must program the *board controller* with the :ref:`bluetooth-hci-lpuart-sample` sample first, before programming the main controller with the LTE Sensor Gateway sample application.
 You can program the board controller as follows:
 
-1. Set the **SW5** switch, marked as *debug/prog*, in the **NRF52** position.
+1. Set the **SW10** switch, marked as debug/prog, in the **NRF52** position.
+   In nRF9160 DK v0.9.0 and earlier, the switch is called **SW5**.
 #. Build the :ref:`bluetooth-hci-lpuart-sample` sample for the nrf9160dk_nrf52840 build target and program the board controller with it.
 #. Verify that the programming was successful.
-   To do so, use a terminal emulator, like PuTTY, to connect to the second serial port and check the output.
+   Use a terminal emulator, like PuTTY, to connect to the second serial port and check the output.
    See :ref:`putty` for the required settings.
 
 After programming the board controller, you must program the main controller with the LTE Sensor Gateway sample, which also includes the :ref:`secure_partition_manager` sample.

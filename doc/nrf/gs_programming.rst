@@ -102,7 +102,8 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    .. important::
       If you are working with an nRF9160 DK, make sure to select the correct controller before you program the application to your development kit.
 
-      Put the **SW5** switch (marked debug/prog) in the **NRF91** position to program the main controller, or in the **NRF52** position to program the board controller.
+      Set the **SW10** switch (marked debug/prog) in the **NRF91** position to program the main controller, or in the **NRF52** position to program the board controller.
+      In nRF9160 DK v0.9.0 and earlier, the switch is called **SW5**.
       See the `Device programming section in the nRF9160 DK User Guide`_ for more information.
 
    .. imp_note_nrf91_end
