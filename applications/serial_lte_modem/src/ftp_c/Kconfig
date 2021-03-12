@@ -5,6 +5,7 @@
 
 config SLM_FTPC
 	bool "FTP client support in SLM"
+	default y
 	select FTP_CLIENT
 
 if SLM_FTPC

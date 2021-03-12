@@ -5,6 +5,8 @@
 
 config SLM_GPS
 	bool "GPS support in SLM"
+	default y
+
 
 if SLM_GPS
 
