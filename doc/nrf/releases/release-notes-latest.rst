@@ -72,6 +72,7 @@ nRF9160
     * Fixed TCP/UDP port range issue (0~65535).
     * Added AT#XSLEEP=2 to power off UART interface.
     * Added data mode to FTP service.
+    * Enabled all SLM services by default.
 
 Common
 ======

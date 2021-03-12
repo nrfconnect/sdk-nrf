@@ -5,4 +5,5 @@
 
 config SLM_HTTPC
 	bool "HTTP client support in SLM"
+	default y
 	select HTTP_CLIENT

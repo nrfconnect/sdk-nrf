@@ -5,5 +5,6 @@
 
 config SLM_MQTTC
 	bool "MQTT client support in SLM"
+	default y
 	select MQTT_LIB
 	select MQTT_LIB_TLS
