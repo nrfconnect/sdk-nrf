@@ -78,7 +78,7 @@ LTE-M / NB-IoT switching
 
 Thingy:91 has a multimode modem, which enables it to support automatic switching between LTE-M and NB-IoT.
 A built-in parameter in the Thingy:91 firmware determines whether the modem first attempts to connect in LTE-M or NB-IoT mode.
-If the modem fails to connect using this preferred mode within the default time-out period (10 minutes), the modem switches to the other mode.
+If the modem fails to connect using this preferred mode within the default timeout period (10 minutes), the modem switches to the other mode.
 
 .. |An nRF9160-based device| replace:: A Thingy:91
 

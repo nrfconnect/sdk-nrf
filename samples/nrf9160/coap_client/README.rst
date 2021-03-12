@@ -59,7 +59,7 @@ After programming the sample and all prerequisites to the development kit, test 
        The nRF CoAP client sample started
 #. Observe that the discovered IP address of the public CoAP server is displayed on the terminal emulator.
 #. Observe that the nRF9160 DK sends periodic CoAP GET requests to the configured server for a configured resource after it gets LTE connection.
-#. Observe that the sample either displays the response data received from the server or indicates a time-out on the terminal.
+#. Observe that the sample either displays the response data received from the server or indicates a timeout on the terminal.
    For more information on the response codes, see `COAP response codes`_.
 
 

@@ -372,7 +372,7 @@ NCSDK-8224: Callbacks for "security changed" and "pairing failed" are not always
 NCSDK-8223: GATT requests might deadlock RX thread
   GATT requests might deadlock the RX thread when all TX buffers are taken by GATT requests and the RX thread tries to allocate a TX buffer for a response.
   This causes a deadlock because only the RX thread releases the TX buffers for the GATT requests.
-  The deadlock is resolved by a 30 second time-out, but the ATT bearer cannot transmit without reconnecting.
+  The deadlock is resolved by a 30 second timeout, but the ATT bearer cannot transmit without reconnecting.
 
   **Workaround:** Set :option:`CONFIG_BT_L2CAP_TX_BUF_COUNT` >= :option:`CONFIG_BT_ATT_TX_MAX` + 2.
 
@@ -640,7 +640,7 @@ Offset not retained with an MCUboot target
 
 .. rst-class:: v1-1-0
 
-Download stopped on socket connection time-out
+Download stopped on socket connection timeout
   In the :ref:`aws_fota_sample` and :ref:`http_application_update_sample` samples, the download is stopped if the socket connection times out before the modem can delete the modem firmware.
   A fix for this issue is available in commit `38625ba7 <https://github.com/nrfconnect/sdk-nrf/commit/38625ba775adda3cdc7dbf516eeb3943c7403227>`_.
 
@@ -980,7 +980,7 @@ Assert on writing to flash
 
 .. rst-class:: v1-0-0
 
-Time-out without sending packet
+Timeout without sending packet
   A directed advertiser may time out without sending a packet on air.
 
 nrfx

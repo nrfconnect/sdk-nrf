@@ -137,7 +137,7 @@ SUPL logger
 Millisecond counter
    Callback function for millisecond counter.
    Callback implementation is optional.
-   If the callback function is not implemented, the library assumes 1 second receive time-out and estimates SUPL level time-outs based on that.
+   If the callback function is not implemented, the library assumes 1 second receive timeout and estimates SUPL level timeouts based on that.
 
 SUPL read
    Callback function for receiving incoming data from the SUPL server.

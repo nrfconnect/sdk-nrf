@@ -28,11 +28,11 @@ You can enable the power manager module by selecting the :option:`CONFIG_DESKTOP
 This module uses Zephyr's :ref:`zephyr:power_management_api` subsystem.
 It depends on :option:`CONFIG_HAS_POWER_STATE_DEEP_SLEEP_1` being enabled and selects :option:`CONFIG_DEVICE_POWER_MANAGEMENT` and :option:`CONFIG_PM_DEEP_SLEEP_STATES`.
 
-Time-out configuration options
-==============================
+Timeout configuration options
+=============================
 
 With the :option:`CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT` configuration option, you can set the amount of time after which the application will go to the low power mode.
-By default, the time-out is set to 120 seconds.
+By default, the timeout is set to 120 seconds.
 
 The :option:`CONFIG_DESKTOP_POWER_MANAGER_ERROR_TIMEOUT` sets the amount of time after which the device is turned off upon an internal error.
 
@@ -82,7 +82,7 @@ On timeout, the power manager module sets the application to either the suspende
 Suspended
 ---------
 
-Upon power-down time-out, the power manager will switch the application to the suspended state if one of the following conditions is met:
+Upon power-down timeout, the power manager will switch the application to the suspended state if one of the following conditions is met:
 
 * The device is connected to a remote peer.
 * The option :option:`CONFIG_DESKTOP_POWER_MANAGER_STAY_ON` is selected.
@@ -96,7 +96,7 @@ The established connection is maintained.
 Off
 ---
 
-Upon power-down time-out, the power manager will switch the application to the deep sleep mode if the following conditions are met:
+Upon power-down timeout, the power manager will switch the application to the deep sleep mode if the following conditions are met:
 
 * The device is disconnected.
 * The option :option:`CONFIG_DESKTOP_POWER_MANAGER_STAY_ON` is disabled.
