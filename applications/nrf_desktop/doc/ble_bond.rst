@@ -60,8 +60,8 @@ Module states
 
 The |ble_bond| is implemented as a state machine.
 Every transition is triggered by an :ref:`event_manager` event with a predefined value.
-Some transitions can be also triggered by internal time-out.
-For example, the transition from :c:enumerator:`STATE_ERASE_PEER` to :c:enumerator:`STATE_IDLE` can be triggered by ``click_event``, ``selector_event``, or an internal time-out.
+Some transitions can be also triggered by internal timeout.
+For example, the transition from :c:enumerator:`STATE_ERASE_PEER` to :c:enumerator:`STATE_IDLE` can be triggered by ``click_event``, ``selector_event``, or an internal timeout.
 
 The following diagram shows states and transitions between these states after the module is initialized:
 
@@ -102,14 +102,14 @@ The peripheral resets the identity and starts advertising using it.
 If a new peer successfully connects, establishes security, and bonds, the current application local identity switches to using the Bluetooth local identity that was used during the erase advertising.
 The new peer is associated with the currently used application local identity.
 
-After a time-out or on user request, the erase advertising is stopped.
+After a timeout or on user request, the erase advertising is stopped.
 The application local identity still uses the Bluetooth local identity that was associated with it before the erase advertising.
 
 .. note::
-   The erase advertising time-out can be extended in case a new peer connects.
+   The erase advertising timeout can be extended in case a new peer connects.
    This ensures that a new peer will have time to establish the Bluetooth security level.
 
-   The time-out is increased to a bigger value when the passkey authentication is enabled (:option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`).
+   The timeout is increased to a bigger value when the passkey authentication is enabled (:option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`).
    This gives the end user enough time to enter the passkey.
 
 Standby states

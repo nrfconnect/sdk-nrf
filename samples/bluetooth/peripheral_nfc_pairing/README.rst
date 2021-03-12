@@ -31,7 +31,7 @@ To start the NFC data transfer, the NFC device must touch the NFC antenna that i
 
 After reading the tag or exchanging data over TNEP, the initiator can connect and pair with the device that is advertising.
 The connection state of the device is signaled by the LEDs.
-When the connection is lost due to a time-out, the library automatically triggers direct advertising.
+When the connection is lost due to a timeout, the library automatically triggers direct advertising.
 
 NFC data exchange
 *****************

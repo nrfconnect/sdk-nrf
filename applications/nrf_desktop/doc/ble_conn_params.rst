@@ -33,7 +33,7 @@ Implementation details
 
 The |ble_conn_params| receives the peripheral's connection parameters update request as ``ble_peer_conn_params_event``.
 The module updates only the connection latency.
-The connection interval and supervision time-out are not changed according to the peripheral's request.
+The connection interval and supervision timeout are not changed according to the peripheral's request.
 
 .. note::
    On the peripheral side, the Bluetooth connection latency is controlled by :ref:`nrf_desktop_ble_latency`.

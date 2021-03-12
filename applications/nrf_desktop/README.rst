@@ -704,7 +704,7 @@ You can define the amount of time after which the peripherals are suspended or p
 By default, this period is set to 120 seconds.
 
 .. important::
-    When the gaming mouse is powered from USB, the power down time-out functionality is disabled.
+    When the gaming mouse is powered from USB, the power down timeout functionality is disabled.
 
     If a nRF Desktop device supports remote wakeup, the USB connected device goes to suspended state when USB is suspended.
     The device can then trigger remote wakeup of the connected host on user input.
@@ -765,7 +765,7 @@ After building the application with or without :ref:`specifying the build type <
 
    .. note::
         You can manually start the scanning for new peripheral devices by pressing the **SW1** button on the dongle for a short time.
-        This might be needed if the dongle does not connect with all the peripherals before time-out.
+        This might be needed if the dongle does not connect with all the peripherals before timeout.
         The scanning is interrupted after the amount of time predefined in :option:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S`, because it negatively affects the performance of already connected peripherals.
 
 #. Move the mouse and press any key on the keyboard.

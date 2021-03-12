@@ -93,7 +93,7 @@ TCP client
          #XSOCKET: (0,1),(1,2),(0,1),<sec-tag>
          OK
 
-   #. Open a TCP socket, read information (handle, protocol, and role) about the open socket, and set the receive time-out of the open socket to 30 seconds.
+   #. Open a TCP socket, read information (handle, protocol, and role) about the open socket, and set the receive timeout of the open socket to 30 seconds.
 
       .. parsed-literal::
          :class: highlight
