@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <logging/log.h>
+#include <logging/log_ctrl.h>
 
 #include <zephyr.h>
 #include <stdio.h>
@@ -16,10 +17,12 @@
 #include <hal/nrf_regulators.h>
 #include <modem/nrf_modem_lib.h>
 #include <dfu/mcuboot.h>
+#include <dfu/dfu_target.h>
 #include <power/reboot.h>
 #include <drivers/clock_control.h>
 #include <drivers/clock_control/nrf_clock_control.h>
 #include "slm_at_host.h"
+#include "slm_at_fota.h"
 
 LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
 
@@ -35,8 +38,16 @@ static bool full_idle_mode;
 /* global variable used across different files */
 struct k_work_q slm_work_q;
 
+/* global variable defined in different files */
+extern uint8_t fota_type;
+extern uint8_t fota_stage;
+extern uint8_t fota_status;
+extern int32_t fota_info;
+
 /* global functions defined in different files */
 int poweron_uart(void);
+int slm_settings_init(void);
+int slm_setting_fota_save(void);
 
 /**@brief Recoverable modem library error. */
 void nrf_modem_recoverable_error_handler(uint32_t err)
@@ -127,23 +138,40 @@ void handle_nrf_modem_lib_init_ret(void)
 
 	/* Handle return values relating to modem firmware update */
 	switch (ret) {
+	case 0:
+		return; /* Initialization successful, no action required. */
 	case MODEM_DFU_RESULT_OK:
 		LOG_INF("MODEM UPDATE OK. Will run new firmware");
-		sys_reboot(SYS_REBOOT_COLD);
+		fota_stage = FOTA_STAGE_COMPLETE;
+		fota_status = FOTA_STATUS_OK;
+		fota_info = 0;
 		break;
 	case MODEM_DFU_RESULT_UUID_ERROR:
 	case MODEM_DFU_RESULT_AUTH_ERROR:
 		LOG_ERR("MODEM UPDATE ERROR %d. Will run old firmware", ret);
-		sys_reboot(SYS_REBOOT_COLD);
+		fota_status = FOTA_STATUS_ERROR;
+		fota_info = ret;
 		break;
 	case MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case MODEM_DFU_RESULT_INTERNAL_ERROR:
 		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failiure", ret);
-		sys_reboot(SYS_REBOOT_COLD);
+		fota_status = FOTA_STATUS_ERROR;
+		fota_info = ret;
 		break;
 	default:
+		/* All non-zero return codes other than DFU result codes are
+		 * considered irrecoverable and a reboot is needed.
+		 */
+		LOG_ERR("nRF modem lib initialization failed, error: %d", ret);
+		fota_status = FOTA_STATUS_ERROR;
+		fota_info = ret;
 		break;
 	}
+
+	slm_setting_fota_save();
+	LOG_WRN("Rebooting...");
+	LOG_PANIC();
+	sys_reboot(SYS_REBOOT_COLD);
 }
 
 void start_execute(void)
@@ -167,8 +195,32 @@ void start_execute(void)
 	}
 #endif
 
-	/* check FOTA result */
-	handle_nrf_modem_lib_init_ret();
+	/* Init and load settings */
+	err = slm_settings_init();
+	if (err) {
+		LOG_ERR("Failed to init slm settings: %d", err);
+		return;
+	}
+
+	/* Post-FOTA handling */
+	if (fota_type != DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
+		handle_nrf_modem_lib_init_ret();
+	} else {
+		/* All initializations were successful mark image as working so that we
+		 * will not revert upon reboot.
+		 */
+		err = boot_write_img_confirmed();
+		if (fota_stage != FOTA_STAGE_INIT) {
+			if (err) {
+				fota_status = FOTA_STATUS_ERROR;
+				fota_info = err;
+			} else {
+				fota_stage = FOTA_STAGE_COMPLETE;
+				fota_status = FOTA_STATUS_OK;
+				fota_info = 0;
+			}
+		}
+	}
 
 	err = slm_at_host_init();
 	if (err) {
@@ -179,11 +231,6 @@ void start_execute(void)
 	k_work_q_start(&slm_work_q, slm_wq_stack_area,
 		K_THREAD_STACK_SIZEOF(slm_wq_stack_area), SLM_WQ_PRIORITY);
 	k_work_init(&exit_idle_work, exit_idle);
-
-	/* All initializations were successful mark image as working so that we
-	 * will not revert upon reboot.
-	 */
-	boot_write_img_confirmed();
 }
 
 #if defined(CONFIG_SLM_START_SLEEP)

@@ -62,12 +62,12 @@ extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 extern uint16_t datamode_size_limit;
 extern uint16_t datamode_time_limit;
+extern struct uart_config slm_uart;
 
 /* global functions defined in different files */
 void enter_idle(bool full_idle);
 void enter_sleep(void);
 int set_uart_baudrate(uint32_t baudrate);
-int get_uart_baudrate(void);
 void rsp_send(const uint8_t *str, size_t len);
 int poweroff_uart(void);
 bool verify_datamode_control(uint16_t size_limit, uint16_t time_limit);
@@ -229,7 +229,7 @@ static int handle_at_slmuart(enum at_cmd_type type)
 	}
 
 	if (type == AT_CMD_TYPE_READ_COMMAND) {
-		sprintf(rsp_buf, "\r\n#XSLMUART: %d\r\n", get_uart_baudrate());
+		sprintf(rsp_buf, "\r\n#XSLMUART: %d\r\n", slm_uart.baudrate);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 	}

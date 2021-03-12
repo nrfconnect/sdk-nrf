@@ -72,7 +72,8 @@ nRF9160
 
     * Fixed TCP/UDP port range issue (0~65535).
     * Added AT#XSLEEP=2 to power off UART interface.
-    * Added data mode to FTP service.
+    * Added support for the ``verbose``, ``uput``, ``mput`` commands and data mode to the FTP service.
+    * Added URC (unsolicited response code) to the FOTA service.
     * Enabled all SLM services by default.
     * Updated the HTTP client service code to handle chunked HTTP responses.
 
