@@ -27,10 +27,6 @@ int slm_at_ftp_init(void);
  *           Otherwise, a (negative) error code is returned.
  */
 int slm_at_ftp_uninit(void);
-
-/**@brief API to set datamode off from external
- */
-void slm_ftp_set_datamode_off(void);
 /** @} */
 
 #endif /* SLM_AT_FTP_ */

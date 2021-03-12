@@ -64,7 +64,7 @@ static int nfds;
 
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
-int enter_datamode(slm_data_mode_handler_t handler);
+int enter_datamode(slm_datamode_handler_t handler);
 bool exit_datamode(void);
 bool check_uart_flowcontrol(void);
 
@@ -477,6 +477,25 @@ static void terminate_connection_wk(struct k_work *work)
 	tcp_terminate_connection(-ENETDOWN);
 }
 
+static int tcp_datamode_callback(uint8_t op, const uint8_t *data, int len)
+{
+	int ret = 0;
+
+	if (op == DATAMODE_SEND) {
+		ret = do_tcp_send_datamode(data, len);
+		LOG_DBG("datamode send: %d", ret);
+	} else if (op == DATAMODE_EXIT) {
+		if (proxy.role == AT_TCP_ROLE_CLIENT) {
+			proxy.datamode = false;
+		}
+		if (proxy.role == AT_TCP_ROLE_SERVER && proxy.sock_peer != INVALID_SOCKET) {
+			k_work_submit(&disconnect_work);
+		}
+	}
+
+	return ret;
+}
+
 static int tcpsvr_input(int infd)
 {
 	int ret;
@@ -525,7 +544,7 @@ static int tcpsvr_input(int infd)
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		proxy.sock_peer = ret;
 		if (proxy.datamode) {
-			enter_datamode(do_tcp_send_datamode);
+			enter_datamode(tcp_datamode_callback);
 		}
 		LOG_DBG("New connection - %d", proxy.sock_peer);
 		fds[nfds].fd = proxy.sock_peer;
@@ -917,7 +936,7 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 			if (err == 0 &&
 			    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				proxy.datamode = true;
-				enter_datamode(do_tcp_send_datamode);
+				enter_datamode(tcp_datamode_callback);
 			}
 		} else if (op == AT_CLIENT_DISCONNECT) {
 			err = do_tcp_client_disconnect();
@@ -1058,23 +1077,4 @@ int slm_at_tcp_proxy_uninit(void)
 	}
 
 	return 0;
-}
-
-/**@brief API to set datamode off from external
- */
-void slm_tcp_set_datamode_off(void)
-{
-	/* do nothing if data mode not configured */
-	if (!proxy.datamode) {
-		return;
-	}
-
-	if (proxy.role == AT_TCP_ROLE_CLIENT &&
-	    proxy.sock != INVALID_SOCKET) {
-		proxy.datamode = false;
-	}
-	if (proxy.role == AT_TCP_ROLE_SERVER &&
-	    proxy.sock_peer != INVALID_SOCKET) {
-		k_work_submit(&disconnect_work);
-	}
 }

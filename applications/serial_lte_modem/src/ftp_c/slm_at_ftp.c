@@ -61,7 +61,7 @@ typedef struct ftp_op_list {
 static bool ftp_verbose_on;
 static char filepath[FTP_MAX_FILEPATH];
 static int sz_filepath;
-static slm_data_mode_handler_t ftp_data_mode_handler;
+static int (*ftp_data_mode_handler)(const uint8_t *data, int len);
 
 /** forward declaration of cmd handlers **/
 static int do_ftp_close(void);
@@ -109,7 +109,7 @@ RING_BUF_DECLARE(ftp_data_buf, CONFIG_SLM_SOCKET_RX_MAX * 2);
 
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
-int enter_datamode(slm_data_mode_handler_t handler);
+int enter_datamode(slm_datamode_handler_t handler);
 bool exit_datamode(void);
 bool check_uart_flowcontrol(void);
 
@@ -460,15 +460,21 @@ static int do_ftp_get(void)
 	}
 }
 
-static int do_ftp_put_data(const uint8_t *data, int len)
+static int ftp_datamode_callback(uint8_t op, const uint8_t *data, int len)
 {
 	int ret = 0;
 
-	if (ftp_data_mode_handler) {
-		ret = ftp_data_mode_handler(data, len);
+	if (op == DATAMODE_SEND) {
+		if (ftp_data_mode_handler) {
+			ret = ftp_data_mode_handler(data, len);
+			LOG_DBG("datamode send: %d", ret);
+		} else {
+			LOG_ERR("no datamode send handler");
+		}
+	} else if (op == DATAMODE_EXIT) {
+		ftp_data_mode_handler = NULL;
 	}
 
-	LOG_DBG("datamode send: %d", ret);
 	return ret;
 }
 
@@ -516,7 +522,7 @@ static int do_ftp_put(void)
 		}
 #endif
 		/* enter data mode */
-		ret = enter_datamode(do_ftp_put_data);
+		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
 			return ret;
 		}
@@ -590,7 +596,7 @@ static int do_ftp_uput(void)
 		}
 #endif
 		/* enter data mode */
-		ret = enter_datamode(do_ftp_put_data);
+		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
 			return ret;
 		}
@@ -663,7 +669,7 @@ static int do_ftp_mput(void)
 		}
 #endif
 		/* enter data mode */
-		ret = enter_datamode(do_ftp_put_data);
+		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
 			return ret;
 		}
@@ -740,11 +746,4 @@ int slm_at_ftp_init(void)
 int slm_at_ftp_uninit(void)
 {
 	return ftp_uninit();
-}
-
-/**@brief API to set datamode off from external
- */
-void slm_ftp_set_datamode_off(void)
-{
-	ftp_data_mode_handler = NULL;
 }
