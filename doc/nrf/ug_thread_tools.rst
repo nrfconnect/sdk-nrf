@@ -78,7 +78,7 @@ When working with samples that support wpantund, complete the following steps to
    Replace the following parameters:
 
    * *network_interface_name* - Specifies the name of the network interface, for example, ``leader_if``.
-   * *ncp_socket_name* - Specifies the location of the socket, for example, :file:`/dev/ACM0`.
+   * *ncp_uart_device* - Specifies the location of the device, for example, :file:`/dev/ttyACM0`.
    * *baudrate* - Specifies the baud rate to use.
      The Thread samples support baud rate ``1000000``.
 
@@ -88,11 +88,11 @@ When working with samples that support wpantund, complete the following steps to
      .. parsed-literal::
         :class: highlight
 
-        wpantund -I *network_interface_name* -s *ncp_socket_name* -b *baudrate*
+        wpantund -I *network_interface_name* -s *ncp_uart_device* -b *baudrate*
 
      For example::
 
-        sudo wpantund -I leader_if -s /dev/ACM0 -b 1000000
+        sudo wpantund -I leader_if -s /dev/ttyACM0 -b 1000000
 
    Radio co-processor (RCP)
      When connecting to an RCP node, you must use the ``ot-ncp`` tool to establish the connection.
@@ -102,7 +102,7 @@ When working with samples that support wpantund, complete the following steps to
      .. parsed-literal::
         :class: highlight
 
-        wpantund -I *network_interface_name* -s 'system:./output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_socket_name*\ ?uart-baudrate=\ *baudrate*
+        wpantund -I *network_interface_name* -s 'system:./output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_uart_device*\ ?uart-baudrate=\ *baudrate*
 
      For example::
 
@@ -170,7 +170,7 @@ When working with samples that support PySpinel, complete the following steps to
    Replace the following parameters:
 
    * *debug_level* - Specifies the debug level, range: ``0-5``.
-   * *ncp_socket_name* - Specifies the location of the socket, for example, :file:`/dev/ACM0`.
+   * *ncp_uart_device* - Specifies the location of the device, for example, :file:`/dev/ttyACM0`.
    * *baudrate* - Specifies the baud rate to use.
      The Thread samples support baud rate ``1000000``.
 
@@ -180,11 +180,11 @@ When working with samples that support PySpinel, complete the following steps to
      .. parsed-literal::
         :class: highlight
 
-        sudo python3 spinel-cli.py -d *debug_level* -p *ncp_socket_name* -b *baudrate*
+        sudo python3 spinel-cli.py -d *debug_level* -u *ncp_uart_device* -b *baudrate*
 
      For example::
 
-        sudo python3 spinel-cli.py -d 4 -p /dev/ACM0 -b 1000000
+        sudo python3 spinel-cli.py -d 4 -u /dev/ttyACM0 -b 1000000
 
    Radio co-processor (RCP)
      When connecting to an RCP node, you must use the ``ot-ncp`` tool to establish the connection.
@@ -197,7 +197,7 @@ When working with samples that support PySpinel, complete the following steps to
      .. parsed-literal::
         :class: highlight
 
-        sudo python3 spinel-cli.py -d *debug_level* -p './output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_socket_name*\ ?uart-baudrate=\ *baudrate*
+        sudo python3 spinel-cli.py -d *debug_level* -p './output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_uart_device*\ ?uart-baudrate=\ *baudrate*
 
      For example::
 
