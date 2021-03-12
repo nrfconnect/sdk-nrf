@@ -28,9 +28,4 @@ int slm_at_udp_proxy_init(void);
  */
 int slm_at_udp_proxy_uninit(void);
 /** @} */
-
-/**@brief API to set datamode off from external
- */
-void slm_udp_set_datamode_off(void);
-
 #endif /* SLM_AT_UDP_PROXY_ */

@@ -28,8 +28,4 @@ int slm_at_tcp_proxy_init(void);
  */
 int slm_at_tcp_proxy_uninit(void);
 /** @} */
-
-/**@brief API to set datamode off from external
- */
-void slm_tcp_set_datamode_off(void);
 #endif /* SLM_AT_TCP_PROXY_ */

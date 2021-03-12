@@ -18,8 +18,14 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_cmd.h>
 
+/**@brief Operations in datamode. */
+enum slm_datamode_operation_t {
+	DATAMODE_SEND,  /* Send data in datamode */
+	DATAMODE_EXIT   /* Exit data mode */
+};
+
 /**@brief Data mode sending handler type. */
-typedef int (*slm_data_mode_handler_t) (const uint8_t *data, int len);
+typedef int (*slm_datamode_handler_t)(uint8_t op, const uint8_t *data, int len);
 
 /**@brief Arbitrary data type over AT channel. */
 enum slm_data_type_t {

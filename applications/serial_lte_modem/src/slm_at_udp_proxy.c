@@ -47,7 +47,7 @@ static bool udp_datamode;
 
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
-int enter_datamode(slm_data_mode_handler_t handler);
+int enter_datamode(slm_datamode_handler_t handler);
 bool check_uart_flowcontrol(void);
 bool exit_datamode(void);
 
@@ -395,6 +395,20 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 	LOG_DBG("Quit receive thread");
 }
 
+static int udp_datamode_callback(uint8_t op, const uint8_t *data, int len)
+{
+	int ret = 0;
+
+	if (op == DATAMODE_SEND) {
+		ret = do_udp_send_datamode(data, len);
+		LOG_DBG("datamode send: %d", ret);
+	} else if (op == DATAMODE_EXIT) {
+		udp_datamode = false;
+	}
+
+	return ret;
+}
+
 /**@brief handle AT#XUDPSVR commands
  *  AT#XUDPSVR=<op>[,<port>]
  *  AT#XUDPSVR? READ command not supported
@@ -435,7 +449,7 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 			err = do_udp_server_start((uint16_t)port);
 			if (err == 0 && op == AT_SERVER_START_WITH_DATAMODE) {
 				udp_datamode = true;
-				enter_datamode(do_udp_send_datamode);
+				enter_datamode(udp_datamode_callback);
 			}
 		} else if (op == AT_SERVER_STOP) {
 			if (udp_sock < 0) {
@@ -511,7 +525,7 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			err = do_udp_client_connect(url, (uint16_t)port, sec_tag);
 			if (err == 0 && op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				udp_datamode = true;
-				enter_datamode(do_udp_send_datamode);
+				enter_datamode(udp_datamode_callback);
 			}
 		} else if (op == AT_CLIENT_DISCONNECT) {
 			if (udp_sock < 0) {
@@ -615,19 +629,4 @@ int slm_at_udp_proxy_uninit(void)
 	}
 
 	return ret;
-}
-
-
-/**@brief API to set datamode from external
- */
-void slm_udp_set_datamode_off(void)
-{
-	/* do nothing if data mode not configured */
-	if (!udp_datamode) {
-		return;
-	}
-
-	if (udp_sock != INVALID_SOCKET) {
-		udp_datamode = false;
-	}
 }
