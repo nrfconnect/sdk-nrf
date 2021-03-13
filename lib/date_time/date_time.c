@@ -46,7 +46,8 @@ LOG_MODULE_REGISTER(date_time, CONFIG_DATE_TIME_LOG_LEVEL);
 
 struct ntp_servers {
 	const char *server_str;
-	struct addrinfo *addr;
+	struct sockaddr addr;
+	socklen_t addrlen;
 };
 
 struct ntp_servers servers[] = {
@@ -143,6 +144,7 @@ static int sntp_time_request(struct ntp_servers *server, uint32_t timeout,
 {
 	int err;
 	static struct addrinfo hints;
+	struct addrinfo *addrinfo;
 	struct sntp_ctx sntp_ctx;
 
 	if (IS_ENABLED(CONFIG_DATE_TIME_IPV6)) {
@@ -153,19 +155,29 @@ static int sntp_time_request(struct ntp_servers *server, uint32_t timeout,
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_protocol = 0;
 
-	if (server->addr == NULL) {
+	if (server->addrlen == 0) {
 		err = getaddrinfo(server->server_str, NTP_DEFAULT_PORT, &hints,
-				  &server->addr);
+				  &addrinfo);
 		if (err) {
 			LOG_WRN("getaddrinfo, error: %d", err);
 			return err;
 		}
+
+		if (addrinfo->ai_addrlen > sizeof(server->addr)) {
+			LOG_WRN("getaddrinfo, addrlen: %d > %d",
+				addrinfo->ai_addrlen, sizeof(server->addr));
+			freeaddrinfo(addrinfo);
+			return -ENOMEM;
+		}
+
+		memcpy(&server->addr, addrinfo->ai_addr, addrinfo->ai_addrlen);
+		server->addrlen = addrinfo->ai_addrlen;
+		freeaddrinfo(addrinfo);
 	} else {
 		LOG_DBG("Server address already obtained, skipping DNS lookup");
 	}
 
-	err = sntp_init(&sntp_ctx, server->addr->ai_addr,
-			server->addr->ai_addrlen);
+	err = sntp_init(&sntp_ctx, &server->addr, server->addrlen);
 	if (err) {
 		LOG_WRN("sntp_init, error: %d", err);
 		goto socket_close;
