@@ -15,7 +15,11 @@ config MQTT_SUB_TOPIC
 
 config MQTT_CLIENT_ID
 	string "MQTT Client ID"
-	default "my-client-id"
+	help
+	  Use a custom Client ID string. If not set, the client ID will be
+	  generated based on IMEI number (for nRF9160 based targets) or
+	  randomly (for other platforms).
+	default ""
 
 config MQTT_BROKER_HOSTNAME
 	string "MQTT broker hostname"
