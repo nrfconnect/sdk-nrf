@@ -20,6 +20,7 @@ The sample opens a timeslot session and starts requesting timeslots when a key i
 The first timeslot is always of type 'earliest'.
 Any following timeslots are of type 'normal'.
 In each timeslot callback, the signal type of the callback is posted to a message queue.
+Upon reception of the timeslot start signal, timer0 is configured to be triggered before the timeslot ends.
 A separate thread reads the message queue and prints the timeslot signal type.
 The timeslot session is closed when any key is pressed in the terminal.
 
@@ -52,12 +53,9 @@ After programming the sample to your development kit, test it by performing the 
    The terminal then prints the signal type for each timeslot callback:
 
    * If you press 'a', the timeslot callback requests a new timeslot.
-     Observe that ``Timeslot start`` is printed until the session is closed.
+     Observe that ``Timeslot start`` and ``Timer0 signal`` are printed until the session is closed.
    * If you press 'b', the timeslot callback ends the timeslot.
-     Observe that only one ``Timeslot start`` is printed, followed by a ``Session idle``.
-
-#. Press any key to close the session.
-   Observe that ``Session closed`` is printed.
+     Observe that ``Timeslot start`` and ``Timer0 signal`` are printed, followed by a ``Session idle``.
 
 Dependencies
 ************
