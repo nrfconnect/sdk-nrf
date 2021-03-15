@@ -69,8 +69,8 @@
 .. _`wpantund Usage Overview`: https://github.com/openthread/wpantund#user-content-usage-overview
 .. _`CLI wpantund wrapper`: https://github.com/openthread/wpantund/blob/master/doc/wpanctl.1
 
-.. _`PySpinel`: https://github.com/openthread/pyspinel/blob/master/README.md
-.. _`PySpinel arguments`: https://github.com/openthread/pyspinel/blob/master/README.md#description
+.. _`Pyspinel`: https://github.com/openthread/pyspinel/blob/master/README.md
+.. _`Pyspinel arguments`: https://github.com/openthread/pyspinel/blob/master/README.md#description
 .. _`Spinel specification properties for Thread`: https://github.com/openthread/spinel-spec/blob/master/thread/detail-properties.md
 .. _`Spinel protocol`: https://github.com/openthread/spinel-spec
 
@@ -417,10 +417,10 @@
 .. ### Source: threadgroup.*
 
 .. _`Thread Group`: https://www.threadgroup.org
-.. _`Thread protocol specification`: https://www.threadgroup.org/ThreadSpec
+.. _`Thread Specification`: https://www.threadgroup.org/ThreadSpec
 .. _`Thread Group's Commissioning White Paper`: https://www.threadgroup.org/Portals/0/documents/support/CommissioningWhitePaper_658_2.pdf
-.. _`Thread Specification v1.2 Commercial White Paper`: https://www.threadgroup.org/Portals/0/documents/support/ThreadInCommercialWhitePaper_2542_1.pdf
-.. _`Thread Specification v1.2 Base Features`: https://www.threadgroup.org/Portals/0/documents/support/Thread%201.2%20Base%20Features.pdf
+.. _`Thread 1.2 in Commercial White Paper`: https://www.threadgroup.org/Portals/0/documents/support/ThreadInCommercialWhitePaper_2542_1.pdf
+.. _`Thread 1.2 Base Features`: https://www.threadgroup.org/Portals/0/documents/support/Thread%201.2%20Base%20Features.pdf
 .. _`Thread Group members`: https://www.threadgroup.org/thread-group
 .. _`Thread Group's Confluence wiki page`: https://threadgroup.atlassian.net/wiki/spaces/THREADTEST/pages/25900869/Supporting+Material
 .. _`Thread Group's certification information`: https://www.threadgroup.org/What-is-Thread/Certification

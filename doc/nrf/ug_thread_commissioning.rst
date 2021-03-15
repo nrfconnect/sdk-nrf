@@ -22,24 +22,21 @@ Commissioning roles
 
 During the commissioning process, the devices involved are assigned one of the following roles:
 
-* Leader - Watches over the network configuration, allows Commissioner Candidate to become Commissioner, and ensures there is only one active Commissioner.
-* Commissioner Candidate - Role for a device capable of becoming the Commissioner, but has not yet been assigned the role of Commissioner.
-* Commissioner - Authenticates the Joiner and provides it with network credentials required to join the network.
+* *Leader* - Watches over the network configuration, allows Commissioner Candidate to become Commissioner, and ensures there is only one active Commissioner.
+* *Commissioner Candidate* - Role for a device capable of becoming the Commissioner, but has not yet been assigned the role of Commissioner.
+* *Commissioner* - Authenticates the Joiner and provides it with network credentials required to join the network.
   The Commissioner can be part of the network or it can be outside the network (see :ref:`thread_ot_commissioning_types`).
-* Joiner - Role for a new device that wants to join the Thread network.
+* *Joiner* - Role for a new device that wants to join the Thread network.
   It exchanges messages with the Commissioner through the directly connected Joiner Router that serves as a proxy.
-* Joiner Router - Role for a router device that is one hop away from the Joiner device in the Thread network and is the sole device connected with the Joiner.
+* *Joiner Router* - Role for a router device that is one hop away from the Joiner device in the Thread network and is the sole device connected with the Joiner.
   Responds to the Discovery Request of the Joiner.
   Moreover, when chosen by the Joiner, it passes subsequent communication in a secure manner.
-* Border Router - Role for a device equipped with at least two interfaces (for example Thread and Wi-Fi, Ethernet, LTE etc.) that forwards data between a Thread network and a non-Thread network.
+* *Border Router* - Role for a device equipped with at least two interfaces (for example Thread and Wi-Fi, Ethernet, LTE etc.) that forwards data between a Thread network and a non-Thread network.
   It can also be an interface for the Commissioner.
 
-  * Border Agent function, usually combined with the Border Router role, accepts :ref:`petitions <thread_ot_commissioning_phases>` from the Commissioner candidate.
-    It also relays commissioning messages between Thread Network and a Commissioner.
-    If a Commissioner is a part of the network, the same node is both the Commissioner and the Border Agent.
-
-  .. note::
-        While the Border Router is typically used only in the external commissioning process, the Nordic Border Router, which is based on the OpenThread Border Router (OTBR), supports both on-mesh and external commissioning.
+  The Border Router role is usually combined with the *Border Agent* function, which accepts :ref:`petitions <thread_ot_commissioning_phases>` from the Commissioner candidate.
+  It also relays commissioning messages between Thread Network and a Commissioner.
+  If a Commissioner is a part of the network, the same node is both the Commissioner and the Border Agent.
 
 Once a device is assigned one of the roles in the network, it can combine it with other roles.
 An exception is the Joiner role, which is exclusive to the Joiner and cannot be combined with other roles.
@@ -52,10 +49,35 @@ For details about scenarios that include devices with multiple roles, see `Threa
 
 See :ref:`thread_ot_commissioning_cli` for the list of commands used to assign the commissioning roles.
 
+.. _thread_ot_device_types:
+
+Device types
+============
+
+OpenThread distinguishes between different device types depending on what roles a device can take in the Thread network.
+
+Full Thread Device (FTD)
+  An FTD can be both a router and an end device.
+  Its radio is always on.
+
+Minimal Thread Device (MTD)
+  An MTD is always an end device.
+  It forwards all messages to its parent.
+
+  There are two important subtypes:
+
+  Minimal End Device (MED)
+    A MED keeps its transceiver always on.
+
+  Sleepy End Device (SED)
+   A SED is usually off and wakes occasionally to receive messages from its parent.
+
+For more information, see `Device Types on OpenThread portal`_.
+
 .. _thread_ot_commissioning_types:
 
-On-mesh and external commissioning
-**********************************
+Commissioning scenarios
+***********************
 
 The commissioning in OpenThread can be either on-mesh or external.
 Native commissioning is not supported by OpenThread.
@@ -67,7 +89,7 @@ On-mesh Thread commissioning
 
 In the on-mesh Thread commissioning, the commissioning takes place inside the Thread network.
 The Thread Leader approves a Commissioner connected either to the Thread network (on-mesh Commissioner) or to a Thread device, and accepts it into the Thread network.
-Border Agent then authenticates it.
+The Border Agent then authenticates it.
 After authentication, the Commissioner instructs the Joiner Router to transfer Thread network credentials to the Joiner.
 
 In this type of commissioning, Thread network credentials are transferred between devices over the radio.
@@ -109,7 +131,7 @@ See :ref:`thread_ot_commissioning_roles_authentication` for related information.
 Commissioning phases
 ********************
 
-The commissioning process goes through petitioning and joining.
+The commissioning process includes petitioning and joining.
 
 .. _thread_ot_commissioning_phases_petitioning:
 
@@ -118,22 +140,22 @@ Petitioning
 
 Petitioning concerns the Commissioner role.
 
-Petitioning occurs in both commissioning scenarios. The Commissioner Candidate that is either connected to an external network (external candidate) or is part of the network (on-mesh candidate) must petition the Leader of the Thread network through the Thread Border Agent to become the only authorized Commissioner.
+Petitioning occurs in both commissioning scenarios. The Commissioner Candidate that is either connected to an external network (external candidate) or is part of the network (on-mesh candidate) must petition the Leader of the Thread network through the Border Agent to become the only authorized Commissioner.
 
 The petitioning involves up to two phases:
 
-* In the external commissioning scenario, the potential commissioner exchanges a DTLS authentication handshake with the Thread Border Router to prove its eligibility and set up a secure connection.
-* In both scenarios, the potential commissioner sends a petition to the Thread Leader through the Thread Border Router.
+1. (External commissioning only) The potential Commissioner exchanges a DTLS authentication handshake with the Thread Border Router to prove its eligibility and set up a secure connection.
+#. (Both scenarios) The potential Commissioner sends a petition to the Thread Leader through the Thread Border Router.
 
 The Leader accepts the petition based on only one criterium: whether there is already an active Commissioner in the Thread network.
 If there is none, the petition is accepted.
 If the petition is rejected, a rejection message is sent with the ID of the active Commissioner.
 
-After the petition is accepted by the Leader:
+After the petition is accepted by the Leader, the following actions occur:
 
-* In the external commissioning scenario, the connection is established and all subsequent communication between the Commissioner and other Thread devices is done through the Border Agent.
-* In both scenarios, the new Commissioner becomes the only authorized Commissioner.
-* In both scenarios, a periodic message is sent to keep the secure commissioning session open.
+1. (External commissioning only) The connection is established and all subsequent communication between the Commissioner and other Thread devices is done through the Border Agent.
+#. (Both scenarios) The new Commissioner becomes the only authorized Commissioner.
+#. (Both scenarios) A periodic message is sent to keep the secure commissioning session open.
 
 .. _thread_ot_commissioning_phases_joining:
 
@@ -145,51 +167,51 @@ Joining concerns the Joiner role.
 Joining occurs in both commissioning scenarios.
 It involves the following phases:
 
-* The Joiner, that is a potential new device in the Thread network, sends a Discovery Request message on every channel.
-* The Joiner Router receives the message and answers with the Discovery Response message.
-  This message contains network identifiers and Steering Data in the payload.
-* The Joiner uses the information received from the Joiner Router to discover the correct network to connect to.
+1. The Joiner, that is a potential new device in the Thread network, sends a Discovery Request message on every channel.
+#. The Joiner Router receives the message and answers with the Discovery Response message.
+   This message contains network identifiers and Steering Data in the payload.
+#. The Joiner uses the information received from the Joiner Router to discover the correct network to connect to.
 
-After the Joiner received the payload from the Joiner Router:
+After the Joiner received the payload from the Joiner Router, the following actions occur:
 
-* The connection is established.
-* The secure communication session continues, with a periodic message sent to keep it open.
+1. The connection is established.
+#. The secure communication session continues, with a periodic message sent to keep it open.
 
 .. _thread_ot_commissioning_roles_authentication:
 
 Security, authentication, and credentials
 *****************************************
 
-To avoid a situation in which rogue devices join the Thread network, the communication between Commissioner and Joiner (in both scenarios), and Commissioner and Border Agent (in external commissioning) is secured with the Datagram Transport Layer Security (DTLS) authentication protocol session.
+To avoid a situation in which rogue devices join the Thread network, the communication between Commissioner and Joiner (in both scenarios) and Commissioner and Border Agent (in external commissioning) is secured with the Datagram Transport Layer Security (DTLS) authentication protocol session.
 The session is established automatically.
 
-Also the communication between Joiner and Joiner Router is secured, but only when Joiner Router sends network credentials to Joiner using one time key generated by the Commissioner.
+The communication between Joiner and Joiner Router is also secured, but only when the Joiner Router sends network credentials to the Joiner using a one-time key generated by the Commissioner.
 
 During commissioning, the on-mesh Thread Commissioner possesses the network master key by default, while the external Thread Commissioner never gains possession of the network master key.
 
 The commissioning uses the following passwords and credentials:
 
-* Commissioning Credential - Passphrase known by the Leader and shared with the Commissioner of the network.
+* *Commissioning Credential* - Passphrase known by the Leader and shared with the Commissioner of the network.
 
   .. note::
         The Commissioning Credential has 6 bytes minimum and 255 bytes maximum and is composed in the UTF-8 format, without character exclusions.
 
-* Commissioning Key (PSKc) - Pre-Shared Key for the Commissioner based on the Commissioning Credential which is used to establish the Commissioner Session between the Commissioner and Border Agent.
+* *Commissioning Key (PSKc)* - Pre-shared key for the Commissioner based on the Commissioning Credential, which is used to establish the Commissioner Session between the Commissioner and Border Agent.
   All devices in the Thread network store the PSKc.
-* Joining Device Credential (PSKd) - Passphrase for authenticating a new Joiner device, used to establish a secure session between the Commissioner and the Joiner.
-  When encoded in binary, this passphrase is referred to as Pre-Shared Key for the Device.
+* *Joining Device Credential (PSKd)* - Passphrase for authenticating a new Joiner device, used to establish a secure session between the Commissioner and the Joiner.
+  When encoded in binary, this passphrase is referred to as pre-shared key for the device.
 
   .. note::
         The Joining Device Credential is composed of at least 6 and no more than 32 uppercase alphanumeric ASCII characters (base32-thread, 0 to 9 and A to Y, with the exclusion of I, O, Q, and Z).
 
-For details and full overview of security credentials, see `Thread protocol specification`_, table 8.2.
+For details and a full overview of security credentials, see the `Thread Specification`_, table 8.2.
 
 .. _thread_ot_commissioning_cli:
 
 Commissioning commands
 **********************
 
-See the following pages in the `OpenThread CLI Reference`_ on GitHub for an overview of available CLI commands:
+See the following pages in the `OpenThread CLI Reference`_ on GitHub for an overview of available CLI commands that can be used for commissioning:
 
 * `Commissioner CLI commands`_
 * `Joiner CLI commands`_
@@ -204,7 +226,8 @@ Configuring on-mesh Thread commissioning
 You can configure on-mesh Thread commissioning using the :ref:`ot_cli_sample` sample or the :ref:`ot_coprocessor_sample` sample with two devices to form a Thread network.
 One device will act as a Commissioner and the other will be a Joiner.
 
-.. note::
+.. comment out until content is moved
+  .. note::
     Before you start the configuration process, make sure you are familiar with :ref:`Thread commissioning concepts <thread_ot_commissioning>`, especially :ref:`thread_ot_commissioning_types_on-mesh`.
 
 .. _thread_ot_commissioning_configuring_on-mesh_requirements:
@@ -440,7 +463,7 @@ Now that the Commissioner is ready, complete the following steps for the sample 
             uart:~$ ot thread start
             Done
 
-      This command starts the Thread network and automatically attaches the device to it.
+         This command starts the Thread network and automatically attaches the device to it.
 
       .. group-tab:: NCP
 
