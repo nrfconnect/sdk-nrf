@@ -5,3 +5,4 @@
 #
 
 add_subdirectory(${ZEPHYR_CURRENT_MODULE_DIR} nrfxlib)
+add_subdirectory_ifdef(CONFIG_NRF_802154_SOURCE_NRFXLIB nrf_802154)
