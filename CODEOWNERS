@@ -35,7 +35,6 @@ Kconfig*                                  @tejlmand
 /doc/update_versions.cmake                @carlescufi
 /doc/scripts/                             @carlescufi
 /doc/static/                              @carlescufi
-/doc/themes/                              @carlescufi
 /doc/**/conf.py                           @carlescufi
 /doc/nrf/                                 @carlescufi
 /doc/versions.json                        @carlescufi
