@@ -7,20 +7,54 @@ Bluetooth: Mesh light switch
    :local:
    :depth: 2
 
-The Bluetooth mesh light switch sample demonstrates how to set up a basic mesh client model application, and control LEDs with the Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
+The :ref:`ug_bt_mesh` light switch sample can be used to change the state of light sources on other devices within the same mesh network.
+It also demonstrates how to use Bluetooth mesh models by using the Generic OnOff Client model in an application.
+
+Use the light switch sample with the :ref:`bluetooth_mesh_light` sample to demonstrate its function in a Bluetooth mesh network.
+
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833
+
+You need at least two development kits:
+
+* One development kit where you program this sample application (the client)
+* One (or more) development kit(s) where you program the :ref:`bluetooth_mesh_light` sample application (the server(s)), and configure according to the mesh light sample's :ref:`testing guide <bluetooth_mesh_light_testing>`
+
+For provisioning and configuring of the mesh model instances, the sample requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
+
+* `nRF Mesh mobile app for Android`_
+* `nRF Mesh mobile app for iOS`_
 
 Overview
 ********
 
-This sample is split into two source files:
+The Bluetooth mesh light switch sample demonstrates how to set up a mesh client model application, and control LEDs with the Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
+To display any functionality, the sample must be paired with a device with the :ref:`bluetooth_mesh_light` sample running in the same mesh network.
 
-* A :file:`main.c` file to handle initialization.
-* One additional file for handling mesh models, :file:`model_handler.c`.
+In both samples, devices are nodes with a provisionee role in a mesh network.
+Provisioning is performed using the `nRF Mesh mobile app`_.
+This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample to enable them to communicate with the servers.
+
+The Generic OnOff Client model is used for manipulating the Generic OnOff state associated with the Generic OnOff Server model.
+The light switch sample implements the Generic OnOff Client model.
+
+The sample has four buttons to control the state of LED 1 on servers (implemented by the :ref:`bluetooth_mesh_light` sample).
+Four instances of the Generic OnOff Client model are instantiated in the light switch sample, one for each button on the development kit that is used.
+When a user presses any of the buttons, an OnOff Set message is sent out to the configured destination address.
+
+After provisioning and configuring the mesh models supported by the sample using the `nRF Mesh mobile app`_, you can control the LEDs on the other (server) development kit(s) from the app.
 
 Provisioning
 ============
 
 Provisioning is handled by the :ref:`bt_mesh_dk_prov`.
+It supports four types of out-of-band (OOB) authentication methods, and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
 
 Models
 ======
@@ -51,35 +85,38 @@ If the model is configured to publish to a unicast address, the model handler ca
 The response from the target device updates the corresponding LED on the mesh light switch device.
 If the model is configured to publish to a group address, it calls :c:func:`bt_mesh_onoff_cli_set_unack` instead, to avoid getting responses from multiple devices at once.
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833
-
-The sample requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
-
-  * `nRF Mesh mobile app for Android`_
-  * `nRF Mesh mobile app for iOS`_
-
-An additional requirement is the :ref:`bluetooth_mesh_light` sample application programmed on a separate device, and configured according to the mesh light sample's :ref:`testing guide <bluetooth_mesh_light_testing>`.
+.. _bluetooth_mesh_light_switch_user_interface:
 
 User interface
 **************
 
 Buttons:
-   Buttons are used to control the respective Generic OnOff Clients.
-   When pressed, the button toggles the LED state on a :ref:`mesh light <bluetooth_mesh_light>` device.
+      During the provisioning process, the buttons (1 to 4) can be used for OOB input.
+      Once the provisioning and configuration are completed, the buttons are used to initiate certain actions and control the respective Generic OnOff Client instances.
+      When pressed, the button publishes an OnOff message using the configured publication parameters of its model instance, and toggles the LED state on a :ref:`mesh light <bluetooth_mesh_light>` device.
 
 LEDs:
-   Show the last known OnOff state of the targeted :ref:`bluetooth_mesh_light` kit.
+   During the provisioning process, the LEDs (1 to 4) are used to output the OOB actions.
+   Once the provisioning and configuration are completed, the LEDs are used to reflect the status of actions, and they show the last known OnOff state of the corresponding button.
 
+Configuration
+*************
+
+|config|
+
+Source file setup
+=================
+
+The light switch sample is split into two source files:
+
+* A :file:`main.c` file to handle initialization.
+* One additional file for handling mesh models, :file:`model_handler.c`.
 
 Building and running
 ********************
+
+Make sure to enable the Bluetooth mesh in |NCS| before building and testing this sample.
+See :ref:`Bluetooth mesh user guide <ug_bt_mesh>` for more information.
 
 .. |sample path| replace:: :file:`samples/bluetooth/mesh/light_switch`
 
@@ -92,9 +129,9 @@ Testing
 
 .. note::
    The light switch sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_light` sample running in the same mesh network.
-   Before testing mesh light switch, go through the mesh light's :ref:`testing guide <bluetooth_mesh_light_testing>` with a different kit.
+   Before testing mesh light switch, go through the mesh light's :ref:`testing guide <bluetooth_mesh_light_testing>` with a different development kit.
 
-After programming the sample to your development kit, you can test it by using a smartphone with Nordic Semiconductor's nRF Mesh app installed.
+After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
 Provisioning the device
@@ -117,7 +154,8 @@ Configure the Generic OnOff Client model on each element on the :guilabel:`Mesh 
   * Destination/publish address: Set the :guilabel:`Publish Address` to the first unicast address of the Mesh Light node.
   * Retransmit count: Set the count to zero (:guilabel:`Disabled`), to prevent the model from sending each button press multiple times.
 
-You can now control the first LED on the mesh light device by pressing Button 1 on the mesh light switch development kit.
+Once the provisioning and the configuration of the client node and at least one of the server nodes are complete, you can use buttons on the client development kit.
+The buttons will control the LED lights on the associated servers, as described in :ref:`bluetooth_mesh_light_switch_user_interface`.
 
 Dependencies
 ************
