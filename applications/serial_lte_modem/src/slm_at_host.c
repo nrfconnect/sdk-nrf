@@ -22,7 +22,6 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #define OK_STR		"\r\nOK\r\n"
 #define ERROR_STR	"\r\nERROR\r\n"
 #define FATAL_STR	"FATAL ERROR\r\n"
-#define OVERFLOW_STR	"Buffer overflow\r\n"
 #define SLM_SYNC_STR	"Ready\r\n"
 
 /** The maximum allowed length of an AT command passed through the SLM
@@ -39,19 +38,9 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #define DATAMODE_SIZE_LIMIT_MAX	1024	/* byte */
 #define DATAMODE_TIME_LIMIT_MAX	10000	/* msec */
 
-/** @brief Termination Modes. */
-enum term_modes {
-	MODE_NULL_TERM, /**< Null Termination */
-	MODE_CR,        /**< CR Termination */
-	MODE_LF,        /**< LF Termination */
-	MODE_CR_LF,     /**< CR+LF Termination */
-	MODE_COUNT      /* Counter of term_modes */
-};
-
-static uint16_t term_mode;
 static const struct device *uart_dev;
 static uint8_t at_buf[AT_MAX_CMD_LEN];
-static size_t at_buf_len;
+static uint16_t at_buf_len;
 static bool at_buf_overflow;
 static bool datamode_active;
 static bool datamode_off_pending;
@@ -108,6 +97,32 @@ void rsp_send(const uint8_t *str, size_t len)
 	}
 }
 
+static int uart_receive(void)
+{
+	int ret;
+
+	ret = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("UART RX failed: %d", ret);
+		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
+		return ret;
+	}
+	at_buf_overflow = false;
+	at_buf_len = 0;
+	rx_start = k_uptime_get();
+
+	return 0;
+}
+
+static void uart_recovery(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	(void)uart_receive();
+	uart_recovery_pending = false;
+	LOG_DBG("UART recovered");
+}
+
 int enter_datamode(slm_datamode_handler_t handler)
 {
 	if (handler == NULL || datamode_handler != NULL) {
@@ -124,20 +139,11 @@ int enter_datamode(slm_datamode_handler_t handler)
 
 bool exit_datamode(void)
 {
-	int err;
-
 	if (datamode_active) {
 		/* reset UART to restore command mode */
 		uart_rx_disable(uart_dev);
 		k_sleep(K_MSEC(10));
-		err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]),
-				     UART_RX_TIMEOUT_MS);
-		if (err) {
-			LOG_ERR("UART RX failed: %d", err);
-			rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
-		}
-		rx_start = k_uptime_get();
-
+		(void) uart_receive();
 		datamode_active = false;
 		datamode_handler = NULL;
 		LOG_INF("Exit datamode");
@@ -175,17 +181,14 @@ int poweron_uart(void)
 	if (current_state != DEVICE_PM_ACTIVE_STATE) {
 		device_set_power_state(uart_dev, DEVICE_PM_ACTIVE_STATE, NULL, NULL);
 		k_sleep(K_MSEC(100));
-		err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]),
-				     UART_RX_TIMEOUT_MS);
-		if (err) {
-			LOG_ERR("Cannot enable rx: %d", err);
-			return err;
+		err = uart_receive();
+		if (err == 0) {
+			k_sem_give(&tx_done);
+			rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
 		}
-		k_sem_give(&tx_done);
-		rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
 	}
 
-	return 0;
+	return err;
 }
 
 bool check_uart_flowcontrol(void)
@@ -282,26 +285,8 @@ static void response_handler(void *context, const char *response)
 	}
 }
 
-static void uart_recovery(struct k_work *work)
-{
-	int err;
-
-	ARG_UNUSED(work);
-
-	at_buf_overflow = false;
-	err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
-	if (err) {
-		LOG_ERR("UART RX failed: %d", err);
-		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
-	}
-	uart_recovery_pending = false;
-	LOG_DBG("UART recovered");
-}
-
 static void raw_send(struct k_work *work)
 {
-	int err;
-
 	ARG_UNUSED(work);
 
 	LOG_HEXDUMP_DBG(at_buf, at_buf_len, "RX");
@@ -312,12 +297,7 @@ static void raw_send(struct k_work *work)
 		LOG_WRN("data dropped in data mode");
 	}
 
-	err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
-	if (err) {
-		LOG_ERR("UART RX failed: %d", err);
-	}
-	rx_start = k_uptime_get();
-	at_buf_len = 0;
+	(void)uart_receive();
 }
 
 static void inactivity_timer_handler(struct k_timer *timer)
@@ -418,6 +398,97 @@ transit:
 	return 0;
 }
 
+/*
+ * Check AT command grammar based on below.
+ *  AT<NULL>
+ *  AT<separator><body><NULL>
+ *  AT<separator><body>=<NULL>
+ *  AT<separator><body>?<NULL>
+ *  AT<separator><body>=?<NULL>
+ *  AT<separator><body>=<parameters><NULL>
+ * In which
+ * <separator>: +, %, #
+ * <body>: alphabetic char only, size > 0
+ * <parameters>: arbitrary, size > 0
+ */
+static int cmd_grammar_check(const uint8_t *cmd, uint16_t length)
+{
+	const uint8_t *body;
+
+	/* check AT (if not, no check) */
+	if (length < 2 || toupper((int)cmd[0]) != 'A' || toupper((int)cmd[1]) != 'T') {
+		return -EINVAL;
+	}
+
+	/* check AT<NULL> */
+	cmd += 2;
+	if (*cmd == '\0') {
+		return 0;
+	}
+
+	/* check AT<separator> */
+	if ((*cmd != '+') && (*cmd != '%') && (*cmd != '#')) {
+		return -EINVAL;
+	}
+
+	/* check AT<separator><body> */
+	cmd += 1;
+	body = cmd;
+	while (true) {
+		char ch = toupper((int)*cmd);
+
+		/* check body is alphabetic */
+		if (ch < 'A' || ch > 'Z') {
+			break;
+		}
+		cmd++;
+	}
+
+	/* check body size > 0 */
+	if (cmd == body) {
+		return -EINVAL;
+	}
+
+	/* check AT<separator><body><NULL> */
+	if (*cmd == '\0') {
+		return 0;
+	}
+
+	/* check AT<separator><body>= or check AT<separator><body>? */
+	if (*cmd != '=' && *cmd != '?') {
+		return -EINVAL;
+	}
+
+	/* check AT<separator><body>?<NULL> */
+	if (*cmd == '?') {
+		cmd += 1;
+		if (*cmd == '\0') {
+			return 0;
+		} else {
+			return -EINVAL;
+		}
+	}
+
+	/* check AT<separator><body>=<NULL> */
+	cmd += 1;
+	if (*cmd == '\0') {
+		return 0;
+	}
+
+	/* check AT<separator><body>=?<NULL> */
+	if (*cmd == '?') {
+		cmd += 1;
+		if (*cmd == '\0') {
+			return 0;
+		} else {
+			return -EINVAL;
+		}
+	}
+
+	/* no need to check AT<separator><body>=<parameters><NULL> */
+	return 0;
+}
+
 static void cmd_send(struct k_work *work)
 {
 	char str[32];
@@ -427,12 +498,17 @@ static void cmd_send(struct k_work *work)
 	ARG_UNUSED(work);
 
 	if (at_buf_overflow) {
-		rsp_send(OVERFLOW_STR, sizeof(OVERFLOW_STR) - 1);
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
 
 	LOG_HEXDUMP_DBG(at_buf, at_buf_len, "RX");
+
+	if (cmd_grammar_check(at_buf, at_buf_len) != 0) {
+		LOG_ERR("AT command invalid");
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
 
 	err = slm_at_parse(at_buf);
 	if (err == 0) {
@@ -478,15 +554,7 @@ static void cmd_send(struct k_work *work)
 	}
 
 done:
-	at_buf_overflow = false;
-	err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
-	if (err) {
-		LOG_ERR("UART RX failed: %d", err);
-		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
-	}
-	/* prepare for transition to datamode, just in case */
-	rx_start = k_uptime_get();
-	at_buf_len = 0;
+	(void)uart_receive();
 }
 
 static int cmd_rx_handler(uint8_t character)
@@ -508,26 +576,21 @@ static int cmd_rx_handler(uint8_t character)
 	/* Handle termination characters, if outside quotes. */
 	if (!inside_quotes) {
 		switch (character) {
-		case '\0':
-			if (term_mode == MODE_NULL_TERM) {
-				goto send;
-			}
-			LOG_WRN("Ignored null; would terminate string early.");
-			return 0;
 		case '\r':
-			if (term_mode == MODE_CR) {
-				goto send;
-			}
+#if defined(CONFIG_SLM_CR_TERMINATION)
+			goto send;
+#else
 			break;
+#endif
 		case '\n':
-			if (term_mode == MODE_LF) {
+#if defined(CONFIG_SLM_LF_TERMINATION)
+			goto send;
+#elif defined(CONFIG_SLM_CR_LF_TERMINATION)
+			if (at_cmd_len > 0 && at_buf[at_cmd_len - 1] == '\r') {
+				at_cmd_len--; /* trim the CR char */
 				goto send;
 			}
-			if (term_mode == MODE_CR_LF &&
-			    at_cmd_len > 0 &&
-			    at_buf[at_cmd_len - 1] == '\r') {
-				goto send;
-			}
+#endif
 			break;
 		}
 	}
@@ -566,8 +629,7 @@ send:
 	return 0;
 }
 
-static void uart_callback(const struct device *dev, struct uart_event *evt,
-			  void *user_data)
+static void uart_callback(const struct device *dev, struct uart_event *evt, void *user_data)
 {
 	static bool enable_rx_retry;
 
@@ -670,18 +732,15 @@ int slm_at_host_init(void)
 		return -EFAULT;
 	}
 	/* Power on UART module */
-	device_set_power_state(uart_dev, DEVICE_PM_ACTIVE_STATE,
-				NULL, NULL);
-	term_mode = CONFIG_SLM_AT_HOST_TERMINATION;
-	err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
+	device_set_power_state(uart_dev, DEVICE_PM_ACTIVE_STATE, NULL, NULL);
+	err = uart_receive();
 	if (err) {
-		LOG_ERR("Cannot enable rx: %d", err);
 		return -EFAULT;
 	}
 
 	err = at_notif_register_handler(NULL, response_handler);
 	if (err) {
-		LOG_ERR("Can't register handler err=%d", err);
+		LOG_ERR("Can't register handler: %d", err);
 		return err;
 	}
 

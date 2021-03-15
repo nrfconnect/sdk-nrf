@@ -162,10 +162,6 @@ Check and configure the following configuration options for the sample:
 
    This option impacts the total RAM usage.
 
-.. option:: CONFIG_SLM_NULL_TERMINATION - NULL termination
-
-   This option configures the application to accept AT commands without a termination character.
-
 .. option:: CONFIG_SLM_CR_TERMINATION - CR termination
 
    This option configures the application to accept AT commands ending with a carriage return.
