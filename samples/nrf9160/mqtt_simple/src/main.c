@@ -428,6 +428,7 @@ static int fds_init(struct mqtt_client *c)
 	return 0;
 }
 
+#if defined(CONFIG_DK_LIBRARY)
 static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	if (has_changed & button_states &
@@ -443,13 +444,14 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		}
 	}
 }
+#endif
 
 /**@brief Configures modem to provide LTE link. Blocks until link is
  * successfully established.
  */
 static int modem_configure(void)
 {
-
+#if defined(CONFIG_LTE_LINK_CONTROL)
 	/* Turn off LTE power saving features for a more responsive demo. Also,
 	 * request power saving features before network registration. Some
 	 * networks rejects timer updates after the device has registered to the
@@ -459,7 +461,6 @@ static int modem_configure(void)
 	lte_lc_psm_req(false);
 	lte_lc_edrx_req(false);
 
-#if defined(CONFIG_LTE_LINK_CONTROL)
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
 		/* Do nothing, modem is already turned on
 		 * and connected.
@@ -519,7 +520,9 @@ void main(void)
 		return;
 	}
 
+#if defined(CONFIG_DK_LIBRARY)
 	dk_buttons_init(button_handler);
+#endif
 
 do_connect:
 	if (connect_attempt++ > 0) {
