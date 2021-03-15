@@ -1,29 +1,3 @@
-/* background color top and bottom left */
-
-.wy-side-nav-search {
- background-color: #159957;
-}
-
-.rst-versions .rst-current-version {
- background-color: #159957;
-}
-
-/* text color navigation menu */
-
-/* l1 not selected */
-.wy-menu-vertical a {
- color: #159957;
-}
-/* expanded container nodes */
-.wy-menu-vertical li.on a, .wy-menu-vertical li.current > a {
- color: #159957;
-}
-/* expanded nodes, not selected */
-.wy-menu-vertical li.current a {
- color: #159957;
-}
-
-/* color for numbered steps */
-div.numbered-step>h2::before, div.numbered-step>h3::before, div.numbered-step>h4::before, div.numbered-step>h5::before {
-  background: #159957;
+:root {
+  --docset-color: #159957;
 }

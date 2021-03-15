@@ -192,8 +192,7 @@ rst_epilog = """
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = "zephyr"
-html_theme_path = ['{}/doc/themes'.format(NRF_BASE)]
+html_theme = "sphinx_ncs_theme"
 html_favicon = '{}/doc/static/images/favicon.ico'.format(NRF_BASE)
 
 if tags.has('release'):  # pylint: disable=undefined-variable
@@ -302,6 +301,14 @@ sourcelink_suffix = '.txt'
 # implements a search results scorer. If empty, the default will be used.
 #html_search_scorer = 'scorer.js'
 
+html_theme_options = {
+    "versions": {
+        "nrf": "nRF Connect SDK",
+        "nrfxlib": "nrfxlib",
+        "mcuboot": "MCUboot",
+        "kconfig": "Kconfig Reference"
+    }
+}
 
 breathe_projects = {
     "Zephyr": "{}/doxygen/xml".format(ZEPHYR_BUILD),
@@ -348,6 +355,6 @@ linkcheck_anchors = False
 
 def setup(app):
     app.add_css_file("zephyr-custom.css")
+
     app.add_css_file("css/common.css")
     app.add_css_file("css/zephyr.css")
-    app.add_js_file("js/ncs.js")

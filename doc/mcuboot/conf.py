@@ -129,15 +129,21 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'mcuboot'
-html_theme_path = ['{}/doc/themes'.format(NRF_BASE)]
+html_theme = 'sphinx_ncs_theme'
 html_favicon = '{}/doc/static/images/favicon.ico'.format(NRF_BASE)
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    "versions": {
+        "nrf": "nRF Connect SDK",
+        "nrfxlib": "nrfxlib",
+        "zephyr": "Zephyr",
+        "kconfig": "Kconfig Reference"
+    }
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -183,7 +189,6 @@ intersphinx_mapping = {
 def setup(app):
     app.add_css_file("css/common.css")
     app.add_css_file("css/mcuboot.css")
-    app.add_js_file("js/ncs.js")
 
 # Configuration for checking links
 
