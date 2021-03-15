@@ -224,13 +224,18 @@ config LTE_RAI_REQ_VALUE
 
 config LTE_NETWORK_USE_FALLBACK
 	bool "Use fallback network mode if selected mode fails"
-	default y
+	default y if !(LTE_NETWORK_MODE_LTEM_NBIOT || LTE_NETWORK_MODE_LTEM_NBIOT_GPS)
 	help
 		When enabled, the network mode will be switched to the other
 		available if the preferred fails to establish connection within
 		specified timeout.
 		If LTE-M is selected as the network mode, NB-IoT will be the
 		fallback mode and vice versa.
+		Fallback should not be enabled if both LTE-M and NB-IoT are enabled.
+		Instead, the LTE preference configuration should be used to
+		instruct the modem on which network to use. This is more efficient
+		both in terms of time to connection establishment and energy
+		consumption.
 
 config LTE_NETWORK_TIMEOUT
 	int "Time period [s] to attempt establishing connection"
