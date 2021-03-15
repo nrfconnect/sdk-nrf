@@ -592,7 +592,7 @@ Syntax
 
 * The ``<datatype>`` parameter can accept one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
   * ``2`` - JSON
   * ``3`` - HTML
@@ -665,7 +665,7 @@ Response syntax
   It contains the data being received.
 * The ``<datatype>`` parameter can accept one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
   * ``2`` - JSON
   * ``3`` - HTML
@@ -721,7 +721,7 @@ Syntax
   It represents the port of the TCP service.
 * The ``<datatype>`` parameter can accept one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
   * ``2`` - JSON
   * ``3`` - HTML
@@ -795,7 +795,7 @@ Response syntax
   It contains the data being received.
 * The ``<datatype>`` parameter can accept one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
   * ``2`` - JSON
   * ``3`` - HTML
@@ -1059,7 +1059,7 @@ It represents the error value according to the standard POSIX *errorno*.
 
 * The ``<datatype>`` value can assume one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
   * ``2`` - JSON
   * ``3`` - HTML
@@ -1209,7 +1209,7 @@ The modem needs to be in the offline state.
 
 * The ``<datatype>`` value can assume one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
   * ``2`` - JSON
   * ``3`` - HTML
@@ -1301,7 +1301,7 @@ Syntax
 
 * The ``<datatype>`` parameter can accept one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
   * ``2`` - JSON
   * ``3`` - HTML
@@ -1442,7 +1442,7 @@ It is reported to the client as follows:
 
 * The ``<datatype>`` parameter can accept one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
   * ``2`` - JSON
   * ``3`` - HTML
@@ -1577,7 +1577,7 @@ It is reported to the client as follows:
 
 * The ``<datatype>`` parameter can accept one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
   * ``2`` - JSON
   * ``3`` - HTML
@@ -1667,7 +1667,7 @@ Syntax
 
 * The ``<datatype>`` parameter can accept one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
   * ``2`` - JSON
   * ``3`` - HTML
