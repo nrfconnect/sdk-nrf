@@ -1,56 +1,78 @@
-/* -- Extra CSS styles for Zephyr content (RTD theme) ----------------------- */
-
-/*  make .. hlist:: tables fill the page */
-table.hlist {
-    width: 95% !important;
+:root {
+  --docset-color: #a67dfb;
 }
 
-/*  override rtd theme white-space no-wrap in table heading and content  */
-th,td {
-    white-space: normal !important;
+/* home page grid display */
+.grid {
+  list-style-type: none !important;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin: 1rem auto;
+  max-width: calc((250px + 2rem) * 4);
 }
 
-/* background color top and bottom left */
-
-.wy-side-nav-search {
- background-color: #a67dfb;
+.grid-item {
+  list-style-type: none !important;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  width: 200px;
+  text-align: center;
+  margin: 1rem;
 }
 
-.rst-versions .rst-current-version {
- background-color: #a67dfb;
- padding: 12px;
-}
-
-/* text color navigation menu */
-
-/* l1 not selected */
-.wy-menu-vertical a {
- color: #a67dfb;
-}
-/* expanded container nodes */
-.wy-menu-vertical li.on a, .wy-menu-vertical li.current > a {
- color: #a67dfb;
-}
-/* expanded nodes, not selected */
-.wy-menu-vertical li.current a {
- color: #a67dfb;
-}
-
-/* overriding some of the grid settings */
 .grid-item a {
- background-color: #fff;
- color: #404040;
+  display: block;
+  width: 200px;
+  height: 200px;
+  padding: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border: 1px solid #c6cbce;
+  background-color: #fff;
+  color: #404040;
 }
+
+.grid-item h2 {
+  font-size: 1.1rem;
+}
+
+.grid-item img {
+  margin-bottom: 1.1rem;
+  max-width: 75%;
+}
+
+
 .grid-item a:hover {
- background-color: #c6cbce;
+  background-color: #c6cbce;
+  color: white;
 }
 
-/* overriding the positioning of the doc set switcher */
-.rst-versions {
- position: fixed !important;
+
+.grid-item p {
+  margin-top: 0.5rem;
+  color: #333e48;
 }
 
-/* color for numbered steps */
-div.numbered-step>h2::before, div.numbered-step>h3::before, div.numbered-step>h4::before, div.numbered-step>h5::before {
-  background: #a67dfb;
+.grid-icon {
+ line-height: 1.8;
+ font-size: 4rem;
+ color: mediumslateblue;
 }

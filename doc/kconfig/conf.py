@@ -24,8 +24,7 @@ exclude_patterns = ['_build']
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = "kconfig"
-html_theme_path = ['{}/doc/themes'.format(NRF_BASE)]
+html_theme = "sphinx_ncs_theme"
 html_favicon = '{}/doc/static/images/favicon.ico'.format(NRF_BASE)
 
 # The name for this set of Sphinx documents.  If None, it defaults to
@@ -59,7 +58,15 @@ html_show_copyright = True
 # If true, license is shown in the HTML footer. Default is True.
 html_show_license = True
 
+html_theme_options = {
+    "versions": {
+        "nrf": "nRF Connect SDK",
+        "nrfxlib": "nrfxlib",
+        "zephyr": "Zephyr",
+        "mcuboot": "MCUboot"
+    }
+}
+
 def setup(app):
     app.add_css_file("css/common.css")
     app.add_css_file("css/kconfig.css")
-    app.add_js_file("js/ncs.js")
