@@ -164,7 +164,7 @@ void pcd_lock_ram(void)
 {
 	uint32_t region = PCD_CMD_ADDRESS/CONFIG_NRF_SPU_RAM_REGION_SIZE;
 
-	nrf_spu_ramregion_set(NRF_SPU, region, true, NRF_SPU_MEM_PERM_READ,
+	nrf_spu_ramregion_set(NRF_SPU, region, false, NRF_SPU_MEM_PERM_READ,
 			true);
 }
 #endif /* CONFIG_SOC_NRF5340_CPUAPP && CONFIG_MCUBOOT */
