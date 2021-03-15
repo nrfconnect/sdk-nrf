@@ -7,7 +7,8 @@ Thread: CLI
    :local:
    :depth: 2
 
-The :ref:`Thread <ug_thread>` CLI sample demonstrates the usage of OpenThread Command Line Interface inside the Zephyr shell.
+The :ref:`Thread <ug_thread>` CLI sample demonstrates how to send commands to a Thread device using the OpenThread Command Line Interface (CLI).
+The CLI is integrated into the Zephyr shell.
 
 This sample supports optional :ref:`ot_cli_sample_thread_v12`, which can be turned on or off.
 See :ref:`coap_client_sample_activating_variants` for details.
@@ -40,10 +41,10 @@ See `Testing diagnostic module`_ section for an example.
 
 .. _ot_cli_sample_thread_v12:
 
-Experimental Thread v1.2 extension
-==================================
+Experimental Thread 1.2 extension
+=================================
 
-This optional extension allows you to test :ref:`available features from Thread Specification v1.2 <thread_ug_thread_1_2>`.
+This optional extension allows you to test :ref:`available features from the Thread 1.2 Specification <thread_ug_thread_1_2>`.
 You can enable these features either by :ref:`activating the overlay extension <ot_cli_sample_activating_variants>` as described below or by setting :ref:`thread_ug_thread_1_2`.
 
 .. _ot_cli_sample_thread_certification:
@@ -82,10 +83,10 @@ The sample supports the following development kits for testing the network statu
 
 Optionally, you can use one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for :ref:`testing communication or diagnostics <ot_cli_sample_testing_multiple>` and :ref:`thread_ot_commissioning_configuring_on-mesh`.
 
-Thread v1.2 extension requirements
-==================================
+Thread 1.2 extension requirements
+=================================
 
-If you enable the :ref:`experimental Thread v1.2 extension <ot_cli_sample_thread_v12>`, you will need `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ to observe messages sent from the router to the leader kit when :ref:`testing v1.2 features <ot_cli_sample_testing_multiple_v12>`.
+If you enable the :ref:`ot_cli_sample_thread_v12`, you will need `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ to observe messages sent from the router to the leader kit when :ref:`ot_cli_sample_testing_multiple_v12`.
 
 User interface
 **************
@@ -255,12 +256,12 @@ To test diagnostic commands, complete the following steps:
 
 .. _ot_cli_sample_testing_multiple_v12:
 
-Testing Thread Specification v1.2 features
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Testing Thread 1.2 features
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To test the Thread Specification v1.2 features, complete the following steps:
+To test the Thread 1.2 features, complete the following steps:
 
-#. Make sure both development kits are programmed with the CLI sample with the :ref:`Thread v1.2 extension <ot_cli_sample_thread_v12>` enabled.
+#. Make sure both development kits are programmed with the CLI sample with the :ref:`ot_cli_sample_thread_v12` enabled.
 #. Turn on the developments kits.
 #. Set up the serial connection with both development kits.
    For more details, see :ref:`putty`.

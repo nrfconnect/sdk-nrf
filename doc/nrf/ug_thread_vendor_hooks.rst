@@ -10,15 +10,16 @@ Vendor hooks
    :local:
    :depth: 2
 
-Vendor hooks are a software mechanism that allows for using enhanced application features provided by a specific vendor.
-For example, they allow you to add radio or crypto functionalities, whose settings will be managed from the host device.
+Vendor hooks are a software mechanism that allows adding custom Spinel commands.
+Such vendor-specific commands can be used to add support for enhanced application features.
+For example, they allow you to add radio or crypto functionalities, whose settings are managed from the host device.
 
 In |NCS|, your implementation of the vendor hooks file is compiled by OpenThread within the NCP component.
 The only information needed for compilation is the file location.
-This allows you to implement new features in the application or elsewhere without having to modify OpenThread components.
+In this way, you can implement new features in the application or elsewhere without having to modify OpenThread components.
 
 Vendor hooks are strictly connected to the `Spinel protocol`_ used in serial communication between host device and the MCU board working in :ref:`Thread NCP or RCP architecture <thread_architectures_designs_cp>`.
-Spinel uses serial frames with commands that describe the activity to take (for example, get or set), and with properties that define the object on which the activity is to be performed.
+Spinel uses serial frames with commands that describe the activity to perform (for example, get or set), and with properties that define the object on which the activity is to be performed.
 You can use the available commands and properties, but also define your set of instructions to provide new features by using the vendor hooks.
 
 .. note::
@@ -29,48 +30,48 @@ You can use the available commands and properties, but also define your set of i
 ID range of general vendor properties
 *************************************
 
-Spinel protocol associates specific properties with its numeric identifiers.
-The ID range reserved for the vendor properties goes from ``0x3c00`` to ``0x4000``.
+The Spinel protocol associates specific properties with numeric identifiers.
+The ID range reserved for the vendor properties spans from ``0x3c00`` to ``0x4000``.
 
-You are not allowed to use IDs from outside this range for your properties, as this may negatively affect the Spinel protocol operation and the vendor hooks mechanism will not work.
+You are not allowed to use IDs from outside this range for your properties, as this might negatively affect the Spinel protocol operation, and the vendor hooks mechanism will not work.
 
 
 Host device configuration
 *************************
 
-In most cases, the host device uses tools that support the Spinel protocol (like `wpantund`_ or `pyspinel`_) to communicate with the NCP/RCP device.
+In most cases, the host device uses tools that support the Spinel protocol (like `wpantund`_ or `Pyspinel`_) to communicate with the NCP/RCP device.
 You can, however, use another tool as long as it supports the Spinel protocol.
 
-Adding new property in pyspinel
-===============================
+Adding properties in Pyspinel
+=============================
 
-pyspinel is the recommended tool for adding new properties, given its ease-of-use.
+Pyspinel is the recommended tool for adding properties, given its ease-of-use.
 
-The configuration of new properties in pyspinel is centered around the following files:
+To configure new properties in Pyspinel, you must update the following files:
 
-* :file:`const.py` - This file contains ``VENDOR_SPINEL`` class, which stores definitions of the identifier values of vendor properties.
-  Use this file to add new properties.
-* :file:`codec.py` - This file contains definitions of handler methods called on the property detection.
+* :file:`const.py` - This file contains the ``VENDOR_SPINEL`` class, which stores definitions of the identifier values of vendor properties.
+  Use this file to add properties.
+* :file:`codec.py` - This file contains definitions of handler methods called on property detection.
   Use this file to add definitions of handlers for your properties.
 * :file:`vendor.py` - This file contains methods to capture property occurrences from the console and call proper handlers.
 
-These files are located in the vendor directory, which can be found in the main project directory.
+These files are located in the :file:`vendor` directory, which can be found in the main project directory.
 
-To add a new property in pyspinel:
+Complete the following steps to add a property in Pyspinel:
 
-1. Clone the `pyspinel`_ respository and install the tool.
-#. Navigate to the vendor directory with the :file:`codec.py`, :file:`const.py` and :file:`vendor.py` files.
+1. Clone the `Pyspinel`_ respository and install the tool.
+#. Navigate to the :file:`vendor` directory that contains the :file:`codec.py`, :file:`const.py`, and :file:`vendor.py` files.
    This directory is located in the main project directory.
 #. Open the :file:`const.py` file for editing.
-#. Add new properties in the :file:`const.py` file.
+#. Add properties to the :file:`const.py` file.
    For example, add the following properties:
 
-   * ``PROP_VENDOR_NAME`` that is used to get the vendor name from the device.
-   * ``PROP_VENDOR_AUTO_ACK_ENABLED`` that will be used to get or set the auto ACK mode state.
+   * ``PROP_VENDOR_NAME``, which is used to get the vendor name from the device.
+   * ``PROP_VENDOR_AUTO_ACK_ENABLED``, which is used to get or set the auto ACK mode state.
 
    The class should contain code similar to the following:
 
-   .. code-block:: console
+   .. code-block:: python
 
       class VENDOR_SPINEL(object):
         """
@@ -89,12 +90,12 @@ To add a new property in pyspinel:
         PROP_VENDOR__END = 0x4000
         pass
 
-   You can also add your own properties, but assign them IDs from the proper vendor range.
+   You can also add your own properties, but you must assign them IDs from the proper vendor range.
 #. Open the :file:`codec.py` file for editing.
 #. In the :file:`codec.py` file, add definitions of handlers.
    For example, for the properties added in the :file:`const.py` file:
 
-   .. code-block:: console
+   .. code-block:: python
 
       class VendorSpinelPropertyHandler(SpinelCodec):
         """
@@ -126,9 +127,9 @@ To add a new property in pyspinel:
         For details, see the ``SpinelCodec`` class in :file:`spinel/codec.py`.
 
 #. Open the :file:`vendor.py` file for editing.
-#. Extend the list of command names with new properties and make sure they are included in the ``do_vendor`` method:
+#. Extend the list of command names with the new properties and make sure they are included in the ``do_vendor`` method:
 
-   .. code-block:: console
+   .. code-block:: python
 
       class VendorSpinelCliCmd():
         """
@@ -161,12 +162,12 @@ NCP/RCP device configuration
 
 In |NCS|, the OpenThread NCP base component is responsible for processing Spinel frames and performing appropriate operations.
 If it finds a frame with an unknown property ID, but one that fits the vendor ID range, it calls vendor handler methods.
-You should define these methods beforehand.
+You must define these methods beforehand.
 
-Handlers methods can check property ID and perform different actions depending on their value.
-They can also ignore the value, if for example the property was defined by other vendor and you want to filter it out.
+Handler methods can check the property ID and perform different actions depending on its value.
+They can also ignore the value, for example, if the property was defined by another vendor and you want to filter it out.
 
-For detailed description about how to enable the vendor hook feature in a sample, see the :ref:`ot_coprocessor_sample` sample documentation.
+For a detailed description of how to enable the vendor hook feature in a sample, see the :ref:`ot_coprocessor_sample` sample documentation.
 
 .. _ug_thread_vendor_hooks_testing:
 
@@ -177,22 +178,22 @@ To test the vendor hook feature, you need a development kit that is programmed w
 
 Complete the following steps:
 
-1. Connect the Thread NCP development kit's SEGGER J-Link USB port to the USB port on your PC with an USB cable.
+1. Connect the development kit's SEGGER J-Link USB port to the USB port on your PC with an USB cable.
 #. Get the development kit's serial port name (for example, :file:`/dev/ttyACM0`).
-#. Open a shell and run PySpinel by using the following command, with *baudrate* set to ``1000000`` and *serial_port_name* set to the port name from the previous step:
+#. Open a shell and run Pyspinel by using the following command, with *baud_rate* set to ``1000000`` and *serial_port_name* set to the port name from the previous step:
 
    .. parsed-literal::
       :class: highlight
 
-      python3 spinel-cli.py -u *serial_port_name* -b *baudrate*
+      python3 spinel-cli.py -u *serial_port_name* -b *baud_rate*
 
-#. In the PySpinel shell, run the following command to check the list of available vendor properties:
+#. In the Pyspinel shell, run the following command to check the list of available vendor properties:
 
    .. code-block:: console
 
       spinel-cli > vendor help
 
-   The output will look similar to the following:
+   The output looks similar to the following:
 
    .. code-block:: console
 
@@ -200,39 +201,39 @@ Complete the following steps:
       ===========================
       help  name  auto_ack
 
-#. In the PySpinel shell, run the following command to get the device vendor name:
+#. In the Pyspinel shell, run the following command to get the device vendor name:
 
    .. code-block:: console
 
       spinel-cli > vendor name
 
-   The output will look similar to the following:
+   The output looks similar to the following:
 
    .. code-block:: console
 
       Nordic Semiconductor
       Done
 
-#. In the PySpinel shell, run the ``auto_ack`` command to get the current state of the device auto ACK mode:
+#. In the Pyspinel shell, run the ``auto_ack`` command to get the current state of the device auto ACK mode:
 
    .. code-block:: console
 
       spinel-cli > vendor auto_ack
 
-   The output will look similar to the following:
+   The output looks similar to the following:
 
    .. code-block:: console
 
       1
       Done
 
-#. In the PySpinel shell, run the ``auto_ack`` command with a value to change the current state of the device auto ACK mode:
+#. In the Pyspinel shell, run the ``auto_ack`` command with a value to change the current state of the device auto ACK mode:
 
    .. code-block:: console
 
       spinel-cli > vendor auto_ack 0
 
-   The output will look similar to the following:
+   The output looks similar to the following:
 
    .. code-block:: console
 

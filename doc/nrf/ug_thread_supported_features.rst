@@ -7,8 +7,7 @@ Supported Thread features
    :local:
    :depth: 2
 
-The OpenThread implementation of the Thread protocol supports all features defined in the Thread v1.1.1 specification.
-This includes:
+The OpenThread implementation of the Thread protocol supports all features defined in the Thread 1.1.1 Specification:
 
 * All Thread networking layers:
 
@@ -23,19 +22,19 @@ This includes:
 
 .. _thread_ug_supported_features_v12:
 
-Support for Thread Specification v1.2
-*************************************
+Support for Thread 1.2 Specification
+************************************
 
-The |NCS| is gradually implementing features from Thread Specification v1.2.
+The |NCS| is gradually implementing features from the Thread 1.2 Specification.
 
-The features introduced with Thread Specification v1.2 are fully backward-compatible with the Thread v1.1 (more specifically, v1.1.1).
-The Thread v1.2 improves network scalability, responsiveness, density, and power consumption.
-For more information about this version, see the official `Thread Specification v1.2 Commercial White Paper`_ and the `Thread Specification v1.2 Base Features`_ documentation.
+The features introduced with the Thread 1.2 Specification are fully backward-compatible with Thread 1.1 (more specifically, the Thread 1.1.1 Specification).
+Thread 1.2 improves network scalability, responsiveness, density, and power consumption.
+For more information about this Thread version, see the official `Thread 1.2 in Commercial White Paper`_ and the `Thread 1.2 Base Features`_ document.
 
-In |NCS|, you can choose which version of Thread protocol will be used in your application.
-By default, |NCS| supports Thread Specification v1.1, but you can enable and configure Thread Specification v1.2 by using :ref:`dedicated options <thread_ug_thread_1_2>`.
+In |NCS|, you can choose which version of the Thread protocol to use in your application.
+By default, |NCS| supports Thread 1.1, but you can enable and configure Thread 1.2 by using :ref:`dedicated options <thread_ug_thread_1_2>`.
 
 .. note::
-    Not all v1.2 functionalities are currently supported.
-    See the dedicated options link for the list of v1.2 features currently available in |NCS|, with information about how to enable them.
-    Currently, the :ref:`Thread CLI sample <ot_cli_sample>` is the only sample to offer :ref:`experimental v1.2 extension <ot_cli_sample_thread_v12>`.
+    Not all Thread 1.2 functionalities are currently supported.
+    See :ref:`thread_ug_thread_1_2` for the list of 1.2 features that are currently available in |NCS|, with information about how to enable them.
+    Currently, the :ref:`ot_cli_sample` sample is the only sample that provides an :ref:`ot_cli_sample_thread_v12`.

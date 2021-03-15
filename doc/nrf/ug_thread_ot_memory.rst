@@ -7,7 +7,7 @@ OpenThread memory requirements
    :local:
    :depth: 2
 
-This page provides information about the layout and the amount of flash memory and RAM that is required by sample that are using the OpenThread stack.
+This page provides information about the layout and the amount of flash memory and RAM that is required by samples that use the OpenThread stack.
 Use these values to see whether your application has enough space for running on particular platforms for different application configurations.
 
 .. _thread_ot_memory_introduction:

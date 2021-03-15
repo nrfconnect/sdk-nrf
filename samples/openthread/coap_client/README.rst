@@ -181,51 +181,40 @@ To test the multiprotocol Bluetooth LE extension, complete the following steps a
 
 #. Set up nRF Toolbox by completing the following steps:
 
-   .. tabs::
+   a. Tap :guilabel:`UART` to open the UART application in nRF Toolbox.
 
-      .. tab:: a. Start UART
+      .. figure:: /images/nrftoolbox_uart_default.png
+         :alt: UART application in nRF Toolbox
 
-         Tap :guilabel:`UART` to open the UART application in nRF Toolbox.
+         UART application in nRF Toolbox
 
-         .. figure:: /images/nrftoolbox_uart_default.png
-            :alt: UART application in nRF Toolbox
+   #. Tap the :guilabel:`EDIT` button in the top right corner of the application to configure the UART commands.
+      The button configuration window appears.
+   #. Create the active application buttons by completing the following steps:
 
-            UART application in nRF Toolbox
+      i. Bind the top left button to the ``u`` command, with EOL set to LF and an icon of your choice.
+         For this testing procedure, the :guilabel:`>` icon is used.
+      #. Bind the top middle button to the ``m`` command, with EOL set to LF and an icon of your choice.
+         For this testing procedure, the play button icon is used.
+      #. Bind the top right button to the ``p`` command, with EOL set to LF and an icon of your choice.
+         For this testing procedure, the settings gear icon is used.
 
-      .. tab:: b. Configure commands
+      .. figure:: /images/nrftoolbox_uart_settings.png
+         :alt: Configuring buttons in nRF Toolbox - UART application
 
-         Configure the UART commands by completing the following steps:
+         Configuring buttons in the UART application of nRF Toolbox
 
-         1. Tap the :guilabel:`EDIT` button in the top right corner of the application.
-            The button configuration window appears.
-         #. Create the active application buttons by completing the following steps:
+   #. Tap the :guilabel:`DONE` button in the top right corner of the application.
 
-            a. Bind the top left button to the ``u`` command, with EOL set to LF and an icon of your choice.
-               For this testing procedure, the :guilabel:`>` icon is used.
-            #. Bind the top middle button to the ``m`` command, with EOL set to LF and an icon of your choice.
-               For this testing procedure, the play button icon is used.
-            #. Bind the top right button to the ``p`` command, with EOL set to LF and an icon of your choice.
-               For this testing procedure, the settings gear icon is used.
+   #. Tap :guilabel:`CONNECT` and select the ``NUS_CoAP_client`` device from the list to connect to the device
 
-            .. figure:: /images/nrftoolbox_uart_settings.png
-               :alt: Configuring buttons in nRF Toolbox - UART application
+       .. figure:: /images/nrftoolbox_uart_connected.png
+          :alt: nRF Toolbox - UART application view after establishing connection
 
-               Configuring buttons in the UART application of nRF Toolbox
+          The UART application of nRF Toolbox after establishing the connection
 
-         #. Tap the :guilabel:`DONE` button in the top right corner of the application.
-
-      .. tab:: c. Connect to device
-
-         Tap :guilabel:`CONNECT` and select the ``NUS_CoAP_client`` device from the list of devices.
-
-         .. figure:: /images/nrftoolbox_uart_connected.png
-            :alt: nRF Toolbox - UART application view after establishing connection
-
-            The UART application of nRF Toolbox after establishing the connection
-
-         .. note::
-            Observe that **LED 2** on your CoAP Multiprotocol Client node is solid, which indicates that the Bluetooth connection is established.
-   ..
+       .. note::
+          Observe that **LED 2** on your CoAP Multiprotocol Client node lights up, which indicates that the Bluetooth connection is established.
 
 #. In nRF Toolbox, press the middle button to control **LED 4** on all CoAP server nodes.
 #. Pair a client with a server by completing the following steps:

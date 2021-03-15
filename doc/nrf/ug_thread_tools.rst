@@ -29,11 +29,11 @@ Border Routers provide services for devices within the IEEE 802.15.4 network, in
 Typically, a Border Router solution consists of the following parts:
 
 * Application based on the :ref:`thread_architectures_designs_cp_ncp` design or its :ref:`thread_architectures_designs_cp_rcp` variant compatible with the IEEE 802.15.4 standard.
-  This application can be implemented for example on an nRF52 device.
+  This application can be implemented, for example, on an nRF52 device.
 * Host-side application, usually implemented on a more powerful device with incorporated Linux-based operating system.
 
-|NCS| does not provide the complete Thread Border Router solution.
-For development purposes, you can use `OpenThread Border Router`_ , an open-source Border Router implementation that you can set up either on your PC using Docker or on Raspberry Pi.
+|NCS| does not provide a complete Thread Border Router solution.
+For development purposes, you can use `OpenThread Border Router`_, an open-source Border Router implementation that you can set up either on your PC using Docker or on Raspberry Pi.
 OpenThread Border Router is compatible with Nordic Semiconductor devices.
 
 .. _ug_thread_tools_wpantund:
@@ -42,7 +42,7 @@ wpantund
 ********
 
 `wpantund`_ is a utility for providing a native IPv6 interface to a Network Co-Processor.
-When working with Thread, it is used for the interaction with the application by the following samples:
+When working with Thread, it is used for interacting with the application by the following samples:
 
 * :ref:`ot_coprocessor_sample`
 
@@ -73,13 +73,13 @@ Configuring wpantund
 When working with samples that support wpantund, complete the following steps to start the wpantund processes:
 
 1. Open a shell and run the wpantund process.
-   The required command depends on if you want to connect to a network co-processor (NCP) node or a radio co-processor (RCP) node.
+   The required command depends on whether you want to connect to a network co-processor (NCP) node or a radio co-processor (RCP) node.
 
    Replace the following parameters:
 
    * *network_interface_name* - Specifies the name of the network interface, for example, ``leader_if``.
    * *ncp_uart_device* - Specifies the location of the device, for example, :file:`/dev/ttyACM0`.
-   * *baudrate* - Specifies the baud rate to use.
+   * *baud_rate* - Specifies the baud rate to use.
      The Thread samples support baud rate ``1000000``.
 
    Network co-processor (NCP)
@@ -88,7 +88,7 @@ When working with samples that support wpantund, complete the following steps to
      .. parsed-literal::
         :class: highlight
 
-        wpantund -I *network_interface_name* -s *ncp_uart_device* -b *baudrate*
+        wpantund -I *network_interface_name* -s *ncp_uart_device* -b *baud_rate*
 
      For example::
 
@@ -102,7 +102,7 @@ When working with samples that support wpantund, complete the following steps to
      .. parsed-literal::
         :class: highlight
 
-        wpantund -I *network_interface_name* -s 'system:./output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_uart_device*\ ?uart-baudrate=\ *baudrate*
+        wpantund -I *network_interface_name* -s 'system:./output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_uart_device*\ ?uart-baudrate=\ *baud_rate*
 
      For example::
 
@@ -123,7 +123,7 @@ Using wpanctl commands
 ======================
 
 To issue a wpanctl command, run it in the wpanctl shell.
-For example, the following command checks the the NCP kit state:
+For example, the following command checks the kit state:
 
 .. code-block:: console
 
@@ -137,41 +137,41 @@ The most common wpanctl commands are the following:
 * ``form "*My_OpenThread_network*"`` - Sets up a Thread network with the name ``My_OpenThread_network``.
 * ``get`` - Gets the values of all properties.
 * ``get *property*`` - Gets the value of the requested property.
-  For example, ``get NCP:SleepyPollInterval`` will list the value of the ``NCP:SleepyPollInterval`` property.
+  For example, ``get NCP:SleepyPollInterval`` lists the value of the ``NCP:SleepyPollInterval`` property.
 * ``set *property* *value*`` - Sets the value of the requested property to the required value.
-  For example, ``set NCP:SleepyPollInterval 1000`` will set the value of the ``NCP:SleepyPollInterval`` property to ``1000``.
+  For example, ``set NCP:SleepyPollInterval 1000`` sets the value of the ``NCP:SleepyPollInterval`` property to ``1000``.
 
 For the full list of commands, run the ``help`` command in wpanctl.
 
 .. _ug_thread_tools_pyspinel:
 
-PySpinel
+Pyspinel
 ********
 
-`PySpinel`_ is a tool for controlling OpenThread co-processor instances through a command-line interface.
+`Pyspinel`_ is a tool for controlling OpenThread co-processor instances through a command-line interface.
 
 .. note::
     The tool is available for Linux and macOS and is not supported on Windows.
 
-Installing PySpinel
+Installing Pyspinel
 ===================
 
-See the `PySpinel`_ documentation for general installation instructions.
+See the `Pyspinel`_ documentation for general installation instructions.
 
-Configuring PySpinel
+Configuring Pyspinel
 ====================
 
-When working with samples that support PySpinel, complete the following steps to communicate with the device:
+When working with samples that support Pyspinel, complete the following steps to communicate with the device:
 
-1. Open a shell in a PySpinel root directory.
-#. Run PySpinel to connect to the node.
-   The required command depends on if you want to connect to a network co-processor (NCP) node or a radio co-processor (RCP) node.
+1. Open a shell in a Pyspinel root directory.
+#. Run Pyspinel to connect to the node.
+   The required command depends on whether you want to connect to a network co-processor (NCP) node or a radio co-processor (RCP) node.
 
    Replace the following parameters:
 
    * *debug_level* - Specifies the debug level, range: ``0-5``.
    * *ncp_uart_device* - Specifies the location of the device, for example, :file:`/dev/ttyACM0`.
-   * *baudrate* - Specifies the baud rate to use.
+   * *baud_rate* - Specifies the baud rate to use.
      The Thread samples support baud rate ``1000000``.
 
    Network co-processor (NCP)
@@ -180,7 +180,7 @@ When working with samples that support PySpinel, complete the following steps to
      .. parsed-literal::
         :class: highlight
 
-        sudo python3 spinel-cli.py -d *debug_level* -u *ncp_uart_device* -b *baudrate*
+        sudo python3 spinel-cli.py -d *debug_level* -u *ncp_uart_device* -b *baud_rate*
 
      For example::
 
@@ -197,7 +197,7 @@ When working with samples that support PySpinel, complete the following steps to
      .. parsed-literal::
         :class: highlight
 
-        sudo python3 spinel-cli.py -d *debug_level* -p './output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_uart_device*\ ?uart-baudrate=\ *baudrate*
+        sudo python3 spinel-cli.py -d *debug_level* -p './output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_uart_device*\ ?uart-baudrate=\ *baud_rate*
 
      For example::
 

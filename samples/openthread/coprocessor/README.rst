@@ -85,7 +85,7 @@ You can interact with the sample through :ref:`ug_thread_tools_wpantund`, using 
 If you use the RCP architecture (see :option:`CONFIG_OPENTHREAD_COPROCESSOR_RCP`), you can alternatively use ``ot-daemon`` or ``ot-cli`` with commands listed in `OpenThread CLI Reference`_.
 See :ref:`ug_thread_tools_ot_apps` for more information.
 
-Both NCP and RCP support communication with the kit using `PySpinel`_ commands.
+Both NCP and RCP support communication with the kit using `Pyspinel`_ commands.
 
 You can use your own application instead of the ones listed above, provided that it supports the Spinel communication protocol.
 
