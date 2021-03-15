@@ -184,7 +184,7 @@ If the MQTT client successfully subscribes to a topic, the following unsolicited
 
 * The ``<datatype>`` value can assume one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
 
 * The ``<topic_length>`` value is an integer.
@@ -306,7 +306,7 @@ Syntax
   It indicates the topic on which data is published.
 * The ``<datatype>`` parameter can accept one of the following values:
 
-  * ``0`` - hexidecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
+  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
   * ``1`` - plain text (default value)
 
 * The ``<msg>`` parameter is a string.
