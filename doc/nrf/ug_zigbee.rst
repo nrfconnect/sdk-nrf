@@ -25,4 +25,5 @@ See :ref:`zigbee_samples` for the list of available Zigbee samples.
    ug_zigbee_memory.rst
    ug_zigbee_configuring.rst
    ug_zigbee_configuring_libraries.rst
+   ug_zigbee_other_ecosystems.rst
    ug_zigbee_tools.rst
