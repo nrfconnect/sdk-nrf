@@ -54,12 +54,9 @@ choice
 	help
 		Sets the command terminator used by the serial terminal.
 		Available options are:
-		-  NULL termination
 		-  CR termination
 		-  LF termination
 		-  CR+LF termination
-	config SLM_NULL_TERMINATION
-		bool "NULL termination"
 	config SLM_CR_TERMINATION
 		bool "CR termination"
 	config SLM_LF_TERMINATION
@@ -67,13 +64,6 @@ choice
 	config SLM_CR_LF_TERMINATION
 		bool "CR+LF termination"
 endchoice
-
-config SLM_AT_HOST_TERMINATION
-	int
-	default 0 if SLM_NULL_TERMINATION
-	default 1 if SLM_CR_TERMINATION
-	default 2 if SLM_LF_TERMINATION
-	default 3 if SLM_CR_LF_TERMINATION
 
 #
 # GPIO wakeup
