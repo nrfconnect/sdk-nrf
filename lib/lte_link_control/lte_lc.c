@@ -548,6 +548,7 @@ static int parse_psm_cfg(struct at_param_list *at_params,
 static int w_lte_lc_init(void)
 {
 	int err;
+	enum lte_lc_system_mode_preference preference;
 
 	if (is_initialized) {
 		return -EALREADY;
@@ -555,10 +556,17 @@ static int w_lte_lc_init(void)
 
 	k_sem_init(&link, 0, 1);
 
-	err = lte_lc_system_mode_get(&sys_mode_current, NULL);
+	err = lte_lc_system_mode_get(&sys_mode_current, &preference);
 	if (err) {
 		LOG_ERR("Could not get current system mode, error: %d", err);
 		return err;
+	}
+
+	if (IS_ENABLED(CONFIG_LTE_NETWORK_DEFAULT)) {
+		sys_mode_target = sys_mode_current;
+		mode_preference = preference;
+
+		LOG_DBG("Default system mode is used: %d", sys_mode_current);
 	}
 
 	err = at_notif_register_handler(NULL, at_handler);
@@ -686,9 +694,11 @@ static int w_lte_lc_connect(bool blocking)
 	do {
 		retry = false;
 
-		err = lte_lc_system_mode_set(sys_mode_target, mode_preference);
-		if (err) {
-			return err;
+		if (!IS_ENABLED(CONFIG_LTE_NETWORK_DEFAULT)) {
+			err = lte_lc_system_mode_set(sys_mode_target, mode_preference);
+			if (err) {
+				return err;
+			}
 		}
 
 		err = lte_lc_normal();
