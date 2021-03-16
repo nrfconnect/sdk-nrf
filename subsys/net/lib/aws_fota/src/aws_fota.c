@@ -590,6 +590,10 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 		aws_fota_evt.dl.progress = download_progress;
 		callback(&aws_fota_evt);
 		break;
+
+	default:
+		LOG_WRN("Unhandled FOTA event ID: %d", evt->id);
+		break;
 	}
 }
 

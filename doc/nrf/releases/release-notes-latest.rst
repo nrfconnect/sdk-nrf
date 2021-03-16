@@ -57,6 +57,7 @@ nRF9160
   * :ref:`lib_fota_download` library:
 
     * Added an API to retrieve the image type that is being downloaded.
+    * Added an API to cancel current downloading.
 
   * :ref:`lib_ftp_client` library:
 
