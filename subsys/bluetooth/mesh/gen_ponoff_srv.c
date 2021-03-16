@@ -9,6 +9,7 @@
 #include <string.h>
 #include <settings/settings.h>
 #include <stdlib.h>
+#include "gen_ponoff_internal.h"
 #include "model_utils.h"
 
 /** Persistent storage handling */
@@ -25,6 +26,7 @@ static int store(struct bt_mesh_ponoff_srv *srv,
 	}
 
 	struct ponoff_settings_data data;
+	ssize_t size;
 
 	data.on_power_up = (uint8_t)srv->on_power_up;
 
@@ -44,8 +46,18 @@ static int store(struct bt_mesh_ponoff_srv *srv,
 		return -EINVAL;
 	}
 
+	/* Models that extend Generic Power OnOff Server and, which states are
+	 * bound with Generic OnOff state, store the value of the bound state
+	 * separately, therefore they don't need to store Generic OnOff state.
+	 */
+	if (atomic_test_bit(&srv->flags, GEN_PONOFF_SRV_NO_ONOFF)) {
+		size = sizeof(data.on_power_up);
+	} else {
+		size = sizeof(data);
+	}
+
 	return bt_mesh_model_data_store(srv->ponoff_model, false, NULL, &data,
-					sizeof(data));
+					size);
 }
 
 static void send_rsp(struct bt_mesh_ponoff_srv *srv,
@@ -90,7 +102,9 @@ static void set_on_power_up(struct bt_mesh_ponoff_srv *srv,
 
 	struct bt_mesh_onoff_status onoff_status = { 0 };
 
-	srv->onoff.handlers->get(&srv->onoff, NULL, &onoff_status);
+	if (!atomic_test_bit(&srv->flags, GEN_PONOFF_SRV_NO_ONOFF)) {
+		srv->onoff.handlers->get(&srv->onoff, NULL, &onoff_status);
+	}
 
 	store(srv, &onoff_status);
 }
@@ -143,7 +157,8 @@ static void onoff_intercept_set(struct bt_mesh_onoff_srv *onoff_srv,
 
 	srv->onoff_handlers->set(onoff_srv, ctx, set, status);
 
-	if (srv->on_power_up == BT_MESH_ON_POWER_UP_RESTORE) {
+	if ((srv->on_power_up == BT_MESH_ON_POWER_UP_RESTORE) &&
+	    !atomic_test_bit(&srv->flags, GEN_PONOFF_SRV_NO_ONOFF)) {
 		store(srv, status);
 	}
 }
@@ -247,16 +262,25 @@ static int bt_mesh_ponoff_srv_settings_set(struct bt_mesh_model *model,
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 	struct bt_mesh_onoff_status dummy;
 	struct ponoff_settings_data data;
+	ssize_t size = MIN(len_rd, sizeof(data));
 
 	if (name) {
 		return -ENOENT;
 	}
 
-	if (read_cb(cb_arg, &data, sizeof(data)) != sizeof(data)) {
+	if (read_cb(cb_arg, &data, size) != size) {
 		return -EINVAL;
 	}
 
 	set_on_power_up(srv, NULL, (enum bt_mesh_on_power_up)data.on_power_up);
+
+	/* Models that extend Generic Power OnOff Server and, which states are
+	 * bound with Generic OnOff state, store the value of the bound state
+	 * separately, therefore they don't need to set Generic OnOff state.
+	 */
+	if (atomic_test_bit(&srv->flags, GEN_PONOFF_SRV_NO_ONOFF)) {
+		return 0;
+	}
 
 	struct bt_mesh_model_transition transition = { 0 };
 	struct bt_mesh_onoff_set onoff_set = { .transition = &transition };

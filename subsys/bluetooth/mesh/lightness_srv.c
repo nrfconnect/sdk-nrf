@@ -7,6 +7,7 @@
 #include <bluetooth/mesh/lightness_srv.h>
 #include "model_utils.h"
 #include "lightness_internal.h"
+#include "gen_ponoff_internal.h"
 #include <bluetooth/mesh/light_ctrl_srv.h>
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
@@ -179,12 +180,6 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 			      struct bt_mesh_lightness_set *set,
 			      struct bt_mesh_lightness_status *status)
 {
-	if (!bt_mesh_is_provisioned()) {
-		/* Avoid picking up Power OnOff loaded onoff, we'll use our own.
-		 */
-		return;
-	}
-
 	bool state_change =
 		(atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON) ==
 		 (set->lvl == 0));
@@ -723,12 +718,6 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 	};
 	struct bt_mesh_lightness_status status;
 
-	if (!bt_mesh_is_provisioned()) {
-		/* Avoid picking up Power OnOff loaded onoff, we'll use our own.
-		 */
-		return;
-	}
-
 	if (onoff_set->on_off) {
 		set.lvl = (srv->default_light ? srv->default_light : srv->last);
 	} else {
@@ -801,12 +790,17 @@ static int update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-
 static int bt_mesh_lightness_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 
 	srv->lightness_model = model;
+
+	/* Light Lightness extend Generic Power OnOff Server, which states are
+	 * bound with Generic OnOff state, store the value of the bound state
+	 * separately, therefore they don't need to set Generic OnOff state.
+	 */
+	atomic_set_bit(&srv->ponoff.flags, GEN_PONOFF_SRV_NO_ONOFF);
 
 	lightness_srv_reset(srv);
 	srv->pub.msg = &srv->pub_buf;
