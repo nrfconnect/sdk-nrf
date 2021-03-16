@@ -75,9 +75,6 @@ config SPM_SERVICE_RNG
 	select NORDIC_SECURITY_BACKEND if IS_SPM
 	select FPU if IS_SPM
 
-# NORDIC_SECURITY_BACKEND is not supported on 53 yet
-	depends on ! SOC_NRF5340_CPUAPP
-
 	help
 	  The Non-Secure Firmware is not allowed to use the crypto hardware.
 	  This service allows it to request random numbers from the SPM.
