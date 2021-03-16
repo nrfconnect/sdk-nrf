@@ -63,8 +63,6 @@ KCONFIG_OUTPUT = os.path.abspath(os.environ["KCONFIG_OUTPUT"])
 # ones.
 
 extensions = ['sphinx.ext.intersphinx',
-              'breathe',
-              'sphinx.ext.ifconfig',
               'recommonmark']
 
 # Add any paths that contain templates here, relative to this directory.
