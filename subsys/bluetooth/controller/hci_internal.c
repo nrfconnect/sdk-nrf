@@ -311,7 +311,7 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 }
 
 #if defined(CONFIG_BT_HCI_VS)
-static void vs_supported_commands(sdc_hci_vs_zephyr_supported_commands_t *cmds)
+static void vs_zephyr_supported_commands(sdc_hci_vs_zephyr_supported_commands_t *cmds)
 {
 	memset(cmds, 0, sizeof(*cmds));
 
@@ -329,6 +329,18 @@ static void vs_supported_commands(sdc_hci_vs_zephyr_supported_commands_t *cmds)
 	cmds->read_tx_power_level = 1;
 #endif /* CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL */
 #endif /* CONFIG_BT_HCI_VS_EXT */
+}
+
+static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
+{
+	memset(cmds, 0, sizeof(*cmds));
+
+	cmds->read_supported_vs_commands = 1;
+	cmds->llpm_mode_set = 1;
+	cmds->conn_update = 1;
+	cmds->conn_event_extend = 1;
+	cmds->qos_conn_event_report_enable = 1;
+	cmds->event_length_set = 1;
 }
 #endif	/* CONFIG_BT_HCI_VS */
 
@@ -810,7 +822,7 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_zephyr_read_version_info((void *)event_out_params);
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_SUPPORTED_COMMANDS:
 		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_read_supported_commands_return_t);
-		vs_supported_commands((void *)event_out_params);
+		vs_zephyr_supported_commands((void *)event_out_params);
 		return 0;
 
 #if defined(CONFIG_BT_HCI_VS_EXT)
@@ -837,7 +849,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 							    (void *)event_out_params);
 #endif /* CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL */
 #endif /* CONFIG_BT_HCI_VS_EXT */
-
+	case SDC_HCI_OPCODE_CMD_VS_READ_SUPPORTED_VS_COMMANDS:
+		*param_length_out += sizeof(sdc_hci_cmd_vs_read_supported_vs_commands_return_t);
+		vs_supported_commands((void *)event_out_params);
+		return 0;
 	case SDC_HCI_OPCODE_CMD_VS_LLPM_MODE_SET:
 		return sdc_hci_cmd_vs_llpm_mode_set((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_CONN_UPDATE:
