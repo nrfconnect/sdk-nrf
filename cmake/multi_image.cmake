@@ -181,6 +181,8 @@ function(add_child_image_from_source)
   if (NOT ${ACI_NAME}_CONF_FILE)
     ncs_file(CONF_FILES ${ACI_NAME_CONF_DIR}
              BOARD ${ACI_BOARD}
+             # Child image always uses the same revision as parent board.
+             BOARD_REVISION ${BOARD_REVISION}
              KCONF ${ACI_NAME}_CONF_FILE
              BUILD ${CONF_FILE_BUILD_TYPE}
     )
