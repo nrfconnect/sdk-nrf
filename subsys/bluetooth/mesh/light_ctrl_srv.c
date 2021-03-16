@@ -447,11 +447,7 @@ static int turn_off(struct bt_mesh_light_ctrl_srv *srv,
 		atomic_clear_bit(&srv->flags, FLAG_ON);
 		store(srv, FLAG_STORE_STATE);
 		light_onoff_pub(srv, prev_state, pub_gen_onoff);
-	} else if (fade_time < remaining_fade_time(srv)) {
-		/* Replacing current transition with a manual transition if it's
-		 * faster. This ensures that the manual override looks
-		 * responsive:
-		 */
+	} else {
 		transition_start(srv, LIGHT_CTRL_STATE_STANDBY, fade_time);
 	}
 
