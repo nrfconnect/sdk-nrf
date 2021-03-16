@@ -34,6 +34,10 @@ void lwm2m_carrier_thread_run(void)
 	config.psk = CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK;
 #endif
 
+#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN
+	config.apn = CONFIG_LWM2M_CARRIER_CUSTOM_APN;
+#endif
+
 	err = lwm2m_carrier_init(&config);
 	__ASSERT(err == 0, "Failed to initialize LwM2M carrier library");
 

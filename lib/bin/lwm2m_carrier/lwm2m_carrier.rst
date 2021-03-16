@@ -47,13 +47,6 @@ LWM2M carrier library API
    :project: nrf
    :members:
 
-LWM2M carrier library events
-----------------------------
-
-.. doxygengroup:: lwm2m_carrier_event
-   :project: nrf
-   :members:
-
 LWM2M OS layer
 ==============
 

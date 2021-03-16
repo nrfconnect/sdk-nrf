@@ -39,6 +39,7 @@ add_subdirectory(src/gps_controller)
 add_subdirectory_ifdef(CONFIG_ENVIRONMENT_SENSORS src/env_sensors)
 add_subdirectory_ifdef(CONFIG_WATCHDOG src/watchdog)
 add_subdirectory_ifdef(CONFIG_LIGHT_SENSOR src/light_sensor)
+add_subdirectory_ifdef(CONFIG_LWM2M_CARRIER src/carrier_certs)
 
 if (CONFIG_USE_BME680_BSEC)
   target_link_libraries(app PUBLIC bsec_lib)

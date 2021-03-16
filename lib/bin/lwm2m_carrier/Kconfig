@@ -8,6 +8,7 @@ menuconfig LWM2M_CARRIER
 	bool "LwM2M carrier library"
 	depends on NEWLIB_LIBC
 	depends on NRF_MODEM_LIB && !NRF_MODEM_LIB_SYS_INIT
+	depends on PDN
 	# Only have hard-float variant
 	depends on FP_HARDABI
 	# Need a source of entropy
@@ -75,6 +76,21 @@ config LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK
 	  PSK of the custom bootstrap server.
 
 endif # LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
+
+config LWM2M_CARRIER_USE_CUSTOM_APN
+	bool "Use custom APN"
+	help
+	  Use a custom APN.
+
+if LWM2M_CARRIER_USE_CUSTOM_APN
+
+config LWM2M_CARRIER_CUSTOM_APN
+	string "LwM2M carrier custom APN"
+	default ""
+	help
+	  Custom APN.
+
+endif # LWM2M_CARRIER_USE_CUSTOM_APN
 
 module=LWM2M_CARRIER
 module-dep=LOG
