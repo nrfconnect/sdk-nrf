@@ -78,6 +78,13 @@ endfunction()
 #                    files for BOARD or the current board if BOARD argument is
 #                    not given.
 #                    CONF_FILES takes the following additional arguments:
+#                    BOARD <board>:             Find configuration files for specified board.
+#                    BOARD_REVISION <revision>: Find configuration files for specified board
+#                                               revision. Requires BOARD to be specified.
+#
+#                                               If no board is given the current BOARD and
+#                                               BOARD_REVISION will be used.
+#
 #                    DTS <list>:   List to populate with DTS overlay files
 #                    KCONF <list>: List to populate with Kconfig fragment files
 #                    BUILD <type>: Build type to include for search.
@@ -92,13 +99,9 @@ function(ncs_file)
 Please provide one of following: CONF_FILES")
   endif()
 
-  set(single_args CONF_FILES BOARD)
+  set(single_args CONF_FILES)
   cmake_parse_arguments(FILE "" "${single_args}" "" ${ARGN})
   cmake_parse_arguments(ZEPHYR_FILE "" "KCONF;DTS;BUILD" "" ${ARGN})
-
-  if(FILE_BOARD)
-    set(BOARD ${FILE_BOARD})
-  endif()
 
   if(ZEPHYR_FILE_KCONF)
     if(ZEPHYR_FILE_BUILD AND EXISTS ${FILE_CONF_FILES}/prj_${ZEPHYR_FILE_BUILD}.conf)
