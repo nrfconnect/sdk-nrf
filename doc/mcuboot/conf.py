@@ -23,8 +23,6 @@
 
 import sys
 import os
-import pkg_resources
-from packaging import version
 
 if "NRF_BASE" not in os.environ:
     sys.exit("$NRF_BASE environment variable undefined.")
@@ -64,18 +62,10 @@ KCONFIG_OUTPUT = os.path.abspath(os.environ["KCONFIG_OUTPUT"])
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 
-# recommonmark didn't have a setup function before 0.5.0, so source_parsers
-# must be added manually
-recommonmark_version = pkg_resources.get_distribution("recommonmark").version
-if version.parse(recommonmark_version) < version.parse('0.5.0'):
-    extensions = ['sphinx.ext.intersphinx',
-                  'breathe',
-                  'sphinx.ext.ifconfig']
-else:
-    extensions = ['sphinx.ext.intersphinx',
-                  'breathe',
-                  'sphinx.ext.ifconfig',
-                  'recommonmark']
+extensions = ['sphinx.ext.intersphinx',
+              'breathe',
+              'sphinx.ext.ifconfig',
+              'recommonmark']
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['../_templates']
@@ -83,11 +73,6 @@ else:
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 source_suffix = ['.rst', '.md']
-
-if version.parse(recommonmark_version) < version.parse('0.5.0'):
-    source_parsers = {
-       '.md': 'recommonmark.parser.CommonMarkParser',
-    }
 
 # The master toctree document.
 master_doc = 'wrapper'
