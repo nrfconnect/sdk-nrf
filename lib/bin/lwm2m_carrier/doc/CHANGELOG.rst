@@ -9,6 +9,29 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.20.0
+***********************
+
+Release for modem firmware version 1.3.0.
+
+Certification status
+====================
+
+For certification status, see `Mobile network operator certifications`_.
+
+Changes
+=======
+
+* CA certificates are no longer provided by the LwM2M carrier library.
+
+  * Application is now expected to store CA certificates into the modem security tags.
+  * Added a new event :c:macro:`LWM2M_CARRIER_EVENT_CERTS_INIT` that instructs the application to provide the CA certificate security tags to the LwM2M carrier library.
+* Renamed the event :c:macro:`LWM2M_CARRIER_BSDLIB_INIT` to :c:macro:`LWM2M_CARRIER_EVENT_MODEM_INIT`.
+* Added a new error code :c:macro:`LWM2M_CARRIER_ERROR_SERVICE_UNAVAILABLE` which indicates that the LwM2M server is unavailable due to maintenance.
+* Added a new error code :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION` which indicates that an illegal object configuration was detected.
+* Added new Kconfig options :c:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN` and :c:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` to set the ``apn`` member of :c:type:`lwm2m_carrier_config_t`.
+* It is now possible to configure a custom bootstrap URI using :c:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` regardless of operator SIM.
+
 liblwm2m_carrier 0.10.2
 ***********************
 
@@ -18,6 +41,21 @@ Certification status
 ====================
 
 For certification status, see `Mobile network operator certifications`_.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 61728         | 10226      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 97116         | 29552      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
 
 Changes
 =======

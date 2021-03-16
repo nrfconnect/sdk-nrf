@@ -9,22 +9,23 @@ Requirements and application limitations
 
 Below are some of the requirements and limitations of the application while running this module.
 
-* The application should not call the :c:func:`nrf_modem_lib_init` function.
+* The application must not call the :c:func:`nrf_modem_lib_init` function.
 
    * The LwM2M carrier library initializes and uses the :ref:`nrf_modem`.
      This library is needed to track the modem FOTA states.
 
-* The application should not use the *NB-IoT* LTE mode.
+* The application must not use the *NB-IoT* LTE mode.
 
    * The LwM2M carrier library is currently only certified for the *LTE-M* LTE mode.
-   * The :option:`CONFIG_LTE_NETWORK_USE_FALLBACK` should be disabled in your application, as seen in the :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`).
+   * The :option:`CONFIG_LTE_NETWORK_USE_FALLBACK` must be disabled in your application, as seen in the :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`).
 
-* The LwM2M carrier library registers to receive several AT event reports using the :ref:`at_cmd_readme` and :ref:`at_notif_readme` libraries. The following notifications should not be deregistered by the application:
+* The LwM2M carrier library registers to receive several AT event reports using the :ref:`at_cmd_readme` and :ref:`at_notif_readme` libraries. The following notifications must not be deregistered by the application:
 
    * SMS events (AT+CNMI).
    * Packet Domain events (AT+CGEREP).
+   * Extended signal quality events (AT+CESQ).
    * Report Network Error Codes events (AT+CNEC): EPS Session Management events are used by the LwM2M carrier library. The application may enable or disable EPS Mobility Management events.
-   * Network Registration Status events (AT+CEREG): Notification Level 2 is used by the LwM2M carrier library. The application may increase this level, but should not decrease it.
+   * Network Registration Status events (AT+CEREG): Notification Level 2 is used by the LwM2M carrier library. The application may increase this level but must not decrease it.
 
 * The LwM2M carrier library controls the LTE link.
 
@@ -40,11 +41,15 @@ Below are some of the requirements and limitations of the application while runn
 
 * The LwM2M carrier library uses both the DTLS sessions made available through the modem. Therefore, the application cannot run any DTLS sessions.
 
-* The LwM2M carrier library provisions the necessary security credentials to the security tags 11, 25, 26, 27, 28.
-  These tags should not be used by the application.
+* The LwM2M carrier library provisions the necessary security credentials to the security tags 25, 26, 27, 28.
+  These tags must not be used by the application.
+
+* The CA certificates that are used for out-of-band FOTA must be provided by the application.
+  Upon initialization, the application will receive the event :c:macro:`LWM2M_CARRIER_EVENT_CERTS_INIT` (see :ref:`lwm2m_events`).
+  Although the certificates are updated as part of the |NCS| releases, you must check the requirements from your carrier to know which certificates are applicable.
 
 * The LwM2M carrier library uses the following NVS record key range: 0xCA00 - 0xCAFF.
-  This range should not be used by the application.
+  This range must not be used by the application.
 
 
 .. _lwm2m_lib_size:
@@ -54,7 +59,7 @@ Library size
 
 The following library sizes are reported in the :ref:`liblwm2m_carrier_changelog`:
 
- * Library size (binary): This shows the standalone size of the library. This size includes all objects, since the library is not linked. This size will change when linking the library to an application.
+ * Library size (binary): This shows the standalone size of the library. This size includes all objects since the library is not linked. This size will change when linking the library to an application.
  * Library size (reference application): This size shows the *total* memory impact of enabling the LwM2M carrier library in the :ref:`lwm2m_carrier` sample.
    This size accounts for the library, abstraction layer and the associated heap and stack requirements. It also includes all the resources for all the dependencies, except :ref:`nrf_modem`.
    See :ref:`lwm2m_app_int` for more information.

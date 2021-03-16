@@ -6,8 +6,10 @@
 
 #ifdef CONFIG_LWM2M_CARRIER
 #include <lwm2m_carrier.h>
+#include "carrier_certs.h"
 #endif /* CONFIG_LWM2M_CARRIER */
 #include <zephyr.h>
+
 
 #ifdef CONFIG_LWM2M_CARRIER
 void nrf_modem_recoverable_error_handler(uint32_t err)
@@ -39,6 +41,8 @@ void print_err(const lwm2m_carrier_event_t *evt)
 			"Connection to remote server lost",
 		[LWM2M_CARRIER_ERROR_FOTA_FAIL] =
 			"Modem firmware update failed",
+		[LWM2M_CARRIER_ERROR_SERVICE_UNAVAILABLE] =
+			"LWM2M server in maintenance mode",
 	};
 
 	__ASSERT(PART_OF_ARRAY(strerr[err->code]),
@@ -80,9 +84,11 @@ void print_deferred(const lwm2m_carrier_event_t *evt)
 
 int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 {
+	int err = 0;
+
 	switch (event->type) {
-	case LWM2M_CARRIER_EVENT_BSDLIB_INIT:
-		printk("LWM2M_CARRIER_EVENT_BSDLIB_INIT\n");
+	case LWM2M_CARRIER_EVENT_MODEM_INIT:
+		printk("LWM2M_CARRIER_EVENT_MODEM_INIT\n");
 		break;
 	case LWM2M_CARRIER_EVENT_CONNECTING:
 		printk("LWM2M_CARRIER_EVENT_CONNECTING\n");
@@ -119,9 +125,12 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		printk("LWM2M_CARRIER_EVENT_ERROR\n");
 		print_err(event);
 		break;
+	case LWM2M_CARRIER_EVENT_CERTS_INIT:
+		err = carrier_cert_provision((ca_cert_tags_t *)event->data);
+		break;
 	}
 
-	return 0;
+	return err;
 }
 #endif /* CONFIG_LWM2M_CARRIER */
 
