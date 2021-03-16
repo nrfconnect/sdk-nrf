@@ -68,7 +68,6 @@ sys.path.append(os.path.join(NRF_BASE, 'scripts', 'sphinx_extensions'))
 extensions = [
     'sphinx.ext.intersphinx',
     'breathe',
-    'sphinx.ext.ifconfig',
     'sphinxcontrib.mscgen',
     'inventory_builder',
 ]
