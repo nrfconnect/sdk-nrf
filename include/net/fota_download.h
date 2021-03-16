@@ -40,6 +40,8 @@ enum fota_download_evt_id {
 	FOTA_DOWNLOAD_EVT_ERASE_DONE,
 	/** FOTA download error. */
 	FOTA_DOWNLOAD_EVT_ERROR,
+	/** FOTA download cancelled. */
+	FOTA_DOWNLOAD_EVT_CANCELLED
 };
 
 /**
@@ -104,6 +106,14 @@ int fota_download_init(fota_download_callback_t client_callback);
  */
 int fota_download_start(const char *host, const char *file, int sec_tag,
 			const char *apn, size_t fragment_size);
+
+/**@brief Cancel FOTA image downloading.
+ *
+ * @retval 0       If FOTA download is cancelled successfully.
+ * @retval -EAGAIN If download is not started, aborted or completed.
+ *                 Otherwise, a negative value is returned.
+ */
+int fota_download_cancel(void);
 
 /**@brief Get target image type.
  *
