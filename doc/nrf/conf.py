@@ -216,15 +216,6 @@ ncs_include_mapping = {
     'zephyr': '{}'.format(ZEPHYR_RST_SRC),
 }
 
-# Qualifiers to a function are causing Sphinx/Breathe to warn about
-# Error when parsing function declaration and more.  This is a list
-# of strings that the parser additionally should accept as
-# attributes.
-cpp_id_attributes = ['__syscall', '__syscall_inline', '__deprecated',
-    '__may_alias', '__used', '__unused', '__weak',
-    '__DEPRECATED_MACRO', 'FUNC_NORETURN' ]
-c_id_attributes = cpp_id_attributes
-
 
 # Custom added feature to allow redirecting old URLs (caused by
 # reorganizing doc directories)
