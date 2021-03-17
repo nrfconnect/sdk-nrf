@@ -50,6 +50,7 @@ static struct k_work raw_send_work;
 static struct k_work cmd_send_work;
 static struct k_delayed_work uart_recovery_work;
 static bool uart_recovery_pending;
+static bool uart_send_pending;
 
 static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
 static uint8_t *next_buf = uart_rx_buf[1];
@@ -109,6 +110,7 @@ static int uart_receive(void)
 	}
 	at_buf_overflow = false;
 	at_buf_len = 0;
+	uart_send_pending = false;
 	rx_start = k_uptime_get();
 
 	return 0;
@@ -308,6 +310,7 @@ static void inactivity_timer_handler(struct k_timer *timer)
 
 	if (at_buf_len > 0) {
 		uart_rx_disable(uart_dev);
+		uart_send_pending = true;
 		k_work_submit(&raw_send_work);
 	}
 }
@@ -343,6 +346,11 @@ static int raw_rx_handler(const uint8_t *data, int datalen)
 	const char *quit_str = CONFIG_SLM_DATAMODE_TERMINATOR;
 	int quit_str_len = strlen(quit_str);
 	int64_t silence = CONFIG_SLM_DATAMODE_SILENCE * MSEC_PER_SEC;
+
+	if (uart_send_pending) {
+		LOG_WRN("raw data dropped, size: %d", datalen);
+		return -1;
+	}
 
 	/* First, check conditions for quitting datamode */
 	if (silence > k_uptime_delta(&rx_start)) {
@@ -393,6 +401,7 @@ static int raw_rx_handler(const uint8_t *data, int datalen)
 
 transit:
 	uart_rx_disable(uart_dev);
+	uart_send_pending = true;
 	k_work_submit(&raw_send_work);
 
 	return 0;
@@ -651,6 +660,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 		LOG_INF("TX_ABORTED");
 		break;
 	case UART_RX_RDY:
+		LOG_INF("RX: %08x, %d", (uint32_t)evt->data.rx.buf, evt->data.rx.len);
 		if (datamode_active) {
 			raw_rx_handler(&(evt->data.rx.buf[pos]), evt->data.rx.len);
 			return;
