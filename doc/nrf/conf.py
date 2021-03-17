@@ -136,11 +136,6 @@ exclude_patterns = ['_build']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-# Additional lexer for Pygments (syntax highlighting)
-from lexer.DtsLexer import DtsLexer
-from sphinx.highlighting import lexers
-lexers['DTS'] = DtsLexer()
-
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 

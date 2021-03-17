@@ -61,7 +61,7 @@ Additionally, the standard UART configuration must have flow control and flow co
 
 See the following configuration example:
 
-.. code-block:: DTS
+.. code-block:: devicetree
 
 	&uart1 {
 		compatible = "nordic,nrf-uarte";
