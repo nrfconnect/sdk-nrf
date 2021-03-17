@@ -115,9 +115,9 @@ Once the verification is successful, the vertical progress bar changes color to 
 At the same time, the :guilabel:`Mark done` button changes to :guilabel:`Mark not done`.
 
 .. figure:: images/gs-assistant_UI.gif
-   :alt: Verifying the |NCS| toolchain installation in the |GSA| app
+   :alt: Example of how to verify |NCS| toolchain installation in the |GSA| app
 
-   Verifying the |NCS| toolchain installation
+   Example of how to verify the |NCS| toolchain installation
 
 If there is an issue, the Log section is updated with the related error.
 
