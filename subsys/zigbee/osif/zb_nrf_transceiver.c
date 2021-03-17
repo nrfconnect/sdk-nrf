@@ -56,7 +56,7 @@ static struct {
 	struct k_sem sem;
 	volatile bool failed;      /* Energy detection procedure failed. */
 	volatile uint32_t time_ms; /* Duration of energy detection procedure. */
-	volatile uint8_t rssi_val; /* Detected energy level. */
+	volatile int8_t rssi_val;  /* Detected energy level. */
 } energy_detect;
 
 static const struct device *radio_dev;
@@ -112,8 +112,7 @@ static void energy_scan_done(const struct device *dev, int16_t max_ed)
 	if (max_ed == SHRT_MAX) {
 		energy_detect.failed = true;
 	} else {
-		energy_detect.rssi_val =
-			(max_ed - ZBOSS_ED_MIN_DBM) * ZBOSS_ED_RESULT_FACTOR;
+		energy_detect.rssi_val = max_ed;
 	}
 	k_sem_give(&energy_detect.sem);
 }
@@ -137,7 +136,7 @@ void zb_trans_start_get_rssi(zb_uint8_t scan_duration_bi)
 }
 
 /* Waiting for the end of energy detection procedure and reads the RSSI */
-void zb_trans_get_rssi(zb_uint8_t *rssi_value_p)
+void zb_trans_get_rssi(zb_int8_t *rssi_value_p)
 {
 	LOG_DBG("Function: %s", __func__);
 
