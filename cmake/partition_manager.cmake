@@ -508,10 +508,6 @@ else()
     add_custom_target(merged_domains_hex ALL DEPENDS ${final_merged})
   endif()
 
-  # Add ${merged}.hex as the representative hex file for flashing this app.
-  if(TARGET flash)
-    add_dependencies(flash ${merged}_hex)
-  endif()
   set(ZEPHYR_RUNNER_CONFIG_KERNEL_HEX "${final_merged}"
     CACHE STRING "Path to merged image in Intel Hex format" FORCE)
 
@@ -529,11 +525,6 @@ if (final_merged)
   # Multiple domains are included in the build, point to the result of
   # merging the merged hex file for all domains.
   set(merged_hex_to_flash ${final_merged})
-  set_property(
-    TARGET zephyr_property_target
-    APPEND PROPERTY FLASH_DEPENDENCIES
-    ${final_merged}
-    )
 else()
   set(merged_hex_to_flash ${PROJECT_BINARY_DIR}/${merged}.hex)
 endif()
