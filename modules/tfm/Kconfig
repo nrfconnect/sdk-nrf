@@ -12,3 +12,9 @@ config TFM_BOARD
 	help
 	  Redefintition of TFM_BOARD to use out-of-tree boards. These depend on
 	  ${TFM_BOARD_BASE_DIR} being set to the TFM board dir inside sdk-nrf.
+
+config TFM_ITS_ENCRYPTION
+	bool "Enable flash encryption for ITS"
+	help
+	  This enables a flash driver for ITS specifically that encrypts the
+	  flash contents with AES-XTS.

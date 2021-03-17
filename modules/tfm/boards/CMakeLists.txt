@@ -27,6 +27,11 @@ target_include_directories(platform_s
   PUBLIC ${partition_includes} ${board_includes}
   )
 
+target_sources(platform_s
+  PRIVATE
+    Driver_Flash_Encrypted.c
+    flash_encryption.c)
+
 target_include_directories(platform_ns PUBLIC ${board_includes})
 
 if(BL2)

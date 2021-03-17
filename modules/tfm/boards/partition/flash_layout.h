@@ -139,7 +139,22 @@
  * allocated in the external flash just for development platforms that don't
  * have internal flash available.
  */
-#define TFM_HAL_ITS_FLASH_DRIVER Driver_FLASH0
+#ifdef CONFIG_TFM_ITS_ENCRYPTION
+#define TFM_HAL_ITS_FLASH_DRIVER        Driver_FLASH0_Encrypted
+/* Specifies the smallest flash programmable unit in bytes */
+#define TFM_ENC_PROGRAM_UNIT            FLASH_AREA_IMAGE_SECTOR_SIZE
+#define TFM_HAL_ITS_PROGRAM_UNIT        TFM_ENC_PROGRAM_UNIT
+/* Internal flash buffer size. */
+#define ITS_FLASH_NAND_BUF_SIZE         (TFM_HAL_ITS_PROGRAM_UNIT \
+					* TFM_HAL_ITS_SECTORS_PER_BLOCK)
+/* Encryption variant */
+#define TFM_HAL_FLASH_ENC_DUMMY
+
+#else
+#define TFM_HAL_ITS_FLASH_DRIVER        Driver_FLASH0
+#define TFM_HAL_ITS_PROGRAM_UNIT        0x4
+
+#endif
 
 /* In this target the CMSIS driver requires only the offset from the base
  * address instead of the full memory address.
@@ -147,11 +162,9 @@
 #define TFM_HAL_ITS_FLASH_AREA_ADDR     FLASH_ITS_AREA_OFFSET
 /* Dedicated flash area for ITS */
 #define TFM_HAL_ITS_FLASH_AREA_SIZE     FLASH_ITS_AREA_SIZE
-#define ITS_RAM_FS_SIZE                FLASH_AREA_IMAGE_SECTOR_SIZE
+#define ITS_RAM_FS_SIZE                 FLASH_AREA_IMAGE_SECTOR_SIZE
 /* Number of ITS_SECTOR_SIZE per block */
 #define TFM_HAL_ITS_SECTORS_PER_BLOCK   (0x1)
-/* Specifies the smallest flash programmable unit in bytes */
-#define TFM_HAL_ITS_PROGRAM_UNIT        (0x4)
 
 /* NV Counters definitions */
 #define TFM_NV_COUNTERS_AREA_ADDR    FLASH_NV_COUNTERS_AREA_OFFSET
