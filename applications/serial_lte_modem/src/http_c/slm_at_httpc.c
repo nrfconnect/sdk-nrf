@@ -70,9 +70,10 @@ bool exit_datamode(void);
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 
-#define THREAD_STACK_SIZE       KB(2)
-#define THREAD_PRIORITY         K_LOWEST_APPLICATION_THREAD_PRIO
-static K_THREAD_STACK_DEFINE(httpc_thread_stack, THREAD_STACK_SIZE);
+static struct k_thread httpc_thread;
+#define HTTPC_THREAD_STACK_SIZE       KB(2)
+#define HTTPC_THREAD_PRIORITY         K_LOWEST_APPLICATION_THREAD_PRIO
+static K_THREAD_STACK_DEFINE(httpc_thread_stack, HTTPC_THREAD_STACK_SIZE);
 
 static K_SEM_DEFINE(http_req_sem, 0, 1);
 
@@ -359,8 +360,7 @@ int do_send_payload(const uint8_t *data, int len)
 		ssize_t ret;
 
 		ret = send(httpc.fd, data + pl_sent,
-				MIN(pl_to_send - pl_sent,
-				HTTPC_FRAG_SIZE), 0);
+			   MIN(pl_to_send - pl_sent, HTTPC_FRAG_SIZE), 0);
 		if (ret < 0) {
 			LOG_ERR("Fail to send payload: %d", ret);
 			httpc.total_sent = -errno;
@@ -624,6 +624,21 @@ int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 	return err;
 }
 
+static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
+{
+	int err;
+
+	err = do_http_request();
+	(void)exit_datamode();
+	if (err < 0) {
+		LOG_ERR("do_http_request fail:%d", err);
+		/* Disconnect from server */
+		err = do_http_disconnect();
+		if (err) {
+			LOG_ERR("Fail to disconnect. Error: %d", err);
+		}
+	}
+}
 
 /**@brief handle AT#XHTTPCREQ commands
  *  AT#XHTTPCREQ=<method>,<resource>,<header>[,<payload_length>]
@@ -679,8 +694,11 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 				return err;
 			}
 		}
-		/* start sending request */
-		k_sem_give(&http_req_sem);
+		/* start http request thread */
+		k_thread_create(&httpc_thread, httpc_thread_stack,
+				K_THREAD_STACK_SIZEOF(httpc_thread_stack),
+				httpc_thread_fn, NULL, NULL, NULL,
+				HTTPC_THREAD_PRIORITY, K_USER, K_NO_WAIT);
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
@@ -691,26 +709,6 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 	}
 
 	return err;
-}
-
-static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
-{
-	int err;
-
-	while (1) {
-		/* Don't go any further until sending HTTP request */
-		k_sem_take(&http_req_sem, K_FOREVER);
-		err = do_http_request();
-		(void)exit_datamode();
-		if (err < 0) {
-			LOG_ERR("do_http_request fail:%d", err);
-			/* Disconnect from server */
-			err = do_http_disconnect();
-			if (err) {
-				LOG_ERR("Fail to disconnect. Error: %d", err);
-			}
-		}
-	}
 }
 
 int slm_at_httpc_init(void)
@@ -736,7 +734,3 @@ int slm_at_httpc_uninit(void)
 
 	return err;
 }
-
-K_THREAD_DEFINE(httpc_thread, K_THREAD_STACK_SIZEOF(httpc_thread_stack),
-		httpc_thread_fn, NULL, NULL, NULL,
-		THREAD_PRIORITY, 0, 0);

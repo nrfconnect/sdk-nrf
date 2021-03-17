@@ -128,10 +128,10 @@ Syntax
   Each header field should end with ``<CR><LF>``.
 * The ``<payload_length>`` is an integer.
   It represents the length of the payload.
-  If ``payload_length`` is greater than ``0``, the SLM will enter the data mode and expect the upcoming UART input data as payload.
+  If ``payload_length`` is greater than ``0``, the SLM will enter data mode and expect the upcoming UART input data as payload.
   The SLM will then send the payload to the HTTP server until the ``payload_length`` bytes are sent.
-  To abort sending the payload, use ``CONFIG_SLM_DATAMODE_TERMINATOR`` to terminate data mode. The default pattern string is "+++".
-  UART silence ``CONFIG_SLM_DATAMODE_SILENCE`` before and after the pattern string is used to exit data mode.
+  To abort sending the payload, terminate data mode by sending the terminator string defined in :option:`CONFIG_SLM_DATAMODE_TERMINATOR`.
+  The default pattern string is "+++". Keep in mind that UART silence as configured in :option:`CONFIG_SLM_DATAMODE_SILENCE` is required before and after the pattern string.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -216,11 +216,11 @@ Syntax
 Example
 ~~~~~~~
 
-The following example sends a PUT request to send JSON format data to the server with an optional header.
+The following example sends a PUT request to send data in JSON format to the server, with an optional header.
 
 ::
 
-   at#xhttpccon=1,"iot.cht.com.tw",80
+   AT#XHTTPCCON=1,"example.com",80
    #XHTTPCCON: 1
 
    OK
