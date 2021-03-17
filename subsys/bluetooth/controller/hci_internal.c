@@ -321,6 +321,7 @@ static void vs_supported_commands(sdc_hci_vs_zephyr_supported_commands_t *cmds)
 #if defined(CONFIG_BT_HCI_VS_EXT)
 	cmds->write_bd_addr = 1;
 	cmds->read_static_addresses = 1;
+	cmds->read_key_hierarchy_roots = 1;
 	cmds->read_chip_temperature = 1;
 
 #if defined(CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL)
@@ -818,6 +819,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t);
 		*param_length_out += sizeof(sdc_hci_vs_zephyr_static_address_t);
 		return sdc_hci_cmd_vs_zephyr_read_static_addresses((void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_KEY_HIERARCHY_ROOTS:
+		*param_length_out +=
+				sizeof(sdc_hci_cmd_vs_zephyr_read_key_hierarchy_roots_return_t);
+		return sdc_hci_cmd_vs_zephyr_read_key_hierarchy_roots((void *)event_out_params);
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_WRITE_BD_ADDR:
 		return sdc_hci_cmd_vs_zephyr_write_bd_addr((void *)cmd_params);
 
