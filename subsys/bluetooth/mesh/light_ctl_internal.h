@@ -14,12 +14,15 @@
 #include <bluetooth/mesh/light_temp_srv.h>
 #include "model_utils.h"
 
+#define LIGHT_TEMP_LVL_OFFSET (-INT16_MIN)
+
 static inline uint16_t lvl_to_temp(struct bt_mesh_light_temp_srv *srv,
 				   int16_t lvl)
 {
-	return srv->range.min + (lvl + ((UINT16_MAX / 2) + 1)) *
-					(srv->range.max - srv->range.min) /
-					UINT16_MAX;
+	return srv->range.min +
+	       ROUNDED_DIV((int32_t)(lvl + LIGHT_TEMP_LVL_OFFSET) *
+				(srv->range.max - srv->range.min),
+				(int32_t)UINT16_MAX);
 }
 
 static inline int16_t temp_to_lvl(struct bt_mesh_light_temp_srv *srv,
@@ -27,9 +30,9 @@ static inline int16_t temp_to_lvl(struct bt_mesh_light_temp_srv *srv,
 {
 	uint16_t temp = CLAMP(raw_temp, srv->range.min, srv->range.max);
 
-	return (temp - srv->range.min) * UINT16_MAX /
-		       (srv->range.max - srv->range.min) -
-	       ((UINT16_MAX / 2) + 1);
+	return ROUNDED_DIV((temp - srv->range.min) * UINT16_MAX,
+				(srv->range.max - srv->range.min)) -
+				LIGHT_TEMP_LVL_OFFSET;
 }
 
 void bt_mesh_light_temp_srv_set(struct bt_mesh_light_temp_srv *srv,

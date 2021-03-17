@@ -15,6 +15,12 @@
 #include <string.h>
 #include <bluetooth/mesh/model_types.h>
 
+/**
+ * @brief Returns rounded division of @p A divided by @p B.
+ * @note Arguments are evaluated twice.
+ */
+#define ROUNDED_DIV(A, B) (((A) + ((B) / 2)) / (B))
+
 /** @brief Send a model message.
  *
  * Sends a model message with the given context. If the context is NULL, this
