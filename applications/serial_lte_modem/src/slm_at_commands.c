@@ -461,13 +461,6 @@ int slm_at_parse(const char *at_cmd)
 		}
 	}
 
-#if defined(CONFIG_SLM_HTTPC)
-	/* CHANGEME: specially for HTTP_C, could be uplink data sending */
-	if (ret == -ENOENT) {
-		ret = handle_at_httpc_send(at_cmd, strlen(at_cmd));
-	}
-#endif
-
 	return ret;
 }
 

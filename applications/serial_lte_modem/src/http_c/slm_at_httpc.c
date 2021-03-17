@@ -56,15 +56,15 @@ static struct slm_httpc_ctx {
 	char *method_str;		/* request method */
 	char *resource;			/* resource */
 	char *headers;			/* headers */
-	char *payload;			/* payload chunk */
 	size_t pl_len;			/* payload length */
-	size_t pl_to_send;		/* payload to send to server */
-	ssize_t pl_sent;		/* payload sent to server */
+	size_t total_sent;		/* payload has been sent to server */
 	enum httpc_state state;		/* HTTPC state */
 } httpc;
 
 /* global functions defined in different resources */
 void rsp_send(const uint8_t *str, size_t len);
+int enter_datamode(slm_datamode_handler_t handler);
+bool exit_datamode(void);
 
 /* global variable defined in different resources */
 extern struct at_param_list at_param_list;
@@ -75,7 +75,6 @@ extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 static K_THREAD_STACK_DEFINE(httpc_thread_stack, THREAD_STACK_SIZE);
 
 static K_SEM_DEFINE(http_req_sem, 0, 1);
-static K_SEM_DEFINE(http_data_sem, 0, 1);
 
 static int socket_sectag_set(int fd, int sec_tag)
 {
@@ -270,13 +269,13 @@ static void response_cb(struct http_response *rsp,
 	}
 
 	if (final_data == HTTP_DATA_FINAL) {
-		LOG_DBG("All the data received (%zd bytes)", rsp->data_len);
-		sprintf(rsp_buf, "\r\n#XHTTPCRSP:0,0\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
 		httpc.state = HTTPC_COMPLETE;
+		sprintf(rsp_buf, "\r\n#XHTTPCRSP:0,%hu\r\n", final_data);
+		rsp_send(rsp_buf, strlen(rsp_buf));
 		return;
+	} else {
+		LOG_DBG("Response data received (%zd bytes)", rsp->data_len);
 	}
-	LOG_DBG("Partial data received (%zd bytes)", rsp->data_len);
 
 	/* Process response header if required */
 	if (httpc.state == HTTPC_REQ_DONE) {
@@ -290,31 +289,30 @@ static void response_cb(struct http_response *rsp,
 			return;
 		}
 		httpc.state = HTTPC_RES_HEADER_DONE;
-		sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,1\r\n", pch - data_buf + 4);
+		sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,%hu\r\n", pch - data_buf + 4, final_data);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		rsp_send(data_buf, pch - data_buf + 4);
-		/* Process response body of required */
+		/* Process response body if required */
 		if (rsp->body_start) {
-			sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,1\r\n",
-				rsp->data_len - (rsp->body_start - data_buf));
+			sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,%hu\r\n",
+				rsp->data_len - (rsp->body_start - data_buf), final_data);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			rsp_send(rsp->body_start,
 				 rsp->data_len - (rsp->body_start - data_buf));
 		}
-		return;
-	}
-
-	/* Process response body */
-	if (rsp->body_start) {
-		/* Response body starts from the middle of receive buffer */
-		sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,1\r\n", rsp->data_len);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-		rsp_send(rsp->body_start, rsp->data_len);
 	} else {
-		/* Response body starts from the beginning of receive buffer */
-		sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,1\r\n", rsp->data_len);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-		rsp_send(data_buf, rsp->data_len);
+		/* Process response body */
+		if (rsp->body_start) {
+			/* Response body starts from the middle of receive buffer */
+			sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,%hu\r\n", rsp->data_len, final_data);
+			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send(rsp->body_start, rsp->data_len);
+		} else {
+			/* Response body starts from the beginning of receive buffer */
+			sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,%hu\r\n", rsp->data_len, final_data);
+			rsp_send(rsp_buf, strlen(rsp_buf));
+			rsp_send(data_buf, rsp->data_len);
+		}
 	}
 }
 
@@ -337,57 +335,92 @@ static int headers_cb(int sock, struct http_request *req, void *user_data)
 	return len;
 }
 
+int do_send_payload(const uint8_t *data, int len)
+{
+	/* payload sent to server */
+	ssize_t pl_sent = 0;
+	/* payload to send to server */
+	size_t pl_to_send = 0;
+
+	if (data == NULL || len <= 0) {
+		return -EINVAL;
+	}
+
+	/* Verity payload length to be sent */
+	if (httpc.total_sent + len > httpc.pl_len) {
+		LOG_WRN("send unexpected payload");
+		pl_to_send = httpc.pl_len - httpc.total_sent;
+	} else {
+		pl_to_send = len;
+	}
+
+	/* Start to send payload */
+	while (pl_sent < pl_to_send) {
+		ssize_t ret;
+
+		ret = send(httpc.fd, data + pl_sent,
+				MIN(pl_to_send - pl_sent,
+				HTTPC_FRAG_SIZE), 0);
+		if (ret < 0) {
+			LOG_ERR("Fail to send payload: %d", ret);
+			httpc.total_sent = -errno;
+			k_sem_give(&http_req_sem);
+			return -errno;
+		}
+		LOG_DBG("send %d bytes payload", ret);
+		pl_sent += ret;
+		httpc.total_sent += ret;
+	}
+
+	if (httpc.total_sent == httpc.pl_len) {
+		LOG_DBG("Successfully send %d bytes payload", httpc.total_sent);
+		k_sem_give(&http_req_sem);
+	}
+
+	return 0;
+}
+
+int httpc_datamode_callback(uint8_t op, const uint8_t *data, int len)
+{
+	int ret = 0;
+
+	if (data == NULL || len <= 0) {
+		LOG_ERR("Wrong raw data");
+		return -EINVAL;
+	}
+	if (op == DATAMODE_SEND) {
+		ret = do_send_payload(data, len);
+		if (ret == 0) {
+			/* Payload sent successfully */
+			sprintf(rsp_buf, "\r\nOK\r\n");
+			rsp_send(rsp_buf, strlen(rsp_buf));
+		} else {
+			/* Payload sent fail */
+			sprintf(rsp_buf, "\r\nERROR\r\n");
+			rsp_send(rsp_buf, strlen(rsp_buf));
+		}
+	} else if (op == DATAMODE_EXIT) {
+		k_sem_give(&http_req_sem);
+	}
+
+	return ret;
+}
+
 static int payload_cb(int sock, struct http_request *req, void *user_data)
 {
-	size_t total_sent = 0;
-
 	if (httpc.pl_len > 0) {
+		enter_datamode(httpc_datamode_callback);
 		sprintf(rsp_buf, "\r\n#XHTTPCREQ: 1\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
-		do {
-			/* Wait until payload is ready */
-			LOG_DBG("wait until payload is ready");
-			k_sem_take(&http_req_sem, K_FOREVER);
-			if (httpc.pl_len == 0) {
-				LOG_INF("abort sending payload");
-				httpc.pl_sent = 0;
-				return -ECONNABORTED;
-			}
-			if (total_sent + httpc.pl_to_send > httpc.pl_len) {
-				LOG_WRN("send unexpected payload");
-				httpc.pl_to_send = httpc.pl_len - total_sent;
-			}
-			while (httpc.pl_sent < httpc.pl_to_send) {
-				ssize_t ret;
-
-				ret = send(sock, httpc.payload + httpc.pl_sent,
-					   MIN(httpc.pl_to_send - httpc.pl_sent,
-					   HTTPC_FRAG_SIZE), 0);
-				if (ret < 0) {
-					LOG_ERR("send fail: %d", ret);
-					httpc.pl_len = 0;
-					httpc.pl_sent = 0;
-					k_sem_give(&http_data_sem);
-					return -errno;
-				}
-				LOG_DBG("send %d bytes payload", ret);
-				httpc.pl_sent += ret;
-				total_sent += ret;
-			}
-			if (total_sent == httpc.pl_len) {
-				httpc.pl_len = 0;
-			}
-			k_sem_give(&http_data_sem);
-		} while (total_sent < httpc.pl_len);
-		sprintf(rsp_buf, "\r\n#XHTTPCREQ: 0\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
-	} else {
-		sprintf(rsp_buf, "\r\n#XHTTPCREQ: 0\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		/* Wait until all payload is sent */
+		LOG_DBG("wait until payload is ready");
+		k_sem_take(&http_req_sem, K_FOREVER);
 	}
 	httpc.state = HTTPC_REQ_DONE;
+	sprintf(rsp_buf, "\r\n#XHTTPCREQ: 0\r\n");
+	rsp_send(rsp_buf, strlen(rsp_buf));
 
-	return total_sent;
+	return httpc.total_sent;
 }
 
 static int do_http_connect(void)
@@ -419,11 +452,6 @@ static int do_http_disconnect(void)
 		httpc.fd = INVALID_SOCKET;
 	} else {
 		return -ENOTCONN;
-	}
-	if (httpc.pl_len > 0) {
-		LOG_ERR("Exit request");
-		httpc.pl_len = 0;
-		k_sem_give(&http_req_sem);
 	}
 	sprintf(rsp_buf, "\r\n#XHTTPCCON: 0\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
@@ -491,7 +519,6 @@ static int do_http_request(void)
 	} else {
 		err = 0;
 	}
-	httpc.state = HTTPC_INIT;
 
 	return err;
 }
@@ -528,8 +555,7 @@ int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 			if (httpc.fd != INVALID_SOCKET) {
 				return -EINPROGRESS;
 			}
-			err = util_string_get(&at_param_list, 2,
-							httpc.host, &host_sz);
+			err = util_string_get(&at_param_list, 2, httpc.host, &host_sz);
 			if (err < 0) {
 				LOG_ERR("Fail to get host: %d", err);
 				return err;
@@ -618,16 +644,14 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 		return err;
 	}
 
-	if (httpc.state != HTTPC_INIT) {
-		LOG_ERR("Another request is not finished.");
-		return err;
-	}
-
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
 		param_count = at_params_valid_count_get(&at_param_list);
-		err = util_string_get(&at_param_list, 1,
-					   data_buf, &method_sz);
+		httpc.pl_len = 0;
+		httpc.total_sent = 0;
+		httpc.state = HTTPC_INIT;
+		memset(data_buf, 0, sizeof(data_buf));
+		err = util_string_get(&at_param_list, 1, data_buf, &method_sz);
 		if (err < 0) {
 			LOG_ERR("Fail to get method string: %d", err);
 			return err;
@@ -635,8 +659,7 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 		httpc.method_str = (char *)data_buf;
 		offset = method_sz + 1;
 		/* Get resource path string */
-		err = util_string_get(&at_param_list, 2,
-					   data_buf + offset, &resource_sz);
+		err = util_string_get(&at_param_list, 2, data_buf + offset, &resource_sz);
 		if (err < 0) {
 			LOG_ERR("Fail to get resource string: %d", err);
 			return err;
@@ -644,16 +667,14 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 		httpc.resource = (char *)(data_buf + offset);
 		offset = offset + resource_sz + 1;
 		/* Get header string */
-		err = util_string_get(&at_param_list, 3,
-					   data_buf + offset, &headers_sz);
+		err = util_string_get(&at_param_list, 3, data_buf + offset, &headers_sz);
 		if (err < 0) {
 			LOG_ERR("Fail to get option string: %d", err);
 			return err;
 		}
 		httpc.headers = (char *)(data_buf + offset);
 		if (param_count >= 5) {
-			err = at_params_int_get(&at_param_list, 4,
-						  &httpc.pl_len);
+			err = at_params_int_get(&at_param_list, 4, &httpc.pl_len);
 			if (err != 0) {
 				return err;
 			}
@@ -672,26 +693,6 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 	return err;
 }
 
-int handle_at_httpc_send(const char *data, size_t length)
-{
-	/* Return if no payload to send */
-	if (httpc.pl_len == 0) {
-		return -ENOENT;
-	}
-	/* Process input data as payload */
-	httpc.payload = (char *)data;
-	httpc.pl_to_send = length;
-	httpc.pl_sent = 0;
-	/* start sending payload */
-	k_sem_give(&http_req_sem);
-	/* Don't go any further until send returns */
-	k_sem_take(&http_data_sem, K_FOREVER);
-	if (httpc.pl_sent <= 0) {
-		return -EINVAL;
-	}
-	return 0;
-}
-
 static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 {
 	int err;
@@ -700,6 +701,7 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 		/* Don't go any further until sending HTTP request */
 		k_sem_take(&http_req_sem, K_FOREVER);
 		err = do_http_request();
+		(void)exit_datamode();
 		if (err < 0) {
 			LOG_ERR("do_http_request fail:%d", err);
 			/* Disconnect from server */
@@ -707,7 +709,6 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 			if (err) {
 				LOG_ERR("Fail to disconnect. Error: %d", err);
 			}
-			break;
 		}
 	}
 }
@@ -716,6 +717,8 @@ int slm_at_httpc_init(void)
 {
 	httpc.fd = INVALID_SOCKET;
 	httpc.state = HTTPC_INIT;
+	httpc.pl_len = 0;
+	httpc.total_sent = 0;
 
 	return 0;
 }
