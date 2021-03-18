@@ -102,8 +102,8 @@ struct bt_mesh_scene_entry_type {
 	 *  and return the number of bytes written. @c data is guaranteed to
 	 *  fit @c maxlen number of bytes.
 	 *
-	 *  @param model Model to get the scene data of.
-	 *  @param data Scene data buffer to fill. Fits @c maxlen bytes.
+	 *  @param[in]  model Model to get the scene data of.
+	 *  @param[out] data  Scene data buffer to fill. Fits @c maxlen bytes.
 	 *
 	 *  @return The number of bytes written to @c data or a negative value
 	 *          on failure.
@@ -117,10 +117,10 @@ struct bt_mesh_scene_entry_type {
 	 *  shall start transitioning to the given scene with the given
 	 *  transition parameters.
 	 *
-	 *  @param model        Model to restore the scene of.
-	 *  @param data       Scene data to restore.
-	 *  @param len        Scene data length.
-	 *  @param transition Transition parameters.
+	 *  @param[in] model      Model to restore the scene of.
+	 *  @param[in] data       Scene data to restore.
+	 *  @param[in] len        Scene data length.
+	 *  @param[in] transition Transition parameters.
 	 */
 	void (*recall)(struct bt_mesh_model *model, const uint8_t data[],
 		       size_t len, struct bt_mesh_model_transition *transition);
@@ -162,7 +162,7 @@ struct bt_mesh_scene_entry {
  *        procedure to correctly recover a scene on startup. The initial Scene
  *        is recovered as part of the model start procedure.
  *
- *  @param[in] model   Model this scene entry represents.
+ *  @param[in] model Model this scene entry represents.
  *  @param[in] entry Scene entry.
  *  @param[in] type  Scene entry type.
  *  @param[in] vnd   Whether this is a vendor model.
