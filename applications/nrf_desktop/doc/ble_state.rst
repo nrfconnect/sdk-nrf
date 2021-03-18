@@ -7,11 +7,11 @@ Bluetooth LE state module
    :local:
    :depth: 2
 
-Use the Bluetooth LE state module to:
+In nRF Desktop, the Bluetooth LE state module is responsible for the following actions:
 
-* Enable Bluetooth (:c:func:`bt_enable`).
-* Handle Zephyr connection callbacks (:c:struct:`bt_conn_cb`).
-* Propagate information about the connection state and parameters by using :ref:`event_manager` events.
+* Enabling Bluetooth (:c:func:`bt_enable`).
+* Handling Zephyr connection callbacks (:c:struct:`bt_conn_cb`).
+* Propagating information about the connection state and parameters by using :ref:`event_manager` events.
 
 Module events
 *************
@@ -23,53 +23,14 @@ Module events
 .. note::
     |nrf_desktop_module_event_note|
 
-Configuration
-*************
-
-The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-
 Implementation details
 **********************
 
-The |ble_state| module is used by both Bluetooth Peripheral and Bluetooth Central devices.
+nRF Desktop uses the Bluetooth LE state module from :ref:`lib_caf` (CAF).
+See the :ref:`CAF Bluetooth LE state <caf_ble_state>` page for implementation details.
 
-Connection state change
-=======================
+The Bluetooth LE state module handles, among others, Zephyr's connection parameters update request callback.
+The module rejects a connection parameters update request and submits the :c:struct:`ble_peer_conn_params_event` event.
+The event is handled by the :ref:`nrf_desktop_ble_conn_params`, which updates the connection parameters.
 
-The module propagates information about the connection state changes using :c:struct:`ble_peer_event`, where :c:member:`ble_peer_event.id` is a pointer to the connection object, and :c:member:`ble_peer_event.state` is the connection state.
-
-The connection state can be set to one of the following values:
-
-* :c:enum:`PEER_STATE_CONNECTED` - successfully connected to the remote peer.
-* :c:enum:`PEER_STATE_CONN_FAILED` - failed to connect the remote peer.
-* :c:enum:`PEER_STATE_SECURED` - set the connection security at least to level 2 (encryption and no authentication).
-* :c:enum:`PEER_STATE_DISCONNECTED` - disconnected from the remote peer.
-
-Connection parameters change
-============================
-
-The module submits a ``ble_peer_conn_params_event`` to inform other application modules about the following:
-
-* Connection parameter update request.
-* Connection parameter update.
-
-The connection parameter update request is rejected in the Zephyr's callback.
-The :ref:`nrf_desktop_ble_conn_params` updates the connection parameters on ``ble_peer_conn_params_event``.
-
-Connection references
-=====================
-
-The |ble_state| keeps references to :c:struct:`bt_conn` objects to ensure that they remain valid when other application modules access them.
-When a new connection is established, the module calls :c:func:`bt_conn_ref` to increase the object reference counter.
-After ``ble_peer_event`` regarding disconnection or connection failure is received by all other application modules, the |ble_state| unreferences the :c:struct:`bt_conn` object by using :c:func:`bt_conn_unref`.
-
-For Bluetooth Peripheral, the |ble_state| is used to request the connection security level 2.
-If the connection security level 2 is not established, the peripheral device disconnects.
-
-SoftDevice Link Layer
-=====================
-
-If Nordic Semiconductor's SoftDevice Bluetooth LE Link Layer is selected (:option:`CONFIG_BT_LL_SOFTDEVICE`) and the :option:`CONFIG_DESKTOP_BLE_USE_LLPM` option is enabled, the module sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
-The |ble_state| also sets the TX power for connections, because Zephyr's Kconfig options related to selecting the default TX power are not used by this Link Layer.
-
-.. |ble_state| replace:: Bluetooth LE state module
+For more information about Bluetooth configuration in nRF Desktop, see :ref:`nrf_desktop_bluetooth_guide`.
