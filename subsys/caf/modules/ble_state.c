@@ -105,6 +105,27 @@ static void set_tx_power(struct bt_conn *conn)
 	}
 }
 
+static void broadcast_init_conn_params(struct bt_conn *conn)
+{
+	struct bt_conn_info info;
+	int err = bt_conn_get_info(conn, &info);
+
+	if (err) {
+		LOG_ERR("Cannot get conn info (%d)", err);
+	} else {
+		struct ble_peer_conn_params_event *event = new_ble_peer_conn_params_event();
+
+		event->id = conn;
+		event->interval_min = info.le.interval;
+		event->interval_max = info.le.interval;
+		event->latency = info.le.latency;
+		event->timeout = info.le.timeout;
+		event->updated = true;
+
+		EVENT_SUBMIT(event);
+	}
+}
+
 static void connected(struct bt_conn *conn, uint8_t error)
 {
 	/* Make sure that connection will remain valid. */
@@ -152,6 +173,8 @@ static void connected(struct bt_conn *conn, uint8_t error)
 	event->id = conn;
 	event->state = PEER_STATE_CONNECTED;
 	EVENT_SUBMIT(event);
+
+	broadcast_init_conn_params(conn);
 
 	struct bt_conn_info info;
 
