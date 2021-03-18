@@ -164,9 +164,16 @@ const struct bt_mesh_model_op _bt_mesh_ponoff_srv_op[] = {
 };
 
 const struct bt_mesh_model_op _bt_mesh_ponoff_setup_srv_op[] = {
-	{ BT_MESH_PONOFF_OP_SET, BT_MESH_PONOFF_MSG_LEN_SET, handle_set },
-	{ BT_MESH_PONOFF_OP_SET_UNACK, BT_MESH_PONOFF_MSG_LEN_SET,
-	  handle_set_unack },
+	{
+		BT_MESH_PONOFF_OP_SET,
+		BT_MESH_PONOFF_MSG_LEN_SET,
+		handle_set,
+	},
+	{
+		BT_MESH_PONOFF_OP_SET_UNACK,
+		BT_MESH_PONOFF_MSG_LEN_SET,
+		handle_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

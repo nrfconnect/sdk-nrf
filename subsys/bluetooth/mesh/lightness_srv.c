@@ -461,36 +461,75 @@ static void handle_range_set_unack(struct bt_mesh_model *mod,
 }
 
 const struct bt_mesh_model_op _bt_mesh_lightness_srv_op[] = {
-	{ BT_MESH_LIGHTNESS_OP_GET, BT_MESH_LIGHTNESS_MSG_LEN_GET,
-	  handle_actual_get },
-	{ BT_MESH_LIGHTNESS_OP_SET, BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
-	  handle_actual_set },
-	{ BT_MESH_LIGHTNESS_OP_SET_UNACK, BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
-	  handle_actual_set_unack },
-	{ BT_MESH_LIGHTNESS_OP_LINEAR_GET, BT_MESH_LIGHTNESS_MSG_LEN_GET,
-	  handle_linear_get },
-	{ BT_MESH_LIGHTNESS_OP_LINEAR_SET, BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
-	  handle_linear_set },
-	{ BT_MESH_LIGHTNESS_OP_LINEAR_SET_UNACK,
-	  BT_MESH_LIGHTNESS_MSG_MINLEN_SET, handle_linear_set_unack },
-	{ BT_MESH_LIGHTNESS_OP_LAST_GET, BT_MESH_LIGHTNESS_MSG_LEN_LAST_GET,
-	  handle_last_get },
-	{ BT_MESH_LIGHTNESS_OP_DEFAULT_GET,
-	  BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_GET, handle_default_get },
-	{ BT_MESH_LIGHTNESS_OP_RANGE_GET, BT_MESH_LIGHTNESS_MSG_LEN_RANGE_GET,
-	  handle_range_get },
+	{
+		BT_MESH_LIGHTNESS_OP_GET,
+		BT_MESH_LIGHTNESS_MSG_LEN_GET,
+		handle_actual_get,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_SET,
+		BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
+		handle_actual_set,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_SET_UNACK,
+		BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
+		handle_actual_set_unack,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_LINEAR_GET,
+		BT_MESH_LIGHTNESS_MSG_LEN_GET,
+		handle_linear_get,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_LINEAR_SET,
+		BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
+		handle_linear_set,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_LINEAR_SET_UNACK,
+		BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
+		handle_linear_set_unack,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_LAST_GET,
+		BT_MESH_LIGHTNESS_MSG_LEN_LAST_GET,
+		handle_last_get,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_DEFAULT_GET,
+		BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_GET,
+		handle_default_get,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_RANGE_GET,
+		BT_MESH_LIGHTNESS_MSG_LEN_RANGE_GET,
+		handle_range_get,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 
 const struct bt_mesh_model_op _bt_mesh_lightness_setup_srv_op[] = {
-	{ BT_MESH_LIGHTNESS_OP_DEFAULT_SET,
-	  BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET, handle_default_set },
-	{ BT_MESH_LIGHTNESS_OP_DEFAULT_SET_UNACK,
-	  BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET, handle_default_set_unack },
-	{ BT_MESH_LIGHTNESS_OP_RANGE_SET, BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET,
-	  handle_range_set },
-	{ BT_MESH_LIGHTNESS_OP_RANGE_SET_UNACK,
-	  BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET, handle_range_set_unack },
+	{
+		BT_MESH_LIGHTNESS_OP_DEFAULT_SET,
+		BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET,
+		handle_default_set,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_DEFAULT_SET_UNACK,
+		BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET,
+		handle_default_set_unack,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_RANGE_SET,
+		BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET,
+		handle_range_set,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_RANGE_SET_UNACK,
+		BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET,
+		handle_range_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

@@ -125,14 +125,26 @@ static void range_status_handle(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_xyl_cli_op[] = {
-	{ BT_MESH_LIGHT_XYL_OP_STATUS, BT_MESH_LIGHT_XYL_MSG_MINLEN_STATUS,
-	  xyl_status_handle },
-	{ BT_MESH_LIGHT_XYL_OP_TARGET_STATUS,
-	  BT_MESH_LIGHT_XYL_MSG_MINLEN_STATUS, target_status_handle },
-	{ BT_MESH_LIGHT_XYL_OP_DEFAULT_STATUS,
-	  BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT, default_status_handle },
-	{ BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,
-	  BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS, range_status_handle },
+	{
+		BT_MESH_LIGHT_XYL_OP_STATUS,
+		BT_MESH_LIGHT_XYL_MSG_MINLEN_STATUS,
+		xyl_status_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_TARGET_STATUS,
+		BT_MESH_LIGHT_XYL_MSG_MINLEN_STATUS,
+		target_status_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_DEFAULT_STATUS,
+		BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT,
+		default_status_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,
+		BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS,
+		range_status_handle,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

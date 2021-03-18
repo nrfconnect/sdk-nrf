@@ -368,30 +368,60 @@ static void handle_range_set_unack(struct bt_mesh_model *mod,
 }
 
 const struct bt_mesh_model_op _bt_mesh_plvl_srv_op[] = {
-	{ BT_MESH_PLVL_OP_LEVEL_GET, BT_MESH_PLVL_MSG_LEN_LEVEL_GET,
-	  handle_lvl_get },
-	{ BT_MESH_PLVL_OP_LEVEL_SET, BT_MESH_PLVL_MSG_MINLEN_LEVEL_SET,
-	  handle_plvl_set },
-	{ BT_MESH_PLVL_OP_LEVEL_SET_UNACK, BT_MESH_PLVL_MSG_MINLEN_LEVEL_SET,
-	  handle_plvl_set_unack },
-	{ BT_MESH_PLVL_OP_LAST_GET, BT_MESH_PLVL_MSG_LEN_LAST_GET,
-	  handle_last_get },
-	{ BT_MESH_PLVL_OP_DEFAULT_GET, BT_MESH_PLVL_MSG_LEN_DEFAULT_GET,
-	  handle_default_get },
-	{ BT_MESH_PLVL_OP_RANGE_GET, BT_MESH_PLVL_MSG_LEN_RANGE_GET,
-	  handle_range_get },
+	{
+		BT_MESH_PLVL_OP_LEVEL_GET,
+		BT_MESH_PLVL_MSG_LEN_LEVEL_GET,
+		handle_lvl_get,
+	},
+	{
+		BT_MESH_PLVL_OP_LEVEL_SET,
+		BT_MESH_PLVL_MSG_MINLEN_LEVEL_SET,
+		handle_plvl_set,
+	},
+	{
+		BT_MESH_PLVL_OP_LEVEL_SET_UNACK,
+		BT_MESH_PLVL_MSG_MINLEN_LEVEL_SET,
+		handle_plvl_set_unack,
+	},
+	{
+		BT_MESH_PLVL_OP_LAST_GET,
+		BT_MESH_PLVL_MSG_LEN_LAST_GET,
+		handle_last_get,
+	},
+	{
+		BT_MESH_PLVL_OP_DEFAULT_GET,
+		BT_MESH_PLVL_MSG_LEN_DEFAULT_GET,
+		handle_default_get,
+	},
+	{
+		BT_MESH_PLVL_OP_RANGE_GET,
+		BT_MESH_PLVL_MSG_LEN_RANGE_GET,
+		handle_range_get,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 
 const struct bt_mesh_model_op _bt_mesh_plvl_setup_srv_op[] = {
-	{ BT_MESH_PLVL_OP_DEFAULT_SET, BT_MESH_PLVL_MSG_LEN_DEFAULT_SET,
-	  handle_default_set },
-	{ BT_MESH_PLVL_OP_DEFAULT_SET_UNACK, BT_MESH_PLVL_MSG_LEN_DEFAULT_SET,
-	  handle_default_set_unack },
-	{ BT_MESH_PLVL_OP_RANGE_SET, BT_MESH_PLVL_MSG_LEN_RANGE_SET,
-	  handle_range_set },
-	{ BT_MESH_PLVL_OP_RANGE_SET_UNACK, BT_MESH_PLVL_MSG_LEN_RANGE_SET,
-	  handle_range_set_unack },
+	{
+		BT_MESH_PLVL_OP_DEFAULT_SET,
+		BT_MESH_PLVL_MSG_LEN_DEFAULT_SET,
+		handle_default_set,
+	},
+	{
+		BT_MESH_PLVL_OP_DEFAULT_SET_UNACK,
+		BT_MESH_PLVL_MSG_LEN_DEFAULT_SET,
+		handle_default_set_unack,
+	},
+	{
+		BT_MESH_PLVL_OP_RANGE_SET,
+		BT_MESH_PLVL_MSG_LEN_RANGE_SET,
+		handle_range_set,
+	},
+	{
+		BT_MESH_PLVL_OP_RANGE_SET_UNACK,
+		BT_MESH_PLVL_MSG_LEN_RANGE_SET,
+		handle_range_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

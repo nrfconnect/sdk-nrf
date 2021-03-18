@@ -142,21 +142,41 @@ static void handle_user_property_status(struct bt_mesh_model *mod,
 }
 
 const struct bt_mesh_model_op _bt_mesh_prop_cli_op[] = {
-	{ BT_MESH_PROP_OP_MFR_PROPS_STATUS,
-	  BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS, handle_mfr_properties_status },
-	{ BT_MESH_PROP_OP_ADMIN_PROPS_STATUS,
-	  BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS,
-	  handle_admin_properties_status },
-	{ BT_MESH_PROP_OP_USER_PROPS_STATUS,
-	  BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS, handle_user_properties_status },
-	{ BT_MESH_PROP_OP_CLIENT_PROPS_STATUS,
-	  BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS, handle_client_properties_status },
-	{ BT_MESH_PROP_OP_MFR_PROP_STATUS, BT_MESH_PROP_MSG_MINLEN_PROP_STATUS,
-	  handle_mfr_property_status },
-	{ BT_MESH_PROP_OP_ADMIN_PROP_STATUS,
-	  BT_MESH_PROP_MSG_MINLEN_PROP_STATUS, handle_admin_property_status },
-	{ BT_MESH_PROP_OP_USER_PROP_STATUS, BT_MESH_PROP_MSG_MINLEN_PROP_STATUS,
-	  handle_user_property_status },
+	{
+		BT_MESH_PROP_OP_MFR_PROPS_STATUS,
+		BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS,
+		handle_mfr_properties_status,
+	},
+	{
+		BT_MESH_PROP_OP_ADMIN_PROPS_STATUS,
+		BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS,
+		handle_admin_properties_status,
+	},
+	{
+		BT_MESH_PROP_OP_USER_PROPS_STATUS,
+		BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS,
+		handle_user_properties_status,
+	},
+	{
+		BT_MESH_PROP_OP_CLIENT_PROPS_STATUS,
+		BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS,
+		handle_client_properties_status,
+	},
+	{
+		BT_MESH_PROP_OP_MFR_PROP_STATUS,
+		BT_MESH_PROP_MSG_MINLEN_PROP_STATUS,
+		handle_mfr_property_status,
+	},
+	{
+		BT_MESH_PROP_OP_ADMIN_PROP_STATUS,
+		BT_MESH_PROP_MSG_MINLEN_PROP_STATUS,
+		handle_admin_property_status,
+	},
+	{
+		BT_MESH_PROP_OP_USER_PROP_STATUS,
+		BT_MESH_PROP_MSG_MINLEN_PROP_STATUS,
+		handle_user_property_status,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

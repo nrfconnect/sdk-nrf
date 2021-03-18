@@ -128,16 +128,31 @@ static void handle_range_status(struct bt_mesh_model *mod,
 }
 
 const struct bt_mesh_model_op _bt_mesh_lightness_cli_op[] = {
-	{ BT_MESH_LIGHTNESS_OP_STATUS, BT_MESH_LIGHTNESS_MSG_MINLEN_STATUS,
-	  handle_light_status },
-	{ BT_MESH_LIGHTNESS_OP_LINEAR_STATUS, BT_MESH_LIGHTNESS_MSG_MINLEN_STATUS,
-	  handle_light_linear_status },
-	{ BT_MESH_LIGHTNESS_OP_LAST_STATUS,
-	  BT_MESH_LIGHTNESS_MSG_LEN_LAST_STATUS, handle_last_status },
-	{ BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS,
-	  BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_STATUS, handle_default_status },
-	{ BT_MESH_LIGHTNESS_OP_RANGE_STATUS,
-	  BT_MESH_LIGHTNESS_MSG_LEN_RANGE_STATUS, handle_range_status },
+	{
+		BT_MESH_LIGHTNESS_OP_STATUS,
+		BT_MESH_LIGHTNESS_MSG_MINLEN_STATUS,
+		handle_light_status,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_LINEAR_STATUS,
+		BT_MESH_LIGHTNESS_MSG_MINLEN_STATUS,
+		handle_light_linear_status,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_LAST_STATUS,
+		BT_MESH_LIGHTNESS_MSG_LEN_LAST_STATUS,
+		handle_last_status,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS,
+		BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_STATUS,
+		handle_default_status,
+	},
+	{
+		BT_MESH_LIGHTNESS_OP_RANGE_STATUS,
+		BT_MESH_LIGHTNESS_MSG_LEN_RANGE_STATUS,
+		handle_range_status,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

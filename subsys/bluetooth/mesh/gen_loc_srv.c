@@ -169,21 +169,39 @@ static void handle_local_set_unack(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_loc_srv_op[] = {
-	{ BT_MESH_LOC_OP_GLOBAL_GET, BT_MESH_LOC_MSG_LEN_GLOBAL_GET,
-	  handle_global_get },
-	{ BT_MESH_LOC_OP_LOCAL_GET, BT_MESH_LOC_MSG_LEN_LOCAL_GET,
-	  handle_local_get },
+	{
+		BT_MESH_LOC_OP_GLOBAL_GET,
+		BT_MESH_LOC_MSG_LEN_GLOBAL_GET,
+		handle_global_get,
+	},
+	{
+		BT_MESH_LOC_OP_LOCAL_GET,
+		BT_MESH_LOC_MSG_LEN_LOCAL_GET,
+		handle_local_get,
+	},
 	BT_MESH_MODEL_OP_END
 };
 const struct bt_mesh_model_op _bt_mesh_loc_setup_srv_op[] = {
-	{ BT_MESH_LOC_OP_GLOBAL_SET, BT_MESH_LOC_MSG_LEN_GLOBAL_SET,
-	  handle_global_set },
-	{ BT_MESH_LOC_OP_GLOBAL_SET_UNACK, BT_MESH_LOC_MSG_LEN_GLOBAL_SET,
-	  handle_global_set_unack },
-	{ BT_MESH_LOC_OP_LOCAL_SET, BT_MESH_LOC_MSG_LEN_LOCAL_SET,
-	  handle_local_set },
-	{ BT_MESH_LOC_OP_LOCAL_SET_UNACK, BT_MESH_LOC_MSG_LEN_LOCAL_SET,
-	  handle_local_set_unack },
+	{
+		BT_MESH_LOC_OP_GLOBAL_SET,
+		BT_MESH_LOC_MSG_LEN_GLOBAL_SET,
+		handle_global_set,
+	},
+	{
+		BT_MESH_LOC_OP_GLOBAL_SET_UNACK,
+		BT_MESH_LOC_MSG_LEN_GLOBAL_SET,
+		handle_global_set_unack,
+	},
+	{
+		BT_MESH_LOC_OP_LOCAL_SET,
+		BT_MESH_LOC_MSG_LEN_LOCAL_SET,
+		handle_local_set,
+	},
+	{
+		BT_MESH_LOC_OP_LOCAL_SET_UNACK,
+		BT_MESH_LOC_MSG_LEN_LOCAL_SET,
+		handle_local_set_unack,
+	},
 	BT_MESH_MODEL_OP_END
 };
 

@@ -169,10 +169,26 @@ static void handle_prop(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctrl_cli_op[] = {
-	{ BT_MESH_LIGHT_CTRL_OP_MODE_STATUS, 1, handle_mode },
-	{ BT_MESH_LIGHT_CTRL_OP_OM_STATUS, 1, handle_occupancy },
-	{ BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS, 1, handle_light_onoff },
-	{ BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, 2, handle_prop },
+	{
+		BT_MESH_LIGHT_CTRL_OP_MODE_STATUS,
+		1,
+		handle_mode,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_OM_STATUS,
+		1,
+		handle_occupancy,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,
+		1,
+		handle_light_onoff,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,
+		2,
+		handle_prop,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

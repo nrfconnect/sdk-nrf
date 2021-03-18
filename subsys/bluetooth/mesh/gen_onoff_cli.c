@@ -65,8 +65,11 @@ static void handle_status(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_onoff_cli_op[] = {
-	{ BT_MESH_ONOFF_OP_STATUS, BT_MESH_ONOFF_MSG_MINLEN_STATUS,
-	  handle_status },
+	{
+		BT_MESH_ONOFF_OP_STATUS,
+		BT_MESH_ONOFF_MSG_MINLEN_STATUS,
+		handle_status,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

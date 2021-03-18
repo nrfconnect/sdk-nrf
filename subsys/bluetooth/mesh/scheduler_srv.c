@@ -632,23 +632,31 @@ static void handle_scheduler_action_set_unack(struct bt_mesh_model *mod,
 }
 
 const struct bt_mesh_model_op _bt_mesh_scheduler_srv_op[] = {
-	{ BT_MESH_SCHEDULER_OP_GET,
-	  BT_MESH_SCHEDULER_MSG_LEN_GET,
-	  handle_scheduler_get },
-	{ BT_MESH_SCHEDULER_OP_ACTION_GET,
-	  BT_MESH_SCHEDULER_MSG_LEN_ACTION_GET,
-	  handle_scheduler_action_get },
-	  BT_MESH_MODEL_OP_END,
+	{
+		BT_MESH_SCHEDULER_OP_GET,
+		BT_MESH_SCHEDULER_MSG_LEN_GET,
+		handle_scheduler_get,
+	},
+	{
+		BT_MESH_SCHEDULER_OP_ACTION_GET,
+		BT_MESH_SCHEDULER_MSG_LEN_ACTION_GET,
+		handle_scheduler_action_get,
+	},
+	BT_MESH_MODEL_OP_END,
 };
 
 const struct bt_mesh_model_op _bt_mesh_scheduler_setup_srv_op[] = {
-	{ BT_MESH_SCHEDULER_OP_ACTION_SET,
-	  BT_MESH_SCHEDULER_MSG_LEN_ACTION_SET,
-	  handle_scheduler_action_set },
-	{ BT_MESH_SCHEDULER_OP_ACTION_SET_UNACK,
-	  BT_MESH_SCHEDULER_MSG_LEN_ACTION_SET,
-	  handle_scheduler_action_set_unack },
-	  BT_MESH_MODEL_OP_END,
+	{
+		BT_MESH_SCHEDULER_OP_ACTION_SET,
+		BT_MESH_SCHEDULER_MSG_LEN_ACTION_SET,
+		handle_scheduler_action_set,
+	},
+	{
+		BT_MESH_SCHEDULER_OP_ACTION_SET_UNACK,
+		BT_MESH_SCHEDULER_MSG_LEN_ACTION_SET,
+		handle_scheduler_action_set_unack,
+	},
+	BT_MESH_MODEL_OP_END,
 };
 
 static int update_handler(struct bt_mesh_model *model)

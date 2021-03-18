@@ -61,10 +61,16 @@ static void handle_local_loc(struct bt_mesh_model *mod,
 }
 
 const struct bt_mesh_model_op _bt_mesh_loc_cli_op[] = {
-	{ BT_MESH_LOC_OP_GLOBAL_STATUS, BT_MESH_LOC_MSG_LEN_GLOBAL_STATUS,
-	  handle_global_loc },
-	{ BT_MESH_LOC_OP_LOCAL_STATUS, BT_MESH_LOC_MSG_LEN_LOCAL_STATUS,
-	  handle_local_loc },
+	{
+		BT_MESH_LOC_OP_GLOBAL_STATUS,
+		BT_MESH_LOC_MSG_LEN_GLOBAL_STATUS,
+		handle_global_loc,
+	},
+	{
+		BT_MESH_LOC_OP_LOCAL_STATUS,
+		BT_MESH_LOC_MSG_LEN_LOCAL_STATUS,
+		handle_local_loc,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

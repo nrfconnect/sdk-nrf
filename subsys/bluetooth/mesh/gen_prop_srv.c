@@ -249,27 +249,50 @@ static void handle_owner_property_set_unack(struct bt_mesh_model *mod,
 }
 
 const struct bt_mesh_model_op _bt_mesh_prop_admin_srv_op[] = {
-	{ BT_MESH_PROP_OP_ADMIN_PROPS_GET, BT_MESH_PROP_MSG_LEN_PROPS_GET,
-	  handle_owner_properties_get },
-	{ BT_MESH_PROP_OP_ADMIN_PROP_GET, BT_MESH_PROP_MSG_LEN_PROP_GET,
-	  handle_owner_property_get },
-	{ BT_MESH_PROP_OP_ADMIN_PROP_SET,
-	  BT_MESH_PROP_MSG_MINLEN_ADMIN_PROP_SET, handle_owner_property_set },
-	{ BT_MESH_PROP_OP_ADMIN_PROP_SET_UNACK,
-	  BT_MESH_PROP_MSG_MINLEN_ADMIN_PROP_SET,
-	  handle_owner_property_set_unack },
+	{
+		BT_MESH_PROP_OP_ADMIN_PROPS_GET,
+		BT_MESH_PROP_MSG_LEN_PROPS_GET,
+		handle_owner_properties_get,
+	},
+	{
+		BT_MESH_PROP_OP_ADMIN_PROP_GET,
+		BT_MESH_PROP_MSG_LEN_PROP_GET,
+		handle_owner_property_get,
+	},
+	{
+		BT_MESH_PROP_OP_ADMIN_PROP_SET,
+		BT_MESH_PROP_MSG_MINLEN_ADMIN_PROP_SET,
+		handle_owner_property_set,
+	},
+	{
+		BT_MESH_PROP_OP_ADMIN_PROP_SET_UNACK,
+		BT_MESH_PROP_MSG_MINLEN_ADMIN_PROP_SET,
+		handle_owner_property_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 
 const struct bt_mesh_model_op _bt_mesh_prop_mfr_srv_op[] = {
-	{ BT_MESH_PROP_OP_MFR_PROPS_GET, BT_MESH_PROP_MSG_LEN_PROPS_GET,
-	  handle_owner_properties_get },
-	{ BT_MESH_PROP_OP_MFR_PROP_GET, BT_MESH_PROP_MSG_LEN_PROP_GET,
-	  handle_owner_property_get },
-	{ BT_MESH_PROP_OP_MFR_PROP_SET, BT_MESH_PROP_MSG_LEN_MFR_PROP_SET,
-	  handle_owner_property_set },
-	{ BT_MESH_PROP_OP_MFR_PROP_SET_UNACK, BT_MESH_PROP_MSG_LEN_MFR_PROP_SET,
-	  handle_owner_property_set_unack },
+	{
+		BT_MESH_PROP_OP_MFR_PROPS_GET,
+		BT_MESH_PROP_MSG_LEN_PROPS_GET,
+		handle_owner_properties_get,
+	},
+	{
+		BT_MESH_PROP_OP_MFR_PROP_GET,
+		BT_MESH_PROP_MSG_LEN_PROP_GET,
+		handle_owner_property_get,
+	},
+	{
+		BT_MESH_PROP_OP_MFR_PROP_SET,
+		BT_MESH_PROP_MSG_LEN_MFR_PROP_SET,
+		handle_owner_property_set,
+	},
+	{
+		BT_MESH_PROP_OP_MFR_PROP_SET_UNACK,
+		BT_MESH_PROP_MSG_LEN_MFR_PROP_SET,
+		handle_owner_property_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 
