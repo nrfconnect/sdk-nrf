@@ -377,9 +377,9 @@ static void bt_mesh_light_ctl_srv_reset(struct bt_mesh_model *model)
 	}
 }
 
-static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *mod)
+static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctl_srv *srv = mod->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->user_data;
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_light_temp_set temp = {
 		.params = srv->temp_srv.dflt,
@@ -397,7 +397,7 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *mod)
 		return -EINVAL;
 	}
 
-	bt_mesh_dtt_srv_transition_get(mod, &transition);
+	bt_mesh_dtt_srv_transition_get(model, &transition);
 
 	switch (srv->lightness_srv.ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:

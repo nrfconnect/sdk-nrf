@@ -318,9 +318,9 @@ const struct bt_mesh_lvl_srv_handlers _bt_mesh_light_sat_srv_lvl_handlers = {
 	.move_set = lvl_move_set,
 };
 
-static int sat_srv_pub_update(struct bt_mesh_model *mod)
+static int sat_srv_pub_update(struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_sat_srv *srv = mod->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->user_data;
 	struct bt_mesh_light_sat_status status;
 
 	srv->handlers->get(srv, NULL, &status);
@@ -347,11 +347,11 @@ static int sat_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int sat_srv_settings_set(struct bt_mesh_model *mod, const char *name,
+static int sat_srv_settings_set(struct bt_mesh_model *model, const char *name,
 				size_t len_rd, settings_read_cb read_cb,
 				void *cb_data)
 {
-	struct bt_mesh_light_sat_srv *srv = mod->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->user_data;
 	struct settings_data data;
 	ssize_t len;
 

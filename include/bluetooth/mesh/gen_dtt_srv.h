@@ -117,25 +117,25 @@ int bt_mesh_dtt_srv_pub(struct bt_mesh_dtt_srv *srv,
 static inline struct bt_mesh_dtt_srv *
 bt_mesh_dtt_srv_get(const struct bt_mesh_elem *elem)
 {
-	struct bt_mesh_model *mod = bt_mesh_model_find(
+	struct bt_mesh_model *model = bt_mesh_model_find(
 		elem, BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_SRV);
 
-	return (struct bt_mesh_dtt_srv *)(mod ? mod->user_data : NULL);
+	return (struct bt_mesh_dtt_srv *)(model ? model->user_data : NULL);
 }
 
 /** @brief Get the default transition parameters for the given model.
  *
- * @param[in] mod Model to get the DTT for.
+ * @param[in] model Model to get the DTT for.
  * @param[out] transition Transition buffer.
  *
  * @return Whether the transition was set.
  */
 static inline bool
-bt_mesh_dtt_srv_transition_get(struct bt_mesh_model *mod,
+bt_mesh_dtt_srv_transition_get(struct bt_mesh_model *model,
 			       struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_dtt_srv *srv =
-		bt_mesh_dtt_srv_get(bt_mesh_model_elem(mod));
+		bt_mesh_dtt_srv_get(bt_mesh_model_elem(model));
 
 	transition->time = srv ? srv->transition_time : 0;
 	transition->delay = 0;

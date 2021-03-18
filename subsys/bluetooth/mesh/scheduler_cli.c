@@ -8,11 +8,11 @@
 #include "scheduler_internal.h"
 #include "model_utils.h"
 
-static void status_op(struct bt_mesh_model *mod,
+static void status_op(struct bt_mesh_model *model,
 		      struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
-	struct bt_mesh_scheduler_cli *cli = mod->user_data;
+	struct bt_mesh_scheduler_cli *cli = model->user_data;
 	uint16_t schedules;
 
 	if (buf->len != BT_MESH_SCHEDULER_MSG_LEN_STATUS) {
@@ -32,11 +32,11 @@ static void status_op(struct bt_mesh_model *mod,
 	}
 }
 
-static void action_status_op(struct bt_mesh_model *mod,
+static void action_status_op(struct bt_mesh_model *model,
 			     struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	struct bt_mesh_scheduler_cli *cli = mod->user_data;
+	struct bt_mesh_scheduler_cli *cli = model->user_data;
 	struct bt_mesh_schedule_entry action = {0};
 	uint8_t idx;
 
@@ -81,15 +81,15 @@ const struct bt_mesh_model_op _bt_mesh_scheduler_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int scheduler_cli_init(struct bt_mesh_model *mod)
+static int scheduler_cli_init(struct bt_mesh_model *model)
 {
-	struct bt_mesh_scheduler_cli *cli = mod->user_data;
+	struct bt_mesh_scheduler_cli *cli = model->user_data;
 
 	if (!cli) {
 		return -EINVAL;
 	}
 
-	cli->mod = mod;
+	cli->model = model;
 
 	net_buf_simple_init_with_data(&cli->pub_msg, cli->buf,
 				      sizeof(cli->buf));
@@ -100,9 +100,9 @@ static int scheduler_cli_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
-static void scheduler_cli_reset(struct bt_mesh_model *mod)
+static void scheduler_cli_reset(struct bt_mesh_model *model)
 {
-	struct bt_mesh_scheduler_cli *cli = mod->user_data;
+	struct bt_mesh_scheduler_cli *cli = model->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
 	model_ack_reset(&cli->ack);
@@ -121,7 +121,7 @@ int bt_mesh_scheduler_cli_get(struct bt_mesh_scheduler_cli *cli,
 			BT_MESH_SCHEDULER_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCHEDULER_OP_GET);
 
-	return model_ackd_send(cli->mod, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
 			BT_MESH_SCHEDULER_OP_STATUS, rsp);
 }
 
@@ -141,7 +141,7 @@ int bt_mesh_scheduler_cli_action_get(struct bt_mesh_scheduler_cli *cli,
 	net_buf_simple_add_u8(&buf, idx);
 	cli->ack_idx = rsp ? idx : BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
 
-	return model_ackd_send(cli->mod, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
 			BT_MESH_SCHEDULER_OP_ACTION_STATUS, rsp);
 }
 
@@ -162,7 +162,7 @@ int bt_mesh_scheduler_cli_action_set(struct bt_mesh_scheduler_cli *cli,
 	scheduler_action_pack(&buf, idx, entry);
 	cli->ack_idx = rsp ? idx : BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
 
-	return model_ackd_send(cli->mod, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
 			BT_MESH_SCHEDULER_OP_ACTION_STATUS, rsp);
 }
 
@@ -181,5 +181,5 @@ int bt_mesh_scheduler_cli_action_set_unack(struct bt_mesh_scheduler_cli *cli,
 
 	scheduler_action_pack(&buf, idx, entry);
 
-	return model_send(cli->mod, ctx, &buf);
+	return model_send(cli->model, ctx, &buf);
 }

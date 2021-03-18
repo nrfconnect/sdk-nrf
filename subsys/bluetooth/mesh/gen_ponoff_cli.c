@@ -41,11 +41,11 @@ const struct bt_mesh_model_op _bt_mesh_ponoff_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int bt_mesh_ponoff_cli_init(struct bt_mesh_model *mod)
+static int bt_mesh_ponoff_cli_init(struct bt_mesh_model *model)
 {
-	struct bt_mesh_ponoff_cli *cli = mod->user_data;
+	struct bt_mesh_ponoff_cli *cli = model->user_data;
 
-	cli->model = mod;
+	cli->model = model;
 	cli->pub.msg = &cli->pub_buf;
 	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
 				      sizeof(cli->pub_data));
@@ -54,11 +54,11 @@ static int bt_mesh_ponoff_cli_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
-static void bt_mesh_ponoff_cli_reset(struct bt_mesh_model *mod)
+static void bt_mesh_ponoff_cli_reset(struct bt_mesh_model *model)
 {
-	struct bt_mesh_ponoff_cli *cli = mod->user_data;
+	struct bt_mesh_ponoff_cli *cli = model->user_data;
 
-	net_buf_simple_reset(mod->pub->msg);
+	net_buf_simple_reset(model->pub->msg);
 	model_ack_reset(&cli->ack_ctx);
 }
 

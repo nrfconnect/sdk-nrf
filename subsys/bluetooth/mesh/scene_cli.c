@@ -7,10 +7,10 @@
 #include <bluetooth/mesh/models.h>
 #include "model_utils.h"
 
-static void scene_status(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
+static void scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
-	struct bt_mesh_scene_cli *cli = mod->user_data;
+	struct bt_mesh_scene_cli *cli = model->user_data;
 	struct bt_mesh_scene_state state;
 
 	state.status = net_buf_simple_pull_u8(buf);
@@ -38,10 +38,10 @@ static void scene_status(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	}
 }
 
-static void scene_reg(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
+static void scene_reg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
-	struct bt_mesh_scene_cli *cli = mod->user_data;
+	struct bt_mesh_scene_cli *cli = model->user_data;
 	struct bt_mesh_scene_register reg;
 
 	reg.status = net_buf_simple_pull_u8(buf);
@@ -98,15 +98,15 @@ const struct bt_mesh_model_op _bt_mesh_scene_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int scene_cli_init(struct bt_mesh_model *mod)
+static int scene_cli_init(struct bt_mesh_model *model)
 {
-	struct bt_mesh_scene_cli *cli = mod->user_data;
+	struct bt_mesh_scene_cli *cli = model->user_data;
 
 	if (!cli) {
 		return -EINVAL;
 	}
 
-	cli->mod = mod;
+	cli->model = model;
 
 	net_buf_simple_init_with_data(&cli->pub_msg, cli->buf,
 				      sizeof(cli->buf));
@@ -117,9 +117,9 @@ static int scene_cli_init(struct bt_mesh_model *mod)
 }
 
 
-static void scene_cli_reset(struct bt_mesh_model *mod)
+static void scene_cli_reset(struct bt_mesh_model *model)
 {
-	struct bt_mesh_scene_cli *cli = mod->user_data;
+	struct bt_mesh_scene_cli *cli = model->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
 	model_ack_reset(&cli->ack);
@@ -138,7 +138,7 @@ int bt_mesh_scene_cli_get(struct bt_mesh_scene_cli *cli,
 				 BT_MESH_SCENE_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCENE_OP_GET);
 
-	return model_ackd_send(cli->mod, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
 			       BT_MESH_SCENE_OP_STATUS, rsp);
 }
 
@@ -150,7 +150,7 @@ int bt_mesh_scene_cli_register_get(struct bt_mesh_scene_cli *cli,
 				 BT_MESH_SCENE_MSG_LEN_REGISTER_GET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCENE_OP_REGISTER_GET);
 
-	return model_ackd_send(cli->mod, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
 			       BT_MESH_SCENE_OP_REGISTER_STATUS, rsp);
 }
 
@@ -168,7 +168,7 @@ int bt_mesh_scene_cli_store(struct bt_mesh_scene_cli *cli,
 
 	net_buf_simple_add_le16(&buf, scene);
 
-	return model_ackd_send(cli->mod, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
 			       BT_MESH_SCENE_OP_REGISTER_STATUS, rsp);
 }
 
@@ -185,7 +185,7 @@ int bt_mesh_scene_cli_store_unack(struct bt_mesh_scene_cli *cli,
 
 	net_buf_simple_add_le16(&buf, scene);
 
-	return model_send(cli->mod, ctx, &buf);
+	return model_send(cli->model, ctx, &buf);
 }
 
 int bt_mesh_scene_cli_delete(struct bt_mesh_scene_cli *cli,
@@ -202,7 +202,7 @@ int bt_mesh_scene_cli_delete(struct bt_mesh_scene_cli *cli,
 
 	net_buf_simple_add_le16(&buf, scene);
 
-	return model_ackd_send(cli->mod, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
 			       BT_MESH_SCENE_OP_REGISTER_STATUS, rsp);
 }
 
@@ -219,7 +219,7 @@ int bt_mesh_scene_cli_delete_unack(struct bt_mesh_scene_cli *cli,
 
 	net_buf_simple_add_le16(&buf, scene);
 
-	return model_send(cli->mod, ctx, &buf);
+	return model_send(cli->model, ctx, &buf);
 }
 
 int bt_mesh_scene_cli_recall(struct bt_mesh_scene_cli *cli,
@@ -242,7 +242,7 @@ int bt_mesh_scene_cli_recall(struct bt_mesh_scene_cli *cli,
 		model_transition_buf_add(&buf, transition);
 	}
 
-	return model_ackd_send(cli->mod, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
 			       BT_MESH_SCENE_OP_STATUS, rsp);
 }
 
@@ -265,5 +265,5 @@ int bt_mesh_scene_cli_recall_unack(
 		model_transition_buf_add(&buf, transition);
 	}
 
-	return model_send(cli->mod, ctx, &buf);
+	return model_send(cli->model, ctx, &buf);
 }
