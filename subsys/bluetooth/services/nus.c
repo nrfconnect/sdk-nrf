@@ -27,7 +27,8 @@ static ssize_t on_receive(struct bt_conn *conn,
 
 	if (nus_cb.received) {
 		nus_cb.received(conn, buf, len);
-}
+	}
+
 	return len;
 }
 
@@ -42,6 +43,20 @@ static void on_sent(struct bt_conn *conn, void *user_data)
 	}
 }
 
+static void receive_cfg_ccc_changed(const struct bt_gatt_attr *attr,
+				    uint16_t value)
+{
+	ARG_UNUSED(attr);
+
+	if (nus_cb.evt_handler) {
+		if (value == BT_GATT_CCC_NOTIFY) {
+			nus_cb.evt_handler(BT_NUS_EVT_SEND_ENABLED);
+		} else {
+			nus_cb.evt_handler(BT_NUS_EVT_SEND_DISABLED);
+		}
+	}
+}
+
 /* UART Service Declaration */
 BT_GATT_SERVICE_DEFINE(nus_svc,
 BT_GATT_PRIMARY_SERVICE(BT_UUID_NUS_SERVICE),
@@ -49,7 +64,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_NUS_SERVICE),
 			       BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ,
 			       NULL, NULL, NULL),
-	BT_GATT_CCC(NULL, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+	BT_GATT_CCC(receive_cfg_ccc_changed, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 	BT_GATT_CHARACTERISTIC(BT_UUID_NUS_RX,
 			       BT_GATT_CHRC_WRITE |
 			       BT_GATT_CHRC_WRITE_WITHOUT_RESP,
@@ -62,6 +77,7 @@ int bt_nus_init(struct bt_nus_cb *callbacks)
 	if (callbacks) {
 		nus_cb.received = callbacks->received;
 		nus_cb.sent = callbacks->sent;
+		nus_cb.evt_handler = callbacks->evt_handler;
 	}
 
 	return 0;

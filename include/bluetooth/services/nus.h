@@ -39,6 +39,14 @@ extern "C" {
 #define BT_UUID_NUS_RX        BT_UUID_DECLARE_128(BT_UUID_NUS_RX_VAL)
 #define BT_UUID_NUS_TX        BT_UUID_DECLARE_128(BT_UUID_NUS_TX_VAL)
 
+enum bt_nus_evt {
+	/* Data send is enabled */
+	BT_NUS_EVT_SEND_ENABLED,
+
+	/* Data send is disabled */
+	BT_NUS_EVT_SEND_DISABLED,
+};
+
 /** @brief Pointers to the callback functions for service events. */
 struct bt_nus_cb {
 	/** @brief Data received callback.
@@ -62,6 +70,12 @@ struct bt_nus_cb {
 	 *                 connected peers.
 	 */
 	void (*sent)(struct bt_conn *conn);
+
+	/** @brief NUS event handler callback.
+	 *
+	 * @param[in] evt NUS event.
+	 */
+	void (*evt_handler)(enum bt_nus_evt evt);
 };
 
 /**@brief Initialize the service.
