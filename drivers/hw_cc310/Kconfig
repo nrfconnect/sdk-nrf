@@ -28,15 +28,4 @@ menuconfig HW_CC3XX
 	help
 	  This option enables the Arm CC3xx hw devices in nRF52840, nRF53, and nRF9160 devices.
 
-if HW_CC3XX
-
-config HW_CC3XX_NAME
-	string "Entropy Device Name"
-	default "HW_CC3XX_0"
-	help
-	  Specify the device name to be used for the HW_CC3XX driver.
-
-
-endif # HW_CC3XX
-
 endif # !HW_CC3XX_FORCE_ALT
