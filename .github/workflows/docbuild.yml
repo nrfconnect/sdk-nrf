@@ -5,9 +5,11 @@ on:
     types: [opened, synchronize, reopened]
     branches:
       - master
+      - 'v*-branch'
   push:
     branches:
       - master
+      - 'v*-branch'
 
 jobs:
   build:
