@@ -135,7 +135,7 @@ a. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatical
 
 .. important::
    If a Bluetooth peer is aready connected with a 1-ms connection interval, the next peer is connected with a 10-ms connection interval instead of 7.5 ms.
-   The peer is connected with a 10-ms connection interval also in case :option:`CONFIG_BT_MAX_CONN` is set to value greater than 2 and :option:`CONFIG_DESKTOP_BLE_USE_LLPM` Kconfig option is enabled.
+   The peer is connected with a 10-ms connection interval also in case :option:`CONFIG_BT_MAX_CONN` is set to value greater than 2 and :option:`CONFIG_CAF_BLE_USE_LLPM` Kconfig option is enabled.
    This is required to avoid Bluetooth scheduling issues that may lead to HID input report rate drops and disconnections.
 
 At this point, the scanning can be restarted.
