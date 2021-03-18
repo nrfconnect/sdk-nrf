@@ -21,6 +21,46 @@
 extern "C" {
 #endif
 
+/** Access flags for properties */
+enum bt_mesh_prop_access {
+	/** Access to the property is prohibited. */
+	BT_MESH_PROP_ACCESS_PROHIBITED = 0,
+	/** Property may be read. */
+	BT_MESH_PROP_ACCESS_READ = BIT(0),
+	/** Property may be written. */
+	BT_MESH_PROP_ACCESS_WRITE = BIT(1),
+	/** Property may be read or written. */
+	BT_MESH_PROP_ACCESS_READ_WRITE =
+		(BT_MESH_PROP_ACCESS_READ | BT_MESH_PROP_ACCESS_WRITE),
+};
+
+/** Property Server kinds. */
+enum bt_mesh_prop_srv_kind {
+	/** Manufacturer property server. */
+	BT_MESH_PROP_SRV_KIND_MFR,
+	/** Admin property server. */
+	BT_MESH_PROP_SRV_KIND_ADMIN,
+	/** User property server. */
+	BT_MESH_PROP_SRV_KIND_USER,
+	/** Client property server. */
+	BT_MESH_PROP_SRV_KIND_CLIENT,
+};
+
+/** Property representation. */
+struct bt_mesh_prop {
+	/** Property ID. @sa bt_mesh_property_ids. */
+	uint16_t id;
+	/** User access flags for the property. */
+	enum bt_mesh_prop_access user_access;
+};
+
+/** Property value representation. */
+struct bt_mesh_prop_val {
+	struct bt_mesh_prop meta; /**< Metadata for this property. */
+	size_t size; /**< Size of the property value. */
+	uint8_t *value; /**< Property value. */
+};
+
 /** @cond INTERNAL_HIDDEN */
 #define BT_MESH_PROP_OP_MFR_PROPS_GET BT_MESH_MODEL_OP_2(0x82, 0x2A)
 #define BT_MESH_PROP_OP_MFR_PROPS_STATUS BT_MESH_MODEL_OP_1(0x43)
@@ -70,45 +110,6 @@ extern "C" {
 				  2 * (_prop_cnt)))
 /** @endcond */
 
-/** Access flags for properties */
-enum bt_mesh_prop_access {
-	/** Access to the property is prohibited. */
-	BT_MESH_PROP_ACCESS_PROHIBITED = 0,
-	/** Property may be read. */
-	BT_MESH_PROP_ACCESS_READ = BIT(0),
-	/** Property may be written. */
-	BT_MESH_PROP_ACCESS_WRITE = BIT(1),
-	/** Property may be read or written. */
-	BT_MESH_PROP_ACCESS_READ_WRITE =
-		(BT_MESH_PROP_ACCESS_READ | BT_MESH_PROP_ACCESS_WRITE),
-};
-
-/** Property Server kinds. */
-enum bt_mesh_prop_srv_kind {
-	/** Manufacturer property server. */
-	BT_MESH_PROP_SRV_KIND_MFR,
-	/** Admin property server. */
-	BT_MESH_PROP_SRV_KIND_ADMIN,
-	/** User property server. */
-	BT_MESH_PROP_SRV_KIND_USER,
-	/** Client property server. */
-	BT_MESH_PROP_SRV_KIND_CLIENT,
-};
-
-/** Property representation. */
-struct bt_mesh_prop {
-	/** Property ID. @sa bt_mesh_property_ids. */
-	uint16_t id;
-	/** User access flags for the property. */
-	enum bt_mesh_prop_access user_access;
-};
-
-/** Property value representation. */
-struct bt_mesh_prop_val {
-	struct bt_mesh_prop meta; /**< Metadata for this property. */
-	size_t size; /**< Size of the property value. */
-	uint8_t *value; /**< Property value. */
-};
 
 #ifdef __cplusplus
 }
