@@ -17,17 +17,11 @@
 
 #if CONFIG_HW_CC3XX
 
-static int hw_cc3xx_init(const struct device *dev)
+static int hw_cc3xx_init_internal(const struct device *dev)
 {
+	ARG_UNUSED(dev);
+
 	int res;
-
-	__ASSERT_NO_MSG(dev != NULL);
-
-	/* Set the RTOS abort APIs */
-	nrf_cc3xx_platform_abort_init();
-
-	/* Set the RTOS mutex APIs */
-	nrf_cc3xx_platform_mutex_init();
 
 	/* Initialize the cc3xx HW with or without RNG support */
 #if CONFIG_ENTROPY_CC3XX
@@ -35,11 +29,32 @@ static int hw_cc3xx_init(const struct device *dev)
 #else
 	res = nrf_cc3xx_platform_init_no_rng();
 #endif
+
 	return res;
 }
 
-SYS_DEVICE_DEFINE(CONFIG_HW_CC3XX_NAME, hw_cc3xx_init, device_pm_control_nop,
-		  POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+static int hw_cc3xx_init(const struct device *dev)
+{
+	int res;
+
+	/* Set the RTOS abort APIs */
+	nrf_cc3xx_platform_abort_init();
+
+	/* Set the RTOS mutex APIs */
+	nrf_cc3xx_platform_mutex_init();
+
+	/* Enable the hardware */
+	res = hw_cc3xx_init_internal(dev);
+	return res;
+}
+
+/* Driver initalization done when mutex is not usable (pre kernel) */
+SYS_INIT(hw_cc3xx_init_internal, PRE_KERNEL_2,
+	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+
+/* Driver initialization when mutex is usable (post kernel) */
+SYS_INIT(hw_cc3xx_init, POST_KERNEL,
+	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 
 #endif /* CONFIG_HW_CC3XX */
 
