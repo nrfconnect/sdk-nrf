@@ -87,6 +87,15 @@ int ext_sensors_humidity_get(double *humid);
  */
 int ext_sensors_mov_thres_set(double threshold_new);
 
+/**
+ * @brief Enable or disable accelerometer trigger handler.
+ *
+ * @param[in] enable Flag that enables or disables callback triggers from the accelerometer.
+ *
+ * @return 0 on success or negative error value on failure.
+ */
+int ext_sensors_accelerometer_trigger_callback_set(bool enable);
+
 #ifdef __cplusplus
 }
 #endif

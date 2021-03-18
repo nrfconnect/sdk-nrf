@@ -1018,11 +1018,6 @@ static void on_all_states(struct data_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_DATA_READY)) {
-		if (current_cfg.active_mode) {
-			/* Do not store movement data in active mode. */
-			return;
-		}
-
 		struct cloud_data_accelerometer new_movement_data = {
 			.values[0] = msg->module.sensor.data.accel.values[0],
 			.values[1] = msg->module.sensor.data.accel.values[1],

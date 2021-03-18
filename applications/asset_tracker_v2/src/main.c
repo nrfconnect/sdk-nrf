@@ -77,6 +77,11 @@ static struct cloud_data_cfg app_cfg;
  */
 static void data_sample_timer_handler(struct k_timer *timer);
 
+/* Timer callback used to signal when the application is expecting movement to trigger the next
+ * sample request.
+ */
+static void waiting_for_movement_handler(struct k_timer *timer);
+
 /* Application module message queue. */
 #define APP_QUEUE_ENTRY_COUNT		10
 #define APP_QUEUE_BYTE_ALIGNMENT	4
@@ -95,7 +100,7 @@ K_TIMER_DEFINE(movement_timeout_timer, data_sample_timer_handler, NULL);
  * lower power consumption by limiting how often GPS search is performed and
  * data is sent on air.
  */
-K_TIMER_DEFINE(movement_resolution_timer, NULL, NULL);
+K_TIMER_DEFINE(movement_resolution_timer, waiting_for_movement_handler, NULL);
 
 /* Module data structure to hold information of the application module, which
  * opens up for using convenience functions available for modules.
@@ -272,7 +277,47 @@ static void data_sample_timer_handler(struct k_timer *timer)
 	SEND_EVENT(app, APP_EVT_DATA_GET_ALL);
 }
 
+static void waiting_for_movement_handler(struct k_timer *timer)
+{
+	ARG_UNUSED(timer);
+	SEND_EVENT(app, APP_EVT_ACTIVITY_DETECTION_ENABLE);
+}
+
 /* Static module functions. */
+static void passive_mode_timers_start_all(void)
+{
+	LOG_INF("Device mode: Passive");
+	LOG_INF("Start movement timeout: %d seconds interval", app_cfg.movement_timeout);
+
+	LOG_INF("%d seconds until movement can trigger a new data sample/publication",
+		app_cfg.movement_resolution);
+
+	k_timer_start(&movement_resolution_timer,
+		      K_SECONDS(app_cfg.movement_resolution),
+		      K_SECONDS(0));
+
+	k_timer_start(&movement_timeout_timer,
+		      K_SECONDS(app_cfg.movement_timeout),
+		      K_SECONDS(app_cfg.movement_timeout));
+
+	k_timer_stop(&data_sample_timer);
+}
+
+static void active_mode_timers_start_all(void)
+{
+	LOG_INF("Device mode: Active");
+	LOG_INF("Start data sample timer: %d seconds interval", app_cfg.active_wait_timeout);
+
+	k_timer_start(&data_sample_timer,
+		      K_SECONDS(app_cfg.active_wait_timeout),
+		      K_SECONDS(app_cfg.active_wait_timeout));
+
+	k_timer_stop(&movement_resolution_timer);
+	k_timer_stop(&movement_timeout_timer);
+
+	SEND_EVENT(app, APP_EVT_ACTIVITY_DETECTION_DISABLE);
+}
+
 static void data_get(void)
 {
 	static bool first = true;
@@ -329,20 +374,9 @@ static void on_state_init(struct app_msg_data *msg)
 		app_cfg = msg->module.data.data.cfg;
 
 		if (app_cfg.active_mode) {
-			LOG_INF("Device mode: Active");
-			LOG_INF("Start data sample timer: %d seconds interval",
-				app_cfg.active_wait_timeout);
-			k_timer_start(&data_sample_timer,
-				      K_SECONDS(app_cfg.active_wait_timeout),
-				      K_SECONDS(app_cfg.active_wait_timeout));
+			active_mode_timers_start_all();
 		} else {
-			LOG_INF("Device mode: Passive");
-			LOG_INF("Start movement timeout: %d seconds interval",
-				app_cfg.movement_timeout);
-
-			k_timer_start(&movement_timeout_timer,
-				K_SECONDS(app_cfg.movement_timeout),
-				K_SECONDS(app_cfg.movement_timeout));
+			passive_mode_timers_start_all();
 		}
 
 		state_set(STATE_RUNNING);
@@ -371,54 +405,30 @@ void on_sub_state_passive(struct app_msg_data *msg)
 		app_cfg = msg->module.data.data.cfg;
 
 		if (app_cfg.active_mode) {
-			LOG_INF("Device mode: Active");
-			LOG_INF("Start data sample timer: %d seconds interval",
-				app_cfg.active_wait_timeout);
-			k_timer_start(&data_sample_timer,
-				      K_SECONDS(app_cfg.active_wait_timeout),
-				      K_SECONDS(app_cfg.active_wait_timeout));
-			k_timer_stop(&movement_timeout_timer);
+			active_mode_timers_start_all();
 			sub_state_set(SUB_STATE_ACTIVE_MODE);
 			return;
 		}
 
-		LOG_INF("Device mode: Passive");
-		LOG_INF("Start movement timeout: %d seconds interval",
-			app_cfg.movement_timeout);
-
-		k_timer_start(&movement_timeout_timer,
-			      K_SECONDS(app_cfg.movement_timeout),
-			      K_SECONDS(app_cfg.movement_timeout));
-		k_timer_stop(&data_sample_timer);
+		passive_mode_timers_start_all();
 	}
 
-	if ((IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_DATA_READY)) ||
-	    (IS_EVENT(msg, ui, UI_EVT_BUTTON_DATA_READY))) {
+	if ((IS_EVENT(msg, ui, UI_EVT_BUTTON_DATA_READY)) ||
+	    (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_DATA_READY))) {
 
 		if (IS_EVENT(msg, ui, UI_EVT_BUTTON_DATA_READY) &&
 		    msg->module.ui.data.ui.button_number != 2) {
 			return;
 		}
 
-		/* Trigger sample/publication cycle if there has been movement
-		 * or button 2 has been pushed on the DK.
+		/* Trigger a sample request if button 2 has been pushed on the DK or activity has
+		 * been detected. The data request can only be triggered if the movement
+		 * resolution timer has timed out.
 		 */
 
 		if (k_timer_remaining_get(&movement_resolution_timer) == 0) {
-			/* Do an initial data sample. */
 			data_sample_timer_handler(NULL);
-
-			LOG_INF("%d seconds until movement can trigger",
-				app_cfg.movement_resolution);
-			LOG_INF("a new data sample/publication");
-
-			/* Start one shot timer. After the timer has expired,
-			 * movement is the only event that triggers a new
-			 * one shot timer.
-			 */
-			k_timer_start(&movement_resolution_timer,
-				      K_SECONDS(app_cfg.movement_resolution),
-				      K_SECONDS(0));
+			passive_mode_timers_start_all();
 		}
 	}
 }
@@ -431,25 +441,12 @@ static void on_sub_state_active(struct app_msg_data *msg)
 		app_cfg = msg->module.data.data.cfg;
 
 		if (!app_cfg.active_mode) {
-			LOG_INF("Device mode: Passive");
-			LOG_INF("Start movement timeout: %d seconds interval",
-				app_cfg.movement_timeout);
-			k_timer_start(&movement_timeout_timer,
-				      K_SECONDS(app_cfg.movement_timeout),
-				      K_SECONDS(app_cfg.movement_timeout));
-			k_timer_stop(&data_sample_timer);
+			passive_mode_timers_start_all();
 			sub_state_set(SUB_STATE_PASSIVE_MODE);
 			return;
 		}
 
-		LOG_INF("Device mode: Active");
-		LOG_INF("Start data sample timer: %d seconds interval",
-			app_cfg.active_wait_timeout);
-
-		k_timer_start(&data_sample_timer,
-			      K_SECONDS(app_cfg.active_wait_timeout),
-			      K_SECONDS(app_cfg.active_wait_timeout));
-		k_timer_stop(&movement_timeout_timer);
+		active_mode_timers_start_all();
 	}
 }
 

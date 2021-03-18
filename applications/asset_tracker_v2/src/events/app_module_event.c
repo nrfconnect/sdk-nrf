@@ -35,6 +35,10 @@ static char *get_evt_type_str(enum app_module_event_type type)
 		return "APP_EVT_DATA_GET";
 	case APP_EVT_CONFIG_GET:
 		return "APP_EVT_CONFIG_GET";
+	case APP_EVT_ACTIVITY_DETECTION_ENABLE:
+		return "APP_EVT_ACTIVITY_DETECTION_ENABLE";
+	case APP_EVT_ACTIVITY_DETECTION_DISABLE:
+		return "APP_EVT_ACTIVITY_DETECTION_DISABLE";
 	case APP_EVT_DATA_GET_ALL:
 		return "APP_EVT_DATA_GET_ALL";
 	case APP_EVT_START:
