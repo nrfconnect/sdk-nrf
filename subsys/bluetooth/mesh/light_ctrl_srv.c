@@ -1463,7 +1463,7 @@ static int light_ctrl_srv_settings_set(struct bt_mesh_model *model,
 	ssize_t result;
 
 	if (name) {
-		return -ENOTSUP; /* TODO support this */
+		return -EINVAL;
 	}
 
 	result = read_cb(cb_arg, &data, sizeof(data));
