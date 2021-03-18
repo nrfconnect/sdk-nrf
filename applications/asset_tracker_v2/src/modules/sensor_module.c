@@ -51,11 +51,6 @@ static struct module_data self = {
 	.msg_q = &msgq_sensor,
 };
 
-/* Forward declarations. */
-#if defined(CONFIG_EXTERNAL_SENSORS)
-static void movement_data_send(const struct ext_sensor_evt *const acc_data);
-#endif
-
 /* Convenience functions used in internal state handling. */
 static char *state2str(enum state_type new_state)
 {
@@ -124,21 +119,20 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-#if defined(CONFIG_EXTERNAL_SENSORS)
-static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
-{
-	switch (evt->type) {
-	case EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER:
-		movement_data_send(evt);
-		break;
-	default:
-		break;
-	}
-}
-#endif
-
 /* Static module functions. */
 #if defined(CONFIG_EXTERNAL_SENSORS)
+/* Function that enables or disables trigger callbacks from the accelerometer. */
+static void accelerometer_callback_set(bool enable)
+{
+	int err;
+
+	err = ext_sensors_accelerometer_trigger_callback_set(enable);
+	if (err) {
+		LOG_ERR("ext_sensors_accelerometer_trigger_callback_set, error: %d", err);
+		SEND_ERROR(sensor, SENSOR_EVT_ERROR, err);
+	}
+}
+
 static void movement_data_send(const struct ext_sensor_evt *const acc_data)
 {
 	struct sensor_module_event *sensor_module_event =
@@ -150,7 +144,19 @@ static void movement_data_send(const struct ext_sensor_evt *const acc_data)
 	sensor_module_event->data.accel.timestamp = k_uptime_get();
 	sensor_module_event->type = SENSOR_EVT_MOVEMENT_DATA_READY;
 
+	accelerometer_callback_set(false);
 	EVENT_SUBMIT(sensor_module_event);
+}
+
+static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
+{
+	switch (evt->type) {
+	case EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER:
+		movement_data_send(evt);
+		break;
+	default:
+		break;
+	}
 }
 #endif
 
@@ -293,6 +299,16 @@ static void on_all_states(struct sensor_msg_data *msg)
 		SEND_EVENT(sensor, SENSOR_EVT_SHUTDOWN_READY);
 		state_set(STATE_SHUTDOWN);
 	}
+
+#if defined(CONFIG_EXTERNAL_SENSORS)
+	if (IS_EVENT(msg, app, APP_EVT_ACTIVITY_DETECTION_ENABLE)) {
+		accelerometer_callback_set(true);
+	}
+
+	if (IS_EVENT(msg, app, APP_EVT_ACTIVITY_DETECTION_DISABLE)) {
+		accelerometer_callback_set(false);
+	}
+#endif
 }
 
 static void module_thread_fn(void)

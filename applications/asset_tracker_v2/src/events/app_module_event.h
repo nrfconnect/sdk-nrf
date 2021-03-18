@@ -22,7 +22,7 @@ extern "C" {
 /** @brief Application event types submitted by Application module. */
 enum app_module_event_type {
 	/** Signal that the application has done necessary setup, and
-	 * now started.
+	 *  now started.
 	 */
 	APP_EVT_START,
 
@@ -33,33 +33,43 @@ enum app_module_event_type {
 	APP_EVT_LTE_DISCONNECT,
 
 	/** Signal other modules to start sampling and report the data when
-	 * it's ready.
-	 * The event must also contain a list with requested data types,
-	 * @ref app_module_data_type.
+	 *  it's ready.
+	 *  The event must also contain a list with requested data types,
+	 *  @ref app_module_data_type.
 	 */
 	APP_EVT_DATA_GET,
 
 	/** Create a list with all available sensor types in the system and
-	 * distribute it as a APP_EVT_DATA_GET event.
+	 *  distribute it as a APP_EVT_DATA_GET event.
 	 */
 	APP_EVT_DATA_GET_ALL,
 
 	/** Request latest configuration from the cloud. */
 	APP_EVT_CONFIG_GET,
 
+	/** Application module is waiting for movement to trigger the next sample request. This
+	 *  event is used to signal the sensor module to enable activity detection.
+	 */
+	APP_EVT_ACTIVITY_DETECTION_ENABLE,
+
+	/** Application module does not depend on activity detection. This event is used to signal
+	 *  the sensor module to disable activity detection.
+	 */
+	APP_EVT_ACTIVITY_DETECTION_DISABLE,
+
 	/** The application module has performed all procedures to prepare for
-	 * a shutdown of the system.
+	 *  a shutdown of the system.
 	 */
 	APP_EVT_SHUTDOWN_READY,
 
 	/** An error has occurred in the application module. Error details are
-	 * attached in the event structure.
+	 *  attached in the event structure.
 	 */
 	APP_EVT_ERROR
 };
 
 /** @brief Data types that the application module requests samples for in
- * @ref app_module_event_type APP_EVT_DATA_GET.
+ *	   @ref app_module_event_type APP_EVT_DATA_GET.
  */
 enum app_module_data_type {
 	APP_DATA_ENVIRONMENTAL,
@@ -85,7 +95,7 @@ struct app_module_event {
 	size_t count;
 
 	/** The time each module has to fetch data before what is available
-	 * is transmitted.
+	 *  is transmitted.
 	 */
 	int timeout;
 };

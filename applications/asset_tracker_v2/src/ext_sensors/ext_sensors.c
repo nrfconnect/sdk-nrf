@@ -53,6 +53,7 @@ static struct env_sensor accel_sensor = {
 };
 
 static ext_sensor_handler_t evt_handler;
+static bool initial_trigger;
 
 static void accelerometer_trigger_handler(const struct device *dev,
 					  struct sensor_trigger *trig)
@@ -60,7 +61,6 @@ static void accelerometer_trigger_handler(const struct device *dev,
 	int err = 0;
 	struct sensor_value data[ACCELEROMETER_CHANNELS];
 	struct ext_sensor_evt evt;
-	static bool initial_trigger;
 
 	switch (trig->type) {
 	case SENSOR_TRIG_THRESHOLD:
@@ -130,15 +130,20 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		return -ENODEV;
 	}
 
-	struct sensor_trigger trig = { .chan = SENSOR_CHAN_ACCEL_XYZ };
+#if defined(CONFIG_EXTERNAL_SENSORS_ACTIVITY_DETECTION_AUTO)
+	struct sensor_trigger trig = {
+		.chan = SENSOR_CHAN_ACCEL_XYZ,
+		.type = SENSOR_TRIG_THRESHOLD
+	};
 
-	trig.type = SENSOR_TRIG_THRESHOLD;
-	if (sensor_trigger_set(accel_sensor.dev, &trig,
-			       accelerometer_trigger_handler)) {
-		LOG_ERR("Could not set trigger for device %s",
-			accel_sensor.dev->name);
-		return -ENODATA;
+	int err = sensor_trigger_set(accel_sensor.dev, &trig, accelerometer_trigger_handler);
+
+	if (err) {
+		LOG_ERR("Could not set trigger for device %s, error: %d",
+			accel_sensor.dev->name, err);
+		return err;
 	}
+#endif
 
 	evt_handler = handler;
 
@@ -258,6 +263,28 @@ int ext_sensors_mov_thres_set(double threshold_new)
 	}
 
 	threshold = threshold_new_copy;
+
+	return 0;
+}
+
+int ext_sensors_accelerometer_trigger_callback_set(bool enable)
+{
+	int err;
+	struct sensor_trigger trig = {
+		.chan = SENSOR_CHAN_ACCEL_XYZ,
+		.type = SENSOR_TRIG_THRESHOLD
+	};
+
+	sensor_trigger_handler_t handler = enable ? accelerometer_trigger_handler : NULL;
+
+	err = sensor_trigger_set(accel_sensor.dev, &trig, handler);
+	if (err) {
+		LOG_ERR("Could not set trigger for device %s, error: %d",
+			accel_sensor.dev->name, err);
+		return err;
+	}
+
+	initial_trigger = false;
 
 	return 0;
 }

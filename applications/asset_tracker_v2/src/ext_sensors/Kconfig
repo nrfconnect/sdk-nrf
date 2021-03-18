@@ -9,6 +9,13 @@ menuconfig EXTERNAL_SENSORS
 
 if EXTERNAL_SENSORS
 
+config EXTERNAL_SENSORS_ACTIVITY_DETECTION_AUTO
+	bool "Start activity detection automatically"
+	help
+	  Enable this option to start activity detection when the library is initialized.
+	  If the option is disabled, the accelerometer trigger handler must manually be enabled to
+	  detect activity.
+
 module = EXTERNAL_SENSORS
 module-str = External sensors
 source "subsys/logging/Kconfig.template.log_config"
