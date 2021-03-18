@@ -102,39 +102,39 @@ int32_t model_delay_decode(uint8_t encoded_delay)
 	return encoded_delay * DELAY_TIME_STEP_MS;
 }
 
-int model_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
+int model_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	       struct net_buf_simple *buf)
 {
-	if (!ctx && !mod->pub) {
+	if (!ctx && !model->pub) {
 		return -ENOTSUP;
 	}
 
 	if (ctx) {
-		return bt_mesh_model_send(mod, ctx, buf, NULL, 0);
+		return bt_mesh_model_send(model, ctx, buf, NULL, 0);
 	}
 
-	net_buf_simple_reset(mod->pub->msg);
-	net_buf_simple_add_mem(mod->pub->msg, buf->data, buf->len);
+	net_buf_simple_reset(model->pub->msg);
+	net_buf_simple_add_mem(model->pub->msg, buf->data, buf->len);
 
-	return bt_mesh_model_publish(mod);
+	return bt_mesh_model_publish(model);
 }
 
-int model_ackd_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
+int model_ackd_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		    struct net_buf_simple *buf,
 		    struct bt_mesh_model_ack_ctx *ack, uint32_t rsp_op,
 		    void *user_data)
 {
 	if (ack &&
-	    model_ack_ctx_prepare(ack, rsp_op, ctx ? ctx->addr : mod->pub->addr,
+	    model_ack_ctx_prepare(ack, rsp_op, ctx ? ctx->addr : model->pub->addr,
 				  user_data) != 0) {
 		return -EALREADY;
 	}
 
-	int retval = model_send(mod, ctx, buf);
+	int retval = model_send(model, ctx, buf);
 
 	if (ack) {
 		if (retval == 0) {
-			uint8_t ttl = (ctx ? ctx->send_ttl : mod->pub->ttl);
+			uint8_t ttl = (ctx ? ctx->send_ttl : model->pub->ttl);
 			int32_t time = (CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_BASE +
 				ttl * CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_PER_HOP);
 			return model_ack_wait(ack, time);
@@ -145,7 +145,7 @@ int model_ackd_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	return retval;
 }
 
-bool bt_mesh_model_pub_is_unicast(const struct bt_mesh_model *mod)
+bool bt_mesh_model_pub_is_unicast(const struct bt_mesh_model *model)
 {
-	return mod->pub && BT_MESH_ADDR_IS_UNICAST(mod->pub->addr);
+	return model->pub && BT_MESH_ADDR_IS_UNICAST(model->pub->addr);
 }

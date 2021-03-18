@@ -24,7 +24,7 @@ struct prop_list_ctx {
 	int status;
 };
 
-static void properties_status(struct bt_mesh_model *mod,
+static void properties_status(struct bt_mesh_model *model,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf,
 			      enum bt_mesh_prop_srv_kind kind)
@@ -33,7 +33,7 @@ static void properties_status(struct bt_mesh_model *mod,
 		return;
 	}
 
-	struct bt_mesh_prop_cli *cli = mod->user_data;
+	struct bt_mesh_prop_cli *cli = model->user_data;
 	struct bt_mesh_prop_list list;
 
 	list.count = buf->len / 2;
@@ -59,35 +59,35 @@ static void properties_status(struct bt_mesh_model *mod,
 	}
 }
 
-static void handle_mfr_properties_status(struct bt_mesh_model *mod,
+static void handle_mfr_properties_status(struct bt_mesh_model *model,
 					 struct bt_mesh_msg_ctx *ctx,
 					 struct net_buf_simple *buf)
 {
-	properties_status(mod, ctx, buf, BT_MESH_PROP_SRV_KIND_MFR);
+	properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_MFR);
 }
 
-static void handle_admin_properties_status(struct bt_mesh_model *mod,
+static void handle_admin_properties_status(struct bt_mesh_model *model,
 					   struct bt_mesh_msg_ctx *ctx,
 					   struct net_buf_simple *buf)
 {
-	properties_status(mod, ctx, buf, BT_MESH_PROP_SRV_KIND_ADMIN);
+	properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_ADMIN);
 }
 
-static void handle_user_properties_status(struct bt_mesh_model *mod,
+static void handle_user_properties_status(struct bt_mesh_model *model,
 					  struct bt_mesh_msg_ctx *ctx,
 					  struct net_buf_simple *buf)
 {
-	properties_status(mod, ctx, buf, BT_MESH_PROP_SRV_KIND_USER);
+	properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_USER);
 }
 
-static void handle_client_properties_status(struct bt_mesh_model *mod,
+static void handle_client_properties_status(struct bt_mesh_model *model,
 					    struct bt_mesh_msg_ctx *ctx,
 					    struct net_buf_simple *buf)
 {
-	properties_status(mod, ctx, buf, BT_MESH_PROP_SRV_KIND_CLIENT);
+	properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_CLIENT);
 }
 
-static void property_status(struct bt_mesh_model *mod,
+static void property_status(struct bt_mesh_model *model,
 			    struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf,
 			    enum bt_mesh_prop_srv_kind kind)
@@ -97,7 +97,7 @@ static void property_status(struct bt_mesh_model *mod,
 		return;
 	}
 
-	struct bt_mesh_prop_cli *cli = mod->user_data;
+	struct bt_mesh_prop_cli *cli = model->user_data;
 	struct bt_mesh_prop_val val;
 
 	val.meta.id = net_buf_simple_pull_le16(buf);
@@ -120,25 +120,25 @@ static void property_status(struct bt_mesh_model *mod,
 	}
 }
 
-static void handle_mfr_property_status(struct bt_mesh_model *mod,
+static void handle_mfr_property_status(struct bt_mesh_model *model,
 				       struct bt_mesh_msg_ctx *ctx,
 				       struct net_buf_simple *buf)
 {
-	property_status(mod, ctx, buf, BT_MESH_PROP_SRV_KIND_MFR);
+	property_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_MFR);
 }
 
-static void handle_admin_property_status(struct bt_mesh_model *mod,
+static void handle_admin_property_status(struct bt_mesh_model *model,
 					 struct bt_mesh_msg_ctx *ctx,
 					 struct net_buf_simple *buf)
 {
-	property_status(mod, ctx, buf, BT_MESH_PROP_SRV_KIND_ADMIN);
+	property_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_ADMIN);
 }
 
-static void handle_user_property_status(struct bt_mesh_model *mod,
+static void handle_user_property_status(struct bt_mesh_model *model,
 					struct bt_mesh_msg_ctx *ctx,
 					struct net_buf_simple *buf)
 {
-	property_status(mod, ctx, buf, BT_MESH_PROP_SRV_KIND_USER);
+	property_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_USER);
 }
 
 const struct bt_mesh_model_op _bt_mesh_prop_cli_op[] = {
@@ -160,11 +160,11 @@ const struct bt_mesh_model_op _bt_mesh_prop_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int bt_mesh_prop_cli_init(struct bt_mesh_model *mod)
+static int bt_mesh_prop_cli_init(struct bt_mesh_model *model)
 {
-	struct bt_mesh_prop_cli *cli = mod->user_data;
+	struct bt_mesh_prop_cli *cli = model->user_data;
 
-	cli->model = mod;
+	cli->model = model;
 	cli->pub.msg = &cli->pub_buf;
 	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
 				      sizeof(cli->pub_data));
@@ -173,11 +173,11 @@ static int bt_mesh_prop_cli_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
-static void bt_mesh_prop_cli_reset(struct bt_mesh_model *mod)
+static void bt_mesh_prop_cli_reset(struct bt_mesh_model *model)
 {
-	struct bt_mesh_prop_cli *cli = mod->user_data;
+	struct bt_mesh_prop_cli *cli = model->user_data;
 
-	net_buf_simple_reset(mod->pub->msg);
+	net_buf_simple_reset(model->pub->msg);
 	model_ack_reset(&cli->ack_ctx);
 }
 

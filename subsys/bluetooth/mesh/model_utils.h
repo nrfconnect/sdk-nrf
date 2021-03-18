@@ -20,7 +20,7 @@
  * Sends a model message with the given context. If the context is NULL, this
  * updates the publish message, and publishes with the configured parameters.
  *
- * @param mod Model to send on.
+ * @param model Model to send on.
  * @param ctx Context to send with, or NULL to publish on the configured
  * publish parameters.
  * @param buf Message to send.
@@ -32,7 +32,7 @@
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
  */
-int model_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
+int model_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	       struct net_buf_simple *buf);
 
 /** @brief Send an acknowledged model message.
@@ -45,7 +45,7 @@ int model_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
  * If a response context is provided, the call blocks for
  * 200 + TTL * 50 milliseconds, or until the acknowledgment is received.
  *
- * @param mod Model to send the message on.
+ * @param model Model to send the message on.
  * @param ctx Message context, or NULL to send with the configured publish
  * parameters.
  * @param buf Message to send.
@@ -62,7 +62,7 @@ int model_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
  * @retval -EAGAIN The device has not been provisioned.
  * @retval -ETIMEDOUT The request timed out without a response.
  */
-int model_ackd_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
+int model_ackd_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		    struct net_buf_simple *buf,
 		    struct bt_mesh_model_ack_ctx *ack, uint32_t rsp_op,
 		    void *user_data);

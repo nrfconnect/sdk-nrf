@@ -78,7 +78,7 @@ struct bt_mesh_scene_srv {
 	/** TID context. */
 	struct bt_mesh_tid_ctx tid;
 	/** Composition data model pointer. */
-	struct bt_mesh_model *mod;
+	struct bt_mesh_model *model;
 	/** Composition data setup model pointer. */
 	struct bt_mesh_model *setup_mod;
 	/** Publication state. */
@@ -102,13 +102,13 @@ struct bt_mesh_scene_entry_type {
 	 *  and return the number of bytes written. @c data is guaranteed to
 	 *  fit @c maxlen number of bytes.
 	 *
-	 *  @param mod Model to get the scene data of.
+	 *  @param model Model to get the scene data of.
 	 *  @param data Scene data buffer to fill. Fits @c maxlen bytes.
 	 *
 	 *  @return The number of bytes written to @c data or a negative value
 	 *          on failure.
 	 */
-	ssize_t (*store)(struct bt_mesh_model *mod, uint8_t data[]);
+	ssize_t (*store)(struct bt_mesh_model *model, uint8_t data[]);
 
 	/** @brief Recall a scene based on the given scene data.
 	 *
@@ -117,12 +117,12 @@ struct bt_mesh_scene_entry_type {
 	 *  shall start transitioning to the given scene with the given
 	 *  transition parameters.
 	 *
-	 *  @param mod        Model to restore the scene of.
+	 *  @param model        Model to restore the scene of.
 	 *  @param data       Scene data to restore.
 	 *  @param len        Scene data length.
 	 *  @param transition Transition parameters.
 	 */
-	void (*recall)(struct bt_mesh_model *mod, const uint8_t data[],
+	void (*recall)(struct bt_mesh_model *model, const uint8_t data[],
 		       size_t len, struct bt_mesh_model_transition *transition);
 };
 
@@ -139,7 +139,7 @@ struct bt_mesh_scene_entry {
 	/** Scene Server this entry got registered to. */
 	struct bt_mesh_scene_srv *srv;
 	/** Model this scene entry belongs to. */
-	struct bt_mesh_model *mod;
+	struct bt_mesh_model *model;
 	/** Scene entry callbacks */
 	const struct bt_mesh_scene_entry_type *type;
 	/** Scene entry list node */
@@ -162,12 +162,12 @@ struct bt_mesh_scene_entry {
  *        procedure to correctly recover a scene on startup. The initial Scene
  *        is recovered as part of the model start procedure.
  *
- *  @param[in] mod   Model this scene entry represents.
+ *  @param[in] model   Model this scene entry represents.
  *  @param[in] entry Scene entry.
  *  @param[in] type  Scene entry type.
  *  @param[in] vnd   Whether this is a vendor model.
  */
-void bt_mesh_scene_entry_add(struct bt_mesh_model *mod,
+void bt_mesh_scene_entry_add(struct bt_mesh_model *model,
 			     struct bt_mesh_scene_entry *entry,
 			     const struct bt_mesh_scene_entry_type *type,
 			     bool vnd);

@@ -6,7 +6,7 @@
 #include <bluetooth/mesh/gen_plvl_cli.h>
 #include "model_utils.h"
 
-static void handle_power_status(struct bt_mesh_model *mod,
+static void handle_power_status(struct bt_mesh_model *model,
 				struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
@@ -15,7 +15,7 @@ static void handle_power_status(struct bt_mesh_model *mod,
 		return;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = model->user_data;
 	struct bt_mesh_plvl_status status;
 
 	status.current = net_buf_simple_pull_le16(buf);
@@ -39,7 +39,7 @@ static void handle_power_status(struct bt_mesh_model *mod,
 	}
 }
 
-static void handle_last_status(struct bt_mesh_model *mod,
+static void handle_last_status(struct bt_mesh_model *model,
 			       struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
@@ -47,7 +47,7 @@ static void handle_last_status(struct bt_mesh_model *mod,
 		return;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = model->user_data;
 	uint16_t last = net_buf_simple_pull_le16(buf);
 
 	if (model_ack_match(&cli->ack_ctx, BT_MESH_PLVL_OP_LAST_STATUS, ctx)) {
@@ -61,7 +61,7 @@ static void handle_last_status(struct bt_mesh_model *mod,
 	}
 }
 
-static void handle_default_status(struct bt_mesh_model *mod,
+static void handle_default_status(struct bt_mesh_model *model,
 				  struct bt_mesh_msg_ctx *ctx,
 				  struct net_buf_simple *buf)
 {
@@ -69,7 +69,7 @@ static void handle_default_status(struct bt_mesh_model *mod,
 		return;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = model->user_data;
 	uint16_t default_lvl = net_buf_simple_pull_le16(buf);
 
 	if (model_ack_match(&cli->ack_ctx, BT_MESH_PLVL_OP_DEFAULT_STATUS, ctx)) {
@@ -83,7 +83,7 @@ static void handle_default_status(struct bt_mesh_model *mod,
 	}
 }
 
-static void handle_range_status(struct bt_mesh_model *mod,
+static void handle_range_status(struct bt_mesh_model *model,
 				struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
@@ -91,7 +91,7 @@ static void handle_range_status(struct bt_mesh_model *mod,
 		return;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = model->user_data;
 	struct bt_mesh_plvl_range_status status;
 
 	status.status = net_buf_simple_pull_u8(buf);
@@ -121,11 +121,11 @@ const struct bt_mesh_model_op _bt_mesh_plvl_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int bt_mesh_lvl_cli_init(struct bt_mesh_model *mod)
+static int bt_mesh_lvl_cli_init(struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = model->user_data;
 
-	cli->model = mod;
+	cli->model = model;
 	cli->pub.msg = &cli->pub_buf;
 	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
 				      sizeof(cli->pub_data));
@@ -134,11 +134,11 @@ static int bt_mesh_lvl_cli_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
-static void bt_mesh_lvl_cli_reset(struct bt_mesh_model *mod)
+static void bt_mesh_lvl_cli_reset(struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = model->user_data;
 
-	net_buf_simple_reset(mod->pub->msg);
+	net_buf_simple_reset(model->pub->msg);
 	model_ack_reset(&cli->ack_ctx);
 }
 

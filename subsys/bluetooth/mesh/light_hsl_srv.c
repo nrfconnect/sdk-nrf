@@ -419,9 +419,9 @@ const struct bt_mesh_model_op _bt_mesh_light_hsl_setup_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int hsl_srv_pub_update(struct bt_mesh_model *mod)
+static int hsl_srv_pub_update(struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_hsl_srv *srv = mod->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->user_data;
 	struct bt_mesh_light_hsl_status status;
 
 	hsl_get(srv, NULL, &status);
@@ -463,9 +463,9 @@ static int bt_mesh_light_hsl_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *mod)
+static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_hsl_srv *srv = mod->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->user_data;
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_light_hue hue = { .transition = &transition };
 	struct bt_mesh_light_sat sat = { .transition = &transition };
@@ -484,7 +484,7 @@ static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *mod)
 		return -EINVAL;
 	}
 
-	bt_mesh_dtt_srv_transition_get(mod, &transition);
+	bt_mesh_dtt_srv_transition_get(model, &transition);
 
 	switch (srv->lightness.ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_ON:

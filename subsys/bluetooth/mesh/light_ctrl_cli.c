@@ -17,10 +17,10 @@ struct prop_status_ctx {
 	union prop_value val;
 };
 
-static void handle_mode(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
+static void handle_mode(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 
 	if (buf->len != 1) {
 		return;
@@ -45,11 +45,11 @@ static void handle_mode(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	}
 }
 
-static void handle_occupancy(struct bt_mesh_model *mod,
+static void handle_occupancy(struct bt_mesh_model *model,
 			     struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 
 	if (buf->len != 1) {
 		return;
@@ -73,11 +73,11 @@ static void handle_occupancy(struct bt_mesh_model *mod,
 	}
 }
 
-static void handle_light_onoff(struct bt_mesh_model *mod,
+static void handle_light_onoff(struct bt_mesh_model *model,
 			       struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 	struct bt_mesh_onoff_status status;
 
 	uint8_t onoff = net_buf_simple_pull_u8(buf);
@@ -117,10 +117,10 @@ static void handle_light_onoff(struct bt_mesh_model *mod,
 	}
 }
 
-static void handle_prop(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
+static void handle_prop(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 	struct prop_status_ctx *rsp = cli->ack.user_data;
 	const struct bt_mesh_sensor_format *format;
 	union prop_value value;
@@ -176,11 +176,11 @@ const struct bt_mesh_model_op _bt_mesh_light_ctrl_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int light_ctrl_cli_init(struct bt_mesh_model *mod)
+static int light_ctrl_cli_init(struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 
-	cli->model = mod;
+	cli->model = model;
 	cli->pub.msg = &cli->pub_buf;
 	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
 				      sizeof(cli->pub_data));
@@ -189,9 +189,9 @@ static int light_ctrl_cli_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
-static void light_ctrl_cli_reset(struct bt_mesh_model *mod)
+static void light_ctrl_cli_reset(struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
 	model_ack_reset(&cli->ack);

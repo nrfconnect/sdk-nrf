@@ -287,20 +287,20 @@ const struct bt_mesh_lvl_srv_handlers _bt_mesh_light_temp_srv_lvl_handlers = {
 	.move_set = lvl_move_set,
 };
 
-static int scene_store(struct bt_mesh_model *mod, uint8_t data[])
+static int scene_store(struct bt_mesh_model *model, uint8_t data[])
 {
-	struct bt_mesh_light_temp_srv *srv = mod->user_data;
+	struct bt_mesh_light_temp_srv *srv = model->user_data;
 
 	sys_put_le16(srv->last.delta_uv, data);
 
 	return sizeof(int16_t);
 }
 
-static void scene_recall(struct bt_mesh_model *mod, const uint8_t data[],
+static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
-	struct bt_mesh_light_temp_srv *srv = mod->user_data;
+	struct bt_mesh_light_temp_srv *srv = model->user_data;
 	struct bt_mesh_light_temp_set set = {
 		.params = {
 			.temp = srv->last.temp,
@@ -347,12 +347,12 @@ static int bt_mesh_light_temp_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_light_temp_srv_settings_set(struct bt_mesh_model *mod,
+static int bt_mesh_light_temp_srv_settings_set(struct bt_mesh_model *model,
 					       const char *name, size_t len_rd,
 					       settings_read_cb read_cb,
 					       void *cb_data)
 {
-	struct bt_mesh_light_temp_srv *srv = mod->user_data;
+	struct bt_mesh_light_temp_srv *srv = model->user_data;
 	struct settings_data data;
 	ssize_t len;
 
