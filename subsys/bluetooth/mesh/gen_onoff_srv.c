@@ -194,9 +194,9 @@ const struct bt_mesh_model_cb _bt_mesh_onoff_srv_cb = {
 	.reset = bt_mesh_onoff_srv_reset,
 };
 
-int32_t bt_mesh_onoff_srv_pub(struct bt_mesh_onoff_srv *srv,
-			    struct bt_mesh_msg_ctx *ctx,
-			    const struct bt_mesh_onoff_status *status)
+int bt_mesh_onoff_srv_pub(struct bt_mesh_onoff_srv *srv,
+			  struct bt_mesh_msg_ctx *ctx,
+			  const struct bt_mesh_onoff_status *status)
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_ONOFF_OP_STATUS,
 				 BT_MESH_ONOFF_MSG_MAXLEN_STATUS);

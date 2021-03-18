@@ -158,9 +158,9 @@ struct bt_mesh_loc_srv {
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
  */
-int32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
-				 struct bt_mesh_msg_ctx *ctx,
-				 const struct bt_mesh_loc_global *global);
+int bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
+			       struct bt_mesh_msg_ctx *ctx,
+			       const struct bt_mesh_loc_global *global);
 
 /** @brief Publish the Local Location state.
  *
@@ -183,9 +183,9 @@ int32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
  */
-int32_t bt_mesh_loc_srv_local_pub(struct bt_mesh_loc_srv *srv,
-				struct bt_mesh_msg_ctx *ctx,
-				const struct bt_mesh_loc_local *local);
+int bt_mesh_loc_srv_local_pub(struct bt_mesh_loc_srv *srv,
+			      struct bt_mesh_msg_ctx *ctx,
+			      const struct bt_mesh_loc_local *local);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_loc_srv_op[];
