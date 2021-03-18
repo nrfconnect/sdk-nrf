@@ -1008,17 +1008,56 @@ static void handle_sensor_status(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctrl_srv_op[] = {
-	{ BT_MESH_LIGHT_CTRL_OP_MODE_GET, 0, handle_mode_get },
-	{ BT_MESH_LIGHT_CTRL_OP_MODE_SET, 1, handle_mode_set },
-	{ BT_MESH_LIGHT_CTRL_OP_MODE_SET_UNACK, 1, handle_mode_set_unack },
-	{ BT_MESH_LIGHT_CTRL_OP_OM_GET, 0, handle_om_get },
-	{ BT_MESH_LIGHT_CTRL_OP_OM_SET, 1, handle_om_set },
-	{ BT_MESH_LIGHT_CTRL_OP_OM_SET_UNACK, 1, handle_om_set_unack },
-	{ BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_GET, 0, handle_light_onoff_get },
-	{ BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_SET, 2, handle_light_onoff_set },
-	{ BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_SET_UNACK, 2,
-	  handle_light_onoff_set_unack },
-	{ BT_MESH_SENSOR_OP_STATUS, 3, handle_sensor_status },
+	{
+		BT_MESH_LIGHT_CTRL_OP_MODE_GET,
+		0,
+		handle_mode_get,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_MODE_SET,
+		1,
+		handle_mode_set,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_MODE_SET_UNACK,
+		1,
+		handle_mode_set_unack,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_OM_GET,
+		0,
+		handle_om_get,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_OM_SET,
+		1,
+		handle_om_set,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_OM_SET_UNACK,
+		1,
+		handle_om_set_unack,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_GET,
+		0,
+		handle_light_onoff_get,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_SET,
+		2,
+		handle_light_onoff_set,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_SET_UNACK,
+		2,
+		handle_light_onoff_set_unack,
+	},
+	{
+		BT_MESH_SENSOR_OP_STATUS,
+		3,
+		handle_sensor_status,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

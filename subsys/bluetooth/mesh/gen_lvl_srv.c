@@ -210,18 +210,41 @@ static void handle_move_set_unack(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_lvl_srv_op[] = {
-	{ BT_MESH_LVL_OP_GET, BT_MESH_LVL_MSG_LEN_GET, handle_get },
-	{ BT_MESH_LVL_OP_SET, BT_MESH_LVL_MSG_MINLEN_SET, handle_set },
-	{ BT_MESH_LVL_OP_SET_UNACK, BT_MESH_LVL_MSG_MINLEN_SET,
-	  handle_set_unack },
-	{ BT_MESH_LVL_OP_DELTA_SET, BT_MESH_LVL_MSG_MINLEN_DELTA_SET,
-	  handle_delta_set },
-	{ BT_MESH_LVL_OP_DELTA_SET_UNACK, BT_MESH_LVL_MSG_MINLEN_DELTA_SET,
-	  handle_delta_set_unack },
-	{ BT_MESH_LVL_OP_MOVE_SET, BT_MESH_LVL_MSG_MINLEN_MOVE_SET,
-	  handle_move_set },
-	{ BT_MESH_LVL_OP_MOVE_SET_UNACK, BT_MESH_LVL_MSG_MINLEN_MOVE_SET,
-	  handle_move_set_unack },
+	{
+		BT_MESH_LVL_OP_GET,
+		BT_MESH_LVL_MSG_LEN_GET,
+		handle_get,
+	},
+	{
+		BT_MESH_LVL_OP_SET,
+		BT_MESH_LVL_MSG_MINLEN_SET,
+		handle_set,
+	},
+	{
+		BT_MESH_LVL_OP_SET_UNACK,
+		BT_MESH_LVL_MSG_MINLEN_SET,
+		handle_set_unack,
+	},
+	{
+		BT_MESH_LVL_OP_DELTA_SET,
+		BT_MESH_LVL_MSG_MINLEN_DELTA_SET,
+		handle_delta_set,
+	},
+	{
+		BT_MESH_LVL_OP_DELTA_SET_UNACK,
+		BT_MESH_LVL_MSG_MINLEN_DELTA_SET,
+		handle_delta_set_unack,
+	},
+	{
+		BT_MESH_LVL_OP_MOVE_SET,
+		BT_MESH_LVL_MSG_MINLEN_MOVE_SET,
+		handle_move_set,
+	},
+	{
+		BT_MESH_LVL_OP_MOVE_SET_UNACK,
+		BT_MESH_LVL_MSG_MINLEN_MOVE_SET,
+		handle_move_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

@@ -122,15 +122,26 @@ static void tai_utc_delta_status_handle(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_time_cli_op[] = {
-	{ BT_MESH_TIME_OP_TIME_STATUS, BT_MESH_TIME_MSG_LEN_TIME_STATUS,
-	  handle_status },
-	{ BT_MESH_TIME_OP_TIME_ROLE_STATUS,
-	  BT_MESH_TIME_MSG_LEN_TIME_ROLE_STATUS, time_role_status_handle },
-	{ BT_MESH_TIME_OP_TIME_ZONE_STATUS,
-	  BT_MESH_TIME_MSG_LEN_TIME_ZONE_STATUS, time_zone_status_handle },
-	{ BT_MESH_TIME_OP_TAI_UTC_DELTA_STATUS,
-	  BT_MESH_TIME_MSG_LEN_TAI_UTC_DELTA_STATUS,
-	  tai_utc_delta_status_handle },
+	{
+		BT_MESH_TIME_OP_TIME_STATUS,
+		BT_MESH_TIME_MSG_LEN_TIME_STATUS,
+		handle_status,
+	},
+	{
+		BT_MESH_TIME_OP_TIME_ROLE_STATUS,
+		BT_MESH_TIME_MSG_LEN_TIME_ROLE_STATUS,
+		time_role_status_handle,
+	},
+	{
+		BT_MESH_TIME_OP_TIME_ZONE_STATUS,
+		BT_MESH_TIME_MSG_LEN_TIME_ZONE_STATUS,
+		time_zone_status_handle,
+	},
+	{
+		BT_MESH_TIME_OP_TAI_UTC_DELTA_STATUS,
+		BT_MESH_TIME_MSG_LEN_TAI_UTC_DELTA_STATUS,
+		tai_utc_delta_status_handle,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

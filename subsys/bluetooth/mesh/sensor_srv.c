@@ -349,13 +349,26 @@ respond:
 }
 
 const struct bt_mesh_model_op _bt_mesh_sensor_srv_op[] = {
-	{ BT_MESH_SENSOR_OP_DESCRIPTOR_GET,
-	  BT_MESH_SENSOR_MSG_MINLEN_DESCRIPTOR_GET, handle_descriptor_get },
-	{ BT_MESH_SENSOR_OP_GET, BT_MESH_SENSOR_MSG_MINLEN_GET, handle_get },
-	{ BT_MESH_SENSOR_OP_COLUMN_GET, BT_MESH_SENSOR_MSG_MINLEN_COLUMN_GET,
-	  handle_column_get },
-	{ BT_MESH_SENSOR_OP_SERIES_GET, BT_MESH_SENSOR_MSG_MINLEN_SERIES_GET,
-	  handle_series_get },
+	{
+		BT_MESH_SENSOR_OP_DESCRIPTOR_GET,
+		BT_MESH_SENSOR_MSG_MINLEN_DESCRIPTOR_GET,
+		handle_descriptor_get,
+	},
+	{
+		BT_MESH_SENSOR_OP_GET,
+		BT_MESH_SENSOR_MSG_MINLEN_GET,
+		handle_get,
+	},
+	{
+		BT_MESH_SENSOR_OP_COLUMN_GET,
+		BT_MESH_SENSOR_MSG_MINLEN_COLUMN_GET,
+		handle_column_get,
+	},
+	{
+		BT_MESH_SENSOR_OP_SERIES_GET,
+		BT_MESH_SENSOR_MSG_MINLEN_SERIES_GET,
+		handle_series_get,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

@@ -138,12 +138,21 @@ static void temp_set_unack_handle(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_temp_srv_op[] = {
-	{ BT_MESH_LIGHT_TEMP_GET, BT_MESH_LIGHT_CTL_MSG_LEN_GET,
-	  temp_get_handle },
-	{ BT_MESH_LIGHT_TEMP_SET, BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_SET,
-	  temp_set_handle },
-	{ BT_MESH_LIGHT_TEMP_SET_UNACK,
-	  BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_SET, temp_set_unack_handle },
+	{
+		BT_MESH_LIGHT_TEMP_GET,
+		BT_MESH_LIGHT_CTL_MSG_LEN_GET,
+		temp_get_handle,
+	},
+	{
+		BT_MESH_LIGHT_TEMP_SET,
+		BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_SET,
+		temp_set_handle,
+	},
+	{
+		BT_MESH_LIGHT_TEMP_SET_UNACK,
+		BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_SET,
+		temp_set_unack_handle,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

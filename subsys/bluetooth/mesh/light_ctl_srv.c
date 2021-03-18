@@ -295,29 +295,55 @@ static void handle_default_set_unack(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctl_srv_op[] = {
-	{ BT_MESH_LIGHT_CTL_GET, BT_MESH_LIGHT_CTL_MSG_LEN_GET,
-	  handle_ctl_get },
-	{ BT_MESH_LIGHT_CTL_SET, BT_MESH_LIGHT_CTL_MSG_MINLEN_SET,
-	  handle_ctl_set },
-	{ BT_MESH_LIGHT_CTL_SET_UNACK, BT_MESH_LIGHT_CTL_MSG_MINLEN_SET,
-	  handle_ctl_set_unack },
-	{ BT_MESH_LIGHT_TEMP_RANGE_GET, BT_MESH_LIGHT_CTL_MSG_LEN_GET,
-	  handle_temp_range_get },
-	{ BT_MESH_LIGHT_CTL_DEFAULT_GET, BT_MESH_LIGHT_CTL_MSG_LEN_GET,
-	  handle_default_get },
+	{
+		BT_MESH_LIGHT_CTL_GET,
+		BT_MESH_LIGHT_CTL_MSG_LEN_GET,
+		handle_ctl_get,
+	},
+	{
+		BT_MESH_LIGHT_CTL_SET,
+		BT_MESH_LIGHT_CTL_MSG_MINLEN_SET,
+		handle_ctl_set,
+	},
+	{
+		BT_MESH_LIGHT_CTL_SET_UNACK,
+		BT_MESH_LIGHT_CTL_MSG_MINLEN_SET,
+		handle_ctl_set_unack,
+	},
+	{
+		BT_MESH_LIGHT_TEMP_RANGE_GET,
+		BT_MESH_LIGHT_CTL_MSG_LEN_GET,
+		handle_temp_range_get,
+	},
+	{
+		BT_MESH_LIGHT_CTL_DEFAULT_GET,
+		BT_MESH_LIGHT_CTL_MSG_LEN_GET,
+		handle_default_get,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 
 const struct bt_mesh_model_op _bt_mesh_light_ctl_setup_srv_op[] = {
-	{ BT_MESH_LIGHT_TEMP_RANGE_SET,
-	  BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_SET, handle_temp_range_set },
-	{ BT_MESH_LIGHT_TEMP_RANGE_SET_UNACK,
-	  BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_SET,
-	  handle_temp_range_set_unack },
-	{ BT_MESH_LIGHT_CTL_DEFAULT_SET, BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG,
-	  handle_default_set },
-	{ BT_MESH_LIGHT_CTL_DEFAULT_SET_UNACK,
-	  BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG, handle_default_set_unack },
+	{
+		BT_MESH_LIGHT_TEMP_RANGE_SET,
+		BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_SET,
+		handle_temp_range_set,
+	},
+	{
+		BT_MESH_LIGHT_TEMP_RANGE_SET_UNACK,
+		BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_SET,
+		handle_temp_range_set_unack,
+	},
+	{
+		BT_MESH_LIGHT_CTL_DEFAULT_SET,
+		BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG,
+		handle_default_set,
+	},
+	{
+		BT_MESH_LIGHT_CTL_DEFAULT_SET_UNACK,
+		BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG,
+		handle_default_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

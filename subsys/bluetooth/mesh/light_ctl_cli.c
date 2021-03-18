@@ -169,15 +169,26 @@ static void default_status_handle(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctl_cli_op[] = {
-	{ BT_MESH_LIGHT_CTL_STATUS, BT_MESH_LIGHT_CTL_MSG_MINLEN_STATUS,
-	  ctl_status_handle },
-	{ BT_MESH_LIGHT_TEMP_RANGE_STATUS,
-	  BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS,
-	  temp_range_status_handle },
-	{ BT_MESH_LIGHT_TEMP_STATUS,
-	  BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_STATUS, temp_status_handle },
-	{ BT_MESH_LIGHT_CTL_DEFAULT_STATUS,
-	  BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG, default_status_handle },
+	{
+		BT_MESH_LIGHT_CTL_STATUS,
+		BT_MESH_LIGHT_CTL_MSG_MINLEN_STATUS,
+		ctl_status_handle,
+	},
+	{
+		BT_MESH_LIGHT_TEMP_RANGE_STATUS,
+		BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS,
+		temp_range_status_handle,
+	},
+	{
+		BT_MESH_LIGHT_TEMP_STATUS,
+		BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_STATUS,
+		temp_status_handle,
+	},
+	{
+		BT_MESH_LIGHT_CTL_DEFAULT_STATUS,
+		BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG,
+		default_status_handle,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

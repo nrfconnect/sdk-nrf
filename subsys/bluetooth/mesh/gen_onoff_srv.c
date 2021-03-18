@@ -115,10 +115,21 @@ static void handle_set_unack(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_onoff_srv_op[] = {
-	{ BT_MESH_ONOFF_OP_GET, BT_MESH_ONOFF_MSG_LEN_GET, handle_get },
-	{ BT_MESH_ONOFF_OP_SET, BT_MESH_ONOFF_MSG_MINLEN_SET, handle_set },
-	{ BT_MESH_ONOFF_OP_SET_UNACK, BT_MESH_ONOFF_MSG_MINLEN_SET,
-	  handle_set_unack },
+	{
+		BT_MESH_ONOFF_OP_GET,
+		BT_MESH_ONOFF_MSG_LEN_GET,
+		handle_get,
+	},
+	{
+		BT_MESH_ONOFF_OP_SET,
+		BT_MESH_ONOFF_MSG_MINLEN_SET,
+		handle_set,
+	},
+	{
+		BT_MESH_ONOFF_OP_SET_UNACK,
+		BT_MESH_ONOFF_MSG_MINLEN_SET,
+		handle_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

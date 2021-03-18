@@ -364,30 +364,60 @@ static void range_set_unack_handle(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_xyl_srv_op[] = {
-	{ BT_MESH_LIGHT_XYL_OP_GET, BT_MESH_LIGHT_XYL_MSG_LEN_GET,
-	  xyl_get_handle },
-	{ BT_MESH_LIGHT_XYL_OP_SET, BT_MESH_LIGHT_XYL_MSG_MINLEN_SET,
-	  xyl_set_handle },
-	{ BT_MESH_LIGHT_XYL_OP_SET_UNACK, BT_MESH_LIGHT_XYL_MSG_MINLEN_SET,
-	  xyl_set_unack_handle },
-	{ BT_MESH_LIGHT_XYL_OP_TARGET_GET, BT_MESH_LIGHT_XYL_MSG_LEN_GET,
-	  target_get_handle },
-	{ BT_MESH_LIGHT_XYL_OP_DEFAULT_GET, BT_MESH_LIGHT_XYL_MSG_LEN_GET,
-	  default_get_handle },
-	{ BT_MESH_LIGHT_XYL_OP_RANGE_GET, BT_MESH_LIGHT_XYL_MSG_LEN_GET,
-	  range_get_handle },
+	{
+		BT_MESH_LIGHT_XYL_OP_GET,
+		BT_MESH_LIGHT_XYL_MSG_LEN_GET,
+		xyl_get_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_SET,
+		BT_MESH_LIGHT_XYL_MSG_MINLEN_SET,
+		xyl_set_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_SET_UNACK,
+		BT_MESH_LIGHT_XYL_MSG_MINLEN_SET,
+		xyl_set_unack_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_TARGET_GET,
+		BT_MESH_LIGHT_XYL_MSG_LEN_GET,
+		target_get_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_DEFAULT_GET,
+		BT_MESH_LIGHT_XYL_MSG_LEN_GET,
+		default_get_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_RANGE_GET,
+		BT_MESH_LIGHT_XYL_MSG_LEN_GET,
+		range_get_handle,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 
 const struct bt_mesh_model_op _bt_mesh_light_xyl_setup_srv_op[] = {
-	{ BT_MESH_LIGHT_XYL_OP_DEFAULT_SET, BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT,
-	  default_set_handle },
-	{ BT_MESH_LIGHT_XYL_OP_DEFAULT_SET_UNACK,
-	  BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT, default_set_unack_handle },
-	{ BT_MESH_LIGHT_XYL_OP_RANGE_SET, BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_SET,
-	  range_set_handle },
-	{ BT_MESH_LIGHT_XYL_OP_RANGE_SET_UNACK,
-	  BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_SET, range_set_unack_handle },
+	{
+		BT_MESH_LIGHT_XYL_OP_DEFAULT_SET,
+		BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT,
+		default_set_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_DEFAULT_SET_UNACK,
+		BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT,
+		default_set_unack_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_RANGE_SET,
+		BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_SET,
+		range_set_handle,
+	},
+	{
+		BT_MESH_LIGHT_XYL_OP_RANGE_SET_UNACK,
+		BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_SET,
+		range_set_unack_handle,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

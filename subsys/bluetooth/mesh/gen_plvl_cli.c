@@ -110,14 +110,26 @@ static void handle_range_status(struct bt_mesh_model *model,
 }
 
 const struct bt_mesh_model_op _bt_mesh_plvl_cli_op[] = {
-	{ BT_MESH_PLVL_OP_LEVEL_STATUS, BT_MESH_PLVL_MSG_MINLEN_LEVEL_STATUS,
-	  handle_power_status },
-	{ BT_MESH_PLVL_OP_LAST_STATUS, BT_MESH_PLVL_MSG_LEN_LAST_STATUS,
-	  handle_last_status },
-	{ BT_MESH_PLVL_OP_DEFAULT_STATUS, BT_MESH_PLVL_MSG_LEN_DEFAULT_STATUS,
-	  handle_default_status },
-	{ BT_MESH_PLVL_OP_RANGE_STATUS, BT_MESH_PLVL_MSG_LEN_RANGE_STATUS,
-	  handle_range_status },
+	{
+		BT_MESH_PLVL_OP_LEVEL_STATUS,
+		BT_MESH_PLVL_MSG_MINLEN_LEVEL_STATUS,
+		handle_power_status,
+	},
+	{
+		BT_MESH_PLVL_OP_LAST_STATUS,
+		BT_MESH_PLVL_MSG_LEN_LAST_STATUS,
+		handle_last_status,
+	},
+	{
+		BT_MESH_PLVL_OP_DEFAULT_STATUS,
+		BT_MESH_PLVL_MSG_LEN_DEFAULT_STATUS,
+		handle_default_status,
+	},
+	{
+		BT_MESH_PLVL_OP_RANGE_STATUS,
+		BT_MESH_PLVL_MSG_LEN_RANGE_STATUS,
+		handle_range_status,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 
