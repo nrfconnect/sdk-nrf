@@ -237,9 +237,9 @@ const struct bt_mesh_model_cb _bt_mesh_loc_srv_cb = {
 	.reset = bt_mesh_loc_srv_reset,
 };
 
-int32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
-				 struct bt_mesh_msg_ctx *ctx,
-				 const struct bt_mesh_loc_global *global)
+int bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
+			       struct bt_mesh_msg_ctx *ctx,
+			       const struct bt_mesh_loc_global *global)
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LOC_OP_GLOBAL_STATUS,
 				 BT_MESH_LOC_MSG_LEN_GLOBAL_STATUS);
@@ -251,9 +251,9 @@ int32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
 	return model_send(srv->model, ctx, &msg);
 }
 
-int32_t bt_mesh_loc_srv_local_pub(struct bt_mesh_loc_srv *srv,
-				struct bt_mesh_msg_ctx *ctx,
-				const struct bt_mesh_loc_local *local)
+int bt_mesh_loc_srv_local_pub(struct bt_mesh_loc_srv *srv,
+			      struct bt_mesh_msg_ctx *ctx,
+			      const struct bt_mesh_loc_local *local)
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LOC_OP_LOCAL_STATUS,
 				 BT_MESH_LOC_MSG_LEN_LOCAL_STATUS);
