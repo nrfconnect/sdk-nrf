@@ -227,8 +227,10 @@ function(add_child_image_from_source)
   list(REMOVE_DUPLICATES SHARED_MULTI_IMAGE_VARIABLES)
   foreach(shared_var ${SHARED_MULTI_IMAGE_VARIABLES})
     if(DEFINED ${shared_var})
+      # Any  shared var that is a list must be escaped to ensure correct behaviour.
+      string(REPLACE \; \\\\\; val "${${shared_var}}")
       list(APPEND image_cmake_args
-        -D${shared_var}=${${shared_var}}
+        -D${shared_var}=${val}
         )
     endif()
   endforeach()
