@@ -123,7 +123,7 @@ enum lte_lc_evt_type {
 
 	/** The currently active LTE mode is updated. If a system mode that
 	 *  enables both LTE-M and NB-IoT is configured, the modem may change
-	 *  the currently active LTE mdode based on the system mode preference
+	 *  the currently active LTE mode based on the system mode preference
 	 *  and network availability. This event will then indicate which
 	 *  LTE mode is currently used by the modem.
 	 */
