@@ -25,6 +25,14 @@ config MPSL_TIMESLOT_SESSION_COUNT
 	help
 	  Maximum number of timeslot sessions.
 
+config MPSL_ASSERT_HANDLER
+	bool "Application defined assertion handler"
+	help
+	  This option enables an application-defined sink for the
+	  MPSL assertion mechanism. This must be defined in
+	  application code and will be invoked whenever the
+	  MPSL code encounters an unrecoverable error.
+
 rsource "Kconfig.fem"
 
 module=MPSL
