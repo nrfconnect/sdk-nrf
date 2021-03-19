@@ -9,4 +9,3 @@ gnuarmemb-short=10-2020q4
 ses=5.34a
 west=0.10.1
 gn=1880
-
