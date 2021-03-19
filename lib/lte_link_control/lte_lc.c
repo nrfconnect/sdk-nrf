@@ -37,7 +37,9 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define AT_CEREG_TAC_INDEX			2
 #define AT_CEREG_READ_TAC_INDEX			3
 #define AT_CEREG_CELL_ID_INDEX			3
+#define AT_CEREG_ACT_INDEX			4
 #define AT_CEREG_READ_CELL_ID_INDEX		4
+#define AT_CEREG_READ_ACT_INDEX			5
 #define AT_CEREG_ACTIVE_TIME_INDEX		7
 #define AT_CEREG_READ_ACTIVE_TIME_INDEX		8
 #define AT_CEREG_TAU_INDEX			8
@@ -254,9 +256,11 @@ static bool is_relevant_notif(const char *notif, enum lte_lc_notif_type *type)
 	return false;
 }
 
-static int parse_cereg(const char *notification,
+static int parse_cereg(bool is_notification,
+		       const char *at_buf,
 		       enum lte_lc_nw_reg_status *reg_status,
 		       struct lte_lc_cell *cell,
+		       enum lte_lc_lte_mode *lte_mode,
 		       struct lte_lc_psm_cfg *psm_cfg)
 {
 	int err, status;
@@ -271,7 +275,7 @@ static int parse_cereg(const char *notification,
 	}
 
 	/* Parse CEREG response and populate AT parameter list */
-	err = at_parser_params_from_str(notification,
+	err = at_parser_params_from_str(at_buf,
 					NULL,
 					&resp_list);
 	if (err) {
@@ -279,23 +283,28 @@ static int parse_cereg(const char *notification,
 		goto clean_exit;
 	}
 
-	/* Parse network registration status */
-	err = at_params_int_get(&resp_list,
-				AT_CEREG_REG_STATUS_INDEX,
+	if (reg_status) {
+		/* Parse network registration status */
+		err = at_params_int_get(&resp_list,
+				is_notification ? AT_CEREG_REG_STATUS_INDEX :
+						AT_CEREG_READ_REG_STATUS_INDEX,
 				&status);
-	if (err) {
-		LOG_ERR("Could not get registration status, error: %d", err);
-		goto clean_exit;
+		if (err) {
+			LOG_ERR("Could not get registration status, error: %d", err);
+			goto clean_exit;
+		}
+
+		*reg_status = status;
 	}
 
-	*reg_status = status;
-
-	if ((*reg_status != LTE_LC_NW_REG_UICC_FAIL) &&
+	if (cell && (*reg_status != LTE_LC_NW_REG_UICC_FAIL) &&
 	    (at_params_valid_count_get(&resp_list) > AT_CEREG_CELL_ID_INDEX)) {
 		/* Parse tracking area code */
-		err = at_params_string_get(&resp_list,
-					AT_CEREG_TAC_INDEX,
-					str_buf, &len);
+		err = at_params_string_get(
+				&resp_list,
+				is_notification ? AT_CEREG_TAC_INDEX :
+						  AT_CEREG_READ_TAC_INDEX,
+				str_buf, &len);
 		if (err) {
 			LOG_ERR("Could not get tracking area code, error: %d", err);
 			goto clean_exit;
@@ -308,8 +317,9 @@ static int parse_cereg(const char *notification,
 		len = sizeof(str_buf) - 1;
 
 		err = at_params_string_get(&resp_list,
-					AT_CEREG_CELL_ID_INDEX,
-					str_buf, &len);
+				is_notification ? AT_CEREG_CELL_ID_INDEX :
+						  AT_CEREG_READ_CELL_ID_INDEX,
+				str_buf, &len);
 		if (err) {
 			LOG_ERR("Could not get cell ID, error: %d", err);
 			goto clean_exit;
@@ -317,16 +327,36 @@ static int parse_cereg(const char *notification,
 
 		str_buf[len] = '\0';
 		cell->id = strtoul(str_buf, NULL, 16);
-	} else {
+	} else if (cell) {
 		cell->tac = UINT32_MAX;
 		cell->id = UINT32_MAX;
 	}
 
+	if (lte_mode) {
+		/* Get currently active LTE mode. */
+		err = at_params_int_get(&resp_list,
+				is_notification ? AT_CEREG_ACT_INDEX :
+						  AT_CEREG_READ_ACT_INDEX,
+				(int *)lte_mode);
+		if (err) {
+			LOG_DBG("LTE mode not found, error code: %d", err);
+			*lte_mode = LTE_LC_LTE_MODE_NONE;
+
+			/* This is not an error that should be returned, as it's
+			 * expected in some situations that LTE mode is not
+			 * available.
+			 */
+			err = 0;
+		} else {
+			LOG_DBG("LTE mode: %d", *lte_mode);
+		}
+	}
+
 	/* Parse PSM configuration only when registered */
-	if (((*reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+	if (psm_cfg && ((*reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
 	    (*reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) &&
 	     (at_params_valid_count_get(&resp_list) > AT_CEREG_TAU_INDEX)) {
-		err = parse_psm_cfg(&resp_list, true, psm_cfg);
+		err = parse_psm_cfg(&resp_list, is_notification, psm_cfg);
 		if (err) {
 			LOG_ERR("Failed to parse PSM configuration, error: %d",
 				err);
@@ -369,13 +399,15 @@ static void at_handler(void *context, const char *response)
 			LTE_LC_NW_REG_NOT_REGISTERED;
 		static struct lte_lc_cell prev_cell;
 		static struct lte_lc_psm_cfg prev_psm_cfg;
+		static enum lte_lc_lte_mode prev_lte_mode = LTE_LC_LTE_MODE_NONE;
 		enum lte_lc_nw_reg_status reg_status = 0;
 		struct lte_lc_cell cell;
+		enum lte_lc_lte_mode lte_mode;
 		struct lte_lc_psm_cfg psm_cfg;
 
 		LOG_DBG("+CEREG notification: %s", log_strdup(response));
 
-		err = parse_cereg(response, &reg_status, &cell, &psm_cfg);
+		err = parse_cereg(true, response, &reg_status, &cell, &lte_mode, &psm_cfg);
 		if (err) {
 			LOG_ERR("Failed to parse notification (error %d): %s",
 				err, log_strdup(response));
@@ -406,6 +438,14 @@ static void at_handler(void *context, const char *response)
 
 			memcpy(&prev_cell, &cell, sizeof(struct lte_lc_cell));
 			memcpy(&evt.cell, &cell, sizeof(struct lte_lc_cell));
+			evt_handler(&evt);
+		}
+
+		if (lte_mode != prev_lte_mode) {
+			prev_lte_mode = lte_mode;
+			evt.type = LTE_LC_EVT_LTE_MODE_UPDATE;
+			evt.lte_mode = lte_mode;
+
 			evt_handler(&evt);
 		}
 
@@ -1823,6 +1863,27 @@ clean_exit:
 	at_params_list_free(&resp_list);
 
 	return err;
+}
+
+int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)
+{
+	int err;
+	char buf[AT_CEREG_RESPONSE_MAX_LEN] = {0};
+
+	/* Read network registration status */
+	err = at_cmd_write(AT_CEREG_READ, buf, sizeof(buf), NULL);
+	if (err) {
+		LOG_ERR("Could not get CEREG response, error: %d", err);
+		return err;
+	}
+
+	err = parse_cereg(false, buf, NULL, NULL, mode, NULL);
+	if (err) {
+		LOG_ERR("Could not parse registration status, err: %d", err);
+		return err;
+	}
+
+	return 0;
 }
 
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
