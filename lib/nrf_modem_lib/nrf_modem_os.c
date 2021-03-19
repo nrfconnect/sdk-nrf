@@ -307,6 +307,9 @@ void nrf_modem_os_errno_set(int err_code)
 	case NRF_ETIMEDOUT:
 		errno = ETIMEDOUT;
 		break;
+	case NRF_ECONNREFUSED:
+		errno = ECONNREFUSED;
+		break;
 	case NRF_ENOBUFS:
 		errno = ENOBUFS;
 		break;
