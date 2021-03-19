@@ -7,5 +7,5 @@ dtc=1.4.7;hash=0747cc9d6b50ac8a3b1b576e4509494f2258aef2
 gnuarmemb=10-2020-q4-major
 gnuarmemb-short=10-2020q4
 ses=5.34a
-west=0.10.0
+west=0.10.1
 gn=1880
