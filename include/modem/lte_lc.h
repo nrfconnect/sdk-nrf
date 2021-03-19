@@ -53,6 +53,17 @@ enum lte_lc_system_mode {
 	LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS,
 };
 
+/** LTE mode. Used to indicate which LTE mode is currently active if more than
+ *  one mode is enabled in the system mode configuration.
+ *  The values for LTE-M and NB-IoT correspond to the values for the AcT field
+ *  in a AT+CEREG response.
+ */
+enum lte_lc_lte_mode {
+	LTE_LC_LTE_MODE_NONE	= 0,
+	LTE_LC_LTE_MODE_LTEM	= 7,
+	LTE_LC_LTE_MODE_NBIOT	= 9,
+};
+
 /** LTE mode preference. If more than one LTE system mode is enabled, the modem
  *  can select the mode that best meets the criteria set by this configuration.
  *  The LTE mode preference does not affect the way GPS operates.
@@ -109,6 +120,14 @@ enum lte_lc_evt_type {
 	LTE_LC_EVT_EDRX_UPDATE,
 	LTE_LC_EVT_RRC_UPDATE,
 	LTE_LC_EVT_CELL_UPDATE,
+
+	/** The currently active LTE mode is updated. If a system mode that
+	 *  enables both LTE-M and NB-IoT is configured, the modem may change
+	 *  the currently active LTE mdode based on the system mode preference
+	 *  and network availability. This event will then indicate which
+	 *  LTE mode is currently used by the modem.
+	 */
+	LTE_LC_EVT_LTE_MODE_UPDATE,
 };
 
 enum lte_lc_rrc_mode {
@@ -139,6 +158,7 @@ struct lte_lc_evt {
 		struct lte_lc_psm_cfg psm_cfg;
 		struct lte_lc_edrx_cfg edrx_cfg;
 		struct lte_lc_cell cell;
+		enum lte_lc_lte_mode lte_mode;
 	};
 };
 
@@ -403,6 +423,14 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
+
+/**@brief Get the currently active LTE mode.
+ *
+ * @param mode Pointer to LTE mode variable.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
 
 /** @} */
 
