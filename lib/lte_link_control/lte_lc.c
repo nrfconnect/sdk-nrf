@@ -160,7 +160,8 @@ static const enum lte_lc_system_mode sys_mode_preferred = SYS_MODE_PREFERRED;
 static enum lte_lc_system_mode sys_mode_target = SYS_MODE_PREFERRED;
 
 /* System mode preference to set when configuring system mode. */
-static enum lte_lc_system_mode_preference mode_preference = CONFIG_LTE_MODE_PREFERENCE;
+static enum lte_lc_system_mode_preference mode_pref_target = CONFIG_LTE_MODE_PREFERENCE;
+static enum lte_lc_system_mode_preference mode_pref_current;
 
 static const enum lte_lc_system_mode sys_mode_fallback =
 #if IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK)
@@ -624,7 +625,6 @@ static int enable_notifications(void)
 static int w_lte_lc_init(void)
 {
 	int err;
-	enum lte_lc_system_mode_preference preference;
 
 	if (is_initialized) {
 		return -EALREADY;
@@ -632,7 +632,7 @@ static int w_lte_lc_init(void)
 
 	k_sem_init(&link, 0, 1);
 
-	err = lte_lc_system_mode_get(&sys_mode_current, &preference);
+	err = lte_lc_system_mode_get(&sys_mode_current, &mode_pref_current);
 	if (err) {
 		LOG_ERR("Could not get current system mode, error: %d", err);
 		return err;
@@ -640,7 +640,6 @@ static int w_lte_lc_init(void)
 
 	if (IS_ENABLED(CONFIG_LTE_NETWORK_DEFAULT)) {
 		sys_mode_target = sys_mode_current;
-		mode_preference = preference;
 
 		LOG_DBG("Default system mode is used: %d", sys_mode_current);
 	}
@@ -651,15 +650,19 @@ static int w_lte_lc_init(void)
 		return err;
 	}
 
-	if (sys_mode_current != sys_mode_target) {
-		err = lte_lc_system_mode_set(sys_mode_target, mode_preference);
+	if ((sys_mode_current != sys_mode_target) ||
+	    (mode_pref_current != mode_pref_target)) {
+		err = lte_lc_system_mode_set(sys_mode_target, mode_pref_target);
 		if (err) {
 			LOG_ERR("Could not set system mode, error: %d", err);
 			return err;
 		}
+
+		LOG_DBG("System mode (%d) and preference (%d) configured",
+			sys_mode_target, mode_pref_target);
 	} else {
-		LOG_DBG("Preferred system mode (%d) is already configured",
-			sys_mode_current);
+		LOG_DBG("System mode (%d) and preference (%d) are already configured",
+			sys_mode_current, mode_pref_current);
 	}
 
 #if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT) && \
@@ -752,7 +755,7 @@ static int w_lte_lc_connect(bool blocking)
 		retry = false;
 
 		if (!IS_ENABLED(CONFIG_LTE_NETWORK_DEFAULT)) {
-			err = lte_lc_system_mode_set(sys_mode_target, mode_preference);
+			err = lte_lc_system_mode_set(sys_mode_target, mode_pref_current);
 			if (err) {
 				return err;
 			}
@@ -1646,6 +1649,8 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 
 	sys_mode_current = mode;
 	sys_mode_target = mode;
+	mode_pref_current = preference;
+	mode_pref_target = preference;
 
 	return err;
 }
@@ -1791,10 +1796,10 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 		sys_mode_current = *mode;
 	}
 
-	if ((preference != NULL) && (mode_preference != *preference)) {
+	if ((preference != NULL) && (mode_pref_current != *preference)) {
 		LOG_DBG("Current system mode preference updated from %d to %d",
-			mode_preference, *preference);
-		mode_preference = *preference;
+			mode_pref_current, *preference);
+		mode_pref_current = *preference;
 	}
 
 clean_exit:
