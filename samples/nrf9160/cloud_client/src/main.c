@@ -192,6 +192,13 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		LOG_DBG("LTE cell changed: Cell ID: %d, Tracking area: %d",
 			evt->cell.id, evt->cell.tac);
 		break;
+	case LTE_LC_EVT_LTE_MODE_UPDATE:
+		LOG_INF("Active LTE mode changed: %s",
+			evt->lte_mode == LTE_LC_LTE_MODE_NONE ? "None" :
+			evt->lte_mode == LTE_LC_LTE_MODE_LTEM ? "LTE-M" :
+			evt->lte_mode == LTE_LC_LTE_MODE_NBIOT ? "NB-IoT" :
+			"Unknown");
+		break;
 	default:
 		break;
 	}
