@@ -16,6 +16,12 @@ zephyr_library_sources_ifdef(
 	src/nrf_cloud_agps.c
 	src/nrf_cloud_agps_utils.c)
 zephyr_library_sources_ifdef(
+	CONFIG_NRF_CLOUD_PGPS
+	src/nrf_cloud_agps.c
+	src/nrf_cloud_agps_utils.c
+	src/nrf_cloud_pgps.c
+	src/nrf_cloud_pgps_utils.c)
+zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_FOTA
 	src/nrf_cloud_fota.c)
 zephyr_include_directories(./include)

@@ -25,8 +25,8 @@ config NRF_CLOUD_PROVISION_CERTIFICATES
 	bool "nRF Cloud library provision of certificate"
 	select MODEM_KEY_MGMT if NRF_MODEM_LIB
 	help
-		Enable run-time provisioning of certificates from the
-		certificates header file selected by using NRF_CLOUD_CERTIFICATES_FILE
+	  Enable run-time provisioning of certificates from the
+	  certificates header file selected by using NRF_CLOUD_CERTIFICATES_FILE
 
 config NRF_CLOUD_CERTIFICATES_FILE
 	string "nRF Cloud certificates"
@@ -131,8 +131,8 @@ config NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN
 	int "Size of the buffer for MQTT library."
 	default 256
 	help
-		Specifies maximum message size can be transmitted/received through
-		MQTT (exluding MQTT PUBLISH payload).
+	  Specifies maximum message size can be transmitted/received through
+	  MQTT (exluding MQTT PUBLISH payload).
 
 config NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN
 	int "Size of the buffer for MQTT PUBLISH payload."
@@ -154,7 +154,7 @@ config NRF_CLOUD_FOTA_PROGRESS_PCT_INCREMENT
 	range 0 100
 	default 10
 	help
-		0 disables progress report.
+	  0 disables progress report.
 
 config NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE
 	int "Fragment size for FOTA downloads."
@@ -199,7 +199,7 @@ endif # NRF_CLOUD_FOTA
 menu "nRF Cloud A-GPS"
 
 config NRF_CLOUD_AGPS
-	bool "Enable nRF Cloud A-GPS"
+	bool "Enable nRF Cloud Assisted GPS"
 	depends on NRF9160_GPS
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK
@@ -216,17 +216,77 @@ config NRF_CLOUD_AGPS_REQ_CELL_BASED_LOC
 	depends on NRF_CLOUD_AGPS_SINGLE_CELL_ONLY
 	default y
 	help
-		When disabled, nRF Cloud will obtain and store the approximate
-		cell-based location but will not send it to the device.
-		When enabled, nRF Cloud will also send the location to the
-		device.
-
-module = NRF_CLOUD_AGPS
-module-str = nRF Cloud A-GPS
-source "subsys/logging/Kconfig.template.log_config"
+	  When disabled, nRF Cloud will obtain and store the approximate
+	  cell-based location but will not send it to the device.
+	  When enabled, nRF Cloud will also send the location to the
+	  device.
 
 endif # NRF_CLOUD_AGPS
 endmenu
+
+menu "nRF Cloud P-GPS"
+
+config NRF_CLOUD_PGPS
+	bool "Enable nRF Cloud Predicted GPS"
+	depends on NRF9160_GPS
+	depends on MODEM_INFO
+	depends on MODEM_INFO_ADD_NETWORK
+	select STREAM_FLASH_ERASE
+	select SETTINGS
+
+if NRF_CLOUD_PGPS
+
+config NRF_CLOUD_PGPS_PREDICTION_PERIOD
+	int "Desired time in minutes between predictions."
+	range 60 480
+	default 240
+	help
+	  This value is used when requesting predicted GPS data from the
+	  cloud. More frequent predictions will result in more accurate
+	  ephemeris values for any given time, but will take more storage
+	  space in flash.
+
+config NRF_CLOUD_PGPS_NUM_PREDICTIONS
+	int "Desired number of predictions."
+	range 1 84
+	default 42
+	help
+	  This value, together with the prediction period, determines the
+	  overall timespan that the GPS predictions will cover. The
+	  default values allows for one week of predictions.
+
+config NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
+	int "Number of predictions remaining before fetching more."
+	range 0 84
+	default 0
+	help
+	  When set to 0, no attempt will be made to update the prediction
+	  set from the cloud until all predictions have expired. When set
+	  to an even number less than or equal to
+	  NRF_CLOUD_PGPS_NUM_PREDICTIONS, any expired predictions will be
+	  replaced with predictions following the last remaining valid
+	  prediction. Odd numbers are not allowed.
+
+config NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE
+	int "Fragment size for PGPS downloads."
+	range 128 1500
+	default 1500
+	help
+	  Due to the finite size of the nrf9160 modem's TLS buffer, this
+	  value needs to be small enough to leave room for the HTTP
+	  headers.
+
+endif # NRF_CLOUD_PGPS
+endmenu
+
+if NRF_CLOUD_AGPS || NRF_CLOUD_PGPS
+
+module = NRF_CLOUD_GPS
+module-str = nRF Cloud GPS Assistance
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
 
 config NRF_CLOUD_CONNECTION_POLL_THREAD
 	bool "Poll cloud connection in a separate thread"

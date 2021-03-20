@@ -36,6 +36,7 @@ enum nrf_cloud_agps_type {
 	NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK			= 7,
 	NRF_CLOUD_AGPS_LOCATION				= 8,
 	NRF_CLOUD_AGPS_INTEGRITY			= 9,
+	NRF_CLOUD_AGPS__LAST				= NRF_CLOUD_AGPS_INTEGRITY
 };
 
 struct nrf_cloud_agps_utc {
