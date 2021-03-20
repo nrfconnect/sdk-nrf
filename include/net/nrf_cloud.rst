@@ -37,7 +37,8 @@ If the :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabl
 When :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` is enabled, an additional event, :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING`, is sent to the application.
 The status field of :c:struct:`nrf_cloud_evt` contains the connection status that is defined by :c:enumerator:`nrf_cloud_connect_result`.
 The event :c:enumerator:`NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED` also contains additional information in the status field that is defined by :c:enumerator:`nrf_cloud_disconnect_status`.
-See :ref:`connectg_to_cloud` for additional information on :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
+Additional details for :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` can be found in the :ref:`connect_to_cloud` section.
+See :ref:`connect_to_cloud` for additional information on :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
 When the poll thread option is used directly with the nRF Cloud library, the enumeration values are prefixed with ``NRF``.
 
 First, the library tries to establish the transport for communicating with the cloud.
@@ -201,7 +202,7 @@ The return values for a failure scenario of the :c:func:`cloud_init` function ar
 .. note::
    If :option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` is enabled, error values could be different or have different error descriptions.
 
-.. _connectg_to_cloud:
+.. _connect_to_cloud:
 
 Connecting to the Cloud
 =======================
