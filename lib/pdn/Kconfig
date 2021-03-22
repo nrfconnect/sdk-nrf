@@ -1,0 +1,101 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig PDN
+	bool "Packet Domain Network library"
+	depends on NRF_MODEM_LIB && AT_CMD && AT_NOTIF
+
+if PDN
+
+config PDN_CONTEXTS_MAX
+	int "Number of PDP contexts"
+	range 0 11
+	default 1
+	help
+	  Maximum number of PDP context handled by the library.
+	  This number does not include the default PDP context 0.
+
+config PDN_LEGACY_PCO
+	bool "Use legacy PCO mode"
+	help
+	  If selected, PCO will be used instead of ePCO during PDN connection establishment.
+
+config PDN_ESM_TIMEOUT
+	int "ESM timeout (ms)"
+	default 1000
+	help
+	  Timeout for waiting for an ESM notification when activating a PDN, in milliseconds.
+
+config PDN_SYS_INIT
+	bool "Initialize during SYS_INIT"
+
+if PDN_SYS_INIT
+
+config PDN_INIT_PRIORITY
+	int "Initialization priority"
+	default APPLICATION_INIT_PRIORITY
+
+config PDN_DEFAULTS_OVERRIDE
+	bool "Override defaults for PDP context 0"
+
+if PDN_DEFAULTS_OVERRIDE
+
+config PDN_DEFAULT_APN
+	string "Access point name (APN)"
+
+choice
+	prompt "Family"
+
+config PDN_DEFAULT_FAM_IPV4
+	bool "IPV4"
+config PDN_DEFAULT_FAM_IPV6
+	bool "IPV6"
+config PDN_DEFAULT_FAM_IPV4V6
+	bool "IPV4V6"
+config PDN_DEFAULT_FAM_NONIP
+	bool "Non-IP"
+
+endchoice
+
+config PDN_DEFAULT_FAM
+	int
+	default 0 if PDN_DEFAULT_FAM_IPV4
+	default 1 if PDN_DEFAULT_FAM_IPV6
+	default 2 if PDN_DEFAULT_FAM_IPV4V6
+	default 3 if PDN_DEFAULT_FAM_NONIP
+
+choice
+	prompt "Authentication method"
+
+config PDN_DEFAULT_AUTH_NONE
+	bool "None"
+config PDN_DEFAULT_AUTH_PAP
+	bool "PAP"
+config PDN_DEFAULT_AUTH_CHAP
+	bool "CHAP"
+endchoice
+
+config PDN_DEFAULT_AUTH
+	int
+	default 0 if PDN_DEFAULT_AUTH_NONE
+	default 1 if PDN_DEFAULT_AUTH_PAP
+	default 2 if PDN_DEFAULT_AUTH_CHAP
+
+config PDN_DEFAULT_USERNAME
+	string "Username"
+
+config PDN_DEFAULT_PASSWORD
+	string "Password"
+
+endif # PDN_DEFAULTS_OVERRIDE
+endif # PDN_SYS_INIT
+
+module=PDN
+module-dep=LOG
+module-str=PDN library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # PDN
