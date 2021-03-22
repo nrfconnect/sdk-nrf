@@ -66,14 +66,12 @@ static enum state_type {
  * Upon a LTE connection loss the device will keep sampling/storing data in
  * the buffers, and empty the buffers in batches upon a reconnect.
  */
-static struct cloud_data_gps gps_buf[CONFIG_GPS_BUFFER_MAX];
-static struct cloud_data_sensors sensors_buf[CONFIG_SENSOR_BUFFER_MAX];
-static struct cloud_data_ui ui_buf[CONFIG_UI_BUFFER_MAX];
-static struct cloud_data_accelerometer accel_buf[CONFIG_ACCEL_BUFFER_MAX];
-static struct cloud_data_battery bat_buf[CONFIG_BAT_BUFFER_MAX];
-
-static struct cloud_data_modem_dynamic
-			modem_dyn_buf[CONFIG_MODEM_BUFFER_DYNAMIC_MAX];
+static struct cloud_data_gps gps_buf[CONFIG_DATA_GPS_BUFFER_COUNT];
+static struct cloud_data_sensors sensors_buf[CONFIG_DATA_SENSOR_BUFFER_COUNT];
+static struct cloud_data_ui ui_buf[CONFIG_DATA_UI_BUFFER_COUNT];
+static struct cloud_data_accelerometer accel_buf[CONFIG_DATA_ACCELEROMETER_BUFFER_COUNT];
+static struct cloud_data_battery bat_buf[CONFIG_DATA_BATTERY_BUFFER_COUNT];
+static struct cloud_data_modem_dynamic modem_dyn_buf[CONFIG_DATA_MODEM_DYNAMIC_BUFFER_COUNT];
 
 /* Static modem data does not change between firmware versions and does not
  * have to be buffered.
