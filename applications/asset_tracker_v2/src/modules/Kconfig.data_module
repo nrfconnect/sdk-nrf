@@ -31,28 +31,28 @@ config DATA_THREAD_STACK_SIZE
 	int "Data module thread stack size"
 	default 2560
 
-config GPS_BUFFER_MAX
-	int "GPS data ringbuffer entries"
+config DATA_GPS_BUFFER_COUNT
+	int "Number of GPS data ringbuffer entries"
 	default 10
 
-config SENSOR_BUFFER_MAX
-	int "Sensor data ringbuffer entries"
+config DATA_SENSOR_BUFFER_COUNT
+	int "Number of sensor data ringbuffer entries"
 	default 10
 
-config MODEM_BUFFER_DYNAMIC_MAX
-	int "Dynamic modem data ringbuffer entries"
+config DATA_MODEM_DYNAMIC_BUFFER_COUNT
+	int "Number of dynamic modem data ringbuffer entries"
 	default 3
 
-config UI_BUFFER_MAX
-	int "UI data ringbuffer entries"
+config DATA_UI_BUFFER_COUNT
+	int "Number of UI data ringbuffer entries"
 	default 3
 
-config ACCEL_BUFFER_MAX
-	int "Accelerometer data ringbuffer entries"
+config DATA_ACCELEROMETER_BUFFER_COUNT
+	int "Number of accelerometer data ringbuffer entries"
 	default 3
 
-config BAT_BUFFER_MAX
-	int "Battery data ringbuffer entries"
+config DATA_BATTERY_BUFFER_COUNT
+	int "Number of battery data ringbuffer entries"
 	default 3
 
 endif # DATA_MODULE
