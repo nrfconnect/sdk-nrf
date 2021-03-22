@@ -168,7 +168,7 @@ void zb_osif_nvram_flush(void)
 #define ZB_OSIF_PRODUCTION_CONFIG_MAGIC             { 0xE7, 0x37, 0xDD, 0xF6 }
 #define ZB_OSIF_PRODUCTION_CONFIG_MAGIC_SIZE        4
 
-zb_bool_t zb_osif_production_configuration_check_presence(void)
+zb_bool_t zb_osif_prod_cfg_check_presence(void)
 {
 	zb_uint8_t hdr[ZB_OSIF_PRODUCTION_CONFIG_MAGIC_SIZE] =
 		ZB_OSIF_PRODUCTION_CONFIG_MAGIC;
@@ -185,8 +185,8 @@ zb_bool_t zb_osif_production_configuration_check_presence(void)
 	}
 }
 
-zb_ret_t zb_osif_production_configuration_read_header(zb_uint8_t *prod_cfg_hdr,
-						      zb_uint16_t hdr_len)
+zb_ret_t zb_osif_prod_cfg_read_header(zb_uint8_t *prod_cfg_hdr,
+				      zb_uint16_t hdr_len)
 {
 	int err = flash_area_read(fa_pc, ZB_OSIF_PRODUCTION_CONFIG_MAGIC_SIZE,
 				  prod_cfg_hdr, hdr_len);
@@ -199,9 +199,9 @@ zb_ret_t zb_osif_production_configuration_read_header(zb_uint8_t *prod_cfg_hdr,
 }
 
 
-zb_ret_t zb_osif_production_configuration_read(zb_uint8_t *buffer,
-					       zb_uint16_t len,
-					       zb_uint16_t offset)
+zb_ret_t zb_osif_prod_cfg_read(zb_uint8_t *buffer,
+			       zb_uint16_t len,
+			       zb_uint16_t offset)
 {
 	uint32_t pc_offset = ZB_OSIF_PRODUCTION_CONFIG_MAGIC_SIZE + offset;
 	int err = flash_area_read(fa_pc, pc_offset, buffer, len);

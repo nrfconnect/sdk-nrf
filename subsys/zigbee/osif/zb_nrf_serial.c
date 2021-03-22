@@ -278,7 +278,7 @@ void zb_osif_uart_wake_up(void)
 	uart_irq_rx_enable(uart_dev);
 }
 
-void zb_osif_serial_put_bytes(zb_uint8_t *buf, zb_short_t len)
+void zb_osif_serial_put_bytes(const zb_uint8_t *buf, zb_short_t len)
 {
 #if !(defined(ZB_HAVE_ASYNC_SERIAL) && \
 	defined(CONFIG_ZBOSS_TRACE_LOG_LEVEL_OFF))
