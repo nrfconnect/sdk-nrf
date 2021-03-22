@@ -206,19 +206,6 @@ struct lte_lc_evt {
 
 typedef void(*lte_lc_evt_handler_t)(const struct lte_lc_evt *const evt);
 
-/* NOTE: enum order is important and should be preserved. */
-enum lte_lc_pdp_type {
-	LTE_LC_PDP_TYPE_IP = 0,
-	LTE_LC_PDP_TYPE_IPV6,
-	LTE_LC_PDP_TYPE_IPV4V6
-};
-
-enum lte_lc_pdn_auth_type {
-	LTE_LC_PDN_AUTH_TYPE_NONE = 0,
-	LTE_LC_PDN_AUTH_TYPE_PAP = 1,
-	LTE_LC_PDN_AUTH_TYPE_CHAP = 2,
-};
-
 /** @brief Register event handler for LTE events.
  *
  *  @param handler Event handler. Handler is de-registered if parameter is
@@ -405,37 +392,6 @@ int lte_lc_rai_param_set(const char *value);
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_rai_req(bool enable);
-
-/**
- * @brief Set the parameters for the default PDP context.
- * Must be called prior to `lte_lc_init` or `lte_lc_init_and_connect`.
- *
- * @param[in]  type            One of enum lte_pdp_type
- * @param[in]  apn             null terminated APN string
- * @param[in]  ip4_addr_alloc  0 - Allocate IPV4 address via NAS signaling
- *	(default), 1 - Allocate IPV4 address via DHCP.
- * @param[in]  nslpi           0 - NSLPI value from configuration is used
- *	(default), 1 - Value "Not configured".
- * @param[in]  secure_pco      0 - Protected PCO transmission is not requested
- *	(default), 1 - Protected PCO transmission is requested
- *
- * @return Zero on success or (negative) error code otherwise.
- */
-int lte_lc_pdp_context_set(enum lte_lc_pdp_type type, const char *apn,
-			   bool ip4_addr_alloc, bool nslpi, bool secure_pco);
-
-/**
- * @brief Set PDN authentication parameters for the default context.
- * Must be called prior to `lte_lc_init` or `lte_lc_init_and_connect`.
- *
- * @param[in]  auth_prot  One of enum lte_lc_pdn_auth_type
- * @param[in]  username   Null terminated username string
- * @param[in]  password   Null terminated password string
- *
- * @return Zero on success or (negative) error code otherwise.
- */
-int lte_lc_pdn_auth_set(enum lte_lc_pdn_auth_type auth_prot,
-			const char *username, const char *password);
 
 /**@brief Get the current network registration status.
  *

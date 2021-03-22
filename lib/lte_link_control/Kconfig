@@ -127,43 +127,6 @@ config LTE_PTW_VALUE_NBIOT
 		value that is configured, and it's usually best to let the modem
 		use default PTW values.
 
-config LTE_LEGACY_PCO_MODE
-	bool "Enable legacy LTE Protocol Configuration Options mode"
-
-config LTE_PDP_CMD
-	bool "Enable Packet Data Protocol AT command"
-	default n
-	help
-		Enable PDP define using AT+CGDCONT.
-
-if LTE_PDP_CMD
-config LTE_PDP_CONTEXT
-	string "Packet Data Protocol Context"
-	default "0,\"IPv4v6\",\"internet.apn\""
-	help
-		The +CGDCONT command defines Packet Data Protocol (PDP) Context.
-		For reference, see 3GPP 27.007 Ch. 10.1.1
-endif  # LTE_PDP_CMD
-
-config LTE_PDN_AUTH_CMD
-	bool "Enable PDN connection authentication AT command"
-	default n
-	help
-		Enable PDP connection authentication using AT+CGAUTH.
-
-if LTE_PDN_AUTH_CMD
-config LTE_PDN_AUTH
-	string "PDN connection authentication parameters"
-	default "0,1,\"username\",\"password\""
-	help
-		The +CGAUTH command specifies authentication parameters for a PDN connection.
-		For reference, see 3GPP 27.007 Ch. 10.1.31.
-
-config LTE_PDN_AUTH_LEN
-	int "Maximum combined lengths of username and password strings"
-	default 40
-endif # LTE_PDN_AUTH_CMD
-
 choice
 	prompt "Select network mode"
 	default LTE_NETWORK_MODE_LTE_M

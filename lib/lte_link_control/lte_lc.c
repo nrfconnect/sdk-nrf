@@ -159,17 +159,6 @@ static const char thingy91_magpio[] = {
 
 static struct k_sem link;
 
-#if defined(CONFIG_LTE_PDP_CMD)
-static char cgdcont[144] = "AT+CGDCONT="CONFIG_LTE_PDP_CONTEXT;
-#endif
-#if defined(CONFIG_LTE_PDN_AUTH_CMD)
-static char cgauth[19 + CONFIG_LTE_PDN_AUTH_LEN] =
-				"AT+CGAUTH="CONFIG_LTE_PDN_AUTH;
-#endif
-#if defined(CONFIG_LTE_LEGACY_PCO_MODE)
-static const char legacy_pco[] = "AT%XEPCO=0";
-#endif
-
 static const char *const at_notifs[] = {
 	[LTE_LC_NOTIF_CEREG]	= "+CEREG",
 	[LTE_LC_NOTIF_CSCON]	= "+CSCON",
@@ -483,24 +472,6 @@ static int init_and_config(void)
 	if (at_cmd_write(unlock_plmn, NULL, 0, NULL) != 0) {
 		return -EIO;
 	}
-#endif
-#if defined(CONFIG_LTE_LEGACY_PCO_MODE)
-	if (at_cmd_write(legacy_pco, NULL, 0, NULL) != 0) {
-		return -EIO;
-	}
-	LOG_INF("Using legacy LTE PCO mode...");
-#endif
-#if defined(CONFIG_LTE_PDP_CMD)
-	if (at_cmd_write(cgdcont, NULL, 0, NULL) != 0) {
-		return -EIO;
-	}
-	LOG_INF("PDP Context: %s", log_strdup(cgdcont));
-#endif
-#if defined(CONFIG_LTE_PDN_AUTH_CMD)
-	if (at_cmd_write(cgauth, NULL, 0, NULL) != 0) {
-		return -EIO;
-	}
-	LOG_INF("PDN Auth: %s", log_strdup(cgauth));
 #endif
 
 	/* Listen for RRC connection mode notifications */
@@ -947,46 +918,6 @@ int lte_lc_rai_param_set(const char *value)
 	}
 
 	return 0;
-}
-
-int lte_lc_pdp_context_set(enum lte_lc_pdp_type type, const char *apn,
-			   bool ip4_addr_alloc, bool nslpi, bool secure_pco)
-{
-#if defined(CONFIG_LTE_PDP_CMD)
-	static const char * const pdp_type_lut[] = {
-		"IP", "IPV6", "IPV4V6"
-	};
-
-	if (apn == NULL || type > LTE_LC_PDP_TYPE_IPV4V6) {
-		return -EINVAL;
-	}
-
-	snprintf(cgdcont, sizeof(cgdcont),
-		"AT+CGDCONT=0,\"%s\",\"%s\",0,0,0,%d,0,0,0,%d,%d",
-		pdp_type_lut[type], apn, ip4_addr_alloc, nslpi, secure_pco);
-
-	return 0;
-#else
-	return -ENOTSUP;
-#endif
-}
-
-int lte_lc_pdn_auth_set(enum lte_lc_pdn_auth_type auth_prot,
-			const char *username, const char *password)
-{
-#if defined(CONFIG_LTE_PDN_AUTH_CMD)
-	if (username == NULL || password == NULL ||
-	    auth_prot > LTE_LC_PDN_AUTH_TYPE_CHAP) {
-		return -EINVAL;
-	}
-
-	snprintf(cgauth, sizeof(cgauth), "AT+CGAUTH=0,%d,\"%s\",\"%s\"",
-		 auth_prot, username, password);
-
-	return 0;
-#else
-	return -ENOTSUP;
-#endif
 }
 
 int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
