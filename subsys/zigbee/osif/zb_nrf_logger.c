@@ -19,7 +19,7 @@ void zb_osif_serial_init(void)
 static zb_uint8_t buf8[8];
 static zb_uint_t buffered;
 
-void zb_osif_serial_put_bytes(zb_uint8_t *buf, zb_short_t len)
+void zb_osif_serial_put_bytes(const zb_uint8_t *buf, zb_short_t len)
 {
 	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_LOG_LEVEL_OFF)) {
 		return;
