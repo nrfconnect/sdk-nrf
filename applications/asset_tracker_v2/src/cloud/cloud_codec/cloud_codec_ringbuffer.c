@@ -19,6 +19,10 @@ void cloud_codec_populate_sensor_buffer(
 				int *head_sensor_buf,
 				size_t buffer_count)
 {
+	if (!IS_ENABLED(CONFIG_DATA_SENSOR_BUFFER_STORE)) {
+		return;
+	}
+
 	if (!new_sensor_data->queued) {
 		return;
 	}
@@ -40,6 +44,10 @@ void cloud_codec_populate_ui_buffer(struct cloud_data_ui *ui_buffer,
 				   int *head_ui_buf,
 				   size_t buffer_count)
 {
+	if (!IS_ENABLED(CONFIG_DATA_UI_BUFFER_STORE)) {
+		return;
+	}
+
 	if (!new_ui_data->queued) {
 		return;
 	}
@@ -62,6 +70,10 @@ void cloud_codec_populate_accel_buffer(
 				int *head_mov_buf,
 				size_t buffer_count)
 {
+	if (!IS_ENABLED(CONFIG_DATA_ACCELEROMETER_BUFFER_STORE)) {
+		return;
+	}
+
 	if (!new_accel_data->queued) {
 		return;
 	}
@@ -83,6 +95,10 @@ void cloud_codec_populate_bat_buffer(struct cloud_data_battery *bat_buffer,
 				     int *head_bat_buf,
 				     size_t buffer_count)
 {
+	if (!IS_ENABLED(CONFIG_DATA_BATTERY_BUFFER_STORE)) {
+		return;
+	}
+
 	if (!new_bat_data->queued) {
 		return;
 	}
@@ -104,6 +120,10 @@ void cloud_codec_populate_gps_buffer(struct cloud_data_gps *gps_buffer,
 				    int *head_gps_buf,
 				    size_t buffer_count)
 {
+	if (!IS_ENABLED(CONFIG_DATA_GPS_BUFFER_STORE)) {
+		return;
+	}
+
 	if (!new_gps_data->queued) {
 		return;
 	}
@@ -126,6 +146,10 @@ void cloud_codec_populate_modem_dynamic_buffer(
 				int *head_modem_buf,
 				size_t buffer_count)
 {
+	if (!IS_ENABLED(CONFIG_DATA_DYNAMIC_MODEM_BUFFER_STORE)) {
+		return;
+	}
+
 	if (!new_modem_data->queued) {
 		return;
 	}

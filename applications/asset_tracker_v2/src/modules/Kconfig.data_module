@@ -33,27 +33,66 @@ config DATA_THREAD_STACK_SIZE
 
 config DATA_GPS_BUFFER_COUNT
 	int "Number of GPS data ringbuffer entries"
+	range 1 100
 	default 10
+	help
+	  Currently, the range for ringbuffer entries is limited to a minimum of 1 and a
+	  maximum of 100. A minimum of 1 is set to make sure that the application builds with the
+	  current implementation of the data module. The buffers are essentially arrays of a
+	  certain data type and arrays cannot be compiled with a count of 0.
+	  The Kconfig range statement requires that a maximum value is also set.
+	  The maximum value of 100 is an arbitrary number that can be increased if desired.
+	  Note that when increasing the maximum count of a buffer there is no guarantee beyond
+	  using the default values that there is enough heap memory to successfully encode
+	  enqueued entries into a JSON object string.
 
 config DATA_SENSOR_BUFFER_COUNT
 	int "Number of sensor data ringbuffer entries"
+	range 1 100
 	default 10
 
 config DATA_MODEM_DYNAMIC_BUFFER_COUNT
 	int "Number of dynamic modem data ringbuffer entries"
+	range 1 100
 	default 3
 
 config DATA_UI_BUFFER_COUNT
 	int "Number of UI data ringbuffer entries"
+	range 1 100
 	default 3
 
 config DATA_ACCELEROMETER_BUFFER_COUNT
 	int "Number of accelerometer data ringbuffer entries"
+	range 1 100
 	default 3
 
 config DATA_BATTERY_BUFFER_COUNT
 	int "Number of battery data ringbuffer entries"
+	range 1 100
 	default 3
+
+config DATA_GPS_BUFFER_STORE
+	bool "Store GPS data received from the GPS module"
+	default y
+
+config DATA_SENSOR_BUFFER_STORE
+	bool "Store environmental sensor data received from the sensor module"
+	default y
+
+config DATA_ACCELEROMETER_BUFFER_STORE
+	bool "Store accelerometer data received from the sensor module"
+
+config DATA_DYNAMIC_MODEM_BUFFER_STORE
+	bool "Store dynamic modem data received from the modem module"
+	default y
+
+config DATA_BATTERY_BUFFER_STORE
+	bool "Store battery data received from the modem module"
+	default y
+
+config DATA_UI_MODEM_BUFFER_STORE
+	bool "Store UI data received from the UI module"
+	default y
 
 endif # DATA_MODULE
 
