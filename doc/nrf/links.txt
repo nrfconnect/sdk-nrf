@@ -181,6 +181,9 @@
 .. _`band lock section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
 .. _`system mode section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
 .. _`Credential storage management %CMNG`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/cmng.html
+.. _`Packet Domain AT commands`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/packet_domain/packet_domain.html?cp=2_1_6
+.. _`AT+CNEC set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mobile_termination_errors/cnec_set.html
+.. _`AT+CGEREP set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/packet_domain/cgerep_set.html
 
 .. _`Getting started with nRF Connect SDK (nRF53 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs/UG/gsg/intro.html
 
