@@ -23,6 +23,13 @@ Changelog
 
 The following sections provide detailed lists of changes by component.
 
+Bluetooth LE
+------------
+
+* Updated:
+
+   * The SoftDevice Controller can now be qualified on nRF52832.
+
 nRF5
 ====
 
