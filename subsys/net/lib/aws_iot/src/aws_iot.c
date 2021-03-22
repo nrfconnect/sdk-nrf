@@ -283,6 +283,7 @@ static void aws_iot_notify_event(const struct aws_iot_evt *aws_iot_evt)
 		cloud_evt.type = CLOUD_EVT_ERROR;
 	case AWS_IOT_EVT_FOTA_ERROR:
 		cloud_evt.type = CLOUD_EVT_FOTA_ERROR;
+		cloud_evt.data.err = aws_iot_evt->data.err;
 		break;
 	case AWS_IOT_EVT_FOTA_DL_PROGRESS:
 		cloud_evt.type = CLOUD_EVT_FOTA_DL_PROGRESS;
@@ -658,16 +659,9 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		return;
 	} else if (err < 0) {
 		LOG_ERR("aws_fota_mqtt_evt_handler, error: %d", err);
-		LOG_DBG("Disconnecting MQTT client...");
-
-		atomic_set(&disconnect_requested, 1);
-		err = mqtt_disconnect(c);
-		if (err) {
-			LOG_ERR("Could not disconnect: %d", err);
-			aws_iot_evt.type = AWS_IOT_EVT_ERROR;
-			aws_iot_evt.data.err = err;
-			aws_iot_notify_event(&aws_iot_evt);
-		}
+		aws_iot_evt.type = AWS_IOT_EVT_FOTA_ERROR;
+		aws_iot_evt.data.err = err;
+		aws_iot_notify_event(&aws_iot_evt);
 	}
 #endif
 
