@@ -12,6 +12,7 @@ config BT_NRF_SERVICES
 	  Common Bluetooth GATT Services support modules, required by all Nordic
 	  Services.
 
+rsource "Kconfig.ancs_client"
 rsource "Kconfig.bas_client"
 rsource "Kconfig.bms"
 rsource "Kconfig.cts_client"

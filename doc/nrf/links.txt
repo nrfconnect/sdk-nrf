@@ -560,6 +560,8 @@
 
 .. _`Timestamping`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/device-cloud-protocol/FourKindsOfData.html#timestamping
 
+.. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
+
 .. _`Power Saving Mode (PSM)`: https://www.sharetechnote.com/html/Handbook_LTE_PSM.html
 
 .. _`MQTT`: https://en.wikipedia.org/wiki/MQTT
