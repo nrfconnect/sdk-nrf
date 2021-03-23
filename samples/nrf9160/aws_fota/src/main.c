@@ -22,26 +22,15 @@
 BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			"This sample does not support auto init and connect");
 
-#if defined(CONFIG_USE_NRF_CLOUD)
-#define NRF_CLOUD_SECURITY_TAG 16842753
-#endif
-
 #define MQTT_KEEPALIVE (CONFIG_MQTT_KEEPALIVE * MSEC_PER_SEC)
 
-#if defined(CONFIG_PROVISION_CERTIFICATES)
-#include "certificates.h"
-#if defined(CONFIG_MODEM_KEY_MGMT)
-#include <modem/modem_key_mgmt.h>
-#endif
-#endif
-
-#if !defined(CONFIG_CLOUD_CLIENT_ID)
+#if !defined(CONFIG_USE_CUSTOM_CLIENT_ID)
 /* Define the length of the IMEI AT COMMAND response buffer */
 #define CGSN_RESP_LEN 19
 #define IMEI_LEN 15
-#define CLIENT_ID_LEN (sizeof(CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX) + IMEI_LEN)
+#define CLIENT_ID_LEN (sizeof(CONFIG_CLIENT_ID_PREFIX) + IMEI_LEN)
 #else
-#define CLIENT_ID_LEN sizeof(CONFIG_CLOUD_CLIENT_ID)
+#define CLIENT_ID_LEN sizeof(CONFIG_CLIENT_ID)
 #endif
 static uint8_t client_id_buf[CLIENT_ID_LEN];
 static uint8_t current_job_id[AWS_JOBS_JOB_ID_MAX_LEN];
@@ -71,57 +60,6 @@ void nrf_modem_recoverable_error_handler(uint32_t err)
 }
 
 #endif /* defined(CONFIG_NRF_MODEM_LIB) */
-
-#if !defined(CONFIG_USE_NRF_CLOUD)
-/* Topic for updating shadow topic with version number */
-#define AWS "$aws/things/"
-#define UPDATE_DELTA_TOPIC AWS "%s/shadow/update"
-#define SHADOW_STATE_UPDATE \
-"{\"state\":{\"reported\":{\"nrfcloud__dfu_v1__app_v\":\"%s\"}}}"
-
-static int update_device_shadow_version(struct mqtt_client *const client)
-{
-	struct mqtt_publish_param param;
-	char update_delta_topic[strlen(AWS) + strlen("/shadow/update") +
-				sizeof(client_id_buf)];
-	uint8_t shadow_update_payload[CONFIG_DEVICE_SHADOW_PAYLOAD_SIZE];
-
-	int ret = snprintf(update_delta_topic,
-			   sizeof(update_delta_topic),
-			   UPDATE_DELTA_TOPIC,
-			   client->client_id.utf8);
-	uint32_t update_delta_topic_len = ret;
-
-	if (ret >= sizeof(update_delta_topic)) {
-		return -ENOMEM;
-	} else if (ret < 0) {
-		return ret;
-	}
-
-	ret = snprintf(shadow_update_payload,
-		       sizeof(shadow_update_payload),
-		       SHADOW_STATE_UPDATE,
-		       CONFIG_APP_VERSION);
-	uint32_t shadow_update_payload_len = ret;
-
-	if (ret >= sizeof(shadow_update_payload)) {
-		return -ENOMEM;
-	} else if (ret < 0) {
-		return ret;
-	}
-
-	param.message.topic.qos = MQTT_QOS_1_AT_LEAST_ONCE;
-	param.message.topic.topic.utf8 = update_delta_topic;
-	param.message.topic.topic.size = update_delta_topic_len;
-	param.message.payload.data = shadow_update_payload;
-	param.message.payload.len = shadow_update_payload_len;
-	param.message_id = sys_rand32_get();
-	param.dup_flag = 0;
-	param.retain_flag = 0;
-
-	return mqtt_publish(client, &param);
-}
-#endif /* !defined(CONFIG_USE_NRF_CLOUD) */
 
 /**@brief Function to print strings without null-termination. */
 static void data_print(uint8_t *prefix, uint8_t *data, size_t len)
@@ -180,12 +118,6 @@ void mqtt_evt_handler(struct mqtt_client * const c,
 		}
 
 		printk("[%s:%d] MQTT client connected!\n", __func__, __LINE__);
-#if !defined(CONFIG_USE_NRF_CLOUD)
-		err = update_device_shadow_version(c);
-		if (err) {
-			printk("Unable to update device shadow err: %d\n", err);
-		}
-#endif
 		break;
 
 	case MQTT_EVT_DISCONNECT:
@@ -324,56 +256,10 @@ static void broker_init(const char *hostname)
 	/* Free the address. */
 	freeaddrinfo(result);
 }
-#if defined(CONFIG_PROVISION_CERTIFICATES)
-#warning Not for prodcution use. This should only be used once to provisioning the certificates please deselect the provision certificates configuration and compile again.
-#define MAX_OF_2 MAX(sizeof(CLOUD_CA_CERTIFICATE),\
-		     sizeof(CLOUD_CLIENT_PRIVATE_KEY))
-#define MAX_LEN MAX(MAX_OF_2, sizeof(CLOUD_CLIENT_PUBLIC_CERTIFICATE))
-static uint8_t certificates[][MAX_LEN] = {{CLOUD_CA_CERTIFICATE},
-				       {CLOUD_CLIENT_PRIVATE_KEY},
-				       {CLOUD_CLIENT_PUBLIC_CERTIFICATE} };
-static const size_t cert_len[] = {
-	sizeof(CLOUD_CA_CERTIFICATE) - 1, sizeof(CLOUD_CLIENT_PRIVATE_KEY) - 1,
-	sizeof(CLOUD_CLIENT_PUBLIC_CERTIFICATE) - 1
-};
-static int provision_certificates(void)
-{
-	int err;
-
-	printk("************************* WARNING *************************\n");
-	printk("%s called do not use this in production!\n", __func__);
-	printk("This will store the certificates in readable flash and leave\n");
-	printk("them exposed on modem_traces. Only use this once for\n");
-	printk("provisioning certificates for development to reduce flash tear."
-		"\n");
-	printk("************************* WARNING *************************\n");
-	nrf_sec_tag_t sec_tag = CONFIG_CLOUD_CERT_SEC_TAG;
-	enum modem_key_mgmt_cred_type cred[] = {
-		MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-		MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
-		MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
-	};
-
-	/* Delete certificates */
-	for (enum modem_key_mgmt_cred_type type = 0; type < 3; type++) {
-		err = modem_key_mgmt_delete(sec_tag, type);
-		printk("modem_key_mgmt_delete(%u, %d) => result=%d\n",
-				sec_tag, type, err);
-	}
-
-	/* Write certificates */
-	for (enum modem_key_mgmt_cred_type type = 0; type < 3; type++) {
-		err = modem_key_mgmt_write(sec_tag, cred[type],
-				certificates[type], cert_len[type]);
-		printk("modem_key_mgmt_write => result=%d\n", err);
-	}
-	return 0;
-}
-#endif
 
 static int client_id_get(char *id_buf, size_t len)
 {
-#if !defined(CONFIG_CLOUD_CLIENT_ID)
+#if !defined(CONFIG_CLIENT_ID)
 	enum at_cmd_state at_state;
 	char imei_buf[CGSN_RESP_LEN];
 	int err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf),
@@ -384,11 +270,11 @@ static int client_id_get(char *id_buf, size_t len)
 			err, at_state);
 		return err;
 	}
-	snprintf(id_buf, len, "%s%.*s", CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX,
+	snprintf(id_buf, len, "%s%.*s", CONFIG_CLIENT_ID_PREFIX,
 		 IMEI_LEN, imei_buf);
 #else
-	memcpy(id_buf, CONFIG_CLOUD_CLIENT_ID, len);
-#endif /* !defined(NRF_CLOUD_CLIENT_ID) */
+	memcpy(id_buf, CONFIG_CLIENT_ID, len);
+#endif /* !defined(CONFIG_CLIENT_ID) */
 	return 0;
 }
 
@@ -423,11 +309,7 @@ static int client_init(struct mqtt_client *client, char *hostname)
 	client->transport.type = MQTT_TRANSPORT_SECURE;
 
 	static sec_tag_t sec_tag_list[] = {
-#ifdef CONFIG_USE_NRF_CLOUD
-		NRF_CLOUD_SECURITY_TAG
-#else
-		CONFIG_CLOUD_CERT_SEC_TAG
-#endif
+		CONFIG_CERT_SEC_TAG
 	};
 	struct mqtt_sec_config *tls_config = &(client->transport).tls.config;
 
@@ -557,9 +439,6 @@ void main(void)
 	printk("Initialized modem library\n");
 
 	at_configure();
-#if defined(CONFIG_PROVISION_CERTIFICATES)
-	provision_certificates();
-#endif /* CONFIG_PROVISION_CERTIFICATES */
 	printk("LTE Link Connecting ...\n");
 	err = lte_lc_init_and_connect();
 	__ASSERT(err == 0, "LTE link could not be established.");

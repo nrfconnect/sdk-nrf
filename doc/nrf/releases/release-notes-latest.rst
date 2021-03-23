@@ -110,6 +110,17 @@ nRF9160
 
     * Renamed gps_agps_request() to gps_agps_request_send().
 
+  * :ref:`aws_fota_sample` sample:
+
+    * Removed nRF Connect for Cloud support code, because ``fota_v1`` is no longer supported in nRF Connect for Cloud.
+    * Removed provisioning using :ref:`modem_key_mgmt` and :file:`certificates.h`, because this is not the recommended way of provisioning private certificates.
+    * Renamed the following Kconfig options:
+
+      * ``CONFIG_CLOUD_CERT_SEC_TAG`` renamed to :option:`CONFIG_CERT_SEC_TAG`.
+      * ``CONFIG_USE_CLOUD_CLIENT_ID`` renamed to :option:`CONFIG_USE_CUSTOM_CLIENT_ID`.
+      * ``CONFIG_CLOUD_CLIENT_ID`` renamed to ``CONFIG_CLIENT_ID``.
+      * ``CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`` renamed to ``CONFIG_CLIENT_ID_PREFIX``.
+
 nRF5
 ====
 

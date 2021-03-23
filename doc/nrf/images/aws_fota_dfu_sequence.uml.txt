@@ -1,18 +1,13 @@
+# Diagram generated with https://sequencediagram.org
 title AWS Firmware-over-the-air
 participant Device
 participant AWS IoT MQTT Broker
 participant AWS IoT Jobs
-participant AWS IoT Device Shadow
 participant AWS S3 Server
 activate AWS IoT MQTT Broker
 note left of Device: Device Boot
 activate Device
-Device->AWS IoT Device Shadow: Update device shadow
-activate AWS IoT Device Shadow
 
-note over Device,AWS IoT Device Shadow: {nrf_cloud_app_fw_version: v1.0.0}
-
-deactivate AWS IoT Device Shadow
 Device->AWS IoT MQTT Broker: MQTT: Connect
 AWS IoT MQTT Broker->Device: MQTT: CONNACK
 Device->AWS IoT MQTT Broker: MQTT: Subscribe
@@ -48,4 +43,3 @@ AWS IoT Jobs->Device: Publish on accepted topic
 deactivateafter Device
 deactivate AWS IoT Jobs
 note left of Device: Device reboots
-

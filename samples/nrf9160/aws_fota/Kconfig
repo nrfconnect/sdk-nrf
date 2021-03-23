@@ -10,80 +10,38 @@ config APP_VERSION
 	string "Application version"
 	default "v1.0.0"
 
-config USE_NRF_CLOUD
-	bool "Use nRF Cloud"
-	default n
-
-config CLOUD_CERT_SEC_TAG
-	depends on !USE_NRF_CLOUD
+config  CERT_SEC_TAG
 	int "Security tag for TLS credentials"
 	default 12345678
-
-config PROVISION_CERTIFICATES
-	depends on !USE_NRF_CLOUD
-	bool "Provision certificates from the certificates.h file"
-	select MODEM_KEY_MGMT
-	default n
 	help
-	  If enabled, the sample provisions server certificates into
-	  the modem by storing the certificates defined in the
-	  certificates.h file in the modem under the given security tag.
-	  Use this option only once to provision the device.
-	  The certificates are stored in the application binary and are
-	  therefore shown in the modem trace information. This is a
-	  security risk. After provisioning the certificates, turn off
-	  this option and compile and program the sample again.
-	  Also, do not share the binary that includes the compiled
-	  certificates with anyone.
+	  Security tag where the certificates for the AWS IoT MQTT broker
+	  are stored.
 
-config USE_CLOUD_CLIENT_ID
-	depends on !USE_NRF_CLOUD
+config USE_CUSTOM_CLIENT_ID
 	bool "Custom MQTT client ID"
-	default y
 
-config CLOUD_CLIENT_ID
-	depends on !USE_NRF_CLOUD
-	depends on USE_CLOUD_CLIENT_ID
+config CLIENT_ID
+	depends on USE_CUSTOM_CLIENT_ID
 	string "Client ID"
 	default "your_client_id"
 
 config MQTT_BROKER_HOSTNAME
-	depends on !USE_NRF_CLOUD
 	string "AWS IoT MQTT broker hostname"
 	default "your_aws_mqtt_broker_hostname.amazonaws.com"
 	help
-	  Default is set to be the nRF Cloud MQTT broker.
+	  Address to your AWS IoT MQTT broker.
 
 config MQTT_BROKER_PORT
-	depends on !USE_NRF_CLOUD
 	int "AWS IoT MQTT broker port"
 	default 8883
 
-config MQTT_BROKER_HOSTNAME
-	depends on USE_NRF_CLOUD
-	string
-	default "a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com"
-	help
-	  Default is set to be the nRF Cloud MQTT broker.
-
-config MQTT_BROKER_PORT
-	depends on USE_NRF_CLOUD
-	int
-	default 8883
-
-config NRF_CLOUD_CLIENT_ID_PREFIX
-	depends on !USE_CLOUD_CLIENT_ID
-	depends on !NRF_CLOUD
+config CLIENT_ID_PREFIX
+	depends on !USE_CUSTOM_CLIENT_ID
 	string "Prefix used when constructing the MQTT client ID from the IMEI"
 	default "nrf-"
 	help
-	  The nrf- prefix is reserved on nRF Connect for Cloud for official Nordic
-	  devices (e.g. the nRF9160 DK or the Thingy:91).
-	  In case you wish to use aws_fota on nRF Connect for Cloud with your own
-	  devices you need to modify the prefix used to generate the MQTT client
-	  ID from the IMEI.
-	  This property is provided here in case the nrf_cloud module itself is not
-	  enabled.
+	  Generates an MQTT client ID based on the prefix and IMEI from the
+	  device.
 
 config MQTT_MESSAGE_BUFFER_SIZE
 	int "MQTT message buffer size"
@@ -92,10 +50,6 @@ config MQTT_MESSAGE_BUFFER_SIZE
 config MQTT_PAYLOAD_BUFFER_SIZE
 	int "MQTT payload buffer size"
 	default 128
-
-config DEVICE_SHADOW_PAYLOAD_SIZE
-	int "MQTT payload transmission buffer size for AWS IoT device shadow updates"
-	default 255
 
 endmenu
 
