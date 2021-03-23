@@ -4,16 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if LOG
-
 menu "Event options"
 
-comment "Initially logged events"
+config ML_APP_ML_RESULT_EVENTS
+	bool "Enable machine learning result events"
 
-config ML_APP_INIT_LOG_ML_RESULT_EVENT
-	bool "Machine learning result event"
+config ML_APP_INIT_LOG_ML_RESULT_EVENTS
+	bool "Log machine learning result events"
+	depends on ML_APP_ML_RESULT_EVENTS
+	depends on LOG
 	default y
 
 endmenu
-
-endif

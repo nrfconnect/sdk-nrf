@@ -4,13 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "Machine learning model runner"
-
-config ML_APP_ML_RUNNER_ENABLE
+menuconfig ML_APP_ML_RUNNER
 	bool "Machine learning model runner"
 	depends on EI_WRAPPER
+	depends on CAF_SENSOR_EVENTS
+	select ML_APP_ML_RESULT_EVENTS
 
-if ML_APP_ML_RUNNER_ENABLE
+if ML_APP_ML_RUNNER
 
 config ML_APP_ML_RUNNER_WINDOW_SHIFT
 	int "Prediction window shift [windows]"
@@ -30,6 +30,4 @@ module = ML_APP_ML_RUNNER
 module-str = machine learning model runner
 source "subsys/logging/Kconfig.template.log_config"
 
-endif # ML_APP_ML_RUNNER_ENABLE
-
-endmenu
+endif # ML_APP_ML_RUNNER
