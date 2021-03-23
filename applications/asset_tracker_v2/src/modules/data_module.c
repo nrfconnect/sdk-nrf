@@ -699,7 +699,6 @@ static void requested_data_list_set(enum app_module_data_type *data_list,
 
 static void new_config_handle(struct cloud_data_cfg *new_config)
 {
-	int err;
 	bool config_change = false;
 
 	/* Guards making sure that only new configuration values are applied. */
@@ -785,27 +784,23 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 			new_config->accelerometer_threshold);
 	}
 
-	err = save_config(&current_cfg, sizeof(current_cfg));
-	if (err) {
-		LOG_WRN("Configuration not stored, error: %d", err);
-	}
-
-	/* Distribute the configuration to other modules regardless
-	 * if the values has changed or not. This is to make sure that
-	 * the cloud module (which does the initial decoding of the
-	 * incoming configuration) always has the latest valid
-	 * configuration.
-	 */
-	config_distribute(DATA_EVT_CONFIG_READY);
-
-	/* Acknowledge configuration to cloud if there has been a change
-	 * in the current device configuration.
+	/* If there has been a change in the currently applied device configuration we want to store
+	 * the configuration to flash, distribute it to other modules and acknowledge the change
+	 * back to cloud.
 	 */
 	if (config_change) {
+		int err = save_config(&current_cfg, sizeof(current_cfg));
+
+		if (err) {
+			LOG_WRN("Configuration not stored, error: %d", err);
+		}
+
+		config_distribute(DATA_EVT_CONFIG_READY);
 		config_send(false);
-	} else {
-		LOG_WRN("No change in current device configuration");
+		return;
 	}
+
+	LOG_DBG("No new values in incoming device configuration update message");
 }
 
 /* Message handler for STATE_CLOUD_DISCONNECTED. */
