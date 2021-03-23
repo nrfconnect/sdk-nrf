@@ -27,6 +27,6 @@ EVENT_INFO_DEFINE(ml_result_event,
 		  profile_ml_result_event);
 
 EVENT_TYPE_DEFINE(ml_result_event,
-		  IS_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_RESULT_EVENT),
+		  IS_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_RESULT_EVENTS),
 		  log_ml_result_event,
 		  &ml_result_event_info);
