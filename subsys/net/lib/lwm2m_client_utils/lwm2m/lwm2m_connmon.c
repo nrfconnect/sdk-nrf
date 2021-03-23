@@ -9,6 +9,7 @@
 #include <net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
 
+#include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 
 #include <logging/log.h>
@@ -28,6 +29,7 @@ static uint8_t bearers[2] = { LTE_FDD_BEARER, NB_IOT_BEARER };
 static void modem_data_update(struct k_work *work)
 {
 	int ret;
+	enum lte_lc_lte_mode mode;
 
 	ret = modem_info_params_get(&modem_param);
 	if (ret < 0) {
@@ -35,10 +37,25 @@ static void modem_data_update(struct k_work *work)
 		return;
 	}
 
-	if (modem_param.network.lte_mode.value != 0) {
+	ret = lte_lc_lte_mode_get(&mode);
+	if (ret < 0) {
+		LOG_ERR("Unable to obtain current LTE mode: %d", ret);
+		return;
+	}
+
+	switch (mode) {
+	case LTE_LC_LTE_MODE_LTEM:
 		lwm2m_engine_set_u8("4/0/0", LTE_FDD_BEARER);
-	} else if (modem_param.network.nbiot_mode.value != 0) {
+		break;
+
+	case LTE_LC_LTE_MODE_NBIOT:
 		lwm2m_engine_set_u8("4/0/0", NB_IOT_BEARER);
+		break;
+
+	case LTE_LC_LTE_MODE_NONE:
+	default:
+		LOG_DBG("No LTE mode information available");
+		break;
 	}
 
 	lwm2m_engine_create_res_inst("4/0/1/0");
