@@ -58,7 +58,7 @@ To create a thing for your kit:
 #. Go to :guilabel:`Manage` > :guilabel:`Things` and select :guilabel:`Register a thing` or :guilabel:`Create` (depending on whether you already have a thing registered).
 #. Select :guilabel:`Create a single thing`.
 #. Enter a name.
-   The default name used by the sample is ``nrf-IMEI``, where *IMEI* is the IMEI number of your kit.
+   The default name used by the sample is ``your_client_id``.
    If you choose a different name, make sure to :ref:`configure a custom client ID <configuring>` in the sample before you build it.
 #. Accept the defaults and continue to the next step.
 #. Select :guilabel:`Create certificate` to generate new certificates.
@@ -74,34 +74,26 @@ Updating the certificates
 =========================
 
 The certificates that you created or added for your thing in AWS IoT must be stored on your kit so that it can connect to AWS IoT.
-There are two different ways of doing this:
 
-Add the certificates to the sample code:
-   If you add the certificates to the sample code, the sample will store them on your kit automatically.
+Use `LTE Link Monitor`_ to write the certificates to the kit.
+This application, which is part of `nRF Connect for Desktop`_, provides a certificate manager that you can use to store the certificates on your kit.
 
    .. warning_start
 
    .. warning::
-      * The sample will overwrite the certificates stored with the configured :option:`security tag <CLOUD_CERT_SEC_TAG>`.
-      * You should provision the certificates only once and then update the sample configuration to use the existing certificates.
-        When provisioning the certificates, they are stored in the application binary and visible in the modem trace information, which is a security risk.
-
+      The LTE Link Monitor will overwrite the certificates stored on the device with the given security tag number.
+      Therefore, make sure that you are using the correct security tag.
    .. warning_end
 
-   1. Open the :file:`certificates.h` file in the :file:`src` folder of the sample.
-   #. Add the three certificates in the given format.
-      Make sure to not add whitespace except for the ``\n`` line breaks.
-   #. Before programming the sample, configure it to provision the certificates from the :file:`certificates.h` file (:option:`PROVISION_CERTIFICATES`) and to use a different security tag (:option:`CLOUD_CERT_SEC_TAG`).
 
 Use LTE Link Monitor to write the certificates to the kit:
-   The nRF Connect `LTE Link Monitor`_ provides a certificate manager that you can use to store the certificates on your kit:
 
-   1. Make sure that you have the :ref:`at_host_sample` sample programmed on your kit.
-   #. Put the modem in offline state.
-   #. Paste the three certificates into the respective fields.
-   #. Choose a security tag.
-   #. Click :guilabel:`Update certificates`.
-   #. Before programming the sample, make sure to configure the :option:`security tag <CLOUD_CERT_SEC_TAG>` to the one that you chose.
+1. Make sure that you have the :ref:`at_host_sample` sample programmed on your kit.
+#. Put the modem in offline state.
+#. Paste the three certificates into the respective fields.
+#. Choose a security tag.
+#. Click :guilabel:`Update certificates`.
+#. Before programming the sample, make sure to configure the :option:`security tag <CONFIG_CERT_SEC_TAG>` to the one that you chose.
 
 .. include:: /includes/aws_s3_bucket.txt
 
@@ -133,42 +125,28 @@ Sample configuration
 
 Before you build the sample, check and update the following configuration options:
 
-.. option:: APP_VERSION - Application version
+.. option:: CONFIG_APP_VERSION - Application version
 
    The version string is printed when the sample starts.
    Use this information to verify that the FOTA update worked.
 
-.. option:: CLOUD_CERT_SEC_TAG - Security tag for TLS credentials
+.. option:: CONFIG_CERT_SEC_TAG - Security tag for TLS credentials
 
    By default, the sample uses the certificates that are stored with the security tag for nRF Connect for Cloud.
    To use different certificates, configure a different security tag.
    If you used LTE Link Monitor to store the certificates, make sure to configure the security tag to the same that you used to store them.
 
-.. option:: MQTT_BROKER_HOSTNAME - AWT IoT MQTT broker hostname
+.. option:: CONFIG_MQTT_BROKER_HOSTNAME - AWT IoT MQTT broker hostname
 
    By default, the sample uses nRF Connect for Cloud's MQTT broker.
    Change this value to AWS IoT's MQTT broker.
    To find the address of the AWS IoT MQTT broker, open the AWS IoT console, go to :guilabel:`Test` and select :guilabel:`View endpoint` from the :guilabel:`Connected as XXX` drop-down menu.
 
-.. option:: USE_CLOUD_CLIENT_ID - Custom MQTT client ID
+.. option:: CONFIG_USE_CUSTOM_CLIENT_ID - Custom MQTT client ID
 
    The client ID links your kit to the thing in AWS IoT.
-   By default, the client ID is ``nrf-IMEI``, where *IMEI* is the IMEI number of your kit.
+   By default, the client ID is ``your_client_id``.
    If you chose a different name for your thing in AWS IoT, check this option and specify the AWS IoT thing name as client ID.
-
-.. option:: USE_NRF_CLOUD - Use nRF Connect for Cloud
-
-   If this option is checked, the sample uses the certificates that are stored in the modem with the nRF Connect for Cloud security tag.
-
-   Uncheck this option if you want to use the certificates added to the :file:`certificates.h` file.
-
-.. option:: PROVISION_CERTIFICATES - Provision certificates from the certificates.h file
-
-   If this option is checked, the sample stores the certificates from the :file:`certificates.h` file with the security tag that is defined as :option:`Security tag for TLS credentials <CLOUD_CERT_SEC_TAG>`.
-
-   .. include:: README.rst
-      :start-after: warning_start
-      :end-before: warning_end
 
 For all other values, use the default values unless you are using a custom MQTT server.
 
@@ -185,12 +163,6 @@ After programming the sample to your development kit, test it by performing the 
       ***** Booting Zephyr OS build v1.14.99-ncs3-snapshot2-1281-g40b430ba977c *****
 
       The MQTT AWS Jobs FOTA Sample, version: v1.0.0
-      nrf_inbuilt_key_delete(42, 0) => result=0
-      nrf_inbuilt_key_delete(42, 1) => result=0
-      nrf_inbuilt_key_delete(42, 2) => result=0
-      nrf_inbuilt_key_write => result=0
-      nrf_inbuilt_key_write => result=0
-      nrf_inbuilt_key_write => result=0
       LTE Link Connecting ...
       LTE Link Connected!
       IPv4 Address 127.0.0.1
@@ -198,8 +170,7 @@ After programming the sample to your development kit, test it by performing the 
       [mqtt_evt_handler:129] MQTT client connected!
       [00:00:14.106,140] <inf> aws_jobs: Subscribe: $aws/things/nrf-aws-fota/jobs/notify-next
 
-#. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` > :guilabel:`Things`, and select your thing.
-#. Go to :guilabel:`Shadow` and confirm that the application version (``nrfcloud__dfu_v1__app_v``) is the one that you configured for the sample.
+#. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` -> :guilabel:`Things`, and select your thing.
 #. In the :ref:`configuring`, change the application version.
    Then rebuild the application, but do not program it.
 #. Go to `AWS S3 console`_ and sign in.
@@ -258,8 +229,6 @@ Troubleshooting
 
 ERROR: mqtt_connect -45:
    Error -45 ("operation is not supported on socket") indicates an error with the configured certificates.
-   Check that you added the certificates correctly in :file:`certificates.h` and that you did not mix up the different certificates.
-   Certificates must be formatted correctly, without extra whitespace.
 
 Content range is not defined:
    If you host the firmware image on a different server than in an S3 bucket, this error indicates that the Content-Range field is missing in the HTTP GET header.
