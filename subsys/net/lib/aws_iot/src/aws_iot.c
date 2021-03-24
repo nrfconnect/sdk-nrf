@@ -1147,6 +1147,12 @@ int aws_iot_init(const struct aws_iot_config *const config,
 	int err;
 
 	if (IS_ENABLED(CONFIG_AWS_IOT_CLIENT_ID_APP) &&
+		config == NULL) {
+		LOG_ERR("config is NULL");
+		return -EINVAL;
+	}
+
+	if (IS_ENABLED(CONFIG_AWS_IOT_CLIENT_ID_APP) &&
 	    config->client_id_len >= CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN) {
 		LOG_ERR("Client ID string too long");
 		return -EMSGSIZE;
@@ -1158,7 +1164,12 @@ int aws_iot_init(const struct aws_iot_config *const config,
 		return -ENODATA;
 	}
 
-	err = aws_iot_topics_populate(config->client_id, config->client_id_len);
+	if (IS_ENABLED(CONFIG_AWS_IOT_CLIENT_ID_APP)) {
+		err = aws_iot_topics_populate(config->client_id, config->client_id_len);
+	} else {
+		err = aws_iot_topics_populate(NULL, 0);
+	}
+
 	if (err) {
 		LOG_ERR("aws_topics_populate, error: %d", err);
 		return err;
