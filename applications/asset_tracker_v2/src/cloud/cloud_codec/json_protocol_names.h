@@ -34,6 +34,7 @@
 #define DATA_ENVIRONMENTALS	"env"
 #define DATA_BUTTON		"btn"
 #define DATA_CONFIG		"cfg"
+#define DATA_VERSION		"version"
 
 #define DATA_MOVEMENT		"acc"
 #define DATA_MOVEMENT_X		"x"

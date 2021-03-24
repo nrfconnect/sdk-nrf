@@ -20,6 +20,35 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
+/* Function that checks the version number of the incoming message and determines if it has already
+ * been handled. Receiving duplicate messages can often occur upon retransmissions from the AWS IoT
+ * broker due to unACKed MQTT QoS 1 messages and unACKed TCP packets. Messages from AWS IoT
+ * shadow topics contains an incrementing version number.
+ */
+static bool has_shadow_update_been_handled(cJSON *root_obj)
+{
+	cJSON *version_obj;
+	static int version_prev;
+	bool retval = false;
+
+	version_obj = cJSON_GetObjectItem(root_obj, DATA_VERSION);
+	if (version_obj == NULL) {
+		/* No version number present in message. */
+		return false;
+	}
+
+	/* If the incoming version number is lower than or equal to the previous,
+	 * the incoming message is considered a retransmitted message and will be ignored.
+	 */
+	if (version_prev >= version_obj->valueint) {
+		retval = true;
+	}
+
+	version_prev = version_obj->valueint;
+
+	return retval;
+}
+
 int cloud_codec_decode_config(char *input, struct cloud_data_cfg *data)
 {
 	int err = 0;
@@ -34,6 +63,11 @@ int cloud_codec_decode_config(char *input, struct cloud_data_cfg *data)
 	root_obj = cJSON_Parse(input);
 	if (root_obj == NULL) {
 		return -ENOENT;
+	}
+
+	if (has_shadow_update_been_handled(root_obj)) {
+		err = -ECANCELED;
+		goto exit;
 	}
 
 	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LOG_LEVEL_DBG)) {
