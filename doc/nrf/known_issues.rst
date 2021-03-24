@@ -831,6 +831,14 @@ SoftDevice Controller
 
 .. rst-class:: v1-5-0
 
+DRGN-15475: Samples might not initialize the SoftDevice Controller HCI driver correctly
+  Samples using both the advertising and the scanning state, but not the connected state, fail to initialize the SoftDevice Controller HCI driver.
+  As a result, the function :c:func:`bt_enable()` returns an error code.
+
+  **Workaround:** Manually enable :option:`CONFIG_SOFTDEVICE_CONTROLLER_MULTIROLE` for the project configuration.
+
+.. rst-class:: v1-5-0
+
 DRGN-15382: The SoftDevice Controller cannot be qualified on nRF52832
   The SoftDevice Controller cannot be qualified on nRF52832.
 
