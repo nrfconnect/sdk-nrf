@@ -15,4 +15,13 @@ config ML_APP_INIT_LOG_ML_RESULT_EVENTS
 	depends on LOG
 	default y
 
+config ML_APP_ML_STATE_EVENTS
+	bool "Enable machine learning state events"
+
+config ML_APP_INIT_LOG_ML_STATE_EVENTS
+	bool "Log machine learning state events"
+	depends on ML_APP_ML_STATE_EVENTS
+	depends on LOG
+	default y
+
 endmenu
