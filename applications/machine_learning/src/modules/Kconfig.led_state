@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig ML_APP_LED_STATE
+	bool "LED state"
+	depends on CAF_LED_EVENTS
+	depends on ML_APP_ML_STATE_EVENTS
+
+if ML_APP_LED_STATE
+
+module = ML_APP_LED_STATE
+module-str = LED state
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # ML_APP_LED_STATE
