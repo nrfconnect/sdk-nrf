@@ -9,6 +9,7 @@
 #include <drivers/uart.h>
 
 #include <caf/events/sensor_event.h>
+#include "ml_state_event.h"
 
 #define MODULE ei_data_forwarder
 #include <caf/events/module_state_event.h>
@@ -19,12 +20,15 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_EI_DATA_FORWARDER_LOG_LEVEL);
 #define UART_LABEL		CONFIG_ML_APP_EI_DATA_FORWARDER_UART_DEV
 #define UART_BUF_SIZE		CONFIG_ML_APP_EI_DATA_FORWARDER_BUF_SIZE
 
+#define ML_STATE_CONTROL	IS_ENABLED(CONFIG_ML_APP_ML_STATE_EVENTS)
+
 static const struct device *dev;
 static atomic_t uart_busy;
 
 enum state {
 	STATE_DISABLED,
 	STATE_ACTIVE,
+	STATE_SUSPENDED,
 	STATE_ERROR
 };
 
@@ -95,6 +99,23 @@ static bool handle_sensor_event(const struct sensor_event *event)
 	return false;
 }
 
+static bool handle_ml_state_event(const struct ml_state_event *event)
+{
+	__ASSERT_NO_MSG(state != STATE_DISABLED);
+
+	if (state == STATE_ERROR) {
+		return false;
+	}
+
+	if (event->state == ML_STATE_DATA_FORWARDING) {
+		state = STATE_ACTIVE;
+	} else {
+		state = STATE_SUSPENDED;
+	}
+
+	return false;
+}
+
 static void uart_cb(const struct device *dev, struct uart_event *evt,
 		    void *user_data)
 {
@@ -127,6 +148,10 @@ static bool event_handler(const struct event_header *eh)
 		return handle_sensor_event(cast_sensor_event(eh));
 	}
 
+	if (ML_STATE_CONTROL && is_ml_state_event(eh)) {
+		return handle_ml_state_event(cast_ml_state_event(eh));
+	}
+
 	if (is_module_state_event(eh)) {
 		const struct module_state_event *event = cast_module_state_event(eh);
 
@@ -134,7 +159,7 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(state == STATE_DISABLED);
 
 			if (!init()) {
-				state = STATE_ACTIVE;
+				state = ML_STATE_CONTROL ? STATE_SUSPENDED : STATE_ACTIVE;
 				module_set_state(MODULE_STATE_READY);
 			} else {
 				report_error();
@@ -152,4 +177,7 @@ static bool event_handler(const struct event_header *eh)
 
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+#if ML_STATE_CONTROL
+EVENT_SUBSCRIBE(MODULE, ml_state_event);
+#endif /* ML_STATE_CONTROL */
 EVENT_SUBSCRIBE(MODULE, sensor_event);
