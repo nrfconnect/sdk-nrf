@@ -24,7 +24,7 @@ set(EI_URI ${CONFIG_EDGE_IMPULSE_URI})
 
 if(NOT ${EI_URI} MATCHES "^[a-z]+://")
   if(NOT IS_ABSOLUTE ${EI_URI})
-    message(FATAL_ERROR "CONFIG_EDGE_IMPULSE_URI cannot be a relative path")
+    set(EI_URI ${APPLICATION_SOURCE_DIR}/${EI_URI}) #message(FATAL_ERROR "CONFIG_EDGE_IMPULSE_URI cannot be a relative path")
   endif()
 endif()
 
