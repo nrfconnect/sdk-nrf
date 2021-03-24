@@ -9,7 +9,7 @@
 
 /**
  * @brief Machine Learning Result Event
- * @defgroup ei_result_event Machine Learning Result Event
+ * @defgroup ml_result_event Machine Learning Result Event
  * @{
  */
 
