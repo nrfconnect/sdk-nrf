@@ -19,7 +19,7 @@ config HW_CC3XX_FORCE_ALT
 
 if !HW_CC3XX_FORCE_ALT
 
-menuconfig HW_CC3XX
+config HW_CC3XX
 	bool "Arm CC3xx hw driver for Nordic devices"
 	depends on HAS_HW_NRF_CC310 || HAS_HW_NRF_CC312
 	depends on !TRUSTED_EXECUTION_NONSECURE
