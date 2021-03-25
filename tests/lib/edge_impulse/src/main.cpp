@@ -222,6 +222,25 @@ static void test_overflow(void)
 	}
 }
 
+static void test_cancel(void)
+{
+	int err;
+
+	err = ei_wrapper_start_prediction(0, 1);
+	zassert_ok(err, "Cannot start prediction");
+	err = add_input_data(prediction_idx, 0);
+	zassert_ok(err, "Cannot add input data");
+
+	err = k_sem_take(&test_sem, EI_TEST_SEM_TIMEOUT);
+	zassert_true(err, "Unexpected prediction end");
+
+	bool cancelled;
+
+	err = ei_wrapper_clear_data(&cancelled);
+	zassert_true(cancelled, "Prediciton was cancelled");
+	zassert_ok(err, "Cannot clear data");
+}
+
 static void test_loop(void)
 {
 	const static size_t loop_cnt = 100;
@@ -368,8 +387,10 @@ static void test_data_isr(void)
 
 static void setup_fn(void)
 {
-	int err = ei_wrapper_clear_data();
+	bool cancelled;
+	int err = ei_wrapper_clear_data(&cancelled);
 
+	zassert_false(cancelled, "Prediction was not cancelled");
 	zassert_ok(err, "Cannot clear data");
 }
 
@@ -388,6 +409,7 @@ void test_main(void)
 		ztest_unit_test_setup_teardown(test_data_add_fail, setup_fn, teardown_fn),
 		ztest_unit_test_setup_teardown(test_double_start, setup_fn, teardown_fn),
 		ztest_unit_test_setup_teardown(test_overflow, setup_fn, teardown_fn),
+		ztest_unit_test_setup_teardown(test_cancel, setup_fn, teardown_fn),
 		ztest_unit_test_setup_teardown(test_loop, setup_fn, teardown_fn),
 		ztest_unit_test_setup_teardown(test_sliding_window, setup_fn, teardown_fn),
 		ztest_unit_test_setup_teardown(test_data_after_start, setup_fn, teardown_fn),
