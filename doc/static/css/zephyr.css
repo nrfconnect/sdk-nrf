@@ -52,6 +52,7 @@
 
 .grid-item h2 {
   font-size: 1.1rem;
+  overflow-x: unset;
 }
 
 .grid-item img {
