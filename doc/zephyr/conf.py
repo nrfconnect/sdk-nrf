@@ -33,7 +33,7 @@ extensions.append("sphinx.ext.intersphinx")
 html_theme = "sphinx_ncs_theme"
 html_theme_path = []
 html_favicon = None
-html_static_path = [str(NRF_BASE / "doc" / "static")]
+html_static_path.append(str(NRF_BASE / "doc" / "static"))
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_logo = None
