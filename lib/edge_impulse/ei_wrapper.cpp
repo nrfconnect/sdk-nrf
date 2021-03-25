@@ -25,6 +25,7 @@ BUILD_ASSERT(CONFIG_EI_WRAPPER_THREAD_STACK_SIZE > 0);
 
 enum state {
 	STATE_DISABLED,
+	STATE_WAITING_FOR_DATA,
 	STATE_PROCESSING,
 	STATE_READY,
 };
@@ -123,6 +124,7 @@ static int buf_append(struct data_buffer *b, const float *data, size_t len,
 			b->wait_data_size -= len;
 		} else {
 			b->wait_data_size = 0;
+			b->state = STATE_PROCESSING;
 			*process_buf = true;
 		}
 	}
@@ -183,7 +185,7 @@ static int buf_processing_move(struct data_buffer *b, size_t move,
 	k_spinlock_key_t key = k_spin_lock(&b->lock);
 
 	if (b->state == STATE_READY) {
-		b->state = STATE_PROCESSING;
+		b->state = STATE_WAITING_FOR_DATA;
 	} else {
 		__ASSERT_NO_MSG(b->state != STATE_DISABLED);
 		k_spin_unlock(&b->lock, key);
@@ -202,6 +204,7 @@ static int buf_processing_move(struct data_buffer *b, size_t move,
 	if (processing_end_move > max_move) {
 		b->wait_data_size = processing_end_move - max_move;
 	} else {
+		b->state = STATE_PROCESSING;
 		*process_buf = true;
 	}
 
