@@ -73,6 +73,10 @@ int ei_wrapper_add_data(const float *data, size_t data_size);
 
 /** Clear all buffered data.
  *
+ * The buffer cannot be cleared if the prediction was already started and the
+ * wrapper is not waiting for data. In that case, user must wait until the
+ * prediction is finished.
+ *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
