@@ -4,4 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-add_subdirectory_ifdef(CONFIG_BUILD_WITH_TFM tfm)
+add_subdirectory_ifdef(CONFIG_BUILD_WITH_TFM tfm/zephyr)
