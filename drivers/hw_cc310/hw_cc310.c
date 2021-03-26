@@ -49,7 +49,7 @@ static int hw_cc3xx_init(const struct device *dev)
 }
 
 /* Driver initalization done when mutex is not usable (pre kernel) */
-SYS_INIT(hw_cc3xx_init_internal, PRE_KERNEL_2,
+SYS_INIT(hw_cc3xx_init_internal, PRE_KERNEL_1,
 	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 
 /* Driver initialization when mutex is usable (post kernel) */
