@@ -11,11 +11,11 @@ The Asset Tracker v2 is a real-time configurable ultra-low-power capable applica
 It is a complete rework of the :ref:`asset_tracker` application.
 This application introduces a set of new features, which are not present in the :ref:`asset_tracker` application:
 
-* *Ultra-low power by design* - The application highlights the power saving features of the nRF9160 SiP, which is critical for successfully developing small form-factor devices and/or products which need very long battery lifetime.
-* *Offline first* - Highly-mobile cellular IoT products need to handle unreliable connections gracefully by implementing mechanisms to retry the failed sending of data.
-* *Timestamping on the device* - Sensor data is timestamped on the device using multiple time sources. When the device is offline (planned or unplanned), the timestamping does not rely on the cloud side.
-* *Batching of data* - Data can be batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
-* *Configurable at run-time* - The application behavior (for example, accelerometer sensitivity or GPS timeout) can be configured at run-time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
+* Ultra-low power by design - The application highlights the power saving features of the nRF9160 SiP, which is critical for successfully developing small form-factor devices and products which need very long battery lifetime.
+* Offline first - Highly-mobile cellular IoT products need to handle unreliable connections gracefully by implementing mechanisms to retry the failed sending of data.
+* Timestamping on the device - Sensor data is timestamped on the device using multiple time sources. When the device is offline (planned or unplanned), the timestamping does not rely on the cloud side.
+* Batching of data - Data can be batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
+* Configurable at run time - The application behavior (for example, accelerometer sensitivity or GPS timeout) can be configured at run time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
 
 Implementation of the above features required a rework of the existing application.
 Hence, this application is not backward compatible to the :ref:`asset_tracker` application.
@@ -159,35 +159,35 @@ The application uses the following buttons on the nRF9160-based development kits
 Additionally, the application displays LED behavior that corresponds to the task performed by the application.
 The following table shows the purpose of each supported button:
 
-+--------+-----------------------------------+--------------------------------------------------------------------------------------------------------------+
-| Button | Thingy:91                         | nRF9160 DK                                                                                                   |
-+========+===================================+==============================================================================================================+
-| 1      | Send message to the cloud service | Send message to the cloud service                                                                            |
-+--------+-----------------------------------+--------------------------------------------------------------------------------------------------------------+
-| 2      |                                   | Send message to the cloud service                                                                            |
-|        |                                   +--------------------------------------------------------------------------------------------------------------+
-|        |                                   | Fake movement. No external accelerometer in nRF9160 DK  to trigger movement in passive mode.                 |
-+--------+-----------------------------------+--------------------------------------------------------------------------------------------------------------+
++--------+-----------------------------------+---------------------------------------------------------------------------------------------+
+| Button | Thingy:91                         | nRF9160 DK                                                                                  |
++========+===================================+=============================================================================================+
+| 1      | Send message to the cloud service | Send message to the cloud service.                                                          |
++--------+-----------------------------------+---------------------------------------------------------------------------------------------+
+| 2      |                                   | Send message to the cloud service.                                                          |
+|        |                                   +---------------------------------------------------------------------------------------------+
+|        |                                   | Fake movement. No external accelerometer in nRF9160 DK to trigger movement in passive mode. |
++--------+-----------------------------------+---------------------------------------------------------------------------------------------+
 
 The following table shows the LED behavior demonstrated by the application:
 
-+----------------------------+-------------------------+----------------------+
-| State                      | Thingy:91 RGB LED       | nRF9160 DK solid LEDs|
-+============================+=========================+======================+
-| LTE connection search      | Yellow flashing         | LED1 flashing        |
-+----------------------------+-------------------------+----------------------+
-| GPS fix search             | Purple flashing         | LED2 flashing        |
-+----------------------------+-------------------------+----------------------+
-| Publishing data            | Green flashing          | LED3 flashing        |
-+----------------------------+-------------------------+----------------------+
-| Active mode                | Light blue flashing     | LED4 flashing        |
-+----------------------------+-------------------------+----------------------+
-| Passive mode               | Dark blue slow flashing | LED4 slow flashing   |
-|                            |                         |                      |
-|                            | (short on, long off)    | (short on, long off) |
-+----------------------------+-------------------------+----------------------+
-| Error                      | Red solid               | all 4 LEDs flashing  |
-+----------------------------+-------------------------+----------------------+
++---------------------------+-------------------------+-----------------------+
+| State                     | Thingy:91 RGB LED       | nRF9160 DK solid LEDs |
++===========================+=========================+=======================+
+| LTE connection search     | Yellow, blinking        | LED1 blinking         |
++---------------------------+-------------------------+-----------------------+
+| GPS fix search            | Purple, blinking        | LED2 blinking         |
++---------------------------+-------------------------+-----------------------+
+| Publishing data           | Green, blinking         | LED3 blinking         |
++---------------------------+-------------------------+-----------------------+
+| Active mode               | Light blue, blinking    | LED4 blinking         |
++---------------------------+-------------------------+-----------------------+
+| Passive mode              | Dark blue, slow blinking| LED4 slow blinking    |
++---------------------------+-------------------------+-----------------------+
+| Error                     | Red, on                 | all 4 LEDs blinking   |
++---------------------------+-------------------------+-----------------------+
+| Completion of FOTA Update | White, rapid blinking   | all 4 LEDs on         |
++---------------------------+-------------------------+-----------------------+
 
 Requirements
 ************
