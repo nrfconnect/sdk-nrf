@@ -365,7 +365,18 @@ static void on_all_states(struct ui_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
-		update_led_pattern(LED_ERROR_SYSTEM_FAULT);
+		switch (msg->module.util.reason) {
+		case REASON_FOTA_UPDATE:
+			update_led_pattern(LED_FOTA_UPDATE_REBOOT);
+			break;
+		case REASON_GENERIC:
+			update_led_pattern(LED_ERROR_SYSTEM_FAULT);
+			break;
+		default:
+			LOG_WRN("Unknown shutdown reason");
+			break;
+		}
+
 		SEND_SHUTDOWN_ACK(ui, UI_EVT_SHUTDOWN_READY, self.id);
 		state_set(STATE_SHUTDOWN);
 	}
