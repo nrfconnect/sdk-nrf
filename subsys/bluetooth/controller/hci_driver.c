@@ -82,6 +82,14 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 			 (CONFIG_SDC_SLAVE_COUNT > 0));
 
+#if defined(CONFIG_BT_EXT_ADV)
+	#define SDC_ADV_SET_COUNT CONFIG_BT_EXT_ADV_MAX_ADV_SET
+#elif defined(CONFIG_BT_BROADCASTER)
+	#define SDC_ADV_SET_COUNT 1
+#else
+	#define SDC_ADV_SET_COUNT 0
+#endif
+
 #ifdef CONFIG_BT_CTLR_DATA_LENGTH_MAX
 	#define MAX_TX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
 	#define MAX_RX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
@@ -105,7 +113,8 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	+ SDC_MEM_SLAVE_LINKS_SHARED)
 
 #define MEMPOOL_SIZE ((CONFIG_SDC_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
-		      (SDC_MASTER_COUNT * MASTER_MEM_SIZE))
+		      (SDC_MASTER_COUNT * MASTER_MEM_SIZE) + \
+		      (SDC_ADV_SET_COUNT * SDC_MEM_DEFAULT_ADV_SIZE))
 
 static uint8_t sdc_mempool[MEMPOOL_SIZE];
 
@@ -462,6 +471,16 @@ static int hci_driver_open(void)
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 				       SDC_CFG_TYPE_EVENT_LENGTH,
 				       &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+
+	cfg.adv_count.count = SDC_ADV_SET_COUNT;
+
+	required_memory =
+	sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+		    SDC_CFG_TYPE_ADV_COUNT,
+		    &cfg);
 	if (required_memory < 0) {
 		return required_memory;
 	}
