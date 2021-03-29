@@ -19,10 +19,10 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_LOG_LEVEL);
 
 static int frame_length_check(size_t length)
 {
+	BUILD_ASSERT(TRANSPORT_HEADER_SIZE < REPORT_SIZE_USER_CONFIG);
+
 	const size_t min_size = TRANSPORT_HEADER_SIZE;
 	const size_t max_size = REPORT_SIZE_USER_CONFIG;
-
-	BUILD_ASSERT(min_size < max_size);
 
 	if ((length < min_size) || (length > max_size)) {
 		LOG_WRN("Unsupported report length %zu", length);
@@ -34,10 +34,10 @@ static int frame_length_check(size_t length)
 
 static int data_len_check(size_t event_data_len)
 {
+	BUILD_ASSERT(TRANSPORT_HEADER_SIZE < REPORT_SIZE_USER_CONFIG);
+
 	const size_t min_size = TRANSPORT_HEADER_SIZE;
 	const size_t max_size = REPORT_SIZE_USER_CONFIG;
-
-	BUILD_ASSERT(min_size < max_size);
 
 	if (event_data_len > max_size - min_size) {
 		LOG_WRN("Unsupported event data length %" PRIu8,
