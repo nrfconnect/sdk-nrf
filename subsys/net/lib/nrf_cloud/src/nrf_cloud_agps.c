@@ -268,6 +268,8 @@ int nrf_cloud_agps_request(const struct gps_agps_request request)
 	}
 
 	if (request.system_time_tow) {
+		types[type_count] = GPS_AGPS_GPS_TOWS;
+		type_count += 1;
 		types[type_count] = GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS;
 		type_count += 1;
 	}
@@ -453,6 +455,10 @@ static int send_to_modem(void *data, size_t data_len,
 {
 	int err;
 
+	if (agps_print_enabled) {
+		agps_print(type, data);
+	}
+
 	/* At this point, GPS driver or app-provided socket is assumed. */
 	if (gps_dev) {
 		return gps_agps_write(gps_dev, type_socket2gps(type), data,
@@ -468,10 +474,6 @@ static int send_to_modem(void *data, size_t data_len,
 	}
 
 	LOG_DBG("A-GSP data sent to modem");
-
-	if (agps_print_enabled) {
-		agps_print(type, data);
-	}
 
 	return err;
 }
@@ -826,7 +828,8 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 {
 	int err;
 	struct nrf_cloud_apgs_element element = {};
-	struct nrf_cloud_agps_system_time sys_time;
+	struct nrf_cloud_agps_system_time sys_time = {};
+	uint32_t sv_mask = 0;
 	size_t parsed_len = 0;
 	uint8_t version;
 
@@ -850,7 +853,7 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 	__ASSERT(version == NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION,
 		 "Cannot parse schema version: %d", version);
 
-	LOG_DBG("Receievd AGPS data. Schema version: %d, length: %d",
+	LOG_DBG("Received AGPS data. Schema version: %d, length: %d",
 		version, buf_len);
 
 	if (socket) {
@@ -883,6 +886,9 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 			memcpy(&sys_time.sv_tow[element.tow->sv_id - 1],
 				element.tow,
 				sizeof(sys_time.sv_tow[0]));
+			if (element.tow->flags || element.tow->tlm) {
+				sv_mask |= 1 << (element.tow->sv_id - 1);
+			}
 
 			LOG_DBG("TOW %d copied", element.tow->sv_id - 1);
 
@@ -890,9 +896,10 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 		} else if (element.type == NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK) {
 			memcpy(&sys_time, element.time_and_tow,
 				sizeof(sys_time) - sizeof(sys_time.sv_tow));
-
+			sys_time.sv_mask = sv_mask | element.time_and_tow->sv_mask;
 			LOG_DBG("TOWs copied, bitmask: 0x%08x",
-				element.time_and_tow->sv_mask);
+				sys_time.sv_mask);
+			element.time_and_tow = &sys_time;
 		}
 
 		err = agps_send_to_modem(&element);
