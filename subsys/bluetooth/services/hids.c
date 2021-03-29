@@ -77,15 +77,18 @@ int bt_hids_connected(struct bt_hids *hids_obj, struct bt_conn *conn)
 	/* Assign output report context. */
 	conn_data->outp_rep_ctx = conn_data->inp_rep_ctx;
 
-	for (size_t i = 0; i < hids_obj->inp_rep_group.cnt; i++) {
+	size_t cnt = MIN(hids_obj->inp_rep_group.cnt, ARRAY_SIZE(hids_obj->inp_rep_group.reports));
+
+	for (size_t i = 0; i < cnt; i++) {
 		conn_data->outp_rep_ctx +=
 		    hids_obj->inp_rep_group.reports[i].size;
 	}
 
 	/* Assign feature report context. */
 	conn_data->feat_rep_ctx = conn_data->outp_rep_ctx;
+	cnt = MIN(hids_obj->outp_rep_group.cnt, ARRAY_SIZE(hids_obj->outp_rep_group.reports));
 
-	for (size_t i = 0; i < hids_obj->outp_rep_group.cnt; i++) {
+	for (size_t i = 0; i < cnt; i++) {
 		conn_data->feat_rep_ctx +=
 		    hids_obj->outp_rep_group.reports[i].size;
 	}
@@ -735,7 +738,9 @@ hids_input_reports_register(struct bt_hids *hids_obj,
 	memcpy(&hids_obj->inp_rep_group, &init_param->inp_rep_group_init,
 	       sizeof(hids_obj->inp_rep_group));
 
-	for (size_t i = 0; i < hids_obj->inp_rep_group.cnt; i++) {
+	size_t cnt = MIN(hids_obj->inp_rep_group.cnt, ARRAY_SIZE(hids_obj->inp_rep_group.reports));
+
+	for (size_t i = 0; i < cnt; i++) {
 		struct bt_hids_inp_rep *hids_inp_rep =
 			&hids_obj->inp_rep_group.reports[i];
 		uint8_t rperm = hids_inp_rep->perm & GATT_PERM_READ_MASK;
@@ -781,7 +786,10 @@ static void hids_outp_reports_register(struct bt_hids *hids_obj,
 	memcpy(&hids_obj->outp_rep_group, &init->outp_rep_group_init,
 	       sizeof(hids_obj->outp_rep_group));
 
-	for (size_t i = 0; i < hids_obj->outp_rep_group.cnt; i++) {
+	size_t cnt = MIN(hids_obj->outp_rep_group.cnt,
+			 ARRAY_SIZE(hids_obj->outp_rep_group.reports));
+
+	for (size_t i = 0; i < cnt; i++) {
 		struct bt_hids_outp_feat_rep *hids_outp_rep =
 			&hids_obj->outp_rep_group.reports[i];
 		uint8_t perm = hids_outp_rep->perm;
@@ -823,8 +831,10 @@ static void hids_feat_reports_register(struct bt_hids *hids_obj,
 	       sizeof(hids_obj->feat_rep_group));
 
 	uint8_t offset = 0;
+	size_t cnt = MIN(hids_obj->feat_rep_group.cnt,
+			 ARRAY_SIZE(hids_obj->feat_rep_group.reports));
 
-	for (size_t i = 0; i < hids_obj->feat_rep_group.cnt; i++) {
+	for (size_t i = 0; i < cnt; i++) {
 		struct bt_hids_outp_feat_rep *hids_feat_rep =
 		    &hids_obj->feat_rep_group.reports[i];
 		uint8_t perm = hids_feat_rep->perm;
