@@ -844,7 +844,7 @@ static bool adv_uuid_compare(const struct bt_data *data, uint8_t uuid_type,
 
 static bool is_uuid_filter_enabled(void)
 {
-	return bt_scan.scan_filters.uuid.enabled;
+	return CONFIG_BT_SCAN_UUID_CNT && bt_scan.scan_filters.uuid.enabled;
 }
 
 static void uuid_check(struct bt_scan_control *control,
