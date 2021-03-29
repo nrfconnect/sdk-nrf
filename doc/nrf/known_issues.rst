@@ -974,6 +974,11 @@ DRGN-15251: Very rare assertion fault when connected as peripheral on Coded PHY
 
   **Workaround:** Do not enable :option:`CONFIG_BT_DATA_LEN_UPDATE` for applications that require Coded PHY as a peripheral device.
 
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+DRGN-15310: HCI Read RSSI fails
+  The command "HCI Read RSSI" always returns "Command Disallowed (0x0C)".
+
 .. rst-class:: v1-5-0
 
 DRGN-15465: Corrupted advertising data when :option:`CONFIG_BT_EXT_ADV` is set
