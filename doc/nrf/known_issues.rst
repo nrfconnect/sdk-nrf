@@ -341,8 +341,11 @@ nRF Desktop
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 DESK-978: Directed advertising issues with SoftDevice Link Layer
-  Directed advertising (:option:`CONFIG_DESKTOP_BLE_DIRECT_ADV`) should not be used by the :ref:`nrf_desktop` application when the :ref:`nrfxlib:softdevice_controller` is in use, because that leads to reconnection problems.
+  Directed advertising (``CONFIG_DESKTOP_BLE_DIRECT_ADV``) should not be used by the :ref:`nrf_desktop` application when the :ref:`nrfxlib:softdevice_controller` is in use, because that leads to reconnection problems.
   For more detailed information, see the ``Known issues and limitations`` section of the SoftDevice Controller's :ref:`nrfxlib:softdevice_controller_changelog`.
+
+.. note::
+   The Kconfig option name changed from ``CONFIG_DESKTOP_BLE_DIRECT_ADV`` to :option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` beginning with the nRF Connect SDK v1.5.99.
 
   **Workaround:** Directed advertising is disabled by default for nRF Desktop.
 

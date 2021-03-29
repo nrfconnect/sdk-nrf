@@ -15,8 +15,10 @@ When enabled for an application, the |ble_state| is responsible for the followin
 * Propagating information about the connection state and parameters with :ref:`event_manager` events
 
 The |ble_state| does not handle Bluetooth advertising or scanning.
-If you want to use these functionalities to connect over Bluetooth LE, use Zephyr's Bluetooth API directly.
-See :ref:`zephyr:bluetooth_api` for more detailed information about Zephyr's Bluetooth API.
+If you want to use these functionalities to connect over Bluetooth LE, use :ref:`CAF's Bluetooth LE advertising module <caf_ble_adv>` or Zephyr's :ref:`Bluetooth API <zephyr:bluetooth_api>` directly.
+
+.. note::
+   CAF assumes that Bluetooth Peripheral device supports only one simultaneous connection and can have up to one bond per Bluetooth local identity.
 
 Configuration
 *************
