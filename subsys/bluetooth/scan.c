@@ -521,7 +521,7 @@ static bool adv_addr_compare(const bt_addr_le_t *target_addr,
 
 static bool is_addr_filter_enabled(void)
 {
-	return bt_scan.scan_filters.addr.enabled;
+	return CONFIG_BT_SCAN_ADDRESS_CNT && bt_scan.scan_filters.addr.enabled;
 }
 
 static void check_addr(struct bt_scan_control *control,
