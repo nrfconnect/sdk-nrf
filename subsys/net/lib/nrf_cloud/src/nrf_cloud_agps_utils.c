@@ -92,13 +92,13 @@ static void print_clock_and_tows(
 	printk("\tdate_day: %d\n", data->date_day);
 	printk("\ttime_full_s: %d\n", data->time_full_s);
 	printk("\ttime_frac_ms: %d\n", data->time_frac_ms);
-	printk("\tsv_mask: %d\n", data->sv_mask);
+	printk("\tsv_mask: 0x%08x\n", data->sv_mask);
 	printk("\tsv_tow\n");
 
 	for (size_t i = 0; i < NRF_GNSS_AGPS_MAX_SV_TOW; i++) {
 		printk("\t\tsv_tow[%d]\n", i);
 		printk("\t\t\ttlm: %d\n", data->sv_tow[i].tlm);
-		printk("\t\t\tflags: %d\n", data->sv_tow[i].flags);
+		printk("\t\t\tflags: 0x%02x\n", data->sv_tow[i].flags);
 	}
 }
 
