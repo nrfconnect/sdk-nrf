@@ -962,6 +962,18 @@ KRKNWK-8133: CSMA-CA issues
 SoftDevice Controller
 =====================
 
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+DRGN-15251: Very rare assertion fault when connected as peripheral on Coded PHY
+  The controller might assert when the following conditions are met:
+
+  * The device is connected as a peripheral.
+  * The connection PHY is set to LE Coded PHY.
+  * The devices have performed a data length update, and the supported values are above the minimum specification defined values.
+  * A packet is received with a CRC error.
+
+  **Workaround:** Do not enable :option:`CONFIG_BT_DATA_LEN_UPDATE` for applications that require Coded PHY as a peripheral device.
+
 .. rst-class:: v1-5-0
 
 DRGN-15465: Corrupted advertising data when :option:`CONFIG_BT_EXT_ADV` is set
