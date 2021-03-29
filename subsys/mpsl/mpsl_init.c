@@ -206,13 +206,6 @@ static int mpsl_lib_init(const struct device *dev)
 	IRQ_DIRECT_CONNECT(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
 			   mpsl_radio_isr_wrapper, IRQ_ZERO_LATENCY);
 
-#if IS_ENABLED(CONFIG_MPSL_FEM)
-	err = mpsl_fem_configure();
-	if (err) {
-		return err;
-	}
-#endif
-
 	return 0;
 }
 
@@ -233,6 +226,18 @@ static int mpsl_signal_thread_init(const struct device *dev)
 	return 0;
 }
 
+static int mpsl_fem_init(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+
+#if IS_ENABLED(CONFIG_MPSL_FEM)
+	return mpsl_fem_configure();
+#else
+	return 0;
+#endif
+}
+
 SYS_INIT(mpsl_lib_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 SYS_INIT(mpsl_signal_thread_init, POST_KERNEL,
 	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
