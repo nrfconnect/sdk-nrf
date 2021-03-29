@@ -1808,6 +1808,33 @@ clean_exit:
 	return err;
 }
 
+int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
+{
+	switch (mode) {
+	case LTE_LC_FUNC_MODE_POWER_OFF:
+	case LTE_LC_FUNC_MODE_NORMAL:
+	case LTE_LC_FUNC_MODE_OFFLINE:
+	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:
+	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
+	case LTE_LC_FUNC_MODE_DEACTIVATE_GNSS:
+	case LTE_LC_FUNC_MODE_ACTIVATE_GNSS:
+	case LTE_LC_FUNC_MODE_OFFLINE_UICC_ON: {
+		char buf[12];
+		int ret = snprintk(buf, sizeof(buf), "AT+CFUN=%d", mode);
+
+		if ((ret < 0) || (ret >= sizeof(buf))) {
+			LOG_ERR("Failed to create functional mode command");
+			return -EFAULT;
+		}
+
+		return at_cmd_write(buf, NULL, 0, NULL);
+	}
+	default:
+		LOG_ERR("Invalid functional mode: %d", mode);
+		return -EINVAL;
+	}
+}
+
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode)
 {
 	int err, resp_mode;

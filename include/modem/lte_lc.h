@@ -99,18 +99,48 @@ enum lte_lc_system_mode_preference {
 	LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO
 };
 
-/* NOTE: enum lte_lc_func_mode maps directly to the functional mode
- *	 as returned by the AT command "AT+CFUN?" as specified in
- *	 "nRF91 AT Commands - Command Reference Guide v1.1"
+/** @brief Functional modes, used to contol RF functionality in the modem.
+ *
+ *  @note The functional modes map directly to the functional modes as described
+ *	  in "nRF91 AT Commands - Command Reference Guide". Please refer to the
+ *	  AT command guide to verify if a functional mode is supported by a
+ *	  given modem firmware version.
  */
 enum lte_lc_func_mode {
+	/* Sets the device to minimum functionality. Disables both transmit and
+	 * receive RF circuits and deactivates LTE and GNSS.
+	 */
 	LTE_LC_FUNC_MODE_POWER_OFF		= 0,
+
+	/* Sets the device to full functionality. Both LTE and GNSS will become
+	 * active if the respective system modes are enabled.
+	 */
 	LTE_LC_FUNC_MODE_NORMAL			= 1,
+
+	/* Sets the device to flight mode. Disables both transmit and receive RF
+	 * circuits and deactivates LTE and GNSS services.
+	 */
 	LTE_LC_FUNC_MODE_OFFLINE		= 4,
+
+	/* Deactivates LTE without shutting down GNSS services. */
 	LTE_LC_FUNC_MODE_DEACTIVATE_LTE		= 20,
+
+	/* Activates LTE without changing GNSS. */
 	LTE_LC_FUNC_MODE_ACTIVATE_LTE		= 21,
+
+	/* Deactivates GNSS without shutting down LTE services. */
 	LTE_LC_FUNC_MODE_DEACTIVATE_GNSS	= 30,
+
+	/* Activates GNSS without changing LTE. */
 	LTE_LC_FUNC_MODE_ACTIVATE_GNSS		= 31,
+
+	/* Deactivates UICC. */
+	LTE_LC_FUNC_MODE_DEACTIVATE_UICC	= 40,
+
+	/* Activates UICC. */
+	LTE_LC_FUNC_MODE_ACTIVATE_UICC		= 41,
+
+	/* Sets the device to flight mode without shutting down UICC. */
 	LTE_LC_FUNC_MODE_OFFLINE_UICC_ON	= 44,
 };
 
@@ -415,6 +445,14 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
  */
 int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 			   enum lte_lc_system_mode_preference *preference);
+
+/**@brief Set the modem's functional mode.
+ *
+ * @param mode Functional mode to set.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
 
 /**@brief Get the modem's functional mode.
  *
