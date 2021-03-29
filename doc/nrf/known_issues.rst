@@ -858,16 +858,6 @@ DRGN-11963: LL control procedures cannot be initiated at the same time
 
   **Workaround:** Do not initiate these procedures at the same time.
 
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-DRGN-8476: Long packets not supported in connections on Coded PHY
-  In connections, the Link Layer payload size is limited to 27 bytes on LE Coded PHY.
-
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-DRGN-9083: AAR populated with zero IRK
-  If the application has set an all zeroes IRK for a device in the resolving list, then a resolvable address that can be resolved with the all zeroes IRK will be reported to the application as that device in the advertisement report or the connected event.
-
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-13921: Directed advertising issues using RPA in TargetA
@@ -877,43 +867,8 @@ DRGN-13921: Directed advertising issues using RPA in TargetA
 
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-DRGN-11297: Maximum CI before entering LLPM-mode
-  The maximum connection interval that can be active when switching to a connection interval of 1 ms is 10 ms.
-
-  **Workaround:** An application that needs to use a higher interval than 10 ms needs to perform two connection updates to use 1 ms connection interval:
-
-  * A first update to 10 ms connection interval.
-  * A second update to 1 ms connection interval.
-
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-DRGN-10305: Scanner can't have more than 16 seconds scan window
-  If the scanner is configured with a scan window larger than 16 seconds, the scanner will truncate the scan window to 16 seconds.
-
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-DRGN-8569: SEVONPEND flag must not be modified
-  Applications must not modify the SEVONPEND flag in the SCR register when running in priority levels higher than 6 (priority level numerical values lower than 6) as this can lead to undefined behavior.
-
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
-
-DRGN-6362: Synthesized low frequency clock source not tested
-  Synthesized low frequency clock source is not tested or intended for use with the Bluetooth LE stack.
-
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
 DRGN-10367: Advertiser times out earlier than expected
   If an extended advertiser is configured with limited duration, it will time out after the first primary channel packet in the last advertising event.
-
-.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
-
-DRGN-12259: HCI Receiver and Transmitter Test commands not available
-  The HCI Receiver and Transmitter Test commands are not available.
-
-  **Workaround:** To perform a radio test, use a DTM application:
-
-  * For nRF52, use the DTM application in the nRF5 SDK.
-  * For nRF53, use :ref:`direct_test_mode`.
 
 .. rst-class:: v1-1-0
 
