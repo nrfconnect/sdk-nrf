@@ -231,7 +231,6 @@ static uint8_t bt_cts_notify_callback(struct bt_conn *conn,
 int bt_cts_read_current_time(struct bt_cts_client *cts_c, bt_cts_read_cb func)
 {
 	int err;
-	struct bt_gatt_read_params *p_read_params;
 
 	if (!cts_c || !func) {
 		return -EINVAL;
@@ -245,13 +244,12 @@ int bt_cts_read_current_time(struct bt_cts_client *cts_c, bt_cts_read_cb func)
 
 	cts_c->read_cb = func;
 
-	p_read_params = &cts_c->read_params;
-	p_read_params->func = bt_cts_read_callback;
-	p_read_params->handle_count = 1;
-	p_read_params->single.handle = cts_c->handle_ct;
-	p_read_params->single.offset = 0;
+	cts_c->read_params.func = bt_cts_read_callback;
+	cts_c->read_params.handle_count = 1;
+	cts_c->read_params.single.handle = cts_c->handle_ct;
+	cts_c->read_params.single.offset = 0;
 
-	err = bt_gatt_read(cts_c->conn, p_read_params);
+	err = bt_gatt_read(cts_c->conn, &cts_c->read_params);
 	if (err) {
 		atomic_clear_bit(&cts_c->state, CTS_ASYNC_READ_PENDING);
 	}
