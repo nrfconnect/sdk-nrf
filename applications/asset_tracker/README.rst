@@ -180,6 +180,14 @@ See :ref:`cmake_options` for more information.
 
 Alternatively, you can manually set the configuration options to match the contents of the overlay config file.
 
+Using nRF Cloud FOTA
+********************
+
+You can add the nRF Cloud FOTA update functionality to the application through the :ref:`lib_nrf_cloud` library.
+The FOTA functionality is automatically enabled when you include the nRF Cloud library.
+For more information, see :ref:`lib_nrf_cloud_fota`.
+
+
 Building and running
 ********************
 

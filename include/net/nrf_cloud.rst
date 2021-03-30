@@ -73,7 +73,7 @@ The following message sequence chart shows the flow of events and the expected a
 The chart shows the sequence of successful user association of an unassociated device.
 
 .. note::
-   
+
    Currently, nRF Connect for Cloud requires that communication is re-established to update the device's permission to send user data.
    The application must disconnect using :c:func:`nrf_cloud_disconnect` and then reconnect using :c:func:`nrf_cloud_connect`.
 
@@ -88,6 +88,43 @@ When the device is successfully associated with a user on the cloud, subsequent 
    Module>>Application      [label="NRF_CLOUD_EVT_READY"];
 
 After receiving :c:enumerator:`NRF_CLOUD_EVT_READY`, the application can start sending sensor data to the cloud.
+
+.. _lib_nrf_cloud_fota:
+
+Firmware over-the-air (FOTA) updates
+************************************
+The nRF Cloud library supports FOTA updates for your nRF9160-based device.
+When the library is included by the application, the :option:`CONFIG_NRF_CLOUD_FOTA` option is enabled by default, and the FOTA functionality is made available to the application.
+
+For FOTA updates to work, the device must provide the information about the supported FOTA types to nRF Connect for Cloud.
+The device passes this information by writing a ``fota_v2`` field containing an array of FOTA types into the ``serviceInfo`` field in the device's shadow.
+
+Following are the three supported FOTA types:
+
+* ``APP``
+* ``MODEM``
+* ``BOOT``
+
+For example, a device that supports all the FOTA types writes the following data into the device shadow:
+
+.. code-block::
+
+   {
+   "state": {
+      "reported": {
+         "device": {
+            "serviceInfo": {
+               "fota_v2": [
+               "APP",
+               "MODEM",
+               "BOOT"
+               ]
+   }}}}}
+
+You can initiate FOTA updates through `nRF Connect for Cloud`_ or by using the `nRF Connect for Cloud Device API`_.
+When the device receives the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event, the application must perform any necessary cleanup, as a reboot will be initiated to complete the update.
+The message payload of the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event contains the :c:enum:`nrf_cloud_fota_type` value.
+If the value equals :c:enumerator:`NRF_CLOUD_FOTA_MODEM`, the application can optionally avoid a reboot by performing reinitialization of the modem and calling the :c:func:`nrf_cloud_modem_fota_completed` function.
 
 .. _lib_nrf_cloud_data:
 
