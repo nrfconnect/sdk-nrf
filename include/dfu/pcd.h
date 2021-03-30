@@ -32,6 +32,12 @@ extern "C" {
 
 #ifdef CONFIG_SOC_SERIES_NRF53X
 
+#ifdef CONFIG_PCD_CMD_ADDRESS
+
+#define PCD_CMD_ADDRESS CONFIG_PCD_CMD_ADDRESS
+
+#else
+
 #include <pm_config.h>
 
 #ifdef PM_PCD_SRAM_ADDRESS
@@ -41,7 +47,9 @@ extern "C" {
 #define PCD_CMD_ADDRESS PM__PCD_SRAM_ADDRESS
 #endif /* PM_PCD_SRAM_ADDRESS */
 
-#endif
+#endif /* CONFIG_PCD_CMD_ADDRESS */
+
+#endif /* CONFIG_SOC_SERIES_NRF53X */
 
 enum pcd_status {
 	PCD_STATUS_COPY = 0,
