@@ -133,7 +133,48 @@ The current |NCS| release is based on Zephyr v2.5.99.
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
-* No changes yet
+* Networking:
+
+  * General:
+
+    * Added UDP commands to the network shell.
+    * Added verification of the network interface status before sending a packet.
+    * Added missing translations for ``getaddrinfo()`` error codes.
+    * Added a separate work queue for TCP2.
+    * Added multiple bug fixes for IEEE 802.15.4 L2.
+    * Fixed memory management issues in TCP2 when running out of memory.
+    * Added connection establishment timer for TCP2.
+
+  * LwM2M:
+
+    * Fixed a bug where large LwM2M endpoint names were not encoded properly in the registration message.
+    * Added API functions to update minimum/maximum observe period of a resource.
+
+  * OpenThread:
+
+    * Updated the OpenThread version to commit ``8f7024c3e9beb47a48cfc1e3185f5fce82fffba9``.
+    * Added external heap implementation in OpenThread platform.
+    * Removed an obsolete ``CONFIG_OPENTHREAD_NCP_BUFFER_SIZE`` option.
+    * Added the following OpenThread options:
+
+      * :option:`CONFIG_OPENTHREAD_COAP_BLOCK`
+      * :option:`CONFIG_OPENTHREAD_MASTERKEY`
+      * :option:`CONFIG_OPENTHREAD_SRP_CLIENT`
+      * :option:`CONFIG_OPENTHREAD_SRP_SERVER`
+
+  * MQTT:
+
+    * Fixed logging of UTF-8 strings.
+
+  * Sockets:
+
+    * Fixed TLS sockets access from user space.
+
+  * CoAP:
+
+    * Added a symbol for the default COAP version.
+    * Fixed a discovery response formatting.
+    * Updated a few API functions to accept a const pointer when appropriate.
 
 Project CHIP
 ============
