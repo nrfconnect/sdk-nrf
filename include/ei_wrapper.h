@@ -77,10 +77,15 @@ int ei_wrapper_add_data(const float *data, size_t data_size);
  * wrapper is not waiting for data. In that case, user must wait until the
  * prediction is finished.
  *
+ * If the wrapper is waiting for data, the prediction is cancelled.
+ *
+ * @param[out] cancelled  Pointer to the variable that is used to store information
+ *                        if prediction was cancelled.
+ *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int ei_wrapper_clear_data(void);
+int ei_wrapper_clear_data(bool *cancelled);
 
 
 /** Start a prediction using the Edge Impulse library.
