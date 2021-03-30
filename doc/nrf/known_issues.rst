@@ -363,6 +363,13 @@ Subsystems
 Bluetooth LE
 ============
 
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
+
+DRGN-15435: GATT notifications and Writes Without Response might be sent out of order
+  GATT notifications and Writes Without Response might be sent out of order when not using a complete callback.
+
+  **Workaround:** Always set a callback for notifications and Writes Without Response.
+
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 NCSDK-8321: NUS shell transport sample does not display the initial shell prompt *uart:~$* on the remote terminal.
