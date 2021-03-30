@@ -89,6 +89,7 @@ Kconfig*                                  @tejlmand
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
 /samples/edge_impulse/                    @pdunaj
 /samples/esb/                             @lemrey
+/samples/event_manager/                   @pdunaj @MarekPieta
 /samples/mpsl/                            @joerchan @hurricaneFromMoscow
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
