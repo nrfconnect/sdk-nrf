@@ -372,6 +372,12 @@ DRGN-15435: GATT notifications and Writes Without Response might be sent out of 
 
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
+DRGN-15448: Incomplete bond overwrite during pairing procedure when peer is not using the IRK stored in the bond
+  When pairing with a peer that has deleted its bond information and is using a new IRK to establish the connection, the existing bond is not overwritten during the pairing procedure.
+  This can lead to MIC errors during reconnection if the old LTK is used instead.
+
+.. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
 NCSDK-8321: NUS shell transport sample does not display the initial shell prompt *uart:~$* on the remote terminal.
   Also few logs with sending errors are displayed on the terminal connected directly to the DK.
   This issue is caused by the shell being enabled before turning on the notifications for the NUS service by the remote peer.
