@@ -475,6 +475,8 @@
 
 .. _`nRF Connect for Cloud`: https://nrfcloud.com/
 
+.. _`nRF Connect for Cloud Device API`: https://api.nrfcloud.com/v1
+
 .. _`NFC Forum specification overview`: https://nfc-forum.org/our-work/specification-releases/specifications/
 
 .. _`ISO/IEC 7816-4`: https://www.iso.org/standard/54550.html
