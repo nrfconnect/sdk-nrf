@@ -808,7 +808,7 @@ EXCLUDE_PATTERNS       = */zboss/* \
                          */nrf_cc312_platform/* \
                          */nrf_cc312_mbedcrypto/* \
                          */nrf_cc310_mbedcrypto/include/mbedtls_extra/* \
-                         */nrf_802154_sl/* \
+                         */nrf_802154/* \
                          */nrf_cc310_mbedcrypto/include/nrf-config-cc310.h
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
