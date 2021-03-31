@@ -2,10 +2,6 @@
 
 | Hardware platforms | PCA | Board name | Build target |
 
-.. nrf52833dk_nrf52833
-
-| :ref:`nRF52833 DK <ug_nrf52>` | PCA10010   | :ref:`nrf52833dk_nrf52833 <nrf52833dk_nrf52833>` | ``nrf52833dk_nrf52833`` |
-
 .. nrf52dk_nrf52832
 
 | :ref:`nRF52 DK <ug_nrf52>` | PCA10040 | :ref:`nrf52dk_nrf52832 <nrf52dk_nrf52832>` | ``nrf52dk_nrf52832`` |
@@ -41,6 +37,10 @@
 .. nrf5340dk_nrf5340_cpunet
 
 | :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>` | ``nrf5340dk_nrf5340_cpunet`` |
+
+.. nrf52833dk_nrf52833
+
+| :ref:`nRF52833 DK <ug_nrf52>` | PCA10100 | :ref:`nrf52833dk_nrf52833 <nrf52833dk_nrf52833>` | ``nrf52833dk_nrf52833`` |
 
 .. nrf52833dongle_nrf52833
 
