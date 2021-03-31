@@ -451,6 +451,7 @@ void *nrf_modem_os_alloc(size_t bytes)
 		LOG_INF("alloc(%d) -> %p", bytes, addr);
 	} else {
 		heap_diag.failed_allocs++;
+		LOG_WRN("alloc(%d) -> %p", bytes, addr);
 	}
 #endif
 	return addr;
@@ -472,6 +473,7 @@ void *nrf_modem_os_shm_tx_alloc(size_t bytes)
 		LOG_INF("shm_tx_alloc(%d) -> %p", bytes, addr);
 	} else {
 		shmem_diag.failed_allocs++;
+		LOG_WRN("shm_tx_alloc(%d) -> %p", bytes, addr);
 	}
 #endif
 	return addr;
