@@ -47,6 +47,17 @@ static bool set_second(struct tm *sched_time,
 		       struct bt_mesh_schedule_entry *entry,
 		       struct bt_mesh_time_srv *srv);
 
+static int store(struct bt_mesh_scheduler_srv *srv, uint8_t idx, bool store_ndel)
+{
+	char name[3] = {0};
+	const void *data = store_ndel ? &srv->sch_reg[idx] : NULL;
+	size_t len = store_ndel ? sizeof(srv->sch_reg[idx]) : 0;
+
+	snprintf(name, sizeof(name), "%x", idx);
+
+	return bt_mesh_model_data_store(srv->model, false, name, data, len);
+}
+
 static bool revise_year(struct tm *sched_time,
 			struct tm *current_local,
 			struct bt_mesh_schedule_entry *entry,
@@ -587,6 +598,10 @@ static void action_set(struct bt_mesh_model *model,
 		srv->action_set_cb(srv, ctx, idx, &srv->sch_reg[idx]);
 	}
 
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		store(srv, idx, true);
+	}
+
 	/* publish state changing */
 	send_scheduler_action_status(model, NULL, idx);
 
@@ -716,17 +731,53 @@ static void scheduler_srv_reset(struct bt_mesh_model *model)
 	srv->status_bitmap = 0;
 	k_delayed_work_cancel(&srv->delayed_work);
 	net_buf_simple_reset(srv->pub.msg);
+	memset(&srv->sch_reg, 0, sizeof(srv->sch_reg));
+
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		for (int idx = 0; idx < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
+		     ++idx) {
+			store(srv, idx, false);
+		}
+	}
 }
+
+#ifdef CONFIG_BT_SETTINGS
+static int scheduler_srv_settings_set(struct bt_mesh_model *model,
+				      const char *name,
+				      size_t len_rd, settings_read_cb read_cb,
+				      void *cb_data)
+{
+	struct bt_mesh_scheduler_srv *srv = model->user_data;
+	struct bt_mesh_schedule_entry data;
+	ssize_t len = read_cb(cb_data, &data, sizeof(data));
+	uint8_t idx = strtol(name, NULL, 16);
+
+	if (len < sizeof(data) || idx >= BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
+		return -EINVAL;
+	}
+
+	srv->sch_reg[idx] = data;
+
+	return 0;
+}
+#endif
 
 const struct bt_mesh_model_cb _bt_mesh_scheduler_srv_cb = {
 	.init = scheduler_srv_init,
 	.reset = scheduler_srv_reset,
+#ifdef CONFIG_BT_SETTINGS
+	.settings_set = scheduler_srv_settings_set
+#endif
 };
 
 int bt_mesh_scheduler_srv_time_update(struct bt_mesh_scheduler_srv *srv)
 {
 	if (srv == NULL) {
 		return -EINVAL;
+	}
+
+	for (int idx = 0; idx < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; ++idx) {
+		schedule_action(srv, idx);
 	}
 
 	run_scheduler(srv);
