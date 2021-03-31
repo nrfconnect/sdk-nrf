@@ -149,7 +149,15 @@ When a Scheduler Server model is present on an element, the Scene Server model (
 Persistent storage
 ******************
 
-None
+The Scheduler Server stores the following information:
+
+* Any changes to the Schedule Register state
+
+This information is used to restore previously configured register entries when the device powers up.
+
+The scheduler operation depends on the availability of the updated current time provided by the Time Server.
+It is the application's responsibility to call :c:func:`bt_mesh_scheduler_srv_time_update` after the current local
+time has been updated to schedule available entries correctly.
 
 API documentation
 *****************
