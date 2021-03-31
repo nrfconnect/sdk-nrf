@@ -834,6 +834,17 @@ SoftDevice Controller
 
 .. rst-class:: v1-5-0
 
+DRGN-15465: Corrupted advertising data when :option:`CONFIG_BT_EXT_ADV` is set
+  Setting scan response data for a legacy advertiser on a build with extended advertising support corrupts parts of the advertising data.
+  When using ``BT_LE_ADV_OPT_USE_NAME`` (which is the default configuration in most samples), the device name is put in the scan response.
+  This corrupts the advertising data.
+
+  **Workaround:** Do not set scan response data.
+  That implies not using the ``BT_LE_ADV_OPT_USE_NAME`` option, or the :c:macro:`BT_LE_ADV_CONN_NAME` macro when initializing Bluetooth.
+  Instead, use :c:macro:`BT_LE_ADV_CONN`, and if necessary set the device name in the advertising data manually.
+
+.. rst-class:: v1-5-0
+
 DRGN-15475: Samples might not initialize the SoftDevice Controller HCI driver correctly
   Samples using both the advertising and the scanning state, but not the connected state, fail to initialize the SoftDevice Controller HCI driver.
   As a result, the function :c:func:`bt_enable()` returns an error code.
