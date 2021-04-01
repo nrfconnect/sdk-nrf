@@ -93,8 +93,9 @@ CHIP_ERROR LightSwitch::Pair(const chip::Inet::IPAddress &lightBulbAddress)
 
 	{
 		chip::Controller::SerializedDevice serializedDevice;
-		err = mCommissioner.PairTestDeviceWithoutSecurity(chip::kTestDeviceNodeId, lightBulbAddress,
-								  serializedDevice, CHIP_PORT);
+		err = mCommissioner.PairTestDeviceWithoutSecurity(
+			chip::kTestDeviceNodeId, chip::Transport::PeerAddress::UDP(lightBulbAddress, CHIP_PORT),
+			serializedDevice);
 	}
 
 	if (err != CHIP_NO_ERROR)

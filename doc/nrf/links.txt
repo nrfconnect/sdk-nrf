@@ -86,14 +86,14 @@
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
-.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/c73b8e0/src/android/CHIPTool
-.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md
-.. _`Building and programming OpenThread RCP firmware`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#user-content-building-and-programming-openthread-rcp-firmware
-.. _`Building and installing Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#user-content-building-and-installing-android-chiptool
-.. _`Configuring PC as Thread Border Router`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#user-content-configuring-pc-as-thread-border-router
-.. _`Preparing and commissioning accessory device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_android_commissioning.md#user-content-preparing-accessory-device
-.. _`Project CHIP Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/README.md
-.. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/c73b8e0/docs/guides/nrfconnect_platform_overview.md
+.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/a008cb/src/android/CHIPTool
+.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/a008cb/docs/guides/nrfconnect_android_commissioning.md
+.. _`Building and programming OpenThread RCP firmware`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/a008cb/docs/guides/nrfconnect_android_commissioning.md#user-content-building-and-programming-openthread-rcp-firmware
+.. _`Building and installing Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/a008cb/docs/guides/nrfconnect_android_commissioning.md#user-content-building-and-installing-android-chiptool
+.. _`Configuring PC as Thread Border Router`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/a008cb/docs/guides/nrfconnect_android_commissioning.md#user-content-configuring-pc-as-thread-border-router
+.. _`Preparing and commissioning accessory device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/a008cb/docs/guides/nrfconnect_android_commissioning.md#user-content-preparing-accessory-device
+.. _`Project CHIP Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/a008cb/README.md
+.. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/a008cb/docs/guides/nrfconnect_platform_overview.md
 
 .. ### Source: developer.nordicsemi.com
 
