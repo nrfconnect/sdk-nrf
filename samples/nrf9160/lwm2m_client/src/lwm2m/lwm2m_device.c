@@ -10,17 +10,14 @@
 #include <power/reboot.h>
 #include <net/lwm2m.h>
 #include "pm_config.h"
-#include "lwm2m_client.h"
+#include "lwm2m_client_app.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(app_lwm2m_device, CONFIG_APP_LOG_LEVEL);
 
-#define CLIENT_MANUFACTURER	"Nordic Semiconductor ASA"
-#define CLIENT_MODEL_NUMBER	CONFIG_BOARD
-#define CLIENT_DEVICE_TYPE	"OMA-LWM2M Client"
-#define CLIENT_HW_VER		CONFIG_SOC
-#define CLIENT_FLASH_SIZE	PM_MCUBOOT_SECONDARY_SIZE
-#define REBOOT_DELAY		K_SECONDS(1)
+#define CLIENT_MODEL_NUMBER CONFIG_BOARD
+#define CLIENT_HW_VER CONFIG_SOC
+#define CLIENT_FLASH_SIZE PM_MCUBOOT_SECONDARY_SIZE
 
 static uint8_t bat_idx = LWM2M_DEVICE_PWR_SRC_TYPE_BAT_INT;
 static int bat_mv = 3800;
@@ -30,27 +27,6 @@ static int usb_mv = 5000;
 static int usb_ma = 900;
 static uint8_t bat_status = LWM2M_DEVICE_BATTERY_STATUS_CHARGING;
 static int mem_total = (CLIENT_FLASH_SIZE / 1024);
-
-static struct k_work_delayable reboot_work;
-
-static void reboot_work_handler(struct k_work *work)
-{
-	LOG_PANIC();
-	sys_reboot(0);
-}
-
-static int device_reboot_cb(uint16_t obj_inst_id, uint8_t *args,
-			    uint16_t args_len)
-{
-	ARG_UNUSED(args);
-	ARG_UNUSED(args_len);
-
-	LOG_INF("DEVICE: Reboot in progress");
-
-	k_work_schedule(&reboot_work, REBOOT_DELAY);
-
-	return 0;
-}
 
 static int device_factory_default_cb(uint16_t obj_inst_id, uint8_t *args,
 				     uint16_t args_len)
@@ -63,22 +39,19 @@ static int device_factory_default_cb(uint16_t obj_inst_id, uint8_t *args,
 	return 0;
 }
 
-int lwm2m_init_device(char *serial_num)
+int lwm2m_app_init_device(char *serial_num)
 {
-	k_work_init_delayable(&reboot_work, reboot_work_handler);
-
-	lwm2m_engine_set_res_data("3/0/0", CLIENT_MANUFACTURER,
-				  sizeof(CLIENT_MANUFACTURER),
+	lwm2m_engine_set_res_data("3/0/0", CONFIG_APP_MANUFACTURER,
+				  sizeof(CONFIG_APP_MANUFACTURER),
 				  LWM2M_RES_DATA_FLAG_RO);
 	lwm2m_engine_set_res_data("3/0/1", CLIENT_MODEL_NUMBER,
 				  sizeof(CLIENT_MODEL_NUMBER),
 				  LWM2M_RES_DATA_FLAG_RO);
 	lwm2m_engine_set_res_data("3/0/2", serial_num, strlen(serial_num),
 				  LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_register_exec_callback("3/0/4", device_reboot_cb);
 	lwm2m_engine_register_exec_callback("3/0/5", device_factory_default_cb);
-	lwm2m_engine_set_res_data("3/0/17", CLIENT_DEVICE_TYPE,
-				  sizeof(CLIENT_DEVICE_TYPE),
+	lwm2m_engine_set_res_data("3/0/17", CONFIG_APP_DEVICE_TYPE,
+				  sizeof(CONFIG_APP_DEVICE_TYPE),
 				  LWM2M_RES_DATA_FLAG_RO);
 	lwm2m_engine_set_res_data("3/0/18", CLIENT_HW_VER,
 				  sizeof(CLIENT_HW_VER),

@@ -8,6 +8,8 @@
 #include <ui.h>
 #include <net/lwm2m.h>
 
+#include "lwm2m_client_app.h"
+
 #include <logging/log.h>
 LOG_MODULE_REGISTER(app_lwm2m_light, CONFIG_APP_LOG_LEVEL);
 
