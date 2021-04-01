@@ -13,6 +13,30 @@ config APP_LWM2M_SERVER
 	help
 	  Choose the LwM2M server you wish to connect to.
 
+config APP_LWM2M_PSK
+	string "LwM2M pre-shared key for communication"
+	default "000102030405060708090a0b0c0d0e0f"
+	help
+	  Pre-shared key used for communicationg with the server
+
+config APP_SERVER_TLS_TAG
+	int "LwM2M server TLS tag"
+	default 35724861
+
+config APP_BOOTSTRAP_TLS_TAG
+	int "LwM2M bootstrap server TLS tag"
+	default 35724862
+
+menu "Device info"
+config APP_MANUFACTURER
+	string "Board manufacturer"
+	default	"Nordic Semiconductor ASA"
+
+config APP_DEVICE_TYPE
+	string "Device type"
+	default	"OMA-LWM2M Client"
+endmenu
+
 config APP_HOLD_TIME_RSRP
 	int "Minimum time [s] between RSRP notification messages"
 	default 60

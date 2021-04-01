@@ -8,11 +8,10 @@
 #include <drivers/gps.h>
 #include <stdio.h>
 #include <net/lwm2m.h>
-
-#include "ui.h"
+#include <net/lwm2m_client_utils.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(app_lwm2m_loc, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(lwm2m_loc, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 static struct gps_nmea nmea_data;
 static const struct device *gps_dev;

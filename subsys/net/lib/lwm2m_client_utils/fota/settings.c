@@ -8,10 +8,10 @@
 #include <zephyr.h>
 #include <settings/settings.h>
 
-#include "settings.h"
+#include <net/lwm2m_client_utils_fota.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(app_fota_settings, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(lwm2m_fota_settings, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 static struct update_counter uc;
 

@@ -312,6 +312,8 @@
 .. _`SUPL context model`: https://www.openmobilealliance.org/release/SUPL/V1_0-20060127-C/OMA-AD-SUPL-V1_0-20060127-C.pdf#page=16
 .. _`SET-initiated SUPL collaboration`: https://www.openmobilealliance.org/release/SUPL/V2_0_4-20181213-A/OMA-TS-ULP-V2_0_4-20181213-A.pdf#page=128
 .. _`SET-Initiated Non-Roaming Successful Case (Proxy mode)`: https://www.openmobilealliance.org/release/SUPL/V2_0_4-20181213-A/OMA-TS-ULP-V2_0_4-20181213-A.pdf#page=129
+.. _`LwM2M Object and Resource Registry`: http://openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html
+.. _`LwM2M editor`: http://devtoolkit.openmobilealliance.org/OEditor/LWMOView?url=https%3A%2F%2Fraw.githubusercontent.com%2FOpenMobileAlliance%2Flwm2m-registry%2Fprod%2Fversion_history%2F3300-1_0.xml
 
 .. ### Source: wikipedia
 
@@ -548,6 +550,8 @@
 .. _`tutorial on SSL.com`: https://www.ssl.com/guide/pem-der-crt-and-cer-x-509-encodings-and-conversions/
 .. _`POSIX Programmer's Manual`: https://man7.org/linux/man-pages/dir_section_3.html
 .. _`LwM2M`: https://omaspecworks.org/what-is-oma-specworks/iot/lightweight-m2m-lwm2m/
+.. _`IPSO objects`: https://omaspecworks.org/develop-with-oma-specworks/ipso-smart-objects/
+.. _`raw XML`: https://raw.githubusercontent.com/OpenMobileAlliance/lwm2m-registry/prod/version_history/3300-1_0.xml
 
 .. _`DLPTest.com`: https://dlptest.com/ftp-test/
 

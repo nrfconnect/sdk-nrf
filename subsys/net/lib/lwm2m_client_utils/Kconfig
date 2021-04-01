@@ -1,0 +1,55 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LWM2M_CLIENT_UTILS
+	bool "LWM2M client utilities library"
+	select LWM2M
+
+if LWM2M_CLIENT_UTILS
+
+config LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT
+	bool "Device object support"
+	default y
+
+config LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
+	bool "Security object support"
+	default y
+
+config LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
+	bool "Connection Monitor object support"
+	default y
+	select LWM2M_CONN_MON_OBJ_SUPPORT
+
+if LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
+
+config LWM2M_CONN_MON_BEARER_MAX
+	int "Max number of bearers"
+	default 2
+
+endif # LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT
+	bool "Location object support"
+	default y
+	select LWM2M_LOCATION_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
+	bool "Firmware Update object support"
+	default y
+	select LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT
+	select DFU_TARGET
+	select BOOTLOADER_MCUBOOT
+	select IMG_MANAGER
+	select IMG_ERASE_PROGRESSIVELY
+	select FLASH
+	select MPU_ALLOW_FLASH_WRITE
+
+module = LWM2M_CLIENT_UTILS
+module-dep = LOG
+module-str = LwM2M client utilities library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # LWM2M_CLIENT_UTILS

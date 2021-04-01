@@ -12,6 +12,9 @@
 #include <modem/nrf_modem_lib.h>
 #include <settings/settings.h>
 
+#include <net/lwm2m_client_utils.h>
+#include <net/lwm2m_client_utils_fota.h>
+
 #include <logging/log.h>
 LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
@@ -25,8 +28,7 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #endif
 
 #include "ui.h"
-#include "lwm2m_client.h"
-#include "settings.h"
+#include "lwm2m_client_app.h"
 
 #if !defined(CONFIG_LTE_LINK_CONTROL)
 #error "Missing CONFIG_LTE_LINK_CONTROL"
@@ -125,16 +127,25 @@ static int query_modem(const char *cmd, char *buf, size_t buf_len)
 
 static int lwm2m_setup(void)
 {
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)
+	/* Manufacturer independent */
+	lwm2m_init_device();
+#endif
+
+	/* Manufacturer dependent */
 	/* use IMEI as serial number */
-	lwm2m_init_device(imei_buf);
+	lwm2m_app_init_device(imei_buf);
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT)
 	lwm2m_init_security(&client, endpoint_name);
-#if defined(CONFIG_LWM2M_LOCATION_OBJ_SUPPORT)
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT)
 	lwm2m_init_location();
 #endif
-#if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	lwm2m_init_firmware();
 #endif
-#if defined(CONFIG_LWM2M_CONN_MON_OBJ_SUPPORT)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
 	lwm2m_init_connmon();
 #endif
 #if defined(CONFIG_LWM2M_IPSO_LIGHT_CONTROL)
@@ -411,16 +422,18 @@ void main(void)
 
 	ui_init(ui_evt_handler);
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	ret = fota_settings_init();
 	if (ret < 0) {
 		LOG_ERR("Unable to init settings (%d)", ret);
 		return;
 	}
+#endif
 
 	/* Load *all* persistent settings */
 	settings_load();
 
-#if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	/* Modem FW update needs to be verified before modem is used. */
 	lwm2m_verify_modem_fw_update();
 #endif
@@ -447,11 +460,13 @@ void main(void)
 		return;
 	}
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	ret = lwm2m_init_image();
 	if (ret < 0) {
 		LOG_ERR("Failed to setup image properties (%d)", ret);
 		return;
 	}
+#endif
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 	ret = modem_key_mgmt_write(client.tls_tag,
@@ -476,7 +491,7 @@ void main(void)
 	modem_connect();
 
 	while (true) {
-#if defined(CONFIG_LWM2M_CONN_MON_OBJ_SUPPORT)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
 		ret = lwm2m_update_connmon();
 		if (ret < 0) {
 			LOG_ERR("Error registering rsrp handler (%d)", ret);
