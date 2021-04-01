@@ -1,4 +1,4 @@
-/*
+/**
  *
  *    Copyright (c) 2020 Project CHIP Authors
  *
@@ -14,9 +14,3 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
- // Enclosing macro to prevent multiple inclusion
-#ifndef __AF_GEN_EVENT__
-#define __AF_GEN_EVENT__
-
-#endif // __AF_GEN_EVENT__
