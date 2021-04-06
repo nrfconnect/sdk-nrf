@@ -77,7 +77,7 @@ jobs:
           exit 1;
         fi
 
-        for file in Nits.txt checkpatch.txt Identity.txt Gitlint.txt pylint.txt Devicetree.txt Kconfig.txt Codeowners.txt; do
+        for file in Nits.txt checkpatch.txt Identity.txt Gitlint.txt pylint.txt Devicetree.txt Kconfig.txt KconfigBasic.txt Codeowners.txt; do
           if [[ -s $file ]]; then
              errors=$(cat $file)
              errors="${errors//'%'/'%25'}"
