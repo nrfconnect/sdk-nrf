@@ -10,6 +10,9 @@
 #include <date_time.h>
 #include <event_manager.h>
 #include <drivers/gps.h>
+#if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_GPS_MODULE_PGPS_STORE_LOCATION)
+#include <net/nrf_cloud_pgps.h>
+#endif
 
 #define MODULE gps_module
 
@@ -190,8 +193,11 @@ static void gps_event_handler(const struct device *dev, struct gps_event *evt)
 	case GPS_EVT_PVT_FIX:
 		LOG_DBG("GPS_EVT_PVT_FIX");
 		time_set(&evt->pvt);
-		data_send(&evt->pvt);
 		inactive_send();
+
+#if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_GPS_MODULE_PGPS_STORE_LOCATION)
+		nrf_cloud_pgps_set_location(evt->pvt.latitude, evt->pvt.longitude);
+#endif
 
 		if (IS_ENABLED(CONFIG_GPS_MODULE_PVT)) {
 			data_send_pvt(&evt->pvt);

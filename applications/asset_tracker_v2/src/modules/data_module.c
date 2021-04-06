@@ -832,7 +832,11 @@ static void on_cloud_state_connected(struct data_msg_data *msg)
 		config_send(true);
 		return;
 	}
+}
 
+/* Message handler for all states. */
+static void on_all_states(struct data_msg_data *msg)
+{
 	/* Distribute new configuration received from cloud. */
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONFIG_RECEIVED)) {
 		struct cloud_data_cfg new = {
@@ -853,11 +857,7 @@ static void on_cloud_state_connected(struct data_msg_data *msg)
 		new_config_handle(&new);
 		return;
 	}
-}
 
-/* Message handler for all states. */
-static void on_all_states(struct data_msg_data *msg)
-{
 	if (IS_EVENT(msg, app, APP_EVT_START)) {
 		config_distribute(DATA_EVT_CONFIG_INIT);
 	}

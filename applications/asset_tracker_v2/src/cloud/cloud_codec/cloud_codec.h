@@ -155,7 +155,7 @@ struct cloud_data_modem_dynamic {
 	/** Cell id. */
 	uint32_t cell;
 	/** Reference Signal Received Power. */
-	uint16_t rsrp;
+	int16_t rsrp;
 	/** Internet Protocol Address. */
 	char ip[INET6_ADDRSTRLEN];
 	/* Mobile Country Code*/
