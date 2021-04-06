@@ -90,7 +90,7 @@ config DATA_BATTERY_BUFFER_STORE
 	bool "Store battery data received from the modem module"
 	default y
 
-config DATA_UI_MODEM_BUFFER_STORE
+config DATA_UI_BUFFER_STORE
 	bool "Store UI data received from the UI module"
 	default y
 
