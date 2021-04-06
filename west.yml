@@ -71,7 +71,6 @@ manifest:
           - civetweb
           - edtt
           - fatfs
-          - hal_nordic
           - hal_st
           - libmetal
           - littlefs
@@ -100,6 +99,10 @@ manifest:
       repo-path: sdk-nrfxlib
       path: nrfxlib
       revision: 3cff48e890b037a0fe2964091702cb1c1bb59926
+    - name: hal_nordic
+      repo-path: sdk-hal_nordic
+      path: modules/hal/nordic
+      revision: b96360f2446b772c2495ca49d4137b9b8f4bb2a8
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
