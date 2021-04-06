@@ -63,6 +63,10 @@ enum json_common_op_code {
  * @param[in] data Pointer to data that is to be encoded.
  * @param[in] op Operation that is to be carried out.
  * @param[in] object_label Name of the encoded object.
+ * @param[out] parent_ref Reference to an unallocated parent object pointer. Used when getting the
+ *			  pointer to the encoded data object when setting
+ *			  JSON_COMMON_GET_POINTER_TO_OBJECT as the opcode. The cJSON object pointed
+ *			  to after this function call must be manually freed after use.
  *
  * @return 0 on success. -ENODATA if the passed in data is not valid. Otherwise a negative error
  *         code is returned.
@@ -70,7 +74,8 @@ enum json_common_op_code {
 int json_common_modem_static_data_add(cJSON *parent,
 				      struct cloud_data_modem_static *data,
 				      enum json_common_op_code op,
-				      const char *object_label);
+				      const char *object_label,
+				      cJSON **parent_ref);
 
 /**
  * @brief Encode and add dynamic modem data to the parent object.
@@ -79,6 +84,10 @@ int json_common_modem_static_data_add(cJSON *parent,
  * @param[in] data Pointer to data that is to be encoded.
  * @param[in] op Operation that is to be carried out.
  * @param[in] object_label Name of the encoded object.
+ * @param[out] parent_ref Reference to an unallocated parent object pointer. Used when getting the
+ *			  pointer to the encoded data object when setting
+ *			  JSON_COMMON_GET_POINTER_TO_OBJECT as the opcode. The cJSON object pointed
+ *			  to after this function call must be manually freed after use.
  *
  * @return 0 on success. -ENODATA if the passed in data is not valid. Otherwise a negative error
  *         code is returned.
@@ -86,7 +95,8 @@ int json_common_modem_static_data_add(cJSON *parent,
 int json_common_modem_dynamic_data_add(cJSON *parent,
 				       struct cloud_data_modem_dynamic *data,
 				       enum json_common_op_code op,
-				       const char *object_label);
+				       const char *object_label,
+				       cJSON **parent_ref);
 
 /**
  * @brief Encode and add environmental sensor data to the parent object.
@@ -95,6 +105,10 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
  * @param[in] data Pointer to data that is to be encoded.
  * @param[in] op Operation that is to be carried out.
  * @param[in] object_label Name of the encoded object.
+ * @param[out] parent_ref Reference to an unallocated parent object pointer. Used when getting the
+ *			  pointer to the encoded data object when setting
+ *			  JSON_COMMON_GET_POINTER_TO_OBJECT as the opcode. The cJSON object pointed
+ *			  to after this function call must be manually freed after use.
  *
  * @return 0 on success. -ENODATA if the passed in data is not valid. Otherwise a negative error
  *         code is returned.
@@ -102,7 +116,8 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
 int json_common_sensor_data_add(cJSON *parent,
 				struct cloud_data_sensors *data,
 				enum json_common_op_code op,
-				const char *object_label);
+				const char *object_label,
+				cJSON **parent_ref);
 
 /**
  * @brief Encode and add GPS data to the parent object.
@@ -111,6 +126,10 @@ int json_common_sensor_data_add(cJSON *parent,
  * @param[in] data Pointer to data that is to be encoded.
  * @param[in] op Operation that is to be carried out.
  * @param[in] object_label Name of the encoded object.
+ * @param[out] parent_ref Reference to an unallocated parent object pointer. Used when getting the
+ *			  pointer to the encoded data object when setting
+ *			  JSON_COMMON_GET_POINTER_TO_OBJECT as the opcode. The cJSON object pointed
+ *			  to after this function call must be manually freed after use.
  *
  * @return 0 on success. -ENODATA if the passed in data is not valid. Otherwise a negative error
  *         code is returned.
@@ -118,7 +137,8 @@ int json_common_sensor_data_add(cJSON *parent,
 int json_common_gps_data_add(cJSON *parent,
 			     struct cloud_data_gps *data,
 			     enum json_common_op_code op,
-			     const char *object_label);
+			     const char *object_label,
+			     cJSON **parent_ref);
 
 /**
  * @brief Encode and add accelerometer data to the parent object.
@@ -127,6 +147,10 @@ int json_common_gps_data_add(cJSON *parent,
  * @param[in] data Pointer to data that is to be encoded.
  * @param[in] op Operation that is to be carried out.
  * @param[in] object_label Name of the encoded object.
+ * @param[out] parent_ref Reference to an unallocated parent object pointer. Used when getting the
+ *			  pointer to the encoded data object when setting
+ *			  JSON_COMMON_GET_POINTER_TO_OBJECT as the opcode. The cJSON object pointed
+ *			  to after this function call must be manually freed after use.
  *
  * @return 0 on success. -ENODATA if the passed in data is not valid. Otherwise a negative error
  *         code is returned.
@@ -134,7 +158,8 @@ int json_common_gps_data_add(cJSON *parent,
 int json_common_accel_data_add(cJSON *parent,
 			       struct cloud_data_accelerometer *data,
 			       enum json_common_op_code op,
-			       const char *object_label);
+			       const char *object_label,
+			       cJSON **parent_ref);
 
 /**
  * @brief Encode and add User Interface data to the parent object.
@@ -143,6 +168,10 @@ int json_common_accel_data_add(cJSON *parent,
  * @param[in] data Pointer to data that is to be encoded.
  * @param[in] op Operation that is to be carried out.
  * @param[in] object_label Name of the encoded object.
+ * @param[out] parent_ref Reference to an unallocated parent object pointer. Used when getting the
+ *			  pointer to the encoded data object when setting
+ *			  JSON_COMMON_GET_POINTER_TO_OBJECT as the opcode. The cJSON object pointed
+ *			  to after this function call must be manually freed after use.
  *
  * @return 0 on success. -ENODATA if the passed in data is not valid. Otherwise a negative error
  *         code is returned.
@@ -150,7 +179,8 @@ int json_common_accel_data_add(cJSON *parent,
 int json_common_ui_data_add(cJSON *parent,
 			    struct cloud_data_ui *data,
 			    enum json_common_op_code op,
-			    const char *object_label);
+			    const char *object_label,
+			    cJSON **parent_ref);
 
 /**
  * @brief Encode and add battery data to the parent object.
@@ -159,6 +189,10 @@ int json_common_ui_data_add(cJSON *parent,
  * @param[in] data Pointer to data that is to be encoded.
  * @param[in] op Operation that is to be carried out.
  * @param[in] object_label Name of the encoded object.
+ * @param[out] parent_ref Reference to an unallocated parent object pointer. Used when getting the
+ *			  pointer to the encoded data object when setting
+ *			  JSON_COMMON_GET_POINTER_TO_OBJECT as the opcode. The cJSON object pointed
+ *			  to after this function call must be manually freed after use.
  *
  * @return 0 on success. -ENODATA if the passed in data is not valid. Otherwise a negative error
  *         code is returned.
@@ -166,7 +200,8 @@ int json_common_ui_data_add(cJSON *parent,
 int json_common_battery_data_add(cJSON *parent,
 				 struct cloud_data_battery *data,
 				 enum json_common_op_code op,
-				 const char *object_label);
+				 const char *object_label,
+				 cJSON **parent_ref);
 
 /**
  * @brief Encode and add configuration data to the parent object.
