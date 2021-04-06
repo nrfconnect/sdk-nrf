@@ -28,6 +28,14 @@ config GPS_MODULE_NMEA
 
 endchoice
 
+config GPS_MODULE_PGPS_STORE_LOCATION
+	bool "Store location to modem upon fix"
+	help
+	  If this option is enabled. The location of the device is stored to flash upon every GPS
+	  fix. This can shorten the first time to fix for semi-stationary applications by injecting
+	  the last known location, current time and relevant predicted ephemerides to the
+	  modem upon boot.
+
 endif # GPS_MODULE
 
 module = GPS_MODULE

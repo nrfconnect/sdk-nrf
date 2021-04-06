@@ -12,6 +12,7 @@ if CLOUD_MODULE
 
 config CLOUD_THREAD_STACK_SIZE
 	int "Cloud module thread stack size"
+	default 4096 if NRF_CLOUD
 	default 2688
 
 config CLOUD_CLIENT_ID_USE_CUSTOM

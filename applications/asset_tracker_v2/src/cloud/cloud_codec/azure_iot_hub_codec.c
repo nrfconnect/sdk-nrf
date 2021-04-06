@@ -36,6 +36,11 @@ int cloud_codec_decode_config(char *input, struct cloud_data_cfg *data)
 		return -ENOENT;
 	}
 
+	/* Verify that the incoming JSON string is an object. */
+	if (!cJSON_IsObject(root_obj)) {
+		return -ENOENT;
+	}
+
 	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LOG_LEVEL_DBG)) {
 		json_print_obj("Decoded message:\n", root_obj);
 	}

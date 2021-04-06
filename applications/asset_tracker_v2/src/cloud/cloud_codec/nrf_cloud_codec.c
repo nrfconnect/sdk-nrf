@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <cloud_codec.h>
 #include <stdbool.h>
 #include <string.h>
 #include <zephyr.h>
 #include <zephyr/types.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <date_time.h>
+#include <cloud_codec.h>
 
 #include "cJSON.h"
 #include "json_helpers.h"
@@ -47,6 +48,68 @@ static bool has_shadow_update_been_handled(cJSON *root_obj)
 	version_prev = version_obj->valueint;
 
 	return retval;
+}
+
+static int add_meta_data(cJSON *parent, const char *app_id, int64_t *timestamp)
+{
+	int err;
+
+	err = date_time_uptime_to_unix_time_ms(timestamp);
+	if (err) {
+		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
+		return err;
+	}
+
+	err = json_add_str(parent, DATA_ID, app_id);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_str(parent, DATA_GROUP, MESSAGE_TYPE_DATA);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_TIMESTAMP, *timestamp);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	return 0;
+}
+
+static int add_data(cJSON *parent, const char *app_id, const char *str_val,
+		    int64_t *timestamp, bool queued, const char *object_name)
+{
+	int err;
+
+	if (!queued) {
+		return -ENODATA;
+	}
+
+	cJSON *data_obj = cJSON_CreateObject();
+
+	err = json_add_str(data_obj, DATA_TYPE, str_val);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = add_meta_data(data_obj, app_id, timestamp);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	json_add_obj(parent, object_name, data_obj);
+	return 0;
+
+exit:
+	cJSON_Delete(data_obj);
+	return err;
 }
 
 int cloud_codec_decode_config(char *input, struct cloud_data_cfg *data)
@@ -163,93 +226,180 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 {
 	int err;
 	char *buffer;
-	bool object_added = false;
+	bool msg_obj_added = false;
+	bool state_obj_added = false;
 
 	cJSON *root_obj = cJSON_CreateObject();
 	cJSON *state_obj = cJSON_CreateObject();
 	cJSON *rep_obj = cJSON_CreateObject();
+	cJSON *dev_obj = cJSON_CreateObject();
 
-	if (root_obj == NULL || state_obj == NULL || rep_obj == NULL) {
+	cJSON *modem_static_ref = NULL;
+	cJSON *modem_dynamic_ref = NULL;
+	cJSON *data_ref = NULL;
+
+	if (root_obj == NULL || state_obj == NULL || rep_obj == NULL || dev_obj == NULL) {
 		cJSON_Delete(root_obj);
 		cJSON_Delete(state_obj);
 		cJSON_Delete(rep_obj);
+		cJSON_Delete(dev_obj);
 		return -ENOMEM;
 	}
 
-	err = json_common_ui_data_add(rep_obj, ui_buf,
-				      JSON_COMMON_ADD_DATA_TO_OBJECT,
-				      DATA_BUTTON,
-				      NULL);
+	/******************************************************************************************/
+
+	/* TEMPHACK - Add GPS, humidity, and temperateure to root object and unpack in nrf cloud
+	 * integration layer before it is adressed to the right endpoint.
+	 */
+
+	/* GPS NMEA */
+
+	err = add_data(root_obj, APP_ID_GPS, gps_buf->nmea, &gps_buf->gps_ts, gps_buf->queued,
+		       OBJECT_MSG_GPS);
 	if (err == 0) {
-		object_added = true;
+		msg_obj_added = true;
+	} else if (err != -ENODATA) {
+		goto add_object;
+	}
+	gps_buf->queued = false;
+
+	/* Humidity and Temperateure */
+
+	/* Convert to humidity and temperateure to string format. */
+	char humidity[10];
+	char temperature[10];
+
+	snprintf(humidity, sizeof(humidity), "%f", sensor_buf->hum);
+	snprintf(temperature, sizeof(temperature), "%f", sensor_buf->temp);
+
+	/* Make a copy of the sensor timestamp. Timestamps are converted before encoding add
+	 * humidity and temperature share the same timestamp.
+	 */
+	int64_t ts_temp = sensor_buf->env_ts;
+
+	err = add_data(root_obj, APP_ID_HUMIDITY, humidity, &sensor_buf->env_ts, sensor_buf->queued,
+		       OBJECT_MSG_HUMID);
+	if (err == 0) {
+		msg_obj_added = true;
 	} else if (err != -ENODATA) {
 		goto add_object;
 	}
 
-	err = json_common_modem_static_data_add(rep_obj, modem_stat_buf,
-						JSON_COMMON_ADD_DATA_TO_OBJECT,
-						DATA_MODEM_STATIC,
-						NULL);
+	err = add_data(root_obj, APP_ID_TEMPERATURE, temperature, &ts_temp, sensor_buf->queued,
+		       OBJECT_MSG_TEMP);
 	if (err == 0) {
-		object_added = true;
+		msg_obj_added = true;
+	} else if (err != -ENODATA) {
+		goto add_object;
+	}
+	sensor_buf->queued = false;
+
+	/* Separate RSRP from static modem data if the entry is queued and encode as a separate
+	 * message.
+	 */
+	if (modem_dyn_buf->queued && modem_dyn_buf->rsrp_fresh) {
+		char rsrp[7];
+		/* Subtract RSRP offset value. nRF Cloud expects this. */
+		modem_dyn_buf->rsrp -= 141;
+
+		/* Make a copy of the timestamp to avoid error when converting the relative
+		 * timestamp twice with date_time_uptime_to_unix_time_ms().
+		 */
+		int64_t rsrp_ts = modem_dyn_buf->ts;
+
+		snprintf(rsrp, sizeof(rsrp), "%d", modem_dyn_buf->rsrp);
+
+		err = add_data(root_obj, APP_ID_RSRP, rsrp, &rsrp_ts, true, OBJECT_MSG_RSRP);
+		if (err == 0) {
+			msg_obj_added = true;
+		} else if (err != -ENODATA) {
+			goto add_object;
+		}
+	}
+
+	/******************************************************************************************/
+
+	/* deviceInfo */
+
+	err = json_common_modem_static_data_add(NULL, modem_stat_buf,
+						JSON_COMMON_GET_POINTER_TO_OBJECT,
+						NULL,
+						&modem_static_ref);
+	if (err == 0) {
+		state_obj_added = true;
 	} else if (err != -ENODATA) {
 		goto add_object;
 	}
 
-	err = json_common_modem_dynamic_data_add(rep_obj, modem_dyn_buf,
-						 JSON_COMMON_ADD_DATA_TO_OBJECT,
-						 DATA_MODEM_DYNAMIC,
-						 NULL);
+	data_ref = cJSON_DetachItemFromObject(modem_static_ref, DATA_VALUE);
+	cJSON_Delete(modem_static_ref);
+
+	if (data_ref != NULL) {
+		/* Temporary add battery data to deviceInfo. */
+		if (bat_buf->queued) {
+			err = json_add_number(data_ref, DATA_BATTERY, bat_buf->bat);
+			if (err) {
+				cJSON_Delete(data_ref);
+				goto add_object;
+			}
+			bat_buf->queued = false;
+		}
+
+		json_add_obj(dev_obj, DATA_MODEM_STATIC, data_ref);
+	} else {
+		/* If deviceInfo is empty but battery data is queued, we create a deviceInfo object
+		 * and populate it with battery data.
+		 */
+		if (bat_buf->queued) {
+
+			data_ref = cJSON_CreateObject();
+			if (data_ref == NULL) {
+				err = -ENOMEM;
+				goto add_object;
+			}
+
+			err = json_add_number(data_ref, DATA_BATTERY, bat_buf->bat);
+			if (err) {
+				cJSON_Delete(data_ref);
+				goto add_object;
+			}
+
+			state_obj_added = true;
+			json_add_obj(dev_obj, DATA_MODEM_STATIC, data_ref);
+			bat_buf->queued = false;
+		}
+	}
+
+	/* networkInfo */
+
+	err = json_common_modem_dynamic_data_add(NULL, modem_dyn_buf,
+						 JSON_COMMON_GET_POINTER_TO_OBJECT,
+						 NULL,
+						 &modem_dynamic_ref);
 	if (err == 0) {
-		object_added = true;
+		state_obj_added = true;
 	} else if (err != -ENODATA) {
 		goto add_object;
 	}
 
-	err = json_common_gps_data_add(rep_obj, gps_buf,
-				       JSON_COMMON_ADD_DATA_TO_OBJECT,
-				       DATA_GPS,
-				       NULL);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
-		goto add_object;
-	}
-
-	err = json_common_sensor_data_add(rep_obj, sensor_buf,
-					  JSON_COMMON_ADD_DATA_TO_OBJECT,
-					  DATA_ENVIRONMENTALS,
-					  NULL);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
-		goto add_object;
-	}
-
-	err = json_common_accel_data_add(rep_obj, accel_buf,
-					 JSON_COMMON_ADD_DATA_TO_OBJECT,
-					 DATA_MOVEMENT,
-					 NULL);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
-		goto add_object;
-	}
-
-	err = json_common_battery_data_add(rep_obj, bat_buf,
-					   JSON_COMMON_ADD_DATA_TO_OBJECT,
-					   DATA_BATTERY,
-					   NULL);
-	if (err == 0) {
-		object_added = true;
-	} else if (err != -ENODATA) {
-		goto add_object;
+	data_ref = cJSON_DetachItemFromObject(modem_dynamic_ref, DATA_VALUE);
+	cJSON_Delete(modem_dynamic_ref);
+	if (data_ref != NULL) {
+		json_add_obj(dev_obj, DATA_MODEM_DYNAMIC, data_ref);
 	}
 
 add_object:
 
-	json_add_obj(state_obj, OBJECT_REPORTED, rep_obj);
-	json_add_obj(root_obj, OBJECT_STATE, state_obj);
+	/* Delete state object if empty. */
+	if (state_obj_added) {
+		json_add_obj(rep_obj, OBJECT_DEVICE, dev_obj);
+		json_add_obj(state_obj, OBJECT_REPORTED, rep_obj);
+		json_add_obj(root_obj, OBJECT_STATE, state_obj);
+	} else {
+		cJSON_Delete(dev_obj);
+		cJSON_Delete(rep_obj);
+		cJSON_Delete(state_obj);
+	}
 
 	/* Check error code after all objects has been added to the root object.
 	 * This way, we only need to clear the root_object upon an error.
@@ -258,7 +408,7 @@ add_object:
 		goto exit;
 	}
 
-	if (!object_added) {
+	if (!state_obj_added && !msg_obj_added) {
 		err = -ENODATA;
 		LOG_DBG("No data to encode, JSON string empty...");
 		goto exit;
@@ -294,19 +444,32 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 {
 	int err;
 	char *buffer;
+	cJSON *root_obj = NULL;
 
-	cJSON *root_obj = cJSON_CreateObject();
+	if (!ui_buf->queued) {
+		err = -ENODATA;
+		goto exit;
+	}
 
+	root_obj = cJSON_CreateObject();
 	if (root_obj == NULL) {
-		cJSON_Delete(root_obj);
 		return -ENOMEM;
 	}
 
-	err = json_common_ui_data_add(root_obj, ui_buf,
-				      JSON_COMMON_ADD_DATA_TO_OBJECT,
-				      DATA_BUTTON,
-				      NULL);
+	/* Convert to string format. */
+	char button[2];
+
+	snprintk(button, sizeof(button), "%d", ui_buf->btn);
+
+	err = json_add_str(root_obj, DATA_TYPE, button);
 	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = add_meta_data(root_obj, APP_ID_BUTTON, &ui_buf->btn_ts);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
 	}
 
@@ -317,6 +480,8 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 		err = -ENOMEM;
 		goto exit;
 	}
+
+	ui_buf->queued = false;
 
 	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LOG_LEVEL_DBG)) {
 		json_print_obj("Encoded message:\n", root_obj);
@@ -352,7 +517,6 @@ int cloud_codec_encode_batch_data(
 	cJSON *root_obj = cJSON_CreateObject();
 
 	if (root_obj == NULL) {
-		cJSON_Delete(root_obj);
 		return -ENOMEM;
 	}
 
@@ -416,7 +580,7 @@ int cloud_codec_encode_batch_data(
 		goto exit;
 	} else {
 		/* At this point err can be either 0 or -ENODATA. Explicitly set err to 0 if
-		 * objects has been added to the rootj object.
+		 * objects has been added to the root object to avoid propagating -ENODATA.
 		 */
 		err = 0;
 	}
