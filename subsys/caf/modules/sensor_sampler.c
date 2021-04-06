@@ -73,14 +73,12 @@ static int sample_sensor(const struct device *dev, const struct sensor_config *s
 	size_t data_idx = 0;
 	struct sensor_value data[data_cnt];
 
+	err = sensor_sample_fetch(dev);
 	for (size_t i = 0; !err && (i < sc->chan_cnt); i++) {
 		const struct sampled_channel *sampled_chan = &sc->chans[i];
 
-		err = sensor_sample_fetch_chan(dev, sampled_chan->chan);
-		if (!err) {
-			err = sensor_channel_get(dev, sampled_chan->chan, &data[data_idx]);
-			data_idx += sampled_chan->data_cnt;
-		}
+		err = sensor_channel_get(dev, sampled_chan->chan, &data[data_idx]);
+		data_idx += sampled_chan->data_cnt;
 	}
 
 	if (err) {
