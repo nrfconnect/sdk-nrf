@@ -51,8 +51,7 @@ config OPENTHREAD_MBEDTLS_LIB_NAME
 
 config OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE
 	int "OpenThread radio transmit workqueue stack size"
-	default 640 if NRF_802154_SER_HOST
-	default 512
+	default 640
 
 choice CC3XX_LOCK_VARIANT
 	default CC3XX_ATOMIC_LOCK if SOC_NRF52840
