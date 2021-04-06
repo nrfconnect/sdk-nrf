@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig CAF_BLE_BOND_SUPPORTED
+config CAF_BLE_BOND_SUPPORTED
 	bool "Application supports Bluetooth LE bond module"
 	depends on SETTINGS
 	depends on CAF_BLE_COMMON_EVENTS
