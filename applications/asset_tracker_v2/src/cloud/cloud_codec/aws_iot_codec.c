@@ -173,7 +173,8 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 	err = json_common_ui_data_add(rep_obj, ui_buf,
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
-				      DATA_BUTTON);
+				      DATA_BUTTON,
+				      NULL);
 	if (err == 0) {
 		object_added = true;
 	} else if (err != -ENODATA) {
@@ -182,7 +183,8 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 	err = json_common_modem_static_data_add(rep_obj, modem_stat_buf,
 						JSON_COMMON_ADD_DATA_TO_OBJECT,
-						DATA_MODEM_STATIC);
+						DATA_MODEM_STATIC,
+						NULL);
 	if (err == 0) {
 		object_added = true;
 	} else if (err != -ENODATA) {
@@ -191,7 +193,8 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 	err = json_common_modem_dynamic_data_add(rep_obj, modem_dyn_buf,
 						 JSON_COMMON_ADD_DATA_TO_OBJECT,
-						 DATA_MODEM_DYNAMIC);
+						 DATA_MODEM_DYNAMIC,
+						 NULL);
 	if (err == 0) {
 		object_added = true;
 	} else if (err != -ENODATA) {
@@ -200,7 +203,8 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 	err = json_common_gps_data_add(rep_obj, gps_buf,
 				       JSON_COMMON_ADD_DATA_TO_OBJECT,
-				       DATA_GPS);
+				       DATA_GPS,
+				       NULL);
 	if (err == 0) {
 		object_added = true;
 	} else if (err != -ENODATA) {
@@ -209,7 +213,8 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 	err = json_common_sensor_data_add(rep_obj, sensor_buf,
 					  JSON_COMMON_ADD_DATA_TO_OBJECT,
-					  DATA_ENVIRONMENTALS);
+					  DATA_ENVIRONMENTALS,
+					  NULL);
 	if (err == 0) {
 		object_added = true;
 	} else if (err != -ENODATA) {
@@ -218,7 +223,8 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 	err = json_common_accel_data_add(rep_obj, accel_buf,
 					 JSON_COMMON_ADD_DATA_TO_OBJECT,
-					 DATA_MOVEMENT);
+					 DATA_MOVEMENT,
+					 NULL);
 	if (err == 0) {
 		object_added = true;
 	} else if (err != -ENODATA) {
@@ -227,7 +233,8 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 	err = json_common_battery_data_add(rep_obj, bat_buf,
 					   JSON_COMMON_ADD_DATA_TO_OBJECT,
-					   DATA_BATTERY);
+					   DATA_BATTERY,
+					   NULL);
 	if (err == 0) {
 		object_added = true;
 	} else if (err != -ENODATA) {
@@ -292,7 +299,8 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 
 	err = json_common_ui_data_add(root_obj, ui_buf,
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
-				      DATA_BUTTON);
+				      DATA_BUTTON,
+				      NULL);
 	if (err) {
 		goto exit;
 	}

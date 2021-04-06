@@ -17,7 +17,7 @@
 LOG_MODULE_REGISTER(json_common, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
 static int op_code_handle(cJSON *parent, enum json_common_op_code op,
-			  const char *object_label, cJSON *child)
+			  const char *object_label, cJSON *child, cJSON **parent_ref)
 {
 	switch (op) {
 	case JSON_COMMON_ADD_DATA_TO_ARRAY:
@@ -28,6 +28,11 @@ static int op_code_handle(cJSON *parent, enum json_common_op_code op,
 		json_add_obj_array(parent, child);
 		break;
 	case JSON_COMMON_ADD_DATA_TO_OBJECT:
+		if (!cJSON_IsObject(parent)) {
+			LOG_WRN("Passed in parent object is not an object");
+			return -EINVAL;
+		}
+
 		if (object_label == NULL) {
 			LOG_WRN("Missing object label");
 			return -EINVAL;
@@ -35,7 +40,11 @@ static int op_code_handle(cJSON *parent, enum json_common_op_code op,
 		json_add_obj(parent, object_label, child);
 		break;
 	case JSON_COMMON_GET_POINTER_TO_OBJECT:
-		parent = child;
+		if (*parent_ref != NULL) {
+			LOG_WRN("Passed in parent reference is not NULL");
+			return -EINVAL;
+		}
+		*parent_ref = child;
 		break;
 	default:
 		LOG_WRN("OP code invalid");
@@ -48,7 +57,8 @@ static int op_code_handle(cJSON *parent, enum json_common_op_code op,
 int json_common_modem_static_data_add(cJSON *parent,
 				      struct cloud_data_modem_static *data,
 				      enum json_common_op_code op,
-				      const char *object_label)
+				      const char *object_label,
+				      cJSON **parent_ref)
 {
 	int err;
 	char nw_mode[50] = {0};
@@ -59,10 +69,6 @@ int json_common_modem_static_data_add(cJSON *parent,
 
 	if (!data->queued) {
 		return -ENODATA;
-	}
-
-	if (parent == NULL) {
-		return -EINVAL;
 	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->ts);
@@ -134,7 +140,7 @@ int json_common_modem_static_data_add(cJSON *parent,
 		return err;
 	}
 
-	err = op_code_handle(parent, op, object_label, modem_obj);
+	err = op_code_handle(parent, op, object_label, modem_obj, parent_ref);
 	if (err) {
 		cJSON_Delete(modem_obj);
 		return err;
@@ -153,7 +159,8 @@ exit:
 int json_common_modem_dynamic_data_add(cJSON *parent,
 				       struct cloud_data_modem_dynamic *data,
 				       enum json_common_op_code op,
-				       const char *object_label)
+				       const char *object_label,
+				       cJSON **parent_ref)
 {
 	int err;
 	uint32_t mccmnc;
@@ -162,10 +169,6 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
 
 	if (!data->queued) {
 		return -ENODATA;
-	}
-
-	if (parent == NULL) {
-		return -EINVAL;
 	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->ts);
@@ -253,7 +256,7 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
 		return err;
 	}
 
-	err = op_code_handle(parent, op, object_label, modem_obj);
+	err = op_code_handle(parent, op, object_label, modem_obj, parent_ref);
 	if (err) {
 		cJSON_Delete(modem_obj);
 		return err;
@@ -272,16 +275,13 @@ exit:
 int json_common_sensor_data_add(cJSON *parent,
 				struct cloud_data_sensors *data,
 				enum json_common_op_code op,
-				const char *object_label)
+				const char *object_label,
+				cJSON **parent_ref)
 {
 	int err;
 
 	if (!data->queued) {
 		return -ENODATA;
-	}
-
-	if (parent == NULL) {
-		return -EINVAL;
 	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->env_ts);
@@ -319,7 +319,7 @@ int json_common_sensor_data_add(cJSON *parent,
 		return err;
 	}
 
-	err = op_code_handle(parent, op, object_label, sensor_obj);
+	err = op_code_handle(parent, op, object_label, sensor_obj, parent_ref);
 	if (err) {
 		cJSON_Delete(sensor_obj);
 		return err;
@@ -338,16 +338,13 @@ exit:
 int json_common_gps_data_add(cJSON *parent,
 			     struct cloud_data_gps *data,
 			     enum json_common_op_code op,
-			     const char *object_label)
+			     const char *object_label,
+			     cJSON **parent_ref)
 {
 	int err;
 
 	if (!data->queued) {
 		return -ENODATA;
-	}
-
-	if (parent == NULL) {
-		return -EINVAL;
 	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->gps_ts);
@@ -409,7 +406,7 @@ int json_common_gps_data_add(cJSON *parent,
 		return err;
 	}
 
-	err = op_code_handle(parent, op, object_label, gps_obj);
+	err = op_code_handle(parent, op, object_label, gps_obj, parent_ref);
 	if (err) {
 		cJSON_Delete(gps_obj);
 		return err;
@@ -428,16 +425,13 @@ exit:
 int json_common_accel_data_add(cJSON *parent,
 			       struct cloud_data_accelerometer *data,
 			       enum json_common_op_code op,
-			       const char *object_label)
+			       const char *object_label,
+			       cJSON **parent_ref)
 {
 	int err;
 
 	if (!data->queued) {
 		return -ENODATA;
-	}
-
-	if (parent == NULL) {
-		return -EINVAL;
 	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->ts);
@@ -481,7 +475,7 @@ int json_common_accel_data_add(cJSON *parent,
 		return err;
 	}
 
-	err = op_code_handle(parent, op, object_label, accel_obj);
+	err = op_code_handle(parent, op, object_label, accel_obj, parent_ref);
 	if (err) {
 		cJSON_Delete(accel_obj);
 		return err;
@@ -500,16 +494,13 @@ exit:
 int json_common_ui_data_add(cJSON *parent,
 			    struct cloud_data_ui *data,
 			    enum json_common_op_code op,
-			    const char *object_label)
+			    const char *object_label,
+			    cJSON **parent_ref)
 {
 	int err;
 
 	if (!data->queued) {
 		return -ENODATA;
-	}
-
-	if (parent == NULL) {
-		return -EINVAL;
 	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->btn_ts);
@@ -537,7 +528,7 @@ int json_common_ui_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	err = op_code_handle(parent, op, object_label, button_obj);
+	err = op_code_handle(parent, op, object_label, button_obj, parent_ref);
 	if (err) {
 		goto exit;
 	}
@@ -553,17 +544,14 @@ exit:
 
 int json_common_battery_data_add(cJSON *parent,
 				 struct cloud_data_battery *data,
-				enum json_common_op_code op,
-				const char *object_label)
+				 enum json_common_op_code op,
+				 const char *object_label,
+				 cJSON **parent_ref)
 {
 	int err;
 
 	if (!data->queued) {
 		return -ENODATA;
-	}
-
-	if (parent == NULL) {
-		return -EINVAL;
 	}
 
 	err = date_time_uptime_to_unix_time_ms(&data->bat_ts);
@@ -591,7 +579,7 @@ int json_common_battery_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	err = op_code_handle(parent, op, object_label, battery_obj);
+	err = op_code_handle(parent, op, object_label, battery_obj, parent_ref);
 	if (err) {
 		goto exit;
 	}
@@ -756,6 +744,7 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 			err = json_common_ui_data_add(array_obj,
 						      &data[i],
 						      JSON_COMMON_ADD_DATA_TO_ARRAY,
+						      NULL,
 						      NULL);
 		}
 			break;
@@ -765,6 +754,7 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 			err = json_common_modem_static_data_add(array_obj,
 								&data[i],
 								JSON_COMMON_ADD_DATA_TO_ARRAY,
+								NULL,
 								NULL);
 		}
 			break;
@@ -774,6 +764,7 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 			err = json_common_modem_dynamic_data_add(array_obj,
 								 &data[i],
 								 JSON_COMMON_ADD_DATA_TO_ARRAY,
+								 NULL,
 								 NULL);
 		}
 			break;
@@ -783,6 +774,7 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 			err = json_common_gps_data_add(array_obj,
 						       &data[i],
 						       JSON_COMMON_ADD_DATA_TO_ARRAY,
+						       NULL,
 						       NULL);
 		}
 			break;
@@ -792,6 +784,7 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 			err = json_common_sensor_data_add(array_obj,
 							  &data[i],
 							  JSON_COMMON_ADD_DATA_TO_ARRAY,
+							  NULL,
 							  NULL);
 		}
 			break;
@@ -801,6 +794,7 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 			err = json_common_accel_data_add(array_obj,
 							 &data[i],
 							 JSON_COMMON_ADD_DATA_TO_ARRAY,
+							 NULL,
 							 NULL);
 		}
 			break;
@@ -810,6 +804,7 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 			err = json_common_battery_data_add(array_obj,
 							   &data[i],
 							   JSON_COMMON_ADD_DATA_TO_ARRAY,
+							   NULL,
 							   NULL);
 		}
 			break;
