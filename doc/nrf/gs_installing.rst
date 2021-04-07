@@ -59,7 +59,8 @@ The installation process is different depending on your operating system.
 
 ..
 
-If you are interested in building `Project Connected Home over IP`_ applications, install also the `GN`_ meta-build system to generate the Ninja files that the |NCS| uses.
+In addition to these required tools, install the `GN`_ meta-build system if you are interested in building `Project Connected Home over IP`_ applications.
+This system generates the Ninja files that the |NCS| uses.
 
 .. tabs::
 
@@ -75,16 +76,23 @@ If you are interested in building `Project Connected Home over IP`_ applications
 
       To install the GN tool, complete the following steps:
 
-      1. Download the GN binary archive and extract it by using the following commands:
+      1. Create the directory for the GN tool:
 
          .. parsed-literal::
             :class: highlight
 
             mkdir ${HOME}/gn && cd ${HOME}/gn
+
+      #. Download the GN binary archive and extract it by using the following commands:
+
+         .. parsed-literal::
+            :class: highlight
+
             wget -O gn.zip https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/latest
             unzip gn.zip
             rm gn.zip
 
+         The wget tool is installed when installing the required tools on Linux.
       #. Add the location of the GN tool to the system PATH.
          For example, if you are using ``bash``, run the following commands:
 
@@ -98,12 +106,25 @@ If you are interested in building `Project Connected Home over IP`_ applications
 
       To install the GN tool, complete the following steps:
 
-      1. Download the GN binary archive and extract it by using the following commands:
+      1. Create the directory for the GN tool:
 
          .. parsed-literal::
             :class: highlight
 
             mkdir ${HOME}/gn && cd ${HOME}/gn
+
+      #. Install the wget tool:
+
+         .. parsed-literal::
+            :class: highlight
+
+            brew install wget
+
+      #. Download the GN binary archive and extract it by using the following commands:
+
+         .. parsed-literal::
+            :class: highlight
+
             wget -O gn.zip https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/mac-amd64/+/latest
             unzip gn.zip
             rm gn.zip
@@ -111,11 +132,20 @@ If you are interested in building `Project Connected Home over IP`_ applications
       #. Add the location of the GN tool to the system PATH.
          For example, if you are using ``bash``, run the following commands:
 
-         .. parsed-literal::
-            :class: highlight
+         a. Create the :file:`.bash_profile` file if you do not have it already:
 
-            echo 'export PATH=${HOME}/gn:"$PATH"' >> ${HOME}/.bashrc
-            source ${HOME}/.bashrc
+            .. parsed-literal::
+               :class: highlight
+
+               touch ${HOME}/.bash_profile
+
+         #. Add the location of the GN tool to :file:`.bash_profile`:
+
+            .. parsed-literal::
+               :class: highlight
+
+               echo 'export PATH=${HOME}/gn:"$PATH"' >> ${HOME}/.bash_profile
+               source ${HOME}/.bash_profile
 
 ..
 
