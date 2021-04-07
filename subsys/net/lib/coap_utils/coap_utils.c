@@ -20,7 +20,7 @@ LOG_MODULE_REGISTER(coap_utils, CONFIG_COAP_UTILS_LOG_LEVEL);
 #if defined(CONFIG_NRF_MODEM_LIB)
 #define COAP_RECEIVE_STACK_SIZE 1000
 #else
-#define COAP_RECEIVE_STACK_SIZE 500
+#define COAP_RECEIVE_STACK_SIZE 900
 #endif
 
 const static int nfds = 1;
