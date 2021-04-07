@@ -9,6 +9,17 @@
 		 */
 		zephyr,entropy = &rng;
 	};
+
+	pwmleds1 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led1: led_pwm_4 {
+			status = "okay";
+			pwms = <&pwm1 6>;
+			label = "LED System State";
+		};
+	};
 };
 
 &usbd {
@@ -23,16 +34,10 @@
 
 &pwm0 {
 	status = "okay";
-	ch0-pin = <6>;
-	ch0-inverted;
-	/delete-property/ ch1-pin;
-	/delete-property/ ch1-inverted;
-	/delete-property/ ch2-pin;
-	/delete-property/ ch2-inverted;
 };
 
 &pwm1 {
 	status = "okay";
-	ch0-pin = <12>;
+	ch0-pin = <6>;
 	ch0-inverted;
 };

@@ -9,6 +9,46 @@
 		 */
 		zephyr,entropy = &rng;
 	};
+
+	pwmleds0 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		led0_r: led_pwm_0 {
+			pwms = <&pwm0 11>;
+			label = "LED0 Red";
+		};
+
+		led0_g: led_pwm_1 {
+			pwms = <&pwm0 26>;
+			label = "LED0 Green";
+		};
+
+		led0_b: led_pwm_2 {
+			pwms = <&pwm0 27>;
+			label = "LED0 Blue";
+		};
+	};
+
+	pwmleds1 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		led1_r: led_pwm_3 {
+			pwms = <&pwm1 23>;
+			label = "LED1 Red";
+		};
+
+		led1_g: led_pwm_4 {
+			pwms = <&pwm1 25>;
+			label = "LED1 Green";
+		};
+
+		led1_b: led_pwm_5 {
+			pwms = <&pwm1 7>;
+			label = "LED1 Blue";
+		};
+	};
 };
 
 &usbd {

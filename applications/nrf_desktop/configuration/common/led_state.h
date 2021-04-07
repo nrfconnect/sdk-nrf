@@ -46,7 +46,7 @@ enum led_id {
 	LED_ID_COUNT
 };
 
-#define LED_UNAVAILABLE CONFIG_CAF_LEDS_COUNT
+#define LED_UNAVAILABLE 0xFF
 
 #if (defined(CONFIG_BT_PERIPHERAL) && defined(CONFIG_BT_CENTRAL)) || \
     (!defined(CONFIG_BT_PERIPHERAL) && !defined(CONFIG_BT_CENTRAL))
