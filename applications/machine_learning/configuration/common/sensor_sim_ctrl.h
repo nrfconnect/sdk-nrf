@@ -15,9 +15,14 @@ extern "C" {
 #include <drivers/sensor.h>
 #include <wave_gen.h>
 
+struct sim_wave {
+	const char *label;
+	struct wave_gen_param wave_param;
+};
+
 struct sim_signal_params {
 	enum sensor_channel chan;
-	const struct wave_gen_param *waves;
+	const struct sim_wave *waves;
 	uint8_t waves_cnt;
 };
 
