@@ -24,4 +24,13 @@ config ML_APP_INIT_LOG_ML_STATE_EVENTS
 	depends on LOG
 	default y
 
+config ML_APP_SENSOR_SIM_EVENTS
+	bool "Enable simulated sensor events"
+
+config ML_APP_INIT_LOG_SENSOR_SIM_EVENTS
+	bool "Log simulated sensor events"
+	depends on ML_APP_SENSOR_SIM_EVENTS
+	depends on LOG
+	default y
+
 endmenu
