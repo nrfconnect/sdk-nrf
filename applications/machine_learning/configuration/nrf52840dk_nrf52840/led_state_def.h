@@ -5,6 +5,7 @@
  */
 
 #include <caf/led_effect.h>
+#include "led_state.h"
 #include "ml_state_event.h"
 
 /* This configuration file is included only once from led_state module and holds
@@ -16,12 +17,36 @@
  */
 const struct {} led_state_def_include_once;
 
-/* Initialized with zero. */
-static const uint8_t ml_state_led_id;
 
-static const struct led_effect ml_state_led_effect[] = {
-	[ML_STATE_MODEL_RUNNING]	= LED_EFFECT_LED_BREATH(1000, LED_COLOR(100)),
-	[ML_STATE_DATA_FORWARDING]	= LED_EFFECT_LED_BLINK(50, LED_COLOR(100)),
+/* Map function to LED ID */
+static const uint8_t led_map[] = {
+	[LED_ID_ML_STATE] = 0,
+	[LED_ID_SENSOR_SIM] = 1
 };
 
-BUILD_ASSERT(ARRAY_SIZE(ml_state_led_effect) == ML_STATE_COUNT);
+static const struct led_effect ml_state_led_effect[] = {
+	[ML_STATE_DATA_FORWARDING]	= LED_EFFECT_LED_BLINK(50, LED_COLOR(100, 100, 100)),
+};
+
+static const struct ml_result_led_effect ml_result_led_effects[] = {
+	{
+		.label = NULL,
+		.effect = LED_EFFECT_LED_BREATH(500, LED_COLOR(100, 100, 100)),
+	},
+	{
+		.label = "sine",
+		.effect = LED_EFFECT_LED_CLOCK(1, LED_COLOR(100, 100, 100)),
+	},
+	{
+		.label = "triangle",
+		.effect = LED_EFFECT_LED_CLOCK(2, LED_COLOR(100, 100, 100)),
+	},
+	{
+		.label = "square",
+		.effect = LED_EFFECT_LED_CLOCK(3, LED_COLOR(100, 100, 100)),
+	},
+	{
+		.label = "idle",
+		.effect = LED_EFFECT_LED_CLOCK(4, LED_COLOR(100, 100, 100)),
+	},
+};
