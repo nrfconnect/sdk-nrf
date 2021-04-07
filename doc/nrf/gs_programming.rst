@@ -30,6 +30,11 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    If you have installed the |NCS| using the :ref:`gs_app_tcm`, click :guilabel:`Open IDE` next to the version you installed to start SES.
    If you have installed SES manually, run :file:`bin/emStudio`.
 
+   .. figure:: images/gs-assistant_tm_installed.png
+      :alt: The Toolchain Manager options after installing the NCS version, cropped
+
+      The Toolchain Manager options after installing the NCS version
+
 #. Select :guilabel:`File` -> :guilabel:`Open nRF Connect SDK Project`.
 
     .. figure:: images/ses_open.png
@@ -142,6 +147,11 @@ Complete the following steps to build |NCS| projects on the command line after c
 1.    Open a terminal window.
 
       If you have installed the |NCS| using the :ref:`gs_app_tcm`, click the down arrow next to the version you installed and select :guilabel:`Open bash`.
+
+      .. figure:: images/gs-assistant_tm_dropdown.png
+         :alt: The Toolchain Manager dropdown menu for the installed NCS version, cropped
+
+         The Toolchain Manager dropdown menu options
 
 #.    Go to the specific sample or application directory.
       For example, to build the :ref:`at_client_sample` sample, run the following command to navigate to the sample directory:
