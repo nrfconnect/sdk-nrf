@@ -66,7 +66,7 @@ config EI_WRAPPER_DATA_BUF_SIZE
 
 config EI_WRAPPER_THREAD_STACK_SIZE
 	int "Size of EI wrapper thread stack"
-	default 12000
+	default 4096
 	help
 	  Edge Impulse library processes the data in a low-priority thread.
 	  The stack size needs to be sufficient for used impulse.
