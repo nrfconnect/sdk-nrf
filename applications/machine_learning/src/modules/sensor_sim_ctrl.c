@@ -10,6 +10,7 @@
 #include "sensor_sim_ctrl_def.h"
 
 #include <caf/events/button_event.h>
+#include "sensor_sim_event.h"
 
 #define MODULE sensor_sim_ctrl
 #include <caf/events/module_state_event.h>
@@ -47,14 +48,24 @@ static void report_error(void)
 	module_set_state(MODULE_STATE_ERROR);
 }
 
+static void broadcast_wave_label(const char *label)
+{
+	struct sensor_sim_event *event = new_sensor_sim_event();
+
+	event->label = label;
+	EVENT_SUBMIT(event);
+}
+
 static void set_wave(void)
 {
-	int err = sensor_sim_set_wave_param(sim_signal_params.chan,
-					    &sim_signal_params.waves[cur_wave_idx]);
+	const struct sim_wave *w = &sim_signal_params.waves[cur_wave_idx];
+	int err = sensor_sim_set_wave_param(sim_signal_params.chan, &w->wave_param);
 
 	if (err) {
 		LOG_ERR("Cannot set simulated accel params (err %d)", err);
 		report_error();
+	} else {
+		broadcast_wave_label(w->label);
 	}
 }
 
@@ -90,11 +101,16 @@ static bool handle_button_event(const struct button_event *event)
 
 static void verify_wave_params(void)
 {
-	for (size_t i = 0; i < sim_signal_params.waves_cnt; i++) {
-		const struct wave_gen_param *w = &sim_signal_params.waves[i];
+	__ASSERT_NO_MSG(sim_signal_params.waves != NULL);
+	__ASSERT_NO_MSG(sim_signal_params.waves_cnt > 0);
 
-		__ASSERT_NO_MSG(w->type < WAVE_GEN_TYPE_COUNT);
-		__ASSERT_NO_MSG((w->period_ms > 0) || (w->type == WAVE_GEN_TYPE_NONE));
+	for (size_t i = 0; i < sim_signal_params.waves_cnt; i++) {
+		const struct sim_wave *w = &sim_signal_params.waves[i];
+
+		__ASSERT_NO_MSG(w->label != NULL);
+		__ASSERT_NO_MSG(w->wave_param.type < WAVE_GEN_TYPE_COUNT);
+		__ASSERT_NO_MSG((w->wave_param.period_ms > 0) ||
+				(w->wave_param.type == WAVE_GEN_TYPE_NONE));
 	}
 }
 

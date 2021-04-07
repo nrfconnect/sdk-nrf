@@ -7,6 +7,7 @@
 menuconfig ML_APP_SENSOR_SIM_CTRL
 	bool "Simulated sensor controller"
 	depends on SENSOR_SIM_ACCEL_WAVE
+	select ML_APP_SENSOR_SIM_EVENTS
 
 if ML_APP_SENSOR_SIM_CTRL
 

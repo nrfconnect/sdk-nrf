@@ -15,41 +15,53 @@
  */
 const struct {} sensor_sim_ctrl_def_include_once;
 
-static const struct wave_gen_param wave_params[] = {
+static const struct sim_wave sim_waves[] = {
 	{
-		.type = WAVE_GEN_TYPE_SINE,
-		.period_ms = 2000,
-		.offset = 0.0,
-		.amplitude = 0.5,
-		.noise = 0.1,
+		.label = "sine",
+		.wave_param = {
+			.type = WAVE_GEN_TYPE_SINE,
+			.period_ms = 2000,
+			.offset = 0.0,
+			.amplitude = 0.5,
+			.noise = 0.1,
+		}
 	},
 	{
-		.type = WAVE_GEN_TYPE_TRIANGLE,
-		.period_ms = 2000,
-		.offset = 0.0,
-		.amplitude = 0.5,
-		.noise = 0.1,
+		.label = "triangle",
+		.wave_param = {
+			.type = WAVE_GEN_TYPE_TRIANGLE,
+			.period_ms = 2000,
+			.offset = 0.0,
+			.amplitude = 0.5,
+			.noise = 0.1,
+		},
 	},
 	{
-		.type = WAVE_GEN_TYPE_SQUARE,
-		.period_ms = 2000,
-		.offset = 0.0,
-		.amplitude = 0.5,
-		.noise = 0.1,
+		.label = "square",
+		.wave_param = {
+			.type = WAVE_GEN_TYPE_SQUARE,
+			.period_ms = 2000,
+			.offset = 0.0,
+			.amplitude = 0.5,
+			.noise = 0.1,
+		},
 	},
 	{
-		.type = WAVE_GEN_TYPE_NONE,
-		.period_ms = 0,
-		.offset = 0.0,
-		.amplitude = 0.0,
-		.noise = 0.1,
-	}
+		.label = "idle",
+		.wave_param = {
+			.type = WAVE_GEN_TYPE_NONE,
+			.period_ms = 0,
+			.offset = 0.0,
+			.amplitude = 0.0,
+			.noise = 0.1,
+		},
+	},
 };
 
-BUILD_ASSERT(ARRAY_SIZE(wave_params) <= UCHAR_MAX);
+BUILD_ASSERT(ARRAY_SIZE(sim_waves) <= UCHAR_MAX);
 
 static const struct sim_signal_params sim_signal_params = {
 	.chan = SENSOR_CHAN_ACCEL_XYZ,
-	.waves = wave_params,
-	.waves_cnt = ARRAY_SIZE(wave_params),
+	.waves = sim_waves,
+	.waves_cnt = ARRAY_SIZE(sim_waves),
 };
