@@ -115,10 +115,6 @@ config SLM_UDP_POLL_TIME
 	int "Poll time-out in seconds for UDP connection"
 	default 10
 
-config SLM_TCP_CONN_TIME
-	int "Connection time-out in seconds for TCP server"
-	default 60
-
 config SLM_DATAMODE_HWFC
 	bool "UART HWFC for data mode"
 	default y
