@@ -922,18 +922,13 @@ To act as a TCP server, |global_private_address|
          TCP3/4/5 received
          Closing connection
 
-   #. Read information about the current state and observe that the client disconnects.
+   #. Read information about the current state.
 
       .. parsed-literal::
          :class: highlight
 
          **AT#XTCPSVR?**
          #XTCPSVR: 1,2,0
-         OK
-         #XTCPSVR: "timeout"
-
-         **AT#XTCPSVR?**
-         #XTCPSVR: 1,-1,0
          OK
 
    #. Stop the server.

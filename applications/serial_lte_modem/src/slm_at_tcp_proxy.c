@@ -48,7 +48,6 @@ RING_BUF_DECLARE(data_buf, CONFIG_SLM_SOCKET_RX_MAX * 2);
 static struct k_thread tcp_thread;
 static struct k_work disconnect_work;
 static K_THREAD_STACK_DEFINE(tcp_thread_stack, THREAD_STACK_SIZE);
-K_TIMER_DEFINE(conn_timer, NULL, NULL);
 
 static struct sockaddr_in remote;
 static struct tcp_proxy_t {
@@ -334,7 +333,6 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 		sock = proxy.sock;
 	} else if (proxy.role == AT_TCP_ROLE_SERVER && proxy.sock_peer != INVALID_SOCKET) {
 		sock = proxy.sock_peer;
-		k_timer_stop(&conn_timer);
 	} else {
 		LOG_ERR("Not connected yet");
 		return -EINVAL;
@@ -362,10 +360,6 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 	if (ret >= 0) {
 		sprintf(rsp_buf, "\r\n#XTCPSEND: %d\r\n", offset);
 		rsp_send(rsp_buf, strlen(rsp_buf));
-		/* restart activity timer */
-		if (proxy.role == AT_TCP_ROLE_SERVER) {
-			k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME), K_NO_WAIT);
-		}
 		return 0;
 	} else {
 		return ret;
@@ -382,7 +376,6 @@ static int do_tcp_send_datamode(const uint8_t *data, int datalen)
 		sock = proxy.sock;
 	} else if (proxy.role == AT_TCP_ROLE_SERVER && proxy.sock_peer != INVALID_SOCKET) {
 		sock = proxy.sock_peer;
-		k_timer_stop(&conn_timer);
 	} else {
 		LOG_ERR("Not connected yet");
 		return -EINVAL;
@@ -403,13 +396,6 @@ static int do_tcp_send_datamode(const uint8_t *data, int datalen)
 			break;
 		}
 		offset += ret;
-	}
-
-	if (ret >= 0) {
-		/* restart activity timer */
-		if (proxy.role == AT_TCP_ROLE_SERVER) {
-			k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME), K_NO_WAIT);
-		}
 	}
 
 	return offset;
@@ -457,8 +443,6 @@ static void tcp_data_handle(uint8_t *data, uint32_t length)
 
 static void tcp_terminate_connection(int cause)
 {
-	k_timer_stop(&conn_timer);
-
 	if (proxy.datamode) {
 		(void)exit_datamode();
 	}
@@ -550,10 +534,7 @@ static int tcpsvr_input(int infd)
 		fds[nfds].fd = proxy.sock_peer;
 		fds[nfds].events = POLLIN;
 		nfds++;
-		/* Start a one-shot timer to close the connection */
-		k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME), K_NO_WAIT);
 	} else {
-		k_timer_stop(&conn_timer);
 		ret = recv(fds[infd].fd, (void *)rx_data, sizeof(rx_data), 0);
 		if (ret > 0) {
 			tcp_data_handle(rx_data, ret);
@@ -561,9 +542,6 @@ static int tcpsvr_input(int infd)
 		if (ret < 0) {
 			LOG_WRN("recv() error: %d", -errno);
 		}
-		/* Restart conn timer */
-		LOG_DBG("restart timer: POLLIN");
-		k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME), K_NO_WAIT);
 	}
 
 	return ret;
@@ -584,10 +562,6 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 	nfds = 1;
 	ring_buf_reset(&data_buf);
 	while (true) {
-		if (k_timer_status_get(&conn_timer) > 0) {
-			LOG_WRN("Connecion timeout");
-			tcp_terminate_connection(-ETIMEDOUT);
-		}
 		ret = poll(fds, nfds, MSEC_PER_SEC * CONFIG_SLM_TCP_POLL_TIME);
 		if (ret < 0) {  /* IO error */
 			LOG_WRN("poll() error: %d", -errno);
@@ -637,7 +611,6 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 	}
 exit:
 	if (proxy.sock_peer != INVALID_SOCKET) {
-		k_timer_stop(&conn_timer);
 		ret = close(proxy.sock_peer);
 		if (ret < 0) {
 			LOG_WRN("close(%d) fail: %d", proxy.sock_peer, -errno);
