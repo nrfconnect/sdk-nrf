@@ -6,12 +6,10 @@
 
 #include <zephyr.h>
 #include <assert.h>
-#include <drivers/pwm.h>
+#include <drivers/led.h>
 
 #include <caf/events/power_event.h>
 #include <caf/events/led_event.h>
-
-#include CONFIG_CAF_LEDS_DEF_PATH
 
 #define MODULE leds
 #include <caf/events/module_state_event.h>
@@ -22,7 +20,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_LEDS_LOG_LEVEL);
 #define LED_ID(led) ((led) - &leds[0])
 
 struct led {
-	const struct device *pwm_dev;
+	const char *label;
+	const struct device *dev;
+	uint8_t color_count;
 
 	struct led_color color;
 	const struct led_effect *effect;
@@ -32,29 +32,73 @@ struct led {
 	struct k_delayed_work work;
 };
 
-static struct led leds[CONFIG_CAF_LEDS_COUNT];
+#define DT_DRV_COMPAT pwm_leds
+
+#define _LED_COLOR_ID(id) 0,
+
+#define _LED_COLOR_COUNT(id)					\
+	static const uint8_t led_colors_##id[] = {		\
+		DT_INST_FOREACH_CHILD(id, _LED_COLOR_ID)	\
+	};
+
+DT_INST_FOREACH_STATUS_OKAY(_LED_COLOR_COUNT)
+
+#define _LED_INSTANCE_DEF(id)						\
+	{								\
+		.label = DT_INST_PROP_OR(id, label, "LED_PWM_"#id),	\
+		.color_count = ARRAY_SIZE(led_colors_##id),		\
+	},
 
 
-static void pwm_out(struct led *led, struct led_color *color)
+static struct led leds[] = {
+	DT_INST_FOREACH_STATUS_OKAY(_LED_INSTANCE_DEF)
+};
+
+
+static int set_color_one_channel(struct led *led, struct led_color *color)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(color->c); i++) {
-		int err = pwm_pin_set_usec(led->pwm_dev,
-					   led_pins[LED_ID(led)][i],
-					   CONFIG_CAF_LEDS_BRIGHTNESS_MAX,
-					   color->c[i],
-					   0);
+	/* For a single color LED convert color to brightness. */
+	unsigned int brightness = 0;
 
-		if (err) {
-			LOG_ERR("Cannot set PWM output (err: %d)", err);
-		}
+	for (size_t i = 0; i < ARRAY_SIZE(color->c); i++) {
+		brightness += color->c[i];
+	}
+	brightness /= ARRAY_SIZE(color->c);
+
+	return led_set_brightness(led->dev, 0, brightness);
+}
+
+static int set_color_all_channels(struct led *led, struct led_color *color)
+{
+	int err = 0;
+
+	for (size_t i = 0; (i < ARRAY_SIZE(color->c)) && !err; i++) {
+		err = led_set_brightness(led->dev, i, color->c[i]);
+	}
+
+	return err;
+}
+
+static void set_color(struct led *led, struct led_color *color)
+{
+	int err;
+
+	if (led->color_count == ARRAY_SIZE(color->c)) {
+		err = set_color_all_channels(led, color);
+	} else {
+		err = set_color_one_channel(led, color);
+	}
+
+	if (err) {
+		LOG_ERR("Cannot set LED brightness (err: %d)", err);
 	}
 }
 
-static void pwm_off(struct led *led)
+static void set_off(struct led *led)
 {
 	struct led_color nocolor = {0};
 
-	pwm_out(led, &nocolor);
+	set_color(led, &nocolor);
 }
 
 static void work_handler(struct k_work *work)
@@ -72,7 +116,7 @@ static void work_handler(struct k_work *work)
 			substeps_left;
 		led->color.c[i] += diff;
 	}
-	pwm_out(led, &led->color);
+	set_color(led, &led->color);
 
 	led->effect_substep++;
 	if (led->effect_substep == effect_step->substep_count) {
@@ -127,35 +171,23 @@ static void led_update(struct led *led)
 
 static int leds_init(void)
 {
-	static const char * const dev_name[] = {
-#if defined(CONFIG_PWM) && DT_NODE_HAS_STATUS(DT_NODELABEL(pwm0), okay)
-		DT_LABEL(DT_NODELABEL(pwm0)),
-#endif
-#if defined(CONFIG_PWM) && DT_NODE_HAS_STATUS(DT_NODELABEL(pwm1), okay)
-		DT_LABEL(DT_NODELABEL(pwm1)),
-#endif
-#if defined(CONFIG_PWM) && DT_NODE_HAS_STATUS(DT_NODELABEL(pwm2), okay)
-		DT_LABEL(DT_NODELABEL(pwm2)),
-#endif
-#if defined(CONFIG_PWM) && DT_NODE_HAS_STATUS(DT_NODELABEL(pwm3), okay)
-		DT_LABEL(DT_NODELABEL(pwm3)),
-#endif
-	};
-
 	int err = 0;
 
-	BUILD_ASSERT(ARRAY_SIZE(leds) <= ARRAY_SIZE(dev_name),
-			 "not enough PWMs");
+	BUILD_ASSERT(DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT) > 0, "No LEDs defined");
 
 	for (size_t i = 0; (i < ARRAY_SIZE(leds)) && !err; i++) {
-		leds[i].pwm_dev = device_get_binding(dev_name[i]);
+		struct led *led = &leds[i];
 
-		if (!leds[i].pwm_dev) {
-			LOG_ERR("Cannot bind %s", dev_name[i]);
+		__ASSERT_NO_MSG((led->color_count == 1) || (led->color_count == 3));
+
+		led->dev = device_get_binding(led->label);
+
+		if (!led->dev) {
+			LOG_ERR("Cannot bind %s", led->label);
 			err = -ENXIO;
 		} else {
-			k_delayed_work_init(&leds[i].work, work_handler);
-			led_update(&leds[i]);
+			k_delayed_work_init(&led->work, work_handler);
+			led_update(led);
 		}
 	}
 
@@ -166,7 +198,7 @@ static void leds_start(void)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
 #ifdef CONFIG_PM_DEVICE
-		int err = device_set_power_state(leds[i].pwm_dev,
+		int err = device_set_power_state(leds[i].dev,
 						 DEVICE_PM_ACTIVE_STATE,
 						 NULL, NULL);
 		if (err) {
@@ -182,10 +214,10 @@ static void leds_stop(void)
 	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
 		k_delayed_work_cancel(&leds[i].work);
 
-		pwm_off(&leds[i]);
+		set_off(&leds[i]);
 
 #ifdef CONFIG_PM_DEVICE
-		int err = device_set_power_state(leds[i].pwm_dev,
+		int err = device_set_power_state(leds[i].dev,
 						 DEVICE_PM_SUSPEND_STATE,
 						 NULL, NULL);
 		if (err) {
@@ -202,7 +234,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_led_event(eh)) {
 		const struct led_event *event = cast_led_event(eh);
 
-		__ASSERT_NO_MSG(event->led_id < CONFIG_CAF_LEDS_COUNT);
+		__ASSERT_NO_MSG(event->led_id < ARRAY_SIZE(leds));
 
 		struct led *led = &leds[event->led_id];
 
