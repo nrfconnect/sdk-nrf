@@ -61,6 +61,7 @@ target_sources(app PRIVATE
 # Include application events and configuration headers
 target_include_directories(app PRIVATE
   src/events
+  src/util
 )
 
 zephyr_include_directories(
@@ -71,6 +72,7 @@ zephyr_include_directories(
 # Application sources
 add_subdirectory(src/events)
 add_subdirectory(src/modules)
+add_subdirectory(src/util)
 
 if(CONFIG_BOOTLOADER_MCUBOOT)
   assert_exists(mcuboot_CONF_FILE)

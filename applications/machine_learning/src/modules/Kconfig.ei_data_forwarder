@@ -6,15 +6,29 @@
 
 menuconfig ML_APP_EI_DATA_FORWARDER
 	bool "Edge Impulse data forwarder"
-	depends on UART_ASYNC_API
 	depends on NEWLIB_LIBC
 	depends on NEWLIB_LIBC_FLOAT_PRINTF
 	depends on CAF_SENSOR_EVENTS
 
 if ML_APP_EI_DATA_FORWARDER
 
+choice
+	prompt "Select data forwarder interface"
+	default ML_APP_EI_DATA_FORWARDER_UART
+
+config ML_APP_EI_DATA_FORWARDER_UART
+	bool "UART"
+	depends on UART_ASYNC_API
+
+config ML_APP_EI_DATA_FORWARDER_BT_NUS
+	bool "Nordic UART Service (NUS)"
+	depends on BT_NUS
+	depends on BT_GAP_AUTO_UPDATE_CONN_PARAMS
+
+endchoice
+
 config ML_APP_EI_DATA_FORWARDER_BUF_SIZE
-	int "UART buffer size"
+	int "Data buffer size"
 	default 64
 	range 6 4096
 	help
@@ -23,6 +37,7 @@ config ML_APP_EI_DATA_FORWARDER_BUF_SIZE
 
 config ML_APP_EI_DATA_FORWARDER_UART_DEV
 	string "UART device name"
+	depends on ML_APP_EI_DATA_FORWARDER_UART
 	default "UART_0"
 	help
 	  Name of UART device that is used to forward data.

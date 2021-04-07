@@ -4,8 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-target_sources_ifdef(CONFIG_ML_APP_EI_DATA_FORWARDER
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ei_data_forwarder.c)
+target_sources_ifdef(CONFIG_ML_APP_EI_DATA_FORWARDER_UART
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ei_data_forwarder_uart.c)
+
+target_sources_ifdef(CONFIG_ML_APP_EI_DATA_FORWARDER_BT_NUS
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ei_data_forwarder_bt_nus.c)
 
 target_sources_ifdef(CONFIG_ML_APP_LED_STATE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led_state.c)
