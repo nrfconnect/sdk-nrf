@@ -90,7 +90,7 @@ For example:
 The USB device VID and PID are configured by the sample's Kconfig file.
 
 .. note::
-    If you want to use the USB as the NCP communication channel when using the nRF52840 Dongle, building the sample with the :file:`prj_usb.conf` configuration file is mandatory.
+    The USB is used as the default NCP communication channel when using the nRF52840 Dongle.
 
 .. _zigbee_ncp_bootloader:
 

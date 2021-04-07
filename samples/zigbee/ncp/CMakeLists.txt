@@ -20,6 +20,11 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml"
   )
 endif()
 
+# Set USB as default transport when nRF52 Dongle board is selected
+if (${BOARD} STREQUAL "nrf52840dongle_nrf52840")
+  set(CONF_FILE "prj_usb.conf")
+endif()
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project("ZBOSS NCP SoC firmware")
