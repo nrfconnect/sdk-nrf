@@ -444,6 +444,13 @@ static int sensor_sim_generate_data(enum sensor_channel chan)
 	int err = 0;
 
 	switch (chan) {
+	case SENSOR_CHAN_ALL:
+		generate_temp_data();
+		generate_humidity_data();
+		generate_pressure_data();
+		err = generate_accel_data(SENSOR_CHAN_ACCEL_XYZ);
+		break;
+
 	case SENSOR_CHAN_ACCEL_X:
 	case SENSOR_CHAN_ACCEL_Y:
 	case SENSOR_CHAN_ACCEL_Z:
