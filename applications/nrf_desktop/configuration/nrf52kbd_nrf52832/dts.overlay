@@ -1,1 +1,12 @@
-/* No overlay */
+/ {
+	pwmleds0 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led0: led_pwm_0 {
+			status = "okay";
+			pwms = <&pwm0 30>;
+			label = "LED Conn State";
+		};
+	};
+};

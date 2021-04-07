@@ -34,7 +34,13 @@ struct led {
 	bool streaming;
 };
 
-static struct led leds[CONFIG_CAF_LEDS_COUNT];
+#define DT_DRV_COMPAT pwm_leds
+#define _LED_INSTANCE_DEF(id) { 0 },
+
+static struct led leds[] = {
+	DT_INST_FOREACH_STATUS_OKAY(_LED_INSTANCE_DEF)
+};
+
 static bool initialized;
 
 enum led_stream_opt {
@@ -57,11 +63,13 @@ static size_t next_index(size_t index)
 
 static bool queue_data(const uint8_t *data, const size_t size, struct led *led)
 {
-	static const size_t min_len = CONFIG_CAF_LEDS_COLOR_COUNT
-			 * sizeof(led->steps_queue[led->rx_idx].color.c[0])
-			 + sizeof(led->steps_queue[led->rx_idx].substep_count)
-			 + sizeof(led->steps_queue[led->rx_idx].substep_time)
-			 + sizeof(uint8_t); /* LED ID */
+	BUILD_ASSERT(ARRAY_SIZE(led->steps_queue[led->rx_idx].color.c) == INCOMING_LED_COLOR_COUNT,
+		     "");
+
+	static const size_t min_len = sizeof(led->steps_queue[led->rx_idx].color.c)
+				    + sizeof(led->steps_queue[led->rx_idx].substep_count)
+				    + sizeof(led->steps_queue[led->rx_idx].substep_time)
+				    + sizeof(uint8_t); /* LED ID */
 
 	BUILD_ASSERT(min_len <= LED_STREAM_DATA_SIZE, "");
 
@@ -74,10 +82,9 @@ static bool queue_data(const uint8_t *data, const size_t size, struct led *led)
 
 	size_t pos = 0;
 
-	/* Fill only leds available in the system */
-	memcpy(led->steps_queue[led->rx_idx].color.c, &data[pos],
-	       CONFIG_CAF_LEDS_COLOR_COUNT);
-	pos += INCOMING_LED_COLOR_COUNT;
+	for (size_t i = 0; i < ARRAY_SIZE(led->steps_queue[led->rx_idx].color.c); i++, pos++) {
+		led->steps_queue[led->rx_idx].color.c[i] = COLOR_BRIGHTNESS_TO_PCT(data[pos]);
+	}
 
 	led->steps_queue[led->rx_idx].substep_count = sys_get_le16(&data[pos]);
 	pos += sizeof(led->steps_queue[led->rx_idx].substep_count);
