@@ -6,6 +6,6 @@ gperf=3.1;hash=258483ea2fd445d42d869d495504f960202fe0c3
 dtc=1.4.7;hash=0747cc9d6b50ac8a3b1b576e4509494f2258aef2
 gnuarmemb=9-2019-q4-major
 gnuarmemb-short=9-2019q4
-ses=5.34a
+ses=5.40c
 west=0.9.0
 gn=1880
