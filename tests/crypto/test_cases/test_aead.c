@@ -155,44 +155,40 @@ __attribute__((noinline)) void unhexify_aead(void)
 	bool encrypt =
 		(p_test_vector->direction == MBEDTLS_ENCRYPT) && g_encrypt;
 
-	key_len = hex2bin(p_test_vector->p_key, strlen(p_test_vector->p_key),
-			  m_aead_key_buf, strlen(p_test_vector->p_key));
-	mac_len =
-		hex2bin(p_test_vector->p_mac, strlen(p_test_vector->p_mac),
-			m_aead_expected_mac_buf, strlen(p_test_vector->p_mac));
-	ad_len = hex2bin(p_test_vector->p_ad, strlen(p_test_vector->p_ad),
-			 m_aead_ad_buf, strlen(p_test_vector->p_ad));
-	nonce_len =
-		hex2bin(p_test_vector->p_nonce, strlen(p_test_vector->p_nonce),
-			m_aead_nonce_buf, strlen(p_test_vector->p_nonce));
+	key_len = hex2bin_safe(p_test_vector->p_key,
+			       m_aead_key_buf,
+			       sizeof(m_aead_key_buf));
+	mac_len = hex2bin_safe(p_test_vector->p_mac,
+			       m_aead_expected_mac_buf,
+			       sizeof(m_aead_expected_mac_buf));
+	ad_len = hex2bin_safe(p_test_vector->p_ad,
+			      m_aead_ad_buf,
+			      sizeof(m_aead_ad_buf));
+	nonce_len = hex2bin_safe(p_test_vector->p_nonce,
+				 m_aead_nonce_buf,
+				 sizeof(m_aead_nonce_buf));
 
 	/* Fetch and unhexify plaintext and ciphertext for encryption. */
 	if (encrypt) {
-		input_len = hex2bin(p_test_vector->p_plaintext,
-				    strlen(p_test_vector->p_plaintext),
-				    m_aead_input_buf,
-				    strlen(p_test_vector->p_plaintext));
-		output_len = hex2bin(p_test_vector->p_ciphertext,
-				     strlen(p_test_vector->p_ciphertext),
-				     m_aead_expected_output_buf,
-				     strlen(p_test_vector->p_ciphertext));
-		mac_len = hex2bin(p_test_vector->p_mac,
-				  strlen(p_test_vector->p_mac),
-				  m_aead_expected_mac_buf,
-				  strlen(p_test_vector->p_mac));
+		input_len = hex2bin_safe(p_test_vector->p_plaintext,
+					 m_aead_input_buf,
+					 sizeof(m_aead_input_buf));
+		output_len = hex2bin_safe(p_test_vector->p_ciphertext,
+					  m_aead_expected_output_buf,
+					  sizeof(m_aead_expected_output_buf));
+		mac_len = hex2bin_safe(p_test_vector->p_mac,
+				       m_aead_expected_mac_buf,
+				       sizeof(m_aead_expected_mac_buf));
 	} else {
-		input_len = hex2bin(p_test_vector->p_ciphertext,
-				    strlen(p_test_vector->p_ciphertext),
-				    m_aead_input_buf,
-				    strlen(p_test_vector->p_ciphertext));
-		output_len = hex2bin(p_test_vector->p_plaintext,
-				     strlen(p_test_vector->p_plaintext),
-				     m_aead_expected_output_buf,
-				     strlen(p_test_vector->p_plaintext));
-		mac_len = hex2bin(p_test_vector->p_mac,
-				  strlen(p_test_vector->p_mac),
-				  m_aead_output_mac_buf,
-				  strlen(p_test_vector->p_mac));
+		input_len = hex2bin_safe(p_test_vector->p_ciphertext,
+					 m_aead_input_buf,
+					 sizeof(m_aead_input_buf));
+		output_len = hex2bin_safe(p_test_vector->p_plaintext,
+					  m_aead_expected_output_buf,
+					  sizeof(m_aead_expected_output_buf));
+		mac_len = hex2bin_safe(p_test_vector->p_mac,
+				       m_aead_output_mac_buf,
+				       sizeof(m_aead_output_mac_buf));
 	}
 }
 

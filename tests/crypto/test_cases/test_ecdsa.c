@@ -73,26 +73,23 @@ static void ecdsa_setup_random(void)
 
 __attribute__((noinline)) void unhexify_ecdsa_verify(void)
 {
-	hash_len = hex2bin(p_test_vector_verify->p_input,
-			   strlen(p_test_vector_verify->p_input),
-			   m_ecdsa_input_buf,
-			   strlen(p_test_vector_verify->p_input));
+	hash_len = hex2bin_safe(p_test_vector_verify->p_input,
+				m_ecdsa_input_buf,
+				sizeof(m_ecdsa_input_buf));
 }
 
 __attribute__((noinline)) void unhexify_ecdsa_sign(void)
 {
-	hash_len =
-		hex2bin(p_test_vector_sign->p_input,
-			strlen(p_test_vector_sign->p_input), m_ecdsa_input_buf,
-			strlen(p_test_vector_sign->p_input));
+	hash_len = hex2bin_safe(p_test_vector_sign->p_input,
+				m_ecdsa_input_buf,
+				sizeof(m_ecdsa_input_buf));
 }
 
 __attribute__((noinline)) void unhexify_ecdsa_random(void)
 {
-	hash_len = hex2bin(p_test_vector_random->p_input,
-			   strlen(p_test_vector_random->p_input),
-			   m_ecdsa_input_buf,
-			   strlen(p_test_vector_random->p_input));
+	hash_len = hex2bin_safe(p_test_vector_random->p_input,
+				m_ecdsa_input_buf,
+				sizeof(m_ecdsa_input_buf));
 }
 
 void ecdsa_clear_buffers(void)

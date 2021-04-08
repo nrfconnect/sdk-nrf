@@ -139,31 +139,30 @@ __attribute__((noinline)) void unhexify_aes_cbc_mac(void)
 {
 	bool encrypt = (p_test_vector->direction == MBEDTLS_ENCRYPT);
 
-	key_len = hex2bin(p_test_vector->p_key, strlen(p_test_vector->p_key),
-			  m_aes_key_buf, strlen(p_test_vector->p_key));
-	iv_len = hex2bin(p_test_vector->p_iv, strlen(p_test_vector->p_iv),
-			 m_aes_iv_buf, strlen(p_test_vector->p_iv));
-	ad_len = hex2bin(p_test_vector->p_ad, strlen(p_test_vector->p_ad),
-			 m_aes_temp_buf, strlen(p_test_vector->p_ad));
+	key_len = hex2bin_safe(p_test_vector->p_key,
+			       m_aes_key_buf,
+			       sizeof(m_aes_key_buf));
+	iv_len = hex2bin_safe(p_test_vector->p_iv,
+			      m_aes_iv_buf,
+			      sizeof(m_aes_iv_buf));
+	ad_len = hex2bin_safe(p_test_vector->p_ad,
+			      m_aes_temp_buf,
+			      sizeof(m_aes_temp_buf));
 
 	if (encrypt) {
-		input_len = hex2bin(p_test_vector->p_plaintext,
-				    strlen(p_test_vector->p_plaintext),
-				    m_aes_input_buf,
-				    strlen(p_test_vector->p_plaintext));
-		output_len = hex2bin(p_test_vector->p_ciphertext,
-				     strlen(p_test_vector->p_ciphertext),
-				     m_aes_expected_output_buf,
-				     strlen(p_test_vector->p_ciphertext));
+		input_len = hex2bin_safe(p_test_vector->p_plaintext,
+					 m_aes_input_buf,
+					 sizeof(m_aes_input_buf));
+		output_len = hex2bin_safe(p_test_vector->p_ciphertext,
+					  m_aes_expected_output_buf,
+					  sizeof(m_aes_expected_output_buf));
 	} else {
-		input_len = hex2bin(p_test_vector->p_ciphertext,
-				    strlen(p_test_vector->p_ciphertext),
-				    m_aes_input_buf,
-				    strlen(p_test_vector->p_ciphertext));
-		output_len = hex2bin(p_test_vector->p_plaintext,
-				     strlen(p_test_vector->p_plaintext),
-				     m_aes_expected_output_buf,
-				     strlen(p_test_vector->p_plaintext));
+		input_len = hex2bin_safe(p_test_vector->p_ciphertext,
+					 m_aes_input_buf,
+					 sizeof(m_aes_input_buf));
+		output_len = hex2bin_safe(p_test_vector->p_plaintext,
+					  m_aes_expected_output_buf,
+					  sizeof(m_aes_expected_output_buf));
 	}
 }
 

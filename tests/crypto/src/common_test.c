@@ -127,6 +127,11 @@ uint32_t get_vector_count(const test_case_t *tc)
 	       test_vector_sizes[tc->vector_type];
 }
 
+size_t hex2bin_safe(const char *hex, uint8_t *buf, size_t buflen)
+{
+	return hex == NULL ? 0 : hex2bin(hex, strlen(hex), buf, buflen);
+}
+
 /* Weak definition, user overridable */
 __weak void start_time_measurement(void)
 {

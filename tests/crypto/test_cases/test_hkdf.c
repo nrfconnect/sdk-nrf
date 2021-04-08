@@ -57,17 +57,21 @@ void hkdf_clear_buffers(void)
 __attribute__((noinline)) void unhexify_hkdf(void)
 {
 	/* Fetch and unhexify test vectors. */
-	ikm_len = hex2bin(p_test_vector->p_ikm, strlen(p_test_vector->p_ikm),
-			  m_hkdf_ikm_buf, strlen(p_test_vector->p_ikm));
-	prk_len = hex2bin(p_test_vector->p_prk, strlen(p_test_vector->p_prk),
-			  m_hkdf_prk_buf, strlen(p_test_vector->p_prk));
-	salt_len = hex2bin(p_test_vector->p_salt, strlen(p_test_vector->p_salt),
-			   m_hkdf_salt_buf, strlen(p_test_vector->p_salt));
-	info_len = hex2bin(p_test_vector->p_info, strlen(p_test_vector->p_info),
-			   m_hkdf_info_buf, strlen(p_test_vector->p_info));
-	expected_okm_len =
-		hex2bin(p_test_vector->p_okm, strlen(p_test_vector->p_okm),
-			m_hkdf_expected_okm_buf, strlen(p_test_vector->p_okm));
+	ikm_len = hex2bin_safe(p_test_vector->p_ikm,
+			       m_hkdf_ikm_buf,
+			       sizeof(m_hkdf_ikm_buf));
+	prk_len = hex2bin_safe(p_test_vector->p_prk,
+			       m_hkdf_prk_buf,
+			       sizeof(m_hkdf_prk_buf));
+	salt_len = hex2bin_safe(p_test_vector->p_salt,
+				m_hkdf_salt_buf,
+				sizeof(m_hkdf_salt_buf));
+	info_len = hex2bin_safe(p_test_vector->p_info,
+				m_hkdf_info_buf,
+				sizeof(m_hkdf_info_buf));
+	expected_okm_len = hex2bin_safe(p_test_vector->p_okm,
+					m_hkdf_expected_okm_buf,
+					sizeof(m_hkdf_expected_okm_buf));
 	okm_len = expected_okm_len;
 
 	p_hkdp_salt = (salt_len == 0) ? NULL : m_hkdf_salt_buf;

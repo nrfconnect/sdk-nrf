@@ -87,55 +87,38 @@ void ecjpake_clear_buffers(void)
 
 __attribute__((noinline)) void unhexify_ecjpake(void)
 {
-	secret_len = hex2bin(p_test_vector->p_expected_shared_secret,
-			     strlen(p_test_vector->p_expected_shared_secret),
-			     m_expected_secret,
-			     strlen(p_test_vector->p_expected_shared_secret));
-	password_len = hex2bin(p_test_vector->p_password,
-			       strlen(p_test_vector->p_password), m_password,
-			       strlen(p_test_vector->p_password));
+	secret_len = hex2bin_safe(p_test_vector->p_expected_shared_secret,
+				  m_expected_secret,
+				  sizeof(m_expected_secret));
+	password_len = hex2bin_safe(p_test_vector->p_password,
+				    m_password,
+				    sizeof(m_password));
 
-	priv_key_cli_1_len =
-		hex2bin(p_test_vector->p_priv_key_client_1,
-			strlen(p_test_vector->p_priv_key_client_1),
-			m_priv_key_cli_1,
-			strlen(p_test_vector->p_priv_key_client_1));
-	priv_key_cli_2_len =
-		hex2bin(p_test_vector->p_priv_key_client_2,
-			strlen(p_test_vector->p_priv_key_client_2),
-			m_priv_key_cli_2,
-			strlen(p_test_vector->p_priv_key_client_2));
-	priv_key_srv_1_len =
-		hex2bin(p_test_vector->p_priv_key_server_1,
-			strlen(p_test_vector->p_priv_key_server_1),
-			m_priv_key_srv_1,
-			strlen(p_test_vector->p_priv_key_server_1));
-	priv_key_srv_2_len =
-		hex2bin(p_test_vector->p_priv_key_server_2,
-			strlen(p_test_vector->p_priv_key_server_2),
-			m_priv_key_srv_2,
-			strlen(p_test_vector->p_priv_key_server_2));
+	priv_key_cli_1_len = hex2bin_safe(p_test_vector->p_priv_key_client_1,
+					  m_priv_key_cli_1,
+					  sizeof(m_priv_key_cli_1));
+	priv_key_cli_2_len = hex2bin_safe(p_test_vector->p_priv_key_client_2,
+					  m_priv_key_cli_2,
+					  sizeof(m_priv_key_cli_2));
+	priv_key_srv_1_len = hex2bin_safe(p_test_vector->p_priv_key_server_1,
+					  m_priv_key_srv_1,
+					  sizeof(m_priv_key_srv_1));
+	priv_key_srv_2_len = hex2bin_safe(p_test_vector->p_priv_key_server_2,
+					  m_priv_key_srv_2,
+					  sizeof(m_priv_key_srv_2));
 
-	msg_cli_1_len =
-		hex2bin(p_test_vector->p_round_message_client_1,
-			strlen(p_test_vector->p_round_message_client_1),
-			m_msg_cli_1,
-			strlen(p_test_vector->p_round_message_client_1));
-	msg_cli_2_len =
-		hex2bin(p_test_vector->p_round_message_client_2,
-			strlen(p_test_vector->p_round_message_client_2),
-			m_msg_cli_2,
-			strlen(p_test_vector->p_round_message_client_2));
-	msg_srv_1_len =
-		hex2bin(p_test_vector->p_round_message_server_1,
-			strlen(p_test_vector->p_round_message_server_1),
-			m_msg_srv_1,
-			strlen(p_test_vector->p_round_message_server_1));
-	msg_srv_2_len =
-		hex2bin(p_test_vector->p_round_message_server_2,
-			strlen(p_test_vector->p_round_message_server_2),
-			m_msg_srv_2,
-			strlen(p_test_vector->p_round_message_server_2));
+	msg_cli_1_len = hex2bin_safe(p_test_vector->p_round_message_client_1,
+				     m_msg_cli_1,
+				     sizeof(m_msg_cli_1));
+	msg_cli_2_len = hex2bin_safe(p_test_vector->p_round_message_client_2,
+				     m_msg_cli_2,
+				     sizeof(m_msg_cli_2));
+	msg_srv_1_len = hex2bin_safe(p_test_vector->p_round_message_server_1,
+				     m_msg_srv_1,
+				     sizeof(m_msg_srv_1));
+	msg_srv_2_len = hex2bin_safe(p_test_vector->p_round_message_server_2,
+				     m_msg_srv_2,
+				     sizeof(m_msg_srv_2));
 }
 
 /*
