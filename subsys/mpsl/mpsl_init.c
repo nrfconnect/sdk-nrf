@@ -140,26 +140,6 @@ static int mpsl_lib_init(const struct device *dev)
 	int err = 0;
 	mpsl_clock_lfclk_cfg_t clock_cfg;
 
-#if !defined(CONFIG_BT_CTLR) && defined(CONFIG_NRFX_DPPI)
-	/* When the Bluetooth controller is used, it will include the DPPI
-	 * channels that MPSL uses in the mask that it provides for nrfx.
-	 * Otherwise, if additionaly the nrfx DPPI allocator is used (what
-	 * indicates that some other module will use some DPPI channels),
-	 * those channels needed by MPSL must be reserved in some other way.
-	 * Currently it is not possible to do it in nrfx_glue.h, so the below
-	 * code is used as a temporarily workaround.
-	 * Unfortunatelly, for PPI a similar workaround cannot be used.
-	 */
-	uint8_t channel;
-	nrfx_err_t err_code;
-	err_code = nrfx_dppi_channel_alloc(&channel);
-	__ASSERT_NO_MSG(err_code == NRFX_SUCCESS && channel == 0);
-	err_code = nrfx_dppi_channel_alloc(&channel);
-	__ASSERT_NO_MSG(err_code == NRFX_SUCCESS && channel == 1);
-	err_code = nrfx_dppi_channel_alloc(&channel);
-	__ASSERT_NO_MSG(err_code == NRFX_SUCCESS && channel == 2);
-#endif
-
 	clock_cfg.source = m_config_clock_source_get();
 	clock_cfg.accuracy_ppm = CONFIG_CLOCK_CONTROL_NRF_ACCURACY;
 	clock_cfg.skip_wait_lfclk_started =
