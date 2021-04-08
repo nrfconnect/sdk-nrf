@@ -70,6 +70,7 @@ K_MSGQ_DEFINE(msgq_ui, sizeof(struct ui_msg_data),
 static struct module_data self = {
 	.name = "ui",
 	.msg_q = NULL,
+	.supports_shutdown = true,
 };
 
 /* Forward declarations. */
@@ -352,8 +353,12 @@ static void on_state_passive_sub_state_gps_inactive(struct ui_msg_data *msg)
 static void on_all_states(struct ui_msg_data *msg)
 {
 	if (IS_EVENT(msg, app, APP_EVT_START)) {
+		int err = module_start(&self);
 
-		module_start(&self);
+		if (err) {
+			LOG_ERR("Failed starting module, error: %d", err);
+			SEND_ERROR(ui, UI_EVT_ERROR, err);
+		}
 
 		state_set(STATE_ACTIVE);
 		sub_state_set(SUB_STATE_GPS_INACTIVE);
@@ -361,7 +366,7 @@ static void on_all_states(struct ui_msg_data *msg)
 
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
 		update_led_pattern(LED_ERROR_SYSTEM_FAULT);
-		SEND_EVENT(ui, UI_EVT_SHUTDOWN_READY);
+		SEND_SHUTDOWN_ACK(ui, UI_EVT_SHUTDOWN_READY, self.id);
 		state_set(STATE_SHUTDOWN);
 	}
 

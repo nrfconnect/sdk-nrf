@@ -211,16 +211,14 @@ static void send_reboot_request(void)
  * modules in the application. When this API has been called a set number of times equal to the
  * number of active modules, a reboot will be scheduled.
  */
-static void reboot_ack_check(void)
+static void reboot_ack_check(uint32_t module_id)
 {
-	static uint8_t reboot_ack_count;
-
-	reboot_ack_count++;
-
 	/* Reboot after a shorter timeout if all modules have acknowledged that they are ready
-	 * to reboot, ensuring a graceful shutdown.
+	 * to reboot, ensuring a graceful shutdown. If not all modules respond to the shutdown
+	 * request, the application will be shut down after a longer duration scheduled upon the
+	 * initial error event.
 	 */
-	if (reboot_ack_count >= module_active_count_get() - 1) {
+	if (modules_shutdown_register(module_id)) {
 		LOG_WRN("All modules have ACKed the reboot request.");
 		LOG_WRN("Reboot in 5 seconds.");
 		k_delayed_work_submit(&reboot_work, K_SECONDS(5));
@@ -247,37 +245,37 @@ static void on_state_init(struct util_msg_data *msg)
 static void on_state_reboot_pending(struct util_msg_data *msg)
 {
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_SHUTDOWN_READY)) {
-		reboot_ack_check();
+		reboot_ack_check(msg->module.cloud.data.id);
 		return;
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_SHUTDOWN_READY)) {
-		reboot_ack_check();
+		reboot_ack_check(msg->module.modem.data.id);
 		return;
 	}
 
 	if (IS_EVENT(msg, sensor, SENSOR_EVT_SHUTDOWN_READY)) {
-		reboot_ack_check();
+		reboot_ack_check(msg->module.sensor.data.id);
 		return;
 	}
 
 	if (IS_EVENT(msg, gps, GPS_EVT_SHUTDOWN_READY)) {
-		reboot_ack_check();
+		reboot_ack_check(msg->module.gps.data.id);
 		return;
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_SHUTDOWN_READY)) {
-		reboot_ack_check();
+		reboot_ack_check(msg->module.data.data.id);
 		return;
 	}
 
 	if (IS_EVENT(msg, app, APP_EVT_SHUTDOWN_READY)) {
-		reboot_ack_check();
+		reboot_ack_check(msg->module.app.data.id);
 		return;
 	}
 
 	if (IS_EVENT(msg, ui, UI_EVT_SHUTDOWN_READY)) {
-		reboot_ack_check();
+		reboot_ack_check(msg->module.ui.data.id);
 		return;
 	}
 }
@@ -286,7 +284,13 @@ static void on_state_reboot_pending(struct util_msg_data *msg)
 static void on_all_states(struct util_msg_data *msg)
 {
 	if (IS_EVENT(msg, app, APP_EVT_START)) {
-		module_start(&self);
+		int err = module_start(&self);
+
+		if (err) {
+			LOG_ERR("Failed starting module, error: %d", err);
+			send_reboot_request();
+		}
+
 		state_set(STATE_INIT);
 	}
 }

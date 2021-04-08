@@ -108,6 +108,7 @@ K_TIMER_DEFINE(movement_resolution_timer, waiting_for_movement_handler, NULL);
 static struct module_data self = {
 	.name = "app",
 	.msg_q = &msgq_app,
+	.supports_shutdown = true,
 };
 
 /* Convenience functions used in internal state handling. */
@@ -458,18 +459,16 @@ static void on_all_events(struct app_msg_data *msg)
 		k_timer_stop(&movement_timeout_timer);
 		k_timer_stop(&movement_resolution_timer);
 
-		SEND_EVENT(app, APP_EVT_SHUTDOWN_READY);
+		SEND_SHUTDOWN_ACK(app, APP_EVT_SHUTDOWN_READY, self.id);
 		state_set(STATE_SHUTDOWN);
 	}
 }
 
 void main(void)
 {
+	int err;
 	struct app_msg_data msg;
 
-	self.thread_id = k_current_get();
-
-	module_start(&self);
 	handle_nrf_modem_lib_init_ret();
 
 	if (event_manager_init()) {
@@ -483,9 +482,16 @@ void main(void)
 		SEND_EVENT(app, APP_EVT_START);
 	}
 
-#if defined(CONFIG_WATCHDOG_APPLICATION)
-	int err = watchdog_init_and_start();
+	self.thread_id = k_current_get();
 
+	err = module_start(&self);
+	if (err) {
+		LOG_ERR("Failed starting module, error: %d", err);
+		SEND_ERROR(app, APP_EVT_ERROR, err);
+	}
+
+#if defined(CONFIG_WATCHDOG_APPLICATION)
+	err = watchdog_init_and_start();
 	if (err) {
 		LOG_DBG("watchdog_init_and_start, error: %d", err);
 		SEND_ERROR(app, APP_EVT_ERROR, err);

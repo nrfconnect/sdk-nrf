@@ -90,6 +90,8 @@ struct app_module_event {
 
 	union {
 		int err;
+		/* Module ID, used when acknowledging shutdown requests. */
+		uint32_t id;
 	} data;
 
 	size_t count;

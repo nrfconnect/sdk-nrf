@@ -49,6 +49,7 @@ K_MSGQ_DEFINE(msgq_sensor, sizeof(struct sensor_msg_data),
 static struct module_data self = {
 	.name = "sensor",
 	.msg_q = &msgq_sensor,
+	.supports_shutdown = true,
 };
 
 /* Convenience functions used in internal state handling. */
@@ -296,7 +297,7 @@ static void on_all_states(struct sensor_msg_data *msg)
 		/* The module doesn't have anything to shut down and can
 		 * report back immediately.
 		 */
-		SEND_EVENT(sensor, SENSOR_EVT_SHUTDOWN_READY);
+		SEND_SHUTDOWN_ACK(sensor, SENSOR_EVT_SHUTDOWN_READY, self.id);
 		state_set(STATE_SHUTDOWN);
 	}
 
@@ -318,7 +319,12 @@ static void module_thread_fn(void)
 
 	self.thread_id = k_current_get();
 
-	module_start(&self);
+	err = module_start(&self);
+	if (err) {
+		LOG_ERR("Failed starting module, error: %d", err);
+		SEND_ERROR(sensor, SENSOR_EVT_ERROR, err);
+	}
+
 	state_set(STATE_INIT);
 
 	err = setup();

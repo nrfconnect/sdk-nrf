@@ -107,6 +107,8 @@ struct modem_module_event {
 		struct modem_module_cell cell;
 		struct modem_module_psm psm;
 		struct modem_module_edrx edrx;
+		/* Module ID, used when acknowledging shutdown requests. */
+		uint32_t id;
 		int err;
 	} data;
 };
