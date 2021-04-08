@@ -54,6 +54,8 @@ struct cloud_module_event {
 	union {
 		struct cloud_data_cfg config;
 		struct cloud_module_data_ack ack;
+		/* Module ID, used when acknowledging shutdown requests. */
+		uint32_t id;
 		int err;
 	} data;
 };

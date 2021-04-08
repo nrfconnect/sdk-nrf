@@ -38,6 +38,8 @@ struct ui_module_event {
 
 	union {
 		struct ui_module_data ui;
+		/* Module ID, used when acknowledging shutdown requests. */
+		uint32_t id;
 		int err;
 	} data;
 };

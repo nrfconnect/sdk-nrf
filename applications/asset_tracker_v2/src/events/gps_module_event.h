@@ -50,6 +50,8 @@ struct gps_module_event {
 	union {
 		struct gps_module_data gps;
 		struct gps_agps_request agps_request;
+		/* Module ID, used when acknowledging shutdown requests. */
+		uint32_t id;
 		int err;
 	} data;
 };

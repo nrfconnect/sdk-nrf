@@ -48,6 +48,8 @@ struct sensor_module_event {
 	union {
 		struct sensor_module_data sensors;
 		struct sensor_module_accel_data accel;
+		/* Module ID, used when acknowledging shutdown requests. */
+		uint32_t id;
 		int err;
 	} data;
 };

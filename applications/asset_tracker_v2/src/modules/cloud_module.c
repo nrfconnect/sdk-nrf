@@ -86,6 +86,7 @@ K_MSGQ_DEFINE(msgq_cloud, sizeof(struct cloud_msg_data),
 static struct module_data self = {
 	.name = "cloud",
 	.msg_q = &msgq_cloud,
+	.supports_shutdown = true
 };
 
 /* Forward declarations. */
@@ -569,7 +570,7 @@ static void on_all_states(struct cloud_msg_data *msg)
 		/* The module doesn't have anything to shut down and can
 		 * report back immediately.
 		 */
-		SEND_EVENT(cloud, CLOUD_EVT_SHUTDOWN_READY);
+		SEND_SHUTDOWN_ACK(cloud, CLOUD_EVT_SHUTDOWN_READY, self.id);
 		state_set(STATE_SHUTDOWN);
 	}
 
@@ -593,7 +594,11 @@ static void module_thread_fn(void)
 
 	self.thread_id = k_current_get();
 
-	module_start(&self);
+	err = module_start(&self);
+	if (err) {
+		LOG_ERR("Failed starting module, error: %d", err);
+		SEND_ERROR(cloud, CLOUD_EVT_ERROR, err);
+	}
 
 	state_set(STATE_LTE_DISCONNECTED);
 	sub_state_set(SUB_STATE_CLOUD_DISCONNECTED);

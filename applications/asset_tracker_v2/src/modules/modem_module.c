@@ -61,6 +61,7 @@ K_MSGQ_DEFINE(msgq_modem, sizeof(struct modem_msg_data),
 static struct module_data self = {
 	.name = "modem",
 	.msg_q = &msgq_modem,
+	.supports_shutdown = true,
 };
 
 /* Forward declarations. */
@@ -689,7 +690,7 @@ static void on_all_states(struct modem_msg_data *msg)
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
 		lte_lc_power_off();
 		state_set(STATE_SHUTDOWN);
-		SEND_EVENT(modem, MODEM_EVT_SHUTDOWN_READY);
+		SEND_SHUTDOWN_ACK(modem, MODEM_EVT_SHUTDOWN_READY, self.id);
 	}
 }
 
@@ -700,7 +701,11 @@ static void module_thread_fn(void)
 
 	self.thread_id = k_current_get();
 
-	module_start(&self);
+	err = module_start(&self);
+	if (err) {
+		LOG_ERR("Failed starting module, error: %d", err);
+		SEND_ERROR(modem, MODEM_EVT_ERROR, err);
+	}
 
 	state_set(STATE_DISCONNECTED);
 

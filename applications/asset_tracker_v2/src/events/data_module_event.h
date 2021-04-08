@@ -51,6 +51,8 @@ struct data_module_event {
 		struct data_module_data_buffers buffer;
 		struct cloud_data_cfg cfg;
 		struct cloud_data_ui ui;
+		/* Module ID, used when acknowledging shutdown requests. */
+		uint32_t id;
 		int err;
 	} data;
 };
