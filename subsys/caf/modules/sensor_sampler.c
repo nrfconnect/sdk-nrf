@@ -61,7 +61,7 @@ static void send_sensor_event(const char *descr, struct sensor_value *data, size
 	EVENT_SUBMIT(event);
 }
 
-static int sample_sensor(const struct device *dev, const struct sensor_config *sc)
+static size_t get_sensor_data_cnt(const struct sensor_config *sc)
 {
 	size_t data_cnt = 0;
 
@@ -69,8 +69,14 @@ static int sample_sensor(const struct device *dev, const struct sensor_config *s
 		data_cnt += sc->chans[i].data_cnt;
 	}
 
+	return data_cnt;
+}
+
+static int sample_sensor(const struct device *dev, const struct sensor_config *sc)
+{
 	int err = 0;
 	size_t data_idx = 0;
+	size_t data_cnt = get_sensor_data_cnt(sc);
 	struct sensor_value data[data_cnt];
 
 	err = sensor_sample_fetch(dev);
