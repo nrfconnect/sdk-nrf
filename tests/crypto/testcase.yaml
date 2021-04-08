@@ -12,7 +12,7 @@ tests:
     platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp
     build_on_all: True
     tags: crypto ci_build
-    timeout: 100
+    timeout: 200
   crypto.multi:
     extra_args: OVERLAY_CONFIG=overlay-multi.conf
     platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp

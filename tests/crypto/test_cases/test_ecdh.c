@@ -107,11 +107,11 @@ void ecdh_clear_buffers(void)
 
 __attribute__((noinline)) void unhexify_ecdh(void)
 {
-	expected_ss_len =
-		hex2bin(p_test_vector->p_expected_shared_secret,
-			strlen(p_test_vector->p_expected_shared_secret),
-			m_ecdh_expected_ss_buf,
-			strlen(p_test_vector->p_expected_shared_secret));
+
+	expected_ss_len = hex2bin_safe(p_test_vector->p_expected_shared_secret,
+				       m_ecdh_expected_ss_buf,
+				       sizeof(m_ecdh_expected_ss_buf));
+
 }
 
 /**@brief Function for executing ECDH for initiator and repsonder by
@@ -267,10 +267,9 @@ void exec_test_case_ecdh_deterministic_full(void)
 	}
 
 	expected_ss_len =
-		hex2bin(p_test_vector->p_expected_shared_secret,
-			strlen(p_test_vector->p_expected_shared_secret),
-			m_ecdh_expected_ss_buf,
-			strlen(p_test_vector->p_expected_shared_secret));
+		hex2bin_safe(p_test_vector->p_expected_shared_secret,
+			     m_ecdh_expected_ss_buf,
+			     sizeof(m_ecdh_expected_ss_buf));
 
 	/* Execute ECDH on initiator side. */
 	start_time_measurement();

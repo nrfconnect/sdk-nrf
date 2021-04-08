@@ -72,15 +72,15 @@ void hmac_clear_buffers(void)
 __attribute__((noinline)) void unhexify_hmac(void)
 {
 	/* Fetch and unhexify test vectors. */
-	key_len = hex2bin(p_test_vector->p_key, strlen(p_test_vector->p_key),
-			  m_hmac_key_buf, strlen(p_test_vector->p_key));
-	in_len = hex2bin(p_test_vector->p_input, strlen(p_test_vector->p_input),
-			 m_hmac_input_buf, strlen(p_test_vector->p_input));
-	expected_hmac_len = hex2bin(p_test_vector->p_expected_output,
-				    strlen(p_test_vector->p_expected_output),
-				    m_hmac_expected_output_buf,
-				    strlen(p_test_vector->p_expected_output));
-
+	key_len = hex2bin_safe(p_test_vector->p_key,
+			       m_hmac_key_buf,
+			       sizeof(m_hmac_key_buf));
+	in_len = hex2bin_safe(p_test_vector->p_input,
+			      m_hmac_input_buf,
+			      sizeof(m_hmac_input_buf));
+	expected_hmac_len = hex2bin_safe(p_test_vector->p_expected_output,
+					 m_hmac_expected_output_buf,
+					 sizeof(m_hmac_expected_output_buf));
 	hmac_len = expected_hmac_len;
 }
 

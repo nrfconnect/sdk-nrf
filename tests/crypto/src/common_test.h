@@ -50,6 +50,18 @@ extern int (*drbg_random)(void *, unsigned char *, size_t);
  */
 int init_drbg(const unsigned char *p_optional_seed, size_t len);
 
+/**@brief Wrapper function for hex2bin that makes sure that the input pointer is valid.
+ *
+ * @details Will return 0 if given param hex is NULL.
+ *
+ * @param hex     The hexadecimal string to convert
+ * @param buf     Address of where to store the binary data
+ * @param buflen  Size of the storage area for binary data
+ *
+ * @return     The length of the binary array, or 0 if an error occurred.
+ */
+size_t hex2bin_safe(const char *hex, uint8_t *buf, size_t buflen);
+
 #if defined(MBEDTLS_CTR_DRBG_C)
 
 #include <mbedtls/ctr_drbg.h>
