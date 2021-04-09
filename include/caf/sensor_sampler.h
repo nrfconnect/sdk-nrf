@@ -22,8 +22,8 @@ struct sensor_config {
 	const char *dev_name;
 	const char *event_descr;
 	const struct sampled_channel *chans;
-	unsigned int sampling_period_ms;
 	uint8_t chan_cnt;
+	unsigned int sampling_period_ms;
 };
 
 #ifdef __cplusplus
