@@ -127,9 +127,11 @@ static const char unlock_plmn[] = "AT+COPS=0";
 /* Request eDRX to be disabled */
 static const char edrx_disable[] = "AT+CEDRXS=3";
 /* Default eDRX setting */
-static char edrx_param[5] = CONFIG_LTE_EDRX_REQ_VALUE;
+static char edrx_param_ltem[5] = CONFIG_LTE_EDRX_REQ_VALUE_LTE_M;
+static char edrx_param_nbiot[5] = CONFIG_LTE_EDRX_REQ_VALUE_NBIOT;
 /* Default PTW setting */
-static char ptw_param[5] = CONFIG_LTE_PTW_VALUE;
+static char ptw_param_ltem[5] = CONFIG_LTE_PTW_VALUE_LTE_M;
+static char ptw_param_nbiot[5] = CONFIG_LTE_PTW_VALUE_NBIOT;
 /* Default PSM RAT setting */
 static char psm_param_rat[9] = CONFIG_LTE_PSM_REQ_RAT;
 /* Default PSM RPATU setting */
@@ -1036,35 +1038,59 @@ parse_psm_clean_exit:
 	return err;
 }
 
-int lte_lc_edrx_param_set(const char *edrx)
+int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx)
 {
+	char *edrx_param;
+
+	if (mode != LTE_LC_LTE_MODE_LTEM && mode != LTE_LC_LTE_MODE_NBIOT) {
+		LOG_ERR("LTE mode must be LTE-M or NB-IoT");
+		return -EINVAL;
+	}
+
 	if (edrx != NULL && strlen(edrx) != 4) {
 		return -EINVAL;
 	}
 
-	if (edrx != NULL) {
+	edrx_param = (mode == LTE_LC_LTE_MODE_LTEM) ? edrx_param_ltem :
+						      edrx_param_nbiot;
+
+	if (edrx) {
 		strcpy(edrx_param, edrx);
-		LOG_DBG("eDRX set to %s", log_strdup(edrx_param));
+		LOG_DBG("eDRX set to %s for %s", log_strdup(edrx_param),
+			(mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" : "NB-IoT");
 	} else {
 		*edrx_param = '\0';
-		LOG_DBG("eDRX use default");
+		LOG_DBG("eDRX use default for %s",
+			(mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" : "NB-IoT");
 	}
 
 	return 0;
 }
 
-int lte_lc_ptw_set(const char *ptw)
+int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw)
 {
+	char *ptw_param;
+
+	if (mode != LTE_LC_LTE_MODE_LTEM && mode != LTE_LC_LTE_MODE_NBIOT) {
+		LOG_ERR("LTE mode must be LTE-M or NB-IoT");
+		return -EINVAL;
+	}
+
 	if (ptw != NULL && strlen(ptw) != 4) {
 		return -EINVAL;
 	}
 
+	ptw_param = (mode == LTE_LC_LTE_MODE_LTEM) ? ptw_param_ltem :
+						     ptw_param_nbiot;
+
 	if (ptw != NULL) {
 		strcpy(ptw_param, ptw);
-		LOG_DBG("PTW set to %s", log_strdup(ptw_param));
+		LOG_DBG("PTW set to %s for %s", log_strdup(ptw_param),
+			(mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" : "NB-IoT");
 	} else {
 		*ptw_param = '\0';
-		LOG_DBG("PTW use default");
+		LOG_DBG("PTW use default for %s",
+			(mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" : "NB-IoT");
 	}
 
 	return 0;
@@ -1072,62 +1098,48 @@ int lte_lc_ptw_set(const char *ptw)
 
 int lte_lc_edrx_req(bool enable)
 {
-	int err, actt;
+	int err;
+	int actt[] = {AT_CEDRXS_ACTT_WB, AT_CEDRXS_ACTT_NB};
 	char req[25];
 
-	if (sys_mode_current == LTE_LC_SYSTEM_MODE_NONE) {
-		err = lte_lc_system_mode_get(&sys_mode_current, NULL);
-		if (err) {
-			return err;
-		}
-	}
-
-	switch (sys_mode_current) {
-	case LTE_LC_SYSTEM_MODE_LTEM:
-	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
-		actt = AT_CEDRXS_ACTT_WB;
-		break;
-	case LTE_LC_SYSTEM_MODE_NBIOT:
-	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
-		actt = AT_CEDRXS_ACTT_NB;
-		break;
-	default:
-		LOG_ERR("Cannot request eDRX for this system mode (%d)",
-			sys_mode_current);
-		return -EOPNOTSUPP;
-	}
-
-	if (enable) {
-		if (strlen(edrx_param) == 4) {
-			snprintf(req, sizeof(req),
-				"AT+CEDRXS=2,%d,\"%s\"", actt, edrx_param);
-		} else {
-			snprintf(req, sizeof(req),
-				"AT+CEDRXS=2,%d", actt);
-		}
-		err = at_cmd_write(req, NULL, 0, NULL);
-	} else {
+	if (!enable) {
 		err = at_cmd_write(edrx_disable, NULL, 0, NULL);
-	}
-	if (err) {
-		LOG_ERR("Failed to %s eDRX, error: %d",
-			enable ? "enable" : "disable", err);
+		if (err) {
+			LOG_ERR("Failed to disable eDRX, error: %d", err);
+		}
+
 		return err;
 	}
 
-	/* PTW must be requested after eDRX is enabled */
-	if (enable) {
-		if (strlen(ptw_param) == 4) {
-			snprintf(req, sizeof(req),
-				"AT%%XPTW=%d,\"%s\"", actt, ptw_param);
+	/* Apply the configurations for both LTE-M and NB-IoT. */
+	for (size_t i = 0; i < ARRAY_SIZE(actt); i++) {
+		char *edrx_param = (actt[i] == AT_CEDRXS_ACTT_WB) ?
+					edrx_param_ltem : edrx_param_nbiot;
+		char *ptw_param = (actt[i] == AT_CEDRXS_ACTT_WB) ?
+					ptw_param_ltem : ptw_param_nbiot;
+
+		if (strlen(edrx_param) == 4) {
+			snprintk(req, sizeof(req), "AT+CEDRXS=2,%d,\"%s\"", actt[i], edrx_param);
 		} else {
-			snprintf(req, sizeof(req),
-				"AT%%XPTW=%d", actt);
+			snprintk(req, sizeof(req), "AT+CEDRXS=2,%d", actt[i]);
 		}
+
 		err = at_cmd_write(req, NULL, 0, NULL);
 		if (err) {
-			LOG_ERR("Failed to request PTW (%s), error: %d",
-				log_strdup(req), err);
+			LOG_ERR("Failed to enable eDRX, error: %d", err);
+			return err;
+		}
+
+		/* PTW must be requested after eDRX is enabled */
+		if (strlen(ptw_param) != 4) {
+			return 0;
+		}
+
+		snprintk(req, sizeof(req), "AT%%XPTW=%d,\"%s\"", actt[i], ptw_param);
+
+		err = at_cmd_write(req, NULL, 0, NULL);
+		if (err) {
+			LOG_ERR("Failed to request PTW (%s), error: %d", log_strdup(req), err);
 			return err;
 		}
 	}

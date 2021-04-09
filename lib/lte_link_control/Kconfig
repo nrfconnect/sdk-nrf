@@ -75,30 +75,57 @@ config LTE_PSM_REQ_RAT
 
 config LTE_EDRX_REQ
 	bool "Enable requesting use of eDRX."
-	default n
 	help
 		Enable request for use of eDRX using AT+CEDRXS.
 		For reference, see 3GPP 27.007 Ch. 7.40.
 
-config LTE_EDRX_REQ_VALUE
-	string "Requested eDRX value"
+config LTE_EDRX_REQ_VALUE_LTE_M
+	string "Requested eDRX value for LTE-M"
 	default "1001"
 	help
-		Sets the eDRX value to request. Half a byte in a four-bit
-		format. The eDRX value refers to bit 4 to 1 of octet 3 of the
+		Sets the eDRX value to request when LTE-M is used.
+		The format is half a byte in a four-bit format.
+		The eDRX value refers to bit 4 to 1 of octet 3 of the
 		Extended DRX parameters information element.
 		See 3GPP TS 24.008, subclause 10.5.5.32.
-		The value 1001 corresponds to 163.84 seconds, and is valid for
-		both LTE-M and NB-IoT networks.
+		The value 1001 corresponds to 163.84 seconds.
 
-config LTE_PTW_VALUE
-	string "Requested PTW value"
+config LTE_EDRX_REQ_VALUE_NBIOT
+	string "Requested eDRX value for NB-IoT"
+	default "1001"
+	help
+		Sets the eDRX value to request when NB-IoT is used.
+		The format is half a byte in a four-bit format.
+		The eDRX value refers to bit 4 to 1 of octet 3 of the
+		Extended DRX parameters information element.
+		See 3GPP TS 24.008, subclause 10.5.5.32.
+		The value 1001 corresponds to 163.84 seconds.
+
+config LTE_PTW_VALUE_LTE_M
+	string "Requested PTW value for LTE-M"
 	help
 		Sets the Paging Time Window value to be requested when enabling
-		eDRX. The allowed values for LTE-M and NB-IoT differ.
+		eDRX. The value will apply to LTE-M.
 		The format is a string with half a byte in 4-bit format,
 		corresponding to bits 8 to 5 in octet 3 of eDRX information
 		element	according to 10.5.5.32 of 3GPP TS 24.008.
+		Requesting a specific PTW configuration should be done with
+		caution. The requested value must be compliant with the eDRX
+		value that is configured, and it's usually best to let the modem
+		use default PTW values.
+
+config LTE_PTW_VALUE_NBIOT
+	string "Requested PTW value for NB-IoT"
+	help
+		Sets the Paging Time Window value to be requested when enabling
+		eDRX. The value will apply to NB-IoT.
+		The format is a string with half a byte in 4-bit format,
+		corresponding to bits 8 to 5 in octet 3 of eDRX information
+		element	according to 10.5.5.32 of 3GPP TS 24.008.
+		Requesting a specific PTW configuration should be done with
+		caution. The requested value must be compliant with the eDRX
+		value that is configured, and it's usually best to let the modem
+		use default PTW values.
 
 config LTE_LEGACY_PCO_MODE
 	bool "Enable legacy LTE Protocol Configuration Options mode"
