@@ -197,6 +197,11 @@ Bug fixes:
 
 * NCSDK-5156: Fixed the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
 
+DFU target
+----------
+
+* Fixed an issue where the offset to the last erased page was set incorrectly one page ahead whenever the flash write ended just after a page boundary.
+
 MCUboot
 =======
 
