@@ -72,18 +72,18 @@ static size_t get_sensor_data_cnt(const struct sensor_config *sc)
 	return data_cnt;
 }
 
-static int sample_sensor(const struct device *dev, const struct sensor_config *sc)
+static int sample_sensor(struct sensor_data *sd, const struct sensor_config *sc)
 {
 	int err = 0;
 	size_t data_idx = 0;
 	size_t data_cnt = get_sensor_data_cnt(sc);
 	struct sensor_value data[data_cnt];
 
-	err = sensor_sample_fetch(dev);
+	err = sensor_sample_fetch(sd->dev);
 	for (size_t i = 0; !err && (i < sc->chan_cnt); i++) {
 		const struct sampled_channel *sampled_chan = &sc->chans[i];
 
-		err = sensor_channel_get(dev, sampled_chan->chan, &data[data_idx]);
+		err = sensor_channel_get(sd->dev, sampled_chan->chan, &data[data_idx]);
 		data_idx += sampled_chan->data_cnt;
 	}
 
@@ -108,7 +108,7 @@ static int sample_sensors(int64_t *next_timeout)
 		const struct sensor_config *sc = &sensor_configs[i];
 
 		if (sd->sample_timeout <= cur_uptime) {
-			err = sample_sensor(sd->dev, sc);
+			err = sample_sensor(sd, sc);
 
 			while (sd->sample_timeout <= cur_uptime) {
 				sd->sample_timeout += sd->sampling_period;
