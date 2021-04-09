@@ -39,6 +39,11 @@ Zigbee
   * ZBOSS Zigbee stack to version 3_3_0_7+03_22_2021.
     See :ref:`zboss_configuration` for detailed information.
 
+Project Connected Home over IP (Project CHIP)
+---------------------------------------------
+
+* Changed the remote URL of the pigweed submodule.
+
 nRF9160
 =======
 
