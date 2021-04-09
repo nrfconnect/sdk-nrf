@@ -12,6 +12,9 @@ tfm:
 
 tfm_primary:
   span: [tfm]
+#if defined(CONFIG_BOOTLOADER_MCUBOOT)
+  inside: mcuboot_primary_app
+#endif
 
 app_primary:
   span: [app]
