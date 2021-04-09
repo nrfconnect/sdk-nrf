@@ -99,7 +99,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: fb936182435a1ae90fafbb8840e70a45d6f99a4e
+      revision: pull/455/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
@@ -122,7 +122,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: b8ad3b317626d1500f281276de40f9c6870fd5a4
+      revision: cc12e1c15c2e18ea3cbe7859d047745ddef0700e
       groups:
       - nrf-802154
     # Other third-party repositories.
