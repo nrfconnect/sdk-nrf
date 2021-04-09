@@ -53,10 +53,8 @@ enum lte_lc_system_mode {
 	LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS,
 };
 
-/** LTE mode. Used to indicate which LTE mode is currently active if more than
- *  one mode is enabled in the system mode configuration.
- *  The values for LTE-M and NB-IoT correspond to the values for the AcT field
- *  in a AT+CEREG response.
+/** LTE mode. The values for LTE-M and NB-IoT correspond to the values for the
+ *  AcT field in an AT+CEREG response.
  */
 enum lte_lc_lte_mode {
 	LTE_LC_LTE_MODE_NONE	= 0,
@@ -304,26 +302,33 @@ int lte_lc_psm_req(bool enable);
 int lte_lc_psm_get(int *tau, int *active_time);
 
 /** @brief Function for setting Paging Time Window (PTW) value to be used when
- *	   eDRX is requested using `lte_lc_edrx_req`.
- *	   For reference see subclause 10.5.5.32 of 3GPP TS 24.008.
+ *	   eDRX is requested using `lte_lc_edrx_req`. PTW is set individually
+ *	   for LTE-M and NB-IoT.
+ *	   Requesting a specific PTW configuration should be done with caution.
+ *	   The requested value must be compliant with the eDRX value that is
+ *	   configured, and it's usually best to let the modem use default PTW
+ *	   values.
+ *	   For reference to which values can be set, see subclause 10.5.5.32 of 3GPP TS 24.008.
  *
+ * @param mode LTE mode to which the PTW value applies.
  * @param ptw Paging Time Window value as null-terminated string.
  *        Set NULL to use manufacturer-specific default value.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
-int lte_lc_ptw_set(const char *ptw);
+int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
 
 /** @brief Function for setting modem eDRX value to be used when
  * eDRX is subsequently enabled using `lte_lc_edrx_req`.
  * For reference see 3GPP 27.007 Ch. 7.40.
  *
+ * @param mode LTE mode to which the eDRX value applies.
  * @param edrx eDRX value as null-terminated string.
  *        Set NULL to use manufacturer-specific default.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
-int lte_lc_edrx_param_set(const char *edrx);
+int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
 
 /** @brief Function for requesting modem to enable or disable
  * use of eDRX using values set by `lte_lc_edrx_param_set`. The
