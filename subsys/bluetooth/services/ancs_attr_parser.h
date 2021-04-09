@@ -34,7 +34,7 @@ extern "C" {
  * --------|-------------|-------|--------|----------------|-------|--------|----------------
  * CMD_ID  |  NOTIF_UID  |ATTR_ID| LENGTH |    DATA        |ATTR_ID| LENGTH |    DATA
  *
- * @param[in] ancs_c     Pointer to an ANCS instance to which the event belongs.
+ * @param[in] ancs_c     ANCS client instance to which the event belongs.
  * @param[in] data_src   Pointer to data that was received from the Notification Provider.
  * @param[in] data_len   Length of the data that was received from the Notification Provider.
  */
