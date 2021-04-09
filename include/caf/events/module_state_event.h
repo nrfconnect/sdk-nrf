@@ -19,6 +19,36 @@
 extern "C" {
 #endif
 
+#define MODULE_ID_LIST_SECTION_PREFIX module_id_list
+
+#define MODULE_ID_PTR_VAR(mname) _CONCAT(__module_, mname)
+#define MODULE_ID_LIST_SECTION_NAME   STRINGIFY(MODULE_ID_LIST_SECTION_PREFIX)
+#define MODULE_ID_LIST_START _CONCAT(__start_, MODULE_ID_LIST_SECTION_PREFIX)
+#define MODULE_ID_LIST_STOP  _CONCAT(__stop_,  MODULE_ID_LIST_SECTION_PREFIX)
+#define MODULE_ID_PTR_VAR_EXTERN_DEC(mname) \
+	extern const void * const MODULE_ID_PTR_VAR(mname)
+
+extern const void * const MODULE_ID_LIST_START;
+extern const void * const MODULE_ID_LIST_STOP;
+
+static inline size_t module_count(void)
+{
+	return (&MODULE_ID_LIST_STOP - &MODULE_ID_LIST_START);
+}
+
+static inline const void * const module_id_get(size_t idx)
+{
+	if (idx >= module_count()) {
+		return NULL;
+	}
+	return *((&MODULE_ID_LIST_START) + idx);
+}
+
+#define MODULE_IDX(mname) ({                                        \
+		MODULE_ID_PTR_VAR_EXTERN_DEC(mname);                \
+		&MODULE_ID_PTR_VAR(mname) - &MODULE_ID_LIST_START;  \
+	})
+
 
 /** Module state list. */
 #define MODULE_STATE_LIST	\
@@ -51,10 +81,11 @@ EVENT_TYPE_DECLARE(module_state_event);
 
 #define MODULE_NAME STRINGIFY(MODULE)
 
-#define EXTERN_DEC(a) extern const void * const _CONCAT(__module_, a)
+MODULE_ID_PTR_VAR_EXTERN_DEC(MODULE);
+const void * const MODULE_ID_PTR_VAR(MODULE)
+	__used __attribute__((__section__(MODULE_ID_LIST_SECTION_NAME)))
+	= MODULE_NAME;
 
-EXTERN_DEC(MODULE);
-const void * const _CONCAT(__module_, MODULE) = MODULE_NAME;
 
 static inline void module_set_state(enum module_state state)
 {
@@ -62,7 +93,7 @@ static inline void module_set_state(enum module_state state)
 
 	struct module_state_event *event = new_module_state_event();
 
-	event->module_id = _CONCAT(__module_, MODULE);
+	event->module_id = MODULE_ID_PTR_VAR(MODULE);
 	event->state = state;
 	EVENT_SUBMIT(event);
 }
@@ -80,9 +111,9 @@ static inline bool check_state(const struct module_state_event *event,
 }
 
 
-#define MODULE_ID(mname) ({							\
-			extern const void * const _CONCAT(__module_, mname);	\
-			_CONCAT(__module_, mname);				\
+#define MODULE_ID(mname) ({                                  \
+			MODULE_ID_PTR_VAR_EXTERN_DEC(mname); \
+			MODULE_ID_PTR_VAR(mname);            \
 		})
 
 
