@@ -55,7 +55,7 @@ static int settings_set(const char *key, size_t len_rd,
 {
 	if (!strcmp(key, current_id)) {
 		int err;
-		int absolute_offset;
+		off_t absolute_offset;
 		struct flash_pages_info page;
 		ssize_t len = read_cb(cb_arg, &stream.bytes_written,
 				      sizeof(stream.bytes_written));
@@ -65,7 +65,13 @@ static int settings_set(const char *key, size_t len_rd,
 			return len;
 		}
 
-		absolute_offset = stream.offset + stream.bytes_written;
+		/* Zero bytes written - set last erased page to its default. */
+		if (stream.bytes_written == 0) {
+			stream.last_erased_page_start_offset = -1;
+			return 0;
+		}
+
+		absolute_offset = stream.offset + stream.bytes_written - 1;
 
 		err = flash_get_page_info_by_offs(stream.fdev,
 						  absolute_offset,

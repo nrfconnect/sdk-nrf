@@ -326,6 +326,11 @@ Partition Manager
   To inspect the current partition manager configuration please use the ``partition_manager_report`` target.
 * Added the ``share_size`` functionality to let a partition share size with a partition in another region.
 
+DFU target
+----------
+
+* Fixed an issue where the offset to the last erased page was set incorrectly one page ahead whenever the flash write ended just after a page boundary.
+
 MCUboot
 =======
 
