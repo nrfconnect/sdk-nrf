@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if (NOT CONFIG_TFM_BL2_FALSE)
+if (CONFIG_TFM_BL2)
   # Add the mcuboot hex file built by TFM as the contents of the bl2 partitions,
   # so it can be flashed together with the app/tfm hex files.
   set_property(GLOBAL PROPERTY
