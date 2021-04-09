@@ -28,6 +28,8 @@ config NRF_MODEM_LIB_TRACE_ENABLED
 	# Modem tracing over UART use the UARTE1 as dedicated peripheral.
 	# This enable UARTE1 peripheral and includes nrfx UARTE driver.
 	select NRFX_UARTE1
+	help
+	  The default size of the Trace region is 16384 bytes.
 
 config NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS
 	bool "Split large blocks passed to send() or sendto()"
@@ -93,8 +95,14 @@ config NRF_MODEM_LIB_SHMEM_RX_SIZE
 	  The minimum memory requirements stem from the size of the RPC lists (264 bytes = 8 + (32 * 8)),
 	  plus the RPC messages and data buffers (1280 bytes = 256 + 1024).
 
+config NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
+	bool "Custom Trace region size"
+	depends on NRF_MODEM_LIB_TRACE_ENABLED
+	help
+	  Override the default size of the Trace region (16384 bytes).
+
 config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
-	int "Trace region size" if NRF_MODEM_LIB_TRACE_ENABLED
+	int "Trace region size" if NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
 	default 16384 if NRF_MODEM_LIB_TRACE_ENABLED
 	default 0
 	help
