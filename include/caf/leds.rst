@@ -10,6 +10,9 @@ CAF: LEDs module
 The LEDs module of the :ref:`lib_caf` (CAF) is responsible for controlling LEDs in response to LED effect set by a ``led_event``.
 The source of such events could be any other module in |NCS|.
 
+The module uses its own variant of Zephyr's :ref:`zephyr:pwm_api` driver for setting the LED color, either RGB or monochromatic.
+For this reason, it requires a manual configuration of the PWM ports and LEDs.
+
 Configuration
 *************
 
@@ -17,106 +20,143 @@ To use the module, you must enable the following Kconfig options:
 
 * :option:`CONFIG_CAF_LEDS` - This option enables the LEDs module.
 * :option:`CONFIG_PWM` - This option enables Zephyr's :ref:`zephyr:pwm_api` driver, which is used for setting the LED color (that is, the brightness of the diodes).
-  Setting this option requires you to define PWM ports, as described in the following section.
+* :option:`CONFIG_LED` - This option enables the LED driver API.
+* :option:`CONFIG_LED_PWM` - This option enabled the LED PWM driver.
 
-The following Kconfig options are available for this module:
+Additionally, you need to complete the steps described in `Configuring PWM ports and LEDs`_.
 
-* :option:`CONFIG_CAF_LEDS_DEF_PATH`
-* :option:`CONFIG_CAF_LEDS_PM_EVENTS`
-* :option:`CONFIG_CAF_LEDS_COUNT`
-* :option:`CONFIG_CAF_LEDS_COLOR_COUNT`
-* :option:`CONFIG_CAF_LEDS_BRIGHTNESS_MAX`
+The following Kconfig options are also available for this module:
 
-Defining PWM ports
-==================
+* :option:`CONFIG_CAF_LEDS_PM_EVENTS` - This option enables the reaction to `Power management events`_.
 
-To define PWM ports used by the application, complete the following steps:
+Configuring PWM ports and LEDs
+==============================
 
-1. Enable the ports in the devicetree file by setting the status to ``"okay"``. This can be done by using one of the following options:
+To properly use the LEDs module and have LEDs driven by PWM, you must configure the PWM driver and the LED PWM driver.
 
-	* Enabling relevant PWM ports in a board-specific :file:`dts` file.
-	* Enabling relevant PWM ports in :file:`dts.overlay` file, which are to be merged to configuration.
+Configuring the PWM driver specifies which PWM channel is related to which GPIO pin.
+Configuring the LED PWM driver defines which PWM port is to be used for each LED and selects the GPIO pin for usage.
+In case of the LED PWM driver, the GPIO pin must match the one passed to the PWM driver.
 
-	The following code snippets show several examples of how the file contents could look:
+The configuration process requires enabling the PWM ports and enabling or creating the LED PWM nodes.
+Both these steps are to be done in the devicetree file, either in the board-specific :file:`dts` file or in the :file:`dts.overlay` file.
+Using the option with the :file:`dts.overlay` file will merge the settings to configuration.
 
-	* Example 1:
+Make sure to configure all PWM ports and channels that are used by the application.
+For more help, see :ref:`zephyr:dt-guide`.
 
-	.. code-block:: none
+Enabling the PWM ports
+----------------------
 
-		&pwm0 {
+To enable the PWM ports, you must set the PWM port status to ``"okay"`` in the devicetree file and specify the PWM channel in relation to the GPIO pin number.
+This can be done using one of the following options:
+
+* Enabling relevant PWM ports in the board-specific :file:`dts` file.
+* Enabling relevant PWM ports in the :file:`dts.overlay` file, which are to be merged to configuration.
+
+The following code snippets show examples of how the file contents could look in either :file:`dts` or :file:`dts.overlay` files:
+
+* Example 1 (enabling an existing port node):
+
+  .. code-block:: none
+
+	&pwm0 {
+		status = "okay";
+		ch0-pin = <8>;
+	};
+
+  In this example, the ``pwm0`` has its ``ch0`` channel bound to the GPIO pin number ``8``.
+* Example 2 (enabling an existing port node):
+
+  .. code-block:: none
+
+	&pwm0 {
+		status = "okay";
+		ch0-pin = <11>;
+		ch0-inverted;
+		ch1-pin = <26>;
+		ch1-inverted;
+		ch2-pin = <27>;
+		ch2-inverted;
+	};
+
+	&pwm1 {
+		status = "okay";
+		ch0-pin = <4>;
+	};
+
+Enabling the LED PWM nodes
+--------------------------
+
+To enable the LED PWM nodes in the devicetree file, you must set their status to ``"okay"`` in the devicetree file and specify to which PWM node they are related to.
+You can also decide to create these nodes from scratch.
+There is no limit to the number of node instances you can create.
+
+The LEDs module assumes that a single LED PWM node is a separate and complete logical LED.
+The LEDs module expects that a single LED PWM node will hold configuration of HW LEDs responsible for reproducing all required color channels.
+The number of HW LEDs configured to reproduce color channels can be either one or three (either monochromatic or following the RGB order, with the red channel defined first, then the green one, then the blue one).
+If only one HW LED is used for a monochromatic setting, the module will convert the tri-channel color to a single value of brightness and pass it to this single HW LED.
+
+The configuration can be done using one of the following options:
+
+* Enabling or creating relevant nodes in a board-specific :file:`dts` file.
+* Enabling or creating relevant nodes in :file:`dts.overlay` file, which are to be merged to configuration.
+
+For the LEDs to be configured correctly, make sure that LED PWM node pin numbers in the :file:`dts` file are matching the PWM nodes set when `Enabling the PWM ports`_.
+
+The following code snippets show examples of how the file contents could look in either :file:`dts` or :file:`dts.overlay` files:
+
+* Example 1 (enabling existing LED node):
+
+  .. code-block:: none
+
+	&pwm_led0 {
+		status = "okay";
+		pwms = <&pwm0 8>;
+		label = "LED0";
+	};
+
+  In this example, the ``pwms`` property is pointing to the ``pwm0`` PWM node set in Example 1 in `Enabling the PWM ports`_, with the respective channel GPIO pin number (``8``).
+* Example 2 (creating new LED nodes):
+
+  .. code-block:: none
+
+	pwmleds0 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led0: led_pwm_0 {
 			status = "okay";
-			ch0-pin = <8>;
+			pwms = <&pwm0 11>;
+			label = "LED0 red";
 		};
 
-	* Example 2:
-
-	.. code-block:: none
-
-		&pwm0 {
+		pwm_led1: led_pwm_1 {
 			status = "okay";
-			ch0-pin = <11>;
-			ch0-inverted;
-			ch1-pin = <26>;
-			ch1-inverted;
-			ch2-pin = <27>;
-			ch2-inverted;
+			pwms = <&pwm0 26>;
+			label = "LED0 green";
 		};
 
-		&pwm1 {
+		pwm_led2: led_pwm_2 {
 			status = "okay";
-			ch0-pin = <23>;
-			ch1-pin = <25>;
-			ch2-pin = <7>;
+			pwms = <&pwm0 27>;
+			label = "LED0 blue";
 		};
+	};
 
-	Make sure to configure all PWM ports that are used by the application.
-	In particular, the number of PWM ports used must match the value set in :option:`CONFIG_CAF_LEDS_COUNT`.
-	For more help, see :ref:`zephyr:dt-guide`.
+	pwmleds1 {
+		compatible = "pwm-leds";
+		status = "okay";
 
-2. Create a configuration file with the following array of arrays:
-
-	* ``led_pins`` - contains PWM port and pin mapping for each LED used in the application.
-
-	The size of the array is determined by the :option:`CONFIG_CAF_LEDS_COUNT` and :option:`CONFIG_CAF_LEDS_COLOR_COUNT` Kconfig options.
-	The following code snippets show several examples of how the file contents could look:
-
-	* Example 1:
-
-	.. code-block:: c
-
-		static const size_t led_pins[CONFIG_CAF_LEDS_COUNT]
-					    [CONFIG_CAF_LEDS_COLOR_COUNT] = {
-			{
-				DT_PROP(DT_NODELABEL(pwm0), ch0_pin)
-			}
+		pwm_led3: led_pwm_3 {
+			status = "okay";
+			pwms = <&pwm1 4>;
+			label = "LED1";
 		};
+	};
 
-	* Example 2:
-
-	.. code-block:: c
-
-		static const size_t led_pins[CONFIG_CAF_LEDS_COUNT]
-					    [CONFIG_CAF_LEDS_COLOR_COUNT] = {
-			{
-				DT_PROP(DT_NODELABEL(pwm0), ch0_pin),
-				DT_PROP(DT_NODELABEL(pwm0), ch1_pin),
-				DT_PROP(DT_NODELABEL(pwm0), ch2_pin)
-			},
-			{
-				DT_PROP(DT_NODELABEL(pwm1), ch0_pin),
-				DT_PROP(DT_NODELABEL(pwm1), ch1_pin),
-				DT_PROP(DT_NODELABEL(pwm1), ch2_pin)
-			}
-		};
-
-3. Specify location of the configuration file with the :option:`CONFIG_CAF_LEDS_DEF_PATH` Kconfig option.
-
-	.. note::
-		The configuration file should be included only by the configured module.
-		Do not include the configuration file in other source files.
-
-.. warning::
-	   For the PWM ports to be configured correctly, both the configuration file and the :file:`dts` file must match.
+     In this example, ``pwmleds0`` is a tri-channel color LED node, while ``pwmleds1`` is a monochromatic LED node.
+     Both ``pwmleds`` nodes are pointing to the ``pwms`` properties corresponding to PWM nodes set in Example 2 in `Enabling the PWM ports`_, with the respective channel GPIO pin numbers.
 
 Implementation details
 **********************
@@ -141,7 +181,7 @@ The LED effect (:c:struct:`led_effect`) is described by the following characteri
 * Size of the array (:c:member:`led_effect.step_count`).
 * Flag indicating if the sequence should start over after it finishes (:c:member:`led_effect.loop_forever`).
 
-To achieve the desired LED effect, the LED color is updated periodically based on LED steps defined for the given LED effect, which in turn are divided in multiple smaller updates called *substeps*.
+To achieve the desired LED effect, the LED color is updated periodically based on the LED steps defined for the given LED effect, which in turn are divided in multiple smaller updates called *substeps*.
 
 .. figure:: /images/caf_led_effect_structure.png
    :alt: Characteristics of a led_effect
