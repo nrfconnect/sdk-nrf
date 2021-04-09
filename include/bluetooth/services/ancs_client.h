@@ -355,7 +355,7 @@ struct bt_ancs_parse_sm {
 	uint32_t current_app_id_index;
 };
 
-/**@brief iOS notification structure, which contains various status information for the client. */
+/**@brief ANCS client instance, which contains various status information. */
 struct bt_ancs_client {
 	/** Connection object. */
 	struct bt_conn *conn;
@@ -426,9 +426,10 @@ struct bt_ancs_client {
 
 /**@brief Function for initializing the ANCS client.
  *
- * @param[out] ancs_c       ANCS client structure. This structure must be
- *                          supplied by the application. It is initialized by this function
- *                          and will later be used to identify this particular client instance.
+ * @param[out] ancs_c       ANCS client instance. This structure must be
+ *                          supplied by the application. It is initialized by
+ *                          this function and will later be used to identify
+ *                          this particular client instance.
  * @param[in]  evt_handler  Event handler for ANCS client events.
  *
  * @retval 0 If the client was initialized successfully.
@@ -440,8 +441,7 @@ int bt_ancs_client_init(struct bt_ancs_client *ancs_c,
 /**@brief Function for writing to the CCCD to enable notifications from
  *        the Apple Notification Service.
  *
- * @param[in] ancs_c  iOS notification structure. This structure must be supplied by
- *                    the application. It identifies the particular client instance to use.
+ * @param[in] ancs_c  ANCS client instance.
  *
  * @retval 0 If writing to the CCCD was successful.
  *           Otherwise, a (negative) error code is returned.
@@ -450,8 +450,7 @@ int bt_ancs_subscribe_notification_source(struct bt_ancs_client *ancs_c);
 
 /**@brief Function for writing to the CCCD to enable data source notifications from the ANCS.
  *
- * @param[in] ancs_c iOS notification structure. This structure must be supplied by
- *                   the application. It identifies the particular client instance to use.
+ * @param[in] ancs_c  ANCS client instance.
  *
  * @retval 0 If writing to the CCCD was successful.
  *           Otherwise, a (negative) error code is returned.
@@ -460,8 +459,7 @@ int bt_ancs_subscribe_data_source(struct bt_ancs_client *ancs_c);
 
 /**@brief Function for writing to the CCCD to disable notifications from the ANCS.
  *
- * @param[in] ancs_c  iOS notification structure. This structure must be supplied by
- *                    the application. It identifies the particular client instance to use.
+ * @param[in] ancs_c  ANCS client instance
  *
  * @retval 0 If writing to the CCCD was successful.
  *           Otherwise, a (negative) error code is returned.
@@ -470,8 +468,7 @@ int bt_ancs_unsubscribe_notification_source(struct bt_ancs_client *ancs_c);
 
 /**@brief Function for writing to the CCCD to disable data source notifications from the ANCS.
  *
- * @param[in] ancs_c  iOS notification structure. This structure must be supplied by
- *                    the application. It identifies the particular client instance to use.
+ * @param[in] ancs_c  ANCS client instance.
  *
  * @retval 0 If writing to the CCCD was successful.
  *           Otherwise, a (negative) error code is returned.
@@ -510,8 +507,7 @@ int bt_ancs_register_app_attr(struct bt_ancs_client *ancs_c,
 
 /**@brief Function for requesting attributes for a notification.
  *
- * @param[in] ancs_c   iOS notification structure. This structure must be supplied by
- *                     the application. It identifies the particular client instance to use.
+ * @param[in] ancs_c   ANCS client instance.
  * @param[in] notif    Pointer to the notification whose attributes will be requested from
  *                     the Notification Provider.
  *
@@ -523,8 +519,7 @@ int bt_ancs_request_attrs(struct bt_ancs_client *ancs_c,
 
 /**@brief Function for requesting attributes for a given app.
  *
- * @param[in] ancs_c   iOS notification structure. This structure must be supplied by
- *                     the application. It identifies the particular client instance to use.
+ * @param[in] ancs_c   ANCS client instance.
  * @param[in] app_id   App identifier of the app for which the app attributes are requested.
  * @param[in] len      Length of the app identifier.
  *
@@ -536,8 +531,7 @@ int bt_ancs_request_app_attr(struct bt_ancs_client *ancs_c,
 
 /**@brief Function for performing a notification action.
  *
- * @param[in] ancs_c    iOS notification structure. This structure must be supplied by
- *                      the application. It identifies the particular client instance to use.
+ * @param[in] ancs_c    ANCS client instance.
  * @param[in] uuid      The UUID of the notification for which to perform the action.
  * @param[in] action_id Perform a positive or negative action.
  *
@@ -547,7 +541,7 @@ int bt_ancs_request_app_attr(struct bt_ancs_client *ancs_c,
 int bt_ancs_notification_action(struct bt_ancs_client *ancs_c, uint32_t uuid,
 				enum bt_ancs_action_id_values action_id);
 
-/**@brief Function for assigning a handle to this instance of ancs_c.
+/**@brief Function for assigning handles to ANCS client instance.
  *
  * @details Call this function when a link has been established with a peer to
  *          associate the link to this instance of the module. This makes it
@@ -555,7 +549,7 @@ int bt_ancs_notification_action(struct bt_ancs_client *ancs_c, uint32_t uuid,
  *          instance of this module.
  *
  * @param[in]     dm     Discovery object.
- * @param[in,out] ancs_c Pointer to the ANCS client structure instance for associating the link.
+ * @param[in,out] ancs_c ANCS client instance for associating the link.
  *
  * @retval 0 If the operation is successful.
  *           Otherwise, a (negative) error code is returned.

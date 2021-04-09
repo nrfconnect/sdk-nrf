@@ -21,8 +21,7 @@ extern "C" {
 
 /**@brief Function for requesting attributes for an app.
  *
- * @param[in] ancs_c  iOS notification structure. This structure must be supplied by
- *                    the application. It identifies the particular client instance to use.
+ * @param[in] ancs_c  ANCS client instance.
  * @param[in] app_id  App identifier of the app for which to request app attributes.
  * @param[in] len     Length of the app identifier.
  *
