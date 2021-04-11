@@ -21,6 +21,7 @@ This page is included only in the latest documentation, because it might contain
    :caption: Subpages:
 
    releases/release-notes-latest
+   releases/release-notes-1.5.1
    releases/release-notes-1.5.0
    releases/release-notes-1.4.2
    releases/release-notes-1.4.1
