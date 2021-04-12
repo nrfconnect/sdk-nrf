@@ -7,7 +7,7 @@ Working with nRF52 Series
    :local:
    :depth: 2
 
-The |NCS| provides support for developing on all nRF52 Series devices and contains board definitions for all development kits and reference design hardware.
+The |NCS| provides foo support for developing on all nRF52 Series devices and contains board definitions for all development kits and reference design hardware.
 
 See `Getting started with nRF Connect SDK (nRF52 Series)`_ for step-by-step instructions on how to test and develop with an nRF52 Series development kit.
 
