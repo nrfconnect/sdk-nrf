@@ -613,10 +613,10 @@ If the HEX files overlap, the conflict is resolved as follows:
 
 This means that you can overwrite a partition's HEX file by wrapping that partition in another partition and assigning a HEX file to the new partition.
 
-ROM report
-----------
+Partition Manager report
+------------------------
 
-When using the Partition Manager, run ``ninja rom_report`` to see the addresses and sizes of flash partitions.
+When using the Partition Manager, run ``ninja partition_manager_report`` to see the addresses and sizes of all the configured partitions.
 
 .. _pm_cmake_usage:
 
