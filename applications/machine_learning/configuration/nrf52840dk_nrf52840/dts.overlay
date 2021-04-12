@@ -3,3 +3,9 @@
 	ch0-pin = <13>;
 	ch0-inverted;
 };
+
+&pwm_led0 {
+	status = "okay";
+	pwms = <&pwm0 13>;
+	label = "State LED";
+};
