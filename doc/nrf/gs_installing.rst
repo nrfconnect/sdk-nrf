@@ -506,12 +506,12 @@ Before you start :ref:`building and programming a sample application <gs_program
 
       .. group-tab:: Windows
 
-         Make sure the locations of tools are added to the PATH variable.
+         Make sure the locations of executable tools are added to the PATH variable, including Python, CMake, Ninja, and DTC.
          On Windows, SES uses the PATH variable to find executables if they are not set in SES.
 
       .. group-tab:: Linux
 
-         Make sure the locations of tools are added to the PATH variable.
+         Make sure the locations of executable tools are added to the PATH variable, including Python, CMake, Ninja, and DTC.
          On Linux, SES uses the PATH variable to find executables if they are not set in SES.
 
       .. group-tab:: macOS
