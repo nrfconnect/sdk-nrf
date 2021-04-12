@@ -156,33 +156,44 @@ config ZBOSS_TRACE_LOG_LEVEL
 config ZBOSS_TRACE_MASK
 	hex "Trace mask of ZBOSS stack logs"
 	default 0x0000
-	range 0x0000 0xFFFF
+	range 0x00000000 0xFFFFFFFF
 	help
 	  Selectively enable Zigbee binary trace logs.
 	  The mask value should be a bitwise OR of values assigned to selected modules.
 
 	  Available modules are:
 
-	  - 0x8000 SPI platform implementation
-	  - 0x4000 Zigbee Green Power
-	  - 0x2000 Custom components
-	  - 0x1000 UART and NCP transport
-	  - 0x0800 Application
-	  - 0x0400 MAC Lower Layer
-	  - 0x0200 Zigbee Light Link
-	  - 0x0100 Zigbee Cluster Library
-	  - 0x0080 Security
-	  - 0x0040 Zigbee Device Object
-	  - 0x0020 Zigbee Smart Energy
-	  - 0x0010 Application Support layer
-	  - 0x0008 Network layer
-	  - 0x0004 MAC layer
-	  - 0x0002 Memory management
-	  - 0x0001 Common
+	  - 0x04000000 Reserved
+	  - 0x02000000 Reserved
+	  - 0x01000000 Reserved
+	  - 0x00800000 Reserved
+	  - 0x00400000 Reserved
+	  - 0x00200000 Zigbee NCP: transport (LL)
+	  - 0x00100000 Zigbee NCP: command adapters (HL)
+	  - 0x00080000 ZCL: Over The Air firmware upgrade
+	  - 0x00040000 IAS zone device: battery monitoring
+	  - 0x00020000 Reserved
+	  - 0x00010000 MAC Lower Layer
+	  - 0x00008000 MAC layer API calls
+	  - 0x00004000 Zigbee Green Power
+	  - 0x00002000 Custom components
+	  - 0x00001000 Reserved
+	  - 0x00000800 Application
+	  - 0x00000400 Reserved
+	  - 0x00000200 Zigbee Light Link
+	  - 0x00000100 Zigbee Cluster Library
+	  - 0x00000080 Security
+	  - 0x00000040 Zigbee Device Object
+	  - 0x00000020 Zigbee Smart Energy
+	  - 0x00000010 Application Support layer
+	  - 0x00000008 Network layer
+	  - 0x00000004 MAC layer
+	  - 0x00000002 Memory management
+	  - 0x00000001 Common
 
-	  For example, in order to enable traces related to OTA DFU, one should set this option to 0x4100.
+	  For example, in order to enable traces related to OTA DFU, one should set this option to 0x00080100.
 
-	  Note: For general debugging purposes, please use 0x0C48.
+	  Note: For general debugging purposes, please use 0x00000C48.
 
 config ZBOSS_TRAF_DUMP
 	bool "Enable logging received 802.15.4 frames over ZBOSS traces"
