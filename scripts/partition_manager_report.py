@@ -7,7 +7,6 @@
 import argparse
 import yaml
 import platform
-import sys
 from os import path
 
 
@@ -77,13 +76,8 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Parse given Partition Manager output YAML file and print a pretty report',
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    # This argument has nargs set to '*' even though it is required. This is because of the logic associated with the
-    # '--quiet' argument, which makes the script quit immediately. Hence we verify that this is set after 'quiet' is
-    # checked.
-    parser.add_argument('-i', '--input', required=True, type=str, nargs='*',
+    parser.add_argument('-i', '--input', required=True, type=str, nargs='+',
                         help='Path to the domain specific YAML files from Partition Manager')
-    parser.add_argument('-q', '--quiet', required=False, action='store_true',
-                        help="Don't print anything")
 
     args = parser.parse_args()
 
@@ -92,9 +86,6 @@ def parse_args():
 
 def main():
     args = parse_args()
-
-    if args.quiet:
-        sys.exit(0)
 
     if not args.input:
         raise RuntimeError('No input files provided')

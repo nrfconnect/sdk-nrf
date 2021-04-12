@@ -488,6 +488,15 @@ else()
     ${global_hex_depends}
     )
 
+  add_custom_target(
+    partition_manager_report
+    COMMAND
+    ${PYTHON_EXECUTABLE}
+    ${ZEPHYR_BASE}/../nrf/scripts/partition_manager_report.py
+    --input ${pm_out_partition_file}
+    COMMAND_EXPAND_LISTS
+    )
+
   if (PM_DOMAINS)
     # For convenience, generate global hex file containing all domains' hex
     # files.
