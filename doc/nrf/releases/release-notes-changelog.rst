@@ -148,6 +148,12 @@ Zigbee
 Common
 ======
 
+Partition Manager
+-----------------
+
+* Partition manager information is no longer appended to the ``rom_report`` target.
+  To inspect the current partition manager configuration please use the ``partition_manager_report`` target.
+
 Libraries
 ---------
 
