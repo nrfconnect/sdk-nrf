@@ -16,7 +16,7 @@ LOG_MODULE_REGISTER(MODULE);
 void main(void)
 {
 	if (event_manager_init()) {
-		LOG_ERR("Event manager not initialized");
+		LOG_ERR("Event manager not initialized foo");
 	} else {
 		module_set_state(MODULE_STATE_READY);
 	}
