@@ -114,6 +114,30 @@
 #define AT_XMODEMSLEEP_TYPE_INDEX		1
 #define AT_XMODEMSLEEP_TIME_INDEX		2
 
+/* CONEVAL command parameters */
+#define AT_CONEVAL_READ				"AT%CONEVAL"
+#define AT_CONEVAL_RESPONSE_PREFIX		"%CONEVAL"
+#define AT_CONEVAL_PREFIX_INDEX			0
+#define AT_CONEVAL_RESPONSE_MAX_LEN		110
+#define AT_CONEVAL_PARAMS_MAX			19
+#define AT_CONEVAL_RESULT_INDEX			1
+#define AT_CONEVAL_RRC_STATE_INDEX		2
+#define AT_CONEVAL_ENERGY_ESTIMATE_INDEX	3
+#define AT_CONEVAL_RSRP_INDEX			4
+#define AT_CONEVAL_RSRQ_INDEX			5
+#define AT_CONEVAL_SNR_INDEX			6
+#define AT_CONEVAL_CELL_ID_INDEX		7
+#define AT_CONEVAL_PLMN_INDEX			8
+#define AT_CONEVAL_PHYSICAL_CELL_ID_INDEX	9
+#define AT_CONEVAL_EARFCN_INDEX			10
+#define AT_CONEVAL_BAND_INDEX			11
+#define AT_CONEVAL_TAU_TRIGGERED_INDEX		12
+#define AT_CONEVAL_CE_LEVEL_INDEX		13
+#define AT_CONEVAL_TX_POWER_INDEX		14
+#define AT_CONEVAL_TX_REPETITIONS_INDEX		15
+#define AT_CONEVAL_RX_REPETITIONS_INDEX		16
+#define AT_CONEVAL_DL_PATHLOSS_INDEX		17
+
 /* @brief Helper function to check if a response is what was expected.
  *
  * @param response Pointer to response prefix
@@ -220,3 +244,23 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells);
  * @return Zero on success or (negative) error code otherwise.
  */
 int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_sleep);
+
+/* @brief Parses a CONEVAL response and populates a struct with parameters from the response.
+ *
+ * @param at_response Pointer to buffer with AT response.
+ * @param params Pointer to a structure that will be populated with CONEVAL parameters.
+ *
+ * @return Zero on success, negative errno code if the API call fails, and a positive error
+ *         code if the API call succeeds but connection evalution fails due to modem/network related
+ *         reasons.
+ *
+ * @retval 0 Evaluation succeeded.
+ * @retval 1 Evaluation failed, no cell available.
+ * @retval 2 Evaluation failed, UICC not available.
+ * @retval 3 Evaluation failed, only barred cells available.
+ * @retval 4 Evaluation failed, radio busy (e.g GNSS activity)
+ * @retval 5 Evaluation failed, aborted due to higher priority operation.
+ * @retval 6 Evaluation failed, UE not registered to network.
+ * @retval 7 Evaluation failed, Unspecified.
+ */
+int parse_coneval(const char *at_response, struct lte_lc_conn_eval_params *params);

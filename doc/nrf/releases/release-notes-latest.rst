@@ -77,6 +77,7 @@ nRF9160
     * Added support for %XT3412 AT command notifications, which allows the application to get prewarnings before Tracking Area Updates.
     * Added support for neighbor cell measurements.
     * Added support for %XMODEMSLEEP AT command notifications which allows the application to get notifications related to modem sleep.
+    * Added support for %CONEVAL AT command that can be used to evaluate the LTE radio signal state in a cell prior to data transmission.
 
   * :ref:`serial_lte_modem` application:
 

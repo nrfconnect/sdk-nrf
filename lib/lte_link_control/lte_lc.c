@@ -1387,6 +1387,50 @@ int lte_lc_neighbor_cell_measurement_cancel(void)
 	return at_cmd_write(AT_NCELLMEAS_STOP, NULL, 0, NULL);
 }
 
+int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params)
+{
+	int err;
+	char buf[AT_CONEVAL_RESPONSE_MAX_LEN] = {0};
+	enum lte_lc_func_mode mode;
+
+	if (params == NULL) {
+		return -EINVAL;
+	}
+
+	err = lte_lc_func_mode_get(&mode);
+	if (err) {
+		LOG_ERR("Could not get functional mode");
+		return err;
+	}
+
+	switch (mode) {
+	case LTE_LC_FUNC_MODE_NORMAL:
+	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
+		break;
+	default:
+		LOG_WRN("Connection evaluation is not available in the current functional mode");
+		return -EOPNOTSUPP;
+	}
+
+	/* Read connection evaluation parameters. */
+	err = at_cmd_write(AT_CONEVAL_READ, buf, sizeof(buf), NULL);
+	if (err) {
+		LOG_ERR("Could not get CONEVAL response, error: %d", err);
+		return err;
+	}
+
+	err = parse_coneval(buf, params);
+	if (err < 0) {
+		LOG_ERR("Could not parse connection evaluation parameters, err: %d", err);
+		return err;
+	} else if (err > 0) {
+		LOG_WRN("Connection evaluation failed, result code: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
 SYS_DEVICE_DEFINE("LTE_LINK_CONTROL", init_and_connect,
 		  device_pm_control_nop,

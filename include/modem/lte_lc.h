@@ -184,8 +184,8 @@ enum lte_lc_evt_type {
 };
 
 enum lte_lc_rrc_mode {
-	LTE_LC_RRC_MODE_IDLE,
-	LTE_LC_RRC_MODE_CONNECTED,
+	LTE_LC_RRC_MODE_IDLE		= 0,
+	LTE_LC_RRC_MODE_CONNECTED	= 1,
 };
 
 struct lte_lc_psm_cfg {
@@ -317,6 +317,165 @@ struct lte_lc_modem_sleep {
 
 	/* If this value is set to -1. Sleep is considered infinite. */
 	int64_t time;
+};
+
+enum lte_lc_energy_estimate {
+	LTE_LC_ENERGY_CONSUMPTION_EXCESSIVE	= 5,
+	LTE_LC_ENERGY_CONSUMPTION_INCREASED	= 6,
+	LTE_LC_ENERGY_CONSUMPTION_NORMAL	= 7,
+	LTE_LC_ENERGY_CONSUMPTION_REDUCED	= 8,
+	LTE_LC_ENERGY_CONSUMPTION_EFFICIENT	= 9,
+};
+
+enum lte_lc_tau_triggered {
+	/** The evaluated cell is in the Tracking Area Identifier list. When switching to this
+	 *  cell, a TAU will not be triggered.
+	 */
+	LTE_LC_CELL_IN_TAI_LIST		= 0,
+
+	/** The evaluated cell is not in the Tracking Area Identifier list. When switching to this
+	 *  cell, a TAU will be triggered.
+	 */
+	LTE_LC_CELL_NOT_IN_TAI_LIST	= 1,
+	LTE_LC_CELL_UNKNOWN		= UINT8_MAX
+};
+
+enum lte_lc_ce_level {
+	LTE_LC_CE_LEVEL_0_NO_REPETITION		= 0,
+	LTE_LC_CE_LEVEL_1_LOW_REPETITION	= 1,
+	LTE_LC_CE_LEVEL_2_MEDIUM_REPETITION	= 2,
+	LTE_LC_CE_LEVEL_UNKNOWN			= UINT8_MAX,
+};
+
+/** @brief Connection evaluation parameters.
+ *
+ *  @note For more information on the various connection evaluation parameters, refer to the
+ *	  "nRF91 AT Commands - Command Reference Guide".
+ */
+struct lte_lc_conn_eval_params {
+	/** RRC connection state during measurements. */
+	enum lte_lc_rrc_mode rrc_state;
+
+	/** Relative estimated energy consumption for data transmission compared to nominal
+	 *  consumption.
+	 */
+	enum lte_lc_energy_estimate energy_estimate;
+
+	/** Value that signifies if the evaluated cell is a part of the Tracking Area Identifier
+	 *  list received from the network.
+	 */
+	enum lte_lc_tau_triggered tau_trig;
+
+	/** Coverage Enhancement level for PRACH depending on RRC state measured in.
+	 *
+	 *  RRC IDLE: CE level is estimated based on RSRP and network configuration.
+	 *
+	 *  RRC CONNECTED: Currently configured CE level.
+	 *
+	 *  CE levels 0-2 are supported in NB-IoT.
+	 *  CE levels 0-1 are supported in LTE-M.
+	 */
+	enum lte_lc_ce_level ce_level;
+
+	/** EARFCN for given cell where EARFCN is per 3GPP TS 36.101. */
+	int earfcn;
+
+	/** Reduction in power density in dB. */
+	int16_t dl_pathloss;
+
+	/** Current RSRP level at time of report.
+	 * -17:  RSRP < -156 dBm
+	 * -16: -156 ≤ RSRP < -155 dBm
+	 *  ...
+	 * -3:  -143 ≤ RSRP < -142 dBm
+	 * -2:  -142 ≤ RSRP < -141 dBm
+	 * -1:  -141 ≤ RSRP < -140 dBm
+	 *  0:   RSRP < -140 dBm
+	 *  1:  -140 ≤ RSRP < -139 dBm
+	 *  2:  -139 ≤ RSRP < -138 dBm
+	 *  ...
+	 *  95: -46 ≤ RSRP < -45 dBm
+	 *  96: -45 ≤ RSRP < -44 dBm
+	 *  97: -44 ≤ RSRP dBm
+	 *  255: not known or not detectable
+	 */
+	int16_t rsrp;
+
+	/** Current RSRQ level at time of report.
+	 * -30:  RSRQ < -34 dB
+	 * -29: -34 ≤ RSRQ < -33.5 dB
+	 * ...
+	 * -2:  -20.5 ≤ RSRQ < -20 dB
+	 * -1:  -20 ≤ RSRQ < -19.5 dB
+	 *  0:   RSRQ < -19.5 dB
+	 *  1:  -19.5 ≤ RSRQ < -19 dB
+	 *  2:  -19 ≤ RSRQ < -18.5 dB
+	 *  ...
+	 *  32: -4 ≤ RSRQ < -3.5 dB
+	 *  33: -3.5 ≤ RSRQ < -3 dB
+	 *  34: -3 ≤ RSRQ dB
+	 *  35: -3 ≤ RSRQ < -2.5 dB
+	 *  36: -2.5 ≤ RSRQ < -2 dB
+	 *  ...
+	 *  45:  2 ≤ RSRQ < 2.5 dB
+	 *  46:  2.5 ≤ RSRQ dB
+	 *  255: not known or not detectable.
+	 */
+	int16_t rsrq;
+
+	/** Estimate of TX repetitions depending on RRC state measured in. 3GPP TS 36.331 and 36.213
+	 *
+	 *  RRC IDLE: Initial preamble repetition level in (N)PRACH based on CE level and
+	 *	      network configuration.
+	 *
+	 *  RRC CONNECTED: Latest physical data channel (N)PUSCH transmission repetition level.
+	 */
+	int16_t tx_rep;
+
+	/** Estimate of RX repetitions depending on RRC state measured in. 3GPP TS 36.331 and 36.213
+	 *
+	 *  RRC IDLE: Initial Random Access control channel (M/NPDCCH) repetition level based on
+	 *	      CE level and network configuration.
+	 *
+	 *  RRC CONNECTED: Latest physical data channel (N)PDSCH reception repetition level.
+	 */
+	int16_t rx_rep;
+
+	/** Physical cell ID of evaluated cell. */
+	int16_t phy_cid;
+
+	/** Current band information. 0 when band information is not available. 3GPP TS 36.101. */
+	int16_t band;
+
+	/** Current signal-to-noise ratio at time of report.
+	 *  0:   SNR < -24 dB
+	 *  1:  -24 dB <= SNR < -23 dB
+	 *  2:  -23 dB <= SNR < -22 dB
+	 *  ...
+	 *  47:  22 dB <= SNR < 23 dB
+	 *  48:  23 dB <= SNR < 24 dB
+	 *  49:  24 dB <= SNR
+	 *  127: Not known or not detectable.
+	 */
+	int16_t snr;
+
+	/** Estimate of TX power in dBm depending on RRC state measured in.
+	 *  3GPP TS 36.101 and 36.213.
+	 *
+	 *  RRC IDLE: Estimated TX power level is for first preamble transmission in (N)PRACH).
+	 *
+	 *  RRC CONNECTED: Latest physical data channel (N)PUSCH transmission power level.
+	 */
+	int16_t tx_power;
+
+	/** Mobile Country Code. */
+	int mcc;
+
+	/** Mobile Network Code. */
+	int mnc;
+
+	/** E-UTRAN cell ID. */
+	uint32_t cell_id;
 };
 
 struct lte_lc_evt {
@@ -596,6 +755,27 @@ int lte_lc_neighbor_cell_measurement(void);
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_neighbor_cell_measurement_cancel(void);
+
+/**@brief Get connection evaluation parameters. Connection evaluation parameters can be used to
+ *	  determine the energy efficiency of data transmission prior to the actual
+ *	  data transmission.
+ *
+ * @param params Pointer to structure to hold connection evaluation parameters.
+ *
+ * @return Zero on success, negative errno code if the API call fails, and a positive error
+ *         code if the API call succeeds but connection evalution fails due to modem/network related
+ *         reasons.
+ *
+ * @retval 0 Evaluation succeeded.
+ * @retval 1 Evaluation failed, no cell available.
+ * @retval 2 Evaluation failed, UICC not available.
+ * @retval 3 Evaluation failed, only barred cells available.
+ * @retval 4 Evaluation failed, radio busy (e.g GNSS activity)
+ * @retval 5 Evaluation failed, aborted due to higher priority operation.
+ * @retval 6 Evaluation failed, UE not registered to network.
+ * @retval 7 Evaluation failed, Unspecified.
+ */
+int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
 
 /** @} */
 

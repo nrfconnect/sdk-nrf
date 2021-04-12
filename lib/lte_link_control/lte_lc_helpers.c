@@ -912,3 +912,176 @@ clean_exit:
 	at_params_list_free(&resp_list);
 	return err;
 }
+
+int parse_coneval(const char *at_response, struct lte_lc_conn_eval_params *params)
+{
+	int err, tmp;
+	struct at_param_list resp_list = {0};
+	char resp_prefix[sizeof(AT_CONEVAL_RESPONSE_PREFIX)] = {0};
+	size_t prefix_len = sizeof(resp_prefix);
+	char plmn_str[7];
+	size_t plmn_len = sizeof(plmn_str);
+	int16_t coneval_result, rrc_state, energy_estimate, tau_trig, ce_level;
+
+	if (params == NULL || at_response == NULL) {
+		return -EINVAL;
+	}
+
+	err = at_params_list_init(&resp_list, AT_CONEVAL_PARAMS_MAX);
+	if (err) {
+		LOG_ERR("Could not initialize AT params list, error: %d", err);
+		return err;
+	}
+
+	err = at_parser_params_from_str(at_response, NULL, &resp_list);
+	if (err) {
+		LOG_ERR("Could not parse CONEVAL response, error: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_string_get(&resp_list, AT_RESPONSE_PREFIX_INDEX, resp_prefix, &prefix_len);
+	if (err) {
+		LOG_ERR("Could not get response prefix, error: %d", err);
+		goto clean_exit;
+	}
+
+	if (!response_is_valid(resp_prefix, prefix_len, AT_CONEVAL_RESPONSE_PREFIX)) {
+		LOG_ERR("Invalid CONEVAL response");
+		err = -EIO;
+		goto clean_exit;
+	}
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_RESULT_INDEX, &coneval_result);
+	if (err) {
+		LOG_ERR("Could not parse result parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	if (coneval_result != 0) {
+		/* Return values directly maps to the <result> parameter of CONEVAL. */
+		err = coneval_result;
+		goto clean_exit;
+	}
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_RRC_STATE_INDEX, &rrc_state);
+	if (err) {
+		LOG_ERR("Could not parse RRC state parameter, err: %d", err);
+		goto clean_exit;
+	}
+	params->rrc_state = rrc_state;
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_ENERGY_ESTIMATE_INDEX, &energy_estimate);
+	if (err) {
+		LOG_ERR("Could not parse energy estimate parameter, err: %d", err);
+		goto clean_exit;
+	}
+	params->energy_estimate = energy_estimate;
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_RSRP_INDEX, &params->rsrp);
+	if (err) {
+		LOG_ERR("Could not parse RSRP parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_RSRQ_INDEX, &params->rsrq);
+	if (err) {
+		LOG_ERR("Could not parse RSRQ parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_SNR_INDEX, &params->snr);
+	if (err) {
+		LOG_ERR("Could not parse SNR parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	err = string_param_to_int(&resp_list, AT_CONEVAL_CELL_ID_INDEX, &tmp, 16);
+	if (err) {
+		LOG_ERR("Could not parse cell ID parameter, err: %d", err);
+		goto clean_exit;
+	}
+	params->cell_id = tmp;
+
+	err = at_params_string_get(&resp_list, AT_CONEVAL_PLMN_INDEX, plmn_str, &plmn_len);
+	if (err) {
+		goto clean_exit;
+	}
+
+	plmn_str[plmn_len] = '\0';
+
+	/* Read MNC and store as integer. The MNC starts as the fourth character
+	 * in the string, following three characters long MCC.
+	 */
+	err = string_to_int(&plmn_str[3], 10, &params->mnc);
+	if (err) {
+		goto clean_exit;
+	}
+
+	/* Null-terminated MCC, read and store it. */
+	plmn_str[3] = '\0';
+
+	err = string_to_int(plmn_str, 10, &params->mcc);
+	if (err) {
+		goto clean_exit;
+	}
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_PHYSICAL_CELL_ID_INDEX, &params->phy_cid);
+	if (err) {
+		LOG_ERR("Could not parse physical cell ID parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_int_get(&resp_list, AT_CONEVAL_EARFCN_INDEX, &params->earfcn);
+	if (err) {
+		LOG_ERR("Could not parse EARFCN parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_BAND_INDEX, &params->band);
+	if (err) {
+		LOG_ERR("Could not parse band parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_TAU_TRIGGERED_INDEX, &tau_trig);
+	if (err) {
+		LOG_ERR("Could not parse TAU triggered parameter, err: %d", err);
+		goto clean_exit;
+	}
+	params->tau_trig = tau_trig;
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_CE_LEVEL_INDEX, &ce_level);
+	if (err) {
+		LOG_ERR("Could not parse CE level parameter, err: %d", err);
+		goto clean_exit;
+	}
+	params->ce_level = ce_level;
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_TX_POWER_INDEX, &params->tx_power);
+	if (err) {
+		LOG_ERR("Could not parse TX power parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_TX_REPETITIONS_INDEX, &params->tx_rep);
+	if (err) {
+		LOG_ERR("Could not parse TX repetitions parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_RX_REPETITIONS_INDEX, &params->rx_rep);
+	if (err) {
+		LOG_ERR("Could not parse RX repetitions parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_short_get(&resp_list, AT_CONEVAL_DL_PATHLOSS_INDEX, &params->dl_pathloss);
+	if (err) {
+		LOG_ERR("Could not parse downlink pathloss parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+clean_exit:
+	at_params_list_free(&resp_list);
+	return err;
+}

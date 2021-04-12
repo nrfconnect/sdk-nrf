@@ -273,6 +273,71 @@ void test_parse_xmodemsleep(void)
 	zassert_equal(-EINVAL, err, "parse_xmodemsleep failed, error: %d", err);
 }
 
+void test_parse_coneval(void)
+{
+	int err;
+	struct lte_lc_conn_eval_params params = {0};
+
+	const char *at_response = "%CONEVAL: 0,1,8,41,19,31,\"02026616\",\"24202\","
+				  "397,6300,20,0,0,21,1,1,117";
+	const char *at_response_no_cell = "%CONEVAL: 1";
+	const char *at_response_uicc_unavail = "%CONEVAL: 2";
+	const char *at_response_barred_cells = "%CONEVAL: 3";
+	const char *at_response_radio_busy = "%CONEVAL: 4";
+	const char *at_response_higher_prio = "%CONEVAL: 5";
+	const char *at_response_unregistered = "%CONEVAL: 6";
+	const char *at_response_unspecified = "%CONEVAL: 7";
+	const char *at_response_empty = "";
+
+	err = parse_coneval(at_response, &params);
+	zassert_equal(0, err, "parse_coneval failed, error: %d", err);
+	zassert_equal(params.rrc_state, LTE_LC_RRC_MODE_CONNECTED, "Wrong RRC state");
+	zassert_equal(params.energy_estimate, LTE_LC_ENERGY_CONSUMPTION_REDUCED,
+		      "Wrong energy estimate parameter");
+	zassert_equal(params.rsrp, 41, "Wrong RSRP");
+	zassert_equal(params.rsrq, 19, "Wrong RSRQ");
+	zassert_equal(params.snr, 31, "Wrong SNR");
+	zassert_equal(params.cell_id, 33711638, "Wrong cell ID");
+	zassert_equal(params.mnc, 2, "Wrong MNC");
+	zassert_equal(params.mcc, 242, "Wrong MNC");
+	zassert_equal(params.phy_cid, 397, "Wrong physical cell ID");
+	zassert_equal(params.earfcn, 6300, "Wrong EARFCN");
+	zassert_equal(params.band, 20, "Wrong Band");
+	zassert_equal(params.tau_trig, 0, "Wrong TAU triggered parameter");
+	zassert_equal(params.ce_level, 0, "wrong CE level");
+	zassert_equal(params.tx_power, 21, "Wrong TX power");
+	zassert_equal(params.tx_rep, 1, "Wrong TX repetition");
+	zassert_equal(params.rx_rep, 1, "Wrong RX repetition");
+	zassert_equal(params.dl_pathloss, 117, "Wrong download pathloss parameter");
+
+	err = parse_coneval(at_response_no_cell, &params);
+	zassert_equal(1, err, "Wrong parse_coneval return value, returns: %d", err);
+
+	err = parse_coneval(at_response_uicc_unavail, &params);
+	zassert_equal(2, err, "Wrong parse_coneval return value, returns: %d", err);
+
+	err = parse_coneval(at_response_barred_cells, &params);
+	zassert_equal(3, err, "Wrong parse_coneval return value, returns: %d", err);
+
+	err = parse_coneval(at_response_radio_busy, &params);
+	zassert_equal(4, err, "Wrong parse_coneval return value, returns: %d", err);
+
+	err = parse_coneval(at_response_higher_prio, &params);
+	zassert_equal(5, err, "Wrong parse_coneval return value, returns: %d", err);
+
+	err = parse_coneval(at_response_unregistered, &params);
+	zassert_equal(6, err, "Wrong parse_coneval return value, returns: %d", err);
+
+	err = parse_coneval(at_response_unspecified, &params);
+	zassert_equal(7, err, "Wrong parse_coneval return value, returns: %d", err);
+
+	err = parse_coneval(at_response_empty, NULL);
+	zassert_equal(-EINVAL, err, "Wrong parse_coneval return value, returns: %d", err);
+
+	err = parse_coneval(NULL, &params);
+	zassert_equal(-EINVAL, err, "Wrong parse_coneval return value, returns: %d", err);
+}
+
 static void test_parse_rrc_mode(void)
 {
 	int err;
@@ -373,7 +438,8 @@ void test_main(void)
 		ztest_unit_test(test_parse_rrc_mode),
 		ztest_unit_test(test_response_is_valid),
 		ztest_unit_test(test_parse_ncellmeas),
-		ztest_unit_test(test_neighborcell_count_get)
+		ztest_unit_test(test_neighborcell_count_get),
+		ztest_unit_test(test_parse_coneval)
 	);
 
 	ztest_run_test_suite(test_lte_lc);
