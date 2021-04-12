@@ -233,12 +233,12 @@ struct led_effect {
  * A single clock tick is a single LED blink with the defined color.
  * This macro is used by UTIL_LISTIFY macro.
  *
- * @param i		Tick number (required by UTIL_LISTIFY).
- * @param _color	Selected LED color.
+ * @param i	Tick number (required by UTIL_LISTIFY).
+ * @param ...	Selected LED color.
  */
-#define LED_CLOCK_TIK(i, _color)					\
+#define _LED_CLOCK_TIK(i, ...)						\
 		{							\
-			.color = _color,				\
+			.color = __VA_ARGS__,				\
 			.substep_count = 1,				\
 			.substep_time = LED_CLOCK_BLINK_PERIOD,		\
 		},							\
@@ -267,7 +267,7 @@ struct led_effect {
 				.substep_count = 1,				\
 				.substep_time = LED_CLOCK_SLEEP_PERIOD,		\
 			},							\
-			UTIL_LISTIFY(_ticks, LED_CLOCK_TIK, _color)		\
+			UTIL_LISTIFY(_ticks, _LED_CLOCK_TIK, _color)		\
 		}),								\
 		.step_count = (2 * _ticks + 1),					\
 		.loop_forever = true,						\
