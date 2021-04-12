@@ -22,6 +22,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_ML_RUNNER_LOG_LEVEL);
 
 #define APP_CONTROLS_ML_STATE	IS_ENABLED(CONFIG_ML_APP_ML_STATE_EVENTS)
 
+/* Make sure that event handlers will not be preempted by the EI wrapper's callback. */
+BUILD_ASSERT(CONFIG_SYSTEM_WORKQUEUE_PRIORITY < CONFIG_EI_WRAPPER_THREAD_PRIORITY);
+
 enum state {
 	STATE_DISABLED,
 	STATE_ACTIVE,
@@ -40,31 +43,21 @@ static uint8_t ml_control;
 static enum state state;
 
 
-static void result_ready_cb(int err)
-{
-	if (err) {
-		LOG_ERR("Result ready callback returned error (err: %d)", err);
-		module_set_state(MODULE_STATE_ERROR);
-		return;
-	}
-
-	struct ml_result_event *evt = new_ml_result_event();
-
-	err = ei_wrapper_get_classification_results(&evt->label, &evt->value, &evt->anomaly);
-
-	if (err) {
-		LOG_ERR("Cannot get classification results (err: %d)", err);
-		module_set_state(MODULE_STATE_ERROR);
-		k_free(evt);
-	} else {
-		EVENT_SUBMIT(evt);
-	}
-}
-
 static void report_error(void)
 {
 	state = STATE_ERROR;
 	module_set_state(MODULE_STATE_ERROR);
+}
+
+static void submit_result(void)
+{
+	struct ml_result_event *evt = new_ml_result_event();
+	int err = ei_wrapper_get_classification_results(&evt->label, &evt->value, &evt->anomaly);
+
+	__ASSERT_NO_MSG(!err);
+	ARG_UNUSED(err);
+
+	EVENT_SUBMIT(evt);
 }
 
 static int buf_cleanup(void)
@@ -131,6 +124,31 @@ static void start_prediction(void)
 	}
 }
 
+static void result_ready_cb(int err)
+{
+	k_sched_lock();
+
+	bool drop_result = (err) || (ml_control & ML_DROP_RESULT) || (state == STATE_ERROR);
+
+	if (err) {
+		LOG_ERR("Result ready callback returned error (err: %d)", err);
+		report_error();
+	} else {
+		ml_control &= ~ML_DROP_RESULT;
+		ml_control &= ~ML_RUNNING;
+
+		if (state == STATE_ACTIVE) {
+			start_prediction();
+		}
+	}
+
+	k_sched_unlock();
+
+	if (!drop_result) {
+		submit_result();
+	}
+}
+
 static int init(void)
 {
 	ml_control |= ML_FIRST_PREDICTION;
@@ -163,20 +181,6 @@ static bool handle_sensor_event(const struct sensor_event *event)
 	return false;
 }
 
-static bool handle_ml_result_event(const struct ml_result_event *event)
-{
-	bool consume = ((ml_control & ML_DROP_RESULT) || (state == STATE_ERROR));
-
-	ml_control &= ~ML_DROP_RESULT;
-	ml_control &= ~ML_RUNNING;
-
-	if (state == STATE_ACTIVE) {
-		start_prediction();
-	}
-
-	return consume;
-}
-
 static bool handle_ml_state_event(const struct ml_state_event *event)
 {
 	if ((event->state == ML_STATE_MODEL_RUNNING) && (state == STATE_SUSPENDED)) {
@@ -187,7 +191,6 @@ static bool handle_ml_state_event(const struct ml_state_event *event)
 
 		if (!err || (err == -EBUSY)) {
 			state = STATE_SUSPENDED;
-
 		}
 	}
 
@@ -205,8 +208,6 @@ static bool handle_module_state_event(const struct module_state_event *event)
 		} else {
 			report_error();
 		}
-	} else if (check_state(event, MODULE_ID(MODULE), MODULE_STATE_ERROR)) {
-		state = STATE_ERROR;
 	}
 
 	return false;
@@ -216,10 +217,6 @@ static bool event_handler(const struct event_header *eh)
 {
 	if (is_sensor_event(eh)) {
 		return handle_sensor_event(cast_sensor_event(eh));
-	}
-
-	if (is_ml_result_event(eh)) {
-		return handle_ml_result_event(cast_ml_result_event(eh));
 	}
 
 	if (APP_CONTROLS_ML_STATE &&
@@ -240,7 +237,6 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, sensor_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, ml_result_event);
 #if APP_CONTROLS_ML_STATE
 EVENT_SUBSCRIBE(MODULE, ml_state_event);
 #endif /* APP_CONTROLS_ML_STATE */
