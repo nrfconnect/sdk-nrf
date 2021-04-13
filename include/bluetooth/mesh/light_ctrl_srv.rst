@@ -34,7 +34,9 @@ Composition data structure
 ==========================
 
 As both the Light LC Server and the Light Lightness Server extend the Generic OnOff model, the two models cannot be instantiated on the same element.
-Conventionally, the Light LC Server is instantiated on the next element after the Light Lightness Server it is controlling:
+
+.. note::
+    Due to implementation limitations, the Light LC Server is instantiated on the next element after the Light Lightness Server it is controlling.
 
 .. figure:: /images/bt_mesh_light_ctrl_composition.svg
    :alt: Light Lightness Control Server composition data structure
