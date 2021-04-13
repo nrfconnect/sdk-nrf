@@ -111,7 +111,7 @@
 .. _`known issues for nRF Connect SDK v1.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-0
 
 .. _`Stack commissioning start sequence`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss_api_doc/using_zigbee__z_c_l.html#stack_start_initiation
-.. _`NCP Host for Zigbee`: https://developer.nordicsemi.com/Zigbee/ncp_sdk_for_host/ncp_sdk_v0.9.3.zip
+.. _`ZBOSS NCP Host`: https://developer.nordicsemi.com/Zigbee/ncp_sdk_for_host/ncp_host_v0.9.4.zip
 .. _`process the frame`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.3.0.6/using_zigbee__z_c_l.html#process_zcl_cmd
 
 .. ### Source: www.nordicsemi.com
