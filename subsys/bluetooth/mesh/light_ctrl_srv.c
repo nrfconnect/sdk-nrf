@@ -1462,6 +1462,12 @@ static int light_ctrl_srv_init(struct bt_mesh_model *model)
 
 	srv->model = model;
 
+	if (srv->lightness->lightness_model == NULL ||
+	    srv->lightness->lightness_model->elem_idx >= model->elem_idx) {
+		BT_ERR("Lightness: Invalid element index");
+		return -EINVAL;
+	}
+
 	if (IS_ENABLED(CONFIG_BT_MESH_LIGHT_CTRL_SRV_OCCUPANCY_MODE)) {
 		atomic_set_bit(&srv->flags, FLAG_OCC_MODE);
 	}
@@ -1493,6 +1499,7 @@ static int light_ctrl_srv_init(struct bt_mesh_model *model)
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
 		bt_mesh_model_extend(model, srv->onoff.model);
+		bt_mesh_model_extend(srv->model, srv->lightness->lightness_model);
 	}
 
 	atomic_set_bit(&srv->onoff.flags, GEN_ONOFF_SRV_NO_DTT);
@@ -1545,20 +1552,6 @@ static int light_ctrl_srv_start(struct bt_mesh_model *model)
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 
 	atomic_set_bit(&srv->flags, FLAG_STARTED);
-
-	if (srv->lightness->lightness_model->elem_idx == model->elem_idx) {
-		BT_ERR("Lightness: Invalid element index");
-		return -EINVAL;
-	}
-
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
-		/* Breaking the pattern of extending models in the init
-		 * function, as the lightness model's position in the
-		 * composition data isn't necessarily known at that point.
-		 */
-		bt_mesh_model_extend(srv->model,
-				     srv->lightness->lightness_model);
-	}
 
 	switch (srv->lightness->ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:
