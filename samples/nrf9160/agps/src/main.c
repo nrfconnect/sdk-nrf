@@ -134,6 +134,8 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_DATA_RECEIVED:
 		LOG_INF("CLOUD_EVT_DATA_RECEIVED");
 
+		LOG_HEXDUMP_DBG(evt->data.msg.buf, evt->data.msg.len, "data");
+
 		/* Convenience functionality for remote testing.
 		 * The device is reset if it receives "{"reboot":true}"
 		 * from the cloud. The command can be sent using the terminal
@@ -146,8 +148,8 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 
 			if (ret == 0) {
 				k_delayed_work_submit(&reboot_work, K_NO_WAIT);
+				break;
 			}
-			break;
 		}
 
 		int err = gps_process_agps_data(evt->data.msg.buf,
@@ -155,6 +157,20 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 		if (err) {
 			LOG_INF("Unable to process agps data, error: %d", err);
 		}
+#if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
+		{
+			double lat, lon;
+
+			err = gps_get_last_cell_location(&lat, &lon);
+			if (err) {
+				LOG_ERR("Failed to get GPS data, error: %d", err);
+				break;
+			}
+
+			LOG_INF("\nLongitude:  %f\nLatitude:   %f\n", lat, lon);
+			gps_stop(gps_dev);
+		}
+#endif
 		break;
 	case CLOUD_EVT_PAIR_REQUEST:
 		LOG_INF("CLOUD_EVT_PAIR_REQUEST");
