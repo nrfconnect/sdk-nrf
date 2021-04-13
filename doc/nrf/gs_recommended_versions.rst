@@ -198,8 +198,8 @@ Building documentation
      - |breathe_ver|
    * - sphinx
      - |sphinx_ver|
-   * - sphinx_rtd_theme
-     - |sphinx_rtd_theme_ver|
+   * - sphinx-ncs-theme
+     - |sphinx-ncs-theme_ver|
    * - sphinx-tabs
      - |sphinx-tabs_ver|
    * - sphinxcontrib-svg2pdfconverter
