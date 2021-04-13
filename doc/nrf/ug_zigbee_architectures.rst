@@ -98,7 +98,7 @@ The host processor communicates with the NCP through a serial interface (USB or 
 
    Split Zigbee architecture
 
-The |NCS|'s :ref:`ug_zigbee_tools` include the `NCP Host for Zigbee`_ based on ZBOSS and available for download as a standalone :file:`zip` package.
+The |NCS|'s :ref:`ug_zigbee_tools` include the `ZBOSS NCP Host`_ and available for download as a standalone :file:`zip` package.
 |zigbee_ncp_package|
 
 The NCP design has the following advantages:
@@ -112,4 +112,4 @@ The NCP design has the following advantages:
 It also has the following disadvantages:
 
 * The host part of the stack must be built and run for every individual host processor in use.
-  However, Nordic Semiconductor provides reference implementation for Linux-based platforms in the NCP Host for Zigbee package.
+  However, Nordic Semiconductor provides reference implementation for Linux-based platforms in the ZBOSS NCP Host package.
