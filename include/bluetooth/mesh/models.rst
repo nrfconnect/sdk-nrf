@@ -3,7 +3,7 @@
 Bluetooth mesh models
 #####################
 
-Nordic Semiconductor provides a variety of model implementations from the `Bluetooth mesh model specification`_, including API documentation.
+Nordic Semiconductor provides a variety of model implementations from the `Bluetooth mesh model specification`_ and their API documentation, as well as vendor-specific models.
 
 For more information about these and other models, see also `Bluetooth mesh model overview`_.
 
@@ -29,3 +29,4 @@ For more information about these and other models, see also `Bluetooth mesh mode
    ../../../include/bluetooth/mesh/time.rst
    ../../../include/bluetooth/mesh/scene.rst
    ../../../include/bluetooth/mesh/scheduler.rst
+   ../../../include/bluetooth/mesh/vnd/silvair_enocean_srv.rst
