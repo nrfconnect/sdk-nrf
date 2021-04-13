@@ -196,8 +196,6 @@ Building documentation
      - |sphinxcontrib-mscgen_ver|
    * - breathe
      - |breathe_ver|
-   * - docutils
-     - |docutils_ver|
    * - sphinx
      - |sphinx_ver|
    * - sphinx_rtd_theme

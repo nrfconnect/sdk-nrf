@@ -68,7 +68,6 @@
 .. |windows-curses_ver| replace:: @WINDOWS-CURSES_VERSION@
 
 .. |breathe_ver| replace:: @BREATHE_VERSION@
-.. |docutils_ver| replace:: @DOCUTILS_VERSION@
 .. |recommonmark_ver| replace:: @RECOMMONMARK_VERSION@
 .. |sphinx_ver| replace:: @SPHINX_VERSION@
 .. |sphinx-tabs_ver| replace:: @SPHINX-TABS_VERSION@
