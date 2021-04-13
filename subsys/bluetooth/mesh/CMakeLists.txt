@@ -71,4 +71,6 @@ zephyr_library_sources_ifdef(CONFIG_BT_MESH_LIGHT_XYL_SRV light_xyl_srv.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_SCHEDULER_CLI scheduler_cli.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_SCHEDULER_SRV scheduler_srv.c)
 
+add_subdirectory_ifdef(CONFIG_BT_MESH_VENDOR_MODELS vnd)
+
 zephyr_linker_sources(SECTIONS sensor_types.ld)

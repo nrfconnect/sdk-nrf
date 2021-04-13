@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Vendor models"
+
+config BT_MESH_VENDOR_MODELS
+	bool
+	select BT_MESH_NRF_MODELS
+	help
+	  Vendor model modules, required by all Nordic-provided vendor models
+
+menuconfig BT_MESH_SILVAIR_ENOCEAN_SRV
+	bool "Silvair EnOcean Proxy Server"
+	select BT_MESH_VENDOR_MODELS
+	select BT_MESH_ONOFF_CLI
+	select BT_MESH_LVL_CLI
+	select BT_ENOCEAN
+	help
+	  Enable Mesh Silvair EnOcean Proxy Server model.
+
+if BT_MESH_SILVAIR_ENOCEAN_SRV
+
+config BT_MESH_SILVAIR_ENOCEAN_AUTO_COMMISSION
+	bool "Automatically commission"
+	help
+	  Automatically commission EnOcean switches.
+
+config BT_MESH_SILVAIR_ENOCEAN_TICK_TIME
+	int "Tick time"
+	default 100
+	help
+	  Interval between sending of successive delta increments/decrements
+	  as long as a button is pressed, in milliseconds.
+
+config BT_MESH_SILVAIR_ENOCEAN_DELTA
+	int "Delta increment/decrement size"
+	default 1000
+	help
+	  Delta value increment/decrement size used when sending delta_set
+	  messages while a button is held down.
+
+config BT_MESH_SILVAIR_ENOCEAN_WAIT_TIME
+	int "Wait time"
+	default 250
+	help
+	  Time for which button must be held to start sending delta_set messages,
+	  in milliseconds.
+
+config BT_MESH_SILVAIR_ENOCEAN_DELTA_TIMEOUT
+	int "Delta timeout"
+	default 7000
+	help
+	  Maximum amount of time, in milliseconds, for which delta_set messages
+	  are sent while a button is held down.
+
+endif
+
+endmenu

@@ -43,6 +43,8 @@ config BT_MESH_MODEL_SRV_STORE_TIMEOUT
 
 endif
 
+rsource "vnd/Kconfig"
+
 config BT_MESH_ONOFF_SRV
 	bool "Generic OnOff Server"
 	select BT_MESH_NRF_MODELS
