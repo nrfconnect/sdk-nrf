@@ -9,7 +9,7 @@ Zigbee: NCP
 
 The :ref:`Zigbee <ug_zigbee>` NCP sample demonstrates the usage of Zigbee's :ref:`ug_zigbee_platform_design_ncp_details` architecture.
 
-Together with the source code from `NCP Host for Zigbee`_, you can use this sample to create a complete and functional Zigbee device.
+Together with the source code from `ZBOSS NCP Host`_, you can use this sample to create a complete and functional Zigbee device.
 For example, as shown in the `Testing`_ scenario, you can program a development kit with the NCP sample and bundle it with the light control application on the NCP host processor.
 
 You can then use this sample together with the :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` and the :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` to set up a basic Zigbee network.
@@ -30,10 +30,10 @@ You can use any of the development kits listed above.
 
 For this sample to work, you also need the following:
 
-* `NCP Host for Zigbee`_ tool, which is based on the ZBOSS stack and available for download as a standalone :file:`zip` package as one of :ref:`ug_zigbee_tools`.
+* `ZBOSS NCP Host`_ tool, which is based on the ZBOSS stack and available for download as a standalone :file:`zip` package as one of :ref:`ug_zigbee_tools`.
   It contains the source code for all parts of the ZBOSS library for the NCP host.
   This allows you to recompile the library for the designated hardware platform.
-  Running the NCP Host for Zigbee requires a PC with an operating system compatible with the 64-bit Ubuntu 18.04 Linux.
+  Running the ZBOSS NCP Host requires a PC with an operating system compatible with the 64-bit Ubuntu 18.04 Linux.
 * The :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` sample programmed on one separate device.
 * The :ref:`zigbee_light_bulb_sample` sample programmed on one separate device.
 
@@ -174,10 +174,10 @@ Testing
 
 After building the sample and programming it to your development kit, test it by performing the following steps:
 
-1. Download and extract the `NCP Host for Zigbee`_ package.
+1. Download and extract the `ZBOSS NCP Host`_ package.
 
    .. note::
-      If you are using an Linux distribution different than the 64-bit Ubuntu 18.04, make sure to rebuild the package libraries and applications by following the instructions described in the :file:`README.rst`  file in the NCP Host for Zigbee package.
+      If you are using an Linux distribution different than the 64-bit Ubuntu 18.04, make sure to rebuild the package libraries and applications by following the instructions described in the :file:`README.rst`  file in the ZBOSS NCP Host package.
 
 #. If you are using `Communication through USB`_, connect the nRF USB port of the NCP sample's development kit to the PC USB port with an USB cable.
 #. Get the kit’s serial port name (for example, /dev/ttyACM0).
