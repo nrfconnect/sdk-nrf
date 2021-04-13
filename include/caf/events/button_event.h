@@ -8,8 +8,8 @@
 #define _BUTTON_EVENT_H_
 
 /**
- * @brief Button Event
- * @defgroup button_event Button Event
+ * @brief CAF Button Event
+ * @defgroup caf_button_event CAF Button Event
  * @{
  */
 
@@ -26,8 +26,6 @@ struct button_event {
 	bool pressed;
 };
 
-EVENT_TYPE_DECLARE(button_event);
-
 #ifdef __cplusplus
 }
 #endif
@@ -35,5 +33,15 @@ EVENT_TYPE_DECLARE(button_event);
 /**
  * @}
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+EVENT_TYPE_DECLARE(button_event);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _BUTTON_EVENT_H_ */

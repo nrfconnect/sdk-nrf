@@ -8,8 +8,8 @@
 #define _SENSOR_EVENT_H_
 
 /**
- * @brief Sensor Event
- * @defgroup sensor_event Sensor Event
+ * @brief CAF Sensor Event
+ * @defgroup caf_sensor_event CAF Sensor Event
  * @{
  */
 
@@ -54,8 +54,6 @@ struct sensor_event {
 	struct event_dyndata dyndata; /**< Sensor data. Provided as floating-point values. */
 };
 
-EVENT_TYPE_DYNDATA_DECLARE(sensor_event);
-
 /** @brief Get size of sensor data.
  *
  * @param[in] event       Pointer to the sensor_event.
@@ -87,5 +85,15 @@ static inline float *sensor_event_get_data_ptr(const struct sensor_event *event)
 /**
  * @}
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+EVENT_TYPE_DYNDATA_DECLARE(sensor_event);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _SENSOR_EVENT_H_ */
