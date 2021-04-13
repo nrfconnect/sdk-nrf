@@ -16,8 +16,8 @@ target_compile_definitions(app PRIVATE
 
 target_include_directories(app PRIVATE
   ${NRF_DIR}/subsys/zigbee/osif
-  ${NRFXLIB_DIR}/zboss/include
-  ${NRFXLIB_DIR}/zboss/include/osif
+  ${NRFXLIB_DIR}/zboss/production/include
+  ${NRFXLIB_DIR}/zboss/production/include/osif
 )
 
 project(osif_crypto)
