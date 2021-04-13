@@ -1,0 +1,8 @@
+sample:
+  name: sms Sample
+tests:
+  samples.nrf9160.sms:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf9160dk_nrf9160ns
+    tags: ci_build

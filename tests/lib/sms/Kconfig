@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config AT_NOTIF
+	bool "Internal"
+	default y
+	help
+	  Used in tests to enable mocking of AT Command library, i.e., remove
+	  dependency from AT Command Notifications library to AT command library
+
+config SMS_AT_CMD
+	bool
+	default n
+	help
+	  Used in tests to enable mocking of AT Command library
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
