@@ -8,10 +8,12 @@
 
 #include <caf/events/click_event.h>
 
+
 static const char * const click_name[] = {
-#define X(name) STRINGIFY(name),
-	CLICK_LIST
-#undef X
+	[CLICK_NONE] = "NONE",
+	[CLICK_SHORT] = "SHORT",
+	[CLICK_LONG] = "LONG",
+	[CLICK_DOUBLE] = "DOUBLE",
 };
 
 static int log_click_event(const struct event_header *eh, char *buf,
@@ -20,6 +22,7 @@ static int log_click_event(const struct event_header *eh, char *buf,
 	const struct click_event *event = cast_click_event(eh);
 
 	__ASSERT_NO_MSG(event->click < CLICK_COUNT);
+	__ASSERT_NO_MSG(click_name[event->click]);
 	return snprintf(buf, buf_len, "key_id: %" PRIu16 " click: %s",
 			event->key_id,
 			click_name[event->click]);

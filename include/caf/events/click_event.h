@@ -8,8 +8,8 @@
 #define _CLICK_EVENT_H_
 
 /**
- * @brief Click Event
- * @defgroup click_event Click Event
+ * @brief CAF Click Event
+ * @defgroup caf_click_event CAF Click Event
  * @{
  */
 
@@ -19,18 +19,13 @@
 extern "C" {
 #endif
 
-/** @brief Click types list. */
-#define CLICK_LIST		\
-	X(NONE)			\
-	X(SHORT)		\
-	X(LONG)			\
-	X(DOUBLE)		\
-
 /** @brief Click types. */
 enum click {
-#define X(name) _CONCAT(CLICK_, name),
-	CLICK_LIST
-#undef X
+	CLICK_NONE,
+	CLICK_SHORT,
+	CLICK_LONG,
+	CLICK_DOUBLE,
+
 	CLICK_COUNT
 };
 
@@ -41,8 +36,6 @@ struct click_event {
 	enum click click;
 };
 
-EVENT_TYPE_DECLARE(click_event);
-
 #ifdef __cplusplus
 }
 #endif
@@ -50,5 +43,15 @@ EVENT_TYPE_DECLARE(click_event);
 /**
  * @}
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+EVENT_TYPE_DECLARE(click_event);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CLICK_EVENT_H_ */

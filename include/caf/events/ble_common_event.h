@@ -8,8 +8,8 @@
 #define _BLE_COMMON_EVENT_H_
 
 /**
- * @brief BLE Common Event
- * @defgroup ble_common_event BLE Common Event
+ * @brief CAF BLE Common Event
+ * @defgroup caf_ble_common_event CAF BLE Common Event
  * @{
  */
 
@@ -54,7 +54,6 @@ struct ble_peer_event {
 	enum peer_state state;
 	void *id;
 };
-EVENT_TYPE_DECLARE(ble_peer_event);
 
 /** @brief BLE peer operation event. */
 struct ble_peer_operation_event {
@@ -64,7 +63,6 @@ struct ble_peer_operation_event {
 	uint8_t bt_app_id;
 	uint8_t bt_stack_id;
 };
-EVENT_TYPE_DECLARE(ble_peer_operation_event);
 
 /** @brief BLE connection parameters event. */
 struct ble_peer_conn_params_event {
@@ -77,7 +75,6 @@ struct ble_peer_conn_params_event {
 	uint16_t timeout;
 	bool updated;
 };
-EVENT_TYPE_DECLARE(ble_peer_conn_params_event);
 
 /** @brief BLE peer search event. */
 struct ble_peer_search_event {
@@ -85,8 +82,6 @@ struct ble_peer_search_event {
 
 	bool active;
 };
-EVENT_TYPE_DECLARE(ble_peer_search_event);
-
 
 #ifdef __cplusplus
 }
@@ -95,5 +90,18 @@ EVENT_TYPE_DECLARE(ble_peer_search_event);
 /**
  * @}
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+EVENT_TYPE_DECLARE(ble_peer_event);
+EVENT_TYPE_DECLARE(ble_peer_operation_event);
+EVENT_TYPE_DECLARE(ble_peer_conn_params_event);
+EVENT_TYPE_DECLARE(ble_peer_search_event);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _BLE_COMMON_EVENT_H_ */

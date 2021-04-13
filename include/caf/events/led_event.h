@@ -8,8 +8,8 @@
 #define _LED_EVENT_H_
 
 /**
- * @brief LED Event
- * @defgroup led_event LED Event
+ * @brief CAF LED Event
+ * @defgroup caf_led_event CAF LED Event
  * @{
  */
 
@@ -28,7 +28,6 @@ struct led_event {
 	const struct led_effect *led_effect;
 };
 
-EVENT_TYPE_DECLARE(led_event);
 
 /** @brief LED ready event used to notify that leds are ready for next
  * LED stream effect.
@@ -40,8 +39,6 @@ struct led_ready_event {
 	const struct led_effect *led_effect;
 };
 
-EVENT_TYPE_DECLARE(led_ready_event);
-
 #ifdef __cplusplus
 }
 #endif
@@ -49,5 +46,16 @@ EVENT_TYPE_DECLARE(led_ready_event);
 /**
  * @}
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+EVENT_TYPE_DECLARE(led_event);
+EVENT_TYPE_DECLARE(led_ready_event);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LED_EVENT_H_ */
