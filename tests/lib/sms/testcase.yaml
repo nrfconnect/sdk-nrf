@@ -1,0 +1,3 @@
+tests:
+  unity.sms_test:
+    tags: sms

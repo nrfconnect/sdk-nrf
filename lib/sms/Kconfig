@@ -6,7 +6,6 @@
 
 menuconfig SMS
 	bool "SMS subscriber"
-	select AT_CMD
 	select AT_CMD_PARSER
 	select AT_NOTIF
 	help
@@ -14,9 +13,20 @@ menuconfig SMS
 
 if SMS
 
-config SMS_MAX_SUBSCRIBERS_CNT
+config SMS_AT_CMD
+	bool
+	default y
+	select AT_CMD
+	help
+	  Use the AT Command library with SMS subscriber library. This is
+	  separated here from other dependencies to allow disabling of
+	  AT Command library in tests for mocking purposes.
+
+config SMS_SUBSCRIBERS_MAX_CNT
 	int "Maximum number of subscribers"
 	default 2
+	help
+	  Maximum number of subscribers that can register to SMS library.
 
 module=SMS
 module-dep=LOG

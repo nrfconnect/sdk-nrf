@@ -75,7 +75,7 @@ Kconfig*                                  @tejlmand
 /lib/pelion/                              @pdunaj
 /lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
 /lib/fatal_error/                         @ioannisg
-/lib/sms/                                 @metc
+/lib/sms/                                 @trantanen
 /lib/st25r3911b/                          @grochu
 /lib/supl/                                @rlubos @evenl
 /lib/date_time/                           @simensrostad
