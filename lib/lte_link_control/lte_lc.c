@@ -41,6 +41,7 @@ enum lte_lc_notif_type {
 	LTE_LC_NOTIF_CEREG,
 	LTE_LC_NOTIF_CSCON,
 	LTE_LC_NOTIF_CEDRXP,
+	LTE_LC_NOTIF_XT3412,
 
 	LTE_LC_NOTIF_COUNT,
 };
@@ -170,9 +171,10 @@ static const char legacy_pco[] = "AT%XEPCO=0";
 #endif
 
 static const char *const at_notifs[] = {
-	[LTE_LC_NOTIF_CEREG] = "+CEREG",
-	[LTE_LC_NOTIF_CSCON] = "+CSCON",
-	[LTE_LC_NOTIF_CEDRXP] = "+CEDRXP",
+	[LTE_LC_NOTIF_CEREG]	= "+CEREG",
+	[LTE_LC_NOTIF_CSCON]	= "+CSCON",
+	[LTE_LC_NOTIF_CEDRXP]	= "+CEDRXP",
+	[LTE_LC_NOTIF_XT3412]	= "%XT3412",
 };
 
 BUILD_ASSERT(ARRAY_SIZE(at_notifs) == LTE_LC_NOTIF_COUNT);
@@ -314,6 +316,26 @@ static void at_handler(void *context, const char *response)
 		notify = true;
 
 		break;
+	case LTE_LC_NOTIF_XT3412:
+		LOG_DBG("%%XT3412 notification");
+
+		err = parse_xt3412(response, &evt.time);
+		if (err) {
+			LOG_ERR("Can't parse TAU pre-warning notification, error: %d", err);
+			return;
+		}
+
+		if (evt.time != CONFIG_LTE_LC_TAU_PRE_WARNING_TIME_MS) {
+			/* Only propagate TAU pre-warning notifications when the received <time>
+			 * parameter is the duration of the set pre-warning time.
+			 */
+			return;
+		}
+
+		evt.type = LTE_LC_EVT_TAU_PRE_WARNING;
+		notify = true;
+
+		break;
 	default:
 		LOG_ERR("Unrecognized notification type: %d", notif_type);
 		break;
@@ -327,12 +349,28 @@ static void at_handler(void *context, const char *response)
 static int enable_notifications(void)
 {
 	int err;
+	char xt3412_sub[35];
 
 	/* +CEREG notifications, level 5 */
 	err = at_cmd_write(cereg_5_subscribe, NULL, 0, NULL);
 	if (err) {
 		LOG_ERR("Failed to subscribe to CEREG notifications");
 		return err;
+	}
+
+	if (IS_ENABLED(CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS)) {
+		snprintk(xt3412_sub,
+			 sizeof(xt3412_sub),
+			 AT_XT3412_SUB,
+			 CONFIG_LTE_LC_TAU_PRE_WARNING_TIME_MS,
+			 CONFIG_LTE_LC_TAU_PRE_WARNING_THRESHOLD_MS);
+
+		/* %XT3412 notifications subscribe */
+		err = at_cmd_write(xt3412_sub, NULL, 0, NULL);
+		if (err) {
+			LOG_ERR("Failed to subscribe to XT3412 notifications");
+			return err;
+		}
 	}
 
 	/* +CSCON notifications */
