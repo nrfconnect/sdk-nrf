@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2021 Nordic Semiconductor
 #
-# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 target_sources_ifdef(CONFIG_ML_APP_ML_RESULT_EVENTS app PRIVATE
