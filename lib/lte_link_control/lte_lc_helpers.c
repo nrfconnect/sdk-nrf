@@ -528,3 +528,42 @@ clean_exit:
 
 	return err;
 }
+
+int parse_xt3412(const char *at_response, uint64_t *time)
+{
+	int err;
+	struct at_param_list resp_list = {0};
+
+	if (time == NULL || at_response == NULL) {
+		return -EINVAL;
+	}
+
+	err = at_params_list_init(&resp_list, AT_XT3412_PARAMS_COUNT_MAX);
+	if (err) {
+		LOG_ERR("Could not init AT params list, error: %d", err);
+		return err;
+	}
+
+	/* Parse XT3412 response and populate AT parameter list */
+	err = at_parser_params_from_str(at_response, NULL, &resp_list);
+	if (err) {
+		LOG_ERR("Could not parse %%XT3412 response, error: %d", err);
+		goto clean_exit;
+	}
+
+	/* Get the remaining time of T3412 from the response */
+	err = at_params_int64_get(&resp_list, AT_XT3412_TIME_INDEX, time);
+	if (err) {
+		LOG_ERR("Could not get time until next TAU, error: %d", err);
+		goto clean_exit;
+	}
+
+	if ((*time > T3412_MAX) || *time < 0) {
+		LOG_WRN("Parsed time parameter not within valid range");
+		err = -EINVAL;
+	}
+
+clean_exit:
+	at_params_list_free(&resp_list);
+	return err;
+}

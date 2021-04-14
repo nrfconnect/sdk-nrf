@@ -72,6 +72,10 @@ nRF9160
 
     * Added function :c:func:`at_params_int64_get` that allows for getting of AT param list entries containing signed 64 bit integers.
 
+  * :ref:`lte_lc_readme` library:
+
+    * Add support for %XT3412 AT command notifications which allows the application to get pre-warnings prior to Tracking Area Updates.
+
   * :ref:`serial_lte_modem` application:
 
     * Fixed TCP/UDP port range issue (0~65535).

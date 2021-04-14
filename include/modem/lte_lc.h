@@ -156,6 +156,13 @@ enum lte_lc_evt_type {
 	 *  LTE mode is currently used by the modem.
 	 */
 	LTE_LC_EVT_LTE_MODE_UPDATE,
+
+	/** Tracking Area Update pre-warning.
+	 *  This event will be received a configurable amount of time before TAU is scheduled to
+	 *  occur. This gives the application the opportunity to send data over the network before
+	 *  the TAU happens, thus saving power by avoiding sending data and the TAU separately.
+	 */
+	LTE_LC_EVT_TAU_PRE_WARNING,
 };
 
 enum lte_lc_rrc_mode {
@@ -191,6 +198,9 @@ struct lte_lc_evt {
 		struct lte_lc_edrx_cfg edrx_cfg;
 		struct lte_lc_cell cell;
 		enum lte_lc_lte_mode lte_mode;
+
+		/* Time until next Tracking Area Update in milliseconds. */
+		uint64_t time;
 	};
 };
 

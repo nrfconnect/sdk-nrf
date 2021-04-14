@@ -70,6 +70,12 @@
 #define AT_CSCON_RRC_MODE_INDEX			1
 #define AT_CSCON_READ_RRC_MODE_INDEX		2
 
+/* XT3412 command parameters */
+#define AT_XT3412_SUB				"AT%%XT3412=1,%d,%d"
+#define AT_XT3412_PARAMS_COUNT_MAX		4
+#define AT_XT3412_TIME_INDEX			2
+#define T3412_MAX				35712000000
+
 /* @brief Helper function to check if a response is what was expected.
  *
  * @param response Pointer to response prefix
@@ -138,3 +144,12 @@ int parse_cereg(const char *at_response,
 		struct lte_lc_cell *cell,
 		enum lte_lc_lte_mode *lte_mode,
 		struct lte_lc_psm_cfg *psm_cfg);
+
+/* @brief Parses an XT3412 response and extracts the time until next TAU.
+ *
+ * @param at_response Pointer to buffer with AT response.
+ * @param time Pointer to integer that the time until next TAU will be written to.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int parse_xt3412(const char *at_response, uint64_t *time);

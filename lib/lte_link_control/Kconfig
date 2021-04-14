@@ -286,6 +286,27 @@ config LTE_NETWORK_TIMEOUT
 		out. If fallback mode is enabled, the fallback mode will also be
 		tried for the same period.
 
+config LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS
+	bool "Get notifications prior to Tracking Area Updates"
+	help
+		TAU pre-warning notifications can be used to determine when it is optimal for the
+		application to send user data. If user data is sent prior to the schedueled TAU, the
+		TAU will be sent togheter with the user data, thus saving power and data transfer.
+
+config LTE_LC_TAU_PRE_WARNING_TIME_MS
+	int "TAU pre-warning time"
+	range 500 3600000
+	default 5000
+	help
+		Time before a TAU that a pre-warning is to be received.
+
+config LTE_LC_TAU_PRE_WARNING_THRESHOLD_MS
+	int "TAU pre-warning threshold"
+	range 10240 3456000000
+	default 1200000
+	help
+		Minimum value of the given T3412 timer that will trigger TAU pre-warnings.
+
 module = LTE_LINK_CONTROL
 module-dep = LOG
 module-str = LTE link control library
