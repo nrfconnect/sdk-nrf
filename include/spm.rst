@@ -42,24 +42,50 @@ SRAM (256 kB)
    * Upper 192 kB: Non-Secure
 
 Peripherals configured as Non-Secure
-   * CLOCK
-   * DPPI
-   * EGU1, EGU2
-   * FPU
-   * GPIO (and GPIO pins)
-   * GPIOTE1
-   * IPC
-   * NFCT
-   * NVMC, VMC
-   * PWM0-3
-   * REGULATORS
-   * RTC0, RTC1
-   * SAADC
-   * SPIM3
-   * TIMER0-2
-   * TWIM2
-   * UARTE0, UARTE1
-   * WDT
+   * Common
+
+      * CLOCK
+      * DPPI
+      * EGU1, EGU2
+      * FPU
+      * GPIO (and GPIO pins)
+      * GPIOTE1
+      * IPC
+      * NFCT
+      * NVMC, VMC
+      * PWM0-3
+      * REGULATORS
+      * RTC0, RTC1
+      * SAADC
+      * SPIM3
+      * TIMER0-2
+      * TWIM2
+      * UARTE0, UARTE1
+      * P0
+
+   * nRF9160 Specific
+
+      * WDT
+      * PDM
+      * I2S
+
+   * nRF5340 Specific
+
+      * Oscillators
+      * Reset
+      * SPIM4
+      * WDT0-1
+      * COMP
+      * LPCOMP
+      * PDM0
+      * I2S0
+      * QSPI
+      * NFCT
+      * MUTEX
+      * QDEC0-1
+      * USBD
+      * USB Regulator
+      * P1
 
 .. _lib_spm_secure_services:
 

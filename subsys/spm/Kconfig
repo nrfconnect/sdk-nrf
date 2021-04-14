@@ -272,15 +272,23 @@ config SPM_NRF_REGULATORS_NS
 	bool "Regulators is Non-Secure"
 	default y
 
+config SPM_NRF_DPPIC_NS
+	bool "DPPIC is Non-Secure"
+	default y
+
 if SOC_NRF9160
 config SPM_NRF_WDT_NS
 	bool "WDT is Non-Secure"
 	default y
-endif #SOC_NRF9160
 
-config SPM_NRF_DPPIC_NS
-	bool "DPPIC is Non-Secure"
+config SPM_NRF_PDM_NS
+	bool "PDM is Non-Secure"
 	default y
+
+config SPM_NRF_I2S_NS
+	bool "I2S is Non-Secure"
+	default y
+endif #SOC_NRF9160
 
 if SOC_NRF5340_CPUAPP
 config SPM_NRF_DCNF_NS
