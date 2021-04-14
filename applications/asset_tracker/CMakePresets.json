@@ -11,7 +11,13 @@
       "displayName": "Asset Tracker build (prj.conf)",
       "description": "Asset Tracker build",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build"
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "NCS_TOOLCHAIN_VERSION": {
+          "type": "STRING",
+          "value": "1.5.0"
+        }
+      }
     },
     {
       "name": "test",
