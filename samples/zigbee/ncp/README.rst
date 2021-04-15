@@ -49,7 +49,7 @@ Overview
 
 The sample demonstrates using a Nordic Semiconductor's Development Kit as Zigbee Network Co-Processor.
 
-The sample uses the :option:`CONFIG_ZIGBEE_LIBRARY_NCP_DEV` Kconfig option, which is available in the :ref:`development version of the ZBOSS stack libraries <nrfxlib:zboss_configuration>` (managed by the :option:`CONFIG_ZIGBEE_LIBRARY_DEVELOPMENT` Kconfig option, also enabled by default).
+The sample uses the :option:`CONFIG_ZIGBEE_LIBRARY_NCP_DEV` Kconfig option, which is available in the :ref:`ZBOSS stack libraries <nrfxlib:zboss_configuration>`.
 The NCP Kconfig option extends the compilation process with an implementation of the ZBOSS API serialization through NCP commands.
 It also implements the ZBOSS default signal handler function, which controls the ZBOSS and commissioning logic.
 
