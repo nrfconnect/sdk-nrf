@@ -169,8 +169,12 @@ struct lte_lc_psm_cfg {
 };
 
 struct lte_lc_edrx_cfg {
-	float edrx;	/* eDRX interval value [s] */
-	float ptw;	/* Paging time window [s] */
+	/* LTE mode for which the configuration is valid. */
+	enum lte_lc_lte_mode mode;
+	/* eDRX interval value [s] */
+	float edrx;
+	/* Paging time window [s] */
+	float ptw;
 };
 
 struct lte_lc_cell {
