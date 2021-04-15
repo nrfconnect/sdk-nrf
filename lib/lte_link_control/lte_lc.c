@@ -853,7 +853,7 @@ int lte_lc_edrx_req(bool enable)
 
 		/* PTW must be requested after eDRX is enabled */
 		if (strlen(ptw_param) != 4) {
-			return 0;
+			continue;
 		}
 
 		snprintk(req, sizeof(req), "AT%%XPTW=%d,\"%s\"", actt[i], ptw_param);
