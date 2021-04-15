@@ -445,9 +445,10 @@ int parse_cereg(const char *at_response,
 
 	if (reg_status) {
 		*reg_status = status;
+
+		LOG_DBG("Network registration status: %d", *reg_status);
 	}
 
-	LOG_DBG("Network registration status: %d", *reg_status);
 
 	if (cell && (status != LTE_LC_NW_REG_UICC_FAIL) &&
 	    (at_params_valid_count_get(&resp_list) > AT_CEREG_CELL_ID_INDEX)) {
