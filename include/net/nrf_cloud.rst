@@ -44,14 +44,19 @@ First, the library tries to establish the transport for communicating with the c
 This procedure involves a TLS handshake that might take up to three seconds.
 The API blocks for the duration of the handshake.
 
-Next, the API subscribes to an MQTT topic to start receiving user association requests from the cloud.
 The cloud uses the certificates of the device for authentication.
 See `Updating the nRF Connect for Cloud certificate`_ and the :ref:`modem_key_mgmt` library for more information on modem credentials.
-The certificates are generated using the device ID and PIN/HWID.
+The certificates are generated using the device ID and PIN or HWID.
+The default format for the device ID is ``nrf-<IMEI>``.
+This format is valid only for Nordic devices such as Thingy:91 or nRF9160 DK.
+For custom hardware, use a prefix other than ``nrf-`` by modifying the :option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` Kconfig option.
+To use a UUID as the device ID, set ``NRF_CLOUD_CLIENT_ID`` to the desired UUID string.
+
+As the next step, the API subscribes to an MQTT topic to start receiving user association requests from the cloud.
 
 Every time nRF Connect for Cloud starts a communication session with a device, it verifies whether the device is uniquely associated with a user.
 If not, the user association procedure is triggered.
-When adding the device to an nRF Connect for Cloud account, the user must provide the correct device ID and PIN (for Thingy:91) or HWID (for nRF9160 DK) to nRF Cloud.
+When adding the device to an nRF Connect for Cloud account, the user must provide the correct device ID and PIN (for Thingy:91 and custom hardware) or HWID (for nRF9160 DK) to nRF Cloud.
 
 The following message sequence chart shows the flow of events and the expected application responses to each event during the user association procedure:
 
