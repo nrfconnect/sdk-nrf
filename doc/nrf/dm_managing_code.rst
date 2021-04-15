@@ -36,6 +36,8 @@ Replace ``{revision}`` with any revision you wish to obtain.
 This can be ``master`` if you want the latest state, or any released version (e.g. |release_tt|).
 If you omit the ``--mr`` parameter, west defaults to ``master``.
 
+This is the procedure used for :ref:`getting the |NCS| code <cloning_the_repositories>` when :ref:`gs_installing`.
+
 .. _dm-wf-update-ncs:
 
 Updating a copy of the |NCS|
@@ -55,7 +57,8 @@ Where ``{remote}`` is the Git remote that points to the official Nordic reposito
 This is called ``origin`` by default for the `sdk-nrf`_ repository and ``ncs`` for most others, but :ref:`may have another name <dm-wf-fork>`.
 You can use ``git remote -v`` to list all your remotes.
 
-Note that using ``git checkout`` is one of multiple ways of achieving this.
+This is the procedure used for :ref:`gs_updating_repos` after :ref:`gs_installing`.
+However, using ``git checkout`` is one of multiple ways of achieving this.
 Git offers several commands and mechanisms to set the current working copy of a repository to a particular revision.
 Depending on how you manage the branches of your local clone of the `sdk-nrf`_ repository, you can also replace the use of ``git checkout`` with, among many others::
 

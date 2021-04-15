@@ -416,14 +416,14 @@ To set up the toolchain, complete the following steps:
 
 .. rst-class:: numbered-step
 
-Install |SES| Nordic Edition
-****************************
+Install the |SES| Nordic Edition
+********************************
 
-You must install |SES| (SES) Nordic Edition to be able to open and compile projects in the |NCS|.
+You must install the |SES| (SES) Nordic Edition to be able to open and compile projects in the |NCS|.
 
 |SES| is free of charge for use with Nordic Semiconductor devices.
 
-To install |SES| Nordic Edition, complete the following steps:
+To install the |SES| Nordic Edition, complete the following steps:
 
 1. Download the package for your operating system:
 
@@ -466,6 +466,14 @@ To install |SES| Nordic Edition, complete the following steps:
 
     #. Copy-paste the license key and click :guilabel:`Install License`.
        The license activation window will close and SES will open the Project Explorer window.
+
+.. note::
+    Notifications about newer versions of SES are disabled in the SES Nordic Edition.
+    This is because of the custom |NCS| options that are available only in the Nordic Edition.
+    You will not be able to use SES with the |NCS| if you install the latest standard version of SES.
+
+    When you move to a newer release of the |NCS|, check the :ref:`gs_recommended_versions` page for the given release to see if you are using the minimum required version of SES Nordic Edition.
+    If you need to install the latest version of the SES Nordic Edition, follow the steps described above and make sure to set up the build environment in SES once more.
 
 .. _build_environment:
 .. _setting_up_SES:
@@ -560,7 +568,7 @@ Before you start :ref:`building and programming a sample application <gs_program
 Set up the command-line build environment
 *****************************************
 
-The default build environment for |NCS| is SES.
+The default build environment for the |NCS| is SES.
 However, you can also build and program your application from the command line.
 You have to set up your build environment by defining the required environment variables every time you open a new command prompt or terminal window.
 
@@ -596,168 +604,5 @@ Define the required environment variables as follows, depending on your operatin
       See :ref:`zephyr:zephyr-env` for more information.
 
 You must also make sure that nrfjprog (part of the `nRF Command Line Tools`_) is installed and its path is added to the environment variables.
-The west command programs the kit by using nrfjprog by default.
+The west command programs the development kit by using nrfjprog by default.
 For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
-
-.. _gs_updating:
-
-Updating tools and repositories
-*******************************
-
-Remember to regularly check for updates to tools.
-Like any other Python package, the west tool is updated regularly.
-
-You might also want to switch to a newer release or check out the latest state of development.
-However, if you work with a specific release of the |NCS|, you do not need to update your repositories, because the release will not change.
-
-.. _west_update:
-
-Updating west
-=============
-
-To update west, run the following command:
-
-.. tabs::
-
-   .. group-tab:: Windows
-
-      .. parsed-literal::
-         :class: highlight
-
-         pip3 install -U west
-
-   .. group-tab:: Linux
-
-      .. parsed-literal::
-         :class: highlight
-
-         pip3 install --user -U west
-
-   .. group-tab:: macOS
-
-      .. parsed-literal::
-         :class: highlight
-
-         pip3 install -U west
-
-..
-
-This command updates west to the latest available version in the PyPi repository.
-
-Updating the repositories
-=========================
-
-To manage the ``nrf`` repository (the manifest repository), use Git.
-To make sure that you have the latest changes, run ``git fetch origin`` to :ref:`fetch the latest code <dm-wf-update-ncs>` from the `sdk-nrf`_ repository.
-Checking out a branch or tag in the ``nrf`` repository gives you a different version of the manifest file.
-Running ``west update`` updates the project repositories to the state specified in this manifest file.
-
-.. include:: gs_installing.rst
-   :start-after: west-error-start
-   :end-before: west-error-end
-
-Examples of commands
---------------------
-
-To switch to release |release| of the |NCS|, enter the following commands in the ``ncs/nrf`` directory:
-
-.. parsed-literal::
-   :class: highlight
-
-   git fetch origin
-   git checkout |release|
-   west update
-
-To update to a particular revision (SHA), make sure that you have that particular revision locally before you check it out (by running ``git fetch origin``)::
-
-   git fetch origin
-   git checkout 224bee9055d986fe2677149b8cbda0ff10650a6e
-   west update
-
-To switch to the latest state of development, enter the following commands::
-
-   git fetch origin
-   git checkout origin/master
-   west update
-
-.. note::
-   Run ``west update`` every time you change or modify the current working branch (for example, when you pull, rebase, or check out a different branch).
-   This will bring the project repositories to the matching revision defined by the manifest file.
-
-.. _repo_move:
-
-Pointing the repositories to the right remotes after they were moved
-====================================================================
-
-Before |NCS| version 1.3.0, the Git repositories were moved from the NordicPlayground GitHub organization to the nrfconnect organization.
-They were also renamed, replacing the ``fw-nrfconnect-`` prefix with ``sdk-``.
-
-The full list of repositories with their old and new URLs is in the following table:
-
-.. list-table::
-   :header-rows: 1
-
-   * - Old URL
-     - New URL
-     - File system path
-
-   * - https:\ //github.com/NordicPlayground/fw-nrfconnect-nrf
-     - https://github.com/nrfconnect/sdk-nrf
-     - :file:`ncs/nrf`
-
-   * - https:\ //github.com/NordicPlayground/fw-nrfconnect-zephyr
-     - https://github.com/nrfconnect/sdk-zephyr
-     - :file:`ncs/zephyr`
-
-   * - https:\ //github.com/NordicPlayground/fw-nrfconnect-mcuboot
-     - https://github.com/nrfconnect/sdk-mcuboot
-     - :file:`ncs/bootloader/mcuboot`
-
-   * - https:\ //github.com/NordicPlayground/fw-nrfconnect-mcumgr
-     - https://github.com/nrfconnect/sdk-mcumgr
-     - :file:`ncs/modules/lib/mcumgr`
-
-   * - https:\ //github.com/NordicPlayground/nrfxlib
-     - https://github.com/nrfconnect/sdk-nrfxlib
-     - :file:`ncs/nrfxlib`
-
-
-If you cloned the repositories before the move, your local repositories and forks of the |NCS| repositories are automatically be redirected to the new ones.
-However, you should point them directly to their new locations as described in this section.
-
-To change the remotes, complete the following steps:
-
-1. Rename any personal forks that you have of the |NCS| repositories to their new names:
-
-   a. Visit your personal fork in a browser.
-      For example, to rename the fw-nrfconnect-nrf repository, access your fork on GitHub (``https://github.com/<username>/fw-nrfconnect-nrf``, where *<username>* is your GitHub account name).
-   b. Switch to the :guilabel:`Settings` tab and edit the name in the :guilabel:`Repository name` field to ``sdk-nrf``.
-
-#. Rename the remotes:
-
-   a. Go to your local copy of each of the repositories listed in the preceding table.
-   #. Enter the following command:
-
-      .. parsed-literal::
-        :class: highlight
-
-        git remote set-url *remote_name* *new_url*
-
-      In this command, replace *remote_name* with the name of your remote (for example, ``origin`` for your fork or ``ncs`` for the upstream repository) and *new_url* with the URL of your fork or the new URL from the preceding table.
-      If you are not sure about the remotes that are configured in your local repository, enter ``git remote -v`` to see your remotes.
-
-For example, to point your existing fw-nrfconnect-nrf clone to its new URL, enter the following command:
-
-.. code-block::
-
-   cd ncs/nrf
-   git remote set-url origin https://github.com/nrfconnect/sdk-nrf
-
-Similarly, to point your existing fw-nrfconnect-zephyr clone to the new URL, enter the following command:
-
-.. code-block::
-
-   cd  ncs/zephyr
-   git remote set-url ncs https://github.com/nrfconnect/sdk-zephyr
-
-For more information about remotes and how to handle them, see :ref:`dm-wf-fork`.
