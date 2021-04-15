@@ -619,14 +619,6 @@ int lte_lc_deinit(void)
 
 int lte_lc_normal(void)
 {
-	int err;
-
-	err = enable_notifications();
-	if (err) {
-		LOG_ERR("Failed to enabled notifications, error: %d", err);
-		return err;
-	}
-
 	return lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
 }
 
@@ -1265,11 +1257,18 @@ clean_exit:
 int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 {
 	switch (mode) {
+	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
+	case LTE_LC_FUNC_MODE_NORMAL: {
+		int err = enable_notifications();
+
+		if (err) {
+			LOG_ERR("Failed to enabled notifications, error: %d", err);
+			return err;
+		}
+	}
 	case LTE_LC_FUNC_MODE_POWER_OFF:
-	case LTE_LC_FUNC_MODE_NORMAL:
 	case LTE_LC_FUNC_MODE_OFFLINE:
 	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:
-	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
 	case LTE_LC_FUNC_MODE_DEACTIVATE_GNSS:
 	case LTE_LC_FUNC_MODE_ACTIVATE_GNSS:
 	case LTE_LC_FUNC_MODE_OFFLINE_UICC_ON: {
