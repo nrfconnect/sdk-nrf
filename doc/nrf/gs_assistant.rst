@@ -12,6 +12,9 @@ Installing the |NCS| through nRF Connect for Desktop
 On Windows, use the :ref:`gs_app_tcm`.
 On Linux or macOS, use the :ref:`gs_app_gsa`.
 
+.. note::
+   When installing the |NCS| through the |GSA| app, you will not be able to build on the command line using west.
+
 See :ref:`gs_installing_os` for information on the supported operating systems and Zephyr features.
 
 .. _gs_app_tcm:
@@ -84,6 +87,9 @@ The app allows you to check which of the required tools are already installed on
 It also guides you through installing the parts of the toolchain that you are missing.
 In addition, it will help you clone the |NCS| repositories and set up your first project in |SES|.
 
+.. note::
+   When installing the |NCS| through the |GSA| app, you must build with |SES|.
+   You will not be able to build on the command line using west.
 
 Installing the |GSA|
 ====================
