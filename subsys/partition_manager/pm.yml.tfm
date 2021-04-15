@@ -9,17 +9,17 @@ tfm_sram:
 tfm:
   placement: {before: [app]}
   size: CONFIG_PM_PARTITION_SIZE_TFM
+#ifdef CONFIG_BOOTLOADER_MCUBOOT
+  inside: mcuboot_primary_app
+#endif
 
 tfm_primary:
   span: [tfm]
-#if defined(CONFIG_BOOTLOADER_MCUBOOT)
-  inside: mcuboot_primary_app
-#endif
 
 app_primary:
   span: [app]
 
-#if defined(CONFIG_TFM_BL2) 
+#ifdef CONFIG_TFM_BL2
 bl2:
   placement: {before: [tfm]}
   size: CONFIG_PM_PARTITION_SIZE_BL2
