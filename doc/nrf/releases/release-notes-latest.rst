@@ -68,6 +68,10 @@ nRF9160
     * Added polling "226 Transfer complete" after data channel TX/RX, with a configurable timeout of 60 seconds.
     * Ignored the reply code of "UTF8 ON" command as some FTP server returns abnormal reply.
 
+  * :ref:`at_params_readme` library:
+
+    * Added function :c:func:`at_params_int64_get` that allows for getting of AT param list entries containing signed 64 bit integers.
+
   * :ref:`serial_lte_modem` application:
 
     * Fixed TCP/UDP port range issue (0~65535).

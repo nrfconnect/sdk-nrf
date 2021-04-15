@@ -12,7 +12,7 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 
-#define TEST_PARAMS 4
+#define TEST_PARAMS 6
 
 static struct at_param_list test_list;
 
@@ -43,14 +43,19 @@ static void test_params_put_get_int(void)
 {
 	int16_t tmp_short = 0;
 	uint16_t tmp_ushort = 0;
-	int32_t tmp_int   = 0;
-	uint32_t tmp_uint   = 0;
+	int32_t tmp_int = 0;
+	uint32_t tmp_uint = 0;
+	int64_t tmp_int64 = 0;
+
+	/* Test list put. */
 
 	zassert_equal(-EINVAL, at_params_int_put(NULL, 0, 1),
 		      "at_params_int_put should return -EINVAL");
 
 	zassert_equal(-EINVAL, at_params_int_put(NULL, TEST_PARAMS, 1),
 		      "at_params_int_put should return -EINVAL");
+
+	/* Populate AT param list. */
 
 	zassert_equal(0, at_params_int_put(&test_list, 1, 32768),
 		      "at_params_int_put should return 0");
@@ -61,48 +66,113 @@ static void test_params_put_get_int(void)
 	zassert_equal(0, at_params_int_put(&test_list, 3, -1),
 		      "at_params_int_put should return 0");
 
+	zassert_equal(0, at_params_int_put(&test_list, 4, 4294967296),
+		      "at_params_int_put should return 0");
+
+	zassert_equal(0, at_params_int_put(&test_list, 5, -4294967296),
+		      "at_params_int_put should return 0");
+
+	/* Test unpopulated list entry. */
+
 	zassert_equal(-EINVAL, at_params_int_get(&test_list, 0, &tmp_int),
 		      "at_params_int_get should return -EINVAL");
+
 	zassert_equal(-EINVAL, at_params_unsigned_int_get(&test_list, 0, &tmp_uint),
 		      "at_params_unsigned_int_get should return -EINVAL");
+
 	zassert_equal(-EINVAL, at_params_short_get(&test_list, 0, &tmp_short),
 		      "at_params_short_get should return -EINVAL");
+
 	zassert_equal(-EINVAL, at_params_unsigned_short_get(&test_list, 0, &tmp_ushort),
 		      "at_params_unsigned_short_get should return -EINVAL");
+
+	zassert_equal(-EINVAL, at_params_int64_get(&test_list, 0, &tmp_int64),
+		      "at_params_int64_get should return -EINVAL");
+
+	/* Test first list entry. */
 
 	zassert_equal(0, at_params_int_get(&test_list, 1, &tmp_int),
 		      "at_params_int_get should return 0");
 	zassert_equal(32768, tmp_int, "at_params_int_get should get 32768");
+
 	zassert_equal(0, at_params_unsigned_int_get(&test_list, 1, &tmp_uint),
 		      "at_params_unsigned_int_get should return 0");
 	zassert_equal(32768, tmp_uint, "at_params_unsigned_int_get should get 32768");
+
+	zassert_equal(0, at_params_int64_get(&test_list, 1, &tmp_int64),
+		      "at_params_int64_get should return 0");
+	zassert_equal(32768, tmp_int64, "at_params_int64_get should get 32768");
+
 	zassert_equal(-EINVAL, at_params_short_get(&test_list, 1, &tmp_short),
 		      "at_params_short_get should return -EINVAL");
+
 	zassert_equal(0, at_params_unsigned_short_get(&test_list, 1, &tmp_ushort),
 		      "at_params_unsigned_short_get should return 0");
 	zassert_equal(32768, tmp_ushort, "at_params_unsigned_short_get should get 32768");
 
+	/* Test second list entry. */
+
 	zassert_equal(0, at_params_int_get(&test_list, 2, &tmp_int),
 		      "at_params_int_get should return 0");
 	zassert_equal(65536, tmp_int, "at_params_int_get should get 65536");
+
 	zassert_equal(0, at_params_unsigned_int_get(&test_list, 2, &tmp_uint),
 		      "at_params_unsigned_int_get should return 0");
 	zassert_equal(65536, tmp_uint, "at_params_unsigned_int_get should get 65536");
+
+	zassert_equal(0, at_params_int64_get(&test_list, 2, &tmp_int64),
+		      "at_params_int64_get should return 0");
+	zassert_equal(65536, tmp_int64, "at_params_int64_get should get 65536");
+
 	zassert_equal(-EINVAL, at_params_short_get(&test_list, 2, &tmp_short),
 		      "at_params_short_get should return -EINVAL");
+
 	zassert_equal(-EINVAL, at_params_unsigned_short_get(&test_list, 2, &tmp_ushort),
 		      "at_params_unsigned_short_get should return -EINVAL");
+
+	/* Test third list entry. */
 
 	zassert_equal(0, at_params_int_get(&test_list, 3, &tmp_int),
 		      "at_params_int_get should return 0");
 	zassert_equal(-1, tmp_int, "at_params_int_get should get -1");
+
 	zassert_equal(-EINVAL, at_params_unsigned_int_get(&test_list, 3, &tmp_uint),
 		      "at_params_unsigned_int_get should return -EINVAL");
+
 	zassert_equal(0, at_params_short_get(&test_list, 3, &tmp_short),
 		      "at_params_short_get should return 0");
 	zassert_equal(-1, tmp_short, "at_params_short_get should get -1");
+
 	zassert_equal(-EINVAL, at_params_unsigned_short_get(&test_list, 3, &tmp_ushort),
 		      "at_params_unsigned_short_get should return -EINVAL");
+
+	zassert_equal(0, at_params_int64_get(&test_list, 3, &tmp_int64),
+		      "at_params_int64_get should return 0");
+	zassert_equal(-1, tmp_int64, "at_params_int64_get should get -1");
+
+	/* Test fourth list entry. */
+
+	zassert_equal(-EINVAL, at_params_unsigned_int_get(&test_list, 4, &tmp_uint),
+		      "at_params_unsigned_int_get should return -EINVAL");
+
+	zassert_equal(-EINVAL, at_params_int_get(&test_list, 4, &tmp_int),
+		      "at_params_int_get should return -EINVAL");
+
+	zassert_equal(0, at_params_int64_get(&test_list, 4, &tmp_int64),
+		      "at_params_int64_get should return 0");
+	zassert_equal(4294967296, tmp_int64, "at_params_int64_get should get 4294967296");
+
+	/* Test fifth list entry. */
+
+	zassert_equal(-EINVAL, at_params_unsigned_int_get(&test_list, 5, &tmp_uint),
+		      "at_params_unsigned_int_get should return -EINVAL");
+
+	zassert_equal(-EINVAL, at_params_int_get(&test_list, 5, &tmp_int),
+		      "at_params_int_get should return -EINVAL");
+
+	zassert_equal(0, at_params_int64_get(&test_list, 5, &tmp_int64),
+		      "at_params_int64_get should return 0");
+	zassert_equal(-4294967296, tmp_int64, "at_params_int64_get should get -4294967296");
 }
 
 static void test_params_put_get_int_teardown(void)
@@ -359,8 +429,8 @@ static void test_params_get_size(void)
 	at_params_int_put(&test_list, 0, 1);
 
 	at_params_size_get(&test_list, 0, &len);
-	zassert_equal(sizeof(uint32_t), len,
-		      "Get size should return sizeof(uint32_t)");
+	zassert_equal(sizeof(uint64_t), len,
+		      "Get size should return sizeof(uint64_t)");
 
 	at_params_string_put(&test_list, 0, test_str, sizeof(test_str));
 
