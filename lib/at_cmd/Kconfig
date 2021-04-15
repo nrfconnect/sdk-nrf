@@ -32,7 +32,7 @@ config AT_CMD_THREAD_PRIO
 
 config AT_CMD_THREAD_STACK_SIZE
 	int "AT thread stack size"
-	default 1024
+	default 1344
 
 config AT_CMD_QUEUE_LEN
 	int "Maximum number of queued AT commands"

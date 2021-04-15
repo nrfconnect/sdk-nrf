@@ -253,7 +253,7 @@ static int at_parse_process_element(const char **str, int index,
 		tmpstr++;
 	} else if (state == NUMBER) {
 		char *next;
-		int32_t value = (int32_t)strtol(tmpstr, &next, 10);
+		int64_t value = (int64_t)strtoll(tmpstr, &next, 10);
 
 		tmpstr = next;
 
