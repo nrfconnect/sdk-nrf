@@ -28,21 +28,25 @@ static void test_parse_edrx(void)
 	zassert_equal(0, err, "parse_edrx failed, error: %d", err);
 	zassert_within(cfg.edrx, 81.92, 0.1, "Wrong eDRX value");
 	zassert_within(cfg.ptw, 15.36,  0.1, "Wrong PTW value");
+	zassert_equal(cfg.mode, LTE_LC_LTE_MODE_LTEM, "Wrong LTE mode");
 
 	err = parse_edrx(at_response_ltem_2, &cfg);
 	zassert_equal(0, err, "parse_edrx failed, error: %d", err);
 	zassert_within(cfg.edrx, 20.48, 0.1, "Wrong eDRX value");
 	zassert_within(cfg.ptw, 19.2, 0.1, "Wrong PTW value");
+	zassert_equal(cfg.mode, LTE_LC_LTE_MODE_LTEM, "Wrong LTE mode");
 
 	err = parse_edrx(at_response_nbiot, &cfg);
 	zassert_equal(0, err, "parse_edrx failed, error: %d", err);
 	zassert_within(cfg.edrx, 2621.44, 0.1, "Wrong eDRX value");
 	zassert_within(cfg.ptw, 20.48, 0.1, "Wrong PTW value");
+	zassert_equal(cfg.mode, LTE_LC_LTE_MODE_NBIOT, "Wrong LTE mode");
 
 	err = parse_edrx(at_response_nbiot_2, &cfg);
 	zassert_equal(0, err, "parse_edrx failed, error: %d", err);
 	zassert_within(cfg.edrx, 2621.44, 0.1, "Wrong eDRX value");
 	zassert_within(cfg.ptw, 15.36, 0.1, "Wrong PTW value");
+	zassert_equal(cfg.mode, LTE_LC_LTE_MODE_NBIOT, "Wrong LTE mode");
 }
 
 void test_parse_cereg(void)
