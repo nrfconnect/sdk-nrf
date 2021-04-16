@@ -29,6 +29,6 @@ static const struct sensor_config sensor_configs[] = {
 		.event_descr = "accel_xyz",
 		.chans = accel_chan,
 		.chan_cnt = ARRAY_SIZE(accel_chan),
-		.sampling_period_ms = 50,
+		.sampling_period_ms = 20,
 	},
 };
