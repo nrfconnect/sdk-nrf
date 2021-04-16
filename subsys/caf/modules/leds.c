@@ -202,7 +202,7 @@ static void leds_start(void)
 						 DEVICE_PM_ACTIVE_STATE,
 						 NULL, NULL);
 		if (err) {
-			LOG_ERR("PWM enable failed");
+			LOG_WRN("PWM enable failed");
 		}
 #endif
 		led_update(&leds[i]);
@@ -221,7 +221,7 @@ static void leds_stop(void)
 						 DEVICE_PM_SUSPEND_STATE,
 						 NULL, NULL);
 		if (err) {
-			LOG_ERR("PWM disable failed");
+			LOG_WRN("PWM disable failed");
 		}
 #endif
 	}
