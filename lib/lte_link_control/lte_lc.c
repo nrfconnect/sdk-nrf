@@ -87,8 +87,6 @@ static char psm_param_rptau[9] = CONFIG_LTE_PSM_REQ_RPTAU;
 static const char psm_disable[] = "AT+CPSMS=";
 /* Enable CSCON (RRC mode) notifications */
 static const char cscon[] = "AT+CSCON=1";
-/* Disable RAI */
-static const char rai_disable[] = "AT+%XRAI=0";
 /* Default RAI setting */
 static char rai_param[2] = CONFIG_LTE_RAI_REQ_VALUE;
 
@@ -892,16 +890,7 @@ int lte_lc_rai_req(bool enable)
 		return -EOPNOTSUPP;
 	}
 
-	if (enable) {
-		char rai_req[10];
-
-		snprintf(rai_req, sizeof(rai_req), "AT%%XRAI=%s", rai_param);
-		err = at_cmd_write(rai_req, NULL, 0, NULL);
-	} else {
-		err = at_cmd_write(rai_disable, NULL, 0, NULL);
-	}
-
-	return err;
+	return at_cmd_printf("AT%%XRAI=%s", enable ? rai_param : "0");
 }
 
 int lte_lc_rai_param_set(const char *value)
@@ -962,29 +951,22 @@ int lte_lc_pdn_auth_set(enum lte_lc_pdn_auth_type auth_prot,
 int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 {
 	int err;
-	char buf[AT_CEREG_RESPONSE_MAX_LEN] = {0};
 
 	if (status == NULL) {
 		return -EINVAL;
 	}
 
 	/* Enable network registration status with level 5 */
-	err = at_cmd_write(AT_CEREG_5, NULL, 0, NULL);
+	err = at_cmd_printf(AT_CEREG_5);
 	if (err) {
 		LOG_ERR("Could not set CEREG level 5, error: %d", err);
 		return err;
 	}
 
 	/* Read network registration status */
-	err = at_cmd_write(AT_CEREG_READ, buf, sizeof(buf), NULL);
+	err = at_cmd_scanf(AT_CEREG_READ, "+CEREG: %*d,%d", status);
 	if (err) {
 		LOG_ERR("Could not get CEREG response, error: %d", err);
-		return err;
-	}
-
-	err = parse_cereg(buf, false, status, NULL, NULL, NULL);
-	if (err) {
-		LOG_ERR("Could not parse registration status, err: %d", err);
 		return err;
 	}
 
@@ -994,8 +976,7 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 			   enum lte_lc_system_mode_preference preference)
 {
-	int err, len;
-	char cmd[50];
+	int err;
 
 	switch (mode) {
 	case LTE_LC_SYSTEM_MODE_NONE:
@@ -1024,17 +1005,9 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 		return -EINVAL;
 	}
 
-	len = snprintf(cmd, sizeof(cmd), "AT%%XSYSTEMMODE=%s,%c",
-		       system_mode_params[mode],
-		       system_mode_preference[preference]);
-	if (len < 0) {
-		LOG_ERR("Could not construct system mode command");
-		return -EFAULT;
-	}
-
-	LOG_DBG("Sending AT command to set system mode: %s", log_strdup(cmd));
-
-	err = at_cmd_write(cmd, NULL, 0, NULL);
+	err = at_cmd_printf("AT%%XSYSTEMMODE=%s,%c",
+			    system_mode_params[mode],
+			    system_mode_preference[preference]);
 	if (err) {
 		LOG_ERR("Could not send AT command, error: %d", err);
 	}
@@ -1202,64 +1175,11 @@ clean_exit:
 
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode)
 {
-	int err, resp_mode;
-	struct at_param_list resp_list = {0};
-	char response[AT_CFUN_RESPONSE_MAX_LEN] = {0};
-	char response_prefix[sizeof(AT_CFUN_RESPONSE_PREFIX)] = {0};
-	size_t response_prefix_len = sizeof(response_prefix);
-
 	if (mode == NULL) {
 		return -EINVAL;
 	}
 
-	err = at_cmd_write(AT_CFUN_READ, response, sizeof(response), NULL);
-	if (err) {
-		LOG_ERR("Could not send AT command");
-		return err;
-	}
-
-	err = at_params_list_init(&resp_list, AT_CFUN_PARAMS_COUNT);
-	if (err) {
-		LOG_ERR("Could init AT params list, error: %d", err);
-		return err;
-	}
-
-	err = at_parser_max_params_from_str(response, NULL, &resp_list,
-					    AT_CFUN_PARAMS_COUNT);
-	if (err) {
-		LOG_ERR("Could not parse AT response, error: %d", err);
-		goto clean_exit;
-	}
-
-	/* Check if AT command response starts with +CFUN */
-	err = at_params_string_get(&resp_list,
-				   AT_RESPONSE_PREFIX_INDEX,
-				   response_prefix,
-				   &response_prefix_len);
-	if (err) {
-		LOG_ERR("Could not get response prefix, error: %d", err);
-		goto clean_exit;
-	}
-
-	if (!response_is_valid(response_prefix, response_prefix_len,
-			       AT_CFUN_RESPONSE_PREFIX)) {
-		LOG_ERR("Invalid CFUN response");
-		err = -EIO;
-		goto clean_exit;
-	}
-
-	err = at_params_int_get(&resp_list, AT_CFUN_MODE_INDEX, &resp_mode);
-	if (err) {
-		LOG_ERR("Could not parse mode parameter, err: %d", err);
-		goto clean_exit;
-	}
-
-	*mode = resp_mode;
-
-clean_exit:
-	at_params_list_free(&resp_list);
-
-	return err;
+	return at_cmd_scanf(AT_CFUN_READ, "+CFUN: %d", mode);
 }
 
 int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
@@ -1273,15 +1193,7 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 	case LTE_LC_FUNC_MODE_DEACTIVATE_GNSS:
 	case LTE_LC_FUNC_MODE_ACTIVATE_GNSS:
 	case LTE_LC_FUNC_MODE_OFFLINE_UICC_ON: {
-		char buf[12];
-		int ret = snprintk(buf, sizeof(buf), "AT+CFUN=%d", mode);
-
-		if ((ret < 0) || (ret >= sizeof(buf))) {
-			LOG_ERR("Failed to create functional mode command");
-			return -EFAULT;
-		}
-
-		return at_cmd_write(buf, NULL, 0, NULL);
+		return at_cmd_printf("AT+CFUN=%d", mode);
 	}
 	default:
 		LOG_ERR("Invalid functional mode: %d", mode);

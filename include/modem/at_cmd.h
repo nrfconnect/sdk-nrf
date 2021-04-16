@@ -133,6 +133,27 @@ int at_cmd_write(const char *const cmd,
 		 enum at_cmd_state *state);
 
 /**
+ * @brief Send a formatted AT command.
+ *
+ * @param fmt Command format.
+ * @param ... Format parameters.
+ * @return int Zero on success, a negative errno otherwise.
+ */
+int at_cmd_printf(const char *fmt, ...);
+
+/**
+ * @brief Send an AT command and parse the response.
+ *
+ * Send an AT command and parse the response using sscanf.
+ *
+ * @param cmd The AT command.
+ * @param fmt Response format.
+ * @param ... Format parameters.
+ * @return int Zero on success, a negative errno otherwise.
+ */
+int at_cmd_scanf(const char *cmd, const char *fmt, ...);
+
+/**
  * @brief Function to set AT command global notification handler
  *
  * @param handler Pointer to a received notification handler function of type

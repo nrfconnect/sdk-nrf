@@ -7,6 +7,7 @@
 #include <logging/log.h>
 #include <zephyr.h>
 #include <stdio.h>
+#include <stdlib.h>
 #if defined(CONFIG_POSIX_API)
 #include <posix/unistd.h>
 #include <posix/sys/socket.h>
@@ -62,6 +63,8 @@ static atomic_t shutdown_mode;
 /* Structure holding current command. current_cmd.cmd=NULL signifies no cmd. */
 static struct cmd_item current_cmd;
 K_MUTEX_DEFINE(current_cmd_mutex);
+
+K_MUTEX_DEFINE(mutex_fmt);
 
 /* Queue for queued command metadata */
 K_MSGQ_DEFINE(commands, sizeof(struct cmd_item), CONFIG_AT_CMD_QUEUE_LEN, 4);
@@ -438,6 +441,60 @@ int at_cmd_write(const char *const cmd,
 	}
 
 	return ret.code;
+}
+
+static char fmt_buf[512];
+
+int at_cmd_printf(const char *fmt, ...)
+{
+	int err;
+
+	k_mutex_lock(&mutex_fmt, K_FOREVER);
+
+	va_list args;
+	va_start(args, fmt);
+
+	err = vsnprintf(fmt_buf, sizeof(fmt_buf), fmt, args);
+	if (err < 0 || err >= sizeof(fmt_buf)) {
+		goto out;
+	}
+
+	va_end(args);
+
+	err = at_cmd_write(fmt_buf, NULL, 0, NULL);
+
+out:
+	k_mutex_unlock(&mutex_fmt);
+	return err;
+}
+
+int at_cmd_scanf(const char *cmd, const char *fmt, ...)
+{
+	int err;
+
+	k_mutex_lock(&mutex_fmt, K_FOREVER);
+
+	err = at_cmd_write(cmd, fmt_buf, sizeof(fmt_buf), NULL);
+	if (err) {
+		goto out;
+	}
+
+	va_list args;
+	va_start(args, fmt);
+
+	printk("RESP: %s\n", fmt_buf);
+	err = vsscanf(fmt_buf, fmt, args);
+	if (err == 0) {
+		err = -EBADMSG;
+	} else if (err > 0) {
+		return 0;
+	}
+
+	va_end(args);
+
+out:
+	k_mutex_unlock(&mutex_fmt);
+	return err;
 }
 
 void at_cmd_set_notification_handler(at_cmd_handler_t handler)
