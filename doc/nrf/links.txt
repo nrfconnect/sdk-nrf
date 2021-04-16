@@ -242,6 +242,8 @@
 .. _`nRF5 SDK Bootloader`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html
 .. _`nRF5 Bootloader DFU Mode`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html#lib_bootloader_dfu_mode
 
+.. _`System Protection Unit`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/spu.html
+
 .. ### Source: devzone.nordicsemi.com
 
 .. _`DevZone`: https://devzone.nordicsemi.com/
@@ -465,6 +467,8 @@
 .. _`Edge Impulse CLI installation guide`: https://docs.edgeimpulse.com/docs/cli-installation
 
 .. ### Source: other
+
+.. _`ARM TrustZone`: https://developer.arm.com/documentation/100690/0200/ARM-TrustZone-technology?lang=en
 
 .. _`Ninja documentation`: https://ninja-build.org/manual.html
 

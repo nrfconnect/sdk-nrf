@@ -81,6 +81,10 @@ nRF9160
 
     * Added support for parsing parameters of type unsigned int or unsigned short.
 
+  * :ref:`lib_spm` library:
+
+    * Added support for the nRF9160 pulse-density modulation (PDM) and inter-IC sound (I2S) peripherals in non-secure applications.
+
 Common
 ======
 
