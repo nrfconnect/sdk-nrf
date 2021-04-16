@@ -7,18 +7,23 @@ Secure Partition Manager (SPM)
    :local:
    :depth: 2
 
-The Secure Partition Manager (SPM) provides functionality for the Trusted Execution Environment of the nRF9160 and the nRF5340.
+The Secure Partition Manager (SPM) provides functionality for the Trusted Execution Environment of the nRF9160 SiP and the nRF5340 SoC.
 
 Overview
 ********
 
-The Cortex-M33 CPU in the nRF9160 and nRF5340 devices implements ARM TrustZone, which means it can run a "secure" and a "non-secure" app side by side.
-The SPM, being the secure app, is responsible for configuring the permissions and resources of the non-secure app and then booting it.
+The Cortex-M33 CPU in the nRF9160 and nRF5340 devices implements `ARM TrustZone`_.
+This allows the CPU to run a "secure" and a "non-secure" app side by side.
+
+The SPM runs as a secure app.
+It configures the permissions and resources of the non-secure app and then boots it.
 Such configuration is required to run non-secure apps.
-The SPM also provides the non-secure app with access to features (:ref:`lib_spm_secure_services`) that are normally only available to secure apps.
+
+The SPM also provides the non-secure app with access to features that are normally only available to secure apps.
+You can find the feature list on the :ref:`lib_spm_secure_services` page.
 
 .. note::
-   If your application is using :ref:`TF-M <ug_tfm>`, SPM is not included in the build.
+   If your application uses :ref:`TF-M <ug_tfm>`, SPM is not included in the build.
 
 The SPM library is used in the :ref:`secure_partition_manager` sample.
 
@@ -27,72 +32,78 @@ The SPM library is used in the :ref:`secure_partition_manager` sample.
 Configuration
 *************
 
-The Secure Partition Manager (SPM) uses the SPU peripheral to configure security attributions for the flash, SRAM, and peripherals.
-Note that the SPU peripheral is the nRF version of an IDAU (Implementation-Defined Security Attribution Unit).
+The Secure Partition Manager (SPM) uses the `System Protection Unit`_ (SPU) peripheral to set security attributions for the flash memory, the SRAM, and other peripherals.
+Security attributions are boolean Kconfig options that configure security settings like, for example, defining a peripheral as secure or non-secure.
+The SPU peripheral is the nRF version of an Implementation-Defined Security Attribution Unit (IDAU).
 
-Use Kconfig to configure the security attributions for the peripherals.
-Modify the source code of the SPM subsystem to configure the security attributions of SRAM.
-If Partition Manager is used, the security attributions of the flash regions are deduced from the generated file :file:`pm.config`.
-Otherwise, the security attributions of the flash regions are deduced from devicetree information.
+To configure SPM, do the following:
 
-For SRAM and peripherals, the following security attribution configuration is applied:
+* Use Kconfig to configure the security attributions for the peripherals.
+* Modify the source code of the SPM library to configure the security attributions of the SRAM.
+
+If Partition Manager is used, the security attributions of the flash memory regions are taken from the generated :file:`pm.config` file.
+Otherwise, they are taken from devicetree information.
+
+For the SRAM and the peripherals, the following security attribution configuration is applied:
 
 SRAM (256 kB)
-   * Lower 64 kB: Secure
-   * Upper 192 kB: Non-Secure
+* Lower 64 kB: Secure
+* Upper 192 kB: Non-Secure
 
-Peripherals configured as Non-Secure
-   * Common
+The following peripherals are configured as Non-Secure:
 
-      * CLOCK
-      * DPPI
-      * EGU1, EGU2
-      * FPU
-      * GPIO (and GPIO pins)
-      * GPIOTE1
-      * IPC
-      * NFCT
-      * NVMC, VMC
-      * PWM0-3
-      * REGULATORS
-      * RTC0, RTC1
-      * SAADC
-      * SPIM3
-      * TIMER0-2
-      * TWIM2
-      * UARTE0, UARTE1
-      * P0
+* Common peripherals:
 
-   * nRF9160 Specific
+  * CLOCK
+  * DPPI
+  * EGU1, EGU2
+  * FPU
+  * GPIO (and GPIO pins)
+  * GPIOTE1
+  * IPC
+  * NFCT
+  * NVMC, VMC
+  * PWM0-3
+  * REGULATORS
+  * RTC0, RTC1
+  * SAADC
+  * SPIM3
+  * TIMER0-2
+  * TWIM2
+  * UARTE0, UARTE1
+  * P0
 
-      * WDT
-      * PDM
-      * I2S
+* nRF9160 SiP specific peripherals:
 
-   * nRF5340 Specific
+  * WDT
+  * PDM
+  * I2S
 
-      * Oscillators
-      * Reset
-      * SPIM4
-      * WDT0-1
-      * COMP
-      * LPCOMP
-      * PDM0
-      * I2S0
-      * QSPI
-      * NFCT
-      * MUTEX
-      * QDEC0-1
-      * USBD
-      * USB Regulator
-      * P1
+* nRF5340 SoC specific peripherals:
+
+  * Oscillators
+  * Reset
+  * SPIM4
+  * WDT0-1
+  * COMP
+  * LPCOMP
+  * PDM0
+  * I2S0
+  * QSPI
+  * NFCT
+  * MUTEX
+  * QDEC0-1
+  * USBD
+  * USB Regulator
+  * P1
 
 .. _lib_spm_secure_services:
 
 Secure Services
 ***************
 
-The SPM by default provides certain Secure Services to the Non-Secure Firmware. See :ref:`lib_secure_services` for more information.
+The SPM provides by default certain Secure Services to the Non-Secure Firmware.
+See :ref:`lib_secure_services` for more information.
 
 API documentation
 *****************
