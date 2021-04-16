@@ -461,6 +461,13 @@ Subsystems
 Bluetooth LE
 ============
 
+.. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-9106: Bluetooth ECC thread stack size too small
+  The Bluetooth ECC thread used during the pairing procedure with LE Secure Connections might overflow when an interrupt is triggered when the stack usage is at its maximum.
+
+  **Workaround:** Increase the ECC stack size by setting :option:`CONFIG_BT_HCI_ECC_STACK_SIZE` to ``1140``.
+
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 DRGN-15435: GATT notifications and Writes Without Response might be sent out of order
