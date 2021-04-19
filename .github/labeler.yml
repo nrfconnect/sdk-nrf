@@ -14,21 +14,30 @@
   - "doc/**/*"
   - "**/*.rst"
 
-"CI-dfu-test":
+"CI-boot-dfu-test":
   - "include/bl*"
   - "include/fprotect.h"
   - "include/fw_info.*"
+  - "include/mgmt/*"
+  - "include/spm.h"
   - "include/dfu/**/*"
   - "include/net/**/*"
+  - "cmake/*"
   - "modules/mcuboot/**/*"
   - "samples/nrf9160/*fota/**/*"
   - "samples/nrf9160/fmfu_smp_svr/**/*"
   - "samples/nrf9160/http_update/**/*"
+  - "samples/nrf5340/netboot/*"
   - "samples/bootloader/**/*"
   - "scripts/bootloader/**/*"
   - "subsys/bootloader/**/*"
+  - "subsys/nonsecure/*"
+  - "subsys/partition_manager/*"
+  - "subsys/dfu/*"
   - "subsys/fw_info/**/*"
   - "subsys/mgmt/**/*"
+  - "subsys/pcd/*"
+  - "subsys/spm/*"
   - "subsys/net/lib/*fota*/**/*"
   - "subsys/net/lib/download_client/**/*"
   - "tests/subsys/bootloader/**/*"
@@ -42,5 +51,124 @@
   - "**/*partition_manager*"
 
 "CI-tfm-test":
+  - "cmake/*"
+  - "modules/nrfxlib/**/*"
   - "modules/tfm/**/*"
   - "samples/tfm/**/*"
+  - "subsys/bootloader/**/*"
+  - "subsys/partition_manager/**/*"
+  - "tests/subsys/spm/secure_services/**/*"
+
+"CI-ble-test":
+  - "subsys/bluetooth/**/*"
+  - "include/bluetooth/**/*"
+  - "samples/bluetooth/**/*"
+
+"CI-mesh-test":
+  - "subsys/bluetooth/mesh/**/*"
+  - "include/bluetooth/mesh/**/*"
+  - "tests/subsys/bluetooth/mesh/**/*"
+
+"CI-zigbee-test":
+  - "include/zigbee/**/*"
+  - "samples/zigbee/**/*"
+  - "subsys/dfu/**/*"
+  - "subsys/mpsl/**/*"
+  - "subsys/zigbee/**/*"
+
+"CI-thingy91-test":
+  - "applications/asset_tracker/**/*"
+  - "ext/cjson/**/*"
+  - "drivers/gps/gps_sim/**/*"
+  - "subsys/net/lib/nrf_cloud/**/*"
+  - "subsys/net/lib/cloud/**/*"
+  - "lib/date_time/**/*"
+  - "drivers/sensor/sensor_sim/**/*"
+  - "samples/nrf9160/udp/**/*"
+
+"CI-desktop-test":
+  - "applications/nrf_desktop/**/*"
+  - "boards/arm/*dmouse*/**/*" zigbee
+  - "boards/arm/*kbd*/**/*"
+  - "boards/arm/*dongle*/**/*"
+  - "boards/arm/*gmouse*/**/*"
+  - "cmake/*"
+  - "drivers/sensor/pmw3360/**/*"
+  - "drivers/sensor/paw3212/**/*"
+  - "dts/bindings/sensor/pixart*"
+  - "include/bluetooth/services/**/*"
+  - "include/bluetooth/*"
+  - "include/caf/**/*"
+  - "include/sensor/*"
+  - "include/event_manager.h"
+  - "include/profiler.h"
+  - "scripts/hid_configurator/**/*"
+  - "subsys/bluetooth/services/**/*"
+  - "subsys/bluetooth/*"
+  - "subsys/caf/**/*"
+  - "subsys/event_manager/**/*"
+  - "subsys/partition_manager/**/*"
+
+"CI-crypto-test":
+  - "cmake/*"
+  - "drivers/entropy/*" zigbee
+  - "drivers/hw_cc310/*"
+  - "drivers/net/*"
+  - "samples/crypto/**/*"
+  - "subsys/partition_manager/**/*"
+  - "tests/crypto/**/*"
+
+"CI-rs-test":
+  - "subsys/mpsl/**/*"
+  - "drivers/mpsl/**/*"
+  - "dts/bindings/radio_fem/**/*"
+  - "samples/nrf5340/multiprotocol_rpmsg/**/*"
+  - "modules/nrfxlib/nrf_802154/**/*"
+  - "samples/CMakeLists.txt"
+
+"CI-homekit-test":
+  - "subsys/mpsl/**/*"
+  - "drivers/mpsl/**/*"
+  - "dts/bindings/radio_fem/**/*"
+  - "modules/nrfxlib/nrf_802154/**/*"
+  - "drivers/hw_cc310/*"
+  - "subsys/bluetooth/**/*"
+  - "include/bluetooth/**/*"
+  - "samples/bluetooth/**/*"
+  - "subsys/bootloader/**/*"
+  - "subsys/partition_manager/**/*"
+  - "modules/mcuboot/**/*"
+
+"CI-thread-test":
+  - "include/openthread/**/*"
+  - "include/modem/**/*"
+  - "lib/**/*"
+  - "samples/openthread/**/*"
+  - "subsys/mpsl/**/*"
+  - "subsys/net/lib/coap_utils/**/*"
+  - "subsys/net/openthread/**/*"
+  - "subsys/net/l2/openthread/**/*"
+
+"CI-nfc-test":
+  - "subsys/nfc/**/*"
+  - "include/nfc/**/*"
+  - "lib/st25r3911b/**/*"
+  - "samples/nfc/**/*"
+  - "samples/bluetooth/peripheral_nfc_pairing/**/*"
+  - "samples/bluetooth/central_nfc_pairing/**/*"
+  - "samples/bluetooth/peripheral_hids_keyboard/**/*"
+
+"CI-chip-test":
+  - "drivers/mpsl/**/*"
+  - "drivers/hw_cc310/*"
+  - "drivers/net/*"
+  - "subsys/mpsl/**/*"
+  - "subsys/bootloader/**/*"
+  - "subsys/partition_manager/**/*"
+  - "subsys/nfc/**/*"
+  - "subsys/nrf_rpc/**/*"
+  - "subsys/net/**/*"
+  - "modules/tfm/**/*"
+  - "modules/nrfxlib/nrf_802154/**/*"
+  - "modules/mcuboot/**/*"
+  - "samples/connectedhomeip/**/*"
