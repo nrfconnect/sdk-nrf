@@ -133,6 +133,52 @@ The current |NCS| release is based on Zephyr v2.5.99.
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
+* Drivers:
+
+  * Introduced the :c:macro:`DEVICE_DT_NAME` macro that returns a string name for a given devicetree node.
+  * Introduced the :c:func:`device_usable_check` function that determines whether a device is ready for use.
+
+  * Display:
+
+    * Added a driver and a generic shield definition for Sharp memory displays of the LS0XX type.
+
+  * Flash:
+
+    * Implemented workaround for nRF52 anomaly 242 in the nRF SoC flash driver.
+    * Added automatic selection of :option:`CONFIG_MPU_ALLOW_FLASH_WRITE` when the MPU is enabled for Arm based SoCs.
+
+  * GPIO:
+
+    * Used the nrfx GPIOTE channel allocator in the nRF GPIO driver to properly track GPIOTE channel allocations made in other modules.
+
+  * IEEE 802.15.4:
+
+    * Moved all the glue code for the nRF IEEE 802.15.4 radio driver from the hal_nordic module to the main Zephyr repository.
+    * Fixed the initialization order in the ieee802154_nrf5 driver.
+    * Corrected the pool from which RX packets are allocated in the ieee802154_nrf5 driver.
+    * Added blocking on the RX packet allocation in the ieee802154_nrf5 driver to avoid dropping already acknowledged frames.
+    * Added the :option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE` option to allow loading EUI64 from UICR registers.
+
+  * Sensors:
+
+    * Reworked the BME280 sensor driver to obtain device pointers directly (used :c:macro:`DEVICE_DT_GET` instead of :c:func:`device_get_binding`).
+    * Made the QDEC nrfx driver usable on nRF5340 (added required devicetree and Kconfig entries).
+    * Fixed an out-of-bounds write on the stack in the DPS310 sensor driver.
+    * Added multi-instance support in the IIS2DLPC sensor driver.
+
+  * Serial:
+
+    * Updated the nRF UARTE driver to wait for the transmitter to go idle before powering down the UARTE peripheral in asynchronous mode.
+    * Fixed the power down routine in the nRF UARTE driver. Now the RX interrupt is properly disabled.
+    * Clarified the meaning of the ``timeout`` parameter of the :c:func:`uart_rx_enable` API function.
+
+  * USB:
+
+    * Added Kconfig configuration of the stack size for the mass storage disk operations thread (:option:`CONFIG_MASS_STORAGE_STACK_SIZE`).
+    * Added Kconfig configuration of inquiry parameters for the mass storage class (:option:`CONFIG_MASS_STORAGE_INQ_VENDOR_ID`, :option:`CONFIG_MASS_STORAGE_INQ_PRODUCT_ID`, :option:`CONFIG_MASS_STORAGE_INQ_REVISION`).
+    * Fixed handling of the OUT buffer in the Bluetooth class.
+    * Fixed a possible deadlock in :c:func:`usb_transfer_sync`.
+
 * Networking:
 
   * General:
