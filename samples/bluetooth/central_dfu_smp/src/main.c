@@ -303,8 +303,8 @@ static void smp_echo_rsp_proc(struct bt_dfu_smp *dfu_smp)
 		}
 
 		cbor_error = cbor_value_to_pretty_advance(stdout, &value);
+		fprintf(stdout, "\n");  /* Add newline and flush the stdout buffer */
 
-		printk("\n");
 		if (cbor_error != CborNoError) {
 			printk("Cannot print received CBOR stream (err: %d)\n",
 			       cbor_error);
