@@ -9,10 +9,10 @@ config PELION_CLIENT_KEEP_ALIVE_EVENTS
 	help
 	  Enable keep alive events.
 
-if PELION_CLIENT_KEEP_ALIVE_EVENTS
-
 config PELION_CLIENT_INIT_LOG_KEEP_ALIVE_EVENTS
 	bool "Log power manager keep alive events"
+	depends on LOG
+	depends on PELION_CLIENT_KEEP_ALIVE_EVENTS
+	default y
 	help
 	  Log the keep alive events.
-endif
