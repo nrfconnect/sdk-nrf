@@ -11,6 +11,7 @@ config PELION_CLIENT_POWER_MANAGER_ENABLE
 	select PM_DEVICE
 	select CAF_PM_EVENTS
 	select PELION_CLIENT_KEEP_ALIVE_EVENTS
+	select PELION_CLIENT_POWER_MANAGER_EVENTS
 	help
 	  Enable power management, which will put the device to low-power mode
 	  if it is idle.
