@@ -80,6 +80,24 @@ bool slm_util_hex_check(const uint8_t *data, uint16_t data_len)
 }
 
 /**
+ * @brief Detect hexdecimal string data type
+ */
+bool slm_util_hexstr_check(const uint8_t *data, uint16_t data_len)
+{
+	for (int i = 0; i < data_len; i++) {
+		char ch = *(data + i);
+
+		if ((ch < '0' || ch > '9') &&
+		    (ch < 'A' || ch > 'F') &&
+		    (ch < 'a' || ch > 'f')) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
  * @brief Encode hex array to hexdecimal string (ASCII text)
  */
 int slm_util_htoa(const uint8_t *hex, uint16_t hex_len,
@@ -114,6 +132,9 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len,
 		return -EINVAL;
 	}
 	if (ascii_len > (hex_len * 2)) {
+		return -EINVAL;
+	}
+	if (!slm_util_hexstr_check(ascii, ascii_len)) {
 		return -EINVAL;
 	}
 
