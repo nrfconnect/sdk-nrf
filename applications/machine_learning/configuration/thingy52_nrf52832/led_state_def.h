@@ -22,37 +22,37 @@ const struct {} led_state_def_include_once;
 /* Map function to LED ID */
 static const uint8_t led_map[] = {
 	[LED_ID_ML_STATE] = 0,
-	[LED_ID_SENSOR_SIM] = 1
+	[LED_ID_SENSOR_SIM] = LED_UNAVAILABLE,
 };
 
 static const struct led_effect ei_data_forwarder_led_effects[] = {
 	[EI_DATA_FORWARDER_STATE_DISCONNECTED]	=
-		LED_EFFECT_LED_BLINK(2000, LED_COLOR(100, 100, 100)),
+		LED_EFFECT_LED_BLINK(2000, LED_COLOR(255, 0, 0)),
 	[EI_DATA_FORWARDER_STATE_CONNECTED]	=
-		LED_EFFECT_LED_BLINK(500, LED_COLOR(100, 100, 100)),
+		LED_EFFECT_LED_BLINK(500, LED_COLOR(255, 0, 0)),
 	[EI_DATA_FORWARDER_STATE_TRANSMITTING]	=
-		LED_EFFECT_LED_BLINK(50, LED_COLOR(100, 100, 100)),
+		LED_EFFECT_LED_BLINK(50, LED_COLOR(255, 0, 0)),
 };
 
 static const struct ml_result_led_effect ml_result_led_effects[] = {
 	{
 		.label = NULL,
-		.effect = LED_EFFECT_LED_BREATH(500, LED_COLOR(100, 100, 100)),
+		.effect = LED_EFFECT_LED_BLINK(300, LED_COLOR(255, 255, 255)),
 	},
 	{
-		.label = "sine",
-		.effect = LED_EFFECT_LED_CLOCK(1, LED_COLOR(100, 100, 100)),
+		.label = "updown",
+		.effect = LED_EFFECT_LED_ON(LED_COLOR(0, 255, 0)),
 	},
 	{
-		.label = "triangle",
-		.effect = LED_EFFECT_LED_CLOCK(2, LED_COLOR(100, 100, 100)),
+		.label = "rotate",
+		.effect = LED_EFFECT_LED_ON(LED_COLOR(255, 0, 255)),
 	},
 	{
-		.label = "square",
-		.effect = LED_EFFECT_LED_CLOCK(3, LED_COLOR(100, 100, 100)),
+		.label = "tap",
+		.effect = LED_EFFECT_LED_ON(LED_COLOR(0, 0, 255)),
 	},
 	{
 		.label = "idle",
-		.effect = LED_EFFECT_LED_CLOCK(4, LED_COLOR(100, 100, 100)),
+		.effect = LED_EFFECT_LED_OFF(),
 	},
 };
