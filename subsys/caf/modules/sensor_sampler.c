@@ -8,6 +8,7 @@
 #include <drivers/sensor.h>
 
 #include <caf/events/sensor_event.h>
+#include <caf/sensor_sampler.h>
 
 #include CONFIG_CAF_SENSOR_SAMPLER_DEF_PATH
 
