@@ -41,6 +41,11 @@
   - "**/*partition_manager*/**/*"
   - "**/*partition_manager*"
 
+"CI-libmodem-test":
+  - "west.yml"
+  - "**/*partition_manager*/**/*"
+  - "**/*partition_manager*"
+
 "CI-tfm-test":
   - "modules/tfm/**/*"
   - "samples/tfm/**/*"
