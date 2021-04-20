@@ -22,6 +22,48 @@
 
 LOG_MODULE_REGISTER(lte_lc_helpers, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
+static int string_to_int(const char *str_buf, int base, int *output)
+{
+	int temp;
+	char *end_ptr;
+
+	errno = 0;
+	temp = strtol(str_buf, &end_ptr, base);
+
+	if (end_ptr == str_buf || *end_ptr != '\0' ||
+	    ((temp == LONG_MAX || temp == LONG_MIN) && errno == ERANGE)) {
+		return -ENODATA;
+	}
+
+	*output = temp;
+
+	return 0;
+}
+
+/* Converts integer on string format to integer type.
+ * Returns zero on success, otherwise negative error on failure.
+ */
+static int string_param_to_int(struct at_param_list *resp_list,
+			       size_t idx, int *output, int base)
+{
+	int err;
+	char str_buf[16];
+	size_t len = sizeof(str_buf);
+
+	err = at_params_string_get(resp_list, idx, str_buf, &len);
+	if (err) {
+		return err;
+	}
+
+	str_buf[len] = '\0';
+
+	if (string_to_int(str_buf, base, output)) {
+		return -ENODATA;
+	}
+
+	return 0;
+}
+
 /* Confirm valid system mode and set Paging Time Window multiplier.
  * Multiplier is 1.28 s for LTE-M, and 2.56 s for NB-IoT, derived from
  * Figure 10.5.5.32/3GPP TS 24.008.
@@ -41,7 +83,6 @@ static int get_ptw_multiplier(enum lte_lc_lte_mode lte_mode, float *ptw_multipli
 
 	return 0;
 }
-
 
 static int get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *edrx_value)
 {
@@ -77,6 +118,20 @@ static int get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *edr
 	*edrx_value = multiplier == 0 ? 5.12 : multiplier * 10.24;
 
 	return 0;
+}
+
+/* Counts the frequency of a character in a null-terminated string. */
+static uint32_t get_char_frequency(const char *str, char c)
+{
+	uint32_t count = 0;
+
+	do {
+		if (*str == c) {
+			count++;
+		}
+	} while (*(str++) != '\0');
+
+	return count;
 }
 
 /**@brief Helper function to check if a response is what was expected
@@ -565,5 +620,248 @@ int parse_xt3412(const char *at_response, uint64_t *time)
 
 clean_exit:
 	at_params_list_free(&resp_list);
+	return err;
+}
+
+uint32_t neighborcell_count_get(const char *at_response)
+{
+	uint32_t comma_count, ncell_elements, ncell_count;
+
+	if (at_response == NULL) {
+		LOG_ERR("at_response is NULL, can't get cell count");
+		return 0;
+	}
+
+	comma_count = get_char_frequency(at_response, ',');
+	if (comma_count < AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT) {
+		return 0;
+	}
+
+	/* Add one, as there's no comma after the last element. */
+	ncell_elements = comma_count - (AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT - 1) + 1;
+	ncell_count = ncell_elements / AT_NCELLMEAS_N_PARAMS_COUNT;
+
+	return ncell_count;
+}
+
+/* Parse NCELLMEAS notification and put information into struct lte_lc_cells_info.
+ *
+ * Returns 0 on successful cell measurements and population of struct, 1 on
+ * measurement failure, -E2BIG if not all cells were parsed due to memory
+ * limitations, otherwise negative error code.
+ */
+int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
+{
+	int err, status, tmp, len;
+	struct at_param_list resp_list;
+	char  response_prefix[sizeof(AT_NCELLMEAS_RESPONSE_PREFIX)] = {0};
+	size_t response_prefix_len = sizeof(response_prefix);
+	char tmp_str[7];
+	bool incomplete = false;
+	/* Count the actual numbers of parameters in the AT response before
+	 * allocating heap for it. This may save quite a bit of heap as the
+	 * worst case scenario is 96 elements.
+	 * 3 is added to account for the parameters that do not have a trailng
+	 * comma.
+	 */
+	size_t param_count = get_char_frequency(at_response, ',') + 3;
+
+	cells->ncells_count = 0;
+
+	err = at_params_list_init(&resp_list, param_count);
+	if (err) {
+		LOG_ERR("Could not init AT params list, error: %d", err);
+		return err;
+	}
+
+	err = at_parser_params_from_str(at_response,
+					NULL,
+					&resp_list);
+	if (err && err != -E2BIG) {
+		LOG_ERR("Could not parse AT%%XNCELLMEAS  response, error: %d", err);
+		goto clean_exit;
+	} else if (err == -E2BIG) {
+		incomplete = true;
+	}
+
+	err = at_params_string_get(&resp_list,
+				   AT_RESPONSE_PREFIX_INDEX,
+				   response_prefix,
+				   &response_prefix_len);
+	if (err) {
+		LOG_ERR("Could not get response prefix, error: %d", err);
+		goto clean_exit;
+	}
+
+	if (!response_is_valid(response_prefix, response_prefix_len,
+			       AT_NCELLMEAS_RESPONSE_PREFIX)) {
+		/* The unsolicited response is not a NCELLMEAS response, ignore it. */
+		LOG_DBG("Not a valid NCELLMEAS response");
+		goto clean_exit;
+	}
+
+	/* Status code. */
+	err = at_params_int_get(&resp_list, AT_NCELLMEAS_STATUS_INDEX, &status);
+	if (err) {
+		goto clean_exit;
+	}
+
+	if (status != AT_NCELLMEAS_STATUS_VALUE_SUCCESS) {
+		err = 1;
+		goto clean_exit;
+	}
+
+	/* Current cell ID. */
+	err = string_param_to_int(&resp_list, AT_NCELLMEAS_CELL_ID_INDEX, &tmp, 16);
+	if (err) {
+		goto clean_exit;
+	}
+
+	cells->current_cell.id = tmp;
+
+	/* PLMN */
+	len = sizeof(tmp_str);
+
+	err = at_params_string_get(&resp_list, AT_NCELLMEAS_PLMN_INDEX,
+				   tmp_str, &len);
+	if (err) {
+		goto clean_exit;
+	}
+
+	tmp_str[len] = '\0';
+
+	/* Read MNC and store as integer. The MNC starts as the fourth character
+	 * in the string, following three characters long MCC.
+	 */
+	err = string_to_int(&tmp_str[3], 10, &cells->current_cell.mnc);
+	if (err) {
+		goto clean_exit;
+	}
+
+	/* Null-terminated MCC, read and store it. */
+	tmp_str[3] = '\0';
+
+	err = string_to_int(tmp_str, 10, &cells->current_cell.mcc);
+	if (err) {
+		goto clean_exit;
+	}
+
+	/* Tracking area code. */
+	err = string_param_to_int(&resp_list, AT_NCELLMEAS_TAC_INDEX, &tmp, 16);
+	if (err) {
+		goto clean_exit;
+	}
+
+	cells->current_cell.tac = tmp;
+
+	/* Timing advance */
+	err = at_params_int_get(&resp_list, AT_NCELLMEAS_TIMING_ADV_INDEX,
+				&tmp);
+	if (err) {
+		goto clean_exit;
+	}
+
+	cells->current_cell.timing_advance = tmp;
+
+	/* EARFCN */
+	err = at_params_int_get(&resp_list, AT_NCELLMEAS_EARFCN_INDEX,
+				&cells->current_cell.earfcn);
+	if (err) {
+		goto clean_exit;
+	}
+
+	/* Physical cell ID. */
+	err = at_params_short_get(&resp_list, AT_NCELLMEAS_PHYS_CELL_ID_INDEX,
+				&cells->current_cell.phys_cell_id);
+	if (err) {
+		goto clean_exit;
+	}
+
+	/* RSRP */
+	err = at_params_int_get(&resp_list, AT_NCELLMEAS_RSRP_INDEX, &tmp);
+	if (err) {
+		goto clean_exit;
+	}
+
+	cells->current_cell.rsrp = tmp;
+
+	/* RSRQ */
+	err = at_params_int_get(&resp_list, AT_NCELLMEAS_RSRQ_INDEX, &tmp);
+	if (err) {
+		goto clean_exit;
+	}
+
+	cells->current_cell.rsrq = tmp;
+
+	/* Measurement time. */
+	err = at_params_int64_get(&resp_list, AT_NCELLMEAS_MEASUREMENT_TIME_INDEX,
+				  &cells->current_cell.measurement_time);
+	if (err) {
+		goto clean_exit;
+	}
+
+	/* Neighbor cell count. */
+	cells->ncells_count = neighborcell_count_get(at_response);
+	if (cells->ncells_count == 0) {
+		return 0;
+	}
+
+	/* Neighboring cells. */
+	for (size_t i = 0; i < cells->ncells_count; i++) {
+		size_t start_idx = AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT +
+				   i * AT_NCELLMEAS_N_PARAMS_COUNT;
+
+		/* EARFCN */
+		err = at_params_int_get(&resp_list,
+					start_idx + AT_NCELLMEAS_N_EARFCN_INDEX,
+					&cells->neighbor_cells[i].earfcn);
+		if (err) {
+			goto clean_exit;
+		}
+
+		/* Physical cell ID. */
+		err = at_params_short_get(&resp_list,
+					  start_idx + AT_NCELLMEAS_N_PHYS_CELL_ID_INDEX,
+					  &cells->neighbor_cells[i].phys_cell_id);
+		if (err) {
+			goto clean_exit;
+		}
+
+		/* RSRP */
+		err = at_params_int_get(&resp_list,
+					start_idx + AT_NCELLMEAS_N_RSRP_INDEX,
+					&tmp);
+		if (err) {
+			goto clean_exit;
+		}
+
+		cells->neighbor_cells[i].rsrp = tmp;
+
+		/* RSRQ */
+		err = at_params_int_get(&resp_list,
+					start_idx + AT_NCELLMEAS_N_RSRQ_INDEX,
+					&tmp);
+		if (err) {
+			goto clean_exit;
+		}
+
+		cells->neighbor_cells[i].rsrq = tmp;
+
+		/* Time difference. */
+		err = at_params_int_get(&resp_list,
+					start_idx + AT_NCELLMEAS_N_TIME_DIFF_INDEX,
+					&cells->neighbor_cells[i].time_diff);
+		if (err) {
+			goto clean_exit;
+		}
+	}
+
+	if (incomplete) {
+		err = -E2BIG;
+	}
+
+clean_exit:
+	at_params_list_free(&resp_list);
+
 	return err;
 }

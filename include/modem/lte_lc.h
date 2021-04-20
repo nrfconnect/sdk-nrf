@@ -163,6 +163,9 @@ enum lte_lc_evt_type {
 	 *  the TAU happens, thus saving power by avoiding sending data and the TAU separately.
 	 */
 	LTE_LC_EVT_TAU_PRE_WARNING,
+
+	/** Event containing results from neighbor cell measurements. */
+	LTE_LC_EVT_NEIGHBOR_CELL_MEAS,
 };
 
 enum lte_lc_rrc_mode {
@@ -185,8 +188,107 @@ struct lte_lc_edrx_cfg {
 };
 
 struct lte_lc_cell {
-	uint32_t id;	/* E-UTRAN cell ID */
-	uint32_t tac;	/* Tracking Area Code */
+	/** Mobile Country Code. */
+	int mcc;
+
+	/** Mobile Network Code. */
+	int mnc;
+
+	/** E-UTRAN cell ID. */
+	uint32_t id;
+
+	/** Tracking area code. */
+	uint32_t tac;
+
+	/** EARFCN of the neighbour cell, per 3GPP TS 36.101. */
+	uint32_t earfcn;
+
+	/** Timing advance decimal value.
+	 *  Range [0..20512, TIMING_ADVANCE_NOT_VALID = 65535].
+	 */
+	uint16_t timing_advance;
+
+	/** Measurement time of serving cell in milliseconds.
+	 *  Range 0 - 18 446 744 073 709 551 614 ms.
+	 */
+	uint64_t measurement_time;
+
+	/** Physical cell ID. */
+	uint16_t phys_cell_id;
+
+	/** RSRP of the neighbor celll.
+	 *  -17: RSRP < -156 dBm
+	 *  -16: -156 ≤ RSRP < -155 dBm
+	 *  ...
+	 *  -3: -143 ≤ RSRP < -142 dBm
+	 *  -2: -142 ≤ RSRP < -141 dBm
+	 *  -1: -141 ≤ RSRP < -140 dBm
+	 *  0: RSRP < -140 dBm
+	 *  1: -140 ≤ RSRP < -139 dBm
+	 *  2: -139 ≤ RSRP < -138 dBm
+	 *  ...
+	 *  95: -46 ≤ RSRP < -45 dBm
+	 *  96: -45 ≤ RSRP < -44 dBm
+	 *  97: -44 ≤ RSRP dBm
+	 *  255: not known or not detectable
+	 */
+	int16_t rsrp;
+
+	/** RSRQ of the neighbor cell.
+	 *  -30: RSRQ < -34 dB
+	 *  -29:	-34 ≤ RSRQ < -33.5 dB
+	 *  ...
+	 *  -2: -20.5 ≤ RSRQ < -20 dB
+	 *  -1:	-20 ≤ RSRQ < -19.5 dB
+	 *  0: RSRQ < -19.5 dB
+	 *  1: -19.5 ≤ RSRQ < -19 dB
+	 *  2: -19 ≤ RSRQ < -18.5 dB
+	 *  ...
+	 *  32: -4 ≤ RSRQ < -3.5 dB
+	 *  33: -3.5 ≤ RSRQ < -3 dB
+	 *  34: -3 ≤ RSRQ dB
+	 *  35: -3 ≤ RSRQ < -2.5 dB
+	 *  36: -2.5 ≤ RSRQ < -2 dB
+	 *  ...
+	 *  45: 2 ≤ RSRQ < 2.5 dB
+	 *  46: 2.5 ≤ RSRQ dB
+	 *  255: not known or not detectable.
+	 */
+	int16_t rsrq;
+};
+
+struct lte_lc_ncell {
+	/** EARFCN of the neighbour cell, per 3GPP TS 36.101. */
+	uint32_t earfcn;
+
+	/** Difference in milliseconds of serving cell and neighbor cell
+	 *  measurement, in the range -99999 ms < time_diff < 99999 ms.
+	 */
+	int time_diff;
+
+	/** Physical cell ID. */
+	uint16_t phys_cell_id;
+
+	/** RSRP of the neighbor celll. Format is the same as for RSRP member
+	 *  of struct lte_lc_cell.
+	 */
+	int16_t rsrp;
+
+	/** RSRQ of the neighbor cell. Format is the same as for RSRQ member
+	 *  of struct lte_lc_cell.
+	 */
+	int16_t rsrq;
+};
+
+/** @brief Structure containing results of neighbor cell measurements.
+ *	   The ncells_count member indicates whether or not the structure contains
+ *	   any valid cell information. If it is zero, no cells were found, and
+ *	   the information in the rest of structure members do not contain valid data.
+ */
+struct lte_lc_cells_info {
+	struct lte_lc_cell current_cell;
+	uint8_t ncells_count;
+	struct lte_lc_ncell *neighbor_cells;
 };
 
 struct lte_lc_evt {
@@ -201,6 +303,8 @@ struct lte_lc_evt {
 
 		/* Time until next Tracking Area Update in milliseconds. */
 		uint64_t time;
+
+		struct lte_lc_cells_info cells_info;
 	};
 };
 
@@ -444,6 +548,25 @@ int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
+
+/**@brief Initiate a neighbor cell measurement.
+ *	  The result of the measurement is reported back as an event of the type
+ *	  LTE_LC_EVT_NEIGHBOR_CELL_MEAS, meaning that an event handler must be
+ *	  registered to receive the information.
+ *	  Depending on the network conditions and LTE connection state, it may
+ *	  take a while before the measurement result is ready and reported back.
+ *	  After the event is received, the neighbor cell measurements
+ *	  are automatically stopped.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_neighbor_cell_measurement(void);
+
+/**@brief Cancel an ongoing neighbor cell measurement.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_neighbor_cell_measurement_cancel(void);
 
 /** @} */
 

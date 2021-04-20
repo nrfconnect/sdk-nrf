@@ -42,6 +42,7 @@ enum lte_lc_notif_type {
 	LTE_LC_NOTIF_CSCON,
 	LTE_LC_NOTIF_CEDRXP,
 	LTE_LC_NOTIF_XT3412,
+	LTE_LC_NOTIF_NCELLMEAS,
 
 	LTE_LC_NOTIF_COUNT,
 };
@@ -164,6 +165,7 @@ static const char *const at_notifs[] = {
 	[LTE_LC_NOTIF_CSCON]	= "+CSCON",
 	[LTE_LC_NOTIF_CEDRXP]	= "+CEDRXP",
 	[LTE_LC_NOTIF_XT3412]	= "%XT3412",
+	[LTE_LC_NOTIF_NCELLMEAS] = "%NCELLMEAS",
 };
 
 BUILD_ASSERT(ARRAY_SIZE(at_notifs) == LTE_LC_NOTIF_COUNT);
@@ -190,7 +192,7 @@ static void at_handler(void *context, const char *response)
 	int err;
 	bool notify = false;
 	enum lte_lc_notif_type notif_type;
-	struct lte_lc_evt evt;
+	struct lte_lc_evt evt = {0};
 
 	if (response == NULL) {
 		LOG_ERR("Response buffer is NULL-pointer");
@@ -325,6 +327,56 @@ static void at_handler(void *context, const char *response)
 		notify = true;
 
 		break;
+	case LTE_LC_NOTIF_NCELLMEAS: {
+		int ncell_count = neighborcell_count_get(response);
+		struct lte_lc_ncell *neighbor_cells;
+
+		LOG_DBG("%%NCELLMEAS notification");
+		LOG_DBG("Neighbor cell count: %d", ncell_count);
+
+		if (!evt_handler) {
+			/* No need to parse the response if there is no handler
+			 * to receive the parsed data.
+			 */
+			return;
+		}
+
+		if (ncell_count == 0) {
+			evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+			evt_handler(&evt);
+			return;
+		}
+
+		neighbor_cells = k_calloc(sizeof(struct lte_lc_ncell), ncell_count);
+		if (neighbor_cells == NULL) {
+			LOG_ERR("Failed to allocate memory for neighbor cells");
+			return;
+		}
+
+		evt.cells_info.neighbor_cells = neighbor_cells;
+
+		err = parse_ncellmeas(response, &evt.cells_info);
+
+		switch (err) {
+		case -E2BIG:
+			LOG_WRN("Not all neighbor cells could be parsed");
+			LOG_WRN("More cells than the configured max count of %d were found",
+				CONFIG_LTE_NEIGHBOR_CELLS_MAX);
+			/* Fall through */
+		case 0: /* Fall through */
+		case 1:
+			evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+			evt_handler(&evt);
+			break;
+		default:
+			LOG_ERR("Parsing of neighbour cells failed, err: %d", err);
+			break;
+		}
+
+		k_free(neighbor_cells);
+
+		return;
+	}
 	default:
 		LOG_ERR("Unrecognized notification type: %d", notif_type);
 		break;
@@ -1276,6 +1328,16 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)
 	}
 
 	return 0;
+}
+
+int lte_lc_neighbor_cell_measurement(void)
+{
+	return at_cmd_write(AT_NCELLMEAS_START, NULL, 0, NULL);
+}
+
+int lte_lc_neighbor_cell_measurement_cancel(void)
+{
+	return at_cmd_write(AT_NCELLMEAS_STOP, NULL, 0, NULL);
 }
 
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
