@@ -111,8 +111,14 @@ static int sample_sensors(int64_t *next_timeout)
 		if (sd->sample_timeout <= cur_uptime) {
 			err = sample_sensor(sd, sc);
 
+			int drops = -1;
 			while (sd->sample_timeout <= cur_uptime) {
 				sd->sample_timeout += sd->sampling_period;
+				drops++;
+			}
+
+			if (drops > 0) {
+				LOG_WRN("%d sample dropped", drops);
 			}
 		}
 
