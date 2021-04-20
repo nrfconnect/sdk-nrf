@@ -20,9 +20,11 @@
 #include <sys/util.h>
 #include <settings/settings.h>
 #include <modem/at_cmd.h>
-
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_socket.h>
+#endif
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
+#include "modem/modem_attest_token.h"
 #endif
 
 LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
@@ -34,13 +36,18 @@ LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 #endif
 #endif /* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) */
 
-#if !defined(NRF_CLOUD_CLIENT_ID)
-#define NRF_IMEI_LEN 15
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
+BUILD_ASSERT((sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1) <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
+	"CONFIG_NRF_CLOUD_CLIENT_ID must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN");
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
 #define CGSN_RESPONSE_LENGTH 19
-#define NRF_CLOUD_CLIENT_ID_LEN \
-	(sizeof(CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX) - 1 + NRF_IMEI_LEN)
-#else
-#define NRF_CLOUD_CLIENT_ID_LEN (sizeof(NRF_CLOUD_CLIENT_ID) - 1)
+#define NRF_IMEI_LEN 15
+#define IMEI_CLIENT_ID_LEN (sizeof(CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX) \
+			    - 1 + NRF_IMEI_LEN)
+BUILD_ASSERT(IMEI_CLIENT_ID_LEN <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
+	"NRF_CLOUD_CLIENT_ID_PREFIX plus IMEI must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN");
 #endif
 
 #define NRF_CLOUD_HOSTNAME CONFIG_NRF_CLOUD_HOST_NAME
@@ -53,11 +60,6 @@ LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 #endif /* defined(CONFIG_NRF_CLOUD_IPV6) */
 
 #define AWS "$aws/things/"
-#define AWS_LEN (sizeof(AWS) - 1)
-
-#define NCT_SHADOW_BASE_TOPIC AWS "%s/shadow"
-#define NCT_SHADOW_BASE_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 7)
-
 /*
  * Note that this topic is intentionally not using the AWS Shadow get/accepted
  * topic ("$aws/things/<deviceId>/shadow/get/accepted").
@@ -68,29 +70,20 @@ LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
  * device.
  */
 #define NCT_ACCEPTED_TOPIC "%s/shadow/get/accepted"
-#define NCT_ACCEPTED_TOPIC_LEN (NRF_CLOUD_CLIENT_ID_LEN + 20)
-
 #define NCT_REJECTED_TOPIC AWS "%s/shadow/get/rejected"
-#define NCT_REJECTED_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 20)
-
 #define NCT_UPDATE_DELTA_TOPIC AWS "%s/shadow/update/delta"
-#define NCT_UPDATE_DELTA_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 20)
-
 #define NCT_UPDATE_TOPIC AWS "%s/shadow/update"
-#define NCT_UPDATE_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 14)
-
 #define NCT_SHADOW_GET AWS "%s/shadow/get"
-#define NCT_SHADOW_GET_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 11)
 
-/* Buffer for keeping the client_id + \0 */
-static char client_id_buf[NRF_CLOUD_CLIENT_ID_LEN + 1];
+/* Null-terminated MQTT client ID */
+static char *client_id_buf;
+
 /* Buffers for keeping the topics for nrf_cloud */
-static char shadow_base_topic[NCT_SHADOW_BASE_TOPIC_LEN + 1];
-static char accepted_topic[NCT_ACCEPTED_TOPIC_LEN + 1];
-static char rejected_topic[NCT_REJECTED_TOPIC_LEN + 1];
-static char update_delta_topic[NCT_UPDATE_DELTA_TOPIC_LEN + 1];
-static char update_topic[NCT_UPDATE_TOPIC_LEN + 1];
-static char shadow_get_topic[NCT_SHADOW_GET_LEN + 1];
+static char *accepted_topic;
+static char *rejected_topic;
+static char *update_delta_topic;
+static char *update_topic;
+static char *shadow_get_topic;
 
 static bool initialized;
 static bool persistent_session;
@@ -129,46 +122,10 @@ static struct nct {
 	uint8_t payload_buf[CONFIG_NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN];
 } nct;
 
-static const struct mqtt_topic nct_cc_rx_list[] = {
-	{
-		.topic = {
-			.utf8 = accepted_topic,
-			.size = NCT_ACCEPTED_TOPIC_LEN
-		},
-		.qos = MQTT_QOS_1_AT_LEAST_ONCE
-	},
-	{
-		.topic = {
-			.utf8 = rejected_topic,
-			.size = NCT_REJECTED_TOPIC_LEN
-		},
-		.qos = MQTT_QOS_1_AT_LEAST_ONCE
-	},
-	{
-		.topic = {
-			.utf8 = update_delta_topic,
-			.size = NCT_UPDATE_DELTA_TOPIC_LEN
-		},
-		.qos = MQTT_QOS_1_AT_LEAST_ONCE
-	}
-};
-
-static const struct mqtt_topic nct_cc_tx_list[] = {
-	{
-		.topic = {
-			.utf8 = shadow_get_topic,
-			.size = NCT_SHADOW_GET_LEN
-		},
-		.qos = MQTT_QOS_1_AT_LEAST_ONCE
-	},
-	{
-		.topic = {
-			.utf8 = update_topic,
-			.size = NCT_UPDATE_TOPIC_LEN
-		},
-		.qos = MQTT_QOS_1_AT_LEAST_ONCE
-	}
-};
+#define CC_RX_LIST_CNT 3
+static struct mqtt_topic nct_cc_rx_list[CC_RX_LIST_CNT];
+#define CC_TX_LIST_CNT 2
+static struct mqtt_topic nct_cc_tx_list[CC_TX_LIST_CNT];
 
 static uint32_t const nct_cc_rx_opcode_map[] = {
 	NCT_CC_OPCODE_UPDATE_REQ,
@@ -296,12 +253,39 @@ static bool control_channel_topic_match(uint32_t list_id,
 	return false;
 }
 
-/* Function to get the client id */
-static int nct_client_id_get(char *id)
+static int allocate_and_copy_client_id(const char * const id)
 {
-#if !defined(NRF_CLOUD_CLIENT_ID)
-#if defined(CONFIG_NRF_MODEM_LIB)
-	char imei_buf[CGSN_RESPONSE_LENGTH + 1];
+	__ASSERT_NO_MSG(id != NULL);
+
+	size_t len = strlen(id);
+
+	if (len > NRF_CLOUD_CLIENT_ID_MAX_LEN) {
+		return -ENAMETOOLONG;
+	}
+
+	client_id_buf = nrf_cloud_calloc(len + 1, 1);
+	if (!client_id_buf) {
+		return -ENOMEM;
+	}
+
+	memcpy(client_id_buf, id, len);
+
+	LOG_DBG("client_id = %s", log_strdup(client_id_buf));
+
+	return 0;
+}
+
+/* Function to set/generate an MQTT client ID */
+static int nct_client_id_set(const char * const client_id)
+{
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME) &&
+	    client_id) {
+		LOG_WRN("Not configured to for runtime client ID, ignoring");
+	}
+
+#if (defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID) || \
+	defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI))
+	/* UUID/IMEI are obtained via AT command */
 	int err;
 
 	if (!IS_ENABLED(CONFIG_AT_CMD_SYS_INIT)) {
@@ -311,6 +295,18 @@ static int nct_client_id_get(char *id)
 			return err;
 		}
 	}
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)
+	if (client_id) {
+		return allocate_and_copy_client_id(client_id);
+	} else {
+		return -EINVAL;
+	}
+
+#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
+	char imei_buf[CGSN_RESPONSE_LENGTH + 1];
+	char id_buf[IMEI_CLIENT_ID_LEN + 1];
 
 	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
 	if (err) {
@@ -320,72 +316,150 @@ static int nct_client_id_get(char *id)
 
 	imei_buf[NRF_IMEI_LEN] = 0;
 
-	snprintf(id, NRF_CLOUD_CLIENT_ID_LEN + 1, "%s%.*s",
-		 CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX, NRF_IMEI_LEN, imei_buf);
-#else
-#error Missing NRF_CLOUD_CLIENT_ID
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
-#else
-	memcpy(id, NRF_CLOUD_CLIENT_ID, NRF_CLOUD_CLIENT_ID_LEN + 1);
-#endif /* !defined(NRF_CLOUD_CLIENT_ID) */
+	snprintf(id_buf, sizeof(id_buf), "%s%.*s",
+		 CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX,
+		 NRF_IMEI_LEN, imei_buf);
 
-	LOG_DBG("client_id = %s", log_strdup(id));
+	return allocate_and_copy_client_id(id_buf);
+
+#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
+	struct nrf_device_uuid dev_id;
+
+	err = modem_attest_token_get_uuids(&dev_id, NULL);
+	if (err) {
+		LOG_ERR("Failed to get device UUID: %d", err);
+		return err;
+	}
+
+	return allocate_and_copy_client_id(dev_id.str);
+
+#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
+	return allocate_and_copy_client_id(CONFIG_NRF_CLOUD_CLIENT_ID);
+#endif
+
+	return -ENOTRECOVERABLE;
+}
+
+static int allocate_and_format_topic(char **topic_buf, const char * const topic_template)
+{
+	int ret;
+	size_t topic_sz;
+	const size_t client_sz = strlen(client_id_buf);
+
+	topic_sz = client_sz + strlen(topic_template) - 1;
+
+	*topic_buf = nrf_cloud_calloc(topic_sz, 1);
+	if (!*topic_buf) {
+		return -ENOMEM;
+	}
+	ret = snprintf(*topic_buf, topic_sz,
+		       topic_template, client_id_buf);
+	if (ret <= 0 || ret >= topic_sz) {
+		nrf_cloud_free(*topic_buf);
+		return -EIO;
+	}
 
 	return 0;
 }
 
+static void nct_reset_topics(void)
+{
+	if (accepted_topic) {
+		nrf_cloud_free(accepted_topic);
+		accepted_topic = NULL;
+	}
+	if (rejected_topic) {
+		nrf_cloud_free(rejected_topic);
+		rejected_topic = NULL;
+	}
+	if (update_delta_topic) {
+		nrf_cloud_free(update_delta_topic);
+		update_delta_topic = NULL;
+	}
+	if (update_topic) {
+		nrf_cloud_free(update_topic);
+		update_topic = NULL;
+	}
+	if (shadow_get_topic) {
+		nrf_cloud_free(shadow_get_topic);
+		shadow_get_topic = NULL;
+	}
+
+	memset(nct_cc_rx_list, 0, sizeof(nct_cc_rx_list[0]) * CC_RX_LIST_CNT);
+	memset(nct_cc_tx_list, 0, sizeof(nct_cc_tx_list[0]) * CC_TX_LIST_CNT);
+}
+
+static void nct_topic_lists_populate(void)
+{
+	/* Add RX topics */
+	nct_cc_rx_list[0].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	nct_cc_rx_list[0].topic.utf8 = accepted_topic;
+	nct_cc_rx_list[0].topic.size = strlen(accepted_topic);
+
+	nct_cc_rx_list[1].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	nct_cc_rx_list[1].topic.utf8 = rejected_topic;
+	nct_cc_rx_list[1].topic.size = strlen(rejected_topic);
+
+	nct_cc_rx_list[2].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	nct_cc_rx_list[2].topic.utf8 = update_delta_topic;
+	nct_cc_rx_list[2].topic.size = strlen(update_delta_topic);
+
+	/* Add TX topics */
+	nct_cc_tx_list[0].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	nct_cc_tx_list[0].topic.utf8 = shadow_get_topic;
+	nct_cc_tx_list[0].topic.size = strlen(shadow_get_topic);
+
+	nct_cc_tx_list[1].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	nct_cc_tx_list[1].topic.utf8 = update_topic;
+	nct_cc_tx_list[1].topic.size = strlen(update_topic);
+}
+
 static int nct_topics_populate(void)
 {
+	if (!client_id_buf) {
+		return -ENODEV;
+	}
+
 	int ret;
 
-	ret = nct_client_id_get(client_id_buf);
-	if (ret != 0) {
-		return ret;
+	nct_reset_topics();
+
+	ret = allocate_and_format_topic(&accepted_topic, NCT_ACCEPTED_TOPIC);
+	if (ret) {
+		goto err_cleanup;
+	}
+	ret = allocate_and_format_topic(&rejected_topic, NCT_REJECTED_TOPIC);
+	if (ret) {
+		goto err_cleanup;
+	}
+	ret = allocate_and_format_topic(&update_delta_topic, NCT_UPDATE_DELTA_TOPIC);
+	if (ret) {
+		goto err_cleanup;
+	}
+	ret = allocate_and_format_topic(&update_topic, NCT_UPDATE_TOPIC);
+	if (ret) {
+		goto err_cleanup;
+	}
+	ret = allocate_and_format_topic(&shadow_get_topic, NCT_SHADOW_GET);
+	if (ret) {
+		goto err_cleanup;
 	}
 
-	ret = snprintf(shadow_base_topic, sizeof(shadow_base_topic),
-		       NCT_SHADOW_BASE_TOPIC, client_id_buf);
-	if (ret != NCT_SHADOW_BASE_TOPIC_LEN) {
-		return -ENOMEM;
-	}
-	LOG_DBG("shadow_base_topic: %s", log_strdup(shadow_base_topic));
-
-	ret = snprintf(accepted_topic, sizeof(accepted_topic),
-		       NCT_ACCEPTED_TOPIC, client_id_buf);
-	if (ret != NCT_ACCEPTED_TOPIC_LEN) {
-		return -ENOMEM;
-	}
 	LOG_DBG("accepted_topic: %s", log_strdup(accepted_topic));
-
-	ret = snprintf(rejected_topic, sizeof(rejected_topic),
-		       NCT_REJECTED_TOPIC, client_id_buf);
-	if (ret != NCT_REJECTED_TOPIC_LEN) {
-		return -ENOMEM;
-	}
 	LOG_DBG("rejected_topic: %s", log_strdup(rejected_topic));
-
-	ret = snprintf(update_delta_topic, sizeof(update_delta_topic),
-		       NCT_UPDATE_DELTA_TOPIC, client_id_buf);
-	if (ret != NCT_UPDATE_DELTA_TOPIC_LEN) {
-		return -ENOMEM;
-	}
 	LOG_DBG("update_delta_topic: %s", log_strdup(update_delta_topic));
-
-	ret = snprintf(update_topic, sizeof(update_topic), NCT_UPDATE_TOPIC,
-		       client_id_buf);
-	if (ret != NCT_UPDATE_TOPIC_LEN) {
-		return -ENOMEM;
-	}
 	LOG_DBG("update_topic: %s", log_strdup(update_topic));
-
-	ret = snprintf(shadow_get_topic, sizeof(shadow_get_topic),
-		       NCT_SHADOW_GET, client_id_buf);
-	if (ret != NCT_SHADOW_GET_LEN) {
-		return -ENOMEM;
-	}
 	LOG_DBG("shadow_get_topic: %s", log_strdup(shadow_get_topic));
 
+	/* Populate RX and TX topic lists */
+	nct_topic_lists_populate();
+
 	return 0;
+
+err_cleanup:
+	LOG_ERR("Failed to format MQTT topics, err: %d", ret);
+	nct_reset_topics();
+	return ret;
 }
 
 /* Provisions root CA certificate using modem_key_mgmt API */
@@ -834,9 +908,14 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	}
 }
 
-int nct_init(void)
+int nct_init(const char * const client_id)
 {
 	int err;
+
+	err = nct_client_id_set(client_id);
+	if (err) {
+		return err;
+	}
 
 	err = nct_settings_init();
 	if (err) {
