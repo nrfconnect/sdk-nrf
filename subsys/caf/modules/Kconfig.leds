@@ -7,11 +7,25 @@
 menuconfig CAF_LEDS
 	bool "LEDs module"
 	select CAF_LED_EVENTS
-	depends on LED_PWM
+	depends on LED
 	help
 	  Enable LED hardware interface.
 
 if CAF_LEDS
+
+choice
+	prompt "Select LED driver"
+	default CAF_LEDS_PWM
+
+config CAF_LEDS_PWM
+	bool "PWM"
+	depends on LED_PWM
+
+config CAF_LEDS_GPIO
+	bool "GPIO"
+	depends on LED_GPIO
+
+endchoice
 
 config CAF_LEDS_PM_EVENTS
 	bool "Power management events support"

@@ -32,7 +32,15 @@ struct led {
 	struct k_delayed_work work;
 };
 
-#define DT_DRV_COMPAT pwm_leds
+#ifdef CONFIG_CAF_LEDS_PWM
+  #define DT_DRV_COMPAT pwm_leds
+  #define DEFAULT_LABEL(id) STRINGIFY(_CONCAT(LED_PWM_, id))
+#elif defined(CONFIG_CAF_LEDS_GPIO)
+  #define DT_DRV_COMPAT gpio_leds
+  #define DEFAULT_LABEL(id) "leds"
+#else
+  #error "LED driver must be specified in configuration"
+#endif
 
 #define _LED_COLOR_ID(id) 0,
 
@@ -45,7 +53,7 @@ DT_INST_FOREACH_STATUS_OKAY(_LED_COLOR_COUNT)
 
 #define _LED_INSTANCE_DEF(id)						\
 	{								\
-		.label = DT_INST_PROP_OR(id, label, "LED_PWM_"#id),	\
+		.label = DT_INST_PROP_OR(id, label, DEFAULT_LABEL(id)),	\
 		.color_count = ARRAY_SIZE(led_colors_##id),		\
 	},
 
@@ -169,11 +177,33 @@ static void led_update(struct led *led)
 	}
 }
 
+static void verify_labels(void)
+{
+	/* Zephyr boards by default define "gpio_leds" compatible DT node called "leds". CAF LEDs
+	 * uses "leds" as a default name to get the related GPIO LED driver binding. In that case
+	 * only one CAF led instance can use the default driver device name. Using the same driver
+	 * device name by multiple instances would result in referring to improper driver device.
+	 */
+	if (IS_ENABLED(CONFIG_ASSERT) && IS_ENABLED(CONFIG_CAF_LEDS_GPIO)) {
+		size_t default_label_cnt = 0;
+
+		for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
+			if (!strcmp(leds[i].label, DEFAULT_LABEL(0))) {
+				default_label_cnt++;
+			}
+		}
+
+		__ASSERT_NO_MSG(default_label_cnt <= 1);
+	}
+}
+
 static int leds_init(void)
 {
 	int err = 0;
 
 	BUILD_ASSERT(DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT) > 0, "No LEDs defined");
+
+	verify_labels();
 
 	for (size_t i = 0; (i < ARRAY_SIZE(leds)) && !err; i++) {
 		struct led *led = &leds[i];
