@@ -58,6 +58,8 @@ static struct k_thread socket_thread;
 static at_cmd_handler_t notification_handler;
 static atomic_t shutdown_mode;
 
+/* Mutex to guard the at_cmd init from simultaneous entry. */
+static K_MUTEX_DEFINE(at_cmd_init_mutex);
 
 /* Structure holding current command. current_cmd.cmd=NULL signifies no cmd. */
 static struct cmd_item current_cmd;
@@ -452,9 +454,10 @@ void at_cmd_set_notification_handler(at_cmd_handler_t handler)
 
 static int at_cmd_driver_init(const struct device *dev)
 {
+	k_mutex_lock(&at_cmd_init_mutex, K_FOREVER);
 	static bool initialized;
-
 	if (initialized) {
+		k_mutex_unlock(&at_cmd_init_mutex);
 		return 0;
 	}
 
@@ -465,6 +468,7 @@ static int at_cmd_driver_init(const struct device *dev)
 	err = open_socket();
 	if (err) {
 		LOG_ERR("Failed to open AT socket (err:%d)", err);
+		k_mutex_unlock(&at_cmd_init_mutex);
 		return err;
 	}
 
@@ -477,9 +481,9 @@ static int at_cmd_driver_init(const struct device *dev)
 				     THREAD_PRIORITY, 0, K_NO_WAIT);
 	k_thread_name_set(socket_tid, "at_cmd_socket_thread");
 
-	initialized = true;
 	LOG_DBG("Common AT socket processing thread created");
-
+	initialized = true;
+	k_mutex_unlock(&at_cmd_init_mutex);
 	return 0;
 }
 
