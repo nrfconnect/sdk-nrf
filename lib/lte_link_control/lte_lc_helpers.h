@@ -76,6 +76,38 @@
 #define AT_XT3412_TIME_INDEX			2
 #define T3412_MAX				35712000000
 
+/* NCELLMEAS notification parameters */
+#define AT_NCELLMEAS_RESPONSE_PREFIX		"%NCELLMEAS"
+#define AT_NCELLMEAS_START			"AT%NCELLMEAS"
+#define AT_NCELLMEAS_STOP			"AT%NCELLMEASSTOP"
+#define AT_NCELLMEAS_STATUS_INDEX		1
+#define AT_NCELLMEAS_STATUS_VALUE_SUCCESS	0
+#define AT_NCELLMEAS_STATUS_VALUE_FAIL		1
+#define AT_NCELLMEAS_CELL_ID_INDEX		2
+#define AT_NCELLMEAS_PLMN_INDEX			3
+#define AT_NCELLMEAS_TAC_INDEX			4
+#define AT_NCELLMEAS_TIMING_ADV_INDEX		5
+#define AT_NCELLMEAS_EARFCN_INDEX		6
+#define AT_NCELLMEAS_PHYS_CELL_ID_INDEX		7
+#define AT_NCELLMEAS_RSRP_INDEX			8
+#define AT_NCELLMEAS_RSRQ_INDEX			9
+#define AT_NCELLMEAS_MEASUREMENT_TIME_INDEX	10
+#define AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT	11
+/* The rest of the parameters are in repeating arrays per neighboring cell.
+ * The indices below refer to their index within such a repeating array.
+ */
+#define AT_NCELLMEAS_N_EARFCN_INDEX		0
+#define AT_NCELLMEAS_N_PHYS_CELL_ID_INDEX	1
+#define AT_NCELLMEAS_N_RSRP_INDEX		2
+#define AT_NCELLMEAS_N_RSRQ_INDEX		3
+#define AT_NCELLMEAS_N_TIME_DIFF_INDEX		4
+#define AT_NCELLMEAS_N_PARAMS_COUNT		5
+#define AT_NCELLMEAS_N_MAX_ARRAY_SIZE		CONFIG_LTE_NEIGHBOR_CELLS_MAX
+
+#define AT_NCELLMEAS_PARAMS_COUNT_MAX					\
+	(AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT +				\
+	 AT_NCELLMEAS_N_PARAMS_COUNT * CONFIG_LTE_NEIGHBOR_CELLS_MAX)
+
 /* @brief Helper function to check if a response is what was expected.
  *
  * @param response Pointer to response prefix
@@ -153,3 +185,21 @@ int parse_cereg(const char *at_response,
  * @return Zero on success or (negative) error code otherwise.
  */
 int parse_xt3412(const char *at_response, uint64_t *time);
+
+/* @brief Get the number of neighboring cells reported in an NCELLMEAS response.
+ *
+ * @param at_response Pointer to buffer with AT response to parse.
+ *
+ * @return The number of neighbor cells found in the response.
+ */
+uint32_t neighborcell_count_get(const char *at_response);
+
+/* @brief Parses an NCELLMEAS notification and stores neighboring cell
+ *	  information in a struct.
+ *
+ * @param at_response Pointer to buffer with AT response.
+ * @param ncell Pointer to ncell structure.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells);

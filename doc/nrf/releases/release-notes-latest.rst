@@ -74,7 +74,8 @@ nRF9160
 
   * :ref:`lte_lc_readme` library:
 
-    * Add support for %XT3412 AT command notifications which allows the application to get pre-warnings prior to Tracking Area Updates.
+    * Added support for %XT3412 AT command notifications, which allows the application to get prewarnings before Tracking Area Updates.
+    * Added support for neighbor cell measurements.
 
   * :ref:`serial_lte_modem` application:
 

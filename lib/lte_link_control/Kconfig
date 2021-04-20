@@ -270,6 +270,19 @@ config LTE_LC_TAU_PRE_WARNING_THRESHOLD_MS
 	help
 		Minimum value of the given T3412 timer that will trigger TAU pre-warnings.
 
+config LTE_NEIGHBOR_CELLS_MAX
+	int "Max number of neighbor cells"
+	range 1 17
+	default 10
+	help
+		Maximum number of neighbor cells to allocate space for when
+		performing neighbor cell measurements.
+		Increasing the maximum number of neighbor cells requires
+		more heap space.
+		The modem can deliver information for a maximum of 17 neighbor
+		cells, so there's a trade-off between heap requirements and
+		the risk of not being able to parse all neighbor cell information.
+
 module = LTE_LINK_CONTROL
 module-dep = LOG
 module-str = LTE link control library
