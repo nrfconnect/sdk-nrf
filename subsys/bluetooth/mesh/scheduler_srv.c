@@ -693,7 +693,9 @@ static int scheduler_srv_init(struct bt_mesh_model *model)
 		 * the mesh stack, but it makes it a lot easier to extend
 		 * this model, as we won't have to support multiple extenders.
 		 */
-		bt_mesh_model_extend(model, srv->setup_mod);
+		bt_mesh_model_extend(model, bt_mesh_model_find(
+				bt_mesh_model_elem(model),
+				BT_MESH_MODEL_ID_SCHEDULER_SETUP_SRV));
 	}
 
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
