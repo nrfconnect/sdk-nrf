@@ -263,6 +263,64 @@ static void test_response_is_valid(void)
 		     "response_is_valid should have failed");
 }
 
+static void test_parse_ncellmeas(void)
+{
+	int err;
+	char *resp1 = "%NCELLMEAS: 0,\"021D140C\",\"24201\",\"0821\",65535,5300,"
+			"449,50,15,10891,5300,194,46,8,0,1650,292,60,27,24";
+	char *resp2 = "%NCELLMEAS: 1,\"021D140C\",\"24201\",\"0821\",65535,5300";
+	char *resp3 = "%NCELLMEAS: 0,\"021D140C\",\"24201\",\"0821\",65535,5300,449,50,15,10891";
+	struct lte_lc_ncell ncells[17];
+	struct lte_lc_cells_info cells = {
+		.neighbor_cells = ncells,
+	};
+
+	err = parse_ncellmeas(resp1, &cells);
+	zassert_equal(err, 0, "parse_ncellmeas failed, error: %d", err);
+	zassert_equal(cells.current_cell.mcc, 242, "Wrong MCC");
+	zassert_equal(cells.current_cell.mnc, 1, "Wrong MNC");
+	zassert_equal(cells.current_cell.tac, 2081, "Wrong TAC");
+	zassert_equal(cells.current_cell.id, 35460108, "Wrong cell ID");
+	zassert_equal(cells.current_cell.earfcn, 5300, "Wrong EARFCN");
+	zassert_equal(cells.current_cell.timing_advance, 65535, "Wrong timing advance");
+	zassert_equal(cells.current_cell.measurement_time, 10891, "Wrong measurement time");
+	zassert_equal(cells.current_cell.phys_cell_id, 449, "Wrong physical cell ID");
+	zassert_equal(cells.ncells_count, 2, "Wrong neighbor cell count");
+	zassert_equal(cells.neighbor_cells[0].earfcn, 5300, "Wrong EARFCN");
+	zassert_equal(cells.neighbor_cells[0].phys_cell_id, 194, "Wrong physical cell ID");
+	zassert_equal(cells.neighbor_cells[0].rsrp, 46, "Wrong RSRP");
+	zassert_equal(cells.neighbor_cells[0].rsrq, 8, "Wrong RSRQ");
+	zassert_equal(cells.neighbor_cells[0].time_diff, 0, "Wrong time difference");
+	zassert_equal(cells.neighbor_cells[1].earfcn, 1650, "Wrong EARFCN");
+	zassert_equal(cells.neighbor_cells[1].phys_cell_id, 292, "Wrong physical cell ID");
+	zassert_equal(cells.neighbor_cells[1].rsrp, 60, "Wrong RSRP");
+	zassert_equal(cells.neighbor_cells[1].rsrq, 27, "Wrong RSRQ");
+	zassert_equal(cells.neighbor_cells[1].time_diff, 24, "Wrong time difference");
+
+	err = parse_ncellmeas(resp2, &cells);
+	zassert_equal(err, 1, "parse_ncellmeas was expected to return 1, but returned %d", err);
+
+	err = parse_ncellmeas(resp3, &cells);
+	zassert_equal(err, 0, "parse_ncellmeas was expected to return 0, but returned %d", err);
+}
+
+static void test_neighborcell_count_get(void)
+{
+	char *resp1 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,"
+		      "1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,"
+		      "1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5";
+	char *resp2 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4";
+	char *resp3 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10";
+	char *resp4 = "%NCELLMEAS: ";
+	char *resp5 = " ";
+
+	zassert_equal(17, neighborcell_count_get(resp1), "Wrong neighbor cell count");
+	zassert_equal(3, neighborcell_count_get(resp2), "Wrong neighbor cell count");
+	zassert_equal(0, neighborcell_count_get(resp3), "Wrong neighbor cell count");
+	zassert_equal(0, neighborcell_count_get(resp4), "Wrong neighbor cell count");
+	zassert_equal(0, neighborcell_count_get(resp5), "Wrong neighbor cell count");
+}
+
 void test_main(void)
 {
 	ztest_test_suite(test_lte_lc,
@@ -270,7 +328,9 @@ void test_main(void)
 		ztest_unit_test(test_parse_cereg),
 		ztest_unit_test(test_parse_xt3412),
 		ztest_unit_test(test_parse_rrc_mode),
-		ztest_unit_test(test_response_is_valid)
+		ztest_unit_test(test_response_is_valid),
+		ztest_unit_test(test_parse_ncellmeas),
+		ztest_unit_test(test_neighborcell_count_get)
 	);
 
 	ztest_run_test_suite(test_lte_lc);
