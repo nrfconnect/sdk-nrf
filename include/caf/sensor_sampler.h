@@ -13,6 +13,22 @@ extern "C" {
 
 #include <drivers/sensor.h>
 
+enum act_type {
+	ACT_TYPE_PERC,
+	ACT_TYPE_ABS,
+};
+
+struct trigger_activation {
+	enum act_type type;
+	float thresh;
+	unsigned int timeout_ms;
+};
+
+struct trigger {
+	struct sensor_trigger cfg;
+	struct trigger_activation activation;
+};
+
 struct sampled_channel {
 	enum sensor_channel chan;
 	uint8_t data_cnt;
@@ -24,6 +40,7 @@ struct sensor_config {
 	const struct sampled_channel *chans;
 	uint8_t chan_cnt;
 	unsigned int sampling_period_ms;
+	struct trigger *trigger;
 };
 
 #ifdef __cplusplus
