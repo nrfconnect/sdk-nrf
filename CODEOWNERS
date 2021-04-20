@@ -51,6 +51,7 @@ Kconfig*                                  @tejlmand
 /include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
+/include/mpsl/                            @joerchan @carlopaparo
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
 /include/shell/                           @nordic-krch
