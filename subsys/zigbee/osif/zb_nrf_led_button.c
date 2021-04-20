@@ -200,7 +200,7 @@ zb_bool_t zb_setup_buttons_cb(zb_callback_t cb)
 	return ZB_TRUE;
 }
 
-int zb_osif_button_state(zb_uint8_t arg)
+zb_bool_t zb_osif_button_state(zb_uint8_t arg)
 {
 	uint32_t button_state, has_changed;
 	uint32_t button_mask = 0;
