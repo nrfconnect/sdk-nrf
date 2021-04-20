@@ -176,6 +176,26 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed a discovery response formatting.
     * Updated a few API functions to accept a const pointer when appropriate.
 
+
+* Libraries/subsystems:
+
+  * File systems:
+
+    * Added an :c:func:`fs_file_t_init` function for initializing :c:struct:`fs_file_t` objects.
+      All :c:struct:`fs_file_t` objects must now be initialized by calling this function before they can be used.
+    * Added an :c:func:`fs_dir_t_init` function for initializing :c:struct:`fs_dir_t` objects.
+      All :c:struct:`fs_dir_t` objects must now be initialized by calling this function before they can be used.
+    * Deprecated the :option:`CONFIG_FS_LITTLEFS_FC_MEM_POOL` option and replaced it with :option:`CONFIG_FS_LITTLEFS_FC_HEAP_SIZE`.
+
+
+  * Storage:
+
+    * :ref:`zephyr:stream_flash`:
+
+      * Fixed error handling for erase errors to not update the last erased page offset on failure.
+      * Fixed error handling to not update the stream flash contex on synchronization failure while flushing the stream.
+
+
 Project CHIP
 ============
 
