@@ -22,6 +22,7 @@
 /applications/connectivity_bridge/        @jtguggedal @nordic-auko
 /applications/machine_learning/           @pdunaj
 /applications/nrf_desktop/                @pdunaj
+/applications/pelion_client/              @pdunaj
 /applications/serial_lte_modem/           @junqingzou @lats1980 @rlubos
 # Boards
 /boards/                                  @ioannisg @anangl
@@ -71,6 +72,7 @@ Kconfig*                                  @tejlmand
 /lib/modem_key_mgmt/                      @rlubos
 /lib/multithreading_lock/                 @joerchan @carlopaparo
 /lib/pdn/                                 @lemrey @rlubos
+/lib/pelion/                              @pdunaj
 /lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
 /lib/fatal_error/                         @ioannisg
 /lib/sms/                                 @metc
