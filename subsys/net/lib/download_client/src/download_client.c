@@ -141,6 +141,24 @@ static int socket_tls_hostname_set(int fd, const char * const hostname)
 	return 0;
 }
 
+static int socket_pdn_id_set(int fd, uint8_t pdn_id)
+{
+	int err;
+	char buf[8] = {0};
+
+	(void) snprintf(buf, sizeof(buf), "pdn%d", pdn_id);
+
+	LOG_INF("Binding to PDN ID: %s", log_strdup(buf));
+	err = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &buf, strlen(buf));
+	if (err) {
+		LOG_ERR("Failed to bind socket to PDN ID %d, err %d",
+			pdn_id, errno);
+		return -ENETDOWN;
+	}
+
+	return 0;
+}
+
 static int socket_apn_set(int fd, const char *apn)
 {
 	int err;
@@ -166,22 +184,16 @@ static int socket_apn_set(int fd, const char *apn)
 	return 0;
 }
 
-static int host_lookup(const char *host, int family, const char *apn,
-		       struct sockaddr *sa)
+static int host_lookup(const char *host, int family, uint8_t pdn_id,
+		       const char *apn, struct sockaddr *sa)
 {
 	int err;
-	struct addrinfo *ai;
+	char pdnserv[4];
 	char hostname[HOSTNAME_SIZE];
+	struct addrinfo *ai;
 
 	struct addrinfo hints = {
 		.ai_family = family,
-		.ai_next = apn ?
-			&(struct addrinfo) {
-				.ai_family    = AF_LTE,
-				.ai_socktype  = SOCK_MGMT,
-				.ai_protocol  = NPROTO_PDN,
-				.ai_canonname = (char *)apn
-			} : NULL,
 	};
 
 	/* Extract the hostname, without protocol or port */
@@ -190,7 +202,23 @@ static int host_lookup(const char *host, int family, const char *apn,
 		return err;
 	}
 
-	err = getaddrinfo(hostname, NULL, &hints, &ai);
+	if (pdn_id) {
+		hints.ai_flags = AI_PDNSERV;
+		(void)snprintf(pdnserv, sizeof(pdnserv), "%d", pdn_id);
+
+		err = getaddrinfo(hostname, pdnserv, &hints, &ai);
+	} else {
+		if (apn) {
+			hints.ai_next = &(struct addrinfo) {
+				.ai_family    = AF_LTE,
+				.ai_socktype  = SOCK_MGMT,
+				.ai_protocol  = NPROTO_PDN,
+				.ai_canonname = (char *)apn
+			};
+		}
+		err = getaddrinfo(hostname, NULL, &hints, &ai);
+	}
+
 	if (err) {
 		LOG_WRN("Failed to resolve hostname %s on %s",
 			log_strdup(hostname), str_family(family));
@@ -283,6 +311,11 @@ static int client_connect(struct download_client *dl, const char *host,
 
 	if (dl->config.apn != NULL && strlen(dl->config.apn)) {
 		err = socket_apn_set(*fd, dl->config.apn);
+		if (err) {
+			goto cleanup;
+		}
+	} else if (dl->config.pdn_id) {
+		err = socket_pdn_id_set(*fd, dl->config.pdn_id);
 		if (err) {
 			goto cleanup;
 		}
@@ -621,10 +654,10 @@ int download_client_connect(struct download_client *client, const char *host,
 	err = 0;
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
-		err = host_lookup(host, AF_INET6, config->apn, &sa);
+		err = host_lookup(host, AF_INET6, config->pdn_id, config->apn, &sa);
 	}
 	if (err || !IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
-		err = host_lookup(host, AF_INET, config->apn, &sa);
+		err = host_lookup(host, AF_INET, config->pdn_id, config->apn, &sa);
 	}
 
 	if (err) {

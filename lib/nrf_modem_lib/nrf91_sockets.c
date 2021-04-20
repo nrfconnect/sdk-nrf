@@ -320,9 +320,17 @@ static int z_to_nrf_flags(int z_flags)
 
 static int z_to_nrf_addrinfo_flags(int flags)
 {
-	/* Flags not implemented.*/
-	ARG_UNUSED(flags);
-	return 0;
+	int nrf_flags = 0;
+
+	if (flags & AI_NUMERICSERV) {
+		nrf_flags |= NRF_AI_NUMERICSERV;
+	}
+
+	if (flags & AI_PDNSERV) {
+		nrf_flags |= NRF_AI_PDNSERV;
+	}
+
+	return nrf_flags;
 }
 
 static int nrf_to_z_addrinfo_flags(int flags)
