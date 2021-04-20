@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "Kconfig.pelion"
+rsource "Kconfig.net"
+rsource "Kconfig.oma_objects"
+rsource "Kconfig.led_state"
+rsource "Kconfig.dfu"
+rsource "Kconfig.power_manager"

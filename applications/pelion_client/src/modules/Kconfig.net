@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Networking"
+
+module = PELION_CLIENT_NET
+module-str = Networking module
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu
