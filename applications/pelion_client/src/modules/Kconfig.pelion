@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Pelion"
+
+config PELION_CLIENT_PAUSE_ON_DISCONNECT
+	bool "Pause Pelion on network disconnection"
+	default y
+	help
+	  When network disconnects cloud client will be paused. On reconnection
+	  it will be resumed. Note that to avoid TLS handshake on resume
+	  mbedtls must support SSL context serialization.
+
+module = PELION_CLIENT_PELION
+module-str = Pelion module
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu
