@@ -29,6 +29,11 @@ nRF9160
 
   * :ref:`lib_modem_jwt` library, which provides an API to obtain a JSON Web Token (JWT) from the modem.  Functionality requires modem firmware v1.3.0 or higher.
 
+  * :ref:`lib_modem_attest_token` library:
+
+    * The library provides an API to get an attestation token from the modem.
+    * Functionality requires modem firmware v1.3.0 or higher.
+
 * Updated:
 
   * :ref:`lib_nrf_cloud` library:

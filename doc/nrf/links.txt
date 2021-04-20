@@ -372,6 +372,8 @@
 
 .. _`J-PAKE: Password-Authenticated Key Exchange by Juggling`: https://tools.ietf.org/html/rfc8236#section-3
 
+.. _`CBOR Object Signing and Encryption (COSE)`: https://tools.ietf.org/html/rfc8152
+
 .. ### Source: pubs.opengroup.org
 
 .. _`BSD Networking Services Spec Reference`: https://pubs.opengroup.org/onlinepubs/007908799/xnsix.html
