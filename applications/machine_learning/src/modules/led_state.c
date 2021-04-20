@@ -37,6 +37,11 @@ static const char *cur_label;
 static size_t prediction_streak;
 
 
+static bool is_led_effect_blocking(const struct led_effect *le)
+{
+	return ((!le->loop_forever) && (le->step_count > 1));
+}
+
 static void clear_prediction(void)
 {
 	cur_label = NULL;
@@ -88,7 +93,7 @@ static void display_sensor_sim(const char *label)
 	}
 
 	if (sensor_sim_effect) {
-		__ASSERT_NO_MSG(sensor_sim_effect->effect.loop_forever);
+		__ASSERT_NO_MSG(!is_led_effect_blocking(&sensor_sim_effect->effect));
 		send_led_event(led_map[LED_ID_SENSOR_SIM], &sensor_sim_effect->effect);
 	}
 }
@@ -125,7 +130,7 @@ static void display_ml_result(const char *label, bool force_update)
 	ml_result_effect = new_effect;
 	send_led_event(led_map[LED_ID_ML_STATE], &ml_result_effect->effect);
 
-	if (!ml_result_effect->effect.loop_forever) {
+	if (is_led_effect_blocking(&ml_result_effect->effect)) {
 		blocking_led_effect = &ml_result_effect->effect;
 	} else {
 		blocking_led_effect = NULL;
@@ -165,7 +170,7 @@ static void update_ml_result(const char *label, float value, float anomaly)
 static void validate_configuration(void)
 {
 	BUILD_ASSERT(ARRAY_SIZE(ml_result_led_effects) >= 1);
-	__ASSERT_NO_MSG(DEFAULT_EFFECT->effect.loop_forever);
+	__ASSERT_NO_MSG(!is_led_effect_blocking(&DEFAULT_EFFECT->effect));
 	__ASSERT_NO_MSG(!DEFAULT_EFFECT->label);
 
 	for (size_t i = 1; i < ARRAY_SIZE(ml_result_led_effects); i++) {
