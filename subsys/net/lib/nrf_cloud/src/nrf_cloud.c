@@ -99,7 +99,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 	}
 
 	/* Initialize the transport. */
-	err = nct_init();
+	err = nct_init(param->client_id);
 	if (err) {
 		return err;
 	}
@@ -599,9 +599,22 @@ static void api_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 static int api_init(const struct cloud_backend *const backend,
 		cloud_evt_handler_t handler)
 {
-	const struct nrf_cloud_init_param params = {
+	struct nrf_cloud_init_param params = {
 		.event_handler = api_event_handler
 	};
+
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)
+	if (!backend->config->id || !backend->config->id_len) {
+		LOG_ERR("ID has not been set in the backend config");
+		return -EINVAL;
+	} else if (backend->config->id_len > NRF_CLOUD_CLIENT_ID_MAX_LEN) {
+		LOG_ERR("ID must not exceed %d characters",
+			NRF_CLOUD_CLIENT_ID_MAX_LEN);
+		return -EBADR;
+	}
+
+	params.client_id = backend->config->id;
+#endif
 
 	backend->config->handler = handler;
 	nrf_cloud_backend = (struct cloud_backend *)backend;
@@ -720,7 +733,6 @@ static int api_user_data_set(const struct cloud_backend *const backend,
 			 void *user_data)
 {
 	backend->config->user_data = user_data;
-
 	return 0;
 }
 

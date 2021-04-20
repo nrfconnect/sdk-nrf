@@ -37,7 +37,7 @@ If the :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabl
 When :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` is enabled, an additional event, :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING`, is sent to the application.
 The status field of :c:struct:`nrf_cloud_evt` contains the connection status that is defined by :c:enumerator:`nrf_cloud_connect_result`.
 The event :c:enumerator:`NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED` also contains additional information in the status field that is defined by :c:enumerator:`nrf_cloud_disconnect_status`.
-Additional details for :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` can be found in the :ref:`connectg_to_cloud` section.
+See :ref:`connectg_to_cloud` for additional information on :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
 When the poll thread option is used directly with the nRF Cloud library, the enumeration values are prefixed with ``NRF``.
 
 First, the library tries to establish the transport for communicating with the cloud.
@@ -47,10 +47,9 @@ The API blocks for the duration of the handshake.
 The cloud uses the certificates of the device for authentication.
 See `Updating the nRF Connect for Cloud certificate`_ and the :ref:`modem_key_mgmt` library for more information on modem credentials.
 The certificates are generated using the device ID and PIN or HWID.
-The default format for the device ID is ``nrf-<IMEI>``.
-This format is valid only for Nordic devices such as Thingy:91 or nRF9160 DK.
-For custom hardware, use a prefix other than ``nrf-`` by modifying the :option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` Kconfig option.
-To use a UUID as the device ID, set ``NRF_CLOUD_CLIENT_ID`` to the desired UUID string.
+The device ID is also the MQTT client ID.
+There are multiple configuration options for the device or client ID.
+See :ref:`config_device_id` for more information.
 
 As the next step, the API subscribes to an MQTT topic to start receiving user association requests from the cloud.
 
@@ -82,7 +81,7 @@ The chart shows the sequence of successful user association of an unassociated d
    Currently, nRF Connect for Cloud requires that communication is re-established to update the device's permission to send user data.
    The application must disconnect using :c:func:`nrf_cloud_disconnect` and then reconnect using :c:func:`nrf_cloud_connect`.
 
-When the device is successfully associated with a user on the cloud, subsequent connections to the cloud (also across power cycles) follow this sequence:
+When the device is successfully associated with a user on the cloud, subsequent connections to the cloud (also across power cycles) occur in the following sequence:
 
 .. msc::
    hscale = "1.3";
@@ -93,6 +92,19 @@ When the device is successfully associated with a user on the cloud, subsequent 
    Module>>Application      [label="NRF_CLOUD_EVT_READY"];
 
 After receiving :c:enumerator:`NRF_CLOUD_EVT_READY`, the application can start sending sensor data to the cloud.
+
+.. _config_device_id:
+
+Configuration options for device ID
+===================================
+
+* :option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` - If you enable this option, the ID is automatically generated using a prefix and the modem's IMEI (``<prefix><IMEI>``). You can configure the prefix by using :option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`. The default format of the prefix is ``nrf-`` and it is valid only for Nordic devices such as Thingy:91 or nRF9160 DK. For custom hardware, use a prefix other than ``nrf-`` by modifying :option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
+
+* :option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` - If you enable this option, the ID is automatically generated using the modem's 128-bit internal UUID, which results in a 32-character string with no hyphens. This option requires modem firmware v1.3.0 or higher.
+
+* :option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` - If you enable this option, the ID is set at compile time using the value specified by :option:`CONFIG_NRF_CLOUD_CLIENT_ID`.
+
+* :option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` - If you enable this option, the ID is set at run time. If the nRF Cloud library is used directly, set the NULL-terminated ID string in :c:struct:`nrf_cloud_init_param` when calling :c:func:`nrf_cloud_init`. If the generic Cloud API is used, set the ID in :c:struct:`cloud_backend_config` and then call :c:func:`cloud_init`.
 
 .. _lib_nrf_cloud_fota:
 
@@ -142,7 +154,7 @@ Use :c:func:`nrf_cloud_sensor_data_stream` to send sensor data with best quality
 
 Before sending any sensor data, call the function :c:func:`nrf_cloud_sensor_attach` with the type of the sensor.
 Note that this function must be called after receiving the event :c:enumerator:`NRF_CLOUD_EVT_READY`.
-It triggers the event :c:enumerator:`NRF_CLOUD_EVT_SENSOR_ATTACHED` if the execution was successful.
+It triggers the event :c:enumerator:`NRF_CLOUD_EVT_SENSOR_ATTACHED` if the function executes successfully.
 
 .. _lib_nrf_cloud_unlink:
 
@@ -195,45 +207,38 @@ Connecting to the Cloud
 =======================
 
 The nRF Cloud library offers two ways to handle backend connections when the :c:func:`cloud_connect` function is called.
-If the :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled, a cloud backend thread monitors the connection socket.
-If the option is not enabled, the user application is responsible for monitoring the socket.
+If you enable the :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option, a cloud backend thread monitors the connection socket.
+If you disable the option, the user application must monitor the socket.
 
 The dual functionalities of the :c:func:`cloud_connect` function in the two scenarios are described below:
 
-:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` enabled
-   Function does not block and returns success if the connection monitoring thread has started.
-   Below are some of the error codes that can be returned:
+* :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` - If you enable this option, the function does not block and returns success if the connection monitoring thread has started. Below are some of the error codes that can be returned:
 
    * :c:enumerator:`CLOUD_CONNECT_RES_ERR_NOT_INITD` - Cloud backend is not initialized
    * :c:enumerator:`CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED` - Connection process has already been started
 
-   Upon success, the monitoring thread sends an event of type :c:enumerator:`CLOUD_EVT_CONNECTING` to the user’s cloud event handler, with the ``err`` field set to success.
-   If an error occurs, another event of the same type is sent, with the ``err`` field set to indicate the cause.
-   These additional errors are described in the following section.
+  Upon success, the monitoring thread sends an event of type :c:enumerator:`CLOUD_EVT_CONNECTING` to the user’s cloud event handler, with the ``err`` field set to success. If an error occurs, another event of the same type is sent, with the ``err`` field set to indicate the cause. These additional errors are described in the following section.
 
-:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` disabled
-   Function blocks and returns success when the MQTT connection to the cloud has completed.
-   The connection socket is set in the backend binding and it becomes available for the application to use.
-   Below are some of the error codes that can be returned:
+* :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` - If you disable this option, the function blocks and returns success when the MQTT connection to the cloud completes. The connection socket is set in the backend binding and it becomes available for the application to use. Below are some of the error codes that can be returned:
 
-   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_NOT_INITD`
-   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_NETWORK`: Host cannot be found with the available network interfaces
-   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_BACKEND`: A backend-specific error; In the case of nRF Connect for Cloud, this can indicate a FOTA initialization error
-   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_MISC`: Error cause cannot be determined
-   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_NO_MEM`: MQTT RX/TX buffers were not initialized
-   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_PRV_KEY`: Invalid private key
-   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_CERT`: Invalid CA or client certificate
-   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_CERT_MISC`: Miscellaneous certificate error
-   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA`: Timeout; typically occurs when the inserted SIM card has no data
+   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_NOT_INITD`.
+   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_NETWORK` - Host cannot be found with the available network interfaces.
+   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_BACKEND` - A backend-specific error. In the case of nRF Connect for Cloud, this can indicate a FOTA initialization error.
+   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_MISC` -  Error cause cannot be determined.
+   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_NO_MEM` - MQTT RX/TX buffers were not initialized.
+   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_PRV_KEY` - Invalid private key.
+   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_CERT` - Invalid CA or client certificate.
+   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_CERT_MISC` - Miscellaneous certificate error.
+   * :c:enumerator:`CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA` - Timeout. Typically occurs when the inserted SIM card has no data.
 
   For both connection methods, when a device with JITP certificates attempts to connect to nRF Connect for Cloud for the first time, the cloud rejects the connection attempt so that it can provision the device.
   When this occurs, the Cloud API generates a :c:enumerator:`CLOUD_EVT_DISCONNECTED` event with the ``err`` field set to :c:enumerator:`CLOUD_DISCONNECT_INVALID_REQUEST`.
-  The device should restart the connection process upon receipt of the :c:enumerator:`CLOUD_EVT_DISCONNECTED` event.
+  The device must restart the connection process upon receipt of the :c:enumerator:`CLOUD_EVT_DISCONNECTED` event.
 
 Connected to the Cloud
 ======================
 
-When the connection between the device and the cloud has been successfully established, the Cloud API dispatches a :c:enumerator:`CLOUD_EVT_CONNECTED` event.
+When the device connects to the cloud successfully, the Cloud API dispatches a :c:enumerator:`CLOUD_EVT_CONNECTED` event.
 If the device is not associated with an nRF Connect for Cloud account, a :c:enumerator:`CLOUD_EVT_PAIR_REQUEST` event is generated.
 The device must wait until it is added to an account, which is indicated by the :c:enumerator:`CLOUD_EVT_PAIR_DONE` event.
 If a device pair request is received, the device must disconnect and reconnect after receiving the :c:enumerator:`CLOUD_EVT_PAIR_DONE` event.
@@ -248,9 +253,9 @@ A successful disconnection is indicated by the :c:enumerator:`CLOUD_EVT_DISCONNE
 The ``err`` field in the event message is set to :c:enumerator:`CLOUD_DISCONNECT_USER_REQUEST`.
 If an unexpected disconnect event is received, the ``err`` field contains the cause.
 If :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` is not enabled, the only cause of disconnection is :c:enumerator:`CLOUD_DISCONNECT_MISC`.
-The user application should use the connection socket to determine a reason.
+The user application must use the connection socket to determine a reason.
 
-If the socket is being monitored by the backend thread, the following causes of disconnection can occur:
+The following events can cause disconnection if the backend thread is monitoring the socket:
 
 * :c:enumerator:`CLOUD_DISCONNECT_CLOSED_BY_REMOTE` - The connection was closed by the cloud (POLLHUP).
 * :c:enumerator:`CLOUD_DISCONNECT_INVALID_REQUEST` - The connection is no longer valid (POLLNVAL).

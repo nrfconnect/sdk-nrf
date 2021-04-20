@@ -31,6 +31,8 @@ extern "C" {
 
 #define NRF_CLOUD_SETTINGS_NAME "nrf_cloud"
 
+#define NRF_CLOUD_CLIENT_ID_MAX_LEN 64
+
 /** @brief Asynchronous nRF Cloud events notified by the module. */
 enum nrf_cloud_evt_type {
 	/** The transport to the nRF Cloud is established. */
@@ -216,6 +218,12 @@ typedef void (*nrf_cloud_event_handler_t)(const struct nrf_cloud_evt *evt);
 struct nrf_cloud_init_param {
 	/** Event handler that is registered with the module. */
 	nrf_cloud_event_handler_t event_handler;
+	/** NULL-terminated MQTT client ID string.
+	 * Must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN.
+	 * Must be set if NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
+	 * is enabled; otherwise, NULL.
+	 */
+	char *client_id;
 };
 
 /**

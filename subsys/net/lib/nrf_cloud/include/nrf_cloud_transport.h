@@ -61,7 +61,7 @@ struct nct_evt {
 int nct_socket_get(void);
 
 /**@brief Initialization routine for the transport. */
-int nct_init(void);
+int nct_init(const char * const client_id);
 
 /**@brief Establishes the transport connection. */
 int nct_connect(void);
