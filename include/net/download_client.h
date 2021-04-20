@@ -94,8 +94,14 @@ struct download_client_cfg {
 	/** Access point name identifying a packet data network.
 	 *  Pass a null-terminated string with the APN
 	 *  or NULL to use the default APN.
+	 *  @deprecated Specify a PDN ID instead.
 	 */
 	const char *apn;
+	/**
+	 * PDN ID to be used for the download.
+	 * Zero is the default PDN.
+	 */
+	uint8_t pdn_id;
 	/** Maximum fragment size to download. 0 indicates that Kconfigured
 	 *  values shall be used.
 	 */
