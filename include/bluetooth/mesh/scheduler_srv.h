@@ -84,8 +84,6 @@ struct bt_mesh_scheduler_srv {
 	};
 	/** Composition data model pointer. */
 	struct bt_mesh_model *model;
-	/** Composition data setup model pointer. */
-	struct bt_mesh_model *setup_mod;
 	/** Publication state. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */
