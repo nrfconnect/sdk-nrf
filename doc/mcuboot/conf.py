@@ -39,7 +39,11 @@ html_theme_options = {"docsets": utils.get_docsets("mcuboot")}
 
 # Options for intersphinx ------------------------------------------------------
 
-intersphinx_mapping = {"kconfig": utils.get_intersphinx_mapping("kconfig")}
+intersphinx_mapping = dict()
+
+kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
+if kconfig_mapping:
+    intersphinx_mapping["kconfig"] = kconfig_mapping
 
 
 def setup(app):
