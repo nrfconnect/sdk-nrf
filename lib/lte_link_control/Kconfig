@@ -283,6 +283,28 @@ config LTE_NEIGHBOR_CELLS_MAX
 		cells, so there's a trade-off between heap requirements and
 		the risk of not being able to parse all neighbor cell information.
 
+config LTE_LC_MODEM_SLEEP_NOTIFICATIONS
+	bool "Modem sleep notifications"
+	help
+		If this option is enabled the application will get notifications when the modem
+		enters and exits sleep. The application will also get pre-warning notifications
+		prior to when the modem exits sleep depending on the configured pre-warning time.
+
+config LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS
+	int "Modem sleep pre-warning time"
+	range 500 3600000
+	default 5000
+	help
+		Time before modem exits sleep that a pre-warning is to be received.
+
+config LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS
+	int "Modem sleep notifications threshold"
+	range 10240 3456000000
+	default 1200000
+	help
+		Minimum value of the duration of the scheduled modem sleep that triggers a
+		notification.
+
 module = LTE_LINK_CONTROL
 module-dep = LOG
 module-str = LTE link control library

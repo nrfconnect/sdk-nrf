@@ -231,6 +231,48 @@ void test_parse_xt3412(void)
 	zassert_equal(-EINVAL, err, "parse_xt3412 failed, error: %d", err);
 }
 
+void test_parse_xmodemsleep(void)
+{
+	int err;
+	struct lte_lc_modem_sleep modem_sleep;
+	char *at_response_0 = "%XMODEMSLEEP: 1,36000";
+	char *at_response_1 = "%XMODEMSLEEP: 1,35712000000";
+	char *at_response_2 = "%XMODEMSLEEP: 2,100400";
+	char *at_response_3 = "%XMODEMSLEEP: 4";
+	char *at_response_4 = "%XMODEMSLEEP: 4,0";
+
+	err = parse_xmodemsleep(at_response_0, &modem_sleep);
+	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
+	zassert_equal(modem_sleep.type, 1, "Wrong modem sleep type parameter");
+	zassert_equal(modem_sleep.time, 36000, "Wrong modem sleep time parameter");
+
+	err = parse_xmodemsleep(at_response_1, &modem_sleep);
+	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
+	zassert_equal(modem_sleep.type, 1, "Wrong modem sleep type parameter");
+	zassert_equal(modem_sleep.time, 35712000000, "Wrong modem sleep time parameter");
+
+	err = parse_xmodemsleep(at_response_2, &modem_sleep);
+	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
+	zassert_equal(modem_sleep.type, 2, "Wrong modem sleep type parameter");
+	zassert_equal(modem_sleep.time, 100400, "Wrong modem sleep time parameter");
+
+	err = parse_xmodemsleep(at_response_3, &modem_sleep);
+	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
+	zassert_equal(modem_sleep.type, 4, "Wrong modem sleep type parameter");
+	zassert_equal(modem_sleep.time, -1, "Wrong modem sleep time parameter");
+
+	err = parse_xmodemsleep(at_response_4, &modem_sleep);
+	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
+	zassert_equal(modem_sleep.type, 4, "Wrong modem sleep type parameter");
+	zassert_equal(modem_sleep.time, 0, "Wrong modem sleep time parameter");
+
+	err = parse_xmodemsleep(NULL, &modem_sleep);
+	zassert_equal(-EINVAL, err, "parse_xmodemsleep failed, error: %d", err);
+
+	err = parse_xmodemsleep(at_response_0, NULL);
+	zassert_equal(-EINVAL, err, "parse_xmodemsleep failed, error: %d", err);
+}
+
 static void test_parse_rrc_mode(void)
 {
 	int err;
@@ -327,6 +369,7 @@ void test_main(void)
 		ztest_unit_test(test_parse_edrx),
 		ztest_unit_test(test_parse_cereg),
 		ztest_unit_test(test_parse_xt3412),
+		ztest_unit_test(test_parse_xmodemsleep),
 		ztest_unit_test(test_parse_rrc_mode),
 		ztest_unit_test(test_response_is_valid),
 		ztest_unit_test(test_parse_ncellmeas),

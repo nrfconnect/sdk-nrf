@@ -32,6 +32,7 @@ config AT_CMD_THREAD_PRIO
 
 config AT_CMD_THREAD_STACK_SIZE
 	int "AT thread stack size"
+	default 1472 if LTE_LINK_CONTROL
 	default 1344
 
 config AT_CMD_QUEUE_LEN

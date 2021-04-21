@@ -166,6 +166,21 @@ enum lte_lc_evt_type {
 
 	/** Event containing results from neighbor cell measurements. */
 	LTE_LC_EVT_NEIGHBOR_CELL_MEAS,
+
+	/** Modem sleep pre-warning
+	 *  This event will be received a configurable amount of time before the modem exits sleep.
+	 *  The time parameter associated with this event signifies the time until modem exits
+	 *  sleep.
+	 */
+	LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING,
+
+	/** This event will be received when the modem exits sleep. */
+	LTE_LC_EVT_MODEM_SLEEP_EXIT,
+
+	/** This event will be received when the modem enters sleep.
+	 *  The time parameter associated with this event signifies the duration of the sleep.
+	 */
+	LTE_LC_EVT_MODEM_SLEEP_ENTER,
 };
 
 enum lte_lc_rrc_mode {
@@ -291,6 +306,19 @@ struct lte_lc_cells_info {
 	struct lte_lc_ncell *neighbor_cells;
 };
 
+enum lte_lc_modem_sleep_type {
+	LTE_LC_MODEM_SLEEP_PSM			= 1,
+	LTE_LC_MODEM_SLEEP_RF_INACTIVITY	= 2,	/* For example eDRX */
+	LTE_LC_MODEM_SLEEP_FLIGHT_MODE		= 4,
+};
+
+struct lte_lc_modem_sleep {
+	enum lte_lc_modem_sleep_type type;
+
+	/* If this value is set to -1. Sleep is considered infinite. */
+	int64_t time;
+};
+
 struct lte_lc_evt {
 	enum lte_lc_evt_type type;
 	union {
@@ -300,6 +328,7 @@ struct lte_lc_evt {
 		struct lte_lc_edrx_cfg edrx_cfg;
 		struct lte_lc_cell cell;
 		enum lte_lc_lte_mode lte_mode;
+		struct lte_lc_modem_sleep modem_sleep;
 
 		/* Time until next Tracking Area Update in milliseconds. */
 		uint64_t time;

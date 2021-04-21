@@ -76,6 +76,7 @@ nRF9160
 
     * Added support for %XT3412 AT command notifications, which allows the application to get prewarnings before Tracking Area Updates.
     * Added support for neighbor cell measurements.
+    * Added support for %XMODEMSLEEP AT command notifications which allows the application to get notifications related to modem sleep.
 
   * :ref:`serial_lte_modem` application:
 
