@@ -76,7 +76,7 @@ set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
 file(MAKE_DIRECTORY ${HTML_DIR})
 
 # Known issues script
-set(KI_SCRIPT ${ZEPHYR_BASE}/scripts/filter-known-issues.py)
+set(KI_SCRIPT ${NRF_BASE}/doc/scripts/filter-known-issues.py)
 
 #
 # Add the 'zephyr' target for building the Zephyr documentation. We reuse
