@@ -39,7 +39,7 @@ html_show_sourcelink = True
 html_logo = None
 
 html_context = {
-    "show_license": html_show_license,
+    "show_license": True,
     "docs_title": docs_title,
     "is_release": is_release,
 }
