@@ -209,7 +209,8 @@ static char *get_current_version(void)
 static bool is_update(void)
 {
 	return strncmp(get_current_version(), fota_object.version,
-		       strlen(get_current_version())) != 0;
+		       MAX(strlen(get_current_version()),
+			   strlen(fota_object.version))) != 0;
 }
 
 static bool is_new_job(void)
