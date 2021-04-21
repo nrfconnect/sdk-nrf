@@ -189,7 +189,7 @@ add_custom_target(
 set(NRF_EXTRACT_CONTENT_COMMAND
   ${CMAKE_COMMAND} -E env
   ZEPHYR_BASE=${NRF_BASE}
-  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/extract_content.py
+  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/_scripts/extract_content.py
   --outputs ${NRF_CONTENT_OUTPUTS}
   --ignore ${CMAKE_CURRENT_BINARY_DIR}
   --sphinx-src-root ${NRF_DOC_DIR}
@@ -283,7 +283,7 @@ set(MCUBOOT_EXTRACT_CONTENT_COMMAND
  ${CMAKE_COMMAND} -E env
   ZEPHYR_BASE=${NRF_BASE}
   ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/extract_content.py
+  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/_scripts/extract_content.py
   --ignore ${CMAKE_CURRENT_BINARY_DIR}
   "*:doc/mcuboot:${MCUBOOT_RST_OUT}"
 )
@@ -366,7 +366,7 @@ set(NRFXLIB_EXTRACT_CONTENT_COMMAND
  ${CMAKE_COMMAND} -E env
   ZEPHYR_BASE=${NRFXLIB_BASE}
   ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/extract_content.py
+  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/_scripts/extract_content.py
   --ignore ${CMAKE_CURRENT_BINARY_DIR}
   "*.rst:.:${NRFXLIB_RST_OUT}"
   "*:doc:${NRFXLIB_RST_OUT}"
@@ -450,7 +450,7 @@ add_custom_target(
     KCONFIG_DOC_MODE=1
     ${ZEPHYR_KCONFIG_MODULES}
       ${PYTHON_EXECUTABLE}
-        ${ZEPHYR_BASE}/doc/scripts/gen_kconfig_rest.py ${KCONFIG_RST_OUT}
+        ${ZEPHYR_BASE}/doc/_scripts/gen_kconfig_rest.py ${KCONFIG_RST_OUT}
         --separate-all-index
         --modules Zephyr,zephyr,${ZEPHYR_BASE}
                   nRF,nrf,${NRF_BASE}
