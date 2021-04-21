@@ -108,6 +108,12 @@
 	(AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT +				\
 	 AT_NCELLMEAS_N_PARAMS_COUNT * CONFIG_LTE_NEIGHBOR_CELLS_MAX)
 
+/* XMODEMSLEEP command parameters. */
+#define AT_XMODEMSLEEP_SUB			"AT%%XMODEMSLEEP=1,%d,%d"
+#define AT_XMODEMSLEEP_PARAMS_COUNT_MAX		4
+#define AT_XMODEMSLEEP_TYPE_INDEX		1
+#define AT_XMODEMSLEEP_TIME_INDEX		2
+
 /* @brief Helper function to check if a response is what was expected.
  *
  * @param response Pointer to response prefix
@@ -203,3 +209,14 @@ uint32_t neighborcell_count_get(const char *at_response);
  * @return Zero on success or (negative) error code otherwise.
  */
 int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells);
+
+/* @brief Parses an XMODEMSLEEP response and extracts the sleep type and time.
+ *
+ * @note If the time parameter -1 after this API call, time shall be considered infinite.
+ *
+ * @param at_response Pointer to buffer with AT response.
+ * @param modem_sleep Pointer to a structure holding modem sleep data.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_sleep);

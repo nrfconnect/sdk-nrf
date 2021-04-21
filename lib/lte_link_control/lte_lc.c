@@ -43,6 +43,7 @@ enum lte_lc_notif_type {
 	LTE_LC_NOTIF_CEDRXP,
 	LTE_LC_NOTIF_XT3412,
 	LTE_LC_NOTIF_NCELLMEAS,
+	LTE_LC_NOTIF_XMODEMSLEEP,
 
 	LTE_LC_NOTIF_COUNT,
 };
@@ -161,11 +162,12 @@ static const char thingy91_magpio[] = {
 static struct k_sem link;
 
 static const char *const at_notifs[] = {
-	[LTE_LC_NOTIF_CEREG]	= "+CEREG",
-	[LTE_LC_NOTIF_CSCON]	= "+CSCON",
-	[LTE_LC_NOTIF_CEDRXP]	= "+CEDRXP",
-	[LTE_LC_NOTIF_XT3412]	= "%XT3412",
-	[LTE_LC_NOTIF_NCELLMEAS] = "%NCELLMEAS",
+	[LTE_LC_NOTIF_CEREG]	   = "+CEREG",
+	[LTE_LC_NOTIF_CSCON]	   = "+CSCON",
+	[LTE_LC_NOTIF_CEDRXP]	   = "+CEDRXP",
+	[LTE_LC_NOTIF_XT3412]	   = "%XT3412",
+	[LTE_LC_NOTIF_NCELLMEAS]   = "%NCELLMEAS",
+	[LTE_LC_NOTIF_XMODEMSLEEP] = "%XMODEMSLEEP",
 };
 
 BUILD_ASSERT(ARRAY_SIZE(at_notifs) == LTE_LC_NOTIF_COUNT);
@@ -317,7 +319,7 @@ static void at_handler(void *context, const char *response)
 		}
 
 		if (evt.time != CONFIG_LTE_LC_TAU_PRE_WARNING_TIME_MS) {
-			/* Only propagate TAU pre-warning notifications when the received <time>
+			/* Only propagate TAU pre-warning notifications when the received time
 			 * parameter is the duration of the set pre-warning time.
 			 */
 			return;
@@ -377,6 +379,36 @@ static void at_handler(void *context, const char *response)
 
 		return;
 	}
+	case LTE_LC_NOTIF_XMODEMSLEEP:
+		LOG_DBG("%%XMODEMSLEEP notification");
+
+		err = parse_xmodemsleep(response, &evt.modem_sleep);
+		if (err) {
+			LOG_ERR("Can't parse modem sleep pre-warning notification, error: %d", err);
+			return;
+		}
+
+		/* Link controller only supports PSM, RF inactivity and flight mode
+		 * modem sleep types.
+		 */
+		if ((evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_PSM) &&
+		    (evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_RF_INACTIVITY) &&
+		    (evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_FLIGHT_MODE)) {
+			return;
+		}
+
+		/* Propagate the appropriate event depending on the parsed time parameter. */
+		if (evt.modem_sleep.time == CONFIG_LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS) {
+			evt.type = LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING;
+		} else if (evt.modem_sleep.time == 0) {
+			evt.type = LTE_LC_EVT_MODEM_SLEEP_EXIT;
+		} else {
+			evt.type = LTE_LC_EVT_MODEM_SLEEP_ENTER;
+		}
+
+		notify = true;
+
+		break;
 	default:
 		LOG_ERR("Unrecognized notification type: %d", notif_type);
 		break;
@@ -390,7 +422,7 @@ static void at_handler(void *context, const char *response)
 static int enable_notifications(void)
 {
 	int err;
-	char xt3412_sub[35];
+	char buf_sub[35];
 
 	/* +CEREG notifications, level 5 */
 	err = at_cmd_write(cereg_5_subscribe, NULL, 0, NULL);
@@ -400,16 +432,31 @@ static int enable_notifications(void)
 	}
 
 	if (IS_ENABLED(CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS)) {
-		snprintk(xt3412_sub,
-			 sizeof(xt3412_sub),
+		snprintk(buf_sub,
+			 sizeof(buf_sub),
 			 AT_XT3412_SUB,
 			 CONFIG_LTE_LC_TAU_PRE_WARNING_TIME_MS,
 			 CONFIG_LTE_LC_TAU_PRE_WARNING_THRESHOLD_MS);
 
 		/* %XT3412 notifications subscribe */
-		err = at_cmd_write(xt3412_sub, NULL, 0, NULL);
+		err = at_cmd_write(buf_sub, NULL, 0, NULL);
 		if (err) {
 			LOG_ERR("Failed to subscribe to XT3412 notifications");
+			return err;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS)) {
+		snprintk(buf_sub,
+			 sizeof(buf_sub),
+			 AT_XMODEMSLEEP_SUB,
+			 CONFIG_LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS,
+			 CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS);
+
+		/* %XMODEMSLEEP notifications subscribe */
+		err = at_cmd_write(buf_sub, NULL, 0, NULL);
+		if (err) {
+			LOG_ERR("Failed to subscribe to XMODEMSLEEP notifications");
 			return err;
 		}
 	}

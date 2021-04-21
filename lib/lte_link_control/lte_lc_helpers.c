@@ -865,3 +865,50 @@ clean_exit:
 
 	return err;
 }
+
+int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_sleep)
+{
+	int err;
+	struct at_param_list resp_list = {0};
+	uint16_t type;
+
+	if (modem_sleep == NULL || at_response == NULL) {
+		return -EINVAL;
+	}
+
+	err = at_params_list_init(&resp_list, AT_XMODEMSLEEP_PARAMS_COUNT_MAX);
+	if (err) {
+		LOG_ERR("Could not init AT params list, error: %d", err);
+		return err;
+	}
+
+	/* Parse XMODEMSLEEP response and populate AT parameter list */
+	err = at_parser_params_from_str(at_response, NULL, &resp_list);
+	if (err) {
+		LOG_ERR("Could not parse %%XMODEMSLEEP response, error: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_unsigned_short_get(&resp_list, AT_XMODEMSLEEP_TYPE_INDEX, &type);
+	if (err) {
+		LOG_ERR("Could not get mode sleep type, error: %d", err);
+		goto clean_exit;
+	}
+	modem_sleep->type = type;
+
+	/* If the time parameter is not present sleep time is considered infinite. */
+	if (at_params_valid_count_get(&resp_list) < AT_XMODEMSLEEP_PARAMS_COUNT_MAX - 1) {
+		modem_sleep->time = -1;
+		goto clean_exit;
+	}
+
+	err = at_params_int64_get(&resp_list, AT_XMODEMSLEEP_TIME_INDEX, &modem_sleep->time);
+	if (err) {
+		LOG_ERR("Could not get time until next modem sleep, error: %d", err);
+		goto clean_exit;
+	}
+
+clean_exit:
+	at_params_list_free(&resp_list);
+	return err;
+}
