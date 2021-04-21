@@ -45,14 +45,14 @@
 
 &i2c0 {
 	status = "okay";
-	sda-gpios = <&gpio1 13 0>;
-	scl-gpios = <&gpio1 15 0>;
+	sda-pin = <45>;
+	scl-pin = <47>;
 };
 
 &i2c1 {
 	status = "okay";
-	sda-gpios = <&gpio0 6 0>;
-	scl-gpios = <&gpio0 8 0>;
+	sda-pin = <6>;
+	scl-pin = <8>;
 };
 
 &spi1 {
