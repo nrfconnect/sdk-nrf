@@ -82,7 +82,8 @@ def get_intersphinx_mapping(docset: str) -> Optional[Tuple[str, str]]:
     """
 
     outputdir = get_outputdir(docset)
-    if not outputdir.exists():
+    inventory = outputdir / "objects.inv"
+    if not inventory.exists():
         return
 
-    return (str(Path("..") / docset), str(outputdir / "objects.inv"))
+    return (str(Path("..") / docset), str(inventory))
