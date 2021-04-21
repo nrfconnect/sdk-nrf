@@ -107,8 +107,8 @@
 &i2c2 {
 	compatible = "nordic,nrf-twim";
 	status = "okay";
-	sda-gpios = <&gpio0 11 0>;
-	scl-gpios = <&gpio0 12 0>;
+	sda-pin = <11>;
+	scl-pin = <12>;
 	clock-frequency = <I2C_BITRATE_FAST>;
 
 	bme680@76 {
