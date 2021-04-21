@@ -32,7 +32,7 @@ copyright = "2019-2021, Nordic Semiconductor"
 author = "Nordic Semiconductor"
 version = release = "1.5.99"
 
-sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "extensions"))
+sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "scripts" / "sphinx_extensions"))
 
 extensions = [
