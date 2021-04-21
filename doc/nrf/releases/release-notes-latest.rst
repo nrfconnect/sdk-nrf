@@ -30,6 +30,10 @@ There are no entries for this section yet.
 nRF9160
 =======
 
+* Added:
+
+  * :ref:`lib_modem_jwt` library, which provides an API to obtain a JSON Web Token (JWT) from the modem.  Functionality requires modem firmware v1.3.0 or higher.
+
 * Updated:
 
   * :ref:`lib_nrf_cloud` library:
