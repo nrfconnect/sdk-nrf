@@ -32,5 +32,6 @@ rsource "edge_impulse/Kconfig"
 rsource "wave_gen/Kconfig"
 rsource "hw_unique_key/Kconfig"
 rsource "pelion/Kconfig"
+rsource "modem_jwt/Kconfig"
 
 endmenu

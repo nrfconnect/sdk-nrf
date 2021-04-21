@@ -80,6 +80,7 @@ Kconfig*                                  @tejlmand
 /lib/date_time/                           @simensrostad
 /lib/wave_gen/                            @MarekPieta
 /lib/hw_unique_key/                       @Vge0rge
+/lib/modem_jwt/                           @jayteemo
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @nvlsianpu
 /samples/sensor/bh1749/                   @wlgrd
