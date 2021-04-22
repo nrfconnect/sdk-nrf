@@ -369,9 +369,26 @@ static int sat_srv_settings_set(struct bt_mesh_model *model, const char *name,
 	return 0;
 }
 
+static void sat_srv_reset(struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_sat_srv *srv = model->user_data;
+
+	srv->range.min = BT_MESH_LIGHT_HSL_MIN;
+	srv->range.max = BT_MESH_LIGHT_HSL_MAX;
+	srv->last = 0;
+	srv->dflt = 0;
+
+	net_buf_simple_reset(srv->pub.msg);
+
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		(void)bt_mesh_model_data_store(srv->model, false, NULL, NULL, 0);
+	}
+}
+
 const struct bt_mesh_model_cb _bt_mesh_light_sat_srv_cb = {
 	.init = sat_srv_init,
 	.settings_set = sat_srv_settings_set,
+	.reset = sat_srv_reset,
 };
 
 void bt_mesh_light_sat_srv_set(struct bt_mesh_light_sat_srv *srv,
