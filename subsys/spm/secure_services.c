@@ -5,7 +5,7 @@
  */
 #include <zephyr.h>
 #include <errno.h>
-#include <cortex_m/tz.h>
+#include <aarch32/cortex_m/tz.h>
 #include <power/reboot.h>
 #include <sys/util.h>
 #include <autoconf.h>

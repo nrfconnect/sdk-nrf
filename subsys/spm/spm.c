@@ -20,7 +20,7 @@
 
 /* Include required APIs for TrustZone-M */
 #include <arm_cmse.h>
-#include <cortex_m/tz.h>
+#include <aarch32/cortex_m/tz.h>
 
 #include <nrfx.h>
 
