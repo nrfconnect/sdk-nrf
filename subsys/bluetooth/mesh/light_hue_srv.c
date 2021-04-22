@@ -214,6 +214,8 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	srv->handlers->set(srv, NULL, &set, &status);
 	srv->last = hue;
 
+	store(srv);
+
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
 
 	if (rsp) {
@@ -240,6 +242,8 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	srv->handlers->delta_set(srv, ctx, &delta, &status);
 	srv->last = status.target;
 
+	store(srv);
+
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
 
 	if (rsp) {
@@ -263,6 +267,9 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	};
 
 	srv->handlers->move_set(srv, ctx, &move, &status);
+	srv->last = status.target;
+
+	store(srv);
 
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
 
