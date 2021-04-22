@@ -6,7 +6,7 @@
 
 menu "Peripheral CPU DFU (PCD)"
 
-menuconfig PCD
+config PCD
 	bool "Peripheral CPU DFU Support"
 	default y if SOC_NRF5340_CPUNET && IS_SECURE_BOOTLOADER
 	default y if SOC_SERIES_NRF53X && MCUBOOT && BT_RPMSG_NRF53
