@@ -440,10 +440,10 @@ static void num_comp_reply(bool accept)
 {
 	if (accept) {
 		bt_conn_auth_passkey_confirm(auth_conn);
-		LOG_INF("Numeric Match, conn %p", auth_conn);
+		LOG_INF("Numeric Match, conn %p", (void *)auth_conn);
 	} else {
 		bt_conn_auth_cancel(auth_conn);
-		LOG_INF("Numeric Reject, conn %p", auth_conn);
+		LOG_INF("Numeric Reject, conn %p", (void *)auth_conn);
 	}
 
 	bt_conn_unref(auth_conn);
