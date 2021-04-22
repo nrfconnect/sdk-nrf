@@ -105,18 +105,25 @@ static const char *lit_attrid[BT_ANCS_NOTIF_ATTR_COUNT] = {
  */
 static const char *lit_appid[BT_ANCS_APP_ATTR_COUNT] = { "Display Name" };
 
+static void bt_ancs_notification_source_handler(struct bt_ancs_client *ancs_c,
+		int err, const struct bt_ancs_evt_notif *notif);
+static void bt_ancs_data_source_handler(struct bt_ancs_client *ancs_c,
+		const struct bt_ancs_attr_response *response);
+
 static void enable_notifications(void)
 {
 	int err;
 
 	if (has_ancs && bt_conn_get_security(ancs_c.conn) >= BT_SECURITY_L2) {
-		err = bt_ancs_subscribe_notification_source(&ancs_c);
+		err = bt_ancs_subscribe_notification_source(&ancs_c,
+				bt_ancs_notification_source_handler);
 		if (err) {
 			printk("Failed to enable Notification Source notification (err %d)\n",
 			       err);
 		}
 
-		err = bt_ancs_subscribe_data_source(&ancs_c);
+		err = bt_ancs_subscribe_data_source(&ancs_c,
+				bt_ancs_data_source_handler);
 		if (err) {
 			printk("Failed to enable Data Source notification (err %d)\n",
 			       err);
@@ -363,29 +370,30 @@ static void err_code_print(uint8_t err_code_np)
 	}
 }
 
-static void bt_ancs_evt_handler(const struct bt_ancs_evt *evt)
+static void bt_ancs_notification_source_handler(struct bt_ancs_client *ancs_c,
+		int err, const struct bt_ancs_evt_notif *notif)
 {
-	switch (evt->evt_type) {
-	case BT_ANCS_EVT_NOTIF:
-		notification_latest = evt->notif;
+	if (!err) {
+		notification_latest = *notif;
 		notif_print(&notification_latest);
-		break;
+	}
+}
 
-	case BT_ANCS_EVT_NOTIF_ATTRIBUTE:
-		notif_attr_latest = evt->attr;
+static void bt_ancs_data_source_handler(struct bt_ancs_client *ancs_c,
+		const struct bt_ancs_attr_response *response)
+{
+	switch (response->command_id) {
+	case BT_ANCS_COMMAND_ID_GET_NOTIF_ATTRIBUTES:
+		notif_attr_latest = response->attr;
 		notif_attr_print(&notif_attr_latest);
-		if (evt->attr.attr_id ==
+		if (response->attr.attr_id ==
 		    BT_ANCS_NOTIF_ATTR_ID_APP_IDENTIFIER) {
-			notif_attr_app_id_latest = evt->attr;
+			notif_attr_app_id_latest = response->attr;
 		}
 		break;
 
-	case BT_ANCS_EVT_APP_ATTRIBUTE:
-		app_attr_print(&evt->attr);
-		break;
-
-	case BT_ANCS_EVT_NP_ERROR:
-		err_code_print(evt->err_code_np);
+	case BT_ANCS_COMMAND_ID_GET_APP_ATTRIBUTES:
+		app_attr_print(&response->attr);
 		break;
 
 	default:
@@ -394,11 +402,17 @@ static void bt_ancs_evt_handler(const struct bt_ancs_evt *evt)
 	}
 }
 
+static void bt_ancs_write_response_handler(struct bt_ancs_client *ancs_c,
+					   uint8_t err)
+{
+	err_code_print(err);
+}
+
 static int ancs_c_init(void)
 {
 	int err;
 
-	err = bt_ancs_client_init(&ancs_c, bt_ancs_evt_handler);
+	err = bt_ancs_client_init(&ancs_c);
 	if (err) {
 		return err;
 	}
@@ -472,7 +486,8 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 	int err;
 
 	if (buttons & KEY_REQ_NOTI_ATTR) {
-		err = bt_ancs_request_attrs(&ancs_c, &notification_latest);
+		err = bt_ancs_request_attrs(&ancs_c, &notification_latest,
+					    bt_ancs_write_response_handler);
 		if (err) {
 			printk("Failed requesting attributes for a notification (err: %d)\n",
 			       err);
@@ -487,7 +502,8 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 			       notif_attr_app_id_latest.attr_data);
 			err = bt_ancs_request_app_attr(
 				&ancs_c, notif_attr_app_id_latest.attr_data,
-				notif_attr_app_id_latest.attr_len);
+				notif_attr_app_id_latest.attr_len,
+				bt_ancs_write_response_handler);
 			if (err) {
 				printk("Failed requesting attributes for a given app (err: %d)\n",
 				       err);
@@ -500,7 +516,8 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 			printk("Performing Positive Action.\n");
 			err = bt_ancs_notification_action(
 				&ancs_c, notification_latest.notif_uid,
-				BT_ANCS_ACTION_ID_POSITIVE);
+				BT_ANCS_ACTION_ID_POSITIVE,
+				bt_ancs_write_response_handler);
 			if (err) {
 				printk("Failed performing action (err: %d)\n",
 				       err);
@@ -513,7 +530,8 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 			printk("Performing Negative Action.\n");
 			err = bt_ancs_notification_action(
 				&ancs_c, notification_latest.notif_uid,
-				BT_ANCS_ACTION_ID_NEGATIVE);
+				BT_ANCS_ACTION_ID_NEGATIVE,
+				bt_ancs_write_response_handler);
 			if (err) {
 				printk("Failed performing action (err: %d)\n",
 				       err);
