@@ -69,7 +69,7 @@ if (CONFIG_BUILD_S1_VARIANT AND
       DEPENDS ${${link_variant}prebuilt}
       )
 
-    set(${link_variant}generated_kernel_files ${link_variant}isr_tables.c)
+    list(APPEND ${link_variant}generated_kernel_files ${link_variant}isr_tables.c)
   endif()
 
   add_custom_command(
@@ -82,7 +82,7 @@ if (CONFIG_BUILD_S1_VARIANT AND
     --zephyr-base ${ZEPHYR_BASE}
     DEPENDS $<TARGET_FILE:${${link_variant}prebuilt}>
     )
-  set(${link_variant}generated_kernel_files ${link_variant}dev_handles.c)
+  list(APPEND ${link_variant}generated_kernel_files ${link_variant}dev_handles.c)
 
   configure_linker_script(
     ${link_variant}linker.cmd
