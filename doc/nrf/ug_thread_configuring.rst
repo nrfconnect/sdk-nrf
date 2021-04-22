@@ -167,7 +167,7 @@ The following options are available:
 * Trigger by Command Line Interface commands.
   In this case, the shell stack size must be increased to at least 3 KB by setting the following option:
 
-  * :option:`CONFIG_SHELL_STACK_SIZE` to ``3072``.
+  * :option:`CONFIG_SHELL_STACK_SIZE` to ``3168``.
 
 For more details about the commissioning process, see `Thread Commissioning on OpenThread portal`_.
 

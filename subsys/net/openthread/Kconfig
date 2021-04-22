@@ -49,10 +49,15 @@ config OPENTHREAD_MBEDTLS_LIB_NAME
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_oberon" if OBERON_BACKEND
 	default "mbedtls_common" if OPENTHREAD_NRF_SECURITY
 
+config OPENTHREAD_THREAD_STACK_SIZE
+	int "OpenThread thread stack size"
+	default 6240 if OPENTHREAD_COMMISSIONER || OPENTHREAD_JOINER
+	default 3168
+
 config OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE
 	int "OpenThread radio transmit workqueue stack size"
-	default 700 if SOC_NRF5340_CPUAPP
-	default 640
+	default 796 if SOC_NRF5340_CPUAPP
+	default 736
 
 choice CC3XX_LOCK_VARIANT
 	default CC3XX_ATOMIC_LOCK if SOC_NRF52840
