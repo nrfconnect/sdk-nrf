@@ -26,6 +26,13 @@ if (CONFIG_SPM)
         )
   endif()
 
+  if (CONFIG_BOARD_ENABLE_CPUNET)
+      add_overlay_config(
+        spm
+        ${NRF_DIR}/samples/spm/spm_enable_cpunet.conf
+        )
+  endif()
+
   add_child_image(
     NAME spm
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/spm
