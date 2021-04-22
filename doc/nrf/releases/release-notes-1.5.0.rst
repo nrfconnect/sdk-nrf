@@ -772,7 +772,7 @@ The following list summarizes the most important changes inherited from upstream
       * :option:`CONFIG_OPENTHREAD_LOG_PREPEND_LEVEL_ENABLE`
       * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_ACK_TIMEOUT_ENABLE`
       * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_RETRANSMIT_ENABLE`
-      * :option:`CONFIG_OPENTHREAD_PLATFORM_USEC_TIMER_ENABLE`
+      * ``CONFIG_OPENTHREAD_PLATFORM_USEC_TIMER_ENABLE``
       * :option:`CONFIG_OPENTHREAD_RADIO_LINK_IEEE_802_15_4_ENABLE`
       * :option:`CONFIG_OPENTHREAD_RADIO_LINK_TREL_ENABLE`
       * :option:`CONFIG_OPENTHREAD_CSL_SAMPLE_WINDOW`
@@ -914,7 +914,7 @@ The following list summarizes the most important changes inherited from upstream
 * USB:
 
   * Fixed the handling of zero-length packet (ZLP) in the nRF USB Device Controller Driver.
-  * Changed the USB DFU wait delay to be configurable with Kconfig (:option:`CONFIG_USB_DFU_WAIT_DELAY_MS`).
+  * Changed the USB DFU wait delay to be configurable with Kconfig (``CONFIG_USB_DFU_WAIT_DELAY_MS``).
 
 Additions specific to |NCS|
 +++++++++++++++++++++++++++
