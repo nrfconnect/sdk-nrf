@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 
-#include <caf/events/button_event.h>
+#include <caf/events/click_event.h>
 #include "ml_state_event.h"
 
 #define MODULE ml_state
@@ -35,9 +35,10 @@ static void broadcast_state(void)
 	EVENT_SUBMIT(event);
 }
 
-static bool handle_button_event(const struct button_event *event)
+static bool handle_click_event(const struct click_event *event)
 {
-	if ((event->key_id == STATE_CONTROL_BUTTON_ID) && event->pressed) {
+	if ((event->key_id == STATE_CONTROL_BUTTON_ID) &&
+	    (event->click == CLICK_LONG)) {
 		switch (state) {
 		case ML_STATE_DATA_FORWARDING:
 			state = ML_STATE_MODEL_RUNNING;
@@ -61,8 +62,9 @@ static bool handle_button_event(const struct button_event *event)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if (STATE_CONTROL && is_button_event(eh)) {
-		return handle_button_event(cast_button_event(eh));
+	if (STATE_CONTROL &&
+	    is_click_event(eh)) {
+		return handle_click_event(cast_click_event(eh));
 	}
 
 	if (is_module_state_event(eh)) {
@@ -89,5 +91,5 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if STATE_CONTROL
-EVENT_SUBSCRIBE(MODULE, button_event);
+EVENT_SUBSCRIBE(MODULE, click_event);
 #endif /* STATE_CONTROL */
