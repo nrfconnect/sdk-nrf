@@ -584,10 +584,22 @@ static int bt_mesh_light_xyl_srv_start(struct bt_mesh_model *model)
 	return 0;
 }
 
+static void bt_mesh_light_xyl_srv_reset(struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+
+	net_buf_simple_reset(srv->pub.msg);
+
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		(void)bt_mesh_model_data_store(srv->model, false, NULL, NULL, 0);
+	}
+}
+
 const struct bt_mesh_model_cb _bt_mesh_light_xyl_srv_cb = {
 	.init = bt_mesh_light_xyl_srv_init,
 	.start = bt_mesh_light_xyl_srv_start,
 	.settings_set = bt_mesh_light_xyl_srv_settings_set,
+	.reset = bt_mesh_light_xyl_srv_reset,
 };
 
 int bt_mesh_light_xyl_srv_pub(struct bt_mesh_light_xyl_srv *srv,
