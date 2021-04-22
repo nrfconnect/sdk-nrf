@@ -232,7 +232,7 @@
 .. _`nRF Util`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_nrfutil%2FUG%2Fnrfutil%2Fnrfutil_intro.html
 .. _`DFU over Zigbee`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_zigbee.html
 
-.. _`nRF Thread Topology Monitor`: https://infocenter.nordicsemi.com/topic/sdk_tz_v4.1.0/thread_topology_monitor.html
+.. _`nRF Thread Topology Monitor`: https://infocenter.nordicsemi.com/topic/ug_nrf_ttm/UG/nrf_ttm/ttm_introduction.html
 .. _`nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`: https://infocenter.nordicsemi.com/topic/sdk_tz_v4.1.0/nrf802154_sniffer.html
 
 .. _`Power Profiler Kit II (PPK2)`: https://infocenter.nordicsemi.com/topic/ug_ppk2/UG/ppk/PPK_user_guide_Intro.html
