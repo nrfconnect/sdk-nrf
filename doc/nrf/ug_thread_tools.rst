@@ -7,16 +7,27 @@ Thread tools
    :local:
    :depth: 2
 
-When working with Thread in |NCS|, you can use the following tools during Thread application development:
+The tools listed on this page can be helpful when developing your Thread application with the |NCS|.
 
-* `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ - Tool for analyzing network traffic during development.
-* `nRF Thread Topology Monitor`_ - This desktop application helps to visualize the current network topology.
-* :ref:`ug_thread_tools_tbr`
-* :ref:`ug_thread_tools_wpantund`
-* :ref:`ug_thread_tools_pyspinel`
-* :ref:`ug_thread_tools_ot_apps`
+.. _ug_thread_tools_sniffer:
 
-Using Thread tools is optional.
+nRF Sniffer for 802.15.4
+************************
+
+The nRF Sniffer for 802.15.4 is a tool for learning about and debugging applications that are using protocols based on IEEE 802.15.4, like Thread or Zigbee.
+It provides a near real-time display of 802.15.4 packets that are sent back and forth between devices, even when the link is encrypted.
+
+See `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ for documentation.
+
+.. _ug_thread_tools_ttm:
+
+nRF Thread Topology Monitor
+***************************
+
+nRF Thread Topology Monitor is a desktop application that connects to a Thread network through a serial connection to visualize the topology of Thread devices.
+It allows you to scan for new devices in real time, check their parameters, and inspect network processes through the log.
+
+See `nRF Thread Topology Monitor`_ for documentation.
 
 .. _ug_thread_tools_tbr:
 
