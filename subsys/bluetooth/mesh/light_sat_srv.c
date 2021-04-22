@@ -208,7 +208,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 
 	uint16_t sat = LVL_TO_SAT(lvl_set->lvl);
 
-	set.lvl = sat;
+	set.lvl = MIN(MAX(sat, srv->range.min), srv->range.max);
 	set.transition = lvl_set->transition;
 	bt_mesh_light_sat_srv_set(srv, ctx, &set, &status);
 
