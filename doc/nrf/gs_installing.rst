@@ -564,7 +564,7 @@ The default build environment for |NCS| is SES.
 However, you can also build and program your application from the command line.
 You have to set up your build environment by defining the required environment variables every time you open a new command prompt or terminal window.
 
-See :ref:`zephyr:env_vars_important` for more information about the various relevant environment variables.
+See :ref:`zephyr:important-build-vars` for more information about the various relevant environment variables.
 
 Define the required environment variables as follows, depending on your operating system:
 
@@ -576,7 +576,7 @@ Define the required environment variables as follows, depending on your operatin
 
       If you need to define additional environment variables, create the file ``%userprofile%\zephyrrc.cmd`` and add the variables there.
       This file is loaded automatically when you run the above command.
-      See :ref:`zephyr:zephyr-env` for more information.
+      See :ref:`zephyr:env_vars_zephyrrc` for more information.
 
    .. group-tab:: Linux
 
@@ -584,7 +584,7 @@ Define the required environment variables as follows, depending on your operatin
 
       If you need to define additional environment variables, create the file ``~/.zephyrrc`` and add the variables there.
       This file is loaded automatically when you run the above command.
-      See :ref:`zephyr:zephyr-env` for more information.
+      See :ref:`zephyr:env_vars_zephyrrc` for more information.
 
 
    .. group-tab:: macOS
@@ -593,7 +593,7 @@ Define the required environment variables as follows, depending on your operatin
 
       If you need to define additional environment variables, create the file ``~/.zephyrrc`` and add the variables there.
       This file is loaded automatically when you run the above command.
-      See :ref:`zephyr:zephyr-env` for more information.
+      See :ref:`zephyr:env_vars_zephyrrc` for more information.
 
 You must also make sure that nrfjprog (part of the `nRF Command Line Tools`_) is installed and its path is added to the environment variables.
 The west command programs the kit by using nrfjprog by default.
