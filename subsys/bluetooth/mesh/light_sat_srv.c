@@ -210,8 +210,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 
 	set.lvl = sat;
 	set.transition = lvl_set->transition;
-	srv->handlers->set(srv, NULL, &set, &status);
-	srv->last = sat;
+	bt_mesh_light_sat_srv_set(srv, ctx, &set, &status);
 
 	(void)bt_mesh_light_sat_srv_pub(srv, NULL, &status);
 
