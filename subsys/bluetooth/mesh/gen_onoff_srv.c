@@ -148,16 +148,18 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 }
 
 static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
-		       size_t len, struct bt_mesh_model_transition *transition)
+			 size_t len, struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_onoff_srv *srv = model->user_data;
-	struct bt_mesh_onoff_status dummy;
+	struct bt_mesh_onoff_status status = { 0 };
 	struct bt_mesh_onoff_set set = {
 		.on_off = data[0],
 		.transition = transition,
 	};
 
-	srv->handlers->set(srv, NULL, &set, &dummy);
+	srv->handlers->set(srv, NULL, &set, &status);
+
+	(void)bt_mesh_onoff_srv_pub(srv, NULL, &status);
 }
 
 static const struct bt_mesh_scene_entry_type scene_type = {
