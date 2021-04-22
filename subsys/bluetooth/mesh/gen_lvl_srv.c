@@ -248,7 +248,7 @@ const struct bt_mesh_model_op _bt_mesh_lvl_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int scene_store(struct bt_mesh_model *model, uint8_t data[])
+static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 {
 	struct bt_mesh_lvl_srv *srv = model->user_data;
 	struct bt_mesh_lvl_status status = { 0 };
@@ -265,13 +265,16 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 			 struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_lvl_srv *srv = model->user_data;
+	struct bt_mesh_lvl_status status = { 0 };
 	struct bt_mesh_lvl_set set = {
 		.lvl = sys_get_le16(data),
 		.new_transaction = true,
 		.transition = transition,
 	};
 
-	srv->handlers->set(srv, NULL, &set, NULL);
+	srv->handlers->set(srv, NULL, &set, &status);
+
+	(void)bt_mesh_lvl_srv_pub(srv, NULL, &status);
 }
 
 static const struct bt_mesh_scene_entry_type scene_type = {
