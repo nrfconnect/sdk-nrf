@@ -152,7 +152,7 @@ static ssize_t on_receive(struct bt_conn *conn,
 			  uint8_t flags)
 {
 	LOG_DBG("Received data, handle %d, conn %p, len %d",
-		attr->handle, conn, len);
+		attr->handle, (void *)conn, len);
 
 	if (len < sizeof(struct gadgets_header_base)) {
 		LOG_WRN("Unexpected length: %d", len);

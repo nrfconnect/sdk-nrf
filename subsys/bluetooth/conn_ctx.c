@@ -37,7 +37,7 @@ void *bt_conn_ctx_alloc(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn)
 
 				LOG_DBG("The memory for the connection context "
 					"has been allocated, conn %p, index: %u",
-					conn, i);
+					(void *)conn, i);
 
 				return ctx->data;
 
@@ -71,7 +71,7 @@ int bt_conn_ctx_free(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn)
 
 			LOG_DBG("The context memory for the connection "
 				"has been released, conn %p index %u",
-				conn, i);
+				(void *)conn, i);
 
 			k_mutex_unlock(ctx_lib->mutex);
 

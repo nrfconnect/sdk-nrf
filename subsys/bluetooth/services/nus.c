@@ -34,7 +34,7 @@ static ssize_t on_receive(struct bt_conn *conn,
 			  uint8_t flags)
 {
 	LOG_DBG("Received data, handle %d, conn %p",
-		attr->handle, conn);
+		attr->handle, (void *)conn);
 
 	if (nus_cb.received) {
 		nus_cb.received(conn, buf, len);
@@ -46,7 +46,7 @@ static void on_sent(struct bt_conn *conn, void *user_data)
 {
 	ARG_UNUSED(user_data);
 
-	LOG_DBG("Data send, conn %p", conn);
+	LOG_DBG("Data send, conn %p", (void *)conn);
 
 	if (nus_cb.sent) {
 		nus_cb.sent(conn);

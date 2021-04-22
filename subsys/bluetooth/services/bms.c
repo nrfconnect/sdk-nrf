@@ -257,7 +257,8 @@ static ssize_t ctrl_pt_write(struct bt_conn *conn,
 			     const void *buf,
 			     uint16_t len, uint16_t offset, uint8_t flags)
 {
-	LOG_DBG("Attribute write, handle: %u, conn: %p", attr->handle, conn);
+	LOG_DBG("Attribute write, handle: %u, conn: %p", attr->handle,
+		(void *)conn);
 
 	uint8_t *cp_proc;
 	enum bt_bms_op op_code;
@@ -347,7 +348,8 @@ static ssize_t feature_read(struct bt_conn *conn,
 			   uint16_t len,
 			   uint16_t offset)
 {
-	LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle, conn);
+	LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle,
+		(void *)conn);
 
 	uint32_t feature = feature_encode();
 	uint16_t feature_size = feature_size_get(feature);
