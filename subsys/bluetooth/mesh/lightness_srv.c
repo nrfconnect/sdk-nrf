@@ -8,7 +8,6 @@
 #include <bluetooth/mesh/lightness_srv.h>
 #include "model_utils.h"
 #include "lightness_internal.h"
-#include "gen_ponoff_internal.h"
 #include <bluetooth/mesh/light_ctrl_srv.h>
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
@@ -828,12 +827,6 @@ static int bt_mesh_lightness_srv_init(struct bt_mesh_model *model)
 
 	srv->lightness_model = model;
 
-	/* Light Lightness extend Generic Power OnOff Server, which states are
-	 * bound with Generic OnOff state, store the value of the bound state
-	 * separately, therefore they don't need to set Generic OnOff state.
-	 */
-	atomic_set_bit(&srv->ponoff.flags, GEN_PONOFF_SRV_NO_ONOFF);
-
 	lightness_srv_reset(srv);
 	srv->pub.msg = &srv->pub_buf;
 	srv->pub.update = update_handler;
@@ -932,7 +925,7 @@ static int bt_mesh_lightness_srv_start(struct bt_mesh_model *model)
 {
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 
-	if (atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_NO_START)) {
+	if (bt_mesh_model_is_extended(model)) {
 		return 0;
 	}
 

@@ -405,9 +405,6 @@ static int bt_mesh_light_ctl_srv_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
 
-	/* Disable On power up procedure on lightness server */
-	atomic_set_bit(&srv->lightness_srv.flags, LIGHTNESS_SRV_FLAG_NO_START);
-
 	/* Model extensions:
 	 * To simplify the model extension tree, we're flipping the
 	 * relationship between the Light CTL server and the Light CTL
@@ -450,10 +447,6 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *model)
 		.params = srv->temp_srv.dflt,
 		.transition = &transition,
 	};
-	struct bt_mesh_lightness_set light = {
-		.lvl = srv->lightness_srv.default_light,
-		.transition = &transition,
-	};
 
 	if (!srv->temp_srv.model ||
 	    (srv->model->elem_idx > srv->temp_srv.model->elem_idx)) {
@@ -471,22 +464,11 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *model)
 
 	case BT_MESH_ON_POWER_UP_ON:
 		bt_mesh_light_temp_srv_set(&srv->temp_srv, NULL, &temp, NULL);
-		lightness_srv_change_lvl(&srv->lightness_srv, NULL, &light,
-					 NULL);
 		break;
 
 	case BT_MESH_ON_POWER_UP_RESTORE:
 		temp.params = srv->temp_srv.last;
 		bt_mesh_light_temp_srv_set(&srv->temp_srv, NULL, &temp, NULL);
-
-		if (!atomic_test_bit(&srv->lightness_srv.flags,
-				     LIGHTNESS_SRV_FLAG_IS_ON)) {
-			break;
-		}
-
-		light.lvl = srv->lightness_srv.last;
-		lightness_srv_change_lvl(&srv->lightness_srv, NULL, &light,
-					 NULL);
 		break;
 
 	default:
