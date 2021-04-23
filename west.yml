@@ -41,7 +41,7 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154]
+  group-filter: [-homekit, -nrf-802154, -find-my]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -162,6 +162,11 @@ manifest:
       revision: 40ae4b9225f051a3e02b8d73ce80389b462fee01
       groups:
       - homekit
+    - name: find-my
+      repo-path: sdk-find-my
+      revision: c170f1f889d2abe9fcf826152c72681382e2eb35
+      groups:
+      - find-my
 
   # West-related configuration for the nrf repository.
   self:
