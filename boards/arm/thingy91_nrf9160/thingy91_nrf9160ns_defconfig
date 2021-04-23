@@ -29,7 +29,6 @@ CONFIG_I2C=y
 
 # Enable SPI
 CONFIG_SPI=y
-CONFIG_SPI_3=y
 
 # Enable power management IC ADP536x
 CONFIG_ADP536X=y
