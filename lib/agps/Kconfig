@@ -21,11 +21,12 @@ config AGPS_SRC_NRF_CLOUD
 	depends on NRF_CLOUD
 	imply NRF_CLOUD_AGPS
 	help
-	  To use nRF Cloud as A-GPS data source, a connection to nRF Cloud must
-	  already be established.
+	  To request A-GPS data from nRF Cloud via MQTT, CONFIG_NRF_CLOUD_MQTT
+	  must be enabled and the connection must already be established.
 	  When a request for A-GPS data is sent to nRF Cloud, the response will
 	  be received on the same socket as all other nRF Cloud communication,
 	  and the data will have to be processed further in the application.
+	  A-GPS data can also be requested from nRF Cloud via REST.
 
 config AGPS_SRC_SUPL
 	bool "Use SUPL as data source"

@@ -35,23 +35,26 @@ struct nrf_cloud_cell_pos_result {
 	uint32_t unc;
 };
 
-/**@brief Request a cellular positioning query from nRF Cloud.
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+/**@brief Request a cellular positioning query from nRF Cloud via MQTT.
  *
  * @param type        Type of cellular positioning request.
  * @param request_loc If true, cloud will send location to the device.
  *                    If false, cloud will not send location to the device.
- * @return 0 if successful, otherwise a (negative) error code.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_cell_pos_request(enum nrf_cloud_cell_pos_type type, const bool request_loc);
+#endif /* CONFIG_NRF_CLOUD_MQTT */
 
-/**@brief Processes cellular positioning data received from nRF Cloud.
+/**@brief Processes cellular positioning data received from nRF Cloud via MQTT or REST.
  *
  * @param buf Pointer to data received from nRF Cloud.
  * @param result Pointer to buffer for parsing result.
  *
- * @return 0 if processed successfully and cell-based location found.
- *         1 if processed successfully but no cell-based location found.
- *         otherwise a (negative) error code.
+ * @retval 0 If processed successfully and cell-based location found.
+ * @retval 1 If processed successfully but no cell-based location found.
+ *         Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_cell_pos_process(const char *buf, struct nrf_cloud_cell_pos_result *result);
 

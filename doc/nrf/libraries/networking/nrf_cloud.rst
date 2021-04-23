@@ -273,6 +273,19 @@ The following events can cause disconnection if the backend thread is monitoring
 * :c:enumerator:`CLOUD_DISCONNECT_INVALID_REQUEST` - The connection is no longer valid (POLLNVAL).
 * :c:enumerator:`CLOUD_DISCONNECT_MISC` - Miscellaneous error (POLLERR).
 
+.. _lib_nrf_cloud_location_services:
+
+Location Services
+*****************
+
+`nRF Cloud`_ offers location services that allow you to obtain the location of your device.
+The following enhancements to this library can be used to interact with `nRF Cloud Location Services`_:
+
+* Assisted GPS - :ref:`lib_nrf_cloud_agps`
+* Predicted GPS - :ref:`lib_nrf_cloud_pgps`
+* Cellular Positioning - :ref:`lib_nrf_cloud_cell_pos`
+* nRF Cloud REST  - :ref:`lib_nrf_cloud_rest`
+
 .. _nrf_cloud_api:
 
 API documentation

@@ -5,12 +5,13 @@
 #
 zephyr_library()
 zephyr_library_sources(
+	src/nrf_cloud_codec.c)
+zephyr_library_sources_ifdef(
+	CONFIG_NRF_CLOUD_MQTT
 	src/nrf_cloud.c
-	src/nrf_cloud_codec.c
 	src/nrf_cloud_fsm.c
 	src/nrf_cloud_transport.c
-	src/nrf_cloud_sanity.c
-)
+	src/nrf_cloud_sanity.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_AGPS
 	src/nrf_cloud_agps.c
@@ -27,4 +28,7 @@ zephyr_library_sources_ifdef(
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_FOTA
 	src/nrf_cloud_fota.c)
+zephyr_library_sources_ifdef(
+	CONFIG_NRF_CLOUD_REST
+	src/nrf_cloud_rest.c)
 zephyr_include_directories(./include)

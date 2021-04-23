@@ -321,7 +321,7 @@ int agps_request_send(struct nrf_modem_gnss_agps_data_frame request, int socket)
 		return err;
 	}
 
-#elif defined(CONFIG_AGPS_SRC_NRF_CLOUD)
+#elif defined(CONFIG_AGPS_SRC_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_MQTT)
 	/* Convert GNSS API A-GPS request to GPS driver A-GPS request. */
 	struct gps_agps_request agps_request;
 
@@ -345,6 +345,9 @@ int agps_request_send(struct nrf_modem_gnss_agps_data_frame request, int socket)
 		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
 		return err;
 	}
+#elif defined(CONFIG_AGPS_SRC_NRF_CLOUD) && !defined(CONFIG_NRF_CLOUD_MQTT)
+	LOG_ERR("CONFIG_NRF_CLOUD_MQTT must be enabled to make A-GPS requests");
+	return -EOPNOTSUPP;
 #endif /* CONFIG_AGPS_SRC_SUPL */
 
 	return 0;
