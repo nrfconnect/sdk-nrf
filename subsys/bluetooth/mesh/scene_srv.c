@@ -17,7 +17,6 @@
 #include "common/log.h"
 
 #define SCENE_PAGE_SIZE SETTINGS_MAX_VAL_LEN
-#define CURR_SCENE_PATH "s"
 /* Account for company ID in data: */
 #define VND_MODEL_SCENE_DATA_OVERHEAD sizeof(uint16_t)
 
@@ -106,22 +105,6 @@ static void handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_scene_srv *srv = model->user_data;
 
 	(void)scene_status_send(srv, ctx, BT_MESH_SCENE_SUCCESS);
-}
-
-static void scene_set(struct bt_mesh_scene_srv *srv, uint16_t scene)
-{
-	if (srv->next == scene) {
-		return;
-	}
-
-	srv->next = scene;
-	if (scene != BT_MESH_SCENE_NONE) {
-		(void)bt_mesh_model_data_store(srv->model, false, CURR_SCENE_PATH,
-					       &srv->next, sizeof(srv->next));
-	} else {
-		(void)bt_mesh_model_data_store(srv->model, false, CURR_SCENE_PATH,
-					       NULL, 0);
-	}
 }
 
 static void scene_recall(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -444,7 +427,7 @@ static enum bt_mesh_scene_status scene_store(struct bt_mesh_scene_srv *srv,
 		srv->all[srv->count++] = scene;
 	}
 
-	scene_set(srv, scene);
+	srv->next = scene;
 	return BT_MESH_SCENE_SUCCESS;
 }
 
@@ -470,7 +453,7 @@ static void scene_delete(struct bt_mesh_scene_srv *srv, uint16_t *scene)
 
 	if (target == *scene ||
 	    (current == *scene && target == BT_MESH_SCENE_NONE)) {
-		scene_set(srv, BT_MESH_SCENE_NONE);
+		srv->next = BT_MESH_SCENE_NONE;
 		srv->transition_end = 0U;
 		srv->prev = BT_MESH_SCENE_NONE;
 	} else if (current == *scene && target != *scene) {
@@ -607,16 +590,9 @@ static int scene_srv_set(struct bt_mesh_model *model, const char *path,
 	 * the path and whether we have started the mesh, we'll handle the data
 	 * differently:
 	 *
-	 * - Path "s": Current scene
 	 * - Path "XXXX/vYY": Scene XXXX vendor model page YY
 	 * - Path "XXXX/sYY": Scene XXXX sig model page YY
 	 */
-	if (!strcmp(path, CURR_SCENE_PATH)) {
-		(void)read_cb(cb_arg, &srv->next, sizeof(srv->next));
-		BT_DBG("Next scene 0x%x", srv->next);
-		return 0;
-	}
-
 	scene = strtol(path, NULL, 16);
 	if (scene == BT_MESH_SCENE_NONE) {
 		BT_ERR("Unknown data %s", log_strdup(path));
@@ -662,31 +638,11 @@ static int scene_srv_set(struct bt_mesh_model *model, const char *path,
 	return 0;
 }
 
-static int scene_srv_start(struct bt_mesh_model *model)
-{
-	struct bt_mesh_model_transition transition = { 0 };
-	struct bt_mesh_scene_srv *srv = model->user_data;
-
-	if (!srv->next || !scene_find(srv, srv->next)) {
-		srv->next = BT_MESH_SCENE_NONE;
-		srv->transition_end = 0;
-		return 0;
-	}
-
-	BT_DBG("Restoring active scene 0x%x", srv->next);
-
-	(void)bt_mesh_dtt_srv_transition_get(model, &transition);
-
-	(void)bt_mesh_scene_srv_set(srv, srv->next, &transition);
-
-	return 0;
-}
-
 static void scene_srv_reset(struct bt_mesh_model *model)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
 
-	scene_set(srv, BT_MESH_SCENE_NONE);
+	srv->next = BT_MESH_SCENE_NONE;
 
 	while (srv->count) {
 		scene_delete(srv, &srv->all[0]);
@@ -701,7 +657,6 @@ static void scene_srv_reset(struct bt_mesh_model *model)
 const struct bt_mesh_model_cb _bt_mesh_scene_srv_cb = {
 	.init = scene_srv_init,
 	.settings_set = scene_srv_set,
-	.start = scene_srv_start,
 	.reset = scene_srv_reset,
 };
 
@@ -785,7 +740,7 @@ void bt_mesh_scene_invalidate(struct bt_mesh_scene_entry *entry)
 
 	entry->srv->prev = BT_MESH_SCENE_NONE;
 	entry->srv->transition_end = 0U;
-	scene_set(entry->srv, BT_MESH_SCENE_NONE);
+	entry->srv->next = BT_MESH_SCENE_NONE;
 }
 
 int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
@@ -815,7 +770,7 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 		srv->transition.time = 0U;
 	}
 
-	scene_set(srv, scene);
+	srv->next = scene;
 
 	sprintf(path, "bt/mesh/s/%x/data/%x",
 		(srv->model->elem_idx << 8) | srv->model->mod_idx, scene);
