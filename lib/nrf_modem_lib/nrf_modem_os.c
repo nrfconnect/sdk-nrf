@@ -490,14 +490,14 @@ void nrf_modem_os_shm_tx_free(void *mem)
 void nrf_modem_lib_heap_diagnose(void)
 {
 	printk("nrf_modem heap dump:\n");
-	sys_heap_dump(&library_heap.heap);
+	sys_heap_print_info(&library_heap.heap, false);
 	printk("Failed allocations: %u\n", heap_diag.failed_allocs);
 }
 
 void nrf_modem_lib_shm_tx_diagnose(void)
 {
 	printk("nrf_modem tx dump:\n");
-	sys_heap_dump(&shmem_heap.heap);
+	sys_heap_print_info(&shmem_heap.heap, false);
 	printk("Failed allocations: %u\n", shmem_diag.failed_allocs);
 }
 
