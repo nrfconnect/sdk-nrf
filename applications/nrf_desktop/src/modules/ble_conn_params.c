@@ -130,7 +130,7 @@ static void update_peer_conn_params(const struct connected_peer *peer)
 				      CONN_PARAMS_ERROR_TIMEOUT);
 	} else {
 		LOG_INF("Conn params for peer: %p set: %s, latency: %"PRIu16,
-		  peer->conn,
+		  (void *)peer->conn,
 		  (IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM) && peer->llpm_support) ?
 		  "LLPM" : "BLE", latency);
 	}
