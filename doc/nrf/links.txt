@@ -567,6 +567,8 @@
 .. _`nRF Cloud Device API`:
 .. _`nRF Connect for Cloud Device API`: https://api.nrfcloud.com/v1
 
+.. _`nRF Cloud REST API`: https://nrfcloud.com/#/docs/guides/restapi
+
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 
 .. ### Source: other

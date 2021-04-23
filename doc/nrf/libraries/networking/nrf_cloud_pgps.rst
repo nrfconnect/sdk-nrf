@@ -44,6 +44,7 @@ Configure the following options to enable or disable the use of this library:
 
 * :kconfig:`CONFIG_NRF_CLOUD`
 * :kconfig:`CONFIG_NRF_CLOUD_PGPS`
+* :kconfig:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:`CONFIG_NRF_CLOUD_REST`
 
 Configure these additional options to refine the behavior of P-GPS:
 
@@ -105,14 +106,26 @@ P-GPS data can be requested from the cloud using one of the following methods:
 
 * Directly:
 
-  * By calling the function :c:func:`nrf_cloud_pgps_request_all` to request a full set of predictions.
-  * By passing a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function.
+  * If :kconfig:`CONFIG_NRF_CLOUD_MQTT` is enabled:
+
+   * By calling the function :c:func:`nrf_cloud_pgps_request_all` to request a full set of predictions.
+   * By passing a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function.
+
+  * If :kconfig:`CONFIG_NRF_CLOUD_REST` is enabled:
+
+   * By passing a properly initialized :c:struct:`nrf_cloud_rest_pgps_request` structure to the :c:func:`nrf_cloud_rest_pgps_data_get` function.
 
 * Indirectly:
 
-  * By calling :c:func:`nrf_cloud_pgps_init`, with no valid predictions present in flash, or with some or all of the predictions expired.
-  * By calling :c:func:`nrf_cloud_pgps_preemptive_updates`.
-  * By calling :c:func:`nrf_cloud_pgps_notify_prediction`.
+  * If :kconfig:`CONFIG_NRF_CLOUD_MQTT` is enabled:
+
+   * By calling :c:func:`nrf_cloud_pgps_init`, with no valid predictions present in flash, or with some or all of the predictions expired.
+   * By calling :c:func:`nrf_cloud_pgps_preemptive_updates`.
+   * By calling :c:func:`nrf_cloud_pgps_notify_prediction`.
+
+  * If :kconfig:`CONFIG_NRF_CLOUD_REST` is enabled:
+
+   * N/A
 
 The indirect methods are used in the :ref:`agps_sample` sample and in the :ref:`asset_tracker` application.
 They are simpler to use than the direct methods.

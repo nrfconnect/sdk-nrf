@@ -139,6 +139,18 @@ enum nrf_cloud_topic_type {
 	NRF_CLOUD_TOPIC_MESSAGE,
 };
 
+/**@brief FOTA status reported to nRF Cloud. */
+enum nrf_cloud_fota_status {
+	NRF_CLOUD_FOTA_QUEUED = 0,
+	NRF_CLOUD_FOTA_IN_PROGRESS = 1,
+	NRF_CLOUD_FOTA_FAILED = 2,
+	NRF_CLOUD_FOTA_SUCCEEDED = 3,
+	NRF_CLOUD_FOTA_TIMED_OUT = 4,
+	NRF_CLOUD_FOTA_CANCELED = 5,
+	NRF_CLOUD_FOTA_REJECTED = 6,
+	NRF_CLOUD_FOTA_DOWNLOADING = 7,
+};
+
 /**@brief FOTA update type. */
 enum nrf_cloud_fota_type {
 	NRF_CLOUD_FOTA_TYPE__FIRST = 0,
@@ -151,6 +163,16 @@ enum nrf_cloud_fota_type {
 	NRF_CLOUD_FOTA_BOOTLOADER = 2,
 
 	NRF_CLOUD_FOTA_TYPE__INVALID
+};
+
+/**@brief Common FOTA job info */
+struct nrf_cloud_fota_job_info {
+	enum nrf_cloud_fota_type type;
+	/** Null-terminated FOTA job identifier */
+	char *id;
+	char *host;
+	char *path;
+	int file_size;
 };
 
 /**@brief Generic encapsulation for any data that is sent to the cloud. */

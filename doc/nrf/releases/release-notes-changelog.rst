@@ -36,6 +36,10 @@ nRF9160
 
     * A sample to show the usage of the :ref:`at_monitor_readme` library.
 
+  * :ref:`lib_nrf_cloud_rest` library:
+
+    * The library enables devices to use nRF Cloud's REST-based device API.
+
 * Updated:
 
   * :ref:`lib_nrf_cloud` library:

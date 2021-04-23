@@ -12,18 +12,21 @@ if SLM_GNSS
 config SLM_AGPS
 	bool "Use nRF Cloud A-GPS"
 	depends on NRF_CLOUD_AGPS
+	depends on NRF_CLOUD_MQTT
 	help
 	  Use nRF Cloud A-GPS in GPS operation
 
 config SLM_PGPS
 	bool "Use nRF Cloud P-GPS"
 	depends on NRF_CLOUD_PGPS
+	depends on NRF_CLOUD_MQTT
 	help
 	  Use nRF Cloud P-GPS in GPS operation
 
 config SLM_CELL_POS
 	bool "Use nRF Cloud cellular positioning"
 	depends on NRF_CLOUD_CELL_POS
+	depends on NRF_CLOUD_MQTT
 	help
 	  Request nRF Cloud cellular positioning service
 

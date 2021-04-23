@@ -13,6 +13,7 @@
 
 #include <zephyr.h>
 #include <drivers/gps.h>
+#include <net/nrf_cloud.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,7 +23,8 @@ extern "C" {
  * @{
  */
 
-/**@brief Requests specified A-GPS data from nRF Cloud.
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+/**@brief Requests specified A-GPS data from nRF Cloud via MQTT.
  *
  * @param request Structure containing specified A-GPS data to be requested.
  *
@@ -30,11 +32,12 @@ extern "C" {
  */
 int nrf_cloud_agps_request(const struct gps_agps_request request);
 
-/**@brief Requests all available A-GPS data from nRF Cloud.
+/**@brief Requests all available A-GPS data from nRF Cloud via MQTT.
  *
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int nrf_cloud_agps_request_all(void);
+#endif /* CONFIG_NRF_CLOUD_MQTT */
 
 /**@brief Processes binary A-GPS data received from nRF Cloud.
  *
