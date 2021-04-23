@@ -105,7 +105,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 		return err;
 	}
 	/* Initialize the encoder, decoder unit. */
-	err = nrf_codec_init();
+	err = nrf_cloud_codec_init();
 	if (err) {
 		return err;
 	}

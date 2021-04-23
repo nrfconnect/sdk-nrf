@@ -36,6 +36,7 @@ nRF9160
   * :ref:`lib_nrf_cloud` library:
 
     * Added function :c:func:`nrf_cloud_uninit`, which can be used to uninitialize the nRF Cloud library.  If :ref:`cloud_api_readme` is used, call :c:func:`cloud_uninit`
+    * Added :ref:`lib_nrf_cloud_rest` so devices can utilize nRF Cloud's REST-based device API.
 
   * :ref:`serial_lte_modem` application:
 

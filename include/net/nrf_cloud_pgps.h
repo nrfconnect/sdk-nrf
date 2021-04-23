@@ -82,6 +82,22 @@ struct gps_pgps_request {
 	uint32_t gps_time_of_day;
 } __packed;
 
+/** @brief nRF Cloud Predicted GPS (P-GPS) result; the location of
+ *         the P-GPS data file which is to be downloaded and provided
+ *         to nrf_cloud_pgps_process().
+ */
+struct nrf_cloud_pgps_result {
+	/** User-provided buffer to hold download host name */
+	char *host;
+	/** Size of user-provided host buffer */
+	size_t host_sz;
+
+	/** User-provided buffer to hold download path/file name */
+	char *path;
+	/** Size of user-provided path buffer */
+	size_t path_sz;
+};
+
 /** @brief P-GPS error code: current time unknown. */
 #define ETIMEUNKNOWN	8000
 /** @brief P-GPS error code: not found but loading in progress. */

@@ -13,6 +13,7 @@
 
 #include <zephyr.h>
 #include <drivers/gps.h>
+#include <net/nrf_cloud.h>
 
 #ifdef __cplusplus
 extern "C" {
