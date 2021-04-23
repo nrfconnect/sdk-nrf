@@ -9,7 +9,6 @@
 #include <string.h>
 #include <settings/settings.h>
 #include <stdlib.h>
-#include "gen_ponoff_internal.h"
 #include "model_utils.h"
 
 /** Persistent storage handling */
@@ -50,7 +49,7 @@ static int store(struct bt_mesh_ponoff_srv *srv,
 	 * bound with Generic OnOff state, store the value of the bound state
 	 * separately, therefore they don't need to store Generic OnOff state.
 	 */
-	if (atomic_test_bit(&srv->flags, GEN_PONOFF_SRV_NO_ONOFF)) {
+	if (bt_mesh_model_is_extended(srv->ponoff_model)) {
 		size = sizeof(data.on_power_up);
 	} else {
 		size = sizeof(data);
@@ -102,7 +101,7 @@ static void set_on_power_up(struct bt_mesh_ponoff_srv *srv,
 
 	struct bt_mesh_onoff_status onoff_status = { 0 };
 
-	if (!atomic_test_bit(&srv->flags, GEN_PONOFF_SRV_NO_ONOFF)) {
+	if (!bt_mesh_model_is_extended(srv->ponoff_model)) {
 		srv->onoff.handlers->get(&srv->onoff, NULL, &onoff_status);
 	}
 
@@ -158,7 +157,7 @@ static void onoff_intercept_set(struct bt_mesh_onoff_srv *onoff_srv,
 	srv->onoff_handlers->set(onoff_srv, ctx, set, status);
 
 	if ((srv->on_power_up == BT_MESH_ON_POWER_UP_RESTORE) &&
-	    !atomic_test_bit(&srv->flags, GEN_PONOFF_SRV_NO_ONOFF)) {
+	    !bt_mesh_model_is_extended(srv->ponoff_model)) {
 		store(srv, status);
 	}
 }
@@ -313,7 +312,7 @@ static int bt_mesh_ponoff_srv_settings_set(struct bt_mesh_model *model,
 	 * bound with Generic OnOff state, store the value of the bound state
 	 * separately, therefore they don't need to set Generic OnOff state.
 	 */
-	if (atomic_test_bit(&srv->flags, GEN_PONOFF_SRV_NO_ONOFF)) {
+	if (bt_mesh_model_is_extended(model)) {
 		return 0;
 	}
 

@@ -7,7 +7,6 @@
 #include <sys/byteorder.h>
 #include <bluetooth/mesh/gen_plvl_srv.h>
 #include "model_utils.h"
-#include "gen_ponoff_internal.h"
 
 #define LVL_TO_POWER(_lvl) ((_lvl) + 32768)
 #define POWER_TO_LVL(_power) ((_power)-32768)
@@ -672,13 +671,6 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *model)
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 
 	srv->plvl_model = model;
-
-	/* Generic Power Level extend Generic Power OnOff Server, which states
-	 * are bound with Generic OnOff state, store the value of the bound
-	 * state separately, therefore they don't need to set Generic OnOff
-	 * state.
-	 */
-	atomic_set_bit(&srv->ponoff.flags, GEN_PONOFF_SRV_NO_ONOFF);
 
 	plvl_srv_reset(srv);
 	srv->pub.msg = &srv->pub_buf;

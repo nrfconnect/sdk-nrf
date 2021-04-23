@@ -1484,15 +1484,6 @@ static int light_ctrl_srv_init(struct bt_mesh_model *model)
 		atomic_set_bit(&srv->flags, FLAG_OCC_MODE);
 	}
 
-	/* When the Lightness Server boots up in restore mode, it'll start
-	 * changing its state in the start cb. The LC Server should decide the
-	 * startup activity of the Lightness Server itself.
-	 *
-	 * Block the Lightness Server startup behavior to prevent it from moving
-	 * before the LC Server gets a chance to take control.
-	 */
-	atomic_set_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_NO_START);
-
 	k_work_init_delayable(&srv->timer, timeout);
 	k_work_init_delayable(&srv->action_delay, delayed_action_timeout);
 
