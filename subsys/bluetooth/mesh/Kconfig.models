@@ -50,6 +50,7 @@ menuconfig BT_MESH_TIME_SRV
 	bool "Time Server"
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_TIME
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable mesh Time Server model.
 
@@ -133,6 +134,7 @@ config BT_MESH_PONOFF_SRV
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_DTT_SRV
 	select BT_MESH_ONOFF_SRV
+	select BT_MESH_MODEL_EXTENSIONS
 	imply BT_SETTINGS
 	help
 	  Enable mesh Generic Power OnOff Server model.
@@ -149,6 +151,7 @@ config BT_MESH_PLVL_SRV
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_LVL_SRV
 	select BT_MESH_PONOFF_SRV
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable mesh Generic Power Level Server model.
 
@@ -187,6 +190,7 @@ config BT_MESH_LOC_CLI
 config BT_MESH_PROP_SRV
 	bool "Generic Property Server"
 	select BT_MESH_NRF_MODELS
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable mesh Generic Property Server models.
 
@@ -227,6 +231,7 @@ config BT_MESH_LIGHTNESS_SRV
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_LVL_SRV
 	select BT_MESH_PONOFF_SRV
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable mesh Light Lightness Server model.
 
@@ -263,6 +268,7 @@ menuconfig BT_MESH_LIGHT_CTRL_SRV
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_LIGHTNESS_SRV
 	select BT_MESH_SENSOR
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable mesh Light Lightness Control Server model.
 
@@ -505,6 +511,7 @@ config BT_MESH_LIGHT_CTL_SRV
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_LIGHTNESS_SRV
 	select BT_MESH_LIGHT_TEMP_SRV
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable mesh Light CTL Server model.
 
@@ -512,6 +519,7 @@ config BT_MESH_LIGHT_TEMP_SRV
 	bool "Color Tunable Light (CTL) Temperature Server"
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_LVL_SRV
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable mesh Light CTL Temperature Server model.
 
@@ -525,6 +533,7 @@ config BT_MESH_LIGHT_XYL_SRV
 	bool "xyL Server"
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_LIGHTNESS_SRV
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable Mesh Light xyL Server model.
 
@@ -545,6 +554,7 @@ config BT_MESH_LIGHT_HSL_SRV
 	select BT_MESH_LIGHT_SAT_SRV
 	select BT_MESH_LIGHT_HUE_SRV
 	select BT_MESH_LIGHT_HSL
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable Mesh Light HSL Server model.
 
@@ -553,6 +563,7 @@ config BT_MESH_LIGHT_SAT_SRV
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_LVL_SRV
 	select BT_MESH_LIGHT_HSL
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable Mesh Light Saturation Server model.
 
@@ -561,6 +572,7 @@ config BT_MESH_LIGHT_HUE_SRV
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_LVL_SRV
 	select BT_MESH_LIGHT_HSL
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable Mesh Light Hue Server model.
 
@@ -604,6 +616,7 @@ rsource "Kconfig.sensor"
 menuconfig BT_MESH_SCENE_SRV
 	bool "Scene Server"
 	select BT_MESH_NRF_MODELS
+	select BT_MESH_MODEL_EXTENSIONS
 	depends on BT_SETTINGS
 	help
 	  Enable mesh Scene Server model.
@@ -634,6 +647,7 @@ config BT_MESH_SCHEDULER_SRV
 	select BT_MESH_ONOFF_SRV
 	select BT_MESH_SCENE_SRV
 	select BT_MESH_TIME_SRV
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable Mesh Scheduler Server model.
 

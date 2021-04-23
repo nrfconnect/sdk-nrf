@@ -725,20 +725,18 @@ static int scheduler_srv_init(struct bt_mesh_model *model)
 			sizeof(srv->pub_data));
 	srv->active_bitmap = 0;
 
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
-		/* Model extensions:
-		 * To simplify the model extension tree, we're flipping the
-		 * relationship between the scheduler server and the scheduler
-		 * setup server. In the specification, the scheduler setup
-		 * server extends the scheduler server, which is the opposite
-		 * of what we're doing here. This makes no difference for
-		 * the mesh stack, but it makes it a lot easier to extend
-		 * this model, as we won't have to support multiple extenders.
-		 */
-		bt_mesh_model_extend(model, bt_mesh_model_find(
-				bt_mesh_model_elem(model),
-				BT_MESH_MODEL_ID_SCHEDULER_SETUP_SRV));
-	}
+	/* Model extensions:
+	 * To simplify the model extension tree, we're flipping the
+	 * relationship between the scheduler server and the scheduler
+	 * setup server. In the specification, the scheduler setup
+	 * server extends the scheduler server, which is the opposite
+	 * of what we're doing here. This makes no difference for
+	 * the mesh stack, but it makes it a lot easier to extend
+	 * this model, as we won't have to support multiple extenders.
+	 */
+	bt_mesh_model_extend(model, bt_mesh_model_find(
+			bt_mesh_model_elem(model),
+			BT_MESH_MODEL_ID_SCHEDULER_SETUP_SRV));
 
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
 	k_work_init_delayable(&srv->delayed_work, scheduled_action_handle);

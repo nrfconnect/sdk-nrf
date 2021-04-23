@@ -340,9 +340,7 @@ static int sat_srv_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&srv->buf, srv->pub_data,
 				      ARRAY_SIZE(srv->pub_data));
 
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
-		bt_mesh_model_extend(model, srv->lvl.model);
-	}
+	bt_mesh_model_extend(model, srv->lvl.model);
 
 	return 0;
 }

@@ -808,24 +808,22 @@ static int bt_mesh_lightness_srv_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
 
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
-		/* Model extensions:
-		 * To simplify the model extension tree, we're flipping the
-		 * relationship between the lightness server and the lightness
-		 * setup server. In the specification, the lightness setup
-		 * server extends the lightness server, which is the opposite of
-		 * what we're doing here. This makes no difference for the mesh
-		 * stack, but it makes it a lot easier to extend this model, as
-		 * we won't have to support multiple extenders.
-		 */
-		bt_mesh_model_extend(model, srv->ponoff.ponoff_model);
-		bt_mesh_model_extend(model, srv->lvl.model);
-		bt_mesh_model_extend(
-			model,
-			bt_mesh_model_find(
-				bt_mesh_model_elem(model),
-				BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV));
-	}
+	/* Model extensions:
+	 * To simplify the model extension tree, we're flipping the
+	 * relationship between the lightness server and the lightness
+	 * setup server. In the specification, the lightness setup
+	 * server extends the lightness server, which is the opposite of
+	 * what we're doing here. This makes no difference for the mesh
+	 * stack, but it makes it a lot easier to extend this model, as
+	 * we won't have to support multiple extenders.
+	 */
+	bt_mesh_model_extend(model, srv->ponoff.ponoff_model);
+	bt_mesh_model_extend(model, srv->lvl.model);
+	bt_mesh_model_extend(
+		model,
+		bt_mesh_model_find(
+			bt_mesh_model_elem(model),
+			BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV));
 
 	return 0;
 }

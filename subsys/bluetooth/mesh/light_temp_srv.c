@@ -345,9 +345,7 @@ static int bt_mesh_light_temp_srv_init(struct bt_mesh_model *model)
 	light_temp_srv_reset(srv);
 	net_buf_simple_init(srv->pub.msg, 0);
 
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
-		bt_mesh_model_extend(model, srv->lvl.model);
-	}
+	bt_mesh_model_extend(model, srv->lvl.model);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENES)) {
 		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);

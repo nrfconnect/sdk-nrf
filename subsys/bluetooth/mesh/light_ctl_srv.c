@@ -371,22 +371,20 @@ static int bt_mesh_light_ctl_srv_init(struct bt_mesh_model *model)
 	/* Disable On power up procedure on lightness server */
 	atomic_set_bit(&srv->lightness_srv.flags, LIGHTNESS_SRV_FLAG_NO_START);
 
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
-		/* Model extensions:
-		 * To simplify the model extension tree, we're flipping the
-		 * relationship between the Light CTL server and the Light CTL
-		 * setup server. In the specification, the Light CTL setup
-		 * server extends the time server, which is the opposite of
-		 * what we're doing here. This makes no difference for the mesh
-		 * stack, but it makes it a lot easier to extend this model, as
-		 * we won't have to support multiple extenders.
-		 */
-		bt_mesh_model_extend(model, srv->lightness_srv.lightness_model);
-		bt_mesh_model_extend(
-			model, bt_mesh_model_find(
-				       bt_mesh_model_elem(model),
-				       BT_MESH_MODEL_ID_LIGHT_CTL_SETUP_SRV));
-	}
+	/* Model extensions:
+	 * To simplify the model extension tree, we're flipping the
+	 * relationship between the Light CTL server and the Light CTL
+	 * setup server. In the specification, the Light CTL setup
+	 * server extends the time server, which is the opposite of
+	 * what we're doing here. This makes no difference for the mesh
+	 * stack, but it makes it a lot easier to extend this model, as
+	 * we won't have to support multiple extenders.
+	 */
+	bt_mesh_model_extend(model, srv->lightness_srv.lightness_model);
+	bt_mesh_model_extend(
+		model, bt_mesh_model_find(
+			       bt_mesh_model_elem(model),
+			       BT_MESH_MODEL_ID_LIGHT_CTL_SETUP_SRV));
 
 	return 0;
 }
