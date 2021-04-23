@@ -582,8 +582,7 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
 
-	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS) &&
-	    (model->id == BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV ||
+	if ((model->id == BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV ||
 	     model->id == BT_MESH_MODEL_ID_GEN_ADMIN_PROP_SRV)) {
 		bt_mesh_model_extend(
 			model,
