@@ -86,7 +86,7 @@ if (CONFIG_BUILD_S1_VARIANT AND
 
   configure_linker_script(
     ${link_variant}linker.cmd
-    "-DLINK_INTO_${link_variant_name};-DLINKER_PASS2"
+    "-DLINK_INTO_${link_variant_name};-DLINKER_ZEPHYR_FINAL;-DLINKER_PASS2"
     ${PRIV_STACK_DEP}
     ${CODE_RELOCATION_DEP}
     ${${link_variant}prebuilt}
