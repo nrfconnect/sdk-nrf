@@ -99,7 +99,7 @@ static void temp_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	bt_mesh_light_temp_srv_set(srv, ctx, &set, &status);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_invalidate(&srv->lvl.scene);
+		bt_mesh_scene_invalidate(&srv->scene);
 	}
 
 respond:
@@ -296,13 +296,28 @@ const struct bt_mesh_lvl_srv_handlers _bt_mesh_light_temp_srv_lvl_handlers = {
 	.move_set = lvl_move_set,
 };
 
-static int scene_store(struct bt_mesh_model *model, uint8_t data[])
+struct __packed scene_data {
+	uint16_t temp;
+	int16_t delta_uv;
+};
+
+static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 {
 	struct bt_mesh_light_temp_srv *srv = model->user_data;
+	struct bt_mesh_light_temp_status status = { 0 };
+	struct scene_data *scene = (struct scene_data *)&data[0];
 
-	sys_put_le16(srv->last.delta_uv, data);
+	srv->handlers->get(srv, NULL, &status);
 
-	return sizeof(int16_t);
+	if (status.remaining_time) {
+		scene->temp = status.target.temp;
+		scene->delta_uv = status.target.delta_uv;
+	} else {
+		scene->temp = status.current.temp;
+		scene->delta_uv = status.current.delta_uv;
+	}
+
+	return sizeof(struct scene_data);
 }
 
 static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
@@ -310,10 +325,11 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 			 struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_light_temp_srv *srv = model->user_data;
+	struct scene_data *scene = (struct scene_data *)&data[0];
 	struct bt_mesh_light_temp_set set = {
 		.params = {
-			.temp = srv->last.temp,
-			.delta_uv = sys_get_le16(data),
+			.temp = scene->temp,
+			.delta_uv = scene->delta_uv,
 		},
 		.transition = transition,
 	};
@@ -324,7 +340,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 static const struct bt_mesh_scene_entry_type scene_type = {
 	.store = scene_store,
 	.recall = scene_recall,
-	.maxlen = sizeof(int16_t),
+	.maxlen = sizeof(struct scene_data),
 };
 
 static void light_temp_srv_reset(struct bt_mesh_light_temp_srv *srv)
@@ -347,7 +363,7 @@ static int bt_mesh_light_temp_srv_init(struct bt_mesh_model *model)
 
 	bt_mesh_model_extend(model, srv->lvl.model);
 
-	if (IS_ENABLED(CONFIG_BT_MESH_SCENES)) {
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
 	}
 

@@ -89,6 +89,8 @@ struct bt_mesh_light_hsl_srv {
 	bool pub_pending;
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx prev_transaction;
+	/* Scene entry */
+	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Publish the current HSL status.

@@ -256,6 +256,14 @@ static void entry_recover(struct bt_mesh_scene_srv *srv, bool vnd,
 			continue;
 		}
 
+		/* MeshMDL1.0.1, section 5.1.3.1.1:
+		 * If a model is extending another model, the extending model shall determine
+		 * the Stored with Scene behavior of that model.
+		 */
+		if (bt_mesh_model_is_extended(entry->model)) {
+			continue;
+		}
+
 		if (vnd) {
 			uint16_t company_id = sys_get_le16(data->data);
 
@@ -371,6 +379,14 @@ static enum bt_mesh_scene_status scene_store(struct bt_mesh_scene_srv *srv,
 	SYS_SLIST_FOR_EACH_CONTAINER(&srv->sig, entry, n) {
 		ssize_t size;
 
+		/* MeshMDL1.0.1, section 5.1.3.1.1:
+		 * If a model is extending another model, the extending model shall determine
+		 * the Stored with Scene behavior of that model.
+		 */
+		if (bt_mesh_model_is_extended(entry->model)) {
+			continue;
+		}
+
 		if (len + sizeof(struct scene_data) + entry->type->maxlen >=
 		    sizeof(buf)) {
 			page_store(srv, scene, page++, false, buf, len);
@@ -394,6 +410,14 @@ static enum bt_mesh_scene_status scene_store(struct bt_mesh_scene_srv *srv,
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&srv->vnd, entry, n) {
 		ssize_t size;
+
+		/* MeshMDL1.0.1, section 5.1.3.1.1:
+		 * If a model is extending another model, the extending model shall determine
+		 * the Stored with Scene behavior of that model.
+		 */
+		if (bt_mesh_model_is_extended(entry->model)) {
+			continue;
+		}
 
 		/* Account for Company ID: */
 		if (len + sizeof(struct scene_data) +
