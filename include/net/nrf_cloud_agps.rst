@@ -24,6 +24,7 @@ Configuration
 Configure the following options to enable or disable the use of this library:
 
 * :option:`CONFIG_NRF_CLOUD`
+* :option:`CONFIG_NRF_CLOUD_MQTT`
 * :option:`CONFIG_NRF_CLOUD_AGPS`
 
 See :ref:`configure_application` for information on how to change configuration options.
