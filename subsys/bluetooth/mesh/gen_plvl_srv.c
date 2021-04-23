@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <stdlib.h>
+#include <sys/byteorder.h>
 #include <bluetooth/mesh/gen_plvl_srv.h>
 #include "model_utils.h"
 #include "gen_ponoff_internal.h"
@@ -146,10 +147,6 @@ static void change_lvl(struct bt_mesh_plvl_srv *srv,
 	memset(status, 0, sizeof(*status));
 	srv->handlers->power_set(srv, ctx, set, status);
 
-	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_invalidate(&srv->lvl.scene);
-	}
-
 	pub(srv, NULL, status);
 }
 
@@ -174,6 +171,10 @@ static void plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
 		change_lvl(srv, ctx, &set, &status);
+
+		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+			bt_mesh_scene_invalidate(&srv->scene);
+		}
 	} else if (ack) {
 		srv->handlers->power_get(srv, NULL, &status);
 	}
@@ -604,6 +605,37 @@ const struct bt_mesh_onoff_srv_handlers bt_mesh_plvl_srv_onoff_handlers = {
 	.get = onoff_get,
 };
 
+static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+{
+	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_status status = { 0 };
+
+	srv->handlers->power_get(srv, NULL, &status);
+	sys_put_le16(status.remaining_time ? status.target : status.current, &data[0]);
+
+	return 2;
+}
+
+static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+			 size_t len,
+			 struct bt_mesh_model_transition *transition)
+{
+	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_status status = { 0 };
+	struct bt_mesh_plvl_set set = {
+		.power_lvl = sys_get_le16(data),
+		.transition = transition,
+	};
+
+	change_lvl(srv, NULL, &set, &status);
+}
+
+static const struct bt_mesh_scene_entry_type scene_type = {
+	.maxlen = 2,
+	.store = scene_store,
+	.recall = scene_recall,
+};
+
 static void plvl_srv_reset(struct bt_mesh_plvl_srv *srv)
 {
 	srv->range.min = 0;
@@ -670,6 +702,10 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *model)
 		bt_mesh_model_find(
 			bt_mesh_model_elem(model),
 			BT_MESH_MODEL_ID_GEN_POWER_LEVEL_SETUP_SRV));
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
+	}
 
 	return 0;
 }

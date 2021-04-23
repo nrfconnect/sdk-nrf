@@ -1402,11 +1402,13 @@ struct __packed scene_data {
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	struct bt_mesh_light_ctrl_srv_reg_cfg reg;
 #endif
+	uint16_t light;
 };
 
-static int scene_store(struct bt_mesh_model *model, uint8_t data[])
+static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_lightness_status light = { 0 };
 	struct scene_data *scene = (struct scene_data *)&data[0];
 
 	scene->enabled = is_enabled(srv);
@@ -1415,6 +1417,9 @@ static int scene_store(struct bt_mesh_model *model, uint8_t data[])
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	scene->reg = srv->reg.cfg;
 #endif
+
+	srv->lightness->handlers->light_get(srv->lightness, NULL, &light);
+	scene->light = repr_to_light(light.remaining_time ? light.target : light.current, ACTUAL);
 
 	return sizeof(struct scene_data);
 }
@@ -1434,7 +1439,14 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	if (scene->enabled) {
 		ctrl_enable(srv);
 	} else {
+		struct bt_mesh_lightness_status status;
+		struct bt_mesh_lightness_set set = {
+			.lvl = scene->light,
+			.transition = transition,
+		};
+
 		ctrl_disable(srv);
+		lightness_srv_change_lvl(srv->lightness, NULL, &set, &status);
 	}
 }
 

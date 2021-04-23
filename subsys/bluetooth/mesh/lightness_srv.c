@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <stdlib.h>
+#include <sys/byteorder.h>
 #include <bluetooth/mesh/lightness_srv.h>
 #include "model_utils.h"
 #include "lightness_internal.h"
@@ -241,7 +242,7 @@ static void lightness_set(struct bt_mesh_model *model,
 		lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-			bt_mesh_scene_invalidate(&srv->lvl.scene);
+			bt_mesh_scene_invalidate(&srv->scene);
 		}
 	} else if (ack) {
 		srv->handlers->light_get(srv, NULL, &status);
@@ -778,6 +779,37 @@ static void bt_mesh_lightness_srv_reset(struct bt_mesh_model *model)
 	}
 }
 
+static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+{
+	struct bt_mesh_lightness_srv *srv = model->user_data;
+	struct bt_mesh_lightness_status status = { 0 };
+
+	srv->handlers->light_get(srv, NULL, &status);
+	sys_put_le16(status.remaining_time ? light_to_repr(status.target, ACTUAL) :
+		     light_to_repr(status.current, ACTUAL), &data[0]);
+	return 2;
+}
+
+static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+			 size_t len,
+			 struct bt_mesh_model_transition *transition)
+{
+	struct bt_mesh_lightness_srv *srv = model->user_data;
+	struct bt_mesh_lightness_status dummy_status;
+	struct bt_mesh_lightness_set set = {
+		.lvl = repr_to_light(sys_get_le16(data), ACTUAL),
+		.transition = transition,
+	};
+
+	lightness_srv_change_lvl(srv, NULL, &set, &dummy_status);
+}
+
+static const struct bt_mesh_scene_entry_type scene_type = {
+	.maxlen = 2,
+	.store = scene_store,
+	.recall = scene_recall,
+};
+
 static int update_handler(struct bt_mesh_model *model)
 {
 	struct bt_mesh_lightness_srv *srv = model->user_data;
@@ -824,6 +856,10 @@ static int bt_mesh_lightness_srv_init(struct bt_mesh_model *model)
 		bt_mesh_model_find(
 			bt_mesh_model_elem(model),
 			BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV));
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
+	}
 
 	return 0;
 }

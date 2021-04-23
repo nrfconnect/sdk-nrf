@@ -160,6 +160,8 @@ struct bt_mesh_plvl_srv {
 	uint16_t last;
 	/** Whether the Power is on. */
 	bool is_on;
+	/* Scene entry */
+	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Publish the current Power state.

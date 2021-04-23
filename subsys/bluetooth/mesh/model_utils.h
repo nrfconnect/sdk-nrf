@@ -176,6 +176,15 @@ model_transition_is_invalid(const struct bt_mesh_model_transition *transition)
 		 transition->delay > BT_MESH_MODEL_DELAY_TIME_MAX_MS));
 }
 
+static inline bool bt_mesh_model_is_extended(struct bt_mesh_model *model)
+{
+#ifdef CONFIG_BT_MESH_MODEL_EXTENSIONS
+	return model->next != NULL;
+#else
+	return false;
+#endif
+}
+
 #endif /* MODEL_UTILS_H__ */
 
 /** @} */

@@ -106,6 +106,8 @@ struct bt_mesh_ponoff_srv {
 	enum bt_mesh_on_power_up on_power_up;
 	/** Internal flag state. */
 	atomic_t flags;
+	/* Scene entry */
+	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Set the OnPowerUp state of a Power OnOff server.

@@ -5,6 +5,7 @@
  */
 
 #include <stdlib.h>
+#include <sys/byteorder.h>
 #include <bluetooth/mesh/light_hue_srv.h>
 #include <bluetooth/mesh/light_hsl_srv.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
@@ -128,6 +129,10 @@ static void hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
 	(void)bt_mesh_lvl_srv_pub(&srv->lvl, NULL, &lvl_status);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->lvl.scene);
+	}
 }
 
 static void hue_get_handle(struct bt_mesh_model *model,
@@ -336,10 +341,6 @@ void bt_mesh_light_hue_srv_set(struct bt_mesh_light_hue_srv *srv,
 	srv->handlers->set(srv, ctx, set, status);
 
 	store(srv);
-
-	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_invalidate(&srv->lvl.scene);
-	}
 }
 
 void bt_mesh_light_hue_srv_default_set(struct bt_mesh_light_hue_srv *srv,

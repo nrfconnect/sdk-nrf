@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <sys/byteorder.h>
 #include <bluetooth/mesh/light_ctl_srv.h>
 #include <bluetooth/mesh/light_temp_srv.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
@@ -113,6 +114,10 @@ static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 respond:
 	if (ack) {
 		bt_mesh_light_ctl_pub(srv, ctx, &status);
+	}
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
 	}
 }
 
@@ -347,6 +352,38 @@ const struct bt_mesh_model_op _bt_mesh_light_ctl_setup_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+{
+	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_lightness_status light = { 0 };
+
+	srv->lightness_srv.handlers->light_get(&srv->lightness_srv, NULL, &light);
+	sys_put_le16(repr_to_light(light.remaining_time ? light.target : light.current, ACTUAL),
+		     &data[0]);
+
+	return 2;
+}
+
+static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+			 size_t len,
+			 struct bt_mesh_model_transition *transition)
+{
+	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_lightness_status dummy_light_status;
+	struct bt_mesh_lightness_set light = {
+		.lvl = repr_to_light(sys_get_le16(data), ACTUAL),
+		.transition = transition,
+	};
+
+	lightness_srv_change_lvl(&srv->lightness_srv, NULL, &light, &dummy_light_status);
+}
+
+static const struct bt_mesh_scene_entry_type scene_type = {
+	.maxlen = 2,
+	.store = scene_store,
+	.recall = scene_recall,
+};
+
 static int update_handler(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_ctl_srv *srv = model->user_data;
@@ -385,6 +422,10 @@ static int bt_mesh_light_ctl_srv_init(struct bt_mesh_model *model)
 		model, bt_mesh_model_find(
 			       bt_mesh_model_elem(model),
 			       BT_MESH_MODEL_ID_LIGHT_CTL_SETUP_SRV));
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
+	}
 
 	return 0;
 }
@@ -452,6 +493,7 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *model)
 		return -EINVAL;
 	}
 
+	lightness_on_power_up(&srv->lightness_srv);
 	return 0;
 }
 

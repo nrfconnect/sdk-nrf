@@ -197,6 +197,40 @@ const struct bt_mesh_onoff_srv_handlers _bt_mesh_ponoff_onoff_intercept = {
 	.get = onoff_intercept_get,
 };
 
+static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+{
+	struct bt_mesh_ponoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_status status = { 0 };
+
+	/* Only store the next stable on_off state: */
+	srv->onoff_handlers->get(&srv->onoff, NULL, &status);
+	data[0] = status.remaining_time ? status.target_on_off :
+					  status.present_on_off;
+
+	return 1;
+}
+
+static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+			 size_t len, struct bt_mesh_model_transition *transition)
+{
+	struct bt_mesh_ponoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_status status = { 0 };
+	struct bt_mesh_onoff_set set = {
+		.on_off = data[0],
+		.transition = transition,
+	};
+
+	srv->onoff_handlers->set(&srv->onoff, NULL, &set, &status);
+
+	(void)bt_mesh_onoff_srv_pub(&srv->onoff, NULL, &status);
+}
+
+const struct bt_mesh_scene_entry_type scene_type = {
+	.maxlen = 1,
+	.store = scene_store,
+	.recall = scene_recall,
+};
+
 static int update_handler(struct bt_mesh_model *model)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
@@ -206,7 +240,6 @@ static int update_handler(struct bt_mesh_model *model)
 	net_buf_simple_add_u8(srv->ponoff_model->pub->msg, srv->on_power_up);
 	return 0;
 }
-
 
 static int bt_mesh_ponoff_srv_init(struct bt_mesh_model *model)
 {
@@ -234,6 +267,10 @@ static int bt_mesh_ponoff_srv_init(struct bt_mesh_model *model)
 		bt_mesh_model_find(
 			bt_mesh_model_elem(model),
 			BT_MESH_MODEL_ID_GEN_POWER_ONOFF_SETUP_SRV));
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
+	}
 
 	return 0;
 }

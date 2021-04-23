@@ -157,6 +157,10 @@ static void hsl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	/* Publish on state change: */
 	srv->pub_pending = false;
 	(void)bt_mesh_light_hsl_srv_pub(srv, NULL, &hsl);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(&srv->scene);
+	}
 }
 
 static void hsl_set_handle(struct bt_mesh_model *model,
@@ -419,6 +423,75 @@ const struct bt_mesh_model_op _bt_mesh_light_hsl_setup_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+struct __packed scene_data {
+	uint16_t h;
+	uint16_t s;
+	uint16_t l;
+};
+
+static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+{
+	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hue_status hue = { 0 };
+	struct bt_mesh_light_sat_status sat = { 0 };
+	struct bt_mesh_lightness_status light = { 0 };
+	struct scene_data *scene = (struct scene_data *)&data[0];
+
+	srv->hue.handlers->get(&srv->hue, NULL, &hue);
+	srv->sat.handlers->get(&srv->sat, NULL, &sat);
+	srv->lightness.handlers->light_get(&srv->lightness, NULL, &light);
+
+	if (hue.remaining_time || sat.remaining_time || light.remaining_time) {
+		scene->h = hue.target;
+		scene->s = sat.target;
+		scene->l = repr_to_light(light.target, ACTUAL);
+	} else {
+		scene->h = hue.current;
+		scene->s = sat.current;
+		scene->l = light.current;
+	}
+
+	return sizeof(struct scene_data);
+}
+
+static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+			 size_t len,
+			 struct bt_mesh_model_transition *transition)
+{
+	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct scene_data *scene = (struct scene_data *)&data[0];
+	struct bt_mesh_lightness_status light_status = { 0 };
+	struct bt_mesh_light_hue_status hue_status = { 0 };
+	struct bt_mesh_light_sat_status sat_status = { 0 };
+	struct bt_mesh_lightness_set light_set = {
+		.lvl = repr_to_light(scene->l, ACTUAL),
+		.transition = transition,
+	};
+	struct bt_mesh_light_hue hue_set = {
+		.lvl = scene->h,
+		.transition = transition,
+	};
+	struct bt_mesh_light_sat sat_set = {
+		.lvl = scene->s,
+		.transition = transition,
+	};
+
+	bt_mesh_light_hue_srv_set(&srv->hue, NULL, &hue_set, &hue_status);
+	bt_mesh_light_sat_srv_set(&srv->sat, NULL, &sat_set, &sat_status);
+	lightness_srv_change_lvl(&srv->lightness, NULL, &light_set, &light_status);
+
+	struct bt_mesh_light_hsl_status hsl =
+		HSL_STATUS_INIT(&hue_status, &sat_status, &light_status, current);
+
+	(void)bt_mesh_light_hsl_srv_pub(srv, NULL, &hsl);
+}
+
+static const struct bt_mesh_scene_entry_type scene_type = {
+	.maxlen = sizeof(struct scene_data),
+	.store = scene_store,
+	.recall = scene_recall,
+};
+
 static int hsl_srv_pub_update(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_hsl_srv *srv = model->user_data;
@@ -457,6 +530,10 @@ static int bt_mesh_light_hsl_srv_init(struct bt_mesh_model *model)
 		model, bt_mesh_model_find(
 			       bt_mesh_model_elem(model),
 			       BT_MESH_MODEL_ID_LIGHT_HSL_SETUP_SRV));
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
+	}
 
 	return 0;
 }
@@ -497,6 +574,8 @@ static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *model)
 	default:
 		return -EINVAL;
 	}
+
+	lightness_on_power_up(&srv->lightness);
 
 	/* Pass dummy status structs to avoid giving the app NULL pointers */
 	bt_mesh_light_hue_srv_set(&srv->hue, NULL, &hue,

@@ -78,6 +78,8 @@ struct bt_mesh_light_ctl_srv {
 		BT_MESH_LIGHT_CTL_STATUS, BT_MESH_LIGHT_CTL_MSG_MAXLEN_STATUS)];
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx prev_transaction;
+	/* Scene entry */
+	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Publish the current CTL status.

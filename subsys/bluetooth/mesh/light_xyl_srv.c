@@ -421,22 +421,36 @@ const struct bt_mesh_model_op _bt_mesh_light_xyl_setup_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+struct __packed scene_data {
+	struct bt_mesh_light_xy xy;
+	uint16_t light;
+};
+
 static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 {
 	struct bt_mesh_light_xyl_srv *srv = model->user_data;
 	struct bt_mesh_light_xy_status xy_rsp = { 0 };
+	struct bt_mesh_lightness_status light = { 0 };
+	struct scene_data *scene = (struct scene_data *)&data[0];
 
+	srv->lightness_srv.handlers->light_get(&srv->lightness_srv, NULL, &light);
 	srv->handlers->xy_get(srv, NULL, &xy_rsp);
 
 	if (xy_rsp.remaining_time) {
-		sys_put_le16(xy_rsp.target.x, data);
-		sys_put_le16(xy_rsp.target.y, data + sizeof(uint16_t));
+		scene->xy.x = xy_rsp.target.x;
+		scene->xy.y = xy_rsp.target.y;
 	} else {
-		sys_put_le16(xy_rsp.current.x, data);
-		sys_put_le16(xy_rsp.current.y, data + sizeof(uint16_t));
+		scene->xy.x = xy_rsp.current.x;
+		scene->xy.y = xy_rsp.current.y;
 	}
 
-	return sizeof(struct bt_mesh_light_xy);
+	if (light.remaining_time) {
+		scene->light = repr_to_light(light.target, ACTUAL);
+	} else {
+		scene->light = repr_to_light(light.current, ACTUAL);
+	}
+
+	return sizeof(struct scene_data);
 }
 
 static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
@@ -444,18 +458,35 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 			 struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_light_xyl_srv *srv = model->user_data;
-	struct bt_mesh_light_xy_status xy_dummy;
+	struct scene_data *scene = (struct scene_data *)&data[0];
+	struct bt_mesh_light_xyl_status xyl_status = { 0 };
+	struct bt_mesh_lightness_status light_status = { 0 };
+	struct bt_mesh_lightness_set light = {
+		.lvl = scene->light,
+		.transition = transition,
+	};
+	struct bt_mesh_light_xy_status xy_status;
 	struct bt_mesh_light_xy_set xy_set = {
-		.params.x = sys_get_le16(data),
-		.params.y = sys_get_le16(data + sizeof(uint16_t)),
+		.params.x = scene->xy.x,
+		.params.y = scene->xy.y,
 		.transition = transition,
 	};
 
-	srv->handlers->xy_set(srv, NULL, &xy_set, &xy_dummy);
+	srv->handlers->xy_set(srv, NULL, &xy_set, &xy_status);
+	lightness_srv_change_lvl(&srv->lightness_srv, NULL, &light, &light_status);
+
+	srv->xy_last.x = xy_set.params.x;
+	srv->xy_last.y = xy_set.params.y;
+	store_state(srv);
+
+	xyl_status.params.xy = xy_status.current;
+	xyl_status.params.lightness = light_status.current;
+	xyl_status.remaining_time = xy_status.remaining_time;
+	(void)bt_mesh_light_xyl_srv_pub(srv, NULL, &xyl_status);
 }
 
 static const struct bt_mesh_scene_entry_type scene_type = {
-	.maxlen = sizeof(struct bt_mesh_light_xy),
+	.maxlen = sizeof(struct scene_data),
 	.store = scene_store,
 	.recall = scene_recall,
 };
@@ -546,6 +577,8 @@ static int bt_mesh_light_xyl_srv_start(struct bt_mesh_model *model)
 	default:
 		return -EINVAL;
 	}
+
+	lightness_on_power_up(&srv->lightness_srv);
 
 	srv->handlers->xy_set(srv, NULL, &set, &xy_dummy);
 	return 0;

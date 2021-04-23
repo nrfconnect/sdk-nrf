@@ -166,6 +166,8 @@ struct bt_mesh_lightness_srv {
 	/** Acting controller, if enabled. */
 	struct bt_mesh_light_ctrl_srv *ctrl;
 #endif
+	/* Scene entry */
+	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Publish the current Light state.
