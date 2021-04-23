@@ -6,33 +6,55 @@ tests:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
     tags: ci_build smoke
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf21540dk_nrf52840
 
   zigbee.light_switch.fota:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840
     tags: ci_build smoke
     extra_args: DOVERLAY_CONFIG=overlay-fota.conf
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf21540dk_nrf52840
 
   zigbee.light_switch.fota_and_multiprotocol:
     build_only: true
     platform_allow: nrf52840dk_nrf52840
     tags: ci_build
     extra_args: DOVERLAY_CONFIG=overlay-fota.conf DOVERLAY_CONFIG=overlay-multiprotocol_ble.conf
+    integration_platforms:
+      - nrf52840dk_nrf52840
 
   zigbee.light_switch.multiprotocol:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
     tags: ci_build
     extra_args: DOVERLAY_CONFIG=overlay-multiprotocol_ble.conf
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
+      - nrf5340dk_nrf5340_cpuapp
 
   zigbee.light_switch.current_measurement:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
     tags: ci_build
     extra_args: CONFIG_SERIAL=n
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
 
   zigbee.light_switch.with_shell:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
     tags: ci_build
     extra_args: CONFIG_ZIGBEE_SHELL=y CONFIG_ZIGBEE_DEBUG_FUNCTIONS=y CONFIG_ZIGBEE_SHELL_ENDPOINT=1
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf21540dk_nrf52840
