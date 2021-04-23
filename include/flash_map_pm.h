@@ -32,6 +32,8 @@
 #define PM_ID(label) PM_##label##_ID
 #define PM_IS_ENABLED(label) PM_##label##_IS_ENABLED
 
+#define FLASH_AREA_LABEL_STR(label) #label
+
 #define FLASH_AREA_ID(label) PM_ID(label)
 
 #define FLASH_AREA_OFFSET(label) \
