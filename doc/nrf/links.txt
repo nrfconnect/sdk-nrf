@@ -62,7 +62,6 @@
 .. _`Sphinx parser issue`: https://github.com/sphinx-doc/sphinx/issues/2683
 
 .. _`Leshan Demo Server`: https://github.com/eclipse/leshan/blob/master/README.md
-.. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io
 
 .. _`wpantund`: https://github.com/openthread/wpantund/blob/master/README.md
 .. _`wpantund Installation Guide`: https://github.com/openthread/wpantund/blob/master/INSTALL.md
@@ -74,7 +73,6 @@
 .. _`Spinel specification properties for Thread`: https://github.com/openthread/spinel-spec/blob/master/thread/detail-properties.md
 .. _`Spinel protocol`: https://github.com/openthread/spinel-spec
 
-.. _`OpenThread Daemon`: https://openthread.io/platforms/co-processor/ot-daemon
 .. _`OpenThread POSIX app`: https://github.com/zephyrproject-rtos/openthread/tree/zephyr/src/posix
 
 .. _`OpenThread THCI`: https://github.com/openthread/openthread/tree/master/tools/harness-thci
@@ -94,6 +92,18 @@
 .. _`Preparing and commissioning accessory device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/a008cb/docs/guides/nrfconnect_android_commissioning.md#user-content-preparing-accessory-device
 .. _`Project CHIP Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/a008cb/README.md
 .. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/a008cb/docs/guides/nrfconnect_platform_overview.md
+
+.. _`Azure support for Asset Tracker v2`: https://github.com/nrfconnect/sdk-nrf/pull/3950
+
+.. ### Source: github.io
+
+.. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
+
+.. _`Timestamping`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/device-cloud-protocol/FourKindsOfData.html#timestamping
+
+.. _`nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/aws/Index.html
+.. _`nRF Asset Tracker web application`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/app/Index.html
+.. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/aws/GettingStarted.html
 
 .. ### Source: developer.nordicsemi.com
 
@@ -289,8 +299,6 @@
 .. _`Bluetooth mesh study guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
 .. _`Bluetooth mesh introduction blog`: https://www.bluetooth.com/blog/introducing-bluetooth-mesh-networking
 
-.. _`Bluetooth Secure Simple Pairing Using NFC`: https://nfc-forum.org/our-work/specification-releases/specifications/#010ea0b1006cf5b44
-
 .. ### Source: openmobilealliance.org
 
 .. _`SUPL context model`: https://www.openmobilealliance.org/release/SUPL/V1_0-20060127-C/OMA-AD-SUPL-V1_0-20060127-C.pdf#page=16
@@ -314,6 +322,8 @@
 .. _`Remote Procedure Calls (RPC)`: https://en.wikipedia.org/wiki/Remote_procedure_call
 
 .. _`Private addresses`: https://en.wikipedia.org/wiki/IP_address#Private_addresses
+
+.. _`MQTT`: https://en.wikipedia.org/wiki/MQTT
 
 .. ### Source: doc.microsoft.com
 
@@ -402,8 +412,6 @@
 
 .. ### Source: openthread.io
 
-.. _`OpenThread CoAP API`: https://openthread.io/reference/group/api-coap
-
 .. _`OpenThread.io`: https://openthread.io
 .. _`Device Types on OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
@@ -414,6 +422,10 @@
 
 .. _`OpenThread system architecture`: https://openthread.io/platforms#system_architecture
 
+.. _`OpenThread Daemon`: https://openthread.io/platforms/co-processor/ot-daemon
+
+.. _`OpenThread CoAP API`: https://openthread.io/reference/group/api-coap
+
 .. ### Source: threadgroup.*
 
 .. _`Thread Group`: https://www.threadgroup.org
@@ -422,7 +434,6 @@
 .. _`Thread 1.2 in Commercial White Paper`: https://www.threadgroup.org/Portals/0/documents/support/ThreadInCommercialWhitePaper_2542_1.pdf
 .. _`Thread 1.2 Base Features`: https://www.threadgroup.org/Portals/0/documents/support/Thread%201.2%20Base%20Features.pdf
 .. _`Thread Group members`: https://www.threadgroup.org/thread-group
-.. _`Thread Group's Confluence wiki page`: https://threadgroup.atlassian.net/wiki/spaces/THREADTEST/pages/25900869/Supporting+Material
 .. _`Thread Group's certification information`: https://www.threadgroup.org/What-is-Thread/Certification
 
 .. ### Source: nist.gov
@@ -484,6 +495,7 @@
 .. _`nRF Connect for Cloud Device API`: https://api.nrfcloud.com/v1
 
 .. _`NFC Forum specification overview`: https://nfc-forum.org/our-work/specification-releases/specifications/
+.. _`Bluetooth Secure Simple Pairing Using NFC`: https://nfc-forum.org/our-work/specification-releases/specifications/#010ea0b1006cf5b44
 
 .. _`ISO/IEC 7816-4`: https://www.iso.org/standard/54550.html
 
@@ -546,8 +558,6 @@
 
 .. _`HID usage tables`: https://www.usb.org/hid
 
-.. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
-
 .. _`BH1749NUC-E`: https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1749nuc-e.pdf
 
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
@@ -568,20 +578,10 @@
 .. _`GN`: https://gn.googlesource.com/gn/
 .. _`GN website`: https://gn.googlesource.com/gn/#getting-a-binary
 
-.. _`Timestamping`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/device-cloud-protocol/FourKindsOfData.html#timestamping
-
 .. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
 
 .. _`Power Saving Mode (PSM)`: https://www.sharetechnote.com/html/Handbook_LTE_PSM.html
 
-.. _`MQTT`: https://en.wikipedia.org/wiki/MQTT
+.. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io
 
-.. ### Source: nRF Asset Tracker
-
-.. _`nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/aws/Index.html
-
-.. _`nRF Asset Tracker web application`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/app/Index.html
-
-.. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.5.x/docs/aws/GettingStarted.html
-
-.. _`Azure support for Asset Tracker v2`: https://github.com/nrfconnect/sdk-nrf/pull/3950
+.. _`Thread Group's Confluence wiki page`: https://threadgroup.atlassian.net/wiki/spaces/THREADTEST/pages/25900869/Supporting+Material
