@@ -68,8 +68,8 @@ static struct nrf_cloud_sensor_data gps_cloud_data = {
 static atomic_val_t send_data_enable;
 
 /* Structures for work */
-static struct k_delayed_work leds_update_work;
-static struct k_delayed_work retry_connect_work;
+static struct k_work_delayable leds_update_work;
+static struct k_work_delayable retry_connect_work;
 static struct k_work connect_work;
 
 enum error_type {
@@ -226,7 +226,7 @@ static void leds_update(struct k_work *work)
 		current_led_on_mask = led_on_mask;
 	}
 
-	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
+	k_work_reschedule(&leds_update_work, LEDS_UPDATE_INTERVAL);
 }
 
 /**@brief Send sensor data to nRF Cloud. **/
@@ -292,7 +292,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		printk("NRF_CLOUD_EVT_TRANSPORT_CONNECTED\n");
-		k_delayed_work_cancel(&retry_connect_work);
+		k_work_cancel_delayable(&retry_connect_work);
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		printk("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST\n");
@@ -393,7 +393,7 @@ static void cloud_connect(struct k_work *work)
 	}
 
 	display_state = LEDS_CLOUD_CONNECTING;
-	k_delayed_work_submit(&retry_connect_work, RETRY_CONNECT_WAIT);
+	k_work_reschedule(&retry_connect_work, RETRY_CONNECT_WAIT);
 }
 
 /**@brief Callback for button events from the DK buttons and LEDs library. */
@@ -408,10 +408,10 @@ static void button_handler(uint32_t buttons, uint32_t has_changed)
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
-	k_delayed_work_init(&leds_update_work, leds_update);
-	k_delayed_work_init(&retry_connect_work, cloud_connect);
+	k_work_init_delayable(&leds_update_work, leds_update);
+	k_work_init_delayable(&retry_connect_work, cloud_connect);
 	k_work_init(&connect_work, cloud_connect);
-	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
+	k_work_reschedule(&leds_update_work, LEDS_UPDATE_INTERVAL);
 }
 
 /**@brief Configures modem to provide LTE link. Blocks until link is

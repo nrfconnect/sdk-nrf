@@ -24,8 +24,8 @@ static struct cloud_backend *cloud_backend;
 static const struct device *gps_dev;
 static uint64_t start_search_timestamp;
 static uint64_t fix_timestamp;
-static struct k_delayed_work gps_start_work;
-static struct k_delayed_work reboot_work;
+static struct k_work_delayable gps_start_work;
+static struct k_work_delayable reboot_work;
 
 static void gps_start_work_fn(struct k_work *work);
 
@@ -120,7 +120,7 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 		/* Update nRF Cloud with GPS service info signifying that it
 		 * has GPS capabilities. */
 		send_service_info();
-		k_delayed_work_submit(&gps_start_work, K_NO_WAIT);
+		k_work_reschedule(&gps_start_work, K_NO_WAIT);
 		break;
 	case CLOUD_EVT_DISCONNECTED:
 		LOG_INF("CLOUD_EVT_DISCONNECTED");
@@ -145,7 +145,7 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 				      strlen("{\"reboot\":true}"));
 
 			if (ret == 0) {
-				k_delayed_work_submit(&reboot_work, K_NO_WAIT);
+				k_work_reschedule(&reboot_work, K_NO_WAIT);
 			}
 			break;
 		}
@@ -329,8 +329,8 @@ static void reboot_work_fn(struct k_work *work)
 
 static void work_init(void)
 {
-	k_delayed_work_init(&gps_start_work, gps_start_work_fn);
-	k_delayed_work_init(&reboot_work, reboot_work_fn);
+	k_work_init_delayable(&gps_start_work, gps_start_work_fn);
+	k_work_init_delayable(&reboot_work, reboot_work_fn);
 }
 
 static int modem_configure(void)
@@ -371,9 +371,9 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	if (has_changed & button_states & DK_BTN1_MSK) {
 		cloud_send_msg();
-		k_delayed_work_submit(&reboot_work, K_SECONDS(3));
+		k_work_reschedule(&reboot_work, K_SECONDS(3));
 	} else if (has_changed & ~button_states & DK_BTN1_MSK) {
-		k_delayed_work_cancel(&reboot_work);
+		k_work_cancel_delayable(&reboot_work);
 	}
 }
 

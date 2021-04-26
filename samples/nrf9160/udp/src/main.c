@@ -13,7 +13,7 @@
 
 static int client_fd;
 static struct sockaddr_storage host_addr;
-static struct k_delayed_work server_transmission_work;
+static struct k_work_delayable server_transmission_work;
 
 K_SEM_DEFINE(lte_connected, 0, 1);
 
@@ -34,14 +34,14 @@ static void server_transmission_work_fn(struct k_work *work)
 		return;
 	}
 
-	k_delayed_work_submit(
+	k_work_reschedule(
 			&server_transmission_work,
 			K_SECONDS(CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS));
 }
 
 static void work_init(void)
 {
-	k_delayed_work_init(&server_transmission_work,
+	k_work_init_delayable(&server_transmission_work,
 			    server_transmission_work_fn);
 }
 
@@ -245,5 +245,5 @@ void main(void)
 		return;
 	}
 
-	k_delayed_work_submit(&server_transmission_work, K_NO_WAIT);
+	k_work_reschedule(&server_transmission_work, K_NO_WAIT);
 }

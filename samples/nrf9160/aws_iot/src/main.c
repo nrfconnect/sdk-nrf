@@ -27,9 +27,9 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 
 #define APP_TOPICS_COUNT CONFIG_AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT
 
-static struct k_delayed_work shadow_update_work;
-static struct k_delayed_work connect_work;
-static struct k_delayed_work shadow_update_version_work;
+static struct k_work_delayable shadow_update_work;
+static struct k_work_delayable connect_work;
+static struct k_work_delayable shadow_update_version_work;
 
 K_SEM_DEFINE(lte_connected, 0, 1);
 
@@ -157,7 +157,7 @@ static void connect_work_fn(struct k_work *work)
 	printk("Next connection retry in %d seconds\n",
 	       CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS);
 
-	k_delayed_work_submit(&connect_work,
+	k_work_reschedule(&connect_work,
 			K_SECONDS(CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS));
 }
 
@@ -173,7 +173,7 @@ static void shadow_update_work_fn(struct k_work *work)
 	printk("Next data publication in %d seconds\n",
 	       CONFIG_PUBLICATION_INTERVAL_SECONDS);
 
-	k_delayed_work_submit(&shadow_update_work,
+	k_work_reschedule(&shadow_update_work,
 			      K_SECONDS(CONFIG_PUBLICATION_INTERVAL_SECONDS));
 }
 
@@ -223,7 +223,7 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 	case AWS_IOT_EVT_CONNECTED:
 		printk("AWS_IOT_EVT_CONNECTED\n");
 
-		k_delayed_work_cancel(&connect_work);
+		k_work_cancel_delayable(&connect_work);
 
 		if (evt->data.persistent_session) {
 			printk("Persistent session enabled\n");
@@ -239,11 +239,11 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		/** Send version number to AWS IoT broker to verify that the
 		 *  FOTA update worked.
 		 */
-		k_delayed_work_submit(&shadow_update_version_work, K_NO_WAIT);
+		k_work_reschedule(&shadow_update_version_work, K_NO_WAIT);
 
 		/** Start sequential shadow data updates.
 		 */
-		k_delayed_work_submit(&shadow_update_work,
+		k_work_reschedule(&shadow_update_work,
 				K_SECONDS(CONFIG_PUBLICATION_INTERVAL_SECONDS));
 
 #if defined(CONFIG_NRF_MODEM_LIB)
@@ -258,13 +258,13 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		break;
 	case AWS_IOT_EVT_DISCONNECTED:
 		printk("AWS_IOT_EVT_DISCONNECTED\n");
-		k_delayed_work_cancel(&shadow_update_work);
+		k_work_cancel_delayable(&shadow_update_work);
 
-		if (k_delayed_work_pending(&connect_work)) {
+		if (k_work_delayable_is_pending(&connect_work)) {
 			break;
 		}
 
-		k_delayed_work_submit(&connect_work, K_NO_WAIT);
+		k_work_reschedule(&connect_work, K_NO_WAIT);
 		break;
 	case AWS_IOT_EVT_DATA_RECEIVED:
 		printk("AWS_IOT_EVT_DATA_RECEIVED\n");
@@ -317,9 +317,9 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 
 static void work_init(void)
 {
-	k_delayed_work_init(&shadow_update_work, shadow_update_work_fn);
-	k_delayed_work_init(&connect_work, connect_work_fn);
-	k_delayed_work_init(&shadow_update_version_work,
+	k_work_init_delayable(&shadow_update_work, shadow_update_work_fn);
+	k_work_init_delayable(&connect_work, connect_work_fn);
+	k_work_init_delayable(&shadow_update_version_work,
 			    shadow_update_version_work_fn);
 }
 
@@ -509,5 +509,5 @@ void main(void)
 
 
 	date_time_update_async(date_time_event_handler);
-	k_delayed_work_submit(&connect_work, K_NO_WAIT);
+	k_work_reschedule(&connect_work, K_NO_WAIT);
 }

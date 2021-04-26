@@ -20,7 +20,7 @@
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
 static K_SEM_DEFINE(cloud_connected_sem, 0, 1);
 static bool network_connected;
-static struct k_delayed_work reboot_work;
+static struct k_work_delayable reboot_work;
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			 "This sample does not support auto init and connect");
@@ -93,7 +93,7 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 	case AZURE_IOT_HUB_EVT_FOTA_DONE:
 		printk("AZURE_IOT_HUB_EVT_FOTA_DONE\n");
 		printk("The device will reboot in 5 seconds to apply update\n");
-		k_delayed_work_submit(&reboot_work, K_SECONDS(5));
+		k_work_reschedule(&reboot_work, K_SECONDS(5));
 		break;
 	case AZURE_IOT_HUB_EVT_FOTA_ERASE_PENDING:
 		printk("AZURE_IOT_HUB_EVT_FOTA_ERASE_PENDING\n");
@@ -231,7 +231,7 @@ void main(void)
 
 	printk("Modem library initialized\n");
 
-	k_delayed_work_init(&reboot_work, reboot_work_fn);
+	k_work_init_delayable(&reboot_work, reboot_work_fn);
 	at_configure();
 
 	err = azure_iot_hub_init(NULL, azure_event_handler);

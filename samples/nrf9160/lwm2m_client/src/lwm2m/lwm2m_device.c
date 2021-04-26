@@ -31,7 +31,7 @@ static int usb_ma = 900;
 static uint8_t bat_status = LWM2M_DEVICE_BATTERY_STATUS_CHARGING;
 static int mem_total = (CLIENT_FLASH_SIZE / 1024);
 
-static struct k_delayed_work reboot_work;
+static struct k_work_delayable reboot_work;
 
 static void reboot_work_handler(struct k_work *work)
 {
@@ -47,7 +47,7 @@ static int device_reboot_cb(uint16_t obj_inst_id, uint8_t *args,
 
 	LOG_INF("DEVICE: Reboot in progress");
 
-	k_delayed_work_submit(&reboot_work, REBOOT_DELAY);
+	k_work_reschedule(&reboot_work, REBOOT_DELAY);
 
 	return 0;
 }
@@ -65,7 +65,7 @@ static int device_factory_default_cb(uint16_t obj_inst_id, uint8_t *args,
 
 int lwm2m_init_device(char *serial_num)
 {
-	k_delayed_work_init(&reboot_work, reboot_work_handler);
+	k_work_init_delayable(&reboot_work, reboot_work_handler);
 
 	lwm2m_engine_set_res_data("3/0/0", CLIENT_MANUFACTURER,
 				  sizeof(CLIENT_MANUFACTURER),

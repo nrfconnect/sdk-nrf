@@ -34,7 +34,7 @@ static uint8_t mcuboot_buf[CONFIG_APP_MCUBOOT_FLASH_BUF_SZ];
 
 static int image_type;
 
-static struct k_delayed_work reboot_work;
+static struct k_work_delayable reboot_work;
 
 void client_acknowledge(void);
 
@@ -82,7 +82,7 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
 
 	LOG_INF("Rebooting device");
 
-	k_delayed_work_submit(&reboot_work, REBOOT_DELAY);
+	k_work_reschedule(&reboot_work, REBOOT_DELAY);
 
 	return 0;
 
@@ -210,7 +210,7 @@ cleanup:
 
 int lwm2m_init_firmware(void)
 {
-	k_delayed_work_init(&reboot_work, reboot_work_handler);
+	k_work_init_delayable(&reboot_work, reboot_work_handler);
 
 #if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	lwm2m_firmware_set_update_cb(firmware_update_cb);

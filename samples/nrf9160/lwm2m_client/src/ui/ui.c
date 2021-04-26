@@ -16,7 +16,7 @@ LOG_MODULE_REGISTER(ui, CONFIG_UI_LOG_LEVEL);
 static enum ui_led_pattern current_led_state;
 
 #if !defined(CONFIG_UI_LED_USE_PWM)
-static struct k_delayed_work leds_update_work;
+static struct k_work_delayable leds_update_work;
 
 /**@brief Update LEDs state. */
 static void leds_update(struct k_work *work)
@@ -43,10 +43,10 @@ static void leds_update(struct k_work *work)
 
 	if (work) {
 		if (led_on) {
-			k_delayed_work_submit(&leds_update_work,
+			k_work_reschedule(&leds_update_work,
 					      K_MSEC(UI_LED_ON_PERIOD_NORMAL));
 		} else {
-			k_delayed_work_submit(&leds_update_work,
+			k_work_reschedule(&leds_update_work,
 					      K_MSEC(UI_LED_OFF_PERIOD_NORMAL));
 		}
 	}
@@ -111,8 +111,8 @@ int ui_init(ui_callback_t cb)
 		return err;
 	}
 
-	k_delayed_work_init(&leds_update_work, leds_update);
-	k_delayed_work_submit(&leds_update_work, K_NO_WAIT);
+	k_work_init_delayable(&leds_update_work, leds_update);
+	k_work_reschedule(&leds_update_work, K_NO_WAIT);
 #endif /* CONFIG_UI_LED_USE_PWM */
 
 #ifdef CONFIG_UI_BUTTON
