@@ -13,7 +13,7 @@ It should be instantiated in the light fixture node.
 The Light Hue Server adds a single model instance to the composition data, in addition to the extended :ref:`bt_mesh_lvl_srv_readme`.
 Although the Light Hue Server contains ``range`` and ``default`` states like other lighting models, the states cannot be accessed directly by other nodes without a :ref:`bt_mesh_light_hsl_srv_readme`.
 
-Unlike the other Lightness models, the Hue Server model's Hue state will wrap around when reaching its maximum value.
+Unlike the other Lightness models, the Hue Server model's Hue state will wrap around when reaching its maximum or minimum values as defined in :c:member:`bt_mesh_light_hue_srv.range`.
 To be able to handle this effectively in the application, the Light Hue Server model exposes the underlying Generic Level Server's Move and Delta Set messages, which must be implemented.
 If the application gets a call to the :c:member:`bt_mesh_light_hue_srv_handlers.delta_set` callback, it must move the Hue relative to its current value, in the direction determined by the ``delta_set`` message.
 Note that this may cause the Hue state to wrap around.
