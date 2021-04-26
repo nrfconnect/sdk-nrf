@@ -203,6 +203,12 @@ uint16_t bt_mesh_light_hsl_to_rgb(const struct bt_mesh_light_hsl *hsl,
 #define BT_MESH_LIGHT_HSL_MSG_LEN_RANGE_SET 8
 #define BT_MESH_LIGHT_HSL_MSG_LEN_RANGE_STATUS 9
 
+#ifdef CONFIG_BT_MESH_SCENE_SRV
+#define BT_MESH_LIGHT_HSL_SCENE_ENTRY_INIT \
+	.scene = BT_MESH_SCENE_ENTRY(&_bt_mesh_light_hsl_scene_type),
+#else
+#define BT_MESH_LIGHT_HSL_SCENE_ENTRY_INIT
+#endif
 /** @endcond */
 
 #ifdef __cplusplus

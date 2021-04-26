@@ -40,6 +40,13 @@ enum bt_mesh_on_power_up {
 #define BT_MESH_PONOFF_MSG_LEN_GET 0
 #define BT_MESH_PONOFF_MSG_LEN_STATUS 1
 #define BT_MESH_PONOFF_MSG_LEN_SET 1
+
+#ifdef CONFIG_BT_MESH_SCENE_SRV
+#define BT_MESH_PONOFF_SCENE_ENTRY_INIT \
+	.scene = BT_MESH_SCENE_ENTRY(&_bt_mesh_ponoff_srv_scene_type),
+#else
+#define BT_MESH_PONOFF_SCENE_ENTRY_INIT
+#endif
 /** @endcond */
 
 #ifdef __cplusplus

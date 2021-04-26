@@ -34,8 +34,9 @@ struct bt_mesh_light_sat_srv;
 #define BT_MESH_LIGHT_SAT_SRV_INIT(_handlers)                                  \
 	{                                                                      \
 		.handlers = _handlers,                                         \
-		.lvl = BT_MESH_LVL_SRV_INIT(                                   \
-			&_bt_mesh_light_sat_srv_lvl_handlers),                 \
+		.lvl = {                                                       \
+			.handlers = &_bt_mesh_light_sat_srv_lvl_handlers,      \
+		},                                                             \
 		.range = BT_MESH_LIGHT_HSL_OP_RANGE_DEFAULT,                   \
 	}
 

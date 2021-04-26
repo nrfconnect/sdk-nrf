@@ -37,9 +37,11 @@ struct bt_mesh_light_ctrl_srv;
 #define BT_MESH_LIGHT_CTRL_SRV_INIT(_lightness_srv)                            \
 	{                                                                      \
 		.cfg = BT_MESH_LIGHT_CTRL_SRV_CFG_INIT,                        \
-		.onoff = BT_MESH_ONOFF_SRV_INIT(                               \
-			&_bt_mesh_light_ctrl_srv_onoff),                       \
+		.onoff = {                                                     \
+			.handlers = &_bt_mesh_light_ctrl_srv_onoff,            \
+		},                                                             \
 		.lightness = _lightness_srv,                                   \
+		BT_MESH_LIGHT_CTRL_SCENE_ENTRY_INIT                            \
 		BT_MESH_LIGHT_CTRL_SRV_REG_INIT                                \
 	}
 
@@ -186,8 +188,10 @@ struct bt_mesh_light_ctrl_srv {
 	struct bt_mesh_model *model;
 	/** Composition data setup server model instance */
 	struct bt_mesh_model *setup_srv;
+#if defined(CONFIG_BT_MESH_SCENE_SRV)
 	/** Scene entry */
-	struct bt_mesh_scene_entry scene;
+	struct bt_mesh_scene_entry *scene;
+#endif
 };
 
 /** @brief Turn the light on.
@@ -275,6 +279,7 @@ extern const struct bt_mesh_model_op _bt_mesh_light_ctrl_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_light_ctrl_setup_srv_cb;
 extern const struct bt_mesh_model_op _bt_mesh_light_ctrl_setup_srv_op[];
 extern const struct bt_mesh_onoff_srv_handlers _bt_mesh_light_ctrl_srv_onoff;
+extern const struct bt_mesh_scene_entry_type _bt_mesh_light_ctrl_scene_type;
 /** @endcond */
 
 #ifdef __cplusplus

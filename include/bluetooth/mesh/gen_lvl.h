@@ -108,6 +108,12 @@ struct bt_mesh_lvl_status {
 #define BT_MESH_LVL_MSG_MAXLEN_DELTA_SET 7
 #define BT_MESH_LVL_MSG_MINLEN_MOVE_SET 3
 #define BT_MESH_LVL_MSG_MAXLEN_MOVE_SET 5
+
+#ifdef CONFIG_BT_MESH_SCENE_SRV
+#define BT_MESH_LVL_SCENE_ENTRY_INIT .scene = BT_MESH_SCENE_ENTRY(&_bt_mesh_lvl_srv_scene_type),
+#else
+#define BT_MESH_LVL_SCENE_ENTRY_INIT
+#endif
 /** @endcond */
 
 #ifdef __cplusplus

@@ -35,10 +35,16 @@ struct bt_mesh_plvl_srv;
  */
 #define BT_MESH_PLVL_SRV_INIT(_handlers)                                       \
 	{                                                                      \
-		.lvl = BT_MESH_LVL_SRV_INIT(&bt_mesh_plvl_srv_lvl_handlers),   \
-		.ponoff = BT_MESH_PONOFF_SRV_INIT(                             \
-			&bt_mesh_plvl_srv_onoff_handlers, NULL, NULL),         \
+		.lvl = {                                                       \
+			.handlers = &bt_mesh_plvl_srv_lvl_handlers,            \
+		},                                                             \
+		.ponoff = {                                                    \
+			.onoff = {                                             \
+				.handlers = &bt_mesh_plvl_srv_onoff_handlers,  \
+			},                                                     \
+		},                                                             \
 		.handlers = _handlers,                                         \
+		BT_MESH_PLVL_SCENE_ENTRY_INIT                                  \
 	}
 
 /** @def BT_MESH_MODEL_PLVL_SRV
@@ -160,8 +166,10 @@ struct bt_mesh_plvl_srv {
 	uint16_t last;
 	/** Whether the Power is on. */
 	bool is_on;
+#if defined(CONFIG_BT_MESH_SCENE_SRV)
 	/* Scene entry */
-	struct bt_mesh_scene_entry scene;
+	struct bt_mesh_scene_entry *scene;
+#endif
 };
 
 /** @brief Publish the current Power state.
@@ -192,6 +200,7 @@ extern const struct bt_mesh_model_op _bt_mesh_plvl_srv_op[];
 extern const struct bt_mesh_model_op _bt_mesh_plvl_setup_srv_op[];
 extern const struct bt_mesh_lvl_srv_handlers bt_mesh_plvl_srv_lvl_handlers;
 extern const struct bt_mesh_onoff_srv_handlers bt_mesh_plvl_srv_onoff_handlers;
+extern const struct bt_mesh_scene_entry_type _bt_mesh_plvl_srv_scene_type;
 /** @endcond */
 
 #ifdef __cplusplus

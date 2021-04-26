@@ -27,6 +27,8 @@ struct __packed scene_data {
 	uint8_t data[];
 };
 
+static sys_slist_t scene_srv_list;
+
 static char *scene_path(char *buf, uint16_t scene, bool vnd, uint8_t page)
 {
 	sprintf(buf, "%x/%c%x", scene, vnd ? 'v' : 's', page);
@@ -652,6 +654,8 @@ static void scene_srv_reset(struct bt_mesh_model *model)
 	srv->transition_end = 0;
 	srv->sigpages = 0;
 	srv->vndpages = 0;
+
+	sys_slist_find_and_remove(&scene_srv_list, &srv->entry);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_scene_srv_cb = {
@@ -681,6 +685,8 @@ static int scene_setup_srv_init(struct bt_mesh_model *model)
 	 */
 	bt_mesh_model_extend(srv->model, srv->setup_mod);
 
+	sys_slist_append(&scene_srv_list, &srv->entry);
+
 	return 0;
 }
 
@@ -688,22 +694,24 @@ const struct bt_mesh_model_cb _bt_mesh_scene_setup_srv_cb = {
 	.init = scene_setup_srv_init,
 };
 
-void bt_mesh_scene_entry_add(struct bt_mesh_model *model,
-			     struct bt_mesh_scene_entry *entry,
-			     const struct bt_mesh_scene_entry_type *type,
-			     bool vnd)
+int bt_mesh_scene_entry_add(struct bt_mesh_model *model,
+			    struct bt_mesh_scene_entry *entry,
+			    bool vnd)
 {
 	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
 
+	if (!entry || !entry->type) {
+		return -EINVAL;
+	}
+
 	if (sizeof(struct scene_data) +
-		    (vnd ? VND_MODEL_SCENE_DATA_OVERHEAD : 0) + type->maxlen >
+		    (vnd ? VND_MODEL_SCENE_DATA_OVERHEAD : 0) + entry->type->maxlen >
 	    SCENE_PAGE_SIZE) {
 		BT_ERR("Scene entry maxlen too large");
-		return;
+		return -ENOMEM;
 	}
 
 	entry->model = model;
-	entry->type = type;
 	entry->srv = NULL;
 
 	/* A scene server covers all elements from its own until the next scene
@@ -722,7 +730,7 @@ void bt_mesh_scene_entry_add(struct bt_mesh_model *model,
 
 	if (!entry->srv) {
 		BT_WARN("No Scene server for elem %u", model->elem_idx);
-		return;
+		return -ENOENT;
 	}
 
 	if (vnd) {
@@ -730,17 +738,30 @@ void bt_mesh_scene_entry_add(struct bt_mesh_model *model,
 	} else {
 		sys_slist_append(&entry->srv->sig, &entry->n);
 	}
+
+	return 0;
 }
 
-void bt_mesh_scene_invalidate(struct bt_mesh_scene_entry *entry)
+void bt_mesh_scene_invalidate(const struct bt_mesh_model *model)
 {
-	if (!entry->srv) {
+	struct bt_mesh_scene_srv *srv = NULL;
+	struct bt_mesh_scene_srv *srv_prev = NULL;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&scene_srv_list, srv, entry) {
+		if (srv->model->elem_idx > model->elem_idx) {
+			break;
+		}
+
+		srv_prev = srv;
+	}
+
+	if (!srv_prev) {
 		return;
 	}
 
-	entry->srv->prev = BT_MESH_SCENE_NONE;
-	entry->srv->transition_end = 0U;
-	entry->srv->next = BT_MESH_SCENE_NONE;
+	srv_prev->prev = BT_MESH_SCENE_NONE;
+	srv_prev->transition_end = 0U;
+	srv_prev->next = BT_MESH_SCENE_NONE;
 }
 
 int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,

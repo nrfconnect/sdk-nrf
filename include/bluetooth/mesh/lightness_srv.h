@@ -35,11 +35,17 @@ struct bt_mesh_lightness_srv;
  */
 #define BT_MESH_LIGHTNESS_SRV_INIT(_handlers)                                  \
 	{                                                                      \
-		.lvl = BT_MESH_LVL_SRV_INIT(                                   \
-			&_bt_mesh_lightness_srv_lvl_handlers),                 \
-		.ponoff = BT_MESH_PONOFF_SRV_INIT(                             \
-			&_bt_mesh_lightness_srv_onoff_handlers, NULL, NULL),   \
+		.lvl = {                                                       \
+			.handlers = &_bt_mesh_lightness_srv_lvl_handlers,      \
+		},                                                             \
+		.ponoff = {                                                    \
+			.onoff = {                                             \
+				.handlers =                                    \
+				      &_bt_mesh_lightness_srv_onoff_handlers,  \
+			},                                                     \
+		},                                                             \
 		.handlers = _handlers,                                         \
+		BT_MESH_LIGHTNESS_SCENE_ENTRY_INIT                             \
 	}
 
 /** @def BT_MESH_MODEL_LIGHTNESS_SRV
@@ -166,8 +172,11 @@ struct bt_mesh_lightness_srv {
 	/** Acting controller, if enabled. */
 	struct bt_mesh_light_ctrl_srv *ctrl;
 #endif
+
+#if defined(CONFIG_BT_MESH_SCENE_SRV)
 	/* Scene entry */
-	struct bt_mesh_scene_entry scene;
+	struct bt_mesh_scene_entry *scene;
+#endif
 };
 
 /** @brief Publish the current Light state.
@@ -200,6 +209,7 @@ extern const struct bt_mesh_lvl_srv_handlers
 	_bt_mesh_lightness_srv_lvl_handlers;
 extern const struct bt_mesh_onoff_srv_handlers
 	_bt_mesh_lightness_srv_onoff_handlers;
+extern const struct bt_mesh_scene_entry_type _bt_mesh_lightness_scene_type;
 /** @endcond */
 
 #ifdef __cplusplus

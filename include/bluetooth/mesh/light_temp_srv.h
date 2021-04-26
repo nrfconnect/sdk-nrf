@@ -33,12 +33,11 @@ struct bt_mesh_light_temp_srv;
  */
 #define BT_MESH_LIGHT_TEMP_SRV_INIT(_handlers)                                 \
 	{                                                                      \
-		.lvl = BT_MESH_LVL_SRV_INIT(                                   \
-			&_bt_mesh_light_temp_srv_lvl_handlers),                \
-		.pub = { .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(          \
-				 BT_MESH_LIGHT_TEMP_STATUS,                    \
-				 BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_STATUS)) }, \
+		.lvl = {                                                       \
+			.handlers = &_bt_mesh_light_temp_srv_lvl_handlers,     \
+		},                                                             \
 		.handlers = _handlers,                                         \
+		BT_MESH_LIGHT_TEMP_SCENE_ENTRY_INIT                            \
 	}
 
 /** @def BT_MESH_MODEL_LIGHT_TEMP_SRV
@@ -120,6 +119,12 @@ struct bt_mesh_light_temp_srv {
 	struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
+		BT_MESH_LIGHT_TEMP_STATUS,
+		BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_STATUS)];
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx prev_transaction;
 	/** Handler function structure. */
@@ -130,8 +135,10 @@ struct bt_mesh_light_temp_srv {
 	struct bt_mesh_light_temp_range range;
 	/** The last known color temperature. */
 	struct bt_mesh_light_temp last;
+#if defined(CONFIG_BT_MESH_SCENE_SRV)
 	/** Scene data entry */
-	struct bt_mesh_scene_entry scene;
+	struct bt_mesh_scene_entry *scene;
+#endif
 };
 
 /** @brief Publish the current CTL Temperature status.
@@ -161,6 +168,7 @@ extern const struct bt_mesh_model_op _bt_mesh_light_temp_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_light_temp_srv_cb;
 extern const struct bt_mesh_lvl_srv_handlers
 	_bt_mesh_light_temp_srv_lvl_handlers;
+extern const struct bt_mesh_scene_entry_type _bt_mesh_light_temp_scene_type;
 /** @endcond */
 
 #ifdef __cplusplus

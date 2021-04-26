@@ -239,6 +239,13 @@ enum bt_mesh_light_ctrl_coeff {
 			CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG,             \
 		}                                                              \
 	}
+
+#ifdef CONFIG_BT_MESH_SCENE_SRV
+#define BT_MESH_LIGHT_CTRL_SCENE_ENTRY_INIT \
+	.scene = BT_MESH_SCENE_ENTRY(&_bt_mesh_light_ctrl_scene_type),
+#else
+#define BT_MESH_LIGHT_CTRL_SCENE_ENTRY_INIT
+#endif
 /** @endcond */
 
 #ifdef __cplusplus

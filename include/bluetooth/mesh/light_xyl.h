@@ -104,6 +104,12 @@ struct bt_mesh_light_xyl_range_status {
 #define BT_MESH_LIGHT_XYL_MSG_MINLEN_SET 7
 #define BT_MESH_LIGHT_XYL_MSG_MAXLEN_SET 9
 
+#ifdef CONFIG_BT_MESH_SCENE_SRV
+#define BT_MESH_LIGHT_XYL_SCENE_ENTRY_INIT \
+	.scene = BT_MESH_SCENE_ENTRY(&_bt_mesh_light_xyl_scene_type),
+#else
+#define BT_MESH_LIGHT_XYL_SCENE_ENTRY_INIT
+#endif
 /** @endcond */
 
 #ifdef __cplusplus

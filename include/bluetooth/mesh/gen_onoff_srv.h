@@ -33,6 +33,7 @@ struct bt_mesh_onoff_srv;
 #define BT_MESH_ONOFF_SRV_INIT(_handlers)                                      \
 	{                                                                      \
 		.handlers = _handlers,                                         \
+		BT_MESH_ONOFF_SCENE_ENTRY_INIT                                 \
 	}
 
 /** @def BT_MESH_MODEL_ONOFF_SRV
@@ -97,8 +98,10 @@ struct bt_mesh_onoff_srv {
 	/* Publication data */
 	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
 		BT_MESH_ONOFF_OP_STATUS, BT_MESH_ONOFF_MSG_MAXLEN_STATUS)];
+#if defined(CONFIG_BT_MESH_SCENE_SRV)
 	/* Scene entry */
-	struct bt_mesh_scene_entry scene;
+	struct bt_mesh_scene_entry *scene;
+#endif
 	/** Internal flag state. */
 	atomic_t flags;
 };
@@ -128,6 +131,7 @@ int bt_mesh_onoff_srv_pub(struct bt_mesh_onoff_srv *srv,
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_onoff_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_onoff_srv_cb;
+extern const struct bt_mesh_scene_entry_type _bt_mesh_onoff_scene_type;
 /** @endcond */
 
 #ifdef __cplusplus

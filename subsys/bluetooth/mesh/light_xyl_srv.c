@@ -137,7 +137,7 @@ static void xyl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	store_state(srv);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_invalidate(&srv->scene);
+		bt_mesh_scene_invalidate(srv->model);
 	}
 
 	(void)bt_mesh_light_xyl_srv_pub(srv, NULL, &xyl_status);
@@ -491,7 +491,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	(void)bt_mesh_light_xyl_srv_pub(srv, NULL, &xyl_status);
 }
 
-static const struct bt_mesh_scene_entry_type scene_type = {
+const struct bt_mesh_scene_entry_type _bt_mesh_light_xyl_scene_type = {
 	.maxlen = sizeof(struct scene_data),
 	.store = scene_store,
 	.recall = scene_recall,
@@ -533,9 +533,9 @@ static int bt_mesh_light_xyl_srv_init(struct bt_mesh_model *model)
 			       bt_mesh_model_elem(model),
 			       BT_MESH_MODEL_ID_LIGHT_XYL_SETUP_SRV));
 
-	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
-	}
+#ifdef CONFIG_BT_MESH_SCENE_SRV
+	(void)bt_mesh_scene_entry_add(model, srv->scene, false);
+#endif
 
 	return 0;
 }

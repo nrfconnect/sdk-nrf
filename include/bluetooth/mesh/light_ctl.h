@@ -133,6 +133,16 @@ struct bt_mesh_light_temp_range_status {
 #define BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_STATUS 9
 #define BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG 6
 #define BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_SET 4
+
+#ifdef CONFIG_BT_MESH_SCENE_SRV
+#define BT_MESH_LIGHT_CTL_SCENE_ENTRY_INIT \
+	.scene = BT_MESH_SCENE_ENTRY(&_bt_mesh_light_ctl_scene_type),
+#define BT_MESH_LIGHT_TEMP_SCENE_ENTRY_INIT \
+	.scene = BT_MESH_SCENE_ENTRY(&_bt_mesh_light_temp_scene_type),
+#else
+#define BT_MESH_LIGHT_CTL_SCENE_ENTRY_INIT
+#define BT_MESH_LIGHT_TEMP_SCENE_ENTRY_INIT
+#endif
 /** @endcond */
 
 #ifdef __cplusplus

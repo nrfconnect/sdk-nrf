@@ -39,7 +39,20 @@ struct bt_mesh_light_hsl_srv;
 	{                                                                      \
 		.hue = BT_MESH_LIGHT_HUE_SRV_INIT(_hue_handlers),              \
 		.sat = BT_MESH_LIGHT_SAT_SRV_INIT(_sat_handlers),              \
-		.lightness = BT_MESH_LIGHTNESS_SRV_INIT(_light_handlers),      \
+		.lightness = {                                                 \
+			.lvl = {                                               \
+				.handlers =                                    \
+					&_bt_mesh_lightness_srv_lvl_handlers,  \
+			},                                                     \
+			.ponoff = {                                            \
+				.onoff = {                                     \
+					.handlers =                            \
+				       &_bt_mesh_lightness_srv_onoff_handlers, \
+				},                                             \
+			},                                                     \
+			.handlers = _light_handlers,                           \
+		},                                                             \
+		BT_MESH_LIGHT_HSL_SCENE_ENTRY_INIT                             \
 	}
 
 /** @def BT_MESH_MODEL_LIGHT_HSL_SRV
@@ -89,8 +102,10 @@ struct bt_mesh_light_hsl_srv {
 	bool pub_pending;
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx prev_transaction;
+#if defined(CONFIG_BT_MESH_SCENE_SRV)
 	/* Scene entry */
-	struct bt_mesh_scene_entry scene;
+	struct bt_mesh_scene_entry *scene;
+#endif
 };
 
 /** @brief Publish the current HSL status.
@@ -119,6 +134,7 @@ int bt_mesh_light_hsl_srv_pub(struct bt_mesh_light_hsl_srv *srv,
 extern const struct bt_mesh_model_op _bt_mesh_light_hsl_srv_op[];
 extern const struct bt_mesh_model_op _bt_mesh_light_hsl_setup_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_light_hsl_srv_cb;
+extern const struct bt_mesh_scene_entry_type _bt_mesh_light_hsl_scene_type;
 /** @endcond */
 
 #ifdef __cplusplus

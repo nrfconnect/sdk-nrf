@@ -38,11 +38,13 @@ struct bt_mesh_ponoff_srv;
 #define BT_MESH_PONOFF_SRV_INIT(_onoff_handlers, _dtt_change_handler,          \
 				_on_power_up_change_handler)                   \
 	{                                                                      \
-		.onoff = BT_MESH_ONOFF_SRV_INIT(                               \
-			&_bt_mesh_ponoff_onoff_intercept),                     \
+		.onoff = {                                                     \
+			.handlers = &_bt_mesh_ponoff_onoff_intercept,          \
+		},                                                             \
 		.dtt = BT_MESH_DTT_SRV_INIT(_dtt_change_handler),              \
 		.onoff_handlers = _onoff_handlers,                             \
 		.update = _on_power_up_change_handler,                         \
+		BT_MESH_PONOFF_SCENE_ENTRY_INIT                                \
 	}
 
 /** @def BT_MESH_MODEL_PONOFF_SRV
@@ -104,8 +106,10 @@ struct bt_mesh_ponoff_srv {
 
 	/** Current OnPowerUp state. */
 	enum bt_mesh_on_power_up on_power_up;
+#if defined(CONFIG_BT_MESH_SCENE_SRV)
 	/* Scene entry */
-	struct bt_mesh_scene_entry scene;
+	struct bt_mesh_scene_entry *scene;
+#endif
 };
 
 /** @brief Set the OnPowerUp state of a Power OnOff server.
@@ -145,6 +149,7 @@ extern const struct bt_mesh_model_cb _bt_mesh_ponoff_srv_cb;
 extern const struct bt_mesh_model_op _bt_mesh_ponoff_srv_op[];
 extern const struct bt_mesh_model_op _bt_mesh_ponoff_setup_srv_op[];
 extern const struct bt_mesh_onoff_srv_handlers _bt_mesh_ponoff_onoff_intercept;
+extern const struct bt_mesh_scene_entry_type _bt_mesh_ponoff_srv_scene_type;
 /** @endcond */
 
 #ifdef __cplusplus

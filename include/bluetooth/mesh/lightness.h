@@ -99,6 +99,13 @@ struct bt_mesh_lightness_range_status {
 #define BT_MESH_LIGHTNESS_MSG_LEN_RANGE_STATUS 5
 #define BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET 2
 #define BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET 4
+
+#ifdef CONFIG_BT_MESH_SCENE_SRV
+#define BT_MESH_LIGHTNESS_SCENE_ENTRY_INIT \
+	.scene = BT_MESH_SCENE_ENTRY(&_bt_mesh_lightness_scene_type),
+#else
+#define BT_MESH_LIGHTNESS_SCENE_ENTRY_INIT
+#endif
 /** @endcond */
 
 #ifdef __cplusplus

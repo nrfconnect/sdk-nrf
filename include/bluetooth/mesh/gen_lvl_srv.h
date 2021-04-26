@@ -33,6 +33,7 @@ struct bt_mesh_lvl_srv;
 #define BT_MESH_LVL_SRV_INIT(_handlers)                                        \
 	{                                                                      \
 		.handlers = _handlers,                                         \
+		BT_MESH_LVL_SCENE_ENTRY_INIT                                   \
 	}
 
 /** @def BT_MESH_MODEL_LVL_SRV
@@ -148,8 +149,10 @@ struct bt_mesh_lvl_srv {
 					       BT_MESH_LVL_MSG_MAXLEN_STATUS)];
 	/** Transaction ID tracking. */
 	struct bt_mesh_tid_ctx tid;
+#if defined(CONFIG_BT_MESH_SCENE_SRV)
 	/* Scene entry */
-	struct bt_mesh_scene_entry scene;
+	struct bt_mesh_scene_entry *scene;
+#endif
 };
 
 /** @brief Publish the generic level state.
@@ -171,6 +174,7 @@ int bt_mesh_lvl_srv_pub(struct bt_mesh_lvl_srv *srv,
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_lvl_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_lvl_srv_cb;
+extern const struct bt_mesh_scene_entry_type _bt_mesh_lvl_srv_scene_type;
 /** @endcond */
 
 #ifdef __cplusplus

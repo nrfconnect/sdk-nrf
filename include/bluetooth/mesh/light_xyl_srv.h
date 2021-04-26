@@ -34,12 +34,24 @@ struct bt_mesh_light_xyl_srv;
 #define BT_MESH_LIGHT_XYL_SRV_INIT(_lightness_handlers, _light_xyl_handlers)   \
 	{                                                                      \
 		.handlers = _light_xyl_handlers,                               \
-		.lightness_srv =                                               \
-			BT_MESH_LIGHTNESS_SRV_INIT(_lightness_handlers),       \
+		.lightness_srv = {                                             \
+			.lvl = {                                               \
+				.handlers =                                    \
+					&_bt_mesh_lightness_srv_lvl_handlers,  \
+			},                                                     \
+			.ponoff = {                                            \
+				.onoff = {                                     \
+					.handlers =                            \
+				       &_bt_mesh_lightness_srv_onoff_handlers, \
+				},                                             \
+			},                                                     \
+			.handlers = _lightness_handlers,                       \
+		},                                                             \
 		.range = {                                                     \
 			.min = { .x = 0, .y = 0 },                             \
 			.max = { .x = UINT16_MAX, .y = UINT16_MAX }            \
-		}                                                              \
+		},                                                             \
+		BT_MESH_LIGHT_XYL_SCENE_ENTRY_INIT                             \
 	}
 
 /** @def BT_MESH_MODEL_LIGHT_XYL_SRV
@@ -155,8 +167,10 @@ struct bt_mesh_light_xyl_srv {
 	struct bt_mesh_light_xy_range range;
 	/** Handler function structure. */
 	const struct bt_mesh_light_xyl_srv_handlers *handlers;
+#if defined(CONFIG_BT_MESH_SCENE_SRV)
 	/** Scene entry */
-	struct bt_mesh_scene_entry scene;
+	struct bt_mesh_scene_entry *scene;
+#endif
 
 	/** The last known xy Level. */
 	struct bt_mesh_light_xy xy_last;
@@ -254,6 +268,7 @@ int bt_mesh_light_xyl_srv_default_pub(struct bt_mesh_light_xyl_srv *srv,
 extern const struct bt_mesh_model_op _bt_mesh_light_xyl_srv_op[];
 extern const struct bt_mesh_model_op _bt_mesh_light_xyl_setup_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_light_xyl_srv_cb;
+extern const struct bt_mesh_scene_entry_type _bt_mesh_light_xyl_scene_type;
 /** @endcond */
 
 #ifdef __cplusplus

@@ -46,6 +46,18 @@ struct bt_mesh_scene_srv;
 						 _srv),                        \
 			 &_bt_mesh_scene_setup_srv_cb)
 
+#ifdef CONFIG_BT_MESH_SCENE_SRV
+/** @def BT_MESH_SCENE_ENTRY
+ *
+ * @brief Scene entry initialization macro.
+ *
+ * @param[in] _type Pointer to a @ref bt_mesh_scene_entry_type instance.
+ */
+#define BT_MESH_SCENE_ENTRY(_type) (&(struct bt_mesh_scene_entry){ .type = _type })
+#else
+#define BT_MESH_SCENE_ENTRY(_type) NULL
+#endif
+
 /** Scene Server model instance */
 struct bt_mesh_scene_srv {
 	/** All known scenes. */
@@ -88,6 +100,9 @@ struct bt_mesh_scene_srv {
 	/** Publication message buffer. */
 	uint8_t buf[BT_MESH_MODEL_BUF_LEN(BT_MESH_SCENE_OP_STATUS,
 					  BT_MESH_SCENE_MSG_MAXLEN_STATUS)];
+
+	/* Entry in the global list of Scene Server models. */
+	sys_snode_t entry;
 	/** @endcond */
 };
 
@@ -149,8 +164,11 @@ struct bt_mesh_scene_entry {
 
 /** @brief Register a scene entry.
  *
- *  This function fills all fields of the supplied @ref bt_mesh_scene_entry
- *  structure, and registers it to the correct Scene Server.
+ *  This function registers the supplied @ref bt_mesh_scene_entry to
+ *  the correct Scene Server.
+ *
+ *  Before calling this function, @ref bt_mesh_scene_entry must be initialized
+ *  with @ref BT_MESH_SCENE_ENTRY.
  *
  *  Scene Servers store scene data for all models in their own element, and
  *  every subsequent element until the next Scene Server. If a Scene Server is
@@ -163,24 +181,27 @@ struct bt_mesh_scene_entry {
  *        is recovered as part of the model start procedure.
  *
  *  @param[in] model Model this scene entry represents.
- *  @param[in] entry Scene entry.
- *  @param[in] type  Scene entry type.
+ *  @param[in] entry Scene entry to be registered.
  *  @param[in] vnd   Whether this is a vendor model.
+ *
+ *  @retval 0 Successfully transitioned to the given scene.
+ *  @retval -EINVAL Scene entry is not initialized.
+ *  @retval -ENOMEM Scene data is too long to be stored.
+ *  @retval -ENOENT No relevant Scene server found for the model.
  */
-void bt_mesh_scene_entry_add(struct bt_mesh_model *model,
-			     struct bt_mesh_scene_entry *entry,
-			     const struct bt_mesh_scene_entry_type *type,
-			     bool vnd);
+int bt_mesh_scene_entry_add(struct bt_mesh_model *model,
+			    struct bt_mesh_scene_entry *entry,
+			    bool vnd);
 
-/** @brief Notify the Scene Server that a Scene entry has changed.
+/** @brief Notify the Scene Server that a model's state has been changed.
  *
  *  Whenever some state in the Scene has changed outside of Scene recall
  *  procedure, this function must be called to notify the Scene Server that
  *  the current Scene is no longer active.
  *
- *  @param[in] entry Scene entry that was invalidated.
+ *  @param[in] model Model instance which state was changed.
  */
-void bt_mesh_scene_invalidate(struct bt_mesh_scene_entry *entry);
+void bt_mesh_scene_invalidate(const struct bt_mesh_model *model);
 
 /** @brief Set the current Scene.
  *
