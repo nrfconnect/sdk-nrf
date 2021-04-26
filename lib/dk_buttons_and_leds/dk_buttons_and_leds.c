@@ -65,7 +65,7 @@ enum state {
 };
 
 static enum state state;
-static struct k_delayed_work buttons_scan;
+static struct k_work_delayable buttons_scan;
 static button_handler_t button_handler_cb;
 static atomic_t my_buttons;
 static const struct device *button_devs[ARRAY_SIZE(button_pins)];
@@ -158,7 +158,7 @@ static void buttons_scan_fn(struct k_work *work)
 	last_button_scan = button_scan;
 
 	if (button_scan != 0) {
-		int err = k_delayed_work_submit(&buttons_scan,
+		int err = k_work_reschedule(&buttons_scan,
 		  K_MSEC(CONFIG_DK_LIBRARY_BUTTON_SCAN_INTERVAL));
 
 		if (err) {
@@ -226,7 +226,7 @@ static void button_pressed(const struct device *gpio_dev, struct gpio_callback *
 	switch (state) {
 	case STATE_WAITING:
 		state = STATE_SCANNING;
-		k_delayed_work_submit(&buttons_scan, K_MSEC(1));
+		k_work_reschedule(&buttons_scan, K_MSEC(1));
 		break;
 
 	case STATE_SCANNING:
@@ -294,11 +294,11 @@ int dk_buttons_init(button_handler_t button_handler)
 		}
 	}
 
-	k_delayed_work_init(&buttons_scan, buttons_scan_fn);
+	k_work_init_delayable(&buttons_scan, buttons_scan_fn);
 
 	state = STATE_SCANNING;
 
-	err = k_delayed_work_submit(&buttons_scan, K_NO_WAIT);
+	err = k_work_reschedule(&buttons_scan, K_NO_WAIT);
 	if (err) {
 		LOG_ERR("Cannot add work to workqueue");
 		return err;

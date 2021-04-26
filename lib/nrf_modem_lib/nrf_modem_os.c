@@ -512,7 +512,7 @@ enum heap_type {
 };
 
 struct task {
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 	enum heap_type type;
 };
 
@@ -531,14 +531,14 @@ static void diag_task(struct k_work *item)
 	case SHMEM:
 #ifdef CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
 		nrf_modem_lib_shm_tx_diagnose();
-		k_delayed_work_submit(&shmem_task.work,
+		k_work_reschedule(&shmem_task.work,
 			K_MSEC(CONFIG_NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS));
 #endif
 		break;
 	case LIBRARY:
 #ifdef CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
 		nrf_modem_lib_heap_diagnose();
-		k_delayed_work_submit(&heap_task.work,
+		k_work_reschedule(&heap_task.work,
 			K_MSEC(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS));
 #endif
 		break;
@@ -568,20 +568,20 @@ void nrf_modem_os_init(void)
 
 #if defined(CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC) || \
 	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC)
-	k_work_q_start(&modem_diag_worqk, work_q_stack_area,
+	k_work_queue_start(&modem_diag_worqk, work_q_stack_area,
 		       K_THREAD_STACK_SIZEOF(work_q_stack_area),
-		       K_LOWEST_APPLICATION_THREAD_PRIO);
+		       K_LOWEST_APPLICATION_THREAD_PRIO, NULL);
 #endif
 
 #ifdef CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
-	k_delayed_work_init(&shmem_task.work, diag_task);
-	k_delayed_work_submit(&shmem_task.work,
+	k_work_init_delayable(&shmem_task.work, diag_task);
+	k_work_reschedule(&shmem_task.work,
 		K_MSEC(CONFIG_NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS));
 #endif
 
 #ifdef CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
-	k_delayed_work_init(&heap_task.work, diag_task);
-	k_delayed_work_submit(&heap_task.work,
+	k_work_init_delayable(&heap_task.work, diag_task);
+	k_work_reschedule(&heap_task.work,
 		K_MSEC(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS));
 #endif
 }

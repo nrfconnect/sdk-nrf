@@ -120,7 +120,7 @@ int lwm2m_os_storage_write(uint16_t id, const void *data, size_t len)
 /* LWM2M timer, built on top of delayed works. */
 
 struct lwm2m_work {
-	struct k_delayed_work work_item;
+	struct k_work_delayable work_item;
 	lwm2m_os_timer_handler_t handler;
 	int32_t remaining_timeout_ms;
 };
@@ -163,7 +163,7 @@ static void work_handler(struct k_work *work)
 		timeout = get_timeout_value(timeout, lwm2m_work);
 
 		/* FIXME: handle error return from k_delayed_work_submit(). */
-		(void)k_delayed_work_submit(&lwm2m_work->work_item,
+		(void) k_work_reschedule(&lwm2m_work->work_item,
 					    K_MSEC(timeout));
 	} else {
 		lwm2m_work->handler(lwm2m_work);
@@ -188,7 +188,7 @@ void *lwm2m_os_timer_get(lwm2m_os_timer_handler_t handler)
 	irq_unlock(key);
 
 	if (work != NULL) {
-		k_delayed_work_init(&work->work_item, work_handler);
+		k_work_init_delayable(&work->work_item, work_handler);
 	}
 
 	return work;
@@ -215,7 +215,7 @@ int lwm2m_os_timer_start(void *timer, int32_t timeout)
 
 	timeout = get_timeout_value(timeout, work);
 
-	return k_delayed_work_submit(&work->work_item, K_MSEC(timeout));
+	return k_work_reschedule(&work->work_item, K_MSEC(timeout));
 }
 
 void lwm2m_os_timer_cancel(void *timer)
@@ -226,7 +226,7 @@ void lwm2m_os_timer_cancel(void *timer)
 		return;
 	}
 
-	k_delayed_work_cancel(&work->work_item);
+	k_work_cancel_delayable(&work->work_item);
 }
 
 int32_t lwm2m_os_timer_remaining(void *timer)
@@ -237,7 +237,7 @@ int32_t lwm2m_os_timer_remaining(void *timer)
 		return 0;
 	}
 
-	return k_delayed_work_remaining_get(&work->work_item) +
+	return k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&work->work_item)) +
 	       work->remaining_timeout_ms;
 }
 

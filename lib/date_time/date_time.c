@@ -63,7 +63,7 @@ static struct sntp_time sntp_time;
 
 K_SEM_DEFINE(time_fetch_sem, 0, 1);
 
-static struct k_delayed_work time_work;
+static struct k_work_delayable time_work;
 
 static struct time_aux {
 	int64_t date_time_utc;
@@ -304,15 +304,15 @@ static void date_time_handler(struct k_work *work)
 		LOG_DBG("New date time update in: %d seconds",
 			CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS);
 
-		k_delayed_work_submit(&time_work,
+		k_work_reschedule(&time_work,
 			K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
 	}
 }
 
 static int date_time_init(const struct device *unused)
 {
-	k_delayed_work_init(&time_work, date_time_handler);
-	k_delayed_work_submit(&time_work,
+	k_work_init_delayable(&time_work, date_time_handler);
+	k_work_reschedule(&time_work,
 			K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
 
 	return 0;
