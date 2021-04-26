@@ -392,7 +392,6 @@ static int do_tcp_send_datamode(const uint8_t *data, int datalen)
 					k_work_submit(&disconnect_work);
 				}
 			}
-			ret = -errno;
 			break;
 		}
 		offset += ret;
@@ -724,7 +723,7 @@ int handle_at_tcp_filter(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -738,8 +737,7 @@ int handle_at_tcp_filter(enum at_cmd_type cmd_type)
 			memset(ip_allowlist, 0x00, sizeof(ip_allowlist));
 			for (int i = 2; i < param_count; i++) {
 				size = INET_ADDRSTRLEN;
-				err = util_string_get(&at_param_list, i,
-							   address, &size);
+				err = util_string_get(&at_param_list, i, address, &size);
 				if (err) {
 					return err;
 				}
@@ -794,33 +792,26 @@ int handle_at_tcp_server(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
+	uint16_t port;
 	int param_count = at_params_valid_count_get(&at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
-		if (op == AT_SERVER_START ||
-		    op == AT_SERVER_START_WITH_DATAMODE) {
-			int32_t port;
-
+		if (op == AT_SERVER_START || op == AT_SERVER_START_WITH_DATAMODE) {
 			if (proxy.sock != INVALID_SOCKET) {
 				LOG_ERR("Server is already running.");
 				return -EINVAL;
 			}
-			err = at_params_int_get(&at_param_list, 2, &port);
+			err = at_params_unsigned_short_get(&at_param_list, 2, &port);
 			if (err) {
 				return err;
 			}
-			if (!check_port_range(port)) {
-				LOG_ERR("Invalid port");
-				return -EINVAL;
-			}
 			if (param_count > 3) {
-				at_params_int_get(&at_param_list, 3,
-						  &proxy.sec_tag);
+				at_params_unsigned_int_get(&at_param_list, 3, &proxy.sec_tag);
 			}
 #if defined(CONFIG_SLM_DATAMODE_HWFC)
 			if (op == AT_SERVER_START_WITH_DATAMODE && !check_uart_flowcontrol()) {
@@ -870,13 +861,12 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
-		if (op == AT_CLIENT_CONNECT ||
-		    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
-			int32_t port;
+		if (op == AT_CLIENT_CONNECT || op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
+			uint16_t port;
 			char url[TCPIP_MAX_URL];
 			int size = TCPIP_MAX_URL;
 
@@ -888,16 +878,12 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 			if (err) {
 				return err;
 			}
-			err = at_params_int_get(&at_param_list, 3, &port);
+			err = at_params_unsigned_short_get(&at_param_list, 3, &port);
 			if (err) {
 				return err;
 			}
-			if (!check_port_range(port)) {
-				LOG_ERR("Invalid port");
-				return -EINVAL;
-			}
 			if (param_count > 4) {
-				at_params_int_get(&at_param_list, 4, &proxy.sec_tag);
+				at_params_unsigned_int_get(&at_param_list, 4, &proxy.sec_tag);
 			}
 #if defined(CONFIG_SLM_DATAMODE_HWFC)
 			if (op == AT_CLIENT_CONNECT_WITH_DATAMODE && !check_uart_flowcontrol()) {
@@ -906,8 +892,7 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 			}
 #endif
 			err = do_tcp_client_connect(url, (uint16_t)port);
-			if (err == 0 &&
-			    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
+			if (err == 0 && op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				proxy.datamode = true;
 				enter_datamode(tcp_datamode_callback);
 			}
@@ -949,7 +934,7 @@ int handle_at_tcp_send(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &datatype);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &datatype);
 		if (err) {
 			return err;
 		}
@@ -992,14 +977,13 @@ int handle_at_tcp_recv(enum at_cmd_type cmd_type)
 		uint32_t sz_send = 0;
 
 		if (at_params_valid_count_get(&at_param_list) > 1) {
-			err = at_params_short_get(&at_param_list, 1, &length);
+			err = at_params_unsigned_short_get(&at_param_list, 1, &length);
 			if (err) {
 				return err;
 			}
 		}
 		if (ring_buf_is_empty(&data_buf) == 0) {
-			sz_send = ring_buf_get(&data_buf, rsp_buf,
-					sizeof(rsp_buf));
+			sz_send = ring_buf_get(&data_buf, rsp_buf, sizeof(rsp_buf));
 			if (length > 0 && sz_send > length) {
 				sz_send = length;
 			}

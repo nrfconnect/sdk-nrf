@@ -540,14 +540,14 @@ int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 		if (at_params_valid_count_get(&at_param_list) == 0) {
 			return -EINVAL;
 		}
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err < 0) {
 			LOG_ERR("Fail to get op: %d", err);
 			return err;
 		}
 
 		if (op == AT_HTTPCCON_CONNECT) {
-			int32_t port;
+			uint16_t port;
 
 			if (at_params_valid_count_get(&at_param_list) <= 3) {
 				return -EINVAL;
@@ -561,18 +561,14 @@ int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 				return err;
 			}
 
-			err = at_params_int_get(&at_param_list, 3, &port);
+			err = at_params_unsigned_short_get(&at_param_list, 3, &port);
 			if (err < 0) {
 				LOG_ERR("Fail to get port: %d", err);
 				return err;
 			}
-			if (!check_port_range(port)) {
-				LOG_ERR("Invalid port");
-				return -EINVAL;
-			}
 			httpc.port = (uint16_t)port;
 			if (at_params_valid_count_get(&at_param_list) == 5) {
-				err = at_params_int_get(&at_param_list, 4,
+				err = at_params_unsigned_int_get(&at_param_list, 4,
 							&httpc.sec_tag);
 				if (err < 0) {
 					LOG_ERR("Fail to get sec_tag: %d", err);
@@ -689,7 +685,7 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 		}
 		httpc.headers = (char *)(data_buf + offset);
 		if (param_count >= 5) {
-			err = at_params_int_get(&at_param_list, 4, &httpc.pl_len);
+			err = at_params_unsigned_int_get(&at_param_list, 4, &httpc.pl_len);
 			if (err != 0) {
 				return err;
 			}

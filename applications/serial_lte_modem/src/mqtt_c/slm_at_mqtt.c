@@ -591,12 +591,12 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 		if (at_params_valid_count_get(&at_param_list) <= 1) {
 			return -EINVAL;
 		}
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
 		}
 		if (op == AT_MQTTCON_CONNECT) {
-			int32_t port;
+			uint16_t port;
 
 			if (at_params_valid_count_get(&at_param_list) <= 6) {
 				return -EINVAL;
@@ -632,17 +632,13 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 			if (err < 0) {
 				return err;
 			}
-			err = at_params_int_get(&at_param_list, 6, &port);
+			err = at_params_unsigned_short_get(&at_param_list, 6, &port);
 			if (err < 0) {
 				return err;
 			}
-			if (!check_port_range(port)) {
-				LOG_ERR("Invalid port");
-				return -EINVAL;
-			}
 			ctx.port = (uint16_t)port;
 			if (at_params_valid_count_get(&at_param_list) == 8) {
-				err = at_params_int_get(&at_param_list, 7,
+				err = at_params_unsigned_int_get(&at_param_list, 7,
 							&ctx.sec_tag);
 				if (err < 0) {
 					return err;
@@ -719,7 +715,7 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 		if (err < 0) {
 			return err;
 		}
-		err = at_params_short_get(&at_param_list, 2, &datatype);
+		err = at_params_unsigned_short_get(&at_param_list, 2, &datatype);
 		if (err < 0) {
 			return err;
 		}
@@ -727,11 +723,11 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 		if (err < 0) {
 			return err;
 		}
-		err = at_params_short_get(&at_param_list, 4, &qos);
+		err = at_params_unsigned_short_get(&at_param_list, 4, &qos);
 		if (err < 0) {
 			return err;
 		}
-		err = at_params_short_get(&at_param_list, 5, &retain);
+		err = at_params_unsigned_short_get(&at_param_list, 5, &retain);
 		if (err < 0) {
 			return err;
 		}
@@ -790,7 +786,7 @@ int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
 			if (err < 0) {
 				return err;
 			}
-			err = at_params_short_get(&at_param_list, 2, &qos);
+			err = at_params_unsigned_short_get(&at_param_list, 2, &qos);
 			if (err < 0) {
 				return err;
 			}

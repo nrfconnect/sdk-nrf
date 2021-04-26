@@ -119,7 +119,7 @@ static int handle_at_sleep(enum at_cmd_type type)
 		uint16_t shutdown_mode = SHUTDOWN_MODE_IDLE;
 
 		if (at_params_valid_count_get(&at_param_list) > 1) {
-			ret = at_params_short_get(&at_param_list, 1, &shutdown_mode);
+			ret = at_params_unsigned_short_get(&at_param_list, 1, &shutdown_mode);
 			if (ret < 0) {
 				return -EINVAL;
 			}
@@ -197,7 +197,7 @@ static int handle_at_slmuart(enum at_cmd_type type)
 		uint32_t baudrate = 115200;
 
 		if (at_params_valid_count_get(&at_param_list) > 1) {
-			ret = at_params_int_get(&at_param_list, 1, &baudrate);
+			ret = at_params_unsigned_int_get(&at_param_list, 1, &baudrate);
 			if (ret) {
 				LOG_ERR("AT parameter error");
 				return -EINVAL;
@@ -256,11 +256,11 @@ static int handle_at_datactrl(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		ret = at_params_short_get(&at_param_list, 1, &size_limit);
+		ret = at_params_unsigned_short_get(&at_param_list, 1, &size_limit);
 		if (ret) {
 			return ret;
 		}
-		ret = at_params_short_get(&at_param_list, 2, &time_limit);
+		ret = at_params_unsigned_short_get(&at_param_list, 2, &time_limit);
 		if (ret) {
 			return ret;
 		}
