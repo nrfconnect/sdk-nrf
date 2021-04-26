@@ -31,7 +31,6 @@ static void test_flash_write(void)
 				ARRAY_SIZE(read_data_before));
 
 	zassert_true(retval == 0, "flash_read failed");
-	(void) flash_write_protection_set(flash_dev, false);
 	retval = flash_write(flash_dev, valid_write_addr, write_data,
 			     ARRAY_SIZE(write_data));
 	zassert_true(retval == 0, "flash_write failed");

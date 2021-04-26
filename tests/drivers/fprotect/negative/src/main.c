@@ -47,7 +47,6 @@ static void flash_write_protected_fails(uint32_t addr, bool backup)
 		err = flash_read(flash_dev, addr, read_buf, sizeof(read_buf));
 		zassert_equal(0, err, "flash_read() failed: %d.\n", err);
 	}
-	(void) flash_write_protection_set(flash_dev, false);
 	printk("NOTE: A BUS FAULT immediately after this message"
 		" means the test passed!\n");
 	zassert_equal(expected_fatal, actual_fatal, "An unexpected fatal error has occurred.\n");
