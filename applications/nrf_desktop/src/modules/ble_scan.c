@@ -46,8 +46,8 @@ static struct subscribed_peer subscribed_peers[CONFIG_BT_MAX_PAIRED];
 
 static struct bt_conn *discovering_peer_conn;
 static unsigned int scan_counter;
-static struct k_delayed_work scan_start_trigger;
-static struct k_delayed_work scan_stop_trigger;
+static struct k_work_delayable scan_start_trigger;
+static struct k_work_delayable scan_stop_trigger;
 static bool peers_only = !IS_ENABLED(CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT);
 static bool scanning;
 
@@ -154,11 +154,11 @@ static void scan_stop(void)
 	scanning = false;
 	broadcast_scan_state(scanning);
 
-	k_delayed_work_cancel(&scan_stop_trigger);
+	k_work_cancel_delayable(&scan_stop_trigger);
 
 	if (count_conn() < CONFIG_BT_MAX_CONN) {
 		scan_counter = 0;
-		k_delayed_work_submit(&scan_start_trigger,
+		k_work_reschedule(&scan_start_trigger,
 				      K_MSEC(SCAN_TRIG_CHECK_MS));
 	}
 }
@@ -372,8 +372,8 @@ static void scan_start(void)
 	scanning = true;
 	broadcast_scan_state(scanning);
 
-	k_delayed_work_submit(&scan_stop_trigger, K_MSEC(SCAN_DURATION_MS));
-	k_delayed_work_cancel(&scan_start_trigger);
+	k_work_reschedule(&scan_stop_trigger, K_MSEC(SCAN_DURATION_MS));
+	k_work_cancel_delayable(&scan_start_trigger);
 
 	return;
 
@@ -391,7 +391,7 @@ static void scan_start_trigger_fn(struct k_work *w)
 		scan_counter = 0;
 		scan_start();
 	} else {
-		k_delayed_work_submit(&scan_start_trigger,
+		k_work_reschedule(&scan_start_trigger,
 				      K_MSEC(SCAN_TRIG_CHECK_MS));
 	}
 }
@@ -424,7 +424,7 @@ static void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
 	LOG_WRN("Connecting failed");
 	scan_counter = SCAN_TRIG_TIMEOUT_MS;
-	k_delayed_work_submit(&scan_start_trigger,
+	k_work_reschedule(&scan_start_trigger,
 			      K_MSEC(SCAN_START_DELAY_MS));
 }
 
@@ -500,8 +500,8 @@ static void scan_init(void)
 	bt_scan_init(&scan_init);
 	bt_scan_cb_register(&scan_cb);
 
-	k_delayed_work_init(&scan_start_trigger, scan_start_trigger_fn);
-	k_delayed_work_init(&scan_stop_trigger, scan_stop_trigger_fn);
+	k_work_init_delayable(&scan_start_trigger, scan_start_trigger_fn);
+	k_work_init_delayable(&scan_stop_trigger, scan_stop_trigger_fn);
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -559,7 +559,7 @@ static bool event_handler(const struct event_header *eh)
 			 * Cannot create new connection now.
 			 */
 			scan_counter = SCAN_TRIG_TIMEOUT_MS;
-			k_delayed_work_submit(&scan_start_trigger,
+			k_work_reschedule(&scan_start_trigger,
 					      K_MSEC(SCAN_START_DELAY_MS));
 			break;
 		default:
@@ -642,7 +642,7 @@ static bool event_handler(const struct event_header *eh)
 		/* Cannot start scanning right after discovery - problems
 		 * establishing security - using delayed work as workaround.
 		 */
-		k_delayed_work_submit(&scan_start_trigger,
+		k_work_reschedule(&scan_start_trigger,
 				      K_MSEC(SCAN_TRIG_TIMEOUT_MS));
 		scan_counter = SCAN_TRIG_TIMEOUT_MS;
 

@@ -55,7 +55,7 @@ static const struct device *adc_dev;
 static int16_t adc_buffer;
 static bool adc_async_read_pending;
 
-static struct k_delayed_work battery_lvl_read;
+static struct k_work_delayable battery_lvl_read;
 static struct k_poll_signal async_sig = K_POLL_SIGNAL_INITIALIZER(async_sig);
 static struct k_poll_event  async_evt =
 	K_POLL_EVENT_INITIALIZER(K_POLL_TYPE_SIGNAL,
@@ -113,7 +113,7 @@ static int battery_monitor_start(void)
 	}
 
 	sampling = true;
-	k_delayed_work_submit(&battery_lvl_read,
+	k_work_reschedule(&battery_lvl_read,
 			      K_MSEC(BATTERY_WORK_INTERVAL));
 
 	return 0;
@@ -121,7 +121,7 @@ static int battery_monitor_start(void)
 
 static void battery_monitor_stop(void)
 {
-	k_delayed_work_cancel(&battery_lvl_read);
+	k_work_cancel_delayable(&battery_lvl_read);
 	sampling = false;
 	int err = 0;
 
@@ -216,7 +216,7 @@ static void battery_lvl_read_fn(struct k_work *work)
 	}
 
 	if (atomic_get(&active) || adc_async_read_pending) {
-		k_delayed_work_submit(&battery_lvl_read,
+		k_work_reschedule(&battery_lvl_read,
 				      K_MSEC(BATTERY_WORK_INTERVAL));
 	} else {
 		battery_monitor_stop();
@@ -249,7 +249,7 @@ static int init_fn(void)
 		goto error;
 	}
 
-	k_delayed_work_init(&battery_lvl_read, battery_lvl_read_fn);
+	k_work_init_delayable(&battery_lvl_read, battery_lvl_read_fn);
 
 	err = battery_monitor_start();
 error:
@@ -305,7 +305,7 @@ static bool event_handler(const struct event_header *eh)
 			if (adc_async_read_pending) {
 				__ASSERT_NO_MSG(sampling);
 				/* Poll ADC and postpone shutdown */
-				k_delayed_work_submit(&battery_lvl_read,
+				k_work_reschedule(&battery_lvl_read,
 						      K_MSEC(0));
 			} else {
 				/* No ADC sample left to read, go to standby */

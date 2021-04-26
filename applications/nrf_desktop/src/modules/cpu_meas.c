@@ -15,7 +15,7 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CPU_MEAS_LOG_LEVEL);
 
-static struct k_delayed_work cpu_load_read;
+static struct k_work_delayable cpu_load_read;
 
 
 static void send_cpu_load_event(uint32_t load)
@@ -31,7 +31,7 @@ static void cpu_load_read_fn(struct k_work *work)
 	send_cpu_load_event(cpu_load_get());
 	cpu_load_reset();
 
-	k_delayed_work_submit(&cpu_load_read,
+	k_work_reschedule(&cpu_load_read,
 		K_MSEC(CONFIG_DESKTOP_CPU_MEAS_PERIOD));
 }
 
@@ -47,14 +47,14 @@ static void init(void)
 	__ASSERT_NO_MSG(!initialized);
 	initialized = true;
 
-	k_delayed_work_init(&cpu_load_read, cpu_load_read_fn);
+	k_work_init_delayable(&cpu_load_read, cpu_load_read_fn);
 	int err = cpu_load_init();
 
 	if (err) {
 		LOG_ERR("CPU load init failed, err: %d", err);
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
-		k_delayed_work_submit(&cpu_load_read,
+		k_work_reschedule(&cpu_load_read,
 			K_MSEC(CONFIG_DESKTOP_CPU_MEAS_PERIOD));
 		module_set_state(MODULE_STATE_READY);
 	}

@@ -49,7 +49,7 @@ static const struct device *qdec_dev;
 static const struct device *gpio_dev;
 static struct gpio_callback gpio_cbs[2];
 static struct k_spinlock lock;
-static struct k_delayed_work idle_timeout;
+static struct k_work_delayable idle_timeout;
 static bool qdec_triggered;
 static enum state state;
 
@@ -214,7 +214,7 @@ static int enable_qdec(enum state next_state)
 		state = next_state;
 		if (SENSOR_IDLE_TIMEOUT > 0) {
 			qdec_triggered = false;
-			k_delayed_work_submit(&idle_timeout,
+			k_work_reschedule(&idle_timeout,
 					      K_MSEC(SENSOR_IDLE_TIMEOUT));
 		}
 	}
@@ -246,7 +246,7 @@ static int disable_qdec(enum state next_state)
 		err = setup_wakeup();
 		if (!err) {
 			if (SENSOR_IDLE_TIMEOUT > 0) {
-				k_delayed_work_cancel(&idle_timeout);
+				k_work_cancel_delayable(&idle_timeout);
 			}
 			state = next_state;
 		}
@@ -269,7 +269,7 @@ static void idle_timeout_fn(struct k_work *work)
 		}
 	} else {
 		qdec_triggered = false;
-		k_delayed_work_submit(&idle_timeout,
+		k_work_reschedule(&idle_timeout,
 				      K_MSEC(SENSOR_IDLE_TIMEOUT));
 	}
 
@@ -281,7 +281,7 @@ static int init(void)
 	__ASSERT_NO_MSG(state == STATE_DISABLED);
 
 	if (SENSOR_IDLE_TIMEOUT > 0) {
-		k_delayed_work_init(&idle_timeout, idle_timeout_fn);
+		k_work_init_delayable(&idle_timeout, idle_timeout_fn);
 	}
 
 	qdec_dev = device_get_binding(DT_LABEL(DT_NODELABEL(qdec)));

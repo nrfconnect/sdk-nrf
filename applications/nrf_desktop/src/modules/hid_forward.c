@@ -64,7 +64,7 @@ struct hids_peripheral {
 	struct bt_hogp hogp;
 	struct enqueued_reports enqueued_reports;
 
-	struct k_delayed_work read_rsp;
+	struct k_work_delayable read_rsp;
 	struct config_event *cfg_chan_rsp;
 	uint8_t cfg_chan_id;
 	uint8_t hwid[HWID_LEN];
@@ -559,7 +559,7 @@ static uint8_t hogp_read_cfg(struct bt_hogp *hogp,
 				/* Reset response size. */
 				per->cfg_chan_rsp->dyndata.size = CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE;
 
-				k_delayed_work_submit(&per->read_rsp,
+				k_work_reschedule(&per->read_rsp,
 						      CFG_CHAN_RSP_READ_DELAY);
 			}
 		} else {
@@ -617,7 +617,7 @@ static void hogp_write_cb(struct bt_hogp *hogp,
 	 */
 	if (per->cfg_chan_rsp->status != CONFIG_STATUS_SET) {
 		per->cur_poll_cnt = 0;
-		k_delayed_work_submit(&per->read_rsp,
+		k_work_reschedule(&per->read_rsp,
 				      CFG_CHAN_RSP_READ_DELAY);
 	} else {
 		__ASSERT_NO_MSG(per->cfg_chan_rsp->dyndata.size == 0);
@@ -880,7 +880,7 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 	__ASSERT_NO_MSG(!is_any_report_enqueued(&per->enqueued_reports));
 
 	bt_hogp_release(&per->hogp);
-	k_delayed_work_cancel(&per->read_rsp);
+	k_work_cancel_delayable(&per->read_rsp);
 	memset(per->hwid, 0, sizeof(per->hwid));
 	per->cur_poll_cnt = 0;
 	per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
@@ -974,7 +974,7 @@ static void init(void)
 		struct hids_peripheral *per = &peripherals[i];
 
 		bt_hogp_init(&per->hogp, &params);
-		k_delayed_work_init(&per->read_rsp, read_rsp_fn);
+		k_work_init_delayable(&per->read_rsp, read_rsp_fn);
 		per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
 
 		init_enqueued_reports(&per->enqueued_reports);
