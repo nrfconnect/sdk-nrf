@@ -369,16 +369,16 @@ int handle_at_icmp_ping(enum at_cmd_type cmd_type)
 		if (err < 0) {
 			return err;
 		}
-		err = at_params_short_get(&at_param_list, 2, &length);
+		err = at_params_unsigned_short_get(&at_param_list, 2, &length);
 		if (err < 0) {
 			return err;
 		}
-		err = at_params_short_get(&at_param_list, 3, &timeout);
+		err = at_params_unsigned_short_get(&at_param_list, 3, &timeout);
 		if (err < 0) {
 			return err;
 		}
 		if (at_params_valid_count_get(&at_param_list) > 4) {
-			err = at_params_short_get(&at_param_list, 4, &count);
+			err = at_params_unsigned_short_get(&at_param_list, 4, &count);
 			if (err < 0) {
 				return err;
 			};
@@ -386,7 +386,7 @@ int handle_at_icmp_ping(enum at_cmd_type cmd_type)
 			count = 0;
 		}
 		if (at_params_valid_count_get(&at_param_list) > 5) {
-			err = at_params_short_get(&at_param_list, 5, &interval);
+			err = at_params_unsigned_short_get(&at_param_list, 5, &interval);
 			if (err < 0) {
 				return err;
 			};

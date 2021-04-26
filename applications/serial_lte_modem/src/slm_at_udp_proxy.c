@@ -418,23 +418,18 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
+	uint16_t port;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
 		if (op == AT_SERVER_START || op == AT_SERVER_START_WITH_DATAMODE) {
-			int32_t port;
-
-			err = at_params_int_get(&at_param_list, 2, &port);
+			err = at_params_unsigned_short_get(&at_param_list, 2, &port);
 			if (err) {
 				return err;
-			}
-			if (!check_port_range(port)) {
-				LOG_ERR("Invalid port");
-				return -EINVAL;
 			}
 			if (udp_sock > 0) {
 				LOG_WRN("Server is running");
@@ -491,12 +486,12 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
 		if (op == AT_CLIENT_CONNECT || op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
-			int32_t port;
+			uint16_t port;
 			char url[TCPIP_MAX_URL];
 			int size = TCPIP_MAX_URL;
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
@@ -505,16 +500,12 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			if (err) {
 				return err;
 			}
-			err = at_params_int_get(&at_param_list, 3, &port);
+			err = at_params_unsigned_short_get(&at_param_list, 3, &port);
 			if (err) {
 				return err;
 			}
-			if (!check_port_range(port)) {
-				LOG_ERR("Invalid port");
-				return -EINVAL;
-			}
 			if (at_params_valid_count_get(&at_param_list) > 4) {
-				at_params_int_get(&at_param_list, 4, &sec_tag);
+				at_params_unsigned_int_get(&at_param_list, 4, &sec_tag);
 			}
 #if defined(CONFIG_SLM_DATAMODE_HWFC)
 			if (op == AT_CLIENT_CONNECT_WITH_DATAMODE && !check_uart_flowcontrol()) {
@@ -573,7 +564,7 @@ int handle_at_udp_send(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &datatype);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &datatype);
 		if (err) {
 			return err;
 		}

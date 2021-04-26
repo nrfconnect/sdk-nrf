@@ -380,16 +380,15 @@ static int do_connect(const char *url, uint16_t port)
 	}
 
 	if (client.sec_tag != INVALID_SEC_TAG) {
-		ret = setsockopt(client.sock, SOL_TLS,
-				 TLS_HOSTNAME, url, strlen(url));
+		ret = setsockopt(client.sock, SOL_TLS, TLS_HOSTNAME, url, strlen(url));
 		if (ret < 0) {
-			printk("Failed to set TLS_HOSTNAME\n");
-			ret = -errno;
+			LOG_ERR("Failed to set TLS_HOSTNAME\n");
+			do_socket_close(-errno);
+			return -errno;
 		}
 	}
 
-	ret = connect(client.sock, (struct sockaddr *)&remote,
-		sizeof(struct sockaddr_in));
+	ret = connect(client.sock, (struct sockaddr *)&remote, sizeof(struct sockaddr_in));
 	if (ret < 0) {
 		LOG_ERR("connect() failed: %d", -errno);
 		do_socket_close(-errno);
@@ -670,7 +669,7 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -678,15 +677,15 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 			uint16_t type;
 			sec_tag_t sec_tag;
 
-			err = at_params_short_get(&at_param_list, 2, &type);
+			err = at_params_unsigned_short_get(&at_param_list, 2, &type);
 			if (err) {
 				return err;
 			}
-			err = at_params_short_get(&at_param_list, 3, &role);
+			err = at_params_unsigned_short_get(&at_param_list, 3, &role);
 			if (err) {
 				return err;
 			}
-			err = at_params_int_get(&at_param_list, 4, &sec_tag);
+			err = at_params_unsigned_int_get(&at_param_list, 4, &sec_tag);
 			if (err) {
 				sec_tag = INVALID_SEC_TAG;
 			}
@@ -755,11 +754,11 @@ int handle_at_socketopt(enum at_cmd_type cmd_type)
 			LOG_ERR("Invalid role");
 			return err;
 		}
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
-		err = at_params_short_get(&at_param_list, 2, &name);
+		err = at_params_unsigned_short_get(&at_param_list, 2, &name);
 		if (err) {
 			return err;
 		}
@@ -797,7 +796,7 @@ int handle_at_socketopt(enum at_cmd_type cmd_type)
 int handle_at_bind(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	int32_t port;
+	uint16_t port;
 
 	if (client.sock < 0) {
 		LOG_ERR("Socket not opened yet");
@@ -806,13 +805,9 @@ int handle_at_bind(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_int_get(&at_param_list, 1, &port);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &port);
 		if (err < 0) {
 			return err;
-		}
-		if (!check_port_range(port)) {
-			LOG_ERR("Invalid port");
-			return -EINVAL;
 		}
 		err = do_bind((uint16_t)port);
 		break;
@@ -834,7 +829,7 @@ int handle_at_connect(enum at_cmd_type cmd_type)
 	int err = -EINVAL;
 	char url[TCPIP_MAX_URL];
 	int size = TCPIP_MAX_URL;
-	int32_t port;
+	uint16_t port;
 
 	if (client.sock < 0) {
 		LOG_ERR("Socket not opened yet");
@@ -851,13 +846,9 @@ int handle_at_connect(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		err = at_params_int_get(&at_param_list, 2, &port);
+		err = at_params_unsigned_short_get(&at_param_list, 2, &port);
 		if (err) {
 			return err;
-		}
-		if (!check_port_range(port)) {
-			LOG_ERR("Invalid port");
-			return -EINVAL;
 		}
 		err = do_connect(url, (uint16_t)port);
 		break;
@@ -979,7 +970,7 @@ int handle_at_send(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &datatype);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &datatype);
 		if (err) {
 			return err;
 		}
@@ -1023,7 +1014,7 @@ int handle_at_recv(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &length);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &length);
 		if (err) {
 			length = CONFIG_SLM_SOCKET_RX_MAX;
 		}
@@ -1047,7 +1038,7 @@ int handle_at_sendto(enum at_cmd_type cmd_type)
 	int err = -EINVAL;
 	char url[TCPIP_MAX_URL];
 	int size = TCPIP_MAX_URL;
-	int32_t port;
+	uint16_t port;
 	uint16_t datatype;
 	char data[NET_IPV4_MTU];
 
@@ -1067,15 +1058,11 @@ int handle_at_sendto(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		err = at_params_int_get(&at_param_list, 2, &port);
+		err = at_params_unsigned_short_get(&at_param_list, 2, &port);
 		if (err) {
 			return err;
 		}
-		if (!check_port_range(port)) {
-			LOG_ERR("Invalid port");
-			return -EINVAL;
-		}
-		err = at_params_short_get(&at_param_list, 3, &datatype);
+		err = at_params_unsigned_short_get(&at_param_list, 3, &datatype);
 		if (err) {
 			return err;
 		}
@@ -1111,7 +1098,7 @@ int handle_at_sendto(enum at_cmd_type cmd_type)
 int handle_at_recvfrom(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	int16_t length;
+	uint16_t length;
 
 	if (client.sock < 0) {
 		LOG_ERR("Socket not opened yet");
@@ -1125,7 +1112,7 @@ int handle_at_recvfrom(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &length);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &length);
 		if (err) {
 			length = CONFIG_SLM_SOCKET_RX_MAX;
 		}

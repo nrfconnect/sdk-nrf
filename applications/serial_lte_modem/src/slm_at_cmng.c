@@ -59,7 +59,7 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 			LOG_ERR("Parameter missed");
 			return -EINVAL;
 		}
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err < 0) {
 			LOG_ERR("Fail to get op parameter: %d", err);
 			return err;
@@ -78,7 +78,7 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 			LOG_ERR("Parameter missed");
 			return -EINVAL;
 		}
-		err = at_params_int_get(&at_param_list, 2, &sec_tag);
+		err = at_params_unsigned_int_get(&at_param_list, 2, &sec_tag);
 		if (err < 0) {
 			LOG_ERR("Fail to get sec_tag parameter: %d", err);
 			return err;
@@ -87,7 +87,7 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 			LOG_ERR("Invalid security tag: %d", sec_tag);
 			return -EINVAL;
 		}
-		err = at_params_short_get(&at_param_list, 3, &type);
+		err = at_params_unsigned_short_get(&at_param_list, 3, &type);
 		if (err < 0) {
 			LOG_ERR("Fail to get type parameter: %d", err);
 			return err;

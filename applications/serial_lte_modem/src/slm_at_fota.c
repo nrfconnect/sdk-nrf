@@ -91,7 +91,10 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 			const char *apn)
 {
 	int ret;
-	struct http_parser_url parser;
+	struct http_parser_url parser = {
+		/* UNINIT checker fix, assumed UF_SCHEMA existence */
+		.field_set = 0
+	};
 	char schema[8];
 
 	http_parser_url_init(&parser);
@@ -209,7 +212,7 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
 		}
@@ -226,7 +229,7 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 				return err;
 			}
 			if (at_params_valid_count_get(&at_param_list) > 3) {
-				at_params_int_get(&at_param_list, 3, &sec_tag);
+				at_params_unsigned_int_get(&at_param_list, 3, &sec_tag);
 			}
 			if (at_params_valid_count_get(&at_param_list) > 4) {
 				size = APN_MAX;
