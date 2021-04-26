@@ -59,8 +59,8 @@ struct bond_find_data {
 static enum state state;
 static bool adv_swift_pair;
 
-static struct k_delayed_work adv_update;
-static struct k_delayed_work sp_grace_period_to;
+static struct k_work_delayable adv_update;
+static struct k_work_delayable sp_grace_period_to;
 static uint8_t cur_identity = BT_ID_DEFAULT; /* We expect zero */
 
 enum peer_rpa {
@@ -117,11 +117,11 @@ static int ble_adv_stop(void)
 	if (err) {
 		LOG_ERR("Cannot stop advertising (err %d)", err);
 	} else {
-		k_delayed_work_cancel(&adv_update);
+		k_work_cancel_delayable(&adv_update);
 
 		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_SWIFT_PAIR) &&
 		    IS_ENABLED(CONFIG_CAF_BLE_ADV_PM_EVENTS)) {
-			k_delayed_work_cancel(&sp_grace_period_to);
+			k_work_cancel_delayable(&sp_grace_period_to);
 		}
 
 		state = STATE_IDLE;
@@ -296,7 +296,7 @@ static int ble_adv_start(bool can_fast_adv)
 		}
 	} else {
 		if (fast_adv) {
-			k_delayed_work_submit(&adv_update,
+			k_work_reschedule(&adv_update,
 					      K_SECONDS(CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT));
 			state = STATE_ACTIVE_FAST;
 		} else {
@@ -332,9 +332,9 @@ static int remove_swift_pair_section(void)
 		LOG_INF("Swift Pair section removed");
 		adv_swift_pair = false;
 
-		k_delayed_work_cancel(&adv_update);
+		k_work_cancel_delayable(&adv_update);
 
-		k_delayed_work_submit(&sp_grace_period_to,
+		k_work_reschedule(&sp_grace_period_to,
 				      K_SECONDS(CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD));
 
 		state = STATE_GRACE_PERIOD;
@@ -384,11 +384,11 @@ static void init(void)
 		ARG_UNUSED(settings_set);
 	}
 
-	k_delayed_work_init(&adv_update, ble_adv_update_fn);
+	k_work_init_delayable(&adv_update, ble_adv_update_fn);
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_SWIFT_PAIR) &&
 	    IS_ENABLED(CONFIG_CAF_BLE_ADV_PM_EVENTS)) {
-		k_delayed_work_init(&sp_grace_period_to, sp_grace_period_fn);
+		k_work_init_delayable(&sp_grace_period_to, sp_grace_period_fn);
 	}
 
 	/* We should not start advertising before ble_bond is ready.
@@ -530,7 +530,7 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 				STATE_DELAYED_ACTIVE_FAST :
 				STATE_DELAYED_ACTIVE_SLOW;
 
-			k_delayed_work_submit(&adv_update, K_NO_WAIT);
+			k_work_reschedule(&adv_update, K_NO_WAIT);
 		}
 		break;
 

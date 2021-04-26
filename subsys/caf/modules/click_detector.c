@@ -40,7 +40,7 @@ struct key_state {
 static struct key_state keys[ARRAY_SIZE(click_detector_config)];
 
 static enum state state;
-static struct k_delayed_work click_check;
+static struct k_work_delayable click_check;
 
 
 static void submit_click_event(uint16_t key_id, enum click click)
@@ -117,7 +117,7 @@ static void click_check_fn(struct k_work *work)
 	}
 
 	if (any_processed) {
-		k_delayed_work_submit(&click_check, K_MSEC(CLICK_CHECK_PERIOD));
+		k_work_reschedule(&click_check, K_MSEC(CLICK_CHECK_PERIOD));
 	}
 }
 
@@ -130,7 +130,7 @@ static void init(void)
 		keys[i].click_short_timeout = TIMER_INACTIVE;
 	}
 
-	k_delayed_work_init(&click_check, click_check_fn);
+	k_work_init_delayable(&click_check, click_check_fn);
 
 	state = STATE_ACTIVE;
 }
@@ -149,14 +149,14 @@ static void process_key(struct key_state *key, uint16_t key_id, bool pressed)
 			key->click_short_timeout = TIMER_INACTIVE;
 		} else {
 			key->click_short_timeout = SHORT_CLICK_MAX;
-			k_delayed_work_submit(&click_check,
+			k_work_reschedule(&click_check,
 					      K_MSEC(CLICK_CHECK_PERIOD));
 		}
 
 		key->pressed_time = TIMER_INACTIVE;
 	} else if (pressed) {
 		key->pressed_time = 0;
-		k_delayed_work_submit(&click_check, K_MSEC(CLICK_CHECK_PERIOD));
+		k_work_reschedule(&click_check, K_MSEC(CLICK_CHECK_PERIOD));
 	}
 }
 
@@ -183,7 +183,7 @@ static void power_down(void)
 
 	state = STATE_OFF;
 	module_set_state(MODULE_STATE_OFF);
-	k_delayed_work_cancel(&click_check);
+	k_work_cancel_delayable(&click_check);
 }
 
 static void wake_up(void)
