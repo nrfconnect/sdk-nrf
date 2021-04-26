@@ -155,9 +155,6 @@ void set_s0_active(bool s0_active)
 	err = flash_erase(fdev, PM_S1_ADDRESS, nrfx_nvmc_flash_page_size_get());
 	zassert_equal(err, 0, "flash_erase failed");
 
-	err = flash_write_protection_set(fdev, false);
-	zassert_equal(err, 0, "Disabling flash protection failed");
-
 	err = flash_write(fdev, PM_S0_ADDRESS, (void *)&s0_info,
 			  sizeof(s0_info));
 	zassert_equal(err, 0, "Unable to write to flash");
@@ -165,9 +162,6 @@ void set_s0_active(bool s0_active)
 	err = flash_write(fdev, PM_S1_ADDRESS, (void *)&s1_info,
 			  sizeof(s1_info));
 	zassert_equal(err, 0, "Unable to write to flash");
-
-	err = flash_write_protection_set(fdev, true);
-	zassert_equal(err, 0, "Enabling flash protection failed");
 }
 #endif
 
