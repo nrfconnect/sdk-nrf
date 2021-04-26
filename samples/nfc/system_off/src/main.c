@@ -31,7 +31,7 @@
 
 
 /* Delayed work that enters system off. */
-static struct k_delayed_work system_off_work;
+static struct k_work_delayable system_off_work;
 
 
 /**
@@ -49,12 +49,12 @@ static void nfc_callback(void *context,
 	switch (event) {
 	case NFC_T2T_EVENT_FIELD_ON:
 		/* Cancel entering system off */
-		k_delayed_work_cancel(&system_off_work);
+		k_work_cancel_delayable(&system_off_work);
 		dk_set_led_on(NFC_FIELD_LED);
 		break;
 	case NFC_T2T_EVENT_FIELD_OFF:
 		/* Enter system off after delay */
-		k_delayed_work_submit(&system_off_work,
+		k_work_reschedule(&system_off_work,
 				K_SECONDS(SYSTEM_OFF_DELAY_S));
 		dk_set_led_off(NFC_FIELD_LED);
 		break;
@@ -209,8 +209,8 @@ void main(void)
 	dk_set_led_on(SYSTEM_ON_LED);
 
 	/* Configure and start delayed work that enters system off */
-	k_delayed_work_init(&system_off_work, system_off);
-	k_delayed_work_submit(&system_off_work, K_SECONDS(SYSTEM_OFF_DELAY_S));
+	k_work_init_delayable(&system_off_work, system_off);
+	k_work_reschedule(&system_off_work, K_SECONDS(SYSTEM_OFF_DELAY_S));
 
 	/* Show last reset reason */
 	print_reset_reason();
