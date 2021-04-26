@@ -66,7 +66,7 @@ struct bt_mesh_scheduler_srv {
 	/** Model state related structure of the Scheduler Server instance. */
 	struct {
 		/* Scheduled work. */
-		struct k_delayed_work delayed_work;
+		struct k_work_delayable delayed_work;
 		/* Calculated TAI-time for action items. */
 		struct bt_mesh_time_tai
 		sched_tai[BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT];

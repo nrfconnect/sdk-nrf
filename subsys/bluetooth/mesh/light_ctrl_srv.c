@@ -52,13 +52,13 @@ struct setup_srv_storage_data {
 
 static void restart_timer(struct bt_mesh_light_ctrl_srv *srv, uint32_t delay)
 {
-	k_delayed_work_submit(&srv->timer, K_MSEC(delay));
+	k_work_reschedule(&srv->timer, K_MSEC(delay));
 }
 
 static void reg_start(struct bt_mesh_light_ctrl_srv *srv)
 {
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	k_delayed_work_submit(&srv->reg.timer, K_MSEC(REG_INT));
+	k_work_reschedule(&srv->reg.timer, K_MSEC(REG_INT));
 #endif
 }
 
@@ -82,7 +82,7 @@ static void store(struct bt_mesh_light_ctrl_srv *srv, enum flags kind)
 	atomic_set_bit(&srv->flags, kind);
 
 	if (!pending) {
-		k_delayed_work_submit(
+		k_work_reschedule(
 			&srv->store_timer,
 			K_SECONDS(CONFIG_BT_MESH_LIGHT_CTRL_SRV_STORE_TIMEOUT));
 	}
@@ -104,7 +104,7 @@ static int delayed_change(struct bt_mesh_light_ctrl_srv *srv, bool value,
 	if (((value && (atomic_test_bit(&srv->flags, FLAG_ON_PENDING) ||
 			atomic_test_bit(&srv->flags, FLAG_OCC_PENDING))) ||
 	     (!value && atomic_test_bit(&srv->flags, FLAG_OFF_PENDING))) &&
-	    (k_delayed_work_remaining_get(&srv->action_delay) < delay)) {
+	    (k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&srv->action_delay)) < delay)) {
 		/* Trying to do a second delayed change that will finish later
 		 * with the same result. Can be safely ignored.
 		 */
@@ -119,7 +119,7 @@ static int delayed_change(struct bt_mesh_light_ctrl_srv *srv, bool value,
 	atomic_clear_bit(&srv->flags, FLAG_OFF_PENDING);
 	atomic_clear_bit(&srv->flags, FLAG_OCC_PENDING);
 
-	k_delayed_work_submit(&srv->action_delay, K_MSEC(delay));
+	k_work_reschedule(&srv->action_delay, K_MSEC(delay));
 
 	return 0;
 }
@@ -179,7 +179,7 @@ static uint32_t curr_fade_time(struct bt_mesh_light_ctrl_srv *srv)
 		return 0;
 	}
 
-	return srv->fade.duration - k_delayed_work_remaining_get(&srv->timer);
+	return srv->fade.duration - k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&srv->timer));
 }
 
 static uint32_t remaining_fade_time(struct bt_mesh_light_ctrl_srv *srv)
@@ -188,7 +188,7 @@ static uint32_t remaining_fade_time(struct bt_mesh_light_ctrl_srv *srv)
 		return 0;
 	}
 
-	return k_delayed_work_remaining_get(&srv->timer);
+	return k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&srv->timer));
 }
 
 static bool state_is_on(const struct bt_mesh_light_ctrl_srv *srv,
@@ -223,7 +223,7 @@ static void light_onoff_encode(struct bt_mesh_light_ctrl_srv *srv,
 	if (atomic_test_bit(&srv->flags, FLAG_ON_PENDING) ||
 	    atomic_test_bit(&srv->flags, FLAG_OFF_PENDING)) {
 		remaining_fade =
-			k_delayed_work_remaining_get(&srv->action_delay) +
+			k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&srv->action_delay)) +
 			srv->fade.duration;
 		net_buf_simple_add_u8(buf, atomic_test_bit(&srv->flags,
 							   FLAG_ON_PENDING));
@@ -253,7 +253,7 @@ static void onoff_encode(struct bt_mesh_light_ctrl_srv *srv,
 	if (atomic_test_bit(&srv->flags, FLAG_ON_PENDING) ||
 	    atomic_test_bit(&srv->flags, FLAG_OFF_PENDING)) {
 		remaining_fade =
-			k_delayed_work_remaining_get(&srv->action_delay) +
+			k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&srv->action_delay)) +
 			srv->fade.duration;
 		status->target_on_off = atomic_test_bit(&srv->flags,
 							FLAG_ON_PENDING);
@@ -487,10 +487,10 @@ static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 	srv->reg.i = 0;
 #endif
 
-	k_delayed_work_cancel(&srv->action_delay);
-	k_delayed_work_cancel(&srv->timer);
+	k_work_cancel_delayable(&srv->action_delay);
+	k_work_cancel_delayable(&srv->timer);
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	k_delayed_work_cancel(&srv->reg.timer);
+	k_work_cancel_delayable(&srv->reg.timer);
 #endif
 
 	light_onoff_pub(srv, srv->state, true);
@@ -507,7 +507,7 @@ static void reg_step(struct k_work *work)
 		return;
 	}
 
-	k_delayed_work_submit(&srv->reg.timer, K_MSEC(REG_INT));
+	k_work_reschedule(&srv->reg.timer, K_MSEC(REG_INT));
 
 	float target = lux_getf(srv);
 	float ambient = sensor_to_float(&srv->ambient_lux);
@@ -1464,15 +1464,15 @@ static int light_ctrl_srv_init(struct bt_mesh_model *model)
 	 */
 	atomic_set_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_NO_START);
 
-	k_delayed_work_init(&srv->timer, timeout);
-	k_delayed_work_init(&srv->action_delay, delayed_action_timeout);
+	k_work_init_delayable(&srv->timer, timeout);
+	k_work_init_delayable(&srv->action_delay, delayed_action_timeout);
 
 #if CONFIG_BT_SETTINGS
-	k_delayed_work_init(&srv->store_timer, store_timeout);
+	k_work_init_delayable(&srv->store_timer, store_timeout);
 #endif
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	k_delayed_work_init(&srv->reg.timer, reg_step);
+	k_work_init_delayable(&srv->reg.timer, reg_step);
 #endif
 
 	srv->pub.msg = &srv->pub_buf;

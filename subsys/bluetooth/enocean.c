@@ -47,7 +47,7 @@ enum entry_tag {
 
 static struct bt_enocean_device devices[CONFIG_BT_ENOCEAN_DEVICES_MAX];
 static const struct bt_enocean_callbacks *cb;
-static struct k_delayed_work work;
+static struct k_work_delayable work;
 static bool commissioning;
 
 static struct bt_enocean_device *device_find(const bt_addr_le_t *addr)
@@ -88,8 +88,8 @@ static void encode_tag(char buf[SETTINGS_TAG_SIZE], uint8_t index,
 static void schedule_store(void)
 {
 #if CONFIG_BT_ENOCEAN_STORE_SEQ
-	if (!k_delayed_work_remaining_get(&work)) {
-		k_delayed_work_submit(
+	if (!k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&work))) {
+		k_work_reschedule(
 			&work, K_SECONDS(CONFIG_BT_ENOCEAN_STORE_TIMEOUT));
 	}
 #endif
@@ -532,7 +532,7 @@ SETTINGS_STATIC_HANDLER_DEFINE(bt_enocean, "bt/enocean", NULL, settings_set,
 void bt_enocean_init(const struct bt_enocean_callbacks *callbacks)
 {
 	if (IS_ENABLED(CONFIG_BT_ENOCEAN_STORE_SEQ)) {
-		k_delayed_work_init(&work, store_dirty);
+		k_work_init_delayable(&work, store_dirty);
 	}
 
 	cb = callbacks;

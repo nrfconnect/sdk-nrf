@@ -37,7 +37,7 @@ static struct bt_mesh_plvl_srv_handlers plvl_handlers = {
 
 struct lvl_ctx {
 	struct bt_mesh_plvl_srv srv;
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 	uint32_t remaining;
 	uint32_t period;
 	uint16_t current;
@@ -50,9 +50,9 @@ static void start_new_trans(uint32_t step_cnt,
 			    const struct bt_mesh_model_transition *transition,
 			    struct lvl_ctx *ctx)
 {
-	k_delayed_work_cancel(&ctx->work);
+	k_work_cancel_delayable(&ctx->work);
 	ctx->period = (step_cnt ? transition->time / step_cnt : 0);
-	k_delayed_work_submit(&ctx->work, K_MSEC(transition->delay));
+	k_work_reschedule(&ctx->work, K_MSEC(transition->delay));
 }
 
 static void lvl_status(struct lvl_ctx *ctx, struct bt_mesh_plvl_status *rsp)
@@ -84,7 +84,7 @@ static void periodic_led_work(struct k_work *work)
 		ctx->current -= PWM_SIZE_STEP;
 	}
 
-	k_delayed_work_submit(&ctx->work, K_MSEC(ctx->period));
+	k_work_reschedule(&ctx->work, K_MSEC(ctx->period));
 }
 
 static void pwr_set(struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx,
@@ -337,7 +337,7 @@ static struct bt_mesh_time_srv time_srv = BT_MESH_TIME_SRV_INIT(NULL);
 
 struct lightness_ctx {
 	struct bt_mesh_lightness_srv srv;
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 	uint32_t remaining;
 	uint32_t period;
 	uint16_t current;
@@ -349,9 +349,9 @@ start_new_lightness_trans(uint32_t step_cnt,
 			  const struct bt_mesh_model_transition *transition,
 			  struct lightness_ctx *ctx)
 {
-	k_delayed_work_cancel(&ctx->work);
+	k_work_cancel_delayable(&ctx->work);
 	ctx->period = (step_cnt ? transition->time / step_cnt : 0);
-	k_delayed_work_submit(&ctx->work, K_MSEC(transition->delay));
+	k_work_reschedule(&ctx->work, K_MSEC(transition->delay));
 }
 
 static void lightness_status(struct lightness_ctx *ctx,
@@ -385,7 +385,7 @@ static void periodic_led_lightness_work(struct k_work *work)
 		ctx->current -= PWM_SIZE_STEP;
 	}
 
-	k_delayed_work_submit(&ctx->work, K_MSEC(ctx->period));
+	k_work_reschedule(&ctx->work, K_MSEC(ctx->period));
 }
 
 static void light_set(struct bt_mesh_lightness_srv *srv,
@@ -604,7 +604,7 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
-	k_delayed_work_init(&lvl_ctx.work, periodic_led_work);
-	k_delayed_work_init(&lightness_ctx.work, periodic_led_lightness_work);
+	k_work_init_delayable(&lvl_ctx.work, periodic_led_work);
+	k_work_init_delayable(&lightness_ctx.work, periodic_led_lightness_work);
 	return &comp;
 }

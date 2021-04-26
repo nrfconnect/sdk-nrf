@@ -54,7 +54,7 @@ static const struct bt_mesh_sensor_cli_handlers bt_mesh_sensor_cli_handlers = {
 static struct bt_mesh_sensor_cli sensor_cli =
 	BT_MESH_SENSOR_CLI_INIT(&bt_mesh_sensor_cli_handlers);
 
-static struct k_delayed_work get_data_work;
+static struct k_work_delayable get_data_work;
 
 static void get_data(struct k_work *work)
 {
@@ -77,13 +77,13 @@ static void get_data(struct k_work *work)
 		       err);
 	}
 
-	k_delayed_work_submit(&get_data_work, K_MSEC(GET_DATA_INTERVAL));
+	k_work_reschedule(&get_data_work, K_MSEC(GET_DATA_INTERVAL));
 }
 
 /* Set up a repeating delayed work to blink the DK's LEDs when attention is
  * requested.
  */
-static struct k_delayed_work attention_blink_work;
+static struct k_work_delayable attention_blink_work;
 
 static void attention_blink(struct k_work *work)
 {
@@ -96,17 +96,17 @@ static void attention_blink(struct k_work *work)
 	};
 
 	dk_set_leds(pattern[idx++ % ARRAY_SIZE(pattern)]);
-	k_delayed_work_submit(&attention_blink_work, K_MSEC(30));
+	k_work_reschedule(&attention_blink_work, K_MSEC(30));
 }
 
 static void attention_on(struct bt_mesh_model *mod)
 {
-	k_delayed_work_submit(&attention_blink_work, K_NO_WAIT);
+	k_work_reschedule(&attention_blink_work, K_NO_WAIT);
 }
 
 static void attention_off(struct bt_mesh_model *mod)
 {
-	k_delayed_work_cancel(&attention_blink_work);
+	k_work_cancel_delayable(&attention_blink_work);
 	dk_set_leds(DK_NO_LEDS_MSK);
 }
 
@@ -138,10 +138,10 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
-	k_delayed_work_init(&attention_blink_work, attention_blink);
-	k_delayed_work_init(&get_data_work, get_data);
+	k_work_init_delayable(&attention_blink_work, attention_blink);
+	k_work_init_delayable(&get_data_work, get_data);
 
-	k_delayed_work_submit(&get_data_work, K_MSEC(GET_DATA_INTERVAL));
+	k_work_reschedule(&get_data_work, K_MSEC(GET_DATA_INTERVAL));
 
 	return &comp;
 }

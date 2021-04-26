@@ -78,7 +78,7 @@ BT_HIDS_DEF(hids_obj,
 	    INPUT_REP_MOVEMENT_LEN,
 	    INPUT_REP_MEDIA_PLAYER_LEN);
 
-static struct k_delayed_work hids_work;
+static struct k_work_delayable hids_work;
 struct mouse_pos {
 	int16_t x_val;
 	int16_t y_val;
@@ -295,7 +295,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-	k_delayed_work_cancel(&hids_work);
+	k_work_cancel_delayable(&hids_work);
 
 	printk("Disconnected from %s (reason %u)\n", addr, reason);
 
@@ -733,7 +733,7 @@ void button_changed(uint32_t button_state, uint32_t has_changed)
 			return;
 		}
 		if (k_msgq_num_used_get(&hids_queue) == 1) {
-			k_delayed_work_submit(&hids_work, K_NO_WAIT);
+			k_work_reschedule(&hids_work, K_NO_WAIT);
 		}
 	}
 }
@@ -787,7 +787,7 @@ void main(void)
 	/* DIS initialized at system boot with SYS_INIT macro. */
 	hid_init();
 
-	k_delayed_work_init(&hids_work, mouse_handler);
+	k_work_init_delayable(&hids_work, mouse_handler);
 	k_work_init(&pairing_work, pairing_process);
 	k_work_init(&adv_work, advertising_process);
 

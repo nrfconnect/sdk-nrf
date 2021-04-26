@@ -71,7 +71,7 @@ typedef void (*bt_bas_read_cb)(struct bt_bas_client *bas,
 /* @brief Battery Service Client characteristic periodic read. */
 struct bt_bas_periodic_read {
 	/** Work queue used to measure the read interval. */
-	struct k_delayed_work read_work;
+	struct k_work_delayable read_work;
 	/** Read parameters. */
 	struct bt_gatt_read_params params;
 	/** Read value interval. */

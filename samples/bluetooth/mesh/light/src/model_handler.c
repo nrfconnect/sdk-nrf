@@ -23,7 +23,7 @@ static const struct bt_mesh_onoff_srv_handlers onoff_handlers = {
 
 struct led_ctx {
 	struct bt_mesh_onoff_srv srv;
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 	uint32_t remaining;
 	bool value;
 };
@@ -42,14 +42,14 @@ static void led_transition_start(struct led_ctx *led)
 	 * state is "on":
 	 */
 	dk_set_led(led_idx, true);
-	k_delayed_work_submit(&led->work, K_MSEC(led->remaining));
+	k_work_reschedule(&led->work, K_MSEC(led->remaining));
 	led->remaining = 0;
 }
 
 static void led_status(struct led_ctx *led, struct bt_mesh_onoff_status *status)
 {
 	status->remaining_time =
-		k_delayed_work_remaining_get(&led->work) + led->remaining;
+		k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&led->work)) + led->remaining;
 	status->target_on_off = led->value;
 	/* As long as the transition is in progress, the onoff state is "on": */
 	status->present_on_off = led->value || status->remaining_time;
@@ -70,7 +70,7 @@ static void led_set(struct bt_mesh_onoff_srv *srv, struct bt_mesh_msg_ctx *ctx,
 	led->remaining = set->transition->time;
 
 	if (set->transition->delay > 0) {
-		k_delayed_work_submit(&led->work,
+		k_work_reschedule(&led->work,
 				      K_MSEC(set->transition->delay));
 	} else if (set->transition->time > 0) {
 		led_transition_start(led);
@@ -113,7 +113,7 @@ static void led_work(struct k_work *work)
 /* Set up a repeating delayed work to blink the DK's LEDs when attention is
  * requested.
  */
-static struct k_delayed_work attention_blink_work;
+static struct k_work_delayable attention_blink_work;
 
 static void attention_blink(struct k_work *work)
 {
@@ -125,17 +125,17 @@ static void attention_blink(struct k_work *work)
 		BIT(3) | BIT(0),
 	};
 	dk_set_leds(pattern[idx++ % ARRAY_SIZE(pattern)]);
-	k_delayed_work_submit(&attention_blink_work, K_MSEC(30));
+	k_work_reschedule(&attention_blink_work, K_MSEC(30));
 }
 
 static void attention_on(struct bt_mesh_model *mod)
 {
-	k_delayed_work_submit(&attention_blink_work, K_NO_WAIT);
+	k_work_reschedule(&attention_blink_work, K_NO_WAIT);
 }
 
 static void attention_off(struct bt_mesh_model *mod)
 {
-	k_delayed_work_cancel(&attention_blink_work);
+	k_work_cancel_delayable(&attention_blink_work);
 	dk_set_leds(DK_NO_LEDS_MSK);
 }
 
@@ -176,10 +176,10 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
-	k_delayed_work_init(&attention_blink_work, attention_blink);
+	k_work_init_delayable(&attention_blink_work, attention_blink);
 
 	for (int i = 0; i < ARRAY_SIZE(led_ctx); ++i) {
-		k_delayed_work_init(&led_ctx[i].work, led_work);
+		k_work_init_delayable(&led_ctx[i].work, led_work);
 	}
 
 	return &comp;

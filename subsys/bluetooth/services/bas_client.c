@@ -164,7 +164,7 @@ static uint8_t periodic_read_process(struct bt_conn *conn, uint8_t err,
 
 	if (atomic_test_bit(&bas->periodic_read.process,
 			    BAS_PERIODIC_READ_PROC_BIT)) {
-		k_delayed_work_submit(&bas->periodic_read.read_work,
+		k_work_reschedule(&bas->periodic_read.read_work,
 				      K_MSEC(atomic_get(
 					&bas->periodic_read.interval)));
 	}
@@ -230,7 +230,7 @@ void bt_bas_client_init(struct bt_bas_client *bas)
 	memset(bas, 0, sizeof(*bas));
 	bas->battery_level = BT_BAS_VAL_INVALID;
 
-	k_delayed_work_init(&bas->periodic_read.read_work,
+	k_work_init_delayable(&bas->periodic_read.read_work,
 			    bas_read_value_handler);
 }
 
@@ -252,7 +252,7 @@ int bt_bas_handles_assign(struct bt_gatt_dm *dm,
 	LOG_DBG("Getting handles from battery service.");
 
 	/* If connection is established again, cancel previous read request. */
-	k_delayed_work_cancel(&bas->periodic_read.read_work);
+	k_work_cancel_delayable(&bas->periodic_read.read_work);
 	/* When workqueue is used its instance cannont be cleared. */
 	bas_reinit(bas);
 
@@ -408,7 +408,7 @@ int bt_bas_start_per_read_battery_level(struct bt_bas_client *bas,
 
 	if (!atomic_test_and_set_bit(&bas->periodic_read.process,
 				     BAS_PERIODIC_READ_PROC_BIT)) {
-		k_delayed_work_submit(&bas->periodic_read.read_work,
+		k_work_reschedule(&bas->periodic_read.read_work,
 				      K_MSEC(interval));
 	}
 
@@ -419,7 +419,7 @@ int bt_bas_start_per_read_battery_level(struct bt_bas_client *bas,
 void bt_bas_stop_per_read_battery_level(struct bt_bas_client *bas)
 {
 	/* If delayed workqueue pending, cancel it. */
-	k_delayed_work_cancel(&bas->periodic_read.read_work);
+	k_work_cancel_delayable(&bas->periodic_read.read_work);
 
 	/* If read is proccesed now, prevent triggering new
 	 * characteristic read.
