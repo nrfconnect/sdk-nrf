@@ -24,7 +24,7 @@ struct led {
 	uint16_t effect_step;
 	uint16_t effect_substep;
 
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 };
 
 static const struct led_effect effect[] = {
@@ -136,13 +136,13 @@ static void work_handler(struct k_work *work)
 		int32_t next_delay =
 			leds.effect->steps[leds.effect_step].substep_time;
 
-		k_delayed_work_submit(&leds.work, K_MSEC(next_delay));
+		k_work_reschedule(&leds.work, K_MSEC(next_delay));
 	}
 }
 
 static void led_update(struct led *led)
 {
-	k_delayed_work_cancel(&led->work);
+	k_work_cancel_delayable(&led->work);
 
 	led->effect_step = 0;
 	led->effect_substep = 0;
@@ -158,7 +158,7 @@ static void led_update(struct led *led)
 		int32_t next_delay =
 			led->effect->steps[led->effect_step].substep_time;
 
-		k_delayed_work_submit(&led->work, K_MSEC(next_delay));
+		k_work_reschedule(&led->work, K_MSEC(next_delay));
 	} else {
 		LOG_DBG("LED effect with no effect");
 	}
@@ -178,7 +178,7 @@ int ui_leds_init(void)
 		return -ENODEV;
 	}
 
-	k_delayed_work_init(&leds.work, work_handler);
+	k_work_init_delayable(&leds.work, work_handler);
 	led_update(&leds);
 
 	return err;
@@ -199,7 +199,7 @@ void ui_leds_start(void)
 
 void ui_leds_stop(void)
 {
-	k_delayed_work_cancel(&leds.work);
+	k_work_cancel_delayable(&leds.work);
 #ifdef CONFIG_PM_DEVICE
 	int err = device_set_power_state(leds.pwm_dev,
 					 DEVICE_PM_SUSPEND_STATE,

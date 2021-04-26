@@ -150,13 +150,13 @@ static struct k_work sensors_start_work;
 static struct k_work send_gps_data_work;
 static struct k_work send_button_data_work;
 static struct k_work send_modem_at_cmd_work;
-static struct k_delayed_work long_press_button_work;
-static struct k_delayed_work cloud_reboot_work;
-static struct k_delayed_work cycle_cloud_connection_work;
-static struct k_delayed_work device_config_work;
-static struct k_delayed_work cloud_connect_work;
+static struct k_work_delayable long_press_button_work;
+static struct k_work_delayable cloud_reboot_work;
+static struct k_work_delayable cycle_cloud_connection_work;
+static struct k_work_delayable device_config_work;
+static struct k_work_delayable cloud_connect_work;
 static struct k_work device_status_work;
-static struct k_delayed_work send_agps_request_work;
+static struct k_work_delayable send_agps_request_work;
 #if defined(CONFIG_MOTION)
 static struct k_work motion_data_send_work;
 #endif
@@ -181,7 +181,7 @@ static K_SEM_DEFINE(cloud_ready_to_connect, 0, 1);
 #endif
 
 #if CONFIG_MODEM_INFO
-static struct k_delayed_work rsrp_work;
+static struct k_work_delayable rsrp_work;
 #endif /* CONFIG_MODEM_INFO */
 
 enum error_type {
@@ -485,7 +485,7 @@ void cloud_connect_error_handler(enum cloud_connect_result err)
 	if (reboot) {
 		LOG_ERR("Device will reboot in %d seconds",
 				CONFIG_CLOUD_CONNECT_ERR_REBOOT_S);
-		k_delayed_work_submit_to_queue(
+		k_work_reschedule_for_queue(
 			&application_work_q, &cloud_reboot_work,
 			K_SECONDS(CONFIG_CLOUD_CONNECT_ERR_REBOOT_S));
 	}
@@ -540,12 +540,12 @@ void connect_to_cloud(const int32_t connect_delay_s)
 	if (!initial_connect) {
 		LOG_INF("Attempting reconnect in %d seconds...",
 			connect_delay_s);
-		k_delayed_work_cancel(&cloud_reboot_work);
+		k_work_cancel_delayable(&cloud_reboot_work);
 	} else {
 		initial_connect = false;
 	}
 
-	k_delayed_work_submit_to_queue(&application_work_q,
+	k_work_reschedule_for_queue(&application_work_q,
 				       &cloud_connect_work,
 				       K_SECONDS(connect_delay_s));
 }
@@ -558,7 +558,7 @@ static void cloud_connect_work_fn(struct k_work *work)
 	       atomic_get(&cloud_connect_attempts),
 		   CONFIG_CLOUD_CONNECT_COUNT_MAX);
 
-	k_delayed_work_submit_to_queue(&application_work_q,
+	k_work_reschedule_for_queue(&application_work_q,
 			&cloud_reboot_work,
 			K_MSEC(CLOUD_CONNACK_WAIT_DURATION));
 
@@ -567,7 +567,7 @@ static void cloud_connect_work_fn(struct k_work *work)
 	/* Attempt cloud connection */
 	ret = cloud_connect(cloud_backend);
 	if (ret != CLOUD_CONNECT_RES_SUCCESS) {
-		k_delayed_work_cancel(&cloud_reboot_work);
+		k_work_cancel_delayable(&cloud_reboot_work);
 		/* Will not return from this function.
 		 * If the connect fails here, it is likely
 		 * that user intervention is required.
@@ -577,7 +577,7 @@ static void cloud_connect_work_fn(struct k_work *work)
 		LOG_INF("Cloud connection request sent.");
 		LOG_INF("Connection response timeout is set to %d seconds.",
 		       CLOUD_CONNACK_WAIT_DURATION / MSEC_PER_SEC);
-		k_delayed_work_submit_to_queue(&application_work_q,
+		k_work_reschedule_for_queue(&application_work_q,
 					&cloud_reboot_work,
 					K_MSEC(CLOUD_CONNACK_WAIT_DURATION));
 	}
@@ -734,7 +734,7 @@ static void gps_handler(const struct device *dev, struct gps_event *evt)
 		 * dependent corner-case where the request would not be sent.
 		 */
 		memcpy(&agps_request, &evt->agps_request, sizeof(agps_request));
-		k_delayed_work_submit_to_queue(&application_work_q,
+		k_work_reschedule_for_queue(&application_work_q,
 					       &send_agps_request_work,
 					       K_SECONDS(1));
 		break;
@@ -954,7 +954,7 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 					       &device_status_work);
 		} else if (cmd->channel == CLOUD_CHANNEL_LTE_LINK_RSRP) {
 #if CONFIG_MODEM_INFO
-			k_delayed_work_submit_to_queue(&application_work_q,
+			k_work_reschedule_for_queue(&application_work_q,
 						       &rsrp_work,
 						       K_NO_WAIT);
 #endif
@@ -988,8 +988,8 @@ static void modem_rsrp_handler(char rsrp_value)
 	 * Checking CONFIG_HOLD_TIME_RSRP gives the compiler a shortcut.
 	 */
 	if (CONFIG_HOLD_TIME_RSRP == 0 ||
-	    k_delayed_work_remaining_get(&rsrp_work) == 0) {
-		k_delayed_work_submit_to_queue(&application_work_q, &rsrp_work,
+	    k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&rsrp_work)) == 0) {
+		k_work_reschedule_for_queue(&application_work_q, &rsrp_work,
 					       K_NO_WAIT);
 	}
 }
@@ -1028,7 +1028,7 @@ static void modem_rsrp_data_send(struct k_work *work)
 	rsrp_prev = rsrp_current;
 
 	if (CONFIG_HOLD_TIME_RSRP > 0) {
-		k_delayed_work_submit_to_queue(&application_work_q, &rsrp_work,
+		k_work_reschedule_for_queue(&application_work_q, &rsrp_work,
 					      K_SECONDS(CONFIG_HOLD_TIME_RSRP));
 	}
 }
@@ -1122,7 +1122,7 @@ static void device_config_send(struct k_work *work)
 
 	if (gps_control_is_active() && gps_cfg_state == CLOUD_CMD_STATE_FALSE) {
 		/* GPS hasn't been stopped yet, reschedule this work */
-		k_delayed_work_submit_to_queue(&application_work_q,
+		k_work_reschedule_for_queue(&application_work_q,
 			&device_config_work, K_SECONDS(5));
 		return;
 	}
@@ -1348,7 +1348,7 @@ static void on_user_pairing_req(const struct cloud_event *evt)
 		/* If the association is not done soon enough (< ~5 min?)
 		 * a connection cycle is needed... TBD why.
 		 */
-		k_delayed_work_submit_to_queue(&application_work_q,
+		k_work_reschedule_for_queue(&application_work_q,
 					       &cycle_cloud_connection_work,
 					       CONN_CYCLE_AFTER_ASSOCIATION_REQ_MS);
 	}
@@ -1367,7 +1367,7 @@ static void cycle_cloud_connection(struct k_work *work)
 	}
 
 	/* Reboot fail-safe on disconnect */
-	k_delayed_work_submit_to_queue(&application_work_q, &cloud_reboot_work,
+	k_work_reschedule_for_queue(&application_work_q, &cloud_reboot_work,
 				       K_MSEC(reboot_wait_ms));
 }
 
@@ -1376,7 +1376,7 @@ void on_pairing_done(void)
 {
 	if (atomic_get(&cloud_association) ==
 			CLOUD_ASSOCIATION_STATE_REQUESTED) {
-		k_delayed_work_cancel(&cycle_cloud_connection_work);
+		k_work_cancel_delayable(&cycle_cloud_connection_work);
 
 		/* After successful association, the device must
 		 * reconnect to the cloud.
@@ -1385,7 +1385,7 @@ void on_pairing_done(void)
 		LOG_INF("Reconnecting for cloud policy to take effect.");
 		atomic_set(&cloud_association,
 				   CLOUD_ASSOCIATION_STATE_RECONNECT);
-		k_delayed_work_submit_to_queue(&application_work_q,
+		k_work_reschedule_for_queue(&application_work_q,
 					       &cycle_cloud_connection_work,
 					       K_NO_WAIT);
 	} else {
@@ -1501,7 +1501,7 @@ void connection_evt_handler(const struct cloud_event *const evt)
 	if (evt->type == CLOUD_EVT_CONNECTING) {
 		LOG_INF("CLOUD_EVT_CONNECTING");
 		ui_led_set_pattern(UI_CLOUD_CONNECTING);
-		k_delayed_work_cancel(&cloud_reboot_work);
+		k_work_cancel_delayable(&cloud_reboot_work);
 
 		if (evt->data.err != CLOUD_CONNECT_RES_SUCCESS) {
 			cloud_connect_error_handler(evt->data.err);
@@ -1509,7 +1509,7 @@ void connection_evt_handler(const struct cloud_event *const evt)
 		return;
 	} else if (evt->type == CLOUD_EVT_CONNECTED) {
 		LOG_INF("CLOUD_EVT_CONNECTED");
-		k_delayed_work_cancel(&cloud_reboot_work);
+		k_work_cancel_delayable(&cloud_reboot_work);
 		k_sem_take(&cloud_disconnected, K_NO_WAIT);
 		atomic_set(&cloud_connect_attempts, 0);
 #if !IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION)
@@ -1601,7 +1601,7 @@ static void set_gps_enable(const bool enable)
 	}
 
 	/* Update config state in cloud */
-	k_delayed_work_submit_to_queue(&application_work_q,
+	k_work_reschedule_for_queue(&application_work_q,
 			&device_config_work, K_MSEC(delay_ms));
 }
 
@@ -1624,20 +1624,20 @@ static void work_init(void)
 	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
 	k_work_init(&send_modem_at_cmd_work, send_modem_at_cmd_work_fn);
-	k_delayed_work_init(&send_agps_request_work, send_agps_request);
-	k_delayed_work_init(&long_press_button_work, long_press_handler);
-	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
-	k_delayed_work_init(&cycle_cloud_connection_work,
+	k_work_init_delayable(&send_agps_request_work, send_agps_request);
+	k_work_init_delayable(&long_press_button_work, long_press_handler);
+	k_work_init_delayable(&cloud_reboot_work, cloud_reboot_handler);
+	k_work_init_delayable(&cycle_cloud_connection_work,
 			    cycle_cloud_connection);
-	k_delayed_work_init(&device_config_work, device_config_send);
-	k_delayed_work_init(&cloud_connect_work, cloud_connect_work_fn);
+	k_work_init_delayable(&device_config_work, device_config_send);
+	k_work_init_delayable(&cloud_connect_work, cloud_connect_work_fn);
 	k_work_init(&device_status_work, device_status_send);
 #if defined(CONFIG_MOTION)
 	k_work_init(&motion_data_send_work, motion_data_send);
 #endif
 	k_work_init(&no_sim_go_offline_work, no_sim_go_offline);
 #if CONFIG_MODEM_INFO
-	k_delayed_work_init(&rsrp_work, modem_rsrp_data_send);
+	k_work_init_delayable(&rsrp_work, modem_rsrp_data_send);
 #endif /* CONFIG_MODEM_INFO */
 }
 
@@ -1772,7 +1772,7 @@ static void sensors_init(void)
 	}
 #if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
 	/* Make initial cell-based location request */
-	k_delayed_work_submit_to_queue(&application_work_q,
+	k_work_reschedule_for_queue(&application_work_q,
 					&send_agps_request_work,
 					K_SECONDS(1));
 #endif
@@ -1797,11 +1797,11 @@ static void ui_evt_handler(struct ui_evt evt)
 	if (IS_ENABLED(CONFIG_GPS_CONTROL_ON_LONG_PRESS) &&
 	   (evt.button == UI_BUTTON_1)) {
 		if (evt.type == UI_EVT_BUTTON_ACTIVE) {
-			k_delayed_work_submit_to_queue(&application_work_q,
+			k_work_reschedule_for_queue(&application_work_q,
 						       &long_press_button_work,
 						       K_SECONDS(5));
 		} else {
-			k_delayed_work_cancel(&long_press_button_work);
+			k_work_cancel_delayable(&long_press_button_work);
 		}
 	}
 
@@ -1925,7 +1925,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 #if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
 		/* Request location based on new network info */
 		if (data_send_enabled() && evt->cell.id != -1) {
-			k_delayed_work_submit_to_queue(&application_work_q,
+			k_work_reschedule_for_queue(&application_work_q,
 						       &send_agps_request_work,
 						       K_SECONDS(1));
 		}
@@ -1960,9 +1960,9 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 void main(void)
 {
 	LOG_INF("Asset tracker started");
-	k_work_q_start(&application_work_q, application_stack_area,
+	k_work_queue_start(&application_work_q, application_stack_area,
 		       K_THREAD_STACK_SIZEOF(application_stack_area),
-		       CONFIG_APPLICATION_WORKQUEUE_PRIORITY);
+		       CONFIG_APPLICATION_WORKQUEUE_PRIORITY, NULL);
 	if (IS_ENABLED(CONFIG_WATCHDOG)) {
 		watchdog_init_and_start(&application_work_q);
 	}

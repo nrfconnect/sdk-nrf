@@ -20,8 +20,8 @@ static const struct device *gps_dev;
 static atomic_t gps_is_enabled;
 static atomic_t gps_is_active;
 static struct k_work_q *app_work_q;
-static struct k_delayed_work start_work;
-static struct k_delayed_work stop_work;
+static struct k_work_delayable start_work;
+static struct k_work_delayable stop_work;
 static int gps_reporting_interval_seconds;
 
 static void start(struct k_work *work)
@@ -102,7 +102,7 @@ static void stop(struct k_work *work)
 		LOG_ERR("Failed to disable GPS, error: %d", err);
 		return;
 	}
-	k_delayed_work_cancel(&start_work);
+	k_work_cancel_delayable(&start_work);
 	atomic_set(&gps_is_enabled, 0);
 	gps_control_set_active(false);
 	LOG_INF("GPS operation was stopped");
@@ -125,13 +125,13 @@ bool gps_control_set_active(bool active)
 
 void gps_control_start(uint32_t delay_ms)
 {
-	k_delayed_work_submit_to_queue(app_work_q, &start_work,
+	k_work_reschedule_for_queue(app_work_q, &start_work,
 				       K_MSEC(delay_ms));
 }
 
 void gps_control_stop(uint32_t delay_ms)
 {
-	k_delayed_work_submit_to_queue(app_work_q, &stop_work,
+	k_work_reschedule_for_queue(app_work_q, &stop_work,
 				       K_MSEC(delay_ms));
 }
 
@@ -174,8 +174,8 @@ int gps_control_init(struct k_work_q *work_q, gps_event_handler_t handler)
 		return err;
 	}
 
-	k_delayed_work_init(&start_work, start);
-	k_delayed_work_init(&stop_work, stop);
+	k_work_init_delayable(&start_work, start);
+	k_work_init_delayable(&stop_work, stop);
 
 #if !defined(CONFIG_GPS_SIM)
 	gps_reporting_interval_seconds =

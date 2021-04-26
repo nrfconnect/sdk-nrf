@@ -43,7 +43,7 @@ static struct ls_ch_data *ls_data[LS_CH__END] = { [LS_CH_RED] = &ls_ch_red,
 						  [LS_CH_BLUE] = &ls_ch_blue,
 						  [LS_CH_IR] = &ls_ch_ir };
 static light_sensor_data_ready_cb ls_cb;
-static struct k_delayed_work ls_poller;
+static struct k_work_delayable ls_poller;
 static struct k_work_q *ls_work_q;
 static uint32_t data_send_interval_s = CONFIG_LIGHT_SENSOR_DATA_SEND_INTERVAL;
 static bool initialized;
@@ -52,7 +52,7 @@ static void light_sensor_poll_fn(struct k_work *work);
 
 static inline int submit_poll_work(const uint32_t delay_s)
 {
-	return k_delayed_work_submit_to_queue(ls_work_q, &ls_poller,
+	return k_work_reschedule_for_queue(ls_work_q, &ls_poller,
 					      K_SECONDS((uint32_t)delay_s));
 }
 
@@ -81,7 +81,7 @@ int light_sensor_init_and_start(struct k_work_q *work_q,
 	ls_work_q = work_q;
 	ls_cb = cb;
 
-	k_delayed_work_init(&ls_poller, light_sensor_poll_fn);
+	k_work_init_delayable(&ls_poller, light_sensor_poll_fn);
 
 	initialized = true;
 
@@ -161,8 +161,8 @@ void light_sensor_set_send_interval(const uint32_t interval_s)
 	if (data_send_interval_s) {
 		/* restart work for new interval to take effect */
 		submit_poll_work(0);
-	} else if (k_delayed_work_remaining_get(&ls_poller) > 0) {
-		k_delayed_work_cancel(&ls_poller);
+	} else if (k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&ls_poller)) > 0) {
+		k_work_cancel_delayable(&ls_poller);
 	}
 }
 

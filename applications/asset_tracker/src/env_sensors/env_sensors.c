@@ -61,7 +61,7 @@ static struct env_sensor *env_sensors[] = {
 	&pressure_sensor
 };
 
-static struct k_delayed_work env_sensors_poller;
+static struct k_work_delayable env_sensors_poller;
 static env_sensors_data_ready_cb data_ready_cb;
 static uint32_t data_send_interval_s = CONFIG_ENVIRONMENT_DATA_SEND_INTERVAL;
 static bool backoff_enabled;
@@ -69,7 +69,7 @@ static bool initialized;
 
 static inline int submit_poll_work(const uint32_t delay_s)
 {
-	return k_delayed_work_submit_to_queue(env_sensors_work_q,
+	return k_work_reschedule_for_queue(env_sensors_work_q,
 					      &env_sensors_poller,
 					      K_SECONDS((uint32_t)delay_s));
 }
@@ -148,7 +148,7 @@ int env_sensors_init_and_start(struct k_work_q *work_q,
 
 	data_ready_cb = cb;
 
-	k_delayed_work_init(&env_sensors_poller, env_sensors_poll_fn);
+	k_work_init_delayable(&env_sensors_poller, env_sensors_poll_fn);
 
 	initialized = true;
 
@@ -214,8 +214,8 @@ void env_sensors_set_send_interval(const uint32_t interval_s)
 	if (data_send_interval_s) {
 		/* restart work for new interval to take effect */
 		env_sensors_poll();
-	} else if (k_delayed_work_remaining_get(&env_sensors_poller) > 0) {
-		k_delayed_work_cancel(&env_sensors_poller);
+	} else if (k_ticks_to_ms_ceil32(k_work_delayable_remaining_get(&env_sensors_poller)) > 0) {
+		k_work_cancel_delayable(&env_sensors_poller);
 	}
 }
 
