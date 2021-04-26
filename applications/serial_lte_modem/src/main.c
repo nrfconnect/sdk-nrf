@@ -228,8 +228,9 @@ void start_execute(void)
 		return;
 	}
 
-	k_work_q_start(&slm_work_q, slm_wq_stack_area,
-		K_THREAD_STACK_SIZEOF(slm_wq_stack_area), SLM_WQ_PRIORITY);
+	k_work_queue_start(&slm_work_q, slm_wq_stack_area,
+		K_THREAD_STACK_SIZEOF(slm_wq_stack_area), SLM_WQ_PRIORITY,
+		NULL);
 	k_work_init(&exit_idle_work, exit_idle);
 }
 
