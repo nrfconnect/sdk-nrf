@@ -1,5 +1,5 @@
 name: OSS history check
-on: pull_request_target
+on: pull_request
 
 jobs:
   contribs:
@@ -10,7 +10,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: ncs/nrf
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - name: Install extra python dependencies
