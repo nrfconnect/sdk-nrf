@@ -19,11 +19,13 @@ choice
 config ML_APP_EI_DATA_FORWARDER_UART
 	bool "UART"
 	depends on UART_ASYNC_API
+	select ML_APP_EI_DATA_FORWARDER_EVENTS
 
 config ML_APP_EI_DATA_FORWARDER_BT_NUS
 	bool "Nordic UART Service (NUS)"
 	depends on BT_NUS
 	depends on BT_GAP_AUTO_UPDATE_CONN_PARAMS
+	select ML_APP_EI_DATA_FORWARDER_EVENTS
 
 endchoice
 

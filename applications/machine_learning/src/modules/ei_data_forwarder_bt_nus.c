@@ -8,6 +8,7 @@
 #include <bluetooth/services/nus.h>
 
 #include "ei_data_forwarder.h"
+#include "ei_data_forwarder_event.h"
 
 #include <caf/events/ble_common_event.h>
 #include <caf/events/sensor_event.h>
@@ -63,21 +64,14 @@ static size_t pipeline_cnt;
 static atomic_t sent_cnt;
 
 
-static void report_error(void)
+static void broadcast_ei_data_forwarder_state(enum ei_data_forwarder_state forwarder_state)
 {
-	state = STATE_ERROR;
-	module_set_state(MODULE_STATE_ERROR);
-}
+	__ASSERT_NO_MSG(forwarder_state != EI_DATA_FORWARDER_STATE_DISABLED);
 
-static void clean_buffered_data(void)
-{
-	sys_snode_t *node;
+	struct ei_data_forwarder_event *event = new_ei_data_forwarder_event();
 
-	while ((node = sys_slist_get(&send_queue))) {
-		struct ei_data_packet *packet = CONTAINER_OF(node, __typeof__(*packet), node);
-
-		k_mem_slab_free(&buf_slab, (void **)&packet);
-	}
+	event->state = forwarder_state;
+	EVENT_SUBMIT(event);
 }
 
 static bool is_nus_conn_valid(struct bt_conn *conn, uint8_t conn_state)
@@ -95,6 +89,63 @@ static bool is_nus_conn_valid(struct bt_conn *conn, uint8_t conn_state)
 	}
 
 	return true;
+}
+
+static void update_state(enum state new_state)
+{
+	static enum ei_data_forwarder_state forwarder_state = EI_DATA_FORWARDER_STATE_DISABLED;
+	enum ei_data_forwarder_state new_forwarder_state;
+
+	switch (new_state) {
+	case STATE_DISABLED_ACTIVE:
+	case STATE_DISABLED_SUSPENDED:
+		new_forwarder_state = EI_DATA_FORWARDER_STATE_DISABLED;
+		break;
+
+	case STATE_ACTIVE:
+		if (is_nus_conn_valid(nus_conn, conn_state)) {
+			new_forwarder_state = EI_DATA_FORWARDER_STATE_TRANSMITTING;
+			break;
+		}
+		/* Fall-through */
+
+	case STATE_SUSPENDED:
+	case STATE_BLOCKED:
+		if (nus_conn) {
+			new_forwarder_state = EI_DATA_FORWARDER_STATE_CONNECTED;
+			break;
+		}
+		/* Fall-through */
+
+	case STATE_ERROR:
+	default:
+		new_forwarder_state = EI_DATA_FORWARDER_STATE_DISCONNECTED;
+		break;
+	}
+
+	state = new_state;
+
+	if (new_forwarder_state != forwarder_state) {
+		broadcast_ei_data_forwarder_state(new_forwarder_state);
+		forwarder_state = new_forwarder_state;
+	}
+}
+
+static void report_error(void)
+{
+	update_state(STATE_ERROR);
+	module_set_state(MODULE_STATE_ERROR);
+}
+
+static void clean_buffered_data(void)
+{
+	sys_snode_t *node;
+
+	while ((node = sys_slist_get(&send_queue))) {
+		struct ei_data_packet *packet = CONTAINER_OF(node, __typeof__(*packet), node);
+
+		k_mem_slab_free(&buf_slab, (void **)&packet);
+	}
 }
 
 static int send_packet(struct bt_conn *conn, uint8_t *buf, size_t size)
@@ -141,7 +192,7 @@ static void send_queued_fn(struct k_work *w)
 		struct ei_data_packet *packet = CONTAINER_OF(node, __typeof__(*packet), node);
 
 		if (send_packet(nus_conn, packet->buf, packet->size)) {
-			state = STATE_BLOCKED;
+			update_state(STATE_BLOCKED);
 		} else {
 			pipeline_cnt++;
 		}
@@ -172,7 +223,7 @@ static bool handle_sensor_event(const struct sensor_event *event)
 
 	if (pipeline_cnt < PIPELINE_MAX_CNT) {
 		if (send_packet(nus_conn, buf, pos)) {
-			state = STATE_BLOCKED;
+			update_state(STATE_BLOCKED);
 		} else {
 			pipeline_cnt++;
 		}
@@ -182,7 +233,7 @@ static bool handle_sensor_event(const struct sensor_event *event)
 		if (k_mem_slab_alloc(&buf_slab, (void **)&packet, K_NO_WAIT)) {
 			LOG_WRN("No space to buffer data");
 			LOG_WRN("Sampling frequency is too high");
-			state = STATE_BLOCKED;
+			update_state(STATE_BLOCKED);
 		} else {
 			memcpy(packet->buf, buf, pos);
 			packet->size = pos;
@@ -200,13 +251,17 @@ static bool handle_ml_state_event(const struct ml_state_event *event)
 	}
 
 	bool disabled = ((state == STATE_DISABLED_ACTIVE) || (state == STATE_DISABLED_SUSPENDED));
+	enum state new_state;
 
 	if (event->state == ML_STATE_DATA_FORWARDING) {
-		state = disabled ? STATE_DISABLED_ACTIVE : STATE_ACTIVE;
+		new_state = disabled ? STATE_DISABLED_ACTIVE : STATE_ACTIVE;
+
 		clean_buffered_data();
 	} else {
-		state = disabled ? STATE_DISABLED_SUSPENDED : STATE_SUSPENDED;
+		new_state = disabled ? STATE_DISABLED_SUSPENDED : STATE_SUSPENDED;
 	}
+
+	update_state(new_state);
 
 	return false;
 }
@@ -242,7 +297,10 @@ static void init(void)
 	int err = init_nus();
 
 	if (!err) {
-		state = (state == STATE_DISABLED_ACTIVE) ? STATE_ACTIVE : STATE_SUSPENDED;
+		enum state new_state = (state == STATE_DISABLED_ACTIVE) ?
+				       STATE_ACTIVE : STATE_SUSPENDED;
+
+		update_state(new_state);
 		module_set_state(MODULE_STATE_READY);
 	} else {
 		report_error();
@@ -285,6 +343,8 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 		break;
 	}
 
+	update_state(state);
+
 	return false;
 }
 
@@ -301,8 +361,13 @@ static bool handle_ble_peer_conn_params_event(const struct ble_peer_conn_params_
 	if ((interval >= MIN_CONN_INT) && (interval <= MAX_CONN_INT)) {
 		conn_state |= CONN_INTERVAL_VALID;
 	} else {
+		if ((state == STATE_ACTIVE) && is_nus_conn_valid(nus_conn, conn_state)) {
+			state = STATE_BLOCKED;
+		}
 		conn_state &= ~CONN_INTERVAL_VALID;
 	}
+
+	update_state(state);
 
 	return false;
 }

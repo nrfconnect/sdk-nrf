@@ -8,6 +8,7 @@
 #include <drivers/uart.h>
 
 #include "ei_data_forwarder.h"
+#include "ei_data_forwarder_event.h"
 
 #include <caf/events/sensor_event.h>
 #include "ml_state_event.h"
@@ -35,9 +36,48 @@ static atomic_t uart_busy;
 static enum state state = STATE_DISABLED;
 
 
+static void broadcast_ei_data_forwarder_state(enum ei_data_forwarder_state forwarder_state)
+{
+	__ASSERT_NO_MSG(forwarder_state != EI_DATA_FORWARDER_STATE_DISABLED);
+
+	struct ei_data_forwarder_event *event = new_ei_data_forwarder_event();
+
+	event->state = forwarder_state;
+	EVENT_SUBMIT(event);
+}
+
+static void update_state(enum state new_state)
+{
+	static enum ei_data_forwarder_state forwarder_state = EI_DATA_FORWARDER_STATE_DISABLED;
+	enum ei_data_forwarder_state new_forwarder_state;
+
+	switch (new_state) {
+	case STATE_ACTIVE:
+		new_forwarder_state = EI_DATA_FORWARDER_STATE_TRANSMITTING;
+		break;
+
+	case STATE_SUSPENDED:
+	case STATE_BLOCKED:
+		new_forwarder_state = EI_DATA_FORWARDER_STATE_CONNECTED;
+		break;
+
+	case STATE_ERROR:
+	default:
+		new_forwarder_state = EI_DATA_FORWARDER_STATE_DISCONNECTED;
+		break;
+	}
+
+	state = new_state;
+
+	if (new_forwarder_state != forwarder_state) {
+		broadcast_ei_data_forwarder_state(new_forwarder_state);
+		forwarder_state = new_forwarder_state;
+	}
+}
+
 static void report_error(void)
 {
-	state = STATE_ERROR;
+	update_state(STATE_ERROR);
 	module_set_state(MODULE_STATE_ERROR);
 }
 
@@ -53,7 +93,7 @@ static bool handle_sensor_event(const struct sensor_event *event)
 	if (!atomic_cas(&uart_busy, false, true)) {
 		LOG_WRN("UART not ready");
 		LOG_WRN("Sampling frequency is too high");
-		state = STATE_BLOCKED;
+		update_state(STATE_BLOCKED);
 		return false;
 	}
 
@@ -91,9 +131,9 @@ static bool handle_ml_state_event(const struct ml_state_event *event)
 	}
 
 	if (event->state == ML_STATE_DATA_FORWARDING) {
-		state = STATE_ACTIVE;
+		update_state(STATE_ACTIVE);
 	} else {
-		state = STATE_SUSPENDED;
+		update_state(STATE_SUSPENDED);
 	}
 
 	return false;
@@ -132,7 +172,9 @@ static bool handle_module_state_event(const struct module_state_event *event)
 		int err = init();
 
 		if (!err) {
-			state = ML_STATE_CONTROL ? STATE_SUSPENDED : STATE_ACTIVE;
+			enum state init_state = ML_STATE_CONTROL ? STATE_SUSPENDED : STATE_ACTIVE;
+
+			update_state(init_state);
 			module_set_state(MODULE_STATE_READY);
 		} else {
 			report_error();
