@@ -11,6 +11,7 @@
 #include <caf/events/led_event.h>
 #include "ml_state_event.h"
 #include "ml_result_event.h"
+#include "ei_data_forwarder_event.h"
 #include "sensor_sim_event.h"
 
 #define MODULE led_state
@@ -21,6 +22,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_LED_STATE_LOG_LEVEL);
 
 #define DISPLAY_ML_RESULTS		IS_ENABLED(CONFIG_ML_APP_ML_RESULT_EVENTS)
 #define DISPLAY_SIM_SIGNAL		IS_ENABLED(CONFIG_ML_APP_SENSOR_SIM_EVENTS)
+#define DISPLAY_DATA_FORWARDER		IS_ENABLED(CONFIG_ML_APP_EI_DATA_FORWARDER_EVENTS)
 
 #define ANOMALY_THRESH			(CONFIG_ML_APP_LED_STATE_ANOMALY_THRESH / 1000.0)
 #define VALUE_THRESH			(CONFIG_ML_APP_LED_STATE_VALUE_THRESH / 1000.0)
@@ -31,11 +33,21 @@ BUILD_ASSERT(PREDICTION_STREAK_THRESH > 0);
 #define DEFAULT_EFFECT			(&ml_result_led_effects[0])
 
 static enum ml_state ml_state = ML_STATE_COUNT;
+static enum ei_data_forwarder_state forwarder_state = DISPLAY_DATA_FORWARDER ?
+	EI_DATA_FORWARDER_STATE_DISCONNECTED : EI_DATA_FORWARDER_STATE_TRANSMITTING;
+
 static const struct led_effect *blocking_led_effect;
 
 static const char *cur_label;
 static size_t prediction_streak;
 
+
+static bool is_led_effect_valid(const struct led_effect *le)
+{
+	const uint8_t zeros[sizeof(struct led_effect)] = {0};
+
+	return memcmp(le, zeros, sizeof(struct led_effect));
+}
 
 static bool is_led_effect_blocking(const struct led_effect *le)
 {
@@ -175,9 +187,8 @@ static void validate_configuration(void)
 
 	for (size_t i = 1; i < ARRAY_SIZE(ml_result_led_effects); i++) {
 		const struct ml_result_led_effect *t = &ml_result_led_effects[i];
-		const uint8_t zeros[sizeof(t->effect)] = {0};
 
-		__ASSERT_NO_MSG(memcmp(&t->effect, zeros, sizeof(t->effect)));
+		__ASSERT_NO_MSG(is_led_effect_valid(&t->effect));
 		__ASSERT_NO_MSG(t->label);
 	}
 }
@@ -198,6 +209,21 @@ static bool handle_sensor_sim_event(const struct sensor_sim_event *event)
 	return false;
 }
 
+static bool handle_ei_data_forwarder_event(const struct ei_data_forwarder_event *event)
+{
+	__ASSERT_NO_MSG(event->state != EI_DATA_FORWARDER_STATE_DISABLED);
+	forwarder_state = event->state;
+
+	__ASSERT_NO_MSG(is_led_effect_valid(&ei_data_forwarder_led_effects[forwarder_state]));
+
+	if (ml_state == ML_STATE_DATA_FORWARDING) {
+		send_led_event(led_map[LED_ID_ML_STATE],
+			       &ei_data_forwarder_led_effects[forwarder_state]);
+	}
+
+	return false;
+}
+
 static bool handle_led_ready_event(const struct led_ready_event *event)
 {
 	if ((event->led_id == led_map[LED_ID_ML_STATE]) &&
@@ -211,15 +237,17 @@ static bool handle_led_ready_event(const struct led_ready_event *event)
 
 static bool handle_ml_state_event(const struct ml_state_event *event)
 {
-	__ASSERT_NO_MSG(event->state < ARRAY_SIZE(ml_state_led_effect));
-
 	ml_state = event->state;
 
 	if (event->state == ML_STATE_MODEL_RUNNING) {
 		clear_prediction();
 		display_ml_result(NULL, true);
+	} else if (event->state == ML_STATE_DATA_FORWARDING) {
+		send_led_event(led_map[LED_ID_ML_STATE],
+			       &ei_data_forwarder_led_effects[forwarder_state]);
 	} else {
-		send_led_event(led_map[LED_ID_ML_STATE], &ml_state_led_effect[ml_state]);
+		/* Not supported. */
+		__ASSERT_NO_MSG(false);
 	}
 
 	return false;
@@ -230,6 +258,8 @@ static bool handle_module_state_event(const struct module_state_event *event)
 	if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 		if (IS_ENABLED(CONFIG_ASSERT)) {
 			validate_configuration();
+		} else {
+			ARG_UNUSED(is_led_effect_valid);
 		}
 
 		static bool initialized;
@@ -254,6 +284,11 @@ static bool event_handler(const struct event_header *eh)
 		return handle_sensor_sim_event(cast_sensor_sim_event(eh));
 	}
 
+	if (DISPLAY_DATA_FORWARDER &&
+	    is_ei_data_forwarder_event(eh)) {
+		return handle_ei_data_forwarder_event(cast_ei_data_forwarder_event(eh));
+	}
+
 	if (is_led_ready_event(eh)) {
 		return handle_led_ready_event(cast_led_ready_event(eh));
 	}
@@ -276,6 +311,9 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ml_state_event);
 EVENT_SUBSCRIBE(MODULE, led_ready_event);
+#if DISPLAY_DATA_FORWARDER
+EVENT_SUBSCRIBE(MODULE, ei_data_forwarder_event);
+#endif /* DISPLAY_DATA_FORWARDER */
 #if DISPLAY_ML_RESULTS
 EVENT_SUBSCRIBE(MODULE, ml_result_event);
 #endif /* DISPLAY_ML_RESULTS */
