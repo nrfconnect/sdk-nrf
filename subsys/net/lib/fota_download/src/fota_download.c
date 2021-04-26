@@ -32,7 +32,7 @@ LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
 static fota_download_callback_t callback;
 static struct download_client   dlc;
-static struct k_delayed_work    dlc_with_offset_work;
+static struct k_work_delayable    dlc_with_offset_work;
 static int socket_retries_left;
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
 static uint8_t mcuboot_buf[CONFIG_FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ];
@@ -133,7 +133,7 @@ static int download_client_callback(const struct download_client_evt *event)
 				 * schedule new download from offset.
 				 */
 				(void)download_client_disconnect(&dlc);
-				k_delayed_work_submit(&dlc_with_offset_work,
+				k_work_reschedule(&dlc_with_offset_work,
 						K_SECONDS(1));
 				LOG_INF("Refuse fragment, restart with offset");
 
@@ -360,7 +360,7 @@ int fota_download_init(fota_download_callback_t client_callback)
 	}
 #endif
 
-	k_delayed_work_init(&dlc_with_offset_work, download_with_offset);
+	k_work_init_delayable(&dlc_with_offset_work, download_with_offset);
 
 	err = download_client_init(&dlc, download_client_callback);
 	if (err != 0) {

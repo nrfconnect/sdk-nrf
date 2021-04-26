@@ -803,8 +803,8 @@ int ftp_init(ftp_client_callback_t ctrl_callback, ftp_client_callback_t data_cal
 	client.ctrl_callback = ctrl_callback;
 	client.data_callback = data_callback;
 
-	k_work_q_start(&ftp_work_q, ftp_stack_area,
-		K_THREAD_STACK_SIZEOF(ftp_stack_area), FTP_PRIORITY);
+	k_work_queue_start(&ftp_work_q, ftp_stack_area,
+		K_THREAD_STACK_SIZEOF(ftp_stack_area), FTP_PRIORITY, NULL);
 	k_work_init(&data_task_param.work, data_task);
 
 	return 0;
