@@ -40,7 +40,7 @@ enum tnep_poller_state {
 };
 
 struct tnep_poller {
-	struct k_delayed_work tnep_work;
+	struct k_work_delayable tnep_work;
 	const struct nfc_tnep_buf *rx;
 	const struct nfc_tnep_buf *tx;
 	const struct nfc_ndef_tnep_rec_svc_param *svc_to_select;
@@ -262,7 +262,7 @@ static void on_svc_delayed_operation(void)
 
 	time_spent = k_uptime_delta(&tnep.last_time);
 
-	err = k_delayed_work_submit(&tnep.tnep_work,
+	err = k_work_reschedule(&tnep.tnep_work,
 				    time_spent > tnep.wait_time ?
 				    K_NO_WAIT :
 				    K_MSEC(tnep.wait_time - time_spent));
@@ -349,7 +349,7 @@ int nfc_tnep_poller_init(const struct nfc_tnep_buf *tx_buf)
 	tnep.tx = tx_buf;
 	tnep.state = TNEP_POLLER_STATE_IDLE;
 
-	k_delayed_work_init(&tnep.tnep_work, tnep_delay_handler);
+	k_work_init_delayable(&tnep.tnep_work, tnep_delay_handler);
 
 	return 0;
 }

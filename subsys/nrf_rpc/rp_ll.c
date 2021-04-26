@@ -277,9 +277,9 @@ int rp_ll_init(void)
 	/* Get RPMsg device from RPMsg VirtIO device. */
 	rdev = rpmsg_virtio_get_rpmsg_device(&rvdev);
 
-	k_work_q_start(&my_work_q, rx_thread_stack,
+	k_work_queue_start(&my_work_q, rx_thread_stack,
 		K_THREAD_STACK_SIZEOF(rx_thread_stack),
-		CONFIG_NRF_RPC_TR_PRMSG_RX_PRIORITY);
+		CONFIG_NRF_RPC_TR_PRMSG_RX_PRIORITY, NULL);
 	k_work_init(&work_item, work_callback);
 
 	LOG_DBG("initializing %s: SUCCESS", __func__);
