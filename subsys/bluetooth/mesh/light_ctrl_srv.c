@@ -1503,6 +1503,8 @@ static int light_ctrl_srv_init(struct bt_mesh_model *model)
 	bt_mesh_model_extend(model, srv->onoff.model);
 	bt_mesh_model_extend(srv->model, srv->lightness->lightness_model);
 
+	atomic_set_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL);
+
 	atomic_set_bit(&srv->onoff.flags, GEN_ONOFF_SRV_NO_DTT);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
