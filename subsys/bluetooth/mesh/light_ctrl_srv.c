@@ -1397,12 +1397,13 @@ const struct bt_mesh_onoff_srv_handlers _bt_mesh_light_ctrl_srv_onoff = {
 
 struct __packed scene_data {
 	uint8_t enabled:1,
-		occ:1;
+		occ:1,
+		light:1;
 	struct bt_mesh_light_ctrl_srv_cfg cfg;
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	struct bt_mesh_light_ctrl_srv_reg_cfg reg;
 #endif
-	uint16_t light;
+	uint16_t lightness;
 };
 
 static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
@@ -1413,13 +1414,15 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 
 	scene->enabled = is_enabled(srv);
 	scene->occ = atomic_test_bit(&srv->flags, FLAG_OCC_MODE);
+	scene->light = atomic_test_bit(&srv->flags, FLAG_ON);
 	scene->cfg = srv->cfg;
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	scene->reg = srv->reg.cfg;
 #endif
 
 	srv->lightness->handlers->light_get(srv->lightness, NULL, &light);
-	scene->light = repr_to_light(light.remaining_time ? light.target : light.current, ACTUAL);
+	scene->lightness = repr_to_light(light.remaining_time ? light.target : light.current,
+					 ACTUAL);
 
 	return sizeof(struct scene_data);
 }
@@ -1438,10 +1441,16 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 #endif
 	if (scene->enabled) {
 		ctrl_enable(srv);
+
+		if (!!scene->light) {
+			turn_on(srv, transition, true);
+		} else {
+			light_onoff_pub(srv, srv->state, true);
+		}
 	} else {
 		struct bt_mesh_lightness_status status;
 		struct bt_mesh_lightness_set set = {
-			.lvl = scene->light,
+			.lvl = scene->lightness,
 			.transition = transition,
 		};
 
