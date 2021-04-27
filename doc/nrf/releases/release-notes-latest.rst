@@ -188,6 +188,11 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed handling of the OUT buffer in the Bluetooth class.
     * Fixed a possible deadlock in :c:func:`usb_transfer_sync`.
 
+* Kernel:
+
+  * Merged a new work queue implementation.
+    See `this comment <kwork API changes_>`_ for details on the API changes.
+
 * Networking:
 
   * General:
