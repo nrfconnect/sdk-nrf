@@ -69,7 +69,7 @@ The application supports the following data types:
 | Battery       | Voltage                    | APP_DATA_BATTERY                              |
 +---------------+----------------------------+-----------------------------------------------+
 
-The sets of sensor data that are published to the cloud service consist of relative timestamps that originate from the time of sampling.
+The sets of sensor data that are published to the cloud service consist of relative `timestamps <Timestamping_>`_ that originate from the time of sampling.
 
 Device modes
 ============
