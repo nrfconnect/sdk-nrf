@@ -55,6 +55,7 @@ enum select_uart {
 
 static enum term_modes term_mode;
 static const struct device *uart_dev;
+static bool at_buf_busy; /* Guards at_buf while processing a command */
 static char at_buf[AT_BUF_SIZE]; /* AT command and modem response buffer */
 static struct k_work_q at_host_work_q;
 static struct k_work cmd_send_work;
@@ -112,7 +113,7 @@ static void cmd_send(struct k_work *work)
 	default:
 		break;
 	}
-
+	at_buf_busy = false;
 	uart_irq_rx_enable(uart_dev);
 }
 
@@ -194,6 +195,7 @@ send:
 	/* Send the command, if there is one to send */
 	if (at_buf[0]) {
 		uart_irq_rx_disable(uart_dev); /* Stop UART to protect at_buf */
+		at_buf_busy = true;
 		k_work_submit_to_queue(&at_host_work_q, &cmd_send_work);
 	}
 }
@@ -214,7 +216,7 @@ static void isr(const struct device *dev, void *user_data)
 	 * Check that we are not sending data (buffer must be preserved then),
 	 * and that a new character is available before handling each character
 	 */
-	while ((!k_work_pending(&cmd_send_work)) &&
+	while ((!at_buf_busy) &&
 	       (uart_fifo_read(dev, &character, 1))) {
 		uart_rx_handler(character);
 	}
