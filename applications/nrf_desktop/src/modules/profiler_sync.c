@@ -25,7 +25,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_PROFILER_SYNC_LOG_LEVEL);
 static const struct device *gpio_dev;
 static struct gpio_callback gpio_cb;
 
-static struct k_delayed_work gen_sync_event;
+static struct k_work_delayable gen_sync_event;
 static uint16_t sync_event_id;
 static int pin_value;
 
@@ -70,7 +70,7 @@ static void gen_sync_event_fn(struct k_work *work)
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
 		profile_sync_event();
-		k_delayed_work_submit(&gen_sync_event,
+		k_work_reschedule(&gen_sync_event,
 				      K_MSEC(sync_period));
 	}
 }
@@ -106,8 +106,8 @@ static int init(void)
 		}
 
 		if (!err) {
-			k_delayed_work_init(&gen_sync_event, gen_sync_event_fn);
-			k_delayed_work_submit(&gen_sync_event,
+			k_work_init_delayable(&gen_sync_event, gen_sync_event_fn);
+			k_work_reschedule(&gen_sync_event,
 					      K_MSEC(SYNC_PERIOD_MIN));
 		}
 	} else {

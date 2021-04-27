@@ -41,8 +41,8 @@ enum state {
 
 static const struct device *gpio_devs[ARRAY_SIZE(port_map)];
 static struct gpio_callback gpio_cb[ARRAY_SIZE(port_map)];
-static struct k_delayed_work matrix_scan;
-static struct k_delayed_work button_pressed;
+static struct k_work_delayable matrix_scan;
+static struct k_work_delayable button_pressed;
 static enum state state;
 
 
@@ -156,7 +156,7 @@ static int callback_ctrl(bool enable)
 		/* Callbacks are disabled but they could fire in the meantime.
 		 * Make sure pending work is canceled.
 		 */
-		k_delayed_work_cancel(&button_pressed);
+		k_work_cancel_delayable(&button_pressed);
 	}
 
 	return err;
@@ -306,7 +306,7 @@ static void scan_fn(struct k_work *work)
 
 	if (any_pressed) {
 		/* Schedule next scan */
-		k_delayed_work_submit(&matrix_scan, K_MSEC(SCAN_INTERVAL));
+		k_work_reschedule(&matrix_scan, K_MSEC(SCAN_INTERVAL));
 	} else {
 		/* If no button is pressed module can switch to callbacks */
 
@@ -388,7 +388,7 @@ static void button_pressed_isr(const struct device *gpio_dev,
 		LOG_ERR("Cannot disable callbacks");
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
-		k_delayed_work_submit(&button_pressed, K_NO_WAIT);
+		k_work_reschedule(&button_pressed, K_NO_WAIT);
 	}
 }
 
@@ -411,7 +411,7 @@ static void button_pressed_fn(struct k_work *work)
 
 	case STATE_ACTIVE:
 		state = STATE_SCANNING;
-		k_delayed_work_submit(&matrix_scan, K_MSEC(DEBOUNCE_INTERVAL));
+		k_work_reschedule(&matrix_scan, K_MSEC(DEBOUNCE_INTERVAL));
 		break;
 
 	case STATE_SCANNING:
@@ -510,8 +510,8 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			k_delayed_work_init(&matrix_scan, scan_fn);
-			k_delayed_work_init(&button_pressed, button_pressed_fn);
+			k_work_init_delayable(&matrix_scan, scan_fn);
+			k_work_init_delayable(&button_pressed, button_pressed_fn);
 
 			init_fn();
 

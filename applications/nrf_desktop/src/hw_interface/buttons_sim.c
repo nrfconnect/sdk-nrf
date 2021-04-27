@@ -26,7 +26,7 @@ enum state {
 };
 
 static enum state state;
-static struct k_delayed_work generate_keys;
+static struct k_work_delayable generate_keys;
 static size_t cur_key_idx;
 
 
@@ -40,7 +40,7 @@ static void start_generating_keys(void)
 	} else {
 		LOG_INF("Start generating key presses");
 		cur_key_idx = 0;
-		k_delayed_work_submit(&generate_keys, K_NO_WAIT);
+		k_work_reschedule(&generate_keys, K_NO_WAIT);
 		state = STATE_ACTIVE;
 	}
 }
@@ -54,7 +54,7 @@ static void stop_generating_keys(void)
 		LOG_INF("Already not generating key presses");
 	} else {
 		LOG_INF("Stop generating key presses");
-		k_delayed_work_cancel(&generate_keys);
+		k_work_cancel_delayable(&generate_keys);
 		state = STATE_IDLE;
 	}
 }
@@ -100,7 +100,7 @@ static bool generate_button_event(void)
 void generate_keys_fn(struct k_work *w)
 {
 	if (generate_button_event()) {
-		k_delayed_work_submit(&generate_keys,
+		k_work_reschedule(&generate_keys,
 				K_MSEC(CONFIG_DESKTOP_BUTTONS_SIM_INTERVAL));
 	} else {
 		state = STATE_IDLE;
@@ -143,7 +143,7 @@ static bool event_handler(const struct event_header *eh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG(state == STATE_DISABLED);
-			k_delayed_work_init(&generate_keys, generate_keys_fn);
+			k_work_init_delayable(&generate_keys, generate_keys_fn);
 
 			state = STATE_IDLE;
 			module_set_state(MODULE_STATE_READY);
@@ -154,7 +154,7 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_power_down_event(eh)) {
 		if (state != STATE_OFF) {
-			k_delayed_work_cancel(&generate_keys);
+			k_work_cancel_delayable(&generate_keys);
 			state = STATE_OFF;
 			module_set_state(MODULE_STATE_OFF);
 		}

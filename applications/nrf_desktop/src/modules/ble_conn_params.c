@@ -39,7 +39,7 @@ struct connected_peer {
 };
 
 static struct connected_peer peers[CONFIG_BT_MAX_CONN];
-static struct k_delayed_work conn_params_update;
+static struct k_work_delayable conn_params_update;
 
 
 static struct connected_peer *find_connected_peer(const struct bt_conn *conn)
@@ -126,7 +126,7 @@ static void update_peer_conn_params(const struct connected_peer *peer)
 		LOG_WRN("Cannot update conn parameters for peer %p (err:%d)",
 			peer, err);
 		/* Retry to update the connection parameters after an error. */
-		k_delayed_work_submit(&conn_params_update,
+		k_work_reschedule(&conn_params_update,
 				      CONN_PARAMS_ERROR_TIMEOUT);
 	} else {
 		LOG_INF("Conn params for peer: %p set: %s, latency: %"PRIu16,
@@ -185,7 +185,7 @@ static void ble_peer_conn_params_event_handler(const struct ble_peer_conn_params
 
 	__ASSERT_NO_MSG(peer);
 	peer->requested_latency = event->latency;
-	k_delayed_work_submit(&conn_params_update, K_NO_WAIT);
+	k_work_reschedule(&conn_params_update, K_NO_WAIT);
 
 	LOG_INF("Request to update conn: %p latency to: %"PRIu16,
 		event->id, event->latency);
@@ -193,7 +193,7 @@ static void ble_peer_conn_params_event_handler(const struct ble_peer_conn_params
 
 static void init(void)
 {
-	k_delayed_work_init(&conn_params_update, conn_params_update_fn);
+	k_work_init_delayable(&conn_params_update, conn_params_update_fn);
 }
 
 static void peer_connected(struct bt_conn *conn)

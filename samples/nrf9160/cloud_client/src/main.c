@@ -16,8 +16,8 @@
 LOG_MODULE_REGISTER(cloud_client, CONFIG_CLOUD_CLIENT_LOG_LEVEL);
 
 static struct cloud_backend *cloud_backend;
-static struct k_delayed_work cloud_update_work;
-static struct k_delayed_work connect_work;
+static struct k_work_delayable cloud_update_work;
+static struct k_work_delayable connect_work;
 
 static K_SEM_DEFINE(lte_connected, 0, 1);
 
@@ -38,7 +38,7 @@ static void connect_work_fn(struct k_work *work)
 	LOG_INF("Next connection retry in %d seconds",
 	       CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS);
 
-	k_delayed_work_submit(&connect_work,
+	k_work_reschedule(&connect_work,
 		K_SECONDS(CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS));
 }
 
@@ -76,7 +76,7 @@ static void cloud_update_work_fn(struct k_work *work)
 	}
 
 #if defined(CONFIG_CLOUD_PUBLICATION_SEQUENTIAL)
-	k_delayed_work_submit(
+	k_work_reschedule(
 			&cloud_update_work,
 			K_SECONDS(CONFIG_CLOUD_MESSAGE_PUBLICATION_INTERVAL));
 #endif
@@ -100,10 +100,10 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_READY:
 		LOG_INF("CLOUD_EVT_READY");
 
-		k_delayed_work_cancel(&connect_work);
+		k_work_cancel_delayable(&connect_work);
 
 #if defined(CONFIG_CLOUD_PUBLICATION_SEQUENTIAL)
-		k_delayed_work_submit(&cloud_update_work, K_NO_WAIT);
+		k_work_reschedule(&cloud_update_work, K_NO_WAIT);
 #endif
 		break;
 	case CLOUD_EVT_DISCONNECTED:
@@ -111,11 +111,11 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 
 		cloud_connected = false;
 
-		if (k_delayed_work_pending(&connect_work)) {
+		if (k_work_delayable_is_pending(&connect_work)) {
 			break;
 		}
 
-		k_delayed_work_submit(&connect_work, K_NO_WAIT);
+		k_work_reschedule(&connect_work, K_NO_WAIT);
 		break;
 	case CLOUD_EVT_ERROR:
 		LOG_INF("CLOUD_EVT_ERROR");
@@ -149,8 +149,8 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 
 static void work_init(void)
 {
-	k_delayed_work_init(&cloud_update_work, cloud_update_work_fn);
-	k_delayed_work_init(&connect_work, connect_work_fn);
+	k_work_init_delayable(&cloud_update_work, cloud_update_work_fn);
+	k_work_init_delayable(&connect_work, connect_work_fn);
 }
 
 static void lte_handler(const struct lte_lc_evt *const evt)
@@ -245,7 +245,7 @@ static void modem_configure(void)
 static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	if (has_changed & button_states & DK_BTN1_MSK) {
-		k_delayed_work_submit(&cloud_update_work, K_NO_WAIT);
+		k_work_reschedule(&cloud_update_work, K_NO_WAIT);
 	}
 }
 #endif
@@ -282,5 +282,5 @@ void main(void)
 	LOG_INF("Connected to LTE network");
 	LOG_INF("Connecting to cloud");
 
-	k_delayed_work_submit(&connect_work, K_NO_WAIT);
+	k_work_reschedule(&connect_work, K_NO_WAIT);
 }

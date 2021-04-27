@@ -34,7 +34,7 @@ enum state {
 struct selector {
 	const struct selector_config *config;
 	struct gpio_callback gpio_cb[ARRAY_SIZE(port_map)];
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 	uint8_t position;
 };
 
@@ -149,7 +149,7 @@ static void selector_isr(const struct device *dev, struct gpio_callback *cb,
 			   gpio_cb);
 	disable_interrupts_nolock(sel);
 
-	k_delayed_work_submit(&sel->work, DEBOUNCE_DELAY);
+	k_work_reschedule(&sel->work, DEBOUNCE_DELAY);
 }
 
 static int read_state_and_enable_interrupts(struct selector *selector)
@@ -236,7 +236,7 @@ static int sleep(void)
 		err = disable_interrupts_nolock(&selectors[i]);
 
 		if (!err) {
-			k_delayed_work_cancel(&selectors[i].work);
+			k_work_cancel_delayable(&selectors[i].work);
 			err = configure_pins(&selectors[i], false);
 		}
 	}
@@ -284,7 +284,7 @@ static int init(void)
 	for (size_t i = 0; (i < ARRAY_SIZE(selectors)) && !err; i++) {
 		selectors[i].config = selector_config[i];
 
-		k_delayed_work_init(&selectors[i].work, selector_work_fn);
+		k_work_init_delayable(&selectors[i].work, selector_work_fn);
 
 		err = configure_callbacks(&selectors[i]);
 	}

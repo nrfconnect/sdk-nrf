@@ -25,13 +25,13 @@
 #define APP_WORK_Q_STACK_SIZE	KB(2)
 
 struct method_data {
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 	char request_id[8];
 	char name[32];
 	char payload[200];
 } method_data;
-struct k_delayed_work twin_report_work;
-struct k_delayed_work send_event_work;
+struct k_work_delayable twin_report_work;
+struct k_work_delayable send_event_work;
 
 static char recv_buf[RECV_BUF_SIZE];
 static void direct_method_handler(struct k_work *work);
@@ -102,7 +102,7 @@ static void event_interval_apply(int interval)
 	}
 
 	atomic_set(&event_interval, interval);
-	k_delayed_work_submit_to_queue(&application_work_q, &send_event_work,
+	k_work_reschedule_for_queue(&application_work_q, &send_event_work,
 				       K_NO_WAIT);
 }
 
@@ -116,7 +116,7 @@ static void on_evt_twin_desired(char *buf, size_t len)
 
 		memcpy(recv_buf, buf, len);
 		recv_buf[len] = '\0';
-			k_delayed_work_submit_to_queue(&application_work_q,
+			k_work_reschedule_for_queue(&application_work_q,
 						       &twin_report_work,
 						       K_NO_WAIT);
 	} else {
@@ -136,7 +136,7 @@ static void on_evt_direct_method(struct azure_iot_hub_method *method)
 	snprintf(method_data.payload, sizeof(method_data.payload),
 		 "%.*s", method->payload_len, method->payload);
 
-	k_delayed_work_submit_to_queue(&application_work_q,
+	k_work_reschedule_for_queue(&application_work_q,
 				       &method_data.work, K_NO_WAIT);
 }
 
@@ -167,7 +167,7 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 		 * The below work submission will cause send_event() to be
 		 * call after 3 seconds.
 		 */
-		k_delayed_work_submit_to_queue(&application_work_q,
+		k_work_reschedule_for_queue(&application_work_q,
 					       &send_event_work, K_NO_WAIT);
 		break;
 	case AZURE_IOT_HUB_EVT_DATA_RECEIVED:
@@ -257,7 +257,7 @@ exit:
 	}
 
 	printk("Next event will be sent in %d seconds\n", event_interval);
-	k_delayed_work_submit_to_queue(&application_work_q, &send_event_work,
+	k_work_reschedule_for_queue(&application_work_q, &send_event_work,
 				       K_SECONDS(event_interval));
 }
 
@@ -414,12 +414,12 @@ static void modem_configure(void)
 
 static void work_init(void)
 {
-	k_delayed_work_init(&method_data.work, direct_method_handler);
-	k_delayed_work_init(&twin_report_work, twin_report_work_fn);
-	k_delayed_work_init(&send_event_work, send_event);
-	k_work_q_start(&application_work_q, application_stack_area,
+	k_work_init_delayable(&method_data.work, direct_method_handler);
+	k_work_init_delayable(&twin_report_work, twin_report_work_fn);
+	k_work_init_delayable(&send_event_work, send_event);
+	k_work_queue_start(&application_work_q, application_stack_area,
 		       K_THREAD_STACK_SIZEOF(application_stack_area),
-		       K_HIGHEST_APPLICATION_THREAD_PRIO);
+		       K_HIGHEST_APPLICATION_THREAD_PRIO, NULL);
 }
 
 void main(void)

@@ -408,7 +408,7 @@ static void decode_new_slip_data(struct eth_rtt_context *context,
 }
 
 /** Delayed work used to do polling RTT down channel */
-static struct k_delayed_work eth_rtt_poll_work;
+static struct k_work_delayable eth_rtt_poll_work;
 
 /** Work handler that is submitted to system workqueue by the poll timer.
  *  It is responsible for reading all available data from RTT down buffer.
@@ -446,7 +446,7 @@ static void poll_work_handler(struct k_work *work)
 		period = K_MSEC(CONFIG_ETH_POLL_ACTIVE_PERIOD_MS);
 	}
 
-	k_delayed_work_submit(&eth_rtt_poll_work, period);
+	k_work_reschedule(&eth_rtt_poll_work, period);
 }
 
 /******** COMMON PART OF THE DRIVER (initialization on configuration) ********/
@@ -491,8 +491,8 @@ static void eth_iface_init(struct net_if *iface)
 			     sizeof(context->mac_addr),
 			     NET_LINK_ETHERNET);
 
-	k_delayed_work_init(&eth_rtt_poll_work, poll_work_handler);
-	k_delayed_work_submit(&eth_rtt_poll_work,
+	k_work_init_delayable(&eth_rtt_poll_work, poll_work_handler);
+	k_work_reschedule(&eth_rtt_poll_work,
 			      K_MSEC(CONFIG_ETH_POLL_PERIOD_MS));
 
 	LOG_INF("Initialized '%s': "

@@ -56,7 +56,7 @@ struct orientation_detector_sensor_data {
 
 static const struct device *accel_dev;
 static double accel_offset[3];
-static struct k_delayed_work flip_poll_work;
+static struct k_work_delayable flip_poll_work;
 static uint32_t timestamp;
 
 int orientation_detector_poll(
@@ -169,7 +169,7 @@ static void flip_work(struct k_work *work)
 
 exit:
 	if (work) {
-		k_delayed_work_submit(&flip_poll_work, FLIP_POLL_INTERVAL);
+		k_work_reschedule(&flip_poll_work, FLIP_POLL_INTERVAL);
 	}
 }
 
@@ -232,7 +232,7 @@ int lwm2m_init_accel(void)
 	int ret;
 
 	if (IS_ENABLED(CONFIG_FLIP_POLL)) {
-		k_delayed_work_init(&flip_poll_work, flip_work);
+		k_work_init_delayable(&flip_poll_work, flip_work);
 	}
 
 	accel_dev = device_get_binding(CONFIG_ACCEL_DEV_NAME);
@@ -259,7 +259,7 @@ int lwm2m_init_accel(void)
 				  &timestamp, sizeof(timestamp), 0);
 
 	if (IS_ENABLED(CONFIG_FLIP_POLL)) {
-		k_delayed_work_submit(&flip_poll_work, K_NO_WAIT);
+		k_work_reschedule(&flip_poll_work, K_NO_WAIT);
 	}
 
 	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM)) {

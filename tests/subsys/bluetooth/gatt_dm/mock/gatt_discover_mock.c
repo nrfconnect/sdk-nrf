@@ -18,7 +18,7 @@ static struct bt_discover_mock {
 	size_t len;
 	struct bt_conn *conn;
 	struct bt_gatt_discover_params *params;
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 } discover_mock_data;
 
 
@@ -126,7 +126,7 @@ int bt_gatt_discover(struct bt_conn *conn,
 	discover_mock_data.conn = conn;
 	discover_mock_data.params = params;
 
-	k_delayed_work_init(&(discover_mock_data.work), bt_gatt_discover_work);
-	k_delayed_work_submit(&(discover_mock_data.work), K_MSEC(5));
+	k_work_init_delayable(&(discover_mock_data.work), bt_gatt_discover_work);
+	k_work_reschedule(&(discover_mock_data.work), K_MSEC(5));
 	return 0;
 }

@@ -32,7 +32,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_CHARGER_LOG_LEVEL);
 static const struct device *gpio_dev;
 static struct gpio_callback gpio_cb;
 
-static struct k_delayed_work error_check;
+static struct k_work_delayable error_check;
 static unsigned int cso_counter;
 static struct k_spinlock lock;
 
@@ -91,7 +91,7 @@ static void cs_change(const struct device *gpio_dev, struct gpio_callback *cb,
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
 	if (cso_counter == 0) {
-		k_delayed_work_submit(&error_check,
+		k_work_reschedule(&error_check,
 				      K_MSEC(ERROR_CHECK_TIMEOUT_MS));
 	}
 	cso_counter++;
@@ -140,7 +140,7 @@ static int start_battery_state_check(void)
 	if (!err) {
 		/* Lock is not needed as interrupt is disabled */
 		cso_counter = 1;
-		k_delayed_work_submit(&error_check,
+		k_work_reschedule(&error_check,
 				      K_MSEC(ERROR_CHECK_TIMEOUT_MS));
 
 		err = gpio_pin_interrupt_configure(gpio_dev,
@@ -182,7 +182,7 @@ static int init_fn(void)
 		goto error;
 	}
 
-	k_delayed_work_init(&error_check, error_check_handler);
+	k_work_init_delayable(&error_check, error_check_handler);
 
 	err = start_battery_state_check();
 	if (err) {
@@ -243,7 +243,7 @@ static bool event_handler(const struct event_header *eh)
 					CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN,
 					GPIO_INT_DISABLE);
 
-			k_delayed_work_cancel(&error_check);
+			k_work_cancel_delayable(&error_check);
 			if (!err) {
 				err = cso_pin_control(false);
 			}

@@ -42,7 +42,7 @@ static uint8_t tx_data[NFC_TX_DATA_LEN];
 static uint8_t rx_data[NFC_RX_DATA_LEN];
 
 static struct k_poll_event events[ST25R3911B_NFCA_EVENT_CNT];
-static struct k_delayed_work transmit_work;
+static struct k_work_delayable transmit_work;
 
 NFC_NDEF_MSG_DEF(poller_msg, NFC_TNEP_MAX_RECORD);
 NFC_T4T_CC_DESC_DEF(t4t_cc, MAX_TLV_BLOCKS);
@@ -331,7 +331,7 @@ static void t4t_isodep_deselected(void)
 {
 	st25r3911b_nfca_tag_sleep();
 
-	k_delayed_work_submit(&transmit_work, K_MSEC(TRANSMIT_DELAY));
+	k_work_reschedule(&transmit_work, K_MSEC(TRANSMIT_DELAY));
 }
 
 static const struct nfc_t4t_isodep_cb t4t_isodep_cb = {
@@ -400,7 +400,7 @@ static void t4t_hl_selected(enum nfc_t4t_hl_procedure_select type)
 	if (err) {
 		st25r3911b_nfca_tag_sleep();
 
-		k_delayed_work_submit(&transmit_work, K_MSEC(TRANSMIT_DELAY));
+		k_work_reschedule(&transmit_work, K_MSEC(TRANSMIT_DELAY));
 	}
 }
 
@@ -659,7 +659,7 @@ void main(void)
 	printk("NFC TNEP Poller sample started.\n");
 	nfc_t4t_hl_procedure_cb_register(&t4t_hl_procedure_cb);
 
-	k_delayed_work_init(&transmit_work, transfer_handler);
+	k_work_init_delayable(&transmit_work, transfer_handler);
 
 	nfc_tnep_poller_cb_register(&tnep_cb);
 

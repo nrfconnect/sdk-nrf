@@ -16,7 +16,7 @@
 
 #include "bh1749.h"
 
-static struct k_delayed_work bh1749_init_work;
+static struct k_work_delayable bh1749_init_work;
 static const struct device *bh1749_dev;
 
 LOG_MODULE_REGISTER(BH1749, CONFIG_SENSOR_LOG_LEVEL);
@@ -219,7 +219,7 @@ static void bh1749_async_init(struct k_work *work)
 			data->ready = true;
 			LOG_INF("BH1749 initialized");
 		} else {
-			k_delayed_work_submit(&bh1749_init_work,
+			k_work_reschedule(&bh1749_init_work,
 					      K_MSEC(async_init_delay[data->async_init_step]));
 		}
 	}
@@ -292,8 +292,8 @@ static int bh1749_init(const struct device *dev)
 
 		return -EINVAL;
 	}
-	k_delayed_work_init(&bh1749_init_work, bh1749_async_init);
-	return k_delayed_work_submit(&bh1749_init_work,
+	k_work_init_delayable(&bh1749_init_work, bh1749_async_init);
+	return k_work_reschedule(&bh1749_init_work,
 				     K_MSEC(async_init_delay[data->async_init_step]));
 };
 

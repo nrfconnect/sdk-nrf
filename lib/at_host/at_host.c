@@ -214,7 +214,7 @@ static void isr(const struct device *dev, void *user_data)
 	 * Check that we are not sending data (buffer must be preserved then),
 	 * and that a new character is available before handling each character
 	 */
-	while ((!k_work_pending(&cmd_send_work)) &&
+	while ((!k_work_is_pending(&cmd_send_work)) &&
 	       (uart_fifo_read(dev, &character, 1))) {
 		uart_rx_handler(character);
 	}
@@ -304,9 +304,9 @@ static int at_host_init(const struct device *arg)
 	}
 
 	k_work_init(&cmd_send_work, cmd_send);
-	k_work_q_start(&at_host_work_q, at_host_stack_area,
+	k_work_queue_start(&at_host_work_q, at_host_stack_area,
 		       K_THREAD_STACK_SIZEOF(at_host_stack_area),
-		       CONFIG_AT_HOST_THREAD_PRIO);
+		       CONFIG_AT_HOST_THREAD_PRIO, NULL);
 	uart_irq_rx_enable(uart_dev);
 
 	return err;

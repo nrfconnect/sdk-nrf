@@ -134,7 +134,7 @@ static K_SEM_DEFINE(irq_sem, 0, 1);
 static K_SEM_DEFINE(user_sem, 0, 1);
 
 static struct k_poll_event *nfca_events;
-static struct k_delayed_work timeout_work;
+static struct k_work_delayable timeout_work;
 static struct st25r3911b_nfca nfca;
 
 enum {
@@ -722,7 +722,7 @@ static int irq_process(void)
 		/* Workaround. In some cases RXE irq is not triggered, so
 		 * after this time transmission finish is checked.
 		 */
-		k_delayed_work_submit(&timeout_work, K_MSEC(RXS_TIMEOUT));
+		k_work_reschedule(&timeout_work, K_MSEC(RXS_TIMEOUT));
 	}
 
 	rx_error_check(irq);
@@ -730,7 +730,7 @@ static int irq_process(void)
 	if (irq & ST25R3911B_IRQ_MASK_RXE) {
 		nfca.state.txrx = RX_STATE_COMPLETE;
 
-		k_delayed_work_cancel(&timeout_work);
+		k_work_cancel_delayable(&timeout_work);
 		err = on_rx_complete();
 	}
 
@@ -1118,7 +1118,7 @@ int st25r3911b_nfca_init(struct k_poll_event *events, uint8_t cnt,
 	/* Set callbacks */
 	nfca.cb = cb;
 
-	k_delayed_work_init(&timeout_work, timeout_handler);
+	k_work_init_delayable(&timeout_work, timeout_handler);
 
 	/* Turn on NFC-A led */
 	err = st25r3911b_technology_led_set(ST25R3911B_NFCA_LED, true);

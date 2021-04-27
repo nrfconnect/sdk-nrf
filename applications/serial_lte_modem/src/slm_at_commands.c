@@ -53,7 +53,7 @@ enum shutdown_modes {
 typedef int (*slm_at_handler_t) (enum at_cmd_type);
 
 static struct slm_work_info {
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 	uint32_t data;
 } slm_work;
 
@@ -217,9 +217,9 @@ static int handle_at_slmuart(enum at_cmd_type type)
 		case 460800:
 		case 921600:
 		case 1000000:
-			k_delayed_work_init(&slm_work.work, set_uart_wk);
+			k_work_init_delayable(&slm_work.work, set_uart_wk);
 			slm_work.data = baudrate;
-			k_delayed_work_submit(&slm_work.work, K_MSEC(50));
+			k_work_reschedule(&slm_work.work, K_MSEC(50));
 			ret = 0;
 			break;
 		default:

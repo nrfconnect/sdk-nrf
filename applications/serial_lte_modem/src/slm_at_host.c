@@ -49,7 +49,7 @@ static slm_datamode_handler_t datamode_handler;
 static int64_t rx_start;
 static struct k_work raw_send_work;
 static struct k_work cmd_send_work;
-static struct k_delayed_work uart_recovery_work;
+static struct k_work_delayable uart_recovery_work;
 static bool uart_recovery_pending;
 
 static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
@@ -655,7 +655,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 	case UART_RX_DISABLED:
 		LOG_DBG("RX_DISABLED");
 		if (enable_rx_retry && !uart_recovery_pending) {
-			k_delayed_work_submit(&uart_recovery_work, K_MSEC(UART_ERROR_DELAY_MS));
+			k_work_reschedule(&uart_recovery_work, K_MSEC(UART_ERROR_DELAY_MS));
 			enable_rx_retry = false;
 			uart_recovery_pending = true;
 		}
@@ -751,7 +751,7 @@ int slm_at_host_init(void)
 
 	k_work_init(&raw_send_work, raw_send);
 	k_work_init(&cmd_send_work, cmd_send);
-	k_delayed_work_init(&uart_recovery_work, uart_recovery);
+	k_work_init_delayable(&uart_recovery_work, uart_recovery);
 	k_sem_give(&tx_done);
 	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
 	slm_fota_post_process();

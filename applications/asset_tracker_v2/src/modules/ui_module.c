@@ -268,13 +268,13 @@ static void on_state_active_sub_state_gps_active(struct ui_msg_data *msg)
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
 		update_led_pattern(LED_CLOUD_PUBLISHING);
-		k_delayed_work_submit(&led_pat_gps_work, K_SECONDS(5));
+		k_work_reschedule(&led_pat_gps_work, K_SECONDS(5));
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_READY)) {
 		if (!msg->module.data.data.cfg.active_mode) {
 			state_set(STATE_PASSIVE);
-			k_delayed_work_submit(&led_pat_gps_work,
+			k_work_reschedule(&led_pat_gps_work,
 					      K_SECONDS(5));
 		}
 	}
@@ -291,13 +291,13 @@ static void on_state_active_sub_state_gps_inactive(struct ui_msg_data *msg)
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
 		update_led_pattern(LED_CLOUD_PUBLISHING);
-		k_delayed_work_submit(&led_pat_active_work, K_SECONDS(5));
+		k_work_reschedule(&led_pat_active_work, K_SECONDS(5));
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_READY)) {
 		if (!msg->module.data.data.cfg.active_mode) {
 			state_set(STATE_PASSIVE);
-			k_delayed_work_submit(&led_pat_passive_work,
+			k_work_reschedule(&led_pat_passive_work,
 					      K_SECONDS(5));
 		}
 	}
@@ -314,13 +314,13 @@ static void on_state_passive_sub_state_gps_active(struct ui_msg_data *msg)
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
 		update_led_pattern(LED_CLOUD_PUBLISHING);
-		k_delayed_work_submit(&led_pat_gps_work, K_SECONDS(5));
+		k_work_reschedule(&led_pat_gps_work, K_SECONDS(5));
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_READY)) {
 		if (msg->module.data.data.cfg.active_mode) {
 			state_set(STATE_ACTIVE);
-			k_delayed_work_submit(&led_pat_gps_work,
+			k_work_reschedule(&led_pat_gps_work,
 					      K_SECONDS(5));
 		}
 	}
@@ -337,13 +337,13 @@ static void on_state_passive_sub_state_gps_inactive(struct ui_msg_data *msg)
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
 		update_led_pattern(LED_CLOUD_PUBLISHING);
-		k_delayed_work_submit(&led_pat_passive_work, K_SECONDS(5));
+		k_work_reschedule(&led_pat_passive_work, K_SECONDS(5));
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_READY)) {
 		if (msg->module.data.data.cfg.active_mode) {
 			state_set(STATE_ACTIVE);
-			k_delayed_work_submit(&led_pat_active_work,
+			k_work_reschedule(&led_pat_active_work,
 					      K_SECONDS(5));
 		}
 	}

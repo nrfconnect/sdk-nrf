@@ -42,7 +42,7 @@ LOG_MODULE_REGISTER(azure_iot_hub_dps, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 
 struct dps_reg_status {
 	enum dps_reg_state state;
-	struct k_delayed_work poll_work;
+	struct k_work_delayable poll_work;
 	uint32_t retry;
 	/* Add 1 to make sure null termination can be used */
 	char reg_id[CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN + 1];
@@ -184,8 +184,8 @@ static void dps_reg_status_work_fn(struct k_work *work)
 
 	if ((retry_count <= DPS_REG_STATUS_UPDATE_MAX_RETRIES) &&
 	    (reg_status->state == DPS_STATE_REGISTERING)) {
-		k_delayed_work_submit(
-			(struct k_delayed_work *)&reg_status->poll_work,
+		k_work_reschedule(
+			(struct k_work_delayable *)&reg_status->poll_work,
 			K_SECONDS(reg_status->retry));
 	} else if (retry_count > DPS_REG_STATUS_UPDATE_MAX_RETRIES) {
 		LOG_ERR("DPS retry max count (%d) exceeded",
@@ -335,7 +335,7 @@ static void dps_parse_reg_update(struct topic_parser_data *topic, char *payload,
 	 *	All others: Failure
 	 */
 	if (topic->status == 200) {
-		k_delayed_work_cancel(&dps_reg_status.poll_work);
+		k_work_cancel_delayable(&dps_reg_status.poll_work);
 
 		/* The assigned IoT hub is stored as JSON in the payload */
 		err = dps_check_reg_success(payload);
@@ -428,7 +428,7 @@ static void dps_parse_reg_update(struct topic_parser_data *topic, char *payload,
 	}
 
 	LOG_DBG("Operation ID: %s", log_strdup(dps_reg_status.operation_id));
-	k_delayed_work_submit(&dps_reg_status.poll_work,
+	k_work_reschedule(&dps_reg_status.poll_work,
 			      K_SECONDS(dps_reg_status.retry));
 }
 
@@ -475,7 +475,7 @@ int dps_init(struct dps_config *cfg)
 		return err;
 	}
 
-	k_delayed_work_init(&dps_reg_status.poll_work, dps_reg_status_work_fn);
+	k_work_init_delayable(&dps_reg_status.poll_work, dps_reg_status_work_fn);
 	k_sem_init(&dps_reg_status.settings_loaded, 0, 1);
 	cJSON_Init();
 

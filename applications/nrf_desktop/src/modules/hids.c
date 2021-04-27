@@ -57,7 +57,7 @@ static bool secured;
 static bool protocol_boot;
 
 static struct config_channel_transport cfg_chan_transport;
-static struct k_delayed_work notify_secured;
+static struct k_work_delayable notify_secured;
 
 static void broadcast_subscription_change(uint8_t report_id, bool enabled)
 {
@@ -496,7 +496,7 @@ static void notify_hids(const struct ble_peer_event *event)
 		cur_conn = NULL;
 		secured = false;
 		if (CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY > 0) {
-			k_delayed_work_cancel(&notify_secured);
+			k_work_cancel_delayable(&notify_secured);
 		}
 		break;
 
@@ -504,7 +504,7 @@ static void notify_hids(const struct ble_peer_event *event)
 		__ASSERT_NO_MSG(cur_conn == event->id);
 
 		if (CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY > 0) {
-			k_delayed_work_submit(&notify_secured,
+			k_work_reschedule(&notify_secured,
 				K_MSEC(CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY));
 		} else {
 			notify_secured_fn(NULL);
@@ -554,7 +554,7 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			if (CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY > 0) {
-				k_delayed_work_init(&notify_secured,
+				k_work_init_delayable(&notify_secured,
 						    notify_secured_fn);
 			}
 

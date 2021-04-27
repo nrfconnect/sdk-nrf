@@ -57,7 +57,7 @@ static struct bt_conn *current_conn;
 static struct bt_conn *auth_conn;
 
 static const struct device *uart;
-static struct k_delayed_work uart_work;
+static struct k_work_delayable uart_work;
 
 struct uart_data_t {
 	void *fifo_reserved;
@@ -140,7 +140,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 			buf->len = 0;
 		} else {
 			LOG_WRN("Not able to allocate UART receive buffer");
-			k_delayed_work_submit(&uart_work,
+			k_work_reschedule(&uart_work,
 					      UART_WAIT_FOR_BUF_DELAY);
 			return;
 		}
@@ -200,7 +200,7 @@ static void uart_work_handler(struct k_work *item)
 		buf->len = 0;
 	} else {
 		LOG_WRN("Not able to allocate UART receive buffer");
-		k_delayed_work_submit(&uart_work, UART_WAIT_FOR_BUF_DELAY);
+		k_work_reschedule(&uart_work, UART_WAIT_FOR_BUF_DELAY);
 		return;
 	}
 
@@ -224,7 +224,7 @@ static int uart_init(void)
 		return -ENOMEM;
 	}
 
-	k_delayed_work_init(&uart_work, uart_work_handler);
+	k_work_init_delayable(&uart_work, uart_work_handler);
 
 	err = uart_callback_set(uart, uart_cb, NULL);
 	if (err) {

@@ -138,7 +138,7 @@ struct pmw3360_data {
 	int16_t                        y;
 	sensor_trigger_handler_t     data_ready_handler;
 	struct k_work                trigger_handler_work;
-	struct k_delayed_work        init_work;
+	struct k_work_delayable        init_work;
 	enum async_init_step         async_init_step;
 	int                          err;
 	bool                         ready;
@@ -777,7 +777,7 @@ static void pmw3360_async_init(struct k_work *work)
 			dev_data->ready = true;
 			LOG_INF("PMW3360 initialized");
 		} else {
-			k_delayed_work_submit(&dev_data->init_work,
+			k_work_reschedule(&dev_data->init_work,
 					      K_MSEC(async_init_delay[
 						dev_data->async_init_step]));
 		}
@@ -871,9 +871,9 @@ static int pmw3360_init(const struct device *dev)
 		return err;
 	}
 
-	k_delayed_work_init(&dev_data->init_work, pmw3360_async_init);
+	k_work_init_delayable(&dev_data->init_work, pmw3360_async_init);
 
-	k_delayed_work_submit(&dev_data->init_work,
+	k_work_reschedule(&dev_data->init_work,
 			      K_MSEC(async_init_delay[
 				dev_data->async_init_step]));
 
