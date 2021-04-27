@@ -1,8 +1,13 @@
 name: Manifest
+
 on:
   pull_request_target:
     paths:
       - 'west.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   contribs:
