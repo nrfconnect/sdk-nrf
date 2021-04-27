@@ -925,7 +925,11 @@ static int bt_mesh_lightness_srv_start(struct bt_mesh_model *model)
 {
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 
-	if (bt_mesh_model_is_extended(model)) {
+	/* When Light Lightness server is extended by Light LC server, Light LC server will execute
+	 * power-up sequence of Light Lightness server according to section 6.5.1.2. Otherwise,
+	 * Light Lightness will execute power-up sequence behavior.
+	 */
+	if (atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
 		return 0;
 	}
 

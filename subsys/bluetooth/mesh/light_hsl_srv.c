@@ -478,7 +478,12 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 
 	bt_mesh_light_hue_srv_set(&srv->hue, NULL, &hue_set, &hue_status);
 	bt_mesh_light_sat_srv_set(&srv->sat, NULL, &sat_set, &sat_status);
-	lightness_srv_change_lvl(&srv->lightness, NULL, &light_set, &light_status);
+
+	if (!atomic_test_bit(&srv->lightness.flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
+		lightness_srv_change_lvl(&srv->lightness, NULL, &light_set, &light_status);
+	} else {
+		srv->lightness.handlers->light_get(&srv->lightness, NULL, &light_status);
+	}
 
 	struct bt_mesh_light_hsl_status hsl =
 		HSL_STATUS_INIT(&hue_status, &sat_status, &light_status, current);
@@ -574,8 +579,6 @@ static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *model)
 	default:
 		return -EINVAL;
 	}
-
-	lightness_on_power_up(&srv->lightness);
 
 	/* Pass dummy status structs to avoid giving the app NULL pointers */
 	bt_mesh_light_hue_srv_set(&srv->hue, NULL, &hue,

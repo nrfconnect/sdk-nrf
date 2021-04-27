@@ -375,7 +375,10 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 		.transition = transition,
 	};
 
-	lightness_srv_change_lvl(&srv->lightness_srv, NULL, &light, &dummy_light_status);
+	if (!atomic_test_bit(&srv->lightness_srv.flags,
+			     LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
+		lightness_srv_change_lvl(&srv->lightness_srv, NULL, &light, &dummy_light_status);
+	}
 }
 
 static const struct bt_mesh_scene_entry_type scene_type = {
@@ -470,7 +473,6 @@ static int bt_mesh_light_ctl_srv_start(struct bt_mesh_model *model)
 		return -EINVAL;
 	}
 
-	lightness_on_power_up(&srv->lightness_srv);
 	return 0;
 }
 

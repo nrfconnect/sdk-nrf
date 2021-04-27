@@ -473,7 +473,12 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	};
 
 	srv->handlers->xy_set(srv, NULL, &xy_set, &xy_status);
-	lightness_srv_change_lvl(&srv->lightness_srv, NULL, &light, &light_status);
+	if (!atomic_test_bit(&srv->lightness_srv.flags,
+			     LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
+		lightness_srv_change_lvl(&srv->lightness_srv, NULL, &light, &light_status);
+	} else {
+		srv->lightness_srv.handlers->light_get(&srv->lightness_srv, NULL, &light_status);
+	}
 
 	srv->xy_last.x = xy_set.params.x;
 	srv->xy_last.y = xy_set.params.y;
@@ -577,8 +582,6 @@ static int bt_mesh_light_xyl_srv_start(struct bt_mesh_model *model)
 	default:
 		return -EINVAL;
 	}
-
-	lightness_on_power_up(&srv->lightness_srv);
 
 	srv->handlers->xy_set(srv, NULL, &set, &xy_dummy);
 	return 0;
