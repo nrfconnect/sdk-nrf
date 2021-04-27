@@ -12,10 +12,21 @@ if NET_L2_OPENTHREAD
 
 menu "OpenThread"
 
+config NORDIC_SECURITY_PROMPTLESS
+	bool
+	default y if !CUSTOM_OPENTHREAD_SECURITY
+
+choice OPENTHREAD_SECURITY
+	depends on !OPENTHREAD_SECURITY_INTERNAL
+
+config OPENTHREAD_NRF_SECURITY_CHOICE
+	bool "nRF Security"
+	select OPENTHREAD_NRF_SECURITY
+
+endchoice
+
 config OPENTHREAD_NRF_SECURITY
-	bool "Enable nrf_security module for OpenThread"
-	default y
-	depends on !OPENTHREAD_MBEDTLS
+	bool
 	select MBEDTLS_AES_C
 	select MBEDTLS_ENABLE_HEAP
 	select MBEDTLS_CCM_C
