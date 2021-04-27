@@ -131,6 +131,10 @@ manifest:
       revision: a147927cf8ed43831dc2d8003017be8306724d61
       groups:
       - nrf-802154
+    - name: cjson
+      repo-path: sdk-cjson
+      path: modules/lib/cjson
+      revision: 50bddddf7fb45e4ce87bc3619df06db55d181856
     # Other third-party repositories.
     - name: cmock
       path: test/cmock

@@ -85,6 +85,7 @@ Kconfig*                                  @tejlmand
 /lib/modem_attest_token/                  @jayteemo
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @nvlsianpu
+/modules/cjson/                           @simensrostad @plskeggs @sigvartmh
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
