@@ -297,6 +297,14 @@ config CLOUD_CONNECT_ERR_REBOOT_S
 	int "Seconds to wait before rebooting when a cloud connect error occurs"
 	default 300
 
+if NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
+
+config CLOUD_RUNTIME_CLIENT_ID
+	string "Client ID used for cloud connection"
+	default "my_runtime_client_id"
+
+endif # NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
+
 endmenu # Cloud
 
 menuconfig ENVIRONMENT_SENSORS

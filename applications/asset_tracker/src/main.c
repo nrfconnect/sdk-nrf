@@ -1642,6 +1642,11 @@ static void cloud_api_init(void)
 	cloud_backend = cloud_get_binding("NRF_CLOUD");
 	__ASSERT(cloud_backend != NULL, "nRF Cloud backend not found");
 
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)
+	cloud_backend->config->id = CONFIG_CLOUD_RUNTIME_CLIENT_ID;
+	cloud_backend->config->id_len = strlen(CONFIG_CLOUD_RUNTIME_CLIENT_ID);
+#endif
+
 	ret = cloud_init(cloud_backend, cloud_event_handler);
 	if (ret) {
 		LOG_ERR("Cloud backend could not be initialized, error: %d",
