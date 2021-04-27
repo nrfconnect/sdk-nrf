@@ -20,6 +20,7 @@
 .. _`Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 .. _`Zephyr commit f12536`: https://github.com/zephyrproject-rtos/hal_nordic/commit/f12536cbfb27b7bb05b40b97bd8a8857f2bf23ec
 .. _`Zephyr commit 2db49c`: https://github.com/zephyrproject-rtos/zephyr/commit/2db49c4b99850b3e7a53667fe7bb9ba6fc2a5b7d
+.. _`kwork API changes`: https://github.com/zephyrproject-rtos/zephyr/pull/29618#issuecomment-738139695
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
