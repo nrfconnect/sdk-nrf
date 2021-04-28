@@ -139,8 +139,6 @@
   - "!subsys/bluetooth/mesh/**/*"
   - "include/bluetooth/**/*"
   - "!include/bluetooth/mesh/**/*"
-  - "samples/bluetooth/**/*"
-  - "!samples/bluetooth/mesh/**/*"
   - "subsys/bootloader/**/*"
   - "subsys/partition_manager/**/*"
   - "modules/mcuboot/**/*"
