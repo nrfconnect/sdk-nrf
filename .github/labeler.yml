@@ -88,7 +88,7 @@
 
 "CI-desktop-test":
   - "applications/nrf_desktop/**/*"
-  - "boards/arm/*dmouse*/**/*" zigbee
+  - "boards/arm/*dmouse*/**/*"
   - "boards/arm/*kbd*/**/*"
   - "boards/arm/*dongle*/**/*"
   - "boards/arm/*gmouse*/**/*"
@@ -111,7 +111,7 @@
 
 "CI-crypto-test":
   - "cmake/*"
-  - "drivers/entropy/*" zigbee
+  - "drivers/entropy/*"
   - "drivers/hw_cc310/*"
   - "drivers/net/*"
   - "samples/crypto/**/*"
