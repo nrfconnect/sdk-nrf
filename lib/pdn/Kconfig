@@ -48,6 +48,7 @@ config PDN_DEFAULT_APN
 
 choice
 	prompt "Family"
+	default PDN_DEFAULT_FAM_IPV4V6
 
 config PDN_DEFAULT_FAM_IPV4
 	bool "IPV4"
@@ -69,6 +70,7 @@ config PDN_DEFAULT_FAM
 
 choice
 	prompt "Authentication method"
+	default PDN_DEFAULT_AUTH_NONE
 
 config PDN_DEFAULT_AUTH_NONE
 	bool "None"
@@ -86,9 +88,11 @@ config PDN_DEFAULT_AUTH
 
 config PDN_DEFAULT_USERNAME
 	string "Username"
+	depends on !PDN_DEFAULT_AUTH_NONE
 
 config PDN_DEFAULT_PASSWORD
 	string "Password"
+	depends on !PDN_DEFAULT_AUTH_NONE
 
 endif # PDN_DEFAULTS_OVERRIDE
 endif # PDN_SYS_INIT
