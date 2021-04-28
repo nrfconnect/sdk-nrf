@@ -115,6 +115,12 @@ enum lte_lc_func_mode {
 	 */
 	LTE_LC_FUNC_MODE_NORMAL			= 1,
 
+	/* Sets the device to receive only functionality. Can be used, for example,
+	 * to preevaluate connections with @ref lte_lc_conn_eval_params_get.
+	 * Available for modem firmware versions >= 1.3.0.
+	 */
+	LTE_LC_FUNC_MODE_RX_ONLY		= 2,
+
 	/* Sets the device to flight mode. Disables both transmit and receive RF
 	 * circuits and deactivates LTE and GNSS services.
 	 */
