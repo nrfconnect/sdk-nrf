@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <kernel.h>
 #include <drivers/entropy.h>
 #include <drivers/bluetooth/hci_driver.h>
 #include <bluetooth/controller.h>
@@ -20,8 +21,11 @@
 #include <sdc_soc.h>
 #include <sdc_hci.h>
 #include <sdc_hci_vs.h>
+#include <mpsl/mpsl_work.h>
+
 #include "multithreading_lock.h"
 #include "hci_internal.h"
+#include "ecdh.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
 #define LOG_MODULE_NAME sdc_hci_driver
@@ -55,11 +59,6 @@
 const uint32_t z_bt_ctlr_used_nrf_ppi_channels =
 	PPI_CHANNELS_USED_BY_CTLR | PPI_CHANNELS_USED_BY_MPSL;
 const uint32_t z_bt_ctlr_used_nrf_ppi_groups;
-
-static K_SEM_DEFINE(sem_recv, 0, 1);
-
-static struct k_thread recv_thread_data;
-static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_SDC_RX_STACK_SIZE);
 
 #if defined(CONFIG_BT_CONN)
 /* It should not be possible to set CONFIG_SDC_SLAVE_COUNT larger than
@@ -134,6 +133,11 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 }
 #endif /* IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
 
+static struct k_work receive_work;
+static inline void receive_signal_raise(void)
+{
+	mpsl_work_submit(&receive_work);
+}
 
 static int cmd_handle(struct net_buf *cmd)
 {
@@ -149,7 +153,7 @@ static int cmd_handle(struct net_buf *cmd)
 		return errcode;
 	}
 
-	k_sem_give(&sem_recv);
+	receive_signal_raise();
 
 	return 0;
 }
@@ -167,7 +171,7 @@ static int acl_handle(struct net_buf *acl)
 
 		if (errcode) {
 			/* Likely buffer overflow event */
-			k_sem_give(&sem_recv);
+			receive_signal_raise();
 		}
 	}
 
@@ -350,40 +354,30 @@ static bool fetch_and_process_acl_data(uint8_t *p_hci_buffer)
 	return true;
 }
 
-static void recv_thread(void *p1, void *p2, void *p3)
+void hci_driver_receive_process(void)
 {
-	ARG_UNUSED(p1);
-	ARG_UNUSED(p2);
-	ARG_UNUSED(p3);
-
-	static uint8_t hci_buffer[CONFIG_BT_RX_BUF_LEN];
-
-	bool received_evt = false;
+	static uint8_t hci_buf[CONFIG_BT_RX_BUF_LEN];
 	bool received_data = false;
+	bool received_evt;
 
-	while (true) {
-		if (!received_evt && !received_data) {
-			/* Wait for a signal from the controller. */
-			k_sem_take(&sem_recv, K_FOREVER);
-		}
+	received_evt = fetch_and_process_hci_evt(&hci_buf[0]);
 
-		received_evt = fetch_and_process_hci_evt(&hci_buffer[0]);
+	if (IS_ENABLED(CONFIG_BT_CONN)) {
+		received_data = fetch_and_process_acl_data(&hci_buf[0]);
+	}
 
-		if (IS_ENABLED(CONFIG_BT_CONN)) {
-			received_data = fetch_and_process_acl_data(&hci_buffer[0]);
-		}
-
+	if (received_evt || received_data) {
 		/* Let other threads of same priority run in between. */
-		k_yield();
+		receive_signal_raise();
 	}
 }
 
-void host_signal(void)
+static void receive_work_handler(struct k_work *work)
 {
-	/* Wake up the RX event/data thread */
-	k_sem_give(&sem_recv);
-}
+	ARG_UNUSED(work);
 
+	hci_driver_receive_process();
+}
 
 static const struct device *entropy_source;
 
@@ -415,11 +409,9 @@ static int hci_driver_open(void)
 {
 	BT_DBG("Open");
 
-	k_thread_create(&recv_thread_data, recv_thread_stack,
-			K_THREAD_STACK_SIZEOF(recv_thread_stack), recv_thread,
-			NULL, NULL, NULL, K_PRIO_COOP(CONFIG_SDC_RX_PRIO), 0,
-			K_NO_WAIT);
-	k_thread_name_set(&recv_thread_data, "SDC RX");
+	if (IS_ENABLED(CONFIG_BT_CTLR_ECDH)) {
+		hci_ecdh_init();
+	}
 
 	uint8_t build_revision[SDC_BUILD_REVISION_SIZE];
 
@@ -577,9 +569,11 @@ static int hci_driver_open(void)
 		}
 	}
 
+	k_work_init(&receive_work, receive_work_handler);
+
 	err = MULTITHREADING_LOCK_ACQUIRE();
 	if (!err) {
-		err = sdc_enable(host_signal, sdc_mempool);
+		err = sdc_enable(hci_driver_receive_process, sdc_mempool);
 		MULTITHREADING_LOCK_RELEASE();
 	}
 	if (err < 0) {

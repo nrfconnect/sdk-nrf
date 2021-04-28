@@ -17,6 +17,9 @@ config BT_MAX_CONN
 	range 1 20 if BT_LL_SOFTDEVICE
 	default 2 if BT_LL_SOFTDEVICE && BT_CENTRAL && BT_PERIPHERAL
 
+config BT_LL_SOFTDEVICE
+	select BT_CTLR_ECDH_SUPPORT
+
 if BT_LL_SOFTDEVICE
 rsource "controller/Kconfig"
 endif # CONFIG_BT_LL_SOFTDEVICE

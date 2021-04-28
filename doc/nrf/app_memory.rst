@@ -45,7 +45,7 @@ Complete the following actions to optimize the Bluetooth part of your applicatio
   * :option:`CONFIG_SDC_RX_STACK_SIZE`
   * :option:`CONFIG_BT_RX_STACK_SIZE`
   * :option:`CONFIG_BT_HCI_TX_STACK_SIZE`
-  * :option:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
+  * :option:`CONFIG_MPSL_WORK_STACK_SIZE`
 
 * Reduce the overall number and the sizes of the Bluetooth buffers, based on the expected data traffic in your application.
 
@@ -89,7 +89,7 @@ Complete the following actions to optimize the Thread part of your application:
   * :option:`CONFIG_NET_MGMT_EVENT_STACK_SIZE`
   * :option:`CONFIG_IEEE802154_NRF5_RX_STACK_SIZE`
   * :option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`
-  * :option:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
+  * :option:`CONFIG_MPSL_WORK_STACK_SIZE`
   * :option:`CONFIG_SHELL_STACK_SIZE`
   * :option:`CONFIG_IDLE_STACK_SIZE`
   * :option:`CONFIG_MAIN_STACK_SIZE`
