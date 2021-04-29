@@ -10,8 +10,8 @@ config DESKTOP_PROFILER_SYNC_GPIO_ENABLE
 	bool "Enable profiler sync based on GPIO"
 	depends on GPIO
 	depends on CAF
-	depends on DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
-	depends on !DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION
+	depends on EVENT_MANAGER_PROFILER_ENABLED
+	depends on !EVENT_MANAGER_TRACE_EVENT_EXECUTION
 	help
 	  This option can be used to synchronize timestamps for profiler events
 	  on two devices.

@@ -11,7 +11,7 @@
 #include <event_manager.h>
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(event_manager, CONFIG_DESKTOP_EVENT_MANAGER_LOG_LEVEL);
+LOG_MODULE_REGISTER(event_manager, CONFIG_EVENT_MANAGER_LOG_LEVEL);
 
 
 /* Event manager uses orphan sections. Below tag will allow linker to
@@ -23,8 +23,8 @@ const struct {} linker_tag __attribute__((__section__("event_manager"))) __used;
 static void event_processor_fn(struct k_work *work);
 
 
-#if CONFIG_DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
-#define IDS_COUNT CONFIG_DESKTOP_EVENT_MANAGER_MAX_EVENT_CNT
+#if CONFIG_EVENT_MANAGER_PROFILER_ENABLED
+#define IDS_COUNT CONFIG_EVENT_MANAGER_MAX_EVENT_CNT
 #else
 #define IDS_COUNT 0
 #endif
@@ -51,13 +51,13 @@ static void log_event(const struct event_header *eh)
 {
 	const struct event_type *et = eh->type_id;
 
-	if (!IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENTS) ||
+	if (!IS_ENABLED(CONFIG_EVENT_MANAGER_SHOW_EVENTS) ||
 	    !log_is_event_displayed(et)) {
 		return;
 	}
 
 	if (et->log_event) {
-		char log_buf[CONFIG_DESKTOP_EVENT_MANAGER_EVENT_LOG_BUF_LEN];
+		char log_buf[CONFIG_EVENT_MANAGER_EVENT_LOG_BUF_LEN];
 
 		int pos = et->log_event(eh, log_buf, sizeof(log_buf));
 
@@ -69,13 +69,13 @@ static void log_event(const struct event_header *eh)
 			log_buf[sizeof(log_buf) - 2] = '~';
 		}
 
-		if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_LOG_EVENT_TYPE)) {
+		if (IS_ENABLED(CONFIG_EVENT_MANAGER_LOG_EVENT_TYPE)) {
 			LOG_INF("e: %s %s", et->name, log_strdup(log_buf));
 		} else {
 			LOG_INF("%s", log_strdup(log_buf));
 		}
 
-	} else if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_LOG_EVENT_TYPE)) {
+	} else if (IS_ENABLED(CONFIG_EVENT_MANAGER_LOG_EVENT_TYPE)) {
 		LOG_INF("e: %s", et->name);
 	}
 }
@@ -83,8 +83,8 @@ static void log_event(const struct event_header *eh)
 static void log_event_progress(const struct event_type *et,
 			       const struct event_listener *el)
 {
-	if (!IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENTS) ||
-	    !IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENT_HANDLERS) ||
+	if (!IS_ENABLED(CONFIG_EVENT_MANAGER_SHOW_EVENTS) ||
+	    !IS_ENABLED(CONFIG_EVENT_MANAGER_SHOW_EVENT_HANDLERS) ||
 	    !log_is_event_displayed(et)) {
 		return;
 	}
@@ -94,8 +94,8 @@ static void log_event_progress(const struct event_type *et,
 
 static void log_event_consumed(const struct event_type *et)
 {
-	if (!IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENTS) ||
-	    !IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENT_HANDLERS) ||
+	if (!IS_ENABLED(CONFIG_EVENT_MANAGER_SHOW_EVENTS) ||
+	    !IS_ENABLED(CONFIG_EVENT_MANAGER_SHOW_EVENT_HANDLERS) ||
 	    !log_is_event_displayed(et)) {
 		return;
 	}
@@ -125,7 +125,7 @@ static void trace_event_execution(const struct event_header *eh, bool is_start)
 	size_t event_idx = event_cnt + (is_start ? 0 : 1);
 	size_t trace_evt_id = profiler_event_ids[event_idx];
 
-	if (!IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION) ||
+	if (!IS_ENABLED(CONFIG_EVENT_MANAGER_TRACE_EVENT_EXECUTION) ||
 	    !is_profiling_enabled(trace_evt_id)) {
 		return;
 	}
@@ -140,7 +140,7 @@ static void trace_event_execution(const struct event_header *eh, bool is_start)
 
 static void trace_event_submission(const struct event_header *eh)
 {
-	if (!IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_PROFILER_ENABLED)) {
+	if (!IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_ENABLED)) {
 		return;
 	}
 
@@ -159,10 +159,10 @@ static void trace_event_submission(const struct event_header *eh)
 
 	profiler_log_start(&buf);
 
-	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION)) {
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_TRACE_EVENT_EXECUTION)) {
 		profiler_log_add_mem_address(&buf, eh);
 	}
-	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_PROFILE_EVENT_DATA)) {
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILE_EVENT_DATA)) {
 		et->ev_info->profile_fn(&buf, eh);
 	}
 
@@ -209,14 +209,14 @@ static void trace_register_events(void)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION)) {
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_TRACE_EVENT_EXECUTION)) {
 		trace_register_execution_tracking_events();
 	}
 }
 
 static int trace_event_init(void)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_PROFILER_ENABLED)) {
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_ENABLED)) {
 		if (profiler_init()) {
 			LOG_ERR("System profiler: "
 				"initialization problem\n");
