@@ -13,6 +13,16 @@ config NRF_SW_LPUART
 
 if NRF_SW_LPUART
 
+config NRF_SW_LPUART_INIT_PRIORITY
+	int "Initialization priority"
+	default 45
+	help
+	  Initialization priority within POST_KERNEL level. It should be set to
+	  a value that ensures that device is initialized later than gpio and
+	  uart devices used by this device. Default is set to be between
+	  default (KERNEL_INIT_PRIORITY_DEFAULT) and device
+	  (KERNEL_INIT_PRIORITY_DEVICE).
+
 config NRF_SW_LPUART_HFXO_ON_RX
 	bool "Turn on HFXO for RX"
 	default y
