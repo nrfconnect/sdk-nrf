@@ -17,16 +17,7 @@ config _NRF_RPC_DUMMY_SELECT
 
 config NRF_RPC_TR_RPMSG
 	bool
-	select IPM
-	select IPM_NRFX
-	select IPM_MSG_CH_0_ENABLE
-	select IPM_MSG_CH_0_TX if SOC_NRF5340_CPUNET
-	select IPM_MSG_CH_0_RX if !SOC_NRF5340_CPUNET
-	select IPM_MSG_CH_1_ENABLE
-	select IPM_MSG_CH_1_TX if !SOC_NRF5340_CPUNET
-	select IPM_MSG_CH_1_RX if SOC_NRF5340_CPUNET
-	select OPENAMP
-	select BOARD_ENABLE_CPUNET if SOC_NRF5340_CPUAPP
+	select RPMSG_SERVICE
 
 config NRF_RPC_CBOR
 	bool
@@ -45,43 +36,6 @@ config NRF_RPC_THREAD_PRIORITY
 	default 2
 	help
 	  Thread priority of each thread in local thread pool.
-
-if NRF_RPC_TR_RPMSG
-
-choice
-	prompt "RPMSG device role"
-	default RPMSG_REMOTE if SOC_NRF5340_CPUNET
-	default RPMSG_MASTER
-
-config RPMSG_REMOTE
-	bool "Remote"
-	help
-	  Selects RPMsg role as "Remote". The other side must be configured as
-	  "Master".
-
-config RPMSG_MASTER
-	bool "Master"
-	help
-	  Selects RPMsg role as "Master". The other side must be configured as
-	  "Remote".
-
-endchoice
-
-config NRF_RPC_TR_PRMSG_RX_STACK_SIZE
-	int "Stack size of the rpmsg receive thread"
-	default 1536
-	help
-	  Stack size for the thread that is responsible for receiving incoming
-	  messages from rpmsg.
-
-config NRF_RPC_TR_PRMSG_RX_PRIORITY
-	int "Priority of the rpmsg receive thread"
-	default -1
-	help
-	  Priority of the thread that is responsible for receiving incoming
-	  messages from rpmsg.
-
-endif # NRF_RPC_TR_RPMSG
 
 module = NRF_RPC
 module-str = NRF_RPC
