@@ -64,11 +64,11 @@
 
 "CI-ble-test":
   - "subsys/bluetooth/**/*"
-  - "!subsys/bluetooth/mesh/**/*"
   - "include/bluetooth/**/*"
-  - "!include/bluetooth/mesh/**/*"
   - "samples/bluetooth/**/*"
-  - "!samples/bluetooth/mesh/**/*"
+  - "!include/bluetooth/mesh/*"
+  - "!subsys/bluetooth/mesh/*"
+  - "!samples/bluetooth/mesh/*"
   - "!**/*.rst"
 
 "CI-mesh-test":
@@ -146,12 +146,12 @@
   - "modules/nrfxlib/nrf_802154/**/*"
   - "drivers/hw_cc310/*"
   - "subsys/bluetooth/**/*"
-  - "!subsys/bluetooth/mesh/**/*"
   - "include/bluetooth/**/*"
-  - "!include/bluetooth/mesh/**/*"
   - "subsys/bootloader/**/*"
   - "subsys/partition_manager/**/*"
   - "modules/mcuboot/**/*"
+  - "!subsys/bluetooth/mesh/*"
+  - "!include/bluetooth/mesh/*"
   - "!**/*.rst"
 
 "CI-thread-test":
