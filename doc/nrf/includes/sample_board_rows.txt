@@ -101,3 +101,7 @@
 .. nrf21540dk_nrf52840
 
 | nRF21540 DK | PCA10112 | :ref:`nrf21540dk_nrf52840 <nrf21540dk_nrf52840>` | ``nrf21540dk_nrf52840`` |
+
+.. thingy52_nrf52832
+
+| Thingy:52 | PCA20020 | :ref:`thingy52_nrf52832 <thingy52_nrf52832>` | ``thingy52_nrf52832`` |
