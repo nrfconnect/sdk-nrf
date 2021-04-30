@@ -46,14 +46,14 @@ Configure OpenThread to build from source
   This option is selected by default.
 
   This alternative allows you to define :ref:`ug_thread_configuring_additional` one by one.
-  By default, the :ref:`feature set <thread_ug_feature_sets>` option is set to custom (:option:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`), which allows you to create your own OpenThread stack configuration.
+  By default, the :ref:`thread_ug_feature_sets` option is set to custom (:option:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`), which allows you to create your own OpenThread stack configuration.
   However, you can select other feature sets as a basis.
 
   When building the OpenThread libraries from source, you can also :ref:`update the pre-built OpenThread libraries <thread_ug_feature_updating_libs>`.
 
 Configure OpenThread to use pre-built libraries
   Set :option:`CONFIG_OPENTHREAD_LIBRARY_1_1` to use pre-built libraries.
-  Select the :ref:`thread_ug_feature_sets` by enabling :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`, :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD`, or :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD`.
+  Select one of the :ref:`thread_ug_feature_sets` by enabling :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`, :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD`, or :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD`.
 
   This alternative disables building OpenThread from source files and links pre-built libraries instead.
 
@@ -244,36 +244,40 @@ Minimal Thread Device (MTD)
   By default, the MTD operates as Minimal End Device (MED).
   To make it operate as Sleepy End Device (SED), enabling :option:`CONFIG_OPENTHREAD_MTD_SED`.
 
+.. _thread_ug_prebuilt:
+
+Pre-built libraries
+*******************
+
+The |NCS| provides a set of :ref:`nrfxlib:ot_libs`.
+These pre-built libraries are available in nrfxlib and provide features and optional functionalities from the OpenThread stack.
+You can use these libraries for building applications with support for the complete Thread 1.1 Specification.
+
+To use a pre-built library, configure OpenThread to use pre-built libraries by setting the :option:`CONFIG_OPENTHREAD_LIBRARY_1_1` Kconfig option and select one of the provided :ref:`thread_ug_feature_sets`.
+
 .. _thread_ug_feature_sets:
 
-Nordic library feature sets
-***************************
+Feature sets
+============
 
-The :ref:`nrfxlib:ot_libs` that are available in nrfxlib provide features and optional functionalities from the OpenThread stack.
-These features and functionalities are available in |NCS| as Nordic library feature sets.
-You can use these sets for building application with support for the complete Thread 1.1 Specification if you :ref:`configure OpenThread to use pre-built libraries <ug_thread_configuring_basic_building>` (with the :option:`CONFIG_OPENTHREAD_LIBRARY_1_1` Kconfig option).
+A feature set defines a combination of OpenThread features for a specific use case.
+These feature sets are mainly used for pre-built libraries, but you can also use them for selecting several configuration options at once when you :ref:`build your application using OpenThread sources <ug_thread_configuring_basic_building>`.
 
-.. note::
-   You can also use these feature sets for selecting several configuration options at once when you :ref:`build your application using OpenThread sources <ug_thread_configuring_basic_building>`.
+The |NCS| provides the following feature sets:
 
-The following feature sets are available for selection:
-
-* :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` - Enable the complete set of OpenThread features.
-* :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD` - Enable optimized OpenThread features for FTD.
-* :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` - Enable optimized OpenThread features for MTD.
+* :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` - Enable the complete set of OpenThread features for the Thread 1.1 Specification.
+* :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD` - Enable optimized OpenThread features for FTD (Thread 1.1).
+* :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` - Enable optimized OpenThread features for MTD (Thread 1.1).
 * :option:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY` - Create a custom feature set for compilation when :ref:`building using OpenThread sources <ug_thread_configuring_basic_building>`.
   This option is the default.
   If you select :option:`CONFIG_OPENTHREAD_LIBRARY_1_1`, choose a different feature set.
 
   .. note::
-    When :ref:`building OpenThread from source <ug_thread_configuring_basic>`, you can still select other feature sets, but the user configuration takes precedence over them.
-
-Selecting these sets is not related to :ref:`selecting the device type <thread_ug_device_type>`.
+    When :ref:`building OpenThread from source <ug_thread_configuring_basic>`, you can select another feature set as base.
+    You can then manually enable additional features, but you cannot disable features that are selected by the feature set.
 
 The following table lists the supported features for each of these sets.
-
-.. note::
-    No tick means missing support for the given feature in the related configuration, while the tick is equal to ``=1`` value.
+No tick indicates that there is no support for the given feature in the related configuration, while the tick signifies that the feature is selected (``=1`` value).
 
 .. list-table::
     :widths: auto
@@ -389,6 +393,39 @@ The following table lists the supported features for each of these sets.
       - ✔
       -
       -
+
+For the full list of configuration options that were used during compilation, including their default values, see the :file:`openthread_lib_configuration.txt` file within each library folder in the nrfxlib repository.
+
+.. _thread_ug_customizing_prebuilt:
+
+Customizing pre-built libraries
+===============================
+
+Selecting a feature set allows you to use the respective OpenThread features in your application.
+You might need to customize some configuration options to fit your use case though.
+
+Be aware of the following limitations when customizing the configuration of a pre-built library:
+
+* You can only update configuration options that are configurable at run time.
+  If you change any options that are compiled into the library, your changes will be ignored.
+* Changes to the configuration might impact the certification status of the pre-built libraries.
+  See :ref:`ug_thread_cert_options` for more information.
+
+The following list shows some of the configuration options that you might want to customize:
+
+* :option:`CONFIG_OPENTHREAD_FTD` or :option:`CONFIG_OPENTHREAD_MTD` - Select the :ref:`device type <thread_ug_device_type>`.
+  The :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` feature set supports only the MTD device type.
+  The other feature sets support both device types.
+* :option:`CONFIG_OPENTHREAD_COPROCESSOR` and :option:`CONFIG_OPENTHREAD_COPROCESSOR_NCP` - Select the OpenThread architecture to use.
+  See :ref:`thread_architectures_designs_cp`.
+* :option:`CONFIG_OPENTHREAD_MANUAL_START` - Choose whether to configure and join the Thread network automatically.
+  If you set this option to ``n``, also check and configure the network parameters that are used, for example:
+
+  * :option:`CONFIG_OPENTHREAD_CHANNEL`
+  * :option:`CONFIG_OPENTHREAD_MASTERKEY`
+  * :option:`CONFIG_OPENTHREAD_NETWORK_NAME`
+  * :option:`CONFIG_OPENTHREAD_PANID`
+  * :option:`CONFIG_OPENTHREAD_XPANID`
 
 .. _thread_ug_feature_updating_libs:
 
