@@ -113,7 +113,7 @@ manifest:
     - name: connectedhomeip
       repo-path: sdk-connectedhomeip
       path: modules/lib/connectedhomeip
-      revision: a008cba6c6671f0db8858c3c51cc619a43ddecdc
+      revision: b35e8eca374772d42967864ffd49648b32699010
       submodules:
         - name: nlio
           path: third_party/nlio/repo

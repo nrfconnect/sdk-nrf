@@ -299,7 +299,7 @@ The following list summarizes the most important changes inherited from upstream
 Project CHIP
 ============
 
-The Project CHIP fork in |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Project CHIP repository up to and including ``1a94b9e720``.
+The Project CHIP fork in |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Project CHIP repository up to and including ``0d5b9559ae``.
 
 The following list summarizes the most important changes inherited from the upstream Project CHIP:
 
@@ -307,6 +307,8 @@ The following list summarizes the most important changes inherited from the upst
 
   * Completed the persistent storage feature, which allows Project CHIP devices to successfully communicate with each other even after reboot.
   * Added support for OpenThread's Service Registration Protocol (SRP) to enable the discovery of Project CHIP nodes using the DNS-SD protocol.
+  * Added support for Network Commissioning Cluster, used when provisioning a Project CHIP node.
+  * Enabled CHIP Reliable Messaging Protocol (CRMP) for the User Datagram Protocol (UDP) traffic within a Project CHIP network.
 
 Documentation
 =============
