@@ -12,6 +12,8 @@ You can follow different scenarios to assure that your Nordic Semiconductor devi
 
 For general information about the certification process, check the `Thread Group's certification information`_.
 
+.. _ug_thread_cert_options:
+
 Thread certification options
 ****************************
 
