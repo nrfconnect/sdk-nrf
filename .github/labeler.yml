@@ -44,11 +44,13 @@
   - "tests/subsys/dfu/**/*"
   - "tests/subsys/fw_info/**/*"
   - "tests/subsys/net/**/*"
+  - "!**/*.rst"
 
 "CI-all-test":
   - "west.yml"
   - "**/*partition_manager*/**/*"
   - "**/*partition_manager*"
+  - "!**/*.rst"
 
 "CI-tfm-test":
   - "cmake/*"
@@ -58,6 +60,7 @@
   - "subsys/bootloader/**/*"
   - "subsys/partition_manager/**/*"
   - "tests/subsys/spm/secure_services/**/*"
+  - "!**/*.rst"
 
 "CI-ble-test":
   - "subsys/bluetooth/**/*"
@@ -66,11 +69,13 @@
   - "!include/bluetooth/mesh/**/*"
   - "samples/bluetooth/**/*"
   - "!samples/bluetooth/mesh/**/*"
+  - "!**/*.rst"
 
 "CI-mesh-test":
   - "subsys/bluetooth/mesh/**/*"
   - "include/bluetooth/mesh/**/*"
   - "tests/subsys/bluetooth/mesh/**/*"
+  - "!**/*.rst"
 
 "CI-zigbee-test":
   - "include/zigbee/**/*"
@@ -78,6 +83,7 @@
   - "subsys/dfu/**/*"
   - "subsys/mpsl/**/*"
   - "subsys/zigbee/**/*"
+  - "!**/*.rst"
 
 "CI-thingy91-test":
   - "applications/asset_tracker/**/*"
@@ -88,6 +94,7 @@
   - "lib/date_time/**/*"
   - "drivers/sensor/sensor_sim/**/*"
   - "samples/nrf9160/udp/**/*"
+  - "!**/*.rst"
 
 "CI-desktop-test":
   - "applications/nrf_desktop/**/*"
@@ -111,6 +118,7 @@
   - "subsys/caf/**/*"
   - "subsys/event_manager/**/*"
   - "subsys/partition_manager/**/*"
+  - "!**/*.rst"
 
 "CI-crypto-test":
   - "cmake/*"
@@ -120,6 +128,7 @@
   - "samples/crypto/**/*"
   - "subsys/partition_manager/**/*"
   - "tests/crypto/**/*"
+  - "!**/*.rst"
 
 "CI-rs-test":
   - "subsys/mpsl/**/*"
@@ -128,6 +137,7 @@
   - "samples/nrf5340/multiprotocol_rpmsg/**/*"
   - "modules/nrfxlib/nrf_802154/**/*"
   - "samples/CMakeLists.txt"
+  - "!**/*.rst"
 
 "CI-homekit-test":
   - "subsys/mpsl/**/*"
@@ -142,6 +152,7 @@
   - "subsys/bootloader/**/*"
   - "subsys/partition_manager/**/*"
   - "modules/mcuboot/**/*"
+  - "!**/*.rst"
 
 "CI-thread-test":
   - "include/openthread/**/*"
@@ -152,6 +163,7 @@
   - "subsys/net/lib/coap_utils/**/*"
   - "subsys/net/openthread/**/*"
   - "subsys/net/l2/openthread/**/*"
+  - "!**/*.rst"
 
 "CI-nfc-test":
   - "subsys/nfc/**/*"
@@ -161,6 +173,7 @@
   - "samples/bluetooth/peripheral_nfc_pairing/**/*"
   - "samples/bluetooth/central_nfc_pairing/**/*"
   - "samples/bluetooth/peripheral_hids_keyboard/**/*"
+  - "!**/*.rst"
 
 "CI-chip-test":
   - "drivers/mpsl/**/*"
@@ -176,3 +189,4 @@
   - "modules/nrfxlib/nrf_802154/**/*"
   - "modules/mcuboot/**/*"
   - "samples/connectedhomeip/**/*"
+  - "!**/*.rst"
