@@ -35,6 +35,7 @@ struct ml_state_event {
 	enum ml_state state; /**< Machine learning state. */
 };
 
+
 EVENT_TYPE_DECLARE(ml_state_event);
 
 #ifdef __cplusplus
