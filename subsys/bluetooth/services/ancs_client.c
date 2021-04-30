@@ -60,60 +60,53 @@ static int bt_ancs_verify_notification_format(const struct bt_ancs_evt_notif *no
 static void parse_notif(struct bt_ancs_client *ancs_c,
 			const uint8_t *data_src, const uint16_t len)
 {
-	struct bt_ancs_evt ancs_evt;
 	int err;
+	struct bt_ancs_evt_notif notif;
 
 	if (len != BT_ANCS_NOTIF_DATA_LENGTH) {
-		ancs_evt.evt_type = BT_ANCS_EVT_INVALID_NOTIF;
-		ancs_c->evt_handler(&ancs_evt);
-
+		bt_ancs_do_ns_notif_cb(ancs_c, -EINVAL, &notif);
 		return;
 	}
 
-	ancs_evt.notif.evt_id = (enum bt_ancs_evt_id_values)
+	notif.evt_id = (enum bt_ancs_evt_id_values)
 		data_src[BT_ANCS_NOTIF_EVT_ID_INDEX];
 
-	ancs_evt.notif.evt_flags.silent =
+	notif.evt_flags.silent =
 		(data_src[BT_ANCS_NOTIF_FLAGS_INDEX] >>
 		 BT_ANCS_EVENT_FLAG_SILENT) &
 		0x01;
 
-	ancs_evt.notif.evt_flags.important =
+	notif.evt_flags.important =
 		(data_src[BT_ANCS_NOTIF_FLAGS_INDEX] >>
 		 BT_ANCS_EVENT_FLAG_IMPORTANT) &
 		0x01;
 
-	ancs_evt.notif.evt_flags.pre_existing =
+	notif.evt_flags.pre_existing =
 		(data_src[BT_ANCS_NOTIF_FLAGS_INDEX] >>
 		 BT_ANCS_EVENT_FLAG_PREEXISTING) &
 		0x01;
 
-	ancs_evt.notif.evt_flags.positive_action =
+	notif.evt_flags.positive_action =
 		(data_src[BT_ANCS_NOTIF_FLAGS_INDEX] >>
 		 BT_ANCS_EVENT_FLAG_POSITIVE_ACTION) &
 		0x01;
 
-	ancs_evt.notif.evt_flags.negative_action =
+	notif.evt_flags.negative_action =
 		(data_src[BT_ANCS_NOTIF_FLAGS_INDEX] >>
 		 BT_ANCS_EVENT_FLAG_NEGATIVE_ACTION) &
 		0x01;
 
-	ancs_evt.notif.category_id = (enum bt_ancs_category_id_val)
+	notif.category_id = (enum bt_ancs_category_id_val)
 		data_src[BT_ANCS_NOTIF_CATEGORY_ID_INDEX];
 
-	ancs_evt.notif.category_count =
+	notif.category_count =
 		data_src[BT_ANCS_NOTIF_CATEGORY_CNT_INDEX];
-	ancs_evt.notif.notif_uid =
+	notif.notif_uid =
 		sys_get_le32(&data_src[BT_ANCS_NOTIF_NOTIF_UID]);
 
-	err = bt_ancs_verify_notification_format(&ancs_evt.notif);
-	if (!err) {
-		ancs_evt.evt_type = BT_ANCS_EVT_NOTIF;
-	} else {
-		ancs_evt.evt_type = BT_ANCS_EVT_INVALID_NOTIF;
-	}
+	err = bt_ancs_verify_notification_format(&notif);
 
-	ancs_c->evt_handler(&ancs_evt);
+	bt_ancs_do_ns_notif_cb(ancs_c, err, &notif);
 }
 
 static uint8_t on_received_ns(struct bt_conn *conn,
@@ -144,16 +137,13 @@ static uint8_t on_received_ds(struct bt_conn *conn,
 	return BT_GATT_ITER_CONTINUE;
 }
 
-int bt_ancs_client_init(struct bt_ancs_client *ancs_c,
-			bt_ancs_evt_handler_t evt_handler)
+int bt_ancs_client_init(struct bt_ancs_client *ancs_c)
 {
-	if (!ancs_c || !evt_handler) {
+	if (!ancs_c) {
 		return -EINVAL;
 	}
 
 	memset(ancs_c, 0, sizeof(struct bt_ancs_client));
-
-	ancs_c->evt_handler = evt_handler;
 
 	return 0;
 }
@@ -239,11 +229,12 @@ int bt_ancs_handles_assign(struct bt_gatt_dm *dm,
 	return 0;
 }
 
-int bt_ancs_subscribe_notification_source(struct bt_ancs_client *ancs_c)
+int bt_ancs_subscribe_notification_source(struct bt_ancs_client *ancs_c,
+					  bt_ancs_ns_notif_cb func)
 {
 	int err;
 
-	if (!ancs_c) {
+	if (!ancs_c || !func) {
 		return -EINVAL;
 	}
 
@@ -258,6 +249,8 @@ int bt_ancs_subscribe_notification_source(struct bt_ancs_client *ancs_c)
 	atomic_set_bit(ancs_c->ns_notif_params.flags,
 		       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
+	ancs_c->ns_notif_cb = func;
+
 	err = bt_gatt_subscribe(ancs_c->conn, &ancs_c->ns_notif_params);
 	if (err) {
 		atomic_clear_bit(&ancs_c->state, ANCS_NS_NOTIF_ENABLED);
@@ -269,11 +262,12 @@ int bt_ancs_subscribe_notification_source(struct bt_ancs_client *ancs_c)
 	return err;
 }
 
-int bt_ancs_subscribe_data_source(struct bt_ancs_client *ancs_c)
+int bt_ancs_subscribe_data_source(struct bt_ancs_client *ancs_c,
+				  bt_ancs_ds_notif_cb func)
 {
 	int err;
 
-	if (!ancs_c) {
+	if (!ancs_c || !func) {
 		return -EINVAL;
 	}
 
@@ -287,6 +281,8 @@ int bt_ancs_subscribe_data_source(struct bt_ancs_client *ancs_c)
 	ancs_c->ds_notif_params.ccc_handle = ancs_c->handle_ds_ccc;
 	atomic_set_bit(ancs_c->ds_notif_params.flags,
 		       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
+
+	ancs_c->ds_notif_cb = func;
 
 	err = bt_gatt_subscribe(ancs_c->conn, &ancs_c->ds_notif_params);
 	if (err) {
@@ -362,21 +358,20 @@ static void bt_ancs_cp_write_callback(struct bt_conn *conn, uint8_t err,
 				      struct bt_gatt_write_params *params)
 {
 	struct bt_ancs_client *ancs_c;
+	bt_ancs_write_cb write_cb;
 
 	/* Retrieve ANCS client module context. */
 	ancs_c = CONTAINER_OF(params, struct bt_ancs_client, cp_write_params);
 
+	write_cb = ancs_c->cp_write_cb;
 	atomic_clear_bit(&ancs_c->state, ANCS_CP_WRITE_PENDING);
-
-	struct bt_ancs_evt ancs_evt;
-
-	ancs_evt.evt_type = BT_ANCS_EVT_NP_ERROR;
-	ancs_evt.err_code_np = err;
-
-	ancs_c->evt_handler(&ancs_evt);
+	if (write_cb) {
+		write_cb(ancs_c, err);
+	}
 }
 
-int bt_ancs_cp_write(struct bt_ancs_client *ancs_c, uint16_t len)
+int bt_ancs_cp_write(struct bt_ancs_client *ancs_c, uint16_t len,
+		     bt_ancs_write_cb func)
 {
 	int err;
 	struct bt_gatt_write_params *write_params = &ancs_c->cp_write_params;
@@ -387,6 +382,8 @@ int bt_ancs_cp_write(struct bt_ancs_client *ancs_c, uint16_t len)
 	write_params->data = ancs_c->cp_data;
 	write_params->length = len;
 
+	ancs_c->cp_write_cb = func;
+
 	err = bt_gatt_write(ancs_c->conn, write_params);
 	if (err) {
 		atomic_clear_bit(&ancs_c->state, ANCS_CP_WRITE_PENDING);
@@ -396,7 +393,8 @@ int bt_ancs_cp_write(struct bt_ancs_client *ancs_c, uint16_t len)
 }
 
 int bt_ancs_notification_action(struct bt_ancs_client *ancs_c, uint32_t uuid,
-				enum bt_ancs_action_id_values action_id)
+				enum bt_ancs_action_id_values action_id,
+				bt_ancs_write_cb func)
 {
 	if (atomic_test_and_set_bit(&ancs_c->state, ANCS_CP_WRITE_PENDING)) {
 		return -EBUSY;
@@ -405,11 +403,11 @@ int bt_ancs_notification_action(struct bt_ancs_client *ancs_c, uint32_t uuid,
 	uint8_t *data = ancs_c->cp_data;
 	uint16_t len = encode_notif_action(data, uuid, action_id);
 
-	return bt_ancs_cp_write(ancs_c, len);
+	return bt_ancs_cp_write(ancs_c, len, func);
 }
 
 static int bt_ancs_get_notif_attrs(struct bt_ancs_client *ancs_c,
-				   const uint32_t uid)
+				   const uint32_t uid, bt_ancs_write_cb func)
 {
 	if (atomic_test_and_set_bit(&ancs_c->state, ANCS_CP_WRITE_PENDING)) {
 		return -EBUSY;
@@ -451,11 +449,12 @@ static int bt_ancs_get_notif_attrs(struct bt_ancs_client *ancs_c,
 	ancs_c->parse_info.expected_number_of_attrs =
 		ancs_c->number_of_requested_attr;
 
-	return bt_ancs_cp_write(ancs_c, index);
+	return bt_ancs_cp_write(ancs_c, index, func);
 }
 
 int bt_ancs_request_attrs(struct bt_ancs_client *ancs_c,
-			  const struct bt_ancs_evt_notif *notif)
+			  const struct bt_ancs_evt_notif *notif,
+			  bt_ancs_write_cb func)
 {
 	int err;
 
@@ -464,9 +463,9 @@ int bt_ancs_request_attrs(struct bt_ancs_client *ancs_c,
 		return err;
 	}
 
-	err = bt_ancs_get_notif_attrs(ancs_c, notif->notif_uid);
 	ancs_c->parse_info.parse_state = BT_ANCS_PARSE_STATE_COMMAND_ID;
-	return err;
+
+	return bt_ancs_get_notif_attrs(ancs_c, notif->notif_uid, func);
 }
 
 int bt_ancs_register_attr(struct bt_ancs_client *ancs_c,
@@ -516,7 +515,8 @@ int bt_ancs_register_app_attr(struct bt_ancs_client *ancs_c,
 }
 
 int bt_ancs_request_app_attr(struct bt_ancs_client *ancs_c,
-			     const uint8_t *app_id, uint32_t len)
+			     const uint8_t *app_id, uint32_t len,
+			     bt_ancs_write_cb func)
 {
-	return bt_ancs_app_attr_request(ancs_c, app_id, len);
+	return bt_ancs_app_attr_request(ancs_c, app_id, len, func);
 }

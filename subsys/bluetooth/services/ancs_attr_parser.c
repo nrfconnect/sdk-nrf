@@ -12,6 +12,7 @@
 
 #include <sys/byteorder.h>
 #include <bluetooth/services/ancs_client.h>
+#include "ancs_client_internal.h"
 #include "ancs_attr_parser.h"
 #include <logging/log.h>
 
@@ -52,14 +53,14 @@ static enum bt_ancs_parse_state command_id_parse(struct bt_ancs_client *ancs_c,
 
 	switch (ancs_c->parse_info.command_id) {
 	case BT_ANCS_COMMAND_ID_GET_NOTIF_ATTRIBUTES:
-		ancs_c->evt.evt_type = BT_ANCS_EVT_NOTIF_ATTRIBUTE;
+		ancs_c->attr_response.command_id = BT_ANCS_COMMAND_ID_GET_NOTIF_ATTRIBUTES;
 		ancs_c->parse_info.attr_list = ancs_c->ancs_notif_attr_list;
 		ancs_c->parse_info.attr_count = BT_ANCS_NOTIF_ATTR_COUNT;
 		parse_state = BT_ANCS_PARSE_STATE_NOTIF_UID;
 		break;
 
 	case BT_ANCS_COMMAND_ID_GET_APP_ATTRIBUTES:
-		ancs_c->evt.evt_type = BT_ANCS_EVT_APP_ATTRIBUTE;
+		ancs_c->attr_response.command_id = BT_ANCS_COMMAND_ID_GET_APP_ATTRIBUTES;
 		ancs_c->parse_info.attr_list = ancs_c->ancs_app_attr_list;
 		ancs_c->parse_info.attr_count = BT_ANCS_APP_ATTR_COUNT;
 		parse_state = BT_ANCS_PARSE_STATE_APP_ID;
@@ -78,7 +79,7 @@ static enum bt_ancs_parse_state notif_uid_parse(struct bt_ancs_client *ancs_c,
 						const uint8_t *data_src,
 						uint32_t *index)
 {
-	ancs_c->evt.notif_uid = sys_get_le32(&data_src[*index]);
+	ancs_c->attr_response.notif_uid = sys_get_le32(&data_src[*index]);
 	*index += sizeof(uint32_t);
 	return BT_ANCS_PARSE_STATE_ATTR_ID;
 }
@@ -87,10 +88,10 @@ static enum bt_ancs_parse_state app_id_parse(struct bt_ancs_client *ancs_c,
 					     const uint8_t *data_src,
 					     uint32_t *index)
 {
-	ancs_c->evt.app_id[ancs_c->parse_info.current_app_id_index] =
+	ancs_c->attr_response.app_id[ancs_c->parse_info.current_app_id_index] =
 		data_src[(*index)++];
 
-	if (ancs_c->evt.app_id[ancs_c->parse_info.current_app_id_index] !=
+	if (ancs_c->attr_response.app_id[ancs_c->parse_info.current_app_id_index] !=
 	    '\0') {
 		ancs_c->parse_info.current_app_id_index++;
 		return BT_ANCS_PARSE_STATE_APP_ID;
@@ -116,14 +117,14 @@ static enum bt_ancs_parse_state attr_id_parse(struct bt_ancs_client *ancs_c,
 					      const uint8_t *data_src,
 					      uint32_t *index)
 {
-	ancs_c->evt.attr.attr_id = data_src[(*index)++];
+	ancs_c->attr_response.attr.attr_id = data_src[(*index)++];
 
-	if (ancs_c->evt.attr.attr_id >= ancs_c->parse_info.attr_count) {
+	if (ancs_c->attr_response.attr.attr_id >= ancs_c->parse_info.attr_count) {
 		LOG_DBG("Attribute ID Invalid.");
 		return BT_ANCS_PARSE_STATE_DONE;
 	}
-	ancs_c->evt.attr.attr_data =
-		ancs_c->parse_info.attr_list[ancs_c->evt.attr.attr_id]
+	ancs_c->attr_response.attr.attr_data =
+		ancs_c->parse_info.attr_list[ancs_c->attr_response.attr.attr_id]
 			.attr_data;
 
 	if (all_req_attrs_parsed(ancs_c)) {
@@ -131,10 +132,10 @@ static enum bt_ancs_parse_state attr_id_parse(struct bt_ancs_client *ancs_c,
 		return BT_ANCS_PARSE_STATE_DONE;
 	}
 
-	if (attr_is_requested(ancs_c, ancs_c->evt.attr)) {
+	if (attr_is_requested(ancs_c, ancs_c->attr_response.attr)) {
 		ancs_c->parse_info.expected_number_of_attrs--;
 	}
-	LOG_DBG("Attribute ID %i ", ancs_c->evt.attr.attr_id);
+	LOG_DBG("Attribute ID %i ", ancs_c->attr_response.attr.attr_id);
 	return BT_ANCS_PARSE_STATE_ATTR_LEN1;
 }
 
@@ -156,7 +157,7 @@ static enum bt_ancs_parse_state attr_len1_parse(struct bt_ancs_client *ancs_c,
 						const uint8_t *data_src,
 						uint32_t *index)
 {
-	ancs_c->evt.attr.attr_len = data_src[(*index)++];
+	ancs_c->attr_response.attr.attr_len = data_src[(*index)++];
 	return BT_ANCS_PARSE_STATE_ATTR_LEN2;
 }
 
@@ -177,23 +178,23 @@ static enum bt_ancs_parse_state attr_len2_parse(struct bt_ancs_client *ancs_c,
 						const uint8_t *data_src,
 						uint32_t *index)
 {
-	ancs_c->evt.attr.attr_len |= (data_src[(*index)++] << 8);
+	ancs_c->attr_response.attr.attr_len |= (data_src[(*index)++] << 8);
 	ancs_c->parse_info.current_attr_index = 0;
 
-	if (ancs_c->evt.attr.attr_len != 0) {
+	if (ancs_c->attr_response.attr.attr_len != 0) {
 		/* If the attribute has a length but there is no allocated
 		 * space for this attribute
 		 */
-		if (!ancs_c->parse_info.attr_list[ancs_c->evt.attr.attr_id].attr_len ||
-		    !ancs_c->parse_info.attr_list[ancs_c->evt.attr.attr_id].attr_data) {
+		if (!ancs_c->parse_info.attr_list[ancs_c->attr_response.attr.attr_id].attr_len ||
+		    !ancs_c->parse_info.attr_list[ancs_c->attr_response.attr.attr_id].attr_data) {
 			return BT_ANCS_PARSE_STATE_ATTR_SKIP;
 		} else {
 			return BT_ANCS_PARSE_STATE_ATTR_DATA;
 		}
 	} else {
-		LOG_DBG("Attribute LEN %i ", ancs_c->evt.attr.attr_len);
-		if (attr_is_requested(ancs_c, ancs_c->evt.attr)) {
-			ancs_c->evt_handler(&ancs_c->evt);
+		LOG_DBG("Attribute LEN %i ", ancs_c->attr_response.attr.attr_len);
+		if (attr_is_requested(ancs_c, ancs_c->attr_response.attr)) {
+			bt_ancs_do_ds_notif_cb(ancs_c, &ancs_c->attr_response);
 		}
 		if (all_req_attrs_parsed(ancs_c)) {
 			return BT_ANCS_PARSE_STATE_DONE;
@@ -223,14 +224,14 @@ static enum bt_ancs_parse_state attr_data_parse(struct bt_ancs_client *ancs_c,
 	 * Proceed with copying data over to our buffer.
 	 */
 	if ((ancs_c->parse_info.current_attr_index <
-	     ancs_c->parse_info.attr_list[ancs_c->evt.attr.attr_id].attr_len) &&
+	     ancs_c->parse_info.attr_list[ancs_c->attr_response.attr.attr_id].attr_len) &&
 	    (ancs_c->parse_info.current_attr_index <
-	     ancs_c->evt.attr.attr_len)) {
+	     ancs_c->attr_response.attr.attr_len)) {
 		/* Un-comment this line to see every byte of an attribute as it is parsed.
 		 * Commented out by default since it can overflow the uart buffer.
 		 */
 		/* LOG_DBG("Byte copied to buffer: %c", data_src[(*index)]); */
-		ancs_c->evt.attr
+		ancs_c->attr_response.attr
 			.attr_data[ancs_c->parse_info.current_attr_index++] =
 			data_src[(*index)++];
 	}
@@ -239,12 +240,12 @@ static enum bt_ancs_parse_state attr_data_parse(struct bt_ancs_client *ancs_c,
 	 * Stop copying data over to our buffer. NUL-terminate at the current index.
 	 */
 	if ((ancs_c->parse_info.current_attr_index ==
-	     ancs_c->evt.attr.attr_len) ||
+	     ancs_c->attr_response.attr.attr_len) ||
 	    (ancs_c->parse_info.current_attr_index ==
-	     ancs_c->parse_info.attr_list[ancs_c->evt.attr.attr_id].attr_len -
+	     ancs_c->parse_info.attr_list[ancs_c->attr_response.attr.attr_id].attr_len -
 		     1)) {
-		if (attr_is_requested(ancs_c, ancs_c->evt.attr)) {
-			ancs_c->evt.attr.attr_data
+		if (attr_is_requested(ancs_c, ancs_c->attr_response.attr)) {
+			ancs_c->attr_response.attr.attr_data
 				[ancs_c->parse_info.current_attr_index] = '\0';
 		}
 
@@ -252,12 +253,12 @@ static enum bt_ancs_parse_state attr_data_parse(struct bt_ancs_client *ancs_c,
 		 * increase index to skip the data until the start of the next attribute.
 		 */
 		if (ancs_c->parse_info.current_attr_index <
-		    ancs_c->evt.attr.attr_len) {
+		    ancs_c->attr_response.attr.attr_len) {
 			return BT_ANCS_PARSE_STATE_ATTR_SKIP;
 		}
 		LOG_DBG("Attribute finished!");
-		if (attr_is_requested(ancs_c, ancs_c->evt.attr)) {
-			ancs_c->evt_handler(&ancs_c->evt);
+		if (attr_is_requested(ancs_c, ancs_c->attr_response.attr)) {
+			bt_ancs_do_ds_notif_cb(ancs_c, &ancs_c->attr_response);
 		}
 		if (all_req_attrs_parsed(ancs_c)) {
 			return BT_ANCS_PARSE_STATE_DONE;
@@ -275,7 +276,7 @@ static enum bt_ancs_parse_state attr_skip(struct bt_ancs_client *ancs_c,
 	/* We have not reached the end of the attribute, nor our max allocated internal size.
 	 * Proceed with copying data over to our buffer.
 	 */
-	if (ancs_c->parse_info.current_attr_index < ancs_c->evt.attr.attr_len) {
+	if (ancs_c->parse_info.current_attr_index < ancs_c->attr_response.attr.attr_len) {
 		ancs_c->parse_info.current_attr_index++;
 		(*index)++;
 	}
@@ -283,9 +284,9 @@ static enum bt_ancs_parse_state attr_skip(struct bt_ancs_client *ancs_c,
 	 * continue parsing the next attribute ID if we are not done with all the attributes.
 	 */
 	if (ancs_c->parse_info.current_attr_index ==
-	    ancs_c->evt.attr.attr_len) {
-		if (attr_is_requested(ancs_c, ancs_c->evt.attr)) {
-			ancs_c->evt_handler(&ancs_c->evt);
+	    ancs_c->attr_response.attr.attr_len) {
+		if (attr_is_requested(ancs_c, ancs_c->attr_response.attr)) {
+			bt_ancs_do_ds_notif_cb(ancs_c, &ancs_c->attr_response);
 		}
 		if (all_req_attrs_parsed(ancs_c)) {
 			return BT_ANCS_PARSE_STATE_DONE;
