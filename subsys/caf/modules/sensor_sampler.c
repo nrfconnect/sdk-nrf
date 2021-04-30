@@ -22,12 +22,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_SAMPLER_LOG_LEVEL);
 #define SAMPLE_THREAD_STACK_SIZE	CONFIG_CAF_SENSOR_SAMPLER_THREAD_STACK_SIZE
 #define SAMPLE_THREAD_PRIORITY		CONFIG_CAF_SENSOR_SAMPLER_THREAD_PRIORITY
 
-enum sensor_state {
-	SENSOR_DISABLED,
-	SENSOR_SLEEP,
-	SENSOR_ACTIVE,
-	SENSOR_ERROR,
-};
 
 struct sensor_data {
 	const struct device *dev;
@@ -155,7 +149,7 @@ static void trigger_handler(const struct device *dev, struct sensor_trigger *tri
 
 	sd->sample_timeout = k_uptime_get();
 
-	if (!atomic_cas(&sd->state, SENSOR_SLEEP, SENSOR_ACTIVE)) {
+	if (!atomic_cas(&sd->state, SENSOR_STATE_SLEEP, SENSOR_STATE_ACTIVE)) {
 		__ASSERT_NO_MSG(false);
 		report_error();
 		return;
@@ -172,11 +166,11 @@ static int try_enter_sleep(const struct sensor_config *sc,
 	int err = 0;
 
 	if (can_sensor_sleep(sc, sd, curr)) {
-		atomic_set(&sd->state, SENSOR_SLEEP);
+		atomic_set(&sd->state, SENSOR_STATE_SLEEP);
 		err = sensor_trigger_set(sd->dev, &sc->trigger->cfg, trigger_handler);
 		if (err) {
 			LOG_ERR("Error setting trigger (err:%d)", err);
-			atomic_set(&sd->state, SENSOR_ERROR);
+			atomic_set(&sd->state, SENSOR_STATE_ERROR);
 			return err;
 		}
 
@@ -230,7 +224,7 @@ static int sample_sensors(int64_t *next_timeout)
 		struct sensor_data *sd = &sensor_data[i];
 		const struct sensor_config *sc = &sensor_configs[i];
 
-		if (atomic_get(&sd->state) == SENSOR_ACTIVE) {
+		if (atomic_get(&sd->state) == SENSOR_STATE_ACTIVE) {
 			if (sd->sample_timeout <= cur_uptime) {
 				err = sample_sensor(sd, sc);
 			}
@@ -246,7 +240,7 @@ static int sample_sensors(int64_t *next_timeout)
 			}
 		}
 
-		if (atomic_get(&sd->state) == SENSOR_ACTIVE) {
+		if (atomic_get(&sd->state) == SENSOR_STATE_ACTIVE) {
 			if (*next_timeout > sd->sample_timeout) {
 				*next_timeout = sd->sample_timeout;
 			}
@@ -300,12 +294,12 @@ static int sensor_init(void)
 		if (sc->trigger) {
 			err = sensor_trigger_init(sc, sd);
 			if (err) {
-				atomic_set(&sd->state, SENSOR_ERROR);
+				atomic_set(&sd->state, SENSOR_STATE_ERROR);
 				break;
 			}
 		}
 
-		atomic_set(&sd->state, SENSOR_ACTIVE);
+		atomic_set(&sd->state, SENSOR_STATE_ACTIVE);
 	}
 
 	return err;

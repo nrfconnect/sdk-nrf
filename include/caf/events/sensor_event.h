@@ -19,6 +19,12 @@
 extern "C" {
 #endif
 
+enum sensor_state {
+	SENSOR_STATE_DISABLED,
+	SENSOR_STATE_SLEEP,
+	SENSOR_STATE_ACTIVE,
+	SENSOR_STATE_ERROR,
+};
 
 /** @brief Sensor event. */
 struct sensor_event {
