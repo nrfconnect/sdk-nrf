@@ -1,0 +1,171 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if MEMFAULT
+
+config MEMFAULT_NCS_PROJECT_KEY
+	string "Memfault API key"
+	help
+	  Memfault project key
+
+choice
+	prompt "Memfault device ID generation method"
+	default MEMFAULT_NCS_DEVICE_ID_IMEI if (BOARD_NRF9160DK_NRF9160NS || BOARD_THINGY91_NRF9160NS)
+	default MEMFAULT_NCS_DEVICE_ID_STATIC
+
+config MEMFAULT_NCS_DEVICE_ID_IMEI
+	bool "Use IMEI as Memfault device ID"
+	depends on AT_CMD
+	help
+	  Use the device's IMEI as Memfault device ID
+
+config MEMFAULT_NCS_DEVICE_ID_STATIC
+	bool "Set Memfault device ID in Kconfig"
+	help
+	  Set the Memfault device ID with CONFIG_MEMFAULT_NCS_DEVICE_ID
+
+config MEMFAULT_NCS_DEVICE_ID_RUNTIME
+	bool "Set device ID runtime"
+	help
+	  Set the Memfault device ID runtime using memfault_ncs_device_id_set()
+
+endchoice
+
+config MEMFAULT_NCS_DEVICE_ID
+	string "Memfault device ID"
+	depends on MEMFAULT_NCS_DEVICE_ID_STATIC
+	help
+	  Memfault device ID
+
+config MEMFAULT_NCS_DEVICE_ID_MAX_LEN
+	int "Memfault device ID max length"
+	depends on MEMFAULT_NCS_DEVICE_ID_RUNTIME
+	default 30
+	help
+	  Maximum length for the device ID when CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME
+	  is selected as method for device ID generation
+
+config MEMFAULT_NCS_HW_VERSION
+	string "Hardware version"
+	default "nrf9160dk" if BOARD_NRF9160DK_NRF9160NS
+	default "thingy91" if BOARD_THINGY91_NRF9160NS
+	help
+	  Device hardware version
+
+config MEMFAULT_NCS_FW_TYPE
+	string "Firmware type"
+	default "nrf91ns-fw" if BOARD_NRF9160DK_NRF9160NS || BOARD_THINGY91_NRF9160NS
+	help
+	  Firmware type running on the board
+
+choice MEMFAULT_FW_VERSION
+	prompt "Firmware version generation method"
+	default MEMFAULT_NCS_FW_VERSION_AUTO
+	help
+	  Method to use to generate firmware version
+
+config MEMFAULT_NCS_FW_VERSION_STATIC
+	bool "Static firmware version"
+	help
+	  Use statically configured firmware version, as opposed to a
+	  dynamically generated one
+
+config MEMFAULT_NCS_FW_VERSION_AUTO
+	bool "Dynamic firmware version"
+	help
+	  Use dyanimically generated firmware version. The version is
+	  re-generated on every compiler run
+endchoice
+
+config MEMFAULT_NCS_FW_VERSION_PREFIX
+	string "Firmware version prefix"
+	depends on MEMFAULT_NCS_FW_VERSION_AUTO
+	default "0.0.1+"
+	help
+	  Prefix to use in front of automatically generated build version string.
+	  If the build version string is "a1b2c3d", the full firmware version
+	  will become "<prefix>a1b2c3d".
+
+config MEMFAULT_NCS_INIT_PRIORITY
+	int "Memfault initialization priority"
+	range AT_CMD_INIT_PRIORITY 99 if MEMFAULT_NCS_DEVICE_ID_IMEI
+	default 90
+	help
+	  If IMEI is used as device ID, the initialization priority must be
+	  greater than that of the AT command module
+
+config MEMFAULT_NCS_PROVISION_CERTIFICATES
+	bool "Provision certificates on initalization"
+	depends on MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM
+	default y
+	help
+	  Provision required TLS root certificates for connecting to Memfault's
+	  endpoints. If this option is disabled, the user is responsible for
+	  calling the appropriate Memfault APIs for provisioning the
+	  certificates before attempting to connect to Memfault servers.
+
+config MEMFAULT_NCS_STACK_METRICS
+	bool "Collect stack metrics"
+	select THREAD_ANALYZER
+	select THREAD_NAME
+	default y
+	help
+	  Collect metrics for unused stack space for selected stacks.
+	  Currently the following stacks' unused space is monitored:
+		- at_cmd_socket_thread, used by the AT command library
+		- connection_poll_thread, used by the cloud libraries for
+		  nRF Cloud, AWS IoT and Azure IoT Hub
+
+config MEMFAULT_NCS_LTE_METRICS
+	bool "Collect LTE metrics"
+	select LTE_LC_TRACE
+	depends on LTE_LINK_CONTROL
+	help
+	  Capture LTE metrics while the application is running. Supported
+	  metrics are time to connect and number of connection establishments.
+
+config MEMFAULT_NCS_USE_DEFAULT_METRICS
+	bool
+	select MEMFAULT_METRICS_EXTRA_DEFS_FILE
+	default y if (MEMFAULT_NCS_STACK_METRICS || MEMFAULT_NCS_LTE_METRICS)
+
+config MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
+	bool "Save coredump to internal flash instead of RAM"
+	select MEMFAULT_COREDUMP_STORAGE_CUSTOM
+	depends on FLASH
+	depends on IMG_MANAGER
+	depends on BOOTLOADER_MCUBOOT
+	depends on MCUBOOT_IMG_MANAGER
+	help
+	  Use internal flash to store coredump data
+
+if MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
+config MEMFAULT_NCS_FLASH_REGION_SIZE
+	hex
+	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
+
+partition=MEMFAULT_STORAGE
+partition-size=0x10000
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_size"
+endif # MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
+
+# We want to encourage the use of a dedicated workqueue to upload data periodically,
+# as sending data from the system workqueue is known to be problematic in
+# LTE networks. Therefore we override the default value for
+# MEMFAULT_HTTP_PERIODIC_UPLOAD_CONTEXT and set it to
+# MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE.
+choice MEMFAULT_HTTP_PERIODIC_UPLOAD_CONTEXT
+	depends on MEMFAULT_HTTP_PERIODIC_UPLOAD
+	default MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE
+endchoice
+
+module = MEMFAULT_NCS
+module-dep = LOG
+module-str = Memfault NCS module
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+
+endif # MEMFAULT

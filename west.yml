@@ -35,6 +35,8 @@ manifest:
       url-base: https://github.com/NordicSemiconductor
     - name: pelioniot
       url-base: https://github.com/PelionIoT
+    - name: memfault
+      url-base: https://github.com/memfault
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -176,6 +178,10 @@ manifest:
       revision: 9c8305df8603374ec304ae46f6048f63ab8f9373
       groups:
       - find-my
+    - name: memfault-firmware-sdk
+      path: modules/lib/memfault-firmware-sdk
+      revision: 0.21.1
+      remote: memfault
 
   # West-related configuration for the nrf repository.
   self:

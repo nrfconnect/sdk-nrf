@@ -1,0 +1,6 @@
+#include <autoconf.h>
+
+memfault_storage:
+  placement: {before: [end]}
+  size: CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE
+  align: {start: CONFIG_MEMFAULT_NCS_FLASH_REGION_SIZE}
