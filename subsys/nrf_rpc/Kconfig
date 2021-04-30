@@ -20,24 +20,6 @@ config NRF_RPC_THREAD_PRIORITY
 	help
 	  Thread priority of each thread in local thread pool.
 
-choice
-	prompt "RPMSG device role"
-	default RPMSG_REMOTE
-
-config RPMSG_REMOTE
-	bool "Remote"
-	help
-	  Selects RPMsg role as "Remote". The other side must be configured as
-	  "Master".
-
-config RPMSG_MASTER
-	bool "Master"
-	help
-	  Selects RPMsg role as "Master". The other side must be configured as
-	  "Remote".
-
-endchoice
-
 config NRF_RPC_TR_PRMSG_RX_STACK_SIZE
 	int "Stack size of the rpmsg receive thread"
 	default 1536
