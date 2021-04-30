@@ -43,7 +43,7 @@ This tutorial will guide you through the following steps:
 
    .. note::
      You can use one of the development boards supported directly by Edge Impulse or your mobile phone to collect the data.
-     You can also modify the :ref:`ei_data_forwarder_sample` sample and use it to forward data from a sensor that is connected to any board available in |NCS|.
+     You can also modify the :ref:`ei_data_forwarder_sample` sample or :ref:`nrf_machine_learning_app` application and use it to forward data from a sensor that is connected to any board available in the |NCS|.
 
 #. Designing your machine learning model (an *impulse*).
 #. Deploying the machine learning model to use it on an embedded device.
