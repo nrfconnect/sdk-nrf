@@ -14,6 +14,7 @@
  */
 
 #include "event_manager.h"
+#include <caf/events/module_state_event.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,7 +30,20 @@ struct ml_result_event {
 	float anomaly; /**< Anomaly value. */
 };
 
+/** @brief Sign in event
+ *
+ * The event that is called by modules
+ * to mark that the module actively listens for the result event.
+ */
+struct ml_result_signin_event {
+	struct event_header header; /**< Event header. */
+
+	size_t module_idx; /**< @brief The index of the module */
+	bool state;        /**< @brief  Requested state: true to sign in, false to sign off */
+};
+
 EVENT_TYPE_DECLARE(ml_result_event);
+EVENT_TYPE_DECLARE(ml_result_signin_event);
 
 #ifdef __cplusplus
 }
