@@ -9,10 +9,10 @@
 #include "app_task.h"
 #include "lighting_manager.h"
 
-#include "af.h"
 #include "gen/attribute-id.h"
 #include "gen/cluster-id.h"
 #include "gen/command-id.h"
+#include <app/util/af.h>
 #include <app/util/af-types.h>
 
 using namespace ::chip;

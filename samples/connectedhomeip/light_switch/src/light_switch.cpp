@@ -43,7 +43,7 @@ void LightSwitch::DiscoveryHandler::HandleMessageReceived(const chip::PacketHead
 
 CHIP_ERROR LightSwitch::Init()
 {
-	CHIP_ERROR err = mCommissioner.Init(chip::kTestControllerNodeId, nullptr, nullptr);
+	CHIP_ERROR err = mCommissioner.Init(chip::kTestControllerNodeId, {});
 
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("DeviceCommissioner::Init() failed: %s", chip::ErrorStr(err));
@@ -121,7 +121,7 @@ CHIP_ERROR LightSwitch::ToggleLight()
 		return CHIP_ERROR_NO_MEMORY;
 	}
 
-	return device->SendMessage(std::move(buffer));
+	return device->SendMessage(chip::Protocols::TempZCL::Id, 0, std::move(buffer));
 }
 
 CHIP_ERROR LightSwitch::SetLightLevel(uint8_t level)
@@ -141,5 +141,5 @@ CHIP_ERROR LightSwitch::SetLightLevel(uint8_t level)
 		return CHIP_ERROR_NO_MEMORY;
 	}
 
-	return device->SendMessage(std::move(buffer));
+	return device->SendMessage(chip::Protocols::TempZCL::Id, 0, std::move(buffer));
 }
