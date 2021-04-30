@@ -99,26 +99,6 @@ extern "C" {
 #define BT_ATT_ERR_ANCS_NP_ACTION_FAILED 0xA3
 /** @} */
 
-/**@brief Event types that are passed from client to application on an event. */
-enum bt_ancs_evt_type {
-	/** An iOS notification was received on the notification source control
-	 *  point.
-	 */
-	BT_ANCS_EVT_NOTIF,
-	/** An iOS notification was received on the notification source control
-	 *  point, but the format is invalid.
-	 */
-	BT_ANCS_EVT_INVALID_NOTIF,
-	/** A received iOS notification attribute has been parsed. */
-	BT_ANCS_EVT_NOTIF_ATTRIBUTE,
-	/** An iOS app attribute has been parsed. */
-	BT_ANCS_EVT_APP_ATTRIBUTE,
-	/** An error has been sent on the ANCS Control Point from the
-	 *  iOS Notification Provider.
-	 */
-	BT_ANCS_EVT_NP_ERROR,
-};
-
 /**@brief Category IDs for iOS notifications. */
 enum bt_ancs_category_id_val {
 	/** The iOS notification belongs to the "Other" category.  */
@@ -297,24 +277,14 @@ struct bt_ancs_attr_list {
 	uint8_t *attr_data;
 };
 
-/**@brief ANCS client module event structure.
- *
- * @details The structure contains the event that is to be handled by the main application.
- */
-struct bt_ancs_evt {
-	/** Type of event. */
-	enum bt_ancs_evt_type evt_type;
-	/** iOS notification. This is filled if @p evt_type is
-	 *  @ref BT_ANCS_EVT_NOTIF.
-	 */
-	struct bt_ancs_evt_notif notif;
-	/** An error coming from the Notification Provider. This is filled with
-	 *  @ref BT_ATT_ANCS_NP_ERROR_CODES if @p evt_type is
-	 *  @ref BT_ANCS_EVT_NP_ERROR.
-	 */
-	uint8_t err_code_np;
-	/** iOS notification attribute or app attribute, depending on the event
-	 *  type.
+struct bt_ancs_client;
+
+/**@brief Attribute response structure. */
+struct bt_ancs_attr_response {
+	/** Command ID. */
+	enum bt_ancs_cmd_id_val command_id;
+	/** iOS notification attribute or app attribute, depending on the
+	 *  Command ID.
 	 */
 	struct bt_ancs_attr attr;
 	/** Notification UID. */
@@ -323,8 +293,31 @@ struct bt_ancs_evt {
 	uint8_t app_id[BT_ANCS_ATTR_DATA_MAX];
 };
 
-/**@brief iOS notification event handler type. */
-typedef void (*bt_ancs_evt_handler_t)(const struct bt_ancs_evt *evt);
+/**@brief Notification Source notification callback function.
+ *
+ * @param[in] ancs_c    ANCS client instance.
+ * @param[in] err       0 if the notification is valid.
+ *                      Otherwise, contains a (negative) error code.
+ * @param[in] notif     iOS notification structure.
+ */
+typedef void (*bt_ancs_ns_notif_cb)(struct bt_ancs_client *ancs_c, int err,
+				    const struct bt_ancs_evt_notif *notif);
+
+/**@brief Data Source notification callback function.
+ *
+ * @param[in] ancs_c    ANCS client instance.
+ * @param[in] response  Attribute response structure.
+ */
+typedef void (*bt_ancs_ds_notif_cb)(struct bt_ancs_client *ancs_c,
+				    const struct bt_ancs_attr_response *response);
+
+/**@brief Write response callback function.
+ *
+ * @param[in] ancs_c  ANCS client instance.
+ * @param[in] err     ATT error code.
+ */
+typedef void (*bt_ancs_write_cb)(struct bt_ancs_client *ancs_c,
+				 uint8_t err);
 
 struct bt_ancs_parse_sm {
 	/** The current list of attributes that are being parsed. This will
@@ -381,19 +374,23 @@ struct bt_ancs_client {
 	/** GATT write parameters for Control Point Characteristic. */
 	struct bt_gatt_write_params cp_write_params;
 
+	/** Callback function for Control Point GATT write. */
+	bt_ancs_write_cb cp_write_cb;
+
 	/** Data buffer for Control Point GATT write. */
 	uint8_t cp_data[CONFIG_BT_ANCS_CLIENT_CP_BUFF_SIZE];
 
 	/** GATT subscribe parameters for Notification Source Characteristic. */
 	struct bt_gatt_subscribe_params ns_notif_params;
 
+	/** Callback function for Notification Source notification. */
+	bt_ancs_ns_notif_cb ns_notif_cb;
+
 	/** GATT subscribe parameters for Data Source Characteristic. */
 	struct bt_gatt_subscribe_params ds_notif_params;
 
-	/** Event handler to be called for handling events in the Apple
-	 *  Notification client application.
-	 */
-	bt_ancs_evt_handler_t evt_handler;
+	/** Callback function for Data Source notification. */
+	bt_ancs_ds_notif_cb ds_notif_cb;
 
 	/** For all attributes: contains information about whether the
 	 *  attributes are to be requested upon attribute request, and
@@ -419,9 +416,9 @@ struct bt_ancs_client {
 	 */
 	struct bt_ancs_parse_sm parse_info;
 
-	/** Allocate memory for the event here.
+	/** Allocate memory for the attribute response here.
 	 */
-	struct bt_ancs_evt evt;
+	struct bt_ancs_attr_response attr_response;
 };
 
 /**@brief Function for initializing the ANCS client.
@@ -430,32 +427,34 @@ struct bt_ancs_client {
  *                          supplied by the application. It is initialized by
  *                          this function and will later be used to identify
  *                          this particular client instance.
- * @param[in]  evt_handler  Event handler for ANCS client events.
  *
  * @retval 0 If the client was initialized successfully.
  *           Otherwise, a (negative) error code is returned.
  */
-int bt_ancs_client_init(struct bt_ancs_client *ancs_c,
-			bt_ancs_evt_handler_t evt_handler);
+int bt_ancs_client_init(struct bt_ancs_client *ancs_c);
 
 /**@brief Function for writing to the CCCD to enable notifications from
  *        the Apple Notification Service.
  *
  * @param[in] ancs_c  ANCS client instance.
+ * @param[in] func    Callback function for handling notification.
  *
  * @retval 0 If writing to the CCCD was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int bt_ancs_subscribe_notification_source(struct bt_ancs_client *ancs_c);
+int bt_ancs_subscribe_notification_source(struct bt_ancs_client *ancs_c,
+					  bt_ancs_ns_notif_cb func);
 
 /**@brief Function for writing to the CCCD to enable data source notifications from the ANCS.
  *
  * @param[in] ancs_c  ANCS client instance.
+ * @param[in] func    Callback function for handling notification.
  *
  * @retval 0 If writing to the CCCD was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int bt_ancs_subscribe_data_source(struct bt_ancs_client *ancs_c);
+int bt_ancs_subscribe_data_source(struct bt_ancs_client *ancs_c,
+				  bt_ancs_ds_notif_cb func);
 
 /**@brief Function for writing to the CCCD to disable notifications from the ANCS.
  *
@@ -510,36 +509,42 @@ int bt_ancs_register_app_attr(struct bt_ancs_client *ancs_c,
  * @param[in] ancs_c   ANCS client instance.
  * @param[in] notif    Pointer to the notification whose attributes will be requested from
  *                     the Notification Provider.
+ * @param[in] func     Callback function for handling NP write response.
  *
  * @retval 0 If all operations are successful.
  *           Otherwise, a (negative) error code is returned.
  */
 int bt_ancs_request_attrs(struct bt_ancs_client *ancs_c,
-			  const struct bt_ancs_evt_notif *notif);
+			  const struct bt_ancs_evt_notif *notif,
+			  bt_ancs_write_cb func);
 
 /**@brief Function for requesting attributes for a given app.
  *
  * @param[in] ancs_c   ANCS client instance.
  * @param[in] app_id   App identifier of the app for which the app attributes are requested.
  * @param[in] len      Length of the app identifier.
+ * @param[in] func     Callback function for handling NP write response.
  *
  * @retval 0 If all operations are successful.
  *           Otherwise, a (negative) error code is returned.
  */
 int bt_ancs_request_app_attr(struct bt_ancs_client *ancs_c,
-			     const uint8_t *app_id, uint32_t len);
+			     const uint8_t *app_id, uint32_t len,
+			     bt_ancs_write_cb func);
 
 /**@brief Function for performing a notification action.
  *
  * @param[in] ancs_c    ANCS client instance.
  * @param[in] uuid      The UUID of the notification for which to perform the action.
  * @param[in] action_id Perform a positive or negative action.
+ * @param[in] func      Callback function for handling NP write response.
  *
  * @retval 0 If the operation is successful.
  *           Otherwise, a (negative) error code is returned.
  */
 int bt_ancs_notification_action(struct bt_ancs_client *ancs_c, uint32_t uuid,
-				enum bt_ancs_action_id_values action_id);
+				enum bt_ancs_action_id_values action_id,
+				bt_ancs_write_cb func);
 
 /**@brief Function for assigning handles to ANCS client instance.
  *

@@ -130,7 +130,7 @@ static enum encode_app_attr app_attr_encode_attr_id(
  * @param[in] app_id_len Length of the app ID.
  */
 static int app_attr_get(struct bt_ancs_client *ancs_c, const uint8_t *app_id,
-			uint32_t app_id_len)
+			uint32_t app_id_len, bt_ancs_write_cb func)
 {
 	enum encode_app_attr state = APP_ATTR_COMMAND_ID;
 	int err;
@@ -166,7 +166,7 @@ static int app_attr_get(struct bt_ancs_client *ancs_c, const uint8_t *app_id,
 	}
 
 	if (state == APP_ATTR_DONE) {
-		err = bt_ancs_cp_write(ancs_c, buf.len);
+		err = bt_ancs_cp_write(ancs_c, buf.len, func);
 
 		ancs_c->parse_info.expected_number_of_attrs =
 			ancs_c->number_of_requested_attr;
@@ -178,7 +178,8 @@ static int app_attr_get(struct bt_ancs_client *ancs_c, const uint8_t *app_id,
 }
 
 int bt_ancs_app_attr_request(struct bt_ancs_client *ancs_c,
-			     const uint8_t *app_id, uint32_t len)
+			     const uint8_t *app_id, uint32_t len,
+			     bt_ancs_write_cb func)
 {
 	/* App ID to be requested must be null-terminated. */
 	if (!len) {
@@ -191,5 +192,5 @@ int bt_ancs_app_attr_request(struct bt_ancs_client *ancs_c,
 
 	ancs_c->parse_info.parse_state = BT_ANCS_PARSE_STATE_COMMAND_ID;
 
-	return app_attr_get(ancs_c, app_id, len);
+	return app_attr_get(ancs_c, app_id, len, func);
 }
