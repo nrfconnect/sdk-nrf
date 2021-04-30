@@ -7,3 +7,4 @@
 rsource "Kconfig.mcuboot"
 rsource "tfm/zephyr/Kconfig"
 rsource "cddl-gen/Kconfig"
+rsource "memfault/Kconfig"

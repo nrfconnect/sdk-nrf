@@ -34,6 +34,11 @@ nRF9160
     * The library provides an API to get an attestation token from the modem.
     * Functionality requires modem firmware v1.3.0 or higher.
 
+  * :ref:`mod_memfault` module and integration on |NCS| for nRF9160-based devices.
+
+    * Integration of Memfault SDK into |NCS|.
+
+
 * Updated:
 
   * :ref:`lib_nrf_cloud` library:

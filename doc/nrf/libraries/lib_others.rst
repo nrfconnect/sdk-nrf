@@ -9,3 +9,4 @@ Other libraries
    :caption: Subpages:
 
    ../../include/*
+   ../../modules/*
