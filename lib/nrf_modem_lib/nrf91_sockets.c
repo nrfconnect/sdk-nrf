@@ -36,13 +36,47 @@
 
 #define PROTO_WILDCARD 0
 
-/* Increment by 1 to make sure we do not store the value of 0, which has
- * a special meaning in the fdtable subsys.
- */
-#define SD_TO_OBJ(sd) ((void *)(sd + 1))
-#define OBJ_TO_SD(obj) (((int)obj) - 1)
+#define OBJ_TO_SD(obj) (((struct nrf_sock_ctx *)obj)->nrf_fd)
+#define OBJ_TO_CTX(obj) ((struct nrf_sock_ctx *)obj)
+
+/* Offloading context related to nRF socket. */
+static struct nrf_sock_ctx {
+	int nrf_fd; /* nRF socket descriptior. */
+	struct k_mutex *lock; /* Mutex associated with the socket. */
+} offload_ctx[NRF_MODEM_MAX_SOCKET_COUNT];
+
+static K_MUTEX_DEFINE(ctx_lock);
 
 static const struct socket_op_vtable nrf91_socket_fd_op_vtable;
+
+static struct nrf_sock_ctx *allocate_ctx(int nrf_fd)
+{
+	struct nrf_sock_ctx *ctx = NULL;
+
+	k_mutex_lock(&ctx_lock, K_FOREVER);
+
+	for (int i = 0; i < ARRAY_SIZE(offload_ctx); i++) {
+		if (offload_ctx[i].nrf_fd == -1) {
+			ctx = &offload_ctx[i];
+			ctx->nrf_fd = nrf_fd;
+			break;
+		}
+	}
+
+	k_mutex_unlock(&ctx_lock);
+
+	return ctx;
+}
+
+static void release_ctx(struct nrf_sock_ctx *ctx)
+{
+	k_mutex_lock(&ctx_lock, K_FOREVER);
+
+	ctx->nrf_fd = -1;
+	ctx->lock = NULL;
+
+	k_mutex_unlock(&ctx_lock);
+}
 
 static void z_to_nrf_ipv4(const struct sockaddr *z_in,
 			  struct nrf_sockaddr_in *nrf_out)
@@ -535,7 +569,8 @@ static int nrf91_socket_offload_accept(void *obj, struct sockaddr *addr,
 {
 	int fd = z_reserve_fd();
 	int sd = OBJ_TO_SD(obj);
-	int new_sd;
+	int new_sd = -1;
+	struct nrf_sock_ctx *ctx = NULL;
 	struct nrf_sockaddr *nrf_addr_ptr = NULL;
 	nrf_socklen_t *nrf_addrlen_ptr = NULL;
 	/* Use `struct nrf_sockaddr_in6` to fit both, IPv4 and IPv6 */
@@ -567,6 +602,12 @@ static int nrf91_socket_offload_accept(void *obj, struct sockaddr *addr,
 		return -1;
 	}
 
+	ctx = allocate_ctx(new_sd);
+	if (ctx == NULL) {
+		errno = ENOMEM;
+		goto error;
+	}
+
 	if ((addr != NULL) && (addrlen != NULL)) {
 		if (nrf_addr_ptr->sa_family == NRF_AF_INET) {
 			*addrlen = sizeof(struct sockaddr_in);
@@ -581,12 +622,20 @@ static int nrf91_socket_offload_accept(void *obj, struct sockaddr *addr,
 		}
 	}
 
-	z_finalize_fd(fd, SD_TO_OBJ(new_sd),
+	z_finalize_fd(fd, ctx,
 		      (const struct fd_op_vtable *)&nrf91_socket_fd_op_vtable);
 
 	return fd;
 
 error:
+	if (new_sd != -1) {
+		nrf_close(new_sd);
+	}
+
+	if (ctx != NULL) {
+		release_ctx(ctx);
+	}
+
 	z_free_fd(fd);
 	return -1;
 }
@@ -762,19 +811,21 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 					     int flags, struct sockaddr *from,
 					     socklen_t *fromlen)
 {
-	int sd = OBJ_TO_SD(obj);
+	struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);
 	ssize_t retval;
 
+	k_mutex_unlock(ctx->lock);
+
 	if (from == NULL) {
-		retval = nrf_recvfrom(sd, buf, len, z_to_nrf_flags(flags), NULL,
-				      NULL);
+		retval = nrf_recvfrom(ctx->nrf_fd, buf, len, z_to_nrf_flags(flags),
+				      NULL, NULL);
 	} else {
 		/* Allocate space for maximum of IPv4 and IPv6 family type. */
 		struct nrf_sockaddr_in6 cliaddr_storage;
 		nrf_socklen_t sock_len = sizeof(struct nrf_sockaddr_in6);
 		struct nrf_sockaddr *cliaddr = (struct nrf_sockaddr *)&cliaddr_storage;
 
-		retval = nrf_recvfrom(sd, buf, len, z_to_nrf_flags(flags),
+		retval = nrf_recvfrom(ctx->nrf_fd, buf, len, z_to_nrf_flags(flags),
 				      cliaddr, &sock_len);
 		if (cliaddr->sa_family == NRF_AF_INET) {
 			nrf_to_z_ipv4(from, (struct nrf_sockaddr_in *)cliaddr);
@@ -785,6 +836,8 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 			*fromlen = sizeof(struct sockaddr_in6);
 		}
 	}
+
+	k_mutex_lock(ctx->lock, K_FOREVER);
 
 	return retval;
 }
@@ -1152,6 +1205,14 @@ static int nrf91_socket_offload_ioctl(void *obj, unsigned int request,
 		return nrf91_socket_offload_poll(fds, nfds, timeout);
 	}
 
+	case ZFD_IOCTL_SET_LOCK: {
+		struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);
+
+		ctx->lock = va_arg(args, struct k_mutex *);
+
+		return 0;
+	}
+
 	/* Otherwise, just forward to offloaded fcntl()
 	 * In Zephyr, fcntl() is just an alias of ioctl().
 	 */
@@ -1173,9 +1234,15 @@ static ssize_t nrf91_socket_offload_write(void *obj, const void *buffer,
 
 static int nrf91_socket_offload_close(void *obj)
 {
-	int sd = OBJ_TO_SD(obj);
+	struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);
+	int retval;
 
-	return nrf_close(sd);
+	retval = nrf_close(ctx->nrf_fd);
+	if (retval == 0) {
+		release_ctx(ctx);
+	}
+
+	return retval;
 }
 
 static const struct socket_op_vtable nrf91_socket_fd_op_vtable = {
@@ -1214,6 +1281,7 @@ static int nrf91_socket_create(int family, int type, int proto)
 {
 	int fd = z_reserve_fd();
 	int sd;
+	struct nrf_sock_ctx *ctx;
 
 	if (fd < 0) {
 		return -1;
@@ -1225,7 +1293,15 @@ static int nrf91_socket_create(int family, int type, int proto)
 		return -1;
 	}
 
-	z_finalize_fd(fd, SD_TO_OBJ(sd),
+	ctx = allocate_ctx(sd);
+	if (ctx == NULL) {
+		errno = ENOMEM;
+		nrf_close(sd);
+		z_free_fd(fd);
+		return -1;
+	}
+
+	z_finalize_fd(fd, ctx,
 		      (const struct fd_op_vtable *)&nrf91_socket_fd_op_vtable);
 
 	return fd;
@@ -1239,6 +1315,10 @@ NET_SOCKET_REGISTER(nrf91_socket, AF_UNSPEC, nrf91_socket_is_supported,
 static int nrf91_nrf_modem_lib_socket_offload_init(const struct device *arg)
 {
 	ARG_UNUSED(arg);
+
+	for (int i = 0; i < ARRAY_SIZE(offload_ctx); i++) {
+		offload_ctx[i].nrf_fd = -1;
+	}
 
 	return 0;
 }
