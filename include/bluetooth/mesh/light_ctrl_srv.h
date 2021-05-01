@@ -115,11 +115,13 @@ struct bt_mesh_light_ctrl_srv_reg_cfg {
 /** Illumination regulator */
 struct bt_mesh_light_ctrl_srv_reg {
 	/** Regulator step timer */
-	struct k_delayed_work timer;
+	struct k_timer timer;
+	/** Regulator work handler */
+	struct k_work work;
 	/** Internal integral sum. */
 	float i;
 	/** Previous output */
-	uint16_t prev;
+	uint16_t out;
 	/** Regulator configuration */
 	struct bt_mesh_light_ctrl_srv_reg_cfg cfg;
 };
