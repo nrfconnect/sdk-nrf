@@ -339,6 +339,7 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 		LOG_DBG("AWS_FOTA_EVT_DL_PROGRESS, (%d%%)",
 			fota_evt->dl.progress);
 		aws_iot_evt.type = AWS_IOT_EVT_FOTA_DL_PROGRESS;
+		aws_iot_evt.data.fota_progress = fota_evt->dl.progress;
 		break;
 	default:
 		LOG_ERR("Unknown FOTA event");

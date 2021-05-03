@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -16,44 +16,120 @@
 
 LOG_MODULE_REGISTER(aws_fota, CONFIG_AWS_FOTA_LOG_LEVEL);
 
-/* State variable to ensure that the AWS Fota library does not update the job
- * execution document before the last update is accepted by AWS IoT.
- */
-static bool accepted = true;
+#define AWS_JOB_ID_DEFAULT "INVALID-JOB-ID"
 
-/* Enum to keep the fota status */
-enum fota_status {
-	NONE = 0,
-	DOWNLOAD_FIRMWARE,
-	APPLY_UPDATE,
+static enum internal_state {
+	STATE_UNINIT,
+	STATE_INIT,
+	STATE_DOWNLOADING,
+	STATE_DOWNLOAD_COMPLETE,
+} internal_state = STATE_UNINIT;
+
+/* Enum used when parsing AWS jobs topics messages are received on. */
+enum jobs_topic {
+	TOPIC_INVALID,
+	TOPIC_GET_NEXT,
+	TOPIC_GET_ACCEPTED,
+	TOPIC_NOTIFY_NEXT,
+	TOPIC_UPDATE_ACCEPTED,
+	TOPIC_UPDATE_REJECTED
 };
 
-/* Pointer to initialized MQTT client instance */
-static struct mqtt_client *c;
+/* Pointer to internal reference of an initialized MQTT client instance. */
+static struct mqtt_client *client_internal;
 
-/* Enum for tracking the job exectuion state */
-static enum execution_status execution_state = AWS_JOBS_QUEUED;
-static enum fota_status fota_state = NONE;
+/* Enum used for tracking the job exectuion status. */
+static enum execution_status execution_status = AWS_JOBS_QUEUED;
 
 /* Document version is read out from the job execution document and is then
  * incremented with each accepted update to the job execution.
  */
 static uint32_t execution_version_number;
 
-/* File download progress % */
+/* File download progress in percentage [0-100%]. */
 static size_t download_progress;
 
-/* Allocated strings for topics */
+/* Variable that keeps tracks of the MQTT connection state. */
+static bool connected;
+
+/* Allocated strings for topics. */
 static uint8_t notify_next_topic[AWS_JOBS_TOPIC_MAX_LEN];
 static uint8_t update_topic[AWS_JOBS_TOPIC_MAX_LEN];
 static uint8_t get_topic[AWS_JOBS_TOPIC_MAX_LEN];
 
-/* Allocated buffers for keeping hostname, json payload and file_path */
+/* Allocated buffers for keeping hostname, json payload and file_path. */
 static uint8_t payload_buf[CONFIG_AWS_FOTA_PAYLOAD_SIZE];
 static uint8_t hostname[CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN];
 static uint8_t file_path[CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN];
-static uint8_t job_id[AWS_JOBS_JOB_ID_MAX_LEN];
+
+/* Allocated buffer used to keep track the job ID currently being handled by the library. */
+static uint8_t job_id_handling[AWS_JOBS_JOB_ID_MAX_LEN] = AWS_JOB_ID_DEFAULT;
 static aws_fota_callback_t callback;
+
+/* Convenience functions used in internal state handling. */
+static char *state2str(enum internal_state state)
+{
+	switch (state) {
+	case STATE_UNINIT:
+		return "STATE_UNINIT";
+	case STATE_INIT:
+		return "STATE_INIT";
+	case STATE_DOWNLOADING:
+		return "STATE_DOWNLOADING";
+	case STATE_DOWNLOAD_COMPLETE:
+		return "STATE_DOWNLOAD_COMPLETE";
+	default:
+		return "Unknown";
+	}
+}
+
+static void internal_state_set(enum internal_state new_state)
+{
+	if (new_state == internal_state) {
+		LOG_DBG("State: %s", state2str(internal_state));
+		return;
+	}
+
+	LOG_DBG("State transition %s --> %s", state2str(internal_state), state2str(new_state));
+
+	internal_state = new_state;
+}
+
+static void reset_library(void)
+{
+	internal_state_set(STATE_INIT);
+	execution_status = AWS_JOBS_QUEUED;
+	download_progress = 0;
+	strncpy(job_id_handling, AWS_JOB_ID_DEFAULT, sizeof(job_id_handling));
+	job_id_handling[sizeof(job_id_handling) - 1] = '\0';
+	LOG_DBG("Library reset");
+}
+
+/* Function that returns AWS jobs specific topic enums depending on the incoming topic. */
+static enum jobs_topic topic_type_get(const char *incoming_topic, size_t topic_len)
+{
+#if defined(CONFIG_AWS_FOTA_LOG_LEVEL_DBG)
+	char debug_log[topic_len + 1];
+
+	memcpy(debug_log, incoming_topic, topic_len);
+	debug_log[topic_len] = '\0';
+	LOG_DBG("Received topic: %s", log_strdup(debug_log)); /* Make this debug */
+#endif
+
+	if (aws_jobs_cmp(get_topic, incoming_topic, topic_len, "")) {
+		return TOPIC_GET_NEXT;
+	} else if (aws_jobs_cmp(get_topic, incoming_topic, topic_len, "accepted")) {
+		return TOPIC_GET_ACCEPTED;
+	} else if (aws_jobs_cmp(notify_next_topic, incoming_topic, topic_len, "")) {
+		return TOPIC_NOTIFY_NEXT;
+	} else if (aws_jobs_cmp(update_topic, incoming_topic, topic_len, "accepted")) {
+		return TOPIC_UPDATE_ACCEPTED;
+	} else if (aws_jobs_cmp(update_topic, incoming_topic, topic_len, "rejected")) {
+		return TOPIC_UPDATE_REJECTED;
+	}
+
+	return TOPIC_INVALID;
+}
 
 /**
  * @brief Read the payload out of the published MQTT message from the MQTT
@@ -90,28 +166,12 @@ static int get_published_payload(struct mqtt_client *client, uint8_t *write_buf,
 }
 
 /**
- * @brief Wait for a job update to be accepted.
- */
-static inline void wait_for_update_accepted(void)
-{
-	uint32_t timeout = CONFIG_AWS_FOTA_UPDATE_TIMEOUT;
-
-	while (!accepted) {
-		k_sleep(K_SECONDS(1));
-		timeout--;
-		if (timeout == 0) {
-			break;
-		}
-	};
-}
-
-/**
  * @brief Update an AWS IoT Job Execution with a state and status details
  *
- * @param[in] client  Connected MQTT client instance
- * @param[in] job_id  Unique identifier for the devices Job Execution
- * @param[in] execution_state  The execution state to update the Job Execution
- *			       with.
+ * @param[in] client  Connected MQTT client instance.
+ * @param[in] job_id  Pointer to Unique Identifier of the devices Job Execution.
+ * @param[in] job_id_len Length of the passed in job ID.
+ * @param[in] status  The status to update the Job Execution with.
  * @param[in] client_token  Client identifier which will be repeated in the
  *			    respone of the update.
  *
@@ -119,27 +179,33 @@ static inline void wait_for_update_accepted(void)
  */
 static int update_job_execution(struct mqtt_client *const client,
 				const uint8_t *job_id,
-				enum execution_status state,
+				size_t job_id_len,
+				enum execution_status status,
 				const char *client_token)
 {
-	int ret;
+	int err;
 
-	/* Waiting for the previous call to this function to be accepted. */
-	wait_for_update_accepted();
-	accepted = false;
-	LOG_DBG("%s, state: %d, version_number: %d", __func__,
-		state, execution_version_number);
-
-	ret = aws_jobs_update_job_execution(client, job_id, state,
-						 NULL,
-					     execution_version_number,
-					     client_token, update_topic);
-
-	if (ret < 0) {
-		LOG_ERR("aws_jobs_update_job_execution failed: %d", ret);
+	/* Check if the library has obtained a job ID. */
+	if (strncmp(job_id, AWS_JOB_ID_DEFAULT, job_id_len) == 0) {
+		return -ECANCELED;
 	}
 
-	return ret;
+	LOG_DBG("%s, status: %d, version_number: %d", __func__,
+		status, execution_version_number);
+
+	err = aws_jobs_update_job_execution(client, job_id, status,
+					    NULL,
+					    execution_version_number,
+					    client_token, update_topic);
+
+	if (err < 0) {
+		LOG_ERR("aws_jobs_update_job_execution failed: %d", err);
+		return err;
+	}
+
+	execution_status = status;
+
+	return 0;
 }
 
 /**
@@ -157,8 +223,11 @@ static int update_job_execution(struct mqtt_client *const client,
 static int get_job_execution(struct mqtt_client *const client,
 			     uint32_t payload_len)
 {
-	int err = get_published_payload(client, payload_buf, payload_len);
+	int err;
+	int execution_version_number_prev = execution_version_number;
+	uint8_t job_id_incoming[AWS_JOBS_JOB_ID_MAX_LEN];
 
+	err = get_published_payload(client, payload_buf, payload_len);
 	if (err) {
 		LOG_ERR("Error when getting the payload: %d", err);
 		return err;
@@ -174,20 +243,30 @@ static int get_job_execution(struct mqtt_client *const client,
 
 	/* Check if message received is a job. */
 	err = aws_fota_parse_DescribeJobExecution_rsp(payload_buf, payload_len,
-						      job_id, hostname,
+						      job_id_incoming, hostname,
 						      file_path,
-						     &execution_version_number);
+						      &execution_version_number);
 
 	if (err < 0) {
 		LOG_ERR("Error when parsing the json: %d", err);
-		return err;
+		goto cleanup;
 	} else if (err == 0) {
 		LOG_DBG("Got only one field");
 		LOG_DBG("No queued jobs for this device");
 		return 0;
 	}
 
-	LOG_DBG("Job ID: %s", log_strdup(job_id));
+	/* Check if the incoming job is already being handled. */
+	if (strncmp(job_id_incoming, job_id_handling, sizeof(job_id_incoming)) == 0) {
+		LOG_WRN("Job already being handled, ignore message");
+		err = 0;
+		goto cleanup;
+	} else {
+		strncpy(job_id_handling, job_id_incoming, sizeof(job_id_handling));
+		job_id_handling[sizeof(job_id_handling) - 1] = '\0';
+	}
+
+	LOG_DBG("Job ID: %s", log_strdup(job_id_handling));
 	LOG_DBG("hostname: %s", log_strdup(hostname));
 	LOG_DBG("file_path %s", log_strdup(file_path));
 	LOG_DBG("execution_version_number: %d ", execution_version_number);
@@ -195,21 +274,18 @@ static int get_job_execution(struct mqtt_client *const client,
 	/* Subscribe to update topic to receive feedback on whether an
 	 * update is accepted or not.
 	 */
-	err = aws_jobs_subscribe_topic_update(client, job_id, update_topic);
+	err = aws_jobs_subscribe_topic_update(client, job_id_handling, update_topic);
 	if (err) {
-		LOG_ERR("Error when subscribing job_id_update: "
-				"%d", err);
-		return err;
+		LOG_ERR("Error when subscribing job_id_update: %d", err);
+		goto cleanup;
 	}
+
 	LOG_DBG("Subscribed to FOTA update topic %s", log_strdup(update_topic));
-
-	/* Set fota_state to DOWNLOAD_FIRMWARE, when we are subscribed
-	 * to job_id topics we will try to publish and if accepted we
-	 * can start the download
-	 */
-	fota_state = DOWNLOAD_FIRMWARE;
-
 	return 0;
+
+cleanup:
+	execution_version_number = execution_version_number_prev;
+	return err;
 }
 
 /**
@@ -224,16 +300,16 @@ static int get_job_execution(struct mqtt_client *const client,
 static int job_update_accepted(struct mqtt_client *const client,
 			       uint32_t payload_len)
 {
+	int err;
 	int sec_tag = -1;
 	char *apn = NULL;
-	int err = get_published_payload(client, payload_buf, payload_len);
 
+	err = get_published_payload(client, payload_buf, payload_len);
 	if (err) {
 		LOG_ERR("Error when getting the payload: %d", err);
 		return err;
 	}
 
-	accepted = true;
 	/* Update accepted, so the execution version number needs to be
 	 * incremented. This can also be parsed out from the response but it's
 	 * better if the device handles this state so we need to send less data.
@@ -242,57 +318,53 @@ static int job_update_accepted(struct mqtt_client *const client,
 	 */
 	execution_version_number++;
 
-	if (execution_state != AWS_JOBS_IN_PROGRESS
-	    && fota_state == DOWNLOAD_FIRMWARE) {
+	switch (execution_status) {
+	case AWS_JOBS_IN_PROGRESS: {
 		struct aws_fota_event aws_fota_evt = {
-			.id = AWS_FOTA_EVT_START };
-		/*Job document is updated and we are ready to download
-		 * the firmware.
-		 */
-		execution_state = AWS_JOBS_IN_PROGRESS;
+			.id = AWS_FOTA_EVT_START
+		};
+
 		LOG_DBG("Start downloading firmware from %s/%s",
 			log_strdup(hostname), log_strdup(file_path));
+
 #if defined(CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG)
 		sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG;
 #endif
 
 		err = fota_download_start(hostname, file_path, sec_tag, apn, 0);
 		if (err) {
-			LOG_ERR("Error (%d) when trying to start firmware "
-				"download", err);
-			execution_state = AWS_JOBS_FAILED;
+			LOG_ERR("Error (%d) when trying to start firmware download", err);
 			aws_fota_evt.id = AWS_FOTA_EVT_ERROR;
-			fota_state = NONE;
-			err = update_job_execution(client, job_id,
-						   execution_state, "");
-			if (err) {
-				return err;
-			}
-
+			callback(&aws_fota_evt);
+			return update_job_execution(client,
+						    job_id_handling,
+						    sizeof(job_id_handling),
+						    AWS_JOBS_FAILED, "");
 		}
-		callback(&aws_fota_evt);
-	} else if (execution_state == AWS_JOBS_IN_PROGRESS
-		   && fota_state == APPLY_UPDATE) {
-		LOG_DBG("Firmware download completed");
-		execution_state = AWS_JOBS_SUCCEEDED;
-		err = update_job_execution(client, job_id, execution_state, "");
-		if (err) {
-			LOG_ERR("Unable to update the job execution");
-			return err;
-		}
-	} else if (execution_state == AWS_JOBS_SUCCEEDED &&
-		   fota_state == APPLY_UPDATE) {
-		struct aws_fota_event aws_fota_evt = {
-			.id = AWS_FOTA_EVT_DONE };
 
+		internal_state_set(STATE_DOWNLOADING);
 		callback(&aws_fota_evt);
-		LOG_DBG("Job document updated with SUCCEDED");
-		LOG_DBG("Ready to reboot");
-	} else if (execution_state == AWS_JOBS_FAILED) {
-		fota_state = NONE;
-		execution_state = AWS_JOBS_QUEUED;
-		accepted = false;
+		LOG_DBG("Job document was updated with status IN_PROGRESS");
 	}
+		break;
+	case AWS_JOBS_SUCCEEDED: {
+		struct aws_fota_event aws_fota_evt = {
+			.id = AWS_FOTA_EVT_DONE
+		};
+
+		LOG_DBG("Job document was updated with status SUCCEEDED");
+		LOG_DBG("Ready to reboot");
+		callback(&aws_fota_evt);
+
+		/* Job is compeleted, reset library. */
+		reset_library();
+	}
+		break;
+	default:
+		LOG_ERR("Invalid execution status");
+		return -EINVAL;
+	}
+
 	return 0;
 }
 
@@ -305,7 +377,6 @@ static int job_update_accepted(struct mqtt_client *const client,
  *
  * @return A negative error code is returned.
  */
-
 static int job_update_rejected(struct mqtt_client *const client,
 			       uint32_t payload_len)
 {
@@ -321,6 +392,30 @@ static int job_update_rejected(struct mqtt_client *const client,
 	LOG_ERR("%s", log_strdup(payload_buf));
 	callback(&aws_fota_evt);
 	return -EFAULT;
+}
+
+/**
+ * @brief Check if topic contains job ID string.
+ *
+ * @param[in] topic Pointer to a string with topic to be checked.
+ * @param[in] topic_len Length of the topic.
+ * @param[in] job_id Pointer to a NULL terminated string that contains a job ID.
+ *
+ * @return True if job ID is present in the topic string. Otherwise false is returned.
+ */
+static int is_job_id_in_topic(const char *topic, size_t topic_len, const char *job_id)
+{
+	/* strstr() depends on job_id being null terminated and smaller than topic. */
+	if (topic_len < strlen(job_id)) {
+		LOG_WRN("Job ID cannot be larger than incoming topic");
+		return false;
+	}
+
+	if (strstr(topic, job_id) == NULL) {
+		return false;
+	}
+
+	return true;
 }
 
 /**
@@ -341,68 +436,174 @@ static int on_publish_evt(struct mqtt_client *const client,
 				   uint32_t topic_len,
 				   uint32_t payload_len)
 {
-	bool is_get_next_topic =
-		aws_jobs_cmp(get_topic, topic, topic_len, "");
-	bool is_get_accepted =
-		aws_jobs_cmp(get_topic, topic, topic_len, "accepted");
-	bool is_notify_next_topic =
-		aws_jobs_cmp(notify_next_topic, topic, topic_len, "");
-	bool doc_update_accepted =
-		aws_jobs_cmp(update_topic, topic, topic_len, "accepted");
-	bool doc_update_rejected =
-		aws_jobs_cmp(update_topic, topic, topic_len, "rejected");
+	int err;
+	enum jobs_topic type = topic_type_get(topic, topic_len);
 
-#if defined(CONFIG_AWS_FOTA_LOG_LEVEL_DBG)
-	char debug_log[topic_len + 1];
-
-	memcpy(debug_log, topic, topic_len);
-	debug_log[topic_len] = '\0';
-	LOG_DBG("Received topic: %s", log_strdup(debug_log));
-#endif
-	if (is_notify_next_topic) {
-		if (fota_state == NONE) {
-			LOG_DBG("Checking for an available job");
-
-			return get_job_execution(client, payload_len);
+	switch (type) {
+	case TOPIC_GET_NEXT:
+	case TOPIC_GET_ACCEPTED:
+	case TOPIC_NOTIFY_NEXT:
+		if (internal_state != STATE_INIT) {
+			goto read_payload;
 		}
 
-		/* If we get here, a job is already being handled. The incoming
-		 * message is most likely a duplicate and must be dropped
-		 * to not interfere with the job being processed.
-		 * The payload must still be read out in order to clear the
-		 * MQTT buffer for next incoming message.
-		 */
-		int err = get_published_payload(client, payload_buf, payload_len);
+		LOG_DBG("Checking for an available job");
+		return get_job_execution(client, payload_len);
+	case TOPIC_UPDATE_ACCEPTED:
+		if (internal_state != STATE_INIT &&
+		    internal_state != STATE_DOWNLOAD_COMPLETE) {
+			goto read_payload;
+		}
 
+		if (!is_job_id_in_topic(topic, topic_len, job_id_handling)) {
+			LOG_WRN("The currently handled job ID is not in incoming accepted topic");
+			goto read_payload;
+		}
+
+		return job_update_accepted(client, payload_len);
+	case TOPIC_UPDATE_REJECTED:
+		if (internal_state != STATE_INIT &&
+		    internal_state != STATE_DOWNLOAD_COMPLETE) {
+			goto read_payload;
+		}
+
+		if (!is_job_id_in_topic(topic, topic_len, job_id_handling)) {
+			LOG_WRN("The currently handled job ID is not in incoming rejected topic");
+			goto read_payload;
+		}
+
+		return job_update_rejected(client, payload_len);
+	default:
+		/* The incoming topic is not related to AWS FOTA. */
+		return 1;
+	}
+
+read_payload:
+
+	/* If we get here, a job is already being handled. The incoming
+	 * message is most likely a duplicate and must be dropped
+	 * to not interfere with the job being processed.
+	 * The payload must still be read out in order to clear the
+	 * MQTT buffer for next incoming message.
+	 */
+	err = get_published_payload(client, payload_buf, payload_len);
+	if (err) {
+		LOG_ERR("Error when getting the payload: %d", err);
+		return err;
+	}
+
+	LOG_DBG("FOTA already in progress, message is ignored");
+	return 0;
+}
+
+static int on_connack_evt(struct mqtt_client *const client)
+{
+	int err;
+
+	switch (internal_state) {
+	case STATE_INIT:
+		err = aws_jobs_subscribe_topic_notify_next(client, notify_next_topic);
 		if (err) {
-			LOG_ERR("Error when getting the payload: %d", err);
+			LOG_ERR("Unable to subscribe to notify-next topic");
 			return err;
 		}
 
-		LOG_DBG("FOTA already in progress, message is ignored");
+		err = aws_jobs_subscribe_topic_get(client, "$next", get_topic);
+		if (err) {
+			LOG_ERR("Unable to subscribe to jobs/$next/get");
+			return err;
+		}
+		break;
+	case STATE_DOWNLOADING:
+		/* Fall through */
+	case STATE_DOWNLOAD_COMPLETE:
+		if (strncmp(job_id_handling, AWS_JOB_ID_DEFAULT, sizeof(job_id_handling)) == 0) {
+			return -ECANCELED;
+		}
 
-		return 0;
-	} else if (is_get_next_topic || is_get_accepted) {
-		LOG_DBG("Checking for an available job");
-		return get_job_execution(client, payload_len);
-	} else if (doc_update_accepted) {
-		return job_update_accepted(client, payload_len);
-	} else if (doc_update_rejected) {
-		LOG_ERR("Job document update was rejected");
-		return job_update_rejected(client, payload_len);
+		err = aws_jobs_subscribe_topic_update(client, job_id_handling, update_topic);
+		if (err) {
+			LOG_ERR("Error when subscribing job_id_update: %d", err);
+			return err;
+		}
+
+		LOG_DBG("Subscribed to FOTA update topic %s", log_strdup(update_topic));
+		break;
+	default:
+		break;
 	}
-#if defined(CONFIG_AWS_FOTA_LOG_LEVEL_DBG)
-	LOG_DBG("received an unhandled MQTT publish event on topic: %s",
-		log_strdup(debug_log));
-#endif
 
-	return 1;
+	return 0;
+}
+
+static int on_suback_evt(struct mqtt_client *const client, uint16_t message_id)
+{
+	int err;
+
+	switch (message_id) {
+	case SUBSCRIBE_NOTIFY_NEXT:
+		LOG_DBG("Subscribed to notify-next topic");
+
+		err = aws_jobs_get_job_execution(client, "$next", get_topic);
+		if (err) {
+			LOG_ERR("aws_jobs_get_job_execution failed, error: %d", err);
+			return err;
+		}
+
+		break;
+	case SUBSCRIBE_GET:
+		LOG_DBG("Subscribed to get topic");
+		break;
+	case SUBSCRIBE_JOB_ID_GET:
+		LOG_DBG("Subscribed to get next-topic");
+		break;
+	case SUBSCRIBE_JOB_ID_UPDATE:
+		LOG_DBG("Subscribed to job ID update accepted/rejected topics");
+
+		enum execution_status status;
+
+		switch (internal_state) {
+		case STATE_INIT:
+			status = AWS_JOBS_IN_PROGRESS;
+			break;
+		case STATE_DOWNLOAD_COMPLETE:
+			status = AWS_JOBS_SUCCEEDED;
+			break;
+		case STATE_DOWNLOADING:
+			return 0;
+		default:
+			LOG_WRN("Invalid state");
+			return -ECANCELED;
+		}
+
+		err = update_job_execution(client,
+					   job_id_handling,
+					   sizeof(job_id_handling),
+					   status,
+					   "");
+		if (err) {
+			LOG_ERR("update_job_execution failed, error: %d", err);
+			return err;
+		}
+
+		break;
+	default:
+		/* Message ID not related to AWS FOTA. */
+		break;
+	} /* end switch(message_id) */
+
+	return 0;
 }
 
 int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			      const struct mqtt_evt *evt)
 {
 	int err;
+
+	if (internal_state == STATE_UNINIT) {
+		LOG_WRN("AWS FOTA library not initialized");
+		return -ENOENT;
+	}
 
 	switch (evt->type) {
 	case MQTT_EVT_CONNACK:
@@ -413,50 +614,12 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			return 1;
 		}
 
-		if (IS_ENABLED(CONFIG_MQTT_CLEAN_SESSION) ||
-		    !evt->param.connack.session_present_flag) {
-			err = aws_jobs_subscribe_topic_notify_next(client,
-							     notify_next_topic);
-			if (err) {
-				LOG_ERR("Unable to subscribe to"
-					" notify-next topic");
-				return err;
-			}
+		connected = true;
 
-			err = aws_jobs_subscribe_topic_get(client, "$next",
-							   get_topic);
-			if (err) {
-				LOG_ERR("Unable to subscribe to"
-					" jobs/$next/get");
-				return err;
-			}
-		} else {
-			LOG_DBG("Previous session valid;"
-				" skipping FOTA subscriptions");
-			err = aws_jobs_create_topic_notify_next(client,
-							     notify_next_topic);
-			if (err) {
-				LOG_ERR("Error when creating topic: %d", err);
-				return err;
-			}
-			LOG_DBG("Created notify_next_topic %s",
-				log_strdup(notify_next_topic));
-
-			err = aws_jobs_create_topic_get(client, "$next",
-							get_topic);
-			if (err) {
-				LOG_ERR("Error when creating topic: %d", err);
-				return err;
-			}
-			LOG_DBG("Created get_topic %s", log_strdup(get_topic));
-
-			LOG_DBG("previously subscribed to notify-next topic");
-			err = aws_jobs_get_job_execution(client, "$next",
-							 get_topic);
-			if (err) {
-				LOG_ERR("Error when publishing: %d", err);
-				return err;
-			}
+		err = on_connack_evt(client);
+		if (err) {
+			LOG_WRN("on_connack_evt failed, error: %d", err);
+			goto cleanup;
 		}
 
 		/* This expects that the application's mqtt handler will handle
@@ -466,6 +629,7 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 		return 1;
 
 	case MQTT_EVT_DISCONNECT:
+		connected = false;
 		return 1;
 
 	case MQTT_EVT_PUBLISH: {
@@ -477,7 +641,7 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 				     p->message.payload.len);
 
 		if (err < 0) {
-			return err;
+			goto cleanup;
 		} else if (err == 1) {
 			return err;
 		}
@@ -488,11 +652,12 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			};
 
 			/* Send acknowledgment. */
-			err = mqtt_publish_qos1_ack(c, &ack);
+			err = mqtt_publish_qos1_ack(client_internal, &ack);
 			if (err) {
-				return err;
+				goto cleanup;
 			}
 		}
+
 		return 0;
 
 	} break;
@@ -502,36 +667,18 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			LOG_ERR("MQTT PUBACK error %d", evt->result);
 			return 0;
 		}
+
 		return 1;
 
 	case MQTT_EVT_SUBACK:
 		if (evt->result != 0) {
 			return evt->result;
 		}
-		if (evt->param.suback.message_id == SUBSCRIBE_NOTIFY_NEXT) {
-			LOG_DBG("subscribed to notify-next topic");
-			err = aws_jobs_get_job_execution(client, "$next",
-							 get_topic);
-			if (err) {
-				return err;
-			}
-			return 0;
-		}
 
-		if (evt->param.suback.message_id == SUBSCRIBE_GET) {
-			LOG_DBG("subscribed to get topic");
-			return 0;
-		}
-
-		if ((fota_state == DOWNLOAD_FIRMWARE) &&
-		   (evt->param.suback.message_id == SUBSCRIBE_JOB_ID_UPDATE)) {
-			download_progress = 0;
-			err = update_job_execution(client, job_id,
-						   AWS_JOBS_IN_PROGRESS, "");
-			if (err) {
-				return err;
-			}
-			return 0;
+		err = on_suback_evt(client, evt->param.suback.message_id);
+		if (err) {
+			LOG_WRN("on_suback_evt, error: %d", err);
+			goto cleanup;
 		}
 
 		return 1;
@@ -540,52 +687,77 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 		/* Handling for default case */
 		return 1;
 	}
+
+cleanup:
+	reset_library();
+	return err;
 }
 
 static void http_fota_handler(const struct fota_download_evt *evt)
 {
-	__ASSERT_NO_MSG(c != NULL);
+	__ASSERT_NO_MSG(client_internal != NULL);
 
 	int err = 0;
 	struct aws_fota_event aws_fota_evt;
 
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		LOG_DBG("FOTA download completed evt received");
+		LOG_DBG("FOTA_DOWNLOAD_EVT_FINISHED");
 
 		/* Always send download complete progress */
 		aws_fota_evt.id = AWS_FOTA_EVT_DL_PROGRESS;
 		aws_fota_evt.dl.progress = AWS_FOTA_EVT_DL_COMPLETE_VAL;
 		callback(&aws_fota_evt);
 
-		fota_state = APPLY_UPDATE;
-		err = update_job_execution(c, job_id, AWS_JOBS_IN_PROGRESS, "");
-		if (err != 0) {
+		err = update_job_execution(client_internal,
+					   job_id_handling,
+					   sizeof(job_id_handling),
+					   AWS_JOBS_SUCCEEDED,
+					   "");
+		if (err != 0 && connected) {
 			aws_fota_evt.id = AWS_FOTA_EVT_ERROR;
 			callback(&aws_fota_evt);
+			reset_library();
+			return;
 		}
+
+		internal_state_set(STATE_DOWNLOAD_COMPLETE);
 		break;
 
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
+		LOG_DBG("FOTA_DOWNLOAD_EVT_ERASE_PENDING");
 		aws_fota_evt.id = AWS_FOTA_EVT_ERASE_PENDING;
 		callback(&aws_fota_evt);
 		break;
 
 	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
+		LOG_DBG("FOTA_DOWNLOAD_EVT_ERASE_DONE");
 		aws_fota_evt.id = AWS_FOTA_EVT_ERASE_DONE;
 		callback(&aws_fota_evt);
 		break;
 
 	case FOTA_DOWNLOAD_EVT_ERROR:
-		LOG_ERR("FOTA download failed, report back");
-		fota_state = NONE;
-		execution_state = AWS_JOBS_QUEUED;
-		(void)update_job_execution(c, job_id, AWS_JOBS_FAILED, "");
+		LOG_ERR("FOTA_DOWNLOAD_EVT_ERROR");
+		(void)update_job_execution(client_internal,
+					   job_id_handling,
+					   sizeof(job_id_handling),
+					   AWS_JOBS_FAILED,
+					   "");
+
 		aws_fota_evt.id = AWS_FOTA_EVT_ERROR;
+
 		callback(&aws_fota_evt);
+		reset_library();
+
+		/* If the FOTA download fails it might be due to the image being deleted.
+		 * Try to get the next job if any exist.
+		 */
+		(void)aws_jobs_get_job_execution(client_internal, "$next", get_topic);
 		break;
 
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
+		LOG_DBG("FOTA_DOWNLOAD_EVT_PROGRESS");
+
 		/* Only if CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT is enabled */
 		download_progress = evt->progress;
 		aws_fota_evt.id = AWS_FOTA_EVT_DL_PROGRESS;
@@ -604,12 +776,17 @@ int aws_fota_init(struct mqtt_client *const client,
 {
 	int err;
 
+	if (internal_state != STATE_UNINIT) {
+		LOG_WRN("AWS FOTA library has already been initialized");
+		return -EPERM;
+	}
+
 	if (client == NULL || evt_handler == NULL) {
 		return -EINVAL;
 	}
 
 	/* Store client to make it available in event handlers. */
-	c = client;
+	client_internal = client;
 	callback = evt_handler;
 
 	err = fota_download_init(http_fota_handler);
@@ -618,6 +795,7 @@ int aws_fota_init(struct mqtt_client *const client,
 		return err;
 	}
 
+	internal_state_set(STATE_INIT);
 	return 0;
 }
 
@@ -626,5 +804,5 @@ int aws_fota_get_job_id(uint8_t *const job_id_buf, size_t buf_size)
 	if ((job_id_buf == NULL) || (buf_size == 0)) {
 		return -EINVAL;
 	}
-	return snprintf(job_id_buf, buf_size, "%s", job_id);
+	return snprintf(job_id_buf, buf_size, "%s", job_id_handling);
 }
