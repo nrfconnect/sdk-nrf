@@ -5,9 +5,8 @@
  */
 
 #include <zephyr.h>
-#include <nrf_socket.h>
-#include <net/socket.h>
-#include <stdio.h>
+#include <nrf_modem_gnss.h>
+#include <string.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
 
@@ -21,10 +20,6 @@
 #define AT_ACTIVATE_GPS     "AT+CFUN=31"
 #define AT_ACTIVATE_LTE     "AT+CFUN=21"
 #define AT_DEACTIVATE_LTE   "AT+CFUN=20"
-
-#define GNSS_INIT_AND_START 1
-#define GNSS_STOP           2
-#define GNSS_RESTART        3
 
 #define AT_CMD_SIZE(x) (sizeof(x) - 1)
 
@@ -58,19 +53,36 @@ static const char *const at_commands[] = {
 	AT_ACTIVATE_GPS
 };
 
-static int                   gnss_fd;
-static char                  nmea_strings[10][NRF_GNSS_NMEA_MAX_LEN];
-static uint32_t                 nmea_string_cnt;
+static struct nrf_modem_gnss_pvt_data_frame last_pvt;
+static volatile bool gnss_blocked;
 
-static bool                  got_fix;
-static uint64_t                 fix_timestamp;
-static nrf_gnss_data_frame_t last_pvt;
+#ifdef CONFIG_SUPL_CLIENT_LIB
+static struct nrf_modem_gnss_agps_data_frame last_agps;
+static struct k_work_q agps_work_q;
+static struct k_work get_agps_data_work;
 
+#define AGPS_WORKQ_THREAD_STACK_SIZE 2048
+#define AGPS_WORKQ_THREAD_PRIORITY   5
+
+K_THREAD_STACK_DEFINE(agps_workq_stack_area, AGPS_WORKQ_THREAD_STACK_SIZE);
+#endif
+
+K_MSGQ_DEFINE(nmea_queue, sizeof(struct nrf_modem_gnss_nmea_data_frame *), 10, 4);
+K_SEM_DEFINE(pvt_data_sem, 0, 1);
 K_SEM_DEFINE(lte_ready, 0, 1);
+
+struct k_poll_event events[2] = {
+	K_POLL_EVENT_STATIC_INITIALIZER(K_POLL_TYPE_SEM_AVAILABLE,
+					K_POLL_MODE_NOTIFY_ONLY,
+					&pvt_data_sem, 0),
+	K_POLL_EVENT_STATIC_INITIALIZER(K_POLL_TYPE_MSGQ_DATA_AVAILABLE,
+					K_POLL_MODE_NOTIFY_ONLY,
+					&nmea_queue, 0),
+};
 
 void nrf_modem_recoverable_error_handler(uint32_t error)
 {
-	printf("Err: %lu\n", (unsigned long)error);
+	printk("Modem library recoverable error: %u\n", error);
 }
 
 static int setup_modem(void)
@@ -87,17 +99,13 @@ static int setup_modem(void)
 
 #ifdef CONFIG_SUPL_CLIENT_LIB
 /* Accepted network statuses read from modem */
-static const char status1[] = "+CEREG: 1";
-static const char status2[] = "+CEREG:1";
-static const char status3[] = "+CEREG: 5";
-static const char status4[] = "+CEREG:5";
+static const char status_reg_home[]    = "+CEREG: 1";
+static const char status_reg_roaming[] = "+CEREG: 5";
 
 static void wait_for_lte(void *context, const char *response)
 {
-	if (!memcmp(status1, response, AT_CMD_SIZE(status1)) ||
-		!memcmp(status2, response, AT_CMD_SIZE(status2)) ||
-		!memcmp(status3, response, AT_CMD_SIZE(status3)) ||
-		!memcmp(status4, response, AT_CMD_SIZE(status4))) {
+	if (!memcmp(status_reg_home, response, AT_CMD_SIZE(status_reg_home)) ||
+	    !memcmp(status_reg_roaming, response, AT_CMD_SIZE(status_reg_roaming))) {
 		k_sem_give(&lte_ready);
 	}
 }
@@ -128,263 +136,142 @@ static int activate_lte(bool activate)
 
 	return 0;
 }
-#endif
 
-static int gnss_ctrl(uint32_t ctrl)
+static void get_agps_data(struct k_work *item)
 {
-	int retval;
+	ARG_UNUSED(item);
 
-	nrf_gnss_fix_retry_t    fix_retry    = 0;
-	nrf_gnss_fix_interval_t fix_interval = 1;
-	nrf_gnss_delete_mask_t	delete_mask  = 0;
-	nrf_gnss_nmea_mask_t	nmea_mask    = NRF_GNSS_NMEA_GSV_MASK |
-					       NRF_GNSS_NMEA_GSA_MASK |
-					       NRF_GNSS_NMEA_GLL_MASK |
-					       NRF_GNSS_NMEA_GGA_MASK |
-					       NRF_GNSS_NMEA_RMC_MASK;
+	printk("\033[1;1H");
+	printk("\033[2J");
+	printk("New A-GPS data requested, contacting SUPL server, flags %d\n",
+			last_agps.data_flags);
 
-	if (ctrl == GNSS_INIT_AND_START) {
-		gnss_fd = nrf_socket(NRF_AF_LOCAL,
-				     NRF_SOCK_DGRAM,
-				     NRF_PROTO_GNSS);
+	activate_lte(true);
+	printk("Established LTE link\n");
 
-		if (gnss_fd >= 0) {
-			printk("GPS Socket created\n");
-		} else {
-			printk("Could not init socket (err: %d)\n", gnss_fd);
-			return -1;
-		}
+	if (open_supl_socket() == 0) {
+		printk("Starting SUPL session\n");
+		supl_session(&last_agps);
+		printk("Done\n");
+		close_supl_socket();
+	}
+	activate_lte(false);
+}
 
-		retval = nrf_setsockopt(gnss_fd,
-					NRF_SOL_GNSS,
-					NRF_SO_GNSS_FIX_RETRY,
-					&fix_retry,
-					sizeof(fix_retry));
-		if (retval != 0) {
-			printk("Failed to set fix retry value\n");
-			return -1;
-		}
+static int inject_agps_type(void *agps, size_t agps_size, uint16_t type, void *user_data)
+{
+	ARG_UNUSED(user_data);
 
-		retval = nrf_setsockopt(gnss_fd,
-					NRF_SOL_GNSS,
-					NRF_SO_GNSS_FIX_INTERVAL,
-					&fix_interval,
-					sizeof(fix_interval));
-		if (retval != 0) {
-			printk("Failed to set fix interval value\n");
-			return -1;
-		}
+	int retval = nrf_modem_gnss_agps_write(agps, agps_size, type);
 
-		retval = nrf_setsockopt(gnss_fd,
-					NRF_SOL_GNSS,
-					NRF_SO_GNSS_NMEA_MASK,
-					&nmea_mask,
-					sizeof(nmea_mask));
-		if (retval != 0) {
-			printk("Failed to set nmea mask\n");
-			return -1;
-		}
+	if (retval != 0) {
+		printk("Failed to write A-GPS data, type: %d (errno: %d)\n", type, errno);
+		return -1;
 	}
 
-	if ((ctrl == GNSS_INIT_AND_START) ||
-	    (ctrl == GNSS_RESTART)) {
-		retval = nrf_setsockopt(gnss_fd,
-					NRF_SOL_GNSS,
-					NRF_SO_GNSS_START,
-					&delete_mask,
-					sizeof(delete_mask));
-		if (retval != 0) {
-			printk("Failed to start GPS\n");
-			return -1;
-		}
-	}
-
-	if (ctrl == GNSS_STOP) {
-		retval = nrf_setsockopt(gnss_fd,
-					NRF_SOL_GNSS,
-					NRF_SO_GNSS_STOP,
-					&delete_mask,
-					sizeof(delete_mask));
-		if (retval != 0) {
-			printk("Failed to stop GPS\n");
-			return -1;
-		}
-	}
+	printk("Injected A-GPS data, type: %d, size: %d\n", type, agps_size);
 
 	return 0;
+}
+#endif
+
+static void gnss_event_handler(int event)
+{
+	int retval;
+	struct nrf_modem_gnss_nmea_data_frame *nmea_data;
+
+	switch (event) {
+	case NRF_MODEM_GNSS_EVT_PVT:
+		retval = nrf_modem_gnss_read(&last_pvt, sizeof(last_pvt), NRF_MODEM_GNSS_DATA_PVT);
+		if (retval == 0) {
+			k_sem_give(&pvt_data_sem);
+		}
+		break;
+
+	case NRF_MODEM_GNSS_EVT_NMEA:
+		nmea_data = k_malloc(sizeof(struct nrf_modem_gnss_nmea_data_frame));
+		if (nmea_data == NULL) {
+			printk("Failed to allocate memory for NMEA\n");
+			break;
+		}
+
+		retval = nrf_modem_gnss_read(nmea_data,
+					     sizeof(struct nrf_modem_gnss_nmea_data_frame),
+					     NRF_MODEM_GNSS_DATA_NMEA);
+		if (retval == 0) {
+			retval = k_msgq_put(&nmea_queue, &nmea_data, K_NO_WAIT);
+		}
+
+		if (retval != 0) {
+			k_free(nmea_data);
+		}
+		break;
+
+	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
+#ifdef CONFIG_SUPL_CLIENT_LIB
+		retval = nrf_modem_gnss_read(&last_agps,
+					     sizeof(last_agps),
+					     NRF_MODEM_GNSS_DATA_AGPS_REQ);
+		if (retval == 0) {
+			k_work_submit_to_queue(&agps_work_q, &get_agps_data_work);
+		}
+#endif
+		break;
+
+	case NRF_MODEM_GNSS_EVT_BLOCKED:
+		gnss_blocked = true;
+		break;
+
+	case NRF_MODEM_GNSS_EVT_UNBLOCKED:
+		gnss_blocked = false;
+		break;
+
+	default:
+		break;
+	}
 }
 
 static int init_app(void)
 {
-	int retval;
-
 	if (setup_modem() != 0) {
 		printk("Failed to initialize modem\n");
 		return -1;
 	}
 
-	retval = gnss_ctrl(GNSS_INIT_AND_START);
-
-	return retval;
-}
-
-static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
-{
-	uint8_t  tracked          = 0;
-	uint8_t  in_fix           = 0;
-	uint8_t  unhealthy        = 0;
-
-	for (int i = 0; i < NRF_GNSS_MAX_SATELLITES; ++i) {
-
-		if ((pvt_data->pvt.sv[i].sv > 0) &&
-		    (pvt_data->pvt.sv[i].sv < 33)) {
-
-			tracked++;
-
-			if (pvt_data->pvt.sv[i].flags &
-					NRF_GNSS_SV_FLAG_USED_IN_FIX) {
-				in_fix++;
-			}
-
-			if (pvt_data->pvt.sv[i].flags &
-					NRF_GNSS_SV_FLAG_UNHEALTHY) {
-				unhealthy++;
-			}
-		}
-	}
-
-	printk("Tracking: %d Using: %d Unhealthy: %d\n", tracked,
-							 in_fix,
-							 unhealthy);
-}
-
-static void print_gnss_stats(nrf_gnss_data_frame_t *pvt_data)
-{
-	if (pvt_data->pvt.flags & NRF_GNSS_PVT_FLAG_DEADLINE_MISSED) {
-		printk("GNSS notification deadline missed\n");
-	}
-	if (pvt_data->pvt.flags & NRF_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) {
-		printk("GNSS operation blocked by insufficient time windows\n");
-	}
-}
-
-static void print_fix_data(nrf_gnss_data_frame_t *pvt_data)
-{
-	printf("Longitude:  %f\n", pvt_data->pvt.longitude);
-	printf("Latitude:   %f\n", pvt_data->pvt.latitude);
-	printf("Altitude:   %f\n", pvt_data->pvt.altitude);
-	printf("Speed:      %f\n", pvt_data->pvt.speed);
-	printf("Heading:    %f\n", pvt_data->pvt.heading);
-	printk("Date:       %02u-%02u-%02u\n", pvt_data->pvt.datetime.year,
-					       pvt_data->pvt.datetime.month,
-					       pvt_data->pvt.datetime.day);
-	printk("Time (UTC): %02u:%02u:%02u\n", pvt_data->pvt.datetime.hour,
-					       pvt_data->pvt.datetime.minute,
-					      pvt_data->pvt.datetime.seconds);
-}
-
-static void print_nmea_data(void)
-{
-	for (int i = 0; i < nmea_string_cnt; ++i) {
-		printk("%s", nmea_strings[i]);
-	}
-}
-
-int process_gps_data(nrf_gnss_data_frame_t *gps_data)
-{
-	int retval;
-
-	retval = nrf_recv(gnss_fd,
-			  gps_data,
-			  sizeof(nrf_gnss_data_frame_t),
-			  NRF_MSG_DONTWAIT);
-
-	if (retval > 0) {
-
-		switch (gps_data->data_id) {
-		case NRF_GNSS_PVT_DATA_ID:
-			memcpy(&last_pvt,
-			       gps_data,
-			       sizeof(nrf_gnss_data_frame_t));
-			nmea_string_cnt = 0;
-			got_fix = false;
-
-			if (gps_data->pvt.flags
-					& NRF_GNSS_PVT_FLAG_FIX_VALID_BIT) {
-
-				got_fix = true;
-				fix_timestamp = k_uptime_get();
-			}
-			break;
-
-		case NRF_GNSS_NMEA_DATA_ID:
-			if (nmea_string_cnt < 10) {
-				memcpy(nmea_strings[nmea_string_cnt++],
-				       gps_data->nmea,
-				       retval);
-			}
-			break;
-
-		case NRF_GNSS_AGPS_DATA_ID:
-#ifdef CONFIG_SUPL_CLIENT_LIB
-			printk("\033[1;1H");
-			printk("\033[2J");
-			printk("New AGPS data requested, contacting SUPL server, flags %d\n",
-			       gps_data->agps.data_flags);
-			gnss_ctrl(GNSS_STOP);
-			activate_lte(true);
-			printk("Established LTE link\n");
-			if (open_supl_socket() == 0) {
-				printf("Starting SUPL session\n");
-				supl_session(&gps_data->agps);
-				printk("Done\n");
-				close_supl_socket();
-			}
-			activate_lte(false);
-			gnss_ctrl(GNSS_RESTART);
-			k_msleep(2000);
-#endif
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	return retval;
-}
-
-#ifdef CONFIG_SUPL_CLIENT_LIB
-int inject_agps_type(void *agps,
-		     size_t agps_size,
-		     nrf_gnss_agps_data_type_t type,
-		     void *user_data)
-{
-	ARG_UNUSED(user_data);
-	int retval = nrf_sendto(gnss_fd,
-				agps,
-				agps_size,
-				0,
-				&type,
-				sizeof(type));
-
-	if (retval != 0) {
-		printk("Failed to send AGNSS data, type: %d (err: %d)\n",
-		       type,
-		       errno);
+	/* Initialize and configure GNSS */
+	if (nrf_modem_gnss_init() != 0) {
+		printk("Failed to initialize GNSS interface\n");
 		return -1;
 	}
 
-	printk("Injected AGPS data, flags: %d, size: %d\n", type, agps_size);
+	if (nrf_modem_gnss_event_handler_set(gnss_event_handler) != 0) {
+		printk("Failed to set GNSS event handler\n");
+		return -1;
+	}
 
-	return 0;
-}
-#endif
+	if (nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_RMC_MASK |
+					 NRF_MODEM_GNSS_NMEA_GGA_MASK |
+					 NRF_MODEM_GNSS_NMEA_GLL_MASK |
+					 NRF_MODEM_GNSS_NMEA_GSA_MASK |
+					 NRF_MODEM_GNSS_NMEA_GSV_MASK) != 0) {
+		printk("Failed to set GNSS NMEA mask\n");
+		return -1;
+	}
 
-int main(void)
-{
-	nrf_gnss_data_frame_t gps_data;
-	uint8_t		      cnt = 0;
+	if (nrf_modem_gnss_fix_retry_set(0) != 0) {
+		printk("Failed to set GNSS fix retry\n");
+		return -1;
+	}
+
+	if (nrf_modem_gnss_fix_interval_set(1) != 0) {
+		printk("Failed to set GNSS fix interval\n");
+		return -1;
+	}
+
+	if (nrf_modem_gnss_start() != 0) {
+		printk("Failed to start GNSS\n");
+		return -1;
+	}
 
 #ifdef CONFIG_SUPL_CLIENT_LIB
 	static struct supl_api supl_api = {
@@ -394,58 +281,130 @@ int main(void)
 		.logger     = supl_logger,
 		.counter_ms = k_uptime_get
 	};
+
+	k_work_queue_start(
+		&agps_work_q,
+		agps_workq_stack_area,
+		K_THREAD_STACK_SIZEOF(agps_workq_stack_area),
+		AGPS_WORKQ_THREAD_PRIORITY,
+		NULL);
+
+	k_work_init(&get_agps_data_work, get_agps_data);
+
+	if (supl_init(&supl_api) != 0) {
+		printk("Failed to initialize SUPL library\n");
+		return -1;
+	}
 #endif
 
-	printk("Starting GPS application\n");
+	return 0;
+}
+
+static void print_satellite_stats(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
+	uint8_t tracked   = 0;
+	uint8_t in_fix    = 0;
+	uint8_t unhealthy = 0;
+
+	for (int i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; ++i) {
+		if (pvt_data->sv[i].sv > 0) {
+			tracked++;
+
+			if (pvt_data->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX) {
+				in_fix++;
+			}
+
+			if (pvt_data->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY) {
+				unhealthy++;
+			}
+		}
+	}
+
+	printk("Tracking: %d Using: %d Unhealthy: %d\n", tracked, in_fix, unhealthy);
+}
+
+static void print_fix_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
+	printk("Latitude:   %.06f\n", pvt_data->latitude);
+	printk("Longitude:  %.06f\n", pvt_data->longitude);
+	printk("Altitude:   %.01f m\n", pvt_data->altitude);
+	printk("Accuracy:   %.01f m\n", pvt_data->accuracy);
+	printk("Speed:      %.01f m/s\n", pvt_data->speed);
+	printk("Heading:    %.01f deg\n", pvt_data->heading);
+	printk("Date:       %02u-%02u-%02u\n", pvt_data->datetime.year,
+					       pvt_data->datetime.month,
+					       pvt_data->datetime.day);
+	printk("Time (UTC): %02u:%02u:%02u\n", pvt_data->datetime.hour,
+					       pvt_data->datetime.minute,
+					       pvt_data->datetime.seconds);
+}
+
+static bool agps_data_download_ongoing(void)
+{
+#ifdef CONFIG_SUPL_CLIENT_LIB
+	return k_work_is_pending(&get_agps_data_work);
+#else
+	return false;
+#endif
+}
+
+int main(void)
+{
+	uint8_t cnt = 0;
+	uint64_t fix_timestamp = 0;
+	struct nrf_modem_gnss_nmea_data_frame *nmea_data;
+
+	printk("Starting GPS sample\n");
 
 	if (init_app() != 0) {
 		return -1;
 	}
 
-#ifdef CONFIG_SUPL_CLIENT_LIB
-	int rc = supl_init(&supl_api);
+	printk("Getting GNSS data...\n");
 
-	if (rc != 0) {
-		return rc;
-	}
-#endif
+	for (;;) {
+		(void)k_poll(events, 2, K_FOREVER);
 
-	printk("Getting GPS data...\n");
+		if (events[0].state == K_POLL_STATE_SEM_AVAILABLE &&
+		    k_sem_take(events[0].sem, K_NO_WAIT) == 0) {
+			/* New PVT data available */
 
-	while (1) {
+			if (!IS_ENABLED(CONFIG_GPS_SAMPLE_NMEA_ONLY) &&
+			    !agps_data_download_ongoing()) {
+				printk("\033[1;1H");
+				printk("\033[2J");
+				print_satellite_stats(&last_pvt);
 
-		do {
-			/* Loop until we don't have more
-			 * data to read
-			 */
-		} while (process_gps_data(&gps_data) > 0);
+				if (gnss_blocked) {
+					printk("GNSS operation blocked by LTE\n");
+				}
+				printk("---------------------------------\n");
 
-		if (IS_ENABLED(CONFIG_GPS_SAMPLE_NMEA_ONLY)) {
-			print_nmea_data();
-			nmea_string_cnt = 0;
-		} else {
-			printk("\033[1;1H");
-			printk("\033[2J");
-			print_satellite_stats(&last_pvt);
-			print_gnss_stats(&last_pvt);
-			printk("---------------------------------\n");
+				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
+					fix_timestamp = k_uptime_get();
+					print_fix_data(&last_pvt);
+				} else {
+					printk("Seconds since last fix: %lld\n",
+							(k_uptime_get() - fix_timestamp) / 1000);
+					cnt++;
+					printk("Searching [%c]\n", update_indicator[cnt%4]);
+				}
 
-			if (!got_fix) {
-				printk("Seconds since last fix: %lld\n",
-				       (k_uptime_get() - fix_timestamp) / 1000);
-				cnt++;
-				printk("Searching [%c]\n",
-				       update_indicator[cnt%4]);
-			} else {
-				print_fix_data(&last_pvt);
+				printk("\nNMEA strings:\n\n");
 			}
+		}
+		if (events[1].state == K_POLL_STATE_MSGQ_DATA_AVAILABLE &&
+		    k_msgq_get(events[1].msgq, &nmea_data, K_NO_WAIT) == 0) {
+			/* New NMEA data available */
 
-			printk("\nNMEA strings:\n\n");
-			print_nmea_data();
-			printk("---------------------------------");
+			if (!agps_data_download_ongoing()) {
+				printk("%s", nmea_data->nmea_str);
+			}
+			k_free(nmea_data);
 		}
 
-		k_msleep(500);
+		events[0].state = K_POLL_STATE_NOT_READY;
+		events[1].state = K_POLL_STATE_NOT_READY;
 	}
 
 	return 0;

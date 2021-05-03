@@ -1,31 +1,38 @@
 .. _gps_with_supl_support_sample:
 
-nRF9160: GPS sockets and SUPL client library
-############################################
+nRF9160: GPS with SUPL client library
+#####################################
 
 .. contents::
    :local:
    :depth: 2
 
-The GPS sample demonstrates how to retrieve `GPS`_ data.
-If Secure User-Plane Location (SUPL) support is enabled, it also shows how to improve the GPS fix accuracy and fix speed with `A-GPS`_ data from a SUPL server.
+The GPS sample demonstrates how to retrieve `GNSS`_ data.
+If Secure User-Plane Location (SUPL) support is enabled, it also shows how to improve the fix accuracy and fix speed with `A-GPS`_ data from a SUPL server.
 See :ref:`supl_client` for information on enabling SUPL support for the sample.
 
-The sample first creates a `GNSS`_ socket.
-Then it reads the GPS data from the socket and parses the received frames to interpret the frame contents.
-See :ref:`nrfxlib:gnss_extension` for more information.
+The sample first initializes the GNSS interface.
+Then it handles events from the interface, reads the associated data and outputs information to the console.
+Because `NMEA`_ data needs to be read as soon as an NMEA event is received, a :ref:`Zephyr message queue <zephyr:message_queues_v2>` is used for buffering the NMEA strings.
+The event handler function reads the received NMEA strings and puts those into the message queue.
+The consumer loop reads from the queue and outputs the strings to the console.
+
+When SUPL support is enabled, a :ref:`Zephyr workqueue <zephyr:workqueues_v2>` is used for downloading the A-GPS data.
+Downloading the data can take some time and the workqueue ensures that the main thread is not blocked during the operation.
+
+See :ref:`nrfxlib:gnss_interface` for more information.
 
 Overview
 ********
 
 This sample operates in two different modes.
 
-In the default mode, the sample displays information from both PVT (Position, Velocity, and Time) and `NMEA`_ strings.
+In the default mode, the sample displays information from both PVT (Position, Velocity, and Time) and NMEA strings.
 The sample can also be configured to run in NMEA-only mode, where only the NMEA strings are displayed in the console.
-The NMEA-only mode can be used to visualize the data from the GPS using a third-party tool.
+The NMEA-only mode can be used to visualize the data from the GNSS using a third-party tool.
 
 SUPL support can be enabled for both the default mode (PVT and NMEA) and the NMEA-only mode.
-When the SUPL support is enabled, the sample receives an A-GPS data request notification from the GPS module, and it starts downloading the A-GPS data requested by the GPS module.
+When the SUPL support is enabled, the sample receives an A-GPS data request notification from the GNSS module, and it starts downloading the A-GPS data requested by the GNSS module.
 The sample then displays the information in the terminal about the download process.
 Finally, after the download completes, the sample switches back to the previous display mode.
 
@@ -56,7 +63,7 @@ If the sample is to be used with the SUPL client library, the library must be do
 You can download it from the `Nordic Semiconductor website`_.
 See :ref:`supl_client` for information on installing and enabling the SUPL client library.
 
-The SUPL client library is not required, and the sample will work without `A-GPS`_ support if the library is not available.
+The SUPL client library is not required, and the sample will work without A-GPS support if the library is not available.
 
 Testing
 =======
@@ -88,17 +95,18 @@ After programming the sample and all the prerequisites to the development kit, y
                 ---------------------------------
 
    #. Observe that the numbers associated with the displayed parameters **Tracking** and **Using** change.
-   #. Observe that the sample displays the following information upon acquiring the GPS lock:
+   #. Observe that the sample displays the following information upon acquiring a fix:
 
           .. code-block:: console
 
                 Tracking: 7 Using: 5 Unhealthy: 0
                 ---------------------------------
-                Longitude:  23.771611
                 Latitude:   61.491275
-                Altitude:   116.274658
-                Speed:      0.039595
-                Heading:    0.000000
+                Longitude:  23.771611
+                Altitude:   116.3 m
+                Accuracy:   4.2 m
+                Speed:      0.0 m/s
+                Heading:    0.0 deg
                 Date:       2020-03-06
                 Time (UTC): 05:48:24
 
@@ -140,7 +148,7 @@ After programming the sample and all the prerequisites to the development kit, y
 
            .. code-block:: console
 
-              New AGPS data requested, contacting SUPL server, flags 59.
+              New A-GPS data requested, contacting SUPL server, flags 59
 
    b. Observe the following actions in the terminal emulator:
 
