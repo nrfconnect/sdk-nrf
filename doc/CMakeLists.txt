@@ -58,6 +58,8 @@ if(${SPHINXBUILD} STREQUAL SPHINXBUILD-NOTFOUND)
   message(FATAL_ERROR "The 'sphinx-build' command was not found. Make sure you have Sphinx installed.")
 endif()
 
+set(EXTRA_SPHINXOPTS "" CACHE STRING "Extra Sphinx Options")
+
 #
 # CMake build directories (build/zephyr, build/nrf, etc.) and the shared HTML
 # output directory
@@ -74,9 +76,6 @@ set(KCONFIG_BINARY_DIR ${CMAKE_BINARY_DIR}/Kconfig)
 # HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
 file(MAKE_DIRECTORY ${HTML_DIR})
-
-# Known issues script
-set(KI_SCRIPT ${NRF_BASE}/doc/scripts/filter-known-issues.py)
 
 #
 # Add the 'zephyr' target for building the Zephyr documentation. We reuse
@@ -133,12 +132,10 @@ set(NRF_DOC_DIR ${NRF_BASE}/doc/nrf)
 set(NRF_DOXYFILE_IN ${NRF_DOC_DIR}/nrf.doxyfile.in)
 set(NRF_DOXYFILE_OUT ${NRF_BINARY_DIR}/nrf.doxyfile)
 set(NRF_RST_OUT ${NRF_BINARY_DIR}/rst)
-set(NRF_DOC_LOG ${NRF_BINARY_DIR}/doc.log)
 set(NRF_DOXY_LOG ${NRF_BINARY_DIR}/doxy.log)
 set(NRF_SPHINX_LOG ${NRF_BINARY_DIR}/sphinx.log)
 set(NRF_CONTENT_OUTPUTS ${NRF_BINARY_DIR}/extracted-content.txt)
 set(NRF_DOC_WARN ${NRF_BINARY_DIR}/doc.warnings)
-set(NRF_KI_DIR ${NRF_BASE}/.known-issues/doc)
 
 configure_file(${NRF_DOXYFILE_IN} ${NRF_DOXYFILE_OUT} @ONLY)
 
@@ -243,15 +240,12 @@ set(nrf_sphinx_environment
 
 set(NRF_SPHINX_BUILD_HTML_COMMAND
   ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
 )
 
 add_custom_target(
   nrf-html
   COMMAND ${NRF_SPHINX_BUILD_HTML_COMMAND}
-  # Merge the Doxygen and Sphinx logs into a single file
-  COMMAND ${CMAKE_COMMAND} -P ${ZEPHYR_BASE}/cmake/util/fmerge.cmake ${NRF_DOC_LOG} ${NRF_DOXY_LOG} ${NRF_SPHINX_LOG}
-  COMMAND ${PYTHON_EXECUTABLE} ${KI_SCRIPT} --config-dir ${NRF_KI_DIR} --errors ${NRF_DOC_WARN} --warnings ${NRF_DOC_WARN} ${NRF_DOC_LOG}
   # Copy root index file
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/static/html/index.html ${HTML_DIR}
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
@@ -313,7 +307,7 @@ set(mcuboot_sphinx_environment
 add_custom_target(
   mcuboot-html
   COMMAND ${CMAKE_COMMAND} -E env ${mcuboot_sphinx_environment}
-  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html ${MCUBOOT_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${HTML_DIR}/mcuboot
+  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html ${MCUBOOT_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${HTML_DIR}/mcuboot
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
@@ -345,7 +339,6 @@ set(NRFXLIB_DOXYFILE_OUT ${NRFXLIB_BINARY_DIR}/nrfxlib.doxyfile)
 set(NRFXLIB_RST_OUT ${NRFXLIB_BINARY_DIR}/rst)
 set(NRFXLIB_DOXY_LOG ${NRFXLIB_BINARY_DIR}/doxy.log)
 set(NRFXLIB_SPHINX_LOG ${NRFXLIB_BINARY_DIR}/sphinx.log)
-set(NRFXLIB_DOC_LOG ${NRFXLIB_BINARY_DIR}/doc.log)
 
 
 configure_file(${NRFXLIB_DOXYFILE_IN} ${NRFXLIB_DOXYFILE_OUT} @ONLY)
@@ -396,11 +389,7 @@ set(nrfxlib_sphinx_environment
 add_custom_target(
   nrfxlib-html
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
-
-  # Merge the Doxygen and Sphinx logs into a single file
-  COMMAND ${CMAKE_COMMAND} -P ${ZEPHYR_BASE}/cmake/util/fmerge.cmake ${NRFXLIB_DOC_LOG} ${NRFXLIB_DOXY_LOG} ${NRFXLIB_SPHINX_LOG}
-
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 add_dependencies(nrfxlib-html nrfxlib-content nrfxlib-doxy)
@@ -477,6 +466,7 @@ add_custom_target(
         # The Kconfig reference build doesn't use Breathe, so we can safely
         # parallelize it
         -j auto
+        ${EXTRA_SPHINXOPTS}
         ${KCONFIG_RST_OUT}
         ${HTML_DIR}/kconfig
 )
@@ -500,7 +490,7 @@ add_custom_target(
 add_custom_target(
   nrf-linkcheck
   COMMAND ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b linkcheck ${NRF_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${NRF_BINARY_DIR}
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b linkcheck ${NRF_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${NRF_BINARY_DIR}
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 
@@ -509,7 +499,7 @@ add_dependencies(nrf-linkcheck nrf-content nrf-doxy)
 add_custom_target(
   nrfxlib-linkcheck
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b linkcheck ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT}  ${NRFXLIB_BINARY_DIR}
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b linkcheck ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_RST_OUT}  ${NRFXLIB_BINARY_DIR}
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 
@@ -518,7 +508,7 @@ add_dependencies(nrfxlib-linkcheck nrfxlib-content nrfxlib-doxy)
 add_custom_target(
   mcuboot-linkcheck
   COMMAND ${CMAKE_COMMAND} -E env ${mcuboot_sphinx_environment}
-  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b linkcheck ${MCUBOOT_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${MCUBOOT_BINARY_DIR}
+  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b linkcheck ${MCUBOOT_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${MCUBOOT_BINARY_DIR}
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 
