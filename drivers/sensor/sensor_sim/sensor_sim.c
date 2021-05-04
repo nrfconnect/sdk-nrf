@@ -201,7 +201,7 @@ static int sensor_sim_init_thread(const struct device *dev)
 		return -EIO;
 	}
 
-	k_sem_init(&drv_data->gpio_sem, 0, UINT_MAX);
+	k_sem_init(&drv_data->gpio_sem, 0, K_SEM_MAX_LIMIT);
 
 #endif   /* CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON */
 
