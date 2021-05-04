@@ -112,7 +112,7 @@ nRF9160
   * :ref:`cloud_client` - shows how to connect to and communicate with a cloud service using the generic :ref:`cloud_api_readme`.
   * :ref:`https_client` - shows how to provision a TLS certificate and connect to an HTTPS server.
   * :ref:`serial_lte_modem` - demonstrates sending AT commands between a host and a client device.
-    The sample is an enhancement to the :ref:`at_client_sample` sample.
+    The sample is an enhancement to the nRF9160: AT Client sample.
 
 * Added the following libraries:
 

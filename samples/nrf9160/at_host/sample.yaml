@@ -1,7 +1,7 @@
 sample:
-  name: at_client Sample
+  name: at_host sample
 tests:
-  samples.nrf9160.at_client:
+  samples.nrf9160.at_host:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160ns

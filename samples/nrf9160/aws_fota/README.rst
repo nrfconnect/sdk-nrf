@@ -96,7 +96,7 @@ Add the certificates to the sample code:
 Use LTE Link Monitor to write the certificates to the kit:
    The nRF Connect `LTE Link Monitor`_ provides a certificate manager that you can use to store the certificates on your kit:
 
-   1. Make sure that you have the AT client sample programmed on your kit.
+   1. Make sure that you have the :ref:`at_host_sample` sample programmed on your kit.
    #. Put the modem in offline state.
    #. Paste the three certificates into the respective fields.
    #. Choose a security tag.

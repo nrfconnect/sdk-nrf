@@ -42,7 +42,7 @@ To program the certificates, complete the following steps:
 
 1. `Download nRF Connect for Desktop`_.
 #. Update the modem firmware on the on-board modem of the nRF9160-based kit to the latest version by following the steps in `Updating the nRF9160 DK cellular modem`_.
-#. Build and program the :ref:`at_client_sample` sample to the nRF9160-based kit as explained in :ref:`gs_programming`.
+#. Build and program the :ref:`at_host_sample` sample to the nRF9160-based kit as explained in :ref:`gs_programming`.
 #. Launch the `LTE Link Monitor`_ application, which is implemented as part of `nRF Connect for Desktop`_.
 #. Click :guilabel:`Certificate manager` located at the top right corner.
 #. Copy and paste the certificates downloaded earlier from the AWS IoT console into the respective entries (``CA certificate``, ``Client certificate``, ``Private key``).
