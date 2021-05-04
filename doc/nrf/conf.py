@@ -113,6 +113,7 @@ breathe_separate_member_pages = True
 
 ncs_include_mapping = {
     "nrf": utils.get_rstdir("nrf"),
+    "nrfxlib": utils.get_rstdir("nrfxlib"),
     "zephyr": utils.get_rstdir("zephyr"),
 }
 
