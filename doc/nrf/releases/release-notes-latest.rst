@@ -130,19 +130,19 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: The latest Zephyr commit appears in multiple places; make sure you update them all.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``7074254937ae``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``8e1cfe9a46``, plus some |NCS| specific additions.
 
 For a complete list of upstream Zephyr commits incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 7074254937ae ^v2.4.99-ncs1
+   git log --oneline 8e1cfe9a46 ^v2.4.99-ncs1
 
 For a complete list of |NCS| specific commits, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^7074254937ae
+   git log --oneline manifest-rev ^8e1cfe9a46
 
 The current |NCS| release is based on Zephyr v2.5.99.
 
@@ -198,6 +198,11 @@ The following list summarizes the most important changes inherited from upstream
 
   * Merged a new work queue implementation.
     See `this comment <kwork API changes_>`_ for details on the API changes.
+  * Added a :c:macro:`K_SEM_MAX_LIMIT` define that users should provide in :c:func:`k_sem_init` as the limit value of semaphores that do not have explicit maximum limits and are instead just used for counting.
+    This is meant as a replacement for using ``UINT_MAX``.
+  * Moved the :option:`CONFIG_THREAD_MONITOR` and :option:`CONFIG_THREAD_NAME` options from experimental to production quality.
+  * Removed the deprecated ``k_mem_domain_destroy`` and ``k_mem_domain_remove_thread`` APIs.
+  * Updated the :c:func:`device_usable_check` and :c:func:`device_is_ready` functions so that they can be called from user space.
 
 * Networking:
 
