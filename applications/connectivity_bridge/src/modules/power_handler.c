@@ -16,7 +16,9 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_POWER_MGMT_LOG_LEVEL);
 
-static struct k_delayed_work power_down_work;
+static void power_down_handler(struct k_work *work);
+
+static K_WORK_DELAYABLE_DEFINE(power_down_work, power_down_handler);
 static int module_active_count;
 
 static void power_down_handler(struct k_work *work)
@@ -28,7 +30,7 @@ static void power_down_handler(struct k_work *work)
 		EVENT_SUBMIT(event);
 
 		/* Keep submitting events as they may be consumed to delay shutdown */
-		k_delayed_work_submit(&power_down_work, K_SECONDS(1));
+		k_work_reschedule(&power_down_work, K_SECONDS(1));
 	}
 }
 
@@ -40,8 +42,6 @@ static bool event_handler(const struct event_header *eh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			module_active_count = 0;
-
-			k_delayed_work_init(&power_down_work, power_down_handler);
 		} else if (event->state == MODULE_STATE_READY) {
 			module_active_count += 1;
 		} else if (event->state == MODULE_STATE_STANDBY) {
@@ -49,7 +49,7 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(module_active_count >= 0);
 
 			if (module_active_count == 0) {
-				k_delayed_work_submit(&power_down_work, K_SECONDS(1));
+				k_work_reschedule(&power_down_work, K_SECONDS(1));
 			}
 		}
 		return false;
