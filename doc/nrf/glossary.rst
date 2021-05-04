@@ -79,8 +79,8 @@ Glossary
    Devicetree
       A data structure for describing hardware and its boot-time configuration, including peripherals on a board, boot-time clock frequencies, and interrupt lines.
 
-   Devicetree Specification (DTS, DTSpec)
-      A specification that "provides a complete boot program to client program interface definition, combined with minimum system requirements that facilitate the development of a wide variety of systems." Devicetree Specification, Release v0.3.
+   Devicetree Specification (DTSpec)
+      A document that defines the source and binary representations of a devicetree, along with some common characteristics of the data structure, such as interrupts and memory addressing.
 
    Device Under Test (DUT)
       A manufactured product undergoing testing.
@@ -459,8 +459,8 @@ Glossary
       See :ref:`zephyr:west`.
 
    West manifest file
-      The file containing the metadata of the manifest repository.
-      In the |NCS| and Zephyr, it is :file:`west.yml`.
+      The main file describing the contents of a west workspace, which is located in the manifest repository.
+      In the |NCS| and Zephyr, it is named :file:`west.yml`.
 
    West manifest repository
       A repository that contains a west manifest file and can be used to configure a west workspace.
