@@ -216,3 +216,16 @@ To test the version drop-down locally, complete the following steps:
 #. Access http://localhost:8000/latest/index.html with your browser to see the documentation.
 
 To add other versions of the documentation to your local documentation output, build the versions from a tagged release and rename the :file:`html` folder to the respective version (for example, |release_number_tt|).
+
+Dealing with warnings
+*********************
+
+When building the documentation, all warnings are regarded as errors, so they will make the documentation build fail.
+
+However, there are some known issues with Sphinx and Breathe that generate Sphinx warnings even though the input is valid C code.
+To deal with such unavoidable warnings, Zephyr provides the Sphinx extension ``zephyr.warnings_filter`` that filters out warnings based on a set of regular expressions.
+You can find the extension together with usage details at :file:`ncs/zephyr/doc/_extensions/zephyr/warnings_filter.py`.
+
+The configuration file that defines the expected warnings for the nrf documentation set is located at :file:`ncs/nrf/doc/nrf/known-warnings.txt`.
+It contains regular expressions to filter out warnings related to duplicate C declarations.
+These warnings are caused by different objects (for example, a struct and a function or nested elements) sharing the same name.
