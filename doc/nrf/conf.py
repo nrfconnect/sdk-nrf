@@ -45,6 +45,7 @@ extensions = [
     "sphinxcontrib.mscgen",
     "sphinx_tabs.tabs",
     "zephyr.html_redirects",
+    "zephyr.warnings_filter",
 ]
 
 linkcheck_ignore = [
@@ -124,6 +125,11 @@ html_redirect_pages = [
     ("gs_ins_mac", "gs_installing"),
     ("samples/nrf9160/at_client/README", "samples/nrf9160/at_host/README")
 ]
+
+# -- Options for zephyr.warnings_filter ----------------------------------------
+
+warnings_filter_config = str(NRF_BASE / "doc" / "nrf" / "known-warnings.txt")
+warnings_filter_silent = False
 
 
 def setup(app):
