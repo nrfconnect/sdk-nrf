@@ -40,7 +40,6 @@ Kconfig*                                  @tejlmand
 /doc/nrf/                                 @carlescufi
 /doc/versions.json                        @carlescufi
 /doc/utils/                               @gmarull
-/.known-issues/                           @carlescufi
 # All subfolders
 /drivers/                                 @anangl
 /dts/                                     @anangl

@@ -58,38 +58,8 @@ jobs:
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           mkdir -p _build && cd _build
-          cmake -GNinja ../nrf/doc
+          cmake -GNinja ../nrf/doc -DEXTRA_SPHINXOPTS="-W"
           ninja build-all
-
-      - name: Check build warnings
-        working-directory: ncs
-        run: |
-          cd _build
-          if [ -s Kconfig/sphinx.log ]; then
-            errors=$(cat Kconfig/sphinx.log)
-            echo "::error file=Kconfig/sphinx.log::$errors"
-            exit 1
-          fi
-          if [ -s zephyr/doc.warnings ]; then
-            errors=$(cat zephyr/doc.warnings)
-            echo "::error file=zephyr/doc.warnings::$errors"
-            exit 1
-          fi
-          if [ -s mcuboot/sphinx.log ]; then
-            errors=$(cat mcuboot/sphinx.log)
-            echo "::error file=mcuboot/sphinx.log::$errors"
-            exit 1
-          fi
-          if [ -s nrf/doc.warnings ]; then
-            errors=$(cat nrf/doc.warnings)
-            echo "::error file=nrf/doc.warnings::$errors"
-            exit 1
-          fi
-          if [ -s nrfxlib/doc.log ]; then
-            errors=$(cat nrfxlib/doc.log)
-            echo "::error file=nrfxlib/doc.log::$errors"
-            exit 1
-          fi
 
       - name: Archive documentation
         working-directory: ncs/_build
