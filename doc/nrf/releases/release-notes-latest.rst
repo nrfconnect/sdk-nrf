@@ -95,6 +95,10 @@ nRF9160
 
     * Added support for the nRF9160 pulse-density modulation (PDM) and inter-IC sound (I2S) peripherals in non-secure applications.
 
+  * :ref:`at_host_sample` sample:
+
+    * Renamed nRF9160: AT Client sample to :ref:`at_host_sample`.
+
 Common
 ======
 

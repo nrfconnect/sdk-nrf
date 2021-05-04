@@ -68,7 +68,7 @@ Set used by samples (Radio Test, MPSL Timeslot)
 
 .. set4_end
 
-Set used by nRF9160 samples (AT Client, AWS FOTA, nRF CoAP Client, GPS sockets and SUPL client library, HTTP application update, HTTPS Client,
+Set used by nRF9160 samples (AT Host, AWS FOTA, nRF CoAP Client, GPS sockets and SUPL client library, HTTP application update, HTTPS Client,
 LTE Sensor Gateway, LwM2M carrier, LwM2M Client, Simple MQTT,  Secure Services Sample) and application (Serial LTE modem)
 
 .. set5_start

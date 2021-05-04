@@ -423,7 +423,7 @@ Documentation
 
   * nRF9160:
 
-    * :ref:`at_client_sample`
+    * nRF9160: AT Client
     * :ref:`lwm2m_carrier`
     * :ref:`lwm2m_client`
     * :ref:`aws_fota_sample`

@@ -1,19 +1,19 @@
-.. _at_client_sample:
+.. _at_host_sample:
 
-nRF9160: AT Client
-##################
+nRF9160: AT Host
+################
 
 .. contents::
    :local:
    :depth: 2
 
-The AT Client sample demonstrates the asynchronous serial communication taking place over UART to the nRF9160 modem.
+The AT Host sample demonstrates the asynchronous serial communication taking place over UART to the nRF9160 modem.
 The sample enables you to use an external computer or MCU to send AT commands to the LTE-M/NB-IoT modem of your nRF9160 device.
 
 Overview
 ********
 
-The AT Client sample acts as a proxy for sending directives to the nRF9160 modem via AT commands.
+The AT Host sample acts as a proxy for sending directives to the nRF9160 modem via AT commands.
 This facilitates the reading of responses or analyzing of events related to the nRF9160 modem.
 The commands can be initiated from a terminal or the `LTE Link Monitor`_, which is an application implemented as part of `nRF Connect for Desktop`_.
 
@@ -35,7 +35,7 @@ The sample supports the following development kit:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf9160/at_client`
+.. |sample path| replace:: :file:`samples/nrf9160/at_host`
 
 .. include:: /includes/build_and_run_nrf9160.txt
 
@@ -45,7 +45,7 @@ Testing
 
 After programming the sample to your development kit, test the sample by performing the following steps:
 
-1. Press the reset button on the nRF9160 DK to reboot the kit and start the AT Client sample.
+1. Press the reset button on the nRF9160 DK to reboot the kit and start the AT Host sample.
 #. :ref:`Connect to the nRF9160 DK with LTE Link Monitor<lte_connect>`.
 
    .. note::

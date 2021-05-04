@@ -154,11 +154,11 @@ Complete the following steps to build |NCS| projects on the command line after c
          The Toolchain Manager dropdown menu options
 
 #.    Go to the specific sample or application directory.
-      For example, to build the :ref:`at_client_sample` sample, run the following command to navigate to the sample directory:
+      For example, to build the :ref:`at_host_sample` sample, run the following command to navigate to the sample directory:
 
       .. code-block:: console
 
-         cd nrf/samples/nRF9160/at_client
+         cd nrf/samples/nRF9160/at_host
 
 
 #.    Build the sample or application using the west command.
