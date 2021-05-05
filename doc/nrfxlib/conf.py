@@ -27,7 +27,7 @@ copyright = "2019-2021, Nordic Semiconductor"
 author = "Nordic Semiconductor"
 version = release = "1.5.99"
 
-sys.path.insert(0, str(NRF_BASE / "scripts" / "sphinx_extensions"))
+sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "sphinx.ext.intersphinx",
