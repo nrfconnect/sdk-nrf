@@ -512,7 +512,8 @@ static int enable_gps(const struct device *dev)
 		return err;
 	}
 
-	if (functional_mode != LTE_LC_FUNC_MODE_NORMAL) {
+	if ((functional_mode != LTE_LC_FUNC_MODE_NORMAL) &&
+	    (functional_mode != LTE_LC_FUNC_MODE_ACTIVATE_GNSS)) {
 		LOG_ERR("GPS is not supported in current functional mode");
 		return -EIO;
 	}
