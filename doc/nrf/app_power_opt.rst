@@ -46,6 +46,10 @@ To reduce current consumption, disable serial logging.
 To disable serial output, you must change the project configuration associated with the sample or application.
 |config|
 
+.. note::
+    If the application consists of multiple images, like applications built for the nRF53 Series, logging must be disabled on both images.
+    See :ref:`ug_nrf5340` and :ref:`ug_multi_image`.
+
 1. Set the project configuration ``CONFIG_SERIAL`` to ``n`` irrespective of whether you are building the sample for the secure or non-secure build targets.
 #. For the non-secure build target (``nrf9160dk_nrf9160ns``), ensure that serial logging is also disabled in :ref:`secure_partition_manager`. To disable serial logging in Secure Partition Manager, complete the following steps:
 
