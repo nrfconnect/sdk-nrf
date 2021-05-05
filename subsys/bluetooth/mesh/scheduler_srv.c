@@ -58,6 +58,11 @@ static int store(struct bt_mesh_scheduler_srv *srv, uint8_t idx, bool store_ndel
 	return bt_mesh_model_data_store(srv->model, false, name, data, len);
 }
 
+static bool is_entry_defined(struct bt_mesh_scheduler_srv *srv, uint8_t idx)
+{
+	return srv->sch_reg[idx].action != BT_MESH_SCHEDULER_NO_ACTIONS;
+}
+
 static bool revise_year(struct tm *sched_time,
 			struct tm *current_local,
 			struct bt_mesh_schedule_entry *entry,
@@ -329,11 +334,11 @@ static bool set_second(struct tm *sched_time,
 
 static uint8_t get_least_time_index(struct bt_mesh_scheduler_srv *srv)
 {
-	uint8_t cnt = u32_count_trailing_zeros(srv->status_bitmap);
+	uint8_t cnt = u32_count_trailing_zeros(srv->active_bitmap);
 	uint8_t idx = cnt;
 
 	while (++cnt < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
-		if (srv->status_bitmap & BIT(cnt)) {
+		if (srv->active_bitmap & BIT(cnt)) {
 			idx = srv->sched_tai[idx].sec >
 				srv->sched_tai[cnt].sec ? cnt : idx;
 		}
@@ -425,7 +430,7 @@ static void schedule_action(struct bt_mesh_scheduler_srv *srv,
 	BT_DBG("        minute: %d", sched_time.tm_min);
 	BT_DBG("        second: %d", sched_time.tm_sec);
 
-	WRITE_BIT(srv->status_bitmap, idx, 1);
+	WRITE_BIT(srv->active_bitmap, idx, 1);
 }
 
 static void scheduled_action_handle(struct k_work *work)
@@ -439,7 +444,7 @@ static void scheduled_action_handle(struct k_work *work)
 		return;
 	}
 
-	WRITE_BIT(srv->status_bitmap, srv->idx, 0);
+	WRITE_BIT(srv->active_bitmap, srv->idx, 0);
 
 	struct bt_mesh_model *next_sched_mod = NULL;
 	uint16_t model_id = srv->sch_reg[srv->idx].action ==
@@ -510,29 +515,45 @@ static void encode_status(struct bt_mesh_scheduler_srv *srv,
 			  struct net_buf_simple *buf)
 {
 	bt_mesh_model_msg_init(buf, BT_MESH_SCHEDULER_OP_STATUS);
-	net_buf_simple_add_le16(buf, srv->status_bitmap);
-	BT_DBG("Tx: scheduler server status: %#2x", srv->status_bitmap);
+
+	uint16_t status_bitmap = 0;
+
+	for (int i = 0; i < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; i++) {
+		if (is_entry_defined(srv, i)) {
+			WRITE_BIT(status_bitmap, i, 1);
+		}
+	}
+
+	net_buf_simple_add_le16(buf, status_bitmap);
+	BT_DBG("Tx: scheduler server status: %#2x", status_bitmap);
 }
 
 static void encode_action_status(struct bt_mesh_scheduler_srv *srv,
 				 struct net_buf_simple *buf,
-				 uint8_t idx)
+				 uint8_t idx,
+				 bool is_reduced)
 {
 	bt_mesh_model_msg_init(buf, BT_MESH_SCHEDULER_OP_ACTION_STATUS);
-	scheduler_action_pack(buf, idx, &srv->sch_reg[idx]);
 
 	BT_DBG("Tx: scheduler server action status:");
-	BT_DBG("              index: %d", idx);
-	BT_DBG("               year: %d", srv->sch_reg[idx].year);
-	BT_DBG("              month: %#2x", srv->sch_reg[idx].month);
-	BT_DBG("                day: %d", srv->sch_reg[idx].day);
-	BT_DBG("               wday: %#2x", srv->sch_reg[idx].day_of_week);
-	BT_DBG("               hour: %d", srv->sch_reg[idx].hour);
-	BT_DBG("             minute: %d", srv->sch_reg[idx].minute);
-	BT_DBG("             second: %d", srv->sch_reg[idx].second);
-	BT_DBG("             action: %d", srv->sch_reg[idx].action);
-	BT_DBG("         transition: %d", srv->sch_reg[idx].transition_time);
-	BT_DBG("              scene: %d", srv->sch_reg[idx].scene_number);
+	BT_DBG("        index: %d", idx);
+
+	if (is_reduced) {
+		net_buf_simple_add_u8(buf, idx);
+	} else {
+		scheduler_action_pack(buf, idx, &srv->sch_reg[idx]);
+
+		BT_DBG("         year: %d", srv->sch_reg[idx].year);
+		BT_DBG("        month: %#2x", srv->sch_reg[idx].month);
+		BT_DBG("          day: %d", srv->sch_reg[idx].day);
+		BT_DBG("         wday: %#2x", srv->sch_reg[idx].day_of_week);
+		BT_DBG("         hour: %d", srv->sch_reg[idx].hour);
+		BT_DBG("       minute: %d", srv->sch_reg[idx].minute);
+		BT_DBG("       second: %d", srv->sch_reg[idx].second);
+		BT_DBG("       action: %d", srv->sch_reg[idx].action);
+		BT_DBG("   transition: %d", srv->sch_reg[idx].transition_time);
+		BT_DBG("        scene: %d", srv->sch_reg[idx].scene_number);
+	}
 }
 
 static int send_scheduler_status(struct bt_mesh_model *model,
@@ -549,14 +570,17 @@ static int send_scheduler_status(struct bt_mesh_model *model,
 
 static int send_scheduler_action_status(struct bt_mesh_model *model,
 					struct bt_mesh_msg_ctx *ctx,
-					uint8_t idx)
+					uint8_t idx,
+					bool is_reduced)
 {
 	struct bt_mesh_scheduler_srv *srv = model->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SCHEDULER_OP_ACTION_STATUS,
+			is_reduced ?
+			BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS_REDUCED :
 			BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS);
 
-	encode_action_status(srv, &buf, idx);
+	encode_action_status(srv, &buf, idx, is_reduced);
 
 	return model_send(model, ctx, &buf);
 }
@@ -598,15 +622,17 @@ static void action_set(struct bt_mesh_model *model,
 		srv->action_set_cb(srv, ctx, idx, &srv->sch_reg[idx]);
 	}
 
-	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
-		store(srv, idx, true);
+	if (is_entry_defined(srv, idx)) {
+		if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+			store(srv, idx, true);
+		}
+
+		/* publish state changing */
+		send_scheduler_action_status(model, NULL, idx, false);
 	}
 
-	/* publish state changing */
-	send_scheduler_action_status(model, NULL, idx);
-
 	if (ack) { /* reply on the action set command */
-		send_scheduler_action_status(model, ctx, idx);
+		send_scheduler_action_status(model, ctx, idx, false);
 	}
 }
 
@@ -622,6 +648,7 @@ static void handle_scheduler_action_get(struct bt_mesh_model *model,
 					struct bt_mesh_msg_ctx *ctx,
 					struct net_buf_simple *buf)
 {
+	struct bt_mesh_scheduler_srv *srv = model->user_data;
 	uint8_t idx = net_buf_simple_pull_u8(buf);
 
 	if (idx >= BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
@@ -629,7 +656,8 @@ static void handle_scheduler_action_get(struct bt_mesh_model *model,
 	}
 
 	BT_DBG("Rx: scheduler server action index %d get", idx);
-	send_scheduler_action_status(model, ctx, idx);
+	send_scheduler_action_status(model, ctx, idx,
+			!is_entry_defined(srv, idx));
 }
 
 static void handle_scheduler_action_set(struct bt_mesh_model *model,
@@ -695,8 +723,7 @@ static int scheduler_srv_init(struct bt_mesh_model *model)
 	srv->pub.update = update_handler;
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 			sizeof(srv->pub_data));
-	srv->status_bitmap = 0;
-	memset(&srv->sch_reg, 0, sizeof(srv->sch_reg));
+	srv->active_bitmap = 0;
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
 		/* Model extensions:
@@ -714,12 +741,10 @@ static int scheduler_srv_init(struct bt_mesh_model *model)
 	}
 
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
-	srv->status_bitmap = 0;
 	k_work_init_delayable(&srv->delayed_work, scheduled_action_handle);
 
 	for (int i = 0; i < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; i++) {
-		srv->sched_tai[i].sec = 0;
-		srv->sched_tai[i].subsec = 0;
+		srv->sch_reg[i].action = BT_MESH_SCHEDULER_NO_ACTIONS;
 	}
 
 	return 0;
@@ -730,13 +755,16 @@ static void scheduler_srv_reset(struct bt_mesh_model *model)
 	struct bt_mesh_scheduler_srv *srv = model->user_data;
 
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
-	srv->status_bitmap = 0;
+	srv->active_bitmap = 0;
 	/* If this cancellation fails, we'll exit early from the timer handler,
 	 * as srv->idx is out of bounds.
 	 */
 	k_work_cancel_delayable(&srv->delayed_work);
 	net_buf_simple_reset(srv->pub.msg);
-	memset(&srv->sch_reg, 0, sizeof(srv->sch_reg));
+
+	for (int i = 0; i < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; i++) {
+		srv->sch_reg[i].action = BT_MESH_SCHEDULER_NO_ACTIONS;
+	}
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		for (int idx = 0; idx < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
