@@ -27,7 +27,8 @@ static const struct shell *chat_shell;
 /* Set up a repeating delayed work to blink the DK's LEDs when attention is
  * requested.
  */
-static struct k_delayed_work attention_blink_work;
+static struct k_work_delayable attention_blink_work;
+static bool attention;
 
 static void attention_blink(struct k_work *work)
 {
@@ -38,19 +39,25 @@ static void attention_blink(struct k_work *work)
 		BIT(2) | BIT(3),
 		BIT(3) | BIT(0),
 	};
-	dk_set_leds(pattern[idx++ % ARRAY_SIZE(pattern)]);
-	k_delayed_work_submit(&attention_blink_work, K_MSEC(30));
+
+	if (attention) {
+		dk_set_leds(pattern[idx++ % ARRAY_SIZE(pattern)]);
+		k_work_reschedule(&attention_blink_work, K_MSEC(30));
+	} else {
+		dk_set_leds(DK_NO_LEDS_MSK);
+	}
 }
 
 static void attention_on(struct bt_mesh_model *mod)
 {
-	k_delayed_work_submit(&attention_blink_work, K_NO_WAIT);
+	attention = true;
+	k_work_reschedule(&attention_blink_work, K_NO_WAIT);
 }
 
 static void attention_off(struct bt_mesh_model *mod)
 {
-	k_delayed_work_cancel(&attention_blink_work);
-	dk_set_leds(DK_NO_LEDS_MSK);
+	/* Will stop rescheduling blink timer */
+	attention = false;
 }
 
 static const struct bt_mesh_health_srv_cb health_srv_cb = {
@@ -415,7 +422,7 @@ SHELL_CMD_ARG_REGISTER(chat, &chat_cmds, "Bluetooth Mesh Chat Client commands",
 /******************************************************************************/
 const struct bt_mesh_comp *model_handler_init(void)
 {
-	k_delayed_work_init(&attention_blink_work, attention_blink);
+	k_work_init_delayable(&attention_blink_work, attention_blink);
 
 	chat_shell = shell_backend_uart_get_ptr();
 	shell_print(chat_shell, ">>> Bluetooth Mesh Chat sample <<<");
