@@ -247,7 +247,7 @@ add_custom_target(
   nrf-html
   COMMAND ${NRF_SPHINX_BUILD_HTML_COMMAND}
   # Copy root index file
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/static/html/index.html ${HTML_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/_static/html/index.html ${HTML_DIR}
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 add_dependencies(nrf-html nrf-doxy nrf-content)
