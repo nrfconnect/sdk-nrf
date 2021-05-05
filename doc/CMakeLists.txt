@@ -264,54 +264,25 @@ add_dependencies(nrf nrf-html nrf-copy-versions)
 # Add mcuboot-related targets
 #
 
-set(MCUBOOT_SPHINXOPTS -d ${MCUBOOT_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/mcuboot ${MCUBOOT_SPHINXOPTS})
-
-set(MCUBOOT_RST_OUT ${MCUBOOT_BINARY_DIR}/rst)
-set(MCUBOOT_SPHINX_LOG ${MCUBOOT_BINARY_DIR}/sphinx.log)
-
-set(MCUBOOT_DOC_DIR ${MCUBOOT_BASE}/docs)
-
-file(GLOB MDFILES ${MCUBOOT_DOC_DIR}/*.md)
-
-set(MCUBOOT_EXTRACT_CONTENT_COMMAND
- ${CMAKE_COMMAND} -E env
-  ZEPHYR_BASE=${NRF_BASE}
-  ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/_scripts/extract_content.py
-  --ignore ${CMAKE_CURRENT_BINARY_DIR}
-  "*:doc/mcuboot:${MCUBOOT_RST_OUT}"
-)
-
-add_custom_target(
-  mcuboot-content
-
-  # Copy all files from nrf/doc/mcuboot to the rst folder
-  COMMAND ${MCUBOOT_EXTRACT_CONTENT_COMMAND}
-
-  # Copy all markdown files from mcuboot/docs to the rst folder
-  COMMAND ${CMAKE_COMMAND} -E copy ${MDFILES} ${MCUBOOT_RST_OUT}/doc/mcuboot/
-
-  WORKING_DIRECTORY ${MCUBOOT_DOC_DIR}
-)
+set(MCUBOOT_SPHINX_LOG ${CMAKE_CURRENT_BINARY_DIR}/mcuboot.log)
+set(MCUBOOT_BUILD_SRC ${MCUBOOT_BINARY_DIR}/src)
 
 set(mcuboot_sphinx_environment
   NRF_BASE=${NRF_BASE}
+  MCUBOOT_BASE=${MCUBOOT_BASE}
   ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
   NRF_OUTPUT=${HTML_DIR}/nrf
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
-  MCUBOOT_RST_SRC=${MCUBOOT_RST_OUT}/doc/mcuboot
   KCONFIG_OUTPUT=${HTML_DIR}/kconfig
 )
 
 add_custom_target(
   mcuboot-html
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${MCUBOOT_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${mcuboot_sphinx_environment}
-  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html ${MCUBOOT_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${HTML_DIR}/mcuboot
-
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html -c ${NRF_BASE}/doc/mcuboot ${EXTRA_SPHINXOPTS} ${MCUBOOT_BUILD_SRC} ${HTML_DIR}/mcuboot
 )
-add_dependencies(mcuboot-html mcuboot-content)
 
 add_custom_target(mcuboot)
 add_dependencies(mcuboot mcuboot-html)
@@ -507,12 +478,10 @@ add_dependencies(nrfxlib-linkcheck nrfxlib-content nrfxlib-doxy)
 
 add_custom_target(
   mcuboot-linkcheck
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${MCUBOOT_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${mcuboot_sphinx_environment}
-  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b linkcheck ${MCUBOOT_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${MCUBOOT_BINARY_DIR}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b linkcheck -c ${NRF_BASE}/doc/mcuboot ${EXTRA_SPHINXOPTS} ${MCUBOOT_BUILD_SRC} ${MCUBOOT_BINARY_DIR}
 )
-
-add_dependencies(mcuboot-linkcheck mcuboot-content)
 
 add_custom_target(linkcheck)
 add_dependencies(linkcheck nrf-linkcheck nrfxlib-linkcheck mcuboot-linkcheck)

@@ -12,6 +12,11 @@ if not NRF_BASE:
     raise FileNotFoundError("NRF_BASE not defined")
 NRF_BASE = Path(NRF_BASE)
 
+MCUBOOT_BASE = os.environ.get("MCUBOOT_BASE")
+if not MCUBOOT_BASE:
+    raise FileNotFoundError("MCUBOOT_BASE not defined")
+MCUBOOT_BASE = Path(MCUBOOT_BASE)
+
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
@@ -21,7 +26,9 @@ project = "MCUboot"
 copyright = "2019-2021"
 version = release = "1.7.99"
 
-extensions = ["sphinx.ext.intersphinx", "recommonmark"]
+sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
+
+extensions = ["sphinx.ext.intersphinx", "recommonmark", "external_content"]
 source_suffix = [".rst", ".md"]
 master_doc = "wrapper"
 
@@ -44,6 +51,13 @@ intersphinx_mapping = dict()
 kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
 if kconfig_mapping:
     intersphinx_mapping["kconfig"] = kconfig_mapping
+
+# Options for external_content -------------------------------------------------
+
+external_content_contents = [
+    (NRF_BASE / "doc" / "mcuboot", "*.rst"),
+    (MCUBOOT_BASE / "docs", "*.md")
+]
 
 
 def setup(app):
