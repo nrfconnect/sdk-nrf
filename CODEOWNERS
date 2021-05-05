@@ -40,6 +40,7 @@ Kconfig*                                  @tejlmand
 /doc/nrf/                                 @carlescufi
 /doc/versions.json                        @carlescufi
 /doc/_utils/                              @gmarull
+/doc/_extensions/                         @gmarull
 # All subfolders
 /drivers/                                 @anangl
 /dts/                                     @anangl
