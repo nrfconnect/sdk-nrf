@@ -12,7 +12,7 @@ if not NRF_BASE:
     raise FileNotFoundError("NRF_BASE not defined")
 NRF_BASE = Path(NRF_BASE)
 
-sys.path.insert(0, str(NRF_BASE / "doc" / "utils"))
+sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
 # General configuration --------------------------------------------------------
@@ -30,7 +30,7 @@ linkcheck_ignore = [r"(\.\.(\\|/))+(kconfig|zephyr)"]
 # Options for HTML output ------------------------------------------------------
 
 html_theme = "sphinx_ncs_theme"
-html_static_path = [str(NRF_BASE / "doc" / "static")]
+html_static_path = [str(NRF_BASE / "doc" / "_static")]
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False

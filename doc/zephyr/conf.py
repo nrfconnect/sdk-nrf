@@ -15,7 +15,7 @@ if not ZEPHYR_BASE:
     raise FileNotFoundError("ZEPHYR_BASE not defined")
 ZEPHYR_BASE = Path(ZEPHYR_BASE)
 
-sys.path.insert(0, str(NRF_BASE / "doc" / "utils"))
+sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
 # pylint: disable=undefined-variable
@@ -33,7 +33,7 @@ extensions.append("sphinx.ext.intersphinx")
 html_theme = "sphinx_ncs_theme"
 html_theme_path = []
 html_favicon = None
-html_static_path.append(str(NRF_BASE / "doc" / "static"))
+html_static_path.append(str(NRF_BASE / "doc" / "_static"))
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_logo = None

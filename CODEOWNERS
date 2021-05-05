@@ -34,12 +34,12 @@ Kconfig*                                  @tejlmand
 # All doc related files
 /doc/CMakeLists.txt                       @carlescufi
 /doc/update_versions.cmake                @carlescufi
-/doc/scripts/                             @carlescufi
-/doc/static/                              @carlescufi
+/doc/_scripts/                            @carlescufi
+/doc/_static/                             @carlescufi
 /doc/**/conf.py                           @carlescufi
 /doc/nrf/                                 @carlescufi
 /doc/versions.json                        @carlescufi
-/doc/utils/                               @gmarull
+/doc/_utils/                              @gmarull
 # All subfolders
 /drivers/                                 @anangl
 /dts/                                     @anangl
