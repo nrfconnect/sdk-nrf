@@ -18,12 +18,14 @@ static struct bt_discover_mock {
 	size_t len;
 	struct bt_conn *conn;
 	struct bt_gatt_discover_params *params;
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 } discover_mock_data;
 
+static void bt_gatt_discover_work(struct k_work *work);
 
 void bt_gatt_discover_mock_setup(const struct bt_gatt_attr *attr, size_t len)
 {
+	k_work_init_delayable(&discover_mock_data.work, bt_gatt_discover_work);
 	discover_mock_data.attr = attr;
 	discover_mock_data.len  = len;
 }
@@ -43,8 +45,9 @@ static bool bt_gatt_primary_check(const struct bt_gatt_attr *attr_cur,
 
 static void bt_gatt_discover_work(struct k_work *work)
 {
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
 	struct bt_discover_mock *mock_data =
-		CONTAINER_OF(work, struct bt_discover_mock, work);
+		CONTAINER_OF(dwork, struct bt_discover_mock, work);
 	const struct bt_gatt_attr *const attr_end =
 		discover_mock_data.attr + discover_mock_data.len;
 	const struct bt_gatt_attr *attr_cur;
@@ -126,7 +129,6 @@ int bt_gatt_discover(struct bt_conn *conn,
 	discover_mock_data.conn = conn;
 	discover_mock_data.params = params;
 
-	k_delayed_work_init(&(discover_mock_data.work), bt_gatt_discover_work);
-	k_delayed_work_submit(&(discover_mock_data.work), K_MSEC(5));
+	k_work_schedule(&discover_mock_data.work, K_MSEC(5));
 	return 0;
 }
