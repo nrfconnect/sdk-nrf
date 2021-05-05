@@ -118,7 +118,7 @@ static struct bt_mesh_sensor *const sensors[] = {
 static struct bt_mesh_sensor_srv sensor_srv =
 	BT_MESH_SENSOR_SRV_INIT(sensors, ARRAY_SIZE(sensors));
 
-static struct k_delayed_work end_of_presence_work;
+static struct k_work_delayable end_of_presence_work;
 
 static void end_of_presence(struct k_work *work)
 {
@@ -159,7 +159,7 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 
 		prev_pres = k_uptime_get_32();
 
-		k_delayed_work_submit(&end_of_presence_work, K_MSEC(2000));
+		k_work_reschedule(&end_of_presence_work, K_MSEC(2000));
 	}
 }
 
@@ -170,7 +170,8 @@ static struct button_handler button_handler = {
 /* Set up a repeating delayed work to blink the DK's LEDs when attention is
  * requested.
  */
-static struct k_delayed_work attention_blink_work;
+static struct k_work_delayable attention_blink_work;
+static bool attention;
 
 static void attention_blink(struct k_work *work)
 {
@@ -181,19 +182,25 @@ static void attention_blink(struct k_work *work)
 		BIT(2) | BIT(3),
 		BIT(3) | BIT(0),
 	};
-	dk_set_leds(pattern[idx++ % ARRAY_SIZE(pattern)]);
-	k_delayed_work_submit(&attention_blink_work, K_MSEC(30));
+
+	if (attention) {
+		dk_set_leds(pattern[idx++ % ARRAY_SIZE(pattern)]);
+		k_work_reschedule(&attention_blink_work, K_MSEC(30));
+	} else {
+		dk_set_leds(DK_NO_LEDS_MSK);
+	}
 }
 
 static void attention_on(struct bt_mesh_model *mod)
 {
-	k_delayed_work_submit(&attention_blink_work, K_NO_WAIT);
+	attention = true;
+	k_work_reschedule(&attention_blink_work, K_NO_WAIT);
 }
 
 static void attention_off(struct bt_mesh_model *mod)
 {
-	k_delayed_work_cancel(&attention_blink_work);
-	dk_set_leds(DK_NO_LEDS_MSK);
+	/* Will stop rescheduling blink timer */
+	attention = false;
 }
 
 static const struct bt_mesh_health_srv_cb health_srv_cb = {
@@ -224,8 +231,8 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
-	k_delayed_work_init(&attention_blink_work, attention_blink);
-	k_delayed_work_init(&end_of_presence_work, end_of_presence);
+	k_work_init_delayable(&attention_blink_work, attention_blink);
+	k_work_init_delayable(&end_of_presence_work, end_of_presence);
 
 	dev = device_get_binding(DT_PROP(DT_NODELABEL(temp), label));
 

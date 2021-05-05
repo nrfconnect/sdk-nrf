@@ -352,17 +352,12 @@ static void run_scheduler(struct bt_mesh_scheduler_srv *srv)
 		return;
 	}
 
-	if (srv->idx != BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
-		k_delayed_work_cancel(&srv->delayed_work);
-	}
-
 	srv->idx = planned_idx;
 	tai_to_ts(&srv->sched_tai[planned_idx], &sched_time);
 	int64_t scheduled_uptime = bt_mesh_time_srv_mktime(srv->time_srv,
 			&sched_time);
-	k_delayed_work_submit(&srv->delayed_work,
-		K_MSEC(scheduled_uptime > current_uptime ?
-				scheduled_uptime - current_uptime : 0));
+	k_work_reschedule(&srv->delayed_work,
+			  K_MSEC(MAX(scheduled_uptime - current_uptime, 0)));
 	BT_DBG("Scheduler started. Target uptime: %lld", scheduled_uptime);
 }
 
@@ -438,6 +433,11 @@ static void scheduled_action_handle(struct k_work *work)
 	struct bt_mesh_scheduler_srv *srv = CONTAINER_OF(work,
 				struct bt_mesh_scheduler_srv,
 				delayed_work);
+
+	if (srv->idx == BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
+		/* Disabled without cancelling timer */
+		return;
+	}
 
 	WRITE_BIT(srv->status_bitmap, srv->idx, 0);
 
@@ -715,7 +715,7 @@ static int scheduler_srv_init(struct bt_mesh_model *model)
 
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
 	srv->status_bitmap = 0;
-	k_delayed_work_init(&srv->delayed_work, scheduled_action_handle);
+	k_work_init_delayable(&srv->delayed_work, scheduled_action_handle);
 
 	for (int i = 0; i < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; i++) {
 		srv->sched_tai[i].sec = 0;
@@ -731,7 +731,10 @@ static void scheduler_srv_reset(struct bt_mesh_model *model)
 
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
 	srv->status_bitmap = 0;
-	k_delayed_work_cancel(&srv->delayed_work);
+	/* If this cancellation fails, we'll exit early from the timer handler,
+	 * as srv->idx is out of bounds.
+	 */
+	k_work_cancel_delayable(&srv->delayed_work);
 	net_buf_simple_reset(srv->pub.msg);
 	memset(&srv->sch_reg, 0, sizeof(srv->sch_reg));
 
