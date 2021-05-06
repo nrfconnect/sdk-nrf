@@ -441,8 +441,9 @@ static int enable_notifications(void)
 		/* %XT3412 notifications subscribe */
 		err = at_cmd_write(buf_sub, NULL, 0, NULL);
 		if (err) {
-			LOG_ERR("Failed to subscribe to XT3412 notifications");
-			return err;
+			LOG_WRN("%s failed (%d), TAU pre-warning notifications are not enabled",
+				log_strdup(buf_sub), err);
+			LOG_WRN("%s is supported in nRF9160 modem >= v1.3.0", log_strdup(buf_sub));
 		}
 	}
 
@@ -456,8 +457,9 @@ static int enable_notifications(void)
 		/* %XMODEMSLEEP notifications subscribe */
 		err = at_cmd_write(buf_sub, NULL, 0, NULL);
 		if (err) {
-			LOG_ERR("Failed to subscribe to XMODEMSLEEP notifications");
-			return err;
+			LOG_WRN("%s failed (%d), modem sleep notifications are not enabled",
+				log_strdup(buf_sub), err);
+			LOG_WRN("%s is supported in nRF9160 modem >= v1.3.0", log_strdup(buf_sub));
 		}
 	}
 
