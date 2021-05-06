@@ -76,6 +76,7 @@ struct nrf9160_gps_config {
 
 static int stop_gps(const struct device *dev, bool is_timeout);
 
+static uint64_t start_timestamp;
 static uint64_t fix_timestamp;
 
 static nrf_gnss_agps_data_type_t type_lookup_gps2socket[] = {
@@ -181,6 +182,17 @@ static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
 							n_unhealthy);
 	LOG_DBG("Seconds since last fix %lld",
 			(k_uptime_get() - fix_timestamp) / 1000);
+	if (fix_timestamp > start_timestamp) {
+		char buf[35];
+
+		snprintf(buf, sizeof(buf), "Seconds for this fix %.3f",
+			 (fix_timestamp - start_timestamp) / 1000.0F);
+		LOG_DBG("%s", log_strdup(buf));
+		LOG_DBG("%u:%02u:%02u.%03u %u/%u/%u", pvt_data->pvt.datetime.hour,
+			pvt_data->pvt.datetime.minute, pvt_data->pvt.datetime.seconds,
+			pvt_data->pvt.datetime.ms, pvt_data->pvt.datetime.day,
+			pvt_data->pvt.datetime.month, pvt_data->pvt.datetime.year);
+	}
 }
 
 static void notify_event(const struct device *dev, struct gps_event *evt)
@@ -349,6 +361,7 @@ wait:
 				atomic_set(&drv_data->timeout_occurred, 0);
 				evt.type = GPS_EVT_SEARCH_STARTED;
 				notify_event(dev, &evt);
+				start_timestamp = k_uptime_get();
 			}
 
 			has_fix = false;
@@ -483,6 +496,7 @@ static int init_thread(const struct device *dev)
 			(k_thread_entry_t)gps_thread, (void *)dev, NULL, NULL,
 			K_PRIO_PREEMPT(CONFIG_NRF9160_GPS_THREAD_PRIORITY),
 			0, K_NO_WAIT);
+	k_thread_name_set(drv_data->thread_id, "nrf9160_gps_driver");
 
 	return 0;
 }
