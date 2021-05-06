@@ -180,6 +180,19 @@ See :ref:`cmake_options` for more information.
 
 Alternatively, you can manually set the configuration options to match the contents of the overlay config file.
 
+Using nRF Cloud A-GPS or P-GPS
+******************************
+By default, this application enables :ref:`lib_nrf_cloud_agps` (Assisted GPS) support.
+Each time the GPS unit attempts to get a location fix, it may require additional information from  `nRF Connect for Cloud`_ to speed up the time to get that fix.
+
+Alternatively, :ref:`lib_nrf_cloud_pgps` (Predicted GPS) downloads and stores assistance predictions in Flash for one or two weeks, and does not require the cloud to help with each fix.
+
+In order to use P-GPS instead of A-GPS, you can add the following parameter to your build command:
+``-DOVERLAY_CONFIG=overlay-pgps.conf``
+
+In order to use A-GPS and P-GPS at the same time, use the following instead:
+``-DOVERLAY_CONFIG=overlay-agps-pgps.conf``
+
 Using nRF Cloud FOTA
 ********************
 

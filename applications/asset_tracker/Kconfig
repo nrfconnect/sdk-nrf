@@ -131,6 +131,17 @@ config GPS_START_ON_MOTION
 	  position, but if no movement, wait a longer delay between updates
 	  to conserve power.
 
+if NRF_CLOUD_PGPS
+
+config PGPS_STORE_LOCATION
+	bool "Store location when GPS fix occurs"
+	help
+	  For semi-stationary applications, the first fix after reset will
+	  be faster using predicted GPS if the last known location is provided
+	  to the modem.
+
+endif
+
 endmenu # GPS
 
 menu "Device and modem"
