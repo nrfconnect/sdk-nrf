@@ -43,7 +43,8 @@ static ssize_t write_led(struct bt_conn *conn,
 			 const void *buf,
 			 uint16_t len, uint16_t offset, uint8_t flags)
 {
-	LOG_DBG("Attribute write, handle: %u, conn: %p", attr->handle, conn);
+	LOG_DBG("Attribute write, handle: %u, conn: %p", attr->handle,
+		(void *)conn);
 
 	if (lbs_cb.led_cb) {
 		lbs_cb.led_cb(*(bool *)buf);
@@ -61,7 +62,8 @@ static ssize_t read_button(struct bt_conn *conn,
 {
 	const char *value = attr->user_data;
 
-	LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle, conn);
+	LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle,
+		(void *)conn);
 
 	if (lbs_cb.button_cb) {
 		button_state = lbs_cb.button_cb();
