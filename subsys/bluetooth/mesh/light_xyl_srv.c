@@ -126,6 +126,7 @@ static void xyl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	set.transition = &transition;
+	lightness_srv_disable_control(&srv->lightness_srv);
 	lightness_srv_change_lvl(&srv->lightness_srv, ctx, &light, &light_rsp);
 	srv->handlers->xy_set(srv, ctx, &set, &status);
 	srv->xy_last.x = set.params.x;

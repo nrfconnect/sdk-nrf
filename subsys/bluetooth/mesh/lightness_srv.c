@@ -50,15 +50,6 @@ static int store_state(struct bt_mesh_lightness_srv *srv)
 					&data, sizeof(data));
 }
 
-static void disable_control(struct bt_mesh_lightness_srv *srv)
-{
-#if defined(CONFIG_BT_MESH_LIGHT_CTRL_SRV)
-	if (srv->ctrl) {
-		bt_mesh_light_ctrl_srv_disable(srv->ctrl);
-	}
-#endif
-}
-
 static void lvl_status_encode(struct net_buf_simple *buf,
 			      const struct bt_mesh_lightness_status *status,
 			      enum light_repr repr)
@@ -175,6 +166,15 @@ static void handle_linear_get(struct bt_mesh_model *model,
 	handle_light_get(model, ctx, buf, LINEAR);
 }
 
+void lightness_srv_disable_control(struct bt_mesh_lightness_srv *srv)
+{
+#if defined(CONFIG_BT_MESH_LIGHT_CTRL_SRV)
+	if (srv->ctrl) {
+		bt_mesh_light_ctrl_srv_disable(srv->ctrl);
+	}
+#endif
+}
+
 void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct bt_mesh_lightness_set *set,
@@ -237,7 +237,7 @@ static void lightness_set(struct bt_mesh_model *model,
 		/* According to the Mesh Model Specification section 6.2.3.1,
 		 * manual changes to the lightness should disable control.
 		 */
-		disable_control(srv);
+		lightness_srv_disable_control(srv);
 		lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
@@ -561,7 +561,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 		/* According to the Mesh Model Specification section 6.2.3.1,
 		 * manual changes to the lightness should disable control.
 		 */
-		disable_control(srv);
+		lightness_srv_disable_control(srv);
 		lightness_srv_change_lvl(srv, ctx, &set, &status);
 	} else if (rsp) {
 		srv->handlers->light_get(srv, NULL, &status);
@@ -615,7 +615,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	/* According to the Mesh Model Specification section 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
-	disable_control(srv);
+	lightness_srv_disable_control(srv);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	/* Override "last" value to be able to make corrective deltas when
@@ -685,7 +685,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	/* According to the Mesh Model Specification section 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
-	disable_control(srv);
+	lightness_srv_disable_control(srv);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {
@@ -727,7 +727,7 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 	/* According to the Mesh Model Specification section 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
-	disable_control(srv);
+	lightness_srv_disable_control(srv);
 	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {

@@ -145,6 +145,7 @@ static void hsl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	bt_mesh_light_hue_srv_set(&srv->hue, ctx, &set.h, &hue);
 	bt_mesh_light_sat_srv_set(&srv->sat, ctx, &set.s, &sat);
+	lightness_srv_disable_control(&srv->lightness);
 	lightness_srv_change_lvl(&srv->lightness, ctx, &set.l, &lightness);
 
 	struct bt_mesh_light_hsl_status hsl =
