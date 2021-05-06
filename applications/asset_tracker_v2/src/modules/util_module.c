@@ -47,7 +47,7 @@ static void message_handler(struct util_msg_data *msg);
 static void send_reboot_request(enum shutdown_reason reason);
 
 /* Delayed work that is used to trigger a reboot. */
-static K_DELAYED_WORK_DEFINE(reboot_work, reboot_work_fn);
+static K_WORK_DELAYABLE_DEFINE(reboot_work, reboot_work_fn);
 
 static struct module_data self = {
 	.name = "util",
@@ -197,7 +197,7 @@ static void send_reboot_request(enum shutdown_reason reason)
 		util_module_event->type = UTIL_EVT_SHUTDOWN_REQUEST;
 		util_module_event->reason = reason;
 
-		k_delayed_work_submit(&reboot_work,
+		k_work_reschedule(&reboot_work,
 				      K_SECONDS(CONFIG_REBOOT_TIMEOUT));
 
 		EVENT_SUBMIT(util_module_event);
@@ -222,7 +222,7 @@ static void reboot_ack_check(uint32_t module_id)
 	if (modules_shutdown_register(module_id)) {
 		LOG_WRN("All modules have ACKed the reboot request.");
 		LOG_WRN("Reboot in 5 seconds.");
-		k_delayed_work_submit(&reboot_work, K_SECONDS(5));
+		k_work_reschedule(&reboot_work, K_SECONDS(5));
 	}
 }
 
