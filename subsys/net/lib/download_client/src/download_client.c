@@ -160,7 +160,7 @@ static int socket_apn_set(int fd, const char *apn)
 	if (err) {
 		LOG_ERR("Failed to bind socket to network \"%s\", err %d",
 			log_strdup(apn), errno);
-		return -ENETUNREACH;
+		return -ENETDOWN;
 	}
 
 	return 0;
