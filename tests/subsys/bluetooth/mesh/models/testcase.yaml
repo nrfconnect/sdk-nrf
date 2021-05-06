@@ -2,6 +2,8 @@ common:
   build_only: true
   platform_allow: nrf52840dk_nrf52840
   tags: bluetooth ci_build
+  integration_platforms:
+    - nrf52840dk_nrf52840
 tests:
   bluetooth.mesh.build_models:
     # Explicitly disabling settings to ensure they're not "imply"'d by anything:
