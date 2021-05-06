@@ -22,14 +22,10 @@ static void test_pcd_network_core_update(void)
 	enum pcd_status status;
 	int err;
 
+	/* Since image does not have fw_info the update will fail */
 	err = pcd_network_core_update(&data, sizeof(data));
-	zassert_equal(err, 0, "Unexpected failure");
+	zassert_not_equal(err, 0, "Unexpected success");
 
-	status = pcd_fw_copy_status_get();
-	zassert_equal(status, PCD_STATUS_COPY_DONE, "Unexpected failure");
-
-	/* Invalidate the CMD */
-	pcd_fw_copy_invalidate();
 	status = pcd_fw_copy_status_get();
 	zassert_equal(status, PCD_STATUS_COPY_FAILED, "Unexpected success");
 }
