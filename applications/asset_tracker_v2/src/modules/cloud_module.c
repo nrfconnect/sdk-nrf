@@ -54,7 +54,7 @@ static enum sub_state_type {
 	SUB_STATE_CLOUD_CONNECTED
 } sub_state;
 
-static struct k_delayed_work connect_check_work;
+static struct k_work_delayable connect_check_work;
 
 struct cloud_backoff_delay_lookup {
 	int delay;
@@ -432,7 +432,7 @@ static void connect_cloud(void)
 		backoff_sec);
 
 	/* Start timer to check connection status after backoff */
-	k_delayed_work_submit(&connect_check_work, K_SECONDS(backoff_sec));
+	k_work_reschedule(&connect_check_work, K_SECONDS(backoff_sec));
 }
 
 /* If this work is executed, it means that the connection attempt was not
@@ -441,6 +441,12 @@ static void connect_cloud(void)
  */
 static void connect_check_work_fn(struct k_work *work)
 {
+	// If cancelling works fails
+	if ((state == STATE_LTE_CONNECTED && sub_state == SUB_STATE_CLOUD_CONNECTED) ||
+		(state == STATE_LTE_DISCONNECTED)) {
+		return;
+	}
+
 	LOG_DBG("Cloud connection timeout occurred");
 
 	SEND_EVENT(cloud, CLOUD_EVT_CONNECTION_TIMEOUT);
@@ -473,7 +479,7 @@ static void on_state_lte_connected(struct cloud_msg_data *msg)
 
 		connect_retries = 0;
 
-		k_delayed_work_cancel(&connect_check_work);
+		k_work_cancel_delayable(&connect_check_work);
 
 		return;
 	}
@@ -508,7 +514,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_DISCONNECTED)) {
 		sub_state_set(SUB_STATE_CLOUD_DISCONNECTED);
 
-		k_delayed_work_submit(&connect_check_work, K_NO_WAIT);
+		k_work_reschedule(&connect_check_work, K_NO_WAIT);
 
 		return;
 	}
@@ -555,7 +561,7 @@ static void on_sub_state_cloud_disconnected(struct cloud_msg_data *msg)
 		sub_state_set(SUB_STATE_CLOUD_CONNECTED);
 
 		connect_retries = 0;
-		k_delayed_work_cancel(&connect_check_work);
+		k_work_cancel_delayable(&connect_check_work);
 	}
 
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTION_TIMEOUT)) {
@@ -603,7 +609,7 @@ static void module_thread_fn(void)
 	state_set(STATE_LTE_DISCONNECTED);
 	sub_state_set(SUB_STATE_CLOUD_DISCONNECTED);
 
-	k_delayed_work_init(&connect_check_work, connect_check_work_fn);
+	k_work_init_delayable(&connect_check_work, connect_check_work_fn);
 
 	err = setup();
 	if (err) {

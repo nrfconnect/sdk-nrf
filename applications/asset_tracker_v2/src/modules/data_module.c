@@ -96,7 +96,7 @@ static struct cloud_data_cfg current_cfg = {
 	.accelerometer_threshold = DEFAULT_ACCELEROMETER_THRESHOLD
 };
 
-static struct k_delayed_work data_send_work;
+static struct k_work_delayable data_send_work;
 
 /* List used to keep track of responses from other modules with data that is
  * requested to be sampled/published.
@@ -662,7 +662,7 @@ static void data_send_work_fn(struct k_work *work)
 	SEND_EVENT(data, DATA_EVT_DATA_READY);
 
 	requested_data_clear();
-	k_delayed_work_cancel(&data_send_work);
+	k_work_cancel_delayable(&data_send_work);
 }
 
 static void requested_data_status_set(enum app_module_data_type data_type)
@@ -888,7 +888,7 @@ static void on_all_states(struct data_msg_data *msg)
 		/* Start countdown until data must have been received by the
 		 * Data module in order to be sent to cloud
 		 */
-		k_delayed_work_submit(&data_send_work,
+		k_work_reschedule(&data_send_work,
 				      K_SECONDS(msg->module.app.timeout));
 
 		return;
@@ -1074,7 +1074,7 @@ static void module_thread_fn(void)
 
 	state_set(STATE_CLOUD_DISCONNECTED);
 
-	k_delayed_work_init(&data_send_work, data_send_work_fn);
+	k_work_init_delayable(&data_send_work, data_send_work_fn);
 
 	err = setup();
 	if (err) {
