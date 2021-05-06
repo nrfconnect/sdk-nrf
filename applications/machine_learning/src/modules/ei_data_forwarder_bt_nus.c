@@ -50,6 +50,9 @@ struct ei_data_packet {
 	uint8_t buf[DATA_BUF_SIZE];
 };
 
+BUILD_ASSERT(ARRAY_SIZE(CONFIG_ML_APP_EI_DATA_FORWARDER_SENSOR_EVENT_DESCR) > 1);
+static const char *handled_sensor_event_descr = CONFIG_ML_APP_EI_DATA_FORWARDER_SENSOR_EVENT_DESCR;
+
 static uint8_t conn_state;
 static struct bt_conn *nus_conn;
 
@@ -203,6 +206,11 @@ static void send_queued_fn(struct k_work *w)
 
 static bool handle_sensor_event(const struct sensor_event *event)
 {
+	if ((event->descr != handled_sensor_event_descr) &&
+	    strcmp(event->descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
 	if ((state != STATE_ACTIVE) || !is_nus_conn_valid(nus_conn, conn_state)) {
 		return false;
 	}

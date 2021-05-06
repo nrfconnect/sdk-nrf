@@ -31,6 +31,9 @@ enum state {
 	STATE_ERROR
 };
 
+BUILD_ASSERT(ARRAY_SIZE(CONFIG_ML_APP_EI_DATA_FORWARDER_SENSOR_EVENT_DESCR) > 1);
+static const char *handled_sensor_event_descr = CONFIG_ML_APP_EI_DATA_FORWARDER_SENSOR_EVENT_DESCR;
+
 static const struct device *dev;
 static atomic_t uart_busy;
 static enum state state = STATE_DISABLED;
@@ -83,6 +86,11 @@ static void report_error(void)
 
 static bool handle_sensor_event(const struct sensor_event *event)
 {
+	if ((event->descr != handled_sensor_event_descr) &&
+	    strcmp(event->descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
 	if (state != STATE_ACTIVE) {
 		return false;
 	}

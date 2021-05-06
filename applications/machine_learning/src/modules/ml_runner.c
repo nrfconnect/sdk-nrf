@@ -39,6 +39,9 @@ enum {
 	ML_RUNNING			= BIT(3),
 };
 
+BUILD_ASSERT(ARRAY_SIZE(CONFIG_ML_APP_ML_RUNNER_SENSOR_EVENT_DESCR) > 1);
+static const char *handled_sensor_event_descr = CONFIG_ML_APP_ML_RUNNER_SENSOR_EVENT_DESCR;
+
 static uint8_t ml_control;
 static enum state state;
 
@@ -166,6 +169,11 @@ static int init(void)
 
 static bool handle_sensor_event(const struct sensor_event *event)
 {
+	if ((event->descr != handled_sensor_event_descr) &&
+	    strcmp(event->descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
 	if (state != STATE_ACTIVE) {
 		return false;
 	}
