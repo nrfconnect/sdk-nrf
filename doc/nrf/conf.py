@@ -47,6 +47,7 @@ extensions = [
     "zephyr.html_redirects",
     "zephyr.warnings_filter",
     "external_content",
+    "doxyrunner",
 ]
 
 linkcheck_ignore = [
@@ -104,9 +105,20 @@ kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
 if kconfig_mapping:
     intersphinx_mapping["kconfig"] = kconfig_mapping
 
+# -- Options for doxyrunner plugin ---------------------------------------------
+
+doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
+doxyrunner_doxyfile = NRF_BASE / "doc" / "nrf" / "nrf.doxyfile.in"
+doxyrunner_outdir = NRF_BUILD / "doxygen"
+doxyrunner_fmt = True
+doxyrunner_fmt_vars = {
+    "NRF_BASE": str(NRF_BASE),
+    "NRF_BINARY_DIR": str(NRF_BUILD),
+}
+
 # Options for breathe ----------------------------------------------------------
 
-breathe_projects = {"nrf": str(NRF_BUILD / "doxygen" / "xml")}
+breathe_projects = {"nrf": str(doxyrunner_outdir / "xml")}
 breathe_default_project = "nrf"
 breathe_domain_by_extension = {"h": "c", "c": "c"}
 breathe_separate_member_pages = True
