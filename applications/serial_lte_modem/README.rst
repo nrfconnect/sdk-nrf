@@ -5,6 +5,9 @@ nRF9160: Serial LTE modem
 
 The Serial LTE Modem (SLM) application can be used to emulate a stand-alone LTE modem on the nRF9160.
 
+The SLM application adds proprietary AT commands running on the application processor so they are 
+complementary to the AT Commands found in nRF91 `AT Commands Reference Guide`_ which are modem specific.
+
 See the subpages for how to use the application, how to extend it, and information on the supported AT commands.
 
 .. toctree::
