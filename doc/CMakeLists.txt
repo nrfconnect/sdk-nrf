@@ -129,15 +129,10 @@ set(NRF_SPHINXOPTS -d ${NRF_BINARY_DIR}/doctrees ${NRF_SPHINXOPTS})
 
 set(NRF_DOC_DIR ${NRF_BASE}/doc/nrf)
 
-set(NRF_DOXYFILE_IN ${NRF_DOC_DIR}/nrf.doxyfile.in)
-set(NRF_DOXYFILE_OUT ${NRF_BINARY_DIR}/nrf.doxyfile)
 set(NRF_RST_OUT ${NRF_BINARY_DIR}/rst)
-set(NRF_DOXY_LOG ${NRF_BINARY_DIR}/doxy.log)
 set(NRF_SPHINX_LOG ${NRF_BINARY_DIR}/sphinx.log)
 set(NRF_CONTENT_OUTPUTS ${NRF_BINARY_DIR}/extracted-content.txt)
 set(NRF_DOC_WARN ${NRF_BINARY_DIR}/doc.warnings)
-
-configure_file(${NRF_DOXYFILE_IN} ${NRF_DOXYFILE_OUT} @ONLY)
 
 set(tools_version_files
     ${NRF_BASE}/scripts/tools-versions-minimum.txt
@@ -172,17 +167,6 @@ add_custom_command(
     ${pip_requirements_files}
 )
 
-add_custom_target(
-  nrf-doxy
-  COMMAND ${CMAKE_COMMAND}
-    -DCOMMAND=${DOXYGEN_EXECUTABLE}
-    -DARGS="${NRF_DOXYFILE_OUT}"
-    -DOUTPUT_FILE=${NRF_DOXY_LOG}
-    -DERROR_FILE=${NRF_DOXY_LOG}
-    -DWORKING_DIRECTORY=${CMAKE_CURRENT_LIST_DIR}
-    -P ${ZEPHYR_BASE}/cmake/util/execute_process.cmake
-)
-
 if(WIN32)
   set(SEP $<SEMICOLON>)
 else()
@@ -196,6 +180,7 @@ set(nrf_sphinx_environment
   NRF_BASE=${NRF_BASE}
   NRF_BUILD=${NRF_BINARY_DIR}
   NRF_RST_SRC=${NRF_BUILD_SRC}
+  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
 )
 
 
@@ -208,7 +193,6 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/_static/html/index.html ${HTML_DIR}
   DEPENDS ${NRF_BINARY_DIR}/src/versions.txt
 )
-add_dependencies(nrf-html nrf-doxy)
 
 add_custom_target(
   nrf-copy-versions
@@ -375,8 +359,6 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
   ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b linkcheck ${NRF_SPHINXOPTS} -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${NRF_BINARY_DIR}
 )
-
-add_dependencies(nrf-linkcheck nrf-doxy)
 
 add_custom_target(
   nrfxlib-linkcheck
