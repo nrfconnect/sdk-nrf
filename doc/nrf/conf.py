@@ -46,6 +46,7 @@ extensions = [
     "sphinx_tabs.tabs",
     "zephyr.html_redirects",
     "zephyr.warnings_filter",
+    "external_content",
 ]
 
 linkcheck_ignore = [
@@ -131,6 +132,20 @@ html_redirect_pages = [
 
 warnings_filter_config = str(NRF_BASE / "doc" / "nrf" / "known-warnings.txt")
 warnings_filter_silent = False
+
+# Options for external_content -------------------------------------------------
+
+external_content_contents = [
+    (NRF_BASE / "doc" / "nrf", "*"),
+    (NRF_BASE, "applications/**/*.rst"),
+    (NRF_BASE, "applications/**/doc"),
+    (NRF_BASE, "include/**/*.rst"),
+    (NRF_BASE, "lib/**/*.rst"),
+    (NRF_BASE, "lib/**/doc"),
+    (NRF_BASE, "samples/**/*.rst"),
+    (NRF_BASE, "scripts/**/*.rst"),
+    (NRF_BASE, "tests/**/*.rst"),
+]
 
 
 def setup(app):

@@ -159,12 +159,12 @@ string(REPLACE ";" "\\;" tools_files_escaped "${tools_version_files}")
 string(REPLACE ";" "\\;" pip_files_escaped "${pip_requirements_files}")
 
 add_custom_command(
-  OUTPUT ${NRF_RST_OUT}/doc/nrf/versions.txt
+  OUTPUT ${NRF_BINARY_DIR}/src/versions.txt
   COMMAND ${CMAKE_COMMAND}
     -DTOOLS_VERSION_FILES="${tools_files_escaped}"
     -DPIP_REQUIREMENTS_FILES="${pip_files_escaped}"
     -DVERSION_IN=${NRF_DOC_DIR}/versions.txt.in
-    -DVERSION_OUT=${NRF_RST_OUT}/doc/nrf/versions.txt
+    -DVERSION_OUT=${NRF_BINARY_DIR}/src/versions.txt
     -P ${NRF_BASE}/doc/update_versions.cmake
   DEPENDS
     ${NRF_DOC_DIR}/versions.txt.in
@@ -183,74 +183,32 @@ add_custom_target(
     -P ${ZEPHYR_BASE}/cmake/util/execute_process.cmake
 )
 
-set(NRF_EXTRACT_CONTENT_COMMAND
-  ${CMAKE_COMMAND} -E env
-  ZEPHYR_BASE=${NRF_BASE}
-  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/_scripts/extract_content.py
-  --outputs ${NRF_CONTENT_OUTPUTS}
-  --ignore ${CMAKE_CURRENT_BINARY_DIR}
-  --sphinx-src-root ${NRF_DOC_DIR}
-  "*:doc:${NRF_RST_OUT}"
-  "*.rst:applications:${NRF_RST_OUT}"
-  "*.rst:samples:${NRF_RST_OUT}"
-  "*.rst:boards:${NRF_RST_OUT}"
-  "*.rst:include:${NRF_RST_OUT}"
-  "*.rst:lib:${NRF_RST_OUT}"
-  "*.rst:scripts:${NRF_RST_OUT}"
-  "*.rst:tests:${NRF_RST_OUT}"
-  "*.rst:applications:${NRF_RST_OUT}/doc/nrf"
-  "*.rst:samples:${NRF_RST_OUT}/doc/nrf"
-  "*.rst:boards:${NRF_RST_OUT}/doc/nrf"
-  "changelog.rst:doc:${NRF_RST_OUT}/doc/nrf"
-  "*.rst:doc/nrf/drivers:${NRF_RST_OUT}"
-  "*.rst:include:${NRF_RST_OUT}/doc/nrf"
-  "*.rst:lib:${NRF_RST_OUT}/doc/nrf"
-  "*.rst:scripts:${NRF_RST_OUT}/doc/nrf"
-  "*.rst:tests:${NRF_RST_OUT}/doc/nrf"
-)
-
-add_custom_target(
-  nrf-content
-  # Copy all files in doc/ to the rst folder
-  COMMAND ${NRF_EXTRACT_CONTENT_COMMAND}
-  WORKING_DIRECTORY ${NRF_DOC_DIR}
-  DEPENDS ${NRF_RST_OUT}/doc/nrf/versions.txt
-)
-
 if(WIN32)
   set(SEP $<SEMICOLON>)
 else()
   set(SEP :)
 endif()
 
+set(NRF_BUILD_SRC ${NRF_BINARY_DIR}/src)
+
 set(nrf_sphinx_environment
   ZEPHYR_BASE=${ZEPHYR_BASE}
-  ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
-  ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
   NRF_BASE=${NRF_BASE}
   NRF_BUILD=${NRF_BINARY_DIR}
-  NRF_OUTPUT=${HTML_DIR}/nrf
-  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
-  NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
-  ZEPHYR_RST_SRC=${ZEPHYR_BINARY_DIR}/rst/doc
-  MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
-  NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
+  NRF_RST_SRC=${NRF_BUILD_SRC}
 )
 
-
-set(NRF_SPHINX_BUILD_HTML_COMMAND
-  ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
-)
 
 add_custom_target(
   nrf-html
-  COMMAND ${NRF_SPHINX_BUILD_HTML_COMMAND}
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${NRF_BUILD_SRC}
+  COMMAND ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${HTML_DIR}/nrf
   # Copy root index file
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/_static/html/index.html ${HTML_DIR}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  DEPENDS ${NRF_BINARY_DIR}/src/versions.txt
 )
-add_dependencies(nrf-html nrf-doxy nrf-content)
+add_dependencies(nrf-html nrf-doxy)
 
 add_custom_target(
   nrf-copy-versions
@@ -413,12 +371,12 @@ add_custom_target(
 
 add_custom_target(
   nrf-linkcheck
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${NRF_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b linkcheck ${NRF_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${NRF_BINARY_DIR}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b linkcheck ${NRF_SPHINXOPTS} -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${NRF_BINARY_DIR}
 )
 
-add_dependencies(nrf-linkcheck nrf-content nrf-doxy)
+add_dependencies(nrf-linkcheck nrf-doxy)
 
 add_custom_target(
   nrfxlib-linkcheck
