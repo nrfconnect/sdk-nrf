@@ -12,6 +12,11 @@ if not NRF_BASE:
     raise FileNotFoundError("NRF_BASE not defined")
 NRF_BASE = Path(NRF_BASE)
 
+NRFXLIB_BASE = os.environ.get("NRFXLIB_BASE")
+if not NRFXLIB_BASE:
+    raise FileNotFoundError("NRFXLIB_BASE not defined")
+NRFXLIB_BASE = Path(NRFXLIB_BASE)
+
 NRFXLIB_BUILD = os.environ.get("NRFXLIB_BUILD")
 if not NRFXLIB_BUILD:
     raise FileNotFoundError("NRFXLIB_BUILD not defined")
@@ -34,6 +39,7 @@ extensions = [
     "breathe",
     "sphinxcontrib.mscgen",
     "inventory_builder",
+    "external_content"
 ]
 master_doc = "README"
 
@@ -71,6 +77,13 @@ breathe_projects = {"nrfxlib": str(NRFXLIB_BUILD / "doxygen" / "xml")}
 breathe_default_project = "nrfxlib"
 breathe_domain_by_extension = {"h": "c", "c": "c"}
 breathe_separate_member_pages = True
+
+# Options for external_content -------------------------------------------------
+
+external_content_contents = [
+    (NRFXLIB_BASE, "**/*.rst"),
+    (NRFXLIB_BASE, "**/doc/")
+]
 
 
 def setup(app):
