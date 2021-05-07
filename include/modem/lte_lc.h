@@ -296,8 +296,9 @@ struct lte_lc_ncell {
 };
 
 /** @brief Structure containing results of neighbor cell measurements.
+ *	   The current cell information is valid if the current cell ID is non-zero.
  *	   The ncells_count member indicates whether or not the structure contains
- *	   any valid cell information. If it is zero, no cells were found, and
+ *	   valid neighbor cell information. If it is zero, no cells were found, and
  *	   the information in the rest of structure members do not contain valid data.
  */
 struct lte_lc_cells_info {

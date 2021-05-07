@@ -646,9 +646,13 @@ uint32_t neighborcell_count_get(const char *at_response)
 
 /* Parse NCELLMEAS notification and put information into struct lte_lc_cells_info.
  *
- * Returns 0 on successful cell measurements and population of struct, 1 on
- * measurement failure, -E2BIG if not all cells were parsed due to memory
- * limitations, otherwise negative error code.
+ * Returns 0 on successful cell measurements and population of struct.
+ *	     A non-zero current cell ID indicates that current cell information
+ *	     is valid. The ncells_count indicates for how many neighbor cells
+ *	     the data is valid.
+ * Returns 1 on measurement failure
+ * Returns -E2BIG if not all cells were parsed due to memory limitations
+ * Returns otherwise a negative error code.
  */
 int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 {
@@ -802,8 +806,8 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 	/* Neighbor cell count. */
 	cells->ncells_count = neighborcell_count_get(at_response);
-	if (cells->ncells_count == 0) {
-		return 0;
+	if ((cells->ncells_count == 0) || (cells->neighbor_cells == NULL)) {
+		goto clean_exit;
 	}
 
 	/* Neighboring cells. */

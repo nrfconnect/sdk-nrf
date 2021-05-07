@@ -376,7 +376,7 @@ static void test_parse_ncellmeas(void)
 	char *resp1 = "%NCELLMEAS: 0,\"021D140C\",\"24201\",\"0821\",65535,5300,"
 			"449,50,15,10891,5300,194,46,8,0,1650,292,60,27,24";
 	char *resp2 = "%NCELLMEAS: 1,\"021D140C\",\"24201\",\"0821\",65535,5300";
-	char *resp3 = "%NCELLMEAS: 0,\"021D140C\",\"24201\",\"0821\",65535,5300,449,50,15,10891";
+	char *resp3 = "%NCELLMEAS: 0,\"071D340C\",\"24201\",\"0821\",65535,5300,449,50,15,10891";
 	struct lte_lc_ncell ncells[17];
 	struct lte_lc_cells_info cells = {
 		.neighbor_cells = ncells,
@@ -404,11 +404,24 @@ static void test_parse_ncellmeas(void)
 	zassert_equal(cells.neighbor_cells[1].rsrq, 27, "Wrong RSRQ");
 	zassert_equal(cells.neighbor_cells[1].time_diff, 24, "Wrong time difference");
 
+	memset(&cells, 0, sizeof(cells));
+
 	err = parse_ncellmeas(resp2, &cells);
 	zassert_equal(err, 1, "parse_ncellmeas was expected to return 1, but returned %d", err);
 
+	memset(&cells, 0, sizeof(cells));
+
 	err = parse_ncellmeas(resp3, &cells);
 	zassert_equal(err, 0, "parse_ncellmeas was expected to return 0, but returned %d", err);
+	zassert_equal(cells.current_cell.mcc, 242, "Wrong MCC");
+	zassert_equal(cells.current_cell.mnc, 1, "Wrong MNC");
+	zassert_equal(cells.current_cell.tac, 2081, "Wrong TAC");
+	zassert_equal(cells.current_cell.id, 119354380, "Wrong cell ID");
+	zassert_equal(cells.current_cell.earfcn, 5300, "Wrong EARFCN");
+	zassert_equal(cells.current_cell.timing_advance, 65535, "Wrong timing advance");
+	zassert_equal(cells.current_cell.measurement_time, 10891, "Wrong measurement time");
+	zassert_equal(cells.current_cell.phys_cell_id, 449, "Wrong physical cell ID");
+	zassert_equal(cells.ncells_count, 0, "Wrong neighbor cell count");
 }
 
 static void test_neighborcell_count_get(void)

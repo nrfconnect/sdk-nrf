@@ -331,7 +331,7 @@ static void at_handler(void *context, const char *response)
 		break;
 	case LTE_LC_NOTIF_NCELLMEAS: {
 		int ncell_count = neighborcell_count_get(response);
-		struct lte_lc_ncell *neighbor_cells;
+		struct lte_lc_ncell *neighbor_cells = NULL;
 
 		LOG_DBG("%%NCELLMEAS notification");
 		LOG_DBG("Neighbor cell count: %d", ncell_count);
@@ -343,16 +343,12 @@ static void at_handler(void *context, const char *response)
 			return;
 		}
 
-		if (ncell_count == 0) {
-			evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
-			evt_handler(&evt);
-			return;
-		}
-
-		neighbor_cells = k_calloc(sizeof(struct lte_lc_ncell), ncell_count);
-		if (neighbor_cells == NULL) {
-			LOG_ERR("Failed to allocate memory for neighbor cells");
-			return;
+		if (ncell_count != 0) {
+			neighbor_cells = k_calloc(ncell_count, sizeof(struct lte_lc_ncell));
+			if (neighbor_cells == NULL) {
+				LOG_ERR("Failed to allocate memory for neighbor cells");
+				return;
+			}
 		}
 
 		evt.cells_info.neighbor_cells = neighbor_cells;
@@ -375,7 +371,9 @@ static void at_handler(void *context, const char *response)
 			break;
 		}
 
-		k_free(neighbor_cells);
+		if (neighbor_cells) {
+			k_free(neighbor_cells);
+		}
 
 		return;
 	}
