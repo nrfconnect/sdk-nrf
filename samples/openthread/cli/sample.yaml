@@ -4,10 +4,11 @@ sample:
 tests:
   samples.openthread.cli:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
+        nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
@@ -22,32 +23,35 @@ tests:
       - nrf21540dk_nrf52840
   samples.openthread.cli.usb:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
     extra_args: OVERLAY_CONFIG=overlay-usb.conf
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
       - nrf52840dongle_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
   samples.openthread.cli.minimal_multiprotocol:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
     extra_args: OVERLAY_CONFIG=overlay-minimal_multiprotocol.conf
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
   samples.openthread.cli.minimal_singleprotocol:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
     extra_args: OVERLAY_CONFIG=overlay-minimal_singleprotocol.conf
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
