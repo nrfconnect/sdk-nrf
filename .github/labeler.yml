@@ -139,14 +139,10 @@
   - "modules/mcuboot/**/*"
 
 "CI-thread-test":
-  - "include/openthread/**/*"
-  - "include/modem/**/*"
-  - "lib/**/*"
   - "samples/openthread/**/*"
   - "subsys/mpsl/**/*"
   - "subsys/net/lib/coap_utils/**/*"
   - "subsys/net/openthread/**/*"
-  - "subsys/net/l2/openthread/**/*"
 
 "CI-nfc-test":
   - "subsys/nfc/**/*"
