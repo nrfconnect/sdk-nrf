@@ -302,7 +302,7 @@ string(REGEX REPLACE ";" "\n" MBEDTLS_CONFIG "${MBEDTLS_CONFIG}")
 file(WRITE ${NRFXLIB_BINARY_DIR}/mbedtls_doxygen_config.h ${MBEDTLS_CONFIG})
 
 
-set(NRFXLIB_SPHINXOPTS -d ${NRFXLIB_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/nrfxlib ${NRFXLIB_SPHINXOPTS})
+set(NRFXLIB_SPHINXOPTS -c ${NRF_BASE}/doc/nrfxlib ${NRFXLIB_SPHINXOPTS})
 
 
 set(NRFXLIB_DOXYFILE_IN ${NRF_BASE}/doc/nrfxlib/nrfxlib.doxyfile.in)
@@ -310,6 +310,7 @@ set(NRFXLIB_DOXYFILE_OUT ${NRFXLIB_BINARY_DIR}/nrfxlib.doxyfile)
 set(NRFXLIB_RST_OUT ${NRFXLIB_BINARY_DIR}/rst)
 set(NRFXLIB_DOXY_LOG ${NRFXLIB_BINARY_DIR}/doxy.log)
 set(NRFXLIB_SPHINX_LOG ${NRFXLIB_BINARY_DIR}/sphinx.log)
+set(NRFXLIB_BUILD_SRC ${NRFXLIB_BINARY_DIR}/src)
 
 
 configure_file(${NRFXLIB_DOXYFILE_IN} ${NRFXLIB_DOXYFILE_OUT} @ONLY)
@@ -326,31 +327,11 @@ add_custom_target(
 )
 
 
-set(NRFXLIB_EXTRACT_CONTENT_COMMAND
- ${CMAKE_COMMAND} -E env
-  ZEPHYR_BASE=${NRFXLIB_BASE}
-  ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/_scripts/extract_content.py
-  --ignore ${CMAKE_CURRENT_BINARY_DIR}
-  "*.rst:.:${NRFXLIB_RST_OUT}"
-  "*:doc:${NRFXLIB_RST_OUT}"
-  "*.rst:include:${NRFXLIB_RST_OUT}/kconfig"
-)
-
-
-add_custom_target(
-  nrfxlib-content
-
-  # Copy all files from nrfxlib to the rst folder
-  COMMAND ${NRFXLIB_EXTRACT_CONTENT_COMMAND}
-
-  WORKING_DIRECTORY ${NRFXLIB_BASE}
-)
-
 set(nrfxlib_sphinx_environment
   NRF_BASE=${NRF_BASE}
   NRF_OUTPUT=${HTML_DIR}/nrf
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
+  NRFXLIB_BASE=${NRFXLIB_BASE}
   NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
   NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
   NRFXLIB_RST_SRC=${NRFXLIB_RST_OUT}
@@ -359,22 +340,22 @@ set(nrfxlib_sphinx_environment
 
 add_custom_target(
   nrfxlib-html
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${HTML_DIR}/nrfxlib
 )
-add_dependencies(nrfxlib-html nrfxlib-content nrfxlib-doxy)
+add_dependencies(nrfxlib-html nrfxlib-doxy)
 
 add_custom_target(nrfxlib)
 add_dependencies(nrfxlib nrfxlib-html)
 
 add_custom_target(
   nrfxlib-inventory
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b inventory ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b inventory ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${HTML_DIR}/nrfxlib
 )
-add_dependencies(nrfxlib-inventory nrfxlib-content nrfxlib-doxy)
+add_dependencies(nrfxlib-inventory nrfxlib-doxy)
 
 #
 # Add targets for building the shared Kconfig documentation
@@ -469,12 +450,12 @@ add_dependencies(nrf-linkcheck nrf-content nrf-doxy)
 
 add_custom_target(
   nrfxlib-linkcheck
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b linkcheck ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_RST_OUT}  ${NRFXLIB_BINARY_DIR}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b linkcheck ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${NRFXLIB_BINARY_DIR}
 )
 
-add_dependencies(nrfxlib-linkcheck nrfxlib-content nrfxlib-doxy)
+add_dependencies(nrfxlib-linkcheck nrfxlib-doxy)
 
 add_custom_target(
   mcuboot-linkcheck
