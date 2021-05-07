@@ -60,7 +60,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp_ns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
 
 You can use one or more of the development kits listed above as the Thread CoAP Client.
 You also need one or more compatible development kits programmed with the :ref:`coap_server_sample` sample.
