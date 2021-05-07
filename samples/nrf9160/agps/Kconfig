@@ -13,6 +13,15 @@ config CLOUD_MESSAGE
 config LTE_POWER_SAVING_MODE
 	bool "Request Power Saving Mode (PSM) from cellular network"
 
+if NRF_CLOUD_PGPS
+config PGPS_STORE_LOCATION
+	bool "Store location when GPS fix occurs"
+	help
+	  For semi-stationary applications, the first fix after reset will
+	  be faster using predicted GPS if the last known location is provided
+	  to the modem.
+endif
+
 endmenu
 
 menu "Zephyr Kernel"
