@@ -1,7 +1,7 @@
 .. _SLM_AT_intro:
 
-AT commands
-###########
+SLM-specific AT commands
+########################
 
 The application sample uses a series of proprietary AT commands to let the nRF91 development kit operate as a Serial LTE Modem (SLM).
 
@@ -26,6 +26,9 @@ There are 3 types of AT commands:
   Some test commands can also have other functionality.
 
 AT responds to all commands with a final response.
+
+See the following subpages for documentation of the proprietary AT commands.
+The modem-specific AT commands are documented in the `nRF91 AT Commands Reference Guide <AT Commands Reference Guide_>`_.
 
 .. toctree::
    :maxdepth: 2
