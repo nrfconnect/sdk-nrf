@@ -30,7 +30,7 @@ class InventoryBuilder(Builder):
     def get_outdated_docs(self):
         return self.env.found_docs
 
-    def get_target_uri(self, docname, typ=None):
+    def get_target_uri(self, docname, typ=None): #pylint: disable=no-self-use
         return docname + '.html'
 
     def prepare_writing(self, docnames):
