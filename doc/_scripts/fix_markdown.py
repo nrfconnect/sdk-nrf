@@ -17,12 +17,11 @@ import fileinput
 import sys
 
 
-
 def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('dir', nargs=1)
+    parser.add_argument("dir", nargs=1)
     args = parser.parse_args()
 
     files = glob.glob(args.dir[0] + "/*.md")
@@ -30,19 +29,19 @@ def main():
     comment = 0
 
     for line in fileinput.input(files, inplace=1):
-      if "<!--" in line:
-         comment = 1
+        if "<!--" in line:
+            comment = 1
 
-      if "-->" in line:
-         comment = 0
-         line = ""
+        if "-->" in line:
+            comment = 0
+            line = ""
 
-      line = line.replace(".md)",".html)")
+        line = line.replace(".md)", ".html)")
 
-      if comment:
-         line = ""
+        if comment:
+            line = ""
 
-      sys.stdout.write(line)
+        sys.stdout.write(line)
 
 
 if __name__ == "__main__":
