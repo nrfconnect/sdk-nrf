@@ -86,6 +86,7 @@ Kconfig*                                  @tejlmand
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
+/samples/bluetooth/direction_finding_connectionless_rx/ @ppryga @joerchan
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @joerchan
 /samples/bootloader/                      @hakonfam @ioannisg
 /samples/connectedhomeip/                 @Damian-Nordic @kkasperczyk-no
