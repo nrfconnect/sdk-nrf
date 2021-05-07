@@ -215,11 +215,25 @@ The following list summarizes the most important changes inherited from upstream
     * Added multiple bug fixes for IEEE 802.15.4 L2.
     * Fixed memory management issues in TCP2 when running out of memory.
     * Added connection establishment timer for TCP2.
+    * Fixed character mode handling in telnet shell backend.
+    * Fixed broadcast packets handling in ICMPv4 module.
+    * Added a network traffic monitoring library.
+    * Updated PPP L2 to make it work with RAW sockets.
+    * Fixed source address selection for packets with multicast destination address.
+    * Added support for virtual network interfaces and tunnelling.
+    * Removed the legacy TCP stack.
+    * Added mutex protection for network interfaces.
+    * Added mutex protection for the DHCPv4 module.
 
   * LwM2M:
 
     * Fixed a bug where large LwM2M endpoint names were not encoded properly in the registration message.
     * Added API functions to update minimum/maximum observe period of a resource.
+    * Updated default values of pmin/pmax parameters, to align with the LwM2M specification.
+    * Added support for object versioning.
+    * Added support for IPSO objects in version 1.1.
+    * Added a new content writer for ``application/link-format`` data format.
+    * Added support for data validation callback.
 
   * OpenThread:
 
@@ -233,6 +247,9 @@ The following list summarizes the most important changes inherited from upstream
       * :option:`CONFIG_OPENTHREAD_SRP_CLIENT`
       * :option:`CONFIG_OPENTHREAD_SRP_SERVER`
 
+    * Fixed a bug where MAC layer code asserted after OpenThread diagnostic was stopped.
+    * Added a microsecond timer API implementation to the Zephyr port.
+
   * MQTT:
 
     * Fixed logging of UTF-8 strings.
@@ -240,6 +257,10 @@ The following list summarizes the most important changes inherited from upstream
   * Sockets:
 
     * Fixed TLS sockets access from user space.
+    * Enabled :option:`CONFIG_NET_SOCKETS_POSIX_NAMES` by default.
+    * Added :c:macro:`TLS_DTLS_HANDSHAKE_TIMEOUT_MIN` and :c:macro:`TLS_DTLS_HANDSHAKE_TIMEOUT_MAX` TLS socket options.
+    * Fixed :c:func:`zsock_poll` behavior during handshake with DTLS socket.
+    * Added mutex protection for the socket API.
 
   * CoAP:
 
