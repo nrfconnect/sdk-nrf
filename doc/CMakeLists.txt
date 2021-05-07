@@ -270,11 +270,6 @@ set(MCUBOOT_BUILD_SRC ${MCUBOOT_BINARY_DIR}/src)
 set(mcuboot_sphinx_environment
   NRF_BASE=${NRF_BASE}
   MCUBOOT_BASE=${MCUBOOT_BASE}
-  ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
-  NRF_OUTPUT=${HTML_DIR}/nrf
-  NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
-  MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
-  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
 )
 
 add_custom_target(
