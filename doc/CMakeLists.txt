@@ -329,13 +329,8 @@ add_custom_target(
 
 set(nrfxlib_sphinx_environment
   NRF_BASE=${NRF_BASE}
-  NRF_OUTPUT=${HTML_DIR}/nrf
-  NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   NRFXLIB_BASE=${NRFXLIB_BASE}
   NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
-  NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
-  NRFXLIB_RST_SRC=${NRFXLIB_RST_OUT}
-  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
 )
 
 add_custom_target(
