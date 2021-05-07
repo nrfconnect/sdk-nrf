@@ -39,7 +39,8 @@ extensions = [
     "breathe",
     "sphinxcontrib.mscgen",
     "inventory_builder",
-    "external_content"
+    "external_content",
+    "doxyrunner",
 ]
 master_doc = "README"
 
@@ -71,9 +72,20 @@ nrf_mapping = utils.get_intersphinx_mapping("nrf")
 if nrf_mapping:
     intersphinx_mapping["nrf"] = nrf_mapping
 
+# -- Options for doxyrunner plugin ---------------------------------------------
+
+doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
+doxyrunner_doxyfile = NRF_BASE / "doc" / "nrfxlib" / "nrfxlib.doxyfile.in"
+doxyrunner_outdir = NRFXLIB_BUILD / "doxygen"
+doxyrunner_fmt = True
+doxyrunner_fmt_vars = {
+    "NRFXLIB_BASE": str(NRFXLIB_BASE),
+    "NRFXLIB_BINARY_DIR": str(NRFXLIB_BUILD),
+}
+
 # Options for breathe ----------------------------------------------------------
 
-breathe_projects = {"nrfxlib": str(NRFXLIB_BUILD / "doxygen" / "xml")}
+breathe_projects = {"nrfxlib": str(doxyrunner_outdir / "xml")}
 breathe_default_project = "nrfxlib"
 breathe_domain_by_extension = {"h": "c", "c": "c"}
 breathe_separate_member_pages = True

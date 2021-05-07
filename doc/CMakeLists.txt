@@ -300,32 +300,16 @@ file(WRITE ${NRFXLIB_BINARY_DIR}/mbedtls_doxygen_config.h ${MBEDTLS_CONFIG})
 set(NRFXLIB_SPHINXOPTS -c ${NRF_BASE}/doc/nrfxlib ${NRFXLIB_SPHINXOPTS})
 
 
-set(NRFXLIB_DOXYFILE_IN ${NRF_BASE}/doc/nrfxlib/nrfxlib.doxyfile.in)
-set(NRFXLIB_DOXYFILE_OUT ${NRFXLIB_BINARY_DIR}/nrfxlib.doxyfile)
 set(NRFXLIB_RST_OUT ${NRFXLIB_BINARY_DIR}/rst)
-set(NRFXLIB_DOXY_LOG ${NRFXLIB_BINARY_DIR}/doxy.log)
 set(NRFXLIB_SPHINX_LOG ${NRFXLIB_BINARY_DIR}/sphinx.log)
 set(NRFXLIB_BUILD_SRC ${NRFXLIB_BINARY_DIR}/src)
-
-
-configure_file(${NRFXLIB_DOXYFILE_IN} ${NRFXLIB_DOXYFILE_OUT} @ONLY)
-
-add_custom_target(
-  nrfxlib-doxy
-  COMMAND ${CMAKE_COMMAND}
-    -DCOMMAND=${DOXYGEN_EXECUTABLE}
-    -DARGS="${NRFXLIB_DOXYFILE_OUT}"
-    -DOUTPUT_FILE=${NRFXLIB_DOXY_LOG}
-    -DERROR_FILE=${NRFXLIB_DOXY_LOG}
-    -DWORKING_DIRECTORY=${NRFXLIB_BASE}
-    -P ${ZEPHYR_BASE}/cmake/util/execute_process.cmake
-)
 
 
 set(nrfxlib_sphinx_environment
   NRF_BASE=${NRF_BASE}
   NRFXLIB_BASE=${NRFXLIB_BASE}
   NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
+  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
 )
 
 add_custom_target(
@@ -334,7 +318,6 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
   ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${HTML_DIR}/nrfxlib
 )
-add_dependencies(nrfxlib-html nrfxlib-doxy)
 
 add_custom_target(nrfxlib)
 add_dependencies(nrfxlib nrfxlib-html)
@@ -345,7 +328,6 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
   ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b inventory ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${HTML_DIR}/nrfxlib
 )
-add_dependencies(nrfxlib-inventory nrfxlib-doxy)
 
 #
 # Add targets for building the shared Kconfig documentation
@@ -444,8 +426,6 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
   ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b linkcheck ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${NRFXLIB_BINARY_DIR}
 )
-
-add_dependencies(nrfxlib-linkcheck nrfxlib-doxy)
 
 add_custom_target(
   mcuboot-linkcheck
