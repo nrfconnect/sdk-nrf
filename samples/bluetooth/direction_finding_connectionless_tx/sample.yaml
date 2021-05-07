@@ -4,10 +4,14 @@ sample:
 tests:
   sample.bluetooth.direction_finding_connectionless:
     harness: bluetooth
-    platform_allow: nrf52833dk_nrf52833
+    filter: CONFIG_HAS_HW_NRF_RADIO_BLE_DF
     tags: bluetooth
+    integration_platforms:
+        - nrf52833dk_nrf52833
   sample.bluetooth.direction_finding_connectionless.aoa:
     extra_args: OVERLAY_CONFIG="overlay-aoa.conf"
     harness: bluetooth
-    platform_allow: nrf52833dk_nrf52833
+    filter: CONFIG_HAS_HW_NRF_RADIO_BLE_DF
     tags: bluetooth
+    integration_platforms:
+        - nrf52833dk_nrf52833
