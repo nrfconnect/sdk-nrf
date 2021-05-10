@@ -116,11 +116,11 @@ struct paw3212_data {
 	const struct device          *spi_dev;
 	struct gpio_callback         irq_gpio_cb;
 	struct k_spinlock            lock;
-	int16_t                        x;
-	int16_t                        y;
+	int16_t                      x;
+	int16_t                      y;
 	sensor_trigger_handler_t     data_ready_handler;
 	struct k_work                trigger_handler_work;
-	struct k_delayed_work        init_work;
+	struct k_work_delayable      init_work;
 	enum async_init_step         async_init_step;
 	int                          err;
 	bool                         ready;
@@ -661,8 +661,8 @@ static void paw3212_async_init(struct k_work *work)
 			dev_data->ready = true;
 			LOG_INF("PAW3212 initialized");
 		} else {
-			k_delayed_work_submit(&dev_data->init_work,
-					      K_MSEC(async_init_delay[
+			k_work_schedule(&dev_data->init_work,
+					K_MSEC(async_init_delay[
 						dev_data->async_init_step]));
 		}
 	}
@@ -760,11 +760,10 @@ static int paw3212_init(const struct device *dev)
 		return err;
 	}
 
-	k_delayed_work_init(&dev_data->init_work, paw3212_async_init);
+	k_work_init_delayable(&dev_data->init_work, paw3212_async_init);
 
-	k_delayed_work_submit(&dev_data->init_work,
-			      K_MSEC(async_init_delay[
-				dev_data->async_init_step]));
+	k_work_schedule(&dev_data->init_work,
+			K_MSEC(async_init_delay[dev_data->async_init_step]));
 
 	return err;
 }
