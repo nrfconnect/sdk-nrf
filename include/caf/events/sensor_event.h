@@ -19,12 +19,32 @@
 extern "C" {
 #endif
 
+/** Sensor state list. */
+#define SENSOR_STATE_LIST	\
+	UTIL_EXPAND(		\
+	X(DISABLED)		\
+	X(SLEEP)		\
+	X(ACTIVE)		\
+	X(ERROR))		\
+
+/** Sensor states. */
 enum sensor_state {
-	SENSOR_STATE_DISABLED,
-	SENSOR_STATE_SLEEP,
-	SENSOR_STATE_ACTIVE,
-	SENSOR_STATE_ERROR,
+#define X(name) _CONCAT(SENSOR_STATE_, name),
+	SENSOR_STATE_LIST
+#undef X
+
+	SENSOR_STATE_COUNT
 };
+
+/** @brief Sensor state event. */
+struct sensor_state_event {
+	struct event_header header; /**< Event header. */
+
+	const char *descr; /**< Description of the sensor event. */
+	enum sensor_state state; /**< Sensor satate. */
+};
+
+EVENT_TYPE_DECLARE(sensor_state_event);
 
 /** @brief Sensor event. */
 struct sensor_event {
