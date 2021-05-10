@@ -11,8 +11,6 @@
 # Intersphinx (http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html)
 # is used to link documentation sets together. It is configured in the Sphinx
 # configuration files.
-#
-# The *-content targets copy/create .rst files that later get built by Sphinx.
 
 cmake_minimum_required(VERSION 3.13.1)
 project(nrf-connect-sdk-doc LANGUAGES)
@@ -54,7 +52,7 @@ set(DOXYGEN_SKIP_DOT True) # Skip the otional Dot component
 find_package(Doxygen REQUIRED)
 
 find_program(SPHINXBUILD sphinx-build)
-if(${SPHINXBUILD} STREQUAL SPHINXBUILD-NOTFOUND)
+if(NOT SPHINXBUILD)
   message(FATAL_ERROR "The 'sphinx-build' command was not found. Make sure you have Sphinx installed.")
 endif()
 
@@ -106,17 +104,9 @@ add_dependencies(zephyr html)
 #
 
 foreach(target zephyr nrf mcuboot nrfxlib kconfig)
-  set(TARGET_BINARY_DIR ${CMAKE_BINARY_DIR}/${target})
-  # Cleanup build output
   add_custom_target(
     clean-${target}
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${TARGET_BINARY_DIR}/doctrees
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${TARGET_BINARY_DIR}/doxygen
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${TARGET_BINARY_DIR}/rst
-    COMMAND ${CMAKE_COMMAND} -E remove ${TARGET_BINARY_DIR}/*.log
-    COMMAND ${CMAKE_COMMAND} -E remove ${TARGET_BINARY_DIR}/*.warnings
-    COMMAND ${CMAKE_COMMAND} -E remove ${TARGET_BINARY_DIR}/last_doxy_run_tstamp
-    # Remove generated HTML as well
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/${target}
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${HTML_DIR}/${target}
   )
 endforeach()
@@ -125,14 +115,8 @@ endforeach()
 # Add nRF-related targets
 #
 
-set(NRF_SPHINXOPTS -d ${NRF_BINARY_DIR}/doctrees ${NRF_SPHINXOPTS})
-
 set(NRF_DOC_DIR ${NRF_BASE}/doc/nrf)
-
-set(NRF_RST_OUT ${NRF_BINARY_DIR}/rst)
 set(NRF_SPHINX_LOG ${NRF_BINARY_DIR}/sphinx.log)
-set(NRF_CONTENT_OUTPUTS ${NRF_BINARY_DIR}/extracted-content.txt)
-set(NRF_DOC_WARN ${NRF_BINARY_DIR}/doc.warnings)
 
 set(tools_version_files
     ${NRF_BASE}/scripts/tools-versions-minimum.txt
@@ -188,7 +172,7 @@ add_custom_target(
   nrf-html
   COMMAND ${CMAKE_COMMAND} -E make_directory ${NRF_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -b html ${NRF_SPHINXOPTS} -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${HTML_DIR}/nrf
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -b html -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${HTML_DIR}/nrf
   # Copy root index file
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/_static/html/index.html ${HTML_DIR}
   DEPENDS ${NRF_BINARY_DIR}/src/versions.txt
@@ -240,14 +224,8 @@ string(REGEX REPLACE
 string(REGEX REPLACE ";" "\n" MBEDTLS_CONFIG "${MBEDTLS_CONFIG}")
 file(WRITE ${NRFXLIB_BINARY_DIR}/mbedtls_doxygen_config.h ${MBEDTLS_CONFIG})
 
-
-set(NRFXLIB_SPHINXOPTS -c ${NRF_BASE}/doc/nrfxlib ${NRFXLIB_SPHINXOPTS})
-
-
-set(NRFXLIB_RST_OUT ${NRFXLIB_BINARY_DIR}/rst)
 set(NRFXLIB_SPHINX_LOG ${NRFXLIB_BINARY_DIR}/sphinx.log)
 set(NRFXLIB_BUILD_SRC ${NRFXLIB_BINARY_DIR}/src)
-
 
 set(nrfxlib_sphinx_environment
   NRF_BASE=${NRF_BASE}
@@ -260,7 +238,7 @@ add_custom_target(
   nrfxlib-html
   COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -b html ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${HTML_DIR}/nrfxlib
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -b html -c ${NRF_BASE}/doc/nrfxlib ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${HTML_DIR}/nrfxlib
   USES_TERMINAL
 )
 
@@ -271,7 +249,8 @@ add_custom_target(
   nrfxlib-inventory
   COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b inventory ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${HTML_DIR}/nrfxlib
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -b inventory -c ${NRF_BASE}/doc/nrfxlib ${NRFXLIB_BUILD_SRC} ${HTML_DIR}/nrfxlib
+  USES_TERMINAL
 )
 
 #
@@ -286,7 +265,7 @@ add_custom_target(
 # use the --modules option to gen_kconfig_rest.py to split the documentation
 # into a separate page for each module.
 
-set(KCONFIG_RST_OUT ${KCONFIG_BINARY_DIR}/rst)
+set(KCONFIG_RST_OUT ${KCONFIG_BINARY_DIR}/src)
 get_directory_property(ZEPHYR_KCONFIG_MODULES DIRECTORY ${ZEPHYR_BASE}/doc DEFINITION ZEPHYR_KCONFIG_MODULES)
 
 # The 'kconfig-content' target uses gen_kconfig_rest.py to generate .rst files
@@ -329,7 +308,6 @@ add_custom_target(
       ${SPHINXBUILD}
         -b html
         -c ${NRF_BASE}/doc/kconfig
-        -d ${KCONFIG_BINARY_DIR}/doctrees
         -w ${KCONFIG_BINARY_DIR}/sphinx.log
         # The Kconfig reference build doesn't use Breathe, so we can safely
         # parallelize it
@@ -360,7 +338,7 @@ add_custom_target(
   nrf-linkcheck
   COMMAND ${CMAKE_COMMAND} -E make_directory ${NRF_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -b linkcheck ${NRF_SPHINXOPTS} -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${NRF_BINARY_DIR}
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -b linkcheck -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${NRF_BINARY_DIR}
   USES_TERMINAL
 )
 
@@ -368,7 +346,7 @@ add_custom_target(
   nrfxlib-linkcheck
   COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -b linkcheck ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${NRFXLIB_BINARY_DIR}
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -b linkcheck -c ${NRF_BASE}/doc/nrfxlib ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${NRFXLIB_BINARY_DIR}
   USES_TERMINAL
 )
 
