@@ -13,7 +13,7 @@ The sample downloads a modem firmware signed by Nordic and performs the firmware
 Overview
 ********
 
-An external flash memory with a minimum of 2MB of free space is required to perform a full modem update.
+An |external_flash_size| of free space is required to perform a full modem update.
 Hence, only versions 0.14.0 and later of the nrf9160 DK support this sample as the prior versions do not have any external flash memory.
 
 The sample connects to a remote HTTP server to download a signed version of the modem firmware, using the :ref:`lib_fota_download` library.
