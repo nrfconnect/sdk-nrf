@@ -9,8 +9,9 @@
 #include <net/openthread.h>
 #include <openthread/thread.h>
 #include <openthread/netdata.h>
-
+#include "factory_reset_event.h"
 #include "net_event.h"
+
 
 #define MODULE net
 #include <caf/events/module_state_event.h>
@@ -19,8 +20,14 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_NET_LOG_LEVEL);
 
 
+#define NET_MODULE_ID_STATE_READY_WAIT_FOR                               \
+	(IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_REQUEST_ENABLE) ? \
+		MODULE_ID(factory_reset_request) : MODULE_ID(main))
+
+
 static struct k_delayed_work connecting_work;
 static enum net_state net_state;
+static bool initialized;
 
 
 static void format_address(char *buffer, size_t buffer_size, const uint8_t *addr_m8,
@@ -181,27 +188,55 @@ static void connect_ot(void)
 	LOG_INF("OT connection requested");
 }
 
+static bool handle_state_event(const struct module_state_event *event)
+{
+	if (!check_state(event, NET_MODULE_ID_STATE_READY_WAIT_FOR, MODULE_STATE_READY)) {
+		return false;
+	}
+	__ASSERT_NO_MSG(!initialized);
+	initialized = true;
+
+	k_delayed_work_init(&connecting_work, connecting_work_handler);
+
+	set_net_state_event(NET_STATE_DISCONNECTED);
+
+	connect_ot();
+	module_set_state(MODULE_STATE_READY);
+	k_delayed_work_submit(&connecting_work, K_NO_WAIT);
+
+	return false;
+}
+
+static bool handle_reset_event(void)
+{
+	struct openthread_context *ot_context = openthread_get_default_context();
+	otError err;
+
+	/* This event has to apear before initialization */
+	__ASSERT_NO_MSG(!initialized);
+
+	LOG_WRN("Storage reset requested");
+	openthread_api_mutex_lock(ot_context);
+	err = otInstanceErasePersistentInfo(ot_context->instance);
+	openthread_api_mutex_unlock(ot_context);
+	/* It can fail only if called with OpenThread stack enabled.
+	 * This event should not appear after the OpenThread is started.
+	 * If it does - there is some huge coding error.
+	 */
+	__ASSERT_NO_MSG(err == OT_ERROR_NONE);
+
+	return false;
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+		return handle_state_event(cast_module_state_event(eh));
+	}
 
-		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			static bool initialized;
-
-			__ASSERT_NO_MSG(!initialized);
-			initialized = true;
-
-			k_delayed_work_init(&connecting_work, connecting_work_handler);
-
-			set_net_state_event(NET_STATE_DISCONNECTED);
-
-			connect_ot();
-			module_set_state(MODULE_STATE_READY);
-			k_delayed_work_submit(&connecting_work, K_NO_WAIT);
-		}
-
-		return false;
+	if (IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS) &&
+	    is_factory_reset_event(eh)) {
+		return handle_reset_event();
 	}
 
 	/* Event not handled but subscribed. */
@@ -212,3 +247,6 @@ static bool event_handler(const struct event_header *eh)
 
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+#if IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS)
+	EVENT_SUBSCRIBE(MODULE, factory_reset_event);
+#endif

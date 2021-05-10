@@ -5,11 +5,10 @@
  */
 
 #include <zephyr.h>
-
+#include "factory_reset_event.h"
 #include "factory_configurator_client.h"
 #include "pelion_fcc_err.h"
 
-#include <caf/events/button_event.h>
 
 #define MODULE pelion_fcc
 #include <caf/events/module_state_event.h>
@@ -17,28 +16,28 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_PELION_LOG_LEVEL);
 
+#define NET_MODULE_ID_STATE_READY_WAIT_FOR                               \
+	(IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_REQUEST_ENABLE) ? \
+		MODULE_ID(factory_reset_request) : MODULE_ID(main))
 
-static struct k_delayed_work fcc_init_work;
-static bool reset_storage;
+static bool initialized;
 
 
-static void fcc_init_work_handler(struct k_work *work)
+static bool handle_state_event(const struct module_state_event *event)
 {
-	fcc_status_e err = fcc_init();
+	if (!check_state(event, NET_MODULE_ID_STATE_READY_WAIT_FOR, MODULE_STATE_READY)) {
+		return false;
+	}
+
+	fcc_status_e err;
+
+	__ASSERT_NO_MSG(!initialized);
+
+	err = fcc_init();
 	if (err != FCC_STATUS_SUCCESS) {
 		LOG_ERR("Failed to initialize FCC (err:%s)", fcc_status_to_string(err));
 		module_set_state(MODULE_STATE_ERROR);
-		return;
-	}
-
-	if (reset_storage) {
-		LOG_WRN("Storage reset requested");
-		err = fcc_storage_delete();
-		if (err != FCC_STATUS_SUCCESS) {
-			LOG_ERR("Failed to reset storage (err:%s)", fcc_status_to_string(err));
-			module_set_state(MODULE_STATE_ERROR);
-			return;
-		}
+		return false;
 	}
 
 	err = fcc_developer_flow();
@@ -52,42 +51,51 @@ static void fcc_init_work_handler(struct k_work *work)
 	default:
 		LOG_ERR("Failed to initialize developer flow (err:%s)", fcc_status_to_string(err));
 		module_set_state(MODULE_STATE_ERROR);
-		return;
+		return false;
 	}
 
 	module_set_state(MODULE_STATE_READY);
-}
-
-
-static bool handle_button_event(const struct button_event *event)
-{
-	if (k_delayed_work_pending(&fcc_init_work) &&
-	    event->pressed) {
-		reset_storage = true;
-	}
-
+	initialized = true;
 	return false;
 }
+
+static bool handle_factory_reset(void)
+{
+	fcc_status_e err;
+	/* This is expected to be called before initialization */
+	__ASSERT_NO_MSG(!initialized);
+	LOG_WRN("Storage reset requested");
+
+	/* FCC needs to be initialized to clear it.
+	 * This is not an issue as the fcc_init function would finish
+	 * silently if already initialized.
+	 */
+	err = fcc_init();
+	if (err != FCC_STATUS_SUCCESS) {
+		LOG_ERR("Failed to initialize FCC (err:%s)", fcc_status_to_string(err));
+		module_set_state(MODULE_STATE_ERROR);
+		return false;
+	}
+
+	err = fcc_storage_delete();
+	if (err != FCC_STATUS_SUCCESS) {
+		LOG_ERR("Failed to reset storage (err:%s)", fcc_status_to_string(err));
+		module_set_state(MODULE_STATE_ERROR);
+		return false;
+	}
+	return false;
+}
+
 
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
-		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			static bool initialized;
-
-			__ASSERT_NO_MSG(!initialized);
-			initialized = true;
-
-			k_delayed_work_init(&fcc_init_work, fcc_init_work_handler);
-			k_delayed_work_submit(&fcc_init_work, K_MSEC(50));
-		}
-
-		return false;
+		return handle_state_event(cast_module_state_event(eh));
 	}
 
-	if (is_button_event(eh)) {
-		return handle_button_event(cast_button_event(eh));
+	if (IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS) &&
+	    is_factory_reset_event(eh)) {
+		return handle_factory_reset();
 	}
 
 	/* Event not handled but subscribed. */
@@ -98,4 +106,6 @@ static bool event_handler(const struct event_header *eh)
 
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, button_event);
+#if IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS)
+	EVENT_SUBSCRIBE(MODULE, factory_reset_event);
+#endif

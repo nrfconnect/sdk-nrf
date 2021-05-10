@@ -27,3 +27,6 @@ target_sources_ifdef(CONFIG_LTE_LINK_CONTROL
 
 target_sources_ifdef(CONFIG_NET_L2_OPENTHREAD
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/net_ot.c)
+
+target_sources_ifdef(CONFIG_PELION_CLIENT_FACTORY_RESET_REQUEST_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/factory_reset_request.c)

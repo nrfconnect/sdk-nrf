@@ -11,3 +11,6 @@ target_sources(app PRIVATE
 
 target_sources_ifdef(CONFIG_PELION_CLIENT_KEEP_ALIVE_EVENTS
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/keep_alive_event.c)
+
+target_sources_ifdef(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/factory_reset_event.c)
