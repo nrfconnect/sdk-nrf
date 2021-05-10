@@ -325,7 +325,7 @@ static void model_bound_cb(uint16_t addr, struct bt_mesh_model *model,
 	int i;
 
 	LOG_DBG("remote addr 0x%04x key_idx 0x%04x model %p",
-		addr, key_idx, model);
+		addr, key_idx, (void *)model);
 
 	for (i = 0; i < ARRAY_SIZE(model_bound); i++) {
 		if (!model_bound[i].model) {
@@ -346,7 +346,7 @@ static void model_unbound_cb(uint16_t addr, struct bt_mesh_model *model,
 	int i;
 
 	LOG_DBG("remote addr 0x%04x key_idx 0x%04x model %p",
-		addr, key_idx, model);
+		addr, key_idx, (void *)model);
 
 	for (i = 0; i < ARRAY_SIZE(model_bound); i++) {
 		if (model_bound[i].model == model) {
