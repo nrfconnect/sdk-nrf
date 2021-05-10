@@ -45,3 +45,9 @@ class DoxygenIdentifierReferenceResolver(SphinxPostTransform):
 
 def setup(app):
     app.add_post_transform(DoxygenIdentifierReferenceResolver)
+
+    return {
+        "version": __version__,
+        "parallel_read_safe": True,
+        "parallel_write_safe": True,
+    }
