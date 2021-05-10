@@ -13,6 +13,7 @@
 #include <SEGGER_RTT.h>
 #include <profiler.h>
 #include <string.h>
+#include <nrfx.h>
 
 
 /* By default, when there is no shell, all events are profiled. */
