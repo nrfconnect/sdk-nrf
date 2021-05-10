@@ -423,7 +423,7 @@ static void clear_axes(struct axis_data *axes)
 
 static void clear_report_data(struct report_data *rd)
 {
-	LOG_INF("Clear report data (%p)", rd);
+	LOG_INF("Clear report data (%p)", (void *)rd);
 
 	clear_axes(&rd->axes);
 	clear_items(&rd->items);
