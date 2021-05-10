@@ -805,10 +805,11 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */zboss/* \
                          */openthread/include/* \
                          */openthread/lib/* \
+                         */nrf_802154/sl/* \
+                         */nrf_802154/serialization/* \
                          */nrf_cc312_platform/* \
                          */nrf_cc312_mbedcrypto/* \
                          */nrf_cc310_mbedcrypto/include/mbedtls_extra/* \
-                         */nrf_802154/* \
                          */nrf_cc310_mbedcrypto/include/nrf-config-cc310.h
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
@@ -1993,7 +1994,12 @@ PREDEFINED             = "MBEDTLS_CONFIG_FILE=\"@OUTPUT_DIRECTORY@/mbedtls_doxyg
 			 "MBEDTLS_AES_C=" \
 			 "MBEDTLS_CCM_C=" \
 			 "MBEDTLS_GCM_C=" \
-			 "MBEDTLS_CONFIG_FILE="
+			 "MBEDTLS_CONFIG_FILE=" \
+			 "NRF_802154_INTERNAL_RADIO_IRQ_HANDLING=" \
+			 "NRF_802154_USE_RAW_API=1" \
+			 "NRF_802154_CSMA_CA_ENABLED=" \
+			 "NRF_802154_ACK_TIMEOUT_ENABLED=" \
+			 "NRF_802154_IFS_ENABLED="
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
