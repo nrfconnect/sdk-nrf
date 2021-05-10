@@ -68,7 +68,7 @@ Full modem upgrades
 ===================
 
 .. note::
-   An external flash memory device of minimum 2MB is required for this target.
+   An |external_flash_size| is required for this target.
 
 This type of firmware upgrade supports updating the modem firmware using the serialized firmware bundled in the zip file of the modem firmware release.
 This DFU target will download the serialized modem firmware to an external flash memory, which is required for this type of upgrade.

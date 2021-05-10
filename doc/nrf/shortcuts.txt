@@ -76,3 +76,5 @@
    If you are updating from the |NCS| version earlier than v1.5.0, see :ref:`gs_installing_tools` for installation instructions.
 
 .. |NSIB| replace:: nRF Secure Immutable Bootloader
+
+.. |external_flash_size| replace:: external flash memory with minimum 4MB

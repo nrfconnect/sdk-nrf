@@ -248,7 +248,7 @@ To perform a FOTA upgrade, complete the following steps:
       * |fota_upgrades_req_mcuboot|
       * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:option:`CONFIG_SECURE_BOOT`).
       * If you want to upgrade the modem firmware through modem delta updates, neither MCUboot nor the immutable bootloader are required, because the modem firmware upgrade is handled by the modem itself.
-      * If you want to perform a full modem firmware upgrade, an external flash memory with minimum 2MB is required.
+      * If you want to perform a full modem firmware upgrade, an |external_flash_size| is required.
 
 #. Create a binary file that contains the new image.
       This step does not apply for upgrades of the modem firmware.
