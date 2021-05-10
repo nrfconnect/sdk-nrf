@@ -549,7 +549,7 @@ uint32_t zigbee_event_poll(uint32_t timeout_us)
 					 &zigbee_sig),
 	};
 
-	unsigned int signaled;
+	unsigned int signaled = 0;
 	int result;
 	/* Store timestamp of event polling start. */
 	int64_t timestamp_poll_start = k_uptime_ticks();

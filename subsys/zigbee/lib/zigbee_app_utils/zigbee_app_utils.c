@@ -116,7 +116,7 @@ bool parse_hex_str(char const *in_str, uint8_t in_str_len, uint8_t *out_buff,
 	memset(out_buff, 0, out_buff_size);
 
 	while (i < in_str_len) {
-		uint8_t nibble;
+		uint8_t nibble = 0;
 
 		if (char2hex(*in_str, &nibble)) {
 			break;
