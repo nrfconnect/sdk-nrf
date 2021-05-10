@@ -156,6 +156,8 @@ The following list summarizes the most important changes inherited from upstream
 
   * Introduced the :c:macro:`DEVICE_DT_NAME` macro that returns a string name for a given devicetree node.
   * Introduced the :c:func:`device_usable_check` function that determines whether a device is ready for use.
+  * Corrected several optional API functions to return ``-ENOSYS`` instead of ``-ENOTSUP`` value when their implementation is not available.
+  * Removed the deprecated ``device_list_get()`` function.
 
   * Display:
 
@@ -165,10 +167,13 @@ The following list summarizes the most important changes inherited from upstream
 
     * Implemented workaround for nRF52 anomaly 242 in the nRF SoC flash driver.
     * Added automatic selection of :option:`CONFIG_MPU_ALLOW_FLASH_WRITE` when the MPU is enabled for Arm based SoCs.
+    * Deprecated the :c:func:`flash_write_protection_set` API function.
+    * Improved the SPI NOR flash driver to support devices that power up with block protect bits set.
 
   * GPIO:
 
     * Used the nrfx GPIOTE channel allocator in the nRF GPIO driver to properly track GPIOTE channel allocations made in other modules.
+    * Added the :option:`CONFIG_GPIO_NRF_INT_EDGE_USING_SENSE` option to allow using the GPIO SENSE mechanism instead of GPIOTE channels to generate edge interrupts in the nRF GPIO driver.
 
   * IEEE 802.15.4:
 
@@ -178,18 +183,31 @@ The following list summarizes the most important changes inherited from upstream
     * Added blocking on the RX packet allocation in the ieee802154_nrf5 driver to avoid dropping already acknowledged frames.
     * Added the :option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE` option to allow loading EUI64 from UICR registers.
 
+  * LED:
+
+    * Added handling of power states in the PWM LED driver.
+
   * Sensors:
 
     * Reworked the BME280 sensor driver to obtain device pointers directly (used :c:macro:`DEVICE_DT_GET` instead of :c:func:`device_get_binding`).
     * Made the QDEC nrfx driver usable on nRF5340 (added required devicetree and Kconfig entries).
     * Fixed an out-of-bounds write on the stack in the DPS310 sensor driver.
-    * Added multi-instance support in the IIS2DLPC sensor driver.
+    * Added multi-instance support in the IIS2DLPC, IIS2MDC, and LSM6DS0 sensor drivers.
+    * Added support for the BMP388 pressure sensor.
+    * Added support for the single measurement mode in the LIS2MDL sensor driver.
+    * Fixed the reset delay in the initialization routine of the CCS811 sensor.
+    * Added an option of deferring the BQ27421 sensor initialization to the first use of the sensor, to shorten the boot time.
 
   * Serial:
 
     * Updated the nRF UARTE driver to wait for the transmitter to go idle before powering down the UARTE peripheral in asynchronous mode.
     * Fixed the power down routine in the nRF UARTE driver. Now the RX interrupt is properly disabled.
     * Clarified the meaning of the ``timeout`` parameter of the :c:func:`uart_rx_enable` API function.
+    * Added a low power mode of operation for particular instances of the nRF UARTE driver (see :option:`CONFIG_UART_0_NRF_ASYNC_LOW_POWER` and related options).
+
+  * SPI:
+
+    * Removed the ``CONFIG_SPI_[0-8]`` and ``CONFIG_SPI_[0-8]_OP_MODES`` symbols that are no longer used by any in-tree driver.
 
   * USB:
 
@@ -197,6 +215,10 @@ The following list summarizes the most important changes inherited from upstream
     * Added Kconfig configuration of inquiry parameters for the mass storage class (:option:`CONFIG_MASS_STORAGE_INQ_VENDOR_ID`, :option:`CONFIG_MASS_STORAGE_INQ_PRODUCT_ID`, :option:`CONFIG_MASS_STORAGE_INQ_REVISION`).
     * Fixed handling of the OUT buffer in the Bluetooth class.
     * Fixed a possible deadlock in :c:func:`usb_transfer_sync`.
+    * Fixed clearing of endpoint flags during :c:func:`usb_dc_ep_disable` in the Nordic Semiconductor USB Device Controller driver (usb_dc_nrfx).
+    * Removed the ``CONFIG_USB_DFU_WAIT_DELAY_MS`` option.
+      The :c:func:`wait_for_usb_dfu` function now takes the delay as a parameter.
+    * Deprecated the :option:`CONFIG_USB_HID_PROTOCOL_CODE` option in favor of the added :c:func:`usb_hid_set_proto_code` function that allows setting the HID Boot Interface protocol code per device.
 
 * Kernel:
 
@@ -262,6 +284,9 @@ The following list summarizes the most important changes inherited from upstream
       All :c:struct:`fs_dir_t` objects must now be initialized by calling this function before they can be used.
     * Deprecated the :option:`CONFIG_FS_LITTLEFS_FC_MEM_POOL` option and replaced it with :option:`CONFIG_FS_LITTLEFS_FC_HEAP_SIZE`.
 
+  * Random:
+
+    * Fixed a non-aligned access issue in the system timer based number generator.
 
   * Storage:
 
