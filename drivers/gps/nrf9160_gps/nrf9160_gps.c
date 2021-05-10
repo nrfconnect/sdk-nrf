@@ -58,9 +58,10 @@ struct gps_drv_data {
 	struct k_thread thread;
 	k_tid_t thread_id;
 	struct k_sem thread_run_sem;
-	struct k_delayed_work stop_work;
-	struct k_delayed_work timeout_work;
-	struct k_delayed_work blocked_work;
+	struct k_work stop_work;
+	struct k_work_delayable timeout_work;
+	struct k_work_delayable blocked_work;
+	struct k_work_sync work_sync;
 };
 
 struct nrf9160_gps_config {
@@ -209,8 +210,10 @@ static int open_socket(struct gps_drv_data *drv_data)
 
 static void cancel_works(struct gps_drv_data *drv_data)
 {
-	k_delayed_work_cancel(&drv_data->timeout_work);
-	k_delayed_work_cancel(&drv_data->blocked_work);
+	k_work_cancel_delayable_sync(&drv_data->timeout_work,
+				     &drv_data->work_sync);
+	k_work_cancel_delayable_sync(&drv_data->blocked_work,
+				     &drv_data->work_sync);
 }
 
 static int gps_priority_set(struct gps_drv_data *drv_data, bool enable)
@@ -276,26 +279,30 @@ wait:
 		nrf_gnss_data_frame_t raw_gps_data = {0};
 		struct gps_event evt = {0};
 
-		/** There is no way of knowing if nrf_recv() blocks because the
-		 *  GPS timeout/retry value has expired or the GPS has gotten a
-		 *  fix. This check makes sure that a GPS_EVT_SEARCH_TIMEOUT is
-		 *  not propagated upon a fix.
+		/* There is no way of knowing if nrf_recv() blocks because the
+		 * GPS timeout/retry value has expired or the GPS has gotten a
+		 * fix. This check makes sure that a GPS_EVT_SEARCH_TIMEOUT is
+		 * not propagated upon a fix.
 		 */
 		if (!has_fix) {
-			/** If nrf_recv() blocks for more than one second, a fix
-			 *  has been obtained or the GPS has timed out. Submit
-			 *  a delayed timeout work every five seconds to make
-			 *  sure the appropriate event is propagated upon
-			 *  a block.
+			/* If nrf_recv() blocks for more than one second,
+			 * a fix has been obtained or the GPS has timed out.
+			 * Schedule a delayed timeout work to be executed after
+			 * five seconds to make sure the appropriate event is
+			 * propagated upon a block.
 			 */
-			k_delayed_work_submit(&drv_data->timeout_work,
-					      K_SECONDS(5));
+			k_work_schedule(&drv_data->timeout_work, K_SECONDS(5));
 		}
 
 		len = nrf_recv(drv_data->socket, &raw_gps_data,
 			       sizeof(nrf_gnss_data_frame_t), 0);
 
-		k_delayed_work_cancel(&drv_data->timeout_work);
+		/* At this point, it may be too late to cancel this work,
+		 * as it may already be running. In such case, the search
+		 * timeout notification will be generated anyway.
+		 */
+		k_work_cancel_delayable_sync(&drv_data->timeout_work,
+					     &drv_data->work_sync);
 
 		if (len <= 0) {
 			/* Is the GPS stopped, causing this error? */
@@ -364,7 +371,7 @@ wait:
 				 * application, GPS priority is requested.
 				 */
 				if (drv_data->current_cfg.priority) {
-					k_delayed_work_submit(
+					k_work_schedule(
 						&drv_data->blocked_work,
 						K_SECONDS(GPS_BLOCKED_TIMEOUT));
 				}
@@ -379,7 +386,13 @@ wait:
 
 				notify_event(dev, &evt);
 
-				k_delayed_work_cancel(&drv_data->blocked_work);
+				/* This may fail when the work has already
+				 * started, and the GPS priority will be
+				 * then requested anyway.
+				 */
+				k_work_cancel_delayable_sync(
+					&drv_data->blocked_work,
+					&drv_data->work_sync);
 			}
 
 			copy_pvt(&evt.pvt, &raw_gps_data.pvt);
@@ -836,7 +849,7 @@ notify:
 	 * in this driver are sent from context different than the calling
 	 * context.
 	 */
-	k_delayed_work_submit(&drv_data->stop_work, K_NO_WAIT);
+	k_work_submit(&drv_data->stop_work);
 
 	return 0;
 }
@@ -927,9 +940,9 @@ static int init(const struct device *dev, gps_event_handler_t handler)
 		}
 	}
 
-	k_delayed_work_init(&drv_data->stop_work, stop_work_fn);
-	k_delayed_work_init(&drv_data->timeout_work, timeout_work_fn);
-	k_delayed_work_init(&drv_data->blocked_work, blocked_work_fn);
+	k_work_init(&drv_data->stop_work, stop_work_fn);
+	k_work_init_delayable(&drv_data->timeout_work, timeout_work_fn);
+	k_work_init_delayable(&drv_data->blocked_work, blocked_work_fn);
 	k_sem_init(&drv_data->thread_run_sem, 0, 1);
 
 	err = init_thread(dev);

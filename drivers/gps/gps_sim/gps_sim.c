@@ -38,10 +38,10 @@ struct gps_sim_data {
 	gps_event_handler_t handler;
 	struct gps_config cfg;
 	struct gps_nmea nmea_sample;
-	struct k_delayed_work start_work;
-	struct k_delayed_work stop_work;
-	struct k_delayed_work timeout_work;
-	struct k_delayed_work fix_work;
+	struct k_work_delayable start_work;
+	struct k_work stop_work;
+	struct k_work_delayable timeout_work;
+	struct k_work_delayable fix_work;
 
 	K_THREAD_STACK_MEMBER(work_q_stack, CONFIG_GPS_SIM_STACK_SIZE);
 	struct k_work_q work_q;
@@ -212,23 +212,23 @@ static void start_work_fn(struct k_work *work)
 
 	switch (drv_data->cfg.nav_mode) {
 	case GPS_NAV_MODE_PERIODIC:
-		k_delayed_work_submit_to_queue(&drv_data->work_q,
-					&drv_data->start_work,
-					K_SECONDS(drv_data->cfg.interval));
+		k_work_schedule_for_queue(&drv_data->work_q,
+					  &drv_data->start_work,
+					  K_SECONDS(drv_data->cfg.interval));
 		/* Fall through */
 	case GPS_NAV_MODE_SINGLE_FIX:
-		k_delayed_work_submit_to_queue(&drv_data->work_q,
-					&drv_data->timeout_work,
-					K_SECONDS(drv_data->cfg.timeout));
+		k_work_schedule_for_queue(&drv_data->work_q,
+					  &drv_data->timeout_work,
+					  K_SECONDS(drv_data->cfg.timeout));
 		break;
 	default:
 		break;
 	}
 
 	drv_data->state = GPS_SIM_ACTIVE_SEARCH;
-	k_delayed_work_submit_to_queue(&drv_data->work_q,
-				       &drv_data->fix_work,
-				       K_MSEC(CONFIG_GPS_SIM_FIX_TIME));
+	k_work_schedule_for_queue(&drv_data->work_q,
+				  &drv_data->fix_work,
+				  K_MSEC(CONFIG_GPS_SIM_FIX_TIME));
 }
 
 static void stop_work_fn(struct k_work *work)
@@ -272,12 +272,18 @@ static void fix_work_fn(struct k_work *work)
 	struct gps_event evt = {
 		.type = GPS_EVT_NMEA_FIX,
 	};
+	int res;
 
 	if (drv_data->state != GPS_SIM_ACTIVE_SEARCH) {
 		return;
 	}
 
-	k_delayed_work_cancel(&drv_data->timeout_work);
+	/* This work cannot be running at the moment, as it was scheduled for
+	 * the same queue that is executing this handler, so the cancellation
+	 * is supposed to be always successful.
+	 */
+	res = k_work_cancel_delayable(&drv_data->timeout_work);
+	__ASSERT_NO_MSG(res == 0);
 
 	generate_gps_data(&drv_data->nmea_sample,
 			  CONFIG_GPS_SIM_MAX_STEP / 1000.0);
@@ -289,14 +295,12 @@ static void fix_work_fn(struct k_work *work)
 	notify_event(drv_data->dev, &evt);
 
 	if (drv_data->cfg.nav_mode == GPS_NAV_MODE_CONTINUOUS) {
-		k_delayed_work_submit_to_queue(&drv_data->work_q,
-					       &drv_data->fix_work,
-					       K_MSEC(CONFIG_GPS_SIM_FIX_TIME));
+		k_work_schedule_for_queue(&drv_data->work_q,
+					  &drv_data->fix_work,
+					  K_MSEC(CONFIG_GPS_SIM_FIX_TIME));
 	} else if (drv_data->cfg.nav_mode == GPS_NAV_MODE_SINGLE_FIX) {
 		drv_data->state = GPS_SIM_IDLE;
-		k_delayed_work_submit_to_queue(&drv_data->work_q,
-					       &drv_data->stop_work,
-					       K_NO_WAIT);
+		k_work_submit_to_queue(&drv_data->work_q, &drv_data->stop_work);
 	}
 }
 
@@ -319,9 +323,9 @@ static int start(const struct device *dev, struct gps_config *cfg)
 	}
 
 	memcpy(&drv_data->cfg, cfg, sizeof(struct gps_config));
-	k_delayed_work_submit_to_queue(&drv_data->work_q,
-				       &drv_data->start_work,
-				       K_NO_WAIT);
+	k_work_schedule_for_queue(&drv_data->work_q,
+				  &drv_data->start_work,
+				  K_NO_WAIT);
 
 	return 0;
 }
@@ -341,13 +345,15 @@ static int stop(const struct device *dev)
 
 	drv_data->state = GPS_SIM_IDLE;
 
-	k_delayed_work_cancel(&drv_data->timeout_work);
-	k_delayed_work_cancel(&drv_data->fix_work);
-	k_delayed_work_cancel(&drv_data->start_work);
+	/* These calls may fail if a given work is running at the moment,
+	 * but that work will be anyway finished before the stop work can
+	 * get started, as it is submitted to the same work queue.
+	 */
+	(void)k_work_cancel_delayable(&drv_data->timeout_work);
+	(void)k_work_cancel_delayable(&drv_data->fix_work);
+	(void)k_work_cancel_delayable(&drv_data->start_work);
 
-	k_delayed_work_submit_to_queue(&drv_data->work_q,
-				       &drv_data->stop_work,
-				       K_NO_WAIT);
+	k_work_submit_to_queue(&drv_data->work_q, &drv_data->stop_work);
 
 	return 0;
 }
@@ -379,13 +385,14 @@ static int gps_sim_setup(const struct device *dev)
 	drv_data->dev = dev;
 	drv_data->state = GPS_SIM_UNINIT;
 
-	k_delayed_work_init(&drv_data->start_work, start_work_fn);
-	k_delayed_work_init(&drv_data->stop_work, stop_work_fn);
-	k_delayed_work_init(&drv_data->timeout_work, timeout_work_fn);
-	k_delayed_work_init(&drv_data->fix_work, fix_work_fn);
-	k_work_q_start(&drv_data->work_q, drv_data->work_q_stack,
+	k_work_init_delayable(&drv_data->start_work, start_work_fn);
+	k_work_init(&drv_data->stop_work, stop_work_fn);
+	k_work_init_delayable(&drv_data->timeout_work, timeout_work_fn);
+	k_work_init_delayable(&drv_data->fix_work, fix_work_fn);
+	k_work_queue_start(&drv_data->work_q, drv_data->work_q_stack,
 		       K_THREAD_STACK_SIZEOF(drv_data->work_q_stack),
-		       K_PRIO_PREEMPT(CONFIG_GPS_SIM_WORKQUEUE_PRIORITY));
+		       K_PRIO_PREEMPT(CONFIG_GPS_SIM_WORKQUEUE_PRIORITY),
+		       NULL);
 	k_thread_name_set(&drv_data->work_q.thread, "gpssimworkq");
 
 	return 0;
