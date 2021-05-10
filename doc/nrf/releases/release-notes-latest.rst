@@ -148,6 +148,14 @@ The current |NCS| release is based on Zephyr v2.5.99.
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
+* Bluetooth:
+
+  * Security keys required by the nRF Sniffer are now logged.
+
+* Boards:
+
+  * Removed the nRF53 PDK after deprecation.
+
 * Drivers:
 
   * Introduced the :c:macro:`DEVICE_DT_NAME` macro that returns a string name for a given devicetree node.
@@ -165,6 +173,7 @@ The following list summarizes the most important changes inherited from upstream
   * GPIO:
 
     * Used the nrfx GPIOTE channel allocator in the nRF GPIO driver to properly track GPIOTE channel allocations made in other modules.
+    * Added support for the PCAL6408A GPIO expander.
 
   * IEEE 802.15.4:
 
@@ -174,12 +183,18 @@ The following list summarizes the most important changes inherited from upstream
     * Added blocking on the RX packet allocation in the ieee802154_nrf5 driver to avoid dropping already acknowledged frames.
     * Added the :option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE` option to allow loading EUI64 from UICR registers.
 
+  * LoRa
+
+    * Added SX1272 LoRa radio support.
+
   * Sensors:
 
     * Reworked the BME280 sensor driver to obtain device pointers directly (used :c:macro:`DEVICE_DT_GET` instead of :c:func:`device_get_binding`).
     * Made the QDEC nrfx driver usable on nRF5340 (added required devicetree and Kconfig entries).
     * Fixed an out-of-bounds write on the stack in the DPS310 sensor driver.
     * Added multi-instance support in the IIS2DLPC sensor driver.
+    * Added support for the BMI270 sensor platform.
+    * Added support for the MAX6675 sensor platform.
 
   * Serial:
 
@@ -194,6 +209,13 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed handling of the OUT buffer in the Bluetooth class.
     * Fixed a possible deadlock in :c:func:`usb_transfer_sync`.
 
+* General:
+
+  * The deprecated int types have been removed from the tree.
+  * The ``cprintf`` library now supports deferred formatting.
+  * Added a ``getopt`` interface to the shell.
+  * The ``gccarmemb`` deprecated variant for ``ZEPHYR_TOOLCHAIN_VARIANT`` has been removed. Use ``gnuarmemb`` instead.
+
 * Kernel:
 
   * Merged a new work queue implementation.
@@ -203,6 +225,11 @@ The following list summarizes the most important changes inherited from upstream
   * Moved the :option:`CONFIG_THREAD_MONITOR` and :option:`CONFIG_THREAD_NAME` options from experimental to production quality.
   * Removed the deprecated ``k_mem_domain_destroy`` and ``k_mem_domain_remove_thread`` APIs.
   * Updated the :c:func:`device_usable_check` and :c:func:`device_is_ready` functions so that they can be called from user space.
+  * Assorted scheduling and timeout fixes and improvements.
+
+* Modules
+
+  * CMSIS: Added support for CMSIS-DSP on Native POSIX.
 
 * Networking:
 
@@ -215,6 +242,7 @@ The following list summarizes the most important changes inherited from upstream
     * Added multiple bug fixes for IEEE 802.15.4 L2.
     * Fixed memory management issues in TCP2 when running out of memory.
     * Added connection establishment timer for TCP2.
+    * Added support for the SO_TYPE, SO_PROTOCOL and SO_SNDTIMEO socket options.
 
   * LwM2M:
 
@@ -237,6 +265,10 @@ The following list summarizes the most important changes inherited from upstream
 
     * Fixed logging of UTF-8 strings.
 
+  * PPP
+
+    * Added new events for connectiona and disconnection.
+
   * Sockets:
 
     * Fixed TLS sockets access from user space.
@@ -250,6 +282,10 @@ The following list summarizes the most important changes inherited from upstream
 
 * Libraries/subsystems:
 
+  * C library:
+
+    * Minimal: Closed the gap in functionality for integer types.
+
   * File systems:
 
     * Added an :c:func:`fs_file_t_init` function for initializing :c:struct:`fs_file_t` objects.
@@ -258,6 +294,10 @@ The following list summarizes the most important changes inherited from upstream
       All :c:struct:`fs_dir_t` objects must now be initialized by calling this function before they can be used.
     * Deprecated the :option:`CONFIG_FS_LITTLEFS_FC_MEM_POOL` option and replaced it with :option:`CONFIG_FS_LITTLEFS_FC_HEAP_SIZE`.
 
+  * Power management:
+
+    * Added a new PM constraints API.
+    * Moved the power subsystem to a newly defined set of power states.
 
   * Storage:
 
@@ -266,6 +306,15 @@ The following list summarizes the most important changes inherited from upstream
       * Fixed error handling for erase errors to not update the last erased page offset on failure.
       * Fixed error handling to not update the stream flash contex on synchronization failure while flushing the stream.
 
+* Samples
+
+  * ``boards/nrf/ieee802154/802154_rpmsg``: Power consumption has been optimized in the sample.
+  * ``boards/nrf/system_off``: Added a RAM retention example for the nRF52 series.
+
+
+* USB
+
+  * Added a new HID header that contains common definitions used across different transports.
 
 Project CHIP
 ============
