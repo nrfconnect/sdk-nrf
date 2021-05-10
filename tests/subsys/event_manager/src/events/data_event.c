@@ -29,6 +29,6 @@ EVENT_INFO_DEFINE(data_event,
 		  profile_data_event);
 
 EVENT_TYPE_DEFINE(data_event,
-		  true,
+		  false,
 		  NULL,
 		  &data_event_info);

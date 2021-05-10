@@ -8,6 +8,6 @@
 
 
 EVENT_TYPE_DEFINE(multicontext_event,
-		  true,
+		  false,
 		  NULL,
 		  NULL);
