@@ -113,7 +113,7 @@ zb_uint32_t zb_osif_timer_get(void)
 	zb_uint32_t time_cur;
 
 	if (zb_osif_timer_is_on() == ZB_TRUE) {
-		uint32_t ticks;
+		uint32_t ticks = 0;
 		(void)counter_get_value(zb_timer.device, &ticks);
 		time_cur = (zb_uint32_t)counter_ticks_to_us(zb_timer.device,
 							    ticks);

@@ -172,7 +172,7 @@ zb_bool_t zb_osif_prod_cfg_check_presence(void)
 {
 	zb_uint8_t hdr[ZB_OSIF_PRODUCTION_CONFIG_MAGIC_SIZE] =
 		ZB_OSIF_PRODUCTION_CONFIG_MAGIC;
-	zb_uint8_t buffer[ZB_OSIF_PRODUCTION_CONFIG_MAGIC_SIZE];
+	zb_uint8_t buffer[ZB_OSIF_PRODUCTION_CONFIG_MAGIC_SIZE] = {0};
 
 	int err = flash_area_read(fa_pc, 0, buffer,
 				  ZB_OSIF_PRODUCTION_CONFIG_MAGIC_SIZE);
