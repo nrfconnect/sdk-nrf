@@ -188,10 +188,11 @@ add_custom_target(
   nrf-html
   COMMAND ${CMAKE_COMMAND} -E make_directory ${NRF_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${HTML_DIR}/nrf
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -b html ${NRF_SPHINXOPTS} -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${HTML_DIR}/nrf
   # Copy root index file
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/_static/html/index.html ${HTML_DIR}
   DEPENDS ${NRF_BINARY_DIR}/src/versions.txt
+  USES_TERMINAL
 )
 
 add_custom_target(
@@ -218,7 +219,8 @@ add_custom_target(
   mcuboot-html
   COMMAND ${CMAKE_COMMAND} -E make_directory ${MCUBOOT_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${mcuboot_sphinx_environment}
-  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html -c ${NRF_BASE}/doc/mcuboot ${EXTRA_SPHINXOPTS} ${MCUBOOT_BUILD_SRC} ${HTML_DIR}/mcuboot
+  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -b html -c ${NRF_BASE}/doc/mcuboot ${EXTRA_SPHINXOPTS} ${MCUBOOT_BUILD_SRC} ${HTML_DIR}/mcuboot
+  USES_TERMINAL
 )
 
 add_custom_target(mcuboot)
@@ -258,7 +260,8 @@ add_custom_target(
   nrfxlib-html
   COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${HTML_DIR}/nrfxlib
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -b html ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${HTML_DIR}/nrfxlib
+  USES_TERMINAL
 )
 
 add_custom_target(nrfxlib)
@@ -327,7 +330,6 @@ add_custom_target(
         -b html
         -c ${NRF_BASE}/doc/kconfig
         -d ${KCONFIG_BINARY_DIR}/doctrees
-        -N
         -w ${KCONFIG_BINARY_DIR}/sphinx.log
         # The Kconfig reference build doesn't use Breathe, so we can safely
         # parallelize it
@@ -335,6 +337,7 @@ add_custom_target(
         ${EXTRA_SPHINXOPTS}
         ${KCONFIG_RST_OUT}
         ${HTML_DIR}/kconfig
+  USES_TERMINAL
 )
 add_dependencies(kconfig-html kconfig-content)
 
@@ -357,21 +360,24 @@ add_custom_target(
   nrf-linkcheck
   COMMAND ${CMAKE_COMMAND} -E make_directory ${NRF_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrf_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b linkcheck ${NRF_SPHINXOPTS} -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${NRF_BINARY_DIR}
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -b linkcheck ${NRF_SPHINXOPTS} -c ${NRF_BASE}/doc/nrf ${EXTRA_SPHINXOPTS} ${NRF_BUILD_SRC} ${NRF_BINARY_DIR}
+  USES_TERMINAL
 )
 
 add_custom_target(
   nrfxlib-linkcheck
   COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${nrfxlib_sphinx_environment}
-  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b linkcheck ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${NRFXLIB_BINARY_DIR}
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -b linkcheck ${NRFXLIB_SPHINXOPTS} ${EXTRA_SPHINXOPTS} ${NRFXLIB_BUILD_SRC} ${NRFXLIB_BINARY_DIR}
+  USES_TERMINAL
 )
 
 add_custom_target(
   mcuboot-linkcheck
   COMMAND ${CMAKE_COMMAND} -E make_directory ${MCUBOOT_BUILD_SRC}
   COMMAND ${CMAKE_COMMAND} -E env ${mcuboot_sphinx_environment}
-  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b linkcheck -c ${NRF_BASE}/doc/mcuboot ${EXTRA_SPHINXOPTS} ${MCUBOOT_BUILD_SRC} ${MCUBOOT_BINARY_DIR}
+  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -b linkcheck -c ${NRF_BASE}/doc/mcuboot ${EXTRA_SPHINXOPTS} ${MCUBOOT_BUILD_SRC} ${MCUBOOT_BINARY_DIR}
+  USES_TERMINAL
 )
 
 add_custom_target(linkcheck)
