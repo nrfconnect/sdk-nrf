@@ -161,7 +161,7 @@ static int hci_rpmsg_send(struct net_buf *buf)
 {
 	uint8_t pkt_indicator;
 
-	LOG_DBG("buf %p type %u len %u", buf, bt_buf_get_type(buf),
+	LOG_DBG("buf %p type %u len %u", (void *)buf, bt_buf_get_type(buf),
 		buf->len);
 
 	LOG_HEXDUMP_DBG(buf->data, buf->len, "Controller buffer:");
