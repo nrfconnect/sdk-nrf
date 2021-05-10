@@ -70,7 +70,7 @@ function(add_docset name env)
   file(MAKE_DIRECTORY ${DOCSET_BUILD_DIR})
   file(MAKE_DIRECTORY ${DOCSET_SRC_DIR})
 
-  add_custom_target(
+  add_doc_target(
     ${name}-inventory
     COMMAND ${CMAKE_COMMAND} -E env ${env}
     ${SPHINXBUILD}
@@ -83,7 +83,7 @@ function(add_docset name env)
     USES_TERMINAL
   )
 
-  add_custom_target(
+  add_doc_target(
     ${name}-html
     COMMAND ${CMAKE_COMMAND} -E env ${env}
     ${SPHINXBUILD}
@@ -121,6 +121,26 @@ function(add_docset name env)
 
   add_custom_target(${name})
   add_dependencies(${name} ${name}-html)
+endfunction()
+
+# Create a custom doc target.
+#
+# This function has the same signature as `add_custom_target()`
+#
+# The function will create two targets for the doc build system.
+# - Target 1 named: `<name>`
+# - Target 2 named: `<name>-all`
+#
+# Both targets will produce same result, but target 1 is useful when only
+# wanting to build a subset of the docs and missing references to other targets
+# are acceptable (warnings will be generated).
+#
+# Target 2 is used for complete docset builds where it is important that build
+# order of each target is under full control.
+#
+function(add_doc_target name)
+  add_custom_target(${name} ${ARGN})
+  add_custom_target(${name}-all ${ARGN})
 endfunction()
 
 #-------------------------------------------------------------------------------
@@ -179,10 +199,21 @@ set(GEN_DEVICETREE_REST_ZEPHYR_DOCSET " ")
 set(MODULES_EXT_ROOT ${NRF_BASE})
 add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
 
-add_custom_target(zephyr-html)
-add_dependencies(zephyr-html html)
-add_custom_target(zephyr)
-add_dependencies(zephyr zephyr-html)
+add_custom_target(
+  zephyr-html-all
+  DEPENDS
+    html
+)
+add_custom_target(
+  zephyr-html
+  DEPENDS
+    html
+)
+add_custom_target(
+  zephyr
+  DEPENDS
+    zephyr-html
+)
 
 #-------------------------------------------------------------------------------
 # docset: nrf
@@ -239,7 +270,9 @@ add_custom_target(
   DEPENDS ${NRF_BINARY_DIR}/src/versions.txt
 )
 
+add_docset(nrf "${nrf_env}")
 add_dependencies(nrf-html nrf-extra)
+add_dependencies(nrf-html-all nrf-extra)
 
 #-------------------------------------------------------------------------------
 # docset: mcuboot
@@ -330,23 +363,39 @@ add_custom_target(
         ${SPHINXOPTS_EXTRA}
         ${KCONFIG_RST_OUT}
         ${HTML_DIR}/kconfig
+  DEPENDS kconfig-content
   USES_TERMINAL
 )
-add_dependencies(kconfig-html kconfig-content)
+
+add_custom_target(
+  kconfig-html-all
+  DEPENDS
+    kconfig-html
+)
 
 #-------------------------------------------------------------------------------
 # Global targets
 
+add_dependencies(zephyr-html-all kconfig-html-all)
+add_dependencies(mcuboot-html-all kconfig-html-all)
+add_dependencies(nrfxlib-inventory-all kconfig-html-all)
+add_dependencies(nrf-html-all nrfxlib-inventory-all kconfig-html-all)
+add_dependencies(nrfxlib-html-all nrf-html-all)
+
 add_custom_target(
   build-all
-  COMMAND ${CMAKE_MAKE_PROGRAM} kconfig-html
-  COMMAND ${CMAKE_MAKE_PROGRAM} zephyr-html
-  COMMAND ${CMAKE_MAKE_PROGRAM} mcuboot-html
-  COMMAND ${CMAKE_MAKE_PROGRAM} nrfxlib-inventory
-  COMMAND ${CMAKE_MAKE_PROGRAM} nrf-html
-  COMMAND ${CMAKE_MAKE_PROGRAM} nrfxlib-html
-  USES_TERMINAL
+  DEPENDS
+    nrf-html-all
+    nrfxlib-html-all
+    zephyr-html-all
+    mcuboot-html-all
+    kconfig-html-all
 )
 
-add_custom_target(linkcheck)
-add_dependencies(linkcheck nrf-linkcheck nrfxlib-linkcheck mcuboot-linkcheck)
+add_custom_target(
+  linkcheck
+  DEPENDS
+    nrf-linkcheck
+    nrfxlib-linkcheck
+    mcuboot-linkcheck
+)
