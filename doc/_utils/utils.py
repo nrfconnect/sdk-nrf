@@ -52,19 +52,23 @@ def get_outputdir(docset: str) -> PathLike:
     return get_builddir() / "html" / docset
 
 
-def get_rstdir(docset: str) -> PathLike:
-    """Obtain rst directory for a given docset.
+def get_srcdir(docset: str) -> PathLike:
+    """Obtain sources directory for a given docset.
 
     Args:
         docset: Target docset.
 
     Returns:
-        rst dir of the given docset.
+        Sources directory of the given docset.
     """
 
-    dir = get_builddir() / docset / "rst" / "doc"
-    if docset == "nrf":
-        dir /= "nrf"
+    dir = get_builddir() / docset
+    # NOTE: Zephyr uses its own structure, we just inherit it
+    if docset == "zephyr":
+        dir = dir / "rst" / "doc"
+    else:
+        dir = dir / "src"
+
     return dir
 
 
