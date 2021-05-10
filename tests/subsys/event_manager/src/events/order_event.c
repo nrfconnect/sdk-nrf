@@ -8,6 +8,6 @@
 
 
 EVENT_TYPE_DEFINE(order_event,
-		  true,
+		  false,
 		  NULL,
 		  NULL);

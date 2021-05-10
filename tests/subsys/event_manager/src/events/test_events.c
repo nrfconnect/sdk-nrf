@@ -8,11 +8,11 @@
 
 
 EVENT_TYPE_DEFINE(test_start_event,
-		  true,
+		  false,
 		  NULL,
 		  NULL);
 
 EVENT_TYPE_DEFINE(test_end_event,
-		  true,
+		  false,
 		  NULL,
 		  NULL);
