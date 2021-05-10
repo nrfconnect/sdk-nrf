@@ -58,7 +58,7 @@ jobs:
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           mkdir -p _build && cd _build
-          cmake -GNinja ../nrf/doc -DEXTRA_SPHINXOPTS="-W"
+          cmake -GNinja ../nrf/doc -DSPHINXOPTS_EXTRA="-W"
           ninja build-all
 
       - name: Archive documentation
