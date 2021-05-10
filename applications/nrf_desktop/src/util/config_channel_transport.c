@@ -205,13 +205,13 @@ int config_channel_transport_set(struct config_channel_transport *transport,
 	__ASSERT_NO_MSG(transport->state != CONFIG_CHANNEL_TRANSPORT_DISABLED);
 
 	if (transport->state == CONFIG_CHANNEL_TRANSPORT_WAIT_RSP) {
-		LOG_WRN("Transport %p busy", transport);
+		LOG_WRN("Transport %p busy", (void *)transport);
 		return -EBUSY;
 	}
 
 	if (transport->state == CONFIG_CHANNEL_TRANSPORT_RSP_READY) {
 		LOG_WRN("Host ignored previous response (transport: %p)",
-			transport);
+			(void *)transport);
 	}
 
 	struct config_event *event =

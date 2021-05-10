@@ -485,8 +485,8 @@ static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
 	__ASSERT_NO_MSG(hwid_len == HWID_LEN);
 	memcpy(per->hwid, hwid, hwid_len);
 
-	LOG_INF("Peripheral %p registered and linked to %p", per,
-		get_subscriber(per));
+	LOG_INF("Peripheral %p registered and linked to %p", (void *)per,
+		(void *)get_subscriber(per));
 
 	return err;
 }
@@ -854,7 +854,7 @@ static bool handle_config_event(struct config_event *event)
 
 static void disconnect_peripheral(struct hids_peripheral *per)
 {
-	LOG_INF("Peripheral %p disconnected", per);
+	LOG_INF("Peripheral %p disconnected", (void *)per);
 
 	struct bt_hogp_rep_info *rep = NULL;
 

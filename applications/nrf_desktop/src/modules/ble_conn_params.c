@@ -124,7 +124,7 @@ static void update_peer_conn_params(const struct connected_peer *peer)
 
 	if (err) {
 		LOG_WRN("Cannot update conn parameters for peer %p (err:%d)",
-			peer, err);
+			(void *)peer, err);
 		/* Retry to update the connection parameters after an error. */
 		k_delayed_work_submit(&conn_params_update,
 				      CONN_PARAMS_ERROR_TIMEOUT);

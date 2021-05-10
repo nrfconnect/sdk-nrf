@@ -389,7 +389,8 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		usb_hid->report_enabled[REPORT_ID_BOOT_KEYBOARD] = new_boot_enabled;
 	}
 
-	LOG_INF("USB HID %p %sabled", usb_hid, (state == USB_STATE_ACTIVE) ? ("en"):("dis"));
+	LOG_INF("USB HID %p %sabled", (void *)usb_hid,
+		(state == USB_STATE_ACTIVE) ? ("en"):("dis"));
 	if (state == USB_STATE_ACTIVE) {
 		LOG_INF("%s_PROTOCOL active", usb_hid->hid_protocol ? "REPORT" : "BOOT");
 	}
