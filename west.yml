@@ -159,7 +159,7 @@ manifest:
       path: modules/lib/cddl-gen
     - name: homekit
       repo-path: sdk-homekit
-      revision: 40ae4b9225f051a3e02b8d73ce80389b462fee01
+      revision: pull/134/head
       groups:
       - homekit
     - name: find-my
