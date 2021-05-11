@@ -4,13 +4,37 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config HW_UNIQUE_KEY_LOAD
-	bool "Load the Hardware Unique Key in the secure bootloader"
-	depends on SOC_NRF52840
-	depends on IS_SECURE_BOOTLOADER
-	select FPROTECT_ENABLE_NO_ACCESS
+config HW_UNIQUE_KEY
+	bool "Hardware Unique Keys (HUK)"
+	depends on HAS_HW_NRF_CC310 || HAS_HW_NRF_CC312
+	depends on NRF_CC3XX_PLATFORM
+	depends on NORDIC_SECURITY_BACKEND
+	depends on !ARM_NONSECURE_FIRMWARE
+	depends on MPU_ALLOW_FLASH_WRITE
+	select FPROTECT if HAS_HW_NRF_ACL
+	imply FPROTECT_ENABLE_NO_ACCESS if HAS_HW_NRF_ACL
+	imply NRFX_NVMC if HAS_HW_NRF_ACL
 	help
 	  This option will load the Hardware Unique Key (HUK) in the KDR
 	  registers of the CryptoCell peripheral and sets the LCS. It will also
 	  lock its flash page so that it's not accesible by the CPU until the
 	  next reboot.
+
+if HW_UNIQUE_KEY
+
+config HW_UNIQUE_KEY_RANDOM
+	bool "Enable writing random HW Unique Keys"
+	depends on MAIN_STACK_SIZE >= 2048
+	help
+	  Enable the hw_unique_key_write_random() function which utilizes the
+	  NRF_CC3XX_PLATFORM to get random numbers.
+	  Disable to save space.
+endif
+
+config HW_UNIQUE_KEY_PARTITION_SIZE
+	hex
+	default 0 if !HAS_HW_NRF_ACL
+	default FPROTECT_BLOCK_SIZE
+	help
+	  Size of the flash page for storing the HUK.
+	  Only needed when there is no KMU for storing keys (nRF52840).
