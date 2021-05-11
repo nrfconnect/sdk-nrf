@@ -1,6 +1,7 @@
 # nrfxlib documentation build configuration file
 
 import os
+import re
 from pathlib import Path
 import sys
 
@@ -80,8 +81,30 @@ doxyrunner_outdir = NRFXLIB_BUILD / "doxygen"
 doxyrunner_fmt = True
 doxyrunner_fmt_vars = {
     "NRFXLIB_BASE": str(NRFXLIB_BASE),
-    "NRFXLIB_BINARY_DIR": str(NRFXLIB_BUILD),
+    "OUTPUT_DIRECTORY": str(doxyrunner_outdir),
 }
+
+# create mbedtls config header (needed for Doxygen)
+doxyrunner_outdir.mkdir(exist_ok=True)
+
+fin_path = NRFXLIB_BASE / "nrf_security" / "configs" / "nrf-config.h.template"
+fout_path = doxyrunner_outdir / "mbedtls_doxygen_config.h"
+
+with open(fin_path) as fin, open(fout_path, "w") as fout:
+    fout.write(
+        re.sub(
+            r"#cmakedefine ([A-Z0-9_-]+)",
+            "\n".join(
+                (
+                    r"#define \1",
+                    r"#define CONFIG_GLUE_\1",
+                    r"#define CONFIG_CC310_\1",
+                    r"#define CONFIG_VANILLA_\1",
+                )
+            ),
+            fin.read(),
+        )
+    )
 
 # Options for breathe ----------------------------------------------------------
 
@@ -92,10 +115,7 @@ breathe_separate_member_pages = True
 
 # Options for external_content -------------------------------------------------
 
-external_content_contents = [
-    (NRFXLIB_BASE, "**/*.rst"),
-    (NRFXLIB_BASE, "**/doc/")
-]
+external_content_contents = [(NRFXLIB_BASE, "**/*.rst"), (NRFXLIB_BASE, "**/doc/")]
 
 
 def setup(app):
