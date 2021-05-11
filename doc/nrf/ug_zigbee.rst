@@ -14,7 +14,7 @@ In combination with the integrated Zephyr RTOS, Zigbee in |NCS| allows for devel
 
 .. zigbee_ug_intro_end
 
-See :ref:`zigbee_samples` for the list of available Zigbee samples.
+See also :ref:`zigbee_samples` for the list of available Zigbee samples and :ref:`lib_zigbee` for the list of available Zigbee libraries.
 
 .. toctree::
    :maxdepth: 1
