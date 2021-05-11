@@ -150,12 +150,12 @@ The following list summarizes the most important changes inherited from upstream
 
 * Bluetooth:
 
-  * Added logging of security keys required by the nRF Sniffer.
-  * Fixed an SMP issue so that it rejects pairing in SC Only mode if keysize is isufficient.
+  * Added logging of security keys required by the nRF Sniffer for Bluetooth LE.
+  * Fixed an SMP issue so that pairing in SC Only mode is rejected if the key size is insufficient.
 
 * Boards:
 
-  * Removed the nRF53 PDK after deprecation.
+  * Removed the deprecated nRF5340 PDK.
 
 * Drivers:
 
@@ -164,7 +164,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Disk:
 
-    * Moved disk drivers to ``drivers/disk``.
+    * Moved disk drivers to :file:`drivers/disk`.
 
   * Display:
 
@@ -190,7 +190,7 @@ The following list summarizes the most important changes inherited from upstream
     * Added blocking on the RX packet allocation in the ieee802154_nrf5 driver to avoid dropping already acknowledged frames.
     * Added the :option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE` option to allow loading EUI64 from UICR registers.
 
-  * LoRa
+  * LoRa:
 
     * Added SX1272 LoRa radio support.
 
@@ -207,7 +207,8 @@ The following list summarizes the most important changes inherited from upstream
   * Serial:
 
     * Updated the nRF UARTE driver to wait for the transmitter to go idle before powering down the UARTE peripheral in asynchronous mode.
-    * Fixed the power down routine in the nRF UARTE driver. Now the RX interrupt is properly disabled.
+    * Fixed the power down routine in the nRF UARTE driver.
+      Now the RX interrupt is properly disabled.
     * Clarified the meaning of the ``timeout`` parameter of the :c:func:`uart_rx_enable` API function.
 
   * USB:
@@ -220,9 +221,10 @@ The following list summarizes the most important changes inherited from upstream
 * General:
 
   * Removed deprecated int types from the tree.
-  * Added a new ``cbprintf`` library that supports deferred formatting and stream output..
-  * The ``gccarmemb`` deprecated variant for ``ZEPHYR_TOOLCHAIN_VARIANT`` has been removed. Use ``gnuarmemb`` instead.
-  * Extended the ``ring_buffer`` API to support discarding data.
+  * Added a :ref:`cbprintf <zephyr:formatted_output>` library that supports deferred formatting and stream output.
+  * Removed the deprecated ``gccarmemb`` variant for ``ZEPHYR_TOOLCHAIN_VARIANT``.
+    Use ``gnuarmemb`` instead.
+  * Extended the :ref:`zephyr:ring_buffers_v2` API to support discarding data.
 
 * Kernel:
 
@@ -233,15 +235,15 @@ The following list summarizes the most important changes inherited from upstream
   * Moved the :option:`CONFIG_THREAD_MONITOR` and :option:`CONFIG_THREAD_NAME` options from experimental to production quality.
   * Removed the deprecated ``k_mem_domain_destroy`` and ``k_mem_domain_remove_thread`` APIs.
   * Updated the :c:func:`device_usable_check` and :c:func:`device_is_ready` functions so that they can be called from user space.
-  * Assorted scheduling and timeout fixes and improvements.
-  * Added support for ``k_poll`` on Message Queues.
+  * Applied several scheduling and timeout fixes and improvements.
+  * Added support for :c:func:`k_poll` on message queues.
   * Removed support for tickless idle mode, as part of a system clock interface cleanup.
 
-* Modules
+* Modules:
 
-  * CMSIS: Added support for CMSIS-DSP on Native POSIX.
-  * Added a new nanopb module.
-  * Added a new TensorFlow module.
+  * Added support for CMSIS-DSP on Native POSIX.
+  * Added a ``nanopb`` module.
+  * Added a TensorFlow module.
 
 * Networking:
 
@@ -254,9 +256,9 @@ The following list summarizes the most important changes inherited from upstream
     * Added multiple bug fixes for IEEE 802.15.4 L2.
     * Fixed memory management issues in TCP2 when running out of memory.
     * Added connection establishment timer for TCP2.
-    * Added support for the ``SO_TYPE``, ``SO_PROTOCOL``, and ``SO_SNDTIMEO`` socket options.
-    * Added support for the ``MSG_TRUNC`` and ``MSG_WAITALL`` flags.
-    * Added locking in the socket subsystem to make it thread safe.
+    * Added support for the :c:macro:`SO_TYPE`, :c:macro:`SO_PROTOCOL`, and :c:macro:`SO_SNDTIMEO` socket options.
+    * Added support for the :c:macro:`ZSOCK_MSG_TRUNC` and :c:macro:`ZSOCK_MSG_WAITALL` flags.
+    * Added locking in the socket subsystem to make it thread-safe.
 
   * LwM2M:
 
@@ -279,9 +281,9 @@ The following list summarizes the most important changes inherited from upstream
 
     * Fixed logging of UTF-8 strings.
 
-  * PPP
+  * PPP:
 
-    * Added new events for connectiona and disconnection.
+    * Added events for connection and disconnection.
 
   * Sockets:
 
@@ -298,12 +300,13 @@ The following list summarizes the most important changes inherited from upstream
 
   * Debug:
 
-    * Deprecated the :option:`CONFIG_OPENOCD_SUPPORT`, use :option:`CONFIG_DEBUG_THREAD_INFO` instead. 
+    * Deprecated the :option:`CONFIG_OPENOCD_SUPPORT` option.
+      Use :option:`CONFIG_DEBUG_THREAD_INFO` instead.
 
-  * C library:
+  * Minimal C library:
 
-    * Minimal: Closed the gap in functionality for integer types.
-    * Minimal: Implemented the ``time()`` API.
+    * Closed the gap in functionality for integer types.
+    * Implemented the ``time()`` API.
 
   * File systems:
 
@@ -315,16 +318,17 @@ The following list summarizes the most important changes inherited from upstream
 
   * Logging:
 
-    * Introduced a complete overhaul of the logging subsystem that overcomes all of the limitations of the previous ones. This remains compatible with the existing logging APIs, but backends need to adapt to the new backend API.
-    * Added a filesystem backend to store log output in files inside a filesystem.
+    * Completely overhauled the logging subsystem to overcome the limitations of the previous implementations.
+      The new implementation is compatible with the existing logging APIs, but backends must adapt to the new backend API.
+    * Added a file system backend to store log output in files inside a file system.
 
   * Modbus:
 
-    * Introduced a new Modbus subsystem, that supports both serial and TCP/IP transports.
+    * Introduced a :ref:`zephyr:modbus` subsystem that supports both serial and TCP/IP transports.
 
   * Portability:
 
-    * Moved the CMSIS OS wrappers to ``subsys/portability``.
+    * Moved the CMSIS OS wrappers to :file:`subsys/portability`.
 
   * Power management:
 
@@ -339,7 +343,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Software watchdog:
 
-    * Implemented ``task_wdt``, a new software watchdog suitable for multiple threads.
+    * Implemented a :ref:`zephyr:task_wdt_api` suitable for multiple threads.
 
   * Storage:
 
@@ -350,17 +354,17 @@ The following list summarizes the most important changes inherited from upstream
 
   * Tracing:
 
-    * Added a new RAM-backed backend.
+    * Added a RAM-backed backend.
 
-* Samples
+* Samples:
 
-  * ``boards/nrf/ieee802154/802154_rpmsg``: Power consumption has been optimized in the sample.
-  * ``boards/nrf/system_off``: Added a RAM retention example for the nRF52 series.
+  * Optimized power consumption in the :ref:`zephyr:nrf-ieee802154-rpmsg-sample` sample.
+  * Added :ref:`zephyr:nrf-system-off-sample`, a RAM retention sample for the nRF52 Series.
 
 
-* USB
+* USB:
 
-  * Added a new HID header that contains common definitions used across different transports.
+  * Added a HID header that contains common definitions used across different transports.
 
 Project CHIP
 ============
