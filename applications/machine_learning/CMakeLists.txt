@@ -34,6 +34,9 @@ set(mcuboot_CONF_FILE
 set(b0_CONF_FILE
   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/b0_${CMAKE_BUILD_TYPE}.conf
   )
+set(hci_rpmsg_CONF_FILE
+  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/hci_rpmsg_${CMAKE_BUILD_TYPE}.conf
+  )
 
 # Use static partition layout to ensure consistency between builds.
 # This is to ensure settings storage will be at the same location after the DFU.
@@ -79,4 +82,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 endif()
 if(CONFIG_SECURE_BOOT)
   assert_exists(b0_CONF_FILE)
+endif()
+if(CONFIG_BT_RPMSG_NRF53)
+  assert_exists(hci_rpmsg_CONF_FILE)
 endif()
