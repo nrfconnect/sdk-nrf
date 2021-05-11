@@ -112,7 +112,7 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 	char *p;
 
 	p = strstr(client->buf, "\r\n\r\n");
-	if (!p) {
+	if (!p || p > client->buf + client->offset) {
 		/* Waiting full HTTP header */
 		LOG_DBG("Waiting full header in response");
 		return 1;
