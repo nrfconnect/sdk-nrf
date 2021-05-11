@@ -148,25 +148,25 @@ To clean the build folders for the Zephyr documentation:
 
 .. code-block:: console
 
-   ninja clean-zephyr
+   ninja zephyr-clean
 
 To clean the build folders for the nrfxlib documentation:
 
 .. code-block:: console
 
-   ninja clean-nrfxlib
+   ninja nrfxlib-clean
 
 To clean the build folders for the MCUboot documentation:
 
 .. code-block:: console
 
-   ninja clean-mcuboot
+   ninja mcuboot-clean
 
 To clean the build folders for the |NCS| documentation:
 
 .. code-block:: console
 
-   ninja clean-nrf
+   ninja nrf-clean
 
 Out-of-tree builds
 ******************
