@@ -1,4 +1,4 @@
-# Copyright (c) 2019 Nordic Semiconductor ASA
+# Copyright (c) 2019-2021 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 # Builds combined documentation for all documentation sets: nRF (including
@@ -13,7 +13,7 @@
 # configuration files.
 
 cmake_minimum_required(VERSION 3.13.1)
-project(nrf-connect-sdk-doc LANGUAGES)
+project(nrf-connect-sdk-doc LANGUAGES NONE)
 
 set(NO_BOILERPLATE TRUE)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} ..)
@@ -261,18 +261,15 @@ set(nrf_env
   DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
 )
 
-add_docset(nrf "${nrf_env}")
-
 add_custom_target(
-  nrf-extra
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/_static/html/index.html ${HTML_DIR}
-  COMMAND ${CMAKE_COMMAND} -E copy ${NRF_BASE}/doc/versions.json ${HTML_DIR}/versions.json
-  DEPENDS ${NRF_BINARY_DIR}/src/versions.txt
+  nrf-versions
+  DEPENDS
+    ${NRF_BINARY_DIR}/src/versions.txt
 )
 
 add_docset(nrf "${nrf_env}")
-add_dependencies(nrf-html nrf-extra)
-add_dependencies(nrf-html-all nrf-extra)
+add_dependencies(nrf-html nrf-versions)
+add_dependencies(nrf-html-all nrf-versions)
 
 #-------------------------------------------------------------------------------
 # docset: mcuboot
@@ -376,6 +373,12 @@ add_custom_target(
 #-------------------------------------------------------------------------------
 # Global targets
 
+add_custom_target(
+  copy-extra-content
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/_static/html/index.html ${HTML_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy ${NRF_BASE}/doc/versions.json ${HTML_DIR}
+)
+
 add_dependencies(zephyr-html-all kconfig-html-all)
 add_dependencies(mcuboot-html-all kconfig-html-all)
 add_dependencies(nrfxlib-inventory-all kconfig-html-all)
@@ -385,6 +388,7 @@ add_dependencies(nrfxlib-html-all nrf-html-all)
 add_custom_target(
   build-all
   DEPENDS
+    copy-extra-content
     nrf-html-all
     nrfxlib-html-all
     zephyr-html-all
