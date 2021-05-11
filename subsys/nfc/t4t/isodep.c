@@ -136,7 +136,7 @@ static const uint16_t fsd_value_map[] = {16, 24, 32, 40, 48, 64, 96, 128, 256};
 
 static struct nfc_t4t_isodep t4t_isodep;
 static const struct nfc_t4t_isodep_cb *t4t_isodep_cb;
-static struct k_delayed_work isodep_work;
+static struct k_work_delayable isodep_work;
 static int64_t ats_received_time;
 
 static void isodep_transmission_clear(void)
@@ -693,7 +693,7 @@ int nfc_t4t_isodep_init(uint8_t *tx_buf, size_t size_tx,
 	/* Initialize work queue to handle delay before sending first
 	 * I-block after receipt RATS Response.
 	 */
-	k_delayed_work_init(&isodep_work, isodep_delay_handler);
+	k_work_init_delayable(&isodep_work, isodep_delay_handler);
 
 	atomic_set(&t4t_isodep.state, ISODEP_STATE_INITIALIZED);
 
@@ -875,7 +875,7 @@ int nfc_t4t_isodep_transmit(const uint8_t *data, size_t data_len)
 			LOG_DBG("Wait %d ms before sending first frame after ATS Response",
 				delay);
 
-			return k_delayed_work_submit(&isodep_work, K_MSEC(delay));
+			return k_work_reschedule(&isodep_work, K_MSEC(delay));
 		}
 	}
 
