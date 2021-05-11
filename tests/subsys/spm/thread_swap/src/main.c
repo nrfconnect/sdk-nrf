@@ -8,7 +8,7 @@
 #include <secure_services.h>
 #include <kernel.h>
 
-static struct k_delayed_work interrupting_work;
+static struct k_work_delayable interrupting_work;
 static volatile bool work_done;
 
 static void work_func(struct k_work *work)
@@ -31,8 +31,8 @@ void test_spm_service_thread_swap1(void)
 	 * This tests that it is safe to switch threads while a secure service
 	 * is running.
 	 */
-	k_delayed_work_init(&interrupting_work, work_func);
-	err = k_delayed_work_submit(&interrupting_work, K_MSEC(10));
+	k_work_init_delayable(&interrupting_work, work_func);
+	err = k_work_reschedule(&interrupting_work, K_MSEC(10));
 	zassert_equal(0, err, "k_delayed_work failed: %d\n", err);
 
 	/* Call into the secure service which will be interrupted. If the
