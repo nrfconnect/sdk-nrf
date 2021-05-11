@@ -33,7 +33,7 @@ const uint32_t z_mpsl_used_nrf_ppi_groups;
 #endif
 #define MPSL_LOW_PRIO (4)
 
-static K_SEM_DEFINE(sem_signal, 0, UINT_MAX);
+static K_SEM_DEFINE(sem_signal, 0, 1);
 static struct k_thread signal_thread_data;
 static K_THREAD_STACK_DEFINE(signal_thread_stack,
 			     CONFIG_MPSL_SIGNAL_STACK_SIZE);
