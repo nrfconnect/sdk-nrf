@@ -292,6 +292,21 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed a discovery response formatting.
     * Updated a few API functions to accept a const pointer when appropriate.
 
+* Bluetooth:
+
+  * Bluetooth Host:
+
+    * Fixed a crash where an ATT timeout occurred on a disconnected ATT channel.
+    * Removed definitions and functions that were deprecated since the v2.3.0 release.
+    * Changed the pairing procedure to fail pairing when both sides have the same public key.
+    * Fixed an issue where GATT requests might deadlock RX thread.
+    * Fixed an issue where a fixed passkey that was previously set could not be cleared.
+    * Fixed an issue where callbacks for "security changed" and "pairing failed" were not always called.
+    * Changed the pairing procedure to fail early if the remote device cannot achieve the required security level.
+    * Fixed an incomplete bond overwrite during the pairing procedure when the peer is not using the IRK stored in the bond.
+    * Fixed an issue where GATT notifications and Writes Without Response might be sent out of order.
+    * Changed buffer ownership of :c:func:`bt_l2cap_chan_send`.
+      The application must now release the buffer for all returned errors.
 
 * Libraries/subsystems:
 
