@@ -227,7 +227,7 @@ Include 3:
      :end-line: 18
 
 Include 4:
-  .. ncs-include:: ../nfc/doc/type_2_tag.rst
+  .. ncs-include:: nfc/doc/type_2_tag.rst
      :docset: nrfxlib
      :auto-dedent:
      :start-after: Version 1.0*.
