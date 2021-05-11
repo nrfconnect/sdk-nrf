@@ -7,4 +7,11 @@
 zephyr_library()
 
 zephyr_library_sources(hw_unique_key.c)
-ncs_add_partition_manager_config(pm.yml.huk_nrf52840)
+
+if (DEFINED CONFIG_HAS_HW_NRF_ACL)
+  zephyr_library_sources(hw_unique_key_acl.c)
+else()
+  zephyr_library_sources(hw_unique_key_kmu.c)
+endif()
+
+ncs_add_partition_manager_config(pm.yml.huk)

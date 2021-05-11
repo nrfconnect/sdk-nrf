@@ -5,4 +5,4 @@
 # be locked by fprotect.
 hw_unique_key_partition:
   placement: {before: end}
-  size: CONFIG_FPROTECT_BLOCK_SIZE
+  size: CONFIG_HW_UNIQUE_KEY_PARTITION_SIZE
