@@ -254,16 +254,6 @@ add_docset(mcuboot "${mcuboot_env}")
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
 
-# Create an mbedtls configuration file with all settings on
-file(STRINGS ${NRFXLIB_BASE}/nrf_security/configs/nrf-config.h.template MBEDTLS_TEMPLATE_CONFIG)
-string(REGEX REPLACE
-       "#cmakedefine ([-_A-Z0-9]*)"
-       "#define \\1\n#define CONFIG_GLUE_\\1\n#define CONFIG_CC310_\\1\n#define CONFIG_VANILLA_\\1"
-       MBEDTLS_CONFIG "${MBEDTLS_TEMPLATE_CONFIG}"
-)
-string(REGEX REPLACE ";" "\n" MBEDTLS_CONFIG "${MBEDTLS_CONFIG}")
-file(WRITE ${NRFXLIB_BINARY_DIR}/mbedtls_doxygen_config.h ${MBEDTLS_CONFIG})
-
 set(nrfxlib_env
   NRF_BASE=${NRF_BASE}
   NRFXLIB_BASE=${NRFXLIB_BASE}

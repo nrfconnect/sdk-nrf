@@ -58,7 +58,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @NRFXLIB_BINARY_DIR@/doxygen
+OUTPUT_DIRECTORY       = @OUTPUT_DIRECTORY@
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -1951,7 +1951,7 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = "MBEDTLS_CONFIG_FILE=\"@NRFXLIB_BINARY_DIR@/mbedtls_doxygen_config.h\"" \
+PREDEFINED             = "MBEDTLS_CONFIG_FILE=\"@OUTPUT_DIRECTORY@/mbedtls_doxygen_config.h\"" \
                          "CONFIG_MBEDTLS_VANILLA_BACKEND=y" \
                          "CONFIG_CC3XX_BACKEND=y" \
                          "CONFIG_SYS_CLOCK_EXISTS=y" \
