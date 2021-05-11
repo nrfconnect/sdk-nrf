@@ -54,7 +54,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 4d068de3f50f6a2de2be0c0b98670e33d28ff493
+      revision: 6d2b8c7b17aabf54c6120bbf79cf432add0956b1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -87,8 +87,10 @@ manifest:
           - open-amp
           - openthread
           - segger
+          - tensorflow
           - tinycbor
           - tinycrypt
+          - TraceRecorderSource
 
     # NCS repositories.
     #
@@ -96,20 +98,20 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 6402e996db829901dc715de41e3669e28fefb670
+      revision: bbca448b64fc7e0e10122dab6909649068c22a0e
       path: bootloader/mcuboot
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: de87b6a5ee7a80cd1b6e0a549f896ba7f921bb59
+      revision: bee7897d426649dc5a2706e3655b84d659c3228e
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: 7b935d15868e4d4dd443fe04f103fef25bb34d2d
+      revision: 974a728ecafba94db804dc146c5e38afab51ccf4
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
-      revision: 81d19f017f18f1bc6bea906d96fd45fba3672064
+      revision: v1.7.2
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
@@ -159,12 +161,12 @@ manifest:
       path: modules/lib/cddl-gen
     - name: homekit
       repo-path: sdk-homekit
-      revision: ea26f7e4c62ad1aa6d2056349673b858320150a9
+      revision: 4b637f0f8cd0e9881c238d10b4121b3712c5ba0d
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 4f4e12e0393432087feed9a682b65163e4745dad
+      revision: cab081f92d8341349ad73d82e507e5db007d3e48
       groups:
       - find-my
 
