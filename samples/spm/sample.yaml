@@ -1,16 +1,22 @@
 sample:
   name: spm Sample
 tests:
-  samples.nrf9160.spm:
+  samples.spm:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf9160dk_nrf9160
     tags: ci_build
 
-  samples.nrf9160.spm_shared_uart:
+  samples.spm_shared_uart:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf9160dk_nrf9160
     tags: ci_build
     extra_configs:
       - CONFIG_SPM_SHARE_CONSOLE_UART=y
