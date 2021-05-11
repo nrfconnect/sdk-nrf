@@ -152,6 +152,18 @@ The current |NCS| release is based on Zephyr v2.5.99.
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
+* Arm architecture:
+
+   * Disallowed :option:`CONFIG_FP_HARDABI` when building applications with Trusted Firmware-M.
+
+* Boards:
+
+   * Enabled building with TF-M for non-secure applications on the nRF9160 DK.
+   * Switched to ``sda-gpios, scl-gpios`` devicetree properties on the nRF9160 DK.
+   * Added a ``pwm-led0`` alias for the nRF5340 application core.
+   * Enabled TF-M testing in CI on QEMU (``mps2_an521_nonsecure``).
+
+
 * Drivers:
 
   * Introduced the :c:macro:`DEVICE_DT_NAME` macro that returns a string name for a given devicetree node.
