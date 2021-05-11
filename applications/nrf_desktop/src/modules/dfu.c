@@ -63,10 +63,10 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
  #error Bootloader not supported.
 #endif
 
-static struct k_delayed_work dfu_timeout;
-static struct k_delayed_work reboot_request;
-static struct k_delayed_work background_erase;
-static struct k_delayed_work background_store;
+static struct k_work_delayable dfu_timeout;
+static struct k_work_delayable reboot_request;
+static struct k_work_delayable background_erase;
+static struct k_work_delayable background_store;
 
 static const struct flash_area *flash_area;
 static uint32_t cur_offset;
@@ -148,8 +148,9 @@ static void terminate_dfu(void)
 	__ASSERT_NO_MSG(flash_area != NULL);
 
 	flash_area_close(flash_area);
-	k_delayed_work_cancel(&dfu_timeout);
-	k_delayed_work_cancel(&background_store);
+	/* Cancel cannot fail if executed from another work's context. */
+	(void)k_work_cancel_delayable(&dfu_timeout);
+	(void)k_work_cancel_delayable(&background_store);
 	dfu_unlock(MODULE_ID(MODULE));
 	flash_area = NULL;
 	sync_offset = 0;
@@ -187,7 +188,7 @@ static void background_erase_handler(struct k_work *work)
 	 */
 	if (device_in_use) {
 		device_in_use = false;
-		k_delayed_work_submit(&background_erase,
+		k_work_reschedule(&background_erase,
 				      BACKGROUND_FLASH_ERASE_TIMEOUT);
 		return;
 	}
@@ -216,7 +217,7 @@ static void background_erase_handler(struct k_work *work)
 	erase_offset += FLASH_PAGE_SIZE;
 
 	if (erase_offset < flash_area->fa_size) {
-		k_delayed_work_submit(&background_erase, K_NO_WAIT);
+		k_work_reschedule(&background_erase, K_NO_WAIT);
 	} else {
 		LOG_INF("Secondary image slot is clean");
 
@@ -289,8 +290,8 @@ static void background_store_handler(struct k_work *work)
 	}
 
 	if (store_offset < sync_offset) {
-		k_delayed_work_submit(&background_store, BACKGROUND_FLASH_STORE_TIMEOUT);
-		k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
+		k_work_reschedule(&background_store, BACKGROUND_FLASH_STORE_TIMEOUT);
+		k_work_reschedule(&dfu_timeout, DFU_TIMEOUT);
 	} else {
 		complete_dfu_data_store();
 	}
@@ -298,14 +299,14 @@ static void background_store_handler(struct k_work *work)
 
 static bool is_dfu_data_store_active(void)
 {
-	return k_delayed_work_pending(&background_store);
+	return k_work_delayable_is_pending(&background_store);
 }
 
 static void start_dfu_data_store(void)
 {
 	LOG_DBG("DFU data store start: %" PRIu32 " %" PRIu32, cur_offset, sync_offset);
 	store_offset = 0;
-	k_delayed_work_submit(&background_store, K_NO_WAIT);
+	k_work_reschedule(&background_store, K_NO_WAIT);
 }
 
 static void handle_dfu_data(const uint8_t *data, size_t size)
@@ -338,7 +339,7 @@ static void handle_dfu_data(const uint8_t *data, size_t size)
 
 	LOG_DBG("DFU chunk collected");
 
-	k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
+	k_work_reschedule(&dfu_timeout, DFU_TIMEOUT);
 
 	return;
 }
@@ -411,7 +412,7 @@ static void handle_dfu_start(const uint8_t *data, const size_t size)
 		}
 	} else {
 		if (cur_offset != 0) {
-			k_delayed_work_submit(&background_erase, K_NO_WAIT);
+			k_work_reschedule(&background_erase, K_NO_WAIT);
 			is_flash_area_clean = false;
 			cur_offset = 0;
 			img_length = 0;
@@ -439,7 +440,7 @@ static void handle_dfu_start(const uint8_t *data, const size_t size)
 		terminate_dfu();
 	} else {
 		LOG_INF("DFU started");
-		k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
+		k_work_reschedule(&dfu_timeout, DFU_TIMEOUT);
 	}
 }
 
@@ -500,7 +501,7 @@ static void handle_reboot_request(uint8_t *data, size_t *size)
 	*size = sizeof(bool);
 	data[0] = true;
 
-	k_delayed_work_submit(&reboot_request, REBOOT_REQUEST_TIMEOUT);
+	k_work_reschedule(&reboot_request, REBOOT_REQUEST_TIMEOUT);
 }
 
 #if CONFIG_SECURE_BOOT
@@ -688,16 +689,16 @@ static bool event_handler(const struct event_header *eh)
 				LOG_ERR("Cannot confirm a running image");
 			}
 #endif
-			k_delayed_work_init(&dfu_timeout, dfu_timeout_handler);
-			k_delayed_work_init(&reboot_request, reboot_request_handler);
-			k_delayed_work_init(&background_erase, background_erase_handler);
-			k_delayed_work_init(&background_store, background_store_handler);
+			k_work_init_delayable(&dfu_timeout, dfu_timeout_handler);
+			k_work_init_delayable(&reboot_request, reboot_request_handler);
+			k_work_init_delayable(&background_erase, background_erase_handler);
+			k_work_init_delayable(&background_store, background_store_handler);
 
 			if (!dfu_lock(MODULE_ID(MODULE))) {
 				/* Should not happen. */
 				__ASSERT_NO_MSG(false);
 			} else {
-				k_delayed_work_submit(&background_erase,
+				k_work_reschedule(&background_erase,
 						      K_NO_WAIT);
 			}
 		}
