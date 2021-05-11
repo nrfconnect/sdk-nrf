@@ -1026,7 +1026,7 @@ static const struct uart_driver_api lpuart_api = {
 #endif
 };
 
-DEVICE_DEFINE(lpuart, "LPUART", lpuart_init, device_pm_control_nop,
+DEVICE_DT_DEFINE(DT_NODELABEL(lpuart), lpuart_init, device_pm_control_nop,
 	      &lpuart_data, &lpuart_config,
 	      POST_KERNEL, CONFIG_NRF_SW_LPUART_INIT_PRIORITY,
 	      &lpuart_api);
