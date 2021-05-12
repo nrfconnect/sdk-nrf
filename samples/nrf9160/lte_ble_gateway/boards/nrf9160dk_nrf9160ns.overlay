@@ -6,6 +6,10 @@
 	};
 };
 
+&gpiote {
+	interrupts = <49 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
 &uart2 {
 	current-speed = <1000000>;
 	status = "okay";
