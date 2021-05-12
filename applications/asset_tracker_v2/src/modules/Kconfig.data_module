@@ -94,6 +94,47 @@ config DATA_UI_BUFFER_STORE
 	bool "Store UI data received from the UI module"
 	default y
 
+config DATA_DEVICE_MODE
+	bool "Default device mode"
+	default y
+	help
+	  Either active or passive mode. True evaluates to active mode. In active mode the device
+	  samples and publishes data at regular intervals. In passive mode the device samples and
+	  publishes data only if movement has been detected.
+
+config DATA_ACTIVE_TIMEOUT_SECONDS
+	int "Default active wait timeout in seconds"
+	default 120
+	help
+	  Number of seconds between sampling/publication in active mode.
+
+config DATA_MOVEMENT_RESOLUTION_SECONDS
+	int "Default movement resolution in seconds"
+	default 120
+	help
+	  Number of seconds between each time movement can trigger sampling/publication in passive
+	  mode.
+
+config DATA_MOVEMENT_TIMEOUT_SECONDS
+	int "Default movement timeout in seconds"
+	default 3600
+	help
+	  Number of seconds between each sampling/publication in passive mode regardless of
+	  movement. Used as a fail-safe to ensure updates even if the device is not moving for
+	  longer durations.
+
+config DATA_ACCELEROMETER_THRESHOLD
+	int "Default accelerometer threshold in m/s²"
+	default 10
+	help
+	  Minimum absolute value in m/s² that is considered movement in passive mode.
+
+config DATA_GPS_TIMEOUT_SECONDS
+	int "Default GPS timeout"
+	default 60
+	help
+	  Timeout for acquiring a GPS fix during sampling of data.
+
 endif # DATA_MODULE
 
 module = DATA_MODULE
