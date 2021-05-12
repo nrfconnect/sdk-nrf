@@ -7,26 +7,44 @@ Bluetooth: Mesh light
    :local:
    :depth: 2
 
-The Bluetooth mesh light sample demonstrates how to set up a basic mesh server model application, and control LEDs with the Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
+The Bluetooth mesh light sample demonstrates how to set up a mesh server model application, and control LEDs with Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
 
 .. note::
    This sample is self-contained, and can be tested on its own.
    However, it is required when testing the :ref:`bluetooth_mesh_light_switch` sample.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820
+
+
+The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
+
+  * `nRF Mesh mobile app for Android`_
+  * `nRF Mesh mobile app for iOS`_
+
 Overview
 ********
 
-This sample is split into two source files:
+The mesh light sample is a Generic OnOff Server with a provisionee role in a mesh network.
+There can be one or more servers in the network, for example light bulbs.
 
-* A :file:`main.c` file to handle initialization.
-* One additional file for handling mesh models, :file:`model_handler.c`.
+The sample instantiates four instances of the Generic OnOff Server model for controlling LEDs.
 
+Provisioning is performed using the `nRF Mesh mobile app`_.
+This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
 After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the LEDs on the development kit from the app.
 
 Provisioning
 ============
 
 The provisioning is handled by the :ref:`bt_mesh_dk_prov`.
+It supports four types of out-of-band (OOB) authentication methods, and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
 
 Models
 ======
@@ -53,21 +71,6 @@ The models are used for the following purposes:
 
 The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to control each LED on the development kit according to the matching received messages of Generic OnOff Server.
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820
-
-
-The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
-
-  * `nRF Mesh mobile app for Android`_
-  * `nRF Mesh mobile app for iOS`_
-
 User interface
 **************
 
@@ -79,6 +82,18 @@ LEDs:
    Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
    Show the OnOff state of the Generic OnOff Server of the corresponding element.
 
+Configuration
+*************
+
+|config|
+
+Source file setup
+=================
+
+This sample is split into the following source files:
+
+* A :file:`main.c` file to handle initialization.
+* One additional file for handling mesh models, :file:`model_handler.c`.
 
 Building and running
 ********************
@@ -92,7 +107,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, you can test it by using a smartphone with Nordic Semiconductor's nRF Mesh app installed.
+After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
 Provisioning the device
