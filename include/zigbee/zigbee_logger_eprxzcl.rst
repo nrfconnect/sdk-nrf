@@ -10,7 +10,7 @@ Zigbee endpoint logger
 The Zigbee endpoint logger library provides the :c:func:`zigbee_logger_eprxzcl_ep_handler` function.
 You can use this endpoint handler function for parsing incoming ZCL frames and logging their fields and command payload.
 
-The library can work as a partial replacement of `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ for debugging and testing purposes.
+The library can work as a partial replacement of `nRF Sniffer for 802.15.4`_ for debugging and testing purposes.
 Unlike the sniffer, it provides logging information only for incoming ZCL frames on a specific device.
 
 .. _lib_zigbee_logger_endpoint_parsing:
