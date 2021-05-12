@@ -290,9 +290,8 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		target = status.current;
 	}
 
-	struct bt_mesh_model_transition transition = { 0 };
-	struct bt_mesh_light_sat set = { .lvl = target,
-					     .transition = &transition };
+	struct bt_mesh_light_sat set = { .lvl = target, .transition = NULL };
+	struct bt_mesh_model_transition transition;
 
 	if (move_set->delta != 0 && move_set->transition) {
 		uint32_t distance = abs(target - status.current);
@@ -314,6 +313,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		if (time_to_edge > 0) {
 			transition.delay = move_set->transition->delay;
 			transition.time = time_to_edge;
+			set.transition = &transition;
 		}
 	}
 

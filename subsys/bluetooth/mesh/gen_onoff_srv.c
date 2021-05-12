@@ -60,7 +60,7 @@ static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_onoff_srv *srv = model->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
 	struct bt_mesh_model_transition transition;
-	struct bt_mesh_onoff_set set = { .transition = &transition };
+	struct bt_mesh_onoff_set set;
 
 	uint8_t on_off = net_buf_simple_pull_u8(buf);
 	uint8_t tid = net_buf_simple_pull_u8(buf);
@@ -81,8 +81,10 @@ static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	if (buf->len == 2) {
 		model_transition_buf_pull(buf, &transition);
+		set.transition = &transition;
 	} else if (!atomic_test_bit(&srv->flags, GEN_ONOFF_SRV_NO_DTT)) {
 		bt_mesh_dtt_srv_transition_get(srv->model, &transition);
+		set.transition = &transition;
 	} else {
 		set.transition = NULL;
 	}

@@ -100,9 +100,7 @@ static void xyl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_light_xy_set set;
 	struct bt_mesh_light_xy_status status = { 0 };
 	struct bt_mesh_lightness_status light_rsp = { 0 };
-	struct bt_mesh_lightness_set light = {
-		.transition = &transition,
-	};
+	struct bt_mesh_lightness_set light;
 	struct bt_mesh_light_xyl_status xyl_status;
 
 	light.lvl = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
@@ -134,13 +132,9 @@ static void xyl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		}
 	}
 
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, &transition);
-	} else {
-		bt_mesh_dtt_srv_transition_get(srv->model, &transition);
-	}
+	set.transition = model_transition_get(srv->model, &transition, buf);
+	light.transition = set.transition;
 
-	set.transition = &transition;
 	lightness_srv_disable_control(&srv->lightness_srv);
 	lightness_srv_change_lvl(&srv->lightness_srv, ctx, &light, &light_rsp);
 	srv->handlers->xy_set(srv, ctx, &set, &status);

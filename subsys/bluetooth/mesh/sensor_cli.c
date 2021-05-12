@@ -433,11 +433,10 @@ static void handle_setting_status(struct bt_mesh_model *model,
 
 	uint16_t id = net_buf_simple_pull_le16(buf);
 	uint16_t setting_id = net_buf_simple_pull_le16(buf);
-	struct bt_mesh_sensor_setting_status setting;
+	struct bt_mesh_sensor_setting_status setting = { 0 };
 	uint8_t access;
 
 	if (buf->len == 0) {
-		setting.type = NULL;
 		goto yield_ack;
 	}
 

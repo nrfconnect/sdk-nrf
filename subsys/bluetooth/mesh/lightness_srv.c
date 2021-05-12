@@ -116,18 +116,6 @@ static int pub(struct bt_mesh_lightness_srv *srv, struct bt_mesh_msg_ctx *ctx,
 	return model_send(srv->lightness_model, ctx, &msg);
 }
 
-static void transition_get(struct bt_mesh_lightness_srv *srv,
-			   struct bt_mesh_model_transition *transition,
-			   struct net_buf_simple *buf)
-{
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, transition);
-	} else {
-		bt_mesh_dtt_srv_transition_get(srv->lightness_model,
-					       transition);
-	}
-}
-
 static void rsp_lightness_status(struct bt_mesh_model *model,
 				 struct bt_mesh_msg_ctx *ctx,
 				 struct bt_mesh_lightness_status *status,
@@ -203,8 +191,12 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 
 	atomic_set_bit_to(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON, set->lvl > 0);
 
-	BT_DBG("%u [%u + %u ms]", set->lvl, set->transition->delay,
-	       set->transition->time);
+	if (bt_mesh_model_transition_time(set->transition)) {
+		BT_DBG("%u [%u + %u ms]", set->lvl, set->transition->delay,
+		       set->transition->time);
+	} else {
+		BT_DBG("%u", set->lvl);
+	}
 
 	if (state_change) {
 		store_state(srv);
@@ -238,11 +230,14 @@ static void lightness_set(struct bt_mesh_model *model,
 
 	set.lvl = repr_to_light(net_buf_simple_pull_le16(buf), repr);
 	tid = net_buf_simple_pull_u8(buf);
-	transition_get(srv, &transition, buf);
-	set.transition = &transition;
+	set.transition = model_transition_get(model, &transition, buf);
 
-	BT_DBG("Light set %s: %u [%u + %u ms]", repr_str[repr], set.lvl,
-	       set.transition->delay, set.transition->time);
+	if (bt_mesh_model_transition_time(set.transition)) {
+		BT_DBG("Light set %s: %u [%u + %u ms]", repr_str[repr], set.lvl,
+		set.transition->delay, set.transition->time);
+	} else {
+		BT_DBG("Light set %s: %u", repr_str[repr], set.lvl);
+	}
 
 	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
 		/* According to the Mesh Model Specification section 6.2.3.1,
@@ -666,9 +661,11 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		target = status.current;
 	}
 
-	struct bt_mesh_model_transition transition = { 0 };
-	struct bt_mesh_lightness_set set = { .lvl = target,
-					     .transition = &transition };
+	struct bt_mesh_model_transition transition;
+	struct bt_mesh_lightness_set set = {
+		.lvl = target,
+		.transition = NULL,
+	};
 
 	if (move_set->delta != 0 && move_set->transition) {
 		uint32_t distance = abs(target - status.current);
@@ -690,6 +687,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		if (time_to_edge > 0) {
 			transition.delay = move_set->transition->delay;
 			transition.time = time_to_edge;
+			set.transition = &transition;
 		}
 	}
 

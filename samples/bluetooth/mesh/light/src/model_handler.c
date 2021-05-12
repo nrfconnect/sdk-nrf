@@ -69,14 +69,18 @@ static void led_set(struct bt_mesh_onoff_srv *srv, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	led->value = set->on_off;
+	if (!bt_mesh_model_transition_time(set->transition)) {
+		led->remaining = 0;
+		dk_set_led(led_idx, set->on_off);
+		goto respond;
+	}
+
 	led->remaining = set->transition->time;
 
-	if (set->transition->delay > 0) {
+	if (set->transition->delay) {
 		k_work_reschedule(&led->work, K_MSEC(set->transition->delay));
-	} else if (set->transition->time > 0) {
-		led_transition_start(led);
 	} else {
-		dk_set_led(led_idx, set->on_off);
+		led_transition_start(led);
 	}
 
 respond:

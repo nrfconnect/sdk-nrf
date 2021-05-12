@@ -14,6 +14,7 @@
 
 #include <string.h>
 #include <bluetooth/mesh/model_types.h>
+#include <bluetooth/mesh/gen_dtt_srv.h>
 
 /**
  * @brief Returns rounded division of @p A divided by @p B.
@@ -162,10 +163,21 @@ model_transition_buf_pull(struct net_buf_simple *buf,
 	transition->delay = model_delay_decode(net_buf_simple_pull_u8(buf));
 }
 
-static inline bool
-model_transition_is_active(const struct bt_mesh_model_transition *transition)
+static inline struct bt_mesh_model_transition *
+model_transition_get(struct bt_mesh_model *model,
+		     struct bt_mesh_model_transition *transition,
+		     struct net_buf_simple *buf)
 {
-	return (transition->time > 0 || transition->delay > 0);
+	if (buf->len == 2) {
+		model_transition_buf_pull(buf, transition);
+		return transition;
+	}
+
+	if (bt_mesh_dtt_srv_transition_get(model, transition)) {
+		return transition;
+	}
+
+	return NULL;
 }
 
 static inline bool

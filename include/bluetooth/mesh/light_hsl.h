@@ -49,7 +49,13 @@ struct bt_mesh_light_hue_sat {
 struct bt_mesh_light_hsl_params {
 	/** HSL set parameters */
 	struct bt_mesh_light_hsl params;
-	/** Transition time parameters for the state change. */
+	/**
+	 * Transition time parameters for the state change, or NULL.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
+	 */
 	const struct bt_mesh_model_transition *transition;
 };
 
@@ -63,7 +69,13 @@ struct bt_mesh_light_hue_delta {
 	 * relative to the original value in the previous delta_set command.
 	 */
 	bool new_transaction;
-	/** Transition time parameters for the state change. */
+	/**
+	 * Transition time parameters for the state change, or NULL.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
+	 */
 	const struct bt_mesh_model_transition *transition;
 };
 
@@ -75,6 +87,10 @@ struct bt_mesh_light_hue_move {
 	 * Transition parameters. @c delay indicates time until the move
 	 * should start, @c time indicates the amount of time each
 	 * @c delta step should take.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
 	 */
 	const struct bt_mesh_model_transition *transition;
 };
@@ -91,7 +107,13 @@ struct bt_mesh_light_hsl_status {
 struct bt_mesh_light_hue {
 	/** Level to set */
 	uint16_t lvl;
-	/** Transition time parameters for the state change. */
+	/**
+	 * Transition time parameters for the state change, or NULL.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
+	 */
 	const struct bt_mesh_model_transition *transition;
 };
 
@@ -99,7 +121,13 @@ struct bt_mesh_light_hue {
 struct bt_mesh_light_sat {
 	/** Level to set */
 	uint16_t lvl;
-	/** Transition time parameters for the state change. */
+	/**
+	 * Transition time parameters for the state change, or NULL.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
+	 */
 	const struct bt_mesh_model_transition *transition;
 };
 

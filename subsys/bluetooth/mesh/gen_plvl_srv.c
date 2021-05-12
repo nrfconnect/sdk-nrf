@@ -100,17 +100,6 @@ static int pub(struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx,
 	return model_send(srv->plvl_model, ctx, &msg);
 }
 
-static void transition_get(struct bt_mesh_plvl_srv *srv,
-			   struct bt_mesh_model_transition *transition,
-			   struct net_buf_simple *buf)
-{
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, transition);
-	} else {
-		bt_mesh_dtt_srv_transition_get(srv->plvl_model, transition);
-	}
-}
-
 static void rsp_plvl_status(struct bt_mesh_model *model,
 			    struct bt_mesh_msg_ctx *ctx,
 			    struct bt_mesh_plvl_status *status)
@@ -180,8 +169,7 @@ static void plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	set.power_lvl = net_buf_simple_pull_le16(buf);
 	tid = net_buf_simple_pull_u8(buf);
-	transition_get(srv, &transition, buf);
-	set.transition = &transition;
+	set.transition = model_transition_get(srv->plvl_model, &transition, buf);
 
 	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
 		change_lvl(srv, ctx, &set, &status);
@@ -536,10 +524,10 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		target = status.current;
 	}
 
-	struct bt_mesh_model_transition transition = { 0 };
+	struct bt_mesh_model_transition transition;
 	struct bt_mesh_plvl_set set = {
 		.power_lvl = target,
-		.transition = &transition,
+		.transition = NULL,
 	};
 
 	if (move_set->delta != 0 && move_set->transition) {
@@ -552,6 +540,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		if (time_to_edge > 0) {
 			transition.delay = move_set->transition->delay;
 			transition.time = time_to_edge;
+			set.transition = &transition;
 		}
 	}
 

@@ -780,7 +780,7 @@ static int scheduler_srv_settings_set(struct bt_mesh_model *model,
 				      void *cb_data)
 {
 	struct bt_mesh_scheduler_srv *srv = model->user_data;
-	struct bt_mesh_schedule_entry data;
+	struct bt_mesh_schedule_entry data = { 0 };
 	ssize_t len = read_cb(cb_data, &data, sizeof(data));
 	uint8_t idx = strtol(name, NULL, 16);
 

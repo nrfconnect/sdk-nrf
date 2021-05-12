@@ -908,14 +908,8 @@ static void light_onoff_set(struct bt_mesh_light_ctrl_srv *srv,
 
 	uint8_t tid = net_buf_simple_pull_u8(buf);
 
-	bool has_trans = (buf->len == 2);
 	struct bt_mesh_model_transition transition;
-
-	if (has_trans) {
-		model_transition_buf_pull(buf, &transition);
-	} else if (buf->len != 0) {
-		return;
-	}
+	bool has_trans = !!model_transition_get(srv->model, &transition, buf);
 
 	enum bt_mesh_light_ctrl_srv_state prev_state = srv->state;
 

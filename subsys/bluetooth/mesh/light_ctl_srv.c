@@ -63,12 +63,8 @@ static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_lightness_status light_rsp;
 	struct bt_mesh_light_temp_status temp_rsp;
 	struct bt_mesh_light_ctl_status status;
-	struct bt_mesh_lightness_set light = {
-		.transition = &transition,
-	};
-	struct bt_mesh_light_temp_set temp = {
-		.transition = &transition,
-	};
+	struct bt_mesh_lightness_set light;
+	struct bt_mesh_light_temp_set temp;
 	uint8_t tid;
 
 	light.lvl = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
@@ -94,11 +90,8 @@ static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		goto respond;
 	}
 
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, &transition);
-	} else {
-		bt_mesh_dtt_srv_transition_get(srv->model, &transition);
-	}
+	light.transition = model_transition_get(srv->model, &transition, buf);
+	temp.transition = light.transition;
 
 	lightness_srv_disable_control(&srv->lightness_srv);
 	lightness_srv_change_lvl(&srv->lightness_srv, ctx, &light, &light_rsp);

@@ -86,9 +86,7 @@ static void temp_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_light_temp_srv *srv = model->user_data;
 	struct bt_mesh_light_temp_status status = { 0 };
 	struct bt_mesh_model_transition transition;
-	struct bt_mesh_light_temp_set set = {
-		.transition = &transition,
-	};
+	struct bt_mesh_light_temp_set set;
 
 	set.params.temp = net_buf_simple_pull_le16(buf);
 	set.params.delta_uv = net_buf_simple_pull_le16(buf);
@@ -107,11 +105,7 @@ static void temp_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		goto respond;
 	}
 
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, &transition);
-	} else {
-		bt_mesh_dtt_srv_transition_get(srv->model, &transition);
-	}
+	set.transition = model_transition_get(srv->model, &transition, buf);
 
 	bt_mesh_light_temp_srv_set(srv, ctx, &set, &status);
 
@@ -271,12 +265,10 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_light_temp_srv *srv =
 		CONTAINER_OF(lvl_srv, struct bt_mesh_light_temp_srv, lvl);
 	struct bt_mesh_light_temp_status status = { 0 };
-	struct bt_mesh_model_transition transition = {
-		.delay = move_set->transition->delay,
-	};
+	struct bt_mesh_model_transition transition;
 	struct bt_mesh_light_temp_set set = {
 		.params = srv->last,
-		.transition = &transition,
+		.transition = NULL,
 	};
 
 	srv->handlers->get(srv, NULL, &status);
@@ -291,10 +283,15 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 
 	if (move_set->delta != 0 && move_set->transition) {
 		uint64_t distance = abs(set.params.temp - status.current.temp);
-
-		transition.time =
+		uint32_t time_to_edge =
 			(distance * (uint64_t)move_set->transition->time) /
 			abs(move_set->delta);
+
+		if (time_to_edge > 0) {
+			transition.time = time_to_edge;
+			transition.delay = move_set->transition->delay;
+			set.transition = &transition;
+		}
 	}
 
 	bt_mesh_light_temp_srv_set(srv, ctx, &set, &status);

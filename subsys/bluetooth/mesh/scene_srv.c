@@ -45,7 +45,7 @@ static inline void update_page_count(struct bt_mesh_scene_srv *srv, bool vnd,
 
 static uint16_t current_scene(const struct bt_mesh_scene_srv *srv, int64_t now)
 {
-	if (model_transition_is_active(&srv->transition) &&
+	if (bt_mesh_model_transition_time(&srv->transition) &&
 	    srv->prev != srv->next && now < srv->transition_end) {
 		if (now < srv->transition_end - srv->transition.time) {
 			return srv->prev;
@@ -59,7 +59,7 @@ static uint16_t current_scene(const struct bt_mesh_scene_srv *srv, int64_t now)
 
 static uint16_t target_scene(const struct bt_mesh_scene_srv *srv, int64_t now)
 {
-	if (model_transition_is_active(&srv->transition) &&
+	if (bt_mesh_model_transition_time(&srv->transition) &&
 	    srv->prev != srv->next && now < srv->transition_end) {
 		return srv->next;
 	}
@@ -114,23 +114,17 @@ static void scene_recall(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 	struct bt_mesh_model_transition transition;
 	enum bt_mesh_scene_status status;
 	uint16_t scene;
+	bool has_trans;
 	uint8_t tid;
 	int err;
 
 	scene = net_buf_simple_pull_le16(buf);
-	tid = net_buf_simple_pull_u8(buf);
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, &transition);
-	} else if (!buf->len) {
-		bt_mesh_dtt_srv_transition_get(model, &transition);
-	} else {
-		return;
-	}
-
-	if (scene == BT_MESH_SCENE_NONE ||
-	    model_transition_is_invalid(&transition)) {
+	if (scene == BT_MESH_SCENE_NONE) {
 		return; /* Prohibited */
 	}
+
+	tid = net_buf_simple_pull_u8(buf);
+	has_trans = !!model_transition_get(srv->model, &transition, buf);
 
 	if (tid_check_and_update(&srv->tid, tid, ctx)) {
 		BT_DBG("Duplicate TID");
@@ -138,7 +132,7 @@ static void scene_recall(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		return;
 	}
 
-	err = bt_mesh_scene_srv_set(srv, scene, &transition);
+	err = bt_mesh_scene_srv_set(srv, scene, has_trans ? &transition : NULL);
 	status = ((err == -ENOENT) ? BT_MESH_SCENE_NOT_FOUND :
 				     BT_MESH_SCENE_SUCCESS);
 
@@ -746,6 +740,7 @@ void bt_mesh_scene_invalidate(struct bt_mesh_scene_entry *entry)
 int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 			  struct bt_mesh_model_transition *transition)
 {
+	int32_t transition_time;
 	char path[25];
 
 	if (scene == BT_MESH_SCENE_NONE ||
@@ -759,10 +754,10 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 	}
 
 	srv->prev = current_scene(srv, k_uptime_get());
-	if (transition && model_transition_is_active(transition)) {
-		srv->transition_end =
-			k_uptime_get() + transition->delay + transition->time;
 
+	transition_time = bt_mesh_model_transition_time(transition);
+	if (transition_time) {
+		srv->transition_end = k_uptime_get() + transition_time;
 		srv->transition = *transition;
 	} else {
 		srv->transition_end = 0U;
