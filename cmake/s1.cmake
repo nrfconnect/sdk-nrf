@@ -7,7 +7,7 @@
 if (CONFIG_BUILD_S1_VARIANT AND
     ((${CONFIG_S1_VARIANT_IMAGE_NAME} STREQUAL "app" AND NOT IMAGE_NAME)
     OR
-    ("${CONFIG_S1_VARIANT_IMAGE_NAME}_" STREQUAL "${IMAGE_NAME}")))
+    ("${CONFIG_S1_VARIANT_IMAGE_NAME}" STREQUAL "${IMAGE_NAME}")))
 # Create second executable for the second slot of the second stage
 # bootloader. This is done inside this file since it is non-trivial to add
 # executable targets outside the root CMakeLists.txt. The problem is that
@@ -143,15 +143,10 @@ if (CONFIG_BUILD_S1_VARIANT AND
     )
 
   if (IMAGE_NAME)
-  # Register in the parent image that this child image will have
-  # ${link_variant}image.hex as a byproduct, this allows the parent image to know
-  # where the hex file comes from and create custom commands that
-  # depend on it.
-  set_property(
-    TARGET         zephyr_property_target
-    APPEND_STRING
-    PROPERTY       shared_vars
-    "list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${output})\n"
-    )
+    # Register in the parent image that this child image will have
+    # ${link_variant}image.hex as a byproduct, this allows the parent image to know
+    # where the hex file comes from and create custom commands that
+    # depend on it.
+    set_shared(IMAGE ${IMAGE_NAME} APPEND PROPERTY BUILD_BYPRODUCTS ${output})
   endif()
 endif()

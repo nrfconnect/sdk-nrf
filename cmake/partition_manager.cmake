@@ -55,7 +55,9 @@ endif()
 #
 # The dynamic partition is specified by the parent domain (i.e. the domain
 # which creates the current domain through 'create_domain_image()'.
-if("${IMAGE_NAME}" STREQUAL "${${DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION}_")
+if(DEFINED ${DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION
+   AND "${IMAGE_NAME}" STREQUAL "${${DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION}"
+)
   set(is_dynamic_partition_in_domain TRUE)
 endif()
 
@@ -111,22 +113,22 @@ set_property(GLOBAL PROPERTY
 # Prepare the input_files, header_files, and images lists
 set(generated_path include/generated)
 foreach (image ${PM_IMAGES})
-  set(shared_vars_file ${CMAKE_BINARY_DIR}/${image}/shared_vars.cmake)
-  if (NOT (EXISTS ${shared_vars_file}))
-    message(FATAL_ERROR "Could not find shared vars file: ${shared_vars_file}")
-  endif()
-  include(${shared_vars_file})
   list(APPEND prefixed_images ${DOMAIN}:${image})
   list(APPEND images ${image})
-  list(APPEND input_files  ${${image}_PM_YML_FILES})
-  list(APPEND header_files ${${image}_ZEPHYR_BINARY_DIR}/${generated_path}/pm_config.h)
+
+  get_shared(${image}_input_files IMAGE ${image} PROPERTY PM_YML_FILES)
+  get_shared(${image}_binary_dir  IMAGE ${image} PROPERTY ZEPHYR_BINARY_DIR)
+
+  list(APPEND input_files  ${${image}_input_files})
+  list(APPEND header_files ${${image}_binary_dir}/${generated_path}/pm_config.h)
 
   # Re-configure (Re-execute all CMakeLists.txt code) when original
   # (not preprocessed) configuration file changes.
+  get_shared(dependencies IMAGE ${image} PROPERTY PM_YML_DEP_FILES)
   set_property(
     DIRECTORY APPEND PROPERTY
     CMAKE_CONFIGURE_DEPENDS
-    ${${image}_PM_YML_DEP_FILES}
+    ${dependencies}
     )
 endforeach()
 
@@ -271,8 +273,11 @@ foreach(part ${PM_ALL_BY_SIZE})
     list(APPEND explicitly_assigned ${part})
   else()
     if(${part} IN_LIST images)
-      set(${part}_PM_HEX_FILE ${${part}_ZEPHYR_BINARY_DIR}/${${part}_KERNEL_HEX_NAME})
-      set(${part}_PM_ELF_FILE ${${part}_ZEPHYR_BINARY_DIR}/${${part}_KERNEL_ELF_NAME})
+      get_shared(${part}_bin_dir  IMAGE ${part} PROPERTY ZEPHYR_BINARY_DIR)
+      get_shared(${part}_hex_file IMAGE ${part} PROPERTY KERNEL_HEX_NAME)
+      get_shared(${part}_elf_file IMAGE ${part} PROPERTY KERNEL_ELF_NAME)
+      set(${part}_PM_HEX_FILE ${${part}_bin_dir}/${${part}_hex_file})
+      set(${part}_PM_ELF_FILE ${${part}_bin_dir}/${${part}_elf_file})
       set(${part}_PM_TARGET ${part}_subimage)
     elseif(${part} IN_LIST containers)
       set(${part}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${part}.hex)
@@ -371,18 +376,18 @@ if (is_dynamic_partition_in_domain)
   # Expose the generated partition manager configuration files to parent image.
   # This is used by the root image to create the global configuration in
   # pm_config.h.
-  share("set(${DOMAIN}_PM_DOMAIN_PARTITIONS ${pm_out_partition_file})")
-  share("set(${DOMAIN}_PM_DOMAIN_REGIONS ${pm_out_region_file})")
-  share("set(${DOMAIN}_PM_DOMAIN_HEADER_FILES ${header_files})")
-  share("set(${DOMAIN}_PM_DOMAIN_IMAGES ${prefixed_images})")
-  share("set(${DOMAIN}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${merged}.hex)")
-  share("set(${DOMAIN}_PM_DOTCONF_FILES ${pm_out_dotconf_file})")
-  share("set(${DOMAIN}_PM_APP_HEX ${PROJECT_BINARY_DIR}/app.hex)")
-  share("set(${DOMAIN}_PM_SIGNED_APP_HEX ${PROJECT_BINARY_DIR}/signed_by_b0_app.hex)")
-  share("list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${merged}.hex)")
+  set_shared(IMAGE ${DOMAIN} PROPERTY PM_DOMAIN_PARTITIONS ${pm_out_partition_file})
+  set_shared(IMAGE ${DOMAIN} PROPERTY PM_DOMAIN_REGIONS ${pm_out_region_file})
+  set_shared(IMAGE ${DOMAIN} PROPERTY PM_DOMAIN_HEADER_FILES ${header_files})
+  set_shared(IMAGE ${DOMAIN} PROPERTY PM_DOMAIN_IMAGES ${prefixed_images})
+  set_shared(IMAGE ${DOMAIN} PROPERTY PM_HEX_FILE ${PROJECT_BINARY_DIR}/${merged}.hex)
+  set_shared(IMAGE ${DOMAIN} PROPERTY PM_DOTCONF_FILES ${pm_out_dotconf_file})
+  set_shared(IMAGE ${DOMAIN} PROPERTY PM_APP_HEX ${PROJECT_BINARY_DIR}/app.hex)
+  set_shared(IMAGE ${DOMAIN} PROPERTY PM_SIGNED_APP_HEX ${PROJECT_BINARY_DIR}/signed_by_b0_app.hex)
+  set_shared(IMAGE ${IMAGE_NAME} APPEND PROPERTY BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${merged}.hex)
 else()
   # This is the root image, generate the global pm_config.h
-  # First, include the shared_vars.cmake file for all child images.
+  # First, include the shared properties for all child images.
   if (PM_DOMAINS)
     # We ensure the existence of PM_DOMAINS to support older cmake versions.
     # When version >= 3.17 is required this check can be removed.
@@ -391,19 +396,18 @@ else()
   foreach (d ${PM_DOMAINS})
     # Don't include shared vars from own domain.
     if (NOT ("${DOMAIN}" STREQUAL "${d}"))
-      set(shared_vars_file
-        ${CMAKE_BINARY_DIR}/${${d}_PM_DOMAIN_DYNAMIC_PARTITION}/shared_vars.cmake
-        )
-      if (NOT (EXISTS ${shared_vars_file}))
-        message(FATAL_ERROR "Could not find shared vars file: ${shared_vars_file}")
-      endif()
-      include(${shared_vars_file})
-      list(APPEND header_files ${${d}_PM_DOMAIN_HEADER_FILES})
-      list(APPEND prefixed_images ${${d}_PM_DOMAIN_IMAGES})
-      list(APPEND pm_out_partition_file ${${d}_PM_DOMAIN_PARTITIONS})
-      list(APPEND pm_out_region_file ${${d}_PM_DOMAIN_REGIONS})
-      list(APPEND global_hex_depends ${${d}_PM_DOMAIN_DYNAMIC_PARTITION}_subimage)
-      list(APPEND domain_hex_files ${${d}_PM_HEX_FILE})
+      get_shared(shared_header_files          IMAGE ${d} PROPERTY PM_DOMAIN_HEADER_FILES)
+      get_shared(shared_prefixed_images       IMAGE ${d} PROPERTY PM_DOMAIN_IMAGES)
+      get_shared(shared_pm_out_partition_file IMAGE ${d} PROPERTY PM_DOMAIN_PARTITIONS)
+      get_shared(shared_pm_out_region_file    IMAGE ${d} PROPERTY PM_DOMAIN_REGIONS)
+      get_shared(shared_domain_hex_files      IMAGE ${d} PROPERTY PM_HEX_FILE)
+
+      list(APPEND header_files          ${shared_header_files})
+      list(APPEND prefixed_images       ${shared_prefixed_images})
+      list(APPEND pm_out_partition_file ${shared_pm_out_partition_file})
+      list(APPEND pm_out_region_file    ${shared_pm_out_region_file})
+      list(APPEND domain_hex_files      ${shared_domain_hex_files})
+      list(APPEND global_hex_depends    ${${d}_PM_DOMAIN_DYNAMIC_PARTITION}_subimage)
 
       # Add domain prefix cmake variables for all partitions
       # Here, we actually overwrite the already imported kconfig values
@@ -411,7 +415,8 @@ else()
       # are accessed through the 'partition_manager' target, and most likely
       # through generator expression, as this file is one of the last
       # cmake files executed in the configure stage.
-      import_kconfig(PM_ ${${d}_PM_DOTCONF_FILES} ${d}_pm_var_names)
+      get_shared(conf_file IMAGE ${d} PROPERTY PM_DOTCONF_FILES)
+      import_kconfig(PM_ ${conf_file} ${d}_pm_var_names)
 
       foreach(name ${${d}_pm_var_names})
         set_property(
@@ -502,7 +507,6 @@ else()
       -o ${final_merged}
       ${domain_hex_files}
       DEPENDS
-      ${domain_hex_files}
       ${global_hex_depends}
       )
 

@@ -126,8 +126,8 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     $<IF:${sign_merged},${merged_hex_file_depends},zephyr_final>)
 
   if (NOT DEFINED CONFIG_BOOT_SIGNATURE_KEY_FILE)
-    include(${CMAKE_BINARY_DIR}/mcuboot/shared_vars.cmake)
-    set(CONFIG_BOOT_SIGNATURE_KEY_FILE ${mcuboot_SIGNATURE_KEY_FILE})
+    get_shared(mcuboot_sign_key IMAGE mcuboot PROPERTY SIGNATURE_KEY_FILE)
+    set(CONFIG_BOOT_SIGNATURE_KEY_FILE ${mcuboot_sign_key})
   endif ()
 
   foreach (filepath ${mcuboot_CONF_FILE})
@@ -243,15 +243,15 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # These updates are verified by the application core MCUBoot.
       # Create a signed variant of the network core application.
 
-      # Load the shared vars to get the path to the hex file to sign.
-      include(${CMAKE_BINARY_DIR}/hci_rpmsg/shared_vars.cmake)
+      get_shared(hci_rpmsg_byproducts IMAGE hci_rpmsg PROPERTY BUILD_BYPRODUCTS)
+      get_shared(cpunet_signed_app_hex IMAGE CPUNET PROPERTY PM_SIGNED_APP_HEX)
 
       sign(
-        SIGNED_BIN_FILE_IN ${CPUNET_PM_SIGNED_APP_HEX}
+        SIGNED_BIN_FILE_IN ${cpunet_signed_app_hex}
         SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/net_core_app
         START_ADDRESS_OFFSET $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
         SIGNED_HEX_FILE_OUT net_core_app_signed_hex
-        DEPENDS hci_rpmsg_subimage ${hci_rpmsg_BUILD_BYPRODUCTS}
+        DEPENDS hci_rpmsg_subimage ${hci_rpmsg_byproducts}
         )
 
       add_custom_target(
