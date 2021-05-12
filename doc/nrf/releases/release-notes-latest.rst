@@ -308,6 +308,20 @@ The following list summarizes the most important changes inherited from upstream
     * Changed buffer ownership of :c:func:`bt_l2cap_chan_send`.
       The application must now release the buffer for all returned errors.
 
+  * Bluetooth Mesh:
+
+    * Fixed error handling for the Friendship counter.
+    * Added a replay check on segmented transport messages.
+    * Added a poll callback for the Friend callback.
+    * Added BabbleSim test suite.
+    * Updated the publish period divisor of the health server to be stored persistently.
+    * Added GATT Proxy callbacks.
+    * Added address matching for Config Client response messages.
+    * Added basic model behavior in the Mesh sample.
+    * Added a composition data traversal API.
+    * Added an acknowledged model message API.
+    * Fixed the Config Server's LPN time reporting.
+
 * Libraries/subsystems:
 
   * File systems:
