@@ -306,8 +306,6 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 {
-	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_BT_CENTRAL));
-
 	struct ble_peer_conn_params_event *event =
 		new_ble_peer_conn_params_event();
 
