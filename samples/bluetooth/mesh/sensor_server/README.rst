@@ -15,13 +15,25 @@ In addition, the sample demonstrates usage of both :ref:`single-channel sensor t
    This sample must be paired with the :ref:`bluetooth_mesh_sensor_client` sample to show any functionality.
    The mesh sensor provides the sensor data used by the observer.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :sample-yaml-rows:
+
+For provisioning and configuring of the mesh model instances, the sample requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
+
+* `nRF Mesh mobile app for Android`_
+* `nRF Mesh mobile app for iOS`_
+
+Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_client` sample application.
+The application needs to be programmed on a separate device, and configured according to the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
+
 Overview
 ********
-
-This sample is split into the following source files:
-
-* A :file:`main.c` file to handle initialization.
-* One additional file for handling Bluetooth mesh models, :file:`model_handler.c`.
 
 The following Bluetooth mesh sensor types are used in this sample:
 
@@ -36,6 +48,8 @@ Provisioning
 ============
 
 The provisioning is handled by the :ref:`bt_mesh_dk_prov`.
+It supports four types of out-of-band (OOB) authentication methods, and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
+
 Use `nRF Mesh mobile app`_ for provisioning and configuring of models supported by the sample.
 
 Models
@@ -62,23 +76,6 @@ The models are used for the following purposes:
 
 The model handling is implemented in :file:`src/model_handler.c`, which uses the ``TEMP_NRF5`` temperature sensor, and the :ref:`dk_buttons_and_leds_readme` library to detect button presses.
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :sample-yaml-rows:
-
-The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
-
-* `nRF Mesh mobile app for Android`_
-* `nRF Mesh mobile app for iOS`_
-
-Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_client` sample application.
-The application needs to be programmed on a separate device, and configured according to the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
-
 User interface
 **************
 
@@ -87,8 +84,20 @@ Buttons:
    All buttons have the same functionality during the provisioning procedure.
 
 Button 1:
-   Simulate presence detected (after the provisioning procedure is finished).
+   Simulates presence detected (after the provisioning procedure is finished).
 
+Configuration
+*************
+
+|config|
+
+Source file setup
+=================
+
+This sample is split into the following source files:
+
+* A :file:`main.c` file to handle initialization.
+* One additional file for handling Bluetooth mesh models, :file:`model_handler.c`.
 
 Building and running
 ********************
@@ -104,9 +113,9 @@ Testing
 
 .. note::
    The Bluetooth mesh sensor sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_sensor_client` sample running in the same mesh network.
-   Before testing the sensor sample, go through the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_client_testing>` with a different kit.
+   Before testing the sensor sample, go through the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_client_testing>` with a different development kit.
 
-After programming the sample to your development kit, you can test it by using a smartphone with Nordic Semiconductor’s nRF Mesh app installed.
+After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.
 Testing consists of provisioning the device, and configuring it for communication with the mesh models.
 
 Provisioning the device

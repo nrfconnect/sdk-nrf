@@ -15,13 +15,24 @@ In addition, the samples demonstrate usage of both :ref:`single-channel sensor t
    This sample must be paired with :ref:`bluetooth_mesh_sensor_server` to show any functionality.
    The observer has no sensor data, and is dependent on a mesh sensor to provide it.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :sample-yaml-rows:
+
+The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
+
+* `nRF Mesh mobile app for Android`_
+* `nRF Mesh mobile app for iOS`_
+
+Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_server` sample application, programmed on a separate development kit and configured according to mesh sensor sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
+
 Overview
 ********
-
-This sample is split into the following source files:
-
-* A :file:`main.c` file to handle initialization.
-* One additional file for handling Bluetooth mesh models, :file:`model_handler.c`.
 
 The following Bluetooth mesh sensor types are used in this sample:
 
@@ -35,6 +46,8 @@ Provisioning
 ============
 
 The provisioning is handled by the :ref:`bt_mesh_dk_prov`.
+It supports four types of out-of-band (OOB) authentication methods, and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
+
 Use `nRF Mesh mobile app`_ for provisioning and configuring of models supported by the sample.
 
 Models
@@ -62,22 +75,6 @@ The models are used for the following purposes:
 The model handling is implemented in :file:`src/model_handler.c`.
 A :c:struct:`k_work_delayable` item is submitted recursively to periodically request sensor data.
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :sample-yaml-rows:
-
-The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
-
-* `nRF Mesh mobile app for Android`_
-* `nRF Mesh mobile app for iOS`_
-
-Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_server` sample application, programmed on a separate development kit and configured according to mesh sensor sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
-
 User interface
 **************
 
@@ -88,6 +85,20 @@ Buttons:
 Terminal:
    All sensor values gathered from the server are printed over UART.
    For more details, see :ref:`gs_testing`.
+
+Configuration
+*************
+
+|config|
+
+Source file setup
+=================
+
+This sample is split into the following source files:
+
+* A :file:`main.c` file to handle initialization.
+* One additional file for handling Bluetooth mesh models, :file:`model_handler.c`.
+
 
 Building and running
 ********************
@@ -103,9 +114,9 @@ Testing
 
 .. note::
    The mesh sensor observer sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_sensor_server` sample running in the same mesh network.
-   Before testing the mesh sensor observer, go through the mesh sensor's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>` with a different kit.
+   Before testing the mesh sensor observer, go through the mesh sensor's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>` with a different development kit.
 
-After programming the sample to your development kit, you can test it by using a smartphone with Nordic Semiconductor’s nRF Mesh app installed.
+After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
 All sensor values gathered from the server are printed over UART.

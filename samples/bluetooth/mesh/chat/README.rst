@@ -8,10 +8,6 @@ Bluetooth: Mesh chat
    :depth: 2
 
 The Bluetooth mesh chat sample demonstrates how the mesh network can be used to facilitate communication between nodes by text, using the :ref:`bt_mesh_chat_client_model`.
-By means of the mesh network, the clients as mesh nodes can communicate with each other without the need of a server.
-The sample is mainly designed for group communication, but it also supports one-on-one communication, as well as sharing the nodes presence.
-
-This sample is used in :ref:`ug_bt_mesh_vendor_model` as an example of how to implement a vendor model for the Bluetooth mesh in |NCS|.
 
 .. toctree::
    :maxdepth: 1
@@ -20,14 +16,32 @@ This sample is used in :ref:`ug_bt_mesh_vendor_model` as an example of how to im
 
    chat_cli.rst
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :sample-yaml-rows:
+
+The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
+
+* `nRF Mesh mobile app for Android`_
+* `nRF Mesh mobile app for iOS`_
+
 Overview
 ********
 
-This sample is split into four source files:
+By means of the mesh network, the clients as mesh nodes can communicate with each other without the need of a server.
+The mesh chat sample is mainly designed for group communication, but it also supports one-on-one communication, as well as sharing the nodes presence.
 
-* A :file:`main.c` file to handle initialization.
-* A file for handling the Chat Client model, :file:`chat_cli.c`.
-* A file for handling Bluetooth mesh models and communication with the :ref:`shell module <shell_api>`, :file:`model_handler.c`.
+This sample is used in :ref:`ug_bt_mesh_vendor_model` as an example of how to implement a vendor model for the Bluetooth mesh in |NCS|.
+
+The clients are nodes with a provisionee role in a mesh network.
+Provisioning is performed using the `nRF Mesh mobile app`_.
+This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
+After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the dimmable LED on the development kit from the app.
 
 After provisioning and configuring the Bluetooth mesh models supported by the sample in the `nRF Mesh mobile app`_, you can communicate with other mesh nodes by sending text messages and obtaining their presence using the :ref:`shell module <shell_api>`.
 
@@ -35,6 +49,7 @@ Provisioning
 ============
 
 The provisioning is handled by the :ref:`bt_mesh_dk_prov`.
+It supports four types of out-of-band (OOB) authentication methods, and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
 
 Models
 ======
@@ -60,20 +75,6 @@ The models are used for the following purposes:
 
 The model handling is implemented in :file:`src/model_handler.c`.
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :sample-yaml-rows:
-
-The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
-
-* `nRF Mesh mobile app for Android`_
-* `nRF Mesh mobile app for iOS`_
-
 User interface
 **************
 
@@ -85,7 +86,21 @@ LEDs:
    Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
 
 Terminal emulator:
-   Used for the interraction with the sample.
+   Used for the interaction with the sample.
+
+Configuration
+*************
+
+|config|
+
+Source file setup
+=================
+
+This sample is split into the following source files:
+
+* A :file:`main.c` file to handle initialization.
+* A file for handling the Chat Client model, :file:`chat_cli.c`.
+* A file for handling Bluetooth mesh models and communication with the :ref:`shell module <shell_api>`, :file:`model_handler.c`.
 
 Building and running
 ********************
@@ -132,8 +147,8 @@ Make sure to configure the parameters for each mesh node in the mesh network.
 Interacting with the sample
 ---------------------------
 
-1. Connect the kit to the computer using a USB cable.
-   The kit is assigned a COM port (Windows), ttyACM device (Linux) or tty.usbmodem (MacOS).
+1. Connect the development kit to the computer using a USB cable.
+   The development kit is assigned a COM port (Windows), ttyACM device (Linux) or tty.usbmodem (MacOS).
 #. |connect_terminal_specific|
 #. Enable local echo in the terminal to see the text you are typing.
 

@@ -107,7 +107,7 @@ Configuration
 Source file setup
 =================
 
-The light switch sample is split into two source files:
+The light switch sample is split into the following source files:
 
 * A :file:`main.c` file to handle initialization.
 * One additional file for handling mesh models, :file:`model_handler.c`.

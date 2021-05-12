@@ -9,21 +9,40 @@ Bluetooth: Mesh light fixture
 
 The Bluetooth mesh light fixture sample demonstrates how to set up a light control mesh server model application, and control a dimmable LED with Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832
+
+The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
+
+  * `nRF Mesh mobile app for Android`_
+  * `nRF Mesh mobile app for iOS`_
+
 Overview
 ********
 
-This sample is split into three source files:
+This sample can be used to control the state of light sources.
+In addition to generic on and off functions, it allows changing the light level (brightness) of a LED light.
 
-* A :file:`main.c` file to handle initialization.
-* A file for handling mesh models, :file:`model_handler.c`.
-* A file for handling PWM driven control of the dimmable LED, :file:`lc_pwm_led.c`.
+The sample instantiates the :ref:`bt_mesh_lightness_srv_readme` model and the :ref:`bt_mesh_light_ctrl_srv_readme` model.
+As both Light Lightness Server and the Light LC Server extend the Generic OnOff Server, the two models need to be instantiated on separate elements.
+For more information, see documentation on :ref:`bt_mesh_light_ctrl_srv_readme`.
 
+Devices are nodes with a provisionee role in a mesh network.
+Provisioning is performed using the `nRF Mesh mobile app`_.
+This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
 After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the dimmable LED on the development kit from the app.
 
 Provisioning
 ============
 
 The provisioning is handled by the :ref:`bt_mesh_dk_prov`.
+It supports four types of out-of-band (OOB) authentication methods, and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
 
 Models
 ======
@@ -57,13 +76,13 @@ The following table shows the mesh light fixture composition data for this sampl
 
 The models are used for the following purposes:
 
-- The first element contains a Config Server and a Health Server.
+* The first element contains a Config Server and a Health Server.
   The Config Server allows configurator devices to configure the node remotely.
   The Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
-- The seven other models in the first element are the product of a single instance of the Light Lightness Server.
+* The seven other models in the first element are the product of a single instance of the Light Lightness Server.
   The application implements callbacks for the Light Lightness Server to control the first LED on the device using the PWM (pulse width modulation) driver.
-- The three models in the second element are the product of a single instance of the Light Lightness Control (LC) Server.
+* The three models in the second element are the product of a single instance of the Light Lightness Control (LC) Server.
   The Light LC Server controls the Light Lightness Server in the first element, deciding on parameters such as fade time, lighting levels for different states, and inactivity timing.
   In this sample, the Light LC Server is enabled by default on startup.
 
@@ -76,20 +95,6 @@ For more details, see :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_ligh
 
 The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the development kit.
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832
-
-The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
-
-  * `nRF Mesh mobile app for Android`_
-  * `nRF Mesh mobile app for iOS`_
-
 User interface
 **************
 
@@ -101,6 +106,19 @@ LEDs:
    Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
    First LED outputs the current light level of the Light Lightness Server in the first element.
 
+Configuration
+*************
+
+|config|
+
+Source file setup
+=================
+
+This sample is split into the following source files:
+
+* A :file:`main.c` file to handle initialization.
+* A file for handling mesh models, :file:`model_handler.c`.
+* A file for handling PWM driven control of the dimmable LED, :file:`lc_pwm_led.c`.
 
 Building and running
 ********************
@@ -114,7 +132,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, you can test it by using a smartphone with Nordic Semiconductor's nRF Mesh app installed.
+After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
 Provisioning the device
