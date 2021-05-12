@@ -129,14 +129,15 @@ static void test_encode_gps_data_object(void)
 	 * encoding.
 	 */
 	struct cloud_data_gps data = {
-		.longi = 10,
-		.lat = 62,
-		.acc = 24,
-		.alt = 170,
-		.spd = 1,
-		.hdg = 176,
+		.pvt.longi = 10,
+		.pvt.lat = 62,
+		.pvt.acc = 24,
+		.pvt.alt = 170,
+		.pvt.spd = 1,
+		.pvt.hdg = 176,
+		.queued = true,
 		.gps_ts = 1000,
-		.queued = true
+		.format = CLOUD_CODEC_GPS_FORMAT_PVT
 	};
 
 	ret = json_common_gps_data_add(dummy.root_obj,
@@ -184,14 +185,15 @@ static void test_encode_gps_data_array(void)
 	 * encoding.
 	 */
 	struct cloud_data_gps data = {
-		.longi = 10,
-		.lat = 62,
-		.acc = 24,
-		.alt = 170,
-		.spd = 1,
-		.hdg = 176,
+		.pvt.longi = 10,
+		.pvt.lat = 62,
+		.pvt.acc = 24,
+		.pvt.alt = 170,
+		.pvt.spd = 1,
+		.pvt.hdg = 176,
+		.queued = true,
 		.gps_ts = 1000,
-		.queued = true
+		.format = CLOUD_CODEC_GPS_FORMAT_PVT
 	};
 
 	ret = json_common_gps_data_add(dummy.array_obj,
@@ -675,23 +677,25 @@ static void test_encode_batch_data_object(void)
 		[1].queued = true
 	};
 	struct cloud_data_gps gps[2] = {
-		[0].longi = 10,
-		[0].lat = 62,
-		[0].acc = 24,
-		[0].alt = 170,
-		[0].spd = 1,
-		[0].hdg = 176,
+		[0].pvt.longi = 10,
+		[0].pvt.lat = 62,
+		[0].pvt.acc = 24,
+		[0].pvt.alt = 170,
+		[0].pvt.spd = 1,
+		[0].pvt.hdg = 176,
 		[0].gps_ts = 1000,
 		[0].queued = true,
+		[0].format = CLOUD_CODEC_GPS_FORMAT_PVT,
 		/* Second entry */
-		[1].longi = 10,
-		[1].lat = 62,
-		[1].acc = 24,
-		[1].alt = 170,
-		[1].spd = 1,
-		[1].hdg = 176,
+		[1].pvt.longi = 10,
+		[1].pvt.lat = 62,
+		[1].pvt.acc = 24,
+		[1].pvt.alt = 170,
+		[1].pvt.spd = 1,
+		[1].pvt.hdg = 176,
 		[1].gps_ts = 1000,
-		[1].queued = true
+		[1].queued = true,
+		[1].format = CLOUD_CODEC_GPS_FORMAT_PVT
 	};
 	struct cloud_data_modem_dynamic modem_dynamic[2] = {
 		[0].rsrp = 20,
@@ -849,14 +853,15 @@ static void test_floating_point_encoding_gps(void)
 	cJSON *decoded_value_obj;
 	struct cloud_data_gps decoded_values = {0};
 	struct cloud_data_gps data = {
-		.longi = 10.417852141870654,
-		.lat = 63.43278762669529,
-		.acc = 15.455987930297852,
-		.alt = 53.67230987548828,
-		.spd = 0.4443884789943695,
-		.hdg = 176.12345298374867,
+		.pvt.longi = 10.417852141870654,
+		.pvt.lat = 63.43278762669529,
+		.pvt.acc = 15.455987930297852,
+		.pvt.alt = 53.67230987548828,
+		.pvt.spd = 0.4443884789943695,
+		.pvt.hdg = 176.12345298374867,
 		.gps_ts = 1000,
-		.queued = true
+		.queued = true,
+		.format = CLOUD_CODEC_GPS_FORMAT_PVT
 	};
 
 	ret = json_common_gps_data_add(dummy.root_obj,
@@ -893,19 +898,25 @@ static void test_floating_point_encoding_gps(void)
 	zassert_not_null(speed, "Speed is NULL");
 	zassert_not_null(heading, "Heading is NULL");
 
-	decoded_values.longi = longitude->valuedouble;
-	decoded_values.lat = latitude->valuedouble;
-	decoded_values.acc = accuracy->valuedouble;
-	decoded_values.alt = altitude->valuedouble;
-	decoded_values.spd = speed->valuedouble;
-	decoded_values.hdg = heading->valuedouble;
+	decoded_values.pvt.longi = longitude->valuedouble;
+	decoded_values.pvt.lat = latitude->valuedouble;
+	decoded_values.pvt.acc = accuracy->valuedouble;
+	decoded_values.pvt.alt = altitude->valuedouble;
+	decoded_values.pvt.spd = speed->valuedouble;
+	decoded_values.pvt.hdg = heading->valuedouble;
 
-	zassert_within(decoded_values.longi, data.longi, 0.1, "Decoded value is not within delta");
-	zassert_within(decoded_values.lat, data.lat, 0.1, "Decoded value is not within delta");
-	zassert_within(decoded_values.acc, data.acc, 0.1, "Decoded value is not within delta");
-	zassert_within(decoded_values.alt, data.alt, 0.1, "Decoded value is not within delta");
-	zassert_within(decoded_values.spd, data.spd, 0.1, "Decoded value is not within delta");
-	zassert_within(decoded_values.hdg, data.hdg, 0.1, "Decoded value is not within delta");
+	zassert_within(decoded_values.pvt.longi, data.pvt.longi, 0.1,
+		       "Decoded value is not within delta");
+	zassert_within(decoded_values.pvt.lat, data.pvt.lat, 0.1,
+		       "Decoded value is not within delta");
+	zassert_within(decoded_values.pvt.acc, data.pvt.acc, 0.1,
+		       "Decoded value is not within delta");
+	zassert_within(decoded_values.pvt.alt, data.pvt.alt, 0.1,
+		       "Decoded value is not within delta");
+	zassert_within(decoded_values.pvt.spd, data.pvt.spd, 0.1,
+		       "Decoded value is not within delta");
+	zassert_within(decoded_values.pvt.hdg, data.pvt.hdg, 0.1,
+		       "Decoded value is not within delta");
 
 	cJSON_Delete(decoded_root_obj);
 }

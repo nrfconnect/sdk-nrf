@@ -36,10 +36,7 @@ struct cloud_data_battery {
 	bool queued : 1;
 };
 
-/** @brief Structure containing GPS data published to cloud. */
-struct cloud_data_gps {
-	/** GPS data timestamp. UNIX milliseconds. */
-	int64_t gps_ts;
+struct cloud_data_gps_pvt {
 	/** Longitude */
 	double longi;
 	/** Latitude */
@@ -52,6 +49,32 @@ struct cloud_data_gps {
 	float spd;
 	/** Heading of movement in degrees. */
 	float hdg;
+};
+
+enum cloud_data_gps_format {
+	CLOUD_CODEC_GPS_FORMAT_INVALID,
+	CLOUD_CODEC_GPS_FORMAT_PVT,
+	CLOUD_CODEC_GPS_FORMAT_NMEA
+};
+
+/** @brief Structure containing GPS data published to cloud. */
+struct cloud_data_gps {
+	/** GPS data timestamp. UNIX milliseconds. */
+	int64_t gps_ts;
+
+	union {
+		/** Structure containing PVT data. */
+		struct cloud_data_gps_pvt pvt;
+
+		/* Null terminated NMEA string. The maximum number of characters in an
+		 * NMEA string is 83.
+		 */
+		char nmea[83];
+	};
+
+	/** Enum signifying the type of GPS data that is valid. */
+	enum cloud_data_gps_format format;
+
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
 };

@@ -361,43 +361,61 @@ int json_common_gps_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	err = json_add_number(gps_val_obj, DATA_GPS_LONGITUDE, data->longi);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+	switch (data->format) {
+	case CLOUD_CODEC_GPS_FORMAT_PVT:
+		err = json_add_number(gps_val_obj, DATA_GPS_LONGITUDE, data->pvt.longi);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+
+		err = json_add_number(gps_val_obj, DATA_GPS_LATITUDE, data->pvt.lat);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+
+		err = json_add_number(gps_val_obj, DATA_MOVEMENT, data->pvt.acc);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+
+		err = json_add_number(gps_val_obj, DATA_GPS_ALTITUDE, data->pvt.alt);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+
+		err = json_add_number(gps_val_obj, DATA_GPS_SPEED, data->pvt.spd);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+
+		err = json_add_number(gps_val_obj, DATA_GPS_HEADING, data->pvt.hdg);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+
+		json_add_obj(gps_obj, DATA_VALUE, gps_val_obj);
+		break;
+	case CLOUD_CODEC_GPS_FORMAT_NMEA:
+		cJSON_Delete(gps_val_obj);
+		err = json_add_str(gps_obj, DATA_VALUE, data->nmea);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		break;
+	case CLOUD_CODEC_GPS_FORMAT_INVALID:
+		/* Fall through */
+	default:
+		err = -EINVAL;
+		LOG_WRN("GPS data format not set");
 		goto exit;
 	}
-
-	err = json_add_number(gps_val_obj, DATA_GPS_LATITUDE, data->lat);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_number(gps_val_obj, DATA_MOVEMENT, data->acc);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_number(gps_val_obj, DATA_GPS_ALTITUDE, data->alt);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_number(gps_val_obj, DATA_GPS_SPEED, data->spd);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_number(gps_val_obj, DATA_GPS_HEADING, data->hdg);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	json_add_obj(gps_obj, DATA_VALUE, gps_val_obj);
 
 	err = json_add_number(gps_obj, DATA_TIMESTAMP, data->gps_ts);
 	if (err) {
