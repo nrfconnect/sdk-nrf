@@ -24,8 +24,8 @@ The |NCS| provides support for developing applications on the Thingy:91.
 Connecting to Thingy:91 serial ports
 ************************************
 
-For connecting to Thingy:91, you can use LTE Link Monitor, Trace Collector applications, or a serial terminal.
-In the case of LTE Link Monitor or Trace Collector applications, the baud rate for the communication is set automatically.
+For connecting to Thingy:91, you can use `LTE Link Monitor`_, `Trace Collector`_, or a serial terminal.
+In the case of LTE Link Monitor or Trace Collector, the baud rate for the communication is set automatically.
 
 If you prefer to use a standard serial terminal, the baud rate has to be specified manually.
 
