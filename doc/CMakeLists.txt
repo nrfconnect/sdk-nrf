@@ -66,12 +66,12 @@ function(add_docset name env)
   set(DOCSET_BUILD_DIR ${CMAKE_BINARY_DIR}/${name})
   set(DOCSET_SRC_DIR ${CMAKE_BINARY_DIR}/${name}/src)
   set(DOCSET_HTML_DIR ${CMAKE_BINARY_DIR}/html/${name})
-
-  file(MAKE_DIRECTORY ${DOCSET_BUILD_DIR})
-  file(MAKE_DIRECTORY ${DOCSET_SRC_DIR})
+  set(DOCSET_MAKE_DIRS ${DOCSET_BUILD_DIR};${DOCSET_SRC_DIR})
+  set(DOCSET_CLEAN_DIRS ${DOCSET_BUILD_DIR};${DOCSET_HTML_DIR})
 
   add_doc_target(
     ${name}-inventory
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
     COMMAND ${CMAKE_COMMAND} -E env ${env}
     ${SPHINXBUILD}
       -b inventory
@@ -85,6 +85,7 @@ function(add_docset name env)
 
   add_doc_target(
     ${name}-html
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
     COMMAND ${CMAKE_COMMAND} -E env ${env}
     ${SPHINXBUILD}
       -b html
@@ -99,6 +100,7 @@ function(add_docset name env)
 
   add_custom_target(
     ${name}-linkcheck
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
     COMMAND ${CMAKE_COMMAND} -E env ${env}
     ${SPHINXBUILD}
       -b linkcheck
@@ -111,13 +113,17 @@ function(add_docset name env)
     USES_TERMINAL
   )
 
-  add_custom_target(
-    ${name}-clean
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${DOCSET_HTML_DIR}
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${DOCSET_BUILD_DIR}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_BUILD_DIR}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_SRC_DIR}
-  )
+  if(${CMAKE_VERSION} VERSION_LESS 3.17)
+    add_custom_target(
+      ${name}-clean
+      COMMAND ${CMAKE_COMMAND} -E remove_directory ${DOCSET_CLEAN_DIRS}
+    )
+  else()
+    add_custom_target(
+      ${name}-clean
+      COMMAND ${CMAKE_COMMAND} -E rm -rf ${DOCSET_CLEAN_DIRS}
+    )
+  endif()
 
   add_custom_target(${name})
   add_dependencies(${name} ${name}-html)
