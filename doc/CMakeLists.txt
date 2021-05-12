@@ -12,7 +12,7 @@
 # is used to link documentation sets together. It is configured in the Sphinx
 # configuration files.
 
-cmake_minimum_required(VERSION 3.13.1)
+cmake_minimum_required(VERSION 3.15)
 project(nrf-connect-sdk-doc LANGUAGES NONE)
 
 set(NO_BOILERPLATE TRUE)
@@ -111,6 +111,14 @@ function(add_docset name env)
       ${DOCSET_SRC_DIR}
       ${DOCSET_BUILD_DIR}
     USES_TERMINAL
+  )
+
+  set_target_properties(
+    ${name}-inventory ${name}-inventory-all
+    ${name}-html ${name}-html-all
+    ${name}-linkcheck
+    PROPERTIES
+      ADDITIONAL_CLEAN_FILES "${DOCSET_CLEAN_DIRS}"
   )
 
   if(${CMAKE_VERSION} VERSION_LESS 3.17)
@@ -219,6 +227,12 @@ add_custom_target(
   zephyr
   DEPENDS
     zephyr-html
+)
+
+set_target_properties(
+  zephyr-html zephyr-html-all
+  PROPERTIES
+    ADDITIONAL_CLEAN_FILES "${ZEPHYR_BINARY_DIR};${SPHINX_OUTPUT_DIR}"
 )
 
 #-------------------------------------------------------------------------------
@@ -365,7 +379,7 @@ add_custom_target(
         -j auto
         ${SPHINXOPTS_EXTRA}
         ${KCONFIG_RST_OUT}
-        ${HTML_DIR}/kconfig
+        ${KCONFIG_OUTPUT}
   DEPENDS kconfig-content
   USES_TERMINAL
 )
@@ -374,6 +388,12 @@ add_custom_target(
   kconfig-html-all
   DEPENDS
     kconfig-html
+)
+
+set_target_properties(
+  kconfig-html kconfig-html-all
+  PROPERTIES
+    ADDITIONAL_CLEAN_FILES "${KCONFIG_BINARY_DIR};${KCONFIG_OUTPUT}"
 )
 
 #-------------------------------------------------------------------------------
