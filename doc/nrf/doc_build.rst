@@ -78,7 +78,7 @@ Complete the following steps to build the documentation output:
 
    .. code-block:: console
 
-      ninja build-all
+      ninja
 
    This command will build all documentation sets.
    Note that this process can take quite some time.
