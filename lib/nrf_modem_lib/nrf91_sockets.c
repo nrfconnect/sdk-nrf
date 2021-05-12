@@ -180,6 +180,12 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case TLS_SESSION_CACHE:
 			*nrf_out_optname = NRF_SO_SEC_SESSION_CACHE;
 			break;
+		case TLS_SESSION_CACHE_PURGE:
+			*nrf_out_optname = NRF_SO_SEC_SESSION_CACHE_PURGE;
+			break;
+		case TLS_DTLS_HANDSHAKE_TIMEO:
+			*nrf_out_optname = NRF_SO_SEC_DTLS_HANDSHAKE_TIMEO;
+			break;
 		default:
 			retval = -1;
 			break;
@@ -211,6 +217,21 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 			break;
 		case SO_IPV6_ECHO_REPLY:
 			*nrf_out_optname = NRF_SO_SILENCE_IPV6_ECHO_REPLY;
+			break;
+		case SO_RAI_LAST:
+			*nrf_out_optname = NRF_SO_RAI_LAST;
+			break;
+		case SO_RAI_NO_DATA:
+			*nrf_out_optname = NRF_SO_RAI_NO_DATA;
+			break;
+		case SO_RAI_ONE_RESP:
+			*nrf_out_optname = NRF_SO_RAI_ONE_RESP;
+			break;
+		case SO_RAI_ONGOING:
+			*nrf_out_optname = NRF_SO_RAI_ONGOING;
+			break;
+		case SO_RAI_WAIT_MORE:
+			*nrf_out_optname = NRF_SO_RAI_WAIT_MORE;
 			break;
 		default:
 			retval = -1;
