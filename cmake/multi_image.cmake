@@ -4,40 +4,24 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-function(share content)
-  # Adds 'content' as a line in the 'shared_vars' property.
-  # This property is again written to a file which is imported as a cmake file
-  # by the parent image. In other words, this function can be used to share
-  # information (variables, lists etc) with the parent image.
-  #
-  # Example usage 'share("set(visible_in_parent \"I AM YOUR CHILD\")")'
-
-  set_property(
-    TARGET         zephyr_property_target
-    APPEND_STRING
-    PROPERTY       shared_vars
-    "${content}\n"
-    )
-endfunction()
-
 if(IMAGE_NAME)
-  share("set(${IMAGE_NAME}KERNEL_HEX_NAME ${KERNEL_HEX_NAME})")
-  share("set(${IMAGE_NAME}ZEPHYR_BINARY_DIR ${ZEPHYR_BINARY_DIR})")
+  set_shared(IMAGE ${IMAGE_NAME} PROPERTY KERNEL_HEX_NAME ${KERNEL_HEX_NAME})
+  set_shared(IMAGE ${IMAGE_NAME} PROPERTY ZEPHYR_BINARY_DIR ${ZEPHYR_BINARY_DIR})
   # Share the elf file, in order to support symbol loading for debuggers.
-  share("set(${IMAGE_NAME}KERNEL_ELF_NAME ${KERNEL_ELF_NAME})")
-  share("list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME})")
-  share("list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${KERNEL_ELF_NAME})")
+  set_shared(IMAGE ${IMAGE_NAME} PROPERTY KERNEL_ELF_NAME ${KERNEL_ELF_NAME})
+  set_shared(IMAGE ${IMAGE_NAME}
+    PROPERTY BUILD_BYPRODUCTS
+             ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME}
+             ${PROJECT_BINARY_DIR}/${KERNEL_ELF_NAME}
+  )
   # Share the signing key file so that the parent image can use it to
   # generate signed update candidates.
   if(CONFIG_BOOT_SIGNATURE_KEY_FILE)
-   share("set(${IMAGE_NAME}SIGNATURE_KEY_FILE ${CONFIG_BOOT_SIGNATURE_KEY_FILE})")
+    set_shared(IMAGE ${IMAGE_NAME} PROPERTY SIGNATURE_KEY_FILE ${CONFIG_BOOT_SIGNATURE_KEY_FILE})
   endif()
 
-  file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/shared_vars.cmake
-    CONTENT $<TARGET_PROPERTY:zephyr_property_target,shared_vars>
-    )
+  generate_shared(IMAGE ${IMAGE_NAME} FILE ${CMAKE_BINARY_DIR}/shared_vars.cmake)
 endif(IMAGE_NAME)
-
 
 function(add_child_image)
   # Adds a child image to the build.
@@ -296,7 +280,7 @@ function(add_child_image_from_source)
     COMMAND ${CMAKE_COMMAND}
     -G${CMAKE_GENERATOR}
     ${EXTRA_MULTI_IMAGE_CMAKE_ARGS} # E.g. --trace-expand
-    -DIMAGE_NAME=${ACI_NAME}_
+    -DIMAGE_NAME=${ACI_NAME}
     ${image_cmake_args}
     ${ACI_SOURCE_DIR}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME}
@@ -305,7 +289,7 @@ function(add_child_image_from_source)
 
   if (IMAGE_NAME)
     # Expose your childrens secrets to your parent
-    share("include(${CMAKE_BINARY_DIR}/${ACI_NAME}/shared_vars.cmake)")
+    set_shared(FILE ${CMAKE_BINARY_DIR}/${ACI_NAME}/shared_vars.cmake)
   endif()
 
   set_property(DIRECTORY APPEND PROPERTY
@@ -323,10 +307,6 @@ function(add_child_image_from_source)
   # namespace
   include(${CMAKE_BINARY_DIR}/${ACI_NAME}/shared_vars.cmake)
 
-  # Increase the scope of this variable to make it more available
-  set(${ACI_NAME}_KERNEL_HEX_NAME ${${ACI_NAME}_KERNEL_HEX_NAME} CACHE STRING "" FORCE)
-  set(${ACI_NAME}_KERNEL_ELF_NAME ${${ACI_NAME}_KERNEL_ELF_NAME} CACHE STRING "" FORCE)
-
   if(MULTI_IMAGE_DEBUG_MAKEFILE AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
     set(multi_image_build_args "-d" "${MULTI_IMAGE_DEBUG_MAKEFILE}")
   endif()
@@ -334,11 +314,13 @@ function(add_child_image_from_source)
     set(multi_image_build_args "--debug=${MULTI_IMAGE_DEBUG_MAKEFILE}")
   endif()
 
+  get_shared(${ACI_NAME}_byproducts IMAGE ${ACI_NAME} PROPERTY BUILD_BYPRODUCTS)
+
   include(ExternalProject)
   ExternalProject_Add(${ACI_NAME}_subimage
     SOURCE_DIR ${ACI_SOURCE_DIR}
     BINARY_DIR ${CMAKE_BINARY_DIR}/${ACI_NAME}
-    BUILD_BYPRODUCTS ${${ACI_NAME}_BUILD_BYPRODUCTS} # Set by shared_vars.cmake
+    BUILD_BYPRODUCTS ${${ACI_NAME}_byproducts}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ${CMAKE_COMMAND} --build . -- ${multi_image_build_args}
     INSTALL_COMMAND ""
