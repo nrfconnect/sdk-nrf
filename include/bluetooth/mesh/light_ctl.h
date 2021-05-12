@@ -47,8 +47,12 @@ struct bt_mesh_light_temp {
 struct bt_mesh_light_ctl_set {
 	/** CTL set parameters. */
 	struct bt_mesh_light_ctl params;
-	/** Transition time parameters for the state change, or NULL to use the
-	 *  default transition time.
+	/**
+	 * Transition time parameters for the state change, or NULL.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
 	 */
 	const struct bt_mesh_model_transition *transition;
 };
@@ -71,8 +75,12 @@ struct bt_mesh_light_ctl_status {
 struct bt_mesh_light_temp_set {
 	/** New light temperature. */
 	struct bt_mesh_light_temp params;
-	/** Transition time parameters for the state change, or NULL to use the
-	 *  default transition time.
+	/**
+	 * Transition time parameters for the state change, or NULL.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
 	 */
 	const struct bt_mesh_model_transition *transition;
 };

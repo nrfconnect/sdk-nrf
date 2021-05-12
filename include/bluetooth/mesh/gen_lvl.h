@@ -32,9 +32,11 @@ struct bt_mesh_lvl_set {
 	/** Whether this is a new action. */
 	bool new_transaction;
 	/**
-	 * Transition time parameters for the state change. Setting the
-	 * transition to NULL makes the server use its default transition time
-	 * parameters.
+	 * Transition time parameters for the state change, or NULL.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
 	 */
 	const struct bt_mesh_model_transition *transition;
 };
@@ -50,9 +52,11 @@ struct bt_mesh_lvl_delta_set {
 	 */
 	bool new_transaction;
 	/**
-	 * Transition time parameters for the state change. Setting the
-	 * transition to NULL makes the server use its default transition time
-	 * parameters.
+	 * Transition time parameters for the state change, or NULL.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
 	 */
 	const struct bt_mesh_model_transition *transition;
 };
@@ -64,10 +68,13 @@ struct bt_mesh_lvl_move_set {
 	/** Whether this is a new action. */
 	bool new_transaction;
 	/**
-	 * Transition parameters. @c delay indicates time until the move
-	 * should start, @c transition indicates the amount of time each
-	 * @c delta step should take. Setting the transition to NULL makes the
-	 * server use its default transition time parameters.
+	 * Transition parameters, or NULL. @c delay indicates time until the
+	 * move should start, @c time indicates the amount of time each @c delta
+	 * step should take.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
 	 */
 	const struct bt_mesh_model_transition *transition;
 };

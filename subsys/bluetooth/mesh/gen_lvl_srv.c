@@ -26,17 +26,6 @@ static void encode_status(const struct bt_mesh_lvl_status *status,
 			      model_transition_encode(status->remaining_time));
 }
 
-static void transition_get(struct bt_mesh_lvl_srv *srv,
-			   struct bt_mesh_model_transition *transition,
-			   struct net_buf_simple *buf)
-{
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, transition);
-	} else {
-		bt_mesh_dtt_srv_transition_get(srv->model, transition);
-	}
-}
-
 static void rsp_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		       const struct bt_mesh_lvl_status *status)
 {
@@ -71,15 +60,14 @@ static void set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	struct bt_mesh_lvl_srv *srv = model->user_data;
-	struct bt_mesh_lvl_status status = { 0 };
 	struct bt_mesh_model_transition transition;
+	struct bt_mesh_lvl_status status = { 0 };
 	struct bt_mesh_lvl_set set;
 
 	set.lvl = net_buf_simple_pull_le16(buf);
 	set.new_transaction = !tid_check_and_update(
 		&srv->tid, net_buf_simple_pull_u8(buf), ctx);
-	transition_get(srv, &transition, buf);
-	set.transition = &transition;
+	set.transition = model_transition_get(srv->model, &transition, buf);
 
 	srv->handlers->set(srv, ctx, &set, &status);
 
@@ -110,8 +98,7 @@ static void delta_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	delta_set.delta = net_buf_simple_pull_le32(buf);
 	delta_set.new_transaction = !tid_check_and_update(
 		&srv->tid, net_buf_simple_pull_u8(buf), ctx);
-	transition_get(srv, &transition, buf);
-	delta_set.transition = &transition;
+	delta_set.transition = model_transition_get(srv->model, &transition, buf);
 
 	srv->handlers->delta_set(srv, ctx, &delta_set, &status);
 
@@ -142,15 +129,15 @@ static void move_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	move_set.delta = net_buf_simple_pull_le16(buf);
 	move_set.new_transaction = !tid_check_and_update(
 		&srv->tid, net_buf_simple_pull_u8(buf), ctx);
-	transition_get(srv, &transition, buf);
-	move_set.transition = &transition;
+	move_set.transition = model_transition_get(srv->model, &transition, buf);
 
 	/* If transition.time is 0, we shouldn't move. Align these two
 	 * parameters to simplify application logic for this case:
 	 */
-	if (move_set.transition->time == 0 || move_set.delta == 0) {
+	if ((!move_set.transition || move_set.transition->time == 0) ||
+	    move_set.delta == 0) {
 		move_set.delta = 0;
-		transition.time = 0;
+		move_set.transition = NULL;
 	}
 
 	srv->handlers->move_set(srv, ctx, &move_set, &status);

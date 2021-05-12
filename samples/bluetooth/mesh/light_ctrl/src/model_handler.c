@@ -72,14 +72,16 @@ static void start_new_light_trans(const struct bt_mesh_lightness_set *set,
 				  struct lightness_ctx *ctx)
 {
 	uint32_t step_cnt = abs(set->lvl - ctx->current_lvl) / PWM_SIZE_STEP;
+	uint32_t time = set->transition ? set->transition->time : 0;
+	uint32_t delay = set->transition ? set->transition->delay : 0;
 
 	ctx->target_lvl = set->lvl;
-	ctx->time_per = (step_cnt ? set->transition->time / step_cnt : 0);
-	ctx->rem_time = set->transition->time + set->transition->delay;
-	k_work_reschedule(&ctx->per_work, K_MSEC(set->transition->delay));
+	ctx->time_per = (step_cnt ? time / step_cnt : 0);
+	ctx->rem_time = bt_mesh_model_transition_time(set->transition);
+	k_work_reschedule(&ctx->per_work, K_MSEC(delay));
 
 	printk("New light transition-> Lvl: %d, Time: %d, Delay: %d\n",
-	       set->lvl, set->transition->time, set->transition->delay);
+	       set->lvl, time, delay);
 }
 
 static void periodic_led_work(struct k_work *work)
@@ -116,7 +118,7 @@ static void light_set(struct bt_mesh_lightness_srv *srv,
 	start_new_light_trans(set, l_ctx);
 	rsp->current = l_ctx->current_lvl;
 	rsp->target = l_ctx->target_lvl;
-	rsp->remaining_time = set->transition->time + set->transition->delay;
+	rsp->remaining_time = bt_mesh_model_transition_time(set->transition);
 }
 
 static void light_get(struct bt_mesh_lightness_srv *srv,

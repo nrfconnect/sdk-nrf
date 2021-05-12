@@ -99,11 +99,7 @@ static void hsl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		struct bt_mesh_light_hue h;
 		struct bt_mesh_light_sat s;
 		struct bt_mesh_lightness_set l;
-	} set = {
-		.h = { .transition = &transition },
-		.s = { .transition = &transition },
-		.l = { .transition = &transition },
-	};
+	} set;
 	uint8_t tid;
 
 	if (buf->len != BT_MESH_LIGHT_HSL_MSG_MINLEN_SET &&
@@ -127,11 +123,9 @@ static void hsl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		return;
 	}
 
-	if (buf->len) {
-		model_transition_buf_pull(buf, &transition);
-	} else {
-		bt_mesh_dtt_srv_transition_get(model, &transition);
-	}
+	set.h.transition = model_transition_get(srv->model, &transition, buf);
+	set.s.transition = set.h.transition;
+	set.l.transition = set.h.transition;
 
 	/* In the documentation for the Hue, Saturation and Lightness Servers,
 	 * the user is instructed to publish an HSL status message whenever

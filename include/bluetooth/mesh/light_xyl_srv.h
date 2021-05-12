@@ -65,7 +65,13 @@ struct bt_mesh_light_xyl_srv;
 struct bt_mesh_light_xy_set {
 	/** xy set parameters */
 	struct bt_mesh_light_xy params;
-	/** Transition time parameters for the state change. */
+	/**
+	 * Transition time parameters for the state change, or NULL.
+	 *
+	 * When sending, setting the transition to NULL makes the receiver use
+	 * its default transition time parameters, or 0 if no default transition
+	 * time is set.
+	 */
 	struct bt_mesh_model_transition *transition;
 };
 
