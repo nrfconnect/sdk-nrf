@@ -47,6 +47,7 @@
 #define DATA_GPS_ALTITUDE	"alt"
 #define DATA_GPS_SPEED		"spd"
 #define DATA_GPS_HEADING	"hdg"
+#define DATA_GPS_NMEA		"nmea"
 
 #define OBJECT_CONFIG		"cfg"
 

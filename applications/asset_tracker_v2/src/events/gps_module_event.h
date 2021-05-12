@@ -21,6 +21,8 @@
 extern "C" {
 #endif
 
+#define NMEA_MAX_LEN 83
+
 /** @brief GPS event types submitted by GPS module. */
 enum gps_module_event_type {
 	GPS_EVT_DATA_READY,
@@ -32,14 +34,29 @@ enum gps_module_event_type {
 	GPS_EVT_ERROR_CODE,
 };
 
-struct gps_module_data {
-	int64_t timestamp;
+struct gps_module_pvt {
 	double longitude;
 	double latitude;
 	float altitude;
 	float accuracy;
 	float speed;
 	float heading;
+};
+
+enum gps_module_format {
+	GPS_MODULE_DATA_FORMAT_INVALID,
+	GPS_MODULE_DATA_FORMAT_PVT,
+	GPS_MODULE_DATA_FORMAT_NMEA
+};
+
+struct gps_module_data {
+	union {
+		struct gps_module_pvt pvt;
+		char nmea[NMEA_MAX_LEN];
+	};
+
+	enum gps_module_format format;
+	int64_t timestamp;
 };
 
 /** @brief GPS event. */

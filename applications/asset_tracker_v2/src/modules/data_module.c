@@ -1024,15 +1024,38 @@ static void on_all_states(struct data_msg_data *msg)
 
 	if (IS_EVENT(msg, gps, GPS_EVT_DATA_READY)) {
 		struct cloud_data_gps new_gps_data = {
-			.acc = msg->module.gps.data.gps.accuracy,
-			.alt = msg->module.gps.data.gps.altitude,
-			.hdg = msg->module.gps.data.gps.heading,
-			.lat = msg->module.gps.data.gps.latitude,
-			.longi = msg->module.gps.data.gps.longitude,
-			.spd = msg->module.gps.data.gps.speed,
 			.gps_ts = msg->module.gps.data.gps.timestamp,
-			.queued = true
+			.queued = true,
+			.format = msg->module.gps.data.gps.format
 		};
+
+		switch (msg->module.gps.data.gps.format) {
+		case GPS_MODULE_DATA_FORMAT_PVT: {
+			/* Add PVT data */
+			new_gps_data.pvt.acc = msg->module.gps.data.gps.pvt.accuracy;
+			new_gps_data.pvt.alt = msg->module.gps.data.gps.pvt.altitude;
+			new_gps_data.pvt.hdg = msg->module.gps.data.gps.pvt.heading;
+			new_gps_data.pvt.lat = msg->module.gps.data.gps.pvt.latitude;
+			new_gps_data.pvt.longi = msg->module.gps.data.gps.pvt.longitude;
+			new_gps_data.pvt.spd = msg->module.gps.data.gps.pvt.speed;
+			new_gps_data.pvt.spd = msg->module.gps.data.gps.pvt.speed;
+
+		};
+			break;
+		case GPS_MODULE_DATA_FORMAT_NMEA: {
+			/* Add NMEA data */
+			BUILD_ASSERT(sizeof(new_gps_data.nmea) >=
+				     sizeof(msg->module.gps.data.gps.nmea));
+
+			strcpy(new_gps_data.nmea, msg->module.gps.data.gps.nmea);
+		};
+			break;
+		case GPS_MODULE_DATA_FORMAT_INVALID:
+			/* Fall through */
+		default:
+			LOG_WRN("Event does not carry valid GPS data");
+			return;
+		}
 
 		cloud_codec_populate_gps_buffer(gps_buf, &new_gps_data,
 						&head_gps_buf,

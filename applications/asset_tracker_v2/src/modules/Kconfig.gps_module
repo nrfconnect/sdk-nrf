@@ -16,6 +16,18 @@ config GPS_DEV_NAME
 	string "GPS device name"
 	default "NRF9160_GPS"
 
+choice
+	prompt "Select GNSS data format"
+	default GPS_MODULE_PVT
+
+config GPS_MODULE_PVT
+	bool "Include PVT data in GPS fix event"
+
+config GPS_MODULE_NMEA
+	bool "Include NMEA data in GPS fix event"
+
+endchoice
+
 endif # GPS_MODULE
 
 module = GPS_MODULE

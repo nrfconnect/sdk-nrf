@@ -68,7 +68,8 @@ static void message_handler(struct gps_msg_data *data);
 static void search_start(void);
 static void inactive_send(void);
 static void time_set(struct gps_pvt *gps_data);
-static void data_send(struct gps_pvt *gps_data);
+static void data_send_pvt(struct gps_pvt *gps_data);
+static void data_send_nmea(struct gps_nmea *gps_data);
 
 /* Convenience functions used in internal state handling. */
 static char *state2str(enum state_type new_state)
@@ -191,12 +192,20 @@ static void gps_event_handler(const struct device *dev, struct gps_event *evt)
 		time_set(&evt->pvt);
 		data_send(&evt->pvt);
 		inactive_send();
+
+		if (IS_ENABLED(CONFIG_GPS_MODULE_PVT)) {
+			data_send_pvt(&evt->pvt);
+		}
+		break;
+	case GPS_EVT_NMEA_FIX:
+		LOG_DBG("GPS_EVT_NMEA_FIX");
+
+		if (IS_ENABLED(CONFIG_GPS_MODULE_NMEA)) {
+			data_send_nmea(&evt->nmea);
+		}
 		break;
 	case GPS_EVT_NMEA:
 		/* Don't spam logs */
-		break;
-	case GPS_EVT_NMEA_FIX:
-		LOG_DBG("Position fix with NMEA data");
 		break;
 	case GPS_EVT_OPERATION_BLOCKED:
 		LOG_DBG("GPS_EVT_OPERATION_BLOCKED");
@@ -222,18 +231,34 @@ static void gps_event_handler(const struct device *dev, struct gps_event *evt)
 }
 
 /* Static module functions. */
-static void data_send(struct gps_pvt *gps_data)
+static void data_send_pvt(struct gps_pvt *gps_data)
 {
 	struct gps_module_event *gps_module_event = new_gps_module_event();
 
-	gps_module_event->data.gps.longitude = gps_data->longitude;
-	gps_module_event->data.gps.latitude = gps_data->latitude;
-	gps_module_event->data.gps.altitude = gps_data->altitude;
-	gps_module_event->data.gps.accuracy = gps_data->accuracy;
-	gps_module_event->data.gps.speed = gps_data->speed;
-	gps_module_event->data.gps.heading = gps_data->heading;
+	gps_module_event->data.gps.pvt.longitude = gps_data->longitude;
+	gps_module_event->data.gps.pvt.latitude = gps_data->latitude;
+	gps_module_event->data.gps.pvt.altitude = gps_data->altitude;
+	gps_module_event->data.gps.pvt.accuracy = gps_data->accuracy;
+	gps_module_event->data.gps.pvt.speed = gps_data->speed;
+	gps_module_event->data.gps.pvt.heading = gps_data->heading;
 	gps_module_event->data.gps.timestamp = k_uptime_get();
 	gps_module_event->type = GPS_EVT_DATA_READY;
+	gps_module_event->data.gps.format = GPS_MODULE_DATA_FORMAT_PVT;
+
+	EVENT_SUBMIT(gps_module_event);
+}
+
+static void data_send_nmea(struct gps_nmea *gps_data)
+{
+	struct gps_module_event *gps_module_event = new_gps_module_event();
+
+	strncpy(gps_module_event->data.gps.nmea, gps_data->buf,
+		sizeof(gps_module_event->data.gps.nmea) - 1);
+
+	gps_module_event->data.gps.nmea[sizeof(gps_module_event->data.gps.nmea) - 1] = '\0';
+	gps_module_event->data.gps.timestamp = k_uptime_get();
+	gps_module_event->type = GPS_EVT_DATA_READY;
+	gps_module_event->data.gps.format = GPS_MODULE_DATA_FORMAT_NMEA;
 
 	EVENT_SUBMIT(gps_module_event);
 }
