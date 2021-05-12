@@ -57,9 +57,8 @@ jobs:
         working-directory: ncs
         run: |
           export PATH="$HOME/.local/bin:$PATH"
-          mkdir -p _build && cd _build
-          cmake -GNinja ../nrf/doc -DSPHINXOPTS_EXTRA="-W"
-          ninja build-all
+          cmake -GNinja -B_build -DSPHINXOPTS_EXTRA="-W" nrf/doc
+          ninja -C_build
 
       - name: Archive documentation
         working-directory: ncs/_build
