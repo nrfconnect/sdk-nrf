@@ -86,7 +86,7 @@ Optionally, you can use one or more compatible development kits programmed with 
 Thread 1.2 extension requirements
 =================================
 
-If you enable the :ref:`ot_cli_sample_thread_v12`, you will need `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ to observe messages sent from the router to the leader kit when :ref:`ot_cli_sample_testing_multiple_v12`.
+If you enable the :ref:`ot_cli_sample_thread_v12`, you will need `nRF Sniffer for 802.15.4`_ to observe messages sent from the router to the leader kit when :ref:`ot_cli_sample_testing_multiple_v12`.
 
 User interface
 **************
@@ -334,7 +334,7 @@ To test the Thread 1.2 features, complete the following steps:
       Done
 
    The router kit will send an ``MLR.req`` message to the leader kit (Backbone Router).
-   This can be observed using the `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_.
+   This can be observed using the `nRF Sniffer for 802.15.4`_.
 
    .. note::
         The DUA registration with the Backbone Router is not yet supported.
