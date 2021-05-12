@@ -20,6 +20,12 @@
 #include "sdc_hci_vs.h"
 #endif /* CONFIG_BT_LL_SOFTDEVICE */
 
+#ifdef CONFIG_BT_CTLR
+#define TX_PWR CONFIG_CAF_BLE_STATE_TX_PWR
+#else
+#define TX_PWR 0
+#endif /* CONFIG_BT_CTLR */
+
 #define MODULE ble_state
 #include <caf/events/module_state_event.h>
 
@@ -83,7 +89,7 @@ static void set_tx_power(struct bt_conn *conn)
 		cp = net_buf_add(buf, sizeof(*cp));
 		cp->handle = sys_cpu_to_le16(conn_handle);
 		cp->handle_type = BT_HCI_VS_LL_HANDLE_TYPE_CONN;
-		cp->tx_power_level = CONFIG_CAF_BLE_STATE_TX_PWR;
+		cp->tx_power_level = TX_PWR;
 
 		LOG_INF("Setting TX power to: %" PRId8, cp->tx_power_level);
 
