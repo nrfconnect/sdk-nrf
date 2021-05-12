@@ -159,9 +159,10 @@ def zephyr_commit_area(commit):
     # than NCS currently needs. Don't throw that work away as we may
     # want to drill down a bit more in the future, but for now, we
     # only want a rough breakdown.
-    if area in ('Kernel', 'Bluetooth', 'Drivers', 'Networking'):
+    if area in ('Kernel', 'Bluetooth', 'Devicetree', 'Drivers', 'Networking'):
         return area
-    elif area in ('Arches', 'Boards'):
+
+    if area in ('Arches', 'Boards'):
         return 'Arches/Boards'
 
     return 'Other'
@@ -222,8 +223,9 @@ _AREA_TO_SHORTLOG_RES = [
     ('Continuous Integration', ['ci', 'coverage', 'sanitycheck', 'gitlint']),
     ('Cryptography', ['crypto', 'mbedtls']),
     ('Debugging', ['debug']),
-    ('Device Tree', ['dt', 'dts(/.*)?', 'dt-bindings',
-                     'extract_dts_includes?']),
+    ('Devicetree', ['dt', 'dts(/.*)?', 'dt-bindings',
+                    'dtlib', 'edtlib', 'devicetree',
+                    'extract_dts_includes?']),
     ('Documentation', ['docs?(/.*)?', 'CONTRIBUTING.rst', 'doxygen']),
     ('Drivers', ['drivers?(/.*)?',
                  'adc', 'aio', 'can', 'clock_control', 'counter', 'crc',
