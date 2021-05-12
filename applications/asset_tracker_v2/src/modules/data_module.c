@@ -29,14 +29,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DATA_MODULE_LOG_LEVEL);
 #define DEVICE_SETTINGS_KEY			"data_module"
 #define DEVICE_SETTINGS_CONFIG_KEY		"config"
 
-/* Default device configuration values. */
-#define DEFAULT_ACTIVE_TIMEOUT_SECONDS		120
-#define DEFAULT_MOVEMENT_RESOLUTION_SECONDS	120
-#define DEFAULT_MOVEMENT_TIMEOUT_SECONDS	3600
-#define DEFAULT_ACCELEROMETER_THRESHOLD		10
-#define DEFAULT_GPS_TIMEOUT_SECONDS		60
-#define DEFAULT_DEVICE_MODE			true
-
 /* Value that is used to limit the maximum allowed device configuration value
  * for the accelerometer threshold. 100 m/s2 ~ 10.2g.
  */
@@ -88,12 +80,12 @@ static int head_bat_buf;
 
 /* Default device configuration. */
 static struct cloud_data_cfg current_cfg = {
-	.gps_timeout = DEFAULT_GPS_TIMEOUT_SECONDS,
-	.active_mode  = DEFAULT_DEVICE_MODE,
-	.active_wait_timeout = DEFAULT_ACTIVE_TIMEOUT_SECONDS,
-	.movement_resolution = DEFAULT_MOVEMENT_RESOLUTION_SECONDS,
-	.movement_timeout = DEFAULT_MOVEMENT_TIMEOUT_SECONDS,
-	.accelerometer_threshold = DEFAULT_ACCELEROMETER_THRESHOLD
+	.gps_timeout			= CONFIG_DATA_GPS_TIMEOUT_SECONDS,
+	.active_mode			= (IS_ENABLED(CONFIG_DATA_DEVICE_MODE) ? true : false),
+	.active_wait_timeout		= CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS,
+	.movement_resolution		= CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS,
+	.movement_timeout		= CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS,
+	.accelerometer_threshold	= CONFIG_DATA_ACCELEROMETER_THRESHOLD
 };
 
 static struct k_work_delayable data_send_work;
