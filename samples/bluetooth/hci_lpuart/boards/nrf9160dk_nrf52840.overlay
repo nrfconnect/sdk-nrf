@@ -24,6 +24,10 @@
 	};
 };
 
+&gpiote {
+	interrupts = <6 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
 /* Disabling uart rx pin to get low power */
 &uart0 {
 	/delete-property/ rx-pin;
