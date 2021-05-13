@@ -41,7 +41,7 @@ struct sensor_state_event {
 	struct event_header header; /**< Event header. */
 
 	const char *descr; /**< Description of the sensor event. */
-	enum sensor_state state; /**< Sensor satate. */
+	enum sensor_state state; /**< Sensor state. */
 };
 
 EVENT_TYPE_DECLARE(sensor_state_event);
