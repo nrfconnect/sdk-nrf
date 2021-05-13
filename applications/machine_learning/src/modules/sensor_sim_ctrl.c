@@ -39,7 +39,7 @@ enum state {
 
 static enum state state;
 static uint8_t cur_wave_idx;
-static struct k_delayed_work change_wave;
+static struct k_work_delayable change_wave;
 
 
 static void report_error(void)
@@ -87,7 +87,7 @@ static void change_wave_fn(struct k_work *w)
 {
 	select_next_wave();
 
-	k_delayed_work_submit(&change_wave, WAVE_SWAP_PERIOD);
+	k_work_reschedule(&change_wave, WAVE_SWAP_PERIOD);
 }
 
 static bool handle_button_event(const struct button_event *event)
@@ -117,8 +117,8 @@ static void verify_wave_params(void)
 static int init(void)
 {
 	if (IS_ENABLED(CONFIG_ML_APP_SENSOR_SIM_CTRL_TRIG_TIMEOUT)) {
-		k_delayed_work_init(&change_wave, change_wave_fn);
-		k_delayed_work_submit(&change_wave, WAVE_SWAP_PERIOD);
+		k_work_init_delayable(&change_wave, change_wave_fn);
+		k_work_reschedule(&change_wave, WAVE_SWAP_PERIOD);
 	}
 
 	if (IS_ENABLED(CONFIG_ASSERT)) {
