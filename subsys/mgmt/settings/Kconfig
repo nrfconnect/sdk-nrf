@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Settings Management"
+
+if MCUBOOT
+config MGMT_SETTINGS
+	bool "Settings Management Module"
+endif
+
+if !MCUBOOT
+config MGMT_SETTINGS
+	bool "Settings Management Module"
+	depends on MCUMGR
+endif
+
+module=MGMT_SETTINGS
+module-dep=LOG
+module-str=SETTINGS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+endmenu

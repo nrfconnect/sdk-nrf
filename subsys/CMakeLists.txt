@@ -26,6 +26,7 @@ add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
 add_subdirectory_ifdef(CONFIG_MPSL mpsl)
 add_subdirectory_ifdef(CONFIG_ZIGBEE zigbee)
 add_subdirectory_ifdef(CONFIG_MGMT_FMFU mgmt/fmfu)
+add_subdirectory_ifdef(CONFIG_MGMT_SETTINGS mgmt/settings)
 
 if (CONFIG_NFC_T2T_NRFXLIB OR
     CONFIG_NFC_T4T_NRFXLIB OR
