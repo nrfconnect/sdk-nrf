@@ -327,7 +327,7 @@ static int sensor_init(void)
 
 static void sample_thread_fn(void)
 {
-	size_t alive_sensors = ARRAY_SIZE(sensor_data);
+	size_t alive_sensors = 0;
 	int64_t next_timeout = 0;
 	int err = 0;
 
@@ -336,8 +336,8 @@ static void sample_thread_fn(void)
 	err = sensor_init();
 
 	if (!err) {
+		alive_sensors = ARRAY_SIZE(sensor_data);
 		module_set_state(MODULE_STATE_READY);
-		return;
 	}
 
 	while (alive_sensors > 0) {
@@ -363,9 +363,11 @@ static bool event_handler(const struct event_header *eh)
 		struct module_state_event *event = cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			__ASSERT_NO_MSG(state == STATE_DISABLED);
+			static bool initialized;
 
+			__ASSERT_NO_MSG(!initialized);
 			init();
+			initialized = true;
 		}
 
 		return false;
