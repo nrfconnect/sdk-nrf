@@ -29,7 +29,7 @@ struct led {
 	uint16_t effect_step;
 	uint16_t effect_substep;
 
-	struct k_delayed_work work;
+	struct k_work_delayable work;
 };
 
 #ifdef CONFIG_CAF_LEDS_PWM
@@ -149,13 +149,13 @@ static void work_handler(struct k_work *work)
 		int32_t next_delay =
 			led->effect->steps[led->effect_step].substep_time;
 
-		k_delayed_work_submit(&led->work, K_MSEC(next_delay));
+		k_work_reschedule(&led->work, K_MSEC(next_delay));
 	}
 }
 
 static void led_update(struct led *led)
 {
-	k_delayed_work_cancel(&led->work);
+	k_work_cancel_delayable(&led->work);
 
 	led->effect_step = 0;
 	led->effect_substep = 0;
@@ -171,7 +171,7 @@ static void led_update(struct led *led)
 		int32_t next_delay =
 			led->effect->steps[led->effect_step].substep_time;
 
-		k_delayed_work_submit(&led->work, K_MSEC(next_delay));
+		k_work_reschedule(&led->work, K_MSEC(next_delay));
 	} else {
 		LOG_WRN("LED effect with no effect");
 	}
@@ -216,7 +216,7 @@ static int leds_init(void)
 			LOG_ERR("Cannot bind %s", led->label);
 			err = -ENXIO;
 		} else {
-			k_delayed_work_init(&led->work, work_handler);
+			k_work_init_delayable(&led->work, work_handler);
 			led_update(led);
 		}
 	}
@@ -242,7 +242,7 @@ static void leds_start(void)
 static void leds_stop(void)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
-		k_delayed_work_cancel(&leds[i].work);
+		k_work_cancel_delayable(&leds[i].work);
 
 		set_off(&leds[i]);
 
