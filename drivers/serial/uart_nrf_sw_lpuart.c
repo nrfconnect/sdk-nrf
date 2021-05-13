@@ -1026,6 +1026,10 @@ static const struct uart_driver_api lpuart_api = {
 #endif
 };
 
+BUILD_ASSERT(DT_IRQ(DT_PARENT(DT_NODELABEL(lpuart)), priority) ==
+	     DT_IRQ(DT_NODELABEL(gpiote), priority),
+	     "UARTE and GPIOTE interrupt priority must match.");
+
 DEVICE_DT_DEFINE(DT_NODELABEL(lpuart), lpuart_init, device_pm_control_nop,
 	      &lpuart_data, &lpuart_config,
 	      POST_KERNEL, CONFIG_NRF_SW_LPUART_INIT_PRIORITY,
