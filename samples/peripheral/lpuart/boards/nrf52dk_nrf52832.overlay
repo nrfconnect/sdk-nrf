@@ -15,3 +15,7 @@
 		rdy-pin = <25>;
 	};
 };
+
+&gpiote {
+	interrupts = <6 NRF_DEFAULT_IRQ_PRIORITY>;
+};

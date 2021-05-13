@@ -18,3 +18,7 @@
 &uart0 {
 	status = "disabled";
  };
+
+&gpiote {
+	interrupts = <6 NRF_DEFAULT_IRQ_PRIORITY>;
+};
