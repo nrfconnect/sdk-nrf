@@ -1,0 +1,14 @@
+sample:
+  name: Pelion Client Application
+  description: Pelion conectivity reference application
+tests:
+  applications.pelion_client.zdebug:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160ns nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuappns
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160ns
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuappns
+    tags: ci_build
