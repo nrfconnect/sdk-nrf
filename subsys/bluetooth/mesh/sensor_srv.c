@@ -55,7 +55,7 @@ static void cadence_store(const struct bt_mesh_sensor_srv *srv)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_SETTINGS) &&
+	if (IS_ENABLED(CONFIG_BT_SETTINGS) &&
 	    bt_mesh_model_data_store(srv->model, false, NULL, buf.data,
 				     buf.len)) {
 		BT_ERR("Sensor server data store failed");
@@ -876,7 +876,7 @@ static void sensor_srv_reset(struct bt_mesh_model *model)
 		memset(&s->state.threshold, 0, sizeof(s->state.threshold));
 	}
 
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		(void)bt_mesh_model_data_store(srv->model, false, NULL, NULL,
 					       0);
 	}
