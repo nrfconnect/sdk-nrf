@@ -35,18 +35,15 @@ class OptionsFromKconfig(SphinxDirective):
         kconfiglib._SOURCE_TOKENS = kconfiglib._REL_SOURCE_TOKENS
         kconfiglib.Kconfig._parse_error = lambda self_, msg: None
 
-    @staticmethod
-    def _get_kconfig_path(path):
-        rel_path = os.path.relpath(path, os.environ['NRF_RST_SRC'])
-        return os.path.join(os.environ['NRF_BASE'], rel_path, 'Kconfig')
+    def _get_kconfig_path(self, path):
+        rel_path = os.path.relpath(path, self.env.srcdir)
+        return os.path.join(
+            self.config.options_from_kconfig_base_dir, rel_path, 'Kconfig'
+        )
 
     def run(self):
         if 'ZEPHYR_BASE' not in os.environ:
             raise self.severe("ZEPHYR_BASE is not in the environment")
-        if 'NRF_BASE' not in os.environ:
-            raise self.severe("NRF_BASE is not in the environment")
-        if 'NRF_RST_SRC' not in os.environ:
-            raise self.severe("NRF_RST_SRC is not in the environment")
 
         if len(self.arguments) > 0:
             _, path = self.env.relfn2path(self.arguments[0])

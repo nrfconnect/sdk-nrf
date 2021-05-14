@@ -163,6 +163,10 @@ external_content_contents = [
 
 table_from_rows_base_dir = NRF_BASE
 
+# Options for options_from_kconfig ---------------------------------------------
+
+options_from_kconfig_base_dir = NRF_BASE
+
 
 def setup(app):
     app.add_css_file("css/common.css")
