@@ -1,14 +1,15 @@
+.. _matter_light_switch_sample:
 .. _chip_light_switch_sample:
 
-Project Connected Home over IP: Light switch
-############################################
+Matter: Light switch
+####################
 
 .. contents::
    :local:
    :depth: 2
 
-This light switch sample demonstrates the usage of the `Project Connected Home over IP`_ application layer to build a basic controller device for the :ref:`CHIP light bulb <chip_light_bulb_sample>` sample.
-This device works as a Project CHIP controller, meaning that it can control a light bulb remotely over a Project CHIP network built on top of a low-power, 802.15.4 Thread network.
+This light switch sample demonstrates the usage of the `Matter`_ (formerly Project Connected Home over IP, Project CHIP) application layer to build a basic controller device for the :ref:`Matter light bulb <matter_light_bulb_sample>` sample.
+This device works as a Matter controller, meaning that it can control a light bulb remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
 You can use this sample as a reference for creating your own application.
 
 Requirements
@@ -20,27 +21,27 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
 
-For this sample to work, you also need the :ref:`Project CHIP light bulb <chip_light_bulb_sample>` sample programmed to another supported development kit.
+For this sample to work, you also need the :ref:`Matter light bulb <matter_light_bulb_sample>` sample programmed to another supported development kit.
 
 .. note::
-    |chip_gn_required_note|
+    |matter_gn_required_note|
 
 Overview
 ********
 
-The light switch must be put into the test mode and paired with a light bulb device to be able to send Project CHIP light bulb control commands such as toggling the light and setting its brightness level.
+The light switch must be put into the test mode and paired with a light bulb device to be able to send Matter light bulb control commands such as toggling the light and setting its brightness level.
 
-.. _chip_light_switch_sample_test_mode:
+.. _matter_light_switch_sample_test_mode:
 
 Test mode
 =========
 
-Unlike other samples, such as :ref:`Project CHIP door lock <chip_lock_sample>`, the light switch sample does not support Project CHIP commissioning over Bluetooth LE.
-To make the light switch and the light bulb devices able to communicate with each other, they must be initialized with the same static Thread network parameters and static Project CHIP cryptographic keys.
+Unlike other samples, such as :ref:`Matter door lock <matter_lock_sample>`, the light switch sample does not support Matter commissioning over Bluetooth LE.
+To make the light switch and the light bulb devices able to communicate with each other, they must be initialized with the same static Thread network parameters and static Matter cryptographic keys.
 
 Pressing **Button 3** activates the test mode before enabling the pairing phase on the device.
 
-.. _chip_light_switch_sample_pairing:
+.. _matter_light_switch_sample_pairing:
 
 Pairing
 =======
@@ -57,7 +58,7 @@ LED 1:
     The following states are possible:
 
     * Solid Off - The device is not paired with any light bulb device.
-    * Short Flash On (100 ms on/900 ms off) - The device is in the :ref:`pairing <chip_light_switch_sample_pairing>` phase.
+    * Short Flash On (100 ms on/900 ms off) - The device is in the :ref:`pairing <matter_light_switch_sample_pairing>` phase.
     * Solid On - The device is paired with a light bulb device.
 
 Button 1:
@@ -67,8 +68,8 @@ Button 2:
     Toggles the light on the paired light bulb device.
 
 Button 3:
-    Enables :ref:`pairing <chip_light_switch_sample_pairing>` for 10 seconds.
-    It also starts the Thread networking in the :ref:`test mode <chip_light_switch_sample_test_mode>` if the Thread network is not yet initialized.
+    Enables :ref:`pairing <matter_light_switch_sample_pairing>` for 10 seconds.
+    It also starts the Thread networking in the :ref:`test mode <matter_light_switch_sample_test_mode>` if the Thread network is not yet initialized.
 
 Button 4:
     Brightens the light on the paired light bulb device.
@@ -88,9 +89,9 @@ Building and running
 Testing
 =======
 
-After building this and :ref:`CHIP light bulb <chip_light_bulb_sample>` samples, and programming them to your development kits, test communication between both devices by performing the following steps:
+After building this and :ref:`Matter light bulb <matter_light_bulb_sample>` samples, and programming them to your development kits, test communication between both devices by performing the following steps:
 
-.. chip_light_switch_sample_testing_start
+.. matter_light_switch_sample_testing_start
 
 #. Complete the following actions for both devices:
 
@@ -100,7 +101,7 @@ After building this and :ref:`CHIP light bulb <chip_light_bulb_sample>` samples,
 #. On both devices, press **Button 1** to reset them to factory settings.
 #. Pair both devices by completing the following steps:
 
-   a. On the light switch device, press **Button 3** to enable :ref:`pairing <chip_light_switch_sample_pairing>` on this device.
+   a. On the light switch device, press **Button 3** to enable :ref:`pairing <matter_light_switch_sample_pairing>` on this device.
       The light switch becomes the Thread network Leader.
       The following messages appear in the console for the light switch device:
 
@@ -143,14 +144,14 @@ After building this and :ref:`CHIP light bulb <chip_light_bulb_sample>` samples,
 
    The brightness of **LED 2** on the light bulb device changes while the button is pressed.
 
-.. chip_light_switch_sample_testing_end
+.. matter_light_switch_sample_testing_end
 
 Dependencies
 ************
 
-This sample uses Connected Home over IP library which includes the |NCS| platform integration layer:
+This sample uses the Matter library which includes the |NCS| platform integration layer:
 
-* `Project Connected Home over IP`_
+* `Matter`_
 
 In addition, the sample uses the following |NCS| components:
 

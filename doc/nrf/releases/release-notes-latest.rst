@@ -22,11 +22,6 @@ Changelog
 
 The following sections provide detailed lists of changes by component.
 
-nRF5
-====
-
-There are no entries for this section yet.
-
 nRF9160
 =======
 
@@ -103,6 +98,17 @@ nRF9160
   * :ref:`at_host_sample` sample:
 
     * Renamed nRF9160: AT Client sample to :ref:`at_host_sample`.
+
+nRF5
+====
+
+Matter (Project CHIP)
+---------------------
+
+* Project CHIP has been officially renamed to `Matter`_.
+* Updated:
+
+  * Renamed occurrences of Project CHIP to Matter.
 
 Common
 ======
@@ -308,12 +314,12 @@ The following list summarizes the most important changes inherited from upstream
       * Fixed error handling to not update the stream flash contex on synchronization failure while flushing the stream.
 
 
-Project CHIP
-============
+Matter (Project CHIP)
+=====================
 
-The Project CHIP fork in |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Project CHIP repository up to and including ``0d5b9559ae``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to and including ``0d5b9559ae``.
 
-The following list summarizes the most important changes inherited from the upstream Project CHIP:
+The following list summarizes the most important changes inherited from the upstream Matter:
 
 * Added:
 
