@@ -68,9 +68,10 @@ static struct nrf_cloud_sensor_data gps_cloud_data = {
 static atomic_val_t send_data_enable;
 
 /* Structures for work */
-static struct k_delayed_work leds_update_work;
-static struct k_delayed_work retry_connect_work;
-static struct k_work connect_work;
+static struct k_work_delayable leds_update_work;
+static struct k_work_delayable connect_work;
+
+static bool cloud_connected;
 
 enum error_type {
 	ERROR_NRF_CLOUD,
@@ -226,7 +227,7 @@ static void leds_update(struct k_work *work)
 		current_led_on_mask = led_on_mask;
 	}
 
-	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
+	k_work_schedule(&leds_update_work, LEDS_UPDATE_INTERVAL);
 }
 
 /**@brief Send sensor data to nRF Cloud. **/
@@ -292,7 +293,13 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		printk("NRF_CLOUD_EVT_TRANSPORT_CONNECTED\n");
-		k_delayed_work_cancel(&retry_connect_work);
+		cloud_connected = true;
+		/* This may fail if the work item is already being processed,
+		 * but in such case, the next time the work handler is executed,
+		 * it will exit after checking the above flag and the work will
+		 * not be scheduled again.
+		 */
+		(void)k_work_cancel_delayable(&connect_work);
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		printk("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST\n");
@@ -339,8 +346,9 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		atomic_set(&send_data_enable, 0);
 		display_state = LEDS_INITIALIZING;
 
+		cloud_connected = false;
 		/* Reconnect to nRF Cloud. */
-		k_work_submit(&connect_work);
+		k_work_schedule(&connect_work, K_NO_WAIT);
 		break;
 	case NRF_CLOUD_EVT_ERROR:
 		printk("NRF_CLOUD_EVT_ERROR, status: %d\n", evt->status);
@@ -373,6 +381,10 @@ static void cloud_connect(struct k_work *work)
 
 	ARG_UNUSED(work);
 
+	if (cloud_connected) {
+		return;
+	}
+
 	const enum nrf_cloud_sensor supported_sensors[] = {
 		NRF_CLOUD_SENSOR_GPS, NRF_CLOUD_SENSOR_FLIP
 	};
@@ -393,7 +405,7 @@ static void cloud_connect(struct k_work *work)
 	}
 
 	display_state = LEDS_CLOUD_CONNECTING;
-	k_delayed_work_submit(&retry_connect_work, RETRY_CONNECT_WAIT);
+	k_work_schedule(&connect_work, RETRY_CONNECT_WAIT);
 }
 
 /**@brief Callback for button events from the DK buttons and LEDs library. */
@@ -408,10 +420,9 @@ static void button_handler(uint32_t buttons, uint32_t has_changed)
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
-	k_delayed_work_init(&leds_update_work, leds_update);
-	k_delayed_work_init(&retry_connect_work, cloud_connect);
-	k_work_init(&connect_work, cloud_connect);
-	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
+	k_work_init_delayable(&leds_update_work, leds_update);
+	k_work_init_delayable(&connect_work, cloud_connect);
+	k_work_schedule(&leds_update_work, LEDS_UPDATE_INTERVAL);
 }
 
 /**@brief Configures modem to provide LTE link. Blocks until link is
