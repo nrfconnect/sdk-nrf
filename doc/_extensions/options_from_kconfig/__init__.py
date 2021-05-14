@@ -9,6 +9,8 @@ __version__ = '0.0.1'
 
 
 def setup(app: Sphinx):
+    app.add_config_value("options_from_kconfig_base_dir", None, "env")
+
     options_from_kconfig.setup(app)
 
     return {
