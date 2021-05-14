@@ -159,6 +159,10 @@ external_content_contents = [
     (NRF_BASE, "tests/**/*.rst"),
 ]
 
+# Options for table_from_rows --------------------------------------------------
+
+table_from_rows_base_dir = NRF_BASE
+
 
 def setup(app):
     app.add_css_file("css/common.css")
