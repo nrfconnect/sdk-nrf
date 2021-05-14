@@ -11,6 +11,8 @@ build-*
 build_*
 cscope.*
 .dir
+venv
+.venv
 
 /*.patch
 
