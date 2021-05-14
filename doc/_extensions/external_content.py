@@ -42,13 +42,16 @@ DEFAULT_DIRECTIVES = ("figure", "image", "include", "literalinclude")
 """Default directives for included content."""
 
 
-def adjust_includes(fname: Path, basepath: Path, directives: List[str]) -> None:
+def adjust_includes(
+    fname: Path, basepath: Path, directives: List[str], encoding: str
+) -> None:
     """Adjust included content paths.
 
     Args:
         fname: File to be processed.
         basepath: Base path to be used to resolve content location.
         directives: Directives to be parsed and adjusted.
+        encoding: Sources encoding.
     """
 
     if fname.suffix != ".rst":
@@ -65,7 +68,7 @@ def adjust_includes(fname: Path, basepath: Path, directives: List[str]) -> None:
 
         return f".. {directive}:: {fpath_adj}"
 
-    with open(fname, "r+", encoding="utf-8") as f:
+    with open(fname, "r+", encoding=encoding) as f:
         content = f.read()
         content_adj, modified = re.subn(
             r"\.\. (" + "|".join(directives) + r")::\s*([^`\n]+)", _adjust, content
@@ -105,7 +108,12 @@ def sync_contents(app: Sphinx) -> None:
 
         status = copy_file(str(src), str(dst), update=True)
         if status[1]:
-            adjust_includes(dst, src.parent, app.config.external_content_directives)
+            adjust_includes(
+                dst,
+                src.parent,
+                app.config.external_content_directives,
+                app.config.source_encoding,
+            )
 
 
 def setup(app: Sphinx) -> Dict[str, Any]:
