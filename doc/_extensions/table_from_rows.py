@@ -10,6 +10,9 @@ import os
 import yaml
 
 
+__version__ = '0.0.1'
+
+
 class TableFromRows(SphinxDirective):
 
     has_content = True
@@ -152,4 +155,12 @@ class TableFromRows(SphinxDirective):
 
 
 def setup(app):
+    app.add_config_value("table_from_rows_base_dir", None, "env")
+
     directives.register_directive('table-from-rows', TableFromRows)
+
+    return {
+        'version': __version__,
+        'parallel_read_safe': True,
+        'parallel_write_safe': True,
+    }
