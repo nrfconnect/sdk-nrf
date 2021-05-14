@@ -113,16 +113,6 @@ In addition, you can run the :ref:`zephyr:bluetooth-samples` that are included f
 
 For available libraries, see :ref:`lib_bluetooth_services` (|NCS|) and :ref:`zephyr:bluetooth_api` (Zephyr).
 
-Project Connected Home over IP (Project CHIP)
-=============================================
-
-.. include:: ug_chip.rst
-   :start-after: chip_intro_start
-   :end-before: chip_intro_end
-
-See the :ref:`ug_chip` user guide for information about how to work with Project CHIP applications.
-To start developing, check out :ref:`chip_samples`.
-
 Enhanced ShockBurst
 ===================
 
@@ -132,6 +122,16 @@ Enhanced ShockBurst
 
 See the :ref:`ug_esb` user guide for information about how to work with Enhanced ShockBurst.
 To start developing, check out the :ref:`esb_prx_ptx` sample.
+
+Matter
+======
+
+.. include:: ug_matter.rst
+   :start-after: matter_intro_start
+   :end-before: matter_intro_end
+
+See the :ref:`ug_matter` user guide for information about how to work with Matter applications.
+To start developing, check out :ref:`matter_samples`.
 
 Near Field Communication
 ========================

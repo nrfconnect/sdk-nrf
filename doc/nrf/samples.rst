@@ -27,6 +27,15 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
    ../../samples/edge_impulse/*/README
 
+.. _matter_samples:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Matter samples
+   :glob:
+
+   ../../samples/connectedhomeip/*/README
+
 .. _nfc_samples:
 
 .. toctree::
@@ -55,15 +64,6 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
    ../../samples/nrf5340/*/README
    ../../samples/nrf_rpc/entropy_nrf53/README
-
-.. _chip_samples:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Project CHIP samples
-   :glob:
-
-   ../../samples/connectedhomeip/*/README
 
 .. _openthread_samples:
 

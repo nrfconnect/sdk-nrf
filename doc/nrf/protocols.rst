@@ -12,8 +12,8 @@ They introduce you to concepts that are important to work with the protocol and 
 
    ug_ble_controller
    ug_bt_mesh
-   ug_chip
    ug_esb
+   ug_matter
    ug_multiprotocol_support
    ug_nfc
    ug_thread
