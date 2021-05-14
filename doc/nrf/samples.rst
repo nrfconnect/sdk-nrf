@@ -92,6 +92,7 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
    ../../samples/*/README
    ../../samples/debug/*/README
+   ../../samples/keys/*/README
    ../../samples/mpsl/*/README
    ../../samples/peripheral/*/README
    ../../samples/sensor/*/README

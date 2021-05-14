@@ -99,6 +99,7 @@ Kconfig*                                  @tejlmand
 /samples/edge_impulse/                    @pdunaj
 /samples/esb/                             @lemrey
 /samples/event_manager/                   @pdunaj @MarekPieta
+/samples/keys/random_hw_unique_key/       @oyvindronningstad @Vge0rge
 /samples/mpsl/                            @joerchan @carlopaparo
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
