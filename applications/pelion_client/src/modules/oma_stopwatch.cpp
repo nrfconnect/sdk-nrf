@@ -21,12 +21,14 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_OMA_STOPWATCH_LOG_LEVEL);
 #define OMA_OBJECT_STOPWATCH  "3350"
 #define OMA_RESOURCE_CUMULATIVE_TIME "5544"
 
+#define PENDING_TIMEOUT 6
+
 
 static M2MResource *resource;
 static struct k_work_delayable resource_work;
 
 static bool updated;
-static bool update_pending;
+static uint8_t update_pending;
 static int64_t base_time;
 
 static bool registered;
@@ -42,11 +44,22 @@ static void update_stopwatch(void)
 	if (updated && !update_pending) {
 		unsigned int time_seconds = (k_uptime_get() - base_time)/1000;
 
-		updated = false;
-		update_pending = true;
-		resource->set_value((float)time_seconds);
+		if (resource->set_value((float)time_seconds)) {
+			updated = false;
+			update_pending = 1;
+			LOG_INF("Resource %p, set value %u", resource, time_seconds);
+		} else {
+			LOG_ERR("Resource %p, set value failed", resource);
+		}
 
-		LOG_INF("Resource %p, set value %u", resource, time_seconds);
+	} else {
+		LOG_WRN("Resource %p not updated (updated: %d, pending: %d)",
+			resource, updated, update_pending);
+		++update_pending;
+		if (update_pending > PENDING_TIMEOUT) {
+			LOG_ERR("Resource %p update timeout - reset pending flag", resource);
+			update_pending = 0;
+		}
 	}
 }
 
@@ -62,7 +75,8 @@ static void resource_work_handler(struct k_work *work)
 
 static void on_value_updated(const char *arg)
 {
-	LOG_INF("Resource %s, value updated %u", log_strdup(arg), (unsigned)resource->get_value_float());
+	LOG_INF("Resource %s, value updated %u",
+		log_strdup(arg), (unsigned)resource->get_value_float());
 	if (resource->get_value_float() == 0.0) {
 		LOG_INF("Stopwatch reset requested");
 		base_time = k_uptime_get();
@@ -76,11 +90,30 @@ static void notification_status_callback(const M2MBase& object,
 {
 	LOG_DBG("Resource %p notification, object:%s status:%d", (void*)&object,
 		log_strdup(object.uri_path()), status);
-	if (status == M2MBase::MESSAGE_STATUS_DELIVERED) {
-		update_pending = false;
+	switch (status) {
+	case M2MBase::MESSAGE_STATUS_SENT:
+		/* This is ok - but wait for ACK */
+		break;
+	case M2MBase::MESSAGE_STATUS_BUILD_ERROR:
+	case M2MBase::MESSAGE_STATUS_RESEND_QUEUE_FULL:
+	case M2MBase::MESSAGE_STATUS_SEND_FAILED:
+	case M2MBase::MESSAGE_STATUS_REJECTED:
+		LOG_WRN("Error during %p resource update, object:%s status:%d",
+			(void*)&object, log_strdup(object.uri_path()), status);
+		update_pending = 0;
 		if (updated) {
 			update_stopwatch();
 		}
+		break;
+	case M2MBase::MESSAGE_STATUS_DELIVERED:
+		LOG_DBG("Resource %p, properly updated", (void*)&object);
+		update_pending = 0;
+		if (updated) {
+			update_stopwatch();
+		}
+		break;
+	default:
+		break;
 	}
 }
 
