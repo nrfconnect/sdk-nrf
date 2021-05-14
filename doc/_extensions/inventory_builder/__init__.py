@@ -13,7 +13,9 @@
 # directional links between them.
 
 from pathlib import Path
+from typing import Iterator, Set
 
+from docutils import nodes
 from sphinx.builders import Builder
 from sphinx.util.inventory import InventoryFile
 
@@ -24,10 +26,10 @@ class InventoryBuilder(Builder):
 
     allow_parallel = True
 
-    def init(self):
+    def init(self) -> None:
         pass
 
-    def get_outdated_docs(self):
+    def get_outdated_docs(self) -> Iterator[str]:
         for doc_name in self.env.found_docs:
             # check if doc is new
             if doc_name not in self.env.all_docs:
@@ -40,16 +42,16 @@ class InventoryBuilder(Builder):
                 yield doc_name
                 continue
 
-    def get_target_uri(self, docname, typ=None): #pylint: disable=no-self-use
+    def get_target_uri(self, docname: str, typ: str = None) -> str: #pylint: disable=no-self-use
         return docname + '.html'
 
-    def prepare_writing(self, docnames):
+    def prepare_writing(self, docnames: Set[str]) -> None:
         pass
 
-    def write_doc(self, docname, doctree):
+    def write_doc(self, docname: str, doctree: nodes.document) -> None:
         pass
 
-    def finish(self):
+    def finish(self) -> None:
         InventoryFile.dump(Path(self.outdir) / 'objects.inv', self.env, self)
 
 
