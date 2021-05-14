@@ -105,13 +105,17 @@ endif
 endmenu # NCS samples configurations
 
 config PM_SINGLE_IMAGE
-	bool "Use the Partition Manager for single image builds"
+	bool "Use the Partition Manager for single image builds" if !BUILD_WITH_TFM
+	default y if BUILD_WITH_TFM
 	select PARTITION_MANAGER_ENABLED
 	help
 	  Use the Partition Manager feature to partition the device even if
 	  only a single image is included in the build. This is typically set
 	  when a subsystem that defines its own Partition Manager configuration
 	  is included in the build.
+
+	  The option is always defined in builds where a TF-M image for the
+	  Secure Execution environment is generated.
 
 menuconfig PM_EXTERNAL_FLASH
 	bool "Support external flash in Partition Manager"
@@ -133,10 +137,6 @@ config PM_EXTERNAL_FLASH_BASE
 	default 0
 
 endif
-
-config BUILD_WITH_TFM
-	bool
-	select PM_SINGLE_IMAGE
 
 if BUILD_WITH_TFM
 
