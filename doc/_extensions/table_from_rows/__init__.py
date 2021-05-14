@@ -8,6 +8,8 @@ __version__ = '0.0.1'
 
 
 def setup(app):
+    app.add_config_value("table_from_rows_base_dir", None, "env")
+
     table_from_rows.setup(app)
 
     return {

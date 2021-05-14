@@ -95,12 +95,8 @@ class TableFromRows(SphinxDirective):
         return self._build_table(column_sizes, header_lines, rows)
 
     def _rows_from_sample_yaml(self, path):
-        if 'NRF_BASE' not in os.environ:
-            raise self.severe(":sample-yaml-rows: needs NRF_BASE in the environment")
-        if 'NRF_RST_SRC' not in os.environ:
-            raise self.severe(":sample-yaml-rows: needs NRF_RST_SRC in the environment")
-        rel_path = os.path.relpath(path, os.environ['NRF_RST_SRC'])
-        path = os.path.join(os.environ['NRF_BASE'], rel_path, 'sample.yaml')
+        rel_path = os.path.relpath(path, self.env.srcdir)
+        path = os.path.join(self.config.table_from_rows_base_dir, rel_path, 'sample.yaml')
         try:
             sample_yaml = open(path)
         except FileNotFoundError:
