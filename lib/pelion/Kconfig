@@ -7,10 +7,6 @@
 # The purpose of this file is to override and extend settings related to
 # building Pelion cloud client library.
 
-config OPENTHREAD_SECURITY_INTERNAL
-	bool
-	default y if PELION_MBEDTLS || PELION_NRF_SECURITY
-
 if PELION_SOURCES
 
 config MBEDTLS_PROMPTLESS
@@ -22,14 +18,6 @@ config NORDIC_SECURITY_PROMPTLESS
 	default y if !CUSTOM_PELION_SECURITY
 
 menu "Pelion Device Management Client Library"
-
-config MBEDTLS_CFG_FILE
-	string
-	default "config-tls-generic.h" if PELION_MBEDTLS
-
-config MBEDTLS_USER_CONFIG_FILE
-	string
-	default "config-tls-pelion.h" if PELION_MBEDTLS
 
 config MBEDTLS_SSL_MAX_CONTENT_LEN
 	int
@@ -86,35 +74,6 @@ config PELION_NRF_SECURITY
 	help
 	  Default mbedtls configuration for Pelion.
 
-config PELION_MBEDTLS
-	bool "mbedTLS built-in"
-	select OPENTHREAD_MBEDTLS if NET_L2_OPENTHREAD
-	select MBEDTLS
-	select MBEDTLS_USER_CONFIG_ENABLE
-	select MBEDTLS_TLS_VERSION_1_2
-	select MBEDTLS_DTLS
-	select MBEDTLS_SERVER_NAME_INDICATION
-	select MBEDTLS_PEM_CERTIFICATE_FORMAT
-	select MBEDTLS_CIPHER_MODE_CTR_ENABLED
-	select MBEDTLS_CIPHER_MODE_CTR_ENABLED
-	select MBEDTLS_ECP_DP_SECP256R1_ENABLED
-	select MBEDTLS_ECP_NIST_OPTIM
-	select MBEDTLS_ECDSA_DETERMINISTIC
-	select MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
-	select MBEDTLS_SSL_EXPORT_KEYS
-	select MBEDTLS_CIPHER_AES_ENABLED
-	select MBEDTLS_CIPHER_CCM_ENABLED
-	select MBEDTLS_CIPHER
-	select MBEDTLS_MAC_CMAC_ENABLED
-	select MBEDTLS_CTR_DRBG_ENABLED
-	select MBEDTLS_ENTROPY_ENABLED
-	select MBEDTLS_CIPHER_GCM_ENABLED
-	select MBEDTLS_HMAC_DRBG_ENABLED
-	select MBEDTLS_MD
-	select MBEDTLS_MAC_SHA256_ENABLED
-	help
-	  Default mbedtls configuration for Pelion.
-
 endchoice
 
 config PELION_MBEDTLS_LIB_NAME
@@ -127,7 +86,6 @@ config PELION_MBEDTLS_LIB_NAME
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx" if CC3XX_BACKEND
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_oberon" if OBERON_BACKEND
 	default "mbedtls_common" if PELION_NRF_SECURITY
-	default "mbedTLS" if MBEDTLS
 	help
 	  This option allows to specify one or more mbedtls library files to be
 	  linked with Pelion. Separate multiple values with space " ".
