@@ -8,7 +8,11 @@ import sys
 
 from docutils import statemachine
 from docutils.parsers.rst import directives
+from sphinx.application import Sphinx
 from sphinx.util.docutils import SphinxDirective
+
+
+__version__ = '0.0.1'
 
 
 class OptionsFromKconfig(SphinxDirective):
@@ -106,5 +110,13 @@ class OptionsFromKconfig(SphinxDirective):
         return []
 
 
-def setup(app):
+def setup(app: Sphinx):
+    app.add_config_value("options_from_kconfig_base_dir", None, "env")
+
     directives.register_directive('options-from-kconfig', OptionsFromKconfig)
+
+    return {
+        'version': __version__,
+        'parallel_read_safe': True,
+        'parallel_write_safe': True,
+    }
