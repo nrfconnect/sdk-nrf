@@ -12,10 +12,10 @@
 # It can be run as a 1st step when projects contain multi-
 # directional links between them.
 
+from pathlib import Path
+
 from sphinx.builders import Builder
 from sphinx.util.inventory import InventoryFile
-
-import os.path as path
 
 
 class InventoryBuilder(Builder):
@@ -28,7 +28,17 @@ class InventoryBuilder(Builder):
         pass
 
     def get_outdated_docs(self):
-        return self.env.found_docs
+        for doc_name in self.env.found_docs:
+            # check if doc is new
+            if doc_name not in self.env.all_docs:
+                yield doc_name
+                continue
+
+            # check if source has been modified
+            src = Path(self.env.doc2path(doc_name))
+            if src.stat().st_mtime > self.env.all_docs[doc_name]:
+                yield doc_name
+                continue
 
     def get_target_uri(self, docname, typ=None): #pylint: disable=no-self-use
         return docname + '.html'
@@ -40,8 +50,7 @@ class InventoryBuilder(Builder):
         pass
 
     def finish(self):
-        InventoryFile.dump(path.join(self.outdir, 'objects.inv'),
-                           self.env, self)
+        InventoryFile.dump(Path(self.outdir) / 'objects.inv', self.env, self)
 
 
 def setup(app):
