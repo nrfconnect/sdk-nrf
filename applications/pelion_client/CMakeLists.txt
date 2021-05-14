@@ -85,9 +85,3 @@ add_subdirectory(src/util)
 if(CONFIG_BOOTLOADER_MCUBOOT)
   assert_exists(mcuboot_CONF_FILE)
 endif()
-
-if(CONFIG_PELION_MBEDTLS)
-  # Copy configuration file to include directory visible for all libraries.
-  # Needed for the file to be visible by Zephyr's mbedtls library.
-  configure_file("configuration/${BOARD}/config-tls-pelion.h" "${CMAKE_BINARY_DIR}/zephyr/include/generated" COPYONLY)
-endif()
