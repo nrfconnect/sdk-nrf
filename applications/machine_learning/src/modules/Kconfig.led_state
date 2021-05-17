@@ -33,20 +33,6 @@ config ML_APP_LED_STATE_PREDICTION_STREAK_THRESH
 	  LED state module displays result reported by the machine learning model if the same label
 	  is observed for the predefined number of times in a row.
 
-config ML_APP_LED_STATE_ML_RESULT_SIGNIN_BUTTON
-	bool "Button press"
-	depends on CAF_BUTTONS
-	depends on ML_APP_ML_RESULT_EVENTS
-
-config ML_APP_LED_STATE_ML_RESULT_SIGNIN_BUTTON_ID
-	hex "ID of button used to signin or signout from ml"
-	range 0x0000 0xffff
-	default 0xffff
-	depends on ML_APP_LED_STATE_ML_RESULT_SIGNIN_BUTTON
-	help
-	  Pressing the button signsin or signsout the LED state module from
-	  active listening the machine learning processing result.
-
 module = ML_APP_LED_STATE
 module-str = LED state
 source "subsys/logging/Kconfig.template.log_config"
