@@ -1030,7 +1030,7 @@ BUILD_ASSERT(DT_IRQ(DT_PARENT(DT_NODELABEL(lpuart)), priority) ==
 	     DT_IRQ(DT_NODELABEL(gpiote), priority),
 	     "UARTE and GPIOTE interrupt priority must match.");
 
-DEVICE_DT_DEFINE(DT_NODELABEL(lpuart), lpuart_init, device_pm_control_nop,
+DEVICE_DT_DEFINE(DT_NODELABEL(lpuart), lpuart_init, NULL,
 	      &lpuart_data, &lpuart_config,
 	      POST_KERNEL, CONFIG_NRF_SW_LPUART_INIT_PRIORITY,
 	      &lpuart_api);

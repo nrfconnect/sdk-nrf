@@ -103,5 +103,5 @@ static const struct entropy_driver_api entropy_cc3xx_rng_api = {
 #endif
 
 DEVICE_DT_DEFINE(CRYPTOCELL_NODE_ID, entropy_cc3xx_rng_init,
-		 device_pm_control_nop, NULL, NULL, PRE_KERNEL_1,
+		 NULL, NULL, NULL, PRE_KERNEL_1,
 		 CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &entropy_cc3xx_rng_api);

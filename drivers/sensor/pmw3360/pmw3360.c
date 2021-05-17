@@ -1071,6 +1071,6 @@ static const struct sensor_driver_api pmw3360_driver_api = {
 	.attr_set     = pmw3360_attr_set,
 };
 
-DEVICE_DT_INST_DEFINE(0, pmw3360_init, device_pm_control_nop,
+DEVICE_DT_INST_DEFINE(0, pmw3360_init, NULL,
 		      NULL, NULL, POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
 		      &pmw3360_driver_api);

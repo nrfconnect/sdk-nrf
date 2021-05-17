@@ -1437,6 +1437,6 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params)
 
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
 SYS_DEVICE_DEFINE("LTE_LINK_CONTROL", init_and_connect,
-		  device_pm_control_nop,
+		  NULL,
 		  APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 #endif /* CONFIG_LTE_AUTO_INIT_AND_CONNECT */

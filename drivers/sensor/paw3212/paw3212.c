@@ -992,6 +992,6 @@ static const struct sensor_driver_api paw3212_driver_api = {
 	.attr_set     = paw3212_attr_set,
 };
 
-DEVICE_DT_INST_DEFINE(0, paw3212_init, device_pm_control_nop,
+DEVICE_DT_INST_DEFINE(0, paw3212_init, NULL,
 		      NULL, NULL, POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
 		      &paw3212_driver_api);

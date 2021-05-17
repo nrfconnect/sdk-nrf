@@ -307,5 +307,5 @@ static const struct sensor_driver_api bh1749_driver_api = {
 static struct bh1749_data bh1749_data;
 
 DEVICE_DEFINE(bh1749, DT_INST_LABEL(0),
-	      bh1749_init, device_pm_control_nop, &bh1749_data, NULL,
+	      bh1749_init, NULL, &bh1749_data, NULL,
 	      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY, &bh1749_driver_api);
