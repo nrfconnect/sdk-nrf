@@ -37,22 +37,22 @@ static const struct led_effect ei_data_forwarder_led_effects[] = {
 static const struct ml_result_led_effect ml_result_led_effects[] = {
 	{
 		.label = NULL,
-		.effect = LED_EFFECT_LED_BLINK(300, LED_COLOR(255, 255, 255)),
+		.effect = LED_EFFECT_LED_BLINK(200, LED_COLOR(255, 255, 255)),
+	},
+	{
+		.label = ANOMALY_LABEL,
+		.effect = LED_EFFECT_LED_ON_GO_OFF(LED_COLOR(255, 0, 255), 2000, 1000),
 	},
 	{
 		.label = "updown",
-		.effect = LED_EFFECT_LED_ON(LED_COLOR(0, 255, 0)),
+		.effect = LED_EFFECT_LED_ON_GO_OFF(LED_COLOR(0, 255, 0), 2000, 1000),
 	},
 	{
 		.label = "rotate",
-		.effect = LED_EFFECT_LED_ON(LED_COLOR(255, 0, 255)),
+		.effect = LED_EFFECT_LED_ON_GO_OFF(LED_COLOR(255, 0, 0), 2000, 1000),
 	},
 	{
 		.label = "tap",
-		.effect = LED_EFFECT_LED_ON(LED_COLOR(0, 0, 255)),
-	},
-	{
-		.label = "idle",
-		.effect = LED_EFFECT_LED_OFF(),
+		.effect = LED_EFFECT_LED_ON_GO_OFF(LED_COLOR(0, 0, 255), 2000, 1000),
 	},
 };

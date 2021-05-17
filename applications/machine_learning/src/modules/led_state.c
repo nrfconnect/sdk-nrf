@@ -9,7 +9,6 @@
 #include "led_state_def.h"
 
 #include <caf/events/led_event.h>
-#include <caf/events/button_event.h>
 #include "ml_state_event.h"
 #include "ml_result_event.h"
 #include "ei_data_forwarder_event.h"
@@ -32,12 +31,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_LED_STATE_LOG_LEVEL);
 BUILD_ASSERT(PREDICTION_STREAK_THRESH > 0);
 
 #define DEFAULT_EFFECT			(&ml_result_led_effects[0])
-
-#if IS_ENABLED(CONFIG_ML_APP_LED_STATE_ML_RESULT_SIGNIN_BUTTON)
-	#define RESULT_SIGNIN_BUTTON_ID	CONFIG_ML_APP_LED_STATE_ML_RESULT_SIGNIN_BUTTON_ID
-#else
-	#define RESULT_SIGNIN_BUTTON_ID	0xffff
-#endif
 
 static enum ml_state ml_state = ML_STATE_COUNT;
 static enum ei_data_forwarder_state forwarder_state = DISPLAY_DATA_FORWARDER ?
@@ -101,6 +94,17 @@ static const struct ml_result_led_effect *get_led_effect(const char *label)
 	return result;
 }
 
+static void ml_result_set_signin_state(bool state)
+{
+	struct ml_result_signin_event *event = new_ml_result_signin_event();
+
+	event->module_idx = MODULE_IDX(MODULE);
+	event->state = state;
+	EVENT_SUBMIT(event);
+	ml_signed = state;
+	LOG_INF("Currently %s result event", state ? "signed in" : "signed off from");
+}
+
 static void display_sensor_sim(const char *label)
 {
 	static const struct ml_result_led_effect *sensor_sim_effect;
@@ -153,8 +157,10 @@ static void display_ml_result(const char *label, bool force_update)
 
 	if (is_led_effect_blocking(&ml_result_effect->effect)) {
 		blocking_led_effect = &ml_result_effect->effect;
+		ml_result_set_signin_state(false);
 	} else {
 		blocking_led_effect = NULL;
+		ml_result_set_signin_state(true);
 	}
 }
 
@@ -164,7 +170,7 @@ static void update_ml_result(const char *label, float value, float anomaly)
 	bool increment = true;
 
 	if (anomaly > ANOMALY_THRESH) {
-		new_label = NULL;
+		new_label = ANOMALY_LABEL;
 	} else if (value >= VALUE_THRESH) {
 		new_label = label;
 	} else {
@@ -194,37 +200,20 @@ static void validate_configuration(void)
 	__ASSERT_NO_MSG(!is_led_effect_blocking(&DEFAULT_EFFECT->effect));
 	__ASSERT_NO_MSG(!DEFAULT_EFFECT->label);
 
+	size_t anomaly_label_cnt = 0;
+
 	for (size_t i = 1; i < ARRAY_SIZE(ml_result_led_effects); i++) {
 		const struct ml_result_led_effect *t = &ml_result_led_effects[i];
 
 		__ASSERT_NO_MSG(is_led_effect_valid(&t->effect));
 		__ASSERT_NO_MSG(t->label);
-	}
-}
 
-static void ml_result_set_signin_state(bool state)
-{
-	struct ml_result_signin_event *event = new_ml_result_signin_event();
-
-	event->module_idx = MODULE_IDX(MODULE);
-	event->state = state;
-	EVENT_SUBMIT(event);
-	ml_signed = state;
-	LOG_INF("Currently %s result event", state ? "signed in" : "signed off from");
-}
-
-static bool handle_button_event(const struct button_event *event)
-{
-	if ((event->key_id == RESULT_SIGNIN_BUTTON_ID) && event->pressed) {
-		ml_result_set_signin_state(!ml_signed);
-
-		if (!ml_signed) {
-			clear_prediction();
-			display_ml_result(NULL, true);
+		if (!strcmp(t->label, ANOMALY_LABEL)) {
+			anomaly_label_cnt++;
 		}
 	}
 
-	return false;
+	__ASSERT_NO_MSG(anomaly_label_cnt <= 1);
 }
 
 static bool handle_ml_result_event(const struct ml_result_event *event)
@@ -309,11 +298,6 @@ static bool handle_module_state_event(const struct module_state_event *event)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if (IS_ENABLED(CONFIG_ML_APP_LED_STATE_ML_RESULT_SIGNIN_BUTTON) &&
-	    is_button_event(eh)) {
-		return handle_button_event(cast_button_event(eh));
-	}
-
 	if (DISPLAY_ML_RESULTS &&
 	    is_ml_result_event(eh)) {
 		return handle_ml_result_event(cast_ml_result_event(eh));
@@ -360,6 +344,3 @@ EVENT_SUBSCRIBE(MODULE, ml_result_event);
 #if DISPLAY_SIM_SIGNAL
 EVENT_SUBSCRIBE(MODULE, sensor_sim_event);
 #endif /* DISPLAY_SIM_SIGNAL */
-#if IS_ENABLED(CONFIG_ML_APP_LED_STATE_ML_RESULT_SIGNIN_BUTTON)
-EVENT_SUBSCRIBE(MODULE, button_event);
-#endif

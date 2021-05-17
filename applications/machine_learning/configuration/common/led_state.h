@@ -13,7 +13,8 @@ extern "C" {
 
 #include <caf/led_effect.h>
 
-#define LED_UNAVAILABLE 0xFF
+#define LED_UNAVAILABLE		0xFF
+#define ANOMALY_LABEL		"_anomaly"
 
 struct ml_result_led_effect {
 	const char *label;

@@ -40,6 +40,10 @@ static const struct ml_result_led_effect ml_result_led_effects[] = {
 		.effect = LED_EFFECT_LED_BREATH(500, LED_COLOR(100, 100, 100)),
 	},
 	{
+		.label = ANOMALY_LABEL,
+		.effect = LED_EFFECT_LED_BREATH(250, LED_COLOR(100, 100, 100)),
+	},
+	{
 		.label = "sine",
 		.effect = LED_EFFECT_LED_CLOCK(1, LED_COLOR(100, 100, 100)),
 	},
