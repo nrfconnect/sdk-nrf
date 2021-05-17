@@ -7,7 +7,12 @@
 #include <init.h>
 
 #if defined(CONFIG_NRF_MODEM_LIB) && defined(CONFIG_NET_SOCKETS_OFFLOAD)
+#if defined(CONFIG_POSIX_API)
+#include <posix/unistd.h>
+#include <posix/sys/socket.h>
+#else
 #include <net/socket.h>
+#endif
 #endif
 
 #include <logging/log.h>
