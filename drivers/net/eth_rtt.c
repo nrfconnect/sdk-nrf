@@ -544,6 +544,6 @@ static const struct ethernet_api if_api = {
 
 /** Initialization of network device driver. */
 ETH_NET_DEVICE_INIT(eth_rtt, CONFIG_ETH_RTT_DRV_NAME, eth_rtt_init,
-		    device_pm_control_nop, &context_data, NULL,
+		    NULL, &context_data, NULL,
 		    CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &if_api,
 		    CONFIG_ETH_RTT_MTU);

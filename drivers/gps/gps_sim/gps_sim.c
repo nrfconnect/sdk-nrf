@@ -413,6 +413,6 @@ static const struct gps_driver_api gps_sim_api_funcs = {
 #endif
 
 DEVICE_DEFINE(gps_sim, CONFIG_GPS_SIM_DEV_NAME,
-	      gps_sim_setup, device_pm_control_nop,
+	      gps_sim_setup, NULL,
 	      &gps_sim_data, NULL, POST_KERNEL, GPS_INIT_PRIORITY,
 	      &gps_sim_api_funcs);
