@@ -94,11 +94,9 @@ static void on_mtd_mode_toggle(uint32_t med)
 	const struct device *cons = device_get_binding(CONSOLE_LABEL);
 
 	if (med) {
-		device_set_power_state(cons, DEVICE_PM_ACTIVE_STATE,
-				       NULL, NULL);
+		pm_device_state_set(cons, PM_DEVICE_STATE_ACTIVE, NULL, NULL);
 	} else {
-		device_set_power_state(cons, DEVICE_PM_OFF_STATE,
-				       NULL, NULL);
+		pm_device_state_set(cons, PM_DEVICE_STATE_OFF, NULL, NULL);
 	}
 #endif
 	dk_set_led(MTD_SED_LED, med);

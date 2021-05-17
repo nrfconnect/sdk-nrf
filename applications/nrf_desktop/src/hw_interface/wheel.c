@@ -199,8 +199,8 @@ static int enable_qdec(enum state next_state)
 {
 	__ASSERT_NO_MSG(next_state == STATE_ACTIVE);
 
-	int err = device_set_power_state(qdec_dev, DEVICE_PM_ACTIVE_STATE,
-					 NULL, NULL);
+	int err = pm_device_state_set(qdec_dev, PM_DEVICE_STATE_ACTIVE,
+				      NULL, NULL);
 	if (err) {
 		LOG_ERR("Cannot activate QDEC");
 		return err;
@@ -238,8 +238,8 @@ static int disable_qdec(enum state next_state)
 		return err;
 	}
 
-	err = device_set_power_state(qdec_dev, DEVICE_PM_SUSPEND_STATE,
-				     NULL, NULL);
+	err = pm_device_state_set(qdec_dev, PM_DEVICE_STATE_SUSPEND,
+				  NULL, NULL);
 	if (err) {
 		LOG_ERR("Cannot suspend QDEC");
 	} else {

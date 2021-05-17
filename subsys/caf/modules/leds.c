@@ -228,9 +228,9 @@ static void leds_start(void)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
 #ifdef CONFIG_PM_DEVICE
-		int err = device_set_power_state(leds[i].dev,
-						 DEVICE_PM_ACTIVE_STATE,
-						 NULL, NULL);
+		int err = pm_device_state_set(leds[i].dev,
+					      PM_DEVICE_STATE_ACTIVE,
+					      NULL, NULL);
 		if (err) {
 			LOG_ERR("PWM enable failed");
 		}
@@ -247,9 +247,9 @@ static void leds_stop(void)
 		set_off(&leds[i]);
 
 #ifdef CONFIG_PM_DEVICE
-		int err = device_set_power_state(leds[i].dev,
-						 DEVICE_PM_SUSPEND_STATE,
-						 NULL, NULL);
+		int err = pm_device_state_set(leds[i].dev,
+					      PM_DEVICE_STATE_SUSPEND,
+					      NULL, NULL);
 		if (err) {
 			LOG_ERR("PWM disable failed");
 		}

@@ -89,9 +89,9 @@ static void nmos_pwm_disable(uint32_t nmos_idx)
 		return;
 	}
 
-	int err = device_set_power_state(pwm_dev,
-					 DEVICE_PM_SUSPEND_STATE,
-					 NULL, NULL);
+	int err = pm_device_state_set(pwm_dev,
+				      PM_DEVICE_STATE_SUSPEND,
+				      NULL, NULL);
 	if (err) {
 		LOG_WRN("PWM disable failed");
 	}
@@ -107,15 +107,15 @@ static int nmos_pwm_enable(size_t nmos_idx)
 #ifdef CONFIG_PM_DEVICE
 	uint32_t power_state;
 
-	device_get_power_state(pwm_dev, &power_state);
+	pm_device_state_get(pwm_dev, &power_state);
 
-	if (power_state == DEVICE_PM_ACTIVE_STATE) {
+	if (power_state == PM_DEVICE_STATE_ACTIVE) {
 		return 0;
 	}
 
-	err = device_set_power_state(pwm_dev,
-					 DEVICE_PM_ACTIVE_STATE,
-					 NULL, NULL);
+	err = pm_device_state_set(pwm_dev,
+				  PM_DEVICE_STATE_ACTIVE,
+				  NULL, NULL);
 	if (err) {
 		LOG_ERR("PWM enable failed");
 		return err;
