@@ -1,5 +1,9 @@
 #include <autoconf.h>
 
 settings_storage:
-  placement: {before: [end]}
+  placement:
+    before: [end]
+#ifdef CONFIG_BUILD_WITH_TFM
+    align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
+#endif
   size: CONFIG_PM_PARTITION_SIZE_SETTINGS_STORAGE
