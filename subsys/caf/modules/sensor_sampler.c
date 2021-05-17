@@ -279,6 +279,8 @@ static int sensor_trigger_init(const struct sensor_config *sc, struct sensor_dat
 		__ASSERT(period > 0, "Sampling period must be bigger than 0");
 		__ASSERT(timeout > period,
 			 "Activation timeout must be bigger than sampling period");
+		ARG_UNUSED(timeout);
+		ARG_UNUSED(period);
 	}
 
 	size_t data_cnt = get_sensor_data_cnt(sc);
