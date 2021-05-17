@@ -121,6 +121,13 @@ Hardware unique key
 
 * Make the checking for hw_unique_key_write_random() more strict; panic if any key is unwritten after writing random keys.
 
+Trusted Firmware-M
+------------------
+
+* Added:
+
+  * Support for non-secure storage.
+    This enables non-secure applications to use the Zephyr Settings API to save and load persistent data.
 
 MCUboot
 =======
