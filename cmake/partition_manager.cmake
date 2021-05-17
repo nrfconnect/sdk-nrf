@@ -378,7 +378,7 @@ if (is_dynamic_partition_in_domain)
   share("set(${DOMAIN}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${merged}.hex)")
   share("set(${DOMAIN}_PM_DOTCONF_FILES ${pm_out_dotconf_file})")
   share("set(${DOMAIN}_PM_APP_HEX ${PROJECT_BINARY_DIR}/app.hex)")
-  share("set(${DOMAIN}_PM_SIGNED_APP_HEX ${PROJECT_BINARY_DIR}/signed_by_b0_app.hex)")
+  share("set(${DOMAIN}_PM_SIGNED_APP_HEX ${PROJECT_BINARY_DIR}/signed_by_b0_app.hex CACHE INTERNAL \"\")")
 else()
   # This is the root image, generate the global pm_config.h
   # First, include the shared_vars.cmake file for all child images.

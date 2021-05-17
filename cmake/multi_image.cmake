@@ -21,12 +21,11 @@ function(share content)
 endfunction()
 
 if(IMAGE_NAME)
-  share("set(${IMAGE_NAME}KERNEL_HEX_NAME ${KERNEL_HEX_NAME})")
+  share("set(${IMAGE_NAME}KERNEL_HEX_NAME ${KERNEL_HEX_NAME} CACHE INTERNAL \"\")")
   share("set(${IMAGE_NAME}ZEPHYR_BINARY_DIR ${ZEPHYR_BINARY_DIR})")
   # Share the elf file, in order to support symbol loading for debuggers.
-  share("set(${IMAGE_NAME}KERNEL_ELF_NAME ${KERNEL_ELF_NAME})")
-  share("list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME})")
-  share("list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${KERNEL_ELF_NAME})")
+  share("set(${IMAGE_NAME}KERNEL_ELF_NAME ${KERNEL_ELF_NAME} CACHE INTERNAL \"\")")
+  share("set(${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME} ${PROJECT_BINARY_DIR}/${KERNEL_ELF_NAME} CACHE INTERNAL \"\")")
   # Share the signing key file so that the parent image can use it to
   # generate signed update candidates.
   if(CONFIG_BOOT_SIGNATURE_KEY_FILE)
@@ -298,9 +297,10 @@ function(add_child_image_from_source)
   # namespace
   include(${CMAKE_BINARY_DIR}/${ACI_NAME}/shared_vars.cmake)
 
-  # Increase the scope of this variable to make it more available
-  set(${ACI_NAME}_KERNEL_HEX_NAME ${${ACI_NAME}_KERNEL_HEX_NAME} CACHE STRING "" FORCE)
-  set(${ACI_NAME}_KERNEL_ELF_NAME ${${ACI_NAME}_KERNEL_ELF_NAME} CACHE STRING "" FORCE)
+  if(DEFINED ACI_DOMAIN AND NOT ${ACI_NAME} IN_LIST ${ACI_DOMAIN}_CHILD_IMAGES)
+    list(APPEND ${ACI_DOMAIN}_CHILD_IMAGES ${ACI_NAME})
+    set(${ACI_DOMAIN}_CHILD_IMAGES ${${ACI_DOMAIN}_CHILD_IMAGES} CACHE INTERNAL "")
+  endif()
 
   if(MULTI_IMAGE_DEBUG_MAKEFILE AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
     set(multi_image_build_args "-d" "${MULTI_IMAGE_DEBUG_MAKEFILE}")
