@@ -706,8 +706,8 @@ int nrf21540_tx_gain_set(uint8_t gain)
 	}
 
 	if (uart_ready) {
-		err = device_set_power_state(uart, DEVICE_PM_OFF_STATE,
-					     NULL, NULL);
+		err = pm_device_state_set(uart, PM_DEVICE_STATE_OFF,
+					  NULL, NULL);
 		if (err) {
 			goto error;
 		}
@@ -728,8 +728,8 @@ int nrf21540_tx_gain_set(uint8_t gain)
 	uarte_configuration_restore(uarte_inst, &uarte_cfg);
 
 	if (uart_ready) {
-		err = device_set_power_state(uart, DEVICE_PM_ACTIVE_STATE,
-					     NULL, NULL);
+		err = pm_device_state_set(uart, PM_DEVICE_STATE_ACTIVE,
+					  NULL, NULL);
 	}
 
 	if (uart_irq) {

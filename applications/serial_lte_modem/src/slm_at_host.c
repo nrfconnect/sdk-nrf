@@ -174,7 +174,7 @@ int poweroff_uart(void)
 
 	uart_rx_disable(uart_dev);
 	k_sleep(K_MSEC(100));
-	err = device_set_power_state(uart_dev, DEVICE_PM_OFF_STATE, NULL, NULL);
+	err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_OFF, NULL, NULL);
 	if (err) {
 		LOG_ERR("Can't power off uart: %d", err);
 	}
@@ -187,14 +187,14 @@ int poweron_uart(void)
 	int err;
 	uint32_t current_state = 0;
 
-	err = device_get_power_state(uart_dev, &current_state);
+	err = pm_device_state_get(uart_dev, &current_state);
 	if (err) {
 		LOG_ERR("Device get power_state: %d", err);
 		return err;
 	}
 
-	if (current_state != DEVICE_PM_ACTIVE_STATE) {
-		device_set_power_state(uart_dev, DEVICE_PM_ACTIVE_STATE, NULL, NULL);
+	if (current_state != PM_DEVICE_STATE_ACTIVE) {
+		pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE, NULL, NULL);
 		k_sleep(K_MSEC(100));
 		err = uart_receive();
 		if (err == 0) {
@@ -738,7 +738,7 @@ int slm_at_host_init(void)
 		return -EFAULT;
 	}
 	/* Power on UART module */
-	device_set_power_state(uart_dev, DEVICE_PM_ACTIVE_STATE, NULL, NULL);
+	pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE, NULL, NULL);
 	err = uart_receive();
 	if (err) {
 		return -EFAULT;
@@ -797,7 +797,7 @@ void slm_at_host_uninit(void)
 	/* Power off UART module */
 	uart_rx_disable(uart_dev);
 	k_sleep(K_MSEC(100));
-	err = device_set_power_state(uart_dev, DEVICE_PM_OFF_STATE, NULL, NULL);
+	err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_OFF, NULL, NULL);
 	if (err) {
 		LOG_WRN("Can't power off uart: %d", err);
 	}
