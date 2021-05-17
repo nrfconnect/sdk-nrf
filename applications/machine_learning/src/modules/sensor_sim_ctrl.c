@@ -111,6 +111,7 @@ static void verify_wave_params(void)
 		__ASSERT_NO_MSG(w->wave_param.type < WAVE_GEN_TYPE_COUNT);
 		__ASSERT_NO_MSG((w->wave_param.period_ms > 0) ||
 				(w->wave_param.type == WAVE_GEN_TYPE_NONE));
+		ARG_UNUSED(w);
 	}
 }
 
