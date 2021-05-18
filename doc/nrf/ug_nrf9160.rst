@@ -241,7 +241,7 @@ To perform a FOTA upgrade, complete the following steps:
 1. Make sure that your application supports FOTA upgrades.
       To download and apply FOTA upgrades, your application must use the :ref:`lib_fota_download` library.
       This library deduces the type of upgrade by inspecting the header of the firmware and invokes the :ref:`lib_dfu_target` library to apply the firmware upgrade.
-      By default, the DFU target library supports all kinds of FOTA upgrades except full modem firmware upgrades, but you can disable support for specific targets.
+      In its default configuration, the DFU target library is set to support all the types of FOTA upgrades except full modem firmware upgrades, but you can freely enable or disable the support for specific targets.
 
       In addition, the following requirements apply:
 
@@ -251,8 +251,10 @@ To perform a FOTA upgrade, complete the following steps:
       * If you want to perform a full modem firmware upgrade, an |external_flash_size| is required.
 
 #. Create a binary file that contains the new image.
-      This step does not apply for upgrades of the modem firmware.
-      You can download delta patches and full modem firmware upgrade binaries for the modem firmware from the `nRF9160 product website (compatible downloads)`_.
+
+      .. note::
+         This step does not apply for upgrades of the modem firmware.
+         You can download delta patches and full binaries of the modem firmware from the `nRF9160 product website (compatible downloads)`_.
 
       |fota_upgrades_building|
       The :file:`app_update.bin` file is the file that should be uploaded to the server.
@@ -262,7 +264,7 @@ To perform a FOTA upgrade, complete the following steps:
       See :ref:`upgradable_bootloader` for more information.
 
 #. Make the binary file (or files) available for download.
-     Upload the file or files to a web server that is compatible with the :ref:`lib_download_client` library.
+     Upload the serialized :file:`.cbor` binary file or files to a web server that is compatible with the :ref:`lib_download_client` library.
      One way of doing this is to upload the files to an Amazon Web Services Simple Storage Service (AWS S3) bucket.
      See the :ref:`lib_aws_fota` documentation for instructions.
 
@@ -278,7 +280,6 @@ You can refer to the following implementation samples:
 * :ref:`http_modem_delta_update_sample` - performs a delta OTA update of the modem firmware.
 * :ref:`http_application_update_sample` - performs a basic application FOTA update.
 * :ref:`aws_fota_sample` - performs a FOTA update via MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
-
 
 Board controller
 ****************

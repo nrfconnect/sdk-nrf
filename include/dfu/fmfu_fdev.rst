@@ -19,6 +19,8 @@ The serialized modem firmware contains the hash of the firmware and a signature.
 These fields are used to pre-validate the modem firmware before it is programmed to the modem, ensuring that the data about to be written corresponds to the data that have been signed.
 Once the modem firmware is pre-validated, it is written to the modem using the :file:`nrf_modem_full_dfu.h` API.
 
+.. _lib_fmfu_fdev_serialization:
+
 Serialization
 *************
 
@@ -27,6 +29,7 @@ The modem firmware is serialized using the following CDDL scheme.
 .. literalinclude:: ../../subsys/dfu/fmfu_fdev/cddl/modem_update.cddl
     :language: none
 
+The resulting serialized firmware file uses the :file:`.cbor` extension.
 A generated decoder, :file:`modem_update_decode.c`, is used for parsing the data serialized with this format.
 
 Prerequisites

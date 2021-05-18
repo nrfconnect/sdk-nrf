@@ -71,8 +71,10 @@ Full modem upgrades
    An |external_flash_size| is required for this target.
 
 This type of firmware upgrade supports updating the modem firmware using the serialized firmware bundled in the zip file of the modem firmware release.
-This DFU target will download the serialized modem firmware to an external flash memory, which is required for this type of upgrade.
-Once the modem firmware has been downloaded, the library will use :ref:`lib_fmfu_fdev` to write the firmware to the modem.
+The serialized firmware file uses the :file:`.cbor` extension.
+
+This DFU target downloads the serialized modem firmware to an external flash memory, which is required for this type of upgrade.
+Once the modem firmware has been downloaded, the library uses :ref:`lib_fmfu_fdev` to write the firmware to the modem.
 
 Configuration
 *************

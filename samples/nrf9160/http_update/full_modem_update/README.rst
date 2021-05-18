@@ -7,8 +7,8 @@ nRF9160: HTTP full modem update
    :local:
    :depth: 2
 
-The HTTP full modem update sample demonstrates how to perform a full firmware update of the modem (as opposed to a delta update).
-The sample downloads a modem firmware signed by Nordic and performs the firmware update of the modem.
+The HTTP full modem update sample shows how to perform a full firmware update of the modem.
+The sample downloads a modem firmware signed by Nordic Semiconductor and then performs the firmware update of the modem.
 
 Overview
 ********
@@ -16,12 +16,15 @@ Overview
 An |external_flash_size| of free space is required to perform a full modem update.
 Hence, only versions 0.14.0 and later of the nrf9160 DK support this sample as the prior versions do not have any external flash memory.
 
-The sample connects to a remote HTTP server to download a signed version of the modem firmware, using the :ref:`lib_fota_download` library.
-It then writes the firmware to the external flash memory.
-After the modem firmware has been stored in the external flash memory, the sample will use the :ref:`lib_fmfu_fdev` to pre-validate the update and program it to the modem.
+The sample proceeds as follows:
 
-Two different versions can be downloaded, depending on what version is currently installed.
-The version which is not currently installed is selected.
+1. It connects to a remote HTTP server to download a signed version of the modem firmware, using the :ref:`lib_fota_download` library.
+#. It writes the modem firmware to the external flash memory.
+#. It prevalidates the update if the firmware supports the prevalidation process.
+#. It then programs the update to the modem, using the :ref:`lib_fmfu_fdev` library.
+
+The current version of this sample downloads two different versions of the firmware, namely 1.2.1 and 1.2.2.
+The sample then selects the version which is currently not installed.
 
 Requirements
 ************
@@ -34,16 +37,39 @@ The sample supports the following development kit, version 0.14.0 or higher:
 
 .. include:: /includes/spm.txt
 
-
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf9160/application_update/full_modem_update`
+.. |sample path| replace:: :file:`samples/nrf9160/http_update/full_modem_update`
 
 .. include:: /includes/build_and_run.txt
 
 The sample is built as a non-secure firmware image for the ``nrf9160dk_nrf9160ns`` build target.
 Because of this, it automatically includes the :ref:`secure_partition_manager`.
+
+You can customize the firmware files downloaded by the sample through the following Kconfig options in the :file:`prj.conf` file:
+
+* .. option:: CONFIG_DOWNLOAD_HOST
+
+   It sets the hostname of the server where the updates are located.
+
+* .. option:: CONFIG_DOWNLOAD_MODEM_0_FILE
+
+   It sets the file name of the first firmware.
+   It supports files encoded in the serialized :file:`.cbor` format.
+   See :ref:`lib_fmfu_fdev_serialization` for additional information.
+
+* .. option:: CONFIG_DOWNLOAD_MODEM_0_VERSION
+
+   It sets the version of the first firmware.
+
+* .. option:: CONFIG_DOWNLOAD_MODEM_1_FILE
+
+   It sets the file name of the second firmware.
+   It supports files encoded in the serialized :file:`.cbor` format.
+   See :ref:`lib_fmfu_fdev_serialization` for additional information.
+
+See :ref:`configure_application` for more information on how to customize configuration options.
 
 Testing
 =======
