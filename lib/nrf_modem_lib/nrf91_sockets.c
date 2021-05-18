@@ -375,7 +375,7 @@ static int z_to_nrf_family(sa_family_t z_family)
 	case AF_PACKET:
 		return NRF_AF_PACKET;
 	case AF_UNSPEC:
-	/* No NRF_AF_UNSPEC defined. */
+		return NRF_AF_UNSPEC;
 	default:
 		return -EAFNOSUPPORT;
 	}
@@ -394,6 +394,8 @@ static int nrf_to_z_family(nrf_socket_family_t nrf_family)
 		return AF_LOCAL;
 	case NRF_AF_PACKET:
 		return AF_PACKET;
+	case NRF_AF_UNSPEC:
+		return AF_UNSPEC;
 	default:
 		return -EAFNOSUPPORT;
 	}
