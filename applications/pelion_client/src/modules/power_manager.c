@@ -248,7 +248,7 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, power_manager_keep_alive_event);
+EVENT_SUBSCRIBE(MODULE, keep_alive_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, wake_up_event);
 EVENT_SUBSCRIBE_FINAL(MODULE, power_down_event);
