@@ -767,7 +767,6 @@ static void handle_mode_set(struct bt_mesh_model *model,
 	}
 
 	mode_rsp(srv, ctx);
-	mode_rsp(srv, NULL); /* publish */
 }
 
 static void handle_mode_set_unack(struct bt_mesh_model *model,
@@ -781,8 +780,6 @@ static void handle_mode_set_unack(struct bt_mesh_model *model,
 	if (err) {
 		return;
 	}
-
-	mode_rsp(srv, NULL); /* publish */
 }
 
 static void om_rsp(struct bt_mesh_light_ctrl_srv *srv,
@@ -847,7 +844,6 @@ static void handle_om_set(struct bt_mesh_model *model,
 	}
 
 	om_rsp(srv, ctx);
-	om_rsp(srv, NULL); /* publish */
 }
 
 static void handle_om_set_unack(struct bt_mesh_model *model,
@@ -861,8 +857,6 @@ static void handle_om_set_unack(struct bt_mesh_model *model,
 	if (err) {
 		return;
 	}
-
-	om_rsp(srv, NULL); /* publish */
 }
 
 static void handle_light_onoff_get(struct bt_mesh_model *model,
