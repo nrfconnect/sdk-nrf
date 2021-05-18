@@ -24,6 +24,10 @@ Configuration options
   a tuple with two fields: the external base directory and a file glob pattern.
 - ``external_content_directives``: A list of directives that should be analyzed
   and their paths adjusted if necessary. Defaults to ``DEFAULT_DIRECTIVES``.
+- ``external_content_keep``: A list of file globs (relative to the destination
+  directory) that should be kept even if they do not exist in the source
+  directory. This option can be useful for auto-generated files in the
+  destination directory.
 """
 
 from distutils.file_util import copy_file
@@ -86,8 +90,15 @@ def sync_contents(app: Sphinx) -> None:
         app: Sphinx application instance.
     """
 
-    srcdir = Path(app.srcdir)
+    srcdir = Path(app.srcdir).resolve()
     to_copy = []
+    to_delete = set(f for f in srcdir.glob("**/*") if not f.is_dir())
+    to_keep = set(
+            f
+            for k in app.config.external_content_keep
+            for f in srcdir.glob(k)
+            if not f.is_dir()
+    )
 
     for content in app.config.external_content_contents:
         prefix_src, glob = content
@@ -101,7 +112,10 @@ def sync_contents(app: Sphinx) -> None:
 
     for entry in to_copy:
         src, prefix_src = entry
-        dst = srcdir / src.relative_to(prefix_src)
+        dst = (srcdir / src.relative_to(prefix_src)).resolve()
+
+        if dst in to_delete:
+            to_delete.remove(dst)
 
         if not dst.parent.exists():
             dst.parent.mkdir(parents=True)
@@ -115,10 +129,16 @@ def sync_contents(app: Sphinx) -> None:
                 app.config.source_encoding,
             )
 
+    # remove any previously copied file not present in the origin folder,
+    # excepting those marked to be kept.
+    for file in to_delete - to_keep:
+        file.unlink()
+
 
 def setup(app: Sphinx) -> Dict[str, Any]:
     app.add_config_value("external_content_contents", [], "env")
     app.add_config_value("external_content_directives", DEFAULT_DIRECTIVES, "env")
+    app.add_config_value("external_content_keep", [], "")
 
     app.connect("builder-inited", sync_contents)
 

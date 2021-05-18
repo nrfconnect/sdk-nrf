@@ -158,6 +158,7 @@ external_content_contents = [
     (NRF_BASE, "scripts/**/*.rst"),
     (NRF_BASE, "tests/**/*.rst"),
 ]
+external_content_keep = ["versions.txt"]
 
 # Options for table_from_rows --------------------------------------------------
 
