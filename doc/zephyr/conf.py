@@ -26,7 +26,9 @@ import utils
 conf = eval_config_file(str(ZEPHYR_BASE / "doc" / "conf.py"), tags)
 locals().update(conf)
 
-extensions.append("sphinx.ext.intersphinx")
+sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
+
+extensions.extend(["sphinx.ext.intersphinx", "external_content"])
 
 # Options for HTML output ------------------------------------------------------
 
@@ -53,6 +55,21 @@ intersphinx_mapping = dict()
 kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
 if kconfig_mapping:
     intersphinx_mapping["kconfig"] = kconfig_mapping
+
+# Options for external_content -------------------------------------------------
+
+external_content_contents = [
+    (ZEPHYR_BASE / "doc", "[!_]*"),
+    (ZEPHYR_BASE, "boards/**/*.rst"),
+    (ZEPHYR_BASE, "boards/**/doc"),
+    (ZEPHYR_BASE, "samples/**/*.rst"),
+    (ZEPHYR_BASE, "samples/**/doc"),
+]
+external_content_keep = [
+    "reference/devicetree/bindings.rst",
+    "reference/devicetree/bindings/**/*",
+    "reference/devicetree/compatibles/**/*",
+]
 
 # pylint: enable=undefined-variable
 

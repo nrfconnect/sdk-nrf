@@ -36,6 +36,18 @@ if(NOT SPHINXBUILD)
   message(FATAL_ERROR "The 'sphinx-build' command was not found")
 endif()
 
+find_program(WEST west)
+if(NOT WEST)
+  message(FATAL_ERROR "The 'west' command was not found")
+endif()
+
+set(KCONFIG_BINARY_DIR ${CMAKE_BINARY_DIR}/kconfig)
+list(INSERT MODULE_EXT_ROOT 0 ${ZEPHYR_BASE})
+file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
+
+include(${ZEPHYR_BASE}/cmake/extensions.cmake)
+include(${ZEPHYR_BASE}/cmake/zephyr_module.cmake)
+
 #-------------------------------------------------------------------------------
 # Functions
 
@@ -187,7 +199,6 @@ message(STATUS "NRFXLIB_BASE: $ENV{NRFXLIB_BASE}")
 set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
-set(KCONFIG_BINARY_DIR ${CMAKE_BINARY_DIR}/Kconfig)
 
 # HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
@@ -196,37 +207,29 @@ file(MAKE_DIRECTORY ${HTML_DIR})
 #-------------------------------------------------------------------------------
 # docset: Zephyr
 
-# Add the 'zephyr' target for building the Zephyr documentation. We reuse
-# doc/CMakeLists.txt from the Zephyr repository, but use our own Sphinx
-# configuration from doc/zephyr/conf.py. The generated HTML is placed in the
-# common Sphinx HTML output folder.
-
-# Parameters to doc/CMakeLists.txt in Zephyr. KCONFIG_OUTPUT is used to find
-# objects.inv from the Kconfig docs, to link the Zephyr docs to the Kconfig
-# docs.
-set(SPHINXOPTS ${SPHINXOPTS_DEFAULT} -c ${NRF_BASE}/doc/zephyr)
-set(SPHINX_OUTPUT_DIR ${HTML_DIR}/zephyr)
-set(KCONFIG_OUTPUT ${HTML_DIR}/kconfig)
-set(GEN_DEVICETREE_REST_ZEPHYR_DOCSET " ")
-
-# Get access to the 'html' target from doc/CMakeLists.txt in Zephyr
-set(MODULES_EXT_ROOT ${NRF_BASE})
-add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
-
-add_custom_target(zephyr)
-add_dependencies(zephyr html)
-
-add_custom_target(zephyr-html)
-add_dependencies(zephyr-html html)
-
-add_custom_target(zephyr-html-all)
-add_dependencies(zephyr-html-all html)
-
-set_target_properties(
-  zephyr-html zephyr-html-all
-  PROPERTIES
-    ADDITIONAL_CLEAN_FILES "${ZEPHYR_BINARY_DIR};${SPHINX_OUTPUT_DIR}"
+add_custom_target(
+  zephyr-devicetree
+  COMMAND ${CMAKE_COMMAND} -E env
+  PYTHONPATH=${ZEPHYR_BASE}/scripts/dts/python-devicetree/src
+  ZEPHYR_BASE=${ZEPHYR_BASE}
+  ${PYTHON_EXECUTABLE}
+    ${ZEPHYR_BASE}/doc/_scripts/gen_devicetree_rest.py
+    --vendor-prefixes ${ZEPHYR_BASE}/dts/bindings/vendor-prefixes.txt
+    --dts-root ${ZEPHYR_BASE}
+    ${ZEPHYR_BINARY_DIR}/src/reference/devicetree
+  VERBATIM
+  USES_TERMINAL
 )
+
+set(zephyr_env
+  ZEPHYR_BASE=${ZEPHYR_BASE}
+  ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
+  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
+)
+
+add_docset(zephyr "${zephyr_env}")
+add_dependencies(zephyr-html zephyr-devicetree)
+add_dependencies(zephyr-html-all zephyr-devicetree)
 
 #-------------------------------------------------------------------------------
 # docset: nrf
@@ -308,30 +311,45 @@ add_docset(nrfxlib "${nrfxlib_env}")
 #-------------------------------------------------------------------------------
 # docset: kconfig
 
-# The Kconfig documentation is a separate documentation set that's shared
-# between all modules (nRF, Zephyr, etc.). This makes it possible to link to
-# Kconfig symbols regardless of where they are defined.
-#
-# We rely on the Zephyr Kconfig files pulling in the other Kconfig files, and
-# use the --modules option to gen_kconfig_rest.py to split the documentation
-# into a separate page for each module.
+file(WRITE ${KCONFIG_BINARY_DIR}/Kconfig.soc.defconfig
+     "osource \"${ZEPHYR_BASE}/soc/$(ARCH)/*/Kconfig.defconfig\"\n"
+)
+file(WRITE ${KCONFIG_BINARY_DIR}/Kconfig.soc
+     "osource \"${ZEPHYR_BASE}/soc/$(ARCH)/*/Kconfig.soc\"\n"
+)
+file(WRITE ${KCONFIG_BINARY_DIR}/Kconfig.shield.defconfig
+     "osource \"${ZEPHYR_BASE}/boards/shields/*/Kconfig.defconfig\"\n"
+)
+file(WRITE ${KCONFIG_BINARY_DIR}/Kconfig.shield
+     "osource \"${ZEPHYR_BASE}/boards/shields/*/Kconfig.shield\"\n"
+)
+file(WRITE ${KCONFIG_BINARY_DIR}/Kconfig.soc.arch
+     "osource \"${ZEPHYR_BASE}/soc/$(ARCH)/Kconfig\"\n"
+     "osource \"${ZEPHYR_BASE}/soc/$(ARCH)/*/Kconfig\"\n"
+)
 
-if(WIN32)
-  set(SEP $<SEMICOLON>)
-else()
-  set(SEP :)
-endif()
+foreach(module_name ${ZEPHYR_MODULE_NAMES})
+  zephyr_string(SANITIZE TOUPPER MODULE_NAME_UPPER ${module_name})
+  list(APPEND
+       ZEPHYR_KCONFIG_MODULES
+       "ZEPHYR_${MODULE_NAME_UPPER}_MODULE_DIR=${ZEPHYR_${MODULE_NAME_UPPER}_MODULE_DIR}"
+  )
+
+  if(ZEPHYR_${MODULE_NAME_UPPER}_KCONFIG)
+    list(APPEND
+         ZEPHYR_KCONFIG_MODULES
+         "ZEPHYR_${MODULE_NAME_UPPER}_KCONFIG=${ZEPHYR_${MODULE_NAME_UPPER}_KCONFIG}"
+  )
+  endif()
+endforeach()
 
 set(KCONFIG_RST_OUT ${KCONFIG_BINARY_DIR}/src)
-get_directory_property(ZEPHYR_KCONFIG_MODULES DIRECTORY ${ZEPHYR_BASE}/doc DEFINITION ZEPHYR_KCONFIG_MODULES)
 
-# The 'kconfig-content' target uses gen_kconfig_rest.py to generate .rst files
-# for all Kconfig symbols, as well as index pages that point to them
 add_custom_target(
   kconfig-content
   COMMAND ${CMAKE_COMMAND} -E make_directory ${KCONFIG_RST_OUT}
   COMMAND ${CMAKE_COMMAND} -E env
-    PYTHONPATH=${ZEPHYR_BASE}/scripts/kconfig${SEP}$ENV{PYTHONPATH}
+    PYTHONPATH=${ZEPHYR_BASE}/scripts/kconfig
     ZEPHYR_BASE=${ZEPHYR_BASE}
     srctree=${ZEPHYR_BASE}
     BOARD_DIR=boards/*/*/
@@ -354,37 +372,9 @@ add_custom_target(
   VERBATIM
 )
 
-# No 'kconfig' target exists, because it clashes with the imported 'kconfig'
-# target from the Zephyr repository
-
-add_custom_target(
-  kconfig-html
-  COMMAND ${CMAKE_COMMAND} -E env
-    ZEPHYR_BASE=${ZEPHYR_BASE}
-    ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-      ${SPHINXBUILD}
-        -b html
-        -c ${NRF_BASE}/doc/kconfig
-        -w ${KCONFIG_BINARY_DIR}/sphinx.log
-        # The Kconfig reference build doesn't use Breathe, so we can safely
-        # parallelize it
-        -j auto
-        ${SPHINXOPTS_EXTRA}
-        ${KCONFIG_RST_OUT}
-        ${KCONFIG_OUTPUT}
-  USES_TERMINAL
-)
-
+add_docset(kconfig "")
 add_dependencies(kconfig-html kconfig-content)
-
-add_custom_target(kconfig-html-all)
-add_dependencies(kconfig-html-all kconfig-html)
-
-set_target_properties(
-  kconfig-html kconfig-html-all
-  PROPERTIES
-    ADDITIONAL_CLEAN_FILES "${KCONFIG_BINARY_DIR};${KCONFIG_OUTPUT}"
-)
+add_dependencies(kconfig-html-all kconfig-content)
 
 #-------------------------------------------------------------------------------
 # Global targets
@@ -394,9 +384,6 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/_static/html/index.html ${HTML_DIR}
   COMMAND ${CMAKE_COMMAND} -E copy ${NRF_BASE}/doc/versions.json ${HTML_DIR}
 )
-
-# FIXME: remove once Zephyr CMake is taken out
-add_dependencies(html kconfig-html-all)
 
 add_dependencies(zephyr-html-all kconfig-html-all)
 add_dependencies(mcuboot-html-all kconfig-html-all)
