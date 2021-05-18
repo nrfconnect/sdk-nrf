@@ -51,14 +51,14 @@ Complete the following actions to optimize the Bluetooth part of your applicatio
 
   The following configuration options affect the Bluetooth buffers:
 
-  * :option:`CONFIG_BT_DISCARDABLE_BUF_COUNT`
-  * :option:`CONFIG_BT_DISCARDABLE_BUF_SIZE`
-  * :option:`CONFIG_BT_RX_BUF_COUNT`
+  * :option:`CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT`
+  * :option:`CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE`
+  * :option:`CONFIG_BT_BUF_EVT_RX_COUNT`
   * :option:`CONFIG_BT_CONN_TX_MAX`
   * :option:`CONFIG_BT_L2CAP_TX_BUF_COUNT`
   * :option:`CONFIG_BT_CTLR_RX_BUFFERS`
-  * :option:`CONFIG_BT_CTLR_TX_BUFFERS`
-  * :option:`CONFIG_BT_CTLR_TX_BUFFER_SIZE`
+  * :option:`CONFIG_BT_BUF_ACL_TX_COUNT`
+  * :option:`CONFIG_BT_BUF_ACL_TX_SIZE`
 
 For reference, you can find minimal footprint configurations of the :ref:`peripheral_lbs` sample in :file:`nrf/samples/bluetooth/peripheral_lbs/minimal.conf` and the :ref:`peripheral_uart` sample in :file:`nrf/samples/bluetooth/peripheral_uart/minimal.conf`.
 

@@ -8,6 +8,7 @@
 #include <drivers/bluetooth/hci_driver.h>
 #include <bluetooth/controller.h>
 #include <bluetooth/hci_vs.h>
+#include <bluetooth/buf.h>
 #include <init.h>
 #include <irq.h>
 #include <kernel.h>
@@ -356,7 +357,7 @@ static void recv_thread(void *p1, void *p2, void *p3)
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
-	static uint8_t hci_buffer[CONFIG_BT_RX_BUF_LEN];
+	static uint8_t hci_buffer[BT_BUF_RX_SIZE];
 
 	bool received_evt = false;
 	bool received_data = false;

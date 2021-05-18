@@ -6,6 +6,7 @@
 
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_err.h>
+#include <bluetooth/buf.h>
 #include <sys/byteorder.h>
 #include <sdc_hci.h>
 #include <sdc_hci_cmd_controller_baseband.h>
@@ -28,7 +29,7 @@
 static struct
 {
 	bool occurred; /**< Set in only one execution context */
-	uint8_t raw_event[CONFIG_BT_RX_BUF_LEN];
+	uint8_t raw_event[BT_BUF_EVT_RX_SIZE];
 } cmd_complete_or_status;
 
 static bool command_generates_command_complete_event(uint16_t hci_opcode)
