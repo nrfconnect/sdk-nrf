@@ -80,6 +80,17 @@ config PELION_NRF_SECURITY
 
 endchoice
 
+config PELION_QUICK_SESSION_RESUME
+	bool "Enable quick session resume"
+	depends on PELION_NRF_SECURITY
+	default y
+	select PELION_PAL_SUPPORT_SSL_CONNECTION_ID
+	select MBEDTLS_SSL_CONTEXT_SERIALIZATION
+	select MBEDTLS_SSL_DTLS_CONNECTION_ID
+	help
+	  This option allows to enable quick session resume functionality by avoiding DTLS
+	  handshake when performing pause, resume for pelion client.
+
 config PELION_MBEDTLS_LIB_NAME
 	string
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx mbedcrypto_oberon mbedcrypto_vanilla" if CC3XX_BACKEND && OBERON_BACKEND && MBEDTLS_VANILLA_BACKEND
