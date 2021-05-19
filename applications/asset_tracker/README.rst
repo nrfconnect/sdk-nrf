@@ -215,7 +215,7 @@ Using RSA signing for MCUboot
 
 When :option:`CONFIG_BOOTLOADER_MCUBOOT` is set to ``y``, the Asset Tracker application adds an overlay configuration for MCUboot.
 This configuration enables the RSA signing of the images for backward compatibility with the MCUboot versions that precede the |NCS| v1.4.0.
-The overlay can be found in :file:`mcuboot_overlay-rsa.conf`.
+The overlay can be found in :file:`child_image/mcuboot.conf`.
 
 Testing
 =======
