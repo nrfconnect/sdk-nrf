@@ -31,6 +31,8 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 #define MCUBOOT_SECONDARY_LAST_PAGE_ADDR                                       \
 	(PM_MCUBOOT_SECONDARY_ADDRESS + PM_MCUBOOT_SECONDARY_SIZE - 1)
 
+#define IS_ALIGNED_32(POINTER) (((uintptr_t)(const void *)(POINTER)) % 4 == 0)
+
 static uint8_t *stream_buf;
 static size_t stream_buf_len;
 
@@ -85,6 +87,10 @@ bool dfu_target_mcuboot_identify(const void *const buf)
 int dfu_target_mcuboot_set_buf(uint8_t *buf, size_t len)
 {
 	if (buf == NULL) {
+		return -EINVAL;
+	}
+
+	if (!IS_ALIGNED_32(buf)) {
 		return -EINVAL;
 	}
 
