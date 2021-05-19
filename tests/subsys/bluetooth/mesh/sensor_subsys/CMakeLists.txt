@@ -5,15 +5,30 @@
 #
 cmake_minimum_required(VERSION 3.13.1)
 
-include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(bt_mesh_sensor_subsystem_test)
 
-target_include_directories(app PUBLIC ${NRF_DIR}/subsys/bluetooth/mesh)
+target_include_directories(app PUBLIC
+  ${NRF_DIR}/subsys/bluetooth/mesh
+  ${ZEPHYR_BASE}/subsys/bluetooth
+  )
 
 FILE(GLOB app_sources src/*.c)
-target_sources(app PRIVATE ${app_sources})
-
-zephyr_ld_options(
-    ${LINKERFLAGPREFIX},--allow-multiple-definition
+target_sources(app PRIVATE
+  ${app_sources}
+  ${NRF_DIR}/subsys/bluetooth/mesh/sensor_types.c
+  ${NRF_DIR}/subsys/bluetooth/mesh/sensor.c
+  ${ZEPHYR_BASE}/subsys/net/buf.c
+  ${ZEPHYR_BASE}/subsys/bluetooth/mesh/msg.c
   )
-  
+
+target_compile_options(app
+  PRIVATE
+  -DCONFIG_BT_MESH_MODEL_KEY_COUNT=5
+  -DCONFIG_BT_MESH_MODEL_GROUP_COUNT=5
+  -DCONFIG_BT_MESH_SENSOR_ALL_TYPES=1
+  -DCONFIG_BT_MESH_SENSOR_LABELS=1
+  -DCONFIG_BT_LOG_LEVEL=0
+  )
+
+zephyr_linker_sources(SECTIONS sensor_types.ld)
