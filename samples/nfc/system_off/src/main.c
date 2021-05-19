@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <zephyr.h>
-#include <power/power.h>
+#include <pm/pm.h>
 
 #include <nrfx.h>
 #include <hal/nrf_power.h>

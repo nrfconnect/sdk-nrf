@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <hal/nrf_power.h>
-#include <power/power.h>
+#include <pm/pm.h>
 #include <power/reboot.h>
 
 #define MODULE power_handler
