@@ -11,7 +11,7 @@
 # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
 
 manifest:
-  version: "0.10"
+  version: "0.12"
 
   # "remotes" is a list of locations where git repositories are cloned
   # and fetched from.
