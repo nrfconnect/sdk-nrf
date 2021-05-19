@@ -424,6 +424,8 @@
 
 .. _`Openthread acting as a new reference platform`: https://openthread.io/certification/automation-setup#acting_as_a_new_reference_platform
 .. _`OpenThread Border Router`: https://openthread.io/guides/border-router
+.. _`OpenThread Border Router Codelab tutorial`: https://openthread.io/codelabs/openthread-border-router
+.. _`OpenThread Border Router Codelab tutorial step 2`: https://openthread.io/codelabs/openthread-border-router#2
 
 .. _`OpenThread system architecture`: https://openthread.io/platforms#system_architecture
 
