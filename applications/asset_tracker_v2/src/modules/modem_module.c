@@ -257,30 +257,6 @@ static void send_edrx_update(float edrx, float ptw)
 	EVENT_SUBMIT(evt);
 }
 
-/* Produce a warning if modem firmware version is unexpected. */
-static void check_modem_fw_version(void)
-{
-	static bool modem_fw_version_checked;
-
-	if (modem_fw_version_checked) {
-		return;
-	}
-	if (strcmp(modem_param.device.modem_fw.value_string,
-		   CONFIG_EXPECTED_MODEM_FIRMWARE_VERSION) != 0) {
-		LOG_WRN("Unsupported modem firmware version: %s",
-			log_strdup(modem_param.device.modem_fw.value_string));
-		LOG_WRN("Expected firmware version: %s",
-			CONFIG_EXPECTED_MODEM_FIRMWARE_VERSION);
-		LOG_WRN("You can change the expected version through the");
-		LOG_WRN("EXPECTED_MODEM_FIRMWARE_VERSION setting.");
-		LOG_WRN("Please upgrade: http://bit.ly/nrf9160-mfw-update");
-	} else {
-		LOG_DBG("Board is running expected modem firmware version: %s",
-			CONFIG_EXPECTED_MODEM_FIRMWARE_VERSION);
-	}
-	modem_fw_version_checked = true;
-}
-
 static int static_modem_data_get(void)
 {
 	int err;
@@ -291,8 +267,6 @@ static int static_modem_data_get(void)
 		LOG_ERR("modem_info_params_get, error: %d", err);
 		return err;
 	}
-
-	check_modem_fw_version();
 
 	struct modem_module_event *modem_module_event = new_modem_module_event();
 
