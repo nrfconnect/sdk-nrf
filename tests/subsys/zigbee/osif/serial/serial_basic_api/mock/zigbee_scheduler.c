@@ -49,7 +49,7 @@ static struct k_work zb_app_cb_work;
 
 static void zb_app_cb_process_schedule(struct k_work *item)
 {
-	struct zb_app_cb_s new_app_cb;
+	struct zb_app_cb_s new_app_cb = {0};
 
 	/**
 	 * Process all requests.
