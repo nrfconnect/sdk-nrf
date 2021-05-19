@@ -20,6 +20,7 @@ Zigbee requires the following modules to properly operate in |NCS|:
   OSIF implements a series of functions used by ZBOSS and is included in the |NCS|'s Zigbee subsystem.
   The files that handle the OSIF integration are located in :file:`nrf/subsys/zigbee/osif`.
   The ZBOSS library is enabled by the :option:`CONFIG_ZIGBEE` Kconfig option.
+  For more information about the ZBOSS stack, see also the `external ZBOSS development guide and API documentation`_.
 * :ref:`zephyr:ieee802154_interface` radio driver - This library is automatically enabled when working with Zigbee on Nordic Semiconductor's development kits.
 
 .. _zigbee_ug_configuration:

@@ -210,7 +210,7 @@ This sample uses the following |NCS| libraries:
 
 This sample uses the following `sdk-nrfxlib`_ libraries:
 
-* :ref:`nrfxlib:zboss` (development version)
+* :ref:`nrfxlib:zboss` (`API documentation`_)
 
 In addition, it uses the following Zephyr libraries:
 

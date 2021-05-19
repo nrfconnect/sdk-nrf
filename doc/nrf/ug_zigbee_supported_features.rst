@@ -20,6 +20,6 @@ The stack comes with the following features:
 * Experimental support for ``ZB_ZCL_WWAH``
 * Experimental support for Green Power Combo
 
-See the :ref:`nrfxlib:zboss` page in nrfxlib for more information about the ZBOSS library.
+See the :ref:`nrfxlib:zboss` page in nrfxlib and the `external ZBOSS development guide and API documentation`_ for more information about the ZBOSS library.
 
 For more information about Zigbee, visit the `Zigbee Alliance`_ page and read `Zigbee Specification`_.
