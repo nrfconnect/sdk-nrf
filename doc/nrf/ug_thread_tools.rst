@@ -34,25 +34,234 @@ See `nRF Thread Topology Monitor`_ for documentation.
 Thread Border Router
 ********************
 
-Thread Border Router is a specific type of Border Router device that provides connectivity from the IEEE 802.15.4 network to adjacent networks on other physical layers (such as Wi-Fi or Ethernet).
+The Thread Border Router is a specific type of Border Router device that provides connectivity from the IEEE 802.15.4 network to adjacent networks on other physical layers (such as Wi-Fi or Ethernet).
 Border Routers provide services for devices within the IEEE 802.15.4 network, including routing services for off-network operations.
 
 Typically, a Border Router solution consists of the following parts:
 
-* Application based on the :ref:`thread_architectures_designs_cp_ncp` design or its :ref:`thread_architectures_designs_cp_rcp` variant compatible with the IEEE 802.15.4 standard.
+* An application based on the :ref:`thread_architectures_designs_cp_ncp` design or its :ref:`thread_architectures_designs_cp_rcp` variant compatible with the IEEE 802.15.4 standard.
   This application can be implemented, for example, on an nRF52 device.
-* Host-side application, usually implemented on a more powerful device with incorporated Linux-based operating system.
+* A host-side application, usually implemented on a more powerful device with an incorporated Linux-based operating system.
 
-|NCS| does not provide a complete Thread Border Router solution.
-For development purposes, you can use `OpenThread Border Router`_, an open-source Border Router implementation that you can set up either on your PC using Docker or on Raspberry Pi.
-OpenThread Border Router is compatible with Nordic Semiconductor devices.
+The |NCS| does not provide a complete Thread Border Router solution.
+For development purposes, you can use the `OpenThread Border Router`_ (OTBR) released by Google, an open-source Border Router implementation that you can set up either on your PC using Docker or on a Raspberry Pi.
+
+The OpenThread Border Router is compatible with Nordic Semiconductor devices.
+It implements a number of features, including:
+
+* Bidirectional IP connectivity between Thread and Wi-Fi or Ethernet networks (or both)
+* Network components that allow Thread nodes to connect to IPv4 networks (NAT64, DNS64)
+* Bidirectional DNS-based service discovery using mDNS (on Wi-Fi or Ethernet link, or both) and SRP (on Thread network)
+* External Thread commissioning (for example, using a mobile phone) to authenticate and join a Thread device to a Thread network
+
+You can either install the OpenThread Border Router on a Raspberry Pi or run it using a Docker container, as described in the following sections.
+In both cases, you must first configure a radio co-processor (RCP), which provides the required radio capability to your Linux device.
+
+.. _ug_thread_tools_tbr_rcp:
+
+Configuring a radio co-processor
+================================
+
+The OpenThread Border Router must have physical access to the IEEE 802.15.4 network that is used by the Thread protocol.
+As neither the Linux-based PC nor the Raspberry Pi have such radio capability, you must connect an external nRF device that serves as radio co-processor.
+
+To program the nRF device with the RCP application, complete the following steps:
+
+#. Clone the OpenThread nRF528xx platform repository into the current directory:
+
+   .. code-block:: console
+
+      git clone --recursive https://github.com/openthread/ot-nrf528xx.git
+
+#. Enter the :file:`ot-nrf528xx` directory:
+
+   .. code-block:: console
+
+      cd ot-nrf528xx
+
+#. Install the OpenThread dependencies:
+
+   .. code-block:: console
+
+      ./script/bootstrap
+
+#. Build the RCP example for the hardware platform and the transport of your choice:
+
+   .. tabs::
+
+      .. tab:: nRF52840 Dongle (USB transport)
+
+         .. code-block:: console
+
+            rm -rf build
+            script/build nrf52840 USB_trans -DOT_BOOTLOADER=USB -DOT_THREAD_VERSION=1.2
+
+      .. tab:: nRF52840 Development Kit (UART transport)
+
+         .. code-block:: console
+
+            rm -rf build
+            script/build nrf52840 UART_trans -DOT_THREAD_VERSION=1.2
+
+   ..
+
+   This creates an RCP image at :file:`build/bin/ot-rcp`.
+#. Convert the RCP image to hexadecimal format:
+
+   .. code-block:: console
+
+      arm-none-eabi-objcopy -O ihex build/bin/ot-rcp build/bin/ot-rcp.hex
+
+#. Depending on the hardware platform, complete the following steps:
+
+   .. tabs::
+
+      .. tab:: nRF52840 Dongle (USB transport)
+
+         a. Install nRF Util:
+
+            .. code-block:: console
+
+               python3 -m pip install -U nrfutil
+
+            .. note::
+
+               If you are using a Raspberry Pi, the nRF Util version distributed officially through PyPI is not supported.
+               To install a compatible version on Raspbian OS, execute the following commands:
+
+               .. code-block:: console
+
+                  sudo apt-get -y install libusb-1.0-0-dev sed
+                  pip3 install click crcmod ecdsa intelhex libusb1 piccata protobuf pyserial pyyaml tqdm pc_ble_driver_py pyspinel
+                  pip3 install -U --no-dependencies nrfutil==6.0.1
+                  export PATH="$HOME/.local/bin:$PATH"
+
+         #. Generate the RCP firmware package:
+
+            .. code-block:: console
+
+               nrfutil pkg generate --hw-version 52 --sd-req=0x00 \
+                --application build/bin/ot-rcp.hex --application-version 1 build/bin/ot-rcp.zip
+
+         #. Connect the nRF52840 Dongle to the USB port.
+         #. Press the **RESET** button on the dongle to put it into the DFU mode.
+            The LED on the dongle starts blinking red.
+         #. Install the RCP firmware package onto the dongle by running the following command, with ``/dev/ttyACM0`` replaced with the device node name of your nRF52840 Dongle:
+
+            .. code-block:: console
+
+               nrfutil dfu usb-serial -pkg build/bin/ot-rcp.zip -p /dev/ttyACM0
+
+      .. tab:: nRF52840 Development Kit (UART transport)
+
+         a. Program the image using the nrfjprog utility (which is part of the `nRF Command Line Tools`_):
+
+            .. code-block:: console
+
+               nrfjprog -f nrf52 --chiperase --program build/bin/ot-rcp.hex --reset
+
+         #. Disable the Mass Storage feature on the device, so that it does not interfere with the core RCP functionalities:
+
+            .. parsed-literal::
+               :class: highlight
+
+               JLinkExe -device NRF52840_XXAA -if SWD -speed 4000 -autoconnect 1 -SelectEmuBySN *SEGGER_ID*
+               J-Link>MSDDisable
+               Probe configured successfully.
+               J-Link>exit
+
+            Replace *SEGGER_ID* with the SEGGER ID of your nRF52840 Development Kit.
+            This setting remains valid even if you program another firmware onto the device.
+         #. Power-cycle the device to apply the changes.
+
+Installing OTBR manually (Raspberry Pi)
+=======================================
+
+The recommended option is to build and configure the OpenThread Border Router on a Raspberry Pi 3 Model B or newer.
+This option provides most of the functionalities available in the OpenThread Border Router, such as border routing capabilities needed for establishing Thread communication with a mobile phone on a Wi-Fi network.
+However, this approach requires you to download the OpenThread Border Router repository and install the Border Router manually on the Raspberry Pi.
+
+To set up and configure the OpenThread Border Router, follow the official `OpenThread Border Router Codelab tutorial`_ on the OpenThread documentation portal.
+Omit the *Build and flash RCP firmware* section, because this section duplicates the steps performed in the previous section.
+
+
+Running OTBR using Docker
+=========================
+
+For development purposes, you can run the OpenThread Border Router on any Linux-based system using a Docker container that already has the Border Router installed.
+This solution can be used when you are only interested in direct communication between your Border Router and the Thread network.
+For example, you can use the Docker container when you want to establish IP communication between an application running on Linux (such as the Python Controller for Matter) and an application running on a Thread node.
+
+To install and configure the OpenThread Border Router using the Docker container on an Ubuntu operating system, complete the following steps:
+
+#. Install the Docker daemon:
+
+   .. code-block:: console
+
+      sudo apt update && sudo apt install docker.io
+
+#. Start the Docker daemon:
+
+   .. code-block:: console
+
+      sudo systemctl start docker
+
+#. Create an IPv6 network for the OpenThread Border Router container in Docker:
+
+   .. code-block:: console
+
+      sudo docker network create --ipv6 --subnet fd11:db8:1::/64 -o com.docker.network.bridge.name=otbr0 otbr
+
+#. Download the latest version of the OpenThread Border Router Docker image by running the following command:
+
+   .. code-block:: console
+
+      docker pull openthread/otbr
+
+#. Connect the radio co-processor that you configured in :ref:`ug_thread_tools_tbr_rcp` to the Border Router device.
+#. Start the OpenThread Border Router container using the following command (in the last line, replace ``/dev/ttyACM0`` with the device node name of the OpenThread radio co-processor):
+
+   .. code-block:: console
+
+      sudo docker run -it --rm --privileged --name otbr --network otbr -p 8080:80 \
+      --sysctl "net.ipv6.conf.all.disable_ipv6=0 net.ipv4.conf.all.forwarding=1 net.ipv6.conf.all.forwarding=1" \
+      --volume /dev/ttyACM0:/dev/radio openthread/otbr --radio-url spinel+hdlc+uart:///dev/radio
+
+#. Form the Thread network using one of the following options:
+
+   * Follow the instruction in the `OpenThread Border Router Codelab tutorial step 2`_.
+   * Open the ``http://localhost:8080/`` address in a web browser and choose :guilabel:`Form` from the menu.
+
+     .. note::
+        If you are using a Raspberry Pi without a screen, but you have a different device in the same network, you can start a web browser on that device and use the address of the Raspberry Pi instead of ``localhost``.
+
+#. Note down the selected On-Mesh Prefix value.
+   For example, ``fd11:22::/64``.
+#. Make sure that packets addressed to devices in the Thread network are routed through the OpenThread Border Router container in Docker.
+   To do this, run the following command that uses the On-Mesh Prefix that you configured in the previous step (in this case, ``fd11:22::/64``):
+
+   .. code-block:: console
+
+      sudo ip -6 route add fd11:22::/64 dev otbr0 via fd11:db8:1::2
+
+#. Check the status of the OpenThread Border Router by executing the following command:
+
+   .. code-block:: console
+
+      sudo docker exec -it otbr sh -c "sudo service otbr-agent status"
+
+#. Check the status of the Thread node running inside the Docker:
+
+   .. code-block:: console
+
+      sudo docker exec -it otbr sh -c "sudo ot-ctl state"
 
 .. _ug_thread_tools_wpantund:
 
 wpantund
 ********
 
-`wpantund`_ is a utility for providing a native IPv6 interface to a Network Co-Processor.
+`wpantund`_ is a utility for providing a native IPv6 interface to a network co-processor.
 When working with Thread, it is used for interacting with the application by the following samples:
 
 * :ref:`ot_coprocessor_sample`
