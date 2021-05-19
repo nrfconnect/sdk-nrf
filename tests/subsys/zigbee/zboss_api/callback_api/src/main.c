@@ -156,7 +156,7 @@ void test_zboss_app_callbacks(void)
 	}
 
 	for (uint8_t i = 0; i < ARRAY_SIZE(thread_id_array); i++) {
-		int data;
+		int data = 0;
 		int err = k_msgq_get(&zb_callback_queue, &data, K_NO_WAIT);
 
 		zassert_equal(err, 0,
