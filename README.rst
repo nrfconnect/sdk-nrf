@@ -24,3 +24,5 @@ Official documentation at:
 
 * Latest: http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest
 * All versions: http://developer.nordicsemi.com/nRF_Connect_SDK/doc/
+
+Changes to check `CI-apps-test` label
