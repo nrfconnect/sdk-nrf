@@ -12,6 +12,10 @@
 /README.rst                               @carlescufi
 /Jenkinsfile                              @thst-nordic
 /west.yml                                 @carlescufi @tejlmand
+/west-test.yml                            @thst-nordic
+
+# CI specific west
+/test-manifests/99-default-test-nrf.yml     @thst-nordic
 
 # Github Actions
 /.github/                                 @thst-nordic
@@ -35,6 +39,8 @@
 # All cmake related files
 /cmake/                                   @tejlmand
 /CMakeLists.txt                           @tejlmand
+# CI labeler
+/ci/labeler.yaml                      @thst-nordic @guwa @mariusz-nordicsemi @tomaszkob89 @totyz @doublemis1 @wiminordic @jorgenmk @maciekrozanski @ns-tolu @miha-nordic @maciejpietras @piwe-nordic @nordic-babu @fredaas @torsteingrindvik @mswarowsky @shantha-14 @ardo-nordic
 # All Kconfig related files
 Kconfig*                                  @tejlmand
 # All doc related files
