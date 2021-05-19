@@ -223,7 +223,7 @@ static int scalar_encode(const struct bt_mesh_sensor_format *format,
 		if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID)) {
 			raw = type_max - 2;
 		} else if (repr->flags & HAS_UNDEFINED) {
-			raw = type_max - 1;
+			raw = repr->flags & HAS_MAX ? type_max : type_max - 1;
 		} else {
 			return -ERANGE;
 		}
@@ -293,7 +293,13 @@ static int scalar_decode(const struct bt_mesh_sensor_format *format,
 	int32_t min_value = scalar_min(format);
 
 	if (raw < min_value || raw > max_value) {
-		return -ERANGE;
+		if (!(repr->flags & HAS_UNDEFINED)) {
+			return -ERANGE;
+		}
+
+		val->val1 = BIT64(8 * format->size) - 1;
+		val->val2 = 0;
+		return 0;
 	}
 
 	int64_t million = mul_scalar(raw * 1000000LL, repr);
