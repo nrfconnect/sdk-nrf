@@ -30,11 +30,13 @@ Configuration options
   destination directory.
 """
 
-from distutils.file_util import copy_file
+import filecmp
 import os
 from pathlib import Path
 import re
-from typing import Dict, Any, List
+import shutil
+import tempfile
+from typing import Dict, Any, List, Optional
 
 from sphinx.application import Sphinx
 
@@ -47,7 +49,11 @@ DEFAULT_DIRECTIVES = ("figure", "image", "include", "literalinclude")
 
 
 def adjust_includes(
-    fname: Path, basepath: Path, directives: List[str], encoding: str
+    fname: Path,
+    basepath: Path,
+    directives: List[str],
+    encoding: str,
+    dstpath: Optional[Path] = None,
 ) -> None:
     """Adjust included content paths.
 
@@ -56,19 +62,22 @@ def adjust_includes(
         basepath: Base path to be used to resolve content location.
         directives: Directives to be parsed and adjusted.
         encoding: Sources encoding.
+        dstpath: Destination path for fname if its path is not the actual destination.
     """
 
     if fname.suffix != ".rst":
         return
 
+    dstpath = dstpath or fname.parent
+
     def _adjust(m):
         directive, fpath = m.groups()
 
         # ignore absolute paths or existing files
-        if fpath.startswith("/") or (fname.parent / fpath).exists():
+        if fpath.startswith("/") or (dstpath / fpath).exists():
             fpath_adj = fpath
         else:
-            fpath_adj = Path(os.path.relpath(basepath / fpath, fname.parent)).as_posix()
+            fpath_adj = Path(os.path.relpath(basepath / fpath, dstpath)).as_posix()
 
         return f".. {directive}:: {fpath_adj}"
 
@@ -94,10 +103,10 @@ def sync_contents(app: Sphinx) -> None:
     to_copy = []
     to_delete = set(f for f in srcdir.glob("**/*") if not f.is_dir())
     to_keep = set(
-            f
-            for k in app.config.external_content_keep
-            for f in srcdir.glob(k)
-            if not f.is_dir()
+        f
+        for k in app.config.external_content_keep
+        for f in srcdir.glob(k)
+        if not f.is_dir()
     )
 
     for content in app.config.external_content_contents:
@@ -120,14 +129,32 @@ def sync_contents(app: Sphinx) -> None:
         if not dst.parent.exists():
             dst.parent.mkdir(parents=True)
 
-        status = copy_file(str(src), str(dst), update=True)
-        if status[1]:
+        # just copy if it does not exist
+        if not dst.exists():
+            shutil.copy(src, dst)
             adjust_includes(
                 dst,
                 src.parent,
                 app.config.external_content_directives,
                 app.config.source_encoding,
             )
+        # if origin file is modified only copy if different
+        elif src.stat().st_mtime > dst.stat().st_mtime:
+            with tempfile.TemporaryDirectory() as td:
+                # adjust origin includes before comparing
+                src_adjusted = Path(td) / src.name
+                shutil.copy(src, src_adjusted)
+                adjust_includes(
+                    src_adjusted,
+                    src.parent,
+                    app.config.external_content_directives,
+                    app.config.source_encoding,
+                    dstpath=dst.parent,
+                )
+
+                if not filecmp.cmp(src_adjusted, dst):
+                    dst.unlink()
+                    src_adjusted.rename(dst)
 
     # remove any previously copied file not present in the origin folder,
     # excepting those marked to be kept.
