@@ -28,10 +28,6 @@ config MODEM_AUTO_REQUEST_POWER_SAVING_FEATURES
 	bool "Auto request power saving features"
 	default y
 
-config EXPECTED_MODEM_FIRMWARE_VERSION
-	string "Expected modem firmware version"
-	default "mfw_nrf9160_1.2.3"
-
 endif # MODEM_MODULE
 
 module = MODEM_MODULE
