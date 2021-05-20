@@ -12,6 +12,7 @@
 #include <mpsl.h>
 #include <mpsl_timeslot.h>
 #include <mpsl/mpsl_assert.h>
+#include "mpsl_fem_config_common.h"
 #include "mpsl_fem_internal.h"
 #include "multithreading_lock.h"
 #if defined(CONFIG_NRFX_DPPI)
@@ -170,6 +171,9 @@ static int mpsl_lib_init(const struct device *dev)
 	if (err) {
 		return err;
 	}
+
+	mpsl_fem_device_config_254_apply_set(
+		IS_ENABLED(CONFIG_MPSL_FEM_DEVICE_CONFIG_254));
 
 #if MPSL_TIMESLOT_SESSION_COUNT > 0
 	err = mpsl_timeslot_session_count_set((void *) timeslot_context,
