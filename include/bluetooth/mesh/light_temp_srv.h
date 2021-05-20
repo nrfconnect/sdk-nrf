@@ -124,6 +124,11 @@ struct bt_mesh_light_temp_srv {
 	struct bt_mesh_tid_ctx prev_transaction;
 	/** Handler function structure. */
 	const struct bt_mesh_light_temp_srv_handlers *handlers;
+
+#if CONFIG_BT_SETTINGS
+	/** Storage timer */
+	struct k_work_delayable store_timer;
+#endif
 	/** Default light temperature and delta UV */
 	struct bt_mesh_light_temp dflt;
 	/** Current Temperature range. */

@@ -11,19 +11,20 @@
 #include <stdlib.h>
 #include "model_utils.h"
 
+#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
+#define LOG_MODULE_NAME bt_mesh_gen_ponoff_srv
+#include "common/log.h"
+
 /** Persistent storage handling */
 struct ponoff_settings_data {
 	uint8_t on_power_up;
 	bool on_off;
 } __packed;
 
-static int store(struct bt_mesh_ponoff_srv *srv,
-		 const struct bt_mesh_onoff_status *onoff_status)
+#if CONFIG_BT_SETTINGS
+static int store_data(struct bt_mesh_ponoff_srv *srv,
+		      const struct bt_mesh_onoff_status *onoff_status)
 {
-	if (!IS_ENABLED(CONFIG_BT_SETTINGS)) {
-		return 0;
-	}
-
 	struct ponoff_settings_data data;
 	ssize_t size;
 
@@ -57,6 +58,39 @@ static int store(struct bt_mesh_ponoff_srv *srv,
 
 	return bt_mesh_model_data_store(srv->ponoff_model, false, NULL, &data,
 					size);
+
+}
+
+static void store_timeout(struct k_work *work)
+{
+	int err;
+
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	struct bt_mesh_ponoff_srv *srv = CONTAINER_OF(
+		dwork, struct bt_mesh_ponoff_srv, store_timer);
+
+	struct bt_mesh_onoff_status onoff_status = {0};
+
+	if (!bt_mesh_model_is_extended(srv->ponoff_model)) {
+		srv->onoff.handlers->get(&srv->onoff, NULL, &onoff_status);
+	}
+
+	err = store_data(srv, &onoff_status);
+
+	if (err) {
+		BT_ERR("Failed storing data: %d", err);
+	}
+}
+#endif
+
+static void store_state(struct bt_mesh_ponoff_srv *srv)
+{
+#if CONFIG_BT_SETTINGS
+	k_work_schedule(
+		&srv->store_timer,
+		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+
+#endif
 }
 
 static void send_rsp(struct bt_mesh_ponoff_srv *srv,
@@ -99,13 +133,7 @@ static void set_on_power_up(struct bt_mesh_ponoff_srv *srv,
 		srv->update(srv, ctx, old, new);
 	}
 
-	struct bt_mesh_onoff_status onoff_status = { 0 };
-
-	if (!bt_mesh_model_is_extended(srv->ponoff_model)) {
-		srv->onoff.handlers->get(&srv->onoff, NULL, &onoff_status);
-	}
-
-	store(srv, &onoff_status);
+	store_state(srv);
 }
 
 static void handle_set_msg(struct bt_mesh_model *model,
@@ -158,7 +186,7 @@ static void onoff_intercept_set(struct bt_mesh_onoff_srv *onoff_srv,
 
 	if ((srv->on_power_up == BT_MESH_ON_POWER_UP_RESTORE) &&
 	    !bt_mesh_model_is_extended(srv->ponoff_model)) {
-		store(srv, status);
+		store_state(srv);
 	}
 }
 
@@ -249,6 +277,10 @@ static int bt_mesh_ponoff_srv_init(struct bt_mesh_model *model)
 	srv->pub.update = update_handler;
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
+
+#if CONFIG_BT_SETTINGS
+	k_work_init_delayable(&srv->store_timer, store_timeout);
+#endif
 
 	/* Model extensions:
 	 * To simplify the model extension tree, we're flipping the

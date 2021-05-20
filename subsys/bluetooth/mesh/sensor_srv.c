@@ -36,8 +36,13 @@ static struct bt_mesh_sensor *sensor_get(struct bt_mesh_sensor_srv *srv,
 	return NULL;
 }
 
-static void cadence_store(const struct bt_mesh_sensor_srv *srv)
+#if CONFIG_BT_SETTINGS
+static void store_timeout(struct k_work *work)
 {
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	struct bt_mesh_sensor_srv *srv = CONTAINER_OF(
+		dwork, struct bt_mesh_sensor_srv, store_timer);
+
 	/* Cadence is stored as a sequence of cadence status messages */
 	NET_BUF_SIMPLE_DEFINE(buf, (CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX *
 				    BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_STATUS));
@@ -51,15 +56,24 @@ static void cadence_store(const struct bt_mesh_sensor_srv *srv)
 					    s->state.min_int,
 					    &s->state.threshold);
 		if (err) {
+			BT_ERR("Failed encode data: %d", err);
 			return;
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_BT_SETTINGS) &&
-	    bt_mesh_model_data_store(srv->model, false, NULL, buf.data,
-				     buf.len)) {
-		BT_ERR("Sensor server data store failed");
-	}
+	(void)bt_mesh_model_data_store(srv->model, false, NULL, buf.data,
+				       buf.len);
+
+}
+#endif
+
+static void cadence_store(struct bt_mesh_sensor_srv *srv)
+{
+#if CONFIG_BT_SETTINGS
+	k_work_schedule(
+		&srv->store_timer,
+		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+#endif
 }
 
 
@@ -818,6 +832,10 @@ static int sensor_srv_init(struct bt_mesh_model *model)
 	struct bt_mesh_sensor_srv *srv = model->user_data;
 
 	sys_slist_init(&srv->sensors);
+
+#if CONFIG_BT_SETTINGS
+	k_work_init_delayable(&srv->store_timer, store_timeout);
+#endif
 
 	/* Establish a sorted list of sensors, as this is a requirement when
 	 * sending multiple sensor values in one message.

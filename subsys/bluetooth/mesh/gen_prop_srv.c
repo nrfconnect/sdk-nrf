@@ -11,6 +11,10 @@
 #include "mesh/net.h"
 #include "mesh/transport.h"
 
+#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
+#define LOG_MODULE_NAME bt_mesh_gen_prop_srv
+#include "common/log.h"
+
 #define PROP_FOREACH(_srv, _prop)                                              \
 	for (_prop = &(_srv)->properties[0];                                   \
 	     _prop != &(_srv)->properties[(_srv)->property_count]; _prop++)
@@ -46,11 +50,12 @@ static struct bt_mesh_prop *prop_get(const struct bt_mesh_prop_srv *srv,
 	return NULL;
 }
 
-static void store_props(const struct bt_mesh_prop_srv *srv)
+#if CONFIG_BT_SETTINGS
+static void store_timeout(struct k_work *work)
 {
-	if (!IS_ENABLED(CONFIG_BT_SETTINGS)) {
-		return;
-	}
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	struct bt_mesh_prop_srv *srv = CONTAINER_OF(
+		dwork, struct bt_mesh_prop_srv, store_timer);
 
 	uint8_t user_access[CONFIG_BT_MESH_PROP_MAXCOUNT];
 
@@ -60,9 +65,20 @@ static void store_props(const struct bt_mesh_prop_srv *srv)
 
 	(void)bt_mesh_model_data_store(srv->model, false, NULL, user_access,
 				       srv->property_count);
+
+}
+#endif
+
+static void store_props(struct bt_mesh_prop_srv *srv)
+{
+#if CONFIG_BT_SETTINGS
+	k_work_schedule(
+		&srv->store_timer,
+		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+#endif
 }
 
-static void set_user_access(const struct bt_mesh_prop_srv *srv,
+static void set_user_access(struct bt_mesh_prop_srv *srv,
 			    struct bt_mesh_prop *prop,
 			    enum bt_mesh_prop_access user_access)
 {
@@ -581,6 +597,10 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 	srv->pub.update = update_handler;
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
+
+#if CONFIG_BT_SETTINGS
+	k_work_init_delayable(&srv->store_timer, store_timeout);
+#endif
 
 	if ((model->id == BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV ||
 	     model->id == BT_MESH_MODEL_ID_GEN_ADMIN_PROP_SRV)) {

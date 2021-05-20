@@ -8,6 +8,10 @@
 #include <bluetooth/mesh/gen_plvl_srv.h>
 #include "model_utils.h"
 
+#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
+#define LOG_MODULE_NAME bt_mesh_gen_lvl_srv
+#include "common/log.h"
+
 #define LVL_TO_POWER(_lvl) ((_lvl) + 32768)
 #define POWER_TO_LVL(_power) ((_power)-32768)
 
@@ -19,11 +23,12 @@ struct bt_mesh_plvl_srv_settings_data {
 	bool is_on;
 } __packed;
 
-static int store_state(struct bt_mesh_plvl_srv *srv)
+#if CONFIG_BT_SETTINGS
+static void store_timeout(struct k_work *work)
 {
-	if (!IS_ENABLED(CONFIG_BT_SETTINGS)) {
-		return 0;
-	}
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	struct bt_mesh_plvl_srv *srv = CONTAINER_OF(
+		dwork, struct bt_mesh_plvl_srv, store_timer);
 
 	struct bt_mesh_plvl_srv_settings_data data = {
 		.default_power = srv->default_power,
@@ -32,8 +37,18 @@ static int store_state(struct bt_mesh_plvl_srv *srv)
 		.range = srv->range,
 	};
 
-	return bt_mesh_model_data_store(srv->plvl_model, false, NULL, &data,
-					sizeof(data));
+	(void)bt_mesh_model_data_store(srv->plvl_model, false, NULL, &data,
+				       sizeof(data));
+}
+#endif
+
+static void store_state(struct bt_mesh_plvl_srv *srv)
+{
+#if CONFIG_BT_SETTINGS
+	k_work_schedule(
+		&srv->store_timer,
+		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+#endif
 }
 
 static void lvl_status_encode(struct net_buf_simple *buf,
@@ -677,6 +692,10 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *model)
 	srv->pub.update = update_handler;
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
+
+#if CONFIG_BT_SETTINGS
+	k_work_init_delayable(&srv->store_timer, store_timeout);
+#endif
 
 	/* Model extensions:
 	 * To simplify the model extension tree, we're flipping the

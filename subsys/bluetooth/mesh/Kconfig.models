@@ -31,6 +31,18 @@ config BT_MESH_MOD_ACKD_TIMEOUT_PER_HOP
 
 endmenu
 
+if BT_SETTINGS
+
+config BT_MESH_MODEL_SRV_STORE_TIMEOUT
+	int "Delay (in seconds) before storing changes to mesh model servers"
+	range 0 1000000
+	default 0
+	help
+	  Time to wait before storing changes to the mesh model servers.
+	  Effectively the minimum interval of changes.
+
+endif
+
 config BT_MESH_ONOFF_SRV
 	bool "Generic OnOff Server"
 	select BT_MESH_NRF_MODELS
@@ -366,15 +378,6 @@ config BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY
 	  Target ambient illuminance for the Standby state (in lux). May be
 	  reconfigured at runtime by other models in the mesh network.
 endif # BT_MESH_LIGHT_CTRL_SRV_REG
-
-config BT_MESH_LIGHT_CTRL_SRV_STORE_TIMEOUT
-	int "Delay (in seconds) before storing changes to the Light LC Server"
-	range 0 1000000
-	default 5
-	help
-	  Time to wait before storing changes to the Light LC Server's
-	  configuration and state. Effectively the minimum interval of changes.
-
 
 config BT_MESH_LIGHT_CTRL_SRV_OCCUPANCY_DELAY
 	int "Default occupancy delay"
