@@ -83,15 +83,17 @@ static int watchdog_feed_enable(struct wdt_data_storage *data)
 	__ASSERT_NO_MSG(data != NULL);
 
 	k_work_init_delayable(&data->work, watchdog_feed_worker);
-	int err = k_work_reschedule(&data->work, K_NO_WAIT);
+	int ret = k_work_schedule(&data->work, K_NO_WAIT);
 
-	if (err) {
-		LOG_ERR("Cannot start watchdog feed worker!"
-				" Error code: %d", err);
+	if (ret != 1) {
+		LOG_ERR("Cannot start watchdog feed worker! Error code: %d", ret);
+		ret = (ret == 0) ? (-EALREADY) : (ret);
 	} else {
 		LOG_INF("Watchdog feed enabled. Timeout: %d", WDT_FEED_WORKER_DELAY_MS);
+		ret = 0;
 	}
-	return err;
+
+	return ret;
 }
 
 static int watchdog_enable(struct wdt_data_storage *data)
