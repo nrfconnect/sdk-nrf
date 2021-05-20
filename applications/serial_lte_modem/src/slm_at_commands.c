@@ -72,7 +72,11 @@ void rsp_send(const uint8_t *str, size_t len);
 int poweroff_uart(void);
 bool verify_datamode_control(uint16_t size_limit, uint16_t time_limit);
 
+#if defined(CONFIG_SLM_CUSTOMIZED)
+#define SLM_VERSION	"\r\n#XSLMVER: \"1.6-CUSTOMIZED\"\r\n"
+#else
 #define SLM_VERSION	"\r\n#XSLMVER: \"1.6\"\r\n"
+#endif
 
 static void modem_power_off(void)
 {

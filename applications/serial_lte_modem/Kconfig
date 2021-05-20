@@ -8,6 +8,11 @@ source "Kconfig.zephyr"
 
 menu "Nordic Serial LTE Modem"
 
+config SLM_CUSTOMIZED
+	bool "Flag for customized functionality"
+	help
+	  Enable this flag to include customized logic.
+
 config SLM_AT_MODE
 	bool "Serial LTE Modem by raw AT mode"
 	default y

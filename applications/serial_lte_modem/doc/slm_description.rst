@@ -114,7 +114,12 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. option:: CONFIG_SLM_NATIVE_TLS
+.. option:: CONFIG_SLM_CUSTOMIZED - Flag for customized functionality
+
+    This flag can be used to enable customized functionality.
+    To add your own custom logic, enclose the code by ``#if defined(CONFIG_SLM_CUSTOMIZED)`` and enable this flag.
+
+.. option:: CONFIG_SLM_NATIVE_TLS - Use Zephyr mbedTLS
 
    This option enables using Zephyr's mbedTLS.
    It requires additional configuration.
