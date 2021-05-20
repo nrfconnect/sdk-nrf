@@ -74,7 +74,7 @@ static bool module_event_handler(const struct module_state_event *event)
 #if CONFIG_DESKTOP_BAS_ENABLE
 		MODULE_ID(bas),
 #endif
-#if CONFIG_DESKTOP_BLE_ADVERTISING_ENABLE
+#if CONFIG_CAF_BLE_ADV
 		MODULE_ID(ble_adv),
 #endif
 #if CONFIG_DESKTOP_MOTION_SENSOR_ENABLE
