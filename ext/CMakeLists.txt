@@ -5,6 +5,7 @@
 #
 
 add_subdirectory_ifdef(CONFIG_CJSON_LIB cjson)
+add_subdirectory_ifdef(CONFIG_NRF_IPERF3 iperf3)
 
 if(CONFIG_SUPL_CLIENT_LIB)
   if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/lib/bin/supl)

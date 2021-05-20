@@ -7,5 +7,6 @@
 menu "External libraries"
 
 rsource "cjson/Kconfig"
+rsource "iperf3/Kconfig"
 
 endmenu
