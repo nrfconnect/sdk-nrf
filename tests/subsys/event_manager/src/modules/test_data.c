@@ -44,6 +44,7 @@ static bool event_handler(const struct event_header *eh)
 
 			struct test_end_event *te = new_test_end_event();
 
+			zassert_not_null(te, "Failed to allocate event");
 			te->test_id = TEST_DATA;
 			EVENT_SUBMIT(te);
 		}
@@ -60,9 +61,9 @@ static bool event_handler(const struct event_header *eh)
 			i++;
 
 			if (i == TEST_EVENT_ORDER_CNT) {
-				struct test_end_event *te =
-					new_test_end_event();
+				struct test_end_event *te = new_test_end_event();
 
+				zassert_not_null(te, "Failed to allocate event");
 				te->test_id = TEST_EVENT_ORDER;
 				EVENT_SUBMIT(te);
 			}

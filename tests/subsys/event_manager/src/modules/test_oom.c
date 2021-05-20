@@ -30,29 +30,29 @@ static bool event_handler(const struct event_header *eh)
 		switch (st->test_id) {
 		case TEST_OOM_RESET:
 		{
-			/* Sending large number of events in infinite loop to
-			 *  cause out of memory error.
-			 */
-			int i = 0;
+			/* Sending large number of events to cause out of memory error. */
+			int i;
 
-			while (!oom_error) {
+			for (i = 0; i < ARRAY_SIZE(event_tab); i++) {
 				event_tab[i] = new_data_event();
-				i++;
-				zassert_false(i == TEST_EVENTS_CNT,
-					      "No OOM detected,"
-					      "increase TEST_EVENTS_CNT");
+				if (event_tab[i] == NULL) {
+					break;
+				}
 			}
-			/* Freeing memory to enable further testing.
-			 * Two last items in array are NULL.
-			 */
-			i -= 2;
-			while (i != 0) {
+
+			zassert_true(i < ARRAY_SIZE(event_tab),
+				     "No OOM detected, increase TEST_EVENTS_CNT");
+			zassert_true(oom_error, "OOM error not detected");
+
+			/* Freeing memory to enable further testing. */
+			while (i >= 0) {
 				k_free(event_tab[i]);
 				i--;
 			}
 
 			struct test_end_event *et = new_test_end_event();
 
+			zassert_not_null(et, "Failed to allocate event");
 			et->test_id = st->test_id;
 			EVENT_SUBMIT(et);
 			break;

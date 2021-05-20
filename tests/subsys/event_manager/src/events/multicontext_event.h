@@ -36,4 +36,4 @@ EVENT_TYPE_DECLARE(multicontext_event);
  * @}
  */
 
-#endif /* _MULTICONTEXT_H_ */
+#endif /* _MULTICONTEXT_EVENT_H_ */

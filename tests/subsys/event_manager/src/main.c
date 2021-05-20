@@ -31,6 +31,7 @@ static void test_start(enum test_id test_id)
 	cur_test_id = test_id;
 	struct test_start_event *ts = new_test_start_event();
 
+	zassert_not_null(ts, "Failed to allocate event");
 	ts->test_id = test_id;
 	EVENT_SUBMIT(ts);
 
