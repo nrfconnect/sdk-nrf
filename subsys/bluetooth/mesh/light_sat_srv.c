@@ -25,11 +25,12 @@ struct settings_data {
 	uint16_t dflt;
 } __packed;
 
-static int store(struct bt_mesh_light_sat_srv *srv)
+#if CONFIG_BT_SETTINGS
+static void store_timeout(struct k_work *work)
 {
-	if (!IS_ENABLED(CONFIG_BT_SETTINGS)) {
-		return 0;
-	}
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	struct bt_mesh_light_sat_srv *srv = CONTAINER_OF(
+		dwork, struct bt_mesh_light_sat_srv, store_timer);
 
 	struct settings_data data = {
 		.range = srv->range,
@@ -37,8 +38,19 @@ static int store(struct bt_mesh_light_sat_srv *srv)
 		.dflt = srv->dflt,
 	};
 
-	return bt_mesh_model_data_store(srv->model, false, NULL, &data,
-					sizeof(data));
+	(void)bt_mesh_model_data_store(srv->model, false, NULL, &data,
+				       sizeof(data));
+
+}
+#endif
+
+static void store(struct bt_mesh_light_sat_srv *srv)
+{
+#if CONFIG_BT_SETTINGS
+	k_work_schedule(
+		&srv->store_timer,
+		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+#endif
 }
 
 static void encode_status(struct net_buf_simple *buf,
@@ -342,6 +354,10 @@ static int sat_srv_init(struct bt_mesh_model *model)
 	srv->pub.msg = &srv->buf;
 	net_buf_simple_init_with_data(&srv->buf, srv->pub_data,
 				      ARRAY_SIZE(srv->pub_data));
+
+#if CONFIG_BT_SETTINGS
+	k_work_init_delayable(&srv->store_timer, store_timeout);
+#endif
 
 	bt_mesh_model_extend(model, srv->lvl.model);
 

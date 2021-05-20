@@ -151,6 +151,11 @@ struct bt_mesh_light_xyl_srv {
 		BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS)];
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx prev_transaction;
+
+#if CONFIG_BT_SETTINGS
+	/** Storage timer */
+	struct k_work_delayable store_timer;
+#endif
 	/** Current range parameters */
 	struct bt_mesh_light_xy_range range;
 	/** Handler function structure. */

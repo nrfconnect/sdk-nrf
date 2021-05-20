@@ -10,17 +10,22 @@
 #include "lightness_internal.h"
 #include "model_utils.h"
 
+#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
+#define LOG_MODULE_NAME bt_mesh_light_xyl_srv
+#include "common/log.h"
+
 struct bt_mesh_light_xyl_srv_settings_data {
 	struct bt_mesh_light_xy default_params;
 	struct bt_mesh_light_xy_range range;
 	struct bt_mesh_light_xy xy_last;
 } __packed;
 
-static int store_state(struct bt_mesh_light_xyl_srv *srv)
+#if CONFIG_BT_SETTINGS
+static void store_timeout(struct k_work *work)
 {
-	if (!IS_ENABLED(CONFIG_BT_SETTINGS)) {
-		return 0;
-	}
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	struct bt_mesh_light_xyl_srv *srv = CONTAINER_OF(
+		dwork, struct bt_mesh_light_xyl_srv, store_timer);
 
 	struct bt_mesh_light_xyl_srv_settings_data data = {
 		.default_params = srv->xy_default,
@@ -28,8 +33,18 @@ static int store_state(struct bt_mesh_light_xyl_srv *srv)
 		.xy_last = srv->xy_last,
 	};
 
-	return bt_mesh_model_data_store(srv->model, false, NULL, &data,
-					sizeof(data));
+	(void)bt_mesh_model_data_store(srv->model, false, NULL, &data,
+				       sizeof(data));
+}
+#endif
+
+static void store_state(struct bt_mesh_light_xyl_srv *srv)
+{
+#if CONFIG_BT_SETTINGS
+	k_work_schedule(
+		&srv->store_timer,
+		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
+#endif
 }
 
 static void xyl_get(struct bt_mesh_light_xyl_srv *srv,
@@ -466,7 +481,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 		.lvl = scene->light,
 		.transition = transition,
 	};
-	struct bt_mesh_light_xy_status xy_status;
+	struct bt_mesh_light_xy_status xy_status = { 0 };
 	struct bt_mesh_light_xy_set xy_set = {
 		.params.x = scene->xy.x,
 		.params.y = scene->xy.y,
@@ -517,6 +532,10 @@ static int bt_mesh_light_xyl_srv_init(struct bt_mesh_model *model)
 	srv->pub.update = update_handler;
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
+
+#if CONFIG_BT_SETTINGS
+	k_work_init_delayable(&srv->store_timer, store_timeout);
+#endif
 
 	/* Model extensions:
 	 * To simplify the model extension tree, we're flipping the

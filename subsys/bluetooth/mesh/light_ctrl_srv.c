@@ -77,16 +77,11 @@ static inline void from_centi_lux(uint32_t centi_lux, struct sensor_value *lux)
 static void store(struct bt_mesh_light_ctrl_srv *srv, enum flags kind)
 {
 #if CONFIG_BT_SETTINGS
-	bool pending = atomic_test_bit(&srv->flags, FLAG_STORE_CFG) ||
-		       atomic_test_bit(&srv->flags, FLAG_STORE_STATE);
-
 	atomic_set_bit(&srv->flags, kind);
 
-	if (!pending) {
-		k_work_reschedule(
-			&srv->store_timer,
-			K_SECONDS(CONFIG_BT_MESH_LIGHT_CTRL_SRV_STORE_TIMEOUT));
-	}
+	k_work_schedule(
+		&srv->store_timer,
+		K_SECONDS(CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT));
 #endif
 }
 
@@ -685,13 +680,8 @@ static void delayed_action_timeout(struct k_work *work)
 }
 
 #if CONFIG_BT_SETTINGS
-static void store_timeout(struct k_work *work)
+static void store_cfg_data(struct bt_mesh_light_ctrl_srv *srv)
 {
-	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
-	struct bt_mesh_light_ctrl_srv *srv = CONTAINER_OF(
-		dwork, struct bt_mesh_light_ctrl_srv, store_timer);
-	int err;
-
 	if (atomic_test_and_clear_bit(&srv->flags, FLAG_STORE_CFG)) {
 		struct setup_srv_storage_data data = {
 			.cfg = srv->cfg,
@@ -700,13 +690,13 @@ static void store_timeout(struct k_work *work)
 #endif
 		};
 
-		err = bt_mesh_model_data_store(srv->setup_srv, false, NULL,
+		(void)bt_mesh_model_data_store(srv->setup_srv, false, NULL,
 					       &data, sizeof(data));
-		if (err) {
-			BT_ERR("Failed storing config: %d", err);
-		}
 	}
+}
 
+static void store_state_data(struct bt_mesh_light_ctrl_srv *srv)
+{
 	if (atomic_test_and_clear_bit(&srv->flags, FLAG_STORE_STATE)) {
 		atomic_t data = 0;
 
@@ -716,12 +706,21 @@ static void store_timeout(struct k_work *work)
 		atomic_set_bit_to(&data, STORED_FLAG_OCC_MODE,
 				  atomic_test_bit(&srv->flags, FLAG_OCC_MODE));
 
-		err = bt_mesh_model_data_store(srv->model, false, NULL, &data,
+		(void)bt_mesh_model_data_store(srv->model, false, NULL, &data,
 					       sizeof(data));
-		if (err) {
-			BT_ERR("Failed storing state: %d", err);
-		}
 	}
+
+}
+
+static void store_timeout(struct k_work *work)
+{
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	struct bt_mesh_light_ctrl_srv *srv = CONTAINER_OF(
+		dwork, struct bt_mesh_light_ctrl_srv, store_timer);
+
+	store_cfg_data(srv);
+
+	store_state_data(srv);
 
 	BT_DBG("");
 }
@@ -1649,6 +1648,8 @@ static void light_ctrl_srv_reset(struct bt_mesh_model *model)
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		(void)bt_mesh_model_data_store(srv->setup_srv, false, NULL,
+					       NULL, 0);
+		(void)bt_mesh_model_data_store(srv->model, false, NULL,
 					       NULL, 0);
 	}
 }

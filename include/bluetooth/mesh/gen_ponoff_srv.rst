@@ -61,6 +61,9 @@ Persistent storage
 
 The Generic On Power Up state is stored persistently, along with the current Generic OnOff state of the extended :ref:`bt_mesh_onoff_srv_readme`.
 
+If :option:`CONFIG_BT_SETTINGS` is enabled, the Generic Power OnOff Server stores all its states persistently using a configurable storage delay to stagger storing.
+See :option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+
 API documentation
 =================
 
