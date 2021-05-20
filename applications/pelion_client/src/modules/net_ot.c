@@ -25,7 +25,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_NET_LOG_LEVEL);
 		MODULE_ID(factory_reset_request) : MODULE_ID(main))
 
 
-static struct k_delayed_work connecting_work;
+static struct k_work_delayable connecting_work;
 static enum net_state net_state;
 static bool initialized;
 
@@ -107,33 +107,25 @@ static bool check_routes(otInstance *instance)
 static void connecting_work_handler(struct k_work *work)
 {
 	LOG_INF("Waiting for OT connection...");
-	k_delayed_work_submit(&connecting_work, K_SECONDS(5));
+	k_work_reschedule(&connecting_work,
+			  K_SECONDS(CONFIG_PELION_CLIENT_WAITING_ON_CONNECTION_LOG_PERIOD));
 }
 
-static void send_net_state_event(void)
+static void send_net_state_event(enum net_state state)
 {
 	struct net_state_event *event = new_net_state_event();
 
 	event->id = MODULE_ID(net);
-	event->state = net_state;
+	event->state = state;
 	EVENT_SUBMIT(event);
 }
 
-static void set_net_state_event(enum net_state state)
+static void set_net_state(enum net_state state)
 {
-	if (state == net_state) {
-		return;
+	if (state != net_state) {
+		net_state = state;
+		send_net_state_event(net_state);
 	}
-
-	net_state = state;
-
-	if (net_state == NET_STATE_CONNECTED) {
-		k_delayed_work_cancel(&connecting_work);
-	} else {
-		k_delayed_work_submit(&connecting_work, K_NO_WAIT);
-	}
-
-	send_net_state_event();
 }
 
 static void on_thread_state_changed(uint32_t flags, void *context)
@@ -174,9 +166,9 @@ static void on_thread_state_changed(uint32_t flags, void *context)
 	}
 
 	if (has_role && has_neighbors && route_available) {
-		set_net_state_event(NET_STATE_CONNECTED);
+		set_net_state(NET_STATE_CONNECTED);
 	} else {
-		set_net_state_event(NET_STATE_DISCONNECTED);
+		set_net_state(NET_STATE_DISCONNECTED);
 	}
 }
 
@@ -196,13 +188,15 @@ static bool handle_state_event(const struct module_state_event *event)
 	__ASSERT_NO_MSG(!initialized);
 	initialized = true;
 
-	k_delayed_work_init(&connecting_work, connecting_work_handler);
-
-	set_net_state_event(NET_STATE_DISCONNECTED);
+	set_net_state(NET_STATE_DISCONNECTED);
 
 	connect_ot();
 	module_set_state(MODULE_STATE_READY);
-	k_delayed_work_submit(&connecting_work, K_NO_WAIT);
+
+	if (IS_ENABLED(CONFIG_PELION_CLIENT_LOG_WAITING_ON_CONNECTION)) {
+		k_work_init_delayable(&connecting_work, connecting_work_handler);
+		k_work_reschedule(&connecting_work, K_NO_WAIT);
+	}
 
 	return false;
 }
@@ -234,6 +228,18 @@ static bool event_handler(const struct event_header *eh)
 		return handle_state_event(cast_module_state_event(eh));
 	}
 
+	if (IS_ENABLED(CONFIG_PELION_CLIENT_LOG_WAITING_ON_CONNECTION) &&
+	    is_net_state_event(eh)) {
+		if (net_state == NET_STATE_DISCONNECTED) {
+			k_work_reschedule(&connecting_work, K_NO_WAIT);
+		} else {
+			/* Cancel cannot fail if executed from another work's context. */
+			(void)k_work_cancel_delayable(&connecting_work);
+		}
+
+		return false;
+	}
+
 	if (IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS) &&
 	    is_factory_reset_event(eh)) {
 		return handle_reset_event();
@@ -249,4 +255,7 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS)
 	EVENT_SUBSCRIBE(MODULE, factory_reset_event);
+#endif
+#if CONFIG_PELION_CLIENT_LOG_WAITING_ON_CONNECTION
+	EVENT_SUBSCRIBE(MODULE, net_state_event);
 #endif

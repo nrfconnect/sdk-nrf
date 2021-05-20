@@ -44,8 +44,8 @@ enum power_state {
 };
 
 static enum power_state power_state = POWER_STATE_IDLE;
-static struct k_delayed_work power_down_trigger;
-static struct k_delayed_work error_trigger;
+static struct k_work_delayable power_down_trigger;
+static struct k_work_delayable error_trigger;
 static atomic_t power_down_count;
 
 
@@ -88,7 +88,7 @@ static void power_down(struct k_work *work)
 			/* Stay suspended. */
 		}
 	} else {
-		k_delayed_work_submit(&power_down_trigger,
+		k_work_reschedule(&power_down_trigger,
 				      K_MSEC(POWER_DOWN_CHECK_MS));
 	}
 }
@@ -137,7 +137,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_power_down_event(eh)) {
 		switch (power_state) {
 		case POWER_STATE_ERROR:
-			k_delayed_work_submit(&error_trigger,
+			k_work_reschedule(&error_trigger,
 					      POWER_DOWN_ERROR_TIMEOUT);
 			break;
 
@@ -183,7 +183,7 @@ static bool event_handler(const struct event_header *eh)
 
 		power_state = POWER_STATE_IDLE;
 		power_down_counter_reset();
-		k_delayed_work_submit(&power_down_trigger,
+		k_work_reschedule(&power_down_trigger,
 				      K_MSEC(POWER_DOWN_CHECK_MS));
 
 		return false;
@@ -220,13 +220,14 @@ static bool event_handler(const struct event_header *eh)
 
 			pm_power_state_force((struct pm_state_info){PM_STATE_ACTIVE, 0, 0});
 
-			k_delayed_work_init(&error_trigger, error);
-			k_delayed_work_init(&power_down_trigger, power_down);
-			k_delayed_work_submit(&power_down_trigger,
+			k_work_init_delayable(&error_trigger, error);
+			k_work_init_delayable(&power_down_trigger, power_down);
+			k_work_reschedule(&power_down_trigger,
 					      K_MSEC(POWER_DOWN_CHECK_MS));
 		} else if (event->state == MODULE_STATE_ERROR) {
 			power_state = POWER_STATE_ERROR;
-			k_delayed_work_cancel(&power_down_trigger);
+			/* Cancel cannot fail if executed from another work's context. */
+			(void)k_work_cancel_delayable(&power_down_trigger);
 
 			struct power_down_event *event = new_power_down_event();
 

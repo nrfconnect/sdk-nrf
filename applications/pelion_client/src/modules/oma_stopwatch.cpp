@@ -23,7 +23,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_OMA_STOPWATCH_LOG_LEVEL);
 
 
 static M2MResource *resource;
-static struct k_delayed_work resource_work;
+static struct k_work_delayable resource_work;
 
 static bool updated;
 static bool update_pending;
@@ -57,7 +57,7 @@ static void resource_work_handler(struct k_work *work)
 	updated = true;
 	update_stopwatch();
 
-	k_delayed_work_submit(&resource_work, K_SECONDS(CONFIG_PELION_CLIENT_OMA_STOPWATCH_TIMEOUT));
+	k_work_reschedule(&resource_work, K_SECONDS(CONFIG_PELION_CLIENT_OMA_STOPWATCH_TIMEOUT));
 }
 
 static void on_value_updated(const char *arg)
@@ -173,8 +173,8 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			k_delayed_work_init(&resource_work, resource_work_handler);
-			k_delayed_work_submit(&resource_work, K_NO_WAIT);
+			k_work_init_delayable(&resource_work, resource_work_handler);
+			k_work_reschedule(&resource_work, K_NO_WAIT);
 
 			module_set_state(MODULE_STATE_READY);
 		}
