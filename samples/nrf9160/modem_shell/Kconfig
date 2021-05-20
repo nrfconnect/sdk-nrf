@@ -1,0 +1,106 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Modem Shell config"
+
+config MOSH_IPERF3
+	bool "iPerf3"
+	default y
+	select NRF_IPERF3
+
+config NRF_IPERF3_PROMPTLESS
+	bool
+	default y
+
+config MOSH_SOCK
+	bool "Socket tool"
+	default y
+	help
+	  Socket tool with TCP, UDP, RAW, IPv4, IPv6 and packet socket support.
+
+config MOSH_PING
+	bool "ICMP ping"
+	default y
+	help
+	  Ping is a tool for testing the reachability of a host on an IP network.
+
+config MOSH_LINK
+	bool "Link control"
+	depends on LTE_LINK_CONTROL
+	depends on SETTINGS
+	default y
+	help
+	  Link control changes and queries the state of the LTE connection.
+
+config MOSH_CURL
+	bool "cURL"
+	default y
+	select NRF_CURL
+
+config NRF_CURL_PROMPTLESS
+	bool
+	default y
+
+config MOSH_GNSS
+	bool "GNSS"
+	default y
+	help
+	  GNSS feature for searching the location of the device.
+
+config MOSH_PPP
+	bool "PPP"
+	help
+	  Point-to-Point Protocol for enabling dial-up access to the Internet.
+
+config MOSH_SMS
+	bool "SMS"
+	default y
+	help
+	  SMS tool for sending and receiving SMS messages.
+
+config MOSH_FOTA
+	bool "FOTA"
+	default y
+	help
+	  FOTA for performing software updates over-the-air for both modem and application side.
+
+if MOSH_LINK
+menu "MoSH link control selections"
+
+config MOSH_LINK_SETT_NORMAL_MODE_AT_CMD_STR_LEN
+	int "Link settings AT command length"
+	default 127
+	help
+	  String length for custom AT commands stored into settings to be used
+	  when going to normal mode.
+
+endmenu
+endif #MOSH_LINK
+
+choice MOSH_GNSS_API
+	bool "GNSS API"
+	depends on MOSH_GNSS
+	default MOSH_GNSS_API_SOCKET
+	help
+	  Used GNSS API type.
+
+config MOSH_GNSS_API_SOCKET
+	bool "GNSS socket API"
+
+config MOSH_GNSS_API_GPS_DRIVER
+	bool "GPS driver"
+
+endchoice
+
+config MOSH_GNSS_ENABLE_LNA
+	bool "LNA for GNSS during startup"
+	depends on MOSH_GNSS
+	help
+	  Enable Low Noise Amplifier (LNA) for GNSS during startup
+
+endmenu # Modem Shell
