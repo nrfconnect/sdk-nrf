@@ -366,7 +366,7 @@ static void test_response_is_valid(void)
 	zassert_true(response_is_valid(xsystemmode, strlen(xsystemmode), "+%XSYSTEMMODE"),
 		     "response_is_valid failed");
 
-	zassert_false(response_is_valid(cscon, strlen(xsystemmode), "+%XSYSTEMMODE"),
+	zassert_false(response_is_valid(cscon, strlen(cscon), "+%XSYSTEMMODE"),
 		     "response_is_valid should have failed");
 }
 
