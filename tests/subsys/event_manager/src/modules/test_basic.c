@@ -25,6 +25,7 @@ static bool event_handler(const struct event_header *eh)
 		{
 			struct test_end_event *et = new_test_end_event();
 
+			zassert_not_null(et, "Failed to allocate event");
 			et->test_id = st->test_id;
 			EVENT_SUBMIT(et);
 			break;
@@ -35,6 +36,7 @@ static bool event_handler(const struct event_header *eh)
 			struct data_event *event = new_data_event();
 			static char descr[] = TEST_STRING;
 
+			zassert_not_null(event, "Failed to allocate event");
 			event->val1 = TEST_VAL1;
 			event->val2 = TEST_VAL2;
 			event->val3 = TEST_VAL3;
@@ -53,6 +55,7 @@ static bool event_handler(const struct event_header *eh)
 			for (size_t i = 0; i < TEST_EVENT_ORDER_CNT; i++) {
 				struct order_event *event = new_order_event();
 
+				zassert_not_null(event, "Failed to allocate event");
 				event->val = i;
 				EVENT_SUBMIT(event);
 			}
@@ -63,6 +66,7 @@ static bool event_handler(const struct event_header *eh)
 		{
 			struct order_event *event = new_order_event();
 
+			zassert_not_null(event, "Failed to allocate event");
 			EVENT_SUBMIT(event);
 			break;
 		}

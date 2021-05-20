@@ -21,6 +21,7 @@ static void end_test(void)
 {
 	struct test_end_event *event = new_test_end_event();
 
+	zassert_not_null(event, "Failed to allocate event");
 	event->test_id = cur_test_id;
 
 	EVENT_SUBMIT(event);
