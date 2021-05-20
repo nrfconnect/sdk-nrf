@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 - 2020 Nordic Semiconductor ASA
+# Copyright (c) 2019 - 2021 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -73,3 +73,13 @@ config MPSL_FEM_NRF21540_RX_GAIN_DB
 endif
 
 endif	# MPSL_FEM
+
+config MPSL_FEM_DEVICE_CONFIG_254
+	bool "Apply device configuration 254"
+	default MPSL_FEM
+	help
+	  Device configuration 254 may be required to conform to the requirements
+	  in section TP/154/PHY24/TRANSMIT-05 of the ZigBee IEEE 802.15.4 Test
+	  Specification, especially when an external PA is present.
+	  Device configuration 254 may be required to improve RX blocking,
+	  especially when an external LNA is present.
