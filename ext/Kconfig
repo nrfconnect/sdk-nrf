@@ -7,6 +7,7 @@
 menu "External libraries"
 
 rsource "cjson/Kconfig"
+rsource "freebsd-getopt/Kconfig"
 rsource "iperf3/Kconfig"
 
 endmenu
