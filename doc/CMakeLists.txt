@@ -388,7 +388,7 @@ add_custom_target(
 add_dependencies(zephyr-html-all kconfig-html-all)
 add_dependencies(mcuboot-html-all kconfig-html-all)
 add_dependencies(nrfxlib-inventory-all kconfig-html-all)
-add_dependencies(nrf-html-all nrfxlib-inventory-all kconfig-html-all)
+add_dependencies(nrf-html-all nrfxlib-inventory-all mcuboot-html-all kconfig-html-all)
 add_dependencies(nrfxlib-html-all nrf-html-all)
 
 add_custom_target(build-all ALL)
