@@ -492,7 +492,7 @@ Before you start :ref:`building and programming a sample application <gs_program
 
    a. Run the file :file:`bin/emStudio`.
 
-   #. Select :guilabel:`File` -> :guilabel:`Open nRF Connect SDK Project`.
+   #. Select :guilabel:`File` > :guilabel:`Open nRF Connect SDK Project`.
 
       .. figure:: images/ses_open.png
          :alt: Open nRF Connect SDK Project menu
@@ -526,7 +526,7 @@ Before you start :ref:`building and programming a sample application <gs_program
 
          If you start SES on macOS by running the file :file:`bin/emStudio`, make sure to complete the following steps:
 
-         1. Specify the path to all executables under :guilabel:`Tools` -> :guilabel:`Options` (in the :guilabel:`nRF Connect` tab).
+         1. Specify the path to all executables under :guilabel:`Tools` > :guilabel:`Options` (in the :guilabel:`nRF Connect` tab).
 
             .. figure:: images/ses_options.png
                :alt: nRF Connect SDK options in SES on Windows
@@ -552,7 +552,7 @@ Before you start :ref:`building and programming a sample application <gs_program
    ..
 
 #. Change the SES environment settings.
-   If you want to change the SES environment settings, click :guilabel:`Tools` -> :guilabel:`Options` and select the :guilabel:`nRF Connect` tab, as shown on the following screenshot from the Windows installation.
+   If you want to change the SES environment settings, click :guilabel:`Tools` > :guilabel:`Options` and select the :guilabel:`nRF Connect` tab, as shown on the following screenshot from the Windows installation.
 
 .. _ses_options_figure:
 

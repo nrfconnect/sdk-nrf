@@ -54,7 +54,7 @@ After programming the sample to your development kit, test it by performing the 
 
 1. Connect a logic analyzer to the pins that are used for tracing.
    Check the sample configuration for information about which pins are used.
-   To do so in |SES|, select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project` and navigate to :guilabel:`PPI trace pins configuration`.
+   To do so in |SES|, select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project` and navigate to :guilabel:`PPI trace pins configuration`.
 #. Observe that:
 
    * The pin that is tracing the RTC Tick event is toggling with a frequency of approximately 32 kHz.
