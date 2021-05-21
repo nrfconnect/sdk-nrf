@@ -73,7 +73,7 @@ union zb_ota_app_ver {
 	};
 };
 
-static uint8_t zb_ota_buf[CONFIG_ZIGBEE_FOTA_DATA_BLOCK_SIZE];
+static uint8_t zb_ota_buf[CONFIG_ZIGBEE_FOTA_DATA_BLOCK_SIZE] __aligned(4);
 static struct zb_ota_dfu_context ota_ctx;
 static struct zb_ota_client_ctx dev_ctx;
 static zigbee_fota_callback_t callback;
