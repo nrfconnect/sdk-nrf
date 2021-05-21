@@ -110,9 +110,9 @@ manifest:
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
       revision: 81d19f017f18f1bc6bea906d96fd45fba3672064
-    - name: connectedhomeip
+    - name: matter
       repo-path: sdk-connectedhomeip
-      path: modules/lib/connectedhomeip
+      path: modules/lib/matter
       revision: b35e8eca374772d42967864ffd49648b32699010
       submodules:
         - name: nlio

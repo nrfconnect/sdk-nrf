@@ -82,7 +82,7 @@ SEGGER J-Link USB port:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/connectedhomeip/light_switch`
+.. |sample path| replace:: :file:`samples/matter/light_switch`
 
 .. include:: /includes/build_and_run.txt
 

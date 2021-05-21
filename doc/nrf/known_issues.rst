@@ -433,8 +433,8 @@ KRKNWK-9214: Pigweed submodule may not be accessible from some regions
 
     .. code-block::
 
-       git -C modules/lib/connectedhomeip submodule set-url third_party/pigweed/repo https://github.com/google/pigweed.git
-       git -C modules/lib/connectedhomeip submodule sync third_party/pigweed/repo
+       git -C modules/lib/matter submodule set-url third_party/pigweed/repo https://github.com/google/pigweed.git
+       git -C modules/lib/matter submodule sync third_party/pigweed/repo
        west update
 
 nRF Desktop

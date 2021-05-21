@@ -1,8 +1,8 @@
 sample:
-  name: CHIP Light Bulb
-  description: CHIP Light Bulb example
+  name: Matter Light Bulb
+  description: Matter Light Bulb example
 tests:
-  connectedhomeip.light_bulb:
+  matter.light_bulb:
     build_only: true
     build_on_all: true
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp

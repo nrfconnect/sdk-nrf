@@ -90,7 +90,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @joerchan
 /samples/bootloader/                      @hakonfam @ioannisg
-/samples/connectedhomeip/                 @Damian-Nordic @kkasperczyk-no
+/samples/matter/                          @Damian-Nordic @kkasperczyk-no
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
 /samples/edge_impulse/                    @pdunaj
 /samples/esb/                             @lemrey

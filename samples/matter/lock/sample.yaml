@@ -1,8 +1,8 @@
 sample:
-  name: CHIP Lock
-  description: CHIP Lock example
+  name: Matter Lock
+  description: Matter Lock example
 tests:
-  connectedhomeip.lock:
+  matter.lock:
     build_only: true
     build_on_all: true
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp

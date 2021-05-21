@@ -153,7 +153,7 @@
   - "samples/bluetooth/central_nfc_pairing/**/*"
   - "samples/bluetooth/peripheral_hids_keyboard/**/*"
 
-"CI-chip-test":
+"CI-matter-test":
   - "drivers/mpsl/**/*"
   - "drivers/hw_cc310/*"
   - "drivers/net/*"
@@ -166,4 +166,4 @@
   - "modules/tfm/**/*"
   - "modules/nrfxlib/nrf_802154/**/*"
   - "modules/mcuboot/**/*"
-  - "samples/connectedhomeip/**/*"
+  - "samples/matter/**/*"
