@@ -291,8 +291,8 @@ static int bh1749_init(const struct device *dev)
 		return -EINVAL;
 	}
 	k_work_init_delayable(&bh1749_init_work, bh1749_async_init);
-	return k_work_schedule(&bh1749_init_work,
-			       K_MSEC(async_init_delay[data->async_init_step]));
+	k_work_schedule(&bh1749_init_work, K_MSEC(async_init_delay[data->async_init_step]));
+	return 0;
 };
 
 static const struct sensor_driver_api bh1749_driver_api = {
