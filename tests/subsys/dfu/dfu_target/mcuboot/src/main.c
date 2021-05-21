@@ -145,7 +145,7 @@ static void test_done(void)
 static void test_offset_get(void)
 {
 	int err;
-	size_t offset;
+	size_t offset = 0;
 
 	init();
 
