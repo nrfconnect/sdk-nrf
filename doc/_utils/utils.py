@@ -62,14 +62,7 @@ def get_srcdir(docset: str) -> PathLike:
         Sources directory of the given docset.
     """
 
-    dir = get_builddir() / docset
-    # NOTE: Zephyr uses its own structure, we just inherit it
-    if docset == "zephyr":
-        dir = dir / "rst" / "doc"
-    else:
-        dir = dir / "src"
-
-    return dir
+    return get_builddir() / docset / "src"
 
 
 def get_intersphinx_mapping(docset: str) -> Optional[Tuple[str, str]]:
