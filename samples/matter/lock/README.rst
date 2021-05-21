@@ -116,7 +116,7 @@ NFC port with antenna attached:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/connectedhomeip/lock`
+.. |sample path| replace:: :file:`samples/matter/lock`
 
 .. include:: /includes/build_and_run.txt
 

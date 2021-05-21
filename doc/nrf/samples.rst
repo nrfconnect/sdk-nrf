@@ -34,7 +34,7 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    :caption: Matter samples
    :glob:
 
-   ../../samples/connectedhomeip/*/README
+   ../../samples/matter/*/README
 
 .. _nfc_samples:
 
