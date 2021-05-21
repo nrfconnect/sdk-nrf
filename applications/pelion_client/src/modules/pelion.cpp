@@ -99,6 +99,9 @@ static void on_client_error(int code)
 	case M2MInterface::NetworkError:
 		set_pelion_state(PELION_STATE_UNREGISTERED);
 		break;
+	case M2MInterface::InvalidCertificates:
+		set_pelion_state(PELION_STATE_SUSPENDED);
+		break;
 	default:
 		/* Ignore */
 		break;
@@ -173,6 +176,7 @@ static bool handle_net_state_event(const struct net_state_event *event)
 		update_connection_state();
 		break;
 
+	case PELION_STATE_SUSPENDED:
 	case PELION_STATE_DISABLED:
 	default:
 		/* Ignore */
