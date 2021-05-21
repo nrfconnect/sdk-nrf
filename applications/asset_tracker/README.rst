@@ -175,7 +175,7 @@ To enable the LwM2M carrier library, add the following parameter to your build c
 
 ``-DOVERLAY_CONFIG=lwm2m_carrier_overlay.conf``
 
-In |SES|, select :guilabel:`Tools` -> :guilabel:`Options` -> :guilabel:`nRF Connect` to add the above CMake parameter.
+In |SES|, select :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`nRF Connect` to add the above CMake parameter.
 See :ref:`cmake_options` for more information.
 
 Alternatively, you can manually set the configuration options to match the contents of the overlay config file.
@@ -197,7 +197,7 @@ Building and running
 
 The Kconfig file of the application contains options to configure the application.
 For example, configure ``CONFIG_POWER_OPTIMIZATION_ENABLE`` to enable power optimization or ``CONFIG_TEMP_USE_EXTERNAL`` to use an external temperature sensor instead of simulated temperature data.
-In |SES|, select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK project` to browse and configure these options.
+In |SES|, select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK project` to browse and configure these options.
 Alternatively, use the command line tool ``menuconfig`` or configure the options directly in :file:`prj.conf`.
 
 .. external_antenna_note_start

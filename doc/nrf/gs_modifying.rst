@@ -62,7 +62,7 @@ In the window that is displayed, you can define compilation options for the proj
 
 .. note::
    These compilation options apply to the application project only.
-   To manage Zephyr and other subsystems, go to :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project`.
+   To manage Zephyr and other subsystems, go to :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
 
 
 SES tags in :file:`CMakeLists.txt`
@@ -130,7 +130,7 @@ Changes are picked up immediately, and you do not need to re-open the project in
 While it is possible to edit the :file:`.config` file directly, you should use SES or a tool like menuconfig or guiconfig to update it.
 These tools present all available options and allow you to select the ones that you need.
 
-To edit the file in SES, select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project`.
+To edit the file in SES, select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
 If your application contains more than one image (see :ref:`ug_multi_image`), you must select the correct target.
 To configure the parent image (the main application), select :guilabel:`menuconfig`.
 The other options allow you to configure the child images.
@@ -220,7 +220,7 @@ To select the build type in SEGGER Embedded Studio:
 
 
 .. note::
-   You can also specify the build type in the :guilabel:`Additional CMake Options` field in :guilabel:`Tools` -> :guilabel:`Options` -> :guilabel:`nRF Connect`.
+   You can also specify the build type in the :guilabel:`Additional CMake Options` field in :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`nRF Connect`.
    However, the changes will only be applied after re-opening the project.
    Reloading the project is not sufficient.
 

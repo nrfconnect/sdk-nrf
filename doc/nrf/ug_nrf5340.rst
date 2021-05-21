@@ -264,7 +264,7 @@ This also creates the network core image.
 
 Follow these steps to program the network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` to the network core when it is included as a child image:
 
-1. Select :guilabel:`File` -> :guilabel:`New Project...`.
+1. Select :guilabel:`File` > :guilabel:`New Project...`.
 
     .. figure:: images/ses_nrf5340_netcore_new_project.png
        :alt: Create New Project menu
@@ -338,14 +338,14 @@ Follow these steps to program the network sample :ref:`zephyr:bluetooth-hci-rpms
    A new project has been created for programming the network core with the network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample`.
 
 #. To program the network sample, the ``hci_rpmsg_nrf5340_netcore`` project must be active.
-   If the ``hci_rpmsg_nrf5340_netcore`` project is not the current active project, then set it as active using :guilabel:`Project` -> :guilabel:`Set Active Project` -> :guilabel:`hci_rpmsg_nrf5340_netcore`.
+   If the ``hci_rpmsg_nrf5340_netcore`` project is not the current active project, then set it as active using :guilabel:`Project` > :guilabel:`Set Active Project` > :guilabel:`hci_rpmsg_nrf5340_netcore`.
 
    .. figure:: images/ses_nrf5340_netcore_set_active.png
      :alt: Set the hci_rpmsg_nrf5340_netcore programming target as active
 
      Set the hci_rpmsg_nrf5340_netcore programming target as active
 
-#. You can now program the network sample using :guilabel:`Target` -> :guilabel:`Download hci_rpmsg_nrf5340_netcore`.
+#. You can now program the network sample using :guilabel:`Target` > :guilabel:`Download hci_rpmsg_nrf5340_netcore`.
 
    .. figure:: images/ses_nrf5340_netcore_flash_active.png
      :alt: Program the network sample hci_rpmsg_nrf5340_netcore
@@ -362,7 +362,7 @@ Follow these steps to program the network sample :ref:`zephyr:bluetooth-hci-rpms
 
 #. After the network core is programmed, make sure to make the application target active again.
 
-   To do this, select :guilabel:`Project` -> :guilabel:`Set Active Project` -> :guilabel:`zephyr/merged.hex`.
+   To do this, select :guilabel:`Project` > :guilabel:`Set Active Project` > :guilabel:`zephyr/merged.hex`.
 
    .. figure:: images/ses_nrf5340_appcore_set_active.png
      :alt: Set the zephyr/merged.hex target as active
