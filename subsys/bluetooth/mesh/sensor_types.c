@@ -223,7 +223,7 @@ static int scalar_encode(const struct bt_mesh_sensor_format *format,
 		if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID)) {
 			raw = type_max - 2;
 		} else if (repr->flags & HAS_UNDEFINED) {
-			raw = repr->flags & HAS_MAX ? type_max : type_max - 1;
+			raw = type_max;
 		} else {
 			return -ERANGE;
 		}
