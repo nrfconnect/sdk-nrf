@@ -205,6 +205,10 @@ Check and configure the following configuration options for the sample:
    This option specifies the time (in seconds) of UART silence before and after the pattern string that is used to exit data mode.
    The default value is 1 second.
 
+.. option:: CONFIG_SLM_SMS - SMS support in SLM
+
+   This option enables additional AT commands for using SMS service.
+
 .. option:: CONFIG_SLM_GPS - GPS support in SLM
 
    This option enables additional AT commands for using GPS service.

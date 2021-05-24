@@ -141,6 +141,13 @@ config SLM_DATAMODE_SILENCE
 #
 # Configurable services
 #
+config SLM_SMS
+	bool "SMS support in SLM"
+	default y
+	select SMS
+	help
+	  Support SMS send/receive in plain text
+
 rsource "src/gps/Kconfig"
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"
