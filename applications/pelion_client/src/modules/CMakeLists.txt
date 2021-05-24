@@ -30,3 +30,6 @@ target_sources_ifdef(CONFIG_NET_L2_OPENTHREAD
 
 target_sources_ifdef(CONFIG_PELION_CLIENT_FACTORY_RESET_REQUEST_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/factory_reset_request.c)
+
+target_sources_ifdef(CONFIG_PELION_DEBUG_TRACE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/pelion_trace.c)
