@@ -15,10 +15,15 @@ if not ZEPHYR_BASE:
     raise FileNotFoundError("ZEPHYR_BASE not defined")
 ZEPHYR_BASE = Path(ZEPHYR_BASE)
 
+ZEPHYR_BUILD = os.environ.get("ZEPHYR_BUILD")
+if not ZEPHYR_BUILD:
+    raise FileNotFoundError("ZEPHYR_BUILD not defined")
+ZEPHYR_BUILD = Path(ZEPHYR_BUILD)
+
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
-# pylint: disable=undefined-variable
+# pylint: disable=undefined-variable,used-before-assignment
 
 # General ----------------------------------------------------------------------
 
@@ -31,6 +36,7 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 extensions.remove("zephyr.doxyrunner")
 extensions = [
     "sphinx.ext.intersphinx",
+    "ncs_cache",
     "external_content",
     "doxyrunner",
 ] + extensions
@@ -76,7 +82,14 @@ external_content_keep = [
     "reference/devicetree/compatibles/**/*",
 ]
 
-# pylint: enable=undefined-variable
+# Options for ncs_cache --------------------------------------------------------
+
+ncs_cache_docset = "zephyr"
+ncs_cache_build_dir = ZEPHYR_BUILD / ".."
+ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
+ncs_cache_manifest = NRF_BASE / "west.yml"
+
+# pylint: enable=undefined-variable,used-before-assignment
 
 
 def setup(app):

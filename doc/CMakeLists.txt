@@ -222,6 +222,7 @@ set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
 set(NRFX_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfx)
 set(TFM_BINARY_DIR ${CMAKE_BINARY_DIR}/tfm)
+set(MCUBOOT_BINARY_DIR ${CMAKE_BINARY_DIR}/mcuboot)
 
 # HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
@@ -314,6 +315,7 @@ add_dependencies(nrf-html-all nrf-versions)
 
 set(mcuboot_env
   NRF_BASE=${NRF_BASE}
+  MCUBOOT_BUILD=${MCUBOOT_BINARY_DIR}
   MCUBOOT_BASE=${MCUBOOT_BASE}
 )
 
@@ -418,7 +420,10 @@ add_custom_target(
   VERBATIM
 )
 
-add_docset(kconfig "")
+set(kconfig_env
+  KCONFIG_BUILD=${KCONFIG_BINARY_DIR}
+)
+add_docset(kconfig "${kconfig_env}")
 add_dependencies(kconfig-html kconfig-content)
 add_dependencies(kconfig-html-all kconfig-content)
 

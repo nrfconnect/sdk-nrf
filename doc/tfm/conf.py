@@ -18,6 +18,11 @@ if not TFM_BASE:
     raise FileNotFoundError("TFM_BASE not defined")
 TFM_BASE = Path(TFM_BASE)
 
+TFM_BUILD = os.environ.get("TFM_BUILD")
+if not TFM_BUILD:
+    raise FileNotFoundError("TFM_BUILD not defined")
+TFM_BUILD = Path(TFM_BUILD)
+
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
@@ -37,6 +42,7 @@ extensions = [
     "m2r2",
     "sphinx.ext.autosectionlabel",
     "sphinxcontrib.plantuml",
+    "ncs_cache",
     "external_content",
 ]
 source_suffix = [".rst", ".md"]
@@ -70,6 +76,14 @@ external_content_contents = [
     (TFM_BASE, "platform/**/*"),
     (TFM_BASE, "tools/**/*"),
 ]
+
+# Options for ncs_cache --------------------------------------------------------
+
+ncs_cache_docset = "tfm"
+ncs_cache_build_dir = TFM_BUILD / ".."
+ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
+ncs_cache_manifest = NRF_BASE / "west.yml"
+
 
 def setup(app):
     app.add_css_file("css/common.css")

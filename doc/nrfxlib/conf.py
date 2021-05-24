@@ -40,6 +40,7 @@ extensions = [
     "breathe",
     "sphinxcontrib.mscgen",
     "inventory_builder",
+    "ncs_cache",
     "external_content",
     "doxyrunner",
 ]
@@ -116,6 +117,13 @@ breathe_separate_member_pages = True
 # Options for external_content -------------------------------------------------
 
 external_content_contents = [(NRFXLIB_BASE, "**/*.rst"), (NRFXLIB_BASE, "**/doc/")]
+
+# Options for ncs_cache --------------------------------------------------------
+
+ncs_cache_docset = "nrfxlib"
+ncs_cache_build_dir = NRFXLIB_BUILD / ".."
+ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
+ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):
