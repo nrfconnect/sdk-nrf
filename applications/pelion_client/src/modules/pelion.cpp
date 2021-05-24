@@ -5,6 +5,7 @@
  */
 
 #include <zephyr.h>
+#include <pal.h>
 
 #include "mbed-cloud-client/MbedCloudClient.h"
 
@@ -26,6 +27,20 @@ static bool objects_created;
 
 static enum pelion_state pelion_state;
 
+static connectionStatusCallback net_status_cb;
+static void *net_cb_arg;
+
+#if defined(CONFIG_PELION_CLIENT_USE_APPLICATION_NETWORK_CALLBACK)
+extern "C" palStatus_t pal_plat_setConnectionStatusCallback(uint32_t interfaceIndex,
+							    connectionStatusCallback callback,
+							    void *arg)
+{
+	net_status_cb = callback;
+	net_cb_arg = arg;
+
+	return PAL_SUCCESS;
+}
+#endif /* CONFIG_PELION_CLIENT_USE_APPLICATION_NETWORK_CALLBACK */
 
 static void set_pelion_state(enum pelion_state state)
 {
@@ -193,6 +208,12 @@ static int pelion_init(void)
 static bool handle_net_state_event(const struct net_state_event *event)
 {
 	net_connected = (event->state == NET_STATE_CONNECTED);
+
+	if (IS_ENABLED(CONFIG_PELION_CLIENT_USE_APPLICATION_NETWORK_CALLBACK)
+	    && net_status_cb) {
+		net_status_cb(net_connected ? PAL_NETWORK_STATUS_CONNECTED :
+			      PAL_NETWORK_STATUS_DISCONNECTED, net_cb_arg);
+	}
 
 	switch (pelion_state) {
 	case PELION_STATE_INITIALIZED:
