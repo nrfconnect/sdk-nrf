@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 
 #include <nfc_t2t_lib.h>
 #include <nfc/ndef/msg.h>

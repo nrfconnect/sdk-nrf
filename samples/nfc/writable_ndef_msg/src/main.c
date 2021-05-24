@@ -14,7 +14,7 @@
  */
 
 #include <zephyr.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <stdbool.h>
 #include <nfc_t4t_lib.h>
 

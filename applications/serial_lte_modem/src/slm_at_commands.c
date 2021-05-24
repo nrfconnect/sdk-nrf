@@ -14,7 +14,7 @@
 #include <init.h>
 #include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 
 #include "slm_util.h"
 #include "slm_at_host.h"

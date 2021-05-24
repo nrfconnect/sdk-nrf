@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/types.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <sys/byteorder.h>
 
 #include <bluetooth/bluetooth.h>

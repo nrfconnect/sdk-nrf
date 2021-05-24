@@ -13,7 +13,7 @@
 #include <net/nrf_cloud.h>
 #include <dk_buttons_and_leds.h>
 #include <modem/lte_lc.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <modem/nrf_modem_lib.h>
 
 #include "aggregator.h"

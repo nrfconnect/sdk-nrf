@@ -18,7 +18,7 @@
 #include <modem/nrf_modem_lib.h>
 #include <dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <drivers/clock_control.h>
 #include <drivers/clock_control/nrf_clock_control.h>
 #include "slm_at_host.h"

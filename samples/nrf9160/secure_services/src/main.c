@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <sys/printk.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <secure_services.h>
 #include <kernel.h>
 #include <pm_config.h>

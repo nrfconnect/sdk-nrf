@@ -21,7 +21,7 @@
 
 #include <zephyr.h>
 #include <zephyr/types.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <sys/__assert.h>
 #include <logging/log_ctrl.h>
 

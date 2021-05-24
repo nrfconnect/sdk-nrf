@@ -20,7 +20,7 @@
 #include <modem/nrf_modem_lib.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/download_client.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <sys/util.h>
 #include <toolchain.h>
 #include <fs/nvs.h>
