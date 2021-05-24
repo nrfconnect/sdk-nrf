@@ -36,6 +36,7 @@ Kconfig*                                  @tejlmand
 /doc/_scripts/                            @carlescufi
 /doc/_static/                             @carlescufi
 /doc/_utils/                              @gmarull
+/doc/cache.yml                            @gmarull
 /doc/CMakeLists.txt                       @carlescufi
 /doc/**/conf.py                           @carlescufi
 /doc/nrf/                                 @carlescufi
