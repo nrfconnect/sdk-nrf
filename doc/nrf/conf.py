@@ -46,6 +46,7 @@ extensions = [
     "sphinx_tabs.tabs",
     "zephyr.html_redirects",
     "zephyr.warnings_filter",
+    "ncs_cache",
     "external_content",
     "doxyrunner",
 ]
@@ -170,6 +171,13 @@ table_from_rows_base_dir = NRF_BASE
 # Options for options_from_kconfig ---------------------------------------------
 
 options_from_kconfig_base_dir = NRF_BASE
+
+# Options for ncs_cache --------------------------------------------------------
+
+ncs_cache_docset = "nrf"
+ncs_cache_build_dir = NRF_BUILD / ".."
+ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
+ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):

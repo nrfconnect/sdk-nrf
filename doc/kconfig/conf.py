@@ -1,5 +1,6 @@
 # Kconfig documentation build configuration file
 
+import os
 from pathlib import Path
 import sys
 
@@ -7,6 +8,11 @@ import sys
 # Paths ------------------------------------------------------------------------
 
 NRF_BASE = Path(__file__).absolute().parent / ".." / ".."
+
+KCONFIG_BUILD = os.environ.get("KCONFIG_BUILD")
+if not KCONFIG_BUILD:
+    raise FileNotFoundError("KCONFIG_BUILD not defined")
+KCONFIG_BUILD = Path(KCONFIG_BUILD)
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
@@ -19,6 +25,10 @@ author = "Nordic Semiconductor"
 # NOTE: use blank space as version to preserve space
 version = "&nbsp;"
 
+sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
+
+extensions = ["ncs_cache"]
+
 # Options for HTML output ------------------------------------------------------
 
 html_theme = "sphinx_ncs_theme"
@@ -29,6 +39,13 @@ html_show_sourcelink = True
 html_show_sphinx = False
 
 html_theme_options = {"docsets": utils.get_docsets("kconfig")}
+
+# Options for ncs_cache --------------------------------------------------------
+
+ncs_cache_docset = "kconfig"
+ncs_cache_build_dir = KCONFIG_BUILD / ".."
+ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
+ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):

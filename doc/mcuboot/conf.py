@@ -17,6 +17,11 @@ if not MCUBOOT_BASE:
     raise FileNotFoundError("MCUBOOT_BASE not defined")
 MCUBOOT_BASE = Path(MCUBOOT_BASE)
 
+MCUBOOT_BUILD = os.environ.get("MCUBOOT_BUILD")
+if not MCUBOOT_BUILD:
+    raise FileNotFoundError("MCUBOOT_BUILD not defined")
+MCUBOOT_BUILD = Path(MCUBOOT_BUILD)
+
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
@@ -28,7 +33,7 @@ version = release = "1.7.99"
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
-extensions = ["sphinx.ext.intersphinx", "recommonmark", "external_content"]
+extensions = ["sphinx.ext.intersphinx", "recommonmark", "ncs_cache", "external_content"]
 source_suffix = [".rst", ".md"]
 master_doc = "wrapper"
 
@@ -56,8 +61,15 @@ if kconfig_mapping:
 
 external_content_contents = [
     (NRF_BASE / "doc" / "mcuboot", "*.rst"),
-    (MCUBOOT_BASE / "docs", "*.md")
+    (MCUBOOT_BASE / "docs", "*.md"),
 ]
+
+# Options for ncs_cache --------------------------------------------------------
+
+ncs_cache_docset = "mcuboot"
+ncs_cache_build_dir = MCUBOOT_BUILD / ".."
+ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
+ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):
