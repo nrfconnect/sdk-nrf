@@ -16,7 +16,7 @@
 #include <nrf_modem.h>
 #endif
 #include <net/aws_iot.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <date_time.h>
 #include <dfu/mcuboot.h>
 #include <cJSON.h>

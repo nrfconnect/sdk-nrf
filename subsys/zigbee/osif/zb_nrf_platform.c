@@ -6,7 +6,7 @@
 
 #include <stdlib.h>
 #include <kernel.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <logging/log.h>
 #include <init.h>
 

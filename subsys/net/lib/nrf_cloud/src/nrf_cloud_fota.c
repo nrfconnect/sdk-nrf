@@ -20,7 +20,7 @@
 #include <logging/log.h>
 #include <sys/util.h>
 #include <settings/settings.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 

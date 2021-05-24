@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <logging/log.h>
 
 #define MODULE util_module

@@ -7,7 +7,7 @@
 #include <ztest.h>
 
 #include "bl_storage.h"
-#include "power/reboot.h"
+#include "sys/reboot.h"
 
 void test_monotonic_counter(void)
 {

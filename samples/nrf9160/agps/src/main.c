@@ -11,7 +11,7 @@
 #include <net/socket.h>
 #include <dk_buttons_and_leds.h>
 #include <drivers/gps.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 
 #include <logging/log.h>
 

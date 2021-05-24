@@ -9,7 +9,7 @@
 #include <pm_config.h>
 #include <nrfx_nvmc.h>
 #include <linker/linker-defs.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <bl_storage.h>
 #include <fw_info.h>
 

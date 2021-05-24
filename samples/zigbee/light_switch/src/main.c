@@ -23,7 +23,7 @@
 
 #if CONFIG_ZIGBEE_FOTA
 #include <zigbee/zigbee_fota.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <dfu/mcuboot.h>
 
 /* LED indicating OTA Client Activity. */

@@ -8,7 +8,7 @@
 #include <version.h>
 #include <string.h>
 #include <shell/shell.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>

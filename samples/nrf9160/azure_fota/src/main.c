@@ -14,7 +14,7 @@
 #include <net/azure_iot_hub.h>
 #include <net/azure_fota.h>
 #include <dfu/mcuboot.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <random/rand32.h>
 
 static K_SEM_DEFINE(network_connected_sem, 0, 1);

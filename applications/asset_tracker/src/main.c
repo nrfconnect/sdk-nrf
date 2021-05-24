@@ -11,7 +11,7 @@
 #include <drivers/gps.h>
 #include <drivers/sensor.h>
 #include <console/console.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <logging/log_ctrl.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <modem/nrf_modem_lib.h>

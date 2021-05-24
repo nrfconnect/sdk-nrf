@@ -16,7 +16,7 @@
 #include <net/aws_jobs.h>
 #include <net/aws_fota.h>
 #include <dfu/mcuboot.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <random/rand32.h>
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
