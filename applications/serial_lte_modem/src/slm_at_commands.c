@@ -26,6 +26,7 @@
 #include "slm_at_cmng.h"
 #endif
 #include "slm_at_icmp.h"
+#include "slm_at_sms.h"
 #include "slm_at_fota.h"
 #if defined(CONFIG_SLM_GPS)
 #include "slm_at_gps.h"
@@ -331,6 +332,11 @@ int handle_at_xcmng(enum at_cmd_type cmd_type);
 /* ICMP commands */
 int handle_at_icmp_ping(enum at_cmd_type cmd_type);
 
+#if defined(CONFIG_SLM_SMS)
+/* SMS commands */
+int handle_at_sms(enum at_cmd_type cmd_type);
+#endif
+
 /* FOTA commands */
 int handle_at_fota(enum at_cmd_type cmd_type);
 
@@ -404,6 +410,11 @@ static struct slm_at_cmd {
 #endif
 	/* ICMP commands */
 	{"AT#XPING", handle_at_icmp_ping},
+
+#if defined(CONFIG_SLM_SMS)
+	/* SMS commands */
+	{"AT#XSMS", handle_at_sms},
+#endif
 
 	/* FOTA commands */
 	{"AT#XFOTA", handle_at_fota},
@@ -510,6 +521,13 @@ int slm_at_init(void)
 		LOG_ERR("ICMP could not be initialized: %d", err);
 		return -EFAULT;
 	}
+#if defined(CONFIG_SLM_GPS)
+	err = slm_at_sms_init();
+	if (err) {
+		LOG_ERR("SMS could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
 	err = slm_at_fota_init();
 	if (err) {
 		LOG_ERR("FOTA could not be initialized: %d", err);
@@ -580,6 +598,12 @@ void slm_at_uninit(void)
 	if (err) {
 		LOG_WRN("ICMP could not be uninitialized: %d", err);
 	}
+#if defined(CONFIG_SLM_GPS)
+	err = slm_at_sms_uninit();
+	if (err) {
+		LOG_WRN("SMS could not be uninitialized: %d", err);
+	}
+#endif
 	err = slm_at_fota_uninit();
 	if (err) {
 		LOG_WRN("FOTA could not be uninitialized: %d", err);

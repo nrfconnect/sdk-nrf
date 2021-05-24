@@ -93,6 +93,7 @@ nRF9160
     * Enabled all SLM services by default.
     * Updated the HTTP client service code to handle chunked HTTP responses.
     * Added data mode to the MQTT Publish service to support JSON-type payload.
+    * Added SMS support, to send/receive SMS in plain text.
 
   * :ref:`at_cmd_parser_readme`:
 
