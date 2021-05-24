@@ -35,7 +35,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
       The Toolchain Manager options after installing the NCS version
 
-#. Select :guilabel:`File` -> :guilabel:`Open nRF Connect SDK Project`.
+#. Select :guilabel:`File` > :guilabel:`Open nRF Connect SDK Project`.
 
     .. figure:: images/ses_open.png
        :alt: Open nRF Connect SDK Project menu
@@ -118,18 +118,18 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    To build and program an application:
 
       a. Select your project in the Project Explorer.
-      #. From the menu, select :guilabel:`Build` -> :guilabel:`Build Solution`.
+      #. From the menu, select :guilabel:`Build` > :guilabel:`Build Solution`.
       #. When the build completes, you can program the sample to a connected development kit:
 
-         * For a single-image application, select :guilabel:`Target` -> :guilabel:`Download zephyr/zephyr.elf`.
-         * For a multi-image application, select :guilabel:`Target` -> :guilabel:`Download zephyr/merged.hex`.
+         * For a single-image application, select :guilabel:`Target` > :guilabel:`Download zephyr/zephyr.elf`.
+         * For a multi-image application, select :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex`.
 
       .. note::
 	   Alternatively, choose the :guilabel:`Build and Debug` option.
 	   :guilabel:`Build and Debug` will build the application and program it when
 	   the build completes.
 
-#. To inspect the details of the code that was programmed and the memory usage, click :guilabel:`Debug` -> :guilabel:`Go`.
+#. To inspect the details of the code that was programmed and the memory usage, click :guilabel:`Debug` > :guilabel:`Go`.
 
    .. note::
    	In a multi-image build, this allows you to debug the source code of your application only.

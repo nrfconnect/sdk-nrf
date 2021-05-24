@@ -39,7 +39,7 @@ See `AWS IoT Developer Guide: Basic Policy Variables`_ and `AWS IoT Developer Gu
 To create a thing for your kit:
 
 1. Log on to the `AWS IoT console`_.
-#. Go to :guilabel:`Secure` -> :guilabel:`Policies` and select :guilabel:`Create a policy`.
+#. Go to :guilabel:`Secure` > :guilabel:`Policies` and select :guilabel:`Create a policy`.
 #. Enter a name and define your policy.
    For testing purposes, you can use the following policy (switch to :guilabel:`Advanced mode` to copy and paste it):
 
@@ -55,7 +55,7 @@ To create a thing for your kit:
              }
           ]
        }
-#. Go to :guilabel:`Manage` -> :guilabel:`Things` and select :guilabel:`Register a thing` or :guilabel:`Create` (depending on whether you already have a thing registered).
+#. Go to :guilabel:`Manage` > :guilabel:`Things` and select :guilabel:`Register a thing` or :guilabel:`Create` (depending on whether you already have a thing registered).
 #. Select :guilabel:`Create a single thing`.
 #. Enter a name.
    The default name used by the sample is ``nrf-IMEI``, where *IMEI* is the IMEI number of your kit.
@@ -198,7 +198,7 @@ After programming the sample to your development kit, test it by performing the 
       [mqtt_evt_handler:129] MQTT client connected!
       [00:00:14.106,140] <inf> aws_jobs: Subscribe: $aws/things/nrf-aws-fota/jobs/notify-next
 
-#. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` -> :guilabel:`Things`, and select your thing.
+#. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` > :guilabel:`Things`, and select your thing.
 #. Go to :guilabel:`Shadow` and confirm that the application version (``nrfcloud__dfu_v1__app_v``) is the one that you configured for the sample.
 #. In the :ref:`configuring`, change the application version.
    Then rebuild the application, but do not program it.
@@ -226,7 +226,7 @@ After programming the sample to your development kit, test it by performing the 
 #. Log on to the `AWS S3 console`_.
 #. Select the bucket, click :guilabel:`Upload`, and select your job document.
    Use the default settings when uploading the file.
-#. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` -> :guilabel:`Jobs`, and select :guilabel:`Create a job`.
+#. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` > :guilabel:`Jobs`, and select :guilabel:`Create a job`.
 #. Click :guilabel:`Create custom job` and enter a unique job ID.
    Select your device and the job file that you uploaded to AWS S3.
    Use the default settings for all other options.
@@ -249,7 +249,7 @@ After programming the sample to your development kit, test it by performing the 
 
 
 #. When the kit resets, observe that the sample prints the new application version.
-#. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` -> :guilabel:`Things`, and select your thing.
+#. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` > :guilabel:`Things`, and select your thing.
 #. Go to :guilabel:`Shadow` and confirm that the application version has updated.
 
 

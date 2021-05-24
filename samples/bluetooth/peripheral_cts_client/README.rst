@@ -60,7 +60,7 @@ After programming the sample to your development kit, you can test it with `nRF 
 #. Go to the :guilabel:`Connection Map` tab.
    Click the dongle configuration and select :guilabel:`Security parameters`.
    Check :guilabel:`Perform Bonding`, and click :guilabel:`Apply`.
-#. Set the value of :guilabel:`Current Time Service` -> :guilabel:`Current Time` to ``C2 07 0B 0F 0C 22 38 06 80 02`` and click Write.
+#. Set the value of :guilabel:`Current Time Service` > :guilabel:`Current Time` to ``C2 07 0B 0F 0C 22 38 06 80 02`` and click Write.
 #. Connect to the device from nRF Connect. The device is advertising as "Nordic_CTS".
 #. Wait until the bond is established. Verify that the UART data is received as follows::
 
@@ -92,7 +92,7 @@ After programming the sample to your development kit, you can test it with `nRF 
           External update  1
           Manual update    0
 
-#. Change the value of :guilabel:`Current Time Service` -> :guilabel:`Current Time` to ``C2 07 0B 0F 0D 25 2A 06 FE 08``. It generates a notification. Verify that the current time printed on the UART matches the time that was input::
+#. Change the value of :guilabel:`Current Time Service` > :guilabel:`Current Time` to ``C2 07 0B 0F 0D 25 2A 06 FE 08``. It generates a notification. Verify that the current time printed on the UART matches the time that was input::
 
       Current Time:
 

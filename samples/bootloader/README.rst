@@ -102,7 +102,7 @@ If you choose to do so, use the Python scripts located in the :file:`scripts/boo
 
        This will erase the whole chip before programming the new image.
 
-     * In |SES|, choose :guilabel:`Target` -> :guilabel:`Connect J-Link` and then :guilabel:`Target` -> :guilabel:`Erase All` to erase the whole chip.
+     * In |SES|, choose :guilabel:`Target` > :guilabel:`Connect J-Link` and then :guilabel:`Target` > :guilabel:`Erase All` to erase the whole chip.
 
    * The public key hash cannot contain half-words with the value ``0xFFFF``, because half-words are writeable when they are ``0xFFFF``, so such hashes cannot be guaranteed to be immutable.
      The bootloader will refuse to boot if any hash contains a half-word with the value ``0xFFFF``.
@@ -153,8 +153,8 @@ Complete the following steps to add the bootloader sample as a child image to yo
 
 #. Enable Secure Boot by running ``menuconfig`` on your application:
 
-   a. Select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK project`.
-   #. Go to :guilabel:`Modules` -> :guilabel:`Nordic nRF Connect` -> :guilabel:`Bootloader` and set :guilabel:`Use Secure Bootloader` to enable :option:`CONFIG_SECURE_BOOT`.
+   a. Select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK project`.
+   #. Go to :guilabel:`Modules` > :guilabel:`Nordic nRF Connect` > :guilabel:`Bootloader` and set :guilabel:`Use Secure Bootloader` to enable :option:`CONFIG_SECURE_BOOT`.
    #. Under :guilabel:`Private key PEM file` (:option:`CONFIG_SB_SIGNING_KEY_FILE`), enter the path to the private key that you created.
       If you choose to run the sample with default debug keys, you can skip this step.
 
@@ -168,9 +168,9 @@ Complete the following steps to add the bootloader sample as a child image to yo
 
    #. Click :guilabel:`Configure`.
 
-#. Select :guilabel:`Build` -> :guilabel:`Build Solution` to compile your application.
+#. Select :guilabel:`Build` > :guilabel:`Build Solution` to compile your application.
    The build process creates two images, one for the bootloader and one for the application, and merges them together.
-#. Select :guilabel:`Build` -> :guilabel:`Build and Run` to program the resulting image to your device.
+#. Select :guilabel:`Build` > :guilabel:`Build and Run` to program the resulting image to your device.
 
 Building on the command line
 ============================

@@ -74,7 +74,7 @@ Testing with an iOS device
 
 #. |connect_terminal_specific|
 #. Reset the kit.
-#. Select the device in the iOS settings -> Bluetooth menu and connect.
+#. Select the device in the iOS settings Bluetooth menu and connect.
 #. Observe that notifications that are displayed in the iOS notification tab also show up on the UART from the sample.
 #. Press **Button 1** to retrieve the notification attributes and observe that you receive, among other information, the app identifier for the last received notification.
    For example, if you got a notification from the Calendar app and request the app identifier, it is "com.apple.mobilecal".
