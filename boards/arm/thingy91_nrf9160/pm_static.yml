@@ -12,15 +12,12 @@ mcuboot_pad:
   size: 0x200
 mcuboot_primary:
   address: 0xc000
-  orig_span: &id001 [spm, mcuboot_pad, app]
-  sharers: 0x1
   size: 0x69000
-  span: *id001
+  span: [spm, mcuboot_pad, app]
 mcuboot_primary_app:
   address: 0xc200
-  orig_span: &id002 [app, spm]
   size: 0x68e00
-  span: *id002
+  span: [app, spm]
 mcuboot_scratch:
   address: 0xde000
   placement:

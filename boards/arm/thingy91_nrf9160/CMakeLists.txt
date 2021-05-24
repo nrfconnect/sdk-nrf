@@ -12,4 +12,9 @@ endif()
 if(CONFIG_BOARD_THINGY91_NRF9160NS)
 	zephyr_library()
 	zephyr_library_sources(board_nonsecure.c)
+
+	# Use static partition layout to ensure the partition layout remains
+	# unchanged after DFU. This needs to be made globally available
+	# because it is used in other CMake files.
+	set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/pm_static.yml CACHE INTERNAL "")
 endif()
