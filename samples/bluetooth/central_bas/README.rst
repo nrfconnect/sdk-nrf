@@ -121,7 +121,7 @@ Testing with nRF Connect for Desktop
       Reading BAS value:
       [xx.xx.xx.xx.xx.xx (random)]: Battery read: 100%
 
-#. Change the value in :guilabel:`Battery Service` -> :guilabel:`Battery Level` to generate notifications.
+#. Change the value in :guilabel:`Battery Service` > :guilabel:`Battery Level` to generate notifications.
 #. Observe that the notification information is displayed::
 
       [xx.xx.xx.xx.xx.xx (random)]: Battery notification: 99%

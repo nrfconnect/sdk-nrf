@@ -54,7 +54,7 @@ See `Setting up an AWS S3 bucket`_ for instructions.
 
 To specify the location in |SES|:
 
-1. Select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project`.
+1. Select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
 #. Navigate to :guilabel:`HTTP application update sample` and specify the download hostname (``CONFIG_DOWNLOAD_HOST``) and the file to download (``CONFIG_DOWNLOAD_FILE``).
 #. Click :guilabel:`Configure` to save the configuration.
 
@@ -79,7 +79,7 @@ Testing
 After programming the sample to your development kit, test it by performing the following steps:
 
 1. Configure the application version to be 2.
-   To do so, either change ``CONFIG_APPLICATION_VERSION`` to 2 in the :file:`prj.conf` file, or select :guilabel:`Project` -> :guilabel:`Configure nRF Connect SDK Project` -> :guilabel:`HTTP application update sample` in |SES| and change the value for :guilabel:`Application version`.
+   To do so, either change ``CONFIG_APPLICATION_VERSION`` to 2 in the :file:`prj.conf` file, or select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project` > :guilabel:`HTTP application update sample` in |SES| and change the value for :guilabel:`Application version`.
    Then rebuild the application.
 #. Upload the file :file:`update.bin` to the server you have chosen.
    To upload the file on nRF Connect for Cloud, click :guilabel:`Upload` for the firmware URL that you generated earlier.

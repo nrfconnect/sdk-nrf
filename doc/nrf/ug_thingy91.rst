@@ -231,7 +231,7 @@ Building and programming using SEGGER Embedded Studio
 #. To build the sample or application:
 
    a. Select your project in the Project Explorer.
-   #. From the menu, select :guilabel:`Build` -> :guilabel:`Build Solution`.
+   #. From the menu, select :guilabel:`Build` > :guilabel:`Build Solution`.
       This builds the project.
 
    You can find the output of the build, which includes the merged HEX file containing both the application and the SPM, in the ``zephyr`` subfolder in the build directory.
@@ -253,8 +253,8 @@ Building and programming using SEGGER Embedded Studio
 .. prog_extdebugprobe_end
 ..
 
-   e. In SES, select :guilabel:`Target` -> :guilabel:`Connect J-Link`.
-   #. Select :guilabel:`Target` -> :guilabel:`Download zephyr/merged.hex` to program the sample or application onto Thingy:91.
+   e. In SES, select :guilabel:`Target` > :guilabel:`Connect J-Link`.
+   #. Select :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex` to program the sample or application onto Thingy:91.
    #. The device will reset and run the programmed sample or application.
 
 .. _build_pgm_cmdline:

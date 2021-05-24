@@ -176,9 +176,8 @@ Pay attention to the following rules when highlighting content:
 
 * GUI
 
-  * When writing about a sequence of GUI elements, use -> between them.
-    Do not use > or other markup.
-    For example: "Select :guilabel:`File` -> :guilabel:`Save as...`".
+  * When writing about a sequence of GUI elements, use a > between them.
+    For example: "Select :guilabel:`File` > :guilabel:`Save as...`".
 
 * Filenames and titles
 
