@@ -41,18 +41,18 @@ static const struct ml_result_led_effect ml_result_led_effects[] = {
 	},
 	{
 		.label = ANOMALY_LABEL,
-		.effect = LED_EFFECT_LED_ON_GO_OFF(LED_COLOR(255, 0, 255), 2500, 500),
+		.effect = LED_EFFECT_LED_ON(LED_COLOR(255, 0, 255)),
 	},
 	{
 		.label = "updown",
-		.effect = LED_EFFECT_LED_ON_GO_OFF(LED_COLOR(0, 255, 0), 2500, 500),
+		.effect = LED_EFFECT_LED_ON(LED_COLOR(0, 255, 0)),
 	},
 	{
 		.label = "rotate",
-		.effect = LED_EFFECT_LED_ON_GO_OFF(LED_COLOR(255, 0, 0), 2500, 500),
+		.effect = LED_EFFECT_LED_ON(LED_COLOR(255, 0, 0)),
 	},
 	{
 		.label = "tap",
-		.effect = LED_EFFECT_LED_ON_GO_OFF(LED_COLOR(0, 0, 255), 2500, 500),
+		.effect = LED_EFFECT_LED_ON(LED_COLOR(0, 0, 255)),
 	},
 };
