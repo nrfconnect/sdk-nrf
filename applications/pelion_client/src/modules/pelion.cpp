@@ -140,6 +140,8 @@ static void complete_objects_creation(void)
 
 static int pelion_init(void)
 {
+	cloud_client.init();
+
 	cloud_client.on_error(on_client_error);
 	cloud_client.on_registered(on_client_registered);
 	cloud_client.on_unregistered(on_client_unregistered);
@@ -149,8 +151,6 @@ static int pelion_init(void)
 	cloud_client.set_update_authorize_priority_handler(on_update_authorize_priority);
 	cloud_client.set_update_progress_handler(on_update_progress);
 #endif
-
-	cloud_client.init();
 
 	set_pelion_state(PELION_STATE_INITIALIZED);
 
