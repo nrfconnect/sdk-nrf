@@ -4,9 +4,17 @@ sample:
 tests:
   samples.openthread.coap_client:
     build_only: true
-    build_on_all: true
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
     tags: ci_build
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
+      - nrf5340dk_nrf5340_cpuapp
+  samples.openthread.coap_client.mtd.multiprotocol_ble:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: OVERLAY_CONFIG=overlay-mtd.conf;overlay-multiprotocol_ble.conf
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
