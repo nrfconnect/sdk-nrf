@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SLM_NRF52_DFU
+	bool "NRF52 DFU support in SLM"
+	select DOWNLOAD_CLIENT
+
+if (SLM_NRF52_DFU)
+
+config SLM_DFU_SOCKET_RETRIES
+	int "Number of retries for socket-related download issues"
+	default 2
+
+config SLM_DFU_INIT_PACKET_SZ
+	int "Size of buffer used for store init packet"
+	default 512
+
+config SLM_DFU_FLASH_BUF_SZ
+	int "Size of buffer used for flash write operations"
+	default 512
+	help
+	  Buffer size must be aligned to the minimal flash write block size
+
+endif # SLM_NRF52_DFU
