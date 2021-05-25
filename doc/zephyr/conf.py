@@ -28,7 +28,12 @@ locals().update(conf)
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
-extensions.extend(["sphinx.ext.intersphinx", "external_content"])
+extensions.remove("zephyr.doxyrunner")
+extensions = [
+    "sphinx.ext.intersphinx",
+    "external_content",
+    "doxyrunner",
+] + extensions
 
 # Options for HTML output ------------------------------------------------------
 
