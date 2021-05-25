@@ -81,7 +81,7 @@ void main(void)
 	struct bt_le_oob oob_local;
 	int err;
 
-	printk("Starting Direction Finding periodic advertising Beacon Demo\n");
+	printk("Starting Connectionless Beacon Demo\n");
 
 	/* Initialize the Bluetooth Subsystem */
 	printk("Bluetooth initialization...");

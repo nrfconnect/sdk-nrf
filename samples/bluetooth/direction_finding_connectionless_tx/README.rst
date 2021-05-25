@@ -7,18 +7,7 @@ Bluetooth: Direction finding connectionless beacon
    :local:
    :depth: 2
 
-Overview
-********
-
-The direction finding connectionless beacon sample demonstrates Bluetooth LE Direction Finding transmission.
-It uses the Constant Tone Extension (CTE), that is transmitted with periodic advertising PDUs.
-
-The sample supports two Direction Finding modes:
-
-* Angle of Arrival
-* Angle of Departure
-
-By default, both modes are available in the sample.
+The direction finding connectionless beacon sample demonstrates Bluetooth LE direction finding transmission.
 
 Requirements
 ************
@@ -29,26 +18,38 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf52833dk_nrf52833
 
-The sample also requires an antenna matrix when operating in Angle of Departure mode.
+The sample also requires an antenna matrix when operating in angle of departure mode.
 It can be a Nordic Semiconductor design 12 patch antenna matrix, or any other antenna matrix.
+
+Overview
+********
+
+The direction finding connectionless beacon sample application uses Constant Tone Extension (CTE), that is transmitted with periodic advertising PDUs.
+
+The sample supports two direction finding modes:
+
+* angle of arrival (AoA)
+* angle of departure (AoD)
+
+By default, both modes are available in the sample.
 
 Configuration
 *************
 
 |config|
 
-Angle of Arrival mode
+Angle of arrival mode
 =====================
 
-To build this sample with Angle of Arrival mode only, set ``OVERLAY_CONFIG`` to :file:`overlay-aoa.conf`.
+To build this sample with angle of arrival mode only, set ``OVERLAY_CONFIG`` to :file:`overlay-aoa.conf`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
-Antenna matrix configuration for Angle of Departure mode
+Antenna matrix configuration for angle of departure mode
 ========================================================
 
-To use this sample when Angle of Departure mode is enabled, additional configuration of GPIOs is required to control the antenna array.
+To use this sample when angle of departure mode is enabled, additional configuration of GPIOs is required to control the antenna array.
 Example of such configuration is provided in a devicetree overlay file :file:`nrf52833dk_nrf52833.overlay`.
 
 The overlay file provides the information about which GPIOs should be used by the Radio peripheral to switch between antenna patches during the CTE transmission in the AoD mode.
@@ -57,7 +58,7 @@ At least two GPIOs must be provided to enable antenna switching.
 The GPIOs are used by the Radio peripheral in order given by the ``dfegpio#-gpios`` properties.
 The order is important because it affects mapping of the antenna switching patterns to GPIOs (see `Antenna patterns`_).
 
-To successfully use the Direction Finding beacon when the AoD mode is enabled, provide the following data related to antenna matrix design:
+To successfully use the direction finding beacon when the AoD mode is enabled, provide the following data related to antenna matrix design:
 
 * Provide the GPIO pins to ``dfegpio#-gpios`` properties in :file:`nrf52833dk_nrf52833.overlay` file
 * Provide the default antenna that will be used to transmit PDU ``dfe-pdu-antenna`` property in :file:`nrf52833dk_nrf52833.overlay` file
@@ -125,7 +126,7 @@ After programming the sample to your development kit, test it by performing the 
 1. |connect_terminal_specific|
 #. In the terminal window, check for information similar to the following::
 
-      Starting Direction Finding periodic advertising Beacon Demo
+      Starting Connectionless Beacon Demo
       Bluetooth initialization...success
       Advertising set create...success
       Update CTE params...success
