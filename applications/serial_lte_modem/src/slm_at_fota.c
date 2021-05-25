@@ -26,8 +26,6 @@ LOG_MODULE_REGISTER(slm_fota, CONFIG_SLM_LOG_LEVEL);
 #define SCHEMA_HTTPS	"https"
 #define URI_HOST_MAX	64
 
-#define APN_MAX		32
-
 /* Some features need fota_download update */
 #define FOTA_FUTURE_FEATURE	0
 

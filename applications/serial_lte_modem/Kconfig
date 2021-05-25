@@ -146,6 +146,7 @@ rsource "src/mqtt_c/Kconfig"
 rsource "src/http_c/Kconfig"
 rsource "src/twi/Kconfig"
 rsource "src/gpio/Kconfig"
+rsource "src/dfu/Kconfig"
 
 module = SLM
 module-str = serial modem

@@ -28,4 +28,7 @@
 #define SLM_MAX_PAYLOAD      UDP_MAX_PAYLOAD_IPV4
 #define SLM_MAX_PAYLOAD6     UDP_MAX_PAYLOAD_IPV6
 
+#define SLM_NRF52_BLK_SIZE   4096 /** nRF52 flash block size for write operation */
+#define SLM_NRF52_BLK_TIME   2000 /** nRF52 flash block write time in millisecond (1.x second) */
+
 #endif /* SLM_AT_DEFINES_ */

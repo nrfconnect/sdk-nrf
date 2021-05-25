@@ -227,7 +227,7 @@ static void handle_nrf_modem_lib_init_ret(void)
 		break;
 	case MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case MODEM_DFU_RESULT_INTERNAL_ERROR:
-		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failiure", ret);
+		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", ret);
 		fota_status = FOTA_STATUS_ERROR;
 		fota_info = ret;
 		break;
@@ -332,8 +332,7 @@ int main(void)
 
 	/* Init and load settings */
 	if (slm_settings_init() != 0) {
-		LOG_ERR("Failed to init slm settings");
-		return -EAGAIN;
+		LOG_WRN("Failed to init slm settings");
 	}
 	/* Post-FOTA handling */
 	if (fota_stage != FOTA_STAGE_INIT) {
