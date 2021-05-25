@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
-static uint8_t mcuboot_buf[CONFIG_APP_MCUBOOT_FLASH_BUF_SZ];
+static uint8_t mcuboot_buf[CONFIG_APP_MCUBOOT_FLASH_BUF_SZ] __aligned(4);
 #endif
 
 static int image_type;
