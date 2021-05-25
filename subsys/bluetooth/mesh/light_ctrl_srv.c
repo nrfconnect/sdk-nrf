@@ -561,9 +561,9 @@ static void reg_step(struct k_work *work)
 
 		srv->reg.prev = output;
 		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
-		light_set(srv, light_to_repr(output, LINEAR), REG_INT);
+		light_set(srv, light_to_repr(output, LINEAR), 0);
 	} else if (atomic_test_and_clear_bit(&srv->flags, FLAG_REGULATOR)) {
-		light_set(srv, light_to_repr(lvl, LINEAR), REG_INT);
+		light_set(srv, light_to_repr(lvl, LINEAR), 0);
 	}
 }
 #endif
