@@ -213,21 +213,14 @@ set(GEN_DEVICETREE_REST_ZEPHYR_DOCSET " ")
 set(MODULES_EXT_ROOT ${NRF_BASE})
 add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
 
-add_custom_target(
-  zephyr-html-all
-  DEPENDS
-    html
-)
-add_custom_target(
-  zephyr-html
-  DEPENDS
-    html
-)
-add_custom_target(
-  zephyr
-  DEPENDS
-    zephyr-html
-)
+add_custom_target(zephyr)
+add_dependencies(zephyr html)
+
+add_custom_target(zephyr-html)
+add_dependencies(zephyr-html html)
+
+add_custom_target(zephyr-html-all)
+add_dependencies(zephyr-html-all html)
 
 set_target_properties(
   zephyr-html zephyr-html-all
@@ -379,15 +372,13 @@ add_custom_target(
         ${SPHINXOPTS_EXTRA}
         ${KCONFIG_RST_OUT}
         ${KCONFIG_OUTPUT}
-  DEPENDS kconfig-content
   USES_TERMINAL
 )
 
-add_custom_target(
-  kconfig-html-all
-  DEPENDS
-    kconfig-html
-)
+add_dependencies(kconfig-html kconfig-content)
+
+add_custom_target(kconfig-html-all)
+add_dependencies(kconfig-html-all kconfig-html)
 
 set_target_properties(
   kconfig-html kconfig-html-all
@@ -404,15 +395,17 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E copy ${NRF_BASE}/doc/versions.json ${HTML_DIR}
 )
 
+# FIXME: remove once Zephyr CMake is taken out
+add_dependencies(html kconfig-html-all)
+
 add_dependencies(zephyr-html-all kconfig-html-all)
 add_dependencies(mcuboot-html-all kconfig-html-all)
 add_dependencies(nrfxlib-inventory-all kconfig-html-all)
 add_dependencies(nrf-html-all nrfxlib-inventory-all kconfig-html-all)
 add_dependencies(nrfxlib-html-all nrf-html-all)
 
-add_custom_target(
-  build-all ALL
-  DEPENDS
+add_custom_target(build-all ALL)
+add_dependencies(build-all
     copy-extra-content
     nrf-html-all
     nrfxlib-html-all
@@ -421,9 +414,8 @@ add_custom_target(
     kconfig-html-all
 )
 
-add_custom_target(
-  linkcheck
-  DEPENDS
+add_custom_target(linkcheck)
+add_dependencies(linkcheck
     nrf-linkcheck
     nrfxlib-linkcheck
     mcuboot-linkcheck
