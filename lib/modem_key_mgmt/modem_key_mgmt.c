@@ -90,19 +90,13 @@ static int write_at_cmd_with_cme_enabled(char *cmd, char *buf, size_t buf_len,
 	}
 
 	if (!cmee_was_active) {
-		err = cmee_enable();
-		if (err) {
-			return err;
-		}
+		cmee_enable();
 	}
 
 	err = at_cmd_write(cmd, buf, buf_len, state);
 
 	if (!cmee_was_active) {
-		err = cmee_disable();
-		if (err) {
-			return err;
-		}
+		cmee_disable();
 	}
 
 	return err;
