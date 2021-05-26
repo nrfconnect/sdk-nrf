@@ -35,6 +35,7 @@ enum flags {
 	FLAG_STORE_STATE,
 	FLAG_CTRL_SRV_MANUALLY_ENABLED,
 	FLAG_STARTED,
+	FLAG_RESUME_TIMER,
 };
 
 enum stored_flags {
@@ -92,6 +93,16 @@ static void store(struct bt_mesh_light_ctrl_srv *srv, enum flags kind)
 static bool is_enabled(const struct bt_mesh_light_ctrl_srv *srv)
 {
 	return srv->lightness->ctrl == srv;
+}
+
+static void schedule_resume_timer(struct bt_mesh_light_ctrl_srv *srv)
+{
+	if (CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY) {
+		k_work_reschedule(
+			&srv->timer,
+			K_SECONDS(CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY));
+		atomic_set_bit(&srv->flags, FLAG_RESUME_TIMER);
+	}
 }
 
 static uint32_t delay_remaining(struct bt_mesh_light_ctrl_srv *srv)
@@ -471,6 +482,7 @@ static void prolong(struct bt_mesh_light_ctrl_srv *srv)
 
 static void ctrl_enable(struct bt_mesh_light_ctrl_srv *srv)
 {
+	atomic_clear_bit(&srv->flags, FLAG_RESUME_TIMER);
 	srv->lightness->ctrl = srv;
 	BT_DBG("Light Control Enabled");
 	transition_start(srv, LIGHT_CTRL_STATE_STANDBY, 0);
@@ -490,6 +502,8 @@ static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	srv->reg.i = 0;
 #endif
+
+	BT_DBG("Light Control Disabled");
 
 	/* If any of these cancel calls fail, their handler will exit early on
 	 * their is_enabled() checks:
@@ -578,6 +592,11 @@ static void timeout(struct k_work *work)
 		CONTAINER_OF(work, struct bt_mesh_light_ctrl_srv, timer.work);
 
 	if (!is_enabled(srv)) {
+		if (CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY &&
+		    atomic_test_and_clear_bit(&srv->flags, FLAG_RESUME_TIMER)) {
+			BT_DBG("Resuming LC server");
+			ctrl_enable(srv);
+		}
 		return;
 	}
 
@@ -1449,6 +1468,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 		};
 
 		ctrl_disable(srv);
+		schedule_resume_timer(srv);
 		lightness_srv_change_lvl(srv->lightness, NULL, &set, &status);
 	}
 }
@@ -1567,6 +1587,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *model)
 		} else {
 			lightness_on_power_up(srv->lightness);
 			ctrl_disable(srv);
+			schedule_resume_timer(srv);
 		}
 
 		/* PTS Corner case: If the device restarts while in the On state
@@ -1584,6 +1605,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *model)
 		} else {
 			lightness_on_power_up(srv->lightness);
 			ctrl_disable(srv);
+			schedule_resume_timer(srv);
 		}
 		store(srv, FLAG_STORE_STATE);
 		break;
@@ -1737,6 +1759,10 @@ int bt_mesh_light_ctrl_srv_enable(struct bt_mesh_light_ctrl_srv *srv)
 int bt_mesh_light_ctrl_srv_disable(struct bt_mesh_light_ctrl_srv *srv)
 {
 	atomic_clear_bit(&srv->flags, FLAG_CTRL_SRV_MANUALLY_ENABLED);
+
+	/* Restart resume timer even if the server has already been disabled: */
+	schedule_resume_timer(srv);
+
 	if (!is_enabled(srv)) {
 		return -EALREADY;
 	}
