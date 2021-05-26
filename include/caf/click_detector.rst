@@ -60,7 +60,7 @@ To do so, complete the following steps:
 Implementation details
 **********************
 
-Tracing of key states is implemented using a periodically submitted work (:c:struct:`k_delayed_work`).
+Tracing of key states is implemented using a periodically submitted work (:c:struct:`k_work_delayable`).
 The work updates the states of traced keys and sends ``click_event`` when one of the `Click types`_ is recorded.
 The work is not submitted if there is no key for which the state should be updated.
 

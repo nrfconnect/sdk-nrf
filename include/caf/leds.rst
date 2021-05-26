@@ -167,7 +167,7 @@ An example may be an LED that is blinking or breathing with a given color.
 Such LED behavior is referred to as *LED effect*.
 
 The LED color is achieved by setting the proper pulse widths for the PWM signals.
-To achieve the desired LED effect, colors for the given LED are periodically updated using work (:c:struct:`k_delayed_work`).
+To achieve the desired LED effect, colors for the given LED are periodically updated using work (:c:struct:`k_work_delayable`).
 One work automatically updates the color of a single LED.
 
 If the application goes to the error state, the LEDs are used to indicate error.

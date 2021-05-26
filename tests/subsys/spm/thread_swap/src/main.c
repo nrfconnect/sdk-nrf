@@ -33,7 +33,7 @@ void test_spm_service_thread_swap1(void)
 	 */
 	k_work_init_delayable(&interrupting_work, work_func);
 	err = k_work_reschedule(&interrupting_work, K_MSEC(10));
-	zassert_equal(0, err, "k_delayed_work failed: %d\n", err);
+	zassert_equal(0, err, "k_work_reschedule failed: %d\n", err);
 
 	/* Call into the secure service which will be interrupted. If the
 	 * scheduler is locked before entering secure services, it will prevent

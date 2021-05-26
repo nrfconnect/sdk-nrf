@@ -40,7 +40,7 @@ Enabling this option increases the power consumption - the connection latency is
 Implementation details
 **********************
 
-The |ble_latency| uses delayed works (:c:struct:`k_delayed_work`) to control the connection latency and trigger the security timeout.
+The |ble_latency| uses delayed works (:c:struct:`k_work_delayable`) to control the connection latency and trigger the security timeout.
 
 .. note::
    The module does not request an increase in the connection latency until the connection is secured.
