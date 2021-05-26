@@ -38,6 +38,8 @@ nRF9160
 
     * Integration of Memfault SDK into |NCS|.
 
+  * :ref:`memfault_sample` sample implementing :ref:`mod_memfault` module and showing how to use Memfault SDK functionality in an application.
+
 
 * Updated:
 
