@@ -68,8 +68,8 @@ When the Light LC Server model controls a Light Lightness Server, all nodes shou
 .. figure:: /images/bt_mesh_light_ctrl_nodes.svg
    :alt: Light Lightness Control Server node organization
 
-The dimmer devices that want to override the light level of the Lightness Server can publish directly to the Lightness Server, but the Light LC Server will override the changes on the next state transition.
-To make permanent changes to the light level for each state, change the Light LC Server's configuration with the :ref:`bt_mesh_light_ctrl_cli_readme` model.
+The dimmer devices that want to override the light level of the Lightness Server can publish directly to the Lightness Server.
+This disengages the Light LC Server, and the Lightness Server operates independently until the Light LC Server is explicitly re-enabled.
 
 .. _bt_mesh_light_ctrl_srv_composition_state_machine:
 
@@ -121,6 +121,19 @@ If the On event is triggered while in the On state, the timer is reset, and the 
 
 .. note::
     The state machine only works while the Light LC Server is enabled, and it always starts in the Standby state.
+
+Resuming the state machine operation
+------------------------------------
+
+Whenever something but the Light LC Server interacts with the controlled Lightness Server, the Light LC Server disables its state machine, and the Lightness Server starts running independently.
+To resume the state machine operation, the Light LC Server must be explicitly re-enabled.
+
+To avoid having a Lightness Server running independently forever, the Light LC Server implements a resume timer that lets the Light LC Server regain control after being disabled for a certain number of seconds.
+The resume timer can be configured with the :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY` option, and is disabled by default.
+
+.. note::
+    The resume timer does not exist in the Bluetooth mesh specification, and may become incompatible with future specification changes.
+    Although it does not break the specification or qualification tests in the current iteration of the Bluetooth mesh specification, its behavior may be unexpected for third party devices, and should be used with caution.
 
 State machine outputs
 ---------------------

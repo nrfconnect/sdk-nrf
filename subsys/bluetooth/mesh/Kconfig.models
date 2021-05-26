@@ -463,6 +463,13 @@ config BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL
 	  be disabled while fading to Standby in manual mode, so making the
 	  manual mode time shorter than this has no effect.
 
+config BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY
+	int "Resume delay (seconds)"
+	default 0
+	help
+	  Time (in seconds) before re-enabling the Light LC Server control after
+	  it has been disabled, or 0 to disable the resume timer.
+
 comment "Light levels"
 
 config BT_MESH_LIGHT_CTRL_SRV_LVL_ON
