@@ -103,19 +103,16 @@ static int publish_get_payload(struct mqtt_client *c, size_t length)
 
 /**@brief Function to handle received publish event.
  */
-static int handle_mqtt_publish_evt(struct mqtt_client *const c,
-					const struct mqtt_evt *evt)
+static int handle_mqtt_publish_evt(struct mqtt_client *const c, const struct mqtt_evt *evt)
 {
 	int ret;
 
-	ret = publish_get_payload(c,
-				evt->param.publish.message.payload.len);
+	ret = publish_get_payload(c, evt->param.publish.message.payload.len);
 	if (ret < 0) {
 		return ret;
 	}
 
-	if (slm_util_hex_check(payload_buf,
-				evt->param.publish.message.payload.len)) {
+	if (slm_util_hex_check(payload_buf, evt->param.publish.message.payload.len)) {
 		int size = evt->param.publish.message.payload.len * 2;
 		char data_hex[size];
 
@@ -125,7 +122,7 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c,
 		if (ret < 0) {
 			return ret;
 		}
-		sprintf(rsp_buf, "#XMQTTMSG: %d,%d,%d\r\n",
+		sprintf(rsp_buf, "\r\n#XMQTTMSG: %d,%d,%d\r\n",
 			DATATYPE_HEXADECIMAL,
 			evt->param.publish.message.topic.topic.size,
 			ret);
@@ -136,7 +133,7 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c,
 		rsp_send(data_hex, ret);
 		rsp_send("\r\n", 2);
 	} else {
-		sprintf(rsp_buf, "#XMQTTMSG: %d,%d,%d\r\n",
+		sprintf(rsp_buf, "\r\n#XMQTTMSG: %d,%d,%d\r\n",
 			DATATYPE_PLAINTEXT,
 			evt->param.publish.message.topic.topic.size,
 			evt->param.publish.message.payload.len);
@@ -154,8 +151,7 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c,
 
 /**@brief MQTT client event handler
  */
-void mqtt_evt_handler(struct mqtt_client *const c,
-		      const struct mqtt_evt *evt)
+void mqtt_evt_handler(struct mqtt_client *const c, const struct mqtt_evt *evt)
 {
 	int ret;
 
@@ -177,8 +173,7 @@ void mqtt_evt_handler(struct mqtt_client *const c,
 
 	case MQTT_EVT_PUBACK:
 		if (evt->result == 0) {
-			LOG_DBG("PUBACK packet id: %u\n",
-					evt->param.puback.message_id);
+			LOG_DBG("PUBACK packet id: %u", evt->param.puback.message_id);
 		}
 		break;
 
@@ -193,11 +188,9 @@ void mqtt_evt_handler(struct mqtt_client *const c,
 			};
 			ret = mqtt_publish_qos2_release(&client, &param);
 			if (ret) {
-				LOG_ERR("mqtt_publish_qos2_release: Fail! %d",
-					ret);
+				LOG_ERR("mqtt_publish_qos2_release: Fail! %d", ret);
 			} else {
-				LOG_DBG("Release, id %u",
-					evt->param.pubrec.message_id);
+				LOG_DBG("Release, id %u", evt->param.pubrec.message_id);
 			}
 		}
 		break;
@@ -213,35 +206,31 @@ void mqtt_evt_handler(struct mqtt_client *const c,
 			};
 			ret = mqtt_publish_qos2_complete(&client, &param);
 			if (ret) {
-				LOG_ERR("mqtt_publish_qos2_complete Failed:%d",
-					ret);
+				LOG_ERR("mqtt_publish_qos2_complete Failed:%d", ret);
 			} else {
-				LOG_DBG("Complete, id %u",
-					evt->param.pubrel.message_id);
+				LOG_DBG("Complete, id %u", evt->param.pubrel.message_id);
 			}
 		}
 		break;
 
 	case MQTT_EVT_PUBCOMP:
 		if (evt->result == 0) {
-			LOG_DBG("PUBCOMP packet id %u",
-				evt->param.pubcomp.message_id);
+			LOG_DBG("PUBCOMP packet id %u", evt->param.pubcomp.message_id);
 		}
 		break;
 
 	case MQTT_EVT_SUBACK:
 		if (evt->result == 0) {
-			LOG_DBG("SUBACK packet id: %u\n",
-					evt->param.suback.message_id);
+			LOG_DBG("SUBACK packet id: %u", evt->param.suback.message_id);
 		}
 		break;
 
 	default:
-		LOG_DBG("default: %d\n", evt->type);
+		LOG_DBG("default: %d", evt->type);
 		break;
 	}
 
-	sprintf(rsp_buf, "#XMQTTEVT: %d,%d\r\n",
+	sprintf(rsp_buf, "\r\n#XMQTTEVT: %d,%d\r\n",
 		evt->type, ret);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 }
@@ -321,39 +310,33 @@ static int broker_init(void)
 	while (addr != NULL) {
 		/* IPv4 Address. */
 		if (addr->ai_addrlen == sizeof(struct sockaddr_in)) {
-			struct sockaddr_in *broker4 =
-				((struct sockaddr_in *)&broker);
+			struct sockaddr_in *broker4 = ((struct sockaddr_in *)&broker);
 
 			broker4->sin_addr.s_addr =
-				((struct sockaddr_in *)addr->ai_addr)
-				->sin_addr.s_addr;
+				((struct sockaddr_in *)addr->ai_addr)->sin_addr.s_addr;
 			broker4->sin_family = AF_INET;
 			broker4->sin_port = htons(ctx.port);
 
-			inet_ntop(AF_INET, &broker4->sin_addr, addr_str,
-				  sizeof(addr_str));
-			LOG_INF("IPv4 Address %s\n", addr_str);
+			inet_ntop(AF_INET, &broker4->sin_addr, addr_str, sizeof(addr_str));
+			LOG_INF("IPv4 Address %s", log_strdup(addr_str));
 			err = 0;
 			break;
 		} else if (addr->ai_addrlen == sizeof(struct sockaddr_in6)) {
 			/* IPv6 Address. */
-			struct sockaddr_in6 *broker6 =
-				((struct sockaddr_in6 *)&broker);
+			struct sockaddr_in6 *broker6 = ((struct sockaddr_in6 *)&broker);
 
 			memcpy(broker6->sin6_addr.s6_addr,
-				((struct sockaddr_in6 *)addr->ai_addr)
-				->sin6_addr.s6_addr,
+				((struct sockaddr_in6 *)addr->ai_addr)->sin6_addr.s6_addr,
 				sizeof(struct in6_addr));
 			broker6->sin6_family = AF_INET6;
 			broker6->sin6_port = htons(ctx.port);
 
-			inet_ntop(AF_INET6, &broker6->sin6_addr, addr_str,
-				  sizeof(addr_str));
-			LOG_INF("IPv6 Address %s\n", addr_str);
+			inet_ntop(AF_INET6, &broker6->sin6_addr, addr_str, sizeof(addr_str));
+			LOG_INF("IPv6 Address %s", log_strdup(addr_str));
 			err = 0;
 			break;
 		} else {
-			LOG_ERR("error: ai_addrlen = %u should be %u or %u\n",
+			LOG_ERR("error: ai_addrlen = %u should be %u or %u",
 				(unsigned int)addr->ai_addrlen,
 				(unsigned int)sizeof(struct sockaddr_in),
 				(unsigned int)sizeof(struct sockaddr_in6));
@@ -600,18 +583,15 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 			memset(&ctx, 0, sizeof(ctx));
 			ctx.sec_tag = INVALID_SEC_TAG;
 
-			err = util_string_get(&at_param_list, 2,
-							ctx.cid, &cid_sz);
+			err = util_string_get(&at_param_list, 2, ctx.cid, &cid_sz);
 			if (err < 0) {
 				return err;
 			}
-			err = util_string_get(&at_param_list, 3,
-						ctx.uname, &username_sz);
+			err = util_string_get(&at_param_list, 3, ctx.uname, &username_sz);
 			if (err < 0) {
 				return err;
 			}
-			err = util_string_get(&at_param_list, 4,
-						ctx.pword, &password_sz);
+			err = util_string_get(&at_param_list, 4, ctx.pword, &password_sz);
 			if (err < 0) {
 				return err;
 			}
@@ -619,8 +599,7 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 				/* Password without username is invalid. */
 				return -EINVAL;
 			}
-			err = util_string_get(&at_param_list, 5,
-						ctx.url, &url_sz);
+			err = util_string_get(&at_param_list, 5, ctx.url, &url_sz);
 			if (err < 0) {
 				return err;
 			}
@@ -630,8 +609,7 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 			}
 			ctx.port = (uint16_t)port;
 			if (at_params_valid_count_get(&at_param_list) == 8) {
-				err = at_params_unsigned_int_get(&at_param_list, 7,
-							&ctx.sec_tag);
+				err = at_params_unsigned_int_get(&at_param_list, 7, &ctx.sec_tag);
 				if (err < 0) {
 					return err;
 				}
@@ -653,25 +631,23 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (ctx.sec_transport) {
 			sprintf(rsp_buf,
-				"#XMQTTCON: %d,\"%s\",\"%s\",\"%s\","
-				"\"%s\",%d,%d\r\n",
-				ctx.connected, ctx.cid, ctx.uname,
-				ctx.pword, ctx.url, ctx.port,
-				ctx.sec_tag);
+				"\r\n#XMQTTCON: %d,\"%s\",\"%s\",\"%s\",\"%s\",%d,%d\r\n",
+				ctx.connected, log_strdup(ctx.cid), log_strdup(ctx.uname),
+				log_strdup(ctx.pword), log_strdup(ctx.url), ctx.port, ctx.sec_tag);
 		} else {
 			sprintf(rsp_buf,
-				"#XMQTTCON: %d,\"%s\",\"%s\",\"%s\","
+				"\r\n#XMQTTCON: %d,\"%s\",\"%s\",\"%s\","
 				"\"%s\",%d\r\n",
-				ctx.connected, ctx.cid, ctx.uname, ctx.pword,
-				ctx.url, ctx.port);
+				ctx.connected, log_strdup(ctx.cid), log_strdup(ctx.uname),
+				log_strdup(ctx.pword), log_strdup(ctx.url), ctx.port);
 		}
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XMQTTCON: (0,1),<cid>,<username>,"
-			" <password>,<url>,<port>,<sec_tag>\r\n");
+		sprintf(rsp_buf, "\r\n#XMQTTCON: (0,1),<cid>,<username>,"
+			"<password>,<url>,<port>,<sec_tag>\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -784,7 +760,7 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XMQTTPUB: <topic>,(0,1,9),<msg>,(0,1,2),(0,1)\r\n");
+		sprintf(rsp_buf, "\r\n#XMQTTPUB: <topic>,(0,1,9),<msg>,(0,1,2),(0,1)\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -811,8 +787,7 @@ int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
 		if (at_params_valid_count_get(&at_param_list) == 3) {
-			err = util_string_get(&at_param_list, 1,
-							topic, &topic_sz);
+			err = util_string_get(&at_param_list, 1, topic, &topic_sz);
 			if (err < 0) {
 				return err;
 			}
@@ -820,15 +795,14 @@ int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
 			if (err < 0) {
 				return err;
 			}
-			err = do_mqtt_subscribe(AT_MQTTSUB_SUB,
-						topic, topic_sz, qos);
+			err = do_mqtt_subscribe(AT_MQTTSUB_SUB, topic, topic_sz, qos);
 		} else {
 			return -EINVAL;
 		}
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XMQTTSUB: <topic>,(0,1,2)\r\n");
+		sprintf(rsp_buf, "\r\n#XMQTTSUB: <topic>,(0,1,2)\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -867,7 +841,7 @@ int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XMQTTUNSUB: <topic>\r\n");
+		sprintf(rsp_buf, "\r\n#XMQTTUNSUB: <topic>\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
