@@ -1,3 +1,23 @@
 sample:
   name: Machine learning
   description: Machine learning application reference design
+tests:
+  applications.machine_learning.zdebug:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf52840dk_nrf52840 thingy52_nrf52832 thingy53_nrf5340_cpuapp
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - thingy52_nrf52832
+      - thingy53_nrf5340_cpuapp
+    tags: ci_build
+  applications.machine_learning.zrelease:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf52840dk_nrf52840 thingy52_nrf52832 thingy53_nrf5340_cpuapp
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - thingy52_nrf52832
+      - thingy53_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: "CMAKE_BUILD_TYPE=ZRelease"
