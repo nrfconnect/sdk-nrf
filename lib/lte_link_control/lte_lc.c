@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <device.h>
 #include <modem/lte_lc.h>
+#include <modem/lte_lc_trace.h>
 #include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
@@ -232,6 +233,33 @@ static void at_handler(void *context, const char *response)
 			k_sem_give(&link);
 		}
 
+		switch (reg_status) {
+		case LTE_LC_NW_REG_NOT_REGISTERED:
+			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_NOT_REGISTERED);
+			break;
+		case LTE_LC_NW_REG_REGISTERED_HOME:
+			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTERED_HOME);
+			break;
+		case LTE_LC_NW_REG_SEARCHING:
+			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_SEARCHING);
+			break;
+		case LTE_LC_NW_REG_REGISTRATION_DENIED:
+			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTRATION_DENIED);
+			break;
+		case LTE_LC_NW_REG_UNKNOWN:
+			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_UNKNOWN);
+			break;
+		case LTE_LC_NW_REG_REGISTERED_ROAMING:
+			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTERED_ROAMING);
+			break;
+		case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
+			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTERED_EMERGENCY);
+			break;
+		case LTE_LC_NW_REG_UICC_FAIL:
+			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_UICC_FAIL);
+			break;
+		}
+
 		if (!evt_handler) {
 			return;
 		}
@@ -258,6 +286,10 @@ static void at_handler(void *context, const char *response)
 			prev_lte_mode = lte_mode;
 			evt.type = LTE_LC_EVT_LTE_MODE_UPDATE;
 			evt.lte_mode = lte_mode;
+
+			LTE_LC_TRACE(lte_mode == LTE_LC_LTE_MODE_LTEM ?
+				     LTE_LC_TRACE_LTE_MODE_UPDATE_LTEM :
+				     LTE_LC_TRACE_LTE_MODE_UPDATE_NBIOT);
 
 			evt_handler(&evt);
 		}
@@ -290,6 +322,12 @@ static void at_handler(void *context, const char *response)
 		if (err) {
 			LOG_ERR("Can't parse signalling mode, error: %d", err);
 			return;
+		}
+
+		if (evt.rrc_mode == LTE_LC_RRC_MODE_IDLE) {
+			LTE_LC_TRACE(LTE_LC_TRACE_RRC_IDLE);
+		} else if (evt.rrc_mode == LTE_LC_RRC_MODE_CONNECTED) {
+			LTE_LC_TRACE(LTE_LC_TRACE_RRC_CONNECTED);
 		}
 
 		evt.type = LTE_LC_EVT_RRC_UPDATE;
@@ -399,8 +437,12 @@ static void at_handler(void *context, const char *response)
 		if (evt.modem_sleep.time == CONFIG_LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS) {
 			evt.type = LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING;
 		} else if (evt.modem_sleep.time == 0) {
+			LTE_LC_TRACE(LTE_LC_TRACE_MODEM_SLEEP_EXIT);
+
 			evt.type = LTE_LC_EVT_MODEM_SLEEP_EXIT;
 		} else {
+			LTE_LC_TRACE(LTE_LC_TRACE_MODEM_SLEEP_ENTER);
+
 			evt.type = LTE_LC_EVT_MODEM_SLEEP_ENTER;
 		}
 
@@ -1324,39 +1366,69 @@ clean_exit:
 
 int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 {
+	char buf[12];
+	int err;
+
 	switch (mode) {
 	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
-	case LTE_LC_FUNC_MODE_NORMAL: {
-		int err = enable_notifications();
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_ACTIVATE_LTE);
 
+		err = enable_notifications();
 		if (err) {
-			LOG_ERR("Failed to enabled notifications, error: %d", err);
+			LOG_ERR("Failed to enable notifications, error: %d", err);
 			return err;
 		}
-	}
-	case LTE_LC_FUNC_MODE_POWER_OFF:
-	case LTE_LC_FUNC_MODE_RX_ONLY:
-	case LTE_LC_FUNC_MODE_OFFLINE:
-	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:
-	case LTE_LC_FUNC_MODE_DEACTIVATE_GNSS:
-	case LTE_LC_FUNC_MODE_ACTIVATE_GNSS:
-	case LTE_LC_FUNC_MODE_DEACTIVATE_UICC:
-	case LTE_LC_FUNC_MODE_ACTIVATE_UICC:
-	case LTE_LC_FUNC_MODE_OFFLINE_UICC_ON: {
-		char buf[12];
-		int ret = snprintk(buf, sizeof(buf), "AT+CFUN=%d", mode);
 
-		if ((ret < 0) || (ret >= sizeof(buf))) {
-			LOG_ERR("Failed to create functional mode command");
-			return -EFAULT;
+		break;
+	case LTE_LC_FUNC_MODE_NORMAL:
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_NORMAL);
+
+		err = enable_notifications();
+		if (err) {
+			LOG_ERR("Failed to enable notifications, error: %d", err);
+			return err;
 		}
 
-		return at_cmd_write(buf, NULL, 0, NULL);
-	}
+		break;
+	case LTE_LC_FUNC_MODE_POWER_OFF:
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_POWER_OFF);
+		break;
+	case LTE_LC_FUNC_MODE_RX_ONLY:
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_RX_ONLY);
+		break;
+	case LTE_LC_FUNC_MODE_OFFLINE:
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_OFFLINE);
+		break;
+	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_DEACTIVATE_LTE);
+		break;
+	case LTE_LC_FUNC_MODE_DEACTIVATE_GNSS:
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_DEACTIVATE_GNSS);
+		break;
+	case LTE_LC_FUNC_MODE_ACTIVATE_GNSS:
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_ACTIVATE_GNSS);
+		break;
+	case LTE_LC_FUNC_MODE_DEACTIVATE_UICC:
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_DEACTIVATE_UICC);
+		break;
+	case LTE_LC_FUNC_MODE_ACTIVATE_UICC:
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_ACTIVATE_UICC);
+		break;
+	case LTE_LC_FUNC_MODE_OFFLINE_UICC_ON:
+		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_OFFLINE_UICC_ON);
+		break;
 	default:
 		LOG_ERR("Invalid functional mode: %d", mode);
 		return -EINVAL;
 	}
+
+	err = snprintk(buf, sizeof(buf), "AT+CFUN=%d", mode);
+	if ((err < 0) || (err >= sizeof(buf))) {
+		LOG_ERR("Failed to create functional mode command");
+		return -EFAULT;
+	}
+
+	return at_cmd_write(buf, NULL, 0, NULL);
 }
 
 int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)

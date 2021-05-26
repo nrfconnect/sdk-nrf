@@ -305,6 +305,14 @@ config LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS
 		Minimum value of the duration of the scheduled modem sleep that triggers a
 		notification.
 
+config LTE_LC_TRACE
+	bool "LTE link control tracing"
+	help
+		Enables tracing of LTE link control events. The tracing differs
+		from regular link controller events in that they only indicate
+		what has happened and has no associated payload.
+		It is intended to be used for debugging purposes.
+
 module = LTE_LINK_CONTROL
 module-dep = LOG
 module-str = LTE link control library
