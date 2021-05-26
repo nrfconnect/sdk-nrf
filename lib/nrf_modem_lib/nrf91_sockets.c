@@ -1294,6 +1294,12 @@ static const struct socket_op_vtable nrf91_socket_fd_op_vtable = {
 
 static bool nrf91_socket_is_supported(int family, int type, int proto)
 {
+	if (IS_ENABLED(CONFIG_NET_SOCKETS_PACKET) &&
+		family == AF_PACKET && type == SOCK_RAW && proto == IPPROTO_RAW) {
+		/* This kind of socket combo is handled by zephyr packet socket: */
+		return false;
+	}
+
 	if (IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_TLS)) {
 		return true;
 	}
