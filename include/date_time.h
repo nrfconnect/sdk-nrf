@@ -55,7 +55,7 @@ typedef void (*date_time_evt_handler_t)(const struct date_time_evt *evt);
  *
  *  @return 0        If the operation was successful.
  *  @return -EINVAL  If a member of the passing variable new_date_time does not
- *                   adhere to the tm structure format.
+ *                   adhere to the tm structure format, or pointer is passed in as NULL.
  */
 int date_time_set(const struct tm *new_date_time);
 
@@ -70,7 +70,8 @@ int date_time_set(const struct tm *new_date_time);
  *
  *  @return 0        If the operation was successful.
  *  @return -ENODATA If the library does not have a valid date time UTC.
- *  @return -EINVAL  If the passing variable is too large or already converted.
+ *  @return -EINVAL  If the passed in pointer is NULL, dereferenced value is too large,
+ *		     or already converted.
  */
 int date_time_uptime_to_unix_time_ms(int64_t *uptime);
 
@@ -84,6 +85,7 @@ int date_time_uptime_to_unix_time_ms(int64_t *uptime);
  *
  *  @return 0        If the operation was successful.
  *  @return -ENODATA If the library does not have a valid date time UTC.
+ *  @return -EINVAL  If the passed in pointer is NULL.
  */
 int date_time_now(int64_t *unix_time_ms);
 
@@ -135,7 +137,8 @@ int date_time_clear(void);
  *
  *  @param[in, out] unix_timestamp Pointer to a unix timestamp.
  *
- *  @return 0 If the operation was successful.
+ *  @return 0        If the operation was successful.
+ *  @return -EINVAL  If the passed in pointer is NULL.
  */
 int date_time_timestamp_clear(int64_t *unix_timestamp);
 

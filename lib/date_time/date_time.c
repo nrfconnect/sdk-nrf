@@ -320,6 +320,11 @@ int date_time_set(const struct tm *new_date_time)
 {
 	int err = 0;
 
+	if (new_date_time == NULL) {
+		LOG_ERR("The passed in pointer cannot be NULL");
+		return -EINVAL;
+	}
+
 	/** Seconds after the minute. tm_sec is generally 0-59.
 	 *  The extra range is to accommodate for leap seconds
 	 *  in certain systems.
@@ -387,7 +392,14 @@ int date_time_set(const struct tm *new_date_time)
 
 int date_time_uptime_to_unix_time_ms(int64_t *uptime)
 {
-	int64_t uptime_prev = *uptime;
+	int64_t uptime_prev;
+
+	if (uptime == NULL) {
+		LOG_ERR("The passed in pointer cannot be NULL");
+		return -EINVAL;
+	}
+
+	uptime_prev = *uptime;
 
 	if (!initial_valid_time) {
 		LOG_WRN("Valid time not currently available");
@@ -414,7 +426,14 @@ int date_time_uptime_to_unix_time_ms(int64_t *uptime)
 int date_time_now(int64_t *unix_time_ms)
 {
 	int err;
-	int64_t unix_time_ms_prev = *unix_time_ms;
+	int64_t unix_time_ms_prev;
+
+	if (unix_time_ms == NULL) {
+		LOG_ERR("The passed in pointer cannot be NULL");
+		return -EINVAL;
+	}
+
+	unix_time_ms_prev = *unix_time_ms;
 
 	*unix_time_ms = k_uptime_get();
 
@@ -473,6 +492,7 @@ int date_time_clear(void)
 int date_time_timestamp_clear(int64_t *unix_timestamp)
 {
 	if (unix_timestamp == NULL) {
+		LOG_ERR("The passed in pointer cannot be NULL");
 		return -EINVAL;
 	}
 
