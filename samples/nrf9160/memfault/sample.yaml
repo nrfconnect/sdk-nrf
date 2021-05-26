@@ -1,0 +1,10 @@
+sample:
+  name: Memfault sample
+tests:
+  samples.nrf9160.memfault:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf9160dk_nrf9160ns thingy91_nrf9160ns
+    tags: ci_build
+    extra_configs:
+      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
