@@ -160,7 +160,7 @@ The image data that is received from the host is initially buffered in RAM.
 Writing the data to flash is triggered when the host performs the fetch operation on the ``sync`` option.
 At that point, the :ref:`nrf_desktop_config_channel_script` waits until the data is written to flash before providing more image data chunks.
 
-The data is stored in a secondary image flash partition using a dedicated work (:c:struct:`k_delayed_work`).
+The data is stored in a secondary image flash partition using a dedicated work (:c:struct:`k_work_delayable`).
 The work stores a single chunk of data and resubmits itself.
 
 To ensure that the flash write will not interfere with the device usability, the stored data is split into small chunks and written only if there are no HID reports transmitted and the Bluetooth connection state does not change.

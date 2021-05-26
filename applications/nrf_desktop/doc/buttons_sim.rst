@@ -40,7 +40,7 @@ By default, the sequence is generated only once.
 Implementation details
 **********************
 
-The |button_sim| generates button sequence using :c:struct:`k_delayed_work`, which resubmits itself.
+The |button_sim| generates button sequence using :c:struct:`k_work_delayable`, which resubmits itself.
 The work handler submits the press and the release of a single button from the sequence.
 
 Receiving ``button_event`` with the key ID set to :option:`CONFIG_DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID` either stops generating the sequence (in case it is already being generated) or starts generating it.

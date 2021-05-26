@@ -51,6 +51,6 @@ When the application goes to sleep, selectors are not informing about the state 
 
 If a selector is placed between states, it is in unknown state and ``selector_event`` is not sent.
 
-Recording of selector state changes is implemented using GPIO callbacks (:c:struct:`gpio_callback`) and work (:c:struct:`k_delayed_work`).
+Recording of selector state changes is implemented using GPIO callbacks (:c:struct:`gpio_callback`) and work (:c:struct:`k_work_delayable`).
 Each state change triggers an interrupt (GPIO interrupt for pin level high).
 Callback of an interrupt submits work, which sends ``selector_event``.
