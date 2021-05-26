@@ -106,6 +106,10 @@ nRF9160
 
     * Renamed nRF9160: AT Client sample to :ref:`at_host_sample`.
 
+  * :ref:`gps_api`:
+
+    * Renamed gps_agps_request() to gps_agps_request_send().
+
 nRF5
 ====
 

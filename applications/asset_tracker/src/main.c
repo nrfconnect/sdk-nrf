@@ -410,7 +410,7 @@ static void send_agps_request(struct k_work *work)
 
 	LOG_INF("Sending A-GPS request");
 
-	err = gps_agps_request(agps_request, GPS_SOCKET_NOT_PROVIDED);
+	err = gps_agps_request_send(agps_request, GPS_SOCKET_NOT_PROVIDED);
 	if (err) {
 		LOG_ERR("Failed to request A-GPS data, error: %d", err);
 		return;
