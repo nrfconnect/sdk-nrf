@@ -185,6 +185,16 @@ nRF5340
 
 .. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
+NCSDK-9786: Wrong FLASH_PAGE_ERASE_MAX_TIME_US for the nRF53 network core
+  ``FLASH_PAGE_ERASE_MAX_TIME_US`` defines the execution window duration when doing the flash operation synchronously along the radio operations (:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` not enabled).
+
+  The ``FLASH_PAGE_ERASE_MAX_TIME_US`` value of the nRF53 network core is lower than required.
+  For this reason, if :option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL` is set to ``y`` and :option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` is set to ``n``, a flash erase operation on the nRF5340 network core will result in an MPSL timeslot OVERSTAYED assert.
+
+  **Workaround:** Increase ``FLASH_PAGE_ERASE_MAX_TIME_US`` (defined in :file:`ncs/zephyr/soc/arm/nordic_nrf/nrf53/soc.h`) from 44850UL to 89700UL (the same value as for the application core).
+
+.. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+
 NCSDK-7234: UART output is not received from the network core
   The UART output is not received from the network core if the application core is programmed and running with a non-secure image (using the ``nrf5340dk_nrf5340_cpuappns`` build target).
 
