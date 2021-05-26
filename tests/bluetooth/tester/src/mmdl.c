@@ -17,7 +17,6 @@
 #include <time_internal.h>
 #include <lightness_internal.h>
 #include <light_ctrl_internal.h>
-#include <light_ctl_internal.h>
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG)
 #define LOG_MODULE_NAME bttester_mmdl
@@ -296,8 +295,6 @@ static void gen_lvl_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_GEN_ONOFF_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -327,7 +324,9 @@ fail:
 static void gen_lvl_set(uint8_t *data, uint16_t len)
 {
 	struct mesh_gen_lvl_set *cmd = (void *)data;
-	struct bt_mesh_lvl_set set;
+	struct bt_mesh_lvl_set set = {
+		.new_transaction = true,
+	};
 	struct bt_mesh_lvl_status status;
 	struct net_buf_simple *buf = NET_BUF_SIMPLE(8);
 	struct bt_mesh_model_transition transition;
@@ -359,8 +358,6 @@ static void gen_lvl_set(uint8_t *data, uint16_t len)
 			model_transition_decode(cmd->transition->time);
 		transition.delay = model_delay_decode(cmd->transition->delay);
 		set.transition = &transition;
-	} else {
-		set.transition = NULL;
 	}
 
 	LOG_DBG("tt=%u delay=%u", transition.time, transition.delay);
@@ -395,7 +392,9 @@ fail:
 static void gen_lvl_delta_set(uint8_t *data, uint16_t len)
 {
 	struct mesh_gen_lvl_delta_set *cmd = (void *)data;
-	struct bt_mesh_lvl_delta_set set;
+	struct bt_mesh_lvl_delta_set set = {
+		.new_transaction = true,
+	};
 	struct bt_mesh_lvl_status status;
 	struct net_buf_simple *buf = NET_BUF_SIMPLE(8);
 	struct bt_mesh_model_transition transition;
@@ -427,8 +426,6 @@ static void gen_lvl_delta_set(uint8_t *data, uint16_t len)
 			model_transition_decode(cmd->transition->time);
 		transition.delay = model_delay_decode(cmd->transition->delay);
 		set.transition = &transition;
-	} else {
-		set.transition = NULL;
 	}
 
 	LOG_DBG("tt=%u delay=%u", transition.time, transition.delay);
@@ -464,7 +461,9 @@ fail:
 static void gen_lvl_move_set(uint8_t *data, uint16_t len)
 {
 	struct mesh_gen_lvl_move_set *cmd = (void *)data;
-	struct bt_mesh_lvl_move_set set;
+	struct bt_mesh_lvl_move_set set = {
+		.new_transaction = true,
+	};
 	struct bt_mesh_lvl_status status;
 	struct net_buf_simple *buf = NET_BUF_SIMPLE(8);
 	struct bt_mesh_model_transition transition;
@@ -496,8 +495,6 @@ static void gen_lvl_move_set(uint8_t *data, uint16_t len)
 			model_transition_decode(cmd->transition->time);
 		transition.delay = model_delay_decode(cmd->transition->delay);
 		set.transition = &transition;
-	} else {
-		set.transition = NULL;
 	}
 
 	LOG_DBG("tt=%u delay=%u", transition.time, transition.delay);
@@ -546,8 +543,6 @@ static void gen_dtt_get(uint8_t *data, uint16_t len)
 		lookup_model_bound(BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -642,8 +637,6 @@ static void gen_ponoff_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_GEN_POWER_ONOFF_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -844,8 +837,6 @@ static void gen_plvl_last_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_GEN_POWER_LEVEL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -883,8 +874,6 @@ static void gen_plvl_dflt_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_GEN_POWER_LEVEL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -1079,8 +1068,6 @@ static void battery_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_GEN_BATTERY_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -1122,8 +1109,6 @@ static void location_global_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_GEN_LOCATION_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -1165,8 +1150,6 @@ static void location_local_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_GEN_LOCATION_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -1324,8 +1307,6 @@ static void gen_props_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_GEN_PROP_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -1336,8 +1317,9 @@ static void gen_props_get(uint8_t *data, uint16_t len)
 		err = bt_mesh_prop_cli_client_props_get(&prop_cli, &ctx,
 							cmd->id, &status);
 	} else {
-		err = bt_mesh_prop_cli_props_get(&prop_cli, &ctx, cmd->kind,
-						 &status);
+		err = bt_mesh_prop_cli_props_get(
+			&prop_cli, &ctx, (enum bt_mesh_prop_srv_kind)cmd->kind,
+			&status);
 	}
 
 	if (err) {
@@ -1380,16 +1362,15 @@ static void gen_prop_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_GEN_PROP_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
 	ctx.addr = model_bound->addr;
 	ctx.app_idx = model_bound->appkey_idx;
 
-	err = bt_mesh_prop_cli_prop_get(&prop_cli, &ctx, cmd->kind, cmd->id,
-					&status);
+	err = bt_mesh_prop_cli_prop_get(&prop_cli, &ctx,
+					(enum bt_mesh_prop_srv_kind)cmd->kind,
+					cmd->id, &status);
 	if (err) {
 		LOG_ERR("err=%d", err);
 		goto fail;
@@ -1416,12 +1397,12 @@ static void gen_prop_set(uint8_t *data, uint16_t len)
 		NET_BUF_SIMPLE(BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS);
 	struct bt_mesh_prop prop = {
 		.id = cmd->id,
-		.user_access = cmd->access,
+		.user_access = (enum bt_mesh_prop_access)cmd->access,
 	};
 	uint8_t val[10];
 	struct bt_mesh_prop_val status = {
 		.meta.id = cmd->id,
-		.meta.user_access = cmd->access,
+		.meta.user_access = (enum bt_mesh_prop_access)cmd->access,
 		.size = ARRAY_SIZE(val),
 		.value = val,
 	};
@@ -1532,8 +1513,6 @@ static void sensor_desc_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SENSOR_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -1542,6 +1521,10 @@ static void sensor_desc_get(uint8_t *data, uint16_t len)
 
 	if (len == 2) {
 		sensor.type = bt_mesh_sensor_type_get(cmd->id);
+		if (!sensor.type) {
+			goto fail;
+		}
+
 		err = bt_mesh_sensor_cli_desc_get(&sensor_cli, &ctx,
 						  sensor.type, &rsp);
 	} else {
@@ -1581,7 +1564,7 @@ fail:
 static void sensor_get(uint8_t *data, uint16_t len)
 {
 	struct mesh_sensor_get *cmd = (void *)data;
-	struct bt_mesh_sensor_type sensor;
+	const struct bt_mesh_sensor_type *sensor;
 	struct net_buf_simple *buf = NET_BUF_SIMPLE(BT_MESH_TX_SDU_MAX);
 	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
 	struct bt_mesh_sensor_data values[5];
@@ -1600,8 +1583,6 @@ static void sensor_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SENSOR_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -1609,8 +1590,13 @@ static void sensor_get(uint8_t *data, uint16_t len)
 	ctx.app_idx = model_bound->appkey_idx;
 
 	if (len == 2) {
-		sensor = *bt_mesh_sensor_type_get(cmd->id);
-		err = bt_mesh_sensor_cli_get(&sensor_cli, &ctx, &sensor, value);
+		sensor = bt_mesh_sensor_type_get(cmd->id);
+		if (!sensor) {
+			LOG_ERR("Sensor ID not found");
+			goto fail;
+		}
+
+		err = bt_mesh_sensor_cli_get(&sensor_cli, &ctx, sensor, value);
 	} else {
 		err = bt_mesh_sensor_cli_all_get(&sensor_cli, &ctx, values,
 						 &count);
@@ -1624,8 +1610,8 @@ static void sensor_get(uint8_t *data, uint16_t len)
 	net_buf_simple_init(buf, 0);
 
 	if (len == 2) {
-		net_buf_simple_add_le16(buf, sensor.id);
-		err = sensor_value_encode(buf, &sensor, value);
+		net_buf_simple_add_le16(buf, sensor->id);
+		err = sensor_value_encode(buf, sensor, value);
 		if (err) {
 			goto fail;
 		}
@@ -1634,9 +1620,14 @@ static void sensor_get(uint8_t *data, uint16_t len)
 			    CONTROLLER_INDEX, buf->data, buf->len);
 	} else {
 		for (i = 0; i < count; ++i) {
-			sensor = *bt_mesh_sensor_type_get(values[i].type->id);
+			sensor = bt_mesh_sensor_type_get(values[i].type->id);
+			if (!sensor) {
+				LOG_ERR("Sensor ID not found");
+				goto fail;
+			}
+
 			net_buf_simple_add_le16(buf, values[i].type->id);
-			err = sensor_value_encode(buf, &sensor,
+			err = sensor_value_encode(buf, sensor,
 						  values[i].value);
 			if (err) {
 				goto fail;
@@ -1657,7 +1648,7 @@ static void sensor_cadence_get(uint8_t *data, uint16_t len)
 	struct mesh_sensor_cadence_get *cmd = (void *)data;
 	struct net_buf_simple *buf =
 		NET_BUF_SIMPLE(BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_STATUS);
-	struct bt_mesh_sensor_type sensor;
+	const struct bt_mesh_sensor_type *sensor;
 	struct bt_mesh_sensor_cadence_status rsp;
 	struct model_data *model_bound;
 	struct bt_mesh_msg_ctx ctx = {
@@ -1672,30 +1663,32 @@ static void sensor_cadence_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SENSOR_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
 	ctx.addr = model_bound->addr;
 	ctx.app_idx = model_bound->appkey_idx;
 
-	sensor = *bt_mesh_sensor_type_get(cmd->id);
+	sensor = bt_mesh_sensor_type_get(cmd->id);
+	if (!sensor) {
+		LOG_ERR("Sensor ID not found");
+		goto fail;
+	}
 
-	err = bt_mesh_sensor_cli_cadence_get(&sensor_cli, &ctx, &sensor, &rsp);
+	err = bt_mesh_sensor_cli_cadence_get(&sensor_cli, &ctx, sensor, &rsp);
 	if (err) {
 		LOG_ERR("err=%d", err);
 		goto fail;
 	}
 	net_buf_simple_init(buf, 0);
-	err = sensor_cadence_encode(buf, &sensor, rsp.fast_period_div,
+	err = sensor_cadence_encode(buf, sensor, rsp.fast_period_div,
 				    rsp.min_int, &rsp.threshold);
 	if (err) {
 		LOG_ERR("err=%d", err);
 		goto fail;
 	}
 
-	net_buf_simple_add_le16(buf, sensor.id);
+	net_buf_simple_add_le16(buf, sensor->id);
 	tester_send(BTP_SERVICE_ID_MMDL, MMDL_SENSOR_CADENCE_GET,
 		    CONTROLLER_INDEX, buf->data, buf->len);
 	return;
@@ -1711,7 +1704,7 @@ static void sensor_cadence_set(uint8_t *data, uint16_t len)
 	struct net_buf_simple *buf = NET_BUF_SIMPLE(0);
 	struct net_buf_simple *buf_rsp =
 		NET_BUF_SIMPLE(BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_STATUS);
-	struct bt_mesh_sensor_type sensor;
+	const struct bt_mesh_sensor_type *sensor;
 	struct bt_mesh_sensor_cadence_status cadence;
 	struct model_data *model_bound;
 	struct bt_mesh_msg_ctx ctx = {
@@ -1735,8 +1728,8 @@ static void sensor_cadence_set(uint8_t *data, uint16_t len)
 	ctx.app_idx = model_bound->appkey_idx;
 
 	net_buf_simple_init_with_data(buf, (void *)&cmd->data, cmd->len);
-	sensor = *bt_mesh_sensor_type_get(cmd->id);
-	err = sensor_cadence_decode(buf, &sensor, &cadence.fast_period_div,
+	sensor = bt_mesh_sensor_type_get(cmd->id);
+	err = sensor_cadence_decode(buf, sensor, &cadence.fast_period_div,
 				    &cadence.min_int, &cadence.threshold);
 	if (err) {
 		LOG_ERR("err=%d", err);
@@ -1744,11 +1737,11 @@ static void sensor_cadence_set(uint8_t *data, uint16_t len)
 	}
 
 	if (cmd->ack) {
-		err = bt_mesh_sensor_cli_cadence_set(&sensor_cli, &ctx, &sensor,
+		err = bt_mesh_sensor_cli_cadence_set(&sensor_cli, &ctx, sensor,
 						     &cadence, &cadence);
 	} else {
 		err = bt_mesh_sensor_cli_cadence_set_unack(&sensor_cli, &ctx,
-							   &sensor, &cadence);
+							   sensor, &cadence);
 	}
 
 	if (err) {
@@ -1758,7 +1751,7 @@ static void sensor_cadence_set(uint8_t *data, uint16_t len)
 
 	if (cmd->ack) {
 		net_buf_simple_init(buf_rsp, 0);
-		err = sensor_cadence_encode(buf_rsp, &sensor,
+		err = sensor_cadence_encode(buf_rsp, sensor,
 					    cadence.fast_period_div,
 					    cadence.min_int,
 					    &cadence.threshold);
@@ -1780,10 +1773,9 @@ fail:
 static void sensor_settings_get(uint8_t *data, uint16_t len)
 {
 	struct mesh_sensor_settings_get *cmd = (void *)data;
-	struct bt_mesh_sensor_type sensor;
 	struct net_buf_simple *buf =
 		NET_BUF_SIMPLE(BT_MESH_SENSOR_MSG_MAXLEN_SETTING_STATUS);
-	const struct bt_mesh_sensor_type *sensor_type;
+	const struct bt_mesh_sensor_type *sensor;
 	uint16_t ids[10];
 	uint32_t count = ARRAY_SIZE(ids);
 	struct model_data *model_bound;
@@ -1800,24 +1792,19 @@ static void sensor_settings_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SENSOR_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
 	ctx.addr = model_bound->addr;
 	ctx.app_idx = model_bound->appkey_idx;
 
-	sensor_type = bt_mesh_sensor_type_get(cmd->id);
-	if (!sensor_type) {
-		err = -EINVAL;
+	sensor = bt_mesh_sensor_type_get(cmd->id);
+	if (!sensor) {
 		LOG_ERR("Unknown Sensor ID");
 		goto fail;
 	}
 
-	sensor = *sensor_type;
-
-	err = bt_mesh_sensor_cli_settings_get(&sensor_cli, &ctx, &sensor, ids,
+	err = bt_mesh_sensor_cli_settings_get(&sensor_cli, &ctx, sensor, ids,
 					      &count);
 	if (err) {
 		LOG_ERR("err=%d", err);
@@ -1825,7 +1812,7 @@ static void sensor_settings_get(uint8_t *data, uint16_t len)
 	}
 
 	net_buf_simple_init(buf, 0);
-	net_buf_simple_add_le16(buf, sensor.id);
+	net_buf_simple_add_le16(buf, sensor->id);
 	for (i = 0; i < count; ++i) {
 		net_buf_simple_add_le16(buf, ids[i]);
 	}
@@ -1842,9 +1829,8 @@ fail:
 static void sensor_setting_get(uint8_t *data, uint16_t len)
 {
 	struct mesh_sensor_setting_get *cmd = (void *)data;
-	const struct bt_mesh_sensor_type *sensor_type;
-	struct bt_mesh_sensor_type sensor;
-	struct bt_mesh_sensor_type setting;
+	const struct bt_mesh_sensor_type *sensor;
+	const struct bt_mesh_sensor_type *setting;
 	struct bt_mesh_sensor_setting_status rsp;
 	struct model_data *model_bound;
 	struct bt_mesh_msg_ctx ctx = {
@@ -1867,26 +1853,22 @@ static void sensor_setting_get(uint8_t *data, uint16_t len)
 	ctx.addr = model_bound->addr;
 	ctx.app_idx = model_bound->appkey_idx;
 
-	sensor_type = bt_mesh_sensor_type_get(cmd->id);
-	if (!sensor_type) {
+	sensor = bt_mesh_sensor_type_get(cmd->id);
+	if (!sensor) {
 		err = -EINVAL;
 		LOG_ERR("Unknown Sensor ID");
 		goto fail;
 	}
 
-	sensor = *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(cmd->setting_id);
-	if (!sensor_type) {
+	setting = bt_mesh_sensor_type_get(cmd->setting_id);
+	if (!setting) {
 		err = -EINVAL;
 		LOG_ERR("Unknown Sensor ID");
 		goto fail;
 	}
 
-	setting = *sensor_type;
-
-	err = bt_mesh_sensor_cli_setting_get(&sensor_cli, &ctx, &sensor,
-					     &setting, &rsp);
+	err = bt_mesh_sensor_cli_setting_get(&sensor_cli, &ctx, sensor,
+					     setting, &rsp);
 	if (err) {
 		LOG_ERR("err=%d", err);
 		goto fail;
@@ -1901,9 +1883,8 @@ fail:
 static void sensor_setting_set(uint8_t *data, uint16_t len)
 {
 	struct mesh_sensor_setting_set *cmd = (void *)data;
-	const struct bt_mesh_sensor_type *sensor_type;
-	struct bt_mesh_sensor_type sensor;
-	struct bt_mesh_sensor_type setting;
+	const struct bt_mesh_sensor_type *sensor;
+	const struct bt_mesh_sensor_type *setting;
 	struct sensor_value value;
 	struct bt_mesh_sensor_setting_status rsp;
 	struct model_data *model_bound;
@@ -1927,23 +1908,19 @@ static void sensor_setting_set(uint8_t *data, uint16_t len)
 	ctx.addr = model_bound->addr;
 	ctx.app_idx = model_bound->appkey_idx;
 
-	sensor_type = bt_mesh_sensor_type_get(cmd->id);
-	if (!sensor_type) {
+	sensor = bt_mesh_sensor_type_get(cmd->id);
+	if (!sensor) {
 		err = -EINVAL;
 		LOG_ERR("Unknown Sensor ID");
 		goto fail;
 	}
 
-	sensor = *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(cmd->setting_id);
-	if (!sensor_type) {
+	setting = bt_mesh_sensor_type_get(cmd->setting_id);
+	if (!setting) {
 		err = -EINVAL;
 		LOG_ERR("Unknown Sensor ID");
 		goto fail;
 	}
-
-	setting = *sensor_type;
 
 	if (cmd->len > sizeof(value)) {
 		err = -EINVAL;
@@ -1954,11 +1931,11 @@ static void sensor_setting_set(uint8_t *data, uint16_t len)
 	memcpy(&value, cmd->data, cmd->len);
 
 	if (cmd->ack) {
-		err = bt_mesh_sensor_cli_setting_set(&sensor_cli, &ctx, &sensor,
-						     &setting, &value, &rsp);
+		err = bt_mesh_sensor_cli_setting_set(&sensor_cli, &ctx, sensor,
+						     setting, &value, &rsp);
 	} else {
 		err = bt_mesh_sensor_cli_setting_set_unack(
-			&sensor_cli, &ctx, &sensor, &setting, &value);
+			&sensor_cli, &ctx, sensor, setting, &value);
 	}
 
 	if (err) {
@@ -1978,10 +1955,9 @@ static void sensor_column_get(uint8_t *data, uint16_t len)
 	struct net_buf_simple *buf = NET_BUF_SIMPLE(0);
 	struct net_buf_simple *buf_rsp =
 		NET_BUF_SIMPLE(BT_MESH_SENSOR_MSG_MAXLEN_COLUMN_STATUS);
-	struct bt_mesh_sensor_type sensor;
+	const struct bt_mesh_sensor_type *sensor;
 	struct bt_mesh_sensor_column column = { 0 };
 	struct bt_mesh_sensor_series_entry rsp;
-	const struct bt_mesh_sensor_type *sensor_type;
 	const struct bt_mesh_sensor_format *col_format;
 	struct sensor_value width;
 	struct model_data *model_bound;
@@ -1997,39 +1973,35 @@ static void sensor_column_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SENSOR_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
 	ctx.addr = model_bound->addr;
 	ctx.app_idx = model_bound->appkey_idx;
 
-	sensor_type = bt_mesh_sensor_type_get(cmd->id);
-	if (!sensor_type) {
-		err = -EINVAL;
+	sensor = bt_mesh_sensor_type_get(cmd->id);
+	if (!sensor) {
 		LOG_ERR("Unknown Sensor ID");
 		goto fail;
 	}
 
 	net_buf_simple_init_with_data(buf, (void *)&cmd->data, cmd->len);
 
-	col_format = bt_mesh_sensor_column_format_get(sensor_type);
+	col_format = bt_mesh_sensor_column_format_get(sensor);
 	err = sensor_ch_decode(buf, col_format, &column.start);
 	if (err) {
 		LOG_ERR("err=%d", err);
 		goto fail;
 	}
 
-	sensor = *sensor_type;
-	err = bt_mesh_sensor_cli_series_entry_get(&sensor_cli, &ctx, &sensor,
+	err = bt_mesh_sensor_cli_series_entry_get(&sensor_cli, &ctx, sensor,
 						  &column, &rsp);
 	if (err) {
 		LOG_ERR("err=%d", err);
 		goto fail;
 	}
 	net_buf_simple_init(buf_rsp, 0);
-	net_buf_simple_add_le16(buf_rsp, sensor.id);
+	net_buf_simple_add_le16(buf_rsp, sensor->id);
 
 	LOG_ERR("err=%d", err);
 	err = sensor_ch_encode(buf_rsp, col_format, &rsp.column.start);
@@ -2047,7 +2019,7 @@ static void sensor_column_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	err = sensor_value_encode(buf_rsp, &sensor, rsp.value);
+	err = sensor_value_encode(buf_rsp, sensor, rsp.value);
 	if (err) {
 		LOG_ERR("err=%d", err);
 		goto fail;
@@ -2067,12 +2039,11 @@ static void sensor_series_get(uint8_t *data, uint16_t len)
 	struct mesh_sensor_series_get *cmd = (void *)data;
 	struct net_buf_simple *buf = NET_BUF_SIMPLE(0);
 	struct net_buf_simple *buf_rsp = NET_BUF_SIMPLE(BT_MESH_TX_SDU_MAX);
-	struct bt_mesh_sensor_type sensor;
+	const struct bt_mesh_sensor_type *sensor;
 	struct bt_mesh_sensor_column range;
 	struct bt_mesh_sensor_series_entry rsp[5];
 	struct sensor_value width;
 	uint32_t count = ARRAY_SIZE(rsp);
-	const struct bt_mesh_sensor_type *sensor_type;
 	const struct bt_mesh_sensor_format *col_format;
 	struct model_data *model_bound;
 	struct bt_mesh_msg_ctx ctx = {
@@ -2088,16 +2059,14 @@ static void sensor_series_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SENSOR_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
 	ctx.addr = model_bound->addr;
 	ctx.app_idx = model_bound->appkey_idx;
 
-	sensor_type = bt_mesh_sensor_type_get(cmd->id);
-	if (!sensor_type) {
+	sensor = bt_mesh_sensor_type_get(cmd->id);
+	if (!sensor) {
 		err = -EINVAL;
 		LOG_ERR("Unknown Sensor ID");
 		goto fail;
@@ -2105,7 +2074,7 @@ static void sensor_series_get(uint8_t *data, uint16_t len)
 
 	net_buf_simple_init_with_data(buf, (void *)&cmd->data, cmd->len);
 
-	col_format = bt_mesh_sensor_column_format_get(sensor_type);
+	col_format = bt_mesh_sensor_column_format_get(sensor);
 	err = sensor_ch_decode(buf, col_format, &range.start);
 	if (err) {
 		goto fail;
@@ -2116,8 +2085,7 @@ static void sensor_series_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	sensor = *sensor_type;
-	err = bt_mesh_sensor_cli_series_entries_get(&sensor_cli, &ctx, &sensor,
+	err = bt_mesh_sensor_cli_series_entries_get(&sensor_cli, &ctx, sensor,
 						    &range, rsp, &count);
 	if (err) {
 		LOG_ERR("err=%d", err);
@@ -2143,13 +2111,13 @@ static void sensor_series_get(uint8_t *data, uint16_t len)
 			goto fail;
 		}
 
-		err = sensor_value_encode(buf_rsp, &sensor, rsp[i].value);
+		err = sensor_value_encode(buf_rsp, sensor, rsp[i].value);
 		if (err) {
 			LOG_ERR("err=%d", err);
 			goto fail;
 		}
 	}
-	net_buf_simple_add_le16(buf_rsp, sensor.id);
+	net_buf_simple_add_le16(buf_rsp, sensor->id);
 	tester_send(BTP_SERVICE_ID_MMDL, MMDL_SENSOR_SERIES_GET,
 		    CONTROLLER_INDEX, buf_rsp->data, buf_rsp->len);
 	return;
@@ -2177,8 +2145,6 @@ static void time_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_TIME_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2223,8 +2189,6 @@ static void time_set(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_TIME_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2268,8 +2232,6 @@ static void time_role_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_TIME_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2309,8 +2271,6 @@ static void time_role_set(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_TIME_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2349,8 +2309,6 @@ static void time_zone_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_TIME_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2396,8 +2354,6 @@ static void time_zone_set(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_TIME_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2443,8 +2399,6 @@ static void time_tai_utc_delta_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_TIME_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2490,8 +2444,6 @@ static void time_tai_utc_delta_set(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_TIME_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2538,8 +2490,6 @@ static void light_lightness_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2651,8 +2601,6 @@ static void light_lightness_linear_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2771,8 +2719,6 @@ static void light_lightness_last_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2810,8 +2756,6 @@ static void light_lightness_default_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -2900,8 +2844,6 @@ static void light_lightness_range_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -3003,8 +2945,6 @@ static void light_lc_mode_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_LC_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -3090,8 +3030,6 @@ static void light_lc_occupancy_mode_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_LC_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -3181,8 +3119,6 @@ static void light_lc_light_onoff_mode_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_LC_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -3298,14 +3234,12 @@ static void light_lc_property_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_LC_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
 	ctx.addr = model_bound->addr;
 	ctx.app_idx = model_bound->appkey_idx;
-	id = cmd->id;
+	id = (enum bt_mesh_light_ctrl_prop)cmd->id;
 
 	err = bt_mesh_light_ctrl_cli_prop_get(&light_ctrl_cli, &ctx, id,
 					      &status);
@@ -3366,7 +3300,7 @@ static void light_lc_property_set(uint8_t *data, uint16_t len)
 
 	ctx.addr = model_bound->addr;
 	ctx.app_idx = model_bound->appkey_idx;
-	id = cmd->id;
+	id = (enum bt_mesh_light_ctrl_prop)cmd->id;
 
 	net_buf_simple_init_with_data(buf, &cmd->val, sizeof(cmd->val));
 
@@ -3431,8 +3365,6 @@ static void light_ctl_states_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_CTL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -3460,7 +3392,7 @@ static void light_ctl_states_get(uint8_t *data, uint16_t len)
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_CTL_STATES_GET,
 		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   BTP_STATUS_FAILED);
 }
 
 static void light_ctl_states_set(uint8_t *data, uint16_t len)
@@ -3553,8 +3485,6 @@ static void light_ctl_temperature_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_CTL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -3582,7 +3512,7 @@ static void light_ctl_temperature_get(uint8_t *data, uint16_t len)
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_CTL_TEMPERATURE_GET,
 		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   BTP_STATUS_FAILED);
 }
 
 static void light_ctl_temperature_set(uint8_t *data, uint16_t len)
@@ -3674,8 +3604,6 @@ static void light_ctl_default_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_CTL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -3701,7 +3629,7 @@ static void light_ctl_default_get(uint8_t *data, uint16_t len)
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_CTL_DEFAULT_GET,
 		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   BTP_STATUS_FAILED);
 }
 static void light_ctl_default_set(uint8_t *data, uint16_t len)
 {
@@ -3778,8 +3706,6 @@ static void light_ctl_temp_range_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_CTL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -3805,7 +3731,7 @@ static void light_ctl_temp_range_get(uint8_t *data, uint16_t len)
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_CTL_TEMPERATURE_RANGE_GET,
 		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   BTP_STATUS_FAILED);
 }
 static void light_ctl_temp_range_set(uint8_t *data, uint16_t len)
 {
@@ -3883,8 +3809,6 @@ static void scene_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SCENE_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -3910,7 +3834,7 @@ static void scene_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_SCENE_GET, CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   BTP_STATUS_FAILED);
 }
 
 static void scene_register_get(uint8_t *data, uint16_t len)
@@ -3930,8 +3854,6 @@ static void scene_register_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SCENE_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -3958,7 +3880,7 @@ static void scene_register_get(uint8_t *data, uint16_t len)
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_SCENE_REGISTER_GET,
 		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   BTP_STATUS_FAILED);
 }
 
 static void scene_store_procedure(uint8_t *data, uint16_t len)
