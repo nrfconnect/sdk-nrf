@@ -225,8 +225,8 @@ static void test_date_time_conversion(void)
 	int64_t date_time_utc_unix = 1596813090000;
 	int64_t date_time_utc_unix_origin = k_uptime_get();
 	int64_t uptime = k_uptime_get();
-	int64_t ts_unix_ms;
-	int64_t ts_expect;
+	int64_t ts_unix_ms = 0;
+	int64_t ts_expect = 0;
 
 	ret = date_time_set(&date_time_dummy);
 	zassert_equal(0, ret, "date_time_set should equal 0");
