@@ -407,7 +407,8 @@ static inline int gps_deinit(const struct device *dev)
 }
 
 /**
- * @brief Function to request A-GPS data.
+ * @brief Function to send a request for A-GPS data to the configured A-GPS
+ *	  data source. See the A-GPS Library Kconfig documentation for alternatives.
  *
  * @param request Assistance data to request from A-GPS service.
  * @param socket GPS socket to which assistance data will be written
@@ -417,7 +418,7 @@ static inline int gps_deinit(const struct device *dev)
  *
  * @return Zero on success or (negative) error code otherwise.
  */
-int gps_agps_request(struct gps_agps_request request, int socket);
+int gps_agps_request_send(struct gps_agps_request request, int socket);
 
 /**
  * @brief Processes A-GPS data.

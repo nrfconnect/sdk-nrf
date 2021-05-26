@@ -75,7 +75,7 @@ static void on_agps_needed(struct gps_agps_request request)
 {
 	int err;
 
-	err = gps_agps_request(request, GPS_SOCKET_NOT_PROVIDED);
+	err = gps_agps_request_send(request, GPS_SOCKET_NOT_PROVIDED);
 	if (err) {
 		LOG_ERR("Failed to request A-GPS data, error: %d", err);
 		return;

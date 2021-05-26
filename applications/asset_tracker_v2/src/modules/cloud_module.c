@@ -488,7 +488,7 @@ static void on_state_lte_connected(struct cloud_msg_data *msg)
 	if (IS_EVENT(msg, gps, GPS_EVT_AGPS_NEEDED)) {
 		int err;
 
-		err = gps_agps_request(msg->module.gps.data.agps_request,
+		err = gps_agps_request_send(msg->module.gps.data.agps_request,
 				       GPS_SOCKET_NOT_PROVIDED);
 		if (err) {
 			LOG_WRN("Failed to request A-GPS data, error: %d", err);
@@ -523,7 +523,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 	if (IS_EVENT(msg, gps, GPS_EVT_AGPS_NEEDED)) {
 		int err;
 
-		err = gps_agps_request(msg->module.gps.data.agps_request,
+		err = gps_agps_request_send(msg->module.gps.data.agps_request,
 				       GPS_SOCKET_NOT_PROVIDED);
 		if (err) {
 			LOG_WRN("Failed to request A-GPS data, error: %d", err);

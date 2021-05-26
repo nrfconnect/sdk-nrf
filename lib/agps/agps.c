@@ -327,7 +327,7 @@ static int supl_start(const struct gps_agps_request request)
 
 #endif /* CONFIG_AGPS_SRC_SUPL */
 
-int gps_agps_request(struct gps_agps_request request, int socket)
+int gps_agps_request_send(struct gps_agps_request request, int socket)
 {
 	int err;
 
