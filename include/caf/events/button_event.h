@@ -8,9 +8,10 @@
 #define _BUTTON_EVENT_H_
 
 /**
- * @brief CAF Button Event
+ * @file
  * @defgroup caf_button_event CAF Button Event
  * @{
+ * @brief CAF Button Event.
  */
 
 #include "event_manager.h"
@@ -19,10 +20,18 @@
 extern "C" {
 #endif
 
+/** @brief Button event.
+ *
+ * The button event is submitted when a button is pressed or released.
+ */
 struct button_event {
+	/** Event header. */
 	struct event_header header;
 
+	/** ID of the button. */
 	uint16_t key_id;
+
+	/** Information if the button was pressed or released. */
 	bool pressed;
 };
 
