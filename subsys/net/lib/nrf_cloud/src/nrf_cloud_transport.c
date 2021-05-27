@@ -119,7 +119,7 @@ static struct nct {
 	uint32_t message_id;
 	uint8_t rx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
 	uint8_t tx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
-	uint8_t payload_buf[CONFIG_NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN];
+	uint8_t payload_buf[CONFIG_NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN + 1];
 } nct;
 
 #define CC_RX_LIST_CNT 3
@@ -744,11 +744,16 @@ int nct_mqtt_connect(void)
 
 static int publish_get_payload(struct mqtt_client *client, size_t length)
 {
-	if (length > sizeof(nct.payload_buf)) {
+	if (length > (sizeof(nct.payload_buf) - 1)) {
 		return -EMSGSIZE;
 	}
 
-	return mqtt_readall_publish_payload(client, nct.payload_buf, length);
+	int ret = mqtt_readall_publish_payload(client, nct.payload_buf, length);
+
+	/* Ensure buffer is always NULL-terminated */
+	nct.payload_buf[length] = 0;
+
+	return ret;
 }
 
 /* Handle MQTT events. */
@@ -801,7 +806,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 
 		if (err < 0) {
 			LOG_ERR("publish_get_payload: failed %d", err);
-			mqtt_disconnect(mqtt_client);
+			nrf_cloud_disconnect();
 			event_notify = false;
 			break;
 		}
