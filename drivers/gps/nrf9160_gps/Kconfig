@@ -16,6 +16,14 @@ menuconfig NRF9160_GPS
 
 if NRF9160_GPS
 
+config NRF9160_AGPS
+	bool "Enable A-GPS"
+	depends on AGPS
+	default y
+	help
+	  Disabling this will cause the GPS driver to not send AGPS data request
+	  events.
+
 config NRF9160_GPS_DEV_NAME
 	string "nRF9160 GPS device name"
 	default "NRF9160_GPS"

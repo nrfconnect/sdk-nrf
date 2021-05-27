@@ -31,9 +31,12 @@ static void start(struct k_work *work)
 	struct gps_config gps_cfg = {
 		.nav_mode = GPS_NAV_MODE_PERIODIC,
 		.power_mode = GPS_POWER_MODE_DISABLED,
+		.use_case = GPS_USE_CASE_MULTIPLE_HOT_START,
+		.accuracy = GPS_ACCURACY_NORMAL,
 		.timeout = CONFIG_GPS_CONTROL_FIX_TRY_TIME,
 		.interval = CONFIG_GPS_CONTROL_FIX_TRY_TIME +
 			gps_reporting_interval_seconds,
+		.delete_agps_data = 0,
 		.priority = true,
 	};
 

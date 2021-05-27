@@ -115,7 +115,7 @@ static int create_device_id(void)
 	return 0;
 }
 
-int supl_session(const nrf_gnss_agps_data_frame_t *const agps_request)
+int supl_session(const struct nrf_modem_gnss_agps_data_frame *const agps_request)
 {
 	create_device_id();
 
