@@ -74,3 +74,4 @@ zephyr_library_sources_ifdef(CONFIG_BT_MESH_SCHEDULER_SRV scheduler_srv.c)
 add_subdirectory_ifdef(CONFIG_BT_MESH_VENDOR_MODELS vnd)
 
 zephyr_linker_sources(SECTIONS sensor_types.ld)
+zephyr_linker_sources(SECTIONS scene_types.ld)

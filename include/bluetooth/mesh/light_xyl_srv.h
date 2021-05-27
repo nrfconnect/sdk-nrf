@@ -166,8 +166,6 @@ struct bt_mesh_light_xyl_srv {
 	struct bt_mesh_light_xy_range range;
 	/** Handler function structure. */
 	const struct bt_mesh_light_xyl_srv_handlers *handlers;
-	/** Scene entry */
-	struct bt_mesh_scene_entry scene;
 
 	/** The last known xy Level. */
 	struct bt_mesh_light_xy xy_last;

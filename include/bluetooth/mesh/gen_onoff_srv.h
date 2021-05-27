@@ -97,8 +97,6 @@ struct bt_mesh_onoff_srv {
 	/* Publication data */
 	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
 		BT_MESH_ONOFF_OP_STATUS, BT_MESH_ONOFF_MSG_MAXLEN_STATUS)];
-	/* Scene entry */
-	struct bt_mesh_scene_entry scene;
 	/** Internal flag state. */
 	atomic_t flags;
 };

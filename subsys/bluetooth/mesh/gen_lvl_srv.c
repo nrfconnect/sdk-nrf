@@ -72,7 +72,7 @@ static void set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	srv->handlers->set(srv, ctx, &set, &status);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_invalidate(&srv->scene);
+		bt_mesh_scene_invalidate(srv->model);
 	}
 
 	if (ack) {
@@ -103,7 +103,7 @@ static void delta_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	srv->handlers->delta_set(srv, ctx, &delta_set, &status);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_invalidate(&srv->scene);
+		bt_mesh_scene_invalidate(srv->model);
 	}
 
 	if (ack) {
@@ -143,7 +143,7 @@ static void move_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	srv->handlers->move_set(srv, ctx, &move_set, &status);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_invalidate(&srv->scene);
+		bt_mesh_scene_invalidate(srv->model);
 	}
 
 	if (ack) {
@@ -264,7 +264,8 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	(void)bt_mesh_lvl_srv_pub(srv, NULL, &status);
 }
 
-static const struct bt_mesh_scene_entry_type scene_type = {
+BT_MESH_SCENE_ENTRY_SIG(lvl) = {
+	.id.sig = BT_MESH_MODEL_ID_GEN_LEVEL_SRV,
 	.maxlen = 2,
 	.store = scene_store,
 	.recall = scene_recall,
@@ -290,10 +291,6 @@ static int bt_mesh_lvl_srv_init(struct bt_mesh_model *model)
 	srv->pub.update = update_handler;
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
-
-	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
-	}
 
 	return 0;
 }

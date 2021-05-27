@@ -108,8 +108,6 @@ struct bt_mesh_ponoff_srv {
 #endif
 	/** Current OnPowerUp state. */
 	enum bt_mesh_on_power_up on_power_up;
-	/* Scene entry */
-	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Set the OnPowerUp state of a Power OnOff server.

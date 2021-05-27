@@ -142,7 +142,7 @@ static void hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	(void)bt_mesh_lvl_srv_pub(&srv->lvl, NULL, &lvl_status);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_invalidate(&srv->lvl.scene);
+		bt_mesh_scene_invalidate(srv->model);
 	}
 }
 

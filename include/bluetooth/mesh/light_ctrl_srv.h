@@ -186,8 +186,6 @@ struct bt_mesh_light_ctrl_srv {
 	struct bt_mesh_model *model;
 	/** Composition data setup server model instance */
 	struct bt_mesh_model *setup_srv;
-	/** Scene entry */
-	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Turn the light on.

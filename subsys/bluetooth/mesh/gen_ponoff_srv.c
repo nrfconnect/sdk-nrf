@@ -252,7 +252,8 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	(void)bt_mesh_onoff_srv_pub(&srv->onoff, NULL, &status);
 }
 
-const struct bt_mesh_scene_entry_type scene_type = {
+BT_MESH_SCENE_ENTRY_SIG(ponoff) = {
+	.id.sig = BT_MESH_MODEL_ID_GEN_POWER_ONOFF_SRV,
 	.maxlen = 1,
 	.store = scene_store,
 	.recall = scene_recall,
@@ -298,10 +299,6 @@ static int bt_mesh_ponoff_srv_init(struct bt_mesh_model *model)
 		bt_mesh_model_find(
 			bt_mesh_model_elem(model),
 			BT_MESH_MODEL_ID_GEN_POWER_ONOFF_SETUP_SRV));
-
-	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-		bt_mesh_scene_entry_add(model, &srv->scene, &scene_type, false);
-	}
 
 	return 0;
 }

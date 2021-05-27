@@ -135,8 +135,6 @@ struct bt_mesh_light_temp_srv {
 	struct bt_mesh_light_temp_range range;
 	/** The last known color temperature. */
 	struct bt_mesh_light_temp last;
-	/** Scene data entry */
-	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Publish the current CTL Temperature status.
