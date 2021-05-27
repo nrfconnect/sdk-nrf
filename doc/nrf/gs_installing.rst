@@ -35,15 +35,28 @@ The installation process is different depending on your operating system.
 
    .. group-tab:: Windows
 
-      The recommended way for installing the required tools on Windows is to use Chocolatey, a package manager for Windows.
+      The recommended way for installing the required tools on Windows is to use `Chocolatey`_, a package manager for Windows.
       Chocolatey installs the tools so that you can use them from a Windows command prompt.
 
-      To install the required tools, follow the :ref:`install-required-tools` section for Windows in Zephyr's :ref:`zephyr:getting_started`.
+      To install the required tools, complete the following steps:
+
+      .. ncs-include:: getting_started/index.rst
+         :docset: zephyr
+         :dedent: 6
+         :start-after: .. _install_dependencies_windows:
+         :end-before: _get_the_code:
 
    .. group-tab:: Linux
 
-      To install the required tools on Linux, follow the :ref:`install-required-tools` section for Linux in Zephyr's :ref:`zephyr:getting_started`.
-      Additional information is available in the :ref:`zephyr:linux_requirements` section.
+      To install the required tools on Ubuntu, complete the following steps:
+
+      .. ncs-include:: getting_started/index.rst
+         :docset: zephyr
+         :dedent: 6
+         :start-after: .. _install_dependencies_ubuntu:
+         :end-before: group-tab:: macOS
+
+      For additional information and instructions for other Linux operating systems, see the :ref:`zephyr:linux_requirements` section in the Zephyr documentation.
 
       .. note::
          You do not need to install the Zephyr SDK.
@@ -51,11 +64,16 @@ The installation process is different depending on your operating system.
 
    .. group-tab:: macOS
 
-      To install the required tools, follow the :ref:`install-required-tools` section for macOS in Zephyr's :ref:`zephyr:getting_started`.
+      To install the required tools on macOS, complete the following steps:
 
-      Install Homebrew and install the required tools using the ``brew`` command line tool.
+      .. ncs-include:: getting_started/index.rst
+         :docset: zephyr
+         :dedent: 6
+         :start-after: .. _install_dependencies_macos:
+         :end-before: group-tab:: Windows
 
-      Also see :ref:`zephyr:mac-setup-alts` for additional information.
+
+      Also see :ref:`zephyr:mac-setup-alts` in the Zephyr documentation for additional information.
 
 ..
 
@@ -70,7 +88,8 @@ This system generates the Ninja files that the |NCS| uses.
 
       1. Download the latest version of the GN binary archive for Windows from the `GN website`_.
       2. Extract the :file:`zip` archive.
-      3. Ensure that the GN tool is added to your :envvar:`PATH` :ref:`environment variable <zephyr:env_vars>`.
+      3. Ensure that the GN tool is added to your :envvar:`PATH` environment variable.
+         See :ref:`zephyr:env_vars` for instructions if needed.
 
    .. group-tab:: Linux
 
