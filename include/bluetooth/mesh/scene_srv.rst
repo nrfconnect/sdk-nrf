@@ -34,39 +34,56 @@ It's up to the individual model implementation to correctly serialize and deseri
 Models with scene data
 **********************
 
-The following models will automatically register as scene entries:
+The following models will automatically register scene entries:
 
 * :ref:`bt_mesh_onoff_srv_readme`
 * :ref:`bt_mesh_lvl_srv_readme`
+* :ref:`bt_mesh_plvl_srv_readme`
+* :ref:`bt_mesh_ponoff_srv_readme`
+* :ref:`bt_mesh_lightness_srv_readme`
+* :ref:`bt_mesh_light_temp_srv_readme`
+* :ref:`bt_mesh_light_xyl_srv_readme`
+* :ref:`bt_mesh_light_hsl_srv_readme`
 * :ref:`bt_mesh_light_ctl_srv_readme`
 * :ref:`bt_mesh_light_ctrl_srv_readme`
-
-All models that extend these models will automatically become part of the scenes as well.
 
 Adding scene data for a model
 *****************************
 
-Every model that needs to store its state in scenes must register a :cpp:type:`bt_mesh_scene_entry` structure containing callbacks for storing and recalling the scene data.
-The scene entry must be registered with a valid :cpp:type:`bt_mesh_scene_entry_type` structure, which defines the store and recall behavior of the scene entry.
+Every model that needs to store its state in scenes must register a :c:type:`bt_mesh_scene_entry` structure containing callbacks for storing and recalling the scene data.
+The scene entry must be declared using :c:macro:`BT_MESH_SCENE_ENTRY_SIG` for SIG defined models (e.g. from the model specification), or :c:macro:`BT_MESH_SCENE_ENTRY_VND` for vendor-specific models.
+These macros will allocate the structure in flash, and make them known to the Scene Server model.
 
-For instance, the Generic OnOff Server model defines its scene entry by adding a `bt_mesh_scene_entry` structure to every :cpp:type:`bt_mesh_onoff_srv`, and registering it with a common type:
+For instance, the Generic OnOff Server model defines its scene entry by declaring a :c:type:`bt_mesh_scene_entry` structure with the Generic OnOff Server model ID and a set of callbacks:
 
 .. literalinclude:: ../../../subsys/bluetooth/mesh/gen_onoff_srv.c
    :language: c
    :start-after: include_startingpoint_scene_srv_rst_1
    :end-before: include_endpoint_scene_srv_rst_1
 
-The Generic OnOff Server model only needs to store its OnOff state in the scene, so it always stores and recalls a single byte.
-The ``restore`` call contains a transition time pointer, which should be taken into account when implementing the model behavior.
+The Generic OnOff Server model only needs to store its OnOff state in the scene, so it always stores and recalls a single byte, as reflected in the :c:member:`bt_mesh_scene_entry.maxlen` member of the :c:type:`bt_mesh_scene_entry`.
+
+Storing and recalling scene data
+********************************
+
+When storing and recalling a scene, the Scene Server will go through each model in the composition data elements it represents, and check if there is a scene entry for this model ID.
+
+The Scene Server will use the callbacks in the scene entry to either store or recall the model's scene data for each model whose model ID is specified in the scene entry.
+
+If you want to skip a specific model instance, return ``0`` from the ``store`` callback.
+
+If a model is extended by other models, it will neither be stored nor recalled with the scene, even if there is a scene entry for this model ID.
 
 If a scene store operation is requested in the middle of a transition between two states, the model should commit the target state to the scene data.
+
+The ``recall`` callback contains a transition time pointer, which should be taken into account when implementing the model behavior.
 
 Invalidating scene data
 ***********************
 
 A scene is valid as long as its state is unchanged.
 As soon as one of the models in a scene detect a change to the scene data, either because of an incoming message or because of an internal change, the node is no longer in an active scene.
-When a model detects a change to its own data, it shall call :cpp:func:`bt_mesh_scene_invalidate`, passing its own scene entry.
+When a model detects a change to its own data, it calls :c:func:`bt_mesh_scene_invalidate`, passing a pointer to its own model pointer.
 This resets the Scene Server's current scene to :c:macro:`BT_MESH_SCENE_NONE`.
 The scene has to be stored again to include the change.
 
@@ -89,7 +106,7 @@ None.
 Persistent storage
 ===================
 
-The Scene Server stores the scene registry and the current scene persistently.
+The Scene Server stores the scene registry persistently.
 
 Each scene in the scene registry is stored as a separate serialized data structure, containing the scene data of all participating models.
 The serialized data is split into pages of 256 bytes to allow storage of more data than the settings backend can fit in one entry.

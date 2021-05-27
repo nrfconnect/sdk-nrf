@@ -16,6 +16,7 @@
 
 #include <bluetooth/mesh/scene.h>
 #include <settings/settings.h>
+#include <toolchain/common.h>
 #include <sys/slist.h>
 
 #ifdef __cplusplus
@@ -25,6 +26,26 @@ extern "C" {
 #ifndef CONFIG_BT_MESH_SCENES_MAX
 #define CONFIG_BT_MESH_SCENES_MAX 0
 #endif
+
+/** @def BT_MESH_SCENE_ENTRY_SIG
+ *
+ *  @brief Scene entry type definition for SIG models
+ *
+ *  @param[in] _name Name of the scene entry type
+ */
+#define BT_MESH_SCENE_ENTRY_SIG(_name)                                         \
+	static const Z_STRUCT_SECTION_ITERABLE(                                \
+		bt_mesh_scene_entry, bt_mesh_scene_entry_sig_##_name)
+
+/** @def BT_MESH_SCENE_ENTRY_VND
+ *
+ *  @brief Scene entry type definition for vendor models
+ *
+ *  @param[in] _name Name of the scene entry type
+ */
+#define BT_MESH_SCENE_ENTRY_VND(_name)                                         \
+	static const Z_STRUCT_SECTION_ITERABLE(                                \
+		bt_mesh_scene_entry, bt_mesh_scene_entry_vnd_##_name)
 
 struct bt_mesh_scene_srv;
 
@@ -65,10 +86,8 @@ struct bt_mesh_scene_srv {
 	/** Largest number of pages used to store SIG model scene data. */
 	uint8_t sigpages;
 
-	/** SIG model scene entries. */
-	sys_slist_t sig;
-	/** Vendor model scene entries. */
-	sys_slist_t vnd;
+	/** Linked list node for Scene Server list */
+	sys_snode_t n;
 
 	/** Timestamp when the transition ends. */
 	uint64_t transition_end;
@@ -92,7 +111,14 @@ struct bt_mesh_scene_srv {
 };
 
 /** Scene entry type. */
-struct bt_mesh_scene_entry_type {
+struct bt_mesh_scene_entry {
+	/** Model ID */
+	union {
+		/** SIG model ID */
+		uint16_t sig;
+		/** Vendor model ID */
+		struct bt_mesh_mod_id_vnd vnd;
+	} id;
 	/** Longest scene data */
 	size_t maxlen;
 
@@ -126,61 +152,15 @@ struct bt_mesh_scene_entry_type {
 		       size_t len, struct bt_mesh_model_transition *transition);
 };
 
-/** @brief Scene entry.
- *
- *  Every model that stores data in scenes must own a unique scene entry, and
- *  register it with a Scene Server through @ref bt_mesh_scene_entry_add.
- *
- *  Parameters in this structure will be filled by @ref bt_mesh_scene_entry_add,
- *  and should not be manipulated directly.
- */
-struct bt_mesh_scene_entry {
-#if defined(CONFIG_BT_MESH_SCENE_SRV)
-	/** Scene Server this entry got registered to. */
-	struct bt_mesh_scene_srv *srv;
-	/** Model this scene entry belongs to. */
-	struct bt_mesh_model *model;
-	/** Scene entry callbacks */
-	const struct bt_mesh_scene_entry_type *type;
-	/** Scene entry list node */
-	sys_snode_t n;
-#endif
-};
-
-/** @brief Register a scene entry.
- *
- *  This function fills all fields of the supplied @ref bt_mesh_scene_entry
- *  structure, and registers it to the correct Scene Server.
- *
- *  Scene Servers store scene data for all models in their own element, and
- *  every subsequent element until the next Scene Server. If a Scene Server is
- *  found for this entry, the @c srv parameter will point to it when this
- *  function returns. If @c srv is NULL, this means no Scene Server was found,
- *  and Scene data will not be stored for this entry.
- *
- *  @note This function must be called as part of the model initialization
- *        procedure to correctly recover a scene on startup. The initial Scene
- *        is recovered as part of the model start procedure.
- *
- *  @param[in] model Model this scene entry represents.
- *  @param[in] entry Scene entry.
- *  @param[in] type  Scene entry type.
- *  @param[in] vnd   Whether this is a vendor model.
- */
-void bt_mesh_scene_entry_add(struct bt_mesh_model *model,
-			     struct bt_mesh_scene_entry *entry,
-			     const struct bt_mesh_scene_entry_type *type,
-			     bool vnd);
-
 /** @brief Notify the Scene Server that a Scene entry has changed.
  *
  *  Whenever some state in the Scene has changed outside of Scene recall
  *  procedure, this function must be called to notify the Scene Server that
  *  the current Scene is no longer active.
  *
- *  @param[in] entry Scene entry that was invalidated.
+ *  @param[in] mod Model that invalidated the scene.
  */
-void bt_mesh_scene_invalidate(struct bt_mesh_scene_entry *entry);
+void bt_mesh_scene_invalidate(struct bt_mesh_model *mod);
 
 /** @brief Set the current Scene.
  *

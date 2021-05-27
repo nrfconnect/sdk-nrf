@@ -148,8 +148,6 @@ struct bt_mesh_lvl_srv {
 					       BT_MESH_LVL_MSG_MAXLEN_STATUS)];
 	/** Transaction ID tracking. */
 	struct bt_mesh_tid_ctx tid;
-	/* Scene entry */
-	struct bt_mesh_scene_entry scene;
 };
 
 /** @brief Publish the generic level state.
