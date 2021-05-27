@@ -70,7 +70,7 @@ static int shadow_update(bool version_number_include)
 {
 	int err;
 	char *message;
-	int64_t message_ts;
+	int64_t message_ts = 0;
 	int16_t bat_voltage = 0;
 
 	err = date_time_now(&message_ts);
