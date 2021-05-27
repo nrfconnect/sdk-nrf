@@ -208,12 +208,18 @@ static int open_socket(struct gps_drv_data *drv_data)
 	return 0;
 }
 
-static void cancel_works(struct gps_drv_data *drv_data)
+static void cancel_works(struct gps_drv_data *drv_data,
+			 bool wait_for_completion)
 {
-	k_work_cancel_delayable_sync(&drv_data->timeout_work,
-				     &drv_data->work_sync);
-	k_work_cancel_delayable_sync(&drv_data->blocked_work,
-				     &drv_data->work_sync);
+	if (wait_for_completion) {
+		k_work_cancel_delayable_sync(&drv_data->timeout_work,
+					&drv_data->work_sync);
+		k_work_cancel_delayable_sync(&drv_data->blocked_work,
+					&drv_data->work_sync);
+	} else {
+		k_work_cancel_delayable(&drv_data->timeout_work);
+		k_work_cancel_delayable(&drv_data->blocked_work);
+	}
 }
 
 static int gps_priority_set(struct gps_drv_data *drv_data, bool enable)
@@ -312,7 +318,7 @@ wait:
 
 			if (errno == EHOSTDOWN) {
 				LOG_DBG("GPS host is going down, sleeping");
-				cancel_works(drv_data);
+				cancel_works(drv_data, true);
 				atomic_clear(&drv_data->is_active);
 				atomic_set(&drv_data->is_shutdown, 1);
 				nrf_close(drv_data->socket);
@@ -624,7 +630,14 @@ static int start(const struct device *dev, struct gps_config *cfg)
 
 	if (atomic_get(&drv_data->is_active)) {
 		LOG_DBG("GPS is already active. Clean up before restart");
-		cancel_works(drv_data);
+		/* Try to cancel the works (one of them may already be running,
+		 * so it may be too late to cancel it and the corresponding
+		 * notification will be generated anyway).
+		 * Don't wait for the works to become idle to avoid a deadlock
+		 * when the function is called from the context of the work that
+		 * could not be canceled and would need to be finished here.
+		 */
+		cancel_works(drv_data, false);
 	}
 
 	if (atomic_get(&drv_data->is_init) != 1) {
@@ -830,7 +843,15 @@ static int stop(const struct device *dev)
 		return -EHOSTDOWN;
 	}
 
-	cancel_works(drv_data);
+	/* Don't wait here for those works to become idle, as this function
+	 * may be invoked from those works (for example, when the GPS is to be
+	 * stopped directly on the GPS_EVT_SEARCH_TIMEOUT event).
+	 * One of those works may already be running, and the attempt to cancel
+	 * it will fail then, but since the GPS_EVT_SEARCH_STOPPED notification
+	 * is submitted below through the same work queue, it will be processed
+	 * after any notification from that work that could not be canceled.
+	 */
+	cancel_works(drv_data, false);
 
 	if (atomic_get(&drv_data->is_active) == 0) {
 		/* The GPS is already stopped, attempting to stop it again would
