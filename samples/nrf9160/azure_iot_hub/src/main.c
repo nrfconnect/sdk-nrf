@@ -127,10 +127,12 @@ static void on_evt_direct_method(struct azure_iot_hub_method *method)
 	printk("Method name: %s\n", method->name);
 	printf("Payload: %.*s\n", method->payload_len, method->payload);
 
-	strncpy(method_data.request_id, method->rid,
-		sizeof(method_data.request_id));
+	strncpy(method_data.request_id, method->rid, sizeof(method_data.request_id) - 1);
+	method_data.request_id[sizeof(method_data.request_id) - 1] = '\0';
 
-	strncpy(method_data.name, method->name, sizeof(method_data.name));
+	strncpy(method_data.name, method->name, sizeof(method_data.name) - 1);
+	method_data.name[sizeof(method_data.name) - 1] = '\0';
+
 	snprintf(method_data.payload, sizeof(method_data.payload),
 		 "%.*s", method->payload_len, method->payload);
 
