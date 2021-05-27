@@ -1,0 +1,9 @@
+*.a
+*.imp
+*.nlm
+*.orig
+*.rej
+*.res
+TAGS
+libcurl.plist.dist
+stamp-h1
