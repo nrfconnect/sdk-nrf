@@ -187,6 +187,7 @@ static int server_connect(void)
 	client_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (client_fd < 0) {
 		printk("Failed to create UDP socket: %d\n", errno);
+		err = -errno;
 		goto error;
 	}
 
