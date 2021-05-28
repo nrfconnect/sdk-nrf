@@ -41,7 +41,7 @@ The modem-specific AT commands are documented in the `nRF91 AT Commands Referenc
    FOTA_AT_commands
    SMS_AT_commands
    FTP_AT_commands
-   GPS_AT_commands
+   GNSS_AT_commands
    MQTT_AT_commands
    HTTPC_AT_commands
    TWI_AT_commands
