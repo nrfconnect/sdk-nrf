@@ -445,6 +445,7 @@ static bool parse_reported_status(const char *msg)
 							 "pendingFwVersion");
 	if (fw_pending_obj == NULL) {
 		LOG_DBG("No pendingFwVersion object found");
+		report_needed = true;
 		goto clean_exit;
 	}
 
