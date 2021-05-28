@@ -140,3 +140,64 @@ Please provide one of following: CONF_FILES")
     set(${ZEPHYR_FILE_DTS} ${${ZEPHYR_FILE_DTS}} PARENT_SCOPE)
   endif()
 endfunction()
+
+# Usage:
+#   target_compile_options_final(<target> <PRIVATE|PUBLIC|INTERFACE> [item(s)])
+#
+# NCS target_compile_options_final().
+# This function extends the target_compile_options(<target> ...) function to
+# support compile options to be applied at the end of compiler invocations.
+#
+# CMake will first place a targets own compile options, and thereafter inherited
+# compile options from link libraries or interface libraries.
+#
+# This means that a compile option from an interface library may overrule the
+# option specified on the library itself.
+#
+# Using target_compile_options_final() allows a user to specify options that
+# must be placed AFTER inherited options.
+#
+# In order for target_compile_options_final() to work correctly then it is
+# important that this function is called AFTER all target_link_libraries().
+#
+# Correct usage for target 'foo'
+#   add_library(foo STATIC ...)
+#   target_link_libraries(foo PRIVATE bar)
+#   target_compile_options_final(foo PRIVATE -late-option)
+#
+# Wrong usage:
+#   add_library(foo STATIC ...)
+#   target_compile_options_final(foo PRIVATE -late-option)
+#   # This results in options from 'bar' being applied after '-late-option'
+#   target_link_libraries(foo PRIVATE bar)
+#
+function(target_compile_options_final)
+  if(${ARGC} LESS 2)
+    message(FATAL_ERROR "target_compile_options_final called with incorrect number of arguments")
+  endif()
+
+  set(VALID_KEYWORDS PRIVATE PUBLIC INTERFACE)
+  if(NOT ${ARGV1} IN_LIST VALID_KEYWORDS)
+    message(FATAL_ERROR "target_compile_options_final called with invalid arguments")
+  endif()
+
+  list(REMOVE_AT ARGV 0 1)
+
+  if(${ARGV1} STREQUAL INTERFACE)
+    target_compile_options(${ARGV0} INTERFACE ${ARGV})
+    return()
+  endif()
+
+  if(${ARGV1} STREQUAL PUBLIC)
+    target_compile_options(${ARGV0} INTERFACE ${ARGV})
+  endif()
+
+  get_property(libraries TARGET ${ARGV0} PROPERTY LINK_LIBRARIES)
+  if(NOT compile_options_final IN_LIST libraries)
+    set_property(
+      TARGET ${ARGV0}
+      APPEND PROPERTY LINK_LIBRARIES compile_options_final
+    )
+  endif()
+  set_property(TARGET ${ARGV0} APPEND PROPERTY COMPILE_OPTIONS_FINAL ${ARGV})
+endfunction()
