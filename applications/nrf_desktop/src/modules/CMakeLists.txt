@@ -82,8 +82,5 @@ target_sources_ifdef(CONFIG_DESKTOP_FAILSAFE_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_CPU_MEAS_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpu_meas.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_SMP_ENABLE
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/smp.c)
-
 target_sources_ifdef(CONFIG_DESKTOP_PROFILER_SYNC_GPIO_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/profiler_sync.c)

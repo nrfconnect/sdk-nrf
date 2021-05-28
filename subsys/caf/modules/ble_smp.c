@@ -1,23 +1,18 @@
 /*
- * Copyright (c) 2020 Nordic Semiconductor ASA
+ * Copyright (c) 2020-2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-#include <zephyr.h>
-#include <zephyr/types.h>
 
 #include <mgmt/mcumgr/smp_bt.h>
 #include <img_mgmt/img_mgmt.h>
 
 #define MODULE smp
 #include <caf/events/module_state_event.h>
-#include <caf/events/ble_common_event.h>
-#include "ble_event.h"
-#include "dfu_lock.h"
+#include <caf/events/ble_smp_event.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_SMP_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_SMP_LOG_LEVEL);
 
 
 static void submit_smp_transfer_event(void)
@@ -29,19 +24,8 @@ static void submit_smp_transfer_event(void)
 
 static int upload_confirm(uint32_t offset, uint32_t size, void *arg)
 {
-	static bool dfu_started;
-
-	if (unlikely(!dfu_started)) {
-		if (!dfu_lock(MODULE_ID(MODULE))) {
-			/* Reject the upload. */
-			return -1;
-		}
-
-		dfu_started = true;
-	}
 	submit_smp_transfer_event();
 
-	/* Accept the upload. */
 	return 0;
 }
 

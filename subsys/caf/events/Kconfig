@@ -53,6 +53,17 @@ config CAF_INIT_LOG_BLE_PEER_CONN_PARAMS_EVENTS
 	depends on LOG
 	default y
 
+config CAF_BLE_SMP_TRANSFER_EVENTS
+	bool "Enable BLE SMP events"
+	help
+	  Enable support for BLE SMP transfer events.
+
+config CAF_INIT_LOG_BLE_SMP_TRANSFER_EVENTS
+	bool "Log BLE SMP transfer events"
+	depends on CAF_BLE_SMP_TRANSFER_EVENTS
+	depends on LOG
+	default y
+
 config CAF_BUTTON_EVENTS
 	bool "Enable button events"
 	help

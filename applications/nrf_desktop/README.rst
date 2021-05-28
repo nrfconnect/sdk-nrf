@@ -1336,7 +1336,7 @@ The GATT Service is implemented by the :ref:`nrf_desktop_dev_descr`.
 Apart from the GATT Services, an nRF Desktop peripheral device must enable and configure the following application modules:
 
 * :ref:`nrf_desktop_ble_adv` - Controls the Bluetooth advertising.
-* :ref:`nrf_desktop_ble_latency` - Keeps the connection latency low when the :ref:`nrf_desktop_config_channel` is being used or when an update image is being received by the :ref:`nrf_desktop_smp`.
+* :ref:`nrf_desktop_ble_latency` - Keeps the connection latency low when the :ref:`nrf_desktop_config_channel` is being used or when an update image is being received by the :ref:`nrf_desktop_ble_smp`.
   This is done to ensure quick data transfer.
 
 Optionally, you can also enable the following module:
@@ -1383,7 +1383,7 @@ The nRF Desktop application can use one of the following bootloaders:
     You can use the MCUboot for the background DFU through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
     The MCUboot can also be used for the background DFU over Simple Management Protocol (SMP).
     The SMP can be used to transfer the new firmware image in the background from an Android device.
-    In that case, the :ref:`nrf_desktop_smp` is used to handle the image transfer.
+    In that case, the :ref:`nrf_desktop_ble_smp` is used to handle the image transfer.
 
   * :ref:`USB serial recovery <nrf_desktop_bootloader_serial_dfu>`.
     In this scenario, the MCUboot bootloader supports the USB serial recovery.
@@ -1439,7 +1439,7 @@ At the end of these three stages, the nRF Desktop application will be rebooted w
     The devices with smaller flash size can use either :ref:`nrf_desktop_bootloader_serial_dfu` or MCUboot bootloader with the secondary image partition located on an external flash.
 
 The background firmware upgrade can also be performed over the Simple Management Protocol (SMP).
-For more detailed information about the DFU over SMP, read the :ref:`nrf_desktop_smp` documentation.
+For more detailed information about the DFU over SMP, read the :ref:`nrf_desktop_ble_smp` documentation.
 
 Update image generation
 -----------------------
@@ -1457,7 +1457,7 @@ The update image is generated in the build directory when building the firmware 
       The update tool checks if the currently running image runs from either slot 0 or slot 1.
       It then transfers the update image that can be run from the unused slot.
 
-* The :file:`zephyr/app_update.bin` is used for the background DFU through the :ref:`nrf_desktop_smp`.
+* The :file:`zephyr/app_update.bin` is used for the background DFU through the :ref:`nrf_desktop_ble_smp`.
 
 Update image transfer
 ---------------------
@@ -1473,7 +1473,7 @@ Depending on the side on which the process is handled:
 * On the host side, the process is handled by the :ref:`nrf_desktop_config_channel_script`.
   See the tool documentation for more information about how to execute the background DFU process on the host.
 
-If the MCUboot bootloader is selected, the update image can also be transfered in the background through the :ref:`nrf_desktop_smp`.
+If the MCUboot bootloader is selected, the update image can also be transferred in the background through the :ref:`nrf_desktop_ble_smp`.
 
 Update image verification and swap
 ----------------------------------

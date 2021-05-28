@@ -47,12 +47,6 @@ struct ble_discovery_complete_event {
 };
 EVENT_TYPE_DECLARE(ble_discovery_complete_event);
 
-/** @brief BLE SMP transfer event. */
-struct ble_smp_transfer_event {
-	struct event_header header;
-};
-EVENT_TYPE_DECLARE(ble_smp_transfer_event);
-
 #if CONFIG_DESKTOP_BLE_QOS_ENABLE
 /** @brief BLE QoS event. */
 struct ble_qos_event {

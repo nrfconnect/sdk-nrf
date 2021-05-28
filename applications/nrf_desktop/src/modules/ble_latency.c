@@ -8,6 +8,7 @@
 #include <bluetooth/conn.h>
 
 #include <caf/events/ble_common_event.h>
+#include <caf/events/ble_smp_event.h>
 #include "ble_event.h"
 #include "config_event.h"
 #include <caf/events/power_event.h>
@@ -280,7 +281,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_SMP_ENABLE) &&
+	if (IS_ENABLED(CONFIG_CAF_BLE_SMP) &&
 	    is_ble_smp_transfer_event(eh)) {
 		use_low_latency();
 
@@ -324,7 +325,7 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
-#if CONFIG_DESKTOP_SMP_ENABLE
+#if CONFIG_CAF_BLE_SMP
 EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
 #endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
