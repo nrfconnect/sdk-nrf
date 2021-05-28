@@ -95,11 +95,7 @@ static void set_tx_power(struct bt_conn *conn)
 
 		err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL, buf, &rsp);
 		if (err) {
-			uint8_t reason = rsp ?
-			  ((struct bt_hci_rp_vs_write_tx_power_level *)rsp->data)->status : 0;
-
-			LOG_ERR("Cannot set TX power (err: %d reason 0x%02x)",
-				err, reason);
+			LOG_ERR("Cannot set TX power (err: %d)", err);
 		} else {
 			rp = (struct bt_hci_rp_vs_write_tx_power_level *)rsp->data;
 			LOG_INF("TX power returned by command: %" PRId8, rp->selected_tx_power);
