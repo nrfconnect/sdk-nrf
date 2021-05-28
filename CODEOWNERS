@@ -70,6 +70,7 @@ Kconfig*                                  @tejlmand
 /lib/lte_link_control/                    @jtguggedal
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
+/lib/multicell_location/                  @jtguggedal
 /lib/multithreading_lock/                 @joerchan @carlopaparo
 /lib/pdn/                                 @lemrey @rlubos
 /lib/pelion/                              @pdunaj

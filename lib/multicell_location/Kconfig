@@ -1,0 +1,163 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig MULTICELL_LOCATION
+	bool "Multicell Location"
+	depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
+	select MODEM_KEY_MGMT
+	select CJSON_LIB
+	help
+	  Enables the multicell location library. The library can be used
+	  to resolve the device's location based on LTE cell measurements.
+	  The library supports multiple location services, which can be
+	  configured using Kconfig options.
+
+if MULTICELL_LOCATION
+
+choice MULTICELL_LOCATION_SERVICE
+	prompt "Location service"
+	default MULTICELL_LOCATION_SERVICE_NONE
+	help
+	  Select which location service that will be used for location requests
+
+config MULTICELL_LOCATION_SERVICE_NONE
+	bool "No location service"
+
+config MULTICELL_LOCATION_SERVICE_HERE
+	bool "HERE location service"
+	help
+	  Use HERE location service
+
+config MULTICELL_LOCATION_SERVICE_SKYHOOK
+	bool "Skyhook location service"
+	help
+	  Use Skyhook location service
+
+endchoice
+
+if MULTICELL_LOCATION_SERVICE_HERE
+choice MULTICELL_LOCATION_SERVICE_HERE_VERSION
+	prompt "HERE Positioning API version"
+	default MULTICELL_LOCATION_HERE_V2
+	help
+	  Select which HERE API version to use
+
+config MULTICELL_LOCATION_HERE_V1
+	bool "HERE API v1"
+	help
+	  Use HERE location service API v1
+
+config MULTICELL_LOCATION_HERE_V2
+	bool "HERE API v2"
+	help
+	  Use HERE location service API v2
+
+endchoice
+
+choice MULTICELL_LOCATION_HERE_AUTH_METHOD
+	prompt "HERE authentication method"
+	default MULTICELL_LOCATION_HERE_USE_API_KEY
+	help
+	  Select authentication method to use when connecting to HERE's server
+
+config MULTICELL_LOCATION_HERE_USE_API_KEY
+	bool "Use API key"
+	help
+	  Use API key for authentication towards HERE location service
+
+config MULTICELL_LOCATION_HERE_USE_APP_CODE_ID
+	bool "Use app code and ID"
+	help
+	  Use app code and ID for authentication towards HERE location service
+
+endchoice
+
+config MULTICELL_LOCATION_HERE_API_KEY
+	string "HERE API key"
+	depends on MULTICELL_LOCATION_HERE_USE_API_KEY
+	help
+	  HERE API key, used both for API v1 and v2 when API key authentication
+	  method id selected
+
+if MULTICELL_LOCATION_HERE_USE_APP_CODE_ID
+config MULTICELL_LOCATION_HERE_APP_CODE
+	string "HERE APP code"
+	help
+	  HERE app code
+
+config MULTICELL_LOCATION_HERE_APP_ID
+	string "HERE APP ID"
+	help
+	  HERE app ID
+
+endif # MULTICELL_LOCATION_HERE_USE_APP_CODE_ID
+endif # MULTICELL_LOCATION_SERVICE_HERE
+
+if MULTICELL_LOCATION_SERVICE_SKYHOOK
+
+config MULTICELL_LOCATION_SKYHOOK_API_KEY
+	string "Skyhook API key"
+	help
+	  Skyhook API key to use for authentication towards Skyhook location
+	  service
+
+endif # MULTICELL_LOCATION_SERVICE_SKYHOOK
+
+config MULTICELL_LOCATION_MAX_NEIGHBORS
+	int "Max number of neighbor cells"
+	range 0 17
+	default 8
+	help
+	  Maximum number of neighbor cells to use when creating HTTP request.
+	  Increasing the max number will increase the library's RAM usage
+	  proportionally.
+
+config MULTICELL_LOCATION_HTTPS_PORT
+	int "HTTPS port number"
+	default 443
+	help
+	  Port number to use when connecting to the selected location service
+
+config MULTICELL_LOCATION_HOSTNAME
+	string "Server hostname"
+	default "pos.api.here.com" if MULTICELL_LOCATION_HERE_V1
+	default "positioning.hereapi.com" if MULTICELL_LOCATION_HERE_V2
+	default "global.skyhookwireless.com" if MULTICELL_LOCATION_SERVICE_SKYHOOK
+	help
+	  Server hostname to use when connecting to the selected locations service
+
+config MULTICELL_LOCATION_TLS_SEC_TAG
+	int "Security tag for TLS certificates"
+	default 175 if MULTICELL_LOCATION_SERVICE_HERE
+	default 176 if MULTICELL_LOCATION_SERVICE_SKYHOOK
+	default -1
+	help
+	  Security tag where the required TLS certificates for the selected
+	  service will be stored. This sec tag will also be used to provision
+	  certificates when multicell_location_provision_certificate() is called.
+
+config MULTICELL_LOCATION_SEND_BUF_SIZE
+	int "Send buffer size"
+	default 2048 if MULTICELL_LOCATION_SERVICE_SKYHOOK
+	default 1024
+	help
+	  Size of the buffer used to store the generated HTTP request that's sent
+	  to the location service.
+
+config MULTICELL_LOCATION_RECV_BUF_SIZE
+	int "Receive buffer size"
+	default 512
+	help
+	  Size of the buffer used to store the response from the location
+	  service.
+
+
+module = MULTICELL_LOCATION
+module-str = Multicell location
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # MULTICELL_LOCATION
