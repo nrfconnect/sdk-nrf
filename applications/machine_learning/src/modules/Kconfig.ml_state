@@ -7,7 +7,7 @@
 menuconfig ML_APP_ML_STATE
 	bool "Machine learning state"
 	depends on ML_APP_ML_RUNNER || ML_APP_EI_DATA_FORWARDER
-	depends on CAF_BUTTON_EVENTS
+	depends on CAF_CLICK_EVENTS
 	select ML_APP_ML_STATE_EVENTS
 
 if ML_APP_ML_STATE
