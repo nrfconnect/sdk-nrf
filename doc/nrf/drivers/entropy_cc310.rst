@@ -25,6 +25,6 @@ API documentation
 *****************
 
 | Header file: :file:`zephyr/include/drivers/entropy.h` (in the |NCS| project)
-| Source file: :file:`drivers/entropy_cc310/entropy_cc310.c`
+| Source file: :file:`drivers/entropy/entropy_cc310.c`
 
 The entropy_cc3xx driver implements the Zephyr :ref:`zephyr:entropy_api` API.
