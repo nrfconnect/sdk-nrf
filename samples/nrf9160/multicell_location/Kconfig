@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Multicell location sample"
+
+config MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC
+	bool "Request location periodically"
+	help
+	  Request cell measurements and location periodically.
+
+config MULTICELL_LOCATION_SAMPLE_REQUEST_PERIODIC_INTERVAL
+	int "Periodic search interval [sec]"
+	default 60
+	help
+	  Interval for periodic cell measurements and location requests.
+
+config MULTICELL_LOCATION_SAMPLE_REQUEST_BUTTON
+	bool "Request location pressing button 1"
+	default y
+	help
+	  Request cell measurements and location when button 1 is pressed.
+
+config MULTICELL_LOCATION_SAMPLE_REQUEST_CELL_CHANGE
+	bool "Request location on cell change"
+	help
+	  Request cell measurements and location when the current LTE cell
+	  changes. This can be useful when testing on a moving device.
+
+config MULTICELL_LOCATION_SAMPLE_PRINT_DATA
+	bool "Print multicell data"
+	default y
+	help
+	  Prints cell data when it's reported from the link controller.
+
+config MULTICELL_LOCATION_SAMPLE_PSM
+	bool "Request PSM from the network"
+	help
+	  Request PSM from the LTE network.
+
+config MULTICELL_LOCATION_SAMPLE_EDRX
+	bool "Request eDRX from the network"
+	help
+	  Request eDRX from the LTE network.
+
+module = MULTICELL_LOCATION_SAMPLE
+module-str = Multicell location sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
