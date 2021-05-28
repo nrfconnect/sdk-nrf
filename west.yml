@@ -166,7 +166,7 @@ manifest:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: cab081f92d8341349ad73d82e507e5db007d3e48
+      revision: 07c8d591b47c4c3609f29871be031c9af39401e1
       groups:
       - find-my
 
