@@ -106,7 +106,7 @@ Source modules for module_state_event
 * :ref:`nrf_desktop_qos`
 * :ref:`nrf_desktop_selector`
 * :ref:`nrf_desktop_settings_loader`
-* :ref:`nrf_desktop_smp`
+* :ref:`nrf_desktop_ble_smp`
 * :ref:`nrf_desktop_usb_state`
 * :ref:`nrf_desktop_watchdog`
 * :ref:`nrf_desktop_wheel`
@@ -153,7 +153,7 @@ Sink modules for module_state_event
 * :ref:`nrf_desktop_qos`
 * :ref:`nrf_desktop_selector`
 * :ref:`nrf_desktop_settings_loader`
-* :ref:`nrf_desktop_smp`
+* :ref:`nrf_desktop_ble_smp`
 * :ref:`nrf_desktop_usb_state`
 * :ref:`nrf_desktop_wheel`
 

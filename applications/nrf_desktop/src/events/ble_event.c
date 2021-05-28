@@ -16,10 +16,6 @@ EVENT_TYPE_DEFINE(ble_discovery_complete_event,
 		  NULL,
 		  NULL);
 
-EVENT_TYPE_DEFINE(ble_smp_transfer_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_BLE_SMP_TRANSFER_EVENT),
-		  NULL,
-		  NULL);
 
 #if CONFIG_DESKTOP_BLE_QOS_ENABLE
 static int log_ble_qos_event(const struct event_header *eh,

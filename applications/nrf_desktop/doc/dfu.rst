@@ -56,13 +56,9 @@ The DFU module implementation is centered around the transmission and the storag
 * `Protocol operations`_ - How the module exchanges information with the host.
 * `Partition preparation`_ - How the module prepares for receiving an image.
 
-The firmware transfer operation can also be carried out by :ref:`nrf_desktop_smp`.
-The application module must call the :c:func:`dfu_lock` function before the transfer operation, as well as before erasing the flash area.
-This is done to make sure that only one application module could modify the secondary image flash partition.
+The firmware transfer operation can also be carried out by :ref:`nrf_desktop_ble_smp`.
+The application user must not perform more than one firmware upgrade at a time.
 The modification of the data by multiple application modules would result in a broken image that would be rejected by the bootloader.
-After the operation is finished, the application module can call the :c:func:`dfu_unlock` to let other modules modify the secondary image flash partition.
-
-You can find the header file of the :c:func:`dfu_lock` and :c:func:`dfu_unlock` at the following path: :file:`src/util/dfu_lock.h`.
 
 Protocol operations
 ===================

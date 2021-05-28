@@ -8,9 +8,6 @@ target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hwid.c)
 target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE app
 			PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/config_channel_transport.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE app
-			PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dfu_lock.c)
-
 if(CONFIG_DESKTOP_BLE_QOS_ENABLE)
   if(CONFIG_FPU)
     if(CONFIG_FP_HARDABI)

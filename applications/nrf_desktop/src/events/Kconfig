@@ -22,10 +22,6 @@ config DESKTOP_INIT_LOG_BLE_DISC_COMPLETE_EVENT
 	bool "BLE discovery complete event"
 	default y
 
-config DESKTOP_INIT_LOG_BLE_SMP_TRANSFER_EVENT
-	bool "BLE SMP transfer event"
-	default y
-
 config DESKTOP_INIT_LOG_BLE_QOS_EVENT
 	bool "BLE QOS event"
 	default y

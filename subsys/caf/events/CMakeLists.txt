@@ -31,3 +31,7 @@ zephyr_sources_ifdef(CONFIG_CAF_LED_EVENTS
 zephyr_sources_ifdef(CONFIG_CAF_SENSOR_EVENTS
 	sensor_event.c
 )
+
+zephyr_sources_ifdef(CONFIG_CAF_BLE_SMP_TRANSFER_EVENTS
+	ble_smp_event.c
+)
