@@ -17,7 +17,7 @@
 #define NUM_LEDS 1
 #endif
 
-static uint8_t fota_buf[512];
+static __aligned(4) uint8_t fota_buf[512];
 
 static void fota_dl_handler(const struct fota_download_evt *evt)
 {
