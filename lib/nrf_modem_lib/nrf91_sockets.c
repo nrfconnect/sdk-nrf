@@ -218,6 +218,9 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case SO_IPV6_ECHO_REPLY:
 			*nrf_out_optname = NRF_SO_SILENCE_IPV6_ECHO_REPLY;
 			break;
+		case SO_TCP_SRV_SESSTIMEO:
+			*nrf_out_optname = NRF_SO_TCP_SRV_SESSTIMEO;
+			break;
 		case SO_RAI_LAST:
 			*nrf_out_optname = NRF_SO_RAI_LAST;
 			break;
