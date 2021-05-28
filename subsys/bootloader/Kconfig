@@ -175,10 +175,7 @@ config PM_PARTITION_SIZE_B0_IMAGE
 	default FPROTECT_BLOCK_SIZE if SOC_NRF9160 || SOC_NRF5340_CPUAPP
 	default 0x3800 if SOC_NRF5340_CPUNET
 	default 0x7000 if !B0_MIN_PARTITION_SIZE
-    # The final default should be for devices without OTP, as the provision
-    # image will add 0x1000 to the partition size. The following value
-    # accommodates that addition to all fit within 16kB
-	default 0x3000
+	default 0x4000
 	help
 	  Flash space set aside for the B0_IMAGE partition.
 
