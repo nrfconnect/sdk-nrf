@@ -28,3 +28,6 @@ if(DEFINED NRF_SUPPORTED_BUILD_TYPES)
                 message(FATAL_ERROR "${CMAKE_BUILD_TYPE} variant is not supported")
         endif()
 endif()
+
+add_library(compile_options_final INTERFACE)
+target_compile_options(compile_options_final INTERFACE $<TARGET_PROPERTY:COMPILE_OPTIONS_FINAL>)
