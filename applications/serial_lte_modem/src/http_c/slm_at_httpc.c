@@ -134,7 +134,6 @@ static int resolve_and_connect(int family, const char *host, int sec_tag)
 	struct addrinfo hints = {
 		.ai_family = family,
 		.ai_socktype = SOCK_STREAM,
-		.ai_protocol = proto,
 	};
 
 	err = getaddrinfo(host, NULL, &hints, &info);
