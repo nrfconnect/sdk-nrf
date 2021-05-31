@@ -147,7 +147,7 @@ Kconfig*                                  @tejlmand
 /modules/tfm/                             @oyvindronningstad @ioannisg @hakonfam
 /subsys/zigbee/                           @maciekfabia @mariuszpos
 /tests/bluetooth/tester/                  @joerchan @carlescufi @trond-snekvik
-/tests/lib/hw_unique_key/                 @oyvindronningstad @Vge0rge
+/tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/subsys/zigbee/                     @maciekfabia @mariuszpos
 /tests/subsys/bluetooth/mesh/             @joerchan @trond-snekvik
 /zephyr/                                  @carlescufi
