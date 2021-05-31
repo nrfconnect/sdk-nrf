@@ -56,7 +56,7 @@ int32_t boot_platform_init(void)
     }
 
     /* Initialize the nrf_cc3xx runtime */
-    result = nrf_cc3xx_platform_init();
+    result = nrf_cc3xx_platform_init_no_rng();
     if (result != NRF_CC3XX_PLATFORM_SUCCESS) {
         return 1;
     }
