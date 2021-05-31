@@ -180,7 +180,7 @@ static int at_parse_process_element(const char **str, int index,
 
 		skip_command_prefix(&tmpstr);
 
-		while (is_valid_notification_char(*tmpstr)) {
+		while (is_valid_command_char(*tmpstr)) {
 			tmpstr++;
 		}
 
