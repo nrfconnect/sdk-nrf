@@ -30,19 +30,17 @@ jobs:
 
       - name: Install packages
         run: |
-          sudo apt-get install -y ninja-build doxygen mscgen plantuml sshpass
+          sudo apt-get install -y ninja-build doxygen mscgen plantuml
 
       - name: Install base dependencies
         working-directory: ncs
         run: |
           sudo pip3 install -U setuptools wheel pip
-          export PATH="$HOME/.local/bin:$PATH"
           pip3 install -r nrf/scripts/requirements-base.txt
 
       - name: West init and update
         working-directory: ncs
         run: |
-          export PATH="$HOME/.local/bin:$PATH"
           west init -l nrf
           west update
           west zephyr-export
@@ -54,33 +52,41 @@ jobs:
           pip3 install -r nrf/scripts/requirements-doc.txt
 
       - name: Build documentation
-        working-directory: ncs
+        working-directory: ncs/nrf
         run: |
-          export PATH="$HOME/.local/bin:$PATH"
-          cmake -GNinja -B_build -DSPHINXOPTS_EXTRA="-W" nrf/doc
-          ninja -C_build
+          cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-W"
+          ninja -C doc/_build
 
-      - name: Archive documentation
-        working-directory: ncs/_build
+      - name: Build cache
+        working-directory: ncs/nrf
         run: |
-          mkdir doc && cd doc
-          file="doc_build_${GITHUB_RUN_ID}.tgz"
-          tar -C ../html -zcf $file .
+            python3 doc/_scripts/cache_create.py -b doc/_build -o cache
+
+      - name: Prepare extra cache files
+        working-directory: ncs/nrf/cache
+        run: |
+          mkdir extra && cd extra
+
+          # Keep root HTML files
+          cp ../../doc/_build/html/index.html .
+          cp ../../doc/_build/html/versions.json .
+
+          # Create documentation upload files
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "publish2 dev PR-${{ github.event.number }} $file" > monitor_$GITHUB_RUN_ID.txt
+            echo "publish2 dev PR-${{ github.event.number }} $file" > monitor.txt
             echo "${{ github.event.number }}" > pr.txt
           else
             # basename will work for both branches and tags
             branch=$(basename "${{ github.ref }}")
             if [[ $branch == "master" ]]; then
-              echo "publish2 main latest $file" > monitor_$GITHUB_RUN_ID.txt
+              echo "publish2 main latest $file" > monitor.txt
             else
-              echo "publish2 main ${branch} $file" > monitor_$GITHUB_RUN_ID.txt
+              echo "publish2 main ${branch} $file" > monitor.txt
             fi
           fi
 
-      - name: Upload artifact
+      - name: Archive cache
         uses: actions/upload-artifact@v2
         with:
-          name: doc
-          path: ncs/_build/doc
+          name: cache
+          path: ncs/nrf/cache
