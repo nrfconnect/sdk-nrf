@@ -17,8 +17,6 @@
 #define NUM_LEDS 1
 #endif
 
-static uint8_t fota_buf[512];
-
 static void fota_dl_handler(const struct fota_download_evt *evt)
 {
 	switch (evt->id) {
@@ -60,12 +58,6 @@ void main(void)
 	}
 	/* This is needed so that MCUBoot won't revert the update */
 	boot_write_img_confirmed();
-
-	err = dfu_target_mcuboot_set_buf(fota_buf, sizeof(fota_buf));
-	if (err != 0) {
-		printk("dfu_target_mcuboot_set_buf() failed, err %d\n", err);
-		return;
-	}
 
 	err = fota_download_init(fota_dl_handler);
 	if (err != 0) {
