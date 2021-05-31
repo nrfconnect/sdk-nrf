@@ -1216,6 +1216,11 @@ static int prop_set(struct net_buf_simple *buf,
 		return err;
 	}
 
+	if (buf->len > 0) {
+		BT_ERR("Invalid message size");
+		return -EMSGSIZE;
+	}
+
 	BT_DBG("0x%04x: %s", id, bt_mesh_sensor_ch_str(&val));
 
 	switch (id) {
