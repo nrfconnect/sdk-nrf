@@ -392,7 +392,7 @@ static int raw_rx_handler(const uint8_t *data, int datalen)
  *  AT<separator><body>=<parameters><NULL>
  * In which
  * <separator>: +, %, #
- * <body>: alphabetic char only, size > 0
+ * <body>: alphanumeric char only, size > 0
  * <parameters>: arbitrary, size > 0
  */
 static int cmd_grammar_check(const uint8_t *cmd, uint16_t length)
@@ -419,10 +419,8 @@ static int cmd_grammar_check(const uint8_t *cmd, uint16_t length)
 	cmd += 1;
 	body = cmd;
 	while (true) {
-		char ch = toupper((int)*cmd);
-
-		/* check body is alphabetic */
-		if (ch < 'A' || ch > 'Z') {
+		/* check body is alphanumeric */
+		if (!isalpha((int)*cmd) && !isdigit((int)*cmd)) {
 			break;
 		}
 		cmd++;
