@@ -54,6 +54,25 @@ static inline bool is_notification(char chr)
 /**
  * @brief Verify that the character is a valid character
  *
+ * Command strings can only contain alphanemuric characters.
+ *
+ * @param[in] chr Character that should be examined
+ *
+ * @retval true  If character is valid
+ * @retval false If character is not valid
+ */
+static inline bool is_valid_command_char(char chr)
+{
+	if (isalpha((int)chr) || isdigit((int)chr)) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * @brief Verify that the character is a valid character
+ *
  * Notification ID strings can only contain upper case letters 'A' through 'Z'
  *
  * @param[in] chr Character that should be examined
