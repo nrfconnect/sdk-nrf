@@ -76,6 +76,13 @@ Configuration
 
 |config|
 
+Device Firmware Upgrade support
+===============================
+
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_build_with_dfu_start
+    :end-before: matter_door_lock_sample_build_with_dfu_end
+
 User interface
 **************
 
@@ -90,8 +97,9 @@ LED 2:
     * Solid On - The light bulb is on.
     * Off - The light bulb is off.
 
-Button 1:
-    Initiates the factory reset of the device.
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_button1_start
+    :end-before: matter_door_lock_sample_button1_end
 
 Button 2:
     Changes the light bulb state to the opposite one.
@@ -118,6 +126,8 @@ Building and running
 .. |sample path| replace:: :file:`samples/matter/light_bulb`
 
 .. include:: /includes/build_and_run.txt
+
+See `Configuration`_ for information about building the sample with the DFU support.
 
 Testing
 =======
@@ -182,6 +192,11 @@ Commissioning the device
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_commissioning_start
     :end-before: matter_door_lock_sample_commissioning_end
+
+Upgrading the device firmware
+=============================
+
+To upgrade the device firmware, complete the steps listed for the selected method in the `Performing Device Firmware Upgrade in Matter device`_ tutorial.
 
 Dependencies
 ************

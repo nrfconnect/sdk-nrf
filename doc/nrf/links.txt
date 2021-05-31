@@ -90,6 +90,7 @@
 .. _`Working with Android Controller`:
 .. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/430b49/docs/guides/nrfconnect_android_commissioning.md
 .. _`Working with Python Controller`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/430b49/src/controller/python/README.md
+.. _`Performing Device Firmware Upgrade in Matter device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/430b49/docs/guides/nrfconnect_examples_software_update.md
 .. _`Matter Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/430b49/README.md
 .. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/430b49/docs/guides/nrfconnect_platform_overview.md
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/430b49/src/controller
