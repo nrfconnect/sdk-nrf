@@ -60,7 +60,7 @@ static void accelerometer_trigger_handler(const struct device *dev,
 {
 	int err = 0;
 	struct sensor_value data[ACCELEROMETER_CHANNELS];
-	struct ext_sensor_evt evt;
+	struct ext_sensor_evt evt = {0};
 
 	switch (trig->type) {
 	case SENSOR_TRIG_THRESHOLD:
@@ -110,42 +110,48 @@ static void accelerometer_trigger_handler(const struct device *dev,
 
 int ext_sensors_init(ext_sensor_handler_t handler)
 {
+	struct ext_sensor_evt evt = {0};
+
 	if (handler == NULL) {
-		LOG_INF("External sensor handler NULL!");
+		LOG_ERR("External sensor handler NULL!");
 		return -EINVAL;
 	}
 
+	evt_handler = handler;
+
 	if (!device_is_ready(temp_sensor.dev)) {
 		LOG_ERR("Temperature sensor device is not ready");
-		return -ENODEV;
+		evt.type = EXT_SENSOR_EVT_TEMPERATURE_ERROR;
+		evt_handler(&evt);
 	}
 
 	if (!device_is_ready(humid_sensor.dev)) {
 		LOG_ERR("Humidity sensor device is not ready");
-		return -ENODEV;
+		evt.type = EXT_SENSOR_EVT_HUMIDITY_ERROR;
+		evt_handler(&evt);
 	}
 
 	if (!device_is_ready(accel_sensor.dev)) {
 		LOG_ERR("Accelerometer device is not ready");
-		return -ENODEV;
-	}
-
+		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
+		evt_handler(&evt);
+	} else {
 #if defined(CONFIG_EXTERNAL_SENSORS_ACTIVITY_DETECTION_AUTO)
-	struct sensor_trigger trig = {
-		.chan = SENSOR_CHAN_ACCEL_XYZ,
-		.type = SENSOR_TRIG_THRESHOLD
-	};
+		struct sensor_trigger trig = {
+			.chan = SENSOR_CHAN_ACCEL_XYZ,
+			.type = SENSOR_TRIG_THRESHOLD
+		};
 
-	int err = sensor_trigger_set(accel_sensor.dev, &trig, accelerometer_trigger_handler);
+		int err = sensor_trigger_set(accel_sensor.dev,
+					     &trig, accelerometer_trigger_handler);
 
-	if (err) {
-		LOG_ERR("Could not set trigger for device %s, error: %d",
-			accel_sensor.dev->name, err);
-		return err;
-	}
+		if (err) {
+			LOG_ERR("Could not set trigger for device %s, error: %d",
+				accel_sensor.dev->name, err);
+			return err;
+		}
 #endif
-
-	evt_handler = handler;
+	}
 
 	return 0;
 }
@@ -153,12 +159,15 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 int ext_sensors_temperature_get(double *ext_temp)
 {
 	int err;
-	struct sensor_value data;
+	struct sensor_value data = {0};
+	struct ext_sensor_evt evt = {0};
 
 	err = sensor_sample_fetch_chan(temp_sensor.dev, SENSOR_CHAN_ALL);
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
 			temp_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_TEMPERATURE_ERROR;
+		evt_handler(&evt);
 		return -ENODATA;
 	}
 
@@ -166,6 +175,8 @@ int ext_sensors_temperature_get(double *ext_temp)
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
 			temp_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_TEMPERATURE_ERROR;
+		evt_handler(&evt);
 		return -ENODATA;
 	}
 
@@ -179,12 +190,15 @@ int ext_sensors_temperature_get(double *ext_temp)
 int ext_sensors_humidity_get(double *ext_hum)
 {
 	int err;
-	struct sensor_value data;
+	struct sensor_value data = {0};
+	struct ext_sensor_evt evt = {0};
 
 	err = sensor_sample_fetch_chan(humid_sensor.dev, SENSOR_CHAN_ALL);
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
 			humid_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_HUMIDITY_ERROR;
+		evt_handler(&evt);
 		return -ENODATA;
 	}
 
@@ -192,6 +206,8 @@ int ext_sensors_humidity_get(double *ext_hum)
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
 			humid_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_HUMIDITY_ERROR;
+		evt_handler(&evt);
 		return -ENODATA;
 	}
 
@@ -207,6 +223,7 @@ int ext_sensors_mov_thres_set(double threshold_new)
 	int err, input_value;
 	double range_max_m_s2 = ADXL362_RANGE_MAX_M_S2;
 	double threshold_new_copy;
+	struct ext_sensor_evt evt = {0};
 
 	if (threshold_new > range_max_m_s2) {
 		LOG_ERR("Invalid threshold value");
@@ -241,6 +258,8 @@ int ext_sensors_mov_thres_set(double threshold_new)
 		LOG_ERR("Failed to set accelerometer x-axis threshold value");
 		LOG_ERR("Device: %s, error: %d",
 			accel_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
+		evt_handler(&evt);
 		return err;
 	}
 
@@ -250,6 +269,8 @@ int ext_sensors_mov_thres_set(double threshold_new)
 		LOG_ERR("Failed to set accelerometer y-axis threshold value");
 		LOG_ERR("Device: %s, error: %d",
 			accel_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
+		evt_handler(&evt);
 		return err;
 	}
 
@@ -259,6 +280,8 @@ int ext_sensors_mov_thres_set(double threshold_new)
 		LOG_ERR("Failed to set accelerometer z-axis threshold value");
 		LOG_ERR("Device: %s, error: %d",
 			accel_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
+		evt_handler(&evt);
 		return err;
 	}
 
@@ -274,6 +297,7 @@ int ext_sensors_accelerometer_trigger_callback_set(bool enable)
 		.chan = SENSOR_CHAN_ACCEL_XYZ,
 		.type = SENSOR_TRIG_THRESHOLD
 	};
+	struct ext_sensor_evt evt = {0};
 
 	sensor_trigger_handler_t handler = enable ? accelerometer_trigger_handler : NULL;
 
@@ -281,6 +305,8 @@ int ext_sensors_accelerometer_trigger_callback_set(bool enable)
 	if (err) {
 		LOG_ERR("Could not set trigger for device %s, error: %d",
 			accel_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
+		evt_handler(&evt);
 		return err;
 	}
 

@@ -130,7 +130,6 @@ static void accelerometer_callback_set(bool enable)
 	err = ext_sensors_accelerometer_trigger_callback_set(enable);
 	if (err) {
 		LOG_ERR("ext_sensors_accelerometer_trigger_callback_set, error: %d", err);
-		SEND_ERROR(sensor, SENSOR_EVT_ERROR, err);
 	}
 }
 
@@ -155,13 +154,22 @@ static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
 	case EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER:
 		movement_data_send(evt);
 		break;
+	case EXT_SENSOR_EVT_ACCELEROMETER_ERROR:
+		LOG_ERR("EXT_SENSOR_EVT_ACCELEROMETER_ERROR");
+		break;
+	case EXT_SENSOR_EVT_TEMPERATURE_ERROR:
+		LOG_ERR("EXT_SENSOR_EVT_TEMPERATURE_ERROR");
+		break;
+	case EXT_SENSOR_EVT_HUMIDITY_ERROR:
+		LOG_ERR("EXT_SENSOR_EVT_HUMIDITY_ERROR");
+		break;
 	default:
 		break;
 	}
 }
 #endif
 
-static int environmental_data_get(void)
+static void environmental_data_get(void)
 {
 	struct sensor_module_event *sensor_module_event;
 #if defined(CONFIG_EXTERNAL_SENSORS)
@@ -172,13 +180,11 @@ static int environmental_data_get(void)
 	err = ext_sensors_temperature_get(&temp);
 	if (err) {
 		LOG_ERR("temperature_get, error: %d", err);
-		return err;
 	}
 
 	err = ext_sensors_humidity_get(&hum);
 	if (err) {
 		LOG_ERR("temperature_get, error: %d", err);
-		return err;
 	}
 
 	sensor_module_event = new_sensor_module_event();
@@ -202,8 +208,6 @@ static int environmental_data_get(void)
 	sensor_module_event->type = SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED;
 #endif
 	EVENT_SUBMIT(sensor_module_event);
-
-	return 0;
 }
 
 static int setup(void)
@@ -246,7 +250,6 @@ static void on_state_init(struct sensor_msg_data *msg)
 			LOG_WRN("Passed in threshold value not valid");
 		} else if (err) {
 			LOG_ERR("Failed to set threshold, error: %d", err);
-			SEND_ERROR(sensor, SENSOR_EVT_ERROR, err);
 		}
 #endif
 		state_set(STATE_RUNNING);
@@ -268,7 +271,6 @@ static void on_state_running(struct sensor_msg_data *msg)
 			LOG_WRN("Passed in threshold value not valid");
 		} else if (err) {
 			LOG_ERR("Failed to set threshold, error: %d", err);
-			SEND_ERROR(sensor, SENSOR_EVT_ERROR, err);
 		}
 #endif
 	}
@@ -280,13 +282,7 @@ static void on_state_running(struct sensor_msg_data *msg)
 			return;
 		}
 
-		int err;
-
-		err = environmental_data_get();
-		if (err) {
-			LOG_ERR("environmental_data_get, error: %d", err);
-			SEND_ERROR(sensor, SENSOR_EVT_ERROR, err);
-		}
+		environmental_data_get();
 	}
 }
 
