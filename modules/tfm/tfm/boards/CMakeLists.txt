@@ -25,7 +25,23 @@ target_include_directories(platform_region_defs INTERFACE ${partition_includes})
 
 target_include_directories(platform_s
   PUBLIC ${partition_includes} ${board_includes}
+  ${NRF_DIR}/include
   )
+
+if (${TFM_PARTITION_CRYPTO}
+      AND (NOT ${CRYPTO_KEY_DERIVATION_MODULE_DISABLED})
+      AND (NOT ${PLATFORM_DUMMY_CRYPTO_KEYS}))
+  target_sources(platform_s
+    PRIVATE
+      ${NRF_DIR}/lib/hw_unique_key/hw_unique_key.c
+      ${NRF_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
+      ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
+      ${CMAKE_CURRENT_LIST_DIR}/common/plat_init.c
+  )
+endif()
+
+target_link_libraries(platform_s PRIVATE platform_cc3xx)
+target_compile_definitions(platform_s PUBLIC CONFIG_HW_UNIQUE_KEY CONFIG_HW_UNIQUE_KEY_RANDOM)
 
 target_include_directories(platform_ns PUBLIC ${board_includes})
 
@@ -52,6 +68,7 @@ if(TFM_PARTITION_PLATFORM)
     PUBLIC
     include
     ${NRF_DIR}/include/tfm
+    ${NRF_DIR}/include
     )
 
   target_sources(platform_s
