@@ -93,6 +93,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @joerchan
 /samples/bootloader/                      @hakonfam @ioannisg
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
+/samples/crypto/                          @frkv @Vge0rge
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
 /samples/edge_impulse/                    @pdunaj
 /samples/esb/                             @lemrey
