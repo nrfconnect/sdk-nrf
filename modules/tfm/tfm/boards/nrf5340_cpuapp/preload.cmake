@@ -6,3 +6,4 @@
 #-------------------------------------------------------------------------------
 
 include(platform/ext/target/nordic_nrf/common/nrf5340/preload.cmake)
+add_compile_definitions(__NRF_TFM__)
