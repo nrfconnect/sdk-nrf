@@ -10,9 +10,10 @@
 
 
 static const char * const sensor_state_name[] = {
-#define X(name) STRINGIFY(name),
-	SENSOR_STATE_LIST
-#undef X
+	[SENSOR_STATE_DISABLED] = "DISABLED",
+	[SENSOR_STATE_SLEEP] = "SLEEP",
+	[SENSOR_STATE_ACTIVE] = "ACTIVE",
+	[SENSOR_STATE_ERROR] = "ERROR",
 };
 
 static int log_sensor_event(const struct event_header *eh, char *buf, size_t buf_len)
@@ -45,6 +46,7 @@ static int log_sensor_state_event(const struct event_header *eh, char *buf, size
 			 "Invalid number of elements");
 
 	__ASSERT_NO_MSG(event->state < SENSOR_STATE_COUNT);
+	__ASSERT_NO_MSG(sensor_state_name[event->state] != NULL);
 
 	return snprintf(buf, buf_len, "sensor:%s state:%s",
 			event->descr, sensor_state_name[event->state]);

@@ -8,9 +8,10 @@
 #define _SENSOR_EVENT_H_
 
 /**
- * @brief CAF Sensor Event
+ * @file
  * @defgroup caf_sensor_event CAF Sensor Event
  * @{
+ * @brief CAF Sensor Event.
  */
 
 #include "event_manager.h"
@@ -19,38 +20,66 @@
 extern "C" {
 #endif
 
-/** Sensor state list. */
-#define SENSOR_STATE_LIST	\
-	UTIL_EXPAND(		\
-	X(DISABLED)		\
-	X(SLEEP)		\
-	X(ACTIVE)		\
-	X(ERROR))		\
-
-/** Sensor states. */
+/** @brief Sensor states. */
 enum sensor_state {
-#define X(name) _CONCAT(SENSOR_STATE_, name),
-	SENSOR_STATE_LIST
-#undef X
+	/** Initial state of the sensor. The state is used only before sensor is initialized and
+	 *  it should not be broadcasted using @ref sensor_state_event.
+	 */
+	SENSOR_STATE_DISABLED,
 
+	/** Sensor is sleeping and no sampling is performed. */
+	SENSOR_STATE_SLEEP,
+
+	/** Sensor is sampled periodically. */
+	SENSOR_STATE_ACTIVE,
+
+	/** Sensor error occurred. The sensor is no longer sampled. */
+	SENSOR_STATE_ERROR,
+
+	/** Number of sensor states. */
 	SENSOR_STATE_COUNT
 };
 
-/** @brief Sensor state event. */
+/** @brief Sensor state event.
+ *
+ * The sensor state event is submitted when state of a sensor changes.
+ *
+ * The description field is a pointer to a string that is used to identify the sensor by the
+ * application. The Common Application Framework does not impose any standard way of describing
+ * sensors. Format and content of the sensor description is defined by the application.
+ *
+ * @warning The sensor state event related to the given sensor must use the same description as
+ *          @sensor_event related to the sensor.
+ */
 struct sensor_state_event {
 	struct event_header header; /**< Event header. */
 
-	const char *descr; /**< Description of the sensor event. */
-	enum sensor_state state; /**< Sensor state. */
+	const char *descr; /**< Description of the sensor. */
+	enum sensor_state state; /**< New state of the sensor. */
 };
 
 EVENT_TYPE_DECLARE(sensor_state_event);
 
-/** @brief Sensor event. */
+/** @brief Sensor event.
+ *
+ * The sensor event is submitted when a sensor is sampled.
+ *
+ * The description field is a pointer to a string that is used to identify the sensor by the
+ * application. The Common Application Framework does not impose any standard way of describing
+ * sensors. Format and content of the sensor description is defined by the application.
+ *
+ * The dyndata contains sensor readouts represented as array of floating-point values. Content of
+ * the array depends only on selected sensor. For example an accelerometer may report acceleration
+ * in X, Y and Z axis as three floating-point values. @ref sensor_event_get_data_cnt and @ref
+ * sensor_event_get_data_ptr can be used to access the sensor data provided by a given sensor event.
+ *
+ * @warning The sensor event related to the given sensor must use the same description as
+ *          @sensor_state_event related to the sensor.
+ */
 struct sensor_event {
 	struct event_header header; /**< Event header. */
 
-	const char *descr; /**< Description of the sensor event. */
+	const char *descr; /**< Description of the sensor. */
 	struct event_dyndata dyndata; /**< Sensor data. Provided as floating-point values. */
 };
 
