@@ -68,6 +68,26 @@ Alternatively to the commissioning procedure, you can use the test mode, which a
 
 .. matter_door_lock_sample_test_mode_end
 
+Configuration
+*************
+
+|config|
+
+Device Firmware Upgrade support
+===============================
+
+.. matter_door_lock_sample_build_with_dfu_start
+
+You can configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade using Bluetooth LE.
+To build the sample with configuration that enables the DFU, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *build_target* -- -DOVERLAY_CONFIG=../common/config/overlay-dfu_support.conf -DPM_STATIC_YML_FILE="configuration/build-target/pm_static.yml"
+
+.. matter_door_lock_sample_build_with_dfu_end
+
 User interface
 **************
 
@@ -92,8 +112,17 @@ LED 2:
     * Off - The bolt is retracted and the door is unlocked.
     * Rapid Even Flashing (50 ms on/50 ms off during 2 s) - The simulated bolt is in motion from one position to another.
 
+.. matter_door_lock_sample_button1_start
+
 Button 1:
-    Initiates the factory reset of the device.
+    Depending on how long you press the button:
+
+    * If pressed for 6 seconds, it initiates the factory reset of the device.
+      Releasing the button within the 6-second window cancels the factory reset procedure.
+    * If pressed for less than 3 seconds, it initiates the OTA software update process.
+      The OTA process is disabled by default, but you can enable it when you build the sample with the DFU support (see `Configuration`_).
+
+.. matter_door_lock_sample_button1_end
 
 Button 2:
     Changes the lock state to the opposite one.
@@ -117,6 +146,8 @@ Building and running
 .. |sample path| replace:: :file:`samples/matter/lock`
 
 .. include:: /includes/build_and_run.txt
+
+See `Configuration`_ for information about building the sample with the DFU support.
 
 Testing
 =======
@@ -188,10 +219,15 @@ The data payload, which includes the device discriminator and setup PIN code, is
 
 .. matter_door_lock_sample_commissioning_end
 
+Upgrading the device firmware
+=============================
+
+To upgrade the device firmware, complete the steps listed for the selected method in the `Performing Device Firmware Upgrade in Matter device`_ tutorial.
+
 Dependencies
 ************
 
-This sample uses Connected Home over IP library which includes the |NCS| platform integration layer:
+This sample uses the Matter library, which includes the |NCS| platform integration layer:
 
 * `Matter`_
 

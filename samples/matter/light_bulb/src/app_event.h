@@ -11,12 +11,9 @@
 struct AppEvent {
 	enum LightEventType : uint8_t { On, Off, Toggle, Level };
 
-	enum OtherEventType : uint8_t {
-		FactoryReset = Level + 1,
-		StartThread,
-		StartBleAdvertising,
-		PublishLightBulbService
-	};
+	enum FunctionEventType : uint8_t { FunctionPress = Level + 1, FunctionRelease, FunctionTimer };
+
+	enum OtherEventType : uint8_t { StartThread = FunctionTimer + 1, StartBleAdvertising, PublishLightBulbService };
 
 	AppEvent() = default;
 
@@ -24,6 +21,8 @@ struct AppEvent {
 		: Type(type), LightEvent{ value, chipInitiated }
 	{
 	}
+
+	AppEvent(FunctionEventType type) : Type(type) {}
 
 	AppEvent(OtherEventType type) : Type(type) {}
 

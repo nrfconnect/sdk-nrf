@@ -11,10 +11,13 @@
 struct AppEvent {
 	enum LockEventType : uint8_t { Lock, Unlock, Toggle, CompleteLockAction };
 
-	enum OtherEventType : uint8_t { FactoryReset = CompleteLockAction + 1, StartThread, StartBleAdvertising };
+	enum FunctionEventType : uint8_t { FunctionPress = CompleteLockAction + 1, FunctionRelease, FunctionTimer };
+
+	enum OtherEventType : uint8_t { StartThread = FunctionTimer + 1, StartBleAdvertising };
 
 	AppEvent() = default;
 	AppEvent(LockEventType type, bool chipInitiated) : Type(type), LockEvent{ chipInitiated } {}
+	explicit AppEvent(FunctionEventType type) : Type(type) {}
 	explicit AppEvent(OtherEventType type) : Type(type) {}
 
 	uint8_t Type;
