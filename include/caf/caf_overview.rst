@@ -156,6 +156,10 @@ CAF module state events
 | Header file: :file:`include/caf/events/module_state_event.h`
 | Source file: :file:`subsys/caf/events/module_state_event.c`
 
+.. doxygengroup:: caf_module_state_event
+   :project: nrf
+   :members:
+
 CAF power events
 ================
 
