@@ -299,6 +299,8 @@ int dk_buttons_init(button_handler_t button_handler)
 
 	dk_read_buttons(NULL, NULL);
 
+	atomic_set(&my_buttons, (atomic_val_t)get_buttons());
+
 	return 0;
 }
 
