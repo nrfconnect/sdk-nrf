@@ -985,6 +985,30 @@ static int client_broker_init(struct mqtt_client *const client)
 	return err;
 }
 
+static int connect_client(struct aws_iot_config *const config)
+{
+	int err;
+
+	err = client_broker_init(&client);
+	if (err) {
+		LOG_ERR("client_broker_init, error: %d", err);
+		return err;
+	}
+
+	err = mqtt_connect(&client);
+	if (err) {
+		LOG_ERR("mqtt_connect, error: %d", err);
+		err = connect_error_translate(err);
+		return err;
+	}
+
+	if (config != NULL) {
+		config->socket = client.transport.tls.sock;
+	}
+
+	return 0;
+}
+
 static int connection_poll_start(void)
 {
 	if (atomic_get(&connection_poll_active)) {
@@ -1090,30 +1114,23 @@ int aws_iot_connect(struct aws_iot_config *const config)
 
 	if (IS_ENABLED(CONFIG_AWS_IOT_CONNECTION_POLL_THREAD)) {
 		err = connection_poll_start();
+		if (err) {
+			LOG_WRN("connection_poll_start failed, error: %d", err);
+			return err;
+		}
 	} else {
 		atomic_set(&disconnect_requested, 0);
 
-		err = client_broker_init(&client);
+		err = connect_client(config);
 		if (err) {
-			LOG_ERR("client_broker_init, error: %d", err);
+			LOG_WRN("connect_client failed, error: %d", err);
 			return err;
 		}
 
-		err = mqtt_connect(&client);
-		if (err) {
-			LOG_ERR("mqtt_connect, error: %d", err);
-		}
-
-		err = connect_error_translate(err);
-
-		if (err == 0) {
-			atomic_set(&aws_iot_disconnected, 0);
-			config->socket = client.transport.tls.sock;
-		}
-
+		atomic_set(&aws_iot_disconnected, 0);
 	}
 
-	return err;
+	return 0;
 }
 
 int aws_iot_subscription_topics_add(
@@ -1206,26 +1223,15 @@ start:
 	aws_iot_evt.type = AWS_IOT_EVT_CONNECTING;
 	aws_iot_notify_event(&aws_iot_evt);
 
-	err = client_broker_init(&client);
-	if (err) {
-		LOG_ERR("client_broker_init, error: %d", err);
-	}
-
-	err = mqtt_connect(&client);
-	if (err) {
-		LOG_ERR("mqtt_connect, error: %d", err);
-	}
-
-	err = connect_error_translate(err);
-
+	err = connect_client(NULL);
 	if (err != AWS_IOT_CONNECT_RES_SUCCESS) {
 		aws_iot_evt.data.err = err;
 		aws_iot_evt.type = AWS_IOT_EVT_CONNECTING;
 		aws_iot_notify_event(&aws_iot_evt);
 		goto reset;
-	} else {
-		LOG_DBG("AWS broker connection request sent.");
 	}
+
+	LOG_DBG("AWS IoT broker connection request sent");
 
 	fds[0].fd = client.transport.tls.sock;
 	fds[0].events = POLLIN;
