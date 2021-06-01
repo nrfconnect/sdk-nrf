@@ -8,6 +8,24 @@
 #include <toolchain.h>
 #include <fw_info.h>
 
+static uint32_t fp_context_buffer[33];
+static bool context_saved;
+
+int z_arm_save_fp_context(uint32_t *buffer, size_t buffer_size_words, bool *context_saved);
+void z_arm_restore_fp_context(uint32_t *buffer, bool context_saved);
+
+void before_nse(void)
+{
+	k_sched_lock();
+	z_arm_save_fp_context(fp_context_buffer, sizeof(fp_context_buffer) / 4, &context_saved);
+}
+
+void after_nse(void)
+{
+	k_sched_unlock();
+	z_arm_restore_fp_context(fp_context_buffer, context_saved);
+}
+
 #ifdef CONFIG_SPM_SERVICE_REBOOT
 NRF_NSE(void, spm_request_system_reboot);
 

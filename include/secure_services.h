@@ -30,6 +30,9 @@
 extern "C" {
 #endif
 
+void before_nse(void);
+void after_nse(void);
+
 /** Implement a wrapper function around a secure_service.
  *
  * This function must reside in the non-secure binary. It makes the secure
@@ -48,7 +51,10 @@ extern "C" {
  */
 #define NRF_NSE(ret, name, ...) \
 ret name ## _nse(__VA_ARGS__); \
-TZ_THREAD_SAFE_NONSECURE_ENTRY_FUNC(name, ret, name ## _nse, __VA_ARGS__)
+ret __attribute__((naked)) name(__VA_ARGS__) \
+{ \
+	__TZ_WRAP_FUNC(before_nse, name ## _nse, after_nse); \
+}
 
 /** Request a system reboot from the Secure Firmware.
  *

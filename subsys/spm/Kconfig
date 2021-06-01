@@ -35,6 +35,7 @@ menuconfig IS_SPM
 	bool "Current app is SPM"
 	default n
 	select TRUSTED_EXECUTION_SECURE
+	# depends on !FPU
 
 if IS_SPM
 
