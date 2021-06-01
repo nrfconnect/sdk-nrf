@@ -277,7 +277,7 @@ static int shell_show_peers(const struct shell *shell, size_t argc, char **argv)
 
 	char addr_str[BT_ADDR_LE_STR_LEN];
 	bt_addr_le_t addrs[CONFIG_BT_ID_MAX];
-	size_t count;
+	size_t count = CONFIG_BT_ID_MAX;
 
 	bt_id_get(addrs, &count);
 	for (size_t i = 0; i < count; i++) {
