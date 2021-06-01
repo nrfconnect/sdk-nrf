@@ -65,6 +65,7 @@ nRF9160
 
     * Added an API to retrieve the image type that is being downloaded.
     * Added an API to cancel current downloading.
+    * Added an API to validate FOTA image type before starting installation.
 
   * :ref:`lib_ftp_client` library:
 

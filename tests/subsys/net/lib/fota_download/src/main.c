@@ -32,7 +32,7 @@ const char *download_client_start_file;
 char *dfu_ctx_mcuboot_set_b1_file__update;
 static bool spm_s0_active_retval;
 
-int dfu_target_init(int img_type, size_t file_size)
+int dfu_target_init(int img_type, size_t file_size, dfu_target_callback_t cb)
 {
 	return 0;
 }
