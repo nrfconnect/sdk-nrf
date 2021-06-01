@@ -50,6 +50,7 @@ nRF9160
     * Added function :c:func:`nrf_cloud_modem_fota_completed` which is to be called by the application after it re-initializes the modem (instead of rebooting) after a modem FOTA update.
     * Updated to include the FOTA type value in the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event.
     * Updated configuration options for setting the source of the MQTT client ID (nRF Cloud device ID).
+    * Updated nRF Cloud FOTA to use type validated FOTA download.
 
   * :ref:`asset_tracker` application:
 

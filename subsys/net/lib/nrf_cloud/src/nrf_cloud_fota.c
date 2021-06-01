@@ -617,11 +617,15 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 		break;
 
 	case FOTA_DOWNLOAD_EVT_ERROR:
+
+		current_fota.status = NRF_CLOUD_FOTA_FAILED;
+
 		if (last_fota_dl_evt == FOTA_DOWNLOAD_EVT_ERASE_DONE ||
 		    evt->cause == FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE) {
 			current_fota.status = NRF_CLOUD_FOTA_REJECTED;
+		} else if (evt->cause == FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH) {
+			current_fota.error = NRF_CLOUD_FOTA_ERROR_MISMATCH;
 		} else {
-			current_fota.status = NRF_CLOUD_FOTA_FAILED;
 			current_fota.error = NRF_CLOUD_FOTA_ERROR_DOWNLOAD;
 		}
 
@@ -856,9 +860,24 @@ static int start_job(struct nrf_cloud_fota_job *const job)
 	__ASSERT_NO_MSG(job != NULL);
 	int ret;
 
-	ret = fota_download_start(job->info.host, job->info.path,
-		CONFIG_NRF_CLOUD_SEC_TAG, NULL,
-		CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE);
+	enum dfu_target_image_type img_type;
+
+	switch (job->info.type) {
+	case NRF_CLOUD_FOTA_BOOTLOADER:
+	case NRF_CLOUD_FOTA_APPLICATION:
+		img_type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
+		break;
+	case NRF_CLOUD_FOTA_MODEM:
+		img_type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
+	default:
+		LOG_ERR("Unhandled FOTA type: %d", job->info.type);
+		return -EFTYPE;
+	}
+
+	ret = fota_download_start_with_image_type(job->info.host,
+		job->info.path, CONFIG_NRF_CLOUD_SEC_TAG, NULL,
+		CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
+		img_type);
 	if (ret) {
 		LOG_ERR("Failed to start FOTA download: %d", ret);
 		job->status = NRF_CLOUD_FOTA_FAILED;
@@ -948,6 +967,8 @@ static const char * const get_error_string(const enum nrf_cloud_fota_error err)
 		return "FOTA update not validated";
 	case NRF_CLOUD_FOTA_ERROR_APPLY_FAIL:
 		return "Error applying update";
+	case NRF_CLOUD_FOTA_ERROR_MISMATCH:
+		return "FW file does not match specified FOTA type";
 	case NRF_CLOUD_FOTA_ERROR_NONE:
 	default:
 		return "";
