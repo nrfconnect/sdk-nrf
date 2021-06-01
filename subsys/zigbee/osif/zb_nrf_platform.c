@@ -631,3 +631,12 @@ ZB_WEAK_PRE zb_uint32_t ZB_WEAK zb_osif_get_ncp_protocol_version(void)
 	return 0x01;
 #endif /* ZB_NCP_PROTOCOL_VERSION */
 }
+
+ZB_WEAK_PRE zb_ret_t ZB_WEAK zb_osif_bootloader_run_after_reboot(void)
+{
+	return RET_OK;
+}
+
+ZB_WEAK_PRE void ZB_WEAK zb_osif_bootloader_report_successful_loading(void)
+{
+}
