@@ -121,12 +121,9 @@ static bool is_page_clean(const struct flash_area *fa, off_t off, size_t len)
 	BUILD_ASSERT(chunk_size * chunk_cnt == FLASH_PAGE_SIZE);
 	BUILD_ASSERT(chunk_size % sizeof(uint32_t) == 0);
 
-	uint32_t buf[chunk_size / sizeof(uint32_t)];
-
-	int err;
-
 	for (size_t i = 0; i < chunk_cnt; i++) {
-		err = flash_area_read(fa, off + i * chunk_size, buf, chunk_size);
+		uint32_t buf[chunk_size / sizeof(uint32_t)];
+		int err = flash_area_read(fa, off + i * chunk_size, buf, chunk_size);
 
 		if (err) {
 			LOG_ERR("Cannot read flash");
