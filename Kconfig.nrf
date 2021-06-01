@@ -41,6 +41,11 @@ config ZTEST_STACKSIZE
 config PRIVILEGED_STACK_SIZE
 	default 2048 if ZTEST
 
+# Set ENTROPY_GENERATOR to true for TF-M or SPM builds with enabled
+# RNG provided from secure services.
+config ENTROPY_GENERATOR
+	default y if BUILD_WITH_TFM || (SPM && SPM_SECURE_SERVICES)
+
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
 rsource "modules/Kconfig"
