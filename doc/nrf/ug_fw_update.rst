@@ -40,10 +40,10 @@ For a complete list of the key types supported by each bootloader, see the table
    :header-rows: 1
 
    * - Bootloader
-     - |NSIB|
-     - MCUboot
-   * - Supported key types
+     - Supported key types
+   * - |NSIB|
      - ECDSA256
+   * - MCUboot
      - RSA-2048, RSA-3072, ECDSA-P256, ED25519
 
 See below for examples of using OpenSSL to create some commonly used key types:
