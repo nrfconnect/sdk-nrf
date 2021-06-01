@@ -97,7 +97,6 @@ config SPM_SERVICE_RNG
 	bool "Request random numbers"
 	default y if SPM
 	select NORDIC_SECURITY_BACKEND if IS_SPM
-	select FPU if IS_SPM
 
 	help
 	  The Non-Secure Firmware is not allowed to use the crypto hardware.
