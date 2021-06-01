@@ -96,5 +96,6 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    ../../samples/peripheral/*/README
    ../../samples/sensor/*/README
    ../../samples/tfm/*/README
+   ../../samples/crypto/*/README
 
 For more complex examples, see :ref:`applications`.
