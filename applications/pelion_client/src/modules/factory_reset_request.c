@@ -26,7 +26,11 @@ static bool event_handler(const struct event_header *eh)
 	if (is_button_event(eh)) {
 		struct button_event *event = cast_button_event(eh);
 
-		if (k_work_delayable_is_pending(&init_work) &&  event->pressed) {
+		if (event->key_id != CONFIG_PELION_CLIENT_FACTORY_RESET_REQUEST_BUTTON) {
+			return false;
+		}
+
+		if (k_work_delayable_is_pending(&init_work) && event->pressed) {
 			EVENT_SUBMIT(new_factory_reset_event());
 		}
 		return false;
