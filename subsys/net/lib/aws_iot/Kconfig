@@ -11,6 +11,25 @@ menuconfig AWS_IOT
 
 if AWS_IOT
 
+config AWS_IOT_SEND_TIMEOUT
+	bool "Send data with socket timeout"
+	default y
+	help
+	  Configures a timeout on the AWS IoT socket to ensure that a call to the send function will
+	  not block indefinitely. To configure the length of the timeout,
+	  use AWS_IOT_SEND_TIMEOUT_SEC.
+
+if AWS_IOT_SEND_TIMEOUT
+
+config AWS_IOT_SEND_TIMEOUT_SEC
+	int "Send timeout"
+	default 60
+	help
+	  Timeout in seconds to use when the AWS IoT socket is configured to
+	  send with a timeout by enabling AWS_IOT_SEND_TIMEOUT.
+
+endif
+
 config AWS_IOT_STATIC_IPV4
 	bool "Enable use of static IPv4"
 
