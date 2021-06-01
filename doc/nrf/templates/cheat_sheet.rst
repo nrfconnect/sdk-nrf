@@ -47,6 +47,38 @@ Lists
    a. different numbering
    #. another item
 
+Diagrams
+========
+
+You can include Message Sequence Chart (MSC) diagrams in RST by using the ``.. msc::`` directive and including the MSC content, for example:
+
+.. code-block:: none
+
+   .. msc::
+       hscale = "1.3";
+       Module,Application;
+       Module<<Application      [label="nrf_cloud_connect() returns successfully"];
+       Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_CONNECTED"];
+       Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST"];
+       Module<<Application      [label="nrf_cloud_user_associate()"];
+       Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
+       Module>>Application      [label="NRF_CLOUD_EVT_READY"];
+       Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED"];
+
+
+This will generate the following output:
+
+   .. msc::
+       hscale = "1.3";
+       Module,Application;
+       Module<<Application      [label="nrf_cloud_connect() returns successfully"];
+       Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_CONNECTED"];
+       Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST"];
+       Module<<Application      [label="nrf_cloud_user_associate()"];
+       Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
+       Module>>Application      [label="NRF_CLOUD_EVT_READY"];
+       Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED"];
+
 
 Definition list
 ===============
