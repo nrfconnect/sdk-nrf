@@ -50,6 +50,8 @@ enum nrf_cloud_fota_error {
 	NRF_CLOUD_FOTA_ERROR_UNABLE_TO_VALIDATE,
 	/** Error applying the update. */
 	NRF_CLOUD_FOTA_ERROR_APPLY_FAIL,
+	/** Firmware file type differs from expected FOTA type. */
+	NRF_CLOUD_FOTA_ERROR_MISMATCH,
 };
 
 /**@brief Common FOTA job info */
