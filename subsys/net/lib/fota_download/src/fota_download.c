@@ -8,7 +8,6 @@
 #include <logging/log.h>
 #include <net/fota_download.h>
 #include <net/download_client.h>
-#include <dfu/dfu_target.h>
 #include <pm_config.h>
 
 #if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
@@ -38,6 +37,7 @@ static int socket_retries_left;
 static uint8_t mcuboot_buf[CONFIG_FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ] __aligned(4);
 #endif
 static enum dfu_target_image_type img_type;
+static enum dfu_target_image_type img_type_expected = DFU_TARGET_IMAGE_TYPE_ANY;
 static bool first_fragment;
 
 static void send_evt(enum fota_download_evt_id id)
@@ -96,6 +96,9 @@ static int download_client_callback(const struct download_client_evt *event)
 	switch (event->id) {
 	case DOWNLOAD_CLIENT_EVT_FRAGMENT: {
 		if (first_fragment) {
+			enum fota_download_error_cause err_cause =
+				FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR;
+
 			err = download_client_file_size_get(&dlc, &file_size);
 			if (err != 0) {
 				LOG_DBG("download_client_file_size_get err: %d",
@@ -106,16 +109,30 @@ static int download_client_callback(const struct download_client_evt *event)
 			first_fragment = false;
 			img_type = dfu_target_img_type(event->fragment.buf,
 							event->fragment.len);
-			err = dfu_target_init(img_type, file_size,
-					      dfu_target_callback_handler);
-			if ((err < 0) && (err != -EBUSY)) {
-				LOG_ERR("dfu_target_init error %d", err);
+
+			if ((img_type_expected != DFU_TARGET_IMAGE_TYPE_ANY) &&
+			    (img_type_expected != img_type)) {
+				LOG_ERR("FOTA image type %d does not match expected type %d",
+					img_type, img_type_expected);
+				err_cause = FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH;
+				err = -EPROTOTYPE;
+			} else {
+				err = dfu_target_init(img_type, file_size,
+						      dfu_target_callback_handler);
+				if ((err < 0) && (err != -EBUSY)) {
+					LOG_ERR("dfu_target_init error %d", err);
+					err_cause = FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED;
+				}
+			}
+
+			if (err_cause != FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR) {
 				(void)download_client_disconnect(&dlc);
-				send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
+				send_error_evt(err_cause);
 				int res = dfu_target_reset();
 
 				if (res != 0) {
-					LOG_ERR("Unable to reset DFU target");
+					LOG_ERR("Unable to reset DFU target, err: %d",
+						res);
 				}
 				first_fragment = true;
 				return err;
@@ -256,7 +273,15 @@ static void download_with_offset(struct k_work *unused)
 }
 
 int fota_download_start(const char *host, const char *file, int sec_tag,
-			const char *apn, size_t fragment_size)
+	const char *apn, size_t fragment_size)
+{
+	return fota_download_start_with_image_type(host, file, sec_tag, apn,
+		fragment_size, DFU_TARGET_IMAGE_TYPE_ANY);
+}
+
+int fota_download_start_with_image_type(const char *host, const char *file,
+	int sec_tag, const char *apn, size_t fragment_size,
+	const enum dfu_target_image_type expected_type)
 {
 	/* We need a static file buffer since the download client structure
 	 * only keeps a pointer to the file buffer. This is problematic when
@@ -330,6 +355,8 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 	if (err != 0) {
 		return err;
 	}
+
+	img_type_expected = expected_type;
 
 	err = download_client_start(&dlc, file_buf_ptr, 0);
 	if (err != 0) {

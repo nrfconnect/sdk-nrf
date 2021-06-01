@@ -21,6 +21,7 @@
 #include <zephyr.h>
 #include <zephyr/types.h>
 #include <net/download_client.h>
+#include <dfu/dfu_target.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,6 +55,8 @@ enum fota_download_error_cause {
 	FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED,
 	/** The update is invalid and was rejected. Retry will not help. */
 	FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE,
+	/** Actual firmware type does not match expected. Retry will not help. */
+	FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH,
 };
 
 /**
@@ -106,6 +109,29 @@ int fota_download_init(fota_download_callback_t client_callback);
  */
 int fota_download_start(const char *host, const char *file, int sec_tag,
 			const char *apn, size_t fragment_size);
+
+/**@brief Start downloading the given file from the given host. Validate that the
+ * file type matches the expected type before starting the installation.
+ *
+ * When the download is complete, the secondary slot of MCUboot is tagged as having
+ * valid firmware inside it. The completion is reported through an event.
+ *
+ * @param host Name of host to start downloading from. Can include scheme
+ *             and port number, e.g. https://google.com:443
+ * @param file Filepath to the file you wish to download.
+ * @param sec_tag Security tag you want to use with HTTPS set to -1 to Disable.
+ * @param apn Access Point Name to use or NULL to use the default APN.
+ * @param fragment_size Fragment size to be used for the download.
+ *			If 0, @option{CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE} is used.
+ * @param expected_type Type of firmware file to be downloaded and installed.
+ *
+ * @retval 0	     If download has started successfully.
+ * @retval -EALREADY If download is already ongoing.
+ *                   Otherwise, a negative value is returned.
+ */
+int fota_download_start_with_image_type(const char *host, const char *file,
+			int sec_tag, const char *apn, size_t fragment_size,
+			const enum dfu_target_image_type expected_type);
 
 /**@brief Cancel FOTA image downloading.
  *
