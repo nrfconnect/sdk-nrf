@@ -243,6 +243,10 @@ Include 5 (similar to include 2, but improved indentation):
 
 See https://github.com/nrfconnect/sdk-nrf/commit/fa5bd7330538f6a12e059c9d60fa2696e48fcf3a for implementation and usage.
 
+.. tip::
+   If you need a "start-after" text that occurs more than once inside a document, you can combine ``:start-after:`` with ``:start-line:``.
+   Sphinx will then use the first occurrence of the "start-after" text after the specified start line.
+
 Including text inside a nested list
 ===================================
 
