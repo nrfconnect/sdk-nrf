@@ -11,6 +11,25 @@ menuconfig AZURE_IOT_HUB
 
 if AZURE_IOT_HUB
 
+config AZURE_IOT_HUB_SEND_TIMEOUT
+	bool "Send data with socket timeout"
+	default y
+	help
+	  Configures a timeout on the Azure IoT Hub socket to ensure that a call to the send
+	  function will not block indefinitely. To configure the length of the timeout,
+	  use AZURE_IOT_HUB_SEND_TIMEOUT_SEC.
+
+if AZURE_IOT_HUB_SEND_TIMEOUT
+
+config AZURE_IOT_HUB_SEND_TIMEOUT_SEC
+	int "Send timeout"
+	default 60
+	help
+	  Timeout in seconds to use when the Azure IoT Hub socket is configured to
+	  send with a timeout by enabling AZURE_IOT_HUB_SEND_TIMEOUT.
+
+endif
+
 config AZURE_IOT_HUB_HOSTNAME
 	string "Azure IoT Hub hostname"
 
