@@ -29,15 +29,17 @@ The sample:
 #. Starts predictions using the machine learning model.
 #. Displays the prediction results to the user.
 
+By default, the sample uses a pretrained machine learning model and input data representing a sine wave.
+
 Configuration
 *************
 
 |config|
 
-Setup
-=====
+Using your own machine learning model
+=====================================
 
-Before running the sample, you must complete the following setup:
+To run the sample using a custom machine learning model, you must complete the following setup:
 
 1. Configure the Edge Impulse wrapper by completing the following steps:
 
@@ -97,7 +99,7 @@ After programming the sample to your development kit, test it by performing the 
 
       Classification results
       ======================
-      Label: updown
+      Label: sine
       Value: 1.00
       Anomaly: 0.47
 
