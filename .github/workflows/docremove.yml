@@ -1,7 +1,7 @@
 name: Documentation Remove
 
 on:
-  pull_request:
+  pull_request_target:
     types: [closed]
     branches:
       - master
@@ -11,13 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Remove documentation
+      - name: Install dependencies
         run: |
-          mkdir doc && cd doc
-          echo "remove PR-${{ github.event.number }}" > monitor_$GITHUB_RUN_ID.txt
+          sudo apt install -y sshpass
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: doc
-          path: doc
+      - name: Request removal
+        env:
+          SSHUSER: ${{ secrets.NCS_TRANSFER_DOC_USR }}
+          SSHPASS: ${{ secrets.NCS_TRANSFER_DOC_PWD }}
+        run: |
+          # create request file
+          echo "remove PR-${{ github.event.number }}" > monitor_${GITHUB_RUN_ID}.txt
+          # trust server
+          mkdir -p ~/.ssh && \
+            ssh-keyscan -p 2222 transfer.nordicsemi.no >> ~/.ssh/known_hosts
+          # upload request file
+          echo "put monitor_${GITHUB_RUN_ID}.txt" | \
+            sshpass -e sftp -P 2222 -o BatchMode=no -b - $SSHUSER@transfer.nordicsemi.no
