@@ -1230,6 +1230,18 @@ NCSDK-8372: Project name collision causes SES Nordic Edition to load the wrong p
   **Workaround:** If the path in :guilabel:`Build Directory` points to the wrong project, select the correct project by using the :guilabel:`...` button for :guilabel:`Projects` and navigating to the correct project location.
   The build directory will update automatically.
 
+Toolchain
+*********
+
+.. rst-class:: v1-5-1 v1-5-0
+
+Some versions of the GNU Arm Embedded toolchain do not work correctly when building samples based on TF-M
+  The GNU Arm Embedded Toolchain, versions *9-2020-q2-update* and *10-2020-q4-major*, do not work correctly when compiling binaries for Cortex-M Secure Extensions.
+  This issue affects all the samples based on TF-M.
+  For more information, see `here <https://github.com/zephyrproject-rtos/zephyr/issues/34658#issuecomment-828422111>`_.
+
+  **Workaround:** When building with TF-M, do not use the mentioned versions of the toolchain.
+
 ----
 
 In addition to these known issues, check the current issues in the `official Zephyr repository`_, since these might apply to the |NCS| fork of the Zephyr repository as well.
