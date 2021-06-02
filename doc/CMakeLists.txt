@@ -191,14 +191,21 @@ if(NOT DEFINED ENV{NRFXLIB_BASE})
   set(ENV{NRFXLIB_BASE} ${NRFXLIB_BASE})
 endif()
 
+if(NOT DEFINED ENV{NRFX_BASE})
+  get_filename_component(NRFX_BASE ${CMAKE_CURRENT_LIST_DIR}/../../modules/hal/nordic/nrfx/ REALPATH)
+  set(ENV{NRFX_BASE} ${NRFX_BASE})
+endif()
+
 message(STATUS "ZEPHYR_BASE: ${ZEPHYR_BASE}")
 message(STATUS "NRF_BASE: $ENV{NRF_BASE}")
 message(STATUS "MCUBOOT_BASE: $ENV{MCUBOOT_BASE}")
 message(STATUS "NRFXLIB_BASE: $ENV{NRFXLIB_BASE}")
+message(STATUS "NRFX_BASE: $ENV{NRFX_BASE}")
 
 set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
+set(NRFX_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfx)
 
 # HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
@@ -295,6 +302,17 @@ set(mcuboot_env
 )
 
 add_docset(mcuboot "${mcuboot_env}")
+
+#-------------------------------------------------------------------------------
+# docset: nrfx
+
+set(nrfx_env
+  NRF_BASE=${NRF_BASE}
+  NRFX_BASE=${NRFX_BASE}
+  NRFX_BUILD=${NRFX_BINARY_DIR}
+)
+
+add_docset(nrfx "${nrfx_env}")
 
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
@@ -395,6 +413,7 @@ add_custom_target(build-all ALL)
 add_dependencies(build-all
     copy-extra-content
     nrf-html-all
+    nrfx-html-all
     nrfxlib-html-all
     zephyr-html-all
     mcuboot-html-all
