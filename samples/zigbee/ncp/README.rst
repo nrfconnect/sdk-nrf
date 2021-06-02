@@ -10,9 +10,9 @@ Zigbee: NCP
 The :ref:`Zigbee <ug_zigbee>` NCP sample demonstrates the usage of Zigbee's :ref:`ug_zigbee_platform_design_ncp_details` architecture.
 
 Together with the source code from `ZBOSS NCP Host`_, you can use this sample to create a complete and functional Zigbee device.
-For example, as shown in the `Testing`_ scenario, you can program a development kit with the NCP sample and bundle it with the light control application on the NCP host processor.
+For example, as shown in the `Testing`_ scenario, you can program a development kit with the NCP sample and bundle it with the simple gateway application on the NCP host processor.
 
-You can then use this sample together with the :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` and the :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` to set up a basic Zigbee network.
+You can then use this sample together with the :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` to set up a basic Zigbee network.
 
 Requirements
 ************
@@ -34,10 +34,9 @@ For this sample to work, you also need the following:
   It contains the source code for all parts of the ZBOSS library for the NCP host.
   This allows you to recompile the library for the designated hardware platform.
   Running the ZBOSS NCP Host requires a PC with an operating system compatible with the 64-bit Ubuntu 18.04 Linux.
-* The :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` sample programmed on one separate device.
 * The :ref:`zigbee_light_bulb_sample` sample programmed on one separate device.
 
-This means that you need at least three development kits for testing this sample.
+This means that you need at least two development kits for testing this sample.
 
 .. figure:: /images/zigbee_ncp_sample_overview.svg
    :alt: Zigbee NCP sample setup overview
@@ -177,27 +176,23 @@ After building the sample and programming it to your development kit, test it by
 1. Download and extract the `ZBOSS NCP Host`_ package.
 
    .. note::
-      If you are using an Linux distribution different than the 64-bit Ubuntu 18.04, make sure to rebuild the package libraries and applications by following the instructions described in the :file:`README.rst`  file in the ZBOSS NCP Host package.
+      If you are using an Linux distribution different than the 64-bit Ubuntu 18.04, make sure to rebuild the package libraries and applications by following the instructions described in the :file:`README.rst` file in the ZBOSS NCP Host package.
 
 #. If you are using `Communication through USB`_, connect the nRF USB port of the NCP sample's development kit to the PC USB port with an USB cable.
 #. Get the kit’s serial port name (for example, /dev/ttyACM0).
    If you are communicating through the nRF USB, get the nRF USB serial port name.
-#. Turn on the development kit that runs the network coordinator sample.
-   When **LED 3** turns on, this development kit has become the Coordinator of the Zigbee network.
 #. Turn on the development kit that runs the light bulb sample.
-   When **LED 3** turns on, the light bulb has become a Router inside the network.
-
-   .. tip::
-        If **LED 3** does not turn on, press **Button 1** on the Coordinator to reopen the network.
-
-#. Start the light control application by running the following command with *serial_port_name* replaced with the serial port name used for communication with the NCP sample:
+#. Start the simple gateway application by running the following command with *serial_port_name* replaced with the serial port name used for communication with the NCP sample:
 
    .. parsed-literal::
       :class: highlight
 
-      NCP_SLAVE_PTY=*serial_port_name* ./application/light_sample/light_control/light_control
+      NCP_SLAVE_PTY=*serial_port_name* ./application/simple_gw/simple_gw
 
-The light control device joins the Zigbee network, searches for a light bulb to control, and starts sending On/Off commands with a 15-sec period that toggle the **LED 4** on the light bulb on and off.
+The simple gateway device forms the Zigbee network and opens the network for 180 seconds for new devices to join.
+When the light bulb joins the network, the **LED 3** on the light bulb device turns on to indicate that it is connected to the simple gateway.
+The gateway then starts discovering the On/Off cluster.
+When it is found, the simple gateway configures bindings and reporting for the device and then starts sending On/Off toggle commands with a 15-second period that toggle the **LED 4** on the light bulb on and off.
 
 Dependencies
 ************

@@ -136,6 +136,13 @@ Matter (Project CHIP)
 
   * Renamed occurrences of Project CHIP to Matter.
 
+Zigbee
+------
+
+* Updated:
+
+  * Reworked the :ref:`NCP sample <zigbee_ncp_sample>` to include a simple gateway application.
+
 Common
 ======
 
