@@ -520,8 +520,9 @@ static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 static void reg_step(struct k_work *work)
 {
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
 	struct bt_mesh_light_ctrl_srv *srv = CONTAINER_OF(
-		work, struct bt_mesh_light_ctrl_srv, reg.timer.work);
+		dwork, struct bt_mesh_light_ctrl_srv, reg.timer);
 
 	if (!is_enabled(srv)) {
 		/* The server might be disabled asynchronously. */
@@ -588,8 +589,9 @@ static void reg_step(struct k_work *work)
 
 static void timeout(struct k_work *work)
 {
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
 	struct bt_mesh_light_ctrl_srv *srv =
-		CONTAINER_OF(work, struct bt_mesh_light_ctrl_srv, timer.work);
+		CONTAINER_OF(dwork, struct bt_mesh_light_ctrl_srv, timer);
 
 	if (!is_enabled(srv)) {
 		if (CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY &&
@@ -658,8 +660,9 @@ static void timeout(struct k_work *work)
 
 static void delayed_action_timeout(struct k_work *work)
 {
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
 	struct bt_mesh_light_ctrl_srv *srv = CONTAINER_OF(
-		work, struct bt_mesh_light_ctrl_srv, action_delay.work);
+		dwork, struct bt_mesh_light_ctrl_srv, action_delay);
 	struct bt_mesh_model_transition transition = {
 		.time = srv->fade.duration
 	};
@@ -684,8 +687,9 @@ static void delayed_action_timeout(struct k_work *work)
 #if CONFIG_BT_SETTINGS
 static void store_timeout(struct k_work *work)
 {
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
 	struct bt_mesh_light_ctrl_srv *srv = CONTAINER_OF(
-		work, struct bt_mesh_light_ctrl_srv, store_timer.work);
+		dwork, struct bt_mesh_light_ctrl_srv, store_timer);
 	int err;
 
 	if (atomic_test_and_clear_bit(&srv->flags, FLAG_STORE_CFG)) {

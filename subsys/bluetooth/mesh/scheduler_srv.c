@@ -435,7 +435,8 @@ static void schedule_action(struct bt_mesh_scheduler_srv *srv,
 
 static void scheduled_action_handle(struct k_work *work)
 {
-	struct bt_mesh_scheduler_srv *srv = CONTAINER_OF(work,
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	struct bt_mesh_scheduler_srv *srv = CONTAINER_OF(dwork,
 				struct bt_mesh_scheduler_srv,
 				delayed_work);
 
