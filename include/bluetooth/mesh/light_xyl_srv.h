@@ -111,25 +111,25 @@ struct bt_mesh_light_xyl_srv_handlers {
 	 *
 	 * @param[in] srv Server the Range state was changed on.
 	 * @param[in] ctx Context of the set message that triggered the update.
-	 * @param[in] old The old Range.
-	 * @param[in] new The new Range.
+	 * @param[in] old_range The old Range.
+	 * @param[in] new_range The new Range.
 	 */
 	void (*const range_update)(struct bt_mesh_light_xyl_srv *srv,
 				   struct bt_mesh_msg_ctx *ctx,
-				   const struct bt_mesh_light_xy_range *old,
-				   const struct bt_mesh_light_xy_range *new);
+				   const struct bt_mesh_light_xy_range *old_range,
+				   const struct bt_mesh_light_xy_range *new_range);
 
 	/** @brief The Default Parameter state has changed.
 	 *
 	 * @param[in] srv Server the Default Parameter state was changed on.
 	 * @param[in] ctx Context of the set message that triggered the update.
-	 * @param[in] old The old Default Parameters.
-	 * @param[in] new The new Default Parameters.
+	 * @param[in] old_default The old Default Parameters.
+	 * @param[in] new_default The new Default Parameters.
 	 */
 	void (*const default_update)(struct bt_mesh_light_xyl_srv *srv,
 				     struct bt_mesh_msg_ctx *ctx,
-				     const struct bt_mesh_light_xy *old,
-				     const struct bt_mesh_light_xy *new);
+				     const struct bt_mesh_light_xy *old_default,
+				     const struct bt_mesh_light_xy *new_default);
 };
 
 /**
