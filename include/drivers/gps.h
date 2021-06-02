@@ -1,9 +1,3 @@
-/**
- * @file gps.h
- *
- * @brief Public APIs for the GPS driver.
- */
-
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
@@ -12,13 +6,24 @@
 #ifndef ZEPHYR_INCLUDE_GPS_H_
 #define ZEPHYR_INCLUDE_GPS_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+/**
+ * @file gps.h
+ *
+ * @brief Public APIs for the GPS interface.
+ */
 
 #include <zephyr.h>
 #include <device.h>
 #include <stdbool.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @defgroup gpsapi GPS API
+ * @{
+ */
 
 #define GPS_NMEA_SENTENCE_MAX_LENGTH	83
 #define GPS_PVT_MAX_SV_COUNT		12
@@ -40,13 +45,26 @@ struct gps_datetime {
 };
 
 struct gps_sv {
-	uint16_t sv;		/**< SV number 1...32 for GPS. */
-	uint16_t cn0;		/**< 0.1 dB/Hz. */
-	int16_t elevation;	/**< SV elevation angle in degrees. */
-	int16_t azimuth;		/**< SV azimuth angle in degrees. */
-	uint8_t signal;		/**< Signal type. 0: invalid, 1: GPS L1C/A. */
-	uint8_t in_fix:1;		/**< Satellite used in fix calculation. */
-	uint8_t unhealthy:1;	/**< Satellite is marked as unhealthy. */
+	/** SV number 1...32 for GPS. */
+	uint16_t sv;
+
+	/** 0.1 dB/Hz. */
+	uint16_t cn0;
+
+	/** SV elevation angle in degrees. */
+	int16_t elevation;
+
+	/** SV azimuth angle in degrees. */
+	int16_t azimuth;
+
+	/** Signal type. 0: invalid, 1: GPS L1C/A. */
+	uint8_t signal;
+
+	/** Satellite used in fix calculation. */
+	uint8_t in_fix:1;
+
+	/** Satellite is marked as unhealthy. */
+	uint8_t unhealthy:1;
 };
 
 struct gps_pvt {
@@ -66,21 +84,21 @@ struct gps_pvt {
 };
 
 enum gps_nav_mode {
-	/* Search will be stopped after first fix. */
+	/** Search will be stopped after first fix. */
 	GPS_NAV_MODE_SINGLE_FIX,
 
-	/* Search continues until explicitly stopped. */
+	/** Search continues until explicitly stopped. */
 	GPS_NAV_MODE_CONTINUOUS,
 
-	/* Periodically start search, stops on fix. */
+	/** Periodically start search, stops on fix. */
 	GPS_NAV_MODE_PERIODIC,
 };
 
 enum gps_use_case {
-	/* Target best single cold start performance. */
+	/** Target best single cold start performance. */
 	GPS_USE_CASE_SINGLE_COLD_START,
 
-	/* Target best multiple hot starts performance. */
+	/** Target best multiple hot starts performance. */
 	GPS_USE_CASE_MULTIPLE_HOT_START,
 };
 
@@ -101,82 +119,111 @@ enum gps_accuracy {
 };
 
 enum gps_power_mode {
-	/* Best GPS performance. */
+	/** Best GPS performance. */
 	GPS_POWER_MODE_DISABLED,
 
-	/* Lower power, without significant GPS performance degradation. */
+	/** Lower power, without significant GPS performance degradation. */
 	GPS_POWER_MODE_PERFORMANCE,
 
-	/* Lowest power option, with acceptable GPS performance. */
+	/** Lowest power option, with acceptable GPS performance. */
 	GPS_POWER_MODE_SAVE,
 };
 
-/* GPS search configuration. */
+/** GPS search configuration. */
 struct gps_config {
-	/* GPS navigation mode, @ref enum gps_nav_mode. */
+	/** GPS navigation mode, @ref gps_nav_mode. */
 	enum gps_nav_mode nav_mode;
 
-	/* Power mode, @ref enum gps_power_mode. */
+	/** Power mode, @ref gps_power_mode. */
 	enum gps_power_mode power_mode;
 
-	/* GPS use case, @ref enum gps_use_case. */
+	/** GPS use case, @ref gps_use_case. */
 	enum gps_use_case use_case;
 
-	/* Accuracy threshold for producing fix, @ref enum gps_accuracy. */
+	/** Accuracy threshold for producing fix, @ref gps_accuracy. */
 	enum gps_accuracy accuracy;
 
-	/* Interval, in seconds, at which to start GPS search. The value is
-	 * ignored outside periodic mode. Minimum accepted value is 10 seconds.
+	/** Interval, in seconds, at which to start GPS search. The value is
+	 *  ignored outside periodic mode. Minimum accepted value is 10 seconds.
 	 */
 	uint32_t interval;
 
-	/* Time to search for fix before giving up. If used in periodic mode,
-	 * the timeout repeats every interval. K_FOREVER or 0 indicate that
-	 * the GPS  will search until it gets a valid PVT estimate, except in
-	 * continuous mode, where it will stay on until explicitly stopped
-	 * also in case of valid PVT.
+	/** Time to search for fix before giving up. If used in periodic mode,
+	 *  the timeout repeats every interval. K_FOREVER or 0 indicate that
+	 *  the GPS  will search until it gets a valid PVT estimate, except in
+	 *  continuous mode, where it will stay on until explicitly stopped
+	 *  also in case of valid PVT.
 	 */
 	int32_t timeout;
 
-	/* Delete stored assistance data before starting GPS search. */
+	/** Delete stored assistance data before starting GPS search. */
 	bool delete_agps_data;
 
-	/* Give GPS priority in competition with other radio resource users.
-	 * This may affect the operation of other protocols, such as LTE in the
-	 * case of nRF9160.
+	/** Give GPS priority in competition with other radio resource users.
+	 *  This may affect the operation of other protocols, such as LTE in the
+	 *  case of nRF9160.
 	 */
 	bool priority;
 };
 
-/* Flags indicating which AGPS assistance data set is written to the GPS module.
- */
+/** GPS assistance data types. */
 enum gps_agps_type {
+	/** UTC parameters. */
 	GPS_AGPS_UTC_PARAMETERS			= 1,
+
+	/** Ephemerides. */
 	GPS_AGPS_EPHEMERIDES			= 2,
+
+	/** Almanac. */
 	GPS_AGPS_ALMANAC			= 3,
+
+	/** Ionospheric correction parameters, Klobuchar model. */
 	GPS_AGPS_KLOBUCHAR_CORRECTION		= 4,
+
+	/** Ionospheric correction parameters, NeQuick model. */
 	GPS_AGPS_NEQUICK_CORRECTION		= 5,
-	GPS_AGPS_GPS_TOWS			= 6, /* nrfcloud request only */
+
+	/** Time of week. */
+	GPS_AGPS_GPS_TOWS			= 6,
+
+	/** GPS system clock and time of week */
 	GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS	= 7,
+
+	/** Approximate location. */
 	GPS_AGPS_LOCATION			= 8,
+
+	/** Satellite integrity data. */
 	GPS_AGPS_INTEGRITY			= 9,
 };
 
 struct gps_agps_request {
-	uint32_t sv_mask_ephe;	/* Bit mask indicating the satellite PRNs for
-				 * which the assistance GPS ephemeris data is
-				 * needed.
-				 */
-	uint32_t sv_mask_alm;	/* Bit mask indicating the satellite PRNs for
-				 * which the assistance GPS almanac data is
-				 * needed.
-				 */
-	uint8_t utc:1;		/* GPS UTC parameters. */
-	uint8_t klobuchar:1;	/* Klobuchar parameters. */
-	uint8_t nequick:1;		/* NeQuick parameters. */
-	uint8_t system_time_tow:1;	/* GPS system time and SV TOWs. */
-	uint8_t position:1;	/* Position assistance parameters. */
-	uint8_t integrity:1;	/* Integrity assistance parameters. */
+	/** Bit mask indicating the satellite PRNs for which the assistance GPS
+	 *  ephemeris data is needed.
+	 */
+	uint32_t sv_mask_ephe;
+
+	/** Bit mask indicating the satellite PRNs for which the assistance GPS
+	 *  almanac data is needed.
+	 */
+	uint32_t sv_mask_alm;
+
+	/** GPS UTC parameters. */
+	uint8_t utc:1;
+
+	/** Klobuchar parameters. */
+	uint8_t klobuchar:1;
+
+	/** NeQuick parameters. */
+	uint8_t nequick:1;
+
+	/** GPS system time and SV TOWs. */
+	uint8_t system_time_tow:1;
+
+	/** Position assistance parameters. */
+	uint8_t position:1;
+
+	/** Integrity assistance parameters. */
+	uint8_t integrity:1;
 };
 
 /**
@@ -437,6 +484,8 @@ int gps_process_agps_data(const uint8_t *buf, size_t len);
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int gps_get_last_cell_location(double *const lat, double *const lon);
+
+/** @} */
 
 #ifdef __cplusplus
 }
