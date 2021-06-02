@@ -86,10 +86,12 @@ struct bt_throughput {
 /** @brief Throughput Characteristic UUID. */
 #define BT_UUID_THROUGHPUT_CHAR BT_UUID_DECLARE_16(0x1524)
 
+#define BT_UUID_THROUGHPUT_VAL \
+	BT_UUID_128_ENCODE(0x0483dadd, 0x6c9d, 0x6ca9, 0x5d41, 0x03ad4fff4abb)
+
 /** @brief Throughput Service UUID. */
 #define BT_UUID_THROUGHPUT                                                     \
-	BT_UUID_DECLARE_128(0xBB, 0x4A, 0xFF, 0x4F, 0xAD, 0x03, 0x41, 0x5D,    \
-			    0xA9, 0x6C, 0x9D, 0x6C, 0xDD, 0xDA, 0x83, 0x04)
+	BT_UUID_DECLARE_128(BT_UUID_THROUGHPUT_VAL)
 
 /** @brief Initialize the GATT Throughput Service.
  *
