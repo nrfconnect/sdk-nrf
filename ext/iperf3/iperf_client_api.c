@@ -97,7 +97,7 @@ iperf_create_streams(struct iperf_test *test, int sender)
 		}
 		test->congestion_used = strdup(ca);
 		if (test->debug) {
-		    printf("Congestion algorithm is %s\n", test->congestion_used);
+		    iperf_printf(test, "Congestion algorithm is %s\n", test->congestion_used);
 		}
 	    }
 	}
@@ -290,7 +290,7 @@ iperf_handle_message_client(struct iperf_test *test)
         case TEST_START:
 #if defined (CONFIG_NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES)
             if (test->debug) {
-                printf("TEST_START: non-blocking ctrl sckt %d\n", test->ctrl_sck);
+                iperf_printf(test, "TEST_START: non-blocking ctrl sckt %d\n", test->ctrl_sck);
             }
             setnonblocking(test->ctrl_sck, 1);
 #endif
@@ -401,7 +401,9 @@ iperf_connect(struct iperf_test *test)
             char str[128];
             snprintf(str, sizeof(str),
                      "Ignoring nonsense TCP MSS %d", opt);
-            warning(str);
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+            warning(test, str);
+#endif
 
             test->ctrl_sck_mss = 0;
         }
@@ -413,7 +415,7 @@ iperf_connect(struct iperf_test *test)
 	printf("Control connection MSS %d\n", test->ctrl_sck_mss);
 #else
     /* no support to set nor read the mss */
-	printf("Control connection MSS: using modem default\n");
+	iperf_printf(test, "Control connection MSS: using modem default\n");
 #endif
     }
 
@@ -441,7 +443,7 @@ iperf_connect(struct iperf_test *test)
 		test->settings->blksize = DEFAULT_UDP_BLKSIZE;
 	    }
 	    if (test->verbose) {
-		printf("Setting UDP block size to %d\n", test->settings->blksize);
+		iperf_printf(test, "Setting UDP block size to %d\n", test->settings->blksize);
 	    }
 	}
 
@@ -454,7 +456,9 @@ iperf_connect(struct iperf_test *test)
 	    char str[128];
 	    snprintf(str, sizeof(str),
 		     "UDP block size %d exceeds TCP MSS %d, may result in fragmentation / drops", test->settings->blksize, test->ctrl_sck_mss);
-	    warning(str);
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+	    warning(test, str);
+#endif
 	}
     }
 
@@ -480,7 +484,7 @@ iperf_client_end(struct iperf_test *test)
 
     if (iperf_set_send_state(test, IPERF_DONE) != 0) {
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-        printf("iperf_client_end: iperf_set_send_state failed\n");
+        iperf_printf(test, "iperf_client_end: iperf_set_send_state failed\n");
         retval = -1;
 #else
         return -1;
@@ -542,7 +546,7 @@ iperf_run_client(struct iperf_test * test)
         /* save time when we got connected */
 		iperf_time_now(&connected_time);
         if (test->debug) {
-            printf("iperf_run_client: ctrl socket connected: %d, state %d\n", test->ctrl_sck, test->state);
+            iperf_printf(test, "iperf_run_client: ctrl socket connected: %d, state %d\n", test->ctrl_sck, test->state);
         }
     }
 
@@ -553,6 +557,21 @@ iperf_run_client(struct iperf_test * test)
 
     startup = 1;
     while (test->state != IPERF_DONE) {
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+	    if (test->kill_signal != NULL) {
+		    int set, res;
+
+		    k_poll_signal_check(test->kill_signal, &set, &res);
+		    if (set) {
+			    k_poll_signal_reset(test->kill_signal);
+			    iperf_printf(test,
+					 "Kill signal received - exiting\n");
+			    i_errno = IEKILL;
+			    goto cleanup_and_fail;
+		    }
+	    }
+#endif
+
 	memcpy(&read_set, &test->read_set, sizeof(fd_set));
 	memcpy(&write_set, &test->write_set, sizeof(fd_set));
 	iperf_time_now(&now);
@@ -569,7 +588,7 @@ iperf_run_client(struct iperf_test * test)
 		if (iperf_time_in_secs(&temp_time) > test_start_tout.tv_sec) {
 			i_errno = IETESTSTARTTIMEOUT;
 			if (test->debug)
-				printf("iperf_run_client: timeout to wait to actual test start, config timeout value %d\n", (uint32_t)test_start_tout.tv_sec);
+				iperf_printf(test, "iperf_run_client: timeout to wait to actual test start, config timeout value %d\n", (uint32_t)test_start_tout.tv_sec);
 
 			goto cleanup_and_fail;
 		}
@@ -579,7 +598,7 @@ iperf_run_client(struct iperf_test * test)
 	if (result < 0 && errno != EINTR) {
   	    i_errno = IESELECT;
         if (test->debug) {
-            printf("iperf_run_client: select failed: %d\n", result);
+            iperf_printf(test, "iperf_run_client: select failed: %d\n", result);
         }
 	    goto cleanup_and_fail;
 	}
@@ -588,7 +607,7 @@ iperf_run_client(struct iperf_test * test)
 	    if (FD_ISSET(test->ctrl_sck, &read_set)) {
  	        if (iperf_handle_message_client(test) < 0) {
                 if (test->debug) {
-                    printf("iperf_run_client: iperf_handle_message_client failed\n");
+                    iperf_printf(test, "iperf_run_client: iperf_handle_message_client failed\n");
                 }
 		    goto cleanup_and_fail;
 		    }          
@@ -609,7 +628,7 @@ iperf_run_client(struct iperf_test * test)
             if (retval < 0) {
                 /* let's ignore errors from stream/testing sockets */
                 if (test->debug)
-                	printf("iperf_recv for stream socket in EXCHANGE_RESULTS failed %d but ignored\n", retval);
+                	iperf_printf(test, "iperf_recv for stream socket in EXCHANGE_RESULTS failed %d but ignored\n", retval);
             }
         } else
 #endif
@@ -633,13 +652,13 @@ iperf_run_client(struct iperf_test * test)
 	    {
                 if (iperf_send(test, &write_set) < 0) {
                     if (test->debug) {
-                        printf("iperf_run_client: BIDIRECTIONAL iperf_send failed\n");
+                        iperf_printf(test, "iperf_run_client: BIDIRECTIONAL iperf_send failed\n");
                     }                    
                     goto cleanup_and_fail;
                 }
                 if (iperf_recv(test, &read_set) < 0) {
                     if (test->debug) {
-                        printf("iperf_run_client: BIDIRECTIONAL iperf_recv failed\n");
+                        iperf_printf(test, "iperf_run_client: BIDIRECTIONAL iperf_recv failed\n");
                     }                    
                     goto cleanup_and_fail;
                 }
@@ -647,7 +666,7 @@ iperf_run_client(struct iperf_test * test)
                 // Regular mode. Client sends.
                 if (iperf_send(test, &write_set) < 0) {
                     if (test->debug) {
-                        printf("iperf_run_client: SENDER iperf_send failed\n");
+                        iperf_printf(test, "iperf_run_client: SENDER iperf_send failed\n");
                     }                    
                     goto cleanup_and_fail;
                 }
@@ -655,7 +674,7 @@ iperf_run_client(struct iperf_test * test)
                 // Reverse mode. Client receives.
                 if (iperf_recv(test, &read_set) < 0) {
                     if (test->debug) {
-                        printf("iperf_run_client: REVERSE mode iperf_recv failed\n");
+                        iperf_printf(test, "iperf_run_client: REVERSE mode iperf_recv failed\n");
                     }                    
                     goto cleanup_and_fail;
                 }
@@ -682,7 +701,7 @@ iperf_run_client(struct iperf_test * test)
 		/* Yes, done!  Send TEST_END. */
 		test->done = 1;
         if (test->debug) {
-            printf("iperf_run_client: Yes, done! Send TEST_END\n");
+            iperf_printf(test, "iperf_run_client: Yes, done! Send TEST_END\n");
         }        
 #if !defined(CONFIG_NRF_IPERF3_INTEGRATION)        
 		cpu_util(test->cpu_util);
@@ -691,7 +710,7 @@ iperf_run_client(struct iperf_test * test)
 
 		if (iperf_set_send_state(test, TEST_END) != 0) {
             if (test->debug) {
-                printf("iperf_run_client: TEST_END SENDING FAILED\n");
+                iperf_printf(test, "iperf_run_client: TEST_END SENDING FAILED\n");
             }               
             goto cleanup_and_fail;
         }                    
@@ -705,7 +724,7 @@ iperf_run_client(struct iperf_test * test)
 	else if (test->mode == RECEIVER && test->state == TEST_END) {
 	    if (iperf_recv(test, &read_set) < 0) {
             if (test->debug) {
-                printf("iperf_run_client: RECEIVER TEST_END iperf_recv failed\n");
+                iperf_printf(test, "iperf_run_client: RECEIVER TEST_END iperf_recv failed\n");
             }            
     		goto cleanup_and_fail;
         }
@@ -728,7 +747,7 @@ iperf_run_client(struct iperf_test * test)
 
   cleanup_and_fail:
     if (test->debug) {
-        printf("iperf_run_client: cleanup_and_fail\n");
+        iperf_printf(test, "iperf_run_client: cleanup_and_fail\n");
     }
     iperf_client_end(test);
     if (test->json_output)

@@ -83,7 +83,7 @@ iperf_tcp_recv(struct iperf_stream *sp)
         }
         else {
             if (sp->test->debug)
-                printf("TCP Early/Late receive, state = %d, read %d\n", sp->test->state, r);
+                iperf_printf(sp->test, "TCP Early/Late receive, state = %d, read %d\n", sp->test->state, r);
 
             /* NRF_IPERF3_INTEGRATION_TODO: should we count followings still? */
             //sp->result->bytes_received += r;
@@ -106,7 +106,7 @@ iperf_tcp_recv(struct iperf_stream *sp)
     }
     else {
 	if (sp->test->debug)
-	    printf("Late receive, state = %d\n", sp->test->state);
+	    iperf_printf(sp->test, "Late receive, state = %d\n", sp->test->state);
     }
 
     return r;
@@ -274,14 +274,14 @@ iperf_tcp_listen(struct iperf_test *test)
         if (test->pdn_id_str != NULL) {
             int ret = iperf_util_socket_pdn_id_set(s, test->pdn_id_str);
             if (ret != 0) {
-                printf("iperf_tcp_listen: cannot bind socket with PDN ID %s\n", test->pdn_id_str);
+                iperf_printf(test, "iperf_tcp_listen: cannot bind socket with PDN ID %s\n", test->pdn_id_str);
                 i_errno = IESTREAMLISTEN;
                 return -1;
             }				
         } else if (test->apn_str != NULL) {
             int ret = iperf_util_socket_apn_set(s, test->apn_str);
             if (ret != 0) {
-                printf("iperf_tcp_listen: cannot bind socket to apn %s\n", test->apn_str);
+                iperf_printf(test, "iperf_tcp_listen: cannot bind socket to apn %s\n", test->apn_str);
                 i_errno = IESTREAMLISTEN;
                 return -1;
             }				
@@ -344,10 +344,12 @@ iperf_tcp_listen(struct iperf_test *test)
 	unsigned int fqrate = test->settings->fqrate / 8;
 	if (fqrate > 0) {
 	    if (test->debug) {
-		printf("Setting fair-queue socket pacing to %u\n", fqrate);
+		iperf_printf(test, "Setting fair-queue socket pacing to %u\n", fqrate);
 	    }
 	    if (setsockopt(s, SOL_SOCKET, SO_MAX_PACING_RATE, &fqrate, sizeof(fqrate)) < 0) {
-		warning("Unable to set socket pacing");
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+		warning(test, "Unable to set socket pacing");
+#endif
 	    }
 	}
     }
@@ -356,7 +358,7 @@ iperf_tcp_listen(struct iperf_test *test)
 	unsigned int rate = test->settings->rate / 8;
 	if (rate > 0) {
 	    if (test->debug) {
-		printf("Setting application pacing to %u\n", rate);
+		iperf_printf(test, "Setting application pacing to %u\n", rate);
 	    }
 	}
     }
@@ -540,14 +542,14 @@ iperf_tcp_connect(struct iperf_test *test)
     if (test->pdn_id_str != NULL) {
         int ret = iperf_util_socket_pdn_id_set(s, test->pdn_id_str);
         if (ret != 0) {
-            printf("iperf_tcp_listen: cannot bind socket with PDN ID %s\n", test->pdn_id_str);
+            iperf_printf(test, "iperf_tcp_listen: cannot bind socket with PDN ID %s\n", test->pdn_id_str);
             i_errno = IESTREAMLISTEN;
             return -1;
         }				
     } else if (test->apn_str != NULL) {
 		int ret = iperf_util_socket_apn_set(s, test->apn_str);
 		if (ret != 0) {
-			printf("Cannot bind socket to apn %s\n", test->apn_str);
+			iperf_printf(test, "Cannot bind socket to apn %s\n", test->apn_str);
             i_errno = IESTREAMCONNECT;            
 			return -1;
 		}				
@@ -662,7 +664,7 @@ iperf_tcp_connect(struct iperf_test *test)
         }
 #else
     if (test->debug) {
-	   printf("Setting of socket buffers are not supported, ignored to set as %d\n", test->settings->socket_bufsize);
+	   iperf_printf(test, "Setting of socket buffers are not supported, ignored to set as %d\n", test->settings->socket_bufsize);
     }
 #endif
     }
@@ -765,10 +767,12 @@ iperf_tcp_connect(struct iperf_test *test)
 	unsigned int fqrate = test->settings->fqrate / 8;
 	if (fqrate > 0) {
 	    if (test->debug) {
-		printf("Setting fair-queue socket pacing to %u\n", fqrate);
+		iperf_printf(test, "Setting fair-queue socket pacing to %u\n", fqrate);
 	    }
 	    if (setsockopt(s, SOL_SOCKET, SO_MAX_PACING_RATE, &fqrate, sizeof(fqrate)) < 0) {
-		warning("Unable to set socket pacing");
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+		warning(test, "Unable to set socket pacing");
+#endif
 	    }
 	}
     }
@@ -777,7 +781,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	unsigned int rate = test->settings->rate / 8;
 	if (rate > 0) {
 	    if (test->debug) {
-		printf("Setting application pacing to %u\n", rate);
+		iperf_printf(test, "Setting application pacing to %u\n", rate);
 	    }
 	}
     }

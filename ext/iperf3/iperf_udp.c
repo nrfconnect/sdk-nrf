@@ -186,7 +186,7 @@ iperf_udp_recv(struct iperf_stream *sp)
 #else
 		/* 64bit varaiable printing not working */
 	    if (sp->test->debug) 
-			fprintf(stderr, "OUT OF ORDER - incoming packet sequence %d but expected sequence %d on stream %d", (uint32_t)pcount, sp->packet_count + 1, sp->socket);
+			iperf_printf(sp->test, "OUT OF ORDER - incoming packet sequence %d but expected sequence %d on stream %d", (uint32_t)pcount, sp->packet_count + 1, sp->socket);
 #endif
 	}
 
@@ -219,7 +219,7 @@ iperf_udp_recv(struct iperf_stream *sp)
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
     else {
 	if (sp->test->debug)
-	    printf("UDP Early/Late receive, state = %d, count: %d\n", sp->test->state, r);
+	    iperf_printf(sp->test, "UDP Early/Late receive, state = %d, count: %d\n", sp->test->state, r);
     }
 #endif
     return r;
@@ -287,7 +287,7 @@ iperf_udp_send(struct iperf_stream *sp)
 #else
 	/* 64bit variable printing is not working */
     if (sp->test->debug)
-		printf("sent %d bytes of %d, total %d\n", r, sp->settings->blksize, (uint32_t)sp->result->bytes_sent);
+		iperf_printf(sp->test, "sent %d bytes of %d, total %d\n", r, sp->settings->blksize, (uint32_t)sp->result->bytes_sent);
 #endif
     return r;
 }
@@ -340,7 +340,7 @@ iperf_udp_buffercheck(struct iperf_test *test, int s)
 	return -1;
     }
     if (test->debug) {
-	printf("SNDBUF is %u, expecting %u\n", sndbuf_actual, test->settings->socket_bufsize);
+	iperf_printf(test, "SNDBUF is %u, expecting %u\n", sndbuf_actual, test->settings->socket_bufsize);
     }
     if (test->settings->socket_bufsize && test->settings->socket_bufsize > sndbuf_actual) {
 	i_errno = IESETBUF2;
@@ -351,7 +351,9 @@ iperf_udp_buffercheck(struct iperf_test *test, int s)
 	snprintf(str, sizeof(str),
 		 "Block size %d > sending socket buffer size %d",
 		 test->settings->blksize, sndbuf_actual);
-	warning(str);
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+	warning(test, str);
+#endif
 	rc = 1;
     }
 
@@ -362,7 +364,7 @@ iperf_udp_buffercheck(struct iperf_test *test, int s)
 	return -1;
     }
     if (test->debug) {
-	printf("RCVBUF is %u, expecting %u\n", rcvbuf_actual, test->settings->socket_bufsize);
+	iperf_printf(test, "RCVBUF is %u, expecting %u\n", rcvbuf_actual, test->settings->socket_bufsize);
     }
     if (test->settings->socket_bufsize && test->settings->socket_bufsize > rcvbuf_actual) {
 	i_errno = IESETBUF2;
@@ -373,7 +375,9 @@ iperf_udp_buffercheck(struct iperf_test *test, int s)
 	snprintf(str, sizeof(str),
 		 "Block size %d > receiving socket buffer size %d",
 		 test->settings->blksize, rcvbuf_actual);
-	warning(str);
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+	warning(test, str);
+#endif
 	rc = 1;
     }
 
@@ -435,7 +439,7 @@ iperf_udp_accept(struct iperf_test *test)
     if (rc > 0) {
 	if (test->settings->socket_bufsize == 0) {
 	    int bufsize = test->settings->blksize + UDP_BUFFER_EXTRA;
-	    printf("Increasing socket buffer size to %d\n",
+	    iperf_printf(test, "Increasing socket buffer size to %d\n",
 		bufsize);
 	    test->settings->socket_bufsize = bufsize;
 	    rc = iperf_udp_buffercheck(test, s);
@@ -451,10 +455,12 @@ iperf_udp_accept(struct iperf_test *test)
 	unsigned int fqrate = test->settings->fqrate / 8;
 	if (fqrate > 0) {
 	    if (test->debug) {
-		printf("Setting fair-queue socket pacing to %u\n", fqrate);
+		iperf_printf(test, "Setting fair-queue socket pacing to %u\n", fqrate);
 	    }
 	    if (setsockopt(s, SOL_SOCKET, SO_MAX_PACING_RATE, &fqrate, sizeof(fqrate)) < 0) {
-		warning("Unable to set socket pacing");
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+		warning(test, "Unable to set socket pacing");
+#endif
 	    }
 	}
     }
@@ -463,7 +469,7 @@ iperf_udp_accept(struct iperf_test *test)
 	unsigned int rate = test->settings->rate / 8;
 	if (rate > 0) {
 	    if (test->debug) {
-		printf("Setting application pacing to %u\n", rate);
+		iperf_printf(test, "Setting application pacing to %u\n", rate);
 	    }
 	}
     }
@@ -551,7 +557,7 @@ iperf_udp_connect(struct iperf_test *test)
     if (rc > 0) {
 	if (test->settings->socket_bufsize == 0) {
 	    int bufsize = test->settings->blksize + UDP_BUFFER_EXTRA;
-	    printf("Increasing socket buffer size to %d\n",
+	    iperf_printf(test, "Increasing socket buffer size to %d\n",
 		bufsize);
 	    test->settings->socket_bufsize = bufsize;
 	    rc = iperf_udp_buffercheck(test, s);
@@ -567,10 +573,12 @@ iperf_udp_connect(struct iperf_test *test)
 	unsigned int fqrate = test->settings->fqrate / 8;
 	if (fqrate > 0) {
 	    if (test->debug) {
-		printf("Setting fair-queue socket pacing to %u\n", fqrate);
+		iperf_printf(test, "Setting fair-queue socket pacing to %u\n", fqrate);
 	    }
 	    if (setsockopt(s, SOL_SOCKET, SO_MAX_PACING_RATE, &fqrate, sizeof(fqrate)) < 0) {
-		warning("Unable to set socket pacing");
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+		warning(test, "Unable to set socket pacing");
+#endif
 	    }
 	}
     }
@@ -579,7 +587,7 @@ iperf_udp_connect(struct iperf_test *test)
 	unsigned int rate = test->settings->rate / 8;
 	if (rate > 0) {
 	    if (test->debug) {
-		printf("Setting application pacing to %u\n", rate);
+		iperf_printf(test, "Setting application pacing to %u\n", rate);
 	    }
 	}
     }
@@ -590,7 +598,7 @@ iperf_udp_connect(struct iperf_test *test)
     tv.tv_sec = 30;
     tv.tv_usec = 0;
     if (setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv, sizeof(struct timeval)) < 0) {
-		warning("Unable to set socket SO_RCVTIMEO");
+		warning(test, "Unable to set socket SO_RCVTIMEO");
 	}
 #endif
 #endif

@@ -162,7 +162,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 #if defined(CONFIG_MOSH_IPERF3)
 static int cmd_iperf3(const struct shell *shell, size_t argc, char **argv)
 {
-	(void)iperf_main(argc, argv);
+	(void)iperf_main(argc, argv, NULL, 0, NULL);
 	return 0;
 }
 #endif

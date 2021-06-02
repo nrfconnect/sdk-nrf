@@ -5,8 +5,12 @@
  */
 
 #include <assert.h>
-#include <strings.h>
+
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+
 #include <zephyr.h>
 #include <sys/util.h>
 
@@ -27,4 +31,26 @@ int str_hex_to_bytes(char *str, uint32_t str_length, uint8_t *buf, uint16_t buf_
 	buf_length = hex2bin(str, str_length_no_space, buf, buf_length);
 
 	return buf_length;
+}
+
+/* strdup() C-library function implemented here because wasn't find from used
+ * MOSH libs (e.g. newlibc).
+ */
+char *mosh_strdup(const char *str)
+{
+	size_t len;
+	char *newstr;
+
+	if (!str) {
+		return (char *)NULL;
+	}
+
+	len = strlen(str) + 1;
+	newstr = malloc(len);
+	if (!newstr) {
+		return (char *)NULL;
+	}
+
+	memcpy(newstr, str, len);
+	return newstr;
 }
