@@ -86,7 +86,6 @@ manifest:
           - nrf_hw_models
           - open-amp
           - segger
-          - tensorflow
           - tinycbor
           - tinycrypt
           - TraceRecorderSource
