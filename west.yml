@@ -87,7 +87,6 @@ manifest:
           - open-amp
           - openthread
           - segger
-          - tensorflow
           - tinycbor
           - tinycrypt
           - TraceRecorderSource
