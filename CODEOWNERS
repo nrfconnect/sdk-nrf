@@ -106,6 +106,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/empty_app_core/          @doki-nordic
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
+/samples/nrf9160/lwm2m_client/            @rlubos @VeijoPesonen
 /samples/spm/                             @lemrey @hakonfam @ioannisg
 /samples/openthread/                      @MarekPorwisz @lmaciejonczyk @rlubos
 /samples/profiler/                        @pdunaj @pizi-nordic
@@ -135,6 +136,7 @@ Kconfig*                                  @tejlmand
 /subsys/mpsl/                             @joerchan @carlopaparo
 /subsys/net/                              @rlubos
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
+/subsys/net/lib/lwm2m_client_utils/       @rlubos @VeijoPesonen
 /subsys/nfc/                              @grochu @anangl
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
 /subsys/partition_manager/                @hakonfam
