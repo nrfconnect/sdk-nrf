@@ -150,7 +150,9 @@ static uint8_t dev_uuid[16];
 
 static const struct bt_mesh_prov prov = {
 	.uuid = dev_uuid,
+#if defined(CONFIG_BT_MESH_DK_PROV_OOB_LOG) || defined(CONFIG_BT_MESH_DK_PROV_OOB_BLINK)
 	.output_size = 1,
+#endif
 	.output_actions = (0
 #ifdef CONFIG_BT_MESH_DK_PROV_OOB_LOG
 		| BT_MESH_DISPLAY_NUMBER
@@ -162,9 +164,9 @@ static const struct bt_mesh_prov prov = {
 		),
 	.output_number = output_number,
 	.output_string = output_string,
-	.input_size = 1,
 	.input = input,
 #ifdef CONFIG_BT_MESH_DK_PROV_OOB_BUTTON
+	.input_size = 1,
 	.input_actions = BT_MESH_PUSH,
 #endif
 	.complete = prov_complete,
