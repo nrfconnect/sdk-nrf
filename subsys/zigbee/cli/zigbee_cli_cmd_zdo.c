@@ -77,7 +77,7 @@
 /* Defines how long to wait, in seconds, for mgmt_leave response. */
 #define ZIGBEE_CLI_MGMT_LEAVE_RESP_TIMEOUT 5
 
-LOG_MODULE_DECLARE(cli);
+LOG_MODULE_DECLARE(cli, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
 
 /* Forward declarations. */
