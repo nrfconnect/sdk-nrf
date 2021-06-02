@@ -185,10 +185,22 @@ void usage_long(FILE *f)
 }
 #endif
 
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+void warning(struct iperf_test *ipt, const char *str)
+{
+	/* Write to RAM "file" if requested: */
+	if (ipt != NULL && ipt->resp_std_out_buff_len && ipt->resp_std_out_buff != NULL) {
+		iperf_printf(ipt, "warning: %s\n", str);
+	} else {
+		fprintf(stderr, "warning: %s\n", str);
+	}
+}
+#else
 void warning(const char *str)
 {
 	fprintf(stderr, "warning: %s\n", str);
 }
+#endif
 
 /************** Getter routines for some fields inside iperf_test *************/
 
@@ -833,9 +845,12 @@ void iperf_on_connect(struct iperf_test *test)
 			iperf_printf(test, report_time, now_str);
 	}
 	else {
-		if (test->debug)
-			printf("warn: cannot get current time from modem (ret: %d). Let's start rockin', and defaulting to early 70's\n", ret);
-		
+		if (test->debug) {
+			iperf_printf(
+				test,
+				"warn: cannot get current time from modem (ret: %d). Let's start rockin', and defaulting to early 70's\n", ret);
+		}
+
 		now_secs = time((time_t *)0);
 		(void)strftime(now_str, sizeof(now_str), rfc1123_fmt,
 				gmtime(&now_secs));
@@ -1662,15 +1677,21 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 
 	/* Show warning if JSON output is used with explicit report format */
 	if ((test->json_output) && (test->settings->unit_format != 'a')) {
-		warning("Report format (-f) flag ignored with JSON output (-J)");
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+		warning(test, "Report format (-f) flag ignored with JSON output (-J)");
+#endif
 	}
 
 	/* Show warning if JSON output is used with verbose or debug flags */
 	if (test->json_output && test->verbose) {
-		warning("Verbose output (-v) may interfere with JSON output (-J)");
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+		warning(test, "Verbose output (-v) may interfere with JSON output (-J)");
+#endif
 	}
 	if (test->json_output && test->debug) {
-		warning("Debug output (-d) may interfere with JSON output (-J)");
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+		warning(test, "Debug output (-d) may interfere with JSON output (-J)");
+#endif
 	}
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 #if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
@@ -1737,7 +1758,7 @@ int iperf_set_send_state(struct iperf_test *test, signed char state)
 
 			ret = select(test->max_fd + 1, &flush_read_set, NULL, NULL, &timeout);
 			if (test->debug) {
-				printf("iperf_set_send_state: select return %d\n", ret);
+				iperf_printf(test, "iperf_set_send_state: select return %d\n", ret);
 
 				SLIST_FOREACH(sp, &test->streams, streams) {
 					iperf_printf(test, "iperf_set_send_state before recv: stream [%d]: socket: %d read: %d\n",
@@ -1751,7 +1772,7 @@ int iperf_set_send_state(struct iperf_test *test, signed char state)
 			if (ret > 0) {
 				if (iperf_recv(test, &flush_read_set) < 0) {
 					if (test->debug) {
-						printf("iperf_set_send_state: iperf_recv flushing failed, ignored\n");
+						iperf_printf(test, "iperf_set_send_state: iperf_recv flushing failed, ignored\n");
 					}
 				}
 			}
@@ -1761,21 +1782,21 @@ int iperf_set_send_state(struct iperf_test *test, signed char state)
         if (ret < 0) {
             i_errno = IESENDMESSAGE;
 			if (test->debug)
-				printf("iperf_set_send_state failed of sending state: %d, ret: %d\n", state, ret);
+				iperf_printf(test, "iperf_set_send_state failed of sending state: %d, ret: %d\n", state, ret);
 			
 			ret = -1;
             break;
         }
         else if (ret > 0) {
 			if (test->debug)
-				printf("iperf_set_send_state succesfully sent the state: %d\n", state);
+				iperf_printf(test, "iperf_set_send_state succesfully sent the state: %d\n", state);
 
             ret = 0;
             break;
         }
 		else {
 			if (test->debug)
-				printf("iperf_set_send_state: Nwrite returned 0, retrying for state: %d\n", state);
+				iperf_printf(test, "iperf_set_send_state: Nwrite returned 0, retrying for state: %d\n", state);
 		}
 
 	} while (1);
@@ -1784,7 +1805,7 @@ int iperf_set_send_state(struct iperf_test *test, signed char state)
 #else
 	if (Nwrite(test->ctrl_sck, (char *)&state, sizeof(state), Ptcp) < 0) {
 		if (test->debug)
-			printf("iperf_set_send_state failed of sending char: %c\n", state);
+			iperf_printf(test, "iperf_set_send_state failed of sending char: %c\n", state);
 		i_errno = IESENDMESSAGE;
 		return -1;
 	}
@@ -2110,7 +2131,7 @@ int iperf_exchange_parameters(struct iperf_test *test)
 		// Send the control message to create streams and start the test
 		if (iperf_set_send_state(test, CREATE_STREAMS) != 0) {
 		    if (test->debug)
-				printf("Sending ctrl CREATE_STREAMS failed\n");
+				iperf_printf(test, "Sending ctrl CREATE_STREAMS failed\n");
 		    
             return -1;
         }
@@ -2249,7 +2270,7 @@ static int send_parameters(struct iperf_test *test)
 
 		if (test->debug) {
 			char *str = cJSON_Print(j);
-			printf("send_parameters:\n%s\n", str);
+			iperf_printf(test, "send_parameters:\n%s\n", str);
 			cJSON_free(str);
 		}
 
@@ -2278,7 +2299,7 @@ static int get_parameters(struct iperf_test *test)
 		if (test->debug) {
 			char *str;
 			str = cJSON_Print(j);
-			printf("get_parameters:\n%s\n", str);
+			iperf_printf(test, "get_parameters:\n%s\n", str);
 			cJSON_free(str);
 		}
 
@@ -2314,7 +2335,7 @@ static int get_parameters(struct iperf_test *test)
 		if ((j_p = cJSON_GetObjectItem(j, "len")) != NULL) {
 			if (j_p->valueint > test->settings->blksize) {
 				if (test->debug)
-					printf("get_parameters: len %d ignored, using default %d\n", (uint32_t)j_p->valueint, test->settings->blksize);
+					iperf_printf(test,"get_parameters: len %d ignored, using default %d\n", (uint32_t)j_p->valueint, test->settings->blksize);
 				}
 			} else {
 				test->settings->blksize = j_p->valueint;
@@ -2499,7 +2520,7 @@ static int send_results(struct iperf_test *test)
 			}
 			if (r == 0 && test->debug) {
 				char *str = cJSON_Print(j);
-				printf("send_results\n%s\n", str);
+				iperf_printf(test,"send_results\n%s\n", str);
 				cJSON_free(str);
 			}
 #if defined (CONFIG_NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES)			
@@ -2570,7 +2591,7 @@ static int get_results(struct iperf_test *test)
 	if (j == NULL) {
 		i_errno = IERECVRESULTS;
 		if (test->debug) {
-			printf("get_results: IERECVRESULTS 1\n");
+			iperf_printf(test, "get_results: IERECVRESULTS 1\n");
 		}
 		r = -1;
 	} else {
@@ -2585,12 +2606,12 @@ static int get_results(struct iperf_test *test)
 			i_errno = IERECVRESULTS;
 			r = -1;
 			if (test->debug) {
-				printf("get_results: IERECVRESULTS 2\n");
+				iperf_printf(test, "get_results: IERECVRESULTS 2\n");
 			}			
 		} else {
 			if (test->debug) {
 				char *str = cJSON_Print(j);
-				printf("get_results\n%s\n", str);
+				iperf_printf(test, "get_results\n%s\n", str);
 				cJSON_free(str);
 			}
 
@@ -2612,7 +2633,7 @@ static int get_results(struct iperf_test *test)
 			j_streams = cJSON_GetObjectItem(j, "streams");
 			if (j_streams == NULL) {
 				if (test->debug) {
-					printf("get_results: IERECVRESULTS 3\n");
+					iperf_printf(test, "get_results: IERECVRESULTS 3\n");
 				}				
 				i_errno = IERECVRESULTS;
 				r = -1;
@@ -2624,7 +2645,7 @@ static int get_results(struct iperf_test *test)
 					if (j_stream == NULL) {
 						i_errno = IERECVRESULTS;
 						if (test->debug) {
-							printf("get_results: IERECVRESULTS 4\n");
+							iperf_printf(test, "get_results: IERECVRESULTS 4\n");
 						}						
 						r = -1;
 					} else {
@@ -2658,7 +2679,7 @@ static int get_results(struct iperf_test *test)
 						    j_packets == NULL) {
 							i_errno = IERECVRESULTS;
 							if (test->debug) {
-								printf("get_results: IERECVRESULTS 5\n");
+								iperf_printf(test, "get_results: IERECVRESULTS 5\n");
 							}							
 							r = -1;
 						} else {
@@ -2812,7 +2833,7 @@ JSON_write_nonblock(struct iperf_test *test, cJSON *json)
     if (str == NULL)
     {
 		if (test->debug)
-			printf("JSON_write_nonblock: cJSON_PrintUnformatted failed\n");
+			iperf_printf(test, "JSON_write_nonblock: cJSON_PrintUnformatted failed\n");
         
 		goto exit;
     }
@@ -2847,7 +2868,7 @@ JSON_write_nonblock(struct iperf_test *test, cJSON *json)
 		if (iperf_time_in_secs(&temp_time) > tout.tv_sec) {
 			i_errno = IESENDRESULTS;
 			if (test->debug)
-				printf("JSON_write_nonblock: breaking the select send loop due to timeout\n");
+				iperf_printf(test, "JSON_write_nonblock: breaking the select send loop due to timeout\n");
 			break;
 		}
 
@@ -2896,14 +2917,14 @@ JSON_write_nonblock(struct iperf_test *test, cJSON *json)
 			if (sel_ret < 0) { //seems that select is timeoutting before the set time limit (i.e. = =0)? thus, let it timeout and don't care
 		        i_errno = IESENDRESULTS;
 				if (test->debug)
-					printf("JSON_write_nonblock: IERECVRESULTS %d\n", ret);
+					iperf_printf(test, "JSON_write_nonblock: IERECVRESULTS %d\n", ret);
 				break;
 			}
 			else {
 				/* Data  might be still coming from server, read it to avoid deadlock due to buffering.
 				 ignore errors */
 				if (test->debug)
-					printf("JSON_write_nonblock: iperf_recv from select timeout\n");
+					iperf_printf(test, "JSON_write_nonblock: iperf_recv from select timeout\n");
 
 				(void)iperf_recv(test, &read_set);
 			}
@@ -3035,7 +3056,7 @@ static cJSON
 		if (iperf_time_in_secs(&temp_time) > tout.tv_sec) {
 			i_errno = IERECVRESULTS;
 			if (test->debug)
-				printf("JSON_read_nonblock: breaking the select recv loop due to timeout\n");
+				iperf_printf(test, "JSON_read_nonblock: breaking the select recv loop due to timeout\n");
 			break;
 		}
 
@@ -3084,7 +3105,7 @@ static cJSON
                             json = cJSON_Parse(str);
                         }
                         else {
-                            printf("WARNING:  Size of data read does not correspond to offered length\n");
+                            iperf_printf(test, "WARNING:  Size of data read does not correspond to offered length\n");
                             break;
                         }
                     }
@@ -3103,7 +3124,7 @@ static cJSON
 			if (ret != 0) { //seems that select is timeoutting before the set time limit (i.e. = =0)? thus, let it timeout and don't care
 		        i_errno = IERECVRESULTS;
 				if (test->debug)
-					printf("JSON_read_nonblock: IERECVRESULTS %d\n", ret);
+					iperf_printf(test, "JSON_read_nonblock: IERECVRESULTS %d\n", ret);
 				break;
 			}
 			else {
@@ -3905,7 +3926,7 @@ static void iperf_print_intermediate(struct iperf_test *test)
 				       "\n",
 				       interval_len, irp->bytes_transferred);
 #else
-				printf("interval_len %f bytes_transferred %d\n",
+				iperf_printf(test, "interval_len %f bytes_transferred %d\n",
 				       interval_len, (uint32_t)irp->bytes_transferred);//64bit printing is not working
 #endif
 			}
@@ -3919,14 +3940,14 @@ static void iperf_print_intermediate(struct iperf_test *test)
 			    irp->bytes_transferred > 0) {
 				interval_ok = 1;
 				if (test->debug) {
-					printf("interval forces keep\n");
+					iperf_printf(test, "interval forces keep\n");
 				}
 			}
 		}
 	}
 	if (!interval_ok) {
 		if (test->debug) {
-			printf("ignoring short interval with no data\n");
+			iperf_printf(test, "ignoring short interval with no data\n");
 		}
 		return;
 	}
@@ -5471,7 +5492,7 @@ struct iperf_stream *iperf_new_stream(struct iperf_test *test, int s,
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 	sp->buffer = (char *)malloc(test->settings->blksize);
 	if (sp->buffer == NULL) {
-		printf("iperf_new_stream: no memory for buffer\n");
+		iperf_printf(test, "iperf_new_stream: no memory for buffer\n");
 		i_errno = IENOMEMORY;
 		free(sp->result);
 		free(sp);
@@ -5546,7 +5567,7 @@ struct iperf_stream *iperf_new_stream(struct iperf_test *test, int s,
 /* only repeating pattern supported */
 	{
 		if (test->debug) {
-			printf("note: only repeating pattern supported\n");
+			iperf_printf(test, "note: only repeating pattern supported\n");
 	    }
 		fill_with_repeating_pattern(sp->buffer,
 				 	    test->settings->blksize);
@@ -6017,6 +6038,12 @@ int iperf_printf(struct iperf_test *test, const char *format, ...)
 	//time_t now;
 	char *ct = NULL;
 
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+	if (test == NULL) {
+		printk("ERR, test ptr NULL, was about to print %s", format);
+		return r;
+	}
+#endif
 	/* Timestamp if requested */
 #if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 	struct tm *ltm = NULL;
@@ -6041,14 +6068,37 @@ int iperf_printf(struct iperf_test *test, const char *format, ...)
      * to be buffered up anyway.
      */
 	if (test->role == 'c') {
-		if (ct) {
-			fprintf(test->outfile, "%s", ct);
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+		/* Write to RAM "file" if requested: */
+		if (test->resp_std_out_buff_len && test->resp_std_out_buff != NULL) {
+			char linebuffer[1024];
+			int total_len;
+
+			va_start(argp, format);
+			r = vsnprintf(linebuffer, sizeof(linebuffer), format,
+				      argp);
+			va_end(argp);
+
+			total_len =
+				strlen(test->resp_std_out_buff) + strlen(linebuffer);
+			if (total_len >= test->resp_std_out_buff_len) {
+				strcpy(test->resp_std_out_buff,
+				       "WARNING: response buffer was too short and was flushed\n"
+					   "...and started from the beginning\n");
+			}
+			strcat(test->resp_std_out_buff, linebuffer);
+		} else
+#endif
+		{
+			if (ct) {
+				fprintf(test->outfile, "%s", ct);
+			}
+			if (test->title)
+				fprintf(test->outfile, "%s:  ", test->title);
+			va_start(argp, format);
+			r = vfprintf(test->outfile, format, argp);
+			va_end(argp);
 		}
-		if (test->title)
-			fprintf(test->outfile, "%s:  ", test->title);
-		va_start(argp, format);
-		r = vfprintf(test->outfile, format, argp);
-		va_end(argp);
 	} 
 	else if (test->role == 's') {
 		char linebuffer[1024];
@@ -6059,7 +6109,24 @@ int iperf_printf(struct iperf_test *test, const char *format, ...)
 		va_start(argp, format);
 		r = vsnprintf(linebuffer + i, sizeof(linebuffer), format, argp);
 		va_end(argp);
-		fprintf(test->outfile, "%s", linebuffer);
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+		/* Write to RAM "file" if requested: */
+		if (test->resp_std_out_buff_len && test->resp_std_out_buff != NULL) {
+			int total_len;
+
+			total_len =
+				strlen(test->resp_std_out_buff) + strlen(linebuffer);
+			if (total_len >= test->resp_std_out_buff_len) {
+				strcpy(test->resp_std_out_buff,
+				       "WARNING: response buffer was too short and was flushed\n"
+					   "...and started from the beginning\n");
+			}
+			strcat(test->resp_std_out_buff, linebuffer);
+		} else
+#endif
+		{
+			fprintf(test->outfile, "%s", linebuffer);
+		}
 
 		if (test->role == 's' &&
 		    iperf_get_test_get_server_output(test)) {

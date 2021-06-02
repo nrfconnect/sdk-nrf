@@ -44,6 +44,9 @@
 #if defined(CONFIG_MOSH_FOTA)
 #include "fota.h"
 #endif
+#if defined(CONFIG_MOSH_WORKER_THREADS)
+#include "th/th_ctrl.h"
+#endif
 
 /* global variables */
 struct modem_param_info modem_param;
@@ -141,7 +144,9 @@ void main(void)
 #if defined(CONFIG_MOSH_PPP)
 	ppp_ctrl_init();
 #endif
-
+#if defined(CONFIG_MOSH_WORKER_THREADS)
+	th_ctrl_init();
+#endif
 #if defined(CONFIG_MOSH_GNSS_ENABLE_LNA)
 	gnss_set_lna_enabled(true);
 #endif

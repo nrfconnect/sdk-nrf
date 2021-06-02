@@ -63,11 +63,16 @@ daemon(int nochdir, int noclose)
 #endif
 
 /**************************************************************************/
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+int iperf_main(int argc, char **argv, char *resp_std_out_buff, int resp_std_out_buff_len,
+	       struct k_poll_signal *kill_signal)
+#else
 int
 iperf_main(int argc, char **argv)
+#endif
 {
     struct iperf_test *test;
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)    
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
     int retval = 0;
 #endif
 
@@ -114,6 +119,10 @@ iperf_main(int argc, char **argv)
     }
     iperf_defaults(test);	/* sets defaults */
 
+    test->resp_std_out_buff = resp_std_out_buff;
+    test->resp_std_out_buff_len = resp_std_out_buff_len;
+    test->kill_signal = kill_signal;
+
     retval = iperf_parse_arguments(test, argc, argv);
     if (retval < 0) {
         if (retval == -2) {
@@ -140,11 +149,11 @@ exit:
     }
     if (retval == 0)
     {
-        printf("iperf Done.\r\n");
+        iperf_printf(test, "iperf Done.\r\n");
     }
     else
     {
-        printf("iperf Failed.\r\n");
+        iperf_printf(test, "iperf Failed.\r\n");
     }    
     return retval;
 #else
