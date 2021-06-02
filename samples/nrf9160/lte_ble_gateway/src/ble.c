@@ -19,20 +19,23 @@
 #include "aggregator.h"
 
 /* Thinghy advertisement UUID */
-#define BT_UUID_THINGY                                                         \
-	BT_UUID_DECLARE_128(0x42, 0x00, 0x74, 0xA9, 0xFF, 0x52, 0x10, 0x9B,    \
-			    0x33, 0x49, 0x35, 0x9B, 0x00, 0x01, 0x68, 0xEF)
+#define BT_UUID_THINGY_VAL \
+	BT_UUID_128_ENCODE(0xef680100, 0x9b35, 0x4933, 0x9b10, 0x52ffa9740042)
 
+#define BT_UUID_THINGY \
+	BT_UUID_DECLARE_128(BT_UUID_THINGY_VAL)
 /* Thingy service UUID */
-#define BT_UUID_TMS                                                            \
-	BT_UUID_DECLARE_128(0x42, 0x00, 0x74, 0xA9, 0xFF, 0x52, 0x10, 0x9B,    \
-			    0x33, 0x49, 0x35, 0x9B, 0x00, 0x04, 0x68, 0xEF)
+#define BT_UUID_TMS_VAL \
+	BT_UUID_128_ENCODE(0xef680400, 0x9b35, 0x4933, 0x9b10, 0x52ffa9740042)
 
-/* Thingy characteristic UUID */
-#define BT_UUID_TOC                                                            \
-	BT_UUID_DECLARE_128(0x42, 0x00, 0x74, 0xA9, 0xFF, 0x52, 0x10, 0x9B,    \
-			    0x33, 0x49, 0x35, 0x9B, 0x03, 0x04, 0x68, 0xEF)
+#define BT_UUID_TMS \
+	BT_UUID_DECLARE_128(BT_UUID_TMS_VAL)
+		/* Thingy characteristic UUID */
+#define BT_UUID_TOC_VAL \
+	BT_UUID_128_ENCODE(0xef680403, 0x9b35, 0x4933, 0x9b10, 0x52ffa9740042)
 
+#define BT_UUID_TOC \
+	BT_UUID_DECLARE_128(BT_UUID_TOC_VAL)
 extern void alarm(void);
 
 static uint8_t on_received(struct bt_conn *conn,
