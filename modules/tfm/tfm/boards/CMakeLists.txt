@@ -31,9 +31,18 @@ target_include_directories(platform_ns PUBLIC ${board_includes})
 
 if(BL2)
   target_include_directories(platform_bl2
-    PUBLIC ${partition_includes}
-    PRIVATE ${board_includes}
+    PUBLIC
+      ${partition_includes}
+    PRIVATE
+      ${board_includes}
     )
+  target_sources(platform_bl2
+    PRIVATE
+      ${CMAKE_CURRENT_LIST_DIR}/common/boot_hal.c
+  )
+
+  target_link_libraries(platform_bl2 PRIVATE platform_cc3xx)
+
 endif()
 
 if(TFM_PARTITION_PLATFORM)
