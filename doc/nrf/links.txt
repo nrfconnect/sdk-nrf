@@ -263,6 +263,8 @@
 
 .. _`System Protection Unit`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/spu.html
 
+.. _`nRF9160 Hardware Verification Guidelines - UART interface`: https://infocenter.nordicsemi.com/topic/nwp_034/WP/nwp_034/nwp_034_uart_if.html
+
 .. ### Source: devzone.nordicsemi.com
 
 .. _`DevZone`: https://devzone.nordicsemi.com/
