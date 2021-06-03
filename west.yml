@@ -85,7 +85,6 @@ manifest:
           - net-tools
           - nrf_hw_models
           - open-amp
-          - openthread
           - segger
           - tensorflow
           - tinycbor
@@ -112,10 +111,14 @@ manifest:
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
       revision: v1.7.2
+    - name: openthread
+      repo-path: sdk-openthread
+      path: modules/lib/openthread
+      revision: 9c01aff66245c3989536a8c96dae3c6ec6402d0d
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: b35e8eca374772d42967864ffd49648b32699010
+      revision: dddca7629f68a040e97104a74387b66ca753d715
       submodules:
         - name: nlio
           path: third_party/nlio/repo
