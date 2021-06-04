@@ -9,6 +9,12 @@ Secure Partition Manager (SPM)
 
 The Secure Partition Manager (SPM) provides functionality for the Trusted Execution Environment of the nRF9160 SiP and the nRF5340 SoC.
 
+.. note::
+   SPM is currently deprecated.
+   By default, Trusted Execution is now set up using Trusted Firmware-M (TF-M).
+   TF-M is a framework that can cover new functions and use cases beyond the scope of SPM.
+   See :ref:`ug_tfm`.
+
 Overview
 ********
 

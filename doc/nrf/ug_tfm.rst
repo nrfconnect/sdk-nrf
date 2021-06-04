@@ -7,8 +7,14 @@ Running applications with Trusted Firmware-M
    :local:
    :depth: 2
 
-On nRF5340 and nRF9160, you can use Trusted Firmware-M (TF-M) as an alternative to :ref:`secure_partition_manager` for running an application from the non-secure area of the memory.
+On nRF5340 and nRF9160, Trusted Firmware-M (TF-M) is a default solution for running an application from the non-secure area of the memory.
 
+.. note::
+
+   Up until |NCS| v1.5.1, the default solution for handling non-secure images was :ref:`secure_partition_manager` (SPM).
+   You can still configure your application to use SPM instead of TF-M, although keep in mind that SPM is currently deprecated.
+   TF-M and SPM are mutually exclusive and cannot be both included in the build.
+   
 Overview
 ********
 
@@ -18,7 +24,7 @@ It provides a highly configurable set of software components to create a Trusted
 This is achieved by a set of secure run time services such as Secure Storage, Cryptography, Audit Logs, and Attestation.
 Additionally, secure boot via MCUboot in TF-M ensures integrity of run time software and supports firmware upgrade.
 
-Support for TF-M in |NCS| is currently experimental.
+TF-M is currently fully supported in |NCS| and is automatically included in all samples that are built for targets with Trusted Execution Environment (nRF5340 and nRF9160).
 TF-M is a framework which will be extended for new functions and use cases beyond the scope of SPM.
 
 For official documentation, see `TF-M documentation`_.
@@ -27,6 +33,9 @@ The TF-M implementation in |NCS| is currently demonstrated in the :ref:`tfm_hell
 
 Building
 ********
+
+.. note::
+   Building TF-M as part of the application is currently enabled by default in all applicable samples in the |NCS|.
 
 TF-M is one of the images that are built as part of a multi-image application.
 If TF-M is used in the application, SPM will not be included in it.
@@ -68,4 +77,4 @@ Wire the pins P0.25 and P0.26 to RxD and TxD respectively.
 Limitations
 ***********
 
-Application code that uses SPM :ref:`lib_secure_services` cannot use TF-M because the interface to TF-M is different and, at this time, not all SPM functions are available in TF-M.
+Application code that uses SPM :ref:`lib_secure_services` cannot use TF-M because the interface to TF-M is different and, at this time, not all SPM functions are available in TF-M. -> TODO verify

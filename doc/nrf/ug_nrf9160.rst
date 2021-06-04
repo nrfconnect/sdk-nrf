@@ -34,7 +34,7 @@ Application MCU
 
 The M33 TrustZone divides the application MCU into secure and non-secure domains.
 When the MCU boots, it always starts executing from the secure area.
-The secure bootloader chain starts the :ref:`nrf9160_ug_secure_partition_manager` or the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`, which configures a part of memory and peripherals to be non-secure and then jumps to the main application located in the non-secure area.
+The secure bootloader chain starts :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` or the :ref:`nrf9160_ug_secure_partition_manager`, which configures a part of memory and peripherals to be non-secure and then jumps to the main application located in the non-secure area.
 
 In Zephyr, :ref:`zephyr:nrf9160dk_nrf9160` is divided into two different build targets:
 
@@ -52,21 +52,27 @@ See :ref:`ug_bootloader` for more information.
 A bootloader chain is optional.
 Not all of the nRF9160 samples include a secure bootloader chain, but the ones that do use the :ref:`bootloader` sample and :doc:`mcuboot:index`.
 
+.. include:: ug_nrf5340.rst
+   :start-after: tfm_support_start
+   :end-before: tfm_support_finish
+
 .. _nrf9160_ug_secure_partition_manager:
 
 Secure Partition Manager
 ------------------------
 
-All nRF9160 samples require the :ref:`secure_partition_manager` sample.
+.. note::
+   SPM is currently deprecated.
+   By default, Trusted Execution is now set up using Trusted Firmware-M (TF-M).
+   TF-M is a framework that can cover new functions and use cases beyond the scope of SPM.
+   See :ref:`ug_tfm`.
+
+All nRF9160 samples can be built with the :ref:`secure_partition_manager` sample.
 It provides a reference implementation of a Secure Partition Manager firmware.
-This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
+This firmware can be used to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
 
-The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160ns`` build target.
-To disable the automatic inclusion of the Secure Partition Manager sample, set the option :option:`CONFIG_SPM` to "n" in the project configuration.
-
-.. include:: ug_nrf5340.rst
-   :start-after: tfm_support_start
-   :end-before: tfm_support_finish
+If used instead of TF-M, the Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160ns`` build target.
+To disable the automatic inclusion of the Secure Partition Manager sample, set the option :option:`CONFIG_SPM` to "n" in the project configuration. TODO verify
 
 Application
 -----------

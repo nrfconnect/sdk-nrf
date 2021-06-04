@@ -67,28 +67,29 @@ In general, this core should be used for tasks that require high performance and
 
 The M33 TrustZone divides the application MCU into secure and non-secure domains.
 When the MCU boots, it always starts executing from the secure area.
-The secure bootloader chain starts the :ref:`secure_partition_manager` sample, which configures a part of memory and peripherals to be non-secure and then jumps to the main application located in the non-secure area.
+The secure bootloader chain starts :ref:`TF-M <ug_tfm>`, which configures a part of memory and peripherals to be non-secure and then jumps to the main application located in the non-secure area.
 
 In Zephyr, :ref:`zephyr:nrf5340dk_nrf5340` is divided into two different build targets:
 
 * ``nrf5340dk_nrf5340_cpuapp`` for the secure domain
 * ``nrf5340dk_nrf5340_cpuappns`` for the non-secure domain
 
-When built for the ``nrf5340dk_nrf5340_cpuappns`` build target, the :ref:`secure_partition_manager` sample is automatically included in the build.
+When built for the ``nrf5340dk_nrf5340_cpuappns`` build target, :ref:`TF-M <ug_tfm>` is automatically included in the build.
 
 .. tfm_support_start
 
-Trusted Firmware-M (TF-M) support
----------------------------------
+Trusted Firmware-M (TF-M)
+-------------------------
 
-You can use Trusted Firmware-M (TF-M) as an alternative to :ref:`secure_partition_manager` for running an application from the non-secure area of the memory.
+Trusted Firmware-M (TF-M) is by default included in the build of any application that will be run from the non-secure area of the memory.
 
-Support for TF-M in |NCS| is currently experimental.
-TF-M is a framework which will be extended for new functions and use cases beyond the scope of SPM.
+If your application does not depend or does not use the secure services developed in SPM, then TF-M can replace SPM as the secure firmware component in your application. TODO remove?
 
-If your application does not depend or does not use the secure services developed in SPM, then TF-M can replace SPM as the secure firmware component in your application.
+For more information about TF-M, see :ref:`ug_tfm`.
 
-For more information and instructions on how to do this, see :ref:`ug_tfm`.
+.. note::
+   You can use :ref:`secure_partition_manager` instead of TF-M, however keep in mind that this component is now deprecated.
+   TF-M is a framework that can cover new functions and use cases beyond the scope of SPM.
 
 .. tfm_support_finish
 

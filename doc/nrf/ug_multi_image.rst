@@ -37,7 +37,7 @@ In the |NCS|, multiple images are required in the following scenarios:
 nRF9160 SPU configuration
    The nRF9160 SiP application MCU is divided into a secure and non-secure domain.
    The code in the secure domain can configure the System Protection Unit (SPU) to allow non-secure access to the CPU resources that are required by the application, and then jump to the code in the non-secure domain.
-   Therefore, each nRF9160 sample, the parent image, requires the :ref:`secure_partition_manager` (or :ref:`TF-M <ug_tfm>`), the child image, to be programmed together with the actual application.
+   Therefore, each nRF9160 sample, the parent image, requires :ref:`TF-M <ug_tfm>` (or :ref:`secure_partition_manager`), the child image, to be programmed together with the actual application.
 
    See :ref:`zephyr:nrf9160dk_nrf9160` and :ref:`ug_nrf9160` for more information.
 
@@ -73,7 +73,7 @@ When building the child image from the source or using a prebuilt HEX file, the 
 This means that you can enable and integrate an additional image just by using the default configuration.
 
 To change the default configuration and configure how a child image is handled, locate the BUILD_STRATEGY configuration options for the child image in the parent image configuration.
-For example, to use a prebuilt HEX file of the :ref:`secure_partition_manager` instead of building it, select :option:`CONFIG_SPM_BUILD_STRATEGY_USE_HEX_FILE` instead of the default :option:`CONFIG_SPM_BUILD_STRATEGY_FROM_SOURCE`, and specify the HEX file in :option:`CONFIG_SPM_HEX_FILE`.
+For example, to use a prebuilt HEX file of the :ref:`secure_partition_manager` instead of building it, select :option:`CONFIG_SPM_BUILD_STRATEGY_USE_HEX_FILE` instead of the default :option:`CONFIG_SPM_BUILD_STRATEGY_FROM_SOURCE`, and specify the HEX file in :option:`CONFIG_SPM_HEX_FILE`. -> TODO
 To ignore an MCUboot child image, select :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_SKIP_BUILD` instead of :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE`.
 
 .. _ug_multi_image_defining:
@@ -94,6 +94,7 @@ To make it possible to enable a child image from a parent image, you must includ
 To do so, place the code in the following example in the cmake tree that is conditional on a configuration option.
 In the |NCS|, the code is included in the :file:`CMakeLists.txt` file for the samples, and in the MCUboot repository.
 
+TODO codeblock below
 .. code-block:: cmake
 
    if (CONFIG_SPM)

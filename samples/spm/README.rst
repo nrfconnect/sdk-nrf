@@ -11,7 +11,10 @@ The Secure Partition Manager sample provides a reference use of the System Prote
 This firmware is required to set up an nRF device with Trusted Execution (|trusted_execution|) so that it can run user applications in the non-secure domain.
 
 .. note::
-   An alternative for using the SPM is Trusted Firmware-M (TF-M). See :ref:`ug_tfm`.
+   SPM is currently deprecated.
+   By default, Trusted Execution is now set up using Trusted Firmware-M (TF-M).
+   TF-M is a framework that can cover new functions and use cases beyond the scope of SPM.
+   See :ref:`ug_tfm`.
 
 Overview
 ********
@@ -47,7 +50,7 @@ Requirements for the application firmware
 Automatic building of SPM
 =========================
 
-The sample is automatically built by the non-secure applications when the non-secure build target is used (e.g. nrf9160dk_nrf9160ns).
+The sample can be built by the non-secure applications when the non-secure build target is used (e.g. nrf9160dk_nrf9160ns).
 However, it is not a part of the non-secure application.
 
 Instead of programming SPM and the non-secure application at the same time, you might want to program them individually.
