@@ -138,6 +138,7 @@ Moreover, Thread 1.2 also comes with the following features that are supported f
 * Domain Unicast Addresses - Set :option:`CONFIG_OPENTHREAD_DUA` to enable this feature.
 * Multicast Listener Registration - Set :option:`CONFIG_OPENTHREAD_MLR` to enable this feature.
 * Backbone Router - Set :option:`CONFIG_OPENTHREAD_BACKBONE_ROUTER` to enable this feature.
+* Link Metrics - Set :option:`CONFIG_OPENTHREAD_LINK_METRICS` to enable this feature.
 
 .. note::
     To test Thread 1.2 options, you can use the :ref:`ot_cli_sample` sample with the :ref:`ot_cli_sample_thread_v12`.

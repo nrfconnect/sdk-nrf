@@ -291,7 +291,7 @@ To test the Thread 1.2 features, complete the following steps:
 
       uart:~$ ot prefix add fd00:7d03:7d03:7d03::/64 prosD med
       Done
-      uart:~$ ot netdataregister
+      uart:~$ ot netdata register
       Done
       I: State changed! Flags: 0x00000200 Current role: 4
       I: State changed! Flags: 0x00001001 Current role: 4
@@ -338,6 +338,91 @@ To test the Thread 1.2 features, complete the following steps:
 
    .. note::
         The DUA registration with the Backbone Router is not yet supported.
+
+#. On the leader kit, list the IPv6 addresses:
+
+   .. code-block:: console
+
+      uart:~$ ot ipaddr
+      fd00:7d03:7d03:7d03:84c9:572d:be24:cbe
+      fdde:ad00:beef:0:0:ff:fe00:fc10
+      fdde:ad00:beef:0:0:ff:fe00:fc38
+      fdde:ad00:beef:0:0:ff:fe00:fc00
+      fdde:ad00:beef:0:0:ff:fe00:7000
+      fdde:ad00:beef:0:a318:bf4f:b9c6:5f7d
+      fe80:0:0:0:10b1:93ea:c0ee:eeb7
+
+#. Note down the link-local address.
+   You must use this address when running Link Metrics commands on the router kit.
+
+   The following steps use the address ``fe80:0:0:0:10b1:93ea:c0ee:eeb7``.
+   Replace it with the link-local address of your leader kit in all commands.
+
+#. Run the following commands on the router kit:
+
+   a. Reattach the router kit as SED:
+
+      .. code-block:: console
+
+         uart:~$ ot mode -
+         Done
+
+   #. Perform a Link Metrics query (Single Probe):
+
+      .. code-block:: console
+
+         uart:~$ ot linkmetrics query fe80:0:0:0:10b1:93ea:c0ee:eeb7 single qmr
+         Done
+         Received Link Metrics Report from: fe80:0:0:0:10b1:93ea:c0ee:eeb7
+         - LQI: 220 (Exponential Moving Average)
+         - Margin: 60 (dB) (Exponential Moving Average)
+         - RSSI: -40 (dBm) (Exponential Moving Average)
+
+   #. Send a Link Metrics Management Request to configure a Forward Tracking Series:
+
+      .. code-block:: console
+
+         uart:~$ ot linkmetrics mgmt fe80:0:0:0:10b1:93ea:c0ee:eeb7 forward 1 dra pqmr
+         Done
+         Received Link Metrics Management Response from: fe80:0:0:0:10b1:93ea:c0ee:eeb7
+         Status: Success
+
+   #. Send an MLE Link Probe message to the peer:
+
+      .. code-block:: console
+
+         uart:~$ ot linkmetrics probe fe80:0:0:0:10b1:93ea:c0ee:eeb7 1 10
+         Done
+
+   #. Perform a Link Metrics query (Forward Tracking Series):
+
+      .. code-block:: console
+
+         uart:~$ ot linkmetrics query fe80:0:0:0:10b1:93ea:c0ee:eeb7 forward 1
+         Done
+         Received Link Metrics Report from: fe80:0:0:0:10b1:93ea:c0ee:eeb7
+         - PDU Counter: 13 (Count/Summation)
+         - LQI: 212 (Exponential Moving Average)
+         - Margin: 60 (dB) (Exponential Moving Average)
+         - RSSI: -40 (dBm) (Exponential Moving Average)
+
+   #. Send a Link Metrics Management Request to register an Enhanced-ACK Based Probing:
+
+      .. code-block:: console
+
+         uart:~$ ot linkmetrics mgmt fe80:0:0:0:10b1:93ea:c0ee:eeb7 enhanced-ack register qm
+         Done
+         Received Link Metrics Management Response from: fe80:0:0:0:10b1:93ea:c0ee:eeb7
+         Status: Success
+
+   #. Send a Link Metrics Management Request to clear an Enhanced-ACK Based Probing:
+
+      .. code-block:: console
+
+         uart:~$ ot linkmetrics mgmt fe80:0:0:0:10b1:93ea:c0ee:eeb7 enhanced-ack clear
+         Done
+         Received Link Metrics Management Response from: fe80:0:0:0:10b1:93ea:c0ee:eeb7
+         Status: Success
 
 Dependencies
 ************
