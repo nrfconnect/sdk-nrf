@@ -8,8 +8,8 @@ Matter: Light bulb
    :local:
    :depth: 2
 
-This light bulb sample demonstrates the usage of the `Matter`_ (formerly Project Connected Home over IP, Project CHIP) application layer to build a white dimmable light bulb device.
-This device works as a Matter accessory, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
+This light bulb sample demonstrates the usage of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer to build a white dimmable light bulb device.
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
 You can use this sample as a reference for creating your own application.
 
 .. note::
@@ -29,7 +29,7 @@ For remote testing scenarios, you also need the following:
 
 * If you want to commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network:
 
-  * A smartphone compatible with Android for using the `Android CHIPTool`_ application as the Matter controller.
+  * A Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
 
 * If you want to use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch:
 
@@ -47,7 +47,7 @@ It can be tested in the following ways:
 * Standalone, by using a single DK that runs the light bulb application.
 * Remotely over the Thread protocol, which requires more devices.
 
-The remote control testing requires either commissioning by the Matter controller device into a network or using the test mode.
+The remote control testing requires a Matter controller, which can be configured either on PC or mobile (for remote testing in a network) or on an embedded device (for remote testing using test mode).
 Both methods can be enabled after :ref:`building and running the sample <matter_light_bulb_sample_remote_control>`.
 
 .. _matter_light_bulb_network_mode:
@@ -110,7 +110,7 @@ SEGGER J-Link USB port:
     Used for getting logs from the device or communicating with it through the command-line interface.
 
 NFC port with antenna attached:
-    Optionally used for obtaining the commissioning information from the Matter device to start the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
+    Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
 
 Building and running
 ********************
