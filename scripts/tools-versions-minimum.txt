@@ -6,5 +6,5 @@ dtc=1.4.6
 gnuarmemb=10-2020-q4-major
 gnuarmemb-short=10-2020q4
 ses=5.30a
-west=0.10.0
+west=0.11.0
 gn=1851
