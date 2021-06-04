@@ -62,16 +62,16 @@ The |NCS| version of your choice is installed on your machine, and the :guilabel
 This button lets you start SEGGER Embedded Studio if you want to start :ref:`gs_programming_ses`.
 
 .. figure:: images/gs-assistant_tm_installed.png
-   :alt: The Toolchain manager options after installing the NCS version, cropped
+   :alt: The Toolchain manager options after installing the nRF Connect SDK version, cropped
 
-   The Toolchain Manager options after installing the NCS version
+   The Toolchain Manager options after installing the |NCS| version
 
 Additionally, the dropdown menu becomes available.
 Among other options, this menu lets you open bash and command prompt that use the installed Toolchain manager tools.
 You can use the :guilabel:`Open bash` option from this menu when you start :ref:`gs_programming_cmd`.
 
 .. figure:: images/gs-assistant_tm_dropdown.png
-   :alt: The Toolchain manager dropdown menu for the installed NCS version, cropped
+   :alt: The Toolchain manager dropdown menu for the installed nRF Connect SDK version, cropped
 
    The Toolchain manager dropdown menu options
 

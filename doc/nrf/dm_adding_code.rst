@@ -109,7 +109,7 @@ For example:
 .. code-block:: yaml
 
    # Example your-application/west.yml, using manifest imports, with
-   # an NCS fork and a separate module
+   # an nRF Connect SDK fork and a separate module
    manifest:
      remotes:
        - name: ncs
@@ -121,11 +121,11 @@ For example:
          remote: ncs
          revision: v1.5.1
          import: true
-       # Example for how to override a repository in the NCS with your own:
+       # Example for how to override a repository in the nRF Connect SDK with your own:
        - name: mcuboot
          remote: your-remote
          revision: your-mcuboot-fork-SHA-or-branch
-       # Example for how to add a repository not in NCS:
+       # Example for how to add a repository not in nRF Connect SDK:
        - name: your-custom-library
          remote: your-remote
          revision: your-library-SHA-or-branch

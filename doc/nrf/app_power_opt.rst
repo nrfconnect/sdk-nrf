@@ -170,7 +170,7 @@ To simulate the use case with Online Power Profiler, complete the following step
 #. Export the settings from the Online Power Profiler tool and compare them with the measurements in real networks. Complete the following sub-steps to export the settings from Online Power Profiler:
 
    a. Click :guilabel:`Export settings` to store current Online Power Profiler settings to a :file:`.json` file.
-   #. Click :guilabel:`Export NCS project config` to export the configuration parameters in a :file:`opp.conf` file that you can use when building the firmware.
+   #. Click :guilabel:`Export project config` to export the configuration parameters in a :file:`opp.conf` file that you can use when building the firmware.
 
 Real-time power measurement using Power Profiler Kit II
 -------------------------------------------------------

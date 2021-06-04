@@ -36,7 +36,7 @@ Replace ``{revision}`` with any revision you wish to obtain.
 This can be ``master`` if you want the latest state, or any released version (e.g. |release_tt|).
 If you omit the ``--mr`` parameter, west defaults to ``master``.
 
-This is the procedure used for :ref:`getting the |NCS| code <cloning_the_repositories>` when :ref:`gs_installing`.
+This is the procedure used for :ref:`getting the nRF Connect SDK code <cloning_the_repositories>` when :ref:`gs_installing`.
 
 .. _dm-wf-update-ncs:
 
