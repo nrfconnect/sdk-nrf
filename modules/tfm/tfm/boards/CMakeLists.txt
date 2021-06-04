@@ -47,12 +47,11 @@ endif()
 
 if(TFM_PARTITION_PLATFORM)
   set(src_dir ${CMAKE_CURRENT_LIST_DIR}/src)
-  set(nrf_dir ${CMAKE_CURRENT_LIST_DIR}/../../../../)
 
   target_include_directories(platform_s
     PUBLIC
     include
-    ${nrf_dir}/include/tfm
+    ${NRF_DIR}/include/tfm
     )
 
   target_sources(platform_s
@@ -64,7 +63,7 @@ if(TFM_PARTITION_PLATFORM)
   target_include_directories(platform_ns
     PUBLIC
     include
-    ${nrf_dir}/include/tfm
+    ${NRF_DIR}/include/tfm
     )
 
   target_sources(platform_ns
