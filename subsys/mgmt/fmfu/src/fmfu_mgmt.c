@@ -9,6 +9,7 @@
 #include <mgmt/mgmt.h>
 #include <nrfx_ipc.h>
 #include <nrf_modem_full_dfu.h>
+#include <modem/nrf_modem_lib.h>
 #include <mgmt/fmfu_mgmt.h>
 #include "fmfu_mgmt_internal.h"
 #include <cborattr/cborattr.h>
@@ -26,12 +27,32 @@ LOG_MODULE_REGISTER(mgmt_fmfu, CONFIG_MGMT_FMFU_LOG_LEVEL);
 
 #define FIRMWARE_SHA_LENGTH 32
 
+static fmfu_callback_t callback;
+
 /* Struct used for parsing upload requests. */
 struct firmware_packet {
 	uint8_t data[SMP_PACKET_MTU];
 	uint32_t target_address;
 	uint32_t data_len;
 };
+
+static int modem_init_dfu_mode(void)
+{
+		struct nrf_modem_full_dfu_digest digest;
+
+		/* Shutdown modem to prepare for DFU */
+		nrf_modem_lib_shutdown();
+
+		nrf_modem_lib_init(FULL_DFU_MODE);
+
+		int err = nrf_modem_full_dfu_init(&digest);
+
+		if (err != 0) {
+			LOG_ERR("modem dfu mode failed to initialize, err: %d,"
+				"errno: %d\n.", err, errno);
+		}
+		return err;
+}
 
 static int unpack(struct mgmt_ctxt *ctxt, struct firmware_packet *packet,
 		  bool *whole_file_received)
@@ -142,12 +163,25 @@ static int encode_response(struct mgmt_ctxt *ctx, uint32_t expected_offset)
 
 static int fmfu_firmware_upload(struct mgmt_ctxt *ctx)
 {
-	static bool bootloader = true;
-
 	int rc;
 	bool whole_file_received;
 	struct firmware_packet packet;
 	uint32_t next_expected_offset;
+	static bool update_started;
+	static int file_counter;
+
+	static bool bootloader = true;
+
+	if (!update_started) {
+		LOG_DBG("Update started");
+		callback(FMFU_EVT_PRE_DFU_MODE);
+		rc = modem_init_dfu_mode();
+		if (rc != 0) {
+			return get_mgmt_err_from_modem_ret_err(rc);
+		}
+		update_started = true;
+		file_counter = 0;
+	}
 
 	rc = unpack(ctx, &packet, &whole_file_received);
 	if (rc < 0) {
@@ -176,8 +210,11 @@ static int fmfu_firmware_upload(struct mgmt_ctxt *ctx)
 			if (rc != 0) {
 				LOG_ERR("Error in writing data, rc: %d,"
 					" errno: %d", rc, errno);
-				return get_mgmt_err_from_modem_ret_err(
-						rc);
+				/* Reset file counter also here as we have
+				 * recived one file.
+				 */
+				update_started = false;
+				return get_mgmt_err_from_modem_ret_err(rc);
 			}
 		}
 	}
@@ -189,6 +226,11 @@ static int fmfu_firmware_upload(struct mgmt_ctxt *ctx)
 			return get_mgmt_err_from_modem_ret_err(rc);
 		}
 		bootloader = false;
+		file_counter++;
+
+		if (file_counter == 3) {
+			update_started = false;
+		}
 	}
 
 	return encode_response(ctx, next_expected_offset);
@@ -196,6 +238,7 @@ static int fmfu_firmware_upload(struct mgmt_ctxt *ctx)
 
 static int fmfu_get_memory_hash(struct mgmt_ctxt *ctxt)
 {
+	static int verified_file_counter;
 	uint64_t start;
 	uint64_t end;
 	struct nrf_modem_full_dfu_digest digest;
@@ -247,6 +290,13 @@ static int fmfu_get_memory_hash(struct mgmt_ctxt *ctxt)
 		return MGMT_ERR_ENOMEM;
 	}
 
+	verified_file_counter++;
+
+	if (verified_file_counter == 3) {
+		callback(FMFU_EVT_FINISHED);
+		verified_file_counter = 0;
+	}
+
 	return MGMT_ERR_EOK;
 }
 
@@ -267,16 +317,13 @@ static struct mgmt_group fmfu_mgmt_group = {
 	.mg_group_id = (MGMT_GROUP_ID_PERUSER + 1),
 };
 
-int fmfu_mgmt_init(void)
+int fmfu_mgmt_register_group(fmfu_callback_t client_callback)
 {
-	struct nrf_modem_full_dfu_digest digest;
-
-	int err = nrf_modem_full_dfu_init(&digest);
-
-	if (err != 0) {
-		LOG_ERR("nrf_fmfu_init failed, errno: %d\n.", errno);
-		return err;
+	if (client_callback == NULL) {
+		return -EINVAL;
 	}
+
+	callback = client_callback;
 	mgmt_register_group(&fmfu_mgmt_group);
-	return err;
+	return 0;
 }
