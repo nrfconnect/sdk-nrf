@@ -1,7 +1,7 @@
 .. _ug_edge_impulse:
 
-Using Edge Impulse with |NCS|
-#############################
+Using Edge Impulse with the |NCS|
+#################################
 
 .. contents::
    :local:
@@ -13,8 +13,8 @@ You can use this platform to collect data from sensors, train machine learning m
 Overview
 ********
 
-Support for `Edge Impulse`_ in |NCS| is centered around the :ref:`ei_wrapper`, which is used for integrating the Edge Impulse machine learning model into an |NCS| application.
-The usage of the wrapper is demonstrated by the :ref:`ei_wrapper_sample` sample.
+Support for `Edge Impulse`_ in the |NCS| is centered around the :ref:`ei_wrapper`, which is used for integrating the Edge Impulse machine learning model into an |NCS| application.
+The usage of the wrapper is demonstrated by the :ref:`ei_wrapper_sample` sample, while the :ref:`nrf_machine_learning_app` application demonstrates the complete out of the box reference design.
 
 Before integrating the Edge Impulse machine learning model to an |NCS| application, you must prepare and deploy the machine learning model for your embedded device.
 This model is prepared using the `Edge Impulse studio`_ external web tool.
@@ -23,8 +23,8 @@ Check the :ref:`ei_data_forwarder_sample` sample for a demonstration of how you 
 
 .. _ug_edge_impulse_adding:
 
-Adding Edge Impulse model to |NCS|
-**********************************
+Adding Edge Impulse model to the |NCS|
+**************************************
 
 The machine learning model is distributed as a single :file:`zip` archive that includes C++ library sources.
 This file is used by the |NCS| build system to build the Edge Impulse library.
@@ -72,7 +72,7 @@ Complete the following steps to configure the building process:
    * An absolute path to a file in the local file system.
      For this variant, you must download the :file:`zip` file manually and place it under path defined by the Kconfig option.
    * Any downloadable URI supported by CMake's ``file(DOWNLOAD)`` command.
-     For this variant, the NCS build system will download the :file:`zip` file automatically during build.
+     For this variant, the |NCS| build system will download the :file:`zip` file automatically during build.
      The :file:`zip` file is downloaded into your application's :file:`build` directory.
 
      If the URI requires providing an additional API key, you can provide it using the following CMake definition: :c:macro:`EI_API_KEY_HEADER`.
