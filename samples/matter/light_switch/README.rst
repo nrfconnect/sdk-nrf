@@ -8,7 +8,7 @@ Matter: Light switch
    :local:
    :depth: 2
 
-This light switch sample demonstrates the usage of the `Matter`_ (formerly Project Connected Home over IP, Project CHIP) application layer to build a basic controller device for the :ref:`Matter light bulb <matter_light_bulb_sample>` sample.
+This light switch sample demonstrates the usage of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer to build a basic controller device for the :ref:`Matter light bulb <matter_light_bulb_sample>` sample.
 This device works as a Matter controller, meaning that it can control a light bulb remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
 You can use this sample as a reference for creating your own application.
 

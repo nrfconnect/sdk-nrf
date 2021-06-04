@@ -128,6 +128,10 @@ Matter (Project CHIP)
 ---------------------
 
 * Project CHIP has been officially renamed to `Matter`_.
+* Added:
+
+  * New user guide about :ref:`ug_matter_configuring`.
+
 * Updated:
 
   * Renamed occurrences of Project CHIP to Matter.
