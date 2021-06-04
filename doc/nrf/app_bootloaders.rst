@@ -40,7 +40,7 @@ You can find an overview of currently supported bootloaders in the table below:
      - SMP updates
      - Downgrade protection
      - Versioning
-     - Update methods (supported by NCS)
+     - Update methods (supported by |NCS|)
    * - :ref:`bootloader`
      - Yes
      - No
