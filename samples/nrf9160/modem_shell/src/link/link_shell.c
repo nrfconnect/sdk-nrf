@@ -56,15 +56,10 @@ enum link_shell_common_options {
 	LINK_COMMON_RESET
 };
 
-enum link_shell_ncellmeas_modes {
-	LINK_NCELLMEAS_MODE_NONE = 0,
-	LINK_NCELLMEAS_MODE_SINGLE
-};
-
 struct link_shell_cmd_args_t {
 	enum link_shell_command command;
 	enum link_shell_common_options common_option;
-	enum link_shell_ncellmeas_modes ncellmeasmode;
+	enum link_ncellmeas_modes ncellmeasmode;
 	enum lte_lc_func_mode funmode_option;
 	enum lte_lc_system_mode sysmode_option;
 	enum lte_lc_system_mode_preference sysmode_lte_pref_option;
@@ -231,10 +226,11 @@ static const char link_rsrp_usage_str[] =
 	"  -u, --unsubscribe,  Unsubscribe for RSRP info\n";
 
 static const char link_ncellmeas_usage_str[] =
-	"Usage: link ncellmeas --single | --cancel\n"
+	"Usage: link ncellmeas --single | --continuous |--cancel\n"
 	"Options:\n"
-	"      --single, Start a neighbor cell measurement and report result\n"
-	"      --cancel, Cancel/Stop neighbor cell measurement if still on going\n";
+	"      --single,     Start a neighbor cell measurement and report result\n"
+	"      --continuous, Start continuous neighbor cell measurement mode and report result\n"
+	"      --cancel,     Cancel/Stop neighbor cell measurement if still ongoing\n";
 
 static const char link_msleep_usage_str[] =
 	"Usage: link msleep --subscribe [options] | --unsubscribe\n"
@@ -286,6 +282,7 @@ enum {
 	LINK_SHELL_OPT_START,
 	LINK_SHELL_OPT_STOP,
 	LINK_SHELL_OPT_SINGLE,
+	LINK_SHELL_OPT_CONTINUOUS,
 };
 
 /* Specifying the expected options (both long and short): */
@@ -335,6 +332,7 @@ static struct option long_options[] = {
 	{ "stop", no_argument, 0, LINK_SHELL_OPT_STOP },
 	{ "cancel", no_argument, 0, LINK_SHELL_OPT_STOP },
 	{ "single", no_argument, 0, LINK_SHELL_OPT_SINGLE },
+	{ "continuous", no_argument, 0, LINK_SHELL_OPT_CONTINUOUS },
 	{ "threshold", required_argument, 0, LINK_SHELL_OPT_THRESHOLD_TIME },
 	{ 0, 0, 0, 0 }
 };
@@ -750,6 +748,9 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		/* Options without short option: */
 		case LINK_SHELL_OPT_SINGLE:
 			link_cmd_args.ncellmeasmode = LINK_NCELLMEAS_MODE_SINGLE;
+			break;
+		case LINK_SHELL_OPT_CONTINUOUS:
+			link_cmd_args.ncellmeasmode = LINK_NCELLMEAS_MODE_CONTINUOUS;
 			break;
 		case LINK_SHELL_OPT_RESET:
 			link_cmd_args.common_option = LINK_COMMON_RESET;
@@ -1250,10 +1251,13 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		break;
 	case LINK_CMD_NCELLMEAS:
 		if (link_cmd_args.common_option == LINK_COMMON_STOP) {
-			link_ncellmeas_start(false);
+			link_ncellmeas_start(false, LINK_NCELLMEAS_MODE_NONE);
 
-		} else if (link_cmd_args.ncellmeasmode == LINK_NCELLMEAS_MODE_SINGLE) {
-			link_ncellmeas_start(true);
+		} else if (link_cmd_args.ncellmeasmode != LINK_NCELLMEAS_MODE_NONE) {
+			shell_print(
+				shell,
+				"Neighbor cell measurements and reporting starting");
+			link_ncellmeas_start(true, link_cmd_args.ncellmeasmode);
 		} else {
 			goto show_usage;
 		}
