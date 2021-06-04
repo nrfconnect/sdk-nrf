@@ -345,7 +345,7 @@ static void data_get(void)
 	 * interval has  passed in active mode, or until next movement in
 	 * passive mode.
 	 */
-	app_module_event->timeout = MAX(app_cfg.gps_timeout + 5, 65);
+	app_module_event->timeout = MAX(app_cfg.gps_timeout + 15, 75);
 
 	if (first) {
 		if (IS_ENABLED(CONFIG_APP_REQUEST_GPS_ON_INITIAL_SAMPLING)) {
