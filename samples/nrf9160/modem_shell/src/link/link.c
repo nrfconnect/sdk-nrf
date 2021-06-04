@@ -53,9 +53,22 @@ static struct k_work modem_info_work;
 static struct k_work modem_info_signal_work;
 #define LINK_RSRP_VALUE_NOT_KNOWN -999
 static int32_t modem_rsrp = LINK_RSRP_VALUE_NOT_KNOWN;
+#endif
+
+/* Work queue for continuous neighbor cell measurements: */
+static struct k_work continuous_ncellmeas_work;
+enum link_ncellmeas_modes ncellmeas_mode = LINK_NCELLMEAS_MODE_NONE;
+
+static void link_continuous_ncellmeas(struct k_work *work)
+{
+	if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
+		link_ncellmeas_start(true, LINK_NCELLMEAS_MODE_CONTINUOUS);
+	}
+}
 
 /******************************************************************************/
 
+#if defined(CONFIG_MODEM_INFO)
 static void link_modem_info_work(struct k_work *unused)
 {
 	ARG_UNUSED(unused);
@@ -103,6 +116,7 @@ void link_init(void)
 	k_work_init(&modem_info_signal_work, link_rsrp_signal_update);
 	modem_info_rsrp_register(link_rsrp_signal_handler);
 #endif
+	k_work_init(&continuous_ncellmeas_work, link_continuous_ncellmeas);
 
 	/* TODO CHECK THIS */
 	//shell_global = shell_backend_uart_get_ptr();
@@ -143,32 +157,41 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		struct lte_lc_cells_info cells = evt->cells_info;
 		struct lte_lc_cell cur_cell = cells.current_cell;
 
+		shell_print(shell_global, "Neighbor cell measurement results:");
+
 		/* Current cell: */
 		if (cur_cell.id) {
-			shell_print(shell_global, "Current cell:");
+			char tmp_ta_str[12];
 
+			if (cur_cell.timing_advance == 65535) {
+				sprintf(tmp_ta_str, "\"not valid\"");
+			} else {
+				sprintf(tmp_ta_str, "%d", cur_cell.timing_advance);
+			}
+
+			shell_print(shell_global, "  Current cell:");
 			shell_print(
 				shell_global,
-				"    ID %d, phy ID %d, MCC %d MNC %d, RSRP %d : %ddBm, RSRQ %d, TAC %d, earfcn %d, meas time %lld, TA %d",
+				"    ID %d, phy ID %d, MCC %d MNC %d, RSRP %d : %ddBm, RSRQ %d, TAC %d, earfcn %d, meas time %lld, TA %s",
 				cur_cell.id, cur_cell.phys_cell_id,
 				cur_cell.mcc, cur_cell.mnc, cur_cell.rsrp,
 				cur_cell.rsrp - MODEM_INFO_RSRP_OFFSET_VAL,
 				cur_cell.rsrq, cur_cell.tac, cur_cell.earfcn,
 				cur_cell.measurement_time,
-				cur_cell.timing_advance);
+				tmp_ta_str);
 		} else {
 			shell_print(shell_global,
-				    "No current cell information from modem.");
+				    "  No current cell information from modem.");
 		}
 
 		if (!cells.ncells_count) {
 			shell_print(shell_global,
-				    "No neighbor cell information from modem.");
+				    "  No neighbor cell information from modem.");
 		}
 
 		for (i = 0; i < cells.ncells_count; i++) {
 			/* Neighbor cells: */
-			shell_print(shell_global, "Neighbor cell %d", i + 1);
+			shell_print(shell_global, "  Neighbor cell %d", i + 1);
 			shell_print(
 				shell_global,
 				"    phy ID %d, RSRP %d : %ddBm, RSRQ %d, earfcn %d, timediff %d",
@@ -218,6 +241,9 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		shell_print(shell_global,
 			    "LTE cell changed: Cell ID: %d, Tracking area: %d",
 			    evt->cell.id, evt->cell.tac);
+		if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
+			k_work_submit(&continuous_ncellmeas_work);
+		}
 		break;
 	case LTE_LC_EVT_RRC_UPDATE:
 		shell_print(shell_global, "RRC mode: %s",
@@ -346,14 +372,12 @@ void link_rsrp_subscribe(bool subscribe)
 	}
 }
 
-void link_ncellmeas_start(bool start)
+void link_ncellmeas_start(bool start, enum link_ncellmeas_modes mode)
 {
 	int ret;
 
+	ncellmeas_mode = mode;
 	if (start) {
-		shell_print(
-			shell_global,
-			"Neighbor cell measurements and reporting starting");
 		ret = lte_lc_neighbor_cell_measurement();
 		if (shell_global != NULL) {
 			if (ret) {
