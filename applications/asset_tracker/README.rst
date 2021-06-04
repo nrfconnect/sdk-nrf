@@ -230,6 +230,21 @@ When :option:`CONFIG_BOOTLOADER_MCUBOOT` is set to ``y``, the Asset Tracker appl
 This configuration enables the RSA signing of the images for backward compatibility with the MCUboot versions that precede the |NCS| v1.4.0.
 The overlay can be found in :file:`child_image/mcuboot.conf`.
 
+Using nRF Cloud A-GPS or P-GPS
+==============================
+
+By default, this application enables :ref:`lib_nrf_cloud_agps` (Assisted GPS) support.
+Each time the GPS unit attempts to get a location fix, it might require additional information from  `nRF Cloud`_ to speed up the time to get the fix.
+
+Alternatively, :ref:`lib_nrf_cloud_pgps` (Predicted GPS) downloads and stores assistance predictions in flash for one or two weeks, and does not require cloud support for each fix.
+
+To use P-GPS instead of A-GPS, add the following parameter to your build command:
+``-DOVERLAY_CONFIG=overlay-pgps.conf``
+
+To use A-GPS and P-GPS simultaneously, use the following parameter:
+``-DOVERLAY_CONFIG=overlay-agps-pgps.conf``
+
+
 Testing
 =======
 
