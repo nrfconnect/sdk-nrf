@@ -7,24 +7,31 @@ nRF Cloud P-GPS
    :local:
    :depth: 2
 
-The nRF Cloud P-GPS library enables applications to request and process predicted GPS data from `nRF Connect for Cloud`_ to be used with the nRF9160 SiP.
-This library is an enhancement to the :ref:`lib_nrf_cloud`. It may be used with or without Assisted GPS (`A-GPS`_) data from `nRF Connect for Cloud`_.
+The nRF Cloud P-GPS library enables applications to request and process predicted GPS data from `nRF Cloud`_ to be used with the nRF9160 SiP.
+This library is an enhancement to the :ref:`lib_nrf_cloud` library.
+It can be used with or without Assisted GPS (`A-GPS`_) data from nRF Cloud.
 
-To get a position fix, a GPS receiver needs information such as the satellite orbital data, the exact date and time of day, and accurate hardware clock frequency data.
+To get a position fix, a GPS receiver needs information such as the satellite orbital data, exact date and time of the day, and accurate hardware clock frequency data.
 GPS satellites broadcast this information in a pattern, which repeats every 12.5 minutes.
-If nRF Connect for Cloud P-GPS and/or A-GPS service is used, the broadcasted information, and future estimates of it, can be downloaded at a faster rate from nRF Connect for Cloud than from the satellites.
-
-Predicted GPS data contains estimated orbits (ephemerides) of the 32 GPS satellites for up to a two week period, with each set of ephemerides predictions being valid for a specific four hour period within the set of all predictions provided.
-These ephemeris predictions are downloaded from the cloud, then stored by the device in Flash memory, then later injected into the GPS unit when needed.
-
-The use of P-GPS reduces the time for a GPS device to estimate its position, which is also called Time to First Fix (TTFF), compared to using no assistance at all.
-Further, it only requires a cloud connection once a week or so (depending on configuration) rather than each time a fix is needed, as is the case when A-GPS alone is used.
-When used together with A-GPS, TTFF is even faster than with just P-GPS, while the amount of cloud data needed for each fix is smaller during each fix than with A-GPS alone.
-With proper configuration, A-GPS can be used with P-GPS when a cloud connection is available, but can still attain fast fixes even without a cloud connection.
-This will be the case as long as stored P-GPS data is still valid, and the current date and time (within a few seconds) and most recent location (within a few dozen km) are known.
+Predicted GPS data contains information about the estimated orbits (`Ephemerides <Ephemeris_>`_) of the 32 GPS satellites for up to a two-week period, with each set of ephemerides predictions being valid for a specific four-hour period within the set of all provided predictions.
+These ephemeris predictions are downloaded from the cloud, stored by the device in flash memory, and later injected into the GPS unit when needed.
 
 .. note::
-   To use the nRF Connect for Cloud P-GPS service, an nRF Connect for Cloud account is needed, and the device needs to be associated with a user's account.
+
+   If two-week prediction sets are used, TTFF towards the end of the second week will increase due to accumulated errors in the predictions and decrease in number of satellite ephemerides in the later prediction periods.
+
+If nRF Cloud services such as P-GPS or A-GPS are used either individually or in combination, the broadcasted information and future estimates of position can be downloaded at a faster rate from nRF Cloud than from the GPS satellites.
+
+The use of P-GPS reduces Time to First Fix (TTFF) (time for a GPS device to estimate its position) when compared to using no assistance at all.
+Further, it only requires a cloud connection approximately once a week, depending on configuration.
+On the other hand, when only A-GPS is used, a cloud connection is needed each time.
+If you use P-GPS along with A-GPS, TTFF is faster compared to an implementation with P-GPS only.
+The amount of cloud data needed for each fix is smaller during each fix compared to an implementation with A-GPS only.
+With proper configuration, A-GPS can be used with P-GPS, when a cloud connection is available, and acquire fast fixes even without a cloud connection.
+This is possible as long as the stored P-GPS data is still valid, and current date and time (within a few seconds) and the most recent location (within a few dozen kilometers) are known.
+
+.. note::
+   To use the nRF Cloud P-GPS service, an nRF Cloud account is needed, and the device needs to be associated with a user's account.
 
 Configuration
 *************
@@ -41,13 +48,14 @@ Configure these additional options to refine the behavior of P-GPS:
 * :option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD`
 * :option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE`
 
-Configure both of the following options if you would like your application to use A-GPS as well, for coarse time and position data, to get the fastest TTFF.
-If A-GPS is not desired (due to data costs, low power requirements, or expected frequent lack of lack of cloud connectivity), both options below should be disabled.
+Configure both of the following options if you need your application to use A-GPS as well, for coarse time and position data and to get the fastest TTFF:
 
 * :option:`CONFIG_NRF_CLOUD_AGPS`
 * :option:`CONFIG_AGPS`
 
-Within an application that uses P-GPS, these options are needed for storing settings, having accurate clock time, and having a location to store predictions in:
+If A-GPS is not desired (due to data costs, low power requirements, or expected frequent loss of cloud connectivity), both options listed above must be disabled.
+
+For an application that uses P-GPS, the following options must be configured for storing settings, for having accurate clock time, and for having a location to store predictions:
 
 * :option:`CONFIG_FLASH`
 * :option:`CONFIG_FCB`
@@ -62,38 +70,50 @@ See :ref:`configure_application` for information on how to change configuration 
 Initialization
 **************
 
-The P-GPS subsystem's :c:func:`nrf_cloud_pgps_init` function takes a pointer to a :c:struct:`nrf_cloud_pgps_init_param` which at a minimum must specify the storage base address and storage size, in Flash, to which the P-GPS subsystem can store predictions.
-It can optionally pass a pointer to a :c:func:`pgps_event_handler_t` callback function.
-
-As an example, the sample :ref:`agps_sample` shows how to pass the address of the secondary MCUBOOT :ref:`mcuboot_ncs` partition whose address is defined by the :c:macro:`PM_MCUBOOT_SECONDARY_ADDRESS` macro and the :c:macro:`PM_MCUBOOT_SECONDARY_SIZE` macro.
-These are automatically defined by the build system in the file pm_config.h. This partition is safe to store data in until a FOTA job is received. However, application developers may wish to store predictions somewhere else to avoid loss during FOTA.
-
-The application should call the P-GPS initialization function, ideally once the device has connected to the cloud.
-If a connection is not available, initialization should still be called, but predictions will be unavailable if all valid predictions are expired, until connected to the cloud in the future.
+Ideally, once the device has connected to the cloud, the application must call the P-GPS initialization function.
+If a connection is not available, initialization must still be called.
+In this case, predictions will be unavailable if all valid predictions have expired, until a connection is established to the cloud in the future.
 
 .. note::
-   Each prediction requires 2KiB of Flash. For 240 minute (4 hour) prediction periods, and 42 predictions in one week, that adds up to 84KiB.
+   Each prediction requires 2 KB of flash. For prediction periods of 240 minutes (four hours), and with 42 predictions per week, the flash requirement adds up to 84 KB.
+
+The P-GPS subsystem's :c:func:`nrf_cloud_pgps_init` function takes a pointer to a :c:struct:`nrf_cloud_pgps_init_param` structure.
+The structure at a minimum must specify the storage base address and the storage size in flash, where P-GPS subsystem stores predictions.
+It can optionally pass a pointer to a :c:func:`pgps_event_handler_t` callback function.
+
+As an example, the :ref:`agps_sample` sample shows how to pass the address of the :ref:`secondary MCUboot partition <mcuboot_ncs>`.
+The address is defined by the ``PM_MCUBOOT_SECONDARY_ADDRESS`` macro and the ``PM_MCUBOOT_SECONDARY_SIZE`` macro.
+These are automatically defined by the build system in the file :file:`pm_config.h`.
+This partition is safe to store data until a FOTA job is received.
+To avoid loss during FOTA, application developers can opt to store predictions in another location.
 
 Time
 ****
 
-The P-GPS subsystem's proper operation depends on an accurate sense of time. For use cases where a cloud connection occurs easily, it is recommended that the :ref:`lib_date_time` library be used with NTP enabled.
-Otherwise, a battery-backed real time clock calendar chip should be used so that accurate time is available regardless of cloud availability after reset.
+The proper operation of the P-GPS subsystem depends on an accurate sense of time.
+For use cases where a cloud connection can be established easily, use the :ref:`lib_date_time` library with NTP enabled.
+Otherwise, a battery-backed real-time clock calendar chip must be used so that accurate time is available regardless of cloud availability after reset.
 
 Requesting and processing P-GPS data
 ************************************
 
 P-GPS data can be requested from the cloud using one of the following methods:
 
-* Directly, by calling the function :c:func:`nrf_cloud_pgps_request_all` to request a full set of predictions
-* Directly, by passing a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function
-* Indirectly, by calling :c:func:`nrf_cloud_pgps_init`, and no valid predictions are present in Flash, or some or all are expired
-* Indirectly, by calling :c:func:`nrf_cloud_pgps_preemptive_updates`
-* Indirectly, by calling :c:func:`nrf_cloud_pgps_notify_prediction`
+* Directly:
 
-The indirect methods are used in the sample :ref:`agps_sample` and in :ref:`asset_tracker`. They are simpler to use than the direct methods.
+  * By calling the function :c:func:`nrf_cloud_pgps_request_all` to request a full set of predictions.
+  * By passing a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function.
 
-When nRF Connect for Cloud responds with the requested P-GPS data, the :c:func:`nrf_cloud_pgps_process` function should be called by the application's :c:func:`cloud_evt_handler_t` when it receives the :c:enum:`CLOUD_EVT_DATA_RECEIVED` event.
+* Indirectly:
+
+  * By calling :c:func:`nrf_cloud_pgps_init`, with no valid predictions present in flash, or with some or all of the predictions expired.
+  * By calling :c:func:`nrf_cloud_pgps_preemptive_updates`.
+  * By calling :c:func:`nrf_cloud_pgps_notify_prediction`.
+
+The indirect methods are used in the :ref:`agps_sample` sample and in the :ref:`asset_tracker` application.
+They are simpler to use than the direct methods.
+
+When nRF Cloud responds with the requested P-GPS data, the application's :c:func:`cloud_evt_handler_t` function must call the :c:func:`nrf_cloud_pgps_process` function when it receives the :c:enum:`CLOUD_EVT_DATA_RECEIVED` event.
 The function parses the data and stores it.
 
 Finding a prediction and injecting to modem
@@ -104,37 +124,41 @@ A P-GPS prediction for the current date and time can be retrieved using one of t
 * Directly, by calling the function :c:func:`nrf_cloud_pgps_find_prediction`
 * Indirectly, by calling the function :c:func:`nrf_cloud_pgps_notify_prediction`
 
-The indirect method is used in the sample :ref:`agps_sample` and in :ref:`asset_tracker`.
+The indirect method is used in the :ref:`agps_sample` sample and in the :ref:`asset_tracker` application.
 
-The application can inject the data contained in the prediction to the GPS unit in the modem by calling the :c:func:`nrf_cloud_pgps_inject` function. This should be done when the GPS driver callback indicates assistance is needed.  See below.
+The application can inject the data contained in the prediction to the GPS unit in the modem by calling the :c:func:`nrf_cloud_pgps_inject` function.
+This must be done when the GPS driver callback indicates that assistance is needed.
 
-A prediction is also automatically injected to the modem every 4 hours whenever the current prediction expires and the next one begins (if the next one is available in Flash).
+A prediction is also automatically injected to the modem every four hours whenever the current prediction expires and the next one begins (if the next one is available in flash).
 
 Interaction with the GPS driver
 *******************************
 
-The P-GPS subsystem, like a number of other nRF Connect for Cloud subsystems, is event driven.
+The P-GPS subsystem, like several other nRF Cloud subsystems, is event driven.
 
-There are two GPS events that an application receives through the GPS driver callback which relate to P-GPS.  One, :c:enum:`GPS_EVT_AGPS_DATA_NEEDED`, occurs when the GPS module requires assistance data.
-Another, :c:enum:`GPS_EVT_PVT_FIX` occurs once a fix has been attained.
+Following are the two GPS events relating to P-GPS that an application receives through the GPS driver callback:
 
-When the application receives the first event, it should call :c:func:`nrf_cloud_pgps_notify_prediction`.
-This will call back the application's :c:func:`pgps_event_handler_t` when a valid P-GPS prediction set is available.
-It will pass the handler the :c:enum:`PGPS_EVT_AVAILABLE` event and a pointer to a :c:struct:`nrf_cloud_pgps_prediction`.
+* :c:enumerator:`GPS_EVT_AGPS_DATA_NEEDED` - Occurs when the GPS module requires assistance data.
+* :c:enumerator:`GPS_EVT_PVT_FIX` - Occurs once a fix is attained.
 
-The application should pass this prediction to :c:func:`nrf_cloud_pgps_inject`, along with either the :c:struct:`gps_agps_request` passed to the GPS driver callback earlier with the :c:enum:`GPS_EVT_AGPS_DATA_NEEDED` event, or NULL.
+When the application receives the :c:enumerator:`GPS_EVT_AGPS_DATA_NEEDED` event, it must call :c:func:`nrf_cloud_pgps_notify_prediction`.
+This event results in the call back of the application's :c:func:`pgps_event_handler_t` function when a valid P-GPS prediction set is available.
+It will pass the :c:enum:`PGPS_EVT_AVAILABLE` event and a pointer to :c:struct:`nrf_cloud_pgps_prediction` to the handler.
 
-If the use case for the application is such that the device will not move distances larger than a few dozen km before it gets a new GPS fix, it could pass the latitude and longitude provided in :c:enum:`GPS_EVT_PVT_FIX` to :c:func:`nrf_cloud_pgps_set_location`.
-The P-GPS subsystem will use that stored location the next time the GPS unit requests position assistance, and A-GPS assistance is not enabled or is unavailable.
-If the use case involves possible long distance travel between fix attempts, such a mechanism could be detrimental to short TTFF, as the saved position may be too inaccurate to be a benefit.
+The application must pass this prediction to :c:func:`nrf_cloud_pgps_inject`, along with either the :c:struct:`gps_agps_request` passed to the GPS driver callback earlier with the :c:enumerator:`GPS_EVT_AGPS_DATA_NEEDED` event or NULL.
 
-The application could also call :c:func:`nrf_cloud_pgps_preemptive_updates` to discard expired predictions and replace them with newer ones, prior to the entire set expiring.
-This can be useful for customer use cases where cloud connections are only available infrequently.
-The :option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` sets the minimum number of valid predictions remaining before such an update occurs, and must even.
+If the use case for the application is such that the device will not move distances greater than a few dozen kilometers before it gets a new GPS fix, it can pass the latitude and longitude provided in :c:enumerator:`GPS_EVT_PVT_FIX` to :c:func:`nrf_cloud_pgps_set_location`.
+The P-GPS subsystem will use this stored location for the next GPS request for position assistance when A-GPS assistance is not enabled or is unavailable.
+If the use case involves possible long-distance travel between fix attempts, such a mechanism can be detrimental to short TTFF, as the saved position might be too inaccurate to be a benefit.
 
-For best performance, it is helpful for applications to call the P-GPS functions mentioned in this section from workqueue handlers, rather than directly from various callback functions.
+The application can also call :c:func:`nrf_cloud_pgps_preemptive_updates` to discard expired predictions and replace them with newer ones, prior to the expiration of the entire set of predictions.
+This can be useful for customer use cases where cloud connections are available infrequently.
+The :option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` sets the minimum number of valid predictions remaining before such an update occurs.
 
-The P-GPS subsystem itself generates events which can be passed to a registered callback function. See :c:enum:`nrf_cloud_pgps_event`.
+For best performance, applications can call the P-GPS functions mentioned in this section from workqueue handlers rather than directly from various callback functions.
+
+The P-GPS subsystem itself generates events that can be passed to a registered callback function.
+See :c:enum:`nrf_cloud_pgps_event`.
 
 API documentation
 *****************
