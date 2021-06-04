@@ -20,3 +20,4 @@ The following user guides introduce important concepts to consider when developi
    ug_tfm
    ug_radio_fem
    ug_edge_impulse
+   ug_pelion
