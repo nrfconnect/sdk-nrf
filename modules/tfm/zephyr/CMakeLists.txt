@@ -29,6 +29,11 @@ else()
       )
   endif()
 endif()
+
 set_property(GLOBAL PROPERTY
   tfm_PM_HEX_FILE $<TARGET_PROPERTY:tfm,TFM_S_HEX_FILE>
+  )
+
+set_property(TARGET zephyr_property_target
+  APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_DIR=${ZEPHYR_NRF_MODULE_DIR}
   )
