@@ -477,6 +477,11 @@ static void on_state_lte_connected(struct cloud_msg_data *msg)
 		state_set(STATE_LTE_DISCONNECTED);
 		sub_state_set(SUB_STATE_CLOUD_DISCONNECTED);
 
+		/* Explicitly disconnect cloud when we receive an LTE disconnected event. This is
+		 * to clear up the cloud library state.
+		 */
+		cloud_wrap_disconnect();
+
 		connect_retries = 0;
 
 		k_work_cancel_delayable(&connect_check_work);
