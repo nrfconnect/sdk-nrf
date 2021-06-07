@@ -141,7 +141,7 @@ struct bt_mesh_light_ctrl_cli {
 		BT_MESH_LIGHT_CTRL_OP_PROP_SET,
 		2 + CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX)];
 	/** Acknowledged message tracking. */
-	struct bt_mesh_model_ack_ctx ack;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/** Collection of handler callbacks. */
 	const struct bt_mesh_light_ctrl_cli_handlers *handlers;
 	/** Current transaction ID. */

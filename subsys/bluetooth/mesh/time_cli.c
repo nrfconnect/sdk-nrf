@@ -18,15 +18,14 @@ static void handle_status(struct bt_mesh_model *model,
 
 	struct bt_mesh_time_cli *cli = model->user_data;
 	struct bt_mesh_time_status status;
+	struct bt_mesh_time_status *rsp;
 
 	bt_mesh_time_decode_time_params(buf, &status);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_TIME_OP_TIME_STATUS, ctx)) {
-		struct bt_mesh_time_status *rsp =
-			(struct bt_mesh_time_status *)cli->ack_ctx.user_data;
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_TIME_OP_TIME_STATUS, ctx->addr,
+				      (void **)&rsp)) {
 		*rsp = status;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->time_status) {
@@ -44,14 +43,14 @@ static void time_role_status_handle(struct bt_mesh_model *model,
 
 	struct bt_mesh_time_cli *cli = model->user_data;
 	enum bt_mesh_time_role status;
+	uint8_t *rsp;
 
 	status = net_buf_simple_pull_u8(buf);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_TIME_OP_TIME_ROLE_STATUS,
-			    ctx)) {
-		uint8_t *rsp = (uint8_t *)cli->ack_ctx.user_data;
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_TIME_OP_TIME_ROLE_STATUS, ctx->addr,
+				      (void **)&rsp)) {
 		*rsp = status;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->time_role_status) {
@@ -69,6 +68,7 @@ static void time_zone_status_handle(struct bt_mesh_model *model,
 
 	struct bt_mesh_time_cli *cli = model->user_data;
 	struct bt_mesh_time_zone_status status;
+	struct bt_mesh_time_zone_status *rsp;
 
 	status.current_offset =
 		net_buf_simple_pull_u8(buf) - ZONE_CHANGE_ZERO_POINT;
@@ -76,13 +76,10 @@ static void time_zone_status_handle(struct bt_mesh_model *model,
 		net_buf_simple_pull_u8(buf) - ZONE_CHANGE_ZERO_POINT;
 	status.time_zone_change.timestamp = bt_mesh_time_buf_pull_tai_sec(buf);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_TIME_OP_TIME_ZONE_STATUS,
-			    ctx)) {
-		struct bt_mesh_time_zone_status *rsp =
-			(struct bt_mesh_time_zone_status *)
-				cli->ack_ctx.user_data;
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_TIME_OP_TIME_ZONE_STATUS, ctx->addr,
+				      (void **)&rsp)) {
 		*rsp = status;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->time_zone_status) {
@@ -100,6 +97,7 @@ static void tai_utc_delta_status_handle(struct bt_mesh_model *model,
 
 	struct bt_mesh_time_cli *cli = model->user_data;
 	struct bt_mesh_time_tai_utc_delta_status status;
+	struct bt_mesh_time_tai_utc_delta_status *rsp;
 
 	status.delta_current =
 		net_buf_simple_pull_le16(buf) - UTC_CHANGE_ZERO_POINT;
@@ -107,13 +105,10 @@ static void tai_utc_delta_status_handle(struct bt_mesh_model *model,
 		net_buf_simple_pull_le16(buf) - UTC_CHANGE_ZERO_POINT;
 	status.tai_utc_change.timestamp = bt_mesh_time_buf_pull_tai_sec(buf);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_TIME_OP_TAI_UTC_DELTA_STATUS,
-			    ctx)) {
-		struct bt_mesh_time_tai_utc_delta_status *rsp =
-			(struct bt_mesh_time_tai_utc_delta_status *)
-				cli->ack_ctx.user_data;
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_TIME_OP_TAI_UTC_DELTA_STATUS,
+				      ctx->addr, (void **)&rsp)) {
 		*rsp = status;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->tai_utc_delta_status) {
@@ -151,7 +146,7 @@ static int bt_mesh_time_cli_init(struct bt_mesh_model *model)
 
 	cli->model = model;
 	net_buf_simple_init(cli->pub.msg, 0);
-	model_ack_init(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_init(&cli->ack_ctx);
 
 	return 0;
 }
@@ -161,7 +156,7 @@ static void bt_mesh_time_cli_reset(struct bt_mesh_model *model)
 	struct bt_mesh_time_cli *cli = model->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
-	model_ack_reset(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_time_cli_cb = {

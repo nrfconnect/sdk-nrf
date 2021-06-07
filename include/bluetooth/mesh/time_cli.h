@@ -128,7 +128,7 @@ struct bt_mesh_time_cli {
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/** Acknowledged message tracking. */
-	struct bt_mesh_model_ack_ctx ack_ctx;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/** Collection of handler callbacks.
 	*
 	* @note Must point to memory that remains valid.

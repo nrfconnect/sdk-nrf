@@ -71,7 +71,7 @@ struct bt_mesh_prop_cli {
 		BT_MESH_PROP_OP_ADMIN_PROP_SET,
 		BT_MESH_PROP_MSG_MAXLEN_ADMIN_PROP_SET)];
 	/** Acknowledged message tracking. */
-	struct bt_mesh_model_ack_ctx ack_ctx;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 
 	/** @brief Property list message handler.
 	 *

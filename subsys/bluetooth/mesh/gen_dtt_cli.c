@@ -18,11 +18,12 @@ static void handle_status(struct bt_mesh_model *model,
 	struct bt_mesh_dtt_cli *cli = model->user_data;
 	int32_t transition_time =
 		model_transition_decode(net_buf_simple_pull_u8(buf));
+	int *rsp;
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_DTT_OP_STATUS, ctx)) {
-		int32_t *rsp = (int32_t *)cli->ack_ctx.user_data;
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_DTT_OP_STATUS, ctx->addr,
+				      (void **)&rsp)) {
 		*rsp = transition_time;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->status_handler) {
@@ -43,7 +44,7 @@ static int bt_mesh_dtt_init(struct bt_mesh_model *model)
 	cli->pub.msg = &cli->pub_buf;
 	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
 				      sizeof(cli->pub_data));
-	model_ack_init(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_init(&cli->ack_ctx);
 
 	return 0;
 }
@@ -53,7 +54,7 @@ static void bt_mesh_dtt_reset(struct bt_mesh_model *model)
 	struct bt_mesh_dtt_cli *cli = model->user_data;
 
 	net_buf_simple_reset(model->pub->msg);
-	model_ack_reset(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_dtt_cli_cb = {

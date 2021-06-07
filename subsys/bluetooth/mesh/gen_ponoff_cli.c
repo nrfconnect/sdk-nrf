@@ -17,17 +17,17 @@ static void handle_status(struct bt_mesh_model *model,
 
 	struct bt_mesh_ponoff_cli *cli = model->user_data;
 	enum bt_mesh_on_power_up on_power_up = net_buf_simple_pull_u8(buf);
+	enum bt_mesh_on_power_up *rsp;
 
 	if (on_power_up >= BT_MESH_ON_POWER_UP_INVALID) {
 		return;
 	}
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_PONOFF_OP_STATUS, ctx)) {
-		enum bt_mesh_on_power_up *rsp =
-			(enum bt_mesh_on_power_up *)cli->ack_ctx.user_data;
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_PONOFF_OP_STATUS, ctx->addr,
+				      (void **)&rsp)) {
 		*rsp = on_power_up;
 
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->status_handler) {
@@ -52,7 +52,7 @@ static int bt_mesh_ponoff_cli_init(struct bt_mesh_model *model)
 	cli->pub.msg = &cli->pub_buf;
 	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
 				      sizeof(cli->pub_data));
-	model_ack_init(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_init(&cli->ack_ctx);
 
 	return 0;
 }
@@ -62,7 +62,7 @@ static void bt_mesh_ponoff_cli_reset(struct bt_mesh_model *model)
 	struct bt_mesh_ponoff_cli *cli = model->user_data;
 
 	net_buf_simple_reset(model->pub->msg);
-	model_ack_reset(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_ponoff_cli_cb = {

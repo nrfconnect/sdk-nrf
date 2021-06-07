@@ -10,6 +10,7 @@
 static void scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
+	struct bt_mesh_scene_state *rsp;
 	struct bt_mesh_scene_cli *cli = model->user_data;
 	struct bt_mesh_scene_state state;
 
@@ -26,11 +27,10 @@ static void scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		return;
 	}
 
-	if (model_ack_match(&cli->ack, BT_MESH_SCENE_OP_STATUS, ctx)) {
-		struct bt_mesh_scene_state *rsp = cli->ack.user_data;
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SCENE_OP_STATUS, ctx->addr,
+				      (void **)&rsp)) {
 		*rsp = state;
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->status) {
@@ -41,6 +41,7 @@ static void scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 static void scene_reg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
+	struct bt_mesh_scene_register *rsp;
 	struct bt_mesh_scene_cli *cli = model->user_data;
 	struct bt_mesh_scene_register reg;
 
@@ -56,9 +57,8 @@ static void scene_reg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		reg.scenes[i] = sys_le16_to_cpu(reg.scenes[i]);
 	}
 
-	if (model_ack_match(&cli->ack, BT_MESH_SCENE_OP_REGISTER_STATUS, ctx)) {
-		struct bt_mesh_scene_register *rsp = cli->ack.user_data;
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SCENE_OP_REGISTER_STATUS, ctx->addr,
+				      (void **)&rsp)) {
 		rsp->status = reg.status;
 		rsp->current = reg.current;
 		if (rsp->scenes) {
@@ -69,7 +69,7 @@ static void scene_reg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			rsp->count = 0;
 		}
 
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->scene_register) {
@@ -111,7 +111,7 @@ static int scene_cli_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&cli->pub_msg, cli->buf,
 				      sizeof(cli->buf));
 	cli->pub.msg = &cli->pub_msg;
-	model_ack_init(&cli->ack);
+	bt_mesh_msg_ack_ctx_init(&cli->ack_ctx);
 
 	return 0;
 }
@@ -122,7 +122,7 @@ static void scene_cli_reset(struct bt_mesh_model *model)
 	struct bt_mesh_scene_cli *cli = model->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
-	model_ack_reset(&cli->ack);
+	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_scene_cli_cb = {
@@ -138,7 +138,7 @@ int bt_mesh_scene_cli_get(struct bt_mesh_scene_cli *cli,
 				 BT_MESH_SCENE_MSG_LEN_GET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCENE_OP_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_SCENE_OP_STATUS, rsp);
 }
 
@@ -150,7 +150,7 @@ int bt_mesh_scene_cli_register_get(struct bt_mesh_scene_cli *cli,
 				 BT_MESH_SCENE_MSG_LEN_REGISTER_GET);
 	bt_mesh_model_msg_init(&buf, BT_MESH_SCENE_OP_REGISTER_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_SCENE_OP_REGISTER_STATUS, rsp);
 }
 
@@ -168,7 +168,7 @@ int bt_mesh_scene_cli_store(struct bt_mesh_scene_cli *cli,
 
 	net_buf_simple_add_le16(&buf, scene);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_SCENE_OP_REGISTER_STATUS, rsp);
 }
 
@@ -202,7 +202,7 @@ int bt_mesh_scene_cli_delete(struct bt_mesh_scene_cli *cli,
 
 	net_buf_simple_add_le16(&buf, scene);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_SCENE_OP_REGISTER_STATUS, rsp);
 }
 
@@ -242,7 +242,7 @@ int bt_mesh_scene_cli_recall(struct bt_mesh_scene_cli *cli,
 		model_transition_buf_add(&buf, transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_SCENE_OP_STATUS, rsp);
 }
 

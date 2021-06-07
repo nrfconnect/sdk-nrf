@@ -66,7 +66,7 @@ struct bt_mesh_sensor_cli {
 		BT_MESH_MODEL_BUF_LEN(BT_MESH_SENSOR_OP_SETTING_SET,
 				      BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET))];
 	/** Response context for acknowledged messages. */
-	struct bt_mesh_model_ack_ctx ack;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/** Client callback functions. */
 	const struct bt_mesh_sensor_cli_handlers *cb;
 };

@@ -20,6 +20,7 @@ struct prop_status_ctx {
 static void handle_mode(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf)
 {
+	bool *ack_buf;
 	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 
 	if (buf->len != 1) {
@@ -32,12 +33,10 @@ static void handle_mode(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 		return;
 	}
 
-	if (model_ack_match(&cli->ack, BT_MESH_LIGHT_CTRL_OP_MODE_STATUS,
-			    ctx)) {
-		bool *ack_buf = cli->ack.user_data;
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_CTRL_OP_MODE_STATUS, ctx->addr,
+				      (void **)&ack_buf)) {
 		*ack_buf = enabled;
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->mode) {
@@ -49,6 +48,7 @@ static void handle_occupancy(struct bt_mesh_model *model,
 			     struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
+	bool *ack_buf;
 	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 
 	if (buf->len != 1) {
@@ -61,11 +61,10 @@ static void handle_occupancy(struct bt_mesh_model *model,
 		return;
 	}
 
-	if (model_ack_match(&cli->ack, BT_MESH_LIGHT_CTRL_OP_OM_STATUS, ctx)) {
-		bool *ack_buf = cli->ack.user_data;
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_CTRL_OP_OM_STATUS, ctx->addr,
+				      (void **)&ack_buf)) {
 		*ack_buf = enabled;
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->occupancy_mode) {
@@ -79,6 +78,7 @@ static void handle_light_onoff(struct bt_mesh_model *model,
 {
 	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 	struct bt_mesh_onoff_status status;
+	struct bt_mesh_onoff_status *ack_buf;
 
 	uint8_t onoff = net_buf_simple_pull_u8(buf);
 
@@ -104,12 +104,10 @@ static void handle_light_onoff(struct bt_mesh_model *model,
 		return;
 	}
 
-	if (model_ack_match(&cli->ack, BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,
-			    ctx)) {
-		struct bt_mesh_onoff_status *ack_buf = cli->ack.user_data;
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,
+				      ctx->addr, (void **)&ack_buf)) {
 		*ack_buf = status;
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->light_onoff) {
@@ -121,7 +119,7 @@ static void handle_prop(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 			struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
-	struct prop_status_ctx *rsp = cli->ack.user_data;
+	struct prop_status_ctx *rsp;
 	const struct bt_mesh_sensor_format *format;
 	union prop_value value;
 	int err;
@@ -152,11 +150,11 @@ static void handle_prop(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 		}
 	}
 
-	if (model_ack_match(&cli->ack, BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,
-			    ctx) && rsp->id == id) {
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, ctx->addr,
+				      (void **)&rsp) &&
+	    rsp->id == id) {
 		rsp->val = value;
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (coeff) {
@@ -200,7 +198,7 @@ static int light_ctrl_cli_init(struct bt_mesh_model *model)
 	cli->pub.msg = &cli->pub_buf;
 	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
 				      sizeof(cli->pub_data));
-	model_ack_init(&cli->ack);
+	bt_mesh_msg_ack_ctx_init(&cli->ack_ctx);
 
 	return 0;
 }
@@ -210,7 +208,7 @@ static void light_ctrl_cli_reset(struct bt_mesh_model *model)
 	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
-	model_ack_reset(&cli->ack);
+	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_light_ctrl_cli_cb = {
@@ -226,7 +224,7 @@ int bt_mesh_light_ctrl_cli_mode_get(struct bt_mesh_light_ctrl_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_MODE_GET, 0);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_MODE_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_LIGHT_CTRL_OP_MODE_STATUS, rsp);
 }
 
@@ -238,7 +236,7 @@ int bt_mesh_light_ctrl_cli_mode_set(struct bt_mesh_light_ctrl_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_MODE_SET);
 	net_buf_simple_add_u8(&buf, enabled);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_LIGHT_CTRL_OP_MODE_STATUS, rsp);
 }
 
@@ -260,7 +258,7 @@ int bt_mesh_light_ctrl_cli_occupancy_enabled_get(
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_OM_GET, 0);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_OM_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_LIGHT_CTRL_OP_OM_STATUS, rsp);
 }
 
@@ -272,7 +270,7 @@ int bt_mesh_light_ctrl_cli_occupancy_enabled_set(
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_OM_SET);
 	net_buf_simple_add_u8(&buf, enabled);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_LIGHT_CTRL_OP_OM_STATUS, rsp);
 }
 
@@ -294,7 +292,7 @@ int bt_mesh_light_ctrl_cli_light_onoff_get(struct bt_mesh_light_ctrl_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_GET, 0);
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_GET);
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS, rsp);
 }
 
@@ -311,7 +309,7 @@ int bt_mesh_light_ctrl_cli_light_onoff_set(struct bt_mesh_light_ctrl_cli *cli,
 		model_transition_buf_add(&buf, set->transition);
 	}
 
-	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	return model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS, rsp);
 }
 
@@ -346,7 +344,7 @@ int bt_mesh_light_ctrl_cli_prop_get(struct bt_mesh_light_ctrl_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_PROP_GET);
 	net_buf_simple_add_le16(&buf, id);
 
-	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
 	if (err) {
 		return err;
@@ -387,7 +385,7 @@ int bt_mesh_light_ctrl_cli_prop_set(struct bt_mesh_light_ctrl_cli *cli,
 		return err;
 	}
 
-	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
 	if (err) {
 		return err;
@@ -441,7 +439,7 @@ int bt_mesh_light_ctrl_cli_coeff_get(struct bt_mesh_light_ctrl_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_PROP_GET);
 	net_buf_simple_add_le16(&buf, id);
 
-	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
 	if (err) {
 		return err;
@@ -470,7 +468,7 @@ int bt_mesh_light_ctrl_cli_coeff_set(struct bt_mesh_light_ctrl_cli *cli,
 	net_buf_simple_add_le16(&buf, id);
 	net_buf_simple_add_mem(&buf, &val, sizeof(float));
 
-	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &buf, rsp ? &cli->ack_ctx : NULL,
 			      BT_MESH_LIGHT_CTRL_OP_PROP_STATUS, &ack);
 	if (err) {
 		return err;

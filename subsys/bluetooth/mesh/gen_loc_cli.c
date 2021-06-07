@@ -18,15 +18,14 @@ static void handle_global_loc(struct bt_mesh_model *model,
 
 	struct bt_mesh_loc_cli *cli = model->user_data;
 	struct bt_mesh_loc_global loc;
+	struct bt_mesh_loc_global *rsp;
 
 	bt_mesh_loc_global_decode(buf, &loc);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_LOC_OP_GLOBAL_STATUS, ctx)) {
-		struct bt_mesh_loc_global *rsp =
-			(struct bt_mesh_loc_global *)cli->ack_ctx.user_data;
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LOC_OP_GLOBAL_STATUS, ctx->addr,
+				      (void **)&rsp)) {
 		*rsp = loc;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->global_status) {
@@ -44,15 +43,14 @@ static void handle_local_loc(struct bt_mesh_model *model,
 
 	struct bt_mesh_loc_cli *cli = model->user_data;
 	struct bt_mesh_loc_local loc;
+	struct bt_mesh_loc_local *rsp;
 
 	bt_mesh_loc_local_decode(buf, &loc);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_LOC_OP_LOCAL_STATUS, ctx)) {
-		struct bt_mesh_loc_local *rsp =
-			(struct bt_mesh_loc_local *)cli->ack_ctx.user_data;
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LOC_OP_LOCAL_STATUS, ctx->addr,
+				      (void **)&rsp)) {
 		*rsp = loc;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->local_status) {
@@ -82,7 +80,7 @@ static int bt_mesh_loc_init(struct bt_mesh_model *model)
 	cli->pub.msg = &cli->pub_buf;
 	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
 				      sizeof(cli->pub_data));
-	model_ack_init(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_init(&cli->ack_ctx);
 
 	return 0;
 }
@@ -92,7 +90,7 @@ static void bt_mesh_loc_reset(struct bt_mesh_model *model)
 	struct bt_mesh_loc_cli *cli = model->user_data;
 
 	net_buf_simple_reset(model->pub->msg);
-	model_ack_reset(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_loc_cli_cb = {

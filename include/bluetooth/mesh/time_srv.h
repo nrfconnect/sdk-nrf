@@ -100,7 +100,7 @@ struct bt_mesh_time_srv {
 	/** Setup model publish parameters */
 	struct bt_mesh_model_pub setup_pub;
 	/** Acknowledged message tracking. */
-	struct bt_mesh_model_ack_ctx ack_ctx;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/** Model state structure */
 	struct bt_mesh_time_srv_data data;
 

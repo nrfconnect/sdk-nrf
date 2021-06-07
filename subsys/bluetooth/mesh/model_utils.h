@@ -71,62 +71,8 @@ int model_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
  */
 int model_ackd_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		    struct net_buf_simple *buf,
-		    struct bt_mesh_model_ack_ctx *ack, uint32_t rsp_op,
+		    struct bt_mesh_msg_ack_ctx *ack, uint32_t rsp_op,
 		    void *user_data);
-
-static inline void model_ack_init(struct bt_mesh_model_ack_ctx *ack)
-{
-	k_sem_init(&ack->sem, 0, 1);
-}
-
-static inline void model_ack_reset(struct bt_mesh_model_ack_ctx *ack)
-{
-	k_sem_reset(&ack->sem);
-}
-
-static inline int model_ack_ctx_prepare(struct bt_mesh_model_ack_ctx *ack,
-					uint32_t op, uint16_t dst, void *user_data)
-{
-	if (ack->op != 0) {
-		return -EALREADY;
-	}
-	ack->op = op;
-	ack->user_data = user_data;
-	ack->dst = dst;
-	return 0;
-}
-
-static inline bool model_ack_match(const struct bt_mesh_model_ack_ctx *ack_ctx,
-				   uint32_t op,
-				   const struct bt_mesh_msg_ctx *msg_ctx)
-{
-	return (ack_ctx->op == op &&
-		(ack_ctx->dst == msg_ctx->addr || ack_ctx->dst == 0));
-}
-
-static inline int model_ack_wait(struct bt_mesh_model_ack_ctx *ack,
-				 int32_t timeout)
-{
-	int status = k_sem_take(&ack->sem, K_MSEC(timeout));
-
-	ack->op = 0;
-	return status;
-}
-
-static inline bool model_ack_busy(struct bt_mesh_model_ack_ctx *ack)
-{
-	return (ack->op != 0);
-}
-
-static inline void model_ack_rx(struct bt_mesh_model_ack_ctx *ack)
-{
-	k_sem_give(&ack->sem);
-}
-
-static inline void model_ack_clear(struct bt_mesh_model_ack_ctx *ack)
-{
-	ack->op = 0;
-}
 
 /** @brief Compare the TID of an incoming message with the previous
  * transaction, and update it if it's new.

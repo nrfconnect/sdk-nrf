@@ -71,7 +71,7 @@ struct bt_mesh_scheduler_cli {
 	uint8_t buf[BT_MESH_MODEL_BUF_LEN(BT_MESH_SCHEDULER_OP_ACTION_STATUS,
 			BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS)];
 	/* Ack context */
-	struct bt_mesh_model_ack_ctx ack;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/* Action index expected in the Ack. */
 	uint8_t ack_idx;
 };

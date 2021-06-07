@@ -105,7 +105,7 @@ struct bt_mesh_light_ctl_cli {
 	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
 		BT_MESH_LIGHT_CTL_SET, BT_MESH_LIGHT_CTL_MSG_MAXLEN_SET)];
 	/** Acknowledged message tracking. */
-	struct bt_mesh_model_ack_ctx ack_ctx;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/** Current transaction ID. */
 	uint8_t tid;
 	/** Handler function structure. */
