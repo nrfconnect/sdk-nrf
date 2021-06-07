@@ -35,14 +35,13 @@ static void properties_status(struct bt_mesh_model *model,
 
 	struct bt_mesh_prop_cli *cli = model->user_data;
 	struct bt_mesh_prop_list list;
+	struct prop_list_ctx *rsp;
 
 	list.count = buf->len / 2;
 	list.ids = (uint16_t *)net_buf_simple_pull_mem(buf, buf->len);
 
-	if (model_ack_match(&cli->ack_ctx,
-			    op_get(BT_MESH_PROP_OP_PROPS_STATUS, kind), ctx)) {
-		struct prop_list_ctx *rsp = cli->ack_ctx.user_data;
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, op_get(BT_MESH_PROP_OP_PROPS_STATUS, kind),
+				      ctx->addr, (void **)&rsp)) {
 		if (list.count > rsp->list->count) {
 			/* Buffer can't hold all entries */
 			rsp->status = -ENOBUFS;
@@ -51,7 +50,7 @@ static void properties_status(struct bt_mesh_model *model,
 
 		memcpy(rsp->list->ids, list.ids, list.count * 2);
 		rsp->list->count = list.count;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->prop_list) {
@@ -99,20 +98,19 @@ static void property_status(struct bt_mesh_model *model,
 
 	struct bt_mesh_prop_cli *cli = model->user_data;
 	struct bt_mesh_prop_val val;
+	struct bt_mesh_prop_val *rsp;
 
 	val.meta.id = net_buf_simple_pull_le16(buf);
 	val.meta.user_access = net_buf_simple_pull_u8(buf);
 	val.size = buf->len;
 	val.value = net_buf_simple_pull_mem(buf, val.size);
 
-	if (model_ack_match(&cli->ack_ctx,
-			    op_get(BT_MESH_PROP_OP_PROP_STATUS, kind), ctx)) {
-		struct bt_mesh_prop_val *rsp = cli->ack_ctx.user_data;
-
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, op_get(BT_MESH_PROP_OP_PROP_STATUS, kind),
+				      ctx->addr, (void **)&rsp)) {
 		rsp->meta = val.meta;
 		rsp->size = MIN(rsp->size, val.size);
 		memcpy(rsp->value, val.value, rsp->size);
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->prop_status) {
@@ -188,7 +186,7 @@ static int bt_mesh_prop_cli_init(struct bt_mesh_model *model)
 	cli->pub.msg = &cli->pub_buf;
 	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
 				      sizeof(cli->pub_data));
-	model_ack_init(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_init(&cli->ack_ctx);
 
 	return 0;
 }
@@ -198,7 +196,7 @@ static void bt_mesh_prop_cli_reset(struct bt_mesh_model *model)
 	struct bt_mesh_prop_cli *cli = model->user_data;
 
 	net_buf_simple_reset(model->pub->msg);
-	model_ack_reset(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_prop_cli_cb = {

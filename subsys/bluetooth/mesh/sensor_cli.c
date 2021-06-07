@@ -68,18 +68,16 @@ static void handle_descriptor_status(struct bt_mesh_model *model,
 	}
 
 	struct bt_mesh_sensor_cli *cli = model->user_data;
-	struct list_rsp *ack_ctx = cli->ack.user_data;
+	struct list_rsp *ack_ctx = NULL;
 	uint32_t count = 0;
-	bool is_rsp;
 
-	is_rsp = model_ack_match(&cli->ack, BT_MESH_SENSOR_OP_DESCRIPTOR_STATUS,
-				 ctx);
+	(void)bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SENSOR_OP_DESCRIPTOR_STATUS,
+					ctx->addr, (void **)&ack_ctx);
 
 	/* A packet with only the sensor ID means that the given sensor doesn't
 	 * exist on the sensor server.
 	 */
 	if (buf->len == 2) {
-		ack_ctx->count = 0;
 		goto yield_ack;
 	}
 
@@ -93,15 +91,15 @@ static void handle_descriptor_status(struct bt_mesh_model *model,
 			cli->cb->sensor(cli, ctx, &sensor);
 		}
 
-		if (is_rsp && count < ack_ctx->count) {
+		if (ack_ctx && count < ack_ctx->count) {
 			ack_ctx->sensors[count++] = sensor;
 		}
 	}
 
 yield_ack:
-	if (is_rsp) {
+	if (ack_ctx) {
 		ack_ctx->count = count;
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 }
 
@@ -110,12 +108,12 @@ static void handle_status(struct bt_mesh_model *model,
 			  struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
-	struct sensor_data_list_rsp *rsp = cli->ack.user_data;
+	struct sensor_data_list_rsp *rsp = NULL;
 	uint32_t count = 0;
-	bool is_rsp;
 	int err;
 
-	is_rsp = model_ack_match(&cli->ack, BT_MESH_SENSOR_OP_STATUS, ctx);
+	(void)bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SENSOR_OP_STATUS, ctx->addr,
+					(void **)&rsp);
 
 	while (buf->len) {
 		const struct bt_mesh_sensor_type *type;
@@ -124,11 +122,11 @@ static void handle_status(struct bt_mesh_model *model,
 
 		sensor_status_id_decode(buf, &length, &id);
 		if (length == 0) {
-			if (is_rsp && rsp->count == 1 && rsp->sensors[0].type &&
+			if (rsp && rsp->count == 1 && rsp->sensors[0].type &&
 			    rsp->sensors[0].type->id == id) {
-				is_rsp = false;
 				rsp->sensors[0].type = NULL;
-				model_ack_rx(&cli->ack);
+				bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
+				rsp = NULL;
 			}
 
 			continue;
@@ -166,7 +164,7 @@ static void handle_status(struct bt_mesh_model *model,
 			cli->cb->data(cli, ctx, type, value);
 		}
 
-		if (is_rsp && count <= rsp->count) {
+		if (rsp && count <= rsp->count) {
 			memcpy(rsp->sensors[count].value, value,
 			       sizeof(struct sensor_value) *
 				       type->channel_count);
@@ -176,9 +174,9 @@ static void handle_status(struct bt_mesh_model *model,
 		}
 	}
 
-	if (is_rsp) {
+	if (rsp) {
 		rsp->count = count;
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 }
 
@@ -221,7 +219,7 @@ static void handle_column_status(struct bt_mesh_model *model,
 				 struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
-	struct series_data_rsp *rsp = cli->ack.user_data;
+	struct series_data_rsp *rsp;
 	const struct bt_mesh_sensor_format *col_format;
 	const struct bt_mesh_sensor_type *type;
 	int err;
@@ -257,7 +255,8 @@ static void handle_column_status(struct bt_mesh_model *model,
 	}
 
 yield_ack:
-	if (model_ack_match(&cli->ack, BT_MESH_SENSOR_OP_COLUMN_STATUS, ctx) &&
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SENSOR_OP_COLUMN_STATUS, ctx->addr,
+				      (void **)&rsp) &&
 	    rsp->col->start.val1 == entry.column.start.val1 &&
 	    rsp->col->start.val2 == entry.column.start.val2) {
 		if (err) {
@@ -266,7 +265,7 @@ yield_ack:
 			rsp->entries[0] = entry;
 			rsp->count = 1;
 		}
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 }
 
@@ -287,8 +286,8 @@ static void handle_series_status(struct bt_mesh_model *model,
 		return;
 	}
 
-	if (model_ack_match(&cli->ack, BT_MESH_SENSOR_OP_SERIES_STATUS, ctx)) {
-		rsp = cli->ack.user_data;
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SENSOR_OP_SERIES_STATUS, ctx->addr,
+				      (void **)&rsp)) {
 		if (rsp->id != id) {
 			rsp = NULL;
 		}
@@ -300,7 +299,7 @@ static void handle_series_status(struct bt_mesh_model *model,
 
 		if (rsp) {
 			rsp->count = 0;
-			model_ack_rx(&cli->ack);
+			bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 		}
 
 		return;
@@ -330,7 +329,7 @@ static void handle_series_status(struct bt_mesh_model *model,
 
 	if (rsp) {
 		rsp->count = count;
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 }
 
@@ -339,7 +338,7 @@ static void handle_cadence_status(struct bt_mesh_model *model,
 				  struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
-	struct cadence_rsp *rsp = cli->ack.user_data;
+	struct cadence_rsp *rsp;
 	int err;
 
 	uint16_t id = net_buf_simple_pull_le16(buf);
@@ -369,7 +368,8 @@ static void handle_cadence_status(struct bt_mesh_model *model,
 	}
 
 yield_ack:
-	if (model_ack_match(&cli->ack, BT_MESH_SENSOR_OP_CADENCE_STATUS, ctx) &&
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SENSOR_OP_CADENCE_STATUS, ctx->addr,
+				      (void **)&rsp) &&
 	    rsp->id == id) {
 		if (err) {
 			rsp->cadence = NULL;
@@ -377,7 +377,7 @@ yield_ack:
 			*rsp->cadence = cadence;
 		}
 
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 }
 
@@ -386,7 +386,7 @@ static void handle_settings_status(struct bt_mesh_model *model,
 				   struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
-	struct settings_rsp *rsp = cli->ack.user_data;
+	struct settings_rsp *rsp;
 
 	if (buf->len % 2) {
 		return;
@@ -414,12 +414,12 @@ static void handle_settings_status(struct bt_mesh_model *model,
 		cli->cb->settings(cli, ctx, type, ids, count);
 	}
 
-	if (model_ack_match(&cli->ack, BT_MESH_SENSOR_OP_SETTINGS_STATUS,
-			    ctx) &&
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SENSOR_OP_SETTINGS_STATUS, ctx->addr,
+				      (void **)&rsp) &&
 	    rsp->id == id) {
 		memcpy(rsp->ids, ids, sizeof(uint16_t) * MIN(count, rsp->count));
 		rsp->count = count;
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 }
 
@@ -428,7 +428,7 @@ static void handle_setting_status(struct bt_mesh_model *model,
 				  struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
-	struct setting_rsp *rsp = cli->ack.user_data;
+	struct setting_rsp *rsp;
 	int err;
 
 	uint16_t id = net_buf_simple_pull_le16(buf);
@@ -480,10 +480,11 @@ static void handle_setting_status(struct bt_mesh_model *model,
 	}
 
 yield_ack:
-	if (model_ack_match(&cli->ack, BT_MESH_SENSOR_OP_SETTING_STATUS, ctx) &&
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SENSOR_OP_SETTING_STATUS, ctx->addr,
+				      (void **)&rsp) &&
 	    rsp->id == id && rsp->setting_id == setting_id) {
 		*rsp->setting = setting;
-		model_ack_rx(&cli->ack);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 }
 
@@ -534,7 +535,7 @@ static int sensor_cli_init(struct bt_mesh_model *model)
 	cli->pub.msg = &cli->pub_buf;
 	net_buf_simple_init_with_data(&cli->pub_buf, cli->pub_data,
 				      sizeof(cli->pub_data));
-	model_ack_init(&cli->ack);
+	bt_mesh_msg_ack_ctx_init(&cli->ack_ctx);
 
 	return 0;
 }
@@ -544,7 +545,7 @@ static void sensor_cli_reset(struct bt_mesh_model *model)
 	struct bt_mesh_sensor_cli *cli = model->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
-	model_ack_reset(&cli->ack);
+	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_sensor_cli_cb = {
@@ -568,7 +569,7 @@ int bt_mesh_sensor_cli_desc_all_get(struct bt_mesh_sensor_cli *cli,
 		.count = *count,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, sensors ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, sensors ? &cli->ack_ctx : NULL,
 			      BT_MESH_SENSOR_OP_DESCRIPTOR_STATUS, &list_rsp);
 
 	*count = list_rsp.count;
@@ -596,7 +597,7 @@ int bt_mesh_sensor_cli_desc_get(struct bt_mesh_sensor_cli *cli,
 		.count = 1,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
 			      BT_MESH_SENSOR_OP_DESCRIPTOR_STATUS, &list_rsp);
 	if (err) {
 		return err;
@@ -634,7 +635,7 @@ int bt_mesh_sensor_cli_cadence_get(struct bt_mesh_sensor_cli *cli,
 		.cadence = rsp,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_SENSOR_OP_CADENCE_STATUS, &rsp_data);
 	if (err) {
 		return err;
@@ -679,7 +680,7 @@ int bt_mesh_sensor_cli_cadence_set(
 		return err;
 	}
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
 			      BT_MESH_SENSOR_OP_CADENCE_STATUS, &rsp_data);
 	if (err) {
 		return err;
@@ -742,7 +743,7 @@ int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
 		.count = *count,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, ids ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, ids ? &cli->ack_ctx : NULL,
 			      BT_MESH_SENSOR_OP_SETTINGS_STATUS, &rsp);
 
 	if (ids && !err) {
@@ -773,7 +774,7 @@ int bt_mesh_sensor_cli_setting_get(struct bt_mesh_sensor_cli *cli,
 		.setting = rsp,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
 			      BT_MESH_SENSOR_OP_SETTING_STATUS, &rsp_data);
 	if (err) {
 		return err;
@@ -812,7 +813,7 @@ int bt_mesh_sensor_cli_setting_set(struct bt_mesh_sensor_cli *cli,
 		.setting = rsp,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_SENSOR_OP_SETTING_STATUS, &rsp_data);
 	if (err) {
 		return err;
@@ -869,7 +870,7 @@ int bt_mesh_sensor_cli_all_get(struct bt_mesh_sensor_cli *cli,
 		memset(sensors, 0, sizeof(*sensors) * (*count));
 	}
 
-	err = model_ackd_send(cli->model, ctx, &msg, sensors ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, sensors ? &cli->ack_ctx : NULL,
 			      BT_MESH_SENSOR_OP_STATUS, &rsp_data);
 	if (err) {
 		return err;
@@ -902,7 +903,7 @@ int bt_mesh_sensor_cli_get(struct bt_mesh_sensor_cli *cli,
 	struct sensor_data_list_rsp rsp_data = { .count = 1,
 						 .sensors = &sensor_data };
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
 			      BT_MESH_SENSOR_OP_STATUS, &rsp_data);
 	if (err) {
 		return err;
@@ -944,7 +945,7 @@ int bt_mesh_sensor_cli_series_entry_get(
 		.col = column,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
 			      BT_MESH_SENSOR_OP_COLUMN_STATUS, &rsp_data);
 	if (err) {
 		return err;
@@ -993,7 +994,7 @@ int bt_mesh_sensor_cli_series_entries_get(
 		.count = *count,
 	};
 
-	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack : NULL,
+	err = model_ackd_send(cli->model, ctx, &msg, rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_SENSOR_OP_SERIES_STATUS, &rsp_data);
 	if (err) {
 		return err;

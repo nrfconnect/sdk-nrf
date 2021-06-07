@@ -65,7 +65,7 @@ struct bt_mesh_battery_cli {
 		const struct bt_mesh_battery_status *status);
 
 	/** Response context for tracking acknowledged messages. */
-	struct bt_mesh_model_ack_ctx ack_ctx;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

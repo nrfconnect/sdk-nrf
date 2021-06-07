@@ -12,6 +12,8 @@ static int status_decode(struct bt_mesh_light_xyl_cli *cli,
 			 struct net_buf_simple *buf, uint32_t opcode,
 			 struct bt_mesh_light_xyl_status *status)
 {
+	struct bt_mesh_light_xyl_status *rsp;
+
 	if (buf->len != BT_MESH_LIGHT_XYL_MSG_MINLEN_STATUS &&
 	    buf->len != BT_MESH_LIGHT_XYL_MSG_MAXLEN_STATUS) {
 		return -EAGAIN;
@@ -25,12 +27,9 @@ static int status_decode(struct bt_mesh_light_xyl_cli *cli,
 			model_transition_decode(net_buf_simple_pull_u8(buf)) :
 			0;
 
-	if (model_ack_match(&cli->ack_ctx, opcode, ctx)) {
-		struct bt_mesh_light_xyl_status *rsp =
-			(struct bt_mesh_light_xyl_status *)
-				cli->ack_ctx.user_data;
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, opcode, ctx->addr, (void **)&rsp)) {
 		*rsp = *status;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 	return 0;
 }
@@ -75,17 +74,16 @@ static void default_status_handle(struct bt_mesh_model *model,
 
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
 	struct bt_mesh_light_xyl status;
+	struct bt_mesh_light_xyl *rsp;
 
 	status.lightness = net_buf_simple_pull_le16(buf);
 	status.xy.x = net_buf_simple_pull_le16(buf);
 	status.xy.y = net_buf_simple_pull_le16(buf);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_LIGHT_XYL_OP_DEFAULT_STATUS,
-			    ctx)) {
-		struct bt_mesh_light_xyl *rsp =
-			(struct bt_mesh_light_xyl *)cli->ack_ctx.user_data;
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_XYL_OP_DEFAULT_STATUS,
+			    ctx->addr, (void **)&rsp)) {
 		*rsp = status;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->default_status) {
@@ -103,6 +101,7 @@ static void range_status_handle(struct bt_mesh_model *model,
 
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
 	struct bt_mesh_light_xyl_range_status status;
+	struct bt_mesh_light_xyl_range_status *rsp;
 
 	status.status_code = net_buf_simple_pull_u8(buf);
 	status.range.min.x = net_buf_simple_pull_le16(buf);
@@ -110,13 +109,10 @@ static void range_status_handle(struct bt_mesh_model *model,
 	status.range.min.y = net_buf_simple_pull_le16(buf);
 	status.range.max.y = net_buf_simple_pull_le16(buf);
 
-	if (model_ack_match(&cli->ack_ctx, BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,
-			    ctx)) {
-		struct bt_mesh_light_xyl_range_status *rsp =
-			(struct bt_mesh_light_xyl_range_status *)
-				cli->ack_ctx.user_data;
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,
+			    ctx->addr, (void **)&rsp)) {
 		*rsp = status;
-		model_ack_rx(&cli->ack_ctx);
+		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
 	if (cli->handlers && cli->handlers->range_status) {
@@ -160,7 +156,7 @@ static int bt_mesh_light_xyl_cli_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&cli->pub_msg, cli->buf,
 				      sizeof(cli->buf));
 	cli->pub.msg = &cli->pub_msg;
-	model_ack_init(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_init(&cli->ack_ctx);
 
 	return 0;
 }
@@ -170,7 +166,7 @@ static void bt_mesh_light_xyl_cli_reset(struct bt_mesh_model *model)
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
-	model_ack_reset(&cli->ack_ctx);
+	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_light_xyl_cli_cb = {

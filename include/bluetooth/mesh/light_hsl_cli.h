@@ -120,7 +120,7 @@ struct bt_mesh_light_hsl_cli {
 	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
 		BT_MESH_LIGHT_HSL_OP_SET, BT_MESH_LIGHT_HSL_MSG_MAXLEN_SET)];
 	/** Acknowledged message tracking. */
-	struct bt_mesh_model_ack_ctx ack_ctx;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/** Current transaction ID. */
 	uint8_t tid;
 };

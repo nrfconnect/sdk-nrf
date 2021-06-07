@@ -82,7 +82,7 @@ struct bt_mesh_loc_cli {
 	/** Handler function structure */
 	const struct bt_mesh_loc_cli_handlers *const handlers;
 	/** Response context for tracking acknowledged messages. */
-	struct bt_mesh_model_ack_ctx ack_ctx;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

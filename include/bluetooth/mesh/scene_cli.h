@@ -93,7 +93,7 @@ struct bt_mesh_scene_cli {
 	uint8_t buf[BT_MESH_MODEL_BUF_LEN(BT_MESH_SCENE_OP_RECALL,
 					  BT_MESH_SCENE_MSG_MAXLEN_RECALL)];
 	/* Ack context */
-	struct bt_mesh_model_ack_ctx ack;
+	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/* Transaction ID */
 	uint8_t tid;
 };

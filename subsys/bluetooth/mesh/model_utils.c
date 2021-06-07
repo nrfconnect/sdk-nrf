@@ -121,12 +121,12 @@ int model_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 int model_ackd_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		    struct net_buf_simple *buf,
-		    struct bt_mesh_model_ack_ctx *ack, uint32_t rsp_op,
+		    struct bt_mesh_msg_ack_ctx *ack, uint32_t rsp_op,
 		    void *user_data)
 {
 	if (ack &&
-	    model_ack_ctx_prepare(ack, rsp_op, ctx ? ctx->addr : model->pub->addr,
-				  user_data) != 0) {
+	    bt_mesh_msg_ack_ctx_prepare(ack, rsp_op, ctx ? ctx->addr : model->pub->addr,
+					user_data) != 0) {
 		return -EALREADY;
 	}
 
@@ -137,10 +137,10 @@ int model_ackd_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			uint8_t ttl = (ctx ? ctx->send_ttl : model->pub->ttl);
 			int32_t time = (CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_BASE +
 				ttl * CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_PER_HOP);
-			return model_ack_wait(ack, time);
+			return bt_mesh_msg_ack_ctx_wait(ack, K_MSEC(time));
 		}
 
-		model_ack_clear(ack);
+		bt_mesh_msg_ack_ctx_clear(ack);
 	}
 	return retval;
 }
