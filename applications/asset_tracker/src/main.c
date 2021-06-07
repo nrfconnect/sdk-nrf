@@ -29,6 +29,9 @@
 #include <net/nrf_cloud_pgps.h>
 #include <pm_config.h>
 #endif
+#if defined(CONFIG_NRF_CLOUD_CELL_POS)
+#include <net/nrf_cloud_cell_pos.h>
+#endif
 
 #if defined(CONFIG_LWM2M_CARRIER)
 #include <lwm2m_carrier.h>
@@ -161,6 +164,9 @@ static struct k_work_delayable device_config_work;
 static struct k_work_delayable cloud_connect_work;
 static struct k_work device_status_work;
 static struct k_work_delayable send_agps_request_work;
+#if defined(CONFIG_NRF_CLOUD_CELL_POS)
+static struct k_work_delayable send_cell_pos_request_work;
+#endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static struct k_work_delayable manage_pgps_work;
 static struct k_work notify_pgps_work;
@@ -439,6 +445,34 @@ static void notify_pgps(struct k_work *work)
 }
 #endif
 
+#if defined(CONFIG_NRF_CLOUD_CELL_POS)
+/* Cell-based location has a smaller payload, allow more frequent updates */
+#define CELL_POS_UPDATE_PERIOD (10 * 60 * MSEC_PER_SEC)
+
+static void send_cell_pos_request(struct k_work *work)
+{
+	int err;
+	static int64_t last_request_timestamp;
+
+	ARG_UNUSED(work);
+
+	if ((last_request_timestamp != 0) &&
+	    (k_uptime_delta(&last_request_timestamp) < CELL_POS_UPDATE_PERIOD)) {
+		LOG_WRN("Cellular positioning request was sent less than 10 minutes ago");
+	} else {
+		LOG_INF("Sending cellular positioning request");
+
+		err = nrf_cloud_cell_pos_request(CELL_POS_TYPE_SINGLE, false);
+		if (err) {
+			LOG_WRN("Failed to request cell pos data, error: %d", err);
+		} else {
+			last_request_timestamp = k_uptime_get();
+			LOG_INF("cellular positioning request sent");
+		}
+	}
+}
+#endif /* CONFIG_NRF_CLOUD_CELL_POS */
+
 static void send_agps_request(struct k_work *work)
 {
 	ARG_UNUSED(work);
@@ -447,13 +481,8 @@ static void send_agps_request(struct k_work *work)
 	int err;
 	static int64_t last_request_timestamp;
 
-#if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
-/* Cell-based location has a smaller payload, allow more frequent updates */
-#define AGPS_UPDATE_PERIOD (10 * 60 * MSEC_PER_SEC)
-#else
 /* Request A-GPS data no more often than every hour (time in milliseconds). */
 #define AGPS_UPDATE_PERIOD (60 * 60 * MSEC_PER_SEC)
-#endif
 
 	if ((last_request_timestamp != 0) &&
 	    (k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD) {
@@ -1552,18 +1581,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 			break;
 		}
 #endif
-#if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
-		double lat, lon;
-
-		err = gps_get_last_cell_location(&lat, &lon);
-		if (err) {
-			LOG_ERR("Could not get cell-based location, err: %d",
-				err);
-		} else {
-			LOG_INF("Cell-based location: %lf, %lf", lat, lon);
-			break;
-		}
-#endif /* defined(CONFIG_AGPS_SINGLE_CELL_ONLY) */
+		LOG_INF("A-GPS data processed");
 #endif /* defined(CONFIG_AGPS) */
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 		err = nrf_cloud_pgps_process(evt->data.msg.buf,
@@ -1669,14 +1687,16 @@ static void set_gps_enable(const bool enable)
 	int32_t delay_ms = 0;
 	bool changing = (enable != gps_control_is_enabled());
 
-	/* Exit early if the link is not ready or if cell-based location
-	 * only is enabled or if the cloud state is defined and the local
+	/* Exit early if the link is not ready or if the cloud state is defined and the local
 	 * state is not changing.
 	 */
 	if (!data_send_enabled() ||
-	    IS_ENABLED(CONFIG_AGPS_SINGLE_CELL_ONLY) ||
 	    ((cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS) !=
 	    CLOUD_CMD_STATE_UNDEFINED) && !changing)) {
+		return;
+	}
+
+	if (!IS_ENABLED(CONFIG_NRF9160_GPS) && !IS_ENABLED(CONFIG_GPS_SIM)) {
 		return;
 	}
 
@@ -1728,6 +1748,9 @@ static void work_init(void)
 	k_work_init_delayable(&cloud_reboot_work, cloud_reboot_handler);
 	k_work_init_delayable(&cycle_cloud_connection_work,
 			    cycle_cloud_connection);
+#if defined(CONFIG_NRF_CLOUD_CELL_POS)
+	k_work_init_delayable(&send_cell_pos_request_work, send_cell_pos_request);
+#endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	k_work_init_delayable(&manage_pgps_work, manage_pgps);
 	k_work_init(&notify_pgps_work, notify_pgps);
@@ -1878,10 +1901,10 @@ static void sensors_init(void)
 		LOG_ERR("GPS could not be initialized");
 		return;
 	}
-#if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
+#if defined(CONFIG_NRF_CLOUD_CELL_POS)
 	/* Make initial cell-based location request */
 	k_work_reschedule_for_queue(&application_work_q,
-					&send_agps_request_work,
+					&send_cell_pos_request_work,
 					K_SECONDS(1));
 #endif
 }
@@ -2030,11 +2053,11 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_CELL_UPDATE:
 		LOG_INF("LTE cell changed: Cell ID: %d, Tracking area: %d",
 			evt->cell.id, evt->cell.tac);
-#if defined(CONFIG_AGPS_SINGLE_CELL_ONLY)
+#if defined(CONFIG_NRF_CLOUD_CELL_POS)
 		/* Request location based on new network info */
 		if (data_send_enabled() && evt->cell.id != -1) {
 			k_work_reschedule_for_queue(&application_work_q,
-						       &send_agps_request_work,
+						       &send_cell_pos_request_work,
 						       K_SECONDS(1));
 		}
 #endif
