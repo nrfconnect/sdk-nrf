@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include <modem/lte_lc.h>
+
 #include <net/ppp.h>
 
 #include <net/net_ip.h>
@@ -38,6 +40,32 @@ int ppp_modem_data_socket_fd = PPP_MODEM_DATA_RAW_SCKT_FD_NONE;
 
 /* Socket to send and recv data to/from Zephyr PPP link: */
 int ppp_data_socket_fd = PPP_MODEM_DATA_RAW_SCKT_FD_NONE;
+
+/* Work queue for auto starting/stopping ppp according to default PDN
+ * activation status:
+ */
+struct ppp_ctrl_worker_data {
+	struct k_work work;
+	bool default_pdn_active;
+} ppp_ctrl_worker_data;
+
+/******************************************************************************/
+
+static void ppp_ctrl_link_default_pdn_status_handler(struct k_work *work_item)
+{
+	struct ppp_ctrl_worker_data *data_ptr =
+		CONTAINER_OF(work_item, struct ppp_ctrl_worker_data, work);
+
+	if (data_ptr->default_pdn_active == true) {
+		shell_info(shell_global,
+			   "Default PDN is active: starting PPP automatically.");
+		ppp_ctrl_start(shell_global);
+	} else {
+		shell_info(shell_global,
+			   "Default PDN is not active: stopping PPP automatically.");
+		ppp_ctrl_stop();
+	}
+}
 
 /******************************************************************************/
 
@@ -105,6 +133,15 @@ static void ppp_ctrl_net_mgmt_events_subscribe(void)
 void ppp_ctrl_init(void)
 {
 	ppp_ctrl_net_mgmt_events_subscribe();
+
+	k_work_init(&ppp_ctrl_worker_data.work,
+		    ppp_ctrl_link_default_pdn_status_handler);
+}
+
+void ppp_ctrl_default_pdn_active(bool default_pdn_active)
+{
+	ppp_ctrl_worker_data.default_pdn_active = default_pdn_active;
+	k_work_submit(&ppp_ctrl_worker_data.work);
 }
 
 /******************************************************************************/

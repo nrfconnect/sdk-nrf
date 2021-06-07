@@ -13,4 +13,6 @@ void ppp_ctrl_init(void);
 int ppp_ctrl_start(const struct shell *shell);
 void ppp_ctrl_stop(void);
 
+void ppp_ctrl_default_pdn_active(bool default_pdn_active);
+
 #endif /* MOSH_PPP_CTRL_H */

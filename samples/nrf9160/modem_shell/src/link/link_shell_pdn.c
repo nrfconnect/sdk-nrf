@@ -11,6 +11,10 @@
 #include <modem/pdn.h>
 #include <modem/at_cmd.h>
 
+#if defined(CONFIG_MOSH_PPP)
+#include "ppp_ctrl.h"
+#endif
+
 #include "link_shell_print.h"
 #include "link_shell_pdn.h"
 
@@ -107,6 +111,18 @@ void link_pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 	default:
 		shell_print(shell_global, "PDN event: PDP context %d %s", cid,
 			    event_str[event]);
+#if defined(CONFIG_MOSH_PPP)
+		if (cid == 0) {
+			/* Notify PPP side about the default PDN activation
+			 * status:
+			 */
+			if (event == PDN_EVENT_ACTIVATED) {
+				ppp_ctrl_default_pdn_active(true);
+			} else if (event == PDN_EVENT_DEACTIVATED) {
+				ppp_ctrl_default_pdn_active(false);
+			}
+		}
+#endif
 		break;
 	}
 }
