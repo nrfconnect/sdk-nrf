@@ -7,6 +7,7 @@
 #pragma once
 
 #include <controller/CHIPDeviceController.h>
+#include <controller/ExampleOperationalCredentialsIssuer.h>
 #include <transport/raw/UDP.h>
 
 #include <atomic>
@@ -34,15 +35,23 @@ private:
 	class DiscoveryHandler : public chip::Transport::RawTransportDelegate {
 	public:
 		void SetEnabled(bool enabled) { mEnabled.store(enabled, std::memory_order_relaxed); }
-
-		void HandleMessageReceived(const chip::PacketHeader &header, const chip::Transport::PeerAddress &source,
-					   chip::System::PacketBufferHandle msgBuf) override;
+		void HandleMessageReceived(const chip::Transport::PeerAddress &source,
+					   chip::System::PacketBufferHandle &&msgBuf) override;
 
 	private:
 		std::atomic_bool mEnabled;
 	};
 
+	class PlaformPersistentStorageDelegate : public chip::PersistentStorageDelegate {
+	public:
+		CHIP_ERROR SyncGetKeyValue(const char *key, void *buffer, uint16_t &size) override;
+		CHIP_ERROR SyncSetKeyValue(const char *key, const void *value, uint16_t size) override;
+		CHIP_ERROR SyncDeleteKeyValue(const char *key) override;
+	};
+
 	chip::Transport::UDP mDiscoveryServiceEndpoint;
 	chip::Controller::DeviceCommissioner mCommissioner;
+	chip::Controller::ExampleOperationalCredentialsIssuer mOpCredDelegate;
+	PlaformPersistentStorageDelegate mStorageDelegate;
 	DiscoveryHandler mDiscoveryHandler;
 };

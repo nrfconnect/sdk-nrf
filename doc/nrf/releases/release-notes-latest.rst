@@ -375,16 +375,17 @@ The following list summarizes the most important changes inherited from upstream
 Matter (Project CHIP)
 =====================
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to and including ``0d5b9559ae``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to and including ``aa96ea0365``.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
 * Added:
 
-  * Completed the persistent storage feature, which allows Project CHIP devices to successfully communicate with each other even after reboot.
-  * Added support for OpenThread's Service Registration Protocol (SRP) to enable the discovery of Project CHIP nodes using the DNS-SD protocol.
-  * Added support for Network Commissioning Cluster, used when provisioning a Project CHIP node.
-  * Enabled CHIP Reliable Messaging Protocol (CRMP) for the User Datagram Protocol (UDP) traffic within a Project CHIP network.
+  * Completed the persistent storage feature, which allows Matter devices to successfully communicate with each other even after reboot.
+  * Added support for OpenThread's Service Registration Protocol (SRP) to enable the discovery of Matter nodes using the DNS-SD protocol.
+  * Added support for Network Commissioning Cluster, used when provisioning a Matter node.
+  * Enabled Message Reliability Protocol (MRP) for the User Datagram Protocol (UDP) traffic within a Matter network.
+  * Added support for Operational Credentials Cluster, used to equip a Matter node with an operational certificate.
 
 Documentation
 =============

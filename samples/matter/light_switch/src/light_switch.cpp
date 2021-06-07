@@ -8,8 +8,9 @@
 
 #include "app_task.h"
 
+#include <controller/data_model/gen/CHIPClusters.h>
 #include <platform/CHIPDeviceLayer.h>
-#include <app/chip-zcl-zpro-codec.h>
+#include <platform/KeyValueStoreManager.h>
 #include <support/ErrorStr.h>
 
 #include <logging/log.h>
@@ -24,9 +25,8 @@ static constexpr uint16_t kDiscoveryPort = 12345;
 static constexpr const char kDiscoveryMagicString[] = "chip-light-bulb";
 } /* namespace */
 
-void LightSwitch::DiscoveryHandler::HandleMessageReceived(const chip::PacketHeader &header,
-							  const chip::Transport::PeerAddress &source,
-							  chip::System::PacketBufferHandle msgBuf)
+void LightSwitch::DiscoveryHandler::HandleMessageReceived(const chip::Transport::PeerAddress &source,
+							  chip::System::PacketBufferHandle &&msgBuf)
 {
 	if (!mEnabled.load(std::memory_order_relaxed)) {
 		return;
@@ -41,9 +41,37 @@ void LightSwitch::DiscoveryHandler::HandleMessageReceived(const chip::PacketHead
 	GetAppTask().PostEvent(AppEvent(AppEvent::LightFound, source.GetIPAddress()));
 }
 
+CHIP_ERROR
+LightSwitch::PlaformPersistentStorageDelegate::SyncGetKeyValue(const char *key, void *buffer, uint16_t &size)
+{
+	return chip::DeviceLayer::PersistedStorage::KeyValueStoreMgr().Get(key, buffer, size);
+}
+
+CHIP_ERROR
+LightSwitch::PlaformPersistentStorageDelegate::SyncSetKeyValue(const char *key, const void *value, uint16_t size)
+{
+	return chip::DeviceLayer::PersistedStorage::KeyValueStoreMgr().Put(key, value, size);
+}
+
+CHIP_ERROR LightSwitch::PlaformPersistentStorageDelegate::SyncDeleteKeyValue(const char *key)
+{
+	return chip::DeviceLayer::PersistedStorage::KeyValueStoreMgr().Delete(key);
+}
+
 CHIP_ERROR LightSwitch::Init()
 {
-	CHIP_ERROR err = mCommissioner.Init(chip::kTestControllerNodeId, {});
+	CHIP_ERROR err = mOpCredDelegate.Initialize(mStorageDelegate);
+
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ExampleOperationalCredentialsIssuer::Initialize() failed: %s", chip::ErrorStr(err));
+		return err;
+	}
+
+	chip::Controller::CommissionerInitParams commissionerParams = {};
+	commissionerParams.storageDelegate = &mStorageDelegate;
+	commissionerParams.operationalCredentialsDelegate = &mOpCredDelegate;
+
+	err = mCommissioner.Init(chip::kTestControllerNodeId, commissionerParams);
 
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("DeviceCommissioner::Init() failed: %s", chip::ErrorStr(err));
@@ -116,12 +144,10 @@ CHIP_ERROR LightSwitch::ToggleLight()
 		return err;
 	}
 
-	auto buffer = encodeOnOffClusterToggleCommand(0, kLightBulbEndpointId);
-	if (buffer.IsNull()) {
-		return CHIP_ERROR_NO_MEMORY;
-	}
+	chip::Controller::OnOffCluster cluster;
+	cluster.Associate(device, kLightBulbEndpointId);
 
-	return device->SendMessage(chip::Protocols::TempZCL::Id, 0, std::move(buffer));
+	return cluster.Toggle(nullptr, nullptr);
 }
 
 CHIP_ERROR LightSwitch::SetLightLevel(uint8_t level)
@@ -136,10 +162,8 @@ CHIP_ERROR LightSwitch::SetLightLevel(uint8_t level)
 		return err;
 	}
 
-	auto buffer = encodeLevelControlClusterMoveToLevelCommand(0, kLightBulbEndpointId, level, 0, 0, 0);
-	if (buffer.IsNull()) {
-		return CHIP_ERROR_NO_MEMORY;
-	}
+	chip::Controller::LevelControlCluster cluster;
+	cluster.Associate(device, kLightBulbEndpointId);
 
-	return device->SendMessage(chip::Protocols::TempZCL::Id, 0, std::move(buffer));
+	return cluster.MoveToLevel(nullptr, nullptr, level, 0, 0, 0);
 }
