@@ -77,12 +77,14 @@
 /* Not used, only the Non-swapping firmware upgrade operation
  * is supported on NRF5340 Application MCU.
  */
+#ifdef PM_TFM_EXTRA_ADDRESS
 #define FLASH_AREA_SCRATCH_ID      (FLASH_AREA_3_ID + 1)
 #define FLASH_AREA_SCRATCH_OFFSET  (PM_TFM_EXTRA_ADDRESS)
 #define FLASH_AREA_SCRATCH_SIZE    (0)
 /* Maximum number of image sectors supported by the bootloader. */
 #define MCUBOOT_MAX_IMG_SECTORS    (FLASH_MAX_PARTITION_SIZE / \
 				    FLASH_AREA_IMAGE_SECTOR_SIZE)
+#endif /* PM_TFM_EXTRA_ADDRESS */
 
 /* Not used, only the Non-swapping firmware upgrade operation
  * is supported on nRF5340. The maximum number of status entries
@@ -90,7 +92,7 @@
  */
 #define MCUBOOT_STATUS_MAX_ENTRIES      (0)
 
-
+#ifdef PM_TFM_EXTRA_ADDRESS
 #define FLASH_PS_AREA_OFFSET            (PM_TFM_EXTRA_ADDRESS)
 #define FLASH_PS_AREA_SIZE              (0x4000)   /* 16 KB */
 
@@ -98,6 +100,7 @@
 #define FLASH_ITS_AREA_OFFSET           (FLASH_PS_AREA_OFFSET + \
 					 FLASH_PS_AREA_SIZE)
 #define FLASH_ITS_AREA_SIZE             (0x2000)   /* 8 KB */
+#endif /* PM_TFM_EXTRA_ADDRESS */
 
 /* NV Counters definitions */
 #define FLASH_NV_COUNTERS_AREA_OFFSET   (FLASH_ITS_AREA_OFFSET + \
@@ -126,6 +129,7 @@
 /* In this target the CMSIS driver requires only the offset from the base
  * address instead of the full memory address.
  */
+#ifdef FLASH_PS_AREA_OFFSET
 #define TFM_HAL_PS_FLASH_AREA_ADDR     FLASH_PS_AREA_OFFSET
 /* Dedicated flash area for PS */
 #define TFM_HAL_PS_FLASH_AREA_SIZE     FLASH_PS_AREA_SIZE
@@ -134,6 +138,7 @@
 #define TFM_HAL_PS_SECTORS_PER_BLOCK   (0x1)
 /* Specifies the smallest flash programmable unit in bytes */
 #define TFM_HAL_PS_PROGRAM_UNIT        (0x4)
+#endif /* FLASH_PS_AREA_OFFSET */
 
 /* Internal Trusted Storage (ITS) Service definitions
  * Note: Further documentation of these definitions can be found in the

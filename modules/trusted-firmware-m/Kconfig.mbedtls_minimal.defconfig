@@ -1,0 +1,49 @@
+config MBEDTLS_SHA1_C
+	default n
+
+config MBEDTLS_SHA512_C
+	default n
+
+# SHA256 is enabled since we don't override its default
+
+config MBEDTLS_TLS_LIBRARY
+	default n
+
+config MBEDTLS_X509_LIBRARY
+	default n
+
+config MBEDTLS_ENABLE_HEAP
+	default n
+
+config MBEDTLS_DHM_C
+	default n
+
+config MBEDTLS_ECP_C
+	default n
+
+config MBEDTLS_HMAC_DRBG_C
+	default n
+
+config MBEDTLS_CIPHER_MODE_CBC
+	default n
+
+config MBEDTLS_CIPHER_MODE_CTR
+	default n
+
+config MBEDTLS_CMAC_C
+	default n
+
+config MBEDTLS_CCM_C
+	default n
+
+config MBEDTLS_GCM_C
+	default n
+
+config MBEDTLS_CHACHA20_C
+	default n
+
+config MBEDTLS_POLY1305_C
+	default n
+
+config MBEDTLS_PSA_CRYPTO_STORAGE_C
+	default n

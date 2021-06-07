@@ -1,0 +1,16 @@
+config TFM_MCUBOOT_IMAGE_NUMBER
+	int
+	default 1
+
+# The HASH module is needed to provide RNG functionality
+config TFM_CRYPTO_HASH_MODULE_ENABLED
+	bool
+	default y
+
+config TFM_PARTITION_CRYPTO
+	bool
+	default y
+
+config TFM_PARTITION_PLATFORM
+	bool
+	default y
