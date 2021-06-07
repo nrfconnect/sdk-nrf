@@ -155,8 +155,8 @@ int gps_control_init(struct k_work_q *work_q, gps_event_handler_t handler)
 		return -EINVAL;
 	}
 
-	if (IS_ENABLED(CONFIG_AGPS_SINGLE_CELL_ONLY)) {
-		LOG_INF("Cell-based location enabled, skipping GPS init");
+	if (!IS_ENABLED(CONFIG_NRF9160_GPS) && !IS_ENABLED(CONFIG_GPS_SIM)) {
+		LOG_INF("GPS not enabled, skipping GPS init");
 		return 0;
 	}
 

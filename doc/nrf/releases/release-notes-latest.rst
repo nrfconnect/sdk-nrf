@@ -38,8 +38,8 @@ nRF9160
 
   * :ref:`lib_nrf_cloud` library:
 
-    * Added cell-based location support to :ref:`lib_nrf_cloud_agps`.
-    * Added Kconfig option :option:`CONFIG_NRF_CLOUD_AGPS_SINGLE_CELL_ONLY` to obtain cell-based location from nRF Connect for Cloud instead of using the modem's GPS.
+    * Added cellular positioning support to :ref:`lib_nrf_cloud_cell_pos`.
+    * Added Kconfig option :option:`CONFIG_NRF_CLOUD_CELL_POS` to obtain cell-based location from nRF Cloud instead of using the modem's GPS.
     * Added function :c:func:`nrf_cloud_modem_fota_completed` which is to be called by the application after it re-initializes the modem (instead of rebooting) after a modem FOTA update.
     * Updated to include the FOTA type value in the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event.
     * Updated configuration options for setting the source of the MQTT client ID (nRF Cloud device ID).
@@ -48,12 +48,7 @@ nRF9160
 
     * Updated to handle new Kconfig options:
 
-      * :option:`CONFIG_NRF_CLOUD_AGPS_SINGLE_CELL_ONLY`
-      * :option:`CONFIG_NRF_CLOUD_AGPS_REQ_CELL_BASED_LOC`
-
-  * A-GPS library:
-
-    * Added the Kconfig option :option:`CONFIG_AGPS_SINGLE_CELL_ONLY` to support cell-based location instead of using the modem's GPS.
+      * :option:`CONFIG_NRF_CLOUD_CELL_POS`
 
   * :ref:`modem_info_readme` library:
 
