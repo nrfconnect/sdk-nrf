@@ -9,16 +9,16 @@
 #include "app_task.h"
 #include "lighting_manager.h"
 
-#include "gen/attribute-id.h"
-#include "gen/cluster-id.h"
-#include "gen/command-id.h"
-#include <app/util/af.h>
+#include <app/common/gen/attribute-id.h>
+#include <app/common/gen/attribute-type.h>
+#include <app/common/gen/cluster-id.h>
 #include <app/util/af-types.h>
+#include <app/util/af.h>
 
 using namespace ::chip;
 
 void emberAfPostAttributeChangeCallback(EndpointId endpoint, ClusterId clusterId, AttributeId attributeId, uint8_t mask,
-					uint16_t manufacturerCode, uint8_t type, uint8_t size, uint8_t *value)
+					uint16_t manufacturerCode, uint8_t type, uint16_t size, uint8_t *value)
 {
 	ChipLogProgress(Zcl, "Cluster callback: %d", clusterId);
 
@@ -30,7 +30,7 @@ void emberAfPostAttributeChangeCallback(EndpointId endpoint, ClusterId clusterId
 
 		GetAppTask().PostEvent(AppEvent(*value ? AppEvent::On : AppEvent::Off, *value, true));
 	} else if (clusterId == ZCL_LEVEL_CONTROL_CLUSTER_ID) {
-		if (attributeId != ZCL_MOVE_TO_LEVEL_COMMAND_ID) {
+		if (attributeId != ZCL_CURRENT_LEVEL_ATTRIBUTE_ID) {
 			ChipLogProgress(Zcl, "Unknown attribute ID: %d", attributeId);
 			return;
 		}

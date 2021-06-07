@@ -90,11 +90,7 @@ void LightBulbPublishService::Publish()
 
 	auto buffer = chip::System::PacketBufferHandle::NewWithData(kPublishServicePayload, payloadLength);
 	if (!buffer.IsNull()) {
-		/* Subsequent messages are assumed to have increasing IDs. */
-		PacketHeader header;
-		header.SetMessageId(mMessageId++);
-
-		if (mUdp.SendMessage(header, Transport::PeerAddress::UDP(mPublishDestAddr, kServiceUDPPort),
+		if (mUdp.SendMessage(Transport::PeerAddress::UDP(mPublishDestAddr, kServiceUDPPort),
 				     std::move(buffer)) == CHIP_NO_ERROR) {
 			LOG_INF("LightBulbPublishService message sent successfully");
 		} else {

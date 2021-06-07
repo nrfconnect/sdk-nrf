@@ -6,8 +6,8 @@
 
 #include "app_task.h"
 
-#include "light_switch.h"
 #include "led_widget.h"
+#include "light_switch.h"
 #include "thread_util.h"
 
 #include <platform/CHIPDeviceLayer.h>
