@@ -67,7 +67,7 @@
 #else
 /* No header if no bootloader, but keep IMAGE_CODE_SIZE the same */
 #define BL2_HEADER_SIZE      (0x0)
-#define BL2_TRAILER_SIZE     (0x800)
+#define BL2_TRAILER_SIZE     (0x0)
 #endif /* BL2 */
 
 #define IMAGE_S_CODE_SIZE \

@@ -33,6 +33,7 @@ If TF-M is used in the application, SPM will not be included in it.
 For more information about multi-image builds, see :ref:`ug_multi_image`.
 
 To add TF-M to your build, enable the :option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
+If you want a :ref:`minimal version <tfm_minimal_build>` of TF-M, also enable the :option:`CONFIG_TFM_MINIMAL` configuration.
 
 .. note::
    If you use menuconfig to enable :option:`CONFIG_BUILD_WITH_TFM`, you must also enable its dependencies.
@@ -46,6 +47,19 @@ The following targets are currently supported:
 When building for ``nrf9160dk_nrf9160ns``, UART1 must be disabled in the non-secure application, because it is used by the TF-M secure application.
 Otherwise, the non-secure application will fail to run.
 The recommended way to do this is to copy the .overlay file from the :ref:`tfm_hello_world` sample.
+
+.. _tfm_minimal_build:
+
+Minimal build
+=============
+
+The default configuration of TF-M has all supported features enabled, which results in a significant memory footprint.
+A minimal version of the TF-M secure application is provided to show how to configure a reduced version of TF-M.
+The non-secure callable interfaces supported by this version generating random numbers, hashing with SHA256, and `tfm_platform_mem_read`.
+The minimal version is enabled by setting the :option:`CONFIG_TFM_MINIMAL` option.
+
+When :option:`CONFIG_TFM_MINIMAL` is set, the configurability of TF-M is severely limited.
+Hence, it is not possible to modify the TF-M minimal configuration to create your own variant of a minimal configuration, instead the default configuration must be used as a starting point.
 
 Programming
 ***********

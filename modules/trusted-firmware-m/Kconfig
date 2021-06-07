@@ -1,0 +1,80 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# The Kconfig of the TF-M module in zephyr is split into several files.
+# This is done to facilitate providing out-of-tree definitions of these
+# symbols. This is typically done to modify what options are exposed, and their
+# values. This repo (sdk-nrf) also includes TF-M as a module, and its
+# module definition takes presedence over that of zephyr. If TFM_MINIMAL
+# is not set, we include the top level module Kconfig, which again includes
+# all parts of the TF-M module kconfig. If, however, TFM_MINIMAL is set,
+# only a subset of these kconfig files will be included.
+
+config TFM_IPC
+	default y if TFM_MINIMAL
+
+config TFM_MINIMAL
+	bool "Use minimal TF-M build"
+	help
+	  Use minimal TF-M build. This will make the TF-M image fit within 32kB.
+	  No configuration of the size of the partition nor the features of the
+	  TF-M image can be done when this option is selected. If your application
+	  needs a different TF-M configuration you have to disable this option
+	  and reproduce the desired configuration through kconfig fragments.
+
+if !TFM_MINIMAL
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig"
+endif
+
+if TFM_MINIMAL
+
+rsource "Kconfig.mbedtls_minimal.defconfig"
+
+rsource "Kconfig.tfm_minimal.defconfig"
+
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
+
+endif # TFM_MINIMAL
+
+if BUILD_WITH_TFM
+
+config PM_PARTITION_SIZE_TFM_SRAM
+	hex
+	prompt "Memory reserved for TFM_RAM." if !TFM_MINIMAL
+	default 0x10000 if TFM_MINIMAL
+	default 0x16000 if SOC_NRF9160
+	default 0x40000 if SOC_NRF5340_CPUAPP
+	help
+	  Memory set aside for the TFM_SRAM partition.
+
+config PM_PARTITION_SIZE_BL2
+	hex "Memory reserved for BL2"
+	default 0x8000 if TFM_BL2
+	default 0
+	help
+	  Memory set aside for the BL2 partition.
+
+config PM_PARTITION_SIZE_TFM
+	hex
+	prompt  "Memory reserved for TFM" if !TFM_MINIMAL
+	default 0x8000 if TFM_MINIMAL
+	default 0x40000
+	help
+	  Memory set aside for the TFM partition. This size is fixed if
+	  TFM_MINIMAL is set. This is because no modification of the features
+	  supported by TF-M can be performed when TFM_MINIMAL is enabled.
+
+config PM_PARTITION_SIZE_TFM_EXTRA
+	hex
+	prompt  "Memory reserved for TFM EXTRA" if !TFM_MINIMAL
+	default 0x10000 if !TFM_MINIMAL
+	default 0
+	help
+	  Memory set aside for the TFM EXTRA partition. If TFM_MINIMAL is set
+	  its size will be set to 0, this is because no feature using this
+	  partition is enabled when TFM_MINIMAL is enabled.
+
+endif # BUILD_WITH_TFM
