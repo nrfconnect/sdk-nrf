@@ -54,7 +54,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 3d906316a0af70ccc20fab3edebb5d9726428983
+      revision: pull/525/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -101,7 +101,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 9c07ac14d4666030ad70d88ea8f830bbb3f0d99d
+      revision: pull/426/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
@@ -117,7 +117,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 430b49a904383ec27131c335b5bfb44046e23338
+      revision: pull/9/head
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -147,7 +147,7 @@ manifest:
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: mbedtls
-      revision: mbedtls-2.24.0
+      revision: mbedtls-2.26.0
       remote: armmbed
     - name: nanopb
       path: modules/lib/nanopb
