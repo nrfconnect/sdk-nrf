@@ -19,3 +19,10 @@ tests:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
       - nrf5340dk_nrf5340_cpuapp
+  samples.openthread.coap_client.multiprotocol_ble.dfu_support:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    tags: ci_build
+    extra_args: OVERLAY_CONFIG=overlay-multiprotocol_ble.conf;overlay-dfu_support.conf
+    integration_platforms:
+      - nrf52840dk_nrf52840
