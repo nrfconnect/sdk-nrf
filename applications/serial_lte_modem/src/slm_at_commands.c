@@ -15,6 +15,7 @@
 #include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 #include <sys/reboot.h>
+#include "ncs_version.h"
 
 #include "slm_util.h"
 #include "slm_at_host.h"
@@ -74,12 +75,6 @@ void rsp_send(const uint8_t *str, size_t len);
 int poweroff_uart(void);
 bool verify_datamode_control(uint16_t time_limit, uint16_t *time_limit_min);
 
-#if defined(CONFIG_SLM_CUSTOMIZED)
-#define SLM_VERSION	"\r\n#XSLMVER: \"1.6-CUSTOMIZED\"\r\n"
-#else
-#define SLM_VERSION	"\r\n#XSLMVER: \"1.6\"\r\n"
-#endif
-
 static void modem_power_off(void)
 {
 	/*
@@ -105,7 +100,14 @@ static int handle_at_slmver(enum at_cmd_type type)
 	int ret = -EINVAL;
 
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
-		rsp_send(SLM_VERSION, sizeof(SLM_VERSION) - 1);
+#if defined(CONFIG_SLM_CUSTOMIZED)
+		sprintf(rsp_buf, "\r\n#XSLMVER: %s-CUSTOMIZED\r\n",
+			STRINGIFY(NCS_VERSION_STRING));
+#else
+		sprintf(rsp_buf, "\r\n#XSLMVER: %s\r\n",
+			STRINGIFY(NCS_VERSION_STRING));
+#endif
+		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 	}
 
