@@ -136,12 +136,19 @@ nRF5 SDK Bootloader
 -------------------
 
 When the sample is built for ``nrf52840dongle_nrf52840``, the build system does not produce an upgrade image.
-You can use the nRF Connect Programmer application (part of `nRF Connect for Desktop`_) to generate and upload a new application image to the dongle.
-For more details, see `Programming the nRF52840 Dongle`_ in the nRF Connect Programmer user guide.
+to upgrade the dongle, you can use one of the following options:
 
-To boot to the bootloader on the dongle, an additional action is required.
-For example, you can trigger the pin reset procedure to reboot the device to the bootloader DFU mode, in which the new application image can be uploaded.
-See `nRF5 Bootloader DFU Mode`_ for the list of possible conditions for activating the DFU mode.
+* nRF Connect Programmer application (part of `nRF Connect for Desktop`_).
+  For more details, see `Programming the nRF52840 Dongle`_ in the nRF Connect Programmer user guide.
+* `nRF Util`_ tool, if you do not want to use the nRF Connect Programmer application.
+  To generate a DFU package, see `Generating DFU packages`_ in the nRF Util user guide.
+  Upgrading the dongle using this method requires putting the dongle into the DFU mode.
+  When in the DFU mode, you can use `nRF Util`_ for sending the upgrade image.
+  See `DFU over a serial USB connection`_ in the nRF Util user guide.
+
+  .. note::
+      By default, you can enter the DFU mode on the dongle using the pin reset.
+      Alternatively, you can also trigger the bootloader on the dongle from the NCP Host application by calling :c:func:`ncp_host_ota_run_bootloader`.
 
 FEM support
 ===========
