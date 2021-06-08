@@ -77,7 +77,7 @@ Kconfig*                                  @tejlmand
 /lib/fatal_error/                         @ioannisg
 /lib/sms/                                 @trantanen
 /lib/st25r3911b/                          @grochu
-/lib/supl/                                @rlubos @evenl
+/lib/supl/                                @rlubos @tokangas
 /lib/date_time/                           @simensrostad
 /lib/wave_gen/                            @MarekPieta
 /lib/hw_unique_key/                       @Vge0rge
