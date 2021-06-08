@@ -6,6 +6,23 @@
 
 menu "Nordic nRF Connect"
 
+#
+# Provide a new choice to override the mbedtls_external library completely
+# and not have to provide a "dummy" path for the implementation
+#
+choice MBEDTLS_IMPLEMENTATION
+	prompt "Select implementation"
+	default MBEDTLS_LIBRARY_NRF_SECURITY
+
+config MBEDTLS_LIBRARY_NRF_SECURITY
+	bool "Use mbed TLS library from Nordic provided security backend"
+	depends on NORDIC_SECURITY_BACKEND
+	help
+	  Use external, out-of-tree prebuilt mbedTLS library. For advanced
+	  users only.
+
+endchoice
+
 # This is a temporary solution to whitelist
 # BOARD_THINGY91_NRF9160NS in compliance
 config BOARD_THINGY91_NRF9160NS
