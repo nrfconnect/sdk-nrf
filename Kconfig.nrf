@@ -18,8 +18,8 @@ config MAIN_STACK_SIZE
 	default 2048 if ZTEST
 	default 2048 if ENTROPY_CC3XX
 
-config ZTEST_STACKSIZE
-	default 2048 if ZTEST
+config TEST_EXTRA_STACKSIZE
+	default 1024 if ZTEST
 
 config PRIVILEGED_STACK_SIZE
 	default 2048 if ZTEST
