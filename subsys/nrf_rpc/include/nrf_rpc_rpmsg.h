@@ -10,6 +10,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "rp_ll.h"
+
 /**
  * @defgroup nrf_rpc_tr_rpmsg nRF PRC transport using RPMsg
  * @{
