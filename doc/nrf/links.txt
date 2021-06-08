@@ -607,6 +607,8 @@
 
 .. _`Git`: https://git-scm.com/
 
+.. _`Go language package`: https://golang.org/doc/install
+
 .. _`reStructuredText Primer`: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
 
 .. _`mscgen`: http://www.mcternan.me.uk/mscgen/

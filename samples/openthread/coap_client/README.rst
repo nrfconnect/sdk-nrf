@@ -45,6 +45,16 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
+Device Firmware Upgrade extension
+=================================
+
+This optional extension can be used to perform an over-the-air Device Firmware Upgrade (DFU).
+In this process, the device that hosts the new firmware image sends it to the CoAP Client device using `SMP over Bluetooth`_.
+The :ref:`MCUboot <mcuboot:mcuboot_wrapper>` bootloader solution is then used to replace the old firmware image with the new one.
+
+.. note::
+   The Device Firmware Upgrade feature is currently supported only on the nRF52840 DK.
+
 Requirements
 ************
 
@@ -56,6 +66,7 @@ The sample supports the following development kits:
 
 You can use one or more of the development kits listed above as the Thread CoAP Client.
 You also need one or more compatible development kits programmed with the :ref:`coap_server_sample` sample.
+
 
 Multiprotocol extension requirements
 ====================================
@@ -131,6 +142,8 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
 
 * For the Minimal Thread Device variant, set :file:`overlay-mtd.conf`.
 * For the Multiprotocol Bluetooth LE extension, set :file:`overlay-multiprotocol_ble.conf`.
+* For the Device Firmware Upgrade extension, set :file:`overlay-dfu_support.conf`.
+  Because the Device Firmware Upgrade is performed over Bluetooth LE, you must also enable the Multiprotocol Bluetooth LE extension.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
@@ -223,6 +236,81 @@ To test the multiprotocol Bluetooth LE extension, complete the following steps a
    #. In nRF Toolbox, press the right button to pair the two nodes.
 
 #. In nRF Toolbox, press the left button to control **LED 4** on the paired server node.
+
+Testing Device Firmware Upgrade extension
+-----------------------------------------
+
+There are two ways of performing the DFU:
+
+* Using a smartphone with the `nRF Connect for Mobile`_ application installed.
+* Using a Linux PC with the `mcumgr`_ command line tool.
+
+To test the DFU extension, complete the steps for the chosen method.
+
+Device Firmware Upgrade using nRF Connect for Mobile
+   1. Navigate to the :file:`build/zephyr` directory and copy the :file:`app_update.bin` file to your smartphone.
+   #. Install the `nRF Connect for Mobile`_ application on your smartphone and run it.
+   #. On the Scanner tab, find the device called ``NUS_CoAP_client`` and click the :guilabel:`CONNECT` button.
+   #. Click the DFU icon in the bar on the top.
+   #. Select the location of the :file:`app_update.bin` file on your smartphone.
+   #. Select the desired DFU mode and click :guilabel:`OK`.
+   #. Observe the DFU progress on the mobile application chart or in the device logs.
+
+   After finishing the upgrade, the device will be rebooted.
+   It should start operating with the new firmware version.
+
+Device Firmware Upgrade using mcumgr
+   1. Install the `Go language package`_ (if it is not already installed).
+   #. Download mcumgr by invoking the following command:
+
+      .. code-block:: console
+
+         $ go get github.com/apache/mynewt-mcumgr-cli/mcumgr
+
+   #. Upload the firmware image to the device by running the following command in the sample directory:
+
+      .. code-block:: console
+
+         $ sudo mcumgr --conntype ble --connstring peer_name='NUS_CoAP_client' image upload build/zephyr/app_update.bin
+
+      The operation might take a few minutes.
+      Wait until the progress bar reaches 100%.
+
+   #. Obtain the list of images present in the device memory by running the following command:
+
+      .. code-block:: console
+
+         $ sudo mcumgr --conntype ble --connstring peer_name='NUS_CoAP_client' image list
+         Images:
+         image=0 slot=0
+               version: 0.0.0
+               bootable: true
+               flags: active confirmed
+               hash: 7bb0e909a846e833465cbb44c581cf045413a5446c6953a30a3dcc2c3ad51764
+         image=0 slot=1
+               version: 0.0.0
+               bootable: true
+               flags:
+               hash: cbd58fc3821e749d3abfb00b3069f98c078824735f1b2a333e8a1579971e7de1
+         Split status: N/A (0)
+
+   #. Select the new firmware image by calling the following method, replacing *image-hash* with the hash of the image present in slot 1 (for example, ``cbd58fc3821e749d3abfb00b3069f98c078824735f1b2a333e8a1579971e7de1``):
+
+      .. parsed-literal::
+         :class: highlight
+
+         $ sudo mcumgr --conntype ble --connstring peer_name='NUS_CoAP_client' image test *image-hash*
+
+      The selected image is marked with a ``pending`` flag.
+
+   #. Reset the device with the following command to let the bootloader swap the images:
+
+      .. code-block:: console
+
+         $ sudo mcumgr --conntype ble --connstring peer_name='NUS_CoAP_client' reset
+
+      The device will be rebooted and the firmware images swapped.
+      The swapping operation might take some time.
 
 Sample output
 =============
