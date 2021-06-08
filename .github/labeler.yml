@@ -199,5 +199,9 @@
     - "subsys/bluetooth/**/*"
     - "!subsys/bluetooth/mesh/**/*"
 
+"CI-rpc-test":
+  - "subsys/nrf_rpc/**/*"
+  - "samples/nrf_rpc/**/*"
+
 "changelog-entry-required":
   - "!doc/nrf/releases/release-notes-changelog.rst"
