@@ -20,18 +20,32 @@ function(get_board_without_ns_suffix board_in board_out)
   endif()
 endfunction()
 
-# Add a kconfig overlay file to a child image.
-# This can be used by a parent image to set kconfig values in its child images.
-# This must be invoked before 'add_child_image(image)'
-function(add_overlay_config image overlay_file)
-  set(old_conf ${${image}_OVERLAY_CONFIG})
-  string(FIND "${old_conf}" "${overlay_file}" found)
+# Add an overlay file to a child image.
+# This can be used by a parent image to set overlay of Kconfig configuration or devicetree
+# in its child images. This function must be called before 'add_child_image(image)'
+# to have effect.
+#
+# Parameters:
+#   'image' - child image name
+#   'overlay_file' - overlay to be added to child image
+#   'overlay_type' - 'OVERLAY_CONFIG' or 'DTC_OVERLAY_FILE'
+function(add_overlay image overlay_file overlay_type)
+  set(old_overlays ${${image}_${overlay_type}})
+  string(FIND "${old_overlays}" "${overlay_file}" found)
   if (${found} EQUAL -1)
-    set(${image}_OVERLAY_CONFIG
-      "${old_conf} ${overlay_file}"
-      CACHE INTERNAL "")
+    set(${image}_${overlay_type} "${old_overlays} ${overlay_file}" CACHE INTERNAL "")
   endif()
 endfunction()
+
+# Convenience macro to add configuration overlays to child image.
+macro(add_overlay_config image overlay_file)
+  add_overlay(${image} ${overlay_file} OVERLAY_CONFIG)
+endmacro()
+
+# Convenience macro to add device tree overlays to child image.
+macro(add_overlay_dts image overlay_file)
+  add_overlay(${image} ${overlay_file} DTC_OVERLAY_FILE)
+endmacro()
 
 # Add a partition manager configuration file to the build.
 # Note that is only one image is included in the build,
@@ -112,6 +126,11 @@ Please provide one of following: CONF_FILES")
   endif()
 
   zephyr_file(CONF_FILES ${FILE_CONF_FILES}/boards ${FILE_UNPARSED_ARGUMENTS})
+  if(ZEPHYR_FILE_DTS)
+    zephyr_file(CONF_FILES ${FILE_CONF_FILES}
+                ${ZEPHYR_FILE_UNPARSED_ARGUMENTS}
+                DTS ${ZEPHYR_FILE_DTS})
+  endif()
 
   if(ZEPHYR_FILE_KCONF)
     set(${ZEPHYR_FILE_KCONF} ${${ZEPHYR_FILE_KCONF}} PARENT_SCOPE)
