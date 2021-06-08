@@ -158,19 +158,24 @@ function(add_child_image_from_source)
   # | - prj.conf
   # | - prj_<desc>.conf
   # | - child_image DIRECTORY
-  #     |-- <ACI_NAME>.conf (I)             Fragment, used together with (A) and (C)
-  #     |-- <ACI_NAME>_<desc>.conf (J)      Fragment, used together with (B) and (D)
+  #     |-- <ACI_NAME>.conf (I)                 Fragment, used together with (A) and (C)
+  #     |-- <ACI_NAME>_<desc>.conf (J)          Fragment, used together with (B) and (D)
+  #     |-- <ACI_NAME>.overlay                  If present, will be merged with BOARD.dts
   #     |-- <ACI_NAME> DIRECTORY
   #         |-- boards DIRECTORY
-  #         |   |-- <board>.conf (E)        If present, use instead of (C), requires (G).
-  #         |   |-- <board>_<desc>.conf (F) If present, use instead of (D), requires (H).
-  #         |-- prj.conf (G)                If present, use instead of (A)
-  #         |                               Note that (C) is ignored if this is present.
-  #         |                               Use (E) instead.
-  #         |-- prj_<desc>.conf (H)         If present, used instead of (B) when user
-  #                                         specify `-DCONF_FILE=prj_<desc>.conf for
-  #                                         parent image. Note that any (C) is ignored
-  #                                         if this is present. Use (F) instead.
+  #         |   |-- <board>.conf (E)            If present, use instead of (C), requires (G).
+  #         |   |-- <board>_<desc>.conf (F)     If present, use instead of (D), requires (H).
+  #         |   |-- <board>.overlay             If present, will be merged with BOARD.dts
+  #         |   |-- <board>_<revision>.overlay  If present, will be merged with BOARD.dts
+  #         |-- prj.conf (G)                    If present, use instead of (A)
+  #         |                                   Note that (C) is ignored if this is present.
+  #         |                                   Use (E) instead.
+  #         |-- prj_<desc>.conf (H)             If present, used instead of (B) when user
+  #         |                                   specify `-DCONF_FILE=prj_<desc>.conf for
+  #         |                                   parent image. Note that any (C) is ignored
+  #         |                                   if this is present. Use (F) instead.
+  #         |-- <board>.overlay                 If present, will be merged with BOARD.dts
+  #         |-- <board>_<revision>.overlay      If present, will be merged with BOARD.dts
   #
   # Note: The folder `child_image/<ACI_NAME>` is only need when configurations
   #       files must be used instead of the child image default configs.
@@ -184,6 +189,7 @@ function(add_child_image_from_source)
              # Child image always uses the same revision as parent board.
              BOARD_REVISION ${BOARD_REVISION}
              KCONF ${ACI_NAME}_CONF_FILE
+             DTS ${ACI_NAME}_DTC_OVERLAY_FILE
              BUILD ${CONF_FILE_BUILD_TYPE}
     )
 
@@ -198,8 +204,13 @@ function(add_child_image_from_source)
     if (EXISTS ${child_image_conf_fragment})
       add_overlay_config(${ACI_NAME} ${child_image_conf_fragment})
     endif()
-  endif()
 
+    # Check for overlay named <ACI_NAME>.overlay.
+    set(child_image_dts_overlay ${ACI_CONF_DIR}/${ACI_NAME}.overlay)
+    if (EXISTS ${child_image_dts_overlay})
+      add_overlay_dts(${ACI_NAME} ${child_image_dts_overlay})
+    endif()
+  endif()
   # Construct a list of variables that, when present in the root
   # image, should be passed on to all child images as well.
   list(APPEND
