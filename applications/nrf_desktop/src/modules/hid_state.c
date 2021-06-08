@@ -466,6 +466,19 @@ static struct subscriber *get_subscriber(const void *subscriber_id)
 	return NULL;
 }
 
+static unsigned int get_pipeline_depth(const struct report_state *rs)
+{
+	unsigned int pipeline_depth = 2;
+
+	if ((rs->subscriber->is_usb) ||
+	    (rs->report_id == REPORT_ID_CONSUMER_CTRL) ||
+	    (rs->report_id == REPORT_ID_SYSTEM_CTRL))  {
+		pipeline_depth = 1;
+	}
+
+	return pipeline_depth;
+}
+
 static bool key_value_set(struct items *items, uint16_t usage_id, int16_t value)
 {
 	const uint8_t prev_item_count = items->item_count;
@@ -806,17 +819,7 @@ static bool report_send(struct report_data *rd, bool check_state, bool send_alwa
 	struct report_state *rs = rd->linked_rs;
 
 	if (!check_state || (rs->state != STATE_DISCONNECTED)) {
-		unsigned int pipeline_depth;
-
-		if ((rs->subscriber->is_usb) ||
-		    (rs->report_id == REPORT_ID_CONSUMER_CTRL) ||
-		    (rs->report_id == REPORT_ID_SYSTEM_CTRL))  {
-			pipeline_depth = 1;
-		} else {
-			pipeline_depth = 2;
-		}
-
-		while ((rs->cnt < pipeline_depth) &&
+		while ((rs->cnt < get_pipeline_depth(rs)) &&
 		       (rs->subscriber->report_cnt < rs->subscriber->report_max) &&
 		       (update_report(rd) || send_always)) {
 
@@ -926,7 +929,7 @@ static void report_issued(const void *subscriber_id, uint8_t report_id, bool err
 	while (true) {
 		if ((next_rs->state != STATE_DISCONNECTED) &&
 		    (next_rs->linked_rd->linked_rs == next_rs) &&
-		    (next_rs->cnt == 0)) {
+		    (next_rs->cnt < get_pipeline_depth(rs))) {
 			if (report_send(next_rs->linked_rd, false, false)) {
 				break;
 			}
@@ -1195,7 +1198,9 @@ static void update_key(const struct hid_keymap *map, int16_t value)
 		connected = (rs->state != STATE_DISCONNECTED);
 	}
 
-	if (!connected || !eventq_is_empty(&rd->eventq)) {
+	if (!connected ||
+	    (rs->cnt >= get_pipeline_depth(rs)) ||
+	    (rs->subscriber->report_cnt >= rs->subscriber->report_max)) {
 		/* Report cannot be sent yet - enqueue this HID event. */
 		enqueue(rd, map->usage_id, value, connected);
 	} else {
