@@ -205,6 +205,28 @@ Check the sample Requirements section for the list of supported development kits
 The sample is used to receive data over NUS and forward it to the host computer over UART.
 See `Testing with the Thingy:52`_ for how to test this solution.
 
+.. _nrf_machine_learning_app_requirements_build_types:
+
+nRF Machine Learning build types
+================================
+
+The nRF Machine Learning application does not use a single :file:`prj.conf` file.
+Configuration files are provided for different build types for each supported board.
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_overview_start
+   :end-before: build_types_overview_end
+
+Before you start testing the application, you can select one of the build types supported by nRF Machine Learning application, depending on your development kit and the building method.
+The application supports the following build types:
+
+* ``ZDebug`` -- Debug version of the application - can be used to verify if the application works correctly.
+* ``ZRelease`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
+
+.. note::
+    `Selecting a build type`_ is optional.
+    The ``ZDebug`` build type is used by default if no build type is explicitly selected.
+
 .. _nrf_machine_learning_app_configuration:
 
 Configuration
@@ -256,11 +278,7 @@ Building the default configurations requires an Internet connection, because the
 Selecting a build type
 ======================
 
-Before you start testing the application, you can select one of the build types supported by nRF Machine Learning application, depending on your development kit and the building method.
-The application supports the following build types:
-
-* ``ZDebug`` -- Debug version of the application - can be used to verify if the application works correctly.
-* ``ZRelease`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
+Before you start testing the application, you can select one of the :ref:`nrf_machine_learning_app_requirements_build_types`, depending on your development kit and building method.
 
 Selecting a build type in SES
 -----------------------------
