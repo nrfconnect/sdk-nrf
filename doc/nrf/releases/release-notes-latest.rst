@@ -139,6 +139,16 @@ Matter (Project CHIP)
 
   * Renamed occurrences of Project CHIP to Matter.
 
+Thread
+------
+
+* Added support for the following Thread 1.2 features:
+
+  * Link Metrics
+  * Coordinated Sampled Listening (CSL)
+
+  These features are supported for nRF52 Series devices.
+
 Zigbee
 ------
 
