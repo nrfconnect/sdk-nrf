@@ -363,6 +363,30 @@ Pelion Device Management requirements
 
 You need a developer account on the `Pelion Device Management Portal`_.
 
+.. _pelion_client_reqs_build_types:
+
+nRF Pelion Client build types
+=============================
+
+The nRF Pelion Client application does not use a single :file:`prj.conf` file.
+Configuration files are provided for different build types for each supported board.
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_overview_start
+   :end-before: build_types_overview_end
+
+Before you start testing the application, you can select one of the build types supported by nRF Pelion Client application, depending on your development kit and the building method.
+The application supports the following build types:
+
+* ``ZDebug`` -- Debug version of the application - can be used to verify if the application works correctly.
+* ``ZRelease`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
+
+.. note::
+    `Selecting a build type`_ is optional.
+    The ``ZDebug`` build type is used by default if no build type is explicitly selected.
+
+For more information, see the `Configuration files`_ section.
+
 Configuration
 *************
 
@@ -431,16 +455,9 @@ Configuration files
 
 You can find the configuration files in the :file:`applications/pelion_client/configuration` directory.
 For each supported build target, you can find a subdirectory that contains all configuration files for the given target.
+Configuration files are provided for different `nRF Pelion Client build types`_ for each supported build target.
 
-The application does not use a single :file:`prj.conf` file.
-Configuration files are provided for different build types for each supported build target.
-
-The following build types are available for various build targets:
-
-* ``ZRelease`` -- Release version of the application with no debugging features.
-* ``ZDebug`` -- Debug version of the application; the same as the ``ZRelease`` build type, but with debug options enabled.
-
-These build types names are replacing the *${CMAKE_BUILD_TYPE}* variable in the configuration file names (for example, :file:`pm_static_ZDebug.yml`).
+The build types names are replacing the *${CMAKE_BUILD_TYPE}* variable in the configuration file names (for example, :file:`pm_static_ZDebug.yml`).
 If the given build type is not supported on the selected build target, an error message appears when `Building and running`_.
 In addition to the build types mentioned above, some build targets can provide more build types, which can be used to generate an application in a specific variant.
 The selected build type impacts the configuration of all system elements that are enabled (application, bootloader, partition layout).
@@ -480,7 +497,7 @@ The application is built the same way to any other |NCS| application or sample.
 Selecting a build type
 ======================
 
-Before you start testing the application, you can select one of the build types, depending on your development kit and building method.
+Before you start testing the application, you can select one of the :ref:`pelion_client_reqs_build_types`, depending on your development kit and building method.
 
 Selecting a build type in SES
 -----------------------------

@@ -21,7 +21,6 @@ You can also configure compiler options, application defines, or include directo
 
 To update the :file:`CMakeLists.txt` file, either edit it directly or use |SES| (SES) to maintain it.
 
-
 Editing CMakeLists.txt directly
 ===============================
 
@@ -37,7 +36,6 @@ Instead of specifying each file (explicitly or with a wildcard), you can include
    target_include_directories(app PRIVATE src)
 
 See the `CMake documentation`_ and :ref:`zephyr:cmake-details` in the Zephyr documentation for more information about how to edit :file:`CMakeLists.txt`.
-
 
 Maintaining CMakeLists.txt in SES
 =================================
@@ -63,7 +61,6 @@ In the window that is displayed, you can define compilation options for the proj
 .. note::
    These compilation options apply to the application project only.
    To manage Zephyr and other subsystems, go to :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
-
 
 SES tags in :file:`CMakeLists.txt`
 ----------------------------------
@@ -100,7 +97,6 @@ The configuration for your application, which might override some default option
 
 For detailed information about configuration options, see :ref:`zephyr:application-kconfig` in the Zephyr documentation.
 
-
 Changing the configuration permanently
 ======================================
 
@@ -115,7 +111,6 @@ This means that after you edit this file, you must re-open your project.
 .. note::
    It is possible to change the default configuration for a library by changing the :file:`Kconfig` file of the library.
    However, best practice is to override the configuration in the application configuration file :file:`prj.conf`.
-
 
 Changing the configuration temporarily
 ======================================
@@ -203,6 +198,9 @@ To create custom build type files for your application instead of using a single
    In this file name, ``ZRelease`` is the build type name.
 
 You can now select build types in SES or from command line.
+
+.. note::
+    For an example of an application that is using build types, see the :ref:`nrf_desktop` application (:ref:`nrf_desktop_requirements_build_types`), the :ref:`nrf_machine_learning_app` application (:ref:`nrf_machine_learning_app_requirements_build_types`), or the :ref:`pelion_client` application (:ref:`pelion_client_reqs_build_types`).
 
 Selecting a build type in SES
 =============================
