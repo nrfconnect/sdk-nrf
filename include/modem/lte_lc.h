@@ -149,42 +149,79 @@ enum lte_lc_func_mode {
 };
 
 enum lte_lc_evt_type {
+	/** @brief Event received carrying information about the modems network registration status.
+	 *
+	 *  Payload is of type @ref lte_lc_nw_reg_status.
+	 */
 	LTE_LC_EVT_NW_REG_STATUS,
+	/** @brief Event received carrying information about PSM updates. Contains PSM parameters
+	 *	   given by the network.
+	 *
+	 *  Payload is of type @ref lte_lc_psm_cfg.
+	 */
 	LTE_LC_EVT_PSM_UPDATE,
+	/** @brief Event received carrying information about eDRX updates. Contains eDRX parameters
+	 *	   given by the network.
+	 *
+	 *  Payload is of type @ref lte_lc_edrx_cfg.
+	 */
 	LTE_LC_EVT_EDRX_UPDATE,
+	/** @brief Event received carrying information about the modems RRC state.
+	 *
+	 *  Payload is of type @ref lte_lc_rrc_mode.
+	 */
 	LTE_LC_EVT_RRC_UPDATE,
+	/** @brief Event received carrying information about the currently connected cell.
+	 *
+	 *  Payload is of type @ref lte_lc_cell.
+	 */
 	LTE_LC_EVT_CELL_UPDATE,
 
-	/** The currently active LTE mode is updated. If a system mode that
-	 *  enables both LTE-M and NB-IoT is configured, the modem may change
-	 *  the currently active LTE mode based on the system mode preference
-	 *  and network availability. This event will then indicate which
-	 *  LTE mode is currently used by the modem.
+	/** @brief The currently active LTE mode is updated. If a system mode that
+	 *	   enables both LTE-M and NB-IoT is configured, the modem may change
+	 *	   the currently active LTE mode based on the system mode preference
+	 *	   and network availability. This event will then indicate which
+	 *	   LTE mode is currently used by the modem.
+	 *
+	 *  Payload is of type @ref lte_lc_lte_mode.
 	 */
 	LTE_LC_EVT_LTE_MODE_UPDATE,
 
-	/** Tracking Area Update pre-warning.
-	 *  This event will be received a configurable amount of time before TAU is scheduled to
-	 *  occur. This gives the application the opportunity to send data over the network before
-	 *  the TAU happens, thus saving power by avoiding sending data and the TAU separately.
+	/** @brief Tracking Area Update pre-warning.
+	 *	   This event will be received a configurable amount of time before TAU is
+	 *	   scheduled to occur. This gives the application the opportunity to send data over
+	 *	   the network before the TAU happens, thus saving power by avoiding sending data
+	 *	   and the TAU separately.
+	 *
+	 *  Payload of this event is contained in the _time_ entry in @ref lte_lc_evt.
 	 */
 	LTE_LC_EVT_TAU_PRE_WARNING,
 
-	/** Event containing results from neighbor cell measurements. */
+	/** @brief Event containing results from neighbor cell measurements.
+	 *
+	 *  Payload is of type @ref lte_lc_cells_info.
+	 */
 	LTE_LC_EVT_NEIGHBOR_CELL_MEAS,
 
-	/** Modem sleep pre-warning
-	 *  This event will be received a configurable amount of time before the modem exits sleep.
-	 *  The time parameter associated with this event signifies the time until modem exits
-	 *  sleep.
+	/** @brief Modem sleep pre-warning
+	 *	   This event will be received a configurable amount of time before the modem exits
+	 *	   sleep. The time parameter associated with this event signifies the time until
+	 *	   modem exits sleep.
+	 *
+	 *  Payload is of type @ref lte_lc_modem_sleep.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING,
 
-	/** This event will be received when the modem exits sleep. */
+	/** @brief This event will be received when the modem exits sleep.
+	 *
+	 *  Payload is of type @ref lte_lc_modem_sleep.
+	 */
 	LTE_LC_EVT_MODEM_SLEEP_EXIT,
 
-	/** This event will be received when the modem enters sleep.
+	/** @brief This event will be received when the modem enters sleep.
 	 *  The time parameter associated with this event signifies the duration of the sleep.
+	 *
+	 *  Payload is of type @ref lte_lc_modem_sleep.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_ENTER,
 };
@@ -237,7 +274,7 @@ struct lte_lc_cell {
 	/** Physical cell ID. */
 	uint16_t phys_cell_id;
 
-	/** RSRP of the neighbor celll.
+	/** RSRP of the neighbor cell.
 	 *  -17: RSRP < -156 dBm
 	 *  -16: -156 ≤ RSRP < -155 dBm
 	 *  ...
@@ -290,7 +327,7 @@ struct lte_lc_ncell {
 	/** Physical cell ID. */
 	uint16_t phys_cell_id;
 
-	/** RSRP of the neighbor celll. Format is the same as for RSRP member
+	/** RSRP of the neighbor cell. Format is the same as for RSRP member
 	 *  of struct lte_lc_cell.
 	 */
 	int16_t rsrp;
@@ -599,7 +636,7 @@ int lte_lc_normal(void);
 
 /** @brief Function for setting modem PSM parameters:
  * requested periodic TAU (RPTAU) and requested active time (RAT)
- * to be used when psm mode is subsequently enabled using `lte_lc_psm_req`.
+ * to be used when PSM mode is subsequently enabled using `lte_lc_psm_req`.
  * For reference see 3GPP 27.007 Ch. 7.38.
  *
  * @param rptau Requested periodic TAU as null-terminated string.
@@ -694,7 +731,7 @@ int lte_lc_rai_req(bool enable);
 
 /**@brief Get the current network registration status.
  *
- * @param status Pointer for network registation status.
+ * @param status Pointer for network registration status.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
@@ -770,8 +807,8 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
  * @param params Pointer to structure to hold connection evaluation parameters.
  *
  * @return Zero on success, negative errno code if the API call fails, and a positive error
- *         code if the API call succeeds but connection evalution fails due to modem/network related
- *         reasons.
+ *         code if the API call succeeds but connection evaluation fails due to modem/network
+ *         related reasons.
  *
  * @retval 0 Evaluation succeeded.
  * @retval 1 Evaluation failed, no cell available.
