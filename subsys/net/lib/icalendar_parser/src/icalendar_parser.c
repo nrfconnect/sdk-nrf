@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -16,7 +16,6 @@ LOG_MODULE_REGISTER(icalendar_parser, CONFIG_ICAL_PARSER_LOG_LEVEL);
 
 static size_t unfold_contentline(const char *buf, char *prop_buf)
 {
-	size_t unfold_size = 0;
 	const char *sol = buf;
 	char *eol;
 	uint16_t total_line_len = 0, single_line_len = 0;
@@ -27,13 +26,11 @@ static size_t unfold_contentline(const char *buf, char *prop_buf)
 			return 0;
 		}
 		single_line_len = eol - sol;
-		if ((total_line_len + single_line_len)
-		    <= CONFIG_ICAL_PARSER_MAX_PROPERTY_SIZE) {
-			memcpy(prop_buf +
-			       total_line_len, sol, single_line_len);
+		if ((total_line_len + single_line_len) <= CONFIG_ICAL_PARSER_MAX_PROPERTY_SIZE) {
+			memcpy(prop_buf + total_line_len, sol, single_line_len);
 			total_line_len += single_line_len;
 		} else {
-			LOG_DBG("Property value overflow."
+			LOG_WRN("Property value overflow."
 				"Increase CONFIG_ICAL_PARSER_MAX_PROPERTY_SIZE.");
 			return 0;
 		}
@@ -43,14 +40,13 @@ static size_t unfold_contentline(const char *buf, char *prop_buf)
 			 */
 			sol = eol + strlen("\r\n ");
 		} else {
-			/* Content line is delimited. Count parsed bytes */
-			unfold_size = eol - buf;
+			/* Content line is delimited. */
 			break;
 		}
 	}
-	prop_buf[unfold_size] = '\0';
+	prop_buf[total_line_len] = '\0';
 
-	return unfold_size;
+	return total_line_len;
 }
 
 static bool parse_desc_props(const char *buf,
@@ -74,9 +70,7 @@ static bool parse_desc_props(const char *buf,
 		size_t value_len = unfold_size - name_size - 1;
 
 		if (value_len <= max_value_len) {
-			memcpy(value,
-				ical_prop_buf + name_size + 1,
-				value_len);
+			memcpy(value, ical_prop_buf + name_size + 1, value_len);
 			value[value_len] = '\0';
 			ret = true;
 		} else {
@@ -118,9 +112,7 @@ static bool parse_datetime_props(const char *buf,
 		size_t value_len = unfold_size - name_size - 1;
 
 		if (value_len <= max_value_len) {
-			memcpy(value,
-				ical_prop_buf + name_size + 1,
-				value_len);
+			memcpy(value, ical_prop_buf + name_size + 1, value_len);
 			value[value_len] = '\0';
 			ret = true;
 		} else {
@@ -136,8 +128,7 @@ static bool parse_datetime_props(const char *buf,
 			dtvalue = dtvalue + 1;
 			size_t value_len;
 
-			value_len = unfold_size -
-					(dtvalue - ical_prop_buf);
+			value_len = unfold_size - (dtvalue - ical_prop_buf);
 			if (value_len <= max_value_len) {
 				memcpy(value, dtvalue, value_len);
 				value[value_len] = '\0';
@@ -199,8 +190,7 @@ static size_t parse_calprops(const char *buf)
 	return (parsed - buf);
 }
 
-static size_t parse_eventprop(const char *buf,
-			      struct ical_parser_evt *evt)
+static size_t parse_eventprop(const char *buf, struct ical_parser_evt *evt)
 {
 	const char *parsed = buf;
 	char *com_end;
@@ -268,8 +258,7 @@ static size_t parse_eventprop(const char *buf,
 	return parsed - buf;
 }
 
-static size_t parse_todoprop(const char *buf,
-				struct ical_parser_evt *evt)
+static size_t parse_todoprop(const char *buf, struct ical_parser_evt *evt)
 {
 	const char *parsed = buf;
 	char *com_end;
@@ -351,8 +340,7 @@ static size_t parse_component(char *buf, struct ical_parser_evt *evt)
 	return ret;
 }
 
-static size_t parse_icalbody(char *buf,
-				icalendar_parser_callback_t callback)
+static size_t parse_icalbody(char *buf,	icalendar_parser_callback_t callback)
 {
 	size_t parsed_bytes = 0, parsed_offset = 0;
 
@@ -369,8 +357,7 @@ static size_t parse_icalbody(char *buf,
 	return parsed_offset;
 }
 
-size_t ical_parser_parse(struct icalendar_parser *ical,
-			const char *data, size_t len)
+size_t ical_parser_parse(struct icalendar_parser *ical, const char *data, size_t len)
 {
 	size_t parsed_offset = 0;
 
@@ -400,8 +387,7 @@ size_t ical_parser_parse(struct icalendar_parser *ical,
 
 	/* If we got a calendar property, start parsing calendar body. */
 	if (ical->icalobject_begin) {
-		parsed_offset += parse_icalbody(ical->buf + parsed_offset,
-						ical->callback);
+		parsed_offset += parse_icalbody(ical->buf + parsed_offset, ical->callback);
 	}
 
 	if (parsed_offset) {
@@ -412,8 +398,7 @@ size_t ical_parser_parse(struct icalendar_parser *ical,
 	return parsed_offset;
 }
 
-int ical_parser_init(struct icalendar_parser *ical,
-		     icalendar_parser_callback_t callback)
+int ical_parser_init(struct icalendar_parser *ical, icalendar_parser_callback_t callback)
 {
 	if (ical == NULL || callback == NULL) {
 		return -EINVAL;
