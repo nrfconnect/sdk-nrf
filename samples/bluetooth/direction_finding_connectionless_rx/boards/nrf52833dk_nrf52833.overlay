@@ -9,7 +9,7 @@
 	/* This is a number of antennas that are available on antenna matrix
 	 * designed by Nordic. For more information see README.rst.
 	 */
-	dfe-antenna-num = < 12 >;
+	dfe-antenna-num = <12>;
 	/* This is a setting that enables antenna 12 (in antenna matrix designed
 	 * by Nordic) for Rx PDU. For more information see README.rst.
 	 */
