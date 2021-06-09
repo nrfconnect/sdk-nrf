@@ -4,8 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config SUPPORT_BT_RPC
+	bool
+
 config BT_RPC
 	bool "Bluetooth over RPC"
+	depends on SUPPORT_BT_RPC
 	select NRF_RPC
 	select NRF_RPC_CBOR
 	help

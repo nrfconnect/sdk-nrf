@@ -33,19 +33,13 @@
  *  @param[in] _value Cbor value to decode. One unsigned integer will be decoded
  *                    from this value that contains scratchpad buffer size.
  */
-#define SER_SCRATCHPAD_ALLOC(_scratchpad, _value)                                               \
+#define SER_SCRATCHPAD_DECLARE(_scratchpad, _value)                                               \
 	(_scratchpad)->value = _value;                                                          \
 	uint32_t _scratchpad_size = ser_decode_uint(_value);                                    \
 	uint32_t _scratchpad_data[SCRATCHPAD_ALIGN(_scratchpad_size) / sizeof(uint32_t)];       \
 	net_buf_simple_init_with_data(&(_scratchpad)->buf, _scratchpad_data, _scratchpad_size); \
 	net_buf_simple_reset(&(_scratchpad)->buf)
 
-
-/** @brief Free the scratchpad.
- *
- * @param[in] _scratchpad to free.
- */
-#define SER_SCRATCHPAD_FREE(_scratchpad)
 
 /** @brief Scratchpad structure. */
 struct ser_scratchpad {

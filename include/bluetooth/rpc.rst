@@ -11,7 +11,18 @@ The nRF Connect SDK supports Bluetooth Low Energy (LE) stack serialization.
 The full Bluetooth LE stack can run on another device or CPU, such as the nRF5340 DK network core using :ref:`nrfxlib:nrf_rpc`.
 
 .. note::
-   The nRF Connect SDK currently supports serialization of the :ref:`zephyr:bt_gap` and the :ref:`zephyr:bluetooth_connection_mgmt`.
+   The |NCS| currently supports serialization of the :ref:`zephyr:bt_gap` and the :ref:`zephyr:bluetooth_connection_mgmt` only.
+   Due to the limited support, a special :option:`CONFIG_SUPPORT_BT_RPC` option was added and it allows enabling the :option:`CONFIG_BT_RPC` option.
+   Samples using other Bluetooth LE features, such as GATT, are currently not supported and they have the :option:`CONFIG_SUPPORT_BT_RPC` option disabled.
+   If you want to use the :option:`CONFIG_BT_RPC` option in your application, you must create a Kconfig file with following content:
+
+   .. code-block:: none
+
+      config SUPPORT_BT_RPC
+        bool
+        default y
+
+      source "Kconfig.zephyr"
 
 Network core
 ************
@@ -68,3 +79,11 @@ Set the following options in the same way for the :ref:`ble_rpc_host` and applic
    * :option:`CONFIG_BT_PER_ADV_SYNC_MAX`
    * :option:`CONFIG_BT_DEVICE_NAME`
    * :option:`CONFIG_CBKPROXY_OUT_SLOTS` on one core must be equal to :option:`CONFIG_CBKPROXY_IN_SLOTS` on the other.
+
+To keep all the above configuration options in sync, create an overlay file that is shared between the application and network core.
+Then, you can invoke build command like this:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board* -- -DCONFIG_OVERLAY=my_overlay_file.conf

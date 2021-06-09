@@ -74,10 +74,10 @@ struct check_list_entry {
 
 #if defined(CONFIG_BT_RPC_HOST)
 
-typedef uint8_t check_list_entry_t;
-typedef char str_check_list_entry_t;
+#define CHECK_LIST_ENTRY_TYPE uint8_t
+#define STR_CHECK_LIST_ENTRY_TYPE char
 
-#define CHECK_FLAGS(a, b, c, d, e, f, g, h) \
+#define CHECK_FLAGS(a, b, c, d, e, f, g, h) ( \
 	(IS_ENABLED(a) ? BIT(0) : 0) | \
 	(IS_ENABLED(b) ? BIT(1) : 0) | \
 	(IS_ENABLED(c) ? BIT(2) : 0) | \
@@ -85,7 +85,7 @@ typedef char str_check_list_entry_t;
 	(IS_ENABLED(e) ? BIT(4) : 0) | \
 	(IS_ENABLED(f) ? BIT(5) : 0) | \
 	(IS_ENABLED(g) ? BIT(6) : 0) | \
-	(IS_ENABLED(h) ? BIT(7) : 0)
+	(IS_ENABLED(h) ? BIT(7) : 0))
 
 #define CHECK_UINT8(_value) _GET_DEF(_value)
 
@@ -105,8 +105,8 @@ typedef char str_check_list_entry_t;
 
 #else
 
-typedef struct check_list_entry check_list_entry_t;
-typedef struct check_list_entry str_check_list_entry_t;
+#define CHECK_LIST_ENTRY_TYPE struct check_list_entry
+#define STR_CHECK_LIST_ENTRY_TYPE struct check_list_entry
 
 #define CHECK_FLAGS(a, b, c, d, e, f, g, h) \
 	{ \
@@ -193,7 +193,7 @@ typedef struct check_list_entry str_check_list_entry_t;
 #define DEF_CONFIG_BT_DEVICE_NAME_MAX 0xFF,
 #define DEF_CONFIG_BT_PER_ADV_SYNC_MAX 0xFF,
 
-static const check_list_entry_t check_table[] = {
+static const CHECK_LIST_ENTRY_TYPE check_table[] = {
 	CHECK_FLAGS(
 		1,
 		CONFIG_BT_CENTRAL,
@@ -229,7 +229,7 @@ static const check_list_entry_t check_table[] = {
 	CHECK_UINT16_PAIR(CONFIG_CBKPROXY_OUT_SLOTS, CONFIG_CBKPROXY_IN_SLOTS),
 };
 
-static const str_check_list_entry_t str_check_list[] =
+static const STR_CHECK_LIST_ENTRY_TYPE str_check_list[] =
 	CHECK_STR_BEGIN()
 	CHECK_STR(CONFIG_BT_DEVICE_NAME)
 	CHECK_STR_END();
@@ -257,7 +257,7 @@ void bt_rpc_get_check_list(uint8_t *data, size_t size)
 }
 
 #else
-static bool validate_flags(const check_list_entry_t *entry, uint8_t flags)
+static bool validate_flags(const CHECK_LIST_ENTRY_TYPE *entry, uint8_t flags)
 {
 	size_t i;
 	uint8_t host;
@@ -282,7 +282,7 @@ static bool validate_flags(const check_list_entry_t *entry, uint8_t flags)
 	}
 }
 
-static bool validate_uint(const check_list_entry_t *entry, const uint8_t *data)
+static bool validate_uint(const CHECK_LIST_ENTRY_TYPE *entry, const uint8_t *data)
 {
 	uint32_t value = 0;
 	size_t i;
@@ -300,7 +300,7 @@ static bool validate_uint(const check_list_entry_t *entry, const uint8_t *data)
 	}
 }
 
-static bool validate_str(const check_list_entry_t *entry, uint8_t **data, size_t *size)
+static bool validate_str(const CHECK_LIST_ENTRY_TYPE *entry, uint8_t **data, size_t *size)
 {
 	size_t client_len;
 	size_t host_len;
@@ -332,10 +332,10 @@ static bool validate_str(const check_list_entry_t *entry, uint8_t **data, size_t
 }
 
 static bool check_table_part(uint8_t **data, size_t *size,
-			     const check_list_entry_t *table, size_t items)
+			     const CHECK_LIST_ENTRY_TYPE *table, size_t items)
 {
 	size_t i;
-	const check_list_entry_t *entry;
+	const CHECK_LIST_ENTRY_TYPE *entry;
 	bool ok = true;
 
 	for (i = 0; i < items; i++) {
