@@ -76,16 +76,16 @@ static void bt_conn_remote_update_ref(struct bt_conn *conn, int8_t value)
 static void bt_conn_remote_update_ref_rpc_handler(CborValue *value, void *handler_data)
 {
 	struct bt_conn *conn;
-	int8_t value;
+	int8_t count;
 
 	conn = bt_rpc_decode_bt_conn(value);
-	value = ser_decode_int(value);
+	count = ser_decode_int(value);
 
 	if (!ser_decoding_done_and_check(value)) {
 		goto decoding_error;
 	}
 
-	bt_conn_remote_update_ref(conn, value);
+	bt_conn_remote_update_ref(conn, count);
 
 	ser_rsp_send_void();
 
@@ -962,7 +962,7 @@ static void bt_le_oob_set_legacy_tk_rpc_handler(CborValue *value, void *handler_
 	int result;
 	struct ser_scratchpad scratchpad;
 
-	SER_SCRATCHPAD_ALLOC(&scratchpad, value);
+	SER_SCRATCHPAD_DECLARE(&scratchpad, value);
 
 	conn = bt_rpc_decode_bt_conn(value);
 	tk = ser_decode_buffer_into_scratchpad(&scratchpad);
@@ -973,14 +973,11 @@ static void bt_le_oob_set_legacy_tk_rpc_handler(CborValue *value, void *handler_
 
 	result = bt_le_oob_set_legacy_tk(conn, tk);
 
-	SER_SCRATCHPAD_FREE(&scratchpad);
-
 	ser_rsp_send_int(result);
 
 	return;
 decoding_error:
 	report_decoding_error(BT_LE_OOB_SET_LEGACY_TK_RPC_CMD, handler_data);
-	SER_SCRATCHPAD_FREE(&scratchpad);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_oob_set_legacy_tk, BT_LE_OOB_SET_LEGACY_TK_RPC_CMD,
