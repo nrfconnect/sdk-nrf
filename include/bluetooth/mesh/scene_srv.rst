@@ -44,6 +44,8 @@ The following models will automatically register scene entries:
 * :ref:`bt_mesh_light_temp_srv_readme`
 * :ref:`bt_mesh_light_xyl_srv_readme`
 * :ref:`bt_mesh_light_hsl_srv_readme`
+* :ref:`bt_mesh_light_hue_srv_readme`
+* :ref:`bt_mesh_light_sat_srv_readme`
 * :ref:`bt_mesh_light_ctl_srv_readme`
 * :ref:`bt_mesh_light_ctrl_srv_readme`
 
