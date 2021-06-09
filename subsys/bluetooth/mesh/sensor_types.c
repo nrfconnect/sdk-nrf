@@ -776,7 +776,7 @@ SENSOR_TYPE(magnetic_declination) = {
 	.id = BT_MESH_PROP_ID_MAGNETIC_DECLINATION,
 	CHANNELS(CHANNEL("Magnetic Declination", direction_16)),
 };
-SENSOR_TYPE(magnetic_flux_density) = {
+SENSOR_TYPE(magnetic_flux_density_2d) = {
 	.id = BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_2D,
 	CHANNELS(CHANNEL("X-axis", magnetic_flux_density),
 		 CHANNEL("Y-axis", magnetic_flux_density)),
