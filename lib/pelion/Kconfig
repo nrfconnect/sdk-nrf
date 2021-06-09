@@ -56,6 +56,7 @@ config PELION_NRF_SECURITY
 	select MBEDTLS_ECP_C
 	select MBEDTLS_HMAC_DRBG_C
 	select MBEDTLS_PK_WRITE_C
+	select MBEDTLS_RSA_C
 	select MBEDTLS_SHA256_C
 	select MBEDTLS_SSL_RENEGOTIATION
 	select MBEDTLS_SSL_ALPN
@@ -93,14 +94,7 @@ config PELION_QUICK_SESSION_RESUME
 
 config PELION_MBEDTLS_LIB_NAME
 	string
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx mbedcrypto_oberon mbedcrypto_vanilla" if CC3XX_BACKEND && OBERON_BACKEND && MBEDTLS_VANILLA_BACKEND
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx mbedcrypto_oberon" if CC3XX_BACKEND && OBERON_BACKEND
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx mbedcrypto_vanilla" if CC3XX_BACKEND && MBEDTLS_VANILLA_BACKEND
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_oberon mbedcrypto_vanilla" if OBERON_BACKEND && MBEDTLS_VANILLA_BACKEND
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_vanilla" if MBEDTLS_VANILLA_BACKEND
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx" if CC3XX_BACKEND
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_oberon" if OBERON_BACKEND
-	default "mbedtls_common" if PELION_NRF_SECURITY
+	default "mbedTLS" if PELION_NRF_SECURITY
 	help
 	  This option allows to specify one or more mbedtls library files to be
 	  linked with Pelion. Separate multiple values with space " ".
