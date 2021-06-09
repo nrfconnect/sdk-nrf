@@ -152,9 +152,11 @@ Thread
 Zigbee
 ------
 
+* Added the v0.9.5 version of the `ZBOSS NCP Host`_ package that includes a simple gateway application.
 * Updated:
 
-  * Reworked the :ref:`NCP sample <zigbee_ncp_sample>` to include a simple gateway application.
+  * Reworked the :ref:`NCP sample <zigbee_ncp_sample>` to work with the simple gateway application.
+  * Moved the `NCP Host documentation`_ from the `ZBOSS NCP Host`_ package to the same location as the `external ZBOSS development guide and API documentation`_.
 
 Common
 ======
