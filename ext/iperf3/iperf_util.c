@@ -53,7 +53,11 @@
 #include <errno.h>
 #include <fcntl.h>
 
+#if defined(CONFIG_CJSON_LIB)
+#include <cJSON.h>
+#else
 #include "cjson.h"
+#endif
 
 #include "iperf.h"
 #include "iperf_api.h"

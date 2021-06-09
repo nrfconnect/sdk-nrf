@@ -109,7 +109,11 @@
 #endif /* HAVE_SCTP_H */
 #include "timer.h"
 
+#if defined(CONFIG_CJSON_LIB)
+#include <cJSON.h>
+#else
 #include "cjson.h"
+#endif
 #include "units.h"
 #include "iperf_util.h"
 #include "iperf_locale.h"

@@ -14,7 +14,6 @@ zephyr_library()
 zephyr_library_link_libraries(posix_subsys)
 
 zephyr_library_sources(
-  cjson.c
   dscp.c
   iperf_api.c
   iperf_auth.c

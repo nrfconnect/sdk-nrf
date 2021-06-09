@@ -12,7 +12,7 @@ config NRF_IPERF3_PROMPTLESS
 
 config  NRF_IPERF3
 	bool "Iperf3 NRF integration" if !NRF_IPERF3_PROMPTLESS
-	depends on POSIX_API && !PTHREAD_IPC && !NET_SOCKETS_POSIX_NAMES && NEWLIB_LIBC
+	depends on POSIX_API && !PTHREAD_IPC && !NET_SOCKETS_POSIX_NAMES && NEWLIB_LIBC && CJSON_LIB
 	imply NEWLIB_LIBC_FLOAT_PRINTF
 	help
 	  Enable Iperf3 NRF integration
