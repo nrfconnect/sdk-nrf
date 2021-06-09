@@ -14,13 +14,14 @@ The library uses HTTP requests to get the location from a configurable location 
 Overview
 ********
 
-The library uses LTE cell information from :ref:`lte_lc_readme` library to generate HTTP requests.
+The library uses LTE cell information such as :ref:`lte_lc_readme` library to generate HTTP requests.
 The HTTP request is then sent using TLS to the configured location service.
 
 When the location service has resolved the location based on the cell measurements provided in the request, it sends back an HTTP response to the device.
 After receiving the HTTP response, the Multicell location library parses the response and returns the location to the caller.
 
-The library supports location services from `HERE Positioning`_ (v1 and v2) and `Skyhook Precision Location`_.
+The library supports location services from `nRF Cloud Location Services`_, `HERE Positioning`_ (v1 and v2) and `Skyhook Precision Location`_.
+Note that nRF Cloud currently is a single-cell location service, and does not make use of neighboring cells in location resolution.
 To use the location services, see the respective documentation for account setup and for getting the required credentials for authentication.
 
 The required credentials for the location services are configurable using Kconfig options.
@@ -38,16 +39,18 @@ Configuration
 
 To enable the multicell location library, enable the :option:`CONFIG_MULTICELL_LOCATION` Kconfig option.
 
-The user must select to use either HERE or Skyhook using one of the two options below:
+The user must select nRF Cloud, HERE or Skyhook location services using one of the following options:
 
+*  :option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
 *  :option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE`
 *  :option:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK`.
 
 
 The next required step is to configure the authentication method.
-By default, API key is used both for HERE and Skyhook.
+By default, API key is used for nRF Cloud, HERE and Skyhook.
 Depending on the selected service, one of the two options below must be configured:
 
+*  :option:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_API_KEY`
 *  :option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
 *  :option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
 
@@ -62,7 +65,7 @@ Following are the options that can usually have default values:
 Limitations
 ***********
 
-*  Currently, the library supports HERE and Skyhook location services.
+*  nRF Cloud uses only the current cell when resolving the location.
 *  Retrieving the device's location is a blocking operation.
 
 Dependencies

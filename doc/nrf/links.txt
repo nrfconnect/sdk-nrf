@@ -549,6 +549,8 @@
 .. _`nRF Cloud Device API`:
 .. _`nRF Connect for Cloud Device API`: https://api.nrfcloud.com/v1
 
+.. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
+
 .. _`NFC Forum specification overview`: https://nfc-forum.org/our-work/specification-releases/specifications/
 .. _`Bluetooth Secure Simple Pairing Using NFC`: https://nfc-forum.org/our-work/specification-releases/specifications/#010ea0b1006cf5b44
 
