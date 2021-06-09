@@ -7,23 +7,27 @@ Crypto: ECDSA
    :local:
    :depth: 2
 
+The ECDSA sample shows how to sign and verify messages using SHA-256 as the hashing algorithm and the secp256r1 curve.
+
 Overview
 ********
 
-The ECDSA sample shows how to sign/verify messages using SHA256 as the hashing algorithm and the secp256r1 curve.
+The sample follows these steps:
 
+1. First, the sample performs initialization:
 
-First, the sample performs initalization:
-   #. The Platform Security Architecture (PSA) API is initialized.
-   #. A random ECDSA keypair is generated an imported in the PSA crypto keystore
-   #. The public key of the ECDSA keypair is imported in the PSA crypto keystore
+   a. The Platform Security Architecture (PSA) API is initialized.
+   #. A random Elliptic Curve Cryptography (ECC) key pair is generated and imported into the PSA crypto keystore.
+   #. The public key of the ECDSA key pair is imported into the PSA crypto keystore.
 
-Then, ECDSA signing/verification is performed:
-   #. Signing is performed using the ECDSA keypair.
-   #. Verification of the signagure is performed using the exported public key.
+#. Then, ECDSA signing and verification is performed:
 
-Afterwards, the sample performs cleanup:
-   #. The ECDSA keypair and public key are removed from the PSA crypto keystore.
+   a. Signing is performed using the private key of the ECC key pair.
+   #. The signature is verified using the exported public key.
+
+#. Afterwards, the sample performs cleanup:
+
+   a. The key pair and public key are removed from the PSA crypto keystore.
 
 Requirements
 ************
@@ -32,8 +36,9 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows:  nrf5340dk_nrf5340_cpuappns, nrf9160dk_nrf9160ns
+   :rows:  nrf5340dk_nrf5340_cpuappns, nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160ns, nrf9160dk_nrf9160, nrf52840dk_nrf52840
 
+.. include:: /includes/tfm.txt
 
 Building and running
 ********************
@@ -45,15 +50,9 @@ Building and running
 Testing
 =======
 
-Follow these steps to test the ECDSA example:
+After programming the sample to your development kit, test it by performing the following steps:
 
-1. Start a terminal emulator like PuTTY and connect to the used COM port with the following UART settings:
-
-   * Baud rate: 115.200
-   * 8 data bits
-   * 1 stop bit
-   * No parity
-   * HW flow control: None
+1. |connect_terminal|
 #. Compile and program the application.
 #. Observe the logs from the application using an RTT Viewer or a terminal emulator.
 

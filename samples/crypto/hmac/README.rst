@@ -7,21 +7,25 @@ Crypto: HMAC
    :local:
    :depth: 2
 
+The HMAC sample shows how to generate a message authentication code using the HMAC algorithm and then verify it.
+The HMAC algorithm in this sample uses SHA-256.
+
 Overview
 ********
 
-The HMAC sample shows how to perform HMAC signing and verification operations using the SHA256 hashing algorithm.
+The sample follows these steps:
 
-First, the sample performs initalization:
-   #. The Platform Security Architecture (PSA) API is initialized.
+1. First, the sample initializes the Platform Security Architecture (PSA) API.
 
-Then, the sample signs/verifies a sample plaintext:
-   #. A random HMAC key is generated and imported in the PSA crypto keystore.
+#. Then, it signs and verifies a sample plaintext:
+
+   a. A secret key is generated and imported into the PSA crypto keystore.
    #. HMAC signing is performed.
    #. HMAC verification is performed.
 
-Afterwards, the sample performs cleanup:
-   #. The HMAC key is removed from the PSA crypto keystore.
+#. Afterwards, it performs cleanup:
+
+   a. The secret key is removed from the PSA crypto keystore.
 
 Requirements
 ************
@@ -30,8 +34,9 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows:  nrf5340dk_nrf5340_cpuappns, nrf9160dk_nrf9160ns
+   :rows:  nrf5340dk_nrf5340_cpuappns, nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160ns, nrf9160dk_nrf9160, nrf52840dk_nrf52840
 
+.. include:: /includes/tfm.txt
 
 Building and running
 ********************
@@ -43,15 +48,9 @@ Building and running
 Testing
 =======
 
-Follow these steps to test the HMAC example:
+After programming the sample to your development kit, test it by performing the following steps:
 
-1. Start a terminal emulator like PuTTY and connect to the used COM port with the following UART settings:
-
-   * Baud rate: 115.200
-   * 8 data bits
-   * 1 stop bit
-   * No parity
-   * HW flow control: None
+1. |connect_terminal|
 #. Compile and program the application.
 #. Observe the logs from the application using an RTT Viewer or a terminal emulator.
 

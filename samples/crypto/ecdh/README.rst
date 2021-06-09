@@ -7,31 +7,23 @@ Crypto: ECDH
    :local:
    :depth: 2
 
+The ECDH sample shows how to perform an Elliptic-curve Diffie–Hellman key exchange to allow two parties to obtain a shared secret.
+
 Overview
 ********
 
-The ECDH sample shows how to perform an Elliptic-curve Diffie–Hellman key exhange to allow two parties to obtain a common secret.
+The sample follows these steps to perform an ECDH key exchange:
 
-The sample peforms an ECDH exchange:
-   #. The Platform Security Architecture (PSA) API is initialized.
-   #. Two ECDH keypairs are generated and imported to the PSA keystore.
-   #. ECDH key echange is performed.
-   #. The keypairs are removed from the PSA keystore.
+1. First, the sample performs initialization:
 
-First, the sample performs initalization:
-   #. The Platform Security Architecture (PSA) API is initialized.
-   #. Two random ECDH keypairs are generated and imported in the PSA crypto keystore
+   a. The Platform Security Architecture (PSA) API is initialized.
+   #. Two random Elliptic Curve Cryptography (ECC) key pairs are generated and imported into the PSA crypto keystore.
 
-First, the sample signs a sample plaintext:
-   #. Signing is performed.
-   #. The keypair is removed from the PSA keystore.
+#. Then, ECDH key exchange is performed using the generated key pairs.
 
-Then, ECDH key exchange is performed:
-   #. ECDH key echange is performed using the generated keypairs.
+#. Afterwards, the sample performs cleanup:
 
-Afterwards, the sample performs cleanup:
-   #. The ECDH keypairs are removed from the PSA crypto keystore.
-
+   a. The key pairs are removed from the PSA crypto keystore.
 
 Requirements
 ************
@@ -40,8 +32,9 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuappns, nrf9160dk_nrf9160ns
+   :rows: nrf5340dk_nrf5340_cpuappns, nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160ns, nrf9160dk_nrf9160, nrf52840dk_nrf52840
 
+.. include:: /includes/tfm.txt
 
 Building and running
 ********************
@@ -51,17 +44,11 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 Testing
-=======================
+=======
 
-Follow these steps to test the ECDH example:
+After programming the sample to your development kit, test it by performing the following steps:
 
-1. Start a terminal emulator like PuTTY and connect to the used COM port with the following UART settings:
-
-   * Baud rate: 115.200
-   * 8 data bits
-   * 1 stop bit
-   * No parity
-   * HW flow control: None
+1. |connect_terminal|
 #. Compile and program the application.
 #. Observe the logs from the application using an RTT Viewer or a terminal emulator.
 
