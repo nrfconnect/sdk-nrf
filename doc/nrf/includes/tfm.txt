@@ -1,0 +1,2 @@
+The sample is configured to compile and run as a non-secure application.
+Therefore, it automatically includes :ref:`TF-M <ug_tfm>` that prepares the required peripherals to be available for the application.
