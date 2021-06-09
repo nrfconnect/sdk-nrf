@@ -40,7 +40,6 @@ static void store_timeout(struct k_work *work)
 
 	(void)bt_mesh_model_data_store(srv->model, false, NULL, &data,
 				       sizeof(data));
-
 }
 #endif
 
@@ -331,6 +330,41 @@ const struct bt_mesh_lvl_srv_handlers _bt_mesh_light_sat_srv_lvl_handlers = {
 	.set = lvl_set,
 	.delta_set = lvl_delta_set,
 	.move_set = lvl_move_set,
+};
+
+static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+{
+	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_status status = { 0 };
+
+	srv->handlers->get(srv, NULL, &status);
+	sys_put_le16(status.remaining_time ? status.target : status.current,
+		     &data[0]);
+
+	return 2;
+}
+
+static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+			 size_t len,
+			 struct bt_mesh_model_transition *transition)
+{
+	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_status status = { 0 };
+	struct bt_mesh_light_sat set = {
+		.lvl = sys_get_le16(data),
+		.transition = transition,
+	};
+
+	bt_mesh_light_sat_srv_set(srv, NULL, &set, &status);
+
+	(void)bt_mesh_light_sat_srv_pub(srv, NULL, &status);
+}
+
+BT_MESH_SCENE_ENTRY_SIG(light_hue) = {
+	.id.sig = BT_MESH_MODEL_ID_LIGHT_HSL_SAT_SRV,
+	.maxlen = 2,
+	.store = scene_store,
+	.recall = scene_recall,
 };
 
 static int sat_srv_pub_update(struct bt_mesh_model *model)
