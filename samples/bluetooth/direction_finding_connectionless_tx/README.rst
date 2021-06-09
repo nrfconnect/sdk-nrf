@@ -16,7 +16,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52833dk_nrf52833, nrf52833dk_nrf52820
+   :rows: nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf5340dk_nrf5340_cpuapp_and_cpuappns
 
 The sample also requires an antenna matrix when operating in angle of departure mode.
 It can be a Nordic Semiconductor design 12 patch antenna matrix, or any other antenna matrix.
@@ -38,6 +38,15 @@ Configuration
 
 |config|
 
+This sample configuration is split into the following two files:
+
+* generic configuration is available in :file:`prj.conf` file
+* board specific configuration is available in :file:`boards/<BOARD>.conf` file
+
+Board specific configuration involves configuring the Bluetooth LE controller.
+For :ref:`nRF5340 DK <ug_nrf5340>`, the Bluetooth LE controller is part of a ``child image`` aimed to run on the network core.
+Configuration for the child image is stored in :file:`child_image/` subdirectory.
+
 Angle of arrival mode
 =====================
 
@@ -45,6 +54,8 @@ To build this sample with angle of arrival mode only, set ``OVERLAY_CONFIG`` to 
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
+To build this sample for :ref:`nRF5340 DK <ug_nrf5340>`, with angle of arrival mode only, add content of :file:`overlay-aoa.conf` file to :file:`child_image/hci_rpmsg.conf` file.
 
 Antenna matrix configuration for angle of departure mode
 ========================================================
