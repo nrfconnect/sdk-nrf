@@ -32,8 +32,9 @@ The sample acquires LTE cell information from :ref:`lte_lc_readme`.
 The cell information is passed on to the :ref:`lib_multicell_location` library, where an HTTP request is generated and sent to the location service of choice.
 Responses from location services are parsed and returned to the sample, which displays the responses on a terminal.
 
-Currently, the sample can be used with the location service supported by the :ref:`lib_multicell_location` library, which are `HERE Positioning`_ and `Skyhook Precision Location`_.
-Before you use the services, see the :ref:`lib_multicell_location` library documentation and the respective location service documentation for required setup.
+Currently, the sample can be used with the location services supported by the :ref:`lib_multicell_location` library, which are `nRF Cloud Location Services`_, `HERE Positioning`_ and `Skyhook Precision Location`_.
+Note that nRF Cloud currently is a single-cell location service, and does not make use of neighboring cells in location resolution.
+Before you use the services, see the :ref:`lib_multicell_location` library documentation and the respective location service documentation for the required setup.
 
 
 Trigger location requests
@@ -89,7 +90,7 @@ Setup
 =====
 
 To use one of the supported location services, you must have an account and a configured authorization method.
-Follow the documentation on `HERE Positioning`_ or `Skyhook Precision Location`_ to create an account and authorization.
+Follow the documentation on `nRF Cloud`_, `HERE Positioning`_ or `Skyhook Precision Location`_ for account creation and authorization method details.
 
 
 Configuration options
@@ -108,11 +109,13 @@ Library configuration
 Check and configure the following library options that are used by the sample:
 
 
+* :option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
 * :option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE`
 * :option:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK`
 
 For the location service that is used, the authorization method can be set with one of the following options:
 
+* :option:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_API_KEY`
 * :option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
 * :option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
 
@@ -207,7 +210,7 @@ Testing
 
       <inf> multicell_location_sample: Periodical start of cell measurements
 
-   Observe that the sample continues with cell measurements and location requests as explained in the previous steps.
+#. Observe that the sample continues with cell measurements and location requests as explained in the previous steps.
 
 
 Dependencies
