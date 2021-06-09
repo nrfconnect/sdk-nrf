@@ -46,7 +46,11 @@
 #include "iperf_udp.h"
 #include "timer.h"
 #include "net.h"
+#if defined(CONFIG_CJSON_LIB)
+#include <cJSON.h>
+#else
 #include "cjson.h"
+#endif
 #include "portable_endian.h"
 
 #if defined(HAVE_INTTYPES_H)

@@ -60,7 +60,11 @@
 
 #include "timer.h"
 #include "queue.h"
+#if defined(CONFIG_CJSON_LIB)
+#include <cJSON.h>
+#else
 #include "cjson.h"
+#endif
 #include "iperf_time.h"
 
 #if defined(HAVE_SSL)
