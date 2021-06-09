@@ -16,6 +16,10 @@
 config TFM_IPC
 	default y if TFM_MINIMAL
 
+config TFM_BL2
+	bool
+	default n
+
 config TFM_MINIMAL
 	bool "Use minimal TF-M build"
 	help
