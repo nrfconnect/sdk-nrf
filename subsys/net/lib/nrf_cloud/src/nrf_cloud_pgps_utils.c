@@ -185,6 +185,14 @@ void nrf_cloud_pgps_set_location(double latitude, double longitude)
 	nrf_cloud_pgps_set_location_normalized(lat, lng);
 }
 
+void nrf_cloud_pgps_clear_location(void)
+{
+	if (saved_location.gps_sec) {
+		saved_location.gps_sec = 0;
+		save_location();
+	}
+}
+
 void nrf_cloud_pgps_set_leap_seconds(int leap_seconds)
 {
 	if (gps_leap_seconds != leap_seconds) {

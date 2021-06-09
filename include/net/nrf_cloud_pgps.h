@@ -151,6 +151,12 @@ void nrf_cloud_pgps_set_location_normalized(int32_t latitude, int32_t longitude)
  */
 void nrf_cloud_pgps_set_location(double latitude, double longitude);
 
+/** @brief If location has previously been set, clear it. The application
+ * should do this if significant distances might have been travelled
+ * since the previous location was saved.
+ */
+void nrf_cloud_pgps_clear_location(void);
+
 /**@brief Update the storage of the leap second offset between GPS time
  * and UTC. This called automatically by the A-GPS subsystem (if enabled)
  * when it receives a UTC assistance element, setting leap_seconds to  the delta_tls field.
