@@ -64,9 +64,17 @@ This firmware is required to set up the nRF9160 DK so that it can run user appli
 The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160ns`` build target.
 To disable the automatic inclusion of the Secure Partition Manager sample, set the option :option:`CONFIG_SPM` to "n" in the project configuration.
 
-.. include:: ug_nrf5340.rst
-   :start-after: tfm_support_start
-   :end-before: tfm_support_finish
+Trusted Firmware-M (TF-M) support
+---------------------------------
+
+You can use Trusted Firmware-M (TF-M) as an alternative to :ref:`secure_partition_manager` for running an application from the non-secure area of the memory.
+
+Support for TF-M in |NCS| is currently experimental.
+TF-M is a framework which will be extended for new functions and use cases beyond the scope of SPM.
+
+If your application does not depend on the secure services developed in SPM and does not use them, TF-M can replace SPM as the secure firmware component in your application.
+
+For more information and instructions on how to do this, see :ref:`ug_tfm`.
 
 Application
 -----------
