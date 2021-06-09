@@ -27,6 +27,13 @@ choice MULTICELL_LOCATION_SERVICE
 config MULTICELL_LOCATION_SERVICE_NONE
 	bool "No location service"
 
+config MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+	bool "nRF Cloud location service"
+	help
+	  Use nRF Cloud location service. Note that the service currently
+	  supports the use of a single cell in requests.
+	  Cell measurements for the current cell will be used.
+
 config MULTICELL_LOCATION_SERVICE_HERE
 	bool "HERE location service"
 	help
@@ -36,7 +43,6 @@ config MULTICELL_LOCATION_SERVICE_SKYHOOK
 	bool "Skyhook location service"
 	help
 	  Use Skyhook location service
-
 endchoice
 
 if MULTICELL_LOCATION_SERVICE_HERE
@@ -107,6 +113,12 @@ config MULTICELL_LOCATION_SKYHOOK_API_KEY
 
 endif # MULTICELL_LOCATION_SERVICE_SKYHOOK
 
+config MULTICELL_LOCATION_NRF_CLOUD_API_KEY
+	depends on MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+	string "nRF Cloud API key"
+	help
+	  nRF Cloud API key
+
 config MULTICELL_LOCATION_MAX_NEIGHBORS
 	int "Max number of neighbor cells"
 	range 0 17
@@ -127,6 +139,7 @@ config MULTICELL_LOCATION_HOSTNAME
 	default "pos.api.here.com" if MULTICELL_LOCATION_HERE_V1
 	default "positioning.hereapi.com" if MULTICELL_LOCATION_HERE_V2
 	default "global.skyhookwireless.com" if MULTICELL_LOCATION_SERVICE_SKYHOOK
+	default "api.nrfcloud.com" if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	help
 	  Server hostname to use when connecting to the selected locations service
 
@@ -134,6 +147,7 @@ config MULTICELL_LOCATION_TLS_SEC_TAG
 	int "Security tag for TLS certificates"
 	default 175 if MULTICELL_LOCATION_SERVICE_HERE
 	default 176 if MULTICELL_LOCATION_SERVICE_SKYHOOK
+	default 177 if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	default -1
 	help
 	  Security tag where the required TLS certificates for the selected
