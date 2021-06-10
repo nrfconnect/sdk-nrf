@@ -424,6 +424,7 @@ int nrf_cloud_pgps_notify_prediction(void)
 			err = nrf_cloud_pgps_request_all();
 			if (err) {
 				LOG_ERR("Error while requesting pgps set: %d", err);
+				pgps_need_assistance = false; /* try again next time */
 			}
 		} else {
 			err = 0;
