@@ -409,7 +409,7 @@ static uint16_t srv_elem_end(const struct bt_mesh_scene_srv *srv)
 			break;
 		}
 
-		end = srv->model->elem_idx;
+		end = it->model->elem_idx;
 	}
 
 	return end;
