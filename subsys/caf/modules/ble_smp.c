@@ -6,6 +6,9 @@
 
 #include <mgmt/mcumgr/smp_bt.h>
 #include <img_mgmt/img_mgmt.h>
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+#include <os_mgmt/os_mgmt.h>
+#endif
 
 #define MODULE smp
 #include <caf/events/module_state_event.h>
@@ -37,6 +40,9 @@ static bool event_handler(const struct event_header *eh)
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			img_mgmt_set_upload_cb(upload_confirm, NULL);
 			img_mgmt_register_group();
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+			os_mgmt_register_group();
+#endif
 		} else if (check_state(event, MODULE_ID(ble_state), MODULE_STATE_READY)) {
 			static bool initialized;
 
