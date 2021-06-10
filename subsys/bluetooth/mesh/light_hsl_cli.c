@@ -48,7 +48,7 @@ static void hsl_status_handle(struct bt_mesh_model *model,
 		return;
 	}
 
-	if (cli->handlers->status) {
+	if (cli->handlers && cli->handlers->status) {
 		cli->handlers->status(cli, ctx, &status);
 	}
 }
@@ -67,7 +67,7 @@ static void hsl_target_status_handle(struct bt_mesh_model *model,
 		return;
 	}
 
-	if (cli->handlers->target_status) {
+	if (cli->handlers && cli->handlers->target_status) {
 		cli->handlers->target_status(cli, ctx, &status);
 	}
 }
@@ -76,7 +76,8 @@ static void default_status_handle(struct bt_mesh_model *model,
 				  struct bt_mesh_msg_ctx *ctx,
 				  struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHT_HSL_OP_DEFAULT_STATUS) {
+	if (buf->len != BT_MESH_LIGHT_HSL_MSG_MINLEN_STATUS &&
+	    buf->len != BT_MESH_LIGHT_HSL_MSG_MAXLEN_STATUS) {
 		return;
 	}
 
@@ -92,7 +93,7 @@ static void default_status_handle(struct bt_mesh_model *model,
 		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
-	if (cli->handlers->default_status) {
+	if (cli->handlers && cli->handlers->default_status) {
 		cli->handlers->default_status(cli, ctx, &status);
 	}
 }
@@ -112,13 +113,13 @@ static void range_status_handle(struct bt_mesh_model *model,
 	status.status_code = net_buf_simple_pull_u8(buf);
 	light_hue_sat_range_buf_pull(buf, &status.range);
 
-	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_HSL_MSG_LEN_RANGE_STATUS,
+	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_HSL_OP_RANGE_STATUS,
 				      ctx->addr, (void **)&rsp)) {
 		*rsp = status;
 		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
-	if (cli->handlers->range_status) {
+	if (cli->handlers && cli->handlers->range_status) {
 		cli->handlers->range_status(cli, ctx, &status);
 	}
 }
@@ -137,11 +138,12 @@ static void hue_status_handle(struct bt_mesh_model *model,
 	}
 
 	status.current = net_buf_simple_pull_le16(buf);
-	status.target = net_buf_simple_pull_le16(buf);
 	if (buf->len) {
+		status.target = net_buf_simple_pull_le16(buf);
 		status.remaining_time =
 			model_transition_decode(net_buf_simple_pull_u8(buf));
 	} else {
+		status.target = status.current;
 		status.remaining_time = 0;
 	}
 
@@ -151,7 +153,7 @@ static void hue_status_handle(struct bt_mesh_model *model,
 		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
-	if (cli->handlers->hue_status) {
+	if (cli->handlers && cli->handlers->hue_status) {
 		cli->handlers->hue_status(cli, ctx, &status);
 	}
 }
@@ -170,11 +172,12 @@ static void saturation_status_handle(struct bt_mesh_model *model,
 	}
 
 	status.current = net_buf_simple_pull_le16(buf);
-	status.target = net_buf_simple_pull_le16(buf);
 	if (buf->len) {
+		status.target = net_buf_simple_pull_le16(buf);
 		status.remaining_time =
 			model_transition_decode(net_buf_simple_pull_u8(buf));
 	} else {
+		status.target = status.current;
 		status.remaining_time = 0;
 	}
 
@@ -184,7 +187,7 @@ static void saturation_status_handle(struct bt_mesh_model *model,
 		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
-	if (cli->handlers->saturation_status) {
+	if (cli->handlers && cli->handlers->saturation_status) {
 		cli->handlers->saturation_status(cli, ctx, &status);
 	}
 }

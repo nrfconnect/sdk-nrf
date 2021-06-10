@@ -159,6 +159,9 @@ static void temp_range_rsp(struct bt_mesh_model *model,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_TEMP_RANGE_STATUS,
 				 BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS);
 	range_encode_status(&msg, srv, status);
+	if (status != BT_MESH_MODEL_SUCCESS) {
+		return;
+	}
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
 
@@ -238,7 +241,7 @@ static void default_rsp(struct bt_mesh_model *model,
 }
 
 static void default_set(struct bt_mesh_model *model,
-			struct bt_mesh_msg_ctx *ctx, struct net_buf_simple *buf)
+			struct bt_mesh_msg_ctx *ctx, struct net_buf_simple *buf, bool ack)
 {
 	struct bt_mesh_light_ctl_srv *srv = model->user_data;
 	struct bt_mesh_light_temp temp;
@@ -257,6 +260,10 @@ static void default_set(struct bt_mesh_model *model,
 	bt_mesh_light_temp_srv_default_set(&srv->temp_srv, ctx, &temp);
 
 	(void)bt_mesh_light_ctl_default_pub(srv, NULL);
+
+	if (ack) {
+		default_rsp(model, ctx);
+	}
 }
 
 static void handle_default_get(struct bt_mesh_model *model,
@@ -278,8 +285,7 @@ static void handle_default_set(struct bt_mesh_model *model,
 		return;
 	}
 
-	default_set(model, ctx, buf);
-	default_rsp(model, ctx);
+	default_set(model, ctx, buf, true);
 }
 
 static void handle_default_set_unack(struct bt_mesh_model *model,
@@ -290,7 +296,7 @@ static void handle_default_set_unack(struct bt_mesh_model *model,
 		return;
 	}
 
-	default_set(model, ctx, buf);
+	default_set(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctl_srv_op[] = {

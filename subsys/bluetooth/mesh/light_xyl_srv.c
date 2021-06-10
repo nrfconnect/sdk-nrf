@@ -328,7 +328,7 @@ static void range_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	if ((new_range.min.x > new_range.max.x) ||
 	    (new_range.min.y > new_range.max.y)) {
 		status_code = BT_MESH_MODEL_STATUS_INVALID;
-		goto respond;
+		return;
 	}
 
 	status_code = BT_MESH_MODEL_SUCCESS;
@@ -342,7 +342,6 @@ static void range_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	(void)bt_mesh_light_xyl_srv_range_pub(srv, NULL, status_code);
 
-respond:
 	if (ack) {
 		range_rsp(model, ctx, status_code);
 	}
