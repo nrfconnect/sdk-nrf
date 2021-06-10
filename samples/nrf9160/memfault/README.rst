@@ -35,7 +35,7 @@ See `Memfault terminology`_ for more details on the various Memfault concepts.
 Metrics
 =======
 
-The sample adds properties specific to the application, while the Memfault SDK integration layer in |NCS| adds the system property metrics.
+The sample adds properties specific to the application, while the :ref:`Memfault SDK integration layer <mod_memfault>` in |NCS| adds the system property metrics.
 See `Memfault: Collecting Device Metrics`_ for details on working and implementation of metrics.
 Some metrics are collected by the Memfault SDK directly.
 There are also some metrics, which are specific to |NCS| that are enabled by default:
@@ -139,7 +139,7 @@ If :option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` is enabled, :opt
 Configuration files
 ===================
 
-.. include:: ../../../doc/nrf/modules/mod_memfault.rst
+.. include:: ../../../include/memfault_ncs.rst
    :start-after: memfault_config_files_start
    :end-before: memfault_config_files_end
 
