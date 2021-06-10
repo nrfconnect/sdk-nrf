@@ -187,7 +187,7 @@ With ``west``, you can pass these configuration variables into CMake by using th
    -Dmcuboot_CONF_FILE=prj_a.conf \
    -DCONF_FILE=app_prj.conf
 
-You can make a project pass Kconfig configuration files and fragments to child images by placing them in the :file:`child_image` folder in the application source directory.
+You can make a project pass Kconfig configuration files, fragments, and device tree overlays to child images by placing them in the :file:`child_image` folder in the application source directory.
 The listing below describes how to leverage this functionality, where ``ACI_NAME`` is the name of the child image to which the configuration will be applied.
 
 .. literalinclude:: ../../cmake/multi_image.cmake
@@ -259,6 +259,31 @@ When the build system finds the fragment, it outputs their merge during the CMak
    Merged configuration '*extrafragment.conf*'
    Merged configuration '*abc.conf*'
    ...
+
+Child image devicetree overlays
+===============================
+
+You can provide devicetree overlays for a child image using ``*.overlay`` files.
+
+The following example sets the devicetree overlay ``extra.overlay`` to ``childimageone``:
+
+.. parsed-literal::
+   :class: highlight
+
+   cmake -D\ *childimageone*\_DTC_OVERLAY_FILE='\ *extra.overlay*\'
+
+The build system does also automatically apply any devicetree overlay located in the ``child_image`` folder and named as follows (where ``ACI_NAME`` is the name of the child image):
+
+* ``child_image/<ACI_NAME>.overlay``
+* ``child_image/<ACI_NAME>/<board>.overlay``
+* ``child_image/<ACI_NAME>/<board>_<revision>.overlay``
+* ``child_image/<ACI_NAME>/boards/<board>.overlay``
+* ``child_image/<ACI_NAME>/boards/<board>_<revision>.overlay``
+
+.. note::
+
+   The build system grabs the devicetree overlay files specified in a CMake argument relative to that image's application directory.
+   For example, the build system uses ``nrf/samples/bootloader/my-dts.overlay`` when building with the ``-Db0_DTC_OVERLAY_FILE=my-dts.overlay`` option, whereas ``-DDTC_OVERLAY_FILE=my-dts.overlay`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-dts.overlay``.
 
 Child image targets
 ===================
