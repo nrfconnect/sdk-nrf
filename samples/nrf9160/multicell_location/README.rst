@@ -103,8 +103,8 @@ Check and configure the following configuration options for the sample:
    :only-visible:
 
 
-Library configuration
-=====================
+Additional configuration
+========================
 
 Check and configure the following library options that are used by the sample:
 
