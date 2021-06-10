@@ -11,6 +11,10 @@ The nRF Cloud P-GPS library enables applications to request and process predicte
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 It can be used with or without Assisted GPS (`A-GPS`_) data from nRF Cloud.
 
+P-GPS is intended for specific use cases.
+It is not targeted for general use cases that already work with A-GPS.
+P-GPS is designed for devices that are frequently disconnected from the cloud but need periodic GPS fixes as quickly as possible to save power.
+
 To get a position fix, a GPS receiver needs information such as the satellite orbital data, exact date and time of the day, and accurate hardware clock frequency data.
 GPS satellites broadcast this information in a pattern, which repeats every 12.5 minutes.
 Predicted GPS data contains information about the estimated orbits (`Ephemerides <Ephemeris_>`_) of the 32 GPS satellites for up to a two-week period, with each set of ephemerides predictions being valid for a specific four-hour period within the set of all provided predictions.
@@ -28,7 +32,7 @@ On the other hand, when only A-GPS is used, a cloud connection is needed each ti
 If you use P-GPS along with A-GPS, TTFF is faster compared to an implementation with P-GPS only.
 The amount of cloud data needed for each fix is smaller during each fix compared to an implementation with A-GPS only.
 With proper configuration, A-GPS can be used with P-GPS, when a cloud connection is available, and acquire fast fixes even without a cloud connection.
-This is possible as long as the stored P-GPS data is still valid, and current date and time (within a few seconds) and the most recent location (within a few dozen kilometers) are known.
+This is possible as long as the stored P-GPS data is still valid, and current date and time (accurate to a few seconds) and the most recent location (accurate to a few dozen kilometers) are known.
 
 .. note::
    To use the nRF Cloud P-GPS service, an nRF Cloud account is needed, and the device needs to be associated with a user's account.
