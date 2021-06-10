@@ -149,31 +149,27 @@ enum lte_lc_func_mode {
 };
 
 enum lte_lc_evt_type {
-	/** @brief Event received carrying information about the modems network registration status.
-	 *
-	 *  Payload is of type @ref lte_lc_nw_reg_status.
+	/** @brief Event received carrying information about the modems network registration
+	 *         status.
+	 *         Payload is of type @ref lte_lc_nw_reg_status.
 	 */
 	LTE_LC_EVT_NW_REG_STATUS,
 	/** @brief Event received carrying information about PSM updates. Contains PSM parameters
 	 *	   given by the network.
-	 *
-	 *  Payload is of type @ref lte_lc_psm_cfg.
+	 *         Payload is of type @ref lte_lc_psm_cfg.
 	 */
 	LTE_LC_EVT_PSM_UPDATE,
 	/** @brief Event received carrying information about eDRX updates. Contains eDRX parameters
 	 *	   given by the network.
-	 *
-	 *  Payload is of type @ref lte_lc_edrx_cfg.
+	 *         Payload is of type @ref lte_lc_edrx_cfg.
 	 */
 	LTE_LC_EVT_EDRX_UPDATE,
 	/** @brief Event received carrying information about the modems RRC state.
-	 *
-	 *  Payload is of type @ref lte_lc_rrc_mode.
+	 *         Payload is of type @ref lte_lc_rrc_mode.
 	 */
 	LTE_LC_EVT_RRC_UPDATE,
 	/** @brief Event received carrying information about the currently connected cell.
-	 *
-	 *  Payload is of type @ref lte_lc_cell.
+	 *         Payload is of type @ref lte_lc_cell.
 	 */
 	LTE_LC_EVT_CELL_UPDATE,
 
@@ -182,46 +178,40 @@ enum lte_lc_evt_type {
 	 *	   the currently active LTE mode based on the system mode preference
 	 *	   and network availability. This event will then indicate which
 	 *	   LTE mode is currently used by the modem.
-	 *
-	 *  Payload is of type @ref lte_lc_lte_mode.
+	 *         Payload is of type @ref lte_lc_lte_mode.
 	 */
 	LTE_LC_EVT_LTE_MODE_UPDATE,
 
 	/** @brief Tracking Area Update pre-warning.
 	 *	   This event will be received a configurable amount of time before TAU is
-	 *	   scheduled to occur. This gives the application the opportunity to send data over
-	 *	   the network before the TAU happens, thus saving power by avoiding sending data
-	 *	   and the TAU separately.
-	 *
-	 *  Payload of this event is contained in the _time_ entry in @ref lte_lc_evt.
+	 *	   scheduled to occur. This gives the application the opportunity to send
+	 *	   data over the network before the TAU happens, thus saving power by
+	 *	   avoiding sending data and the TAU separately.
+	 *         Payload of this event is contained in the _time_ entry in @ref lte_lc_evt.
 	 */
 	LTE_LC_EVT_TAU_PRE_WARNING,
 
 	/** @brief Event containing results from neighbor cell measurements.
-	 *
-	 *  Payload is of type @ref lte_lc_cells_info.
+	 *         Payload is of type @ref lte_lc_cells_info.
 	 */
 	LTE_LC_EVT_NEIGHBOR_CELL_MEAS,
 
 	/** @brief Modem sleep pre-warning
-	 *	   This event will be received a configurable amount of time before the modem exits
-	 *	   sleep. The time parameter associated with this event signifies the time until
-	 *	   modem exits sleep.
-	 *
-	 *  Payload is of type @ref lte_lc_modem_sleep.
+	 *	   This event will be received a configurable amount of time before
+	 *	   the modem exits sleep. The time parameter associated with this
+	 *	   event signifies the time until modem exits sleep.
+	 *         Payload is of type @ref lte_lc_modem_sleep.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING,
 
 	/** @brief This event will be received when the modem exits sleep.
-	 *
-	 *  Payload is of type @ref lte_lc_modem_sleep.
+	 *         Payload is of type @ref lte_lc_modem_sleep.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_EXIT,
 
 	/** @brief This event will be received when the modem enters sleep.
-	 *  The time parameter associated with this event signifies the duration of the sleep.
-	 *
-	 *  Payload is of type @ref lte_lc_modem_sleep.
+	 *         The time parameter associated with this event signifies
+	 *         the duration of the sleep. Payload is of type @ref lte_lc_modem_sleep.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_ENTER,
 };
@@ -549,7 +539,7 @@ typedef void(*lte_lc_evt_handler_t)(const struct lte_lc_evt *const evt);
  */
 void lte_lc_register_handler(lte_lc_evt_handler_t handler);
 
-/**@brief Initializes the module and configures the modem.
+/** @brief Initializes the module and configures the modem.
  *
  * @note a follow-up call to lte_lc_connect() or lte_lc_connect_async() must be
  *	 made to establish an LTE connection. The module can be initialized
@@ -572,9 +562,9 @@ int lte_lc_init(void);
  */
 int lte_lc_connect(void);
 
-/**@brief Initializes the LTE module, configures the modem and connects to LTE
- *	  network. The function blocks until connection is established, or
- *	  the connection attempt times out.
+/** @brief Initializes the LTE module, configures the modem and connects to LTE
+ *	   network. The function blocks until connection is established, or
+ *	   the connection attempt times out.
  *
  * @note The module can be initialized only once, and repeated calls will
  *	 return -EALREADY. lte_lc_connect_async() should be used on subsequent
@@ -584,20 +574,20 @@ int lte_lc_connect(void);
  */
 int lte_lc_init_and_connect(void);
 
-/**@brief Connect to LTE network. Non-blocking.
+/** @brief Connect to LTE network. Non-blocking.
  *
  * @note The module must be initialized before this function is called.
  *
  * @param handler Event handler for receiving LTE events. The parameter can be
- *		  NULL if an event handler is already registered.
+ *	          NULL if an event handler is already registered.
  *
  * @return Zero on success, -EINVAL if no handler is provided and not already
  *	   registered, otherwise a (negative) error code.
  */
 int lte_lc_connect_async(lte_lc_evt_handler_t handler);
 
-/**@brief Initializes the LTE module, configures the modem and connects to LTE
- *	  network. Non-blocking.
+/** @brief Initializes the LTE module, configures the modem and connects to LTE
+ *	   network. Non-blocking.
  *
  * @note The module can be initialized only once, and repeated calls will
  *	 return -EALREADY. lte_lc_connect() should be used on subsequent calls.
@@ -610,7 +600,7 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
  */
 int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler);
 
-/**@brief Deinitialize the LTE module, powers of the modem.
+/** @brief Deinitialize the LTE module, powers of the modem.
  *
  * @return Zero on success, -EIO if it fails.
  */
@@ -635,34 +625,34 @@ int lte_lc_power_off(void);
 int lte_lc_normal(void);
 
 /** @brief Function for setting modem PSM parameters:
- * requested periodic TAU (RPTAU) and requested active time (RAT)
- * to be used when PSM mode is subsequently enabled using `lte_lc_psm_req`.
- * For reference see 3GPP 27.007 Ch. 7.38.
+ *         requested periodic TAU (RPTAU) and requested active time (RAT)
+ *         to be used when PSM mode is subsequently enabled using `lte_lc_psm_req`.
+ *         For reference see 3GPP 27.007 Ch. 7.38.
  *
  * @param rptau Requested periodic TAU as null-terminated string.
- *        Set NULL to use manufacturer-specific default value.
+ *              Set NULL to use manufacturer-specific default value.
  * @param rat Requested active time as null-terminated string.
- *         Set NULL to use manufacturer-specific default value.
+ *            Set NULL to use manufacturer-specific default value.
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_psm_param_set(const char *rptau, const char *rat);
 
 /** @brief Function for requesting modem to enable or disable
- * power saving mode (PSM) using default Kconfig value or as set using
- * `lte_lc_psm_param_set`.
+ *         power saving mode (PSM) using default Kconfig value or as set using
+ *         `lte_lc_psm_param_set`.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_psm_req(bool enable);
 
-/**@brief Function for getting the current PSM (Power Saving Mode)
- *	  configurations for periodic TAU (Tracking Area Update) and
- *	  active time, both in units of seconds.
+/** @brief Function for getting the current PSM (Power Saving Mode)
+ *	   configurations for periodic TAU (Tracking Area Update) and
+ *	   active time, both in units of seconds.
  *
  * @param tau Pointer to the variable for parsed periodic TAU interval in
  *	      seconds. Positive integer, or -1 if timer is deactivated.
  * @param active_time Pointer to the variable for parsed active time in seconds.
- *		      Positive integer, or -1 if timer is deactivated.
+ *	              Positive integer, or -1 if timer is deactivated.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
@@ -679,28 +669,28 @@ int lte_lc_psm_get(int *tau, int *active_time);
  *
  * @param mode LTE mode to which the PTW value applies.
  * @param ptw Paging Time Window value as null-terminated string.
- *        Set NULL to use manufacturer-specific default value.
+ *            Set NULL to use manufacturer-specific default value.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
 
 /** @brief Function for setting modem eDRX value to be used when
- * eDRX is subsequently enabled using `lte_lc_edrx_req`.
- * For reference see 3GPP 27.007 Ch. 7.40.
+ *         eDRX is subsequently enabled using `lte_lc_edrx_req`.
+ *         For reference see 3GPP 27.007 Ch. 7.40.
  *
  * @param mode LTE mode to which the eDRX value applies.
  * @param edrx eDRX value as null-terminated string.
- *        Set NULL to use manufacturer-specific default.
+ *             Set NULL to use manufacturer-specific default.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
 
 /** @brief Function for requesting modem to enable or disable
- * use of eDRX using values set by `lte_lc_edrx_param_set`. The
- * default values are defined in kconfig.
- * For reference see 3GPP 27.007 Ch. 7.40.
+ *         use of eDRX using values set by `lte_lc_edrx_param_set`. The
+ *         default values are defined in kconfig.
+ *         For reference see 3GPP 27.007 Ch. 7.40.
  *
  * @param enable Boolean value enabling or disabling the use of eDRX.
  *
@@ -710,8 +700,8 @@ int lte_lc_edrx_req(bool enable);
 
 
 /** @brief Function for setting modem RAI value to be used when
- * RAI is subsequently enabled using `lte_lc_rai_req`.
- * For reference see 3GPP 24.301 Ch. 9.9.4.25.
+ *         RAI is subsequently enabled using `lte_lc_rai_req`.
+ *         For reference see 3GPP 24.301 Ch. 9.9.4.25.
  *
  * @param value RAI value.
  *
@@ -720,8 +710,8 @@ int lte_lc_edrx_req(bool enable);
 int lte_lc_rai_param_set(const char *value);
 
 /** @brief Function for requesting modem to enable or disable
- * use of RAI using values set by `lte_lc_rai_param_set`. The
- * default values are defined in Kconfig.
+ *         use of RAI using values set by `lte_lc_rai_param_set`. The
+ *         default values are defined in Kconfig.
  *
  * @param enable Boolean value enabling or disabling the use of RAI.
  *
@@ -729,7 +719,7 @@ int lte_lc_rai_param_set(const char *value);
  */
 int lte_lc_rai_req(bool enable);
 
-/**@brief Get the current network registration status.
+/** @brief Get the current network registration status.
  *
  * @param status Pointer for network registration status.
  *
@@ -737,7 +727,7 @@ int lte_lc_rai_req(bool enable);
  */
 int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
 
-/**@brief Set the modem's system mode and LTE preference.
+/** @brief Set the modem's system mode and LTE preference.
  *
  * @param mode System mode to set.
  * @param preference System mode preference.
@@ -747,7 +737,7 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
 int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 			   enum lte_lc_system_mode_preference preference);
 
-/**@brief Get the modem's system mode and LTE preference.
+/** @brief Get the modem's system mode and LTE preference.
  *
  * @param mode Pointer to system mode variable.
  * @param preference Pointer to system mode preference variable. Can be NULL.
@@ -757,7 +747,7 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 			   enum lte_lc_system_mode_preference *preference);
 
-/**@brief Set the modem's functional mode.
+/** @brief Set the modem's functional mode.
  *
  * @param mode Functional mode to set.
  *
@@ -765,7 +755,7 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
  */
 int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
 
-/**@brief Get the modem's functional mode.
+/** @brief Get the modem's functional mode.
  *
  * @param mode Pointer to functional mode variable.
  *
@@ -773,7 +763,7 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
  */
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
 
-/**@brief Get the currently active LTE mode.
+/** @brief Get the currently active LTE mode.
  *
  * @param mode Pointer to LTE mode variable.
  *
@@ -781,28 +771,28 @@ int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
  */
 int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
 
-/**@brief Initiate a neighbor cell measurement.
- *	  The result of the measurement is reported back as an event of the type
- *	  LTE_LC_EVT_NEIGHBOR_CELL_MEAS, meaning that an event handler must be
- *	  registered to receive the information.
- *	  Depending on the network conditions and LTE connection state, it may
- *	  take a while before the measurement result is ready and reported back.
- *	  After the event is received, the neighbor cell measurements
- *	  are automatically stopped.
+/** @brief Initiate a neighbor cell measurement.
+ *	   The result of the measurement is reported back as an event of the type
+ *	   LTE_LC_EVT_NEIGHBOR_CELL_MEAS, meaning that an event handler must be
+ *	   registered to receive the information.
+ *	   Depending on the network conditions and LTE connection state, it may
+ *	   take a while before the measurement result is ready and reported back.
+ *	   After the event is received, the neighbor cell measurements
+ *	   are automatically stopped.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_neighbor_cell_measurement(void);
 
-/**@brief Cancel an ongoing neighbor cell measurement.
+/** @brief Cancel an ongoing neighbor cell measurement.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_neighbor_cell_measurement_cancel(void);
 
-/**@brief Get connection evaluation parameters. Connection evaluation parameters can be used to
- *	  determine the energy efficiency of data transmission prior to the actual
- *	  data transmission.
+/** @brief Get connection evaluation parameters. Connection evaluation parameters can be used to
+ *	   determine the energy efficiency of data transmission prior to the actual
+ *	   data transmission.
  *
  * @param params Pointer to structure to hold connection evaluation parameters.
  *
