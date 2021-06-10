@@ -8,7 +8,7 @@
 #include <nrf_modem_gnss.h>
 #include <string.h>
 #include <modem/at_cmd.h>
-#include <modem/at_notif.h>
+#include <modem/lte_lc.h>
 
 #ifdef CONFIG_SUPL_CLIENT_LIB
 #include <supl_os_client.h>
@@ -16,10 +16,8 @@
 #include "supl_support.h"
 #endif
 
-#define AT_XSYSTEMMODE      "AT\%XSYSTEMMODE=1,0,1,0"
+#define AT_XSYSTEMMODE      "AT\%XSYSTEMMODE=0,0,1,0"
 #define AT_ACTIVATE_GPS     "AT+CFUN=31"
-#define AT_ACTIVATE_LTE     "AT+CFUN=21"
-#define AT_DEACTIVATE_LTE   "AT+CFUN=20"
 
 #define AT_CMD_SIZE(x) (sizeof(x) - 1)
 
@@ -44,7 +42,9 @@
 
 static const char update_indicator[] = {'\\', '|', '/', '-'};
 static const char *const at_commands[] = {
+#if !defined(CONFIG_SUPL_CLIENT_LIB)
 	AT_XSYSTEMMODE,
+#endif
 #if defined(CONFIG_BOARD_NRF9160DK_NRF9160NS) || \
 	defined(CONFIG_BOARD_THINGY91_NRF9160NS)
 	AT_MAGPIO,
@@ -98,40 +98,49 @@ static int setup_modem(void)
 }
 
 #ifdef CONFIG_SUPL_CLIENT_LIB
-/* Accepted network statuses read from modem */
-static const char status_reg_home[]    = "+CEREG: 1";
-static const char status_reg_roaming[] = "+CEREG: 5";
+BUILD_ASSERT(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS) ||
+	     IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS) ||
+	     IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS),
+	     "To use SUPL and GPS, CONFIG_LTE_NETWORK_MODE_LTE_M_GPS, "
+	     "CONFIG_LTE_NETWORK_MODE_NBIOT_GPS or "
+	     "CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS must be enabled");
 
-static void wait_for_lte(void *context, const char *response)
+static void lte_handler(const struct lte_lc_evt *const evt)
 {
-	if (!memcmp(status_reg_home, response, AT_CMD_SIZE(status_reg_home)) ||
-	    !memcmp(status_reg_roaming, response, AT_CMD_SIZE(status_reg_roaming))) {
-		k_sem_give(&lte_ready);
+	switch (evt->type) {
+	case LTE_LC_EVT_NW_REG_STATUS:
+		if ((evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+		    (evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+			printk("Connected to LTE network\n");
+			k_sem_give(&lte_ready);
+		}
+		break;
+	default:
+		break;
 	}
 }
 
 static int activate_lte(bool activate)
 {
+	int err;
+
 	if (activate) {
-		if (at_cmd_write(AT_ACTIVATE_LTE, NULL, 0, NULL) != 0) {
+		err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
+		if (err) {
+			printk("Failed to activate LTE, error: %d\n", err);
 			return -1;
 		}
 
-		at_notif_register_handler(NULL, wait_for_lte);
-		if (at_cmd_write("AT+CEREG=2", NULL, 0, NULL) != 0) {
-			return -1;
-		}
-
+		printk("LTE activated\n");
 		k_sem_take(&lte_ready, K_FOREVER);
-
-		at_notif_deregister_handler(NULL, wait_for_lte);
-		if (at_cmd_write("AT+CEREG=0", NULL, 0, NULL) != 0) {
-			return -1;
-		}
 	} else {
-		if (at_cmd_write(AT_DEACTIVATE_LTE, NULL, 0, NULL) != 0) {
+		err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_DEACTIVATE_LTE);
+		if (err) {
+			printk("Failed to deactivate LTE, error: %d\n", err);
 			return -1;
 		}
+
+		printk("LTE deactivated\n");
 	}
 
 	return 0;
@@ -147,7 +156,6 @@ static void get_agps_data(struct k_work *item)
 			last_agps.data_flags);
 
 	activate_lte(true);
-	printk("Established LTE link\n");
 
 	if (open_supl_socket() == 0) {
 		printk("Starting SUPL session\n");
@@ -233,6 +241,15 @@ static void gnss_event_handler(int event)
 
 static int init_app(void)
 {
+#ifdef CONFIG_SUPL_CLIENT_LIB
+	if (lte_lc_init()) {
+		printk("Failed to initialize LTE link controller\n");
+		return -1;
+	}
+
+	lte_lc_register_handler(lte_handler);
+#endif /* CONFIG_SUPL_CLIENT_LIB */
+
 	if (setup_modem() != 0) {
 		printk("Failed to initialize modem\n");
 		return -1;
