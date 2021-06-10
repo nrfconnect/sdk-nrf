@@ -366,6 +366,8 @@ static void discard_oldest_predictions(int num)
 	 * have some free, if a previous attempt to replace expired
 	 * predictions failed (e.g., due to lack of LTE connection)
 	 */
+	LOG_INF("discarding %d", last);
+
 	for (pnum = 0; pnum < last; pnum++) {
 		block = npgps_pointer_to_block((uint8_t *)index.predictions[pnum]);
 		__ASSERT((block != -1), "unexpected ptr:%p for Prediction num:%d",
@@ -793,7 +795,7 @@ int nrf_cloud_pgps_preemptive_updates(void)
 	/* keep unexpired, read newer subsequent to last */
 	struct gps_pgps_request request;
 	int current = index.cur_pnum;
-	int valid_remaining = index.header.prediction_count - (current + 1);
+	int n = NUM_PREDICTIONS - REPLACEMENT_THRESHOLD;
 	uint16_t period_min = index.header.prediction_period_min;
 	uint16_t gps_day = 0;
 	uint32_t gps_time_of_day = 0;
@@ -806,8 +808,9 @@ int nrf_cloud_pgps_preemptive_updates(void)
 	if (current == 0xff) {
 		return nrf_cloud_pgps_request_all();
 	}
-	if (valid_remaining >= REPLACEMENT_THRESHOLD) {
-		LOG_DBG("Updates not needed yet");
+	if ((current + npgps_num_free()) < n) {
+		LOG_DBG("Updates not needed yet; current:%d, free:%d, n:%d",
+			current, npgps_num_free(), n);
 		return 0;
 	}
 
@@ -815,13 +818,16 @@ int nrf_cloud_pgps_preemptive_updates(void)
 		handler(PGPS_EVT_LOADING, NULL);
 	}
 
-	LOG_INF("Replacing %d oldest predictions", current);
-	discard_oldest_predictions(current);
+	LOG_INF("Replacing %d oldest predictions; %d already free",
+		current, npgps_num_free());
+	if (current >= n) {
+		discard_oldest_predictions(current);
+	}
 	npgps_gps_sec_to_day_time(index.end_sec, &gps_day, &gps_time_of_day);
 
 	request.gps_day = gps_day;
 	request.gps_time_of_day = gps_time_of_day;
-	request.prediction_count = current;
+	request.prediction_count = npgps_num_free();
 	request.prediction_period_min = period_min;
 	return nrf_cloud_pgps_request(&request);
 }
