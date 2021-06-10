@@ -474,10 +474,6 @@ Additionally, each build target directory contains the following configuration f
 * :file:`dts.overlay` - The DTS overlay used to adjust the DTS for needs of the application (that is, enable and configure the required hardware).
 * ``_def`` files - Configuration files for application modules.
 
-The :file:`nrf52840dk_nrf52840` directory also includes the following optional file:
-
-* :file:`config-tls-pelion.h` - Mbed TLS configuration overlay; used when Zephyr's default Mbed TLS version is selected (this is a different Mbed TLS version than the one provided by :ref:`nrfxlib:nrf_security`).
-
 Building and running
 ********************
 
