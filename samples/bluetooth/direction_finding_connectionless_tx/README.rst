@@ -16,7 +16,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52833dk_nrf52833
+   :rows: nrf52833dk_nrf52833, nrf52833dk_nrf52820
 
 The sample also requires an antenna matrix when operating in angle of departure mode.
 It can be a Nordic Semiconductor design 12 patch antenna matrix, or any other antenna matrix.
