@@ -191,11 +191,15 @@ static void test_fota_download_start(void)
 	zassert_equal(dfu_ctx_mcuboot_set_b1_file__s0_active,
 		      spm_s0_active_retval, "Incorrect param for s0_active");
 
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
 	set_s0_active(true);
 	err = fota_download_start("something.com", buf, NO_TLS, DEFAULT_APN, 0);
 	zassert_equal(err, 0, NULL);
 	zassert_equal(dfu_ctx_mcuboot_set_b1_file__s0_active,
 		      spm_s0_active_retval, "Incorrect param for s0_active");
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
 
 	/* Next, verify that the update path given by mcuboot_set_b1_file
 	 * is used correctly.
@@ -207,6 +211,8 @@ static void test_fota_download_start(void)
 	err = fota_download_start("something.com", buf, NO_TLS, DEFAULT_APN, 0);
 	zassert_equal(err, 0, NULL);
 	zassert_true(strcmp(download_client_start_file, S0_S1) == 0, NULL);
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
 
 	/* update set to not null indicates to use update for file param */
 	dfu_ctx_mcuboot_set_b1_file__update = S1;
@@ -214,6 +220,10 @@ static void test_fota_download_start(void)
 	err = fota_download_start("something.com", buf, NO_TLS, DEFAULT_APN, 0);
 	zassert_equal(err, 0, NULL);
 	zassert_true(strcmp(download_client_start_file, S1) == 0, NULL);
+
+	/* Check if double call returns EALREADY */
+	err = fota_download_start("something.com", buf, NO_TLS, DEFAULT_APN, 0);
+	zassert_equal(err, -EALREADY, "No failure for double call");
 }
 
 void test_main(void)
