@@ -42,7 +42,7 @@ extern "C" {
 #define DK_BTN3_MSK      BIT(DK_BTN3)
 #define DK_BTN4_MSK      BIT(DK_BTN4)
 #define DK_ALL_BTNS_MSK  (DK_BTN1_MSK | DK_BTN2_MSK | \
-			  DK_BTN2_MSK | DK_BTN3_MSK)
+			  DK_BTN3_MSK | DK_BTN4_MSK)
 /**
  * @typedef button_handler_t
  * @brief Callback that is executed when a button state change is detected.
