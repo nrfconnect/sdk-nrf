@@ -572,7 +572,7 @@ static int bt_mesh_light_xyl_srv_settings_set(struct bt_mesh_model *model,
 static int bt_mesh_light_xyl_srv_start(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_xyl_srv *srv = model->user_data;
-	struct bt_mesh_light_xy_status xy_dummy;
+	struct bt_mesh_light_xy_status status;
 	struct bt_mesh_model_transition transition = {
 		.time = srv->lightness_srv.ponoff.dtt.transition_time,
 		.delay = 0,
@@ -594,7 +594,16 @@ static int bt_mesh_light_xyl_srv_start(struct bt_mesh_model *model)
 		return -EINVAL;
 	}
 
-	srv->handlers->xy_set(srv, NULL, &set, &xy_dummy);
+	srv->handlers->xy_set(srv, NULL, &set, &status);
+
+	struct bt_mesh_light_xyl_status xyl_status;
+
+	xyl_get(srv, NULL, &xyl_status);
+
+	/* Ignore error: Will fail if there are no publication parameters, but
+	 * it doesn't matter for the startup procedure.
+	 */
+	(void)bt_mesh_light_xyl_srv_pub(srv, NULL, &xyl_status);
 	return 0;
 }
 
