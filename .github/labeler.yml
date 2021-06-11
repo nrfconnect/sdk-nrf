@@ -60,9 +60,15 @@
   - "tests/subsys/spm/secure_services/**/*"
 
 "CI-ble-test":
-  - "subsys/bluetooth/**/*"
-  - "include/bluetooth/**/*"
-  - "samples/bluetooth/**/*"
+  - any:
+    - "subsys/bluetooth/**/*"
+    - "!subsys/bluetooth/mesh/**/*"
+  - any:
+    - "include/bluetooth/**/*"
+    - "!include/bluetooth/mesh/**/*"
+  - any:
+    - "samples/bluetooth/**/*"
+    - "!samples/bluetooth/mesh/**/*"
 
 "CI-mesh-test":
   - "subsys/bluetooth/mesh/**/*"
@@ -128,16 +134,21 @@
   - "samples/CMakeLists.txt"
 
 "CI-homekit-test":
-  - "subsys/mpsl/**/*"
-  - "drivers/mpsl/**/*"
-  - "dts/bindings/radio_fem/**/*"
-  - "modules/nrfxlib/nrf_802154/**/*"
-  - "drivers/hw_cc310/*"
-  - "subsys/bluetooth/**/*"
-  - "include/bluetooth/**/*"
-  - "subsys/bootloader/**/*"
-  - "subsys/partition_manager/**/*"
-  - "modules/mcuboot/**/*"
+  - any:
+    - "subsys/mpsl/**/*"
+    - "drivers/mpsl/**/*"
+    - "dts/bindings/radio_fem/**/*"
+    - "modules/nrfxlib/nrf_802154/**/*"
+    - "drivers/hw_cc310/*"
+    - "subsys/bootloader/**/*"
+    - "subsys/partition_manager/**/*"
+    - "modules/mcuboot/**/*"
+  - any:
+    - "subsys/bluetooth/**/*"
+    - "!subsys/bluetooth/mesh/**/*"
+  - any:
+    - "include/bluetooth/**/*"
+    - "!include/bluetooth/mesh/**/*"
 
 "CI-thread-test":
   - "samples/openthread/**/*"
