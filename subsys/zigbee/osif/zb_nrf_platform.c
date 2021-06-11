@@ -22,6 +22,10 @@
 #include "zb_nrf_platform.h"
 #include "zb_nrf_crypto.h"
 
+#ifdef CONFIG_ZIGBEE_LIBRARY_NCP_DEV
+#define SYS_REBOOT_NCP 0x10
+#endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
+
 
 /**
  * Enumeration representing type of application callback to execute from ZBOSS
@@ -500,7 +504,11 @@ void zb_reset(zb_uint8_t param)
 {
 	ZVUNUSED(param);
 
+#ifdef CONFIG_ZIGBEE_LIBRARY_NCP_DEV
+	sys_reboot(SYS_REBOOT_NCP);
+#else /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
 	sys_reboot(SYS_REBOOT_COLD);
+#endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
 }
 
 zb_bool_t zb_osif_is_inside_isr(void)
@@ -586,19 +594,23 @@ void zigbee_enable(void)
 zb_uint8_t zb_get_reset_source(void)
 {
 	uint32_t reas;
+	uint8_t zb_reason;
+#ifdef CONFIG_ZIGBEE_LIBRARY_NCP_DEV
+	uint8_t zephyr_reset_type = nrf_power_gpregret_get(NRF_POWER);
+#endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
 
 #if NRF_POWER_HAS_RESETREAS
 
 	reas = nrf_power_resetreas_get(NRF_POWER);
 	nrf_power_resetreas_clear(NRF_POWER, reas);
 	if (reas & NRF_POWER_RESETREAS_RESETPIN_MASK) {
-		return ZB_RESET_SRC_RESET_PIN;
+		zb_reason = ZB_RESET_SRC_RESET_PIN;
 	} else if (reas & NRF_POWER_RESETREAS_SREQ_MASK) {
-		return ZB_RESET_SRC_SW_RESET;
+		zb_reason = ZB_RESET_SRC_SW_RESET;
 	} else if (reas) {
-		return ZB_RESET_SRC_OTHER;
+		zb_reason = ZB_RESET_SRC_OTHER;
 	} else {
-		return ZB_RESET_SRC_POWER_ON;
+		zb_reason = ZB_RESET_SRC_POWER_ON;
 	}
 
 #else
@@ -606,16 +618,26 @@ zb_uint8_t zb_get_reset_source(void)
 	reas = nrf_reset_resetreas_get(NRF_RESET);
 	nrf_reset_resetreas_clear(NRF_RESET, reas);
 	if (reas & NRF_RESET_RESETREAS_RESETPIN_MASK) {
-		return ZB_RESET_SRC_RESET_PIN;
+		zb_reason = ZB_RESET_SRC_RESET_PIN;
 	} else if (reas & NRF_RESET_RESETREAS_SREQ_MASK) {
-		return ZB_RESET_SRC_SW_RESET;
+		zb_reason = ZB_RESET_SRC_SW_RESET;
 	} else if (reas) {
-		return ZB_RESET_SRC_OTHER;
+		zb_reason = ZB_RESET_SRC_OTHER;
 	} else {
-		return ZB_RESET_SRC_POWER_ON;
+		zb_reason = ZB_RESET_SRC_POWER_ON;
 	}
 
 #endif
+
+#ifdef CONFIG_ZIGBEE_LIBRARY_NCP_DEV
+	if ((zb_reason == ZB_RESET_SRC_SW_RESET) &&
+	    (zephyr_reset_type != SYS_REBOOT_NCP)) {
+		zb_reason = ZB_RESET_SRC_OTHER;
+	}
+
+#endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
+
+	return zb_reason;
 }
 
 ZB_WEAK_PRE zb_uint32_t ZB_WEAK zb_osif_get_fw_version(void)
