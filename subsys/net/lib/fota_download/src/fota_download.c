@@ -39,6 +39,7 @@ static uint8_t mcuboot_buf[CONFIG_FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ] __aligned(
 static enum dfu_target_image_type img_type;
 static enum dfu_target_image_type img_type_expected = DFU_TARGET_IMAGE_TYPE_ANY;
 static bool first_fragment;
+static bool downloading;
 
 static void send_evt(enum fota_download_evt_id id)
 {
@@ -57,6 +58,7 @@ static void send_error_evt(enum fota_download_error_cause cause)
 		.id = FOTA_DOWNLOAD_EVT_ERROR,
 		.cause = cause
 	};
+	downloading = false;
 	callback(&evt);
 }
 
@@ -190,6 +192,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			}
 
 			send_progress((offset * 100) / file_size);
+			downloading = false;
 			LOG_DBG("Progress: %d/%d bytes", offset, file_size);
 		}
 	break;
@@ -210,6 +213,7 @@ static int download_client_callback(const struct download_client_evt *event)
 		}
 		send_evt(FOTA_DOWNLOAD_EVT_FINISHED);
 		first_fragment = true;
+		downloading = false;
 		break;
 
 	case DOWNLOAD_CLIENT_EVT_ERROR: {
@@ -269,6 +273,7 @@ static void download_with_offset(struct k_work *unused)
 		return;
 	}
 	LOG_INF("Downloading from offset: 0x%x", offset);
+	downloading = true;
 	return;
 }
 
@@ -301,6 +306,10 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 
 	if (host == NULL || file == NULL || callback == NULL) {
 		return -EINVAL;
+	}
+
+	if (downloading) {
+		return -EALREADY;
 	}
 
 	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
@@ -364,6 +373,8 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 		return err;
 	}
 
+	downloading = true;
+
 	return 0;
 }
 
@@ -401,6 +412,8 @@ int fota_download_init(fota_download_callback_t client_callback)
 int fota_download_cancel(void)
 {
 	int err;
+
+	downloading = false;
 
 	if (dlc.fd == -1) {
 		/* Download not started, aborted or completed */
