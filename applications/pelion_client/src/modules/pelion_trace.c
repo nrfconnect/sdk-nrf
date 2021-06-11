@@ -10,6 +10,14 @@
 #define MODULE pelion_trace
 #include <caf/events/module_state_event.h>
 
+#include <logging/log.h>
+LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_PELION_LOG_LEVEL);
+
+
+static void trace_printer(const char *str)
+{
+	LOG_INF("%s", log_strdup(str));
+}
 
 static void init_pelion_trace(void)
 {
@@ -28,6 +36,8 @@ static void init_pelion_trace(void)
 	 */
 	mbed_trace_mutex_wait_function_set(mbed_trace_helper_mutex_wait);
 	mbed_trace_mutex_release_function_set(mbed_trace_helper_mutex_release);
+	mbed_trace_config_set(TRACE_MODE_COLOR | TRACE_ACTIVE_LEVEL_ALL);
+	mbed_trace_print_function_set(trace_printer);
 }
 
 
