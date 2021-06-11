@@ -237,9 +237,10 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 		return ret;
 	}
 
+
 	if (saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_PENDING) {
 		update_was_pending = true;
-#if defined(CONFIG_BOOTLOADER_MCUBOOT)
+#if defined(CONFIG_MCUBOOT_IMG_MANAGER)
 		if (!boot_is_img_confirmed()) {
 			ret = boot_write_img_confirmed();
 			if (ret) {
