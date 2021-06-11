@@ -167,3 +167,7 @@
   - "modules/nrfxlib/nrf_802154/**/*"
   - "modules/mcuboot/**/*"
   - "samples/matter/**/*"
+
+  "CI-rpc-test":
+  - "subsys/nrf_rpc/**/*"
+  - "samples/nrf_rpc/**/*"
