@@ -12,6 +12,9 @@ Modules can register a callback function to receive AT command notifications as 
 Multiple instances, which can be identified by pointers to contexts, are also supported.
 Modules can de-register the callback function to stop receiving notifications.
 
+.. note::
+   The AT command notifications library is deprecated. Use the :ref:`at_monitor_readme` library instead.
+
 API documentation
 *****************
 
