@@ -110,6 +110,11 @@ int http_get_request_send(struct download_client *client)
 static int http_header_parse(struct download_client *client, size_t *hdr_len)
 {
 	char *p;
+	char *q;
+	const bool using_range_requests = (client->proto == IPPROTO_TLS_1_2 ||
+		IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS));
+	const unsigned int expected_status = using_range_requests ? 206 : 200;
+	unsigned int http_status;
 
 	p = strstr(client->buf, "\r\n\r\n");
 	if (!p || p > client->buf + client->offset) {
@@ -130,31 +135,40 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 		client->buf[i] = tolower(client->buf[i]);
 	}
 
-	p = strstr(client->buf, "http/1.1 206");
+	/* Look for the status code just after "http/1.1 " */
+	p = strstr(client->buf, "http/1.1 ");
 	if (!p) {
-		p = strstr(client->buf, "http/1.1 404");
-		if (p) {
-			LOG_ERR("Server response was 404: file not found");
-			return -1;
+		LOG_ERR("Server response missing HTTP/1.1");
+		return -1;
+	}
+	p += strlen("http/1.1 ");
+
+	http_status = strtoul(p, &q, 10);
+	if (!q) {
+		LOG_ERR("Server response malformed: status code not found");
+		return -1;
+	}
+	if (http_status != expected_status) {
+		/* Truncate the server response at the first CR or LF after the
+		 * status and message so we can log it. Normally we can't
+		 * modify the response like this since we'd need to look at
+		 * data beyond this point, but we're already in a failing
+		 * condition.
+		 */
+		while ((*q != '\0') && (*q != '\r') && (*q != '\n')) {
+			q++;
 		}
-		if (client->proto == IPPROTO_TLS_1_2
-		   || IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
-			LOG_ERR("Server did not honor partial content request");
-			return -1;
-		}
-		p = strstr(client->buf, "http/1.1 200");
-		if (!p) {
-			LOG_ERR("Server response is not 200 Success");
-			return -1;
-		}
+		*q = '\0';
+
+		LOG_ERR("Unexpected HTTP response: %s", log_strdup(p));
+		return -1;
 	}
 
 	/* The file size is returned via "Content-Length" in case of HTTP,
 	 * and via "Content-Range" in case of HTTPS with range requests.
 	 */
 	if (client->file_size == 0) {
-		if (client->proto == IPPROTO_TLS_1_2
-		   || IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
+		if (using_range_requests) {
 			p = strstr(client->buf, "content-range");
 			if (!p) {
 				LOG_ERR("Server did not send "
