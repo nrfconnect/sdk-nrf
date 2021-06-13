@@ -29,5 +29,19 @@ jobs:
           checkout-path: 'ncs/nrf'
           label-prefix: 'manifest-'
           verbosity-level: '1'
-          labels: 'manifest'
+
+          # Add one label per line. 'manifest' always adds the label 'manifest'.
+          # 'CI-all-test:zephyr;nrfxlib,' adds the 'CI-all-test' label when the
+          # zephyr module or the nrfxlib module is changed. Each line is comma-
+          # separated.
+          labels: >
+            manifest,
+            CI-all-test:zephyr;nrfxlib,
+            CI-tfm-test:trusted-firmware-m;tfm-mcuboot,
+            CI-boot-dfu-test:mcuboot;mcumgr,
+            CI-matter-test:matter,
+            CI-find-my-test:find-my,
+            CI-homekit-test:homekit,
+            CI-thread-test:openthread,
+            CI-crypto-test:mbedtls;mbedtls-nrf
           dnm-labels: 'DNM'
