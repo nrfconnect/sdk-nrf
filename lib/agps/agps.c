@@ -286,7 +286,7 @@ static int init_supl(int socket)
 static int supl_start(const struct gps_agps_request request)
 {
 	int err;
-	nrf_gnss_agps_data_frame_t req = {
+	struct nrf_modem_gnss_agps_data_frame req = {
 		.sv_mask_ephe = request.sv_mask_ephe,
 		.sv_mask_alm = request.sv_mask_alm,
 		.data_flags =
