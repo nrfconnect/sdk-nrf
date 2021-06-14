@@ -10,6 +10,7 @@ ALL_DOCSETS = {
     "nrfxlib": ("nrfxlib", "README"),
     "zephyr": ("Zephyr Project", "index"),
     "mcuboot": ("MCUboot", "wrapper"),
+    "tfm": ("Trusted Firmware-M", "index"),
     "kconfig": ("Kconfig Reference", "index"),
 }
 """All supported docsets (name: title, home page)."""
