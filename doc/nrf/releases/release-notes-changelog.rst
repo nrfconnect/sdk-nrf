@@ -126,6 +126,8 @@ Hardware unique key
 
 * Make the checking for hw_unique_key_write_random() more strict; panic if any key is unwritten after writing random keys.
 * Refactored the HUK_HAS_* macros to be defined/undefined instead of 1/0.
+* Added a new sample :ref:`hw_unique_key_usage` showing how to use a hardware unique key to derive an encryption key.
+  The sample can be run with or without TF-M.
 
 Bugfixes:
 
