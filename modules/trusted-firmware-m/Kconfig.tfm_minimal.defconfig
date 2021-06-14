@@ -7,6 +7,10 @@ config TFM_CRYPTO_HASH_MODULE_ENABLED
 	bool
 	default y
 
+config TFM_CRYPTO_RNG_MODULE_ENABLED
+	bool
+	default y
+
 config TFM_PARTITION_CRYPTO
 	bool
 	default y
