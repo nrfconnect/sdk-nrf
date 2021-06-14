@@ -56,6 +56,9 @@ include(${ZEPHYR_BASE}/cmake/zephyr_module.cmake)
 # Args:
 # - name: Docset name.
 # - env: Environment passed to the Sphinx build.
+# - DODGY: Enable/disable "dodgy" mode. If enabled, the ${SPHINXOPTS_EXTRA}
+#   option (used to enable things like -W) will not be passed to Sphinx. It can
+#   be useful for external docsets that are likely to generate build warnings.
 #
 # This function configures multiple targets which can be used to build a docset.
 # The docset configuration (conf.py) is expected to be at the ${name} folder
@@ -74,12 +77,18 @@ include(${ZEPHYR_BASE}/cmake/zephyr_module.cmake)
 # - ${name}-clean: Clean build artifacts.
 #
 function(add_docset name env)
+  cmake_parse_arguments(DOCSET "DODGY" "" "" ${ARGN})
+
   set(DOCSET_CFG_DIR ${CMAKE_CURRENT_LIST_DIR}/${name})
   set(DOCSET_BUILD_DIR ${CMAKE_BINARY_DIR}/${name})
   set(DOCSET_SRC_DIR ${CMAKE_BINARY_DIR}/${name}/src)
   set(DOCSET_HTML_DIR ${CMAKE_BINARY_DIR}/html/${name})
   set(DOCSET_MAKE_DIRS ${DOCSET_BUILD_DIR};${DOCSET_SRC_DIR})
   set(DOCSET_CLEAN_DIRS ${DOCSET_BUILD_DIR};${DOCSET_HTML_DIR})
+
+  if(NOT ${DOCSET_DODGY})
+    set(EXTRA_ARGS ${SPHINXOPTS_EXTRA})
+  endif()
 
   add_doc_target(
     ${name}-inventory
@@ -104,7 +113,7 @@ function(add_docset name env)
       -c ${DOCSET_CFG_DIR}
       -w ${DOCSET_BUILD_DIR}/html.log
       ${SPHINXOPTS_DEFAULT}
-      ${SPHINXOPTS_EXTRA}
+      ${EXTRA_ARGS}
       ${DOCSET_SRC_DIR}
       ${DOCSET_HTML_DIR}
     USES_TERMINAL
@@ -119,7 +128,7 @@ function(add_docset name env)
       -c ${DOCSET_CFG_DIR}
       -w ${DOCSET_BUILD_DIR}/linkcheck.log
       ${SPHINXOPTS_DEFAULT}
-      ${SPHINXOPTS_EXTRA}
+      ${EXTRA_ARGS}
       ${DOCSET_SRC_DIR}
       ${DOCSET_BUILD_DIR}
     USES_TERMINAL
