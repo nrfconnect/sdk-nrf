@@ -229,7 +229,7 @@ To install and configure the OpenThread Border Router using the Docker container
 
 #. Form the Thread network using one of the following options:
 
-   * Follow the instruction in the `OpenThread Border Router Codelab tutorial step 2`_.
+   * Follow the instruction in the `OpenThread Border Router Codelab tutorial step 3`_.
    * Open the ``http://localhost:8080/`` address in a web browser and choose :guilabel:`Form` from the menu.
 
      .. note::
