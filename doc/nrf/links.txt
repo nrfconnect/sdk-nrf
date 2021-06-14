@@ -12,8 +12,8 @@
 .. ### Source: github.com
 
 .. _`GitHub`: https://github.com/
-.. _`GitHub fork`: https://docs.github.com/en/github/getting-started-with-github/fork-a-repo
-.. _`GitHub duplicate`: https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/duplicating-a-repository
+.. _`GitHub fork`: https://docs.github.com/en/github/getting-started-with-github/quickstart/fork-a-repo
+.. _`GitHub duplicate`: https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/duplicating-a-repository
 
 .. _`sdk-zephyr`: https://github.com/nrfconnect/sdk-zephyr
 .. _`official Zephyr repository`:
@@ -55,9 +55,9 @@
 
 .. _`nRF52820 CMakeLists.txt`: https://github.com/zephyrproject-rtos/zephyr/blob/master/boards/arm/nrf52833dk_nrf52820/CMakeLists.txt
 
-.. _`OpenThread CLI Reference`: https://github.com/openthread/openthread/blob/master/src/cli/README.md
-.. _`Commissioner CLI commands`: https://github.com/openthread/openthread/blob/master/src/cli/README_COMMISSIONER.md
-.. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/master/src/cli/README_JOINER.md
+.. _`OpenThread CLI Reference`: https://github.com/openthread/openthread/blob/main/src/cli/README.md
+.. _`Commissioner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_COMMISSIONER.md
+.. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_JOINER.md
 
 .. _`Breathe issue #437`: https://github.com/michaeljones/breathe/issues/437
 .. _`Breathe issue #438`: https://github.com/michaeljones/breathe/issues/438
@@ -70,14 +70,14 @@
 .. _`wpantund Usage Overview`: https://github.com/openthread/wpantund#user-content-usage-overview
 .. _`CLI wpantund wrapper`: https://github.com/openthread/wpantund/blob/master/doc/wpanctl.1
 
-.. _`Pyspinel`: https://github.com/openthread/pyspinel/blob/master/README.md
-.. _`Pyspinel arguments`: https://github.com/openthread/pyspinel/blob/master/README.md#description
+.. _`Pyspinel`: https://github.com/openthread/pyspinel/blob/main/README.md
+.. _`Pyspinel arguments`: https://github.com/openthread/pyspinel/blob/main/README.md#description
 .. _`Spinel specification properties for Thread`: https://github.com/openthread/spinel-spec/blob/master/thread/detail-properties.md
 .. _`Spinel protocol`: https://github.com/openthread/spinel-spec
 
 .. _`OpenThread POSIX app`: https://github.com/zephyrproject-rtos/openthread/tree/zephyr/src/posix
 
-.. _`OpenThread THCI`: https://github.com/openthread/openthread/tree/master/tools/harness-thci
+.. _`OpenThread THCI`: https://github.com/openthread/openthread/tree/main/tools/harness-thci
 
 .. _`OpenAMP`: https://github.com/OpenAMP/open-amp/
 .. _`RPMsg Messaging Protocol`: https://github.com/OpenAMP/open-amp/wiki/RPMsg-Messaging-Protocol
@@ -359,7 +359,7 @@
 .. _`Creating an Azure IoT Hub instance using the Azure portal`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal
 .. _`Azure IoT Hub Device Provisioning Service (DPS)`: https://docs.microsoft.com/en-us/azure/iot-dps/
 .. _`Set up an Azure IoT Hub Device Provisioning Service (DPS) instance`: https://docs.microsoft.com/en-us/azure/iot-dps/quick-setup-auto-provision
-.. _`Creating Azure IoT Hub certificates`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-security-x509-get-started
+.. _`Creating Azure IoT Hub certificates`: https://docs.microsoft.com/en-us/azure/iot-hub/tutorial-x509-scripts
 .. _`Azure IoT Hub direct method`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-direct-methods
 .. _`Azure IoT Hub MQTT protocol support`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-mqtt-support
 .. _`Azure IoT Explorer`: https://docs.microsoft.com/en-us/azure/iot-pnp/howto-use-iot-explorer
@@ -374,27 +374,27 @@
 
 .. ### Source: ietf.org
 
-.. _`CoAP response codes`: https://tools.ietf.org/html/rfc7252#section-12.1.2
+.. _`CoAP response codes`: https://datatracker.ietf.org/doc/html/rfc7252#section-12.1.2
 
-.. _`RFC 7252 - The Constrained Application Protocol`: https://tools.ietf.org/html/rfc7252
+.. _`RFC 7252 - The Constrained Application Protocol`: https://datatracker.ietf.org/doc/html/rfc7252
 
-.. _`Content-Range requests (IETF RFC 7233)`: https://tools.ietf.org/html/rfc7233
+.. _`Content-Range requests (IETF RFC 7233)`: https://datatracker.ietf.org/doc/html/rfc7233
 
-.. _`RFC959 File Transfer Protocol (FTP)`: https://tools.ietf.org/html/rfc959
-.. _`RFC1055 Serial Line Internet Protocol (SLIP)`: https://tools.ietf.org/html/rfc1055
+.. _`RFC959 File Transfer Protocol (FTP)`: https://datatracker.ietf.org/doc/html/rfc959
+.. _`RFC1055 Serial Line Internet Protocol (SLIP)`: https://datatracker.ietf.org/doc/html/rfc1055
 
 .. _`TLS`: https://www.ietf.org/rfc/rfc5246.txt
 
-.. _`RFC 5639 - ECC Brainpool Standard Curves and Curve Generation`: https://tools.ietf.org/html/rfc5639
-.. _`RFC 5869 - HMAC-based Extract-and-Expand Key Derivation Function (HKDF)`: https://tools.ietf.org/html/rfc5869
-.. _`RFC 7027 - ECC Brainpool Curves for TLS`: https://tools.ietf.org/html/rfc7027
-.. _`RFC 7539 - ChaCha20 and Poly1305 for IETF Protocols`: https://tools.ietf.org/html/rfc7539
-.. _`RFC 7748 - Elliptic Curves for Security`: https://tools.ietf.org/html/rfc7748
-.. _`RFC 8032 - Edwards-Curve Digital Signature Algorithm (EdDSA)`: https://tools.ietf.org/html/rfc8032
+.. _`RFC 5639 - ECC Brainpool Standard Curves and Curve Generation`: https://datatracker.ietf.org/doc/html/rfc5639
+.. _`RFC 5869 - HMAC-based Extract-and-Expand Key Derivation Function (HKDF)`: https://datatracker.ietf.org/doc/html/rfc5869
+.. _`RFC 7027 - ECC Brainpool Curves for TLS`: https://datatracker.ietf.org/doc/html/rfc7027
+.. _`RFC 7539 - ChaCha20 and Poly1305 for IETF Protocols`: https://datatracker.ietf.org/doc/html/rfc7539
+.. _`RFC 7748 - Elliptic Curves for Security`: https://datatracker.ietf.org/doc/html/rfc7748
+.. _`RFC 8032 - Edwards-Curve Digital Signature Algorithm (EdDSA)`: https://datatracker.ietf.org/doc/html/rfc8032
 
-.. _`J-PAKE: Password-Authenticated Key Exchange by Juggling`: https://tools.ietf.org/html/rfc8236#section-3
+.. _`J-PAKE: Password-Authenticated Key Exchange by Juggling`: https://datatracker.ietf.org/doc/html/rfc8236#section-3
 
-.. _`CBOR Object Signing and Encryption (COSE)`: https://tools.ietf.org/html/rfc8152
+.. _`CBOR Object Signing and Encryption (COSE)`: https://datatracker.ietf.org/doc/html/rfc8152
 
 .. ### Source: pubs.opengroup.org
 
@@ -442,7 +442,7 @@
 
 .. ### Source: openthread.io
 
-.. _`OpenThread.io`: https://www.openthread.io
+.. _`OpenThread.io`: https://openthread.io/
 .. _`Device Types on OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
 .. _`OpenThread logging`: https://openthread.io/guides/build/logs
@@ -450,7 +450,7 @@
 .. _`Openthread acting as a new reference platform`: https://openthread.io/certification/automation-setup#acting_as_a_new_reference_platform
 .. _`OpenThread Border Router`: https://openthread.io/guides/border-router
 .. _`OpenThread Border Router Codelab tutorial`: https://openthread.io/codelabs/openthread-border-router
-.. _`OpenThread Border Router Codelab tutorial step 2`: https://openthread.io/codelabs/openthread-border-router#2
+.. _`OpenThread Border Router Codelab tutorial step 3`: https://openthread.io/codelabs/openthread-border-router#2
 
 .. _`OpenThread system architecture`: https://openthread.io/platforms#system_architecture
 
@@ -544,7 +544,7 @@
 
 .. _`GCC compiler`: https://gcc.gnu.org/
 
-.. _`MCUboot`: https://mcuboot.com
+.. _`MCUboot`: https://www.mcuboot.com
 
 .. _`nRF Mesh mobile app for iOS`: https://apps.apple.com/us/app/nrf-mesh/id1380726771
 .. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner
@@ -613,7 +613,8 @@
 
 .. _`ST25R3911B chip documentation`: https://www.st.com/resource/en/datasheet/st25r3911b.pdf
 
-.. _`Zigbee Alliance`: https://zigbeealliance.org
+.. _`Zigbee Alliance`:
+.. _`Connectivity Standards Alliance`: https://csa-iot.org
 .. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/
 
 .. _`ZBOSS Open Initiative (ZOI)`: https://dsr-zoi.com/
@@ -652,7 +653,7 @@
 .. _`GN`: https://gn.googlesource.com/gn/
 .. _`GN website`: https://gn.googlesource.com/gn/#getting-a-binary
 
-.. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
+.. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
 
 .. _`Power Saving Mode (PSM)`: https://www.sharetechnote.com/html/Handbook_LTE_PSM.html
 

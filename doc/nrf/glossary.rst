@@ -188,7 +188,7 @@ Glossary
       Kconfig fragments use the :file:`.conf` extension.
 
    Kconfig language
-      A `configuration language <Kconfig language>`_ used in Kconfig files and fragments.
+      A `configuration language <Kconfig language_>`_ used in Kconfig files and fragments.
       It was initially created for the Linux kernel.
 
    Kconfig option
@@ -290,7 +290,7 @@ Glossary
       See `OpenAMP`_.
 
    OpenThread
-      A portable and flexible `open-source implementation <OpenThread.io>`_ of the Thread networking protocol.
+      A portable and flexible `open-source implementation <OpenThread.io_>`_ of the Thread networking protocol.
 
    OpenThread Border Router (OTBR)
       A router that connects a Thread network to other IP-based networks, like Wi-Fi or Ethernet.
