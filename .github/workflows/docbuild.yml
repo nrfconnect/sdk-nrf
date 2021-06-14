@@ -30,7 +30,7 @@ jobs:
 
       - name: Install packages
         run: |
-          sudo apt-get install -y ninja-build doxygen mscgen sshpass
+          sudo apt-get install -y ninja-build doxygen mscgen plantuml sshpass
 
       - name: Install base dependencies
         working-directory: ncs

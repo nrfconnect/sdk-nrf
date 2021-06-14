@@ -21,6 +21,7 @@ The following tool versions have been tested to work:
 
 * Doxygen 1.8.13
 * Mscgen 0.20
+* PlantUML
 * Python dependencies as listed in :ref:`python_req_documentation`
 
 Complete the following steps to install the required tools:
@@ -29,6 +30,7 @@ Complete the following steps to install the required tools:
 #. Install or update all required :ref:`Python dependencies <additional_deps>`.
 #. Install `Doxygen`_.
 #. Install `mscgen`_ and make sure that the ``mscgen`` executable is in your ``PATH``.
+#. Install PlantUML. It can be easily installed from `chocolatey <https://community.chocolatey.org/packages/plantuml>`_ on Windows.
 
 .. _documentation_sets:
 
@@ -47,6 +49,7 @@ Following are the available documentation sets:
 - ``nrfxlib``: nrfxlib
 - ``zephyr``: Zephyr RTOS
 - ``mcuboot``: MCUboot
+- ``tfm``: Trusted Firmware-M
 - ``kconfig``: All available Kconfig options in the |NCS|
 
 Since there are links from the |NCS| documentation set into other documentation sets, the documentation is built in a predefined order.
