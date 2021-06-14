@@ -86,14 +86,13 @@
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
-.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/430b49/src/android/CHIPTool
-.. _`Working with Android Controller`:
-.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/430b49/docs/guides/nrfconnect_android_commissioning.md
-.. _`Working with Python Controller`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/430b49/src/controller/python/README.md
-.. _`Performing Device Firmware Upgrade in Matter device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/430b49/docs/guides/nrfconnect_examples_software_update.md
-.. _`Matter Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/430b49/README.md
-.. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/430b49/docs/guides/nrfconnect_platform_overview.md
-.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/430b49/src/controller
+.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/933fb4/src/android/CHIPTool
+.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/933fb4/docs/guides/nrfconnect_android_commissioning.md
+.. _`Working with Python Controller`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/933fb4/src/controller/python/README.md
+.. _`Performing Device Firmware Upgrade in Matter device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/933fb4/docs/guides/nrfconnect_examples_software_update.md
+.. _`Matter Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/933fb4/README.md
+.. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/933fb4/docs/guides/nrfconnect_platform_overview.md
+.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/933fb4/src/controller
 
 .. _`Azure support for Asset Tracker v2`: https://github.com/nrfconnect/sdk-nrf/pull/3950
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
