@@ -101,6 +101,40 @@ static int execute_http_request(const char *request, size_t request_len)
 		goto clean_up;
 	}
 
+	if (CONFIG_MULTICELL_LOCATION_SEND_TIMEOUT > 0) {
+		struct timeval timeout = {
+			.tv_sec = CONFIG_MULTICELL_LOCATION_SEND_TIMEOUT,
+		};
+
+		err = setsockopt(fd,
+				 SOL_SOCKET,
+				 SO_SNDTIMEO,
+				 &timeout,
+				 sizeof(timeout));
+		if (err) {
+			LOG_ERR("Failed to setup socket send timeout, errno %d", errno);
+			err = -errno;
+			goto clean_up;
+		}
+	}
+
+	if (CONFIG_MULTICELL_LOCATION_RECV_TIMEOUT > 0) {
+		struct timeval timeout = {
+			.tv_sec = CONFIG_MULTICELL_LOCATION_RECV_TIMEOUT,
+		};
+
+		err = setsockopt(fd,
+				 SOL_SOCKET,
+				 SO_RCVTIMEO,
+				 &timeout,
+				 sizeof(timeout));
+		if (err) {
+			LOG_ERR("Failed to setup socket receive timeout, errno %d", errno);
+			err = -errno;
+			goto clean_up;
+		}
+	}
+
 	err = connect(fd, res->ai_addr, sizeof(struct sockaddr_in));
 	if (err) {
 		LOG_ERR("connect() failed, errno: %d", errno);
@@ -126,7 +160,21 @@ static int execute_http_request(const char *request, size_t request_len)
 	do {
 		bytes = recv(fd, &recv_buf[offset], sizeof(recv_buf) - offset - 1, 0);
 		if (bytes < 0) {
+			if ((errno == EAGAIN) || (errno == EWOULDBLOCK) || (errno == ETIMEDOUT)) {
+				LOG_WRN("Receive timeout, possibly incomplete data received");
+
+				/* It's been observed that some services seemingly doesn't
+				 * close the connection as expected, causing recv() to never
+				 * return 0. In these cases we may have received all data,
+				 * so we choose to break here to continue parsing while
+				 * propagating the timeout information.
+				 */
+				err = -ETIMEDOUT;
+				break;
+			}
+
 			LOG_ERR("recv() failed, errno: %d", errno);
+
 			err = -errno;
 			goto clean_up;
 		} else {
@@ -146,7 +194,10 @@ static int execute_http_request(const char *request, size_t request_len)
 
 	LOG_DBG("Closing socket");
 
-	err = 0;
+	/* Propagate timeout information */
+	if (err != -ETIMEDOUT) {
+		err = 0;
+	}
 
 clean_up:
 	freeaddrinfo(res);
@@ -180,7 +231,9 @@ int multicell_location_get(const struct lte_lc_cells_info *cell_data,
 	LOG_DBG("Generated request:\n%s", log_strdup(http_request));
 
 	err = execute_http_request(http_request, strlen(http_request));
-	if (err) {
+	if (err == -ETIMEDOUT) {
+		LOG_WRN("Data reception timed out, attempting to parse possibly incomplete data");
+	} else if (err) {
 		LOG_ERR("HTTP request failed, error: %d", err);
 		return err;
 	}
