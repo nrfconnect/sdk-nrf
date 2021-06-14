@@ -48,8 +48,8 @@ config EVENT_MANAGER_PROFILER_ENABLED
 if EVENT_MANAGER_PROFILER_ENABLED
 
 config EVENT_MANAGER_MAX_EVENT_CNT
-	int "Maximum number of event types"
-	default 64
+	int "Maximum number of profiled event types"
+	default 32
 
 config EVENT_MANAGER_TRACE_EVENT_EXECUTION
 	bool "Trace events execution"
