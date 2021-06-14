@@ -94,14 +94,7 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		}
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
-		LOG_WRN("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
-
-		if (evt->status == NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE) {
-			LOG_WRN("Disconnected by the cloud");
-			LOG_WRN("This can occur during initial nRF Cloud provisioning");
-			LOG_WRN("Add the device to nRF Cloud and wait for it to reconnect");
-		}
-
+		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_DISCONNECTED;
 		notify = true;
 		break;
@@ -129,7 +122,8 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		notify = true;
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
-		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
+		LOG_WRN("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
+		LOG_WRN("Add the device to nRF Cloud and wait for it to reconnect");
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
 		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATED");
