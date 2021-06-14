@@ -64,12 +64,12 @@ int lwm2m_init_firmware(void);
 /**
  * @brief Initialize Image Update object
  */
-int lwm2m_init_image(void);
+int lwm2m_init_image(uint16_t obj_inst_id);
 
 /**
  * @brief Verifies modem firmware update
  */
-void lwm2m_verify_modem_fw_update(void);
+void lwm2m_verify_modem_fw_update(uint16_t obj_inst_id);
 #endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)

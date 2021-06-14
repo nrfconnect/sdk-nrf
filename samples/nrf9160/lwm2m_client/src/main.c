@@ -43,6 +43,26 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 BUILD_ASSERT(sizeof(CONFIG_APP_LWM2M_SERVER) > 1,
 	     "CONFIG_APP_LWM2M_SERVER must be set in prj.conf");
 
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM)
+
+BUILD_ASSERT(
+	CONFIG_LWM2M_FIRMWARE_INSTANCE_COUNT > CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM,
+	 "Zero-indexed instance id must be less than the number of the instances");
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP)
+
+BUILD_ASSERT(
+	CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM !=
+	CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP,
+"Modem- and application update object instances must not overlap");
+
+BUILD_ASSERT(CONFIG_LWM2M_FIRMWARE_INSTANCE_COUNT > CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP,
+	 "Zero-indexed instance id must be less than the number of the instances");
+
+#endif
+#endif
+
 #define APP_BANNER "Run LWM2M client"
 
 #define IMEI_LEN 15
@@ -121,7 +141,9 @@ static int lwm2m_setup(void)
 	lwm2m_init_security(&client, endpoint_name);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	lwm2m_init_firmware();
+	if (lwm2m_init_firmware() < 0) {
+		goto fail;
+	}
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
 	lwm2m_init_connmon();
@@ -160,6 +182,9 @@ static int lwm2m_setup(void)
 	initialise_gps();
 #endif
 	return 0;
+
+fail:
+	return -1;
 }
 
 int lwm2m_security_index_to_inst_id(int index);
@@ -467,7 +492,7 @@ void main(void)
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	/* Modem FW update needs to be verified before modem is used. */
-	lwm2m_verify_modem_fw_update();
+	lwm2m_verify_modem_fw_update(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM);
 #endif
 #if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
 	ret = at_cmd_init();
@@ -506,11 +531,13 @@ void main(void)
 		return;
 	}
 
-	ret = lwm2m_init_image();
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
+	ret = lwm2m_init_image(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP);
 	if (ret < 0) {
 		LOG_ERR("Failed to setup image properties (%d)", ret);
 		return;
 	}
+#endif
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 	ret = modem_key_mgmt_write(client.tls_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK, client_psk,

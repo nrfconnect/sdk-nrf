@@ -57,6 +57,26 @@ config LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG
 	  https:// or coaps:// URI. It has no effect on usage of http:// or coap://
 	  -1 disables the usage of security tag.
 
+config LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM
+	int "Modem Firmware Object instance ID, highest in the range is not usable"
+	range 0 LWM2M_FIRMWARE_INSTANCE_COUNT
+	default 0
+	help
+		Neither arithmetic operations are not possible when defining a range,
+		nor excluding the values which equal to second symbol - or the first to that matter.
+		It's impossibile to limit the range of the value to LWM2M_FIRMWARE_INSTANCE_COUNT-1 even
+		when it should be.
+
+config LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP
+	int "Application Firmware Object instance ID, highest in the range is not usable"
+	range 0 LWM2M_FIRMWARE_INSTANCE_COUNT
+	default 1
+	help
+		Neither arithmetic operations are not possible when defining a range,
+		nor excluding the values which equal to second symbol - or the first to that matter.
+		It's impossibile to limit the range of the value to LWM2M_FIRMWARE_INSTANCE_COUNT-1 even
+		when it should be.
+
 endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
 
 module = LWM2M_CLIENT_UTILS
