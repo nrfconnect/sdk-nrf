@@ -138,6 +138,8 @@
 .. _`NCP Host documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.6.0.0/zboss_ncp_host_intro.html
 .. _`process the frame`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.6.0.0/using_zigbee__z_c_l.html#process_zcl_cmd
 .. _`declaring custom cluster`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.6.0.0/using_zigbee__z_c_l.html#cluster_declaration_custom
+.. _`Configuring sleepy behavior for end devices`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.6.0.0/zigbee_prog_principles.html#zigbee_power_optimization_sleepy
+.. _`zboss_signal_handler()`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.6.0.0/group__zb__comm__signals.html#gae05c0ff285cfd03e0997fe438e8047fc
 
 .. ### Source: www.nordicsemi.com
 

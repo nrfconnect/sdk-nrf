@@ -62,6 +62,7 @@ This action results in calling the ZBOSS API that activates this feature.
 See the :ref:`light switch sample <zigbee_light_switch_sample>` for a demonstration.
 
 .. note::
+    For this feature to work, make sure to poll the :c:func:`zb_set_rx_on_when_idle` ZBOSS API, as described in `Configuring sleepy behavior for end devices`_ in the ZBOSS documentation.
     This feature does not require enabling any additional options in Kconfig.
 
 Power saving during sleep
@@ -71,8 +72,8 @@ With the sleepy behavior enabled, the unused part of RAM memory is powered off, 
 The sleep current of MCU can be lowered to about 1.8 uA by completing the following steps:
 
 1. Turn off UART by setting :option:`CONFIG_SERIAL` to ``n``.
-#. For current measurements for nRF52840 DK board (PCA10056) or nRF52833 DK board (PCA10100), set **SW6** to ``nRF ONLY`` position to get the desired results.
-   See :ref:`ug_nrf52` for more information about these kits.
+#. For current measurements for the :ref:`nRF52840 DK <ug_nrf52>` (PCA10056), the :ref:`nRF52833 DK <ug_nrf52>` (PCA10100), or the :ref:`nRF5340 <ug_nrf5340>` (PCA10095), set **SW6** to ``nRF ONLY`` position to get the desired results.
+#. Enable the :option:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option.
 
 Optional configuration
 **********************
@@ -149,7 +150,7 @@ To customize them, use the following options:
 * :option:`CONFIG_ZBOSS_ERROR_PRINT_TO_LOG` - Allows the application to log ZBOSS error names; enabled by default.
 * :option:`CONFIG_ZBOSS_TRACE_MASK` - Sets the modules from which ZBOSS will log the debug messages with :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL`; no module is set by default.
 
-The stack logs are provided in a binary (hex dump) format.
+The stack logs are provided in a binary format (hex dump).
 
 .. _zigbee_ug_logging_logger_options:
 
@@ -160,7 +161,7 @@ Zephyr's :ref:`zephyr:logging_api` starts with the default ``ERR`` logging level
 This level is used by default by the application.
 
 You can configure custom logger options for each Zigbee and ZBOSS module.
-To do this, configure the related Kconfig option for one or more modules that you want to customize the logging for:
+To do this, configure the related Kconfig option for one or more modules:
 
 * :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL`
 * :option:`CONFIG_ZBOSS_OSIF_LOG_LEVEL`
@@ -177,6 +178,12 @@ For each of the modules, you can set the following logging options:
 * ``LOG_LEVEL_DBG`` - Enables logging for debug messages, informational messages, errors, and warnings.
 
 For example, setting :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_INF` will enable logging of informational messages, errors, and warnings for the ZBOSS Trace module.
+
+Reduced power consumption
+=========================
+
+You can reduce the amount of power used by your device by enabling the :ref:`lib_ram_pwrdn` library.
+This library is also used for `Power saving during sleep`_.
 
 .. _zigbee_ug_static_partition:
 
