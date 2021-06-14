@@ -19,8 +19,8 @@ Zigbee application utilities library provides a set of components that are ready
 Zigbee default signal handler
 *****************************
 
-The :ref:`nrfxlib:zboss` interacts with the user application by invoking the :c:func:`zboss_signal_handler` function whenever a stack event, such as network steering, occurs.
-It is mandatory to define :c:func:`zboss_signal_handler` in the application.
+The :ref:`nrfxlib:zboss` interacts with the user application by invoking the `zboss_signal_handler()`_ function whenever a stack event, such as network steering, occurs.
+It is mandatory to define `zboss_signal_handler()`_ in the application.
 
 Because most of Zigbee devices behave in a similar way, :c:func:`zigbee_default_signal_handler` was introduced to provide a default logic to handle stack signals.
 
@@ -32,7 +32,7 @@ Because most of Zigbee devices behave in a similar way, :c:func:`zigbee_default_
 Minimal zboss_signal_handler implementation
 ===========================================
 
-This function can be called in the application's :c:func:`zboss_signal_handler` to simplify the implementation.
+This function can be called in the application's `zboss_signal_handler()`_ to simplify the implementation.
 In such case, this minimal implementation includes only a call to the default signal handler:
 
 
@@ -47,12 +47,12 @@ In such case, this minimal implementation includes only a call to the default si
         zb_buf_free(param);
     }
 
-With this call, the device will be able to join the Zigbee network or join a new network when it leaves the previous one.
+With this call, the device is able to join the Zigbee network or join a new network when it leaves the previous one.
 
 In general, using the default signal handler is worth considering because of the following reasons:
 
 * It simplifies the application.
-* It provides a default behavior for each signal, which reduces the risk that an application will break due to an unimplemented signal handler.
+* It provides a default behavior for each signal, which reduces the risk that an application breaks due to an unimplemented signal handler.
 * It provides Zigbee role specific behavior (for example, finite join/rejoin time)
 * It makes the application less sensitive to changes in the Zigbee stack commissioning API.
 
@@ -65,7 +65,7 @@ Complete zboss_signal_handler implementation
 
 In its complete implementation, the ``zboss_signal_handler`` allows the application to control a broader set of basic functionalities, including joining, commissioning, and network formation.
 
-There are cases in which the default handler will not be sufficient and needs to be extended.
+There are cases in which the default handler is not sufficient and needs to be extended.
 For example, when the application wants to use the procedure of the initiator of finding & binding or use the production configuration feature.
 
 Extending zboss_signal_handler
@@ -241,14 +241,14 @@ When the stack is started through :c:func:`zigbee_enable`, the stack generates t
 
 The reception of these signals determines the behavior of the default signal handler:
 
-* Upon reception of ``ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY``, the default signal handler will print out a log with the signal status and exit.
+* Upon reception of ``ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY``, the default signal handler prints out a log with the signal status and exit.
 
 .. figure:: /images/zigbee_signal_handler_01_production_config.png
    :alt: ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY signal handler
 
    ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY signal handler
 
-* Upon reception of ``ZB_ZDO_SIGNAL_SKIP_STARTUP`` signal, the default signal handler will perform the BDB initialization procedure, and then exit.
+* Upon reception of ``ZB_ZDO_SIGNAL_SKIP_STARTUP`` signal, the default signal handler performs the BDB initialization procedure, and then exit.
 
 .. figure:: /images/zigbee_signal_handler_02_startup.png
    :alt: ZB_ZDO_SIGNAL_SKIP_STARTUP signal handler
@@ -263,29 +263,29 @@ The reception of these signals determines the behavior of the default signal han
 Zigbee Base Device Behavior initialization
 ==========================================
 
-Once the BDB initialization procedure is finished, depending on the data stored inside the Zigbee persistent storage, the stack will complete one of the following scenarios:
+Once the BDB initialization procedure is finished, depending on the data stored inside the Zigbee persistent storage, the stack completes one of the following scenarios:
 
-* New devices - Generate the ``ZB_BDB_SIGNAL_DEVICE_FIRST_START`` signal for factory new devices.
-* Commissioned devices - Perform a single attempt to rejoin the Zigbee network based on NVRAM contents and then generate the ``ZB_BDB_SIGNAL_DEVICE_REBOOT`` signal.
+* `New device scenario`_: Generate the ``ZB_BDB_SIGNAL_DEVICE_FIRST_START`` signal for factory new devices.
+* `Commissioned device scenario`_: Perform a single attempt to rejoin the Zigbee network based on NVRAM contents and then generate the ``ZB_BDB_SIGNAL_DEVICE_REBOOT`` signal.
 
-Both scenarios will cause different behavior of the the default signal handler.
+Both scenarios cause different behavior of the the default signal handler.
 
 .. _zarco_signal_handler_bdb_initialization_new_devices:
 
 New device scenario
 +++++++++++++++++++
 
-For factory new devices, the default signal handler will:
+For factory new devices, the default signal handler performs the following actions:
 
-* Start the BDB network formation on coordinator devices.
-  Once finished, the stack will generate ``ZB_BDB_SIGNAL_FORMATION`` signal, and continue to :ref:`zarco_signal_handler_network`.
-* Call :c:func:`start_network_rejoin` to start the :ref:`zarco_network_rejoin` on routers and end devices.
+* Starts the BDB network formation on coordinator devices.
+  Once finished, the stack generates ``ZB_BDB_SIGNAL_FORMATION`` signal, and continue to :ref:`zarco_signal_handler_network`.
+* Calls :c:func:`start_network_rejoin` to start the :ref:`zarco_network_rejoin` on routers and end devices.
   Once the procedure is started, the device tries to join the network until cancellation.
   Each try takes place after a longer period of waiting time, for a total maximum of 15 minutes.
   Devices may behave differently because the implementation of :c:func:`start_network_rejoin` is different for different Zigbee roles.
   See :ref:`zarco_network_rejoin` for more information.
 
-Once handling of the signal is finished, the stack will generate the ``ZB_BDB_SIGNAL_STEERING`` signal, and will continue to :ref:`zarco_signal_handler_network`.
+Once handling of the signal is finished, the stack generates the ``ZB_BDB_SIGNAL_STEERING`` signal, and continues to :ref:`zarco_signal_handler_network`.
 
 .. figure:: /images/zigbee_signal_handler_03_first_start.png
    :alt: Scenario for factory new devices (ZB_BDB_SIGNAL_DEVICE_FIRST_START)
@@ -297,20 +297,20 @@ Once handling of the signal is finished, the stack will generate the ``ZB_BDB_SI
 Commissioned device scenario
 ++++++++++++++++++++++++++++
 
-For devices that have been already commissioned, the default handler will:
+For devices that have been already commissioned, the default handler performs the following actions:
 
 * Not perform additional actions if the device implements a coordinator role.
 
-    * This will keep the network closed for new Zigbee devices even if the coordinator is reset.
+    * This keeps the network closed for new Zigbee devices even if the coordinator is reset.
 
 * Not perform additional actions if the device successfully rejoins Zigbee network.
 
-    * This will not open the network for new devices if one of existing devices is reset.
-    * In case of the :ref:`zarco_network_rejoin` is running, it will be cancelled.
+    * This does not open the network for new devices if one of existing devices is reset.
+    * If :ref:`zarco_network_rejoin` is running, it is cancelled.
 
 * For routers and end devices, if they did not join the Zigbee network successfully, :ref:`zarco_network_rejoin` is started by calling :c:func:`start_network_rejoin`.
 
-Once finished, the stack will generate the ``ZB_BDB_SIGNAL_STEERING`` signal, and continue to :ref:`zarco_signal_handler_network`.
+Once finished, the stack generates the ``ZB_BDB_SIGNAL_STEERING`` signal, and continues to :ref:`zarco_signal_handler_network`.
 
 .. figure:: /images/zigbee_signal_handler_04_reboot.png
    :alt: Scenario for already commissioned devices (ZB_BDB_SIGNAL_DEVICE_REBOOT)
@@ -324,19 +324,19 @@ Zigbee network formation and commissioning
 
 According to the logic implemented inside the default signal handler, the devices can either form a network or join an existing network:
 
-1. Coordinators will first form a network.
-   Attempts to form the network will continue infinitely, with a one-second delay between each attempt.
+1. Coordinators first form a network.
+   Attempts to form the network continue infinitely, with a one-second delay between each attempt.
 
    .. figure:: /images/zigbee_signal_handler_05_formation.png
       :alt: Forming a network following the generation of ZB_BDB_SIGNAL_FORMATION
 
       Forming a network following the generation of ZB_BDB_SIGNAL_FORMATION
 
-   By default, after the successful network formation on the coordinator node, a single-permit join period of 180 seconds will be started, which will allow new Zigbee devices to join the network.
-#. Other devices will then join an existing network during this join period.
+   By default, after the successful network formation on the coordinator node, a single-permit join period of 180 seconds is started, which allows new Zigbee devices to join the network.
+#. Other devices then join an existing network during this join period.
 
     * When a device has joined and :ref:`zarco_network_rejoin` is running, the procedure is cancelled.
-    * If no device has joined and the procedure is not running, the procedure will be started.
+    * If no device has joined and the procedure is not running, the procedure is started.
 
    .. figure:: /images/zigbee_signal_handler_06_steering.png
       :alt: Forming a network following the generation of ZB_BDB_SIGNAL_STEERING
@@ -351,7 +351,7 @@ Zigbee network leaving
 The default signal handler implements the same behavior for handling ``ZB_ZDO_SIGNAL_LEAVE`` for both routers and end devices.
 When leaving the network, the default handler calls :c:func:`start_network_rejoin` to start :ref:`zarco_network_rejoin` to join a new network.
 
-Once :c:func:`start_network_rejoin` is called, the stack will generate the ``ZB_BDB_SIGNAL_STEERING`` signal and will continue to :ref:`zarco_signal_handler_network`.
+Once :c:func:`start_network_rejoin` is called, the stack generates the ``ZB_BDB_SIGNAL_STEERING`` signal and continues to :ref:`zarco_signal_handler_network`.
 
 .. figure:: /images/zigbee_signal_handler_09_leave.png
    :alt: Leaving the network following ZB_ZDO_SIGNAL_LEAVE
@@ -367,14 +367,14 @@ The Zigee network rejoin procedure is a mechanism that is similar to the ZDO rej
 It is implemented to work with both routers and end devices and simplify handling of cases such as device joining, rejoining, or leaving the network.
 It is used in :c:func:`default_signal_handler` by default.
 
-If the network is left by a router or an end device, the device will try to join any open network.
+If the network is left by a router or an end device, the device tries to join any open network.
 
-* The router will use the default signal handler to try to join or rejoin the network until it succeeds.
-* The end device will use the default signal handler to try to join or rejoin the network for a finite period of time, because the end devices are often powered by batteries.
+* The router uses the default signal handler to try to join or rejoin the network until it succeeds.
+* The end device uses the default signal handler to try to join or rejoin the network for a finite period of time, because the end devices are often powered by batteries.
 
   * The procedure to join or rejoin the network is restarted after the device reset or power cycle.
   * The procedure to join or rejoin the network can be restarted by calling :c:func:`user_input_indicate`, but it needs to be implemented in the application (for example, by calling :c:func:`user_input_indicate` when a button is pressed).
-    The procedure will be restarted only if the device does not join and the procedure is not running.
+    The procedure is restarted only if the device does not join and the procedure is not running.
 
 The Zigbee rejoin procedure retries to join a network with each try after a specified amount of time: ``2^n`` seconds, where ``n`` is the number of retries.
 
@@ -420,7 +420,7 @@ Additionally, it allows to implement a Zigbee Sleepy End Device.
 For more information about the power optimization of the Zigbee stack, see :ref:`zigbee_ug_sed`.
 
 The inactivity signal can be handled using the Zigbee default signal handler.
-If so, it will allow the Zigbee stack to enter the sleep state and suspend the Zigbee task by calling :c:func:`zigbee_event_poll` function.
+If so, it allows the Zigbee stack to enter the sleep state and suspend the Zigbee task by calling :c:func:`zigbee_event_poll` function.
 
 If the default behavior is not applicable for the application, you can customize the sleep functionality by overwriting the :c:func:`zb_osif_sleep` weak function and implementing a custom logic for handling the stack sleep state.
 

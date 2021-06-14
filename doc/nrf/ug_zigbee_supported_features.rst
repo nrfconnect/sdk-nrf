@@ -13,12 +13,14 @@ The stack comes with the following features:
 
 * Complete implementation of the Zigbee core specification and Zigbee Pro feature set
 * Support for all device roles: Coordinator, Router, and End Device
-* Zigbee Cluster Library
+* Zigbee Cluster Library, including :ref:`lib_zigbee_fota`
 * Base Device Behavior
-* Devices, described in former Zigbee Home Automation and Light Link profiles
+* Devices definitions for devices that were implemented for Zigbee Home Automation and Light Link profiles
 * Zigbee Green Power Proxy Basic
 * Experimental support for ``ZB_ZCL_WWAH``
 * Experimental support for Green Power Combo
+
+Experimental support means the feature is either not certified or no sample is provided for the given feature (or both).
 
 See the :ref:`nrfxlib:zboss` page in nrfxlib and the `external ZBOSS development guide and API documentation`_ for more information about the ZBOSS library.
 

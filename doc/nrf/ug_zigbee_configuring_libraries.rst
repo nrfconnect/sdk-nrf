@@ -28,8 +28,8 @@ Because the Zigbee OTA DFU performs the upgrade using the :ref:`lib_dfu_target` 
 * :option:`CONFIG_IMG_ERASE_PROGRESSIVELY` - This option instructs MCUboot to erase the flash memory progressively.
   This allows to avoid long wait times at the beginning of the DFU process.
 
-Configuring these options allows you to use Zigbee FOTA in the :ref:`zigbee_light_switch_sample` sample.
-Alternatively, you can use :file:`ota_overlay.conf` file during the sample building process.
+Configuring these options and updating the default values (at least updating the ``image_version`` to the application version) allows you to use Zigbee FOTA in the :ref:`zigbee_light_switch_sample` sample.
+Alternatively, you can use :file:`overlay-fota.conf` file during the sample building process.
 
 Enabling Zigbee FOTA in an application
 ======================================
@@ -88,15 +88,17 @@ If you want to use the Zigbee FOTA functionality in your application, you must a
 
 See the :file:`samples/zigbee/light_switch/src/main.c` file of the :ref:`zigbee_light_switch_sample` sample for an example implementation of the Zigbee FOTA in an application.
 
-Generating Zigbee FOTA upgrade image
-====================================
+Options for generating Zigbee FOTA upgrade image
+================================================
 
 By enabling the Zigbee OTA DFU, the west tool will automatically generate the upgrade image.
 To specify the target device of the generated image, use the following Kconfig options:
 
 * :option:`CONFIG_ZIGBEE_FOTA_COMMENT` - This option allows to specify a human-readable image name.
 * :option:`CONFIG_ENABLE_ZIGBEE_FOTA_MIN_HW_VERSION` and :option:`CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION` - These options allow to specify the minimum hardware version of the device that will accept the generated image.
+  No value makes these options unused.
 * :option:`CONFIG_ENABLE_ZIGBEE_FOTA_MAX_HW_VERSION` and :option:`CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION` - These options allow to specify the maximum hardware version of the device that will accept the generated image.
+  No value makes these options unused.
 
 The manufacturer ID, image type and version of the generated image are obtained from the application settings.
 
