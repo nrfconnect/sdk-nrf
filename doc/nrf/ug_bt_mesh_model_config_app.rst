@@ -27,8 +27,6 @@ Complete the following steps in the nRF Mesh app to bind a model to an applicati
    a. Tap :guilabel:`BIND KEY` at the top of the screen.
    #. Select the key from the list.
 
-#. Tap :guilabel:`APPLY`, in the right bottom corner of the screen, to confirm the configuration.
-
 Creating a group
 ****************
 
