@@ -58,24 +58,30 @@ static struct k_work_delayable get_data_work;
 
 static void get_data(struct k_work *work)
 {
+	static bool req_temp_range;
 	int err;
 
-	err = bt_mesh_sensor_cli_series_entries_get(
-		&sensor_cli, NULL,
-		&bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range, NULL, NULL,
-		NULL);
-	if (err) {
-		printk("Error getting relative chip temperature data (%d)\n",
-		       err);
+	/* Only one message can be published at a time. Swap sensor after each timeout. */
+	if (req_temp_range) {
+		err = bt_mesh_sensor_cli_series_entries_get(
+			&sensor_cli, NULL,
+			&bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range, NULL, NULL,
+			NULL);
+		if (err) {
+			printk("Error getting relative chip temperature data (%d)\n",
+			       err);
+		}
+	} else {
+		err = bt_mesh_sensor_cli_get(
+			&sensor_cli, NULL, &bt_mesh_sensor_time_since_presence_detected,
+			NULL);
+		if (err) {
+			printk("Error getting time since presence detected (%d)\n",
+			       err);
+		}
 	}
 
-	err = bt_mesh_sensor_cli_get(
-		&sensor_cli, NULL, &bt_mesh_sensor_time_since_presence_detected,
-		NULL);
-	if (err) {
-		printk("Error getting time since presence detected (%d)\n",
-		       err);
-	}
+	req_temp_range = !req_temp_range;
 
 	k_work_schedule(&get_data_work, K_MSEC(GET_DATA_INTERVAL));
 }
