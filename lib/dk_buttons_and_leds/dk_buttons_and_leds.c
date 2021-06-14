@@ -381,7 +381,7 @@ int dk_set_led(uint8_t led_idx, uint32_t val)
 {
 	int err;
 
-	if (led_idx > ARRAY_SIZE(led_pins)) {
+	if (led_idx >= ARRAY_SIZE(led_pins)) {
 		LOG_ERR("LED index out of the range");
 		return -EINVAL;
 	}
