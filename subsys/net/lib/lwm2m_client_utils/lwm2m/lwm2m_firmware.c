@@ -5,7 +5,9 @@
  */
 
 #include <zephyr.h>
+#include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <nrf_modem.h>
 #include <drivers/flash.h>
 #include <dfu/dfu_target.h>
@@ -31,6 +33,8 @@ static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 static uint8_t mcuboot_buf[CONFIG_APP_MCUBOOT_FLASH_BUF_SZ] __aligned(4);
 #endif
 
+#define MAX_INSTANCE_COUNT CONFIG_LWM2M_FIRMWARE_INSTANCE_COUNT
+
 static int image_type;
 
 static struct k_work_delayable reboot_work;
@@ -49,20 +53,20 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
 	ARG_UNUSED(args);
 	ARG_UNUSED(args_len);
 
-	struct update_counter update_counter;
 	int ret = 0;
-
 	LOG_DBG("Executing firmware update");
 
 	/* Bump update counter so it can be verified on the next reboot */
-	ret = fota_update_counter_read(&update_counter);
+	struct update_counter update_counter;
+
+	ret = fota_update_counter_read(obj_inst_id, &update_counter);
 	if (ret) {
 		LOG_ERR("Failed read update counter");
 		goto cleanup;
 	}
 	LOG_INF("Update Counter: current %d, update %d",
 		update_counter.current, update_counter.update);
-	ret = fota_update_counter_update(COUNTER_UPDATE,
+	ret = fota_update_counter_update(obj_inst_id, COUNTER_UPDATE,
 					 update_counter.current + 1);
 	if (ret) {
 		LOG_ERR("Failed to update the update counter: %d", ret);
@@ -71,10 +75,16 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args,
 
 	ret = dfu_target_done(true);
 	if (ret != 0) {
-		LOG_ERR("Failed to upgrade %s firmware.",
-			image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ?
-				"modem" :
-				"application");
+		switch (image_type) {
+		case DFU_TARGET_IMAGE_TYPE_MODEM_DELTA:
+		case DFU_TARGET_IMAGE_TYPE_FULL_MODEM:
+			LOG_ERR("Failed to upgrade modem firmware.");
+		break;
+		case DFU_TARGET_IMAGE_TYPE_MCUBOOT:
+			LOG_ERR("Failed to upgrade application firmware.");
+		break;
+		}
+
 		goto cleanup;
 	}
 
@@ -122,6 +132,11 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 		client_acknowledge();
 
 		image_type = dfu_target_img_type(data, data_len);
+		if (image_type < 0) {
+			LOG_ERR("Invalid DFU target image type");
+			goto cleanup;
+		}
+
 
 		ret = dfu_target_init(image_type, total_size, dfu_target_cb);
 		if (ret < 0) {
@@ -207,17 +222,31 @@ cleanup:
 
 int lwm2m_init_firmware(void)
 {
+	int ret;
+	char path[6 + sizeof(int)]; /* '/5/%d/0' where %d denotes the obj instance id, int */
+
 	k_work_init_delayable(&reboot_work, reboot_work_handler);
 
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
+
 	/* setup data buffer for block-wise transfer */
-	lwm2m_engine_register_pre_write_callback("5/0/0", firmware_get_buf);
+	for (int i = 0; i < MAX_INSTANCE_COUNT; i++) {
+		ret = snprintf(path, sizeof(path), "/5/%d/0", i);
+
+		if (ret < 0 || ret > sizeof(path)) {
+			__ASSERT(false, "invalid lwm2m fw update path, err code %d", ret);
+			return -1;
+		}
+
+		lwm2m_engine_register_pre_write_callback(path, firmware_get_buf);
+	}
+
 	lwm2m_firmware_set_write_cb(firmware_block_received_cb);
 
 	return 0;
 }
 
-void lwm2m_verify_modem_fw_update(void)
+void lwm2m_verify_modem_fw_update(uint16_t obj_inst_id)
 {
 	int ret = nrf_modem_lib_get_init_ret();
 	struct update_counter counter;
@@ -227,14 +256,14 @@ void lwm2m_verify_modem_fw_update(void)
 	case MODEM_DFU_RESULT_OK:
 		LOG_INF("MODEM UPDATE OK. Will run new firmware");
 
-		ret = fota_update_counter_read(&counter);
+		ret = fota_update_counter_read(obj_inst_id, &counter);
 		if (ret != 0) {
 			LOG_ERR("Failed read the update counter, err: %d", ret);
 			break;
 		}
 
 		if (counter.update != -1) {
-			ret = fota_update_counter_update(COUNTER_CURRENT,
+			ret = fota_update_counter_update(obj_inst_id, COUNTER_CURRENT,
 							 counter.update);
 			if (ret != 0) {
 				LOG_ERR("Failed to update the update counter, err: %d",
@@ -262,33 +291,34 @@ void lwm2m_verify_modem_fw_update(void)
 	sys_reboot(SYS_REBOOT_COLD);
 }
 
-int lwm2m_init_image(void)
+int lwm2m_init_image(uint16_t obj_inst_id)
 {
 	int ret = 0;
 	struct update_counter counter;
 	bool image_ok;
 
 	/* Update boot status and update counter */
-	ret = fota_update_counter_read(&counter);
+	ret = fota_update_counter_read(obj_inst_id, &counter);
 	if (ret) {
 		LOG_ERR("Failed read update counter");
 		return ret;
 	}
-	LOG_INF("Update Counter: current %d, update %d",
-		counter.current, counter.update);
+	LOG_INF("Update Counter: current %d, update %d", counter.current, counter.update);
+
 	image_ok = boot_is_img_confirmed();
-	LOG_INF("Image is%s confirmed OK", image_ok ? "" : " not");
+	LOG_INF("Image is confirmed as OK - %s", image_ok ? "true" : "false");
+
 	if (!image_ok) {
 		ret = boot_write_img_confirmed();
 		if (ret) {
-			LOG_ERR("Couldn't confirm this image: %d", ret);
+			LOG_ERR("Couldn't mark this image as confirmed - return value %d", ret);
 			return ret;
 		}
 
-		LOG_INF("Marked image as OK");
+		LOG_INF("Current image marked as OK");
 
 		if (counter.update != -1) {
-			ret = fota_update_counter_update(COUNTER_CURRENT,
+			ret = fota_update_counter_update(obj_inst_id, COUNTER_CURRENT,
 							 counter.update);
 			if (ret) {
 				LOG_ERR("Failed to update the update "
@@ -296,7 +326,7 @@ int lwm2m_init_image(void)
 				return ret;
 			}
 
-			ret = fota_update_counter_read(&counter);
+			ret = fota_update_counter_read(obj_inst_id, &counter);
 			if (ret) {
 				LOG_ERR("Failed to read update counter: %d",
 					ret);
@@ -307,15 +337,18 @@ int lwm2m_init_image(void)
 		}
 	}
 
+	char path[9+1]; /* '5/[0-65535]/5' -> max len 9 + terminating NULL */
+
+	ret = snprintf(path, sizeof(path), "5/%" PRIu16 "/5", obj_inst_id);
+
+
 	/* Check if a firmware update status needs to be reported */
 	if (counter.update != -1 && counter.current == counter.update) {
-		/* Successful update */
 		LOG_INF("Firmware updated successfully");
-		lwm2m_engine_set_u8("5/0/5", RESULT_SUCCESS);
+		lwm2m_engine_set_u8(path, RESULT_SUCCESS);
 	} else if (counter.update > counter.current) {
-		/* Failed update */
 		LOG_INF("Firmware failed to be updated");
-		lwm2m_engine_set_u8("5/0/5", RESULT_UPDATE_FAILED);
+		lwm2m_engine_set_u8(path, RESULT_UPDATE_FAILED);
 	}
 
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
@@ -328,3 +361,4 @@ int lwm2m_init_image(void)
 
 	return ret;
 }
+

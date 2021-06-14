@@ -33,13 +33,16 @@ enum counter_type {
 
 /**
  * @brief Read the update counter
+ *
+ * @param[in] obj_inst_id Firmware Object instance ID
+ * @param[out] update_counter Update counter values for active and update images
  */
-int fota_update_counter_read(struct update_counter *update_counter);
+int fota_update_counter_read(uint16_t obj_inst_id, struct update_counter *update_counter);
 
 /**
  * @brief Update the update counter
  */
-int fota_update_counter_update(enum counter_type type, uint32_t new_value);
+int fota_update_counter_update(uint16_t obj_inst_id, enum counter_type type, uint32_t new_value);
 
 /**
  * @brief Initialize FOTA settings
