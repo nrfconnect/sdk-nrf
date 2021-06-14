@@ -114,7 +114,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	shell_global = shell_backend_uart_get_ptr();
 
 	switch (event->type) {
-	case LWM2M_CARRIER_EVENT_BSDLIB_INIT:
+	case LWM2M_CARRIER_EVENT_MODEM_INIT:
 		shell_print(shell_global, "LwM2M carrier event: modem lib initialized");
 		break;
 	case LWM2M_CARRIER_EVENT_CONNECTING:
