@@ -153,7 +153,7 @@ Interacting with the sample
 After completing the steps above, a command can be sent to the sample.
 The sample supports the following commands:
 
-chat --help
+chat \-\-help
    Prints help message together with the list of supported commands.
 
 chat presence set <presence>
