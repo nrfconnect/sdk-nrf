@@ -89,7 +89,7 @@ For information about how to configure and use the required components, complete
 * Depending on the Matter controller type:
 
   * Testing with the Python Matter Controller - see `Working with Python Controller`_ in the Matter documentation
-  * Testing with the Android Mobile Controller - see `Working with Android Controller`_ in the Matter documentation
+  * Testing with the Android Mobile Controller - see `Commissioning nRF Connect Accessory using Android CHIPTool`_ in the Matter documentation
 
 Running Thread Border Router and Matter controller on the same device
 =====================================================================
