@@ -8,6 +8,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if defined(CONFIG_POSIX_API)
+#include <posix/arpa/inet.h>
+#else
+#include <net/socket.h>
+#endif
 
 #include "lte_params.h"
 #include "utils.h"
@@ -246,7 +251,6 @@ int handler_at_xmonitor(struct supl_session_ctx *session_ctx,
 		return parse_lte_status(&session_ctx->lte_params,
 					buf,
 					buf_len);
-		break;
 	case 3:
 		if (parse_lte_mcc(&session_ctx->lte_params,
 				  buf,
@@ -263,17 +267,72 @@ int handler_at_xmonitor(struct supl_session_ctx *session_ctx,
 		return parse_lte_tac(&session_ctx->lte_params,
 				     buf,
 				     buf_len);
-		break;
 	case 7:
 		return parse_lte_cid(&session_ctx->lte_params,
 				     buf,
 				     buf_len);
-		break;
 	case 8:
 		return parse_lte_phys_cid(&session_ctx->lte_params,
 					  buf,
 					  buf_len);
+	default:
 		break;
+	}
+
+	return 0;
+}
+
+void device_id_init(struct supl_session_ctx *session_ctx)
+{
+	session_ctx->device_id_choice = LIBSUPL_ID_CHOICE_IPV4;
+	memset(&session_ctx->device_id, 0, sizeof(session_ctx->device_id));
+}
+
+/**
+ * @brief Parse and fill device ID to the session context
+ *
+ * @param[in,out] lte pointer to session context to fill
+ * @param[in]     buf pointer to input buffer. Assumes a quoted string.
+ * @param[in]     buf_len input buffer length.
+ *
+ * @return 0 when device ID was filled successfully, -1 otherwise
+ */
+static int parse_ip_address(struct supl_session_ctx *session_ctx,
+			    const char *buf,
+			    int buf_len)
+{
+	char addr_buf[INET6_ADDRSTRLEN] = { 0 };
+
+	/* Start from index 1 to skip first quote and copy the first IP address */
+	for (int i = 1; i < buf_len && i <= INET6_ADDRSTRLEN; i++) {
+		if (buf[i] == '\"' || buf[i] == ' ') {
+			/* End of the quoted string or a space between IP addresses */
+			break;
+		}
+		addr_buf[i - 1] = buf[i];
+	}
+
+	if (inet_pton(AF_INET, addr_buf, session_ctx->device_id)) {
+		session_ctx->device_id_choice = LIBSUPL_ID_CHOICE_IPV4;
+	} else if (inet_pton(AF_INET6, addr_buf, session_ctx->device_id)) {
+		session_ctx->device_id_choice = LIBSUPL_ID_CHOICE_IPV6;
+	} else {
+		return -1;
+	}
+
+	return 0;
+}
+
+int handler_at_cgdcont(struct supl_session_ctx *session_ctx,
+		       int col_number,
+		       const char *buf,
+		       int buf_len)
+{
+	switch (col_number) {
+	case 3:
+		return parse_ip_address(session_ctx,
+					buf,
+					buf_len);
 	default:
 		break;
 	}
