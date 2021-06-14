@@ -17,3 +17,11 @@ config BOOT_SIGNATURE_KEY_FILE
 	  built from source, it is not possible for the build system to deduce
 	  what key was used when compiling it. Hence, it is required that the
 	  key is passed to the build system through this option.
+
+config INIT_ARCH_HW_AT_BOOT
+	default n if SPM
+	default y
+	help
+	  The image will be booted directly by an unknown image which might not
+	  leave the system in a clean state, so it is necessary to perform
+	  architecture specific hardware initialization.
