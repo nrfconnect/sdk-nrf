@@ -10,6 +10,9 @@
 #include <modem/modem_info.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/at_cmd.h>
+#include "os_mgmt/os_mgmt.h"
+#include "img_mgmt/img_mgmt.h"
+#include <dfu/mcuboot.h>
 
 void main(void)
 {
@@ -41,10 +44,19 @@ void main(void)
 	nrf_modem_lib_init(FULL_DFU_MODE);
 	/* Register SMP Communication stats */
 	fmfu_mgmt_stat_init();
+	/* Registers the OS management command handler group */
+	os_mgmt_register_group();
+	/* Registers the image management command handler group */
+	img_mgmt_register_group();
 	/* Initialize MCUMgr handlers for full modem update */
 	err = fmfu_mgmt_init();
 	if (err) {
 		printk("Error in fmfu init: %d\n\r", err);
 	}
-	printk("FMFU initialized and ready to receive firmware\n\r");
+	printk("Initialized and ready to receive firmware\n\r");
+	if (boot_is_img_confirmed()) {
+		printk("Current image confirmed\n\r");
+	} else {
+		printk("Current image not confirmed yet\n\r");
+	}
 }
