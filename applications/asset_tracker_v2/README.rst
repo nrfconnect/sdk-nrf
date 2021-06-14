@@ -278,7 +278,7 @@ Check and configure the following configuration options for the application:
 
 .. option:: CONFIG_ASSET_TRACKER_V2_APP_VERSION - Configuration for providing the application version
 
-   The application publishes its version number as a part of the static device data. The default value for the application version is ``0.0.0-development``. To configure the application version, set :option:`CONFIG_ASSET_TRACKER_V2_APP_VERSION` to the desired ``app-version``.
+   The application publishes its version number as a part of the static device data. The default value for the application version is ``0.0.0-development``. To configure the application version, set :option:`CONFIG_ASSET_TRACKER_V2_APP_VERSION` to the desired version.
 
 .. option:: CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM - Configuration for enabling the use of custom cloud client ID
 
