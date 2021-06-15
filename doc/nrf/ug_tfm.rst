@@ -23,7 +23,11 @@ TF-M is a framework which will be extended for new functions and use cases beyon
 
 For official documentation, see `TF-M documentation`_.
 
-The TF-M implementation in |NCS| is currently demonstrated in the :ref:`tfm_hello_world` sample.
+The TF-M implementation in |NCS| is currently demonstrated in the following samples:
+
+- The :ref:`tfm_hello_world` sample
+- All :ref:`cryptography samples <crypto_samples>` in this SDK
+- A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
 
 Building
 ********
@@ -33,7 +37,7 @@ If TF-M is used in the application, SPM will not be included in it.
 For more information about multi-image builds, see :ref:`ug_multi_image`.
 
 To add TF-M to your build, enable the :option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
-If you want a :ref:`minimal version <tfm_minimal_build>` of TF-M, also enable the :option:`CONFIG_TFM_MINIMAL` configuration.
+To build a :ref:`minimal version <tfm_minimal_build>` of TF-M, you must also enable the :option:`CONFIG_TFM_MINIMAL` configuration.
 
 .. note::
    If you use menuconfig to enable :option:`CONFIG_BUILD_WITH_TFM`, you must also enable its dependencies.
@@ -48,18 +52,33 @@ When building for ``nrf9160dk_nrf9160ns``, UART1 must be disabled in the non-sec
 Otherwise, the non-secure application will fail to run.
 The recommended way to do this is to copy the .overlay file from the :ref:`tfm_hello_world` sample.
 
+Enabling secure services
+========================
+
+When using the :ref:`nrfxlib:nrf_security`, if :option:`CONFIG_BUILD_WITH_TFM` is enabled together with :option:`CONFIG_NORDIC_SECURITY_BACKEND`, the TF-M secure image will enable the use of the hardware acceleration of Arm CryptoCell.
+In such case, the Kconfig configurations in the Nordic Security Backend control the features enabled through TF-M.
+
+You can configure what crypto modules to include in TF-M by using the ``TFM_CRYPTO_`` Kconfig options found in file :file:`zephyr/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules`.
+
+TF-M utilizes :ref:`hardware unique keys <lib_hw_unique_key>` when the PSA Crypto key derivation APIs are used, and ``psa_key_derivation_setup`` is called with the algorithm ``TFM_CRYPTO_ALG_HUK_DERIVATION``.
+
 .. _tfm_minimal_build:
 
 Minimal build
 =============
 
 The default configuration of TF-M has all supported features enabled, which results in a significant memory footprint.
-A minimal version of the TF-M secure application is provided to show how to configure a reduced version of TF-M.
-The non-secure callable interfaces supported by this version generating random numbers, hashing with SHA256, and `tfm_platform_mem_read`.
-The minimal version is enabled by setting the :option:`CONFIG_TFM_MINIMAL` option.
+A minimal version of the TF-M secure application is provided in |NCS| to show how to configure a reduced version of TF-M.
+
+The secure services supported by this minimal version allow for generating random numbers, hashing with SHA-256, and using ``tfm_platform_mem_read``.
+This corresponds to the feature set provided by the :ref:`secure_partition_manager`.
+
+
+The minimal version of TF-M is enabled by setting the :option:`CONFIG_TFM_MINIMAL` option.
 
 When :option:`CONFIG_TFM_MINIMAL` is set, the configurability of TF-M is severely limited.
-Hence, it is not possible to modify the TF-M minimal configuration to create your own variant of a minimal configuration, instead the default configuration must be used as a starting point.
+Hence, it is not possible to modify the TF-M minimal configuration to create your own variant of the minimal configuration.
+Instead, the default configuration must be used as a starting point.
 
 Programming
 ***********
