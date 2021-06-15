@@ -34,7 +34,7 @@ It sends an HTTP HEAD request and prints the response code in the terminal.
 Obtaining a certificate
 =======================
 
-The sample connects to ``www.google.com``, which requires an X.509 certificate.
+The sample connects to ``www.example.com``, which requires an X.509 certificate.
 This certificate is provided in the :file:`samples/nrf9160/https_client/cert` folder.
 
 To connect to other servers, you might need to provision a different certificate.
@@ -55,7 +55,7 @@ Testing
 After programming the sample to your development kit, test it by performing the following steps:
 
 1. Connect the USB cable and power on or reset your nRF9160 DK.
-#. Open a terminal emulator and observe that the sample starts, provisions certificates, connects to the LTE network and to google.com, and then sends an HTTP HEAD request.
+#. Open a terminal emulator and observe that the sample starts, provisions certificates, connects to the LTE network and to example.com, and then sends an HTTP HEAD request.
 #. Observe that the HTTP HEAD request returns ``HTTP/1.1 200 OK``.
 
 Sample Output
@@ -68,7 +68,7 @@ The sample shows the following output:
    HTTPS client sample started
    Provisioning certificate
    Waiting for network.. OK
-   Connecting to google.com
+   Connecting to example.com
    Sent 64 bytes
    Received 903 bytes
 
