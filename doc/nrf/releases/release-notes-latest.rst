@@ -141,6 +141,54 @@ Matter (Project CHIP)
 
   * Renamed occurrences of Project CHIP to Matter.
 
+Bluetooth mesh
+--------------
+
+* Added:
+
+  * Support for vendor-specific mesh model :ref:`bt_mesh_silvair_enocean_srv_readme`.
+  * A new API function ``bt_mesh_rpl_pending_store`` to manually store pending RPL entries in the persistent storage without waiting for the timeout.
+  * A ``bt_mesh_scene_entry::recall_complete`` callback that is called for each model that has a scene entry when recalling a scene data is done.
+
+* Updated:
+
+  * Updated the :ref:`bt_mesh_light_xyl_srv_readme` to publish its state values that were loaded from flash after powering up.
+  * Replaced the linked list of scene entries in the model contexts, with a lookup in ROM-allocated scene entries.
+  * Updated so the transition pointer can be NULL, if no transition time parameters are provided in APIs.
+  * Renamed Kconfig option ``CONFIG_BT_MESH_LIGHT_CTRL_STORE_TIMEOUT`` to :option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`, and default value is set to 0.
+  * Updated the :ref:`bt_mesh_light_ctrl_srv_readme` with a timer, allowing it to resume operation after a certain delay.
+  * Updated the proportional-integral (PI) feedback regulator to use instant transition time to relieve the application from overhead.
+  * Fixed an issue where an undefined state for some sensor properties is a valid state, and should be handled without giving errors.
+  * Fixed an issue with storing and recalling the Light OnOff state in :ref:`bt_mesh_light_ctrl_srv_readme`.
+  * Fixed an issue where :ref:`bt_mesh_lightness_srv_readme` publishes twice if extended by two models.
+  * Updated :ref:`bt_mesh_light_hue_srv_readme` and :ref:`bt_mesh_light_sat_srv_readme` to store their states upon a change.
+  * Fixed an issue where :ref:`bt_mesh_light_hue_srv_readme` and :ref:`bt_mesh_light_sat_srv_readme` did not erase model data on reset.
+  * Fixed an issue where :ref:`bt_mesh_scene_srv_readme` called scene recall at startup.
+  * Fixed an issue by publishing a new value during scene recall in :ref:`bt_mesh_onoff_srv_readme` and :ref:`bt_mesh_lvl_srv_readme`.
+  * Fixed issues where extended models stored or recalled instead of the extending model.
+  * Updated the extending models by adding the extension API by default through Kconfig.
+  * Forced the extension of :ref:`bt_mesh_lightness_srv_readme` to be initialized before :ref:`bt_mesh_light_ctrl_srv_readme`.
+  * Fixed an issue where :ref:`bt_mesh_light_ctrl_srv_readme` should disable control when the lightness is set by receiving a message.
+  * Added persistent storage to the :ref:`bt_mesh_scheduler_readme` to restore previously configured entries on power-up.
+  * Fixed an issue where CTL temperature bindings should use rounding operation for division in the binding formula.
+  * Samples are using :option:`CONFIG_NVS` instead of :option:`CONFIG_FCB` as the default storage backend.
+  * Fixed an issue in :ref:`bt_mesh_light_ctrl_srv_readme` by always setting the transition time to a Fade Standby Manual state time when a Light Off event is received.
+  * Fixed an issue by reporting maximum remaining time for all components for CTL state transition time when GET is processed.
+  * Fixed an issue where a deleted :ref:`bt_mesh_scene_srv_readme` did not delete all its pages from the file system.
+  * Fixed an issue where Sensor Threshold was trimmed and an invalid value was calculated.
+  * Updated :ref:`bt_mesh_scheduler_srv_readme` to no longer extend :ref:`bt_mesh_scene_srv_readme`, but they must be present on the same element.
+  * Moved the configuration settings for acknowledged messages into Kconfig to make them public.
+  * Fixed an issue where an Occupancy On event did not transition to a Fade On state even if Occupancy Mode is disabled.
+  * Added a flag to :ref:`bt_mesh_onoff_srv_readme` to skip Default Transition Time on Generic OnOff Set (Unack) messages.
+  * Fixed an issue by correcting the bindings between the Generic OnOff state and the Light OnOff state.
+  * Fixed an issue by clearing the internal sum in the proportional-integral (PI) feedback regulator when entering the OFF state of the state machine.
+  * Fixed an issue where :ref:`bt_mesh_lightness_srv_readme` could accidentally disable :ref:`bt_mesh_light_ctrl_srv_readme` before it was started.
+  * Fixed an issue by publishing the Light Lightness Status message on startup even if the OnPowerUp state is OFF.
+  * Fixed issues by publishing the Light OnOff Status when disabling and restoring the Light LC state.
+  * Fixed an issue where temperature and range should be within a valid default range for the :ref:`bt_mesh_light_temp_srv_readme`.
+  * Removed sensor type ``BT_MESH_SENSOR_DELTA_DISABLED`` as it is removed from specification.
+  * Replaced ``struct bt_mesh_model_ack_ctx`` with ``struct bt_mesh_msg_ack_ctx`` from :ref:`zephyr:bluetooth_mesh_msg`.
+
 Thread
 ------
 
