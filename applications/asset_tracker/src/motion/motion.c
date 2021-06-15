@@ -28,7 +28,7 @@ static int accelerometer_poll(motion_acceleration_data_t *sensor_data)
 
 	int err;
 
-	struct sensor_value accel_data[3];
+	struct sensor_value accel_data[3] = {0};
 
 	/* If using the ADXL362 driver, all channels must be fetched */
 	if (IS_ENABLED(CONFIG_ADXL362)) {

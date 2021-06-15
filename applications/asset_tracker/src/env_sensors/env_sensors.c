@@ -82,7 +82,7 @@ int env_sensors_poll(void)
 static void env_sensors_poll_fn(struct k_work *work)
 {
 	int num_sensors = ARRAY_SIZE(env_sensors);
-	struct sensor_value data[num_sensors];
+	struct sensor_value data[num_sensors] = {0};
 
 	int err;
 
