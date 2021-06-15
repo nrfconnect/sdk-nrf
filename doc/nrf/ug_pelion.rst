@@ -73,7 +73,7 @@ Create a dedicated partition on flash
 
 The Pelion Device Management library requires a partition named ``pelion_storage`` to be defined on flash.
 The partition is used to store the non-volatile data, such as credentials and identifiers.
-Because this kind of data is fragile, keep the partition on the SoC internal flash or make sure to secure the access to the memory.
+Because this kind of data is sensitive, keep the partition on the SoC internal flash or make sure to secure the access to the memory.
 
 Configure dynamic allocation memory
 ===================================
