@@ -37,13 +37,16 @@ enum tfm_plat_err_t tfm_plat_get_huk_derived_key(const uint8_t *label,
 		uint8_t *key, size_t key_size)
 {
 	if (key_size > TFM_KEY_LEN_BYTES) {
-		return TFM_PLAT_ERR_SYSTEM_ERR;
+		return TFM_PLAT_ERR_INVALID_INPUT;
 	}
 
 	int err  = hw_unique_key_derive_key(HUK_KEYSLOT_MKEK, context,
 			context_size, label, label_size, key, key_size);
 
-	return err;
+	if (err) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
+	return TFM_PLAT_ERR_SUCCESS;
 }
 
 enum tfm_plat_err_t
