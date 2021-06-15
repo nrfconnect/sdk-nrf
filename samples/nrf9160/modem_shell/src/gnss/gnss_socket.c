@@ -36,7 +36,7 @@ static struct k_work_delayable gnss_timeout_work;
 #if defined(CONFIG_SUPL_CLIENT_LIB)
 static struct k_work get_agps_data_work;
 
-static nrf_gnss_agps_data_frame_t agps_data;
+static struct nrf_modem_gnss_agps_data_frame agps_data;
 #endif
 
 enum gnss_operation_mode {
