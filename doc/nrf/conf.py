@@ -43,12 +43,12 @@ extensions = [
     "options_from_kconfig",
     "ncs_include",
     "sphinxcontrib.mscgen",
-    "sphinx_tabs.tabs",
     "zephyr.html_redirects",
     "zephyr.warnings_filter",
     "ncs_cache",
     "external_content",
     "doxyrunner",
+    "sphinx_tabs.tabs",
 ]
 
 linkcheck_ignore = [
