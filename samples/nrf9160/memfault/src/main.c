@@ -141,6 +141,8 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		MEMFAULT_TRACE_EVENT_WITH_LOG(Switch2Toggled,
 					      "Switch state: %d",
 					      buttons_pressed & DK_BTN4_MSK ? 1 : 0);
+		LOG_INF("Switch2Toggled event has been traced, button state: %d",
+			buttons_pressed & DK_BTN4_MSK ? 1 : 0);
 	}
 }
 
