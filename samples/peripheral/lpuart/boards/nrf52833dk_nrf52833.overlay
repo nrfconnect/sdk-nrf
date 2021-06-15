@@ -14,8 +14,8 @@
 };
 
 &uart0 {
-	status = "disabled";
- };
+	disable-rx;
+};
 
 &gpiote {
 	interrupts = <6 NRF_DEFAULT_IRQ_PRIORITY>;

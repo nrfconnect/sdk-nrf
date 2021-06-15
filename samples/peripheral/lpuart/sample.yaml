@@ -11,9 +11,25 @@ tests:
       - nrf9160dk_nrf9160_ns
       - nrf5340dk_nrf5340_cpuapp
       - nrf21540dk_nrf52840
-    platform_allow: nrf52dk_nrf52832 nrf52833dk_nrf52833 nrf52840dk_nrf52840 nrf9160dk_nrf9160_ns
-      nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+
+  samples.peripheral.lpuart_nrf52840_debug:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    extra_args: OVERLAY_CONFIG=debug.conf
+      DTC_OVERLAY_FILE="boards/nrf52840dk_nrf52840.overlay;debug.overlay"
     tags: ci_build
+
+  samples.peripheral.lpuart_nrf9160dk_debug:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    extra_args: OVERLAY_CONFIG=debug.conf
+      DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_ns.overlay;debug.overlay"
+    tags: ci_build
+
   sample.peripheral.lpuart_int_driven:
     build_only: true
     extra_configs:
