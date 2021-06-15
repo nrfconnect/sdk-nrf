@@ -100,7 +100,14 @@ Complete the following steps to build the documentation output:
 
    Alternatively, if you want to build each documentation set separately, complete the following steps:
 
-   a. Run ninja to build the Kconfig documentation:
+   a. Run ninja to build the nrfx documentation:
+
+      .. code-block:: console
+
+         ninja nrfx
+
+
+   #. Run ninja to build the Kconfig documentation:
 
       .. code-block:: console
 
