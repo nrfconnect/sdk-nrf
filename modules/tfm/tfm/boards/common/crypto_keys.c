@@ -53,5 +53,38 @@ enum tfm_plat_err_t
 tfm_plat_get_initial_attest_key(uint8_t *key_buf, uint32_t size,
 		struct ecc_key_t *ecc_key, psa_ecc_family_t *curve_type)
 {
-	return TFM_PLAT_ERR_UNSUPPORTED;
+	uint8_t *key_dst;
+	const uint8_t *key_src;
+	uint32_t key_size;
+	uint32_t full_key_size = initial_attestation_private_key_size;
+	uint8_t key_label[] = "tfm_initial_attest_key";
+	int err;
+
+	if (size < full_key_size) {
+		return TFM_PLAT_ERR_INVALID_INPUT;
+	}
+
+	/* Set the EC curve type which the key belongs to */
+	*curve_type = initial_attestation_curve_type;
+
+	/* Copy the private key to the buffer, it MUST be present */
+	key_dst  = key_buf;
+	key_src  = initial_attestation_private_key;
+	key_size = initial_attestation_private_key_size;
+
+	err  = hw_unique_key_derive_key(HUK_KEYSLOT_MKEK, NULL, 0,
+			key_label, sizeof(key_label) - 1, key_dst, key_size);
+	if (err) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
+
+	ecc_key->priv_key = key_dst;
+	ecc_key->priv_key_size = key_size;
+
+	ecc_key->pubx_key = NULL;
+	ecc_key->pubx_key_size = 0;
+	ecc_key->puby_key = NULL;
+	ecc_key->puby_key_size = 0;
+
+	return TFM_PLAT_ERR_SUCCESS;
 }
