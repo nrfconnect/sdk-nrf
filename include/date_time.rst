@@ -28,7 +28,7 @@ See the API documentation for more information on these functions.
 .. note::
 
    The first date-time update cycle (after boot) does not occur until the time set by the :option:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` has elapsed.
-   It is recommended to call the :c:func:`date_time_update` function after the device has connected to LTE, to get the initial date-time information.
+   It is recommended to call the :c:func:`date_time_update_async` function after the device has connected to LTE, to get the initial date-time information.
 
 Configuration
 *************
