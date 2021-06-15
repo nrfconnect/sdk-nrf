@@ -45,6 +45,13 @@ class RttNordicProfilerHost:
         self.logger_console.setFormatter(self.log_format)
         self.logger.addHandler(self.logger_console)
 
+        self.rtt_up_channels = {
+            'info': None,
+            'data': None,
+        }
+        self.rtt_down_channels = {
+            'command': None,
+        }
         self.connect()
 
     @staticmethod
@@ -84,7 +91,35 @@ class RttNordicProfilerHost:
                 self.logger.error("Cannot find RTT control block")
                 sys.exit()
 
-            time.sleep(1)
+            time.sleep(0.2)
+
+        while (None in list(self.rtt_up_channels.values())) or \
+              (None in list(self.rtt_down_channels.values())):
+            down_channel_cnt, up_channel_cnt = self.jlink.rtt_read_channel_count()
+
+            for idx in range(0, down_channel_cnt):
+                chan_name, _ = self.jlink.rtt_read_channel_info(idx, 'DOWN_DIRECTION')
+
+                try:
+                    label = self.config['rtt_down_channel_names'][chan_name]
+                    self.rtt_down_channels[label] = idx
+                except KeyError:
+                    continue
+
+            for idx in range(0, up_channel_cnt):
+                chan_name, _ = self.jlink.rtt_read_channel_info(idx, 'UP_DIRECTION')
+
+                try:
+                    label = self.config['rtt_up_channel_names'][chan_name]
+                    self.rtt_up_channels[label] = idx
+                except KeyError:
+                    continue
+
+            if time.time() - start_time > TIMEOUT:
+                self.logger.error("Cannot find properly configured RTT channels")
+                sys.exit()
+
+            time.sleep(0.2)
 
         self.logger.info("Connected to device via RTT")
 
@@ -100,7 +135,7 @@ class RttNordicProfilerHost:
         # read remaining data to buffer
         while True:
             try:
-                buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
+                buf = self.jlink.rtt_read(self.rtt_up_channels['data'],
                                           self.config['rtt_read_chunk_size'],
                                           encoding=None)
 
@@ -148,7 +183,7 @@ class RttNordicProfilerHost:
                 break
 
             try:
-                buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
+                buf = self.jlink.rtt_read(self.rtt_up_channels['data'],
                                           self.config['rtt_read_chunk_size'],
                                           encoding=None)
             except APIError:
@@ -186,7 +221,7 @@ class RttNordicProfilerHost:
     def _read_single_event_description(self):
         while '\n' not in self.desc_buf:
             try:
-                buf_temp = self.jlink.rtt_read(self.config['rtt_info_channel'],
+                buf_temp = self.jlink.rtt_read(self.rtt_up_channels['info'],
                                       self.config['rtt_read_chunk_size'],
                                       encoding='utf-8')
 
@@ -303,6 +338,6 @@ class RttNordicProfilerHost:
         command = bytearray(1)
         command[0] = command_type.value
         try:
-            self.jlink.rtt_write(self.config['rtt_command_channel'], command, None)
+            self.jlink.rtt_write(self.rtt_down_channels['command'], command, None)
         except APIError:
             self.logger.error("Problem with writing RTT data.")
