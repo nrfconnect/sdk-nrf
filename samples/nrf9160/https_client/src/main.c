@@ -19,7 +19,7 @@
 
 #define HTTP_HEAD                                                              \
 	"HEAD / HTTP/1.1\r\n"                                                  \
-	"Host: www.google.com:443\r\n"                                         \
+	"Host: example.com:443\r\n"                                            \
 	"Connection: close\r\n\r\n"
 
 #define HTTP_HEAD_LEN (sizeof(HTTP_HEAD) - 1)
@@ -32,9 +32,9 @@
 static const char send_buf[] = HTTP_HEAD;
 static char recv_buf[RECV_BUF_SIZE];
 
-/* Certificate for `google.com` */
+/* Certificate for `example.com` */
 static const char cert[] = {
-	#include "../cert/GlobalSign-Root-CA-R2"
+	#include "../cert/DigiCertGlobalRootCA.pem"
 };
 
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
@@ -181,7 +181,7 @@ void main(void)
 	}
 	printk("OK\n");
 
-	err = getaddrinfo("google.com", NULL, &hints, &res);
+	err = getaddrinfo("example.com", NULL, &hints, &res);
 	if (err) {
 		printk("getaddrinfo() failed, err %d\n", errno);
 		return;
@@ -201,7 +201,7 @@ void main(void)
 		goto clean_up;
 	}
 
-	printk("Connecting to %s\n", "google.com");
+	printk("Connecting to %s\n", "example.com");
 	err = connect(fd, res->ai_addr, sizeof(struct sockaddr_in));
 	if (err) {
 		printk("connect() failed, err: %d\n", errno);
