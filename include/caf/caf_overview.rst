@@ -36,16 +36,12 @@ The figure shows an example application that uses one CAF module and one custom 
 Enabling CAF
 ************
 
-To enable CAF, set the :option:`CONFIG_CAF` Kconfig option, initialize Event Manager, and submit the first :c:struct:`module_state_event`.
+To enable CAF, complete the following steps:
 
-Initialize Event Manager
-==========================
-
-As CAF uses Event Manager, you must initialize Event Manager in your :file:`main.c` file.
-To do so, complete the following steps:
-
-1. Include :file:`event_manager.h`.
-#. Call :c:func:`event_manager_init()`.
+1. Enable :option:`CONFIG_CAF` Kconfig option in your project configuration file.
+#. Enable and initialize Event Manager.
+   See :ref:`event_manager_configuration` for more details.
+#. Submit the first :c:struct:`module_state_event`.
 
 Submit ``module_state_event``
 =============================
@@ -102,7 +98,7 @@ However, if you want to add custom modules that communicate with CAF modules usi
 
 * A custom module must register as Event Manager's listener and subscribe for CAF events that should be handled by that custom module.
   You can subscribe for a CAF event in the same way as you subscribe for any other Event Manager event.
-  See the :ref:`event_manager` documentation for instructions about how to configure this.
+  See the :ref:`event_manager_register_module_as_listener` documentation for instructions about how to configure this.
 * The module must work with :c:struct:`module_state_event`.
   It must submit it and react to it.
 
