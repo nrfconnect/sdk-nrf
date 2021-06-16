@@ -142,6 +142,28 @@ You can update the modem firmware of Thingy:91 using any of the following method
 
 See `Programming the Thingy:91 modem`_ for the detailed steps to update the modem firmware.
 
+Using RSA signing for MCUboot
+=============================
+In order to be compatible with the factory-programmed bootloader on Thingy:91, the signing algorithm must be changed from the default MCUboot algorithm.
+To change the algorithm, create the file :file:`child_image/mcuboot.conf` in your application folder and add the following content:
+
+.. parsed-literal::
+   :class: highlight
+
+   CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
+   CONFIG_BOOT_SIGNATURE_KEY_FILE="root-rsa-2048.pem"
+
+The build system will include these configurations and enable RSA signing of the images for backward compatibility with the MCUboot versions that precede the |NCS| v1.4.0.
+Note that the configurations in such a file will also be taken for other build targets, besides Thingy:91.
+
+.. note::
+
+   Changing the signing algorithm enables MCUboot to use the default RSA keys, so that it is compatible with the factory-programmed bootloader present on the Thingy:91.
+   These keys must only be used for development.
+   In a final product, you must use your own, secret keys.
+   See :ref:`ug_fw_update_development_keys` for more information.
+
+
 .. _building_pgming:
 
 Building and programming from the source code
