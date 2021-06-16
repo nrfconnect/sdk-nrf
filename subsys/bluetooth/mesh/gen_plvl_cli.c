@@ -31,6 +31,7 @@ static void handle_power_status(struct bt_mesh_model *model,
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_PLVL_OP_LEVEL_STATUS, ctx->addr,
 				      (void **)&rsp)) {
+		*rsp = status;
 		bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
 	}
 
