@@ -19,12 +19,7 @@ Before you start
 Before you can build the documentation, you must install the required tools.
 The following tool versions have been tested to work:
 
-.. ncs-include:: README.rst
-   :docset: zephyr
-   :auto-dedent:
-   :start-after: tested to run with:
-   :end-before: * All Python dependencies
-
+* Doxygen 1.8.13
 * Mscgen 0.20
 * Python dependencies as listed in :ref:`python_req_documentation`
 
@@ -32,16 +27,8 @@ Complete the following steps to install the required tools:
 
 1. If you have not done so already, install the |NCS| as described in :ref:`gs_installing`.
 #. Install or update all required :ref:`Python dependencies <additional_deps>`.
-#. Install the additional documentation tools required by Zephyr:
-
-   .. ncs-include:: README.rst
-      :docset: zephyr
-      :auto-dedent:
-      :start-after: .. doc_processors_installation_start
-      :end-before: .. doc_processors_installation_end
-
+#. Install `Doxygen`_.
 #. Install `mscgen`_ and make sure that the ``mscgen`` executable is in your ``PATH``.
-
 
 Documentation structure
 ***********************

@@ -629,6 +629,8 @@
 
 .. _`mscgen`: http://www.mcternan.me.uk/mscgen/
 
+.. _`Doxygen`: https://www.doxygen.nl/
+
 .. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
 
 .. _`HID usage tables`: https://www.usb.org/hid
