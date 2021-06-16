@@ -844,6 +844,15 @@ NCSIDB-114: Default logging causes crash
 
   **Workaround:** Do not enable logging and add a breakpoint in the fault handling, or try a different logging backend.
 
+Crypto
+======
+.. rst-class:: v1-6-0
+
+NCSDK-10101: KDR key slot not available for HW Unique Keys on nRF91 and nRF53
+  The KDR slot cannot be populated or used for derivation.
+
+  **Workaround:** Use the MKEK or MEXT slot in place of KDR.
+
 
 MCUboot
 *******
