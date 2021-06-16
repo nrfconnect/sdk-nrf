@@ -580,7 +580,7 @@ static int anomaly_timer_init(void)
 		NRF_TIMER_CC_CHANNEL0,
 		nrfx_timer_ms_to_ticks(&dtm_inst.anomaly_timer,
 				       BLOCKER_FIX_WAIT_DEFAULT),
-		false);
+		true);
 
 	return 0;
 }
@@ -1983,7 +1983,9 @@ static void radio_handler(const void *context)
 		if (dtm_inst.state == STATE_RECEIVER_TEST &&
 		    dtm_inst.anomaly_172_wa_enabled) {
 			nrfx_timer_clear(&dtm_inst.anomaly_timer);
-			nrfx_timer_enable(&dtm_inst.anomaly_timer);
+			if (!nrfx_timer_is_enabled(&dtm_inst.anomaly_timer)) {
+				nrfx_timer_enable(&dtm_inst.anomaly_timer);
+			}
 		}
 	}
 }
