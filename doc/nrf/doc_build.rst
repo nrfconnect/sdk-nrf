@@ -50,9 +50,18 @@ All documentation build files are located in the :file:`ncs/nrf/doc` folder.
 The :file:`nrf` subfolder in that directory contains all :file:`.rst` source files that are not directly related to a sample application or a library.
 Documentation for samples and libraries are provided in a :file:`README.rst` or :file:`.rst` file in the same directory as the code.
 
-Building the documentation output requires building output for all documentation sets.
-Currently, there are four sets: nrf, nrfxlib, zephyr, and mcuboot (covering the contents of :file:`bootloader/mcuboot`).
-Since there are links from the ncs documentation set into other documentation sets, the other documentation sets must be built first.
+Building the documentation output requires building the output for all docsets.
+Currently, there are the following docsets:
+
+- ``nrf``: nRF Connect SDK (NCS)
+- ``nrfx``: nrfx
+- ``nrfxlib``: nrfxlib
+- ``zephyr``: Zephyr RTOS
+- ``mcuboot``: MCUboot
+- ``kconfig``: All available Kconfig options in the nRF Connect SDK
+
+Since there are links from the NCS documentation set into other docsets, the
+documentation is built in a pre-defined order.
 
 Building documentation output
 *****************************
@@ -81,7 +90,7 @@ Complete the following steps to build the documentation output:
 
    .. code-block:: console
 
-      cmake -GNinja -B_build .
+      cmake -GNinja -S. -B_build
 
 #. Enter the generated build folder:
 
@@ -89,70 +98,38 @@ Complete the following steps to build the documentation output:
 
       cd _build
 
-#. Run ninja to build the documentation:
+#. Run ninja to build the complete documentation:
 
    .. code-block:: console
 
       ninja
 
-   This command will build all documentation sets.
-   Note that this process can take quite some time.
-
-   Alternatively, if you want to build each documentation set separately, complete the following steps:
-
-   a. Run ninja to build the nrfx documentation:
-
-      .. code-block:: console
-
-         ninja nrfx
-
-
-   #. Run ninja to build the Kconfig documentation:
-
-      .. code-block:: console
-
-         ninja kconfig-html
-
-   #. Run ninja to build the Zephyr documentation:
-
-      .. code-block:: console
-
-         ninja zephyr
-
-      This step can take up to 15 minutes.
-
-   #. Run ninja to build the mcuboot documentation:
-
-      .. code-block:: console
-
-         ninja mcuboot
-
-   #. Run ninja to build the nrfxlib inventory file (used by nrf):
-
-      .. code-block:: console
-
-         ninja nrfxlib-inventory
-
-   #. Run ninja to build the |NCS| documentation:
-
-      .. code-block:: console
-
-         ninja nrf
-
-   #. Run ninja to build the nrfxlib documentation:
-
-      .. code-block:: console
-
-         ninja nrfxlib
-
-The documentation output is written to the :file:`_build/html` folder.
+The documentation output is written to the :file:`doc/_build/html` folder.
 Double-click the :file:`index.html` file to display the documentation in your browser.
 
-.. tip::
+Alternatively, you may also want to work only with a single docset, e.g. ``nrf``.
+The build system provides individual targets for such purpose.
+If you have not built all docsets before, it is recommended to run:
 
-   If you modify or add RST files, you do not need to rerun the full documentation build.
-   For simple changes, it is sufficient to run the substep that builds the respective documentation (for example, only ``ninja nrf`` for changes to the |NCS| documentation).
-   If this results in unexpected build errors, follow :ref:`caching_and_cleaning` and rerun ``ninja build-all``.
+.. code-block:: console
+
+   ninja <docset-name>-html-all
+
+where ``<docset-name>`` is the docset name, e.g. ``nrf``.
+This target will build everything needed for the ``<docset-name>``.
+On subsequent builds it is recommended to just run:
+
+.. code-block:: console
+
+   ninja <docset-name>-html
+
+or the alias target ``<docset-name>`` for ``<docset-name>-html``:
+
+.. code-block:: console
+
+   ninja <docset-name>
+
+The last couple of targets will only invoke the build for the ``<docset-name>``, assuming all of its dependencies are available.
 
 .. _caching_and_cleaning:
 
@@ -160,66 +137,23 @@ Caching and cleaning
 ********************
 
 To speed up the documentation build, Sphinx processes only those files that have been changed since the last build.
-In addition, RST files are copied to a different location during the build process.
-This mechanism can cause outdated or deleted files to be used in the build, or the navigation to not be updated as expected.
+This mechanism can sometimes cause issues such as navigation not being updated correctly.
 
-If you experience any such problems, clean the build folders before you run the documentation build.
-Note that this will cause the documentation to be built from scratch, which takes a considerable time.
+If you experience any of such issues, clean the build folders before you run the documentation build.
 
-To clean the build folders for the Zephyr documentation:
+To clean all the build files:
 
 .. code-block:: console
 
-   ninja zephyr-clean
+   ninja clean
 
-To clean the build folders for the nrfxlib documentation:
-
-.. code-block:: console
-
-   ninja nrfxlib-clean
-
-To clean the build folders for the MCUboot documentation:
+To clean the build folders for a particular docset:
 
 .. code-block:: console
 
-   ninja mcuboot-clean
+   ninja <docset-name>-clean
 
-To clean the build folders for the |NCS| documentation:
-
-.. code-block:: console
-
-   ninja nrf-clean
-
-Out-of-tree builds
-******************
-
-Out-of-tree builds are also supported, so you can actually build from outside
-the source tree:
-
-.. code-block:: console
-
-   # On Linux/macOS
-   cd ~
-   source ncs/zephyr/zephyr-env.sh
-   cd ~
-   mkdir build
-   # On Windows
-   cd %userprofile%
-   ncs\zephyr\zephyr-env.cmd
-   mkdir build
-
-   # Use cmake to configure a Ninja-based build system:
-   cmake -GNinja -Bbuild/ -Hncs/nrf/doc
-   # Now run ninja on the generated build system:
-   ninja -C build/ zephyr
-   ninja -C build/ mcuboot
-   ninja -C build/ nrfxlib-inventory
-   ninja -C build/ nrf
-   ninja -C build/ nrfxlib
-   # If you modify or add .rst files in the nRF repository, run ninja again:
-   ninja -C build/ nrf
-
-If you want to build the documentation from scratch, delete the contents of the build folder and run ``cmake`` and then ``ninja`` again.
+where ``<docset-name>`` is the docset name, e.g. ``nrf``.
 
 Different versions
 ******************
