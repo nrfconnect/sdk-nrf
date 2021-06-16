@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <nrf9160dk_nrf52840_reset_on_if5.dtsi>
+
+#include <nrf9160dk_uart1_on_if0_3.dtsi>
+
+&uart1 {
+	current-speed = <1000000>;
+	/delete-property/ rts-pin;
+	/delete-property/ cts-pin;
+
+	lpuart: nrf-sw-lpuart {
+		compatible = "nordic,nrf-sw-lpuart";
+		status = "okay";
+		label = "LPUART";
+		req-pin = <15>; /* <&interface_to_nrf9160 2 0>; */
+		rdy-pin = <22>; /* <&interface_to_nrf9160 3 0>; */
+	};
+};
+
+&gpiote {
+	interrupts = <6 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
+/* Disabling uart rx pin to get low power */
+&uart0 {
+	disable-rx;
+};
+
+&timer3 {
+	status = "ok";
+	interrupts = <26 0>;
+};
+
+/ {
+	busy-sim {
+		compatible = "vnd,busy-sim";
+		status = "okay";
+		counter = <&timer3>;
+	};
+};
