@@ -59,10 +59,10 @@ UNIT(watt) = { "Watt", "W" };
 UNIT(kwh) = { "Kilo Watt hours", "kWh" };
 UNIT(db) = { "Decibel", "dB" };
 UNIT(lux) = { "Lux", "lx" };
-UNIT(lux_hour) = { "Lux hours", "lxh" };
+UNIT(klxh) = { "Kilo Lux hours", "klxh" };
 UNIT(lumen) = { "Lumen", "lm" };
 UNIT(lumen_per_watt) = { "Lumen per Watt", "lm/W" };
-UNIT(lumen_hour) = { "Lumen hours", "lmh" };
+UNIT(klmh) = { "Kilo Lumen hours", "klmh" };
 UNIT(degrees) = { "Degrees", "degrees" };
 UNIT(mps) = { "Metres per second", "m/s" };
 UNIT(microtesla) = { "Microtesla", "uT" };
@@ -82,18 +82,29 @@ UNIT(unitless) = { "Unitless" };
 
 #define SCALAR_IS_DIV(_scalar) ((_scalar) > -1.0 && (_scalar) < 1.0)
 
-#define SCALAR_REPR_RANGED(_scalar, _flags, _max)                              \
+#define SCALAR_REPR_RANGED(_scalar, _flags, _min, _max)                              \
 	{                                                                      \
 		.flags = ((_flags) | (SCALAR_IS_DIV(_scalar) ? DIVIDE : 0)),   \
+		.min = _min,                                                   \
 		.max = _max,                                                   \
 		.value = (int64_t)((SCALAR_IS_DIV(_scalar) ? (1.0 / (_scalar)) : \
 							   (_scalar)) +        \
 				 0.5),                                         \
 	}
 
-#define SCALAR_REPR(_scalar, _flags) SCALAR_REPR_RANGED(_scalar, _flags, 0)
+#define SCALAR_REPR(_scalar, _flags) SCALAR_REPR_RANGED(_scalar, _flags, 0, 0)
 
 #ifdef CONFIG_BT_MESH_SENSOR_LABELS
+
+#define SCALAR_FORMAT_MIN_MAX(_size, _flags, _unit, _scalar, _min, _max)       \
+	{                                                                      \
+		.unit = &bt_mesh_sensor_unit_##_unit,                          \
+		.encode = scalar_encode, .decode = scalar_decode,              \
+		.size = _size,                                                 \
+		.user_data = (void *)&(                                        \
+			(const struct scalar_repr)SCALAR_REPR_RANGED(          \
+				_scalar, ((_flags) | HAS_MIN | HAS_MAX), _min, _max)),         \
+	}
 
 #define SCALAR_FORMAT_MAX(_size, _flags, _unit, _scalar, _max)                 \
 	{                                                                      \
@@ -102,7 +113,7 @@ UNIT(unitless) = { "Unitless" };
 		.size = _size,                                                 \
 		.user_data = (void *)&(                                        \
 			(const struct scalar_repr)SCALAR_REPR_RANGED(          \
-				_scalar, ((_flags) | HAS_MAX), _max)),         \
+				_scalar, ((_flags) | HAS_MAX), 0, _max)),         \
 	}
 
 #define SCALAR_FORMAT(_size, _flags, _unit, _scalar)                           \
@@ -115,13 +126,22 @@ UNIT(unitless) = { "Unitless" };
 	}
 #else
 
+#define SCALAR_FORMAT_MIN_MAX(_size, _flags, _unit, _scalar, _min, _max)       \
+	{                                                                      \
+		.encode = scalar_encode, .decode = scalar_decode,              \
+		.size = _size,                                                 \
+		.user_data = (void *)&(                                        \
+			(const struct scalar_repr)SCALAR_REPR_RANGED(          \
+				_scalar, ((_flags) | HAS_MIN | HAS_MAX), _min, _max)),         \
+	}
+
 #define SCALAR_FORMAT_MAX(_size, _flags, _unit, _scalar, _max)                 \
 	{                                                                      \
 		.encode = scalar_encode, .decode = scalar_decode,              \
 		.size = _size,                                                 \
 		.user_data = (void *)&(                                        \
 			(const struct scalar_repr)SCALAR_REPR_RANGED(          \
-				_scalar, ((_flags) | HAS_MAX), _max)),         \
+				_scalar, ((_flags) | HAS_MAX), 0, _max)),         \
 	}
 
 #define SCALAR_FORMAT(_size, _flags, _unit, _scalar)                           \
@@ -147,10 +167,12 @@ enum scalar_repr_flags {
 	/** The second highest encoded value represents "value is invalid" */
 	HAS_INVALID = (BIT(5)),
 	HAS_MAX = BIT(6),
+	HAS_MIN = BIT(7),
 };
 
 struct scalar_repr {
 	enum scalar_repr_flags flags;
+	int32_t min;
 	uint32_t max; /**< Highest encoded value */
 	int64_t value;
 };
@@ -194,6 +216,10 @@ static int32_t scalar_min(const struct bt_mesh_sensor_format *format)
 {
 	const struct scalar_repr *repr = format->user_data;
 
+	if (repr->flags & HAS_MIN) {
+		return repr->min;
+	}
+
 	if (repr->flags & SIGNED) {
 		return -BIT64(8 * format->size - 1);
 	}
@@ -220,9 +246,11 @@ static int scalar_encode(const struct bt_mesh_sensor_format *format,
 	if (raw > max_value || raw < min_value) {
 		uint32_t type_max = BIT64(8 * format->size) - 1;
 
-		if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID)) {
-			raw = type_max - 2;
-		} else if (repr->flags & HAS_UNDEFINED) {
+		if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID) &&
+		    val->val1 == type_max - 1) {
+			raw = type_max - 1;
+		} else if (repr->flags & HAS_UNDEFINED &&
+			   val->val1 == type_max) {
 			raw = type_max;
 		} else {
 			return -ERANGE;
@@ -258,7 +286,7 @@ static int scalar_decode(const struct bt_mesh_sensor_format *format,
 		return -ENOMEM;
 	}
 
-	int32_t raw;
+	int64_t raw;
 
 	switch (format->size) {
 	case 1:
@@ -290,14 +318,22 @@ static int scalar_decode(const struct bt_mesh_sensor_format *format,
 	}
 
 	int64_t max_value = scalar_max(format);
-	int32_t min_value = scalar_min(format);
+	int64_t min_value = scalar_min(format);
 
 	if (raw < min_value || raw > max_value) {
-		if (!(repr->flags & HAS_UNDEFINED)) {
+		if (!(repr->flags & (HAS_UNDEFINED | HAS_HIGHER_THAN | HAS_INVALID))) {
 			return -ERANGE;
 		}
 
-		val->val1 = BIT64(8 * format->size) - 1;
+		uint32_t type_max = BIT64(8 * format->size) - 1;
+
+		if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID) && raw == type_max - 1) {
+			type_max -= 1;
+		} else if (raw != type_max) {
+			return -ERANGE;
+		}
+
+		val->val1 = type_max;
 		val->val2 = 0;
 		return 0;
 	}
@@ -501,7 +537,7 @@ FORMAT(time_decihour_8)	    = SCALAR_FORMAT_MAX(1,
 FORMAT(time_hour_24)	    = SCALAR_FORMAT(3,
 					    (UNSIGNED | HAS_UNDEFINED),
 					    hours,
-					    SCALAR(1e-1, 0));
+					    SCALAR(1, 0));
 FORMAT(time_second_16)	    = SCALAR_FORMAT(2,
 					    (UNSIGNED | HAS_UNDEFINED),
 					    seconds,
@@ -546,36 +582,38 @@ FORMAT(energy)           = SCALAR_FORMAT(3,
 /*******************************************************************************
  * Lighting formats
  ******************************************************************************/
-FORMAT(chromatic_distance)      = SCALAR_FORMAT_MAX(2,
-						(SIGNED |
-						 HAS_INVALID |
-						 HAS_UNDEFINED),
-						unitless, SCALAR(1e-5, 0),
-						5000);
+FORMAT(chromatic_distance)      = SCALAR_FORMAT_MIN_MAX(2,
+							(SIGNED |
+							HAS_INVALID |
+							HAS_UNDEFINED),
+							unitless, SCALAR(1e-5, 0),
+							-5000, 5000);
 FORMAT(chromaticity_coordinate) = SCALAR_FORMAT(2,
 						UNSIGNED,
 						unitless,
 						SCALAR(1, -16));
-FORMAT(correlated_color_temp)	= SCALAR_FORMAT(2,
-						(UNSIGNED | HAS_UNDEFINED),
-						kelvin,
-						SCALAR(1, 0));
+FORMAT(correlated_color_temp)	= SCALAR_FORMAT_MIN_MAX(2,
+							(UNSIGNED | HAS_UNDEFINED),
+							kelvin,
+							SCALAR(1, 0),
+							800, 65534);
 FORMAT(illuminance)		= SCALAR_FORMAT(3,
 						(UNSIGNED | HAS_UNDEFINED),
 						lux,
 						SCALAR(1e-2, 0));
-FORMAT(luminous_efficacy)	= SCALAR_FORMAT(2,
-						(UNSIGNED | HAS_UNDEFINED),
-						lumen_per_watt,
-						SCALAR(1e-1, 0));
+FORMAT(luminous_efficacy)	= SCALAR_FORMAT_MAX(2,
+						    (UNSIGNED | HAS_UNDEFINED),
+						    lumen_per_watt,
+						    SCALAR(1e-1, 0),
+						    18000);
 FORMAT(luminous_energy)		= SCALAR_FORMAT(3,
 						(UNSIGNED | HAS_UNDEFINED),
-						lumen_hour,
-						SCALAR(1e3, 0));
+						klmh,
+						SCALAR(1, 0));
 FORMAT(luminous_exposure)	= SCALAR_FORMAT(3,
 						(UNSIGNED | HAS_UNDEFINED),
-						lux_hour,
-						SCALAR(1e3, 0));
+						klxh,
+						SCALAR(1, 0));
 FORMAT(luminous_flux)		= SCALAR_FORMAT(2,
 						(UNSIGNED | HAS_UNDEFINED),
 						lumen,
@@ -961,10 +999,20 @@ SENSOR_TYPE(present_amb_light_level) = {
 	.id = BT_MESH_PROP_ID_PRESENT_AMB_LIGHT_LEVEL,
 	CHANNELS(CHANNEL("Present ambient light level", illuminance)),
 };
+SENSOR_TYPE(initial_cie_1931_chromaticity_coords) = {
+	.id = BT_MESH_PROP_ID_INITIAL_CIE_1931_CHROMATICITY_COORDS,
+	CHANNELS(CHANNEL("Initial CIE 1931 chromaticity x-coordinate", chromaticity_coordinate),
+		 CHANNEL("Initial CIE 1931 chromaticity y-coordinate", chromaticity_coordinate)),
+};
 SENSOR_TYPE(present_cie_1931_chromaticity_coords) = {
 	.id = BT_MESH_PROP_ID_PRESENT_CIE_1931_CHROMATICITY_COORDS,
-	CHANNELS(CHANNEL("Chromaticity x-coordinate", chromaticity_coordinate),
-		 CHANNEL("Chromaticity y-coordinate", chromaticity_coordinate)),
+	CHANNELS(CHANNEL("Present CIE 1931 chromaticity x-coordinate", chromaticity_coordinate),
+		 CHANNEL("Present CIE 1931 chromaticity y-coordinate", chromaticity_coordinate)),
+};
+SENSOR_TYPE(initial_correlated_col_temp) = {
+	.id = BT_MESH_PROP_ID_INITIAL_CORRELATED_COL_TEMP,
+	CHANNELS(CHANNEL("Initial correlated color temperature",
+			 correlated_color_temp)),
 };
 SENSOR_TYPE(present_correlated_col_temp) = {
 	.id = BT_MESH_PROP_ID_PRESENT_CORRELATED_COL_TEMP,
@@ -975,9 +1023,17 @@ SENSOR_TYPE(present_illuminance) = {
 	.id = BT_MESH_PROP_ID_PRESENT_ILLUMINANCE,
 	CHANNELS(CHANNEL("Present illuminance", illuminance)),
 };
+SENSOR_TYPE(initial_luminous_flux) = {
+	.id = BT_MESH_PROP_ID_INITIAL_LUMINOUS_FLUX,
+	CHANNELS(CHANNEL("Initial luminous flux", luminous_flux)),
+};
 SENSOR_TYPE(present_luminous_flux) = {
 	.id = BT_MESH_PROP_ID_PRESENT_LUMINOUS_FLUX,
 	CHANNELS(CHANNEL("Present luminous flux", luminous_flux)),
+};
+SENSOR_TYPE(initial_planckian_distance) = {
+	.id = BT_MESH_PROP_ID_INITIAL_PLANCKIAN_DISTANCE,
+	CHANNELS(CHANNEL("Initial planckian distance", chromatic_distance)),
 };
 SENSOR_TYPE(present_planckian_distance) = {
 	.id = BT_MESH_PROP_ID_PRESENT_PLANCKIAN_DISTANCE,
