@@ -58,6 +58,11 @@ nRF9160
 
       * :option:`CONFIG_NRF_CLOUD_CELL_POS`
 
+  * :ref:`asset_tracker_v2` application:
+
+    * Added support for Azure IoT Hub.
+    * Added support for nRF Cloud.
+
   * :ref:`modem_info_readme` library:
 
     * Updated to prevent reinitialization of param list in :c:func:`modem_info_init`.
@@ -125,6 +130,10 @@ nRF9160
       * ``CONFIG_USE_CLOUD_CLIENT_ID`` renamed to :option:`CONFIG_USE_CUSTOM_CLIENT_ID`.
       * ``CONFIG_CLOUD_CLIENT_ID`` renamed to ``CONFIG_CLIENT_ID``.
       * ``CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`` renamed to ``CONFIG_CLIENT_ID_PREFIX``.
+
+  * :ref:`lib_aws_fota` library:
+
+    * Updated internal state handling and fault tolerance.
 
 nRF5
 ====
