@@ -129,9 +129,10 @@ You can change the stack version by using the following Kconfig options:
 
 By selecting support for Thread 1.2, you enable the following features in addition to the :ref:`Thread 1.1 features <thread_ug_supported_features>`:
 
-* Enhanced Frame Pending
-* Enhanced Keep Alive
-* Thread Domain Name
+* Enhanced Frame Pending.
+* Enhanced Keep Alive.
+* Thread Domain Name.
+* Coordinated Sampled Listening (CSL) Transmitter, for Full Thread Devices only.
 
 Moreover, Thread 1.2 also comes with the following features that are supported for development, but not production:
 
@@ -143,6 +144,7 @@ Moreover, Thread 1.2 also comes with the following features that are supported f
 
 .. note::
    The Link Metrics and Coordinated Sampled Listening features are not supported for nRF53 Series devices yet.
+   The Backbone Router feature enables the Thread Network side functionality, but not the Backbone side functionality.
 
 To test Thread 1.2 options, you can use the :ref:`ot_cli_sample` sample with the :ref:`ot_cli_sample_thread_v12`.
 

@@ -35,6 +35,11 @@ In |NCS|, you can choose which version of the Thread protocol to use in your app
 By default, |NCS| supports Thread 1.1, but you can enable and configure Thread 1.2 by using :ref:`dedicated options <thread_ug_thread_1_2>`.
 
 .. note::
-    Not all Thread 1.2 functionalities are currently supported.
+    All Thread 1.2 mandatory functionalities are currently supported, execept for full Border Router support.
     See :ref:`thread_ug_thread_1_2` for the list of 1.2 features that are currently available in |NCS|, with information about how to enable them.
     Currently, the :ref:`ot_cli_sample` sample is the only sample that provides an :ref:`ot_cli_sample_thread_v12`.
+
+.. note::
+    Currently there is a limitation which prevents from sending secured retransmissions when Thread 1.2 is enabled.
+    Thus,retransmissions are disabled by default for Thread 1.2.
+    Users should enabled them at they own risk.
