@@ -6,7 +6,14 @@
 
 #include <zephyr.h>
 #include <stdio.h>
+#if defined(CONFIG_POSIX_API)
+#include <posix/arpa/inet.h>
+#include <posix/unistd.h>
+#include <posix/netdb.h>
+#include <posix/sys/socket.h>
+#else
 #include <net/socket.h>
+#endif
 #include <modem/lte_lc.h>
 #include <net/tls_credentials.h>
 #include <modem/modem_key_mgmt.h>
