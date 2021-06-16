@@ -44,6 +44,19 @@ LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);
 
 #define GPS_BLOCKED_TIMEOUT CONFIG_NRF9160_GPS_PRIORITY_WINDOW_TIMEOUT_SEC
 
+/* If no data is received on the GPS socket during a GPS search for this defined amount of time,
+ * the GPS search is considered timed out. The driver will then propagate a GPS_EVT_SEARCH_TIMEOUT
+ * to the application.
+ */
+#define GPS_SEARCH_TIMEOUT_DETECTION_SECONDS 5
+
+/* Minimum allowed delta between timeout and interval in periodic search mode. This value is used
+ * when passing in a GPS configuration upon GPS start. It prevents that a timeout value is too close
+ * to the interval which prevents the library to detect a GPS search timeout before a new search
+ * is started.
+ */
+#define GPS_SEARCH_PERIODIC_TIMEOUT_INTERVAL_DELTA (GPS_SEARCH_TIMEOUT_DETECTION_SECONDS + 5)
+
 struct gps_drv_data {
 	const struct device *dev;
 	gps_event_handler_t handler;
@@ -283,15 +296,9 @@ static void gps_thread(int dev_ptr)
 	int len;
 	bool operation_blocked = false;
 	bool has_fix = false;
-	struct gps_event evt = {
-		.type = GPS_EVT_SEARCH_STARTED
-	};
 
 wait:
 	k_sem_take(&drv_data->thread_run_sem, K_FOREVER);
-
-	evt.type = GPS_EVT_SEARCH_STARTED;
-	notify_event(dev, &evt);
 
 	while (true) {
 		nrf_gnss_data_frame_t raw_gps_data = {0};
@@ -309,7 +316,8 @@ wait:
 			 * five seconds to make sure the appropriate event is
 			 * propagated upon a block.
 			 */
-			k_work_schedule(&drv_data->timeout_work, K_SECONDS(5));
+			k_work_reschedule(&drv_data->timeout_work,
+					  K_SECONDS(GPS_SEARCH_TIMEOUT_DETECTION_SECONDS));
 		}
 
 		len = nrf_recv(drv_data->socket, &raw_gps_data,
@@ -323,15 +331,11 @@ wait:
 					     &drv_data->work_sync);
 
 		if (len <= 0) {
-			/* Is the GPS stopped, causing this error? */
-			if (!atomic_get(&drv_data->is_active)) {
-				goto wait;
-			}
-
 			if (errno == EHOSTDOWN) {
 				LOG_DBG("GPS host is going down, sleeping");
 				cancel_works(drv_data, true);
 				atomic_clear(&drv_data->is_active);
+				atomic_clear(&drv_data->timeout_occurred);
 				atomic_set(&drv_data->is_shutdown, 1);
 				nrf_close(drv_data->socket);
 
@@ -356,6 +360,7 @@ wait:
 		switch (raw_gps_data.data_id) {
 		case NRF_GNSS_PVT_DATA_ID:
 			if (atomic_get(&drv_data->timeout_occurred) ||
+			    (atomic_get(&drv_data->is_active) == 0) ||
 			    ((drv_data->current_cfg.nav_mode != GPS_NAV_MODE_CONTINUOUS) &&
 			    has_fix)) {
 				atomic_set(&drv_data->timeout_occurred, 0);
@@ -363,6 +368,8 @@ wait:
 				notify_event(dev, &evt);
 				start_timestamp = k_uptime_get();
 			}
+
+			atomic_set(&drv_data->is_active, 1);
 
 			has_fix = false;
 
@@ -592,6 +599,11 @@ static int parse_cfg(struct gps_config *cfg_src,
 		if (cfg_src->interval < 10) {
 			LOG_ERR("Minimum periodic interval is 10 sec");
 			return -EINVAL;
+		} else if (cfg_src->timeout + GPS_SEARCH_PERIODIC_TIMEOUT_INTERVAL_DELTA >
+			   cfg_src->interval) {
+			LOG_ERR("Timeout should be a minimum of %d seconds less than the interval",
+				GPS_SEARCH_PERIODIC_TIMEOUT_INTERVAL_DELTA);
+			return -EINVAL;
 		}
 
 		cfg_dst->retry = cfg_src->timeout;
@@ -768,8 +780,8 @@ set_configuration:
 		}
 	}
 
-	atomic_set(&drv_data->is_active, 1);
-	atomic_set(&drv_data->timeout_occurred, 0);
+	atomic_clear(&drv_data->is_active);
+	atomic_clear(&drv_data->timeout_occurred);
 	k_sem_give(&drv_data->thread_run_sem);
 
 	LOG_DBG("GPS operational");
@@ -833,8 +845,6 @@ static int stop_gps(const struct device *dev, bool is_timeout)
 		LOG_DBG("Stopping GPS");
 	}
 
-	atomic_set(&drv_data->is_active, 0);
-
 	retval = nrf_setsockopt(drv_data->socket,
 				NRF_SOL_GNSS,
 				NRF_SO_GNSS_STOP,
@@ -844,6 +854,8 @@ static int stop_gps(const struct device *dev, bool is_timeout)
 		LOG_ERR("Failed to stop GPS");
 		return -EIO;
 	}
+
+	atomic_set(&drv_data->is_active, 0);
 
 	return 0;
 }
