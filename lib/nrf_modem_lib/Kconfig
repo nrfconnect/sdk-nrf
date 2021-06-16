@@ -24,12 +24,38 @@ config NRF_MODEM_LIB_SYS_INIT
 
 config NRF_MODEM_LIB_TRACE_ENABLED
 	bool
-	prompt "Enable proprietary traces over UART"
+	prompt "Enable proprietary traces"
+	help
+	  The default size of the Trace region is defined by the
+	  NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
+
+if NRF_MODEM_LIB_TRACE_ENABLED
+
+choice NRF_MODEM_LIB_TRACE_MEDIUM
+	prompt "nRF modem trace medium"
+	default NRF_MODEM_LIB_TRACE_MEDIUM_UART
+
+config NRF_MODEM_LIB_TRACE_MEDIUM_UART
+	bool "Send modem trace over UARTE1"
 	# Modem tracing over UART use the UARTE1 as dedicated peripheral.
 	# This enable UARTE1 peripheral and includes nrfx UARTE driver.
 	select NRFX_UARTE1
-	help
-	  The default size of the Trace region is 16384 bytes.
+
+config NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+	bool "Send modem trace over SEGGER RTT"
+	select USE_SEGGER_RTT
+
+endchoice # NRF_MODEM_LIB_TRACE_MEDIUM
+
+if NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+
+config NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE
+	int "Size of the buffer used by the RTT to write messages"
+	default 255
+
+endif # NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+
+endif # NRF_MODEM_LIB_TRACE_ENABLED
 
 config NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS
 	bool "Split large blocks passed to send() or sendto()"
