@@ -13,4 +13,3 @@ set(PLATFORM_DUMMY_CRYPTO_KEYS          FALSE      CACHE BOOL      "Use dummy cr
 
 # Disable crypto regression tests that are not supported
 set(TFM_CRYPTO_TEST_ALG_CFB             OFF         CACHE BOOL      "Test CFB cryptography mode")
-set(TFM_CRYPTO_TEST_ALG_GCM             OFF         CACHE BOOL      "Test GCM cryptography mode")
