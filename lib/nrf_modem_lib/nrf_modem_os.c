@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2021 Intellinium <giuliano.franchetto@intellinium.com>
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -16,8 +17,12 @@
 #include <pm_config.h>
 #include <logging/log.h>
 
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 #include <nrfx_uarte.h>
+#endif
+
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+#include <SEGGER_RTT.h>
 #endif
 
 #ifndef ENOKEY
@@ -42,7 +47,7 @@
 #define TRACE_IRQ EGU2_IRQn
 #define TRACE_IRQ_PRIORITY 6
 
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 /* Use UARTE1 as a dedicated peripheral to print traces. */
 static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 #endif
@@ -422,7 +427,7 @@ void read_task_create(void)
 
 void trace_uart_init(void)
 {
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 	/* UART pins are defined in "nrf9160dk_nrf9160.dts". */
 	const nrfx_uarte_config_t config = {
 		/* Use UARTE1 pins routed on VCOM2. */
@@ -443,6 +448,28 @@ void trace_uart_init(void)
 	/* Initialize nrfx UARTE driver in blocking mode. */
 	/* TODO: use UARTE in non-blocking mode with IRQ handler. */
 	nrfx_uarte_init(&uarte_inst, &config, NULL);
+#endif
+}
+
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+#define RTT_BUF_SZ		(CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE)
+static int trace_rtt_channel;
+static char rtt_buffer[RTT_BUF_SZ];
+#endif
+
+static void trace_rtt_init(void)
+{
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+	trace_rtt_channel = SEGGER_RTT_AllocUpBuffer("modem_trace", rtt_buffer,
+		sizeof(rtt_buffer), SEGGER_RTT_MODE_NO_BLOCK_SKIP);
+
+	if (trace_rtt_channel < 0) {
+		LOG_ERR("Could not allocated RTT channel for modem trace (%d)",
+			trace_rtt_channel);
+	} else {
+		LOG_INF("RTT channel for modem trace is now %d",
+			trace_rtt_channel);
+	}
 #endif
 }
 
@@ -557,8 +584,9 @@ void nrf_modem_os_init(void)
 
 	read_task_create();
 
-	/* Configure and enable modem tracing over UART. */
+	/* Configure and enable modem tracing over UART and RTT. */
 	trace_uart_init();
+	trace_rtt_init();
 	trace_task_create();
 
 	memset(&heap_diag, 0x00, sizeof(heap_diag));
@@ -591,7 +619,7 @@ void nrf_modem_os_init(void)
 
 int32_t nrf_modem_os_trace_put(const uint8_t * const data, uint32_t len)
 {
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 	/* Max DMA transfers are 255 bytes.
 	 * Split RAM buffer into smaller chunks
 	 * to be transferred using DMA.
@@ -607,5 +635,24 @@ int32_t nrf_modem_os_trace_put(const uint8_t * const data, uint32_t len)
 	}
 #endif
 
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+	/* First, let's check if the buffer has been correctly
+	 * allocated for the modem trace
+	 */
+	if (trace_rtt_channel < 0) {
+		return 0;
+	}
+
+	uint32_t remaining_bytes = len;
+
+	while (remaining_bytes) {
+		uint8_t transfer_len = MIN(remaining_bytes, RTT_BUF_SZ);
+		uint32_t idx = len - remaining_bytes;
+
+		SEGGER_RTT_WriteSkipNoLock(trace_rtt_channel, &data[idx],
+			transfer_len);
+		remaining_bytes -= transfer_len;
+	}
+#endif
 	return 0;
 }
