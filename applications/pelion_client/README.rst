@@ -72,7 +72,7 @@ Network back end initialization
 -------------------------------
 
 In parallel to the FCC initialization, the application initializes the network back end.
-The appropriate net module connects the required callbacks and starts either OpenThread (``net_ot``, using Zephyr's :ref:`zephyr:thread_protocol_interface`) or the link control (``net_lte``, using the :ref:`lte_lc_readme`).
+The appropriate net module connects the required callbacks and starts either OpenThread (``net_ot``, using Zephyr's :ref:`zephyr:thread_protocol_interface`) or the link control (``net_lte``, using the :ref:`nrf_modem_lib_readme`).
 
 The network module tracks the connection state and informs the rest of the application if the connection is established or the network is disconnected.
 
@@ -239,7 +239,7 @@ Network back ends
 
 The application supports the following network back ends:
 
-* LTE using the :ref:`lte_lc_readme` for the nRF9160 DK
+* LTE using the :ref:`nrf_modem_lib_readme` for the nRF9160 DK
 * OpenThread using Zephyr's :ref:`zephyr:thread_protocol_interface` for the nRF52840 DK and nRF5340 DK
 
 Transport structure
@@ -562,6 +562,7 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`lib_caf`
 * :ref:`event_manager`
 * :ref:`lte_lc_readme`
+* :ref:`nrf_modem_lib_readme`
 * :ref:`partition_manager`
 
 It uses the following `sdk-nrfxlib`_ libraries:
