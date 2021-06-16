@@ -273,6 +273,21 @@ static int link_default_pdp_context_auth_set(void)
 	return 0;
 }
 
+static int link_enable_rel14_features(void)
+{
+	static const char rel14feat_at_cmd[] = "AT%REL14FEAT=1,1,1,1,1";
+	enum at_cmd_state state = AT_CMD_OK;
+
+	at_cmd_write(rel14feat_at_cmd, NULL, 0, &state);
+	if (state != AT_CMD_OK) {
+		shell_warn(
+			shell_global,
+			"Release 14 features AT-command \"%s\" returned: ERROR",
+			rel14feat_at_cmd);
+	}
+	return 0;
+}
+
 static int link_normal_mode_at_cmds_run(void)
 {
 	char *normal_mode_at_cmd;
@@ -450,6 +465,9 @@ int link_func_mode_set(enum lte_lc_func_mode fun)
 		return_value = lte_lc_offline();
 		break;
 	case LTE_LC_FUNC_MODE_NORMAL:
+		/* Enable Rel14 features before going to normal mode */
+		link_enable_rel14_features();
+
 		/* Run custom at cmds from settings (link nmodeat -mosh command): */
 		link_normal_mode_at_cmds_run();
 
