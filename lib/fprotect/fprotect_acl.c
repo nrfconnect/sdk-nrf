@@ -8,8 +8,23 @@
 #include <hal/nrf_ficr.h>
 #include <errno.h>
 #include <sys/__assert.h>
+#include <kernel.h>
 
-static uint32_t region_idx;
+/* Find the first unused ACL region. */
+static int find_free_region(uint32_t *region_idx)
+{
+	static uint32_t idx;
+
+	while (nrf_acl_region_perm_get(NRF_ACL, idx) != 0) {
+		idx++;
+		if (idx >= ACL_REGIONS_COUNT) {
+			*region_idx = idx;
+			return -ENOSPC;
+		}
+	}
+	*region_idx = idx;
+	return 0;
+}
 
 static int fprotect_set_permission(uint32_t start, size_t length,
 				   size_t permission)
@@ -17,8 +32,11 @@ static int fprotect_set_permission(uint32_t start, size_t length,
 	__ASSERT_NO_MSG(nrf_ficr_codepagesize_get(NRF_FICR) ==
 			CONFIG_FPROTECT_BLOCK_SIZE);
 
-	if (region_idx >= ACL_REGIONS_COUNT) {
-		return -ENOSPC;
+	uint32_t region_idx;
+	int result = find_free_region(&region_idx);
+
+	if (result != 0) {
+		return result;
 	}
 
 	if (start % nrf_ficr_codepagesize_get(NRF_FICR) != 0 ||
@@ -27,7 +45,13 @@ static int fprotect_set_permission(uint32_t start, size_t length,
 		return -EINVAL;
 	}
 
-	nrf_acl_region_set(NRF_ACL, region_idx++, start, length, permission);
+	nrf_acl_region_set(NRF_ACL, region_idx, start, length, permission);
+
+	if ((nrf_acl_region_address_get(NRF_ACL, region_idx) != start)
+		|| (nrf_acl_region_size_get(NRF_ACL, region_idx) != length)
+		|| (nrf_acl_region_perm_get(NRF_ACL, region_idx) != permission)) {
+		return -EFAULT;
+	}
 
 	return 0;
 }
