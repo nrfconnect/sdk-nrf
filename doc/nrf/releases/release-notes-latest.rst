@@ -197,15 +197,22 @@ Zigbee
   * Reworked the :ref:`NCP sample <zigbee_ncp_sample>` to work with the simple gateway application.
   * Moved the `NCP Host documentation`_ from the `ZBOSS NCP Host`_ package to the same location as the `external ZBOSS development guide and API documentation`_.
 
+nRF Desktop
+-----------
+
+* Fixed issues with boot reports on the USB backend.
+* Adapted the application to use common modules from the :ref:`lib_caf` library.
+* Fixed minor bugs.
+
 Common
 ======
+
+The following changes are relevant for all device families.
 
 sdk-nrfxlib
 -----------
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
-
-
 
 Modem library
 +++++++++++++
@@ -216,6 +223,25 @@ Modem library
   * GNSS socket API is deprecated.
 
 * PDN socket API is deprecated. The functionality has been replaced by :ref:`pdn_readme`.
+
+Edge Impulse
+------------
+
+* Added the :ref:`nrf_machine_learning_app` application that integrates the Edge Impulse wrapper library with sensor sampling.
+* Sample reference to a public pre-trained model.
+
+Pelion
+------
+
+* Added the integration of Pelion Device Management library, available as one of the external submodule repositories in the |NCS|.
+  For more information, see :ref:`ug_pelion`.
+
+* Added the :ref:`pelion_client` application that showcases the usage of Pelion Device Management library.
+
+Common Application Framework (CAF)
+----------------------------------
+
+* Migrated some of the application modules of nRF Desktop application to :ref:`lib_caf` for reuse by other applications.
 
 MCUboot
 =======
