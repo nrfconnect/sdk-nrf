@@ -15,7 +15,7 @@ The most relevant changes that are present on the master branch of the |NCS|, as
 Highlights
 **********
 
-There are no entries for this section yet.
+* New sample :ref:`modem_shell_application` can be used test various connectivity features.
 
 Changelog
 *********
@@ -40,10 +40,17 @@ nRF9160
 
   * :ref:`memfault_sample` sample implementing :ref:`mod_memfault` module and showing how to use Memfault SDK functionality in an application.
 
+  * :ref:`modem_shell_application` enables to test various connectivity features such as link handling, TCP/IP connections, data throughput (curl and iPerf3), SMS, GNSS, FOTA and PPP.
+
   * :ref:`lib_nrf_cloud_pgps` library:
 
     * The library adds P-GPS (Predicted GPS) support to the :ref:`lib_nrf_cloud` library.
 
+  * :ref:`sms_sample` demonstrates how you can send and receive SMS messages with your nRF9160-based device using the ref:`sms_readme`
+
+  * :ref:`pdn_sample` demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the :ref:`pdn_readme` library.
+
+  * :ref:`pdn_readme` library can be used to manage Packet Data Protocol (PDP) contexts and PDN connections.
 
 * Updated:
 
@@ -145,6 +152,12 @@ nRF9160
 
     * Updated internal state handling and fault tolerance.
 
+  * :ref:`sms_readme` updated to enable sending of sms and decoding of received SMS payload.
+
+  * :ref:`liblwm2m_carrier_readme` library - Updated to v0.20.1. See :ref:`liblwm2m_carrier_changelog` for details.
+
+  * :ref:`lib_lwm2m_client_utils` created from common parts of :ref:`lwm2m_client`. This module can be reused to add common objects to LwM2M applications.
+
 nRF5
 ====
 
@@ -187,7 +200,22 @@ Zigbee
 Common
 ======
 
-There are no entries for this section yet.
+sdk-nrfxlib
+-----------
+
+See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
+
+
+
+Modem library
++++++++++++++
+
+* Updated Modem library to version 1.2.1. See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
+* Added a new function based GNSS API with support for new GNSS features in MFW 1.3.0. See :ref:`nrfxlib:gnss_interface` for more information.
+
+  * GNSS socket API is deprecated.
+
+* PDN socket API is deprecated. The functionality has been replaced by :ref:`pdn_readme`.
 
 MCUboot
 =======
