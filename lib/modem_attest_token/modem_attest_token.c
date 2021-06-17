@@ -30,6 +30,12 @@
  */
 #define ATTEST_MAP_LEN 5
 
+/* UUID v4 hypen locations with respect to the original byte array */
+#define UUID_HYPHEN_POS_1 (8 / 2)
+#define UUID_HYPHEN_POS_2 (12 / 2)
+#define UUID_HYPHEN_POS_3 (16 / 2)
+#define UUID_HYPHEN_POS_4 (20 / 2)
+
 #define ATTEST_TOKEN_RESP_LEN 200
 BUILD_ASSERT(
 	ATTEST_TOKEN_RESP_LEN <= CONFIG_AT_CMD_RESPONSE_MAX_LEN,
@@ -448,6 +454,33 @@ cleanup:
 	return err;
 }
 
+static int format_uuid(const char * const bytes_in, const size_t bytes_sz,
+		       char * const str_out, const size_t str_sz)
+{
+	__ASSERT_NO_MSG(bytes_in != NULL);
+	__ASSERT_NO_MSG(bytes_sz == NRF_UUID_BYTE_SZ);
+	__ASSERT_NO_MSG(str_out != NULL);
+	__ASSERT_NO_MSG(str_sz >= NRF_UUID_V4_STR_LEN);
+
+	int sz;
+	size_t w_pos = 0;
+
+	for (int i = 0; (i < bytes_sz); ++i) {
+		if ((i == UUID_HYPHEN_POS_1) || (i == UUID_HYPHEN_POS_2) ||
+		    (i == UUID_HYPHEN_POS_3) || (i == UUID_HYPHEN_POS_4)) {
+			str_out[w_pos++] = '-';
+		}
+
+		sz = sprintf(&str_out[w_pos], "%02x", bytes_in[i]);
+		if (sz != 2) {
+			return -EIO;
+		}
+		w_pos += 2;
+	}
+
+	return 0;
+}
+
 int modem_attest_token_get_uuids(struct nrf_device_uuid *dev,
 				 struct nrf_modem_fw_uuid *mfw)
 {
@@ -471,20 +504,18 @@ int modem_attest_token_get_uuids(struct nrf_device_uuid *dev,
 		goto cleanup;
 	}
 
-	for (int i = 0; (dev) && (i < NRF_DEVICE_UUID_SZ); ++i) {
-		int sz = sprintf(&dev->str[i * 2], "%02X",
-				 a_data.device_uuid[i]);
-		if (sz != 2) {
-			err = -EIO;
+	if (dev) {
+		err = format_uuid(a_data.device_uuid, sizeof(a_data.device_uuid),
+				  dev->str, sizeof(dev->str));
+		if (err) {
 			goto cleanup;
 		}
 	}
 
-	for (int i = 0; (mfw) && (i < NRF_MODEM_FW_UUID_SZ); ++i) {
-		int sz = sprintf(&mfw->str[i * 2], "%02X",
-				 a_data.fw_uuid[i]);
-		if (sz != 2) {
-			err = -EIO;
+	if (mfw) {
+		err = format_uuid(a_data.fw_uuid, sizeof(a_data.fw_uuid),
+				  mfw->str, sizeof(mfw->str));
+		if (err) {
 			goto cleanup;
 		}
 	}
