@@ -7,23 +7,20 @@
 #include <secure_services.h>
 #include <toolchain.h>
 #include <fw_info.h>
+#include <arch/arm/aarch32/cortex_m/fpu.h>
 
-static uint32_t fp_context_buffer[33];
-static bool context_saved;
-
-int z_arm_save_fp_context(uint32_t *buffer, size_t buffer_size_words, bool *context_saved);
-void z_arm_restore_fp_context(uint32_t *buffer, bool context_saved);
+static struct fpu_ctx_full context_buffer;
 
 void before_nse(void)
 {
 	k_sched_lock();
-	z_arm_save_fp_context(fp_context_buffer, sizeof(fp_context_buffer) / 4, &context_saved);
+	z_arm_save_fp_context(&context_buffer);
 }
 
 void after_nse(void)
 {
 	k_sched_unlock();
-	z_arm_restore_fp_context(fp_context_buffer, context_saved);
+	z_arm_restore_fp_context(&context_buffer);
 }
 
 #ifdef CONFIG_SPM_SERVICE_REBOOT
