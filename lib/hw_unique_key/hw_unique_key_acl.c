@@ -42,6 +42,12 @@ bool hw_unique_key_is_written(enum hw_unique_key_slot kmu_slot)
 		HUK_PANIC();
 	}
 
+	uint32_t protection = fprotect_is_protected(huk_addr);
+
+	if (protection == 3) {
+		return true;
+	}
+
 	const uint32_t *huk_ptr = (const uint32_t *)huk_addr;
 
 	for (int i = 0; i < (sizeof(huk_magic) / 4) + HUK_SIZE_WORDS; i++) {
