@@ -534,6 +534,104 @@ struct mesh_scene_ctl_recall {
 	struct mesh_model_transition transition[0];
 } __packed;
 
+#define MMDL_LIGHT_XYL_GET 0x4a
+#define MMDL_LIGHT_XYL_SET 0x4b
+struct mesh_light_xyl_set {
+	uint8_t ack;
+	uint16_t lightness;
+	uint16_t x;
+	uint16_t y;
+	struct mesh_model_transition transition[0];
+} __packed;
+
+#define MMDL_LIGHT_XYL_TARGET_GET 0x4c
+#define MMDL_LIGHT_XYL_DEFAULT_GET 0x4d
+#define MMDL_LIGHT_XYL_DEFAULT_SET 0x4e
+struct mesh_light_xyl_default_set {
+	uint8_t ack;
+	uint16_t lightness;
+	uint16_t x;
+	uint16_t y;
+} __packed;
+
+#define MMDL_LIGHT_XYL_RANGE_GET 0x4f
+#define MMDL_LIGHT_XYL_RANGE_SET 0x50
+struct mesh_light_xyl_range_set {
+	uint8_t ack;
+	uint16_t min_x;
+	uint16_t min_y;
+	uint16_t max_x;
+	uint16_t max_y;
+} __packed;
+
+#define MMDL_LIGHT_HSL_GET 0x51
+#define MMDL_LIGHT_HSL_SET 0x52
+struct mesh_light_hsl_set {
+	uint8_t ack;
+	uint16_t lightness;
+	uint16_t hue;
+	uint16_t saturation;
+	struct mesh_model_transition transition[0];
+} __packed;
+
+#define MMDL_LIGHT_HSL_TARGET_GET 0x53
+#define MMDL_LIGHT_HSL_DEFAULT_GET 0x54
+#define MMDL_LIGHT_HSL_DEFAULT_SET 0x55
+struct mesh_light_hsl_default_set {
+	uint8_t ack;
+	uint16_t lightness;
+	uint16_t hue;
+	uint16_t saturation;
+} __packed;
+
+#define MMDL_LIGHT_HSL_RANGE_GET 0x56
+#define MMDL_LIGHT_HSL_RANGE_SET 0x57
+struct mesh_light_hsl_range_set {
+	uint8_t ack;
+	uint16_t hue_min;
+	uint16_t saturation_min;
+	uint16_t hue_max;
+	uint16_t saturation_max;
+} __packed;
+
+#define MMDL_LIGHT_HSL_HUE_GET 0x58
+#define MMDL_LIGHT_HSL_HUE_SET 0x59
+struct mesh_light_hsl_hue_set {
+	uint8_t ack;
+	uint16_t hue;
+	struct mesh_model_transition transition[0];
+} __packed;
+
+#define MMDL_LIGHT_HSL_SATURATION_GET 0x5a
+#define MMDL_LIGHT_HSL_SATURATION_SET 0x5b
+struct mesh_light_hsl_saturation_set {
+	uint8_t ack;
+	uint16_t saturation;
+	struct mesh_model_transition transition[0];
+} __packed;
+
+#define MMDL_SCHEDULER_GET 0x5c
+#define MMDL_SCHEDULER_ACTION_GET 0x5d
+struct mesh_scheduler_action_get {
+	uint8_t index;
+} __packed;
+
+#define MMDL_SCHEDULER_ACTION_SET 0x5e
+struct mesh_scheduler_action_set {
+	uint8_t ack;
+	uint8_t index;
+	uint8_t year;
+	uint8_t month;
+	uint8_t day;
+	uint8_t hour;
+	uint8_t minute;
+	uint8_t second;
+	uint8_t day_of_week;
+	uint8_t action;
+	uint8_t transition_time;
+	uint16_t scene_number;
+} __packed;
+
 void tester_init(void);
 void tester_rsp(uint8_t service, uint8_t opcode, uint8_t index, uint8_t status);
 void tester_send(uint8_t service, uint8_t opcode, uint8_t index, uint8_t *data,

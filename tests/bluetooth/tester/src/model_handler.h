@@ -34,6 +34,9 @@ extern struct bt_mesh_lightness_cli lightness_cli;
 extern struct bt_mesh_light_ctrl_cli light_ctrl_cli;
 extern struct bt_mesh_light_ctl_cli light_ctl_cli;
 extern struct bt_mesh_scene_cli scene_cli;
+extern struct bt_mesh_light_xyl_cli xyl_cli;
+extern struct bt_mesh_light_hsl_cli light_hsl_cli;
+extern struct bt_mesh_scheduler_cli scheduler_cli;
 
 struct model_data {
 	struct bt_mesh_model *model;
@@ -42,7 +45,7 @@ struct model_data {
 };
 
 /* Model send data */
-#define MODEL_BOUNDS_MAX 60
+#define MODEL_BOUNDS_MAX 100
 
 extern struct model_data model_bound[MODEL_BOUNDS_MAX];
 

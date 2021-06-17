@@ -44,6 +44,9 @@ struct bt_mesh_light_ctrl_cli light_ctrl_cli =
 	BT_MESH_LIGHT_CTRL_CLI_INIT(NULL);
 struct bt_mesh_light_ctl_cli light_ctl_cli = BT_MESH_LIGHT_CTL_CLI_INIT(NULL);
 struct bt_mesh_scene_cli scene_cli;
+struct bt_mesh_light_xyl_cli xyl_cli;
+struct bt_mesh_light_hsl_cli light_hsl_cli;
+struct bt_mesh_scheduler_cli scheduler_cli;
 
 static void supported_commands(uint8_t *data, uint16_t len)
 {
@@ -3840,7 +3843,7 @@ fail:
 static void scene_register_get(uint8_t *data, uint16_t len)
 {
 	struct bt_mesh_scene_register status;
-	struct net_buf_simple *buf = NET_BUF_SIMPLE(3);
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(4);
 	struct model_data *model_bound;
 	struct bt_mesh_msg_ctx ctx = {
 		.net_idx = net.net_idx,
@@ -4006,6 +4009,1173 @@ static void scene_recall(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_SCENE_RECALL, CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_xyl_get(uint8_t *data, uint16_t len)
+{
+	struct bt_mesh_light_xyl_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(10);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_light_xyl_get(&xyl_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_le16(buf, status.params.lightness);
+	net_buf_simple_add_le16(buf, status.params.xy.x);
+	net_buf_simple_add_le16(buf, status.params.xy.y);
+	net_buf_simple_add_le32(buf, status.remaining_time);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_GET, CONTROLLER_INDEX,
+		    buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_GET, CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_xyl_set(uint8_t *data, uint16_t len)
+{
+	struct mesh_light_xyl_set *cmd = (void *)data;
+	struct bt_mesh_light_xyl_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(10);
+	struct bt_mesh_model_transition transition;
+	struct bt_mesh_light_xyl_set_params set;
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	set.params.lightness = cmd->lightness;
+	set.params.xy.x = cmd->x;
+	set.params.xy.y = cmd->y;
+
+	if (len > sizeof(*cmd)) {
+		transition.time =
+			model_transition_decode(cmd->transition->time);
+		transition.delay = model_delay_decode(cmd->transition->delay);
+		set.transition = &transition;
+	} else {
+		set.transition = NULL;
+	}
+
+	if (cmd->ack) {
+		err = bt_mesh_light_xyl_set(&xyl_cli, &ctx, &set, &status);
+	} else {
+		err = bt_mesh_light_xyl_set_unack(&xyl_cli, &ctx, &set);
+	}
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	if (cmd->ack) {
+		net_buf_simple_init(buf, 0);
+		net_buf_simple_add_le16(buf, status.params.lightness);
+		net_buf_simple_add_le16(buf, status.params.xy.x);
+		net_buf_simple_add_le16(buf, status.params.xy.y);
+		net_buf_simple_add_le32(buf, status.remaining_time);
+
+		tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_SET,
+			    CONTROLLER_INDEX, buf->data, buf->len);
+		return;
+	}
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_SET, CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_xyl_target_get(uint8_t *data, uint16_t len)
+{
+	struct bt_mesh_light_xyl_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(10);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_light_xyl_target_get(&xyl_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_le16(buf, status.params.lightness);
+	net_buf_simple_add_le16(buf, status.params.xy.x);
+	net_buf_simple_add_le16(buf, status.params.xy.y);
+	net_buf_simple_add_le32(buf, status.remaining_time);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_TARGET_GET,
+		    CONTROLLER_INDEX, buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_TARGET_GET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_xyl_default_get(uint8_t *data, uint16_t len)
+{
+	struct bt_mesh_light_xyl status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(6);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_light_xyl_default_get(&xyl_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_le16(buf, status.lightness);
+	net_buf_simple_add_le16(buf, status.xy.x);
+	net_buf_simple_add_le16(buf, status.xy.y);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_DEFAULT_GET,
+		    CONTROLLER_INDEX, buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_DEFAULT_GET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_xyl_default_set(uint8_t *data, uint16_t len)
+{
+	struct mesh_light_xyl_set *cmd = (void *)data;
+	struct bt_mesh_light_xyl status;
+	struct bt_mesh_light_xyl set;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(6);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	set.lightness = cmd->lightness;
+	set.xy.x = cmd->x;
+	set.xy.y = cmd->y;
+
+	if (cmd->ack) {
+		err = bt_mesh_light_xyl_default_set(&xyl_cli, &ctx, &set,
+						    &status);
+	} else {
+		err = bt_mesh_light_xyl_default_set_unack(&xyl_cli, &ctx, &set);
+	}
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	if (cmd->ack) {
+		net_buf_simple_init(buf, 0);
+		net_buf_simple_add_le16(buf, status.lightness);
+		net_buf_simple_add_le16(buf, status.xy.x);
+		net_buf_simple_add_le16(buf, status.xy.y);
+
+		tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_DEFAULT_SET,
+			    CONTROLLER_INDEX, buf->data, buf->len);
+		return;
+	}
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_DEFAULT_SET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_xyl_range_get(uint8_t *data, uint16_t len)
+{
+	struct bt_mesh_light_xyl_range_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(9);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_light_xyl_range_get(&xyl_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_u8(buf, status.status_code);
+	net_buf_simple_add_le16(buf, status.range.min.x);
+	net_buf_simple_add_le16(buf, status.range.min.y);
+	net_buf_simple_add_le16(buf, status.range.max.x);
+	net_buf_simple_add_le16(buf, status.range.max.y);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_RANGE_GET,
+		    CONTROLLER_INDEX, buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_RANGE_GET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_xyl_range_set(uint8_t *data, uint16_t len)
+{
+	struct mesh_light_xyl_range_set *cmd = (void *)data;
+	struct bt_mesh_light_xyl_range_status status;
+	struct bt_mesh_light_xy_range set;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(9);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	set.min.x = cmd->min_x;
+	set.min.y = cmd->min_y;
+	set.max.x = cmd->max_x;
+	set.max.y = cmd->max_y;
+
+	if (cmd->ack) {
+		err = bt_mesh_light_xyl_range_set(&xyl_cli, &ctx, &set,
+						  &status);
+	} else {
+		err = bt_mesh_light_xyl_range_set_unack(&xyl_cli, &ctx, &set);
+	}
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	if (cmd->ack) {
+		net_buf_simple_init(buf, 0);
+		net_buf_simple_add_u8(buf, status.status_code);
+		net_buf_simple_add_le16(buf, status.range.min.x);
+		net_buf_simple_add_le16(buf, status.range.min.y);
+		net_buf_simple_add_le16(buf, status.range.max.x);
+		net_buf_simple_add_le16(buf, status.range.max.y);
+
+		tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_RANGE_SET,
+			    CONTROLLER_INDEX, buf->data, buf->len);
+		return;
+	}
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_RANGE_SET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_get(uint8_t *data, uint16_t len)
+{
+	struct bt_mesh_light_hsl_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(10);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_light_hsl_get(&light_hsl_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_le16(buf, status.params.lightness);
+	net_buf_simple_add_le16(buf, status.params.hue);
+	net_buf_simple_add_le16(buf, status.params.saturation);
+	net_buf_simple_add_le32(buf, status.remaining_time);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_GET, CONTROLLER_INDEX,
+		    buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_GET, CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_set(uint8_t *data, uint16_t len)
+{
+	struct mesh_light_hsl_set *cmd = (void *)data;
+	struct bt_mesh_light_hsl_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(10);
+	struct bt_mesh_model_transition transition;
+	struct bt_mesh_light_hsl_params set;
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	set.params.lightness = cmd->lightness;
+	set.params.hue = cmd->hue;
+	set.params.saturation = cmd->saturation;
+
+	if (len > sizeof(*cmd)) {
+		transition.time =
+			model_transition_decode(cmd->transition->time);
+		transition.delay = model_delay_decode(cmd->transition->delay);
+		set.transition = &transition;
+	} else {
+		set.transition = NULL;
+	}
+
+	if (cmd->ack) {
+		err = bt_mesh_light_hsl_set(&light_hsl_cli, &ctx, &set,
+					    &status);
+	} else {
+		err = bt_mesh_light_hsl_set_unack(&light_hsl_cli, &ctx, &set);
+	}
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	if (cmd->ack) {
+		net_buf_simple_init(buf, 0);
+		net_buf_simple_add_le16(buf, status.params.lightness);
+		net_buf_simple_add_le16(buf, status.params.hue);
+		net_buf_simple_add_le16(buf, status.params.saturation);
+		net_buf_simple_add_le32(buf, status.remaining_time);
+
+		tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_SET,
+			    CONTROLLER_INDEX, buf->data, buf->len);
+		return;
+	}
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_SET, CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_target_get(uint8_t *data, uint16_t len)
+{
+	struct bt_mesh_light_hsl_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(10);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_light_hsl_target_get(&light_hsl_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_le16(buf, status.params.lightness);
+	net_buf_simple_add_le16(buf, status.params.hue);
+	net_buf_simple_add_le16(buf, status.params.saturation);
+	net_buf_simple_add_le32(buf, status.remaining_time);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_TARGET_GET,
+		    CONTROLLER_INDEX, buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_TARGET_GET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_default_get(uint8_t *data, uint16_t len)
+{
+	struct bt_mesh_light_hsl status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(6);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_light_hsl_default_get(&light_hsl_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_le16(buf, status.lightness);
+	net_buf_simple_add_le16(buf, status.hue);
+	net_buf_simple_add_le16(buf, status.saturation);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_DEFAULT_GET,
+		    CONTROLLER_INDEX, buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_DEFAULT_GET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_default_set(uint8_t *data, uint16_t len)
+{
+	struct mesh_light_hsl_default_set *cmd = (void *)data;
+	struct bt_mesh_light_hsl status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(6);
+	struct bt_mesh_light_hsl set;
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	set.lightness = cmd->lightness;
+	set.hue = cmd->hue;
+	set.saturation = cmd->saturation;
+
+	if (cmd->ack) {
+		err = bt_mesh_light_hsl_default_set(&light_hsl_cli, &ctx, &set,
+						    &status);
+	} else {
+		err = bt_mesh_light_hsl_default_set_unack(&light_hsl_cli, &ctx,
+							  &set);
+	}
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	if (cmd->ack) {
+		net_buf_simple_init(buf, 0);
+		net_buf_simple_add_le16(buf, status.lightness);
+		net_buf_simple_add_le16(buf, status.hue);
+		net_buf_simple_add_le16(buf, status.saturation);
+
+		tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_DEFAULT_SET,
+			    CONTROLLER_INDEX, buf->data, buf->len);
+		return;
+	}
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_DEFAULT_SET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_range_get(uint8_t *data, uint16_t len)
+{
+	struct bt_mesh_light_hsl_range_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(9);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_light_hsl_range_get(&light_hsl_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_u8(buf, status.status_code);
+	net_buf_simple_add_le16(buf, status.range.min.hue);
+	net_buf_simple_add_le16(buf, status.range.min.saturation);
+	net_buf_simple_add_le16(buf, status.range.max.hue);
+	net_buf_simple_add_le16(buf, status.range.max.saturation);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_RANGE_GET,
+		    CONTROLLER_INDEX, buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_RANGE_GET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_range_set(uint8_t *data, uint16_t len)
+{
+	struct mesh_light_hsl_range_set *cmd = (void *)data;
+	struct bt_mesh_light_hsl_range_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(9);
+	struct bt_mesh_light_hue_sat_range set;
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	set.min.hue = cmd->hue_min;
+	set.min.saturation = cmd->saturation_min;
+	set.max.hue = cmd->hue_max;
+	set.max.saturation = cmd->saturation_max;
+
+	if (cmd->ack) {
+		err = bt_mesh_light_hsl_range_set(&light_hsl_cli, &ctx, &set,
+						  &status);
+	} else {
+		err = bt_mesh_light_hsl_range_set_unack(&light_hsl_cli, &ctx,
+							&set);
+	}
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	if (cmd->ack) {
+		net_buf_simple_init(buf, 0);
+		net_buf_simple_add_u8(buf, status.status_code);
+		net_buf_simple_add_le16(buf, status.range.min.hue);
+		net_buf_simple_add_le16(buf, status.range.min.saturation);
+		net_buf_simple_add_le16(buf, status.range.max.hue);
+		net_buf_simple_add_le16(buf, status.range.max.saturation);
+
+		tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_RANGE_SET,
+			    CONTROLLER_INDEX, buf->data, buf->len);
+		return;
+	}
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_RANGE_SET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_hue_get(uint8_t *data, uint16_t len)
+{
+	struct bt_mesh_light_hue_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(8);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_light_hue_get(&light_hsl_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_le16(buf, status.current);
+	net_buf_simple_add_le16(buf, status.target);
+	net_buf_simple_add_le32(buf, status.remaining_time);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_HUE_GET,
+		    CONTROLLER_INDEX, buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_HUE_GET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_hue_set(uint8_t *data, uint16_t len)
+{
+	struct mesh_light_hsl_hue_set *cmd = (void *)data;
+	struct bt_mesh_light_hue_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(10);
+	struct bt_mesh_model_transition transition;
+	struct bt_mesh_light_hue set;
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	set.lvl = cmd->hue;
+
+	if (len > sizeof(*cmd)) {
+		transition.time =
+			model_transition_decode(cmd->transition->time);
+		transition.delay = model_delay_decode(cmd->transition->delay);
+		set.transition = &transition;
+	} else {
+		set.transition = NULL;
+	}
+
+	if (cmd->ack) {
+		err = bt_mesh_light_hue_set(&light_hsl_cli, &ctx, &set,
+					    &status);
+	} else {
+		err = bt_mesh_light_hue_set_unack(&light_hsl_cli, &ctx, &set);
+	}
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	if (cmd->ack) {
+		net_buf_simple_init(buf, 0);
+		net_buf_simple_add_le16(buf, status.current);
+		net_buf_simple_add_le16(buf, status.target);
+		net_buf_simple_add_le32(buf, status.remaining_time);
+
+		tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_HUE_SET,
+			    CONTROLLER_INDEX, buf->data, buf->len);
+		return;
+	}
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_HUE_SET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_saturation_get(uint8_t *data, uint16_t len)
+{
+	struct bt_mesh_light_sat_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(8);
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_light_saturation_get(&light_hsl_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_le16(buf, status.current);
+	net_buf_simple_add_le16(buf, status.target);
+	net_buf_simple_add_le32(buf, status.remaining_time);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_SATURATION_GET,
+		    CONTROLLER_INDEX, buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_SATURATION_GET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void light_hsl_saturation_set(uint8_t *data, uint16_t len)
+{
+	struct mesh_light_hsl_saturation_set *cmd = (void *)data;
+	struct bt_mesh_light_sat_status status;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(10);
+	struct bt_mesh_model_transition transition;
+	struct bt_mesh_light_sat set;
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	set.lvl = cmd->saturation;
+
+	if (len > sizeof(*cmd)) {
+		transition.time =
+			model_transition_decode(cmd->transition->time);
+		transition.delay = model_delay_decode(cmd->transition->delay);
+		set.transition = &transition;
+	} else {
+		set.transition = NULL;
+	}
+
+	if (cmd->ack) {
+		err = bt_mesh_light_saturation_set(&light_hsl_cli, &ctx, &set,
+						   &status);
+	} else {
+		err = bt_mesh_light_saturation_set_unack(&light_hsl_cli, &ctx,
+							 &set);
+	}
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	if (cmd->ack) {
+		net_buf_simple_init(buf, 0);
+		net_buf_simple_add_le16(buf, status.current);
+		net_buf_simple_add_le16(buf, status.target);
+		net_buf_simple_add_le32(buf, status.remaining_time);
+
+		tester_send(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_SATURATION_SET,
+			    CONTROLLER_INDEX, buf->data, buf->len);
+		return;
+	}
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_SATURATION_SET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+
+static void scheduler_get(uint8_t *data, uint16_t len)
+{
+	uint16_t status;
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SCHEDULER_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_scheduler_cli_get(&scheduler_cli, &ctx, &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_SCHEDULER_GET, CONTROLLER_INDEX,
+		    (uint8_t *)&status, sizeof(status));
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_SCHEDULER_GET, CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+static void scheduler_action_get(uint8_t *data, uint16_t len)
+{
+	struct mesh_scheduler_action_get *cmd = (void *)data;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(11);
+	struct bt_mesh_schedule_entry status;
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SCHEDULER_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	err = bt_mesh_scheduler_cli_action_get(&scheduler_cli, &ctx, cmd->index,
+					       &status);
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+
+	net_buf_simple_init(buf, 0);
+	net_buf_simple_add_u8(buf, status.year);
+	net_buf_simple_add_u8(buf, status.month);
+	net_buf_simple_add_u8(buf, status.day);
+	net_buf_simple_add_u8(buf, status.hour);
+	net_buf_simple_add_u8(buf, status.minute);
+	net_buf_simple_add_u8(buf, status.second);
+	net_buf_simple_add_u8(buf, status.day_of_week);
+	net_buf_simple_add_u8(buf, status.action);
+	net_buf_simple_add_u8(buf, status.transition_time);
+	net_buf_simple_add_le16(buf, status.scene_number);
+
+	tester_send(BTP_SERVICE_ID_MMDL, MMDL_SCHEDULER_ACTION_GET,
+		    CONTROLLER_INDEX, buf->data, buf->len);
+	return;
+
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_SCHEDULER_ACTION_GET,
+		   CONTROLLER_INDEX,
+		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+}
+static void scheduler_action_set(uint8_t *data, uint16_t len)
+{
+	struct mesh_scheduler_action_set *cmd = (void *)data;
+	struct bt_mesh_schedule_entry entry;
+	struct net_buf_simple *buf = NET_BUF_SIMPLE(12);
+	struct bt_mesh_schedule_entry status;
+	struct model_data *model_bound;
+	struct bt_mesh_msg_ctx ctx = {
+		.net_idx = net.net_idx,
+		.app_idx = BT_MESH_KEY_DEV,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	int err;
+
+	LOG_DBG("");
+
+	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SCHEDULER_CLI);
+	if (!model_bound) {
+		LOG_ERR("Model not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
+	ctx.addr = model_bound->addr;
+	ctx.app_idx = model_bound->appkey_idx;
+
+	entry.year = cmd->year;
+	entry.month = cmd->month;
+	entry.day = cmd->day;
+	entry.hour = cmd->hour;
+	entry.minute = cmd->minute;
+	entry.second = cmd->second;
+	entry.day_of_week = cmd->day_of_week;
+	entry.action = cmd->action;
+	entry.transition_time = cmd->transition_time;
+	entry.scene_number = cmd->scene_number;
+
+	if (cmd->ack) {
+		err = bt_mesh_scheduler_cli_action_set(
+			&scheduler_cli, &ctx, cmd->index, &entry, &status);
+	} else {
+		err = bt_mesh_scheduler_cli_action_set_unack(
+			&scheduler_cli, &ctx, cmd->index, &entry);
+	}
+
+	if (err) {
+		LOG_ERR("err=%d", err);
+		goto fail;
+	}
+	if (cmd->ack) {
+		net_buf_simple_init(buf, 0);
+		net_buf_simple_add_u8(buf, status.year);
+		net_buf_simple_add_u8(buf, status.month);
+		net_buf_simple_add_u8(buf, status.day);
+		net_buf_simple_add_u8(buf, status.hour);
+		net_buf_simple_add_u8(buf, status.minute);
+		net_buf_simple_add_u8(buf, status.second);
+		net_buf_simple_add_u8(buf, status.day_of_week);
+		net_buf_simple_add_u8(buf, status.action);
+		net_buf_simple_add_u8(buf, status.transition_time);
+		net_buf_simple_add_le16(buf, status.scene_number);
+
+		tester_send(BTP_SERVICE_ID_MMDL, MMDL_SCHEDULER_ACTION_SET,
+			    CONTROLLER_INDEX, buf->data, buf->len);
+		return;
+	}
+fail:
+	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_SCHEDULER_ACTION_SET,
+		   CONTROLLER_INDEX,
 		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
 }
 
@@ -4231,6 +5401,69 @@ void tester_handle_mmdl(uint8_t opcode, uint8_t index, uint8_t *data,
 		break;
 	case MMDL_SCENE_RECALL:
 		scene_recall(data, len);
+		break;
+	case MMDL_LIGHT_XYL_GET:
+		light_xyl_get(data, len);
+		break;
+	case MMDL_LIGHT_XYL_SET:
+		light_xyl_set(data, len);
+		break;
+	case MMDL_LIGHT_XYL_TARGET_GET:
+		light_xyl_target_get(data, len);
+		break;
+	case MMDL_LIGHT_XYL_DEFAULT_GET:
+		light_xyl_default_get(data, len);
+		break;
+	case MMDL_LIGHT_XYL_DEFAULT_SET:
+		light_xyl_default_set(data, len);
+		break;
+	case MMDL_LIGHT_XYL_RANGE_GET:
+		light_xyl_range_get(data, len);
+		break;
+	case MMDL_LIGHT_XYL_RANGE_SET:
+		light_xyl_range_set(data, len);
+		break;
+	case MMDL_LIGHT_HSL_GET:
+		light_hsl_get(data, len);
+		break;
+	case MMDL_LIGHT_HSL_SET:
+		light_hsl_set(data, len);
+		break;
+	case MMDL_LIGHT_HSL_TARGET_GET:
+		light_hsl_target_get(data, len);
+		break;
+	case MMDL_LIGHT_HSL_DEFAULT_GET:
+		light_hsl_default_get(data, len);
+		break;
+	case MMDL_LIGHT_HSL_DEFAULT_SET:
+		light_hsl_default_set(data, len);
+		break;
+	case MMDL_LIGHT_HSL_RANGE_GET:
+		light_hsl_range_get(data, len);
+		break;
+	case MMDL_LIGHT_HSL_RANGE_SET:
+		light_hsl_range_set(data, len);
+		break;
+	case MMDL_LIGHT_HSL_HUE_GET:
+		light_hsl_hue_get(data, len);
+		break;
+	case MMDL_LIGHT_HSL_HUE_SET:
+		light_hsl_hue_set(data, len);
+		break;
+	case MMDL_LIGHT_HSL_SATURATION_GET:
+		light_hsl_saturation_get(data, len);
+		break;
+	case MMDL_LIGHT_HSL_SATURATION_SET:
+		light_hsl_saturation_set(data, len);
+		break;
+	case MMDL_SCHEDULER_GET:
+		scheduler_get(data, len);
+		break;
+	case MMDL_SCHEDULER_ACTION_GET:
+		scheduler_action_get(data, len);
+		break;
+	case MMDL_SCHEDULER_ACTION_SET:
+		scheduler_action_set(data, len);
 		break;
 	default:
 		tester_rsp(BTP_SERVICE_ID_MMDL, opcode, index,
