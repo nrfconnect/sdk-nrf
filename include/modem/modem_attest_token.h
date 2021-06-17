@@ -49,12 +49,15 @@ enum nrf_device_type {
 	NRF_DEVICE_TYPE_9160_SICA = 3,
 };
 
-#define NRF_DEVICE_UUID_SZ 16
-#define NRF_MODEM_FW_UUID_SZ 16
-#define NRF_ATTEST_NONCE_SZ 16
+#define NRF_UUID_BYTE_SZ	16
+#define NRF_DEVICE_UUID_SZ	NRF_UUID_BYTE_SZ
+#define NRF_MODEM_FW_UUID_SZ	NRF_UUID_BYTE_SZ
+#define NRF_ATTEST_NONCE_SZ	16
 
-#define NRF_DEVICE_UUID_STR_LEN (NRF_DEVICE_UUID_SZ * 2)
-#define NRF_MODEM_FW_UUID_STR_LEN (NRF_MODEM_FW_UUID_SZ * 2)
+/* UUID v4 format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+#define NRF_UUID_V4_STR_LEN		((NRF_UUID_BYTE_SZ * 2) + 4)
+#define NRF_DEVICE_UUID_STR_LEN		NRF_UUID_V4_STR_LEN
+#define NRF_MODEM_FW_UUID_STR_LEN	NRF_UUID_V4_STR_LEN
 
 /** @brief Parsed attestation token data */
 struct nrf_attestation_data {
@@ -66,12 +69,12 @@ struct nrf_attestation_data {
 	char nonce[NRF_ATTEST_NONCE_SZ];
 };
 
-/** @brief Device UUID string (no hyphens) */
+/** @brief Device UUID v4 string */
 struct nrf_device_uuid {
 	char str[NRF_DEVICE_UUID_STR_LEN + 1];
 };
 
-/** @brief Modem firmware UUID string (no hyphens) */
+/** @brief Modem firmware UUID v4 string */
 struct nrf_modem_fw_uuid {
 	char str[NRF_MODEM_FW_UUID_STR_LEN + 1];
 };
