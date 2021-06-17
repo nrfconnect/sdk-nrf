@@ -869,6 +869,7 @@ static int start_job(struct nrf_cloud_fota_job *const job)
 		break;
 	case NRF_CLOUD_FOTA_MODEM:
 		img_type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
+		break;
 	default:
 		LOG_ERR("Unhandled FOTA type: %d", job->info.type);
 		return -EFTYPE;
