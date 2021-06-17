@@ -31,5 +31,5 @@ void enable_xtal(void)
 void main(void)
 {
 	enable_xtal();
-	printk("AT host sample started\n");
+	printk("The AT host sample started\n");
 }

@@ -88,12 +88,12 @@ This application, which is part of `nRF Connect for Desktop`_, provides a certif
 
 Use LTE Link Monitor to write the certificates to the kit:
 
-1. Make sure that you have the :ref:`at_host_sample` sample programmed on your kit.
-#. Put the modem in offline state.
-#. Paste the three certificates into the respective fields.
-#. Choose a security tag.
-#. Click :guilabel:`Update certificates`.
-#. Before programming the sample, make sure to configure the :option:`security tag <CONFIG_CERT_SEC_TAG>` to the one that you chose.
+   1. Make sure that you have the AT client sample programmed on your kit.
+   #. Put the modem in offline state.
+   #. Paste the three certificates into the respective fields.
+   #. Choose a security tag.
+   #. Click :guilabel:`Update certificates`.
+   #. Before programming the sample, make sure to configure the :option:`security tag <CONFIG_CERT_SEC_TAG>` to the one that you chose.
 
 .. include:: /includes/aws_s3_bucket.txt
 

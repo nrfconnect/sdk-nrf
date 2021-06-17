@@ -137,7 +137,6 @@ html_redirect_pages = [
     ("gs_ins_windows", "gs_installing"),
     ("gs_ins_linux", "gs_installing"),
     ("gs_ins_mac", "gs_installing"),
-    ("samples/nrf9160/at_client/README", "samples/nrf9160/at_host/README")
 ]
 
 # -- Options for zephyr.warnings_filter ----------------------------------------
