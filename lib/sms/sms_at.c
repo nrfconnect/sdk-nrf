@@ -16,6 +16,7 @@
 
 #include "string_conversion.h"
 #include "parser.h"
+#include "sms_at.h"
 #include "sms_submit.h"
 #include "sms_deliver.h"
 #include "sms_internal.h"
@@ -105,7 +106,6 @@ int sms_at_parse(const char *at_notif, struct sms_data *sms_data_info,
 		}
 		err = sms_deliver_pdu_parse(sms_buf_tmp, sms_data_info);
 		if (err) {
-			LOG_ERR("sms_deliver_pdu_parse error: %d\n", err);
 			return err;
 		}
 	} else if (strncmp(at_notif, AT_SMS_STATUS_REPORT, AT_SMS_STATUS_REPORT_LEN) == 0) {
@@ -119,12 +119,11 @@ int sms_at_parse(const char *at_notif, struct sms_data *sms_data_info,
 		err = sms_notif_at_parse(at_notif, sms_buf_tmp, SMS_BUF_TMP_LEN,
 				AT_CDS_PARAMS_COUNT, AT_CDS_PDU_INDEX, temp_resp_list);
 		if (err != 0) {
-			LOG_ERR("sms_cds_at_parse error: %d", err);
 			return err;
 		}
 	} else {
 		/* Ignore all other notifications */
-		return -EINVAL;
+		return -ENOTSMSAT;
 	}
 
 	return 0;
