@@ -712,7 +712,11 @@ static int decode_pdu_deliver_message(struct parser *parser, uint8_t *buf)
 		return decode_pdu_ud_7bit(parser, buf);
 	case 1:
 		return decode_pdu_ud_8bit(parser, buf);
-	default:
+	case 2:
+		LOG_ERR("Unsupported data coding scheme: UCS2");
+		return -ENOTSUP;
+	default: /* case 3: is a reserved value */
+		LOG_ERR("Unsupported data coding scheme: Reserved");
 		return -ENOTSUP;
 	};
 
@@ -843,12 +847,11 @@ int sms_deliver_pdu_parse(const char *pdu, struct sms_data *data)
 	parser_get_header(&sms_deliver, header);
 
 	data->payload_len = parser_get_payload(&sms_deliver,
-					  data->payload,
-					  SMS_MAX_PAYLOAD_LEN_CHARS);
+					       data->payload,
+					       SMS_MAX_PAYLOAD_LEN_CHARS);
 
 	if (data->payload_len < 0) {
-		LOG_ERR("Getting sms deliver payload failed: %d\n",
-			data->payload_len);
+		LOG_ERR("Decoding SMS-DELIVER payload failed: %d", data->payload_len);
 		return data->payload_len;
 	}
 

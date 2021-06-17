@@ -103,6 +103,9 @@ void sms_at_handler(void *context, const char *at_notif)
 	/* Parse AT command and SMS PDU */
 	err = sms_at_parse(at_notif, &sms_data_info, &resp_list);
 	if (err) {
+		if (err != -ENOTSMSAT) {
+			goto sms_ack;
+		}
 		return;
 	}
 
@@ -110,11 +113,11 @@ void sms_at_handler(void *context, const char *at_notif)
 	LOG_DBG("Valid SMS notification decoded");
 	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
 		if (subscribers[i].listener != NULL) {
-			subscribers[i].listener(
-				&sms_data_info, subscribers[i].ctx);
+			subscribers[i].listener(&sms_data_info, subscribers[i].ctx);
 		}
 	}
 
+sms_ack:
 	/* Use system work queue to ACK SMS PDU because we cannot
 	 * call at_cmd_write from a notification callback.
 	 */

@@ -7,6 +7,9 @@
 #ifndef _SMS_AT_INCLUDE_H_
 #define _SMS_AT_INCLUDE_H_
 
+/** @brief Error code for AT command that is not SMS related. */
+#define ENOTSMSAT 0x0FFFFFFF
+
 /**
  * @brief Parse AT notifications finding relevant notifications for SMS and
  * dropping the rest.
