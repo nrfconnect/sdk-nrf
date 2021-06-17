@@ -115,7 +115,7 @@ static void do_key_test(void)
 		for (int i = 0; i < ARRAY_SIZE(huk_slots); i++) {
 			zassert_true(hw_unique_key_is_written(huk_slots[i]), NULL);
 
-#if !HUK_HAS_KMU
+#ifndef HUK_HAS_KMU
 			if (huk_slots[i] == HUK_KEYSLOT_KDR) {
 				hw_unique_key_load_kdr();
 			}
