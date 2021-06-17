@@ -151,10 +151,15 @@ Thread
 
 * Added support for the following Thread 1.2 features:
 
+  * Domain Unicast Addresses
+  * Multicast Listener Registration
+  * Backbone Router (Thread Network side only)
   * Link Metrics
   * Coordinated Sampled Listening (CSL)
 
-  These features are supported for nRF52 Series devices.
+  Link Metrics and CSL are supported for nRF52 Series devices.
+
+* NCP sample renamed to Co-processor, with added support for RCP architecture.
 
 Zigbee
 ------
