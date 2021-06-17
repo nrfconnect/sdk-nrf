@@ -4,6 +4,30 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config HW_UNIQUE_KEY_SRC
+	bool
+	default y if HW_UNIQUE_KEY || HW_UNIQUE_KEY_LOAD
+	help
+	  This is true whenever hw_unique_key source files are included in the
+	  build.
+
+config HW_UNIQUE_KEY_LOAD
+	bool "Load Hardware Unique key on boot"
+	depends on HAS_HW_NRF_ACL
+	depends on HAS_HW_NRF_CC310
+	depends on NRF_CC3XX_PLATFORM
+	select FPROTECT
+	imply FPROTECT_ENABLE_NO_ACCESS
+	imply NRFX_NVMC
+	help
+	  Use this on devices with no KMU. Enable this in the immutable
+	  bootloader to load the HUK from the allocated flash area
+	  "hw_unique_key_partition" and lock the flash area so no subsequent
+	  code can read it.
+	  The code allows the app to write a (typically random) key to the flash
+	  area on the first clean boot. On subsequent boots, the bootloader
+	  will fail if no key is present.
+
 config HW_UNIQUE_KEY
 	bool "Hardware Unique Keys (HUK)"
 	depends on HAS_HW_NRF_CC310 || HAS_HW_NRF_CC312
