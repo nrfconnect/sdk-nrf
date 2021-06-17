@@ -48,7 +48,6 @@ static bool udp_datamode;
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
 int enter_datamode(slm_datamode_handler_t handler);
-bool check_uart_flowcontrol(void);
 bool exit_datamode(void);
 
 /* global variable defined in different files */
@@ -435,12 +434,6 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 				LOG_WRN("Server is running");
 				return -EINVAL;
 			}
-#if defined(CONFIG_SLM_DATAMODE_HWFC)
-			if (op == AT_SERVER_START_WITH_DATAMODE && !check_uart_flowcontrol()) {
-				LOG_ERR("Data mode requires HWFC.");
-				return -EINVAL;
-			}
-#endif
 			err = do_udp_server_start((uint16_t)port);
 			if (err == 0 && op == AT_SERVER_START_WITH_DATAMODE) {
 				udp_datamode = true;
@@ -507,12 +500,6 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			if (at_params_valid_count_get(&at_param_list) > 4) {
 				at_params_unsigned_int_get(&at_param_list, 4, &sec_tag);
 			}
-#if defined(CONFIG_SLM_DATAMODE_HWFC)
-			if (op == AT_CLIENT_CONNECT_WITH_DATAMODE && !check_uart_flowcontrol()) {
-				LOG_ERR("Data mode requires HWFC.");
-				return -EINVAL;
-			}
-#endif
 			err = do_udp_client_connect(url, (uint16_t)port, sec_tag);
 			if (err == 0 && op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				udp_datamode = true;

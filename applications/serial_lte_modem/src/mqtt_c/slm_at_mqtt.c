@@ -58,7 +58,6 @@ static uint8_t pub_msg[MQTT_MESSAGE_BUFFER_LEN];
 /* global functions defined in different files */
 void rsp_send(const uint8_t *str, size_t len);
 int enter_datamode(slm_datamode_handler_t handler);
-bool check_uart_flowcontrol(void);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -737,12 +736,6 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 		}
 		if (datatype == DATATYPE_ARBITRARY) {
 			/* Publish payload in data mode */
-#if defined(CONFIG_SLM_DATAMODE_HWFC)
-			if (!check_uart_flowcontrol()) {
-				LOG_ERR("Data mode requires HWFC.");
-				return -EINVAL;
-			}
-#endif
 			err = enter_datamode(mqtt_datamode_callback);
 		} else if (datatype == DATATYPE_HEXADECIMAL) {
 			/* Publish payload in hexadecimal format */

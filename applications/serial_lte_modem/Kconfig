@@ -120,12 +120,6 @@ config SLM_UDP_POLL_TIME
 	int "Poll time-out in seconds for UDP connection"
 	default 10
 
-config SLM_DATAMODE_HWFC
-	bool "UART HWFC for data mode"
-	default y
-	help
-	  Require UART hardware flow control for data mode
-
 config SLM_DATAMODE_TERMINATOR
 	string "Pattern string to terminate data mode"
 	default "+++"

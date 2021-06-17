@@ -111,7 +111,6 @@ RING_BUF_DECLARE(ftp_data_buf, CONFIG_SLM_SOCKET_RX_MAX * 2);
 void rsp_send(const uint8_t *str, size_t len);
 int enter_datamode(slm_datamode_handler_t handler);
 bool exit_datamode(void);
-bool check_uart_flowcontrol(void);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -511,12 +510,6 @@ static int do_ftp_put(void)
 	}
 
 	if (datatype == DATATYPE_ARBITRARY) {
-#if defined(CONFIG_SLM_DATAMODE_HWFC)
-		if (!check_uart_flowcontrol()) {
-			LOG_ERR("Data mode requires HWFC.");
-			return -EINVAL;
-		}
-#endif
 		/* enter data mode */
 		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
@@ -585,12 +578,6 @@ static int do_ftp_uput(void)
 	}
 
 	if (datatype == DATATYPE_ARBITRARY) {
-#if defined(CONFIG_SLM_DATAMODE_HWFC)
-		if (!check_uart_flowcontrol()) {
-			LOG_ERR("Data mode requires HWFC.");
-			return -EINVAL;
-		}
-#endif
 		/* enter data mode */
 		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
@@ -658,12 +645,6 @@ static int do_ftp_mput(void)
 		return ret;
 	}
 	if (datatype == DATATYPE_ARBITRARY) {
-#if defined(CONFIG_SLM_DATAMODE_HWFC)
-		if (!check_uart_flowcontrol()) {
-			LOG_ERR("Data mode requires HWFC.");
-			return -EINVAL;
-		}
-#endif
 		/* enter data mode */
 		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
