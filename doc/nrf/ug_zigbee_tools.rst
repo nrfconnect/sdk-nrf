@@ -24,8 +24,12 @@ See `nRF Sniffer for 802.15.4`_ for documentation.
 ZBOSS NCP Host
 **************
 
-The NCP Host is a ZBOSS-based tool for running the host side of the :ref:`ug_zigbee_platform_design_ncp_details` design, distributed as a standalone :file:`zip` package.
+The NCP Host is a ZBOSS-based tool for running the host side of the :ref:`ug_zigbee_platform_design_ncp_details` design.
 |zigbee_ncp_package|
+
+The tool is available for download as a standalone :file:`zip` package using the following link:
+
+* `ZBOSS NCP Host`_ (|zigbee_ncp_package_version|)
 
 |zigbee_ncp_package_more_info|
 

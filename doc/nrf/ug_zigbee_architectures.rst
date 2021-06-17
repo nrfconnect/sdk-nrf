@@ -125,8 +125,12 @@ It also has the following disadvantages:
 
    Split Zigbee architecture
 
-The |NCS|'s :ref:`ug_zigbee_tools` include the `ZBOSS NCP Host`_, which is available for download as a standalone :file:`zip` package.
+The |NCS| includes the :ref:`ug_zigbee_tools_ncp_host` tool.
 |zigbee_ncp_package|
+
+The tool is available for download as a standalone :file:`zip` package using the following link:
+
+* `ZBOSS NCP Host`_ (|zigbee_ncp_package_version|)
 
 |zigbee_ncp_package_more_info|
 
