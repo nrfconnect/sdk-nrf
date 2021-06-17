@@ -153,6 +153,15 @@ Immutable bootloader
   * The bootloader now allows a single boot with no key present, to allow the app to write a key.
     After the first boot, the key must be present or the bootloader won't boot the app.
 
+Immutable bootloader
+--------------------
+
+* Improved how hardware unique keys are handled.
+
+  * Introduced :kconfig:`CONFIG_HW_UNIQUE_KEY_LOAD` with fewer dependencies than :kconfig:`CONFIG_HW_UNIQUE_KEY` solely for loading the key.
+  * The bootloader now allows a single boot with no key present, to allow the app to write a key.
+    After the first boot, the key must be present or the bootloader won't boot the app.
+
 
 MCUboot
 =======
