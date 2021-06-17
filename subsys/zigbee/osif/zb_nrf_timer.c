@@ -10,6 +10,7 @@
 
 #include <zboss_api.h>
 #include <zb_types.h>
+#include <zb_osif_platform.h>
 
 #define ALARM_CHANNEL_ID  0
 #define TIMER_INSTANCE    DT_LABEL(DT_NODELABEL(timer2))
@@ -17,6 +18,8 @@
 typedef struct {
 	const struct device *device;
 	struct counter_alarm_cfg alarm_cfg;
+	uint32_t counter_period_us;
+	uint32_t counter_acc_us;
 	uint8_t alarm_ch_id;
 	volatile zb_bool_t is_init;
 	volatile atomic_t is_running;
@@ -39,13 +42,27 @@ static void zb_timer_alarm_handler(const struct device *counter_dev,
 	case ALARM_CHANNEL_ID:
 		if (atomic_set((atomic_t *)&zb_timer.is_running, 0) == 1) {
 			/* The atomic flag is_running was 1 and now set to 0. */
-			zb_osif_zboss_timer_tick();
+			zb_timer.counter_acc_us += zb_timer.counter_period_us;
+
+			/* ZBOSS reschedules the timer inside the
+			 * zb_osif_zboss_timer_tick(), so it is required to
+			 * reshedule it manually if the function will not be
+			 * called at the end of this function.
+			 */
+			if (zb_timer.counter_acc_us < ZB_BEACON_INTERVAL_USEC) {
+				zb_osif_timer_start();
+			}
 		}
 		break;
 
 	default:
 		/*Do nothing*/
 		break;
+	}
+
+	if (zb_timer.counter_acc_us >= ZB_BEACON_INTERVAL_USEC) {
+		zb_timer.counter_acc_us -= ZB_BEACON_INTERVAL_USEC;
+		zb_osif_zboss_timer_tick();
 	}
 }
 
@@ -54,7 +71,10 @@ static void zb_osif_timer_set_default_config(zb_timer_t *timer)
 	timer->alarm_ch_id = ALARM_CHANNEL_ID;
 	timer->alarm_cfg.flags = 0;
 	timer->alarm_cfg.ticks = counter_us_to_ticks(timer->device,
-						     ZB_BEACON_INTERVAL_USEC);
+						   ZB_BEACON_INTERVAL_USEC / 2);
+	timer->counter_period_us = counter_ticks_to_us(timer->device,
+						       timer->alarm_cfg.ticks);
+	timer->counter_acc_us = 0;
 	timer->alarm_cfg.callback = zb_timer_alarm_handler;
 }
 
