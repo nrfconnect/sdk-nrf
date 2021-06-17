@@ -38,7 +38,6 @@ extern "C" {
  */
 int fprotect_area(uint32_t start, size_t length);
 
-#if defined(CONFIG_FPROTECT_ENABLE_NO_ACCESS)
 /**
  * @brief Protect flash area against reads/writes.
  *
@@ -53,7 +52,19 @@ int fprotect_area(uint32_t start, size_t length);
  *                  registers which are used for all address ranges.
  */
 int fprotect_area_no_access(uint32_t start, size_t length);
-#endif
+
+/**
+ * @brief Check whether a block has already been protected.
+ *
+ * @param[in]  addr  The address to check. The block containing this address
+ *                   will be checked.
+ *
+ * @retval 0   If not protected
+ * @retval 1   If only write protected
+ * @retval 2   If only read protected
+ * @retval 3   If write and read protected
+ */
+uint32_t fprotect_is_protected(uint32_t addr);
 
 #ifdef __cplusplus
 }

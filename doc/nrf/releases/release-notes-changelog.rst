@@ -133,6 +133,12 @@ Trusted Firmware-M
   * Support for non-secure storage.
     This enables non-secure applications to use the Zephyr Settings API to save and load persistent data.
 
+fprotect
+--------
+
+* Added a new function ``fprotect_is_protected()`` for devices with the ACL peripheral.
+
+
 MCUboot
 =======
 
