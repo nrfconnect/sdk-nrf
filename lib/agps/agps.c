@@ -315,11 +315,12 @@ static int supl_start(const struct gps_agps_request request)
 	err = supl_session(&req);
 	if (err) {
 		LOG_ERR("SUPL session failed, error: %d", err);
-		return err;
+		goto cleanup;
 	}
 
 	LOG_INF("SUPL session finished successfully");
 
+cleanup:
 	close_supl_socket();
 
 	return err;
