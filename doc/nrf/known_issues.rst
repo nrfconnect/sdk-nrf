@@ -177,6 +177,13 @@ Modem FW reset on debugger connection through SWD
   If a debugger (for example, J-Link) is connected via SWD to the nRF9160, the modem firmware will reset.
   Therefore, the LTE modem cannot be operational during debug sessions.
 
+  .. rst-class:: v1-6-0 v1-5-1 v1-5-0
+
+NCSDK-9441: Fmfu SMP server sample is unstable with the newest J-Link version
+  Full modem serial update does not work on development kit with debugger chip version delivered with J-Link software > 6.88a
+
+  **Workaround:** Downgrade the debugger chip to the firmware released with J-Link 6.88a or use another way of transferring serial data to the chip.
+
 nRF5
 ****
 
