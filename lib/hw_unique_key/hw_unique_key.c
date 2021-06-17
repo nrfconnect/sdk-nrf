@@ -21,11 +21,9 @@ void hw_unique_key_write_random(void)
 	int err, err2;
 	nrf_cc3xx_platform_ctr_drbg_context_t ctx = {0};
 
-	for (int i = 0; i < ARRAY_SIZE(huk_slots); i++) {
-		if (hw_unique_key_is_written(huk_slots[i])) {
-			HUK_PRINT("One or more keys already set. Cannot overwrite\n\r");
-			HUK_PANIC();
-		}
+	if (hw_unique_key_are_any_written()) {
+		HUK_PRINT("One or more keys already set. Cannot overwrite\n\r");
+		HUK_PANIC();
 	}
 
 	err = nrf_cc3xx_platform_ctr_drbg_init(&ctx, pers_str, sizeof(pers_str) - 1);
@@ -54,9 +52,11 @@ void hw_unique_key_write_random(void)
 
 	memset(rand_bytes, sizeof(rand_bytes), 0);
 
-	if (!hw_unique_key_are_any_written()) {
-		HUK_PRINT("One or more keys not set correctly.\n\r");
-		HUK_PANIC();
+	for (int i = 0; i < ARRAY_SIZE(huk_slots); i++) {
+		if (!hw_unique_key_is_written(huk_slots[i])) {
+			HUK_PRINT("One or more keys not set correctly.\n\r");
+			HUK_PANIC();
+		}
 	}
 }
 #endif /* CONFIG_HW_UNIQUE_KEY_RANDOM */

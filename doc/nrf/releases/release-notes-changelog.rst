@@ -82,6 +82,12 @@ Updated:
 
 * The power management support in modules is now enabled by default when the :kconfig:`CONFIG_CAF_PM_EVENTS` Kconfig option is enabled.
 
+Hardware unique key
+-------------------
+
+* Make the checking for hw_unique_key_write_random() more strict; panic if any key is unwritten after writing random keys.
+
+
 MCUboot
 =======
 
