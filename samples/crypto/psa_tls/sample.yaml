@@ -1,0 +1,10 @@
+sample:
+    description: This app provides an example of performing TLS handshake
+        as either server or client
+    name: PSA TLS Sample
+tests:
+    samples.psa_tls:
+        build_only: true
+        build_on_all: true
+        platform_allow: nrf5340dk_nrf5340_cpuappns nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160ns nrf9160dk_nrf9160 nrf52840dk_nrf52840
+        tags: ci_build
