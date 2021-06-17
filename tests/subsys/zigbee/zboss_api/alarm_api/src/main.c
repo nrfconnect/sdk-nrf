@@ -16,7 +16,7 @@
 #define STACKSIZE               1024
 #define PRIORITY                (CONFIG_ZBOSS_DEFAULT_THREAD_PRIORITY + 1)
 #define N_THREADS               4
-#define ZB_TIMER_PRECISION      ZB_TIME_BEACON_INTERVAL_TO_MSEC(3)
+#define ZB_TIMER_PRECISION      ZB_TIME_BEACON_INTERVAL_TO_MSEC(2)
 
 #define IEEE_CHANNEL_MASK       (1l << CONFIG_ZIGBEE_CHANNEL)
 
@@ -98,7 +98,7 @@ static void add_to_queue_from_callback(uint8_t int_to_put)
 void thread_0(void)
 {
 	zigbee_schedule_alarm(add_to_queue_from_callback, 0,
-			      ZB_TIME_ONE_SECOND * 1);
+			      ZB_MILLISECONDS_TO_BEACON_INTERVAL(1000 * 1));
 	while (1) {
 		k_sleep(K_MSEC(10));
 	}
@@ -107,7 +107,7 @@ void thread_0(void)
 void thread_1(void)
 {
 	zigbee_schedule_alarm(add_to_queue_from_callback, 1,
-			      ZB_TIME_ONE_SECOND * 2);
+			      ZB_MILLISECONDS_TO_BEACON_INTERVAL(1000 * 2));
 	while (1) {
 		k_sleep(K_MSEC(10));
 	}
@@ -116,7 +116,7 @@ void thread_1(void)
 void thread_2(void)
 {
 	zigbee_schedule_alarm(add_to_queue_from_callback, 2,
-			      ZB_TIME_ONE_SECOND * 3);
+			      ZB_MILLISECONDS_TO_BEACON_INTERVAL(1000 * 3));
 	while (1) {
 		k_sleep(K_MSEC(10));
 	}
@@ -125,7 +125,7 @@ void thread_2(void)
 void thread_3(void)
 {
 	zigbee_schedule_alarm(add_to_queue_from_callback, 3,
-			      ZB_TIME_ONE_SECOND * 4);
+			      ZB_MILLISECONDS_TO_BEACON_INTERVAL(1000 * 4));
 	while (1) {
 		k_sleep(K_MSEC(10));
 	}
@@ -158,6 +158,9 @@ void test_zboss_app_alarm(void)
 		k_sleep(K_MSEC(1000 * (i + 1)));
 		expected_queue_usage_cnt++;
 	}
+
+	/* Allow the last alarm to be late by ZB_TIMER_PRECISION milliseconds */
+	k_sleep(K_MSEC(ZB_TIMER_PRECISION));
 
 	/* Verify if all callbacks has fired. */
 	zassert_equal(
