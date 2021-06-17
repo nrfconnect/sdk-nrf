@@ -31,6 +31,7 @@ extern "C" {
 struct hid_report_event {
 	struct event_header header; /**< Event header. */
 
+	const void *source; /**< Id of the report source. */
 	const void *subscriber; /**< Id of the report subscriber. */
 	struct event_dyndata dyndata; /**< Report data. The first byte is a report id. */
 };

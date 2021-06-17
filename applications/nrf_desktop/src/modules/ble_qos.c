@@ -639,6 +639,13 @@ static bool event_handler(const struct event_header *eh)
 		/* Send stats printout via CDC every 100 packets. */
 
 		if (is_hid_report_event(eh)) {
+			const struct hid_report_event *event = cast_hid_report_event(eh);
+
+			/* Ignore HID output reports. */
+			if (!event->subscriber) {
+				return false;
+			}
+
 			hid_pkt_recv_count++;
 			cdc_notify_count++;
 
