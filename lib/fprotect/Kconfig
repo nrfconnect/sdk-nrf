@@ -58,3 +58,10 @@ config FPROTECT_ENABLE_NO_ACCESS
 	help
 	  Allows to protect flash pages both from reading and writing until the
 	  next reboot.
+
+config FPROTECT_ENABLE_IS_PROTECTED
+	bool
+	default y
+	depends on FPROTECT && HAS_HW_NRF_ACL
+	help
+	  Enable API to query if an address has been protected.
