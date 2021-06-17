@@ -160,6 +160,14 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	};
 
 	srv->handlers->set(srv, NULL, &set, &status);
+}
+
+static void scene_recall_complete(struct bt_mesh_model *model)
+{
+	struct bt_mesh_onoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_status status = { 0 };
+
+	srv->handlers->get(srv, NULL, &status);
 
 	(void)bt_mesh_onoff_srv_pub(srv, NULL, &status);
 }
@@ -169,6 +177,7 @@ BT_MESH_SCENE_ENTRY_SIG(onoff) = {
 	.maxlen = 1,
 	.store = scene_store,
 	.recall = scene_recall,
+	.recall_complete = scene_recall_complete,
 };
 /* .. include_endpoint_scene_srv_rst_1 */
 

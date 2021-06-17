@@ -45,17 +45,6 @@ static void hsl_status_encode(struct net_buf_simple *buf, uint32_t op,
 			      model_transition_encode(status->remaining_time));
 }
 
-static void hsl_status_rsp(struct bt_mesh_model *model,
-			   struct bt_mesh_msg_ctx *ctx,
-			   const struct bt_mesh_light_hsl_status *status)
-{
-	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_HSL_OP_STATUS,
-				 BT_MESH_LIGHT_HSL_MSG_MAXLEN_STATUS);
-	hsl_status_encode(&buf, BT_MESH_LIGHT_HSL_OP_STATUS, status);
-
-	bt_mesh_model_send(model, ctx, &buf, NULL, NULL);
-}
-
 static void hsl_get(struct bt_mesh_light_hsl_srv *srv,
 		    struct bt_mesh_msg_ctx *ctx,
 		    struct bt_mesh_light_hsl_status *status)
@@ -84,7 +73,7 @@ static void hsl_get_handle(struct bt_mesh_model *model,
 	}
 
 	hsl_get(srv, ctx, &status);
-	hsl_status_rsp(model, ctx, &status);
+	(void)bt_mesh_light_hsl_srv_pub(srv, ctx, &status);
 }
 
 static void hsl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -117,7 +106,7 @@ static void hsl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			struct bt_mesh_light_hsl_status status;
 
 			hsl_get(srv, NULL, &status);
-			hsl_status_rsp(model, ctx, &status);
+			(void)bt_mesh_light_hsl_srv_pub(srv, ctx, &status);
 		}
 
 		return;
@@ -140,17 +129,18 @@ static void hsl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	bt_mesh_light_hue_srv_set(&srv->hue, ctx, &set.h, &hue);
 	bt_mesh_light_sat_srv_set(&srv->sat, ctx, &set.s, &sat);
 	lightness_srv_disable_control(&srv->lightness);
-	lightness_srv_change_lvl(&srv->lightness, ctx, &set.l, &lightness);
+	lightness_srv_change_lvl(&srv->lightness, ctx, &set.l, &lightness, true);
+
+	srv->pub_pending = false;
 
 	struct bt_mesh_light_hsl_status hsl =
 		HSL_STATUS_INIT(&hue, &sat, &lightness, current);
 
 	if (ack) {
-		hsl_status_rsp(model, ctx, &hsl);
+		(void)bt_mesh_light_hsl_srv_pub(srv, ctx, &hsl);
 	}
 
 	/* Publish on state change: */
-	srv->pub_pending = false;
 	(void)bt_mesh_light_hsl_srv_pub(srv, NULL, &hsl);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
@@ -423,8 +413,12 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	struct bt_mesh_light_hsl_srv *srv = model->user_data;
 	struct bt_mesh_lightness_status status = { 0 };
 
+	if (atomic_test_bit(&srv->lightness.flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
+		return 0;
+	}
+
 	srv->lightness.handlers->light_get(&srv->lightness, NULL, &status);
-	sys_put_le16(status.remaining_time ? repr_to_light(status.target, ACTUAL) :
+	sys_put_le16(status.remaining_time ? light_to_repr(status.target, ACTUAL) :
 					     status.current,
 		     &data[0]);
 
@@ -436,22 +430,30 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 			 struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+
+	if (atomic_test_bit(&srv->lightness.flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
+		return;
+	}
+
 	struct bt_mesh_lightness_status light_status = { 0 };
-	struct bt_mesh_light_hue_status hue_status = { 0 };
-	struct bt_mesh_light_sat_status sat_status = { 0 };
 	struct bt_mesh_lightness_set light_set = {
 		.lvl = repr_to_light(sys_get_le16(data), ACTUAL),
 		.transition = transition,
 	};
 
+	lightness_srv_change_lvl(&srv->lightness, NULL, &light_set, &light_status, false);
+}
+
+static void scene_recall_complete(struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_lightness_status light_status = { 0 };
+	struct bt_mesh_light_hue_status hue_status = { 0 };
+	struct bt_mesh_light_sat_status sat_status = { 0 };
+
 	srv->hue.handlers->get(&srv->hue, NULL, &hue_status);
 	srv->sat.handlers->get(&srv->sat, NULL, &sat_status);
-
-	if (!atomic_test_bit(&srv->lightness.flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
-		lightness_srv_change_lvl(&srv->lightness, NULL, &light_set, &light_status);
-	} else {
-		srv->lightness.handlers->light_get(&srv->lightness, NULL, &light_status);
-	}
+	srv->lightness.handlers->light_get(&srv->lightness, NULL, &light_status);
 
 	struct bt_mesh_light_hsl_status hsl =
 		HSL_STATUS_INIT(&hue_status, &sat_status, &light_status, current);
@@ -464,6 +466,7 @@ BT_MESH_SCENE_ENTRY_SIG(light_hsl) = {
 	.maxlen = 2,
 	.store = scene_store,
 	.recall = scene_recall,
+	.recall_complete = scene_recall_complete,
 };
 
 static int hsl_srv_pub_update(struct bt_mesh_model *model)

@@ -146,7 +146,8 @@ void lightness_srv_disable_control(struct bt_mesh_lightness_srv *srv);
 void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct bt_mesh_lightness_set *set,
-			      struct bt_mesh_lightness_status *status);
+			      struct bt_mesh_lightness_status *status,
+			      bool publish);
 
 /* For testing purposes */
 int lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,

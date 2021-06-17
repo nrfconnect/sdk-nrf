@@ -149,8 +149,6 @@ static void change_lvl(struct bt_mesh_plvl_srv *srv,
 
 	memset(status, 0, sizeof(*status));
 	srv->handlers->power_set(srv, ctx, set, status);
-
-	pub(srv, NULL, status);
 }
 
 static void plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -173,6 +171,7 @@ static void plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
 		change_lvl(srv, ctx, &set, &status);
+		(void)bt_mesh_plvl_srv_pub(srv, NULL, &status);
 
 		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 			bt_mesh_scene_invalidate(srv->plvl_model);
@@ -452,6 +451,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 
 	if (lvl_set->new_transaction) {
 		change_lvl(srv, ctx, &set, &status);
+		(void)bt_mesh_plvl_srv_pub(srv, NULL, &status);
 	} else if (rsp) {
 		srv->handlers->power_get(srv, NULL, &status);
 	}
@@ -489,6 +489,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	};
 
 	change_lvl(srv, ctx, &set, &status);
+	(void)bt_mesh_plvl_srv_pub(srv, NULL, &status);
 
 	/* Override "last" value to be able to make corrective deltas when
 	 * new_transaction is false. Note that the "last" value in persistent
@@ -545,6 +546,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	}
 
 	change_lvl(srv, ctx, &set, &status);
+	(void)bt_mesh_plvl_srv_pub(srv, NULL, &status);
 
 	if (rsp) {
 		rsp->current = POWER_TO_LVL(status.current);
@@ -580,6 +582,7 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 	}
 
 	change_lvl(srv, ctx, &set, &status);
+	(void)bt_mesh_plvl_srv_pub(srv, NULL, &status);
 
 	if (rsp) {
 		rsp->present_on_off = (status.current > 0);
@@ -633,11 +636,22 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	change_lvl(srv, NULL, &set, &status);
 }
 
+static void scene_recall_complete(struct bt_mesh_model *model)
+{
+	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_status status = { 0 };
+
+	srv->handlers->power_get(srv, NULL, &status);
+
+	(void)bt_mesh_plvl_srv_pub(srv, NULL, &status);
+}
+
 BT_MESH_SCENE_ENTRY_SIG(plvl) = {
 	.id.sig = BT_MESH_MODEL_ID_GEN_POWER_LEVEL_SRV,
 	.maxlen = 2,
 	.store = scene_store,
 	.recall = scene_recall,
+	.recall_complete = scene_recall_complete,
 };
 
 static void plvl_srv_reset(struct bt_mesh_plvl_srv *srv)
@@ -734,7 +748,7 @@ static int bt_mesh_plvl_srv_settings_set(struct bt_mesh_model *model,
 static int bt_mesh_plvl_srv_start(struct bt_mesh_model *model)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
-	struct bt_mesh_plvl_status dummy = { 0 };
+	struct bt_mesh_plvl_status status = { 0 };
 	struct bt_mesh_model_transition transition = {
 		.time = srv->ponoff.dtt.transition_time,
 	};
@@ -755,7 +769,8 @@ static int bt_mesh_plvl_srv_start(struct bt_mesh_model *model)
 		return -EINVAL;
 	}
 
-	change_lvl(srv, NULL, &set, &dummy);
+	change_lvl(srv, NULL, &set, &status);
+	(void)bt_mesh_plvl_srv_pub(srv, NULL, &status);
 	return 0;
 }
 #endif

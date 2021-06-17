@@ -65,17 +65,6 @@ static void encode_status(struct net_buf_simple *buf,
 	}
 }
 
-static void rsp_status(struct bt_mesh_model *model,
-		       struct bt_mesh_msg_ctx *rx_ctx,
-		       struct bt_mesh_light_hue_status *status)
-{
-	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_HUE_OP_STATUS,
-				 BT_MESH_LIGHT_HSL_MSG_MAXLEN_HUE_STATUS);
-	encode_status(&msg, status);
-
-	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
-}
-
 static void hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		    struct net_buf_simple *buf, bool ack)
 {
@@ -105,7 +94,7 @@ static void hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		 * to the app, but we still have to respond with a status.
 		 */
 		srv->handlers->get(srv, NULL, &status);
-		rsp_status(model, ctx, &status);
+		(void)bt_mesh_light_hue_srv_pub(srv, ctx, &status);
 		return;
 	}
 
@@ -135,7 +124,7 @@ static void hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	};
 
 	if (ack) {
-		rsp_status(model, ctx, &status);
+		(void)bt_mesh_light_hue_srv_pub(srv, ctx, &status);
 	}
 
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
@@ -158,7 +147,7 @@ static void hue_get_handle(struct bt_mesh_model *model,
 	struct bt_mesh_light_hue_status status = { 0 };
 
 	srv->handlers->get(srv, ctx, &status);
-	rsp_status(model, ctx, &status);
+	(void)bt_mesh_light_hue_srv_pub(srv, ctx, &status);
 }
 
 static void hue_set_handle(struct bt_mesh_model *model,
@@ -320,7 +309,16 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 		.lvl = sys_get_le16(data),
 		.transition = transition,
 	};
+
 	bt_mesh_light_hue_srv_set(srv, NULL, &set, &status);
+}
+
+static void scene_recall_complete(struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_hue_srv *srv = model->user_data;
+	struct bt_mesh_light_hue_status status = { 0 };
+
+	srv->handlers->get(srv, NULL, &status);
 
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
 }
@@ -330,6 +328,7 @@ BT_MESH_SCENE_ENTRY_SIG(light_hue) = {
 	.maxlen = 2,
 	.store = scene_store,
 	.recall = scene_recall,
+	.recall_complete = scene_recall_complete,
 };
 
 static int hue_srv_pub_update(struct bt_mesh_model *model)

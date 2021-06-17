@@ -260,6 +260,14 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	};
 
 	srv->handlers->set(srv, NULL, &set, &status);
+}
+
+static void scene_recall_complete(struct bt_mesh_model *model)
+{
+	struct bt_mesh_lvl_srv *srv = model->user_data;
+	struct bt_mesh_lvl_status status = { 0 };
+
+	srv->handlers->get(srv, NULL, &status);
 
 	(void)bt_mesh_lvl_srv_pub(srv, NULL, &status);
 }
@@ -269,6 +277,7 @@ BT_MESH_SCENE_ENTRY_SIG(lvl) = {
 	.maxlen = 2,
 	.store = scene_store,
 	.recall = scene_recall,
+	.recall_complete = scene_recall_complete,
 };
 
 static int update_handler(struct bt_mesh_model *model)

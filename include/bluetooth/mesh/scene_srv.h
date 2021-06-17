@@ -150,6 +150,21 @@ struct bt_mesh_scene_entry {
 	 */
 	void (*recall)(struct bt_mesh_model *model, const uint8_t data[],
 		       size_t len, struct bt_mesh_model_transition *transition);
+
+	/** @brief Recall a scene is completed
+	 *
+	 * This callback is called for each model that has a scene entry when
+	 * recalling a scene data is done and @ref bt_mesh_scene_entry::recall
+	 * callback has been called for all models. The model can use this
+	 * callback when it needs to publish its state, which is a composite
+	 * state and requires all corresponding models to recall their scene
+	 * data first.
+	 *
+	 * Can be NULL.
+	 *
+	 *  @param[in] model      Model to restore the scene of.
+	 */
+	void (*recall_complete)(struct bt_mesh_model *model);
 };
 
 /** @brief Notify the Scene Server that a Scene entry has changed.

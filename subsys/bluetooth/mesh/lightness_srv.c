@@ -177,7 +177,8 @@ void lightness_srv_disable_control(struct bt_mesh_lightness_srv *srv)
 void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct bt_mesh_lightness_set *set,
-			      struct bt_mesh_lightness_status *status)
+			      struct bt_mesh_lightness_status *status,
+			      bool publish)
 {
 	bool state_change =
 		(atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON) ==
@@ -205,11 +206,12 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 	memset(status, 0, sizeof(*status));
 	srv->handlers->light_set(srv, ctx, set, status);
 
-	BT_DBG("Publishing Light %s to 0x%04x", repr_str[ACTUAL],
-	       srv->pub.addr);
+	if (publish) {
+		BT_DBG("Publishing Light %s to 0x%04x", repr_str[ACTUAL], srv->pub.addr);
 
-	/* Publishing is always done as an Actual, according to test spec. */
-	pub(srv, NULL, status, ACTUAL);
+		/* Publishing is always done as an Actual, according to test spec. */
+		pub(srv, NULL, status, ACTUAL);
+	}
 }
 
 static void lightness_set(struct bt_mesh_model *model,
@@ -244,7 +246,7 @@ static void lightness_set(struct bt_mesh_model *model,
 		 * manual changes to the lightness should disable control.
 		 */
 		lightness_srv_disable_control(srv);
-		lightness_srv_change_lvl(srv, ctx, &set, &status);
+		lightness_srv_change_lvl(srv, ctx, &set, &status, true);
 
 		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 			bt_mesh_scene_invalidate(srv->lightness_model);
@@ -568,7 +570,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 		 * manual changes to the lightness should disable control.
 		 */
 		lightness_srv_disable_control(srv);
-		lightness_srv_change_lvl(srv, ctx, &set, &status);
+		lightness_srv_change_lvl(srv, ctx, &set, &status, true);
 	} else if (rsp) {
 		srv->handlers->light_get(srv, NULL, &status);
 	}
@@ -622,7 +624,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	 * manual changes to the lightness should disable control.
 	 */
 	lightness_srv_disable_control(srv);
-	lightness_srv_change_lvl(srv, ctx, &set, &status);
+	lightness_srv_change_lvl(srv, ctx, &set, &status, true);
 
 	/* Override "last" value to be able to make corrective deltas when
 	 * new_transaction is false. Note that the "last" value in persistent
@@ -695,7 +697,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	 * manual changes to the lightness should disable control.
 	 */
 	lightness_srv_disable_control(srv);
-	lightness_srv_change_lvl(srv, ctx, &set, &status);
+	lightness_srv_change_lvl(srv, ctx, &set, &status, true);
 
 	if (rsp) {
 		rsp->current = LIGHT_TO_LVL(status.current);
@@ -737,7 +739,7 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 	 * manual changes to the lightness should disable control.
 	 */
 	lightness_srv_disable_control(srv);
-	lightness_srv_change_lvl(srv, ctx, &set, &status);
+	lightness_srv_change_lvl(srv, ctx, &set, &status, true);
 
 	if (rsp) {
 		rsp->present_on_off = (status.current > 0);
@@ -809,7 +811,17 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 		.transition = transition,
 	};
 
-	lightness_srv_change_lvl(srv, NULL, &set, &dummy_status);
+	lightness_srv_change_lvl(srv, NULL, &set, &dummy_status, false);
+}
+
+static void scene_recall_complete(struct bt_mesh_model *model)
+{
+	struct bt_mesh_lightness_srv *srv = model->user_data;
+	struct bt_mesh_lightness_status status;
+
+	srv->handlers->light_get(srv, NULL, &status);
+
+	(void)pub(srv, NULL, &status, ACTUAL);
 }
 
 BT_MESH_SCENE_ENTRY_SIG(lightness) = {
@@ -817,6 +829,7 @@ BT_MESH_SCENE_ENTRY_SIG(lightness) = {
 	.maxlen = 2,
 	.store = scene_store,
 	.recall = scene_recall,
+	.recall_complete = scene_recall_complete,
 };
 
 static int update_handler(struct bt_mesh_model *model)
@@ -926,7 +939,7 @@ int lightness_on_power_up(struct bt_mesh_lightness_srv *srv)
 	BT_DBG("Loading POnOff: %u -> %u [%u ms]", srv->ponoff.on_power_up,
 	       set.lvl, transition.time);
 
-	lightness_srv_change_lvl(srv, NULL, &set, &dummy);
+	lightness_srv_change_lvl(srv, NULL, &set, &dummy, true);
 	return 0;
 }
 
