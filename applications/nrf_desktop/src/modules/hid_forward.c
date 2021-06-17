@@ -365,6 +365,7 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 
 	struct hid_report_event *report = new_hid_report_event(size + sizeof(report_id));
 
+	report->source = per;
 	report->subscriber = sub->id;
 
 	/* Forward report as is adding report id on the front. */

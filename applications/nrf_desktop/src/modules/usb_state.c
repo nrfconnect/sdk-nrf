@@ -167,8 +167,17 @@ static int set_report(const struct device *dev, struct usb_setup_packet *setup, 
 		break;
 
 	case REPORT_TYPE_OUTPUT:
-		if (request_value[0] == REPORT_ID_KEYBOARD_LEDS) {
-			LOG_INF("No action on keyboard LEDs report");
+		if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) &&
+		    (request_value[0] == REPORT_ID_KEYBOARD_LEDS)) {
+			struct usb_hid_device *usb_hid = dev_to_hid(dev);
+			struct hid_report_event *event = new_hid_report_event(*len);
+
+			event->source = usb_hid;
+			/* Subscriber is not specified for HID output report. */
+			event->subscriber = NULL;
+			memcpy(event->dyndata.data, *data, *len);
+
+			EVENT_SUBMIT(event);
 			return 0;
 		}
 		break;

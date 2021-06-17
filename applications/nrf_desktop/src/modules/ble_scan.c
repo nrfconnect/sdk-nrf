@@ -509,6 +509,13 @@ static void scan_init(void)
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_hid_report_event(eh)) {
+		const struct hid_report_event *event = cast_hid_report_event(eh);
+
+		/* Ignore HID output reports. */
+		if (!event->subscriber) {
+			return false;
+		}
+
 		/* Do not scan when devices are in use. */
 		scan_counter = 0;
 

@@ -557,6 +557,7 @@ static void send_report_keyboard(uint8_t report_id, struct report_data *rd)
 
 	struct hid_report_event *event = new_hid_report_event(sizeof(report_id) + REPORT_SIZE_KEYBOARD_KEYS);
 
+	event->source = &state;
 	event->subscriber = rd->linked_rs->subscriber->id;
 
 	event->dyndata.data[0] = report_id;
@@ -645,6 +646,7 @@ static void send_report_mouse(uint8_t report_id, struct report_data *rd)
 
 	struct hid_report_event *event = new_hid_report_event(sizeof(report_id) + REPORT_SIZE_MOUSE);
 
+	event->source = &state;
 	event->subscriber = rd->linked_rs->subscriber->id;
 
 	/* Convert to little-endian. */
@@ -712,6 +714,7 @@ static void send_report_boot_mouse(uint8_t report_id, struct report_data *rd)
 			     sizeof(button_bm);
 	struct hid_report_event *event = new_hid_report_event(report_size);
 
+	event->source = &state;
 	event->subscriber = rd->linked_rs->subscriber->id;
 
 	event->dyndata.data[0] = report_id;
@@ -748,6 +751,7 @@ static void send_report_ctrl(uint8_t report_id, struct report_data *rd)
 
 	struct hid_report_event *event = new_hid_report_event(report_size);
 
+	event->source = &state;
 	event->subscriber = rd->linked_rs->subscriber->id;
 
 	/* Only one item can fit in the consumer control report. */
