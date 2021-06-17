@@ -9,7 +9,7 @@ Zigbee is a portable, low-power software networking protocol that provides conne
 It also defines an application layer that provides interoperability among all Zigbee devices.
 
 The |NCS| provides support for developing Zigbee applications based on the third-party precompiled ZBOSS stack.
-This stack is included as the :ref:`nrfxlib:zboss` library in nrfxlib.
+This stack is included as the :ref:`nrfxlib:zboss` library in nrfxlib (version |zboss_version|).
 In combination with the integrated Zephyr RTOS, Zigbee in |NCS| allows for development of low-power connected solutions.
 
 .. zigbee_ug_intro_end
