@@ -65,7 +65,6 @@ static int nfds;
 void rsp_send(const uint8_t *str, size_t len);
 int enter_datamode(slm_datamode_handler_t handler);
 bool exit_datamode(void);
-bool check_uart_flowcontrol(void);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -813,12 +812,6 @@ int handle_at_tcp_server(enum at_cmd_type cmd_type)
 			if (param_count > 3) {
 				at_params_unsigned_int_get(&at_param_list, 3, &proxy.sec_tag);
 			}
-#if defined(CONFIG_SLM_DATAMODE_HWFC)
-			if (op == AT_SERVER_START_WITH_DATAMODE && !check_uart_flowcontrol()) {
-				LOG_ERR("Data mode requires HWFC.");
-				return -EINVAL;
-			}
-#endif
 			err = do_tcp_server_start((uint16_t)port);
 			if (err == 0 && op == AT_SERVER_START_WITH_DATAMODE) {
 				proxy.datamode = true;
@@ -885,12 +878,6 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 			if (param_count > 4) {
 				at_params_unsigned_int_get(&at_param_list, 4, &proxy.sec_tag);
 			}
-#if defined(CONFIG_SLM_DATAMODE_HWFC)
-			if (op == AT_CLIENT_CONNECT_WITH_DATAMODE && !check_uart_flowcontrol()) {
-				LOG_ERR("Data mode requires HWFC.");
-				return -EINVAL;
-			}
-#endif
 			err = do_tcp_client_connect(url, (uint16_t)port);
 			if (err == 0 && op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 				proxy.datamode = true;

@@ -190,11 +190,6 @@ Check and configure the following configuration options for the sample:
 
    This option specifies the poll timeout for the TCP connection, in seconds.
 
-.. option:: CONFIG_SLM_DATAMODE_HWFC - UART HWFC for data mode
-
-   This option specifies whether UART hardware flow control is required for data mode.
-   By default, UART hardware flow control is required.
-
 .. option:: CONFIG_SLM_DATAMODE_TERMINATOR - Pattern string to terminate data mode
 
    This option specifies a pattern string to terminate data mode.

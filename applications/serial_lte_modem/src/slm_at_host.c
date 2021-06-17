@@ -206,11 +206,6 @@ int poweron_uart(void)
 	return err;
 }
 
-bool check_uart_flowcontrol(void)
-{
-	return (slm_uart.flow_ctrl == UART_CFG_FLOW_CTRL_RTS_CTS);
-}
-
 int set_uart_baudrate(uint32_t baudrate)
 {
 	int err;
