@@ -80,6 +80,9 @@ If a scene store operation is requested in the middle of a transition between tw
 
 The ``recall`` callback contains a transition time pointer, which should be taken into account when implementing the model behavior.
 
+The ``recall_complete`` callback is called to notify that recalling scene data is finished.
+A model can use this callback when it needs to publish its state, which is a composite state and requires all corresponding models to recall their scene data first.
+
 Invalidating scene data
 ***********************
 

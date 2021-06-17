@@ -415,6 +415,48 @@ static uint16_t srv_elem_end(const struct bt_mesh_scene_srv *srv)
 	return end;
 }
 
+static void scene_recall_complete_mod(struct bt_mesh_scene_srv *srv, struct bt_mesh_model *models,
+				      int model_count, bool vnd)
+{
+	for (int j = 0; j < model_count; j++) {
+		const struct bt_mesh_scene_entry *entry;
+		struct bt_mesh_model *mod = &models[j];
+
+		if (mod == srv->model) {
+			continue;
+		}
+
+		/* MeshMDL1.0.1, section 5.1.3.1.1:
+		 * If a model is extending another model, the extending
+		 * model shall determine the Stored with Scene behavior
+		 * of that model.
+		 */
+		if (bt_mesh_model_is_extended(mod)) {
+			continue;
+		}
+
+		entry = entry_find(mod, vnd);
+		if (!entry || !entry->recall_complete) {
+			continue;
+		}
+
+		entry->recall_complete(mod);
+	}
+}
+
+static void scene_recall_complete(struct bt_mesh_scene_srv *srv)
+{
+	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
+	uint16_t elem_end = srv_elem_end(srv);
+
+	for (int i = srv->model->elem_idx; i < elem_end; i++) {
+		const struct bt_mesh_elem *elem = &comp->elem[i];
+
+		scene_recall_complete_mod(srv, elem->models, elem->model_count, false);
+		scene_recall_complete_mod(srv, elem->vnd_models, elem->vnd_model_count, true);
+	}
+}
+
 static void scene_store_mod(struct bt_mesh_scene_srv *srv, uint16_t scene,
 			    bool vnd)
 {
@@ -761,6 +803,7 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 {
 	int32_t transition_time;
 	char path[25];
+	int err;
 
 	if (scene == BT_MESH_SCENE_NONE ||
 	    model_transition_is_invalid(transition)) {
@@ -791,7 +834,12 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 
 	BT_DBG("Loading %s", log_strdup(path));
 
-	return settings_load_subtree(path);
+	err = settings_load_subtree(path);
+	if (!err) {
+		scene_recall_complete(srv);
+	}
+
+	return err;
 }
 
 int bt_mesh_scene_srv_pub(struct bt_mesh_scene_srv *srv,

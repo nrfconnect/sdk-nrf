@@ -182,7 +182,7 @@ static void light_set(struct bt_mesh_light_ctrl_srv *srv, uint16_t lvl,
 	};
 	struct bt_mesh_lightness_status dummy;
 
-	lightness_srv_change_lvl(srv->lightness, NULL, &set, &dummy);
+	lightness_srv_change_lvl(srv->lightness, NULL, &set, &dummy, true);
 }
 
 static uint32_t remaining_fade_time(struct bt_mesh_light_ctrl_srv *srv)
@@ -1436,7 +1436,7 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 #endif
 
 	srv->lightness->handlers->light_get(srv->lightness, NULL, &light);
-	scene->lightness = repr_to_light(light.remaining_time ? light.target : light.current,
+	scene->lightness = light_to_repr(light.remaining_time ? light.target : light.current,
 					 ACTUAL);
 
 	return sizeof(struct scene_data);
@@ -1465,13 +1465,13 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	} else {
 		struct bt_mesh_lightness_status status;
 		struct bt_mesh_lightness_set set = {
-			.lvl = scene->lightness,
+			.lvl = repr_to_light(scene->lightness, ACTUAL),
 			.transition = transition,
 		};
 
 		ctrl_disable(srv);
 		schedule_resume_timer(srv);
-		lightness_srv_change_lvl(srv->lightness, NULL, &set, &status);
+		lightness_srv_change_lvl(srv->lightness, NULL, &set, &status, true);
 	}
 }
 
