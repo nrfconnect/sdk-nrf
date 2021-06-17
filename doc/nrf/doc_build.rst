@@ -30,6 +30,8 @@ Complete the following steps to install the required tools:
 #. Install `Doxygen`_.
 #. Install `mscgen`_ and make sure that the ``mscgen`` executable is in your ``PATH``.
 
+.. _documentation_sets:
+
 Documentation structure
 ***********************
 
@@ -37,18 +39,17 @@ All documentation build files are located in the :file:`ncs/nrf/doc` folder.
 The :file:`nrf` subfolder in that directory contains all :file:`.rst` source files that are not directly related to a sample application or a library.
 Documentation for samples and libraries are provided in a :file:`README.rst` or :file:`.rst` file in the same directory as the code.
 
-Building the documentation output requires building the output for all docsets.
-Currently, there are the following docsets:
+Building the documentation output requires building the output for all documentation sets.
+Following are the available documentation sets:
 
-- ``nrf``: nRF Connect SDK (NCS)
+- ``nrf``: |NCS|
 - ``nrfx``: nrfx
 - ``nrfxlib``: nrfxlib
 - ``zephyr``: Zephyr RTOS
 - ``mcuboot``: MCUboot
-- ``kconfig``: All available Kconfig options in the nRF Connect SDK
+- ``kconfig``: All available Kconfig options in the |NCS|
 
-Since there are links from the NCS documentation set into other docsets, the
-documentation is built in a pre-defined order.
+Since there are links from the |NCS| documentation set into other documentation sets, the documentation is built in a predefined order.
 
 Building documentation output
 *****************************
@@ -94,29 +95,30 @@ Complete the following steps to build the documentation output:
 The documentation output is written to the :file:`doc/_build/html` folder.
 Double-click the :file:`index.html` file to display the documentation in your browser.
 
-Alternatively, you may also want to work only with a single docset, e.g. ``nrf``.
-The build system provides individual targets for such purpose.
-If you have not built all docsets before, it is recommended to run:
+Alternatively, you can work with just a single documentation set, for example, ``nrf``.
+The build system provides individual targets for such a purpose.
+If you have not built all documentation sets before, it is recommended to run the following command:
 
-.. code-block:: console
+.. parsed-literal::
 
-   ninja <docset-name>-html-all
+   ninja *docset-name*-html-all
 
-where ``<docset-name>`` is the docset name, e.g. ``nrf``.
-This target will build everything needed for the ``<docset-name>``.
-On subsequent builds it is recommended to just run:
+Here, *docset-name* is the name of the documentation set, for example, ``nrf``.
+This target will build the :ref:`documentation sets <documentation_sets>` that are needed for *docset-name*.
 
-.. code-block:: console
+On subsequent builds, it is recommended to just run the following command:
 
-   ninja <docset-name>-html
+.. parsed-literal::
 
-or the alias target ``<docset-name>`` for ``<docset-name>-html``:
+   ninja *docset-name*-html
 
-.. code-block:: console
+Alternatively, for subsequent builds, you can run the ninja command using the alias target *docset-name* instead of *docset-name*-html:
 
-   ninja <docset-name>
+.. parsed-literal::
 
-The last couple of targets will only invoke the build for the ``<docset-name>``, assuming all of its dependencies are available.
+   ninja *docset-name*
+
+The last couple of targets mentioned in :ref:`documentation_sets` will only invoke the build for the corresponding documentation set (referred by *docset-name*), assuming that all of its dependencies are available.
 
 .. _caching_and_cleaning:
 
@@ -134,13 +136,13 @@ To clean all the build files:
 
    ninja clean
 
-To clean the build folders for a particular docset:
+To clean the build folders for a particular documentation set:
 
-.. code-block:: console
+.. parsed-literal::
 
-   ninja <docset-name>-clean
+   ninja *docset-name*-clean
 
-where ``<docset-name>`` is the docset name, e.g. ``nrf``.
+Here, *docset-name* is the name of the documentation set, for example, ``nrf``.
 
 Different versions
 ******************
