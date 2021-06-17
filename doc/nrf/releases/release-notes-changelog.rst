@@ -138,6 +138,13 @@ fprotect
 
 * Added a new function ``fprotect_is_protected()`` for devices with the ACL peripheral.
 
+Hardware unique key
+-------------------
+
+Bugfixes:
+
+* Fixed ``hw_unique_key_is_written()`` which would previously trigger a fault under certain circumstances.
+
 
 MCUboot
 =======
