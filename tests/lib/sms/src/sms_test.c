@@ -600,6 +600,7 @@ void test_send_cds_erroneous(void)
 	TEST_ASSERT_EQUAL(AT_CMD_OK, state);
 
 	/* Fail to receive SMS-STATUS-REPORT */
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	/* Removed length (24) from CDS */
 	sms_at_handler(NULL, "+CDS: \r\n06550A912143658709122022118314801220221183148000\r\n");
@@ -1124,6 +1125,7 @@ void test_recv_invalid_hex_characters(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	sms_at_handler(NULL, "+CMT: \"+1234567890\",18\r\n"
 		"00040A91214365870900001220A00285438009123456KLAB\r\n");
@@ -1139,6 +1141,7 @@ void test_recv_invalid_header_too_short(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	sms_at_handler(NULL, "+CMT: \"+1234567890\",18\r\n"
 		"00040A91214365870900001220A0028543800\r\n");
@@ -1151,6 +1154,7 @@ void test_recv_fail_number21(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	sms_at_handler(NULL, "+CMT: \"+123456789012345678901\",32\r\n"
 		"0004169121436587092143658709F10000122090028543800831D98C56B3DD70\r\n");
@@ -1163,6 +1167,7 @@ void test_recv_cmt_erroneous(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	/* Size missing (22\r\n) */
 	sms_at_handler(NULL, "+CMT: \"+1234567890\","
@@ -1176,9 +1181,23 @@ void test_recv_fail_invalid_dcs_ucs2(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	sms_at_handler(NULL, "+CMT: \"+1234567890\",22\r\n"
 		"004408812143658700081210032143652b1c0b05040b84000000037c0101010203040506070809\r\n");
+
+	sms_unreg_helper();
+}
+
+/** DCS not supported (reserved): 0x0C */
+void test_recv_fail_invalid_dcs_reserved_value(void)
+{
+	sms_reg_helper();
+
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
+	sms_callback_called_expected = false;
+	sms_at_handler(NULL, "+CMT: \"+1234567890\",22\r\n"
+		"0044088121436587000C1210032143652b1c0b05040b84000000037c0101010203040506070809\r\n");
 
 	sms_unreg_helper();
 }
@@ -1188,6 +1207,7 @@ void test_recv_fail_invalid_dcs_unsupported_format(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	sms_at_handler(NULL, "+CMT: \"+1234567890\",22\r\n"
 		"004408812143658700801210032143652b1c0b05040b84000000037c0101010203040506070809\r\n");
@@ -1200,6 +1220,7 @@ void test_recv_fail_len161(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	sms_at_handler(NULL, "+CMT: \"+1234567890\",22\r\n"
 		"00040A912143658709000012201232054480A131D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031\r\n");
@@ -1216,6 +1237,7 @@ void test_recv_fail_internal_pdu_buffer_too_short(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	sms_at_handler(NULL, "+CMT: \"+1234567890\",22\r\n"
 		"00040A912143658709000012201232054480A031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E560\r\n");
@@ -1232,6 +1254,7 @@ void test_recv_fail_internal_payload_buffer_too_short(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	sms_at_handler(NULL, "+CMT: \"+1234567890\",22\r\n"
 		"0B912143658709214365870904149121436587092143658709000012201232054480A031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E560313233343536\r\n");
@@ -1377,6 +1400,7 @@ void test_recv_fail_udhl_longer_than_udh(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	sms_at_handler(NULL, "+CMT: \"+1234567890\",22\r\n"
 		"00440A912143658709000012201232054480050500037E0201AAAA\r\n");
@@ -1389,6 +1413,7 @@ void test_recv_fail_udhl_longer_than_ud(void)
 {
 	sms_reg_helper();
 
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CNMA=1", NULL, 0, NULL, 0);
 	sms_callback_called_expected = false;
 	sms_at_handler(NULL, "+CMT: \"+1234567890\",22\r\n"
 		"00440A91214365870900001220123205448004030201\r\n");
