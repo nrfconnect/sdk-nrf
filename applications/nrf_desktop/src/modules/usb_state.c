@@ -92,28 +92,32 @@ static int get_report(const struct device *dev, struct usb_setup_packet *setup, 
 	switch (request_value[1]) {
 	case REPORT_TYPE_FEATURE:
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-		    (dev == usb_hid_device[0].dev)) {
-			if (request_value[0] == REPORT_ID_USER_CONFIG) {
-				size_t length = *len;
-				uint8_t *buffer = *data;
+		    (request_value[0] == REPORT_ID_USER_CONFIG) &&
+		    (*len == (REPORT_SIZE_USER_CONFIG + sizeof(uint8_t)))) {
+			size_t length = *len;
+			uint8_t *buffer = *data;
 
-				/* HID Feature report ID is specific to USB.
-				 * Config channel does not use it.
-				 */
-				buffer[0] = REPORT_ID_USER_CONFIG;
-				int err = config_channel_transport_get(&cfg_chan_transport,
-								&buffer[1],
-								length - 1);
+			/* HID Feature report ID is specific to USB.
+			 * Config channel does not use it.
+			 */
+			buffer[0] = REPORT_ID_USER_CONFIG;
+
+			int err = 0;
+
+			if (dev == usb_hid_device[0].dev) {
+				err = config_channel_transport_get(&cfg_chan_transport,
+								   &buffer[1],
+								   length - 1);
 
 				if (err) {
 					LOG_WRN("Failed to process report get");
 				}
-
-				return err;
 			} else {
-				LOG_WRN("Unsupported report ID");
-				return -ENOTSUP;
+				/* Configuration channel does not use this USB HID instance. */
+				memset(&buffer[1], 0, length - 1);
 			}
+
+			return err;
 		}
 		break;
 
@@ -131,7 +135,7 @@ static int get_report(const struct device *dev, struct usb_setup_packet *setup, 
 		" wLength: %04X", setup->bmRequestType, setup->bRequest,
 		setup->wValue, setup->wIndex, setup->wLength);
 
-	return 0;
+	return -ENOTSUP;
 }
 
 static int set_report(const struct device *dev, struct usb_setup_packet *setup, int32_t *len, uint8_t **data)
@@ -143,8 +147,9 @@ static int set_report(const struct device *dev, struct usb_setup_packet *setup, 
 	switch (request_value[1]) {
 	case REPORT_TYPE_FEATURE:
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-		    (dev == usb_hid_device[0].dev)) {
-			if (request_value[0] == REPORT_ID_USER_CONFIG) {
+		    (request_value[0] == REPORT_ID_USER_CONFIG) &&
+		    (*len == (REPORT_SIZE_USER_CONFIG + sizeof(uint8_t)))) {
+			if (dev == usb_hid_device[0].dev) {
 				size_t length = *len;
 				uint8_t *buffer = *data;
 
@@ -152,23 +157,34 @@ static int set_report(const struct device *dev, struct usb_setup_packet *setup, 
 				 * Config channel does not use it.
 				 */
 				int err = config_channel_transport_set(&cfg_chan_transport,
-								&buffer[1],
-								length - 1);
+								       &buffer[1],
+								       length - 1);
 
 				if (err) {
 					LOG_WRN("Failed to process report set");
 				}
+
 				return err;
 			} else {
-				LOG_WRN("Unsupported report ID");
-				return -ENOTSUP;
+				/* Configuration channel does not use this USB HID instance. */
+				return 0;
 			}
 		}
 		break;
 
 	case REPORT_TYPE_OUTPUT:
-		if (request_value[0] == REPORT_ID_KEYBOARD_LEDS) {
-			LOG_INF("No action on keyboard LEDs report");
+		if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) &&
+		    (request_value[0] == REPORT_ID_KEYBOARD_LEDS) &&
+		    (*len == (REPORT_SIZE_KEYBOARD_LEDS + sizeof(uint8_t)))) {
+			struct usb_hid_device *usb_hid = dev_to_hid(dev);
+			struct hid_report_event *event = new_hid_report_event(*len);
+
+			event->source = usb_hid;
+			/* Subscriber is not specified for HID output report. */
+			event->subscriber = NULL;
+			memcpy(event->dyndata.data, *data, *len);
+
+			EVENT_SUBMIT(event);
 			return 0;
 		}
 		break;
@@ -184,7 +200,7 @@ static int set_report(const struct device *dev, struct usb_setup_packet *setup, 
 		" wLength: %04X", setup->bmRequestType, setup->bRequest,
 		setup->wValue, setup->wIndex, setup->wLength);
 
-	return 0;
+	return -ENOTSUP;
 }
 
 static void report_sent(const struct device *dev, bool error)

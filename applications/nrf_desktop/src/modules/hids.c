@@ -214,11 +214,17 @@ static void consumer_ctrl_notif_handler(enum bt_hids_notify_evt evt)
 	async_notif_handler(REPORT_ID_CONSUMER_CTRL, evt);
 }
 
-static void keyboard_leds_handler(struct bt_hids_rep *rep,
-				  struct bt_conn *conn,
-				  bool write)
+static void broadcast_kbd_leds_report(struct bt_hids_rep *rep, struct bt_conn *conn, bool write)
 {
-	LOG_WRN("KEYBOARD_LEDS output report is ignored");
+	struct hid_report_event *event = new_hid_report_event(rep->size + 1);
+
+	event->source = conn;
+	/* Subscriber is not specified for HID output report. */
+	event->subscriber = NULL;
+	event->dyndata.data[0] = REPORT_ID_KEYBOARD_LEDS;
+	memcpy(&event->dyndata.data[1], rep->data, rep->size);
+
+	EVENT_SUBMIT(event);
 }
 
 static void feature_report_handler(struct bt_hids_rep *rep,
@@ -348,7 +354,7 @@ static int module_init(void)
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
 		output_report[or_pos].id      = REPORT_ID_KEYBOARD_LEDS;
 		output_report[or_pos].size    = REPORT_SIZE_KEYBOARD_LEDS;
-		output_report[or_pos].handler = keyboard_leds_handler;
+		output_report[or_pos].handler = broadcast_kbd_leds_report;
 
 		report_index[output_report[or_pos].id] = or_pos;
 		or_pos++;
@@ -399,12 +405,11 @@ static void send_hid_report(const struct hid_report_event *event)
 		[REPORT_ID_BOOT_KEYBOARD] = boot_keyboard_report_sent_cb,
 	};
 
-	if (cur_conn != event->subscriber) {
+	if (!cur_conn || (cur_conn != event->subscriber)) {
 		/* It's not us */
 		return;
 	}
 
-	__ASSERT_NO_MSG(cur_conn);
 	__ASSERT_NO_MSG(event->dyndata.size > 0);
 
 	uint8_t report_id = event->dyndata.data[0];

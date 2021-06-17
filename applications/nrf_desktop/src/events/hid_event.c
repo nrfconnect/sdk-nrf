@@ -17,8 +17,9 @@ static int log_hid_report_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->dyndata.size > 0);
 
-	pos = snprintf(buf, buf_len, "Report 0x%x send to %p:",
+	pos = snprintf(buf, buf_len, "Report 0x%x src:%p sub:%p:",
 		       event->dyndata.data[0],
+		       event->source,
 		       event->subscriber);
 	if ((pos > 0) && (pos < buf_len)) {
 		for (size_t i = 1; i < event->dyndata.size; i++) {
@@ -47,12 +48,13 @@ static void profile_hid_report_event(struct log_event_buf *buf,
 	__ASSERT_NO_MSG(event->dyndata.size > 0);
 
 	profiler_log_encode_u32(buf, (uint32_t)event->dyndata.data[0]);
+	profiler_log_encode_u32(buf, (uint32_t)event->source);
 	profiler_log_encode_u32(buf, (uint32_t)event->subscriber);
 }
 
 EVENT_INFO_DEFINE(hid_report_event,
-		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U32),
-		  ENCODE("report_id", "subscriber"),
+		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U32, PROFILER_ARG_U32),
+		  ENCODE("report_id", "source", "subscriber"),
 		  profile_hid_report_event);
 
 
