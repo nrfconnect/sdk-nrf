@@ -125,6 +125,11 @@ Hardware unique key
 -------------------
 
 * Make the checking for hw_unique_key_write_random() more strict; panic if any key is unwritten after writing random keys.
+* Refactored the HUK_HAS_* macros to be defined/undefined instead of 1/0.
+
+Bugfixes:
+
+* Fixed ``hw_unique_key_is_written()`` which would previously trigger a fault under certain circumstances.
 
 Trusted Firmware-M
 ------------------
@@ -139,12 +144,14 @@ fprotect
 
 * Added a new function ``fprotect_is_protected()`` for devices with the ACL peripheral.
 
-Hardware unique key
--------------------
+Immutable bootloader
+--------------------
 
-Bugfixes:
+* Improved how hardware unique keys are handled.
 
-* Fixed ``hw_unique_key_is_written()`` which would previously trigger a fault under certain circumstances.
+  * Introduced :kconfig:`CONFIG_HW_UNIQUE_KEY_LOAD` with fewer dependencies than :kconfig:`CONFIG_HW_UNIQUE_KEY` solely for loading the key.
+  * The bootloader now allows a single boot with no key present, to allow the app to write a key.
+    After the first boot, the key must be present or the bootloader won't boot the app.
 
 
 MCUboot
