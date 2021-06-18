@@ -161,4 +161,9 @@ void main(void)
 #if defined(CONFIG_BOOTLOADER_MCUBOOT)
 	boot_write_img_confirmed();
 #endif
+
+	/* Resize terminal width and height of the shell to have proper command editing. */
+	shell_execute_cmd(shell_global, "resize");
+	/* Run empty command because otherwise "resize" would be set to the command line. */
+	shell_execute_cmd(shell_global, "");
 }
