@@ -131,9 +131,7 @@ The current values of ``[nrf xyz]`` are:
 
 * ``[nrf mergeup]``: periodic merges of the upstream tree
 * ``[nrf fromlist]``: patches which have upstream pull requests, including any later revisions
-* ``[nrf toup]``: patches which Nordic developers intend to submit upstream later
 * ``[nrf noup]``: patches which are specific to the |NCS|
-* ``[nrf temphack]``: temporary patches with some known issues
 * ``[nrf fromtree]``: patches which have been cherry-picked from an upstream tree
 
 .. note::
