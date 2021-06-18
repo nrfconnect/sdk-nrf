@@ -65,6 +65,16 @@ static char dps_topic_reg_pub[sizeof(DPS_TOPIC_REG_PUB) +
 BUILD_ASSERT(sizeof(CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE) - 1 > 0,
 	     "The DPS ID scope must be defined");
 
+/* The device ID is used as DPS registration ID, and will be received back
+ * in response to registration request. Therefore the size of a property bag
+ * must be at least as large as the maximum device ID.
+ */
+BUILD_ASSERT(CONFIG_AZURE_IOT_HUB_TOPIC_ELEMENT_MAX_LEN >=
+	     CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN,
+	     "CONFIG_AZURE_IOT_HUB_TOPIC_ELEMENT_MAX_LEN must be at least as "
+	     "large as CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN "
+	     "when DPS is enabled");
+
 /* Forward declarations */
 static int dps_on_settings_loaded(void);
 static int dps_settings_handler(const char *key, size_t len,
