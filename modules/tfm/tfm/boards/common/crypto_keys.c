@@ -40,7 +40,7 @@ enum tfm_plat_err_t tfm_plat_get_huk_derived_key(const uint8_t *label,
 		return TFM_PLAT_ERR_INVALID_INPUT;
 	}
 
-	int err  = hw_unique_key_derive_key(HUK_KEYSLOT_MKEK, context,
+	int err  = hw_unique_key_derive_key(HUK_KEYSLOT_MEXT, context,
 			context_size, label, label_size, key, key_size);
 
 	if (err) {
