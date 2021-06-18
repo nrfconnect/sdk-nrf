@@ -96,7 +96,7 @@ config AZURE_IOT_HUB_TOPIC_MAX_LEN
 
 config AZURE_IOT_HUB_TOPIC_ELEMENT_MAX_LEN
 	int "Maximum length of topic element strings"
-	default 22
+	default 40
 	help
 	  Azure IoT Hub uses dynamically constructed topics to transfer
 	  information elements such as response codes, direct method names and
