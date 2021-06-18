@@ -11,7 +11,8 @@
 #include <modem/at_cmd.h>
 #include <modem/modem_jwt.h>
 
-#define JWT_CMD_TEMPLATE "AT%%JWT=%d,%u,\"%s\",\"%s\",%d,%d"
+#define JWT_CMD_TEMPLATE "AT%%JWT=%d,%u,\"%s\",\"%s\""
+#define JWT_CMD_TEMPLATE_SEC_TAG "AT%%JWT=%d,%u,\"%s\",\"%s\",%d,%d"
 #define MAX_INT_PRINT_SZ 11
 #define JWT_CMD_PRINT_INT_SZ (MAX_INT_PRINT_SZ * 4)
 
@@ -69,7 +70,7 @@ int modem_jwt_generate(struct jwt_data *const jwt)
 	enum at_cmd_state state;
 	char *cmd;
 	char *cmd_resp = NULL;
-	size_t cmd_sz = sizeof(JWT_CMD_TEMPLATE) + JWT_CMD_PRINT_INT_SZ +
+	size_t cmd_sz = sizeof(JWT_CMD_TEMPLATE_SEC_TAG) + JWT_CMD_PRINT_INT_SZ +
 			(jwt->subject ? strlen(jwt->subject) : 0) +
 			(jwt->audience ? strlen(jwt->audience) : 0);
 
@@ -84,13 +85,21 @@ int modem_jwt_generate(struct jwt_data *const jwt)
 		return -ENOMEM;
 	}
 
-	ret = snprintf(cmd, cmd_sz, JWT_CMD_TEMPLATE,
-		       jwt->alg,
-		       jwt->exp_delta_s,
-		       jwt->subject ? jwt->subject : "",
-		       jwt->audience ? jwt->audience : "",
-		       jwt->sec_tag,
-		       jwt->key);
+	if (jwt->sec_tag) {
+		ret = snprintf(cmd, cmd_sz, JWT_CMD_TEMPLATE_SEC_TAG,
+			jwt->alg,
+			jwt->exp_delta_s,
+			jwt->subject ? jwt->subject : "",
+			jwt->audience ? jwt->audience : "",
+			jwt->sec_tag,
+			jwt->key);
+	} else {
+		ret = snprintf(cmd, cmd_sz, JWT_CMD_TEMPLATE,
+			jwt->alg,
+			jwt->exp_delta_s,
+			jwt->subject ? jwt->subject : "",
+			jwt->audience ? jwt->audience : "");
+	}
 
 	if ((ret < 0) || (ret >= cmd_sz)) {
 		ret = -EIO;
