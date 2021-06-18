@@ -1,5 +1,5 @@
-.. _modem_shell_application:
 .. highlight:: none
+.. _modem_shell_application:
 
 nRF9160: Modem Shell
 ####################
