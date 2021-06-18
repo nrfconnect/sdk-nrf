@@ -310,6 +310,26 @@ KRKNWK-6408: ``diag`` command not supported
 Zigbee
 ======
 
+.. rst-class:: v1-6-0
+
+KRKNWK-8211: Leave signal generated twice
+  The ``ZB_ZDO_SIGNAL_LEAVE`` signal is generated twice during Zigbee Coordinator factory reset.
+
+.. rst-class:: v1-6-0
+
+KRKNWK-9714: Device association fails if the Request Key packet is retransmitted
+  If the Request Key packet for the TCLK is retransmitted and the coordinator sends two new keys that are different, a joiner logic error happens that leads to unsuccessful key verification.
+
+.. rst-class:: v1-6-0
+
+KRKNWK-9743 Timer cannot be stopped in Zigbee routers and coordinators
+  The call to the ``zb_timer_enable_stop()`` API has no effect on the timer logic in Zigbee routers and coordinators.
+
+.. rst-class:: v1-6-0
+
+KRKNWK-10490: Deadlock in the NCP frame fragmentation logic
+  If the last piece of a fragmented NCP command is not delivered, the receiving side becomes unresponsive to further commands.
+
 .. rst-class:: v1-5-1
 
 KRKNWK-8478: NCP host application crash on exceeding :c:macro:`TX_BUFFERS_POOL_SIZE`
