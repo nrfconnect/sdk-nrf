@@ -18,6 +18,7 @@
 #include <sys/util.h>
 #include <sys/byteorder.h>
 
+#include <caf/events/led_event.h>
 #include <caf/events/button_event.h>
 #include "motion_event.h"
 #include "wheel_event.h"
@@ -25,6 +26,7 @@
 #include <caf/events/ble_common_event.h>
 #include "usb_event.h"
 
+#include "hid_keyboard_leds_def.h"
 #include "hid_keymap.h"
 #include "hid_keymap_def.h"
 #include "hid_report_desc.h"
@@ -50,6 +52,10 @@ enum state {
 #define SUBSCRIBER_COUNT (IS_ENABLED(CONFIG_DESKTOP_HIDS_ENABLE) + \
 			  CONFIG_USB_HID_DEVICE_COUNT)
 
+#define OUTPUT_REPORT_DATA_MAX_LEN (REPORT_SIZE_KEYBOARD_LEDS)
+
+#define OUTPUT_REPORT_STATE_COUNT (ARRAY_SIZE(output_reports))
+
 #define INPUT_REPORT_DATA_COUNT (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) +		\
 				 IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) +	\
 				 IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT) +	\
@@ -68,7 +74,6 @@ enum state {
 			   CONSUMER_CTRL_REPORT_KEY_COUNT_MAX))
 
 #define AXIS_COUNT (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) * MOUSE_REPORT_AXIS_COUNT)
-
 
 /**@brief HID state item. */
 struct item {
@@ -118,11 +123,16 @@ struct report_state {
 	struct report_data *linked_rd;
 };
 
+struct output_report_state {
+	uint8_t data[OUTPUT_REPORT_DATA_MAX_LEN];
+};
+
 struct subscriber {
 	const void *id;
 	bool is_usb;
 	uint8_t report_max;
 	uint8_t report_cnt;
+	struct output_report_state output_reports[OUTPUT_REPORT_STATE_COUNT];
 	struct report_state state[INPUT_REPORT_STATE_COUNT];
 };
 
@@ -455,6 +465,19 @@ static struct report_data *get_report_data(uint8_t report_id)
 	return &state.report_data[pos];
 }
 
+static size_t get_output_report_idx(uint8_t report_id)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(output_reports); i++) {
+		if (output_reports[i] == report_id) {
+			return i;
+		}
+	}
+
+	/* Should not happen. */
+	__ASSERT_NO_MSG(false);
+	return 0;
+}
+
 static struct subscriber *get_subscriber(const void *subscriber_id)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
@@ -464,6 +487,14 @@ static struct subscriber *get_subscriber(const void *subscriber_id)
 	}
 	LOG_WRN("No subscriber %p", subscriber_id);
 	return NULL;
+}
+
+static struct subscriber *get_linked_subscriber(uint8_t report_id)
+{
+	struct report_data *rd = get_report_data(report_id);
+	struct report_state *rs = rd->linked_rs;
+
+	return rs ? rs->subscriber : NULL;
 }
 
 static bool key_value_set(struct items *items, uint16_t usage_id, int16_t value)
@@ -981,6 +1012,48 @@ static struct report_state *find_next_report_state(const struct report_data *rd)
 	return rs_result;
 }
 
+static void update_led(uint8_t led_id, const struct led_effect *effect)
+{
+	if (led_id == LED_UNAVAILABLE) {
+		return;
+	}
+
+	struct led_event *event = new_led_event();
+
+	event->led_id = led_id;
+	event->led_effect = effect;
+	EVENT_SUBMIT(event);
+}
+
+static void broadcast_keyboard_leds(void)
+{
+	BUILD_ASSERT(HID_KEYBOARD_LEDS_COUNT <= CHAR_BIT);
+	BUILD_ASSERT(REPORT_SIZE_KEYBOARD_LEDS == 1);
+
+	const struct subscriber *sub = get_linked_subscriber(REPORT_ID_KEYBOARD_KEYS);
+	size_t idx = get_output_report_idx(REPORT_ID_KEYBOARD_LEDS);
+
+	static uint8_t displayed_leds_state;
+	uint8_t new_leds_state = sub ? sub->output_reports[idx].data[0] : 0;
+	uint8_t update_needed = (displayed_leds_state ^ new_leds_state);
+
+	for (size_t i = 0; i < ARRAY_SIZE(keyboard_led_map); i++) {
+		if (update_needed & BIT(i)) {
+			update_led(keyboard_led_map[i],
+				((new_leds_state & BIT(i)) ? &keyboard_led_on : &keyboard_led_off));
+		}
+	}
+
+	displayed_leds_state = new_leds_state;
+}
+
+static void update_output_report_state(void)
+{
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
+		broadcast_keyboard_leds();
+	}
+}
+
 static void connect(const void *subscriber_id, uint8_t report_id)
 {
 	struct subscriber *subscriber = get_subscriber(subscriber_id);
@@ -1040,6 +1113,8 @@ static void connect(const void *subscriber_id, uint8_t report_id)
 
 		report_send(rd, false, true);
 	}
+
+	update_output_report_state();
 }
 
 static void disconnect(const void *subscriber_id, uint8_t report_id)
@@ -1072,6 +1147,8 @@ static void disconnect(const void *subscriber_id, uint8_t report_id)
 			report_send(rd, true, true);
 		}
 	}
+
+	update_output_report_state();
 }
 
 static void connect_subscriber(const void *subscriber_id, bool is_usb, uint8_t report_max)
@@ -1082,6 +1159,7 @@ static void connect_subscriber(const void *subscriber_id, bool is_usb, uint8_t r
 			state.subscriber[i].is_usb = is_usb;
 			state.subscriber[i].report_max = report_max;
 			state.subscriber[i].report_cnt = 0;
+			update_output_report_state();
 			LOG_INF("Subscriber %p connected", subscriber_id);
 			return;
 		}
@@ -1132,6 +1210,8 @@ static void disconnect_subscriber(const void *subscriber_id)
 	}
 
 	memset(s, 0, sizeof(*s));
+
+	update_output_report_state();
 
 	LOG_INF("Subscriber %p disconnected", subscriber_id);
 }
@@ -1346,6 +1426,53 @@ static bool handle_hid_report_sent_event(
 	return false;
 }
 
+static void handle_keyboard_leds_report(struct subscriber *sub,
+					const uint8_t *data, size_t len)
+{
+	BUILD_ASSERT(REPORT_SIZE_KEYBOARD_LEDS == 1);
+	BUILD_ASSERT(REPORT_SIZE_KEYBOARD_LEDS <= OUTPUT_REPORT_DATA_MAX_LEN);
+
+	if (len != REPORT_SIZE_KEYBOARD_LEDS) {
+		LOG_WRN("Improper keyboard LED report size");
+		return;
+	}
+
+	size_t idx = get_output_report_idx(REPORT_ID_KEYBOARD_LEDS);
+
+	memcpy(sub->output_reports[idx].data, data, len);
+	broadcast_keyboard_leds();
+}
+
+static void handle_hid_output_report(struct subscriber *sub, uint8_t report_id,
+				     const uint8_t *data, size_t len)
+{
+	__ASSERT_NO_MSG(sub);
+
+	switch (report_id) {
+	case REPORT_ID_KEYBOARD_LEDS:
+		handle_keyboard_leds_report(sub, data, len);
+		break;
+	default:
+		/* Ignore unknown report. */
+		break;
+	}
+}
+
+static bool handle_hid_report_event(const struct hid_report_event *event)
+{
+	/* Ignore HID input reports. */
+	if (event->subscriber) {
+		return false;
+	}
+
+	__ASSERT_NO_MSG(event->dyndata.size > 0);
+
+	handle_hid_output_report(get_subscriber(event->source), event->dyndata.data[0],
+				 &event->dyndata.data[1], event->dyndata.size - 1);
+
+	return false;
+}
+
 static bool handle_hid_report_subscription_event(
 		const struct hid_report_subscription_event *event)
 {
@@ -1431,6 +1558,11 @@ static bool event_handler(const struct event_header *eh)
 		return handle_button_event(cast_button_event(eh));
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) &&
+	    is_hid_report_event(eh)) {
+		return handle_hid_report_event(cast_hid_report_event(eh));
+	}
+
 	if (is_hid_report_subscription_event(eh)) {
 		return handle_hid_report_subscription_event(
 				cast_hid_report_subscription_event(eh));
@@ -1458,6 +1590,9 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, usb_hid_event);
+#ifdef CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+EVENT_SUBSCRIBE(MODULE, hid_report_event);
+#endif /* CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT */
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);

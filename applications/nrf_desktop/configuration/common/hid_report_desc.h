@@ -54,6 +54,10 @@ static const uint8_t input_reports[] = {
 	REPORT_ID_BOOT_KEYBOARD,
 };
 
+static const uint8_t output_reports[] = {
+	REPORT_ID_KEYBOARD_LEDS,
+};
+
 
 extern const uint8_t hid_report_desc[];
 extern const size_t hid_report_desc_size;
