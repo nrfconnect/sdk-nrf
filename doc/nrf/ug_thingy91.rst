@@ -113,7 +113,7 @@ Downloading precompiled firmware images
 
 To obtain precompiled firmware images for updating the firmware, perform the following steps:
 
-	1. Go to the `Thingy:91 product page`_ and under the :guilabel:`Downloads` tab, navigate to :guilabel:`Precompiled firmware`.
+	1. Go to the `Thingy:91 product page`_ and under the :guilabel:`Downloads` tab, navigate to :guilabel:`Precompiled application and modem firmware`.
 	#. Download and extract the latest Thingy:91 firmware package.
 	#. Check the :file:`CONTENTS.txt` file in the extracted folder for the location and names of the different firmware images.
 
@@ -142,27 +142,6 @@ You can update the modem firmware of Thingy:91 using any of the following method
 
 See `Programming the Thingy:91 modem`_ for the detailed steps to update the modem firmware.
 
-Using RSA signing for MCUboot
-=============================
-In order to be compatible with the factory-programmed bootloader on Thingy:91, the signing algorithm must be changed from the default MCUboot algorithm.
-To change the algorithm, create the file :file:`child_image/mcuboot.conf` in your application folder and add the following content:
-
-.. parsed-literal::
-   :class: highlight
-
-   CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
-   CONFIG_BOOT_SIGNATURE_KEY_FILE="root-rsa-2048.pem"
-
-The build system will include these configurations and enable RSA signing of the images for backward compatibility with the MCUboot versions that precede the |NCS| v1.4.0.
-Note that the configurations in such a file will also be taken for other build targets, besides Thingy:91.
-
-.. note::
-
-   Changing the signing algorithm enables MCUboot to use the default RSA keys, so that it is compatible with the factory-programmed bootloader present on the Thingy:91.
-   These keys must only be used for development.
-   In a final product, you must use your own, secret keys.
-   See :ref:`ug_fw_update_development_keys` for more information.
-
 
 .. _building_pgming:
 
@@ -184,7 +163,7 @@ The build targets of interest for Thingy:91 in |NCS| are as follows:
 |nRF52840 SoC   |``thingy91_nrf52840``                             |
 +---------------+--------------------------------------------------+
 
-You should use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
+You must use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
 
 .. note::
 
@@ -222,6 +201,14 @@ You can choose the method based on the availability or absence of an external de
    If you do not have an external debug probe available to program the Thingy:91, you can directly program by :ref:`using the USB (MCUboot) method and nRF Connect Programmer<programming_usb>`.
    In this scenario, use the :file:`app_signed.hex` firmware image file.
 
+.. note::
+
+   While building applications for Thingy:91, the build system changes the signing algorithm of MCUboot so that it uses the default RSA Keys.
+   This is to ensure backward compatibility with the MCUboot versions that precede the |NCS| v1.4.0.
+   The default RSA keys must only be used for development.
+   In a final product, you must use your own, secret keys.
+   See :ref:`ug_fw_update_development_keys` for more information.
+
 .. _build_pgm_segger:
 
 Building and programming using SEGGER Embedded Studio
@@ -241,7 +228,6 @@ Building and programming using SEGGER Embedded Studio
    .. note::
 
       The *Board Directory* folder can be found in the following location: ``ncs/nrf/boards/arm``.
-
 
 4. Click :guilabel:`OK` to import the project into SES.
    You can now work with the project in the IDE.
@@ -296,8 +282,7 @@ To build and program the source code from the command line, complete the followi
 
 #. To get the rest of the dependencies, run the ``west update`` command as follows:
 
-   .. parsed-literal::
-      :class: highlight
+   .. code-block:: console
 
       west update
 
@@ -306,14 +291,14 @@ To build and program the source code from the command line, complete the followi
    .. parsed-literal::
       :class: highlight
 
-	  west build -b *build_target* -d *destination_directory_name*
+      west build -b *build_target* -d *destination_directory_name*
 
    The parameter *build_target* should be ``thingy91_nrf9160`` or ``thingy91_nrf9160ns`` if building for the nRF9160 SiP component and ``thingy91_nrf52840`` if building for the nRF52840 SoC component.
 
    .. note::
 
-	  The parameter *destination_directory_name* can be used to optionally specify the destination directory in the west command.
-	  Unless a *destination_directory_name* is specified, the build files are automatically generated in ``build/zephyr/``.
+	   The parameter *destination_directory_name* can be used to optionally specify the destination directory in the west command.
+	   Unless a *destination_directory_name* is specified, the build files are automatically generated in ``build/zephyr/``.
 
 .. include:: ug_thingy91.rst
    :start-after: prog_extdebugprobe_start
@@ -326,4 +311,4 @@ To build and program the source code from the command line, complete the followi
 
        west flash
 
-   #. The device will reset and run the programmed sample or application.
+      The device will reset and run the programmed sample or application.
