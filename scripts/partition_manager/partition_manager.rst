@@ -150,6 +150,13 @@ placement: dict
          Only one key can be specified.
          Partitions that directly or indirectly (through :ref:`spans <partition_manager_spans>`) share size with the ``app`` partitions can only be aligned if they are placed directly after the ``app`` partition.
 
+      align_next: int
+         Ensure that the _next_ partition is aligned on this number of bytes.
+         This is equivalent to adding a start-alignment to the next partition.
+         If the next partition already has a start-alignment, the largest alignment takes effect.
+         align_next will fail if the next partition has a start-alignment that is not a divisor or multiple of the align_next-alignment.
+         align_next will also fail if the next partition has any end-alignment.
+
 .. _partition_manager_spans:
 
 span: list OR span: string
