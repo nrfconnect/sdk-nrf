@@ -69,7 +69,11 @@ static void mosh_print_version_info(void)
 #endif
 
 #if defined(BUILD_VARIANT)
+#if defined(BRANCH_NAME)
+	printk("\nMOSH build variant: %s/%s\n\n", STRINGIFY(BRANCH_NAME), STRINGIFY(BUILD_VARIANT));
+#else
 	printk("\nMOSH build variant: %s\n\n", STRINGIFY(BUILD_VARIANT));
+#endif
 #else
 	printk("\nMOSH build variant: dev\n\n");
 #endif
