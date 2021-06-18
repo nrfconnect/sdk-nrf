@@ -41,6 +41,9 @@ The sample supports the following development kits:
    :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810
 
 
+.. note::
+   To build this sample for ``nrf52dk_nrf52810``, ``nrf52840dk_nrf52811`` or ``nrf52833dk_nrf52820``, use the `Minimal build`_ approach.
+
 The sample also requires a phone or tablet running a compatible application.
 The `Testing`_ instructions refer to nRF Connect for Mobile, but similar applications (for example, nRF Toolbox) can be used as well.
 
