@@ -586,6 +586,8 @@ Partition Manager
 * Partition manager information is no longer appended to the ``rom_report`` target.
   To inspect the current partition manager configuration please use the ``partition_manager_report`` target.
 * Added the ``share_size`` functionality to let a partition share size with a partition in another region.
+* Added a new directive, ``align_next``, which controls the alignment of the next partition.
+  See the Partition Manager documentation for more information.
 
 DFU target
 ----------

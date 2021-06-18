@@ -428,6 +428,30 @@ def first_partition_has_been_aligned(first, solution):
 
 
 def _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions, dp):
+
+    # Resolve 'align_next'
+    solution_non_empty = [part for part in solution if 'EMPTY_' not in part]
+    for i in range(len(solution_non_empty) - 1):
+        part = solution_non_empty[i]
+        next_part = solution_non_empty[i + 1]
+        if 'placement' in reqs[part] and 'align_next' in reqs[part]['placement']:
+            a_next = reqs[part]['placement'].pop('align_next')
+            alignment = a_next
+
+            reqs[next_part].setdefault('placement', {}).setdefault('align', {})
+
+            if 'end' in reqs[next_part]['placement']['align']:
+                raise PartitionError(f"Align config already present in {next_part}")
+
+            if 'start' in reqs[next_part]['placement']['align']:
+                a_start = reqs[next_part]['placement']['align']['start']
+                if ((a_start % a_next) == 0) or ((a_next % a_start) == 0):
+                    alignment = max(a_next, a_start)
+                else:
+                    raise PartitionError(f"Align config already present in {next_part}")
+
+            reqs[next_part]['placement']['align']['start'] = alignment
+
     # Perform address assignment and alignment in two steps, first from start to app, then from end to app.
     for i in range(0, solution.index(dp) + 1):
         current = solution[i]
@@ -1455,6 +1479,57 @@ def test():
     expect_addr_size(td, 'EMPTY_1', 10400, 600)
     expect_addr_size(td, 'with_alignment_2', 11000, 100)
 
+    # Test 'align_next'
+    # 'second' will align 'third', but 'third' already has a bigger alignment.
+    # 'third' will align 'fourth' on 6000 instead of 2000.
+    # 'app' will align 'fifth' on 4000.
+    # 'fifth' has an 'align_next' directive that is ignored since 'fifth' is the last partition.
+    td = {'first': {'placement': {'after': 'start'}, 'size': 10000},
+          'second': {'placement': {'after': 'first', 'align': {'end': 2000}, 'align_next': 4000}, 'size': 1000},
+          'third': {'placement': {'after':'second', 'align': {'start': 8000}, 'align_next': 6000}, 'size': 3000},
+          'fourth': {'placement': {'before': 'app', 'after':'third', 'align': {'start': 2000}}, 'size': 2000},
+          'app': {'region': 'flash_primary', 'placement': {'align_next': 4000}},
+          'fifth': {'placement': {'after': 'app', 'align_next': 10000}, 'size': 2000}}
+    s, sub_partitions = resolve(td, 'app')
+    set_addresses_and_align(td, sub_partitions, s, 100000, 'app')
+    set_sub_partition_address_and_size(td, sub_partitions)
+    calculate_end_address(td)
+    expect_addr_size(td, 'EMPTY_0', 10000, 1000)
+    expect_addr_size(td, 'second', 11000, 1000)
+    expect_addr_size(td, 'EMPTY_1', 12000, 4000)
+    expect_addr_size(td, 'third', 16000, 3000)
+    expect_addr_size(td, 'EMPTY_2', 19000, 5000)
+    expect_addr_size(td, 'fourth', 24000, 2000)
+    expect_addr_size(td, 'app', 26000, 70000)
+    expect_addr_size(td, 'fifth', 96000, 2000)
+    expect_addr_size(td, 'EMPTY_3', 98000, 2000)
+
+    # Test 'align_next' (negative)
+    # 'align' already exists (end)
+    td = {'first': {'placement': {'after': 'start', 'align_next': 4000}, 'size': 10000},
+          'second': {'placement': {'after': 'first', 'align': {'end': 2000}}, 'size': 1000},
+          'app': {'region': 'flash_primary'}}
+    s, sub_partitions = resolve(td, 'app')
+    try:
+        set_addresses_and_align(td, sub_partitions, s, 100000, 'app')
+    except PartitionError:
+        pass
+    else:
+        assert False, "Should have raised an error."
+
+    # Test 'align_next' (negative)
+    # 'align' already exists (start - not divisible)
+    td = {'first': {'placement': {'after': 'start', 'align_next': 4000}, 'size': 10000},
+          'second': {'placement': {'after': 'first', 'align': {'start': 3000}}, 'size': 1000},
+          'app': {'region': 'flash_primary'}}
+    s, sub_partitions = resolve(td, 'app')
+    try:
+        set_addresses_and_align(td, sub_partitions, s, 100000, 'app')
+    except PartitionError:
+        pass
+    else:
+        assert False, "Should have raised an error."
+
 
 #    FLASH (0x100000):
 #    +------------------------------------------+
@@ -1484,17 +1559,17 @@ def test():
           's0': {'span': ['s0_pad', 's0_image']},
           's0_pad': {'placement': {'after': 'b0', 'align': {'start': 0x1000}}, 'share_size': 'mcuboot_pad'},
           's0_image': {'span': {'one_of': ['mcuboot', 'spm', 'app']}},
-          'mcuboot': {'placement': {'before': 'mcuboot_primary'}, 'size': 0xc000},
+          'mcuboot': {'placement': {'before': 'mcuboot_primary', 'align_next': 0x1000}, 'size': 0xc000},
           's1': {'span': ['s1_pad', 's1_image']},
-          's1_pad': {'placement': {'after': 's0', 'align': {'start': 0x1000}}, 'share_size': 'mcuboot_pad'},
+          's1_pad': {'placement': {'after': 's0'}, 'share_size': 'mcuboot_pad'},
           's1_image': {'placement': {'after': 's1_pad'}, 'share_size': 'mcuboot'},
           'mcuboot_primary': {'span': ['mcuboot_pad', 'mcuboot_primary_app']},
           'mcuboot_pad': {'placement': {'before': 'mcuboot_primary_app', 'align': {'start': 0x1000}}, 'size': 0x200},
           'mcuboot_primary_app': {'span': ['app']},
           'app': {'region': 'flash_primary'},
-          'mcuboot_secondary': {'placement': {'after': 'mcuboot_primary', 'align': {'start': 0x1000}}, 'share_size': 'mcuboot_primary'},
+          'mcuboot_secondary': {'placement': {'after': 'mcuboot_primary', 'align': {'start': 0x1000}, 'align_next': 0x1000}, 'share_size': 'mcuboot_primary'},
           'mcuboot_scratch': {'placement': {'after': 'app', 'align': {'start': 0x1000}}, 'size': 0x1e000},
-          'mcuboot_storage': {'placement': {'after': 'mcuboot_scratch', 'align': {'start': 0x1000}}, 'size': 0x4000},
+          'mcuboot_storage': {'placement': {'after': 'mcuboot_scratch'}, 'size': 0x4000},
           'provision': {'placement': {'before': 'end', 'align': {'start': 0x1000}}, 'size': 0x1000}}
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 0x100000, 'app')
