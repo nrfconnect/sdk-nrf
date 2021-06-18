@@ -30,6 +30,7 @@ config TFM_MINIMAL
 	  and reproduce the desired configuration through kconfig fragments.
 
 if !TFM_MINIMAL
+rsource "Kconfig.mbedtls.defconfig"
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig"
 endif
 
