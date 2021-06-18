@@ -48,9 +48,9 @@ struct jwt_data {
 	uint32_t exp_delta_s;
 
 	/**  NULL terminated 'sub' claim; the principal that is the subject of the JWT */
-	char *subject;
+	const char *subject;
 	/**  NULL terminated 'aud' claim; intended recipient of the JWT */
-	char *audience;
+	const char *audience;
 
 	/** Buffer to which the NULL terminated JWT will be copied.
 	 * If a buffer is provided by the user, the size must also be set.
