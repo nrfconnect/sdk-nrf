@@ -596,7 +596,12 @@ zb_uint8_t zb_get_reset_source(void)
 	uint32_t reas;
 	uint8_t zb_reason;
 #ifdef CONFIG_ZIGBEE_LIBRARY_NCP_DEV
-	uint8_t zephyr_reset_type = nrf_power_gpregret_get(NRF_POWER);
+	static uint8_t zephyr_reset_type = 0xFF;
+
+	/* Read the value at the first API call, then use data from RAM. */
+	if (zephyr_reset_type == 0xFF) {
+		zephyr_reset_type = nrf_power_gpregret_get(NRF_POWER);
+	}
 #endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
 
 #if NRF_POWER_HAS_RESETREAS
@@ -635,6 +640,13 @@ zb_uint8_t zb_get_reset_source(void)
 		zb_reason = ZB_RESET_SRC_OTHER;
 	}
 
+	/* The NCP reset type is used only by this API call.
+	 * Reset the value inside the register, so after the next, external
+	 * SW reset, the value will not trigger NCP logic.
+	 */
+	if (zephyr_reset_type == SYS_REBOOT_NCP) {
+		nrf_power_gpregret_set(NRF_POWER, (uint8_t)SYS_REBOOT_COLD);
+	}
 #endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
 
 	return zb_reason;
