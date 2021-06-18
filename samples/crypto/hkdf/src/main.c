@@ -114,7 +114,7 @@ int export_derived_key(void)
 
 	PRINT_MESSAGE("Compare derived key with expected value...");
 	cmp_status = memcmp(m_expected_output_key, m_output_key, sizeof(m_output_key));
-	if (status != 0) {
+	if (cmp_status != 0) {
 		PRINT_MESSAGE("Error, the derived key doesn't match the expected value!");
 		return APP_ERROR;
 	}
