@@ -40,6 +40,10 @@ nRF9160
 
   * :ref:`memfault_sample` sample implementing :ref:`mod_memfault` module and showing how to use Memfault SDK functionality in an application.
 
+  * :ref:`lib_nrf_cloud_pgps` library:
+
+    * The library adds P-GPS (Predicted GPS) support to the :ref:`lib_nrf_cloud` library.
+
 
 * Updated:
 
@@ -48,7 +52,6 @@ nRF9160
     * Added cellular positioning support to :ref:`lib_nrf_cloud_cell_pos`.
     * Added Kconfig option :option:`CONFIG_NRF_CLOUD_CELL_POS` to obtain cell-based location from nRF Cloud instead of using the modem's GPS.
     * Added function :c:func:`nrf_cloud_modem_fota_completed` which is to be called by the application after it re-initializes the modem (instead of rebooting) after a modem FOTA update.
-    * Added P-GPS (Predicted GPS) support to :ref:`lib_nrf_cloud_pgps`.
     * Updated to include the FOTA type value in the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event.
     * Updated configuration options for setting the source of the MQTT client ID (nRF Cloud device ID).
     * Updated nRF Cloud FOTA to use type validated FOTA download.
@@ -56,9 +59,9 @@ nRF9160
   * :ref:`asset_tracker` application:
 
     * Added optional P-GPS support.
-    * Added application-specific CONFIG_PGPS_STORE_LOCATION.
+    * Added application-specific option ``CONFIG_PGPS_STORE_LOCATION``.
     * Added :file:`overlay-pgps.conf` to enable P-GPS support.
-    * Added :file:`overlay-agps-pgps.conf` to enable A-GPS plus P-GPS support.
+    * Added :file:`overlay-agps-pgps.conf` to enable A-GPS and P-GPS support.
     * Updated to handle new Kconfig options:
 
       * :option:`CONFIG_NRF_CLOUD_CELL_POS`
@@ -125,7 +128,7 @@ nRF9160
 
     * Added optional P-GPS support.
     * Added :file:`overlay-pgps.conf` to enable P-GPS support.
-    * Added :file:`overlay-agps-pgps.conf` to enable A-GPS plus P-GPS support.
+    * Added :file:`overlay-agps-pgps.conf` to enable A-GPS and P-GPS support.
 
   * :ref:`aws_fota_sample` sample:
 
