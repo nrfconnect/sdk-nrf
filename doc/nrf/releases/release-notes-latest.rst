@@ -161,6 +161,7 @@ nRF9160
 nRF5
 ====
 
+
 Matter (Project CHIP)
 ---------------------
 
@@ -205,8 +206,6 @@ sdk-nrfxlib
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
-
-
 Modem library
 +++++++++++++
 
@@ -216,6 +215,17 @@ Modem library
   * GNSS socket API is deprecated.
 
 * PDN socket API is deprecated. The functionality has been replaced by :ref:`pdn_readme`.
+
+
+SoftDevice Controller
++++++++++++++++++++++
+
+See the :ref:`softdevice_controller_changelog` for detailed information.
+
+* Added support for multiple advertising sets.
+* Added radio front-end module (FEM) support (nRF52 Series only).
+* Added support for nRF5340, which was previously only supported for evaluation purposes.
+* Decoupled the controller from the random number generator.
 
 MCUboot
 =======
