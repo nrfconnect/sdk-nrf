@@ -37,6 +37,11 @@ nRF9160
 
     * Added function :c:func:`nrf_cloud_uninit`, which can be used to uninitialize the nRF Cloud library.  If :ref:`cloud_api_readme` is used, call :c:func:`cloud_uninit`
 
+  * :ref:`serial_lte_modem` application:
+
+    * Added a separate document page to explain data mode mechanism and how it works.
+    * Removed datatype in all sending AT commands. If no sending data is specified, switch data mode to receive and send any arbitrary data.
+
 nRF5
 ====
 

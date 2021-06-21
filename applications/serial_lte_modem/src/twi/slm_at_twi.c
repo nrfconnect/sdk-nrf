@@ -9,6 +9,7 @@
 #include <drivers/i2c.h>
 #include <stdio.h>
 #include "slm_util.h"
+#include "slm_at_host.h"
 #include "slm_at_twi.h"
 
 LOG_MODULE_REGISTER(slm_twi, CONFIG_SLM_LOG_LEVEL);
@@ -31,9 +32,6 @@ LOG_MODULE_REGISTER(slm_twi, CONFIG_SLM_LOG_LEVEL);
 
 static const struct device *slm_twi_dev[TWI_MAX_INSTANCE];
 static uint8_t twi_data[TWI_DATA_LEN * 2 + 1];
-
-/* global functions defined in different files */
-void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;

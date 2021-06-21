@@ -130,27 +130,13 @@ TCP client
       .. parsed-literal::
          :class: highlight
 
-         **AT#XSEND=1,"Test TCP"**
+         **AT#XSEND="Test TCP"**
          #XSEND: 8
          OK
 
          **AT#XRECV**
          PONG: b'Test TCP'
-         #XRECV: 1,17
-         OK
-
-   #. Send hexadecimal data to the TCP server and retrieve the returned data.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XSEND=0,"DEADBEEF"**
-         #XSEND: 4
-         OK
-
-         **AT#XRECV**
-         PONG: b'\\xde\\xad\\xbe\\xef'
-         #XRECV: 1,25
+         #XRECV: 17
          OK
 
    #. Close the socket and confirm its state.
@@ -181,33 +167,27 @@ TCP client
          #XCONNECT: 1
          OK
 
-   #. Send an HTTP request to the server.
+   #. Send an HTTP request to the server in data mode.
 
       .. parsed-literal::
          :class: highlight
 
-         **AT#XSEND=1,"HEAD / HTTP/1.1"**
-         #XSEND: 15
+         **AT#XSEND**
          OK
 
-         **AT#XSEND=0,"0D0A"**
-         #XSEND: 2
-         OK
+   #. Send the text below as a whole (for example, as a copy and paste from a text editor).
 
-         **AT#XSEND=1,"Host: www.google.com:443"**
-         #XSEND: 24
-         OK
+      .. parsed-literal::
+         :class: highlight
 
-         **AT#XSEND=0,"0D0A"**
-         #XSEND: 2
-         OK
+           HEAD / HTTP/1.1<CR><LF>
+           Host: www.google.com:443<CR><LF>
+           Connection: close<CR><LF>
+           <CR><LF>
 
-         **AT#XSEND=1,"Connection: close"**
-         #XSEND: 17
-         OK
+      Exit data mode.
 
-         **AT#XSEND=0,"0D0A0D0A"**
-         #XSEND: 4
+         +++
          OK
 
    #. Receive the response from the server.
@@ -219,13 +199,13 @@ TCP client
          HTTP/1.1 200 OK
          Content-Type: text/html; charset=ISO-8859-1
          *[...]*
-         #XRECV: 1,576
+         #XRECV: 576
          OK
 
          **AT#XRECV**
          *[...]*
          Connection: close
-         #XRECV: 1,147
+         #XRECV:147
          OK
 
    #. Close the socket.
@@ -268,27 +248,13 @@ TCP client
       .. parsed-literal::
          :class: highlight
 
-         **AT#XTCPSEND=1,"Test TCP"**
+         **AT#XTCPSEND="Test TCP"**
          #XTCPSEND: 8
          OK
 
          **AT#XTCPRECV=10**
          PONG: b'Te
          #XTCPRECV: 10
-         OK
-
-   #. Send hexadecimal data to the TCP server and retrieve the returned data.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XTCPSEND=0,"DEADBEEF"**
-         #XTCPSEND: 4
-         OK
-
-         **AT#XTCPRECV**
-         PONG: b'\\xde\\xad\\xbe\\xef'
-         #XTCPRECV: 25
          OK
 
    #. Disconnect and confirm the status of the connection.
@@ -308,7 +274,7 @@ TCP client
 #. Test a TCP client with TCP proxy service in data mode:
 
    a. Create a TCP/TLS client and connect to a server with data mode support.
-      Replace *example.com* with the host name or IPv4 address of a TCP server and *1234* with the corresponding port.
+      Replace ``*example.com*`` with the host name or IPv4 address of a TCP server and ``*1234*`` with the corresponding port.
       Then read information about the connection.
 
       .. parsed-literal::
@@ -363,27 +329,12 @@ UDP client
       .. parsed-literal::
          :class: highlight
 
-         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,1,"Test UDP"**
+         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,"Test UDP"**
          #XSENDTO: 8
          OK
          **AT#XRECVFROM**
          PONG: Test UDP
-         #XRECVFROM: 1,14
-         OK
-
-   #. Send hexadecimal data to a UDP server on a specified port.
-      Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
-      Then retrieve the returned data.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,0,"DEADBEEF"**
-         #XSENDTO: 4
-         OK
-         **AT#XRECVFROM**
-         504F4E473A20DEADBEEF
-         #XRECVFROM: 0,20
+         #XRECVFROM: 14
          OK
 
    #. Close the socket.
@@ -416,13 +367,13 @@ UDP client
       .. parsed-literal::
          :class: highlight
 
-         **AT#XSEND=1,"Test UDP"**
+         **AT#XSEND="Test UDP"**
          #XSEND: 8
          OK
 
          **AT#XRECV**
          PONG: Test UDP
-         #XRECV: 1,14
+         #XRECV: 14
          OK
 
    #. Close the socket.
@@ -460,22 +411,11 @@ UDP client
       .. parsed-literal::
          :class: highlight
 
-         **AT#XUDPSEND=1,"Test UDP"**
+         **AT#XUDPSEND="Test UDP"**
          #XUDPSEND: 8
          OK
-         #XUDPDATA: 1,14
+         #XUDPDATA: 14
          PONG: Test UDP
-
-   #. Send hexadecimal data to the UDP server and check the returned data.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XUDPSEND=0,"DEADBEEF"**
-         #XUDPSEND: 4
-         OK
-         #XUDPDATA: 0,20
-         504F4E473A20DEADBEEF
 
    #. Disconnect from the server.
 
@@ -563,13 +503,13 @@ You must register the corresponding credentials on the server side.
       .. parsed-literal::
          :class: highlight
 
-         **AT#XSEND=1,"Test TLS client"**
+         **AT#XSEND="Test TLS client"**
          #XSEND: 15
          OK
 
          **AT#XRECV**
          PONG: b'Test TLS client'
-         #XRECV: 1,24
+         #XRECV: 24
          OK
 
    #. Close the socket.
@@ -603,10 +543,10 @@ You must register the corresponding credentials on the server side.
       .. parsed-literal::
          :class: highlight
 
-         **AT#XTCPSEND=1,"Test TLS client"**
+         **AT#XTCPSEND="Test TLS client"**
          #XTCPSEND: 15
          OK
-         #XTCPDATA: 1,24
+         #XTCPDATA: 24
 
          **AT#XTCPRECV**
          PONG: b'Test TLS client'
@@ -673,13 +613,13 @@ You must register the corresponding credentials on the server side.
 	  .. parsed-literal::
 	     :class: highlight
 
-	     **AT#XSEND=1,"Test DTLS client"**
+	     **AT#XSEND="Test DTLS client"**
 	     #XSEND: 16
 	     OK
 
 	     **AT#XRECV**
 	     PONG: b'Test DTLS client'
-	     #XRECV: 1,25
+	     #XRECV: 25
 	     OK
 
        #. Close the socket.
@@ -795,19 +735,19 @@ To act as a TCP server, |global_private_address|
 
          **AT#XRECV**
          Hello, TCP#1!Hello, TCP#2!
-         #XRECV: 1,26
+         #XRECV: 26
          OK
 
-         **AT#XSEND=1,"TCP1/2 received"**
+         **AT#XSEND="TCP1/2 received"**
          #XSEND: 15
          OK
 
          **AT#XRECV**
          Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!
-         #XRECV: 1,39
+         #XRECV: 39
          OK
 
-         **AT#XSEND=1,"TCP3/4/5 received"**
+         **AT#XSEND="TCP3/4/5 received"**
          #XSEND: 17
          OK
 
@@ -872,8 +812,8 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          #XTCPSVR: *IP address* connected
-         #XTCPDATA: 1,13
-         #XTCPDATA: 1,13
+         #XTCPDATA: 13
+         #XTCPDATA: 13
 
          **AT#XTCPSVR?**
          #XTCPSVR: 1,2,0
@@ -889,12 +829,12 @@ To act as a TCP server, |global_private_address|
          #XTCPRECV: 26
          OK
 
-         **AT#XTCPSEND=1,"TCP1/2 received"**
+         **AT#XTCPSEND="TCP1/2 received"**
          #XTCPSEND: 15
          OK
-         #XTCPDATA: 1,13
-         #XTCPDATA: 1,13
-         #XTCPDATA: 1,13
+         #XTCPDATA: 13
+         #XTCPDATA: 13
+         #XTCPDATA: 13
 
          **AT#XTCPSVR?**
          #XTCPSVR: 1,2,0
@@ -1066,34 +1006,34 @@ To act as a UDP server, |global_private_address|
 
          **AT#XRECVFROM**
          Hello, UDP#1!
-         #XRECVFROM: 1,13
+         #XRECVFROM: 13
          OK
 
          **AT#XRECVFROM**
          Hello, UDP#2!
-         #XRECVFROM: 1,13
+         #XRECVFROM: 13
          OK
 
-         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,1,"UDP1/2 received"**
+         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,"UDP1/2 received"**
          #XSENDTO: 15
          OK
 
          **AT#XRECVFROM**
          Hello, UDP#3!
-         #XRECVFROM: 1,13
+         #XRECVFROM: 13
          OK
 
          **AT#XRECVFROM**
          Hello, UDP#4!
-         #XRECVFROM: 1,13
+         #XRECVFROM: 13
          OK
 
          **AT#XRECVFROM**
          Hello, UDP#5!
-         #XRECVFROM: 1,13
+         #XRECVFROM: 13
          OK
 
-         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,1,"UDP3/4/5 received"**
+         **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,"UDP3/4/5 received"**
          #XSENDTO: 17
          OK
 
@@ -1154,23 +1094,23 @@ To act as a UDP server, |global_private_address|
       .. parsed-literal::
          :class: highlight
 
-         #XUDPDATA: 1,13
+         #XUDPDATA: 13
          Hello, UDP#1!
-         #XUDPDATA: 1,13
+         #XUDPDATA: 13
          Hello, UDP#2!
 
-         **AT#XUDPSEND=1,"UDP1/2 received"**
+         **AT#XUDPSEND="UDP1/2 received"**
          #XUDPSEND: 15
          OK
 
-         #XUDPDATA: 1,13
+         #XUDPDATA: 13
          Hello, UDP#3!
-         #XUDPDATA: 1,13
+         #XUDPDATA: 13
          Hello, UDP#4!
-         #XUDPDATA: 1,13
+         #XUDPDATA: 13
          Hello, UDP#5!
 
-         **AT#XUDPSEND=1,"UDP3/4/5 received"**
+         **AT#XUDPSEND="UDP3/4/5 received"**
          #XUDPSEND: 17
          OK
 

@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <modem/sms.h>
+#include "slm_at_host.h"
 #include "slm_util.h"
 
 LOG_MODULE_REGISTER(slm_sms, CONFIG_SLM_LOG_LEVEL);
@@ -22,9 +23,6 @@ enum slm_sms_operation {
 };
 
 static int sms_handle;
-
-/* global functions defined in different files */
-void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;

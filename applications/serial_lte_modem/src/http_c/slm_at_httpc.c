@@ -61,11 +61,6 @@ static struct slm_httpc_ctx {
 	enum httpc_state state;		/* HTTPC state */
 } httpc;
 
-/* global functions defined in different resources */
-void rsp_send(const uint8_t *str, size_t len);
-int enter_datamode(slm_datamode_handler_t handler);
-bool exit_datamode(void);
-
 /* global variable defined in different resources */
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];

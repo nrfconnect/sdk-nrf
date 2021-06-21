@@ -72,7 +72,6 @@ extern struct uart_config slm_uart;
 void enter_idle(bool full_idle);
 void enter_sleep(void);
 int set_uart_baudrate(uint32_t baudrate);
-void rsp_send(const uint8_t *str, size_t len);
 int poweroff_uart(void);
 bool verify_datamode_control(uint16_t time_limit, uint16_t *time_limit_min);
 

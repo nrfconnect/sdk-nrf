@@ -190,16 +190,6 @@ Check and configure the following configuration options for the sample:
 
    This option specifies the poll timeout for the TCP connection, in seconds.
 
-.. option:: CONFIG_SLM_DATAMODE_TERMINATOR - Pattern string to terminate data mode
-
-   This option specifies a pattern string to terminate data mode.
-   The default pattern string is "+++".
-
-.. option:: CONFIG_SLM_DATAMODE_SILENCE - Silence time to exit data mode
-
-   This option specifies the time (in seconds) of UART silence before and after the pattern string that is used to exit data mode.
-   The default value is 1 second.
-
 .. option:: CONFIG_SLM_SMS - SMS support in SLM
 
    This option enables additional AT commands for using SMS service.

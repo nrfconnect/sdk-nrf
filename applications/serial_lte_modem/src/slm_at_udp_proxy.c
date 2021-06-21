@@ -45,11 +45,6 @@ static int udp_sock;
 static bool udp_server_role;
 static bool udp_datamode;
 
-/* global functions defined in different files */
-void rsp_send(const uint8_t *str, size_t len);
-int enter_datamode(slm_datamode_handler_t handler);
-bool exit_datamode(void);
-
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
@@ -371,21 +366,8 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 		}
 		if (udp_datamode) {
 			rsp_send(rx_data, ret);
-		} else if (slm_util_hex_check(rx_data, ret)) {
-			uint8_t data_hex[ret * 2];
-
-			ret = slm_util_htoa(rx_data, ret, data_hex, ret * 2);
-			if (ret > 0) {
-				sprintf(rsp_buf, "\r\n#XUDPDATA: %d,%d\r\n", DATATYPE_HEXADECIMAL,
-					ret);
-				rsp_send(rsp_buf, strlen(rsp_buf));
-				rsp_send(data_hex, ret);
-				rsp_send("\r\n", 2);
-			} else {
-				LOG_WRN("hex convert error: %d", ret);
-			}
 		} else {
-			sprintf(rsp_buf, "\r\n#XUDPDATA: %d,%d\r\n", DATATYPE_PLAINTEXT, ret);
+			sprintf(rsp_buf, "\r\n#XUDPDATA: %d\r\n", ret);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			rsp_send(rx_data, ret);
 			rsp_send("\r\n", 2);
@@ -535,14 +517,13 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 }
 
 /**@brief handle AT#XUDPSEND commands
- *  AT#XUDPSEND=<datatype>,<data>
+ *  AT#XUDPSEND=<data>
  *  AT#XUDPSEND? READ command not supported
  *  AT#XUDPSEND=? TEST command not supported
  */
 int handle_at_udp_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	uint16_t datatype;
 	char data[NET_IPV4_MTU];
 	int size = NET_IPV4_MTU;
 
@@ -552,24 +533,11 @@ int handle_at_udp_send(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &datatype);
+		err = util_string_get(&at_param_list, 1, data, &size);
 		if (err) {
 			return err;
 		}
-		err = util_string_get(&at_param_list, 2, data, &size);
-		if (err) {
-			return err;
-		}
-		if (datatype == DATATYPE_HEXADECIMAL) {
-			uint8_t data_hex[size / 2];
-
-			err = slm_util_atoh(data, size, data_hex, size / 2);
-			if (err > 0) {
-				err = do_udp_send(data_hex, err);
-			}
-		} else {
-			err = do_udp_send(data, size);
-		}
+		err = do_udp_send(data, size);
 		break;
 
 	default:
