@@ -1,14 +1,7 @@
 /* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */
 
 &uart0 {
-	status = "okay";
 	/delete-property/ rx-pin;
-
-	spm_uart: nrf-spm-uart {
-		compatible = "nordic,nrf-spm-uart";
-		status = "okay";
-		label = "SPM_UART";
-	};
 };
 
 &uart1 {
