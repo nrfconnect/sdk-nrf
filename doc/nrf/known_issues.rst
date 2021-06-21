@@ -498,6 +498,17 @@ NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth LE 
 
   **Workaround:** Connect the nRF Desktop peripheral through USB or using the nRF Desktop dongle.
 
+Pelion
+======
+
+.. rst-class:: v1-6-0
+
+NCSDK-10196: DFU fails for some configurations with the quick session resume feature enabled
+  Enabling :option:`CONFIG_PELION_QUICK_SESSION_RESUME` together with the OpenThread network backend leads to the quick session resume failure during the DFU packet exchange.
+  This is valid for the :ref:`nRF52840 DK <ug_nrf52>` and the :ref:`nRF5340 DK <ug_nrf5340>`.
+
+  **Workaround:** Use the quick session resume feature only for configurations with the cellular network backend.
+
 Subsystems
 **********
 
