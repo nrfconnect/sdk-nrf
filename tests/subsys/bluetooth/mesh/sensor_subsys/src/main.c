@@ -10,9 +10,8 @@
 #include <ztest.h>
 #include <bluetooth/mesh/properties.h>
 #include <bluetooth/mesh/sensor_types.h>
+#include <model_utils.h>
 #include <sensor.h> // private header from the source folder
-
-#include "model_utils.h"
 
 BUILD_ASSERT(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__,
 	     "This test is only supported on little endian platforms");
@@ -22,7 +21,6 @@ BUILD_ASSERT(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__,
 struct __packed uint24_t  { uint32_t v:24; };
 
 /****************** types section **********************************/
-
 
 /****************** mock section **********************************/
 /****************** mock section **********************************/
@@ -37,7 +35,6 @@ static int64_t int_pow(int a, int b)
 	for (int i = 0; i < b; i++) {
 		res *= a;
 	}
-
 	return res;
 }
 
@@ -51,7 +48,6 @@ static int64_t raw_scalar_value_get(int64_t r, int m, int d, int b)
 
 	return ROUNDED_DIV(r, div) * mul;
 }
-
 
 static void sensor_type_sanitize(const struct bt_mesh_sensor_type *sensor_type)
 {
@@ -221,6 +217,207 @@ static void time_second16_check(const struct bt_mesh_sensor_type *sensor_type)
 
 		encoding_checking_proceed(sensor_type, &in_value, &expected, 2);
 		decoding_checking_proceed(sensor_type, &expected, 2, &in_value);
+	}
+}
+
+static void humidity_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	uint16_t test_vector[] = {0, 1000, 5000, 10000, UINT16_MAX};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		if (test_vector[i] == UINT16_MAX) {
+			in_value.val1 = UINT16_MAX;
+			in_value.val2 = 0;
+		} else {
+			in_value.val1 = test_vector[i] / 100;
+			in_value.val2 = test_vector[i] % 100 * 10000;
+		}
+
+		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 2);
+		decoding_checking_proceed(sensor_type, &test_vector[i], 2, &in_value);
+	}
+
+	/* Test invalid range. */
+	uint16_t invalid_test_vector = 10001;
+
+	in_value.val1 = invalid_test_vector / 100;
+	in_value.val2 = invalid_test_vector % 100 * 10000;
+	invalid_encoding_checking_proceed(sensor_type, &in_value);
+}
+
+static void temp8_signed_celsius_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	int8_t test_vector[] = {-128, -50, 0, 50, 127};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i];
+
+		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 1);
+		decoding_checking_proceed(sensor_type, &test_vector[i], 1, &in_value);
+	}
+}
+
+static void plane_angle_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	uint16_t test_vector[] = {0, 1000, 5000, 10000, 35999};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i] / 100;
+		in_value.val2 = test_vector[i] % 100 * 10000;
+
+		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 2);
+		decoding_checking_proceed(sensor_type, &test_vector[i], 2, &in_value);
+	}
+
+	/* Test invalid range. */
+	uint16_t invalid_test_vector = 36000;
+
+	in_value.val1 = invalid_test_vector / 100;
+	in_value.val2 = invalid_test_vector % 100 * 10000;
+	invalid_encoding_checking_proceed(sensor_type, &in_value);
+}
+
+static void wind_speed_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	uint16_t test_vector[] = {0, 1000, 5432, 12345, UINT16_MAX};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i] / 100;
+		in_value.val2 = test_vector[i] % 100 * 10000;
+
+		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 2);
+		decoding_checking_proceed(sensor_type, &test_vector[i], 2, &in_value);
+	}
+}
+
+static void pressure_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	uint32_t test_vector[] = {0, UINT32_MAX / 2, UINT32_MAX};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i] / 10;
+		in_value.val2 = test_vector[i] % 10 * 100000;
+
+		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 4);
+		decoding_checking_proceed(sensor_type, &test_vector[i], 4, &in_value);
+	}
+}
+
+static void gust_factor_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	uint8_t test_vector[] = {0, 25, 50, 75, 100, UINT8_MAX};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i] / 10;
+		in_value.val2 = test_vector[i] % 10 * 100000;
+
+		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 1);
+		decoding_checking_proceed(sensor_type, &test_vector[i], 1, &in_value);
+	}
+}
+
+static void concentration_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	uint32_t test_vector[] = {0, 1000,
+		UINT16_MAX - 2, UINT16_MAX - 1, UINT16_MAX, UINT16_MAX + 1};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i];
+
+		uint16_t expected = test_vector[i] > 65533 ?
+			test_vector[i] == UINT16_MAX ?
+				UINT16_MAX : UINT16_MAX - 1 : test_vector[i];
+
+		encoding_checking_proceed(sensor_type, &in_value, &expected, 2);
+		in_value.val1 = expected;
+		decoding_checking_proceed(sensor_type, &expected, 2, &in_value);
+	}
+}
+
+static void noise_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	uint16_t test_vector[] = {0, 50,
+		UINT8_MAX - 2, UINT8_MAX - 1, UINT8_MAX, UINT8_MAX + 1};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i];
+
+		uint8_t expected = test_vector[i] > 253 ?
+			test_vector[i] == UINT8_MAX ?
+				UINT8_MAX : UINT8_MAX - 1 : test_vector[i];
+
+		encoding_checking_proceed(sensor_type, &in_value, &expected, 1);
+		in_value.val1 = expected;
+		decoding_checking_proceed(sensor_type, &expected, 1, &in_value);
+	}
+}
+
+static void pollen_concentration_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	uint32_t test_vector[] = {0, 0xFF, 0xFFFF, 0xFFFFFF};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i];
+
+		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 3);
+		decoding_checking_proceed(sensor_type, &test_vector[i], 3, &in_value);
+	}
+}
+
+static void rainfall_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	uint16_t test_vector[] = {0, 1000, 15000, 30000, UINT16_MAX};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i] / 1000;
+		in_value.val2 = test_vector[i] % 1000 * 1000;
+
+		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 2);
+		decoding_checking_proceed(sensor_type, &test_vector[i], 2, &in_value);
+	}
+}
+
+static void uv_index_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	uint8_t test_vector[] = {0, 25, 50, 200, UINT8_MAX};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i];
+
+		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 1);
+		decoding_checking_proceed(sensor_type, &test_vector[i], 1, &in_value);
+	}
+}
+
+static void flux_density_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value[sensor_type->channel_count];
+	int16_t test_vector[] = {INT16_MIN, -30000, -15000, 0, 15000, 30000, INT16_MAX};
+
+	memset(in_value, 0, sizeof(in_value));
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		int16_t expected[sensor_type->channel_count];
+
+		for (int j = 0; j < sensor_type->channel_count; j++) {
+			in_value[j].val1 = test_vector[i] / 10;
+			in_value[j].val2 = test_vector[i] % 10 * 100000;
+			expected[j] = test_vector[i];
+		}
+
+		encoding_checking_proceed(sensor_type, in_value, expected, sizeof(expected));
+		decoding_checking_proceed(sensor_type, expected, sizeof(expected), in_value);
 	}
 }
 
@@ -704,6 +901,8 @@ static void temp_check(const struct bt_mesh_sensor_type *sensor_type)
 	}
 }
 
+/* Occupancy sensors */
+
 static void test_motion_sensor(void)
 {
 	const struct bt_mesh_sensor_type *sensor_type;
@@ -756,6 +955,206 @@ static void test_time_since_presence_detected(void)
 	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TIME_SINCE_PRESENCE_DETECTED);
 	sensor_type_sanitize(sensor_type);
 	time_second16_check(sensor_type);
+}
+
+/* Environmental sensors */
+
+static void test_apparent_wind_direction(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_APPARENT_WIND_DIRECTION);
+	sensor_type_sanitize(sensor_type);
+	plane_angle_check(sensor_type);
+}
+
+static void test_apparent_wind_speed(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_APPARENT_WIND_SPEED);
+	sensor_type_sanitize(sensor_type);
+	wind_speed_check(sensor_type);
+}
+
+static void test_dew_point(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DEW_POINT);
+	sensor_type_sanitize(sensor_type);
+	temp8_signed_celsius_check(sensor_type);
+}
+
+static void test_gust_factor(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_GUST_FACTOR);
+	sensor_type_sanitize(sensor_type);
+	gust_factor_check(sensor_type);
+}
+
+static void test_heat_index(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_HEAT_INDEX);
+	sensor_type_sanitize(sensor_type);
+	temp8_signed_celsius_check(sensor_type);
+}
+
+static void test_present_amb_rel_humidity(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_REL_HUMIDITY);
+	sensor_type_sanitize(sensor_type);
+	humidity_check(sensor_type);
+}
+
+static void test_present_amb_co2_concentration(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_CO2_CONCENTRATION);
+	sensor_type_sanitize(sensor_type);
+	concentration_check(sensor_type);
+}
+
+static void test_present_amb_voc_concentration(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_VOC_CONCENTRATION);
+	sensor_type_sanitize(sensor_type);
+	concentration_check(sensor_type);
+}
+
+static void test_present_amb_noise(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_NOISE);
+	sensor_type_sanitize(sensor_type);
+	noise_check(sensor_type);
+}
+
+static void test_present_indoor_relative_humidity(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_INDOOR_RELATIVE_HUMIDITY);
+	sensor_type_sanitize(sensor_type);
+	humidity_check(sensor_type);
+}
+
+static void test_present_outdoor_relative_humidity(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_OUTDOOR_RELATIVE_HUMIDITY);
+	sensor_type_sanitize(sensor_type);
+	humidity_check(sensor_type);
+}
+
+static void test_magnetic_declination(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_MAGNETIC_DECLINATION);
+	sensor_type_sanitize(sensor_type);
+	plane_angle_check(sensor_type);
+}
+
+static void test_magnetic_flux_density_2d(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_2D);
+	sensor_type_sanitize(sensor_type);
+	flux_density_check(sensor_type);
+}
+
+static void test_magnetic_flux_density_3d(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_3D);
+	sensor_type_sanitize(sensor_type);
+	flux_density_check(sensor_type);
+}
+
+static void test_pollen_concentration(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_POLLEN_CONCENTRATION);
+	sensor_type_sanitize(sensor_type);
+	pollen_concentration_check(sensor_type);
+}
+
+static void test_air_pressure(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_AIR_PRESSURE);
+	sensor_type_sanitize(sensor_type);
+	pressure_check(sensor_type);
+}
+
+static void test_pressure(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESSURE);
+	sensor_type_sanitize(sensor_type);
+	pressure_check(sensor_type);
+}
+
+static void test_rainfall(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_RAINFALL);
+	sensor_type_sanitize(sensor_type);
+	rainfall_check(sensor_type);
+}
+
+static void test_true_wind_direction(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TRUE_WIND_DIRECTION);
+	sensor_type_sanitize(sensor_type);
+	plane_angle_check(sensor_type);
+}
+
+static void test_true_wind_speed(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TRUE_WIND_SPEED);
+	sensor_type_sanitize(sensor_type);
+	wind_speed_check(sensor_type);
+}
+
+static void test_uv_index(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_UV_INDEX);
+	sensor_type_sanitize(sensor_type);
+	uv_index_check(sensor_type);
+}
+
+static void test_wind_chill(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_WIND_CHILL);
+	sensor_type_sanitize(sensor_type);
+	temp8_signed_celsius_check(sensor_type);
 }
 
 /* Photometry sensors */
@@ -906,6 +1305,8 @@ static void test_luminous_flux_range(void)
 	luminous_flux_range_check(sensor_type);
 }
 
+/* Ambient temperature sensors */
+
 static void test_avg_amb_temp_in_period_of_day(void)
 {
 	const struct bt_mesh_sensor_type *sensor_type;
@@ -981,6 +1382,7 @@ static void test_precise_present_amb_temp(void)
 void test_main(void)
 {
 	ztest_test_suite(sensor_types_test,
+			/* Occupancy sensors */
 			ztest_unit_test(test_motion_sensor),
 			ztest_unit_test(test_motion_threshold),
 			ztest_unit_test(test_people_count),
@@ -1002,6 +1404,33 @@ void test_main(void)
 			ztest_unit_test(test_luminous_energy_since_turn_on),
 			ztest_unit_test(test_luminous_exposure),
 			ztest_unit_test(test_luminous_flux_range),
+
+			/* Environmental sensors */
+			ztest_unit_test(test_time_since_presence_detected),
+			ztest_unit_test(test_apparent_wind_direction),
+			ztest_unit_test(test_apparent_wind_speed),
+			ztest_unit_test(test_dew_point),
+			ztest_unit_test(test_gust_factor),
+			ztest_unit_test(test_heat_index),
+			ztest_unit_test(test_present_amb_rel_humidity),
+			ztest_unit_test(test_present_amb_co2_concentration),
+			ztest_unit_test(test_present_amb_voc_concentration),
+			ztest_unit_test(test_present_amb_noise),
+			ztest_unit_test(test_present_indoor_relative_humidity),
+			ztest_unit_test(test_present_outdoor_relative_humidity),
+			ztest_unit_test(test_magnetic_declination),
+			ztest_unit_test(test_magnetic_flux_density_2d),
+			ztest_unit_test(test_magnetic_flux_density_3d),
+			ztest_unit_test(test_pollen_concentration),
+			ztest_unit_test(test_air_pressure),
+			ztest_unit_test(test_pressure),
+			ztest_unit_test(test_rainfall),
+			ztest_unit_test(test_true_wind_direction),
+			ztest_unit_test(test_true_wind_speed),
+			ztest_unit_test(test_uv_index),
+			ztest_unit_test(test_wind_chill),
+
+			/* Ambient temperature sensors */
 			ztest_unit_test(test_avg_amb_temp_in_period_of_day),
 			ztest_unit_test(test_indoor_amb_temp_stat_values),
 			ztest_unit_test(test_outdoor_stat_values),

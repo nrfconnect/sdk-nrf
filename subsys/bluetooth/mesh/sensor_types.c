@@ -253,11 +253,12 @@ static int scalar_encode(const struct bt_mesh_sensor_format *format,
 			type_max = BIT64(8 * format->size - 1) - 1;
 		}
 
-		if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID) &&
-		    val->val1 == type_max - 1) {
+		if ((repr->flags & HAS_HIGHER_THAN) &&
+			!((repr->flags & HAS_UNDEFINED) && (raw == type_max))) {
 			raw = type_max - 1;
-		} else if (repr->flags & HAS_UNDEFINED &&
-			   val->val1 == type_max) {
+		} else if ((repr->flags & HAS_INVALID) && val->val1 == type_max - 1) {
+			raw = type_max - 1;
+		} else if ((repr->flags & HAS_UNDEFINED) && val->val1 == type_max) {
 			raw = type_max;
 		} else if (repr->flags & HAS_UNDEFINED_MIN) {
 			raw = type_max + 1;
@@ -508,23 +509,27 @@ FORMAT(temp)		      = SCALAR_FORMAT(2,
 					      (SIGNED | HAS_UNDEFINED_MIN),
 					      celsius,
 					      SCALAR(1e-2, 0));
-FORMAT(co2_concentration)     = SCALAR_FORMAT(2,
-					      (HAS_HIGHER_THAN | HAS_UNDEFINED),
-					      ppm,
-					      SCALAR(1, 0));
-FORMAT(noise)		      = SCALAR_FORMAT(1,
+FORMAT(co2_concentration)     = SCALAR_FORMAT_MAX(2,
 					      (UNSIGNED |
+					      HAS_HIGHER_THAN |
+					      HAS_UNDEFINED),
+					      ppm,
+					      SCALAR(1, 0),
+					      65533);
+FORMAT(noise)			     = SCALAR_FORMAT_MAX(1,
+					       (UNSIGNED |
 					       HAS_HIGHER_THAN |
 					       HAS_UNDEFINED),
-					      db,
-					      SCALAR(1, 0));
+					       db,
+					       SCALAR(1, 0),
+					       253);
 FORMAT(voc_concentration)     = SCALAR_FORMAT_MAX(2,
-						  (UNSIGNED |
-						   HAS_HIGHER_THAN |
-						   HAS_UNDEFINED),
-						  ppb,
-						  SCALAR(1, 0),
-						  65533);
+					       (UNSIGNED |
+					       HAS_HIGHER_THAN |
+					       HAS_UNDEFINED),
+					       ppb,
+					       SCALAR(1, 0),
+					       65533);
 FORMAT(wind_speed)            = SCALAR_FORMAT(2,
 					      UNSIGNED,
 					      mps,

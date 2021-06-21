@@ -2,3 +2,5 @@ tests:
   bluetooth.mesh.sensor_subsys:
     platform_allow: native_posix
     tags: bluetooth mesh models sensor
+    integration_platforms:
+        - native_posix
