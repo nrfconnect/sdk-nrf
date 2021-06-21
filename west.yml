@@ -56,7 +56,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: a62ea8fa297a12c2d17332218ff45c1e54c55a8e
+      revision: v2.6.0-ncs1-rc3
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -98,16 +98,16 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 02afea39ebadbaa230887163507626cae7fc98ea
+      revision: v1.7.0-ncs1-rc3
       path: bootloader/mcuboot
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 76469a054694708a5f79b5e0eefa52a7b3a8ff9a
+      revision: v1.6.0-rc3
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: cb1e6c2f070e68c950cd861d1bbd76b296be78b9
+      revision: v1.3.99-ncs1-rc3
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -115,11 +115,11 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: thread-reference-20200818-ncs1-rc1
+      revision: thread-reference-20200818-ncs1-rc3
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: f2143619b5c097f36e608be4a1e60144857e6efe
+      revision: v1.6.0-rc3
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -130,7 +130,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: f78a933ac2f44cb754d344287d1b393b4a958cb6
+      revision: v1.6.0-rc3
       groups:
       - nrf-802154
     - name: cjson
@@ -169,12 +169,12 @@ manifest:
       path: modules/lib/cddl-gen
     - name: homekit
       repo-path: sdk-homekit
-      revision: 714dcca08a610e664861f0cf41c1ff0584cd6ac4
+      revision: v1.6.0-rc3
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 1e50cdaedbcf6d90680fbca7c9d9c6ad6fc5450b
+      revision: v1.6.0-rc3
       groups:
       - find-my
     - name: memfault-firmware-sdk
