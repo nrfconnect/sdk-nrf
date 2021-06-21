@@ -19,6 +19,7 @@ target_sources(app PRIVATE src/shell.c)
 target_sources(app PRIVATE src/at/at_shell.c)
 
 add_subdirectory(src/utils)
+add_subdirectory(src/uart)
 add_subdirectory_ifdef(CONFIG_MOSH_SOCK src/sock)
 add_subdirectory_ifdef(CONFIG_MOSH_LINK src/link)
 add_subdirectory_ifdef(CONFIG_MOSH_PING src/ping)
