@@ -588,20 +588,13 @@ Syntax
 
 ::
 
-   #XSEND=<datatype>,<data>
-
-* The ``<datatype>`` parameter can accept one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
+   #XSEND[=<data>]
 
 * The ``<data>`` parameter is a string.
   It contains the data being sent.
   The maximum size for ``NET_IPV4_MTU`` is 576 bytes.
   It should have no ``NULL`` character in the middle.
+  If not specified, SLM enters ``slm_data_mode``.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -659,17 +652,10 @@ Response syntax
 ::
 
    <data>
-   #XRECV: <datatype>, <size>
+   #XRECV: <size>
 
 * The ``<data>`` value is a string.
   It contains the data being received.
-* The ``<datatype>`` parameter can accept one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
 
 * The ``<size>`` value is an integer.
   It represents the actual number of bytes received.
@@ -683,7 +669,7 @@ Examples
 
    AT#XRECV
    Test OK
-   #XRECV: 1,7
+   #XRECV: 7
    OK
 
 Read command
@@ -711,7 +697,7 @@ Syntax
 
 ::
 
-   #XSENDTO=<url>,<port>,<datatype>,<data>
+   #XSENDTO=<url>,<port>[,<data>]
 
 * The ``<url>`` parameter is a string.
   It indicates the hostname or the IP address to connect to.
@@ -719,18 +705,11 @@ Syntax
   When the parameter is an IP address, it supports IPv4 only, not IPv6.
 * The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the port of the TCP service.
-* The ``<datatype>`` parameter can accept one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
-
 * The ``<data>`` parameter is a string.
   It contains the data being sent.
   The maximum size for ``NET_IPV4_MTU`` is 576 bytes.
   It must not have any``NULL`` character in the middle.
+  If not specified, SLM enters ``slm_data_mode``.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -788,19 +767,11 @@ Response syntax
 ::
 
    <data>
-   #XRECVFROM: <datatype>, <size>
+   #XRECVFROM: <size>
 
 
 * The ``<data>`` value is a string.
   It contains the data being received.
-* The ``<datatype>`` parameter can accept one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
-
 * The ``<size>`` value is an integer.
   It represents the actual number of bytes received.
 
@@ -827,12 +798,12 @@ The test command is not supported.
 Resolve hostname #XGETADDRINFO
 ==============================
 
-The ``#XGETADDRINFO`` command allows you to resolve hostnames to IPv4 and/or IPv6 addresses.
+The ``#XGETADDRINFO`` command allows you to resolve hostnames to IPv4 addresses.
 
 Set command
 -----------
 
-The set command allows you to resolve hostnames to IPv4 and/or IPv6 addresses.
+The set command allows you to resolve hostnames to IPv4 addresses.
 
 Syntax
 ~~~~~~
@@ -842,6 +813,7 @@ Syntax
    #XGETADDRINFO=<hostname>
 
 The ``<hostname>`` parameter is a string.
+It cannot be an IPv4 address string.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -851,7 +823,7 @@ Response syntax
    #XGETADDRINFO: "<ip_addr>"
 
 * The ``<ip_addr>`` value is a string.
-  It indicates the IPv4 and/or IPv6 address of the resolved hostname.
+  It indicates the IPv4 address of the resolved hostname.
 
 Examples
 ~~~~~~~~
@@ -1054,15 +1026,7 @@ It represents the error value according to the standard POSIX *errorno*.
 
 ::
 
-   #XTCPDATA: <datatype>,<size>
-
-* The ``<datatype>`` value can assume one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
+   #XTCPDATA: <size>
 
 * The ``<size>`` value is the length of RX data received by the SLM waiting to be fetched by the MCU.
 
@@ -1075,9 +1039,9 @@ Examples
    #XTCPSVR: 2,"started"
    OK
    #XTCPSVR: "5.123.123.99","connected"
-   #XTCPDATA: 1,13
+   #XTCPDATA: 13
    Hello, TCP#1!
-   #XTCPDATA: 1,13
+   #XTCPDATA: 13
    Hello, TCP#2!
 
 Read command
@@ -1204,15 +1168,7 @@ The modem needs to be in the offline state.
 
 ::
 
-   #XTCPDATA: <datatype>,<size>
-
-* The ``<datatype>`` value can assume one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
+   #XTCPDATA: <size>
 
 * The ``<size>`` value is the length of RX data received by the SLM waiting to be fetched by the MCU.
 
@@ -1224,7 +1180,7 @@ Examples
    at#xtcpcli=1,"remote.ip",1234
    #XTCPCLI: 2,"connected"
    OK
-   #XTCPDATA: 1,31
+   #XTCPDATA: 31
    PONG: b'Test TCP by IP address'
 
    at#xtcpcli=0
@@ -1296,15 +1252,7 @@ Syntax
 
 ::
 
-   #XTCPSEND=<datatype>,<data>
-
-* The ``<datatype>`` parameter can accept one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
+   #XTCPSEND=<data>
 
 * The ``<data>`` parameter is a string.
   It contains the data being sent.
@@ -1436,17 +1384,8 @@ It is reported to the client as follows:
 
 ::
 
-   #XUDPDATA: <datatype>,<size>
+   #XUDPDATA: <size>
    <data>
-
-* The ``<datatype>`` parameter can accept one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
-
 
 Examples
 ~~~~~~~~
@@ -1456,9 +1395,9 @@ Examples
    at#xudpsvr=1,3442
    #XUDPSVR: 2,"started"
    OK
-   #XUDPDATA: 1,13
+   #XUDPDATA: 13
    Hello, UDP#1!
-   #XUDPDATA: 1,13
+   #XUDPDATA: 13
    Hello, UDP#2!
 
 Read command
@@ -1571,16 +1510,8 @@ It is reported to the client as follows:
 
 ::
 
-   #XUDPDATA: <datatype>,<size>
+   #XUDPDATA: <size>
    <data>
-
-* The ``<datatype>`` parameter can accept one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
 
 Examples
 ~~~~~~~~
@@ -1593,7 +1524,7 @@ Examples
    at#xudpsend=1,"Test UDP by hostname"
    #XUDPSEND: 20
    OK
-   #XUDPDATA: 1,26
+   #XUDPDATA: 26
    PONG: Test UDP by hostname
    at#xudpcli=0
    OK
@@ -1662,15 +1593,7 @@ Syntax
 
 ::
 
-   #XUDPSEND=<datatype>,<data>
-
-* The ``<datatype>`` parameter can accept one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``2`` - JSON
-  * ``3`` - HTML
-  * ``4`` - OMA TLV
+   #XUDPSEND=<data>
 
 * The ``<data>`` parameter is a string type.
   It contains arbitrary data.

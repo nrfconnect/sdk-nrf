@@ -47,6 +47,8 @@ enum slm_socket_role {
 };
 
 static struct sockaddr_in remote;
+static char udp_url[TCPIP_MAX_URL];
+static uint16_t udp_port;
 
 static struct tcpip_client {
 	int sock; /* Socket descriptor. */
@@ -56,9 +58,6 @@ static struct tcpip_client {
 	int ip_proto; /* IP protocol */
 	bool connected; /* TCP connected flag */
 } client;
-
-/* global functions defined in different files */
-void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -106,13 +105,11 @@ static int parse_host_by_name(const char *name, uint16_t port, int socktype)
 	/* IPv4 Address. */
 	struct sockaddr_in *server4 = ((struct sockaddr_in *)&remote);
 
-	server4->sin_addr.s_addr =
-		((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
+	server4->sin_addr.s_addr = ((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
 	server4->sin_family = AF_INET;
 	server4->sin_port = htons(port);
 
-	inet_ntop(AF_INET, &server4->sin_addr.s_addr, ipv4_addr,
-		  sizeof(ipv4_addr));
+	inet_ntop(AF_INET, &server4->sin_addr.s_addr, ipv4_addr, sizeof(ipv4_addr));
 	LOG_DBG("IPv4 Address found %s\n", log_strdup(ipv4_addr));
 
 	/* Free the address. */
@@ -128,22 +125,18 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 	client.sec_tag = sec_tag;
 	if (type == SOCK_STREAM) {
 		if (sec_tag == INVALID_SEC_TAG) {
-			client.sock = socket(AF_INET, SOCK_STREAM,
-					IPPROTO_TCP);
+			client.sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 			client.ip_proto = IPPROTO_TCP;
 		} else {
-			client.sock = socket(AF_INET, SOCK_STREAM,
-					IPPROTO_TLS_1_2);
+			client.sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
 			client.ip_proto = IPPROTO_TLS_1_2;
 		}
 	} else if (type == SOCK_DGRAM) {
 		if (sec_tag == INVALID_SEC_TAG) {
-			client.sock = socket(AF_INET, SOCK_DGRAM,
-					IPPROTO_UDP);
+			client.sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 			client.ip_proto = IPPROTO_UDP;
 		} else {
-			client.sock = socket(AF_INET, SOCK_DGRAM,
-					IPPROTO_DTLS_1_2);
+			client.sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_DTLS_1_2);
 			client.ip_proto = IPPROTO_DTLS_1_2;
 		}
 	} else {
@@ -174,8 +167,7 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 			verify = TLS_PEER_VERIFY_REQUIRED;
 		}
 
-		ret = setsockopt(client.sock, SOL_TLS, TLS_PEER_VERIFY,
-				 &verify, sizeof(verify));
+		ret = setsockopt(client.sock, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 		if (ret) {
 			printk("Failed to setup peer verification, err %d\n",
 			       errno);
@@ -190,8 +182,8 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 		}
 #endif
 
-		ret = setsockopt(client.sock, SOL_TLS, TLS_SEC_TAG_LIST,
-				sec_tag_list, sizeof(sec_tag_t));
+		ret = setsockopt(client.sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
+				 sizeof(sec_tag_t));
 		if (ret) {
 			LOG_ERR("set (d)tls tag list failed: %d", -errno);
 			ret = -errno;
@@ -200,8 +192,7 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 	}
 
 	client.role = role;
-	sprintf(rsp_buf, "\r\n#XSOCKET: %d,%d,%d,%d\r\n", client.sock,
-		type, role, client.ip_proto);
+	sprintf(rsp_buf, "\r\n#XSOCKET: %d,%d,%d,%d\r\n", client.sock, type, role, client.ip_proto);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	LOG_DBG("Socket opened");
@@ -477,14 +468,12 @@ static int do_accept(void)
 		do_socket_close(-errno);
 		return -errno;
 	}
-	if (inet_ntop(AF_INET, &remote.sin_addr, peer_addr, INET_ADDRSTRLEN)
-		== NULL) {
+	if (inet_ntop(AF_INET, &remote.sin_addr, peer_addr, INET_ADDRSTRLEN) == NULL) {
 		LOG_WRN("Parse peer IP address failed: %d", -errno);
 		close(fd);
 		return -EINVAL;
 	}
-	sprintf(rsp_buf, "\r\n#XACCEPT: \"connected with %s\"\r\n",
-		peer_addr);
+	sprintf(rsp_buf, "\r\n#XACCEPT: \"connected with %s\"\r\n", peer_addr);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	client.sock_peer = fd;
 	client.connected = true;
@@ -501,7 +490,7 @@ static int do_send(const uint8_t *data, int datalen)
 	int ret = 0;
 	int sock = client.sock;
 
-	/* For TCP/TLS Server, send to imcoming socket */
+	/* For TCP/TLS Server, send to incoming socket */
 	if (client.role == AT_SOCKET_ROLE_SERVER) {
 		if (client.sock_peer != INVALID_SOCKET) {
 			sock = client.sock_peer;
@@ -536,6 +525,34 @@ static int do_send(const uint8_t *data, int datalen)
 	} else {
 		return ret;
 	}
+}
+
+static int do_send_datamode(const uint8_t *data, int datalen)
+{
+	uint32_t offset = 0;
+	int ret = 0;
+	int sock = client.sock;
+
+	/* For TCP/TLS Server, send to imcoming socket */
+	if (client.role == AT_SOCKET_ROLE_SERVER) {
+		if (client.sock_peer != INVALID_SOCKET) {
+			sock = client.sock_peer;
+		} else {
+			LOG_ERR("No remote connection");
+			return -EINVAL;
+		}
+	}
+
+	while (offset < datalen) {
+		ret = send(sock, data + offset, datalen - offset, 0);
+		if (ret < 0) {
+			LOG_ERR("send() failed: %d", -errno);
+			break;
+		}
+		offset += ret;
+	}
+
+	return offset;
 }
 
 static int do_recv(uint16_t length)
@@ -574,25 +591,10 @@ static int do_recv(uint16_t length)
 	if (ret == 0) {
 		LOG_WRN("recv() return 0");
 	}
-	if (slm_util_hex_check(rx_data, ret)) {
-		char data_hex[ret * 2];
-		int size = ret * 2;
-
-		ret = slm_util_htoa(rx_data, ret, data_hex, size);
-		if (ret > 0) {
-			rsp_send(data_hex, ret);
-			sprintf(rsp_buf, "\r\n#XRECV: %d,%d\r\n", DATATYPE_HEXADECIMAL, ret);
-			rsp_send(rsp_buf, strlen(rsp_buf));
-			ret = 0;
-		} else {
-			LOG_ERR("hex convert error: %d", ret);
-		}
-	} else {
-		rsp_send(rx_data, ret);
-		sprintf(rsp_buf, "\r\n#XRECV: %d,%d\r\n", DATATYPE_PLAINTEXT, ret);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-		ret = 0;
-	}
+	rsp_send(rx_data, ret);
+	sprintf(rsp_buf, "\r\n#XRECV: %d\r\n", ret);
+	rsp_send(rsp_buf, strlen(rsp_buf));
+	ret = 0;
 
 	LOG_DBG("TCP received");
 	return ret;
@@ -616,22 +618,19 @@ static int do_udp_init(const char *url, uint16_t port)
 	return 0;
 }
 
-static int do_sendto(const char *url, uint16_t port, const uint8_t *data,
-		int datalen)
+static int do_sendto(const uint8_t *data, int datalen)
 {
 	uint32_t offset = 0;
 	int ret;
 
-	ret = do_udp_init(url, port);
+	ret = do_udp_init(udp_url, udp_port);
 	if (ret < 0) {
 		return ret;
 	}
 
 	while (offset < datalen) {
-		ret = sendto(client.sock, data + offset,
-			datalen - offset, 0,
-			(struct sockaddr *)&remote,
-			sizeof(struct sockaddr_in));
+		ret = sendto(client.sock, data + offset, datalen - offset, 0,
+			(struct sockaddr *)&remote, sizeof(struct sockaddr_in));
 		if (ret <= 0) {
 			LOG_ERR("sendto() failed: %d", -errno);
 			if (errno != EAGAIN && errno != ETIMEDOUT) {
@@ -657,6 +656,30 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data,
 	}
 }
 
+static int do_sendto_datamode(const uint8_t *data, int datalen)
+{
+	uint32_t offset = 0;
+	int ret;
+
+	ret = do_udp_init(udp_url, udp_port);
+	if (ret < 0) {
+		return ret;
+	}
+
+	while (offset < datalen) {
+		ret = sendto(client.sock, data + offset, datalen - offset, 0,
+			(struct sockaddr *)&remote, sizeof(struct sockaddr_in));
+		if (ret <= 0) {
+			LOG_ERR("sendto() failed: %d", -errno);
+			ret = -errno;
+			break;
+		}
+		offset += ret;
+	}
+
+	return offset;
+}
+
 static int do_recvfrom(uint16_t length)
 {
 	int ret;
@@ -680,27 +703,30 @@ static int do_recvfrom(uint16_t length)
 	 * datagrams. When such a datagram is received, the return
 	 * value is 0. Treat as normal case
 	 */
-	if (slm_util_hex_check(rx_data, ret)) {
-		char data_hex[ret * 2];
-		int size = ret * 2;
-
-		ret = slm_util_htoa(rx_data, ret, data_hex, size);
-		if (ret > 0) {
-			rsp_send(data_hex, ret);
-			sprintf(rsp_buf, "\r\n#XRECVFROM: %d,%d\r\n", DATATYPE_HEXADECIMAL, ret);
-			rsp_send(rsp_buf, strlen(rsp_buf));
-			ret = 0;
-		} else {
-			LOG_ERR("hex convert error: %d", ret);
-		}
-	} else {
-		rsp_send(rx_data, ret);
-		sprintf(rsp_buf, "\r\n#XRECVFROM: %d,%d\r\n", DATATYPE_PLAINTEXT, ret);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-		ret = 0;
-	}
+	rsp_send(rx_data, ret);
+	sprintf(rsp_buf, "\r\n#XRECVFROM: %d\r\n", ret);
+	rsp_send(rsp_buf, strlen(rsp_buf));
+	ret = 0;
 
 	LOG_DBG("UDP received");
+	return ret;
+}
+
+static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len)
+{
+	int ret = 0;
+
+	if (op == DATAMODE_SEND) {
+		if (client.ip_proto == IPPROTO_TCP || client.ip_proto == IPPROTO_TLS_1_2) {
+			ret = do_send_datamode(data, len);
+		} else {
+			ret = do_sendto_datamode(data, len);
+		}
+		LOG_DBG("datamode send: %d", ret);
+	} else if (op == DATAMODE_EXIT) {
+		LOG_DBG("datamode exit");
+	}
+
 	return ret;
 }
 
@@ -1015,14 +1041,13 @@ int handle_at_accept(enum at_cmd_type cmd_type)
 }
 
 /**@brief handle AT#XSEND commands
- *  AT#XSEND=<datatype>,<data>
+ *  AT#XSEND[=<data>]
  *  AT#XSEND? READ command not supported
  *  AT#XSEND=? TEST command not supported
  */
 int handle_at_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	uint16_t datatype;
 	char data[NET_IPV4_MTU];
 	int size = NET_IPV4_MTU;
 
@@ -1033,23 +1058,14 @@ int handle_at_send(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &datatype);
-		if (err) {
-			return err;
-		}
-		err = util_string_get(&at_param_list, 2, data, &size);
-		if (err) {
-			return err;
-		}
-		if (datatype == DATATYPE_HEXADECIMAL) {
-			uint8_t data_hex[size / 2];
-
-			err = slm_util_atoh(data, size, data_hex, size / 2);
-			if (err > 0) {
-				err = do_send(data_hex, err);
+		if (at_params_valid_count_get(&at_param_list) > 1) {
+			err = util_string_get(&at_param_list, 1, data, &size);
+			if (err) {
+				return err;
 			}
-		} else {
 			err = do_send(data, size);
+		} else {
+			err = enter_datamode(socket_datamode_callback);
 		}
 		break;
 
@@ -1092,17 +1108,14 @@ int handle_at_recv(enum at_cmd_type cmd_type)
 }
 
 /**@brief handle AT#XSENDTO commands
- *  AT#XSENDTO=<url>,<port>,<datatype>,<data>
+ *  AT#XSENDTO=<url>,<port>[<data>]
  *  AT#XSENDTO? READ command not supported
  *  AT#XSENDTO=? TEST command not supported
  */
 int handle_at_sendto(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	char url[TCPIP_MAX_URL];
 	int size = TCPIP_MAX_URL;
-	uint16_t port;
-	uint16_t datatype;
 	char data[NET_IPV4_MTU];
 
 	if (client.sock < 0) {
@@ -1117,32 +1130,23 @@ int handle_at_sendto(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = util_string_get(&at_param_list, 1, url, &size);
+		err = util_string_get(&at_param_list, 1, udp_url, &size);
 		if (err) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 2, &port);
+		err = at_params_unsigned_short_get(&at_param_list, 2, &udp_port);
 		if (err) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 3, &datatype);
-		if (err) {
-			return err;
-		}
-		size = NET_IPV4_MTU;
-		err = util_string_get(&at_param_list, 4, data, &size);
-		if (err) {
-			return err;
-		}
-		if (datatype == DATATYPE_HEXADECIMAL) {
-			uint8_t data_hex[size / 2];
-
-			err = slm_util_atoh(data, size, data_hex, size / 2);
-			if (err > 0) {
-				err = do_sendto(url, port, data_hex, err);
+		if (at_params_valid_count_get(&at_param_list) > 3) {
+			size = NET_IPV4_MTU;
+			err = util_string_get(&at_param_list, 3, data, &size);
+			if (err) {
+				return err;
 			}
+			err = do_sendto(data, size);
 		} else {
-			err = do_sendto(url, (uint16_t)port, data, size);
+			err = enter_datamode(socket_datamode_callback);
 		}
 		break;
 

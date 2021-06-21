@@ -42,9 +42,9 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XFTP="rename",<filename_old>,<filename_new>``
 * ``AT#XFTP="delete",<file>``
 * ``AT#XFTP="get",<file>``
-* ``AT#XFTP="put",<file>,<datatype>[,<data>]``
-* ``AT#XFTP="uput",<datatype>[,<data>]``
-* ``AT#XFTP="mput",<file>,<datatype>[,<data>]``
+* ``AT#XFTP="put",<file>[,<data>]``
+* ``AT#XFTP="uput"[,<data>]``
+* ``AT#XFTP="mput",<file>[,<data>]``
 
 The values of the parameters depend on the command string used.
 

@@ -12,6 +12,7 @@
 #include <modem/modem_key_mgmt.h>
 #include "slm_util.h"
 #include "slm_native_tls.h"
+#include "slm_at_host.h"
 #include "slm_at_cmng.h"
 
 LOG_MODULE_REGISTER(cmng, CONFIG_SLM_LOG_LEVEL);
@@ -32,9 +33,6 @@ enum slm_cmng_type {
 	AT_CMNG_TYPE_PSK,
 	AT_CMNG_TYPE_PSK_ID,
 };
-
-/* global functions defined in different files */
-void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;

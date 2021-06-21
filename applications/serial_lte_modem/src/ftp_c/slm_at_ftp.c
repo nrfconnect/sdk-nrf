@@ -107,11 +107,6 @@ static ftp_op_list_t ftp_op_list[FTP_OP_MAX] = {
 
 RING_BUF_DECLARE(ftp_data_buf, CONFIG_SLM_SOCKET_RX_MAX * 2);
 
-/* global functions defined in different files */
-void rsp_send(const uint8_t *str, size_t len);
-int enter_datamode(slm_datamode_handler_t handler);
-bool exit_datamode(void);
-
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
@@ -161,6 +156,7 @@ void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 static int ftp_data_save(uint8_t *data, uint32_t length)
 {
 	if (ring_buf_space_get(&ftp_data_buf) < length) {
+		LOG_WRN("RX overrun");
 		return -1; /* RX overrun */
 	}
 
@@ -181,19 +177,7 @@ static int ftp_data_send(void)
 
 void ftp_data_callback(const uint8_t *msg, uint16_t len)
 {
-	if (slm_util_hex_check((uint8_t *)msg, len)) {
-		int ret;
-		int size = len * 2;
-
-		ret = slm_util_htoa(msg, len, rsp_buf, size);
-		if (ret > 0) {
-			ftp_data_save(rsp_buf, ret);
-		} else {
-			LOG_WRN("hex convert error: %d", ret);
-		}
-	} else {
-		ftp_data_save((uint8_t *)msg, len);
-	}
+	ftp_data_save((uint8_t *)msg, len);
 }
 
 /* AT#XFTP="open",<username>,<password>,<hostname>[,<port>[,<sec_tag>]] */
@@ -491,12 +475,10 @@ static int ftp_put_handler(const uint8_t *data, int len)
 	return (ret == FTP_CODE_226) ? 0 : -1;
 }
 
-/* AT#XFTP="put",<file>,<datatype>[,<data>] */
+/* AT#XFTP="put",<file>[,<data>] */
 static int do_ftp_put(void)
 {
 	int ret;
-	uint16_t datatype;
-	int param_count = at_params_valid_count_get(&at_param_list);
 
 	sz_filepath = FTP_MAX_FILEPATH;
 	ret = util_string_get(&at_param_list, 2, filepath, &sz_filepath);
@@ -504,12 +486,7 @@ static int do_ftp_put(void)
 		return ret;
 	}
 
-	ret = at_params_unsigned_short_get(&at_param_list, 3, &datatype);
-	if (ret) {
-		return ret;
-	}
-
-	if (datatype == DATATYPE_ARBITRARY) {
+	if (at_params_valid_count_get(&at_param_list) == 3) {
 		/* enter data mode */
 		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
@@ -518,30 +495,16 @@ static int do_ftp_put(void)
 
 		ftp_data_mode_handler = ftp_put_handler;
 		return 0;
-	}
-
-	if (param_count > 4) {
-		int size = CONFIG_SLM_SOCKET_RX_MAX;
-
-		ret = util_string_get(&at_param_list, 4, rx_data, &size);
-		if (ret) {
-			return ret;
-		}
-		if (datatype == DATATYPE_HEXADECIMAL) {
-			uint8_t data_hex[size / 2];
-
-			ret = slm_util_atoh(rx_data, size, data_hex, size / 2);
-			if (ret > 0) {
-				ret = ftp_put(filepath, data_hex, ret, FTP_PUT_NORMAL);
-			}
-		} else {
-			ret = ftp_put(filepath, rx_data, size, FTP_PUT_NORMAL);
-		}
-
-		ret = (ret == FTP_CODE_226) ? 0 : -1;
 	} else {
-		/* must carry data to send */
-		ret = -EINVAL;
+		int size = CONFIG_SLM_SOCKET_RX_MAX;
+		int err;
+
+		err = util_string_get(&at_param_list, 3, rx_data, &size);
+		if (err) {
+			return err;
+		}
+		err = ftp_put(filepath, rx_data, size, FTP_PUT_NORMAL);
+		ret = (err == FTP_CODE_226) ? 0 : -1;
 	}
 
 	return ret;
@@ -565,19 +528,12 @@ static int ftp_uput_handler(const uint8_t *data, int len)
 	return (ret == FTP_CODE_226) ? 0 : -1;
 }
 
-/* AT#XFTP="uput",<datatype>[,<data>] */
+/* AT#XFTP="uput"[,<data>] */
 static int do_ftp_uput(void)
 {
 	int ret;
-	uint16_t datatype;
-	int param_count = at_params_valid_count_get(&at_param_list);
 
-	ret = at_params_unsigned_short_get(&at_param_list, 2, &datatype);
-	if (ret) {
-		return ret;
-	}
-
-	if (datatype == DATATYPE_ARBITRARY) {
+	if (at_params_valid_count_get(&at_param_list) == 2) {
 		/* enter data mode */
 		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
@@ -586,30 +542,16 @@ static int do_ftp_uput(void)
 
 		ftp_data_mode_handler = ftp_uput_handler;
 		return 0;
-	}
-
-	if (param_count > 3) {
-		int size = CONFIG_SLM_SOCKET_RX_MAX;
-
-		ret = util_string_get(&at_param_list, 3, rx_data, &size);
-		if (ret) {
-			return ret;
-		}
-		if (datatype == DATATYPE_HEXADECIMAL) {
-			uint8_t data_hex[size / 2];
-
-			ret = slm_util_atoh(rx_data, size, data_hex, size / 2);
-			if (ret > 0) {
-				ret = ftp_put(NULL, data_hex, ret, FTP_PUT_UNIQUE);
-			}
-		} else {
-			ret = ftp_put(NULL, rx_data, size, FTP_PUT_UNIQUE);
-		}
-
-		ret = (ret == FTP_CODE_226) ? 0 : -1;
 	} else {
-		/* must carry data to send */
-		ret = -EINVAL;
+		int size = CONFIG_SLM_SOCKET_RX_MAX;
+		int err;
+
+		err = util_string_get(&at_param_list, 2, rx_data, &size);
+		if (err) {
+			return err;
+		}
+		err = ftp_put(NULL, rx_data, size, FTP_PUT_UNIQUE);
+		ret = (err == FTP_CODE_226) ? 0 : -1;
 	}
 
 	return ret;
@@ -627,12 +569,10 @@ static int ftp_mput_handler(const uint8_t *data, int len)
 	return (ret == FTP_CODE_226) ? 0 : -1;
 }
 
-/* AT#XFTP="mput",<file>,<datatype>[,<data>] */
+/* AT#XFTP="mput",<file>[,<data>] */
 static int do_ftp_mput(void)
 {
 	int ret;
-	uint16_t datatype;
-	int param_count = at_params_valid_count_get(&at_param_list);
 
 	sz_filepath = FTP_MAX_FILEPATH;
 	ret = util_string_get(&at_param_list, 2, filepath, &sz_filepath);
@@ -640,11 +580,7 @@ static int do_ftp_mput(void)
 		return ret;
 	}
 
-	ret = at_params_unsigned_short_get(&at_param_list, 3, &datatype);
-	if (ret) {
-		return ret;
-	}
-	if (datatype == DATATYPE_ARBITRARY) {
+	if (at_params_valid_count_get(&at_param_list) == 3) {
 		/* enter data mode */
 		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
@@ -653,30 +589,16 @@ static int do_ftp_mput(void)
 
 		ftp_data_mode_handler = ftp_mput_handler;
 		return 0;
-	}
-
-	if (param_count > 4) {
-		int size = CONFIG_SLM_SOCKET_RX_MAX;
-
-		ret = util_string_get(&at_param_list, 4, rx_data, &size);
-		if (ret) {
-			return ret;
-		}
-		if (datatype == DATATYPE_HEXADECIMAL) {
-			uint8_t data_hex[size / 2];
-
-			ret = slm_util_atoh(rx_data, size, data_hex, size / 2);
-			if (ret > 0) {
-				ret = ftp_put(filepath, data_hex, ret, FTP_PUT_APPEND);
-			}
-		} else {
-			ret = ftp_put(filepath, rx_data, size, FTP_PUT_APPEND);
-		}
-
-		ret = (ret == FTP_CODE_226) ? 0 : -1;
 	} else {
-		/* must carry data to send */
-		ret = -EINVAL;
+		int size = CONFIG_SLM_SOCKET_RX_MAX;
+		int err;
+
+		err = util_string_get(&at_param_list, 3, rx_data, &size);
+		if (err) {
+			return err;
+		}
+		err = ftp_put(filepath, rx_data, size, FTP_PUT_APPEND);
+		ret = (err == FTP_CODE_226) ? 0 : -1;
 	}
 
 	return ret;

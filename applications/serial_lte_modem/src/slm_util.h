@@ -46,16 +46,6 @@ bool slm_util_casecmp(const char *str1, const char *str2);
 bool slm_util_cmd_casecmp(const char *cmd, const char *slm_cmd);
 
 /**
- * @brief Detect hexdecimal data type
- *
- * @param[in] data Hex arrary to be encoded
- * @param[in] data_len Length of hex array
- *
- * @return true if the input is hexdecimal array, otherwise false
- */
-bool slm_util_hex_check(const uint8_t *data, uint16_t data_len);
-
-/**
  * @brief Detect hexdecimal string data type
  *
  * @param[in] data Hexdecimal string arrary to be checked

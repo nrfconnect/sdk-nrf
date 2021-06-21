@@ -12,6 +12,7 @@
 #include <net/http_parser_url.h>
 #include <net/fota_download.h>
 #include "slm_util.h"
+#include "slm_at_host.h"
 #include "slm_at_fota.h"
 
 LOG_MODULE_REGISTER(fota, CONFIG_SLM_LOG_LEVEL);
@@ -39,7 +40,6 @@ static char path[URI_PATH_MAX];
 static char hostname[URI_HOST_MAX];
 
 /* global functions defined in different files */
-void rsp_send(const uint8_t *str, size_t len);
 int slm_setting_fota_init(void);
 int slm_setting_fota_save(void);
 

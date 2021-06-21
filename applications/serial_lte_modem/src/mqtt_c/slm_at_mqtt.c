@@ -55,10 +55,6 @@ static struct mqtt_publish_param pub_param;
 static uint8_t pub_topic[MQTT_MAX_TOPIC_LEN];
 static uint8_t pub_msg[MQTT_MESSAGE_BUFFER_LEN];
 
-/* global functions defined in different files */
-void rsp_send(const uint8_t *str, size_t len);
-int enter_datamode(slm_datamode_handler_t handler);
-
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
@@ -111,39 +107,15 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c, const struct mqt
 		return ret;
 	}
 
-	if (slm_util_hex_check(payload_buf, evt->param.publish.message.payload.len)) {
-		int size = evt->param.publish.message.payload.len * 2;
-		char data_hex[size];
-
-		ret = slm_util_htoa((const uint8_t *)&payload_buf,
-				evt->param.publish.message.payload.len,
-				data_hex, size);
-		if (ret < 0) {
-			return ret;
-		}
-		sprintf(rsp_buf, "\r\n#XMQTTMSG: %d,%d,%d\r\n",
-			DATATYPE_HEXADECIMAL,
-			evt->param.publish.message.topic.topic.size,
-			ret);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-		rsp_send(evt->param.publish.message.topic.topic.utf8,
-			evt->param.publish.message.topic.topic.size);
-		rsp_send("\r\n", 2);
-		rsp_send(data_hex, ret);
-		rsp_send("\r\n", 2);
-	} else {
-		sprintf(rsp_buf, "\r\n#XMQTTMSG: %d,%d,%d\r\n",
-			DATATYPE_PLAINTEXT,
-			evt->param.publish.message.topic.topic.size,
-			evt->param.publish.message.payload.len);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-		rsp_send(evt->param.publish.message.topic.topic.utf8,
-			evt->param.publish.message.topic.topic.size);
-		rsp_send("\r\n", 2);
-		rsp_send(payload_buf,
-			evt->param.publish.message.payload.len);
-		rsp_send("\r\n", 2);
-	}
+	sprintf(rsp_buf, "\r\n#XMQTTMSG: %d,%d\r\n",
+		evt->param.publish.message.topic.topic.size,
+		evt->param.publish.message.payload.len);
+	rsp_send(rsp_buf, strlen(rsp_buf));
+	rsp_send(evt->param.publish.message.topic.topic.utf8,
+		evt->param.publish.message.topic.topic.size);
+	rsp_send("\r\n", 2);
+	rsp_send(payload_buf, evt->param.publish.message.payload.len);
+	rsp_send("\r\n", 2);
 
 	return 0;
 }
@@ -673,7 +645,7 @@ static int mqtt_datamode_callback(uint8_t op, const uint8_t *data, int len)
 }
 
 /**@brief handle AT#XMQTTPUB commands
- *  AT#XMQTTPUB=<topic>,<datatype>[,<msg>[,<qos>[,<retain>]]]
+ *  AT#XMQTTPUB=<topic>[,<msg>[,<qos>[,<retain>]]]
  *  AT#XMQTTPUB? READ command not supported
  *  AT#XMQTTPUB=?
  */
@@ -683,7 +655,6 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 
 	uint16_t qos = MQTT_QOS_0_AT_MOST_ONCE;
 	uint16_t retain = 0;
-	uint16_t datatype;
 	size_t topic_sz = MQTT_MAX_TOPIC_LEN;
 	size_t msg_sz = MQTT_MESSAGE_BUFFER_LEN;
 	uint16_t param_count = at_params_valid_count_get(&at_param_list);
@@ -694,28 +665,37 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 2, &datatype);
-		if (err) {
-			return err;
-		}
-		if (param_count >= 4) {
+		pub_msg[0] = '\0';
+		if (at_params_type_get(&at_param_list, 3) == AT_PARAM_TYPE_STRING) {
 			err = util_string_get(&at_param_list, 3, pub_msg, &msg_sz);
 			if (err) {
 				return err;
 			}
-		}
-		if (param_count >= 5) {
-			err = at_params_unsigned_short_get(&at_param_list, 4, &qos);
+			if (param_count > 4) {
+				err = at_params_unsigned_short_get(&at_param_list, 4, &qos);
+				if (err) {
+					return err;
+				}
+			}
+			if (param_count > 5) {
+				err = at_params_unsigned_short_get(&at_param_list, 5, &retain);
+				if (err) {
+					return err;
+				}
+			}
+		} else if (at_params_type_get(&at_param_list, 3) == AT_PARAM_TYPE_NUM_INT) {
+			err = at_params_unsigned_short_get(&at_param_list, 3, &qos);
 			if (err) {
 				return err;
 			}
-		}
-		if (param_count >= 6) {
-			err = at_params_unsigned_short_get(&at_param_list, 5, &retain);
-			if (err) {
-				return err;
+			if (param_count > 4) {
+				err = at_params_unsigned_short_get(&at_param_list, 4, &retain);
+				if (err) {
+					return err;
+				}
 			}
 		}
+
 		/* common publish parameters*/
 		if (qos <= MQTT_QOS_2_EXACTLY_ONCE) {
 			pub_param.message.topic.qos = (uint8_t)qos;
@@ -734,26 +714,16 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 		if (pub_param.message_id == UINT16_MAX) {
 			pub_param.message_id = 1;
 		}
-		if (datatype == DATATYPE_ARBITRARY) {
+		if (strlen(pub_msg) == 0) {
 			/* Publish payload in data mode */
 			err = enter_datamode(mqtt_datamode_callback);
-		} else if (datatype == DATATYPE_HEXADECIMAL) {
-			/* Publish payload in hexadecimal format */
-			size_t data_len = msg_sz / 2;
-			uint8_t data_hex[data_len];
-
-			err = slm_util_atoh(pub_msg, msg_sz, data_hex, data_len);
-			if (err > 0) {
-				err = do_mqtt_publish(data_hex, err);
-			}
 		} else {
-			/* Publish payload in plaintext format */
 			err = do_mqtt_publish(pub_msg, msg_sz);
 		}
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XMQTTPUB: <topic>,(0,1,9),<msg>,(0,1,2),(0,1)\r\n");
+		sprintf(rsp_buf, "\r\n#XMQTTPUB: <topic>,<msg>,(0,1,2),(0,1)\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;

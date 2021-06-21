@@ -10,6 +10,7 @@
 #include <net/socket.h>
 #include <nrf_socket.h>
 #include "slm_util.h"
+#include "slm_at_host.h"
 #include "slm_at_icmp.h"
 
 LOG_MODULE_REGISTER(icmp, CONFIG_SLM_LOG_LEVEL);
@@ -43,9 +44,6 @@ static struct ping_argv_t {
 	uint16_t count;
 	uint16_t interval;
 } ping_argv;
-
-/* global functions defined in different files */
-void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct k_work_q slm_work_q;

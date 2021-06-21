@@ -9,7 +9,9 @@
 #include <stdio.h>
 #include <nrf_socket.h>
 #include "slm_util.h"
+#include "slm_at_host.h"
 #include "slm_at_gps.h"
+
 #ifdef CONFIG_SUPL_CLIENT_LIB
 #include <net/socket.h>
 #include <supl_os_client.h>
@@ -47,9 +49,6 @@ static struct k_thread gps_thread;
 static k_tid_t gps_thread_id;
 static K_THREAD_STACK_DEFINE(gps_thread_stack, THREAD_STACK_SIZE);
 static uint64_t ttft_start;
-
-/* global functions defined in different files */
-void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;

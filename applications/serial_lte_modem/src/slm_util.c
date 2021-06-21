@@ -11,8 +11,6 @@
 #include <modem/at_cmd_parser.h>
 #include "slm_util.h"
 
-#define PRINTABLE_ASCII(ch) (ch > 0x1f && ch < 0x7f)
-
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
 
@@ -65,22 +63,6 @@ bool slm_util_cmd_casecmp(const char *cmd, const char *slm_cmd)
 	}
 
 	return true;
-}
-
-/**
- * @brief Detect hexdecimal data type
- */
-bool slm_util_hex_check(const uint8_t *data, uint16_t data_len)
-{
-	for (int i = 0; i < data_len; i++) {
-		char ch = *(data + i);
-
-		if (!PRINTABLE_ASCII(ch) && ch != '\r' && ch != '\n') {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 /**

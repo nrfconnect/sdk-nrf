@@ -178,14 +178,9 @@ If the MQTT client successfully subscribes to a topic, the following unsolicited
 
 ::
 
-   #XMQTTMSG=<datatype>,<topic_length>,<message_length><CR><LF>
+   #XMQTTMSG: <topic_length>,<message_length><CR><LF>
    <topic_received><CR><LF>
    <message>
-
-* The ``<datatype>`` value can assume one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
 
 * The ``<topic_length>`` value is an integer.
   It indicates the length of the ``<topic_received>`` field.
@@ -299,17 +294,11 @@ Syntax
 
 ::
 
-   AT#XMQTTPUB=<topic>,<datatype>[,<msg>[,<qos>[,<retain>]]]
+   AT#XMQTTPUB=<topic>[,<msg>[,<qos>[,<retain>]]]
 
 
 * The ``<topic>`` parameter is a string.
   It indicates the topic on which data is published.
-* The ``<datatype>`` parameter can accept one of the following values:
-
-  * ``0`` - hexadecimal string (e.g. "DEADBEEF" for 0xDEADBEEF)
-  * ``1`` - plain text (default value)
-  * ``9`` - Arbitrary (enter data mode)
-
 * The ``<msg>`` parameter is a string.
   It contains the payload on the topic being published.
   The max ``NET_IPV4_MTU`` is 576 bytes.
@@ -356,30 +345,30 @@ Examples
 
 ::
 
-   AT#XMQTTPUB="nrf91/slm/mqtt/topic0",1,"Test message with QoS 0",0,0
+   AT#XMQTTPUB="nrf91/slm/mqtt/topic0","Test message with QoS 0",0,0
    OK
-   #XMQTTMSG: 1,21,23
+   #XMQTTMSG: 21,23
    nrf91/slm/mqtt/topic0
    Test message with QoS 0
    #XMQTTEVT: 2,0
 
 ::
 
-   AT#XMQTTPUB="nrf91/slm/mqtt/topic1",1,"Test message with QoS 1",1,0
+   AT#XMQTTPUB="nrf91/slm/mqtt/topic1","Test message with QoS 1",1,0
    OK
    #XMQTTEVT: 3,0
-   #XMQTTMSG: 1,21,23
+   #XMQTTMSG: 21,23
    nrf91/slm/mqtt/topic1
    Test message with QoS 1
    #XMQTTEVT: 2,0
 
 ::
 
-   AT#XMQTTPUB="nrf91/slm/mqtt/topic2",1,"Test message with QoS 2",2,0
+   AT#XMQTTPUB="nrf91/slm/mqtt/topic2","Test message with QoS 2",2,0
    OK
    #XMQTTEVT: 4,0
    #XMQTTEVT: 6,0
-   #XMQTTMSG: 1,21,23
+   #XMQTTMSG: 21,23
    nrf91/slm/mqtt/topic2Test message with QoS 2
    #XMQTTEVT: 2,0
 

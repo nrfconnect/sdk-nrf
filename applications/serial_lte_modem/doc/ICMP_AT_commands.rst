@@ -62,6 +62,17 @@ Example
    #XPING: 0.313 seconds
    #XPING: 0.313 seconds
    #XPING: average 0.341 seconds
+   AT#XGETADDRINFO="ipv6.google.com"
+   #XGETADDRINFO: "2404:6800:4006:80e::200e"
+   OK
+   AT#XPING="ipv6.google.com",45,5000,5,1000
+   OK
+   #XPING: 0.286 seconds
+   #XPING: 0.077 seconds
+   #XPING: 0.110 seconds
+   #XPING: 0.037 seconds
+   #XPING: 0.106 seconds
+   #XPING: average 0.123 seconds
 
 Read command
 ------------
