@@ -84,7 +84,6 @@ endchoice
 config PELION_QUICK_SESSION_RESUME
 	bool "Enable quick session resume"
 	depends on PELION_NRF_SECURITY
-	default y
 	select PELION_PAL_SUPPORT_SSL_CONNECTION_ID
 	select MBEDTLS_SSL_CONTEXT_SERIALIZATION
 	select MBEDTLS_SSL_DTLS_CONNECTION_ID
