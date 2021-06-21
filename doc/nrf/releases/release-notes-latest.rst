@@ -173,6 +173,11 @@ Matter (Project CHIP)
 
   * Renamed occurrences of Project CHIP to Matter.
 
+nRF IEEE 802.15.4 radio driver
+------------------------------
+
+* Production support for nRF5340 in multiprotocol configuration (IEEE 802.15.4 and Bluetooth Peripheral Role).
+
 Thread
 ------
 
