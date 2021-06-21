@@ -20,7 +20,6 @@ LOG_MODULE_REGISTER(azure_iot_hub_dps, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 
 #define DPS_REG_STATUS_UPDATE_MAX_RETRIES	10
 #define DPS_OPERATION_ID_MAX_LEN		60
-#define DPS_TOPIC_OPERATION_ID_MAX_LEN		(DPS_OPERATION_ID_MAX_LEN + 100)
 #define DPS_REGISTERED_HUB_MAX_LEN		100
 #define DPS_SETTINGS_KEY			"azure_iot_hub"
 #define DPS_SETTINGS_HOSTNAME_LEN_KEY		"hostname_len"
@@ -33,6 +32,9 @@ LOG_MODULE_REGISTER(azure_iot_hub_dps, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 #define DPS_TOPIC_REG_STATUS	\
 	"$dps/registrations/GET/iotdps-get-operationstatus/" \
 	"?$rid=%s&operationId=%s"
+#define DPS_TOPIC_OPERATION_ID_MAX_LEN (DPS_OPERATION_ID_MAX_LEN + \
+					sizeof(DPS_TOPIC_REG_STATUS) + \
+					CONFIG_AZURE_IOT_HUB_DEVICE_ID_MAX_LEN)
 #define DPS_TOPIC_REG		"$dps/registrations/res/"
 #define DPS_TOPIC_REG_SUB	DPS_TOPIC_REG "#"
 #define DPS_TOPIC_REG_PUB	"$dps/registrations/PUT/iotdps-register/" \
