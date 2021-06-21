@@ -872,6 +872,31 @@ NCSIDB-114: Default logging causes crash
 
   **Workaround:** Do not enable logging and add a breakpoint in the fault handling, or try a different logging backend.
 
+Trusted Firmware-M
+==================
+
+.. rst-class:: v1-6-0
+
+NCSDK-10052: CONFIG_TFM_BL2 is not supported when TF-M is built with nrf_security (default)
+  Currently, TF-M cannot be built with a bootloader.
+
+
+Crypto
+======
+
+.. rst-class:: v1-6-0
+
+NCSDK-10192: hw_unique_key_is_written() does not work properly for nRF52840
+  The function faults when it should return 'true'.
+
+.. rst-class:: v1-6-0
+
+NCSDK-10101: The KDR :ref:`lib_hw_unique_key` slot is not available on nRF9160 and nRF5340
+  The KDR slot cannot be populated or used through the :ref:`lib_hw_unique_key` or APIs on nRF9160 and nRF5340.
+  The KDR slot is available on nRF52840.
+
+  **Workaround:** Use the MEXT or MKEK slot in place of the KDR slot.
+
 
 MCUboot
 *******
@@ -886,6 +911,18 @@ nrfxlib
 
 Crypto
 ======
+
+.. rst-class:: v1-6-0
+
+NCSDK-10020: RSA not supported
+  RSA is not supported by :ref:`nrfxlib:nrf_security`.
+  That includes the default configuration of TF-M which uses :ref:`nrfxlib:nrf_security` for hardware crypto support.
+
+.. rst-class:: v1-6-0
+
+NCSDK-10022: CFB not supported
+  CFB is not supported by :ref:`nrfxlib:nrf_security`.
+  That includes the default configuration of TF-M which uses :ref:`nrfxlib:nrf_security` for hardware crypto support.
 
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 

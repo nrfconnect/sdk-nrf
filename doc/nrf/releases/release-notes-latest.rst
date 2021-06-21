@@ -46,7 +46,7 @@ nRF9160
 
     * The library adds P-GPS (Predicted GPS) support to the :ref:`lib_nrf_cloud` library.
 
-  * :ref:`sms_sample` demonstrates how you can send and receive SMS messages with your nRF9160-based device using the ref:`sms_readme`
+  * :ref:`sms_sample` demonstrates how you can send and receive SMS messages with your nRF9160-based device using the :ref:`sms_readme`.
 
   * :ref:`pdn_sample` demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the :ref:`pdn_readme` library.
 
@@ -126,6 +126,8 @@ nRF9160
   * :ref:`lib_spm` library:
 
     * Added support for the nRF9160 pulse-density modulation (PDM) and inter-IC sound (I2S) peripherals in non-secure applications.
+    * Fixed an issue where SPM and the application could have incompatible FPU configurations, resulting in a HardFault.
+      Now, the application is free to use FPU regardless of SPM configuration.
 
   * :ref:`gps_api`:
 
@@ -200,22 +202,71 @@ Zigbee
 Common
 ======
 
+Trusted Firmware-M
+------------------
+
+* Added support for hardware-accelerated cryptography in TF-M using the Nordic Security module (nrf_security).
+  When enabled (default), any calls to psa_crypto APIs will utilize the CryptoCell hardware on nRF9160 and nRF5340.
+* Added support for using hardware unique keys (HUKs) for key derivation (``TFM_CRYPTO_ALG_HUK_DERIVATION``).
+  TF-M automatically generates and stores random hardware unique keys (if not present), using the :ref:`lib_hw_unique_key` library.
+* TFM_MINIMAL: Added a size-optimized configuration of TF-M which provides a minimal set of features:
+
+  * This configuration requires 32 kB of flash and provides random number generation, SHA-256, and the platform memory read service, which is analogous to the feature set of :ref:`secure_partition_manager`.
+  * The configuration is showcased in the :ref:`tfm_hello_world` sample.
+
+Crypto
+------
+
+* :ref:`crypto_samples`:
+
+  * Added samples showcasing the usage of the Platform Security Architecture (PSA) Crypto APIs.
+    The samples perform various cryptographic operations such as encryption/decryption using symmetric and asymmetric ciphers, key exchange, hashing, and random number generation.
+    Both TF-M enabled targets and secure-only targets are supported.
+
+* :ref:`lib_hw_unique_key` library:
+
+  * New library for managing and using hardware unique keys (HUKs), building on the APIs in nrf_cc3xx_platform.
+    HUKs are secret keys that are kept hidden from the application code, but which can be used by the application for deriving keys for other purposes, such as encrypting data for storing.
+
+Hardware flash write protection
+-------------------------------
+
+* Fixed an issue where :ref:`fprotect_readme` did not properly add protection on devices with the ACL peripheral, if multiple boot stages were using the flash write protection.
+
 sdk-nrfxlib
 -----------
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
+Crypto
+++++++
 
+* nrf_security:
+
+  * Added functionality to configure and enable crypto hardware acceleration as part of the TF-M build.
+  * Added configurations to enable PSA Crypto APIs in non-TF-M builds.
+  * psa_eits: added a library to provide ITS APIs for using the Zephyr settings subsystem for non-volatile storage of key material.
+    This library is development quality and the storage format is likely to change without backwards compatibility.
+
+* nrf_cc3xx_platform/nrf_cc3xx_mbedcrypto:
+
+  * Added low-level APIs for managing and using hardware unique keys located in the KMU peripheral, or flash + K_DR, when no KMU is available.
+  * Added platform APIs for ``hmac_drbg``.
+  * Updated the used mbed TLS version to 2.26.0 to align with upstream TF-M.
+  * For full information, see :ref:`crypto_changelog_nrf_cc3xx_platform` and :ref:`crypto_changelog_nrf_cc3xx_mbedcrypto`.
 
 Modem library
 +++++++++++++
 
-* Updated Modem library to version 1.2.1. See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
-* Added a new function based GNSS API with support for new GNSS features in MFW 1.3.0. See :ref:`nrfxlib:gnss_interface` for more information.
+* Updated Modem library to version 1.2.1.
+  See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
+* Added a new function based GNSS API with support for new GNSS features in MFW 1.3.0.
+  See :ref:`nrfxlib:gnss_interface` for more information.
 
-  * GNSS socket API is deprecated.
+  * GNSS socket API is now deprecated.
 
-* PDN socket API is deprecated. The functionality has been replaced by :ref:`pdn_readme`.
+* PDN socket API is deprecated.
+  The functionality has been replaced by the :ref:`pdn_readme` library.
 
 MCUboot
 =======
