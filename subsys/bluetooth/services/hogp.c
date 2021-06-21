@@ -906,8 +906,10 @@ static void rep_write_process(struct bt_conn *conn, uint8_t err,
 		LOG_ERR("No write callback present");
 		return;
 	}
-	rep->write_cb(rep->hogp, rep, err);
+	bt_hogp_write_cb cb = rep->write_cb;
 	rep->write_cb = NULL;
+
+	cb(rep->hogp, rep, err);
 }
 
 int bt_hogp_rep_write(struct bt_hogp *hogp,
@@ -952,8 +954,10 @@ static void rep_write_wo_rsp_process(struct bt_conn *conn, void *rep_ptr)
 		return;
 	}
 
-	rep->write_cb(rep->hogp, rep, 0);
+	bt_hogp_write_cb cb = rep->write_cb;
 	rep->write_cb = NULL;
+
+	cb(rep->hogp, rep, 0);
 }
 
 int bt_hogp_rep_write_wo_rsp(struct bt_hogp *hogp,
