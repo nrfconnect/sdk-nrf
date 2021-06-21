@@ -28,6 +28,8 @@
 #include "link_api.h"
 #include "link.h"
 
+#include "uart/uart_shell.h"
+
 #if defined(CONFIG_MOSH_SMS)
 #include "sms.h"
 #endif
@@ -40,6 +42,8 @@
 static bool link_subscribe_for_rsrp;
 
 extern const struct shell *shell_global;
+
+extern bool uart_disable_during_sleep_requested;
 
 #if defined(CONFIG_MODEM_INFO)
 /* System work queue for getting the modem info that ain't in lte connection ind: */
@@ -178,9 +182,15 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		}
 	} break;
 	case LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING:
+		link_shell_print_modem_sleep_notif(shell_global, evt);
+		break;
 	case LTE_LC_EVT_MODEM_SLEEP_ENTER:
 	case LTE_LC_EVT_MODEM_SLEEP_EXIT:
 		link_shell_print_modem_sleep_notif(shell_global, evt);
+
+		if (uart_disable_during_sleep_requested) {
+			uart_toggle_power_state_at_event(shell_global, evt);
+		}
 		break;
 	case LTE_LC_EVT_LTE_MODE_UPDATE:
 		/** The currently active LTE mode is updated. If a system mode that
