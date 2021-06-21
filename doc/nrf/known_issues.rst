@@ -1268,6 +1268,14 @@ NCSDK-8372: Project name collision causes SES Nordic Edition to load the wrong p
   **Workaround:** If the path in :guilabel:`Build Directory` points to the wrong project, select the correct project by using the :guilabel:`...` button for :guilabel:`Projects` and navigating to the correct project location.
   The build directory will update automatically.
 
+.. rst-class:: v1-6-0 v1-5-1 v1-5-0
+
+NCSDK-9992: Multiple extra CMake options applied as single option.
+  If you specify two or more :guilabel:`Extra CMake Build Options` in the :guilabel:`Open nRF Connect SDK Project` dialog, those will be incorrectly treated as one option where the second option becomes a value to the first.
+  For example: ``-DFOO=foo -DBAR=bar`` will define the CMake variable ``FOO`` having the value ``foo -DBAR=bar``.
+
+  **Workaround:** Create a CMake preload script containing ``FOO`` and ``BAR`` settings, and then specify ``-C <pre-load-script>.cmake`` in :guilabel:`Extra CMake Build Options`.
+
 Toolchain
 *********
 
