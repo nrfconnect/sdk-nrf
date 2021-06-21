@@ -16,6 +16,7 @@ Highlights
 **********
 
 * New sample :ref:`modem_shell_application` can be used test various connectivity features.
+* Integrated Apple Find My supported for production.
 
 Changelog
 *********
@@ -160,6 +161,18 @@ nRF9160
 
 nRF5
 ====
+
+Bluetooth LE
+------------
+
+* Added:
+
+  * Support for serialization of the :ref:`zephyr:bt_gap` and the :ref:`zephyr:bluetooth_connection_mgmt` API.
+  * :ref:`ble_rpc_host` sample that enables support for serialization of the :ref:`zephyr:bt_gap` and the :ref:`zephyr:bluetooth_connection_mgmt`.
+
+* Updated:
+
+  * :ref:`shell_bt_nus` sample - Fixed an issue where shell transport did not display the initial shell prompt ``uart:~$`` on the remote terminal.
 
 Matter (Project CHIP)
 ---------------------
