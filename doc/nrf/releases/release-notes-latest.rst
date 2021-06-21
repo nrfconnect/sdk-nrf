@@ -46,7 +46,7 @@ nRF9160
 
     * The library adds P-GPS (Predicted GPS) support to the :ref:`lib_nrf_cloud` library.
 
-  * :ref:`sms_sample` demonstrates how you can send and receive SMS messages with your nRF9160-based device using the ref:`sms_readme`
+  * :ref:`sms_sample` demonstrates how you can send and receive SMS messages with your nRF9160-based device using the :ref:`sms_readme`.
 
   * :ref:`pdn_sample` demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the :ref:`pdn_readme` library.
 
@@ -210,12 +210,15 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 Modem library
 +++++++++++++
 
-* Updated Modem library to version 1.2.1. See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
-* Added a new function based GNSS API with support for new GNSS features in MFW 1.3.0. See :ref:`nrfxlib:gnss_interface` for more information.
+* Updated Modem library to version 1.2.1.
+  See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
+* Added a new function based GNSS API with support for new GNSS features in MFW 1.3.0.
+  See :ref:`nrfxlib:gnss_interface` for more information.
 
   * GNSS socket API is deprecated.
 
-* PDN socket API is deprecated. The functionality has been replaced by :ref:`pdn_readme`.
+* PDN socket API is now deprecated.
+  The functionality has been replaced by the :ref:`pdn_readme` library.
 
 MCUboot
 =======
