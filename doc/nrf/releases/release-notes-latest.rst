@@ -15,7 +15,18 @@ The most relevant changes that are present on the master branch of the |NCS|, as
 Highlights
 **********
 
-* New sample :ref:`modem_shell_application` can be used test various connectivity features.
+* Added production support for nRF5340 for Bluetooth LE in single protocol configuration and in multiprotocol operation with Thread for Bluetooth Peripheral role.
+* Added production support for multiple advertising sets to SoftDevice Controller.
+* Added features available in Trusted Firmware-M (TF-M) which is supported for development with nRF5340 and nRF9160.
+* Integrated Apple Find My supported for production.
+* Integrated Pelion cloud client supported for development for LTE-M/NB-IoT and Thread.
+* Edge Impulse Machine Learning has been further integrated with an Application example available for Thingy:52.
+* Added complete support for Thread 1.2 mandatory features for routers and end devices supported for development for the nRF52 family.
+* Integrated more complete support for Matter (Project CHIP) which is supported for development for nRF52840 and nRF5340.
+* Integrated Apple HomeKit ADK v5.3 and added development support for nRF52832 and nRF52833 for Bluetooth LE HomeKit accessories.
+* Zigbee Network Co-Processor (NCP) design is now supported for production for nRF52833 and nRF52840.
+* The application layer part of ZBOSS Zigbee stack is available in source code now.
+* New sample :ref:`modem_shell_application` can be used to test various connectivity features.
 
 Changelog
 *********
