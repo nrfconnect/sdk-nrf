@@ -185,6 +185,13 @@ NCSDK-9441: Fmfu SMP server sample is unstable with the newest J-Link version
 
   **Workaround:** Downgrade the debugger chip to the firmware released with J-Link 6.88a or use another way of transferring serial data to the chip.
 
+.. rst-class:: v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+
+NCSDK-10106: Elevated current consumption when using applications without :ref:`nrfxlib:nrf_modem` on nRF9160
+  When running applications that do not enable :ref:`nrfxlib:nrf_modem` on nRF9160 with build code B1A, current consumption will stay at 3 mA when in sleep.
+
+ **Workaround:** Enable :ref:`nrfxlib:nrf_modem`.
+
 nRF5
 ****
 
