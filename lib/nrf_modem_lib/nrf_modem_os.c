@@ -190,6 +190,11 @@ static void sleeping_thread_remove(struct sleeping_thread *thread)
 	irq_unlock(key);
 }
 
+void nrf_modem_os_busywait(int32_t usec)
+{
+	k_busy_wait(usec);
+}
+
 int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 {
 	struct sleeping_thread thread;
@@ -358,6 +363,11 @@ void nrf_modem_os_errno_set(int err_code)
 		errno = 0xBAADBAAD;
 		break;
 	}
+}
+
+bool nrf_modem_os_is_in_isr(void)
+{
+	return k_is_in_isr();
 }
 
 void nrf_modem_os_application_irq_set(void)
