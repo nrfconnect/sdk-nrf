@@ -848,13 +848,31 @@ extern const struct bt_mesh_sensor_type
  *  @{
  */
 
+/** Device power range specification
+ *
+ *  Channels:
+ *  - Minimum Power Value
+ *    - Unit: Watt
+ *    - Encoding: 24 bit unsigned scalar (Resolution: 0.1 W)
+ *    - Range: 0 to 1677721.4
+ *  - Typical Power Value
+ *    - Unit: Watt
+ *    - Encoding: 24 bit unsigned scalar (Resolution: 0.1 W)
+ *    - Range: 0 to 1677721.4
+ *  - Maximum Power Value
+ *    - Unit: Watt
+ *    - Encoding: 24 bit unsigned scalar (Resolution: 0.1 W)
+ *    - Range: 0 to 1677721.4
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_dev_power_range_spec;
+
 /** Present device input power
  *
  *  Channels:
  *  - Present Device Input Power
  *    - Unit: Watt
  *    - Encoding: 24 bit unsigned scalar (Resolution: 0.1 W)
- *    - Range: 0 to 1677721.3
+ *    - Range: 0 to 1677721.4
  */
 extern const struct bt_mesh_sensor_type bt_mesh_sensor_present_dev_input_power;
 
@@ -875,7 +893,7 @@ extern const struct bt_mesh_sensor_type
  *  - Total Device Energy Use
  *    - Unit: Kwh
  *    - Encoding: 24 bit unsigned scalar (Resolution: 1 kWh)
- *    - Range: 0 to 16777213
+ *    - Range: 0 to 16777214
  */
 extern const struct bt_mesh_sensor_type bt_mesh_sensor_tot_dev_energy_use;
 
@@ -885,7 +903,7 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_tot_dev_energy_use;
  *  - Device Energy Use Since Turn On
  *    - Unit: Kwh
  *    - Encoding: 24 bit unsigned scalar (Resolution: 1 kWh)
- *    - Range: 0 to 16777213
+ *    - Range: 0 to 16777214
  */
 extern const struct bt_mesh_sensor_type
 	bt_mesh_sensor_dev_energy_use_since_turn_on;
@@ -894,8 +912,8 @@ extern const struct bt_mesh_sensor_type
  *
  *  Channels:
  *  - Total Device Energy Use
- *    - Unit: Kwh
- *    - Encoding: 32 bit unsigned scalar (Resolution: 0.01 kWh)
+ *    - Unit: kWh
+ *    - Encoding: 32 bit unsigned scalar (Resolution: 0.001 kWh)
  *    - Range: 0 to 4294967.293
  */
 extern const struct bt_mesh_sensor_type
@@ -909,7 +927,7 @@ extern const struct bt_mesh_sensor_type
  *  - Cosine Of the Angle
  *    - Unit: _unitless_
  *    - Encoding: 8 bit signed scalar (Resolution: 1)
- *    - Range: -256 to 100
+ *    - Range: -100 to 100
  */
 extern const struct bt_mesh_sensor_type bt_mesh_sensor_power_factor;
 
@@ -920,9 +938,9 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_power_factor;
  *
  *  Channels:
  *  - Energy Value
- *    - Unit: Kwh
+ *    - Unit: kWh
  *    - Encoding: 24 bit unsigned scalar (Resolution: 1 kWh)
- *    - Range: 0 to 16777213
+ *    - Range: 0 to 16777214
  *  - Start Time
  *    - Unit: Hours
  *    - Encoding: 8 bit unsigned scalar (Resolution: 0.1 hours)
@@ -935,27 +953,44 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_power_factor;
 extern const struct bt_mesh_sensor_type
 	bt_mesh_sensor_rel_dev_energy_use_in_a_period_of_day;
 
-/** Relative device runtime in a generic level range
- *
- *  This sensor type supports series access.
- *  The series X-axis is unitless.
+/** Apparent energy
  *
  *  Channels:
- *  - Relative Value
- *    - Unit: Percent
- *    - Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)
- *    - Range: 0 to 100.0
- *  - Minimum Generic Level
- *    - Unit: _unitless_
- *    - Encoding: 16 bit unsigned scalar (Resolution: 1)
- *    - Range: 0 to 65535
- *  - Maximum Generic Level
- *    - Unit: _unitless_
- *    - Encoding: 16 bit unsigned scalar (Resolution: 1)
- *    - Range: 0 to 65535
+ *  - Apparent Energy
+ *    - Unit: kVAh
+ *    - Encoding: 32 bit unsigned scalar (Resolution: 0.001 kVAh)
+ *    - Range: 0 to 4294967.293
  */
-extern const struct bt_mesh_sensor_type
-	bt_mesh_sensor_rel_dev_runtime_in_a_generic_level_range;
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_apparent_energy32;
+
+/** Apparent power
+ *
+ *  Channels:
+ *  - Apparent Power
+ *    - Unit: VA
+ *    - Encoding: 32 bit unsigned scalar (Resolution: 0.1 VA)
+ *    - Range: 0 to 1677721.3
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_apparent_power;
+
+/** Active energy loadside
+ *
+ *  Channels:
+ *  - Energy
+ *    - Unit: kWh
+ *    - Encoding: 32 bit unsigned scalar (Resolution: 0.001 kWh)
+ *    - Range: 0 to 4294967.293
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_active_energy_loadside;
+
+/** Active power loadside
+ *  Channels:
+ *  - Power
+ *    - Unit: Watt
+ *    - Encoding: 24 bit unsigned scalar (Resolution: 0.1 W)
+ *    - Range: 0 to 1677721.4
+ */
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_active_power_loadside;
 
 /** @} */
 
@@ -1287,6 +1322,28 @@ extern const struct bt_mesh_sensor_type
  *    - Encoding: 32 bit float
  */
 extern const struct bt_mesh_sensor_type bt_mesh_sensor_gain;
+
+/** Relative device runtime in a generic level range
+ *
+ *  This sensor type supports series access.
+ *  The series X-axis is unitless.
+ *
+ *  Channels:
+ *  - Relative Value
+ *    - Unit: Percent
+ *    - Encoding: 8 bit unsigned scalar (Resolution: 0.5 %)
+ *    - Range: 0 to 100.0
+ *  - Minimum Generic Level
+ *    - Unit: _unitless_
+ *    - Encoding: 16 bit unsigned scalar (Resolution: 1)
+ *    - Range: 0 to 65535
+ *  - Maximum Generic Level
+ *    - Unit: _unitless_
+ *    - Encoding: 16 bit unsigned scalar (Resolution: 1)
+ *    - Range: 0 to 65535
+ */
+extern const struct bt_mesh_sensor_type
+	bt_mesh_sensor_rel_dev_runtime_in_a_generic_level_range;
 
 /** @} */
 

@@ -901,6 +901,339 @@ static void temp_check(const struct bt_mesh_sensor_type *sensor_type)
 	}
 }
 
+static void power_specification_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct {
+		struct sensor_value represented[3];
+		struct uint24_t raw[3];
+	} test_vector[] = {
+		{
+			{{0, 0}, {1, 0}, {65536, 0}},
+			{{0}, {10}, {655360}}
+		},
+		{
+			{{1234, 0}, {838860, 500000}, {1677721, 400000}},
+			{{12340}, {8388605}, {16777214}}
+		},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		encoding_checking_proceed(sensor_type, &test_vector[i].represented[0],
+					  &test_vector[i].raw, 9);
+		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 9,
+					  &test_vector[i].represented[0]);
+	}
+
+	/* Test invalid range on encoding. */
+	struct sensor_value invalid_encoding_test_vector[][3] = {
+		{{1, 0}, {-1, 0}, {0, 0}},
+		{{1234, 0}, {4567, 0}, {0x1000000, 0}},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
+		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i][0]);
+	}
+}
+
+static void power_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct {
+		struct sensor_value represented;
+		uint32_t raw;
+	} test_vector[] = {
+		{{0, 0}, 0},
+		{{1234, 0}, 12340},
+		{{87654, 300000}, 876543},
+		{{1677721, 400000}, 0xFFFFFE},
+		{{0xFFFFFF, 0}, 0xFFFFFF},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
+					  &test_vector[i].raw, 3);
+		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 3,
+					  &test_vector[i].represented);
+	}
+
+	/* Test invalid range on encoding. */
+	struct sensor_value invalid_encoding_test_vector[] = {
+		{-1, 0},
+		{0x1000000, 0},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
+		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
+	}
+}
+
+static void energy_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct {
+		struct sensor_value represented;
+		uint32_t raw;
+	} test_vector[] = {
+		{{0, 0}, 0},
+		{{1000, 0}, 1000},
+		{{12345678, 0}, 12345678},
+		{{16777214, 0}, 16777214},
+		{{0xFFFFFF, 0}, 0xFFFFFF},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
+					  &test_vector[i].raw, 3);
+		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 3,
+					  &test_vector[i].represented);
+	}
+
+	/* Test invalid range on encoding. */
+	struct sensor_value invalid_encoding_test_vector[] = {
+		{-1, 0},
+		{0x1000000, 0},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
+		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
+	}
+}
+
+static void energy32_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct {
+		struct sensor_value represented;
+		uint32_t raw;
+	} test_vector[] = {
+		{{0, 0}, 0},
+		{{1000, 0}, 1000000},
+		{{1234567, 890000}, 1234567890},
+		{{4294967, 293000}, 0xFFFFFFFD},
+		{{0xFFFFFFFE, 0}, 0xFFFFFFFE},
+		{{0xFFFFFFFF, 0}, 0xFFFFFFFF},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
+					  &test_vector[i].raw, 4);
+		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 4,
+					  &test_vector[i].represented);
+	}
+
+	/* Test invalid range on encoding. */
+	struct sensor_value invalid_encoding_test_vector[] = {
+		{-3, 0},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
+		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
+	}
+}
+
+static void cos_of_the_angle_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct {
+		struct sensor_value represented;
+		uint8_t raw;
+	} test_vector[] = {
+		{{-100, 0}, 0x9C},
+		{{-50, 0}, 0xCE},
+		{{0, 0}, 0},
+		{{50, 0}, 0x32},
+		{{100, 0}, 0x64},
+		{{0x7F, 0}, 0x7F},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
+					  &test_vector[i].raw, 1);
+		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 1,
+					  &test_vector[i].represented);
+	}
+
+	/* Test invalid range on encoding. */
+	struct sensor_value invalid_encoding_test_vector[] = {
+		{-101, 0},
+		{101, 0},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
+		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
+	}
+
+	/* Test invalid range on decoding. */
+	uint32_t invalid_decoding_test_vector[] = {
+		0x9B,
+		0x7E,
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
+		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 1);
+	}
+}
+
+static void energy_in_a_period_of_day_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct {
+		struct sensor_value represented[3];
+		struct __packed {
+			struct uint24_t energy;
+			uint8_t start_time;
+			uint8_t end_time;
+		} raw;
+	} test_vector[] = {
+		{{{0, 0}, {0, 0}, {1, 0}}, {{0}, 0, 10}},
+		{{{1000, 0}, {10, 100000}, {12, 200000}}, {{1000}, 101, 122}},
+		{{{16777214, 0}, {15, 500000}, {24, 0}}, {{16777214}, 155, 240}},
+		{{{1, 0}, {2, 0}, {0xFF, 0}}, {{1}, 20, 0xFF}},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		encoding_checking_proceed(sensor_type, &test_vector[i].represented[0],
+					  &test_vector[i].raw, 5);
+		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 5,
+					  &test_vector[i].represented[0]);
+	}
+
+	/* Test invalid range on encoding. */
+	struct sensor_value invalid_encoding_test_vector[][3] = {
+		{{-1, 0}, {0, 0}, {0, 0}},
+		{{0, 0}, {-1, 0}, {0, 0}},
+		{{0, 0}, {0, 0}, {-1, 0}},
+		{{1, 0}, {25, 0}, {0, 0}},
+		{{1, 0}, {0, 0}, {25, 0}},
+		{{0x1000000, 0}, {0, 0}, {0, 0}},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
+		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i][0]);
+	}
+
+	/* Test invalid range on decoding. */
+	struct __packed {
+		struct uint24_t energy;
+		uint8_t start_time;
+		uint8_t end_time;
+	} invalid_decoding_test_vector[] = {
+		{{0}, 241, 0},
+		{{0}, 0, 254},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
+		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 5);
+	}
+}
+
+static void relative_runtime_in_a_generic_level_range_check(
+						const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct {
+		struct sensor_value represented[3];
+		struct __packed {
+			uint8_t relative;
+			uint16_t min;
+			uint16_t max;
+		} raw;
+	} test_vector[] = {
+		{{{0, 0}, {0, 0}, {0, 0}}, {0, 0, 0}},
+		{{{50, 0}, {32767, 0}, {16384, 0}}, {100, 32767, 16384}},
+		{{{100, 0}, {65535, 0}, {8192, 0}}, {200, 65535, 8192}},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		encoding_checking_proceed(sensor_type, &test_vector[i].represented[0],
+					  &test_vector[i].raw, 5);
+		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 5,
+					  &test_vector[i].represented[0]);
+	}
+
+	/* Test invalid range on encoding. */
+	struct sensor_value invalid_encoding_test_vector[][3] = {
+		{{0, 0}, {-1, 0}, {0, 0}},
+		{{0, 0}, {0, 0}, {-1, 0}},
+		{{100, 500000}, {0, 0}, {0, 0}},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
+		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i][0]);
+	}
+
+	/* Test invalid range on decoding. */
+	struct __packed {
+		uint8_t relative;
+		uint16_t min;
+		uint16_t max;
+	} invalid_decoding_test_vector[] = {
+		{251, 0, 0},
+		{254, 0, 0},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
+		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 5);
+	}
+}
+
+static void apparent_energy32_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct {
+		struct sensor_value represented;
+		uint32_t raw;
+	} test_vector[] = {
+		{{0, 0}, 0},
+		{{1000, 0}, 1000000},
+		{{1234567, 890000}, 1234567890},
+		{{4294967, 293000}, 0xFFFFFFFD},
+		{{0xFFFFFFFE, 0}, 0xFFFFFFFE},
+		{{0xFFFFFFFF, 0}, 0xFFFFFFFF},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
+					  &test_vector[i].raw, 4);
+		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 4,
+					  &test_vector[i].represented);
+	}
+
+	/* Test invalid range on encoding. */
+	struct sensor_value invalid_encoding_test_vector[] = {
+		{-3, 0},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
+		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
+	}
+}
+
+static void apparent_power_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct {
+		struct sensor_value represented;
+		uint32_t raw;
+	} test_vector[] = {
+		{{0, 0}, 0},
+		{{1234, 0}, 12340},
+		{{87654, 300000}, 876543},
+		{{1677721, 300000}, 0xFFFFFD},
+		{{0xFFFFFF, 0}, 0xFFFFFF},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
+					  &test_vector[i].raw, 3);
+		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 3,
+					  &test_vector[i].represented);
+	}
+
+	/* Test invalid range on encoding. */
+	struct sensor_value invalid_encoding_test_vector[] = {
+		{-1, 0},
+		{1677721, 400000},
+		{0x1000000, 0},
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
+		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
+	}
+}
+
 /* Occupancy sensors */
 
 static void test_motion_sensor(void)
@@ -1379,6 +1712,129 @@ static void test_precise_present_amb_temp(void)
 	temp_check(sensor_type);
 }
 
+/* Energy management sensors */
+
+static void test_dev_power_range_spec(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DEV_POWER_RANGE_SPEC);
+	sensor_type_sanitize(sensor_type);
+	power_specification_check(sensor_type);
+}
+
+static void test_present_dev_input_power(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_DEV_INPUT_POWER);
+	sensor_type_sanitize(sensor_type);
+	power_check(sensor_type);
+}
+
+static void test_present_dev_op_efficiency(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_DEV_OP_EFFICIENCY);
+	sensor_type_sanitize(sensor_type);
+	percentage8_check(sensor_type);
+}
+
+static void test_tot_dev_energy_use(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TOT_DEV_ENERGY_USE);
+	sensor_type_sanitize(sensor_type);
+	energy_check(sensor_type);
+}
+
+static void test_precise_tot_dev_energy_use(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRECISE_TOT_DEV_ENERGY_USE);
+	sensor_type_sanitize(sensor_type);
+	energy32_check(sensor_type);
+}
+
+static void test_dev_energy_use_since_turn_on(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DEV_ENERGY_USE_SINCE_TURN_ON);
+	sensor_type_sanitize(sensor_type);
+	energy_check(sensor_type);
+}
+
+static void test_power_factor(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_POWER_FACTOR);
+	sensor_type_sanitize(sensor_type);
+	cos_of_the_angle_check(sensor_type);
+}
+
+static void test_rel_dev_energy_use_in_a_period_of_day(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(
+					BT_MESH_PROP_ID_REL_DEV_ENERGY_USE_IN_A_PERIOD_OF_DAY);
+	sensor_type_sanitize(sensor_type);
+	energy_in_a_period_of_day_check(sensor_type);
+}
+
+static void test_apparent_energy(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_APPARENT_ENERGY);
+	sensor_type_sanitize(sensor_type);
+	apparent_energy32_check(sensor_type);
+}
+
+static void test_apparent_power(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_APPARENT_POWER);
+	sensor_type_sanitize(sensor_type);
+	apparent_power_check(sensor_type);
+}
+
+static void test_active_energy_loadside(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_ACTIVE_ENERGY_LOADSIDE);
+	sensor_type_sanitize(sensor_type);
+	energy32_check(sensor_type);
+}
+
+static void test_active_power_loadside(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_ACTIVE_POWER_LOADSIDE);
+	sensor_type_sanitize(sensor_type);
+	power_check(sensor_type);
+}
+
+/* Warranty and service sensors */
+
+static void test_rel_dev_runtime_in_a_generic_level_range(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(
+					BT_MESH_PROP_ID_REL_DEV_RUNTIME_IN_A_GENERIC_LEVEL_RANGE);
+	sensor_type_sanitize(sensor_type);
+	relative_runtime_in_a_generic_level_range_check(sensor_type);
+}
+
 void test_main(void)
 {
 	ztest_test_suite(sensor_types_test,
@@ -1438,7 +1894,24 @@ void test_main(void)
 			ztest_unit_test(test_present_indoor_amb_temp),
 			ztest_unit_test(test_present_outdoor_amb_temp),
 			ztest_unit_test(test_desired_amb_temp),
-			ztest_unit_test(test_precise_present_amb_temp)
+			ztest_unit_test(test_precise_present_amb_temp),
+
+			/* Energy management sensors */
+			ztest_unit_test(test_dev_power_range_spec),
+			ztest_unit_test(test_present_dev_input_power),
+			ztest_unit_test(test_present_dev_op_efficiency),
+			ztest_unit_test(test_tot_dev_energy_use),
+			ztest_unit_test(test_precise_tot_dev_energy_use),
+			ztest_unit_test(test_dev_energy_use_since_turn_on),
+			ztest_unit_test(test_power_factor),
+			ztest_unit_test(test_rel_dev_energy_use_in_a_period_of_day),
+			ztest_unit_test(test_apparent_energy),
+			ztest_unit_test(test_apparent_power),
+			ztest_unit_test(test_active_energy_loadside),
+			ztest_unit_test(test_active_power_loadside),
+
+			/* Warranty and service sensors */
+			ztest_unit_test(test_rel_dev_runtime_in_a_generic_level_range)
 			 );
 
 	ztest_run_test_suite(sensor_types_test);

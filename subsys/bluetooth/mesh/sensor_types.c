@@ -57,6 +57,8 @@ UNIT(volt) = { "Volt", "V" };
 UNIT(ampere) = { "Ampere", "A" };
 UNIT(watt) = { "Watt", "W" };
 UNIT(kwh) = { "Kilo Watt hours", "kWh" };
+UNIT(va) = { "Volt Ampere", "VA" };
+UNIT(kvah) = { "Kilo Volt Ampere hours", "kVAh" };
 UNIT(db) = { "Decibel", "dB" };
 UNIT(lux) = { "Lux", "lx" };
 UNIT(klxh) = { "Kilo Lux hours", "klxh" };
@@ -606,6 +608,14 @@ FORMAT(energy32)	 = SCALAR_FORMAT(4,
 					 UNSIGNED | HAS_INVALID | HAS_UNDEFINED,
 					 kwh,
 					 SCALAR(1e-3, 0));
+FORMAT(apparent_energy32)	 = SCALAR_FORMAT(4,
+					 UNSIGNED | HAS_INVALID | HAS_UNDEFINED,
+					 kvah,
+					 SCALAR(1e-3, 0));
+FORMAT(apparent_power)		 = SCALAR_FORMAT(3,
+					 (UNSIGNED | HAS_INVALID | HAS_UNDEFINED),
+					 va,
+					 SCALAR(1e-1, 0));
 FORMAT(power)		 = SCALAR_FORMAT(3,
 					 (UNSIGNED | HAS_UNDEFINED),
 					 watt,
@@ -675,11 +685,11 @@ FORMAT(gen_lvl)		 = SCALAR_FORMAT(2,
 					 UNSIGNED,
 					 unitless,
 					 SCALAR(1, 0));
-FORMAT(cos_of_the_angle) = SCALAR_FORMAT_MAX(1,
-					     SIGNED,
-					     unitless,
-					     SCALAR(1, 0),
-					     100);
+FORMAT(cos_of_the_angle) = SCALAR_FORMAT_MIN_MAX(1,
+						 (SIGNED | HAS_UNDEFINED),
+						 unitless,
+						 SCALAR(1, 0),
+						 -100, 100);
 FORMAT(boolean) = {
 	.encode = boolean_encode,
 	.decode = boolean_decode,
@@ -989,6 +999,12 @@ SENSOR_TYPE(rel_runtime_in_an_input_voltage_range) = {
 /*******************************************************************************
  * Energy management
  ******************************************************************************/
+SENSOR_TYPE(dev_power_range_spec) = {
+	.id = BT_MESH_PROP_ID_DEV_POWER_RANGE_SPEC,
+	CHANNELS(CHANNEL("Min power value", power),
+		 CHANNEL("Typical power value", power),
+		 CHANNEL("Max power value", power)),
+};
 SENSOR_TYPE(present_dev_input_power) = {
 	.id = BT_MESH_PROP_ID_PRESENT_DEV_INPUT_POWER,
 	CHANNELS(CHANNEL("Present device input power", power)),
@@ -1020,12 +1036,21 @@ SENSOR_TYPE(rel_dev_energy_use_in_a_period_of_day) = {
 		 CHANNEL("Start time", time_decihour_8),
 		 CHANNEL("End time", time_decihour_8)),
 };
-SENSOR_TYPE(rel_dev_runtime_in_a_generic_level_range) = {
-	.id = BT_MESH_PROP_ID_REL_DEV_RUNTIME_IN_A_GENERIC_LEVEL_RANGE,
-	.flags = BT_MESH_SENSOR_TYPE_FLAG_SERIES,
-	CHANNELS(CHANNEL("Relative value", percentage_8),
-		 CHANNEL("Min", gen_lvl),
-		 CHANNEL("Max", gen_lvl)),
+SENSOR_TYPE(apparent_energy) = {
+	.id = BT_MESH_PROP_ID_APPARENT_ENERGY,
+	CHANNELS(CHANNEL("Apparent energy", apparent_energy32)),
+};
+SENSOR_TYPE(apparent_power) = {
+	.id = BT_MESH_PROP_ID_APPARENT_POWER,
+	CHANNELS(CHANNEL("Apparent power", apparent_power)),
+};
+SENSOR_TYPE(active_energy_loadside) = {
+	.id = BT_MESH_PROP_ID_ACTIVE_ENERGY_LOADSIDE,
+	CHANNELS(CHANNEL("Energy", energy32)),
+};
+SENSOR_TYPE(active_power_loadside) = {
+	.id = BT_MESH_PROP_ID_ACTIVE_POWER_LOADSIDE,
+	CHANNELS(CHANNEL("Power", power)),
 };
 
 /*******************************************************************************
@@ -1158,10 +1183,21 @@ SENSOR_TYPE(present_rel_output_ripple_voltage) = {
 	CHANNELS(CHANNEL("Output ripple voltage", percentage_8)),
 };
 
+/*******************************************************************************
+ * Warranty and service
+ ******************************************************************************/
 SENSOR_TYPE(gain) = {
 	.id = BT_MESH_PROP_ID_SENSOR_GAIN,
 	CHANNELS(CHANNEL("Sensor gain", coefficient)),
 };
+SENSOR_TYPE(rel_dev_runtime_in_a_generic_level_range) = {
+	.id = BT_MESH_PROP_ID_REL_DEV_RUNTIME_IN_A_GENERIC_LEVEL_RANGE,
+	.flags = BT_MESH_SENSOR_TYPE_FLAG_SERIES,
+	CHANNELS(CHANNEL("Relative value", percentage_8),
+		 CHANNEL("Min", gen_lvl),
+		 CHANNEL("Max", gen_lvl)),
+};
+
 /******************************************************************************/
 
 const struct bt_mesh_sensor_type *bt_mesh_sensor_type_get(uint16_t id)
