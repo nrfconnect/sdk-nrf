@@ -85,14 +85,17 @@ endif #MOSH_LINK
 choice MOSH_GNSS_API
 	bool "GNSS API"
 	depends on MOSH_GNSS
-	default MOSH_GNSS_API_SOCKET
+	default MOSH_GNSS_INTERFACE
 	help
 	  Used GNSS API type.
 
-config MOSH_GNSS_API_SOCKET
-	bool "GNSS socket API"
+config MOSH_GNSS_INTERFACE
+	bool "GNSS interface"
 
-config MOSH_GNSS_API_GPS_DRIVER
+config MOSH_GNSS_SOCKET
+	bool "GNSS socket"
+
+config MOSH_GNSS_GPS_DRIVER
 	bool "GPS driver"
 
 endchoice

@@ -56,7 +56,6 @@ static nrf_gnss_data_frame_t raw_gnss_data;
 static enum gnss_operation_mode operation_mode = GNSS_OP_MODE_CONTINUOUS;
 static uint32_t fix_interval;
 static uint32_t fix_retry;
-static enum gnss_data_delete data_delete = GNSS_DATA_DELETE_NONE;
 static int8_t elevation_threshold = -1;
 static bool low_accuracy;
 static nrf_gnss_nmea_mask_t nmea_mask =
@@ -509,7 +508,7 @@ int gnss_start(void)
 	nrf_gnss_fix_interval_t interval;
 	nrf_gnss_fix_retry_t retry;
 	nrf_gnss_power_save_mode_t ps_mode;
-	nrf_gnss_delete_mask_t delete_mask;
+	nrf_gnss_delete_mask_t delete_mask = 0;
 	nrf_gnss_elevation_mask_t elevation_mask;
 	nrf_gnss_use_case_t use_case;
 	char timestamp_str[16];
@@ -619,19 +618,6 @@ int gnss_start(void)
 	}
 
 	/* Start GNSS */
-	switch (data_delete) {
-	case GNSS_DATA_DELETE_EPHEMERIDES:
-		/* Delete ephemerides data */
-		delete_mask = 0x01;
-		break;
-	case GNSS_DATA_DELETE_ALL:
-		/* Delete everything else but TCXO frequency offset data */
-		delete_mask = 0x7f;
-		break;
-	default:
-		delete_mask = 0x0;
-		break;
-	}
 	ret = nrf_setsockopt(fd, NRF_SOL_GNSS, NRF_SO_GNSS_START, &delete_mask,
 			     sizeof(delete_mask));
 	if (ret == 0) {
@@ -702,6 +688,36 @@ int gnss_stop(void)
 	return ret;
 }
 
+int gnss_delete_data(enum gnss_data_delete data)
+{
+	int ret;
+	nrf_gnss_delete_mask_t delete_mask;
+
+	gnss_init();
+
+	switch (data) {
+	case GNSS_DATA_DELETE_EPHEMERIDES:
+		delete_mask = 0x01;
+		break;
+
+	case GNSS_DATA_DELETE_ALL:
+		/* Delete everything else but TCXO frequency offset data */
+		delete_mask = 0x7f;
+		break;
+
+	default:
+		shell_error(shell_global, "GNSS: Invalid data delete value");
+		return -1;
+	}
+
+	ret = nrf_setsockopt(fd, NRF_SOL_GNSS, NRF_SO_GNSS_STOP, &delete_mask, sizeof(delete_mask));
+	if (ret != 0) {
+		shell_error(shell_global, "GNSS: Failed to delete data");
+	}
+
+	return ret;
+}
+
 int gnss_set_continuous_mode(void)
 {
 	operation_mode = GNSS_OP_MODE_CONTINUOUS;
@@ -739,16 +755,15 @@ int gnss_set_periodic_fix_mode_gnss(uint16_t interval, uint16_t retry)
 	return 0;
 }
 
+int gnss_set_system_mask(uint8_t system_mask)
+{
+	shell_error(shell_global, "GNSS: Operation not supported in GNSS socket API mode");
+	return -EOPNOTSUPP;
+}
+
 int gnss_set_duty_cycling_policy(enum gnss_duty_cycling_policy policy)
 {
 	duty_cycling_policy = policy;
-
-	return 0;
-}
-
-int gnss_set_data_delete(enum gnss_data_delete value)
-{
-	data_delete = value;
 
 	return 0;
 }
@@ -805,6 +820,36 @@ int gnss_set_priority_time_windows(bool value)
 	}
 
 	return err;
+}
+
+int gnss_set_dynamics_mode(enum gnss_dynamics_mode mode)
+{
+	shell_error(shell_global, "GNSS: Operation not supported in GNSS socket API mode");
+	return -EOPNOTSUPP;
+}
+
+int gnss_set_qzss_nmea_mode(enum gnss_qzss_nmea_mode nmea_mode)
+{
+	shell_error(shell_global, "GNSS: Operation not supported in GNSS socket API mode");
+	return -EOPNOTSUPP;
+}
+
+int gnss_set_qzss_mask(uint16_t mask)
+{
+	shell_error(shell_global, "GNSS: Operation not supported in GNSS socket API mode");
+	return -EOPNOTSUPP;
+}
+
+int gnss_set_1pps_mode(const struct gnss_1pps_mode *config)
+{
+	shell_error(shell_global, "GNSS: Operation not supported in GNSS socket API mode");
+	return -EOPNOTSUPP;
+}
+
+int gnss_set_timing_source(enum gnss_timing_source source)
+{
+	shell_error(shell_global, "GNSS: Operation not supported in GNSS socket API mode");
+	return -EOPNOTSUPP;
 }
 
 int gnss_set_agps_data_enabled(bool ephe, bool alm, bool utc, bool klob,
