@@ -138,6 +138,16 @@
 #define AT_CONEVAL_RX_REPETITIONS_INDEX		16
 #define AT_CONEVAL_DL_PATHLOSS_INDEX		17
 
+/* MDMEV command parameters */
+#define AT_MDMEV_ENABLE				"AT%MDMEV=1"
+#define AT_MDMEV_DISABLE			"AT%MDMEV=0"
+#define AT_MDMEV_RESPONSE_PREFIX		"%MDMEV: "
+#define AT_MDMEV_OVERHEATED			"ME OVERHEATED"
+#define AT_MDMEV_BATTERY_LOW			"ME BATTERY LOW"
+#define AT_MDMEV_SEARCH_STATUS_1		"SEARCH STATUS 1"
+#define AT_MDMEV_SEARCH_STATUS_2		"SEARCH STATUS 2"
+#define AT_MDMEV_RESET_LOOP			"RESET LOOP"
+
 /* @brief Helper function to check if a response is what was expected.
  *
  * @param response Pointer to response prefix
@@ -264,3 +274,18 @@ int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_
  * @retval 7 Evaluation failed, Unspecified.
  */
 int parse_coneval(const char *at_response, struct lte_lc_conn_eval_params *params);
+
+/* @brief Parses an MDMEV response and populate an enum with the corresponding
+ *	  modem event type.
+ *
+ * @param at_response Pointer to buffer with AT response.
+ * @param modem_evt Pointer to enum to hold modem event.
+ *
+ * @return Zero on success, negative errno code on failure.
+ *
+ * @retval 0 Parsing succeeded.
+ * @retval -EINVAL If invalid parameters are provided.
+ * @retval -EIO If the AT response is not a valid MDMEV reseponse.
+ * @retval -ENODATA If no modem event type was found in the AT response.
+ */
+int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt);
