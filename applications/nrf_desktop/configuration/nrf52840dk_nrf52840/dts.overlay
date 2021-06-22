@@ -20,11 +20,33 @@
 			label = "LED Conn State";
 		};
 	};
+
+	pwmleds2 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led2: led_pwm_2 {
+			status = "okay";
+			pwms = <&pwm2 15>;
+			label = "LED Caps Lock";
+		};
+	};
+
+	pwmleds3 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led3: led_pwm_3 {
+			status = "okay";
+			pwms = <&pwm3 16>;
+			label = "LED Num Lock";
+		};
+	};
 };
 
 &pwm0 {
 	status = "okay";
-	ch0-pin = <15>;
+	ch0-pin = <13>;
 	ch0-inverted;
 };
 
@@ -34,9 +56,21 @@
 	ch0-inverted;
 };
 
+&pwm2 {
+	status = "okay";
+	ch0-pin = <15>;
+	ch0-inverted;
+};
+
+&pwm3 {
+	status = "okay";
+	ch0-pin = <16>;
+	ch0-inverted;
+};
+
 &pwm_led0 {
 	status = "okay";
-	pwms = <&pwm0 15>;
+	pwms = <&pwm0 13>;
 	label = "LED System State";
 };
 
