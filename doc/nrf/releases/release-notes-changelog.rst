@@ -146,6 +146,12 @@ Bugfixes:
 
 * Fixed ``hw_unique_key_is_written()`` which would previously trigger a fault under certain circumstances.
 
+Secure partition manager (SPM)
+------------------------------
+
+Bug fixes:
+
+* NCSDK-5156: Fixed the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
 
 MCUboot
 =======

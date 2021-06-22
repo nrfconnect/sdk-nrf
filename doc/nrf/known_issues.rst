@@ -1014,15 +1014,6 @@ NCSIDB-114: Default logging causes crash
 
   **Workaround:** Do not enable logging and add a breakpoint in the fault handling, or try a different logging backend.
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
-
-NCSDK-5156: Size of the non-secure callable area is wrong when the number of secure services exceeds 63
-  If the number of services is between 64 and 255, the number is too large, resulting in up to 4096 B of wasted space.
-  If the number of services exceeds 255, the hardware configuration becomes invalid.
-  The default number of services is much smaller than 64.
-
-  **Workaround:** Keep the number of services below 256.
-
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 NCSDK-8232: Secure Partition Manager and application building together
