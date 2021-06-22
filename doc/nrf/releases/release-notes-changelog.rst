@@ -319,6 +319,10 @@ Other samples
     * The bootloader now allows a single boot with no key present, to allow the app to write a key.
       After the first boot, the key must be present or the bootloader won't boot the app.
 
+  * Bug fixes:
+
+    * NCSDK-10209: the |NSIB| and MCUboot have been made more robust against alignment errors caused by changes in the size of partitions.
+
 * Added the :ref:`hw_unique_key_usage` sample.
 
 Drivers
