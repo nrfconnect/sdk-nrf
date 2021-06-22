@@ -44,10 +44,9 @@ struct pdp_context_info_array {
 	size_t size;
 };
 
-#if defined(CONFIG_MODEM_INFO)
 void link_api_modem_info_get_for_shell(const struct shell *shell,
 					bool connected);
-#endif
+
 #if defined(CONFIG_AT_CMD)
 void link_api_coneval_read_for_shell(const struct shell *shell);
 

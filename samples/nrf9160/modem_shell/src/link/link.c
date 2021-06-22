@@ -34,10 +34,8 @@
 #include "sms.h"
 #endif
 
-#if defined(CONFIG_MODEM_INFO)
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
-#endif
 
 static bool link_subscribe_for_rsrp;
 
@@ -45,15 +43,18 @@ extern const struct shell *shell_global;
 
 extern bool uart_disable_during_sleep_requested;
 
-#if defined(CONFIG_MODEM_INFO)
+struct pdn_activation_status_info {
+	bool activated;
+	uint8_t cid;
+};
+
 /* System work queue for getting the modem info that ain't in lte connection ind: */
-static struct k_work modem_info_work;
+static struct k_work registered_work;
 
 /* Work queue for signal info: */
 static struct k_work modem_info_signal_work;
 #define LINK_RSRP_VALUE_NOT_KNOWN -999
 static int32_t modem_rsrp = LINK_RSRP_VALUE_NOT_KNOWN;
-#endif
 
 /* Work queue for continuous neighbor cell measurements: */
 static struct k_work continuous_ncellmeas_work;
@@ -68,10 +69,75 @@ static void link_continuous_ncellmeas(struct k_work *work)
 
 /******************************************************************************/
 
-#if defined(CONFIG_MODEM_INFO)
-static void link_modem_info_work(struct k_work *unused)
+static void link_api_activate_mosh_contexts(
+	struct pdn_activation_status_info pdn_act_status_arr[], int size)
 {
+	int i, esm;
+
+	/* Check that all context created by mosh link connect are active and if not,
+	 * then activate:
+	 */
+	for (i = 0; i < size; i++) {
+		if (pdn_act_status_arr[i].activated == false &&
+		    link_shell_pdn_info_is_in_list(pdn_act_status_arr[i].cid)) {
+			(void)pdn_activate(pdn_act_status_arr[i].cid, &esm);
+		}
+	}
+}
+
+/* ****************************************************************************/
+#define AT_CMD_PDP_CONTEXTS_ACT_READ "AT+CGACT?"
+
+static void link_api_get_pdn_activation_status(
+	struct pdn_activation_status_info pdn_act_status_arr[], int size)
+{
+	char buf[16] = { 0 };
+	const char *p;
+	char at_response_str[256];
+	int ret;
+
+	ret = at_cmd_write(AT_CMD_PDP_CONTEXTS_ACT_READ, at_response_str,
+			   sizeof(at_response_str), NULL);
+	if (ret) {
+		shell_error(
+			shell_global,
+			"Cannot get PDP contexts activation states, err: %d",
+			ret);
+		return;
+	}
+
+	/* For each contexts, fill the activation status into given array: */
+	for (int i = 0; i < size; i++) {
+		/* Search for a string +CGACT: <cid>,<state> */
+		snprintf(buf, sizeof(buf), "+CGACT: %d,1", i);
+		pdn_act_status_arr[i].cid = i;
+		p = strstr(at_response_str, buf);
+		if (p) {
+			pdn_act_status_arr[i].activated = true;
+		}
+	}
+}
+
+/* ****************************************************************************/
+
+static void link_registered_work(struct k_work *unused)
+{
+	struct pdn_activation_status_info
+		pdn_act_status_arr[CONFIG_PDN_CONTEXTS_MAX];
+
 	ARG_UNUSED(unused);
+
+	memset(pdn_act_status_arr, 0,
+	       CONFIG_PDN_CONTEXTS_MAX *
+		       sizeof(struct pdn_activation_status_info));
+
+	/* Get PDN activation status for each: */
+	link_api_get_pdn_activation_status(pdn_act_status_arr,
+					   CONFIG_PDN_CONTEXTS_MAX);
+
+	/* Activate the deactive ones that have been connected by us: */
+	link_api_activate_mosh_contexts(pdn_act_status_arr,
+					CONFIG_PDN_CONTEXTS_MAX);
 
 	/* Seems that 1st info read fails without this. Thus, let modem have some time: */
 	k_sleep(K_MSEC(1500));
@@ -105,17 +171,15 @@ static void link_rsrp_signal_update(struct k_work *work)
 	}
 	timestamp_prev = k_uptime_get_32();
 }
-#endif
 
 /******************************************************************************/
 
 void link_init(void)
 {
-#if defined(CONFIG_MODEM_INFO)
-	k_work_init(&modem_info_work, link_modem_info_work);
+	k_work_init(&registered_work, link_registered_work);
 	k_work_init(&modem_info_signal_work, link_rsrp_signal_update);
 	modem_info_rsrp_register(link_rsrp_signal_handler);
-#endif
+
 	k_work_init(&continuous_ncellmeas_work, link_continuous_ncellmeas);
 
 	/* TODO CHECK THIS */
@@ -229,13 +293,11 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_NW_REG_STATUS:
 		link_shell_print_reg_status(shell_global, evt->nw_reg_status);
 
-#if defined(CONFIG_MODEM_INFO)
 		if (evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_EMERGENCY ||
 		    evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ||
 		    evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING) {
-			k_work_submit(&modem_info_work);
+			k_work_submit(&registered_work);
 		}
-#endif
 		break;
 	case LTE_LC_EVT_CELL_UPDATE:
 		shell_print(shell_global,
@@ -291,6 +353,7 @@ static int link_default_pdp_context_set(void)
 	}
 	return 0;
 }
+
 static int link_default_pdp_context_auth_set(void)
 {
 	int ret;
