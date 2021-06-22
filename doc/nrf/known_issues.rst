@@ -462,6 +462,21 @@ KRKNWK-6073: Potential delay during FOTA
 Matter (Project CHIP)
 =====================
 
+.. rst-class:: v1-6-0
+
+KRKNWK-10589: Android CHIPTool crashes when commissioning a Matter device
+  In random circumstances, Android CHIPTool crashes when trying to connect to a Matter device over Bluetooth LE.
+
+  **Workaround** Restart the application and try to commission the Matter device again.
+  If the problem persists, clear the application data and try again.
+
+.. rst-class:: v1-6-0
+
+KRKNWK-10387: Matter service is needlessly advertised over Bluetooth LE during DFU
+  The Matter samples can be configured to include the support for Device Firmware Upgrade (DFU) over Bluetooth LE.
+  When the DFU procedure is started, the Matter Bluetooth LE service is needlessly advertised, revealing the device identifiers such as Vendor and Product IDs.
+  The service is meant to be advertised only during the device commissioning.
+
 .. rst-class:: v1-5-1 v1-5-0
 
 KRKNWK-9214: Pigweed submodule may not be accessible from some regions
