@@ -36,6 +36,10 @@ s1_image:
   share_size: {one_of: [mcuboot, s0_image]}
   placement:
     after: [s1_pad, s0]
+#if CONFIG_PM_PARTITION_SIZE_MCUBOOT_PAD == 0
+    align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
+#endif
+    align_next: CONFIG_FPROTECT_BLOCK_SIZE
 
 s1:
   # Partition which contains the whole S1 partition.
