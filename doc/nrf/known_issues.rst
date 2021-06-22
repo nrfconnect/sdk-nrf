@@ -1025,6 +1025,95 @@ KRKNWK-8133: CSMA-CA issues
 SoftDevice Controller
 =====================
 
+.. rst-class:: v1-6-0 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
+
+DRGN-15852: In rare cases on nRF53 Series devices, an assert can occur while scanning
+  This only occurs when the host started scanning using HCI LE Set Scan Enable.
+  This is default configuration of the Bluetooth host.
+
+  **Workaround:** Use extended scanning commands.
+  That is, set :option:`CONFIG_BT_EXT_ADV` to use HCI LE Set Extended Scan Enable instead.
+
+.. rst-class:: v1-6-0 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
+
+DRGN-15852: In rare cases on nRF53 Series, the scanner generates corrupted advertising reports
+  The following fields are affected:
+
+  * Event_Type
+  * Address_Type
+  * Direct_Address_Type
+  * TX_Power
+  * Advertising_SID
+
+.. rst-class:: v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-15586: "HCI LE Set Scan Parameters" accepts a scan window greater than the scan interval
+  This can result in undefined behavior. It should fail with the result "Invalid HCI Command Parameters (0x12)".
+
+  **Workaround:** The application should make sure the scan window is set to less than or equal to the scan interval.
+
+.. rst-class:: v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+DRGN-15547: Assertion when updating PHY and the event length is configured too low
+  The SoftDevice Controller may assert if:
+
+  * :c:union:`sdc_cfg_t` with :c:member:`event_length` is set to less than 2500 us and the PHY is updated from 2M to 1M, or from either 1M or 2M to Coded PHY.
+  * :c:union:`sdc_cfg_t` with :c:member:`event_length` is set to less than 7500 us and a PHY update to Coded PHY is performed.
+
+  | The default value of :option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` is 7500 us.
+  | The minimum event length supported by :option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` is 2500 us.
+
+  **Workaround:**
+    * Set :c:union:`sdc_cfg_t` with :c:member:`event_length` to at least 2500 us if the application is using 1M PHY.
+    * Set :c:union:`sdc_cfg_t` with :c:member:`event_length` to at least 7500 us if the application is using Coded PHY.
+
+.. rst-class:: v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-13594: The channel map provided by the LE Host Set Channel Classification HCI command is not always applied on the secondary advertising channels
+  In this case, the extended advertiser can send secondary advertising packets on channels which are disabled by the Host.
+
+.. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-15338: Extended scanner may generate reports containing truncated data from chained advertising PDUs
+  The scanner reports partial data from advertising PDUs when there is not enough storage space for the full report.
+
+.. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-15469: Slave connections can disconnect prematurely if there are scheduling conflicts with other roles
+  This is more likely to occur during long-running events such as flash operations.
+
+.. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+
+DRGN-15369: Radio output power cannot be set using the vendor-specific HCI command Zephyr Write TX Power Level for all power levels
+  The command returns "Unsupported Feature or Parameter value (0x11)" if the chosen power level is not supported by the used hardware platform.
+
+  **Workaround** Only select output power levels that are supported by the hardware platform.
+
+.. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-15694: An assert can occur when running an extended advertiser with maximum data length and minimum interval on Coded PHY
+  The assert only occurs if there are scheduling conflicts.
+
+  **Workaround** Ensure the advertising interval is configured to at least 30 milliseconds when advertising on LE Coded PHY.
+
+.. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-15484: A connectable or scannable advertiser may end with sending a packet without listening for the ``CONNECT_IND``, ``AUX_CONNECT_REQ``, ``SCAN_REQ``, or ``AUX_SCAN_REQ``
+  These packets sent by the scanner or initiator can end up ignored in some cases.
+
+.. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-15531: The coding scheme provided by the LE Set PHY HCI Command is ignored after a remote initiated PHY procedure
+  The PHY options set by the host in LE Set PHY command are reverted when the remote initiates a PHY update.
+  This happens because of the automatic reply of a PHY update Request in the SoftDevice Controller.
+  This makes it impossible to change the PHY preferred coding in both directions.
+  When receiving on S2, the SoftDevice Controller will always transmit on S8 even when configured to prefer S2.
+
+.. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-15758: The controller may still have pending events after :c:func:`sdc_hci_evt_get()` returns false
+  This will only occur if the host has masked out events.
+
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 DRGN-15251: Very rare assertion fault when connected as peripheral on Coded PHY
@@ -1068,6 +1157,17 @@ DRGN-15382: The SoftDevice Controller cannot be qualified on nRF52832
 
   **Workaround:** Upgrade to v1.5.1 or use the master branch.
 
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-14008: The advertising data is cleared every time the advertising set is configured
+  This causes the "HCI LE Set Extended Advertising Parameters" command to accept data which cannot be fit within the advertising interval instead of returning "Packet Too Long (0x45)".
+  This would only occur if the advertising set is configured to use maximum data length on LE Coded PHY with an advertising interval less than 30 milliseconds.
+
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-15291: The generation of QoS Connection events is not disabled after an HCI reset
+  Some event reports may still occur after a reset.
+
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 DRGN-15226: Link disconnects with reason "LMP Response Timeout (0x22)"
@@ -1093,6 +1193,33 @@ DRGN-13921: Directed advertising issues using RPA in TargetA
 
 DRGN-10367: Advertiser times out earlier than expected
   If an extended advertiser is configured with limited duration, it will time out after the first primary channel packet in the last advertising event.
+
+.. rst-class:: v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+DRGN-11222: A Central may disconnect prematurely if there are scheduling conflicts while doing a control procedure with an instant
+  This bug will only be triggered in extremely rare cases.
+
+.. rst-class:: v1-1-0 v1-0-0
+
+DRGN-13231: A control packet may be sent twice even after the packet is ACKed
+  This only occurs if the radio is forced off due to an unforeseen condition.
+
+.. rst-class:: v1-1-0 v1-0-0
+
+DRGN-13350: HCI LE Set Extended Scan Enable returns "Unsupported Feature or Parameter value (0x11)"
+  This occurs when duplicate filtering is enabled.
+
+  **Workaround** Do not enable duplicate filtering in the controller.
+
+.. rst-class:: v1-1-0 v1-0-0
+
+DRGN-12122: ``secondary_max_skip`` cannot be set to a non-zero value
+  HCI LE Set Advertising Parameters will return "Unsupported Feature or Parameter value (0x11)" when ``secondary_max_skip`` is set to a non-zero value.
+
+.. rst-class:: v1-1-0 v1-0-0
+
+DRGN-13079: An assert occurs when setting a secondary PHY to 0 when using HCI LE Set Extended Advertising Parameters
+  This issue occurs when the advertising type is set to legacy advertising.
 
 .. rst-class:: v1-1-0
 
@@ -1127,10 +1254,10 @@ Sending control packet twice
   A control packet could be sent twice even after the packet was acknowledged.
   This would only occur if the radio was forced off due to an unforeseen condition.
 
-.. rst-class:: v1-1-0 v1-0-0
+.. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-Wait time required after a directed high duty cycle advertiser times out
-  The application is unable to restart a connectable advertiser right after a high-duty-cycle advertiser times out.
+DRGN-13029: The application will not immediately restart a connectable advertiser after a high duty cycle advertiser times out
+  In some cases, the host may restart advertising sooner than the SoftDevice Controller is able to free its connection context.
 
   **Workaround:** Wait 500 ms before restarting a connectable advertiser
 
@@ -1138,21 +1265,6 @@ Wait time required after a directed high duty cycle advertiser times out
 
 Assert risk after performing a DLE procedure
   The controller could assert when receiving a packet with a CRC error on LE Coded PHY after performing a DLE procedure where RX Octets is changed to a value above 140.
-
-.. rst-class:: v1-1-0 v1-0-0
-
-Assert when using HCI LE Set Extended Advertising Parameters
-  The controller will assert when setting secondary PHY to 0 when using HCI LE Set Extended Advertising Parameters and the advertising type is set to legacy advertising.
-
-.. rst-class:: v1-1-0 v1-0-0
-
-HCI issues with duplicate filtering
-  HCI LE Set Extended Scan Enable returns `UNSUPPORTED_FEATURE` when duplicate filtering is enabled.
-
-.. rst-class:: v1-1-0 v1-0-0
-
-HCI issues with `secondary_max_skip`
-  HCI LE Set Advertising Parameters returns `UNSUPPORTED_FEATURE` when `secondary_max_skip` is set to a non-zero value.
 
 .. rst-class:: v1-0-0
 
