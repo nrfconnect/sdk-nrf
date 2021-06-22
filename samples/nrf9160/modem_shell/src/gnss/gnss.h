@@ -16,18 +16,57 @@ enum gnss_duty_cycling_policy {
 };
 
 enum gnss_data_delete {
-	GNSS_DATA_DELETE_NONE,
 	GNSS_DATA_DELETE_EPHEMERIDES,
 	GNSS_DATA_DELETE_ALL
+};
+
+enum gnss_dynamics_mode {
+	GNSS_DYNAMICS_MODE_GENERAL,
+	GNSS_DYNAMICS_MODE_STATIONARY,
+	GNSS_DYNAMICS_MODE_PEDESTRIAN,
+	GNSS_DYNAMICS_MODE_AUTOMOTIVE
+};
+
+enum gnss_timing_source {
+	GNSS_TIMING_SOURCE_RTC,
+	GNSS_TIMING_SOURCE_TCXO
+};
+
+enum gnss_qzss_nmea_mode {
+	/** Standard NMEA PRN reporting. */
+	GNSS_QZSS_NMEA_MODE_STANDARD,
+	/** Custom NMEA PRN reporting (PRN IDs 193...202 used for QZSS satellites). */
+	GNSS_QZSS_NMEA_MODE_CUSTOM
+};
+
+struct gnss_1pps_mode {
+	/** True if 1PPS is enabled, false if disabled. */
+	bool enable;
+	/** Pulse interval (s) 0...1800s. 0 denotes one-time pulse mode. */
+	uint16_t pulse_interval;
+	/** Pulse width (ms) 1...500ms. */
+	uint16_t pulse_width;
+	/** True if start time is applied, false if not. */
+	bool apply_start_time;
+	/** Gregorian year. */
+	uint16_t year;
+	/** Month of the year. */
+	uint8_t month;
+	/** Day of the month. */
+	uint8_t day;
+	/** Hour of the day. */
+	uint8_t hour;
+	/** Minute of the hour. */
+	uint8_t minute;
+	/** Second of the minute. */
+	uint8_t second;
 };
 
 /* Common functions */
 
 int gnss_set_lna_enabled(bool enabled);
 
-/* Functions implemented by different API implementations
- * (GNSS socket/GPS driver)
- */
+/* Functions implemented by different API implementations */
 
 /**
  * @brief Starts GNSS.
@@ -44,6 +83,16 @@ int gnss_start(void);
  *         Otherwise, a (negative) error code is returned.
  */
 int gnss_stop(void);
+
+/**
+ * @brief Deletes GNSS data from NV memory.
+ *
+ * @param data Value indicating which data is deleted.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_delete_data(enum gnss_data_delete data);
 
 /**
  * @brief Sets continuous tracking mode.
@@ -93,6 +142,21 @@ int gnss_set_periodic_fix_mode(uint32_t fix_interval, uint16_t fix_retry);
 int gnss_set_periodic_fix_mode_gnss(uint16_t fix_interval, uint16_t fix_retry);
 
 /**
+ * @brief Sets the system mask.
+ *
+ * Bit 0: GPS
+ * Bit 1: reserved
+ * Bit 2: QZSS
+ * Bit 3..7: reserved
+ *
+ * @param system_mask System bitmask.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_set_system_mask(uint8_t system_mask);
+
+/**
  * @brief Sets duty cycling policy for continuous tracking mode.
  *
  * Duty cycled tracking saves power by operating the GNSS receiver in on/off
@@ -106,16 +170,6 @@ int gnss_set_periodic_fix_mode_gnss(uint16_t fix_interval, uint16_t fix_retry);
  *         Otherwise, a (negative) error code is returned.
  */
 int gnss_set_duty_cycling_policy(enum gnss_duty_cycling_policy policy);
-
-/**
- * @brief Sets what stored data (if any) is deleted whenever the GNSS is started.
- *
- * @param value Value indicating which data is deleted.
- *
- * @retval 0 if the operation was successful.
- *         Otherwise, a (negative) error code is returned.
- */
-int gnss_set_data_delete(enum gnss_data_delete value);
 
 /**
  * @brief Sets satellite elevation threshold angle.
@@ -172,6 +226,58 @@ int gnss_set_nmea_mask(uint16_t nmea_mask);
  *         Otherwise, a (negative) error code is returned.
  */
 int gnss_set_priority_time_windows(bool value);
+
+/**
+ * @brief Sets the dynamics mode.
+ *
+ * @param mode Dynamics mode.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_set_dynamics_mode(enum gnss_dynamics_mode mode);
+
+/**
+ * @brief Sets the QZSS NMEA mode. In standard NMEA mode QZSS satellites are not reported.
+ *        In custom NMEA mode QZSS satellites are reported using PRN IDs 193...202.
+ *
+ * @param nmea_mode QZSS NMEA mode.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_set_qzss_nmea_mode(enum gnss_qzss_nmea_mode nmea_mode);
+
+/**
+ * @brief Sets the QZSS PRN mask.
+ *
+ * @param mask Bits 0 to 9 when set correspond to PRNs 193...202 being enabled.
+ *             Bits 10...15 are reserved.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_set_qzss_mask(uint16_t mask);
+
+/**
+ * @brief Sets the 1PPS mode configuration.
+ *
+ * @param config 1PPS mode configuration.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_set_1pps_mode(const struct gnss_1pps_mode *config);
+
+/**
+ * @brief Sets the timing source during sleep.
+ *
+ * @param source Timing source.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_set_timing_source(enum gnss_timing_source source);
 
 /**
  * @brief Sets which AGPS data is allowed to be injected to the modem (either

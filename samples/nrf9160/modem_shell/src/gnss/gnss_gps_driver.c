@@ -21,12 +21,14 @@ static bool gnss_initialized;
 
 /* Default GNSS configuration */
 struct gps_config gnss_conf = {
-	GPS_NAV_MODE_CONTINUOUS,
-	GPS_POWER_MODE_DISABLED,
-	0,      /* interval */
-	0,      /* timeout */
-	false,  /* delete_agps_data */
-	false   /* priority */
+	.nav_mode = GPS_NAV_MODE_CONTINUOUS,
+	.power_mode = GPS_POWER_MODE_DISABLED,
+	.use_case = GPS_USE_CASE_MULTIPLE_HOT_START,
+	.accuracy = GPS_ACCURACY_NORMAL,
+	.interval = 0,
+	.timeout = 0,
+	.delete_agps_data = false,
+	.priority = false
 };
 
 /* Default output configuration */
@@ -210,6 +212,25 @@ int gnss_stop(void)
 	return gps_stop(gps_dev);
 }
 
+int gnss_delete_data(enum gnss_data_delete data)
+{
+	gnss_init();
+
+	if (data != GNSS_DATA_DELETE_ALL) {
+		shell_error(shell_global,
+			    "GNSS: In GPS driver mode only deleting all data is supported");
+		return -1;
+	}
+
+	gnss_conf.delete_agps_data = true;
+	(void)gps_start(gps_dev, &gnss_conf);
+
+	gnss_conf.delete_agps_data = false;
+	(void)gps_stop(gps_dev);
+
+	return 0;
+}
+
 int gnss_set_continuous_mode(void)
 {
 	gnss_conf.nav_mode = GPS_NAV_MODE_CONTINUOUS;
@@ -245,6 +266,13 @@ int gnss_set_periodic_fix_mode_gnss(uint16_t fix_interval, uint16_t fix_retry)
 	return 0;
 }
 
+int gnss_set_system_mask(uint8_t system_mask)
+{
+	shell_error(shell_global,
+		    "GNSS: Operation not supported in GPS driver mode");
+	return -EOPNOTSUPP;
+}
+
 int gnss_set_duty_cycling_policy(enum gnss_duty_cycling_policy policy)
 {
 	int err = 0;
@@ -265,26 +293,6 @@ int gnss_set_duty_cycling_policy(enum gnss_duty_cycling_policy policy)
 	}
 
 	return err;
-}
-
-int gnss_set_data_delete(enum gnss_data_delete value)
-{
-	switch (value) {
-	case GNSS_DATA_DELETE_NONE:
-		gnss_conf.delete_agps_data = false;
-		break;
-	case GNSS_DATA_DELETE_EPHEMERIDES:
-		shell_error(shell_global,
-			    "GNSS: Operation not supported in GPS driver mode");
-		return -EOPNOTSUPP;
-	case GNSS_DATA_DELETE_ALL:
-		gnss_conf.delete_agps_data = true;
-		break;
-	default:
-		return -EOPNOTSUPP;
-	}
-
-	return 0;
 }
 
 int gnss_set_elevation_threshold(uint8_t elevation)
@@ -309,6 +317,41 @@ int gnss_set_nmea_mask(uint16_t mask)
 }
 
 int gnss_set_priority_time_windows(bool value)
+{
+	shell_error(shell_global,
+		    "GNSS: Operation not supported in GPS driver mode");
+	return -EOPNOTSUPP;
+}
+
+int gnss_set_dynamics_mode(enum gnss_dynamics_mode mode)
+{
+	shell_error(shell_global,
+		    "GNSS: Operation not supported in GPS driver mode");
+	return -EOPNOTSUPP;
+}
+
+int gnss_set_qzss_nmea_mode(enum gnss_qzss_nmea_mode nmea_mode)
+{
+	shell_error(shell_global,
+		    "GNSS: Operation not supported in GPS driver mode");
+	return -EOPNOTSUPP;
+}
+
+int gnss_set_qzss_mask(uint16_t mask)
+{
+	shell_error(shell_global,
+		    "GNSS: Operation not supported in GPS driver mode");
+	return -EOPNOTSUPP;
+}
+
+int gnss_set_1pps_mode(const struct gnss_1pps_mode *config)
+{
+	shell_error(shell_global,
+		    "GNSS: Operation not supported in GPS driver mode");
+	return -EOPNOTSUPP;
+}
+
+int gnss_set_timing_source(enum gnss_timing_source source)
 {
 	shell_error(shell_global,
 		    "GNSS: Operation not supported in GPS driver mode");
