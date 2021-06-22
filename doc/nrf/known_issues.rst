@@ -178,7 +178,7 @@ Modem FW reset on debugger connection through SWD
   If a debugger (for example, J-Link) is connected via SWD to the nRF9160, the modem firmware will reset.
   Therefore, the LTE modem cannot be operational during debug sessions.
 
-  .. rst-class:: v1-6-0 v1-5-1 v1-5-0
+.. rst-class:: v1-6-0 v1-5-1 v1-5-0
 
 NCSDK-9441: Fmfu SMP server sample is unstable with the newest J-Link version
   Full modem serial update does not work on development kit with debugger chip version delivered with J-Link software > 6.88a
@@ -190,7 +190,7 @@ NCSDK-9441: Fmfu SMP server sample is unstable with the newest J-Link version
 NCSDK-10106: Elevated current consumption when using applications without :ref:`nrfxlib:nrf_modem` on nRF9160
   When running applications that do not enable :ref:`nrfxlib:nrf_modem` on nRF9160 with build code B1A, current consumption will stay at 3 mA when in sleep.
 
- **Workaround:** Enable :ref:`nrfxlib:nrf_modem`.
+  **Workaround:** Enable :ref:`nrfxlib:nrf_modem`.
 
 nRF5
 ****
