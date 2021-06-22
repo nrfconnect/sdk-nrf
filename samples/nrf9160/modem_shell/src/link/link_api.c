@@ -22,6 +22,7 @@
 
 #include "link_shell.h"
 #include "link_shell_print.h"
+#include "link_shell_pdn.h"
 #include "link_api.h"
 
 #if defined(CONFIG_AT_CMD)
@@ -49,6 +50,41 @@
 #define AT_CMD_PDP_CONTEXT_READ_RSP_DELIM "\r\n"
 
 extern const struct shell *shell_global;
+
+#define AT_CMD_PDP_CONTEXTS_ACT_READ "AT+CGACT?"
+
+static void link_api_context_info_fill_activation_status(
+	struct pdp_context_info_array *pdp_info)
+{
+	char buf[16] = { 0 };
+	const char *p;
+	char at_response_str[256];
+	int ret;
+	int ctx_cnt = pdp_info->size;
+	struct pdp_context_info *ctx_tbl = pdp_info->array;
+
+	ret = at_cmd_write(AT_CMD_PDP_CONTEXTS_ACT_READ, at_response_str,
+			   sizeof(at_response_str), NULL);
+	if (ret) {
+		shell_error(
+			shell_global,
+			"Cannot get PDP contexts activation states, err: %d",
+			ret);
+		return;
+	}
+
+	/* For each contexts: */
+	for (int i = 0; i < ctx_cnt; i++) {
+		/* Search for a string +CGACT: <cid>,<state> */
+		snprintf(buf, sizeof(buf), "+CGACT: %d,1", ctx_tbl[i].cid);
+		p = strstr(at_response_str, buf);
+		if (p) {
+			ctx_tbl[i].ctx_active = true;
+		}
+	}
+}
+
+/* ****************************************************************************/
 
 static int link_api_pdn_id_get(uint8_t cid)
 {
@@ -81,37 +117,7 @@ static int link_api_pdn_id_get(uint8_t cid)
 	return ret;
 }
 
-#define AT_CMD_PDP_CONTEXTS_ACT_READ "AT+CGACT?"
-
-static void link_api_get_pdn_states(struct pdp_context_info_array *pdp_info)
-{
-	char buf[16] = { 0 };
-	const char *p;
-	char at_response_str[256];
-	int ret;
-	int ctx_cnt = pdp_info->size;
-	struct pdp_context_info *ctx_tbl = pdp_info->array;
-
-	ret = at_cmd_write(AT_CMD_PDP_CONTEXTS_ACT_READ, at_response_str,
-			   sizeof(at_response_str), NULL);
-	if (ret) {
-		shell_error(
-			shell_global,
-			"Cannot get PDP contexts activation states, err: %d",
-			ret);
-		return;
-	}
-
-	/* For each contexts: */
-	for (int i = 0; i < ctx_cnt; i++) {
-		/* Search for a string +CGACT: <cid>,<state> */
-		snprintf(buf, sizeof(buf), "+CGACT: %d,1", ctx_tbl[i].cid);
-		p = strstr(at_response_str, buf);
-		if (p) {
-			ctx_tbl[i].ctx_active = true;
-		}
-	}
-}
+/* ****************************************************************************/
 
 struct pdp_context_info *link_api_get_pdp_context_info_by_pdn_cid(int pdn_cid)
 {
@@ -764,7 +770,7 @@ parse:
 	}
 
 	/* ...and finally, fill PDP context activation status for each: */
-	link_api_get_pdn_states(pdp_info);
+	link_api_context_info_fill_activation_status(pdp_info);
 
 clean_exit:
 	at_params_list_free(&param_list);
@@ -776,7 +782,6 @@ clean_exit:
 
 /* *****************************************************************************/
 
-#if defined(CONFIG_MODEM_INFO)
 void link_api_modem_info_get_for_shell(const struct shell *shell, bool connected)
 {
 	struct pdp_context_info_array pdp_context_info_tbl;
@@ -885,4 +890,3 @@ void link_api_modem_info_get_for_shell(const struct shell *shell, bool connected
 #endif /* CONFIG_AT_CMD */
 	}
 }
-#endif /* CONFIG_MODEM_INFO */

@@ -32,6 +32,7 @@ config MOSH_PING
 config MOSH_LINK
 	bool "Link control"
 	depends on LTE_LINK_CONTROL
+	depends on MODEM_INFO
 	depends on SETTINGS
 	default y
 	help
