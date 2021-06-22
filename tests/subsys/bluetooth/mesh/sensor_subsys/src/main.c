@@ -887,17 +887,23 @@ static void temp8_check(const struct bt_mesh_sensor_type *sensor_type)
 
 static void temp_check(const struct bt_mesh_sensor_type *sensor_type)
 {
-	struct sensor_value in_value = {0};
+	struct sensor_value in_value[sensor_type->channel_count];
 	int32_t test_vector[] = {0x8000, -273, 0, 100, 327};
 
+	memset(in_value, 0, sizeof(in_value));
+
 	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
+		int16_t expected[sensor_type->channel_count];
 
-		int16_t expected = test_vector[i] == 0x8000 ?
-			0x8000 : raw_scalar_value_get(test_vector[i], 1, -2, 0);
+		for (int j = 0; j < sensor_type->channel_count; j++) {
+			in_value[j].val1 = test_vector[i];
+			in_value[j].val2 = 0;
+			expected[j] = test_vector[i] == 0x8000 ?
+				0x8000 : raw_scalar_value_get(test_vector[i], 1, -2, 0);
+		}
 
-		encoding_checking_proceed(sensor_type, &in_value, &expected, sizeof(uint16_t));
-		decoding_checking_proceed(sensor_type, &expected, sizeof(uint16_t), &in_value);
+		encoding_checking_proceed(sensor_type, in_value, expected, sizeof(expected));
+		decoding_checking_proceed(sensor_type, expected, sizeof(expected), in_value);
 	}
 }
 
@@ -1236,8 +1242,10 @@ static void apparent_power_check(const struct bt_mesh_sensor_type *sensor_type)
 
 static void electric_current_check(const struct bt_mesh_sensor_type *sensor_type)
 {
-	struct sensor_value in_value[sensor_type->channel_count] = {0};
+	struct sensor_value in_value[sensor_type->channel_count];
 	uint16_t test_vector[] = {0, 1234, 5555, 11111, 65534, UINT16_MAX};
+
+	memset(in_value, 0, sizeof(in_value));
 
 	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
 		uint16_t expected[sensor_type->channel_count];
@@ -1257,8 +1265,10 @@ static void electric_current_check(const struct bt_mesh_sensor_type *sensor_type
 
 static void voltage_check(const struct bt_mesh_sensor_type *sensor_type)
 {
-	struct sensor_value in_value[sensor_type->channel_count] = {0};
+	struct sensor_value in_value[sensor_type->channel_count];
 	uint16_t test_vector[] = {0, 123, 159, 160, UINT16_MAX};
+
+	memset(in_value, 0, sizeof(in_value));
 
 	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
 		uint16_t expected[sensor_type->channel_count];
@@ -1278,8 +1288,10 @@ static void voltage_check(const struct bt_mesh_sensor_type *sensor_type)
 
 static void average_current_check(const struct bt_mesh_sensor_type *sensor_type)
 {
-	struct sensor_value in_value[sensor_type->channel_count] = {0};
+	struct sensor_value in_value[sensor_type->channel_count];
 	uint16_t test_vector_current[] = {0, 1234, 5555, 11111, 65534, UINT16_MAX};
+
+	memset(in_value, 0, sizeof(in_value));
 
 	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
 	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
@@ -1314,8 +1326,10 @@ static void average_current_check(const struct bt_mesh_sensor_type *sensor_type)
 
 static void average_voltage_check(const struct bt_mesh_sensor_type *sensor_type)
 {
-	struct sensor_value in_value[sensor_type->channel_count] = {0};
+	struct sensor_value in_value[sensor_type->channel_count];
 	uint16_t test_vector_voltage[] = {0, 123, 159, 160, UINT16_MAX};
+
+	memset(in_value, 0, sizeof(in_value));
 
 	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
 	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
@@ -1350,8 +1364,10 @@ static void average_voltage_check(const struct bt_mesh_sensor_type *sensor_type)
 
 static void input_current_stat_check(const struct bt_mesh_sensor_type *sensor_type)
 {
-	struct sensor_value in_value[sensor_type->channel_count] = {0};
+	struct sensor_value in_value[sensor_type->channel_count];
 	uint16_t test_vector_current[] = {0, 1234, 5555, 11111, 65534, UINT16_MAX};
+
+	memset(in_value, 0, sizeof(in_value));
 
 	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
 	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
@@ -1387,8 +1403,10 @@ static void input_current_stat_check(const struct bt_mesh_sensor_type *sensor_ty
 
 static void input_voltage_stat_check(const struct bt_mesh_sensor_type *sensor_type)
 {
-	struct sensor_value in_value[sensor_type->channel_count] = {0};
+	struct sensor_value in_value[sensor_type->channel_count];
 	uint16_t test_vector_voltage[] = {0, 123, 159, 160, UINT16_MAX};
+
+	memset(in_value, 0, sizeof(in_value));
 
 	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
 	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
@@ -1425,13 +1443,15 @@ static void input_voltage_stat_check(const struct bt_mesh_sensor_type *sensor_ty
 
 static void rel_runtime_in_current_range_check(const struct bt_mesh_sensor_type *sensor_type)
 {
-	struct sensor_value in_value[sensor_type->channel_count] = {0};
+	struct sensor_value in_value[sensor_type->channel_count];
 	uint16_t test_vector_current[] = {0, 1234, 5555, 11111, 65534, UINT16_MAX};
 	uint8_t test_vector_percentage8[] = {0, 25, 50, 75, 100, 0xFF};
 	struct __packed {
 		uint8_t expected_percentage8;
 		uint16_t expected_current[2];
 	} expected;
+
+	memset(in_value, 0, sizeof(in_value));
 
 	for (int i = 0; i < ARRAY_SIZE(test_vector_current); i++) {
 		for (int j = 1; j < sensor_type->channel_count; j++) {
@@ -1454,13 +1474,15 @@ static void rel_runtime_in_current_range_check(const struct bt_mesh_sensor_type 
 
 static void rel_runtime_in_voltage_range_check(const struct bt_mesh_sensor_type *sensor_type)
 {
-	struct sensor_value in_value[sensor_type->channel_count] = {0};
+	struct sensor_value in_value[sensor_type->channel_count];
 	uint16_t test_vector_voltage[] = {0, 123, 159, 160, UINT16_MAX};
 	uint8_t test_vector_percentage8[] = {0, 25, 50, 75, 100, 0xFF};
 	struct __packed {
 		uint8_t expected_percentage8;
 		uint16_t expected_voltage[2];
 	} expected;
+
+	memset(in_value, 0, sizeof(in_value));
 
 	for (int i = 0; i < ARRAY_SIZE(test_vector_voltage); i++) {
 		for (int j = 1; j < sensor_type->channel_count; j++) {
@@ -1476,6 +1498,72 @@ static void rel_runtime_in_voltage_range_check(const struct bt_mesh_sensor_type 
 		in_value[0].val2 = 0;
 		expected.expected_percentage8 = test_vector_percentage8[i] == 0xFF ?
 			0xFF : raw_scalar_value_get(test_vector_percentage8[i], 1, 0, -1);
+
+		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
+		decoding_checking_proceed(sensor_type, &expected, sizeof(expected), in_value);
+	}
+}
+
+static void temp_stat_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value[sensor_type->channel_count];
+	int32_t test_vector_temp[] = {0x8000, -273, 0, 100, 327};
+
+	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
+	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
+	 * to themselves as they represent 0 seconds, total device lifetime
+	 * and unknown value, respectively)
+	 */
+	int32_t test_vector_time[] = {0, 1, 66560640, 0xFFFFFFFE,
+				      0xFFFFFFFF};
+	uint8_t expected_time[] = {0, 64, 253, 0xFE, 0xFF};
+	struct __packed {
+		uint16_t expected_temp[4];
+		uint8_t expected_time;
+	} expected;
+
+	memset(in_value, 0, sizeof(in_value));
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector_temp); i++) {
+		for (int j = 0; j < 4; j++) {
+			in_value[j].val1 = test_vector_temp[i];
+			expected.expected_temp[j] = test_vector_temp[i] == 0x8000 ?
+				0x8000 : raw_scalar_value_get(test_vector_temp[i], 1, -2, 0);
+		}
+		in_value[4].val1 = test_vector_time[i];
+		expected.expected_time = expected_time[i];
+
+		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
+		decoding_checking_proceed_with_tolerance(sensor_type, &expected, sizeof(expected),
+							 in_value, 0.001);
+	}
+}
+
+static void rel_val_in_a_temp_range_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value[sensor_type->channel_count];
+	int32_t test_vector_temp[] = {0x8000, -273, 0, 100, 327};
+	int32_t test_vector_percentage8[] = {0, 25, 50, 100, 0xFF};
+
+	struct __packed {
+		uint8_t expected_percentage8;
+		uint16_t expected_temp[2];
+	} expected;
+
+	memset(in_value, 0, sizeof(in_value));
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector_temp); i++) {
+		in_value[0].val1 = test_vector_percentage8[i];
+		in_value[1].val1 = test_vector_temp[i];
+		in_value[2].val1 = test_vector_temp[i];
+
+		uint16_t expected_temp = test_vector_temp[i] == 0x8000 ?
+			0x8000 : raw_scalar_value_get(test_vector_temp[i], 1, -2, 0);
+
+		expected.expected_percentage8 = test_vector_percentage8[i] == 0xFF ?
+			0xFF : raw_scalar_value_get(test_vector_percentage8[i], 1, 0, -1);
+		expected.expected_temp[0] = expected_temp;
+		expected.expected_temp[1] = expected_temp;
 
 		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
 		decoding_checking_proceed(sensor_type, &expected, sizeof(expected), in_value);
@@ -2186,6 +2274,44 @@ static void test_rel_runtime_in_an_input_voltage_range(void)
 	rel_runtime_in_voltage_range_check(sensor_type);
 }
 
+/* Device operating temperature sensors */
+
+static void test_dev_op_temp_range_spec(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DEV_OP_TEMP_RANGE_SPEC);
+	sensor_type_sanitize(sensor_type);
+	temp_check(sensor_type);
+}
+
+static void test_present_dev_op_temp(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_DEV_OP_TEMP);
+	sensor_type_sanitize(sensor_type);
+	temp_check(sensor_type);
+}
+
+static void test_dev_op_temp_stat_values(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DEV_OP_TEMP_STAT_VALUES);
+	sensor_type_sanitize(sensor_type);
+	temp_stat_check(sensor_type);
+}
+
+static void test_rel_runtime_in_a_dev_op_temp_range(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_REL_RUNTIME_IN_A_DEV_OP_TEMP_RANGE);
+	sensor_type_sanitize(sensor_type);
+	rel_val_in_a_temp_range_check(sensor_type);
+}
+
 void test_main(void)
 {
 	ztest_test_suite(sensor_types_test,
@@ -2275,7 +2401,13 @@ void test_main(void)
 			ztest_unit_test(test_present_input_ripple_voltage),
 			ztest_unit_test(test_present_input_voltage),
 			ztest_unit_test(test_rel_runtime_in_an_input_current_range),
-			ztest_unit_test(test_rel_runtime_in_an_input_voltage_range)
+			ztest_unit_test(test_rel_runtime_in_an_input_voltage_range),
+
+			/* Device operating temperature sensors */
+			ztest_unit_test(test_dev_op_temp_range_spec),
+			ztest_unit_test(test_dev_op_temp_stat_values),
+			ztest_unit_test(test_present_dev_op_temp),
+			ztest_unit_test(test_rel_runtime_in_a_dev_op_temp_range)
 			 );
 
 	ztest_run_test_suite(sensor_types_test);
