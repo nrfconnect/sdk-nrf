@@ -94,6 +94,10 @@ nRF9160
 
     * The driver has been deprecated in favor of the :ref:`nrfxlib:gnss_interface`.
 
+  * :ref:`lte_lc_readme` library:
+
+    * Added API to enable modem domain events.
+
   * Board names:
 
     * The ``nrf9160dk_nrf9160ns`` and the ``nrf5340dk_nrf5340_cpuappns`` boards have been renamed respectively to ``nrf9160dk_nrf9160_ns`` and ``nrf5340dk_nrf5340_cpuapp_ns``, in a change inherited from upstream Zephyr.

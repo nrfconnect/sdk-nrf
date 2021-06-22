@@ -45,6 +45,7 @@ enum lte_lc_notif_type {
 	LTE_LC_NOTIF_XT3412,
 	LTE_LC_NOTIF_NCELLMEAS,
 	LTE_LC_NOTIF_XMODEMSLEEP,
+	LTE_LC_NOTIF_MDMEV,
 
 	LTE_LC_NOTIF_COUNT,
 };
@@ -163,12 +164,13 @@ static const char thingy91_magpio[] = {
 static struct k_sem link;
 
 static const char *const at_notifs[] = {
-	[LTE_LC_NOTIF_CEREG]	   = "+CEREG",
-	[LTE_LC_NOTIF_CSCON]	   = "+CSCON",
-	[LTE_LC_NOTIF_CEDRXP]	   = "+CEDRXP",
-	[LTE_LC_NOTIF_XT3412]	   = "%XT3412",
-	[LTE_LC_NOTIF_NCELLMEAS]   = "%NCELLMEAS",
-	[LTE_LC_NOTIF_XMODEMSLEEP] = "%XMODEMSLEEP",
+	[LTE_LC_NOTIF_CEREG]		= "+CEREG",
+	[LTE_LC_NOTIF_CSCON]		= "+CSCON",
+	[LTE_LC_NOTIF_CEDRXP]		= "+CEDRXP",
+	[LTE_LC_NOTIF_XT3412]		= "%XT3412",
+	[LTE_LC_NOTIF_NCELLMEAS]	= "%NCELLMEAS",
+	[LTE_LC_NOTIF_XMODEMSLEEP]	= "%XMODEMSLEEP",
+	[LTE_LC_NOTIF_MDMEV]		= "%MDMEV",
 };
 
 BUILD_ASSERT(ARRAY_SIZE(at_notifs) == LTE_LC_NOTIF_COUNT);
@@ -462,6 +464,19 @@ static void at_handler(void *context, const char *response)
 			evt.type = LTE_LC_EVT_MODEM_SLEEP_ENTER;
 		}
 
+		notify = true;
+
+		break;
+	case LTE_LC_NOTIF_MDMEV:
+		LOG_DBG("%%MDMEV notification");
+
+		err = parse_mdmev(response, &evt.modem_evt);
+		if (err) {
+			LOG_ERR("Can't parse modem event notification, error: %d", err);
+			return;
+		}
+
+		evt.type = LTE_LC_EVT_MODEM_EVENT;
 		notify = true;
 
 		break;
@@ -1521,6 +1536,16 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params)
 	}
 
 	return 0;
+}
+
+int lte_lc_modem_events_enable(void)
+{
+	return at_cmd_write(AT_MDMEV_ENABLE, NULL, 0, NULL);
+}
+
+int lte_lc_modem_events_disable(void)
+{
+	return at_cmd_write(AT_MDMEV_DISABLE, NULL, 0, NULL);
 }
 
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)

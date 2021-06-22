@@ -441,6 +441,72 @@ static void test_neighborcell_count_get(void)
 	zassert_equal(0, neighborcell_count_get(resp5), "Wrong neighbor cell count");
 }
 
+static void test_parse_mdmev(void)
+{
+	int err;
+	enum lte_lc_modem_evt modem_evt;
+	const char *light_search = "%MDMEV: SEARCH STATUS 1\r\n";
+	const char *search = "%MDMEV: SEARCH STATUS 2\r\n";
+	const char *reset = "%MDMEV: RESET LOOP\r\n";
+	const char *battery_low = "%MDMEV: ME BATTERY LOW\r\n";
+	const char *overheated = "%MDMEV: ME OVERHEATED\r\n";
+	const char *status_3 = "%MDMEV: SEARCH STATUS 3\r\n";
+	const char *light_search_long = "%MDMEV: SEARCH STATUS 1 and then some\r\n";
+
+	err = parse_mdmev(light_search, &modem_evt);
+	zassert_equal(err, 0, "parse_mdmev was expected to return 0, but returned %d", err);
+	zassert_equal(modem_evt, LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE,
+		"Wrong modem event type: %d, expected: %d", modem_evt,
+		LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE);
+	err = parse_mdmev(search, &modem_evt);
+	zassert_equal(err, 0, "parse_mdmev was expected to return 0, but returned %d", err);
+	zassert_equal(modem_evt, LTE_LC_MODEM_EVT_SEARCH_DONE,
+		"Wrong modem event type: %d, expected: %d", modem_evt,
+		LTE_LC_MODEM_EVT_SEARCH_DONE);
+
+	err = parse_mdmev(reset, &modem_evt);
+	zassert_equal(err, 0, "parse_mdmev was expected to return 0, but returned %d", err);
+	zassert_equal(modem_evt, LTE_LC_MODEM_EVT_RESET_LOOP,
+		"Wrong modem event type: %d, expected: %d", modem_evt,
+		LTE_LC_MODEM_EVT_RESET_LOOP);
+
+	err = parse_mdmev(battery_low, &modem_evt);
+	zassert_equal(err, 0, "parse_mdmev was expected to return 0, but returned %d", err);
+	zassert_equal(modem_evt, LTE_LC_MODEM_EVT_BATTERY_LOW,
+		"Wrong modem event type: %d, expected: %d", modem_evt,
+		LTE_LC_MODEM_EVT_BATTERY_LOW);
+
+	err = parse_mdmev(overheated, &modem_evt);
+	zassert_equal(err, 0, "parse_mdmev was expected to return 0, but returned %d", err);
+	zassert_equal(modem_evt, LTE_LC_MODEM_EVT_OVERHEATED,
+		"Wrong modem event type: %d, expected: %d", modem_evt,
+		LTE_LC_MODEM_EVT_OVERHEATED);
+
+	err = parse_mdmev(status_3, &modem_evt);
+	zassert_equal(err, -ENODATA, "parse_mdmev was expected to return %d, but returned %d",
+		     -ENODATA, err);
+
+	err = parse_mdmev(search, NULL);
+	zassert_equal(err, -EINVAL, "parse_mdmev was expected to return %d, but returned %d",
+		      -EINVAL, err);
+
+	err = parse_mdmev(light_search_long, &modem_evt);
+	zassert_equal(err, -ENODATA, "parse_mdmev was expected to return %d, but returned %d",
+		      -ENODATA, err);
+
+	err = parse_mdmev("%MDMEVE", &modem_evt);
+	zassert_equal(err, -EIO, "parse_mdmev was expected to return %d, but returned %d",
+		      -EIO, err);
+
+	err = parse_mdmev("%MDME", &modem_evt);
+	zassert_equal(err, -EIO, "parse_mdmev was expected to return %d, but returned %d",
+		      -EIO, err);
+
+	err = parse_mdmev("%MDMEV: ", &modem_evt);
+	zassert_equal(err, -ENODATA, "parse_mdmev was expected to return %d, but returned %d",
+		      -ENODATA, err);
+}
+
 void test_main(void)
 {
 	ztest_test_suite(test_lte_lc,
@@ -452,7 +518,8 @@ void test_main(void)
 		ztest_unit_test(test_response_is_valid),
 		ztest_unit_test(test_parse_ncellmeas),
 		ztest_unit_test(test_neighborcell_count_get),
-		ztest_unit_test(test_parse_coneval)
+		ztest_unit_test(test_parse_coneval),
+		ztest_unit_test(test_parse_mdmev)
 	);
 
 	ztest_run_test_suite(test_lte_lc);
