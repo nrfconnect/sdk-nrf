@@ -164,6 +164,12 @@ Immutable bootloader
   * The bootloader now allows a single boot with no key present, to allow the app to write a key.
     After the first boot, the key must be present or the bootloader won't boot the app.
 
+Secure partition manager (SPM)
+------------------------------
+
+Bug fixes:
+
+* NCSDK-5156: Fixed the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
 
 MCUboot
 =======
