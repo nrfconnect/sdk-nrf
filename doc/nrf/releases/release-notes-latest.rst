@@ -1,6 +1,8 @@
+:orphan:
+
 .. _ncs_release_notes_latest:
 
-Changes in |NCS| v1.5.99
+Changes in |NCS| v1.6.99
 ########################
 
 .. contents::
@@ -15,7 +17,7 @@ The most relevant changes that are present on the master branch of the |NCS|, as
 Highlights
 **********
 
-* New sample :ref:`modem_shell_application` can be used test various connectivity features.
+There are no entries for this section yet.
 
 Changelog
 *********
@@ -25,207 +27,17 @@ The following sections provide detailed lists of changes by component.
 nRF9160
 =======
 
-* Added:
-
-  * :ref:`lib_modem_jwt` library, which provides an API to obtain a JSON Web Token (JWT) from the modem.  Functionality requires modem firmware v1.3.0 or higher.
-
-  * :ref:`lib_modem_attest_token` library:
-
-    * The library provides an API to get an attestation token from the modem.
-    * Functionality requires modem firmware v1.3.0 or higher.
-
-  * :ref:`mod_memfault` module and integration on |NCS| for nRF9160-based devices.
-
-    * Integration of Memfault SDK into |NCS|.
-
-  * :ref:`memfault_sample` sample implementing :ref:`mod_memfault` module and showing how to use Memfault SDK functionality in an application.
-
-  * :ref:`modem_shell_application` enables to test various connectivity features such as link handling, TCP/IP connections, data throughput (curl and iPerf3), SMS, GNSS, FOTA and PPP.
-
-  * :ref:`lib_nrf_cloud_pgps` library:
-
-    * The library adds P-GPS (Predicted GPS) support to the :ref:`lib_nrf_cloud` library.
-
-  * :ref:`sms_sample` demonstrates how you can send and receive SMS messages with your nRF9160-based device using the ref:`sms_readme`
-
-  * :ref:`pdn_sample` demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the :ref:`pdn_readme` library.
-
-  * :ref:`pdn_readme` library can be used to manage Packet Data Protocol (PDP) contexts and PDN connections.
-
-* Updated:
-
-  * :ref:`lib_nrf_cloud` library:
-
-    * Added cellular positioning support to :ref:`lib_nrf_cloud_cell_pos`.
-    * Added Kconfig option :option:`CONFIG_NRF_CLOUD_CELL_POS` to obtain cell-based location from nRF Cloud instead of using the modem's GPS.
-    * Added function :c:func:`nrf_cloud_modem_fota_completed` which is to be called by the application after it re-initializes the modem (instead of rebooting) after a modem FOTA update.
-    * Updated to include the FOTA type value in the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event.
-    * Updated configuration options for setting the source of the MQTT client ID (nRF Cloud device ID).
-    * Updated nRF Cloud FOTA to use type validated FOTA download.
-
-  * :ref:`asset_tracker` application:
-
-    * Added optional P-GPS support.
-    * Added application-specific option ``CONFIG_PGPS_STORE_LOCATION``.
-    * Added :file:`overlay-pgps.conf` to enable P-GPS support.
-    * Added :file:`overlay-agps-pgps.conf` to enable A-GPS and P-GPS support.
-    * Updated to handle new Kconfig options:
-
-      * :option:`CONFIG_NRF_CLOUD_CELL_POS`
-
-  * :ref:`asset_tracker_v2` application:
-
-    * Added support for Azure IoT Hub.
-    * Added support for nRF Cloud.
-
-  * :ref:`modem_info_readme` library:
-
-    * Updated to prevent reinitialization of param list in :c:func:`modem_info_init`.
-
-  * :ref:`lib_fota_download` library:
-
-    * Added an API to retrieve the image type that is being downloaded.
-    * Added an API to cancel current downloading.
-    * Added an API to validate FOTA image type before starting installation.
-
-  * :ref:`lib_ftp_client` library:
-
-    * Support subset of RFC959 FTP commands only.
-    * Added support of STOU and APPE (besides STOR) for "put".
-    * Added detection of socket errors, report with proprietary reply message.
-    * Increased FTP payload size from NET_IPV4_MTU(576) to MSS as defined on modem side (708).
-    * Added polling "226 Transfer complete" after data channel TX/RX, with a configurable timeout of 60 seconds.
-    * Ignored the reply code of "UTF8 ON" command as some FTP server returns abnormal reply.
-
-  * :ref:`at_params_readme` library:
-
-    * Added function :c:func:`at_params_int64_get` that allows for getting of AT param list entries containing signed 64 bit integers.
-
-  * :ref:`lte_lc_readme` library:
-
-    * Added support for %XT3412 AT command notifications, which allows the application to get prewarnings before Tracking Area Updates.
-    * Added support for neighbor cell measurements.
-    * Added support for %XMODEMSLEEP AT command notifications which allows the application to get notifications related to modem sleep.
-    * Added support for %CONEVAL AT command that can be used to evaluate the LTE radio signal state in a cell prior to data transmission.
-
-  * :ref:`serial_lte_modem` application:
-
-    * Fixed TCP/UDP port range issue (0~65535).
-    * Added AT#XSLEEP=2 to power off UART interface.
-    * Added support for the ``verbose``, ``uput``, ``mput`` commands and data mode to the FTP service.
-    * Added URC (unsolicited response code) to the FOTA service.
-    * Enabled all SLM services by default.
-    * Updated the HTTP client service code to handle chunked HTTP responses.
-    * Added data mode to the MQTT Publish service to support JSON-type payload.
-    * Added SMS support, to send/receive SMS in plain text.
-
-  * :ref:`at_cmd_parser_readme`:
-
-    * Added support for parsing parameters of type unsigned int or unsigned short.
-
-  * :ref:`lib_spm` library:
-
-    * Added support for the nRF9160 pulse-density modulation (PDM) and inter-IC sound (I2S) peripherals in non-secure applications.
-
-  * :ref:`gps_api`:
-
-    * Renamed gps_agps_request() to gps_agps_request_send().
-
-  * :ref:`agps_sample` sample:
-
-    * Added optional P-GPS support.
-    * Added :file:`overlay-pgps.conf` to enable P-GPS support.
-    * Added :file:`overlay-agps-pgps.conf` to enable A-GPS and P-GPS support.
-
-  * :ref:`aws_fota_sample` sample:
-
-    * Removed nRF Connect for Cloud support code, because ``fota_v1`` is no longer supported in nRF Connect for Cloud.
-    * Removed provisioning using :ref:`modem_key_mgmt` and :file:`certificates.h`, because this is not the recommended way of provisioning private certificates.
-    * Renamed the following Kconfig options:
-
-      * ``CONFIG_CLOUD_CERT_SEC_TAG`` renamed to :option:`CONFIG_CERT_SEC_TAG`.
-      * ``CONFIG_USE_CLOUD_CLIENT_ID`` renamed to :option:`CONFIG_USE_CUSTOM_CLIENT_ID`.
-      * ``CONFIG_CLOUD_CLIENT_ID`` renamed to ``CONFIG_CLIENT_ID``.
-      * ``CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`` renamed to ``CONFIG_CLIENT_ID_PREFIX``.
-
-  * :ref:`lib_aws_fota` library:
-
-    * Updated internal state handling and fault tolerance.
-
-  * :ref:`sms_readme` updated to enable sending of sms and decoding of received SMS payload.
-
-  * :ref:`liblwm2m_carrier_readme` library - Updated to v0.20.1. See :ref:`liblwm2m_carrier_changelog` for details.
-
-  * :ref:`lib_lwm2m_client_utils` created from common parts of :ref:`lwm2m_client`. This module can be reused to add common objects to LwM2M applications.
+There are no entries for this section yet.
 
 nRF5
 ====
 
-
-Matter (Project CHIP)
----------------------
-
-* Project CHIP has been officially renamed to `Matter`_.
-* Added:
-
-  * New user guide about :ref:`ug_matter_configuring`.
-
-* Updated:
-
-  * Renamed occurrences of Project CHIP to Matter.
-
-Thread
-------
-
-* Added support for the following Thread 1.2 features:
-
-  * Domain Unicast Addresses
-  * Multicast Listener Registration
-  * Backbone Router (Thread Network side only)
-  * Link Metrics
-  * Coordinated Sampled Listening (CSL)
-
-  Link Metrics and CSL are supported for nRF52 Series devices.
-
-* NCP sample renamed to Co-processor, with added support for RCP architecture.
-
-Zigbee
-------
-
-* Added the v0.9.5 version of the `ZBOSS NCP Host`_ package that includes a simple gateway application.
-* Updated:
-
-  * Reworked the :ref:`NCP sample <zigbee_ncp_sample>` to work with the simple gateway application.
-  * Moved the `NCP Host documentation`_ from the `ZBOSS NCP Host`_ package to the same location as the `external ZBOSS development guide and API documentation`_.
+There are no entries for this section yet.
 
 Common
 ======
 
-sdk-nrfxlib
------------
-
-See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
-
-Modem library
-+++++++++++++
-
-* Updated Modem library to version 1.2.1. See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
-* Added a new function based GNSS API with support for new GNSS features in MFW 1.3.0. See :ref:`nrfxlib:gnss_interface` for more information.
-
-  * GNSS socket API is deprecated.
-
-* PDN socket API is deprecated. The functionality has been replaced by :ref:`pdn_readme`.
-
-
-SoftDevice Controller
-+++++++++++++++++++++
-
-See the :ref:`softdevice_controller_changelog` for detailed information.
-
-* Added support for multiple advertising sets.
-* Added radio front-end module (FEM) support (nRF52 Series only).
-* Added support for nRF5340, which was previously only supported for evaluation purposes.
-* Decoupled the controller from the random number generator.
+There are no entries for this section yet.
 
 MCUboot
 =======
@@ -236,12 +48,8 @@ The code for integrating MCUboot into |NCS| is located in :file:`ncs/nrf/modules
 
 The following list summarizes the most important changes inherited from upstream MCUboot:
 
-* Added support for indicating serial recovery through LED.
-* Made the debounce delay of the serial detect pin state configurable.
-* Added support for mbed TLS ECDSA for signatures.
-* Added an option to use GPIO PIN to enter to USB DFU class recovery.
-* Added an optional check that prevents attempting to boot an image built for a different ROM address than the slot it currently resides in.
-  The check is enabled if the image was signed with the ``IMAGE_F_ROM_FIXED`` flag.
+* No changes yet
+
 
 Mcumgr
 ======
@@ -281,13 +89,7 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* Added:
-
-  * Completed the persistent storage feature, which allows Matter devices to successfully communicate with each other even after reboot.
-  * Added support for OpenThread's Service Registration Protocol (SRP) to enable the discovery of Matter nodes using the DNS-SD protocol.
-  * Added support for Network Commissioning Cluster, used when provisioning a Matter node.
-  * Enabled Message Reliability Protocol (MRP) for the User Datagram Protocol (UDP) traffic within a Matter network.
-  * Added support for Operational Credentials Cluster, used to equip a Matter node with an operational certificate.
+* No changes yet
 
 Documentation
 =============
@@ -298,4 +100,4 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v1.5.0`_ for the list of issues valid for this release.
+See `known issues for nRF Connect SDK v1.6.0`_ for the list of issues valid for this release.

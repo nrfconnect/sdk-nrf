@@ -10,7 +10,8 @@ The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is bui
 
 .. note::
 
-   This version of the |NCS| supports prototyping and evaluation, but should not be used for production and deployment in end products.
+   nRF53 Series devices are supported for production.
+   Wireless protocol stacks and libraries may indicate support for development or support for production for different series of devices based on verification and certification status.
 
 To access different versions of the |NCS| documentation, use the version drop-down in the top left corner.
 To view the documentation from the different repositories that are part of |NCS|, click the arrow in the bottom left corner and select the desired document set.
@@ -65,6 +66,5 @@ In addition to the |NCS| documentation, information is available in the followin
    libraries
    scripts
    release_notes
-   known_issues
 
 ..   cheat_sheet

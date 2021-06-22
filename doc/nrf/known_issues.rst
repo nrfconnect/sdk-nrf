@@ -1,3 +1,5 @@
+:orphan:
+
 .. _known_issues:
 
 Known issues
@@ -497,6 +499,18 @@ KRKNWK-9214: Pigweed submodule may not be accessible from some regions
        git -C modules/lib/matter submodule set-url third_party/pigweed/repo https://github.com/google/pigweed.git
        git -C modules/lib/matter submodule sync third_party/pigweed/repo
        west update
+
+HomeKit
+=======
+
+.. _krknwk_10611:
+
+.. rst-class:: v1-6-0
+
+KRKNWK-10611: DFU will fail when using external flash memory for update image storage.
+  DFU with external flash memory cannot be performed on HomeKit accessories.
+
+More information on HomeKit known issues is available in the HomeKit documentation available in the sdk-homekit private repository.
 
 nRF Desktop
 ===========
@@ -1050,6 +1064,8 @@ KRKNWK-8133: CSMA-CA issues
 
 SoftDevice Controller
 =====================
+
+.. _drgn_15852:
 
 .. rst-class:: v1-6-0 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
