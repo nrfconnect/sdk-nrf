@@ -21,6 +21,8 @@
 .. _`Zephyr commit f12536`: https://github.com/zephyrproject-rtos/hal_nordic/commit/f12536cbfb27b7bb05b40b97bd8a8857f2bf23ec
 .. _`Zephyr commit 2db49c`: https://github.com/zephyrproject-rtos/zephyr/commit/2db49c4b99850b3e7a53667fe7bb9ba6fc2a5b7d
 .. _`kwork API changes`: https://github.com/zephyrproject-rtos/zephyr/pull/29618#issuecomment-738139695
+.. _`Zephyr pull request #29618`: https://github.com/zephyrproject-rtos/zephyr/pull/29618
+.. _`Zephyr issue #27356`: https://github.com/zephyrproject-rtos/zephyr/issues/27356
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
@@ -38,7 +40,7 @@
 .. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-220---2020-04-28
 .. _`Changelog for nrfx 2.3.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-230---2020-08-19
 .. _`Changelog for nrfx 2.4.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-240---2020-11-13
-
+.. _`Changelog for nrfx 2.5.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#250---2021-05-05
 .. _`nRF52 client for serial LTE modem application`: https://github.com/NordicPlayground/nRF52-clients-for-serial-LTE-modem
 
 .. _`HIDAPI library`: https://github.com/libusb/hidapi
@@ -124,6 +126,7 @@
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
 .. _`known issues page on the master branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html
+.. _`known issues for nRF Connect SDK v1.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-6-0
 .. _`known issues for nRF Connect SDK v1.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-5-1
 .. _`known issues for nRF Connect SDK v1.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-5-0
 .. _`known issues for nRF Connect SDK v1.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-2
@@ -168,6 +171,7 @@
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
 .. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
+.. _`Modem firmware compatibility matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_modem_fw.html
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT
 
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52

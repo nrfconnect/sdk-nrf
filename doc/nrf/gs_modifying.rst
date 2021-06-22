@@ -241,8 +241,8 @@ For example, you can replace the *selected_build_type* variable to build the ``Z
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840_pca20041 -d build_pca20041 -- -DCMAKE_BUILD_TYPE=ZRelease
+   west build -b nrf52840dk_nrf52840 -d build_nrf52840dk_nrf52840 -- -DCMAKE_BUILD_TYPE=ZRelease
 
-The ``build_pca20041`` parameter specifies the output directory for the build files.
+The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for the build files.
 
 .. build_types_selection_cmd_end
