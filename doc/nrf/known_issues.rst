@@ -666,6 +666,13 @@ Bluetooth mesh
 NCSDK-5580: nRF5340 only supports SoftDevice Controller
   On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth mesh.
 
+.. rst-class:: v1-6-0
+
+NCSDK-10200: The device stops sending Secure Network Beacons after re-provisioning
+  Bluetooth mesh stops sending Secure Network Beacons if the device is re-provisioned after reset through Config Node Reset message or ``bt_mesh_reset()`` call.
+
+  **Workaround:** Reboot the device after re-provisioning.
+
 Bootloader
 ==========
 
