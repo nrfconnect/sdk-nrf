@@ -427,20 +427,16 @@ int link_sett_save_defcontauth_prot(int auth_prot)
 	int err;
 	const char *key =
 		LINK_SETT_KEY "/" LINK_SETT_DEFCONTAUTH_PROTOCOL_KEY;
-	enum pdn_auth prot;
+	enum pdn_auth method;
 
-	if (auth_prot == 0) {
-		prot = PDN_AUTH_NONE;
-	} else if (auth_prot == 1) {
-		prot = PDN_AUTH_PAP;
-	} else if (auth_prot == 2) {
-		prot = PDN_AUTH_CHAP;
-	} else {
+	err = link_shell_pdn_auth_prot_to_pdn_lib_method_map(auth_prot,
+							     &method);
+	if (err) {
 		shell_error(shell_global, "Uknown auth protocol %d", auth_prot);
 		return -EINVAL;
 	}
 
-	err = settings_save_one(key, &prot, sizeof(enum pdn_auth));
+	err = settings_save_one(key, &auth_prot, sizeof(enum pdn_auth));
 	if (err) {
 		shell_error(
 			shell_global,
@@ -448,10 +444,10 @@ int link_sett_save_defcontauth_prot(int auth_prot)
 			err);
 		return err;
 	}
-	link_settings.defcontauth_prot = prot;
+	link_settings.defcontauth_prot = method;
 
 	shell_print(shell_global, "Key \"%s\" with value \"%d\" saved", key,
-		    prot);
+		    method);
 
 	return 0;
 }

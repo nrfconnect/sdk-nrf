@@ -130,10 +130,14 @@ static const char link_defcontauth_usage_str[] =
 	"                      2 (CHAP)\n";
 
 static const char link_connect_usage_str[] =
-	"Usage: link connect --apn <apn str> [--family <pdn family str>]\n"
+	"Usage: link connect --apn <apn str> [--family <pdn family str>] [auth options]\n"
 	"Options:\n"
 	"  -a, --apn, [str]    Access Point Name\n"
 	"  -f, --family, [str] PDN family: 'ipv4v6', 'ipv4', 'ipv6', 'non-ip'\n"
+	"Optional authentication options:\n"
+	"  -U, --uname, [str]  Username\n"
+	"  -P, --pword, [str]  Password\n"
+	"  -A, --prot,  [int]  Authentication protocol: 0 (None), 1 (PAP), 2 (CHAP)\n"
 	"\n"
 	"Usage: link disconnect -I <cid>\n"
 	"Options:\n"
@@ -735,14 +739,14 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'f': /* Address family */
 			family = optarg;
 			break;
-		case 'A': /* defcont auth protocol */
+		case 'A': /* auth protocol */
 			protocol = atoi(optarg);
 			protocol_given = true;
 			break;
-		case 'U': /* defcont auth username */
+		case 'U': /* auth username */
 			username = optarg;
 			break;
-		case 'P': /* defcont auth password */
+		case 'P': /* auth password */
 			password = optarg;
 			break;
 		/* Options without short option: */
@@ -1284,9 +1288,39 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			link_modem_tau_notifications_unsubscribe();
 		}
 		break;
-	case LINK_CMD_CONNECT:
-		ret = link_shell_pdn_connect(shell, apn, family);
-		break;
+	case LINK_CMD_CONNECT: {
+		struct link_shell_pdn_auth auth_params;
+		struct link_shell_pdn_auth *auth_params_ptr = NULL;
+
+		if ((protocol_given &&
+		     (username == NULL || password == NULL)) ||
+		    ((username != NULL || password != NULL) &&
+		     !protocol_given)) {
+			shell_error(
+				shell,
+				"When setting authentication, all auth options must be given");
+			goto show_usage;
+		} else {
+			enum pdn_auth method;
+
+			ret = link_shell_pdn_auth_prot_to_pdn_lib_method_map(
+				protocol, &method);
+			if (ret) {
+				shell_error(shell, "Uknown auth protocol %d",
+					    protocol);
+				goto show_usage;
+			}
+			auth_params.method = method;
+			auth_params.user = username;
+			auth_params.password = password;
+			if (protocol_given && username != NULL &&
+			    password != NULL) {
+				auth_params_ptr = &auth_params;
+			}
+		}
+		ret = link_shell_pdn_connect(shell, apn, family,
+					     auth_params_ptr);
+	} break;
 	case LINK_CMD_DISCONNECT:
 		ret = link_shell_pdn_disconnect(shell, pdn_cid);
 		break;

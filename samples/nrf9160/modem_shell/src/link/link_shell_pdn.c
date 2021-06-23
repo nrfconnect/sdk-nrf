@@ -241,7 +241,8 @@ bool link_shell_pdn_info_is_in_list(uint8_t cid)
 }
 
 int link_shell_pdn_connect(const struct shell *shell, const char *apn_name,
-			    const char *family_str)
+			   const char *family_str,
+			   const struct link_shell_pdn_auth *auth_params)
 {
 	struct link_shell_pdn_info *new_pdn_info = NULL;
 	enum pdn_fam pdn_lib_family;
@@ -271,7 +272,19 @@ int link_shell_pdn_connect(const struct shell *shell, const char *apn_name,
 		goto cleanup_and_fail;
 	}
 
-	/* TODO: Set authentication params if requested by using pdn_ctx_auth_set() */
+	/* Set authentication params if requested: */
+	if (auth_params != NULL) {
+		ret = pdn_ctx_auth_set(cid, auth_params->method,
+				       auth_params->user,
+				       auth_params->password);
+		if (ret) {
+			shell_error(
+				shell,
+				"Failed to set auth params for CID %d, err %d",
+				cid, ret);
+			goto cleanup_and_fail;
+		}
+	}
 
 	/* Activate a PDN connection */
 	ret = link_shell_pdn_activate(shell, cid);
@@ -361,4 +374,21 @@ void link_shell_pdn_init(const struct shell *shell)
 	pdn_init();
 	pdn_default_callback_set(link_pdn_event_handler);
 	sys_dlist_init(&pdn_info_list);
+}
+
+int link_shell_pdn_auth_prot_to_pdn_lib_method_map(int auth_proto,
+						   enum pdn_auth *method)
+{
+	*method = PDN_AUTH_NONE;
+
+	if (auth_proto == 0) {
+		*method = PDN_AUTH_NONE;
+	} else if (auth_proto == 1) {
+		*method = PDN_AUTH_PAP;
+	} else if (auth_proto == 2) {
+		*method = PDN_AUTH_CHAP;
+	} else {
+		return -EINVAL;
+	}
+	return 0;
 }

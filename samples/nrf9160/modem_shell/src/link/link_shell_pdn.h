@@ -10,15 +10,24 @@
 #include <shell/shell.h>
 #include <modem/pdn.h>
 
+struct link_shell_pdn_auth {
+	enum pdn_auth method;
+	char *user;
+	char *password;
+};
+
 void link_shell_pdn_init(const struct shell *shell);
 
 int link_shell_pdn_connect(const struct shell *shell, const char *apn_name,
-			    const char *family_str);
+			   const char *family_str,
+			   const struct link_shell_pdn_auth *auth_params);
 int link_shell_pdn_disconnect(const struct shell *shell, int pdn_cid);
 int link_shell_pdn_activate(const struct shell *shell, int pdn_cid);
 
 int link_family_str_to_pdn_lib_family(enum pdn_fam *ret_fam, const char *family);
 const char *link_pdn_lib_family_to_string(enum pdn_fam pdn_family, char *out_fam_str);
 bool link_shell_pdn_info_is_in_list(uint8_t cid);
+int link_shell_pdn_auth_prot_to_pdn_lib_method_map(int auth_proto,
+						   enum pdn_auth *method);
 
 #endif /* MOSH_LINK_SHELL_PDN_H */
