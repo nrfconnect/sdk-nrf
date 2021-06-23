@@ -174,7 +174,7 @@ static int get_input_report_idx(uint8_t report_id)
 	return -ENOENT;
 }
 
-static bool is_report_enabled(struct subscriber *sub, uint8_t report_id)
+static bool is_report_enabled(const struct subscriber *sub, uint8_t report_id)
 {
 	__ASSERT_NO_MSG(report_id < __CHAR_BIT__ * sizeof(sub->enabled_reports_bm));
 	return (sub->enabled_reports_bm & BIT(report_id)) != 0;
@@ -406,6 +406,17 @@ static uint8_t hogp_read(struct bt_hogp *hids_c,
 	uint8_t report_id = bt_hogp_rep_id(rep);
 	size_t size = bt_hogp_rep_size(rep);
 
+	/* HID boot protocol reports are received with report ID equal 0 (REPORT_ID_RESERVED).
+	 * The report ID must be updated before HID report is submitted as an Event Manager event.
+	 */
+	if (report_id == REPORT_ID_RESERVED) {
+		if (bt_hogp_rep_boot_kbd_in(hids_c)) {
+			report_id = REPORT_ID_BOOT_KEYBOARD;
+		} else if (bt_hogp_rep_boot_mouse_in(hids_c)) {
+			report_id = REPORT_ID_BOOT_MOUSE;
+		}
+	}
+
 	__ASSERT_NO_MSG((report_id != REPORT_ID_RESERVED) &&
 			(report_id < REPORT_ID_COUNT));
 
@@ -417,6 +428,40 @@ static uint8_t hogp_read(struct bt_hogp *hids_c,
 static bool is_peripheral_connected(struct hids_peripheral *per)
 {
 	return bt_hogp_assign_check(&per->hogp);
+}
+
+static enum bt_hids_pm get_sub_protocol_mode(const struct subscriber *sub)
+{
+	if (is_report_enabled(sub, REPORT_ID_BOOT_MOUSE) ||
+	    is_report_enabled(sub, REPORT_ID_BOOT_KEYBOARD)) {
+		return BT_HIDS_PM_BOOT;
+	} else {
+		return BT_HIDS_PM_REPORT;
+	}
+}
+
+static void set_peripheral_protocol_mode(struct hids_peripheral *per, enum bt_hids_pm pm)
+{
+	int err = bt_hogp_pm_write(&per->hogp, pm);
+
+	if (err) {
+		LOG_ERR("Cannot update Protocol Mode (err: %d)", err);
+	}
+}
+
+static void update_sub_protocol_mode(const struct subscriber *sub, enum bt_hids_pm pm)
+{
+	size_t sub_id = sub - &subscribers[0];
+
+	__ASSERT_NO_MSG(sub_id < ARRAY_SIZE(subscribers));
+
+	for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
+		struct hids_peripheral *per = &peripherals[i];
+
+		if (is_peripheral_connected(per) && (per->sub_id == sub_id)) {
+			set_peripheral_protocol_mode(per, pm);
+		}
+	}
 }
 
 static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
@@ -936,18 +981,49 @@ static void hogp_ready(struct bt_hogp *hids_c)
 	struct bt_hogp_rep_info *rep = NULL;
 
 	while (NULL != (rep = bt_hogp_rep_next(hids_c, rep))) {
-		if (bt_hogp_rep_type(rep) ==
-		    BT_HIDS_REPORT_TYPE_INPUT) {
+		if (bt_hogp_rep_type(rep) == BT_HIDS_REPORT_TYPE_INPUT) {
 			int err = bt_hogp_rep_subscribe(hids_c, rep, hogp_read);
 
 			if (err) {
-				LOG_ERR("Cannot subscribe to report (err:%d)",
-					err);
+				LOG_ERR("Cannot subscribe to report (err:%d)", err);
 			} else {
-				LOG_INF("Subscriber to rep id:%d",
-					bt_hogp_rep_id(rep));
+				LOG_INF("Subscriber to rep id:%d", bt_hogp_rep_id(rep));
 			}
 		}
+	}
+
+	rep = bt_hogp_rep_boot_kbd_in(hids_c);
+
+	if (rep) {
+		int err = bt_hogp_rep_subscribe(hids_c, rep, hogp_read);
+
+		if (err) {
+			LOG_ERR("Cannot subscribe to boot keyboard report (err:%d)", err);
+		} else {
+			LOG_INF("Subscriber to boot keyboard report");
+		}
+	}
+
+	rep = bt_hogp_rep_boot_mouse_in(hids_c);
+
+	if (rep) {
+		int err = bt_hogp_rep_subscribe(hids_c, rep, hogp_read);
+
+		if (err) {
+			LOG_ERR("Cannot subscribe to boot mouse report (err:%d)", err);
+		} else {
+			LOG_INF("Subscriber to boot mouse report");
+		}
+	}
+
+	struct hids_peripheral *per = CONTAINER_OF(hids_c,
+						   struct hids_peripheral,
+						   hogp);
+
+	enum bt_hids_pm per_pm = get_sub_protocol_mode(get_subscriber(per));
+
+	if (per_pm == BT_HIDS_PM_BOOT) {
+		set_peripheral_protocol_mode(per, per_pm);
 	}
 }
 
@@ -1097,11 +1173,18 @@ static bool event_handler(const struct event_header *eh)
 		}
 
 		__ASSERT_NO_MSG(event->report_id < __CHAR_BIT__ * sizeof(sub->enabled_reports_bm));
+
+		enum bt_hids_pm prev_pm = get_sub_protocol_mode(sub);
+
 		if (event->enabled) {
 			enable_subscription(sub, event->report_id);
 			send_enqueued_report(sub);
 		} else {
 			disable_subscription(sub, event->report_id);
+		}
+
+		if (prev_pm != get_sub_protocol_mode(sub)) {
+			update_sub_protocol_mode(sub, get_sub_protocol_mode(sub));
 		}
 
 		return false;
