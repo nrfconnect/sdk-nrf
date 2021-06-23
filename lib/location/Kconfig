@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LOCATION
+	bool "Location"
+	depends on NRF_MODEM_LIB
+	help
+	  TODO
+
+if LOCATION
+
+module = LOCATION
+module-str = Location
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # LOCATION
