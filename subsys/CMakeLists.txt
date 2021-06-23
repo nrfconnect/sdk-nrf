@@ -4,9 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if (CONFIG_BT OR CONFIG_BT_RPC_CLIENT)
-  add_subdirectory(bluetooth)
-endif()
+add_subdirectory_ifdef(CONFIG_BT bluetooth)
 
 add_subdirectory_ifdef(CONFIG_IS_SECURE_BOOTLOADER bootloader)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT bootloader/image)

@@ -13,6 +13,7 @@
 
 #include <nrf_rpc_cbor.h>
 
+#include "bt_rpc_gatt_svc_client.h"
 #include "bt_rpc_common.h"
 #include "serialize.h"
 #include "cbkproxy.h"
@@ -113,6 +114,14 @@ int bt_enable(bt_ready_cb_t cb)
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_ENABLE_RPC_CMD,
 				&ctx, ser_rsp_decode_i32, &result);
+
+	if (result) {
+		return result;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CONN)) {
+		result = bt_rpc_gatt_init();
+	}
 
 	if (result) {
 		return result;
@@ -585,11 +594,6 @@ void bt_le_ext_adv_sent_info_dec(CborValue *value, struct bt_le_ext_adv_sent_inf
 	data->num_sent = ser_decode_uint(value);
 }
 
-void bt_le_ext_adv_connected_info_dec(CborValue *value, struct bt_le_ext_adv_connected_info *data)
-{
-	data->conn = bt_rpc_decode_bt_conn(value);
-}
-
 void bt_le_ext_adv_scanned_info_dec(struct ser_scratchpad *scratchpad,
 				    struct bt_le_ext_adv_scanned_info *data)
 {
@@ -599,6 +603,7 @@ void bt_le_ext_adv_scanned_info_dec(struct ser_scratchpad *scratchpad,
 
 	data->addr = ser_decode_buffer_into_scratchpad(scratchpad);
 }
+
 
 static void bt_le_ext_adv_cb_sent_callback_rpc_handler(CborValue *value, void *handler_data)
 {
@@ -627,6 +632,12 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_cb_sent_callback,
 			 BT_LE_EXT_ADV_CB_SENT_CALLBACK_RPC_CMD,
 			 bt_le_ext_adv_cb_sent_callback_rpc_handler, NULL);
 
+#if defined(CONFIG_BT_CONN)
+void bt_le_ext_adv_connected_info_dec(CborValue *value, struct bt_le_ext_adv_connected_info *data)
+{
+	data->conn = bt_rpc_decode_bt_conn(value);
+}
+
 static void bt_le_ext_adv_cb_connected_callback_rpc_handler(CborValue *value, void *handler_data)
 {
 	struct bt_le_ext_adv *adv;
@@ -653,6 +664,7 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_cb_connected_callback,
 			 BT_LE_EXT_ADV_CB_CONNECTED_CALLBACK_RPC_CMD,
 			 bt_le_ext_adv_cb_connected_callback_rpc_handler, NULL);
+#endif /* defined(CONFIG_BT_CONN) */
 
 static void bt_le_ext_adv_cb_scanned_callback_rpc_handler(CborValue *value, void *handler_data)
 {
