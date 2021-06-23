@@ -52,8 +52,15 @@ static inline uint8_t get_conn_index(const struct bt_conn *conn)
 
 void bt_rpc_encode_bt_conn(CborEncoder *encoder, const struct bt_conn *conn)
 {
+	uint8_t index;
+
 	if (CONFIG_BT_MAX_CONN > 1) {
-		ser_encode_uint(encoder, get_conn_index(conn));
+		/* In case when conn is NULL encode index which is out of range
+		 * to decode it as NULL on the host.
+		 */
+		index = conn ? get_conn_index(conn) : CONFIG_BT_MAX_CONN;
+
+		ser_encode_uint(encoder, index);
 	}
 }
 
