@@ -4,14 +4,20 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config SUPPORT_BT_RPC
-	bool
-
 config BT_RPC
 	bool "Bluetooth over RPC"
-	depends on SUPPORT_BT_RPC
 	select NRF_RPC
 	select NRF_RPC_CBOR
+	depends on BT
+	depends on !BT_ISO
+	depends on !BT_MESH
+	depends on !BT_HCI_RAW
+	depends on !BT_DF
+	depends on !BT_OTS
+	depends on !BT_GATT_CLIENT
+	depends on !NET_L2_BT
+	depends on !NET_L2_BT_SHELL
+	depends on !BT_BREDR
 	help
 	  Enables Bluetooth serialization over RPC
 
@@ -27,14 +33,12 @@ choice BT_RPC_ROLE_CHOICE
 
 config BT_RPC_CLIENT
 	bool "Bluetooth over RPC Client"
-	select BT
 	help
 	  Bluetooth Low Energy API will use nRF RPC library to access host on
 	  the remote core.
 
 config BT_RPC_HOST
 	bool "Bluetooth over RPC Host"
-	select BT
 	help
 	  Bluetooth Low Energy API will use nRF RPC library to provide API for
 	  client on the remote core.
@@ -95,7 +99,7 @@ config HEAP_MEM_POOL_SIZE
 # Overrides the Bluetooth Controller to disable it
 config BT_CTLR
 	default n
- 
+
 endif # BT_RPC_CLIENT
 
 if BT_RPC_HOST
