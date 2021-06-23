@@ -10,3 +10,10 @@ zephyr_library_link_libraries(subsys_bluetooth_rpc)
 zephyr_library_sources(bt_rpc_common.c
                        cbkproxy.c
                        serialize.c)
+
+zephyr_library_sources_ifdef(
+  CONFIG_BT_CONN
+  bt_rpc_gatt_common.c
+)
+
+zephyr_include_directories_ifdef(CONFIG_BT_CONN include)
