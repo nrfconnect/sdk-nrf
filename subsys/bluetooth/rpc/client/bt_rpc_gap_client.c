@@ -9,6 +9,8 @@
 
 #include <bluetooth/bluetooth.h>
 
+#include <settings/settings.h>
+
 #include <nrf_rpc_cbor.h>
 
 #include "bt_rpc_common.h"
@@ -97,7 +99,6 @@ decoding_error:
 NRF_RPC_CBOR_EVT_DECODER(bt_rpc_grp, bt_ready_cb_t_callback, BT_READY_CB_T_CALLBACK_RPC_EVT,
 			 bt_ready_cb_t_callback_rpc_handler, NULL);
 
-
 int bt_enable(bt_ready_cb_t cb)
 {
 	struct nrf_rpc_cbor_ctx ctx;
@@ -112,6 +113,22 @@ int bt_enable(bt_ready_cb_t cb)
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_ENABLE_RPC_CMD,
 				&ctx, ser_rsp_decode_i32, &result);
+
+	if (result) {
+		return result;
+	}
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		int network_load = 1;
+
+		result = settings_subsys_init();
+		if (result) {
+			return result;
+		}
+
+		result = settings_save_one("bt_rpc/network",
+					   &network_load, sizeof(network_load));
+	}
 
 	return result;
 }
@@ -1903,3 +1920,32 @@ void bt_foreach_bond(uint8_t id, void (*func)(const struct bt_bond_info *info,
 				&ctx, ser_rsp_decode_void, NULL);
 }
 #endif /* (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) */
+
+static int rpc_settings_set(const char *key, size_t len_rd, settings_read_cb read_cb,
+				    void *cb_arg)
+{
+	struct nrf_rpc_cbor_ctx _ctx;
+	size_t _buffer_size_max = 0;
+	ssize_t len;
+	const char *next;
+
+	if (!key) {
+		LOG_ERR("Insufficient number of arguments");
+		return -ENOENT;
+	}
+
+	len = settings_name_next(key, &next);
+
+	if (!strncmp(key, "network", len)) {
+		NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);
+
+		nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_SETTINGS_LOAD_RPC_CMD,
+					&_ctx, ser_rsp_decode_void, NULL);
+
+	}
+
+	return 0;
+}
+
+SETTINGS_STATIC_HANDLER_DEFINE(bt_gatt_rpc, "bt_rpc", NULL, rpc_settings_set,
+			       NULL, NULL);
