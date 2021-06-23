@@ -37,6 +37,9 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 			uint32_t *msg_len)
 {
 	uint32_t sum_of_len = 0;
+#if NFC_NDEF_MSG_TAG_TYPE == TYPE_4_TAG
+	sum_of_len += NLEN_FIELD_SIZE;
+#endif
 
 	if (!ndef_msg_desc || !msg_len) {
 		return -EINVAL;
@@ -73,6 +76,10 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 		/* next record */
 		pp_record_rec_desc++;
 	}
+
+#if NFC_NDEF_MSG_TAG_TYPE == TYPE_4_TAG
+	sys_put_be16(sum_of_len-NLEN_FIELD_SIZE, msg_buffer);
+#endif
 
 	*msg_len = sum_of_len;
 
