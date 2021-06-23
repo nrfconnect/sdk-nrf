@@ -83,7 +83,7 @@ Kconfig*                                  @tejlmand
 /lib/date_time/                           @simensrostad
 /lib/wave_gen/                            @MarekPieta
 /lib/hw_unique_key/                       @oyvindronningstad @Vge0rge
-/lib/modem_jwt/                           @jayteemo
+/lib/modem_jwt/                           @jayteemo @SeppoTakalo
 /lib/modem_attest_token/                  @jayteemo
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @nvlsianpu
@@ -151,6 +151,7 @@ Kconfig*                                  @tejlmand
 /subsys/zigbee/                           @maciekfabia @mariuszpos
 /tests/bluetooth/tester/                  @joerchan @carlescufi @trond-snekvik
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
+/tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/subsys/zigbee/                     @maciekfabia @mariuszpos
 /tests/subsys/bluetooth/mesh/             @joerchan @trond-snekvik
 /zephyr/                                  @carlescufi

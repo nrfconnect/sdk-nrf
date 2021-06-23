@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+cmake_minimum_required(VERSION 3.13.1)
+
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(jwt_test)
+
+# generate runner for the test
+test_runner_generate(src/jwt_test.c)
+
+target_include_directories(app PRIVATE src)
+
+cmock_handle(../../../include/modem/at_cmd.h)
+
+# add test file
+target_sources(app PRIVATE src/jwt_test.c)
+target_sources(app PRIVATE ../../../lib/modem_jwt/modem_jwt.c)
+add_definitions(-DCONFIG_MODEM_JWT_MAX_LEN=850)
+add_definitions(-DCONFIG_AT_CMD_RESPONSE_MAX_LEN=850)
