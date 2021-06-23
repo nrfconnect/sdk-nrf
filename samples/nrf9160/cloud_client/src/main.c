@@ -199,6 +199,20 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			evt->lte_mode == LTE_LC_LTE_MODE_NBIOT ? "NB-IoT" :
 			"Unknown");
 		break;
+	case LTE_LC_EVT_MODEM_EVENT:
+		LOG_INF("Modem domain event, type: %s",
+			evt->modem_evt == LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE ?
+				"Light search done" :
+			evt->modem_evt == LTE_LC_MODEM_EVT_SEARCH_DONE ?
+				"Search done" :
+			evt->modem_evt == LTE_LC_MODEM_EVT_RESET_LOOP ?
+				"Reset loop detected" :
+			evt->modem_evt == LTE_LC_MODEM_EVT_BATTERY_LOW ?
+				"Low battery" :
+			evt->modem_evt == LTE_LC_MODEM_EVT_OVERHEATED ?
+				"Modem is overheated" :
+				"Unknown");
+		break;
 	default:
 		break;
 	}
@@ -227,6 +241,14 @@ static void modem_configure(void)
 
 		LOG_INF("PSM mode requested");
 #endif
+
+		err = lte_lc_modem_events_enable();
+		if (err) {
+			LOG_ERR("lte_lc_modem_events_enable failed, error: %d",
+				err);
+			return;
+		}
+
 		err = lte_lc_init_and_connect_async(lte_handler);
 		if (err) {
 			LOG_ERR("Modem could not be configured, error: %d",
