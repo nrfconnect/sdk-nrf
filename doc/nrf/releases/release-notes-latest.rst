@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ncs_release_notes_latest:
 
 Changes in |NCS| v1.6.99
@@ -18,6 +16,12 @@ Highlights
 **********
 
 There are no entries for this section yet.
+
+Known issues
+************
+
+Known issues are only tracked for the latest official release.
+See `known issues for nRF Connect SDK v1.6.0`_ for the list of issues valid for this release.
 
 Changelog
 *********
@@ -95,9 +99,3 @@ Documentation
 =============
 
 There are no entries for this section yet.
-
-Known issues
-************
-
-Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v1.6.0`_ for the list of issues valid for this release.
