@@ -128,7 +128,7 @@ The following configuration files are available:
 * :file:`overlay-minimal_rcp.conf` - Enables a minimal configuration that reduces the code size and RAM usage.
   This file enables the RCP architecture with basic functionality and optimizes stacks and buffer sizes.
   For more information, see :ref:`app_memory`.
-
+* :file:`overlay-usb.conf` - Enables emulating a serial port over USB for Spinel communication with the host.
 
 Building and running
 ********************
