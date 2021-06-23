@@ -99,9 +99,10 @@ Testing with nRF Connect for Desktop
 #. Wait until the bond is established. Verify that the UART data is received as follows::
 
       Connected xx:xx:xx:xx:xx:xx (random)
-      The discovery procedure succeeded
       Security changed: xx:xx:xx:xx:xx:xx (random) level 2
       Pairing completed: xx:xx:xx:xx:xx:xx (random), bonded: 1
+      GATT Service could not be found during the discovery
+      The discovery procedure for ANCS succeeded
 
 #. After bonding, verify in nRF Connect that the :guilabel:`Client Characteristic Configuration` (CCCD) value for :guilabel:`Apple Notification Source` and :guilabel:`Apple Data Source` are set to ``01 00``.
 
@@ -280,6 +281,7 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`ancs_client_readme`
+* :ref:`gattp_readme`
 * :ref:`gatt_dm_readme`
 * :ref:`dk_buttons_and_leds_readme`
 
