@@ -69,6 +69,15 @@ config CBKPROXY_IN_SLOTS
 	  Each output slot takes 8 bytes of RAM memory. Maximum number of
 	  output slots on the remote side should be the same as this value.
 
+config BT_RPC_GATT_SRV_MAX
+	int "Maximum number of GATT services"
+	default 4
+	range 0 64
+	help
+	  Maximum number of GATT services that BT_RPC client can define and register on a host.
+	  It must be at least equal to sum of static and dynamic services which you plan to register
+	  on a client.
+
 module = BT_RPC
 module-str = BLE over nRF RPC
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
@@ -86,6 +95,17 @@ config HEAP_MEM_POOL_SIZE
 # Overrides the Bluetooth Controller to disable it
 config BT_CTLR
 	default n
-
+ 
 endif # BT_RPC_CLIENT
+
+if BT_RPC_HOST
+
+config BT_RPC_GATT_BUFFER_SIZE
+	int "Size of the buffer for GATT data"
+	default 2048
+	help
+	  The GATT buffer is used to keep GATT services data from client on a host.
+	  The GATT attributes are allocated on this buffer and registered to the BLE stack.
+
+endif # BT_RPC_HOST
 endif # BT_RPC
