@@ -15,5 +15,3 @@ zephyr_library_sources_ifdef(
   CONFIG_BT_CONN
   bt_rpc_gatt_common.c
 )
-
-zephyr_include_directories_ifdef(CONFIG_BT_CONN include)

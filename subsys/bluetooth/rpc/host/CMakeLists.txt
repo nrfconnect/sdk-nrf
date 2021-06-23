@@ -8,4 +8,8 @@ zephyr_library()
 zephyr_library_link_libraries(subsys_bluetooth_rpc)
 
 zephyr_library_sources(bt_rpc_gap_host.c)
-zephyr_library_sources_ifdef(CONFIG_BT_CONN bt_rpc_conn_host.c)
+zephyr_library_sources_ifdef(
+  CONFIG_BT_CONN
+  bt_rpc_conn_host.c
+  bt_rpc_gatt_svc_host.c
+)
