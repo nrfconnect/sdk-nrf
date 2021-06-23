@@ -31,7 +31,7 @@ import utils
 project = "nrfxlib"
 copyright = "2019-2021, Nordic Semiconductor"
 author = "Nordic Semiconductor"
-version = release = "1.6.0"
+version = release = "1.6.99"
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
