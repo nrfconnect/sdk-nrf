@@ -316,6 +316,13 @@ void ser_rsp_decode_bool(CborValue *value, void *handler_data);
  */
 void ser_rsp_decode_u8(CborValue *value, void *handler_data);
 
+/** @brief Decode a command response as an unsigned 16-bit integer value.
+ *
+ * @param[in] value Value parsed from the CBOR stream.
+ * @param[in] handler_data Pointer to place where value will be decoded.
+ */
+void ser_rsp_decode_u16(CborValue *value, void *handler_data);
+
 /** @brief Decode a command response as an integer value.
  *
  * @param[in] value Value parsed from the CBOR stream.

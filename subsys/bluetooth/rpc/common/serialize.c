@@ -585,6 +585,12 @@ void ser_rsp_decode_u8(CborValue *value, void *handler_data)
 	check_final_decode_valid(value);
 }
 
+void ser_rsp_decode_u16(CborValue *value, void *handler_data)
+{
+	*(uint16_t *)handler_data = ser_decode_int(value);
+	check_final_decode_valid(value);
+}
+
 void ser_rsp_decode_void(CborValue *value, void *handler_data)
 {
 	ARG_UNUSED(value);
