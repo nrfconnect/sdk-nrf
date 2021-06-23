@@ -281,9 +281,18 @@ To install the verified version, replace the ``git checkout full/latest-release`
 
 .. parsed-literal::
 
-   git checkout 87c90eedce0c75cb68a1cbc34ff36223400862f1
+   git checkout bf45115f41ba2b8029eda174be2b93dea73b9261
 
 When installing on macOS, follow the instructions for the manual installation and replace the above command to ensure that the correct version is installed.
+
+.. note::
+   To use USB transport for communication with a network co-processor (NCP), you must build wpantund with the udev library.
+   To do so, use the following commands::
+
+      sudo apt-get install libudev-dev
+      ./bootstrap
+      ./configure --with-udev
+      make -j4
 
 .. _ug_thread_tools_wpantund_configuring:
 
@@ -292,41 +301,31 @@ Configuring wpantund
 
 When working with samples that support wpantund, complete the following steps to start the wpantund processes:
 
-1. Open a shell and run the wpantund process.
-   The required command depends on whether you want to connect to a network co-processor (NCP) node or a radio co-processor (RCP) node.
-
-   Replace the following parameters:
-
-   * *network_interface_name* - Specifies the name of the network interface, for example, ``leader_if``.
-   * *ncp_uart_device* - Specifies the location of the device, for example, :file:`/dev/ttyACM0`.
-   * *baud_rate* - Specifies the baud rate to use.
-     The Thread samples support baud rate ``1000000``.
-
-   Network co-processor (NCP)
-     When connecting to an NCP node, use the following command:
+1. Open a shell and run the wpantund process:
 
      .. parsed-literal::
         :class: highlight
 
         wpantund -I *network_interface_name* -s *ncp_uart_device* -b *baud_rate*
 
-     For example::
+   Replace the following parameters:
 
-        sudo wpantund -I leader_if -s /dev/ttyACM0 -b 1000000
+   * *network_interface_name* - Specifies the name of the network interface, for example, ``leader_if``.
+   * *ncp_uart_device* - Specifies the location of the device, for example:
 
-   Radio co-processor (RCP)
-     When connecting to an RCP node, you must use the ``ot-ncp`` tool to establish the connection.
-     See :ref:`ug_thread_tools_ot_apps` for more information.
-     Use the following command:
+     * For UART transport: :file:`/dev/ttyACM0`
+     * For USB transport - symlink: :file:`/dev/serial/by-id/usb-Nordic_Semiconductor_ASA_Thread_Co-Processor_07AA4C22D2E2C88D-if00`
 
-     .. parsed-literal::
-        :class: highlight
+   * *baud_rate* - Specifies the baud rate to use.
+     The Thread samples support baud rate ``1000000``.
 
-        wpantund -I *network_interface_name* -s 'system:./output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_uart_device*\ ?uart-baudrate=\ *baud_rate*
+   For example, for UART transport, enter the following command::
 
-     For example::
+     sudo wpantund -I leader_if -s /dev/ttyACM0 -b 1000000
 
-        sudo wpantund -I leader_if -s 'system:./output/posix/bin/ot-ncp spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=1000000'
+   For example, for USB transport, enter the following command::
+
+     sudo wpantund -I leader_if -s /dev/serial/by-id/usb-Nordic_Semiconductor_ASA_Thread_Co-Processor_07AA4C22D2E2C88D-if00 -b 1000000
 
 #. Open another shell and run the wpanctl process by using the following command:
 
@@ -343,11 +342,9 @@ Using wpanctl commands
 ======================
 
 To issue a wpanctl command, run it in the wpanctl shell.
-For example, the following command checks the kit state:
+For example, the following command checks the kit state::
 
-.. code-block:: console
-
-   wpanctl:leader_if> status
+  wpanctl:leader_if> status
 
 The output will be different depending on the kit and the sample.
 
@@ -384,8 +381,12 @@ Configuring Pyspinel
 When working with samples that support Pyspinel, complete the following steps to communicate with the device:
 
 1. Open a shell in a Pyspinel root directory.
-#. Run Pyspinel to connect to the node.
-   The required command depends on whether you want to connect to a network co-processor (NCP) node or a radio co-processor (RCP) node.
+#. Run Pyspinel to connect to the node:
+
+   .. parsed-literal::
+      :class: highlight
+
+      sudo python3 spinel-cli.py -d *debug_level* -u *ncp_uart_device* -b *baud_rate*
 
    Replace the following parameters:
 
@@ -394,45 +395,19 @@ When working with samples that support Pyspinel, complete the following steps to
    * *baud_rate* - Specifies the baud rate to use.
      The Thread samples support baud rate ``1000000``.
 
-   Network co-processor (NCP)
-     When connecting to an NCP node, use the following command:
+   For example::
 
-     .. parsed-literal::
-        :class: highlight
-
-        sudo python3 spinel-cli.py -d *debug_level* -u *ncp_uart_device* -b *baud_rate*
-
-     For example::
-
-        sudo python3 spinel-cli.py -d 4 -u /dev/ttyACM0 -b 1000000
-
-   Radio co-processor (RCP)
-     When connecting to an RCP node, you must use the ``ot-ncp`` tool to establish the connection.
-     See :ref:`ug_thread_tools_ot_apps` for more information.
-     To enable logs from the RCP Spinel backend, you must build the ``ot-ncp`` tool with option ``LOG_OUTPUT=APP``.
-     See :ref:`ug_thread_tools_building_ot_apps` for information on how to build the tool.
-
-     Use the following command to connect to an RCP node:
-
-     .. parsed-literal::
-        :class: highlight
-
-        sudo python3 spinel-cli.py -d *debug_level* -p './output/posix/bin/ot-ncp spinel+hdlc+uart://\ *ncp_uart_device*\ ?uart-baudrate=\ *baud_rate*
-
-     For example::
-
-        sudo python3 spinel-cli.py -d 4 -p './output/posix/bin/ot-ncp spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=1000000'
+      sudo python3 spinel-cli.py -d 4 -u /dev/ttyACM0 -b 1000000
 
 .. _ug_thread_tools_ot_apps:
 
 OpenThread POSIX applications
 *****************************
 
-OpenThread POSIX applications allow to communicate with a radio co-processor in a comfortable way.
+OpenThread POSIX applications allow to communicate with a radio co-processor (RCP) in a comfortable way.
 
 OpenThread provides the following applications:
 
-* ``ot-ncp`` - Supports :ref:`ug_thread_tools_wpantund` for the RCP architecture.
 * ``ot-cli`` - Works like the :ref:`ot_cli_sample` sample for the RCP architecture.
 * ``ot-daemon`` and ``ot-ctl`` - Provides the same functionality as ``ot-cli``, but keeps the daemon running in the background all the time.
   See `OpenThread Daemon`_ for more information.
@@ -451,29 +426,68 @@ Building the OpenThread POSIX applications
 Build the OpenThread POSIX applications by performing the following steps:
 
 #. Open a shell in the OpenThread source code directory :file:`ncs/modules/lib/openthread`.
-#. Initialize the build and clean previous artifacts by running the following commands:
+#. Clean previous artifacts by running the following commands::
 
-     .. code-block:: console
-
-        # initialize GNU Autotools
-        ./bootstrap
-
-        # clean previous artifacts
-        make -f src/posix/Makefile-posix clean
+      rm -rf build
 
 #. Build the applications with the required options.
-   For example, to build POSIX applications like ``ot-cli`` or ``ot-ncp`` with log output being redirected to the application, run the following command:
+   For example, to build the ``ot-cli`` application with support for USB transport and Thread v1.1, run the following command::
 
-     .. code-block:: console
+      ./script/cmake-build posix -DOT_SPINEL_RESET_CONNECTION=ON -DOT_THREAD_VERSION=1.1
 
-        # build core for POSIX (ot-cli, ot-ncp)
-        make -f src/posix/Makefile-posix LOG_OUTPUT=APP
+   Alternatively, to build the ``ot-daemon`` and ``ot-ctl`` applications with support for USB transport and Thread v1.1, run the following command::
 
-   Alternatively, to build POSIX applications like ``ot-daemon`` or ``ot-ctl``, run the following command:
+      ./script/cmake-build posix -DOT_SPINEL_RESET_CONNECTION=ON -DOT_THREAD_VERSION=1.1 -DOT_DAEMON=ON
 
-     .. code-block:: console
+You can find the generated applications in :file:`./build/posix/src/posix/`.
 
-        # build daemon mode core stack for POSIX (ot-daemon, ot-ctl)
-        make -f src/posix/Makefile-posix DAEMON=1
+.. note::
+   The build option ``OT_SPINEL_RESET_CONNECTION`` is required to properly handle USB communication with RCP devices that perform a hard reset.
+   It depends on the libudev-dev library, and it is supported only on Linux.
 
-You can find the generated applications in :file:`./output/posix/bin/`.
+   The option is required when working with the :ref:`ot_coprocessor_sample` sample (|NCS|) or the :ref:`zephyr:coprocessor-sample` sample (Zephyr).
+
+
+
+Running the OpenThread POSIX applications
+=========================================
+
+Use the following commands to connect to an RCP node.
+
+* For ``ot-cli``:
+
+  .. parsed-literal::
+     :class: highlight
+
+     sudo ./build/posix/src/posix/ot-cli 'spinel+hdlc+uart://\ *ncp_uart_device*\ ?uart-baudrate=\ *baud_rate*' --verbose
+
+* For ``ot-daemon`` and ``ot-ctl``:
+
+  .. parsed-literal::
+     :class: highlight
+
+     sudo ./build/posix/src/posix/ot-daemon 'spinel+hdlc+uart://\ *ncp_uart_device*\ ?uart-baudrate=\ *baud_rate*' --verbose
+     sudo ./build/posix/src/posix/ot-ctl
+
+Replace the following parameters:
+
+* *ncp_uart_device* - Specifies the location of the device, for example:
+
+   * For UART transport: :file:`/dev/ttyACM0`
+   * For USB transport - symlink: :file:`/dev/serial/by-id/usb-Nordic_Semiconductor_ASA_Thread_Co-Processor_07AA4C22D2E2C88D-if00`
+
+* *baud_rate* - Specifies the baud rate to use.
+  The Thread Co-Processor sample supports baud rate ``1000000``.
+
+For example, to use ``ot-cli`` with USB transport, enter the following command::
+
+   sudo ./build/posix/src/posix/ot-cli 'spinel+hdlc+uart:///dev/serial/by-id/usb-Nordic_Semiconductor_ASA_Thread_Co-Processor_07AA4C22D2E2C88D-if00?uart-baudrate=1000000' --verbose
+
+For example, to use ``ot-daemon`` with UART transport, enter the following commands::
+
+   sudo ./build/posix/src/posix/ot-daemon 'spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=1000000' --verbose
+   sudo ./build/posix/src/posix/ot-ctl
+
+.. note::
+   You must use a symlink to specify the device for a USB connection.
+   Otherwise, communication will fail after resetting the device.
