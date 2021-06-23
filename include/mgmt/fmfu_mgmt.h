@@ -24,15 +24,35 @@
 extern "C" {
 #endif
 
+enum fmfu_evt_id {
+	/** Prepare for full modem update to start. */
+	FMFU_EVT_PRE_DFU_MODE,
+	/** Full modem update finished. */
+	FMFU_EVT_FINISHED,
+	/** Full modem update failed. */
+	FMFU_EVT_ERROR,
+};
+
+/**
+ * @brief FMFU event callback function.
+ *
+ * @param event_id Event ID.
+ *
+ */
+typedef void (*fmfu_callback_t)(enum fmfu_evt_id id);
+
 /** @brief Setup and register the command handler for full modem
  *  update command handler group.
  *
- * The modem library must be initialized in DFU mode before calling this
- * function - nrf_modem_lib_init(FULL_DFU_MODE).
+ * The modem library must be initialized in DFU mode when a FMFU_EVT_INIT event
+ * occurs in the callback by calling this function -
+ * nrf_modem_lib_init(FULL_DFU_MODE).
+ *
+ * @param client_callback Callback for handling events when FMFU is triggered.
  *
  * @retval 0 on success, negative integer on failure.
  */
-int fmfu_mgmt_init(void);
+int fmfu_mgmt_register_group(fmfu_callback_t client_callback);
 
 #ifdef __cplusplus
 }
