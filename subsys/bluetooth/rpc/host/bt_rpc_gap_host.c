@@ -13,6 +13,7 @@
 #include "bt_rpc_common.h"
 #include "serialize.h"
 #include "cbkproxy.h"
+#include <settings/settings.h>
 
 static void report_decoding_error(uint8_t cmd_evt_id, void *data)
 {
@@ -1966,3 +1967,18 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_per_adv_sync_cb_register_on_remote,
 			 BT_LE_PER_ADV_SYNC_CB_REGISTER_ON_REMOTE_RPC_CMD,
 			 bt_le_per_adv_sync_cb_register_on_remote_rpc_handler, NULL);
 #endif /* defined(CONFIG_BT_PER_ADV_SYNC) */
+
+#if defined(CONFIG_SETTINGS)
+static void bt_rpc_settings_load_rpc_handler(CborValue *_value,
+					     void *_handler_data)
+{
+	nrf_rpc_cbor_decoding_done(_value);
+
+	settings_load();
+	ser_rsp_send_void();
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_settings_load,
+			 BT_SETTINGS_LOAD_RPC_CMD,
+			 bt_rpc_settings_load_rpc_handler, NULL);
+#endif /* defined(CONFIG_SETTINGS) */
