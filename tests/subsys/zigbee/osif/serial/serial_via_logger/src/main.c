@@ -5,9 +5,10 @@
  */
 
 
-#define ZB_BINARY_TRACE
 #define ZB_HAVE_SERIAL
-#define ZB_SERIAL_FOR_TRACE
+#define ZB_DONT_NEED_TRACE_FILE_ID
+#define ZB_TRACE_LEVEL 4
+#define ZB_TRACE_MASK  0x00000800
 
 #include <zephyr/types.h>
 #include <ztest.h>
