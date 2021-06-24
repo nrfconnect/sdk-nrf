@@ -21,14 +21,14 @@
 
 #include <logging/log_ctrl.h>
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_POWER_MANAGER_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_POWER_MANAGER_LOG_LEVEL);
 
-#include "power_manager_event.h"
-#include "keep_alive_event.h"
+#include <caf/events/power_manager_event.h>
+#include <caf/events/keep_alive_event.h>
 
 
-#define POWER_DOWN_ERROR_TIMEOUT K_SECONDS(CONFIG_PELION_CLIENT_POWER_MANAGER_ERROR_TIMEOUT)
-#define POWER_DOWN_TIMEOUT       K_SECONDS(CONFIG_PELION_CLIENT_POWER_MANAGER_TIMEOUT)
+#define POWER_DOWN_ERROR_TIMEOUT K_SECONDS(CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT)
+#define POWER_DOWN_TIMEOUT       K_SECONDS(CONFIG_CAF_POWER_MANAGER_TIMEOUT)
 
 
 enum power_state {
@@ -121,7 +121,7 @@ static void restrict_power_state(size_t module, enum power_manager_level lvl)
 
 static void system_off(void)
 {
-	if (!IS_ENABLED(CONFIG_PELION_CLIENT_POWER_MANAGER_STAY_ON) &&
+	if (!IS_ENABLED(CONFIG_CAF_POWER_MANAGER_STAY_ON) &&
 	    check_if_power_state_allowed(POWER_MANAGER_LEVEL_OFF)) {
 		set_power_state(POWER_STATE_OFF);
 		LOG_WRN("System turned off");
@@ -178,7 +178,7 @@ static void error(struct k_work *work)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if (is_keep_alive_event(eh)) {
+	if (IS_ENABLED(CONFIG_CAF_KEEP_ALIVE_EVENTS) && is_keep_alive_event(eh)) {
 		power_down_counter_reset();
 
 		return false;
@@ -307,7 +307,9 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, keep_alive_event);
+#if IS_ENABLED(CONFIG_CAF_KEEP_ALIVE_EVENTS)
+	EVENT_SUBSCRIBE(MODULE, keep_alive_event);
+#endif
 EVENT_SUBSCRIBE(MODULE, power_manager_restrict_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, wake_up_event);
