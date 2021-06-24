@@ -100,18 +100,38 @@ int location_init(location_event_handler_t handler)
 int location_get(const struct location_config *config)
 {
 	int err;
+	struct location_method_config selected_method = { 0 };
 
-	if (config->method_count < 1 || config->method_count > LOC_MAX_METHODS) {
-		LOG_ERR("Too few or too many location methods in the configuration");
-		return -1;
+	for (int i = 0; i < LOC_MAX_METHODS; i++) {
+		switch (config->methods[i].method) {
+		case LOC_METHOD_CELL_ID:
+			LOG_DBG("Cell ID not yet supported");
+			break;
+
+		case LOC_METHOD_GNSS:
+			LOG_DBG("GNSS selected");
+			selected_method = config->methods[i];
+			break;
+
+		default:
+			break;
+		}
+
+		if (selected_method.method) {
+			continue;
+		}
+	}
+
+	if (!selected_method.method) {
+		LOG_ERR("No location method found");
+		return -EINVAL;
 	}
 
 	/* TODO: Add protection so that only one request is handled at a time */
 
 	/* Single fix mode */
 	err = nrf_modem_gnss_fix_interval_set(0);
-	/* TODO: Make GNSS timeout configurable */
-	err |= nrf_modem_gnss_fix_retry_set(120);
+	err |= nrf_modem_gnss_fix_retry_set(selected_method.config.gnss.timeout);
 	if (err) {
 		LOG_ERR("Failed to configure GNSS");
 		return -EINVAL;

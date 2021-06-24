@@ -34,7 +34,7 @@ enum location_event {
 	LOC_EVT_LOCATION,
 	/** Getting location timed out. */
 	LOC_EVT_TIMEOUT,
-	/** TODO: Is this needed? Probably not for GNSS, but could be needed for cell ID. */
+	/** An error occurred when trying to get the location. */
 	LOC_EVT_ERROR
 };
 
@@ -45,11 +45,27 @@ struct location_data {
 	float accuracy;
 };
 
+struct cell_id_config {
+};
+
+struct gnss_config {
+	uint16_t timeout;
+	bool allow_low_accuracy;
+};
+
+struct location_method_config {
+	enum location_method method;
+	union {
+		struct cell_id_config cell_id;
+		struct gnss_config gnss;
+	} config;
+};
+
 struct location_config {
-	/** Selected positioning methods in priority order. Index 0 has the highest priority. */
-	enum location_method methods[LOC_MAX_METHODS];
-	/** Number of positioning methods in the method list. */
-	uint8_t method_count;
+	/** Selected positioning methods and associated configurations in priority order. Index 0
+	 *  has the highest priority. Unused entries in the array must be initialized to zero.
+	 */
+	struct location_method_config methods[LOC_MAX_METHODS];
 };
 
 /** @brief Event handler prototype.

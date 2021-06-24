@@ -26,13 +26,13 @@ void location_event_handler(enum location_event event, const struct location_dat
 int main(void)
 {
 	int err;
-	struct location_config config = {
-		.methods = {
-			LOC_METHOD_CELL_ID,
-			LOC_METHOD_GNSS
-		},
-		2
-	};
+	struct location_config config = { 0 };
+
+	config.methods[0].method = LOC_METHOD_CELL_ID;
+
+	config.methods[1].method = LOC_METHOD_GNSS;
+	config.methods[1].config.gnss.timeout = 120;
+	config.methods[1].config.gnss.allow_low_accuracy = false;
 
 	/* Disable LTE to help get a GNSS fix faster for now */
 	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_DEACTIVATE_LTE);
