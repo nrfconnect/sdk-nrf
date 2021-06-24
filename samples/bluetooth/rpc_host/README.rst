@@ -59,21 +59,26 @@ Example build
 =============
 
 The recommended way of building the nRF RPC Host sample is to use the multi-image feature of the build system, building the sample with the same Bluetooth configuration as the application core sample.
-In this way, the sample is built automatically as a child image when :kconfig:`CONFIG_BT_RPC` is enabled.
+In this way, the sample is built automatically as a child image when :kconfig:`CONFIG_BT_RPC_STACK` is enabled.
 
 See :ref:`configure_application` for information about how to configure a sample.
 
-For example, building the :ref:`zephyr:bluetooth-beacon-sample` sample for the nRF5340 application core with the :kconfig:`CONFIG_BT_RPC` configuration option will include the nRF RPC Host sample in the build.
-
-To do so on the command line, run the following command in the beacon sample directory:
+Build the sample with the same Bluetooth configuration as the application core sample.
+For more details, see: :ref:`ble_rpc`.
+Build the :ref:`peripheral_uart` on the application core.
+This sample works out of the box and does not require configuration changes.
+In the Peripheral UART sample directory, invoke:
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DCONFIG_BT_RPC=y
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DCONFIG_BT_RPC_STACK=y
+
+You can also build :ref:`peripheral_hids_mouse` using the above command.
+This sample requires some additional configuration in the :file:`samples/bluetooth/peripheral_hids_mouse/child_image/rpc_host.conf` file.
+You can take it as an example on how to create configuration for your own application.
 
 Testing
 =======
-
 After programming the example build to your development kit, test it by performing the following steps:
 
 1. Connect the dual core development kit to the computer using a USB cable.
