@@ -37,7 +37,7 @@
 #define FLASH_AREA_ID(label) PM_ID(label)
 
 #define FLASH_AREA_OFFSET(label) \
-	UTIL_CAT(PM_, UTIL_CAT(UTIL_CAT(PM_, UTIL_CAT(PM_ID(label), _LABEL)), _ADDRESS))
+	UTIL_CAT(PM_, UTIL_CAT(UTIL_CAT(PM_, UTIL_CAT(PM_ID(label), _LABEL)), _OFFSET))
 
 #define FLASH_AREA_SIZE(label) \
 	UTIL_CAT(PM_, UTIL_CAT(UTIL_CAT(PM_, UTIL_CAT(PM_ID(label), _LABEL)), _SIZE))
