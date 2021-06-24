@@ -11,18 +11,7 @@ The |NCS| supports Bluetooth® Low Energy (LE) stack serialization.
 The full Bluetooth LE stack can run on another device or CPU, such as the nRF5340 DK network core using :ref:`nrfxlib:nrf_rpc`.
 
 .. note::
-   The |NCS| currently supports serialization of the :ref:`zephyr:bt_gap` and the :ref:`zephyr:bluetooth_connection_mgmt` only.
-   Due to the limited support, a special :kconfig:`CONFIG_SUPPORT_BT_RPC` option was added and it allows enabling the :kconfig:`CONFIG_BT_RPC` option.
-   Samples using other Bluetooth LE features, such as GATT, are currently not supported and they have the :kconfig:`CONFIG_SUPPORT_BT_RPC` option disabled.
-   If you want to use the :kconfig:`CONFIG_BT_RPC` option in your application, you must create a Kconfig file with following content:
-
-   .. code-block:: none
-
-      config SUPPORT_BT_RPC
-        bool
-        default y
-
-      source "Kconfig.zephyr"
+   The |NCS| currently supports serialization of the :ref:`zephyr:bt_gap`, the :ref:`zephyr:bluetooth_connection_mgmt` and the GATT server only.
 
 Network core
 ************
@@ -35,7 +24,7 @@ Application core
 ****************
 
 To use the Bluetooth LE stack through nRF RPC, an additional configuration is needed.
-When building samples for the application core, enable the :kconfig:`CONFIG_BT_RPC` to run the Bluetooth LE stack on the network core.
+When building samples for the application core, enable the :kconfig:`CONFIG_BT_RPC_STACK` to run the Bluetooth LE stack on the network core.
 This option builds :ref:`ble_rpc_host` automatically as a child image.
 For more details, see: :ref:`ug_nrf5340_building`.
 
@@ -43,7 +32,7 @@ Open a command prompt in the build folder of the application sample and enter th
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DCONFIG_BT_RPC=y
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DCONFIG_BT_RPC_STACK=y
 
 Requirements
 ************
