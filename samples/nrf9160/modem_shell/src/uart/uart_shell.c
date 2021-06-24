@@ -31,6 +31,14 @@ static int print_help(const struct shell *shell, size_t argc, char **argv)
 	return ret;
 }
 
+void uart_reenable_timer_handler(struct k_timer *timer)
+{
+	ARG_UNUSED(timer);
+	enable_uarts();
+}
+
+static K_TIMER_DEFINE(uart_reenable_timer, uart_reenable_timer_handler, NULL);
+
 static int cmd_uart_disable(const struct shell *shell, size_t argc, char **argv)
 {
 	int sleep_time;
@@ -51,11 +59,7 @@ static int cmd_uart_disable(const struct shell *shell, size_t argc, char **argv)
 	disable_uarts();
 
 	if (sleep_time > 0) {
-		k_sleep(K_SECONDS(sleep_time));
-
-		enable_uarts();
-
-		shell_print(shell, "disable: UARTs enabled");
+		k_timer_start(&uart_reenable_timer, K_SECONDS(sleep_time), K_NO_WAIT);
 	}
 
 	return 0;
@@ -69,7 +73,64 @@ void uart_toggle_power_state_at_event(const struct shell *shell, const struct lt
 		disable_uarts();
 	} else if (evt->type == LTE_LC_EVT_MODEM_SLEEP_EXIT) {
 		enable_uarts();
-		shell_print(shell, "Modem sleep exit: re-enabling UARTs");
+	}
+}
+
+void uart_toggle_power_state(const struct shell *shell)
+{
+	const struct device *uart_dev;
+	uint32_t uart0_power_state;
+	int err;
+
+	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
+	if (uart_dev) {
+		err = pm_device_state_get(uart_dev, &uart0_power_state);
+		if (err) {
+			shell_print(shell,
+				   "Failed to assess UART power state, pm_device_state_get: %d.",
+				    err);
+			return;
+		}
+
+		if (uart0_power_state == PM_DEVICE_STATE_ACTIVE) {
+			shell_print(shell, "Disabling UARTs");
+
+			/* allow little time for printing the notification */
+			k_sleep(K_MSEC(500));
+
+			/* set uart0 to low power state */
+			err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER, NULL, NULL);
+
+			/* set uart1 to low power state */
+			uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
+			if (uart_dev) {
+				pm_device_state_set(uart_dev,
+						    PM_DEVICE_STATE_LOW_POWER,
+						    NULL,
+						    NULL);
+			}
+		} else {
+			/* set uart0 to active state */
+			err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE, NULL, NULL);
+
+			/* set uart1 to active state */
+			uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
+			if (uart_dev) {
+				pm_device_state_set(uart_dev,
+						    PM_DEVICE_STATE_ACTIVE,
+						    NULL,
+						    NULL);
+			}
+			shell_print(shell, "Enabling UARTs");
+
+			/* stop timer if uarts were disabled with command 'uart disable' */
+			k_timer_stop(&uart_reenable_timer);
+		}
+		if (err) {
+			shell_print(shell, "Failed to change UART power state");
+		}
+	} else {
+		shell_print(shell, "Failed to change UART power state");
 	}
 }
 
