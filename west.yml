@@ -91,6 +91,17 @@ manifest:
           - tinycbor
           - tinycrypt
           - TraceRecorderSource
+    # This version of NCS uses an openthread commit which is
+    # available in the zephyrproject-rtos fork, but which is
+    # slightly ahead of what was available in zephyr/west.yml
+    # at the above revision.
+    #
+    # Maintainers: this entry should be moved back to the allowlist
+    # during the next upmerge.
+    - name: openthread
+      remote: zephyrproject
+      path: modules/lib/openthread
+      revision: f460532d4afa5d49feba241e5dc31c56123d31a8
 
     # NCS repositories.
     #
@@ -112,10 +123,6 @@ manifest:
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
       revision: v1.7.2
-    - name: openthread
-      repo-path: sdk-openthread
-      path: modules/lib/openthread
-      revision: thread-reference-20200818-ncs1-rc3
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
