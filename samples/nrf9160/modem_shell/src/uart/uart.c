@@ -28,8 +28,22 @@ void disable_uarts(void)
 void enable_uarts(void)
 {
 	const struct device *uart_dev;
+	uint32_t current_state;
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
+
+	int err = pm_device_state_get(uart_dev, &current_state);
+
+	if (err) {
+		printk("Failed to assess UART power state, pm_device_state_get: %d", err);
+		return;
+	}
+
+	/* If UARTs are already enabled, do nothing */
+	if (current_state == PM_DEVICE_STATE_ACTIVE) {
+		return;
+	}
+
 	if (uart_dev) {
 		pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE, NULL, NULL);
 	}
@@ -38,4 +52,6 @@ void enable_uarts(void)
 	if (uart_dev) {
 		pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE, NULL, NULL);
 	}
+
+	printk("UARTs enabled\n");
 }

@@ -25,6 +25,9 @@
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 
+#include <dk_buttons_and_leds.h>
+#include "uart/uart_shell.h"
+
 #if defined(CONFIG_MOSH_PPP)
 #include <shell/shell.h>
 #include "ppp_ctrl.h"
@@ -77,6 +80,14 @@ static void mosh_print_version_info(void)
 #else
 	printk("\nMOSH build variant: dev\n\n");
 #endif
+}
+
+static void button_handler(uint32_t button_states, uint32_t has_changed)
+{
+	if (has_changed & button_states & DK_BTN2_MSK) {
+		shell_print(shell_global, "Button 2 pressed, toggling UART power state");
+		uart_toggle_power_state(shell_global);
+	}
 }
 
 void main(void)
@@ -154,6 +165,11 @@ void main(void)
 	}
 	modem_info_params_init(&modem_param);
 #endif
+
+	err = dk_buttons_init(button_handler);
+	if (err) {
+		printk("Failed to initialize DK buttons library, error: %d", err);
+	}
 
 	/* Application started successfully, mark image as OK to prevent
 	 * revert at next reboot.
