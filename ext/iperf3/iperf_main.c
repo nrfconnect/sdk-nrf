@@ -144,9 +144,6 @@ iperf_main(int argc, char **argv)
     }
 
 exit:
-    if (test) {
-        iperf_free_test(test);
-    }
     if (retval == 0)
     {
         iperf_printf(test, "iperf Done.\r\n");
@@ -154,7 +151,10 @@ exit:
     else
     {
         iperf_printf(test, "iperf Failed.\r\n");
-    }    
+    }
+    if (test) {
+        iperf_free_test(test);
+    }
     return retval;
 #else
     test = iperf_new_test();

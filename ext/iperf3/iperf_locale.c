@@ -102,8 +102,10 @@ const char nrf_iperf3_usage_support_str[] =
                            "  -B, --bind      <host>    bind to the interface associated with the address <host>\n"
                            "  -V, --verbose             more detailed output\n"
                            "  -J, --json                output in JSON format\n"
+                           "  --timestamps    <format>  emit a timestamp at the start of each output line\n"
+                           "                            (using optional format string as per strftime(3))\n"
                            "  -d, --debug               emit debugging output\n"
-                           "  -v, --version             show version information and quit"
+                           "  -v, --version             show version information and quit\n"
                            "  -m, --manual              show this message and quit\n"
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)                           
                            "  -I, --interface <apn>     use this option to bind to PDN with specific APN.\n"
