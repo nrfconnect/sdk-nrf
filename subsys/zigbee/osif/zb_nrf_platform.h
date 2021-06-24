@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Zigbee ZBOSS OSIF layer API header.
+ */
+
 #ifndef ZB_NRF_PLATFORM_H__
 #define ZB_NRF_PLATFORM_H__
 
@@ -17,31 +21,11 @@ typedef enum {
 	ZIGBEE_EVENT_APP,
 } zigbee_event_t;
 
-#ifdef CONFIG_ZIGBEE_DEBUG_FUNCTIONS
-/**@brief Function for suspending zboss thread.
- */
-void zigbee_debug_suspend_zboss_thread(void);
-
-/**@brief Function for resuming zboss thread.
- */
-void zigbee_debug_resume_zboss_thread(void);
-
-/**@brief Function for getting the state of the Zigbee stack thread
- *        processing suspension.
+/**
+ * @defgroup zigbee_zboss_osif Zigbee ZBOSS OSIF API
+ * @{
  *
- * @retval true   Scheduler processing is suspended or zboss thread
- *                is not yet created.
- * @retval false  Scheduler processing is not suspended and zboss thread
- *                is created.
  */
-bool zigbee_is_zboss_thread_suspended(void);
-#endif /* defined(CONFIG_ZIGBEE_DEBUG_FUNCTIONS) */
-
-/**@brief Function for Zigbee stack initialization
- *
- * @return    0 if success
- */
-int zigbee_init(void);
 
 /**@brief Function for checking if the Zigbee stack has been started.
  *
@@ -50,10 +34,40 @@ int zigbee_init(void);
  */
 bool zigbee_is_stack_started(void);
 
-/* Function for starting Zigbee thread. */
+/**@brief Function for starting the Zigbee thread. */
 void zigbee_enable(void);
 
-/**@brief Notify ZBOSS thread about a new event.
+#ifdef CONFIG_ZIGBEE_DEBUG_FUNCTIONS
+/**@brief Function for suspending the ZBOSS thread.
+ */
+void zigbee_debug_suspend_zboss_thread(void);
+
+/**@brief Function for resuming the ZBOSS thread.
+ */
+void zigbee_debug_resume_zboss_thread(void);
+
+/**@brief Function for getting the state of the Zigbee stack thread
+ *        processing suspension.
+ *
+ * @retval true   Scheduler processing is suspended or the ZBOSS thread
+ *                is not yet created.
+ * @retval false  Scheduler processing is not suspended and the ZBOSS thread
+ *                is created.
+ */
+bool zigbee_is_zboss_thread_suspended(void);
+#endif /* defined(CONFIG_ZIGBEE_DEBUG_FUNCTIONS) */
+
+/**
+ * @}
+ */
+
+/**@brief Function for Zigbee stack initialization
+ *
+ * @return    0 if success
+ */
+int zigbee_init(void);
+
+/**@brief Notify the ZBOSS thread about a new event.
  *
  * @param[in] event  Event to notify.
  */
