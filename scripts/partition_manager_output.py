@@ -53,7 +53,9 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
 
             name_upper = name.upper()
             name_lower = name.lower()
-
+            region = reg_config[partition['region']]
+            offset = partition['address'] - region['base_address']
+            add_line(f'{name_upper}_OFFSET', hex(offset))
             add_line(f'{name_upper}_ADDRESS', hex(partition['address']))
             # The end address facilitates using PM values via Cmake generator expressions.
             add_line(f'{name_upper}_END_ADDRESS', hex(partition['end_address']))
@@ -75,7 +77,7 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
 
             if dest is DEST_HEADER:
                 if partition_has_device(partition):
-                    add_line(f'{name_upper}_DEV_NAME', f"\"{reg_config[partition['region']]['device']}\"")
+                    add_line(f'{name_upper}_DEV_NAME', f"\"{region['device']}\"")
             elif dest is DEST_KCONFIG:
                 if 'span' in partition.keys():
                     add_line(f'{name_upper}_SPAN', string_of_strings(partition['span']))
