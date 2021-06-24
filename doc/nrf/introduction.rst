@@ -22,10 +22,26 @@ It is a set of open source projects maintained by Nordic Semiconductor, consisti
 The main repository is ``sdk-nrf``.
 It contains the SDK manifest file that enables you to manage the repositories as one code base with the west tool.
 
+Documentation structure
+***********************
+
+The documentation consists of several inter-linked documentation sets, one for each repository.
+You can switch between these documentation sets by using the selector in the bottom-left corner of each page.
+
+The entry point is the |NCS| documentation that you are currently reading.
+The local :doc:`Zephyr documentation <zephyr:index>` is a slightly extended version of the official `Zephyr Project documentation`_, containing some Nordic Semiconductor specific additions.
+The local :doc:`MCUboot documentation <mcuboot:index>` is a slightly extended version of the official `MCUboot`_ documentation, containing some Nordic Semiconductor specific additions.
+
+The |NCS| documentation contains all information that is specific to the |NCS| and describes our libraries, samples, and applications.
+API documentation is extracted from the source code and included with the library documentation.
+
+For instructions about building the documentation locally, see :ref:`doc_build`.
+For more information about the documentation conventions and templates, see :ref:`documentation`.
+
 Tools and configuration
 ***********************
 
-The figure below visualizes the tools and configuration methods in |NCS|.
+The figure below visualizes the tools and configuration methods in the |NCS|.
 They are based on the :ref:`Zephyr project <zephyr:getting_started>`.
 All of them have a role in the creation of an application, from configuring the libraries or applications to building them.
 

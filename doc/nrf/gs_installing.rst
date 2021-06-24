@@ -8,18 +8,21 @@ Installing the |NCS| manually
    :depth: 2
 
 The recommended way to get started with the |NCS| is to use nRF Connect for Desktop.
-See the :ref:`gs_assistant` section for information about how to install the |NCS| through nRF Connect for Desktop.
+See the :ref:`gs_assistant` page for information about how to install automatically.
 
 .. note::
    If you use nRF Connect for Desktop to install the |NCS|, you can skip this section of the documentation.
-   If you prefer to install the toolchain manually, or if you run into problems during the installation process, see the following documentation for instructions.
+   If you prefer to install the toolchain manually, see the following documentation for instructions.
 
 To manually install the |NCS|, you must install all required tools and clone the |NCS| repositories.
 See the following sections for detailed instructions.
 
-The steps `Install the required tools`_ and `Install the toolchain`_ are similar to the installation steps in Zephyr's :ref:`zephyr:getting_started`.
-If you already have your system set up to work with the Zephyr OS, you can skip these steps.
+If you already have your system set up to work with Zephyr OS based on Zephyr's :ref:`zephyr:getting_started`, you already have some of the requirements for the |NCS| installed.
+The only requirement not covered by the installation steps in Zephyr is the :ref:`GN tool <gs_installing_gn>`.
+This tool is needed only for :ref:`ug_matter` applications.
+You can also skip the `Install the GNU Arm Embedded Toolchain`_ section.
 
+Before you start setting up the toolchain, install available updates for your operating system.
 See :ref:`gs_installing_os` for information on the supported operating systems and Zephyr features.
 
 .. _gs_installing_tools:
@@ -31,12 +34,16 @@ Install the required tools
 
 The installation process is different depending on your operating system.
 
+.. note::
+      You will be asked to reboot after installing some of the tools.
+      You can skip these notifications and reboot only once after you complete the installation of all tools.
+
 .. tabs::
 
    .. group-tab:: Windows
 
       The recommended way for installing the required tools on Windows is to use `Chocolatey`_, a package manager for Windows.
-      Chocolatey installs the tools so that you can use them from a Windows command prompt.
+      Chocolatey installs the tools so that you can use them from a Windows command-line window.
 
       To install the required tools, complete the following steps:
 
@@ -44,7 +51,7 @@ The installation process is different depending on your operating system.
          :docset: zephyr
          :dedent: 6
          :start-after: .. _install_dependencies_windows:
-         :end-before: _get_the_code:
+         :end-before: #. Close the window and open a new
 
    .. group-tab:: Linux
 
@@ -56,15 +63,15 @@ The installation process is different depending on your operating system.
          :start-after: .. _install_dependencies_ubuntu:
          :end-before: group-tab:: macOS
 
-      For additional information and instructions for other Linux operating systems, see the :ref:`zephyr:linux_requirements` section in the Zephyr documentation.
+      If you are using other Linux-based operating systems, see the :ref:`zephyr:linux_requirements` section in the Zephyr documentation.
 
       .. note::
          You do not need to install the Zephyr SDK.
-         We recommend to install the compiler toolchain separately, as detailed in `Install the toolchain`_.
+         We recommend to install the compiler toolchain separately, as detailed in `Install the GNU Arm Embedded Toolchain`_.
 
    .. group-tab:: macOS
 
-      To install the required tools on macOS, complete the following steps:
+      To install the required tools, complete the following steps:
 
       .. ncs-include:: getting_started/index.rst
          :docset: zephyr
@@ -76,6 +83,8 @@ The installation process is different depending on your operating system.
       Also see :ref:`zephyr:mac-setup-alts` in the Zephyr documentation for additional information.
 
 ..
+
+.. _gs_installing_gn:
 
 In addition to these required tools, install the `GN`_ meta-build system if you are interested in building `Matter`_ (formerly Project Connected Home over IP, Project CHIP) applications.
 This system generates the Ninja files that the |NCS| uses.
@@ -177,11 +186,13 @@ Install west
 
 To manage the combination of repositories and versions, the |NCS| uses :ref:`Zephyr's west <zephyr:west>`.
 
-To install west, enter the following command:
+To install west, complete the following step:
 
 .. tabs::
 
    .. group-tab:: Windows
+
+      Enter the following command in a command-line window in the :file:`ncs` folder:
 
       .. parsed-literal::
          :class: highlight
@@ -190,12 +201,16 @@ To install west, enter the following command:
 
    .. group-tab:: Linux
 
+      Enter the following command in a terminal window in the :file:`ncs` folder:
+
       .. parsed-literal::
          :class: highlight
 
          pip3 install --user west
 
    .. group-tab:: macOS
+
+      Enter the following command in a terminal window in the :file:`ncs` folder:
 
       .. parsed-literal::
          :class: highlight
@@ -218,12 +233,12 @@ Every |NCS| release consists of a combination of these repositories at different
 The revision of each of those repositories is determined by the current revision of the main (or manifest) repository, `sdk-nrf`_.
 
 .. note::
-   The latest state of development is on the master branch of the `sdk-nrf`_ repository.
+   The latest state of development is on the ``master`` branch of the `sdk-nrf`_ repository.
    To ensure a usable state, the `sdk-nrf`_ repository defines the compatible states of the other repositories.
    However, this state is not necessarily tested.
    For a higher degree of quality assurance, check out a tagged release.
 
-   Therefore, unless you are familiar with the development process, you should always work with a specific release of the |NCS|.
+   Unless you are familiar with the development process, you should always work with a specific release of the |NCS|.
 
 The main repository, `sdk-nrf`_, contains a `west manifest file`_, :file:`west.yml`, that determines the revision of all other repositories.
 This means that sdk-nrf acts as the :ref:`manifest repository <zephyr:west-basics>`, while the other repositories are project repositories.
@@ -235,19 +250,18 @@ For more information about the repository and development model, see the :ref:`d
 
 To clone the repositories, complete the following steps:
 
-1. Create a folder named ``ncs``.
+1. Create a folder named :file:`ncs`.
    This folder will hold all |NCS| repositories.
-#. Open a command window in the ``ncs`` folder.
-#. Determine what revision of the |NCS| you want to work with.
+#. Determine the identifier of the revision of the |NCS| you want to work with.
    The recommended way is to work with a specific release.
 
-   * To work with a specific release, the revision is the corresponding tag (for example, |release_tt|).
+   * To work with a specific release, the identifier is the corresponding tag (for example, |release_tt|).
      You can find the tag in the :ref:`release_notes` of the release.
-   * To work with a development tag, the revision is the corresponding tag (for example, ``v1.2.99-dev1``)
-   * To work with a branch, the revision is the branch name (for example, ``master`` to work with the latest state of development).
-   * To work with a specific state, the revision is the SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``).
+   * To work with a development tag, the identifier is the corresponding tag (for example, ``v1.2.99-dev1``)
+   * To work with a branch, the identifier is the branch name (for example, ``master`` to work with the latest state of development).
+   * To work with a specific state, the identifier is the SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``).
 
-#. Initialize west with the revision of the |NCS| that you want to check out, replacing *NCS_revision* with the revision:
+#. From the command line, initialize west with the revision of the |NCS| that you want to check out, replacing *NCS_revision* with the identifier:
 
    .. parsed-literal::
       :class: highlight
@@ -283,6 +297,7 @@ To clone the repositories, complete the following steps:
 
       west update
 
+   Depending on your connection, this might take some time.
 #. Export a :ref:`Zephyr CMake package <zephyr:cmake_pkg>`.
    This allows CMake to automatically load the boilerplate code required for building |NCS| applications::
 
@@ -318,7 +333,7 @@ Use the following commands to install the requirements for each repository.
 
    .. group-tab:: Windows
 
-      Open a command prompt in the ``ncs`` folder and enter the following commands:
+      Enter the following command in a command-line window in the :file:`ncs` folder:
 
         .. parsed-literal::
            :class: highlight
@@ -329,7 +344,7 @@ Use the following commands to install the requirements for each repository.
 
    .. group-tab:: Linux
 
-      Open a terminal window in the ``ncs`` folder and enter the following commands:
+      Enter the following command in a terminal window in the :file:`ncs` folder:
 
         .. parsed-literal::
            :class: highlight
@@ -340,7 +355,7 @@ Use the following commands to install the requirements for each repository.
 
    .. group-tab:: macOS
 
-      Open a terminal window in the ``ncs`` folder and enter the following commands:
+      Enter the following command in a terminal window in the :file:`ncs` folder:
 
         .. parsed-literal::
            :class: highlight
@@ -355,34 +370,34 @@ Use the following commands to install the requirements for each repository.
 
 .. rst-class:: numbered-step
 
-Install the toolchain
-*********************
+Install the GNU Arm Embedded Toolchain
+**************************************
 
 To be able to cross-compile your applications for Arm targets, you must install version 9-2019-q4-major of the `GNU Arm Embedded Toolchain`_.
 
 .. important::
-   Make sure to install the version that is mentioned above.
-   Other versions might not work with this version of the |NCS|.
-
-   Other versions of the |NCS| might require a different toolchain version.
+   Make sure to install the toolchain version that is mentioned above.
+   Other toolchain versions might not work with this version of the |NCS|.
+   Similarly, other versions of the |NCS| might require a different toolchain version.
 
 To set up the toolchain, complete the following steps:
 
 .. _toolchain_setup:
 
 1. Download the `GNU Arm Embedded Toolchain`_ for your operating system.
-#. Extract the toolchain into a folder of your choice.
-   We recommend to use the folder ``c:\gnuarmemb`` on Windows and ``~/gnuarmemb`` on Linux or macOS.
-
+#. Extract the contents of the root folder of the toolchain into a directory of your choice.
+   The recommended folder is :file:`c:\gnuarmemb` on Windows and :file:`~/gnuarmemb` on Linux or macOS.
    Make sure that the folder name does not contain any spaces or special characters.
-#. If you want to build and program applications from the command line, define the environment variables for the GNU Arm Embedded toolchain.
+#. If you want to build and program applications from the command line, define the environment variables for the GNU Arm Embedded Toolchain.
    Depending on your operating system:
 
     .. tabs::
 
        .. group-tab:: Windows
 
-          Open a command prompt and enter the following commands (assuming that you have installed the toolchain to ``c:\gnuarmemb``; if not, change the value for GNUARMEMB_TOOLCHAIN_PATH):
+          Open a command-line window and enter the commands below.
+
+          If you did not install the toolchain in the recommended folder, change the value of GNUARMEMB_TOOLCHAIN_PATH to the folder you used.
 
             .. parsed-literal::
                :class: highlight
@@ -392,23 +407,27 @@ To set up the toolchain, complete the following steps:
 
        .. group-tab:: Linux
 
-          Open a terminal window and enter the following commands (assuming that you have installed the toolchain to ``~/gnuarmemb``; if not, change the value for GNUARMEMB_TOOLCHAIN_PATH):
+          Open a terminal window and enter the commands below.
+
+          If you did not install the toolchain in the recommended folder, change the value of GNUARMEMB_TOOLCHAIN_PATH to the folder you used.
 
             .. parsed-literal::
-              :class: highlight
+               :class: highlight
 
-              export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-              export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb"
+               export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
+               export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb"
 
        .. group-tab:: macOS
 
-          Open a terminal window and enter the following commands (assuming that you have installed the toolchain to ``~/gnuarmemb``; if not, change the value for GNUARMEMB_TOOLCHAIN_PATH):
+          Open a terminal window and enter the commands below.
+
+          If you did not install the toolchain in the recommended folder, change the value of GNUARMEMB_TOOLCHAIN_PATH to the folder you used.
 
             .. parsed-literal::
-              :class: highlight
+               :class: highlight
 
-              export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-              export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb"
+               export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
+               export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb"
 
 #. Set the environment variables persistently.
    Depending on your operating system:
@@ -417,17 +436,17 @@ To set up the toolchain, complete the following steps:
 
        .. group-tab:: Windows
 
-          Add the environment variables as system environment variables or define them in the ``%userprofile%\zephyrrc.cmd`` file as described in :ref:`build_environment_cli`.
-          This lets you avoid setting them every time you open a command prompt.
+          Add the environment variables as system environment variables or define them in the :file:`%userprofile%\zephyrrc.cmd` file as described in :ref:`build_environment_cli`.
+          This lets you avoid setting them every time you open a command-line window.
 
        .. group-tab:: Linux
 
-          Define the environment variables in the ``~/.zephyrrc`` file as described in :ref:`build_environment_cli`.
+          Define the environment variables in the :file:`~/.zephyrrc` file as described in :ref:`build_environment_cli`.
           This lets you avoid setting them every time you open a terminal window.
 
        .. group-tab:: macOS
 
-          Define the environment variables in the ``~/.zephyrrc`` file as described in :ref:`build_environment_cli`.
+          Define the environment variables in the :file:`~/.zephyrrc` file as described in :ref:`build_environment_cli`.
           This lets you avoid setting them every time you open a terminal window.
 
 
@@ -440,9 +459,9 @@ Install the |SES| Nordic Edition
 
 You must install the |SES| (SES) Nordic Edition to be able to open and compile projects in the |NCS|.
 
-|SES| is free of charge for use with Nordic Semiconductor devices.
+SES is free of charge for use with Nordic Semiconductor devices.
 
-To install the |SES| Nordic Edition, complete the following steps:
+To install the Nordic Edition, complete the following steps:
 
 1. Download the package for your operating system:
 
@@ -467,8 +486,9 @@ To install the |SES| Nordic Edition, complete the following steps:
    |SES| is free of charge for use with Nordic Semiconductor devices, but you still need to request and activate a license.
    Complete the following steps:
 
-    a. Run the file :file:`bin/emStudio`.
-       |SES| will open the Dashboard window and inform you about the missing license.
+    a. Navigate to the :file:`bin` directory.
+    #. Run the :file:`emStudio` executable file.
+       SES first opens the Options window, which you can close at this stage, and then the Dashboard window, which informs you about the missing license.
 
         .. figure:: images/ses_license.PNG
            :alt: SEGGER Embedded Studio Dashboard notification about missing license
@@ -509,8 +529,8 @@ Before you start :ref:`building and programming a sample application <gs_program
    You only need to do this once.
    Complete the following steps:
 
-   a. Run the file :file:`bin/emStudio`.
-
+   a. Navigate to the :file:`bin` directory.
+   #. Run the :file:`emStudio` executable file.
    #. Select :guilabel:`File` > :guilabel:`Open nRF Connect SDK Project`.
 
       .. figure:: images/ses_open.png
@@ -518,8 +538,8 @@ Before you start :ref:`building and programming a sample application <gs_program
 
          Open nRF Connect SDK Project menu
 
-   #. Set the Zephyr Base directory to the full path to ``ncs/zephyr``.
-      The GNU ARM Embedded Toolchain directory is the directory where you installed the toolchain (for example, ``c:/gnuarmemb``).
+   #. Set the Zephyr Base directory to the full path to :file:`ncs/zephyr`.
+      The GNU ARM Embedded Toolchain directory is the directory where you installed the toolchain (for example, :file:`c:/gnuarmemb`).
 
       .. figure:: images/ses_notset.png
          :alt: Zephyr Base Not Set prompt
@@ -543,7 +563,7 @@ Before you start :ref:`building and programming a sample application <gs_program
 
       .. group-tab:: macOS
 
-         If you start SES on macOS by running the file :file:`bin/emStudio`, make sure to complete the following steps:
+         If you start SES on macOS by running the :file:`emStudio` executable file, make sure to complete the following steps:
 
          1. Specify the path to all executables under :guilabel:`Tools` > :guilabel:`Options` (in the :guilabel:`nRF Connect` tab).
 
@@ -554,13 +574,12 @@ Before you start :ref:`building and programming a sample application <gs_program
 
             Use this section to change the SES environment settings later as well.
 
-         #. Specify the path to the west tool as an additional CMake option, replacing *path_to_west* with the path to the west executable (for example, ``/usr/local/bin/west``):
+         #. Specify the path to the west tool as an additional CMake option, replacing *path_to_west* with the path to the west executable (for example, :file:`/usr/local/bin/west`):
 
             .. parsed-literal::
                :class: highlight
 
                -DWEST=\ *path_to_west*
-
 
          If you start SES from the command line, it uses the global PATH variable to find the executables.
          You do not need to explicitly configure the executables in SES.
@@ -570,8 +589,7 @@ Before you start :ref:`building and programming a sample application <gs_program
 
    ..
 
-#. Change the SES environment settings.
-   If you want to change the SES environment settings, click :guilabel:`Tools` > :guilabel:`Options` and select the :guilabel:`nRF Connect` tab, as shown on the following screenshot from the Windows installation.
+If you want to change the SES environment settings after the initial setup, click :guilabel:`Tools` > :guilabel:`Options` and select the :guilabel:`nRF Connect` tab, as shown on the following screenshot from the Windows installation.
 
 .. _ses_options_figure:
 
@@ -580,7 +598,7 @@ Before you start :ref:`building and programming a sample application <gs_program
 
       nRF Connect SDK options in SES (Windows)
 
-   If you want to configure tools that are not listed in the SES options, add them to the PATH variable.
+If you want to configure tools that are not listed in the SES options, add them to the PATH variable.
 
 .. _build_environment_cli:
 
@@ -589,7 +607,7 @@ Set up the command-line build environment
 
 The default build environment for the |NCS| is SES.
 However, you can also build and program your application from the command line.
-You have to set up your build environment by defining the required environment variables every time you open a new command prompt or terminal window.
+You have to set up your build environment by defining the required environment variables every time you open a new command-line or terminal window.
 
 See :ref:`zephyr:important-build-vars` for more information about the various relevant environment variables.
 
@@ -599,26 +617,26 @@ Define the required environment variables as follows, depending on your operatin
 
    .. group-tab:: Windows
 
-      Navigate to the ``ncs`` folder and enter the following command: ``zephyr\zephyr-env.cmd``
+      Navigate to the :file:`ncs` folder and enter the following command: ``zephyr\zephyr-env.cmd``
 
-      If you need to define additional environment variables, create the file ``%userprofile%\zephyrrc.cmd`` and add the variables there.
+      If you need to define additional environment variables, create the file :file:`%userprofile%\zephyrrc.cmd` and add the variables there.
       This file is loaded automatically when you run the above command.
       See :ref:`zephyr:env_vars_zephyrrc` for more information.
 
    .. group-tab:: Linux
 
-      Navigate to the ``ncs`` folder and enter the following command: ``source zephyr/zephyr-env.sh``
+      Navigate to the :file:`ncs` folder and enter the following command: ``source zephyr/zephyr-env.sh``
 
-      If you need to define additional environment variables, create the file ``~/.zephyrrc`` and add the variables there.
+      If you need to define additional environment variables, create the file :file:`~/.zephyrrc` and add the variables there.
       This file is loaded automatically when you run the above command.
       See :ref:`zephyr:env_vars_zephyrrc` for more information.
 
 
    .. group-tab:: macOS
 
-      Navigate to the ``ncs`` folder and enter the following command: ``source zephyr/zephyr-env.sh``
+      Navigate to the :file:`ncs` folder and enter the following command: ``source zephyr/zephyr-env.sh``
 
-      If you need to define additional environment variables, create the file ``~/.zephyrrc`` and add the variables there.
+      If you need to define additional environment variables, create the file :file:`~/.zephyrrc` and add the variables there.
       This file is loaded automatically when you run the above command.
       See :ref:`zephyr:env_vars_zephyrrc` for more information.
 
