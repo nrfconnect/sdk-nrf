@@ -1,3 +1,0 @@
-&uart0 {
-	compatible = "nordic,nrf-uarte";
-};
