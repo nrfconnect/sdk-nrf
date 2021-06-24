@@ -12,6 +12,8 @@
 #include <bluetooth/mesh/sensor_types.h>
 #include <sensor.h> // private header from the source folder
 
+#include "model_utils.h"
+
 BUILD_ASSERT(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__,
 	     "This test is only supported on little endian platforms");
 
@@ -28,10 +30,28 @@ struct __packed uint24_t  { uint32_t v:24; };
 /****************** callback section ******************************/
 /****************** callback section ******************************/
 
-static int64_t raw_scalar_value_get(int64_t r, int64_t m, int64_t d, int64_t b)
+static int64_t int_pow(int a, int b)
 {
-	return r / (m * pow(10.0, d) * pow(2.0, b));
+	int64_t res = 1;
+
+	for (int i = 0; i < b; i++) {
+		res *= a;
+	}
+
+	return res;
 }
+
+static int64_t raw_scalar_value_get(int64_t r, int m, int d, int b)
+{
+	/* Powers < 1 will be clamped to 1, so this works for both
+	 * positive and negative d and b
+	 */
+	int64_t div = m * int_pow(10, d) * int_pow(2, b);
+	int64_t mul = int_pow(10, -d) * int_pow(2, -b);
+
+	return ROUNDED_DIV(r, div) * mul;
+}
+
 
 static void sensor_type_sanitize(const struct bt_mesh_sensor_type *sensor_type)
 {
@@ -62,10 +82,12 @@ static void encoding_checking_proceed(const struct bt_mesh_sensor_type *sensor_t
 		"Encoded value is not equal expected");
 }
 
-static void decoding_checking_proceed(const struct bt_mesh_sensor_type *sensor_type,
-				      const void *value,
-				      size_t size,
-				      const struct sensor_value *expected)
+static void decoding_checking_proceed_with_tolerance(
+			const struct bt_mesh_sensor_type *sensor_type,
+			const void *value,
+			size_t size,
+			const struct sensor_value *expected,
+			double tolerance)
 {
 	struct sensor_value out_value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 	int err;
@@ -80,14 +102,34 @@ static void decoding_checking_proceed(const struct bt_mesh_sensor_type *sensor_t
 	err = sensor_value_decode(&buf, sensor_type, out_value);
 	zassert_ok(err, "Decoding failed with error code: %i", err);
 
-	for (uint32_t i = 0; i < sensor_type->channel_count; ++i) {
-		zassert_equal(expected[i].val1, out_value[i].val1,
-				"Encoded value val1: %i is not equal decoded: %i",
-				expected[i].val1, out_value[i].val1);
-		zassert_equal(expected[i].val2, out_value[i].val2,
-				"Encoded value val2: %i is not equal decoded: %i",
-				expected[i].val2, out_value[i].val2);
+	for (int i = 0; i < sensor_type->channel_count; i++) {
+		if (tolerance == 0.0 || (expected[i].val1 == 0 && expected[i].val2 == 0)) {
+			zassert_equal(expected[i].val1, out_value[i].val1,
+				"Channel: %i - encoded value val1: %i is not equal decoded: %i",
+				i, expected[i].val1, out_value[i].val1);
+			zassert_equal(expected[i].val2, out_value[i].val2,
+				"Channel: %i - encoded value val2: %i is not equal decoded: %i",
+				i, expected[i].val2, out_value[i].val2);
+		} else {
+			double in_d = expected[i].val1 + expected[i].val2 * 0.000001;
+			double out_d = out_value[i].val1 + out_value[i].val2 * 0.000001;
+			double ratio = out_d / in_d;
+
+			zassert_within(ratio, 1.0, tolerance,
+				"Channel: %i - decoded value %i.%i is more than %f away "
+				"from encoded value %i.%i, and is outside tolerance.",
+				i, out_value[i].val1, out_value[i].val2,
+				tolerance, expected[i].val1, expected[i].val2);
+		}
 	}
+}
+
+static void decoding_checking_proceed(const struct bt_mesh_sensor_type *sensor_type,
+				      const void *value,
+				      size_t size,
+				      const struct sensor_value *expected)
+{
+	decoding_checking_proceed_with_tolerance(sensor_type, value, size, expected, 0.0);
 }
 
 static void invalid_encoding_checking_proceed(const struct bt_mesh_sensor_type *sensor_type,
@@ -384,21 +426,8 @@ static void chromatic_distance_check(const struct bt_mesh_sensor_type *sensor_ty
 		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 2);
 	}
 
-	/* Check that values outside of range are encoded to 'value is not valid/known' */
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} valid_encoding_test_vector[] = {
-		{{0xFFFF, 0}, 0xFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(valid_encoding_test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &valid_encoding_test_vector[i].represented,
-					  &valid_encoding_test_vector[i].raw, 2);
-	}
-
-	/* 0xFFFF defined as 'value is not known' is in _valid_ range and can't be decoded
-	 * correctly.
+	/* 0xFFFF defined as 'value is not known' is in _valid_ range and can't be encoded or
+	 * decoded correctly.
 	 */
 }
 
@@ -578,6 +607,100 @@ static void luminous_exposure_check(const struct bt_mesh_sensor_type *sensor_typ
 
 	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
 		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
+	}
+}
+
+static void temp8_in_period_of_day_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value[sensor_type->channel_count];
+	int8_t test_vector_temp[] = {-64, -32, 0, 32, 53, 0x7F};
+	uint8_t test_vector_time[] = {0, 5, 10, 17, 24, 0xff};
+	uint8_t expected[3];
+
+	memset(in_value, 0, sizeof(in_value));
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector_temp); i++) {
+		in_value[0].val1 = test_vector_temp[i];
+		in_value[1].val1 = test_vector_time[i];
+		in_value[2].val1 = test_vector_time[i];
+
+		expected[0] = test_vector_temp[i] == 0x7F ?
+			0x7F : raw_scalar_value_get(test_vector_temp[i], 1, 0, -1);
+		expected[1] = test_vector_time[i] == 0xFF ?
+			0xFF : raw_scalar_value_get(test_vector_time[i], 1, -1, 0);
+		expected[2] = expected[1];
+
+		encoding_checking_proceed(sensor_type, in_value, expected, 3 * sizeof(uint8_t));
+		decoding_checking_proceed(sensor_type, expected, 3*sizeof(uint8_t), in_value);
+	}
+}
+
+static void temp8_statistics_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value[sensor_type->channel_count];
+	int8_t test_vector[] = {-64, -32, 0, 32, 63, 0x7F};
+
+	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
+	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
+	 * to themselves as they represent 0 seconds, total device lifetime
+	 * and unknown value, respectively) 66560640
+	 */
+	int32_t test_vector_time[] = {0, 1, 2999, 66560640, 0xFFFFFFFE,
+				      0xFFFFFFFF};
+	uint8_t expected_time[] = {0, 64, 148, 253, 0xFE, 0xFF};
+	uint8_t expected[5];
+
+	memset(in_value, 0, sizeof(in_value));
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		for (int j = 0; j < (sensor_type->channel_count - 1); j++) {
+			in_value[j].val1 = test_vector[i];
+		}
+		in_value[sensor_type->channel_count - 1].val1 =
+				test_vector_time[i];
+		int8_t expected_temp = test_vector[i] == 0x7F ?
+			0x7F : raw_scalar_value_get(test_vector[i], 1, 0, -1);
+		expected[0] = expected_temp;
+		expected[1] = expected_temp;
+		expected[2] = expected_temp;
+		expected[3] = expected_temp;
+		expected[4] = expected_time[i];
+
+		encoding_checking_proceed(sensor_type, in_value, expected, 5 * sizeof(uint8_t));
+		decoding_checking_proceed_with_tolerance(sensor_type, expected,
+							 5 * sizeof(uint8_t), in_value, 0.001);
+	}
+}
+
+static void temp8_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	int8_t test_vector[] = {-64, -32, 0, 32, 63, 0x7F};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i];
+
+		int8_t expected = test_vector[i] == 0x7F ?
+			0x7F : raw_scalar_value_get(test_vector[i], 1, 0, -1);
+
+		encoding_checking_proceed(sensor_type, &in_value, &expected, sizeof(uint8_t));
+		decoding_checking_proceed(sensor_type, &expected, sizeof(uint8_t), &in_value);
+	}
+}
+
+static void temp_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value = {0};
+	int32_t test_vector[] = {0x8000, -273, 0, 100, 327};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		in_value.val1 = test_vector[i];
+
+		int16_t expected = test_vector[i] == 0x8000 ?
+			0x8000 : raw_scalar_value_get(test_vector[i], 1, -2, 0);
+
+		encoding_checking_proceed(sensor_type, &in_value, &expected, sizeof(uint16_t));
+		decoding_checking_proceed(sensor_type, &expected, sizeof(uint16_t), &in_value);
 	}
 }
 
@@ -783,6 +906,78 @@ static void test_luminous_flux_range(void)
 	luminous_flux_range_check(sensor_type);
 }
 
+static void test_avg_amb_temp_in_period_of_day(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_AVG_AMB_TEMP_IN_A_PERIOD_OF_DAY);
+	sensor_type_sanitize(sensor_type);
+	temp8_in_period_of_day_check(sensor_type);
+}
+
+static void test_indoor_amb_temp_stat_values(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_INDOOR_AMB_TEMP_STAT_VALUES);
+	sensor_type_sanitize(sensor_type);
+	temp8_statistics_check(sensor_type);
+}
+
+static void test_outdoor_stat_values(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTDOOR_STAT_VALUES);
+	sensor_type_sanitize(sensor_type);
+	temp8_statistics_check(sensor_type);
+}
+
+static void test_present_amb_temp(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_TEMP);
+	sensor_type_sanitize(sensor_type);
+	temp8_check(sensor_type);
+}
+
+static void test_present_indoor_amb_temp(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_INDOOR_AMB_TEMP);
+	sensor_type_sanitize(sensor_type);
+	temp8_check(sensor_type);
+}
+
+static void test_present_outdoor_amb_temp(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_OUTDOOR_AMB_TEMP);
+	sensor_type_sanitize(sensor_type);
+	temp8_check(sensor_type);
+}
+
+static void test_desired_amb_temp(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DESIRED_AMB_TEMP);
+	sensor_type_sanitize(sensor_type);
+	temp8_check(sensor_type);
+}
+
+static void test_precise_present_amb_temp(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRECISE_PRESENT_AMB_TEMP);
+	sensor_type_sanitize(sensor_type);
+	temp_check(sensor_type);
+}
+
 void test_main(void)
 {
 	ztest_test_suite(sensor_types_test,
@@ -806,7 +1001,15 @@ void test_main(void)
 			ztest_unit_test(test_luminous_efficacy),
 			ztest_unit_test(test_luminous_energy_since_turn_on),
 			ztest_unit_test(test_luminous_exposure),
-			ztest_unit_test(test_luminous_flux_range)
+			ztest_unit_test(test_luminous_flux_range),
+			ztest_unit_test(test_avg_amb_temp_in_period_of_day),
+			ztest_unit_test(test_indoor_amb_temp_stat_values),
+			ztest_unit_test(test_outdoor_stat_values),
+			ztest_unit_test(test_present_amb_temp),
+			ztest_unit_test(test_present_indoor_amb_temp),
+			ztest_unit_test(test_present_outdoor_amb_temp),
+			ztest_unit_test(test_desired_amb_temp),
+			ztest_unit_test(test_precise_present_amb_temp)
 			 );
 
 	ztest_run_test_suite(sensor_types_test);
