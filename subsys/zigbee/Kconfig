@@ -208,12 +208,12 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 # Configure ZBOSS_OSIF_LOG_LEVEL
 module = ZBOSS_OSIF
-module-str = ZBOSS osif layer
+module-str = ZBOSS OSIF layer
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endmenu #menu "Zigbee Log configuration"
 
-menu "ZBOSS osif configuration"
+menu "ZBOSS OSIF configuration"
 
 menuconfig ZIGBEE_HAVE_SERIAL
 	bool "UART serial abstract for ZBOSS OSIF"
