@@ -51,7 +51,6 @@ In addition to the |NCS| documentation, information is available in the followin
    :caption: Contents:
 
    introduction
-   documentation
    glossary
    getting_started
    ug_dev_model
@@ -67,5 +66,6 @@ In addition to the |NCS| documentation, information is available in the followin
    scripts
    release_notes
    known_issues
+   documentation
 
 ..   cheat_sheet

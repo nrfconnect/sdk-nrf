@@ -39,7 +39,7 @@ Documentation structure
 
 All documentation build files are located in the :file:`ncs/nrf/doc` folder.
 The :file:`nrf` subfolder in that directory contains all :file:`.rst` source files that are not directly related to a sample application or a library.
-Documentation for samples and libraries are provided in a :file:`README.rst` or :file:`.rst` file in the same directory as the code.
+Documentation for samples and libraries are provided in a :file:`README.rst` or another :file:`.rst` file in the same directory as the code.
 
 Building the documentation output requires building the output for all documentation sets.
 Following are the available documentation sets:
@@ -61,21 +61,33 @@ Complete the following steps to build the documentation output:
 
 1. Open a shell and enter the doc folder :file:`ncs/nrf/doc`.
 
-   * On Windows:
+   .. tabs::
 
-     a. Navigate to :file:`ncs/nrf`.
-     #. Hold shift and right-click on the :file:`doc` folder.
-        Select :guilabel:`Open command window here`.
+      .. group-tab:: Windows
 
-   * On Linux or macOS:
+         a. Navigate to :file:`ncs/nrf`.
+         #. Hold shift and right-click on the :file:`doc` folder.
+            Select :guilabel:`Open command window here`.
 
-     a. Open a shell window.
-     #. Navigate to :file:`ncs/nrf/doc`.
-        If the ncs folder is in your home directory, enter:
+      .. group-tab:: Linux
 
-        .. code-block:: console
+         a. Open a shell window.
+         #. Navigate to :file:`ncs/nrf/doc`.
+            If the ncs folder is in your home directory, enter:
 
-           cd ~/ncs/nrf/doc
+            .. code-block:: console
+
+               cd ~/ncs/nrf/doc
+
+      .. group-tab:: macOS
+
+         a. Open a shell window.
+         #. Navigate to :file:`ncs/nrf/doc`.
+            If the ncs folder is in your home directory, enter:
+
+            .. code-block:: console
+
+               cd ~/ncs/nrf/doc
 
 #. Generate the Ninja build files:
 
