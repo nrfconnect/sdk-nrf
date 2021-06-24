@@ -6,6 +6,7 @@
 
 #include <hal/nrf_acl.h>
 #include <hal/nrf_ficr.h>
+#include <nrfx_nvmc.h>
 #include <errno.h>
 #include <sys/__assert.h>
 #include <kernel.h>
@@ -54,6 +55,35 @@ static int fprotect_set_permission(uint32_t start, size_t length,
 	}
 
 	return 0;
+}
+
+bool fprotect_is_protected(uint32_t addr)
+{
+	uint32_t region_idx;
+	uint32_t page_size = nrf_ficr_codepagesize_get(NRF_FICR);
+	uint32_t flash_size = nrf_ficr_codesize_get(NRF_FICR) * page_size;
+	uint32_t block_addr = ROUND_DOWN(addr, CONFIG_FPROTECT_BLOCK_SIZE);
+
+	find_free_region(&region_idx);
+
+	for (int i = 0; i < region_idx; i++) {
+		uint32_t prot_addr = nrf_acl_region_address_get(NRF_ACL, i);
+		uint32_t prot_size = nrf_acl_region_size_get(NRF_ACL, i);
+
+		if ((prot_addr > flash_size) || (prot_size > NRF_ACL_REGION_SIZE_MAX)) {
+			printk("ACL is incorrectly configured!\n");
+			k_panic();
+		}
+
+		uint32_t prot_end_addr = prot_addr + prot_size;
+		uint32_t end_addr = block_addr + CONFIG_FPROTECT_BLOCK_SIZE;
+
+		if ((prot_addr <= block_addr) && (prot_end_addr >= end_addr)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 int fprotect_area(uint32_t start, size_t length)

@@ -35,7 +35,7 @@ static void panic(void)
 
 /* The available slots as an array that can be iterated over. */
 static const enum hw_unique_key_slot huk_slots[] = {
-#if !HUK_HAS_KMU
+#ifndef HUK_HAS_KMU
 	HUK_KEYSLOT_KDR,
 #else
 	HUK_KEYSLOT_MKEK,

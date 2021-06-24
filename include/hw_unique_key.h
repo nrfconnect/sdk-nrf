@@ -23,20 +23,30 @@ extern "C" {
 #include <stdbool.h>
 
 #ifdef __ZEPHYR__
-#include <devicetree.h>
-#define HUK_HAS_KMU DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_kmu)
-#define HUK_HAS_CC310 DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_cc310)
-#define HUK_HAS_CC312 DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_cc312)
-#else
-#define HUK_HAS_KMU 1
-#define HUK_HAS_CC310 defined(NRF9160_XXAA)
-#define HUK_HAS_CC312 defined(NRF5340_XXAA_APPLICATION)
+#include <autoconf.h>
+#ifdef CONFIG_HAS_HW_NRF_KMU
+	#define HUK_HAS_KMU
+#endif
+#ifdef CONFIG_HAS_HW_NRF_CC310
+	#define HUK_HAS_CC310
+#endif
+#ifdef CONFIG_HAS_HW_NRF_CC312
+	#define HUK_HAS_CC312
+#endif
 
+#else /* __ZEPHYR__ */
+#define HUK_HAS_KMU
+#ifdef NRF9160_XXAA
+	#define HUK_HAS_CC310
+#endif
+#ifdef NRF5340_XXAA_APPLICATION
+	#define HUK_HAS_CC312
+#endif
 #endif /* __ZEPHYR__ */
 
-#if HUK_HAS_CC310
+#ifdef HUK_HAS_CC310
 #define HUK_SIZE_WORDS 4
-#elif HUK_HAS_CC312
+#elif defined(HUK_HAS_CC312)
 #define HUK_SIZE_WORDS 8
 #else
 #error This library requires CryptoCell to be available.
@@ -52,7 +62,7 @@ extern "C" {
  * live in the CC HW for the entire boot cycle of the device.
  */
 enum hw_unique_key_slot {
-#if !HUK_HAS_KMU
+#ifndef HUK_HAS_KMU
 	HUK_KEYSLOT_KDR  = 0, /* Device Root Key */
 #else
 	HUK_KEYSLOT_MKEK = 2, /* Master Key Encryption Key */

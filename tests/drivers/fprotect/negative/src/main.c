@@ -48,6 +48,10 @@ static void flash_write_protected_fails(uint32_t addr, bool backup)
 {
 	uint8_t buf[BUF_SIZE];
 
+#ifdef CONFIG_HAS_HW_NRF_ACL
+	zassert_true(fprotect_is_protected(ROUND_DOWN(addr, CONFIG_FPROTECT_BLOCK_SIZE)), NULL);
+#endif
+
 	(void)memset(buf, 0xa5, sizeof(buf));
 	if (backup) {
 		memcpy(read_buf, (void *)addr, sizeof(read_buf));
@@ -75,6 +79,10 @@ static void test_flash_write_protected_fails(void)
 
 	(void)memset(buf, 0x5a, sizeof(buf));
 	nrfx_nvmc_bytes_write(TEST_FPROTECT_WRITE_ADDR, buf, sizeof(buf));
+
+#ifdef CONFIG_HAS_HW_NRF_ACL
+	zassert_false(fprotect_is_protected(TEST_FPROTECT_WRITE_ADDR), NULL);
+#endif
 	fprotect_area(TEST_FPROTECT_WRITE_ADDR, CONFIG_FPROTECT_BLOCK_SIZE);
 
 	flash_write_protected_fails(TEST_FPROTECT_WRITE_ADDR, true);
@@ -97,7 +105,11 @@ static void test_flash_read_protected_fails_r(void)
 #ifdef CONFIG_HAS_HW_NRF_ACL
 	uint8_t buf[BUF_SIZE];
 
+	zassert_false(fprotect_is_protected(TEST_FPROTECT_READ_ADDR), NULL);
+
 	fprotect_area_no_access(TEST_FPROTECT_READ_ADDR, CONFIG_FPROTECT_BLOCK_SIZE);
+
+	zassert_true(fprotect_is_protected(TEST_FPROTECT_READ_ADDR), NULL);
 
 	printk("NOTE: A BUS FAULT immediately after this message"
 		" means the test passed!\n");

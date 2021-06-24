@@ -46,7 +46,7 @@ void hw_unique_key_write(enum hw_unique_key_slot kmu_slot, const uint8_t *key)
 {
 	int err = write_slot(kmu_slot, NRF_CC3XX_PLATFORM_KMU_AES_ADDR, key);
 
-#if HUK_HAS_CC312
+#ifdef HUK_HAS_CC312
 	if (err == 0) {
 		err = write_slot(kmu_slot + 1, NRF_CC3XX_PLATFORM_KMU_AES_ADDR_2,
 				key + (HUK_SIZE_BYTES / 2));
