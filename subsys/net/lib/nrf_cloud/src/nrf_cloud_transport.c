@@ -65,7 +65,7 @@ BUILD_ASSERT(IMEI_CLIENT_ID_LEN <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
  * topic ("$aws/things/<deviceId>/shadow/get/accepted").
  * Messages on the AWS topic contain the entire shadow, including metadata and
  * they can become too large for the modem to handle.
- * Messages on the topic below are published by nRF Connect for Cloud and
+ * Messages on the topic below are published by nRF Cloud and
  * contain only a part of the original message so it can be received by the
  * device.
  */

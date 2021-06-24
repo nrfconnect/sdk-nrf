@@ -5,7 +5,7 @@
 #
 
 # The purpose of this file is to override and extend settings related to
-# building Pelion cloud client library.
+# building the Pelion cloud client library.
 
 if PELION_SOURCES
 

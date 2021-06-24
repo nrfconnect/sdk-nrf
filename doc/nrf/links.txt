@@ -210,7 +210,7 @@
 
 .. _`nRF9160 DK Getting Started`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/intro.html
 .. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_modem_firmware.html
-.. _`Updating the nRF Connect for Cloud certificate`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_certificates.html
+.. _`Updating the nRF Cloud certificate`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_certificates.html
 
 .. _`nRF9160 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/intro.html
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/board_controller.html

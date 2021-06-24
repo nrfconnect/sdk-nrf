@@ -50,7 +50,7 @@ The firmware of Thingy:91 has been developed using the nRF Connect SDK.
 It is open source, and can be modified according to specific needs.
 The :ref:`asset_tracker` application firmware, which is preprogrammed in the Thingy:91, enables the device to use the environment sensors and provides an option of tracking the device using GPS.
 
-The data, along with information about the device, is transmitted to Nordic Semiconductor's cloud solution, `nRF Connect for Cloud`_, where it can be visualized.
+The data, along with information about the device, is transmitted to Nordic Semiconductor's cloud solution, `nRF Cloud`_, where it can be visualized.
 See :ref:`asset_tracker` for more information on the asset tracker application.
 
 Operating modes

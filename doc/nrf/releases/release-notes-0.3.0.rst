@@ -102,16 +102,16 @@ nRF9160
   * **at_client**:
     This sample uses the **at_host** library to provide a UART interface for AT commands.
   * :ref:`asset_tracker`:
-    This sample uses the **nrf_cloud** library to transmit GPS and device orientation data to nRF Connect for Cloud via LTE.
+    This sample uses the **nrf_cloud** library to transmit GPS and device orientation data to nRF Cloud via LTE.
   * :ref:`lte_sensor_gateway`:
-    This sample uses the **nrf_cloud** library to transmit sensor data collected via Bluetooth LE to nRF Connect for Cloud via LTE.
+    This sample uses the **nrf_cloud** library to transmit sensor data collected via Bluetooth LE to nRF Cloud via LTE.
 
 * Added the following libraries:
 
   * **at_host**:
     This library helps creating an AT command socket and forwards requests and responses from and to the modem.
   * :ref:`lib_nrf_cloud`:
-    This library implements features to connect and send data to nRF Connect for Cloud services.
+    This library implements features to connect and send data to nRF Cloud services.
   * **bsdlib**:
     This library is a porting library for the BSD socket library that is located in the nrfxlib repository.
   * **mqtt_socket**:
@@ -214,7 +214,7 @@ Known issues
 nRF9160
 =======
 
-* The :ref:`asset_tracker` sample does not wait for connection to nRF Connect for Cloud before trying to send data.
+* The :ref:`asset_tracker` sample does not wait for connection to nRF Cloud before trying to send data.
   This causes the sample to crash if the user toggles one of the switches before the board is connected to the cloud.
 * The :ref:`asset_tracker` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
 * If a debugger (for example, J-Link) is connected via SWD to the nRF9160, the modem firmware will reset.

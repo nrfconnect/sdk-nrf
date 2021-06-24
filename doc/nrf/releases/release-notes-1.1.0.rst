@@ -114,7 +114,7 @@ nRF9160
 
 * Added the following libraries:
 
-  * Cloud API (``include/net/cloud.h``) - provides a generic cloud API with an implementation for nRF Connect for Cloud.
+  * Cloud API (``include/net/cloud.h``) - provides a generic cloud API with an implementation for nRF Cloud.
   * :ref:`liblwm2m_carrier_readme` (version 0.8.0) - provides support for the Verizon Wireless network support.
   * :ref:`at_notif_readme` - dispatches AT command notifications to registered modules.
 
@@ -132,7 +132,7 @@ Updated samples and applications
   * Updated to use the generic cloud API.
   * Added a user interface module to the application to facilitate the use of buttons, LEDs, buzzer, and NMOS transistors.
   * Added a cloud command decoder module that parses incoming JSON strings.
-  * Added an application reboot in the case that MQTT CONNACK is missing from the nRF Connect for Cloud server.
+  * Added an application reboot in the case that MQTT CONNACK is missing from the nRF Cloud server.
   * Fixed a bug where invalid RSRP values (not known / not detectable) were sent to the cloud.
   * Added service information JSON to the device information shadow data.
   * Added light sensor handling.
@@ -141,8 +141,8 @@ Updated samples and applications
 * :ref:`aws_fota_sample`:
 
   * Added a warning message when provisioning certificates stating that the certificates are stored in application core flash (readable flash) and are visible on modem traces.
-  * Changed the default security tag to not be the same as nRF Connect for Cloud's security tag, to ensure that users do not overwrite their nRF Connect for Cloud certificates.
-  * Created a separate nRF Connect for Cloud configuration option for the sample.
+  * Changed the default security tag to not be the same as nRF Cloud's security tag, to ensure that users do not overwrite their nRF Cloud certificates.
+  * Created a separate nRF Cloud configuration option for the sample.
   * Added device shadow update to the sample.
   * Added support for delta updates of the modem firmware using firmware over-the-air (FOTA).
 
