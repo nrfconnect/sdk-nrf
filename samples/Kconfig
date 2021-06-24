@@ -16,6 +16,16 @@ config NCS_SAMPLES_DEFAULTS
 	help
 	  Use the default configuration for NCS samples.
 
+config NCS_AUTO_INCLUDE_NET_CORE_IMAGE
+	bool "Enable automatic child-image selection for the network core"
+	default y
+	depends on SOC_NRF5340_CPUAPP
+	help
+	  Enable auto-inclusion of a sample image when building
+	  SOC_NRF5340_CPUAPP applications. E.g. inclusion of hci_rpmsg,
+	  multiprotocol_rpmsg or 802154_rpmsg samples when building apps that
+	  require radio functionality.
+
 config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
 	bool "Enable empty_app_core as a child image"
 	default n
