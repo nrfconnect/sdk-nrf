@@ -372,7 +372,7 @@ uint8_t sensor_powtime_encode(uint64_t raw)
 		return 1;
 	}
 
-	const uint64_t *seed = &powtime_lookup[0];
+	const uint64_t *seed = &powtime_lookup[ARRAY_SIZE(powtime_lookup) - 1];
 
 	for (int i = 1; i < ARRAY_SIZE(powtime_lookup); ++i) {
 		if (raw_us < powtime_lookup[i]) {
@@ -388,7 +388,9 @@ uint8_t sensor_powtime_encode(uint64_t raw)
 	     i++) {
 	}
 
-	return ARRAY_SIZE(powtime_mul) * (seed - &powtime_lookup[0]) + i;
+	uint8_t encoded = ARRAY_SIZE(powtime_mul) * (seed - &powtime_lookup[0]) + i;
+
+	return MIN(encoded, 253);
 }
 
 uint64_t sensor_powtime_decode_us(uint8_t val)

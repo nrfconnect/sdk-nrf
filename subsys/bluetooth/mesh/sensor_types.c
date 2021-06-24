@@ -168,6 +168,7 @@ enum scalar_repr_flags {
 	HAS_INVALID = (BIT(5)),
 	HAS_MAX = BIT(6),
 	HAS_MIN = BIT(7),
+	HAS_UNDEFINED_MIN = BIT(8),
 };
 
 struct scalar_repr {
@@ -197,11 +198,11 @@ static int64_t scalar_max(const struct bt_mesh_sensor_format *format)
 		return repr->max;
 	}
 
-	if (repr->flags & SIGNED) {
-		return BIT64(8 * format->size - 1) - 1;
-	}
-
 	int64_t max_value = BIT64(8 * format->size) - 1;
+
+	if (repr->flags & SIGNED) {
+		max_value = BIT64(8 * format->size - 1) - 1;
+	}
 
 	if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID)) {
 		max_value -= 2;
@@ -221,6 +222,9 @@ static int32_t scalar_min(const struct bt_mesh_sensor_format *format)
 	}
 
 	if (repr->flags & SIGNED) {
+		if (repr->flags & HAS_UNDEFINED_MIN) {
+			return -BIT64(8 * format->size - 1) + 1;
+		}
 		return -BIT64(8 * format->size - 1);
 	}
 
@@ -245,6 +249,9 @@ static int scalar_encode(const struct bt_mesh_sensor_format *format,
 
 	if (raw > max_value || raw < min_value) {
 		uint32_t type_max = BIT64(8 * format->size) - 1;
+		if (repr->flags & SIGNED) {
+			type_max = BIT64(8 * format->size - 1) - 1;
+		}
 
 		if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID) &&
 		    val->val1 == type_max - 1) {
@@ -252,6 +259,8 @@ static int scalar_encode(const struct bt_mesh_sensor_format *format,
 		} else if (repr->flags & HAS_UNDEFINED &&
 			   val->val1 == type_max) {
 			raw = type_max;
+		} else if (repr->flags & HAS_UNDEFINED_MIN) {
+			raw = type_max + 1;
 		} else {
 			return -ERANGE;
 		}
@@ -321,13 +330,18 @@ static int scalar_decode(const struct bt_mesh_sensor_format *format,
 	int64_t min_value = scalar_min(format);
 
 	if (raw < min_value || raw > max_value) {
-		if (!(repr->flags & (HAS_UNDEFINED | HAS_HIGHER_THAN | HAS_INVALID))) {
+		if (!(repr->flags & (HAS_UNDEFINED | HAS_UNDEFINED_MIN |
+				     HAS_HIGHER_THAN | HAS_INVALID))) {
 			return -ERANGE;
 		}
 
-		uint32_t type_max = BIT64(8 * format->size) - 1;
+		uint32_t type_max = (repr->flags & SIGNED) ?
+			BIT64(8 * format->size - 1) - 1 :
+			BIT64(8 * format->size) - 1;
 
-		if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID) && raw == type_max - 1) {
+		if (repr->flags & HAS_UNDEFINED_MIN) {
+			type_max += 1;
+		} else if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID) && raw == type_max - 1) {
 			type_max -= 1;
 		} else if (raw != type_max) {
 			return -ERANGE;
@@ -384,6 +398,15 @@ static int exp_1_1_encode(const struct bt_mesh_sensor_format *format,
 		return -ENOMEM;
 	}
 
+	if (val->val1 == 0xffffffff && val->val2 == 0) {
+		net_buf_simple_add_u8(buf, 0xff); // Unknown time
+		return 0;
+	}
+	if (val->val1 == 0xfffffffe && val->val2 == 0) {
+		net_buf_simple_add_u8(buf, 0xfe); // Total lifetime
+		return 0;
+	}
+
 	net_buf_simple_add_u8(buf,
 			      sensor_powtime_encode((val->val1 * 1000ULL) +
 						    (val->val2 / 1000ULL)));
@@ -397,11 +420,19 @@ static int exp_1_1_decode(const struct bt_mesh_sensor_format *format,
 		return -ENOMEM;
 	}
 
-	uint64_t time_us =
-		sensor_powtime_decode_us(net_buf_simple_pull_u8(buf));
+	uint8_t raw = net_buf_simple_pull_u8(buf);
 
-	val->val1 = time_us / USEC_PER_SEC;
-	val->val2 = time_us % USEC_PER_SEC;
+	val->val2 = 0;
+	if (raw == 0xff) {
+		val->val1 = 0xffffffff;
+	} else if (raw == 0xfe) {
+		val->val1 = 0xfffffffe;
+	} else {
+		uint64_t time_us = sensor_powtime_decode_us(raw);
+
+		val->val1 = time_us / USEC_PER_SEC;
+		val->val2 = time_us % USEC_PER_SEC;
+	}
 	return 0;
 }
 
@@ -470,11 +501,11 @@ FORMAT(percentage_delta_trigger) = SCALAR_FORMAT(2,
  * Environmental formats
  ******************************************************************************/
 FORMAT(temp_8)		      = SCALAR_FORMAT(1,
-					      SIGNED,
+					      (SIGNED | HAS_UNDEFINED),
 					      celsius,
 					      SCALAR(1, -1));
 FORMAT(temp)		      = SCALAR_FORMAT(2,
-					      SIGNED,
+					      (SIGNED | HAS_UNDEFINED_MIN),
 					      celsius,
 					      SCALAR(1e-2, 0));
 FORMAT(co2_concentration)     = SCALAR_FORMAT(2,
