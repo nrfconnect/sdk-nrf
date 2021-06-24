@@ -6,19 +6,18 @@
 
 menu "Power manager"
 
-config PELION_CLIENT_POWER_MANAGER_ENABLE
+config CAF_POWER_MANAGER
 	bool "Enable power management"
 	select PM_DEVICE
 	select CAF_PM_EVENTS
-	select PELION_CLIENT_KEEP_ALIVE_EVENTS
-	select PELION_CLIENT_POWER_MANAGER_EVENTS
+	select CAF_POWER_MANAGER_EVENTS
 	help
 	  Enable power management, which will put the device to low-power mode
 	  if it is idle.
 
-if PELION_CLIENT_POWER_MANAGER_ENABLE
+if CAF_POWER_MANAGER
 
-config PELION_CLIENT_POWER_MANAGER_STAY_ON
+config CAF_POWER_MANAGER_STAY_ON
 	bool "Stay on while no connections"
 	help
 	  If disabled the device will switch SoC to OFF mode after power
@@ -26,19 +25,19 @@ config PELION_CLIENT_POWER_MANAGER_STAY_ON
 	  but remain idle. If the device is connected it will always stay on
 	  and maintain the connection, regardless of the setting.
 
-config PELION_CLIENT_POWER_MANAGER_TIMEOUT
+config CAF_POWER_MANAGER_TIMEOUT
 	int "Power down timeout [s]"
 	default 120
 	help
 	  Time in seconds after which the device will enter low-power mode.
 
-config PELION_CLIENT_POWER_MANAGER_ERROR_TIMEOUT
+config CAF_POWER_MANAGER_ERROR_TIMEOUT
 	int "Power manager timeout on error [s]"
 	default 30
 	help
 	 Time in seconds after which the device will be turned off after an error.
 
-module = PELION_CLIENT_POWER_MANAGER
+module = CAF_POWER_MANAGER
 module-str = power manager
 source "subsys/logging/Kconfig.template.log_config"
 

@@ -15,7 +15,7 @@
 
 #define MODULE net
 #include <caf/events/module_state_event.h>
-#include <power_manager_event.h>
+#include <caf/events/power_manager_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_NET_LOG_LEVEL);
@@ -130,11 +130,11 @@ static void set_net_state(enum net_state state)
 	net_state = state;
 
 	if (net_state == NET_STATE_CONNECTED) {
-		if (IS_ENABLED(CONFIG_PELION_CLIENT_POWER_MANAGER_EVENTS)) {
+		if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER_EVENTS)) {
 			power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_ALIVE);
 		}
 	} else {
-		if (IS_ENABLED(CONFIG_PELION_CLIENT_POWER_MANAGER_EVENTS)) {
+		if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER_EVENTS)) {
 			power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_MAX);
 		}
 	}

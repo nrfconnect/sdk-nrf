@@ -16,6 +16,8 @@ zephyr_library_sources_ifdef(CONFIG_CAF_CLICK_DETECTOR click_detector.c)
 
 zephyr_library_sources_ifdef(CONFIG_CAF_LEDS leds.c)
 
+zephyr_library_sources_ifdef(CONFIG_CAF_POWER_MANAGER power_manager.c)
+
 zephyr_library_sources_ifdef(CONFIG_CAF_SENSOR_SAMPLER sensor_sampler.c)
 
 zephyr_library_sources_ifdef(CONFIG_CAF_BLE_SMP ble_smp.c)
