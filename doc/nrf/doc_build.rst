@@ -7,8 +7,8 @@ Building the |NCS| documentation
    :local:
    :depth: 2
 
-The |NCS| documentation is written using the reStructuredText markup language (.rst file extension) with Sphinx extensions and processed using Sphinx.
-API documentation is included from Doxygen comments.
+The |NCS| documentation is written using the reStructuredText markup language (:file:`.rst` file extension) with Sphinx extensions and processed using Sphinx.
+API documentation is generated from Doxygen comments.
 
 See :ref:`zephyr:documentation-overview` in the Zephyr developer guide for information about reStructuredText.
 
@@ -30,7 +30,8 @@ Complete the following steps to install the required tools:
 #. Install or update all required :ref:`Python dependencies <additional_deps>`.
 #. Install `Doxygen`_.
 #. Install `mscgen`_ and make sure that the ``mscgen`` executable is in your ``PATH``.
-#. Install PlantUML. It can be easily installed from `chocolatey <https://community.chocolatey.org/packages/plantuml>`_ on Windows.
+#. Install PlantUML.
+   On Windows, you can install `PlantUML from chocolatey`_.
 
 .. _documentation_sets:
 
@@ -39,7 +40,7 @@ Documentation structure
 
 All documentation build files are located in the :file:`ncs/nrf/doc` folder.
 The :file:`nrf` subfolder in that directory contains all :file:`.rst` source files that are not directly related to a sample application or a library.
-Documentation for samples and libraries are provided in a :file:`README.rst` or :file:`.rst` file in the same directory as the code.
+Documentation for samples and libraries are provided in a :file:`README.rst` or another :file:`.rst` file in the same directory as the code.
 
 Building the documentation output requires building the output for all documentation sets.
 Following are the available documentation sets:
@@ -59,25 +60,8 @@ Building documentation output
 
 Complete the following steps to build the documentation output:
 
-1. Open a shell and enter the doc folder :file:`ncs/nrf/doc`.
-
-   * On Windows:
-
-     a. Navigate to :file:`ncs/nrf`.
-     #. Hold shift and right-click on the :file:`doc` folder.
-        Select :guilabel:`Open command window here`.
-
-   * On Linux or macOS:
-
-     a. Open a shell window.
-     #. Navigate to :file:`ncs/nrf/doc`.
-        If the ncs folder is in your home directory, enter:
-
-        .. code-block:: console
-
-           cd ~/ncs/nrf/doc
-
-#. Generate the Ninja build files:
+1. Open a command-line window and enter the doc folder :file:`ncs/nrf/doc`.
+#. Generate the Ninja build files by entering the following command:
 
    .. code-block:: console
 
@@ -89,7 +73,7 @@ Complete the following steps to build the documentation output:
 
       cd _build
 
-#. Run ninja to build the complete documentation:
+#. Run ninja to build the complete documentation by entering the following command:
 
    .. code-block:: console
 
@@ -175,7 +159,7 @@ The version drop-down is displayed only if the documentation files are organized
 To test the version drop-down locally, complete the following steps:
 
 1. In the documentation build folder (for example, :file:`_build`), rename the :file:`html` folder to :file:`latest`.
-#. Open a command window in the documentation build folder and enter the following command to start a Python web server::
+#. Open a command-line window in the documentation build folder and enter the following command to start a Python web server::
 
       python -m http.server
 

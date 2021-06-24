@@ -692,3 +692,7 @@
 .. _`HERE Positioning`: https://www.here.com/platform/tracking-positioning-solutions/positioning
 
 .. _`Skyhook Precision Location`: https://www.skyhook.com/precision-location
+
+.. _`Install chocolatey`: https://chocolatey.org/install
+.. _`Chocolatey`: https://chocolatey.org/
+.. _`PlantUML from chocolatey`: https://community.chocolatey.org/packages/plantuml
