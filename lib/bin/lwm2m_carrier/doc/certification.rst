@@ -15,5 +15,5 @@ For a list of all the carrier certifications (including those certifications wit
 .. note::
 
    Your final product will need certification from the carrier.
-   Please contact the carrier for more information on their respective device certification program.
+   Contact the carrier for more information on their respective device certification program.
    If your carrier is AT&T or Verizon Wireless, see `AT&T's Get network ready program`_, and `Verizon's Get certified program`_ for more information.

@@ -101,7 +101,7 @@ Because of these design constraints, the following limitations apply:
 
 1. The public key hash cannot contain half-words with the value ``0xFFFF``, as such hashes cannot be guaranteed to be immutable when placed in the OTP region.
    Therefore, the bootloader refuses to boot if any hash contains a half-word with the value ``0xFFFF``.
-   If your public key hash is found to contain this value, please :ref:`regenerate it <ug_fw_update_keys>` or use another public key.
+   If your public key hash is found to contain this value, :ref:`regenerate it <ug_fw_update_keys>` or use another public key.
 
 #. Writing data to an OTP region means that provisioned data cannot be written more than once to the target device.
    When programming images that contain flash memory content for this region, such as the bootloader or images containing the bootloader, the UICR must first be erased.

@@ -955,7 +955,7 @@ NCSDK-5883: CMAC behavior issues
 NCSDK-5546: Oberon missing symbols for HKDF
   nRF Oberon v3.0.5 is missing symbols for HKDF using SHA1, which will be fixed in an upcoming version of the library.
 
-  **Workaround:** Use a different backend (for example, vanilla mbed TLS) for HKDF/HMAC using SHA1.
+  **Workaround:** Use a different backend (for example, vanilla Mbed TLS) for HKDF/HMAC using SHA1.
 
 .. rst-class:: v1-3-1 v1-3-0
 
