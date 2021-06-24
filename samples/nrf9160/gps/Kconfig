@@ -17,6 +17,7 @@ choice GPS_SAMPLE_ANTENNA
 
 config GPS_SAMPLE_ANTENNA_ONBOARD
 	bool "Use onboard antenna"
+	depends on !BOARD_CIRCUITDOJO_FEATHER_NRF9160NS
 
 config GPS_SAMPLE_ANTENNA_EXTERNAL
 	bool "Use external antenna"
@@ -35,6 +36,7 @@ config GPS_SAMPLE_AT_COEX0
 	string "AT%XCOEX0 command"
 	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160NS || BOARD_THINGY91_NRF9160NS) && GPS_SAMPLE_ANTENNA_ONBOARD
 	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160NS || BOARD_THINGY91_NRF9160NS) && GPS_SAMPLE_ANTENNA_EXTERNAL
+	default "AT\%XCOEX0=1,1,1565,1586" if BOARD_CIRCUITDOJO_FEATHER_NRF9160NS
 	help
 	  Defines what is the AT%XCOEX0 command to be sent to GPS module. Leave
 	  empty if this command should not be sent.
