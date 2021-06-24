@@ -36,9 +36,7 @@
 
 int gerror;
 
-#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 char iperf_timestrerr[100];
-#endif
 
 /* Do a printf to stderr. */
 void
@@ -49,7 +47,6 @@ iperf_err(struct iperf_test *test, const char *format, ...)
     char *ct = NULL;
 
     /* Timestamp if requested */
-#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
     time_t now;
     struct tm *ltm = NULL;
     if (test != NULL && test->timestamps) {
@@ -58,7 +55,6 @@ iperf_err(struct iperf_test *test, const char *format, ...)
         strftime(iperf_timestrerr, sizeof(iperf_timestrerr), test->timestamp_format, ltm);
         ct = iperf_timestrerr;
     }
-#endif
 
     va_start(argp, format);
     vsnprintf(str, sizeof(str), format, argp);
@@ -72,13 +68,14 @@ iperf_err(struct iperf_test *test, const char *format, ...)
         fprintf(test->outfile, "iperf3: %s\n", str);
     }
     else {
-        if (ct) {
-            fprintf(stderr, "%s", ct);
-        }
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
         /* Write to RAM "file" if requested: */
         if (test != NULL && test->resp_std_out_buff_len && test->resp_std_out_buff != NULL) {
             int total_len;
+
+            if (ct) {
+                fprintf(stderr, "%s", ct);
+            }
 
             total_len = strlen(test->resp_std_out_buff) + strlen(str);
             if (total_len >= test->resp_std_out_buff_len) {
@@ -91,6 +88,9 @@ iperf_err(struct iperf_test *test, const char *format, ...)
         } else
 #endif
         {
+            if (ct) {
+                fprintf(stderr, "%s", ct);
+            }
             fprintf(stderr, "iperf3: %s\n", str);
         }
     }
@@ -103,21 +103,17 @@ iperf_errexit(struct iperf_test *test, const char *format, ...)
 {
     va_list argp;
     char str[1024];
-#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
     time_t now;
     struct tm *ltm = NULL;
-#endif
     char *ct = NULL;
 
     /* Timestamp if requested */
-#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
     if (test != NULL && test->timestamps) {
         time(&now);
         ltm = localtime(&now);
         strftime(iperf_timestrerr, sizeof(iperf_timestrerr), "%c ", ltm);
         ct = iperf_timestrerr;
     }
-#endif
 
     va_start(argp, format);
     vsnprintf(str, sizeof(str), format, argp);

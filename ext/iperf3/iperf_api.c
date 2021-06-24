@@ -59,10 +59,6 @@
 #include <netinet/tcp.h>
 #include <sys/time.h>
 
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION) && defined(CONFIG_MODEM_INFO)
-#include <modem/modem_info.h>
-#endif
-
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 #if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined(CONFIG_AT_CMD)
 #include <modem/at_cmd.h>
@@ -807,19 +803,6 @@ static void mapped_v4_to_regular_v4(char *str)
 	}
 }
 
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-
-/* NRF_IPERF3_INTEGRATION_TODO: this just defaults to 70's */
-time_t time(time_t *t)
-{
-    /* at+cclk? TODO to get real time? or use date_time.h services? */
-    return 0;
-}
-
-/* forward declarations: */
-struct tm *gmtime(const time_t *timep);
-size_t strftime (char *__restrict _s, size_t _maxsize, const char *__restrict _fmt, const struct tm *__restrict _t);
-#endif
 
 void iperf_on_connect(struct iperf_test *test)
 {
@@ -833,36 +816,6 @@ void iperf_on_connect(struct iperf_test *test)
 	struct sockaddr_in6 *sa_in6P;
 	socklen_t len;
 
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION) && defined(CONFIG_MODEM_INFO)
-	int ret = modem_info_string_get(MODEM_INFO_DATE_TIME, now_str, sizeof(now_str));
-	if (ret >= 0) {
-		if (test->json_output)
-			cJSON_AddItemToObject(
-				test->json_start, "timestamp",
-				iperf_json_printf("time: %s  timesecs: %d", now_str,
-						(int64_t)now_secs));
-		else if (test->verbose)
-			iperf_printf(test, report_time, now_str);
-	}
-	else {
-		if (test->debug) {
-			iperf_printf(
-				test,
-				"warn: cannot get current time from modem (ret: %d). Let's start rockin', and defaulting to early 70's\n", ret);
-		}
-
-		now_secs = time((time_t *)0);
-		(void)strftime(now_str, sizeof(now_str), rfc1123_fmt,
-				gmtime(&now_secs));
-		if (test->json_output)
-			cJSON_AddItemToObject(
-				test->json_start, "timestamp",
-				iperf_json_printf("time: %s  timesecs: %d", now_str,
-						(int64_t)now_secs));
-		else if (test->verbose)
-			iperf_printf(test, report_time, now_str);
-	}
-#else
 	now_secs = time((time_t *)0);
 	(void)strftime(now_str, sizeof(now_str), rfc1123_fmt,
 		       gmtime(&now_secs));
@@ -873,7 +826,6 @@ void iperf_on_connect(struct iperf_test *test)
 					  (int64_t)now_secs));
 	else if (test->verbose)
 		iperf_printf(test, report_time, now_str);
-#endif
 
 	if (test->role == 'c') {
 		if (test->json_output)
@@ -6027,15 +5979,13 @@ int iperf_clearaffinity(struct iperf_test *test)
 #endif /* neither HAVE_SCHED_SETAFFINITY nor HAVE_CPUSET_SETAFFINITY nor HAVE_SETPROCESSAFFINITYMASK */
 }
 
-#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 char iperf_timestr[100];
-#endif
 
 int iperf_printf(struct iperf_test *test, const char *format, ...)
 {
 	va_list argp;
 	int r = -1;
-	//time_t now;
+	time_t now;
 	char *ct = NULL;
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
@@ -6045,7 +5995,6 @@ int iperf_printf(struct iperf_test *test, const char *format, ...)
 	}
 #endif
 	/* Timestamp if requested */
-#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 	struct tm *ltm = NULL;
 	if (iperf_get_test_timestamps(test)) {
 		time(&now);
@@ -6054,7 +6003,6 @@ int iperf_printf(struct iperf_test *test, const char *format, ...)
 			 iperf_get_test_timestamp_format(test), ltm);
 		ct = iperf_timestr;
 	}
-#endif
 	/*
      * There are roughly two use cases here.  If we're the client,
      * want to print stuff directly to the output stream.
@@ -6072,19 +6020,29 @@ int iperf_printf(struct iperf_test *test, const char *format, ...)
 		/* Write to RAM "file" if requested: */
 		if (test->resp_std_out_buff_len && test->resp_std_out_buff != NULL) {
 			char linebuffer[1024];
-			int total_len;
+			int len;
+
+			linebuffer[0] = '\0';
+			if (ct) {
+				sprintf(linebuffer, "%s", ct);
+			}
+			if (test->title) {
+				sprintf(linebuffer + strlen(linebuffer),
+					"%s:  ", test->title);
+			}
+			len = strlen(linebuffer);
 
 			va_start(argp, format);
-			r = vsnprintf(linebuffer, sizeof(linebuffer), format,
-				      argp);
+			r = vsnprintf(linebuffer + len,
+				      sizeof(linebuffer) - len, format, argp);
 			va_end(argp);
 
-			total_len =
-				strlen(test->resp_std_out_buff) + strlen(linebuffer);
-			if (total_len >= test->resp_std_out_buff_len) {
+			/* Total length */
+			len = strlen(test->resp_std_out_buff) + strlen(linebuffer);
+			if (len >= test->resp_std_out_buff_len) {
 				strcpy(test->resp_std_out_buff,
 				       "WARNING: response buffer was too short and was flushed\n"
-					   "...and started from the beginning\n");
+				       "...and started from the beginning\n");
 			}
 			strcat(test->resp_std_out_buff, linebuffer);
 		} else
@@ -6103,6 +6061,7 @@ int iperf_printf(struct iperf_test *test, const char *format, ...)
 	else if (test->role == 's') {
 		char linebuffer[1024];
 		int i = 0;
+
 		if (ct) {
 			i = sprintf(linebuffer, "%s", ct);
 		}
