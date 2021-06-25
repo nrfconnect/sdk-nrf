@@ -1017,7 +1017,6 @@ static void connect(const void *subscriber_id, uint8_t report_id)
 		int8_t cur_sub_prio = get_subscriber_priority(rd->linked_rs->subscriber);
 		int8_t new_sub_prio = get_subscriber_priority(subscriber);
 
-		__ASSERT_NO_MSG(cur_sub_prio != new_sub_prio);
 		if (cur_sub_prio < new_sub_prio) {
 			LOG_WRN("Force report data unlink");
 			rd->linked_rs = NULL;
