@@ -63,7 +63,7 @@ static int do_udp_server_start(uint16_t port)
 	int ret = 0;
 	struct sockaddr_in local;
 	int addr_len;
-	char ipv4_addr[NET_IPV4_ADDR_LEN];
+	char ipv4_addr[NET_IPV4_ADDR_LEN] = {0};
 
 	/* Open socket */
 	udp_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -77,7 +77,8 @@ static int do_udp_server_start(uint16_t port)
 	/* Bind to local port */
 	local.sin_family = AF_INET;
 	local.sin_port = htons(port);
-	if (!util_get_ipv4_addr(ipv4_addr)) {
+	util_get_ip_addr(ipv4_addr, NULL);
+	if (strlen(ipv4_addr) == 0) {
 		LOG_ERR("Unable to obtain local IPv4 address");
 		close(udp_sock);
 		return ret;

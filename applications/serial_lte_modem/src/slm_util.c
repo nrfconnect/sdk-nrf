@@ -7,10 +7,14 @@
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
-#include "slm_util.h"
 #include <net/socket.h>
+#include <modem/at_cmd_parser.h>
+#include "slm_util.h"
 
 #define PRINTABLE_ASCII(ch) (ch > 0x1f && ch < 0x7f)
+
+/* global variable defined in different files */
+extern struct at_param_list at_param_list;
 
 /**
  * @brief Compare string ignoring case
@@ -164,34 +168,6 @@ bool check_for_ipv4(const char *address, uint8_t length)
 	return true;
 }
 
-/**brief use AT command to get IPv4 address
- */
-bool util_get_ipv4_addr(char *address)
-{
-	int err;
-	char at_rsp[128];
-	char *tmp1, *tmp2;
-
-	err = at_cmd_write("AT+CGPADDR", at_rsp, sizeof(at_rsp), NULL);
-	if (err) {
-		return false;
-	}
-	/* parse +CGPADDR: 0,"10.145.192.136" */
-	tmp1 = strstr(at_rsp, "\"");
-	if (tmp1 == NULL) {
-		return false;
-	}
-	tmp1++;
-	tmp2 = strstr(tmp1, "\"");
-	if (tmp2 == NULL) {
-		return false;
-	}
-
-	memcpy(address, tmp1, tmp2 - tmp1);
-	address[tmp2 - tmp1] = '\0';
-	return true;
-}
-
 /**
  * @brief Get string value from AT command with length check
  */
@@ -212,4 +188,56 @@ int util_string_get(const struct at_param_list *list, size_t index,
 	}
 
 	return -ENOMEM;
+}
+
+/**
+ * @brief use AT command to get IPv4 and/or IPv6 address
+ */
+void util_get_ip_addr(char *addr4, char *addr6)
+{
+	int err;
+	char rsp[128];
+	char tmp[sizeof(struct in6_addr)];
+	char addr[NET_IPV6_ADDR_LEN];
+	size_t addr_len;
+
+	err = at_cmd_write("AT+CGPADDR", rsp, sizeof(rsp), NULL);
+	if (err) {
+		return;
+	}
+	/** parse +CGPADDR: <cid>,<PDP_addr_1>,<PDP_addr_2>
+	 * PDN type "IP": PDP_addr_1 is <IPv4>
+	 * PDN type "IPV6": PDP_addr_1 is <IPv6>
+	 * PDN type "IPV4V6": <IPv4>,<IPv6> or <IPV4> or <IPv6>
+	 */
+	err = at_parser_params_from_str(rsp, NULL, &at_param_list);
+	if (err) {
+		return;
+	}
+
+	/* parse first IP string, could be IPv4 or IPv6 */
+	addr_len = NET_IPV6_ADDR_LEN;
+	err = util_string_get(&at_param_list, 2, addr, &addr_len);
+	if (err) {
+		return;
+	}
+	if (addr4 != NULL && inet_pton(AF_INET, addr, tmp) == 1) {
+		strcpy(addr4, addr);
+	} else if (addr6 != NULL && inet_pton(AF_INET6, addr, tmp) == 1) {
+		strcpy(addr6, addr);
+		return;
+	}
+	/* parse second IP string, IPv6 only */
+	if (addr6 == NULL) {
+		return;
+	}
+	addr_len = NET_IPV6_ADDR_LEN;
+	err = util_string_get(&at_param_list, 3, addr, &addr_len);
+	if (err) {
+		return;
+	}
+	if (inet_pton(AF_INET6, addr, tmp) == 1) {
+		strcpy(addr6, addr);
+	}
+	/* only parse addresses from primary PDN */
 }

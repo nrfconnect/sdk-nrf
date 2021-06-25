@@ -103,14 +103,6 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len,
  */
 bool check_for_ipv4(const char *address, uint8_t length);
 
-/**brief use AT command to get IPv4 address
- *
- * @param[in] address buffer to hold the IPv4 address
- *
- * @return true if IPv4 address obtained, false otherwise
- */
-bool util_get_ipv4_addr(char *address);
-
 /**
  * @brief Get string value from AT command with length check.
  *
@@ -130,6 +122,13 @@ bool util_get_ipv4_addr(char *address);
 int util_string_get(const struct at_param_list *list, size_t index,
 			 char *value, size_t *len);
 
+/**
+ * @brief use AT command to get IPv4 and IPv6 addresses
+ *
+ * @param[in] addr4 buffer to hold the IPv4 address, size NET_IPV4_ADDR_LEN
+ * @param[in] addr6 buffer to hold the IPv6 address, size NET_IPV6_ADDR_LEN
+ */
+void util_get_ip_addr(char *addr4, char *addr6);
 /** @} */
 
 #endif /* SLM_UTIL_ */

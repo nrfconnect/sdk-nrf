@@ -827,12 +827,12 @@ The test command is not supported.
 Resolve hostname #XGETADDRINFO
 ==============================
 
-The ``#XGETADDRINFO`` command allows you to resolve hostnames to IPv4 addresses.
+The ``#XGETADDRINFO`` command allows you to resolve hostnames to IPv4 and/or IPv6 addresses.
 
 Set command
 -----------
 
-The set command allows you to resolve hostnames to IPv4 addresses.
+The set command allows you to resolve hostnames to IPv4 and/or IPv6 addresses.
 
 Syntax
 ~~~~~~
@@ -842,7 +842,6 @@ Syntax
    #XGETADDRINFO=<hostname>
 
 The ``<hostname>`` parameter is a string.
-It cannot be an IPv4 address string.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -852,7 +851,7 @@ Response syntax
    #XGETADDRINFO: "<ip_addr>"
 
 * The ``<ip_addr>`` value is a string.
-  It indicates the IPv4 address of the resolved hostname.
+  It indicates the IPv4 and/or IPv6 address of the resolved hostname.
 
 Examples
 ~~~~~~~~
