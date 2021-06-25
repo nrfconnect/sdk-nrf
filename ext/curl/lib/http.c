@@ -83,10 +83,6 @@
 #include "curl_memory.h"
 #include "memdebug.h"
 
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-#include "nrf_time_utils.h"
-#endif
-
 /*
  * Forward declarations.
  */
@@ -3931,11 +3927,7 @@ CURLcode Curl_http_readwrite_headers(struct Curl_easy *data,
       }
       else {
         /* convert date to number of seconds into the future */
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-        retry_after = date - nrf_time(NULL); /* time() not supported */
-#else
         retry_after = date - time(NULL);
-#endif        
       }
       data->info.retry_after = retry_after; /* store it */
     }

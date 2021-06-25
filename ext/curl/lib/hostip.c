@@ -68,10 +68,6 @@
 #include "curl_memory.h"
 #include "memdebug.h"
 
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-#include "nrf_time_utils.h"
-#endif
-
 #if defined(CURLRES_SYNCH) && \
     defined(HAVE_ALARM) && defined(SIGALRM) && defined(HAVE_SIGSETJMP)
 /* alarm-based timeouts can only be used with all the dependencies satisfied */
@@ -238,11 +234,7 @@ void Curl_hostcache_prune(struct Curl_easy *data)
   if(data->share)
     Curl_share_lock(data, CURL_LOCK_DATA_DNS, CURL_LOCK_ACCESS_SINGLE);
 
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-  nrf_time(&now);
-#else
   time(&now);
-#endif
 
   /* Remove outdated and unused entries from the hostcache */
   hostcache_prune(data->dns.hostcache,
@@ -292,11 +284,8 @@ fetch_addr(struct connectdata *conn,
     struct hostcache_prune_data user;
 
 
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-    nrf_time(&user.now); /* time() not supported */
-#else
     time(&user.now);
-#endif
+
     user.cache_timeout = data->set.dns_cache_timeout;
 
     if(hostcache_timestamp_remove(&user, dns)) {
@@ -456,11 +445,7 @@ Curl_cache_addr(struct Curl_easy *data,
   dns->inuse = 1;   /* the cache has the first reference */
   dns->addr = addr; /* this is the address(es) */
 
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-  nrf_time(&dns->timestamp); /* time() not supported */
-#else
-    time(&dns->timestamp);
-#endif
+  time(&dns->timestamp);
   if(dns->timestamp == 0)
     dns->timestamp = 1;   /* zero indicates CURLOPT_RESOLVE entry */
 

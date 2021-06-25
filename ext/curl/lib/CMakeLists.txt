@@ -33,5 +33,3 @@ zephyr_library_sources(
 	vtls/mbedtls.c vtls/mbedtls_threadlock.c vtls/mesalink.c vtls/nss.c
 	vtls/openssl.c vtls/schannel.c vtls/schannel_verify.c vtls/sectransp.c
 	vtls/vtls.c vtls/wolfssl.c)
-
-zephyr_library_sources_ifdef(CONFIG_NRF_CURL_INTEGRATION nrf_time_utils.c)

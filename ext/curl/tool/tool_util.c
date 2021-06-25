@@ -25,10 +25,6 @@
 
 #include "memdebug.h" /* keep this as LAST include */
 
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-#include "nrf_time_utils.h"
-#endif
-
 #if defined(WIN32) && !defined(MSDOS)
 
 /* set in win32_init() */
@@ -120,11 +116,7 @@ struct timeval tvnow(void)
   */
   struct timeval now;
 
-#if defined(CONFIG_NRF_CURL_INTEGRATION)  
-  now.tv_sec = (long)nrf_time(NULL); /* time() not supported */
-#else
   now.tv_sec = (long)time(NULL);
-#endif
   now.tv_usec = 0;
   return now;
 }
