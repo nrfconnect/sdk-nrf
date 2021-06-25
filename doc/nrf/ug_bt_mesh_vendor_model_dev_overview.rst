@@ -1,7 +1,7 @@
 .. _ug_bt_mesh_vendor_model_dev_overview:
 
-Model development overview
-##########################
+Vendor model development overview
+#################################
 
 .. contents::
    :local:
@@ -289,6 +289,11 @@ Defining model callbacks
 The Access API provides a set of callbacks that are called when certain events occur.
 These callbacks are defined in :c:struct:`bt_mesh_model_cb`.
 
+.. figure:: /images/bt_mesh_model_callbacks.svg
+    :alt: A diagram representing the callbacks for Bluetooth mesh models.
+
+    Bluetooth mesh model callbacks
+
 :c:member:`bt_mesh_model_cb.settings_set`
    This handler is called when the model data is restored from the persistent storage.
    If you need to store data in the persistent storage, use the :c:func:`bt_mesh_model_data_store` function.
@@ -306,7 +311,7 @@ These callbacks are defined in :c:struct:`bt_mesh_model_cb`.
 
 :c:member:`bt_mesh_model_cb.reset`
    The model reset handler is called when the mesh node is reset.
-   All model data is deleted on reset, and the model should clear its state.
+   All of the model's configuration is deleted on reset, and the model should clear its state.
    If the model stores any persistent data, this needs to be erased manually.
 
 If you want to use any of these callbacks, create an instance of :c:struct:`bt_mesh_model_cb` and initialize any of the required callbacks.
