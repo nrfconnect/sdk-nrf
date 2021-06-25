@@ -24,7 +24,7 @@
 #include <nrf_socket.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
-#include "modem/modem_attest_token.h"
+#include "modem/modem_jwt.h"
 #endif
 
 LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
@@ -325,7 +325,7 @@ static int nct_client_id_set(const char * const client_id)
 #elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
 	struct nrf_device_uuid dev_id;
 
-	err = modem_attest_token_get_uuids(&dev_id, NULL);
+	err = modem_jwt_get_uuids(&dev_id, NULL);
 	if (err) {
 		LOG_ERR("Failed to get device UUID: %d", err);
 		return err;

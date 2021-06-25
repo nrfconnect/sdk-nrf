@@ -51,8 +51,7 @@ config NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME
 
 config NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID
 	bool "Modem internal UUID value"
-	select MODEM_ATTEST_TOKEN
-	select MODEM_ATTEST_TOKEN_PARSING
+	depends on MODEM_JWT
 	help
 	  Requires modem firmware version 1.3 or later.
 
