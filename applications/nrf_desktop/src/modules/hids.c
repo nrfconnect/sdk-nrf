@@ -495,6 +495,7 @@ static void notify_hids(const struct ble_peer_event *event)
 
 		cur_conn = NULL;
 		secured = false;
+		protocol_boot = false;
 		if (CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY > 0) {
 			/* Cancel cannot fail if executed from another work's context. */
 			(void)k_work_cancel_delayable(&notify_secured);
