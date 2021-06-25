@@ -96,7 +96,6 @@
 .. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/933fb4/docs/guides/nrfconnect_platform_overview.md
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/933fb4/src/controller
 
-.. _`Azure support for Asset Tracker v2`: https://github.com/nrfconnect/sdk-nrf/pull/3950
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 
 .. _`Pelion Device Management Client library reference example`: https://github.com/PelionIoT/mbed-cloud-client-example
