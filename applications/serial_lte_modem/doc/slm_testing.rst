@@ -1286,16 +1286,20 @@ DNS lookup
       :class: highlight
 
       **AT#XGETADDRINFO="www.google.com"**
-      #XGETADDRINFO: 172.217.174.100
+      #XGETADDRINFO: "172.217.174.100"
       OK
 
-#. Observe that you cannot look up the host name for an IP address.
-
-   .. parsed-literal::
-      :class: highlight
+      **AT#XGETADDRINFO="ipv6.google.com"**
+      #XGETADDRINFO: "2404:6800:4006:80e::200e"
+      OK
 
       **AT#XGETADDRINFO="172.217.174.100"**
-      ERROR
+      #XGETADDRINFO: "172.217.174.100"
+      OK
+
+      **AT#XGETADDRINFO="2404:6800:4006:80e::200e"**
+      #XGETADDRINFO: "2404:6800:4006:80e::200e"
+      OK
 
 Socket options
 ==============
@@ -1359,13 +1363,22 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       :class: highlight
 
       **AT#XPING="www.google.com",45,5000,5,1000**
-      #XPING: 0.637
-      #XPING: 0.585
-      #XPING: 0.598
-      #XPING: 0.598
-      #XPING: 0.599
-      #XPING: average 0.603
       OK
+      #XPING: 0.637 seconds
+      #XPING: 0.585 seconds
+      #XPING: 0.598 seconds
+      #XPING: 0.598 seconds
+      #XPING: 0.599 seconds
+      #XPING: average 0.603 seconds
+
+      **AT#XPING="ipv6.google.com",45,5000,5,1000**
+      OK
+      #XPING: 0.140 seconds
+      #XPING: 0.109 seconds
+      #XPING: 0.113 seconds
+      #XPING: 0.118 seconds
+      #XPING: 0.112 seconds
+      #XPING: average 0.118 seconds
 
 #. Ping a remote IP address, for example, 172.217.174.100.
 
@@ -1373,13 +1386,13 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       :class: highlight
 
       **AT#XPING="172.217.174.100",45,5000,5,1000**
-      #XPING: 0.873
-      #XPING: 0.576
-      #XPING: 0.599
-      #XPING: 0.623
-      #XPING: 0.577
-      #XPING: average 0.650
       OK
+      #XPING: 0.873 seconds
+      #XPING: 0.576 seconds
+      #XPING: 0.599 seconds
+      #XPING: 0.623 seconds
+      #XPING: 0.577 seconds
+      #XPING: average 0.650 seconds
 
 FTP AT commands
 ***************

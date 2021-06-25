@@ -384,24 +384,14 @@ static int do_bind(uint16_t port)
 {
 	int ret;
 	struct sockaddr_in local;
-	int addr_len;
-	char ipv4_addr[NET_IPV4_ADDR_LEN];
+	char ipv4_addr[NET_IPV4_ADDR_LEN] = {0};
 
 	local.sin_family = AF_INET;
 	local.sin_port = htons(port);
 
-	if (!util_get_ipv4_addr(ipv4_addr)) {
+	util_get_ip_addr(ipv4_addr, NULL);
+	if (strlen(ipv4_addr) == 0) {
 		LOG_ERR("Unable to obtain local IPv4 address");
-		return -1;
-	}
-	/* Check network connection status by checking local IP address */
-	addr_len = strlen(ipv4_addr);
-	if (addr_len == 0) {
-		LOG_ERR("LTE not connected yet");
-		return -1;
-	}
-	if (!check_for_ipv4(ipv4_addr, addr_len)) {
-		LOG_ERR("Invalid local address");
 		return -1;
 	}
 
@@ -411,8 +401,7 @@ static int do_bind(uint16_t port)
 		return -EINVAL;
 	}
 
-	ret = bind(client.sock, (struct sockaddr *)&local,
-		 sizeof(struct sockaddr_in));
+	ret = bind(client.sock, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
 	if (ret) {
 		LOG_ERR("bind() failed: %d", -errno);
 		do_socket_close(-errno);
@@ -1208,28 +1197,21 @@ int handle_at_recvfrom(enum at_cmd_type cmd_type)
 int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	char url[TCPIP_MAX_URL];
+	char hostname[NI_MAXHOST];
+	char host[TCPIP_MAX_URL];
 	int size = TCPIP_MAX_URL;
 	struct addrinfo *result;
-	struct addrinfo hints = {
-		.ai_family = AF_INET
-	};
-	struct sockaddr_in *host;
-	char ipv4addr[NET_IPV4_ADDR_LEN];
+	struct addrinfo *res;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = util_string_get(&at_param_list, 1, url, &size);
+		err = util_string_get(&at_param_list, 1, host, &size);
 		if (err) {
 			return err;
 		}
-		if (check_for_ipv4(url, strlen(url))) {
-			LOG_ERR("already IPv4 address");
-			return -EINVAL;
-		}
-		err = getaddrinfo(url, NULL, &hints, &result);
+		err = getaddrinfo(host, NULL, NULL, &result);
 		if (err) {
-			sprintf(rsp_buf, "\r\n#XGETADDRINFO: %d\r\n", -err);
+			sprintf(rsp_buf, "\r\n#XGETADDRINFO: \"%s\"\r\n", gai_strerror(err));
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			return err;
 		} else if (result == NULL) {
@@ -1238,10 +1220,29 @@ int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 			return -ENOENT;
 		}
 
-		host = (struct sockaddr_in *)result->ai_addr;
-		inet_ntop(AF_INET, &(host->sin_addr.s_addr),
-			ipv4addr, sizeof(ipv4addr));
-		sprintf(rsp_buf, "\r\n#XGETADDRINFO: \"%s\"\r\n", ipv4addr);
+		sprintf(rsp_buf, "\r\n#XGETADDRINFO: \"");
+		/* loop over all returned results and do inverse lookup */
+		for (res = result; res != NULL; res = res->ai_next) {
+			if (res->ai_family == AF_INET) {
+				struct sockaddr_in *host = (struct sockaddr_in *)result->ai_addr;
+
+				(void)inet_ntop(AF_INET, &(host->sin_addr.s_addr),
+					hostname, sizeof(hostname));
+			} else if (res->ai_family == AF_INET6) {
+				struct sockaddr_in6 *host = (struct sockaddr_in6 *)result->ai_addr;
+
+				(void)inet_ntop(AF_INET6, &(host->sin6_addr.s6_addr),
+					hostname, sizeof(hostname));
+			} else {
+				continue;
+			}
+
+			strcat(rsp_buf, hostname);
+			if (res->ai_next) {
+				strcat(rsp_buf, " ");
+			}
+		}
+		strcat(rsp_buf, "\"\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		freeaddrinfo(result);
 		break;

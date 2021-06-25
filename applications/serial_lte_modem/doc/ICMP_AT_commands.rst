@@ -27,10 +27,9 @@ Syntax
    #XPING=<url>,<length>,<timeout>[,<count>[,<interval>]]
 
 * The ``<url>`` parameter is a string.
-  It represents the hostname or the IPv4 address of the target host.
+  It represents the hostname, the IPv4, or the IPv6 address of the target host.
 * The ``<length>`` parameter is an integer.
   It represents the length of the buffer size.
-  Its maximum value is ``548``.
 * The ``<timeout>`` parameter is an integer.
   It represents the time to wait for each reply, in milliseconds.
 * The ``<count>`` parameter is an integer.
@@ -40,23 +39,15 @@ Syntax
   It represents the time to wait for sending the next echo request, in milliseconds.
   Its default value is ``1000``.
 
-Response syntax
-~~~~~~~~~~~~~~~
-
-This is the response syntax when an echo reply is received:
+Unsolicited notification
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
-   #XPING: <response time>
+   #XPING: <response time> seconds
 
 The ``<response time>`` value is a *float*.
 It represents the elapsed time, in seconds, between the echo requests and the echo replies.
-
-This is the response syntax when an echo reply is not received:
-
-::
-
-   #XPING: "timeout"
 
 Example
 ~~~~~~~
@@ -64,13 +55,13 @@ Example
 ::
 
    AT#XPING="5.189.130.26",45,5000,5,1000
-   #XPING: 0.386
-   #XPING: 0.341
-   #XPING: 0.353
-   #XPING: 0.313
-   #XPING: 0.313
-   #XPING: "average 0.341"
    OK
+   #XPING: 0.386 seconds
+   #XPING: 0.341 seconds
+   #XPING: 0.353 seconds
+   #XPING: 0.313 seconds
+   #XPING: 0.313 seconds
+   #XPING: average 0.341 seconds
 
 Read command
 ------------
