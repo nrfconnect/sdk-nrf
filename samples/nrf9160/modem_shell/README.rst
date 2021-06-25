@@ -379,6 +379,17 @@ Building and running
 
 .. include:: /includes/build_and_run_nrf9160.txt
 
+DK buttons
+==========
+
+The buttons have the following functions:
+
+Button 1:
+   Raises a kill or abort signal. A long press of the button will kill or abort all supported running commands. You can abort commands ``iperf3`` (also with ``th``), ``curl``, ``ping`` and ``sock send``.
+
+Button 2:
+   Enables or disables the UARTs for power consumption measurements. Toggles between UARTs enabled and disabled.
+
 Testing
 =======
 

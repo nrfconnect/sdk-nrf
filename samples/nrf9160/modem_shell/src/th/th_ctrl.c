@@ -159,6 +159,16 @@ void th_ctrl_status_print(const struct shell *shell)
 	th_ctrl_data_status_print(shell, &th_work_data_2);
 }
 
+void th_ctrl_kill_em_all(void)
+{
+	if (k_work_is_pending(&(th_work_data_1.work))) {
+		k_poll_signal_raise(&th_work_data_1.kill_signal, 1);
+	}
+	if (k_work_is_pending(&(th_work_data_2.work))) {
+		k_poll_signal_raise(&th_work_data_2.kill_signal, 2);
+	}
+}
+
 void th_ctrl_kill(const struct shell *shell, int nbr)
 {
 	if (nbr == 1) {

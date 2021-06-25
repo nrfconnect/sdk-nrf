@@ -16,5 +16,6 @@ void th_ctrl_status_print(const struct shell *shell);
 void th_ctrl_start(const struct shell *shell, size_t argc, char **argv,
 		   bool bg_thread);
 void th_ctrl_kill(const struct shell *shell, int nbr);
+void th_ctrl_kill_em_all(void);
 
 #endif /* TH_CTRL_H */
