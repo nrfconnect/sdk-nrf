@@ -15,7 +15,6 @@
 #include <tinycbor/cbor_buf_reader.h>
 #include <modem/modem_attest_token.h>
 
-#define GET_BASE64_LEN(n) (((4 * n / 3) + 3) & ~3)
 #define BASE64_PAD_CHAR '='
 #define AT_ATTEST_CMD "AT%ATTESTTOKEN"
 
