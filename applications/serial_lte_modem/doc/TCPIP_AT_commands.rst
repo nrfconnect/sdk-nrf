@@ -26,31 +26,17 @@ Syntax
 
 ::
 
-   #XSOCKET=<op>[,<type>,<role>[,<sec_tag>]]
+   #XSOCKET=<op>[,<type>,<role>]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
   * ``0`` - Close
   * ``1`` - Open
 
-* The ``<sec_tag>`` parameter is an integer.
-  It indicates to the modem the credential of the security tag used for establishing a secure connection.
-  It is associated with the certificate or PSK.
-  Specifying the ``<sec_tag>`` is mandatory when opening a socket.
-  When TLS/DTLS is expected, the credentials should be stored on the modem side by ``AT%XCMNG`` or by the Nordic nRF Connect/LTE Link Monitor tool.
-  The modem needs to be in the offline state.
-  The DTLS server is not supported.
-
-* The ``<type>`` parameter value depends on the presence of the <sec_tag> parameter.
-  When the ``<sec_tag>`` is not specified:
+* The ``<type>`` parameter can accept one of the following values:
 
   * 1: SOCK_STREAM for TCP
   * 2: SOCK_DGRAM for UDP
-
-  When the ``<sec_tag>`` is specified:
-
-  * 1: SOCK_STREAM for TLS
-  * 2: SOCK_DGRAM for DTLS
 
 * The ``<role>`` parameter can accept one of the following values:
 
@@ -71,24 +57,17 @@ Response syntax
   * Negative - The socket failed to open.
   * ``0`` - The socket closed successfully.
 
-* The ``<type>`` parameter value depends on the presence of the <sec_tag> parameter.
-  When the ``<sec_tag>`` is not specified:
+* The ``<type>`` parameter value is an integer.
+  It can be interpreted as follows:
 
   * 1: SOCK_STREAM for TCP
   * 2: SOCK_DGRAM for UDP
-
-  When the ``<sec_tag>`` is specified:
-
-  * 1: SOCK_STREAM for TLS
-  * 2: SOCK_DGRAM for DTLS
 
 * The ``<protocol>`` value is present only in the response to a request to open the socket.
   It can be one of the following:
 
   * ``6`` - IPPROTO_TCP
   * ``17`` - IPPROTO_UDP
-  * ``258`` - IPPROTO_TLS_1_2
-  * ``273`` - IPPROTO_DTLS_1_2
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -113,12 +92,6 @@ Examples
    OK
    AT#XSOCKET=0
    #XSOCKET: 0,"closed"
-   OK
-   at#xsocket=1,1,0,16842753
-   #XSOCKET: 2,1,0,258
-   OK
-   at#xsocket=1,2,0,16842753
-   #XSOCKET: 2,2,0,273
    OK
 
 Read command
@@ -151,8 +124,6 @@ Response syntax
 
   * ``6`` - IPPROTO_TCP
   * ``17`` - IPPROTO_UDP
-  * ``258`` - IPPROTO_TLS_1_2
-  * ``273`` - IPPROTO_DTLS_1_2
 
 * The ``<role>`` parameter can accept one of the following values:
 
@@ -174,18 +145,6 @@ Examples
    #XSOCKET: 3,17,0
    OK
 
-::
-
-   at#xsocket?
-   #XSOCKET: 2,258,0
-   OK
-
-::
-
-   at#xsocket?
-   #XSOCKET: 2,273,0
-   OK
-
 Test command
 ------------
 
@@ -203,7 +162,7 @@ Response syntax
 
 ::
 
-   #XSOCKET: <list of op value>,<list of type value>,<list of roles>,<sec-tag>
+   #XSOCKET: <list of op value>,<list of type value>,<list of roles>
 
 
 * The ``<op>`` parameter can accept one of the following values:
@@ -211,13 +170,50 @@ Response syntax
   * ``0`` - Open
   * ``1`` - Close
 
-* The ``<type>`` parameter value depends on the presence of the <sec_tag> parameter.
-  When the ``<sec_tag>`` is not specified:
+* The ``<type>`` parameter can accept one of the following values:
 
   * 1: SOCK_STREAM for TCP
   * 2: SOCK_DGRAM for UDP
 
-  When the ``<sec_tag>`` is specified:
+* The ``<role>`` parameter can accept one of the following values:
+
+  * ``0`` - Client
+  * ``1`` - Server
+
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XSOCKET=?
+   #XSOCKET: (0,1),(1,2)
+   OK
+
+Secure Socket #XSSOCKET
+=======================
+
+The ``#XSSOCKET`` command allows you to open or close a secure socket, or to check the socket handle.
+NOTE TLS server role and DTLS server role is not supported.
+
+Set command
+-----------
+
+The set command allows you to open or close a secure socket.
+
+Syntax
+~~~~~~
+
+::
+
+   #XSSOCKET=<op>[,<type>,<role>,<sec_tag>[,<peer_verify>[,<hostname_verify>]]]
+
+* The ``<op>`` parameter can accept one of the following values:
+
+  * ``0`` - Close
+  * ``1`` - Open
+
+* The ``<type>`` parameter can accept one of the following values:
 
   * 1: SOCK_STREAM for TLS
   * 2: SOCK_DGRAM for DTLS
@@ -229,14 +225,173 @@ Response syntax
 
 * The ``<sec_tag>`` parameter is an integer.
   It indicates to the modem the credential of the security tag used for establishing a secure connection.
+  It is associated with the certificate or PSK.
+  Specifying the ``<sec_tag>`` is mandatory when opening a socket.
+  When TLS/DTLS is expected, the credentials should be stored on the modem side by ``AT%XCMNG`` or by the Nordic nRF Connect/LTE Link Monitor tool.
+  The modem needs to be in the offline state.
+  The DTLS server is not supported.
+
+* The ``<peer_verify>`` parameter can accept one of the following values:
+
+  * ``0`` - None (default for server role)
+  * ``1`` - Optional
+  * ``2`` - Required (default for client role)
+
+* The ``<hostname_verify>`` parameter can accept one of the following values:
+
+  * ``0`` - None
+  * ``1`` - Required
+
+  The ``<hostname_verify>`` parameter only apply to client role.
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XSSOCKET: <handle>[,<type>,<protocol>]
+
+* The ``<handle>`` value is an integer.
+  It can be interpreted as follows:
+
+  * Positive - The socket opened successfully.
+  * Negative - The socket failed to open.
+  * ``0`` - The socket closed successfully.
+
+* The ``<type>`` parameter is an integer.
+  It can be interpreted as follows:
+
+  * 1: SOCK_STREAM for TLS
+  * 2: SOCK_DGRAM for DTLS
+
+* The ``<protocol>`` value is present only in the response to a request to open the socket.
+  It can be one of the following:
+
+  * ``258`` - IPPROTO_TLS_1_2
+  * ``273`` - IPPROTO_DTLS_1_2
+
+Unsolicited notification
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #XSOCKET: <error>,"closed"
+
+The ``<error>`` value is a negative integer.
+It represents the error value according to the standard POSIX *errorno*.
 
 Examples
 ~~~~~~~~
 
 ::
 
-   at#xsocket=?
-   #XSOCKET: (0,1),(1,2),<sec_tag>
+   AT#XSSOCKET=1,1,0,16842753
+   #XSSOCKET: 2,1,0,258
+   OK
+   AT#XSOCKET=0
+   #XSOCKET: 0,"closed"
+   OK
+
+   AT#XSSOCKET=1,2,0,16842753
+   #XSSOCKET: 2,2,0,273
+   OK
+   AT#XSOCKET=0
+   #XSOCKET: 0,"closed"
+   OK
+
+Read command
+------------
+
+The read command allows you to check the socket handle.
+
+Syntax
+~~~~~~
+
+::
+
+   #XSSOCKET?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XSSOCKET: <handle>[,<protocol>,<role>]
+
+* The ``<handle>`` value is an integer.
+  It can be interpreted as follows:
+
+  * Positive - The socket is valid.
+  * ``0`` - The socket is closed.
+
+* The ``<protocol>`` value is present only in the response to a request to open the socket.
+  It can be one of the following:
+
+  * ``258`` - IPPROTO_TLS_1_2
+  * ``273`` - IPPROTO_DTLS_1_2
+
+* The ``<role>`` parameter can accept one of the following values:
+
+  * ``0`` - Client
+  * ``1`` - Server
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XSSOCKET?
+   #XSSOCKET: 2,258,0
+   OK
+
+::
+
+   AT#XSSOCKET?
+   #XSSOCKET: 2,273,0
+   OK
+
+Test command
+------------
+
+The test command tests the existence of the command and provides information about the type of its subparameters.
+
+Syntax
+~~~~~~
+
+::
+
+   #XSSOCKET=?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XSSOCKET: <list of op value>,<list of type value>,<list of roles>,<sec-tag>,<peer_verify>,<hostname_varify>
+
+
+* The ``<op>`` parameter can accept one of the following values:
+
+  * ``0`` - Open
+  * ``1`` - Close
+
+* The ``<type>`` parameter can accept one of the following values.
+
+  * 1: SOCK_STREAM for TLS
+  * 2: SOCK_DGRAM for DTLS
+
+* The ``<role>`` parameter can accept one of the following values:
+
+  * ``0`` - Client
+  * ``1`` - Server
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XSSOCKET=?
+   #XSSOCKET: (0,1),(1,2),<sec_tag>,<peer_verify>,<hostname_verify>
    OK
 
 Socket options #XSOCKETOPT

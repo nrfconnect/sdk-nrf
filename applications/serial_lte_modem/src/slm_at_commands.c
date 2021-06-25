@@ -314,6 +314,7 @@ int handle_at_udp_send(enum at_cmd_type cmd_type);
 
 /* Socket-type TCPIP commands */
 int handle_at_socket(enum at_cmd_type cmd_type);
+int handle_at_secure_socket(enum at_cmd_type cmd_type);
 int handle_at_socketopt(enum at_cmd_type cmd_type);
 int handle_at_bind(enum at_cmd_type cmd_type);
 int handle_at_connect(enum at_cmd_type cmd_type);
@@ -393,6 +394,7 @@ static struct slm_at_cmd {
 
 	/* Socket-type TCPIP commands */
 	{"AT#XSOCKET", handle_at_socket},
+	{"AT#XSSOCKET", handle_at_secure_socket},
 	{"AT#XSOCKETOPT", handle_at_socketopt},
 	{"AT#XBIND", handle_at_bind},
 	{"AT#XCONNECT", handle_at_connect},

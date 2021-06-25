@@ -50,6 +50,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       AT#XSLEEP
       AT#XCLAC
       AT#XSOCKET
+      AT#XSSOCKET
       AT#XSOCKETOPT
       AT#XBIND
       *[...]*
@@ -90,7 +91,7 @@ TCP client
          :class: highlight
 
          **AT#XSOCKET=?**
-         #XSOCKET: (0,1),(1,2),(0,1),<sec-tag>
+         #XSOCKET: (0,1),(1,2),(0,1)
          OK
 
    #. Open a TCP socket, read information (handle, protocol, and role) about the open socket, and set the receive timeout of the open socket to 30 seconds.
@@ -550,8 +551,8 @@ You must register the corresponding credentials on the server side.
       .. parsed-literal::
          :class: highlight
 
-         **AT#XSOCKET=1,1,0,16842755**
-         #XSOCKET: 1,1,0,258
+         **AT#XSSOCKET=1,1,0,16842755**
+         #XSSOCKET: 1,1,0,258
          OK
 
          **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
@@ -660,8 +661,8 @@ You must register the corresponding credentials on the server side.
 	 .. parsed-literal::
 	     :class: highlight
 
-	     **AT#XSOCKET=1,2,0,16842756**
-	     #XSOCKET: 1,2,0,273
+	     **AT#XSSOCKET=1,2,0,16842756**
+	     #XSSOCKET: 1,2,0,273
 	     OK
 
 	     **AT#XCONNECT="**\ *example.com*\ **",**\ *1234*
@@ -1257,8 +1258,8 @@ The TLS server role is currently not supported.
 .. parsed-literal::
    :class: highlight
 
-   **AT#XSOCKET=1,1,1,16842753**
-   #XSOCKET: "(D)TLS Server not supported"
+   **AT#XSSOCKET=1,1,1,16842753**
+   #XSSOCKET: "not supported"
    ERROR
 
    **AT#XTCPSVR=1,3443,16842753**
@@ -1273,8 +1274,8 @@ The DTLS server role is currently not supported (modem limitation).
 .. parsed-literal::
    :class: highlight
 
-   **AT#XSOCKET=1,2,1,16842755**
-   #XSOCKET: "(D)TLS Server not supported"
+   **AT#XSSOCKET=1,2,1,16842755**
+   #XSSOCKET: "not supported"
    ERROR
 
 DNS lookup

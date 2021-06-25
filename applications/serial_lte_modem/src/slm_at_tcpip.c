@@ -17,6 +17,9 @@
 
 LOG_MODULE_REGISTER(tcpip, CONFIG_SLM_LOG_LEVEL);
 
+/* Some features need lib nrf_modem update */
+#define SOCKET_FUTURE_FEATURE 0
+
 /*
  * Known limitation in this version
  * - Multiple concurrent sockets
@@ -51,6 +54,7 @@ static struct sockaddr_in remote;
 static struct tcpip_client {
 	int sock; /* Socket descriptor. */
 	sec_tag_t sec_tag; /* Security tag of the credential */
+	int hostname_verify; /* (D)TLS verify hostname or not */
 	int role; /* Client or Server role */
 	int sock_peer; /* Socket descriptor for peer. */
 	int ip_proto; /* IP protocol */
@@ -121,31 +125,16 @@ static int parse_host_by_name(const char *name, uint16_t port, int socktype)
 	return 0;
 }
 
-static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
+static int do_socket_open(uint8_t type, uint8_t role)
 {
 	int ret = 0;
 
-	client.sec_tag = sec_tag;
 	if (type == SOCK_STREAM) {
-		if (sec_tag == INVALID_SEC_TAG) {
-			client.sock = socket(AF_INET, SOCK_STREAM,
-					IPPROTO_TCP);
-			client.ip_proto = IPPROTO_TCP;
-		} else {
-			client.sock = socket(AF_INET, SOCK_STREAM,
-					IPPROTO_TLS_1_2);
-			client.ip_proto = IPPROTO_TLS_1_2;
-		}
+		client.sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		client.ip_proto = IPPROTO_TCP;
 	} else if (type == SOCK_DGRAM) {
-		if (sec_tag == INVALID_SEC_TAG) {
-			client.sock = socket(AF_INET, SOCK_DGRAM,
-					IPPROTO_UDP);
-			client.ip_proto = IPPROTO_UDP;
-		} else {
-			client.sock = socket(AF_INET, SOCK_DGRAM,
-					IPPROTO_DTLS_1_2);
-			client.ip_proto = IPPROTO_DTLS_1_2;
-		}
+		client.sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+		client.ip_proto = IPPROTO_UDP;
 	} else {
 		LOG_ERR("socket type %d not supported", type);
 		return -ENOTSUP;
@@ -154,49 +143,6 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 		LOG_ERR("socket() failed: %d", -errno);
 		ret = -errno;
 		goto error_exit;
-	}
-
-	if (client.sec_tag != INVALID_SEC_TAG) {
-		sec_tag_t sec_tag_list[1] = { client.sec_tag };
-#if defined(CONFIG_SLM_NATIVE_TLS)
-		int verify;
-
-		ret = slm_tls_loadcrdl(client.sec_tag);
-		if (ret < 0) {
-			LOG_ERR("Fail to load credential: %d", ret);
-			return ret;
-		}
-
-		/* Set up default TLS peer verification */
-		if (role == AT_SOCKET_ROLE_SERVER) {
-			verify = TLS_PEER_VERIFY_NONE;
-		} else {
-			verify = TLS_PEER_VERIFY_REQUIRED;
-		}
-
-		ret = setsockopt(client.sock, SOL_TLS, TLS_PEER_VERIFY,
-				 &verify, sizeof(verify));
-		if (ret) {
-			printk("Failed to setup peer verification, err %d\n",
-			       errno);
-			return ret;
-		}
-#else
-		if (role == AT_SOCKET_ROLE_SERVER) {
-			sprintf(rsp_buf, "\r\n#XSOCKET: \"not supported\"\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
-			ret = -ENOTSUP;
-			goto error_exit;
-		}
-#endif
-
-		ret = setsockopt(client.sock, SOL_TLS, TLS_SEC_TAG_LIST,
-				sec_tag_list, sizeof(sec_tag_t));
-		if (ret) {
-			LOG_ERR("set (d)tls tag list failed: %d", -errno);
-			ret = -errno;
-			goto error_exit;
-		}
 	}
 
 	client.role = role;
@@ -209,6 +155,79 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 
 error_exit:
 	LOG_DBG("Socket not opened");
+	if (client.sock >= 0) {
+		close(client.sock);
+	}
+	slm_at_tcpip_init();
+	return ret;
+}
+
+static int do_secure_socket_open(uint8_t type, uint8_t role, int peer_verify)
+{
+	int ret = 0;
+
+	if (type == SOCK_STREAM) {
+		client.sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
+		client.ip_proto = IPPROTO_TLS_1_2;
+	} else if (type == SOCK_DGRAM) {
+		client.sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_DTLS_1_2);
+		client.ip_proto = IPPROTO_DTLS_1_2;
+	} else {
+		LOG_ERR("socket type %d not supported", type);
+		return -ENOTSUP;
+	}
+	if (client.sock < 0) {
+		LOG_ERR("socket() failed: %d", -errno);
+		ret = -errno;
+		goto error_exit;
+	}
+
+	sec_tag_t sec_tag_list[1] = { client.sec_tag };
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	ret = slm_tls_loadcrdl(client.sec_tag);
+	if (ret < 0) {
+		LOG_ERR("Fail to load credential: %d", ret);
+		ret = -EAGAIN;
+		goto error_exit;
+	}
+#else
+#ifdef SOCKET_FUTURE_FEATURE
+/* run TLS server on modem side */
+	if (role == AT_SOCKET_ROLE_SERVER && client.ip_proto == IPPROTO_DTLS_1_2) {
+#else
+	if (role == AT_SOCKET_ROLE_SERVER) {
+#endif
+		sprintf(rsp_buf, "\r\n#XSSOCKET: \"not supported\"\r\n");
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		ret = -ENOTSUP;
+		goto error_exit;
+	}
+#endif
+	ret = setsockopt(client.sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list, sizeof(sec_tag_t));
+	if (ret) {
+		LOG_ERR("setsockopt(TLS_SEC_TAG_LIST) error:: %d", -errno);
+		ret = -errno;
+		goto error_exit;
+	}
+
+	/* Set up (D)TLS peer verification */
+	ret = setsockopt(client.sock, SOL_TLS, TLS_PEER_VERIFY, &peer_verify, sizeof(peer_verify));
+	if (ret) {
+		LOG_ERR("setsockopt(TLS_PEER_VERIFY) error: %d", errno);
+		ret = -errno;
+		goto error_exit;
+	}
+
+	client.role = role;
+	sprintf(rsp_buf, "\r\n#XSSOCKET: %d,%d,%d,%d\r\n", client.sock,
+		type, role, client.ip_proto);
+	rsp_send(rsp_buf, strlen(rsp_buf));
+
+	LOG_DBG("Secure socket opened");
+	return ret;
+
+error_exit:
+	LOG_DBG("Secure socket not opened");
 	if (client.sock >= 0) {
 		close(client.sock);
 	}
@@ -427,12 +446,24 @@ static int do_connect(const char *url, uint16_t port)
 		return ret;
 	}
 
-	if (client.sec_tag != INVALID_SEC_TAG) {
-		ret = setsockopt(client.sock, SOL_TLS, TLS_HOSTNAME, url, strlen(url));
-		if (ret < 0) {
-			LOG_ERR("Failed to set TLS_HOSTNAME\n");
-			do_socket_close(-errno);
-			return -errno;
+	if (client.ip_proto == IPPROTO_TLS_1_2 || client.ip_proto == IPPROTO_DTLS_1_2) {
+		if (client.hostname_verify) {
+			ret = setsockopt(client.sock, SOL_TLS, TLS_HOSTNAME, url, strlen(url));
+			if (ret < 0) {
+				LOG_ERR("Failed to set TLS_HOSTNAME (%d)", -errno);
+				do_socket_close(-errno);
+				return -errno;
+			}
+#ifdef SOCKET_FUTURE_FEATURE
+/* Due to bug report NCSIDB-497, cannot explicitly clear TLS_HOSTNAME yet*/
+		} else {
+			ret = setsockopt(client.sock, SOL_TLS, TLS_HOSTNAME, NULL, 0);
+			if (ret < 0) {
+				LOG_ERR("Failed to clear TLS_HOSTNAME (%d)", -errno);
+				do_socket_close(-errno);
+				return -errno;
+			}
+#endif
 		}
 	}
 
@@ -705,7 +736,7 @@ static int do_recvfrom(uint16_t length)
 }
 
 /**@brief handle AT#XSOCKET commands
- *  AT#XSOCKET=<op>[,<type>,<role>,[sec_tag]]
+ *  AT#XSOCKET=<op>[,<type>,<role>]
  *  AT#XSOCKET?
  *  AT#XSOCKET=?
  */
@@ -713,7 +744,6 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
-	uint16_t role;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -723,7 +753,7 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 		}
 		if (op == AT_SOCKET_OPEN) {
 			uint16_t type;
-			sec_tag_t sec_tag;
+			uint16_t role;
 
 			err = at_params_unsigned_short_get(&at_param_list, 2, &type);
 			if (err) {
@@ -733,23 +763,17 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_int_get(&at_param_list, 4, &sec_tag);
-			if (err) {
-				sec_tag = INVALID_SEC_TAG;
-			}
 			if (client.sock > 0) {
 				LOG_WRN("Socket is already opened");
 				return -EINVAL;
-			} else {
-				err = do_socket_open(type, role, sec_tag);
 			}
+			err = do_socket_open(type, role);
 		} else if (op == AT_SOCKET_CLOSE) {
 			if (client.sock < 0) {
 				LOG_WRN("Socket is not opened yet");
 				return -EINVAL;
-			} else {
-				err = do_socket_close(0);
 			}
+			err = do_socket_close(0);
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
@@ -780,6 +804,115 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 
 	return err;
 }
+
+/**@brief handle AT#XSOCKET commands
+ *  AT#XSSOCKET=<op>[,<type>,<role>,sec_tag>[,<peer_verify>[,<hostname_verify>]]]
+ *  AT#XSSOCKET?
+ *  AT#XSSOCKET=?
+ */
+int handle_at_secure_socket(enum at_cmd_type cmd_type)
+{
+	int err = -EINVAL;
+	uint16_t op;
+
+	switch (cmd_type) {
+	case AT_CMD_TYPE_SET_COMMAND:
+		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		if (err) {
+			return err;
+		}
+		if (op == AT_SOCKET_OPEN) {
+			uint16_t type;
+			uint16_t role;
+			/** Peer verification level for TLS connection.
+			 *    - 0 - none
+			 *    - 1 - optional
+			 *    - 2 - required
+			 * If not set, socket will use defaults (none for servers,
+			 * required for clients)
+			 */
+			uint16_t peer_verify;
+
+			err = at_params_unsigned_short_get(&at_param_list, 2, &type);
+			if (err) {
+				return err;
+			}
+			err = at_params_unsigned_short_get(&at_param_list, 3, &role);
+			if (err) {
+				return err;
+			}
+			if (role == AT_SOCKET_ROLE_SERVER) {
+				peer_verify = TLS_PEER_VERIFY_NONE;
+			} else if (role == AT_SOCKET_ROLE_CLIENT) {
+				peer_verify = TLS_PEER_VERIFY_REQUIRED;
+			} else {
+				return -EINVAL;
+			}
+			err = at_params_unsigned_int_get(&at_param_list, 4, &client.sec_tag);
+			if (err) {
+				return err;
+			}
+			if (at_params_valid_count_get(&at_param_list) > 5) {
+				err = at_params_unsigned_short_get(&at_param_list, 5,
+								   &peer_verify);
+				if (err) {
+					return err;
+				}
+			}
+			/** Set hostname. It accepts a string containing the hostname (may be NULL
+			 * to disable hostname verification). By default, hostname check is
+			 * enforced for TLS clients but we disable it
+			 */
+			client.hostname_verify = 0;
+			if (at_params_valid_count_get(&at_param_list) > 6) {
+				err = at_params_int_get(&at_param_list, 6,
+							&client.hostname_verify);
+				if (err) {
+					return err;
+				}
+			}
+
+			if (client.sock > 0) {
+				LOG_WRN("Socket is already opened");
+				return -EINVAL;
+			}
+			err = do_secure_socket_open(type, role, peer_verify);
+		} else if (op == AT_SOCKET_CLOSE) {
+			if (client.sock < 0) {
+				LOG_WRN("Socket is not opened yet");
+				return -EINVAL;
+			}
+			err = do_socket_close(0);
+		} break;
+
+	case AT_CMD_TYPE_READ_COMMAND:
+		if (client.sock != INVALID_SOCKET) {
+			sprintf(rsp_buf, "\r\n#XSSOCKET: %d,%d,%d\r\n",
+				client.sock, client.ip_proto, client.role);
+		} else {
+			sprintf(rsp_buf, "\r\n#XSSOCKET: 0\r\n");
+		}
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		err = 0;
+		break;
+
+	case AT_CMD_TYPE_TEST_COMMAND:
+		sprintf(rsp_buf, "\r\n#XSSOCKET: (%d,%d),(%d,%d),(%d,%d)",
+			AT_SOCKET_CLOSE, AT_SOCKET_OPEN, SOCK_STREAM, SOCK_DGRAM,
+			AT_SOCKET_ROLE_CLIENT, AT_SOCKET_ROLE_SERVER);
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		sprintf(rsp_buf, "\r\n,<sec-tag>,<peer_verify>,<hostname_verify>\r\n");
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		err = 0;
+		break;
+
+	default:
+		break;
+	}
+
+	return err;
+}
+
 
 /**@brief handle AT#XSOCKETOPT commands
  *  AT#XSOCKETOPT=<op>,<name>[,<value>]
