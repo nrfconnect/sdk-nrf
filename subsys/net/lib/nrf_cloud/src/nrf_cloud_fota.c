@@ -111,13 +111,13 @@ static void cleanup_job(struct nrf_cloud_fota_job *const job);
 static int start_job(struct nrf_cloud_fota_job *const job);
 static int send_job_update(struct nrf_cloud_fota_job *const job);
 static int publish(const struct mqtt_publish_param *const pub);
-static bool is_fota_active(void);
 static int save_validate_status(const char *const job_id,
 			   const enum nrf_cloud_fota_type job_type,
 			   const enum fota_validate_status status);
 static int fota_settings_set(const char *key, size_t len_rd,
 			     settings_read_cb read_cb, void *cb_arg);
 static int report_validated_job_status(void);
+static void reset_topics(void);
 
 static struct mqtt_client *client_mqtt;
 static nrf_cloud_fota_callback_t event_cb;
@@ -144,6 +144,7 @@ static struct settings_fota_job saved_job = {
 	.type = NRF_CLOUD_FOTA_TYPE__INVALID
 };
 static bool initialized;
+static bool fota_dl_initialized;
 
 #define SETTINGS_KEY_FOTA "fota"
 #define SETTINGS_FULL_FOTA NRF_CLOUD_SETTINGS_NAME \
@@ -225,10 +226,13 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 		return 0;
 	}
 
-	ret = fota_download_init(http_fota_handler);
-	if (ret != 0) {
-		LOG_ERR("fota_download_init error: %d", ret);
-		return ret;
+	if (!fota_dl_initialized) {
+		ret = fota_download_init(http_fota_handler);
+		if (ret != 0) {
+			LOG_ERR("fota_download_init error: %d", ret);
+			return ret;
+		}
+		fota_dl_initialized = true;
 	}
 
 	ret = settings_load_subtree(settings_handler_fota.name);
@@ -284,6 +288,22 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 
 	initialized = true;
 	return ret;
+}
+
+int nrf_cloud_fota_uninit(void)
+{
+	if (nrf_cloud_fota_is_active()) {
+		return -EBUSY;
+	}
+
+	event_cb = NULL;
+	initialized = false;
+
+	(void)nrf_cloud_fota_unsubscribe();
+	reset_topics();
+	cleanup_job(&current_fota);
+
+	return 0;
 }
 
 int nrf_cloud_modem_fota_completed(const bool fota_success)
@@ -529,7 +549,7 @@ int nrf_cloud_fota_unsubscribe(void)
 	return mqtt_unsubscribe(client_mqtt, &sub_list);
 }
 
-static bool is_fota_active(void)
+bool nrf_cloud_fota_is_active(void)
 {
 	return current_fota.parsed_payload != NULL;
 }
@@ -1108,7 +1128,7 @@ static int handle_mqtt_evt_publish(const struct mqtt_evt *evt)
 		goto send_ack;
 	}
 
-	if (is_fota_active() && !ble_id) {
+	if (nrf_cloud_fota_is_active() && !ble_id) {
 		LOG_INF("Job in progress... skipping");
 		skip = true;
 		goto send_ack;

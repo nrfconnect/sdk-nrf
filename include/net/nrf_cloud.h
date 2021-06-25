@@ -229,8 +229,8 @@ struct nrf_cloud_init_param {
 /**
  * @brief Initialize the module.
  *
- * @warning This API must be called exactly once, and it must return
- * successfully.
+ * @warning This API must be called prior to using nRF Cloud
+ *  and it must return successfully.
  *
  * @param[in] param Initialization parameters.
  *
@@ -238,6 +238,19 @@ struct nrf_cloud_init_param {
  *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_init(const struct nrf_cloud_init_param *param);
+
+/**
+ * @brief Uninitialize nRF Cloud; disconnects cloud connection
+ *  and cleans up allocated memory.
+ *
+ * @note If nRF Cloud FOTA is enabled and a FOTA job is active
+ *  uninit will not be performed.
+ *
+ * @retval 0      If successful.
+ * @retval -EBUSY If a FOTA job is in progress.
+ *                Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_uninit(void);
 
 /**
  * @brief Connect to the cloud.

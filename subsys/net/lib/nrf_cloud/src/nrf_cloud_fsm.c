@@ -31,8 +31,9 @@ static int handle_pin_complete(const struct nct_evt *nct_evt);
 static int handle_device_config_update(const struct nct_evt *const evt,
 				       bool *const config_found);
 
-/* Drop all the events. */
-static const fsm_transition not_implemented_fsm_transition[NCT_EVT_TOTAL];
+static const fsm_transition idle_fsm_transition[NCT_EVT_TOTAL] = {
+	[NCT_EVT_DISCONNECTED] = disconnection_handler,
+};
 
 static const fsm_transition initialized_fsm_transition[NCT_EVT_TOTAL] = {
 	[NCT_EVT_CONNECTED] = connection_handler,
@@ -87,7 +88,7 @@ static const fsm_transition dc_connected_fsm_transition[NCT_EVT_TOTAL] = {
 };
 
 static const fsm_transition *state_event_handlers[] = {
-	[STATE_IDLE] = not_implemented_fsm_transition,
+	[STATE_IDLE] = idle_fsm_transition,
 	[STATE_INITIALIZED] = initialized_fsm_transition,
 	[STATE_CONNECTED] = connected_fsm_transition,
 	[STATE_CC_CONNECTING] = cc_connecting_fsm_transition,
@@ -97,9 +98,6 @@ static const fsm_transition *state_event_handlers[] = {
 	[STATE_UA_PIN_COMPLETE] = ua_complete_fsm_transition,
 	[STATE_DC_CONNECTING] = dc_connecting_fsm_transition,
 	[STATE_DC_CONNECTED] = dc_connected_fsm_transition,
-	[STATE_READY] = not_implemented_fsm_transition,
-	[STATE_DISCONNECTING] = not_implemented_fsm_transition,
-	[STATE_ERROR] = not_implemented_fsm_transition,
 };
 BUILD_ASSERT(ARRAY_SIZE(state_event_handlers) == STATE_TOTAL);
 
@@ -332,7 +330,9 @@ static int cc_connection_handler(const struct nct_evt *nct_evt)
 	};
 
 	if (nct_evt->status != 0) {
-		nfsm_set_current_state_and_notify(STATE_ERROR, &evt);
+		/* Send error event and initiate disconnect */
+		nfsm_set_current_state_and_notify(nfsm_get_current_state(), &evt);
+		(void)nct_dc_disconnect();
 		return 0;
 	}
 
