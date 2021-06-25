@@ -23,9 +23,10 @@ RAM and flash memory requirements
 
 RAM and flash memory requirement values differ depending on the DK, and the programmed sample.
 
-The following tables list memory requirement values (in KB) for Zigbee samples.
+The following tables list memory requirement values for Zigbee samples.
 
-|not_available_note|
+Values are provided in kilobytes (KB).
+``n/a`` indicates that the sample with the given variant is not supported on the DK.
 
 .. tabs::
 
@@ -106,11 +107,13 @@ The following tables list memory requirement values (in KB) for Zigbee samples.
 Stack memory requirements
 *************************
 
-The following table lists stack memory requirement values (in KB) for ``main`` and ``zboss`` threads.
+The following table lists stack memory requirement values for ``main`` and ``zboss`` threads.
 These measurements were carried out with :ref:`zephyr:thread_analyzer`, using the following Kconfig options for configuration:
 
 * For the stack memory size of the ``main`` thread - :option:`CONFIG_MAIN_STACK_SIZE`
 * For the stack memory size of the ``zboss`` thread - :option:`CONFIG_ZBOSS_DEFAULT_THREAD_STACK_SIZE`
+
+Values are provided in bytes (B).
 
 +----------------------------------------------------------------+-----------------------------+----------------------------+------------------------------+-----------------------------+
 | Sample                                                         | ``main`` thread stack usage | ``main`` thread stack size | ``zboss`` thread stack usage | ``zboss`` thread stack size |
@@ -121,5 +124,3 @@ These measurements were carried out with :ref:`zephyr:thread_analyzer`, using th
 +----------------------------------------------------------------+-----------------------------+----------------------------+------------------------------+-----------------------------+
 | :ref:`Light switch <zigbee_light_switch_sample>`               | 432                         | 1024                       | 1272                         | 1952                        |
 +----------------------------------------------------------------+-----------------------------+----------------------------+------------------------------+-----------------------------+
-
-.. |not_available_note| replace:: ``n/a`` indicates that the sample with the given variant is not supported on the DK.
