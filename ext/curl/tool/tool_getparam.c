@@ -44,11 +44,6 @@
 
 #include "memdebug.h" /* keep this as LAST include */
 
-
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-#include "nrf_time_utils.h"
-#endif
-
 #ifdef MSDOS
 #  define USE_WATT32
 #endif
@@ -2325,11 +2320,7 @@ ParameterError getparameter(const char *flag, /* f or -long-flag */
         nextarg++;
         break;
       }
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-      now = nrf_time(NULL); /* time() not supported */
-#else
       now = time(NULL);
-#endif
       config->condtime = (curl_off_t)curl_getdate(nextarg, &now);
       if(-1 == config->condtime) {
         /* now let's see if it is a file name to get the time from instead! */

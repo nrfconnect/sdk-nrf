@@ -161,9 +161,6 @@ struct curltime Curl_now(void)
 }
 
 #else
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-#include "nrf_time_utils.h"
-#endif
 
 struct curltime Curl_now(void)
 {
@@ -171,11 +168,9 @@ struct curltime Curl_now(void)
   ** time() returns the value of time in seconds since the Epoch.
   */
   struct curltime now;
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-  now.tv_sec = nrf_time(NULL); /* time() not supported */
-#else
+
   now.tv_sec = time(NULL);
-#endif
+
   now.tv_usec = 0; //this needs to be more accurate!, use HAVE_GETTIMEOFDAY
   return now;
 }

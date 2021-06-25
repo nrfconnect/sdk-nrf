@@ -45,10 +45,6 @@
 
 #include "strcase.h"
 
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-#include "nrf_time_utils.h"
-#endif
-
 #define ENABLE_CURLX_PRINTF
 /* use our own printf() functions */
 #include "curlx.h"
@@ -2232,11 +2228,7 @@ static CURLcode add_parallel_transfers(struct GlobalConfig *global,
     if(per->added)
       /* already added */
       continue;
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-    if(per->startat && (nrf_time(NULL) < per->startat)) { /* no time() available */
-#else
 if(per->startat && (time(NULL) < per->startat)) { /* no time() available */
-#endif
       /* this is still delaying */
       sleeping = TRUE;
       continue;
@@ -2280,11 +2272,7 @@ static CURLcode parallel_transfers(struct GlobalConfig *global,
   bool more_transfers;
   bool added_transfers;
 
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-  time_t tick = nrf_time(NULL); /* no time() available */
-#else
   time_t tick = time(NULL);
-#endif
 
   multi = curl_multi_init();
   if(!multi)
@@ -2326,22 +2314,14 @@ static CURLcode parallel_transfers(struct GlobalConfig *global,
           if(retry) {
             ended->added = FALSE; /* add it again */
             /* we delay retries in full integer seconds only */
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-            ended->startat = delay ? nrf_time(NULL) + delay/1000 : 0; /* no time() available */
-#else
             ended->startat = delay ? time(NULL) + delay/1000 : 0;
-#endif
           }
           else
             (void)del_per_transfer(ended);
         }
       } while(msg);
       if(!checkmore) {
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-        time_t tock = nrf_time(NULL); /* no time() available */
-#else
         time_t tock = time(NULL);
-#endif
         if(tick != tock) {
           checkmore = TRUE;
           tick = tock;
