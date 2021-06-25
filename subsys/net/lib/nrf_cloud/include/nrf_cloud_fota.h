@@ -119,6 +119,16 @@ typedef void (*nrf_cloud_fota_ble_callback_t)
  */
 int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb);
 
+/**
+ * @brief Uninitialize nRF Cloud FOTA; cleans up allocated memory. If a FOTA
+ *  job is in progress, uninit is not be performed and an error status is
+ *  returned.
+ *
+ * @retval 0      If successful.
+ * @retval -EBUSY If a FOTA job is in progress.
+ */
+int nrf_cloud_fota_uninit(void);
+
 /**@brief Handler for nRF Cloud FOTA MQTT events.
  *
  * @param _mqtt_evt Pointer to the recived mqtt_evt.
@@ -166,6 +176,9 @@ int nrf_cloud_fota_unsubscribe(void);
 
 /**@brief Check for pending FOTA updates. */
 int nrf_cloud_fota_update_check(void);
+
+/**@brief Check if a FOTA job is active. */
+bool nrf_cloud_fota_is_active(void);
 
 /**
  * @brief Set callback for BLE FOTA.

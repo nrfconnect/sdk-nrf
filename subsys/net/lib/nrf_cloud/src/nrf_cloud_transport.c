@@ -85,7 +85,7 @@ static char *update_delta_topic;
 static char *update_topic;
 static char *shadow_get_topic;
 
-static bool initialized;
+static bool mqtt_client_initialized;
 static bool persistent_session;
 
 #define NCT_RX_LIST 0
@@ -675,7 +675,7 @@ static void nrf_cloud_fota_cb_handler(const struct nrf_cloud_fota_evt
 int nct_mqtt_connect(void)
 {
 	int err;
-	if (!initialized) {
+	if (!mqtt_client_initialized) {
 
 		mqtt_client_init(&nct.client);
 
@@ -704,7 +704,7 @@ int nct_mqtt_connect(void)
 #else
 		nct.client.transport.type = MQTT_TRANSPORT_NON_SECURE;
 #endif
-		initialized = true;
+		mqtt_client_initialized = true;
 	}
 
 	err = mqtt_connect(&nct.client);
@@ -945,6 +945,20 @@ int nct_init(const char * const client_id)
 	}
 
 	return nct_provision();
+}
+
+void nct_uninit(void)
+{
+	dc_endpoint_free();
+	nct_reset_topics();
+
+	if (client_id_buf) {
+		nrf_cloud_free(client_id_buf);
+		client_id_buf = NULL;
+	}
+
+	memset(&nct, 0, sizeof(nct));
+	mqtt_client_initialized = false;
 }
 
 #if defined(CONFIG_NRF_CLOUD_STATIC_IPV4)

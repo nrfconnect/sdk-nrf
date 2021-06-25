@@ -63,6 +63,9 @@ int nct_socket_get(void);
 /**@brief Initialization routine for the transport. */
 int nct_init(const char * const client_id);
 
+/**@brief Unintialize the transport; reset state and free allocated memory */
+void nct_uninit(void);
+
 /**@brief Establishes the transport connection. */
 int nct_connect(void);
 

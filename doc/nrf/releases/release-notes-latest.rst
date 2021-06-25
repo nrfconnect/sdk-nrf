@@ -31,7 +31,11 @@ The following sections provide detailed lists of changes by component.
 nRF9160
 =======
 
-There are no entries for this section yet.
+* Updated:
+
+  * :ref:`lib_nrf_cloud` library:
+
+    * Added function :c:func:`nrf_cloud_uninit`, which can be used to uninitialize the nRF Cloud library.  If :ref:`cloud_api_readme` is used, call :c:func:`cloud_uninit`
 
 nRF5
 ====
