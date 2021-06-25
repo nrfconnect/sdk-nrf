@@ -47,9 +47,12 @@
 #if defined(CONFIG_MOSH_WORKER_THREADS)
 #include "th/th_ctrl.h"
 #endif
+#include "mosh_defines.h"
 
 /* global variables */
 struct modem_param_info modem_param;
+struct k_poll_signal mosh_signal;
+
 /**
  * @brief Global shell pointer that can be used for printing.
  *
@@ -87,6 +90,17 @@ static void mosh_print_version_info(void)
 
 static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
+	if (has_changed & button_states & DK_BTN1_MSK) {
+		shell_print(shell_global, "Button 1 pressed - raising a kill signal");
+		k_poll_signal_raise(&mosh_signal, MOSH_SIGNAL_KILL);
+#if defined(CONFIG_MOSH_WORKER_THREADS)
+		th_ctrl_kill_em_all();
+#endif
+	} else if (has_changed & ~button_states & DK_BTN1_MSK) {
+		shell_print(shell_global, "Button 1 released - resetting a kill signal");
+		k_poll_signal_reset(&mosh_signal);
+	}
+
 	if (has_changed & button_states & DK_BTN2_MSK) {
 		shell_print(shell_global, "Button 2 pressed, toggling UART power state");
 		uart_toggle_power_state(shell_global);
@@ -182,6 +196,7 @@ void main(void)
 #if defined(CONFIG_BOOTLOADER_MCUBOOT)
 	boot_write_img_confirmed();
 #endif
+	k_poll_signal_init(&mosh_signal);
 
 	/* Resize terminal width and height of the shell to have proper command editing. */
 	shell_execute_cmd(shell_global, "resize");

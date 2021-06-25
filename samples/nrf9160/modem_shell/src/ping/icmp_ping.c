@@ -22,6 +22,7 @@
 
 #include "utils/net_utils.h"
 #include "link_api.h"
+#include "mosh_defines.h"
 
 #include "icmp_ping.h"
 
@@ -38,6 +39,8 @@
 #define ICMP_ECHO_REQ 8
 #define ICMP6_ECHO_REQ 128
 #define ICMP6_ECHO_REP 129
+
+extern struct k_poll_signal mosh_signal;
 
 enum ping_rai {
 	PING_RAI_NONE,
@@ -525,6 +528,7 @@ static void icmp_ping_tasks_execute(const struct shell *shell)
 	uint32_t count = 0;
 	uint32_t rtt_min = 0xFFFFFFFF;
 	uint32_t rtt_max = 0;
+	int set, res;
 	enum ping_rai rai;
 	uint32_t ping_t;
 
@@ -539,6 +543,13 @@ static void icmp_ping_tasks_execute(const struct shell *shell)
 			}
 		}
 		ping_t = send_ping_wait_reply(shell, rai);
+
+		k_poll_signal_check(&mosh_signal, &set, &res);
+		if (set && res == MOSH_SIGNAL_KILL) {
+			k_poll_signal_reset(&mosh_signal);
+			shell_error(shell, "KILL signal received - exiting");
+			break;
+		}
 
 		if (ping_t > 0) {
 			count++;

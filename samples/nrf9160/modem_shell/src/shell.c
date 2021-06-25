@@ -44,7 +44,7 @@
 
 extern const struct shell *shell_global;
 extern struct k_sem nrf_modem_lib_initialized;
-
+extern struct k_poll_signal mosh_signal;
 /**
  * @brief Overriding modem library error handler.
  */
@@ -162,7 +162,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 #if defined(CONFIG_MOSH_IPERF3)
 static int cmd_iperf3(const struct shell *shell, size_t argc, char **argv)
 {
-	(void)iperf_main(argc, argv, NULL, 0, NULL);
+	(void)iperf_main(argc, argv, NULL, 0, &mosh_signal);
 	return 0;
 }
 #endif

@@ -17,4 +17,8 @@
 
 #define MOSH_AT_CMD_RESPONSE_MAX_LEN 2700
 
+enum mosh_signals {
+	MOSH_SIGNAL_KILL,
+};
+
 #endif /* MOSH_DEFINES_H */
