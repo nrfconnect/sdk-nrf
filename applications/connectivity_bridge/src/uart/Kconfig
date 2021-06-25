@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2021 Georgi Valkov
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "UART miniport options"
+
+comment "UART miniport"
+
+
+endmenu

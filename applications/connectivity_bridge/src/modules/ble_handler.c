@@ -20,6 +20,7 @@
 #include "ble_ctrl_event.h"
 #include "ble_data_event.h"
 #include "uart_data_event.h"
+#include "../uart/include/uart_miniport.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_BLE_LOG_LEVEL);
@@ -309,11 +310,32 @@ static bool event_handler(const struct event_header *eh)
 			(ring_buf_capacity_get(&ble_tx_ring_buf) -
 			ring_buf_space_get(&ble_tx_ring_buf));
 
+#if USE_UART_MINIPORT
+		if (buf_utilization >= nus_max_send_len)
+		{
+			k_work_submit(&bt_send_work);
+		}
+		else
+		{
+			char * p = event->buf;
+			char * e = p + event->len;
+
+			for (; p < e; p++)
+			{
+				if (*p == '\n')
+				{
+					k_work_submit(&bt_send_work);
+					break;
+				}
+			}
+		}
+#else
 		/* Simple check to start transmission. */
 		/* If bt_send_work is already running, this has no effect */
 		if (buf_utilization == written) {
 			k_work_submit(&bt_send_work);
 		}
+#endif
 
 		return false;
 	}

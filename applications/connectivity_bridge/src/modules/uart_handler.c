@@ -14,6 +14,7 @@
 #include "ble_data_event.h"
 #include "cdc_data_event.h"
 #include "uart_data_event.h"
+#include "../uart/include/uart_miniport.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_UART_LOG_LEVEL);
@@ -69,6 +70,190 @@ BUILD_ASSERT((sizeof(struct uart_rx_buf) % UART_SLAB_ALIGNMENT) == 0);
 
 K_MEM_SLAB_DEFINE(uart_rx_slab, UART_SLAB_BLOCK_SIZE, UART_SLAB_BLOCK_COUNT, UART_SLAB_ALIGNMENT);
 
+
+#if USE_UART_MINIPORT
+struct uart_api * uarts[UART_DEVICE_COUNT];
+static const struct device * devices[UART_DEVICE_COUNT];
+static uint32_t uart_default_baudrate[UART_DEVICE_COUNT];
+
+/* UART RX only enabled when there is one or more subscribers (power saving) */
+static int subscriber_count[UART_DEVICE_COUNT];
+static k_tid_t uart_tasks[UART_DEVICE_COUNT];
+
+
+static void uart_miniport(void * p1, void * p2, void * p3)
+{
+	int dev_idx = (int)p1;
+	uarts[dev_idx] = uart_open(dev_idx);
+	struct uart_api * uart = uarts[dev_idx];
+
+	if (!uart)
+	{
+		LOG_ERR("UART[%u]->uart_open  FAILED", dev_idx);
+		return;
+	}
+
+	if (!uart->config.enabled)
+	{
+		LOG_INF("UART[%u] disabled", dev_idx);
+		return;
+	}
+
+	LOG_INF("UART[%u] miniport: starting...", dev_idx);
+
+	if (uart_default_baudrate[dev_idx])
+	{
+		uart->baud_rate = uart_default_baudrate[dev_idx];
+	}
+
+	uart->config.int_priority = 4;
+	//-uart->config.use_interrupts = 0;
+
+
+#if !CONFIG_BOARD_NRF9160DK_NRF52840
+	uart_tasks[dev_idx] = k_current_get();
+#endif
+
+	if (uart_tasks[dev_idx] && !subscriber_count[dev_idx])
+	{
+		// wait at until one or more subscribers are connected
+		k_sleep(K_FOREVER);
+	}
+
+
+	// UART init code
+	if (OK != uart->init(uart))
+	{
+		LOG_ERR("UART[%u]->init  FAILED", dev_idx);
+		return;
+	}
+
+	LOG_INF("UART[%u] ready %u", dev_idx, uart->baud_rate);
+
+	while (1)
+	{
+		int count = 0;
+		char * rx_buf = NULL;
+		int err = k_mem_slab_alloc(&uart_rx_slab, (void **)&rx_buf, K_NO_WAIT);
+
+		if (err)
+		{
+			LOG_ERR("UART[%u] RX  k_mem_slab_alloc FAILED", dev_idx);
+		}
+		else
+		{
+			do
+			{
+				// if a transfer gets aborted, try again
+				count = uart->recv(uart, rx_buf, UART_BUF_SIZE);
+
+				if (uart_tasks[dev_idx] && !subscriber_count[dev_idx])
+				{
+					LOG_INF("UART[%u] power save", dev_idx);
+					uart->deinit(uart);
+
+					// wait at until one or more subscribers are connected
+					k_sleep(K_FOREVER);
+
+					// UART init code
+					uart->init(uart);
+					LOG_INF("UART[%u] ready %u", dev_idx, uart->baud_rate);
+				}
+			} while (!count);
+
+			// forward from nRF9160 to external host
+			struct uart_data_event * event = new_uart_data_event();
+			event->dev_idx = dev_idx;
+			event->buf = rx_buf;
+			event->len = count;
+			EVENT_SUBMIT(event);
+		}
+	}
+}
+
+#define UART_STACK_SIZE 4096
+#define UART_PRIORITY 5
+
+K_THREAD_DEFINE(uart_tid_0, UART_STACK_SIZE, uart_miniport, (void *)0, NULL, NULL, UART_PRIORITY, 0, 0);
+K_THREAD_DEFINE(uart_tid_1, UART_STACK_SIZE, uart_miniport, (void *)1, NULL, NULL, UART_PRIORITY, 0, 0);
+
+static void uart_rx_buf_unref(void * buf)
+{
+	k_mem_slab_free(&uart_rx_slab, &buf);
+}
+
+static void set_uart_baudrate(uint8_t dev_idx, uint32_t baudrate)
+{
+	struct uart_api * uart = uarts[dev_idx];
+
+	if (uart && baudrate)
+	{
+		if (OK == uart->set_baud_rate(uart, baudrate, 0))
+		{
+			if (baudrate != uart->baud_rate)
+			{
+				LOG_INF("UART[%u] baud  %u -> %u", dev_idx, baudrate, uart->baud_rate);
+			}
+		}
+		else
+		{
+			LOG_ERR("UART[%u]->set_baud_rate(%u)  FAILED", dev_idx, baudrate);
+		}
+	}
+}
+
+static void set_uart_power_state(uint8_t dev_idx, bool active)
+{
+}
+
+static void enable_uart_rx(uint8_t dev_idx)
+{
+	// wake the UART task to initialise the hardware
+	// and continue receiving data
+	if (uart_tasks[dev_idx])
+	{
+		k_wakeup(uart_tasks[dev_idx]);
+	}
+}
+
+static void disable_uart_rx(uint8_t dev_idx)
+{
+	struct uart_api * uart = uarts[dev_idx];
+
+	if (uart && uart_tasks[dev_idx])
+	{
+		uart->abort(uart);
+	}
+}
+
+static int uart_tx_enqueue(uint8_t * data, size_t data_len, uint8_t dev_idx)
+{
+	struct uart_api * uart = uarts[dev_idx];
+
+	if (uart)
+	{
+		size_t count = uart->send(uart, (char *)data, data_len);
+
+		if (count == data_len)
+		{
+			return OK;
+		}
+
+		switch (count)
+		{
+		case FAIL:
+			return -EINVAL;
+
+		default:
+			return -EIO;
+		}
+	}
+
+	return -ENODEV;
+}
+
+
+#else
 static const struct device *devices[UART_DEVICE_COUNT];
 static struct uart_tx_buf uart_tx_ringbufs[UART_DEVICE_COUNT];
 static uint32_t uart_default_baudrate[UART_DEVICE_COUNT];
@@ -363,6 +548,7 @@ static int uart_tx_enqueue(uint8_t *data, size_t data_len, uint8_t dev_idx)
 
 	return 0;
 }
+#endif
 
 static bool event_handler(const struct event_header *eh)
 {
@@ -371,6 +557,11 @@ static bool event_handler(const struct event_header *eh)
 	if (is_uart_data_event(eh)) {
 		const struct uart_data_event *event =
 			cast_uart_data_event(eh);
+
+#if CONFIG_BOARD_NRF9160DK_NRF52840
+		// forward between UART0-PC and UART0-nRF9160
+		uart_tx_enqueue(event->buf, event->len, event->dev_idx);
+#endif
 
 		/* All subscribers have gotten a chance to copy data at this point */
 		uart_rx_buf_unref(event->buf);
@@ -486,6 +677,8 @@ static bool event_handler(const struct event_header *eh)
 				}
 				uart_default_baudrate[i] = cfg.baudrate;
 				subscriber_count[i] = 0;
+
+#if !USE_UART_MINIPORT
 				enable_rx_retry[i] = false;
 
 				atomic_set(&uart_tx_started[i], false);
@@ -498,6 +691,7 @@ static bool event_handler(const struct event_header *eh)
 				if (UART_SET_PM_STATE) {
 					set_uart_power_state(i, false);
 				}
+#endif
 			}
 		}
 
