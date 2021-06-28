@@ -596,14 +596,16 @@ FORMAT(time_exp_8)	    = {
 /*******************************************************************************
  * Electrical formats
  ******************************************************************************/
-FORMAT(electric_current) = SCALAR_FORMAT(2,
+FORMAT(electric_current) = SCALAR_FORMAT_MAX(2,
 					 (UNSIGNED | HAS_UNDEFINED),
 					 ampere,
-					 SCALAR(1e-2, 0));
-FORMAT(voltage)		 = SCALAR_FORMAT(2,
+					 SCALAR(1e-2, 0),
+					 65534);
+FORMAT(voltage)		 = SCALAR_FORMAT_MAX(2,
 					 (UNSIGNED | HAS_UNDEFINED),
 					 volt,
-					 SCALAR(1, -6));
+					 SCALAR(1, -6),
+					 10220);
 FORMAT(energy32)	 = SCALAR_FORMAT(4,
 					 UNSIGNED | HAS_INVALID | HAS_UNDEFINED,
 					 kwh,
