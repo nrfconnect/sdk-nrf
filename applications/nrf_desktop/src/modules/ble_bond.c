@@ -1029,12 +1029,12 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE) &&
+	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER) &&
 	    is_power_down_event(eh)) {
 		return handle_power_down_event(cast_power_down_event(eh));
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE) &&
+	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER) &&
 	    is_wake_up_event(eh)) {
 		return handle_wake_up_event(cast_wake_up_event(eh));
 	}
@@ -1049,22 +1049,24 @@ static bool event_handler(const struct event_header *eh)
 }
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-#if CONFIG_BT_PERIPHERAL
+#if IS_ENABLED(CONFIG_BT_PERIPHERAL)
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 #endif
-#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+#if IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)
 EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
-#if CONFIG_DESKTOP_BLE_PEER_CONTROL
+#if IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL)
 EVENT_SUBSCRIBE(MODULE, click_event);
 #endif
-#if CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE
+#if IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE)
 EVENT_SUBSCRIBE(MODULE, selector_event);
 #endif
+#if IS_ENABLED(CONFIG_CAF_POWER_MANAGER)
 EVENT_SUBSCRIBE(MODULE, power_down_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
+#endif
 
-#if CONFIG_SHELL
+#if IS_ENABLED(CONFIG_SHELL)
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_peers,
 	SHELL_CMD_ARG(show, NULL, "Show bonded peers", shell_show_peers, 0, 0),
 	SHELL_CMD_ARG(remove, NULL, "Remove bonded devices",

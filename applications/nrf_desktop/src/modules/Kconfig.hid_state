@@ -28,6 +28,14 @@ config DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH
 	  Location of configuration file that holds information about LEDs
 	  associated with HID keyboard LEDs report.
 
+config DESKTOP_HID_STATE_PM_ENABLE
+	bool "Enable HID power manager integration"
+	depends on CAF_POWER_MANAGER
+	select CAF_KEEP_ALIVE_EVENTS
+	default y
+	help
+	  This enables small module that blocks power down if HID is active.
+
 config DESKTOP_HID_REPORT_EXPIRATION
 	int "HID report expiration [ms]"
 	default 500
