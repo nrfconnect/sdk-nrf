@@ -46,8 +46,25 @@ static ssize_t write_led(struct bt_conn *conn,
 	LOG_DBG("Attribute write, handle: %u, conn: %p", attr->handle,
 		(void *)conn);
 
+	if (len != 1U) {
+		LOG_DBG("Write led: Incorrect data length");
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
+	}
+
+	if (offset != 0) {
+		LOG_DBG("Write led: Incorrect data offset");
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+
 	if (lbs_cb.led_cb) {
-		lbs_cb.led_cb(*(bool *)buf);
+		uint8_t val = *((uint8_t *)buf);
+
+		if (val == 0x00 || val == 0x01) {
+			lbs_cb.led_cb(val ? true : false);
+		} else {
+			LOG_DBG("Write led: Incorrect value");
+			return BT_GATT_ERR(BT_ATT_ERR_VALUE_NOT_ALLOWED);
+		}
 	}
 
 	return len;
