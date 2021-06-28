@@ -266,7 +266,7 @@ static void agps_data_request_handle(struct gps_agps_request *incoming_request)
 	/* Keep a local copy of the incoming request. Used when injecting PGPS data into the
 	 * modem.
 	 */
-	memcpy(&agps_request, &incoming_request, sizeof(agps_request));
+	memcpy(&agps_request, incoming_request, sizeof(agps_request));
 
 #if defined(CONFIG_AGPS)
 	err = gps_agps_request_send(agps_request, GPS_SOCKET_NOT_PROVIDED);
