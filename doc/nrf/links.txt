@@ -170,7 +170,6 @@
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
 .. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
-.. _`Modem firmware compatibility matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_modem_fw.html
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT
 
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
@@ -249,6 +248,7 @@
 .. _`Measuring Current on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/hw_power_current_measurement.html
 
 .. _`Mobile network operator certifications`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_operator_certifications.html
+.. _`Modem firmware compatibility matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_modem_fw.html
 
 .. _`Power saving mode setting section in AT commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/cpsms.html
 .. _`Measuring current on nRF9160 DK`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/hw_measure_current.html
@@ -536,6 +536,21 @@
 .. _`Memfault: Collecting Device Metrics`: https://docs.memfault.com/docs/embedded/metrics-api
 .. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/
 
+.. ### Source: nrfcloud.com
+
+.. _`nRF Cloud`:
+.. _`nRF Connect for Cloud`: https://nrfcloud.com/
+
+.. _`nRF Cloud documentation`:
+.. _`nRF Connect for Cloud documentation`: https://nrfcloud.com/#/docs
+
+.. _`nRF Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
+
+.. _`nRF Cloud Device API`:
+.. _`nRF Connect for Cloud Device API`: https://api.nrfcloud.com/v1
+
+.. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
+
 .. ### Source: other
 
 .. _`Pelion Device Management Portal`: https://portal.mbedcloud.com/login
@@ -552,21 +567,6 @@
 
 .. _`nRF Mesh mobile app for iOS`: https://apps.apple.com/us/app/nrf-mesh/id1380726771
 .. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner
-
-.. _`nRF Cloud`:
-.. _`nRF Connect for Cloud`: https://nrfcloud.com/
-
-
-
-.. _`nRF Cloud documentation`:
-.. _`nRF Connect for Cloud documentation`: https://nrfcloud.com/#/docs
-
-.. _`nRF Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
-
-.. _`nRF Cloud Device API`:
-.. _`nRF Connect for Cloud Device API`: https://api.nrfcloud.com/v1
-
-.. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 
 .. _`NFC Forum specification overview`: https://nfc-forum.org/our-work/specification-releases/specifications/
 .. _`Bluetooth Secure Simple Pairing Using NFC`: https://nfc-forum.org/our-work/specification-releases/specifications/#010ea0b1006cf5b44
