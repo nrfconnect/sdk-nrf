@@ -13,7 +13,7 @@
 LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 
 static location_event_handler_t event_handler;
-static struct location_data location;
+static struct loc_event_data event_data;
 static struct k_work gnss_fix_work;
 static struct k_work gnss_timeout_work;
 
@@ -32,6 +32,14 @@ static void gnss_event_handler(int event)
 	}
 }
 
+static void event_data_init(enum loc_event_id event_id, enum loc_method method)
+{
+	memset(&event_data, 0, sizeof(event_data));
+
+	event_data.id = event_id;
+	event_data.method = method;
+}
+
 static void gnss_fix_work_fn(struct k_work *item)
 {
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
@@ -41,19 +49,29 @@ static void gnss_fix_work_fn(struct k_work *item)
 		return;
 	}
 
-	location.used_method = LOC_METHOD_GNSS;
-	location.latitude = pvt_data.latitude;
-	location.longitude = pvt_data.longitude;
-	location.accuracy = pvt_data.accuracy;
+	event_data_init(LOC_EVT_LOCATION, LOC_METHOD_GNSS);
+	event_data.location.latitude = pvt_data.latitude;
+	event_data.location.longitude = pvt_data.longitude;
+	event_data.location.accuracy = pvt_data.accuracy;
+	event_data.location.datetime.valid = true;
+	event_data.location.datetime.year = pvt_data.datetime.year;
+	event_data.location.datetime.month = pvt_data.datetime.month;
+	event_data.location.datetime.day = pvt_data.datetime.day;
+	event_data.location.datetime.hour = pvt_data.datetime.hour;
+	event_data.location.datetime.minute = pvt_data.datetime.minute;
+	event_data.location.datetime.second = pvt_data.datetime.seconds;
+	event_data.location.datetime.ms = pvt_data.datetime.ms;
 
-	event_handler(LOC_EVT_LOCATION, &location);
+	event_handler(&event_data);
 
 	nrf_modem_gnss_stop();
 }
 
 static void gnss_timeout_work_fn(struct k_work *item)
 {
-	event_handler(LOC_EVT_TIMEOUT, NULL);
+	event_data_init(LOC_EVT_TIMEOUT, LOC_METHOD_GNSS);
+
+	event_handler(&event_data);
 
 	nrf_modem_gnss_stop();
 }
@@ -97,10 +115,15 @@ int location_init(location_event_handler_t handler)
 	return 0;
 }
 
-int location_get(const struct location_config *config)
+int location_request(const struct loc_config *config)
 {
 	int err;
-	struct location_method_config selected_method = { 0 };
+	struct loc_method_config selected_method = { 0 };
+
+	if (config->interval > 0) {
+		LOG_ERR("Periodic location updates not yet supported.");
+		return -EINVAL;
+	}
 
 	for (int i = 0; i < LOC_MAX_METHODS; i++) {
 		switch (config->methods[i].method) {
@@ -148,13 +171,7 @@ int location_get(const struct location_config *config)
 	return 0;
 }
 
-int location_periodic_start(const struct location_config *config,
-			    uint16_t interval)
-{
-	return -1;
-}
-
-int location_periodic_stop(void)
+int location_request_cancel(void)
 {
 	return -1;
 }
