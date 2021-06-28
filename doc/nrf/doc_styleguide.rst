@@ -504,7 +504,7 @@ Enums
 =====
 
 The documentation block should precede the documented element.
-This is in accordance with the :ref:`Zephyr coding style <zephyr:contribute_guidelines>`.
+This is in accordance with the :ref:`Zephyr coding style <zephyr:coding_style>`.
 
 
 .. code-block:: c
@@ -523,7 +523,7 @@ Structs
 =======
 
 The documentation block should precede the documented element.
-This is in accordance with the :ref:`Zephyr coding style <zephyr:contribute_guidelines>`.
+This is in accordance with the :ref:`Zephyr coding style <zephyr:coding_style>`.
 Make sure to add ``:members:`` when you include the API documentation in RST; otherwise, the member documentation will not show up.
 
 .. code-block:: c
@@ -569,7 +569,7 @@ Typedefs
 ========
 
 The documentation block should precede the documented element.
-This is in accordance with the :ref:`Zephyr coding style <zephyr:contribute_guidelines>`.
+This is in accordance with the :ref:`Zephyr coding style <zephyr:coding_style>`.
 
 .. code-block:: c
 
