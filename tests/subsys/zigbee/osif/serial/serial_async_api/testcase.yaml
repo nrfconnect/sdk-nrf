@@ -2,3 +2,7 @@ tests:
   zigbee.osif.serial.async:
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
     tags: osif_serial
+    harness_config:
+      fixture: shorted_uart_1
+    integration_platforms:
+      - null # No integration platforms because test requires shorted UART 1 pins
