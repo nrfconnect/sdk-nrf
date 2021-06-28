@@ -700,7 +700,7 @@ For example, LEDs are turned off and advertising is stopped.
 
 Moving the mouse or pressing any button wakes up the device and turns on the disabled functionalities.
 
-You can define the amount of time after which the peripherals are suspended or powered off in :option:`CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT`.
+You can define the amount of time after which the peripherals are suspended or powered off in :option:`CONFIG_CAF_POWER_MANAGER_TIMEOUT`.
 By default, this period is set to 120 seconds.
 
 .. important::

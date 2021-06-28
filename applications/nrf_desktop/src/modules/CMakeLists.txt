@@ -37,17 +37,20 @@ target_sources_ifdef(CONFIG_DESKTOP_HID_FORWARD_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_HID_STATE_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_state.c)
 
+target_sources_ifdef(CONFIG_DESKTOP_HID_STATE_PM_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_state_pm.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_USB_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/usb_state.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_USB_PM_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/usb_state_pm.c)
 
 target_sources_ifdef(CONFIG_CAF_LEDS
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led_state.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_LED_STREAM_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led_stream.c)
-
-target_sources_ifdef(CONFIG_DESKTOP_POWER_MANAGER_ENABLE
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/power_manager.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dfu.c)
