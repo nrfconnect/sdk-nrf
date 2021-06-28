@@ -137,6 +137,8 @@ Building and running
    On the |nRF5340DKnoref|, the Radio test sample is a standalone network sample that does not require any counterpart application sample.
    However, you must still program the application core to boot up the network core.
    You can use any sample for this, for example :ref:`nrf5340_empty_app_core`.
+   The :ref:`nrf5340_empty_app_core` is built and programmed automatically by default.
+   If you want to program another sample for the application core, unset the :option:'CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE' option.
 
 .. _radio_test_testing:
 
