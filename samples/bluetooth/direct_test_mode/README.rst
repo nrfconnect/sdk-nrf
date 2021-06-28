@@ -210,6 +210,8 @@ Building and running
    It does not require any counterpart application sample.
    However, you must still program the application core to boot up the network core.
    You can use any sample for this, for example, the :ref:`nrf5340_empty_app_core`.
+   The :ref:`nrf5340_empty_app_core` is built and programmed automatically by default.
+   If you want to program another sample for the application core, unset the :option:'CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE' option.
 
 .. _dtm_testing:
 
