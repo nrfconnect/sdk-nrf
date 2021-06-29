@@ -72,8 +72,8 @@ int open_supl_socket(void)
 	};
 
 	err = setsockopt(supl_fd,
-			 NRF_SOL_SOCKET,
-			 NRF_SO_RCVTIMEO,
+			 SOL_SOCKET,
+			 SO_RCVTIMEO,
 			 &timeout,
 			 sizeof(timeout));
 	if (err) {
@@ -85,31 +85,27 @@ int open_supl_socket(void)
 	err = -1;
 
 	for (addr = info; addr != NULL; addr = addr->ai_next) {
+		char ip[INET_ADDRSTRLEN] = { 0 };
 		struct sockaddr *const sa = addr->ai_addr;
 
-		switch (sa->sa_family) {
-		case AF_INET6:
-			((struct sockaddr_in6 *)sa)->sin6_port = port;
-			break;
-		case AF_INET:
-			((struct sockaddr_in *)sa)->sin_port = port;
-			char ip[255] = { 0 };
-
-			inet_ntop(NRF_AF_INET,
-				  (void *)&((struct sockaddr_in *)
-				  sa)->sin_addr,
-				  ip,
-				  255);
-			printk("ip %s (%x) port %d\n",
-				ip,
-				((struct sockaddr_in *)sa)->sin_addr.s_addr,
-				ntohs(port));
-			break;
+		if (sa->sa_family != AF_INET) {
+			/* Not an IPv4 address, try the next address */
+			continue;
 		}
+
+		((struct sockaddr_in *)sa)->sin_port = port;
+
+		inet_ntop(AF_INET,
+			  (void *)&((struct sockaddr_in *)sa)->sin_addr,
+			  ip,
+			  INET_ADDRSTRLEN);
+		printk("Connecting to %s port %d\n",
+			ip,
+			ntohs(port));
 
 		err = connect(supl_fd, sa, addr->ai_addrlen);
 		if (err) {
-			/* Try next address */
+			/* Try the next address */
 			printk("Unable to connect, errno %d\n", errno);
 		} else {
 			/* Connected */
@@ -124,6 +120,7 @@ cleanup:
 		/* Unable to connect, close socket */
 		close(supl_fd);
 		supl_fd = -1;
+		return -1;
 	}
 
 	return 0;
