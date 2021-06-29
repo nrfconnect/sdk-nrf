@@ -174,7 +174,7 @@ For example, to change the ``VARIABLEONE`` variable for the ``childimageone`` ch
   .. parsed-literal::
     :class: highlight
 
-     cmake -D*childimageone*_*VARIABLEONE*=value -D*VARIABLEONE*=value
+     cmake -D\ *childimageone*\_\ *VARIABLEONE*\=value -D\ *VARIABLEONE*\=value
 
 You can extend the CMake command used to create the child images by adding flags to the CMake variable ``EXTRA_MULTI_IMAGE_CMAKE_ARGS``.
 For example, add ``--trace-expand`` to that variable to output more debug information.
@@ -206,7 +206,7 @@ The following example sets the configuration option ``CONFIG_VARIABLEONE=val`` i
   .. parsed-literal::
     :class: highlight
 
-     cmake -D*childimageone*_*CONFIG_VARIABLEONE=val* [...]
+     cmake -D\ *childimageone*\_\ *CONFIG_VARIABLEONE=val*\ [...]
 
 You can add a Kconfig fragment to the child image default configuration in a similar way.
 The following example adds an extra Kconfig fragment ``extrafragment.conf`` to ``childimageone``:
@@ -214,7 +214,7 @@ The following example adds an extra Kconfig fragment ``extrafragment.conf`` to `
   .. parsed-literal::
     :class: highlight
 
-     cmake -D*childimageone*_OVERLAY_CONFIG=*extrafragment.conf* [...]
+     cmake -D\ *childimageone*\_OVERLAY_CONFIG=\ *extrafragment.conf*\ [...]
 
 It is also possible to provide a custom configuration file as a replacement for the default Kconfig file for the child image.
 The following example uses the custom configuration file ``myfile.conf`` when building ``childimageone``:
@@ -222,7 +222,7 @@ The following example uses the custom configuration file ``myfile.conf`` when bu
   .. parsed-literal::
     :class: highlight
 
-     cmake -D*childimageone*_CONF_FILE=*myfile.conf* [...]
+     cmake -D\ *childimageone*\_CONF_FILE=\ *myfile.conf*\ [...]
 
 If your application includes multiple child images, then you can combine all the above as follows:
 
@@ -233,7 +233,7 @@ If your application includes multiple child images, then you can combine all the
   .. parsed-literal::
     :class: highlight
 
-     cmake -DCONFIG_VARIABLEONE=val -D*childimageone*_OVERLAY_CONFIG=*extrafragment.conf* -Dquz_CONF_FILE=*myfile.conf* [...]
+     cmake -DCONFIG_VARIABLEONE=val -D\ *childimageone*\_OVERLAY_CONFIG=\ *extrafragment.conf*\ -Dquz_CONF_FILE=\ *myfile.conf*\ [...]
 
 See :ref:`ug_bootloader` for more details.
 
@@ -248,7 +248,7 @@ The following example shows how to combine ``abc.conf``, Kconfig fragment of the
   .. parsed-literal::
     :class: highlight
 
-     cmake -D*childimageone*_OVERLAY_CONFIG='*extrafragment.conf*;*abc.conf*'
+     cmake -D\ *childimageone*\_OVERLAY_CONFIG='\ *extrafragment.conf*\;\ *abc.conf*\'
 
 When the build system finds the fragment, it outputs their merge during the CMake build output as follows:
 
@@ -256,8 +256,8 @@ When the build system finds the fragment, it outputs their merge during the CMak
    :class: highlight
 
    ...
-   Merged configuration '*extrafragment.conf*'
-   Merged configuration '*abc.conf*'
+   Merged configuration '\ *extrafragment.conf*\'
+   Merged configuration '\ *abc.conf*\'
    ...
 
 Child image devicetree overlays
