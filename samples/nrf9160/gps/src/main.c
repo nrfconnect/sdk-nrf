@@ -21,35 +21,13 @@
 
 #define AT_CMD_SIZE(x) (sizeof(x) - 1)
 
-#ifdef CONFIG_BOARD_NRF9160DK_NRF9160NS
-#define AT_MAGPIO      "AT\%XMAGPIO=1,0,0,1,1,1574,1577"
-#ifdef CONFIG_GPS_SAMPLE_ANTENNA_ONBOARD
-#define AT_COEX0       "AT\%XCOEX0=1,1,1565,1586"
-#elif CONFIG_GPS_SAMPLE_ANTENNA_EXTERNAL
-#define AT_COEX0       "AT\%XCOEX0"
-#endif
-#endif /* CONFIG_BOARD_NRF9160DK_NRF9160NS */
-
-#ifdef CONFIG_BOARD_THINGY91_NRF9160NS
-#define AT_MAGPIO      "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200," \
-			"3,824,894,4,880,960,5,791,849,7,1565,1586"
-#ifdef CONFIG_GPS_SAMPLE_ANTENNA_ONBOARD
-#define AT_COEX0       "AT\%XCOEX0=1,1,1565,1586"
-#elif CONFIG_GPS_SAMPLE_ANTENNA_EXTERNAL
-#define AT_COEX0       "AT\%XCOEX0"
-#endif
-#endif /* CONFIG_BOARD_THINGY91_NRF9160NS */
-
 static const char update_indicator[] = {'\\', '|', '/', '-'};
 static const char *const at_commands[] = {
 #if !defined(CONFIG_SUPL_CLIENT_LIB)
 	AT_XSYSTEMMODE,
 #endif
-#if defined(CONFIG_BOARD_NRF9160DK_NRF9160NS) || \
-	defined(CONFIG_BOARD_THINGY91_NRF9160NS)
-	AT_MAGPIO,
-	AT_COEX0,
-#endif
+	CONFIG_GPS_SAMPLE_AT_MAGPIO,
+	CONFIG_GPS_SAMPLE_AT_COEX0,
 	AT_ACTIVATE_GPS
 };
 
@@ -88,6 +66,9 @@ void nrf_modem_recoverable_error_handler(uint32_t error)
 static int setup_modem(void)
 {
 	for (int i = 0; i < ARRAY_SIZE(at_commands); i++) {
+		if (at_commands[i][0] == '\0') {
+			continue;
+		}
 
 		if (at_cmd_write(at_commands[i], NULL, 0, NULL) != 0) {
 			return -1;
