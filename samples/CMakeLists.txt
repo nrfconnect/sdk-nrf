@@ -160,7 +160,7 @@ if (CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE)
 
   add_child_image(
     NAME empty_app_core
-    SOURCE_DIR ${NRF_DIR}/samples/nrf5340/empty_app_core
+    SOURCE_DIR ${NRF_DIR}/${CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_PATH}
     DOMAIN CPUAPP
     BOARD ${CONFIG_DOMAIN_CPUAPP_BOARD})
 endif()
