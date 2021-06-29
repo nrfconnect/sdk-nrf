@@ -6,6 +6,7 @@
 
 #include <math.h>
 #include <stdint.h>
+#include <float.h>
 
 #include <ztest.h>
 #include <bluetooth/mesh/properties.h>
@@ -1362,7 +1363,7 @@ static void average_voltage_check(const struct bt_mesh_sensor_type *sensor_type)
 	}
 }
 
-static void input_current_stat_check(const struct bt_mesh_sensor_type *sensor_type)
+static void current_stat_check(const struct bt_mesh_sensor_type *sensor_type)
 {
 	struct sensor_value in_value[sensor_type->channel_count];
 	uint16_t test_vector_current[] = {0, 1234, 5555, 11111, 65534, UINT16_MAX};
@@ -1401,7 +1402,7 @@ static void input_current_stat_check(const struct bt_mesh_sensor_type *sensor_ty
 	}
 }
 
-static void input_voltage_stat_check(const struct bt_mesh_sensor_type *sensor_type)
+static void voltage_stat_check(const struct bt_mesh_sensor_type *sensor_type)
 {
 	struct sensor_value in_value[sensor_type->channel_count];
 	uint16_t test_vector_voltage[] = {0, 123, 159, 160, UINT16_MAX};
@@ -1567,6 +1568,19 @@ static void rel_val_in_a_temp_range_check(const struct bt_mesh_sensor_type *sens
 
 		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
 		decoding_checking_proceed(sensor_type, &expected, sizeof(expected), in_value);
+	}
+}
+
+static void gain_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct sensor_value in_value[] = {{-10, -999999}, {0, -99999}, {0, 99999},
+			{10, 1111}, {9, 999999}};
+
+	for (int i = 0; i < ARRAY_SIZE(in_value); i++) {
+		float expected = (float)in_value[i].val1 + in_value[i].val2 / 1000000.0f;
+
+		encoding_checking_proceed(sensor_type, &in_value[i], &expected, sizeof(float));
+		decoding_checking_proceed(sensor_type, &expected, sizeof(float), &in_value[i]);
 	}
 }
 
@@ -2171,6 +2185,15 @@ static void test_rel_dev_runtime_in_a_generic_level_range(void)
 	relative_runtime_in_a_generic_level_range_check(sensor_type);
 }
 
+static void test_gain(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_SENSOR_GAIN);
+	sensor_type_sanitize(sensor_type);
+	gain_check(sensor_type);
+}
+
 /* Electrical input sensors */
 
 static void test_avg_input_current(void)
@@ -2206,7 +2229,7 @@ static void test_input_current_stat(void)
 
 	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_INPUT_CURRENT_STAT);
 	sensor_type_sanitize(sensor_type);
-	input_current_stat_check(sensor_type);
+	current_stat_check(sensor_type);
 }
 
 static void test_input_voltage_range_spec(void)
@@ -2224,7 +2247,7 @@ static void test_input_voltage_stat(void)
 
 	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_INPUT_VOLTAGE_STAT);
 	sensor_type_sanitize(sensor_type);
-	input_voltage_stat_check(sensor_type);
+	voltage_stat_check(sensor_type);
 }
 
 static void test_present_input_current(void)
@@ -2312,6 +2335,98 @@ static void test_rel_runtime_in_a_dev_op_temp_range(void)
 	rel_val_in_a_temp_range_check(sensor_type);
 }
 
+/* Power output supply sensors*/
+
+static void test_avg_output_current(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_AVG_OUTPUT_CURRENT);
+	sensor_type_sanitize(sensor_type);
+	average_current_check(sensor_type);
+}
+
+static void test_avg_output_voltage(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_AVG_OUTPUT_VOLTAGE);
+	sensor_type_sanitize(sensor_type);
+	average_voltage_check(sensor_type);
+}
+
+static void test_output_current_range(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTPUT_CURRENT_RANGE);
+	sensor_type_sanitize(sensor_type);
+	electric_current_check(sensor_type);
+}
+
+static void test_output_current_stat(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTPUT_CURRENT_STAT);
+	sensor_type_sanitize(sensor_type);
+	current_stat_check(sensor_type);
+}
+
+static void test_output_ripple_voltage_spec(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTPUT_RIPPLE_VOLTAGE_SPEC);
+	sensor_type_sanitize(sensor_type);
+	percentage8_check(sensor_type);
+}
+
+static void test_output_voltage_range(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTPUT_VOLTAGE_RANGE);
+	sensor_type_sanitize(sensor_type);
+	voltage_check(sensor_type);
+}
+
+static void test_output_voltage_stat(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTPUT_VOLTAGE_STAT);
+	sensor_type_sanitize(sensor_type);
+	voltage_stat_check(sensor_type);
+}
+
+static void test_present_output_current(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_OUTPUT_CURRENT);
+	sensor_type_sanitize(sensor_type);
+	electric_current_check(sensor_type);
+}
+
+static void test_present_output_voltage(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_OUTPUT_VOLTAGE);
+	sensor_type_sanitize(sensor_type);
+	voltage_check(sensor_type);
+}
+
+static void test_present_rel_output_ripple_voltage(void)
+{
+	const struct bt_mesh_sensor_type *sensor_type;
+
+	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_REL_OUTPUT_RIPPLE_VOLTAGE);
+	sensor_type_sanitize(sensor_type);
+	percentage8_check(sensor_type);
+}
+
 void test_main(void)
 {
 	ztest_test_suite(sensor_types_test,
@@ -2389,6 +2504,7 @@ void test_main(void)
 
 			/* Warranty and service sensors */
 			ztest_unit_test(test_rel_dev_runtime_in_a_generic_level_range),
+			ztest_unit_test(test_gain),
 
 			/* Electrical input sensors */
 			ztest_unit_test(test_avg_input_current),
@@ -2407,7 +2523,19 @@ void test_main(void)
 			ztest_unit_test(test_dev_op_temp_range_spec),
 			ztest_unit_test(test_dev_op_temp_stat_values),
 			ztest_unit_test(test_present_dev_op_temp),
-			ztest_unit_test(test_rel_runtime_in_a_dev_op_temp_range)
+			ztest_unit_test(test_rel_runtime_in_a_dev_op_temp_range),
+
+			/* Power output supply sensors */
+			ztest_unit_test(test_avg_output_current),
+			ztest_unit_test(test_avg_output_voltage),
+			ztest_unit_test(test_output_current_range),
+			ztest_unit_test(test_output_current_stat),
+			ztest_unit_test(test_output_ripple_voltage_spec),
+			ztest_unit_test(test_output_voltage_range),
+			ztest_unit_test(test_output_voltage_stat),
+			ztest_unit_test(test_present_output_current),
+			ztest_unit_test(test_present_output_voltage),
+			ztest_unit_test(test_present_rel_output_ripple_voltage)
 			 );
 
 	ztest_run_test_suite(sensor_types_test);
