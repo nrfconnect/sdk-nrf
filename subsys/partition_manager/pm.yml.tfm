@@ -7,8 +7,10 @@ tfm_sram:
   region: sram_primary
 
 tfm:
-  placement: {before: [app]}
   size: CONFIG_PM_PARTITION_SIZE_TFM
+  placement:
+    before: [app]
+    align: {end: CONFIG_FPROTECT_BLOCK_SIZE}
 #ifdef CONFIG_BOOTLOADER_MCUBOOT
   inside: mcuboot_primary_app
 #endif
