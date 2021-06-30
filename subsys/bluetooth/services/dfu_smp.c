@@ -49,12 +49,12 @@ static uint8_t notify_process(struct bt_conn *conn,
 		if (dfu_smp->rsp_state.offset == 0) {
 			/* First block */
 			uint32_t total_len;
-			const struct dfu_smp_header *header;
+			const struct bt_dfu_smp_header *header;
 
 			header = data;
 			total_len = (((uint16_t)header->len_h8) << 8) |
 				    header->len_l8;
-			total_len += sizeof(struct dfu_smp_header);
+			total_len += sizeof(struct bt_dfu_smp_header);
 			dfu_smp->rsp_state.total_size = total_len;
 		}
 		dfu_smp->cbs.rsp_part(dfu_smp);
