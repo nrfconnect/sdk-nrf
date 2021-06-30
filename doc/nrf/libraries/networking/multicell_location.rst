@@ -20,7 +20,13 @@ The HTTP request is then sent using TLS to the configured location service.
 When the location service has resolved the location based on the cell measurements provided in the request, it sends back an HTTP response to the device.
 After receiving the HTTP response, the Multicell location library parses the response and returns the location to the caller.
 
-The library supports location services from `nRF Cloud Location Services`_, `HERE Positioning`_ (v1 and v2) and `Skyhook Precision Location`_.
+The library supports the following location services:
+
+*  `nRF Cloud Location Services`_
+*  `HERE Positioning`_ (v1 and v2)
+*  `Skyhook Precision Location`_
+*  `Polte Location API`_
+
 To use the location services, see the respective documentation for account setup and for getting the required credentials for authentication.
 
 .. reprovision_cert_note_start
@@ -48,23 +54,24 @@ The library has an API to handle provisioning of the required TLS certificates f
 Configuration
 *************
 
-To enable the multicell location library, enable the :kconfig:`CONFIG_MULTICELL_LOCATION` Kconfig option.
+To use the multicell location library, enable the :kconfig:`CONFIG_MULTICELL_LOCATION` Kconfig option.
 
-The user must select nRF Cloud, HERE or Skyhook location services using one of the following options:
+Select nRF Cloud, HERE, Skyhook or Polte location services using one of the following options:
 
 *  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
 *  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK`.
-
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE`
 
 The next required step is to configure the authentication method.
-By default, API key is used for HERE and Skyhook.
+By default, API key is used for HERE, Skyhook and Polte (needs also customer ID).
 A JSON Web Token (JWT) signed by the device's private key is used for nRF Cloud.
-Depending on the selected service, one of the three options below must be configured:
+Depending on the selected service, configure some of these options:
 
 *  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
 *  :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
 *  :kconfig:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
 
 Following are the options that can usually have default values:
 

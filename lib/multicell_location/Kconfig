@@ -48,6 +48,13 @@ config MULTICELL_LOCATION_SERVICE_SKYHOOK
 	help
 	  Use Skyhook location service. If a device ID is not provided for
 	  a location request, the device's IMEI will be used.
+
+config MULTICELL_LOCATION_SERVICE_POLTE
+	bool "Polte location service"
+	select REST_CLIENT
+	help
+	  Use Polte location service.
+
 endchoice
 
 if MULTICELL_LOCATION_SERVICE_HERE
@@ -127,6 +134,16 @@ config MULTICELL_LOCATION_MAX_NEIGHBORS
 	  Increasing the max number will increase the library's RAM usage
 	  proportionally.
 
+if MULTICELL_LOCATION_SERVICE_POLTE
+
+config MULTICELL_LOCATION_POLTE_CUSTOMER_ID
+	string "Polte customer ID"
+
+config MULTICELL_LOCATION_POLTE_API_TOKEN
+	string "Polte API token"
+
+endif # MULTICELL_LOCATION_SERVICE_POLTE
+
 config MULTICELL_LOCATION_HTTPS_PORT
 	int "HTTPS port number"
 	default 443
@@ -139,6 +156,7 @@ config MULTICELL_LOCATION_HOSTNAME
 	default "positioning.hereapi.com" if MULTICELL_LOCATION_HERE_V2
 	default "global.skyhookwireless.com" if MULTICELL_LOCATION_SERVICE_SKYHOOK
 	default NRF_CLOUD_REST_HOST_NAME if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+	default "polte.io" if MULTICELL_LOCATION_SERVICE_POLTE
 	help
 	  Server hostname to use when connecting to the selected locations service
 
@@ -156,6 +174,7 @@ config MULTICELL_LOCATION_TLS_SEC_TAG
 	default 175 if MULTICELL_LOCATION_SERVICE_HERE
 	default 176 if MULTICELL_LOCATION_SERVICE_SKYHOOK
 	default NRF_CLOUD_SEC_TAG if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+	default 178 if MULTICELL_LOCATION_SERVICE_POLTE
 	default -1
 	range NRF_CLOUD_SEC_TAG NRF_CLOUD_SEC_TAG if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	help
@@ -183,7 +202,7 @@ config MULTICELL_LOCATION_RECV_TIMEOUT
 
 config MULTICELL_LOCATION_SEND_BUF_SIZE
 	int "Send buffer size"
-	default 2048 if MULTICELL_LOCATION_SERVICE_SKYHOOK
+	default 2048 if (MULTICELL_LOCATION_SERVICE_SKYHOOK || MULTICELL_LOCATION_SERVICE_POLTE)
 	default 0 if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	default 1024
 	help
@@ -192,6 +211,7 @@ config MULTICELL_LOCATION_SEND_BUF_SIZE
 
 config MULTICELL_LOCATION_RECV_BUF_SIZE
 	int "Receive buffer size"
+	default 1536 if MULTICELL_LOCATION_SERVICE_POLTE
 	default 512
 	help
 	  Size of the buffer used to store the response from the location
