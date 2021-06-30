@@ -24,9 +24,6 @@ extern "C" {
  *
  */
 
-/** Size of NLEN field, used to encode NDEF message for Type 4 Tag. */
-#define NLEN_FIELD_SIZE 2U
-
 /**
  * @brief NDEF message descriptor.
  */
