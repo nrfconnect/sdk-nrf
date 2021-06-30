@@ -68,10 +68,11 @@ __weak zb_uint32_t zb_osif_sleep(zb_uint32_t sleep_tmo)
 	time_slept_us = zigbee_event_poll(sleep_tmo * USEC_PER_MSEC);
 
 	/* Calculate sleep duration in milliseconds. Round up the result
-	 * to avoid possible errors in the event of
-	 * another time unit conversion.
+	 * using the basic time unit of ZBOSS API to avoid possible errors
+	 * in the time unit conversion.
 	 */
-	time_slept_ms = ceiling_fraction(time_slept_us, USEC_PER_MSEC);
+	time_slept_ms = ZB_TIME_BEACON_INTERVAL_TO_MSEC(
+		ceiling_fraction(time_slept_us, ZB_BEACON_INTERVAL_USEC));
 
 	/* Unlock timer value updates. */
 	ZVUNUSED(atomic_set((atomic_t *)&is_sleeping, 0));
