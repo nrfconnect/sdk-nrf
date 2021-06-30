@@ -586,6 +586,20 @@ static CURLcode easy_transfer(struct Curl_multi *multi)
   while(!done && !mcode) {
     int still_running = 0;
 
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+    if (multi->kill_signal != NULL) {
+	    int set, res;
+
+	    k_poll_signal_check(multi->kill_signal, &set, &res);
+	    if (set) {
+		    k_poll_signal_reset(multi->kill_signal);
+		    printk("\nKill signal received - exiting\n");
+		    result = CURLE_ABORTED_BY_CALLBACK;
+		    break;
+	    }
+    }
+#endif
+
     mcode = curl_multi_poll(multi, NULL, 0, 1000, NULL);
 
     if(!mcode)
@@ -678,6 +692,10 @@ static CURLcode easy_perform(struct Curl_easy *data, bool events)
 
   sigpipe_ignore(data, &pipe_st);
 
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
+  multi->kill_signal = data->kill_signal;
+#endif
+
   /* run the transfer */
   result = events ? easy_events(multi) : easy_transfer(multi);
 
@@ -728,6 +746,17 @@ void curl_easy_cleanup(struct Curl_easy *data)
   Curl_close(&data);
   sigpipe_restore(&pipe_st);
 }
+
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
+void curl_easy_nrf_set_kill_signal(struct Curl_easy *data,
+			      struct k_poll_signal *kill_signal)
+{
+	if (!data)
+		return;
+
+	data->kill_signal = kill_signal;
+}
+#endif
 
 /*
  * curl_easy_getinfo() is an external interface that allows an app to retrieve
