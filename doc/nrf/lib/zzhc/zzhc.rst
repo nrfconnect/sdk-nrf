@@ -12,7 +12,7 @@ The China Telecom ZZHC library implements the self-registration (Zi-ZHu-Ce, ZZHC
 Overview
 ********
 
-The telecommunication modules that are part of the China Telecom network are required to provide certain information stored on the module to the ``zzhc.vnet.cn`` server.
+The telecommunication modules that are part of the China Telecom network are required to provide certain information stored on the module to the ZZHC server (``zzhc.vnet.cn``).
 This is required for conformity with Chapter 6 of the China Telecom IoT Module Requirements Whitepaper.
 
 The ZZHC library is started as a background thread on boot and it automatically detects the availability of the operator network.
@@ -24,7 +24,7 @@ Once the Internet connectivity is ready and a new SIM card is detected on boot, 
 * nRF9160 SIM ICCID
 * nRF9160 SIM IMSI
 
-On any failure, which includes an unknown or negative response from the server or any error during the program execution, the ZZHC library retries to upload the information to the server once per hour, for a maximum of 5 attempts.
+On any failure, which includes an unknown or negative response from the server or any error during the program execution, the ZZHC library retries to upload the information to the server once every hour, for a maximum of five attempts.
 
 .. _lib_zzhc_configuration:
 
@@ -33,66 +33,57 @@ Configuration
 
 By default, the ZZHC library is not used in any sample.
 
-Dependencies
-------------
-
-Configure the following option if you want to use this library:
-
-:option:`CONFIG_TRUSTED_EXECUTION_NONSECURE`
-    The ZZHC library works only when this option is enabled (Trusted Execution: Non-Secure firmware image).
-
-The following required options are automatically selected when the ZZHC library is enabled:
-
-* :option:`CONFIG_NRF_MODEM_LIB`
-* :option:`CONFIG_SETTINGS`
-* :option:`CONFIG_AT_CMD`
-* :option:`CONFIG_AT_CMD_PARSER`
-* :option:`CONFIG_AT_NOTIF`
-* :option:`CONFIG_BASE64`
-* :option:`CONFIG_JSON_LIBRARY`
-
-
 Enabling the ZZHC library
 -------------------------
 
-To enable the library and ensure that the end product can be approved by China Telecom:
+To enable the ZZHC library, complete the following steps:
 
-* In Kconfig, enable :option:`CONFIG_ZZHC`.
-* In ``prj.conf``, set ``CONFIG_ZZHC=y``.
+1. Set the :option:`CONFIG_TRUSTED_EXECUTION_NONSECURE` Kconfig option.
+   This option enables the Trusted Execution: Non-Secure firmware image.
+   The following required options are automatically selected when the ZZHC library is enabled:
 
-Additionally, make sure to configure the following options in ``prj.conf``:
+   * :option:`CONFIG_NRF_MODEM_LIB`
+   * :option:`CONFIG_SETTINGS`
+   * :option:`CONFIG_AT_CMD`
+   * :option:`CONFIG_AT_CMD_PARSER`
+   * :option:`CONFIG_AT_NOTIF`
+   * :option:`CONFIG_BASE64`
+   * :option:`CONFIG_JSON_LIBRARY`
 
-* The minimal heap size required (2560 bytes): ``CONFIG_HEAP_MEM_POOL_SIZE=2560``.
-* The following options required by :option:`CONFIG_NRF_MODEM_LIB`:
+#. In the :file:`prj.conf` file, configure the following options:
 
-  * ``CONFIG_NETWORKING=y``
-  * ``CONFIG_NET_NATIVE=n``
-  * ``CONFIG_NET_SOCKETS=y``
-  * ``CONFIG_NET_SOCKETS_OFFLOAD=y``
+   a. Set :option:`CONFIG_ZZHC` to ``y``.
+      This ensures that China Telecom can approve the end product.
+   #. Set :option:`CONFIG_HEAP_MEM_POOL_SIZE` to the minimum heap size required (2560 bytes): ``CONFIG_HEAP_MEM_POOL_SIZE=2560``.
+   #. Set the following options required by :option:`CONFIG_NRF_MODEM_LIB`:
 
-* The following options required by :option:`CONFIG_SETTINGS`:
+      * ``CONFIG_NETWORKING=y``
+      * ``CONFIG_NET_NATIVE=n``
+      * ``CONFIG_NET_SOCKETS=y``
+      * ``CONFIG_NET_SOCKETS_OFFLOAD=y``
 
-  * ``CONFIG_FLASH=y``
-  * ``CONFIG_FLASH_PAGE_LAYOUT=y``
-  * ``CONFIG_FLASH_MAP=y``
-  * ``CONFIG_MPU_ALLOW_FLASH_WRITE=y``
-  * ``CONFIG_NVS=y``
-  * ``CONFIG_SETTINGS_NVS_SECTOR_COUNT=6``
+   #. Set the following options required by :option:`CONFIG_SETTINGS`:
 
+      * ``CONFIG_FLASH=y``
+      * ``CONFIG_FLASH_PAGE_LAYOUT=y``
+      * ``CONFIG_FLASH_MAP=y``
+      * ``CONFIG_MPU_ALLOW_FLASH_WRITE=y``
+      * ``CONFIG_NVS=y``
+      * ``CONFIG_SETTINGS_NVS_SECTOR_COUNT=6``
 
 Configuring additional thread behavior
 --------------------------------------
 
-The thread behavior can be configured by using the following Kconfig options:
+You can configure the thread behavior using the following Kconfig options:
 
-* To configure the stack size for the thread, change :option:`CONFIG_ZZHC_STACK_SIZE`.
-* To configure the thread priority, change :option:`CONFIG_ZZHC_THREAD_PRIO`.
+* To adjust the stack size for the thread, change :option:`CONFIG_ZZHC_STACK_SIZE`.
+* To adjust the thread priority, change :option:`CONFIG_ZZHC_THREAD_PRIO`.
 
 
-Allowing for automatic registration to Lte-M or NB-IoT on boot
+Allowing for automatic registration to LTE-M or NB-IoT on boot
 --------------------------------------------------------------
 
-To allow for automatic registration to Lte-M or NB-IoT network on boot, set the following options in ``prj.conf``:
+To allow for automatic registration to LTE-M or NB-IoT network on boot, set the following Kconfig options in :file:`prj.conf`:
 
 * ``CONFIG_LTE_LINK_CONTROL=y``
 * ``CONFIG_LTE_AUTO_INIT_AND_CONNECT=y``
