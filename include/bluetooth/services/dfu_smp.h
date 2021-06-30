@@ -49,7 +49,7 @@ struct bt_dfu_smp;
 
 /** @brief Header used internally by dfu_smp.
  */
-struct dfu_smp_header {
+struct bt_dfu_smp_header {
 	/** Operation. */
 	uint8_t op;
 	/** Operational flags. */
