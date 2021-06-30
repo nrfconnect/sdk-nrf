@@ -25,7 +25,7 @@ Parsing incoming frames
 When you enable the library and register the handler at an endpoint, ZCL frames directed to this endpoint are intercepted and the registered handler is called.
 At that point, the handler counts and parses each frame: ZCL header is read and the payload of the command is obtained.
 
-By default, the handler returns ``ZB_TRUE`` when the frame has been processed or ``ZB_FALSE`` if the stack must `process the frame`_.
+By default, the handler returns ``ZB_TRUE`` when the frame has been processed or ``ZB_FALSE`` if the stack must `process the frame`_ (as described in the ZBOSS API documentation).
 This endpoint logger, however, only reads the incoming frame, but does not process the command, and so it always returns ``ZB_FALSE``.
 
 After parsing and gathering the data, the "Received ZCL command" packet entry is added to the log.
