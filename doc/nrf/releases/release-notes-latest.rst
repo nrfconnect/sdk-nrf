@@ -45,7 +45,10 @@ nRF9160
 nRF5
 ====
 
-There are no entries for this section yet.
+nRF Desktop
+-----------
+
+* Settings backend changed from FCB to NVS.
 
 Common
 ======
