@@ -16,7 +16,6 @@ LOG_MODULE_REGISTER(slm_config, CONFIG_SLM_LOG_LEVEL);
 /**
  * Serial LTE Modem setting page for persistent data
  */
-uint8_t fota_type;		/* FOTA: image type */
 uint8_t fota_stage;		/* FOTA: stage of FOTA process */
 uint8_t fota_status;		/* FOTA: OK/Error status */
 int32_t fota_info;		/* FOTA: failure cause in case of error or download percentage*/
@@ -26,12 +25,7 @@ struct uart_config slm_uart;	/* UART: config */
 
 static int settings_set(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
 {
-	if (!strcmp(name, "fota_type")) {
-		if (len != sizeof(fota_type))
-			return -EINVAL;
-		if (read_cb(cb_arg, &fota_type, len) > 0)
-			return 0;
-	} else if (!strcmp(name, "fota_stage")) {
+	if (!strcmp(name, "fota_stage")) {
 		if (len != sizeof(fota_stage))
 			return -EINVAL;
 		if (read_cb(cb_arg, &fota_stage, len) > 0)
@@ -113,11 +107,6 @@ int slm_setting_fota_save(void)
 	int ret;
 
 	/* Write a single serialized value to persisted storage (if it has changed value). */
-	ret = settings_save_one("slm/fota_type", &(fota_type), sizeof(fota_type));
-	if (ret) {
-		LOG_ERR("save slm/fota_type failed: %d", ret);
-		return ret;
-	}
 	ret = settings_save_one("slm/fota_stage", &(fota_stage), sizeof(fota_stage));
 	if (ret) {
 		LOG_ERR("save slm/fota_stage failed: %d", ret);
@@ -139,7 +128,6 @@ int slm_setting_fota_save(void)
 
 void slm_setting_fota_init(void)
 {
-	fota_type = 0; /* see enum dfu_target_image_type */
 	fota_stage = FOTA_STAGE_INIT;
 	fota_status = FOTA_STATUS_OK;
 	fota_info = 0;
