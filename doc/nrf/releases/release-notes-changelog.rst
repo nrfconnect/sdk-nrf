@@ -73,6 +73,7 @@ nRF9160
   * :ref:`multicell_location` sample:
 
     * Updated to only request neighbor cell measurements when connected and to only copy neighbor cell measurements if they exist.
+    * Added support for Polte location service.
 
   * :ref:`lte_lc_readme` library:
 
