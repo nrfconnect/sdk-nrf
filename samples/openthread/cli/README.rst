@@ -65,6 +65,13 @@ The provided configurations optimize the memory footprint of the sample for sing
 
 For more information, see :ref:`app_memory`.
 
+Serial transport
+================
+
+The Thread CLI sample supports UART and USB CDC ACM as serial transports.
+By default, it uses UART transport.
+You can switch to USB transport by :ref:`activating the USB overlay extension <ot_cli_sample_activating_variants>`, as described below.
+
 FEM support
 ===========
 
@@ -79,7 +86,7 @@ The sample supports the following development kits for testing the network statu
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf52840dk_nrf52840, nrf52840dongle_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
 
 Optionally, you can use one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for :ref:`testing communication or diagnostics <ot_cli_sample_testing_multiple>` and :ref:`thread_ot_commissioning_configuring_on-mesh`.
 
@@ -103,7 +110,7 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-To update OpenThread libraries provided by the ``nrfxlib``, please invoke ``west build -b nrf52840dk_nrf52840 -t install_openthread_libraries``.
+To update the OpenThread libraries provided by ``nrfxlib``, invoke ``west build -b nrf52840dk_nrf52840 -t install_openthread_libraries``.
 
 .. _ot_cli_sample_activating_variants:
 
@@ -115,6 +122,7 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
 * For the experimental Thread 1.2 variant, set :file:`overlay-thread_1_2.conf`.
 * For the minimal single protocol variant, set :file:`overlay-minimal_singleprotocol.conf`.
 * For the minimal multiprotocol variant, set :file:`overlay-minimal_multiprotocol.conf`.
+* For USB transport support, set :file:`overlay-usb.conf`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
