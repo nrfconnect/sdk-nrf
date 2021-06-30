@@ -180,5 +180,20 @@
   - "modules/mcuboot/**/*"
   - "samples/matter/**/*"
 
+"CI-find-my-test":
+  - "include/bluetooth/**/*"
+  - "include/dfu/**/*"
+  - "include/nfc/**/*"
+  - "include/dk_buttons_and_leds.h"
+  - "include/event_manager.h"
+  - "lib/dk_buttons_and_leds/**/*"
+  - "subsys/bootloader/**/*"
+  - "subsys/bluetooth/**/*"
+  - "subsys/dfu/dfu_target/**/*"
+  - "subsys/event_manager/**/*"
+  - "subsys/nfc/**/*"
+  - "subsys/partition_manager/**/*"
+  - "modules/mcuboot/**/*"
+
 "no-changelog":
   - "!doc/nrf/releases/release-notes-latest.rst"
