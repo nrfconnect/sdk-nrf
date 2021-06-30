@@ -18,3 +18,21 @@ tests:
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
+  samples.openthread.cli.minimal_multiprotocol:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: OVERLAY_CONFIG=overlay-minimal_multiprotocol.conf
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
+      - nrf5340dk_nrf5340_cpuapp
+  samples.openthread.cli.minimal_singleprotocol:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: OVERLAY_CONFIG=overlay-minimal_singleprotocol.conf
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
+      - nrf5340dk_nrf5340_cpuapp
