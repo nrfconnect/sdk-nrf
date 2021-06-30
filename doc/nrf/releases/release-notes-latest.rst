@@ -43,6 +43,10 @@ nRF9160
     * Removed datatype in all sending AT commands. If no sending data is specified, switch data mode to receive and send any arbitrary data.
     * Added a separate document page to describe the FOTA service.
 
+  * :ref:`asset_tracker_v2` application:
+
+    * Changed the custom module responsible for controlling the LEDs to CAF LEDs module.
+
 nRF5
 ====
 

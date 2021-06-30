@@ -16,7 +16,8 @@
 #endif
 
 /* Module name is used by the event manager macros in this file */
-#define MODULE app_module
+#define MODULE main
+#include <caf/events/module_state_event.h>
 
 #include "modules_common.h"
 #include "events/app_module_event.h"
@@ -26,6 +27,7 @@
 #include "events/ui_module_event.h"
 #include "events/util_module_event.h"
 #include "events/modem_module_event.h"
+#include "events/led_state_event.h"
 
 #include <logging/log.h>
 #include <logging/log_ctrl.h>
@@ -487,6 +489,7 @@ void main(void)
 		k_sleep(K_SECONDS(5));
 		sys_reboot(SYS_REBOOT_COLD);
 	} else {
+		module_set_state(MODULE_STATE_READY);
 		SEND_EVENT(app, APP_EVT_START);
 	}
 
