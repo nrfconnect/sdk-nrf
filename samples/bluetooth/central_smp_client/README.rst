@@ -1,13 +1,13 @@
 .. _bluetooth_central_dfu_smp:
 
-Bluetooth: Central DFU SMP
-##########################
+Bluetooth: Central SMP Client
+#############################
 
 .. contents::
    :local:
    :depth: 2
 
-The Central DFU SMP sample demonstrates how to use the :ref:`dfu_smp_readme` to connect to an SMP Server and send a simple echo command.
+The Central Simple Management Protocol (SMP) Client sample demonstrates how to use the :ref:`dfu_smp_readme` to connect to an SMP Server and send a simple echo command.
 The response, which is received as CBOR-encoded data, is decoded and printed.
 
 
@@ -44,7 +44,7 @@ Button 1:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/central_dfu_smp`
+.. |sample path| replace:: :file:`samples/bluetooth/central_smp_client`
 
 .. include:: /includes/build_and_run.txt
 
@@ -59,7 +59,7 @@ After programming the sample to your development kit, test it by performing the 
    The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal|
 #. Reset the kit.
-#. Observe that the text "Starting DFU SMP Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with SMP.
+#. Observe that the text "Starting Bluetooth Central SMP Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with SMP.
 #. Program the :ref:`smp_svr_sample` to another development kit.
    See the documentation for that sample for more information.
 #. Observe that the kits connect.
