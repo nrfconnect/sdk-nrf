@@ -1,0 +1,3 @@
+nrf5_mbr:
+  placement: {after: [start]}
+  size: 0x1000
