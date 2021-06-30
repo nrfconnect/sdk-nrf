@@ -9,8 +9,6 @@
 #include <event_manager.h>
 #include <dk_buttons_and_leds.h>
 
-#include "led.h"
-
 #define MODULE ui_module
 
 #include "modules_common.h"
@@ -21,6 +19,7 @@
 #include "events/util_module_event.h"
 #include "events/gps_module_event.h"
 #include "events/modem_module_event.h"
+#include "events/led_state_event.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_UI_MODULE_LOG_LEVEL);
@@ -213,26 +212,29 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 }
 
 /* Static module functions. */
-static void update_led_pattern(enum led_pattern pattern)
+static void update_led_pattern(enum led_state pattern)
 {
 #if defined(CONFIG_LED_CONTROL)
-	led_set_pattern(pattern);
+	struct led_state_event *event = new_led_state_event();
+
+	event->state = pattern;
+	EVENT_SUBMIT(event);
 #endif
 }
 
 static void led_pat_active_work_fn(struct k_work *work)
 {
-	update_led_pattern(LED_ACTIVE_MODE);
+	update_led_pattern(LED_STATE_ACTIVE_MODE);
 }
 
 static void led_pat_passive_work_fn(struct k_work *work)
 {
-	update_led_pattern(LED_PASSIVE_MODE);
+	update_led_pattern(LED_STATE_PASSIVE_MODE);
 }
 
 static void led_pat_gps_work_fn(struct k_work *work)
 {
-	update_led_pattern(LED_GPS_SEARCHING);
+	update_led_pattern(LED_STATE_GPS_SEARCHING);
 }
 
 static int setup(const struct device *dev)
@@ -247,13 +249,6 @@ static int setup(const struct device *dev)
 		return err;
 	}
 
-#if defined(CONFIG_LED_CONTROL)
-	err = led_init();
-	if (err) {
-		LOG_ERR("led_init, error: %d", err);
-		return err;
-	}
-#endif
 	return 0;
 }
 
@@ -261,13 +256,13 @@ static int setup(const struct device *dev)
 static void on_state_active_sub_state_gps_active(struct ui_msg_data *msg)
 {
 	if (IS_EVENT(msg, gps, GPS_EVT_INACTIVE)) {
-		update_led_pattern(LED_ACTIVE_MODE);
+		update_led_pattern(LED_STATE_ACTIVE_MODE);
 		sub_state_set(SUB_STATE_GPS_INACTIVE);
 	}
 
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
-		update_led_pattern(LED_CLOUD_PUBLISHING);
+		update_led_pattern(LED_STATE_CLOUD_PUBLISHING);
 		k_work_reschedule(&led_pat_gps_work, K_SECONDS(5));
 	}
 
@@ -284,13 +279,13 @@ static void on_state_active_sub_state_gps_active(struct ui_msg_data *msg)
 static void on_state_active_sub_state_gps_inactive(struct ui_msg_data *msg)
 {
 	if (IS_EVENT(msg, gps, GPS_EVT_ACTIVE)) {
-		update_led_pattern(LED_GPS_SEARCHING);
+		update_led_pattern(LED_STATE_GPS_SEARCHING);
 		sub_state_set(SUB_STATE_GPS_ACTIVE);
 	}
 
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
-		update_led_pattern(LED_CLOUD_PUBLISHING);
+		update_led_pattern(LED_STATE_CLOUD_PUBLISHING);
 		k_work_reschedule(&led_pat_active_work, K_SECONDS(5));
 	}
 
@@ -307,13 +302,13 @@ static void on_state_active_sub_state_gps_inactive(struct ui_msg_data *msg)
 static void on_state_passive_sub_state_gps_active(struct ui_msg_data *msg)
 {
 	if (IS_EVENT(msg, gps, GPS_EVT_INACTIVE)) {
-		update_led_pattern(LED_PASSIVE_MODE);
+		update_led_pattern(LED_STATE_PASSIVE_MODE);
 		sub_state_set(SUB_STATE_GPS_INACTIVE);
 	}
 
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
-		update_led_pattern(LED_CLOUD_PUBLISHING);
+		update_led_pattern(LED_STATE_CLOUD_PUBLISHING);
 		k_work_reschedule(&led_pat_gps_work, K_SECONDS(5));
 	}
 
@@ -330,13 +325,13 @@ static void on_state_passive_sub_state_gps_active(struct ui_msg_data *msg)
 static void on_state_passive_sub_state_gps_inactive(struct ui_msg_data *msg)
 {
 	if (IS_EVENT(msg, gps, GPS_EVT_ACTIVE)) {
-		update_led_pattern(LED_GPS_SEARCHING);
+		update_led_pattern(LED_STATE_GPS_SEARCHING);
 		sub_state_set(SUB_STATE_GPS_ACTIVE);
 	}
 
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
-		update_led_pattern(LED_CLOUD_PUBLISHING);
+		update_led_pattern(LED_STATE_CLOUD_PUBLISHING);
 		k_work_reschedule(&led_pat_passive_work, K_SECONDS(5));
 	}
 
@@ -367,10 +362,10 @@ static void on_all_states(struct ui_msg_data *msg)
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
 		switch (msg->module.util.reason) {
 		case REASON_FOTA_UPDATE:
-			update_led_pattern(LED_FOTA_UPDATE_REBOOT);
+			update_led_pattern(LED_STATE_FOTA_UPDATE_REBOOT);
 			break;
 		case REASON_GENERIC:
-			update_led_pattern(LED_ERROR_SYSTEM_FAULT);
+			update_led_pattern(LED_STATE_ERROR_SYSTEM_FAULT);
 			break;
 		default:
 			LOG_WRN("Unknown shutdown reason");
@@ -382,7 +377,7 @@ static void on_all_states(struct ui_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTING)) {
-		update_led_pattern(LED_LTE_CONNECTING);
+		update_led_pattern(LED_STATE_LTE_CONNECTING);
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_INIT)) {

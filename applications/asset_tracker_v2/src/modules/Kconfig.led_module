@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LED_CONTROL
+	bool "LED control library"
+	depends on CAF_LEDS
+	default y
+
+config LED_STATE_DEF_PATH
+	string "Configuration file"
+	default "led_state_def.h"
+	help
+	  Location of configuration file for led_state_def file.
+
+module = LED_CONTROL
+module-str = LED control library
+source "subsys/logging/Kconfig.template.log_config"

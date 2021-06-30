@@ -15,8 +15,6 @@ config UI_THREAD_STACK_SIZE
 	int "UI module thread stack size"
 	default 512
 
-rsource "../led/Kconfig"
-
 endif # UI_MODULE
 
 module = UI_MODULE

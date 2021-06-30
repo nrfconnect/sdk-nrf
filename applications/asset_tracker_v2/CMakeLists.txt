@@ -15,12 +15,12 @@ target_sources(app PRIVATE src/main.c)
 
 # Include source directory
 target_include_directories(app PRIVATE src)
+target_include_directories(app PRIVATE boards/${BOARD}/)
 
 # Application directories
 add_subdirectory(src/modules)
 add_subdirectory(src/events)
 
 add_subdirectory_ifdef(CONFIG_CLOUD_MODULE src/cloud)
-add_subdirectory_ifdef(CONFIG_UI_MODULE src/led)
 add_subdirectory_ifdef(CONFIG_SENSOR_MODULE src/ext_sensors)
 add_subdirectory_ifdef(CONFIG_WATCHDOG_APPLICATION src/watchdog)

@@ -44,6 +44,10 @@ nRF9160
     * Added a separate document page to describe the FOTA service.
     * Added IPv6 support to Socket and ICMP services.
 
+  * :ref:`asset_tracker_v2` application:
+
+    * Changed the custom module responsible for controlling the LEDs to CAF LEDs module.
+
 nRF5
 ====
 
