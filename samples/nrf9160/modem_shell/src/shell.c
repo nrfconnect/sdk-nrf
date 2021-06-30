@@ -170,7 +170,7 @@ static int cmd_iperf3(const struct shell *shell, size_t argc, char **argv)
 #if defined(CONFIG_MOSH_CURL)
 static int cmd_curl(const struct shell *shell, size_t argc, char **argv)
 {
-	(void)curl_tool_main(argc, argv);
+	(void)curl_tool_main(argc, argv, &mosh_signal);
 	shell_print(shell, "\nDONE");
 	return 0;
 }
