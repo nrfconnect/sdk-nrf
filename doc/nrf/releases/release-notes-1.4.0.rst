@@ -131,13 +131,13 @@ nRF9160
 
 * :ref:`supl_client` library and :ref:`agps_sample` sample:
 
-    * Renamed the sample from nRF Connect for Cloud A-GPS.
-    * Added a common A-GPS interface for SUPL and nRF Connect for Cloud A-GPS service.
-    * Added sending of service information after a successful connection to `nRF Connect for Cloud`_ has been made.
+    * Renamed the sample from nRF Cloud A-GPS.
+    * Added a common A-GPS interface for SUPL and nRF Cloud A-GPS service.
+    * Added sending of service information after a successful connection to `nRF Cloud`_ has been made.
 
 * :ref:`asset_tracker` application:
 
-    * Added handling of sensor channel ``get`` commands received from `nRF Connect for Cloud`_.
+    * Added handling of sensor channel ``get`` commands received from `nRF Cloud`_.
     * Added event handler for :ref:`lte_lc_readme` events.
     * Added the detection feature when there is no SIM card in the slot.
     * Added support for Bosch BSEC library 1.4.8.0 (see :ref:`zephyr:bme680`).

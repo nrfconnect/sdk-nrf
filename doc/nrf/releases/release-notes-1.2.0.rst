@@ -131,10 +131,10 @@ Updated samples and applications
 * :ref:`asset_tracker`:
 
   * Added functionality to configure high/low thresholds for sensor data, so that only data below/above the threshold is sent to the cloud.
-  * Modified the command format to match the format that is used by nRF Connect for Cloud.
+  * Modified the command format to match the format that is used by nRF Cloud.
   * Implemented support for receiving modem AT commands from the cloud and returning the modem's response.
   * Added functionality to configure the interval at which sensor data is sent to the cloud.
-    This makes it possible to change the poll/send interval for environmental and light sensors from the terminal card in nRF connect for Cloud.
+    This makes it possible to change the poll/send interval for environmental and light sensors from the terminal card in nRF Cloud.
   * Replaced ``printk`` calls with calls to the :ref:`zephyr:logging_api` subsystem.
   * Added a separate workqueue for the application, instead of using the system workqueue.
 

@@ -69,7 +69,7 @@ nRF9160
 
 * Updated:
 
-  * :ref:`asset_tracker` application - Updated to use the new FOTA (fota_v2) based on nRF Connect for Cloud.
+  * :ref:`asset_tracker` application - Updated to use the new FOTA (fota_v2) based on nRF Cloud.
   * :ref:`serial_lte_modem` application:
 
     * Fixed an issue where FOTA downloads were interrupted if an AT command was issued.
@@ -103,9 +103,9 @@ nRF9160
   * :ref:`lib_fota_download` library - Enabled SNI TLS extension for HTTPS downloads.
   * :ref:`lib_nrf_cloud` library:
 
-    * nRF Connect for Cloud FOTA replaced AWS Jobs as the FOTA mechanism for devices connected to nRF Connect for Cloud.
+    * nRF Cloud FOTA replaced AWS Jobs as the FOTA mechanism for devices connected to nRF Cloud.
     * Removed :option:`CONFIG_CLOUD_API` dependency from :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
-    * Added a new API :c:func:`nrf_cloud_send` that can be used for sending pre-encoded data to specified endpoint topics in nRF Connect for Cloud.
+    * Added a new API :c:func:`nrf_cloud_send` that can be used for sending pre-encoded data to specified endpoint topics in nRF Cloud.
 
   * :ref:`at_cmd_parser_readme` library - The library can now parse AT command strings with negative numbers in the range supported by the int32_t type.
   * :ref:`lib_azure_iot_hub` library - Improved the internal connection state handling.

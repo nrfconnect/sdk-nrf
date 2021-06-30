@@ -68,7 +68,7 @@ config NRF_CLOUD_CLIENT_ID_PREFIX
 	string "Prefix used when constructing the MQTT client ID from the IMEI"
 	default "nrf-"
 	help
-	  The nrf- prefix is reserved on nRF Connect for Cloud for official Nordic
+	  The nrf- prefix is reserved on nRF Cloud for official Nordic
 	  devices (e.g. the nRF9160 DK or the Thingy:91).
 	  In case you wish to use nrf_cloud with your own devices you need to modify
 	  the prefix used to generate the MQTT client ID from the IMEI.
