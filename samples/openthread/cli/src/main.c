@@ -7,8 +7,13 @@
 #include <zephyr.h>
 #include <logging/log.h>
 
-#if CONFIG_BT
+#if defined(CONFIG_BT)
 #include "ble.h"
+#endif
+
+#if defined(CONFIG_USB_UART_CONSOLE)
+#include <drivers/uart.h>
+#include <usb/usb_device.h>
 #endif
 
 LOG_MODULE_REGISTER(cli_sample, CONFIG_OT_COMMAND_LINE_INTERFACE_LOG_LEVEL);
@@ -25,6 +30,42 @@ LOG_MODULE_REGISTER(cli_sample, CONFIG_OT_COMMAND_LINE_INTERFACE_LOG_LEVEL);
 
 void main(void)
 {
+#if defined(CONFIG_USB_UART_CONSOLE)
+	int ret;
+	const struct device *dev;
+	uint32_t dtr = 0U;
+
+	ret = usb_enable(NULL);
+	if (ret != 0) {
+		LOG_ERR("Failed to enable USB");
+		return;
+	}
+
+	dev = device_get_binding(CONFIG_UART_SHELL_ON_DEV_NAME);
+	if (dev == NULL) {
+		LOG_ERR("Failed to find specific UART device");
+		return;
+	}
+
+	LOG_INF("Waiting for host to be ready to communicate");
+
+	/* Data Terminal Ready - check if host is ready to communicate */
+	while (!dtr) {
+		ret = uart_line_ctrl_get(dev, UART_LINE_CTRL_DTR, &dtr);
+		if (ret) {
+			LOG_ERR("Failed to get Data Terminal Ready line state: %d",
+				ret);
+			continue;
+		}
+		k_msleep(100);
+	}
+
+	/* Data Carrier Detect Modem - mark connection as established */
+	(void)uart_line_ctrl_set(dev, UART_LINE_CTRL_DCD, 1);
+	/* Data Set Ready - the NCP SoC is ready to communicate */
+	(void)uart_line_ctrl_set(dev, UART_LINE_CTRL_DSR, 1);
+#endif
+
 	LOG_INF(WELLCOME_TEXT);
 
 #if CONFIG_BT
