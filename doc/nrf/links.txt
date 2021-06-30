@@ -569,6 +569,14 @@
 
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 
+.. ### Source: nrfcloud.com
+
+.. _`nRF Cloud`: https://nrfcloud.com
+.. _`nRF Cloud documentation`: https://nrfcloud.com/#/docs
+.. _`nRF Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
+.. _`nRF Cloud Device API`: https://api.nrfcloud.com/v1
+.. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
+
 .. ### Source: other
 
 .. _`Pelion Device Management Portal`: https://portal.mbedcloud.com/login
