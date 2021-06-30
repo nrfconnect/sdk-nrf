@@ -148,15 +148,13 @@ nrfx_err_t nfc_platform_nfcid1_default_bytes_get(uint8_t * const buf,
 			buf[8] = (uint8_t) (nfc_tag_header[2] >> 8);
 			buf[9] = (uint8_t) (nfc_tag_header[2] >> 16);
 		}
-		/* Begin: Bugfix for FTPAN-181. */
-		/* Workaround for wrong value in NFCID1. Value 0x88 cannot be
-		 * used as byte 3 of a double-size NFCID1, according to the
-		 * NFC Forum Digital Protocol specification.
+		/* Workaround for errata 181 "NFCT: Invalid value in FICR for double-size NFCID1"
+		 * found at the Errata document for your device located at
+		 * https://infocenter.nordicsemi.com/index.jsp
 		 */
 		else if (buf[3] == 0x88) {
 			buf[3] |= 0x11;
 		}
-		/* End: Bugfix for FTPAN-181 */
 	}
 
 	return NRFX_SUCCESS;
