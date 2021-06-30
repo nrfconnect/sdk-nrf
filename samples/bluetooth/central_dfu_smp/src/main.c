@@ -38,7 +38,7 @@ static struct bt_gatt_exchange_params exchange_params;
 
 /* Buffer for response */
 struct smp_buffer {
-	struct dfu_smp_header header;
+	struct bt_dfu_smp_header header;
 	uint8_t payload[CBOR_BUFFER_SIZE];
 };
 static struct smp_buffer smp_rsp_buff;
