@@ -236,6 +236,7 @@ comment "BLE QoS management"
 config DESKTOP_BLE_QOS_ENABLE
 	bool "Enable BLE channel map management"
 	depends on BT_LL_SOFTDEVICE
+	depends on CPU_CORTEX_M4
 	select BT_HCI_VS_EVT_USER
 	help
 	  Enable device to avoid congested RF channels.
