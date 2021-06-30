@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <hal/nrf_power.h>
+#include <helpers/nrfx_reset_reason.h>
 #include <storage/flash_map.h>
 
 #define MODULE failsafe
@@ -17,11 +17,12 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_FAILSAFE_LOG_LEVEL);
 
 static bool failsafe_check(void)
 {
-	uint32_t mask = NRF_POWER_RESETREAS_DOG_MASK |
-			NRF_POWER_RESETREAS_LOCKUP_MASK;
+	uint32_t mask = NRFX_RESET_REASON_DOG_MASK |
+			NRFX_RESET_REASON_LOCKUP_MASK;
 
-	uint32_t reas = nrf_power_resetreas_get(NRF_POWER);
-	nrf_power_resetreas_clear(NRF_POWER, reas);
+	uint32_t reas = nrfx_reset_reason_get();
+
+	nrfx_reset_reason_clear(reas);
 
 	return (reas & mask) != 0;
 }
