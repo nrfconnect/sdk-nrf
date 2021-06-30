@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LED_CONTROL
+	bool "LED control library"
+	default y
+
+config LED_STATE_DEF_PATH
+string "Configuration file"
+	default "led_state_def.h"
+	help
+	  Location of configuration file for led_state_def file.
+
+if LED_CONTROL
+
+config LED_USE_PWM
+	bool "Use PWM to control LEDs"
+	default y if BOARD_THINGY91_NRF9160NS
+
+endif # LED_CONTROL
+
+module = LED_CONTROL
+module-str = LED control library
+source "subsys/logging/Kconfig.template.log_config"

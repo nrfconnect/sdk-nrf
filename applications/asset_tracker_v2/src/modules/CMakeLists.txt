@@ -13,3 +13,4 @@ target_sources_ifdef(CONFIG_UI_MODULE app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ui
 target_sources_ifdef(CONFIG_SENSOR_MODULE app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sensor_module.c)
 target_sources_ifdef(CONFIG_DATA_MODULE app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/data_module.c)
 target_sources_ifdef(CONFIG_UTIL_MODULE app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/util_module.c)
+target_sources_ifdef(CONFIG_LED_CONTROL app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led_module.c)
