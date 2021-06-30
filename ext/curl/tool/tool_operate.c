@@ -343,6 +343,11 @@ static CURLcode pre_transfer(struct GlobalConfig *global,
     }
     per->input.fd = per->infd;
   }
+
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
+  curl_easy_nrf_set_kill_signal(per->curl, global->kill_signal);
+#endif
+  
   return result;
 }
 

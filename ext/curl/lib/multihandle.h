@@ -151,6 +151,10 @@ struct Curl_multi {
   bool recheckstate; /* see Curl_multi_connchanged */
   bool in_callback;            /* true while executing a callback */
   bool ipv6_works;
+
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
+struct k_poll_signal *kill_signal; 
+#endif
 };
 
 #endif /* HEADER_CURL_MULTIHANDLE_H */

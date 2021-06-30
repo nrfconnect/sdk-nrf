@@ -301,7 +301,7 @@ static void restore_terminal(void)
 int wmain(int argc, wchar_t *argv[])
 #else
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
-int curl_tool_main(int argc, char *argv[])
+int curl_tool_main(int argc, char *argv[], struct k_poll_signal *kill_signal)
 #endif
 #endif
 {
@@ -345,6 +345,10 @@ int curl_tool_main(int argc, char *argv[])
      this point */
   result = main_init(&global);
   if(!result) {
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
+    global.kill_signal = kill_signal;
+#endif
+      
     /* Start our curl operation */
     result = operate(&global, argc, argv);
 

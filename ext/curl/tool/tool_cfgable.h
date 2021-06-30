@@ -319,6 +319,7 @@ struct GlobalConfig {
   char *help_category;            /* The help category, if set */
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
   bool curr_mdm_traces;
+  struct k_poll_signal *kill_signal; 
 #endif
   struct OperationConfig *first;
   struct OperationConfig *current;

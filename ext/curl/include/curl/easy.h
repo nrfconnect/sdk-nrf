@@ -38,6 +38,12 @@ struct curl_blob {
 
 CURL_EXTERN CURL *curl_easy_init(void);
 CURL_EXTERN CURLcode curl_easy_setopt(CURL *curl, CURLoption option, ...);
+
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
+CURL_EXTERN void curl_easy_nrf_set_kill_signal(
+  CURL *curl, struct k_poll_signal *kill_signal);
+#endif
+
 CURL_EXTERN CURLcode curl_easy_perform(CURL *curl);
 CURL_EXTERN void curl_easy_cleanup(CURL *curl);
 

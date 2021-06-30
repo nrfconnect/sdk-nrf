@@ -1920,6 +1920,9 @@ struct Curl_easy {
   iconv_t utf8_cd;             /* for translating to UTF8 */
 #endif /* CURL_DOES_CONVERSIONS && HAVE_ICONV */
   unsigned int magic;          /* set to a CURLEASY_MAGIC_NUMBER */
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
+struct k_poll_signal *kill_signal; 
+#endif
 };
 
 #define LIBCURL_NAME "libcurl"
