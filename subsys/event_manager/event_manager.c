@@ -10,7 +10,9 @@
 #include <sys/slist.h>
 #include <event_manager.h>
 #include <logging/log.h>
-
+#if defined(CONFIG_EVENT_MANAGER_STORAGE)
+#include "event_manager_storage_priv.h"
+#endif
 LOG_MODULE_REGISTER(event_manager, CONFIG_EVENT_MANAGER_LOG_LEVEL);
 
 
@@ -283,6 +285,9 @@ static void event_processor_fn(struct k_work *work)
 
 				if (consumed) {
 					log_event_consumed(et);
+#if defined(CONFIG_EVENT_MANAGER_STORAGE)
+					event_store_remove(eh);
+#endif
 				}
 			}
 		}
@@ -309,7 +314,21 @@ void _event_submit(struct event_header *eh)
 
 int event_manager_init(void)
 {
+	int err;
+
 	log_event_init();
 
-	return trace_event_init();
+	err = trace_event_init();
+	if (err) {
+		return err;
+	}
+
+#if defined(CONFIG_EVENT_MANAGER_STORAGE)
+	err = event_store_init();
+	if (err) {
+		return err;
+	}
+#endif
+
+	return 0;
 }

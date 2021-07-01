@@ -223,6 +223,8 @@ extern "C" {
 
 #define _EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, ev_info_struct)							\
 	_EVENT_SUBSCRIBERS_DEFINE(ename);										\
+	BUILD_ASSERT(!(IS_ENABLED(CONFIG_EVENT_MANAGER_STORAGE) &&							\
+		sizeof(struct ename) > CONFIG_EVENT_MANAGER_STORAGE_PAYLOAD_MAX_SIZE));					\
 	const struct event_type _CONCAT(__event_type_, ename) __used							\
 	__attribute__((__section__("event_types"))) = {									\
 		.name				= STRINGIFY(ename),							\
@@ -239,8 +241,10 @@ extern "C" {
 		.init_log_enable		= init_log_en,								\
 		.log_event			= log_fn,								\
 		.ev_info			= ev_info_struct,							\
+		COND_CODE_1(IS_ENABLED(CONFIG_EVENT_MANAGER_STORAGE),							\
+			(.event_size = sizeof(struct ename)),								\
+			())												\
 	}
-
 
 #ifdef __cplusplus
 }
