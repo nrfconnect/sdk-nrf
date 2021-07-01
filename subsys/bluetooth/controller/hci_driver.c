@@ -412,23 +412,78 @@ static void rand_prio_low_vector_get_blocking(uint8_t *p_buff, uint8_t length)
 	(void) err;
 }
 
-static int hci_driver_open(void)
+static int configure_supported_features(void)
 {
-	BT_DBG("Open");
-
-	k_thread_create(&recv_thread_data, recv_thread_stack,
-			K_THREAD_STACK_SIZEOF(recv_thread_stack), recv_thread,
-			NULL, NULL, NULL, K_PRIO_COOP(CONFIG_SDC_RX_PRIO), 0,
-			K_NO_WAIT);
-	k_thread_name_set(&recv_thread_data, "SDC RX");
-
-	uint8_t build_revision[SDC_BUILD_REVISION_SIZE];
-
-	sdc_build_revision_get(build_revision);
-	LOG_HEXDUMP_INF(build_revision, sizeof(build_revision),
-			"SoftDevice Controller build revision: ");
-
 	int err;
+
+	if (IS_ENABLED(CONFIG_BT_BROADCASTER)) {
+		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
+			err = sdc_support_ext_adv();
+			if (err) {
+				return -ENOTSUP;
+			}
+		} else {
+			err = sdc_support_adv();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		err = sdc_support_slave();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
+		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
+			err = sdc_support_ext_scan();
+			if (err) {
+				return -ENOTSUP;
+			}
+		} else {
+			err = sdc_support_scan();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+		err = sdc_support_master();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_DATA_LENGTH)) {
+		err = sdc_support_dle();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_2M)) {
+		err = sdc_support_le_2m_phy();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_CODED)) {
+		err = sdc_support_le_coded_phy();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	return 0;
+}
+
+static int configure_memory_usage(void)
+{
 	int required_memory;
 	sdc_cfg_t cfg;
 
@@ -497,6 +552,37 @@ static int hci_driver_open(void)
 		return -ENOMEM;
 	}
 
+	return 0;
+}
+
+static int hci_driver_open(void)
+{
+	BT_DBG("Open");
+
+	k_thread_create(&recv_thread_data, recv_thread_stack,
+			K_THREAD_STACK_SIZEOF(recv_thread_stack), recv_thread,
+			NULL, NULL, NULL, K_PRIO_COOP(CONFIG_SDC_RX_PRIO), 0,
+			K_NO_WAIT);
+	k_thread_name_set(&recv_thread_data, "SDC RX");
+
+	uint8_t build_revision[SDC_BUILD_REVISION_SIZE];
+
+	sdc_build_revision_get(build_revision);
+	LOG_HEXDUMP_INF(build_revision, sizeof(build_revision),
+			"SoftDevice Controller build revision: ");
+
+	int err;
+
+	err = configure_supported_features();
+	if (err) {
+		return -err;
+	}
+
+	err = configure_memory_usage();
+	if (err) {
+		return err;
+	}
+
 	entropy_source = device_get_binding(DT_LABEL(DT_NODELABEL(rng)));
 	if (!entropy_source) {
 		BT_ERR("An entropy source is required");
@@ -513,69 +599,6 @@ static int hci_driver_open(void)
 	if (err) {
 		BT_ERR("Failed to register rand source (%d)", err);
 		return -EINVAL;
-	}
-
-	if (IS_ENABLED(CONFIG_BT_BROADCASTER)) {
-		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
-			err = sdc_support_ext_adv();
-			if (err) {
-				return -ENOTSUP;
-			}
-		} else {
-			err = sdc_support_adv();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
-	}
-
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		err = sdc_support_slave();
-		if (err) {
-			return -ENOTSUP;
-		}
-	}
-
-	if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
-		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
-			err = sdc_support_ext_scan();
-			if (err) {
-				return -ENOTSUP;
-			}
-		} else {
-			err = sdc_support_scan();
-			if (err) {
-				return -ENOTSUP;
-			}
-		}
-	}
-
-	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-		err = sdc_support_master();
-		if (err) {
-			return -ENOTSUP;
-		}
-	}
-
-	if (IS_ENABLED(CONFIG_BT_CTLR_DATA_LENGTH)) {
-		err = sdc_support_dle();
-		if (err) {
-			return -ENOTSUP;
-		}
-	}
-
-	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_2M)) {
-		err = sdc_support_le_2m_phy();
-		if (err) {
-			return -ENOTSUP;
-		}
-	}
-
-	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_CODED)) {
-		err = sdc_support_le_coded_phy();
-		if (err) {
-			return -ENOTSUP;
-		}
 	}
 
 	err = MULTITHREADING_LOCK_ACQUIRE();
