@@ -25,6 +25,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_POWER_MANAGER_LOG_LEVEL);
 
 #include <caf/events/power_manager_event.h>
 #include <caf/events/keep_alive_event.h>
+#include <caf/events/force_power_down_event.h>
 
 
 #define POWER_DOWN_ERROR_TIMEOUT K_SECONDS(CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT)
@@ -184,6 +185,20 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_CAF_FORCE_POWER_DOWN_EVENTS) && is_force_power_down_event(eh)) {
+		if (power_state != POWER_STATE_IDLE) {
+			return false;
+		}
+
+		struct power_down_event *event = new_power_down_event();
+
+		LOG_INF("Force power down processing ");
+		event->error = false;
+		set_power_state(POWER_STATE_SUSPENDING);
+		EVENT_SUBMIT(event);
+		return false;
+	}
+
 	if (is_power_manager_restrict_event(eh)) {
 		bool was_alive_forced = check_power_alive_required();
 		const struct power_manager_restrict_event *event =
@@ -307,6 +322,9 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 EVENT_LISTENER(MODULE, event_handler);
+#if IS_ENABLED(CONFIG_CAF_FORCE_POWER_DOWN_EVENTS)
+	EVENT_SUBSCRIBE(MODULE, force_power_down_event);
+#endif
 #if IS_ENABLED(CONFIG_CAF_KEEP_ALIVE_EVENTS)
 	EVENT_SUBSCRIBE(MODULE, keep_alive_event);
 #endif

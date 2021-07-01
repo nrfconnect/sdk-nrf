@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CAF_FORCE_POWER_DOWN_EVENTS
+	bool "Enable force Power down event"
+	help
+	  Enable power manager event to put the device into power down mode when processed.
+	  It means the power down would be processed without the delay that is
+	  normally applied inside power manager.
+	  The event would be send only if the power manager is in IDLE state.
+	  The power down event would be send ignoring the fact if any of the modules
+	  requires ACTIVE state.
+	  The reasult of such situation would be powering down the device to SUSPENDED state.
+	  To avoid this the user is responsible in clearing all power ACTIVE requirements
+	  before sending this event.
+	  The event is here to support very specyfic requirement when the device
+	  has to limit is power usage no matter what.
+	  The possible usage scenarios are:
+	  - Reaction to USB SUSPEND on bus powered device
+	  - Reaction to power loss if we have for example to disable LEDs to keep power
+	    to do some important jobs before we lost all the power stored in system.
+
+config CAF_INIT_LOG_FORCE_POWER_DOWN_EVENTS
+	bool "Log force power down event"
+	depends on LOG
+	depends on CAF_FORCE_POWER_DOWN_EVENTS
+	default y
+	help
+	  Log the force power down event.
