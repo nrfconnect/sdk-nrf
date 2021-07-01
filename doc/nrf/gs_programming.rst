@@ -192,6 +192,10 @@ Complete the following steps to build |NCS| projects on the command line after c
          :end-before: .. imp_note_nrf91_end
 
 #.    Connect the development kit to your PC using a USB cable.
+
+      .. note::
+         To program the nRF52840 Dongle instead of a development kit, skip the following instructions and follow the programming instructions in :ref:`zephyr:nrf52840dongle_nrf52840`.
+
 #.    Power on the development kit.
 #.    Program the sample or application to the kit using the following command:
 
