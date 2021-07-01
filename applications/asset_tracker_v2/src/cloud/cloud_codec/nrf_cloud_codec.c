@@ -112,6 +112,16 @@ exit:
 	return err;
 }
 
+int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
+				      struct cloud_data_neighbor_cells *neighbor_cells)
+{
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(neighbor_cells != NULL);
+
+	neighbor_cells->queued = false;
+	return -ENOTSUP;
+}
+
 int cloud_codec_decode_config(char *input, struct cloud_data_cfg *data)
 {
 	int err = 0;
@@ -299,8 +309,6 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 	 */
 	if (modem_dyn_buf->queued && modem_dyn_buf->rsrp_fresh) {
 		char rsrp[7];
-		/* Subtract RSRP offset value. nRF Cloud expects this. */
-		modem_dyn_buf->rsrp -= 141;
 
 		/* Make a copy of the timestamp to avoid error when converting the relative
 		 * timestamp twice with date_time_uptime_to_unix_time_ms().

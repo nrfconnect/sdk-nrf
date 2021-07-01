@@ -560,6 +560,158 @@ exit:
 	return err;
 }
 
+int json_common_neighbor_cells_data_add(cJSON *parent,
+					struct cloud_data_neighbor_cells *data,
+					enum json_common_op_code op)
+{
+	int err;
+
+	if (!data->queued) {
+		return -ENODATA;
+	}
+
+	err = date_time_uptime_to_unix_time_ms(&data->ts);
+	if (err) {
+		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_NEIGHBOR_CELLS_MCC, data->cell_data.current_cell.mcc);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_NEIGHBOR_CELLS_MNC, data->cell_data.current_cell.mnc);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_NEIGHBOR_CELLS_CID, data->cell_data.current_cell.id);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_NEIGHBOR_CELLS_TAC, data->cell_data.current_cell.tac);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_NEIGHBOR_CELLS_EARFCN,
+			      data->cell_data.current_cell.earfcn);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_NEIGHBOR_CELLS_TIMING,
+			      data->cell_data.current_cell.timing_advance);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_NEIGHBOR_CELLS_RSRP,
+			      data->cell_data.current_cell.rsrp);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_NEIGHBOR_CELLS_RSRQ,
+			      data->cell_data.current_cell.rsrq);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_TIMESTAMP, data->ts);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	if (data->cell_data.ncells_count > 0) {
+		cJSON *neighbor_cells = cJSON_CreateArray();
+
+		if (neighbor_cells == NULL) {
+			return err;
+		}
+
+		for (int i = 0; i < data->cell_data.ncells_count; i++) {
+
+			cJSON *cell = cJSON_CreateObject();
+
+			if (cell == NULL) {
+				err = -ENOMEM;
+				cJSON_Delete(neighbor_cells);
+				return err;
+			}
+
+			err = json_add_number(cell, DATA_NEIGHBOR_CELLS_EARFCN,
+					      data->neighbor_cells[i].earfcn);
+			if (err) {
+				LOG_ERR("Encoding error: %d returned at %s:%d", err,
+					__FILE__, __LINE__);
+				cJSON_Delete(neighbor_cells);
+				cJSON_Delete(cell);
+				return err;
+			}
+
+			err = json_add_number(cell, DATA_NEIGHBOR_CELLS_PCI,
+					      data->neighbor_cells[i].phys_cell_id);
+			if (err) {
+				LOG_ERR("Encoding error: %d returned at %s:%d", err,
+					__FILE__, __LINE__);
+				cJSON_Delete(neighbor_cells);
+				cJSON_Delete(cell);
+				return err;
+			}
+
+			err = json_add_number(cell, DATA_NEIGHBOR_CELLS_RSRP,
+					      data->neighbor_cells[i].rsrp);
+			if (err) {
+				LOG_ERR("Encoding error: %d returned at %s:%d", err,
+					__FILE__, __LINE__);
+				cJSON_Delete(neighbor_cells);
+				cJSON_Delete(cell);
+				return err;
+			}
+
+			err = json_add_number(cell, DATA_NEIGHBOR_CELLS_RSRQ,
+					      data->neighbor_cells[i].rsrq);
+			if (err) {
+				LOG_ERR("Encoding error: %d returned at %s:%d", err,
+					__FILE__, __LINE__);
+				cJSON_Delete(neighbor_cells);
+				cJSON_Delete(cell);
+				return err;
+			}
+
+			err = op_code_handle(neighbor_cells, JSON_COMMON_ADD_DATA_TO_ARRAY, NULL,
+					     cell, NULL);
+			if (err) {
+				cJSON_Delete(neighbor_cells);
+				cJSON_Delete(cell);
+				return err;
+			}
+		}
+
+		err = op_code_handle(parent, JSON_COMMON_ADD_DATA_TO_OBJECT,
+				     DATA_NEIGHBOR_CELLS_NEIGHBOR_MEAS, neighbor_cells, NULL);
+		if (err) {
+			cJSON_Delete(neighbor_cells);
+			return err;
+		}
+	}
+
+	data->queued = false;
+	return err;
+}
+
 int json_common_battery_data_add(cJSON *parent,
 				 struct cloud_data_battery *data,
 				 enum json_common_op_code op,

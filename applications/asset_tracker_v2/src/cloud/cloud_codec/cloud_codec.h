@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include "cJSON_os.h"
 #include <net/net_ip.h>
+#include <modem/lte_lc.h>
 
 /**@file
  *
@@ -187,10 +188,20 @@ struct cloud_codec_data {
 	size_t len;
 };
 
+struct cloud_data_neighbor_cells {
+	struct lte_lc_cells_info cell_data;
+	struct lte_lc_ncell neighbor_cells[17];
+	int64_t ts;
+	bool queued : 1;
+};
+
 static inline void cloud_codec_init(void)
 {
 	cJSON_Init();
 }
+
+int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
+				      struct cloud_data_neighbor_cells *neighbor_cells);
 
 int cloud_codec_decode_config(char *input, struct cloud_data_cfg *cfg);
 

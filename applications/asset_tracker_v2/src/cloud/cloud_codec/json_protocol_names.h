@@ -53,6 +53,17 @@
 #define MODEM_CELL_ID		"cellID"
 #define MODEM_IP_ADDRESS	"ipAddress"
 
+#define DATA_NEIGHBOR_CELLS_MCC		  "mcc"
+#define DATA_NEIGHBOR_CELLS_MNC		  "mnc"
+#define DATA_NEIGHBOR_CELLS_CID		  "cell"
+#define DATA_NEIGHBOR_CELLS_TAC		  "area"
+#define DATA_NEIGHBOR_CELLS_EARFCN	  "earfcn"
+#define DATA_NEIGHBOR_CELLS_TIMING	  "adv"
+#define DATA_NEIGHBOR_CELLS_RSRP	  "rsrp"
+#define DATA_NEIGHBOR_CELLS_RSRQ	  "rsrq"
+#define DATA_NEIGHBOR_CELLS_NEIGHBOR_MEAS "nmr"
+#define DATA_NEIGHBOR_CELLS_PCI		  "cell"
+
 #define CONFIG_DEVICE_MODE	"activeMode"
 #define CONFIG_ACTIVE_TIMEOUT	"activeWaitTime"
 #define CONFIG_MOVE_TIMEOUT	"movementTimeout"
@@ -118,6 +129,17 @@
 #define DATA_GPS_SPEED		"spd"
 #define DATA_GPS_HEADING	"hdg"
 #define DATA_GPS_NMEA		"nmea"
+
+#define DATA_NEIGHBOR_CELLS_MCC		  "mcc"
+#define DATA_NEIGHBOR_CELLS_MNC		  "mnc"
+#define DATA_NEIGHBOR_CELLS_CID		  "cell"
+#define DATA_NEIGHBOR_CELLS_TAC		  "area"
+#define DATA_NEIGHBOR_CELLS_EARFCN	  "earfcn"
+#define DATA_NEIGHBOR_CELLS_TIMING	  "adv"
+#define DATA_NEIGHBOR_CELLS_RSRP	  "rsrp"
+#define DATA_NEIGHBOR_CELLS_RSRQ	  "rsrq"
+#define DATA_NEIGHBOR_CELLS_NEIGHBOR_MEAS "nmr"
+#define DATA_NEIGHBOR_CELLS_PCI		  "cell"
 
 #define OBJECT_CONFIG		"cfg"
 

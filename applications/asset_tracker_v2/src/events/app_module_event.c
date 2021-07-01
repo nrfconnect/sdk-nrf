@@ -23,6 +23,8 @@ static char *type2str(enum app_module_data_type type)
 		return "BAT";
 	case APP_DATA_GNSS:
 		return "GNSS";
+	case APP_DATA_NEIGHBOR_CELLS:
+		return "NEIGHBOR_CELLS";
 	default:
 		return "Unknown type";
 	}

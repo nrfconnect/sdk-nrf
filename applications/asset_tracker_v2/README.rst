@@ -64,19 +64,21 @@ Data types
 Data from multiple sensor sources are collected to construct information about the location, environment, and the health of the nRF9160-based device.
 The application supports the following data types:
 
-+---------------+----------------------------+-----------------------------------------------+
-| Data type     | Description                | Identifiers                                   |
-+===============+============================+===============================================+
-| Location      | GNSS coordinates           | APP_DATA_GNSS                                 |
-+---------------+----------------------------+-----------------------------------------------+
-| Environmental | Temperature, humidity      | APP_DATA_ENVIRONMENTAL                        |
-+---------------+----------------------------+-----------------------------------------------+
-| Movement      | Acceleration               | APP_DATA_MOVEMENT                             |
-+---------------+----------------------------+-----------------------------------------------+
-| Modem         | LTE link data, device data | APP_DATA_MODEM_DYNAMIC, APP_DATA_MODEM_STATIC |
-+---------------+----------------------------+-----------------------------------------------+
-| Battery       | Voltage                    | APP_DATA_BATTERY                              |
-+---------------+----------------------------+-----------------------------------------------+
++----------------+----------------------------+-----------------------------------------------+
+| Data type      | Description                | Identifiers                                   |
++================+============================+===============================================+
+| Location       | GNSS coordinates           | APP_DATA_GNSS                                 |
++----------------+----------------------------+-----------------------------------------------+
+| Environmental  | Temperature, humidity      | APP_DATA_ENVIRONMENTAL                        |
++----------------+----------------------------+-----------------------------------------------+
+| Movement       | Acceleration               | APP_DATA_MOVEMENT                             |
++----------------+----------------------------+-----------------------------------------------+
+| Modem          | LTE link data, device data | APP_DATA_MODEM_DYNAMIC, APP_DATA_MODEM_STATIC |
++----------------+----------------------------+-----------------------------------------------+
+| Battery        | Voltage                    | APP_DATA_BATTERY                              |
++----------------+----------------------------+-----------------------------------------------+
+| Neighbor cells | Neighbor cell measurements | APP_DATA_NEIGHBOR_CELLS                       |
++----------------+----------------------------+-----------------------------------------------+
 
 The sets of sensor data that are published to the cloud service consist of relative `timestamps <Timestamping_>`_ that originate from the time of sampling.
 

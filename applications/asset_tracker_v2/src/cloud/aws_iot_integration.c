@@ -22,9 +22,11 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #define BATCH_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 6)
 #define MESSAGES_TOPIC "%s/messages"
 #define MESSAGES_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 9)
+#define NEIGHBOR_CELLS_TOPIC "%s/ncellmeas"
+#define NEIGHBOR_CELLS_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 10)
 
 #define APP_SUB_TOPICS_COUNT 1
-#define APP_PUB_TOPICS_COUNT 2
+#define APP_PUB_TOPICS_COUNT 3
 
 #define REQUEST_SHADOW_DOCUMENT_STRING ""
 
@@ -32,6 +34,7 @@ static char client_id_buf[AWS_CLOUD_CLIENT_ID_LEN + 1];
 static char batch_topic[BATCH_TOPIC_LEN + 1];
 static char cfg_topic[CFG_TOPIC_LEN + 1];
 static char messages_topic[MESSAGES_TOPIC_LEN + 1];
+static char neighbor_cells_topic[NEIGHBOR_CELLS_TOPIC_LEN + 1];
 
 static struct aws_iot_topic_data sub_topics[APP_SUB_TOPICS_COUNT];
 static struct aws_iot_topic_data pub_topics[APP_PUB_TOPICS_COUNT];
@@ -70,6 +73,15 @@ static int populate_app_endpoint_topics(void)
 
 	pub_topics[1].str = messages_topic;
 	pub_topics[1].len = MESSAGES_TOPIC_LEN;
+
+	err = snprintf(neighbor_cells_topic, sizeof(neighbor_cells_topic),
+		       NEIGHBOR_CELLS_TOPIC, client_id_buf);
+	if (err != NEIGHBOR_CELLS_TOPIC_LEN) {
+		return -ENOMEM;
+	}
+
+	pub_topics[2].str = neighbor_cells_topic;
+	pub_topics[2].len = NEIGHBOR_CELLS_TOPIC_LEN;
 
 	err = snprintf(cfg_topic, sizeof(cfg_topic), CFG_TOPIC, client_id_buf);
 	if (err != CFG_TOPIC_LEN) {
@@ -337,6 +349,26 @@ int cloud_wrap_ui_send(char *buf, size_t len)
 		.qos = MQTT_QOS_0_AT_MOST_ONCE,
 		/* <imei>/messages */
 		.topic = pub_topics[1]
+	};
+
+	err = aws_iot_send(&msg);
+	if (err) {
+		LOG_ERR("aws_iot_send, error: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len)
+{
+	int err;
+	struct aws_iot_data msg = {
+		.ptr = buf,
+		.len = len,
+		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		/* <imei>/ncellmeas */
+		.topic = pub_topics[2]
 	};
 
 	err = aws_iot_send(&msg);

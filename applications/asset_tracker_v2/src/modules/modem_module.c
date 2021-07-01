@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdio.h>
 #include <event_manager.h>
-
+#include <math.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 
@@ -48,7 +48,7 @@ static enum state_type {
 static struct modem_param_info modem_param;
 
 /* Value that always holds the latest RSRP value. */
-static uint16_t rsrp_value_latest;
+static int16_t rsrp_value_latest;
 const k_tid_t module_thread;
 
 /* Modem module message queue. */
@@ -66,6 +66,7 @@ static struct module_data self = {
 
 /* Forward declarations. */
 static void send_cell_update(uint32_t cell_id, uint32_t tac);
+static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info);
 static void send_psm_update(int tau, int active_time);
 static void send_edrx_update(float edrx, float ptw);
 
@@ -197,6 +198,10 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 			evt->cell.id, evt->cell.tac);
 		send_cell_update(evt->cell.id, evt->cell.tac);
 		break;
+	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS:
+		LOG_DBG("Neighbor cell measurements received");
+		send_neighbor_cell_update((struct lte_lc_cells_info *)&evt->cells_info);
+		break;
 	default:
 		break;
 	}
@@ -205,7 +210,7 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 static void modem_rsrp_handler(char rsrp_value)
 {
 	/* RSRP raw values that represent actual signal strength are
-	 * 0 through 97 (per "nRF91 AT Commands" v1.1).
+	 * 0 through 97. RSRP is converted to dBm per "nRF91 AT Commands" v1.7.
 	 */
 
 	if (rsrp_value > 97) {
@@ -217,7 +222,7 @@ static void modem_rsrp_handler(char rsrp_value)
 	 * This temporarily saves the latest value which are sent to
 	 * the Data module upon a modem data request.
 	 */
-	rsrp_value_latest = rsrp_value;
+	rsrp_value_latest = rsrp_value - 140;
 
 	LOG_DBG("Incoming RSRP status message, RSRP value is %d",
 		rsrp_value_latest);
@@ -253,6 +258,48 @@ static void send_edrx_update(float edrx, float ptw)
 	evt->type = MODEM_EVT_LTE_EDRX_UPDATE;
 	evt->data.edrx.edrx = edrx;
 	evt->data.edrx.ptw = ptw;
+
+	EVENT_SUBMIT(evt);
+}
+
+static inline int adjust_rsrp(int input)
+{
+	return input - 140;
+}
+
+static inline int adjust_rsrq(int input)
+{
+	return round(input * 0.5 - 19.5);
+}
+
+static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info)
+{
+	struct modem_module_event *evt = new_modem_module_event();
+
+	BUILD_ASSERT(sizeof(evt->data.neighbor_cells.cell_data) ==
+		     sizeof(struct lte_lc_cells_info));
+	BUILD_ASSERT(sizeof(evt->data.neighbor_cells.neighbor_cells) >=
+		     sizeof(struct lte_lc_ncell) * CONFIG_LTE_NEIGHBOR_CELLS_MAX);
+
+	memcpy(&evt->data.neighbor_cells.cell_data, cell_info, sizeof(struct lte_lc_cells_info));
+	memcpy(&evt->data.neighbor_cells.neighbor_cells, cell_info->neighbor_cells,
+	       sizeof(struct lte_lc_ncell) * evt->data.neighbor_cells.cell_data.ncells_count);
+
+	/* Convert RSRP to dBm and RSRQ to dB per "nRF91 AT Commands" v1.7. */
+	evt->data.neighbor_cells.cell_data.current_cell.rsrp =
+			adjust_rsrp(evt->data.neighbor_cells.cell_data.current_cell.rsrp);
+	evt->data.neighbor_cells.cell_data.current_cell.rsrq =
+			adjust_rsrq(evt->data.neighbor_cells.cell_data.current_cell.rsrq);
+
+	for (size_t i = 0; i < evt->data.neighbor_cells.cell_data.ncells_count; i++) {
+		evt->data.neighbor_cells.neighbor_cells[i].rsrp =
+			adjust_rsrp(evt->data.neighbor_cells.neighbor_cells[i].rsrp);
+		evt->data.neighbor_cells.neighbor_cells[i].rsrq =
+			adjust_rsrq(evt->data.neighbor_cells.neighbor_cells[i].rsrq);
+	}
+
+	evt->type = MODEM_EVT_NEIGHBOR_CELLS_DATA_READY;
+	evt->data.neighbor_cells.timestamp = k_uptime_get();
 
 	EVENT_SUBMIT(evt);
 }
@@ -458,6 +505,18 @@ static bool battery_data_requested(enum app_module_data_type *data_list,
 	return false;
 }
 
+static bool neighbor_cells_data_requested(enum app_module_data_type *data_list,
+				     size_t count)
+{
+	for (size_t i = 0; i < count; i++) {
+		if (data_list[i] == APP_DATA_NEIGHBOR_CELLS) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 static int battery_data_get(void)
 {
 	int err;
@@ -480,6 +539,19 @@ static int battery_data_get(void)
 	modem_module_event->type = MODEM_EVT_BATTERY_DATA_READY;
 
 	EVENT_SUBMIT(modem_module_event);
+
+	return 0;
+}
+
+static int neighbor_cells_measurement_start(void)
+{
+	int err;
+
+	err = lte_lc_neighbor_cell_measurement();
+	if (err) {
+		LOG_ERR("Failed to start neighbor cell measurements, error: %d", err);
+		return err;
+	}
 
 	return 0;
 }
@@ -657,6 +729,16 @@ static void on_all_states(struct modem_msg_data *msg)
 			if (err) {
 				SEND_EVENT(modem,
 					MODEM_EVT_BATTERY_DATA_NOT_READY);
+			}
+		}
+
+		if (neighbor_cells_data_requested(msg->module.app.data_list,
+						  msg->module.app.count)) {
+			int err;
+
+			err = neighbor_cells_measurement_start();
+			if (err) {
+				SEND_EVENT(modem, MODEM_EVT_NEIGHBOR_CELLS_DATA_NOT_READY);
 			}
 		}
 	}

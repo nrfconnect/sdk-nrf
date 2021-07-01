@@ -73,3 +73,6 @@ int cloud_wrap_batch_send(char *buf, size_t len);
 
 /** Send UI data to cloud. Button presses. */
 int cloud_wrap_ui_send(char *buf, size_t len);
+
+/** Send neighbor cell data to cloud. */
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len);

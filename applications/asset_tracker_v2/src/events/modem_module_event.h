@@ -13,6 +13,8 @@
  * @{
  */
 #include <net/net_ip.h>
+#include <modem/lte_lc.h>
+
 #include "event_manager.h"
 
 #ifdef __cplusplus
@@ -31,6 +33,8 @@ enum modem_module_event_type {
 	MODEM_EVT_MODEM_DYNAMIC_DATA_READY,
 	MODEM_EVT_MODEM_STATIC_DATA_NOT_READY,
 	MODEM_EVT_MODEM_DYNAMIC_DATA_NOT_READY,
+	MODEM_EVT_NEIGHBOR_CELLS_DATA_READY,
+	MODEM_EVT_NEIGHBOR_CELLS_DATA_NOT_READY,
 	MODEM_EVT_BATTERY_DATA_NOT_READY,
 	MODEM_EVT_BATTERY_DATA_READY,
 	MODEM_EVT_SHUTDOWN_READY,
@@ -77,7 +81,7 @@ struct modem_module_dynamic_modem_data {
 	int64_t timestamp;
 	uint16_t area_code;
 	uint32_t cell_id;
-	uint16_t rsrp;
+	int16_t rsrp;
 	char ip_address[INET6_ADDRSTRLEN];
 	char mccmnc[7];
 
@@ -96,6 +100,12 @@ struct modem_module_battery_data {
 	int64_t timestamp;
 };
 
+struct modem_module_neighbor_cells {
+	struct lte_lc_cells_info cell_data;
+	struct lte_lc_ncell neighbor_cells[17];
+	int64_t timestamp;
+};
+
 /** @brief Modem event. */
 struct modem_module_event {
 	struct event_header header;
@@ -107,6 +117,7 @@ struct modem_module_event {
 		struct modem_module_cell cell;
 		struct modem_module_psm psm;
 		struct modem_module_edrx edrx;
+		struct modem_module_neighbor_cells neighbor_cells;
 		/* Module ID, used when acknowledging shutdown requests. */
 		uint32_t id;
 		int err;
