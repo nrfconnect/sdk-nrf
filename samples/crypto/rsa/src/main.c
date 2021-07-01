@@ -13,7 +13,7 @@
 #include <psa/crypto_extra.h>
 #include <crypto_common.h>
 
-LOG_MODULE_REGISTER(ecdsa, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(rsa, LOG_LEVEL_DBG);
 
 /* ====================================================================== */
 /*				Global variables/defines for the RSA example			  */
