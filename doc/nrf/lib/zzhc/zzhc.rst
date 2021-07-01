@@ -36,10 +36,10 @@ By default, the ZZHC library is not used in any sample.
 Enabling the ZZHC library
 -------------------------
 
-To enable the ZZHC library, complete the following steps:
+To enable the ZZHC library, edit the :file:`prj.conf` file according to the following steps:
 
-1. Set the :option:`CONFIG_TRUSTED_EXECUTION_NONSECURE` Kconfig option.
-   This option enables the Trusted Execution: Non-Secure firmware image.
+1. Set :option:`CONFIG_ZZHC` to ``y``.
+   This option enables the ZZHC library and ensures that China Telecom can approve the end product.
    The following required options are automatically selected when the ZZHC library is enabled:
 
    * :option:`CONFIG_NRF_MODEM_LIB`
@@ -50,26 +50,25 @@ To enable the ZZHC library, complete the following steps:
    * :option:`CONFIG_BASE64`
    * :option:`CONFIG_JSON_LIBRARY`
 
-#. In the :file:`prj.conf` file, configure the following options:
+#. Set :option:`CONFIG_TRUSTED_EXECUTION_NONSECURE` to ``y``.
+   This option enables the Trusted Execution: Non-Secure firmware image.
+   The ZZHC library only works when this option is enabled.
+#. Set :option:`CONFIG_HEAP_MEM_POOL_SIZE` to the minimum heap size required (2560 bytes): ``CONFIG_HEAP_MEM_POOL_SIZE=2560``.
+#. Set the following options required by :option:`CONFIG_NRF_MODEM_LIB`:
 
-   a. Set :option:`CONFIG_ZZHC` to ``y``.
-      This ensures that China Telecom can approve the end product.
-   #. Set :option:`CONFIG_HEAP_MEM_POOL_SIZE` to the minimum heap size required (2560 bytes): ``CONFIG_HEAP_MEM_POOL_SIZE=2560``.
-   #. Set the following options required by :option:`CONFIG_NRF_MODEM_LIB`:
+   * ``CONFIG_NETWORKING=y``
+   * ``CONFIG_NET_NATIVE=n``
+   * ``CONFIG_NET_SOCKETS=y``
+   * ``CONFIG_NET_SOCKETS_OFFLOAD=y``
 
-      * ``CONFIG_NETWORKING=y``
-      * ``CONFIG_NET_NATIVE=n``
-      * ``CONFIG_NET_SOCKETS=y``
-      * ``CONFIG_NET_SOCKETS_OFFLOAD=y``
+#. Set the following options required by :option:`CONFIG_SETTINGS`:
 
-   #. Set the following options required by :option:`CONFIG_SETTINGS`:
-
-      * ``CONFIG_FLASH=y``
-      * ``CONFIG_FLASH_PAGE_LAYOUT=y``
-      * ``CONFIG_FLASH_MAP=y``
-      * ``CONFIG_MPU_ALLOW_FLASH_WRITE=y``
-      * ``CONFIG_NVS=y``
-      * ``CONFIG_SETTINGS_NVS_SECTOR_COUNT=6``
+   * ``CONFIG_FLASH=y``
+   * ``CONFIG_FLASH_PAGE_LAYOUT=y``
+   * ``CONFIG_FLASH_MAP=y``
+   * ``CONFIG_MPU_ALLOW_FLASH_WRITE=y``
+   * ``CONFIG_NVS=y``
+   * ``CONFIG_SETTINGS_NVS_SECTOR_COUNT=6``
 
 Configuring additional thread behavior
 --------------------------------------
@@ -78,7 +77,6 @@ You can configure the thread behavior using the following Kconfig options:
 
 * To adjust the stack size for the thread, change :option:`CONFIG_ZZHC_STACK_SIZE`.
 * To adjust the thread priority, change :option:`CONFIG_ZZHC_THREAD_PRIO`.
-
 
 Allowing for automatic registration to LTE-M or NB-IoT on boot
 --------------------------------------------------------------
