@@ -77,8 +77,6 @@ endmenu # Zephyr subsystem configurations
 menu "Zephyr samples configurations"
 
 if BT_RPMSG_NRF53 && SOC_NRF5340_CPUAPP
-module=HCI_RPMSG
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
 
 DT_CHOSEN_Z_IPC_SHM := zephyr,ipc_shm
 
@@ -97,14 +95,7 @@ endmenu # NCS subsystem configurations
 
 menu "NCS samples configurations"
 
-if NRF_802154_SER_HOST && SOC_NRF5340_CPUAPP
-module=802154_RPMSG
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
-endif
-
 if BT_RPC && SOC_NRF5340_CPUAPP
-module=RPC_HOST
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
 
 DT_CHOSEN_Z_IPC_SHM := zephyr,ipc_shm
 

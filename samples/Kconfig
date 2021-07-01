@@ -16,14 +16,69 @@ config NCS_SAMPLES_DEFAULTS
 	help
 	  Use the default configuration for NCS samples.
 
+if SOC_SERIES_NRF53X
+
 config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
-	bool "Enable empty_app_core as a child image"
-	default n
+	bool "Add empty_app_core as a child image"
 	depends on SOC_NRF5340_CPUNET
 	select PARTITION_MANAGER_ENABLED
 	help
-	  Add the empty_app_core as a child image for the given sample.
-	  Used by samples that only require SOC_NRF5340_CPUNET.
+	  Add empty_app_core as a child image (application core).
+	  Used by samples that run on the network core only.
+
+config NCS_INCLUDE_RPMSG_CHILD_IMAGE
+	bool "Include RPMsg sample on netcore"
+	depends on SOC_NRF5340_CPUAPP && (BT_RPMSG_NRF53 || NRF_802154_SER_HOST || BT_RPC)
+	select PARTITION_MANAGER_ENABLED
+	default y if BT_RPMSG_NRF53 || NRF_802154_SER_HOST || BT_RPC
+	help
+	  Enabling this setting will include a network stack to run on the
+	  network core and communicate over RPMsg with the application core.
+	  The application core does not have access to the radio peripheral.
+
+	  The network core sample to be included depends on the configuration of
+	  the application.
+
+	  The following RPMsg samples may be included when this setting is enabled:
+	  In order of precedence:
+	  - Multiprotocol RPMsg: When both Bluetooth and nRF IEEE 802.15.4 Serialization host are enabled.
+	  - HCI RPMsg: When only Bluetooth is enabled
+	  - nRF IEEE 802.15.4 Serialization RPMsg: When only nRF IEEE 802.15.4 Serialization host is enabled.
+	  - nRF RPC Host: When Bluetooth and Bluetooth serialization over RPC are enabled.
+
+if NCS_INCLUDE_RPMSG_CHILD_IMAGE
+
+config NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE
+	bool
+	depends on BT_RPMSG_NRF53 && NRF_802154_SER_HOST && !BT_RPC
+	default y
+	help
+	  multiprotocol_rpmsg sample as a child image (network core).
+
+config NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE
+	bool
+	depends on BT_RPMSG_NRF53 && !NRF_802154_SER_HOST && !BT_RPC
+	default y
+	help
+	  hci_rpmsg sample as a child image (network core).
+
+config NCS_SAMPLE_802154_RPMSG_CHILD_IMAGE
+	bool
+	depends on NRF_802154_SER_HOST && !BT_RPMSG_NRF53 && !BT_RPC
+	default y
+	help
+	  802154_rpmsg sample as a child image (network core).
+
+config NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
+	bool
+	depends on BT_RPC
+	default y
+	help
+	  rpc_host sample as a child image (network core).
+
+endif # NCS_INCLUDE_RPMSG_CHILD_IMAGE
+
+endif # SOC_SERIES_NRF53X
 
 if LOG
 
