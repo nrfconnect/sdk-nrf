@@ -49,6 +49,48 @@ static bool has_shadow_update_been_handled(cJSON *root_obj)
 	return retval;
 }
 
+int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
+				      struct cloud_data_neighbor_cells *neighbor_cells)
+{
+	int err;
+	char *buffer;
+
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(neighbor_cells != NULL);
+
+	cJSON *root_obj = cJSON_CreateObject();
+
+	if (root_obj == NULL) {
+		cJSON_Delete(root_obj);
+		return -ENOMEM;
+	}
+
+	err = json_common_neighbor_cells_data_add(root_obj, neighbor_cells,
+						  JSON_COMMON_ADD_DATA_TO_OBJECT);
+	if (err) {
+		goto exit;
+	}
+
+	buffer = cJSON_PrintUnformatted(root_obj);
+	if (buffer == NULL) {
+		LOG_ERR("Failed to allocate memory for JSON string");
+
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LOG_LEVEL_DBG)) {
+		json_print_obj("Encoded message:\n", root_obj);
+	}
+
+	output->buf = buffer;
+	output->len = strlen(buffer);
+
+exit:
+	cJSON_Delete(root_obj);
+	return err;
+}
+
 int cloud_codec_decode_config(char *input, struct cloud_data_cfg *data)
 {
 	int err = 0;

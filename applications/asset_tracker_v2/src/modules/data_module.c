@@ -64,6 +64,7 @@ static struct cloud_data_ui ui_buf[CONFIG_DATA_UI_BUFFER_COUNT];
 static struct cloud_data_accelerometer accel_buf[CONFIG_DATA_ACCELEROMETER_BUFFER_COUNT];
 static struct cloud_data_battery bat_buf[CONFIG_DATA_BATTERY_BUFFER_COUNT];
 static struct cloud_data_modem_dynamic modem_dyn_buf[CONFIG_DATA_MODEM_DYNAMIC_BUFFER_COUNT];
+static struct cloud_data_neighbor_cells neighbor_cells;
 
 /* Static modem data does not change between firmware versions and does not
  * have to be buffered.
@@ -112,6 +113,7 @@ enum data_type {
 	GENERIC,
 	BATCH,
 	UI,
+	NEIGHBOR_CELLS,
 	CONFIG
 };
 
@@ -375,6 +377,8 @@ static void data_resend(void)
 			case UI:
 				evt->type = DATA_EVT_UI_DATA_SEND;
 				break;
+			case NEIGHBOR_CELLS:
+				evt->type = DATA_EVT_NEIGHBOR_CELLS_DATA_SEND;
 			default:
 				LOG_WRN("Unknown associated data type");
 				SEND_ERROR(data, DATA_EVT_ERROR, -ENODATA);
@@ -491,19 +495,53 @@ static void config_status_set_all(bool fresh)
 	current_cfg.accelerometer_threshold_fresh = fresh;
 }
 
+static void data_send(enum data_module_event_type event,
+		      enum data_type type,
+		      struct cloud_codec_data *data)
+{
+	struct data_module_event *module_event = new_data_module_event();
+
+	module_event->type = event;
+	module_event->data.buffer.buf = data->buf;
+	module_event->data.buffer.len = data->len;
+
+	data_list_add_pending(data->buf, data->len, type);
+	EVENT_SUBMIT(module_event);
+
+	/* Reset buffer */
+	data->buf = NULL;
+	data->len = 0;
+}
+
 /* This function allocates buffer on the heap, which needs to be freed after use. */
-static void data_send(void)
+static void data_encode(void)
 {
 	int err;
-	struct data_module_event *data_module_event_new;
-	struct data_module_event *data_module_event_batch;
-	struct cloud_codec_data codec;
+	struct cloud_codec_data codec = {0};
 
 	if (!date_time_is_valid()) {
 		/* Date time library does not have valid time to
 		 * timestamp cloud data. Abort cloud publicaton. Data will
 		 * be cached in it respective ringbuffer.
 		 */
+		return;
+	}
+
+	err = cloud_codec_encode_neighbor_cells(&codec, &neighbor_cells);
+	switch (err) {
+	case 0:
+		LOG_DBG("Neighbor cell data encoded successfully");
+		data_send(DATA_EVT_NEIGHBOR_CELLS_DATA_SEND, NEIGHBOR_CELLS, &codec);
+		break;
+	case -ENOTSUP:
+		/* Neighbor cell data encoding not supported */
+		break;
+	case -ENODATA:
+		LOG_DBG("No neighbor cells data to encode, error: %d", err);
+		break;
+	default:
+		LOG_ERR("Error encoding neighbor cells data: %d", err);
+		SEND_ERROR(data, DATA_EVT_ERROR, err);
 		return;
 	}
 
@@ -516,32 +554,22 @@ static void data_send(void)
 		&ui_buf[head_ui_buf],
 		&accel_buf[head_accel_buf],
 		&bat_buf[head_bat_buf]);
-	if (err == -ENODATA) {
-		/* This error might occurs when data has not been obtained prior
+	switch (err) {
+	case 0:
+		LOG_DBG("Data encoded successfully");
+		data_send(DATA_EVT_DATA_SEND, GENERIC, &codec);
+		break;
+	case -ENODATA:
+		/* This error might occur when data has not been obtained prior
 		 * to data encoding.
 		 */
-		LOG_DBG("No new data to encode, error: %d", err);
-		return;
-	} else if (err) {
+		LOG_DBG("No new data to encode");
+		break;
+	default:
 		LOG_ERR("Error encoding message %d", err);
 		SEND_ERROR(data, DATA_EVT_ERROR, err);
 		return;
 	}
-
-	LOG_DBG("Data encoded successfully");
-
-
-	data_module_event_new = new_data_module_event();
-	data_module_event_new->type = DATA_EVT_DATA_SEND;
-
-	data_module_event_new->data.buffer.buf = codec.buf;
-	data_module_event_new->data.buffer.len = codec.len;
-
-	data_list_add_pending(codec.buf, codec.len, GENERIC);
-	EVENT_SUBMIT(data_module_event_new);
-
-	codec.buf = NULL;
-	codec.len = 0;
 
 	err = cloud_codec_encode_batch_data(&codec,
 					gps_buf,
@@ -556,22 +584,19 @@ static void data_send(void)
 					ARRAY_SIZE(ui_buf),
 					ARRAY_SIZE(accel_buf),
 					ARRAY_SIZE(bat_buf));
-	if (err == -ENODATA) {
-		LOG_DBG("No batch data to encode, ringbuffers empty");
-		return;
-	} else if (err) {
+	switch (err) {
+	case 0:
+		LOG_DBG("Batch data encoded successfully");
+		data_send(DATA_EVT_DATA_SEND_BATCH, BATCH, &codec);
+		break;
+	case -ENODATA:
+		LOG_DBG("No batch data to encode, ringbuffers are empty");
+		break;
+	default:
 		LOG_ERR("Error batch-enconding data: %d", err);
 		SEND_ERROR(data, DATA_EVT_ERROR, err);
 		return;
 	}
-
-	data_module_event_batch = new_data_module_event();
-	data_module_event_batch->type = DATA_EVT_DATA_SEND_BATCH;
-	data_module_event_batch->data.buffer.buf = codec.buf;
-	data_module_event_batch->data.buffer.len = codec.len;
-
-	data_list_add_pending(codec.buf, codec.len, BATCH);
-	EVENT_SUBMIT(data_module_event_batch);
 }
 
 static void config_get(void)
@@ -809,7 +834,7 @@ static void on_cloud_state_connected(struct data_msg_data *msg)
 	if (IS_EVENT(msg, data, DATA_EVT_DATA_READY)) {
 		/* Resend data previously failed to be sent. */
 		data_resend();
-		data_send();
+		data_encode();
 		return;
 	}
 
@@ -1062,6 +1087,30 @@ static void on_all_states(struct data_msg_data *msg)
 						ARRAY_SIZE(gps_buf));
 
 		requested_data_status_set(APP_DATA_GNSS);
+	}
+
+	if (IS_EVENT(msg, modem, MODEM_EVT_NEIGHBOR_CELLS_DATA_READY)) {
+		BUILD_ASSERT(sizeof(neighbor_cells.cell_data) ==
+			     sizeof(msg->module.modem.data.neighbor_cells.cell_data));
+
+		BUILD_ASSERT(sizeof(neighbor_cells.neighbor_cells) ==
+			     sizeof(msg->module.modem.data.neighbor_cells.neighbor_cells));
+
+		memcpy(&neighbor_cells.cell_data, &msg->module.modem.data.neighbor_cells.cell_data,
+		       sizeof(neighbor_cells.cell_data));
+
+		memcpy(&neighbor_cells.neighbor_cells,
+		       &msg->module.modem.data.neighbor_cells.neighbor_cells,
+		       sizeof(neighbor_cells.neighbor_cells));
+
+		neighbor_cells.ts = msg->module.modem.data.neighbor_cells.timestamp;
+		neighbor_cells.queued = true;
+
+		requested_data_status_set(APP_DATA_NEIGHBOR_CELLS);
+	}
+
+	if (IS_EVENT(msg, modem, MODEM_EVT_NEIGHBOR_CELLS_DATA_NOT_READY)) {
+		requested_data_status_set(APP_DATA_NEIGHBOR_CELLS);
 	}
 
 	if (IS_EVENT(msg, gps, GPS_EVT_TIMEOUT)) {

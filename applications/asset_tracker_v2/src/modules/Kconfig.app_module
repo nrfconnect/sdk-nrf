@@ -10,4 +10,11 @@ config APP_REQUEST_GPS_ON_INITIAL_SAMPLING
 	bool "Request GPS on initial data sampling after connection"
 	default y if GPS_MODULE
 
+config APP_REQUEST_NEIGHBOR_CELLS_DATA
+	bool "Request neighbor cells data"
+	help
+	  Include LTE neighbor cell measurement data in regular sampling requests.
+	  The data will be encoded together with the other sampled data and sent to cloud,
+	  where it can be used to determine the device's location.
+
 endmenu

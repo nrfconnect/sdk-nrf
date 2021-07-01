@@ -20,6 +20,16 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
+int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
+				      struct cloud_data_neighbor_cells *neighbor_cells)
+{
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(neighbor_cells != NULL);
+
+	neighbor_cells->queued = false;
+	return -ENOTSUP;
+}
+
 int cloud_codec_decode_config(char *input, struct cloud_data_cfg *data)
 {
 	int err = 0;
