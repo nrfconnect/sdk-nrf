@@ -50,6 +50,7 @@ struct icmp_ping_shell_cmd_argv {
 	uint32_t count;
 	uint32_t interval;
 	bool force_ipv6;
+	bool rai;
 };
 
 /**
