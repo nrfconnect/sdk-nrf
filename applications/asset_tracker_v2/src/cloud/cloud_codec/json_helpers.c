@@ -16,12 +16,18 @@ LOG_MODULE_REGISTER(json_helpers, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
 void json_add_obj(cJSON *parent, const char *str, cJSON *item)
 {
-	cJSON_AddItemToObject(parent, str, item);
+	if (!cJSON_AddItemToObject(parent, str, item)) {
+		LOG_ERR("Failed adding object");
+		cJSON_Delete(item);
+	}
 }
 
 void json_add_obj_array(cJSON *parent, cJSON *item)
 {
-	cJSON_AddItemToArray(parent, item);
+	if (!cJSON_AddItemToArray(parent, item)) {
+		LOG_ERR("Failed adding array item");
+		cJSON_Delete(item);
+	}
 }
 
 int json_add_number(cJSON *parent, const char *str, double item)
