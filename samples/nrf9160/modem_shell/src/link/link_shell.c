@@ -41,7 +41,8 @@ enum link_shell_command {
 	LINK_CMD_NORMAL_MODE_AT,
 	LINK_CMD_NORMAL_MODE_AUTO,
 	LINK_CMD_EDRX,
-	LINK_CMD_PSM
+	LINK_CMD_PSM,
+	LINK_CMD_RAI
 };
 
 enum link_shell_common_options {
@@ -100,7 +101,9 @@ static const char link_usage_str[] =
 	"                Has impact after the bootup\n"
 	"  edrx:         Enable/disable eDRX with default or with custom parameters\n"
 	"  psm:          Enable/disable Power Saving Mode (PSM) with\n"
-	"                default or with custom parameters\n";
+	"                default or with custom parameters\n"
+	"  rai:          Enable/disable RAI feature. Actual use must be set for sockets\n"
+	"                with 'sock rai' command. Effective when going to normal mode.\n";
 
 static const char link_settings_usage_str[] =
 	"Usage: link settings --read | --reset\n"
@@ -260,6 +263,12 @@ static const char link_tau_usage_str[] =
 	"                         Default value from\n"
 	"                         CONFIG_LTE_LC_TAU_PRE_WARNING_TIME_MS.\n";
 
+static const char link_rai_usage_str[] =
+	"Usage: link rai --enable | --disable\n"
+	"Options:\n"
+	"  -d, --disable,      Disable RAI\n"
+	"  -e, --enable,       Enable RAI\n";
+
 /******************************************************************************/
 
 /* Following are not having short options: */
@@ -389,6 +398,9 @@ static void link_shell_print_usage(const struct shell *shell,
 		break;
 	case LINK_CMD_TAU:
 		shell_print(shell, "%s", link_tau_usage_str);
+		break;
+	case LINK_CMD_RAI:
+		shell_print(shell, "%s", link_rai_usage_str);
 		break;
 	default:
 		shell_print(shell, "%s", link_usage_str);
@@ -550,6 +562,9 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 	} else if (strcmp(argv[1], "psm") == 0) {
 		require_option = true;
 		link_cmd_args.command = LINK_CMD_PSM;
+	} else if (strcmp(argv[1], "rai") == 0) {
+		require_option = true;
+		link_cmd_args.command = LINK_CMD_RAI;
 	} else {
 		shell_error(shell, "Unsupported command=%s\n", argv[1]);
 		ret = -EINVAL;
@@ -1324,6 +1339,13 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		ret = link_shell_pdn_connect(shell, apn, family,
 					     auth_params_ptr);
 	} break;
+	case LINK_CMD_RAI:
+		if (link_cmd_args.common_option == LINK_COMMON_ENABLE) {
+			link_rai_enable(true);
+		} else {
+			link_rai_enable(false);
+		}
+		break;
 	case LINK_CMD_DISCONNECT:
 		ret = link_shell_pdn_disconnect(shell, pdn_cid);
 		break;

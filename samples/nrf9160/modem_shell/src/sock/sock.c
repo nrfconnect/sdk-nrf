@@ -1164,31 +1164,6 @@ int sock_close(int socket_id)
 	return 0;
 }
 
-int sock_rai_enable(int rai_enable)
-{
-	enum at_cmd_state state = AT_CMD_OK;
-	char command[] = "AT%%RAI=0";
-	int err;
-
-	if (rai_enable == SOCK_RAI_NONE) {
-		shell_error(shell_global, "No valid RAI options given");
-		return -EINVAL;
-	}
-	sprintf(command, "AT%%RAI=%d", rai_enable);
-	err = at_cmd_write(command, NULL, 0, &state);
-	if (state == AT_CMD_OK) {
-		shell_print(
-			shell_global,
-			"Release Assistance Indication functionality set to enabled=%d",
-			rai_enable);
-	} else {
-		shell_error(shell_global, "Error state=%d, error=%d",
-			    state, err);
-		return -EINVAL;
-	}
-	return 0;
-}
-
 static int sock_rai_option_set(int fd, int option, char *option_string)
 {
 	int err = setsockopt(fd, SOL_SOCKET, option, NULL, 0);

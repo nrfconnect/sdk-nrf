@@ -50,10 +50,8 @@ static const char sock_usage_str[] =
 	"            and final summary for receiving.\n"
 	"            Mandatory options: -i\n"
 	"  rai:      Set Release Assistance Indication (RAI) parameters.\n"
-	"            --rai_enable, --rai_disable or -i option shall be used.\n"
-	"            -i option should be used together with other rai options\n"
-	"            excluding --rai_enable or --rai_disable that should be\n"
-	"            used without other parameters.\n"
+	"            In order to use RAI options for a socket, RAI feature must be\n"
+	"            globally enabled with 'link rai' command.\n"
 	"  list:     List open sockets. No options available.\n"
 	"\n"
 	"General options:\n"
@@ -100,14 +98,6 @@ static const char sock_usage_str[] =
 	"                                01 02 03 04 05 06 07 08 09 10 11 12\n"
 	"                                01020304 05060708 09101112\n"
 	"Options for 'rai' command:\n"
-	"      --rai_enable,         Enable RAI functionality. This shall be used\n"
-	"                            without other parameters and it applies to all\n"
-	"                            sockets. This takes effect the next time modem\n"
-	"                            is switched to normal mode.\n"
-	"      --rai_disable,        Disable RAI functionality. This shall be used\n"
-	"                            without other parameters and it applies to all\n"
-	"                            sockets. This takes effect the next time modem\n"
-	"                            is switched to normal mode.\n"
 	"      --rai_last,           Sets NRF_SO_RAI_LAST option.\n"
 	"                            Indicates that the next call to send/sendto will be\n"
 	"                            the last one for some time, which means that the\n"
@@ -145,13 +135,11 @@ static const char sock_usage_str[] =
 	"                            'hex'\n";
 
 /* The following do not have short options: */
-#define SOCK_SHELL_OPT_RAI_ENABLE 200
-#define SOCK_SHELL_OPT_RAI_DISABLE 201
-#define SOCK_SHELL_OPT_RAI_LAST 202
-#define SOCK_SHELL_OPT_RAI_NO_DATA 203
-#define SOCK_SHELL_OPT_RAI_ONE_RESP 204
-#define SOCK_SHELL_OPT_RAI_ONGOING 205
-#define SOCK_SHELL_OPT_RAI_WAIT_MORE 206
+#define SOCK_SHELL_OPT_RAI_LAST 200
+#define SOCK_SHELL_OPT_RAI_NO_DATA 201
+#define SOCK_SHELL_OPT_RAI_ONE_RESP 202
+#define SOCK_SHELL_OPT_RAI_ONGOING 203
+#define SOCK_SHELL_OPT_RAI_WAIT_MORE 204
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options[] = {
@@ -175,8 +163,6 @@ static struct option long_options[] = {
 	{ "start",          no_argument,       0, 'r' },
 	{ "blocking",       required_argument, 0, 'B' },
 	{ "print_format",   required_argument, 0, 'P' },
-	{ "rai_enable",     no_argument,       0, SOCK_SHELL_OPT_RAI_ENABLE },
-	{ "rai_disable",    no_argument,       0, SOCK_SHELL_OPT_RAI_DISABLE },
 	{ "rai_last",       no_argument,       0, SOCK_SHELL_OPT_RAI_LAST },
 	{ "rai_no_data",    no_argument,       0, SOCK_SHELL_OPT_RAI_NO_DATA },
 	{ "rai_one_resp",   no_argument,       0, SOCK_SHELL_OPT_RAI_ONE_RESP },
@@ -246,7 +232,6 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 	bool arg_blocking_send = true;
 	bool arg_blocking_recv = false;
 	enum sock_recv_print_format arg_recv_print_format = SOCK_RECV_PRINT_FORMAT_NONE;
-	int arg_rai_enable = SOCK_RAI_NONE;
 	bool arg_rai_last = false;
 	bool arg_rai_no_data = false;
 	bool arg_rai_one_resp = false;
@@ -447,12 +432,6 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		/* Options without short option: */
-		case SOCK_SHELL_OPT_RAI_ENABLE:
-			arg_rai_enable = true;
-			break;
-		case SOCK_SHELL_OPT_RAI_DISABLE:
-			arg_rai_enable = false;
-			break;
 		case SOCK_SHELL_OPT_RAI_LAST:
 			arg_rai_last = true;
 			break;
@@ -511,17 +490,13 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		err = sock_close(arg_socket_id);
 		break;
 	case SOCK_CMD_RAI:
-		if (arg_socket_id == SOCK_ID_NONE) {
-			err = sock_rai_enable(arg_rai_enable);
-		} else {
-			err = sock_rai(
-				arg_socket_id,
-				arg_rai_last,
-				arg_rai_no_data,
-				arg_rai_one_resp,
-				arg_rai_ongoing,
-				arg_rai_wait_more);
-		}
+		err = sock_rai(
+			arg_socket_id,
+			arg_rai_last,
+			arg_rai_no_data,
+			arg_rai_one_resp,
+			arg_rai_ongoing,
+			arg_rai_wait_more);
 		break;
 	case SOCK_CMD_LIST:
 		err = sock_list();
