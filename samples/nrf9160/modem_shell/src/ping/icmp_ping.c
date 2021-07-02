@@ -39,6 +39,12 @@
 #define ICMP6_ECHO_REQ 128
 #define ICMP6_ECHO_REP 129
 
+enum ping_rai {
+	PING_RAI_NONE,
+	PING_RAI_ONGOING,
+	PING_RAI_LAST_PACKET
+};
+
 /* ICMP Ping command arguments */
 static struct icmp_ping_shell_cmd_argv ping_argv;
 
@@ -111,7 +117,7 @@ static void calc_ics(uint8_t *buffer, int len, int hcs_pos)
 
 /*****************************************************************************/
 
-static uint32_t send_ping_wait_reply(const struct shell *shell)
+static uint32_t send_ping_wait_reply(const struct shell *shell, enum ping_rai rai)
 {
 	static int64_t start_t;
 	int64_t delta_t;
@@ -331,6 +337,19 @@ static uint32_t send_ping_wait_reply(const struct shell *shell)
 	}
 #endif
 #endif
+	if (rai != PING_RAI_NONE) {
+		/* Set RAI option ONGOING except for the last packet for which we set ONE_RESP */
+		int rai_option = SO_RAI_ONGOING;
+
+		if (rai == PING_RAI_LAST_PACKET) {
+			rai_option = SO_RAI_ONE_RESP;
+		}
+		ret = setsockopt(fd, SOL_SOCKET, rai_option, NULL, 0);
+		if (ret) {
+			shell_error(shell, "setsockopt() for RAI failed with error %d", errno);
+			goto close_end;
+		}
+	}
 
 	/* Include also a sending time to measured RTT: */
 	start_t = k_uptime_get();
@@ -411,6 +430,16 @@ wait_for_data:
 			break;
 		}
 	} while (true);
+
+	if (rai == PING_RAI_LAST_PACKET) {
+		/* Set RAI option NO_DATA after last response has been received */
+		ret = setsockopt(fd, SOL_SOCKET, SO_RAI_NO_DATA, NULL, 0);
+		if (ret) {
+			shell_error(shell, "setsockopt() for SO_RAI_NO_DATA failed with error %d",
+				    errno);
+			goto close_end;
+		}
+	}
 
 	if (rep == ICMP_ECHO_REP) {
 		/* Check ICMP HCS */
@@ -496,9 +525,20 @@ static void icmp_ping_tasks_execute(const struct shell *shell)
 	uint32_t count = 0;
 	uint32_t rtt_min = 0xFFFFFFFF;
 	uint32_t rtt_max = 0;
+	enum ping_rai rai;
+	uint32_t ping_t;
 
 	for (int i = 0; i < ping_argv.count; i++) {
-		uint32_t ping_t = send_ping_wait_reply(shell);
+		rai = PING_RAI_NONE;
+		if (ping_argv.rai) {
+			if (i == ping_argv.count - 1) {
+				/* For last packet */
+				rai = PING_RAI_LAST_PACKET;
+			} else {
+				rai = PING_RAI_ONGOING;
+			}
+		}
+		ping_t = send_ping_wait_reply(shell, rai);
 
 		if (ping_t > 0) {
 			count++;

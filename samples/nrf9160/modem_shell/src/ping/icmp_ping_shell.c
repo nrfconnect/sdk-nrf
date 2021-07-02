@@ -29,6 +29,7 @@ static const char icmp_ping_shell_cmd_usage_str[] =
 	"  -I, --cid, [int]         Use this option to bind pinging to specific CID.\n"
 	"                           See link cmd for interfaces\n"
 	"  -6, --ipv6,              Force IPv6 usage with the dual stack interfaces\n"
+	"  -r, --rai                Set RAI options for ping socket\n"
 	"  -h, --help,              Shows this help information\n";
 
 /* Specifying the expected options (both long and short): */
@@ -40,6 +41,7 @@ static struct option long_options[] = {
 	{ "length", required_argument, 0, 'l' },
 	{ "cid", required_argument, 0, 'I' },
 	{ "ipv6", no_argument, 0, '6' },
+	{ "rai", no_argument, 0, 'r' },
 	{ "help", no_argument, 0, 'h' },
 	{ 0, 0, 0, 0 }
 };
@@ -109,7 +111,7 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 	/* Start from the 1st argument */
 	optind = 1;
 
-	while ((flag = getopt_long(argc, argv, "d:t:c:i:I:l:h6", long_options, NULL)) != -1) {
+	while ((flag = getopt_long(argc, argv, "d:t:c:i:I:l:h6r", long_options, NULL)) != -1) {
 
 		switch (flag) {
 		case 'd': /* destination */
@@ -171,6 +173,9 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case '6': /* force ipv6 */
 			ping_args.force_ipv6 = true;
+			break;
+		case 'r': /* RAI */
+			ping_args.rai = true;
 			break;
 		case 'h': /* help */
 		default:
