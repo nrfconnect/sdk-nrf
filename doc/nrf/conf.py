@@ -105,6 +105,10 @@ kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
 if kconfig_mapping:
     intersphinx_mapping["kconfig"] = kconfig_mapping
 
+nrfx_mapping = utils.get_intersphinx_mapping("nrfx")
+if nrfx_mapping:
+    intersphinx_mapping["nrfx"] = nrfx_mapping
+
 # -- Options for doxyrunner plugin ---------------------------------------------
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
