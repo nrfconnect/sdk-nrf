@@ -391,7 +391,7 @@ static int turn_on(struct bt_mesh_light_ctrl_srv *srv,
 		return -EBUSY;
 	}
 
-	BT_DBG("");
+	BT_DBG("Light Turned On");
 
 	uint32_t fade_time;
 
@@ -426,7 +426,7 @@ static void turn_off_auto(struct bt_mesh_light_ctrl_srv *srv)
 		return;
 	}
 
-	BT_DBG("");
+	BT_DBG("Light Automatically Turn Off");
 
 	transition_start(srv, LIGHT_CTRL_STATE_STANDBY,
 			 srv->cfg.fade_standby_auto);
@@ -444,20 +444,21 @@ static int turn_off(struct bt_mesh_light_ctrl_srv *srv,
 		return -EBUSY;
 	}
 
-	BT_DBG("");
-
-	atomic_set_bit(&srv->flags, FLAG_MANUAL);
+	BT_DBG("Light Turned Off");
 
 	uint32_t fade_time =
 		transition ? transition->time : srv->cfg.fade_standby_manual;
 	enum bt_mesh_light_ctrl_srv_state prev_state = srv->state;
 
 	if (prev_state != LIGHT_CTRL_STATE_STANDBY) {
+		atomic_set_bit(&srv->flags, FLAG_MANUAL);
 		transition_start(srv, LIGHT_CTRL_STATE_STANDBY, fade_time);
 		atomic_clear_bit(&srv->flags, FLAG_ON);
 		store(srv, FLAG_STORE_STATE);
 		light_onoff_pub(srv, prev_state, pub_gen_onoff);
-	} else {
+	} else if (atomic_test_bit(&srv->flags, FLAG_TRANSITION) &&
+		   !atomic_test_bit(&srv->flags, FLAG_MANUAL)) {
+		atomic_set_bit(&srv->flags, FLAG_MANUAL);
 		transition_start(srv, LIGHT_CTRL_STATE_STANDBY, fade_time);
 	}
 
@@ -470,7 +471,7 @@ static void prolong(struct bt_mesh_light_ctrl_srv *srv)
 		return;
 	}
 
-	BT_DBG("");
+	BT_DBG("Light Prolonged");
 
 	transition_start(srv, LIGHT_CTRL_STATE_PROLONG, srv->cfg.fade_prolong);
 }
@@ -479,7 +480,7 @@ static void ctrl_enable(struct bt_mesh_light_ctrl_srv *srv)
 {
 	atomic_clear_bit(&srv->flags, FLAG_RESUME_TIMER);
 	srv->lightness->ctrl = srv;
-	BT_DBG("Light Control Enabled");
+	BT_DBG("Enable Light Control");
 	transition_start(srv, LIGHT_CTRL_STATE_STANDBY, 0);
 	reg_start(srv);
 }
@@ -498,7 +499,7 @@ static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 	srv->reg.i = 0;
 #endif
 
-	BT_DBG("Light Control Disabled");
+	BT_DBG("Disable Light Control");
 
 	/* If any of these cancel calls fail, their handler will exit early on
 	 * their is_enabled() checks:
@@ -666,7 +667,7 @@ static void delayed_action_timeout(struct k_work *work)
 		return;
 	}
 
-	BT_DBG("");
+	BT_DBG("Delayed Action Timeout");
 
 	if (atomic_test_and_clear_bit(&srv->flags, FLAG_ON_PENDING)) {
 		turn_on(srv, &transition, true);
@@ -722,7 +723,7 @@ static void store_timeout(struct k_work *work)
 
 	store_state_data(srv);
 
-	BT_DBG("");
+	BT_DBG("Store Timeout");
 }
 #endif
 /*******************************************************************************
@@ -765,7 +766,7 @@ static int mode_set(struct bt_mesh_light_ctrl_srv *srv,
 		return -EINVAL;
 	}
 
-	BT_DBG("%s", mode ? "enable" : "disable");
+	BT_DBG("Set Mode: %s", mode ? "enable" : "disable");
 
 	if (mode) {
 		bt_mesh_light_ctrl_srv_enable(srv);
@@ -841,7 +842,7 @@ static int om_set(struct bt_mesh_light_ctrl_srv *srv,
 		return -EINVAL;
 	}
 
-	BT_DBG("%s", mode ? "on" : "off");
+	BT_DBG("Set OM: %s", mode ? "on" : "off");
 
 	atomic_set_bit_to(&srv->flags, FLAG_OCC_MODE, mode);
 	store(srv, FLAG_STORE_STATE);
@@ -891,7 +892,7 @@ static void handle_light_onoff_get(struct bt_mesh_model *model,
 		return;
 	}
 
-	BT_DBG("");
+	BT_DBG("Get Light OnOff");
 
 	light_onoff_status_send(srv, ctx, srv->state);
 }
@@ -914,7 +915,7 @@ static void light_onoff_set(struct bt_mesh_light_ctrl_srv *srv,
 	enum bt_mesh_light_ctrl_srv_state prev_state = srv->state;
 
 	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
-		BT_DBG("%s (%u + %u)", onoff ? "on" : "off",
+		BT_DBG("Set Light OnOff: %s (%u + %u)", onoff ? "on" : "off",
 		       has_trans ? transition.time : 0,
 		       has_trans ? transition.delay : 0);
 
@@ -1218,7 +1219,7 @@ static int prop_set(struct net_buf_simple *buf,
 		return -EMSGSIZE;
 	}
 
-	BT_DBG("0x%04x: %s", id, bt_mesh_sensor_ch_str(&val));
+	BT_DBG("Set Prop: 0x%04x: %s", id, bt_mesh_sensor_ch_str(&val));
 
 	switch (id) {
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
@@ -1484,7 +1485,7 @@ BT_MESH_SCENE_ENTRY_SIG(light_ctrl) = {
 
 static int update_handler(struct bt_mesh_model *model)
 {
-	BT_DBG("");
+	BT_DBG("Update Handler");
 
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 
