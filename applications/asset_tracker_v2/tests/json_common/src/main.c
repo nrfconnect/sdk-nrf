@@ -662,12 +662,15 @@ static void test_encode_configuration_data_object(void)
 		.movement_timeout = 3600,
 		.gps_timeout = 60,
 		.accelerometer_threshold = 2,
+		.no_data.gnss = true,
+		.no_data.neighbor_cell = true,
 		.active_mode_fresh = true,
 		.gps_timeout_fresh = true,
 		.active_wait_timeout_fresh = true,
 		.movement_resolution_fresh = true,
 		.movement_timeout_fresh = true,
 		.accelerometer_threshold_fresh = true,
+		.nod_list_fresh = true,
 	};
 
 	ret = json_common_config_add(dummy.root_obj, &data, DATA_CONFIG);
@@ -699,6 +702,8 @@ static void test_decode_configuration_data(void)
 	json_common_config_get(sub_group_obj, &data);
 
 	zassert_equal(false, data.active_mode, "Configuration is wrong");
+	zassert_equal(true, data.no_data.gnss, "Configuration is wrong");
+	zassert_equal(true, data.no_data.neighbor_cell, "Configuration is wrong");
 	zassert_equal(60, data.gps_timeout, "Configuration is wrong");
 	zassert_equal(120, data.active_wait_timeout, "Configuration is wrong");
 	zassert_equal(120, data.movement_resolution, "Configuration is wrong");

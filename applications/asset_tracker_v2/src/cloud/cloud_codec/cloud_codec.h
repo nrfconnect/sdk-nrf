@@ -80,6 +80,17 @@ struct cloud_data_gps {
 	bool queued : 1;
 };
 
+/** Structure containing boolean variables used to enable/disable inclusion of the corresponding
+ *  data type in sample requests sent out by the application module.
+ */
+struct cloud_data_no_data {
+	/** If this flag is set GNSS data is not included in sample requests. */
+	bool gnss;
+
+	/** If this flag is set neighbor cell data is not included sample requests. */
+	bool neighbor_cell;
+};
+
 struct cloud_data_cfg {
 	/** Device mode. */
 	bool active_mode;
@@ -95,6 +106,8 @@ struct cloud_data_cfg {
 	int movement_timeout;
 	/** Accelerometer trigger threshold value in m/s2. */
 	double accelerometer_threshold;
+	/** Variable used to govern what data types are requested by the application. */
+	struct cloud_data_no_data no_data;
 
 	/** Flags to signify if the corresponding data value is fresh and can be used. */
 	bool active_mode_fresh		   : 1;
@@ -103,6 +116,7 @@ struct cloud_data_cfg {
 	bool movement_resolution_fresh	   : 1;
 	bool movement_timeout_fresh	   : 1;
 	bool accelerometer_threshold_fresh : 1;
+	bool nod_list_fresh		   : 1;
 };
 
 struct cloud_data_accelerometer {
