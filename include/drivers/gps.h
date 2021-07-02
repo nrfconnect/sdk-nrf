@@ -247,6 +247,7 @@ enum gps_event_type {
  */
 enum gps_error {
 	GPS_ERROR_GPS_DISABLED,
+	GPS_ERROR_EVT_QUEUE_FULL
 };
 
 struct gps_event {
@@ -328,11 +329,12 @@ struct gps_driver_api {
 /**
  * @brief Function to start GPS operation.
  *
- * If gps is already running a call to this function will
- * restart the gps.
+ * If GPS is already running a call to this function will restart the GPS.
  *
  * @param dev Pointer to GPS device
  * @param cfg Pointer to GPS configuration.
+ *
+ * @return Zero on success or (negative) error code otherwise.
  */
 static inline int gps_start(const struct device *dev, struct gps_config *cfg)
 {
@@ -355,6 +357,8 @@ static inline int gps_start(const struct device *dev, struct gps_config *cfg)
  * @brief Function to stop GPS operation.
  *
  * @param dev Pointer to GPS device
+ *
+ * @return Zero on success or (negative) error code otherwise.
  */
 static inline int gps_stop(const struct device *dev)
 {

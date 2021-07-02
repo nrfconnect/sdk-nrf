@@ -228,9 +228,11 @@ static void gps_event_handler(const struct device *dev, struct gps_event *evt)
 		gps_module_event->type = GPS_EVT_AGPS_NEEDED;
 		EVENT_SUBMIT(gps_module_event);
 		break;
-	case GPS_EVT_ERROR:
-		LOG_DBG("GPS_EVT_ERROR\n");
+	case GPS_EVT_ERROR: {
+		LOG_ERR("GPS_EVT_ERROR");
+		SEND_ERROR(gps, GPS_EVT_ERROR_CODE, evt->error);
 		break;
+	}
 	default:
 		break;
 	}
@@ -397,7 +399,7 @@ static void on_all_states(struct gps_msg_data *msg)
 		err = module_start(&self);
 		if (err) {
 			LOG_ERR("Failed starting module, error: %d", err);
-			SEND_ERROR(gps, GPS_EVT_ERROR, err);
+			SEND_ERROR(gps, GPS_EVT_ERROR_CODE, err);
 		}
 
 		state_set(STATE_INIT);
