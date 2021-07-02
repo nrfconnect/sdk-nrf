@@ -102,3 +102,6 @@ To define your own board, you can use the following Zephyr guides as reference, 
 
 * :ref:`custom_board_definition` is a guide to adding your own custom board to the Zephyr build system.
 * :ref:`board_porting_guide` is a complete guide to porting Zephyr to your own board.
+
+One of the |NCS| applications that lets you add custom boards is :ref:`nrf_desktop`.
+See :ref:`nrf_desktop_porting_guide` in the application documentation for details.

@@ -25,6 +25,7 @@ See the following links for information about the different building blocks ment
 * :ref:`zephyr:cmake-details` describes in-depth the usage of CMake for Zephyr-based applications.
 * :ref:`zephyr:application-kconfig` contains a guide for Kconfig usage in applications.
 * :ref:`zephyr:set-devicetree-overlays` explains how to use devicetree and its overlays to customize an application's devicetree.
+* :ref:`board_porting_guide` is a complete guide to porting Zephyr to your own board.
 
 |NCS| additions
 ***************

@@ -811,8 +811,10 @@ The nRF Desktop application uses the following files as configuration sources:
 * Kconfig files - These reflect the software configuration.
   See :ref:`kconfig_tips_and_tricks` for information about how to configure them.
 
-You must modify these configuration sources when `Adding a new board`_.
+You must modify these configuration sources when `Adding a new board`_, as described below.
+
 For information about differences between DTS and Kconfig, see :ref:`zephyr:dt_vs_kconfig`.
+For detailed instructions for adding Zephyr support to a custom board, see Zephyr's :ref:`zephyr:board_porting_guide`.
 
 .. _nrf_desktop_board_configuration:
 
@@ -901,7 +903,8 @@ When adding a new board for the first time, focus on a single configuration.
 Moreover, keep the default ``ZDebug`` build type that the application is built with, and do not add any additional build type parameters.
 
 .. note::
-    The following procedure uses the gaming mouse configuration as an example.
+    * The following procedure uses the gaming mouse configuration as an example.
+    * The first three steps of the configuration procedure are identical to the steps described in Zephyr's :ref:`zephyr:board_porting_guide`.
 
 To use the nRF Desktop application with your custom board:
 
