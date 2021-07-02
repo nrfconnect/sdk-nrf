@@ -20,15 +20,10 @@ config NRF9160_GPS_DEV_NAME
 	string "nRF9160 GPS device name"
 	default "NRF9160_GPS"
 
-config NRF9160_GPS_FIX_CHECK_INTERVAL
-	int "Interval in seconds to check for GPS fix"
-	default 1
-
 config NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 	bool "The GPS driver will handle modem configuration directly"
 	depends on !LWM2M_CARRIER
 	depends on AT_CMD
-	depends on AT_CMD_PARSER
 	default y
 	help
 	  Disabling this will cause the GPS driver to do no modem
