@@ -1,0 +1,12 @@
+.. _nrf9160_samples:
+
+nRF9160 samples
+###############
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Subpages
+   :glob:
+
+   ../../../samples/nrf9160/*/README
+   ../../../samples/nrf9160/http_update/*/README
