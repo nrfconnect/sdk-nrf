@@ -5,13 +5,10 @@
  */
 
 /**
+ * @file
  *  @defgroup zb_error ZBOSS error handling utilities
  *  @{
- */
-
-/**
- * @file
- * @brief This file defines the error handler for ZBOSS error codes.
+ * @brief This file defines the error handler utilities for ZBOSS error codes.
  */
 
 #ifndef ZIGBEE_ERROR_HANDLER_H__
@@ -22,15 +19,18 @@
 #include <zboss_api.h>
 #include <zb_errors.h>
 
-#define ZB_ERROR_BASE_NUM 20000 /*< ZBOSS stack error codes base. */
+/**@brief ZBOSS stack error code base.
+ *
+ */
+#define ZB_ERROR_BASE_NUM 20000
 
 #ifdef CONFIG_ZBOSS_ERROR_PRINT_TO_LOG
 #include "zb_error_to_string.h"
 #include <logging/log.h>
 
 
-/**@brief Macro for calling error handler function if supplied
- *        error code any other than RET_OK.
+/**@brief Macro for calling the error handler function if the supplied
+ *        ZBOSS return code is different than RET_OK.
  *
  * @param[in] ERR_CODE Error code supplied to the error handler.
  */
@@ -47,11 +47,11 @@
 		}							\
 	} while (0)
 
-/**@brief Macro for calling error handler function
- *        if bdb_start_top_level_commissioning return code
- *        indicates that it BDB procedure did not succeed.
+/**@brief Macro for calling the error handler function
+ *        if the return code for bdb_start_top_level_commissioning
+ *        indicates that the BDB procedure did not succeed.
  *
- * @param[in] COMM_STATUS Value returned by
+ * @param[in] COMM_STATUS Value returned by the
  *            bdb_start_top_level_commissioning function.
  */
 #define ZB_COMM_STATUS_CHECK(COMM_STATUS)				      \
