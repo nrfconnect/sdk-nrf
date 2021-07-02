@@ -32,7 +32,6 @@ int sock_recv(int socket_id, bool receive_start, int data_length, bool blocking,
 	      enum sock_recv_print_format print_format);
 
 int sock_close(int socket_id);
-int sock_rai_enable(int rai_enable);
 int sock_rai(int socket_id, bool rai_last, bool rai_no_data, bool rai_one_resp,
 	     bool rai_ongoing, bool rai_wait_more);
 int sock_list(void);

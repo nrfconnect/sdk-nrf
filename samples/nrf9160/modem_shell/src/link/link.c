@@ -624,3 +624,24 @@ int link_func_mode_set(enum lte_lc_func_mode fun)
 
 	return return_value;
 }
+
+int link_rai_enable(bool enable)
+{
+	enum at_cmd_state state = AT_CMD_ERROR;
+	char command[10];
+	int err;
+
+	sprintf(command, "AT%%RAI=%d", enable);
+	err = at_cmd_write(command, NULL, 0, &state);
+	if (state == AT_CMD_OK) {
+		shell_print(
+			shell_global,
+			"Release Assistance Indication functionality set to enabled=%d.\n"
+			"The change will be applied when going to normal mode for the next time.",
+			enable);
+	} else {
+		shell_error(shell_global, "Error state=%d, error=%d", state, err);
+		return -EFAULT;
+	}
+	return 0;
+}
