@@ -142,6 +142,7 @@ html_redirect_pages = [
     ("gs_ins_windows", "gs_installing"),
     ("gs_ins_linux", "gs_installing"),
     ("gs_ins_mac", "gs_installing"),
+    ("examples", "samples"),
 ]
 
 # -- Options for zephyr.warnings_filter ----------------------------------------

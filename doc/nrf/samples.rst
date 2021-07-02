@@ -3,108 +3,32 @@
 Samples
 #######
 
-For very simple samples, see the :ref:`zephyr:basic-sample` in Zephyr.
+The |NCS| provides samples that specifically target Nordic Semiconductor devices and show how to implement typical use cases with Nordic Semiconductor libraries and drivers.
+
+Samples showcase a single feature or library, while :ref:`applications` include a variety of libraries to implement a specific use case.
+
+Zephyr also provides a variety of application samples and demos.
+Documentation for those is available in Zephyr's :ref:`zephyr:samples-and-demos` section.
+For very simple samples, see the :ref:`zephyr:basic-sample`.
 Those samples are a good starting point for understanding how to put together your own application.
 
-In addition, the |NCS| provides the following samples that showcase the use of a single feature or library:
-
-.. _ble_samples:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Bluetooth samples
-   :glob:
-
-   ../../samples/bluetooth/*/README
-   ../../samples/bluetooth/mesh/*/README
-
-.. _crypto_samples:
+.. note::
+   All samples in the |NCS| are configured to perform a system reset if a fatal error occurs.
+   This behavior is different from how fatal errors are handled in the Zephyr samples.
+   You can change the default behavior by updating the configuration option :option:`CONFIG_RESET_ON_FATAL_ERROR`.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Cryptography samples
    :glob:
+   :caption: Subpages:
 
-   ../../samples/crypto/*/README
-
-.. _edge_impulse_samples:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Edge Impulse samples
-   :glob:
-
-   ../../samples/edge_impulse/*/README
-
-.. _matter_samples:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Matter samples
-   :glob:
-
-   ../../samples/matter/*/README
-
-.. _nfc_samples:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: NFC samples
-   :glob:
-
-   ../../samples/nfc/*/README
-
-.. _nrf9160_samples:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: nRF9160 samples
-   :glob:
-
-   ../../samples/nrf9160/*/README
-   ../../samples/nrf9160/http_update/*/README
-
-.. _nrf5340_samples:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: nRF5340 samples
-   :glob:
-
-   ../../samples/nrf5340/*/README
-   ../../samples/nrf_rpc/entropy_nrf53/README
-
-.. _openthread_samples:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Thread samples
-   :glob:
-
-   ../../samples/openthread/*/README
-
-.. _zigbee_samples:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Zigbee samples
-   :glob:
-
-   ../../samples/zigbee/*/README
-
-.. _other_samples:
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Other samples
-   :glob:
-
-   ../../samples/*/README
-   ../../samples/debug/*/README
-   ../../samples/keys/*/README
-   ../../samples/mpsl/*/README
-   ../../samples/peripheral/*/README
-   ../../samples/sensor/*/README
-   ../../samples/tfm/*/README
-
-For more complex examples, see :ref:`applications`.
+   samples/samples_bl.rst
+   samples/samples_crypto.rst
+   samples/samples_edge.rst
+   samples/samples_matter.rst
+   samples/samples_nfc.rst
+   samples/samples_nrf5340.rst
+   samples/samples_nrf9160.rst
+   samples/samples_thread.rst
+   samples/samples_zigbee.rst
+   samples/samples_other.rst

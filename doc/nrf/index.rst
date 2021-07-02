@@ -60,7 +60,8 @@ In addition to the |NCS| documentation, information is available in the followin
    ug_nrf5340
    ug_nrf52
    protocols
-   examples
+   applications
+   samples
    drivers
    libraries
    scripts
