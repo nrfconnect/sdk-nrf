@@ -7,5 +7,6 @@
 menu "Binary libraries"
 
 rsource "lwm2m_carrier/Kconfig"
+rsource "sb_fota/Kconfig"
 
 endmenu

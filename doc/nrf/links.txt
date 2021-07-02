@@ -333,6 +333,8 @@
 .. _`Connecting your device to nRF Cloud`:
 .. _`Connecting your device to nRF Connect for Cloud`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/connecting_nrf_cloud.html
 
+.. _`AT%KEYGEN set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/security/keygen_set.html
+
 .. ### Source: devzone.nordicsemi.com
 
 .. _`DevZone`: https://devzone.nordicsemi.com/
@@ -613,6 +615,8 @@
 
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
 .. _`Securely Generating Credentials on the nRF9160`: https://docs.nrfcloud.com/Guides/GettingStarted/Devices#securely-generating-credentials-on-the-nrf9160
+
+.. _`ProvisionDevices API`: https://api.nrfcloud.com/v1#operation/ProvisionDevices
 
 .. ### Source: zigbeealliance.org & csa-iot.org
 

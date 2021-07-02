@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig SB_FOTA
+	bool "nRF91 modem FOTA library for Sofbank"
+	select NRF_MODEM_LIB
+	select AT_MONITOR
+	select AT_CMD
+	select AT_CMD_PARSER
+	select AT_NOTIF
+	select MODEM_JWT
+	select REBOOT
+	select SETTINGS
+	select NVS
+	select HTTP_CLIENT
+	select DOWNLOAD_CLIENT
+	select FOTA_DOWNLOAD
+	select DFU_TARGET
+	select PDN
+
+if SB_FOTA
+
+config SB_FOTA_TLS_SECURITY_TAG
+	int "Security tag for TLS"
+	default 16842753
+	help
+	  Security tag to be used for the server TLS connections.
+
+config SB_FOTA_JWT_SECURITY_TAG
+	int "Security tag for JWT"
+	default 50
+	help
+	  Security tag to be used for signing JWT tokens.
+
+config SB_FOTA_AUTOINIT
+	bool "Initialize carrier FOTA automatically"
+	default y if LTE_AUTO_INIT_AND_CONNECT
+	depends on NRF_MODEM_LIB_SYS_INIT
+	help
+	  When enabled, carrier FOTA library will automatically start during application boot.
+	  This requires that modem library is also automatically initialized. Otherwise the
+	  the initialization will fail.
+
+module=SB_FOTA
+module-dep=LOG
+module-str=Modem Firmware Over the Air client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # SB_FOTA
