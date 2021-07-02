@@ -391,7 +391,7 @@ static int turn_on(struct bt_mesh_light_ctrl_srv *srv,
 		return -EBUSY;
 	}
 
-	BT_DBG("");
+	BT_DBG("Light Turned On");
 
 	uint32_t fade_time;
 
@@ -426,7 +426,7 @@ static void turn_off_auto(struct bt_mesh_light_ctrl_srv *srv)
 		return;
 	}
 
-	BT_DBG("");
+	BT_DBG("Light Automaticaly Turn Off");
 
 	transition_start(srv, LIGHT_CTRL_STATE_STANDBY,
 			 srv->cfg.fade_standby_auto);
@@ -444,7 +444,7 @@ static int turn_off(struct bt_mesh_light_ctrl_srv *srv,
 		return -EBUSY;
 	}
 
-	BT_DBG("");
+	BT_DBG("Light Turned Off");
 
 	atomic_set_bit(&srv->flags, FLAG_MANUAL);
 
@@ -470,7 +470,7 @@ static void prolong(struct bt_mesh_light_ctrl_srv *srv)
 		return;
 	}
 
-	BT_DBG("");
+	BT_DBG("Light Prolonged");
 
 	transition_start(srv, LIGHT_CTRL_STATE_PROLONG, srv->cfg.fade_prolong);
 }
