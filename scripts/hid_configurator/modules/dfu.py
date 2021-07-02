@@ -110,7 +110,10 @@ class FwInfo:
 def b0_get_fwinfo_offset(dfu_bin):
     UPDATE_IMAGE_MAGIC_COMMON = 0x281ee6de
     UPDATE_IMAGE_MAGIC_FWINFO = 0x8fcebb4c
-    UPDATE_IMAGE_MAGIC_COMPATIBILITY = 0x00003402
+    UPDATE_IMAGE_MAGIC_COMPATIBILITY = (
+                                        0x00003402,   # nRF52
+                                        0x00003502    # nRF53
+                                        )
     UPDATE_IMAGE_HEADER_OFFSETS = (0x0000, 0x0200, 0x0400, 0x0800, 0x1000)
 
     fwinfo_offset = None
@@ -127,7 +130,7 @@ def b0_get_fwinfo_offset(dfu_bin):
             data_raw = img_file.read(4)
             magic_compat = struct.unpack('<I', data_raw)[0]
             if magic_common == UPDATE_IMAGE_MAGIC_COMMON and \
-               magic_compat == UPDATE_IMAGE_MAGIC_COMPATIBILITY and \
+               magic_compat in UPDATE_IMAGE_MAGIC_COMPATIBILITY and \
                magic_fwinfo == UPDATE_IMAGE_MAGIC_FWINFO:
                 fwinfo_offset = offset
                 break
