@@ -135,6 +135,22 @@ config DATA_GPS_TIMEOUT_SECONDS
 	help
 	  Timeout for acquiring a GPS fix during sampling of data.
 
+config DATA_SAMPLE_GNSS_DEFAULT
+	bool "Include GNSS in sample requests"
+	default y
+	help
+	  If this configuration is enabled the application will by default include GNSS data in
+	  sample requests sent to other modules. This configuration can be overwritten by changing
+	  the application's real-time configuration using the cloud-side state.
+
+config DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT
+	bool "Include neighbor cells in sample requests"
+	default y
+	help
+	  If this configuration is enabled the application will by default include neighbor cell
+	  data in sample requests sent to other modules. This configuration can be overwritten by
+	  changing the application's real-time configuration using the cloud-side state.
+
 endif # DATA_MODULE
 
 module = DATA_MODULE

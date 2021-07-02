@@ -64,6 +64,8 @@ Data types
 Data from multiple sensor sources are collected to construct information about the location, environment, and the health of the nRF9160-based device.
 The application supports the following data types:
 
+.. _app_data_types:
+
 +----------------+----------------------------+-----------------------------------------------+
 | Data type      | Description                | Identifiers                                   |
 +================+============================+===============================================+
@@ -89,26 +91,29 @@ The application can be either in an active or in a passive state depending on th
 The device mode is a part of the application's real-time configurations.
 The device modes and their descriptions are listed in the following table:
 
-+-------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| Real-time Configurations            | Description                                                                                                                                 | Default values |
-+=====================================+=============================================================================================================================================+================+
-| Device mode                         | Either in active or passive mode.                                                                                                           | Active         |
-+---------------+---------------------+---------------------------------------------------------------------------------------------------------------------------------------------+----------------+
-|  Active       |                     | Sample and publish data at regular intervals.                                                                                               |                |
-|               +---------------------+---------------------------------------------------------------------------------------------------------------------------------------------+----------------+
-|               | Active wait time    | Number of seconds between each sampling/publication.                                                                                        | 120 seconds    |
-+---------------+---------------------+---------------------------------------------------------------------------------------------------------------------------------------------+----------------+
-|  Passive      |                     | Sample and publish data only if movement has been detected.                                                                                 |                |
-|               +---------------------+---------------------------------------------------------------------------------------------------------------------------------------------+----------------+
-|               | Movement resolution | Sample and publish data after detecting movement.                                                                                           |                |
-|               |                     | Wait for a duration specified by the parameter until a movement triggers the next update.                                                   | 120 seconds    |
-|               +---------------------+---------------------------------------------------------------------------------------------------------------------------------------------+----------------+
-|               | Movement timeout    | Sample and publish data at a minimum of the time interval specified by the parameter. Not dependent on movement.                            | 3600 seconds   |
-+---------------+---------------------+---------------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| GPS timeout                         | Timeout for acquiring a GPS fix during sampling of the data.                                                                                | 60 seconds     |
-+-------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| Accelerometer threshold             | Accelerometer threshold in m/s². Minimal absolute value in m/s² for the accelerometer readings to be considered as a valid movement.        | 10 m/s²        |
-+-------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------+----------------+
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
+| Real-time Configurations       | Description                                                                                                                          | Default values |
++================================+======================================================================================================================================+================+
+| Device mode                    | Either in active or passive mode.                                                                                                    | Active         |
++----------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
+|  Active  |                     | Sample and publish data at regular intervals.                                                                                        |                |
+|          +---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
+|          | Active wait time    | Number of seconds between each sampling/publication.                                                                                 | 120 seconds    |
++----------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
+|  Passive |                     | Sample and publish data only if movement has been detected.                                                                          |                |
+|          +---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
+|          | Movement resolution | Sample and publish data after detecting movement.                                                                                    |                |
+|          |                     | Wait for a duration specified by the parameter until a movement triggers the next update.                                            | 120 seconds    |
+|          +---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
+|          | Movement timeout    | Sample and publish data at a minimum of the time interval specified by the parameter. Not dependent on movement.                     | 3600 seconds   |
++----------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
+| GPS timeout                    | Timeout for acquiring a GPS fix during sampling of the data.                                                                         | 60 seconds     |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
+| Accelerometer threshold        | Accelerometer threshold in m/s². Minimal absolute value in m/s² for the accelerometer readings to be considered as a valid movement. | 10 m/s²        |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
+| No Data List (NOD)             | List containing :ref:`data types <app_data_types>` that is not included when the application samples data.                           | No entries     |
+|                                | Currently, the application supports only APP_DATA_GNSS and APP_DATA_NEIGHBOR_CELLS.                                                  | (Request all)  |
++--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 
 See :ref:`Kconfig options for default device configuration values <default_config_values>` for a list of configuration options that can set the default values of the device configuration parameters.
 

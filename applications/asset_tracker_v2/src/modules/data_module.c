@@ -86,7 +86,11 @@ static struct cloud_data_cfg current_cfg = {
 	.active_wait_timeout		= CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS,
 	.movement_resolution		= CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS,
 	.movement_timeout		= CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS,
-	.accelerometer_threshold	= CONFIG_DATA_ACCELEROMETER_THRESHOLD
+	.accelerometer_threshold	= CONFIG_DATA_ACCELEROMETER_THRESHOLD,
+	.no_data.gnss			= (IS_ENABLED(CONFIG_DATA_SAMPLE_GNSS_DEFAULT)
+					   ? false : true),
+	.no_data.neighbor_cell		= (IS_ENABLED(CONFIG_DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT)
+					   ? false : true)
 };
 
 static struct k_work_delayable data_send_work;
@@ -493,6 +497,7 @@ static void config_status_set_all(bool fresh)
 	current_cfg.movement_resolution_fresh = fresh;
 	current_cfg.movement_timeout_fresh = fresh;
 	current_cfg.accelerometer_threshold_fresh = fresh;
+	current_cfg.nod_list_fresh = fresh;
 }
 
 static void data_send(enum data_module_event_type event,
@@ -731,6 +736,32 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		current_cfg.active_mode_fresh = true;
 	}
 
+	if (current_cfg.no_data.gnss != new_config->no_data.gnss) {
+		current_cfg.no_data.gnss = new_config->no_data.gnss;
+
+		if (!current_cfg.no_data.gnss) {
+			LOG_WRN("Requesting of GNSS data is enabled");
+		} else {
+			LOG_WRN("Requesting of GNSS data is disabled");
+		}
+
+		config_change = true;
+		current_cfg.nod_list_fresh = true;
+	}
+
+	if (current_cfg.no_data.neighbor_cell != new_config->no_data.neighbor_cell) {
+		current_cfg.no_data.neighbor_cell = new_config->no_data.neighbor_cell;
+
+		if (!current_cfg.no_data.neighbor_cell) {
+			LOG_WRN("Requesting of neighbor cell data is enabled");
+		} else {
+			LOG_WRN("Requesting of neighbor cell data is disabled");
+		}
+
+		config_change = true;
+		current_cfg.nod_list_fresh = true;
+	}
+
 	if (new_config->gps_timeout > 0) {
 		if (current_cfg.gps_timeout != new_config->gps_timeout) {
 			current_cfg.gps_timeout = new_config->gps_timeout;
@@ -877,6 +908,10 @@ static void on_all_states(struct data_msg_data *msg)
 				msg->module.cloud.data.config.gps_timeout,
 			.accelerometer_threshold =
 				msg->module.cloud.data.config.accelerometer_threshold,
+			.no_data.gnss =
+				msg->module.cloud.data.config.no_data.gnss,
+			.no_data.neighbor_cell =
+				msg->module.cloud.data.config.no_data.neighbor_cell
 		};
 
 		new_config_handle(&new);

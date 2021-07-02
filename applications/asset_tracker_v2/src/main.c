@@ -325,23 +325,25 @@ static void data_get(void)
 	struct app_module_event *app_module_event = new_app_module_event();
 	size_t count = 0;
 
+	/* Specify a timeout that each module has to fetch data. If data is not
+	 * fetched within this timeout, the data that is available is sent.
+	 */
+	app_module_event->timeout = 10;
+
 	/* Specify which data that is to be included in the transmission. */
 	app_module_event->data_list[count++] = APP_DATA_MODEM_DYNAMIC;
 	app_module_event->data_list[count++] = APP_DATA_BATTERY;
 	app_module_event->data_list[count++] = APP_DATA_ENVIRONMENTAL;
 
-	if (IS_ENABLED(CONFIG_APP_REQUEST_NEIGHBOR_CELLS_DATA)) {
+	if (IS_ENABLED(CONFIG_APP_REQUEST_NEIGHBOR_CELLS_DATA) && !app_cfg.no_data.neighbor_cell) {
 		app_module_event->data_list[count++] = APP_DATA_NEIGHBOR_CELLS;
 	}
 
-	/* Specify a timeout that each module has to fetch data. If data is not
-	 * fetched within this timeout, the data that is available is sent.
-	 *
-	 * The reason for having at least 65 seconds timeout is that the GNSS
-	 * module in nRF9160 will always search for at least 60 seconds for the
+	/* The reason for having at least 75 seconds timeout in the case of requesting GNSS data
+	 * is that the GNSS module in nRF9160 will always search for at least 60 seconds for the
 	 * first position fix after a reboot.
 	 *
-	 * The addition of 5 seconds to the configured GPS timeout is  done
+	 * The addition of 15 seconds to the configured GPS timeout is done
 	 * to let the GPS module run the currently ongoing search until
 	 * the end. If the timeout for sending data is exactly the same as for
 	 * the GPS search, a fix occurring at the same time as timeout is
@@ -349,19 +351,21 @@ static void data_get(void)
 	 * interval has  passed in active mode, or until next movement in
 	 * passive mode.
 	 */
-	app_module_event->timeout = MAX(app_cfg.gps_timeout + 15, 75);
 
 	if (first) {
-		if (IS_ENABLED(CONFIG_APP_REQUEST_GPS_ON_INITIAL_SAMPLING)) {
+		if (IS_ENABLED(CONFIG_APP_REQUEST_GPS_ON_INITIAL_SAMPLING) &&
+		    !app_cfg.no_data.gnss) {
 			app_module_event->data_list[count++] = APP_DATA_GNSS;
-		} else {
-			app_module_event->timeout = 10;
+			app_module_event->timeout = MAX(app_cfg.gps_timeout + 15, 75);
 		}
 
 		app_module_event->data_list[count++] = APP_DATA_MODEM_STATIC;
 		first = false;
 	} else {
-		app_module_event->data_list[count++] = APP_DATA_GNSS;
+		if (!app_cfg.no_data.gnss) {
+			app_module_event->data_list[count++] = APP_DATA_GNSS;
+			app_module_event->timeout = MAX(app_cfg.gps_timeout + 15, 75);
+		}
 	}
 
 	/* Set list count to number of data types passed in app_module_event. */
