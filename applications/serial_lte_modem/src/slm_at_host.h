@@ -17,6 +17,7 @@
 #include <ctype.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_cmd.h>
+#include "slm_defines.h"
 
 /**@brief Operations in datamode. */
 enum slm_datamode_operation_t {

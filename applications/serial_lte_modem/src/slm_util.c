@@ -86,8 +86,7 @@ bool slm_util_hexstr_check(const uint8_t *data, uint16_t data_len)
 /**
  * @brief Encode hex array to hexdecimal string (ASCII text)
  */
-int slm_util_htoa(const uint8_t *hex, uint16_t hex_len,
-		char *ascii, uint16_t ascii_len)
+int slm_util_htoa(const uint8_t *hex, uint16_t hex_len, char *ascii, uint16_t ascii_len)
 {
 	if (hex == NULL || ascii == NULL) {
 		return -EINVAL;
@@ -106,8 +105,7 @@ int slm_util_htoa(const uint8_t *hex, uint16_t hex_len,
 /**
  * @brief Decode hexdecimal string (ASCII text) to hex array
  */
-int slm_util_atoh(const char *ascii, uint16_t ascii_len,
-		uint8_t *hex, uint16_t hex_len)
+int slm_util_atoh(const char *ascii, uint16_t ascii_len, uint8_t *hex, uint16_t hex_len)
 {
 	char hex_str[3];
 
@@ -133,28 +131,10 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len,
 	return (ascii_len / 2);
 }
 
-/**@brief Check whether a string has valid IPv4 address or not
- */
-bool check_for_ipv4(const char *address, uint8_t length)
-{
-	int index;
-
-	for (index = 0; index < length; index++) {
-		char ch = *(address + index);
-
-		if ((ch != '.') && (ch < '0' || ch > '9')) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
 /**
  * @brief Get string value from AT command with length check
  */
-int util_string_get(const struct at_param_list *list, size_t index,
-			 char *value, size_t *len)
+int util_string_get(const struct at_param_list *list, size_t index, char *value, size_t *len)
 {
 	int ret;
 	size_t size = *len;

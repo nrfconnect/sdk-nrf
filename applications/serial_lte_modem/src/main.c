@@ -24,7 +24,7 @@
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
 
-LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm, CONFIG_SLM_LOG_LEVEL);
 
 #define SLM_WQ_STACK_SIZE	KB(2)
 #define SLM_WQ_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
