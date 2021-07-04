@@ -13,7 +13,7 @@
 #include "slm_at_host.h"
 #include "slm_at_udp_proxy.h"
 
-LOG_MODULE_REGISTER(udp_proxy, CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm_udp, CONFIG_SLM_LOG_LEVEL);
 
 #define THREAD_STACK_SIZE	(KB(1) + NET_IPV4_MTU)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
@@ -81,11 +81,6 @@ static int do_udp_server_start(uint16_t port)
 	addr_len = strlen(ipv4_addr);
 	if (addr_len == 0) {
 		LOG_ERR("LTE not connected yet");
-		close(udp_sock);
-		return -EINVAL;
-	}
-	if (!check_for_ipv4(ipv4_addr, addr_len)) {
-		LOG_ERR("Invalid local address");
 		close(udp_sock);
 		return -EINVAL;
 	}
@@ -168,38 +163,24 @@ static int do_udp_client_connect(const char *url, uint16_t port, int sec_tag)
 	}
 
 	/* Connect to remote host */
-	if (check_for_ipv4(url, strlen(url))) {
-		remote.sin_family = AF_INET;
-		remote.sin_port = htons(port);
-		LOG_DBG("IPv4 Address %s", log_strdup(url));
-		/* NOTE inet_pton() returns 1 as success */
-		ret = inet_pton(AF_INET, url, &remote.sin_addr);
-		if (ret != 1) {
-			LOG_ERR("inet_pton() failed: %d", ret);
-			close(udp_sock);
-			return -EINVAL;
-		}
-	} else {
-		struct addrinfo *result;
-		struct addrinfo hints = {
-			.ai_family = AF_INET,
-			.ai_socktype = SOCK_DGRAM
-		};
+	struct addrinfo *result;
+	struct addrinfo hints = {
+		.ai_family = AF_INET,
+		.ai_socktype = SOCK_DGRAM
+	};
 
-		ret = getaddrinfo(url, NULL, &hints, &result);
-		if (ret || result == NULL) {
-			LOG_ERR("getaddrinfo() failed: %d", ret);
-			close(udp_sock);
-			return -EINVAL;
-		}
-
-		remote.sin_family = AF_INET;
-		remote.sin_port = htons(port);
-		remote.sin_addr.s_addr =
-		((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
-		/* Free the address. */
-		freeaddrinfo(result);
+	ret = getaddrinfo(url, NULL, &hints, &result);
+	if (ret || result == NULL) {
+		LOG_ERR("getaddrinfo() failed: %d", ret);
+		close(udp_sock);
+		return -EINVAL;
 	}
+
+	remote.sin_family = AF_INET;
+	remote.sin_port = htons(port);
+	remote.sin_addr.s_addr = ((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
+	/* Free the address. */
+	freeaddrinfo(result);
 
 	ret = connect(udp_sock, (struct sockaddr *)&remote,
 		sizeof(struct sockaddr_in));
@@ -321,6 +302,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 	int ret;
 	int size = sizeof(struct sockaddr_in);
 	struct pollfd fds;
+	char rx_data[SLM_MAX_PAYLOAD];
 
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
@@ -383,7 +365,7 @@ static int udp_datamode_callback(uint8_t op, const uint8_t *data, int len)
 
 	if (op == DATAMODE_SEND) {
 		ret = do_udp_send_datamode(data, len);
-		LOG_DBG("datamode send: %d", ret);
+		LOG_INF("datamode send: %d", ret);
 	} else if (op == DATAMODE_EXIT) {
 		udp_datamode = false;
 	}
@@ -468,8 +450,8 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 		}
 		if (op == AT_CLIENT_CONNECT || op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 			uint16_t port;
-			char url[TCPIP_MAX_URL];
-			int size = TCPIP_MAX_URL;
+			char url[SLM_MAX_URL];
+			int size = SLM_MAX_URL;
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 
 			err = util_string_get(&at_param_list, 2, url, &size);

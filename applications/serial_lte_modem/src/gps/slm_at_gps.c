@@ -18,7 +18,7 @@
 #include <supl_session.h>
 #endif
 
-LOG_MODULE_REGISTER(gps, CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm_gps, CONFIG_SLM_LOG_LEVEL);
 
 #define IS_FIX(_flag)       (_flag & NRF_GNSS_PVT_FLAG_FIX_VALID_BIT)
 #define IS_UNHEALTHY(_flag) (_flag & NRF_GNSS_SV_FLAG_UNHEALTHY)
@@ -52,7 +52,7 @@ static uint64_t ttft_start;
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
+extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 extern struct k_work_q slm_work_q;
 
 #ifdef CONFIG_SUPL_CLIENT_LIB
