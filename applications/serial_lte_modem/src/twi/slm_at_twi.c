@@ -35,7 +35,7 @@ static uint8_t twi_data[TWI_DATA_LEN * 2 + 1];
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
+extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 
 static void do_twi_list(void)
 {

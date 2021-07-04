@@ -15,14 +15,13 @@
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
 
-LOG_MODULE_REGISTER(fota, CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm_fota, CONFIG_SLM_LOG_LEVEL);
 
 /* file_uri: scheme://hostname[:port]path */
 #define FILE_URI_MAX	256
 #define SCHEMA_HTTP	"http"
 #define SCHEMA_HTTPS	"https"
 #define URI_HOST_MAX	64
-#define URI_PATH_MAX	128
 
 #define APN_MAX		32
 
@@ -36,7 +35,7 @@ enum slm_fota_operation {
 	AT_FOTA_PAUSE_RESUME,
 };
 
-static char path[URI_PATH_MAX];
+static char path[SLM_MAX_URL];
 static char hostname[URI_HOST_MAX];
 
 /* global functions defined in different files */
@@ -45,7 +44,7 @@ int slm_setting_fota_save(void);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
+extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 extern uint8_t fota_type;
 extern uint8_t fota_stage;
 extern uint8_t fota_status;
@@ -112,7 +111,7 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 		LOG_ERR("Parse schema error");
 		return -EINVAL;
 	}
-	memset(path, 0x00, URI_PATH_MAX);
+	memset(path, 0x00, SLM_MAX_URL);
 	if (parser.field_set & (1 << UF_PATH)) {
 		strncpy(path,
 			file_uri + parser.field_data[UF_PATH].off,

@@ -14,12 +14,11 @@
 #include <init.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
-
-LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
-
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
+
+LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
 #define OK_STR		"\r\nOK\r\n"
 #define ERROR_STR	"\r\nERROR\r\n"
@@ -68,10 +67,9 @@ void slm_at_uninit(void);
 int slm_setting_uart_save(void);
 
 /* global variable used across different files */
-struct at_param_list at_param_list;         /* For AT parser */
-char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2]; /* SLM URC and socket data */
-uint8_t rx_data[CONFIG_SLM_SOCKET_RX_MAX];  /* Socket RX raw data */
-uint16_t datamode_time_limit;               /* Send trigger by time in data mode */
+struct at_param_list at_param_list;           /* For AT parser */
+char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN]; /* SLM URC and socket data */
+uint16_t datamode_time_limit;                 /* Send trigger by time in data mode */
 
 /* global variable defined in different files */
 extern bool uart_configured;
@@ -276,7 +274,7 @@ static void raw_send(struct k_work *work)
 	}
 	/* resume UART RX in case of stopped by buffer full */
 	if (datamode_rx_disabled) {
-		uart_receive();
+		(void)uart_receive();
 		datamode_rx_disabled = false;
 	}
 }

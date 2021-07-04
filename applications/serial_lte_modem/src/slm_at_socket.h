@@ -4,30 +4,30 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef SLM_AT_TCPIP_
-#define SLM_AT_TCPIP_
+#ifndef SLM_AT_SOCKET_
+#define SLM_AT_SOCKET_
 
-/**@file slm_at_tcpip.h
+/**@file slm_at_socket.h
  *
- * @brief Vendor-specific AT command for TCPIP service.
+ * @brief Vendor-specific AT command for Socket service.
  * @{
  */
 
 /**
- * @brief Initialize TCP/IP AT command parser.
+ * @brief Initialize socket AT command parser.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int slm_at_tcpip_init(void);
+int slm_at_socket_init(void);
 
 /**
- * @brief Uninitialize TCP/IP AT command parser.
+ * @brief Uninitialize socket AT command parser.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int slm_at_tcpip_uninit(void);
+int slm_at_socket_uninit(void);
 /** @} */
 
-#endif /* SLM_AT_TCPIP_ */
+#endif /* SLM_AT_SOCKET_ */

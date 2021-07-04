@@ -15,7 +15,7 @@
 #include "slm_at_httpc.h"
 #include "slm_util.h"
 
-LOG_MODULE_REGISTER(httpc, CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm_httpc, CONFIG_SLM_LOG_LEVEL);
 
 #define HTTPC_HOST_LEN		64
 #define HTTPC_METHOD_LEN	20
@@ -63,7 +63,7 @@ static struct slm_httpc_ctx {
 
 /* global variable defined in different resources */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
+extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 
 static struct k_thread httpc_thread;
 #define HTTPC_THREAD_STACK_SIZE       KB(2)
@@ -384,6 +384,7 @@ int httpc_datamode_callback(uint8_t op, const uint8_t *data, int len)
 	}
 	if (op == DATAMODE_SEND) {
 		ret = do_send_payload(data, len);
+		LOG_INF("datamode send: %d", ret);
 		if (ret == 0) {
 			/* Payload sent successfully */
 			sprintf(rsp_buf, "\r\nOK\r\n");

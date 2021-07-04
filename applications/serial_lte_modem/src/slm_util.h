@@ -19,12 +19,6 @@
 #include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 
-#define INVALID_SOCKET	-1
-#define INVALID_SEC_TAG	-1
-#define INVALID_ROLE	-1
-
-#define TCPIP_MAX_URL	128
-
 /**
  * @brief Compare string ignoring case
  *
@@ -66,8 +60,7 @@ bool slm_util_hexstr_check(const uint8_t *data, uint16_t data_len);
  * @return actual size of ascii string if the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int slm_util_htoa(const uint8_t *hex, uint16_t hex_len,
-		char *ascii, uint16_t ascii_len);
+int slm_util_htoa(const uint8_t *hex, uint16_t hex_len, char *ascii, uint16_t ascii_len);
 
 /**
  * @brief Decode hexdecimal string (ASCII text) to hex array
@@ -80,18 +73,7 @@ int slm_util_htoa(const uint8_t *hex, uint16_t hex_len,
  * @return actual size of hex array if the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int slm_util_atoh(const char *ascii, uint16_t ascii_len,
-		uint8_t *hex, uint16_t hex_len);
-
-
-/**@brief Check whether a string has valid IPv4 address or not
- *
- * @param address URL text string
- * @param length size of URL string
- *
- * @return true if text string is IPv4 address, false otherwise
- */
-bool check_for_ipv4(const char *address, uint8_t length);
+int slm_util_atoh(const char *ascii, uint16_t ascii_len, uint8_t *hex, uint16_t hex_len);
 
 /**
  * @brief Get string value from AT command with length check.
@@ -109,8 +91,7 @@ bool check_for_ipv4(const char *address, uint8_t length);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int util_string_get(const struct at_param_list *list, size_t index,
-			 char *value, size_t *len);
+int util_string_get(const struct at_param_list *list, size_t index, char *value, size_t *len);
 
 /**
  * @brief use AT command to get IPv4 and IPv6 addresses

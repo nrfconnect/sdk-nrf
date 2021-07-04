@@ -14,7 +14,7 @@
 #include "slm_at_host.h"
 #include "slm_at_tcp_proxy.h"
 
-LOG_MODULE_REGISTER(tcp_proxy, CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm_tcp, CONFIG_SLM_LOG_LEVEL);
 
 #define THREAD_STACK_SIZE	(KB(3) + NET_IPV4_MTU)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
@@ -44,7 +44,7 @@ enum slm_tcp_proxy_role {
 };
 
 static char ip_allowlist[CONFIG_SLM_TCP_FILTER_SIZE][INET_ADDRSTRLEN];
-RING_BUF_DECLARE(data_buf, CONFIG_SLM_SOCKET_RX_MAX * 2);
+RING_BUF_DECLARE(data_buf, SLM_MAX_PAYLOAD);
 static struct k_thread tcp_thread;
 static struct k_work disconnect_work;
 static K_THREAD_STACK_DEFINE(tcp_thread_stack, THREAD_STACK_SIZE);
@@ -63,8 +63,7 @@ static int nfds;
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
-extern uint8_t rx_data[CONFIG_SLM_SOCKET_RX_MAX];
+extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 
 /** forward declaration of thread function **/
 static void tcpcli_thread_func(void *p1, void *p2, void *p3);
@@ -142,11 +141,6 @@ static int do_tcp_server_start(uint16_t port)
 	if (addr_len == 0) {
 		LOG_ERR("LTE not connected yet");
 		ret = -ENETUNREACH;
-		goto exit;
-	}
-	if (!check_for_ipv4(ipv4_addr, addr_len)) {
-		LOG_ERR("Invalid local address");
-		ret = -EINVAL;
 		goto exit;
 	}
 	if (inet_pton(AF_INET, ipv4_addr, &local.sin_addr) != 1) {
@@ -241,39 +235,24 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 		}
 	}
 
-	/* Connect to remote host */
-	if (check_for_ipv4(url, strlen(url))) {
-		remote.sin_family = AF_INET;
-		remote.sin_port = htons(port);
-		LOG_DBG("IPv4 Address %s", log_strdup(url));
-		/* NOTE inet_pton() returns 1 as success */
-		ret = inet_pton(AF_INET, url, &remote.sin_addr);
-		if (ret != 1) {
-			LOG_ERR("inet_pton() failed: %d", ret);
-			ret = -EINVAL;
-			goto exit;
-		}
-	} else {
-		struct addrinfo *result;
-		struct addrinfo hints = {
-			.ai_family = AF_INET,
-			.ai_socktype = SOCK_STREAM
-		};
+	struct addrinfo *result;
+	struct addrinfo hints = {
+		.ai_family = AF_INET,
+		.ai_socktype = SOCK_STREAM
+	};
 
-		ret = getaddrinfo(url, NULL, &hints, &result);
-		if (ret || result == NULL) {
-			LOG_ERR("getaddrinfo() failed: %d", ret);
-			ret = -EINVAL;
-			goto exit;
-		}
-
-		remote.sin_family = AF_INET;
-		remote.sin_port = htons(port);
-		remote.sin_addr.s_addr =
-		((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
-		/* Free the address. */
-		freeaddrinfo(result);
+	ret = getaddrinfo(url, NULL, &hints, &result);
+	if (ret || result == NULL) {
+		LOG_ERR("getaddrinfo() failed: %d", ret);
+		ret = -EINVAL;
+		goto exit;
 	}
+
+	remote.sin_family = AF_INET;
+	remote.sin_port = htons(port);
+	remote.sin_addr.s_addr = ((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
+	/* Free the address. */
+	freeaddrinfo(result);
 
 	ret = connect(proxy.sock, (struct sockaddr *)&remote,
 		sizeof(struct sockaddr_in));
@@ -442,7 +421,7 @@ static int tcp_datamode_callback(uint8_t op, const uint8_t *data, int len)
 
 	if (op == DATAMODE_SEND) {
 		ret = do_tcp_send_datamode(data, len);
-		LOG_DBG("datamode send: %d", ret);
+		LOG_INF("datamode send: %d", ret);
 	} else if (op == DATAMODE_EXIT) {
 		if (proxy.role == AT_TCP_ROLE_CLIENT) {
 			proxy.datamode = false;
@@ -458,6 +437,7 @@ static int tcp_datamode_callback(uint8_t op, const uint8_t *data, int len)
 static int tcpsvr_input(int infd)
 {
 	int ret;
+	char rx_data[SLM_MAX_PAYLOAD];
 
 	if (fds[infd].fd == proxy.sock) {
 		socklen_t len = sizeof(struct sockaddr_in);
@@ -622,6 +602,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 {
 	int ret;
 	bool in_datamode;
+	char rx_data[SLM_MAX_PAYLOAD];
 
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
@@ -684,6 +665,23 @@ exit:
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		}
 	}
+}
+
+/**@brief Check whether a string has valid IPv4 address or not
+ */
+static bool check_for_ipv4(const char *address, uint8_t length)
+{
+	int index;
+
+	for (index = 0; index < length; index++) {
+		char ch = *(address + index);
+
+		if ((ch != '.') && (ch < '0' || ch > '9')) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 /**@brief handle AT#XTCPFILTER commands
@@ -837,8 +835,8 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 		}
 		if (op == AT_CLIENT_CONNECT || op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 			uint16_t port;
-			char url[TCPIP_MAX_URL];
-			int size = TCPIP_MAX_URL;
+			char url[SLM_MAX_URL];
+			int size = SLM_MAX_URL;
 
 			if (proxy.sock != INVALID_SOCKET) {
 				LOG_ERR("Client is already running.");
