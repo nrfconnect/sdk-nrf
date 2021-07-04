@@ -42,6 +42,7 @@ nRF9160
     * Added a separate document page to explain data mode mechanism and how it works.
     * Removed datatype in all sending AT commands. If no sending data is specified, switch data mode to receive and send any arbitrary data.
     * Added a separate document page to describe the FOTA service.
+    * Added IPv6 support to Socket and ICMP services.
 
 nRF5
 ====

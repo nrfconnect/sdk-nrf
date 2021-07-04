@@ -35,12 +35,13 @@ The modem-specific AT commands are documented in the `nRF91 AT Commands Referenc
    :caption: Subpages:
 
    Generic_AT_commands
-   FTP_AT_commands
-   GPS_AT_commands
+   SOCKET_AT_commands
+   TCPIP_AT_commands
    ICMP_AT_commands
    FOTA_AT_commands
    SMS_AT_commands
+   FTP_AT_commands
+   GPS_AT_commands
    MQTT_AT_commands
-   TCPIP_AT_commands
    HTTPC_AT_commands
    TWI_AT_commands

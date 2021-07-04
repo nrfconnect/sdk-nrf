@@ -21,7 +21,7 @@
 #include "slm_at_host.h"
 #include "slm_at_tcp_proxy.h"
 #include "slm_at_udp_proxy.h"
-#include "slm_at_tcpip.h"
+#include "slm_at_socket.h"
 #if defined(CONFIG_SLM_NATIVE_TLS)
 #include "slm_at_cmng.h"
 #endif
@@ -64,7 +64,7 @@ static struct slm_work_info {
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
+extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 extern uint16_t datamode_time_limit;
 extern struct uart_config slm_uart;
 
@@ -313,7 +313,9 @@ int handle_at_udp_send(enum at_cmd_type cmd_type);
 
 /* Socket-type TCPIP commands */
 int handle_at_socket(enum at_cmd_type cmd_type);
+int handle_at_secure_socket(enum at_cmd_type cmd_type);
 int handle_at_socketopt(enum at_cmd_type cmd_type);
+int handle_at_secure_socketopt(enum at_cmd_type cmd_type);
 int handle_at_bind(enum at_cmd_type cmd_type);
 int handle_at_connect(enum at_cmd_type cmd_type);
 int handle_at_listen(enum at_cmd_type cmd_type);
@@ -392,7 +394,9 @@ static struct slm_at_cmd {
 
 	/* Socket-type TCPIP commands */
 	{"AT#XSOCKET", handle_at_socket},
+	{"AT#XSSOCKET", handle_at_secure_socket},
 	{"AT#XSOCKETOPT", handle_at_socketopt},
+	{"AT#XSSOCKETOPT", handle_at_secure_socketopt},
 	{"AT#XBIND", handle_at_bind},
 	{"AT#XCONNECT", handle_at_connect},
 	{"AT#XLISTEN", handle_at_listen},
@@ -503,7 +507,7 @@ int slm_at_init(void)
 		LOG_ERR("UDP Server could not be initialized: %d", err);
 		return -EFAULT;
 	}
-	err = slm_at_tcpip_init();
+	err = slm_at_socket_init();
 	if (err) {
 		LOG_ERR("TCPIP could not be initialized: %d", err);
 		return -EFAULT;
@@ -583,7 +587,7 @@ void slm_at_uninit(void)
 	if (err) {
 		LOG_WRN("UDP Server could not be uninitialized: %d", err);
 	}
-	err = slm_at_tcpip_uninit();
+	err = slm_at_socket_uninit();
 	if (err) {
 		LOG_WRN("TCPIP could not be uninitialized: %d", err);
 	}
