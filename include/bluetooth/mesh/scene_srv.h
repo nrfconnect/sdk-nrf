@@ -14,6 +14,7 @@
 #ifndef BT_MESH_SCENE_SRV_H__
 #define BT_MESH_SCENE_SRV_H__
 
+#include <bluetooth/mesh/gen_dtt_srv.h>
 #include <bluetooth/mesh/scene.h>
 #include <settings/settings.h>
 #include <toolchain/common.h>
@@ -56,6 +57,7 @@ struct bt_mesh_scene_srv;
  *  @param[in] _srv Pointer to a @ref bt_mesh_scene_srv instance.
  */
 #define BT_MESH_MODEL_SCENE_SRV(_srv)                                          \
+	BT_MESH_MODEL_DTT_SRV(&(_srv)->dtt),                               \
 	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SCENE_SRV, _bt_mesh_scene_srv_op,    \
 			 &(_srv)->pub,                                         \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_scene_srv,     \
@@ -69,6 +71,9 @@ struct bt_mesh_scene_srv;
 
 /** Scene Server model instance */
 struct bt_mesh_scene_srv {
+	/** Generic Default Transition Time Server instance. */
+	struct bt_mesh_dtt_srv dtt;
+
 	/** All known scenes. */
 	uint16_t all[CONFIG_BT_MESH_SCENES_MAX];
 	/** Number of known scenes. */

@@ -777,6 +777,7 @@ static int scene_setup_srv_init(struct bt_mesh_model *model)
 	 * we won't have to support multiple extenders.
 	 */
 	bt_mesh_model_extend(srv->model, srv->setup_mod);
+	bt_mesh_model_extend(srv->dtt.model, srv->setup_mod);
 
 	return 0;
 }
