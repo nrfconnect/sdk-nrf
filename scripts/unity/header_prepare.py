@@ -29,7 +29,7 @@ def header_prepare(in_file, out_file, out_wrap_file):
 
     # change static inline functions to normal function declaration
     static_inline_pattern = re.compile(
-        r'(?:__deprecated\s+)?(?:static\s+inline\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
+        r'(?:__deprecated\s+)?(?:static\s+inline\s+|inline\s+static\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
         r'((?:\w+[*\s]+)+\w+?\(.*?\))\n\{.+?\n\}',
         re.M | re.S)
     content = static_inline_pattern.sub(r"\1;", content)
