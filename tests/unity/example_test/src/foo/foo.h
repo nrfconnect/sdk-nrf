@@ -33,4 +33,8 @@ static ALWAYS_INLINE int foo_execute2(void)
 	return 0;
 }
 
+inline static int foo_execute3(void)
+{
+	return 0;
+}
 #endif /* __FOO_H */
