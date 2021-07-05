@@ -56,7 +56,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: v2.6.0-rc1-ncs1
+      revision: 0944459b5b622048a08ad1f8cf8a044c135fd0d3
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -87,21 +87,11 @@ manifest:
           - net-tools
           - nrf_hw_models
           - open-amp
+          - openthread
           - segger
           - tinycbor
           - tinycrypt
           - TraceRecorderSource
-    # This version of NCS uses an openthread commit which is
-    # available in the zephyrproject-rtos fork, but which is
-    # slightly ahead of what was available in zephyr/west.yml
-    # at the above revision.
-    #
-    # Maintainers: this entry should be moved back to the allowlist
-    # during the next upmerge.
-    - name: openthread
-      remote: zephyrproject
-      path: modules/lib/openthread
-      revision: f460532d4afa5d49feba241e5dc31c56123d31a8
 
     # NCS repositories.
     #
@@ -126,7 +116,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v1.6.0
+      revision: 5456b3966b98e011bffc27438976f1f054feb3e6
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -176,7 +166,7 @@ manifest:
       path: modules/lib/cddl-gen
     - name: homekit
       repo-path: sdk-homekit
-      revision: 97b3628b468df8c798dd8338018b65763c7af9e8
+      revision: 8ba570430261e54537a64dd9bbb5620afbe0a394
       groups:
       - homekit
     - name: find-my

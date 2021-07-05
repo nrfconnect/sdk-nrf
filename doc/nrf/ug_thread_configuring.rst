@@ -139,7 +139,8 @@ Moreover, Thread 1.2 also comes with the following features that are supported f
 * Domain Unicast Addresses - Set :option:`CONFIG_OPENTHREAD_DUA` to enable this feature.
 * Multicast Listener Registration - Set :option:`CONFIG_OPENTHREAD_MLR` to enable this feature.
 * Backbone Router - Set :option:`CONFIG_OPENTHREAD_BACKBONE_ROUTER` to enable this feature.
-* Link Metrics - Set :option:`CONFIG_OPENTHREAD_LINK_METRICS` to enable this feature.
+* Link Metrics - Set :option:`CONFIG_OPENTHREAD_LINK_METRICS_INITIATOR` to enable the link metrics initiator functionality.
+  Set :option:`CONFIG_OPENTHREAD_LINK_METRICS_SUBJECT` to enable the link metrics subject functionality.
 * Coordinated Sampled Listening (CSL) Receiver - Set :option:`CONFIG_OPENTHREAD_CSL_RECEIVER` to enable this feature.
 
 .. note::
@@ -430,7 +431,7 @@ The following list shows some of the configuration options that you might want t
   If you set this option to ``n``, also check and configure the network parameters that are used, for example:
 
   * :option:`CONFIG_OPENTHREAD_CHANNEL`
-  * :option:`CONFIG_OPENTHREAD_MASTERKEY`
+  * :option:`CONFIG_OPENTHREAD_NETWORKKEY`
   * :option:`CONFIG_OPENTHREAD_NETWORK_NAME`
   * :option:`CONFIG_OPENTHREAD_PANID`
   * :option:`CONFIG_OPENTHREAD_XPANID`
