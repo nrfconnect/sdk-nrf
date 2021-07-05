@@ -109,3 +109,7 @@
 .. thingy52_nrf52832
 
 | Thingy:52 | PCA20020 | :ref:`thingy52_nrf52832 <thingy52_nrf52832>` | ``thingy52_nrf52832`` |
+
+.. thingy53_nrf5340_cpuapp
+
+| Thingy:53 | PCA20053 | :ref:`thingy53_nrf5340 <thingy53_nrf5340>` | ``thingy53_nrf5340_cpuapp`` |
