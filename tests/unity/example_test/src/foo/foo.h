@@ -37,4 +37,12 @@ inline static int foo_execute3(void)
 {
 	return 0;
 }
+
+__syscall void foo_syscall(void);
+
+static inline void z_impl_foo_syscall(void)
+{
+	/* empty */
+}
+
 #endif /* __FOO_H */
