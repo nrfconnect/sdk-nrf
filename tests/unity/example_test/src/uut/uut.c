@@ -24,5 +24,5 @@ int uut_init(void *handle)
 		return err;
 	}
 
-	return foo_execute() + foo_execute2();
+	return foo_execute() + foo_execute2() + foo_execute3();
 }
