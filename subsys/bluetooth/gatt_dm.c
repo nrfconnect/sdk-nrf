@@ -75,14 +75,14 @@ static void *user_data_alloc(struct bt_gatt_dm *dm,
 	/* Round up len to 32 bits to make sure that return pointers are always
 	 * correctly aligned.
 	 */
-	len = (len + DATA_ALIGN - 1) & ~(DATA_ALIGN - 1);
+	len = ROUND_UP(len, DATA_ALIGN);
 
 	__ASSERT_NO_MSG(len <= CHUNK_DATA_SIZE);
 
 	if (sys_slist_is_empty(&dm->chunk_list) ||
 	    dm->cur_chunk_len + len > CHUNK_DATA_SIZE) {
 
-		item = k_malloc(sizeof(struct data_chunk_item));
+		item = k_calloc(1, sizeof(struct data_chunk_item));
 
 		if (!item) {
 			return NULL;
@@ -198,6 +198,11 @@ static struct bt_uuid *uuid_store(struct bt_gatt_dm *dm,
 	size_t size = get_uuid_size(uuid);
 	void *buffer = user_data_alloc(dm, size);
 
+	if (!buffer) {
+		LOG_ERR("No space for a UUID.");
+		return NULL;
+	}
+
 	memcpy(buffer, uuid, size);
 
 	return (struct bt_uuid *)buffer;
@@ -291,6 +296,9 @@ static uint8_t discovery_process_service(struct bt_gatt_dm *dm,
 
 	struct bt_gatt_service_val *cur_service_val =
 		bt_gatt_dm_attr_service_val(cur_attr);
+
+	__ASSERT_NO_MSG(cur_service_val != NULL);
+
 	memcpy(cur_service_val, service_val, sizeof(*cur_service_val));
 
 	cur_service_val->uuid = uuid_store(dm, cur_service_val->uuid);
@@ -352,6 +360,9 @@ static uint8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 
 	if (bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CHRC) == 0) {
 		cur_attr = attr_store(dm, attr, sizeof(struct bt_gatt_chrc));
+		struct bt_gatt_chrc *cur_gatt_chrc = bt_gatt_dm_attr_chrc_val(cur_attr);
+
+		cur_gatt_chrc->uuid = cur_attr->uuid;
 	} else {
 		cur_attr = attr_store(dm, attr, 0);
 	}
@@ -392,6 +403,9 @@ static uint8_t discovery_process_characteristic(
 
 	gatt_chrc = attr->user_data;
 	cur_gatt_chrc = bt_gatt_dm_attr_chrc_val(cur_attr);
+
+	__ASSERT_NO_MSG(cur_gatt_chrc != NULL);
+
 	memcpy(cur_gatt_chrc, gatt_chrc, sizeof(*cur_gatt_chrc));
 	cur_gatt_chrc->uuid = uuid_store(dm, cur_gatt_chrc->uuid);
 	if (!cur_gatt_chrc->uuid) {
