@@ -9,6 +9,9 @@ menu "Selector configuration"
 config DESKTOP_SELECTOR_HW_ENABLE
 	depends on CAF
 	bool "Enable HW based selector"
+	help
+	  This option enables hardware based selector for nRF Desktop application.
+	  If selector state changes, selector_event is send.
 
 if DESKTOP_SELECTOR_HW_ENABLE
 

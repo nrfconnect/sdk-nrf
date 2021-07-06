@@ -12,23 +12,33 @@ choice
 
 config DESKTOP_MOTION_NONE
 	bool "Disable motion"
+	help
+	  If selected, no motion source if defined for the interface.
 
 config DESKTOP_MOTION_SENSOR_PMW3360_ENABLE
 	bool "Motion from optical sensor PMW3360"
 	select DESKTOP_MOTION_SENSOR_ENABLE
 	depends on PMW3360
+	help
+	  If selected, movement data it obtained from PMW3360 optical sensor.
 
 config DESKTOP_MOTION_SENSOR_PAW3212_ENABLE
 	bool "Motion from optical sensor PAW3212"
 	select DESKTOP_MOTION_SENSOR_ENABLE
 	depends on PAW3212
+	help
+	  If selected, movement data it obtained from PAW3212 optical sensor.
 
 config DESKTOP_MOTION_BUTTONS_ENABLE
 	bool "Motion from buttons"
 	depends on CAF_BUTTON_EVENTS
+	help
+	  If selected, movement data it obtained from buttons.
 
 config DESKTOP_MOTION_SIMULATED_ENABLE
 	bool "Simulated motion"
+	help
+	  If selected, movement data is simulated.
 
 endchoice
 
@@ -75,6 +85,7 @@ config DESKTOP_MOTION_SIMULATED_EDGE_TIME
 	range 8 1000000
 	default 16
 	help
+	  The simulated movement data will be tracing predefined path, an eight-sided polygon.
 	  Must be power of two (calculations speedup).
 
 config DESKTOP_MOTION_SIMULATED_SCALE_FACTOR
@@ -82,6 +93,9 @@ config DESKTOP_MOTION_SIMULATED_SCALE_FACTOR
 	depends on DESKTOP_MOTION_SIMULATED_ENABLE
 	range 1 5
 	default 2
+	help
+	  The simulated movement data will be tracing predefined path, an eight-sided polygon.
+	  This option defines scale factor for tracked polygon size.
 
 config DESKTOP_MOTION_SENSOR_THREAD_STACK_SIZE
 	int "Motion module thread stack size"

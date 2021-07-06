@@ -25,6 +25,8 @@ config DESKTOP_HID_EVENT_QUEUE_SIZE
 	int "HID event queue size"
 	default 12
 	range 2 255
+	help
+	  Size of the HID event queue.
 
 module = DESKTOP_HID_STATE
 module-str = HID state

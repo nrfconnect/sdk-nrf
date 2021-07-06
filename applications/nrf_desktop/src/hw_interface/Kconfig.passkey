@@ -12,10 +12,15 @@ choice
 
 config DESKTOP_PASSKEY_NONE
 	bool "Disable passkey"
+	help
+	  If selected, passkey is disabled.
 
 config DESKTOP_PASSKEY_BUTTONS
 	bool "Passkey based on button presses"
 	depends on CAF_BUTTON_EVENTS
+	help
+	  If selected, the passkey module is used to handle numeric passkey input.
+	  The input handling is based on button presses.
 
 endchoice
 
@@ -24,6 +29,8 @@ config DESKTOP_PASSKEY_MAX_LEN
 	range 0 9
 	default 0
 	depends on !DESKTOP_PASSKEY_NONE
+	help
+	  Maximum number of digits in a passkey.
 
 if !DESKTOP_PASSKEY_NONE
 

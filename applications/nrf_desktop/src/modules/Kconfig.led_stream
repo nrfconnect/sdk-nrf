@@ -17,6 +17,8 @@ config DESKTOP_LED_STREAM_QUEUE_SIZE
 	depends on DESKTOP_LED_STREAM_ENABLE
 	default 15
 	range 2 254
+	help
+	  Size of the LED stream event queue.
 
 if DESKTOP_LED_STREAM_ENABLE
 
