@@ -132,19 +132,61 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 			 enum modem_key_mgmt_cred_type cred_type,
 			 const void *buf, size_t len)
 {
+	char *scratch_p = scratch_buf;
+	const char *buf_str = buf;
 	int err;
 	int written;
 	enum at_cmd_state state;
+	/*
+	 * According to "nRF91 AT Commands" document, PSK needs to be converted
+	 * to hex string.
+	 */
+	bool convert_to_hex = (cred_type == MODEM_KEY_MGMT_CRED_TYPE_PSK);
 
 	if (buf == NULL || len == 0) {
 		return -EINVAL;
 	}
 
-	written = snprintf(scratch_buf, sizeof(scratch_buf),
-			   "%s,%d,%d,\"%.*s\"", MODEM_KEY_MGMT_OP_WR, sec_tag,
-			   cred_type, len, (const char *)buf);
+	written = snprintf(scratch_p, sizeof(scratch_buf),
+			   "%s,%d,%d,\"", MODEM_KEY_MGMT_OP_WR,
+			   sec_tag, cred_type);
+	if (written < 0) {
+		return -ENOBUFS;
+	}
 
-	if (written < 0 || written >= sizeof(scratch_buf)) {
+	scratch_p += written;
+
+	/*
+	 * At this point we know how much space we need, so check it now
+	 * and don't bother about it in subsequent snprintf() calls.
+	 */
+	if (written + len * (convert_to_hex ? 2 : 1) + 1 /* '"' */ + 1 /* \0 */
+						>= sizeof(scratch_buf)) {
+		return -ENOBUFS;
+	}
+
+	if (convert_to_hex) {
+		for (int i = 0; i < len; i++) {
+			written = snprintf(scratch_p, 3, "%02x",
+					   (unsigned int) buf_str[i]);
+			if (written < 0) {
+				return -ENOBUFS;
+			}
+
+			scratch_p += written;
+		}
+	} else {
+		written = snprintf(scratch_p, sizeof(scratch_buf), "%.*s",
+				   len, buf_str);
+		if (written < 0) {
+			return -ENOBUFS;
+		}
+
+		scratch_p += written;
+	}
+
+	written = snprintf(scratch_p, 2, "\"");
+	if (written < 0) {
 		return -ENOBUFS;
 	}
 
