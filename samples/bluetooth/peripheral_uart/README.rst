@@ -14,10 +14,10 @@ It uses the NUS service to send data back and forth between a UART connection an
 Overview
 ********
 
-When connected, the sample forwards any data received on the RX pin of the UART 1 peripheral to the Bluetooth LE unit.
-On Nordic Semiconductor's development kits, the UART 1 peripheral is typically gated through the SEGGER chip to a USB CDC virtual serial port.
+When connected, the sample forwards any data received on the RX pin of the UART 0 peripheral to the Bluetooth LE unit.
+On Nordic Semiconductor's development kits, the UART 0 peripheral is typically gated through the SEGGER chip to a USB CDC virtual serial port.
 
-Any data sent from the Bluetooth LE unit is sent out of the UART 1 peripheral's TX pin.
+Any data sent from the Bluetooth LE unit is sent out of the UART 0 peripheral's TX pin.
 
 
 .. _peripheral_uart_debug:
