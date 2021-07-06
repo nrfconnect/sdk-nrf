@@ -30,11 +30,18 @@ int event_storage_littlefs_remove(struct event_header *eh)
 	return -ENOTSUP;
 }
 
+int event_storage_littlefs_clear(void)
+{
+	/* TODO */
+	return -ENOTSUP;
+}
+
 static struct event_storage_api api = {
 	.init = event_storage_littlefs_init,
 	.write = event_storage_littlefs_write,
 	.read = event_storage_littlefs_read,
-	.remove = event_storage_littlefs_remove
+	.remove = event_storage_littlefs_remove,
+	.clear = event_storage_littlefs_clear
 };
 
 struct event_storage_api *event_store_backend_get_api(void)

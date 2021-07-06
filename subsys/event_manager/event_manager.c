@@ -332,3 +332,17 @@ int event_manager_init(void)
 
 	return 0;
 }
+
+int event_manager_clear_storage(void)
+{
+#if defined(CONFIG_EVENT_MANAGER_STORAGE)
+	int err;
+
+	err = event_store_clear();
+	if (err) {
+		return err;
+	}
+#endif
+
+	return 0;
+}

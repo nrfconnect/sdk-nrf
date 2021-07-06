@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "event_manager_storage_priv.h"
+#include <event_manager.h>
 #include <storage/flash_map.h>
 #include <fs/nvs.h>
 #include <logging/log.h>
@@ -139,6 +139,10 @@ int event_storage_nvs_remove(struct event_header *header)
 {
 	int err;
 
+	if (header->entry_id < FIRST_AVAILABLE_INDEX) {
+		return 0;
+	}
+
 	LOG_DBG("Removing event %d from nvs storage", header->entry_id);
 	err = nvs_delete(&event_nvs_cfg.cf_nvs, header->entry_id);
 	if (err < 0) {
@@ -206,11 +210,17 @@ int event_storage_nvs_read(struct event_header **eh, bool from_start)
 	return 0;
 }
 
+static int event_storage_nvs_clear(void)
+{
+	return nvs_clear(&event_nvs_cfg.cf_nvs);
+}
+
 static struct event_storage_api api = {
 	.init = event_storage_nvs_init,
 	.write = event_storage_nvs_write,
 	.read = event_storage_nvs_read,
-	.remove = event_storage_nvs_remove
+	.remove = event_storage_nvs_remove,
+	.clear = event_storage_nvs_clear,
 };
 
 struct event_storage_api *event_store_backend_get_api(void)

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <event_manager.h>
 #include "event_manager_storage_priv.h"
 
 static struct event_storage_api *storage_api;
@@ -25,6 +26,7 @@ static int event_store_play_all(void)
 
 	while (1) {
 		struct event_header *header;
+
 		err = storage_api->read(&header, first);
 		if (err == -ENOMEM) {
 			return -ENOMEM;
@@ -50,4 +52,9 @@ int event_store_init(void)
 	}
 
 	return event_store_play_all();
+}
+
+int event_store_clear(void)
+{
+	return storage_api->clear();
 }

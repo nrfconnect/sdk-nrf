@@ -100,6 +100,9 @@ extern "C" {
 			return NULL;					\
 		}							\
 		event->header.type_id = _EVENT_ID(ename);		\
+		COND_CODE_1(IS_ENABLED(CONFIG_EVENT_MANAGER_STORAGE),	\
+			(event->header.entry_id = 0;),			\
+			())						\
 		return event;						\
 	}
 

@@ -298,11 +298,11 @@ void _event_submit(struct event_header *eh);
  */
 #if defined(CONFIG_EVENT_MANAGER_STORAGE)
 #include "event_manager_storage_priv.h"
-#define EVENT_SUBMIT(event)		event_store_add(&event->header); \
+#define EVENT_SUBMIT_IMPORTANT(event)	event_store_add(&event->header); \
 					_event_submit(&event->header)
-#else
-#define EVENT_SUBMIT(event) _event_submit(&event->header)
 #endif
+
+#define EVENT_SUBMIT(event) _event_submit(&event->header)
 
 /** Initialize the Event Manager.
  *
@@ -310,6 +310,11 @@ void _event_submit(struct event_header *eh);
  */
 int event_manager_init(void);
 
+/** Clears the underlying storage layer if configured
+ *
+ * @retval 0 If the operation was successful.
+ */
+int event_manager_clear_storage(void);
 
 #ifdef __cplusplus
 }
