@@ -525,15 +525,18 @@ static void connect_cloud(void)
 }
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-void pgps_handler(enum nrf_cloud_pgps_event event, struct nrf_cloud_pgps_prediction *prediction)
+void pgps_handler(struct nrf_cloud_pgps_event *event)
 {
 	int err;
 
-	if (event != PGPS_EVT_AVAILABLE) {
+	if (event->type == PGPS_EVT_REQUEST) {
+		LOG_WRN("PGPS_EVT_REQUEST");
+		return;
+	} else if (event->type != PGPS_EVT_AVAILABLE) {
 		return;
 	}
 
-	err = nrf_cloud_pgps_inject(prediction, &agps_request, NULL);
+	err = nrf_cloud_pgps_inject(event->prediction, &agps_request, NULL);
 	if (err) {
 		LOG_ERR("Unable to send prediction to modem: %d", err);
 	}

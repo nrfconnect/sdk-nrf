@@ -175,7 +175,7 @@ The :kconfig:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` sets the minimum numb
 For best performance, applications can call the P-GPS functions mentioned in this section from workqueue handlers rather than directly from various callback functions.
 
 The P-GPS subsystem itself generates events that can be passed to a registered callback function.
-See :c:enum:`nrf_cloud_pgps_event`.
+See :c:enum:`nrf_cloud_pgps_event_type`.
 
 API documentation
 *****************

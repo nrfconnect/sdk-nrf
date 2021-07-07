@@ -46,7 +46,7 @@ config NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
 	  prediction. Odd numbers are not allowed.
 
 config NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE
-	int "Fragment size for PGPS downloads."
+	int "Fragment size for P-GPS downloads."
 	range 128 1500
 	default 1500
 	help
