@@ -46,12 +46,33 @@ config NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
 	  prediction. Odd numbers are not allowed.
 
 config NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE
-	int "Fragment size for P-GPS downloads."
+	int "Fragment size for P-GPS downloads"
 	range 128 1500
 	default 1500
 	help
 	  Due to the finite size of the nrf9160 modem's TLS buffer, this
 	  value needs to be small enough to leave room for the HTTP
 	  headers.
+
+choice NRF_CLOUD_PGPS_TRANSPORT
+	prompt "nRF Cloud P-GPS transport"
+	default NRF_CLOUD_PGPS_TRANSPORT_MQTT if NRF_CLOUD_MQTT
+	default NRF_CLOUD_PGPS_TRANSPORT_NONE
+
+config NRF_CLOUD_PGPS_TRANSPORT_NONE
+	bool "No transport"
+	help
+	  Enabling this option will make the nRF Cloud P-GPS library not request
+	  data from nRF Cloud when its APIs are called. This will instead let
+	  it be up to the user to request, receive and process P-GPS data.
+
+config NRF_CLOUD_PGPS_TRANSPORT_MQTT
+	bool "MQTT transport"
+	depends on NRF_CLOUD_MQTT
+	help
+	  Use nRF Cloud library's MQTT implementation to send requests for P-GPS
+	  data and receive responses.
+
+endchoice # NRF_CLOUD_PGPS_TRANSPORT
 
 endif # NRF_CLOUD_PGPS
