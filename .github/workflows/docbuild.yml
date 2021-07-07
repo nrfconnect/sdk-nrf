@@ -73,15 +73,15 @@ jobs:
 
           # Create documentation upload files
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "publish2 dev PR-${{ github.event.number }} $file" > monitor.txt
+            echo "publish2 dev PR-${{ github.event.number }} __FILE__" > monitor.txt
             echo "${{ github.event.number }}" > pr.txt
           else
             # basename will work for both branches and tags
             branch=$(basename "${{ github.ref }}")
             if [[ $branch == "master" ]]; then
-              echo "publish2 main latest $file" > monitor.txt
+              echo "publish2 main latest __FILE__" > monitor.txt
             else
-              echo "publish2 main ${branch} $file" > monitor.txt
+              echo "publish2 main ${branch} __FILE__" > monitor.txt
             fi
           fi
 
