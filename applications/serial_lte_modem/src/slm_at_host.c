@@ -281,7 +281,7 @@ static void response_handler(void *context, const char *response)
 
 static void raw_send(struct k_work *work)
 {
-	uint8_t *data;
+	uint8_t *data = NULL;
 	uint32_t size_send, size_sent;
 
 	ARG_UNUSED(work);
@@ -289,7 +289,7 @@ static void raw_send(struct k_work *work)
 	/* NOTE ring_buf_get_claim() might not return full size */
 	do {
 		size_send = ring_buf_get_claim(&data_rb, &data, sizeof(at_buf));
-		if (size_send > 0) {
+		if (data != NULL && size_send > 0) {
 			LOG_INF("Raw send %d", size_send);
 			LOG_HEXDUMP_DBG(data, MIN(size_send, HEXDUMP_DATAMODE_MAX), "RX-DATAMODE");
 			if (datamode_handler) {

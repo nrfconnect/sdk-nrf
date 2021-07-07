@@ -20,9 +20,9 @@ Overview
 You can manually switch between AT-command mode and data mode.
 However, the SLM data mode is applied automatically while using the following modules:
 
-* TCP/TLS server and client
-* UDP server and client, DTLS client
 * Socket ``send()`` and ``sendto()``
+* TCP/TLS proxy send
+* UDP/DTLS proxy send
 * FTP put, uput and mput
 * MQTT publish
 * HTTP request
@@ -36,35 +36,36 @@ See the following examples:
 * ``AT#XSEND`` makes SLM enter data mode to receive arbitrary data to transmit.
 * ``AT#XSEND="data"`` makes SLM transmit data in normal AT Command mode.
 
+Other examples:
+
+* ``AT#XTCPSEND``
+* ``AT#XUDPSEND``
+* ``AT#XFTP="put",<file>``
+* ``AT#XFTP="uput"``
+* ``AT#XFTP="mput",<file>``
+* ``AT#XMQTTPUB=<topic>,"",<qos>,<retain>``
+
 The SLM application does not send an *OK* response when it enters data mode.
-
-TCP and UDP proxies must explicitly specify data mode support using their respective AT commands.
-Also, the following conditions apply:
-
-* A TCP Server enters data mode after accepting an incoming connection.
-* A TCP Client enters data mode after connecting to a remote server.
-* An UDP Server enters data mode after starting.
-* An UDP Client enters data mode after connecting to a remote server.
 
 Exiting data mode
 =================
 
 To exit data mode, the MCU sends the termination command set by the ``CONFIG_SLM_DATAMODE_TERMINATOR`` configuration option over UART and also applies the silence period set by the ``CONFIG_SLM_DATAMODE_SILENCE`` option, both before and after the termination command.
 
-When instructed to exit data mode, the SLM application returns the AT-command response ``OK``.
+When instructed to exit data mode, the SLM application returns the AT command response ``OK``.
 
 The SLM application also exits data mode automatically in the following scenarios:
 
-* The TCP Server is stopped.
+* The TCP server is stopped.
 * The remote server disconnects the TCP client.
-* The TCP Client disconnects from the remote server due to an error.
-* The UDP Client disconnects from the remote server due to an error.
+* The TCP client disconnects from the remote server due to an error.
+* The UDP client disconnects from the remote server due to an error.
 * FTP unique or single put operations are completed.
 * An HTTP request is sent.
 
 When exiting data mode automatically, the SLM application sends ``#XDATAMODE: 0`` as an unsolicited notification.
 
-After exiting data mode, the SLM application returns to the AT-command mode.
+After exiting data mode, the SLM application returns to the AT command mode.
 
 Triggering the transmission
 ===========================

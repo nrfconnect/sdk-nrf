@@ -300,11 +300,10 @@ static int handle_at_datactrl(enum at_cmd_type cmd_type)
 int handle_at_clac(enum at_cmd_type cmd_type);
 
 /* TCP proxy commands */
-int handle_at_tcp_filter(enum at_cmd_type cmd_type);
 int handle_at_tcp_server(enum at_cmd_type cmd_type);
 int handle_at_tcp_client(enum at_cmd_type cmd_type);
 int handle_at_tcp_send(enum at_cmd_type cmd_type);
-int handle_at_tcp_recv(enum at_cmd_type cmd_type);
+int handle_at_tcp_hangup(enum at_cmd_type cmd_type);
 
 /* UDP proxy commands */
 int handle_at_udp_server(enum at_cmd_type cmd_type);
@@ -381,11 +380,10 @@ static struct slm_at_cmd {
 	{"AT#XDATACTRL", handle_at_datactrl},
 
 	/* TCP proxy commands */
-	{"AT#XTCPFILTER", handle_at_tcp_filter},
 	{"AT#XTCPSVR", handle_at_tcp_server},
 	{"AT#XTCPCLI", handle_at_tcp_client},
 	{"AT#XTCPSEND", handle_at_tcp_send},
-	{"AT#XTCPRECV", handle_at_tcp_recv},
+	{"AT#XTCPHANGUP", handle_at_tcp_hangup},
 
 	/* UDP proxy commands */
 	{"AT#XUDPSVR", handle_at_udp_server},
