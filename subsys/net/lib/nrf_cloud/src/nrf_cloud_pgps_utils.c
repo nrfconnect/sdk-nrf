@@ -453,7 +453,7 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 	}
 	LOG_DBG("pgps_active LOCKED");
 
-	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
+	socket_retries_left = CONFIG_NRF_CLOUD_PGPS_SOCKET_RETRIES;
 
 	struct download_client_cfg config = {
 		.sec_tag = sec_tag,
