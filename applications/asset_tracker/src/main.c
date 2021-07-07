@@ -412,13 +412,13 @@ void cloud_error_handler(int err)
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static struct nrf_cloud_pgps_prediction *prediction;
 
-void pgps_handler(enum nrf_cloud_pgps_event event,
-		  struct nrf_cloud_pgps_prediction *p)
+void pgps_handler(struct nrf_cloud_pgps_event *event)
 {
 	/* GPS unit asked for it, but we didn't have it; check now */
-	LOG_INF("event: %d", event);
-	if (event == PGPS_EVT_AVAILABLE) {
-		prediction = p;
+	LOG_INF("P-GPS event type: %d", event->type);
+
+	if (event->type == PGPS_EVT_AVAILABLE) {
+		prediction = event->prediction;
 		k_work_reschedule_for_queue(&application_work_q,
 					    &manage_pgps_work,
 					    K_MSEC(100));

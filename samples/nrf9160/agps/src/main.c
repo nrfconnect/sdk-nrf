@@ -44,13 +44,14 @@ static void gps_start_work_fn(struct k_work *work);
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static struct nrf_cloud_pgps_prediction *prediction;
 
-void pgps_handler(enum nrf_cloud_pgps_event event,
-		  struct nrf_cloud_pgps_prediction *p)
+void pgps_handler(struct nrf_cloud_pgps_event *event)
 {
 	/* GPS unit asked for it, but we didn't have it; check now */
-	LOG_INF("event: %d", event);
-	if (event == PGPS_EVT_AVAILABLE) {
-		prediction = p;
+	LOG_INF("P-GPS event type: %d", event->type);
+
+	if (event->type == PGPS_EVT_AVAILABLE) {
+		prediction = event->prediction;
+
 		k_work_submit(&manage_pgps_work);
 	}
 }

@@ -134,12 +134,11 @@ static void cell_pos_req_wk(struct k_work *work)
 	}
 }
 
-static void pgps_event_handler(enum nrf_cloud_pgps_event event,
-			       struct nrf_cloud_pgps_prediction *prediction)
+static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 {
 	int err;
 
-	switch (event) {
+	switch (event->type) {
 	/* P-GPS initialization beginning. */
 	case PGPS_EVT_INIT:
 		LOG_INF("PGPS_EVT_INIT");
@@ -161,10 +160,10 @@ static void pgps_event_handler(enum nrf_cloud_pgps_event event,
 		err = read_agps_req(&req);
 		if (err) {
 			/* All assistance elements as requested */
-			err = nrf_cloud_pgps_inject(prediction, &req, NULL);
+			err = nrf_cloud_pgps_inject(event->prediction, &req, NULL);
 		} else {
 			/* ephemerides assistance only */
-			err = nrf_cloud_pgps_inject(prediction, NULL, NULL);
+			err = nrf_cloud_pgps_inject(event->prediction, NULL, NULL);
 		}
 		if (err) {
 			LOG_ERR("Unable to send prediction to modem: %d", err);
