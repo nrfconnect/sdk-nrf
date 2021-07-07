@@ -51,13 +51,17 @@ Testing
 
 Build the sample with the same Bluetooth configuration as the application core sample.
 For more details, see: :ref:`ble_rpc`.
-Build the :ref:`zephyr:bluetooth-beacon-sample` on the application core.
+Build the :ref:`peripheral_uart` on the application core.
 This sample works out of the box and does not require configuration changes.
-In the Beacon sample directory, invoke:
+In the Peripheral UART sample directory, invoke:
 
    .. code-block:: console
 
       west build -b nrf5340dk_nrf5340_cpuapp -- -DCONFIG_BT_RPC=y
+
+You can also build :ref:`peripheral_hids_mouse` using the above command.
+This sample works also out of the box but it contains additional :file:`samples/bluetooth/peripheral_hids_mouse/child_image/rpc_host.conf` which is used to configure this sample.
+You can take it as an example on how to create a configuration for the your own application.
 
 After programming the sample for your development kit, test it by performing the following steps:
 

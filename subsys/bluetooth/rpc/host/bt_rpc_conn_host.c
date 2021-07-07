@@ -50,14 +50,7 @@ struct bt_conn *bt_rpc_decode_bt_conn(CborValue *value)
 	}
 
 	conn = bt_conn_lookup_index(index);
-
-	if (conn == NULL) {
-		LOG_ERR("Cannot find connection of specified index");
-		ser_decoder_invalid(value, CborErrorIO);
-	} else {
-		/* It is safe to unref, because remote side must be holding
-		 * at least one reference.
-		 */
+	if (conn) {
 		bt_conn_unref(conn);
 	}
 
