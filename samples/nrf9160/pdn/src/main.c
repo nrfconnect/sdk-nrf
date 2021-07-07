@@ -121,5 +121,6 @@ void main(void)
 	printk("PDP Context %d, PDN ID %d\n", 0, pdn_id_get(0));
 	printk("PDP Context %d, PDN ID %d\n", cid, pdn_id_get(cid));
 
+	lte_lc_power_off();
 	printk("Bye\n");
 }
