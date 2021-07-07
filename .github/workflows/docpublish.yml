@@ -48,6 +48,7 @@ jobs:
 
           # prepare request file
           mv ../extra/monitor.txt monitor_${GITHUB_RUN_ID}.txt
+          sed -i "s/__FILE__/doc_build_${GITHUB_RUN_ID}.tgz/g" monitor_${GITHUB_RUN_ID}.txt
 
       - name: Upload documentation
         env:
