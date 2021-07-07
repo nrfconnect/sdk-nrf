@@ -656,6 +656,11 @@ int nrf_cloud_pgps_request(const struct gps_pgps_request *request)
 		return -EINVAL;
 	}
 
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT)) {
+		LOG_ERR("CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT is not enabled");
+		return -ENOTSUP;
+	}
+
 	if (nrf_cloud_pgps_loading()) {
 		return 0;
 	}
@@ -737,20 +742,26 @@ static int send_request(struct gps_pgps_request *request)
 		.type = PGPS_EVT_LOADING,
 	};
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT)) {
 		if (evt_handler) {
 			evt_handler(&evt);
 		}
 
 		return nrf_cloud_pgps_request(request);
-	} else if (evt_handler) {
+	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)) {
+		if (!evt_handler) {
+			LOG_WRN("No handler is registered");
+			return 0;
+		}
+
 		evt.type = PGPS_EVT_REQUEST;
 		evt.request = request;
 
 		evt_handler(&evt);
-
-		return 0;
 	}
+
+	return 0;
+
 }
 
 int nrf_cloud_pgps_request_all(void)
@@ -1572,6 +1583,7 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 
 			evt_handler(&evt);
 		}
+
 		err = nrf_cloud_pgps_request_all();
 	} else if (num_valid < count) {
 		/* read missing predictions at end */

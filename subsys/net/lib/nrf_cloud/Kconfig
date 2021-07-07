@@ -275,6 +275,19 @@ config NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE
 	  value needs to be small enough to leave room for the HTTP
 	  headers.
 
+choice NRF_CLOUD_PGPS_TRANSPORT
+	prompt "Auto request"
+	default NRF_CLOUD_PGPS_TRANSPORT_MQTT if NRF_CLOUD_MQTT
+	default NRF_CLOUD_PGPS_TRANSPORT_NONE
+
+config NRF_CLOUD_PGPS_TRANSPORT_NONE
+	bool "No transport"
+
+config NRF_CLOUD_PGPS_TRANSPORT_MQTT
+	bool "MQTT transport"
+
+endchoice # NRF_CLOUD_PGPS_TRANSPORT
+
 endif # NRF_CLOUD_PGPS
 endmenu
 
