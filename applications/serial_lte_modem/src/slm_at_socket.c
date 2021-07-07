@@ -761,6 +761,7 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 		return 0;
 	}
 
+	freeaddrinfo(res);
 	return ret;
 }
 
@@ -807,6 +808,7 @@ static int do_sendto_datamode(const uint8_t *data, int datalen)
 		offset += ret;
 	}
 
+	freeaddrinfo(res);
 	return (offset > 0) ? offset : -1;
 }
 

@@ -97,11 +97,6 @@ config SLM_SOCKET_RX_MAX
 #
 # TCP/TLS proxy
 #
-config SLM_TCP_FILTER_SIZE
-	int "Size of IPv4 address allowlist"
-	range 1 6
-	default 6
-
 config SLM_TCP_POLL_TIME
 	int "Poll time-out in seconds for TCP connection"
 	default 10
@@ -110,6 +105,9 @@ config SLM_UDP_POLL_TIME
 	int "Poll time-out in seconds for UDP connection"
 	default 10
 
+#
+# Data mode
+#
 config SLM_DATAMODE_TERMINATOR
 	string "Pattern string to terminate data mode"
 	default "+++"

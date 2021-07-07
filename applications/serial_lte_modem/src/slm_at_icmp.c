@@ -472,6 +472,7 @@ static int ping_test_handler(const char *target)
 		util_get_ip_addr(ipv4_addr, NULL);
 		if (strlen(ipv4_addr) == 0) {
 			LOG_ERR("Unable to obtain local IPv4 address");
+			freeaddrinfo(res);
 			return -1;
 		}
 
@@ -491,6 +492,7 @@ static int ping_test_handler(const char *target)
 		util_get_ip_addr(NULL, ipv6_addr);
 		if (strlen(ipv6_addr) == 0) {
 			LOG_ERR("Unable to obtain local IPv6 address");
+			freeaddrinfo(res);
 			return -1;
 		}
 
