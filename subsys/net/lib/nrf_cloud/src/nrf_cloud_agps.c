@@ -35,9 +35,6 @@ static K_SEM_DEFINE(agps_injection_active, 1, 1);
 static int fd = -1;
 static bool agps_print_enabled;
 static const struct device *gps_dev;
-#if defined(CONFIG_NRF_CLOUD_MQTT)
-static bool json_initialized;
-#endif
 static struct gps_agps_request processed;
 static atomic_t request_in_progress;
 
@@ -66,32 +63,6 @@ bool nrf_cloud_agps_request_in_progress(void)
 }
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
-static cJSON *json_create_req_obj(const char *const app_id,
-				   const char *const msg_type)
-{
-	__ASSERT_NO_MSG(app_id != NULL);
-	__ASSERT_NO_MSG(msg_type != NULL);
-
-	if (!json_initialized) {
-		cJSON_Init();
-		json_initialized = true;
-	}
-
-	cJSON *resp_obj = cJSON_CreateObject();
-
-	if (!cJSON_AddStringToObject(resp_obj,
-				     NRF_CLOUD_JSON_APPID_KEY,
-				     app_id) ||
-	    !cJSON_AddStringToObject(resp_obj,
-				     NRF_CLOUD_JSON_MSG_TYPE_KEY,
-				     msg_type)) {
-		cJSON_Delete(resp_obj);
-		resp_obj = NULL;
-	}
-
-	return resp_obj;
-}
-
 static int json_add_types_array(cJSON *const obj, enum gps_agps_type *types,
 				const size_t type_count)
 {
@@ -119,38 +90,6 @@ static int json_add_types_array(cJSON *const obj, enum gps_agps_type *types,
 	}
 
 	return 0;
-}
-
-static int json_send_to_cloud(cJSON *const agps_request)
-{
-	__ASSERT_NO_MSG(agps_request != NULL);
-
-	char *msg_string;
-	int err;
-
-	msg_string = cJSON_PrintUnformatted(agps_request);
-	if (!msg_string) {
-		LOG_ERR("Could not allocate memory for A-GPS request message");
-		return -ENOMEM;
-	}
-
-	LOG_DBG("Created A-GPS request: %s", log_strdup(msg_string));
-
-	struct nct_dc_data msg = {
-		.data.ptr = msg_string,
-		.data.len = strlen(msg_string)
-	};
-
-	err = nct_dc_send(&msg);
-	if (err) {
-		LOG_ERR("Failed to send A-GPS request, error: %d", err);
-	} else {
-		LOG_DBG("A-GPS request sent");
-	}
-
-	k_free(msg_string);
-
-	return err;
 }
 
 int nrf_cloud_agps_request(const struct gps_agps_request request)
