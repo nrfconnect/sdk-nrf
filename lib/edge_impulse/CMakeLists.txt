@@ -28,6 +28,10 @@ if(NOT ${EI_URI} MATCHES "^[a-z]+://")
   endif()
 endif()
 
+
+file(GLOB_RECURSE  edge_impulse_all_headers CONFIGURE_DEPENDS "${EDGE_IMPULSE_SOURCE_DIR}/*.h")
+
+
 include(ExternalProject)
 ExternalProject_Add(edge_impulse_project
     URL              ${EI_URI}
@@ -39,6 +43,7 @@ ExternalProject_Add(edge_impulse_project
     STAMP_DIR        ${EDGE_IMPULSE_STAMP_DIR}
     DOWNLOAD_NAME    edge_impulse_src.zip
     BUILD_BYPRODUCTS ${EDGE_IMPULSE_LIBRARY}
+                     ${edge_impulse_all_headers}
     PATCH_COMMAND    ${CMAKE_COMMAND} -E copy
                      ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.ei.template
                      ${EDGE_IMPULSE_SOURCE_DIR}/CMakeLists.txt
