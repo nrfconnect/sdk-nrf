@@ -12,9 +12,10 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "cJSON_os.h"
+#include <cJSON_os.h>
 #include <net/net_ip.h>
 #include <modem/lte_lc.h>
+#include <drivers/gps.h>
 
 /**@file
  *
@@ -209,6 +210,23 @@ struct cloud_data_neighbor_cells {
 	bool queued : 1;
 };
 
+struct cloud_data_agps_request {
+	/** Mobile Country Code */
+	int mcc;
+	/** Mobile Network Code */
+	int mnc;
+	/** Cell ID */
+	uint32_t cell;
+	/** Area Code */
+	uint32_t area;
+	/** Physical Cell ID*/
+	uint16_t phy_cell;
+	/** AGPS request types */
+	struct gps_agps_request request;
+	/** Flag signifying that the data entry is to be encoded. */
+	bool queued : 1;
+};
+
 static inline void cloud_codec_init(void)
 {
 	cJSON_Init();
@@ -216,6 +234,9 @@ static inline void cloud_codec_init(void)
 
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 				      struct cloud_data_neighbor_cells *neighbor_cells);
+
+int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
+				    struct cloud_data_agps_request *agps_request);
 
 int cloud_codec_decode_config(char *input, struct cloud_data_cfg *cfg);
 

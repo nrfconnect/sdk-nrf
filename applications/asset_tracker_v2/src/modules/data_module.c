@@ -65,6 +65,7 @@ static struct cloud_data_accelerometer accel_buf[CONFIG_DATA_ACCELEROMETER_BUFFE
 static struct cloud_data_battery bat_buf[CONFIG_DATA_BATTERY_BUFFER_COUNT];
 static struct cloud_data_modem_dynamic modem_dyn_buf[CONFIG_DATA_MODEM_DYNAMIC_BUFFER_COUNT];
 static struct cloud_data_neighbor_cells neighbor_cells;
+static struct cloud_data_agps_request agps_request;
 
 /* Static modem data does not change between firmware versions and does not
  * have to be buffered.
@@ -118,8 +119,14 @@ enum data_type {
 	BATCH,
 	UI,
 	NEIGHBOR_CELLS,
+	AGPS_REQUEST,
 	CONFIG
 };
+
+/* Variable to keep track if the module has received cell data from the modem module. Used when
+ * combining AGPS request data from the GPS module and cell data from the modem module.
+ */
+static bool cell_data_obtained;
 
 struct ack_data {
 	enum data_type type;
@@ -383,6 +390,10 @@ static void data_resend(void)
 				break;
 			case NEIGHBOR_CELLS:
 				evt->type = DATA_EVT_NEIGHBOR_CELLS_DATA_SEND;
+				break;
+			case AGPS_REQUEST:
+				evt->type = DATA_EVT_AGPS_REQUEST_DATA_SEND;
+				break;
 			default:
 				LOG_WRN("Unknown associated data type");
 				SEND_ERROR(data, DATA_EVT_ERROR, -ENODATA);
@@ -599,6 +610,30 @@ static void data_encode(void)
 		break;
 	default:
 		LOG_ERR("Error batch-enconding data: %d", err);
+		SEND_ERROR(data, DATA_EVT_ERROR, err);
+		return;
+	}
+}
+
+static void data_agps_request_encode(void)
+{
+	int err;
+	struct cloud_codec_data codec = {0};
+
+	err = cloud_codec_encode_agps_request(&codec, &agps_request);
+	switch (err) {
+	case 0:
+		LOG_DBG("A-GPS request encoded successfully");
+		data_send(DATA_EVT_AGPS_REQUEST_DATA_SEND, AGPS_REQUEST, &codec);
+		break;
+	case -ENOTSUP:
+		LOG_WRN("A-GPS requests are not supported for the configured cloud backend");
+		break;
+	case -ENODATA:
+		LOG_DBG("No A-GPS request data to encode, error: %d", err);
+		break;
+	default:
+		LOG_ERR("Error encoding A-GPS request: %d", err);
 		SEND_ERROR(data, DATA_EVT_ERROR, err);
 		return;
 	}
@@ -915,6 +950,37 @@ static void on_all_states(struct data_msg_data *msg)
 		};
 
 		new_config_handle(&new);
+		return;
+	}
+
+	if (IS_EVENT(msg, gps, GPS_EVT_AGPS_NEEDED)) {
+		if (!cell_data_obtained) {
+			LOG_WRN("No cell data obtained, aborting AGPS data request");
+			return;
+		}
+
+		/* Take data from the last modem cell update and combine it with the incoming AGPS
+		 * request types from the GPS module event.
+		 */
+		BUILD_ASSERT(sizeof(agps_request.request) ==
+			     sizeof(msg->module.gps.data.agps_request));
+
+		memcpy(&agps_request.request, &msg->module.gps.data.agps_request,
+		       sizeof(agps_request.request));
+
+		agps_request.queued = true;
+
+		data_agps_request_encode();
+		return;
+	}
+
+	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CELL_UPDATE)) {
+		agps_request.mcc = msg->module.modem.data.cell.mcc;
+		agps_request.mnc = msg->module.modem.data.cell.mnc;
+		agps_request.area = msg->module.modem.data.cell.tac;
+		agps_request.cell = msg->module.modem.data.cell.cell_id;
+		agps_request.phy_cell = msg->module.modem.data.cell.phy_cell;
+		cell_data_obtained = true;
 		return;
 	}
 

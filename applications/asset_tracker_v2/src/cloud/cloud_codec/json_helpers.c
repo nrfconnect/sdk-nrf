@@ -30,6 +30,20 @@ void json_add_obj_array(cJSON *parent, cJSON *item)
 	}
 }
 
+int json_add_number_to_array(cJSON *parent, double number)
+{
+	cJSON *json_num;
+
+	json_num = cJSON_CreateNumber(number);
+	if (json_num == NULL) {
+		return -ENOMEM;
+	}
+
+	json_add_obj_array(parent, json_num);
+
+	return 0;
+}
+
 int json_add_number(cJSON *parent, const char *str, double item)
 {
 	cJSON *json_num;
