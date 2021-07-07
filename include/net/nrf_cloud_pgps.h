@@ -109,7 +109,7 @@ struct nrf_cloud_pgps_result {
 #define NRF_CLOUD_PGPS_EMPTY_EPHEM_HEALTH (0xff)
 
 /** @brief P-GPS event passed to the registered pgps_event_handler. */
-enum nrf_cloud_pgps_event {
+enum nrf_cloud_pgps_event_type {
 	/** P-GPS initialization beginning. */
 	PGPS_EVT_INIT,
 	/** There are currently no P-GPS predictions available. */
@@ -119,7 +119,24 @@ enum nrf_cloud_pgps_event {
 	/** A P-GPS prediction is available now for the current date and time. */
 	PGPS_EVT_AVAILABLE,
 	/** All P-GPS predictions are available. */
-	PGPS_EVT_READY
+	PGPS_EVT_READY,
+	/** A P-GPS request has been created for missing predicitons.
+	 *  This event has payload in the form of @ref gps_pgps_request that can
+	 *  The event is intended to be used when nRF Cloud over MATT and auto requests
+	 *  are disabled and let the application decide when and how to use
+	 *  the request information.
+	 *  These events are not received if CONFIG_NRF_CLOUD_PGPS_AUTO_REQUEST
+	 *  is enabled.
+	 */
+	PGPS_EVT_REQUEST,
+};
+
+struct nrf_cloud_pgps_event {
+	enum nrf_cloud_pgps_event_type type;
+	union {
+		struct nrf_cloud_pgps_prediction *prediction;
+		struct gps_pgps_request *request;
+	};
 };
 
 /**
@@ -130,8 +147,7 @@ enum nrf_cloud_pgps_event {
  * @param[in] p For event PGPS_EVT_AVAILABLE, a pointer to the prediction;
  * otherwise, NULL.
  */
-typedef void (*pgps_event_handler_t)(enum nrf_cloud_pgps_event event,
-				     struct nrf_cloud_pgps_prediction *p);
+typedef void (*pgps_event_handler_t)(struct nrf_cloud_pgps_event *event);
 
 /**@brief Initialization parameters for the module. */
 struct nrf_cloud_pgps_init_param {
