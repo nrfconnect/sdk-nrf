@@ -173,13 +173,13 @@ static int callback(const struct download_client_evt *event)
 #endif /* CONFIG_SAMPLE_COMPARE_HASH */
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
+		lte_lc_power_off();
 		printk("Bye\n");
-		downloaded = 0;
 		return 0;
 
 	case DOWNLOAD_CLIENT_EVT_ERROR:
 		printk("Error %d during download\n", event->error);
-		downloaded = 0;
+		lte_lc_power_off();
 		/* Stop download */
 		return -1;
 	}
