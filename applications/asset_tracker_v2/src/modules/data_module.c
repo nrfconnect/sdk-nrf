@@ -8,6 +8,12 @@
 #include <event_manager.h>
 #include <settings/settings.h>
 #include <date_time.h>
+#include <modem/modem_info.h>
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+#include <net/nrf_cloud_pgps.h>
+#include <pm_config.h>
+#endif
 
 #include "cloud/cloud_codec/cloud_codec.h"
 
@@ -118,6 +124,7 @@ enum data_type {
 	BATCH,
 	UI,
 	NEIGHBOR_CELLS,
+	AGPS_REQUEST,
 	CONFIG
 };
 
@@ -383,6 +390,10 @@ static void data_resend(void)
 				break;
 			case NEIGHBOR_CELLS:
 				evt->type = DATA_EVT_NEIGHBOR_CELLS_DATA_SEND;
+				break;
+			case AGPS_REQUEST:
+				evt->type = DATA_EVT_AGPS_REQUEST_DATA_SEND;
+				break;
 			default:
 				LOG_WRN("Unknown associated data type");
 				SEND_ERROR(data, DATA_EVT_ERROR, -ENODATA);
@@ -603,6 +614,85 @@ static void data_encode(void)
 		return;
 	}
 }
+
+#if defined(CONFIG_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_AGPS_SRC_SUPL)
+static int get_modem_info(struct modem_param_info *const modem_info)
+{
+	__ASSERT_NO_MSG(modem_info != NULL);
+
+	int err = modem_info_init();
+
+	if (err) {
+		LOG_ERR("Could not initialize modem info module, error: %d", err);
+		return err;
+	}
+
+	err = modem_info_params_init(modem_info);
+	if (err) {
+		LOG_ERR("Could not initialize modem info parameters, error: %d", err);
+		return err;
+	}
+
+	err = modem_info_params_get(modem_info);
+	if (err) {
+		LOG_ERR("Could not obtain cell information, error: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
+/**
+ * @brief Combine and encode modem network parameters togheter with the incoming A-GPS data request
+ *	  types to form the A-GPS request.
+ *
+ * @param[in] incoming_request Pointer to a structure containing A-GPS data types that has been
+ *			       requested by the modem.
+ *
+ * @return 0 on success, otherwise a negative error code indicating reason of failure.
+ */
+static int agps_request_encode(struct gps_agps_request *incoming_request)
+{
+	int err;
+	struct cloud_codec_data codec = {0};
+	static struct modem_param_info modem_info = {0};
+	static struct cloud_data_agps_request agps_request = {0};
+
+	err = get_modem_info(&modem_info);
+	if (err) {
+		return err;
+	}
+
+	agps_request.mcc = modem_info.network.mcc.value;
+	agps_request.mnc = modem_info.network.mnc.value;
+	agps_request.cell = modem_info.network.cellid_dec;
+	agps_request.area = modem_info.network.area_code.value;
+	agps_request.queued = true;
+
+	BUILD_ASSERT(sizeof(agps_request.request) == sizeof(*incoming_request));
+	memcpy(&agps_request.request, incoming_request, sizeof(agps_request.request));
+
+	err = cloud_codec_encode_agps_request(&codec, &agps_request);
+	switch (err) {
+	case 0:
+		LOG_DBG("A-GPS request encoded successfully");
+		data_send(DATA_EVT_AGPS_REQUEST_DATA_SEND, AGPS_REQUEST, &codec);
+		break;
+	case -ENOTSUP:
+		LOG_WRN("Encoding of A-GPS requests are not supported by the configured codec");
+		break;
+	case -ENODATA:
+		LOG_DBG("No A-GPS request data to encode, error: %d", err);
+		break;
+	default:
+		LOG_ERR("Error encoding A-GPS request: %d", err);
+		SEND_ERROR(data, DATA_EVT_ERROR, err);
+		break;
+	}
+
+	return err;
+}
+#endif /* CONFIG_AGPS && !CONFIG_NRF_CLOUD_MQTT && !CONFIG_AGPS_SRC_SUPL */
 
 static void config_get(void)
 {
@@ -850,6 +940,68 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 	LOG_DBG("No new values in incoming device configuration update message");
 }
 
+/**
+ * @brief Function that requests A-GPS and P-GPS data upon receiving a request from the GPS module.
+ *	  If both A-GPS and P-GPS is enabled. A-GPS will take precedence.
+ *
+ * @param[in] incoming_request Pointer to a structure containing A-GPS data types that has been
+ *			       requested by the modem.
+ *
+ * @return 0 on success, otherwise a negative error code indicating reason of failure.
+ */
+static void agps_request_handle(struct gps_agps_request *incoming_request)
+{
+	int err;
+
+	/* If the A-GPS library is enabled, it will handle the creation of the A-GPS request,
+	 * send it, and process the returned data.
+	 *
+	 * If CONFIG_NRF_CLOUD_MQTT is enabled, the nRF Cloud MQTT transport library will be used
+	 * to sent the request. This is handled internally in the A-GPS library.
+	 *
+	 * If CONFIG_AGPS_SRC_SUPL is enabled a SUPL session is started and A-GPS data is requested
+	 * from a configured SUPL server.
+	 *
+	 * If both CONFIG_NRF_CLOUD_MQTT and CONFIG_AGPS_SRC_SUPL are enabled, SUPL will take
+	 * precedence over nRF Cloud as it is selected as the A-GPS source. By default, nRF Cloud is
+	 * selected as the A-GPS source via the CONFIG_AGPS_SRC_NRF_CLOUD option.
+	 */
+#if defined(CONFIG_AGPS) && (defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_AGPS_SRC_SUPL))
+	err = gps_agps_request_send(*incoming_request, GPS_SOCKET_NOT_PROVIDED);
+	if (err) {
+		LOG_WRN("Failed to request A-GPS data, error: %d", err);
+		LOG_WRN("This is expected to fail if we are not in a connected state");
+	} else {
+		LOG_DBG("A-GPS request sent");
+		return;
+	}
+#elif defined(CONFIG_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_AGPS_SRC_SUPL)
+	/* If the nRF Cloud MQTT transport library is not enabled, we will have to create an
+	 * A-GPS request and send out an event containing the request for the cloud module to pick
+	 * up and send to the cloud that is currently used.
+	 */
+	err = agps_request_encode(incoming_request);
+	if (err) {
+		LOG_WRN("Failed to request A-GPS data, error: %d", err);
+	} else {
+		LOG_DBG("A-GPS request sent");
+		return;
+	}
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	/* A-GPS data is not expected to be received. Proceed to schedule a callback when
+	 * P-GPS data for current time is available.
+	 */
+	err = nrf_cloud_pgps_notify_prediction();
+	if (err) {
+		LOG_ERR("Requesting notification of prediction availability, error: %d", err);
+	}
+#endif
+
+	(void)err;
+}
+
 /* Message handler for STATE_CLOUD_DISCONNECTED. */
 static void on_cloud_state_disconnected(struct data_msg_data *msg)
 {
@@ -915,6 +1067,11 @@ static void on_all_states(struct data_msg_data *msg)
 		};
 
 		new_config_handle(&new);
+		return;
+	}
+
+	if (IS_EVENT(msg, gps, GPS_EVT_AGPS_NEEDED)) {
+		agps_request_handle(&msg->module.gps.data.agps_request);
 		return;
 	}
 

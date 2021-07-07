@@ -371,10 +371,16 @@ int gps_process_agps_data(const uint8_t *buf, size_t len)
 	err = nrf_cloud_agps_process(buf, len, NULL);
 	if (err) {
 		LOG_ERR("A-GPS failed, error: %d", err);
-	} else {
-		LOG_INF("A-GPS data successfully processed");
+		return err;
 	}
-#endif /* CONFIG_AGPS_SRC_NRF_CLOUD && CONFIG_NRF_CLOUD_AGPS */
+
+	LOG_INF("A-GPS data successfully processed");
+
+#else /* CONFIG_AGPS_SRC_NRF_CLOUD && CONFIG_NRF_CLOUD_AGPS */
+
+	LOG_WRN("Processing of incoming A-GPS data is not supported");
+	return -ENOTSUP;
+#endif
 
 	return err;
 }

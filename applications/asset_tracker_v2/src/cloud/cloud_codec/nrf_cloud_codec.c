@@ -122,6 +122,16 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 	return -ENOTSUP;
 }
 
+int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
+				    struct cloud_data_agps_request *agps_request)
+{
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(agps_request != NULL);
+
+	agps_request->queued = false;
+	return -ENOTSUP;
+}
+
 int cloud_codec_decode_config(char *input, struct cloud_data_cfg *data)
 {
 	int err = 0;

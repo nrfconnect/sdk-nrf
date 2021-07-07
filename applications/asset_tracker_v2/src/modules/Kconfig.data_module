@@ -29,6 +29,7 @@ config DATA_SEND_ALL_DEVICE_CONFIGURATIONS
 
 config DATA_THREAD_STACK_SIZE
 	int "Data module thread stack size"
+	default 4096 if NRF_CLOUD
 	default 2560
 
 config DATA_GPS_BUFFER_COUNT
