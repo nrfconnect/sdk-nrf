@@ -35,7 +35,7 @@ config DESKTOP_CONFIG_CHANNEL_TIMEOUT
 	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
 	default 10
 	help
-	  Timeout in [s] after which config channel transaction is dropped.
+	  Timeout [s] after which config channel transaction is dropped.
 
 if DESKTOP_CONFIG_CHANNEL_ENABLE
 
