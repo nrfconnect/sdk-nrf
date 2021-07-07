@@ -259,4 +259,6 @@ void main(void)
 clean_up:
 	freeaddrinfo(res);
 	(void)close(fd);
+
+	lte_lc_power_off();
 }
