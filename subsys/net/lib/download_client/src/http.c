@@ -17,14 +17,23 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 #define HOSTNAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
 #define FILENAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
 
-#define GET_HTTP_TEMPLATE                                                      \
+/* Request whole file; use with HTTP */
+#define HTTP_GET                                                               \
+	"GET /%s HTTP/1.1\r\n"                                                 \
+	"Host: %s\r\n"                                                         \
+	"Connection: keep-alive\r\n"                                           \
+	"\r\n"
+
+/* Request remaining bytes from offset; use with HTTP */
+#define HTTP_GET_OFFSET                                                        \
 	"GET /%s HTTP/1.1\r\n"                                                 \
 	"Host: %s\r\n"                                                         \
 	"Range: bytes=%u-\r\n"                                                 \
 	"Connection: keep-alive\r\n"                                           \
 	"\r\n"
 
-#define GET_HTTPS_TEMPLATE                                                     \
+/* Request a range of bytes; use with HTTPS due to modem limitations */
+#define HTTP_GET_RANGE                                                         \
 	"GET /%s HTTP/1.1\r\n"                                                 \
 	"Host: %s\r\n"                                                         \
 	"Range: bytes=%u-%u\r\n"                                               \
@@ -69,19 +78,19 @@ int http_get_request_send(struct download_client *client)
 		off = MIN(off, client->file_size);
 	}
 
-	/* We use range requests only for HTTPS, due to memory limitations.
-	 * When using HTTP, we request the whole resource to minimize
-	 * network usage (only one request/response are sent).
-	 */
 	if (client->proto == IPPROTO_TLS_1_2
 	   || IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
 		len = snprintf(client->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
-			GET_HTTPS_TEMPLATE, file, host, client->progress, off);
+			HTTP_GET_RANGE, file, host, client->progress, off);
+	} else if (client->progress) {
+		len = snprintf(client->buf,
+			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
+			HTTP_GET_OFFSET, file, host, client->progress);
 	} else {
 		len = snprintf(client->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
-			GET_HTTP_TEMPLATE, file, host, client->progress);
+			HTTP_GET, file, host);
 	}
 
 	if (len < 0 || len > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
@@ -111,10 +120,13 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 {
 	char *p;
 	char *q;
-	const bool using_range_requests = (client->proto == IPPROTO_TLS_1_2 ||
-		IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS));
-	const unsigned int expected_status = using_range_requests ? 206 : 200;
 	unsigned int http_status;
+	const bool using_range_requests =
+		(client->proto == IPPROTO_TLS_1_2 ||
+		 IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS) ||
+		 client->progress);
+
+	const unsigned int expected_status = using_range_requests ? 206 : 200;
 
 	p = strstr(client->buf, "\r\n\r\n");
 	if (!p || p > client->buf + client->offset) {
@@ -148,6 +160,7 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 		LOG_ERR("Server response malformed: status code not found");
 		return -1;
 	}
+
 	if (http_status != expected_status) {
 		/* Truncate the server response at the first CR or LF after the
 		 * status and message so we can log it. Normally we can't
