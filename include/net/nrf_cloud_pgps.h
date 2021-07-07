@@ -236,7 +236,13 @@ int nrf_cloud_pgps_request(const struct gps_pgps_request *request);
  */
 int nrf_cloud_pgps_request_all(void);
 
-/**@brief Processes binary P-GPS data received from nRF Cloud.
+/**@brief Processes P-GPS data from nRF Cloud. The data contains
+ *	  information about where to download the requested predictions.
+ *	  If processing of the data is successful, downloading of predictions
+ *	  will start automatically using a dedicated connection to the
+ *	  hosting server, which means that this API should be called only when
+ *	  the device is ready to download large amounts of data.
+ *	  The received predictions will be processed as they arrive and stored to flash.
  *
  * @param buf Pointer to data received from nRF Cloud.
  * @param buf_len Buffer size of data to be processed.
@@ -244,6 +250,20 @@ int nrf_cloud_pgps_request_all(void);
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int nrf_cloud_pgps_process(const char *buf, size_t buf_len);
+
+/**@brief Processes binary P-GPS data. This API is intended to be used if
+ *	  @ref nrf_cloud_pgps_process is not used. A typical use case would be
+ *	  that P-GPS data is received using a method different from the default
+ *	  nRF Cloud MQTT connection for metadata and HTTP download for predictions.
+ *
+ * @note This API must be called for every P-GPS data chunk that is received.
+ *
+ * @param buf Pointer to data received from nRF Cloud.
+ * @param buf_len Buffer size of data to be processed.
+ *
+ * @return 0 if successful, otherwise a (negative) error code.
+ */
+int nrf_cloud_pgps_process_buffer(uint8_t *buf, size_t len);
 
 /**@brief Injects binary P-GPS data to the modem. If request is NULL,
  * it is assumed that only ephemerides assistance should be injected.

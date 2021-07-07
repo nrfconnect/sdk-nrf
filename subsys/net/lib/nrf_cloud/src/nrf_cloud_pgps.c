@@ -1091,7 +1091,7 @@ static int flush_storage(void)
 	return stream_flash_buffered_write(&stream, NULL, 0, true);
 }
 
-static int process_buffer(uint8_t *buf, size_t len)
+int nrf_cloud_pgps_process_buffer(uint8_t *buf, size_t len)
 {
 	int err;
 	size_t need;
@@ -1402,6 +1402,12 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 		LOG_ERR("P-GPS subsystem is not initialized.");
 		return -EINVAL;
 	}
+
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT)) {
+		LOG_ERR("CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT is not enabled");
+		return -ENOTSUP;
+	}
+
 	LOG_HEXDUMP_DBG(buf, buf_len, "MQTT packet");
 	if (!buf_len) {
 		LOG_ERR("Zero length packet received");
@@ -1526,7 +1532,7 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	memset(&index, 0, sizeof(index));
 	(void)npgps_settings_init();
 
-	err = npgps_download_init(process_buffer);
+	err = npgps_download_init(nrf_cloud_pgps_process_buffer);
 	if (err) {
 		LOG_ERR("Error initializing download client:%d", err);
 		return err;
