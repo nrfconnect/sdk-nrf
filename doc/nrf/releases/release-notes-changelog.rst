@@ -62,6 +62,7 @@ nRF9160
   * :ref:`asset_tracker_v2` application:
 
     * Changed the custom module responsible for controlling the LEDs to CAF LEDs module.
+    * Added support for A-GPS when configuring the application for AWS IoT.
 
   * :ref:`at_cmd_readme` library:
 

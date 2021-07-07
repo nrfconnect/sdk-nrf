@@ -91,8 +91,49 @@ exit:
 	return err;
 }
 
+int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
+				    struct cloud_data_agps_request *agps_request)
+{
+	int err;
+	char *buffer;
+
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(agps_request != NULL);
+
+	cJSON *root_obj = cJSON_CreateObject();
+
+	if (root_obj == NULL) {
+		return -ENOMEM;
+	}
+
+	err = json_common_agps_request_data_add(root_obj, agps_request,
+						JSON_COMMON_ADD_DATA_TO_OBJECT);
+	if (err) {
+		goto exit;
+	}
+
+	buffer = cJSON_PrintUnformatted(root_obj);
+	if (buffer == NULL) {
+		LOG_ERR("Failed to allocate memory for JSON string");
+
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LOG_LEVEL_DBG)) {
+		json_print_obj("Encoded message:\n", root_obj);
+	}
+
+	output->buf = buffer;
+	output->len = strlen(buffer);
+
+exit:
+	cJSON_Delete(root_obj);
+	return err;
+}
+
 int cloud_codec_decode_config(char *input, size_t input_len,
-			      struct cloud_data_cfg *data)
+			      struct cloud_data_cfg *cfg)
 {
 	int err = 0;
 	cJSON *root_obj = NULL;
@@ -142,7 +183,7 @@ int cloud_codec_decode_config(char *input, size_t input_len,
 
 get_data:
 
-	json_common_config_get(subgroup_obj, data);
+	json_common_config_get(subgroup_obj, cfg);
 
 exit:
 	cJSON_Delete(root_obj);

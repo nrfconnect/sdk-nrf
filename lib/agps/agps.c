@@ -348,6 +348,7 @@ int agps_request_send(struct nrf_modem_gnss_agps_data_frame request, int socket)
 #elif defined(CONFIG_AGPS_SRC_NRF_CLOUD) && !defined(CONFIG_NRF_CLOUD_MQTT)
 	LOG_ERR("CONFIG_NRF_CLOUD_MQTT must be enabled to make A-GPS requests");
 	return -EOPNOTSUPP;
+	(void)err;
 #endif /* CONFIG_AGPS_SRC_SUPL */
 
 	return 0;
@@ -360,11 +361,17 @@ int agps_cloud_data_process(const uint8_t *buf, size_t len)
 #if defined(CONFIG_AGPS_SRC_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGPS)
 	err = nrf_cloud_agps_process(buf, len, NULL);
 	if (err) {
-		LOG_ERR("Processing A-GPS data failed, error: %d", err);
-	} else {
-		LOG_INF("A-GPS data successfully processed");
+		LOG_ERR("A-GPS failed, error: %d", err);
+		return err;
 	}
-#endif /* CONFIG_AGPS_SRC_NRF_CLOUD && CONFIG_NRF_CLOUD_AGPS */
+
+	LOG_INF("A-GPS data successfully processed");
+
+#else /* CONFIG_AGPS_SRC_NRF_CLOUD && CONFIG_NRF_CLOUD_AGPS */
+
+	LOG_WRN("Processing of incoming A-GPS data is not supported");
+	return -EOPNOTSUPP;
+#endif
 
 	return err;
 }
