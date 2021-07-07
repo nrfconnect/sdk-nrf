@@ -102,6 +102,24 @@
 					"]"							\
 				"}"
 
+#define TEST_VALIDATE_AGPS_REQUEST_JSON_SCHEMA							\
+				"{"								\
+					"\"mcc\":242,"						\
+					"\"mnc\":1,"						\
+					"\"area\":40401,"					\
+					"\"cell\":21679716,"					\
+					"\"types\":["						\
+						"1,"						\
+						"2,"						\
+						"3,"						\
+						"4,"						\
+						"6,"						\
+						"7,"						\
+						"8,"						\
+						"9"						\
+					"]"							\
+				"}"
+
 #define TEST_VALIDATE_ACCELEROMETER_JSON_SCHEMA							\
 				"{"								\
 					"\"acc\":{"						\

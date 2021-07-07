@@ -122,8 +122,18 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 	return -ENOTSUP;
 }
 
+int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
+				    struct cloud_data_agps_request *agps_request)
+{
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(agps_request != NULL);
+
+	agps_request->queued = false;
+	return -ENOTSUP;
+}
+
 int cloud_codec_decode_config(char *input, size_t input_len,
-			      struct cloud_data_cfg *data)
+			      struct cloud_data_cfg *cfg)
 {
 	int err = 0;
 	cJSON *root_obj = NULL;
@@ -173,7 +183,7 @@ int cloud_codec_decode_config(char *input, size_t input_len,
 
 get_data:
 
-	json_common_config_get(subgroup_obj, data);
+	json_common_config_get(subgroup_obj, cfg);
 
 exit:
 	cJSON_Delete(root_obj);

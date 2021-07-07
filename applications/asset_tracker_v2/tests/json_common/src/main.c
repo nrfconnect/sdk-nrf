@@ -554,6 +554,43 @@ static void test_encode_neighbor_cells_data_object(void)
 	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
 }
 
+static void test_encode_agps_request_data_object(void)
+{
+	int ret;
+	struct cloud_data_agps_request data = {
+		.mcc = 242,
+		.mnc = 1,
+		.cell = 21679716,
+		.area = 40401,
+		.request.sv_mask_ephe = UINT32_MAX,
+		.request.sv_mask_alm = UINT32_MAX,
+		.request.utc = 1,
+		.request.klobuchar = 1,
+		.request.system_time_tow = 1,
+		.request.position = 1,
+		.request.integrity = 1,
+		.queued = true
+	};
+
+	ret = json_common_agps_request_data_add(dummy.root_obj,
+						&data,
+						JSON_COMMON_ADD_DATA_TO_OBJECT);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_AGPS_REQUEST_JSON_SCHEMA,
+				   data.queued);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	/* Check for invalid inputs. */
+
+	data.queued = false;
+
+	ret = json_common_agps_request_data_add(dummy.root_obj,
+						&data,
+						JSON_COMMON_ADD_DATA_TO_OBJECT);
+	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+}
+
 static void test_encode_ui_data_array(void)
 {
 	int ret;
@@ -1197,6 +1234,11 @@ void test_main(void)
 
 		/* Neighbor cell */
 		ztest_unit_test_setup_teardown(test_encode_neighbor_cells_data_object,
+					       test_setup_object,
+					       test_teardown_object),
+
+		/* AGPS request */
+		ztest_unit_test_setup_teardown(test_encode_agps_request_data_object,
 					       test_setup_object,
 					       test_teardown_object),
 
