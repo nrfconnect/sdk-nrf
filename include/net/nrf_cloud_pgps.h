@@ -122,10 +122,10 @@ enum nrf_cloud_pgps_event_type {
 	PGPS_EVT_READY,
 	/** A P-GPS request has been created for missing predictions.
 	 *  The event has payload in the form of @ref gps_pgps_request.
-	 *  The event is intended to be used when @option{CONFIG_NRF_CLOUD_MQTT}
+	 *  The event is intended to be used when CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT
 	 *  is disabled to let the application decide when and how to use
 	 *  the request information.
-	 *  This event type is not received if @option{CONFIG_NRF_CLOUD_MQTT}
+	 *  This event type is not received if  CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT
 	 *  is enabled.
 	 */
 	PGPS_EVT_REQUEST,

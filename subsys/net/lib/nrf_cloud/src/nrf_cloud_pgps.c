@@ -610,7 +610,29 @@ static int pgps_request(const struct gps_pgps_request *request)
 		return 0;
 	}
 
-#if defined(CONFIG_NRF_CLOUD_MQTT)
+	if (request->prediction_count < index.header.prediction_count) {
+		index.partial_request = true;
+		index.pnum_offset = index.header.prediction_count -
+				    request->prediction_count;
+	} else {
+		index.partial_request = false;
+		index.pnum_offset = 0;
+	}
+
+	index.expected_count = request->prediction_count;
+
+#if defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)
+	struct nrf_cloud_pgps_event evt = {
+		.type = PGPS_EVT_REQUEST,
+		.request = (struct gps_pgps_request *)request,
+	};
+
+	if (evt_handler) {
+		evt_handler(&evt);
+	}
+
+	return 0;
+#elif defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT)
 	int err = 0;
 	cJSON *data_obj;
 	cJSON *pgps_req_obj;
@@ -638,15 +660,6 @@ static int pgps_request(const struct gps_pgps_request *request)
 		goto cleanup;
 	}
 #endif
-	if (request->prediction_count < index.header.prediction_count) {
-		index.partial_request = true;
-		index.pnum_offset = index.header.prediction_count -
-				    request->prediction_count;
-	} else {
-		index.partial_request = false;
-		index.pnum_offset = 0;
-	}
-	index.expected_count = request->prediction_count;
 
 	ret = cJSON_AddNumberToObject(data_obj, NRF_CLOUD_JSON_PGPS_PRED_COUNT,
 				      request->prediction_count);
@@ -687,16 +700,7 @@ cleanup:
 	cJSON_Delete(pgps_req_obj);
 
 	return err;
-#else /* !defined(CONFIG_NRF_CLOUD_MQTT) */
-	struct nrf_cloud_pgps_event evt = {
-		.type = PGPS_EVT_REQUEST,
-		.request = request,
-	};
-
-	evt_handler(&evt);
-
-	return 0;
-#endif /* !defined(CONFIG_NRF_CLOUD_MQTT) */
+#endif /* defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT) */
 }
 
 static int pgps_request_all(void)
@@ -1531,6 +1535,7 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 
 			evt_handler(&evt);
 		}
+
 		err = pgps_request_all();
 	} else if (num_valid < count) {
 		/* read missing predictions at end */

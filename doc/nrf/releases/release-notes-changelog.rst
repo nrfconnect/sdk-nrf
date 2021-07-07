@@ -49,6 +49,7 @@ nRF9160
     * Added function :c:func:`nrf_cloud_modem_info_json_encode`, which encodes modem information into a cJSON object formatted for use with nRF Cloud.
     * Added function :c:func:`nrf_cloud_service_info_json_encode`, which encodes service information into a cJSON object formatted for use with nRF Cloud.
     * Removed function ``nrf_cloud_sensor_attach()``, the associated structure ``nrf_cloud_sa_param``, and event ``NRF_CLOUD_EVT_SENSOR_ATTACHED``. These items provided no useful functionality.
+    * Added the option to use the P-GPS API independent of nRF Cloud MQTT transport.
 
   * :ref:`serial_lte_modem` application:
 
