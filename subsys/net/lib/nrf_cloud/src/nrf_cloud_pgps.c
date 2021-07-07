@@ -85,9 +85,6 @@ static uint8_t *write_buf;
 static uint32_t flash_page_size;
 
 static uint8_t prediction_buf[PGPS_PREDICTION_STORAGE_SIZE];
-#if defined(CONFIG_NRF_CLOUD_MQTT)
-static bool json_initialized;
-#endif
 static bool ignore_packets;
 static atomic_t pgps_need_assistance;
 
@@ -587,65 +584,6 @@ bool nrf_cloud_pgps_loading(void)
 }
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
-static cJSON *json_create_req_obj(const char *const app_id,
-				   const char *const msg_type)
-{
-	__ASSERT_NO_MSG(app_id != NULL);
-	__ASSERT_NO_MSG(msg_type != NULL);
-
-	if (!json_initialized) {
-		cJSON_Init();
-		json_initialized = true;
-	}
-
-	cJSON *resp_obj = cJSON_CreateObject();
-
-	if (!cJSON_AddStringToObject(resp_obj,
-				     NRF_CLOUD_JSON_APPID_KEY,
-				     app_id) ||
-	    !cJSON_AddStringToObject(resp_obj,
-				     NRF_CLOUD_JSON_MSG_TYPE_KEY,
-				     msg_type)) {
-		cJSON_Delete(resp_obj);
-		resp_obj = NULL;
-	}
-
-	return resp_obj;
-}
-
-static int json_send_to_cloud(cJSON *const pgps_request)
-{
-	__ASSERT_NO_MSG(pgps_request != NULL);
-
-	char *msg_string;
-	int err;
-
-	msg_string = cJSON_PrintUnformatted(pgps_request);
-	if (!msg_string) {
-		LOG_ERR("Could not allocate memory for P-GPS request message");
-		return -ENOMEM;
-	}
-
-	LOG_DBG("Created P-GPS request: %s", log_strdup(msg_string));
-
-	struct nct_dc_data msg = {
-		.data.ptr = msg_string,
-		.data.len = strlen(msg_string)
-	};
-
-	err = nct_dc_send(&msg);
-	if (err) {
-		/* @TODO: if device is offline, we need to defer this to later */
-		LOG_ERR("Failed to send P-GPS request, error:%d", err);
-	} else {
-		LOG_DBG("P-GPS request sent");
-	}
-
-	k_free(msg_string);
-
-	return err;
-}
-
 int nrf_cloud_pgps_request(const struct gps_pgps_request *request)
 {
 	return pgps_request(request);
@@ -735,6 +673,7 @@ static int pgps_request(const struct gps_pgps_request *request)
 		goto cleanup;
 	}
 
+	/* @TODO: if device is offline, we need to defer this to later */
 	err = json_send_to_cloud(pgps_req_obj);
 	if (!err) {
 		state = PGPS_REQUESTING;

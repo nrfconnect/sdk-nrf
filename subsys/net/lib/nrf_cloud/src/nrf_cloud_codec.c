@@ -96,6 +96,24 @@ static int json_add_num_cs(cJSON *parent, const char *str, double item)
 	return cJSON_AddNumberToObjectCS(parent, str, item) ? 0 : -ENOMEM;
 }
 
+cJSON *json_create_req_obj(const char *const app_id, const char *const msg_type)
+{
+	__ASSERT_NO_MSG(app_id != NULL);
+	__ASSERT_NO_MSG(msg_type != NULL);
+
+	nrf_cloud_codec_init();
+
+	cJSON *req_obj = cJSON_CreateObject();
+
+	if (!cJSON_AddStringToObject(req_obj, NRF_CLOUD_JSON_APPID_KEY, app_id) ||
+	    !cJSON_AddStringToObject(req_obj, NRF_CLOUD_JSON_MSG_TYPE_KEY, msg_type)) {
+		cJSON_Delete(req_obj);
+		req_obj = NULL;
+	}
+
+	return req_obj;
+}
+
 static char *json_strdup(cJSON *const string_obj)
 {
 	char *dest;
@@ -906,6 +924,38 @@ cleanup:
 		output->ptr = NULL;
 		output->len = 0;
 	}
+
+	return err;
+}
+
+int json_send_to_cloud(cJSON *const request)
+{
+	__ASSERT_NO_MSG(request != NULL);
+
+	char *msg_string;
+	int err;
+
+	msg_string = cJSON_PrintUnformatted(request);
+	if (!msg_string) {
+		LOG_ERR("Could not allocate memory for request message");
+		return -ENOMEM;
+	}
+
+	LOG_DBG("Created request: %s", log_strdup(msg_string));
+
+	struct nct_dc_data msg = {
+		.data.ptr = msg_string,
+		.data.len = strlen(msg_string)
+	};
+
+	err = nct_dc_send(&msg);
+	if (err) {
+		LOG_ERR("Failed to send request, error: %d", err);
+	} else {
+		LOG_DBG("Request sent to cloud");
+	}
+
+	k_free(msg_string);
 
 	return err;
 }

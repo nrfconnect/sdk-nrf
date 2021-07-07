@@ -17,67 +17,11 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_cell_pos, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
-#include "nrf_cloud_transport.h"
 #include "nrf_cloud_codec.h"
-#include "nrf_cloud_agps_schema_v1.h"
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+#include "nrf_cloud_transport.h"
 
 #define CELL_POS_JSON_CELL_LOC_KEY_DOREPLY	"doReply"
-
-#if defined(CONFIG_NRF_CLOUD_MQTT)
-static bool json_initialized;
-
-static cJSON *json_create_req_obj(const char *const app_id, const char *const msg_type)
-{
-	__ASSERT_NO_MSG(app_id != NULL);
-	__ASSERT_NO_MSG(msg_type != NULL);
-
-	if (!json_initialized) {
-		cJSON_Init();
-		json_initialized = true;
-	}
-
-	cJSON *resp_obj = cJSON_CreateObject();
-
-	if (!cJSON_AddStringToObject(resp_obj, NRF_CLOUD_JSON_APPID_KEY, app_id) ||
-	    !cJSON_AddStringToObject(resp_obj, NRF_CLOUD_JSON_MSG_TYPE_KEY, msg_type)) {
-		cJSON_Delete(resp_obj);
-		resp_obj = NULL;
-	}
-
-	return resp_obj;
-}
-
-static int json_send_to_cloud(cJSON *const cell_pos_request)
-{
-	__ASSERT_NO_MSG(cell_pos_request != NULL);
-
-	char *msg_string;
-	int err;
-
-	msg_string = cJSON_PrintUnformatted(cell_pos_request);
-	if (!msg_string) {
-		LOG_ERR("Could not allocate memory for Cell Pos request message");
-		return -ENOMEM;
-	}
-
-	LOG_DBG("Created Cell Pos request: %s", log_strdup(msg_string));
-
-	struct nct_dc_data msg = {
-		.data.ptr = msg_string,
-		.data.len = strlen(msg_string)
-	};
-
-	err = nct_dc_send(&msg);
-	if (err) {
-		LOG_ERR("Failed to send Cell Pos request, error: %d", err);
-	} else {
-		LOG_DBG("Cell Pos request sent");
-	}
-
-	k_free(msg_string);
-
-	return err;
-}
 
 int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info * const cells_inf,
 			       const bool request_loc)
