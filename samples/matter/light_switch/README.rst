@@ -76,8 +76,9 @@ Button 4:
     The brightness level is increased gradually while the button is being pressed.
     When the button is pressed for too long, the brightness level wraps around and becomes the lowest possible.
 
-SEGGER J-Link USB port:
-    Used for getting logs from the device or for communicating with it through the command-line interface.
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_jlink_start
+    :end-before: matter_door_lock_sample_jlink_end
 
 Building and running
 ********************

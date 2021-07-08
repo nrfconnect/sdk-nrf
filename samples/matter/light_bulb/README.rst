@@ -27,13 +27,8 @@ The sample supports the following development kits:
 
 For remote testing scenarios, you also need the following:
 
-* If you want to commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network:
-
-  * A Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
-
-* If you want to use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch:
-
-  * :ref:`Matter light switch <matter_light_switch_sample>` programmed to another supported development kit.
+* If you want to commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network: a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
+* If you want to use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch, the :ref:`Matter light switch <matter_light_switch_sample>` sample programmed to another supported development kit.
 
 .. note::
     |matter_gn_required_note|
@@ -114,8 +109,9 @@ Button 4:
     Starts the the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time, and makes the device discoverable over Bluetooth LE.
     This button is used during the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
 
-SEGGER J-Link USB port:
-    Used for getting logs from the device or communicating with it through the command-line interface.
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_jlink_start
+    :end-before: matter_door_lock_sample_jlink_end
 
 NFC port with antenna attached:
     Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.

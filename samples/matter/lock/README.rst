@@ -21,9 +21,7 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
 
-For remote testing scenarios, if you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a Thread network, you also need the following:
-
-* A Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
+For remote testing scenarios, if you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
 
 .. note::
     |matter_gn_required_note|
@@ -47,7 +45,8 @@ Remote testing in a network
 
 .. matter_door_lock_sample_remote_testing_start
 
-By default, the Matter accessory device has Thread disabled, and it must be paired with the Matter controller over Bluetooth LE to get configuration from it if you want to use the device within a Thread network.
+By default, the Matter accessory device has Thread disabled.
+You must pair it with the Matter controller over Bluetooth LE to get configuration from the controller if you want to use the device within a Thread network.
 To do this, the device must be made discoverable manually (for security reasons) and the controller must get the commissioning information from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
 
@@ -134,8 +133,12 @@ Button 4:
     Starts the the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time, and makes the device discoverable over Bluetooth LE.
     This button is used during the :ref:`commissioning procedure <matter_lock_sample_remote_control_commissioning>`.
 
+.. matter_door_lock_sample_jlink_start
+
 SEGGER J-Link USB port:
     Used for getting logs from the device or for communicating with it through the command-line interface.
+
+.. matter_door_lock_sample_jlink_end
 
 NFC port with antenna attached:
     Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_lock_sample_remote_control>`.
@@ -178,7 +181,7 @@ After building the sample and programming it to your development kit, test its b
 
 #. Press **Button 1** to initiate factory reset of the device.
 
-The device is rebooted after all its settings are erased.
+The device reboots after all its settings are erased.
 
 .. _matter_lock_sample_remote_control:
 
@@ -208,11 +211,11 @@ To commission the device, go to the :ref:`ug_matter_configuring` page and comple
 As part of this tutorial, you will configure Thread Border Router, build and install the Matter controller, commission the device, and send Matter commands that cover scenarios described in the `Testing`_ section.
 If you are new to Matter, the recommended approach is :ref:`ug_matter_configuring_mobile` using an Android smartphone.
 
-In Matter, the commissioning procedure is done over Bluetooth LE between a Matter accessory device and the Matter controller, where the controller has the commissioner role.
-When the procedure is finished, the device should be equipped with all information needed to securely operate in the Matter network.
+In Matter, the commissioning procedure takes place over Bluetooth LE between a Matter accessory device and the Matter controller, where the controller has the commissioner role.
+When the procedure has completed, the device should be equipped with all information needed to securely operate in the Matter network.
 
-During the last part of the commissioning procedure (the provisioning operation), Thread network credentials are sent from the Matter controller to the Matter accessory device.
-As a result, the device is able to join the Thread network and communicate with other Thread devices in the network.
+During the last part of the commissioning procedure (the provisioning operation), the Matter controller sends the Thread network credentials to the Matter accessory device.
+As a result, the device can join the Thread network and communicate with other Thread devices in the network.
 
 .. matter_door_lock_sample_commissioning_end
 
