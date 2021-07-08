@@ -217,12 +217,8 @@ message(STATUS "NRFXLIB_BASE: $ENV{NRFXLIB_BASE}")
 message(STATUS "NRFX_BASE: $ENV{NRFX_BASE}")
 message(STATUS "TFM_BASE: $ENV{TFM_BASE}")
 
-set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
-set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
-set(NRFX_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfx)
-set(TFM_BINARY_DIR ${CMAKE_BINARY_DIR}/tfm)
-set(MCUBOOT_BINARY_DIR ${CMAKE_BINARY_DIR}/mcuboot)
+set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 
 # HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
@@ -246,8 +242,6 @@ add_custom_target(
 )
 
 set(zephyr_env
-  ZEPHYR_BASE=${ZEPHYR_BASE}
-  ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
   DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
 )
 
@@ -294,9 +288,6 @@ add_custom_command(
 )
 
 set(nrf_env
-  ZEPHYR_BASE=${ZEPHYR_BASE}
-  NRF_BASE=${NRF_BASE}
-  NRF_BUILD=${NRF_BINARY_DIR}
   DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
 )
 
@@ -313,21 +304,13 @@ add_dependencies(nrf-html-all nrf-versions)
 #-------------------------------------------------------------------------------
 # docset: mcuboot
 
-set(mcuboot_env
-  NRF_BASE=${NRF_BASE}
-  MCUBOOT_BUILD=${MCUBOOT_BINARY_DIR}
-  MCUBOOT_BASE=${MCUBOOT_BASE}
-)
-
-add_docset(mcuboot "${mcuboot_env}")
+add_docset(mcuboot "")
 
 #-------------------------------------------------------------------------------
 # docset: nrfx
 
 set(nrfx_env
-  NRF_BASE=${NRF_BASE}
-  NRFX_BASE=${NRFX_BASE}
-  NRFX_BUILD=${NRFX_BINARY_DIR}
+  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
 )
 
 add_docset(nrfx "${nrfx_env}")
@@ -335,22 +318,12 @@ add_docset(nrfx "${nrfx_env}")
 #-------------------------------------------------------------------------------
 # docset: tfm
 
-set(tfm_env
-  NRF_BASE=${NRF_BASE}
-  ZEPHYR_BASE=${ZEPHYR_BASE}
-  TFM_BASE=${TFM_BASE}
-  TFM_BUILD=${TFM_BINARY_DIR}
-)
-
-add_docset(tfm "${tfm_env}" DODGY)
+add_docset(tfm "" DODGY)
 
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
 
 set(nrfxlib_env
-  NRF_BASE=${NRF_BASE}
-  NRFXLIB_BASE=${NRFXLIB_BASE}
-  NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
   DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
 )
 
@@ -420,10 +393,7 @@ add_custom_target(
   VERBATIM
 )
 
-set(kconfig_env
-  KCONFIG_BUILD=${KCONFIG_BINARY_DIR}
-)
-add_docset(kconfig "${kconfig_env}")
+add_docset(kconfig "")
 add_dependencies(kconfig-html kconfig-content)
 add_dependencies(kconfig-html-all kconfig-content)
 

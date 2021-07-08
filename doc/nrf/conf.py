@@ -7,23 +7,12 @@ import sys
 
 # Paths ------------------------------------------------------------------------
 
-NRF_BASE = os.environ.get("NRF_BASE")
-if not NRF_BASE:
-    raise FileNotFoundError("NRF_BASE not defined")
-NRF_BASE = Path(NRF_BASE)
-
-NRF_BUILD = os.environ.get("NRF_BUILD")
-if not NRF_BUILD:
-    raise FileNotFoundError("NRF_BUILD not defined")
-NRF_BUILD = Path(NRF_BUILD)
-
-ZEPHYR_BASE = os.environ.get("ZEPHYR_BASE")
-if not ZEPHYR_BASE:
-    raise FileNotFoundError("ZEPHYR_BASE not defined")
-ZEPHYR_BASE = Path(ZEPHYR_BASE)
+NRF_BASE = Path(__file__).absolute().parents[2]
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
+
+ZEPHYR_BASE = utils.get_projdir("zephyr")
 
 # General configuration --------------------------------------------------------
 
@@ -114,11 +103,11 @@ if nrfx_mapping:
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
 doxyrunner_doxyfile = NRF_BASE / "doc" / "nrf" / "nrf.doxyfile.in"
-doxyrunner_outdir = NRF_BUILD / "doxygen"
+doxyrunner_outdir = utils.get_builddir() / "nrf" / "doxygen"
 doxyrunner_fmt = True
 doxyrunner_fmt_vars = {
     "NRF_BASE": str(NRF_BASE),
-    "NRF_BINARY_DIR": str(NRF_BUILD),
+    "NRF_BINARY_DIR": str(utils.get_builddir() / "nrf"),
 }
 
 # Options for breathe ----------------------------------------------------------
@@ -177,7 +166,7 @@ options_from_kconfig_zephyr_dir = ZEPHYR_BASE
 # Options for ncs_cache --------------------------------------------------------
 
 ncs_cache_docset = "nrf"
-ncs_cache_build_dir = NRF_BUILD / ".."
+ncs_cache_build_dir = utils.get_builddir()
 ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
 ncs_cache_manifest = NRF_BASE / "west.yml"
 
