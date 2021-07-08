@@ -1403,12 +1403,7 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 		return -EINVAL;
 	}
 
-	if (!IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT)) {
-		LOG_ERR("CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT is not enabled");
-		return -ENOTSUP;
-	}
-
-	LOG_HEXDUMP_DBG(buf, buf_len, "MQTT packet");
+	LOG_HEXDUMP_DBG(buf, buf_len, "P-GPS data packet");
 	if (!buf_len) {
 		LOG_ERR("Zero length packet received");
 		state = PGPS_NONE;
