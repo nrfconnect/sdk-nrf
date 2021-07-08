@@ -55,7 +55,6 @@ include(${ZEPHYR_BASE}/cmake/zephyr_module.cmake)
 #
 # Args:
 # - name: Docset name.
-# - env: Environment passed to the Sphinx build.
 # - DODGY: Enable/disable "dodgy" mode. If enabled, the ${SPHINXOPTS_EXTRA}
 #   option (used to enable things like -W) will not be passed to Sphinx. It can
 #   be useful for external docsets that are likely to generate build warnings.
@@ -76,7 +75,7 @@ include(${ZEPHYR_BASE}/cmake/zephyr_module.cmake)
 # - ${name}-linkcheck: Run Sphinx "linkcheck" target.
 # - ${name}-clean: Clean build artifacts.
 #
-function(add_docset name env)
+function(add_docset name)
   cmake_parse_arguments(DOCSET "DODGY" "" "" ${ARGN})
 
   set(DOCSET_CFG_DIR ${CMAKE_CURRENT_LIST_DIR}/${name})
@@ -85,6 +84,7 @@ function(add_docset name env)
   set(DOCSET_HTML_DIR ${CMAKE_BINARY_DIR}/html/${name})
   set(DOCSET_MAKE_DIRS ${DOCSET_BUILD_DIR};${DOCSET_SRC_DIR})
   set(DOCSET_CLEAN_DIRS ${DOCSET_BUILD_DIR};${DOCSET_HTML_DIR})
+  set(DOCSET_ENV DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE})
 
   if(NOT ${DOCSET_DODGY})
     set(EXTRA_ARGS ${SPHINXOPTS_EXTRA})
@@ -93,7 +93,7 @@ function(add_docset name env)
   add_doc_target(
     ${name}-inventory
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
-    COMMAND ${CMAKE_COMMAND} -E env ${env}
+    COMMAND ${CMAKE_COMMAND} -E env ${DOCSET_ENV}
     ${SPHINXBUILD}
       -b inventory
       -c ${DOCSET_CFG_DIR}
@@ -107,7 +107,7 @@ function(add_docset name env)
   add_doc_target(
     ${name}-html
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
-    COMMAND ${CMAKE_COMMAND} -E env ${env}
+    COMMAND ${CMAKE_COMMAND} -E env ${DOCSET_ENV}
     ${SPHINXBUILD}
       -b html
       -c ${DOCSET_CFG_DIR}
@@ -122,7 +122,7 @@ function(add_docset name env)
   add_custom_target(
     ${name}-linkcheck
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
-    COMMAND ${CMAKE_COMMAND} -E env ${env}
+    COMMAND ${CMAKE_COMMAND} -E env ${DOCSET_ENV}
     ${SPHINXBUILD}
       -b linkcheck
       -c ${DOCSET_CFG_DIR}
@@ -241,11 +241,7 @@ add_custom_target(
   USES_TERMINAL
 )
 
-set(zephyr_env
-  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
-)
-
-add_docset(zephyr "${zephyr_env}")
+add_docset(zephyr)
 add_dependencies(zephyr-html zephyr-devicetree)
 add_dependencies(zephyr-html-all zephyr-devicetree)
 
@@ -287,47 +283,35 @@ add_custom_command(
     ${pip_requirements_files}
 )
 
-set(nrf_env
-  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
-)
-
 add_custom_target(
   nrf-versions
   DEPENDS
     ${NRF_BINARY_DIR}/src/versions.txt
 )
 
-add_docset(nrf "${nrf_env}")
+add_docset(nrf)
 add_dependencies(nrf-html nrf-versions)
 add_dependencies(nrf-html-all nrf-versions)
 
 #-------------------------------------------------------------------------------
 # docset: mcuboot
 
-add_docset(mcuboot "")
+add_docset(mcuboot)
 
 #-------------------------------------------------------------------------------
 # docset: nrfx
 
-set(nrfx_env
-  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
-)
-
-add_docset(nrfx "${nrfx_env}")
+add_docset(nrfx)
 
 #-------------------------------------------------------------------------------
 # docset: tfm
 
-add_docset(tfm "" DODGY)
+add_docset(tfm DODGY)
 
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
 
-set(nrfxlib_env
-  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
-)
-
-add_docset(nrfxlib "${nrfxlib_env}")
+add_docset(nrfxlib)
 
 #-------------------------------------------------------------------------------
 # docset: kconfig
@@ -393,7 +377,7 @@ add_custom_target(
   VERBATIM
 )
 
-add_docset(kconfig "")
+add_docset(kconfig)
 add_dependencies(kconfig-html kconfig-content)
 add_dependencies(kconfig-html-all kconfig-content)
 
