@@ -1,19 +1,27 @@
 from os import PathLike
 from pathlib import Path
-from sphinx.cmd.build import get_parser
 from typing import Dict, Tuple, Optional
 
+from sphinx.cmd.build import get_parser
+from west.manifest import Manifest
+
+
+_NRF_BASE = Path(__file__).parents[2]
+"""NCS Repository root"""
+
+_MANIFEST = Manifest.from_file(_NRF_BASE / "west.yml")
+"""Manifest instance"""
 
 ALL_DOCSETS = {
-    "nrf": ("nRF Connect SDK", "index"),
-    "nrfx": ("nrfx", "index"),
-    "nrfxlib": ("nrfxlib", "README"),
-    "zephyr": ("Zephyr Project", "index"),
-    "mcuboot": ("MCUboot", "wrapper"),
-    "tfm": ("Trusted Firmware-M", "index"),
-    "kconfig": ("Kconfig Reference", "index"),
+    "nrf": ("nRF Connect SDK", "index", "manifest"),
+    "nrfx": ("nrfx", "index", "hal_nordic"),
+    "nrfxlib": ("nrfxlib", "README", "nrfxlib"),
+    "zephyr": ("Zephyr Project", "index", "zephyr"),
+    "mcuboot": ("MCUboot", "wrapper", "mcuboot"),
+    "tfm": ("Trusted Firmware-M", "index", "trusted-firmware-m"),
+    "kconfig": ("Kconfig Reference", "index", None),
 }
-"""All supported docsets (name: title, home page)."""
+"""All supported docsets (name: title, home page, manifest project name)."""
 
 
 def get_docsets(docset: str) -> Dict[str, str]:
@@ -28,6 +36,26 @@ def get_docsets(docset: str) -> Dict[str, str]:
     docsets = ALL_DOCSETS.copy()
     del docsets[docset]
     return docsets
+
+
+def get_projdir(docset: str) -> Path:
+    """Obtain the project directory for the given docset.
+
+    Args:
+        docset: Target docset.
+
+    Returns:
+        Project path for the given docset.
+    """
+
+    name = ALL_DOCSETS[docset][2]
+    if not name:
+        raise ValueError("Given docset has no associated project")
+
+    p = next((p for p in _MANIFEST.projects if p.name == name), None)
+    assert p, f"Project {name} not in manifest"
+
+    return Path(p.topdir) / Path(p.path)
 
 
 def get_builddir() -> PathLike:
