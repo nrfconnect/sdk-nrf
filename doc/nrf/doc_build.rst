@@ -147,6 +147,24 @@ To clean the build folders for a particular documentation set:
 
 Here, *docset-name* is the name of the documentation set, for example, ``nrf``.
 
+Downloading cached builds
+=========================
+
+The |NCS| provides cached builds for the current documentation.
+That means that if you do not have local modifications to a documentation set, you can download a cached version of the build.
+Downloading is usually quicker than building the documentation from scratch, however, this might depend on your Internet connection speed.
+
+.. note::
+   Using cached builds is currently in experimental state.
+
+To enable the online cache, set the ``NCS_CACHE_ENABLE`` environment variable.
+For example, on Windows, enter the following command::
+
+  set NCS_CACHE_ENABLE=1
+
+The cached build is downloaded only if there are no local modifications to a specific documentation set.
+To force the download even if there are local modifications, set ``NCS_CACHE_FORCE`` in addition to ``NCS_CACHE_ENABLE``.
+
 Different versions
 ******************
 
