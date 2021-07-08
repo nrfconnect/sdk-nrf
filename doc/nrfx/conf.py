@@ -8,20 +8,12 @@ from sphinx.config import eval_config_file
 
 # Paths ------------------------------------------------------------------------
 
-NRF_BASE = Path(__file__).absolute().parent / ".." / ".."
-
-NRFX_BASE = os.environ.get("NRFX_BASE")
-if not NRFX_BASE:
-    raise FileNotFoundError("NRFX_BASE not defined")
-NRFX_BASE = Path(NRFX_BASE)
-
-NRFX_BUILD = os.environ.get("NRFX_BUILD")
-if not NRFX_BUILD:
-    raise FileNotFoundError("NRFX_BUILD not defined")
-NRFX_BUILD = Path(NRFX_BUILD)
+NRF_BASE = Path(__file__).absolute().parents[2]
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
+
+NRFX_BASE = utils.get_projdir("nrfx") / "nrfx"
 
 # pylint: disable=undefined-variable
 
@@ -43,7 +35,7 @@ html_theme_options = {"docsets": utils.get_docsets("nrfx")}
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
 doxyrunner_doxyfile = NRF_BASE / "doc" / "nrfx" / "nrfx.doxyfile.in"
-doxyrunner_outdir = NRFX_BUILD / "doxygen"
+doxyrunner_outdir = utils.get_builddir() / "nrfx" / "doxygen"
 doxyrunner_fmt = True
 doxyrunner_fmt_vars = {
     "NRFX_BASE": str(NRFX_BASE),
@@ -57,7 +49,8 @@ breathe_projects = {"nrfx": str(doxyrunner_outdir / "xml")}
 # Options for external_content -------------------------------------------------
 
 from external_content import DEFAULT_DIRECTIVES
-directives = DEFAULT_DIRECTIVES + ("mdinclude", )
+
+directives = DEFAULT_DIRECTIVES + ("mdinclude",)
 
 external_content_directives = directives
 external_content_contents = [
@@ -67,7 +60,7 @@ external_content_contents = [
 # Options for ncs_cache --------------------------------------------------------
 
 ncs_cache_docset = "nrfx"
-ncs_cache_build_dir = NRFX_BUILD / ".."
+ncs_cache_build_dir = utils.get_builddir()
 ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
 ncs_cache_manifest = NRF_BASE / "west.yml"
 
