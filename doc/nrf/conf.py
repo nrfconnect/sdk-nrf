@@ -172,6 +172,7 @@ table_from_rows_base_dir = NRF_BASE
 # Options for options_from_kconfig ---------------------------------------------
 
 options_from_kconfig_base_dir = NRF_BASE
+options_from_kconfig_zephyr_dir = ZEPHYR_BASE
 
 # Options for ncs_cache --------------------------------------------------------
 
