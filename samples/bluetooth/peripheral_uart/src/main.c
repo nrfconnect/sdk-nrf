@@ -211,7 +211,7 @@ static int uart_init(void)
 	int err;
 	struct uart_data_t *rx;
 
-	uart = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
+	uart = device_get_binding(CONFIG_BT_NUS_UART_DEV);
 	if (!uart) {
 		return -ENXIO;
 	}
