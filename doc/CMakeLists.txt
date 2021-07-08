@@ -179,43 +179,9 @@ function(add_doc_target name)
 endfunction()
 
 #-------------------------------------------------------------------------------
-# Environment & Paths
-
-# Set various *_BASE variables pointing to the nrf/, zephyr/, etc.,
-# directories. Derive them automatically if they're not set in the environment,
-# by assuming that e.g. nrfxlib can be found at ../../nrfxlib/. Also add them
-# to the environment if they're not there.
-#
+# Paths
 
 get_filename_component(NRF_BASE ${CMAKE_CURRENT_LIST_DIR}../ DIRECTORY)
-set(ENV{NRF_BASE} ${NRF_BASE})
-
-if(NOT DEFINED ENV{MCUBOOT_BASE})
-  get_filename_component(MCUBOOT_BASE ${CMAKE_CURRENT_LIST_DIR}/../../bootloader/mcuboot/ REALPATH)
-  set(ENV{MCUBOOT_BASE} ${MCUBOOT_BASE})
-endif()
-
-if(NOT DEFINED ENV{NRFXLIB_BASE})
-  get_filename_component(NRFXLIB_BASE ${CMAKE_CURRENT_LIST_DIR}/../../nrfxlib/ REALPATH)
-  set(ENV{NRFXLIB_BASE} ${NRFXLIB_BASE})
-endif()
-
-if(NOT DEFINED ENV{NRFX_BASE})
-  get_filename_component(NRFX_BASE ${CMAKE_CURRENT_LIST_DIR}/../../modules/hal/nordic/nrfx/ REALPATH)
-  set(ENV{NRFX_BASE} ${NRFX_BASE})
-endif()
-
-if(NOT DEFINED ENV{TFM_BASE})
-  get_filename_component(TFM_BASE ${CMAKE_CURRENT_LIST_DIR}/../../modules/tee/tfm/trusted-firmware-m/ REALPATH)
-  set(ENV{TFM_BASE} ${TFM_BASE})
-endif()
-
-message(STATUS "ZEPHYR_BASE: ${ZEPHYR_BASE}")
-message(STATUS "NRF_BASE: $ENV{NRF_BASE}")
-message(STATUS "MCUBOOT_BASE: $ENV{MCUBOOT_BASE}")
-message(STATUS "NRFXLIB_BASE: $ENV{NRFXLIB_BASE}")
-message(STATUS "NRFX_BASE: $ENV{NRFX_BASE}")
-message(STATUS "TFM_BASE: $ENV{TFM_BASE}")
 
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
@@ -258,7 +224,7 @@ set(tools_version_files
 set(pip_requirements_files
     ${ZEPHYR_BASE}/scripts/requirements-base.txt
     ${ZEPHYR_BASE}/scripts/requirements-doc.txt
-    ${MCUBOOT_BASE}/scripts/requirements.txt
+    ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/requirements.txt
     ${NRF_BASE}/scripts/requirements-base.txt
     ${NRF_BASE}/scripts/requirements-doc.txt
     ${NRF_BASE}/scripts/requirements-build.txt
@@ -371,9 +337,9 @@ add_custom_target(
         --separate-all-index
         --modules Zephyr,zephyr,${ZEPHYR_BASE}
                   nRF,nrf,${NRF_BASE}
-                  nrfxlib,nrfxlib,${NRFXLIB_BASE}
+                  nrfxlib,nrfxlib,${ZEPHYR_NRFXLIB_MODULE_DIR}
         --no-index-modules BuildDir,${CMAKE_BINARY_DIR}
-                           MCUboot,${MCUBOOT_BASE}
+                           MCUboot,${ZEPHYR_MCUBOOT_MODULE_DIR}
   VERBATIM
 )
 
