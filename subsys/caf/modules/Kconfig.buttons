@@ -13,7 +13,7 @@ menuconfig CAF_BUTTONS
 if CAF_BUTTONS
 
 config CAF_BUTTONS_DEF_PATH
-string "Configuration file"
+	string "Configuration file"
 	default "buttons_def.h"
 	help
 	  Location of configuration file for buttons module.
