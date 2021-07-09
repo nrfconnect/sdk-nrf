@@ -74,11 +74,16 @@
 #define CONFIG_NO_DATA_LIST_GNSS	  "gnss"
 #define CONFIG_NO_DATA_LIST_NEIGHBOR_CELL "ncell"
 
-#define DATA_AGPS_REQUEST_MCC	"mcc"
-#define DATA_AGPS_REQUEST_MNC	"mnc"
-#define DATA_AGPS_REQUEST_CID	"cell"
-#define DATA_AGPS_REQUEST_TAC	"area"
-#define DATA_AGPS_REQUEST_TYPES "types"
+#define DATA_AGPS_REQUEST_MCC           "mcc"
+#define DATA_AGPS_REQUEST_MNC           "mnc"
+#define DATA_AGPS_REQUEST_CID           "cell"
+#define DATA_AGPS_REQUEST_TAC           "area"
+#define DATA_AGPS_REQUEST_TYPES         "types"
+
+#define DATA_PGPS_REQUEST_COUNT         "n"
+#define DATA_PGPS_REQUEST_INTERVAL      "int"
+#define DATA_PGPS_REQUEST_DAY           "day"
+#define DATA_PGPS_REQUEST_TIME          "time"
 
 #define OBJECT_CONFIG		"config"
 #define OBJECT_REPORTED		"reported"
@@ -153,11 +158,16 @@
 #define DATA_NEIGHBOR_CELLS_NEIGHBOR_MEAS "nmr"
 #define DATA_NEIGHBOR_CELLS_PCI		  "cell"
 
-#define DATA_AGPS_REQUEST_MCC	"mcc"
-#define DATA_AGPS_REQUEST_MNC	"mnc"
-#define DATA_AGPS_REQUEST_CID	"cell"
-#define DATA_AGPS_REQUEST_TAC	"area"
-#define DATA_AGPS_REQUEST_TYPES "types"
+#define DATA_AGPS_REQUEST_MCC           "mcc"
+#define DATA_AGPS_REQUEST_MNC           "mnc"
+#define DATA_AGPS_REQUEST_CID           "cell"
+#define DATA_AGPS_REQUEST_TAC           "area"
+#define DATA_AGPS_REQUEST_TYPES         "types"
+
+#define DATA_PGPS_REQUEST_COUNT         "n"
+#define DATA_PGPS_REQUEST_INTERVAL      "int"
+#define DATA_PGPS_REQUEST_DAY           "day"
+#define DATA_PGPS_REQUEST_TIME          "time"
 
 #define OBJECT_CONFIG		"cfg"
 
