@@ -104,9 +104,8 @@ endif()
 # Automatically include the multiprotocol_rpmsg as child image when both RPMSG HCI
 # and RPMSG 802.15.4 Serialization are enabled or the hci_rpmsg sample when
 # only RPMSG HCI is enabled. For any of these samples change the board to be the network core.
-if (CONFIG_BT_RPMSG_NRF53)
-  if (CONFIG_SOC_NRF5340_CPUAPP)
-
+if (CONFIG_NCS_AUTO_INCLUDE_NET_CORE_IMAGE)
+  if (CONFIG_BT_RPMSG_NRF53)
     if (CONFIG_NRF_802154_SER_HOST)
       set(NETCORE_IMAGE "multiprotocol_rpmsg")
       set(NETCORE_IMAGE_PATH "${NRF_DIR}/samples/nrf5340/${NETCORE_IMAGE}")
@@ -133,12 +132,7 @@ if (CONFIG_BT_RPMSG_NRF53)
       SOURCE_DIR ${NETCORE_IMAGE_PATH}
       DOMAIN CPUNET
       BOARD ${CONFIG_DOMAIN_CPUNET_BOARD})
-  else()
-    message(FATAL_ERROR
-      "SoC not supported for including hci_rpmsg as child image")
-  endif()
-elseif (CONFIG_NRF_802154_SER_HOST)
-  if (CONFIG_SOC_NRF5340_CPUAPP)
+  elseif (CONFIG_NRF_802154_SER_HOST)
     message("Adding '802154_rpmsg' firmware as child image since "
     "CONFIG_NRF_802154_SER_HOST is set to y")
 
@@ -148,25 +142,7 @@ elseif (CONFIG_NRF_802154_SER_HOST)
       DOMAIN CPUNET
       BOARD ${CONFIG_DOMAIN_CPUNET_BOARD}
     )
-  else()
-    message(FATAL_ERROR
-      "Board ${BOARD} not supported for including '802154_rpmsg' as child image")
-  endif()
-endif()
-
-if (CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE)
-  message("Adding 'empty_app_core' firmware as child image since "
-    "CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE is set to 'y'")
-
-  add_child_image(
-    NAME empty_app_core
-    SOURCE_DIR ${NRF_DIR}/samples/nrf5340/empty_app_core
-    DOMAIN CPUAPP
-    BOARD ${CONFIG_DOMAIN_CPUAPP_BOARD})
-endif()
-
-if (CONFIG_BT_RPC)
-  if (CONFIG_SOC_NRF5340_CPUAPP)
+  elseif (CONFIG_BT_RPC)
     message("Adding 'rpc_host' firmware as child image since "
       "CONFIG_BT_RPC is set to 'y'")
 
@@ -179,4 +155,15 @@ if (CONFIG_BT_RPC)
       BOARD ${CONFIG_DOMAIN_CPUNET_BOARD}
     )
   endif()
+endif()
+
+if (CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE)
+  message("Adding 'empty_app_core' firmware as child image since "
+    "CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE is set to 'y'")
+
+  add_child_image(
+    NAME empty_app_core
+    SOURCE_DIR ${NRF_DIR}/samples/nrf5340/empty_app_core
+    DOMAIN CPUAPP
+    BOARD ${CONFIG_DOMAIN_CPUAPP_BOARD})
 endif()
