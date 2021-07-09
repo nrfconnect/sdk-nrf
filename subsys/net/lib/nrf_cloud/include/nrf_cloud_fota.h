@@ -15,17 +15,17 @@
 extern "C" {
 #endif
 
-/**@brief FOTA status reported to nRF Cloud. */
-enum nrf_cloud_fota_status {
-	NRF_CLOUD_FOTA_QUEUED = 0,
-	NRF_CLOUD_FOTA_IN_PROGRESS = 1,
-	NRF_CLOUD_FOTA_FAILED = 2,
-	NRF_CLOUD_FOTA_SUCCEEDED = 3,
-	NRF_CLOUD_FOTA_TIMED_OUT = 4,
-	NRF_CLOUD_FOTA_CANCELED = 5,
-	NRF_CLOUD_FOTA_REJECTED = 6,
-	NRF_CLOUD_FOTA_DOWNLOADING = 7,
-};
+#define NRF_CLOUD_FOTA_REST_KEY_JOB_DOC	"jobDocument"
+#define NRF_CLOUD_FOTA_REST_KEY_JOB_ID	"jobId"
+#define NRF_CLOUD_FOTA_REST_KEY_PATH	"path"
+#define NRF_CLOUD_FOTA_REST_KEY_HOST	"host"
+#define NRF_CLOUD_FOTA_REST_KEY_TYPE	"firmwareType"
+#define NRF_CLOUD_FOTA_REST_KEY_SIZE	"fileSize"
+#define NRF_CLOUD_FOTA_REST_KEY_VER	"version"
+
+#define NRF_CLOUD_FOTA_REST_VAL_TYPE_MODEM "MODEM"
+#define NRF_CLOUD_FOTA_REST_VAL_TYPE_BOOT  "BOOT"
+#define NRF_CLOUD_FOTA_REST_VAL_TYPE_APP   "APP"
 
 /**@brief FOTA event type provided to callback. */
 enum nrf_cloud_fota_evt_id {
@@ -52,15 +52,6 @@ enum nrf_cloud_fota_error {
 	NRF_CLOUD_FOTA_ERROR_APPLY_FAIL,
 	/** Firmware file type differs from expected FOTA type. */
 	NRF_CLOUD_FOTA_ERROR_MISMATCH,
-};
-
-/**@brief Common FOTA job info */
-struct nrf_cloud_fota_job_info {
-	enum nrf_cloud_fota_type type;
-	char *id;
-	char *host;
-	char *path;
-	int file_size;
 };
 
 /**@brief FOTA info for a BLE job */

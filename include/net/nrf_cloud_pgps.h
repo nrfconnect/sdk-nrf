@@ -82,6 +82,22 @@ struct gps_pgps_request {
 	uint32_t gps_time_of_day;
 } __packed;
 
+/** @brief nRF Cloud Predicted GPS (P-GPS) result; the location of
+ *         the P-GPS data file which is to be downloaded and provided
+ *         to nrf_cloud_pgps_process().
+ */
+struct nrf_cloud_pgps_result {
+	/** User-provided buffer to hold download host name */
+	char *host;
+	/** Size of user-provided host buffer */
+	size_t host_sz;
+
+	/** User-provided buffer to hold download path/file name */
+	char *path;
+	/** Size of user-provided path buffer */
+	size_t path_sz;
+};
+
 /** @brief P-GPS error code: current time unknown. */
 #define ETIMEUNKNOWN	8000
 /** @brief P-GPS error code: not found but loading in progress. */
@@ -93,7 +109,7 @@ struct gps_pgps_request {
 #define NRF_CLOUD_PGPS_EMPTY_EPHEM_HEALTH (0xff)
 
 /** @brief P-GPS event passed to the registered pgps_event_handler. */
-enum nrf_cloud_pgps_event {
+enum nrf_cloud_pgps_event_type {
 	/** P-GPS initialization beginning. */
 	PGPS_EVT_INIT,
 	/** There are currently no P-GPS predictions available. */
@@ -103,7 +119,24 @@ enum nrf_cloud_pgps_event {
 	/** A P-GPS prediction is available now for the current date and time. */
 	PGPS_EVT_AVAILABLE,
 	/** All P-GPS predictions are available. */
-	PGPS_EVT_READY
+	PGPS_EVT_READY,
+	/** A P-GPS request has been created for missing predicitons.
+	 *  This event has payload in the form of @ref gps_pgps_request that can
+	 *  The event is intended to be used when nRF Cloud over MATT and auto requests
+	 *  are disabled and let the application decide when and how to use
+	 *  the request information.
+	 *  These events are not received if CONFIG_NRF_CLOUD_PGPS_AUTO_REQUEST
+	 *  is enabled.
+	 */
+	PGPS_EVT_REQUEST,
+};
+
+struct nrf_cloud_pgps_event {
+	enum nrf_cloud_pgps_event_type type;
+	union {
+		struct nrf_cloud_pgps_prediction *prediction;
+		struct gps_pgps_request *request;
+	};
 };
 
 /**
@@ -114,8 +147,7 @@ enum nrf_cloud_pgps_event {
  * @param[in] p For event PGPS_EVT_AVAILABLE, a pointer to the prediction;
  * otherwise, NULL.
  */
-typedef void (*pgps_event_handler_t)(enum nrf_cloud_pgps_event event,
-				     struct nrf_cloud_pgps_prediction *p);
+typedef void (*pgps_event_handler_t)(struct nrf_cloud_pgps_event *event);
 
 /**@brief Initialization parameters for the module. */
 struct nrf_cloud_pgps_init_param {
@@ -204,7 +236,13 @@ int nrf_cloud_pgps_request(const struct gps_pgps_request *request);
  */
 int nrf_cloud_pgps_request_all(void);
 
-/**@brief Processes binary P-GPS data received from nRF Cloud.
+/**@brief Processes P-GPS data from nRF Cloud. The data contains
+ *	  information about where to download the requested predictions.
+ *	  If processing of the data is successful, downloading of predictions
+ *	  will start automatically using a dedicated connection to the
+ *	  hosting server, which means that this API should be called only when
+ *	  the device is ready to download large amounts of data.
+ *	  The received predictions will be processed as they arrive and stored to flash.
  *
  * @param buf Pointer to data received from nRF Cloud.
  * @param buf_len Buffer size of data to be processed.
@@ -212,6 +250,20 @@ int nrf_cloud_pgps_request_all(void);
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int nrf_cloud_pgps_process(const char *buf, size_t buf_len);
+
+/**@brief Processes binary P-GPS data. This API is intended to be used if
+ *	  @ref nrf_cloud_pgps_process is not used. A typical use case would be
+ *	  that P-GPS data is received using a method different from the default
+ *	  nRF Cloud MQTT connection for metadata and HTTP download for predictions.
+ *
+ * @note This API must be called for every P-GPS data chunk that is received.
+ *
+ * @param buf Pointer to data received from nRF Cloud.
+ * @param buf_len Buffer size of data to be processed.
+ *
+ * @return 0 if successful, otherwise a (negative) error code.
+ */
+int nrf_cloud_pgps_process_buffer(uint8_t *buf, size_t len);
 
 /**@brief Injects binary P-GPS data to the modem. If request is NULL,
  * it is assumed that only ephemerides assistance should be injected.
