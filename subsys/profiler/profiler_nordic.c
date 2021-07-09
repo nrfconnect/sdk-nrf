@@ -195,7 +195,7 @@ const char *profiler_get_event_descr(size_t profiler_event_id)
 	return descr[profiler_event_id];
 }
 
-uint16_t profiler_register_event_type(const char *name, const char **args,
+uint16_t profiler_register_event_type(const char *name, const char * const *args,
 				   const enum profiler_arg *arg_types,
 				   uint8_t arg_cnt)
 {
@@ -255,6 +255,25 @@ void profiler_log_encode_u32(struct log_event_buf *buf, uint32_t data)
 			 <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
 	sys_put_le32(data, buf->payload);
 	buf->payload += sizeof(data);
+}
+
+void profiler_log_encode_string(struct log_event_buf *buf, const char *string)
+{
+	size_t string_len = strlen(string);
+
+	if (string_len > UINT8_MAX) {
+		string_len = UINT8_MAX;
+	}
+	/* First byte that is send denotes string length.
+	 * Null character is not being sent.
+	 */
+	__ASSERT_NO_MSG(buf->payload - buf->payload_start + sizeof(uint8_t) + string_len
+			 <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
+	*(buf->payload) = (uint8_t) string_len;
+	buf->payload++;
+
+	memcpy(buf->payload, string, string_len);
+	buf->payload += string_len;
 }
 
 void profiler_log_add_mem_address(struct log_event_buf *buf,

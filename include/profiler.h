@@ -122,12 +122,12 @@ static inline bool is_profiling_enabled(size_t profiler_event_id)
  * @return ID assigned to the event type.
  */
 #ifdef CONFIG_PROFILER
-uint16_t profiler_register_event_type(const char *name, const char **args,
+uint16_t profiler_register_event_type(const char *name, const char * const *args,
 				   const enum profiler_arg *arg_types,
 				   uint8_t arg_cnt);
 #else
 static inline uint16_t profiler_register_event_type(const char *name,
-			const char **args, const enum profiler_arg *arg_types,
+			const char * const *args, const enum profiler_arg *arg_types,
 			uint8_t arg_cnt) {return 0; }
 #endif
 
@@ -156,6 +156,23 @@ void profiler_log_encode_u32(struct log_event_buf *buf, uint32_t data);
 #else
 static inline void profiler_log_encode_u32(struct log_event_buf *buf,
 					   uint32_t data) {}
+#endif
+
+/** @brief Encode and add string to a buffer.
+ *
+ * Maximum 255 characters can be sent (the rest is ommited).
+ *
+ * @warning The buffer must be initialized with @ref profiler_log_start
+ *          before calling this function.
+ *
+ * @param buf Pointer to the data buffer.
+ * @param string String to add to the buffer.
+ */
+#ifdef CONFIG_PROFILER
+void profiler_log_encode_string(struct log_event_buf *buf, const char *string);
+#else
+static inline void profiler_log_encode_string(struct log_event_buf *buf,
+					      const char *string) {}
 #endif
 
 
