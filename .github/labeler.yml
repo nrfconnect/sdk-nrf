@@ -46,7 +46,6 @@
   - "tests/subsys/net/**/*"
 
 "CI-all-test":
-  - "west.yml"
   - "**/*partition_manager*/**/*"
   - "**/*partition_manager*"
 
