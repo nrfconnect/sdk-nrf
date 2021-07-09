@@ -23,8 +23,8 @@ zephyr_library_sources(osif/zb_nrf_led_button.c)
 zephyr_library_sources(osif/zb_nrf_transceiver.c)
 zephyr_library_sources(osif/zb_nrf_crypto.c)
 zephyr_library_sources(osif/zb_nrf_pwr_mgmt.c)
+zephyr_library_sources(osif/zb_nrf_logger.c)
 zephyr_library_sources_ifdef(CONFIG_ZIGBEE_HAVE_SERIAL osif/zb_nrf_serial.c)
-zephyr_library_sources_ifndef(CONFIG_ZIGBEE_HAVE_SERIAL osif/zb_nrf_logger.c)
 zephyr_library_sources_ifdef(
 	CONFIG_ZIGBEE_SHELL
 	cli/zigbee_cli.c

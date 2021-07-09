@@ -43,6 +43,10 @@ static K_TIMER_DEFINE(uart_tx_timer, uart_tx_timeout, NULL);
 static K_TIMER_DEFINE(uart_rx_timer, uart_rx_timeout, NULL);
 
 
+#if defined(CONFIG_ZBOSS_TRACE_UART_LOGGING) || defined(CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING)
+void zb_logger_init(void);
+#endif /* CONFIG_ZBOSS_TRACE_UART_LOGGING || CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING */
+
 /**
  * Inform user about received data and unlock for the next reception.
  */
@@ -238,6 +242,10 @@ void zb_osif_serial_init(void)
 
 	/* Enable rx interrupts. */
 	uart_irq_rx_enable(uart_dev);
+
+#if defined(CONFIG_ZBOSS_TRACE_UART_LOGGING) || defined(CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING)
+	zb_logger_init();
+#endif /* CONFIG_ZBOSS_TRACE_UART_LOGGING || CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING */
 }
 
 void zb_osif_set_uart_byte_received_cb(zb_callback_t hnd)
@@ -278,6 +286,7 @@ void zb_osif_uart_wake_up(void)
 	uart_irq_rx_enable(uart_dev);
 }
 
+#if !defined(CONFIG_ZBOSS_TRACE_UART_LOGGING) && !defined(CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING)
 void zb_osif_serial_put_bytes(const zb_uint8_t *buf, zb_short_t len)
 {
 #if !(defined(ZB_HAVE_ASYNC_SERIAL) && \
@@ -306,6 +315,7 @@ void zb_osif_serial_put_bytes(const zb_uint8_t *buf, zb_short_t len)
 
 #endif /* !(ZB_HAVE_ASYNC_SERIAL && CONFIG_ZBOSS_TRACE_LOG_LEVEL_OFF) */
 }
+#endif /* !CONFIG_ZBOSS_TRACE_UART_LOGGING && !CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING */
 
 void zb_osif_serial_recv_data(zb_uint8_t *buf, zb_ushort_t len)
 {
