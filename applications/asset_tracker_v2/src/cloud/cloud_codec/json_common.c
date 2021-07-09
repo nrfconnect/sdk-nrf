@@ -834,6 +834,42 @@ exit:
 	return err;
 }
 
+int json_common_pgps_request_data_add(cJSON *parent, struct cloud_data_pgps_request *data)
+{
+	int err;
+
+	if (!data->queued) {
+		return -ENODATA;
+	}
+
+	err = json_add_number(parent, DATA_PGPS_REQUEST_COUNT, data->count);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_PGPS_REQUEST_INTERVAL, data->interval);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_PGPS_REQUEST_DAY, data->day);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	err = json_add_number(parent, DATA_PGPS_REQUEST_TIME, data->time);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		return err;
+	}
+
+	data->queued = false;
+	return 0;
+}
+
 int json_common_battery_data_add(cJSON *parent,
 				 struct cloud_data_battery *data,
 				 enum json_common_op_code op,

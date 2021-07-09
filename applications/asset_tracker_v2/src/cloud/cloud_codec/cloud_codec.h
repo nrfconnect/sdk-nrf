@@ -224,6 +224,18 @@ struct cloud_data_agps_request {
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
 };
+struct cloud_data_pgps_request {
+	/** Number of requested predictions. */
+	uint16_t count;
+	/** Time in between predictions, in minutes. */
+	uint16_t interval;
+	/** The day to start the prediction from. Days since GPS epoch. */
+	uint16_t day;
+	/** The start time of the prediction in seconds in a day. */
+	uint32_t time;
+	/** Flag signifying that the data entry is to be encoded. */
+	bool queued : 1;
+};
 
 static inline void cloud_codec_init(void)
 {
@@ -235,6 +247,9 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 				    struct cloud_data_agps_request *agps_request);
+
+int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
+				    struct cloud_data_pgps_request *pgps_request);
 
 int cloud_codec_decode_config(char *input, size_t input_len,
 			      struct cloud_data_cfg *cfg);

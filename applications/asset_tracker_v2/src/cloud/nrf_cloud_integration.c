@@ -356,3 +356,9 @@ int cloud_wrap_agps_request_send(char *buf, size_t len)
 	/* Not supported */
 	return -ENOTSUP;
 }
+
+int cloud_wrap_pgps_request_send(char *buf, size_t len)
+{
+	/* Not supported */
+	return -ENOTSUP;
+}

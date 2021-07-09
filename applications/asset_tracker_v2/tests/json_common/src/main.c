@@ -591,6 +591,32 @@ static void test_encode_agps_request_data_object(void)
 	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
 }
 
+static void test_encode_pgps_request_data_object(void)
+{
+	int ret;
+	struct cloud_data_pgps_request data = {
+		.count = 42,
+		.interval = 240,
+		.day = 15160,
+		.time = 40655,
+		.queued = true
+	};
+
+	ret = json_common_pgps_request_data_add(dummy.root_obj, &data);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_PGPS_REQUEST_JSON_SCHEMA,
+				   data.queued);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	/* Check for invalid inputs. */
+
+	data.queued = false;
+
+	ret = json_common_pgps_request_data_add(dummy.root_obj, &data);
+	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+}
+
 static void test_encode_ui_data_array(void)
 {
 	int ret;
@@ -1237,8 +1263,13 @@ void test_main(void)
 					       test_setup_object,
 					       test_teardown_object),
 
-		/* AGPS request */
+		/* A-GPS request */
 		ztest_unit_test_setup_teardown(test_encode_agps_request_data_object,
+					       test_setup_object,
+					       test_teardown_object),
+
+		/* P-GPS request */
+		ztest_unit_test_setup_teardown(test_encode_pgps_request_data_object,
 					       test_setup_object,
 					       test_teardown_object),
 

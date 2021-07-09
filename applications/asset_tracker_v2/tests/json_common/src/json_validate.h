@@ -120,6 +120,14 @@
 					"]"							\
 				"}"
 
+#define TEST_VALIDATE_PGPS_REQUEST_JSON_SCHEMA							\
+				"{"								\
+					"\"n\":42,"						\
+					"\"int\":240,"						\
+					"\"day\":15160,"					\
+					"\"time\":40655"					\
+				"}"
+
 #define TEST_VALIDATE_ACCELEROMETER_JSON_SCHEMA							\
 				"{"								\
 					"\"acc\":{"						\

@@ -68,6 +68,7 @@ nRF9160
 
     * Changed the custom module responsible for controlling the LEDs to CAF LEDs module.
     * Added support for A-GPS when configuring the application for AWS IoT.
+    * Added support for P-GPS when configuring the application for AWS IoT.
 
   * :ref:`at_cmd_readme` library:
 

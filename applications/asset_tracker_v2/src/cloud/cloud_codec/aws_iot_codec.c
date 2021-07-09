@@ -132,6 +132,46 @@ exit:
 	return err;
 }
 
+int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
+				    struct cloud_data_pgps_request *pgps_request)
+{
+	int err;
+	char *buffer;
+
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(pgps_request != NULL);
+
+	cJSON *root_obj = cJSON_CreateObject();
+
+	if (root_obj == NULL) {
+		return -ENOMEM;
+	}
+
+	err = json_common_pgps_request_data_add(root_obj, pgps_request);
+	if (err) {
+		goto exit;
+	}
+
+	buffer = cJSON_PrintUnformatted(root_obj);
+	if (buffer == NULL) {
+		LOG_ERR("Failed to allocate memory for JSON string");
+
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LOG_LEVEL_DBG)) {
+		json_print_obj("Encoded message:\n", root_obj);
+	}
+
+	output->buf = buffer;
+	output->len = strlen(buffer);
+
+exit:
+	cJSON_Delete(root_obj);
+	return err;
+}
+
 int cloud_codec_decode_config(char *input, size_t input_len,
 			      struct cloud_data_cfg *cfg)
 {

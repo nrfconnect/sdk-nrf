@@ -17,6 +17,8 @@ enum cloud_wrap_event_type {
 	CLOUD_WRAP_EVT_DATA_RECEIVED,
 	/** A-GPS data received from the cloud integration layer. */
 	CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED,
+	/** P-GPS data received from the cloud integration layer. */
+	CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED,
 	/** Cloud integration layer has successfully perform a FOTA update.
 	 * Device should now be rebooted.
 	 */
@@ -81,3 +83,6 @@ int cloud_wrap_neighbor_cells_send(char *buf, size_t len);
 
 /** Send A-GPS request to cloud. */
 int cloud_wrap_agps_request_send(char *buf, size_t len);
+
+/** Send P-GPS request to cloud. */
+int cloud_wrap_pgps_request_send(char *buf, size_t len);
