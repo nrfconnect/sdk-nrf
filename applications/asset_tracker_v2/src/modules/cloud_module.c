@@ -226,7 +226,7 @@ static void agps_data_handle(const uint8_t *buf, size_t len)
 {
 	int err;
 
-#if defined(CONFIG_AGPS)
+#if defined(CONFIG_AGPS) && defined(CONFIG_AGPS_SRC_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGPS)
 	err = agps_cloud_data_process(buf, len);
 	if (err) {
 		LOG_WRN("Unable to process A-GPS data, error: %d", err);
@@ -303,6 +303,10 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 		 * based on topic. This means that agps_data_handle() must be called on both
 		 * CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED and CLOUD_WRAP_EVT_DATA_RECEIVED events.
 		 */
+		agps_data_handle(evt->data.buf, evt->data.len);
+		break;
+	case CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED:
+		LOG_DBG("CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED");
 		agps_data_handle(evt->data.buf, evt->data.len);
 		break;
 	case CLOUD_WRAP_EVT_FOTA_DONE: {
@@ -490,6 +494,25 @@ static void agps_data_request_send(struct data_module_event *evt)
 	}
 }
 
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+static void pgps_request_send(struct cloud_codec_data *data)
+{
+	int err;
+
+	err = cloud_wrap_pgps_request_send(data->buf, data->len);
+	cloud_codec_release_data(data);
+
+	if (err == -ENOTSUP) {
+		LOG_DBG("Sending of P-GPS request is not supported by the "
+			"configured cloud library");
+	} else if (err) {
+		LOG_ERR("cloud_wrap_pgps_request_send, err: %d", err);
+	} else {
+		LOG_DBG("PGPS request sent");
+	}
+}
+#endif
+
 static void connect_cloud(void)
 {
 	int err;
@@ -529,22 +552,68 @@ void pgps_handler(struct nrf_cloud_pgps_event *event)
 {
 	int err;
 
-	if (event->type == PGPS_EVT_REQUEST) {
-		LOG_WRN("PGPS_EVT_REQUEST");
-		return;
-	} else if (event->type != PGPS_EVT_AVAILABLE) {
-		return;
+	switch (event->type) {
+	case PGPS_EVT_INIT:
+		LOG_DBG("PGPS_EVT_INIT");
+		break;
+	case PGPS_EVT_UNAVAILABLE:
+		LOG_DBG("PGPS_EVT_UNAVAILABLE");
+		break;
+	case PGPS_EVT_LOADING:
+		LOG_DBG("PGPS_EVT_LOADING");
+		break;
+	case PGPS_EVT_READY:
+		LOG_DBG("PGPS_EVT_READY");
+		break;
+	case PGPS_EVT_AVAILABLE:
+		LOG_DBG("PGPS_EVT_AVAILABLE");
+
+		err = nrf_cloud_pgps_inject(event->prediction, &agps_request, NULL);
+		if (err) {
+			LOG_ERR("Unable to send prediction to modem: %d", err);
+		}
+
+		break;
+	case PGPS_EVT_REQUEST: {
+		LOG_DBG("PGPS_EVT_REQUEST");
+
+		/* Encode and send P-GPS request to cloud. */
+		struct cloud_codec_data output = {0};
+		struct cloud_data_pgps_request request = {
+			.count = event->request->prediction_count,
+			.interval = event->request->prediction_period_min,
+			.day = event->request->gps_day,
+			.time = event->request->gps_time_of_day,
+			.queued = true,
+		};
+
+		err = cloud_codec_encode_pgps_request(&output, &request);
+		switch (err) {
+		case 0:
+			LOG_DBG("P-GPS request encoded successfully");
+
+			/* This function frees the allocated JSON string buffer */
+			pgps_request_send(&output);
+			break;
+		case -ENOTSUP:
+			/* PGPS request encoding is not supported */
+			break;
+		case -ENODATA:
+			LOG_DBG("No P-GPS data to encode, error: %d", err);
+			break;
+		default:
+			LOG_ERR("Error encoding P-GPS request: %d", err);
+			SEND_ERROR(data, DATA_EVT_ERROR, err);
+			return;
+		}
+	}
+		break;
+	default:
+		LOG_WRN("Unknown P-GPS event");
+		break;
 	}
 
-	err = nrf_cloud_pgps_inject(event->prediction, &agps_request, NULL);
-	if (err) {
-		LOG_ERR("Unable to send prediction to modem: %d", err);
-	}
-
-	err = nrf_cloud_pgps_preemptive_updates();
-	if (err) {
-		LOG_ERR("Error requesting updates: %d", err);
-	}
+	(void)err;
 }
 #endif
 

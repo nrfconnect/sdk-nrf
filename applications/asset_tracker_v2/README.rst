@@ -239,6 +239,10 @@ Currently, the application supports the following services and technologies in t
 |                          |   `TLS`_                        |
 |                          +---------------------------------+
 |                          |   :ref:`FOTA <nrf9160_ug_fota>` |
+|                          +---------------------------------+
+|                          |   :ref:`lib_nrf_cloud_agps`     |
+|                          +---------------------------------+
+|                          |   :ref:`lib_nrf_cloud_pgps`     |
 +--------------------------+---------------------------------+
 | `Azure IoT Hub`_         |   `MQTT`_                       |
 |                          +---------------------------------+
@@ -253,9 +257,16 @@ Currently, the application supports the following services and technologies in t
 |                          |   :ref:`FOTA <nrf9160_ug_fota>` |
 +                          +---------------------------------+
 |                          |   :ref:`lib_nrf_cloud_agps`     |
-+--------------------------+---------------------------------+
++                          +---------------------------------+
 |                          |   :ref:`lib_nrf_cloud_pgps`     |
 +--------------------------+---------------------------------+
+
+When the application is configured to communicate with `AWS IoT Core`_, it supports processing of received A-GPS and P-GPS data through the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries.
+This enables the cloud to indirectly fetch A-GPS and P-GPS data from `nRF Cloud`_ using REST calls and relay the data to the nRF9160 DK using the pre-established MQTT connection.
+This approach saves data and energy costs related to maintaining multiple connections.
+
+.. note::
+   For more information on the various trade-offs of using A-GPS compared to using P-GPS, see `nRF Cloud Location Services`_.
 
 By default, the application is configured to communicate with `nRF Cloud`_ using the factory-provisioned certificates on Thingy:91 and nRF9160 DK.
 This enables the application to function out-of-the-box with nRF Cloud.
@@ -363,7 +374,11 @@ The application supports Assisted GPS.
 To set the source of the A-GPS data, set the following options:
 
 * :kconfig:`CONFIG_AGPS_SRC_SUPL` - Sets the external SUPL Client library as A-GPS data source. See the documentation on :ref:`supl_client_lib`.
-* :kconfig:`CONFIG_AGPS_SRC_NRF_CLOUD` - Sets nRF Cloud as A-GPS data source. You must set nRF Cloud as the firmware cloud backend.
+* :kconfig:`CONFIG_AGPS_SRC_NRF_CLOUD` - Sets nRF Cloud as A-GPS data source.
+
+The application supports Predicted GPS (P-GPS).
+To enable P-GPS, set the :kconfig:`CONFIG_NRF_CLOUD_PGPS` option.
+It enables requesting and processing of P-GPS data from nRF Cloud.
 
 Configuration files
 ===================

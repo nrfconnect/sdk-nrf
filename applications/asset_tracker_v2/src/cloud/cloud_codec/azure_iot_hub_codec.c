@@ -37,6 +37,18 @@ int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 	__ASSERT_NO_MSG(agps_request != NULL);
 
 	agps_request->queued = false;
+
+	return -ENOTSUP;
+}
+
+int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
+				    struct cloud_data_pgps_request *pgps_request)
+{
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(pgps_request != NULL);
+
+	pgps_request->queued = false;
+
 	return -ENOTSUP;
 }
 
