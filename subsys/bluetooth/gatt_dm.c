@@ -60,6 +60,9 @@ struct bt_gatt_dm {
 
 	/* The pointer to callback structure */
 	const struct bt_gatt_dm_cb *callback;
+
+	/* Numer of characteristics to store */
+	volatile unsigned int chrc_to_store;
 };
 
 /* Currently only one instance is supported */
@@ -75,14 +78,14 @@ static void *user_data_alloc(struct bt_gatt_dm *dm,
 	/* Round up len to 32 bits to make sure that return pointers are always
 	 * correctly aligned.
 	 */
-	len = (len + DATA_ALIGN - 1) & ~(DATA_ALIGN - 1);
+	len = ROUND_UP(len, DATA_ALIGN);
 
 	__ASSERT_NO_MSG(len <= CHUNK_DATA_SIZE);
 
 	if (sys_slist_is_empty(&dm->chunk_list) ||
 	    dm->cur_chunk_len + len > CHUNK_DATA_SIZE) {
 
-		item = k_malloc(sizeof(struct data_chunk_item));
+		item = k_calloc(1, sizeof(struct data_chunk_item));
 
 		if (!item) {
 			return NULL;
@@ -198,6 +201,11 @@ static struct bt_uuid *uuid_store(struct bt_gatt_dm *dm,
 	size_t size = get_uuid_size(uuid);
 	void *buffer = user_data_alloc(dm, size);
 
+	if (!buffer) {
+		LOG_ERR("No space for uuid.");
+		return NULL;
+	}
+
 	memcpy(buffer, uuid, size);
 
 	return (struct bt_uuid *)buffer;
@@ -291,6 +299,9 @@ static uint8_t discovery_process_service(struct bt_gatt_dm *dm,
 
 	struct bt_gatt_service_val *cur_service_val =
 		bt_gatt_dm_attr_service_val(cur_attr);
+
+	__ASSERT_NO_MSG(cur_service_val != NULL);
+
 	memcpy(cur_service_val, service_val, sizeof(*cur_service_val));
 
 	cur_service_val->uuid = uuid_store(dm, cur_service_val->uuid);
@@ -352,6 +363,7 @@ static uint8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 
 	if (bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CHRC) == 0) {
 		cur_attr = attr_store(dm, attr, sizeof(struct bt_gatt_chrc));
+		dm->chrc_to_store++;
 	} else {
 		cur_attr = attr_store(dm, attr, 0);
 	}
@@ -377,7 +389,11 @@ static uint8_t discovery_process_characteristic(
 	struct bt_gatt_chrc *cur_gatt_chrc;
 
 	if (!attr) {
-		discovery_complete(dm);
+		if (!dm->chrc_to_store) {
+			discovery_complete(dm);
+		} else {
+			discovery_complete_error(dm, -ENOMEM);
+		}
 		return BT_GATT_ITER_STOP;
 	}
 
@@ -392,12 +408,16 @@ static uint8_t discovery_process_characteristic(
 
 	gatt_chrc = attr->user_data;
 	cur_gatt_chrc = bt_gatt_dm_attr_chrc_val(cur_attr);
+
+	__ASSERT_NO_MSG(cur_gatt_chrc != NULL);
+
 	memcpy(cur_gatt_chrc, gatt_chrc, sizeof(*cur_gatt_chrc));
 	cur_gatt_chrc->uuid = uuid_store(dm, cur_gatt_chrc->uuid);
 	if (!cur_gatt_chrc->uuid) {
 		discovery_complete_error(dm, -ENOMEM);
 		return BT_GATT_ITER_STOP;
 	}
+	dm->chrc_to_store--;
 
 	return BT_GATT_ITER_CONTINUE;
 }
@@ -596,6 +616,7 @@ int bt_gatt_dm_start(struct bt_conn *conn,
 	dm->context = context;
 	dm->callback = cb;
 	dm->cur_attr_id = 0;
+	dm->chrc_to_store = 0;
 	sys_slist_init(&dm->chunk_list);
 	dm->cur_chunk_len = 0;
 
@@ -645,6 +666,7 @@ int bt_gatt_dm_continue(struct bt_gatt_dm *dm, void *context)
 	dm->discover_params.start_handle = dm->discover_params.end_handle + 1;
 	dm->discover_params.end_handle = 0xffff;
 	dm->discover_params.type = BT_GATT_DISCOVER_PRIMARY;
+	dm->chrc_to_store = 0;
 
 	err = bt_gatt_discover(dm->conn, &dm->discover_params);
 	if (err) {
