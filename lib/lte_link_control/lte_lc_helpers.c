@@ -1089,3 +1089,59 @@ clean_exit:
 	at_params_list_free(&resp_list);
 	return err;
 }
+
+int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
+{
+	const char *event_types[] = {
+		[LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE] = AT_MDMEV_SEARCH_STATUS_1,
+		[LTE_LC_MODEM_EVT_SEARCH_DONE] = AT_MDMEV_SEARCH_STATUS_2,
+		[LTE_LC_MODEM_EVT_RESET_LOOP] = AT_MDMEV_RESET_LOOP,
+		[LTE_LC_MODEM_EVT_BATTERY_LOW] = AT_MDMEV_BATTERY_LOW,
+		[LTE_LC_MODEM_EVT_OVERHEATED] = AT_MDMEV_OVERHEATED,
+	};
+
+	if (at_response == NULL || modem_evt == NULL) {
+		return -EINVAL;
+	}
+
+	if (!response_is_valid(at_response, sizeof(AT_MDMEV_RESPONSE_PREFIX) - 1,
+			       AT_MDMEV_RESPONSE_PREFIX)) {
+		LOG_ERR("Invalid MDMEV response");
+		return -EIO;
+	}
+
+	const char *start_ptr = at_response + sizeof(AT_MDMEV_RESPONSE_PREFIX) - 1;
+
+	for (size_t i = 0; i < ARRAY_SIZE(event_types); i++) {
+		if (strstr(start_ptr, event_types[i])) {
+			/* Check to avoid accepting partial match for strings that
+			 * are longer than the event type.
+			 * AT commands end with "\r\n".
+			 */
+			char *ptr = strstr(start_ptr, "\r\n");
+			size_t len;
+
+			if (ptr == NULL) {
+				/* This shouldn't happen, but we add this
+				 * check just in case.
+				 */
+				len = strlen(start_ptr);
+			} else {
+				len = ptr - start_ptr;
+			}
+
+			if (len > strlen(event_types[i])) {
+				continue;
+			}
+
+			LOG_DBG("Occurence found: %s", event_types[i]);
+			*modem_evt = i;
+
+			return 0;
+		}
+	}
+
+	LOG_DBG("No modem event type found: %s", log_strdup(at_response));
+
+	return -ENODATA;
+}
