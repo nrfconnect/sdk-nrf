@@ -211,17 +211,80 @@ static int hci_driver_send(struct net_buf *buf)
 	return err;
 }
 
-static void data_packet_process(uint8_t *hci_buf)
+static bool fetch_and_process_hci_evt(struct net_buf *evt_buf)
 {
-	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_FOREVER);
-	struct bt_hci_acl_hdr *hdr = (void *)hci_buf;
+	int errcode;
+
+	errcode = MULTITHREADING_LOCK_ACQUIRE();
+	if (!errcode) {
+		errcode = hci_internal_evt_get(evt_buf->data);
+		MULTITHREADING_LOCK_RELEASE();
+	}
+
+	if (errcode) {
+		return false;
+	}
+
+	struct bt_hci_evt_hdr *hdr = (void *)evt_buf->data;
+
+	if (hdr->evt == BT_HCI_EVT_LE_META_EVENT) {
+		struct bt_hci_evt_le_meta_event *me = (void *)&evt_buf->data[2];
+
+		BT_DBG("LE Meta Event (0x%02x), len (%u)",
+		       me->subevent, hdr->len);
+	} else if (hdr->evt == BT_HCI_EVT_CMD_COMPLETE) {
+		struct bt_hci_evt_cmd_complete *cc = (void *)&evt_buf->data[2];
+		struct bt_hci_evt_cc_status *ccs = (void *)&evt_buf->data[5];
+		uint16_t opcode = sys_le16_to_cpu(cc->opcode);
+
+		BT_DBG("Command Complete (0x%04x) status: 0x%02x,"
+		       " ncmd: %u, len %u",
+		       opcode, ccs->status, cc->ncmd, hdr->len);
+	} else if (hdr->evt == BT_HCI_EVT_CMD_STATUS) {
+		struct bt_hci_evt_cmd_status *cs = (void *)&evt_buf->data[2];
+		uint16_t opcode = sys_le16_to_cpu(cs->opcode);
+
+		BT_DBG("Command Status (0x%04x) status: 0x%02x",
+		       opcode, cs->status);
+	} else {
+		BT_DBG("Event (0x%02x) len %u", hdr->evt, hdr->len);
+	}
+
+	if (hdr->evt == BT_HCI_EVT_CMD_COMPLETE ||
+	    hdr->evt == BT_HCI_EVT_CMD_STATUS) {
+		struct net_buf *cmd_complete_buf = bt_buf_get_cmd_complete(K_FOREVER);
+
+		net_buf_add_mem(cmd_complete_buf, &evt_buf->data[0], hdr->len + sizeof(*hdr));
+
+		bt_recv(cmd_complete_buf);
+
+		/* The provided buffer is not used. */
+		net_buf_unref(evt_buf);
+	} else {
+		net_buf_add(evt_buf, hdr->len + sizeof(*hdr));
+		bt_recv(evt_buf);
+	}
+
+	return true;
+}
+
+static bool fetch_and_process_acl_data(struct net_buf *data_buf)
+{
 	uint16_t hf, handle, len;
 	uint8_t flags, pb, bc;
+	int errcode;
 
-	if (!data_buf) {
-		BT_ERR("No data buffer available");
-		return;
+	errcode = MULTITHREADING_LOCK_ACQUIRE();
+	if (!errcode) {
+		errcode = sdc_hci_data_get(data_buf->data);
+		MULTITHREADING_LOCK_RELEASE();
 	}
+
+	if (errcode) {
+		return false;
+	}
+
+	struct bt_hci_acl_hdr *hdr = (void *)data_buf->data;
 
 	len = sys_le16_to_cpu(hdr->len);
 	hf = sys_le16_to_cpu(hdr->handle);
@@ -233,121 +296,9 @@ static void data_packet_process(uint8_t *hci_buf)
 	BT_DBG("Data: handle (0x%02x), PB(%01d), BC(%01d), len(%u)", handle,
 	       pb, bc, len);
 
-	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
+	net_buf_add(data_buf, len + sizeof(hdr));
 	bt_recv(data_buf);
-}
 
-static bool event_packet_is_discardable(const uint8_t *hci_buf)
-{
-	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
-
-	switch (hdr->evt) {
-	case BT_HCI_EVT_LE_META_EVENT: {
-		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
-
-		switch (me->subevent) {
-		case BT_HCI_EVT_LE_ADVERTISING_REPORT:
-		case BT_HCI_EVT_LE_EXT_ADVERTISING_REPORT:
-			return true;
-		default:
-			return false;
-		}
-	}
-	case BT_HCI_EVT_VENDOR:
-	{
-		uint8_t subevent = hci_buf[2];
-
-		switch (subevent) {
-		case SDC_HCI_SUBEVENT_VS_QOS_CONN_EVENT_REPORT:
-			return true;
-		default:
-			return false;
-		}
-	}
-	default:
-		return false;
-	}
-}
-
-static void event_packet_process(uint8_t *hci_buf)
-{
-	bool discardable = event_packet_is_discardable(hci_buf);
-	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
-	struct net_buf *evt_buf;
-
-	if (hdr->evt == BT_HCI_EVT_LE_META_EVENT) {
-		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
-
-		BT_DBG("LE Meta Event (0x%02x), len (%u)",
-		       me->subevent, hdr->len);
-	} else if (hdr->evt == BT_HCI_EVT_CMD_COMPLETE) {
-		struct bt_hci_evt_cmd_complete *cc = (void *)&hci_buf[2];
-		struct bt_hci_evt_cc_status *ccs = (void *)&hci_buf[5];
-		uint16_t opcode = sys_le16_to_cpu(cc->opcode);
-
-		BT_DBG("Command Complete (0x%04x) status: 0x%02x,"
-		       " ncmd: %u, len %u",
-		       opcode, ccs->status, cc->ncmd, hdr->len);
-	} else if (hdr->evt == BT_HCI_EVT_CMD_STATUS) {
-		struct bt_hci_evt_cmd_status *cs = (void *)&hci_buf[2];
-		uint16_t opcode = sys_le16_to_cpu(cs->opcode);
-
-		BT_DBG("Command Status (0x%04x) status: 0x%02x",
-		       opcode, cs->status);
-	} else {
-		BT_DBG("Event (0x%02x) len %u", hdr->evt, hdr->len);
-	}
-
-	evt_buf = bt_buf_get_evt(hdr->evt, discardable,
-				 discardable ? K_NO_WAIT : K_FOREVER);
-
-	if (!evt_buf) {
-		if (discardable) {
-			BT_DBG("Discarding event");
-			return;
-		}
-
-		BT_ERR("No event buffer available");
-		return;
-	}
-
-	net_buf_add_mem(evt_buf, &hci_buf[0], hdr->len + sizeof(*hdr));
-	bt_recv(evt_buf);
-}
-
-static bool fetch_and_process_hci_evt(uint8_t *p_hci_buffer)
-{
-	int errcode;
-
-	errcode = MULTITHREADING_LOCK_ACQUIRE();
-	if (!errcode) {
-		errcode = hci_internal_evt_get(p_hci_buffer);
-		MULTITHREADING_LOCK_RELEASE();
-	}
-
-	if (errcode) {
-		return false;
-	}
-
-	event_packet_process(p_hci_buffer);
-	return true;
-}
-
-static bool fetch_and_process_acl_data(uint8_t *p_hci_buffer)
-{
-	int errcode;
-
-	errcode = MULTITHREADING_LOCK_ACQUIRE();
-	if (!errcode) {
-		errcode = sdc_hci_data_get(p_hci_buffer);
-		MULTITHREADING_LOCK_RELEASE();
-	}
-
-	if (errcode) {
-		return false;
-	}
-
-	data_packet_process(p_hci_buffer);
 	return true;
 }
 
@@ -357,21 +308,50 @@ static void recv_thread(void *p1, void *p2, void *p3)
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
-	static uint8_t hci_buffer[BT_BUF_RX_SIZE];
-
 	bool received_evt = false;
 	bool received_data = false;
+	bool tried_fetching_evt = false;
+	bool tried_fetching_data = false;
+
+	struct net_buf *evt_buf = bt_buf_get_rx(BT_BUF_EVT, K_FOREVER);
+	struct net_buf *data_buf;
+
+	if (IS_ENABLED(CONFIG_BT_CONN)) {
+		data_buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_FOREVER);
+	}
 
 	while (true) {
-		if (!received_evt && !received_data) {
-			/* Wait for a signal from the controller. */
+		if (!received_evt && tried_fetching_evt
+		    && !received_data && (tried_fetching_data || !IS_ENABLED(CONFIG_BT_CONN))) {
+			/* The controller signaled that data or events were
+			 * available. Now wait for new signals.
+			 */
 			k_sem_take(&sem_recv, K_FOREVER);
 		}
 
-		received_evt = fetch_and_process_hci_evt(&hci_buffer[0]);
+		if (evt_buf) {
+			received_evt = fetch_and_process_hci_evt(evt_buf);
+			tried_fetching_evt = true;
+		} else {
+			tried_fetching_evt = false;
+		}
 
-		if (IS_ENABLED(CONFIG_BT_CONN)) {
-			received_data = fetch_and_process_acl_data(&hci_buffer[0]);
+		if (data_buf && IS_ENABLED(CONFIG_BT_CONN)) {
+			received_data = fetch_and_process_acl_data(data_buf);
+			tried_fetching_data = true;
+		} else {
+			tried_fetching_data = false;
+		}
+
+		/* Fetch new buffers if buffers are used. Use no-wait to avoid
+		 * a situation where data cannot be fetched because there are no
+		 * available event buffers.
+		 */
+		if (received_evt) {
+			evt_buf = bt_buf_get_rx(BT_BUF_EVT, K_NO_WAIT);
+		}
+		if (received_data && IS_ENABLED(CONFIG_BT_CONN)) {
+			data_buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_NO_WAIT);
 		}
 
 		/* Let other threads of same priority run in between. */
