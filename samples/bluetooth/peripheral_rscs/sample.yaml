@@ -1,0 +1,16 @@
+sample:
+  name: Bluetooth LE RSCS sample
+  description: Bluetooth Low Energy Running Speed and Cadence Service sample
+tests:
+  samples.bluetooth.peripheral_rscs:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf52833dk_nrf52833
+      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns
+    integration_platforms:
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+    tags: bluetooth ci_build
