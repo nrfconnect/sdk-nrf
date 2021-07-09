@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+zephyr_sources_ifdef(CONFIG_BT_AMS_CLIENT ams_client.c)
 zephyr_sources_ifdef(CONFIG_BT_ANCS_CLIENT ancs_client.c
                                            ancs_attr_parser.c
                                            ancs_app_attr_get.c)
