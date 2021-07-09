@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#if defined(CONFIG_NRF_CLOUD)
+#if defined(CONFIG_NRF_CLOUD_MQTT)
 #define DATA_MOVEMENT		"acc"
 #define DATA_MOVEMENT_X		"x"
 #define DATA_MOVEMENT_Y		"y"
@@ -74,6 +74,11 @@
 #define CONFIG_NO_DATA_LIST_GNSS	  "gnss"
 #define CONFIG_NO_DATA_LIST_NEIGHBOR_CELL "ncell"
 
+#define DATA_PGPS_REQUEST_COUNT	   "n"
+#define DATA_PGPS_REQUEST_INTERVAL "int"
+#define DATA_PGPS_REQUEST_DAY	   "day"
+#define DATA_PGPS_REQUEST_TIME	   "time"
+
 #define OBJECT_CONFIG		"config"
 #define OBJECT_REPORTED		"reported"
 #define OBJECT_STATE		"state"
@@ -86,7 +91,7 @@
 #define OBJECT_MSG_GPS		"MSG_GPS"
 #define OBJECT_MSG_RSRP		"MSG_RSRP"
 
-#else /* CONFIG_NRF_CLOUD */
+#else /* CONFIG_NRF_CLOUD_MQTT */
 
 #define MODEM_CURRENT_BAND	"band"
 #define MODEM_NETWORK_MODE	"nw"
@@ -146,6 +151,11 @@
 #define DATA_NEIGHBOR_CELLS_RSRQ	  "rsrq"
 #define DATA_NEIGHBOR_CELLS_NEIGHBOR_MEAS "nmr"
 #define DATA_NEIGHBOR_CELLS_PCI		  "cell"
+
+#define DATA_PGPS_REQUEST_COUNT	   "n"
+#define DATA_PGPS_REQUEST_INTERVAL "int"
+#define DATA_PGPS_REQUEST_DAY	   "day"
+#define DATA_PGPS_REQUEST_TIME	   "time"
 
 #define OBJECT_CONFIG		"cfg"
 
