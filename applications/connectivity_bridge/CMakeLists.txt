@@ -22,3 +22,5 @@ zephyr_library_include_directories(
 add_subdirectory(src/disk)
 add_subdirectory(src/events)
 add_subdirectory(src/modules)
+add_subdirectory(src/uart)
+include_directories(src/uart/include)
