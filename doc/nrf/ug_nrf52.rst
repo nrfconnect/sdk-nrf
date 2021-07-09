@@ -59,6 +59,10 @@ Devices in the nRF52 Series are supported by these boards in the Zephyr open sou
      - PCA10040
      - ``nrf52dk_nrf52810``
      - `Product Specification <nRF52810 Product Specification_>`_
+   * - :ref:`zephyr:nrf52dk_nrf52805`
+     - PCA10040
+     - ``nrf52dk_nrf52805``
+     - `Product Specification <nRF52805 Product Specification_>`_
    * - :ref:`zephyr:nrf52840dongle_nrf52840`
      - PCA10059
      - ``nrf52840dongle_nrf52840``

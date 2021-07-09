@@ -62,6 +62,10 @@
 
 | :ref:`nRF52 DK (emulating nRF52810) <ug_nrf52>` | PCA10040 | :ref:`nrf52dk_nrf52810 <nrf52dk_nrf52810>` | ``nrf52dk_nrf52810`` |
 
+.. nrf52dk_nrf52805
+
+| :ref:`nRF52 DK (emulating nRF52805) <ug_nrf52>` | PCA10040 | :ref:`nrf52dk_nrf52805 <nrf52dk_nrf52805>` | ``nrf52dk_nrf52805`` |
+
 .. nrf52kbd_nrf52832
 
 | nRF52832 Desktop Keyboard | PCA20037 | nrf52kbd_nrf52832 | ``nrf52kbd_nrf52832`` |
