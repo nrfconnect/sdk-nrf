@@ -16,14 +16,133 @@ config NCS_SAMPLES_DEFAULTS
 	help
 	  Use the default configuration for NCS samples.
 
+if SOC_SERIES_NRF53X
+
 config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
 	bool "Enable empty_app_core as a child image"
-	default n
 	depends on SOC_NRF5340_CPUNET
-	select PARTITION_MANAGER_ENABLED
+	imply AUTO_INCLUDE_CHILD_IMAGE
 	help
 	  Add the empty_app_core as a child image for the given sample.
 	  Used by samples that only require SOC_NRF5340_CPUNET.
+
+config NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE
+	bool "Add multiprotocol_rpmsg sample to network core"
+	default y if BT_RPMSG_NRF53 && NRF_802154_SER_HOST
+	imply AUTO_INCLUDE_CHILD_IMAGE
+	help
+	  Add the multiprotocal_rpmsg sample as a child image on the network
+	  core for the given sample.
+
+config NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE
+	bool "Add hci_rpmsg sample to network core"
+	default y if BT_RPMSG_NRF53
+	imply AUTO_INCLUDE_CHILD_IMAGE
+	help
+	  Add the hci_rpmsg sample as a child image on the network core for the
+	  given sample.
+
+config NCS_SAMPLE_802154_RPMSG_CHILD_IMAGE
+	bool "Add 802154_rpmsg sample to network core"
+	default y if NRF_802154_SER_HOST
+	imply AUTO_INCLUDE_CHILD_IMAGE
+	help
+	  Add the 802154_rpmsg sample as a child image on the network core for
+	  the given sample.
+
+config NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
+	bool "Add rpc_host sample to network core"
+	default y if BT_RPC
+	imply AUTO_INCLUDE_CHILD_IMAGE
+	help
+	  Add the rpc_host sample as a child image on the network core for the
+	  given sample.
+
+config AUTO_INCLUDE_CHILD_IMAGE
+	bool
+	select NCS_ADD_CHILD_IMAGE_TO_OTHER_CORE
+	help
+	  Helper configuration to indicate that an automatic inclusion of
+	  a child image is performed. Some prompts are removed if this
+	  option is set to ensure that the user does not interfere with the
+	  automatic inclusion.
+
+config NCS_ADD_CHILD_IMAGE_TO_OTHER_CORE
+	bool
+	prompt "Add child image to the application/network core" if !AUTO_INCLUDE_CHILD_IMAGE
+	imply PARTITION_MANAGER_ENABLED
+	help
+	  Add a child image to the other core. If the current sample is built
+	  for the APP core the child image will be build for the NET core and
+	  vice versa. To allow skipping build of the specified child image
+	  include the build_strategy_domain Kconfig template (this is handled
+	  automatically if AUTO_INCLUDE_CHILD_IMAGE is set).
+
+if NCS_ADD_CHILD_IMAGE_TO_OTHER_CORE
+
+config NCS_DOMAIN_TO_ADD_CHILD_IMAGE_TO
+	string
+	default "CPUNET" if SOC_NRF5340_CPUAPP
+	default "CPUAPP" if SOC_NRF5340_CPUNET
+	help
+	  The name of the domain to which the child image will be added.
+
+config NCS_CHILD_IMAGE_NAME
+	string
+	prompt  "Child image name" if !AUTO_INCLUDE_CHILD_IMAGE
+	default "empty_app_core" if NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
+	default "multiprotocol_rpmsg" if NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE
+	default "hci_rpmsg" if NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE
+	default "802154_rpmsg" if NCS_SAMPLE_802154_RPMSG_CHILD_IMAGE
+	default "rpc_host" if NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
+	default "hello_world"  # To stop it from failing in default case
+	help
+	  The name of the child image. This must match the name passed to the
+	  build strategy template.
+
+config NCS_CHILD_IMAGE_PATH
+	string
+	prompt  "Path to child image" if !AUTO_INCLUDE_CHILD_IMAGE
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/empty_app_core" if NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/multiprotocol_rpmsg" if NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE
+	default "${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg" if NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE
+	default "${ZEPHYR_BASE}/samples/boards/nrf/ieee802154/802154_rpmsg" if NCS_SAMPLE_802154_RPMSG_CHILD_IMAGE
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/rpc_host" if NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
+	default "${ZEPHYR_BASE}/samples/hello_world"  # To stop it from failing in the default case
+	help
+	  Path to the child image to add to the other domain.
+
+config NCS_CHILD_IMAGE_OVERLAY
+	string "Child image overlay file"
+	default "${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/controller/bt_ll_softdevice_hci_rpmsg.conf" if BT_RPMSG_NRF53 && BT_LL_SOFTDEVICE_DEFAULT
+	help
+	  Add specified overlay file to the child image. Only one overlay file
+	  is supported. Compose a single overlay file wich is a combination
+	  of several files if the configuration of multiple overlay files is
+	  needed.
+
+# Add built strategies for all the automatic child images. Note that the module
+# name must match the upper case of the child image name.
+if NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
+module=EMPTY_APP_CORE
+endif
+if NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE
+module=MULTIPROTOCOL_RPMSG
+endif
+if NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE
+module=HCI_RPMSG
+endif
+if NCS_SAMPLE_802154_RPMSG_CHILD_IMAGE
+module=802154_RPMSG
+endif
+if NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
+module=RPC_HOST
+endif
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
+
+endif # NCS_ADD_CHILD_IMAGE_TO_OTHER_CORE
+
+endif # SOC_SERIES_NRF53X
 
 if LOG
 
