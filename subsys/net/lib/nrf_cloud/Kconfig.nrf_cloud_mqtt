@@ -1,0 +1,142 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_CLOUD_MQTT
+	bool "nRF Cloud MQTT"
+	select MQTT_LIB
+	select MQTT_LIB_TLS
+	select SETTINGS if !MQTT_CLEAN_SESSION
+
+if NRF_CLOUD_MQTT
+
+config NRF_CLOUD_STATIC_IPV4
+	bool "Enable use of static IPv4"
+	default n
+
+config NRF_CLOUD_STATIC_IPV4_ADDR
+	string "Static IPv4 address"
+	depends on NRF_CLOUD_STATIC_IPV4
+	default "192.168.2.2"
+
+config NRF_CLOUD_PROVISION_CERTIFICATES
+	bool "nRF Cloud library provision of certificate"
+	select MODEM_KEY_MGMT if NRF_MODEM_LIB
+	help
+	  Enable run-time provisioning of certificates from the
+	  certificates header file selected by using NRF_CLOUD_CERTIFICATES_FILE
+
+config NRF_CLOUD_CERTIFICATES_FILE
+	string "nRF Cloud certificates"
+	depends on NRF_CLOUD_PROVISION_CERTIFICATES
+	default "certificates.h"
+
+menu "MQTT Client ID (nRF Cloud Device ID)"
+choice
+	prompt "MQTT Client ID Source"
+	default NRF_CLOUD_CLIENT_ID_SRC_IMEI
+
+config NRF_CLOUD_CLIENT_ID_SRC_IMEI
+	depends on NRF_MODEM_LIB
+	bool "IMEI based value"
+
+config NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME
+	bool "Compile time value"
+
+config NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID
+	bool "Modem internal UUID value"
+	depends on MODEM_JWT
+	help
+	  Requires modem firmware version 1.3 or later.
+
+config NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
+	bool "Runtime value"
+	help
+	  NULL-terminated client ID string must be passed to this library's
+	  initialization function.
+endchoice
+
+if NRF_CLOUD_CLIENT_ID_SRC_IMEI
+config NRF_CLOUD_CLIENT_ID_PREFIX
+	string "Prefix used when constructing the MQTT client ID from the IMEI"
+	default "nrf-"
+	help
+	  The nrf- prefix is reserved on nRF Connect for Cloud for official Nordic
+	  devices (e.g. the nRF9160 DK or the Thingy:91).
+	  In case you wish to use nrf_cloud with your own devices you need to modify
+	  the prefix used to generate the MQTT client ID from the IMEI.
+endif
+
+if NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME
+config NRF_CLOUD_CLIENT_ID
+	string "MQTT Client ID used for connection to nRF Cloud"
+	default "my-client-id"
+endif
+endmenu # "MQTT Client ID"
+
+config NRF_CLOUD_PORT
+	int "nRF Cloud server port"
+	default 8883
+
+config NRF_CLOUD_IPV6
+	bool "Configure nRF Cloud library to use IPv6 addressing. Otherwise IPv4 is used."
+
+choice
+	prompt "Socket behavior when sending"
+	default NRF_CLOUD_SEND_BLOCKING
+
+config NRF_CLOUD_SEND_BLOCKING
+	bool "Send data using blocking socket"
+	help
+	  Send data using a blocking socket. Selecting this option will make call to
+	  send data block until the data is processed by the network stack.
+
+config NRF_CLOUD_SEND_NONBLOCKING
+	bool "Send data using non-blocking socket"
+	help
+	  When using a blocking socket, the application can in certain situations
+	  fail and hang indefinitely if a watchdog timer is not used.
+	  Using a non-blocking socket for data transfers can help avoid getting
+	  into such a situation, at the cost of failing in situations where
+	  a short period of blocking would have sent the data.
+
+config NRF_CLOUD_SEND_TIMEOUT
+	bool "Send data with socket timeout"
+	help
+	  Configures a timeout on the nRF Cloud socket to ensure that a call to
+	  te send function will not block indefinitely.
+	  To configure the length of the timeout, use NRF_CLOUD_SEND_TIMEOUT_SEC.
+
+endchoice
+
+config NRF_CLOUD_SEND_TIMEOUT_SEC
+	int "Send timeout"
+	default 60
+	help
+	  Timeout in seconds to use when the nRF Cloud socket is configured to
+	  send with a timeout by enabling NRF_CLOUD_SEND_TIMEOUT.
+
+config NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN
+	int "Size of the buffer for MQTT library."
+	default 256
+	help
+	  Specifies maximum message size can be transmitted/received through
+	  MQTT (exluding MQTT PUBLISH payload).
+
+config NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN
+	int "Size of the buffer for MQTT PUBLISH payload."
+	default 2144 if NRF_CLOUD_AGPS
+	default 2048
+
+config NRF_CLOUD_CONNECTION_POLL_THREAD
+	bool "Poll cloud connection in a separate thread"
+
+config NRF_CLOUD_MQTT_KEEPALIVE
+	int "Maximum number of keep alive time for MQTT (in seconds)"
+	default MQTT_KEEPALIVE
+	help
+	  Keep alive time for MQTT (in seconds) connection to nRF Cloud,
+	  allow overwriting CONFIG_MQTT_KEEPALIVE value.
+
+endif # NRF_CLOUD_MQTT

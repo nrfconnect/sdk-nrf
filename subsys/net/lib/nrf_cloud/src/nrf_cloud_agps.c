@@ -62,7 +62,7 @@ bool nrf_cloud_agps_request_in_progress(void)
 	return atomic_get(&request_in_progress) != 0;
 }
 
-#if defined(CONFIG_NRF_CLOUD_MQTT)
+#if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
 static int json_add_types_array(cJSON *const obj, enum gps_agps_type *types,
 				const size_t type_count)
 {
@@ -91,9 +91,11 @@ static int json_add_types_array(cJSON *const obj, enum gps_agps_type *types,
 
 	return 0;
 }
+#endif /* IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) */
 
 int nrf_cloud_agps_request(const struct gps_agps_request request)
 {
+#if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
 	int err;
 	enum gps_agps_type types[9];
 	size_t type_count = 0;
@@ -174,6 +176,12 @@ cleanup:
 	cJSON_Delete(agps_req_obj);
 
 	return err;
+#else /* IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) */
+
+	LOG_ERR("CONFIG_NRF_CLOUD_MQTT must be enabled in order to use this API");
+
+	return -ENOTSUP;
+#endif
 }
 
 int nrf_cloud_agps_request_all(void)
@@ -190,7 +198,6 @@ int nrf_cloud_agps_request_all(void)
 
 	return nrf_cloud_agps_request(request);
 }
-#endif /* CONFIG_NRF_CLOUD_MQTT */
 
 /* Convert nrf_socket A-GPS type to GPS API type. */
 static inline enum gps_agps_type type_socket2gps(

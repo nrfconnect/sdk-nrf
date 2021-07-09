@@ -1,0 +1,10 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NRF_CLOUD_CELL_POS
+	bool "Enable nRF Cloud Cellular Positioning"
+	imply FPU
+	depends on MODEM_INFO
+	depends on MODEM_INFO_ADD_NETWORK
