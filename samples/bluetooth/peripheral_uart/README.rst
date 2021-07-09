@@ -50,6 +50,11 @@ The `Testing`_ instructions refer to nRF Connect for Mobile, but similar applica
 You can also test the application with the :ref:`central_uart` sample.
 See the documentation for that sample for detailed instructions.
 
+.. note::
+   You can use this sample also with :ref:`zephyr:thingy53_nrf5340`.
+   When the sample is used with this board, it supports MCUBoot bootloader with serial recovery and SMP DFU over Bluetooth.
+   Debug logs are provided over USB CDC ACM.
+
 User interface
 **************
 
