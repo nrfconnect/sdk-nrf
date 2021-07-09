@@ -24,11 +24,13 @@
 extern "C" {
 #endif
 
-/** @brief AWS IoT shadow topics, used in messages to specify which shadow
+/** @brief AWS IoT topics, used in messages to specify which
  *         topic that will be published to.
  */
 enum aws_iot_topic_type {
-	/** Unknown device shadow topic. */
+	/** Unknown device shadow topic.
+	 *  @deprecated Use AWS_IOT_APPLICATION_TOPIC instead.
+	 */
 	AWS_IOT_SHADOW_TOPIC_UNKNOWN = 0x0,
 	/** This topic type corresponds to
 	 *  $aws/things/<thing-name>/shadow/get, publishing an empty message
@@ -44,7 +46,9 @@ enum aws_iot_topic_type {
 	 *  $aws/things/<thing-name>/shadow/delete, publishing an empty message
 	 *  to this topic deletes the device Shadow document.
 	 */
-	AWS_IOT_SHADOW_TOPIC_DELETE
+	AWS_IOT_SHADOW_TOPIC_DELETE,
+	/** Use when publishing to a topic not predefined above. */
+	AWS_IOT_APPLICATION_TOPIC = 0x0
 };
 
 /**@ AWS broker disconnect results. */
@@ -111,9 +115,13 @@ enum aws_iot_evt_type {
 struct aws_iot_topic_data {
 	/** Type of shadow topic that will be published to. */
 	enum aws_iot_topic_type type;
-	/** Pointer to string of application specific topic. */
+	/** Pointer to string of application specific topic.
+	 *  Must be set when using AWS_IOT_APPLICATION_TOPIC.
+	 */
 	const char *str;
-	/** Length of application specific topic. */
+	/** Length of application specific topic.
+	 *  Must be set when using AWS_IOT_APPLICATION_TOPIC.
+	 */
 	size_t len;
 };
 
