@@ -34,9 +34,11 @@ static K_SEM_DEFINE(agps_injection_active, 1, 1);
 static int fd = -1;
 static bool agps_print_enabled;
 static const struct device *gps_dev;
-static bool json_initialized;
 static struct gps_agps_request processed;
 static atomic_t request_in_progress;
+#if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
+static bool json_initialized;
+#endif /* IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) */
 
 static enum gps_agps_type type_lookup_socket2gps[] = {
 	[NRF_GNSS_AGPS_UTC_PARAMETERS]	= GPS_AGPS_UTC_PARAMETERS,
@@ -57,6 +59,7 @@ void agps_print_enable(bool enable)
 	agps_print_enabled = enable;
 }
 
+#if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
 static cJSON *json_create_req_obj(const char *const app_id,
 				   const char *const msg_type)
 {
@@ -143,6 +146,7 @@ static int json_send_to_cloud(cJSON *const agps_request)
 
 	return err;
 }
+#endif /* IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) */
 
 bool nrf_cloud_agps_request_in_progress(void)
 {
@@ -151,6 +155,7 @@ bool nrf_cloud_agps_request_in_progress(void)
 
 int nrf_cloud_agps_request(const struct gps_agps_request request)
 {
+#if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
 	int err;
 	enum gps_agps_type types[9];
 	size_t type_count = 0;
@@ -231,6 +236,12 @@ cleanup:
 	cJSON_Delete(agps_req_obj);
 
 	return err;
+#else /* IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) */
+
+	LOG_ERR("CONFIG_NRF_CLOUD_MQTT must be enabled in order to use this API");
+
+	return -ENOTSUP;
+#endif
 }
 
 int nrf_cloud_agps_request_all(void)
