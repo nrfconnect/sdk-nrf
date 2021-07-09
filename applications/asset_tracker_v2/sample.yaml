@@ -10,6 +10,9 @@ tests:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160ns thingy91_nrf9160ns
+    integration_platforms:
+      - nrf9160dk_nrf9160ns
+      - thingy91_nrf9160ns
     extra_configs:
       - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
       - CONFIG_AWS_IOT_SEC_TAG=42
