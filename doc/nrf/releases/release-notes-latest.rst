@@ -84,7 +84,12 @@ Zigbee
 Common
 ======
 
-There are no entries for this section yet.
+The following changes are relevant for all device families.
+
+Pelion
+------
+
+* Updated Pelion Device Management Client library version to 4.10.0.
 
 MCUboot
 =======

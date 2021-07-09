@@ -158,7 +158,7 @@ manifest:
       remote: alexa
     - name: mbed-cloud-client
       path: modules/lib/pelion-dm
-      revision: 4.9.1
+      revision: 4.10.0
       remote: pelioniot
     - name: cddl-gen
       remote: nordicsemi
