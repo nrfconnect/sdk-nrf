@@ -141,10 +141,6 @@ extern "C" {
 	((SPU_FLASHNSC_REGION_LOCK_Locked << SPU_FLASHNSC_REGION_LOCK_Pos) &   \
 	SPU_FLASHNSC_REGION_LOCK_Msk)
 
-#define FLASH_NSC_SIZE(reg_size)                                               \
-	(((reg_size) << SPU_FLASHNSC_SIZE_SIZE_Pos) &                          \
-	SPU_FLASHNSC_SIZE_SIZE_Msk)
-
 #define FLASH_NSC_SIZE_LOCK                                                    \
 	((SPU_FLASHNSC_SIZE_LOCK_Locked << SPU_FLASHNSC_SIZE_LOCK_Pos) &       \
 	SPU_FLASHNSC_SIZE_LOCK_Msk)
@@ -152,7 +148,22 @@ extern "C" {
 #define FLASH_NSC_SIZE_FROM_ADDR(addr) FLASH_SECURE_ATTRIBUTION_REGION_SIZE    \
 	- (((uint32_t)(addr)) % FLASH_SECURE_ATTRIBUTION_REGION_SIZE)
 
-#define FLASH_NSC_SIZE_REG(size) FLASH_NSC_SIZE((size) / FLASH_NSC_MIN_SIZE)
+
+/* (31 - __builtin_clzl(size)) is the same as log2 for powers of 2.
+ * Subtract 4 because the NSC region sizes start at 32 and are 1-indexed.
+ * Note that this macro needs size to one of the valid sizes, it cannot be
+ * any value in between, so the size has have been rounded up beforehand.
+ */
+#define FLASH_NSC_SIZE_REG(size) ((31 - __builtin_clzl(size)) - 4)
+
+BUILD_ASSERT(FLASH_NSC_SIZE_REG(32) == 1);
+BUILD_ASSERT(FLASH_NSC_SIZE_REG(64) == 2);
+BUILD_ASSERT(FLASH_NSC_SIZE_REG(128) == 3);
+BUILD_ASSERT(FLASH_NSC_SIZE_REG(256) == 4);
+BUILD_ASSERT(FLASH_NSC_SIZE_REG(512) == 5);
+BUILD_ASSERT(FLASH_NSC_SIZE_REG(1024) == 6);
+BUILD_ASSERT(FLASH_NSC_SIZE_REG(2048) == 7);
+BUILD_ASSERT(FLASH_NSC_SIZE_REG(4096) == 8);
 
 
 /** Initialze secure services.
