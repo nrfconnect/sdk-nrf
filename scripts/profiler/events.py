@@ -78,13 +78,13 @@ class EventsData():
         self._write_events_types_json(filename_event_types, csv_hash)
 
     def read_data_from_files(self, filename_events, filename_event_types):
-        self._read_events_csv(filename_events)
         csv_hash1 = self._read_events_types_json(filename_event_types)
+        self._read_events_csv(filename_events)
         csv_hash2 = EventsData._calculate_md5_hash_of_file(filename_events)
         if csv_hash1 != csv_hash2:
             self.logger.warning("Hash values of csv files do not match")
             self.logger.warning("Events and descriptions may be inconsistent")
-
+    @staticmethod
     def _calculate_md5_hash_of_file(filename):
         return hashlib.md5(open(filename, 'rb').read()).hexdigest()
 
@@ -113,8 +113,10 @@ class EventsData():
                     type_id = int(row['type_id'])
                     timestamp = float(row['timestamp'])
                     # reading event data from single row in csv file
-                    if (row['data'][1:-1] != ''):
-                        data = list(map(int, (row['data'][1:-1].split(','))))
+                    if row['data'][1:-1] != '':
+                        data = list(map(lambda s, data_type: s if data_type == "s" else int(s),
+                                        row['data'][1:-1].split(','),
+                                        self.registered_events_types[type_id].data_types))
                     else:
                         data = []
                     ev = Event(type_id, timestamp, data)
