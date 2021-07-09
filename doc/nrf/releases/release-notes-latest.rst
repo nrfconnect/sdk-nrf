@@ -62,7 +62,8 @@ Bluetooth LE
 Common
 ======
 
-There are no entries for this section yet.
+* Partition manager information is no longer appended to the ``rom_report`` target.
+  To inspect the current partition manager configuration please use the ``partition_manager_report`` target.
 
 MCUboot
 =======
