@@ -18,10 +18,13 @@
 #include <stdbool.h>
 #include <nfc_t4t_lib.h>
 
-#include "ndef_file_m.h"
 #include <nfc/ndef/msg.h>
+#include <nfc/t4t/ndef_file.h>
 
 #include <dk_buttons_and_leds.h>
+
+#include "ndef_file_m.h"
+
 
 #define NFC_FIELD_LED		DK_LED1
 #define NFC_WRITE_LED		DK_LED2
@@ -45,7 +48,7 @@ static void flash_buffer_prepare(size_t data_length)
 {
 	if (atomic_cas(&op_flags, FLASH_WRITE_FINISHED,
 			FLASH_BUF_PREP_STARTED)) {
-		flash_buf_len = data_length + NLEN_FIELD_SIZE;
+		flash_buf_len = data_length + NFC_NDEF_FILE_NLEN_FIELD_SIZE;
 		memcpy(flash_buf, ndef_msg_buf, sizeof(flash_buf));
 
 		atomic_set(&op_flags, FLASH_BUF_PREP_FINISHED);

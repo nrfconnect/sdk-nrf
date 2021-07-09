@@ -35,6 +35,18 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 static struct onoff_manager *hf_mgr;
 static struct onoff_client cli;
 
+ISR_DIRECT_DECLARE(nfc_isr_wrapper)
+{
+	nrfx_nfct_irq_handler();
+
+	ISR_DIRECT_PM();
+
+	/* We may need to reschedule in case an NFC callback
+	 * accesses zephyr primitives.
+	 */
+	return 1;
+}
+
 static void clock_handler(struct onoff_manager *mgr, int res)
 {
 	/* Activate NFCT only when HFXO is running */
@@ -46,8 +58,8 @@ nrfx_err_t nfc_platform_setup(void)
 	hf_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
 	__ASSERT_NO_MSG(hf_mgr);
 
-	IRQ_CONNECT(NFCT_IRQn, CONFIG_NFCT_IRQ_PRIORITY,
-			   nrfx_nfct_irq_handler, NULL,  0);
+	IRQ_DIRECT_CONNECT(NFCT_IRQn, CONFIG_NFCT_IRQ_PRIORITY,
+			   nfc_isr_wrapper, 0);
 	IRQ_CONNECT(NFC_TIMER_IRQn, CONFIG_NFCT_IRQ_PRIORITY,
 			   nfc_timer_irq_handler, NULL,  0);
 
@@ -136,15 +148,13 @@ nrfx_err_t nfc_platform_nfcid1_default_bytes_get(uint8_t * const buf,
 			buf[8] = (uint8_t) (nfc_tag_header[2] >> 8);
 			buf[9] = (uint8_t) (nfc_tag_header[2] >> 16);
 		}
-		/* Begin: Bugfix for FTPAN-181. */
-		/* Workaround for wrong value in NFCID1. Value 0x88 cannot be
-		 * used as byte 3 of a double-size NFCID1, according to the
-		 * NFC Forum Digital Protocol specification.
+		/* Workaround for errata 181 "NFCT: Invalid value in FICR for double-size NFCID1"
+		 * found at the Errata document for your device located at
+		 * https://infocenter.nordicsemi.com/index.jsp
 		 */
 		else if (buf[3] == 0x88) {
 			buf[3] |= 0x11;
 		}
-		/* End: Bugfix for FTPAN-181 */
 	}
 
 	return NRFX_SUCCESS;
