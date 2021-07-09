@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_RSCS
+	bool "Running Speed and Cadence Service"
+	select BT_NRF_SERVICES
+	help
+	  Enable Running Speed and Cadence Service
+
+if BT_RSCS
+
+module = BT_RSCS
+module-str = RSCS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_RSCS
