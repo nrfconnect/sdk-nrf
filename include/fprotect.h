@@ -55,6 +55,17 @@ int fprotect_area(uint32_t start, size_t length);
 int fprotect_area_no_access(uint32_t start, size_t length);
 #endif
 
+/**
+ * @brief Check whether a block has already been protected.
+ *
+ * @param[in]  addr  The address to check. The block containing this address
+ *                   will be checked.
+ *
+ * @retval true   If protected
+ * @retval false  If not protected
+ */
+bool fprotect_is_protected(uint32_t addr);
+
 #ifdef __cplusplus
 }
 #endif
