@@ -134,20 +134,20 @@ static int ecjpake_test_load(mbedtls_ecjpake_context *ctx,
 	int err_code;
 
 	err_code = mbedtls_mpi_read_binary(&ctx->xm1, xm1, len1);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	if (err_code != 0)
+		return err_code;
 
 	err_code = mbedtls_mpi_read_binary(&ctx->xm2, xm2, len2);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	if (err_code != 0)
+		return err_code;
 
-	mbedtls_ecp_mul(&ctx->grp, &ctx->Xm1, &ctx->xm1, &ctx->grp.G, NULL,
-			NULL);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	err_code = mbedtls_ecp_mul(&ctx->grp, &ctx->Xm1, &ctx->xm1, &ctx->grp.G,
+		NULL, NULL);
+	if (err_code != 0)
+		return err_code;
 
-	mbedtls_ecp_mul(&ctx->grp, &ctx->Xm2, &ctx->xm2, &ctx->grp.G, NULL,
-			NULL);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-
-	return err_code;
+	return mbedtls_ecp_mul(&ctx->grp, &ctx->Xm2, &ctx->xm2, &ctx->grp.G,
+		NULL, NULL);
 }
 #else
 extern int ecjpake_test_load(mbedtls_ecjpake_context *ctx,
@@ -175,7 +175,7 @@ static void ecjpake_random_setup(void)
 	unhexify_ecjpake();
 }
 
-static void ecjpake_ctx_init(mbedtls_ecjpake_context *ctx,
+static int ecjpake_ctx_init(mbedtls_ecjpake_context *ctx,
 				 mbedtls_ecjpake_role role)
 {
 	int err_code;
@@ -184,10 +184,10 @@ static void ecjpake_ctx_init(mbedtls_ecjpake_context *ctx,
 	err_code = mbedtls_ecjpake_setup(ctx, role, MBEDTLS_MD_SHA256,
 					 MBEDTLS_ECP_DP_SECP256R1, m_password,
 					 password_len);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	if (err_code != 0)
+		return err_code;
 
-	err_code = mbedtls_ecjpake_check(ctx);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	return mbedtls_ecjpake_check(ctx);
 }
 
 void exec_test_case_ecjpake_given(void)
@@ -199,8 +199,10 @@ void exec_test_case_ecjpake_given(void)
 	mbedtls_ecjpake_context ctx_client;
 	mbedtls_ecjpake_context ctx_server;
 
-	ecjpake_ctx_init(&ctx_client, MBEDTLS_ECJPAKE_CLIENT);
-	ecjpake_ctx_init(&ctx_server, MBEDTLS_ECJPAKE_SERVER);
+	err_code = ecjpake_ctx_init(&ctx_client, MBEDTLS_ECJPAKE_CLIENT);
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	err_code = ecjpake_ctx_init(&ctx_server, MBEDTLS_ECJPAKE_SERVER);
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	err_code = ecjpake_test_load(&ctx_client, m_priv_key_cli_1,
 				     priv_key_cli_1_len, m_priv_key_cli_2,
