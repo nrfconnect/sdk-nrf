@@ -107,6 +107,12 @@
 					 FLASH_ITS_AREA_SIZE)
 #define FLASH_NV_COUNTERS_AREA_SIZE     (FLASH_AREA_IMAGE_SECTOR_SIZE)
 
+/* Non-secure storage region */
+#if defined(PM_SETTINGS_STORAGE_ADDRESS) && defined(PM_SETTINGS_STORAGE_SIZE)
+#define NRF_FLASH_NS_STORAGE_AREA_OFFSET   (PM_SETTINGS_STORAGE_ADDRESS)
+#define NRF_FLASH_NS_STORAGE_AREA_SIZE     (PM_SETTINGS_STORAGE_SIZE)
+#endif
+
 /* Offset and size definition in flash area used by assemble.py */
 #define SECURE_IMAGE_OFFSET             (0x0)
 #define SECURE_IMAGE_MAX_SIZE           FLASH_S_PARTITION_SIZE
