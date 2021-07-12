@@ -1,0 +1,107 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+#include <stdio.h>
+#include <logging/log.h>
+#include<toolchain/common.h>
+#include "led_module.h"
+#include <device.h>
+#include <caf/events/led_event.h>
+#include "events/led_state_event.h"
+#include <caf/events/module_state_event.h>
+#include CONFIG_LED_STATE_DEF_PATH
+
+
+LOG_MODULE_REGISTER(led, CONFIG_LED_CONTROL_LOG_LEVEL);
+
+
+static void send_led_event(size_t led_id, const struct led_effect *led_effect)
+{
+	__ASSERT_NO_MSG(led_effect);
+	__ASSERT_NO_MSG(led_id < LED_ID_COUNT);
+
+	struct led_event *event = new_led_event();
+
+	event->led_id = led_id;
+	event->led_effect = led_effect;
+	EVENT_SUBMIT(event);
+}
+
+static void update_led(enum led_states_type state)
+{
+	uint8_t led_bm = 0;
+
+	switch (state)	{
+	case LED_STATES_LTE_CONNECTING:
+		send_led_event(led_map[LED_ID_CONNECTING],
+				&asset_tracker_led_effect[LED_STATES_LTE_CONNECTING]);
+		led_bm |= BIT(LED_ID_CONNECTING);
+		break;
+	case LED_STATES_GPS_SEARCHING:
+		send_led_event(led_map[LED_ID_SEARCHING],
+				&asset_tracker_led_effect[LED_STATES_GPS_SEARCHING]);
+		led_bm |= BIT(LED_ID_SEARCHING);
+		break;
+	case LED_STATES_CLOUD_PUBLISHING:
+		send_led_event(led_map[LED_ID_PUBLISHING],
+				&asset_tracker_led_effect[LED_STATES_CLOUD_PUBLISHING]);
+		led_bm |= BIT(LED_ID_PUBLISHING);
+		break;
+	case LED_STATES_ACTIVE_MODE:
+		send_led_event(led_map[LED_ID_MODE],
+				&asset_tracker_led_effect[LED_STATES_ACTIVE_MODE]);
+		led_bm |= BIT(LED_ID_MODE);
+		break;
+	case LED_STATES_PASSIVE_MODE:
+		send_led_event(led_map[LED_ID_MODE],
+				&asset_tracker_led_effect[LED_STATES_PASSIVE_MODE]);
+		led_bm |= BIT(LED_ID_MODE);
+		break;
+	case LED_STATES_ERROR_SYSTEM_FAULT:
+		for (size_t i = 0; i < LED_ID_COUNT; i++) {
+			send_led_event(led_map[i],
+					&asset_tracker_led_effect[LED_STATES_ERROR_SYSTEM_FAULT]);
+			led_bm |= BIT(i);
+		}
+		break;
+	case LED_STATES_FOTA_UPDATE_REBOOT:
+		for (size_t i = 0; i < LED_ID_COUNT; i++) {
+			send_led_event(led_map[i],
+					&asset_tracker_led_effect[LED_STATES_FOTA_UPDATE_REBOOT]);
+			led_bm |= BIT(i);
+		}
+		break;
+	default:
+		LOG_WRN("Unrecognized LED state event send");
+		break;
+	}
+
+	for (size_t i = 0; i < LED_ID_COUNT; i++) {
+		if (!(led_bm & BIT(i))) {
+			send_led_event(led_map[i], &asset_tracker_led_effect[LED_STATES_TURN_OFF]);
+		}
+	}
+}
+
+static bool handle_led_state_event(const struct led_state_event *event)
+{
+	update_led(event->state);
+	return false;
+}
+
+static bool event_handler(const struct event_header *eh)
+{
+	if (is_led_state_event(eh)) {
+		return handle_led_state_event(cast_led_state_event(eh));
+	}
+
+	/* If event is unhandled, unsubscribe. */
+	__ASSERT_NO_MSG(false);
+
+	return false;
+}
+
+EVENT_LISTENER(MODULE, event_handler);
+EVENT_SUBSCRIBE(MODULE, led_state_event);

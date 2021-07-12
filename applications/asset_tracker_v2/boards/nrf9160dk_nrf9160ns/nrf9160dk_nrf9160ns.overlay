@@ -1,0 +1,46 @@
+/	{
+	/delete-node/ leds;
+	/delete-node/ pwm0;
+
+leds0 {
+	compatible = "gpio-leds";
+	status = "okay";
+	label = "LED0";
+	led0: led_0 {
+		status = "okay";
+		gpios = < &gpio0 0x2 0x0 >;
+		label = "Green LED0";
+	};
+
+};
+
+leds1 {
+	compatible = "gpio-leds";
+	status = "okay";
+	label = "LED1";
+	led1: led_1 {
+		gpios = <&gpio0 0x3 0x0>;
+		label = "Green LED1";
+	};
+};
+
+leds2 {
+	compatible = "gpio-leds";
+	status = "okay";
+	label = "LED2";
+	led2: led_2 {
+		gpios = <&gpio0 0x4 0x0>;
+		label = "Green LED2";
+	};
+};
+
+leds3 {
+	compatible = "gpio-leds";
+	status = "okay";
+	label = "LED3";
+	led3: led_3 {
+		gpios = <&gpio0 0x5 0x0>;
+		label = "Green LED3";
+	};
+};
+};
