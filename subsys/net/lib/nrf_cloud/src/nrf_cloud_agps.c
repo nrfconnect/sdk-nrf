@@ -9,6 +9,7 @@
 #include <drivers/gps.h>
 #include <net/socket.h>
 #include <nrf_socket.h>
+#include <nrf_modem_gnss.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 #include <modem/modem_info.h>
@@ -339,21 +340,25 @@ static int send_to_modem(void *data, size_t data_len,
 		agps_print(type, data);
 	}
 
-	/* At this point, GPS driver or app-provided socket is assumed. */
 	if (gps_dev) {
+		/* GPS driver */
 		return gps_agps_write(gps_dev, type_socket2gps(type), data,
 				      data_len);
-	}
-
-	err = nrf_sendto(fd, data, data_len, 0, &type, sizeof(type));
-	if (err < 0) {
-		LOG_ERR("Failed to send AGPS data to modem, errno: %d", errno);
-		err = -errno;
+	} else if (fd != -1) {
+		/* GNSS socket */
+		err = nrf_sendto(fd, data, data_len, 0, &type, sizeof(type));
+		if (err < 0) {
+			LOG_ERR("Failed to send A-GPS data to modem, errno: %d", errno);
+			err = -errno;
+		} else {
+			err = 0;
+		}
 	} else {
-		err = 0;
+		/* GNSS API */
+		err = nrf_modem_gnss_agps_write(data, data_len, type);
 	}
 
-	LOG_DBG("A-GSP data sent to modem");
+	LOG_DBG("A-GPS data sent to modem");
 
 	return err;
 }
@@ -706,12 +711,12 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 		fd = *socket;
 	} else if (gps_dev == NULL) {
 		gps_dev = device_get_binding("NRF9160_GPS");
-		if (gps_dev == NULL) {
-			LOG_ERR("GPS is not enabled, A-GPS response unhandled");
-			LOG_DBG("A-GPS_inject_active UNLOCKED");
-			k_sem_give(&agps_injection_active);
-			return -ENODEV;
-		}
+	}
+
+	if (gps_dev != NULL) {
+		LOG_DBG("Using GPS driver");
+	} else {
+		LOG_DBG("Using GNSS API");
 	}
 
 	while (parsed_len < buf_len) {

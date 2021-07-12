@@ -31,8 +31,6 @@ The following sections provide detailed lists of changes by component.
 nRF9160
 =======
 
-* Updated:
-
   * :ref:`lib_nrf_cloud` library:
 
     * Added function :c:func:`nrf_cloud_uninit`, which can be used to uninitialize the nRF Cloud library.  If :ref:`cloud_api_readme` is used, call :c:func:`cloud_uninit`
@@ -41,6 +39,8 @@ nRF9160
 
     * Added a separate document page to explain data mode mechanism and how it works.
     * Removed datatype in all sending AT commands. If no sending data is specified, switch data mode to receive and send any arbitrary data.
+    * Added the GNSS service to replace the existing GPS test functionality.
+    * Added the support of GPS-related optional services from nRF Cloud, like A-GPS, P-GPS, and cellular positioning.
 
 nRF5
 ====

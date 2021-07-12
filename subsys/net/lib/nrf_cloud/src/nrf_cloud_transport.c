@@ -686,6 +686,7 @@ int nct_mqtt_connect(void)
 		nct.client.protocol_version = MQTT_VERSION_3_1_1;
 		nct.client.password = NULL;
 		nct.client.user_name = NULL;
+		nct.client.keepalive = CONFIG_NRF_CLOUD_MQTT_KEEPALIVE;
 		nct.client.clean_session = persistent_session ? 0U : 1U;
 		LOG_DBG("MQTT clean session flag: %u",
 			nct.client.clean_session);

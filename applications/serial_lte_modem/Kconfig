@@ -142,7 +142,7 @@ config SLM_SMS
 	help
 	  Support SMS send/receive in plain text
 
-rsource "src/gps/Kconfig"
+rsource "src/gnss/Kconfig"
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"
 rsource "src/http_c/Kconfig"

@@ -28,8 +28,8 @@
 #include "slm_at_icmp.h"
 #include "slm_at_sms.h"
 #include "slm_at_fota.h"
-#if defined(CONFIG_SLM_GPS)
-#include "slm_at_gps.h"
+#if defined(CONFIG_SLM_GNSS)
+#include "slm_at_gnss.h"
 #endif
 #if defined(CONFIG_SLM_FTPC)
 #include "slm_at_ftp.h"
@@ -339,8 +339,12 @@ int handle_at_sms(enum at_cmd_type cmd_type);
 /* FOTA commands */
 int handle_at_fota(enum at_cmd_type cmd_type);
 
-#if defined(CONFIG_SLM_GPS)
+#if defined(CONFIG_SLM_GNSS)
 int handle_at_gps(enum at_cmd_type cmd_type);
+int handle_at_nrf_cloud(enum at_cmd_type cmd_type);
+int handle_at_agps(enum at_cmd_type cmd_type);
+int handle_at_pgps(enum at_cmd_type cmd_type);
+int handle_at_cellpos(enum at_cmd_type cmd_type);
 #endif
 
 #if defined(CONFIG_SLM_FTPC)
@@ -418,9 +422,19 @@ static struct slm_at_cmd {
 	/* FOTA commands */
 	{"AT#XFOTA", handle_at_fota},
 
-#if defined(CONFIG_SLM_GPS)
-	/* GPS commands */
+#if defined(CONFIG_SLM_GNSS)
+	/* GNSS commands */
 	{"AT#XGPS", handle_at_gps},
+	{"AT#XNRFCLOUD", handle_at_nrf_cloud},
+#if defined(CONFIG_SLM_AGPS)
+	{"AT#XAGPS", handle_at_agps},
+#endif
+#if defined(CONFIG_SLM_PGPS)
+	{"AT#XPGPS", handle_at_pgps},
+#endif
+#if defined(CONFIG_SLM_CELL_POS)
+	{"AT#XCELLPOS", handle_at_cellpos},
+#endif
 #endif
 
 #if defined(CONFIG_SLM_FTPC)
@@ -532,8 +546,8 @@ int slm_at_init(void)
 		LOG_ERR("FOTA could not be initialized: %d", err);
 		return -EFAULT;
 	}
-#if defined(CONFIG_SLM_GPS)
-	err = slm_at_gps_init();
+#if defined(CONFIG_SLM_GNSS)
+	err = slm_at_gnss_init();
 	if (err) {
 		LOG_ERR("GPS could not be initialized: %d", err);
 		return -EFAULT;
@@ -607,8 +621,8 @@ void slm_at_uninit(void)
 	if (err) {
 		LOG_WRN("FOTA could not be uninitialized: %d", err);
 	}
-#if defined(CONFIG_SLM_GPS)
-	err = slm_at_gps_uninit();
+#if defined(CONFIG_SLM_GNSS)
+	err = slm_at_gnss_uninit();
 	if (err) {
 		LOG_WRN("GPS could not be uninitialized: %d", err);
 	}

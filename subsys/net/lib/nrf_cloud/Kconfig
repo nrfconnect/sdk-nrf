@@ -200,7 +200,6 @@ menu "nRF Cloud A-GPS"
 
 config NRF_CLOUD_AGPS
 	bool "Enable nRF Cloud Assisted GPS"
-	depends on NRF9160_GPS
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK
 
@@ -230,7 +229,6 @@ menu "nRF Cloud P-GPS"
 
 config NRF_CLOUD_PGPS
 	bool "Enable nRF Cloud Predicted GPS"
-	depends on NRF9160_GPS
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK
 	select STREAM_FLASH_ERASE
@@ -289,9 +287,15 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
-
 config NRF_CLOUD_CONNECTION_POLL_THREAD
 	bool "Poll cloud connection in a separate thread"
+
+config NRF_CLOUD_MQTT_KEEPALIVE
+	int "Maximum number of keep alive time for MQTT (in seconds)"
+	default MQTT_KEEPALIVE
+	help
+	  Keep alive time for MQTT (in seconds) connection to nRF Cloud,
+	  allow overwriting CONFIG_MQTT_KEEPALIVE value.
 
 module=NRF_CLOUD
 module-dep=LOG

@@ -192,19 +192,23 @@ Check and configure the following configuration options for the sample:
 
 .. option:: CONFIG_SLM_SMS - SMS support in SLM
 
-   This option enables additional AT commands for using SMS service.
+   This option enables additional AT commands for using the SMS service.
 
-.. option:: CONFIG_SLM_GPS - GPS support in SLM
+.. option:: CONFIG_SLM_GNSS - GNSS support in SLM
 
-   This option enables additional AT commands for using GPS service.
+   This option enables additional AT commands for using the GNSS service.
 
-.. option:: CONFIG_SLM_SUPL_SERVER - SUPL server
+.. option:: CONFIG_SLM_AGPS - nRF Cloud A-GPS support in SLM
 
-   This option specifies the SUPL server to use for retrieving SUPL A-GPS data.
+   This option enables additional AT commands for using the GPS service together with nRF Cloud A-GPS service.
 
-.. option:: CONFIG_SLM_SUPL_PORT - SUPL server port
+.. option:: CONFIG_SLM_PGPS - nRF Cloud P-GPS support in SLM
 
-   This option specifies the port to use for the specified SUPL server.
+   This option enables additional AT commands for using the GPS service together with nRF Cloud P-GPS service.
+
+.. option:: CONFIG_SLM_CELL_POS - nRF Cloud cellular positioning support in SLM
+
+   This option enables additional AT commands for using the cellular positioning service from nRF Cloud.
 
 .. option:: CONFIG_SLM_FTPC - FTP client support in SLM
 
@@ -236,10 +240,6 @@ Check and configure the following configuration options for the sample:
 
 Additional configuration
 ========================
-
-Check and configure the following library options that are used by the sample:
-
-* :option:`CONFIG_SUPL_CLIENT_LIB` - Enables the :ref:`supl_client`.
 
 To save power, console and logging output over ``UART_0`` is disabled in this application.
 This information is logged to RTT instead.
@@ -335,7 +335,10 @@ This application uses the following |NCS| libraries:
 * :ref:`at_cmd_parser_readme`
 * :ref:`at_notif_readme`
 * :ref:`lib_ftp_client`
-* :ref:`supl_client`
+* :ref:`lib_fota_download`
+* :ref:`cloud_api_readme`
+* :ref:`lib_nrf_cloud`
+* :ref:`lib_nrf_cloud_agps`
 
 It uses the following `sdk-nrfxlib`_ libraries:
 
