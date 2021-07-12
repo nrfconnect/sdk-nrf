@@ -86,7 +86,7 @@ int main(void)
 
 	uart_dev = device_get_binding(CONFIG_ZIGBEE_UART_DEVICE_NAME);
 	if (uart_dev == NULL) {
-		LOG_ERR("Error during serial initialization");
+		LOG_ERR("Error during NCP serial initialization");
 		return -EIO;
 	}
 
@@ -103,6 +103,21 @@ int main(void)
 	(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DCD, 1);
 	/* Data Set Ready - the NCP SoC is ready to communicate. */
 	(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DSR, 1);
+
+#ifdef CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING
+	/* Configure USB device to use for logging ZBOSS Traces. */
+	uart_dev = device_get_binding(CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME);
+	if (uart_dev == NULL) {
+		LOG_ERR("Error during ZBOSS Trace serial initialization");
+		return -EIO;
+	}
+
+	/* Data Carrier Detect Modem - mark connection as established. */
+	(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DCD, 1);
+	/* Data Set Ready - the NCP SoC is ready to communicate. */
+	(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DSR, 1);
+#endif /* CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING */
+
 #endif /* CONFIG_UART_LINE_CTRL */
 
 	/* Wait 1 sec for the host to do all settings */

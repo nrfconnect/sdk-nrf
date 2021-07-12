@@ -14,6 +14,16 @@ int32_t log_mock_get_buf_len(void);
 int32_t log_mock_get_buf_data(int32_t index);
 void log_mock_clear(void);
 
+#ifdef LOG_ERR
+#undef LOG_ERR
+#endif
+#define LOG_ERR(...)
+
+#ifdef LOG_DBG
+#undef LOG_DBG
+#endif
+#define LOG_DBG(...)
+
 #ifdef LOG_HEXDUMP_DBG
 #undef LOG_HEXDUMP_DBG
 #endif

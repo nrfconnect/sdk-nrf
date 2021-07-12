@@ -201,6 +201,62 @@ config ZBOSS_TRAF_DUMP
 	help
 	  Dumps all packets destined to the node over ZBOSS binary trace protocol
 
+choice
+	prompt "Select ZBOSS trace logging method: hexdump, binary, NCP transport"
+	default ZBOSS_TRACE_HEXDUMP_LOGGING
+
+config ZBOSS_TRACE_HEXDUMP_LOGGING
+	bool "Enable logging hexdumped ZBOSS Traces"
+	select RING_BUFFER
+
+config ZBOSS_TRACE_BINARY_LOGGING
+	bool "Enable logging binary ZBOSS Traces"
+	select SERIAL
+	select RING_BUFFER
+
+config ZBOSS_TRACE_BINARY_NCP_TRANSPORT_LOGGING
+	bool "Enable logging binary ZBOSS Traces over the NCP transport channel"
+	depends on ZIGBEE_HAVE_SERIAL
+
+endchoice
+
+if (ZBOSS_TRACE_HEXDUMP_LOGGING || ZBOSS_TRACE_BINARY_LOGGING)
+
+config ZBOSS_TRACE_LOGGER_BUFFER_SIZE
+	int "Size of ring buffer to store ZBOSS Traces"
+	default 4096
+	range 256 2147483648
+
+endif # (ZBOSS_TRACE_HEXDUMP_LOGGING || ZBOSS_TRACE_BINARY_LOGGING)
+
+if ZBOSS_TRACE_BINARY_LOGGING
+
+choice
+	prompt "Backend used to log ZBOSS Traces"
+	default ZBOSS_TRACE_UART_LOGGING
+
+config ZBOSS_TRACE_UART_LOGGING
+	bool "UART Serial"
+	select UART_INTERRUPT_DRIVEN
+
+config ZBOSS_TRACE_USB_CDC_LOGGING
+	bool "UART USB CDC (supported only for Zigbee NCP sample)"
+	select USB
+	select USB_DEVICE_STACK
+	select USB_CDC_ACM
+	select USB_COMPOSITE_DEVICE
+	select UART_LINE_CTRL
+	select UART_INTERRUPT_DRIVEN
+
+endchoice
+
+config ZBOSS_TRACE_LOGGER_DEVICE_NAME
+	string "UART device name for logging ZBOSS Traces"
+	default "UART_1" if ZBOSS_TRACE_UART_LOGGING
+	default "CDC_ACM_1" if ZBOSS_TRACE_USB_CDC_LOGGING
+
+endif # ZBOSS_TRACE_BINARY_LOGGING
+
 # Configure ZIGBEE_SHELL_LOG_LEVEL
 module = ZIGBEE_SHELL
 module-str = Zigbee Shell

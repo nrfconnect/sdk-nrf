@@ -108,6 +108,11 @@ Zigbee
   * :ref:`zigbee_template_sample` sample.
     This minimal Zigbee router application can be used as the starting point for developing custom Zigbee devices.
 
+* Updated:
+
+  * :ref:`zigbee_ug_logging_stack_logs` - Improved printing ZBOSS stack logs.
+    Added new backend options to print ZBOSS stack logs with option for using binary format.
+
 Common
 ======
 

@@ -11,12 +11,16 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(app)
 add_definitions(-Wno-packed-bitfield-compat)
 
+zephyr_compile_definitions(CONFIG_ZBOSS_TRACE_HEXDUMP_LOGGING)
+zephyr_compile_definitions(CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE=1024)
+
 zephyr_include_directories(${NRFXLIB_DIR}/zboss/include)
 zephyr_include_directories(${NRFXLIB_DIR}/zboss/include/osif)
 target_include_directories(app BEFORE PRIVATE mock)
 
 target_sources(app PRIVATE
   ${NRF_DIR}/subsys/zigbee/osif/zb_nrf_logger.c
+  ${NRF_DIR}/subsys/zigbee/osif/zb_nrf_serial.c
   src/main.c
   mock/log_mock.c
 )
