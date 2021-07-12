@@ -15,7 +15,7 @@
 #include "slm_at_host.h"
 #include "slm_at_ftp.h"
 
-LOG_MODULE_REGISTER(ftp, CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm_ftp, CONFIG_SLM_LOG_LEVEL);
 
 #define INVALID_SEC_TAG		-1
 #define FTP_MAX_HOSTNAME	64
@@ -105,12 +105,11 @@ static ftp_op_list_t ftp_op_list[FTP_OP_MAX] = {
 	{FTP_OP_MPUT, "mput", do_ftp_mput},
 };
 
-RING_BUF_DECLARE(ftp_data_buf, CONFIG_SLM_SOCKET_RX_MAX * 2);
+RING_BUF_DECLARE(ftp_data_buf, SLM_MAX_PAYLOAD);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
-extern uint8_t rx_data[CONFIG_SLM_SOCKET_RX_MAX];
+extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 
 void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 {
@@ -446,7 +445,7 @@ static int ftp_datamode_callback(uint8_t op, const uint8_t *data, int len)
 	if (op == DATAMODE_SEND) {
 		if (ftp_data_mode_handler) {
 			ret = ftp_data_mode_handler(data, len);
-			LOG_DBG("datamode send: %d", ret);
+			LOG_INF("datamode send: %d", ret);
 		} else {
 			LOG_ERR("no datamode send handler");
 		}
@@ -496,14 +495,15 @@ static int do_ftp_put(void)
 		ftp_data_mode_handler = ftp_put_handler;
 		return 0;
 	} else {
-		int size = CONFIG_SLM_SOCKET_RX_MAX;
+		char data[TCP_MAX_PAYLOAD_IPV4] = {0};
+		int size = TCP_MAX_PAYLOAD_IPV4;
 		int err;
 
-		err = util_string_get(&at_param_list, 3, rx_data, &size);
+		err = util_string_get(&at_param_list, 3, data, &size);
 		if (err) {
 			return err;
 		}
-		err = ftp_put(filepath, rx_data, size, FTP_PUT_NORMAL);
+		err = ftp_put(filepath, data, size, FTP_PUT_NORMAL);
 		ret = (err == FTP_CODE_226) ? 0 : -1;
 	}
 
@@ -531,7 +531,7 @@ static int ftp_uput_handler(const uint8_t *data, int len)
 /* AT#XFTP="uput"[,<data>] */
 static int do_ftp_uput(void)
 {
-	int ret;
+	int ret = -1;
 
 	if (at_params_valid_count_get(&at_param_list) == 2) {
 		/* enter data mode */
@@ -543,14 +543,15 @@ static int do_ftp_uput(void)
 		ftp_data_mode_handler = ftp_uput_handler;
 		return 0;
 	} else {
-		int size = CONFIG_SLM_SOCKET_RX_MAX;
+		char data[TCP_MAX_PAYLOAD_IPV4] = {0};
+		int size = TCP_MAX_PAYLOAD_IPV4;
 		int err;
 
-		err = util_string_get(&at_param_list, 2, rx_data, &size);
+		err = util_string_get(&at_param_list, 2, data, &size);
 		if (err) {
 			return err;
 		}
-		err = ftp_put(NULL, rx_data, size, FTP_PUT_UNIQUE);
+		err = ftp_put(NULL, data, size, FTP_PUT_UNIQUE);
 		ret = (err == FTP_CODE_226) ? 0 : -1;
 	}
 
@@ -590,14 +591,15 @@ static int do_ftp_mput(void)
 		ftp_data_mode_handler = ftp_mput_handler;
 		return 0;
 	} else {
-		int size = CONFIG_SLM_SOCKET_RX_MAX;
+		char data[TCP_MAX_PAYLOAD_IPV4] = {0};
+		int size = TCP_MAX_PAYLOAD_IPV4;
 		int err;
 
-		err = util_string_get(&at_param_list, 3, rx_data, &size);
+		err = util_string_get(&at_param_list, 3, data, &size);
 		if (err) {
 			return err;
 		}
-		err = ftp_put(filepath, rx_data, size, FTP_PUT_APPEND);
+		err = ftp_put(filepath, data, size, FTP_PUT_APPEND);
 		ret = (err == FTP_CODE_226) ? 0 : -1;
 	}
 

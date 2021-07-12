@@ -15,7 +15,7 @@
 #include "slm_native_tls.h"
 #include "slm_at_mqtt.h"
 
-LOG_MODULE_REGISTER(mqtt, CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm_mqtt, CONFIG_SLM_LOG_LEVEL);
 
 #define MQTT_MAX_TOPIC_LEN	128
 #define MQTT_MAX_URL_LEN	128
@@ -57,7 +57,7 @@ static uint8_t pub_msg[MQTT_MESSAGE_BUFFER_LEN];
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
+extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 
 #define THREAD_STACK_SIZE	KB(2)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
@@ -636,7 +636,7 @@ static int mqtt_datamode_callback(uint8_t op, const uint8_t *data, int len)
 
 	if (op == DATAMODE_SEND) {
 		ret = do_mqtt_publish((uint8_t *)data, len);
-		LOG_DBG("datamode send: %d", ret);
+		LOG_INF("datamode send: %d", ret);
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("MQTT datamode exit");
 	}
