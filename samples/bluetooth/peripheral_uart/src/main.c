@@ -211,7 +211,7 @@ static int uart_init(void)
 	int err;
 	struct uart_data_t *rx;
 
-	uart = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
+	uart = device_get_binding(CONFIG_BT_NUS_UART_DEV);
 	if (!uart) {
 		return -ENXIO;
 	}
@@ -435,6 +435,7 @@ void error(void)
 	}
 }
 
+#ifdef CONFIG_BT_NUS_SECURITY_ENABLED
 static void num_comp_reply(bool accept)
 {
 	if (accept) {
@@ -463,15 +464,18 @@ void button_changed(uint32_t button_state, uint32_t has_changed)
 		}
 	}
 }
+#endif /* CONFIG_BT_NUS_SECURITY_ENABLED */
 
 static void configure_gpio(void)
 {
 	int err;
 
+#ifdef CONFIG_BT_NUS_SECURITY_ENABLED
 	err = dk_buttons_init(button_changed);
 	if (err) {
 		LOG_ERR("Cannot init buttons (err: %d)", err);
 	}
+#endif /* CONFIG_BT_NUS_SECURITY_ENABLED */
 
 	err = dk_leds_init();
 	if (err) {
