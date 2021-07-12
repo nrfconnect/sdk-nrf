@@ -12,9 +12,13 @@ choice
 
 config DESKTOP_BATTERY_CHARGER_NONE
 	bool "No battery charging"
+	help
+	  If selected, battery charging is disabled.
 
 config DESKTOP_BATTERY_CHARGER_DISCRETE
 	bool "Discrete battery charger"
+	help
+	  If selected, battery charging is enabled.
 
 endchoice
 
@@ -31,12 +35,18 @@ choice
 
 config DESKTOP_BATTERY_CHARGER_CSO_PULL_NONE
 	bool "Disable CSO pin pull"
+	help
+	  If selected, CSO pin pull is disabled.
 
 config DESKTOP_BATTERY_CHARGER_CSO_PULL_UP
 	bool "Enable CPO pin pull up"
+	help
+	  If selected, CSO pin is pulled up.
 
 config DESKTOP_BATTERY_CHARGER_CSO_PULL_DOWN
 	bool "Enable CSO pin pull down"
+	help
+	  If selected, CSO pin is pulled down.
 
 endchoice
 
