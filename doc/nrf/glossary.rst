@@ -25,6 +25,11 @@ Glossary
       An implementation example that includes a variety of libraries to implement a specific use case.
       It is possible to create a programmable image from it, as it includes a ``main()`` entry point.
 
+   Attribute Protocol (ATT)
+      “The attribute protocol allows a device referred to as the server to expose a set of attributes and
+      their associated values to a peer device referred to as the client.” `Bluetooth Core Specification`_,
+      Version 5.2, Vol 3, Part F, Section 1.1
+
    Application Programming Interface (API)
       A language and message format used by an application program to communicate with an operating system, application, or other services.
 
@@ -69,6 +74,10 @@ Glossary
 
    Contribution
       A change to the codebase sent to a remote repository for inclusion.
+
+   Cortex Microcontroller Software Interface Standard (CMSIS)
+      A vendor-independent hardware abstraction layer for the Cortex-M processor series that defines
+      generic tool interfaces.
 
    Development Kit (DK)
       A hardware development platform used for application development.
@@ -132,8 +141,13 @@ Glossary
       A module that provides functionality for accessing GPIO pins using tasks and events.
       Each GPIOTE channel can be assigned to one pin.
 
+   Generic Access Profile (GAP)
+      “The Bluetooth system defines a base profile which all Bluetooth devices implement. This profile
+      is the Generic Access Profile (GAP), which defines the basic requirements of a Bluetooth device.”
+      `Bluetooth Core Specification`_, Version 5.2, Vol 1, Part A, Section 6.2
+
    Generic Attribute Protocol (GATT)
-      "Generic Attribute Profile (GATT) is built on top of the Attribute Protocol (ATT) and establishes common operations and a framework for the data transported and stored by the Attribute Protocol.” Bluetooth Core Specification, Version 5.1, Vol 1, Part A, Section 6.4
+      "Generic Attribute Profile (GATT) is built on top of the Attribute Protocol (ATT) and establishes common operations and a framework for the data transported and stored by the Attribute Protocol.” `Bluetooth Core Specification`_, Version 5.1, Vol 1, Part A, Section 6.4
 
    Global Navigation Satellite System (GNSS)
       A satellite navigation system with global coverage.
@@ -200,8 +214,16 @@ Glossary
       However, they can be overridden by applying an additional Kconfig fragment at build time.
 
    Link Layer (LL)
-      “A control protocol for the link and physical layers that is carried over logical links in addition to user data.” Bluetooth Core Specification, Version 5.1, Vol 1, Part A, Section 1.2
+      “A control protocol for the link and physical layers that is carried over logical links in addition to user data.” `Bluetooth Core Specification`_, Version 5.1, Vol 1, Part A, Section 1.2
       It is implemented in the Bluetooth LE Controller layer.
+
+   Logical Link Control and Adaptation Protocol (L2CAP)
+      “Provides a channel-based abstraction to applications and services. It carries out segmentation and
+      reassembly of application data and multiplexing and de-multiplexing of multiple channels over a
+      shared logical link.” `Bluetooth Core Specification`_, Version 5.2, Vol 1, Part A, Section 1.2
+
+   Low Latency Packet Mode (LLPM)
+      A mode that allows shorter connection intervals than specified in the `Bluetooth Core Specification`_.
 
    Low-Noise Amplifier (LNA)
       In a radio receiving system, an electronic amplifier that amplifies a very low-power signal without significantly degrading its signal-to-noise ratio.
@@ -213,6 +235,10 @@ Glossary
    Lightweight Machine to Machine (LwM2M)
       An application layer protocol.
       It defines the service architecture for IoT devices and the protocol for device management.
+
+   Main Stack Pointer (MSP)
+      The default stack pointer. By default, the nRF52 has a shared call stack for the application and the
+      SoftDevice, managed by the MSP.
 
    Man-in-the-Middle (MITM)
       A man-in-the-middle attack is a form of eavesdropping where communication between two devices is monitored and modified by an unauthorized party who relays information between the two devices giving the illusion that they are directly connected.
@@ -229,6 +255,9 @@ Glossary
    Mcumgr
       A management library for 32-bit MCUs.
       It uses the Simple Management Procotol (SMP).
+
+   Memory Watch Unit (MWU)
+      A peripheral that can be used to generate events when a memory region is accessed by the CPU.
 
    Message Queue Telemetry Transport (MQTT)
       A machine-to-machine (M2M) connectivity protocol used by some IoT devices.
@@ -306,6 +335,9 @@ Glossary
    Over-the-Air (OTA)
       Any type of wireless transmission.
 
+   Packet Traffic Arbitration (PTA)
+      A collaborative coexistence mechanism for collocated wireless protocols.
+
    Patch
       A method to describe changes in one or more source code files.
       It does not require a repository.
@@ -321,6 +353,14 @@ Glossary
    Printed Circuit Board (PCB)
       A board that connects electronic components.
 
+   Process Stack Pointer (PSP)
+      A separate stack pointer that can be used for application threads. This is an optional configuration,
+      but it may be required if using an RTOS.
+
+   Programmable Peripheral Interconnect (PPI)
+      Enables peripherals to interact autonomously with each other using tasks and events independent of
+      the CPU.
+
    Protocol Data Unit (PDU)
       Information transferred as a single unit between peer entities of a computer network and containing control and address information or data.
       PDU mode is one of the two ways of sending and receiving SMS messages.
@@ -334,8 +374,13 @@ Glossary
    Pull Request
       A set of commits that are sent to contribute to a repository.
 
+   Qualified Design Identification (QDID)
+      A unique identifier assigned to a design that has completed Bluetooth Qualification.
+
    Quality of Service (QoS)
-      The measured overall performance of a service, such as a telephony or a computer network, or a cloud computing service.
+      | The measured overall performance of a service, such as a telephony or a computer network, or a cloud computing service.
+      | A module in the SoftDevice Controller of the same name is dedicated to provideing these signal quality measurements. The
+        application can use this data to estimate the quality of received signal.
 
    Radio Co-Processor (RCP)
       A co-processor offloading radio functions from the host processor.
@@ -366,6 +411,9 @@ Glossary
    Secure Access Port Protection (SECUREAPPROTECT)
       A register used to prevent read and write access to all secure CPU registers and secure memory-mapped addresses.
       See Access Port Protection (APPROTECT).
+
+   Security Manager (SM)
+      Provides means for bonding devices, encrypting and decrypting data, and enabling device privacy.
 
    Security Manager Protocol (SMP)
       A protocol used for pairing and key distribution.
@@ -398,6 +446,10 @@ Glossary
 
    Spinel
       A general management protocol for enabling a host device to communicate with and manage co-processors, like a network co-processor (NCP) or a radio co-processor (RCP).
+
+   Supervisor Call (SVC)
+      Generates a software exception in which access to system resources or privileged operations can be
+      provided.
 
    System in Package (SiP)
       Several integrated circuits, often from different technologies, enclosed in a single module that performs as a system or subsystem.
