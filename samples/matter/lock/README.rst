@@ -214,10 +214,10 @@ When the procedure is finished, the device should be equipped with all informati
 During the last part of the commissioning procedure (the provisioning operation), Thread network credentials are sent from the Matter controller to the Matter accessory device.
 As a result, the device is able to join the Thread network and communicate with other Thread devices in the network.
 
+.. matter_door_lock_sample_commissioning_end
+
 To start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
 The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, printed to the UART console, and can be shared using an NFC tag.
-
-.. matter_door_lock_sample_commissioning_end
 
 Upgrading the device firmware
 =============================
