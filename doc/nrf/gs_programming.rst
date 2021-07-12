@@ -7,7 +7,7 @@ Building and programming a sample application
    :local:
    :depth: 2
 
-The recommended way of building and programming an |NCS| sample is to use the Nordic Edition of the SEGGER Embedded Studio (SES) IDE.
+The recommended way of building and programming an |NCS| sample is to use the Nordic Edition of the |SES| (SES) IDE.
 
 
 .. note::
@@ -28,7 +28,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 1. Start SEGGER Embedded Studio.
 
    If you have installed the |NCS| using the :ref:`gs_app_tcm`, click :guilabel:`Open IDE` next to the version you installed to start SES.
-   If you have installed SES manually, run :file:`bin/emStudio`.
+   If you have installed SES manually, run the :file:`emStudio` executable file from the :file:`bin` directory.
 
    .. figure:: images/gs-assistant_tm_installed.png
       :alt: The Toolchain Manager options after installing the nRF Connect SDK version, cropped
