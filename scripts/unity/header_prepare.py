@@ -27,9 +27,16 @@ def header_prepare(in_file, out_file, out_wrap_file):
 
     content = cpp_comments_pattern.sub(r"", content)
 
+    # remove inline syscalls
+    static_inline_pattern = re.compile(
+        r'(?:__deprecated\s+)?(?:static\s+inline\s+|inline\s+static\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
+        r'((?:\w+[*\s]+)+z_impl_\w+?\(.*?\))\n\{.+?\n\}',
+        re.M | re.S)
+    content = static_inline_pattern.sub(r"", content)
+
     # change static inline functions to normal function declaration
     static_inline_pattern = re.compile(
-        r'(?:__deprecated\s+)?(?:static\s+inline\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
+        r'(?:__deprecated\s+)?(?:static\s+inline\s+|inline\s+static\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
         r'((?:\w+[*\s]+)+\w+?\(.*?\))\n\{.+?\n\}',
         re.M | re.S)
     content = static_inline_pattern.sub(r"\1;", content)
@@ -39,7 +46,7 @@ def header_prepare(in_file, out_file, out_wrap_file):
     content = syscall_pattern.sub(r"", content)
 
     syscall_decl_pattern = re.compile(
-        r'__syscall\s+(?:\w+[*\s]+)+(.+?;)',
+        r'__syscall\s+',
         re.M | re.S)
     content = syscall_decl_pattern.sub("", content)
 
