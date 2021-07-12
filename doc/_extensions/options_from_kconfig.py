@@ -46,9 +46,6 @@ class OptionsFromKconfig(SphinxDirective):
         )
 
     def run(self):
-        if 'ZEPHYR_BASE' not in os.environ:
-            raise self.severe("ZEPHYR_BASE is not in the environment")
-
         if len(self.arguments) > 0:
             _, path = self.env.relfn2path(self.arguments[0])
         else:
@@ -57,8 +54,14 @@ class OptionsFromKconfig(SphinxDirective):
             source_dir = os.path.dirname(os.path.abspath(source))
             path = self._get_kconfig_path(source_dir)
 
-        sys.path.append(os.path.join(os.environ['ZEPHYR_BASE'],
-                                     'scripts', 'kconfig'))
+        sys.path.append(
+            os.path.join(
+                self.config.options_from_kconfig_zephyr_dir,
+                'scripts',
+                'kconfig'
+            )
+        )
+        os.environ["ZEPHYR_BASE"] = str(self.config.options_from_kconfig_zephyr_dir)
         import kconfiglib
         self._monkey_patch_kconfiglib(kconfiglib)
 
@@ -112,6 +115,7 @@ class OptionsFromKconfig(SphinxDirective):
 
 def setup(app: Sphinx):
     app.add_config_value("options_from_kconfig_base_dir", None, "env")
+    app.add_config_value("options_from_kconfig_zephyr_dir", None, "env")
 
     directives.register_directive('options-from-kconfig', OptionsFromKconfig)
 

@@ -8,23 +8,12 @@ import sys
 
 # Paths ------------------------------------------------------------------------
 
-NRF_BASE = os.environ.get("NRF_BASE")
-if not NRF_BASE:
-    raise FileNotFoundError("NRF_BASE not defined")
-NRF_BASE = Path(NRF_BASE)
-
-NRFXLIB_BASE = os.environ.get("NRFXLIB_BASE")
-if not NRFXLIB_BASE:
-    raise FileNotFoundError("NRFXLIB_BASE not defined")
-NRFXLIB_BASE = Path(NRFXLIB_BASE)
-
-NRFXLIB_BUILD = os.environ.get("NRFXLIB_BUILD")
-if not NRFXLIB_BUILD:
-    raise FileNotFoundError("NRFXLIB_BUILD not defined")
-NRFXLIB_BUILD = Path(NRFXLIB_BUILD)
+NRF_BASE = Path(__file__).absolute().parents[2]
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
+
+NRFXLIB_BASE = utils.get_projdir("nrfxlib")
 
 # General configuration --------------------------------------------------------
 
@@ -78,7 +67,7 @@ if nrf_mapping:
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
 doxyrunner_doxyfile = NRF_BASE / "doc" / "nrfxlib" / "nrfxlib.doxyfile.in"
-doxyrunner_outdir = NRFXLIB_BUILD / "doxygen"
+doxyrunner_outdir = utils.get_builddir() / "nrfxlib" / "doxygen"
 doxyrunner_fmt = True
 doxyrunner_fmt_vars = {
     "NRFXLIB_BASE": str(NRFXLIB_BASE),
@@ -121,7 +110,7 @@ external_content_contents = [(NRFXLIB_BASE, "**/*.rst"), (NRFXLIB_BASE, "**/doc/
 # Options for ncs_cache --------------------------------------------------------
 
 ncs_cache_docset = "nrfxlib"
-ncs_cache_build_dir = NRFXLIB_BUILD / ".."
+ncs_cache_build_dir = utils.get_builddir()
 ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
 ncs_cache_manifest = NRF_BASE / "west.yml"
 

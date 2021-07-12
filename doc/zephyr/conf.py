@@ -1,33 +1,28 @@
 # Zephyr documentation build configuration file
 
+import os
 from pathlib import Path
 import sys
-import os
 from sphinx.config import eval_config_file
 
 
 # Paths ------------------------------------------------------------------------
 
-NRF_BASE = Path(__file__).absolute().parent / ".." / ".."
-
-ZEPHYR_BASE = os.environ.get("ZEPHYR_BASE")
-if not ZEPHYR_BASE:
-    raise FileNotFoundError("ZEPHYR_BASE not defined")
-ZEPHYR_BASE = Path(ZEPHYR_BASE)
-
-ZEPHYR_BUILD = os.environ.get("ZEPHYR_BUILD")
-if not ZEPHYR_BUILD:
-    raise FileNotFoundError("ZEPHYR_BUILD not defined")
-ZEPHYR_BUILD = Path(ZEPHYR_BUILD)
+NRF_BASE = Path(__file__).absolute().parents[2]
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
+
+ZEPHYR_BASE = utils.get_projdir("zephyr")
 
 # pylint: disable=undefined-variable,used-before-assignment
 
 # General ----------------------------------------------------------------------
 
 # Import all Zephyr configuration, override as needed later
+os.environ["ZEPHYR_BASE"] = str(ZEPHYR_BASE)
+os.environ["ZEPHYR_BUILD"] = str(utils.get_builddir() / "zephyr")
+
 conf = eval_config_file(str(ZEPHYR_BASE / "doc" / "conf.py"), tags)
 locals().update(conf)
 
@@ -85,7 +80,7 @@ external_content_keep = [
 # Options for ncs_cache --------------------------------------------------------
 
 ncs_cache_docset = "zephyr"
-ncs_cache_build_dir = ZEPHYR_BUILD / ".."
+ncs_cache_build_dir = utils.get_builddir()
 ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
 ncs_cache_manifest = NRF_BASE / "west.yml"
 

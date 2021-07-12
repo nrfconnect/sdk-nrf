@@ -1,6 +1,5 @@
 # TFM documentation build configuration file
 
-import os
 from pathlib import Path
 import re
 import sys
@@ -8,23 +7,12 @@ import sys
 
 # Paths ------------------------------------------------------------------------
 
-NRF_BASE = os.environ.get("NRF_BASE")
-if not NRF_BASE:
-    raise FileNotFoundError("NRF_BASE not defined")
-NRF_BASE = Path(NRF_BASE)
-
-TFM_BASE = os.environ.get("TFM_BASE")
-if not TFM_BASE:
-    raise FileNotFoundError("TFM_BASE not defined")
-TFM_BASE = Path(TFM_BASE)
-
-TFM_BUILD = os.environ.get("TFM_BUILD")
-if not TFM_BUILD:
-    raise FileNotFoundError("TFM_BUILD not defined")
-TFM_BUILD = Path(TFM_BUILD)
+NRF_BASE = Path(__file__).absolute().parents[2]
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
+
+TFM_BASE = utils.get_projdir("tfm") / "trusted-firmware-m"
 
 # General configuration --------------------------------------------------------
 
@@ -80,7 +68,7 @@ external_content_contents = [
 # Options for ncs_cache --------------------------------------------------------
 
 ncs_cache_docset = "tfm"
-ncs_cache_build_dir = TFM_BUILD / ".."
+ncs_cache_build_dir = utils.get_builddir()
 ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
 ncs_cache_manifest = NRF_BASE / "west.yml"
 

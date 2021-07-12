@@ -55,7 +55,6 @@ include(${ZEPHYR_BASE}/cmake/zephyr_module.cmake)
 #
 # Args:
 # - name: Docset name.
-# - env: Environment passed to the Sphinx build.
 # - DODGY: Enable/disable "dodgy" mode. If enabled, the ${SPHINXOPTS_EXTRA}
 #   option (used to enable things like -W) will not be passed to Sphinx. It can
 #   be useful for external docsets that are likely to generate build warnings.
@@ -76,7 +75,7 @@ include(${ZEPHYR_BASE}/cmake/zephyr_module.cmake)
 # - ${name}-linkcheck: Run Sphinx "linkcheck" target.
 # - ${name}-clean: Clean build artifacts.
 #
-function(add_docset name env)
+function(add_docset name)
   cmake_parse_arguments(DOCSET "DODGY" "" "" ${ARGN})
 
   set(DOCSET_CFG_DIR ${CMAKE_CURRENT_LIST_DIR}/${name})
@@ -85,6 +84,7 @@ function(add_docset name env)
   set(DOCSET_HTML_DIR ${CMAKE_BINARY_DIR}/html/${name})
   set(DOCSET_MAKE_DIRS ${DOCSET_BUILD_DIR};${DOCSET_SRC_DIR})
   set(DOCSET_CLEAN_DIRS ${DOCSET_BUILD_DIR};${DOCSET_HTML_DIR})
+  set(DOCSET_ENV DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE})
 
   if(NOT ${DOCSET_DODGY})
     set(EXTRA_ARGS ${SPHINXOPTS_EXTRA})
@@ -93,7 +93,7 @@ function(add_docset name env)
   add_doc_target(
     ${name}-inventory
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
-    COMMAND ${CMAKE_COMMAND} -E env ${env}
+    COMMAND ${CMAKE_COMMAND} -E env ${DOCSET_ENV}
     ${SPHINXBUILD}
       -b inventory
       -c ${DOCSET_CFG_DIR}
@@ -107,7 +107,7 @@ function(add_docset name env)
   add_doc_target(
     ${name}-html
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
-    COMMAND ${CMAKE_COMMAND} -E env ${env}
+    COMMAND ${CMAKE_COMMAND} -E env ${DOCSET_ENV}
     ${SPHINXBUILD}
       -b html
       -c ${DOCSET_CFG_DIR}
@@ -122,7 +122,7 @@ function(add_docset name env)
   add_custom_target(
     ${name}-linkcheck
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
-    COMMAND ${CMAKE_COMMAND} -E env ${env}
+    COMMAND ${CMAKE_COMMAND} -E env ${DOCSET_ENV}
     ${SPHINXBUILD}
       -b linkcheck
       -c ${DOCSET_CFG_DIR}
@@ -179,50 +179,12 @@ function(add_doc_target name)
 endfunction()
 
 #-------------------------------------------------------------------------------
-# Environment & Paths
-
-# Set various *_BASE variables pointing to the nrf/, zephyr/, etc.,
-# directories. Derive them automatically if they're not set in the environment,
-# by assuming that e.g. nrfxlib can be found at ../../nrfxlib/. Also add them
-# to the environment if they're not there.
-#
+# Paths
 
 get_filename_component(NRF_BASE ${CMAKE_CURRENT_LIST_DIR}../ DIRECTORY)
-set(ENV{NRF_BASE} ${NRF_BASE})
 
-if(NOT DEFINED ENV{MCUBOOT_BASE})
-  get_filename_component(MCUBOOT_BASE ${CMAKE_CURRENT_LIST_DIR}/../../bootloader/mcuboot/ REALPATH)
-  set(ENV{MCUBOOT_BASE} ${MCUBOOT_BASE})
-endif()
-
-if(NOT DEFINED ENV{NRFXLIB_BASE})
-  get_filename_component(NRFXLIB_BASE ${CMAKE_CURRENT_LIST_DIR}/../../nrfxlib/ REALPATH)
-  set(ENV{NRFXLIB_BASE} ${NRFXLIB_BASE})
-endif()
-
-if(NOT DEFINED ENV{NRFX_BASE})
-  get_filename_component(NRFX_BASE ${CMAKE_CURRENT_LIST_DIR}/../../modules/hal/nordic/nrfx/ REALPATH)
-  set(ENV{NRFX_BASE} ${NRFX_BASE})
-endif()
-
-if(NOT DEFINED ENV{TFM_BASE})
-  get_filename_component(TFM_BASE ${CMAKE_CURRENT_LIST_DIR}/../../modules/tee/tfm/trusted-firmware-m/ REALPATH)
-  set(ENV{TFM_BASE} ${TFM_BASE})
-endif()
-
-message(STATUS "ZEPHYR_BASE: ${ZEPHYR_BASE}")
-message(STATUS "NRF_BASE: $ENV{NRF_BASE}")
-message(STATUS "MCUBOOT_BASE: $ENV{MCUBOOT_BASE}")
-message(STATUS "NRFXLIB_BASE: $ENV{NRFXLIB_BASE}")
-message(STATUS "NRFX_BASE: $ENV{NRFX_BASE}")
-message(STATUS "TFM_BASE: $ENV{TFM_BASE}")
-
-set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
-set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
-set(NRFX_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfx)
-set(TFM_BINARY_DIR ${CMAKE_BINARY_DIR}/tfm)
-set(MCUBOOT_BINARY_DIR ${CMAKE_BINARY_DIR}/mcuboot)
+set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 
 # HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
@@ -245,13 +207,7 @@ add_custom_target(
   USES_TERMINAL
 )
 
-set(zephyr_env
-  ZEPHYR_BASE=${ZEPHYR_BASE}
-  ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
-  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
-)
-
-add_docset(zephyr "${zephyr_env}")
+add_docset(zephyr)
 add_dependencies(zephyr-html zephyr-devicetree)
 add_dependencies(zephyr-html-all zephyr-devicetree)
 
@@ -268,7 +224,7 @@ set(tools_version_files
 set(pip_requirements_files
     ${ZEPHYR_BASE}/scripts/requirements-base.txt
     ${ZEPHYR_BASE}/scripts/requirements-doc.txt
-    ${MCUBOOT_BASE}/scripts/requirements.txt
+    ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/requirements.txt
     ${NRF_BASE}/scripts/requirements-base.txt
     ${NRF_BASE}/scripts/requirements-doc.txt
     ${NRF_BASE}/scripts/requirements-build.txt
@@ -293,68 +249,35 @@ add_custom_command(
     ${pip_requirements_files}
 )
 
-set(nrf_env
-  ZEPHYR_BASE=${ZEPHYR_BASE}
-  NRF_BASE=${NRF_BASE}
-  NRF_BUILD=${NRF_BINARY_DIR}
-  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
-)
-
 add_custom_target(
   nrf-versions
   DEPENDS
     ${NRF_BINARY_DIR}/src/versions.txt
 )
 
-add_docset(nrf "${nrf_env}")
+add_docset(nrf)
 add_dependencies(nrf-html nrf-versions)
 add_dependencies(nrf-html-all nrf-versions)
 
 #-------------------------------------------------------------------------------
 # docset: mcuboot
 
-set(mcuboot_env
-  NRF_BASE=${NRF_BASE}
-  MCUBOOT_BUILD=${MCUBOOT_BINARY_DIR}
-  MCUBOOT_BASE=${MCUBOOT_BASE}
-)
-
-add_docset(mcuboot "${mcuboot_env}")
+add_docset(mcuboot)
 
 #-------------------------------------------------------------------------------
 # docset: nrfx
 
-set(nrfx_env
-  NRF_BASE=${NRF_BASE}
-  NRFX_BASE=${NRFX_BASE}
-  NRFX_BUILD=${NRFX_BINARY_DIR}
-)
-
-add_docset(nrfx "${nrfx_env}")
+add_docset(nrfx)
 
 #-------------------------------------------------------------------------------
 # docset: tfm
 
-set(tfm_env
-  NRF_BASE=${NRF_BASE}
-  ZEPHYR_BASE=${ZEPHYR_BASE}
-  TFM_BASE=${TFM_BASE}
-  TFM_BUILD=${TFM_BINARY_DIR}
-)
-
-add_docset(tfm "${tfm_env}" DODGY)
+add_docset(tfm DODGY)
 
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
 
-set(nrfxlib_env
-  NRF_BASE=${NRF_BASE}
-  NRFXLIB_BASE=${NRFXLIB_BASE}
-  NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
-  DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
-)
-
-add_docset(nrfxlib "${nrfxlib_env}")
+add_docset(nrfxlib)
 
 #-------------------------------------------------------------------------------
 # docset: kconfig
@@ -414,16 +337,13 @@ add_custom_target(
         --separate-all-index
         --modules Zephyr,zephyr,${ZEPHYR_BASE}
                   nRF,nrf,${NRF_BASE}
-                  nrfxlib,nrfxlib,${NRFXLIB_BASE}
+                  nrfxlib,nrfxlib,${ZEPHYR_NRFXLIB_MODULE_DIR}
         --no-index-modules BuildDir,${CMAKE_BINARY_DIR}
-                           MCUboot,${MCUBOOT_BASE}
+                           MCUboot,${ZEPHYR_MCUBOOT_MODULE_DIR}
   VERBATIM
 )
 
-set(kconfig_env
-  KCONFIG_BUILD=${KCONFIG_BINARY_DIR}
-)
-add_docset(kconfig "${kconfig_env}")
+add_docset(kconfig)
 add_dependencies(kconfig-html kconfig-content)
 add_dependencies(kconfig-html-all kconfig-content)
 

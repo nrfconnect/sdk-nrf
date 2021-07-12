@@ -1,29 +1,17 @@
 # MCUboot documentation build configuration file
 
-import os
 from pathlib import Path
 import sys
 
 
 # Paths ------------------------------------------------------------------------
 
-NRF_BASE = os.environ.get("NRF_BASE")
-if not NRF_BASE:
-    raise FileNotFoundError("NRF_BASE not defined")
-NRF_BASE = Path(NRF_BASE)
-
-MCUBOOT_BASE = os.environ.get("MCUBOOT_BASE")
-if not MCUBOOT_BASE:
-    raise FileNotFoundError("MCUBOOT_BASE not defined")
-MCUBOOT_BASE = Path(MCUBOOT_BASE)
-
-MCUBOOT_BUILD = os.environ.get("MCUBOOT_BUILD")
-if not MCUBOOT_BUILD:
-    raise FileNotFoundError("MCUBOOT_BUILD not defined")
-MCUBOOT_BUILD = Path(MCUBOOT_BUILD)
+NRF_BASE = Path(__file__).absolute().parents[2]
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
+
+MCUBOOT_BASE = utils.get_projdir("mcuboot")
 
 # General configuration --------------------------------------------------------
 
@@ -67,7 +55,7 @@ external_content_contents = [
 # Options for ncs_cache --------------------------------------------------------
 
 ncs_cache_docset = "mcuboot"
-ncs_cache_build_dir = MCUBOOT_BUILD / ".."
+ncs_cache_build_dir = utils.get_builddir()
 ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
 ncs_cache_manifest = NRF_BASE / "west.yml"
 
