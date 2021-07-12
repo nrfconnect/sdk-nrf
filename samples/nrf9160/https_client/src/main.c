@@ -245,4 +245,6 @@ void main(void)
 clean_up:
 	freeaddrinfo(res);
 	(void)close(fd);
+
+	nrf_modem_lib_shutdown();
 }

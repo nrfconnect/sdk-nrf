@@ -174,13 +174,13 @@ static int callback(const struct download_client_evt *event)
 #endif /* CONFIG_SAMPLE_COMPARE_HASH */
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
+		nrf_modem_lib_shutdown();
 		printk("Bye\n");
-		downloaded = 0;
 		return 0;
 
 	case DOWNLOAD_CLIENT_EVT_ERROR:
 		printk("Error %d during download\n", event->error);
-		downloaded = 0;
+		nrf_modem_lib_shutdown();
 		/* Stop download */
 		return -1;
 	}
