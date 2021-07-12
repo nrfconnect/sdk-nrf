@@ -66,7 +66,7 @@ int http_get_request_send(struct download_client *client)
 
 	if (client->file_size != 0) {
 		/* Don't request bytes past the end of file */
-		off = MIN(off, client->file_size);
+		off = MIN(off, client->file_size - 1);
 	}
 
 	/* We use range requests only for HTTPS, due to memory limitations.
