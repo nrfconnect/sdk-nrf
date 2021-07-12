@@ -61,4 +61,35 @@ config EVENT_MANAGER_PROFILE_EVENT_DATA
 
 endif # EVENT_MANAGER_PROFILER_ENABLED
 
+config EVENT_MANAGER_STORAGE
+	bool "Store event in non-volatile memory"
+	default n
+
+if EVENT_MANAGER_STORAGE
+
+partition=EVENTS_STORAGE
+partition-size=0x10000
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_size"
+
+choice EVENT_MANAGER_STORAGE_BACKEND
+	bool "Event storage backend"
+	default EVENT_MANAGER_STORAGE_BACKEND_LITTLEFS if FILE_SYSTEM_LITTLEFS
+	default EVENT_MANAGER_STORAGE_BACKEND_NVS if NVS
+
+config EVENT_MANAGER_STORAGE_BACKEND_LITTLEFS
+	bool "Littlefs backend"
+	depends on FILE_SYSTEM_LITTLEFS
+
+config EVENT_MANAGER_STORAGE_BACKEND_NVS
+	bool "NVS backend"
+	depends on NVS
+
+endchoice # EVENT_MANAGER_STORAGE_BACKEND
+
+endif # EVENT_MANAGER_STORAGE
+
+config EVENT_MANAGER_STORAGE_PAYLOAD_MAX_SIZE
+	int "Maximum size of event payload"
+	default 64
+
 endif # EVENT_MANAGER

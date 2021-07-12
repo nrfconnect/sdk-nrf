@@ -1,0 +1,5 @@
+#include <autoconf.h>
+
+events_storage:
+  placement: {before: [end]}
+  size: CONFIG_PM_PARTITION_SIZE_EVENTS_STORAGE

@@ -65,6 +65,11 @@ struct event_header {
 
 	/** Pointer to the event type object. */
 	const struct event_type *type_id;
+
+#if defined(CONFIG_EVENT_MANAGER_STORAGE)
+	/** Entry id used in one of the storage backend */
+	size_t entry_id;
+#endif
 };
 
 
@@ -144,6 +149,11 @@ struct event_type {
 
 	/** Logging and formatting information. */
 	const struct event_info *ev_info;
+
+#if defined(CONFIG_EVENT_MANAGER_STORAGE)
+	/** Size of the static payload used by the event */
+	const size_t event_size;
+#endif
 };
 
 
@@ -286,8 +296,13 @@ void _event_submit(struct event_header *eh);
  *
  * @param event  Pointer to the event object.
  */
-#define EVENT_SUBMIT(event) _event_submit(&event->header)
+#if defined(CONFIG_EVENT_MANAGER_STORAGE)
+#include "event_manager_storage_priv.h"
+#define EVENT_SUBMIT_IMPORTANT(event)	event_store_add(&event->header); \
+					_event_submit(&event->header)
+#endif
 
+#define EVENT_SUBMIT(event) _event_submit(&event->header)
 
 /** Initialize the Event Manager.
  *
@@ -295,6 +310,11 @@ void _event_submit(struct event_header *eh);
  */
 int event_manager_init(void);
 
+/** Clears the underlying storage layer if configured
+ *
+ * @retval 0 If the operation was successful.
+ */
+int event_manager_clear_storage(void);
 
 #ifdef __cplusplus
 }
