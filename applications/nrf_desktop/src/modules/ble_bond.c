@@ -1029,12 +1029,12 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE) &&
+	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER) &&
 	    is_power_down_event(eh)) {
 		return handle_power_down_event(cast_power_down_event(eh));
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE) &&
+	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER) &&
 	    is_wake_up_event(eh)) {
 		return handle_wake_up_event(cast_wake_up_event(eh));
 	}

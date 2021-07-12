@@ -7,9 +7,6 @@
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/pelion.cpp)
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/pelion_fcc.cpp)
 
-target_sources_ifdef(CONFIG_PELION_CLIENT_POWER_MANAGER_ENABLE
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/power_manager.c)
-
 target_sources_ifdef(CONFIG_PELION_CLIENT_OMA_STOPWATCH
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/oma_stopwatch.cpp)
 

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CAF_FORCE_POWER_DOWN_EVENTS
+	bool "Enable force Power down event"
+	help
+	  Enable power manager event to put the device into power down mode quickly.
+
+config CAF_INIT_LOG_FORCE_POWER_DOWN_EVENTS
+	bool "Log force power down event"
+	depends on LOG
+	depends on CAF_FORCE_POWER_DOWN_EVENTS
+	default y
+	help
+	  Log the force power down event.

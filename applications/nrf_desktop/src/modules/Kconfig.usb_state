@@ -24,6 +24,15 @@ config DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
 	  usb_state_def.h file in application configuration directory for given
 	  board and configuration.
 
+config DESKTOP_USB_PM_ENABLE
+	bool "Enable USB power manager integration"
+	depends on DESKTOP_USB_ENABLE
+	depends on CAF_POWER_MANAGER
+	select CAF_FORCE_POWER_DOWN_EVENTS
+	default y
+	help
+	  This enables small module that blocks power down if the USB is active.
+
 if DESKTOP_USB_ENABLE
 
 module = DESKTOP_USB_STATE

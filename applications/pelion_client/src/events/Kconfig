@@ -23,8 +23,6 @@ config PELION_INIT_LOG_PELION_CREATE_OBJECTS_EVENTS
 	depends on LOG
 	default y
 
-rsource "Kconfig.keep_alive_event"
 rsource "Kconfig.factory_reset_event"
-rsource "Kconfig.power_manager_event"
 
 endmenu
