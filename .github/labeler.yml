@@ -75,6 +75,7 @@
   - "subsys/dfu/**/*"
   - "subsys/mpsl/**/*"
   - "subsys/zigbee/**/*"
+  - "tests/subsys/zigbee/**/*"
 
 "CI-thingy91-test":
   - "applications/asset_tracker/**/*"
