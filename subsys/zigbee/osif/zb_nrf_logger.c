@@ -5,6 +5,7 @@
  */
 
 #include <zboss_api.h>
+#include <sys/ring_buffer.h>
 
 #if defined ZB_NRF_TRACE
 
@@ -12,52 +13,75 @@
 
 LOG_MODULE_REGISTER(zboss, LOG_LEVEL_DBG);
 
-void zb_osif_serial_init(void)
-{
-}
+RING_BUF_DECLARE(logger_buf, CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE);
 
-static zb_uint8_t buf8[8];
-static zb_uint_t buffered;
-
-void zb_osif_serial_put_bytes(const zb_uint8_t *buf, zb_short_t len)
+void zb_osif_logger_put_bytes(const zb_uint8_t *buf, zb_short_t len)
 {
+	zb_uint8_t *buf_dest;
+	zb_uint32_t allocated = 0;
+
 	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_LOG_LEVEL_OFF)) {
 		return;
 	}
 
-	/* Try to fill hex dump by 8-bytes dumps */
+	allocated = ring_buf_put_claim(&logger_buf, &buf_dest, len);
+	while (allocated != 0) {
+		ZB_MEMCPY(buf_dest, buf, allocated);
+		ring_buf_put_finish(&logger_buf, allocated);
+		len -= allocated;
+		buf += allocated;
+		allocated = ring_buf_put_claim(&logger_buf, &buf_dest, len);
+	}
 
-	while (len) {
-		zb_int_t n = 8 - buffered;
-
-		if (n > len) {
-			n = len;
-		}
-		ZB_MEMCPY(buf8 + buffered, buf, n);
-		buffered += n;
-		buf += n;
-		len -= n;
-		if (buffered == 8) {
-			LOG_HEXDUMP_DBG(buf8, 8, "");
-			buffered = 0;
-		}
-	} /* while */
-}
-
-#ifdef CONFIG_ZB_NRF_TRACE_RX_ENABLE
-/*Function set UART RX callback function*/
-void zb_osif_set_uart_byte_received_cb(zb_callback_t cb)
-{
-	LOG_ERR("Command reception is not available through Zephyr's logger");
-}
-#endif /*CONFIG_ZB_NRF_TRACE_RX_ENABLE*/
-
-void zb_osif_serial_flush(void)
-{
-	if (buffered) {
-		LOG_HEXDUMP_DBG(buf8, buffered, "");
-		buffered = 0;
+	if (len) {
+		LOG_DBG("Dropping %u bytes, ring buffer is full", len);
 	}
 }
+
+/* Is called when complete Trace message is put in the ring buffer.
+ * Triggers sending buffered data through UART API.
+ */
+void zb_trace_msg_port_do(void)
+{
+	zb_uint32_t data_len;
+	zb_uint8_t *data_ptr;
+	int ret_val;
+
+	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_LOG_LEVEL_OFF)) {
+		return;
+	}
+
+	if (ring_buf_is_empty(&logger_buf)) {
+		return;
+	}
+
+	data_len = ring_buf_get_claim(&logger_buf,
+				      &data_ptr,
+				      CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE);
+
+	LOG_HEXDUMP_DBG(data_ptr, data_len, "");
+
+	ret_val = ring_buf_get_finish(&logger_buf, data_len);
+
+	if (ret_val != 0) {
+		LOG_ERR("%u exceeds valid bytes in the logger ring buffer", data_len);
+	}
+}
+
+/* Prints remaining bytes. */
+void zb_osif_logger_flush(void)
+{
+	while (!ring_buf_is_empty(&logger_buf)) {
+		zb_trace_msg_port_do();
+	}
+}
+
+#if defined(CONFIG_ZB_NRF_TRACE_RX_ENABLE)
+/* Function set UART RX callback function */
+void zb_osif_logger_set_uart_byte_received_cb(zb_callback_t cb)
+{
+	LOG_ERR("Command reception is not available through logger");
+}
+#endif /* CONFIG_ZB_NRF_TRACE_RX_ENABLE */
 
 #endif /* defined ZB_NRF_TRACE */

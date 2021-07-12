@@ -94,6 +94,12 @@ The USB device VID and PID are configured by the sample's Kconfig file.
 .. note::
     The USB is used as the default NCP communication channel when using the nRF52840 Dongle.
 
+You can configure :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` to be printed in binary format over the USB CDC using an independent serial port by setting:
+* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - to enable binary format.
+* :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - to select USB CDC serial over UART serial.
+
+No additional changes in application are required. For more configuration options, see :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>`.
+
 .. _zigbee_ncp_bootloader:
 
 Bootloader support

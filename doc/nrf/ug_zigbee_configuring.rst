@@ -149,7 +149,34 @@ To customize them, use the following options:
 * :kconfig:`CONFIG_ZBOSS_TRACE_MASK` - Sets the modules from which ZBOSS will log the debug messages with :kconfig:`CONFIG_ZBOSS_TRACE_LOG_LEVEL`; no module is set by default.
 * :kconfig:`CONFIG_ZBOSS_TRAF_DUMP` - Enables logging of the received 802.15.4 frames over ZBOSS trace log if :kconfig:`CONFIG_ZBOSS_TRACE_LOG_LEVEL` is set; disabled by default.
 
-The stack logs are provided in a binary format (hex dump).
+The stack logs are provided in a binary format and you can configure how they are printed:
+
+* :kconfig:`CONFIG_ZBOSS_TRACE_HEXDUMP_LOGGING` - Stack logs are printed as hexdump using Zephyr's :ref:`zephyr:logging_api`.
+  This option is enabled by default.
+* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - Stack logs are printed in the binary format using one of the following independent serial backends of your choice:
+
+  * :kconfig:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - UART serial.
+    This backend is enabled by default.
+  * :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - USB CDC serial.
+
+  To specify the serial device, set :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME`.
+  By default, this option is set to the following values:
+
+  * ``UART_1`` if :kconfig:`CONFIG_ZBOSS_TRACE_UART_LOGGING` is selected.
+  * ``CDC_ACM_1`` if :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` is selected.
+
+  .. note::
+      When you select :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING`, make sure that the USB CDC serial is correctly started by the application.
+      The application must enable the USB peripheral and set the UART line control signals.
+      See the :c:func:`main` of :ref:`NCP sample <zigbee_ncp_sample>` for an example of how to implement the USB CDC serial support.
+      This can be skipped only for :ref:`NCP sample <zigbee_ncp_sample>`, for other applications you must correctly configure and start USB CDC serial.
+
+* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_NCP_TRANSPORT_LOGGING` - Stack logs are printed in the binary format using the NCP transport channel.
+
+Stack logs are stored in the internal buffer if they are printed using Zephyr's :ref:`zephyr:logging_api` or the independent serial backend.
+You can customize the buffer size with the :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE`.
+The buffer size must be larger than ``256`` and smaller than ``2147483648``.
+If NCP transport channel is used, stack logs are stored in the buffer used for NCP transport, which size can be configured with :kconfig:`CONFIG_ZIGBEE_UART_TX_BUF_LEN`.
 
 .. _zigbee_ug_logging_logger_options:
 

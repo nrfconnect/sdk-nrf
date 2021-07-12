@@ -7,6 +7,7 @@
 #include <ztest.h>
 #include <zboss_api.h>
 
+#include <zb_nrf_async_serial.c>
 #include <zb_nrf_serial.c>
 
 
