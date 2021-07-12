@@ -1,0 +1,52 @@
+Dear Codeowners
+You are addressed in this PR because you are listed as maintainers for at least one of samples in sdk-nrf/samples/.
+I've sent an email before (23.04) titled "CI testing scope for NCS samples" where I asked for your action to add integration_platforms to sample yaml. Below I copy that message. Please do the needed changes ASAP. This is crucial to make your sample building in our CI.
+Cheers,
+Maciej
+
+/samples/sensor/bh1749/                   @wlgrd
+/samples/bluetooth/                       @joerchan @carlescufi @KAGA164
+/samples/bluetooth/mesh/                  @trond-snekvik @joerchan
+/samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @joerchan
+/samples/bootloader/                      @hakonfam @ioannisg
+/samples/connectedhomeip/                 @Damian-Nordic @kkasperczyk-no
+/samples/debug/ppi_trace/                 @nordic-krch @anangl
+/samples/edge_impulse/                    @pdunaj
+/samples/esb/                             @lemrey
+/samples/event_manager/                   @pdunaj @MarekPieta
+/samples/mpsl/                            @joerchan @carlopaparo
+/samples/nfc/                             @grochu
+/samples/nrf_rpc/                         @doki-nordic @KAGA164
+/samples/nrf5340/empty_app_core/          @doki-nordic
+/samples/nrf9160/                         @rlubos @lemrey
+/samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
+/samples/spm/                             @lemrey @hakonfam @ioannisg
+/samples/openthread/                      @MarekPorwisz @lmaciejonczyk @rlubos
+/samples/profiler/                        @pdunaj @pizi-nordic
+/samples/peripheral/radio_test/           @kapi-no
+/samples/peripheral/lpuart/               @nordic-krch
+/samples/tfm/tfm_hello_world/             @oyvindronningstad
+/samples/zigbee/                          @maciekfabia @mariuszpos
+/samples/CMakeLists.txt                   @tejlmand
+/samples/nrf5340/netboot/                 @hakonfam
+/samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
+
+Dear NCS,
+We want to increase the transparency of the testing scope in the CI, starting with tests at sdk-nrf/samples (only downstream samples for now).
+Why:
+•	a relation between which platform will be tested for what sample is not clear for developers. Mutually exclusive filters are used during the process resulting in platforms not being tested.
+•	a reliable source of the testing scope is required for the documentation purpose and customer support.
+How the scope will be defined:
+•	The platform scope for on-commit CI tests will be defined at a sample level, set by an entry "integration_platforms" in sample.yaml (e.g. https://github.com/zephyrproject-rtos/zephyr/blob/master/samples/subsys/usb/dfu/sample.yaml)
+•	Having a platform in sample's "integration_platforms" list will guarantee that the sample will be built on this platform and won't be silently skipped
+•	A nightly CI plan will be building every sample/test for every nrf platform fulfilling conditions defined in test's/sample's yaml file 
+If you are a CODEOWNER of a sample (https://github.com/nrfconnect/sdk-nrf/blob/master/CODEOWNERS for /samples/), you need to do these 2 things:
+•	add "integration_platforms" list to every sample you maintain at https://github.com/nrfconnect/sdk-nrf/tree/master/samples
+•	probably you can copy platforms from "platform_allow" list (note a different format of these two list, all entries in integration_platforms has to start with "-" like in the above example).
+•	please consider removing "platform_allow". This list works only as a filter blocking testing on anything outside this list (will affect the nightly plan). If possible, replace it with platform’s features the sample depends on (like in the above example).
+Please provide the requested changes by the end of this month.
+This page Sample.yaml vs compatible boards will provide you with some more details about the process and its background.
+Similar approach will also be taken for /tests/ and /applications/ (basically for everything what is tested with Twister)
+
+If you have comments or questions, please state them at Sample.yaml vs compatible boards.
+Best regards,
