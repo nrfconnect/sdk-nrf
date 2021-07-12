@@ -47,6 +47,12 @@ struct modem_module_cell {
 	uint32_t cell_id;
 	/** Tracking area code. */
 	uint32_t tac;
+	/** Mobile Country Code. */
+	int mcc;
+	/** Mobile Network Code. */
+	int mnc;
+	/** Physical cell ID */
+	uint16_t phy_cell;
 };
 
 /** @brief PSM information. */

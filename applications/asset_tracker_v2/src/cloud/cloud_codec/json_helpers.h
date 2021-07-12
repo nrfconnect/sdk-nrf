@@ -33,6 +33,19 @@ void json_add_obj(cJSON *parent, const char *str, cJSON *item);
  */
 void json_add_obj_array(cJSON *parent, cJSON *item);
 
+/**
+ * @brief Add number to array object
+ *
+ * This API is expected to be called after data has been added to the child item. If this API
+ * fails to add the child item to the parent it will free the child item. Due to this its not
+ * guaranteed that subsequent accesses to the child item will succeed after this API call.
+ *
+ * @param[inout] parent	Pointer to a parent array object.
+ * @param[in]    number	Pointer to number to be added.
+ *
+ */
+int json_add_number_to_array(cJSON *parent, double number);
+
 int json_add_number(cJSON *parent, const char *str, double item);
 
 int json_add_bool(cJSON *parent, const char *str, int item);

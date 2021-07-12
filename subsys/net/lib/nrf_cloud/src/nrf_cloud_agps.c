@@ -21,24 +21,11 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_agps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 
+#include "nrf_cloud_codec.h"
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_agps_schema_v1.h"
 
-
-#define AGPS_JSON_MSG_TYPE_KEY		"messageType"
-#define AGPS_JSON_MSG_TYPE_VAL_DATA	"DATA"
-
-#define AGPS_JSON_DATA_KEY		"data"
-#define AGPS_JSON_MCC_KEY		"mcc"
-#define AGPS_JSON_MNC_KEY		"mnc"
-#define AGPS_JSON_AREA_CODE_KEY		"tac"
-#define AGPS_JSON_CELL_ID_KEY		"eci"
-#define AGPS_JSON_PHYCID_KEY		"phycid"
 #define AGPS_JSON_TYPES_KEY		"types"
-#define AGPS_JSON_CELL_LOC_KEY_DOREPLY	"doReply"
-
-#define AGPS_JSON_APPID_KEY		"appId"
-#define AGPS_JSON_APPID_VAL_AGPS	"AGPS"
 
 extern void agps_print(enum nrf_cloud_agps_type type, void *data);
 
@@ -47,9 +34,11 @@ static K_SEM_DEFINE(agps_injection_active, 1, 1);
 static int fd = -1;
 static bool agps_print_enabled;
 static const struct device *gps_dev;
-static bool json_initialized;
 static struct gps_agps_request processed;
 static atomic_t request_in_progress;
+#if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
+static bool json_initialized;
+#endif /* IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) */
 
 static enum gps_agps_type type_lookup_socket2gps[] = {
 	[NRF_GNSS_AGPS_UTC_PARAMETERS]	= GPS_AGPS_UTC_PARAMETERS,
@@ -70,32 +59,7 @@ void agps_print_enable(bool enable)
 	agps_print_enabled = enable;
 }
 
-static int get_modem_info(struct modem_param_info *const modem_info)
-{
-	__ASSERT_NO_MSG(modem_info != NULL);
-
-	int err = modem_info_init();
-
-	if (err) {
-		LOG_ERR("Could not initialize modem info module");
-		return err;
-	}
-
-	err = modem_info_params_init(modem_info);
-	if (err) {
-		LOG_ERR("Could not initialize modem info parameters");
-		return err;
-	}
-
-	err = modem_info_params_get(modem_info);
-	if (err) {
-		LOG_ERR("Could not obtain cell information");
-		return err;
-	}
-
-	return 0;
-}
-
+#if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
 static cJSON *json_create_req_obj(const char *const app_id,
 				   const char *const msg_type)
 {
@@ -110,37 +74,16 @@ static cJSON *json_create_req_obj(const char *const app_id,
 	cJSON *resp_obj = cJSON_CreateObject();
 
 	if (!cJSON_AddStringToObject(resp_obj,
-				     AGPS_JSON_APPID_KEY,
+				     NRF_CLOUD_JSON_APPID_KEY,
 				     app_id) ||
 	    !cJSON_AddStringToObject(resp_obj,
-				     AGPS_JSON_MSG_TYPE_KEY,
+				     NRF_CLOUD_JSON_MSG_TYPE_KEY,
 				     msg_type)) {
 		cJSON_Delete(resp_obj);
 		resp_obj = NULL;
 	}
 
 	return resp_obj;
-}
-
-static int json_format_data_obj(cJSON *const data_obj,
-	const struct modem_param_info *const modem_info)
-{
-	__ASSERT_NO_MSG(data_obj != NULL);
-	__ASSERT_NO_MSG(modem_info != NULL);
-
-	if (!cJSON_AddNumberToObject(data_obj, AGPS_JSON_MCC_KEY,
-		modem_info->network.mcc.value) ||
-	    !cJSON_AddNumberToObject(data_obj, AGPS_JSON_MNC_KEY,
-		modem_info->network.mnc.value) ||
-	    !cJSON_AddNumberToObject(data_obj, AGPS_JSON_AREA_CODE_KEY,
-		modem_info->network.area_code.value) ||
-	    !cJSON_AddNumberToObject(data_obj, AGPS_JSON_CELL_ID_KEY,
-		(uint32_t)modem_info->network.cellid_dec) ||
-	    !cJSON_AddNumberToObject(data_obj, AGPS_JSON_PHYCID_KEY, 0)) {
-		return -ENOMEM;
-	}
-
-	return 0;
 }
 
 static int json_add_types_array(cJSON *const obj, enum gps_agps_type *types,
@@ -170,21 +113,6 @@ static int json_add_types_array(cJSON *const obj, enum gps_agps_type *types,
 	}
 
 	return 0;
-}
-
-static int json_add_modem_info(cJSON *const data_obj)
-{
-	__ASSERT_NO_MSG(data_obj != NULL);
-
-	struct modem_param_info modem_info = {0};
-	int err;
-
-	err = get_modem_info(&modem_info);
-	if (err) {
-		return err;
-	}
-
-	return json_format_data_obj(data_obj, &modem_info);
 }
 
 static int json_send_to_cloud(cJSON *const agps_request)
@@ -218,6 +146,7 @@ static int json_send_to_cloud(cJSON *const agps_request)
 
 	return err;
 }
+#endif /* IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) */
 
 bool nrf_cloud_agps_request_in_progress(void)
 {
@@ -226,6 +155,7 @@ bool nrf_cloud_agps_request_in_progress(void)
 
 int nrf_cloud_agps_request(const struct gps_agps_request request)
 {
+#if IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)
 	int err;
 	enum gps_agps_type types[9];
 	size_t type_count = 0;
@@ -276,9 +206,9 @@ int nrf_cloud_agps_request(const struct gps_agps_request request)
 	}
 
 	/* Create request JSON containing a data object */
-	agps_req_obj = json_create_req_obj(AGPS_JSON_APPID_VAL_AGPS,
-					   AGPS_JSON_MSG_TYPE_VAL_DATA);
-	data_obj = cJSON_AddObjectToObject(agps_req_obj, AGPS_JSON_DATA_KEY);
+	agps_req_obj = json_create_req_obj(NRF_CLOUD_JSON_APPID_VAL_AGPS,
+					   NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
+	data_obj = cJSON_AddObjectToObject(agps_req_obj, NRF_CLOUD_JSON_DATA_KEY);
 
 	if (!agps_req_obj || !data_obj) {
 		err = -ENOMEM;
@@ -286,7 +216,7 @@ int nrf_cloud_agps_request(const struct gps_agps_request request)
 	}
 
 	/* Add modem info and A-GPS types to the data object */
-	err = json_add_modem_info(data_obj);
+	err = nrf_cloud_json_add_modem_info(data_obj);
 	if (err) {
 		LOG_ERR("Failed to add modem info to A-GPS request: %d", err);
 		goto cleanup;
@@ -306,6 +236,12 @@ cleanup:
 	cJSON_Delete(agps_req_obj);
 
 	return err;
+#else /* IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) */
+
+	LOG_ERR("CONFIG_NRF_CLOUD_MQTT must be enabled in order to use this API");
+
+	return -ENOTSUP;
+#endif
 }
 
 int nrf_cloud_agps_request_all(void)

@@ -65,7 +65,7 @@ static struct module_data self = {
 };
 
 /* Forward declarations. */
-static void send_cell_update(uint32_t cell_id, uint32_t tac);
+static void send_cell_update(struct lte_lc_cell *cell);
 static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info);
 static void send_psm_update(int tau, int active_time);
 static void send_edrx_update(float edrx, float ptw);
@@ -196,7 +196,7 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_CELL_UPDATE:
 		LOG_DBG("LTE cell changed: Cell ID: %d, Tracking area: %d",
 			evt->cell.id, evt->cell.tac);
-		send_cell_update(evt->cell.id, evt->cell.tac);
+		send_cell_update((struct lte_lc_cell *)&evt->cell);
 		break;
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS:
 		LOG_DBG("Neighbor cell measurements received");
@@ -229,13 +229,16 @@ static void modem_rsrp_handler(char rsrp_value)
 }
 
 /* Static module functions. */
-static void send_cell_update(uint32_t cell_id, uint32_t tac)
+static void send_cell_update(struct lte_lc_cell *cell)
 {
 	struct modem_module_event *evt = new_modem_module_event();
 
 	evt->type = MODEM_EVT_LTE_CELL_UPDATE;
-	evt->data.cell.cell_id = cell_id;
-	evt->data.cell.tac = tac;
+	evt->data.cell.cell_id = cell->id;
+	evt->data.cell.tac = cell->tac;
+	evt->data.cell.mcc = cell->mcc;
+	evt->data.cell.mnc = cell->mnc;
+	evt->data.cell.phy_cell = cell->phys_cell_id;
 
 	EVENT_SUBMIT(evt);
 }
