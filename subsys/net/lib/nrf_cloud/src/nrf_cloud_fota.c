@@ -7,6 +7,7 @@
 #include "nrf_cloud_fota.h"
 #include "nrf_cloud_mem.h"
 #include "nrf_cloud_transport.h"
+#include "nrf_cloud_codec.h"
 
 #include <zephyr.h>
 #include <errno.h>
@@ -721,22 +722,6 @@ static bool add_number_to_array(cJSON *const array, const int number)
 		cJSON_AddItemToArray(array, item);
 	}
 	return item;
-}
-
-static int get_string_from_array(const cJSON *const array, const int index,
-				  char **string_out)
-{
-	__ASSERT_NO_MSG(string_out != NULL);
-
-	cJSON *item = cJSON_GetArrayItem(array, index);
-
-	if (!cJSON_IsString(item)) {
-		return -EINVAL;
-	}
-
-	*string_out = item->valuestring;
-
-	return 0;
 }
 
 static int get_number_from_array(const cJSON *const array, const int index,
