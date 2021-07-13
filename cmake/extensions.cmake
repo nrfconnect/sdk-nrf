@@ -141,6 +141,9 @@ endfunction()
 # This function extends the zephyr_file(CONF_FILES <arg>) function to support
 # switching BOARD for child images.
 #
+# It also supports lookup of static partition manager files for boards based on
+# the board name, revision, and the current build type.
+#
 # This function currently support the following <modes>.
 #
 # BOARD <board>: Board name to use when searching for board specific Kconfig
@@ -163,10 +166,14 @@ endfunction()
 #
 #                    DTS <list>:   List to populate with DTS overlay files
 #                    KCONF <list>: List to populate with Kconfig fragment files
+#                    PM <list>:    List to populate with board / build / domain specific
+#                                  static partition manager files
 #                    BUILD <type>: Build type to include for search.
 #                                  For example:
 #                                  BUILD debug, will look for <board>_debug.conf
 #                                  and <board>_debug.overlay, instead of <board>.conf
+#                    DOMAIN <domain>: Domain to use. This argument is only effective
+#                                     for partition manager configuration files.
 #
 function(ncs_file)
   set(file_options CONF_FILES)
@@ -175,24 +182,29 @@ function(ncs_file)
 Please provide one of following: CONF_FILES")
   endif()
 
-  set(single_args CONF_FILES)
-  cmake_parse_arguments(FILE "" "${single_args}" "" ${ARGN})
-  cmake_parse_arguments(ZEPHYR_FILE "" "KCONF;DTS;BUILD" "" ${ARGN})
+  set(single_args CONF_FILES PM DOMAIN)
+  set(zephyr_conf_single_args BOARD BOARD_REVISION BUILD DTS KCONF)
+
+  cmake_parse_arguments(PREPROCESS_ARGS "" "${single_args};${zephyr_conf_single_args}" "" ${ARGN})
+  # Remove any argument that is missing value to ensure proper behavior in situations like:
+  # ncs_file(CONF_FILES <path> PM <list> DOMAIN BUILD <type>)
+  # where value of DOMAIN could wrongly become BUILD which is another keyword.
+  if(DEFINED PREPROCESS_ARGS_KEYWORDS_MISSING_VALUES)
+    list(REMOVE_ITEM ARGN ${PREPROCESS_ARGS_KEYWORDS_MISSING_VALUES})
+  endif()
+
+  cmake_parse_arguments(NCS_FILE "" "${single_args}" "" ${ARGN})
+  cmake_parse_arguments(ZEPHYR_FILE "" "${zephyr_conf_single_args}" "" ${ARGN})
 
   if(ZEPHYR_FILE_KCONF)
-    if(ZEPHYR_FILE_BUILD AND EXISTS ${FILE_CONF_FILES}/prj_${ZEPHYR_FILE_BUILD}.conf)
-      set(${ZEPHYR_FILE_KCONF} ${FILE_CONF_FILES}/prj_${ZEPHYR_FILE_BUILD}.conf)
-    elseif(NOT ZEPHYR_FILE_BUILD AND EXISTS ${FILE_CONF_FILES}/prj.conf)
-      set(${ZEPHYR_FILE_KCONF} ${FILE_CONF_FILES}/prj.conf)
+    if(ZEPHYR_FILE_BUILD AND EXISTS ${NCS_FILE_CONF_FILES}/prj_${ZEPHYR_FILE_BUILD}.conf)
+      set(${ZEPHYR_FILE_KCONF} ${NCS_FILE_CONF_FILES}/prj_${ZEPHYR_FILE_BUILD}.conf)
+    elseif(NOT ZEPHYR_FILE_BUILD AND EXISTS ${NCS_FILE_CONF_FILES}/prj.conf)
+      set(${ZEPHYR_FILE_KCONF} ${NCS_FILE_CONF_FILES}/prj.conf)
     endif()
   endif()
 
-  zephyr_file(CONF_FILES ${FILE_CONF_FILES}/boards ${FILE_UNPARSED_ARGUMENTS})
-  if(ZEPHYR_FILE_DTS)
-    zephyr_file(CONF_FILES ${FILE_CONF_FILES}
-                ${ZEPHYR_FILE_UNPARSED_ARGUMENTS}
-                DTS ${ZEPHYR_FILE_DTS})
-  endif()
+  zephyr_file(CONF_FILES ${NCS_FILE_CONF_FILES}/boards ${NCS_FILE_UNPARSED_ARGUMENTS})
 
   if(ZEPHYR_FILE_KCONF)
     set(${ZEPHYR_FILE_KCONF} ${${ZEPHYR_FILE_KCONF}} PARENT_SCOPE)
@@ -201,6 +213,45 @@ Please provide one of following: CONF_FILES")
   if(ZEPHYR_FILE_DTS)
     set(${ZEPHYR_FILE_DTS} ${${ZEPHYR_FILE_DTS}} PARENT_SCOPE)
   endif()
+
+  if(NOT DEFINED ZEPHYR_FILE_BOARD)
+    # Defaulting to system wide settings when BOARD is not given as argument
+    set(ZEPHYR_FILE_BOARD ${BOARD})
+    if(DEFINED BOARD_REVISION)
+      set(ZEPHYR_FILE_BOARD_REVISION ${BOARD_REVISION})
+    endif()
+  endif()
+
+  if(NCS_FILE_PM)
+    zephyr_build_string(filename
+                        BOARD ${ZEPHYR_FILE_BOARD}
+                        BOARD_REVISION ${ZEPHYR_FILE_BOARD_REVISION}
+                        BUILD ${ZEPHYR_FILE_BUILD}
+    )
+    set(filename_list ${filename})
+
+    zephyr_build_string(filename
+                        BOARD ${ZEPHYR_FILE_BOARD}
+                        BUILD ${ZEPHYR_FILE_BUILD}
+    )
+    list(APPEND filename_list ${filename})
+    list(REMOVE_DUPLICATES filename_list)
+
+    foreach(filename ${filename_list})
+      if(DEFINED NCS_FILE_DOMAIN)
+        if(EXISTS ${NCS_FILE_CONF_FILES}/pm_static_${filename}_${NCS_FILE_DOMAIN}.yml)
+          set(${NCS_FILE_PM} ${NCS_FILE_CONF_FILES}/pm_static_${filename}_${NCS_FILE_DOMAIN}.yml PARENT_SCOPE)
+          break()
+        endif()
+      endif()
+
+      if(EXISTS ${NCS_FILE_CONF_FILES}/pm_static_${filename}.yml)
+        set(${NCS_FILE_PM} ${NCS_FILE_CONF_FILES}/pm_static_${filename}.yml PARENT_SCOPE)
+        break()
+      endif()
+    endforeach()
+  endif()
+
 endfunction()
 
 #
