@@ -87,6 +87,8 @@ config PELION_QUICK_SESSION_RESUME
 	select PELION_PAL_SUPPORT_SSL_CONNECTION_ID
 	select MBEDTLS_SSL_CONTEXT_SERIALIZATION
 	select MBEDTLS_SSL_DTLS_CONNECTION_ID
+	depends on CC3XX_MUTEX_LOCK
+	default y
 	help
 	  This option allows to enable quick session resume functionality by avoiding DTLS
 	  handshake when performing pause, resume for pelion client.
