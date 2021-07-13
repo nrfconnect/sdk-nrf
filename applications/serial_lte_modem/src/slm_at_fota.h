@@ -24,7 +24,8 @@ enum fota_stages {
 enum fota_status {
 	FOTA_STATUS_OK,
 	FOTA_STATUS_ERROR,
-	FOTA_STATUS_CANCELLED
+	FOTA_STATUS_CANCELLED,
+	FOTA_STATUS_REVERTED
 };
 
 /**

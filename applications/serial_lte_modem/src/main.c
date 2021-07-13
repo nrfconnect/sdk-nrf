@@ -39,7 +39,6 @@ static bool full_idle_mode;
 struct k_work_q slm_work_q;
 
 /* global variable defined in different files */
-extern uint8_t fota_type;
 extern uint8_t fota_stage;
 extern uint8_t fota_status;
 extern int32_t fota_info;
@@ -60,8 +59,7 @@ static void exit_idle(struct k_work *work)
 	int err;
 
 	LOG_INF("Exit idle, full mode: %d", full_idle_mode);
-	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN,
-				     GPIO_INT_DISABLE);
+	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN, GPIO_INT_DISABLE);
 	gpio_remove_callback(gpio_dev, &gpio_cb);
 	/* Do the same as nrf_gpio_cfg_default() */
 	gpio_pin_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN, GPIO_INPUT);
@@ -81,8 +79,7 @@ static void exit_idle(struct k_work *work)
 	}
 }
 
-static void gpio_callback(const struct device *dev,
-		     struct gpio_callback *gpio_cb, uint32_t pins)
+static void gpio_callback(const struct device *dev, struct gpio_callback *gpio_cb, uint32_t pins)
 {
 	k_work_submit_to_queue(&slm_work_q, &exit_idle_work);
 }
@@ -96,21 +93,18 @@ void enter_idle(bool full_idle)
 		LOG_ERR("GPIO_0 bind error");
 		return;
 	}
-	err = gpio_pin_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN,
-				GPIO_INPUT | GPIO_PULL_UP);
+	err = gpio_pin_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN, GPIO_INPUT | GPIO_PULL_UP);
 	if (err) {
 		LOG_ERR("GPIO_0 config error: %d", err);
 		return;
 	}
-	gpio_init_callback(&gpio_cb, gpio_callback,
-			BIT(CONFIG_SLM_INTERFACE_PIN));
+	gpio_init_callback(&gpio_cb, gpio_callback, BIT(CONFIG_SLM_INTERFACE_PIN));
 	err = gpio_add_callback(gpio_dev, &gpio_cb);
 	if (err) {
 		LOG_ERR("GPIO_0 add callback error: %d", err);
 		return;
 	}
-	err = gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN,
-					   GPIO_INT_LEVEL_LOW);
+	err = gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN, GPIO_INT_LEVEL_LOW);
 	if (err) {
 		LOG_ERR("GPIO_0 enable callback error: %d", err);
 		return;
@@ -124,15 +118,13 @@ void enter_sleep(void)
 	/*
 	 * Due to errata 4, Always configure PIN_CNF[n].INPUT before PIN_CNF[n].SENSE.
 	 */
-	nrf_gpio_cfg_input(CONFIG_SLM_INTERFACE_PIN,
-		NRF_GPIO_PIN_PULLUP);
-	nrf_gpio_cfg_sense_set(CONFIG_SLM_INTERFACE_PIN,
-		NRF_GPIO_PIN_SENSE_LOW);
+	nrf_gpio_cfg_input(CONFIG_SLM_INTERFACE_PIN, NRF_GPIO_PIN_PULLUP);
+	nrf_gpio_cfg_sense_set(CONFIG_SLM_INTERFACE_PIN, NRF_GPIO_PIN_SENSE_LOW);
 
 	nrf_regulators_system_off(NRF_REGULATORS_NS);
 }
 
-void handle_nrf_modem_lib_init_ret(void)
+static void handle_nrf_modem_lib_init_ret(void)
 {
 	int ret = nrf_modem_lib_get_init_ret();
 
@@ -174,6 +166,46 @@ void handle_nrf_modem_lib_init_ret(void)
 	sys_reboot(SYS_REBOOT_COLD);
 }
 
+void handle_mcuboot_swap_ret(void)
+{
+	int err;
+	int type = mcuboot_swap_type();
+
+	fota_stage = FOTA_STAGE_COMPLETE;
+	switch (type) {
+	/** Swap failed because image to be run is not valid */
+	case BOOT_SWAP_TYPE_FAIL:
+		LOG_INF("BOOT_SWAP_TYPE_FAIL");
+		fota_status = FOTA_STATUS_ERROR;
+		fota_info = -EBADF;
+		break;
+	/** Swap to slot 1. Absent a confirm command, revert back on next boot. */
+	case BOOT_SWAP_TYPE_TEST:
+		LOG_INF("BOOT_SWAP_TYPE_TEST");
+		err = boot_write_img_confirmed();
+		if (err) {
+			fota_status = FOTA_STATUS_ERROR;
+			fota_info = err;
+		} else {
+			fota_status = FOTA_STATUS_OK;
+			fota_info = 0;
+		} break;
+	/** Swap back to alternate slot. A confirm changes this state to NONE. */
+	case BOOT_SWAP_TYPE_REVERT:
+		LOG_INF("BOOT_SWAP_TYPE_REVERT");
+		boot_write_img_confirmed();
+		fota_status = FOTA_STATUS_REVERTED;
+		fota_info = 0;
+		break;
+	/** Attempt to boot the contents of slot 0. */
+	case BOOT_SWAP_TYPE_NONE:
+	/** Swap to slot 1, and permanently switch to booting its contents. */
+	case BOOT_SWAP_TYPE_PERM:
+	default:
+		break;
+	}
+}
+
 void start_execute(void)
 {
 	int err;
@@ -203,23 +235,9 @@ void start_execute(void)
 	}
 
 	/* Post-FOTA handling */
-	if (fota_type != DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
+	if (fota_stage != FOTA_STAGE_INIT) {
 		handle_nrf_modem_lib_init_ret();
-	} else {
-		/* All initializations were successful mark image as working so that we
-		 * will not revert upon reboot.
-		 */
-		err = boot_write_img_confirmed();
-		if (fota_stage != FOTA_STAGE_INIT) {
-			if (err) {
-				fota_status = FOTA_STATUS_ERROR;
-				fota_info = err;
-			} else {
-				fota_stage = FOTA_STAGE_COMPLETE;
-				fota_status = FOTA_STATUS_OK;
-				fota_info = 0;
-			}
-		}
+		handle_mcuboot_swap_ret();
 	}
 
 	err = slm_at_host_init();
