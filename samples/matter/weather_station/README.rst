@@ -11,6 +11,9 @@ This weather station sample demonstrates the usage of the :ref:`Matter <ug_matte
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
 You can use this sample as a reference for creating your own application.
 
+.. note::
+    |weather_station_wip_note|
+
 Requirements
 ************
 
@@ -25,7 +28,7 @@ If you own an nRF5340 DK that has an on-board J-Link programmer, you can also us
 
 To commission the weather station device and :ref:`control it remotely <matter_weather_station_sample_remote_control>` through a Thread network, you also need the following:
 
-* A Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
+* A Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
 
 .. note::
     |matter_gn_required_note|
@@ -35,10 +38,9 @@ Overview
 
 The sample uses single button for controlling the device state.
 The weather station device is periodically performing temperature, air pressure, and relative humidity measurements.
-You can read the results using the Matter controller.
-
-The Matter controller communicates with the weather station device over the Matter protocol using Zigbee Cluster Library (ZCL).
-The library describes data measurements within the proper clusters.
+The measurement results are stored in the device memory and can be read using the Matter controller.
+The controller communicates with the weather station device over the Matter protocol using Zigbee Cluster Library (ZCL).
+The library describes data measurements within the proper clusters that correspond to the measurement type.
 
 The sample can be tested remotely over the Thread protocol, which requires additional Matter controller device that can be configured either on PC or mobile (for remote testing in a network).
 You can start testing after :ref:`building and running the sample <matter_weather_station_sample_remote_control>`.
@@ -48,12 +50,47 @@ You can start testing after :ref:`building and running the sample <matter_weathe
 Remote testing in a network
 ===========================
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_remote_testing_start
-    :end-before: matter_door_lock_sample_remote_testing_end
+By default, the Matter accessory device has Thread disabled, and it must be paired with the Matter controller over Bluetooth LE to get configuration from it if you want to use the device within a Thread network.
+To do this, the device must be made discoverable over Bluetooth LE that starts automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
+If the Bluetooth LE advertising times out, you can re-enable it manually using **Button 1**.
+Additionally, the controller must get the commissioning information from the Matter accessory device and provision the device into the network.
+For details, see the `Commissioning the device`_ section.
+
+Configuration
+*************
+
+|config|
+
+.. _matter_weather_station_sample_selecting_build_configuration:
+
+Selecting build configuration
+=============================
+
+This sample supports the following build types:
+
+* Debug - This build type enables additional features for verifying the application behavior, such as logs or command-line shell.
+* Release - This build type enables only the necessary application functionalities to optimize its performance.
+
+You can find configuration options for both build types in the corresponding :file:`prj_debug.conf` and :file:`prj_release.conf` files.
+By default, the sample selects the release configuration.
+If you want to build the target with the debug configuration, run the following command when building the sample:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b thingy53_nrf5340_cpuapp -- -DCMAKE_BUILD_TYPE=debug
 
 User interface
 **************
+
+LED 1:
+    Shows the overall state of the device and its connectivity.
+    The following states are possible:
+
+    * Green color short flash on (50 ms on/950 ms off) - The device is in the unprovisioned (unpaired) state and is not advertising over Bluetooth LE.
+    * Blue color short flash on (50 ms on/950 ms off) - The device is in the unprovisioned (unpaired) state and is advertising over Bluetooth LE.
+    * Blue color rapid even flashing (100 ms on/100 ms off) - The device is in the unprovisioned state and a commissioning application is connected through Bluetooth LE.
+    * Purple color short flash on (50 ms on/950 ms off) - The device is fully provisioned and has Thread enabled.
 
 Button 1:
     This button is used during the :ref:`commissioning procedure <matter_weather_station_sample_remote_control_commissioning>`.
@@ -65,9 +102,11 @@ Button 1:
 
 Serial Wire Debug port:
     Used for getting logs from the device or communicating with it through the command-line interface.
+    It is enabled only for the debug configuration of a sample.
+    See the :ref:`build configuration <matter_weather_station_sample_selecting_build_configuration>` to learn how to select debug configuration.
 
 NFC port with antenna attached:
-    Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_weather_station_sample_remote_control_commissioning>`.
+    Used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_weather_station_sample_remote_control_commissioning>`.
 
 Building and running
 ********************
@@ -80,7 +119,7 @@ Testing
 =======
 
 .. note::
-    This sample is still in development and offers no testing scenarios at the moment.
+    |weather_station_wip_note|
 
 .. _matter_weather_station_sample_remote_control:
 
@@ -99,8 +138,12 @@ Commissioning the device
     :start-after: matter_door_lock_sample_commissioning_start
     :end-before: matter_door_lock_sample_commissioning_end
 
-To start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
-The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, available through the RTT interface, and can be shared using an NFC tag.
+Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE that starts automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
+If the Bluetooth LE advertising times out, you can re-enable it manually using **Button 1**.
+
+To start commissioning, the controller must get the commissioning information from the Matter accessory device.
+The data payload, which includes the device discriminator and setup PIN code, is encoded and shared using an NFC tag.
+When using the debug configuration, you can also get this type of information from the RTT interface logs.
 
 Dependencies
 ************
@@ -119,3 +162,5 @@ The sample depends on the following Zephyr libraries:
 
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:kernel_api`
+
+.. |weather_station_wip_note| replace:: This sample is still in development and offers no testing scenarios at the moment.

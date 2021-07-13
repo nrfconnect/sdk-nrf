@@ -570,165 +570,180 @@
 #define ZAP_ATTRIBUTE_MASK(mask) ATTRIBUTE_MASK_##mask
 // This is an array of EmberAfAttributeMetadata structures.
 #define GENERATED_ATTRIBUTE_COUNT 97
-#define GENERATED_ATTRIBUTES                                                                                                    \
-	{                                                                                                                       \
-		/* Endpoint: 0, Cluster: Basic (server) */                                                                      \
-		{ 0x0000, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON), ZAP_EMPTY_DEFAULT() }, /* InteractionModelVersion \
-												      */                        \
-			{ 0x0001, ZAP_TYPE(CHAR_STRING), 32, ZAP_ATTRIBUTE_MASK(SINGLETON),                                     \
-			  ZAP_LONG_DEFAULTS_INDEX(0) }, /* VendorName */                                                        \
-			{ 0x0002, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON), ZAP_EMPTY_DEFAULT() }, /* VendorID        \
-													      */                \
-			{ 0x0003, ZAP_TYPE(CHAR_STRING), 32, ZAP_ATTRIBUTE_MASK(SINGLETON),                                     \
-			  ZAP_LONG_DEFAULTS_INDEX(32) }, /* ProductName */                                                      \
-			{ 0x0004, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON), ZAP_EMPTY_DEFAULT() }, /* ProductID       \
-													      */                \
-			{ 0x0005, ZAP_TYPE(CHAR_STRING), 32,                                                                    \
-			  ZAP_ATTRIBUTE_MASK(SINGLETON) | ZAP_ATTRIBUTE_MASK(WRITABLE),                                         \
-			  ZAP_LONG_DEFAULTS_INDEX(64) }, /* UserLabel */                                                        \
-			{ 0x0006, ZAP_TYPE(CHAR_STRING), 16,                                                                    \
-			  ZAP_ATTRIBUTE_MASK(SINGLETON) | ZAP_ATTRIBUTE_MASK(WRITABLE),                                         \
-			  ZAP_LONG_DEFAULTS_INDEX(96) }, /* Location */                                                         \
-			{ 0x0007, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON),                                           \
-			  ZAP_SIMPLE_DEFAULT(0x00) }, /* HardwareVersion */                                                     \
-			{ 0x0008, ZAP_TYPE(CHAR_STRING), 64, ZAP_ATTRIBUTE_MASK(SINGLETON),                                     \
-			  ZAP_LONG_DEFAULTS_INDEX(112) }, /* HardwareVersionString */                                           \
-			{ 0x0009, ZAP_TYPE(INT32U), 4, ZAP_ATTRIBUTE_MASK(SINGLETON),                                           \
-			  ZAP_LONG_DEFAULTS_INDEX(176) }, /* SoftwareVersion */                                                 \
-			{ 0x000A, ZAP_TYPE(CHAR_STRING), 64, ZAP_ATTRIBUTE_MASK(SINGLETON),                                     \
-			  ZAP_LONG_DEFAULTS_INDEX(180) }, /* SoftwareVersionString */                                           \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON), ZAP_SIMPLE_DEFAULT(3) }, /* cluster       \
-														  revision      \
-														*/              \
-                                                                                                                                \
-			/* Endpoint: 0, Cluster: General Commissioning (server) */                                              \
-			{ 0x0000, ZAP_TYPE(OCTET_STRING), 8, 0, ZAP_LONG_DEFAULTS_INDEX(244) }, /* FabricId */                  \
-			{ 0x0001, ZAP_TYPE(INT64U), 8, ZAP_ATTRIBUTE_MASK(WRITABLE),                                            \
-			  ZAP_LONG_DEFAULTS_INDEX(252) }, /* Breadcrumb */                                                      \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */                  \
-                                                                                                                                \
-			/* Endpoint: 0, Cluster: Network Commissioning (server) */                                              \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */                  \
-                                                                                                                                \
-			/* Endpoint: 0, Cluster: General Diagnostics (server) */                                                \
-			{ 0x0000, ZAP_TYPE(ARRAY), 254, 0, ZAP_LONG_DEFAULTS_INDEX(260) }, /* NetworkInterfaces */              \
-			{ 0x0001, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* RebootCount */                       \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */                  \
-                                                                                                                                \
-			/* Endpoint: 0, Cluster: Software Diagnostics (server) */                                               \
-			{ 0x0003, ZAP_TYPE(INT64U), 8, 0, ZAP_LONG_DEFAULTS_INDEX(514) }, /* CurrentHeapHighWatermark           \
-											   */                                   \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */                  \
-                                                                                                                                \
-			/* Endpoint: 0, Cluster: Thread Network Diagnostics (server) */                                         \
-			{ 0x0000, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* channel */                                   \
-			{ 0x0001, ZAP_TYPE(ENUM8), 1, 0, ZAP_EMPTY_DEFAULT() }, /* RoutingRole */                               \
-			{ 0x0002, ZAP_TYPE(OCTET_STRING), 16, 0, ZAP_LONG_DEFAULTS_INDEX(522) }, /* NetworkName */              \
-			{ 0x0003, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* PanId */                             \
-			{ 0x0004, ZAP_TYPE(INT64U), 8, 0, ZAP_LONG_DEFAULTS_INDEX(538) }, /* ExtendedPanId */                   \
-			{ 0x0005, ZAP_TYPE(OCTET_STRING), 17, 0, ZAP_LONG_DEFAULTS_INDEX(546) }, /* MeshLocalPrefix */          \
-			{ 0x0006, ZAP_TYPE(INT64U), 8, 0, ZAP_LONG_DEFAULTS_INDEX(563) }, /* OverrunCount */                    \
-			{ 0x0007, ZAP_TYPE(ARRAY), 254, 0, ZAP_LONG_DEFAULTS_INDEX(571) }, /* NeighborTableList */              \
-			{ 0x0008, ZAP_TYPE(ARRAY), 254, 0, ZAP_LONG_DEFAULTS_INDEX(825) }, /* RouteTableList */                 \
-			{ 0x0009, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1079) }, /* PartitionId */                    \
-			{ 0x000A, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* weighting */                                 \
-			{ 0x000B, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* DataVersion */                               \
-			{ 0x000C, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* StableDataVersion */                         \
-			{ 0x000D, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* LeaderRouterId */                            \
-			{ 0x000E, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* DetachedRoleCount */                 \
-			{ 0x000F, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* ChildRoleCount */                    \
-			{ 0x0010, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* RouterRoleCount */                   \
-			{ 0x0011, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* LeaderRoleCount */                   \
-			{ 0x0012, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* AttachAttemptCount */                \
-			{ 0x0013, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* PartitionIdChangeCount */            \
-			{ 0x0014, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* BetterPartitionAttachAttemptCount    \
-											 */                                     \
-			{ 0x0015, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* ParentChangeCount */                 \
-			{ 0x0016, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1083) }, /* TxTotalCount */                   \
-			{ 0x0017, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1087) }, /* TxUnicastCount */                 \
-			{ 0x0018, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1091) }, /* TxBroadcastCount */               \
-			{ 0x0019, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1095) }, /* TxAckRequestedCount */            \
-			{ 0x001A, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1099) }, /* TxAckedCount */                   \
-			{ 0x001B, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1103) }, /* TxNoAckRequestedCount */          \
-			{ 0x001C, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1107) }, /* TxDataCount */                    \
-			{ 0x001D, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1111) }, /* TxDataPollCount */                \
-			{ 0x001E, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1115) }, /* TxBeaconCount */                  \
-			{ 0x001F, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1119) }, /* TxBeaconRequestCount */           \
-			{ 0x0020, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1123) }, /* TxOtherCount */                   \
-			{ 0x0021, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1127) }, /* TxRetryCount */                   \
-			{ 0x0022, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1131) }, /* TxDirectMaxRetryExpiryCount       \
-											    */                                  \
-			{ 0x0023, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1135) }, /* TxIndirectMaxRetryExpiryCount     \
-											    */                                  \
-			{ 0x0024, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1139) }, /* TxErrCcaCount */                  \
-			{ 0x0025, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1143) }, /* TxErrAbortCount */                \
-			{ 0x0026, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1147) }, /* TxErrBusyChannelCount */          \
-			{ 0x0027, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1151) }, /* RxTotalCount */                   \
-			{ 0x0028, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1155) }, /* RxUnicastCount */                 \
-			{ 0x0029, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1159) }, /* RxBroadcastCount */               \
-			{ 0x002A, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1163) }, /* RxDataCount */                    \
-			{ 0x002B, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1167) }, /* RxDataPollCount */                \
-			{ 0x002C, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1171) }, /* RxBeaconCount */                  \
-			{ 0x002D, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1175) }, /* RxBeaconRequestCount */           \
-			{ 0x002E, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1179) }, /* RxOtherCount */                   \
-			{ 0x002F, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1183) }, /* RxAddressFilteredCount            \
-											    */                                  \
-			{ 0x0030, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1187) }, /* RxDestAddrFilteredCount           \
-											    */                                  \
-			{ 0x0031, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1191) }, /* RxDuplicatedCount */              \
-			{ 0x0032, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1195) }, /* RxErrNoFrameCount */              \
-			{ 0x0033, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1199) }, /* RxErrUnknownNeighborCount         \
-											    */                                  \
-			{ 0x0034, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1203) }, /* RxErrInvalidSrcAddrCount          \
-											    */                                  \
-			{ 0x0035, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1207) }, /* RxErrSecCount */                  \
-			{ 0x0036, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1211) }, /* RxErrFcsCount */                  \
-			{ 0x0037, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1215) }, /* RxErrOtherCount */                \
-			{ 0x003B, ZAP_TYPE(ARRAY), 1, 0, ZAP_EMPTY_DEFAULT() }, /* SecurityPolicy */                            \
-			{ 0x003C, ZAP_TYPE(INT8U), 1, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* ChannelMask */                        \
-			{ 0x003D, ZAP_TYPE(ARRAY), 1, 0, ZAP_EMPTY_DEFAULT() }, /* OperationalDatasetComponents */              \
-			{ 0x003E, ZAP_TYPE(ARRAY), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1219) }, /* ActiveNetworkFaultsList            \
-											   */                                   \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */                  \
-                                                                                                                                \
-			/* Endpoint: 0, Cluster: Operational Credentials (server) */                                            \
-			{ 0x0001, ZAP_TYPE(ARRAY), 254, 0, ZAP_LONG_DEFAULTS_INDEX(1223) }, /* fabrics list */                  \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */                  \
-                                                                                                                                \
-			/* Endpoint: 0, Cluster: Trusted Root Certificates (server) */                                          \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */                  \
-                                                                                                                                \
-			/* Endpoint: 1, Cluster: Temperature Measurement (server) */                                            \
-			{ 0x0000, ZAP_TYPE(INT16S), 2, 0, ZAP_EMPTY_DEFAULT() }, /* measured value */                           \
-			{ 0x0001, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(-4000) }, /* min measured value */                 \
-			{ 0x0002, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(8500) }, /* max measured value */                  \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */                  \
-                                                                                                                                \
-			/* Endpoint: 2, Cluster: Relative Humidity Measurement (server) */                                      \
-			{ 0x0000, ZAP_TYPE(INT16U), 2, 0, ZAP_EMPTY_DEFAULT() }, /* measured value */                           \
-			{ 0x0001, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0) }, /* min measured value */                     \
-			{ 0x0002, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(10000) }, /* max measured value */                 \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(2) }, /* cluster revision */                       \
-                                                                                                                                \
-			/* Endpoint: 3, Cluster: Pressure Measurement (server) */                                               \
-			{ 0x0000, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* measured value */                    \
-			{ 0x0001, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(300) }, /* min measured value */                   \
-			{ 0x0002, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(1100) }, /* max measured value */                  \
-			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(2) }, /* cluster revision */                       \
+#define GENERATED_ATTRIBUTES                                                                                           \
+	{                                                                                                              \
+		/* Endpoint: 0, Cluster: Basic (server) */                                                             \
+		{ 0x0000, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON),                                          \
+		  ZAP_EMPTY_DEFAULT() }, /* InteractionModelVersion                                                    \
+					  */                                                                           \
+			{ 0x0001, ZAP_TYPE(CHAR_STRING), 32, ZAP_ATTRIBUTE_MASK(SINGLETON),                            \
+			  ZAP_LONG_DEFAULTS_INDEX(0) }, /* VendorName */                                               \
+			{ 0x0002, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON),                                  \
+			  ZAP_EMPTY_DEFAULT() }, /* VendorID                                                           \
+						  */                                                                   \
+			{ 0x0003, ZAP_TYPE(CHAR_STRING), 32, ZAP_ATTRIBUTE_MASK(SINGLETON),                            \
+			  ZAP_LONG_DEFAULTS_INDEX(32) }, /* ProductName */                                             \
+			{ 0x0004, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON),                                  \
+			  ZAP_EMPTY_DEFAULT() }, /* ProductID                                                          \
+						  */                                                                   \
+			{ 0x0005, ZAP_TYPE(CHAR_STRING), 32,                                                           \
+			  ZAP_ATTRIBUTE_MASK(SINGLETON) | ZAP_ATTRIBUTE_MASK(WRITABLE),                                \
+			  ZAP_LONG_DEFAULTS_INDEX(64) }, /* UserLabel */                                               \
+			{ 0x0006, ZAP_TYPE(CHAR_STRING), 16,                                                           \
+			  ZAP_ATTRIBUTE_MASK(SINGLETON) | ZAP_ATTRIBUTE_MASK(WRITABLE),                                \
+			  ZAP_LONG_DEFAULTS_INDEX(96) }, /* Location */                                                \
+			{ 0x0007, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON),                                  \
+			  ZAP_SIMPLE_DEFAULT(0x00) }, /* HardwareVersion */                                            \
+			{ 0x0008, ZAP_TYPE(CHAR_STRING), 64, ZAP_ATTRIBUTE_MASK(SINGLETON),                            \
+			  ZAP_LONG_DEFAULTS_INDEX(112) }, /* HardwareVersionString */                                  \
+			{ 0x0009, ZAP_TYPE(INT32U), 4, ZAP_ATTRIBUTE_MASK(SINGLETON),                                  \
+			  ZAP_LONG_DEFAULTS_INDEX(176) }, /* SoftwareVersion */                                        \
+			{ 0x000A, ZAP_TYPE(CHAR_STRING), 64, ZAP_ATTRIBUTE_MASK(SINGLETON),                            \
+			  ZAP_LONG_DEFAULTS_INDEX(180) }, /* SoftwareVersionString */                                  \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON),                                  \
+			  ZAP_SIMPLE_DEFAULT(3) }, /* cluster                                                          \
+						      revision                                                         \
+						    */                                                                 \
+                                                                                                                       \
+			/* Endpoint: 0, Cluster: General Commissioning (server) */                                     \
+			{ 0x0000, ZAP_TYPE(OCTET_STRING), 8, 0, ZAP_LONG_DEFAULTS_INDEX(244) }, /* FabricId */         \
+			{ 0x0001, ZAP_TYPE(INT64U), 8, ZAP_ATTRIBUTE_MASK(WRITABLE),                                   \
+			  ZAP_LONG_DEFAULTS_INDEX(252) }, /* Breadcrumb */                                             \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */         \
+                                                                                                                       \
+			/* Endpoint: 0, Cluster: Network Commissioning (server) */                                     \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */         \
+                                                                                                                       \
+			/* Endpoint: 0, Cluster: General Diagnostics (server) */                                       \
+			{ 0x0000, ZAP_TYPE(ARRAY), 254, 0, ZAP_LONG_DEFAULTS_INDEX(260) }, /* NetworkInterfaces */     \
+			{ 0x0001, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* RebootCount */              \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */         \
+                                                                                                                       \
+			/* Endpoint: 0, Cluster: Software Diagnostics (server) */                                      \
+			{ 0x0003, ZAP_TYPE(INT64U), 8, 0, ZAP_LONG_DEFAULTS_INDEX(514) }, /* CurrentHeapHighWatermark  \
+											   */                          \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */         \
+                                                                                                                       \
+			/* Endpoint: 0, Cluster: Thread Network Diagnostics (server) */                                \
+			{ 0x0000, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* channel */                          \
+			{ 0x0001, ZAP_TYPE(ENUM8), 1, 0, ZAP_EMPTY_DEFAULT() }, /* RoutingRole */                      \
+			{ 0x0002, ZAP_TYPE(OCTET_STRING), 16, 0, ZAP_LONG_DEFAULTS_INDEX(522) }, /* NetworkName */     \
+			{ 0x0003, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* PanId */                    \
+			{ 0x0004, ZAP_TYPE(INT64U), 8, 0, ZAP_LONG_DEFAULTS_INDEX(538) }, /* ExtendedPanId */          \
+			{ 0x0005, ZAP_TYPE(OCTET_STRING), 17, 0, ZAP_LONG_DEFAULTS_INDEX(546) }, /* MeshLocalPrefix */ \
+			{ 0x0006, ZAP_TYPE(INT64U), 8, 0, ZAP_LONG_DEFAULTS_INDEX(563) }, /* OverrunCount */           \
+			{ 0x0007, ZAP_TYPE(ARRAY), 254, 0, ZAP_LONG_DEFAULTS_INDEX(571) }, /* NeighborTableList */     \
+			{ 0x0008, ZAP_TYPE(ARRAY), 254, 0, ZAP_LONG_DEFAULTS_INDEX(825) }, /* RouteTableList */        \
+			{ 0x0009, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1079) }, /* PartitionId */           \
+			{ 0x000A, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* weighting */                        \
+			{ 0x000B, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* DataVersion */                      \
+			{ 0x000C, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* StableDataVersion */                \
+			{ 0x000D, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* LeaderRouterId */                   \
+			{ 0x000E, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* DetachedRoleCount */        \
+			{ 0x000F, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* ChildRoleCount */           \
+			{ 0x0010, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* RouterRoleCount */          \
+			{ 0x0011, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* LeaderRoleCount */          \
+			{ 0x0012, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* AttachAttemptCount */       \
+			{ 0x0013, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* PartitionIdChangeCount */   \
+			{ 0x0014, ZAP_TYPE(INT16U), 2, 0,                                                              \
+			  ZAP_SIMPLE_DEFAULT(0x0000) }, /* BetterPartitionAttachAttemptCount                           \
+							 */                                                            \
+			{ 0x0015, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* ParentChangeCount */        \
+			{ 0x0016, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1083) }, /* TxTotalCount */          \
+			{ 0x0017, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1087) }, /* TxUnicastCount */        \
+			{ 0x0018, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1091) }, /* TxBroadcastCount */      \
+			{ 0x0019, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1095) }, /* TxAckRequestedCount */   \
+			{ 0x001A, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1099) }, /* TxAckedCount */          \
+			{ 0x001B, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1103) }, /* TxNoAckRequestedCount */ \
+			{ 0x001C, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1107) }, /* TxDataCount */           \
+			{ 0x001D, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1111) }, /* TxDataPollCount */       \
+			{ 0x001E, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1115) }, /* TxBeaconCount */         \
+			{ 0x001F, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1119) }, /* TxBeaconRequestCount */  \
+			{ 0x0020, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1123) }, /* TxOtherCount */          \
+			{ 0x0021, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1127) }, /* TxRetryCount */          \
+			{ 0x0022, ZAP_TYPE(INT32U), 4, 0,                                                              \
+			  ZAP_LONG_DEFAULTS_INDEX(1131) }, /* TxDirectMaxRetryExpiryCount                              \
+							    */                                                         \
+			{ 0x0023, ZAP_TYPE(INT32U), 4, 0,                                                              \
+			  ZAP_LONG_DEFAULTS_INDEX(1135) }, /* TxIndirectMaxRetryExpiryCount                            \
+							    */                                                         \
+			{ 0x0024, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1139) }, /* TxErrCcaCount */         \
+			{ 0x0025, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1143) }, /* TxErrAbortCount */       \
+			{ 0x0026, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1147) }, /* TxErrBusyChannelCount */ \
+			{ 0x0027, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1151) }, /* RxTotalCount */          \
+			{ 0x0028, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1155) }, /* RxUnicastCount */        \
+			{ 0x0029, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1159) }, /* RxBroadcastCount */      \
+			{ 0x002A, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1163) }, /* RxDataCount */           \
+			{ 0x002B, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1167) }, /* RxDataPollCount */       \
+			{ 0x002C, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1171) }, /* RxBeaconCount */         \
+			{ 0x002D, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1175) }, /* RxBeaconRequestCount */  \
+			{ 0x002E, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1179) }, /* RxOtherCount */          \
+			{ 0x002F, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1183) }, /* RxAddressFilteredCount   \
+											    */                         \
+			{ 0x0030, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1187) }, /* RxDestAddrFilteredCount  \
+											    */                         \
+			{ 0x0031, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1191) }, /* RxDuplicatedCount */     \
+			{ 0x0032, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1195) }, /* RxErrNoFrameCount */     \
+			{ 0x0033, ZAP_TYPE(INT32U), 4, 0,                                                              \
+			  ZAP_LONG_DEFAULTS_INDEX(1199) }, /* RxErrUnknownNeighborCount                                \
+							    */                                                         \
+			{ 0x0034, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1203) }, /* RxErrInvalidSrcAddrCount \
+											    */                         \
+			{ 0x0035, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1207) }, /* RxErrSecCount */         \
+			{ 0x0036, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1211) }, /* RxErrFcsCount */         \
+			{ 0x0037, ZAP_TYPE(INT32U), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1215) }, /* RxErrOtherCount */       \
+			{ 0x003B, ZAP_TYPE(ARRAY), 1, 0, ZAP_EMPTY_DEFAULT() }, /* SecurityPolicy */                   \
+			{ 0x003C, ZAP_TYPE(INT8U), 1, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* ChannelMask */               \
+			{ 0x003D, ZAP_TYPE(ARRAY), 1, 0, ZAP_EMPTY_DEFAULT() }, /* OperationalDatasetComponents */     \
+			{ 0x003E, ZAP_TYPE(ARRAY), 4, 0, ZAP_LONG_DEFAULTS_INDEX(1219) }, /* ActiveNetworkFaultsList   \
+											   */                          \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */         \
+                                                                                                                       \
+			/* Endpoint: 0, Cluster: Operational Credentials (server) */                                   \
+			{ 0x0001, ZAP_TYPE(ARRAY), 254, 0, ZAP_LONG_DEFAULTS_INDEX(1223) }, /* fabrics list */         \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */         \
+                                                                                                                       \
+			/* Endpoint: 0, Cluster: Trusted Root Certificates (server) */                                 \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */         \
+                                                                                                                       \
+			/* Endpoint: 1, Cluster: Temperature Measurement (server) */                                   \
+			{ 0x0000, ZAP_TYPE(INT16S), 2, 0, ZAP_EMPTY_DEFAULT() }, /* measured value */                  \
+			{ 0x0001, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(-4000) }, /* min measured value */        \
+			{ 0x0002, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(8500) }, /* max measured value */         \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* cluster revision */         \
+                                                                                                                       \
+			/* Endpoint: 2, Cluster: Relative Humidity Measurement (server) */                             \
+			{ 0x0000, ZAP_TYPE(INT16U), 2, 0, ZAP_EMPTY_DEFAULT() }, /* measured value */                  \
+			{ 0x0001, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0) }, /* min measured value */            \
+			{ 0x0002, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(10000) }, /* max measured value */        \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(2) }, /* cluster revision */              \
+                                                                                                                       \
+			/* Endpoint: 3, Cluster: Pressure Measurement (server) */                                      \
+			{ 0x0000, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* measured value */           \
+			{ 0x0001, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(300) }, /* min measured value */          \
+			{ 0x0002, ZAP_TYPE(INT16S), 2, 0, ZAP_SIMPLE_DEFAULT(1100) }, /* max measured value */         \
+			{ 0xFFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(2) }, /* cluster revision */              \
 	}
 
 // This is an array of EmberAfCluster structures.
 #define ZAP_ATTRIBUTE_INDEX(index) ((EmberAfAttributeMetadata *)(&generatedAttributes[index]))
 
 // Cluster function static arrays
-#define GENERATED_FUNCTION_ARRAYS
+#define GENERATED_FUNCTION_ARRAYS                                                                                      \
+	const EmberAfGenericClusterFunction chipFuncArrayBasicServer[] = {                                             \
+		(EmberAfGenericClusterFunction)emberAfBasicClusterServerInitCallback,                                  \
+	};
 
 #define ZAP_CLUSTER_MASK(mask) CLUSTER_MASK_##mask
 #define GENERATED_CLUSTER_COUNT 11
 #define GENERATED_CLUSTERS                                                                                             \
 	{                                                                                                              \
-		{ 0x0028, ZAP_ATTRIBUTE_INDEX(0), 12, 254, ZAP_CLUSTER_MASK(SERVER), NULL }, /* Endpoint: 0, Cluster:  \
-												Basic (server) */      \
+		{ 0x0028,                                                                                              \
+		  ZAP_ATTRIBUTE_INDEX(0),                                                                              \
+		  12,                                                                                                  \
+		  254,                                                                                                 \
+		  ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION),                                          \
+		  chipFuncArrayBasicServer }, /* Endpoint: 0, Cluster: Basic (server) */                               \
 			{ 0x0030, ZAP_ATTRIBUTE_INDEX(12), 3, 18, ZAP_CLUSTER_MASK(SERVER), NULL }, /* Endpoint: 0,    \
 												       Cluster:        \
 												       General         \

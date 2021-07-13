@@ -6,6 +6,12 @@
 
 cmake_minimum_required(VERSION 3.13.1)
 
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE release)
+endif()
+
+set(CONF_FILE "prj_${CMAKE_BUILD_TYPE}.conf")
+
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-weather-station)
@@ -24,6 +30,7 @@ target_sources(app PRIVATE
                src/gen/IMClusterCommandHandler.cpp
                src/gen/callback-stub.cpp
                ${COMMON_ROOT}/src/thread_util.cpp
+               ${COMMON_ROOT}/src/led_widget.cpp
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/DataModelHandler.cpp
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/reporting/reporting-default-configuration.cpp
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/reporting/reporting.cpp
