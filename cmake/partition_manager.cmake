@@ -23,8 +23,8 @@ endmacro()
 
 # Load static configuration if found.
 set(user_def_pm_static ${PM_STATIC_YML_FILE})
-set(nodomain_pm_static ${APPLICATION_SOURCE_DIR}/pm_static.yml)
-set(domain_pm_static ${APPLICATION_SOURCE_DIR}/pm_static_${DOMAIN}.yml)
+set(nodomain_pm_static ${APPLICATION_CONFIG_DIR}/pm_static.yml)
+set(domain_pm_static ${APPLICATION_CONFIG_DIR}/pm_static_${DOMAIN}.yml)
 
 if(EXISTS "${user_def_pm_static}" AND NOT IS_DIRECTORY "${user_def_pm_static}")
   set(static_configuration_file ${user_def_pm_static})
