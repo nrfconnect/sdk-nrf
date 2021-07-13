@@ -1,6 +1,6 @@
 sample:
   name: Zigbee NCP
-  description: Zigbee network co-processor
+  description: Zigbee network co-processor - dummy change
 
 tests:
   zigbee.ncp:
