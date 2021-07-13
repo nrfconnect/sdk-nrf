@@ -179,8 +179,8 @@ function(add_child_image_from_source)
   #       files must be used instead of the child image default configs.
   #       The append a child image default config, place the addetional settings
   #       in `child_image/<ACI_NAME>.conf`.
-  set(ACI_CONF_DIR ${APPLICATION_SOURCE_DIR}/child_image)
-  set(ACI_NAME_CONF_DIR ${APPLICATION_SOURCE_DIR}/child_image/${ACI_NAME})
+  set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
+  set(ACI_NAME_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image/${ACI_NAME})
   if (NOT ${ACI_NAME}_CONF_FILE)
     ncs_file(CONF_FILES ${ACI_NAME_CONF_DIR}
              BOARD ${ACI_BOARD}
