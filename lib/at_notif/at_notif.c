@@ -24,7 +24,7 @@ struct notif_handler {
 };
 
 static sys_slist_t handler_list;
-
+static bool initialized;
 
 /**
  * @brief Find the handler from the notification list.
@@ -122,8 +122,6 @@ static int module_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 
-	static bool initialized;
-
 	if (initialized) {
 		LOG_WRN("Already initialized. Nothing to do");
 		return 0;
@@ -144,6 +142,10 @@ int at_notif_init(void)
 
 int at_notif_register_handler(void *context, at_notif_handler_t handler)
 {
+	if (!initialized) {
+		LOG_ERR("Module not initialized yet");
+		return -EINVAL;
+	}
 	if (handler == NULL) {
 		LOG_ERR("Invalid handler (context=0x%08X, handler=0x%08X)",
 			(uint32_t)context, (uint32_t)handler);
@@ -154,6 +156,10 @@ int at_notif_register_handler(void *context, at_notif_handler_t handler)
 
 int at_notif_deregister_handler(void *context, at_notif_handler_t handler)
 {
+	if (!initialized) {
+		LOG_ERR("Module not initialized yet");
+		return -EINVAL;
+	}
 	if (handler == NULL) {
 		LOG_ERR("Invalid handler (context=0x%08X, handler=0x%08X)",
 			(uint32_t)context, (uint32_t)handler);
