@@ -91,7 +91,8 @@ exit:
 	return err;
 }
 
-int cloud_codec_decode_config(char *input, struct cloud_data_cfg *data)
+int cloud_codec_decode_config(char *input, size_t input_len,
+			      struct cloud_data_cfg *data)
 {
 	int err = 0;
 	cJSON *root_obj = NULL;
@@ -102,7 +103,7 @@ int cloud_codec_decode_config(char *input, struct cloud_data_cfg *data)
 		return -EINVAL;
 	}
 
-	root_obj = cJSON_Parse(input);
+	root_obj = cJSON_ParseWithLength(input, input_len);
 	if (root_obj == NULL) {
 		return -ENOENT;
 	}

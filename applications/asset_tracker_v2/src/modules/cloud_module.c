@@ -324,7 +324,8 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 		 * before it is sent to the Data module. This way we avoid
 		 * sending uninitialized variables to the Data module.
 		 */
-		err = cloud_codec_decode_config(evt->data.buf, &copy_cfg);
+		err = cloud_codec_decode_config(evt->data.buf, evt->data.len,
+						&copy_cfg);
 		if (err == 0) {
 			LOG_DBG("Device configuration encoded");
 			send_config_received();

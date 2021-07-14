@@ -217,7 +217,8 @@ static inline void cloud_codec_init(void)
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 				      struct cloud_data_neighbor_cells *neighbor_cells);
 
-int cloud_codec_decode_config(char *input, struct cloud_data_cfg *cfg);
+int cloud_codec_decode_config(char *input, size_t input_len,
+			      struct cloud_data_cfg *cfg);
 
 int cloud_codec_encode_config(struct cloud_codec_data *output,
 			      struct cloud_data_cfg *cfg);
