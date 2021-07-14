@@ -63,7 +63,7 @@ Kconfig*                                  @tejlmand
 /lib/at_cmd_parser/                       @rlubos
 /lib/at_cmd/                              @rlubos
 /lib/at_host/                             @rlubos
-/lib/at_notif/                            @pkchan
+/lib/at_notif/                            @rlubos
 /lib/agps/                                @jtguggedal @simensrostad
 /lib/nrf_modem_lib/                       @rlubos
 /lib/edge_impulse/                        @pdunaj
