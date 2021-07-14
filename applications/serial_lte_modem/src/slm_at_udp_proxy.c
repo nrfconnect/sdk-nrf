@@ -301,7 +301,7 @@ static int do_udp_send_datamode(const uint8_t *data, int datalen)
 		if (ret < 0) {
 			LOG_ERR("send() failed: %d", -errno);
 			if (errno != EAGAIN && errno != ETIMEDOUT) {
-				(void)exit_datamode();
+				(void)exit_datamode(false);
 				if (udp_server_role) {
 					do_udp_server_stop(-errno);
 				} else {
