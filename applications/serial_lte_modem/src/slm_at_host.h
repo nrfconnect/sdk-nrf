@@ -53,20 +53,31 @@ void rsp_send(const uint8_t *str, size_t len);
 /**
  * @brief Request SLM AT host to enter data mode
  *
+ * No AT unsolicited message or command response allowed in data mode.
+ *
  * @param handler Data mode handler provided by requesting module
  *
  * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
+ *         Otherwise, a (negative) error code is returned.
  */
 int enter_datamode(slm_datamode_handler_t handler);
 
 /**
+ * @brief Check whether SLM AT host is in data mode
+ *
+ * @retval true if yes, false if no.
+ */
+bool in_datamode(void);
+
+/**
  * @brief Request SLM AT host to exit data mode
+ *
+ * @param response Whether to send "OK" response or not
  *
  * @retval true If normal exit from data mode.
  *         false If not in data mode.
  */
-bool exit_datamode(void);
+bool exit_datamode(bool response);
 /** @} */
 
 #endif /* SLM_AT_HOST_ */

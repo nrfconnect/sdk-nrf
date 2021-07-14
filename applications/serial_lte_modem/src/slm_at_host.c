@@ -151,14 +151,27 @@ int enter_datamode(slm_datamode_handler_t handler)
 	return 0;
 }
 
-bool exit_datamode(void)
+bool in_datamode(void)
+{
+	return (slm_operation_mode == SLM_DATA_MODE);
+}
+
+bool exit_datamode(bool response)
 {
 	if (slm_operation_mode == SLM_DATA_MODE) {
 		ring_buf_reset(&data_rb);
 		/* reset UART to restore command mode */
 		uart_rx_disable(uart_dev);
 		k_sleep(K_MSEC(10));
-		(void) uart_receive();
+		(void)uart_receive();
+
+		if (response) {
+			strcpy(rsp_buf, OK_STR);
+		} else {
+			sprintf(rsp_buf, "\r\n#XDATAMODE: 0\r\n");
+		}
+		rsp_send(rsp_buf, strlen(rsp_buf));
+
 		slm_operation_mode = SLM_AT_COMMAND_MODE;
 		datamode_handler = NULL;
 		LOG_INF("Exit datamode");
@@ -307,13 +320,11 @@ static void silence_timer_handler(struct k_timer *timer)
 	/* quit datamode */
 	if (datamode_handler) {
 		(void)datamode_handler(DATAMODE_EXIT, NULL, 0);
-		(void)exit_datamode();
+		(void)exit_datamode(true);
 	} else {
 		LOG_WRN("missing datamode handler");
 	}
 	datamode_off_pending = false;
-	/* send URC */
-	rsp_send(OK_STR, sizeof(OK_STR) - 1);
 }
 
 K_TIMER_DEFINE(silence_timer, silence_timer_handler, NULL);
@@ -489,7 +500,9 @@ static void cmd_send(struct k_work *work)
 
 	err = slm_at_parse(at_buf);
 	if (err == 0) {
-		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		if (!in_datamode()) {
+			rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		}
 		goto done;
 	} else if (err == -ESHUTDOWN) {
 		/*Entered IDLE or UART Power Off */

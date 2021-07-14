@@ -141,9 +141,7 @@ void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 			break;
 		}
 		rsp_send(rsp_buf, strlen(rsp_buf));
-		if (ftp_data_mode_handler && exit_datamode()) {
-			sprintf(rsp_buf, "\r\n#XFTP: 0,\"datamode\"\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
+		if (ftp_data_mode_handler && exit_datamode(false)) {
 			ftp_data_mode_handler = NULL;
 		}
 	}
@@ -466,9 +464,7 @@ static int ftp_put_handler(const uint8_t *data, int len)
 		ret = ftp_put(filepath, data, len, FTP_PUT_NORMAL);
 	}
 
-	if (exit_datamode()) {
-		sprintf(rsp_buf, "\r\n#XFTP: 0,\"datamode\"\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+	if (exit_datamode(false)) {
 		ftp_data_mode_handler = NULL;
 	}
 
@@ -519,9 +515,7 @@ static int ftp_uput_handler(const uint8_t *data, int len)
 		ret = ftp_put(NULL, data, len, FTP_PUT_UNIQUE);
 	}
 
-	if (exit_datamode()) {
-		sprintf(rsp_buf, "\r\n#XFTP: 0,\"datamode\"\r\n");
-		rsp_send(rsp_buf, strlen(rsp_buf));
+	if (exit_datamode(false)) {
 		ftp_data_mode_handler = NULL;
 	}
 

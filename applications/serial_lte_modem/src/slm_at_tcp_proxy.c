@@ -419,7 +419,7 @@ static void tcp_data_handle(uint8_t *data, uint32_t length)
 static void tcp_terminate_connection(int cause)
 {
 	if (proxy.datamode) {
-		(void)exit_datamode();
+		(void)exit_datamode(false);
 	}
 	close(proxy.sock_peer);
 	proxy.sock_peer = INVALID_SOCKET;
@@ -610,10 +610,7 @@ exit:
 	sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	if (in_datamode) {
-		if (exit_datamode()) {
-			sprintf(rsp_buf, "\r\n#XTCPSVR: 0,\"datamode\"\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
-		}
+		(void)exit_datamode(false);
 	}
 }
 
@@ -679,10 +676,7 @@ exit:
 	sprintf(rsp_buf, "\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	if (in_datamode) {
-		if (exit_datamode()) {
-			sprintf(rsp_buf, "\r\n#XTCPCLI: 0,\"datamode\"\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
-		}
+		(void)exit_datamode(false);
 	}
 }
 
