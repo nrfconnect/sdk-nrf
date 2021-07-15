@@ -8,4 +8,4 @@ Other libraries
    :glob:
    :caption: Subpages:
 
-   ../../../include/*
+   *

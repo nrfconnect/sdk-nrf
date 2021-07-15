@@ -140,7 +140,7 @@ If :option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` is enabled, :opt
 Configuration files
 ===================
 
-.. include:: ../../../include/memfault_ncs.rst
+.. include:: ../../../doc/nrf/libraries/others/memfault_ncs.rst
    :start-after: memfault_config_files_start
    :end-before: memfault_config_files_end
 

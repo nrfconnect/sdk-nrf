@@ -11,7 +11,7 @@ The Event Manager is a piece of software that supports development of consistent
 In an event-based application, parts of the application functionality are separated into isolated modules that communicate with each other using events.
 Events are submitted by modules and other modules can subscribe and react to them.
 
-.. figure:: ../doc/nrf/images/em_overview.svg
+.. figure:: images/em_overview.svg
    :alt: Architecture of an application based on Event Manager
 
 For a usage example of the Event Manger module and event structure in the |NCS|, see the :ref:`lib_caf` (CAF).
