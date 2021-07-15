@@ -8,4 +8,4 @@ TF-M libraries
    :glob:
    :caption: Subpages:
 
-   ../../include/tfm/*
+   ../../../include/tfm/*

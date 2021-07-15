@@ -8,4 +8,4 @@ Binary libraries
    :glob:
    :caption: Subpages:
 
-   ../../lib/bin/*/*
+   ../../../lib/bin/*/*

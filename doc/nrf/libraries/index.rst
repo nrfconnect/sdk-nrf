@@ -12,4 +12,4 @@ Here you can find documentation for these libraries, including API documentation
    :glob:
    :caption: Subpages:
 
-   libraries/*
+   */index
