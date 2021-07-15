@@ -204,6 +204,9 @@ def download_cache(app: Sphinx) -> None:
     app.env.toc_num_entries = env_cache["toc_num_entries"]
     app.env.tocs = env_cache["tocs"]
 
+    if "doxyrunner_cache" in env_cache:
+        app.env.doxyrunner_cache = env_cache["doxyrunner_cache"]
+
     app.env.config_status = CONFIG_OK
 
     # make relative paths absolute again
