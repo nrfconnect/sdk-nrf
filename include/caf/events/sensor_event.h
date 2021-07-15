@@ -49,7 +49,7 @@ enum sensor_state {
  * sensors. Format and content of the sensor description is defined by the application.
  *
  * @warning The sensor state event related to the given sensor must use the same description as
- *          @sensor_event related to the sensor.
+ *          #sensor_event related to the sensor.
  */
 struct sensor_state_event {
 	struct event_header header; /**< Event header. */
@@ -74,7 +74,7 @@ EVENT_TYPE_DECLARE(sensor_state_event);
  * sensor_event_get_data_ptr can be used to access the sensor data provided by a given sensor event.
  *
  * @warning The sensor event related to the given sensor must use the same description as
- *          @sensor_state_event related to the sensor.
+ *          #sensor_state_event related to the sensor.
  */
 struct sensor_event {
 	struct event_header header; /**< Event header. */

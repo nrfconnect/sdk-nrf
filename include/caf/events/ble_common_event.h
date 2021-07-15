@@ -31,7 +31,7 @@ enum peer_state {
 	/** Bluetooth stack disconnected from the remote peer. */
 	PEER_STATE_DISCONNECTED,
 
-	/** An application module called @ref bt_conn_disconnect to disconnect the remote peer.
+	/** An application module called bt_conn_disconnect() to disconnect the remote peer.
 	 *  This state can be reported by the module that requests peer disconnection to let other
 	 *  application modules prepare for the planned disconnection.
 	 */
@@ -108,7 +108,7 @@ struct ble_peer_event {
 	/** State of the Bluetooth LE peer. */
 	enum peer_state state;
 
-	/** ID used to identify Bluetooth connection - pointer to the @ref bt_conn structure. */
+	/** ID used to identify Bluetooth connection - pointer to the bt_conn. */
 	void *id;
 };
 
@@ -149,7 +149,7 @@ struct ble_peer_conn_params_event {
 	/** Event header. */
 	struct event_header header;
 
-	/** ID used to identify Bluetooth connection - pointer to the @ref bt_conn structure. */
+	/** ID used to identify Bluetooth connection - pointer to the bt_conn. */
 	void *id;
 
 	/** Minimum Connection Interval (N * 1.25 ms). */

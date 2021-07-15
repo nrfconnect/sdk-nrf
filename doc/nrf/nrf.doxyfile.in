@@ -1989,7 +1989,8 @@ PREDEFINED             = "CONFIG_SYS_CLOCK_EXISTS=y" \
                          "CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT=y"\
                          "ATOMIC_DEFINE(x, y)=atomic_t x[ATOMIC_BITMAP_SIZE(y)]" \
                          "CONFIG_ZIGBEE_DEBUG_FUNCTIONS=y" \
-                         "CONFIG_ZBOSS_ERROR_PRINT_TO_LOG=y"
+                         "CONFIG_ZBOSS_ERROR_PRINT_TO_LOG=y" \
+                         "MODULE="
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
