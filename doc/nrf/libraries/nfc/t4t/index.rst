@@ -17,4 +17,4 @@ Note that these require an NFC polling device.
    :glob:
    :caption: Subpages:
 
-   ../../include/nfc/t4t/*
+   *

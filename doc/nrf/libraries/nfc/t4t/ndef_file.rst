@@ -13,7 +13,7 @@ To generate an NDEF message, you can use the :ref:`nfc_ndef_msg` and :ref:`nfc_n
 
 The following code sample demonstrates how to encode the NDEF file for NFC Type 4 Tag:
 
-.. literalinclude:: ../../../samples/nfc/writable_ndef_msg/src/ndef_file_m.c
+.. literalinclude:: ../../../../../samples/nfc/writable_ndef_msg/src/ndef_file_m.c
     :language: c
     :start-after: include_startingpoint_ndef_file_rst
     :end-before: include_endpoint_ndef_file_rst

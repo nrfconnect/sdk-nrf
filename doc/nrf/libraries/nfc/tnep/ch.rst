@@ -28,7 +28,7 @@ Static handover
 In the static handover, the Handover Requester only reads a Handover Select Message from the NFC Tag Device.
 TNEP is not used in this communication form.
 
-.. figure:: /images/nfc_static_connection_handover.svg
+.. figure:: images/nfc_static_connection_handover.svg
    :alt: Static handover
 
 Negotiated handover
@@ -38,7 +38,7 @@ In the negotiated handover, the Handover Requester provides a Handover Request M
 The Handover Selector replies with a Handover Select Message that contains the list of carriers that they both support.
 Connection Handover NDEF messages are exchanged as defined by TNEP.
 
-.. figure:: /images/nfc_negotiated_connection_handover.svg
+.. figure:: images/nfc_negotiated_connection_handover.svg
    :alt: Negotiated handover
 
 Device Role
@@ -62,7 +62,7 @@ NFC Tag Device
 
 The following code sample demonstrates how to use this module with an NFC Tag Device:
 
-.. literalinclude:: ../../../samples/bluetooth/peripheral_nfc_pairing/src/main.c
+.. literalinclude:: ../../../../../samples/bluetooth/peripheral_nfc_pairing/src/main.c
     :language: c
     :start-after: include_startingpoint_nfc_tnep_ch_tag_rst
     :end-before: include_endpoint_nfc_tnep_ch_tag_rst
@@ -74,7 +74,7 @@ NFC Poller Device
 
 The following code sample demonstrates how to use this module with an NFC Poller Device:
 
-.. literalinclude:: ../../../samples/bluetooth/central_nfc_pairing/src/main.c
+.. literalinclude:: ../../../../../samples/bluetooth/central_nfc_pairing/src/main.c
     :language: c
     :start-after: include_startingpoint_nfc_tnep_ch_poller_rst
     :end-before: include_endpoint_nfc_tnep_ch_poller_rst

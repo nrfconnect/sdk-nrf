@@ -19,7 +19,7 @@ This library should be used together with the :ref:`nfc_ndef_parser_readme` in t
 
 The following code sample demonstrates how to use this module:
 
-.. literalinclude:: ../../../samples/nfc/tag_reader/src/main.c
+.. literalinclude:: ../../../../../samples/nfc/tag_reader/src/main.c
     :language: c
     :start-after: include_startingpoint_ch_rec_parser_rst
     :end-before: include_endpoint_ch_rec_parser_rst
