@@ -116,7 +116,7 @@ void hw_unique_key_load_kdr(void);
 /**
  * @brief Derive a key from the specified HUK, using the nrf_cc3xx_platform API
  *
- * See @ref nrf_cc3xx_platform_kmu_shadow_key_derive for more info.
+ * See nrf_cc3xx_platform_kmu_shadow_key_derive() for more info.
  *
  * @param[in]  kmu_slot      Keyslot to derive from.
  * @param[in]  context       Context for key derivation.
@@ -128,7 +128,7 @@ void hw_unique_key_load_kdr(void);
  *
  * @retval 0  on success
  * @retval -ERR_HUK_MISSING  if the slot has not been written.
- * @return otherwise, an error from @ref nrf_cc3xx_platform_kmu_shadow_key_derive
+ * @return otherwise, an error from nrf_cc3xx_platform_kmu_shadow_key_derive()
  */
 int hw_unique_key_derive_key(enum hw_unique_key_slot kmu_slot,
 	const uint8_t *context, size_t context_size,
