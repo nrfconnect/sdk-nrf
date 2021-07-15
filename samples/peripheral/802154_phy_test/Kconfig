@@ -1,0 +1,70 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "PHY Test Tool configuration"
+
+choice
+	prompt "Device Mode"
+	default BOTH
+	help
+	  Select the device mode
+
+config DUT_MODE
+	bool "Configure device as a DUT"
+
+config CMD_MODE
+	bool "Configure device as a CMD"
+
+config BOTH
+	bool "Supports both CMD and DUT modes"
+
+endchoice
+
+config POWER
+	int "Transmit Power (dBm)"
+	default -20
+
+config CHANNEL_MASK
+	hex "Channel page and channel number mask"
+	default 0x00000800
+
+config SW_VERSION
+	int "Software Version"
+	default 1
+
+config HW_VERSION
+	int "Hardware Version"
+	default 1
+
+config ANTENNA_DIVERSITY
+	bool "Enable Antenna Diversity (Not Yet Supported)"
+	
+if ANTENNA_DIVERSITY
+
+choice
+	prompt "Antenna Mode"
+	default ANT_MODE_AUTO
+	help
+	  Select the antenna diversity mode
+
+config ANT_MODE_AUTO
+	bool "Automatic"
+
+config ANT_MODE_MANUAL
+	bool "Manual"
+
+endchoice
+
+config ANTENNA_NUMBER
+	int "Antenna Number"
+	range 0 2
+	default 0
+
+endif #ANTENNA_DIVERSITY
+
+endmenu
