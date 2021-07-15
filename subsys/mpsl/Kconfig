@@ -34,6 +34,7 @@ config MPSL_ASSERT_HANDLER
 	  MPSL code encounters an unrecoverable error.
 
 rsource "Kconfig.fem"
+rsource "Kconfig.cx"
 
 module=MPSL
 module-str=MPSL

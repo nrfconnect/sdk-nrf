@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MPSL_CX
+	bool "Radio Coexistence interface support [EXPERIMENTAL]"
+# Generic coexistence is not yet supported by Bluetooth
+	depends on !BT
+	help
+	  Controls if Radio Coexistence interface is to be configured and enabled
+	  when MPSL is initialized.
+
+	  Radio Coexistence interface connects nRF5 radio protocols with external
+	  Packet Traffic Arbiter (PTA) which denies or grants access to RF.
+
+if MPSL_CX
+
+choice MPSL_CX_CHOICE
+	prompt "Radio Coexistence interface implementation"
+
+config MPSL_CX_THREAD
+	select NRFX_GPIOTE
+	select GPIO
+	bool "Thread Radio Coexistence"
+	help
+	  Radio Coexistence interface implementation according to Thread Radio
+	  Coexistence Practical recommendations for using a 3-wire PTA
+	  implementation for co-located 2.4 GHz radios.
+
+endchoice	# MPSL_CX_CHOICE
+
+if MPSL_CX_THREAD
+
+config MPSL_CX_THREAD_PIN_REQUEST
+	int "GPIO pin id used as coexistence Request signal"
+	default 13
+	help
+	  For port 0 simply use pin number. For port 1 add value 32 to pin number:
+	  P0.04 is 4; P1.04 is 36.
+
+	  Note: This configuration will be moved to device tree.
+
+config MPSL_CX_THREAD_PIN_PRIORITY
+	int "GPIO pin id used as coexistence Priority signal"
+	default 14
+	help
+	  For port 0 simply use pin number. For port 1 add value 32 to pin number:
+	  P0.04 is 4; P1.04 is 36.
+
+	  Note: This configuration will be moved to device tree.
+
+config MPSL_CX_THREAD_PIN_GRANT
+	int "GPIO pin id used as coexistence Grant signal"
+	default 12
+	help
+	  For port 0 simply use pin number. For port 1 add value 32 to pin number:
+	  P0.04 is 4; P1.04 is 36.
+
+	  Note: This configuration will be moved to device tree.
+
+endif
+
+endif	# MPSL_CX
