@@ -12,7 +12,4 @@ See the :ref:`ug_nfc` user guide for an overview of the technology and informati
    :glob:
    :caption: Subpages:
 
-   lib_nfc_t2t
-   lib_nfc_t4t
-   lib_nfc_ndef
-   lib_nfc_tnep
+   *
