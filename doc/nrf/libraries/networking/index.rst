@@ -8,4 +8,4 @@ Libraries for networking
    :glob:
    :caption: Subpages:
 
-   ../../../include/net/*
+   *

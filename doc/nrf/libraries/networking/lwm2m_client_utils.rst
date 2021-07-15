@@ -22,7 +22,7 @@ Following are the fixed set of readily initialized objects that are available to
 These objects do not indicate a complete set of resources that a device is expected to support.
 Based on the use case, a user application can, and is expected to, define additional set of resources based on the capabilities of the device.
 
-.. figure:: /images/lib_lwm2m_client_utils.svg
+.. figure:: images/lib_lwm2m_client_utils.svg
       :alt: LwM2M client utils software stack
 
 Configuration and implementation
