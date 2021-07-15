@@ -51,7 +51,7 @@ Connection state change
 The module propagates information about the connection state changes using :c:struct:`ble_peer_event`.
 In this event, :c:member:`ble_peer_event.id` is a pointer to the connection object and :c:member:`ble_peer_event.state` is the connection state.
 
-.. figure:: /images/caf_ble_state_transitions.svg
+.. figure:: images/caf_ble_state_transitions.svg
    :alt: Bluetooth connection state handling in CAF
 
    Bluetooth connection state handling in CAF

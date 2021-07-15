@@ -187,7 +187,7 @@ Each sensor can be in one of the following states:
 
 The following figure shows the possible state transitions.
 
-.. figure:: /images/caf_sensor_states.svg
+.. figure:: images/caf_sensor_states.svg
    :alt: State transitions of the sensors used by the sensor sampler module
 
    State transitions of the sensors used by the sensor sampler module
