@@ -43,7 +43,7 @@ Static Handover
 
 A tag in the Static Handover mode, contains a Handover Select Message with carrier information NDEF records or a single Carrier Configuration Record.
 
-.. figure:: /images/nfc_static_connection_handover.svg
+.. figure:: images/nfc_static_connection_handover.svg
    :alt: Static Handover
 
 Negotiated Handover
@@ -59,7 +59,7 @@ This sample can be configured to take the Connection Handover Selector role or t
 The Connection Handover Selector role is default for this sample.
 You can change the default role by choosing ``CONFIG_NFC_TAG_CH_SELECTOR`` or ``CONFIG_NFC_TAG_CH_REQUESTER``.
 
-.. figure:: /images/nfc_negotiated_connection_handover.svg
+.. figure:: images/nfc_negotiated_connection_handover.svg
    :alt: Negotiated Handover
 
 

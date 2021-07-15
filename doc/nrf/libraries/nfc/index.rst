@@ -12,4 +12,4 @@ See the :ref:`ug_nfc` user guide for an overview of the technology and informati
    :glob:
    :caption: Subpages:
 
-   *
+   **/index

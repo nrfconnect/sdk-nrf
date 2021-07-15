@@ -38,7 +38,7 @@ Static Handover
 ===============
 A tag in the Static Handover mode, contains a Handover Select Message with carrier information NDEF records or a single Carrier Configuration Record.
 
-.. figure:: /images/nfc_static_connection_handover.svg
+.. figure:: images/nfc_static_connection_handover.svg
    :alt: Static Handover
 
 Negotiated Handover
@@ -49,7 +49,7 @@ In case of the OOB data for Bluetooth LE the NFC Devices can exchange OOB data 2
 Handover messages are exchanged using the TNEP Single response communication mode.
 The NFC Poler Device can be the Handover Requester or Handover Selector Device, the role is taken based on the NFC Tag first NDEF message.
 
-.. figure:: /images/nfc_negotiated_connection_handover.svg
+.. figure:: images/nfc_negotiated_connection_handover.svg
    :alt: Negotiated Handover
 
 Requirements

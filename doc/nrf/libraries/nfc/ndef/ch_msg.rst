@@ -41,7 +41,7 @@ This library is used in the :ref:`peripheral_nfc_pairing` sample.
 
 The following code sample demonstrates how to create a Handover Select message with one Alternative Carrier record that has a reference to the :ref:`Bluetooth LE OOB record <nfc_ndef_le_oob>`:
 
-.. literalinclude:: ../../../samples/bluetooth/peripheral_nfc_pairing/src/main.c
+.. literalinclude:: ../../../../../samples/bluetooth/peripheral_nfc_pairing/src/main.c
     :language: c
     :start-after: include_startingpoint_pair_msg_rst
     :end-before: include_endpoint_pair_msg_rst

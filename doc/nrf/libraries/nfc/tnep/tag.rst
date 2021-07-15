@@ -53,14 +53,14 @@ You can also encode additional NDEF records into the Initial TNEP message in the
 
 See the following code for an example of the Initial message encoding:
 
-.. literalinclude:: ../../../samples/nfc/tnep_tag/src/main.c
+.. literalinclude:: ../../../../../samples/nfc/tnep_tag/src/main.c
     :language: c
     :start-after: include_startingpoint_initial_msg_cb_rst
     :end-before: include_endpoint_initial_cb_msg_rst
 
 The following code shows how to create the Initial NDEF message:
 
-.. literalinclude:: ../../../samples/nfc/tnep_tag/src/main.c
+.. literalinclude:: ../../../../../samples/nfc/tnep_tag/src/main.c
     :language: c
     :start-after: include_startingpoint_initial_msg_rst
     :end-before: include_endpoint_initial_msg_rst
@@ -112,7 +112,7 @@ If the application does not reply before the expiration on the time period speci
 
 The following code demonstrates how to exchange NDEF messages using the tag library after initialization:
 
-.. literalinclude:: ../../../samples/nfc/tnep_tag/src/main.c
+.. literalinclude:: ../../../../../samples/nfc/tnep_tag/src/main.c
     :language: c
     :start-after: include_startingpoint_tnep_service_rst
     :end-before: include_endpoint_tnep_service_rst

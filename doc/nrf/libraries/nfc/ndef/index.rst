@@ -26,4 +26,4 @@ The NFC NDEF libraries are used in the following samples:
    :glob:
    :caption: Subpages:
 
-   ../../include/nfc/ndef/*
+   *
