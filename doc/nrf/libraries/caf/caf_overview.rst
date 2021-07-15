@@ -19,7 +19,7 @@ In an event-based application, parts of the application functionality are separa
 These events are defined either by CAF or by the application.
 They are submitted by modules and other modules can subscribe and react to them.
 
-.. figure:: ../../doc/nrf/images/caf_overview.svg
+.. figure:: images/caf_overview.svg
    :alt: Common Application Framework architecture example
 
    Common Application Framework architecture example

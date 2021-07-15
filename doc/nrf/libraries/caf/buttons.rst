@@ -65,7 +65,7 @@ Implementation details
 
 Depending on the configuration, the module can use from two to four states.
 
-.. figure:: /images/caf_buttons_states.svg
+.. figure:: images/caf_buttons_states.svg
    :alt: State transitions of the buttons module
 
    State transitions of the buttons module
