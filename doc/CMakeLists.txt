@@ -207,7 +207,7 @@ add_custom_target(
   USES_TERMINAL
 )
 
-add_docset(zephyr)
+add_docset(zephyr DODGY)
 add_dependencies(zephyr-html zephyr-devicetree)
 add_dependencies(zephyr-html-all zephyr-devicetree)
 
