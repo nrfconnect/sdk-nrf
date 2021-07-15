@@ -50,8 +50,6 @@ void lte_lc_trace_handler_set(lte_lc_trace_handler_t handler);
 
 void lte_lc_trace_capture(enum lte_lc_trace_type type);
 
-/** @} */
-
 #ifdef __cplusplus
 }
 #endif
