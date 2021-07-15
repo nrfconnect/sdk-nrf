@@ -12,6 +12,7 @@
 #include <mpsl.h>
 #include <mpsl_timeslot.h>
 #include <mpsl/mpsl_assert.h>
+#include "mpsl_cx_internal.h"
 #include "mpsl_fem_config_common.h"
 #include "mpsl_fem_internal.h"
 #include "multithreading_lock.h"
@@ -224,7 +225,19 @@ static int mpsl_fem_init(const struct device *dev)
 #endif
 }
 
+static int mpsl_cx_init(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+
+#if IS_ENABLED(CONFIG_MPSL_CX)
+	return mpsl_cx_configure();
+#else
+	return 0;
+#endif
+}
+
 SYS_INIT(mpsl_lib_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 SYS_INIT(mpsl_signal_thread_init, POST_KERNEL,
 	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
