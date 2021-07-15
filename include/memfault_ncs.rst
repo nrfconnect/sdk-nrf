@@ -37,6 +37,8 @@ The APIs in Memfault SDK can then be linked into your application.
 
 In addition, you must configure a Memfault project key using :option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`.
 
+To get access to all the benefits, like up to 100 free devices connected, register at the `Memfault registration page`_.
+
 
 Configuration
 *************
@@ -55,13 +57,18 @@ Configuration files
 
 .. memfault_config_files_start
 
-Memfault SDK requires the following three files in the include path during the build process:
+If you just want to do a quick test with a sample, disable the :option:`CONFIG_MEMFAULT_USER_CONFIG_ENABLE` option in the :file:`prj.conf` to avoid adding the user configuration files.
+Otherwise, follow the instructions below.
+
+Memfault SDK requires three files in the include path during the build process.
+Add a new folder into your project called :file:`config` and add the following three files:
 
 * ``memfault_platform_config.h`` - Sets Memfault SDK configurations that are not covered by Kconfig options
 * ``memfault_metrics_heartbeat_config.def`` - Defines application-specific metrics
 * ``memfault_trace_reason_user_config.def`` - Defines application-specific trace reasons
 
-These configuration files are added to the include path by adding the following in :file:`CMakeLists.txt`:
+You can use the files in the :ref:`memfault_sample` sample as a reference.
+To have these configuration files in the include path, add the following in the :file:`CMakeLists.txt` file:
 
 .. code-block:: console
 

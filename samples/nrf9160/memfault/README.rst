@@ -24,6 +24,7 @@ Before using the Memfault platform, you must register an account in `Memfault`_ 
 
 .. include:: /includes/spm.txt
 
+To get access to all the benefits, like up to 100 free devices connected, register at the `Memfault registration page`_.
 
 Overview
 ********
