@@ -548,6 +548,7 @@
 .. _`Memfault Terminology`: https://docs.memfault.com/docs/platform/memfault-terminology/
 .. _`Memfault: Collecting Device Metrics`: https://docs.memfault.com/docs/embedded/metrics-api
 .. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/
+.. _`Memfault registration page`: https://app.memfault.com/register-nordic
 
 .. ### Source: nrfcloud.com
 
