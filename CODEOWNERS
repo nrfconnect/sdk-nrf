@@ -115,7 +115,7 @@ Kconfig*                                  @tejlmand
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/tfm/tfm_hello_world/             @oyvindronningstad
-/samples/zigbee/                          @maciekfabia @mariuszpos
+/samples/zigbee/                          @tomchy @sebastiandraus
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
@@ -149,10 +149,10 @@ Kconfig*                                  @tejlmand
 /subsys/nonsecure/                        @ioannisg
 /modules/                                 @tejlmand
 /modules/tfm/                             @oyvindronningstad @ioannisg @hakonfam
-/subsys/zigbee/                           @maciekfabia @mariuszpos
+/subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/bluetooth/tester/                  @joerchan @carlescufi @trond-snekvik
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/lib/modem_jwt/                     @SeppoTakalo
-/tests/subsys/zigbee/                     @maciekfabia @mariuszpos
+/tests/subsys/zigbee/                     @tomchy @sebastiandraus
 /tests/subsys/bluetooth/mesh/             @joerchan @trond-snekvik
 /zephyr/                                  @carlescufi
