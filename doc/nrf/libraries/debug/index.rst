@@ -1,6 +1,6 @@
-.. _lib_dfu:
+.. _lib_debug:
 
-DFU libraries
+Debug libraries
 ###############
 
 .. toctree::
@@ -8,5 +8,4 @@ DFU libraries
    :glob:
    :caption: Subpages:
 
-   ../../include/dfu/*
-   ../../include/mgmt/*
+   ../../../include/debug/*

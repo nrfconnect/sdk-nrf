@@ -8,4 +8,4 @@ Multiprotocol Service Layer libraries
    :caption: Subpages:
    :glob:
 
-   ../../include/mpsl/*
+   ../../../include/mpsl/*

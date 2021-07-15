@@ -1,6 +1,6 @@
-.. _lib_debug:
+.. _lib_others:
 
-Debug libraries
+Other libraries
 ###############
 
 .. toctree::
@@ -8,4 +8,4 @@ Debug libraries
    :glob:
    :caption: Subpages:
 
-   ../../include/debug/*
+   ../../../include/*

@@ -8,5 +8,5 @@ Common Application Framework
    :glob:
    :caption: Subpages:
 
-   ../../../include/caf/caf_overview.rst
-   ../../../include/caf/*
+   ../../../../include/caf/caf_overview.rst
+   ../../../../include/caf/*

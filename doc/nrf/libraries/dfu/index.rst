@@ -1,6 +1,6 @@
-.. _lib_others:
+.. _lib_dfu:
 
-Other libraries
+DFU libraries
 ###############
 
 .. toctree::
@@ -8,4 +8,5 @@ Other libraries
    :glob:
    :caption: Subpages:
 
-   ../../include/*
+   ../../../include/dfu/*
+   ../../../include/mgmt/*

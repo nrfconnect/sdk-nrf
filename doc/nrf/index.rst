@@ -62,7 +62,7 @@ In addition to the |NCS| documentation, information is available in the followin
    applications
    samples
    drivers
-   libraries
+   libraries/index
    scripts
    release_notes
    known_issues

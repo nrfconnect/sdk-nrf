@@ -8,7 +8,7 @@ Bluetooth libraries and services
    :caption: Bluetooth libraries:
    :glob:
 
-   ../../include/bluetooth/*
+   ../../../include/bluetooth/*
 
 
 .. toctree::
@@ -16,4 +16,4 @@ Bluetooth libraries and services
    :caption: Bluetooth services:
    :glob:
 
-   ../../include/bluetooth/services/*
+   ../../../include/bluetooth/services/*
