@@ -159,7 +159,7 @@ It is assumed that the GNSS socket is already available.
 
 The following message sequence chart (MSC) describes the flow of communication in a SUPL session.
 
-.. figure:: /images/supl_msc.svg
+.. figure:: images/supl_msc.svg
    :alt: SUPL Session MSC
 
 .. _supl_session_msc_desc:
