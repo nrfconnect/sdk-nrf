@@ -157,6 +157,9 @@ def patch_environment(env_file: Path, topdir: Path) -> None:
         "tocs": env.tocs,
     }
 
+    if hasattr(env, "doxyrunner_cache"):
+        env_cache["doxyrunner_cache"] = env.doxyrunner_cache
+
     with open(env_file, "wb") as f:
         pickle.dump(env_cache, f)
 
