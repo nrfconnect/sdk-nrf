@@ -208,6 +208,11 @@ function(add_child_image_from_source)
     if (EXISTS ${child_image_dts_overlay})
       add_overlay_dts(${ACI_NAME} ${child_image_dts_overlay})
     endif()
+    if(DEFINED ${ACI_NAME}_CONF_FILE)
+      set(${ACI_NAME}_CONF_FILE ${${ACI_NAME}_CONF_FILE} CACHE STRING
+          "Default ${ACI_NAME} configuration file"
+      )
+    endif()
   endif()
   # Construct a list of variables that, when present in the root
   # image, should be passed on to all child images as well.
