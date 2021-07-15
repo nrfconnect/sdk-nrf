@@ -154,7 +154,7 @@ If there is no match, you can establish a connection without the need to disable
 
 The following code sample demonstrates the usage of the ``filter_no_match`` event:
 
-.. literalinclude:: ../../samples/bluetooth/central_hids/src/main.c
+.. literalinclude:: ../../../../samples/bluetooth/central_hids/src/main.c
     :language: c
     :start-after: include_startingpoint_scan_rst
     :end-before: include_endpoint_scan_rst

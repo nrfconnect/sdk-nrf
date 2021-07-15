@@ -38,7 +38,7 @@ As both the Light LC Server and the Light Lightness Server extend the Generic On
 .. note::
     Due to implementation limitations, the Light LC Server is instantiated on the next element after the Light Lightness Server it is controlling.
 
-.. figure:: /images/bt_mesh_light_ctrl_composition.svg
+.. figure:: images/bt_mesh_light_ctrl_composition.svg
    :alt: Light Lightness Control Server composition data structure
 
    Light Lightness Control Server composition data structure
@@ -65,7 +65,7 @@ Relationship with other nodes
 
 When the Light LC Server model controls a Light Lightness Server, all nodes should publish to the LC Server or its extended Generic OnOff model, instead of publishing directly to the Light Lightness Server:
 
-.. figure:: /images/bt_mesh_light_ctrl_nodes.svg
+.. figure:: images/bt_mesh_light_ctrl_nodes.svg
    :alt: Light Lightness Control Server node organization
 
 The dimmer devices that want to override the light level of the Lightness Server can publish directly to the Lightness Server.
@@ -93,7 +93,7 @@ When the state changes, the light level fades from the previous state's level to
 
 When the Light LC Server is turned on, the following sequence takes place:
 
-.. figure:: /images/bt_mesh_light_ctrl_levels.svg
+.. figure:: images/bt_mesh_light_ctrl_levels.svg
    :alt: Light Lightness Control Server light levels
 
    Light Lightness Control Server light levels
@@ -114,7 +114,7 @@ The On and Prolong states will start a timer as soon as the transition into the 
 When this timer expires, the state machine will automatically go into the next state.
 If the On event is triggered while in the On state, the timer is reset, and the transition to the Prolong state is postponed.
 
-.. figure:: /images/bt_mesh_light_ctrl_states.svg
+.. figure:: images/bt_mesh_light_ctrl_states.svg
    :alt: Light Lightness Control Server state machine
 
    Light Lightness Control Server state machine
@@ -300,7 +300,7 @@ Illuminance regulator
 The illuminance regulator complements the light level state machine by adding an ambient illuminance sensor feedback loop.
 This allows the Lightness Server to adjust its output level that is based on the room's ambient light, and as a result conserve energy and achieve more consistent light levels.
 
-.. figure:: /images/bt_mesh_light_ctrl_reg.svg
+.. figure:: images/bt_mesh_light_ctrl_reg.svg
    :alt: Light Lightness Control Server illuminance regulator
 
    Light Lightness Control Server illuminance regulator
