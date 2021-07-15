@@ -26,7 +26,7 @@ Serialization
 
 The modem firmware is serialized using the following CDDL scheme.
 
-.. literalinclude:: ../../subsys/dfu/fmfu_fdev/cddl/modem_update.cddl
+.. literalinclude:: ../../../../subsys/dfu/fmfu_fdev/cddl/modem_update.cddl
     :language: none
 
 The resulting serialized firmware file uses the :file:`.cbor` extension.
