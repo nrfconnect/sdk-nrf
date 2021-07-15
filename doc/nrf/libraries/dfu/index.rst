@@ -8,5 +8,4 @@ DFU libraries
    :glob:
    :caption: Subpages:
 
-   ../../../include/dfu/*
-   ../../../include/mgmt/*
+   *
