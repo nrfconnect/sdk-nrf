@@ -60,7 +60,7 @@ struct bt_mesh_lightness_srv;
 			 _bt_mesh_lightness_setup_srv_op, NULL,                \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_lightness_srv, \
 						 _srv),                        \
-			 NULL)
+			 &_bt_mesh_lightness_setup_srv_cb)
 
 /** Collection of handler callbacks for the Light Lightness Server. */
 struct bt_mesh_lightness_srv_handlers {
@@ -140,6 +140,8 @@ struct bt_mesh_lightness_srv {
 	struct bt_mesh_ponoff_srv ponoff;
 	/** Pointer to the model entry in the composition data. */
 	struct bt_mesh_model *lightness_model;
+	/** Pointer to the Setup Server model entry in the composition data. */
+	struct bt_mesh_model *lightness_setup_model;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */
@@ -198,6 +200,7 @@ int bt_mesh_lightness_srv_pub(struct bt_mesh_lightness_srv *srv,
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_cb _bt_mesh_lightness_srv_cb;
+extern const struct bt_mesh_model_cb _bt_mesh_lightness_setup_srv_cb;
 extern const struct bt_mesh_model_op _bt_mesh_lightness_srv_op[];
 extern const struct bt_mesh_model_op _bt_mesh_lightness_setup_srv_op[];
 extern const struct bt_mesh_lvl_srv_handlers

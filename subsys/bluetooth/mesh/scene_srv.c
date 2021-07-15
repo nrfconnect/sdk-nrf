@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <bluetooth/mesh/access.h>
 #include <bluetooth/mesh/models.h>
 #include <sys/byteorder.h>
 #include "model_utils.h"
@@ -676,6 +677,7 @@ static int scene_srv_init(struct bt_mesh_model *model)
 	sys_slist_prepend(&scene_servers, &srv->n);
 
 	srv->model = model;
+
 	net_buf_simple_init_with_data(&srv->pub_msg, srv->buf,
 				      sizeof(srv->buf));
 	srv->pub.msg = &srv->pub_msg;
@@ -772,6 +774,10 @@ const struct bt_mesh_model_cb _bt_mesh_scene_srv_cb = {
 static int scene_setup_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
+	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
+	struct bt_mesh_model *dtt_srv = NULL;
+	int err;
+	int i;
 
 	if (!srv) {
 		return -EINVAL;
@@ -779,18 +785,23 @@ static int scene_setup_srv_init(struct bt_mesh_model *model)
 
 	srv->setup_mod = model;
 
-	/* Model extensions:
-	 * To simplify the model extension tree, we're flipping the
-	 * relationship between the scene server and the scene
-	 * setup server. In the specification, the scene setup
-	 * server extends the scene server, which is the opposite of
-	 * what we're doing here. This makes no difference for the mesh
-	 * stack, but it makes it a lot easier to extend this model, as
-	 * we won't have to support multiple extenders.
-	 */
-	bt_mesh_model_extend(srv->model, srv->setup_mod);
+	for (i = model->elem_idx; (i >= 0) && (dtt_srv == NULL); --i) {
+		struct bt_mesh_elem *elem = &comp->elem[i];
 
-	return 0;
+		dtt_srv = bt_mesh_model_find(elem, BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_SRV);
+	}
+
+	if (!dtt_srv) {
+		BT_ERR("Failed to find Generic DTT Server on element");
+		return -EINVAL;
+	}
+
+	err = bt_mesh_model_extend(srv->setup_mod, dtt_srv);
+	if (err) {
+		return err;
+	}
+
+	return bt_mesh_model_extend(srv->setup_mod, srv->model);
 }
 
 const struct bt_mesh_model_cb _bt_mesh_scene_setup_srv_cb = {

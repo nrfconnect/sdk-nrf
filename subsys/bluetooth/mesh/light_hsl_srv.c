@@ -454,8 +454,15 @@ static void scene_recall_complete(struct bt_mesh_model *model)
 	(void)bt_mesh_light_hsl_srv_pub(srv, NULL, &hsl);
 }
 
+/*  MeshMDL1.0.1, section 5.1.3.1.1:
+ *  If a model is extending another model, the extending model shall determine
+ *  the Stored with Scene behavior of that model.
+ *
+ *  Use Setup Model to handle Scene Store/Recall as it is not extended
+ *  by other models.
+ */
 BT_MESH_SCENE_ENTRY_SIG(light_hsl) = {
-	.id.sig = BT_MESH_MODEL_ID_LIGHT_HSL_SRV,
+	.id.sig = BT_MESH_MODEL_ID_LIGHT_HSL_SETUP_SRV,
 	.maxlen = 2,
 	.store = scene_store,
 	.recall = scene_recall,
@@ -476,6 +483,7 @@ static int hsl_srv_pub_update(struct bt_mesh_model *model)
 static int bt_mesh_light_hsl_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_model *lightness_srv;
 
 	srv->model = model;
 	srv->pub.update = hsl_srv_pub_update;
@@ -486,22 +494,15 @@ static int bt_mesh_light_hsl_srv_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&srv->buf, srv->pub_data,
 				      ARRAY_SIZE(srv->pub_data));
 
-	/* Model extensions:
-	 * To simplify the model extension tree, we're flipping the
-	 * relationship between the Light HSL server and the Light HSL
-	 * setup server. In the specification, the Light HSL setup
-	 * server extends the time server, which is the opposite of
-	 * what we're doing here. This makes no difference for the mesh
-	 * stack, but it makes it a lot easier to extend this model, as
-	 * we won't have to support multiple extenders.
-	 */
-	bt_mesh_model_extend(model, srv->lightness->lightness_model);
-	bt_mesh_model_extend(
-		model, bt_mesh_model_find(
-			       bt_mesh_model_elem(model),
-			       BT_MESH_MODEL_ID_LIGHT_HSL_SETUP_SRV));
+	lightness_srv =
+		bt_mesh_model_find(bt_mesh_model_elem(model), BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SRV);
 
-	return 0;
+	if (!lightness_srv) {
+		BT_ERR("Failed to find Lightness Server on element");
+		return -EINVAL;
+	}
+
+	return bt_mesh_model_extend(model, lightness_srv);
 }
 
 static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *model)
@@ -573,6 +574,32 @@ static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *model)
 const struct bt_mesh_model_cb _bt_mesh_light_hsl_srv_cb = {
 	.init = bt_mesh_light_hsl_srv_init,
 	.start = bt_mesh_light_hsl_srv_start,
+};
+
+static int bt_mesh_light_hsl_setup_srv_init(struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_model *lightness_setup_srv;
+	int err;
+
+	err = bt_mesh_model_extend(model, srv->model);
+	if (err) {
+		return err;
+	}
+
+	lightness_setup_srv = bt_mesh_model_find(bt_mesh_model_elem(model),
+						 BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV);
+
+	if (!lightness_setup_srv) {
+		BT_ERR("Failed to find Lightness Setup Server on element");
+		return -EINVAL;
+	}
+
+	return bt_mesh_model_extend(model, lightness_setup_srv);
+}
+
+const struct bt_mesh_model_cb _bt_mesh_light_hsl_setup_srv_cb = {
+	.init = bt_mesh_light_hsl_setup_srv_init,
 };
 
 int bt_mesh_light_hsl_srv_pub(struct bt_mesh_light_hsl_srv *srv,

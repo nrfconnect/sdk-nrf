@@ -379,8 +379,15 @@ static void scene_recall_complete(struct bt_mesh_model *model)
 	bt_mesh_light_ctl_pub(srv, NULL, &status);
 }
 
+/*  MeshMDL1.0.1, section 5.1.3.1.1:
+ *  If a model is extending another model, the extending model shall determine
+ *  the Stored with Scene behavior of that model.
+ *
+ *  Use Setup Model to handle Scene Store/Recall as it is not extended
+ *  by other models.
+ */
 BT_MESH_SCENE_ENTRY_SIG(light_ctl) = {
-	.id.sig = BT_MESH_MODEL_ID_LIGHT_CTL_SRV,
+	.id.sig = BT_MESH_MODEL_ID_LIGHT_CTL_SETUP_SRV,
 	.maxlen = 2,
 	.store = scene_store,
 	.recall = scene_recall,
@@ -408,22 +415,7 @@ static int bt_mesh_light_ctl_srv_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
 
-	/* Model extensions:
-	 * To simplify the model extension tree, we're flipping the
-	 * relationship between the Light CTL server and the Light CTL
-	 * setup server. In the specification, the Light CTL setup
-	 * server extends the time server, which is the opposite of
-	 * what we're doing here. This makes no difference for the mesh
-	 * stack, but it makes it a lot easier to extend this model, as
-	 * we won't have to support multiple extenders.
-	 */
-	bt_mesh_model_extend(model, srv->lightness_srv.lightness_model);
-	bt_mesh_model_extend(
-		model, bt_mesh_model_find(
-			       bt_mesh_model_elem(model),
-			       BT_MESH_MODEL_ID_LIGHT_CTL_SETUP_SRV));
-
-	return 0;
+	return bt_mesh_model_extend(model, srv->lightness_srv.lightness_model);
 }
 
 static void bt_mesh_light_ctl_srv_reset(struct bt_mesh_model *model)
@@ -477,6 +469,23 @@ const struct bt_mesh_model_cb _bt_mesh_light_ctl_srv_cb = {
 	.init = bt_mesh_light_ctl_srv_init,
 	.reset = bt_mesh_light_ctl_srv_reset,
 	.start = bt_mesh_light_ctl_srv_start,
+};
+
+static int bt_mesh_light_ctl_setup_srv_init(struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	int err;
+
+	err = bt_mesh_model_extend(model, srv->model);
+	if (err) {
+		return err;
+	}
+
+	return bt_mesh_model_extend(model, srv->lightness_srv.lightness_setup_model);
+}
+
+const struct bt_mesh_model_cb _bt_mesh_light_ctl_setup_srv_cb = {
+	.init = bt_mesh_light_ctl_setup_srv_init,
 };
 
 int bt_mesh_light_ctl_pub(struct bt_mesh_light_ctl_srv *srv,

@@ -1475,8 +1475,15 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	}
 }
 
+/*  MeshMDL1.0.1, section 5.1.3.1.1:
+ *  If a model is extending another model, the extending model shall determine
+ *  the Stored with Scene behavior of that model.
+ *
+ *  Use Setup Model to handle Scene Store/Recall as it is not extended
+ *  by other models.
+ */
 BT_MESH_SCENE_ENTRY_SIG(light_ctrl) = {
-	.id.sig = BT_MESH_MODEL_ID_LIGHT_LC_SRV,
+	.id.sig = BT_MESH_MODEL_ID_LIGHT_LC_SETUPSRV,
 	.maxlen = sizeof(struct scene_data),
 	.store = scene_store,
 	.recall = scene_recall,
@@ -1497,6 +1504,7 @@ static int update_handler(struct bt_mesh_model *model)
 static int light_ctrl_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	int err;
 
 	srv->model = model;
 
@@ -1526,8 +1534,15 @@ static int light_ctrl_srv_init(struct bt_mesh_model *model)
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
 				      sizeof(srv->pub_data));
 
-	bt_mesh_model_extend(model, srv->onoff.model);
-	bt_mesh_model_extend(srv->model, srv->lightness->lightness_model);
+	err = bt_mesh_model_extend(model, srv->lightness->lightness_model);
+	if (err) {
+		return err;
+	}
+
+	err = bt_mesh_model_extend(model, srv->onoff.model);
+	if (err) {
+		return err;
+	}
 
 	atomic_set_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL);
 
@@ -1662,19 +1677,14 @@ const struct bt_mesh_model_cb _bt_mesh_light_ctrl_srv_cb = {
 static int lc_setup_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	int err;
 
 	srv->setup_srv = model;
 
-	/* Model extensions:
-	 * To simplify the model extension tree, we're flipping the
-	 * relationship between the Light LC Server and the Light LC
-	 * Setup Server. In the specification, the Light LC Setup
-	 * Server extends the Light LC Server, which is the opposite of
-	 * what we're doing here. This makes no difference for the mesh
-	 * stack, but it makes it a lot easier to extend this model, as
-	 * we won't have to support multiple extenders.
-	 */
-	bt_mesh_model_extend(srv->model, srv->setup_srv);
+	err = bt_mesh_model_extend(srv->setup_srv, srv->model);
+	if (err) {
+		return err;
+	}
 
 	srv->setup_pub.msg = &srv->setup_pub_buf;
 	net_buf_simple_init_with_data(&srv->setup_pub_buf, srv->setup_pub_data,

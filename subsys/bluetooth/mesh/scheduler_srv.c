@@ -727,19 +727,6 @@ static int scheduler_srv_init(struct bt_mesh_model *model)
 			sizeof(srv->pub_data));
 	srv->active_bitmap = 0;
 
-	/* Model extensions:
-	 * To simplify the model extension tree, we're flipping the
-	 * relationship between the scheduler server and the scheduler
-	 * setup server. In the specification, the scheduler setup
-	 * server extends the scheduler server, which is the opposite
-	 * of what we're doing here. This makes no difference for
-	 * the mesh stack, but it makes it a lot easier to extend
-	 * this model, as we won't have to support multiple extenders.
-	 */
-	bt_mesh_model_extend(model, bt_mesh_model_find(
-			bt_mesh_model_elem(model),
-			BT_MESH_MODEL_ID_SCHEDULER_SETUP_SRV));
-
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
 	k_work_init_delayable(&srv->delayed_work, scheduled_action_handle);
 
@@ -801,6 +788,17 @@ const struct bt_mesh_model_cb _bt_mesh_scheduler_srv_cb = {
 #ifdef CONFIG_BT_SETTINGS
 	.settings_set = scheduler_srv_settings_set
 #endif
+};
+
+static int scheduler_setup_srv_init(struct bt_mesh_model *model)
+{
+	struct bt_mesh_scheduler_srv *srv = model->user_data;
+
+	return bt_mesh_model_extend(model, srv->model);
+}
+
+const struct bt_mesh_model_cb _bt_mesh_scheduler_setup_srv_cb = {
+	.init = scheduler_setup_srv_init,
 };
 
 int bt_mesh_scheduler_srv_time_update(struct bt_mesh_scheduler_srv *srv)

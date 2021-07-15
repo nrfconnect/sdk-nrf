@@ -628,8 +628,15 @@ static void scene_recall_complete(struct bt_mesh_model *model)
 	(void)bt_mesh_plvl_srv_pub(srv, NULL, &status);
 }
 
+/*  MeshMDL1.0.1, section 5.1.3.1.1:
+ *  If a model is extending another model, the extending model shall determine
+ *  the Stored with Scene behavior of that model.
+ *
+ *  Use Setup Model to handle Scene Store/Recall as it is not extended
+ *  by other models.
+ */
 BT_MESH_SCENE_ENTRY_SIG(plvl) = {
-	.id.sig = BT_MESH_MODEL_ID_GEN_POWER_LEVEL_SRV,
+	.id.sig = BT_MESH_MODEL_ID_GEN_POWER_LEVEL_SETUP_SRV,
 	.maxlen = 2,
 	.store = scene_store,
 	.recall = scene_recall,
@@ -670,6 +677,7 @@ static int update_handler(struct bt_mesh_model *model)
 static int bt_mesh_plvl_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
+	int err;
 
 	srv->plvl_model = model;
 
@@ -683,24 +691,12 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *model)
 	k_work_init_delayable(&srv->store_timer, store_timeout);
 #endif
 
-	/* Model extensions:
-	 * To simplify the model extension tree, we're flipping the
-	 * relationship between the plvl server and the plvl setup
-	 * server. In the specification, the plvl setup server extends
-	 * the plvl server, which is the opposite of what we're doing
-	 * here. This makes no difference for the mesh stack, but it
-	 * makes it a lot easier to extend this model, as we won't have
-	 * to support multiple extenders.
-	 */
-	bt_mesh_model_extend(model, srv->ponoff.ponoff_model);
-	bt_mesh_model_extend(model, srv->lvl.model);
-	bt_mesh_model_extend(
-		model,
-		bt_mesh_model_find(
-			bt_mesh_model_elem(model),
-			BT_MESH_MODEL_ID_GEN_POWER_LEVEL_SETUP_SRV));
+	err = bt_mesh_model_extend(model, srv->ponoff.ponoff_model);
+	if (err) {
+		return err;
+	}
 
-	return 0;
+	return bt_mesh_model_extend(model, srv->lvl.model);
 }
 
 #ifdef CONFIG_BT_SETTINGS
@@ -764,6 +760,26 @@ const struct bt_mesh_model_cb _bt_mesh_plvl_srv_cb = {
 	.settings_set = bt_mesh_plvl_srv_settings_set,
 	.start = bt_mesh_plvl_srv_start,
 #endif
+};
+
+static int bt_mesh_plvl_setup_srv_init(struct bt_mesh_model *model)
+{
+	struct bt_mesh_plvl_srv *srv = model->user_data;
+	int err;
+
+	srv->plvl_setup_model = model;
+
+	err = bt_mesh_model_extend(model, srv->ponoff.ponoff_setup_model);
+	if (err) {
+		return err;
+	}
+
+	return bt_mesh_model_extend(model, srv->plvl_model);
+}
+
+
+const struct bt_mesh_model_cb _bt_mesh_plvl_setup_srv_cb = {
+	.init = bt_mesh_plvl_setup_srv_init,
 };
 
 int bt_mesh_plvl_srv_pub(struct bt_mesh_plvl_srv *srv,

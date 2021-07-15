@@ -394,9 +394,7 @@ static int bt_mesh_light_temp_srv_init(struct bt_mesh_model *model)
 	k_work_init_delayable(&srv->store_timer, store_timeout);
 #endif
 
-	bt_mesh_model_extend(model, srv->lvl.model);
-
-	return 0;
+	return bt_mesh_model_extend(model, srv->lvl.model);
 }
 
 static int bt_mesh_light_temp_srv_settings_set(struct bt_mesh_model *model,

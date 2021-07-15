@@ -31,10 +31,9 @@ struct bt_mesh_scheduler_srv;
  * @param[in] _action_set_cb Action Set callback.
  * @param[in] _time_srv      Timer server that is used for action scheduling.
  */
-#define BT_MESH_SCHEDULER_SRV_INIT(_action_set_cb, _time_srv)                 \
-	{                                                                     \
-		.action_set_cb = _action_set_cb,                              \
-		.time_srv = _time_srv,                                        \
+#define BT_MESH_SCHEDULER_SRV_INIT(_action_set_cb, _time_srv)        \
+	{                                                                      \
+		.action_set_cb = _action_set_cb, .time_srv = _time_srv,        \
 	}
 
 /** @def BT_MESH_MODEL_SCHEDULER_SRV

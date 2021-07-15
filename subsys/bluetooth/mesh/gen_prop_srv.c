@@ -609,10 +609,19 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 
 	if ((model->id == BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV ||
 	     model->id == BT_MESH_MODEL_ID_GEN_ADMIN_PROP_SRV)) {
-		bt_mesh_model_extend(
-			model,
-			bt_mesh_model_find(bt_mesh_model_elem(model),
-					   BT_MESH_MODEL_ID_GEN_USER_PROP_SRV));
+		int err;
+		struct bt_mesh_model *usr_prop_srv = bt_mesh_model_find(
+			bt_mesh_model_elem(model), BT_MESH_MODEL_ID_GEN_USER_PROP_SRV);
+
+		if (!usr_prop_srv) {
+			BT_ERR("Failed to find Generic User Property Server on element");
+			return -EINVAL;
+		}
+
+		err = bt_mesh_model_extend(model, usr_prop_srv);
+		if (err) {
+			return err;
+		}
 	}
 
 	if (IS_MFR_SRV(model)) {

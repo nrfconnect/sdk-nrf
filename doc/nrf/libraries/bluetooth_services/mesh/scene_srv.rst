@@ -23,6 +23,9 @@ This allows for a fine-grained control of the access rights for the Scene Server
 * Scene Server provides functionality for listing and recalling stored scenes.
 * Scene Setup Server provides functionality for storing and deleting scenes.
 
+The Scene Setup Server model extends the Scene Server model and the Generic Default Transition Time Server model.
+The Generic Default Transition Time Server model shall be present on the same element as the Scene Setup Server model, or on an element with a lower address.
+
 Operation
 =========
 
