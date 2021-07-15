@@ -38,7 +38,7 @@ The tool is available for download as a standalone :file:`zip` package using the
 Zigbee endpoint logger
 **********************
 
-.. include:: ../../include/zigbee/zigbee_logger_eprxzcl.rst
+.. include:: libraries/zigbee/zigbee_logger_eprxzcl.rst
     :start-after: zigbee_logger_endpoint_intro_start
     :end-before: zigbee_logger_endpoint_intro_end
 
