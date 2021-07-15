@@ -26,11 +26,11 @@ The LwM2M carrier library is also used in the :ref:`asset_tracker` application.
     :maxdepth: 1
     :caption: Subpages:
 
-    doc/certification
-    doc/app_integration
-    doc/requirements
-    doc/msc
-    doc/CHANGELOG
+    certification
+    app_integration
+    requirements
+    msc
+    CHANGELOG
 
 
 
