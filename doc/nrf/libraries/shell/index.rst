@@ -8,4 +8,4 @@ Shell libraries
    :glob:
    :caption: Subpages:
 
-   ../../../include/shell/*
+   *
