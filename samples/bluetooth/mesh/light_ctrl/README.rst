@@ -164,7 +164,7 @@ You should now see the following actions:
 
 The default value of :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` is 10000 (~15%).
 
-.. figure:: /images/bt_mesh_light_ctrl_levels.svg
+.. figure:: images/bt_mesh_light_ctrl_levels.svg
    :alt: Light level transitions over time
 
    Light level transitions over time

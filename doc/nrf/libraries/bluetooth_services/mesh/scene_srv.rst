@@ -58,7 +58,7 @@ These macros will allocate the structure in flash, and make them known to the Sc
 
 For instance, the Generic OnOff Server model defines its scene entry by declaring a :c:type:`bt_mesh_scene_entry` structure with the Generic OnOff Server model ID and a set of callbacks:
 
-.. literalinclude:: ../../../subsys/bluetooth/mesh/gen_onoff_srv.c
+.. literalinclude:: ../../../../../subsys/bluetooth/mesh/gen_onoff_srv.c
    :language: c
    :start-after: include_startingpoint_scene_srv_rst_1
    :end-before: include_endpoint_scene_srv_rst_1

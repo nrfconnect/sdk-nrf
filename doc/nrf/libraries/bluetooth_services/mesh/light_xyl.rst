@@ -12,7 +12,7 @@ The CIE1931 color spaces are the first defined quantitative links between distri
 The CIE1931 color space chart is utilized by the models to determine the color light emitted by an element.
 The xyL models allow remote control and configuration of a light device with x and y chromaticity coordinates support in a mesh network.
 
-.. figure:: /images/CIExy1931.png
+.. figure:: images/CIExy1931.png
    :scale: 50 %
    :alt: CIE1931 color space chromaticity diagram
 
