@@ -16,6 +16,5 @@ For information on how to use the supplied libraries, see :ref:`ug_zigbee_config
    :glob:
    :caption: Subpages:
 
-   lib_zigbee_osif
+   *
    ../../../include/zigbee/*
-   lib_zigbee_shell
