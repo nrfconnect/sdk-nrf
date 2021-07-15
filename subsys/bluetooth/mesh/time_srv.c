@@ -389,19 +389,6 @@ static int bt_mesh_time_srv_init(struct bt_mesh_model *model)
 
 	srv->model = model;
 	net_buf_simple_init(srv->pub.msg, 0);
-	/* Model extensions:
-	 * To simplify the model extension tree, we're flipping the
-	 * relationship between the time server and the time
-	 * setup server. In the specification, the time setup
-	 * server extends the time server, which is the opposite of
-	 * what we're doing here. This makes no difference for the mesh
-	 * stack, but it makes it a lot easier to extend this model, as
-	 * we won't have to support multiple extenders.
-	 */
-	bt_mesh_model_extend(
-		model,
-		bt_mesh_model_find(bt_mesh_model_elem(model),
-				   BT_MESH_MODEL_ID_TIME_SETUP_SRV));
 
 	return 0;
 }
@@ -448,6 +435,18 @@ const struct bt_mesh_model_cb _bt_mesh_time_srv_cb = {
 #ifdef CONFIG_BT_MESH_TIME_SRV_PERSISTENT
 	.settings_set = bt_mesh_time_srv_settings_set,
 #endif
+};
+
+static int bt_mesh_time_setup_srv_init(struct bt_mesh_model *model)
+{
+	struct bt_mesh_time_srv *srv = model->user_data;
+
+	return bt_mesh_model_extend(model, srv->model);
+}
+
+
+const struct bt_mesh_model_cb _bt_mesh_time_setup_srv_cb = {
+	.init = bt_mesh_time_setup_srv_init,
 };
 
 int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)

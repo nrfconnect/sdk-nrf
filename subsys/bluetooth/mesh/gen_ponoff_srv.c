@@ -46,11 +46,11 @@ static int store_data(struct bt_mesh_ponoff_srv *srv,
 		return -EINVAL;
 	}
 
-	/* Models that extend Generic Power OnOff Server and, which states are
+	/* Models that extend Generic Power OnOff Setup Server and, which states are
 	 * bound with Generic OnOff state, store the value of the bound state
 	 * separately, therefore they don't need to store Generic OnOff state.
 	 */
-	if (bt_mesh_model_is_extended(srv->ponoff_model)) {
+	if (bt_mesh_model_is_extended(srv->ponoff_setup_model)) {
 		size = sizeof(data.on_power_up);
 	} else {
 		size = sizeof(data);
@@ -71,7 +71,7 @@ static void store_timeout(struct k_work *work)
 
 	struct bt_mesh_onoff_status onoff_status = {0};
 
-	if (!bt_mesh_model_is_extended(srv->ponoff_model)) {
+	if (!bt_mesh_model_is_extended(srv->ponoff_setup_model)) {
 		srv->onoff.handlers->get(&srv->onoff, NULL, &onoff_status);
 	}
 
@@ -179,7 +179,7 @@ static void onoff_intercept_set(struct bt_mesh_onoff_srv *onoff_srv,
 	srv->onoff_handlers->set(onoff_srv, ctx, set, status);
 
 	if ((srv->on_power_up == BT_MESH_ON_POWER_UP_RESTORE) &&
-	    !bt_mesh_model_is_extended(srv->ponoff_model)) {
+	    !bt_mesh_model_is_extended(srv->ponoff_setup_model)) {
 		store_state(srv);
 	}
 }
@@ -258,8 +258,15 @@ static void scene_recall_complete(struct bt_mesh_model *model)
 	(void)bt_mesh_onoff_srv_pub(&srv->onoff, NULL, &status);
 }
 
+/*  MeshMDL1.0.1, section 5.1.3.1.1:
+ *  If a model is extending another model, the extending model shall determine
+ *  the Stored with Scene behavior of that model.
+ *
+ *  Use Setup Model to handle Scene Store/Recall as it is not extended
+ *  by other models.
+ */
 BT_MESH_SCENE_ENTRY_SIG(ponoff) = {
-	.id.sig = BT_MESH_MODEL_ID_GEN_POWER_ONOFF_SRV,
+	.id.sig = BT_MESH_MODEL_ID_GEN_POWER_ONOFF_SETUP_SRV,
 	.maxlen = 1,
 	.store = scene_store,
 	.recall = scene_recall,
@@ -290,24 +297,7 @@ static int bt_mesh_ponoff_srv_init(struct bt_mesh_model *model)
 	k_work_init_delayable(&srv->store_timer, store_timeout);
 #endif
 
-	/* Model extensions:
-	 * To simplify the model extension tree, we're flipping the
-	 * relationship between the ponoff server and the ponoff setup
-	 * server. In the specification, the ponoff setup server extends
-	 * the ponoff server, which is the opposite of what we're doing
-	 * here. This makes no difference for the mesh stack, but it
-	 * makes it a lot easier to extend this model, as we won't have
-	 * to support multiple extenders.
-	 */
-	bt_mesh_model_extend(model, srv->onoff.model);
-	bt_mesh_model_extend(model, srv->dtt.model);
-	bt_mesh_model_extend(
-		model,
-		bt_mesh_model_find(
-			bt_mesh_model_elem(model),
-			BT_MESH_MODEL_ID_GEN_POWER_ONOFF_SETUP_SRV));
-
-	return 0;
+	return bt_mesh_model_extend(model, srv->onoff.model);
 }
 
 static void bt_mesh_ponoff_srv_reset(struct bt_mesh_model *model)
@@ -344,11 +334,11 @@ static int bt_mesh_ponoff_srv_settings_set(struct bt_mesh_model *model,
 
 	set_on_power_up(srv, NULL, (enum bt_mesh_on_power_up)data.on_power_up);
 
-	/* Models that extend Generic Power OnOff Server and, which states are
+	/* Models that extend Generic Power OnOff Setup Server and, which states are
 	 * bound with Generic OnOff state, store the value of the bound state
 	 * separately, therefore they don't need to set Generic OnOff state.
 	 */
-	if (bt_mesh_model_is_extended(model)) {
+	if (bt_mesh_model_is_extended(srv->ponoff_setup_model)) {
 		return 0;
 	}
 
@@ -380,6 +370,26 @@ const struct bt_mesh_model_cb _bt_mesh_ponoff_srv_cb = {
 #ifdef CONFIG_BT_SETTINGS
 	.settings_set = bt_mesh_ponoff_srv_settings_set,
 #endif
+};
+
+static int bt_mesh_ponoff_setup_srv_init(struct bt_mesh_model *model)
+{
+	struct bt_mesh_ponoff_srv *srv = model->user_data;
+	int err;
+
+	srv->ponoff_setup_model = model;
+
+	err = bt_mesh_model_extend(model, srv->ponoff_model);
+	if (err) {
+		return err;
+	}
+
+	return bt_mesh_model_extend(model, srv->dtt.model);
+}
+
+
+const struct bt_mesh_model_cb _bt_mesh_ponoff_setup_srv_cb = {
+	.init = bt_mesh_ponoff_setup_srv_init,
 };
 
 void bt_mesh_ponoff_srv_set(struct bt_mesh_ponoff_srv *srv,

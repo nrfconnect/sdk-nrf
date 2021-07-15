@@ -57,7 +57,7 @@ struct bt_mesh_light_xyl_srv;
 				 _bt_mesh_light_xyl_setup_srv_op, NULL,        \
 				 BT_MESH_MODEL_USER_DATA(                      \
 					 struct bt_mesh_light_xyl_srv, _srv),  \
-				 NULL)
+				 &_bt_mesh_light_xyl_setup_srv_cb)
 
 /** Light xy set parameters. */
 struct bt_mesh_light_xy_set {
@@ -261,6 +261,7 @@ int bt_mesh_light_xyl_srv_default_pub(struct bt_mesh_light_xyl_srv *srv,
 extern const struct bt_mesh_model_op _bt_mesh_light_xyl_srv_op[];
 extern const struct bt_mesh_model_op _bt_mesh_light_xyl_setup_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_light_xyl_srv_cb;
+extern const struct bt_mesh_model_cb _bt_mesh_light_xyl_setup_srv_cb;
 /** @endcond */
 
 #ifdef __cplusplus

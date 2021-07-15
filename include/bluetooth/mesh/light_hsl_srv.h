@@ -57,7 +57,7 @@ struct bt_mesh_light_hsl_srv;
 			 _bt_mesh_light_hsl_setup_srv_op, NULL,                \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_light_hsl_srv, \
 						 _srv),                        \
-			 NULL)
+			 &_bt_mesh_light_hsl_setup_srv_cb)
 
 /**
  * Light HSL Server instance.
@@ -115,6 +115,7 @@ int bt_mesh_light_hsl_srv_pub(struct bt_mesh_light_hsl_srv *srv,
 extern const struct bt_mesh_model_op _bt_mesh_light_hsl_srv_op[];
 extern const struct bt_mesh_model_op _bt_mesh_light_hsl_setup_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_light_hsl_srv_cb;
+extern const struct bt_mesh_model_cb _bt_mesh_light_hsl_setup_srv_cb;
 /** @endcond */
 
 #ifdef __cplusplus

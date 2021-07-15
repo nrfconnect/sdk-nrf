@@ -57,7 +57,7 @@ struct tm;
 		&(_srv)->setup_pub,                                            \
 		BT_MESH_MODEL_USER_DATA(                                       \
 		struct bt_mesh_time_srv, _srv),                                \
-		NULL)
+		&_bt_mesh_time_setup_srv_cb)
 
 /** Time srv update types */
 enum bt_mesh_time_update_types {
@@ -295,6 +295,7 @@ void bt_mesh_time_srv_role_set(struct bt_mesh_time_srv *srv,
 extern const struct bt_mesh_model_op _bt_mesh_time_srv_op[];
 extern const struct bt_mesh_model_op _bt_mesh_time_setup_srv_op[];
 extern const struct bt_mesh_model_cb _bt_mesh_time_srv_cb;
+extern const struct bt_mesh_model_cb _bt_mesh_time_setup_srv_cb;
 int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model);
 /** @endcond */
 

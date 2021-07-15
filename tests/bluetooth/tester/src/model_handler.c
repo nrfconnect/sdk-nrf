@@ -337,6 +337,8 @@ void sensor_data_set(uint8_t *data, uint16_t len)
 		   BTP_STATUS_SUCCESS);
 }
 
+static struct bt_mesh_dtt_srv dtt_srv = BT_MESH_DTT_SRV_INIT(NULL);
+
 static struct bt_mesh_time_srv time_srv = BT_MESH_TIME_SRV_INIT(NULL);
 
 static struct bt_mesh_scheduler_srv scheduler_srv =
@@ -1271,6 +1273,7 @@ static struct bt_mesh_elem elements[] = {
 				 BT_MESH_MODEL_CFG_CLI(&cfg_cli),
 				 BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 				 BT_MESH_MODEL_HEALTH_CLI(&health_cli),
+			     BT_MESH_MODEL_DTT_SRV(&dtt_srv),
 			     BT_MESH_MODEL_SCHEDULER_SRV(&scheduler_srv)),
 		     vnd_models),
 	BT_MESH_ELEM(20,
