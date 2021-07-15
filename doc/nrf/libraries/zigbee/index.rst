@@ -17,4 +17,3 @@ For information on how to use the supplied libraries, see :ref:`ug_zigbee_config
    :caption: Subpages:
 
    *
-   ../../../include/zigbee/*
