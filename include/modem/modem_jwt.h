@@ -104,7 +104,7 @@ int modem_jwt_get_uuids(struct nrf_device_uuid *dev,
 /**
  * @brief Frees the JWT buffer allocated by @ref modem_jwt_generate.
  *
- * @param[in] jwt_buf Pointer to JWT buffer; see @ref struct jwt_data.
+ * @param[in] jwt_buf Pointer to JWT buffer; see #jwt_data.
  */
 void modem_jwt_free(char *const jwt_buf);
 
