@@ -39,7 +39,7 @@ Implementation
 
 The following sequence diagram shows how a firmware over-the-air update is implemented through the use of `AWS IoT MQTT`_, `AWS IoT jobs`_, and `AWS Simple Storage Service (S3)`_.
 
-.. figure:: /images/aws_fota_dfu_sequence.svg
+.. figure:: images/aws_fota_dfu_sequence.svg
    :alt: AWS FOTA sequence diagram for doing FOTA through AWS jobs
 
 

@@ -60,7 +60,7 @@ If the GPS service has already started before the device enters the RRC idle mod
 Limitations
 ***********
 
-.. include:: ../../samples/nrf9160/agps/README.rst
+.. include:: ../../../../samples/nrf9160/agps/README.rst
    :start-after: agpslimitation_start
    :end-before: agpslimitation_end
 
