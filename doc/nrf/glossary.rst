@@ -491,7 +491,7 @@ Glossary
       A timer that causes a system reset if it is not poked periodically.
 
    West
-      A multiple-repositories management system used by Zephyr and the |NCS|.
+      A management system for multiple repositories used by Zephyr and the |NCS|.
       See :ref:`zephyr:west`.
 
    West manifest file
