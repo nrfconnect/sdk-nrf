@@ -8,4 +8,4 @@ Debug libraries
    :glob:
    :caption: Subpages:
 
-   ../../../include/debug/*
+   *
