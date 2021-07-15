@@ -383,7 +383,7 @@ void lwm2m_os_timer_release(lwm2m_os_timer_t *timer);
  * @brief Start a timer on system work queue.
  *
  * @param timer Timer task.
- * @param msec Delay before submitting the task in ms.
+ * @param timeout Delay before submitting the task in ms.
  *
  * @retval  0      If timeout is @c NO_WAIT and work was already on a queue
  * @retval  1      If timeout is @c NO_WAIT and work was not submitted but has now been queued to
@@ -448,6 +448,7 @@ void lwm2m_os_log(int level, const char *fmt, ...);
 /**
  * @brief Print a data dump via logger.
  *
+ * @param level Level.
  * @param msg  Log message.
  * @param data Data to dump.
  * @param len  Data length.

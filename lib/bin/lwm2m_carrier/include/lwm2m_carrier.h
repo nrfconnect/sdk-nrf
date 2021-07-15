@@ -148,6 +148,7 @@ typedef struct {
 
 /**
  * @name LWM2M device error codes.
+ * @{
  */
 #define LWM2M_CARRIER_ERROR_CODE_NO_ERROR		 0
 #define LWM2M_CARRIER_ERROR_CODE_LOW_CHARGE		 1
