@@ -22,8 +22,6 @@ Complete the following steps to add a parser for your own AT commands:
 
    * ``*_init()`` - Initialize the parser.
    * ``*_uninit()`` - Uninitialize the parser.
-   * ``*_parse()`` - Parse an AT command string.
-   * ``*_clac()`` - List all defined AT commands.
 
    See the files for existing AT command parsers for reference.
 #. Implement your AT strings and handlers in a corresponding :file:`.c` file.
@@ -35,12 +33,12 @@ Complete the following steps to add a parser for your own AT commands:
    * Before entering idle state, the serial LTE modem application will call the uninit function.
      Make sure that the uninit function exits successfully.
      Otherwise, the application cannot enter idle state.
-#. Edit :file:`applications/nrf9160/serial_lte_modem/src/slm_at_host.c` and add calls to your functions:
+#. Edit :file:`applications/nrf9160/serial_lte_modem/src/slm_at_commands.c` and add calls to your functions:
 
-   a. In ``slm_at_host_init()``, add a call to your init function.
-   #. In ``slm_at_host_uninit()``, add a call to your uninit function.
-   #. In ``cmd_send()``, add a call to your parse function.
-   #. In ``handle_at_clac()``, add a call to your clac function.
+   a. In ``slm_at_init()``, add a call to your init function.
+   #. In ``slm_at_uninit()``, add a call to your uninit function.
+   #. Declare your command handler like those of other service modules.
+   #. In ``slm_at_cmd_list``, add the mapping of your AT command and its handler.
 
 If you discover any bugs in the :file:`main.c`, :file:`slm_at_host.h`, or :file:`slm_at_host.c` files, report them on the `DevZone`_.
 
