@@ -37,10 +37,9 @@ The figure does not present all the available modules.
 For example, the figure does not include the modules that are used as hotfixes or only for debug or profiling purposes.
 
 .. figure:: /images/nrf_desktop_arch.svg
-   :scale: 25 %
    :alt: nRF Desktop high-level design (overview)
 
-   Application high-level design overview (click to enlarge)
+   Application high-level design overview
 
 For more information about each of nRF Desktop modules, see the :ref:`nrf_desktop_app_internal_modules` section.
 
@@ -100,10 +99,9 @@ Gaming mouse module set
 The following figure shows the modules that are enabled when the application is working as a gaming mouse.
 
 .. figure:: /images/nrf_desktop_arch_gmouse.svg
-   :scale: 25 %
    :alt: nRF Desktop high-level design (gaming mouse)
 
-   Application configured as a gaming mouse (click to enlarge)
+   Application configured as a gaming mouse
 
 Desktop mouse module set
 ------------------------
@@ -111,10 +109,9 @@ Desktop mouse module set
 The following figure shows the modules that are enabled when the application is working as a desktop mouse.
 
 .. figure:: /images/nrf_desktop_arch_dmouse.svg
-   :scale: 25 %
    :alt: nRF Desktop high-level design (desktop mouse)
 
-   Application configured as a desktop mouse (click to enlarge)
+   Application configured as a desktop mouse
 
 Keyboard module set
 -------------------
@@ -122,10 +119,9 @@ Keyboard module set
 The following figure shows the modules that are enabled when the application is working as a keyboard.
 
 .. figure:: /images/nrf_desktop_arch_kbd.svg
-   :scale: 25 %
    :alt: nRF Desktop high-level design (keyboard)
 
-   Application configured as a keyboard (click to enlarge)
+   Application configured as a keyboard
 
 Dongle module set
 -----------------
@@ -133,10 +129,9 @@ Dongle module set
 The following figure shows the modules that are enabled when the application is working as a dongle.
 
 .. figure:: /images/nrf_desktop_arch_dongle.svg
-   :scale: 25 %
    :alt: nRF Desktop high-level design (dongle)
 
-   Application configured as a dongle (click to enlarge)
+   Application configured as a dongle
 
 Thread usage
 ============
@@ -221,7 +216,6 @@ The following diagram shows the data exchange between the application modules.
 To keep it simple, the diagram only shows data related to HID input reports that are sent after the host is connected and the HID subscriptions are enabled.
 
 .. figure:: /images/nrf_desktop_motion_sensing.svg
-   :scale: 50 %
    :alt: nRF Desktop mouse HID data sensing and transmission
 
    nRF Desktop mouse HID data sensing and transmission

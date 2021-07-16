@@ -72,7 +72,7 @@ A :ref:`manifest repository <zephyr:west-manifests>`, `sdk-nrf`_, contains a fil
 The |NCS| repository structure has a star topology, with the `sdk-nrf`_ repository being the center of the star and all other repositories being west projects that are managed by :file:`west.yml`.
 This is equivalent to topology T2 in the :ref:`west documentation <zephyr:west-basics>`.
 
-.. figure:: images/ncs-west-repos.png
+.. figure:: images/ncs-west-repos.svg
    :alt: A graphical depiction of the |NCS| repository structure
 
    The |NCS| repository structure

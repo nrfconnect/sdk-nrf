@@ -53,7 +53,7 @@ There are two implementations currently supported:
 
   See below for an abstract representation of the memory layout for an application that uses only an immutable bootloader in its boot chain:
 
-  .. figure:: images/bootloader_memory_layout_onestage.png
+  .. figure:: images/bootloader_memory_layout_onestage.svg
      :alt: Memory layout
 
 * The second implementation provides both the first stage in the chain, the immutable bootloader (|NSIB|), and uses :doc:`MCUboot <mcuboot:index>` as the upgradable second-stage bootloader.
