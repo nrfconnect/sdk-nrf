@@ -32,7 +32,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_EI_DATA_FORWARDER_LOG_LEVEL);
 
 enum {
 	CONN_SECURED			= BIT(0),
-	CONN_INTERVAL_VALID		= BIT(1),
+	CONN_SUBSCRIBED			= BIT(1),
+	CONN_INTERVAL_VALID		= BIT(2),
 };
 
 enum state {
@@ -88,6 +89,10 @@ static bool is_nus_conn_valid(struct bt_conn *conn, uint8_t conn_state)
 	}
 
 	if (!(conn_state & CONN_SECURED)) {
+		return false;
+	}
+
+	if (!(conn_state & CONN_SUBSCRIBED)) {
 		return false;
 	}
 
@@ -280,10 +285,30 @@ static void bt_nus_sent_cb(struct bt_conn *conn)
 	k_work_submit(&send_queued);
 }
 
+static void send_enabled(enum bt_nus_send_status status)
+{
+	/* Make sure callback and Event Manager event handler will not be preempted. */
+	BUILD_ASSERT(CONFIG_SYSTEM_WORKQUEUE_PRIORITY < 0);
+	__ASSERT_NO_MSG(!k_is_in_isr());
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+
+	if (status == BT_NUS_SEND_STATUS_ENABLED) {
+		conn_state |= CONN_SUBSCRIBED;
+	} else {
+		conn_state &= ~CONN_SUBSCRIBED;
+		__ASSERT_NO_MSG(status == BT_NUS_SEND_STATUS_DISABLED);
+	}
+
+	update_state(state);
+
+	LOG_INF("Notifications %sabled", (status == BT_NUS_SEND_STATUS_ENABLED) ? "en" : "dis");
+}
+
 static int init_nus(void)
 {
 	static struct bt_nus_cb nus_cb = {
 		.sent = bt_nus_sent_cb,
+		.send_enabled = send_enabled,
 	};
 
 	int err = bt_nus_init(&nus_cb);
@@ -342,8 +367,8 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 	case PEER_STATE_DISCONNECTED:
 		k_work_cancel(&send_queued);
 	case PEER_STATE_DISCONNECTING:
-		conn_state &= ~CONN_SECURED;
-		conn_state &= ~CONN_INTERVAL_VALID;
+		/* Clear flags representing connection state. */
+		conn_state = 0;
 		nus_conn = NULL;
 		break;
 
