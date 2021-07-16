@@ -49,7 +49,16 @@ void slm_at_host_uninit(void);
  * @param len Length of response message
  *
  */
-void rsp_send(const uint8_t *str, size_t len);
+void rsp_send(const char *str, size_t len);
+
+/**
+ * @brief Send raw data received in data mode
+ *
+ * @param data Raw data received
+ * @param len Length of raw data
+ *
+ */
+void datamode_send(const uint8_t *data, size_t len);
 
 /**
  * @brief Request SLM AT host to enter data mode
