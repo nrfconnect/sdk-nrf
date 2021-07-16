@@ -10,6 +10,7 @@
 #include <logging/log.h>
 #include <drivers/uart.h>
 #include <sys/ring_buffer.h>
+#include <sys/util.h>
 #include <string.h>
 #include <init.h>
 #include <modem/at_cmd.h>
@@ -35,6 +36,8 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 #define UART_RX_TIMEOUT_MS      1
 #define UART_ERROR_DELAY_MS     500
 #define UART_RX_MARGIN_MS       10
+
+#define HEXDUMP_DATAMODE_MAX    16
 
 static enum slm_operation_modes {
 	SLM_AT_COMMAND_MODE,  /* AT command host or bridge */
@@ -99,7 +102,7 @@ static int uart_send(const uint8_t *str, size_t len)
 	return ret;
 }
 
-void rsp_send(const uint8_t *str, size_t len)
+void rsp_send(const char *str, size_t len)
 {
 	if (len == 0) {
 		return;
@@ -107,6 +110,12 @@ void rsp_send(const uint8_t *str, size_t len)
 
 	LOG_HEXDUMP_DBG(str, len, "TX");
 	(void)uart_send(str, len);
+}
+
+void datamode_send(const uint8_t *data, size_t len)
+{
+	LOG_HEXDUMP_DBG(data, MIN(len, HEXDUMP_DATAMODE_MAX), "TX-DATAMODE");
+	(void)uart_send(data, len);
 }
 
 static int uart_receive(void)
@@ -278,7 +287,8 @@ static void raw_send(struct k_work *work)
 
 	if (size > 0) {
 		LOG_INF("Raw send %d", size);
-		LOG_HEXDUMP_DBG(&at_buf[tx_buf_size], size, "RX");
+		LOG_HEXDUMP_DBG(&at_buf[tx_buf_size],
+				MIN(size, HEXDUMP_DATAMODE_MAX), "RX-DATAMODE");
 		if (datamode_handler) {
 			(void)datamode_handler(DATAMODE_SEND, &at_buf[tx_buf_size], size);
 		} else {
@@ -675,6 +685,8 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 		LOG_DBG("RX_DISABLED");
 		if (slm_operation_mode == SLM_DATA_MODE) {
 			datamode_rx_disabled = true;
+			/* flush data in ring-buffer, if any */
+			k_work_submit(&raw_send_work);
 		}
 		if (enable_rx_retry && !uart_recovery_pending) {
 			k_work_schedule(&uart_recovery_work, K_MSEC(UART_ERROR_DELAY_MS));
