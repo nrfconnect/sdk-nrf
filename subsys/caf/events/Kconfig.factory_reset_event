@@ -4,15 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PELION_CLIENT_FACTORY_RESET_EVENTS
+config CAF_FACTORY_RESET_EVENTS
 	bool "Enable factory reset events"
 	help
 	  Enable the event that informs the system that factory reset was requested.
 
-config PELION_CLIENT_INIT_LOG_FACTORY_RESET_EVENTS
+config CAF_INIT_LOG_FACTORY_RESET_EVENTS
 	bool "Log factory reset events"
 	depends on LOG
-	depends on PELION_CLIENT_FACTORY_RESET_EVENTS
+	depends on CAF_FACTORY_RESET_EVENTS
 	default y
 	help
 	  Log the factory reset events.

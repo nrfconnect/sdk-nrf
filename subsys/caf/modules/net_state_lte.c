@@ -8,34 +8,37 @@
 #include <zephyr.h>
 #include <modem/lte_lc.h>
 
-#include "net_event.h"
-
-#define MODULE net
+#define MODULE net_state
 #include <caf/events/module_state_event.h>
 #include <caf/events/power_manager_event.h>
+#include <caf/events/net_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_NET_LOG_LEVEL);
-
 
 static struct k_work_delayable connecting_work;
 static enum net_state net_state;
 static bool registered;
 static uint32_t cell_id = UINT32_MAX;
 
+#if IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING)
+#define STATE_WAITING_PERIOD CONFIG_CAF_LOG_NET_STATE_WAITING_PERIOD
+#else
+#define STATE_WAITING_PERIOD 0
+#endif
+
 
 static void connecting_work_handler(struct k_work *work)
 {
 	LOG_INF("Waiting for LTE connection...");
-	k_work_reschedule(&connecting_work,
-			  K_SECONDS(CONFIG_PELION_CLIENT_WAITING_ON_CONNECTION_LOG_PERIOD));
+	k_work_reschedule(&connecting_work, K_SECONDS(STATE_WAITING_PERIOD));
 }
 
 static void send_net_state_event(enum net_state state)
 {
 	struct net_state_event *event = new_net_state_event();
 
-	event->id = MODULE_ID(net);
+	event->id = MODULE_ID(MODULE);
 	event->state = state;
 	EVENT_SUBMIT(event);
 }
@@ -171,7 +174,7 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			if (IS_ENABLED(CONFIG_PELION_CLIENT_LOG_WAITING_ON_CONNECTION)) {
+			if (IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING)) {
 				k_work_init_delayable(&connecting_work, connecting_work_handler);
 			}
 
@@ -188,8 +191,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_PELION_CLIENT_LOG_WAITING_ON_CONNECTION) &&
-	    is_net_state_event(eh)) {
+	if (IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING) && is_net_state_event(eh)) {
 		if (net_state == NET_STATE_DISCONNECTED) {
 			k_work_reschedule(&connecting_work, K_NO_WAIT);
 		} else {
@@ -208,6 +210,6 @@ static bool event_handler(const struct event_header *eh)
 
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-#if CONFIG_PELION_CLIENT_LOG_WAITING_ON_CONNECTION
+#if CONFIG_CAF_LOG_NET_STATE_WAITING
 	EVENT_SUBSCRIBE(MODULE, net_state_event);
 #endif

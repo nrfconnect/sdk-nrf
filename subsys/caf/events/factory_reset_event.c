@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include "factory_reset_event.h"
+#include <caf/events/factory_reset_event.h>
 
 
 static void profile_factory_reset_event(struct log_event_buf *buf,
@@ -21,6 +21,6 @@ EVENT_INFO_DEFINE(factory_reset_event,
 		  profile_factory_reset_event);
 
 EVENT_TYPE_DEFINE(factory_reset_event,
-		  IS_ENABLED(CONFIG_PELION_CLIENT_INIT_LOG_FACTORY_RESET_EVENTS),
+		  IS_ENABLED(CONFIG_CAF_INIT_LOG_FACTORY_RESET_EVENTS),
 		  NULL,
 		  &factory_reset_event_info);
