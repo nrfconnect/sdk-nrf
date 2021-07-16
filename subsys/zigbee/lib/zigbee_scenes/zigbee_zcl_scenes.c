@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "zcl_scenes.h"
-#include <zb_nrf_platform.h>
 #include <logging/log.h>
 #include <settings/settings.h>
+#include <zb_nrf_platform.h>
+#include <zigbee/zigbee_zcl_scenes.h>
 
-LOG_MODULE_REGISTER(zcl_scenes);
+LOG_MODULE_REGISTER(zcl_scenes, CONFIG_ZIGBEE_SCENES_LOG_LEVEL);
 
 static zb_uint8_t scene_table_get_entry(zb_uint16_t group_id, zb_uint8_t scene_id);
 static void scene_table_remove_entries_by_group(zb_uint16_t group_id);
@@ -39,7 +39,7 @@ struct scene_table_on_off_entry {
 	struct zb_zcl_scenes_fieldset_data_window_covering window_covering;
 };
 
-static struct scene_table_on_off_entry scenes_table[ZCL_SCENES_TABLE_SIZE];
+static struct scene_table_on_off_entry scenes_table[CONFIG_ZIGBEE_SCENE_TABLE_SIZE];
 
 struct response_info {
 	zb_zcl_parsed_hdr_t cmd_info;
@@ -83,7 +83,7 @@ struct settings_handler scenes_conf = {
 static zb_bool_t has_cluster(zb_uint16_t cluster_id)
 {
 	return (get_endpoint_by_cluster(cluster_id, ZB_ZCL_CLUSTER_SERVER_ROLE)
-		== ZCL_SCENES_ENDPOINT)
+		== CONFIG_ZIGBEE_SCENES_ENDPOINT)
 		? ZB_TRUE : ZB_FALSE;
 }
 
@@ -206,7 +206,7 @@ static zb_uint8_t *dump_fieldsets(struct scene_table_on_off_entry *entry,
 static zb_ret_t get_on_off_value(zb_uint8_t *on_off)
 {
 	zb_zcl_attr_t *attr_desc = zb_zcl_get_attr_desc_a(
-		ZCL_SCENES_ENDPOINT,
+		CONFIG_ZIGBEE_SCENES_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_ON_OFF,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID);
@@ -222,7 +222,7 @@ static zb_ret_t get_on_off_value(zb_uint8_t *on_off)
 static zb_ret_t get_current_level_value(zb_uint8_t *current_level)
 {
 	zb_zcl_attr_t *attr_desc = zb_zcl_get_attr_desc_a(
-		ZCL_SCENES_ENDPOINT,
+		CONFIG_ZIGBEE_SCENES_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID);
@@ -238,7 +238,7 @@ static zb_ret_t get_current_level_value(zb_uint8_t *current_level)
 static zb_ret_t get_current_lift_value(zb_uint8_t *percentage)
 {
 	zb_zcl_attr_t *attr_desc = zb_zcl_get_attr_desc_a(
-		ZCL_SCENES_ENDPOINT,
+		CONFIG_ZIGBEE_SCENES_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_WINDOW_COVERING,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_WINDOW_COVERING_CURRENT_POSITION_LIFT_PERCENTAGE_ID);
@@ -254,7 +254,7 @@ static zb_ret_t get_current_lift_value(zb_uint8_t *percentage)
 static zb_ret_t get_current_tilt_value(zb_uint8_t *percentage)
 {
 	zb_zcl_attr_t *attr_desc = zb_zcl_get_attr_desc_a(
-		ZCL_SCENES_ENDPOINT,
+		CONFIG_ZIGBEE_SCENES_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_WINDOW_COVERING,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_WINDOW_COVERING_CURRENT_POSITION_TILT_PERCENTAGE_ID);
@@ -302,14 +302,14 @@ static void recall_scene(struct scene_table_on_off_entry *entry)
 		LOG_INF("Recall On/Off state");
 
 		attr_desc = zb_zcl_get_attr_desc_a(
-			ZCL_SCENES_ENDPOINT,
+			CONFIG_ZIGBEE_SCENES_ENDPOINT,
 			ZB_ZCL_CLUSTER_ID_ON_OFF,
 			ZB_ZCL_CLUSTER_SERVER_ROLE,
 			ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID);
 
 		ZB_ZCL_INVOKE_USER_APP_SET_ATTR_WITH_RESULT(
 			buf,
-			ZCL_SCENES_ENDPOINT,
+			CONFIG_ZIGBEE_SCENES_ENDPOINT,
 			ZB_ZCL_CLUSTER_ID_ON_OFF,
 			attr_desc,
 			&entry->on_off.on_off,
@@ -320,14 +320,14 @@ static void recall_scene(struct scene_table_on_off_entry *entry)
 		LOG_INF("Recall level control state");
 
 		attr_desc = zb_zcl_get_attr_desc_a(
-			ZCL_SCENES_ENDPOINT,
+			CONFIG_ZIGBEE_SCENES_ENDPOINT,
 			ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
 			ZB_ZCL_CLUSTER_SERVER_ROLE,
 			ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID);
 
 		ZB_ZCL_INVOKE_USER_APP_SET_ATTR_WITH_RESULT(
 			buf,
-			ZCL_SCENES_ENDPOINT,
+			CONFIG_ZIGBEE_SCENES_ENDPOINT,
 			ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
 			attr_desc,
 			&entry->level_control.current_level,
@@ -338,14 +338,14 @@ static void recall_scene(struct scene_table_on_off_entry *entry)
 		LOG_INF("Recall window covering lift state");
 
 		attr_desc = zb_zcl_get_attr_desc_a(
-			ZCL_SCENES_ENDPOINT,
+			CONFIG_ZIGBEE_SCENES_ENDPOINT,
 			ZB_ZCL_CLUSTER_ID_WINDOW_COVERING,
 			ZB_ZCL_CLUSTER_SERVER_ROLE,
 			ZB_ZCL_ATTR_WINDOW_COVERING_CURRENT_POSITION_LIFT_PERCENTAGE_ID);
 
 		ZB_ZCL_INVOKE_USER_APP_SET_ATTR_WITH_RESULT(
 				buf,
-				ZCL_SCENES_ENDPOINT,
+				CONFIG_ZIGBEE_SCENES_ENDPOINT,
 				ZB_ZCL_CLUSTER_ID_WINDOW_COVERING,
 				attr_desc,
 				&entry->window_covering.current_position_lift_percentage,
@@ -356,14 +356,14 @@ static void recall_scene(struct scene_table_on_off_entry *entry)
 		LOG_INF("Recall window covering tilt state");
 
 		attr_desc = zb_zcl_get_attr_desc_a(
-			ZCL_SCENES_ENDPOINT,
+			CONFIG_ZIGBEE_SCENES_ENDPOINT,
 			ZB_ZCL_CLUSTER_ID_WINDOW_COVERING,
 			ZB_ZCL_CLUSTER_SERVER_ROLE,
 			ZB_ZCL_ATTR_WINDOW_COVERING_CURRENT_POSITION_TILT_PERCENTAGE_ID);
 
 		ZB_ZCL_INVOKE_USER_APP_SET_ATTR_WITH_RESULT(
 			buf,
-			ZCL_SCENES_ENDPOINT,
+			CONFIG_ZIGBEE_SCENES_ENDPOINT,
 			ZB_ZCL_CLUSTER_ID_WINDOW_COVERING,
 			attr_desc,
 			&entry->window_covering.current_position_tilt_percentage,
@@ -458,7 +458,7 @@ static void send_get_scene_membership_resp(zb_bufid_t bufid)
 		scene_count_ptr = payload_ptr;
 		ZB_ZCL_SCENES_ADD_SCENE_COUNT_GET_SCENE_MEMBERSHIP_RES(payload_ptr, 0);
 
-		while (i < ZCL_SCENES_TABLE_SIZE) {
+		while (i < CONFIG_ZIGBEE_SCENE_TABLE_SIZE) {
 			if (scenes_table[i].common.group_id ==
 			    resp_info.get_scene_membership_req.group_id) {
 				/* Add to payload */
@@ -493,7 +493,7 @@ static void scene_table_init(void)
 	zb_uint8_t i = 0;
 
 	memset(scenes_table, 0, sizeof(scenes_table));
-	while (i < ZCL_SCENES_TABLE_SIZE) {
+	while (i < CONFIG_ZIGBEE_SCENE_TABLE_SIZE) {
 		scenes_table[i].common.group_id = ZB_ZCL_SCENES_FREE_SCENE_TABLE_RECORD;
 		++i;
 	}
@@ -504,7 +504,7 @@ static zb_uint8_t scene_table_get_entry(zb_uint16_t group_id, zb_uint8_t scene_i
 	zb_uint8_t i = 0;
 	zb_uint8_t idx = 0xFF, free_idx = 0xFF;
 
-	while (i < ZCL_SCENES_TABLE_SIZE) {
+	while (i < CONFIG_ZIGBEE_SCENE_TABLE_SIZE) {
 		if (scenes_table[i].common.group_id == group_id &&
 		    scenes_table[i].common.scene_id == scene_id) {
 			idx = i;
@@ -526,7 +526,7 @@ static void scene_table_remove_entries_by_group(zb_uint16_t group_id)
 	zb_uint8_t i = 0;
 
 	LOG_DBG(">> %s: group_id 0x%x", __func__, group_id);
-	while (i < ZCL_SCENES_TABLE_SIZE) {
+	while (i < CONFIG_ZIGBEE_SCENE_TABLE_SIZE) {
 		if (scenes_table[i].common.group_id == group_id) {
 			LOG_INF("removing scene: entry idx %hd", i);
 			memset(&scenes_table[i], 0, sizeof(scenes_table[i]));
@@ -540,7 +540,7 @@ static void scene_table_remove_entries_by_group(zb_uint16_t group_id)
 static zb_ret_t get_scene_valid_value(zb_bool_t *scene_valid)
 {
 	zb_zcl_attr_t *attr_desc = zb_zcl_get_attr_desc_a(
-		ZCL_SCENES_ENDPOINT,
+		CONFIG_ZIGBEE_SCENES_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_SCENES,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_SCENES_SCENE_VALID_ID);
@@ -556,7 +556,7 @@ static zb_ret_t get_scene_valid_value(zb_bool_t *scene_valid)
 static zb_ret_t set_scene_valid_value(zb_bool_t scene_valid)
 {
 	zb_zcl_attr_t *attr_desc = zb_zcl_get_attr_desc_a(
-		ZCL_SCENES_ENDPOINT,
+		CONFIG_ZIGBEE_SCENES_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_SCENES,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_SCENES_SCENE_VALID_ID);
@@ -572,7 +572,7 @@ static zb_ret_t set_scene_valid_value(zb_bool_t scene_valid)
 static zb_ret_t get_current_scene_scene_id_value(zb_uint8_t *scene_id)
 {
 	zb_zcl_attr_t *attr_desc = zb_zcl_get_attr_desc_a(
-		ZCL_SCENES_ENDPOINT,
+		CONFIG_ZIGBEE_SCENES_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_SCENES,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_SCENES_CURRENT_SCENE_ID);
@@ -588,7 +588,7 @@ static zb_ret_t get_current_scene_scene_id_value(zb_uint8_t *scene_id)
 static zb_ret_t get_current_scene_group_id_value(zb_uint16_t *group_id)
 {
 	zb_zcl_attr_t *attr_desc = zb_zcl_get_attr_desc_a(
-		ZCL_SCENES_ENDPOINT,
+		CONFIG_ZIGBEE_SCENES_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_SCENES,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_ID);
@@ -619,7 +619,7 @@ static void update_scene_valid_value(void)
 		zb_uint8_t idx = scene_table_get_entry(group_id, scene_id);
 
 		if (group_id == ZB_ZCL_SCENES_FREE_SCENE_TABLE_RECORD ||
-		    scene_id < ZCL_SCENES_TABLE_SIZE ||
+		    scene_id < CONFIG_ZIGBEE_SCENE_TABLE_SIZE ||
 		    idx == ZB_ZCL_SCENES_FREE_SCENE_TABLE_RECORD) {
 			(void)set_scene_valid_value(ZB_FALSE);
 			return;
