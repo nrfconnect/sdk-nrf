@@ -149,6 +149,19 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 			      struct bt_mesh_lightness_status *status,
 			      bool publish);
 
+
+/** @brief Set the lightness without side effects such as storage or publication
+ *
+ *  @param[in] srv     Lightness server
+ *  @param[in] ctx     Message context or NULL
+ *  @param[in] set     Value to set
+ *  @param[out] status Status response
+ */
+void bt_mesh_lightness_srv_set(struct bt_mesh_lightness_srv *srv,
+			       struct bt_mesh_msg_ctx *ctx,
+			       struct bt_mesh_lightness_set *set,
+			       struct bt_mesh_lightness_status *status);
+
 /* For testing purposes */
 int lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
 			    struct bt_mesh_msg_ctx *ctx, enum light_repr repr,

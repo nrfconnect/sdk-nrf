@@ -174,6 +174,29 @@ void lightness_srv_disable_control(struct bt_mesh_lightness_srv *srv)
 #endif
 }
 
+void bt_mesh_lightness_srv_set(struct bt_mesh_lightness_srv *srv,
+			       struct bt_mesh_msg_ctx *ctx,
+			       struct bt_mesh_lightness_set *set,
+			       struct bt_mesh_lightness_status *status)
+{
+	if (bt_mesh_model_transition_time(set->transition)) {
+		BT_DBG("%u [%u + %u ms]", set->lvl, set->transition->delay,
+		       set->transition->time);
+	} else {
+		BT_DBG("%u", set->lvl);
+	}
+
+	memset(status, 0, sizeof(*status));
+
+	if (set->lvl != 0) {
+		set->lvl = CLAMP(set->lvl, srv->range.min, srv->range.max);
+	}
+
+	atomic_set_bit_to(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON, set->lvl > 0);
+
+	srv->handlers->light_set(srv, ctx, set, status);
+}
+
 void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct bt_mesh_lightness_set *set,
@@ -184,27 +207,16 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 		(atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON) ==
 		 (set->lvl == 0));
 
+	bt_mesh_lightness_srv_set(srv, ctx, set, status);
+
 	if (set->lvl != 0) {
-		set->lvl = CLAMP(set->lvl, srv->range.min, srv->range.max);
 		state_change |= (srv->last != set->lvl);
 		srv->last = set->lvl;
-	}
-
-	atomic_set_bit_to(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON, set->lvl > 0);
-
-	if (bt_mesh_model_transition_time(set->transition)) {
-		BT_DBG("%u [%u + %u ms]", set->lvl, set->transition->delay,
-		       set->transition->time);
-	} else {
-		BT_DBG("%u", set->lvl);
 	}
 
 	if (state_change) {
 		store_state(srv);
 	}
-
-	memset(status, 0, sizeof(*status));
-	srv->handlers->light_set(srv, ctx, set, status);
 
 	if (publish) {
 		BT_DBG("Publishing Light %s to 0x%04x", repr_str[ACTUAL], srv->pub.addr);

@@ -572,10 +572,18 @@ static void reg_step(struct k_work *work)
 
 		srv->reg.prev = output;
 		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
-		light_set(srv, light_to_repr(output, LINEAR), 0);
 	} else if (atomic_test_and_clear_bit(&srv->flags, FLAG_REGULATOR)) {
-		light_set(srv, light_to_repr(lvl, LINEAR), 0);
+		output = lvl;
+	} else {
+		return;
 	}
+
+	struct bt_mesh_lightness_set set = {
+		.lvl = light_to_repr(output, LINEAR),
+	};
+
+	bt_mesh_lightness_srv_set(srv->lightness, NULL, &set,
+				  &(struct bt_mesh_lightness_status){});
 }
 #endif
 
