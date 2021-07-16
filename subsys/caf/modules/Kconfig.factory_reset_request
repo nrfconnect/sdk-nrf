@@ -6,17 +6,16 @@
 
 menu "Factory reset request"
 
-config PELION_CLIENT_FACTORY_RESET_REQUEST_ENABLE
+config CAF_FACTORY_RESET_REQUEST
 	bool "Enable factory reset request module"
-	select PELION_CLIENT_FACTORY_RESET_EVENTS
+	select CAF_FACTORY_RESET_EVENTS
 	help
 	  Enable module that generates initialization event with
 	  factory reset request.
 
-if PELION_CLIENT_FACTORY_RESET_REQUEST_ENABLE
-
-config PELION_CLIENT_FACTORY_RESET_REQUEST_BUTTON
+config CAF_FACTORY_RESET_REQUEST_BUTTON
 	hex "Key ID of button used to request factory reset"
+	depends on CAF_FACTORY_RESET_REQUEST
 	range 0x0000 0xffff
 	default 0x0000
 	help
@@ -24,14 +23,13 @@ config PELION_CLIENT_FACTORY_RESET_REQUEST_BUTTON
 	  boot-up. Factory reset will erase any stored Pelion and Network
 	  data. It will also re-provision the device.
 
-config PELION_CLIENT_FACTORY_RESET_REQUEST_DELAY
+config CAF_FACTORY_RESET_REQUEST_DELAY
 	int "Time in miliseconds to wait for button event at initialization"
+	depends on CAF_FACTORY_RESET_REQUEST
 	default 50
 	help
 	  The time to wait for button event when the module is initialized.
 	  The time should be long enough for the button module to react
 	  for the button that is pressed during initialization.
-
-endif
 
 endmenu

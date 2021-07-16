@@ -5,9 +5,9 @@
  */
 
 #include <caf/led_effect.h>
+#include <caf/events/net_state_event.h>
 
 #include "led_state.h"
-#include "net_event.h"
 #include "pelion_event.h"
 
 /* This configuration file is included only once from led_state module and holds

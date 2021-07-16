@@ -9,11 +9,11 @@
 
 #include "mbed-cloud-client/MbedCloudClient.h"
 
-#include "net_event.h"
 #include "pelion_event.h"
 
 #define MODULE pelion
 #include <caf/events/module_state_event.h>
+#include <caf/events/net_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_PELION_LOG_LEVEL);

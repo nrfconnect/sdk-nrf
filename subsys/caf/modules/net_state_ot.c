@@ -9,20 +9,19 @@
 #include <net/openthread.h>
 #include <openthread/thread.h>
 #include <openthread/netdata.h>
-#include "factory_reset_event.h"
-#include "net_event.h"
 
-
-#define MODULE net
+#define MODULE net_state
 #include <caf/events/module_state_event.h>
 #include <caf/events/power_manager_event.h>
+#include <caf/events/net_state_event.h>
+#include <caf/events/factory_reset_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_NET_LOG_LEVEL);
 
 
-#define NET_MODULE_ID_STATE_READY_WAIT_FOR                               \
-	(IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_REQUEST_ENABLE) ? \
+#define NET_MODULE_ID_STATE_READY_WAIT_FOR                          \
+	(IS_ENABLED(CONFIG_CAF_FACTORY_RESET_REQUEST) ?             \
 		MODULE_ID(factory_reset_request) : MODULE_ID(main))
 
 
@@ -30,6 +29,11 @@ static struct k_work_delayable connecting_work;
 static enum net_state net_state;
 static bool initialized;
 
+#if IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING)
+#define STATE_WAITING_PERIOD CONFIG_CAF_LOG_NET_STATE_WAITING_PERIOD
+#else
+#define STATE_WAITING_PERIOD 0
+#endif
 
 static void format_address(char *buffer, size_t buffer_size, const uint8_t *addr_m8,
 			   size_t addr_size)
@@ -108,15 +112,14 @@ static bool check_routes(otInstance *instance)
 static void connecting_work_handler(struct k_work *work)
 {
 	LOG_INF("Waiting for OT connection...");
-	k_work_reschedule(&connecting_work,
-			  K_SECONDS(CONFIG_PELION_CLIENT_WAITING_ON_CONNECTION_LOG_PERIOD));
+	k_work_reschedule(&connecting_work, K_SECONDS(STATE_WAITING_PERIOD));
 }
 
 static void send_net_state_event(enum net_state state)
 {
 	struct net_state_event *event = new_net_state_event();
 
-	event->id = MODULE_ID(net);
+	event->id = MODULE_ID(MODULE);
 	event->state = state;
 	EVENT_SUBMIT(event);
 }
@@ -206,7 +209,7 @@ static bool handle_state_event(const struct module_state_event *event)
 	connect_ot();
 	module_set_state(MODULE_STATE_READY);
 
-	if (IS_ENABLED(CONFIG_PELION_CLIENT_LOG_WAITING_ON_CONNECTION)) {
+	if (IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING)) {
 		k_work_init_delayable(&connecting_work, connecting_work_handler);
 		k_work_reschedule(&connecting_work, K_NO_WAIT);
 	}
@@ -241,8 +244,7 @@ static bool event_handler(const struct event_header *eh)
 		return handle_state_event(cast_module_state_event(eh));
 	}
 
-	if (IS_ENABLED(CONFIG_PELION_CLIENT_LOG_WAITING_ON_CONNECTION) &&
-	    is_net_state_event(eh)) {
+	if (IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING) &&  is_net_state_event(eh)) {
 		if (net_state == NET_STATE_DISCONNECTED) {
 			k_work_reschedule(&connecting_work, K_NO_WAIT);
 		} else {
@@ -253,7 +255,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS) &&
+	if (IS_ENABLED(CONFIG_CAF_FACTORY_RESET_EVENTS) &&
 	    is_factory_reset_event(eh)) {
 		return handle_reset_event();
 	}
@@ -266,9 +268,9 @@ static bool event_handler(const struct event_header *eh)
 
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-#if IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS)
+#if IS_ENABLED(CONFIG_CAF_FACTORY_RESET_EVENTS)
 	EVENT_SUBSCRIBE(MODULE, factory_reset_event);
 #endif
-#if CONFIG_PELION_CLIENT_LOG_WAITING_ON_CONNECTION
+#if CONFIG_CAF_LOG_NET_STATE_WAITING
 	EVENT_SUBSCRIBE(MODULE, net_state_event);
 #endif

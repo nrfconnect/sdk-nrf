@@ -8,7 +8,7 @@
 #include <sys/util.h>
 #include <stdio.h>
 
-#include "net_event.h"
+#include <caf/events/net_state_event.h>
 
 
 static const char * const state_name[NET_STATE_COUNT] = {
@@ -46,6 +46,6 @@ EVENT_INFO_DEFINE(net_state_event,
 		  profile_net_state_event);
 
 EVENT_TYPE_DEFINE(net_state_event,
-		  IS_ENABLED(CONFIG_PELION_INIT_LOG_NET_STATE_EVENTS),
+		  IS_ENABLED(CONFIG_CAF_INIT_LOG_NET_EVENTS),
 		  log_net_state_event,
 		  &net_state_event_info);

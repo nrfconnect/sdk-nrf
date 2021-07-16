@@ -9,8 +9,8 @@
 #define MODULE led_state
 #include <caf/events/module_state_event.h>
 #include <caf/events/led_event.h>
+#include <caf/events/net_state_event.h>
 
-#include "net_event.h"
 #include "pelion_event.h"
 
 #include <logging/log.h>

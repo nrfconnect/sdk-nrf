@@ -5,19 +5,19 @@
  */
 
 #include <zephyr.h>
-#include "factory_reset_event.h"
 #include "factory_configurator_client.h"
 #include "pelion_fcc_err.h"
 
 
 #define MODULE pelion_fcc
 #include <caf/events/module_state_event.h>
+#include <caf/events/factory_reset_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_PELION_LOG_LEVEL);
 
-#define NET_MODULE_ID_STATE_READY_WAIT_FOR                               \
-	(IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_REQUEST_ENABLE) ? \
+#define NET_MODULE_ID_STATE_READY_WAIT_FOR                          \
+	(IS_ENABLED(CONFIG_CAF_FACTORY_RESET_REQUEST) ?             \
 		MODULE_ID(factory_reset_request) : MODULE_ID(main))
 
 static bool initialized;
@@ -93,7 +93,7 @@ static bool event_handler(const struct event_header *eh)
 		return handle_state_event(cast_module_state_event(eh));
 	}
 
-	if (IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS) &&
+	if (IS_ENABLED(CONFIG_CAF_FACTORY_RESET_EVENTS) &&
 	    is_factory_reset_event(eh)) {
 		return handle_factory_reset();
 	}
@@ -106,6 +106,6 @@ static bool event_handler(const struct event_header *eh)
 
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-#if IS_ENABLED(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS)
+#if IS_ENABLED(CONFIG_CAF_FACTORY_RESET_EVENTS)
 	EVENT_SUBSCRIBE(MODULE, factory_reset_event);
 #endif

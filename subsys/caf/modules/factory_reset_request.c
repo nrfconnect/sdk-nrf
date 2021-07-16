@@ -7,7 +7,7 @@
 #include <event_manager.h>
 
 #include <caf/events/button_event.h>
-#include "factory_reset_event.h"
+#include <caf/events/factory_reset_event.h>
 
 #define MODULE factory_reset_request
 #include <caf/events/module_state_event.h>
@@ -26,7 +26,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_button_event(eh)) {
 		struct button_event *event = cast_button_event(eh);
 
-		if (event->key_id != CONFIG_PELION_CLIENT_FACTORY_RESET_REQUEST_BUTTON) {
+		if (event->key_id != CONFIG_CAF_FACTORY_RESET_REQUEST_BUTTON) {
 			return false;
 		}
 
@@ -42,7 +42,7 @@ static bool event_handler(const struct event_header *eh)
 		if (check_state(event, MODULE_ID(buttons), MODULE_STATE_READY)) {
 			k_work_init_delayable(&init_work, init_work_handler);
 			k_work_schedule(&init_work,
-					K_MSEC(CONFIG_PELION_CLIENT_FACTORY_RESET_REQUEST_DELAY));
+					K_MSEC(CONFIG_CAF_FACTORY_RESET_REQUEST_DELAY));
 		}
 		return false;
 	}

@@ -5,9 +5,5 @@
 #
 
 target_sources(app PRIVATE
-	       ${CMAKE_CURRENT_SOURCE_DIR}/net_event.c
 	       ${CMAKE_CURRENT_SOURCE_DIR}/pelion_event.c
 )
-
-target_sources_ifdef(CONFIG_PELION_CLIENT_FACTORY_RESET_EVENTS
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/factory_reset_event.c)

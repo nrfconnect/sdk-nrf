@@ -24,6 +24,10 @@ zephyr_sources_ifdef(CONFIG_CAF_CLICK_EVENTS
 	click_event.c
 )
 
+zephyr_sources_ifdef(CONFIG_CAF_FACTORY_RESET_EVENTS
+	factory_reset_event.c
+)
+
 zephyr_sources_ifdef(CONFIG_CAF_FORCE_POWER_DOWN_EVENTS
 	force_power_down_event.c
 )
@@ -34,6 +38,10 @@ zephyr_sources_ifdef(CONFIG_CAF_KEEP_ALIVE_EVENTS
 
 zephyr_sources_ifdef(CONFIG_CAF_LED_EVENTS
 	led_event.c
+)
+
+zephyr_sources_ifdef(CONFIG_CAF_NET_STATE_EVENTS
+	net_state_event.c
 )
 
 zephyr_sources_ifdef(CONFIG_CAF_POWER_MANAGER_EVENTS

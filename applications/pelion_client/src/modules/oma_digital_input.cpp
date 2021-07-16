@@ -9,12 +9,12 @@
 #include "mbed-cloud-client/MbedCloudClient.h"
 
 #include "pelion_event.h"
-#include "net_event.h"
 
 #define MODULE oma_digital_input
 #include <caf/events/module_state_event.h>
 
 #include <caf/events/button_event.h>
+#include <caf/events/net_state_event.h>
 #include <caf/key_id.h>
 
 #include <logging/log.h>

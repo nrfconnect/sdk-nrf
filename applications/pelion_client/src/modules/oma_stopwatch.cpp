@@ -9,10 +9,10 @@
 #include "mbed-cloud-client/MbedCloudClient.h"
 
 #include "pelion_event.h"
-#include "net_event.h"
 
 #define MODULE oma_stopwatch
 #include <caf/events/module_state_event.h>
+#include <caf/events/net_state_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_OMA_STOPWATCH_LOG_LEVEL);
