@@ -19,9 +19,9 @@
 		.st11 {font-size:1em}
 		.st12 {fill:#f58220;stroke:none;stroke-width:1}
 		.st13 {fill:#0077c8;stroke:none;stroke-width:1}
-		.st14 {marker-end:url(#mrkr13-48);marker-start:url(#mrkr13-46);stroke:#0077c8;stroke-linecap:butt;stroke-width:1}
-		.st15 {fill:#0077c8;fill-opacity:1;stroke:#0077c8;stroke-opacity:1;stroke-width:0.35714285714286}
-		.st16 {marker-start:url(#mrkr13-46);stroke:#0077c8;stroke-linecap:butt;stroke-width:1}
+		.st14 {marker-end:url(#mrkr13-48);marker-start:url(#mrkr13-46);stroke:#333f48;stroke-linecap:butt;stroke-width:1}
+		.st15 {fill:#333f48;fill-opacity:1;stroke:#333f48;stroke-opacity:1;stroke-width:0.35714285714286}
+		.st16 {marker-start:url(#mrkr13-46);stroke:#333f48;stroke-linecap:butt;stroke-width:1}
 		.st17 {fill:#0033a0;stroke:none;stroke-width:1}
 		.st18 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
@@ -97,29 +97,29 @@
 			<text x="17.4" y="311.49" class="st7">Radio  2.4 GHz</text>		</g>
 		<g id="shape245-33" transform="translate(10.3201,-194.733)">
 			<title>Nordic Fall.245</title>
-			<desc>IEEE 802.15.4 API Serialization (Spinel) /radio</desc>
+			<desc>IEEE 802.15.4 API serialization (Spinel) /radio</desc>
 			<rect x="0" y="291.016" width="198.055" height="27.4722" class="st12"/>
-			<text x="37.77" y="301.75" class="st7">IEEE 802.15.4 API Serialization <tspan x="37.27" dy="1.2em" class="st11">(Spinel)                              /radio</tspan></text>		</g>
+			<text x="38.11" y="301.75" class="st7">IEEE 802.15.4 API serialization <tspan x="37.27" dy="1.2em" class="st11">(Spinel)                              /radio</tspan></text>		</g>
 		<g id="shape1000-37" transform="translate(10.3201,-54.6817)">
 			<title>Nordic Lake.1000</title>
 			<desc>Multiprotocol Service Layer (MPSL)</desc>
 			<rect x="0" y="291.168" width="156.153" height="27.3201" class="st13"/>
 			<text x="6.78" y="307.83" class="st7">Multiprotocol Service Layer (MPSL)</text>		</g>
-		<g id="shape1002-40" transform="translate(476.69,-100.817)">
+		<g id="shape1002-40" transform="translate(429.457,-100.088)">
 			<title>Dynamic connector.1002</title>
-			<path d="M0 326.53 L0 326.89 L0 344.6 L-84.64 344.6" class="st14"/>
+			<path d="M0 326.53 L0 326.89 L0 344.6 L-37.4 344.6" class="st14"/>
 		</g>
-		<g id="shape1010-49" transform="translate(180.338,-88.7327)">
+		<g id="shape1010-49" transform="translate(194.511,-88.7327)">
 			<title>Dynamic connector.1010</title>
-			<path d="M7.09 326.53 L7.09 326.89 L7.09 366.64" class="st14"/>
+			<path d="M-7.09 326.53 L-7.09 326.89 L-7.09 366.64" class="st14"/>
 		</g>
-		<g id="shape1014-56" transform="translate(329.548,-65.8943)">
+		<g id="shape1014-56" transform="translate(329.548,-65.1652)">
 			<title>Dynamic connector.1014</title>
-			<path d="M-8.04 318.49 L-8.4 318.49 L-20.56 318.49 L-20.56 288.02 L-24.61 288.02" class="st16"/>
+			<path d="M-8.04 318.49 L-8.4 318.49 L-20.56 318.49 L-20.56 287.29 L-24.61 287.29" class="st16"/>
 		</g>
-		<g id="shape1015-61" transform="translate(329.548,-82.7066)">
+		<g id="shape1015-61" transform="translate(329.548,-81.9775)">
 			<title>Dynamic connector.1015</title>
-			<path d="M-8.04 318.49 L-8.4 318.49 L-15.58 318.49 L-15.58 265.37 L-24.61 265.37" class="st16"/>
+			<path d="M-8.04 318.49 L-8.4 318.49 L-15.58 318.49 L-15.58 264.64 L-24.61 264.64" class="st16"/>
 		</g>
 		<g id="shape1017-66" transform="translate(208.375,-157.795)">
 			<title>Dynamic connector.1017</title>
@@ -132,7 +132,7 @@
 			<title>Dynamic connector.1020</title>
 			<path d="M8.04 318.49 L8.4 318.49 L25.02 318.49 L25.02 362.28 L30.25 362.28" class="st16"/>
 		</g>
-		<g id="shape119-77" transform="translate(329.548,-55.4108)">
+		<g id="shape119-77" transform="translate(329.548,-54.6817)">
 			<title>Nordic Sun</title>
 			<desc>OpenAmp</desc>
 			<rect x="0" y="279.908" width="54.106" height="38.58" class="st9"/>
@@ -157,11 +157,11 @@
 			<desc>Protocol stack (Thread | Zigbee)</desc>
 			<rect x="0" y="291.168" width="188.894" height="27.3201" class="st13"/>
 			<text x="65.73" y="301.83" class="st7">Protocol stack <tspan x="59.09" dy="1.2em" class="st11">(Thread | Zigbee)</tspan></text>		</g>
-		<g id="shape122-93" transform="translate(329.548,-100.817)">
+		<g id="shape122-93" transform="translate(329.548,-100.088)">
 			<title>Nordic Fall.122</title>
-			<desc>IEEE 802.15.4 API Serialization (Spinel) /host</desc>
+			<desc>IEEE 802.15.4 API serialization (Spinel) /host</desc>
 			<rect x="0" y="291.016" width="188.894" height="27.4722" class="st12"/>
-			<text x="33.18" y="301.75" class="st7">IEEE 802.15.4 API Serialization  <tspan x="32.08" dy="1.2em" class="st11">(Spinel)                                /host</tspan></text>		</g>
+			<text x="33.53" y="301.75" class="st7">IEEE 802.15.4 API serialization  <tspan x="32.08" dy="1.2em" class="st11">(Spinel)                                /host</tspan></text>		</g>
 		<g id="group1033-97" transform="translate(10.3201,-88.7327)">
 			<title>Sheet.1033</title>
 			<g id="group1032-98">

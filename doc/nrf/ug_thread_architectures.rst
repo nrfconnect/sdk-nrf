@@ -26,7 +26,7 @@ This can be done per platform, while retaining the ability to default to a stand
 .. figure:: images/ot-arch_2x.png
    :alt: OpenThread architecture
 
-   OpenThread architecture
+   OpenThread architecture adapted from `openthread.io <OpenThread system architecture_>`_
 
 .. _ug_thread_architectures_designs_soc_designs:
 

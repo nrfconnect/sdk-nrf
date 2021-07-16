@@ -151,14 +151,14 @@ The reception of these signals determines the behavior of the default signal han
 
 * Upon reception of `ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY`_, the default signal handler prints out a log with the signal status and exit.
 
-.. figure:: /images/zigbee_signal_handler_01_production_config.png
+.. figure:: /images/zigbee_signal_handler_01_production_config.svg
    :alt: ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY signal handler
 
    ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY signal handler
 
 * Upon reception of `ZB_ZDO_SIGNAL_SKIP_STARTUP`_ signal, the default signal handler performs the BDB initialization procedure, and then exit.
 
-.. figure:: /images/zigbee_signal_handler_02_startup.png
+.. figure:: /images/zigbee_signal_handler_02_startup.svg
    :alt: ZB_ZDO_SIGNAL_SKIP_STARTUP signal handler
 
    ZB_ZDO_SIGNAL_SKIP_STARTUP signal handler
@@ -195,7 +195,7 @@ For factory new devices, the default signal handler performs the following actio
 
 Once handling of the signal is finished, the stack generates the `ZB_BDB_SIGNAL_STEERING`_ signal, and continues to :ref:`zarco_signal_handler_network`.
 
-.. figure:: /images/zigbee_signal_handler_03_first_start.png
+.. figure:: /images/zigbee_signal_handler_03_first_start.svg
    :alt: Scenario for factory new devices (ZB_BDB_SIGNAL_DEVICE_FIRST_START)
 
    Scenario for factory new devices (ZB_BDB_SIGNAL_DEVICE_FIRST_START)
@@ -220,7 +220,7 @@ For devices that have been already commissioned, the default handler performs th
 
 Once finished, the stack generates the `ZB_BDB_SIGNAL_STEERING`_ signal, and continues to :ref:`zarco_signal_handler_network`.
 
-.. figure:: /images/zigbee_signal_handler_04_reboot.png
+.. figure:: /images/zigbee_signal_handler_04_reboot.svg
    :alt: Scenario for already commissioned devices (ZB_BDB_SIGNAL_DEVICE_REBOOT)
 
    Scenario for already commissioned devices (ZB_BDB_SIGNAL_DEVICE_REBOOT)
@@ -235,7 +235,7 @@ According to the logic implemented inside the default signal handler, the device
 1. Coordinators first form a network.
    Attempts to form the network continue infinitely, with a one-second delay between each attempt.
 
-   .. figure:: /images/zigbee_signal_handler_05_formation.png
+   .. figure:: /images/zigbee_signal_handler_05_formation.svg
       :alt: Forming a network following the generation of ZB_BDB_SIGNAL_FORMATION
 
       Forming a network following the generation of ZB_BDB_SIGNAL_FORMATION
@@ -246,7 +246,7 @@ According to the logic implemented inside the default signal handler, the device
     * When a device has joined and :ref:`zarco_network_rejoin` is running, the procedure is cancelled.
     * If no device has joined and the procedure is not running, the procedure is started.
 
-   .. figure:: /images/zigbee_signal_handler_06_steering.png
+   .. figure:: /images/zigbee_signal_handler_06_steering.svg
       :alt: Forming a network following the generation of ZB_BDB_SIGNAL_STEERING
 
       Forming a network following the generation of ZB_BDB_SIGNAL_STEERING
@@ -261,7 +261,7 @@ When leaving the network, the default handler calls :c:func:`start_network_rejoi
 
 Once :c:func:`start_network_rejoin` is called, the stack generates the `ZB_BDB_SIGNAL_STEERING`_ signal and continues to :ref:`zarco_signal_handler_network`.
 
-.. figure:: /images/zigbee_signal_handler_09_leave.png
+.. figure:: /images/zigbee_signal_handler_09_leave.svg
    :alt: Leaving the network following ZB_ZDO_SIGNAL_LEAVE
 
    Leaving the network following ZB_ZDO_SIGNAL_LEAVE
@@ -317,7 +317,7 @@ The minimal inactivity duration that causes the signal to be generated is define
 By default, the inactivity duration equals approximately 15 ms.
 The value can be modified by the ``zb_sleep_set_threshold`` API.
 
-.. figure:: /images/zigbee_signal_handler_07_idle.png
+.. figure:: /images/zigbee_signal_handler_07_idle.svg
    :alt: Generation of the ZB_COMMON_SIGNAL_CAN_SLEEP signal
 
    Generation of the ZB_COMMON_SIGNAL_CAN_SLEEP signal
@@ -332,7 +332,7 @@ If so, it allows the Zigbee stack to enter the sleep state and suspend the Zigbe
 
 If the default behavior is not applicable for the application, you can customize the sleep functionality by overwriting the :c:func:`zb_osif_sleep` weak function and implementing a custom logic for handling the stack sleep state.
 
-.. figure:: /images/zigbee_signal_handler_08_deep_sleep.png
+.. figure:: /images/zigbee_signal_handler_08_deep_sleep.svg
    :alt: Implementing a custom logic for putting the stack into the sleep mode
 
    Implementing a custom logic for putting the stack into the sleep mode

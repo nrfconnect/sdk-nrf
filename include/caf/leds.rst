@@ -278,7 +278,7 @@ The LED effect (:c:struct:`led_effect`) is described by the following characteri
 
 To achieve the desired LED effect, the LED color is updated periodically based on the LED steps defined for the given LED effect, which in turn are divided in multiple smaller updates called *substeps*.
 
-.. figure:: /images/caf_led_effect_structure.png
+.. figure:: /images/caf_led_effect_structure.svg
    :alt: Characteristics of a led_effect
 
    Characteristics of a led_effect
