@@ -1,7 +1,7 @@
 .. _gs_installing:
 
-Installing the |NCS| manually
-#############################
+Installing manually
+###################
 
 .. contents::
    :local:
@@ -23,7 +23,7 @@ This tool is needed only for :ref:`ug_matter` applications.
 You can also skip the `Install the GNU Arm Embedded Toolchain`_ section.
 
 Before you start setting up the toolchain, install available updates for your operating system.
-See :ref:`gs_installing_os` for information on the supported operating systems and Zephyr features.
+See :ref:`gs_recommended_versions` for information on the supported operating systems and Zephyr features.
 
 .. _gs_installing_tools:
 
@@ -244,9 +244,6 @@ The main repository, `sdk-nrf`_, contains a `west manifest file`_, :file:`west.y
 This means that sdk-nrf acts as the :ref:`manifest repository <zephyr:west-basics>`, while the other repositories are project repositories.
 
 For more information about the repository and development model, see the :ref:`development model section <dev-model>`.
-
-.. tip::
-   If you cloned the |NCS| repositories before they were moved to the nrfconnect GitHub organization and want to update them, follow the instructions in :ref:`repo_move`.
 
 To clone the repositories, complete the following steps:
 
