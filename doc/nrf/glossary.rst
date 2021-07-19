@@ -30,7 +30,7 @@ Glossary
 
    Attribute Protocol (ATT)
       "[It] allows a device referred to as the server to expose a set of attributes and their associated values to a peer device referred to as the client."
-      `Bluetooth Core Specification`_, Version 5.2, Vol 3, Part F, Section 1.1.
+      `Bluetooth Core Specification`_, Version 5.3, Vol 3, Part F, Section 1.1.
 
    Bluetooth LE Controller layer
       A layer of the Bluetooth LE protocol stack that implements the Link Layer (LL).
@@ -142,11 +142,11 @@ Glossary
    Generic Access Profile (GAP)
       A base profile that all Bluetooth devices implement.
       It defines the basic requirements of a Bluetooth device.
-      See `Bluetooth Core Specification`_, Version 5.2, Vol 1, Part A, Section 6.2.
+      See `Bluetooth Core Specification`_, Version 5.3, Vol 1, Part A, Section 6.2.
 
-   Generic Attribute Protocol (GATT)
+   Generic Attribute Profile (GATT)
       "Generic Attribute Profile (GATT) is built on top of the Attribute Protocol (ATT) and establishes common operations and a framework for the data transported and stored by the Attribute Protocol."
-      `Bluetooth Core Specification`_, Version 5.1, Vol 1, Part A, Section 6.4.
+      `Bluetooth Core Specification`_, Version 5.3, Vol 1, Part A, Section 6.4.2.
 
    Global Navigation Satellite System (GNSS)
       A satellite navigation system with global coverage.
@@ -214,13 +214,13 @@ Glossary
 
    Link Layer (LL)
       "A control protocol for the link and physical layers that is carried over logical links in addition to user data."
-      `Bluetooth Core Specification`_, Version 5.1, Vol 1, Part A, Section 1.2.
+      `Bluetooth Core Specification`_, Version 5.3, Vol 1, Part A, Section 1.2.
       It is implemented in the Bluetooth LE Controller layer.
 
    Logical Link Control and Adaptation Protocol (L2CAP)
       "[It] provides a channel-based abstraction to applications and services.
       It carries out segmentation and reassembly of application data and multiplexing and de-multiplexing of multiple channels over a shared logical link."
-      `Bluetooth Core Specification`_, Version 5.2, Vol 1, Part A, Section 1.2.
+      `Bluetooth Core Specification`_, Version 5.3, Vol 1, Part A, Section 1.1.
 
    Low Latency Packet Mode (LLPM)
       A mode that allows shorter connection intervals than specified in the `Bluetooth Core Specification`_.
@@ -369,9 +369,7 @@ Glossary
       A unique identifier assigned to a design that has completed the Bluetooth Qualification Process.
 
    Quality of Service (QoS)
-      * The measured overall performance of a service, such as a telephony or a computer network, or a cloud computing service.
-      * A module in the SoftDevice Controller dedicated to providing these signal quality measurements.
-        The application can use this data to estimate the quality of the received signal.
+      The measured overall performance of a service, such as a network, connection, or a cloud computing service.
 
    Radio Co-Processor (RCP)
       A co-processor offloading radio functions from the host processor.
