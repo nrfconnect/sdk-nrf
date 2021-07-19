@@ -1,7 +1,7 @@
 .. _gs_assistant:
 
-Installing the |NCS| through nRF Connect for Desktop
-####################################################
+Installing automatically
+########################
 
 .. contents::
    :local:
@@ -9,11 +9,11 @@ Installing the |NCS| through nRF Connect for Desktop
 
 `nRF Connect for Desktop`_, a cross-platform tool available for Windows, Linux, and macOS, provides different apps that simplify installing the |NCS|.
 
-On Windows, use the :ref:`gs_app_tcm`.
-On Linux or macOS, use the :ref:`gs_app_gsa`.
+On Windows or macOS, use the :ref:`gs_app_tcm`.
+On Linux, use the :ref:`gs_app_gsa` or follow the steps found on the :ref:`gs_installing` page.
 
 Before you start setting up the toolchain, install available updates for your operating system.
-See :ref:`gs_installing_os` for information on the supported operating systems and Zephyr features.
+See :ref:`gs_recommended_versions` for information on the supported operating systems and Zephyr features.
 
 .. note::
    When installing the |NCS| through the |GSA| app, you will not be able to build on the command line using west.
@@ -23,12 +23,8 @@ See :ref:`gs_installing_os` for information on the supported operating systems a
 Toolchain manager
 *****************
 
-The Toolchain manager app is available for Windows only.
+The Toolchain manager app is available for Windows and macOS.
 It installs the full toolchain that you need to work with the |NCS|, including SEGGER Embedded Studio and the |NCS| source code.
-
-.. important::
-   The Toolchain manager is currently in beta version.
-   If you encounter problems, use the :ref:`gs_app_gsa` instead, or :ref:`install the nRF Connect SDK manually <gs_installing>`.
 
 
 Installing the Toolchain manager
@@ -81,7 +77,7 @@ You can use the :guilabel:`Open bash` option from this menu when you start :ref:
 Getting Started Assistant
 *************************
 
-The |GSA| app is available for Linux and macOS.
+The |GSA| app is available for Linux.
 It provides you with step-by-step instructions for installing the toolchain for |NCS|.
 
 The app allows you to check which of the required tools are already installed on your computer and verify the installation.
