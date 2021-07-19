@@ -39,4 +39,6 @@ struct led_state_event {
 
 EVENT_TYPE_DECLARE(led_state_event);
 
+/** @} */
+
 #endif /* _LED_STATE_EVENT_H_ */
