@@ -15,7 +15,7 @@ Overview
 When connected, the sample sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
 The mobile application on the device can display the received button state and can control the state of **LED 3** on the development kit.
 
-Alternatively, you can use this sample to control the color of RGB LED on the nRF52840 Dongle.
+Alternatively, you can use this sample to control the color of the RGB LED on the nRF52840 Dongle or Thingy:53.
 
 Requirements
 ************
@@ -24,79 +24,120 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810, nrf52840dongle_nrf52840
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810, nrf52840dongle_nrf52840, thingy53_nrf5340_cpuapp
 
+.. note::
+   When used with :ref:`zephyr:thingy53_nrf5340`, the sample supports the MCUboot bootloader with serial recovery and SMP DFU over Bluetooth.
+   Debug logs are provided over the USB CDC ACM class serial port.
 
-The sample also requires a phone or tablet running a compatible application, for example `nRF Connect for Mobile`_, `nRF Blinky`_, or `nRF Toolbox`_.
+The sample also requires a smartphone or tablet running a compatible application.
+The `Testing`_ instructions refer to `nRF Connect for Mobile`_, but you can also use other similar applications (for example, `nRF Blinky`_ or `nRF Toolbox`_).
 
 User interface
 **************
 
-For nRF52840 Dongle:
+The user interface of the sample depends on the hardware platform you are using.
+
+nRF52840 Dongle
+===============
+
+Green LED:
+   When the main loop is running (that is, the device is advertising), the LED blinks with a period of 2 seconds, duty cycle 50%.
 
 RGB LED:
-   Red:
-      * On when connected.
-   Green:
-      * Controlled remotely from the connected device.
+   The RGB LED channels are used independently to display the following information:
+
+   * Red - if Dongle is connected.
+   * Green - if user set the LED using Nordic LED Button Service.
 
 Button 1:
-   * Sends a notification with the button state: "pressed" or "released".
+   Send a notification with the button state: "pressed" or "released".
 
-For development kits:
+Thingy:53
+=========
+
+RGB LED:
+   The RGB LED channels are used independently to display the following information:
+
+   * Red - if the main loop is running (that is, the device is advertising).
+     The LED blinks with a period of 2 seconds, duty cycle 50%.
+   * Green - if the device is connected.
+   * Blue - if user set the LED using Nordic LED Button Service.
+
+   For example, if Thingy:53 is connected over Bluetooth, the LED color toggles between green and yellow.
+   The green LED channel is kept on and the red LED channel is blinking.
+
+Button 1:
+   Send a notification with the button state: "pressed" or "released".
+
+Development kits
+================
 
 LED 1:
-   * When the main loop is running (device is advertising), blinks with a period of 2 seconds, duty cycle 50%.
+   Blinks when the main loop is running (that is, the device is advertising) with a period of 2 seconds, duty cycle 50%.
 
 LED 2:
-   * On when connected.
+   On when the development kit is connected.
 
 LED 3:
-   * Controlled remotely from the connected device.
+   On when the development kit is controlled remotely from the connected device.
 
 Button 1:
-   * Sends a notification with the button state: "pressed" or "released".
+   Send a notification with the button state: "pressed" or "released".
 
-Building and Running
+Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_lbs`
 
 .. include:: /includes/build_and_run.txt
 
-.. _peripheral_lbs_testing:
-
-Minimal Build
+Minimal build
 =============
 
 The sample can be built with a minimum configuration as a demonstration of how to reduce code size and RAM usage.
+To build the minimum configuration, use the following command:
 
 .. code-block:: console
 
    west build samples/bluetooth/peripheral_lbs -- -DCONF_FILE='prj_minimal.conf'
 
+.. _peripheral_lbs_testing:
 
 Testing
 =======
 
-After programming the sample to your dongle or development kit, test it by performing the following steps.
-This testing procedure assumes that you are using `nRF Connect for Mobile`_.
+After programming the sample to your dongle or development kit, test it by performing the following steps:
 
-1. Power on your development kit or plug in your dongle.
-#. Connect to the device from nRF Connect (the device is advertising as "Nordic_LBS").
-#. Observe that the services of the connected device are shown.
-#. In "Nordic LED Button Service", click the :guilabel:`Play` button for the "Button" characteristic.
-#. Press **Button 1** either on the dongle or on the development kit.
-#. Observe that notifications with the following values are received:
+1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
+#. Power on the development kit or insert your dongle into the USB port.
+#. Connect to the device from the nRF Connect application.
+   The device is advertising as ``Nordic_LBS``.
+   The services of the connected device are shown.
+#. In :guilabel:`Nordic LED Button Service`, enable notifications for the :guilabel:`Button` characteristic.
+#. Press **Button 1** on the device.
+#. Observe that notifications with the following values are displayed:
 
-   * ``00`` when **Button 1** is released,
-   * ``01`` when **Button 1** is pressed.
+   * ``Button released`` when **Button 1** is released.
+   * ``Button pressed`` when **Button 1** is pressed.
 
-#. Control the color of RGB LED on the dongle or status of **LED 3** on the kit by writing the following values to the "LED" characteristic in the "Nordic LED Button Service":
+#. Write the following values to the LED characteristic in the :guilabel:`Nordic LED Button Service`.
+   Depending on the hardware platform, this produces results described in the table.
 
-   * ``00`` to switch the LED off on the kit or turn on the red RGB LED on the dongle.
-   * ``01`` to switch the LED on on the kit or turn on the green RGB LED on the dongle.
-
-#. Observe that RGB LED on the dongle or **LED 3** on the kit corresponds to the value of the "LED" characteristic.
++------------------------+---------+----------------------------------------------+
+| Hardware platform      | Value   | Effect                                       |
++========================+=========+==============================================+
+| Development kit        | ``OFF`` | Switch the **LED3** off.                     |
++                        +---------+----------------------------------------------+
+|                        | ``ON``  | Switch the **LED3** on.                      |
++------------------------+---------+----------------------------------------------+
+| nRF52840 Dongle        | ``OFF`` | Switch the green channel of the RGB LED off. |
++                        +---------+----------------------------------------------+
+|                        | ``ON``  | Switch the green channel of the RGB LED on.  |
++------------------------+---------+----------------------------------------------+
+| Thingy:53              | ``OFF`` | Switch the blue channel of the RGB LED off.  |
++                        +---------+----------------------------------------------+
+|                        | ``ON``  | Switch the blue channel of the RGB LED on.   |
++------------------------+---------+----------------------------------------------+
 
 Dependencies
 ************
