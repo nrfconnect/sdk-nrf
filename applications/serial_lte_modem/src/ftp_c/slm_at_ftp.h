@@ -7,7 +7,7 @@
 #ifndef SLM_AT_FTP_
 #define SLM_AT_FTP_
 
-/**@file slm_at_tcpip.h
+/**@file
  *
  * @brief Vendor-specific AT command for FTP service.
  * @{
