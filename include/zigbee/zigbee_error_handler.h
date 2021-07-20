@@ -19,11 +19,6 @@
 #include <zboss_api.h>
 #include <zb_errors.h>
 
-/**@brief ZBOSS stack error code base.
- *
- */
-#define ZB_ERROR_BASE_NUM 20000
-
 #ifdef CONFIG_ZBOSS_ERROR_PRINT_TO_LOG
 #include "zb_error_to_string.h"
 #include <logging/log.h>
