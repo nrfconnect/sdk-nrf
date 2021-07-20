@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #define MAX_VAL1 1000
+#define MAX_VAL4 100
 #define MAX_BUF_SIZE 256
 
 static uint16_t data_event_id;
@@ -22,14 +23,19 @@ static void profile_no_data_event(void)
 	profiler_log_send(&buf, no_data_event_id);
 }
 
-static void profile_data_event(uint32_t val1, int32_t val2, const char *string)
+static void profile_data_event(uint32_t val1, int32_t val2, int16_t val3,
+			       uint8_t val4, const char *string)
 {
 	struct log_event_buf buf;
 
 	profiler_log_start(&buf);
-	/* Use this function for every data type except string */
-	profiler_log_encode_u32(&buf, val1);
-	profiler_log_encode_u32(&buf, val2);
+	/* Use this function for 32-bit data type */
+	profiler_log_encode_uint32(&buf, val1);
+	profiler_log_encode_int32(&buf, val2);
+	/* Use this function for 16-bit data type */
+	profiler_log_encode_int16(&buf, val3);
+	/* Use this function for 8-bit data type */
+	profiler_log_encode_uint8(&buf, val4);
 	/* Use this function for string data type */
 	profiler_log_encode_string(&buf, string);
 
@@ -38,14 +44,15 @@ static void profile_data_event(uint32_t val1, int32_t val2, const char *string)
 
 static void register_profiler_events(void)
 {
-	static const char * const data_names[] = {"value1", "value2", "string"};
-	static const enum profiler_arg data_types[] = {PROFILER_ARG_U32,
-						       PROFILER_ARG_S32,
+	static const char * const data_names[] = {"value1", "value2", "value3", "value4", "string"};
+	static const enum profiler_arg data_types[] = {PROFILER_ARG_U32, PROFILER_ARG_S32,
+						       PROFILER_ARG_S16, PROFILER_ARG_U8,
 						       PROFILER_ARG_STRING};
+
 	no_data_event_id = profiler_register_event_type("no data event", NULL,
 							NULL, 0);
 	data_event_id = profiler_register_event_type("data event", data_names,
-						     data_types, 3);
+						     data_types, 5);
 }
 
 void main(void)
@@ -58,16 +65,27 @@ void main(void)
 	printk("Events registered\n");
 	uint32_t val1 = 50;
 	int32_t val2 = -50;
+	int16_t val3 = -10;
+	uint8_t val4 = 7;
 
 	/* Periodically changing values and profiling events */
 	while (1) {
 		val2 = -val2;
+		val3 = -val3;
 		val1++;
+		val4++;
+
 		if (val1 > MAX_VAL1) {
 			val1 = 0;
 		}
+
+		if (val4 > MAX_VAL4) {
+			val4 = 0;
+		}
+
 		char string[MAX_BUF_SIZE];
-		int err = snprintf(string, sizeof(string), "Sum of values is: %d.", val1 + val2);
+		int err = snprintf(string, sizeof(string),
+				   "Sum of values is: %d.", val1 + val2 + val3 + val4);
 
 		if ((err < 0) || (err >= sizeof(string))) {
 			printk("snprintf error: %d\n", err);
@@ -76,7 +94,7 @@ void main(void)
 
 		profile_no_data_event();
 		k_sleep(K_MSEC(10));
-		profile_data_event(val1, val2, string);
+		profile_data_event(val1, val2, val3, val4, string);
 		printk("Events sent\n");
 		k_sleep(K_MSEC(500));
 	}
