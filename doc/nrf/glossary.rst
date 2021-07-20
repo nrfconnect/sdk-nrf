@@ -369,7 +369,7 @@ Glossary
       A unique identifier assigned to a design that has completed the Bluetooth Qualification Process.
 
    Quality of Service (QoS)
-      The measured overall performance of a service, such as a network, connection, or a cloud computing service.
+      The measured overall performance of a service, such as a network, a connection, or a cloud computing service.
 
    Radio Co-Processor (RCP)
       A co-processor offloading radio functions from the host processor.
@@ -489,7 +489,8 @@ Glossary
       A timer that causes a system reset if it is not poked periodically.
 
    West
-      A management system for multiple repositories used by Zephyr and the |NCS|.
+      A command-line tool providing a management system for multiple repositories, used by Zephyr and the |NCS|.
+      It is expandable, as you can write your own extension commands to add additional features.
       See :ref:`zephyr:west`.
 
    West manifest file
