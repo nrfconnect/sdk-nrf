@@ -15,7 +15,7 @@ static void profile_config_event(struct log_event_buf *buf,
 	struct config_event *event = cast_config_event(eh);
 
 	ARG_UNUSED(event);
-	profiler_log_encode_u32(buf, event->init_value1);
+	profiler_log_encode_int8(buf, event->init_value1);
 }
 
 static int log_config_event(const struct event_header *eh, char *buf,

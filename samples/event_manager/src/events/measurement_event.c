@@ -23,9 +23,9 @@ static void profile_measurement_event(struct log_event_buf *buf,
 	struct measurement_event *event = cast_measurement_event(eh);
 
 	ARG_UNUSED(event);
-	profiler_log_encode_u32(buf, event->value1);
-	profiler_log_encode_u32(buf, event->value2);
-	profiler_log_encode_u32(buf, event->value3);
+	profiler_log_encode_int8(buf, event->value1);
+	profiler_log_encode_int16(buf, event->value2);
+	profiler_log_encode_int32(buf, event->value3);
 }
 
 EVENT_INFO_DEFINE(measurement_event,
