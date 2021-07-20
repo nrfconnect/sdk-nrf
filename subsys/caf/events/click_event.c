@@ -33,8 +33,8 @@ static void profile_click_event(struct log_event_buf *buf,
 {
 	const struct click_event *event = cast_click_event(eh);
 
-	profiler_log_encode_u32(buf, event->key_id);
-	profiler_log_encode_u32(buf, event->click);
+	profiler_log_encode_uint16(buf, event->key_id);
+	profiler_log_encode_uint8(buf, event->click);
 }
 
 EVENT_INFO_DEFINE(click_event,
