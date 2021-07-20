@@ -37,8 +37,8 @@ static void profile_ml_result_signin_event(struct log_event_buf *buf,
 {
 	const struct ml_result_signin_event *event = cast_ml_result_signin_event(eh);
 
-	profiler_log_encode_u32(buf, event->module_idx);
-	profiler_log_encode_u32(buf, event->state);
+	profiler_log_encode_uint32(buf, event->module_idx);
+	profiler_log_encode_uint8(buf, event->state);
 }
 
 EVENT_INFO_DEFINE(ml_result_event,
@@ -53,7 +53,7 @@ EVENT_TYPE_DEFINE(ml_result_event,
 
 
 EVENT_INFO_DEFINE(ml_result_signin_event,
-		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U32),
+		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8),
 		  ENCODE("module", "state"),
 		  profile_ml_result_signin_event);
 
