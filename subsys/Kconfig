@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 - 2020 Nordic Semiconductor
+# Copyright (c) 2018 - 2021 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -36,6 +36,8 @@ rsource "mpsl/Kconfig"
 rsource "partition_manager/Kconfig"
 
 rsource "nrf_rpc/Kconfig"
+
+rsource "sm_ipt/Kconfig"
 
 rsource "zigbee/Kconfig"
 

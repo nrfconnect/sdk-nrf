@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "SM IPT (Shared Memory Inter-Processor Transport) library"
+
+if SM_IPT
+
+module = SM_IPT_OS
+module-str = SM IPT OS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # SM_IPT
+
+endmenu
+

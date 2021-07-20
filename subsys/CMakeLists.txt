@@ -48,5 +48,6 @@ add_subdirectory_ifdef(CONFIG_SHELL_BT_NUS	shell)
 add_subdirectory(debug)
 add_subdirectory(partition_manager)
 
-add_subdirectory_ifdef(CONFIG_NRF_RPC nrf_rpc)
 add_subdirectory_ifdef(CONFIG_NRF_802154_RADIO_DRIVER ieee802154)
+add_subdirectory_ifdef(CONFIG_NRF_RPC nrf_rpc)
+add_subdirectory_ifdef(CONFIG_SM_IPT sm_ipt)

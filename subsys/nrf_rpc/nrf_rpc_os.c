@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2020 Nordic Semiconductor ASA
+ * Copyright (c) 2020-2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#define NRF_RPC_LOG_MODULE NRF_RPC_OS
-#include <nrf_rpc_log.h>
-
+#include "nrf_rpc_errno.h"
 #include "nrf_rpc_os.h"
+
+#define NRF_RPC_LOG_MODULE NRF_RPC_OS
+#include "nrf_rpc_log.h"
 
 /* Maximum number of remote thread that this implementation allows. */
 #define MAX_REMOTE_THREADS 255
