@@ -22,7 +22,7 @@ static void profile_passkey_input_event(struct log_event_buf *buf,
 {
 	const struct passkey_input_event *event = cast_passkey_input_event(eh);
 
-	profiler_log_encode_u32(buf, event->passkey);
+	profiler_log_encode_uint32(buf, event->passkey);
 }
 
 EVENT_INFO_DEFINE(passkey_input_event,
@@ -50,11 +50,11 @@ static void profile_passkey_req_event(struct log_event_buf *buf,
 {
 	const struct passkey_req_event *event = cast_passkey_req_event(eh);
 
-	profiler_log_encode_u32(buf, event->active);
+	profiler_log_encode_uint8(buf, event->active);
 }
 
 EVENT_INFO_DEFINE(passkey_req_event,
-		  ENCODE(PROFILER_ARG_U32),
+		  ENCODE(PROFILER_ARG_U8),
 		  ENCODE("active"),
 		  profile_passkey_req_event);
 

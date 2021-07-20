@@ -24,7 +24,7 @@ static void profile_cpu_load_event(struct log_event_buf *buf,
 {
 	const struct cpu_load_event *event = cast_cpu_load_event(eh);
 
-	profiler_log_encode_u32(buf, event->load);
+	profiler_log_encode_uint32(buf, event->load);
 }
 
 EVENT_INFO_DEFINE(cpu_load_event,
