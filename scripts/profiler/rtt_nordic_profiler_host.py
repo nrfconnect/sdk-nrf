@@ -290,28 +290,46 @@ class RttNordicProfilerHost:
         timestamp = self._calculate_timestamp_from_clock_ticks(timestamp_raw)
 
         def process_int32(self, data):
-            signum = True
             buf = self._read_bytes(4)
             data.append(int.from_bytes(buf, byteorder=self.config['byteorder'],
-                                    signed=signum))
+                                       signed=True))
 
         def process_uint32(self, data):
-            signum = False
             buf = self._read_bytes(4)
             data.append(int.from_bytes(buf, byteorder=self.config['byteorder'],
-                                    signed=signum))
+                                       signed=False))
+
+        def process_int16(self, data):
+            buf = self._read_bytes(2)
+            data.append(int.from_bytes(buf, byteorder=self.config['byteorder'],
+                                       signed=True))
+
+        def process_uint16(self, data):
+            buf = self._read_bytes(2)
+            data.append(int.from_bytes(buf, byteorder=self.config['byteorder'],
+                                       signed=False))
+
+        def process_int8(self, data):
+            buf = self._read_bytes(1)
+            data.append(int.from_bytes(buf, byteorder=self.config['byteorder'],
+                                       signed=True))
+
+        def process_uint8(self, data):
+            buf = self._read_bytes(1)
+            data.append(int.from_bytes(buf, byteorder=self.config['byteorder'],
+                                       signed=False))
 
         def process_string(self, data):
             buf = self._read_bytes(1)
             buf = self._read_bytes(int.from_bytes(buf, byteorder=self.config['byteorder'],
-                                    signed=False))
+                                                  signed=False))
             data.append(buf.decode())
 
         READ_BYTES = {
-            "u8": process_uint32,
-            "s8": process_int32,
-            "u16": process_uint32,
-            "s16": process_int32,
+            "u8": process_uint8,
+            "s8": process_int8,
+            "u16": process_uint16,
+            "s16": process_int16,
             "u32": process_uint32,
             "s32": process_int32,
             "s": process_string,
