@@ -37,11 +37,11 @@ static void profile_pelion_state_event(struct log_event_buf *buf,
 {
 	const struct pelion_state_event *event = cast_pelion_state_event(eh);
 
-	profiler_log_encode_u32(buf, event->state);
+	profiler_log_encode_uint8(buf, event->state);
 }
 
 EVENT_INFO_DEFINE(pelion_state_event,
-		  ENCODE(PROFILER_ARG_U32),
+		  ENCODE(PROFILER_ARG_U8),
 		  ENCODE("state"),
 		  profile_pelion_state_event);
 

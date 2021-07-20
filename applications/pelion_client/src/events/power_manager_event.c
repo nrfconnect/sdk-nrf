@@ -51,13 +51,13 @@ static void profile_event(struct log_event_buf *buf,
 {
 	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(eh);
 
-	profiler_log_encode_u32(buf, event->module_idx);
-	profiler_log_encode_u32(buf, event->level);
+	profiler_log_encode_uint32(buf, event->module_idx);
+	profiler_log_encode_int8(buf, event->level);
 }
 
 
 EVENT_INFO_DEFINE(power_manager_restrict_event,
-		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U32),
+		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_S8),
 		  ENCODE("module", "level"),
 		  profile_event
 );
