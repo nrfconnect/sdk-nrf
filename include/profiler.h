@@ -142,20 +142,94 @@ void profiler_log_start(struct log_event_buf *buf);
 static inline void profiler_log_start(struct log_event_buf *buf) {}
 #endif
 
-
-/** @brief Encode and add data to a buffer.
+/** @brief Encode and add uint32_t data type to a buffer.
  *
  * @warning The buffer must be initialized with @ref profiler_log_start
  *          before calling this function.
  *
- * @param data Data to add to the buffer.
  * @param buf Pointer to the data buffer.
+ * @param data Data to add to the buffer.
  */
 #ifdef CONFIG_PROFILER
-void profiler_log_encode_u32(struct log_event_buf *buf, uint32_t data);
+void profiler_log_encode_uint32(struct log_event_buf *buf, uint32_t data);
 #else
-static inline void profiler_log_encode_u32(struct log_event_buf *buf,
-					   uint32_t data) {}
+static inline void profiler_log_encode_uint32(struct log_event_buf *buf,
+					      uint32_t data) {}
+#endif
+
+/** @brief Encode and add int32_t data type to a buffer.
+ *
+ * @warning The buffer must be initialized with @ref profiler_log_start
+ *          before calling this function.
+ *
+ * @param buf Pointer to the data buffer.
+ * @param data Data to add to the buffer.
+ */
+#ifdef CONFIG_PROFILER
+void profiler_log_encode_int32(struct log_event_buf *buf, int32_t data);
+#else
+static inline void profiler_log_encode_int32(struct log_event_buf *buf,
+					     int32_t data) {}
+#endif
+
+/** @brief Encode and add uint16_t data type to a buffer.
+ *
+ * @warning The buffer must be initialized with @ref profiler_log_start
+ *          before calling this function.
+ *
+ * @param buf Pointer to the data buffer.
+ * @param data Data to add to the buffer.
+ */
+#ifdef CONFIG_PROFILER
+void profiler_log_encode_uint16(struct log_event_buf *buf, uint16_t data);
+#else
+static inline void profiler_log_encode_uint16(struct log_event_buf *buf,
+					      uint16_t data) {}
+#endif
+
+/** @brief Encode and add int16_t data type to a buffer.
+ *
+ * @warning The buffer must be initialized with @ref profiler_log_start
+ *          before calling this function.
+ *
+ * @param buf Pointer to the data buffer.
+ * @param data Data to add to the buffer.
+ */
+#ifdef CONFIG_PROFILER
+void profiler_log_encode_int16(struct log_event_buf *buf, int16_t data);
+#else
+static inline void profiler_log_encode_int16(struct log_event_buf *buf,
+					     int16_t data) {}
+#endif
+
+/** @brief Encode and add uint8_t data type to a buffer.
+ *
+ * @warning The buffer must be initialized with @ref profiler_log_start
+ *          before calling this function.
+ *
+ * @param buf Pointer to the data buffer.
+ * @param data Data to add to the buffer.
+ */
+#ifdef CONFIG_PROFILER
+void profiler_log_encode_uint8(struct log_event_buf *buf, uint8_t data);
+#else
+static inline void profiler_log_encode_uint8(struct log_event_buf *buf,
+					     uint8_t data) {}
+#endif
+
+/** @brief Encode and add int8_t data type to a buffer.
+ *
+ * @warning The buffer must be initialized with @ref profiler_log_start
+ *          before calling this function.
+ *
+ * @param buf Pointer to the data buffer.
+ * @param data Data to add to the buffer.
+ */
+#ifdef CONFIG_PROFILER
+void profiler_log_encode_int8(struct log_event_buf *buf, int8_t data);
+#else
+static inline void profiler_log_encode_int8(struct log_event_buf *buf,
+					    int8_t data) {}
 #endif
 
 /** @brief Encode and add string to a buffer.
@@ -198,7 +272,10 @@ static inline void profiler_log_add_mem_address(struct log_event_buf *buf,
 /** @brief Send data from the buffer to the host.
  *
  * This function only sends data that is already stored in the buffer.
- * Use @ref profiler_log_encode_u32 or @ref profiler_log_add_mem_address
+ * Use @ref profiler_log_encode_uint32, @ref profiler_log_encode_int32,
+ * @ref profiler_log_encode_uint16, @ref profiler_log_encode_int16,
+ * @ref profiler_log_encode_uint8, @ref profiler_log_encode_int8,
+ * @ref profiler_log_encode_string or @ref profiler_log_add_mem_address
  * to add data to the buffer.
  *
  * @param event_type_id Event type ID as assigned to the event type
