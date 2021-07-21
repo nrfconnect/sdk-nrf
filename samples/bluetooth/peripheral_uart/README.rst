@@ -95,8 +95,10 @@ Building and running
 Minimal build
 =============
 
-You can build the sample with a minimum configuration as a demonstration of how to reduce code size and RAM usage.
-To build the minimum configuration, use the following command:
+You can build the sample with a minimum configuration as a demonstration of how to reduce code size and RAM usage, using the ``-DCONF_FILE='prj_minimal.conf'`` flag in your build.
+
+See :ref:`cmake_options` for instructions on how to add this option to your build.
+For example, when building on the command line, you can do so as follows:
 
 .. code-block:: console
 

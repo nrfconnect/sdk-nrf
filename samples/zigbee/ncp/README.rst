@@ -80,9 +80,10 @@ The ``UART0`` pins are configured by Devicetree :file:`overlay` files for each s
 Communication through USB
 -------------------------
 
-You can change the communication channel from the default UART to nRF USB by using the :file:`prj_usb.conf` configuration file.
-This configuration file is not applied automatically and can be passed into CMake by using the ``--`` separator when building the sample.
-For example:
+You can change the communication channel from the default UART to nRF USB by using the :file:`prj_usb.conf` configuration file, adding the ``-DCONF_FILE='prj_usb.conf'`` flag to your build.
+
+See :ref:`cmake_options` for instructions on how to add this flag to your build.
+For example, when building on the command line, you can do so as follows:
 
 .. code-block:: console
 
@@ -117,8 +118,10 @@ See :ref:`ug_multi_image_variables` for how to set the required options.
 
 MCUboot with the USB DFU requires a larger partition.
 To increase the partition, define the ``PM_STATIC_YML_FILE`` variable that provides the path to the :file:`pm_static.yml` static configuration file in the :file:`configuration` directory for the build target of your choice.
-These additional options and configuration file can be passed into CMake by using the ``--`` separator when building the sample.
-For example:
+
+For instructions on how to set these additional options and configuration at build time, see :ref:`cmake_options` and :ref:`configure_application`.
+
+See the following command-line instruction for an example:
 
 .. code-block:: console
 

@@ -77,10 +77,14 @@ Device Firmware Upgrade support
 
 .. matter_door_lock_sample_build_with_dfu_start
 
-You can configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade through Bluetooth LE, adding to your build a configuration that enables the DFU using the ``-DBUILD_WITH_DFU=1`` flag in your build.
+You can configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade using Bluetooth LE, using the following build flags during the build process:
 
-See :ref:`cmake_options` for instructions on how to add this option to your build.
-For example, when building on the command line, you can run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
+* ``-DOVERLAY_CONFIG=../common/config/overlay-dfu_support.conf``
+* ``-DPM_STATIC_YML_FILE="configuration/build-target/pm_static.yml``
+
+See :ref:`cmake_options` for instructions on how to add these options to your build.
+
+For example, when building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
 
 .. parsed-literal::
    :class: highlight

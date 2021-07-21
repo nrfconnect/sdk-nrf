@@ -31,6 +31,8 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/rpc_host`
 
+You must program this sample to the nRF5340 network core.
+
 .. include:: /includes/build_and_run.txt
 
 .. _rpc_host_debug:
@@ -38,7 +40,10 @@ Building and running
 Debug build
 ===========
 
-To build the sample with a debugging configuration, use the following command:
+You can build the sample with a debugging configuration using the ``-DCONFIG_OVERLAY=overlay-debugging.conf'`` flag in your build.
+
+See :ref:`cmake_options` for instructions on how to add this option to your build.
+For example, when building on the command line, you can do so as follows:
 
 .. code-block:: console
 
@@ -46,20 +51,24 @@ To build the sample with a debugging configuration, use the following command:
 
 .. _rpc_host_testing:
 
-Testing
-=======
+Example build
+=============
 
-Build the sample with the same Bluetooth configuration as the application core sample.
-For more details, see: :ref:`ble_rpc`.
-Build the :ref:`zephyr:bluetooth-beacon-sample` on the application core.
-This sample works out of the box and does not require configuration changes.
-In the Beacon sample directory, invoke:
+The recommended way of building the nRF RPC Host sample is to use the multi-image feature of the build system, building the sample with the same Bluetooth configuration as the application core sample.
+In this way, the sample is built automatically as a child image when :option:`CONFIG_BT_RPC` is enabled.
 
-   .. code-block:: console
+See :ref:`configure_application` for information about how to configure a sample.
+
+For example, building the :ref:`zephyr:bluetooth-beacon-sample` sample for the nRF5340 application core with the :option:`CONFIG_BT_RPC` configuration option will include the nRF RPC Host sample in the build.
+
+To do so on the command line, run the following command in the beacon sample directory:
 
       west build -b nrf5340dk_nrf5340_cpuapp -- -DCONFIG_BT_RPC=y
 
-After programming the sample for your development kit, test it by performing the following steps:
+Testing
+=======
+
+After programming the example build to your development kit, test it by performing the following steps:
 
 1. Connect the dual core development kit to the computer using a USB cable.
    The development kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.

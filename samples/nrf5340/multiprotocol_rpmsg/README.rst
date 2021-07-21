@@ -49,6 +49,21 @@ You must program this sample to the nRF5340 network core.
 The recommended way of building the sample is to use the multi-image feature of the build system.
 In this way, the sample is built automatically as a child image when both :option:`CONFIG_BT_RPMSG_NRF53` and :option:`CONFIG_NRF_802154_SER_HOST` are enabled.
 
+See :ref:`configure_application` for information about how to configure the sample.
+
+For example, you can include the Multiprotocol RPMsg sample in a multi-image build by building the :ref:`sockets-echo-server-sample` sample for the nRF5340 application core and adding the following configuration files to your build as CMake options:
+
+* ``overlay-802154.conf``
+* ``overlay-bt.conf``
+
+See :ref:`cmake_options` for instructions on how to add these options to your build.
+To see an example of this multi-image build on the command line, run the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf5340dk_nrf5340_cpuapp -p -- -DOVERLAY_CONFIG="overlay-802154.conf;overlay-bt.conf"
+
 However, it is also possible to build the sample as a stand-alone image.
 
 .. include:: /includes/build_and_run.txt
@@ -56,24 +71,12 @@ However, it is also possible to build the sample as a stand-alone image.
 Testing
 *******
 
-|test_sample|
+The testing methods for this sample depend on how it was built and programmed to the device.
+For example, if you built the sample in a multi-image build containing also the :ref:`sockets-echo-server-sample` sample mentioned before, you can test it as follows:
 
-1. Go to the :file:`samples/net/sockets/echo_server` path in the Zephyr's sample directory
-#. Run the following command:
-
-   .. code-block:: console
-
-      west build -b nrf5340dk_nrf5340_cpuapp -p -- -DOVERLAY_CONFIG="overlay-802154.conf;overlay-bt.conf"
-
-   During the build, the :ref:`multiprotocol-rpmsg-sample` image will be automatically included.
-#. Run this command to program both the application and network core firmwares to the nRF5340 SoC:
-
-   .. code-block:: console
-
-      west flash
-#. Run the IEEE 802.15.4 variant of the :ref:`sockets-echo-client-sample` on a second development kit that supports IEEE 802.15.4.
+1. Run the IEEE 802.15.4 variant of the :ref:`sockets-echo-client-sample` on a second development kit that supports IEEE 802.15.4.
 #. |connect_terminal|
-   As the nRF5340 DK has multiple UART instances, the correct port must be identified.
+   As the nRF5340 DK has multiple UART instances, you must identify the correct port.
 #. Observe that IPv6 packets are exchanged between the echo client and server over the IEEE 802.15.4 interface.
    You can use a smartphone to see that the nRF5340 device advertises over Bluetooth LE in parallel to the echo exchanges.
 
