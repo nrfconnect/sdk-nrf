@@ -73,10 +73,13 @@ This sample supports the following build types:
 
 You can find configuration options for both build types in the corresponding :file:`prj_debug.conf` and :file:`prj_release.conf` files.
 By default, the sample selects the release configuration.
-To build the target with the debug configuration, you can use the ``-DCMAKE_BUILD_TYPE=debug`` flag in your build.
 
-See :ref:`cmake_options` for instructions on how to add this option to your build.
-For example, when building on the command line, you can do so as follows:
+If you want to build the target with the debug configuration, you can set the following flag when building the sample:
+
+* ``-DCMAKE_BUILD_TYPE=debug``
+
+See :ref:`cmake_options` for instructions on how to add these options to your build.
+For example, when building on the command line, you can build the target with the debug configuration running the following command:
 
 .. parsed-literal::
    :class: highlight

@@ -93,8 +93,10 @@ In addition, the sample provides overlay configuration files, which are used to 
 They are located in ``samples/nrf9160/mqtt_simple`` folder.
 
 
-To add a specific overlay configuration file to the build, add the ``-- -DOVERLAY_CONFIG=<overlay_config_file>`` parameter to the ``west build`` command.
-The following command builds the sample with the TLS configuration for nRF9160 DK:
+To add a specific overlay configuration file to the build, add the ``-- -DOVERLAY_CONFIG=<overlay_config_file>`` flag to your build.
+
+See :ref:`cmake_options` for instructions on how to add this option to your build.
+For example, when building on the command line, you can build the sample with the TLS configuration for nRF9160 DK as follows:
 
   .. code-block:: console
 
@@ -102,9 +104,6 @@ The following command builds the sample with the TLS configuration for nRF9160 D
 
 .. note::
    The CA certificate for the default MQTT broker is included in the project and automatically provisioned after boot if the sample is built with the TLS configuration.
-
-
-
 
 Building and running
 ********************
