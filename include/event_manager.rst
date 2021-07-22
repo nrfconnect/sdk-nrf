@@ -311,10 +311,18 @@ Profiler allows you to observe the propagation of an event in the system, view t
 
 To profile an event, you must complete the following steps:
 
-1. Enable profiler with :option:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED` Kconfig option.
+1. Enable the profiler using the :option:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED` Kconfig option.
 #. Edit the source file for the event type:
 
-   a. Define a profiling function that logs the event data to a given buffer by calling :c:func:`profiler_log_encode_u32`, regardless of the profiled data type.
+   a. Define a profiling function that logs the event data to a given buffer by calling one of the following functions for every registered data type:
+
+      * :c:func:`profiler_log_encode_uint32`
+      * :c:func:`profiler_log_encode_int32`
+      * :c:func:`profiler_log_encode_uint16`
+      * :c:func:`profiler_log_encode_int16`
+      * :c:func:`profiler_log_encode_uint8`
+      * :c:func:`profiler_log_encode_int8`
+      * :c:func:`profiler_log_encode_string`
    #. Define an :c:struct:`event_info` structure, using :c:macro:`EVENT_INFO_DEFINE` in your event source file, and provide it as an argument when defining the event type with :c:macro:`EVENT_TYPE_DEFINE` macro.
 	  This structure contains a profiling function and information about the data fields that are logged.
 	  The following code example shows a profiling function for the event type ``sample_event``:
@@ -326,9 +334,9 @@ To profile an event, you must complete the following steps:
 		 {
 			struct sample_event *event = cast_sample_event(eh);
 
-			profiler_log_encode_u32(buf, event->value1);
-			profiler_log_encode_u32(buf, event->value2);
-			profiler_log_encode_u32(buf, event->value3);
+			profiler_log_encode_int8(buf, event->value1);
+			profiler_log_encode_int16(buf, event->value2);
+			profiler_log_encode_int32(buf, event->value3);
 		 }
 
 	  The following code example shows how to define the event profiling information structure and add it to event type definition:
