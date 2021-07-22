@@ -180,4 +180,3 @@ void ptt_ctrl_led_indication_on(void);
 void ptt_ctrl_led_indication_off(void);
 
 #endif /* PTT_CTRL_INTERNAL_H__ */
-

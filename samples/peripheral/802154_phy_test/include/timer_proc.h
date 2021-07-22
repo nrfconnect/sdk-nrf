@@ -61,4 +61,3 @@ void launch_ptt_process_timer(ptt_time_t timeout);
 ptt_time_t ptt_get_max_time(void);
 
 #endif /* TIMER_PROC_H__ */
-

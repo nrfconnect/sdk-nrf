@@ -47,4 +47,3 @@
 typedef uint8_t ptt_evt_id_t;
 
 #endif /* PTT_EVENTS_H__ */
-

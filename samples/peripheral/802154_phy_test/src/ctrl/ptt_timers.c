@@ -50,7 +50,6 @@
 #include "ptt_ctrl_internal.h"
 #endif
 
-
 /* Main idea is to keep timeouts bounded to current time and refresh them every
    time when a new timer added or any timer is ended. The nearest timeout is
    selected from all timeouts in the pool and the application timer is called
@@ -358,4 +357,3 @@ static void update_timers(ptt_time_t current_time)
 
     PTT_TRACE("update_timers -<\n");
 }
-

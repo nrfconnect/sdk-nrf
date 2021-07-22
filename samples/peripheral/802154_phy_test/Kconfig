@@ -16,18 +16,25 @@ choice
 
 config DUT_MODE
 	bool "Configure device as a DUT"
+	help
+	  DUT (Device Under Test) - serial communication is not initialized
 
 config CMD_MODE
 	bool "Configure device as a CMD"
+	help
+	  CMD - serial communication is available with 115200 8N1 settings
 
 config BOTH
 	bool "Supports both CMD and DUT modes"
+	help
+	  Device can be switched between modes using "custom changemode 0/1" command.
 
 endchoice
 
 config POWER
 	int "Transmit Power (dBm)"
-	default -20
+	default 0
+	range -20 8
 
 config CHANNEL_MASK
 	hex "Channel page and channel number mask"
@@ -36,10 +43,12 @@ config CHANNEL_MASK
 config SW_VERSION
 	int "Software Version"
 	default 1
+	range 0 255
 
 config HW_VERSION
 	int "Hardware Version"
 	default 1
+	range 0 255
 
 config ANTENNA_DIVERSITY
 	bool "Enable Antenna Diversity (Not Yet Supported)"

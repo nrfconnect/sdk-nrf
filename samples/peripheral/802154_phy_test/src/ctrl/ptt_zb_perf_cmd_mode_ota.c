@@ -59,7 +59,6 @@
 #include "test_cmd_ota_conf.h"
 #endif
 
-
 /** currently processed OTA command */
 static ptt_evt_id_t m_ota_cmd_evt;
 
@@ -914,4 +913,3 @@ static ptt_ret_t cmd_make_and_send_rf_packet(ptt_cmd_t cmd)
 
     return ret;
 }
-

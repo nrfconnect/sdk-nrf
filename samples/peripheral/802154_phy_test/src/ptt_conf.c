@@ -128,5 +128,3 @@ bool ptt_get_ant_num_ext(uint8_t * ant_num)
     return false;
 #endif
 }
-
-

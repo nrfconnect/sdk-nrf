@@ -70,7 +70,7 @@ LOG_MODULE_REGISTER(periph);
 #define PTT_CLK_TIMER 2
 
 static struct onoff_client hfclk_cli;
-static nrfx_timer_t m_clk_timer = NRFX_TIMER_INSTANCE(PTT_CLK_TIMER);
+static nrfx_timer_t        m_clk_timer = NRFX_TIMER_INSTANCE(PTT_CLK_TIMER);
 
 /* The devicetree node identifier for the "led0" alias. */
 #define LED0_NODE DT_ALIAS(led0)
@@ -106,10 +106,10 @@ nrf_ppi_channel_t ppi_channel;
 
 #endif
 
-static void hfclk_on_callback(struct onoff_manager *mgr,
-			      struct onoff_client  *cli,
-			      uint32_t state,
-			      int res)
+static void hfclk_on_callback(struct onoff_manager * mgr,
+                              struct onoff_client  * cli,
+                              uint32_t               state,
+                              int                    res)
 {
     /* do nothing */
 }
@@ -122,17 +122,18 @@ static void clk_timer_handler(nrf_timer_event_t event_type, void * p_context)
 void periph_init(void)
 {
     nrfx_err_t err_code;
-    int ret;
+    int        ret;
 
     /* Enable HFCLK */
-    struct onoff_manager *mgr =
+    struct onoff_manager * mgr =
         z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+
     __ASSERT_NO_MSG(mgr != NULL);
 
-	sys_notify_init_callback(&hfclk_cli.notify, hfclk_on_callback);
+    sys_notify_init_callback(&hfclk_cli.notify, hfclk_on_callback);
 
     ret = onoff_request(mgr, &hfclk_cli);
-	__ASSERT_NO_MSG(ret >= 0);
+    __ASSERT_NO_MSG(ret >= 0);
 
     nrfx_timer_config_t clk_timer_cfg = NRFX_TIMER_DEFAULT_CONFIG;
 
@@ -252,15 +253,17 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
     return true;
 }
 
-static const struct device * get_pin_port(uint32_t* pin)
+static const struct device * get_pin_port(uint32_t * pin)
 {
-    switch(nrf_gpio_pin_port_number_extract(pin))
+    switch (nrf_gpio_pin_port_number_extract(pin))
     {
         case 0:
             return gpio_port0_dev;
+
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio1), okay)
         case 1:
             return gpio_port1_dev;
+
 #endif
         default:
             return NULL;
@@ -269,9 +272,10 @@ static const struct device * get_pin_port(uint32_t* pin)
 
 bool ptt_set_gpio_ext(uint8_t pin, uint8_t value)
 {
-    int ret;
+    int                   ret;
     const struct device * port;
-    uint32_t pin_nr = pin;
+    uint32_t              pin_nr = pin;
+
     if (nrf_gpio_pin_present_check(pin_nr))
     {
         port = get_pin_port(&pin_nr);
@@ -297,9 +301,9 @@ bool ptt_set_gpio_ext(uint8_t pin, uint8_t value)
 
 bool ptt_get_gpio_ext(uint8_t pin, uint8_t * value)
 {
-    int ret;
+    int                   ret;
     const struct device * port;
-    uint32_t pin_nr = pin;
+    uint32_t              pin_nr = pin;
 
     if (nrf_gpio_pin_present_check(pin_nr))
     {
@@ -395,4 +399,3 @@ void ptt_ctrl_led_indication_off_ext(void)
 {
     gpio_pin_set(indication_led_dev, PIN, false);
 }
-

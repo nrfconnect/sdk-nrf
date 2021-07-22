@@ -65,7 +65,6 @@
 #include "test_cmd_uart_conf.h"
 #endif
 
-
 /** currently processed UART command */
 static ptt_evt_id_t m_uart_cmd_evt;
 
@@ -1860,6 +1859,7 @@ static ptt_ret_t cmd_uart_l_tx(void)
                                          UART_TEXT_PAYLOAD_DELIMETERS, &save);
 
     cmd_uart_ltx_info_t * p_ltx_info = (cmd_uart_ltx_info_t * )p_ctx_data->arr;
+
     p_ltx_info->is_stop_requested = false;
 
     if (NULL == p_token_str)
@@ -1992,8 +1992,8 @@ static void cmd_uart_l_tx_process_next_packet(void)
 
     cmd_uart_ltx_info_t * p_ltx_info = (cmd_uart_ltx_info_t *)p_ctx_data->arr;
 
-    if ((!p_ltx_info->is_infinite && 
-         (p_ltx_info->max_repeats_cnt <= p_ltx_info->repeats_cnt)) || 
+    if ((!p_ltx_info->is_infinite &&
+         (p_ltx_info->max_repeats_cnt <= p_ltx_info->repeats_cnt)) ||
         p_ltx_info->is_stop_requested)
     {
         cmd_uart_cmd_unlock();
@@ -2483,7 +2483,7 @@ static ptt_ret_t cmd_uart_parse_waveform_timings(const uint8_t * p_uart_cmd_payl
                     p_token_str = strtok_r(NULL, UART_TEXT_PAYLOAD_DELIMETERS, &save);
 
                     if ((NULL == p_token_str) ||
-                        /* lets be sure that there are no extra parameters */
+ /* lets be sure that there are no extra parameters */
                         (NULL != strtok_r(NULL, UART_TEXT_PAYLOAD_DELIMETERS, &save)))
                     {
                         ret = PTT_RET_INVALID_VALUE;
@@ -2506,8 +2506,8 @@ static ptt_ret_t cmd_uart_l_carrier(void)
 
     int32_t                     transmission_duration;
     cmd_uart_waveform_timings_t timings_info = {0};
-    ptt_ret_t                   ret    = PTT_RET_SUCCESS;
-    ptt_evt_data_t *            p_data = ptt_event_get_p_data(m_uart_cmd_evt);
+    ptt_ret_t                   ret          = PTT_RET_SUCCESS;
+    ptt_evt_data_t            * p_data       = ptt_event_get_p_data(m_uart_cmd_evt);
 
     assert(p_data != NULL);
 
@@ -2533,7 +2533,7 @@ static ptt_ret_t cmd_uart_l_carrier(void)
     {
         /* The values are only stored in the p_ctx_data if the parsing is successful */
         memcpy(p_ctx_data->arr, &timings_info, sizeof(cmd_uart_waveform_timings_t));
-     
+
         bool is_pulse_duration_valid = (PTT_L_CARRIER_PULSE_MIN <= timings_info.pulse_duration) &&
                                        (PTT_L_CARRIER_PULSE_MAX >= timings_info.pulse_duration);
         bool is_interval_valid = (PTT_L_CARRIER_INTERVAL_MIN <= timings_info.interval) &&
@@ -2752,8 +2752,8 @@ static ptt_ret_t cmd_uart_l_stream(void)
 
     int32_t                     transmission_duration;
     cmd_uart_waveform_timings_t timings_info = {0};
-    ptt_ret_t                   ret    = PTT_RET_SUCCESS;
-    ptt_evt_data_t *            p_data = ptt_event_get_p_data(m_uart_cmd_evt);
+    ptt_ret_t                   ret          = PTT_RET_SUCCESS;
+    ptt_evt_data_t            * p_data       = ptt_event_get_p_data(m_uart_cmd_evt);
 
     assert(p_data != NULL);
 
@@ -3044,4 +3044,3 @@ static inline ptt_bool_t cmd_is_uart_cmd_locked_by(ptt_evt_id_t evt_id)
 {
     return (evt_id == m_uart_cmd_evt) ? true : false;
 }
-

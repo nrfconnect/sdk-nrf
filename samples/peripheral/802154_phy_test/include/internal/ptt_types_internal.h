@@ -42,4 +42,3 @@
 #include <stdint.h>
 
 #endif /* PTT_TYPES_INTERNAL_H__ */
-

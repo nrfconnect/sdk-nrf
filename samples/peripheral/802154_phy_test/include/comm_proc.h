@@ -84,4 +84,3 @@ void comm_proc(void);
 void comm_input_timeout_handler(struct k_timer * timer);
 
 #endif /* COMM_PROC_H__ */
-

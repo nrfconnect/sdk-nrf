@@ -172,4 +172,3 @@ uint32_t ptt_betoh32_val(uint8_t * p_src)
 
     return val;
 }
-

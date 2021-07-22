@@ -76,4 +76,3 @@
 #define PTT_LED_INDICATION_BLINK_TIMEOUT_MS 200
 
 #endif /* PTT_CONFIG_H__ */
-

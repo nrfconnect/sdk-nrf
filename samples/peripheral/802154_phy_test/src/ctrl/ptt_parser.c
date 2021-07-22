@@ -245,4 +245,3 @@ static ptt_ret_t ptt_parser_hex_string_next_byte(const char * p_hex_str, uint8_t
 
     return ret;
 }
-
