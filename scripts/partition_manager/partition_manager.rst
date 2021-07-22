@@ -14,6 +14,9 @@ See :ref:`ug_multi_image` for more information about multi-image builds.
 
 The Partition Manager is activated for all multi-image builds, regardless of which build strategy is used for the child image.
 
+.. note::
+   When you build a multi-image application using the Partition Manager, the Device Tree Source flash partitions are ignored.
+
 .. _pm_overview:
 
 Overview
