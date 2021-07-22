@@ -370,6 +370,50 @@ bool nrf_modem_os_is_in_isr(void)
 	return k_is_in_isr();
 }
 
+#define NRF_MODEM_OS_SEM_MAX 2
+static struct k_sem nrf_modem_os_sems[NRF_MODEM_OS_SEM_MAX];
+
+int nrf_modem_os_sem_init(void **sem,
+	unsigned int initial_count, unsigned int limit)
+{
+	static uint8_t used;
+
+	if (PART_OF_ARRAY(nrf_modem_os_sems, (struct k_sem *)*sem)) {
+		goto recycle;
+	}
+
+	__ASSERT(used < NRF_MODEM_OS_SEM_MAX,
+		 "Not enough semaphores in glue layer");
+
+	*sem = &nrf_modem_os_sems[used++];
+
+recycle:
+	return k_sem_init((struct k_sem *)*sem, initial_count, limit);
+}
+
+void nrf_modem_os_sem_give(void *sem)
+{
+	__ASSERT(PART_OF_ARRAY(nrf_modem_os_sems, (struct k_sem *)sem),
+		 "Uninitialised semaphore");
+
+	k_sem_give((struct k_sem *)sem);
+}
+
+int nrf_modem_os_sem_take(void *sem, int timeout)
+{
+	int err;
+
+	__ASSERT(PART_OF_ARRAY(nrf_modem_os_sems, (struct k_sem *)sem),
+		 "Uninitialised semaphore");
+
+	err = k_sem_take((struct k_sem *)sem, timeout == -1 ? K_FOREVER : K_MSEC(timeout));
+	if (err == -EAGAIN) {
+		return NRF_ETIMEDOUT;
+	}
+
+	return 0;
+}
+
 void nrf_modem_os_application_irq_set(void)
 {
 	NVIC_SetPendingIRQ(NRF_MODEM_APPLICATION_IRQ);

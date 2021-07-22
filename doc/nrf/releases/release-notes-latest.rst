@@ -31,6 +31,16 @@ The following sections provide detailed lists of changes by component.
 nRF9160
 =======
 
+* Added:
+
+  * :ref:`at_monitor_readme` library:
+
+    * A library to reschedule and dispatch AT notifications from the Modem library AT interface to AT monitors.
+
+  * :ref:`at_monitor_sample` sample:
+
+    * A sample to show the usage of the :ref:`at_monitor_readme` library.
+
 * Updated:
 
   * :ref:`lib_nrf_cloud` library:
@@ -51,6 +61,14 @@ nRF9160
   * :ref:`asset_tracker_v2` application:
 
     * Changed the custom module responsible for controlling the LEDs to CAF LEDs module.
+
+  * :ref:`at_cmd_readme` library:
+
+    * The library has been deprecated in favor of Modem library's native AT interface.
+
+  * :ref:`at_notif_readme` library:
+
+    * The library has been deprecated in favor of the :ref:`at_monitor_readme` library.
 
 nRF5
 ====
@@ -89,6 +107,24 @@ Common
 ======
 
 The following changes are relevant for all device families.
+
+sdk-nrfxlib
+-----------
+
+See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
+
+Modem library
++++++++++++++
+
+* Updated :ref:`nrf_modem` to version 1.3.0.
+  See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
+* Added a new API for AT commands.
+  See :ref:`nrfxlib:nrf_modem_at` for more information.
+* Added a new API for modem delta firmware updates.
+  See :ref:`nrfxlib:nrf_modem_delta_dfu` for more information.
+
+* The AT socket API is now deprecated.
+* The DFU socket API is now deprecated.
 
 Pelion
 ------
