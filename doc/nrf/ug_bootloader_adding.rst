@@ -53,7 +53,7 @@ To ensure that the immutable bootloader occupies as little flash memory as possi
 
 .. code-block:: console
 
-   west build -b nrf52840dk_nrf5840 zephyr/samples/hello_world -- \
+   west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
    -DCONFIG_SECURE_BOOT=y \
    -Db0_CONF_FILE=prj_minimal.conf
 
@@ -181,7 +181,7 @@ To use a custom signing command with this bootloader, set the following options 
 
       .. code-block:: console
 
-         west build -b nrf52840dk_nrf5840 zephyr/samples/hello_world -- \
+         west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
          -DCONFIG_SECURE_BOOT=y \
          -DCONFIG_SB_SIGNING_CUSTOM=y \
          -DCONFIG_SB_SIGNING_PUBLIC_KEY=\"/path/to/pub.pem\" \
@@ -302,7 +302,7 @@ To enable this configuration, apply the :file:`overlay-minimal-external-crypto.c
 
 .. code-block::
 
-   west build -b nrf52840dk_nrf5840 zephyr/samples/hello_world -- \
+   west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
    -DCONFIG_BOOTLOADER_MCUBOOT=y \
    -Dmcuboot_OVERLAY_CONFIG=overlay-minimal-external-crypto.conf
 
