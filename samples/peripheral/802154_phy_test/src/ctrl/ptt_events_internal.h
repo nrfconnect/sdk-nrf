@@ -221,4 +221,3 @@ void ptt_event_set_data(ptt_evt_id_t evt_id, const uint8_t * p_data, uint16_t le
 ptt_evt_data_t * ptt_event_get_p_data(ptt_evt_id_t evt_id);
 
 #endif /* PTT_EVENTS_INTERNAL_H__ */
-

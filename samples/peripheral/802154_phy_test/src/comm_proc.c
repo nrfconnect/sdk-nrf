@@ -95,7 +95,7 @@ K_FIFO_DEFINE(text_processing_fifo);
 void comm_text_processor_fn(struct k_work * work)
 {
     LOG_DBG("Called work queue function");
-    text_proc_t *p_text_proc = CONTAINER_OF(work, text_proc_t, work);
+    text_proc_t * p_text_proc = CONTAINER_OF(work, text_proc_t, work);
 
     /* force string termination for further processing */
     p_text_proc->buf[p_text_proc->len] = '\0';
@@ -108,7 +108,8 @@ void comm_text_processor_fn(struct k_work * work)
 void comm_input_timeout_handler(struct k_timer * timer)
 {
     LOG_DBG("push packet to lib via timer");
-    text_proc_t *p_text_proc = CONTAINER_OF(timer, text_proc_t, timer);
+    text_proc_t * p_text_proc = CONTAINER_OF(timer, text_proc_t, timer);
+
     k_work_submit(&p_text_proc->work);
 }
 
@@ -195,4 +196,3 @@ void comm_proc(void)
     usb_task();
 #endif
 }
-

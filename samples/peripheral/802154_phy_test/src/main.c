@@ -45,19 +45,19 @@
 LOG_MODULE_REGISTER(phy_tt);
 
 /* size of stack area used by each thread */
-#define RF_THREAD_STACKSIZE     (1024u)
-#define COMM_THREAD_STACKSIZE   (1024u)
+#define RF_THREAD_STACKSIZE   (1024u)
+#define COMM_THREAD_STACKSIZE (1024u)
 
 /* scheduling priority used by each thread */
-#define RF_THREAD_PRIORITY      (7u)
-#define COMM_THREAD_PRIORITY    (7u)
+#define RF_THREAD_PRIORITY    (7u)
+#define COMM_THREAD_PRIORITY  (7u)
 
 void ptt_do_reset_ext(void)
 {
     NVIC_SystemReset();
 }
 
-static int setup(const struct device *dev)
+static int setup(const struct device * dev)
 {
     LOG_INF("Setup started");
 

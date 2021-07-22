@@ -50,7 +50,6 @@
 #include "ptt_ctrl_internal.h"
 #endif
 
-
 void ptt_events_init(void)
 {
     PTT_TRACE("ptt_events_init ->\n");
@@ -317,4 +316,3 @@ ptt_evt_data_t * ptt_event_get_p_data(ptt_evt_id_t evt_id)
     PTT_TRACE("ptt_event_get_p_data -< ctx %p\n", &p_event->data);
     return &p_event->data;
 }
-

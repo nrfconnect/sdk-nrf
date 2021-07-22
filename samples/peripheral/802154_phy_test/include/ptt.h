@@ -114,4 +114,3 @@ extern void ptt_ctrl_led_indication_on_ext(void);
 extern void ptt_ctrl_led_indication_off_ext(void);
 
 #endif /* PTT_H__ */
-

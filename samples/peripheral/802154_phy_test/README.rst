@@ -290,9 +290,8 @@ Building and running
 
 .. note::
    On the |nRF5340DKnoref|, the IEEE 802.15.4 PHY Test Tool is a standalone network sample that does not require any counterpart application sample.
-   However, you must still program the application core to boot up the network core.
-   You can use any sample for this, for example :ref:`nrf5340_empty_app_core`.
-   The :ref:`nrf5340_empty_app_core` is built and programmed automatically by default.
+   However, you must still program the application core to boot up the network core (and forward UART pins to the network core of the CMD device).
+   The :ref:`nrf5340_empty_app_core`, which accomplishes both, is built and programmed automatically by default.
    If you want to program another sample for the application core, unset the :option:'CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE' option.
 
 .. _802154_phy_test_testing:
@@ -307,7 +306,7 @@ After programming the supported development kit of your choice with the sample, 
 Checking if the sample works as expected
 ----------------------------------------
 
-1. Connect the development kit to the computer using a USB cable. Use the DK's programmer USB port, not the nRF USB port located near the SoC.
+1. Connect the development kit to the computer using a USB cable. Use the DK's programmer USB port (J2).
    The kits are assigned a COM port (Windows) or ttyACM device (Linux), which should be now visible in the Device Manager or /dev directory.
 #. Connect to the DK using a terminal emulator (for example, PuTTY or minicom), with the following settings:
 
@@ -329,10 +328,10 @@ Checking if the sample works as expected
 
 .. _802154_phy_test_testing_board:
 
-Testing with another development kit
-------------------------------------
+Performing radio tests without serial interface
+-----------------------------------------------
 
-1. Make sure that at least one of the development kits can be set into CMD mode, and the other one to the DUT mode. The easiest way to achieve this is to flash both devices with the cample configured to support BOTH modes (default setting). 
+1. Make sure that at least one of the development kits can be set into CMD mode, and the other one to the DUT mode. DUT device will not initialize serial interface. The easiest way to achieve this is to flash both devices with the cample configured to support BOTH modes (default setting). 
 #. Connect both development kits to the computer using a USB cable.
    The kits are assigned a COM port (Windows) or ttyACM device (Linux), which should be now visible in the Device Manager or /dev directory.
 #. Connect to the DKs using a terminal emulator (for example, PuTTY or minicom), with the following settings:

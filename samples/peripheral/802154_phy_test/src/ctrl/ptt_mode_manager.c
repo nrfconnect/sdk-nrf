@@ -44,7 +44,6 @@
 #include "ptt_ctrl_internal.h"
 #include "ptt_modes.h"
 
-
 static ptt_ret_t ptt_mode_init(ptt_mode_t mode);
 
 /* caller should take care about freeing shared resources */
@@ -151,4 +150,3 @@ static ptt_ret_t ptt_mode_init(ptt_mode_t mode)
 
     return ret;
 }
-

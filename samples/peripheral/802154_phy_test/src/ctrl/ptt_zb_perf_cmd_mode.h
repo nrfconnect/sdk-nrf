@@ -372,4 +372,3 @@ void cmd_uart_send_rsp_get_dcdc(ptt_evt_id_t evt_id);
 void cmd_uart_send_rsp_get_icache(ptt_evt_id_t evt_id);
 
 #endif /* PTT_MODE_ZB_PERF_CMD_H__ */
-

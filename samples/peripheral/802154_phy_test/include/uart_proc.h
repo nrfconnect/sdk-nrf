@@ -58,4 +58,3 @@ void uart_init(void);
 int32_t uart_send(const uint8_t * p_pkt, ptt_pkt_len_t len, bool add_crlf);
 
 #endif /* UART_PROC_H__ */
-

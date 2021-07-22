@@ -57,7 +57,6 @@
 #include "test_cmd_response_conf.h"
 #endif
 
-
 #define CMD_UART_BUF 320
 
 static void cmd_uart_send_rf_packet_with_num(ptt_evt_id_t new_rf_pkt_evt, uint32_t packet_n);
@@ -557,4 +556,3 @@ void cmd_uart_send_rsp_l_get_gpio_error(ptt_evt_id_t evt_id)
     ptt_uart_send_packet(p_evt_data->arr,
                          strlen(PTT_CAST_TO_STR(p_evt_data->arr)));
 }
-

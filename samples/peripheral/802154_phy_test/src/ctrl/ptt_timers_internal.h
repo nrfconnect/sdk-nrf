@@ -95,4 +95,3 @@ void ptt_timers_reset_all(void);
 void ptt_timers_process(ptt_time_t current_time);
 
 #endif /* PTT_TIMERS_INTERNAL_H__ */
-

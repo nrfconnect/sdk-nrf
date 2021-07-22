@@ -58,4 +58,3 @@ LOG_MODULE_DECLARE(phy_tt);
 #define PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret)   PTT_TRACE("%s -< ret: %d\n", __func__, ret)
 
 #endif /* PTT_TRACE_H__ */
-

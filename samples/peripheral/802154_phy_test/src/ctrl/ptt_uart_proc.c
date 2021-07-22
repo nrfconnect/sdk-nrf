@@ -62,7 +62,6 @@
 #include "test_uart_conf.h"
 #endif
 
-
 /** array to parse text command */
 static uart_text_cmd_t m_text_cmds[PTT_UART_CMD_N] = {
     {UART_CMD_R_PING_TEXT, PTT_UART_CMD_R_PING, UART_CMD_R_PING_PAYLOAD_L,
@@ -418,4 +417,3 @@ static ptt_ret_t payload_fill(ptt_evt_ctx_data_t * p_ctx_data, char * p_payload,
 
     return ret;
 }
-

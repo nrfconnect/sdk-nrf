@@ -53,7 +53,6 @@
 #include "test_dut_conf.h"
 #endif
 
-
 /** currently processed event */
 static ptt_evt_id_t m_cur_evt;
 
@@ -481,7 +480,9 @@ static ptt_ret_t dut_stream(void)
 
                 ptt_random_vector_generate(p_ltx_payload->arr, p_ltx_payload->len);
 
-                ret = ptt_rf_start_modulated_stream(m_cur_evt, p_ltx_payload->arr, p_ltx_payload->len);
+                ret = ptt_rf_start_modulated_stream(m_cur_evt,
+                                                    p_ltx_payload->arr,
+                                                    p_ltx_payload->len);
 
                 if (PTT_RET_SUCCESS == ret)
                 {
@@ -490,9 +491,10 @@ static ptt_ret_t dut_stream(void)
                 else
                 {
                     ptt_timer_remove(m_cur_evt);
-                    PTT_TRACE("%s: ptt_rf_start_modulated_stream returns %d. Aborting command handling",
-                            __func__,
-                            ret);
+                    PTT_TRACE(
+                        "%s: ptt_rf_start_modulated_stream returns %d. Aborting command handling",
+                        __func__,
+                        ret);
                 }
             }
         }
@@ -696,4 +698,3 @@ static inline void dut_reset_cur_evt(void)
     ptt_event_free(m_cur_evt);
     m_cur_evt = PTT_EVENT_UNASSIGNED;
 }
-

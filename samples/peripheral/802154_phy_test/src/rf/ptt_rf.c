@@ -47,7 +47,6 @@
 #include "ptt_rf_api.h"
 #include "ptt_rf_internal.h"
 
-
 ptt_rf_ctx_t m_ptt_rf_ctx;
 
 static ptt_ret_t ptt_rf_try_lock(ptt_evt_id_t evt_id);
@@ -773,4 +772,3 @@ inline ptt_ltx_payload_t * ptt_rf_get_custom_ltx_payload(void)
 {
     return &(m_ptt_rf_ctx.ltx_payload);
 }
-

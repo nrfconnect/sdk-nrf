@@ -42,7 +42,6 @@
 #include "ptt_modes.h"
 #include "ptt_zb_perf_cmd_mode.h"
 
-
 ptt_ret_t ptt_zb_perf_cmd_mode_init(void)
 {
     PTT_TRACE("ptt_zb_perf_cmd_mode_init ->\n");
@@ -76,4 +75,3 @@ ptt_ret_t ptt_zb_perf_cmd_mode_uninit(void)
     PTT_TRACE("ptt_zb_perf_cmd_mode_uninit -<\n");
     return PTT_RET_SUCCESS;
 }
-

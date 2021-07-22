@@ -54,4 +54,3 @@
 #define PTT_CAST_TO_STR(x)     ( ( char * )(x) )
 
 #endif /* PTT_UTILS_H__ */
-

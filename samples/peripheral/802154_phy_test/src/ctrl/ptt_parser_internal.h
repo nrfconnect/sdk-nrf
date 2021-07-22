@@ -153,4 +153,3 @@ ptt_ret_t ptt_parser_hex_string_to_uint8_array(const char * p_hex_str,
                                                uint8_t    * p_written_len);
 
 #endif /* PTT_PARSER_INTERNAL_H__ */
-

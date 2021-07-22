@@ -52,20 +52,24 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(uart);
 
-static text_proc_t      m_text_proc_uart;
-static struct k_timer   m_uart_timer;
+static text_proc_t           m_text_proc_uart;
+static struct k_timer        m_uart_timer;
 static const struct device * m_uart_dev;
 
 RING_BUF_DECLARE(uart_rb, 10240);
 
 static void uart_irq_handler(const struct device * dev, void * context)
 {
-    uint8_t *m_data_tx;
+    uint8_t * m_data_tx;
+
     uart_irq_update(dev);
     if (uart_irq_tx_ready(dev))
     {
-        int nr_bytes_read = ring_buf_get_claim(&uart_rb, &m_data_tx, CONFIG_UART_0_NRF_TX_BUFFER_SIZE);
+        int nr_bytes_read = ring_buf_get_claim(&uart_rb,
+                                               &m_data_tx,
+                                               CONFIG_UART_0_NRF_TX_BUFFER_SIZE);
         int sent = uart_fifo_fill(dev, m_data_tx, nr_bytes_read);
+
         ring_buf_get_finish(&uart_rb, sent);
         if (ring_buf_is_empty(&uart_rb))
         {
@@ -103,7 +107,7 @@ void uart_init(void)
 
 int32_t uart_send(const uint8_t * p_pkt, ptt_pkt_len_t len, bool add_crlf)
 {
-    while(ring_buf_space_get(&uart_rb) < len)
+    while (ring_buf_space_get(&uart_rb) < len)
     {
         LOG_WRN("queue full, waiting for free space");
         k_sleep(K_MSEC(1));
@@ -119,4 +123,3 @@ int32_t uart_send(const uint8_t * p_pkt, ptt_pkt_len_t len, bool add_crlf)
 
     return len;
 }
-

@@ -87,4 +87,3 @@ static void schedule_ptt_process(struct k_work * work)
 {
     ptt_process(ptt_get_current_time());
 }
-

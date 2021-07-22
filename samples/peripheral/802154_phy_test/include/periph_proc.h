@@ -53,4 +53,3 @@
 void periph_init(void);
 
 #endif /* PERIPH_PROC_H__ */
-

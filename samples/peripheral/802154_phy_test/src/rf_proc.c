@@ -192,7 +192,7 @@ static void rf_process_rx_packets(void)
 
 void rf_thread(void)
 {
-    while(1)
+    while (1)
     {
         rf_process_rx_packets();
         k_sleep(K_MSEC(1));
@@ -495,4 +495,3 @@ static void rf_rx_pool_clear(void)
         }
     }
 }
-

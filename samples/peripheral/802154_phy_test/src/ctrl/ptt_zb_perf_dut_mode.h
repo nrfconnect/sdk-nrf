@@ -64,4 +64,3 @@ typedef enum
 } dut_state_t;
 
 #endif  /* PTT_MODE_ZB_PERF_DUT_H__ */
-

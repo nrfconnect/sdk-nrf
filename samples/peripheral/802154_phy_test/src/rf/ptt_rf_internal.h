@@ -67,4 +67,3 @@ typedef struct
 } ptt_rf_ctx_t;
 
 #endif  /* PTT_RF_INTERNAL_H__ */
-
