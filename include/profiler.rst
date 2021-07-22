@@ -37,32 +37,43 @@ To profile custom events, you must register them using :c:func:`profiler_registe
 
 The following code example shows how to register event types::
 
-	static const char *data_names[] = {"value1", "value2"};
-	static const enum profiler_arg data_types[] = {PROFILER_ARG_U32,
-						       PROFILER_ARG_S32};
+	static const char * const data_names[] = {"value1", "value2", "value3", "value4", "string"};
+	static const enum profiler_arg data_types[] = {PROFILER_ARG_U32, PROFILER_ARG_S32,
+						       PROFILER_ARG_S16, PROFILER_ARG_U8,
+						       PROFILER_ARG_STRING};
 
 	no_data_event_id = profiler_register_event_type("no data event", NULL,
 							NULL, 0);
 	data_event_id = profiler_register_event_type("data event", data_names,
-						     data_types, 2);
+						     data_types, 5);
 
 After registering the types, you can send information about event occurrences using the following functions:
 
 * :c:func:`profiler_log_start` - Start logging.
-* :c:func:`profiler_log_encode_u32` - Add data connected with the event (optional).
+* :c:func:`profiler_log_encode_uint32` - Add 32-bit unsigned integer connected with the event (optional).
+* :c:func:`profiler_log_encode_int32` - Add 32-bit integer connected with the event (optional).
+* :c:func:`profiler_log_encode_uint16` - Add 16-bit unsigned integer connected with the event (optional).
+* :c:func:`profiler_log_encode_int16` - Add 16-bit integer connected with the event (optional).
+* :c:func:`profiler_log_encode_uint8` - Add 8-bit unsigned integer connected with the event (optional).
+* :c:func:`profiler_log_encode_int8` - Add 8-bit integer connected with the event (optional).
+* :c:func:`profiler_log_encode_string` - Add string connected with the event (optional).
 * :c:func:`profiler_log_send` - Send profiled data.
 
 It is good practice to wrap the calls in one function that you then call to profile event occurrences.
 The following code example shows a function for profiling an event with data::
 
-	static void profile_data_event(uint32_t val1, int32_t val2)
+	static void profile_data_event(uint32_t val1, int32_t val2, int16_t val3,
+				       uint8_t val4, const char *string)
 	{
 		struct log_event_buf buf;
 
 		profiler_log_start(&buf);
 		/* Profiling data connected with an event */
-		profiler_log_encode_u32(&buf, val1);
-		profiler_log_encode_u32(&buf, val2);
+		profiler_log_encode_uint32(&buf, val1);
+		profiler_log_encode_int32(&buf, val2);
+		profiler_log_encode_int16(&buf, val3);
+		profiler_log_encode_uint8(&buf, val4);
+		profiler_log_encode_string(&buf, string);
 		profiler_log_send(&buf, data_event_id);
 	}
 
