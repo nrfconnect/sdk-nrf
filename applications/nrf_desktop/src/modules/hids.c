@@ -381,8 +381,8 @@ static int module_init(void)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD)) {
 		hids_init_param.is_kb = true;
-		hids_init_param.boot_kb_notif_handler =
-			boot_keyboard_notif_handler;
+		hids_init_param.boot_kb_notif_handler = boot_keyboard_notif_handler;
+		hids_init_param.boot_kb_outp_rep_handler = broadcast_kbd_leds_report;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {

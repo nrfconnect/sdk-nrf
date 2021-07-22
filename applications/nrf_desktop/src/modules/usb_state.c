@@ -173,16 +173,38 @@ static int set_report(const struct device *dev, struct usb_setup_packet *setup, 
 		break;
 
 	case REPORT_TYPE_OUTPUT:
-		if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) &&
-		    (request_value[0] == REPORT_ID_KEYBOARD_LEDS) &&
-		    (*len == (REPORT_SIZE_KEYBOARD_LEDS + sizeof(uint8_t)))) {
+		if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
 			struct usb_hid_device *usb_hid = dev_to_hid(dev);
-			struct hid_report_event *event = new_hid_report_event(*len);
+
+			if ((request_value[0] == REPORT_ID_KEYBOARD_LEDS) &&
+			    (usb_hid->hid_protocol == HID_PROTOCOL_REPORT) &&
+			    (*len == (REPORT_SIZE_KEYBOARD_LEDS + sizeof(uint8_t)))) {
+				/* Handle HID keyboard LEDs report. */
+			} else if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) &&
+				  (request_value[0] == REPORT_ID_RESERVED) &&
+				  (usb_hid->hid_protocol == HID_PROTOCOL_BOOT) &&
+				  (*len == REPORT_SIZE_KEYBOARD_LEDS)) {
+				/* Handle HID boot keyboard LEDs report. */
+			} else {
+				/* Ignore invalid report. */
+				break;
+			}
+
+			size_t dyndata_len = REPORT_SIZE_KEYBOARD_LEDS + sizeof(uint8_t);
+			struct hid_report_event *event = new_hid_report_event(dyndata_len);
 
 			event->source = usb_hid;
 			/* Subscriber is not specified for HID output report. */
 			event->subscriber = NULL;
-			memcpy(event->dyndata.data, *data, *len);
+
+			uint8_t *buf = event->dyndata.data;
+
+			if (*len == REPORT_SIZE_KEYBOARD_LEDS) {
+				*buf = REPORT_ID_KEYBOARD_LEDS;
+				buf++;
+			}
+
+			memcpy(buf, *data, *len);
 
 			EVENT_SUBMIT(event);
 			return 0;
