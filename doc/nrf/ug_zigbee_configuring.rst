@@ -167,6 +167,7 @@ To do this, configure the related Kconfig option for one or more modules:
 * :option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL`
 * :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL`
 * :option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL`
+* :option:`CONFIG_ZIGBEE_SCENES_LOG_LEVEL`
 
 For each of the modules, you can set the following logging options:
 
