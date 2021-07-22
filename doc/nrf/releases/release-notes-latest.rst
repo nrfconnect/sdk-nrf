@@ -69,7 +69,17 @@ Matter
 ------
 
 * Added:
-   * :ref:`Weather station <matter_weather_station_sample>` sample.
+
+  * :ref:`Weather station <matter_weather_station_sample>` sample.
+
+
+Zigbee
+------
+
+* Added:
+
+  * :ref:`lib_zigbee_zcl_scenes` library with documentation.
+    This library was separated from the Zigbee light bulb sample.
 
 Common
 ======
