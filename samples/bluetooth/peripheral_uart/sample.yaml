@@ -6,4 +6,20 @@ tests:
     build_only: true
     platform_allow: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840
       nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuappns thingy53_nrf5340_cpuapp
+    integration_platforms:
+      - nrf51dk_nrf51422
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuappns
+      - thingy53_nrf5340_cpuapp
+    tags: bluetooth ci_build
+  samples.bluetooth.peripheral_uart_minimal:
+    extra_args: OVERLAY_CONFIG=prj_minimal.conf
+    build_only: true
+    platform_allow: nrf52dk_nrf52810 nrf52840dk_nrf52811 nrf52833dk_nrf52820
+    integration_platforms:
+      - nrf52dk_nrf52810
+      - nrf52840dk_nrf52811
+      - nrf52833dk_nrf52820
     tags: bluetooth ci_build
