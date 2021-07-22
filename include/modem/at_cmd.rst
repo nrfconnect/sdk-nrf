@@ -7,6 +7,10 @@ AT command interface
    :local:
    :depth: 2
 
+.. note::
+
+   The AT command interface is deprecated. Use the :ref:`nrfxlib:nrf_modem_at` API instead.
+
 The socket interface has a global limitation of 8 socket instances that can be open at the same time.
 So if an application needs multiple socket protocols like TCP, UDP, TLS, AT, and so on, the available 8 socket instances become a limiting factor.
 The AT command interface is designed to let multiple threads share a single AT socket instance.
