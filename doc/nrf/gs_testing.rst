@@ -1,16 +1,18 @@
 .. _gs_testing:
 
-Testing a sample application
+Testing an application
 ############################
 
 .. contents::
    :local:
    :depth: 2
 
-Follow the instructions in the testing section of the sample documentation to ensure that the application runs as expected.
+|application_sample_definition|
+
+Follow the instructions in the testing section of the application documentation to ensure that the application runs as expected.
 
 Information about the current state of the application is usually provided through the LEDs or through UART, or through both.
-See the user interface section of the sample documentation for description of the LED states or available UART commands.
+See the user interface section of the application documentation for description of the LED states or available UART commands.
 
 .. _putty:
 
@@ -39,7 +41,7 @@ UART can also be used for logging purposes as one of the :ref:`logging backends 
 How to use RTT
 **************
 
-To view the logging output using Real Time Transfer (RTT), modify the configuration settings of the sample to override the default UART console:
+To view the logging output using Real Time Transfer (RTT), modify the configuration settings of the application to override the default UART console:
 
  .. code-block:: none
 

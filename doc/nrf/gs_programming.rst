@@ -1,14 +1,15 @@
 .. _gs_programming:
 
-Building and programming a sample application
-#############################################
+Building and programming an application
+#######################################
 
 .. contents::
    :local:
    :depth: 2
 
-The recommended way of building and programming an |NCS| sample is to use the Nordic Edition of the |SES| (SES) IDE.
+The recommended way of building and programming an |NCS| application is to use the Nordic Edition of the |SES| (SES) IDE.
 
+|application_sample_definition|
 
 .. note::
 
@@ -56,8 +57,8 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
    * :guilabel:`Projects` - Select the project that you want to work with.
 
-     The drop-down list contains a selection of samples and applications from the sdk-nrf and sdk-zephyr repositories.
-     Select any of the checkboxes underneath to add the samples from that area to the drop-down list.
+     The drop-down list contains a selection of applications from the sdk-nrf and sdk-zephyr repositories.
+     Select any of the checkboxes underneath to add the applications from that area to the drop-down list.
      To add projects to the drop-down list, for example, your own custom projects, click :guilabel:`...` and select the folder that contains the projects that you want to add.
    * :guilabel:`Board Name` - Select the board that you want to work with.
 
@@ -119,7 +120,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
       a. Select your project in the Project Explorer.
       #. From the menu, select :guilabel:`Build` > :guilabel:`Build Solution`.
-      #. When the build completes, you can program the sample to a connected development kit:
+      #. When the build completes, you can program the application to a connected development kit:
 
          * For a single-image application, select :guilabel:`Target` > :guilabel:`Download zephyr/zephyr.elf`.
          * For a multi-image application, select :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex`.
@@ -153,15 +154,15 @@ Complete the following steps to build |NCS| projects on the command line after c
 
          The Toolchain Manager dropdown menu options
 
-#.    Go to the specific sample or application directory.
-      For example, to build the :ref:`at_client_sample` sample, run the following command to navigate to the sample directory:
+#.    Go to the specific application directory.
+      For example, to build the :ref:`at_client_sample` sample, run the following command to navigate to its directory:
 
       .. code-block:: console
 
          cd nrf/samples/nRF9160/at_client
 
 
-#.    Build the sample or application using the west command.
+#.    Build the application using the west command.
       The build target is specified by the parameter *build_target* in the west command as follows:
 
       .. parsed-literal::
@@ -197,7 +198,7 @@ Complete the following steps to build |NCS| projects on the command line after c
          To program the nRF52840 Dongle instead of a development kit, skip the following instructions and follow the programming instructions in :ref:`zephyr:nrf52840dongle_nrf52840`.
 
 #.    Power on the development kit.
-#.    Program the sample or application to the kit using the following command:
+#.    Program the application to the kit using the following command:
 
       .. code-block:: console
 
