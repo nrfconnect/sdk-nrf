@@ -80,7 +80,7 @@ To use this setup, you need the following hardware:
 * 1x PC with Ubuntu (20.04 or newer) or 1x smartphone with Android 8+
 * 1x Raspberry Pi Model 3B+ or newer (along with a SD card with at least 8 GB of memory)
 * 1x Wi-Fi Access Point supporting IPv6 (without the IPv6 Router Advertisement Guard enabled on the router)
-* 1x nRF52840 DK or nRF5840 Dongle - for the Radio Co-Processor (RCP) device
+* 1x nRF52840 DK or nRF52840 Dongle - for the Radio Co-Processor (RCP) device
 * 1x nRF52840 DK or nRF5340 DK - for the Matter accessory device (programmed with one of :ref:`matter_samples`)
 
 For information about how to configure and use the required components, complete steps from the following user guides:
@@ -107,7 +107,7 @@ To use this setup, you need the following hardware:
 
 * 1x PC with Ubuntu (20.04 or newer) or Raspberry Pi Model 3B+ or newer with Ubuntu (20.04 or newer) instead of Raspbian OS
 * 1x Bluetooth LE dongle (can be embedded inside the PC, like it is on Raspberry Pi)
-* 1x nRF52840 DK or nRF5840 Dongle - for the Radio Co-Processor (RCP) device
+* 1x nRF52840 DK or nRF52840 Dongle - for the Radio Co-Processor (RCP) device
 * 1x nRF52840 DK or nRF5340 DK - for the Matter accessory device (programmed with one of :ref:`matter_samples`)
 
 For information about how to configure and use the required components, see the following user guides:
