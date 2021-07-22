@@ -80,3 +80,5 @@
 .. |NSIB| replace:: nRF Secure Immutable Bootloader
 
 .. |external_flash_size| replace:: external flash memory with minimum 4MB
+
+.. |application_sample_definition| replace:: For simplicity, this guide will refer to both :ref:`samples<samples>` and :ref:`applications<applications>` as "applications".
