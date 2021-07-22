@@ -1,13 +1,15 @@
 .. _gs_modifying:
 
-Modifying a sample application
-##############################
+Modifying an application
+########################
 
 .. contents::
    :local:
    :depth: 2
 
-After programming and testing a sample application, you probably want to make some modifications to the application, for example, add your own files with additional functionality, change compilation options, or update the default configuration.
+|application_sample_definition|
+
+After programming and testing an application, you probably want to make some modifications to the application, for example, add your own files with additional functionality, change compilation options, or update the default configuration.
 
 
 Adding files and changing compiler settings
@@ -75,7 +77,7 @@ The following CMake commands can be managed by SES, if they target the ``app`` l
 * ``target_include_directories``
 * ``target_compile_options``
 
-The :file:`CMakeLists.txt` files for the sample applications in the |NCS| are tagged as required.
+The :file:`CMakeLists.txt` files for the applications in the |NCS| are tagged as required.
 Therefore, if you always use SES to maintain them, you do not need to worry about tagging.
 Typically, the :file:`CMakeLists.txt` files include at least the :file:`main.c` file as source::
 
