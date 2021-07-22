@@ -30,10 +30,15 @@ config DESKTOP_CONFIG_CHANNEL_OUT_REPORT
 	  configuration channel data, but it increases memory consumption of
 	  the peripheral.
 
+	  The config channel HID output report is handled in a dedicated way.
+	  It does not use the same infrastructure as other HID output reports.
+
 config DESKTOP_CONFIG_CHANNEL_TIMEOUT
 	int "Transaction timeout on configuration channel in seconds"
 	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
 	default 10
+	help
+	  Timeout [s] after which config channel transaction is dropped.
 
 if DESKTOP_CONFIG_CHANNEL_ENABLE
 

@@ -6,6 +6,7 @@
 
 #include "app_task.h"
 
+#include "led_widget.h"
 #include <platform/CHIPDeviceLayer.h>
 
 #include <app/common/gen/attribute-id.h>
@@ -27,6 +28,7 @@ LOG_MODULE_DECLARE(app);
 namespace
 {
 enum class FunctionTimerMode { kDisabled, kFactoryResetTrigger, kFactoryResetComplete };
+enum class LedState { kAlive, kAdvertisingBle, kConnectedBle, kProvisioned };
 
 constexpr size_t kAppEventQueueSize = 10;
 constexpr size_t kFactoryResetTriggerTimeoutMs = 3000;
@@ -48,6 +50,17 @@ K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppE
 k_timer sFunctionTimer;
 FunctionTimerMode sFunctionTimerMode = FunctionTimerMode::kDisabled;
 
+LEDWidget sRedLED;
+LEDWidget sGreenLED;
+LEDWidget sBlueLED;
+
+bool sIsThreadProvisioned;
+bool sIsThreadEnabled;
+bool sIsBleAdvertisingEnabled;
+bool sHaveBLEConnections;
+
+LedState sLedState = LedState::kAlive;
+
 const device *kBme688SensorDev = device_get_binding(DT_LABEL(DT_INST(0, bosch_bme680)));
 } /* namespace */
 
@@ -55,6 +68,12 @@ AppTask AppTask::sAppTask;
 
 int AppTask::Init()
 {
+	/* Initialize RGB LED */
+	LEDWidget::InitGpio();
+	sRedLED.Init(DK_LED1);
+	sGreenLED.Init(DK_LED2);
+	sBlueLED.Init(DK_LED3);
+
 	/* Initialize buttons */
 	int ret = dk_buttons_init(ButtonStateHandler);
 	if (ret) {
@@ -91,14 +110,6 @@ void AppTask::OpenPairingWindow()
 		return;
 	}
 
-#ifdef CONFIG_CHIP_NFC_COMMISSIONING
-	if (NFCMgr().IsTagEmulationStarted()) {
-		LOG_INF("NFC Tag emulation is already started");
-	} else {
-		ShareQRCodeOverNFC(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
-	}
-#endif
-
 	if (ConnectivityMgr().IsBLEAdvertisingEnabled()) {
 		LOG_INF("BLE Advertisement is already enabled");
 		return;
@@ -130,7 +141,16 @@ int AppTask::StartApp()
 			ret = k_msgq_get(&sAppEventQueue, &event, K_NO_WAIT);
 		}
 
+		if (PlatformMgr().TryLockChipStack()) {
+			sIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
+			sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
+			sIsBleAdvertisingEnabled = ConnectivityMgr().IsBLEAdvertisingEnabled();
+			sHaveBLEConnections = (ConnectivityMgr().NumBLEConnections() != 0);
+			PlatformMgr().UnlockChipStack();
+		}
+
 		UpdateClusterState();
+		UpdateLedState();
 	}
 }
 
@@ -163,7 +183,8 @@ void AppTask::ButtonPushHandler(AppEvent *)
 
 void AppTask::ButtonReleaseHandler(AppEvent *)
 {
-	/* If the button was released within the first kFactoryResetTriggerTimeoutMs, open the BLE pairing window. */
+	/* If the button was released within the first kFactoryResetTriggerTimeoutMs, open the BLE pairing
+	 * window. */
 	if (sFunctionTimerMode == FunctionTimerMode::kFactoryResetTrigger) {
 		GetAppTask().OpenPairingWindow();
 	}
@@ -212,9 +233,9 @@ void AppTask::UpdateClusterState()
 
 	result = sensor_channel_get(kBme688SensorDev, SENSOR_CHAN_AMBIENT_TEMP, &sTemperature);
 	if (result == 0) {
-		/* Defined by cluster temperature measured value = 100 x temperature in degC with resolution of 0.01
-		 * degC. val1 is an integer part of the value and val2 is fractional part in one-millionth parts. To
-		 * achieve resolution of 0.01 degC val2 needs to be divided by 10000. */
+		/* Defined by cluster temperature measured value = 100 x temperature in degC with resolution of
+		 * 0.01 degC. val1 is an integer part of the value and val2 is fractional part in one-millionth
+		 * parts. To achieve resolution of 0.01 degC val2 needs to be divided by 10000. */
 		int16_t newValue = static_cast<int16_t>(sTemperature.val1 * 100 + sTemperature.val2 / 10000);
 
 		if (newValue > kTemperatureMeasurementAttributeMaxValue ||
@@ -284,12 +305,65 @@ void AppTask::UpdateClusterState()
 	}
 }
 
+void AppTask::UpdateLedState()
+{
+	LedState nextState;
+
+	if (sIsThreadProvisioned && sIsThreadEnabled) {
+		nextState = LedState::kProvisioned;
+	} else if (sHaveBLEConnections) {
+		nextState = LedState::kConnectedBle;
+	} else if (sIsBleAdvertisingEnabled) {
+		nextState = LedState::kAdvertisingBle;
+	} else {
+		nextState = LedState::kAlive;
+	}
+
+	/* In case of changing signalled state, turn off all leds to synchronize blinking */
+	if (nextState != sLedState) {
+		sGreenLED.Set(false);
+		sBlueLED.Set(false);
+		sRedLED.Set(false);
+	}
+	sLedState = nextState;
+
+	switch (sLedState) {
+	case LedState::kAlive:
+		sGreenLED.Blink(50, 950);
+		break;
+	case LedState::kAdvertisingBle:
+		sBlueLED.Blink(50, 950);
+		break;
+	case LedState::kConnectedBle:
+		sBlueLED.Blink(100, 100);
+		break;
+	case LedState::kProvisioned:
+		sBlueLED.Blink(50, 950);
+		sRedLED.Blink(50, 950);
+		break;
+	default:
+		break;
+	}
+
+	sGreenLED.Animate();
+	sBlueLED.Animate();
+	sRedLED.Animate();
+}
+
 #ifdef CONFIG_CHIP_NFC_COMMISSIONING
 void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 {
-	if (event->Type == DeviceEventType::kCHIPoBLEAdvertisingChange &&
-	    event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
-		NFCMgr().StopTagEmulation();
+	if (event->Type == DeviceEventType::kCHIPoBLEAdvertisingChange) {
+		if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
+			if (NFCMgr().IsTagEmulationStarted()) {
+				LOG_INF("NFC Tag emulation is already started");
+			} else {
+				ShareQRCodeOverNFC(
+					chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+			}
+		} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
+			NFCMgr().StopTagEmulation();
+		}
 	}
 }
 #endif

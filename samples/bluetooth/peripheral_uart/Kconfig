@@ -27,6 +27,13 @@ config BT_NUS_SECURITY_ENABLED
 	help
 	  "Enable BLE security for the UART service"
 
+config BT_NUS_UART_DEV
+	string "UART device name"
+	default "UART_0"
+	help
+	  Name of the used UART device. The sample uses uart0 by default.
+	  The UART device should not be used as logger backend.
+
 config BT_NUS_UART_RX_WAIT_TIME
 	int "Timeout for UART RX complete event"
 	default 50

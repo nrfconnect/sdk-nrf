@@ -42,6 +42,11 @@ nRF9160
     * Added a separate document page to explain data mode mechanism and how it works.
     * Removed datatype in all sending AT commands. If no sending data is specified, switch data mode to receive and send any arbitrary data.
     * Added a separate document page to describe the FOTA service.
+    * Added IPv6 support to Socket and ICMP services.
+
+  * :ref:`asset_tracker_v2` application:
+
+    * Changed the custom module responsible for controlling the LEDs to CAF LEDs module.
 
 nRF5
 ====
@@ -59,6 +64,12 @@ Bluetooth LE
 * Updated:
 
   * :ref:`ble_samples` - Changed the Bluetooth sample Central DFU SMP name to :ref:`Central SMP Client <bluetooth_central_dfu_smp>`.
+
+Matter
+------
+
+* Added:
+   * :ref:`Weather station <matter_weather_station_sample>` sample.
 
 Common
 ======

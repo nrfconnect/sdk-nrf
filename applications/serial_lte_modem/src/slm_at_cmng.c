@@ -15,7 +15,7 @@
 #include "slm_at_host.h"
 #include "slm_at_cmng.h"
 
-LOG_MODULE_REGISTER(cmng, CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm_cmng, CONFIG_SLM_LOG_LEVEL);
 
 /**@brief List of supported opcode */
 enum slm_cmng_opcode {

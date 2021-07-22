@@ -1,6 +1,6 @@
 tests:
   bluetooth.mesh.silvair_enocean_model:
     platform_allow: native_posix qemu_cortex_m3
-    tags: bluetooth mesh models
+    tags: bluetooth ci_build
     integration_platforms:
-        - native_posix
+        - qemu_cortex_m3

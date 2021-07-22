@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		temp-sensor = &bme680;
+		humidity-sensor = &bme680;
+		accelerometer = &adxl362;
+	};
+	pwmleds0 {
+		compatible = "pwm-leds";
+		status = "okay";
+		pwm_led0: led_pwm_0 {
+			status = "okay";
+			pwms = <&pwm0 29>;
+			label = "LED0 red";
+		};
+		pwm_led1: led_pwm_1 {
+			status = "okay";
+			pwms = <&pwm0 30>;
+			label = "LED0 green";
+		};
+		pwm_led2: led_pwm_2 {
+			status = "okay";
+			pwms = <&pwm0 31>;
+			label = "LED0 blue";
+		};
+	};
+};
+
+&i2c2 {
+	bme680: bme680@76 {};
+};
+
+&spi3 {
+	adxl362: adxl362@0 {};
+};

@@ -19,6 +19,7 @@ public:
 	void PostEvent(const AppEvent *aEvent);
 	void PostEvent(AppEvent::Type type, AppEvent::Handler handler);
 	void UpdateClusterState();
+	void UpdateLedState();
 
 private:
 	friend AppTask &GetAppTask();

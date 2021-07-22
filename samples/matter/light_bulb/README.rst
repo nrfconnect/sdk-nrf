@@ -27,13 +27,8 @@ The sample supports the following development kits:
 
 For remote testing scenarios, you also need the following:
 
-* If you want to commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network:
-
-  * A Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
-
-* If you want to use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch:
-
-  * :ref:`Matter light switch <matter_light_switch_sample>` programmed to another supported development kit.
+* If you want to commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network: a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
+* If you want to use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch, the :ref:`Matter light switch <matter_light_switch_sample>` sample programmed to another supported development kit.
 
 .. note::
     |matter_gn_required_note|
@@ -114,8 +109,9 @@ Button 4:
     Starts the the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time, and makes the device discoverable over Bluetooth LE.
     This button is used during the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
 
-SEGGER J-Link USB port:
-    Used for getting logs from the device or communicating with it through the command-line interface.
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_jlink_start
+    :end-before: matter_door_lock_sample_jlink_end
 
 NFC port with antenna attached:
     Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
@@ -193,7 +189,11 @@ Commissioning the device
     :start-after: matter_door_lock_sample_commissioning_start
     :end-before: matter_door_lock_sample_commissioning_end
 
-To start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
+Before starting the commissioning procedure, you must make the device discoverable over Bluetooth LE.
+To enable Bluetooth LE for a predefined period of time (15 minutes by default), press **Button 4**.
+If the Bluetooth LE advertising times out, you can re-enable using the same button.
+
+When you start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
 The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, printed to the UART console, and can be shared using an NFC tag.
 
 Upgrading the device firmware

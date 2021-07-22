@@ -30,9 +30,13 @@ choice
 
 config DESKTOP_PROFILER_SYNC_CENTRAL
 	bool "Central"
+	help
+	  This is the default option, the device is central.
 
 config DESKTOP_PROFILER_SYNC_PERIPHERAL
 	bool "Peripheral"
+	help
+	  If selected, the device is peripheral.
 
 endchoice
 
@@ -40,11 +44,19 @@ config DESKTOP_PROFILER_SYNC_GPIO_PORT
 	int "Sync GPIO port"
 	range 0 1
 	default 0
+	help
+	  This option defines which gpio port is to be used to generate/receive
+	  synchronization signal. The signal is used to synchronize timestamps
+	  between two different devices.
 
 config DESKTOP_PROFILER_SYNC_GPIO_PIN
 	int "Sync GPIO pin"
 	range 0 31
 	default 0
+	help
+	  This option defines which gpio pin is to be used to generate/receive
+	  synchronization signal. The signal is used to synchronize timestamps
+	  between two different devices.
 
 module = DESKTOP_PROFILER_SYNC
 module-str = profiler_sync
