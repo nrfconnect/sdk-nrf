@@ -16,7 +16,7 @@ config BT_NUS_THREAD_STACK_SIZE
 
 config BT_NUS_UART_BUFFER_SIZE
 	int "UART payload buffer element size"
-	default 20
+	default 40
 	help
 	  Size of the payload buffer in each RX and TX FIFO element
 
