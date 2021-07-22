@@ -209,7 +209,9 @@ static void uart_work_handler(struct k_work *item)
 static int uart_init(void)
 {
 	int err;
+	int pos;
 	struct uart_data_t *rx;
+	struct uart_data_t *tx;
 
 	uart = device_get_binding(CONFIG_BT_NUS_UART_DEV);
 	if (!uart) {
@@ -227,6 +229,29 @@ static int uart_init(void)
 
 	err = uart_callback_set(uart, uart_cb, NULL);
 	if (err) {
+		return err;
+	}
+
+	tx = k_malloc(sizeof(*tx));
+
+	if (tx) {
+		pos = snprintf(tx->data, sizeof(tx->data),
+			       "Starting Nordic UART service example\r\n");
+
+		if ((pos < 0) || (pos >= sizeof(tx->data))) {
+			k_free(tx);
+			LOG_ERR("snprintf returned %d", pos);
+			return -ENOMEM;
+		}
+
+		tx->len = pos;
+	} else {
+		return -ENOMEM;
+	}
+
+	err = uart_tx(uart, tx->data, tx->len, SYS_FOREVER_MS);
+	if (err) {
+		LOG_ERR("Cannot display welcome message (err: %d)", err);
 		return err;
 	}
 
@@ -524,9 +549,8 @@ void main(void)
 			      ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)", err);
+		return;
 	}
-
-	printk("Starting Nordic UART service example\n");
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
