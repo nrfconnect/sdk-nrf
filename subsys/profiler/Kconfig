@@ -27,11 +27,6 @@ choice
 	default PROFILER_NORDIC
 	depends on PROFILER
 
-config PROFILER_SYSVIEW
-	bool "SysView profiler"
-	select USE_SEGGER_RTT
-	depends on SEGGER_SYSTEMVIEW
-
 config PROFILER_NORDIC
 	bool "Nordic profiler"
 	select USE_SEGGER_RTT
