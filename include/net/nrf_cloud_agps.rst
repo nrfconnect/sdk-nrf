@@ -7,16 +7,16 @@ nRF Cloud A-GPS
    :local:
    :depth: 2
 
-The nRF Cloud A-GPS library enables applications to request and process Assisted GPS (`A-GPS`_) data from `nRF Connect for Cloud`_ to be used with the nRF9160 SiP.
+The nRF Cloud A-GPS library enables applications to request and process Assisted GPS (`A-GPS`_) data from `nRF Cloud`_ to be used with the nRF9160 SiP.
 This library is an enhancement to the :ref:`lib_nrf_cloud`.
 
 The use of A-GPS reduces the time for a GPS device to estimate its position, which is also called Time to First Fix (TTFF).
 To get a position fix, a GPS needs information such as the satellite orbital data, exact timing data, and a rough position estimate.
 GPS satellites broadcast this information in a pattern, which repeats every 12.5 minutes.
-If nRF Connect for Cloud A-GPS service is used, the broadcasted information can be downloaded at a faster rate from nRF Connect for Cloud.
+If nRF Cloud A-GPS service is used, the broadcasted information can be downloaded at a faster rate from nRF Cloud.
 
 .. note::
-   To use the nRF Connect for Cloud A-GPS service, an nRF Connect for Cloud account is needed, and the device needs to be associated with a user's account.
+   To use the nRF Cloud A-GPS service, an nRF Cloud account is needed, and the device needs to be associated with a user's account.
 
 Configuration
 *************
@@ -38,7 +38,7 @@ A-GPS data can be requested using one of the following methods:
 
 The :c:func:`nrf_cloud_agps_request` function is used to request by type, and the :c:func:`nrf_cloud_agps_request_all` function is used to return all available assistance data.
 
-When nRF Connect for Cloud responds with the requested A-GPS data, the :c:func:`nrf_cloud_agps_process` function processes the received data.
+When nRF Cloud responds with the requested A-GPS data, the :c:func:`nrf_cloud_agps_process` function processes the received data.
 The function parses the data and passes it on to the modem.
 
 Practical considerations

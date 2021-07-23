@@ -298,10 +298,10 @@ Glossary
    Non-volatile Memory Controller (NVMC)
       A controller used for writing and erasing the internal flash memory and the User Information Configuration Registers (UICR).
 
-   nRF Connect for Cloud
+   nRF Cloud
       Nordic Semiconductor's platform for connecting IoT devices to the cloud, viewing and analyzing device message data, prototyping ideas that use Nordic Semiconductor chips, and more.
       It includes a public REST API that can be used for building IoT solutions.
-      See `nRF Connect for Cloud`_.
+      See `nRF Cloud`_.
 
    nRF repository
       An |NCS| repository, hosted in the `nrfconnect GitHub organization`_, that does not have an externally maintained, open-source upstream.

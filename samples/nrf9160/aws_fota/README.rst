@@ -132,13 +132,13 @@ Before you build the sample, check and update the following configuration option
 
 .. option:: CONFIG_CERT_SEC_TAG - Security tag for TLS credentials
 
-   By default, the sample uses the certificates that are stored with the security tag for nRF Connect for Cloud.
+   By default, the sample uses the certificates that are stored with the security tag for nRF Cloud.
    To use different certificates, configure a different security tag.
    If you used LTE Link Monitor to store the certificates, make sure to configure the security tag to the same that you used to store them.
 
 .. option:: CONFIG_MQTT_BROKER_HOSTNAME - AWT IoT MQTT broker hostname
 
-   By default, the sample uses nRF Connect for Cloud's MQTT broker.
+   By default, the sample uses nRF Cloud's MQTT broker.
    Change this value to AWS IoT's MQTT broker.
    To find the address of the AWS IoT MQTT broker, open the AWS IoT console, go to :guilabel:`Test` and select :guilabel:`View endpoint` from the :guilabel:`Connected as XXX` drop-down menu.
 
