@@ -147,6 +147,12 @@ Check and configure the following configuration options for the sample:
 
    This option is selected by default.
 
+.. option:: CONFIG_SLM_CONFIRM_XSLEEP - Send response on sleep command
+
+   This option makes nRF9160 respond with the `OK` message to the `AT#XSLEEP=...` command.
+
+   This option is not selected by default.
+
 .. option:: CONFIG_SLM_START_SLEEP - Enter sleep on startup
 
    This option makes nRF9160 enter deep sleep after startup.

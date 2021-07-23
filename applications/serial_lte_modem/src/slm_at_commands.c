@@ -122,6 +122,9 @@ static int handle_at_slmver(enum at_cmd_type type)
 static int handle_at_sleep(enum at_cmd_type type)
 {
 	int ret = -EINVAL;
+#if defined(CONFIG_SLM_CONFIRM_XSLEEP)
+	char ok_str[] = "\r\nOK\r\n";
+#endif
 
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
 		uint16_t shutdown_mode = SHUTDOWN_MODE_IDLE;
@@ -133,10 +136,18 @@ static int handle_at_sleep(enum at_cmd_type type)
 			}
 		}
 		if (shutdown_mode == SHUTDOWN_MODE_IDLE) {
+#if defined(CONFIG_SLM_CONFIRM_XSLEEP)
+			rsp_send(ok_str, strlen(ok_str));
+			k_sleep(K_MSEC(50));
+#endif
 			slm_at_host_uninit();
 			enter_idle(true);
-			ret = -ESHUTDOWN; /*Will send no "OK"*/
+			ret = -ESHUTDOWN;
 		} else if (shutdown_mode == SHUTDOWN_MODE_SLEEP) {
+#if defined(CONFIG_SLM_CONFIRM_XSLEEP)
+			rsp_send(ok_str, strlen(ok_str));
+			k_sleep(K_MSEC(50));
+#endif
 #if defined(CONFIG_SLM_GPIO_WAKEUP)
 			slm_at_host_uninit();
 			modem_power_off();
@@ -147,10 +158,14 @@ static int handle_at_sleep(enum at_cmd_type type)
 			ret = -EINVAL;
 #endif
 		} else if (shutdown_mode == SHUTDOWN_MODE_UART) {
+#if defined(CONFIG_SLM_CONFIRM_XSLEEP)
+			rsp_send(ok_str, strlen(ok_str));
+			k_sleep(K_MSEC(50));
+#endif
 			ret = poweroff_uart();
 			if (ret == 0) {
 				enter_idle(false);
-				ret = -ESHUTDOWN; /*Will send no "OK"*/
+				ret = -ESHUTDOWN;
 			}
 		} else {
 			LOG_ERR("AT parameter error");

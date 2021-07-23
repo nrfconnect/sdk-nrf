@@ -27,6 +27,9 @@ config SLM_AT_MAX_PARAM
 config SLM_NATIVE_TLS
 	bool "Use Zephyr mbedTLS"
 
+config SLM_CONFIRM_XSLEEP
+	bool "Send OK confirmation after the AT#XSLEEP=... command"
+
 #
 # external XTAL for UART
 #

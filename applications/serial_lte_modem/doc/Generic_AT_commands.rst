@@ -149,7 +149,7 @@ The default value is 0.
 Response syntax
 ~~~~~~~~~~~~~~~
 
-There is no response:
+There is no ``OK`` response on this command, unless the :option:`CONFIG_SLM_CONFIRM_XSLEEP` option is enabled:
 
 * In case of Idle, it will exit by GPIO.
 * In case of Sleep, it will wake up by GPIO.
