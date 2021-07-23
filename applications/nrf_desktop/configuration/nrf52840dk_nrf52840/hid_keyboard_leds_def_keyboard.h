@@ -20,4 +20,9 @@ static const struct led_effect keyboard_led_off = LED_EFFECT_LED_OFF();
 
 /* Map HID keyboard LEDs to application LED IDs. */
 static const uint8_t keyboard_led_map[] = {
+	[HID_KEYBOARD_LEDS_NUM_LOCK] = 2,
+	[HID_KEYBOARD_LEDS_CAPS_LOCK] = 3,
+	[HID_KEYBOARD_LEDS_SCROLL_LOCK] = LED_UNAVAILABLE,
+	[HID_KEYBOARD_LEDS_COMPOSE] = LED_UNAVAILABLE,
+	[HID_KEYBOARD_LEDS_KANA] = LED_UNAVAILABLE,
 };
