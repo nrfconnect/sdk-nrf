@@ -10,6 +10,45 @@ Configuring Zigbee libraries in |NCS|
 The Zigbee protocol in |NCS| can be customized by enabling and configuring several :ref:`Zigbee libraries <lib_zigbee>`.
 This page lists options and steps required for configuring each of them.
 
+.. _ug_zigbee_configuring_components_osif:
+
+Configuring ZBOSS OSIF
+**********************
+
+The Zigbee ZBOSS OSIF layer subsystem acts as the linking layer between the :ref:`nrfxlib:zboss` and the |NCS|.
+The layer is automatically enabled when you enable the ZBOSS library with the :option:`CONFIG_ZIGBEE` Kconfig option.
+
+For more information about the library, see :ref:`lib_zigbee_osif`.
+
+.. _ug_zigbee_configuring_components_application_utilities:
+
+Configuring Zigbee application utilities
+****************************************
+The :ref:`lib_zigbee_application_utilities` library provides a set of components that are ready for use in Zigbee applications.
+
+To enable and use this library, set the :option:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
+
+For additional logs for this library, configure the :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
+See :ref:`zigbee_ug_logging_logger_options` for more information.
+
+Default signal handler
+======================
+The default signal handler provides the default logic for handling ZBOSS stack signals.
+For more information, see :ref:`lib_zigbee_signal_handler`.
+
+Afer enabling the Zigbee application utilities library, you can use this component by calling the :c:func:`zigbee_default_signal_handler` in the application's :c:func:`zboss_signal_handler` implementation.
+
+.. _ug_zigbee_configuring_components_error_handler:
+
+Configuring Zigbee error handler
+********************************
+
+The Zigbee error handler library provides a set of macros that can be used to assert on nrfxlib's Zigbee ZBOSS stack API return codes.
+
+To use this library, include its :file:`zigbee_error_handler.h` header in your application and pass the error code that should be checked using its macros.
+
+For more information about the library, see :ref:`lib_zigbee_error_handler`.
+
 .. _ug_zigbee_configuring_components_ota:
 
 Configuring Zigbee FOTA
@@ -104,24 +143,6 @@ The manufacturer ID, image type and version of the generated image are obtained 
 
 The upgrade image will be created in a dedicated directory in the :file:`build/zephyr/` directory.
 
-.. _ug_zigbee_configuring_components_application_utilities:
-
-Configuring Zigbee application utilities
-****************************************
-The :ref:`lib_zigbee_application_utilities` library provides a set of components that are ready for use in Zigbee applications.
-
-To enable and use this library, set the :option:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
-
-For additional logs for this library, configure the :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
-See :ref:`zigbee_ug_logging_logger_options` for more information.
-
-Default signal handler
-======================
-The default signal handler provides the default logic for handling ZBOSS stack signals.
-For more information, see :ref:`lib_zigbee_signal_handler`.
-
-Afer enabling the Zigbee application utilities library, you can use this component by calling the :c:func:`zigbee_default_signal_handler` in the application's :c:func:`zboss_signal_handler` implementation.
-
 .. _ug_zigbee_configuring_components_logger_ep:
 
 Configuring Zigbee endpoint logger
@@ -150,6 +171,24 @@ To enable the endpoint logger library in your application, complete the followin
       This is because the Zigbee shell library registers its own handler for the endpoint.
 
 For more information about the library, see :ref:`lib_zigbee_logger_endpoint`.
+
+.. _ug_zigbee_configuring_components_scene_helper:
+
+Configuring Zigbee ZCL scene helper
+***********************************
+
+The Zigbee ZCL scene helper library provides a set of functions that implement the callbacks required by the ZCL scene cluster in the application.
+
+To enable the Zigbee ZCL scene helper library, set the :option:`CONFIG_ZIGBEE_SCENES` Kconfig option.
+
+Because the library uses Zephyr's :ref:`settings_api` subsystem, the application must call the following functions for the library to work correctly:
+
+* :c:func:`zcl_scenes_init()`
+* :c:func:`zcl_scenes_cb()`
+* :c:func:`settings_subsys_init()`
+* :c:func:`settings_load()`
+
+For more information about the library, see :ref:`lib_zigbee_zcl_scenes`.
 
 .. _ug_zigbee_configuring_components_shell:
 
