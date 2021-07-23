@@ -421,14 +421,10 @@ static void button_bootmode(void)
 	}
 	int err;
 	enum bt_hids_pm pm = bt_hogp_pm_get(&hogp);
+	enum bt_hids_pm new_pm = ((pm == BT_HIDS_PM_BOOT) ? BT_HIDS_PM_REPORT : BT_HIDS_PM_BOOT);
 
-	printk("Setting protocol mode: %s\n",
-	       (pm == BT_HIDS_PM_BOOT) ?
-	       "BOOT" : "REPORT");
-	err = bt_hogp_pm_write(&hogp,
-				      (pm == BT_HIDS_PM_BOOT) ?
-				      BT_HIDS_PM_REPORT :
-				      BT_HIDS_PM_BOOT);
+	printk("Setting protocol mode: %s\n", (new_pm == BT_HIDS_PM_BOOT) ? "BOOT" : "REPORT");
+	err = bt_hogp_pm_write(&hogp, new_pm);
 	if (err) {
 		printk("Cannot change protocol mode (err %d)\n", err);
 	}
