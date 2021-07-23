@@ -97,6 +97,7 @@
 .. _`Matter Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5456b3/README.md
 .. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5456b3/docs/guides/nrfconnect_platform_overview.md
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5456b3/src/controller
+.. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
 
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 

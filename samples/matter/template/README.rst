@@ -11,6 +11,7 @@ This sample demonstrates a minimal implementation of the :ref:`Matter <ug_matter
 This basic implementation enables the commissioning on the device, which allows it to join a Matter network.
 
 Use this sample as a reference for developing your own application.
+See the :ref:`ug_matter_creating_accessory` page for an overview of steps that you need to complete.
 
 Requirements
 ************
@@ -85,6 +86,9 @@ Testing
 When you have built the sample and programmed it to your development kit, it automatically starts the Bluetooth LE advertising and the **LED1** starts flashing (Short Flash On).
 At this point, you can press **Button 1** for 6 seconds to initiate the factory reset of the device.
 
+.. note::
+    If you are new to Matter, commission the Matter device using the Android Mobile Controller when :ref:`setting up Matter development environment <ug_matter_configuring_mobile>`.
+
 .. _matter_template_network_testing:
 
 Testing in a network
@@ -92,10 +96,11 @@ Testing in a network
 
 To test the sample in a Matter-enabled Thread network, complete the following steps:
 
+.. matter_template_sample_testing_start
+
 1. |connect_kit|
 #. |connect_terminal|
 #. Commission the device into a Thread network by following the guides linked on the :ref:`ug_matter_configuring` page for the Matter controller you want to use.
-   If you are new to Matter, the recommended approach is :ref:`ug_matter_configuring_mobile` using an Android smartphone.
    As part of this procedure, you will complete the following steps:
 
    * Configure Thread Border Router.
@@ -103,7 +108,7 @@ To test the sample in a Matter-enabled Thread network, complete the following st
    * Commission the device.
    * Send Matter commands.
 
-   At the end of this procedure, **LED 1** of the Matter device programmed with the template sample starts flashing in the Short Flash Off state.
+   At the end of this procedure, **LED 1** of the Matter device programmed with the sample starts flashing in the Short Flash Off state.
    This indicates that the device is fully provisioned, but does not yet have full Thread network connectivity.
 #. Press **Button 1** for 6 seconds to initiate the factory reset of the device.
 
