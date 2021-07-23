@@ -115,7 +115,6 @@ static struct nct {
 	struct mqtt_utf8 dc_tx_endp;
 	struct mqtt_utf8 dc_rx_endp;
 	struct mqtt_utf8 dc_m_endp;
-	struct mqtt_utf8 job_status_endp;
 	uint16_t message_id;
 	uint8_t rx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
 	uint8_t tx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
@@ -144,9 +143,6 @@ static void dc_endpoint_reset(void)
 
 	nct.dc_m_endp.utf8 = NULL;
 	nct.dc_m_endp.size = 0;
-
-	nct.job_status_endp.utf8 = NULL;
-	nct.job_status_endp.size = 0;
 }
 
 /* Get the next unused message id. */
@@ -168,9 +164,6 @@ static uint16_t get_next_message_id(void)
  * nct_dc_endpoint_set() caller gets the buffers from
  * json_decode_and_alloc(), which uses nrf_cloud_malloc() to call
  * k_malloc().
- *
- * The job_status_endp.utf8 buffer is allocated in this file as
- * non-const, so casting away const here is safe.
  */
 static void dc_endpoint_free(void)
 {
@@ -182,9 +175,6 @@ static void dc_endpoint_free(void)
 	}
 	if (nct.dc_m_endp.utf8 != NULL) {
 		nrf_cloud_free((void *)nct.dc_m_endp.utf8);
-	}
-	if (nct.job_status_endp.utf8 != NULL) {
-		nrf_cloud_free((void *)nct.job_status_endp.utf8);
 	}
 	dc_endpoint_reset();
 #if defined(CONFIG_NRF_CLOUD_FOTA)
