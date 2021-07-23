@@ -93,8 +93,8 @@ static void ctl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	light.transition = model_transition_get(srv->model, &transition, buf);
 	temp.transition = light.transition;
 
-	lightness_srv_disable_control(&srv->lightness_srv);
-	lightness_srv_change_lvl(&srv->lightness_srv, ctx, &light, &light_rsp, true);
+	bt_mesh_lightness_srv_disable_control(&srv->lightness_srv);
+	bt_mesh_lightness_srv_change_lvl(&srv->lightness_srv, ctx, &light, &light_rsp, true);
 	bt_mesh_light_temp_srv_set(&srv->temp_srv, ctx, &temp, &temp_rsp);
 
 	status.current_temp = temp_rsp.current.temp;
@@ -256,7 +256,7 @@ static void default_set(struct bt_mesh_model *model,
 		return;
 	}
 
-	lightness_srv_default_set(&srv->lightness_srv, ctx, light);
+	bt_mesh_lightness_srv_default_set(&srv->lightness_srv, ctx, light);
 	bt_mesh_light_temp_srv_default_set(&srv->temp_srv, ctx, &temp);
 
 	(void)bt_mesh_light_ctl_default_pub(srv, NULL);
@@ -386,7 +386,8 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 		.transition = transition,
 	};
 
-	lightness_srv_change_lvl(&srv->lightness_srv, NULL, &light, &dummy_light_status, false);
+	bt_mesh_lightness_srv_change_lvl(&srv->lightness_srv, NULL, &light, &dummy_light_status,
+					 false);
 }
 
 static void scene_recall_complete(struct bt_mesh_model *model)

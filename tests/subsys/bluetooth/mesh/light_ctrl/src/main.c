@@ -44,7 +44,7 @@ static struct bt_mesh_model mock_ligth_ctrl_model = {
 	.elem_idx = 1
 };
 
-void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
+void bt_mesh_lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct bt_mesh_lightness_set *set,
 			      struct bt_mesh_lightness_status *status,
@@ -59,7 +59,7 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 	zassert_true(publish, "Publication not done");
 }
 
-int lightness_on_power_up(struct bt_mesh_lightness_srv *srv)
+int bt_mesh_lightness_srv_on_power_up(struct bt_mesh_lightness_srv *srv)
 {
 	zassert_not_null(srv, "Context was null");
 	return 0;

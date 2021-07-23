@@ -2610,7 +2610,7 @@ static void light_lightness_linear_get(uint8_t *data, uint16_t len)
 	ctx.addr = model_bound->addr;
 	ctx.app_idx = model_bound->appkey_idx;
 
-	err = lightness_cli_light_get(&lightness_cli, &ctx, LINEAR, &status);
+	err = bt_mesh_lightness_cli_light_get(&lightness_cli, &ctx, LINEAR, &status);
 	if (err) {
 		LOG_ERR("err=%d", err);
 		goto fail;
@@ -2673,7 +2673,7 @@ static void light_lightness_linear_set(uint8_t *data, uint16_t len)
 	}
 
 	if (cmd->ack) {
-		err = lightness_cli_light_set(&lightness_cli, &ctx, LINEAR,
+		err = bt_mesh_lightness_cli_light_set(&lightness_cli, &ctx, LINEAR,
 					      &set, &status);
 
 		current = light_to_repr(status.current, LINEAR);
@@ -2685,7 +2685,7 @@ static void light_lightness_linear_set(uint8_t *data, uint16_t len)
 		net_buf_simple_add_le32(buf, status.remaining_time);
 
 	} else {
-		err = lightness_cli_light_set_unack(&lightness_cli, &ctx,
+		err = bt_mesh_lightness_cli_light_set_unack(&lightness_cli, &ctx,
 						    LINEAR, &set);
 	}
 	if (err) {

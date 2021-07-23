@@ -128,8 +128,8 @@ static void hsl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	bt_mesh_light_hue_srv_set(&srv->hue, ctx, &set.h, &hue);
 	bt_mesh_light_sat_srv_set(&srv->sat, ctx, &set.s, &sat);
-	lightness_srv_disable_control(&srv->lightness);
-	lightness_srv_change_lvl(&srv->lightness, ctx, &set.l, &lightness, true);
+	bt_mesh_lightness_srv_disable_control(&srv->lightness);
+	bt_mesh_lightness_srv_change_lvl(&srv->lightness, ctx, &set.l, &lightness, true);
 
 	srv->pub_pending = false;
 
@@ -215,7 +215,7 @@ static void default_set(struct bt_mesh_model *model,
 
 	light_hsl_buf_pull(buf, &val);
 
-	lightness_srv_default_set(&srv->lightness, ctx, val.lightness);
+	bt_mesh_lightness_srv_default_set(&srv->lightness, ctx, val.lightness);
 	bt_mesh_light_hue_srv_default_set(&srv->hue, ctx, val.hue);
 	bt_mesh_light_sat_srv_default_set(&srv->sat, ctx, val.saturation);
 }
@@ -441,7 +441,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 		.transition = transition,
 	};
 
-	lightness_srv_change_lvl(&srv->lightness, NULL, &light_set, &light_status, false);
+	bt_mesh_lightness_srv_change_lvl(&srv->lightness, NULL, &light_set, &light_status, false);
 }
 
 static void scene_recall_complete(struct bt_mesh_model *model)

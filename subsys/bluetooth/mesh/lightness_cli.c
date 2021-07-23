@@ -184,9 +184,9 @@ const struct bt_mesh_model_cb _bt_mesh_lightness_cli_cb = {
 	.reset = bt_mesh_lvl_cli_reset,
 };
 
-int lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
-			    struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
-			    struct bt_mesh_lightness_status *rsp)
+int bt_mesh_lightness_cli_light_repr_get(struct bt_mesh_lightness_cli *cli,
+					 struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
+					 struct bt_mesh_lightness_status *rsp)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHTNESS_OP_GET,
 				 BT_MESH_LIGHTNESS_MSG_LEN_GET);
@@ -197,10 +197,10 @@ int lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
 			       op_get(LIGHTNESS_OP_TYPE_STATUS, repr), rsp);
 }
 
-int lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
-			    struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
-			    const struct bt_mesh_lightness_set *set,
-			    struct bt_mesh_lightness_status *rsp)
+int bt_mesh_lightness_cli_light_repr_set(struct bt_mesh_lightness_cli *cli,
+					 struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
+					 const struct bt_mesh_lightness_set *set,
+					 struct bt_mesh_lightness_status *rsp)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHTNESS_OP_SET,
 				 BT_MESH_LIGHTNESS_MSG_MAXLEN_SET);
@@ -217,10 +217,9 @@ int lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
 			       op_get(LIGHTNESS_OP_TYPE_STATUS, repr), rsp);
 }
 
-int lightness_cli_light_set_unack(struct bt_mesh_lightness_cli *cli,
-				  struct bt_mesh_msg_ctx *ctx,
-				  enum light_repr repr,
-				  const struct bt_mesh_lightness_set *set)
+int bt_mesh_lightness_cli_light_repr_set_unack(struct bt_mesh_lightness_cli *cli,
+					       struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
+					       const struct bt_mesh_lightness_set *set)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHTNESS_OP_SET_UNACK,
 				 BT_MESH_LIGHTNESS_MSG_MAXLEN_SET);
@@ -239,7 +238,7 @@ int bt_mesh_lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
 				    struct bt_mesh_lightness_status *rsp)
 {
-	return lightness_cli_light_get(cli, ctx, LIGHT_USER_REPR, rsp);
+	return bt_mesh_lightness_cli_light_repr_get(cli, ctx, LIGHT_USER_REPR, rsp);
 }
 
 int bt_mesh_lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
@@ -247,14 +246,14 @@ int bt_mesh_lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
 				    const struct bt_mesh_lightness_set *set,
 				    struct bt_mesh_lightness_status *rsp)
 {
-	return lightness_cli_light_set(cli, ctx, LIGHT_USER_REPR, set, rsp);
+	return bt_mesh_lightness_cli_light_repr_set(cli, ctx, LIGHT_USER_REPR, set, rsp);
 }
 
 int bt_mesh_lightness_cli_light_set_unack(
 	struct bt_mesh_lightness_cli *cli, struct bt_mesh_msg_ctx *ctx,
 	const struct bt_mesh_lightness_set *set)
 {
-	return lightness_cli_light_set_unack(cli, ctx, LIGHT_USER_REPR, set);
+	return bt_mesh_lightness_cli_light_repr_set_unack(cli, ctx, LIGHT_USER_REPR, set);
 }
 
 int bt_mesh_lightness_cli_range_get(struct bt_mesh_lightness_cli *cli,

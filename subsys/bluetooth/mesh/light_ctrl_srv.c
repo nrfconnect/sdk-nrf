@@ -182,7 +182,7 @@ static void light_set(struct bt_mesh_light_ctrl_srv *srv, uint16_t lvl,
 	};
 	struct bt_mesh_lightness_status dummy;
 
-	lightness_srv_change_lvl(srv->lightness, NULL, &set, &dummy, true);
+	bt_mesh_lightness_srv_change_lvl(srv->lightness, NULL, &set, &dummy, true);
 }
 
 static uint32_t remaining_fade_time(struct bt_mesh_light_ctrl_srv *srv)
@@ -1472,7 +1472,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 
 		ctrl_disable(srv);
 		schedule_resume_timer(srv);
-		lightness_srv_change_lvl(srv->lightness, NULL, &set, &status, true);
+		bt_mesh_lightness_srv_change_lvl(srv->lightness, NULL, &set, &status, true);
 	}
 }
 
@@ -1585,7 +1585,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *model)
 				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
 			ctrl_enable(srv);
 		} else {
-			lightness_on_power_up(srv->lightness);
+			bt_mesh_lightness_srv_on_power_up(srv->lightness);
 			ctrl_disable(srv);
 			schedule_resume_timer(srv);
 		}
@@ -1603,7 +1603,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *model)
 				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
 			ctrl_enable(srv);
 		} else {
-			lightness_on_power_up(srv->lightness);
+			bt_mesh_lightness_srv_on_power_up(srv->lightness);
 			ctrl_disable(srv);
 			schedule_resume_timer(srv);
 		}
@@ -1619,7 +1619,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *model)
 			}
 		} else if (atomic_test_bit(&srv->lightness->flags,
 					   LIGHTNESS_SRV_FLAG_IS_ON)) {
-			lightness_on_power_up(srv->lightness);
+			bt_mesh_lightness_srv_on_power_up(srv->lightness);
 		}
 		break;
 	default:

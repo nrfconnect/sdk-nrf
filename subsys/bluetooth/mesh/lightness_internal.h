@@ -141,33 +141,31 @@ static inline uint16_t light_to_repr(uint16_t light, enum light_repr repr)
 struct bt_mesh_lightness_srv;
 struct bt_mesh_lightness_cli;
 
-void lightness_srv_disable_control(struct bt_mesh_lightness_srv *srv);
+void bt_mesh_lightness_srv_disable_control(struct bt_mesh_lightness_srv *srv);
 
-void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
-			      struct bt_mesh_msg_ctx *ctx,
-			      struct bt_mesh_lightness_set *set,
-			      struct bt_mesh_lightness_status *status,
-			      bool publish);
+void bt_mesh_lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
+				      struct bt_mesh_msg_ctx *ctx,
+				      struct bt_mesh_lightness_set *set,
+				      struct bt_mesh_lightness_status *status, bool publish);
 
 /* For testing purposes */
-int lightness_cli_light_get(struct bt_mesh_lightness_cli *cli,
-			    struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
-			    struct bt_mesh_lightness_status *rsp);
+int bt_mesh_lightness_cli_light_repr_get(struct bt_mesh_lightness_cli *cli,
+					 struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
+					 struct bt_mesh_lightness_status *rsp);
 
-int lightness_cli_light_set(struct bt_mesh_lightness_cli *cli,
-			    struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
-			    const struct bt_mesh_lightness_set *set,
-			    struct bt_mesh_lightness_status *rsp);
+int bt_mesh_lightness_cli_light_repr_set(struct bt_mesh_lightness_cli *cli,
+					 struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
+					 const struct bt_mesh_lightness_set *set,
+					 struct bt_mesh_lightness_status *rsp);
 
-int lightness_cli_light_set_unack(struct bt_mesh_lightness_cli *cli,
-				  struct bt_mesh_msg_ctx *ctx,
-				  enum light_repr repr,
-				  const struct bt_mesh_lightness_set *set);
+int bt_mesh_lightness_cli_light_repr_set_unack(struct bt_mesh_lightness_cli *cli,
+					       struct bt_mesh_msg_ctx *ctx, enum light_repr repr,
+					       const struct bt_mesh_lightness_set *set);
 
-void lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
-			       struct bt_mesh_msg_ctx *ctx, uint16_t set);
+void bt_mesh_lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
+				       struct bt_mesh_msg_ctx *ctx, uint16_t set);
 
-int lightness_on_power_up(struct bt_mesh_lightness_srv *srv);
+int bt_mesh_lightness_srv_on_power_up(struct bt_mesh_lightness_srv *srv);
 
 #ifdef __cplusplus
 }
