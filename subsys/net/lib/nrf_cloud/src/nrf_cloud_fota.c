@@ -516,7 +516,7 @@ int nrf_cloud_fota_subscribe(void)
 	struct mqtt_subscription_list sub_list = {
 		.list = sub_topics,
 		.list_count = ARRAY_SIZE(sub_topics),
-		.message_id = NRF_CLOUD_FOTA_SUBSCRIBE_ID
+		.message_id = NCT_MSG_ID_FOTA_SUB
 	};
 
 	for (int i = 0; i < sub_list.list_count; ++i) {
@@ -536,7 +536,7 @@ int nrf_cloud_fota_unsubscribe(void)
 	struct mqtt_subscription_list sub_list = {
 		.list = sub_topics,
 		.list_count = ARRAY_SIZE(sub_topics),
-		.message_id = NRF_CLOUD_FOTA_SUBSCRIBE_ID
+		.message_id = NCT_MSG_ID_FOTA_UNSUB
 	};
 
 	for (int i = 0; i < sub_list.list_count; ++i) {
@@ -1024,7 +1024,7 @@ static int send_job_update(struct nrf_cloud_fota_job *const job)
 
 	int ret;
 	struct mqtt_publish_param param = {
-		.message_id = NRF_CLOUD_FOTA_UPDATE_ID,
+		.message_id = NCT_MSG_ID_FOTA_REPORT,
 		.dup_flag = 0,
 		.retain_flag = 0,
 	};
@@ -1068,7 +1068,7 @@ int nrf_cloud_fota_update_check(void)
 	}
 
 	struct mqtt_publish_param param = {
-		.message_id = NRF_CLOUD_FOTA_REQUEST_ID,
+		.message_id = NCT_MSG_ID_FOTA_REQUEST,
 		.dup_flag = 0,
 		.retain_flag = 0,
 	};
@@ -1200,8 +1200,7 @@ int nrf_cloud_fota_mqtt_evt_handler(const struct mqtt_evt *evt)
 	}
 	case MQTT_EVT_SUBACK:
 	{
-		if (evt->param.suback.message_id !=
-		    NRF_CLOUD_FOTA_SUBSCRIBE_ID) {
+		if (evt->param.suback.message_id != NCT_MSG_ID_FOTA_SUB) {
 			return 1;
 		}
 		LOG_DBG("MQTT_EVT_SUBACK");
@@ -1212,8 +1211,7 @@ int nrf_cloud_fota_mqtt_evt_handler(const struct mqtt_evt *evt)
 	}
 	case MQTT_EVT_UNSUBACK:
 	{
-		if (evt->param.unsuback.message_id !=
-		    NRF_CLOUD_FOTA_SUBSCRIBE_ID) {
+		if (evt->param.unsuback.message_id != NCT_MSG_ID_FOTA_UNSUB) {
 			return 1;
 		}
 		LOG_DBG("MQTT_EVT_UNSUBACK");
@@ -1224,11 +1222,11 @@ int nrf_cloud_fota_mqtt_evt_handler(const struct mqtt_evt *evt)
 		bool do_update_check = false;
 
 		switch (evt->param.puback.message_id) {
-		case NRF_CLOUD_FOTA_UPDATE_ID:
+		case NCT_MSG_ID_FOTA_REPORT:
 			do_update_check = true;
-		case NRF_CLOUD_FOTA_REQUEST_ID:
-		case NRF_CLOUD_FOTA_BLE_UPDATE_ID:
-		case NRF_CLOUD_FOTA_BLE_REQUEST_ID:
+		case NCT_MSG_ID_FOTA_REQUEST:
+		case NCT_MSG_ID_FOTA_BLE_REPORT:
+		case NCT_MSG_ID_FOTA_BLE_REQUEST:
 			break;
 		default:
 			return 1;
@@ -1300,7 +1298,7 @@ int nrf_cloud_fota_ble_update_check(const bt_addr_t *const ble_id)
 	cJSON *array;
 	char ble_id_str[BT_ADDR_LE_STR_LEN];
 	struct mqtt_publish_param param = {
-		.message_id = NRF_CLOUD_FOTA_BLE_REQUEST_ID,
+		.message_id = NCT_MSG_ID_FOTA_BLE_REQUEST,
 		.dup_flag = 0,
 		.retain_flag = 0,
 	};
@@ -1339,7 +1337,7 @@ int nrf_cloud_fota_ble_job_update(const struct nrf_cloud_fota_ble_job
 	cJSON *array;
 	char ble_id_str[BT_ADDR_LE_STR_LEN];
 	struct mqtt_publish_param param = {
-		.message_id = NRF_CLOUD_FOTA_BLE_UPDATE_ID,
+		.message_id = NCT_MSG_ID_FOTA_BLE_REPORT,
 		.dup_flag = 0,
 		.retain_flag = 0,
 	};

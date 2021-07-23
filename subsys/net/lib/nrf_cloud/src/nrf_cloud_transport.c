@@ -116,7 +116,7 @@ static struct nct {
 	struct mqtt_utf8 dc_rx_endp;
 	struct mqtt_utf8 dc_m_endp;
 	struct mqtt_utf8 job_status_endp;
-	uint32_t message_id;
+	uint16_t message_id;
 	uint8_t rx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
 	uint8_t tx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
 	uint8_t payload_buf[CONFIG_NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN + 1];
@@ -150,12 +150,13 @@ static void dc_endpoint_reset(void)
 }
 
 /* Get the next unused message id. */
-static uint32_t get_next_message_id(void)
+static uint16_t get_next_message_id(void)
 {
-	nct.message_id++;
-
-	if ((uint16_t)nct.message_id == 0) {
-		nct.message_id++;
+	if (nct.message_id < NCT_MSG_ID_INCREMENT_BEGIN ||
+	    nct.message_id == NCT_MSG_ID_INCREMENT_END) {
+		nct.message_id = NCT_MSG_ID_INCREMENT_BEGIN;
+	} else {
+		++nct.message_id;
 	}
 
 	return nct.message_id;
@@ -852,11 +853,11 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 		LOG_DBG("MQTT_EVT_SUBACK: id = %d result = %d",
 			_mqtt_evt->param.suback.message_id, _mqtt_evt->result);
 
-		if (_mqtt_evt->param.suback.message_id == NCT_CC_SUBSCRIBE_ID) {
+		if (_mqtt_evt->param.suback.message_id == NCT_MSG_ID_CC_SUB) {
 			evt.type = NCT_EVT_CC_CONNECTED;
 			event_notify = true;
 		}
-		if (_mqtt_evt->param.suback.message_id == NCT_DC_SUBSCRIBE_ID) {
+		if (_mqtt_evt->param.suback.message_id == NCT_MSG_ID_DC_SUB) {
 			evt.type = NCT_EVT_DC_CONNECTED;
 			event_notify = true;
 
@@ -878,7 +879,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	case MQTT_EVT_UNSUBACK: {
 		LOG_DBG("MQTT_EVT_UNSUBACK");
 
-		if (_mqtt_evt->param.suback.message_id == NCT_CC_SUBSCRIBE_ID) {
+		if (_mqtt_evt->param.suback.message_id == NCT_MSG_ID_CC_UNSUB) {
 			evt.type = NCT_EVT_CC_DISCONNECTED;
 			event_notify = true;
 		}
@@ -1062,7 +1063,7 @@ int nct_cc_connect(void)
 	const struct mqtt_subscription_list subscription_list = {
 		.list = (struct mqtt_topic *)&nct_cc_rx_list,
 		.list_count = ARRAY_SIZE(nct_cc_rx_list),
-		.message_id = NCT_CC_SUBSCRIBE_ID
+		.message_id = NCT_MSG_ID_CC_SUB
 	};
 
 	return mqtt_subscribe(&nct.client, &subscription_list);
@@ -1115,7 +1116,7 @@ int nct_cc_disconnect(void)
 	static const struct mqtt_subscription_list subscription_list = {
 		.list = (struct mqtt_topic *)nct_cc_rx_list,
 		.list_count = ARRAY_SIZE(nct_cc_rx_list),
-		.message_id = NCT_CC_SUBSCRIBE_ID
+		.message_id = NCT_MSG_ID_CC_UNSUB
 	};
 
 	return mqtt_unsubscribe(&nct.client, &subscription_list);
@@ -1187,7 +1188,7 @@ int nct_dc_connect(void)
 	const struct mqtt_subscription_list subscription_list = {
 		.list = &subscribe_topic,
 		.list_count = 1,
-		.message_id = NCT_DC_SUBSCRIBE_ID
+		.message_id = NCT_MSG_ID_DC_SUB
 	};
 
 	return mqtt_subscribe(&nct.client, &subscription_list);
@@ -1212,7 +1213,7 @@ int nct_dc_disconnect(void)
 	const struct mqtt_subscription_list subscription_list = {
 		.list = (struct mqtt_topic *)&nct.dc_rx_endp,
 		.list_count = 1,
-		.message_id = NCT_DC_SUBSCRIBE_ID
+		.message_id = NCT_MSG_ID_DC_UNSUB
 	};
 
 	ret = mqtt_unsubscribe(&nct.client, &subscription_list);

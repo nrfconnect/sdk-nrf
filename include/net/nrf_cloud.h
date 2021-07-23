@@ -18,16 +18,27 @@ extern "C" {
  * @{
  */
 
-#define DEFAULT_REPORT_ID		1
-#define NCT_CC_SUBSCRIBE_ID		1234
-#define CLOUD_STATE_REQ_ID		5678
-#define PAIRING_STATUS_REPORT_ID	7890
-#define NCT_DC_SUBSCRIBE_ID		8765
-#define NRF_CLOUD_FOTA_SUBSCRIBE_ID	8766
-#define NRF_CLOUD_FOTA_REQUEST_ID	8767
-#define NRF_CLOUD_FOTA_UPDATE_ID	8768
-#define NRF_CLOUD_FOTA_BLE_REQUEST_ID	8769
-#define NRF_CLOUD_FOTA_BLE_UPDATE_ID	8770
+/** @defgroup nrf_cloud_mqtt_msg_ids MQTT message IDs for nRF Cloud.
+ * @{
+ */
+#define NCT_MSG_ID_CC_SUB               100
+#define NCT_MSG_ID_DC_SUB               101
+#define NCT_MSG_ID_CG_SUB               102
+#define NCT_MSG_ID_FOTA_SUB             103
+#define NCT_MSG_ID_CC_UNSUB             150
+#define NCT_MSG_ID_DC_UNSUB             151
+#define NCT_MSG_ID_CG_UNSUB             152
+#define NCT_MSG_ID_FOTA_UNSUB           153
+#define NCT_MSG_ID_STATE_REQUEST        200
+#define NCT_MSG_ID_FOTA_REQUEST         201
+#define NCT_MSG_ID_FOTA_BLE_REQUEST     202
+#define NCT_MSG_ID_STATE_REPORT         300
+#define NCT_MSG_ID_PAIR_STATUS_REPORT   301
+#define NCT_MSG_ID_FOTA_REPORT          302
+#define NCT_MSG_ID_FOTA_BLE_REPORT      303
+#define NCT_MSG_ID_INCREMENT_BEGIN     1000
+#define NCT_MSG_ID_INCREMENT_END       0xFFFF /* MQTT message IDs are uint16_t */
+/** @} */
 
 #define NRF_CLOUD_SETTINGS_NAME "nrf_cloud"
 
