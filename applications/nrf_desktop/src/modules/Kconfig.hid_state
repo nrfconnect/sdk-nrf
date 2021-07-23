@@ -14,6 +14,20 @@ config DESKTOP_HID_STATE_ENABLE
 
 if DESKTOP_HID_STATE_ENABLE
 
+config DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH
+	string "File defining HID keymap"
+	default "hid_keymap_def.h"
+	help
+	  Location of configuration file that holds information about mapping
+	  between buttons and generated reports.
+
+config DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH
+	string "File defining HID keyboard LEDs"
+	default "hid_keyboard_leds_def.h"
+	help
+	  Location of configuration file that holds information about LEDs
+	  associated with HID keyboard LEDs report.
+
 config DESKTOP_HID_REPORT_EXPIRATION
 	int "HID report expiration [ms]"
 	default 500

@@ -26,9 +26,9 @@
 #include <caf/events/ble_common_event.h>
 #include "usb_event.h"
 
-#include "hid_keyboard_leds_def.h"
+#include CONFIG_DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH
 #include "hid_keymap.h"
-#include "hid_keymap_def.h"
+#include CONFIG_DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH
 #include "hid_report_desc.h"
 
 #define MODULE hid_state
