@@ -9,8 +9,8 @@ Matter: Door lock
    :depth: 2
 
 This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer to build a door lock device with one basic bolt.
-This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
-You can use this sample as a reference for creating your own application.
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network.
+You can use this sample as a reference for creating your application.
 
 Requirements
 ************
@@ -77,13 +77,15 @@ Device Firmware Upgrade support
 
 .. matter_door_lock_sample_build_with_dfu_start
 
-You can configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade using Bluetooth LE.
-To build the sample with configuration that enables the DFU, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
+You can configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade through Bluetooth LE, adding to your build a configuration that enables the DFU using the ``-DBUILD_WITH_DFU=1`` flag in your build.
+
+See :ref:`cmake_options` for instructions on how to add this option to your build.
+For example, when building on the command line, you can run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DOVERLAY_CONFIG=../common/config/overlay-dfu_support.conf -DPM_STATIC_YML_FILE="configuration/build-target/pm_static.yml"
+   west build -b *build_target* -- -DBUILD_WITH_DFU=1
 
 .. matter_door_lock_sample_build_with_dfu_end
 
