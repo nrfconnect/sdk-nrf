@@ -237,11 +237,39 @@ class RepoAnalyzer:
 
     def _likely_merged_commits(self):
         # Compute patches which are downstream and probably were
-        # merged upstream, using a shortlog edit distance heuristic.
-        # This is a map from pygit2 commit objects for downstream
-        # patches, to a list of pygit2 commit objects that are
-        # upstream patches which have similar shortlogs and the same
-        # authors.
+        # merged upstream, using the following heuristics:
+        #
+        # 1. downstream patches with small shortlog edit distances
+        #    from upstream patches
+        #
+        # 2. downstream patches with shortlogs that are prefixes of
+        #    upstream patches
+        #
+        # Heuristic #1 catches patches with typos in the shortlogs
+        # that reviewers asked to be fixed, etc. E.g. upstream
+        # shortlog
+        #
+        #    Bluetoth: do foo
+        #
+        # matches downstream shortlog
+        #
+        #    [nrf fromlist] Bluetooth: do foo
+        #
+        # Heuristic #2 catches situations where we had to shorten our
+        # downstream shortlog to fit the "[nrf xyz]" sauce tag at the
+        # beginning and still fit within CI's shortlog length
+        # restrictions. E.g. upstream shortlog
+        #
+        #    subsys: do a thing that is very useful for everyone
+        #
+        # matches downstream shortlog
+        #
+        #    [nrf fromlist] subsys: do a thing that is very
+        #
+        # The return value is a map from pygit2 commit objects for
+        # downstream patches, to a list of pygit2 commit objects that
+        # are upstream patches which have similar shortlogs and the
+        # same authors.
 
         likely_merged = OrderedDict()
         for dc in self.downstream_outstanding:
@@ -252,8 +280,14 @@ class RepoAnalyzer:
                     shortlog_no_sauce(sl, self._downstream_sauce),
                     commit_shortlog(upstream_commit))
 
-            matches = [c for c in self.upstream_new if
-                       ed(c) < self._edit_dist_threshold]
+            matches = [
+                uc for uc in self.upstream_new if
+                # Heuristic #1:
+                ed(uc) < self._edit_dist_threshold or
+                # Heuristic #2:
+                commit_shortlog(uc).startswith(sl)
+            ]
+
             if len(matches) != 0:
                 likely_merged[dc] = matches
 
