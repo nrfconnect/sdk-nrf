@@ -128,7 +128,7 @@ static void cell_pos_req_wk(struct k_work *work)
 
 	ARG_UNUSED(work);
 
-	err = nrf_cloud_cell_pos_request(cell_pos_type, true);
+	err = nrf_cloud_cell_pos_request(NULL, true);
 	if (err) {
 		LOG_ERR("Failed to request cell_pos %d, error: %d", cell_pos_type, err);
 	}

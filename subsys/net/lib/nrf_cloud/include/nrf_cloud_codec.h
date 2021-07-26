@@ -24,15 +24,14 @@ extern "C" {
 #define NRF_CLOUD_JSON_APPID_KEY		"appId"
 #define NRF_CLOUD_JSON_APPID_VAL_AGPS		"AGPS"
 #define NRF_CLOUD_JSON_APPID_VAL_PGPS		"PGPS"
-/* TODO: SCELL and MCELL can be removed, new API is simply "LOCATE" */
-#define NRF_CLOUD_JSON_APPID_VAL_SINGLE_CELL	"SCELL"
-#define NRF_CLOUD_JSON_APPID_VAL_LOCATE		"LOCATE"
-#define NRF_CLOUD_JSON_APPID_VAL_MULTI_CELL	NRF_CLOUD_JSON_APPID_VAL_LOCATE
+#define NRF_CLOUD_JSON_APPID_VAL_CELL_POS	"CELL_POS"
 
 #define NRF_CLOUD_JSON_MSG_TYPE_KEY		"messageType"
 #define NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA	"DATA"
 
 #define NRF_CLOUD_JSON_DATA_KEY			"data"
+
+#define NRF_CLOUD_JSON_FULFILL_KEY		"fulfilledWith"
 
 /* Modem info key text */
 #define NRF_CLOUD_JSON_MCC_KEY			"mcc"
@@ -47,7 +46,7 @@ extern "C" {
 #define NRF_CLOUD_CELL_POS_JSON_KEY_UNCERT	"uncertainty"
 
 #define NRF_CLOUD_CELL_POS_JSON_KEY_LTE		"lte"
-#define NRF_CLOUD_CELL_POS_JSON_KEY_ECI		"cid"
+#define NRF_CLOUD_CELL_POS_JSON_KEY_ECI		NRF_CLOUD_JSON_CELL_ID_KEY
 #define NRF_CLOUD_CELL_POS_JSON_KEY_MCC		NRF_CLOUD_JSON_MCC_KEY
 #define NRF_CLOUD_CELL_POS_JSON_KEY_MNC		NRF_CLOUD_JSON_MNC_KEY
 #define NRF_CLOUD_CELL_POS_JSON_KEY_TAC		NRF_CLOUD_JSON_AREA_CODE_KEY
@@ -59,6 +58,9 @@ extern "C" {
 #define NRF_CLOUD_CELL_POS_JSON_KEY_NBORS	"nmr"
 #define NRF_CLOUD_CELL_POS_JSON_KEY_RSRP	"rsrp"
 #define NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ	"rsrq"
+
+#define NRF_CLOUD_CELL_POS_TYPE_VAL_SCELL	"SCELL"
+#define NRF_CLOUD_CELL_POS_TYPE_VAL_MCELL	"MCELL"
 
 /* P-GPS */
 #define NRF_CLOUD_JSON_PGPS_PRED_COUNT		"predictionCount"
@@ -113,8 +115,13 @@ int nrf_cloud_parse_pgps_response(const char *const response,
 
 int nrf_cloud_json_add_modem_info(cJSON * const data_obj);
 
-char * const nrf_cloud_format_cell_pos_req_payload(struct lte_lc_cells_info const *const inf,
-						   size_t inf_cnt);
+int nrf_cloud_format_cell_pos_req(struct lte_lc_cells_info const *const inf,
+				  size_t inf_cnt, char **string_out);
+
+int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf,
+				       size_t inf_cnt, cJSON * const req_obj_out);
+
+int nrf_cloud_format_single_cell_pos_req_json(cJSON * const req_obj_out);
 
 int nrf_cloud_parse_cell_pos_response(const char *const buf,
 				      struct nrf_cloud_cell_pos_result *result);

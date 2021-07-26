@@ -79,41 +79,42 @@ static int json_send_to_cloud(cJSON *const cell_pos_request)
 	return err;
 }
 
-int nrf_cloud_cell_pos_request(enum nrf_cloud_cell_pos_type type, const bool request_loc)
+int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info * const cells_inf,
+			       const bool request_loc)
 {
-	int err;
-	cJSON *data_obj;
-	cJSON *cell_pos_req_obj;
+	int err = 0;
+	cJSON *cell_pos_req_obj = json_create_req_obj(NRF_CLOUD_JSON_APPID_VAL_CELL_POS,
+						      NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
+	cJSON *data_obj = cJSON_AddObjectToObject(cell_pos_req_obj, NRF_CLOUD_JSON_DATA_KEY);
 
-	/* TODO: currently single cell only */
-	ARG_UNUSED(type);
-	cell_pos_req_obj = json_create_req_obj(NRF_CLOUD_JSON_APPID_VAL_SINGLE_CELL,
-					   NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
-	data_obj = cJSON_AddObjectToObject(cell_pos_req_obj, NRF_CLOUD_JSON_DATA_KEY);
-
-	if (!cell_pos_req_obj || !data_obj) {
+	if (!data_obj) {
 		err = -ENOMEM;
 		goto cleanup;
 	}
 
-	/* Add modem info to the data object */
-	err = nrf_cloud_json_add_modem_info(data_obj);
+	if (cells_inf) {
+		/* Add provided cell info to the data obj */
+		err = nrf_cloud_format_cell_pos_req_json(cells_inf, 1, data_obj);
+	} else {
+		/* Fetch modem info and add to the data obj */
+		err = nrf_cloud_format_single_cell_pos_req_json(data_obj);
+	}
+
 	if (err) {
-		LOG_ERR("Failed to add modem info to cell loc req: %d", err);
 		goto cleanup;
 	}
 
 	/* By default, nRF Cloud will send the location to the device */
-	if (!request_loc) {
-		/* Specify that location should not be sent to the device */
-		cJSON_AddNumberToObject(data_obj, CELL_POS_JSON_CELL_LOC_KEY_DOREPLY, 0);
+	if (!request_loc &&
+	    !cJSON_AddNumberToObjectCS(data_obj, CELL_POS_JSON_CELL_LOC_KEY_DOREPLY, 0)) {
+		err = -ENOMEM;
+		goto cleanup;
 	}
 
 	err = json_send_to_cloud(cell_pos_req_obj);
 
 cleanup:
 	cJSON_Delete(cell_pos_req_obj);
-
 	return err;
 }
 #endif /* CONFIG_NRF_CLOUD_MQTT */

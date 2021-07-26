@@ -471,7 +471,7 @@ static void send_cell_pos_request(struct k_work *work)
 	} else {
 		LOG_INF("Sending cellular positioning request");
 
-		err = nrf_cloud_cell_pos_request(CELL_POS_TYPE_SINGLE, false);
+		err = nrf_cloud_cell_pos_request(NULL, false);
 		if (err) {
 			LOG_WRN("Failed to request cell pos data, error: %d", err);
 		} else {
