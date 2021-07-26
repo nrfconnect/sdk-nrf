@@ -126,6 +126,10 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/multicell_location`
 
+.. note::
+
+   Before building the sample, you must configure a location provider and an API key as instructed in :ref:`lib_multicell_location`.
+
 .. include:: /includes/build_and_run_nrf9160.txt
 
 
