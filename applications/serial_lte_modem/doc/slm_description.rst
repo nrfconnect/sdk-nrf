@@ -149,7 +149,7 @@ Check and configure the following configuration options for the sample:
 
 .. option:: CONFIG_SLM_CONFIRM_XSLEEP - Send response on sleep command
 
-   This option makes nRF9160 respond with the `OK` message to the `AT#XSLEEP=...` command.
+   This option makes nRF9160 respond with the ``OK`` message to the ``AT#XSLEEP=...`` command.
 
    This option is not selected by default.
 
