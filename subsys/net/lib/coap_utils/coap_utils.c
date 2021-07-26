@@ -203,14 +203,13 @@ static void coap_set_response_callback(struct coap_packet *request,
 void coap_init(int ip_family, struct sockaddr *addr)
 {
 	proto_family = ip_family;
+	if (addr) {
+		bind_addr = addr;
+	}
 
 	fds.events = POLLIN;
 	fds.revents = 0;
 	fds.fd = coap_open_socket();
-
-	if (addr) {
-		bind_addr = addr;
-	}
 
 	/* start sock receive thread */
 	k_thread_create(&receive_thread_data, receive_stack_area,
