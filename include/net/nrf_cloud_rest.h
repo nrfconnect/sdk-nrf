@@ -61,7 +61,12 @@ struct nrf_cloud_rest_context {
 	bool keep_alive;
 	/** Timeout value for receiving response data */
 	int32_t timeout_ms;
-	/** Authentication string: JWT @ref modem_jwt */
+	/** Authentication string: JWT @ref modem_jwt.
+	 * The nRF Cloud device ID must be included in the sub claim.
+	 * If the device ID is the device's internal UUID, the sub claim
+	 * can be omitted for modem generated JWTs; the UUID is included
+	 * in the iss claim.
+	 */
 	char *auth;
 	/** User allocated buffer for receiving API response.
 	 * Buffer size should be limited according to the
@@ -86,18 +91,14 @@ struct nrf_cloud_rest_context {
 	size_t response_len;
 };
 
-/** @brief Data required for nRF Cloud location request */
-struct nrf_cloud_rest_location_request {
-	/** Unique device identifier; null-terminated */
-	char *device_id;
-	/** Network information used in location request */
+/** @brief Data required for nRF Cloud cellular positioning request */
+struct nrf_cloud_rest_cell_pos_request {
+	/** Network information used in request */
 	struct lte_lc_cells_info *net_info;
 };
 
 /** @brief Data required for nRF Cloud Assisted GPS (A-GPS) request */
 struct nrf_cloud_rest_agps_request {
-	/** Unique device identifier; null-terminated */
-	char *device_id;
 	enum nrf_cloud_rest_agps_req_type type;
 	/** Required for custom request type */
 	struct gps_agps_request *agps_req;
@@ -128,8 +129,6 @@ struct nrf_cloud_rest_agps_result {
 
 /** @brief Data required for nRF Cloud Predicted GPS (P-GPS) request */
 struct nrf_cloud_rest_pgps_request {
-	/** Unique device identifier; null-terminated */
-	char *device_id;
 	/** Data to be included in the P-GPS request. To omit an item
 	 * use the appropriate define in @ref nrf_cloud_rest_pgps_omit
 	 */
@@ -148,8 +147,8 @@ struct nrf_cloud_rest_pgps_request {
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
-	struct nrf_cloud_rest_location_request const *const request,
+int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
+	struct nrf_cloud_rest_cell_pos_request const *const request,
 	struct nrf_cloud_cell_pos_result *const result);
 
 /**

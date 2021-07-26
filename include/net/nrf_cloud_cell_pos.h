@@ -12,6 +12,7 @@
  */
 
 #include <zephyr.h>
+#include <modem/lte_lc.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,7 +25,7 @@ extern "C" {
 /** @brief Cellular positioning request type */
 enum nrf_cloud_cell_pos_type {
 	CELL_POS_TYPE_SINGLE,
-	CELL_POS_TYPE_MULTI /* Not yet supported */
+	CELL_POS_TYPE_MULTI
 };
 
 /** @brief Cellular positioning request result */
@@ -36,15 +37,24 @@ struct nrf_cloud_cell_pos_result {
 };
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
-/**@brief Request a cellular positioning query from nRF Cloud via MQTT.
+/**@brief Perform an nRF Cloud cellular positioning request via MQTT using
+ * the provided cell info.
  *
- * @param type        Type of cellular positioning request.
+ * @param cells_inf Pointer to cell info. The required network parameters are
+ *                  cell identifier, mcc, mnc and tac. The required neighboring
+ *                  cell parameters are E-ARFCN and physical cell identity.
+ *                  The parameters for time diff and measurement time are not used.
+ *                  The remaining parameters are optional; including them may improve
+ *                  location accuracy.
+ *                  If NULL, current (single) cell tower data will be requested from
+ *                  the modem and used in the request.
  * @param request_loc If true, cloud will send location to the device.
  *                    If false, cloud will not send location to the device.
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_cell_pos_request(enum nrf_cloud_cell_pos_type type, const bool request_loc);
+int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info * const cells_inf,
+			       const bool request_loc);
 #endif /* CONFIG_NRF_CLOUD_MQTT */
 
 /**@brief Processes cellular positioning data received from nRF Cloud via MQTT or REST.
