@@ -28,6 +28,7 @@ private:
 	void OpenPairingWindow();
 	void DispatchEvent(AppEvent *event);
 
+	static int SoftwareUpdateConfirmationHandler(uint32_t offset, uint32_t size, void *arg);
 	static void ButtonStateHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void ButtonPushHandler(AppEvent *event);
 	static void ButtonReleaseHandler(AppEvent *event);

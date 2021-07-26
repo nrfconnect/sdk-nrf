@@ -6,6 +6,15 @@
 
 cmake_minimum_required(VERSION 3.13.1)
 
+option(BUILD_WITH_DFU "Build target with Device Firmware Upgrade support" OFF)
+if(BUILD_WITH_DFU)
+    list(INSERT OVERLAY_CONFIG 0 ${CMAKE_CURRENT_SOURCE_DIR}/../common/config/overlay-dfu_support.conf)
+    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml)
+    if(${BOARD} STREQUAL "nrf5340dk_nrf5340_cpuapp")
+        list(INSERT OVERLAY_CONFIG 0 ${CMAKE_CURRENT_SOURCE_DIR}/../common/config/overlay-dfu_nrf53_extension.conf)
+    endif()
+endif()
+
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-lock)
