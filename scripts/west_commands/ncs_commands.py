@@ -490,6 +490,7 @@ _BLOCKED_PROJECTS = set(
      'modules/hal/quicklogic',
      'modules/hal/silabs',
      'modules/hal/stm32',
+     'modules/hal/telink',
      'modules/hal/ti',
      'modules/hal/xtensa',
      'modules/lib/tensorflow',

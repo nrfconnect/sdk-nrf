@@ -27,8 +27,6 @@ manifest:
       url-base: https://github.com/ThrowTheSwitch
     - name: armmbed
       url-base: https://github.com/ARMmbed
-    - name: nanopb
-      url-base: https://github.com/nanopb
     - name: alexa
       url-base: https://github.com/alexa
     - name: nordicsemi
@@ -56,7 +54,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 0944459b5b622048a08ad1f8cf8a044c135fd0d3
+      revision: 01a38e7fa55913350c647df1f51715fea5d80daa
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -82,9 +80,11 @@ manifest:
           - littlefs
           - loramac-node
           - lvgl
+          - lz4
           - mbedtls
           - mcumgr
           - mipi-sys-t
+          - nanopb
           - net-tools
           - nrf_hw_models
           - open-amp
@@ -99,7 +99,7 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 5a6bf2fa11503ea0a3ef2b42a8afeed43053b6b9
+      revision: 274ff833dabea621483cafa3e5aede9a9bf11b9e
       path: bootloader/mcuboot
     - name: nrfxlib
       repo-path: sdk-nrfxlib
@@ -108,7 +108,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: v1.3.99-ncs1
+      revision: 52a2fbefe02da485f4c6103d40a86b3a529cbd8e
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -148,10 +148,6 @@ manifest:
       repo-path: mbedtls
       revision: mbedtls-2.26.0
       remote: armmbed
-    - name: nanopb
-      path: modules/lib/nanopb
-      revision: nanopb-0.4.2
-      remote: nanopb
     - name: Alexa-Gadgets-Embedded-Sample-Code
       path: modules/alexa-embedded
       revision: face92d8c62184832793f518bb1f19379538c5c1
