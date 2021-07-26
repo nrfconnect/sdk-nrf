@@ -30,7 +30,6 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define RANGE_MAX_BYTES			CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE
 
 #define API_VER				"/v1"
-#define DEV_ID				"deviceIdentifier=%s"
 
 #define CONTENT_TYPE_TXT_PLAIN		"text/plain"
 #define CONTENT_TYPE_ALL		"*/*"
@@ -56,8 +55,8 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define API_UPDATE_FOTA_DETAILS_TMPLT	"{\"status\":\"%s\", \"details\":\"%s\"}"
 
 #define API_LOCATION			"/location"
-#define API_GET_LOCATION_TEMPLATE	API_VER API_LOCATION "/locate/%s"
-#define API_GET_AGPS_BASE		API_VER API_LOCATION "/agps?" DEV_ID
+#define API_GET_CELL_POS_TEMPLATE	API_VER API_LOCATION "/cell"
+#define API_GET_AGPS_BASE		API_VER API_LOCATION "/agps?"
 #define AGPS_REQ_TYPE			"&requestType=%s"
 #define NET_INFO_PRINT_SZ		(3 + 3 + 5 + UINT32_MAX_STR_SZ)
 #define AGPS_NET_INFO			"&mcc=%u&mnc=%u&tac=%u&eci=%u"
@@ -73,7 +72,7 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
  */
 #define AGPS_CUSTOM_TYPE_STR_SZ		(AGPS_CUSTOM_TYPE_CNT * 2)
 
-#define API_GET_PGPS_BASE		API_VER "/location/pgps?" DEV_ID
+#define API_GET_PGPS_BASE		API_VER "/location/pgps?"
 #define PGPS_REQ_PREDICT_CNT		"&" NRF_CLOUD_JSON_PGPS_PRED_COUNT "=%u"
 #define PGPS_REQ_PREDICT_INT_MIN	"&" NRF_CLOUD_JSON_PGPS_INT_MIN "=%u"
 #define PGPS_REQ_START_GPS_DAY		"&" NRF_CLOUD_JSON_PGPS_GPS_DAY "=%u"
@@ -575,47 +574,29 @@ void nrf_cloud_rest_fota_job_free(struct nrf_cloud_fota_job_info *const job)
 	nrf_cloud_fota_job_free(job);
 }
 
-int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
-	struct nrf_cloud_rest_location_request const *const request,
+int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
+	struct nrf_cloud_rest_cell_pos_request const *const request,
 	struct nrf_cloud_cell_pos_result *const result)
 {
 	__ASSERT_NO_MSG(rest_ctx != NULL);
 	__ASSERT_NO_MSG(request != NULL);
-	__ASSERT_NO_MSG(request->device_id != NULL);
 	__ASSERT_NO_MSG(request->net_info != NULL);
 
 	int ret;
-	size_t url_sz;
 	char *auth_hdr = NULL;
-	char *url = NULL;
 	char *payload = NULL;
 	struct http_request http_req;
 
 	init_request(&http_req, HTTP_POST, CONTENT_TYPE_APP_JSON);
 
-	/* Format API URL with device ID */
-	url_sz = sizeof(API_GET_LOCATION_TEMPLATE) + strlen(request->device_id);
-	url = k_calloc(url_sz, 1);
-	if (!url) {
-		ret = -ENOMEM;
-		goto clean_up;
-	}
-	http_req.url = url;
-
-	ret = snprintk(url, url_sz, API_GET_LOCATION_TEMPLATE, request->device_id);
-	if (ret < 0 || ret >= url_sz) {
-		LOG_ERR("Could not format URL");
-		ret = -ETXTBSY;
-		goto clean_up;
-	}
-
+	http_req.url = API_GET_CELL_POS_TEMPLATE;
 	LOG_DBG("URL: %s", log_strdup(http_req.url));
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
 
 	if (ret) {
-		LOG_ERR("Could not format HTTP auth header");
+		LOG_ERR("Could not format HTTP auth header, err: %d", ret);
 		goto clean_up;
 	}
 	char *const headers[] = {
@@ -627,9 +608,8 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	http_req.header_fields = (const char **)headers;
 
 	/* Get payload */
-	payload = nrf_cloud_format_cell_pos_req_payload(request->net_info, 1);
-	if (!payload) {
-		ret = -ENOMEM;
+	ret = nrf_cloud_format_cell_pos_req(request->net_info, 1, &payload);
+	if (ret) {
 		goto clean_up;
 	}
 
@@ -667,9 +647,6 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	}
 
 clean_up:
-	if (url) {
-		k_free(url);
-	}
 	if (auth_hdr) {
 		k_free(auth_hdr);
 	}
@@ -786,7 +763,6 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 {
 	__ASSERT_NO_MSG(rest_ctx != NULL);
 	__ASSERT_NO_MSG(request != NULL);
-	__ASSERT_NO_MSG(request->device_id != NULL);
 
 	int ret;
 	size_t total_bytes;
@@ -816,7 +792,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	init_request(&http_req, HTTP_GET, CONTENT_TYPE_APP_OCT_STR);
 
 	/* Determine size of URL buffer and allocate */
-	url_sz = sizeof(API_GET_AGPS_BASE) + strlen(request->device_id);
+	url_sz = sizeof(API_GET_AGPS_BASE);
 	if (request->net_info) {
 		url_sz += strlen(AGPS_NET_INFO) + NET_INFO_PRINT_SZ;
 	}
@@ -850,7 +826,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	http_req.url = url;
 
 	/* Format API URL */
-	ret = snprintk(url, url_sz, API_GET_AGPS_BASE, request->device_id);
+	ret = snprintk(url, url_sz, API_GET_AGPS_BASE);
 	if (ret < 0 || ret >= url_sz) {
 		LOG_ERR("Could not format URL: device id");
 		ret = -ETXTBSY;
@@ -1008,7 +984,6 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 {
 	__ASSERT_NO_MSG(rest_ctx != NULL);
 	__ASSERT_NO_MSG(request != NULL);
-	__ASSERT_NO_MSG(request->device_id != NULL);
 
 	int ret;
 	size_t url_sz;
@@ -1021,7 +996,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	init_request(&http_req, HTTP_GET, CONTENT_TYPE_ALL);
 
 	/* Determine size of URL buffer and allocate */
-	url_sz = sizeof(API_GET_PGPS_BASE) + strlen(request->device_id);
+	url_sz = sizeof(API_GET_PGPS_BASE);
 
 	if (request->pgps_req) {
 		if (request->pgps_req->prediction_count !=
@@ -1054,7 +1029,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	http_req.url = url;
 
 	/* Format API URL */
-	ret = snprintk(url, url_sz, API_GET_PGPS_BASE, request->device_id);
+	ret = snprintk(url, url_sz, API_GET_PGPS_BASE);
 	if (ret < 0 || ret >= url_sz) {
 		LOG_ERR("Could not format URL");
 		ret = -ETXTBSY;

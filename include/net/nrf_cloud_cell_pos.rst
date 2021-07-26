@@ -25,7 +25,7 @@ Configure the following options to enable or disable the use of this library:
 Request and process cellular positioning data
 *********************************************
 
-The :c:func:`nrf_cloud_cell_pos_request` function is used to request the cellular location of the device by type.
+The :c:func:`nrf_cloud_cell_pos_request` function is used to request the cellular location of the device.
 
 When nRF Cloud responds with the requested cellular positioning data, the :c:func:`nrf_cloud_cell_pos_process` function processes the received data.
 The function parses the data and returns the location information if it is found.
