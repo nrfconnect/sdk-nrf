@@ -28,7 +28,7 @@ from pygit2_helpers import commit_affects_files, commit_shortlog
 def add_zephyr_rev_arg(parser):
     parser.add_argument('-z', '--zephyr-rev', metavar='REF',
                         help='''zephyr git ref (commit, branch, etc.);
-                        default: upstream/master''')
+                        default: upstream/main''')
 
 def add_projects_arg(parser):
     parser.add_argument('projects', metavar='PROJECT', nargs='*',
@@ -142,7 +142,7 @@ class NcsWestCommand(WestCommand):
         if args.zephyr_rev:
             zephyr_rev = args.zephyr_rev
         else:
-            zephyr_rev = 'upstream/master'
+            zephyr_rev = 'upstream/main'
         zephyr_project = self.manifest.get_projects(['zephyr'])[0]
         try:
             self.zephyr_sha = zephyr_project.sha(zephyr_rev)
