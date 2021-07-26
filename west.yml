@@ -70,9 +70,10 @@ manifest:
         #
         # Please keep this list sorted alphabetically.
         name-allowlist:
+          - TraceRecorderSource
           - canopennode
-          - cmsis
           - civetweb
+          - cmsis
           - edtt
           - fatfs
           - hal_nordic
@@ -91,7 +92,6 @@ manifest:
           - segger
           - tinycbor
           - tinycrypt
-          - TraceRecorderSource
 
     # NCS repositories.
     #
