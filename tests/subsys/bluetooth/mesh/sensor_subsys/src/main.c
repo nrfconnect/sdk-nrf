@@ -595,6 +595,8 @@ static void chromatic_distance_check(const struct bt_mesh_sensor_type *sensor_ty
 		{{0, -10}, -1},
 		{{0, 10}, 1},
 		{{0, 50000}, 5000},
+		{{0x7FFF, 0}, 0x7FFF},
+		{{0x7FFE, 0}, 0x7FFE},
 	};
 
 	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
@@ -623,10 +625,6 @@ static void chromatic_distance_check(const struct bt_mesh_sensor_type *sensor_ty
 	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
 		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 2);
 	}
-
-	/* 0xFFFF defined as 'value is not known' is in _valid_ range and can't be encoded or
-	 * decoded correctly.
-	 */
 }
 
 static void percentage8_illuminance_check(const struct bt_mesh_sensor_type *sensor_type)
