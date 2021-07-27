@@ -58,7 +58,7 @@ static void rsp_status(struct bt_mesh_model *model,
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
 
-static void handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		       struct net_buf_simple *buf)
 {
 	struct bt_mesh_battery_srv *srv = model->user_data;
@@ -67,10 +67,16 @@ static void handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	srv->get(srv, ctx, &status);
 
 	rsp_status(model, ctx, &status);
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_battery_srv_op[] = {
-	{ BT_MESH_BATTERY_OP_GET, BT_MESH_BATTERY_MSG_LEN_GET, handle_get },
+	{
+		BT_MESH_BATTERY_OP_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_BATTERY_MSG_LEN_GET),
+		handle_get,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

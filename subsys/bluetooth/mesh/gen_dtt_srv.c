@@ -24,32 +24,26 @@ static void rsp_status(struct bt_mesh_dtt_srv *srv,
 	(void)bt_mesh_model_send(srv->model, rx_ctx, &msg, NULL, NULL);
 }
 
-static void handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		       struct net_buf_simple *buf)
+static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		      struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_DTT_MSG_LEN_GET) {
-		return;
-	}
-
 	struct bt_mesh_dtt_srv *srv = model->user_data;
 
 	rsp_status(srv, ctx);
+
+	return 0;
 }
 
-static void set_dtt(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int set_dtt(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		    struct net_buf_simple *buf, bool ack)
 {
-	if (buf->len != BT_MESH_DTT_MSG_LEN_SET) {
-		return;
-	}
-
 	struct bt_mesh_dtt_srv *srv = model->user_data;
 	uint32_t old_time = srv->transition_time;
 	uint32_t new_time = model_transition_decode(net_buf_simple_pull_u8(buf));
 
 	if (new_time == SYS_FOREVER_MS) {
 		/* Invalid parameter */
-		return;
+		return -EINVAL;
 	}
 
 	srv->transition_time = new_time;
@@ -69,25 +63,38 @@ static void set_dtt(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	(void)bt_mesh_dtt_srv_pub(srv, NULL);
+
+	return 0;
 }
 
-static void handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		       struct net_buf_simple *buf)
+static int handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		      struct net_buf_simple *buf)
 {
-	set_dtt(model, ctx, buf, true);
+	return set_dtt(model, ctx, buf, true);
 }
 
-static void handle_set_unack(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf)
+static int handle_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
 {
-	set_dtt(model, ctx, buf, false);
+	return set_dtt(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_dtt_srv_op[] = {
-	{ BT_MESH_DTT_OP_GET, BT_MESH_DTT_MSG_LEN_GET, handle_get },
-	{ BT_MESH_DTT_OP_SET, BT_MESH_DTT_MSG_LEN_SET, handle_set },
-	{ BT_MESH_DTT_OP_SET_UNACK, BT_MESH_DTT_MSG_LEN_SET, handle_set_unack },
+	{
+		BT_MESH_DTT_OP_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_DTT_MSG_LEN_GET),
+		handle_get,
+	},
+	{
+		BT_MESH_DTT_OP_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_DTT_MSG_LEN_SET),
+		handle_set,
+	},
+	{
+		BT_MESH_DTT_OP_SET_UNACK,
+		BT_MESH_LEN_EXACT(BT_MESH_DTT_MSG_LEN_SET),
+		handle_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

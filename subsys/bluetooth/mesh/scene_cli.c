@@ -7,7 +7,7 @@
 #include <bluetooth/mesh/models.h>
 #include "model_utils.h"
 
-static void scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_state *rsp;
@@ -24,7 +24,7 @@ static void scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		state.remaining_time = 0;
 	} else {
 		/* Invalid size */
-		return;
+		return -EMSGSIZE;
 	}
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SCENE_OP_STATUS, ctx->addr,
@@ -36,10 +36,12 @@ static void scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 	if (cli->status) {
 		cli->status(cli, ctx, &state);
 	}
+
+	return 0;
 }
 
-static void scene_reg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		      struct net_buf_simple *buf)
+static int handle_scene_reg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_register *rsp;
 	struct bt_mesh_scene_cli *cli = model->user_data;
@@ -47,6 +49,10 @@ static void scene_reg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	reg.status = net_buf_simple_pull_u8(buf);
 	reg.current = net_buf_simple_pull_le16(buf);
+	if (buf->len % 2) {
+		return -EMSGSIZE;
+	}
+
 	reg.count = buf->len / sizeof(uint16_t);
 	reg.scenes = net_buf_simple_pull_mem(buf, buf->len);
 
@@ -82,18 +88,20 @@ static void scene_reg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	for (int i = 0; i < reg.count; i++) {
 		reg.scenes[i] = sys_cpu_to_le16(reg.scenes[i]);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_scene_cli_op[] = {
 	{
 		BT_MESH_SCENE_OP_STATUS,
-		BT_MESH_SCENE_MSG_MINLEN_STATUS,
-		scene_status,
+		BT_MESH_LEN_MIN(BT_MESH_SCENE_MSG_MINLEN_STATUS),
+		handle_scene_status,
 	},
 	{
 		BT_MESH_SCENE_OP_REGISTER_STATUS,
-		BT_MESH_SCENE_MSG_MINLEN_REGISTER_STATUS,
-		scene_reg,
+		BT_MESH_LEN_MIN(BT_MESH_SCENE_MSG_MINLEN_REGISTER_STATUS),
+		handle_scene_reg,
 	},
 	BT_MESH_MODEL_OP_END,
 };

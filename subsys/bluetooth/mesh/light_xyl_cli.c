@@ -16,7 +16,7 @@ static int status_decode(struct bt_mesh_light_xyl_cli *cli,
 
 	if (buf->len != BT_MESH_LIGHT_XYL_MSG_MINLEN_STATUS &&
 	    buf->len != BT_MESH_LIGHT_XYL_MSG_MAXLEN_STATUS) {
-		return -EAGAIN;
+		return -EMSGSIZE;
 	}
 
 	status->params.lightness = net_buf_simple_pull_le16(buf);
@@ -34,9 +34,8 @@ static int status_decode(struct bt_mesh_light_xyl_cli *cli,
 	return 0;
 }
 
-static void xyl_status_handle(struct bt_mesh_model *model,
-			      struct bt_mesh_msg_ctx *ctx,
-			      struct net_buf_simple *buf)
+static int handle_xyl_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			     struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
 	struct bt_mesh_light_xyl_status status;
@@ -47,11 +46,12 @@ static void xyl_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->xyl_status && !err) {
 		cli->handlers->xyl_status(cli, ctx, &status);
 	}
+
+	return err;
 }
 
-static void target_status_handle(struct bt_mesh_model *model,
-				 struct bt_mesh_msg_ctx *ctx,
-				 struct net_buf_simple *buf)
+static int handle_target_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
 	struct bt_mesh_light_xyl_status status;
@@ -62,16 +62,13 @@ static void target_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->target_status && !err) {
 		cli->handlers->target_status(cli, ctx, &status);
 	}
+
+	return err;
 }
 
-static void default_status_handle(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				 struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT) {
-		return;
-	}
-
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
 	struct bt_mesh_light_xyl status;
 	struct bt_mesh_light_xyl *rsp;
@@ -89,16 +86,13 @@ static void default_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->default_status) {
 		cli->handlers->default_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void range_status_handle(struct bt_mesh_model *model,
-				struct bt_mesh_msg_ctx *ctx,
-				struct net_buf_simple *buf)
+static int handle_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			       struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
 	struct bt_mesh_light_xyl_range_status status;
 	struct bt_mesh_light_xyl_range_status *rsp;
@@ -118,28 +112,30 @@ static void range_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->range_status) {
 		cli->handlers->range_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_xyl_cli_op[] = {
 	{
 		BT_MESH_LIGHT_XYL_OP_STATUS,
-		BT_MESH_LIGHT_XYL_MSG_MINLEN_STATUS,
-		xyl_status_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_XYL_MSG_MINLEN_STATUS),
+		handle_xyl_status,
 	},
 	{
 		BT_MESH_LIGHT_XYL_OP_TARGET_STATUS,
-		BT_MESH_LIGHT_XYL_MSG_MINLEN_STATUS,
-		target_status_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_XYL_MSG_MINLEN_STATUS),
+		handle_target_status,
 	},
 	{
 		BT_MESH_LIGHT_XYL_OP_DEFAULT_STATUS,
-		BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT,
-		default_status_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT),
+		handle_default_status,
 	},
 	{
 		BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,
-		BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS,
-		range_status_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS),
+		handle_range_status,
 	},
 	BT_MESH_MODEL_OP_END,
 };

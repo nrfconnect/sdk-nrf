@@ -34,27 +34,25 @@ static void rsp_status(struct bt_mesh_model *model,
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
 
-static void handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		       struct net_buf_simple *buf)
+static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		      struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_ONOFF_MSG_LEN_GET) {
-		return;
-	}
-
 	struct bt_mesh_onoff_srv *srv = model->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
 
 	srv->handlers->get(srv, ctx, &status);
 
 	rsp_status(model, ctx, &status);
+
+	return 0;
 }
 
-static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_ONOFF_MSG_MINLEN_SET &&
 	    buf->len != BT_MESH_ONOFF_MSG_MAXLEN_SET) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_onoff_srv *srv = model->user_data;
@@ -66,7 +64,7 @@ static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	uint8_t tid = net_buf_simple_pull_u8(buf);
 
 	if (on_off > 1) {
-		return;
+		return -EINVAL;
 	}
 
 	set.on_off = on_off;
@@ -101,35 +99,36 @@ respond:
 	if (ack) {
 		rsp_status(model, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		       struct net_buf_simple *buf)
+static int handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		      struct net_buf_simple *buf)
 {
-	onoff_set(model, ctx, buf, true);
+	return onoff_set(model, ctx, buf, true);
 }
 
-static void handle_set_unack(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf)
+static int handle_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
 {
-	onoff_set(model, ctx, buf, false);
+	return onoff_set(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_onoff_srv_op[] = {
 	{
 		BT_MESH_ONOFF_OP_GET,
-		BT_MESH_ONOFF_MSG_LEN_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_ONOFF_MSG_LEN_GET),
 		handle_get,
 	},
 	{
 		BT_MESH_ONOFF_OP_SET,
-		BT_MESH_ONOFF_MSG_MINLEN_SET,
+		BT_MESH_LEN_MIN(BT_MESH_ONOFF_MSG_MINLEN_SET),
 		handle_set,
 	},
 	{
 		BT_MESH_ONOFF_OP_SET_UNACK,
-		BT_MESH_ONOFF_MSG_MINLEN_SET,
+		BT_MESH_LEN_MIN(BT_MESH_ONOFF_MSG_MINLEN_SET),
 		handle_set_unack,
 	},
 	BT_MESH_MODEL_OP_END,

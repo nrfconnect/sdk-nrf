@@ -7,20 +7,15 @@
 #include <bluetooth/mesh/gen_ponoff_cli.h>
 #include "model_utils.h"
 
-static void handle_status(struct bt_mesh_model *model,
-			  struct bt_mesh_msg_ctx *ctx,
-			  struct net_buf_simple *buf)
+static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			 struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PONOFF_MSG_LEN_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_ponoff_cli *cli = model->user_data;
 	enum bt_mesh_on_power_up on_power_up = net_buf_simple_pull_u8(buf);
 	enum bt_mesh_on_power_up *rsp;
 
 	if (on_power_up >= BT_MESH_ON_POWER_UP_INVALID) {
-		return;
+		return -EINVAL;
 	}
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_PONOFF_OP_STATUS, ctx->addr,
@@ -33,12 +28,14 @@ static void handle_status(struct bt_mesh_model *model,
 	if (cli->status_handler) {
 		cli->status_handler(cli, ctx, on_power_up);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_ponoff_cli_op[] = {
 	{
 		BT_MESH_PONOFF_OP_STATUS,
-		BT_MESH_PONOFF_MSG_LEN_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_PONOFF_MSG_LEN_STATUS),
 		handle_status,
 	},
 	BT_MESH_MODEL_OP_END,

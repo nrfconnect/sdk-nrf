@@ -6,13 +6,12 @@
 #include <bluetooth/mesh/gen_plvl_cli.h>
 #include "model_utils.h"
 
-static void handle_power_status(struct bt_mesh_model *model,
-				struct bt_mesh_msg_ctx *ctx,
-				struct net_buf_simple *buf)
+static int handle_power_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			       struct net_buf_simple *buf)
 {
 	if (buf->len != BT_MESH_PLVL_MSG_MINLEN_LEVEL_STATUS &&
 	    buf->len != BT_MESH_PLVL_MSG_MAXLEN_LEVEL_STATUS) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_plvl_cli *cli = model->user_data;
@@ -38,16 +37,13 @@ static void handle_power_status(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->power_status) {
 		cli->handlers->power_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void handle_last_status(struct bt_mesh_model *model,
-			       struct bt_mesh_msg_ctx *ctx,
-			       struct net_buf_simple *buf)
+static int handle_last_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			      struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PLVL_MSG_LEN_LAST_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_plvl_cli *cli = model->user_data;
 	uint16_t last = net_buf_simple_pull_le16(buf);
 	uint16_t *rsp;
@@ -61,16 +57,13 @@ static void handle_last_status(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->last_status) {
 		cli->handlers->last_status(cli, ctx, last);
 	}
+
+	return 0;
 }
 
-static void handle_default_status(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				 struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PLVL_MSG_LEN_DEFAULT_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_plvl_cli *cli = model->user_data;
 	uint16_t default_lvl = net_buf_simple_pull_le16(buf);
 	uint16_t *rsp;
@@ -84,16 +77,13 @@ static void handle_default_status(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->default_status) {
 		cli->handlers->default_status(cli, ctx, default_lvl);
 	}
+
+	return 0;
 }
 
-static void handle_range_status(struct bt_mesh_model *model,
-				struct bt_mesh_msg_ctx *ctx,
-				struct net_buf_simple *buf)
+static int handle_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			       struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PLVL_MSG_LEN_RANGE_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_plvl_cli *cli = model->user_data;
 	struct bt_mesh_plvl_range_status status;
 	struct bt_mesh_plvl_range_status *rsp;
@@ -111,27 +101,29 @@ static void handle_range_status(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->range_status) {
 		cli->handlers->range_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_plvl_cli_op[] = {
 	{
 		BT_MESH_PLVL_OP_LEVEL_STATUS,
-		BT_MESH_PLVL_MSG_MINLEN_LEVEL_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_PLVL_MSG_MINLEN_LEVEL_STATUS),
 		handle_power_status,
 	},
 	{
 		BT_MESH_PLVL_OP_LAST_STATUS,
-		BT_MESH_PLVL_MSG_LEN_LAST_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_LAST_STATUS),
 		handle_last_status,
 	},
 	{
 		BT_MESH_PLVL_OP_DEFAULT_STATUS,
-		BT_MESH_PLVL_MSG_LEN_DEFAULT_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_DEFAULT_STATUS),
 		handle_default_status,
 	},
 	{
 		BT_MESH_PLVL_OP_RANGE_STATUS,
-		BT_MESH_PLVL_MSG_LEN_RANGE_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_RANGE_STATUS),
 		handle_range_status,
 	},
 	BT_MESH_MODEL_OP_END,

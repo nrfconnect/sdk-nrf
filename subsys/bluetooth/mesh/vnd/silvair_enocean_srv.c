@@ -208,25 +208,30 @@ static void decommission_device(struct bt_mesh_silvair_enocean_srv *srv)
 #endif
 }
 
-static void handle_get(struct bt_mesh_model *model,
+static int handle_get(struct bt_mesh_model *model,
 		       struct bt_mesh_msg_ctx *ctx,
 		       struct net_buf_simple *buf)
 {
 	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
+
+	if (buf->len != 0) {
+		return -EMSGSIZE;
+	}
 
 	if (!bt_addr_le_cmp(&srv->addr, BT_ADDR_LE_NONE)) {
 		status_pub(model, ctx, BT_MESH_SILVAIR_ENOCEAN_STATUS_NOT_SET, NULL);
 	} else {
 		status_pub(model, ctx, BT_MESH_SILVAIR_ENOCEAN_STATUS_SET, srv->addr.a.val);
 	}
+
+	return 0;
 }
 
-static void handle_set(struct bt_mesh_model *model,
-		       struct bt_mesh_msg_ctx *ctx,
-		       struct net_buf_simple *buf)
+static int handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		      struct net_buf_simple *buf)
 {
 	if (buf->len != BT_MESH_SILVAIR_ENOCEAN_PROXY_MSG_MAXLEN - 1) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
@@ -245,7 +250,7 @@ static void handle_set(struct bt_mesh_model *model,
 		if (bt_addr_le_cmp(&srv->addr, &addr)) {
 			status_pub(model, ctx, BT_MESH_SILVAIR_ENOCEAN_STATUS_UNSPECIFIED_ERROR,
 				   NULL);
-			return;
+			return -EINVAL;
 		}
 	} else {
 		/* PTM 215B User Manual: By default, PTM 215B uses static source
@@ -264,7 +269,7 @@ static void handle_set(struct bt_mesh_model *model,
 			status_pub(model, ctx, BT_MESH_SILVAIR_ENOCEAN_STATUS_UNSPECIFIED_ERROR,
 				   NULL);
 			bt_addr_le_copy(&srv->addr, BT_ADDR_LE_NONE);
-			return;
+			return err;
 		}
 #if CONFIG_BT_ENOCEAN_STORE
 		if (err != -EBUSY) {
@@ -276,13 +281,18 @@ static void handle_set(struct bt_mesh_model *model,
 	}
 
 	status_pub(model, ctx, BT_MESH_SILVAIR_ENOCEAN_STATUS_SET, srv->addr.a.val);
+
+	return 0;
 }
 
-static void handle_delete(struct bt_mesh_model *model,
-			  struct bt_mesh_msg_ctx *ctx,
-			  struct net_buf_simple *buf)
+static int handle_delete(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
+
+	if (buf->len != 0) {
+		return -EMSGSIZE;
+	}
 
 	if (bt_addr_le_cmp(&srv->addr, BT_ADDR_LE_NONE)) {
 		decommission_device(srv);
@@ -293,11 +303,12 @@ static void handle_delete(struct bt_mesh_model *model,
 	if (IS_ENABLED(CONFIG_BT_MESH_SILVAIR_ENOCEAN_AUTO_COMMISSION)) {
 		bt_enocean_commissioning_enable();
 	}
+
+	return 0;
 }
 
-static void handle_message(struct bt_mesh_model *model,
-			   struct bt_mesh_msg_ctx *ctx,
-			   struct net_buf_simple *buf)
+static int handle_message(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			  struct net_buf_simple *buf)
 {
 	uint8_t sub_opcode;
 
@@ -305,21 +316,20 @@ static void handle_message(struct bt_mesh_model *model,
 
 	switch (sub_opcode) {
 	case BT_MESH_SILVAIR_ENOCEAN_PROXY_SUB_OP_GET:
-		handle_get(model, ctx, buf);
-		break;
+		return handle_get(model, ctx, buf);
 	case BT_MESH_SILVAIR_ENOCEAN_PROXY_SUB_OP_SET:
-		handle_set(model, ctx, buf);
-		break;
+		return handle_set(model, ctx, buf);
 	case BT_MESH_SILVAIR_ENOCEAN_PROXY_SUB_OP_DELETE:
-		handle_delete(model, ctx, buf);
-		break;
+		return handle_delete(model, ctx, buf);
 	}
+
+	return -EOPNOTSUPP;
 }
 
 const struct bt_mesh_model_op _bt_mesh_silvair_enocean_srv_op[] = {
 	{
 		BT_MESH_SILVAIR_ENOCEAN_PROXY_OP,
-		BT_MESH_SILVAIR_ENOCEAN_PROXY_MSG_MINLEN,
+		BT_MESH_LEN_MIN(BT_MESH_SILVAIR_ENOCEAN_PROXY_MSG_MINLEN),
 		handle_message,
 	},
 	BT_MESH_MODEL_OP_END,

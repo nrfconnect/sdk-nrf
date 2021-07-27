@@ -64,12 +64,12 @@ static void encode_status(struct net_buf_simple *buf,
 	}
 }
 
-static void temp_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int temp_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		     struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_SET &&
 	    buf->len != BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_SET) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_light_temp_srv *srv = model->user_data;
@@ -83,7 +83,7 @@ static void temp_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	if ((set.params.temp < BT_MESH_LIGHT_TEMP_MIN) ||
 	    (set.params.temp > BT_MESH_LIGHT_TEMP_MAX)) {
-		return;
+		return -EINVAL;
 	}
 
 	if (tid_check_and_update(&srv->prev_transaction, tid, ctx) != 0) {
@@ -106,52 +106,52 @@ respond:
 	if (ack) {
 		(void)bt_mesh_light_temp_srv_pub(srv, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void temp_get_handle(struct bt_mesh_model *model,
+static int handle_temp_get(struct bt_mesh_model *model,
 			    struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHT_CTL_MSG_LEN_GET) {
-		return;
-	}
-
 	struct bt_mesh_light_temp_srv *srv = model->user_data;
 	struct bt_mesh_light_temp_status status = { 0 };
 
 	srv->handlers->get(srv, ctx, &status);
 	(void)bt_mesh_light_temp_srv_pub(srv, ctx, &status);
+
+	return 0;
 }
 
-static void temp_set_handle(struct bt_mesh_model *model,
+static int handle_temp_set(struct bt_mesh_model *model,
 			    struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
-	temp_set(model, ctx, buf, true);
+	return temp_set(model, ctx, buf, true);
 }
 
-static void temp_set_unack_handle(struct bt_mesh_model *model,
+static int handle_temp_set_unack(struct bt_mesh_model *model,
 				  struct bt_mesh_msg_ctx *ctx,
 				  struct net_buf_simple *buf)
 {
-	temp_set(model, ctx, buf, false);
+	return temp_set(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_temp_srv_op[] = {
 	{
 		BT_MESH_LIGHT_TEMP_GET,
-		BT_MESH_LIGHT_CTL_MSG_LEN_GET,
-		temp_get_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTL_MSG_LEN_GET),
+		handle_temp_get,
 	},
 	{
 		BT_MESH_LIGHT_TEMP_SET,
-		BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_SET,
-		temp_set_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_SET),
+		handle_temp_set,
 	},
 	{
 		BT_MESH_LIGHT_TEMP_SET_UNACK,
-		BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_SET,
-		temp_set_unack_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_SET),
+		handle_temp_set_unack,
 	},
 	BT_MESH_MODEL_OP_END,
 };

@@ -35,21 +35,22 @@ static int decode_status(struct net_buf_simple *buf,
 	return 0;
 }
 
-static void handle_status(struct bt_mesh_model *model,
-			  struct bt_mesh_msg_ctx *ctx,
-			  struct net_buf_simple *buf)
+static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			 struct net_buf_simple *buf)
 {
 	if (buf->len != BT_MESH_ONOFF_MSG_MINLEN_STATUS &&
 	    buf->len != BT_MESH_ONOFF_MSG_MAXLEN_STATUS) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_onoff_cli *cli = model->user_data;
 	struct bt_mesh_onoff_status status;
 	struct bt_mesh_onoff_status *rsp;
+	int err;
 
-	if (decode_status(buf, &status)) {
-		return;
+	err = decode_status(buf, &status);
+	if (err) {
+		return err;
 	}
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_ONOFF_OP_STATUS, ctx->addr,
@@ -61,12 +62,14 @@ static void handle_status(struct bt_mesh_model *model,
 	if (cli->status_handler) {
 		cli->status_handler(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_onoff_cli_op[] = {
 	{
 		BT_MESH_ONOFF_OP_STATUS,
-		BT_MESH_ONOFF_MSG_MINLEN_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_ONOFF_MSG_MINLEN_STATUS),
 		handle_status,
 	},
 	BT_MESH_MODEL_OP_END,

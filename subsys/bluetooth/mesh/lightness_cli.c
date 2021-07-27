@@ -7,12 +7,12 @@
 #include "model_utils.h"
 #include "lightness_internal.h"
 
-static void light_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-			 struct net_buf_simple *buf, enum light_repr repr)
+static int light_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			struct net_buf_simple *buf, enum light_repr repr)
 {
 	if (buf->len != BT_MESH_LIGHTNESS_MSG_MINLEN_STATUS &&
 	    buf->len != BT_MESH_LIGHTNESS_MSG_MAXLEN_STATUS) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_lightness_cli *cli = model->user_data;
@@ -39,30 +39,25 @@ static void light_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 	if (cli->handlers && cli->handlers->light_status) {
 		cli->handlers->light_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void handle_light_status(struct bt_mesh_model *model,
-				struct bt_mesh_msg_ctx *ctx,
-				struct net_buf_simple *buf)
-{
-	light_status(model, ctx, buf, ACTUAL);
-}
-
-static void handle_light_linear_status(struct bt_mesh_model *model,
-				struct bt_mesh_msg_ctx *ctx,
-				struct net_buf_simple *buf)
-{
-	light_status(model, ctx, buf, LINEAR);
-}
-
-static void handle_last_status(struct bt_mesh_model *model,
-			       struct bt_mesh_msg_ctx *ctx,
+static int handle_light_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHTNESS_MSG_LEN_LAST_STATUS) {
-		return;
-	}
+	return light_status(model, ctx, buf, ACTUAL);
+}
 
+static int handle_light_linear_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				      struct net_buf_simple *buf)
+{
+	return light_status(model, ctx, buf, LINEAR);
+}
+
+static int handle_last_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			      struct net_buf_simple *buf)
+{
 	struct bt_mesh_lightness_cli *cli = model->user_data;
 	uint16_t last = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
 	uint16_t *rsp;
@@ -76,16 +71,13 @@ static void handle_last_status(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->last_light_status) {
 		cli->handlers->last_light_status(cli, ctx, last);
 	}
+
+	return 0;
 }
 
-static void handle_default_status(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				 struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_lightness_cli *cli = model->user_data;
 	uint16_t default_lvl =
 		repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
@@ -100,16 +92,13 @@ static void handle_default_status(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->default_status) {
 		cli->handlers->default_status(cli, ctx, default_lvl);
 	}
+
+	return 0;
 }
 
-static void handle_range_status(struct bt_mesh_model *model,
-				struct bt_mesh_msg_ctx *ctx,
-				struct net_buf_simple *buf)
+static int handle_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			       struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHTNESS_MSG_LEN_RANGE_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_lightness_cli *cli = model->user_data;
 	struct bt_mesh_lightness_range_status status;
 	struct bt_mesh_lightness_range_status *rsp;
@@ -127,32 +116,34 @@ static void handle_range_status(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->range_status) {
 		cli->handlers->range_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_lightness_cli_op[] = {
 	{
 		BT_MESH_LIGHTNESS_OP_STATUS,
-		BT_MESH_LIGHTNESS_MSG_MINLEN_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHTNESS_MSG_MINLEN_STATUS),
 		handle_light_status,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_LINEAR_STATUS,
-		BT_MESH_LIGHTNESS_MSG_MINLEN_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHTNESS_MSG_MINLEN_STATUS),
 		handle_light_linear_status,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_LAST_STATUS,
-		BT_MESH_LIGHTNESS_MSG_LEN_LAST_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_LAST_STATUS),
 		handle_last_status,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS,
-		BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_STATUS),
 		handle_default_status,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_RANGE_STATUS,
-		BT_MESH_LIGHTNESS_MSG_LEN_RANGE_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_RANGE_STATUS),
 		handle_range_status,
 	},
 	BT_MESH_MODEL_OP_END,

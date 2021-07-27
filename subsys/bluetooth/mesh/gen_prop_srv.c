@@ -114,34 +114,26 @@ static void pub_list_build(const struct bt_mesh_prop_srv *srv,
 
 /* Owner properties */
 
-static void handle_owner_properties_get(struct bt_mesh_model *model,
-					struct bt_mesh_msg_ctx *ctx,
-					struct net_buf_simple *buf)
+static int handle_owner_properties_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				       struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PROP_MSG_LEN_PROPS_GET) {
-		return;
-	}
-
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_ADMIN_PROPS_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS);
 
 	pub_list_build(model->user_data, &rsp, 0);
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void handle_owner_property_get(struct bt_mesh_model *model,
-				      struct bt_mesh_msg_ctx *ctx,
-				      struct net_buf_simple *buf)
+static int handle_owner_property_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				     struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PROP_MSG_LEN_PROP_GET) {
-		return;
-	}
-
 	struct bt_mesh_prop_srv *srv = model->user_data;
 	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	if (id == BT_MESH_PROP_ID_PROHIBITED) {
-		return;
+		return -EINVAL;
 	}
 
 	const struct bt_mesh_prop *prop = prop_get(srv, id);
@@ -174,26 +166,31 @@ static void handle_owner_property_get(struct bt_mesh_model *model,
 
 respond:
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void owner_property_set(struct bt_mesh_model *model,
+static int owner_property_set(struct bt_mesh_model *model,
 			       struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf, bool ack)
 {
 	if ((IS_MFR_SRV(model) && (buf->len != 3)) ||
 	    (buf->len > BT_MESH_PROP_MSG_MAXLEN_ADMIN_PROP_SET ||
 	     buf->len < BT_MESH_PROP_MSG_MINLEN_ADMIN_PROP_SET)) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_prop_srv *srv = model->user_data;
 	uint16_t id = net_buf_simple_pull_le16(buf);
 	enum bt_mesh_prop_access user_access = net_buf_simple_pull_u8(buf);
 
-	if (id == BT_MESH_PROP_ID_PROHIBITED ||
-	    (IS_MFR_SRV(model) && (user_access & BT_MESH_PROP_ACCESS_WRITE)) ||
+	if (id == BT_MESH_PROP_ID_PROHIBITED) {
+		return -EINVAL;
+	}
+
+	if ((IS_MFR_SRV(model) && (user_access & BT_MESH_PROP_ACCESS_WRITE)) ||
 	    user_access > BT_MESH_PROP_ACCESS_READ_WRITE) {
-		return;
+		return -EPERM;
 	}
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_ADMIN_PROP_STATUS,
@@ -237,7 +234,7 @@ static void owner_property_set(struct bt_mesh_model *model,
 			/* User callbacks wipe the id to indicate invalid
 			 * behavior
 			 */
-			return;
+			return -EINVAL;
 		}
 	}
 
@@ -248,41 +245,41 @@ respond:
 	if (ack) {
 		bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 	}
+
+	return 0;
 }
 
-static void handle_owner_property_set(struct bt_mesh_model *model,
-				      struct bt_mesh_msg_ctx *ctx,
-				      struct net_buf_simple *buf)
+static int handle_owner_property_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				     struct net_buf_simple *buf)
 {
-	owner_property_set(model, ctx, buf, true);
+	return owner_property_set(model, ctx, buf, true);
 }
 
-static void handle_owner_property_set_unack(struct bt_mesh_model *model,
-					    struct bt_mesh_msg_ctx *ctx,
-					    struct net_buf_simple *buf)
+static int handle_owner_property_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+					   struct net_buf_simple *buf)
 {
-	owner_property_set(model, ctx, buf, false);
+	return owner_property_set(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_prop_admin_srv_op[] = {
 	{
 		BT_MESH_PROP_OP_ADMIN_PROPS_GET,
-		BT_MESH_PROP_MSG_LEN_PROPS_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PROP_MSG_LEN_PROPS_GET),
 		handle_owner_properties_get,
 	},
 	{
 		BT_MESH_PROP_OP_ADMIN_PROP_GET,
-		BT_MESH_PROP_MSG_LEN_PROP_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PROP_MSG_LEN_PROP_GET),
 		handle_owner_property_get,
 	},
 	{
 		BT_MESH_PROP_OP_ADMIN_PROP_SET,
-		BT_MESH_PROP_MSG_MINLEN_ADMIN_PROP_SET,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_ADMIN_PROP_SET),
 		handle_owner_property_set,
 	},
 	{
 		BT_MESH_PROP_OP_ADMIN_PROP_SET_UNACK,
-		BT_MESH_PROP_MSG_MINLEN_ADMIN_PROP_SET,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_ADMIN_PROP_SET),
 		handle_owner_property_set_unack,
 	},
 	BT_MESH_MODEL_OP_END,
@@ -291,35 +288,30 @@ const struct bt_mesh_model_op _bt_mesh_prop_admin_srv_op[] = {
 const struct bt_mesh_model_op _bt_mesh_prop_mfr_srv_op[] = {
 	{
 		BT_MESH_PROP_OP_MFR_PROPS_GET,
-		BT_MESH_PROP_MSG_LEN_PROPS_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PROP_MSG_LEN_PROPS_GET),
 		handle_owner_properties_get,
 	},
 	{
 		BT_MESH_PROP_OP_MFR_PROP_GET,
-		BT_MESH_PROP_MSG_LEN_PROP_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PROP_MSG_LEN_PROP_GET),
 		handle_owner_property_get,
 	},
 	{
 		BT_MESH_PROP_OP_MFR_PROP_SET,
-		BT_MESH_PROP_MSG_LEN_MFR_PROP_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_PROP_MSG_LEN_MFR_PROP_SET),
 		handle_owner_property_set,
 	},
 	{
 		BT_MESH_PROP_OP_MFR_PROP_SET_UNACK,
-		BT_MESH_PROP_MSG_LEN_MFR_PROP_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_PROP_MSG_LEN_MFR_PROP_SET),
 		handle_owner_property_set_unack,
 	},
 	BT_MESH_MODEL_OP_END,
 };
 
-static void handle_client_properties_get(struct bt_mesh_model *model,
-					 struct bt_mesh_msg_ctx *ctx,
-					 struct net_buf_simple *buf)
+static int handle_client_properties_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+					struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PROP_MSG_LEN_CLIENT_PROPS_GET) {
-		return;
-	}
-
 	uint16_t start_prop = net_buf_simple_pull_le16(buf);
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_CLIENT_PROPS_STATUS,
@@ -327,11 +319,16 @@ static void handle_client_properties_get(struct bt_mesh_model *model,
 
 	pub_list_build(model->user_data, &rsp, start_prop);
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_prop_client_srv_op[] = {
-	{ BT_MESH_PROP_OP_CLIENT_PROPS_GET,
-	  BT_MESH_PROP_MSG_LEN_CLIENT_PROPS_GET, handle_client_properties_get },
+	{
+		BT_MESH_PROP_OP_CLIENT_PROPS_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PROP_MSG_LEN_CLIENT_PROPS_GET),
+		handle_client_properties_get,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 
@@ -368,14 +365,9 @@ static struct bt_mesh_prop *user_prop_get(struct bt_mesh_model *model, uint16_t 
 	return NULL;
 }
 
-static void handle_user_properties_get(struct bt_mesh_model *model,
-				       struct bt_mesh_msg_ctx *ctx,
-				       struct net_buf_simple *buf)
+static int handle_user_properties_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				      struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PROP_MSG_LEN_PROPS_GET) {
-		return;
-	}
-
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_PROPS_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS);
 
@@ -409,20 +401,17 @@ static void handle_user_properties_get(struct bt_mesh_model *model,
 	}
 
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void handle_user_property_get(struct bt_mesh_model *model,
-				     struct bt_mesh_msg_ctx *ctx,
-				     struct net_buf_simple *buf)
+static int handle_user_property_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				    struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PROP_MSG_LEN_PROP_GET) {
-		return;
-	}
-
 	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	if (id == BT_MESH_PROP_ID_PROHIBITED) {
-		return;
+		return -EINVAL;
 	}
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_USER_PROP_STATUS,
@@ -457,15 +446,16 @@ static void handle_user_property_get(struct bt_mesh_model *model,
 
 respond:
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void user_property_set(struct bt_mesh_model *model,
+static int user_property_set(struct bt_mesh_model *model,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf, bool ack)
 {
-	if (buf->len < BT_MESH_PROP_MSG_MINLEN_USER_PROP_SET ||
-	    buf->len > BT_MESH_PROP_MSG_MAXLEN_USER_PROP_SET) {
-		return;
+	if (buf->len > BT_MESH_PROP_MSG_MAXLEN_USER_PROP_SET) {
+		return -EMSGSIZE;
 	}
 
 	uint16_t id = net_buf_simple_pull_le16(buf);
@@ -478,7 +468,7 @@ static void user_property_set(struct bt_mesh_model *model,
 	net_buf_simple_add_le16(&rsp, id);
 
 	if (id == BT_MESH_PROP_ID_PROHIBITED) {
-		return;
+		return -EINVAL;
 	}
 
 	struct bt_mesh_prop_srv *user_srv = model->user_data;
@@ -515,7 +505,7 @@ static void user_property_set(struct bt_mesh_model *model,
 
 	if (value.meta.id == BT_MESH_PROP_ID_PROHIBITED) {
 		/* User callbacks wipe the id to indicate invalid behavior */
-		return;
+		return -EINVAL;
 	}
 
 	net_buf_simple_add(&rsp, value.size);
@@ -526,28 +516,43 @@ respond:
 	if (ack) {
 		bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 	}
+
+	return 0;
 }
 
-static void handle_user_property_set(struct bt_mesh_model *model,
-				     struct bt_mesh_msg_ctx *ctx,
-				     struct net_buf_simple *buf)
+static int handle_user_property_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				    struct net_buf_simple *buf)
 {
-	user_property_set(model, ctx, buf, true);
+	return user_property_set(model, ctx, buf, true);
 }
 
-static void handle_user_property_set_unack(struct bt_mesh_model *model,
-					   struct bt_mesh_msg_ctx *ctx,
-					   struct net_buf_simple *buf)
+static int handle_user_property_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+					  struct net_buf_simple *buf)
 {
-	user_property_set(model, ctx, buf, false);
+	return user_property_set(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_prop_user_srv_op[] = {
-	{ BT_MESH_PROP_OP_USER_PROPS_GET, 0, handle_user_properties_get },
-	{ BT_MESH_PROP_OP_USER_PROP_GET, 2, handle_user_property_get },
-	{ BT_MESH_PROP_OP_USER_PROP_SET, 2, handle_user_property_set },
-	{ BT_MESH_PROP_OP_USER_PROP_SET_UNACK, 2,
-	  handle_user_property_set_unack },
+	{
+		BT_MESH_PROP_OP_USER_PROPS_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PROP_MSG_LEN_PROPS_GET),
+		handle_user_properties_get,
+	},
+	{
+		BT_MESH_PROP_OP_USER_PROP_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PROP_MSG_LEN_PROP_GET),
+		handle_user_property_get,
+	},
+	{
+		BT_MESH_PROP_OP_USER_PROP_SET,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_USER_PROP_SET),
+		handle_user_property_set,
+	},
+	{
+		BT_MESH_PROP_OP_USER_PROP_SET_UNACK,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_USER_PROP_SET),
+		handle_user_property_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

@@ -750,26 +750,19 @@ static void mode_rsp(struct bt_mesh_light_ctrl_srv *srv,
 	model_send(srv->model, ctx, &rsp);
 }
 
-static void handle_mode_get(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_mode_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 
-	if (buf->len != 0) {
-		return;
-	}
-
 	mode_rsp(srv, ctx);
+
+	return 0;
 }
 
 static int mode_set(struct bt_mesh_light_ctrl_srv *srv,
 		    struct net_buf_simple *buf)
 {
-	if (buf->len != 1) {
-		return -EINVAL;
-	}
-
 	uint8_t mode = net_buf_simple_pull_u8(buf);
 
 	if (mode > 1) {
@@ -787,32 +780,28 @@ static int mode_set(struct bt_mesh_light_ctrl_srv *srv,
 	return 0;
 }
 
-static void handle_mode_set(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_mode_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 	int err;
 
 	err = mode_set(srv, buf);
 	if (err) {
-		return;
+		return err;
 	}
 
 	mode_rsp(srv, ctx);
+
+	return 0;
 }
 
-static void handle_mode_set_unack(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_mode_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				 struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
-	int err;
 
-	err = mode_set(srv, buf);
-	if (err) {
-		return;
-	}
+	return mode_set(srv, buf);
 }
 
 static void om_rsp(struct bt_mesh_light_ctrl_srv *srv,
@@ -826,26 +815,19 @@ static void om_rsp(struct bt_mesh_light_ctrl_srv *srv,
 	model_send(srv->model, ctx, &rsp);
 }
 
-static void handle_om_get(struct bt_mesh_model *model,
-			  struct bt_mesh_msg_ctx *ctx,
-			  struct net_buf_simple *buf)
+static int handle_om_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 
-	if (buf->len != 0) {
-		return;
-	}
-
 	om_rsp(srv, ctx);
+
+	return 0;
 }
 
 static int om_set(struct bt_mesh_light_ctrl_srv *srv,
 		  struct net_buf_simple *buf)
 {
-	if (buf->len != 1) {
-		return -EINVAL;
-	}
-
 	uint8_t mode = net_buf_simple_pull_u8(buf);
 
 	if (mode > 1) {
@@ -864,57 +846,49 @@ static int om_set(struct bt_mesh_light_ctrl_srv *srv,
 	return 0;
 }
 
-static void handle_om_set(struct bt_mesh_model *model,
-			  struct bt_mesh_msg_ctx *ctx,
-			  struct net_buf_simple *buf)
+static int handle_om_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 	int err;
 
 	err = om_set(srv, buf);
 	if (err) {
-		return;
+		return err;
 	}
 
 	om_rsp(srv, ctx);
+
+	return 0;
 }
 
-static void handle_om_set_unack(struct bt_mesh_model *model,
-				struct bt_mesh_msg_ctx *ctx,
-				struct net_buf_simple *buf)
-{
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
-	int err;
-
-	err = om_set(srv, buf);
-	if (err) {
-		return;
-	}
-}
-
-static void handle_light_onoff_get(struct bt_mesh_model *model,
-				   struct bt_mesh_msg_ctx *ctx,
-				   struct net_buf_simple *buf)
+static int handle_om_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			       struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 
-	if (buf->len != 0) {
-		return;
-	}
+	return om_set(srv, buf);
+}
+
+static int handle_light_onoff_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				  struct net_buf_simple *buf)
+{
+	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 
 	BT_DBG("Get Light OnOff");
 
 	light_onoff_status_send(srv, ctx, srv->state);
+
+	return 0;
 }
 
-static void light_onoff_set(struct bt_mesh_light_ctrl_srv *srv,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf, bool ack)
+static int light_onoff_set(struct bt_mesh_light_ctrl_srv *srv, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf, bool ack)
 {
 	uint8_t onoff = net_buf_simple_pull_u8(buf);
 
 	if (onoff > 1) {
-		return;
+		return -EINVAL;
 	}
 
 	uint8_t tid = net_buf_simple_pull_u8(buf);
@@ -945,29 +919,28 @@ static void light_onoff_set(struct bt_mesh_light_ctrl_srv *srv,
 	if (ack) {
 		light_onoff_status_send(srv, ctx, prev_state);
 	}
+
+	return 0;
 }
 
-static void handle_light_onoff_set(struct bt_mesh_model *model,
-				   struct bt_mesh_msg_ctx *ctx,
-				   struct net_buf_simple *buf)
+static int handle_light_onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				  struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 
-	light_onoff_set(srv, ctx, buf, true);
+	return light_onoff_set(srv, ctx, buf, true);
 }
 
-static void handle_light_onoff_set_unack(struct bt_mesh_model *model,
-					 struct bt_mesh_msg_ctx *ctx,
-					 struct net_buf_simple *buf)
+static int handle_light_onoff_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+					struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 
-	light_onoff_set(srv, ctx, buf, false);
+	return light_onoff_set(srv, ctx, buf, false);
 }
 
-static void handle_sensor_status(struct bt_mesh_model *model,
-				 struct bt_mesh_msg_ctx *ctx,
-				 struct net_buf_simple *buf)
+static int handle_sensor_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 	int err;
@@ -1009,7 +982,7 @@ static void handle_sensor_status(struct bt_mesh_model *model,
 
 		err = sensor_value_decode(buf, type, &value);
 		if (err) {
-			return;
+			return -ENOENT;
 		}
 
 		BT_DBG("Sensor 0x%04x: %s", id, bt_mesh_sensor_ch_str(&value));
@@ -1037,57 +1010,59 @@ static void handle_sensor_status(struct bt_mesh_model *model,
 			turn_on(srv, NULL, true);
 		}
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctrl_srv_op[] = {
 	{
 		BT_MESH_LIGHT_CTRL_OP_MODE_GET,
-		0,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTRL_MSG_LEN_MODE_GET),
 		handle_mode_get,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_MODE_SET,
-		1,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTRL_MSG_LEN_MODE_SET),
 		handle_mode_set,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_MODE_SET_UNACK,
-		1,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTRL_MSG_LEN_MODE_SET),
 		handle_mode_set_unack,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_OM_GET,
-		0,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTRL_MSG_LEN_OM_GET),
 		handle_om_get,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_OM_SET,
-		1,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTRL_MSG_LEN_OM_SET),
 		handle_om_set,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_OM_SET_UNACK,
-		1,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTRL_MSG_LEN_OM_SET),
 		handle_om_set_unack,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_GET,
-		0,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTRL_MSG_LEN_LIGHT_ONOFF_GET),
 		handle_light_onoff_get,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_SET,
-		2,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_CTRL_MSG_MINLEN_LIGHT_ONOFF_SET),
 		handle_light_onoff_set,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_SET_UNACK,
-		2,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_CTRL_MSG_MINLEN_LIGHT_ONOFF_SET),
 		handle_light_onoff_set_unack,
 	},
 	{
 		BT_MESH_SENSOR_OP_STATUS,
-		3,
+		BT_MESH_LEN_MIN(BT_MESH_SENSOR_MSG_MINLEN_STATUS),
 		handle_sensor_status,
 	},
 	BT_MESH_MODEL_OP_END,
@@ -1293,7 +1268,7 @@ static int prop_set(struct net_buf_simple *buf,
 	return 0;
 }
 
-static void prop_tx(struct bt_mesh_light_ctrl_srv *srv,
+static int prop_tx(struct bt_mesh_light_ctrl_srv *srv,
 		    struct bt_mesh_msg_ctx *ctx, uint16_t id)
 {
 	int err;
@@ -1306,30 +1281,51 @@ static void prop_tx(struct bt_mesh_light_ctrl_srv *srv,
 
 	err = prop_get(&buf, srv, id);
 	if (err) {
-		return;
+		return -ENOENT;
 	}
 
 	model_send(srv->setup_srv, ctx, &buf);
+
+	return 0;
 }
 
-static void handle_prop_get(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_prop_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
-
-	if (buf->len != 2) {
-		return;
-	}
-
 	uint16_t id = net_buf_simple_pull_le16(buf);
 
-	prop_tx(srv, ctx, id);
+	return prop_tx(srv, ctx, id);
+
+	return 0;
 }
 
-static void handle_prop_set(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_prop_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
+{
+	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	uint16_t id = net_buf_simple_pull_le16(buf);
+	int err;
+
+	err = prop_set(buf, srv, id);
+	if (err) {
+		return err;
+	}
+
+	(void)prop_tx(srv, ctx, id);
+	(void)prop_tx(srv, NULL, id);
+
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(srv->model);
+	}
+
+	store(srv, FLAG_STORE_CFG);
+
+	return 0;
+}
+
+static int handle_prop_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				 struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 	int err;
@@ -1337,44 +1333,37 @@ static void handle_prop_set(struct bt_mesh_model *model,
 	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	err = prop_set(buf, srv, id);
+	if (err) {
+		return err;
+	}
 
-	if (!err) {
-		prop_tx(srv, ctx, id);
-		prop_tx(srv, NULL, id);
+	(void)prop_tx(srv, NULL, id);
 
-		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-			bt_mesh_scene_invalidate(srv->model);
-		}
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(srv->model);
 	}
 
 	store(srv, FLAG_STORE_CFG);
-}
 
-static void handle_prop_set_unack(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
-{
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
-	int err;
-
-	uint16_t id = net_buf_simple_pull_le16(buf);
-
-	err = prop_set(buf, srv, id);
-	if (!err) {
-		prop_tx(srv, NULL, id);
-
-		if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
-			bt_mesh_scene_invalidate(srv->model);
-		}
-	}
-
-	store(srv, FLAG_STORE_CFG);
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctrl_setup_srv_op[] = {
-	{ BT_MESH_LIGHT_CTRL_OP_PROP_GET, 2, handle_prop_get },
-	{ BT_MESH_LIGHT_CTRL_OP_PROP_SET, 3, handle_prop_set },
-	{ BT_MESH_LIGHT_CTRL_OP_PROP_SET_UNACK, 3, handle_prop_set_unack },
+	{
+		BT_MESH_LIGHT_CTRL_OP_PROP_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTRL_MSG_LEN_PROP_GET),
+		handle_prop_get,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_PROP_SET,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_CTRL_MSG_MINLEN_PROP_SET),
+		handle_prop_set,
+	},
+	{
+		BT_MESH_LIGHT_CTRL_OP_PROP_SET_UNACK,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_CTRL_MSG_MINLEN_PROP_SET),
+		handle_prop_set_unack,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

@@ -8,17 +8,12 @@
 #include "scheduler_internal.h"
 #include "model_utils.h"
 
-static void status_op(struct bt_mesh_model *model,
-		      struct bt_mesh_msg_ctx *ctx,
-		      struct net_buf_simple *buf)
+static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_scheduler_cli *cli = model->user_data;
 	uint16_t schedules;
 	uint16_t *rsp;
-
-	if (buf->len != BT_MESH_SCHEDULER_MSG_LEN_STATUS) {
-		return;
-	}
 
 	schedules = net_buf_simple_pull_le16(buf);
 
@@ -31,11 +26,12 @@ static void status_op(struct bt_mesh_model *model,
 	if (cli->status_handler) {
 		cli->status_handler(cli, ctx, schedules);
 	}
+
+	return 0;
 }
 
-static void action_status_op(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf)
+static int handle_action_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				struct net_buf_simple *buf)
 {
 	struct bt_mesh_scheduler_cli *cli = model->user_data;
 	struct bt_mesh_schedule_entry action = {0};
@@ -44,7 +40,7 @@ static void action_status_op(struct bt_mesh_model *model,
 
 	if (buf->len != BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS &&
 	    buf->len !=	BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS_REDUCED) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	if (buf->len == BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS) {
@@ -66,18 +62,20 @@ static void action_status_op(struct bt_mesh_model *model,
 			buf->len == BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS ?
 				&action : NULL);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_scheduler_cli_op[] = {
 	{
 		BT_MESH_SCHEDULER_OP_STATUS,
-		BT_MESH_SCHEDULER_MSG_LEN_STATUS,
-		status_op,
+		BT_MESH_LEN_EXACT(BT_MESH_SCHEDULER_MSG_LEN_STATUS),
+		handle_status,
 	},
 	{
 		BT_MESH_SCHEDULER_OP_ACTION_STATUS,
-		BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS_REDUCED,
-		action_status_op,
+		BT_MESH_LEN_MIN(BT_MESH_SCHEDULER_MSG_LEN_ACTION_STATUS_REDUCED),
+		handle_action_status,
 	},
 	BT_MESH_MODEL_OP_END,
 };
