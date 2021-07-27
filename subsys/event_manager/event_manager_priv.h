@@ -158,11 +158,11 @@ extern "C" {
 
 /* Wrappers used for defining event infos */
 #ifdef CONFIG_EVENT_MANAGER_TRACE_EVENT_EXECUTION
-#define MEM_ADDRESS_LABEL "mem_address",
+#define EM_MEM_ADDRESS_LABEL "_em_mem_address_",
 #define MEM_ADDRESS_TYPE PROFILER_ARG_U32,
 
 #else
-#define MEM_ADDRESS_LABEL
+#define EM_MEM_ADDRESS_LABEL
 #define MEM_ADDRESS_TYPE
 
 #endif /* CONFIG_EVENT_MANAGER_TRACE_EVENT_EXECUTION */
@@ -170,13 +170,13 @@ extern "C" {
 
 #ifdef CONFIG_EVENT_MANAGER_PROFILE_EVENT_DATA
 #define _ARG_LABELS_DEFINE(...) \
-	{MEM_ADDRESS_LABEL __VA_ARGS__}
+	{EM_MEM_ADDRESS_LABEL __VA_ARGS__}
 #define _ARG_TYPES_DEFINE(...) \
 	 {MEM_ADDRESS_TYPE __VA_ARGS__}
 
 #else
 #define _ARG_LABELS_DEFINE(...) \
-	{MEM_ADDRESS_LABEL}
+	{EM_MEM_ADDRESS_LABEL}
 #define _ARG_TYPES_DEFINE(...) \
 	 {MEM_ADDRESS_TYPE}
 
