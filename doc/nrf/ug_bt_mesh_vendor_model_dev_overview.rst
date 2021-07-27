@@ -297,7 +297,7 @@ These callbacks are defined in :c:struct:`bt_mesh_model_cb`.
 :c:member:`bt_mesh_model_cb.settings_set`
    This handler is called when the model data is restored from the persistent storage.
    If you need to store data in the persistent storage, use the :c:func:`bt_mesh_model_data_store` function.
-   To use the persitent storage, it needs to be enabled with :option:`CONFIG_BT_SETTINGS`.
+   To use the persitent storage, it needs to be enabled with :kconfig:`CONFIG_BT_SETTINGS`.
    For more information on persistent storage, see :ref:`zephyr:settings_api`.
 
 :c:member:`bt_mesh_model_cb.start`

@@ -45,6 +45,6 @@ Limitations for Thread 1.2 support
 The Thread 1.2 Specification support has the following limitations:
 
 * The current implementation does not guarantee that all retransmitted frames will be secured when using the radio driver transmission security capabilities.
-  For this reason, OpenThread retransmissions are disabled by default when the :option:`CONFIG_NRF_802154_ENCRYPTION` Kconfig option is enabled.
+  For this reason, OpenThread retransmissions are disabled by default when the :kconfig:`CONFIG_NRF_802154_ENCRYPTION` Kconfig option is enabled.
   You can enable the retransmissions at your own risk.
 * Due to code size limitation, the combination of complete set of Thread 1.2 features with the Bluetooth LE multiprotocol support is not possible for the nRF52833 DKs.

@@ -46,11 +46,11 @@ Configuration*
 
 The following configuration parameters are associated with the XYZ Server/XYZ Client model:
 
-* ``:option:PARAM_1`` - Short description of the first parameter.
-* ``:option:PARAM_2`` - Short description of the second parameter.
+* ``:kconfig:PARAM_1`` - Short description of the first parameter.
+* ``:kconfig:PARAM_2`` - Short description of the second parameter.
 
 .. tip::
-   List Kconfig options associated with the model, and link to them using the `:option:` reference.
+   List Kconfig options associated with the model, and link to them using the `:kconfig:` reference.
    This section is optional, because not all models have Kconfig parameters that allow configuration.
    Do not go into details here, as the link will allow the reader to get the required information.
    However, do provide a short description of each option.

@@ -21,7 +21,7 @@ Setting up a unit test
 An example for a unit test can be found in :file:`tests/unity/example_test`.
 The file `tests/unity/example_test/CMakeLists.txt`_ shows how to set up the generation of the test runner file and mocks.
 
-To run the unit test, enable the Unity module (:option:`CONFIG_UNITY`) and the module under test.
+To run the unit test, enable the Unity module (:kconfig:`CONFIG_UNITY`) and the module under test.
 The module under test and all dependencies are enabled and compiled into the binary, even the mocked modules.
 
 The linker replaces all calls to the mocked API with a mock implementation using the wrapping feature.

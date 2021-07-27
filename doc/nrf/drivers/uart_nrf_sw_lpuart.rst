@@ -7,8 +7,8 @@ Low power UART driver
    :local:
    :depth: 2
 
-The low power UART driver implements the standard *asynchronous UART API* that can be enabled with the :option:`CONFIG_UART_ASYNC_API` configuration option.
-Alternatively, you can also enable the *interrupt-driven UART API* using the :option:`CONFIG_NRF_SW_LPUART_INT_DRIVEN` configuration option.
+The low power UART driver implements the standard *asynchronous UART API* that can be enabled with the :kconfig:`CONFIG_UART_ASYNC_API` configuration option.
+Alternatively, you can also enable the *interrupt-driven UART API* using the :kconfig:`CONFIG_NRF_SW_LPUART_INT_DRIVEN` configuration option.
 
 The protocol used by this driver implements two control lines, instead of standard hardware flow control lines, to allow for disabling the UART receiver during the idle period.
 This results in low power consumption, as you can shut down the high-frequency clock when UART is in idle state.
@@ -84,15 +84,15 @@ See the following configuration example:
 
 The low power UART configuration includes:
 
-* :option:`CONFIG_NRF_SW_LPUART_MAX_PACKET_SIZE`: Sets the maximum RX packet size.
+* :kconfig:`CONFIG_NRF_SW_LPUART_MAX_PACKET_SIZE`: Sets the maximum RX packet size.
 
-* :option:`CONFIG_NRF_SW_LPUART_INT_DRIVEN`: Enables the interrupt-driven API.
+* :kconfig:`CONFIG_NRF_SW_LPUART_INT_DRIVEN`: Enables the interrupt-driven API.
   When enabled, the asynchronous API cannot be used.
 
-* :option:`CONFIG_NRF_SW_LPUART_DEFAULT_TX_TIMEOUT`: Sets the timeout value, in milliseconds.
+* :kconfig:`CONFIG_NRF_SW_LPUART_DEFAULT_TX_TIMEOUT`: Sets the timeout value, in milliseconds.
   It is used in :c:func:`uart_poll_out` and :c:func:`uart_fifo_fill` when the interrupt-driven API is enabled.
 
-* :option:`CONFIG_NRF_SW_LPUART_INT_DRV_TX_BUF_SIZE`: Set the size of the internal buffer created and used by :c:func:`uart_fifo_fill`.
+* :kconfig:`CONFIG_NRF_SW_LPUART_INT_DRV_TX_BUF_SIZE`: Set the size of the internal buffer created and used by :c:func:`uart_fifo_fill`.
   For optimal performance, it should be able to fit the longest possible packet.
 
 Usage

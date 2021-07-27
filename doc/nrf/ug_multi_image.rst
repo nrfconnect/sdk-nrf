@@ -73,8 +73,8 @@ When building the child image from the source or using a prebuilt HEX file, the 
 This means that you can enable and integrate an additional image just by using the default configuration.
 
 To change the default configuration and configure how a child image is handled, locate the BUILD_STRATEGY configuration options for the child image in the parent image configuration.
-For example, to use a prebuilt HEX file of the :ref:`secure_partition_manager` instead of building it, select :option:`CONFIG_SPM_BUILD_STRATEGY_USE_HEX_FILE` instead of the default :option:`CONFIG_SPM_BUILD_STRATEGY_FROM_SOURCE`, and specify the HEX file in :option:`CONFIG_SPM_HEX_FILE`.
-To ignore an MCUboot child image, select :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_SKIP_BUILD` instead of :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE`.
+For example, to use a prebuilt HEX file of the :ref:`secure_partition_manager` instead of building it, select :kconfig:`CONFIG_SPM_BUILD_STRATEGY_USE_HEX_FILE` instead of the default :kconfig:`CONFIG_SPM_BUILD_STRATEGY_FROM_SOURCE`, and specify the HEX file in :kconfig:`CONFIG_SPM_HEX_FILE`.
+To ignore an MCUboot child image, select :kconfig:`CONFIG_MCUBOOT_BUILD_STRATEGY_SKIP_BUILD` instead of :kconfig:`CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE`.
 
 .. _ug_multi_image_defining:
 
@@ -341,7 +341,7 @@ Memory placement
 ****************
 
 In a multi-image build, all images must be placed in memory so that they do not overlap.
-The flash memory start address for each image must be specified by, for example, :option:`CONFIG_FLASH_LOAD_OFFSET`.
+The flash memory start address for each image must be specified by, for example, :kconfig:`CONFIG_FLASH_LOAD_OFFSET`.
 
 Hardcoding the image locations like this works fine for simple use cases like a bootloader that prepares a device, where there are no further requirements on where in memory each image must be placed.
 However, more advanced use cases require a memory layout where images are located in a specific order relative to one another.

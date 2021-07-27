@@ -10,8 +10,8 @@ Use the default
   The extension identifier is set to the DEVICEID from the factory information configuration registers (FICR).
 
 Replace the company ID
-  You can enable :option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` to replace Nordic Semiconductor's company ID with your own company ID.
-  Specify your company ID in :option:`CONFIG_IEEE802154_VENDOR_OUI`.
+  You can enable :kconfig:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` to replace Nordic Semiconductor's company ID with your own company ID.
+  Specify your company ID in :kconfig:`CONFIG_IEEE802154_VENDOR_OUI`.
 
   The extension identifier is set to the default, namely the DEVICEID from FICR.
 
@@ -20,12 +20,12 @@ Replace the full EUI-64
   For nRF52 Series devices, the CUSTOMER registers block is used.
   For nRF53 Series devices, the OTP registers block is used.
 
-  To use the EUI-64 value from the UICR, enable :option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE` and set :option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG` to the base of the two consecutive registers that contain your EUI-64 value.
+  To use the EUI-64 value from the UICR, enable :kconfig:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE` and set :kconfig:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG` to the base of the two consecutive registers that contain your EUI-64 value.
 
   The following example shows how to replace the full EUI-64 on an nRF52840 device:
 
-  1. Enable :option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE`.
-  #. Specify the offset for the UICR registers in :option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`.
+  1. Enable :kconfig:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE`.
+  #. Specify the offset for the UICR registers in :kconfig:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`.
      This example uses UICR->CUSTOMER[0] and UICR->CUSTOMER[1], which means that you can keep the default value ``0``.
   #. Build and program your application erasing the whole memory (replace *serial_number* with the serial number of your debugger):
 
@@ -44,4 +44,4 @@ Replace the full EUI-64
        nrfjprog --snr *serial_number* --memwr 0x10001084 --val 0x55667788
        nrfjprog --snr *serial_number* --reset
 
-     If you used a different value for :option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`, you must use different register addresses.
+     If you used a different value for :kconfig:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`, you must use different register addresses.

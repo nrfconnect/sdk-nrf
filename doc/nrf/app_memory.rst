@@ -42,23 +42,23 @@ Complete the following actions to optimize the Bluetooth part of your applicatio
 
   The following configuration options affect the stack sizes of the Bluetooth threads:
 
-  * :option:`CONFIG_SDC_RX_STACK_SIZE`
-  * :option:`CONFIG_BT_RX_STACK_SIZE`
-  * :option:`CONFIG_BT_HCI_TX_STACK_SIZE`
-  * :option:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
+  * :kconfig:`CONFIG_SDC_RX_STACK_SIZE`
+  * :kconfig:`CONFIG_BT_RX_STACK_SIZE`
+  * :kconfig:`CONFIG_BT_HCI_TX_STACK_SIZE`
+  * :kconfig:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
 
 * Reduce the overall number and the sizes of the Bluetooth buffers, based on the expected data traffic in your application.
 
   The following configuration options affect the Bluetooth buffers:
 
-  * :option:`CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT`
-  * :option:`CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE`
-  * :option:`CONFIG_BT_BUF_EVT_RX_COUNT`
-  * :option:`CONFIG_BT_CONN_TX_MAX`
-  * :option:`CONFIG_BT_L2CAP_TX_BUF_COUNT`
-  * :option:`CONFIG_BT_CTLR_RX_BUFFERS`
-  * :option:`CONFIG_BT_BUF_ACL_TX_COUNT`
-  * :option:`CONFIG_BT_BUF_ACL_TX_SIZE`
+  * :kconfig:`CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT`
+  * :kconfig:`CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE`
+  * :kconfig:`CONFIG_BT_BUF_EVT_RX_COUNT`
+  * :kconfig:`CONFIG_BT_CONN_TX_MAX`
+  * :kconfig:`CONFIG_BT_L2CAP_TX_BUF_COUNT`
+  * :kconfig:`CONFIG_BT_CTLR_RX_BUFFERS`
+  * :kconfig:`CONFIG_BT_BUF_ACL_TX_COUNT`
+  * :kconfig:`CONFIG_BT_BUF_ACL_TX_SIZE`
 
 For reference, you can find minimal footprint configurations of the :ref:`peripheral_lbs` sample in :file:`nrf/samples/bluetooth/peripheral_lbs/minimal.conf` and the :ref:`peripheral_uart` sample in :file:`nrf/samples/bluetooth/peripheral_uart/minimal.conf`.
 
@@ -82,17 +82,17 @@ Complete the following actions to optimize the Thread part of your application:
 
   The following configuration options affect the stack sizes of the Thread threads:
 
-  * :option:`CONFIG_OPENTHREAD_THREAD_STACK_SIZE`
-  * :option:`CONFIG_NET_CONNECTION_MANAGER_STACK_SIZE`
-  * :option:`CONFIG_NET_RX_STACK_SIZE`
-  * :option:`CONFIG_NET_TX_STACK_SIZE`
-  * :option:`CONFIG_NET_MGMT_EVENT_STACK_SIZE`
-  * :option:`CONFIG_IEEE802154_NRF5_RX_STACK_SIZE`
-  * :option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`
-  * :option:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
-  * :option:`CONFIG_SHELL_STACK_SIZE`
-  * :option:`CONFIG_IDLE_STACK_SIZE`
-  * :option:`CONFIG_MAIN_STACK_SIZE`
-  * :option:`CONFIG_ISR_STACK_SIZE`
+  * :kconfig:`CONFIG_OPENTHREAD_THREAD_STACK_SIZE`
+  * :kconfig:`CONFIG_NET_CONNECTION_MANAGER_STACK_SIZE`
+  * :kconfig:`CONFIG_NET_RX_STACK_SIZE`
+  * :kconfig:`CONFIG_NET_TX_STACK_SIZE`
+  * :kconfig:`CONFIG_NET_MGMT_EVENT_STACK_SIZE`
+  * :kconfig:`CONFIG_IEEE802154_NRF5_RX_STACK_SIZE`
+  * :kconfig:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`
+  * :kconfig:`CONFIG_MPSL_SIGNAL_STACK_SIZE`
+  * :kconfig:`CONFIG_SHELL_STACK_SIZE`
+  * :kconfig:`CONFIG_IDLE_STACK_SIZE`
+  * :kconfig:`CONFIG_MAIN_STACK_SIZE`
+  * :kconfig:`CONFIG_ISR_STACK_SIZE`
 
 For reference, you can find minimal footprint configurations for the single protocol and multiprotocol variants of the :ref:`ot_cli_sample` sample in :file:`nrf/samples/openthread/cli/overlay-minimal_*protocol.conf`.

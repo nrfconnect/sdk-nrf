@@ -419,7 +419,7 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
  *
  *  Only known sensor types from @ref bt_mesh_sensor_types will be available.
  *  Sensor types can be made known to the sensor module by enabling
- *  @option{CONFIG_BT_MESH_SENSOR_ALL_TYPES} or by referencing them in the
+ *  @kconfig{CONFIG_BT_MESH_SENSOR_ALL_TYPES} or by referencing them in the
  *  application.
  *
  *  @param[in] id A Device Property ID.

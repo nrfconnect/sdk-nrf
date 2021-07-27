@@ -140,7 +140,7 @@ Key revocation can be a useful security measure for devices that have already be
 If a private key has been compromised or lost, you can invalidate its public key by uploading a new firmware image signed by another key known to the bootloader.
 
 These keys are kept internally by the bootloader, so the list of available public keys cannot change once it is deployed.
-See :option:`CONFIG_SB_PUBLIC_KEY_FILES` for details on how this mechanism is implemented.
+See :kconfig:`CONFIG_SB_PUBLIC_KEY_FILES` for details on how this mechanism is implemented.
 
 You can add this feature to your own project and check its functionality as follows:
 

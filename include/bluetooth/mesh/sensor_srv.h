@@ -30,7 +30,7 @@ struct bt_mesh_sensor_srv;
  *
  *  @param[in] _sensors Array of pointers to sensors owned by this server.
  *  @param[in] _count Number of sensors in the array. Can at most be
- *                    @option{CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX}.
+ *                    @kconfig{CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX}.
  */
 #define BT_MESH_SENSOR_SRV_INIT(_sensors, _count)                              \
 	{                                                                      \

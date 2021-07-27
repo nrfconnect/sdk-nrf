@@ -202,7 +202,7 @@ void bt_gadgets_profile_mtu_exchanged(struct bt_conn *conn);
  *          with a single string as the payload.
  *          The string must be valid JSON for the cloud side to accept it.
  *          The namespace for this custom event is given by
- *          @option{CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE}.
+ *          @kconfig{CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE}.
  *
  * @param[in] name Null-terminated event name string.
  * @param[in] json Null-terminated JSON string.

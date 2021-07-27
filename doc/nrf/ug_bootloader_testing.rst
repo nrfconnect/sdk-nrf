@@ -6,7 +6,7 @@ Testing the bootloader chain
 To test either of the bootloaders and the secure bootloader chain, build and program them with any sample as described in :ref:`Adding a bootloader chain  <ug_bootloader_adding>`.
 
 By default, both |NSIB| and MCUboot print information to their serial output on boot.
-This output includes information about the validation of images in its slots, as well as firmware-specific information if using :option:`CONFIG_FW_INFO` with the |NSIB|.
+This output includes information about the validation of images in its slots, as well as firmware-specific information if using :kconfig:`CONFIG_FW_INFO` with the |NSIB|.
 To see this output:
 
 1. |connect_terminal|

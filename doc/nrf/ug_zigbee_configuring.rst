@@ -17,7 +17,7 @@ Required libraries and drivers
 Zigbee requires the following modules to properly operate in the |NCS|:
 
 * :ref:`nrfxlib:zboss` available in nrfxlib, with the :ref:`lib_zigbee_osif` subsystem acting as the linking layer between the ZBOSS stack and the |NCS|.
-  The ZBOSS library is enabled by the :option:`CONFIG_ZIGBEE` Kconfig option.
+  The ZBOSS library is enabled by the :kconfig:`CONFIG_ZIGBEE` Kconfig option.
   For more information about the ZBOSS stack, see also the `external ZBOSS development guide and API documentation`_.
 * :ref:`zephyr:ieee802154_interface` radio driver - This library is automatically enabled when working with Zigbee on Nordic Semiconductor's development kits.
 
@@ -26,14 +26,14 @@ Zigbee requires the following modules to properly operate in the |NCS|:
 Mandatory configuration
 ***********************
 
-To use the Zigbee protocol, set the :option:`CONFIG_ZIGBEE` Kconfig option.
+To use the Zigbee protocol, set the :kconfig:`CONFIG_ZIGBEE` Kconfig option.
 Setting this option enables all the peripherals required for the correct operation of the Zigbee protocol and allows you to use them.
 
 After that, you have to define the Zigbee device role for the Zigbee application or sample by setting one of the following Kconfig options:
 
-* Router role: :option:`CONFIG_ZIGBEE_ROLE_ROUTER`
-* End Device role: :option:`CONFIG_ZIGBEE_ROLE_END_DEVICE`
-* Coordinator role: :option:`CONFIG_ZIGBEE_ROLE_COORDINATOR`
+* Router role: :kconfig:`CONFIG_ZIGBEE_ROLE_ROUTER`
+* End Device role: :kconfig:`CONFIG_ZIGBEE_ROLE_END_DEVICE`
+* Coordinator role: :kconfig:`CONFIG_ZIGBEE_ROLE_COORDINATOR`
 
 Setting any of these options enables the respective ZBOSS role library.
 This is needed because End Devices use different libraries than Routers and Coordinators.
@@ -69,9 +69,9 @@ Power saving during sleep
 With the sleepy behavior enabled, the unused part of RAM memory is powered off, which allows to lower the power consumption even more.
 The sleep current of MCU can be lowered to about 1.8 uA by completing the following steps:
 
-1. Turn off UART by setting :option:`CONFIG_SERIAL` to ``n``.
+1. Turn off UART by setting :kconfig:`CONFIG_SERIAL` to ``n``.
 #. For current measurements for the :ref:`nRF52840 DK <ug_nrf52>` (PCA10056), the :ref:`nRF52833 DK <ug_nrf52>` (PCA10100), or the :ref:`nRF5340 <ug_nrf5340>` (PCA10095), set **SW6** to ``nRF ONLY`` position to get the desired results.
-#. Enable the :option:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option.
+#. Enable the :kconfig:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option.
 
 Optional configuration
 **********************
@@ -83,11 +83,11 @@ Device operational channel
 
 You can enable one of the following alternative options to select the channel on which the Zigbee device can operate:
 
-  * :option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE` - Single mode is enabled by default.
+  * :kconfig:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE` - Single mode is enabled by default.
     The default channel is set to 16.
-    To set a different channel, edit the :option:`CONFIG_ZIGBEE_CHANNEL` option to the desired value.
-  * :option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` - In this mode, you get all the channels enabled by default.
-    To configure a custom set of channels in the range from 11 to 26, edit the :option:`CONFIG_ZIGBEE_CHANNEL_MASK` option.
+    To set a different channel, edit the :kconfig:`CONFIG_ZIGBEE_CHANNEL` option to the desired value.
+  * :kconfig:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` - In this mode, you get all the channels enabled by default.
+    To configure a custom set of channels in the range from 11 to 26, edit the :kconfig:`CONFIG_ZIGBEE_CHANNEL_MASK` option.
     For example, you can set channels 13, 16, and 21.
     You must have at least one channel enabled with this option.
 
@@ -126,15 +126,15 @@ The ZBOSS stack can be started using one of the following options:
 
 The dedicated thread can be configured using the following options:
 
-* :option:`CONFIG_ZBOSS_DEFAULT_THREAD_PRIORITY` - Defines thread priority; set to 3 by default.
-* :option:`CONFIG_ZBOSS_DEFAULT_THREAD_STACK_SIZE` - Defines the size of the thread stack; set to 2048 by default.
+* :kconfig:`CONFIG_ZBOSS_DEFAULT_THREAD_PRIORITY` - Defines thread priority; set to 3 by default.
+* :kconfig:`CONFIG_ZBOSS_DEFAULT_THREAD_STACK_SIZE` - Defines the size of the thread stack; set to 2048 by default.
 
 .. _zigbee_ug_logging:
 
 Custom logging per module
 =========================
 
-Logging is handled with the :option:`CONFIG_LOG` option.
+Logging is handled with the :kconfig:`CONFIG_LOG` option.
 This option enables logging for both the stack and Zephyr's :ref:`zephyr:logging_api` API.
 
 .. _zigbee_ug_logging_stack_logs:
@@ -145,9 +145,9 @@ Stack logs
 The stack logs are independent from Zephyr's :ref:`zephyr:logging_api` API.
 To customize them, use the following options:
 
-* :option:`CONFIG_ZBOSS_ERROR_PRINT_TO_LOG` - Allows the application to log ZBOSS error names; enabled by default.
-* :option:`CONFIG_ZBOSS_TRACE_MASK` - Sets the modules from which ZBOSS will log the debug messages with :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL`; no module is set by default.
-* :option:`CONFIG_ZBOSS_TRAF_DUMP` - Enables logging of the received 802.15.4 frames over ZBOSS trace log if :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL` is set; disabled by default.
+* :kconfig:`CONFIG_ZBOSS_ERROR_PRINT_TO_LOG` - Allows the application to log ZBOSS error names; enabled by default.
+* :kconfig:`CONFIG_ZBOSS_TRACE_MASK` - Sets the modules from which ZBOSS will log the debug messages with :kconfig:`CONFIG_ZBOSS_TRACE_LOG_LEVEL`; no module is set by default.
+* :kconfig:`CONFIG_ZBOSS_TRAF_DUMP` - Enables logging of the received 802.15.4 frames over ZBOSS trace log if :kconfig:`CONFIG_ZBOSS_TRACE_LOG_LEVEL` is set; disabled by default.
 
 The stack logs are provided in a binary format (hex dump).
 
@@ -162,12 +162,12 @@ This level is used by default by the application.
 You can configure custom logger options for each Zigbee and ZBOSS module.
 To do this, configure the related Kconfig option for one or more modules:
 
-* :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL`
-* :option:`CONFIG_ZBOSS_OSIF_LOG_LEVEL`
-* :option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL`
-* :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL`
-* :option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL`
-* :option:`CONFIG_ZIGBEE_SCENES_LOG_LEVEL`
+* :kconfig:`CONFIG_ZBOSS_TRACE_LOG_LEVEL`
+* :kconfig:`CONFIG_ZBOSS_OSIF_LOG_LEVEL`
+* :kconfig:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL`
+* :kconfig:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL`
+* :kconfig:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL`
+* :kconfig:`CONFIG_ZIGBEE_SCENES_LOG_LEVEL`
 
 For each of the modules, you can set the following logging options:
 
@@ -177,7 +177,7 @@ For each of the modules, you can set the following logging options:
 * ``LOG_LEVEL_INF`` - Enables logging for informational messages, errors, and warnings.
 * ``LOG_LEVEL_DBG`` - Enables logging for debug messages, informational messages, errors, and warnings.
 
-For example, setting :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_INF` will enable logging of informational messages, errors, and warnings for the ZBOSS Trace module.
+For example, setting :kconfig:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_INF` will enable logging of informational messages, errors, and warnings for the ZBOSS Trace module.
 
 Reduced power consumption
 =========================

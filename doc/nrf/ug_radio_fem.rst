@@ -42,7 +42,7 @@ Before you add the devicetree node in your application, complete the following s
 1. Add support for the MPSL library in your application.
    The MPSL library provides API to configure FEM.
    See :ref:`nrfxlib:mpsl_lib` in the nrfxlib documentation for details.
-#. Enable support for MPSL implementation in |NCS| by setting the :option:`CONFIG_MPSL` Kconfig option to ``y``.
+#. Enable support for MPSL implementation in |NCS| by setting the :kconfig:`CONFIG_MPSL` Kconfig option to ``y``.
 
 .. _ug_radio_fem_nrf21540_gpio:
 

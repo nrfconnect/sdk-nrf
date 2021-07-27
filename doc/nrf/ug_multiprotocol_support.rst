@@ -22,7 +22,7 @@ Enabling multiprotocol support
 
 To enable the multiprotocol support for either Thread or Zigbee, set the following Kconfig option:
 
-* :option:`CONFIG_BT_LL_SOFTDEVICE_DEFAULT`
+* :kconfig:`CONFIG_BT_LL_SOFTDEVICE_DEFAULT`
 
 This option activates the :ref:`nrfxlib:softdevice_controller`, which by default supports the multiprotocol features.
 Disabling the SoftDevice Controller also disables the multiprotocol support.

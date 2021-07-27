@@ -35,8 +35,8 @@ You can use the Zephyr system logger in |NCS| for the following use cases:
 * Internal system logs - Useful for analyzing detailed system performance, for example issues with threads stack sizes.
 * Logs from external components - Useful for gathering messages from sample applications and custom modules.
 
-The logger can be enabled with the :option:`CONFIG_LOG` Kconfig option.
-This option is automatically set alongside the minimal logging implementation (:option:`CONFIG_LOG_MINIMAL`) with the :option:`CONFIG_NCS_SAMPLES_DEFAULTS` Kconfig option, which is enabled by default for all samples in |NCS|.
+The logger can be enabled with the :kconfig:`CONFIG_LOG` Kconfig option.
+This option is automatically set alongside the minimal logging implementation (:kconfig:`CONFIG_LOG_MINIMAL`) with the :kconfig:`CONFIG_NCS_SAMPLES_DEFAULTS` Kconfig option, which is enabled by default for all samples in |NCS|.
 For more information about configuring Zephyr's logger, see :ref:`zephyr:logging_api`.
 
 .. _ug_logging_net_application:
@@ -83,8 +83,8 @@ UART
 
 The UART interface can be configured as a logging backend using the following Kconfig options:
 
-* :option:`CONFIG_LOG_BACKEND_UART` - This option enables the UART logging backend.
-* :option:`CONFIG_LOG_BACKEND_UART_SYST_ENABLE` - This option is used to output logs in system format.
+* :kconfig:`CONFIG_LOG_BACKEND_UART` - This option enables the UART logging backend.
+* :kconfig:`CONFIG_LOG_BACKEND_UART_SYST_ENABLE` - This option is used to output logs in system format.
 
 For information about how to see UART output, see :ref:`putty`.
 
@@ -95,17 +95,17 @@ RTT
 
 SEGGER's J-Link RTT backend logging can be handled with the following Kconfig options:
 
-* :option:`CONFIG_LOG_BACKEND_RTT` - This option enables RTT logging backend.
-* :option:`CONFIG_LOG_BACKEND_RTT_MODE_DROP` - This option enables the mode in which messages that do not fit the buffer are dropped.
-* :option:`CONFIG_LOG_BACKEND_RTT_MODE_BLOCK` - This option enables the mode in which the device is blocked until a message is transferred.
-* :option:`CONFIG_LOG_BACKEND_RTT_OUTPUT_BUFFER_SIZE` - This option defines the size of the buffer used for storing data prepared for sending.
-* :option:`CONFIG_LOG_BACKEND_RTT_RETRY_CNT` - This option defines the number of retries before a message is dropped.
-* :option:`CONFIG_LOG_BACKEND_RTT_RETRY_DELAY_MS` - This option defines the time interval between transmission retries.
-* :option:`CONFIG_LOG_BACKEND_RTT_SYST_ENABLE` - This option is used to output logs in the system format.
-* :option:`CONFIG_LOG_BACKEND_RTT_MESSAGE_SIZE` - This option defines the maximum message size.
-* :option:`CONFIG_LOG_BACKEND_RTT_BUFFER` - This option selects the index of the buffer used for logger output.
-* :option:`CONFIG_LOG_BACKEND_RTT_BUFFER_SIZE` - This option defines the size of the buffer used for logger output.
-* :option:`CONFIG_LOG_BACKEND_RTT_FORCE_PRINTK` - This option enables processing of ``printk`` calls in the logger buffers instead of the RTT buffer.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT` - This option enables RTT logging backend.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT_MODE_DROP` - This option enables the mode in which messages that do not fit the buffer are dropped.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT_MODE_BLOCK` - This option enables the mode in which the device is blocked until a message is transferred.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT_OUTPUT_BUFFER_SIZE` - This option defines the size of the buffer used for storing data prepared for sending.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT_RETRY_CNT` - This option defines the number of retries before a message is dropped.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT_RETRY_DELAY_MS` - This option defines the time interval between transmission retries.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT_SYST_ENABLE` - This option is used to output logs in the system format.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT_MESSAGE_SIZE` - This option defines the maximum message size.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT_BUFFER` - This option selects the index of the buffer used for logger output.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT_BUFFER_SIZE` - This option defines the size of the buffer used for logger output.
+* :kconfig:`CONFIG_LOG_BACKEND_RTT_FORCE_PRINTK` - This option enables processing of ``printk`` calls in the logger buffers instead of the RTT buffer.
 
 For information about how to run SEGGER's J-Link RTT on your PC and see the logs, see :ref:`testing_rtt`.
 
@@ -117,8 +117,8 @@ Spinel
 Using `Spinel protocol`_ as a logging backend is specific to OpenThread's :ref:`thread_architectures_designs_cp_ncp` and :ref:`thread_architectures_designs_cp_rcp` architectures.
 The Spinel protocol can be configured as a logging backend using the following Kconfig options:
 
-* :option:`CONFIG_LOG_BACKEND_SPINEL` - This option enables the Spinel logging backend.
-* :option:`CONFIG_LOG_BACKEND_SPINEL_BUFFER_SIZE` - This option defines the size of buffer used for logger output.
+* :kconfig:`CONFIG_LOG_BACKEND_SPINEL` - This option enables the Spinel logging backend.
+* :kconfig:`CONFIG_LOG_BACKEND_SPINEL_BUFFER_SIZE` - This option defines the size of buffer used for logger output.
 
 To communicate using the Spinel protocol and gather logs, you need one of the following tools:
 
@@ -137,7 +137,7 @@ Shell
 When you enable Zephyr's :ref:`zephyr:shell_api`, it by default becomes a logging backend.
 You can disable this backend by using the following Kconfig option:
 
-* :option:`CONFIG_SHELL_LOG_BACKEND` - This option enables and disables the shell logging backend.
+* :kconfig:`CONFIG_SHELL_LOG_BACKEND` - This option enables and disables the shell logging backend.
 
 .. note::
    The UART and RTT logging backends can also be configured as shell backends.

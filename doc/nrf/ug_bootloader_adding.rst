@@ -39,7 +39,7 @@ The following sections describe how to add either |NSIB| or MCUboot as an immuta
 Adding |NSIB| as an immutable bootloader
 ========================================
 
-To build |NSIB| with a Zephyr or |NCS| sample, enable the :option:`CONFIG_SECURE_BOOT` in the application's ``prj.conf`` file, in an associated Kconfig fragment, or using the command line:
+To build |NSIB| with a Zephyr or |NCS| sample, enable the :kconfig:`CONFIG_SECURE_BOOT` in the application's ``prj.conf`` file, in an associated Kconfig fragment, or using the command line:
 
 .. code-block:: console
 
@@ -64,7 +64,7 @@ See :ref:`ug_bootloader_config` for more information about using Kconfig fragmen
 Adding a custom signature key file
 ----------------------------------
 
-To add a signature key file to this bootloader, set the :option:`CONFIG_SB_SIGNING_KEY_FILE` option in the application's ``prj.conf`` file, in an associated Kconfig fragment, or using the command line:
+To add a signature key file to this bootloader, set the :kconfig:`CONFIG_SB_SIGNING_KEY_FILE` option in the application's ``prj.conf`` file, in an associated Kconfig fragment, or using the command line:
 
 .. tabs::
 
@@ -137,9 +137,9 @@ See :ref:`ug_fw_update_keys` for information on how to generate custom keys for 
 
 Additionally, the |NSIB| supports the following methods for signing images with private keys:
 
-* :ref:`ug_fw_update_keys_python` - The default method, using the :option:`CONFIG_SB_SIGNING_PYTHON`.
-* :ref:`ug_fw_update_keys_openssl` - Uses the :option:`CONFIG_SB_SIGNING_OPENSSL`.
-* :ref:`Using a custom command <ug_bootloader_adding_immutable_b0_custom_signing>` - Uses the :option:`CONFIG_SB_SIGNING_CUSTOM`.
+* :ref:`ug_fw_update_keys_python` - The default method, using the :kconfig:`CONFIG_SB_SIGNING_PYTHON`.
+* :ref:`ug_fw_update_keys_openssl` - Uses the :kconfig:`CONFIG_SB_SIGNING_OPENSSL`.
+* :ref:`Using a custom command <ug_bootloader_adding_immutable_b0_custom_signing>` - Uses the :kconfig:`CONFIG_SB_SIGNING_CUSTOM`.
 
 Both Python and OpenSSL methods are handled internally by the build system, whereas using custom commands requires more configuration steps.
 
@@ -193,7 +193,7 @@ To use a custom signing command with this bootloader, set the following options 
 
    The public key string must be an absolute path to the location of the public key file, as mentioned previously in :ref:`ug_bootloader_adding_immutable_keys`.
 
-See :option:`CONFIG_SB_SIGNING_COMMAND` for specifics about what a usable signing command must do.
+See :kconfig:`CONFIG_SB_SIGNING_COMMAND` for specifics about what a usable signing command must do.
 The command string can include its own arguments like a typical terminal command, including arguments specific to the build system:
 
 .. parsed-literal::
@@ -201,7 +201,7 @@ The command string can include its own arguments like a typical terminal command
 
    my_command *[options]* *<args ...>* *<build_system_args ..>*
 
-See the description of :option:`CONFIG_SB_SIGNING_COMMAND` for which arguments can be be sent to the build system in this way.
+See the description of :kconfig:`CONFIG_SB_SIGNING_COMMAND` for which arguments can be be sent to the build system in this way.
 
 .. note::
 
@@ -326,7 +326,7 @@ The process to use specific signature keys with MCUboot used as the upgradable b
 Generating pre-signed variants
 ------------------------------
 
-Enable the :option:`CONFIG_BUILD_S1_VARIANT` option when building the upgradable bootloader to automatically generate :ref:`pre-signed variants <upgradable_bootloader_presigned_variants>` of the image for both slots:
+Enable the :kconfig:`CONFIG_BUILD_S1_VARIANT` option when building the upgradable bootloader to automatically generate :ref:`pre-signed variants <upgradable_bootloader_presigned_variants>` of the image for both slots:
 
 .. code-block::
 

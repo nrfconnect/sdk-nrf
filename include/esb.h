@@ -386,7 +386,7 @@ int esb_set_base_address_1(const uint8_t *addr);
  *
  *  @param[in] prefixes		Prefixes for each pipe.
  *  @param[in] num_pipes	Number of pipes. Must be less than or equal to
- *				@option{CONFIG_ESB_PIPE_COUNT}.
+ *				@kconfig{CONFIG_ESB_PIPE_COUNT}.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
@@ -397,7 +397,7 @@ int esb_set_prefixes(const uint8_t *prefixes, uint8_t num_pipes);
  *
  *  The @p enable_mask parameter must contain the same number of pipes as has
  *  been configured with @ref esb_set_prefixes. This number may not be
- *  greater than the number defined by @option{CONFIG_ESB_PIPE_COUNT}
+ *  greater than the number defined by @kconfig{CONFIG_ESB_PIPE_COUNT}
  *
  *  @param enable_mask	Bitfield mask to enable or disable pipes.
  *			Setting a bit to 0 disables the pipe.

@@ -30,7 +30,7 @@ struct bt_mesh_prop_srv;
  * @param[in] _properties Array of properties supported by the server.
  * @param[in] _property_count Number of properties supported by the server.
  *                            Cannot be larger than
- *                            @option{CONFIG_BT_MESH_PROP_MAXCOUNT}.
+ *                            @kconfig{CONFIG_BT_MESH_PROP_MAXCOUNT}.
  * @param[in] _get Getter handler for property values. @sa
  * bt_mesh_prop_srv::get.
  * @param[in] _set Setter handler for property values. @sa

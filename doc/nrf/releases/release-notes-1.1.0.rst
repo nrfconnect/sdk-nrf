@@ -337,7 +337,7 @@ nRF BLE Controller
 
 * Improved the default static memory pool allocation.
   The controller now determines its static memory pool size based on the maximum Link Layer packet length.
-  This is determined by the Kconfig macro :option:`CONFIG_BT_CTLR_DATA_LENGTH_MAX` (if defined), or else the minimum packet length (which is 27 B).
+  This is determined by the Kconfig macro :kconfig:`CONFIG_BT_CTLR_DATA_LENGTH_MAX` (if defined), or else the minimum packet length (which is 27 B).
   The memory pool is large enough to facilitate one master and one slave link.
 
 * Added support for connection intervals less than the standard minimum of 7.5 ms.
@@ -392,7 +392,7 @@ Bluetooth Low Energy
   * Added "Numeric Comparison" pairing support and aligned LED usage in peripheral samples.
   * Added nRF52840 Dongle support in :ref:`peripheral_lbs`.
 
-* Fixed default connections configuration when selecting :option:`CONFIG_BT_LL_SOFTDEVICE`.
+* Fixed default connections configuration when selecting :kconfig:`CONFIG_BT_LL_SOFTDEVICE`.
 
 
 NFC
@@ -514,15 +514,15 @@ Subsystems
 Bluetooth Low Energy
 --------------------
 
-* :option:`CONFIG_BT_HCI_TX_STACK_SIZE` must be set to 1536 when selecting :option:`CONFIG_BT_LL_SOFTDEVICE`.
+* :kconfig:`CONFIG_BT_HCI_TX_STACK_SIZE` must be set to 1536 when selecting :kconfig:`CONFIG_BT_LL_SOFTDEVICE`.
 * The :ref:`nrfxlib:softdevice_controller` 0.3.0-3.prealpha might assert when receiving a packet with an CRC error on LE Coded PHY after performing a DLE procedure where RX Octets is changed to a value above 140.
-* :option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` must be set to 2048 when selecting :option:`CONFIG_BT_LL_SOFTDEVICE` on :ref:`central_uart` and :ref:`central_bas`.
-* :option:`CONFIG_NFCT_IRQ_PRIORITY` must be set to 5 or less when selecting :option:`CONFIG_BT_LL_SOFTDEVICE` on :ref:`peripheral_hids_keyboard`.
-* When selecting :option:`CONFIG_BT_LL_SOFTDEVICE`:
+* :kconfig:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` must be set to 2048 when selecting :kconfig:`CONFIG_BT_LL_SOFTDEVICE` on :ref:`central_uart` and :ref:`central_bas`.
+* :kconfig:`CONFIG_NFCT_IRQ_PRIORITY` must be set to 5 or less when selecting :kconfig:`CONFIG_BT_LL_SOFTDEVICE` on :ref:`peripheral_hids_keyboard`.
+* When selecting :kconfig:`CONFIG_BT_LL_SOFTDEVICE`:
   If a directed high duty cycle advertiser times out, the application might have to wait a short time before starting a new connectable advertiser.
   Otherwise, starting the advertiser will fail.
 * Bluetooth Low Energy peripheral samples are unstable in some conditions (when pairing and bonding are performed and then disconnections/re-connections happen).
-* When running the :ref:`bluetooth_central_dfu_smp` sample, the :option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
+* When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
   However, security is not enabled by default in the Zephyr sample.
 * The central samples (:ref:`central_uart`, :ref:`bluetooth_central_hids`) do not support any pairing methods with MITM protection.
 * On some operating systems, the nrf_desktop application is unable to reconnect to a host.

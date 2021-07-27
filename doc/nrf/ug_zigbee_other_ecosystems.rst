@@ -26,7 +26,7 @@ To make Zigbee samples in |NCS| work within Zigbee networks of other ecosystems,
 The following configuration scenarios are possible:
 
 Connecting Nordic device to a third-party Coordinator
-  If you are connecting a Nordic Semiconductor's device programmed with a Zigbee sample to a third-party Zigbee Coordinator, set the :option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` Kconfig option for the Zigbee sample in |NCS|.
+  If you are connecting a Nordic Semiconductor's device programmed with a Zigbee sample to a third-party Zigbee Coordinator, set the :kconfig:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` Kconfig option for the Zigbee sample in |NCS|.
   This will allow your device to scan all channels to find the Coordinator's Zigbee network.
 
 Connecting a third-party Zigbee 3.0 device to a Nordic-based Coordinator
@@ -35,8 +35,8 @@ Connecting a third-party Zigbee 3.0 device to a Nordic-based Coordinator
 Connecting a third-party Zigbee legacy device to a Nordic-based Coordinator
   If you are connecting a third-party Zigbee device that is not compatible with Zigbee 3.0 to a Zigbee Coordinator that is programmed onto a Nordic Semiconductor's device, you must enable the legacy mode on the Coordinator by calling :c:func:`zb_bdb_set_legacy_device_support`.
 
-For the scenarios with the Nordic-based Coordinator, you can select the 802.15.4 channel on which the Coordinator will form the network by setting the :option:`CONFIG_ZIGBEE_CHANNEL` Kconfig option.
-Alternatively, you can enable the :option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` Kconfig option to allow the Coordinator to use the best channel with least RF interference.
+For the scenarios with the Nordic-based Coordinator, you can select the 802.15.4 channel on which the Coordinator will form the network by setting the :kconfig:`CONFIG_ZIGBEE_CHANNEL` Kconfig option.
+Alternatively, you can enable the :kconfig:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` Kconfig option to allow the Coordinator to use the best channel with least RF interference.
 
 Connecting the device to other ecosystems
 *****************************************
@@ -65,6 +65,6 @@ The following instructions can help you troubleshoot the connection problem:
       For example, on the Amazon Alexa ecosystem, you can say "Alexa, find my devices".
 
 #. Make sure that the device is scanning through all channels to find the Zigbee network.
-   For example, verify that the :option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` Kconfig option is correctly set.
+   For example, verify that the :kconfig:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` Kconfig option is correctly set.
 #. Check if the device is compatible with Zigbee 3.0.
    If it *not* compatible, enable the legacy mode by including a call to :c:func:`zb_bdb_set_legacy_device_support`.
