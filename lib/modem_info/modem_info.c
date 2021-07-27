@@ -464,7 +464,7 @@ int modem_info_string_get(enum modem_info info, char *buf,
 	char recv_buf[CONFIG_MODEM_INFO_BUFFER_SIZE] = {0};
 	uint16_t param_value;
 	int ip_cnt = 0;
-	char *ip_str_end = recv_buf;
+	char *str_end = recv_buf;
 	/* index into the AT cmd response buffer */
 	size_t cmd_rsp_idx = 0;
 	/* length of each parsed IP address line */
@@ -482,37 +482,54 @@ int modem_info_string_get(enum modem_info info, char *buf,
 			  recv_buf,
 			  CONFIG_MODEM_INFO_BUFFER_SIZE,
 			  NULL);
+	if (err != 0) {
+		return -EIO;
+	}
 
 	/* modem_info does not yet support array objects, so here we handle
 	 * the supported bands independently as a string
 	 */
 	if (info == MODEM_INFO_SUP_BAND) {
-		strcpy(buf, recv_buf + sizeof("%XCBAND: ") - 1);
-		return strlen(buf);
+
+		/* The list of supported bands is contained in parenthesis */
+		char *str_begin = strchr(recv_buf, '(');
+
+		str_end = strchr(recv_buf, ')');
+
+		if (!str_begin || !str_end) {
+			return -EFAULT;
+		}
+
+		/* terminate after the closing parenthesis */
+		*(str_end + 1) = 0;
+
+		len = strlen(str_begin);
+		if (len >= buf_size) {
+			return -EMSGSIZE;
+		}
+
+		strcpy(buf, str_begin);
+		return len;
 	}
 	if (info == MODEM_INFO_IP_ADDRESS) {
 		/* check for multiple IP addresses */
-		while ((ip_str_end = strstr(ip_str_end, AT_CMD_RSP_DELIM))
+		while ((str_end = strstr(str_end, AT_CMD_RSP_DELIM))
 			   != NULL) {
-			++ip_str_end;
+			++str_end;
 			++ip_cnt;
 		}
 		LOG_DBG("Device contains %d IP addresses", ip_cnt);
 	}
 
-	if (err != 0) {
-		return -EIO;
-	}
-
 parse:
 	if (info == MODEM_INFO_IP_ADDRESS) {
 		/* parse each IP address line separately */
-		ip_str_end = strstr(&recv_buf[cmd_rsp_idx], AT_CMD_RSP_DELIM);
-		if (ip_str_end == NULL) {
+		str_end = strstr(&recv_buf[cmd_rsp_idx], AT_CMD_RSP_DELIM);
+		if (str_end == NULL) {
 			return -EFAULT;
 		}
 		/* get the size and then null-terminate the line */
-		ip_str_len = ip_str_end - &recv_buf[cmd_rsp_idx];
+		ip_str_len = str_end - &recv_buf[cmd_rsp_idx];
 		recv_buf[++ip_str_len] = 0;
 	}
 	err = modem_info_parse(modem_data[info], &recv_buf[cmd_rsp_idx]);
