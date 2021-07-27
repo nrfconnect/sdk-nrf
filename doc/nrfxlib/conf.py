@@ -13,6 +13,7 @@ NRF_BASE = Path(__file__).absolute().parents[2]
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
+ZEPHYR_BASE = utils.get_projdir("zephyr")
 NRFXLIB_BASE = utils.get_projdir("nrfxlib")
 
 # General configuration --------------------------------------------------------
@@ -22,6 +23,7 @@ copyright = "2019-2021, Nordic Semiconductor"
 author = "Nordic Semiconductor"
 version = release = "1.6.99"
 
+sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
@@ -29,6 +31,7 @@ extensions = [
     "breathe",
     "sphinxcontrib.mscgen",
     "inventory_builder",
+    "zephyr.kconfig-role",
     "ncs_cache",
     "external_content",
     "doxyrunner",
