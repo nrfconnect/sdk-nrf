@@ -54,6 +54,39 @@ void nrf_modem_recoverable_error_handler(uint32_t err)
 	LOG_ERR("Modem library recoverable error: %u", err);
 }
 
+static int ext_xtal_control(bool xtal_on)
+{
+	int err = 0;
+#if defined(CONFIG_SLM_EXTERNAL_XTAL)
+	static struct onoff_manager *clk_mgr;
+
+	if (xtal_on) {
+		struct onoff_client cli = {};
+
+		/* request external XTAL for UART */
+		clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+		sys_notify_init_spinwait(&cli.notify);
+		err = onoff_request(clk_mgr, &cli);
+		if (err < 0) {
+			LOG_ERR("Clock request failed: %d", err);
+			return err;
+		}
+		while (sys_notify_fetch_result(&cli.notify, &err) < 0) {
+			/*empty*/
+		}
+	} else {
+		/* release external XTAL for UART */
+		err = onoff_release(clk_mgr);
+		if (err < 0) {
+			LOG_ERR("Clock release failed: %d", err);
+			return err;
+		}
+	}
+#endif
+
+	return err;
+}
+
 static void exit_idle(struct k_work *work)
 {
 	int err;
@@ -63,6 +96,11 @@ static void exit_idle(struct k_work *work)
 	gpio_remove_callback(gpio_dev, &gpio_cb);
 	/* Do the same as nrf_gpio_cfg_default() */
 	gpio_pin_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN, GPIO_INPUT);
+
+	err = ext_xtal_control(true);
+	if (err < 0) {
+		LOG_WRN("Failed to enable ext XTAL: %d", err);
+	}
 
 	if (full_idle_mode) {
 		/* Restart SLM services */
@@ -108,6 +146,11 @@ void enter_idle(bool full_idle)
 	if (err) {
 		LOG_ERR("GPIO_0 enable callback error: %d", err);
 		return;
+	}
+
+	err = ext_xtal_control(false);
+	if (err < 0) {
+		LOG_WRN("Failed to disable ext XTAL: %d", err);
 	}
 
 	full_idle_mode = full_idle;
@@ -211,23 +254,8 @@ void handle_mcuboot_swap_ret(void)
 void start_execute(void)
 {
 	int err;
-#if defined(CONFIG_SLM_EXTERNAL_XTAL)
-	struct onoff_manager *clk_mgr;
-	struct onoff_client cli = {};
-#endif
 
 	LOG_INF("Serial LTE Modem");
-
-#if defined(CONFIG_SLM_EXTERNAL_XTAL)
-	/* request external XTAL for UART */
-	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
-	sys_notify_init_spinwait(&cli.notify);
-	err = onoff_request(clk_mgr, &cli);
-	if (err) {
-		LOG_ERR("Clock request failed: %d", err);
-		return;
-	}
-#endif
 
 	/* Init and load settings */
 	err = slm_settings_init();
@@ -240,6 +268,12 @@ void start_execute(void)
 	if (fota_stage != FOTA_STAGE_INIT) {
 		handle_nrf_modem_lib_init_ret();
 		handle_mcuboot_swap_ret();
+	}
+
+	err = ext_xtal_control(true);
+	if (err < 0) {
+		LOG_ERR("Failed to enable ext XTAL: %d", err);
+		return;
 	}
 
 	err = slm_at_host_init();
