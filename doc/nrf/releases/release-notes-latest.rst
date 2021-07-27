@@ -21,7 +21,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v1.6.0`_ for the list of issues valid for this release.
+See `known issues for nRF Connect SDK v1.6.1`_ for the list of issues valid for this release.
 
 Changelog
 *********
