@@ -5,7 +5,8 @@
 
 from events import EventsData, TrackedEvent
 import logging
-import sys
+
+MEM_ADDRESS_DATA_DESC = "_em_mem_address_"
 
 class ProcessedEvents():
     def __init__(self):
@@ -14,7 +15,6 @@ class ProcessedEvents():
 
         self.event_processing_start_id = None
         self.event_processing_end_id = None
-        self.tracking_execution = True
 
         self.submit_event = None
         self.start_event = None
@@ -32,24 +32,24 @@ class ProcessedEvents():
             'event_processing_start')
         self.event_processing_end_id = self.raw_data.get_event_type_id(
             'event_processing_end')
-
-        if (self.event_processing_start_id is None) or \
-          (self.event_processing_end_id is None):
-            self.tracking_execution = False
-            for ev in self.raw_data.events:
-                self.tracked_events.append(TrackedEvent(ev, None, None))
-            return
-
-        for i in range(1, len(self.raw_data.events)):
+        for i in range(len(self.raw_data.events)):
+            if len(self.raw_data.events[i].data) == 0:
+                self.tracked_events.append(TrackedEvent(self.raw_data.events[i], None, None))
+                continue
+            if self.raw_data.registered_events_types[self.raw_data.events[i].type_id].data_descriptions[0] != MEM_ADDRESS_DATA_DESC:
+                self.tracked_events.append(TrackedEvent(self.raw_data.events[i], None, None))
+                continue
             if self.raw_data.events[i].type_id == self.event_processing_start_id:
                 self.start_event = self.raw_data.events[i]
                 for j in range(i - 1, -1, -1):
                     # comparing memory addresses of event processing start
                     # and event submit to identify matching events
-                    if self.raw_data.events[j].data[0] == self.start_event.data[0]:
+                    if len(self.raw_data.events[j].data) == 0:
+                        continue
+                    if self.raw_data.events[j].data[0] == self.start_event.data[0] and \
+                      self.raw_data.registered_events_types[self.raw_data.events[j].type_id].data_descriptions[0] == MEM_ADDRESS_DATA_DESC:
                         self.submit_event = self.raw_data.events[j]
                         break
-
             # comparing memory addresses of event processing start and end
             # to identify matching events
             if self.raw_data.events[i].type_id == self.event_processing_end_id:
