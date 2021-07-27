@@ -275,6 +275,11 @@ add_docset(nrfx)
 add_docset(tfm DODGY)
 
 #-------------------------------------------------------------------------------
+# docset: matter
+
+add_docset(matter)
+
+#-------------------------------------------------------------------------------
 # docset: nrfxlib
 
 add_docset(nrfxlib DODGY)
@@ -371,6 +376,7 @@ add_dependencies(build-all
     zephyr-html-all
     mcuboot-html-all
     tfm-html-all
+    matter-html-all
     kconfig-html-all
 )
 

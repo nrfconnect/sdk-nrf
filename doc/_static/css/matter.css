@@ -1,0 +1,8 @@
+:root {
+    --docset-color: #6D42C8;
+}
+
+.rst-content h2 {
+    border-top: unset;
+    padding-top: unset;
+}

@@ -42,6 +42,7 @@ Kconfig*                                  @tejlmand
 /doc/**/conf.py                           @carlescufi
 /doc/nrf/                                 @carlescufi
 /doc/nrfx/                                @gmarull
+/doc/matter/                              @gmarull
 /doc/update_versions.cmake                @carlescufi
 /doc/versions.json                        @carlescufi
 # All subfolders

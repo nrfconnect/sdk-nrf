@@ -44,6 +44,10 @@
   projects:
     - trusted-firmware-m
 
+- docset: matter
+  projects:
+    - matter
+
 - docset: kconfig
   projects:
     - manifest
