@@ -62,6 +62,9 @@ struct log_event_buf {
 
 /** @brief Initialize the Profiler.
  *
+ * @warning This function is thread-safe, but not safe to use in
+ *	    interrupts.
+ *
  * @retval 0 If the operation was successful.
  */
 #ifdef CONFIG_PROFILER
