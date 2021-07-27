@@ -11,6 +11,8 @@ NRF_BASE = Path(__file__).absolute().parents[2]
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
+ZEPHYR_BASE = utils.get_projdir("zephyr")
+
 # General configuration --------------------------------------------------------
 
 project = "Kconfig reference"
@@ -19,9 +21,10 @@ author = "Nordic Semiconductor"
 # NOTE: use blank space as version to preserve space
 version = "&nbsp;"
 
+sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
-extensions = ["ncs_cache"]
+extensions = ["zephyr.kconfig-role", "ncs_cache"]
 
 # Options for HTML output ------------------------------------------------------
 
