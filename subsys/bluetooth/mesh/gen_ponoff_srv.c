@@ -103,14 +103,12 @@ static void send_rsp(struct bt_mesh_ponoff_srv *srv,
 	bt_mesh_model_send(srv->ponoff_model, ctx, &msg, NULL, NULL);
 }
 
-static void handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		       struct net_buf_simple *buf)
+static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		      struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PONOFF_MSG_LEN_GET) {
-		return;
-	}
-
 	send_rsp(model->user_data, ctx);
+
+	return 0;
 }
 
 static void set_on_power_up(struct bt_mesh_ponoff_srv *srv,
@@ -136,19 +134,14 @@ static void set_on_power_up(struct bt_mesh_ponoff_srv *srv,
 	store_state(srv);
 }
 
-static void handle_set_msg(struct bt_mesh_model *model,
-			   struct bt_mesh_msg_ctx *ctx,
-			   struct net_buf_simple *buf, bool ack)
+static int handle_set_msg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			  struct net_buf_simple *buf, bool ack)
 {
-	if (buf->len != BT_MESH_PONOFF_MSG_LEN_SET) {
-		return;
-	}
-
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 	enum bt_mesh_on_power_up new = net_buf_simple_pull_u8(buf);
 
 	if (new >= BT_MESH_ON_POWER_UP_INVALID) {
-		return;
+		return -EINVAL;
 	}
 
 	set_on_power_up(srv, ctx, new);
@@ -158,19 +151,20 @@ static void handle_set_msg(struct bt_mesh_model *model,
 	}
 
 	(void)bt_mesh_ponoff_srv_pub(srv, NULL);
+
+	return 0;
 }
 
-static void handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		       struct net_buf_simple *buf)
+static int handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		      struct net_buf_simple *buf)
 {
-	handle_set_msg(model, ctx, buf, true);
+	return handle_set_msg(model, ctx, buf, true);
 }
 
-static void handle_set_unack(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf)
+static int handle_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
 {
-	handle_set_msg(model, ctx, buf, false);
+	return handle_set_msg(model, ctx, buf, false);
 }
 
 /* Need to intercept the onoff state to get the right value on power up. */
@@ -201,19 +195,23 @@ static void onoff_intercept_get(struct bt_mesh_onoff_srv *onoff_srv,
 }
 
 const struct bt_mesh_model_op _bt_mesh_ponoff_srv_op[] = {
-	{ BT_MESH_PONOFF_OP_GET, BT_MESH_PONOFF_MSG_LEN_GET, handle_get },
+	{
+		BT_MESH_PONOFF_OP_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PONOFF_MSG_LEN_GET),
+		handle_get,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 
 const struct bt_mesh_model_op _bt_mesh_ponoff_setup_srv_op[] = {
 	{
 		BT_MESH_PONOFF_OP_SET,
-		BT_MESH_PONOFF_MSG_LEN_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_PONOFF_MSG_LEN_SET),
 		handle_set,
 	},
 	{
 		BT_MESH_PONOFF_OP_SET_UNACK,
-		BT_MESH_PONOFF_MSG_LEN_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_PONOFF_MSG_LEN_SET),
 		handle_set_unack,
 	},
 	BT_MESH_MODEL_OP_END,

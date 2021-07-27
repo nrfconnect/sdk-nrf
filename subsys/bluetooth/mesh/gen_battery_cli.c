@@ -43,16 +43,17 @@ int bt_mesh_gen_bat_decode_status(struct net_buf_simple *buf,
 	return 0;
 }
 
-static void handle_status(struct bt_mesh_model *model,
-			  struct bt_mesh_msg_ctx *ctx,
-			  struct net_buf_simple *buf)
+static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_battery_cli *cli = model->user_data;
 	struct bt_mesh_battery_status status;
 	struct bt_mesh_battery_status *rsp;
+	int err;
 
-	if (bt_mesh_gen_bat_decode_status(buf, &status)) {
-		return;
+	err = bt_mesh_gen_bat_decode_status(buf, &status);
+	if (err) {
+		return err;
 	}
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_BATTERY_OP_STATUS, ctx->addr,
@@ -64,12 +65,14 @@ static void handle_status(struct bt_mesh_model *model,
 	if (cli->status_handler) {
 		cli->status_handler(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_battery_cli_op[] = {
 	{
 		BT_MESH_BATTERY_OP_STATUS,
-		BT_MESH_BATTERY_MSG_LEN_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_BATTERY_MSG_LEN_STATUS),
 		handle_status,
 	},
 	BT_MESH_MODEL_OP_END,

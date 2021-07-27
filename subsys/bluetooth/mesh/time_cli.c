@@ -8,14 +8,10 @@
 #include "time_internal.h"
 #include "model_utils.h"
 
-static void handle_status(struct bt_mesh_model *model,
+static int handle_status(struct bt_mesh_model *model,
 			  struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_TIME_MSG_LEN_TIME_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_time_cli *cli = model->user_data;
 	struct bt_mesh_time_status status;
 	struct bt_mesh_time_status *rsp;
@@ -31,16 +27,13 @@ static void handle_status(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->time_status) {
 		cli->handlers->time_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void time_role_status_handle(struct bt_mesh_model *model,
-				    struct bt_mesh_msg_ctx *ctx,
-				    struct net_buf_simple *buf)
+static int handle_time_role_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				   struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_TIME_MSG_LEN_TIME_ROLE_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_time_cli *cli = model->user_data;
 	enum bt_mesh_time_role status;
 	uint8_t *rsp;
@@ -56,16 +49,13 @@ static void time_role_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->time_role_status) {
 		cli->handlers->time_role_status(cli, ctx, status);
 	}
+
+	return 0;
 }
 
-static void time_zone_status_handle(struct bt_mesh_model *model,
-				    struct bt_mesh_msg_ctx *ctx,
-				    struct net_buf_simple *buf)
+static int handle_time_zone_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				   struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_TIME_MSG_LEN_TIME_ZONE_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_time_cli *cli = model->user_data;
 	struct bt_mesh_time_zone_status status;
 	struct bt_mesh_time_zone_status *rsp;
@@ -85,16 +75,13 @@ static void time_zone_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->time_zone_status) {
 		cli->handlers->time_zone_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void tai_utc_delta_status_handle(struct bt_mesh_model *model,
-					struct bt_mesh_msg_ctx *ctx,
-					struct net_buf_simple *buf)
+static int handle_tai_utc_delta_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				       struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_TIME_MSG_LEN_TAI_UTC_DELTA_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_time_cli *cli = model->user_data;
 	struct bt_mesh_time_tai_utc_delta_status status;
 	struct bt_mesh_time_tai_utc_delta_status *rsp;
@@ -114,28 +101,30 @@ static void tai_utc_delta_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->tai_utc_delta_status) {
 		cli->handlers->tai_utc_delta_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_time_cli_op[] = {
 	{
 		BT_MESH_TIME_OP_TIME_STATUS,
-		BT_MESH_TIME_MSG_LEN_TIME_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TIME_STATUS),
 		handle_status,
 	},
 	{
 		BT_MESH_TIME_OP_TIME_ROLE_STATUS,
-		BT_MESH_TIME_MSG_LEN_TIME_ROLE_STATUS,
-		time_role_status_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TIME_ROLE_STATUS),
+		handle_time_role_status,
 	},
 	{
 		BT_MESH_TIME_OP_TIME_ZONE_STATUS,
-		BT_MESH_TIME_MSG_LEN_TIME_ZONE_STATUS,
-		time_zone_status_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TIME_ZONE_STATUS),
+		handle_time_zone_status,
 	},
 	{
 		BT_MESH_TIME_OP_TAI_UTC_DELTA_STATUS,
-		BT_MESH_TIME_MSG_LEN_TAI_UTC_DELTA_STATUS,
-		tai_utc_delta_status_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TAI_UTC_DELTA_STATUS),
+		handle_tai_utc_delta_status,
 	},
 	BT_MESH_MODEL_OP_END,
 };

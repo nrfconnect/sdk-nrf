@@ -8,14 +8,9 @@
 #include "model_utils.h"
 #include "gen_loc_internal.h"
 
-static void handle_global_loc(struct bt_mesh_model *model,
-			      struct bt_mesh_msg_ctx *ctx,
-			      struct net_buf_simple *buf)
+static int handle_global_loc(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			     struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LOC_MSG_LEN_GLOBAL_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_loc_cli *cli = model->user_data;
 	struct bt_mesh_loc_global loc;
 	struct bt_mesh_loc_global *rsp;
@@ -31,16 +26,13 @@ static void handle_global_loc(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->global_status) {
 		cli->handlers->global_status(cli, ctx, &loc);
 	}
+
+	return 0;
 }
 
-static void handle_local_loc(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf)
+static int handle_local_loc(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LOC_MSG_LEN_LOCAL_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_loc_cli *cli = model->user_data;
 	struct bt_mesh_loc_local loc;
 	struct bt_mesh_loc_local *rsp;
@@ -56,17 +48,19 @@ static void handle_local_loc(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->local_status) {
 		cli->handlers->local_status(cli, ctx, &loc);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_loc_cli_op[] = {
 	{
 		BT_MESH_LOC_OP_GLOBAL_STATUS,
-		BT_MESH_LOC_MSG_LEN_GLOBAL_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_LOC_MSG_LEN_GLOBAL_STATUS),
 		handle_global_loc,
 	},
 	{
 		BT_MESH_LOC_OP_LOCAL_STATUS,
-		BT_MESH_LOC_MSG_LEN_LOCAL_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_LOC_MSG_LEN_LOCAL_STATUS),
 		handle_local_loc,
 	},
 	BT_MESH_MODEL_OP_END,

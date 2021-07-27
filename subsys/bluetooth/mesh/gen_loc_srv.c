@@ -44,29 +44,22 @@ static void rsp_global(struct bt_mesh_model *model,
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
 
-static void handle_global_get(struct bt_mesh_model *model,
-			      struct bt_mesh_msg_ctx *ctx,
-			      struct net_buf_simple *buf)
+static int handle_global_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			     struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LOC_MSG_LEN_GLOBAL_GET) {
-		return;
-	}
-
 	struct bt_mesh_loc_srv *srv = model->user_data;
 	struct bt_mesh_loc_global global = LOC_GLOBAL_DEFAULT;
 
 	srv->handlers->global_get(srv, ctx, &global);
 
 	rsp_global(model, ctx, &global);
+
+	return 0;
 }
 
-static void global_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		       struct net_buf_simple *buf, bool ack)
+static int global_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		      struct net_buf_simple *buf, bool ack)
 {
-	if (buf->len != BT_MESH_LOC_MSG_LEN_GLOBAL_SET) {
-		return;
-	}
-
 	struct bt_mesh_loc_srv *srv = model->user_data;
 	struct bt_mesh_loc_global global;
 
@@ -82,20 +75,21 @@ static void global_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	    srv->pub_op != BT_MESH_LOC_OP_GLOBAL_STATUS) {
 		(void)bt_mesh_loc_srv_global_pub(srv, NULL, &global);
 	}
+
+	return 0;
 }
 
-static void handle_global_set(struct bt_mesh_model *model,
+static int handle_global_set(struct bt_mesh_model *model,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
-	global_set(model, ctx, buf, true);
+	return global_set(model, ctx, buf, true);
 }
 
-static void handle_global_set_unack(struct bt_mesh_model *model,
-				    struct bt_mesh_msg_ctx *ctx,
-				    struct net_buf_simple *buf)
+static int handle_global_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				   struct net_buf_simple *buf)
 {
-	global_set(model, ctx, buf, false);
+	return global_set(model, ctx, buf, false);
 }
 
 /* Local location */
@@ -113,29 +107,23 @@ static void rsp_local(struct bt_mesh_model *model,
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
 
-static void handle_local_get(struct bt_mesh_model *model,
+static int handle_local_get(struct bt_mesh_model *model,
 			     struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LOC_MSG_LEN_LOCAL_GET) {
-		return;
-	}
-
 	struct bt_mesh_loc_srv *srv = model->user_data;
 	struct bt_mesh_loc_local local = LOC_LOCAL_DEFAULT;
 
 	srv->handlers->local_get(srv, ctx, &local);
 
 	rsp_local(model, ctx, &local);
+
+	return 0;
 }
 
-static void local_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int local_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf, bool ack)
 {
-	if (buf->len != BT_MESH_LOC_MSG_LEN_LOCAL_SET) {
-		return;
-	}
-
 	struct bt_mesh_loc_srv *srv = model->user_data;
 	struct bt_mesh_loc_local local;
 
@@ -151,31 +139,33 @@ static void local_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	    srv->pub_op != BT_MESH_LOC_OP_LOCAL_STATUS) {
 		(void)bt_mesh_loc_srv_local_pub(srv, NULL, &local);
 	}
+
+	return 0;
 }
 
-static void handle_local_set(struct bt_mesh_model *model,
+static int handle_local_set(struct bt_mesh_model *model,
 			     struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	local_set(model, ctx, buf, true);
+	return local_set(model, ctx, buf, true);
 }
 
-static void handle_local_set_unack(struct bt_mesh_model *model,
+static int handle_local_set_unack(struct bt_mesh_model *model,
 				   struct bt_mesh_msg_ctx *ctx,
 				   struct net_buf_simple *buf)
 {
-	local_set(model, ctx, buf, false);
+	return local_set(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_loc_srv_op[] = {
 	{
 		BT_MESH_LOC_OP_GLOBAL_GET,
-		BT_MESH_LOC_MSG_LEN_GLOBAL_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_LOC_MSG_LEN_GLOBAL_GET),
 		handle_global_get,
 	},
 	{
 		BT_MESH_LOC_OP_LOCAL_GET,
-		BT_MESH_LOC_MSG_LEN_LOCAL_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_LOC_MSG_LEN_LOCAL_GET),
 		handle_local_get,
 	},
 	BT_MESH_MODEL_OP_END
@@ -183,22 +173,22 @@ const struct bt_mesh_model_op _bt_mesh_loc_srv_op[] = {
 const struct bt_mesh_model_op _bt_mesh_loc_setup_srv_op[] = {
 	{
 		BT_MESH_LOC_OP_GLOBAL_SET,
-		BT_MESH_LOC_MSG_LEN_GLOBAL_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_LOC_MSG_LEN_GLOBAL_SET),
 		handle_global_set,
 	},
 	{
 		BT_MESH_LOC_OP_GLOBAL_SET_UNACK,
-		BT_MESH_LOC_MSG_LEN_GLOBAL_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_LOC_MSG_LEN_GLOBAL_SET),
 		handle_global_set_unack,
 	},
 	{
 		BT_MESH_LOC_OP_LOCAL_SET,
-		BT_MESH_LOC_MSG_LEN_LOCAL_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_LOC_MSG_LEN_LOCAL_SET),
 		handle_local_set,
 	},
 	{
 		BT_MESH_LOC_OP_LOCAL_SET_UNACK,
-		BT_MESH_LOC_MSG_LEN_LOCAL_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_LOC_MSG_LEN_LOCAL_SET),
 		handle_local_set_unack,
 	},
 	BT_MESH_MODEL_OP_END

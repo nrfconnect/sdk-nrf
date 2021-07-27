@@ -65,12 +65,12 @@ static void encode_status(struct net_buf_simple *buf,
 	}
 }
 
-static void hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		    struct net_buf_simple *buf, bool ack)
+static int hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		   struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE &&
 	    buf->len != BT_MESH_LIGHT_HSL_MSG_MAXLEN_HUE) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_light_hue_srv *srv = model->user_data;
@@ -95,7 +95,7 @@ static void hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		 */
 		srv->handlers->get(srv, NULL, &status);
 		(void)bt_mesh_light_hue_srv_pub(srv, ctx, &status);
-		return;
+		return 0;
 	}
 
 	if (buf->len == 2) {
@@ -133,52 +133,49 @@ static void hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 		bt_mesh_scene_invalidate(srv->model);
 	}
+
+	return 0;
 }
 
-static void hue_get_handle(struct bt_mesh_model *model,
-			   struct bt_mesh_msg_ctx *ctx,
-			   struct net_buf_simple *buf)
+static int handle_hue_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			  struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHT_HSL_MSG_LEN_GET) {
-		return;
-	}
-
 	struct bt_mesh_light_hue_srv *srv = model->user_data;
 	struct bt_mesh_light_hue_status status = { 0 };
 
 	srv->handlers->get(srv, ctx, &status);
 	(void)bt_mesh_light_hue_srv_pub(srv, ctx, &status);
+
+	return 0;
 }
 
-static void hue_set_handle(struct bt_mesh_model *model,
-			   struct bt_mesh_msg_ctx *ctx,
-			   struct net_buf_simple *buf)
+static int handle_hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			  struct net_buf_simple *buf)
 {
-	hue_set(model, ctx, buf, true);
+	return hue_set(model, ctx, buf, true);
 }
 
-static void hue_set_unack_handle(struct bt_mesh_model *model,
-				 struct bt_mesh_msg_ctx *ctx,
-				 struct net_buf_simple *buf)
+static int handle_hue_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				struct net_buf_simple *buf)
 {
-	hue_set(model, ctx, buf, false);
+	return hue_set(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_hue_srv_op[] = {
 	{
 		BT_MESH_LIGHT_HUE_OP_GET,
-		BT_MESH_LIGHT_HSL_MSG_LEN_GET,
-		hue_get_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_HSL_MSG_LEN_GET),
+		handle_hue_get,
 	},
 	{
 		BT_MESH_LIGHT_HUE_OP_SET,
-		BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE,
-		hue_set_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE),
+		handle_hue_set,
 	},
 	{
 		BT_MESH_LIGHT_HUE_OP_SET_UNACK,
-		BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE,
-		hue_set_unack_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE),
+		handle_hue_set_unack,
 	},
 	BT_MESH_MODEL_OP_END,
 };

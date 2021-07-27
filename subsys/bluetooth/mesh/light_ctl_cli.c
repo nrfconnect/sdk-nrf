@@ -7,13 +7,12 @@
 #include <bluetooth/mesh/light_ctl_cli.h>
 #include "model_utils.h"
 
-static void ctl_status_handle(struct bt_mesh_model *model,
-			      struct bt_mesh_msg_ctx *ctx,
-			      struct net_buf_simple *buf)
+static int handle_ctl_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			     struct net_buf_simple *buf)
 {
 	if (buf->len != BT_MESH_LIGHT_CTL_MSG_MINLEN_STATUS &&
 	    buf->len != BT_MESH_LIGHT_CTL_MSG_MAXLEN_STATUS) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_light_ctl_cli *cli = model->user_data;
@@ -24,7 +23,7 @@ static void ctl_status_handle(struct bt_mesh_model *model,
 	status.current_temp = net_buf_simple_pull_le16(buf);
 	if ((status.current_temp < BT_MESH_LIGHT_TEMP_MIN) ||
 	    (status.current_temp > BT_MESH_LIGHT_TEMP_MAX)) {
-		return;
+		return -EINVAL;
 	}
 
 	if (buf->len == 5) {
@@ -32,7 +31,7 @@ static void ctl_status_handle(struct bt_mesh_model *model,
 		status.target_temp = net_buf_simple_pull_le16(buf);
 		if ((status.target_temp < BT_MESH_LIGHT_TEMP_MIN) ||
 		    (status.target_temp > BT_MESH_LIGHT_TEMP_MAX)) {
-			return;
+			return -EINVAL;
 		}
 
 		status.remaining_time =
@@ -52,16 +51,13 @@ static void ctl_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->ctl_status) {
 		cli->handlers->ctl_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void temp_range_status_handle(struct bt_mesh_model *model,
-				     struct bt_mesh_msg_ctx *ctx,
-				     struct net_buf_simple *buf)
+static int handle_temp_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				    struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_light_ctl_cli *cli = model->user_data;
 	struct bt_mesh_light_temp_range_status status;
 	struct bt_mesh_light_temp_range_status *rsp;
@@ -79,15 +75,16 @@ static void temp_range_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->temp_range_status) {
 		cli->handlers->temp_range_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void temp_status_handle(struct bt_mesh_model *model,
-			       struct bt_mesh_msg_ctx *ctx,
-			       struct net_buf_simple *buf)
+static int handle_temp_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			      struct net_buf_simple *buf)
 {
 	if (buf->len != BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_STATUS &&
 	    buf->len != BT_MESH_LIGHT_CTL_MSG_MAXLEN_TEMP_STATUS) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_light_ctl_cli *cli = model->user_data;
@@ -97,7 +94,7 @@ static void temp_status_handle(struct bt_mesh_model *model,
 	status.current.temp = net_buf_simple_pull_le16(buf);
 	if ((status.current.temp < BT_MESH_LIGHT_TEMP_MIN) ||
 	    (status.current.temp > BT_MESH_LIGHT_TEMP_MAX)) {
-		return;
+		return -EINVAL;
 	}
 
 	status.current.delta_uv = net_buf_simple_pull_le16(buf);
@@ -106,7 +103,7 @@ static void temp_status_handle(struct bt_mesh_model *model,
 		status.target.temp = net_buf_simple_pull_le16(buf);
 		if ((status.target.temp < BT_MESH_LIGHT_TEMP_MIN) ||
 		    (status.target.temp > BT_MESH_LIGHT_TEMP_MAX)) {
-			return;
+			return -EINVAL;
 		}
 
 		status.target.delta_uv = net_buf_simple_pull_le16(buf);
@@ -127,16 +124,13 @@ static void temp_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->temp_status) {
 		cli->handlers->temp_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void default_status_handle(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				 struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG) {
-		return;
-	}
-
 	struct bt_mesh_light_ctl_cli *cli = model->user_data;
 	struct bt_mesh_light_ctl status;
 	struct bt_mesh_light_ctl *rsp;
@@ -145,7 +139,7 @@ static void default_status_handle(struct bt_mesh_model *model,
 	status.temp = net_buf_simple_pull_le16(buf);
 	if ((status.temp < BT_MESH_LIGHT_TEMP_MIN) ||
 	    (status.temp > BT_MESH_LIGHT_TEMP_MAX)) {
-		return;
+		return -EINVAL;
 	}
 
 	status.delta_uv = net_buf_simple_pull_le16(buf);
@@ -159,28 +153,30 @@ static void default_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->default_status) {
 		cli->handlers->default_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctl_cli_op[] = {
 	{
 		BT_MESH_LIGHT_CTL_STATUS,
-		BT_MESH_LIGHT_CTL_MSG_MINLEN_STATUS,
-		ctl_status_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_CTL_MSG_MINLEN_STATUS),
+		handle_ctl_status,
 	},
 	{
 		BT_MESH_LIGHT_TEMP_RANGE_STATUS,
-		BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS,
-		temp_range_status_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS),
+		handle_temp_range_status,
 	},
 	{
 		BT_MESH_LIGHT_TEMP_STATUS,
-		BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_STATUS,
-		temp_status_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_CTL_MSG_MINLEN_TEMP_STATUS),
+		handle_temp_status,
 	},
 	{
 		BT_MESH_LIGHT_CTL_DEFAULT_STATUS,
-		BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG,
-		default_status_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG),
+		handle_default_status,
 	},
 	BT_MESH_MODEL_OP_END,
 };

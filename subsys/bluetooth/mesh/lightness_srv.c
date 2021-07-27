@@ -133,14 +133,9 @@ static void rsp_lightness_status(struct bt_mesh_model *model,
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 }
 
-static void handle_light_get(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf, enum light_repr repr)
+static int handle_light_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf, enum light_repr repr)
 {
-	if (buf->len != BT_MESH_LIGHTNESS_MSG_LEN_GET) {
-		return;
-	}
-
 	BT_DBG("%s", repr_str[repr]);
 
 	struct bt_mesh_lightness_srv *srv = model->user_data;
@@ -149,20 +144,20 @@ static void handle_light_get(struct bt_mesh_model *model,
 	srv->handlers->light_get(srv, ctx, &status);
 
 	rsp_lightness_status(model, ctx, &status, repr);
+
+	return 0;
 }
 
-static void handle_actual_get(struct bt_mesh_model *model,
-			      struct bt_mesh_msg_ctx *ctx,
-			      struct net_buf_simple *buf)
+static int handle_actual_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			     struct net_buf_simple *buf)
 {
-	handle_light_get(model, ctx, buf, ACTUAL);
+	return handle_light_get(model, ctx, buf, ACTUAL);
 }
 
-static void handle_linear_get(struct bt_mesh_model *model,
-			      struct bt_mesh_msg_ctx *ctx,
-			      struct net_buf_simple *buf)
+static int handle_linear_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			     struct net_buf_simple *buf)
 {
-	handle_light_get(model, ctx, buf, LINEAR);
+	return handle_light_get(model, ctx, buf, LINEAR);
 }
 
 void lightness_srv_disable_control(struct bt_mesh_lightness_srv *srv)
@@ -226,14 +221,12 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 	}
 }
 
-static void lightness_set(struct bt_mesh_model *model,
-			  struct bt_mesh_msg_ctx *ctx,
-			  struct net_buf_simple *buf, bool ack,
-			  enum light_repr repr)
+static int lightness_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			 struct net_buf_simple *buf, bool ack, enum light_repr repr)
 {
 	if (buf->len != BT_MESH_LIGHTNESS_MSG_MINLEN_SET &&
 	    buf->len != BT_MESH_LIGHTNESS_MSG_MAXLEN_SET) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_lightness_srv *srv = model->user_data;
@@ -270,44 +263,37 @@ static void lightness_set(struct bt_mesh_model *model,
 	if (ack) {
 		rsp_lightness_status(model, ctx, &status, repr);
 	}
+
+	return 0;
 }
 
-static void handle_actual_set(struct bt_mesh_model *model,
-			      struct bt_mesh_msg_ctx *ctx,
-			      struct net_buf_simple *buf)
+static int handle_actual_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			     struct net_buf_simple *buf)
 {
-	lightness_set(model, ctx, buf, true, ACTUAL);
+	return lightness_set(model, ctx, buf, true, ACTUAL);
 }
 
-static void handle_actual_set_unack(struct bt_mesh_model *model,
-				    struct bt_mesh_msg_ctx *ctx,
-				    struct net_buf_simple *buf)
+static int handle_actual_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				   struct net_buf_simple *buf)
 {
-	lightness_set(model, ctx, buf, false, ACTUAL);
+	return lightness_set(model, ctx, buf, false, ACTUAL);
 }
 
-static void handle_linear_set(struct bt_mesh_model *model,
-			      struct bt_mesh_msg_ctx *ctx,
-			      struct net_buf_simple *buf)
+static int handle_linear_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			     struct net_buf_simple *buf)
 {
-	lightness_set(model, ctx, buf, true, LINEAR);
+	return lightness_set(model, ctx, buf, true, LINEAR);
 }
 
-static void handle_linear_set_unack(struct bt_mesh_model *model,
-				    struct bt_mesh_msg_ctx *ctx,
-				    struct net_buf_simple *buf)
+static int handle_linear_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				   struct net_buf_simple *buf)
 {
-	lightness_set(model, ctx, buf, false, LINEAR);
+	return lightness_set(model, ctx, buf, false, LINEAR);
 }
 
-static void handle_last_get(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_last_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHTNESS_MSG_LEN_LAST_GET) {
-		return;
-	}
-
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_LIGHTNESS_OP_LAST_STATUS,
@@ -316,16 +302,13 @@ static void handle_last_get(struct bt_mesh_model *model,
 
 	net_buf_simple_add_le16(&rsp, light_to_repr(srv->last, ACTUAL));
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void handle_default_get(struct bt_mesh_model *model,
-			       struct bt_mesh_msg_ctx *ctx,
-			       struct net_buf_simple *buf)
+static int handle_default_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			      struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_GET) {
-		return;
-	}
-
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS,
@@ -335,6 +318,8 @@ static void handle_default_get(struct bt_mesh_model *model,
 	net_buf_simple_add_le16(&rsp,
 				light_to_repr(srv->default_light, ACTUAL));
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
 void lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
@@ -356,19 +341,15 @@ void lightness_srv_default_set(struct bt_mesh_lightness_srv *srv,
 	store_state(srv);
 }
 
-static void set_default(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-			struct net_buf_simple *buf, bool ack)
+static int set_default(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		       struct net_buf_simple *buf, bool ack)
 {
-	if (buf->len != BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET) {
-		return;
-	}
-
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 	uint16_t new = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
 
 	lightness_srv_default_set(srv, ctx, new);
 	if (!ack) {
-		return;
+		return 0;
 	}
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_LIGHTNESS_OP_DEFAULT_STATUS,
@@ -377,30 +358,25 @@ static void set_default(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	net_buf_simple_add_le16(&rsp, srv->default_light);
 
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void handle_default_set(struct bt_mesh_model *model,
-			       struct bt_mesh_msg_ctx *ctx,
-			       struct net_buf_simple *buf)
+static int handle_default_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			      struct net_buf_simple *buf)
 {
-	set_default(model, ctx, buf, true);
+	return set_default(model, ctx, buf, true);
 }
 
-static void handle_default_set_unack(struct bt_mesh_model *model,
-				     struct bt_mesh_msg_ctx *ctx,
-				     struct net_buf_simple *buf)
+static int handle_default_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				    struct net_buf_simple *buf)
 {
-	set_default(model, ctx, buf, false);
+	return set_default(model, ctx, buf, false);
 }
 
-static void handle_range_get(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf)
+static int handle_range_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHTNESS_MSG_LEN_RANGE_GET) {
-		return;
-	}
-
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_LIGHTNESS_OP_RANGE_STATUS,
@@ -412,15 +388,13 @@ static void handle_range_get(struct bt_mesh_model *model,
 	net_buf_simple_add_le16(&rsp, light_to_repr(srv->range.max, ACTUAL));
 
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		      struct net_buf_simple *buf, bool ack)
+static int set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		     struct net_buf_simple *buf, bool ack)
 {
-	if (buf->len != BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET) {
-		return;
-	}
-
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 	struct bt_mesh_lightness_range new;
 
@@ -432,7 +406,7 @@ static void set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	 * parameters.
 	 */
 	if (new.min == 0 || new.max == 0 || new.min > new.max) {
-		return;
+		return -EINVAL;
 	}
 
 	if (new.min != srv->range.min || new.max != srv->range.max) {
@@ -447,7 +421,7 @@ static void set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	if (!ack) {
-		return;
+		return 0;
 	}
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_LIGHTNESS_OP_RANGE_STATUS,
@@ -459,66 +433,66 @@ static void set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	net_buf_simple_add_le16(&rsp, light_to_repr(srv->range.max, ACTUAL));
 
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void handle_range_set(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf)
+static int handle_range_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
 {
-	set_range(model, ctx, buf, true);
+	return set_range(model, ctx, buf, true);
 }
 
-static void handle_range_set_unack(struct bt_mesh_model *model,
-				   struct bt_mesh_msg_ctx *ctx,
-				   struct net_buf_simple *buf)
+static int handle_range_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				  struct net_buf_simple *buf)
 {
-	set_range(model, ctx, buf, false);
+	return set_range(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_lightness_srv_op[] = {
 	{
 		BT_MESH_LIGHTNESS_OP_GET,
-		BT_MESH_LIGHTNESS_MSG_LEN_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_GET),
 		handle_actual_get,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_SET,
-		BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHTNESS_MSG_MINLEN_SET),
 		handle_actual_set,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_SET_UNACK,
-		BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHTNESS_MSG_MINLEN_SET),
 		handle_actual_set_unack,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_LINEAR_GET,
-		BT_MESH_LIGHTNESS_MSG_LEN_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_GET),
 		handle_linear_get,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_LINEAR_SET,
-		BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHTNESS_MSG_MINLEN_SET),
 		handle_linear_set,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_LINEAR_SET_UNACK,
-		BT_MESH_LIGHTNESS_MSG_MINLEN_SET,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHTNESS_MSG_MINLEN_SET),
 		handle_linear_set_unack,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_LAST_GET,
-		BT_MESH_LIGHTNESS_MSG_LEN_LAST_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_LAST_GET),
 		handle_last_get,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_DEFAULT_GET,
-		BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_GET),
 		handle_default_get,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_RANGE_GET,
-		BT_MESH_LIGHTNESS_MSG_LEN_RANGE_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_RANGE_GET),
 		handle_range_get,
 	},
 	BT_MESH_MODEL_OP_END,
@@ -527,22 +501,22 @@ const struct bt_mesh_model_op _bt_mesh_lightness_srv_op[] = {
 const struct bt_mesh_model_op _bt_mesh_lightness_setup_srv_op[] = {
 	{
 		BT_MESH_LIGHTNESS_OP_DEFAULT_SET,
-		BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET),
 		handle_default_set,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_DEFAULT_SET_UNACK,
-		BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_DEFAULT_SET),
 		handle_default_set_unack,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_RANGE_SET,
-		BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET),
 		handle_range_set,
 	},
 	{
 		BT_MESH_LIGHTNESS_OP_RANGE_SET_UNACK,
-		BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHTNESS_MSG_LEN_RANGE_SET),
 		handle_range_set_unack,
 	},
 	BT_MESH_MODEL_OP_END,

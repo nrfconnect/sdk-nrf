@@ -187,15 +187,15 @@ static int send_time_status(struct bt_mesh_model *model,
 	return model_send(model, ctx, &msg);
 }
 
-static void handle_time_status(struct bt_mesh_model *model,
-			       struct bt_mesh_msg_ctx *ctx,
-			       struct net_buf_simple *buf)
+static int handle_time_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			      struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 
 	if ((srv->data.role != BT_MESH_TIME_CLIENT) &&
 	    (srv->data.role != BT_MESH_TIME_RELAY)) {
-		return;
+		/* Not relevant for this role, ignore. */
+		return 0;
 	}
 
 	struct bt_mesh_time_status status;
@@ -205,7 +205,7 @@ static void handle_time_status(struct bt_mesh_model *model,
 	if (status.is_authority <= srv->data.sync.status.is_authority &&
 	    srv->data.sync.status.uncertainty < status.uncertainty) {
 		/* The new time status is not an improvement, ignore. */
-		return;
+		return 0;
 	}
 
 	srv->data.sync.uptime = k_uptime_get();
@@ -220,18 +220,20 @@ static void handle_time_status(struct bt_mesh_model *model,
 	if (srv->data.role == BT_MESH_TIME_RELAY) {
 		(void)bt_mesh_time_srv_time_status_send(srv, NULL);
 	}
+
+	return 0;
 }
 
-static void handle_time_get(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_time_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
 	send_time_status(model, ctx, k_uptime_get());
+
+	return 0;
 }
 
-static void handle_time_set(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_time_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 
@@ -243,18 +245,20 @@ static void handle_time_set(struct bt_mesh_model *model,
 	}
 
 	send_time_status(model, ctx, srv->data.sync.uptime);
+
+	return 0;
 }
 
-static void handle_zone_get(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_zone_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
 	send_zone_status(model, ctx);
+
+	return 0;
 }
 
-static void handle_zone_set(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_zone_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 
@@ -268,18 +272,20 @@ static void handle_zone_set(struct bt_mesh_model *model,
 	}
 
 	send_zone_status(model, ctx);
+
+	return 0;
 }
 
-static void handle_tai_utc_delta_get(struct bt_mesh_model *model,
-				     struct bt_mesh_msg_ctx *ctx,
-				     struct net_buf_simple *buf)
+static int handle_tai_utc_delta_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				    struct net_buf_simple *buf)
 {
 	send_tai_utc_delta_status(model, ctx);
+
+	return 0;
 }
 
-static void handle_tai_utc_delta_set(struct bt_mesh_model *model,
-				     struct bt_mesh_msg_ctx *ctx,
-				     struct net_buf_simple *buf)
+static int handle_tai_utc_delta_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				    struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 
@@ -292,18 +298,20 @@ static void handle_tai_utc_delta_set(struct bt_mesh_model *model,
 	}
 
 	send_tai_utc_delta_status(model, ctx);
+
+	return 0;
 }
 
-static void handle_role_get(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_role_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
 	send_role_status(model, ctx);
+
+	return 0;
 }
 
-static void handle_role_set(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_role_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 	enum bt_mesh_time_role role;
@@ -311,34 +319,36 @@ static void handle_role_set(struct bt_mesh_model *model,
 	role = net_buf_simple_pull_u8(buf);
 	if (role != BT_MESH_TIME_NONE && role != BT_MESH_TIME_AUTHORITY &&
 	    role != BT_MESH_TIME_RELAY && role != BT_MESH_TIME_CLIENT) {
-		return;
+		return -EINVAL;
 	}
 
 	srv->data.role = role;
 
 	store_state(srv);
 	send_role_status(model, ctx);
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_time_srv_op[] = {
 	{
 		BT_MESH_TIME_OP_TIME_GET,
-		BT_MESH_TIME_MSG_LEN_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_GET),
 		handle_time_get,
 	},
 	{
 		BT_MESH_TIME_OP_TIME_STATUS,
-		BT_MESH_TIME_MSG_LEN_TIME_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TIME_STATUS),
 		handle_time_status,
 	},
 	{
 		BT_MESH_TIME_OP_TIME_ZONE_GET,
-		BT_MESH_TIME_MSG_LEN_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_GET),
 		handle_zone_get,
 	},
 	{
 		BT_MESH_TIME_OP_TAI_UTC_DELTA_GET,
-		BT_MESH_TIME_MSG_LEN_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_GET),
 		handle_tai_utc_delta_get,
 	},
 	BT_MESH_MODEL_OP_END,
@@ -347,27 +357,27 @@ const struct bt_mesh_model_op _bt_mesh_time_srv_op[] = {
 const struct bt_mesh_model_op _bt_mesh_time_setup_srv_op[] = {
 	{
 		BT_MESH_TIME_OP_TIME_SET,
-		BT_MESH_TIME_MSG_LEN_TIME_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TIME_SET),
 		handle_time_set,
 	},
 	{
 		BT_MESH_TIME_OP_TIME_ZONE_SET,
-		BT_MESH_TIME_MSG_LEN_TIME_ZONE_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TIME_ZONE_SET),
 		handle_zone_set,
 	},
 	{
 		BT_MESH_TIME_OP_TAI_UTC_DELTA_SET,
-		BT_MESH_TIME_MSG_LEN_TAI_UTC_DELTA_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TAI_UTC_DELTA_SET),
 		handle_tai_utc_delta_set,
 	},
 	{
 		BT_MESH_TIME_OP_TIME_ROLE_GET,
-		BT_MESH_TIME_MSG_LEN_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_GET),
 		handle_role_get,
 	},
 	{
 		BT_MESH_TIME_OP_TIME_ROLE_SET,
-		BT_MESH_TIME_MSG_LEN_TIME_ROLE_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_TIME_MSG_LEN_TIME_ROLE_SET),
 		handle_role_set,
 	},
 	BT_MESH_MODEL_OP_END,

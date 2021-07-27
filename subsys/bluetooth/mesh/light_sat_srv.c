@@ -65,12 +65,12 @@ static void encode_status(struct net_buf_simple *buf,
 	}
 }
 
-static void sat_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int sat_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		    struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_LIGHT_HSL_MSG_MINLEN_SAT &&
 	    buf->len != BT_MESH_LIGHT_HSL_MSG_MAXLEN_SAT) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_light_sat_srv *srv = model->user_data;
@@ -94,7 +94,7 @@ static void sat_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		 */
 		srv->handlers->get(srv, NULL, &status);
 		(void)bt_mesh_light_sat_srv_pub(srv, ctx, &status);
-		return;
+		return 0;
 	}
 
 	if (buf->len == 2) {
@@ -132,52 +132,52 @@ static void sat_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 		bt_mesh_scene_invalidate(srv->model);
 	}
+
+	return 0;
 }
 
-static void sat_get_handle(struct bt_mesh_model *model,
+static int handle_sat_get(struct bt_mesh_model *model,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHT_HSL_MSG_LEN_GET) {
-		return;
-	}
-
 	struct bt_mesh_light_sat_srv *srv = model->user_data;
 	struct bt_mesh_light_sat_status status = { 0 };
 
 	srv->handlers->get(srv, ctx, &status);
 	(void)bt_mesh_light_sat_srv_pub(srv, ctx, &status);
+
+	return 0;
 }
 
-static void sat_set_handle(struct bt_mesh_model *model,
+static int handle_sat_set(struct bt_mesh_model *model,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	sat_set(model, ctx, buf, true);
+	return sat_set(model, ctx, buf, true);
 }
 
-static void sat_set_unack_handle(struct bt_mesh_model *model,
+static int handle_sat_set_unack(struct bt_mesh_model *model,
 				 struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
-	sat_set(model, ctx, buf, false);
+	return sat_set(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_sat_srv_op[] = {
 	{
 		BT_MESH_LIGHT_SAT_OP_GET,
-		BT_MESH_LIGHT_HSL_MSG_LEN_GET,
-		sat_get_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_HSL_MSG_LEN_GET),
+		handle_sat_get,
 	},
 	{
 		BT_MESH_LIGHT_SAT_OP_SET,
-		BT_MESH_LIGHT_HSL_MSG_MINLEN_SAT,
-		sat_set_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_HSL_MSG_MINLEN_SAT),
+		handle_sat_set,
 	},
 	{
 		BT_MESH_LIGHT_SAT_OP_SET_UNACK,
-		BT_MESH_LIGHT_HSL_MSG_MINLEN_SAT,
-		sat_set_unack_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_HSL_MSG_MINLEN_SAT),
+		handle_sat_set_unack,
 	},
 	BT_MESH_MODEL_OP_END,
 };

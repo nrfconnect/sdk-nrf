@@ -111,23 +111,20 @@ static void rsp_plvl_status(struct bt_mesh_model *model,
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 }
 
-static void handle_lvl_get(struct bt_mesh_model *model,
-			   struct bt_mesh_msg_ctx *ctx,
-			   struct net_buf_simple *buf)
+static int handle_lvl_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			  struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PLVL_MSG_LEN_LEVEL_GET) {
-		return;
-	}
-
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
 
 	srv->handlers->power_get(srv, ctx, &status);
 
 	rsp_plvl_status(model, ctx, &status);
+
+	return 0;
 }
 
-static void change_lvl(struct bt_mesh_plvl_srv *srv,
+static int change_lvl(struct bt_mesh_plvl_srv *srv,
 		       struct bt_mesh_msg_ctx *ctx,
 		       struct bt_mesh_plvl_set *set,
 		       struct bt_mesh_plvl_status *status)
@@ -149,14 +146,16 @@ static void change_lvl(struct bt_mesh_plvl_srv *srv,
 
 	memset(status, 0, sizeof(*status));
 	srv->handlers->power_set(srv, ctx, set, status);
+
+	return 0;
 }
 
-static void plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		     struct net_buf_simple *buf, bool ack)
+static int plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		    struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_PLVL_MSG_MINLEN_LEVEL_SET &&
 	    buf->len != BT_MESH_PLVL_MSG_MAXLEN_LEVEL_SET) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_plvl_srv *srv = model->user_data;
@@ -183,30 +182,25 @@ static void plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	if (ack) {
 		rsp_plvl_status(model, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void handle_plvl_set(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
-	plvl_set(model, ctx, buf, true);
+	return plvl_set(model, ctx, buf, true);
 }
 
-static void handle_plvl_set_unack(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_plvl_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				 struct net_buf_simple *buf)
 {
-	plvl_set(model, ctx, buf, false);
+	return plvl_set(model, ctx, buf, false);
 }
 
-static void handle_last_get(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *ctx,
-			    struct net_buf_simple *buf)
+static int handle_last_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			   struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PLVL_MSG_LEN_LAST_GET) {
-		return;
-	}
-
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PLVL_OP_LAST_STATUS,
@@ -215,16 +209,13 @@ static void handle_last_get(struct bt_mesh_model *model,
 
 	net_buf_simple_add_le16(&rsp, srv->last);
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void handle_default_get(struct bt_mesh_model *model,
-			       struct bt_mesh_msg_ctx *ctx,
-			       struct net_buf_simple *buf)
+static int handle_default_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			      struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PLVL_MSG_LEN_DEFAULT_GET) {
-		return;
-	}
-
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PLVL_OP_DEFAULT_STATUS,
@@ -233,15 +224,13 @@ static void handle_default_get(struct bt_mesh_model *model,
 
 	net_buf_simple_add_le16(&rsp, srv->default_power);
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void set_default(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-			struct net_buf_simple *buf, bool ack)
+static int set_default(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		       struct net_buf_simple *buf, bool ack)
 {
-	if (buf->len != BT_MESH_PLVL_MSG_LEN_DEFAULT_SET) {
-		return;
-	}
-
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 	uint16_t new = net_buf_simple_pull_le16(buf);
 
@@ -257,7 +246,7 @@ static void set_default(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	}
 
 	if (!ack) {
-		return;
+		return 0;
 	}
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PLVL_OP_DEFAULT_STATUS,
@@ -266,30 +255,25 @@ static void set_default(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	net_buf_simple_add_le16(&rsp, srv->default_power);
 
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void handle_default_set(struct bt_mesh_model *model,
-			       struct bt_mesh_msg_ctx *ctx,
-			       struct net_buf_simple *buf)
+static int handle_default_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			      struct net_buf_simple *buf)
 {
-	set_default(model, ctx, buf, true);
+	return set_default(model, ctx, buf, true);
 }
 
-static void handle_default_set_unack(struct bt_mesh_model *model,
-				     struct bt_mesh_msg_ctx *ctx,
-				     struct net_buf_simple *buf)
+static int handle_default_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				    struct net_buf_simple *buf)
 {
-	set_default(model, ctx, buf, false);
+	return set_default(model, ctx, buf, false);
 }
 
-static void handle_range_get(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf)
+static int handle_range_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PLVL_MSG_LEN_RANGE_GET) {
-		return;
-	}
-
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PLVL_OP_RANGE_STATUS,
@@ -301,15 +285,13 @@ static void handle_range_get(struct bt_mesh_model *model,
 	net_buf_simple_add_le16(&rsp, srv->range.max);
 
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		      struct net_buf_simple *buf, bool ack)
+static int set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		     struct net_buf_simple *buf, bool ack)
 {
-	if (buf->len != BT_MESH_PLVL_MSG_LEN_RANGE_SET) {
-		return;
-	}
-
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 	struct bt_mesh_plvl_range new;
 
@@ -321,7 +303,7 @@ static void set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	 * parameters.
 	 */
 	if (new.min == 0 || new.max == 0 || new.min > new.max) {
-		return;
+		return -EINVAL;
 	}
 
 	if (new.min != srv->range.min || new.max != srv->range.max) {
@@ -336,7 +318,7 @@ static void set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	if (!ack) {
-		return;
+		return 0;
 	}
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PLVL_OP_RANGE_STATUS,
@@ -348,51 +330,51 @@ static void set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	net_buf_simple_add_le16(&rsp, srv->range.max);
 
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
+
+	return 0;
 }
 
-static void handle_range_set(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf)
+static int handle_range_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
 {
-	set_range(model, ctx, buf, true);
+	return set_range(model, ctx, buf, true);
 }
 
-static void handle_range_set_unack(struct bt_mesh_model *model,
-				   struct bt_mesh_msg_ctx *ctx,
-				   struct net_buf_simple *buf)
+static int handle_range_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				  struct net_buf_simple *buf)
 {
-	set_range(model, ctx, buf, false);
+	return set_range(model, ctx, buf, false);
 }
 
 const struct bt_mesh_model_op _bt_mesh_plvl_srv_op[] = {
 	{
 		BT_MESH_PLVL_OP_LEVEL_GET,
-		BT_MESH_PLVL_MSG_LEN_LEVEL_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_LEVEL_GET),
 		handle_lvl_get,
 	},
 	{
 		BT_MESH_PLVL_OP_LEVEL_SET,
-		BT_MESH_PLVL_MSG_MINLEN_LEVEL_SET,
+		BT_MESH_LEN_MIN(BT_MESH_PLVL_MSG_MINLEN_LEVEL_SET),
 		handle_plvl_set,
 	},
 	{
 		BT_MESH_PLVL_OP_LEVEL_SET_UNACK,
-		BT_MESH_PLVL_MSG_MINLEN_LEVEL_SET,
+		BT_MESH_LEN_MIN(BT_MESH_PLVL_MSG_MINLEN_LEVEL_SET),
 		handle_plvl_set_unack,
 	},
 	{
 		BT_MESH_PLVL_OP_LAST_GET,
-		BT_MESH_PLVL_MSG_LEN_LAST_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_LAST_GET),
 		handle_last_get,
 	},
 	{
 		BT_MESH_PLVL_OP_DEFAULT_GET,
-		BT_MESH_PLVL_MSG_LEN_DEFAULT_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_DEFAULT_GET),
 		handle_default_get,
 	},
 	{
 		BT_MESH_PLVL_OP_RANGE_GET,
-		BT_MESH_PLVL_MSG_LEN_RANGE_GET,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_RANGE_GET),
 		handle_range_get,
 	},
 	BT_MESH_MODEL_OP_END,
@@ -401,22 +383,22 @@ const struct bt_mesh_model_op _bt_mesh_plvl_srv_op[] = {
 const struct bt_mesh_model_op _bt_mesh_plvl_setup_srv_op[] = {
 	{
 		BT_MESH_PLVL_OP_DEFAULT_SET,
-		BT_MESH_PLVL_MSG_LEN_DEFAULT_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_DEFAULT_SET),
 		handle_default_set,
 	},
 	{
 		BT_MESH_PLVL_OP_DEFAULT_SET_UNACK,
-		BT_MESH_PLVL_MSG_LEN_DEFAULT_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_DEFAULT_SET),
 		handle_default_set_unack,
 	},
 	{
 		BT_MESH_PLVL_OP_RANGE_SET,
-		BT_MESH_PLVL_MSG_LEN_RANGE_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_RANGE_SET),
 		handle_range_set,
 	},
 	{
 		BT_MESH_PLVL_OP_RANGE_SET_UNACK,
-		BT_MESH_PLVL_MSG_LEN_RANGE_SET,
+		BT_MESH_LEN_EXACT(BT_MESH_PLVL_MSG_LEN_RANGE_SET),
 		handle_range_set_unack,
 	},
 	BT_MESH_MODEL_OP_END,

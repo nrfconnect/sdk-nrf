@@ -7,13 +7,13 @@
 #include <bluetooth/mesh/gen_lvl_cli.h>
 #include "model_utils.h"
 
-static void handle_status(struct bt_mesh_model *model,
+static int handle_status(struct bt_mesh_model *model,
 			  struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
 	if (buf->len != BT_MESH_LVL_MSG_MINLEN_STATUS &&
 	    buf->len != BT_MESH_LVL_MSG_MAXLEN_STATUS) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_lvl_cli *cli = model->user_data;
@@ -39,10 +39,16 @@ static void handle_status(struct bt_mesh_model *model,
 	if (cli->status_handler) {
 		cli->status_handler(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_lvl_cli_op[] = {
-	{ BT_MESH_LVL_OP_STATUS, BT_MESH_LVL_MSG_MINLEN_STATUS, handle_status },
+	{
+		BT_MESH_LVL_OP_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_LVL_MSG_MINLEN_STATUS),
+		handle_status,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

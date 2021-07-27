@@ -34,9 +34,8 @@ static int status_decode(struct bt_mesh_light_hsl_cli *cli,
 	return 0;
 }
 
-static void hsl_status_handle(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_hsl_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			     struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_hsl_cli *cli = model->user_data;
 	struct bt_mesh_light_hsl_status status;
@@ -45,17 +44,18 @@ static void hsl_status_handle(struct bt_mesh_model *model,
 	err = status_decode(cli, ctx, buf, BT_MESH_LIGHT_HSL_OP_STATUS,
 			    &status);
 	if (err) {
-		return;
+		return err;
 	}
 
 	if (cli->handlers && cli->handlers->status) {
 		cli->handlers->status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void hsl_target_status_handle(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_hsl_target_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				    struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_hsl_cli *cli = model->user_data;
 	struct bt_mesh_light_hsl_status status;
@@ -64,21 +64,22 @@ static void hsl_target_status_handle(struct bt_mesh_model *model,
 	err = status_decode(cli, ctx, buf, BT_MESH_LIGHT_HSL_OP_TARGET_STATUS,
 			    &status);
 	if (err) {
-		return;
+		return err;
 	}
 
 	if (cli->handlers && cli->handlers->target_status) {
 		cli->handlers->target_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void default_status_handle(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				 struct net_buf_simple *buf)
 {
 	if (buf->len != BT_MESH_LIGHT_HSL_MSG_MINLEN_STATUS &&
 	    buf->len != BT_MESH_LIGHT_HSL_MSG_MAXLEN_STATUS) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_light_hsl_cli *cli = model->user_data;
@@ -96,16 +97,13 @@ static void default_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->default_status) {
 		cli->handlers->default_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void range_status_handle(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			       struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_LIGHT_HSL_MSG_LEN_RANGE_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_light_hsl_cli *cli = model->user_data;
 	struct bt_mesh_light_hsl_range_status status;
 	struct bt_mesh_light_hsl_range_status *rsp;
@@ -122,11 +120,12 @@ static void range_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->range_status) {
 		cli->handlers->range_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void hue_status_handle(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_hue_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			     struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_hsl_cli *cli = model->user_data;
 	struct bt_mesh_light_hue_status status;
@@ -134,7 +133,7 @@ static void hue_status_handle(struct bt_mesh_model *model,
 
 	if (buf->len != BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE_STATUS &&
 	    buf->len != BT_MESH_LIGHT_HSL_MSG_MAXLEN_HUE_STATUS) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	status.current = net_buf_simple_pull_le16(buf);
@@ -156,11 +155,12 @@ static void hue_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->hue_status) {
 		cli->handlers->hue_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void saturation_status_handle(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
-				  struct net_buf_simple *buf)
+static int handle_saturation_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				    struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_hsl_cli *cli = model->user_data;
 	struct bt_mesh_light_sat_status status;
@@ -168,7 +168,7 @@ static void saturation_status_handle(struct bt_mesh_model *model,
 
 	if (buf->len != BT_MESH_LIGHT_HSL_MSG_MINLEN_SAT_STATUS &&
 	    buf->len != BT_MESH_LIGHT_HSL_MSG_MAXLEN_SAT_STATUS) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	status.current = net_buf_simple_pull_le16(buf);
@@ -190,38 +190,40 @@ static void saturation_status_handle(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->saturation_status) {
 		cli->handlers->saturation_status(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_hsl_cli_op[] = {
 	{
 		BT_MESH_LIGHT_HSL_OP_STATUS,
-		BT_MESH_LIGHT_HSL_MSG_MINLEN_STATUS,
-		hsl_status_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_HSL_MSG_MINLEN_STATUS),
+		handle_hsl_status,
 	},
 	{
 		BT_MESH_LIGHT_HSL_OP_TARGET_STATUS,
-		BT_MESH_LIGHT_HSL_MSG_MINLEN_STATUS,
-		hsl_target_status_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_HSL_MSG_MINLEN_STATUS),
+		handle_hsl_target_status,
 	},
 	{
 		BT_MESH_LIGHT_HSL_OP_DEFAULT_STATUS,
-		BT_MESH_LIGHT_HSL_MSG_LEN_DEFAULT,
-		default_status_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_HSL_MSG_LEN_DEFAULT),
+		handle_default_status,
 	},
 	{
 		BT_MESH_LIGHT_HSL_OP_RANGE_STATUS,
-		BT_MESH_LIGHT_HSL_MSG_LEN_RANGE_STATUS,
-		range_status_handle,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_HSL_MSG_LEN_RANGE_STATUS),
+		handle_range_status,
 	},
 	{
 		BT_MESH_LIGHT_HUE_OP_STATUS,
-		BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE_STATUS,
-		hue_status_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE_STATUS),
+		handle_hue_status,
 	},
 	{
 		BT_MESH_LIGHT_SAT_OP_STATUS,
-		BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE_STATUS,
-		saturation_status_handle,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE_STATUS),
+		handle_saturation_status,
 	},
 	BT_MESH_MODEL_OP_END,
 };

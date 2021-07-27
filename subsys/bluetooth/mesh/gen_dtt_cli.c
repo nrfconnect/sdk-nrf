@@ -7,14 +7,9 @@
 #include <bluetooth/mesh/gen_dtt_cli.h>
 #include "model_utils.h"
 
-static void handle_status(struct bt_mesh_model *model,
-			  struct bt_mesh_msg_ctx *ctx,
-			  struct net_buf_simple *buf)
+static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			 struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_DTT_MSG_LEN_STATUS) {
-		return;
-	}
-
 	struct bt_mesh_dtt_cli *cli = model->user_data;
 	int32_t transition_time =
 		model_transition_decode(net_buf_simple_pull_u8(buf));
@@ -29,10 +24,16 @@ static void handle_status(struct bt_mesh_model *model,
 	if (cli->status_handler) {
 		cli->status_handler(cli, ctx, transition_time);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_dtt_cli_op[] = {
-	{ BT_MESH_DTT_OP_STATUS, BT_MESH_DTT_MSG_LEN_STATUS, handle_status },
+	{
+		BT_MESH_DTT_OP_STATUS,
+		BT_MESH_LEN_EXACT(BT_MESH_DTT_MSG_LEN_STATUS),
+		handle_status,
+	},
 	BT_MESH_MODEL_OP_END,
 };
 

@@ -24,13 +24,13 @@ struct prop_list_ctx {
 	int status;
 };
 
-static void properties_status(struct bt_mesh_model *model,
+static int properties_status(struct bt_mesh_model *model,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf,
 			      enum bt_mesh_prop_srv_kind kind)
 {
 	if ((buf->len % 2) != 0) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_prop_cli *cli = model->user_data;
@@ -56,44 +56,42 @@ static void properties_status(struct bt_mesh_model *model,
 	if (cli->prop_list) {
 		cli->prop_list(cli, ctx, kind, &list);
 	}
+
+	return 0;
 }
 
-static void handle_mfr_properties_status(struct bt_mesh_model *model,
-					 struct bt_mesh_msg_ctx *ctx,
-					 struct net_buf_simple *buf)
+static int handle_mfr_properties_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+					struct net_buf_simple *buf)
 {
-	properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_MFR);
+	return properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_MFR);
 }
 
-static void handle_admin_properties_status(struct bt_mesh_model *model,
-					   struct bt_mesh_msg_ctx *ctx,
-					   struct net_buf_simple *buf)
-{
-	properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_ADMIN);
-}
-
-static void handle_user_properties_status(struct bt_mesh_model *model,
-					  struct bt_mesh_msg_ctx *ctx,
+static int handle_admin_properties_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 					  struct net_buf_simple *buf)
 {
-	properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_USER);
+	return properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_ADMIN);
 }
 
-static void handle_client_properties_status(struct bt_mesh_model *model,
-					    struct bt_mesh_msg_ctx *ctx,
-					    struct net_buf_simple *buf)
+static int handle_user_properties_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+					 struct net_buf_simple *buf)
 {
-	properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_CLIENT);
+	return properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_USER);
 }
 
-static void property_status(struct bt_mesh_model *model,
+static int handle_client_properties_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+					   struct net_buf_simple *buf)
+{
+	return properties_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_CLIENT);
+}
+
+static int property_status(struct bt_mesh_model *model,
 			    struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf,
 			    enum bt_mesh_prop_srv_kind kind)
 {
 	if (buf->len < BT_MESH_PROP_MSG_MINLEN_PROP_STATUS ||
 	    buf->len > BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS) {
-		return;
+		return -EMSGSIZE;
 	}
 
 	struct bt_mesh_prop_cli *cli = model->user_data;
@@ -116,63 +114,62 @@ static void property_status(struct bt_mesh_model *model,
 	if (cli->prop_status) {
 		cli->prop_status(cli, ctx, kind, &val);
 	}
+
+	return 0;
 }
 
-static void handle_mfr_property_status(struct bt_mesh_model *model,
-				       struct bt_mesh_msg_ctx *ctx,
-				       struct net_buf_simple *buf)
+static int handle_mfr_property_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				      struct net_buf_simple *buf)
 {
-	property_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_MFR);
+	return property_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_MFR);
 }
 
-static void handle_admin_property_status(struct bt_mesh_model *model,
-					 struct bt_mesh_msg_ctx *ctx,
-					 struct net_buf_simple *buf)
-{
-	property_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_ADMIN);
-}
-
-static void handle_user_property_status(struct bt_mesh_model *model,
-					struct bt_mesh_msg_ctx *ctx,
+static int handle_admin_property_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 					struct net_buf_simple *buf)
 {
-	property_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_USER);
+	return property_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_ADMIN);
+}
+
+static int handle_user_property_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+				       struct net_buf_simple *buf)
+{
+	return property_status(model, ctx, buf, BT_MESH_PROP_SRV_KIND_USER);
 }
 
 const struct bt_mesh_model_op _bt_mesh_prop_cli_op[] = {
 	{
 		BT_MESH_PROP_OP_MFR_PROPS_STATUS,
-		BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS),
 		handle_mfr_properties_status,
 	},
 	{
 		BT_MESH_PROP_OP_ADMIN_PROPS_STATUS,
-		BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS),
 		handle_admin_properties_status,
 	},
 	{
 		BT_MESH_PROP_OP_USER_PROPS_STATUS,
-		BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS),
 		handle_user_properties_status,
 	},
 	{
 		BT_MESH_PROP_OP_CLIENT_PROPS_STATUS,
-		BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_PROPS_STATUS),
 		handle_client_properties_status,
 	},
 	{
 		BT_MESH_PROP_OP_MFR_PROP_STATUS,
-		BT_MESH_PROP_MSG_MINLEN_PROP_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_PROP_STATUS),
 		handle_mfr_property_status,
 	},
 	{
 		BT_MESH_PROP_OP_ADMIN_PROP_STATUS,
-		BT_MESH_PROP_MSG_MINLEN_PROP_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_PROP_STATUS),
 		handle_admin_property_status,
 	},
 	{
 		BT_MESH_PROP_OP_USER_PROP_STATUS,
-		BT_MESH_PROP_MSG_MINLEN_PROP_STATUS,
+		BT_MESH_LEN_MIN(BT_MESH_PROP_MSG_MINLEN_PROP_STATUS),
 		handle_user_property_status,
 	},
 	BT_MESH_MODEL_OP_END,

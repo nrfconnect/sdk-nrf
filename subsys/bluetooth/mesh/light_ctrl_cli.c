@@ -17,20 +17,15 @@ struct prop_status_ctx {
 	union prop_value val;
 };
 
-static void handle_mode(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-			struct net_buf_simple *buf)
+static int handle_mode(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		       struct net_buf_simple *buf)
 {
 	bool *ack_buf;
 	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
-
-	if (buf->len != 1) {
-		return;
-	}
-
 	uint8_t enabled = net_buf_simple_pull_u8(buf);
 
 	if (enabled > 1) {
-		return;
+		return -EINVAL;
 	}
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_CTRL_OP_MODE_STATUS, ctx->addr,
@@ -42,23 +37,19 @@ static void handle_mode(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	if (cli->handlers && cli->handlers->mode) {
 		cli->handlers->mode(cli, ctx, enabled);
 	}
+
+	return 0;
 }
 
-static void handle_occupancy(struct bt_mesh_model *model,
-			     struct bt_mesh_msg_ctx *ctx,
-			     struct net_buf_simple *buf)
+static int handle_occupancy(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
 {
 	bool *ack_buf;
 	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
-
-	if (buf->len != 1) {
-		return;
-	}
-
 	uint8_t enabled = net_buf_simple_pull_u8(buf);
 
 	if (enabled > 1) {
-		return;
+		return -EINVAL;
 	}
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_CTRL_OP_OM_STATUS, ctx->addr,
@@ -70,11 +61,12 @@ static void handle_occupancy(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->occupancy_mode) {
 		cli->handlers->occupancy_mode(cli, ctx, enabled);
 	}
+
+	return 0;
 }
 
-static void handle_light_onoff(struct bt_mesh_model *model,
-			       struct bt_mesh_msg_ctx *ctx,
-			       struct net_buf_simple *buf)
+static int handle_light_onoff(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+			      struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 	struct bt_mesh_onoff_status status;
@@ -83,7 +75,7 @@ static void handle_light_onoff(struct bt_mesh_model *model,
 	uint8_t onoff = net_buf_simple_pull_u8(buf);
 
 	if (onoff > 1) {
-		return;
+		return -EINVAL;
 	}
 
 	status.present_on_off = onoff;
@@ -91,7 +83,7 @@ static void handle_light_onoff(struct bt_mesh_model *model,
 	if (buf->len == 2) {
 		onoff = net_buf_simple_pull_u8(buf);
 		if (onoff > 1) {
-			return;
+			return -EINVAL;
 		}
 
 		status.target_on_off = onoff;
@@ -101,7 +93,7 @@ static void handle_light_onoff(struct bt_mesh_model *model,
 		status.target_on_off = onoff;
 		status.remaining_time = 0;
 	} else {
-		return;
+		return -EMSGSIZE;
 	}
 
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,
@@ -113,10 +105,12 @@ static void handle_light_onoff(struct bt_mesh_model *model,
 	if (cli->handlers && cli->handlers->light_onoff) {
 		cli->handlers->light_onoff(cli, ctx, &status);
 	}
+
+	return 0;
 }
 
-static void handle_prop(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-			struct net_buf_simple *buf)
+static int handle_prop(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		       struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_ctrl_cli *cli = model->user_data;
 	struct prop_status_ctx *rsp;
@@ -132,7 +126,7 @@ static void handle_prop(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 
 	if (coeff) {
 		if (buf->len != sizeof(float)) {
-			return;
+			return -EINVAL;
 		}
 
 		memcpy(&value.coeff,
@@ -141,12 +135,12 @@ static void handle_prop(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	} else {
 		format = prop_format_get(id);
 		if (!format) {
-			return;
+			return -ENOENT;
 		}
 
 		err = sensor_ch_decode(buf, format, &value.prop);
 		if (err) {
-			return;
+			return -EINVAL;
 		}
 	}
 
@@ -164,27 +158,29 @@ static void handle_prop(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	} else if (cli->handlers && cli->handlers->prop) {
 		cli->handlers->prop(cli, ctx, id, &value.prop);
 	}
+
+	return 0;
 }
 
 const struct bt_mesh_model_op _bt_mesh_light_ctrl_cli_op[] = {
 	{
 		BT_MESH_LIGHT_CTRL_OP_MODE_STATUS,
-		1,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTRL_MSG_LEN_MODE_STATUS),
 		handle_mode,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_OM_STATUS,
-		1,
+		BT_MESH_LEN_EXACT(BT_MESH_LIGHT_CTRL_MSG_LEN_OM_STATUS),
 		handle_occupancy,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,
-		1,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_CTRL_MSG_MINLEN_LIGHT_ONOFF_STATUS),
 		handle_light_onoff,
 	},
 	{
 		BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,
-		2,
+		BT_MESH_LEN_MIN(BT_MESH_LIGHT_CTRL_MSG_MINLEN_PROP_STATUS),
 		handle_prop,
 	},
 	BT_MESH_MODEL_OP_END,
