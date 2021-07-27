@@ -17,6 +17,7 @@ import logging
 
 from events import TrackedEvent
 from processed_events import ProcessedEvents
+from processed_events import MEM_ADDRESS_DATA_DESC
 from plot_nordic_config import PlotNordicConfig
 
 
@@ -208,11 +209,17 @@ class PlotNordic():
         plt.draw()
 
     def _find_closest_event(self, x_coord, y_coord):
-        if self.processed_events.tracking_execution:
-            filtered_id = list(filter(lambda x: x.submit.type_id == round(y_coord),
-                                      self.processed_events.tracked_events))
-            if len(filtered_id) == 0:
-                return None
+        filtered_id = list(filter(lambda x: x.submit.type_id == round(y_coord),
+                                    self.processed_events.tracked_events))
+        if len(filtered_id) == 0:
+            return None
+        if len(self.processed_events.raw_data.registered_events_types[round(y_coord)].data_types) == 0:
+            dists = list(map(lambda x: abs(x.submit.timestamp - x_coord), filtered_id))
+            return filtered_id[np.argmin(dists)]
+        if self.processed_events.raw_data.registered_events_types[round(y_coord)].data_types[0] != MEM_ADDRESS_DATA_DESC:
+            dists = list(map(lambda x: abs(x.submit.timestamp - x_coord), filtered_id))
+            return filtered_id[np.argmin(dists)]
+        else:
             matching_processing = list(
                 filter(
                     lambda x: x.proc_start_time < x_coord < x.proc_end_time,
@@ -220,13 +227,7 @@ class PlotNordic():
             if matching_processing:
                 return matching_processing[0]
             dists = list(map(lambda x: min([abs(x.submit.timestamp - x_coord),
-               abs(x.proc_start_time - x_coord), abs(x.proc_end_time - x_coord)]), filtered_id))
-            return filtered_id[np.argmin(dists)]
-        else:
-            filtered_id = list(filter(lambda x: x.type_id == round(y_coord), self.processed_events.raw_data.events))
-            if len(filtered_id) == 0:
-                return None
-            dists = list(map(lambda x: abs(x.timestamp - x_coord), filtered_id))
+                                abs(x.proc_start_time - x_coord), abs(x.proc_end_time - x_coord)]), filtered_id))
             return filtered_id[np.argmin(dists)]
 
     @staticmethod
@@ -265,11 +266,7 @@ class PlotNordic():
             selected_event = self._find_closest_event(coord_x, coord_y)
             if selected_event is None:
                 return
-
-            if self.processed_events.tracking_execution:
-                event_submit = selected_event.submit
-            else:
-                event_submit = selected_event
+            event_submit = selected_event.submit
 
             self.draw_state.selected_event_submit = self.draw_state.ax.plot(
                 event_submit.timestamp,
@@ -279,7 +276,7 @@ class PlotNordic():
                 marker='o',
                 linestyle=' ')
 
-            if self.processed_events.tracking_execution:
+            if selected_event.proc_start_time is not None:
                 self.draw_state.selected_event_processing = matplotlib.patches.Rectangle(
                     (selected_event.proc_start_time,
                     selected_event.submit.type_id -
@@ -295,7 +292,8 @@ class PlotNordic():
                 self.processed_events.raw_data.registered_events_types[event_submit.type_id].name + '\n'
             self.draw_state.selected_event_text += 'Submit: ' + \
                 PlotNordic._stringify_time(event_submit.timestamp) + '\n'
-            if self.processed_events.tracking_execution:
+
+            if selected_event.proc_start_time is not None:
                 self.draw_state.selected_event_text += 'Processing start: ' + \
                     PlotNordic._stringify_time(
                         selected_event.proc_start_time) + '\n'
@@ -309,7 +307,7 @@ class PlotNordic():
             ev_type = self.processed_events.raw_data.registered_events_types[event_submit.type_id]
 
             for i in range(0, len(ev_type.data_descriptions)):
-                if ev_type.data_descriptions[i] == 'mem_address':
+                if ev_type.data_descriptions[i] == MEM_ADDRESS_DATA_DESC:
                     continue
                 self.draw_state.selected_event_text += ev_type.data_descriptions[i] + ' = '
                 self.draw_state.selected_event_text += str(event_submit.data[i]) + '\n'
@@ -410,54 +408,55 @@ class PlotNordic():
                 self.logger.info("Stopped collecting new events")
                 self.close_event(None)
 
-            if self.processed_events.tracking_execution:
-                if event.type_id == self.processed_events.event_processing_start_id:
-                    self.processed_events.start_event = event
-                    for i in range(
-                            len(self.temp_events) - 1, -1, -1):
-                        # comparing memory addresses of event processing start
-                        # and event submit to identify matching events
-                        if self.temp_events[i].data[0] == self.processed_events.start_event.data[0]:
-                            self.processed_events.submit_event = self.temp_events[i]
-                            events.append(self.temp_events[i])
-                            self.submitted_event_type = self.processed_events.submit_event.type_id
-                            del self.temp_events[i]
-                            break
+            if event.type_id == self.processed_events.event_processing_start_id:
+                self.processed_events.start_event = event
+                for i in range(len(self.temp_events) - 1, -1, -1):
+                    # comparing memory addresses of event processing start
+                    # and event submit to identify matching events
+                    if self.temp_events[i].data[0] == self.processed_events.start_event.data[0]:
+                        self.processed_events.submit_event = self.temp_events[i]
+                        events.append(self.temp_events[i])
+                        self.submitted_event_type = self.processed_events.submit_event.type_id
+                        del self.temp_events[i]
+                        break
 
-                elif event.type_id == self.processed_events.event_processing_end_id:
-                    # comparing memory addresses of event processing start and
-                    # end to identify matching events
-                    if self.submitted_event_type is not None and event.data[0] \
-                             == self.processed_events.start_event.data[0]:
-                        rects.append(
-                            matplotlib.patches.Rectangle(
-                                (self.processed_events.start_event.timestamp,
-                                 self.processed_events.submit_event.type_id -
-                                 self.draw_state.event_processing_rect_height/2),
-                                event.timestamp -
-                                self.processed_events.start_event.timestamp,
-                                self.draw_state.event_processing_rect_height,
-                                edgecolor='black'))
-                        self.processed_events.tracked_events.append(
-                            TrackedEvent(
-                                self.processed_events.submit_event,
-                                self.processed_events.start_event.timestamp,
-                                event.timestamp))
-                        self.submitted_event_type = None
-                else:
-                    self.temp_events.append(event)
-                    if event.timestamp > time.time() - self.start_time + self.draw_state.added_time - \
-                            0.2 * self.draw_state.timeline_width:
-                        self.draw_state.added_time += 0.05
-
-                    if event.timestamp < time.time() - self.start_time + self.draw_state.added_time - \
-                            0.8 * self.draw_state.timeline_width:
-                        self.draw_state.added_time -= 0.05
-
-                    events.append(event)
-            else:
+            elif event.type_id == self.processed_events.event_processing_end_id:
+                # comparing memory addresses of event processing start and
+                # end to identify matching events
+                if self.submitted_event_type is not None and event.data[0] \
+                            == self.processed_events.start_event.data[0]:
+                    rects.append(
+                        matplotlib.patches.Rectangle(
+                            (self.processed_events.start_event.timestamp,
+                                self.processed_events.submit_event.type_id -
+                                self.draw_state.event_processing_rect_height/2),
+                            event.timestamp -
+                            self.processed_events.start_event.timestamp,
+                            self.draw_state.event_processing_rect_height,
+                            edgecolor='black'))
+                    self.processed_events.tracked_events.append(
+                        TrackedEvent(
+                            self.processed_events.submit_event,
+                            self.processed_events.start_event.timestamp,
+                            event.timestamp))
+                    self.submitted_event_type = None
+            elif len(event.data) == 0:
                 events.append(event)
-                self.processed_events.raw_data.events.append(event)
+                self.processed_events.tracked_events.append(TrackedEvent(event, None, None))
+            elif self.processed_events.raw_data.registered_events_types[event.type_id].data_descriptions[0] != MEM_ADDRESS_DATA_DESC:
+                events.append(event)
+                self.processed_events.tracked_events.append(TrackedEvent(event, None, None))
+            else:
+                self.temp_events.append(event)
+                if event.timestamp > time.time() - self.start_time + self.draw_state.added_time - \
+                        0.2 * self.draw_state.timeline_width:
+                    self.draw_state.added_time += 0.05
+
+                if event.timestamp < time.time() - self.start_time + self.draw_state.added_time - \
+                        0.8 * self.draw_state.timeline_width:
+                    self.draw_state.added_time -= 0.05
+
+                events.append(event)
 
         # translating plot
         if not self.draw_state.synchronized_with_events:
@@ -514,10 +513,6 @@ class PlotNordic():
             self.processed_events.raw_data.get_event_type_id('event_processing_start')
         self.processed_events.event_processing_end_id = \
             self.processed_events.raw_data.get_event_type_id('event_processing_end')
-
-        if (self.processed_events.event_processing_start_id is None) or (
-                self.processed_events.event_processing_end_id is None):
-            self.processed_events.tracking_execution = False
         fig = self._prepare_plot(selected_events_types)
 
         self.start_stop_ax = plt.axes([0.8, 0.025, 0.1, 0.04])
@@ -558,18 +553,19 @@ class PlotNordic():
             color='r',
             markersize=self.draw_state.event_submit_markersize)
 
-        if self.processed_events.tracking_execution:
-            rects = []
-            for ev in self.processed_events.tracked_events:
-                rects.append(
-                    matplotlib.patches.Rectangle(
-                        (ev.proc_start_time,
-                         ev.submit.type_id - self.draw_state.event_processing_rect_height/2),
-                         ev.proc_end_time - ev.proc_start_time,
-                         self.draw_state.event_processing_rect_height,
-                         edgecolor='black'))
+        rects = []
+        for ev in self.processed_events.tracked_events:
+            if ev.proc_start_time is None:
+                continue
+            rects.append(
+                matplotlib.patches.Rectangle(
+                    (ev.proc_start_time,
+                        ev.submit.type_id - self.draw_state.event_processing_rect_height/2),
+                        ev.proc_end_time - ev.proc_start_time,
+                        self.draw_state.event_processing_rect_height,
+                        edgecolor='black'))
 
-            self.draw_state.ax.add_collection(PatchCollection(rects))
+        self.draw_state.ax.add_collection(PatchCollection(rects))
 
         self.draw_state.timeline_max = max(x) + 1
         self.draw_state.timeline_width = max(x) - min(x) + 2
