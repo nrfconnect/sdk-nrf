@@ -262,7 +262,8 @@ class NcsLoot(NcsWestCommand):
             return
 
         log.banner(name_path)
-        log.inf(f'NCS commit (manifest-rev): {nsha}, upstream commit: {zsha}')
+        log.inf(f'     NCS commit: {nsha}\n'
+                f'upstream commit: {zsha}')
         log.inf('OOT patches: ' +
                 (f'{len(loot)} total' if loot else 'none') +
                 (', output limited by --file' if args.files else ''))
@@ -442,7 +443,8 @@ class NcsCompare(NcsWestCommand):
         else:
             status = f'diverged: {ahead} ahead, {behind} behind'
 
-        commits = f'NCS commit: {nsha}, upstream commit: {zsha}'
+        commits = (f'     NCS commit: {nsha}\n'
+                   f'upstream commit: {zsha}')
         if 'up to date' in status or 'ahead by' in status:
             if log.VERBOSE > log.VERBOSE_NONE:
                 # Up to date or ahead: only print in verbose mode.
