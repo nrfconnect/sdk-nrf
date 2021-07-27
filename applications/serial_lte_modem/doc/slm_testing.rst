@@ -64,15 +64,16 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       #XSLEEP: (0,1,2)
       OK
 
-   ``AT#XSLEEP`` puts the kit in idle mode, and you can wake up by GPIO.
+   ``AT#XSLEEP=0`` puts the kit in idle mode.
+   You can exit idle by GPIO.
 
    Alternatively, you can use different modes for #XSLEEP:
 
    * ``AT#XSLEEP=1`` puts the kit in sleep mode.
-     If you are testing with :option:`CONFIG_SLM_GPIO_WAKEUP` enabled, you can wake up by GPIO.
+     You can wake it up by GPIO.
 
    * ``AT#XSLEEP=2`` powers off UART.
-     You can power on UART by GPIO.
+     You can power on UART again by GPIO.
 
 TCP/IP AT commands
 ******************
@@ -93,7 +94,7 @@ TCP client
          #XSOCKET: (0,1),(1,2),(0,1),<sec-tag>
          OK
 
-   #. Open a TCP socket, read information (handle, protocol, and role) about the open socket, and set the receive timeout of the open socket to 30 seconds.
+   #. Open a TCP socket, read the information (handle, protocol, and role) about the open socket, and set the receive timeout of the open socket to 30 seconds.
 
       .. parsed-literal::
          :class: highlight
@@ -110,7 +111,7 @@ TCP client
          OK
 
    #. Connect to a TCP server on a specified port.
-      Replace *example.com* with the host name or IPv4 address of a TCP server and *1234* with the corresponding port.
+      Replace *example.com* with the hostname or IPv4 address of a TCP server and *1234* with the corresponding port.
       Then read the connection status.
       ``1`` indicates that the connection is established.
 
@@ -135,7 +136,7 @@ TCP client
          OK
 
          **AT#XRECV**
-         PONG: b'Test TCP'
+         PONG: 'Test TCP'
          #XRECV: 17
          OK
 
@@ -185,7 +186,10 @@ TCP client
            Connection: close<CR><LF>
            <CR><LF>
 
-      Exit data mode.
+   #. Exit data mode.
+
+      .. parsed-literal::
+         :class: highlight
 
          +++
          OK
@@ -229,8 +233,8 @@ TCP client
          OK
 
    #. Create a TCP/TLS client and connect to a server.
-      Replace *example.com* with the host name or IPv4 address of a TCP server and *1234* with the corresponding port.
-      Then read information about the connection.
+      Replace *example.com* with the hostname or IPv4 address of a TCP server and *1234* with the corresponding port.
+      Then read the information about the connection.
 
       .. parsed-literal::
          :class: highlight
@@ -274,8 +278,8 @@ TCP client
 #. Test a TCP client with TCP proxy service in data mode:
 
    a. Create a TCP/TLS client and connect to a server with data mode support.
-      Replace ``*example.com*`` with the host name or IPv4 address of a TCP server and ``*1234*`` with the corresponding port.
-      Then read information about the connection.
+      Replace ``*example.com*`` with the hostname or IPv4 address of a TCP server and ``*1234*`` with the corresponding port.
+      Then read the information about the connection.
 
       .. parsed-literal::
          :class: highlight
@@ -310,7 +314,7 @@ UDP client
 
 1. Test a UDP client with connectionless UDP:
 
-   a. Open a UDP socket and read information (handle, protocol, and role) about the open socket.
+   a. Open a UDP socket and read the information (handle, protocol, and role) about the open socket.
 
       .. parsed-literal::
          :class: highlight
@@ -323,7 +327,7 @@ UDP client
          OK
 
    #. Send plain text data to a UDP server on a specified port.
-      Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
+      Replace *example.com* with the hostname or IPv4 address of a UDP server and *1234* with the corresponding port.
       Then retrieve the returned data.
 
       .. parsed-literal::
@@ -349,7 +353,7 @@ UDP client
 #. Test a UDP client with connection-based UDP:
 
    a. Open a UDP socket and connect to a UDP server on a specified port.
-      Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
+      Replace *example.com* with the hostname or IPv4 address of a UDP server and *1234* with the corresponding port.
 
       .. parsed-literal::
          :class: highlight
@@ -397,7 +401,7 @@ UDP client
          OK
 
    #. Create a UDP client and connect to a server.
-      Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
+      Replace *example.com* with the hostname or IPv4 address of a UDP server and *1234* with the corresponding port.
 
       .. parsed-literal::
          :class: highlight
@@ -428,8 +432,8 @@ UDP client
 #. Test a connection-based UDP client with UDP proxy service in data mode:
 
    a. Create a UDP client and connect to a server with data mode support.
-      Replace *example.com* with the host name or IPv4 address of a UDP server and *1234* with the corresponding port.
-      Then read information about the connection.
+      Replace *example.com* with the hostname or IPv4 address of a UDP server and *1234* with the corresponding port.
+      Then read the information about the connection.
 
       .. parsed-literal::
          :class: highlight
@@ -485,7 +489,7 @@ You must register the corresponding credentials on the server side.
          OK
 
    #. Open a TCP/TLS socket that uses the security tag 16842755 and connect to a TLS server on a specified port.
-      Replace *example.com* with the host name or IPv4 address of a TLS server and *1234* with the corresponding port.
+      Replace *example.com* with the hostname or IPv4 address of a TLS server and *1234* with the corresponding port.
 
       .. parsed-literal::
          :class: highlight
@@ -524,8 +528,8 @@ You must register the corresponding credentials on the server side.
 #. Test a TLS client with TCP proxy service:
 
    a. Create a TCP/TLS client and connect to a server.
-      Replace *example.com* with the host name or IPv4 address of a TLS server and *1234* with the corresponding port.
-      Then read information about the connection.
+      Replace *example.com* with the hostname or IPv4 address of a TLS server and *1234* with the corresponding port.
+      Then read the information about the connection.
 
       .. parsed-literal::
          :class: highlight
@@ -595,7 +599,7 @@ You must register the corresponding credentials on the server side.
 	     OK
 
        #. Open a TCP/DTLS socket that uses the security tag 16842756 and connect to a DTLS server on a specified port.
-	  Replace *example.com* with the host name or IPv4 address of a DTLS server and *1234* with the corresponding port.
+	  Replace *example.com* with the hostname or IPv4 address of a DTLS server and *1234* with the corresponding port.
 
 	 .. parsed-literal::
 	     :class: highlight
@@ -634,8 +638,8 @@ You must register the corresponding credentials on the server side.
     #. Test a DTLS client with UDP proxy service:
 
        a. Create a UDP/DTLS client and connect to a server.
-	  Replace *example.com* with the host name or IPv4 address of a DTLS server and *1234* with the corresponding port.
-	  Then read information about the connection.
+	  Replace *example.com* with the hostname or IPv4 address of a DTLS server and *1234* with the corresponding port.
+	  Then read the information about the connection.
 
 	  .. parsed-literal::
 	     :class: highlight
@@ -666,7 +670,7 @@ To act as a TCP server, |global_private_address|
 
 |global_private_address_check|
 
-1. Create a Python script :file:`client_tcp.py` that acts a TCP client.
+1. Create a Python script :file:`client_tcp.py` that acts as a TCP client.
    See the following sample code (make sure to use the correct IP address and port):
 
    .. code-block:: python
@@ -776,7 +780,7 @@ To act as a TCP server, |global_private_address|
 
 #. Test the TCP server with TCP proxy service:
 
-   a. Check the available values for the XTCPSVR command and read information about the current state.
+   a. Check the available values for the XTCPSVR command and read the information about the current state.
 
       .. parsed-literal::
          :class: highlight
@@ -789,7 +793,7 @@ To act as a TCP server, |global_private_address|
          #XTCPSVR: -1,-1
          OK
 
-   #. Create a TCP server and read information about the current state.
+   #. Create a TCP server and read the information about the current state.
       Replace *1234* with the correct port number.
 
       .. parsed-literal::
@@ -806,7 +810,7 @@ To act as a TCP server, |global_private_address|
    #. Run the :file:`client_tcp.py` script to start sending data to the server.
 
    #. Observe that the server accepts the connection from the client.
-      Read information about the current state again.
+      Read the information about the current state again.
 
       .. parsed-literal::
          :class: highlight
@@ -862,7 +866,7 @@ To act as a TCP server, |global_private_address|
          TCP3/4/5 received
          Closing connection
 
-   #. Read information about the current state.
+   #. Read the information about the current state.
 
       .. parsed-literal::
          :class: highlight
@@ -886,7 +890,7 @@ To act as a TCP server, |global_private_address|
 
 #. Test the TCP server with TCP proxy service in data mode:
 
-   a. Create a TCP server and read information about the current state.
+   a. Create a TCP server and read the information about the current state.
       Replace *1234* with the correct port number.
 
       .. parsed-literal::
@@ -941,7 +945,7 @@ To act as a UDP server, |global_private_address|
 
 |global_private_address_check|
 
-1. Create a Python script :file:`client_udp.py` that acts a UDP client.
+1. Create a Python script :file:`client_udp.py` that acts as a UDP client.
    See the following sample code (make sure to use the correct IP addresses and port):
 
    .. code-block:: python
@@ -999,7 +1003,7 @@ To act as a UDP server, |global_private_address|
    #. Run the :file:`client_udp.py` script to start sending data to the server.
 
    #. Start receiving and acknowledging the data.
-      Replace *example.com* with the host name or IPv4 address of the UDP client and *1234* with the corresponding port.
+      Replace *example.com* with the hostname or IPv4 address of the UDP client and *1234* with the corresponding port.
 
       .. parsed-literal::
          :class: highlight
@@ -1140,7 +1144,7 @@ To act as a UDP server, |global_private_address|
 
 #. Test the UDP server with UDP proxy service in data mode:
 
-   a. Create a UDP server and read information about the current state.
+   a. Create a UDP server and read the information about the current state.
       Replace *1234* with the correct port number.
 
       .. parsed-literal::
@@ -1220,7 +1224,7 @@ The DTLS server role is currently not supported (modem limitation).
 DNS lookup
 ==========
 
-1. Look up the IP address for a host name.
+1. Look up the IP address for a hostname.
 
    .. parsed-literal::
       :class: highlight
@@ -1846,7 +1850,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
 
 ..
 
-   c. Enable power saving mode.
+   c. Enable power-saving mode.
       Then turn on the modem.
 
       .. parsed-literal::
@@ -1977,7 +1981,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
          +CEREG: 1,"107E","00B02C03",7
 
    #. Start GPS with GPS fix data and geographic position latitude/longitude and time, and observe the output.
-      Note that the TTFF printed in the AT response is from then time when AT#XGPS was issued.
+      Note that the TTFF printed in the AT response is from the time when AT#XGPS was issued.
       For A-GPS, this includes the SUPL injection time.
 
       .. parsed-literal::
