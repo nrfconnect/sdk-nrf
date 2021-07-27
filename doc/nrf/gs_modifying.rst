@@ -42,6 +42,10 @@ See the `CMake documentation`_ and :ref:`zephyr:cmake-details` in the Zephyr doc
 Maintaining CMakeLists.txt in SES
 =================================
 
+You must tag the :file:`CMakeLists.txt` files properly before adding them to a project in SES.
+Projects in the :file:`sdk-nrf` repository already have these tags, but projects from Zephyr and other repositories do not.
+Follow the steps in :ref:`ses_tags_in_CMakeLists` to manually add tags when using :file:`CMakeLists.txt` files that are not located in the :file:`sdk-nrf` repository.
+
 To add a file in SES, right-click :guilabel:`Project 'app/libapp.a'` in the Project Explorer.
 Select either :guilabel:`Add new file to CMakeLists.txt` to create a file and add it or :guilabel:`Add existing file to CMakeLists.txt` to add a file that already exists.
 
@@ -64,6 +68,8 @@ In the window that is displayed, you can define compilation options for the proj
    These compilation options apply to the application project only.
    To manage Zephyr and other subsystems, go to :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
 
+.. _ses_tags_in_CMakeLists:
+
 SES tags in :file:`CMakeLists.txt`
 ----------------------------------
 
@@ -77,7 +83,7 @@ The following CMake commands can be managed by SES, if they target the ``app`` l
 * ``target_include_directories``
 * ``target_compile_options``
 
-The :file:`CMakeLists.txt` files for the applications in the |NCS| are tagged as required.
+The :file:`CMakeLists.txt` files for the sample applications in the :file:`sdk-nrf` repository already have the required tags.
 Therefore, if you always use SES to maintain them, you do not need to worry about tagging.
 Typically, the :file:`CMakeLists.txt` files include at least the :file:`main.c` file as source::
 
