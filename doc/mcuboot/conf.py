@@ -12,6 +12,7 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
 MCUBOOT_BASE = utils.get_projdir("mcuboot")
+ZEPHYR_BASE = utils.get_projdir("zephyr")
 
 # General configuration --------------------------------------------------------
 
@@ -19,9 +20,16 @@ project = "MCUboot"
 copyright = "2019-2021"
 version = release = "1.7.99"
 
+sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
-extensions = ["sphinx.ext.intersphinx", "recommonmark", "ncs_cache", "external_content"]
+extensions = [
+    "zephyr.kconfig-role",
+    "sphinx.ext.intersphinx",
+    "recommonmark",
+    "ncs_cache",
+    "external_content"
+]
 source_suffix = [".rst", ".md"]
 master_doc = "wrapper"
 
