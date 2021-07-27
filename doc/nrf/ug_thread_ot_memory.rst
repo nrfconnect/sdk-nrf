@@ -25,13 +25,13 @@ Moreover, take into account the following considerations:
 * The multiprotocol samples were optimized with the overlay :file:`overlay-minimal_multiprotocol.conf`.
 * To enable the multiprotocol support, the following options were used:
 
-  * :option:`CONFIG_MPSL` set to ``y`` (default setting for all samples)
-  * :option:`CONFIG_BT_LL_SOFTDEVICE_DEFAULT` set to ``y``
-  * :option:`CONFIG_BT` set to ``y``
-  * :option:`CONFIG_BT_PERIPHERAL` set to ``y``
-  * :option:`CONFIG_BT_DEVICE_NAME` set to ``"NCS DUT"``
-  * :option:`CONFIG_BT_DEVICE_APPEARANCE` set to ``833``
-  * :option:`CONFIG_BT_MAX_CONN` set to ``1``
+  * :kconfig:`CONFIG_MPSL` set to ``y`` (default setting for all samples)
+  * :kconfig:`CONFIG_BT_LL_SOFTDEVICE_DEFAULT` set to ``y``
+  * :kconfig:`CONFIG_BT` set to ``y``
+  * :kconfig:`CONFIG_BT_PERIPHERAL` set to ``y``
+  * :kconfig:`CONFIG_BT_DEVICE_NAME` set to ``"NCS DUT"``
+  * :kconfig:`CONFIG_BT_DEVICE_APPEARANCE` set to ``833``
+  * :kconfig:`CONFIG_BT_MAX_CONN` set to ``1``
 
 * Values for the :ref:`Thread CLI sample <ot_cli_sample>`, which works with all OpenThread calls, are the highest possible for the OpenThread stack using the master image library configuration.
 

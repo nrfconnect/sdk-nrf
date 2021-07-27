@@ -118,9 +118,9 @@ To link directly to a doxygen reference from RST, use the following Breathe doma
 Kconfig
 -------
 
-Kconfig options can be linked to from RST by using the ``:option:`` domain::
+Kconfig options can be linked to from RST by using the ``:kconfig:`` domain::
 
-   :option:`CONFIG_DEBUG`
+   :kconfig:`CONFIG_DEBUG`
 
 Doxygen |gl|
 ************

@@ -92,7 +92,7 @@ nRF9160
 
   * :ref:`lib_download_client` library:
 
-    * Added CoAP block-wise transfer support, which can be enabled with :option:`CONFIG_COAP`.
+    * Added CoAP block-wise transfer support, which can be enabled with :kconfig:`CONFIG_COAP`.
     * Updated functions that end with ``_connect()`` and ``_start()`` to parse complete URLs, with port and schema.
     * Removed ``port`` field in :c:struct:`download_client_cfg`.
       The port number can now be passed together with the URL.
@@ -178,9 +178,9 @@ nRF9160
 * :ref:`lib_nrf_cloud` library:
 
     * Added saving of a valid session flag to settings after all subscriptions have completed, so that the persistent session is only used when the flag is valid.
-    * Replaced ``CONFIG_CLOUD_PERSISTENT_SESSIONS`` usage with Zephyr's :option:`CONFIG_MQTT_CLEAN_SESSION`.
+    * Replaced ``CONFIG_CLOUD_PERSISTENT_SESSIONS`` usage with Zephyr's :kconfig:`CONFIG_MQTT_CLEAN_SESSION`.
     * Made the MQTT client ID prefix configurable.
-    * Added an option to set send time-out for the socket used by nRF Cloud library (:option:`CONFIG_NRF_CLOUD_SEND_TIMEOUT`).
+    * Added an option to set send time-out for the socket used by nRF Cloud library (:kconfig:`CONFIG_NRF_CLOUD_SEND_TIMEOUT`).
 
 nRF5
 ====
@@ -284,7 +284,7 @@ Bluetooth Mesh
   * :ref:`bt_mesh_light_ctl_readme` - These models allow remote control and configuration of CTLs on a mesh device.
   * :ref:`bt_mesh_scene_readme` - These models allow storing the model state of the entire mesh network as a *scene*, which can be recalled at a later time.
   * Added support for Mesh Device Properties v2.0.
-  * Added :option:`CONFIG_BT_TINYCRYPT_ECC` option in :file:`prj.conf` files for samples that support nRF5340 (:ref:`bluetooth_mesh_light` or :ref:`bluetooth_mesh_light_switch`).
+  * Added :kconfig:`CONFIG_BT_TINYCRYPT_ECC` option in :file:`prj.conf` files for samples that support nRF5340 (:ref:`bluetooth_mesh_light` or :ref:`bluetooth_mesh_light_switch`).
 
 * Updated:
 

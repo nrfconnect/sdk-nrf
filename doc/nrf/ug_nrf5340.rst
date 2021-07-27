@@ -87,7 +87,7 @@ The OpenAMP library uses the IPM SHIM layer, which in turn uses the IPC driver i
 
 .. |note| replace:: The following instructions are for the application core.
    To upgrade the firmware on the network core, perform the steps for FOTA upgrade described below, replacing :file:`app_update.bin`, which is the file used when upgrading firmware on the application core, with :file:`net_core_app_update.bin`.
-   In addition, ensure that :option:`CONFIG_PCD_APP` is enabled for the MCUboot child image.
+   In addition, ensure that :kconfig:`CONFIG_PCD_APP` is enabled for the MCUboot child image.
    For more details, see :ref:`nc_bootloader`.
 
 Protocols and use cases
@@ -224,13 +224,13 @@ Direct use of the radio peripheral
 Samples that directly use the radio peripheral can run on the network core of the nRF5340.
 They do not require any functionality from the application core.
 
-However, on nRF5340, the application core is responsible for starting the network core and connecting its GPIO pins (see :option:`CONFIG_BOARD_ENABLE_CPUNET` and the code in :file:`zephyr/boards/arm/nrf5340dk_nrf5340/nrf5340_cpunet_reset.c`).
+However, on nRF5340, the application core is responsible for starting the network core and connecting its GPIO pins (see :kconfig:`CONFIG_BOARD_ENABLE_CPUNET` and the code in :file:`zephyr/boards/arm/nrf5340dk_nrf5340/nrf5340_cpunet_reset.c`).
 Therefore, you must always program the application core, even if the firmware is supposed to run only on the network core.
 
 You can use the :ref:`nrf5340_empty_app_core` sample for this purpose.
 Configure the network core application to automatically include this sample as a child image.
 This is the default configuration for the listed network core samples.
-For more information, see :option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` and :ref:`ug_nrf5340_multi_image`.
+For more information, see :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` and :ref:`ug_nrf5340_multi_image`.
 
 
 No radio communication
@@ -254,7 +254,7 @@ Samples that do not need radio communication can run on the application core of 
 They do not require any firmware on the network core.
 Therefore, the network core can remain empty.
 
-If you want to enable the network core anyway, set the :option:`CONFIG_BOARD_ENABLE_CPUNET` option in the image for the application core.
+If you want to enable the network core anyway, set the :kconfig:`CONFIG_BOARD_ENABLE_CPUNET` option in the image for the application core.
 
 .. _ug_nrf5340_multi_image:
 
@@ -280,9 +280,9 @@ For other samples, the images are built separately.
 
 The build configuration depends on the following Kconfig options that must be set in the configuration of the parent image:
 
-* :option:`CONFIG_BT_RPMSG_NRF53` - set to ``y`` in all Bluetooth LE samples for the application core
-* :option:`CONFIG_NRF_802154_SER_HOST` - set to ``y`` in all Thread, Zigbee, and Matter samples for the application core
-* :option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` - set to ``y`` in all network core samples that require the :ref:`nrf5340_empty_app_core` sample
+* :kconfig:`CONFIG_BT_RPMSG_NRF53` - set to ``y`` in all Bluetooth LE samples for the application core
+* :kconfig:`CONFIG_NRF_802154_SER_HOST` - set to ``y`` in all Thread, Zigbee, and Matter samples for the application core
+* :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` - set to ``y`` in all network core samples that require the :ref:`nrf5340_empty_app_core` sample
 
 The combination of these options determines which (if any) sample is included in the build of the parent image:
 
@@ -292,16 +292,16 @@ The combination of these options determines which (if any) sample is included in
    * - Enabled options
      - Child image sample for the network core
      - Child image sample for the application core
-   * - :option:`CONFIG_BT_RPMSG_NRF53`
+   * - :kconfig:`CONFIG_BT_RPMSG_NRF53`
      - :ref:`zephyr:bluetooth-hci-rpmsg-sample`
      - ---
-   * - :option:`CONFIG_NRF_802154_SER_HOST`
+   * - :kconfig:`CONFIG_NRF_802154_SER_HOST`
      - :ref:`zephyr:nrf-ieee802154-rpmsg-sample`
      - ---
-   * - :option:`CONFIG_BT_RPMSG_NRF53` and :option:`CONFIG_NRF_802154_SER_HOST`
+   * - :kconfig:`CONFIG_BT_RPMSG_NRF53` and :kconfig:`CONFIG_NRF_802154_SER_HOST`
      - :ref:`multiprotocol-rpmsg-sample`
      - ---
-   * - :option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE`
+   * - :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE`
      - ---
      - :ref:`nrf5340_empty_app_core`
 

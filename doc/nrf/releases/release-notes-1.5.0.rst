@@ -104,7 +104,7 @@ nRF9160
   * :ref:`lib_nrf_cloud` library:
 
     * nRF Connect for Cloud FOTA replaced AWS Jobs as the FOTA mechanism for devices connected to nRF Connect for Cloud.
-    * Removed :option:`CONFIG_CLOUD_API` dependency from :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
+    * Removed :kconfig:`CONFIG_CLOUD_API` dependency from :kconfig:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
     * Added a new API :c:func:`nrf_cloud_send` that can be used for sending pre-encoded data to specified endpoint topics in nRF Connect for Cloud.
 
   * :ref:`at_cmd_parser_readme` library - The library can now parse AT command strings with negative numbers in the range supported by the int32_t type.
@@ -154,7 +154,7 @@ nRF5340 SoC
   * :ref:`esb_readme` subsystem - Added support for nRF5340 (CPUNET) in the ESB subsystem.
   * :ref:`lib_spm` subsystem - Added support for nRF5340 peripherals in non-secure applications.
   * :ref:`ble_samples` - Added configuration overlays for child image to the required Bluetooth LE samples so that no Kconfig updates in the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample are needed by default.
-  * :ref:`nrf5340_empty_app_core` sample - Disabled the kernel memory pool option :option:`CONFIG_KERNEL_MEM_POOL` to reduce the memory footprint.
+  * :ref:`nrf5340_empty_app_core` sample - Disabled the kernel memory pool option :kconfig:`CONFIG_KERNEL_MEM_POOL` to reduce the memory footprint.
   * ``bl_boot`` library - Disabled clock interrupts before booting the application. This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
 
 
@@ -369,7 +369,7 @@ Crypto
   * :ref:`nrfxlib:nrf_security`:
 
     * Added Kconfig options for TLS/DTLS and x509 certificates.
-    * Added Kconfig options for ``PK`` and ``PK_WRITE`` (:option:`CONFIG_MBEDTLS_PK_C` and :option:`CONFIG_MBEDTLS_PK_WRITE_C`).
+    * Added Kconfig options for ``PK`` and ``PK_WRITE`` (:kconfig:`CONFIG_MBEDTLS_PK_C` and :kconfig:`CONFIG_MBEDTLS_PK_WRITE_C`).
     * Rewrote the stripping mechanism of the library to not use the ``POST_BUILD`` option in a custom build rule.
       The library stripping mechanism was non-functional in certain versions of |SES| Nordic Edition.
 
@@ -435,11 +435,11 @@ The following list summarizes the most important changes inherited from upstream
   * Allowed the final data chunk in the image to be unaligned in the serial-recovery protocol.
   * Updated the ``CONFIG_BOOT_DIRECT_XIP_REVERT`` option to be valid only in xip-mode.
   * Added an offset parameter to the tinycrypt ctr mode so that it can be properly used as a streaming cipher.
-  * Configured the bootloader to use a minimal CBPRINTF (:option:`CONFIG_CBPRINTF_NANO`) implementation.
-  * Configured logging to use :option:`CONFIG_LOG_MINIMAL` by default.
+  * Configured the bootloader to use a minimal CBPRINTF (:kconfig:`CONFIG_CBPRINTF_NANO`) implementation.
+  * Configured logging to use :kconfig:`CONFIG_LOG_MINIMAL` by default.
   * Fixed a vulnerability with nokogiri<=1.11.0.rc4.
   * Introduced a bootutil_public library that contains code common to MCUboot and the DFU application.
-    See :option:`CONFIG_MCUBOOT_BOOTUTIL_LIB`.
+    See :kconfig:`CONFIG_MCUBOOT_BOOTUTIL_LIB`.
 
 * Image tool:
 
@@ -460,7 +460,7 @@ The following list summarizes the most important changes inherited from upstream
   In this case, it was not possible to update the device and mcumgr would return error code 6 (``MGMT_ERR_EBADSTATE``).
 * Added support for invoking shell commands (shell management) from the mcumgr command line.
 * Added optional verification of an uploaded direct-xip binary, which will reject any binary that cannot boot from the base address of the offered upload slot.
-  This verification can be enabled through :option:`CONFIG_IMG_MGMT_REJECT_DIRECT_XIP_MISMATCHED_SLOT`.
+  This verification can be enabled through :kconfig:`CONFIG_IMG_MGMT_REJECT_DIRECT_XIP_MISMATCHED_SLOT`.
 
 Zephyr
 ======
@@ -543,7 +543,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Updated :c:func:`k_timer_user_data_get` to take a ``const struct k_timer *timer`` instead of a non-\ ``const`` pointer.
   * Added a :c:macro:`K_DELAYED_WORK_DEFINE` macro.
-  * Added a :option:`CONFIG_MEM_SLAB_TRACE_MAX_UTILIZATION` option.
+  * Added a :kconfig:`CONFIG_MEM_SLAB_TRACE_MAX_UTILIZATION` option.
     If enabled, :c:func:`k_mem_slab_max_used_get` can be used to get a memory slab's maximum utilization in blocks.
 
   * Bug fixes:
@@ -636,8 +636,8 @@ The following list summarizes the most important changes inherited from upstream
   * Flash:
 
     * Modified the nRF QSPI NOR driver so that it also supports nRF53 Series SoCs.
-    * Added missing selection of :option:`CONFIG_FLASH_HAS_PAGE_LAYOUT` for the SPI NOR and AT45 family flash drivers.
-    * Refactored the nRF QSPI NOR driver so that it no longer depends on :option:`CONFIG_MULTITHREADING`.
+    * Added missing selection of :kconfig:`CONFIG_FLASH_HAS_PAGE_LAYOUT` for the SPI NOR and AT45 family flash drivers.
+    * Refactored the nRF QSPI NOR driver so that it no longer depends on :kconfig:`CONFIG_MULTITHREADING`.
     * Removed ``CONFIG_NORDIC_QSPI_NOR_QE_BIT``.
       Use the ``quad-enable-requirements`` devicetree property instead.
     * Added JESD216 support to the nRF QSPI NOR driver.
@@ -735,14 +735,14 @@ The following list summarizes the most important changes inherited from upstream
     * Added support for RX packet queueing in TCP2.
     * Added network management events for DHCPv4.
     * Added periodic throughput printout to the :ref:`zephyr:sockets-echo-server-sample` sample.
-    * Added an experimental option to set preemptive priority for networking threads (:option:`CONFIG_NET_TC_THREAD_PREEMPTIVE`).
-    * Added a Kconfig option that enables a hostname update on link address change (:option:`CONFIG_NET_HOSTNAME_UNIQUE_UPDATE`).
+    * Added an experimental option to set preemptive priority for networking threads (:kconfig:`CONFIG_NET_TC_THREAD_PREEMPTIVE`).
+    * Added a Kconfig option that enables a hostname update on link address change (:kconfig:`CONFIG_NET_HOSTNAME_UNIQUE_UPDATE`).
     * Added multiple fixes to the DHCP implementation.
     * Added support for the Distributed Switch Architecture (DSA).
 
   * LwM2M:
 
-    * Made the endpoint name length configurable with Kconfig (see :option:`CONFIG_LWM2M_RD_CLIENT_ENDPOINT_NAME_MAX_LENGTH`).
+    * Made the endpoint name length configurable with Kconfig (see :kconfig:`CONFIG_LWM2M_RD_CLIENT_ENDPOINT_NAME_MAX_LENGTH`).
     * Fixed PUSH FOTA block transfer with Opaque content format.
     * Added various improvements to the bootstrap procedure.
     * Fixed token generation.
@@ -764,22 +764,22 @@ The following list summarizes the most important changes inherited from upstream
     * Added new OpenThread options:
 
       * ``CONFIG_OPENTHREAD_NCP_BUFFER_SIZE``
-      * :option:`CONFIG_OPENTHREAD_NUM_MESSAGE_BUFFERS`
-      * :option:`CONFIG_OPENTHREAD_MAX_STATECHANGE_HANDLERS`
-      * :option:`CONFIG_OPENTHREAD_TMF_ADDRESS_CACHE_ENTRIES`
-      * :option:`CONFIG_OPENTHREAD_MAX_CHILDREN`
-      * :option:`CONFIG_OPENTHREAD_MAX_IP_ADDR_PER_CHILD`
-      * :option:`CONFIG_OPENTHREAD_LOG_PREPEND_LEVEL_ENABLE`
-      * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_ACK_TIMEOUT_ENABLE`
-      * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_RETRANSMIT_ENABLE`
+      * :kconfig:`CONFIG_OPENTHREAD_NUM_MESSAGE_BUFFERS`
+      * :kconfig:`CONFIG_OPENTHREAD_MAX_STATECHANGE_HANDLERS`
+      * :kconfig:`CONFIG_OPENTHREAD_TMF_ADDRESS_CACHE_ENTRIES`
+      * :kconfig:`CONFIG_OPENTHREAD_MAX_CHILDREN`
+      * :kconfig:`CONFIG_OPENTHREAD_MAX_IP_ADDR_PER_CHILD`
+      * :kconfig:`CONFIG_OPENTHREAD_LOG_PREPEND_LEVEL_ENABLE`
+      * :kconfig:`CONFIG_OPENTHREAD_MAC_SOFTWARE_ACK_TIMEOUT_ENABLE`
+      * :kconfig:`CONFIG_OPENTHREAD_MAC_SOFTWARE_RETRANSMIT_ENABLE`
       * ``CONFIG_OPENTHREAD_PLATFORM_USEC_TIMER_ENABLE``
-      * :option:`CONFIG_OPENTHREAD_RADIO_LINK_IEEE_802_15_4_ENABLE`
-      * :option:`CONFIG_OPENTHREAD_RADIO_LINK_TREL_ENABLE`
-      * :option:`CONFIG_OPENTHREAD_CSL_SAMPLE_WINDOW`
-      * :option:`CONFIG_OPENTHREAD_CSL_RECEIVE_TIME_AHEAD`
-      * :option:`CONFIG_OPENTHREAD_MAC_SOFTWARE_CSMA_BACKOFF_ENABLE`
-      * :option:`CONFIG_OPENTHREAD_PLATFORM_INFO`
-      * :option:`CONFIG_OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE`
+      * :kconfig:`CONFIG_OPENTHREAD_RADIO_LINK_IEEE_802_15_4_ENABLE`
+      * :kconfig:`CONFIG_OPENTHREAD_RADIO_LINK_TREL_ENABLE`
+      * :kconfig:`CONFIG_OPENTHREAD_CSL_SAMPLE_WINDOW`
+      * :kconfig:`CONFIG_OPENTHREAD_CSL_RECEIVE_TIME_AHEAD`
+      * :kconfig:`CONFIG_OPENTHREAD_MAC_SOFTWARE_CSMA_BACKOFF_ENABLE`
+      * :kconfig:`CONFIG_OPENTHREAD_PLATFORM_INFO`
+      * :kconfig:`CONFIG_OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE`
 
     * Added support for RCP co-processor mode.
     * Fixed multicast packet reception.
@@ -800,7 +800,7 @@ The following list summarizes the most important changes inherited from upstream
   * CoAP:
 
     * Added a retransmission counter to the :c:struct:`coap_pending` structure to simplify the retransmission logic.
-    * Added a Kconfig option to randomize the initial ACK time-out, as specified in RFC 7252 (:option:`CONFIG_COAP_RANDOMIZE_ACK_TIMEOUT`).
+    * Added a Kconfig option to randomize the initial ACK time-out, as specified in RFC 7252 (:kconfig:`CONFIG_COAP_RANDOMIZE_ACK_TIMEOUT`).
     * Fixed encoding of long options (larger than 268 bytes).
 
 * Bluetooth Mesh:
@@ -835,12 +835,12 @@ The following list summarizes the most important changes inherited from upstream
     * Added a :c:macro:`FS_MOUNT_FLAG_NO_FORMAT` flag to the FatFs options.
       This flag removes formatting capabilities from the FAT/exFAT file system driver and prevents unformatted devices to be formatted, to FAT or exFAT, on mount attempt.
     * Added support for the following :c:func:`fs_mount` flags: :c:macro:`FS_MOUNT_FLAG_READ_ONLY`, :c:macro:`FS_MOUNT_FLAG_NO_FORMAT`
-    * Updated the FS API to not perform a runtime check of a driver interface when the :option:`CONFIG_NO_RUNTIME_CHECKS` option is enabled.
+    * Updated the FS API to not perform a runtime check of a driver interface when the :kconfig:`CONFIG_NO_RUNTIME_CHECKS` option is enabled.
 
   * DFU:
 
     * Added shell module for MCUboot enabled application.
-      See :option:`CONFIG_MCUBOOT_SHELL`.
+      See :kconfig:`CONFIG_MCUBOOT_SHELL`.
     * Reworked the implementation to use MCUboot's bootutil_public library instead of the Zephyr implementation of the same API.
 
   * IPC:
@@ -853,7 +853,7 @@ The following list summarizes the most important changes inherited from upstream
   * Renamed sanitycheck to Twister.
   * Ensured that shields can be placed in other BOARD_ROOT folders.
   * Added basic support for Clang 10 with x86.
-  * Fixed a bug that prevented compiling the :ref:`bootloader` with :option:`CONFIG_SB_SIGNING_PUBLIC_KEY`
+  * Fixed a bug that prevented compiling the :ref:`bootloader` with :kconfig:`CONFIG_SB_SIGNING_PUBLIC_KEY`
 
 * System:
 
@@ -880,7 +880,7 @@ The following list summarizes the most important changes inherited from upstream
 
 * Modules:
 
-  * Introduced a :option:`CONFIG_MBEDTLS_MEMORY_DEBUG` option for mbedtls.
+  * Introduced a :kconfig:`CONFIG_MBEDTLS_MEMORY_DEBUG` option for mbedtls.
   * Updated LVGL to v7.6.1.
   * Updated libmetal and openamp to v2020.10.
   * Updated nrfx in hal-nordic to version 2.4.0.
@@ -992,7 +992,7 @@ Applications and samples
 
   * :ref:`serial_lte_modem` - Added documentation for new commands.
     Fixed the syntax and examples of some existing commands.
-  * Added a note about :option:`CONFIG_MQTT_KEEPALIVE` option to the :ref:`aws_iot`, :ref:`azure_iot_hub`, and :ref:`cloud_client` samples.
+  * Added a note about :kconfig:`CONFIG_MQTT_KEEPALIVE` option to the :ref:`aws_iot`, :ref:`azure_iot_hub`, and :ref:`cloud_client` samples.
 * Bluetooth:
 
   * Added a note about child-image overlay to the :ref:`bluetooth_central_hr_coded` and :ref:`peripheral_hr_coded` samples.

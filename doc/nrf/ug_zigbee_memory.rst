@@ -110,8 +110,8 @@ Stack memory requirements
 The following table lists stack memory requirement values for ``main`` and ``zboss`` threads.
 These measurements were carried out with :ref:`zephyr:thread_analyzer`, using the following Kconfig options for configuration:
 
-* For the stack memory size of the ``main`` thread - :option:`CONFIG_MAIN_STACK_SIZE`
-* For the stack memory size of the ``zboss`` thread - :option:`CONFIG_ZBOSS_DEFAULT_THREAD_STACK_SIZE`
+* For the stack memory size of the ``main`` thread - :kconfig:`CONFIG_MAIN_STACK_SIZE`
+* For the stack memory size of the ``zboss`` thread - :kconfig:`CONFIG_ZBOSS_DEFAULT_THREAD_STACK_SIZE`
 
 Values are provided in bytes (B).
 

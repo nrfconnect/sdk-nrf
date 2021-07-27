@@ -124,7 +124,7 @@ Configuration options*
 
 .. note::
    * You do not need to list all configuration options of the sample, but only the ones that are important for the sample and make sense for the user to know about.
-   * The syntax below allows sample configuration options to link to the option descriptions in the same way as the library configuration options link to the corresponding Kconfig descriptions (``:option:`SAMPLE_CONFIG```, which results in :option:`SAMPLE_CONFIG`).
+   * The syntax below allows sample configuration options to link to the option descriptions in the same way as the library configuration options link to the corresponding Kconfig descriptions (``:kconfig:`SAMPLE_CONFIG```, which results in :kconfig:`SAMPLE_CONFIG`).
    * For each configuration option, list the symbol name and the string describing it.
 
 Check and configure the following configuration options for the sample:
@@ -143,13 +143,13 @@ Additional configuration*
 
 .. note::
    * Add this section to describe and link to any library configuration options that might be important to run this sample.
-     You can link to options with ``:option:`CONFIG_XXX```.
+     You can link to options with ``:kconfig:`CONFIG_XXX```.
    * You do not need to list all possible configuration options, but only the ones that are relevant.
 
 Check and configure the following library options that are used by the sample:
 
-* :option:`CONFIG_BT_DEVICE_NAME` - Defines the Bluetooth device name.
-* :option:`CONFIG_BT_LBS` - Enables the :ref:`lbs_readme`.
+* :kconfig:`CONFIG_BT_DEVICE_NAME` - Defines the Bluetooth device name.
+* :kconfig:`CONFIG_BT_LBS` - Enables the :ref:`lbs_readme`.
 
 Configuration files*
 ====================

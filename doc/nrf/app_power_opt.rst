@@ -192,7 +192,7 @@ To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is
    Even though the requested time-out value in the use case is 60 minutes, it is decided by the network.
    The PSM floor current is now 4.69 µA.
 
-#. Since the data transfer interval is 20 minutes, you can increase the frequency of transmission. Set :option:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS` to ``120`` in :file:`prj.conf`.
+#. Since the data transfer interval is 20 minutes, you can increase the frequency of transmission. Set :kconfig:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS` to ``120`` in :file:`prj.conf`.
 #. Rebuild and program the sample.
 #. A 40-byte data packet is now sent every two minutes. Make sure that the frequency is sufficiently higher than the duration of RRC inactivity present in the network.
 
@@ -217,7 +217,7 @@ To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is
    It is recommended to send a batch of six measurements for every 60 minutes to have some margin.
    Hence, you can change the payload size to a value of 120 bytes in the :file:`prj.conf` to observe how it affects the charge in a single transmission.
 
-#. To change the payload size, set :option:`CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES` to ``120`` in :file:`prj.conf`
+#. To change the payload size, set :kconfig:`CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES` to ``120`` in :file:`prj.conf`
 #. Rebuild and program the sample.
 
    Observe the results in the Power Profiler Kit II interface:

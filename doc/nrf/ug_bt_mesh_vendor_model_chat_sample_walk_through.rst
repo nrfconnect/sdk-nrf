@@ -72,7 +72,7 @@ This is done through the :c:member:`bt_mesh_model_cb.reset` handler:
    :end-before: include_endpoint_chat_cli_rst_6
 
 .. note::
-   The :c:member:`bt_mesh_model_cb.settings_set` handler, and both :c:func:`bt_mesh_model_data_store` calls, are only compiled if :option:`CONFIG_BT_SETTINGS` is enabled, making it possible to exclude this functionality if the persistent storage is not enabled.
+   The :c:member:`bt_mesh_model_cb.settings_set` handler, and both :c:func:`bt_mesh_model_data_store` calls, are only compiled if :kconfig:`CONFIG_BT_SETTINGS` is enabled, making it possible to exclude this functionality if the persistent storage is not enabled.
 
 The following code initializes the model callbacks structure:
 

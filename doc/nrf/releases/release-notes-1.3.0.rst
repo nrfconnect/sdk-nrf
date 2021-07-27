@@ -370,7 +370,7 @@ Secure Partition Manager (SPM)
 
 * Added support for disabling some services in the :ref:`secure_services` sample.
   It now works in more bootloader configurations.
-* Disabled :option:`CONFIG_SPM_SERVICE_PREVALIDATE` in the :ref:`lib_spm` library, because this option requires the immutable bootloader.
+* Disabled :kconfig:`CONFIG_SPM_SERVICE_PREVALIDATE` in the :ref:`lib_spm` library, because this option requires the immutable bootloader.
 * Updated the :ref:`lib_spm` library to make it compatible with nRF5340 (with or without `anomaly 19`_).
 
 CPU load measurement
@@ -589,7 +589,7 @@ Bluetooth Low Energy
   NFC requires this API to work correctly. (fixed)
 * When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth LE Controller, directed advertising does not time out and the regular advertising cannot be started. (fixed)
 * The :ref:`bluetooth_central_hids` sample cannot connect to a peripheral that uses directed advertising. (fixed)
-* When running the :ref:`bluetooth_central_dfu_smp` sample, the :option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
+* When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
   However, security is not enabled by default in the Zephyr sample. (fixed)
 * On some operating systems, the nrf_desktop application is unable to reconnect to a host. (fixed)
 

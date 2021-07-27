@@ -15,7 +15,7 @@ It initializes the following elements of the library:
 * hardware mutex and mutex API,
 * platform with or without RNG.
 
-You can initialize the hw_cc310 driver using the :option:`CONFIG_HW_CC3XX` Kconfig option.
+You can initialize the hw_cc310 driver using the :kconfig:`CONFIG_HW_CC3XX` Kconfig option.
 
 API documentation
 *****************

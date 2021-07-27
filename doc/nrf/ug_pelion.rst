@@ -43,12 +43,12 @@ Enable and configure Mbed TLS
 The Pelion Device Management library depends on a properly configured Mbed TLS library.
 To simplify the development within the |NCS|, you can use a predefined set of Mbed TLS configuration options.
 
-To enable the set that is compatible with :ref:`nrfxlib:nrf_security`, use the :option:`CONFIG_PELION_NRF_SECURITY` Kconfig option.
+To enable the set that is compatible with :ref:`nrfxlib:nrf_security`, use the :kconfig:`CONFIG_PELION_NRF_SECURITY` Kconfig option.
 
 Make sure to properly configure the memory region used by Mbed TLS library for dynamic allocations.
 Memory for this library is allocated from either the libc heap or a dedicated buffer, depending on the configuration.
-For more information about using the dedicated buffer for Mbed TLS heap, see help for the :option:`CONFIG_MBEDTLS_ENABLE_HEAP` and :option:`CONFIG_MBEDTLS_HEAP_SIZE` Kconfig options.
-If :option:`CONFIG_MBEDTLS_ENABLE_HEAP` is disabled and Mbed TLS configuration files do not add any overrides, the libc heap is used.
+For more information about using the dedicated buffer for Mbed TLS heap, see help for the :kconfig:`CONFIG_MBEDTLS_ENABLE_HEAP` and :kconfig:`CONFIG_MBEDTLS_HEAP_SIZE` Kconfig options.
+If :kconfig:`CONFIG_MBEDTLS_ENABLE_HEAP` is disabled and Mbed TLS configuration files do not add any overrides, the libc heap is used.
 
 Provision the device with credentials
 =====================================
@@ -114,12 +114,12 @@ For more information, see :ref:`zephyr:thread_protocol_interface` in the Zephyr 
 Pelion configuration
 ********************
 
-To enable the Pelion Device Management library in the |NCS|, use the :option:`CONFIG_PELION_CLIENT` Kconfig option.
+To enable the Pelion Device Management library in the |NCS|, use the :kconfig:`CONFIG_PELION_CLIENT` Kconfig option.
 
 You can control the Pelion Device Management library features using Kconfig options that are defined within the Pelion Device Management library repository.
 The following options are among the most important ones:
 
-* :option:`CONFIG_PELION_UPDATE` - This option enables the device firmware update (DFU) feature.
-* :option:`CONFIG_PELION_TRANSPORT_MODE_TCP`, :option:`CONFIG_PELION_TRANSPORT_MODE_UDP`, :option:`CONFIG_PELION_TRANSPORT_MODE_UDP_QUEUE` - These options select the transport protocol used by the library.
+* :kconfig:`CONFIG_PELION_UPDATE` - This option enables the device firmware update (DFU) feature.
+* :kconfig:`CONFIG_PELION_TRANSPORT_MODE_TCP`, :kconfig:`CONFIG_PELION_TRANSPORT_MODE_UDP`, :kconfig:`CONFIG_PELION_TRANSPORT_MODE_UDP_QUEUE` - These options select the transport protocol used by the library.
 
 To see all options, check the Pelion Device Management library subtree in configuration system (menuconfig) or read the `Zephyr integration tutorial`_ in the Pelion documentation.

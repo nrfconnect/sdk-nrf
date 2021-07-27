@@ -227,7 +227,7 @@ ALIASES                = "rst=\verbatim embed:rst" \
                          "r=\verbatim embed:rst:leading-asterisk" \
                          "er=\endverbatim"
 
-ALIASES += option{1}="\verbatim embed:rst:inline :option:`\1` \endverbatim"
+ALIASES += kconfig{1}="\verbatim embed:rst:inline :kconfig:`\1` \endverbatim"
 ALIASES += "req=\xrefitem req \"Requirement\" \"Requirements\" "
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).

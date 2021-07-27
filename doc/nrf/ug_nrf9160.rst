@@ -62,7 +62,7 @@ It provides a reference implementation of a Secure Partition Manager firmware.
 This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
 
 The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160ns`` build target.
-To disable the automatic inclusion of the Secure Partition Manager sample, set the option :option:`CONFIG_SPM` to "n" in the project configuration.
+To disable the automatic inclusion of the Secure Partition Manager sample, set the option :kconfig:`CONFIG_SPM` to "n" in the project configuration.
 
 Trusted Firmware-M (TF-M) support
 ---------------------------------
@@ -85,8 +85,8 @@ Therefore, it must be built for the ``nrf9160dk_nrf9160ns`` build target.
 The application image might require other images to be present.
 Depending on the configuration, all these images can be built at the same time in a :ref:`multi-image build <ug_multi_image>`.
 
-All nRF9160 samples include the :ref:`secure_partition_manager` sample, which can be enabled or disabled with the :option:`CONFIG_SPM` option.
-Some also include the :ref:`bootloader` sample (:option:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index` (:option:`CONFIG_BOOTLOADER_MCUBOOT`).
+All nRF9160 samples include the :ref:`secure_partition_manager` sample, which can be enabled or disabled with the :kconfig:`CONFIG_SPM` option.
+Some also include the :ref:`bootloader` sample (:kconfig:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index` (:kconfig:`CONFIG_BOOTLOADER_MCUBOOT`).
 
 
 LTE modem
@@ -168,7 +168,7 @@ Then, enable the LTE band lock feature and the band lock mask in the configurati
    CONFIG_LTE_LOCK_BAND_MASK="10000001000000001100"
 
 The band lock mask allows you to set the bands on which you want the modem to operate.
-Each bit in the :option:`CONFIG_LTE_LOCK_BAND_MASK` option represents one band.
+Each bit in the :kconfig:`CONFIG_LTE_LOCK_BAND_MASK` option represents one band.
 The maximum length of the string is 88 characters (bit string, 88 bits).
 
 The band lock is a non-volatile setting that must be set before activating the modem.
@@ -192,7 +192,7 @@ Network mode
 The modem supports LTE-M (Cat-M1) and Narrowband Internet of Things (NB-IoT or LTE Cat-NB).
 By default, the modem starts in LTE-M mode.
 
-When using the LTE Link Control driver, you can select LTE-M with :option:`CONFIG_LTE_NETWORK_MODE_LTE_M` or NB-IoT with :option:`CONFIG_LTE_NETWORK_MODE_NBIOT`.
+When using the LTE Link Control driver, you can select LTE-M with :kconfig:`CONFIG_LTE_NETWORK_MODE_LTE_M` or NB-IoT with :kconfig:`CONFIG_LTE_NETWORK_MODE_NBIOT`.
 
 To start in NB-IoT mode without the driver, send the following command before starting the modem protocols (by using ``AT+CFUN=1``)::
 
@@ -257,7 +257,7 @@ To perform a FOTA upgrade, complete the following steps:
       In addition, the following requirements apply:
 
       * |fota_upgrades_req_mcuboot|
-      * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:option:`CONFIG_SECURE_BOOT`).
+      * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:kconfig:`CONFIG_SECURE_BOOT`).
       * If you want to upgrade the modem firmware through modem delta updates, neither MCUboot nor the immutable bootloader are required, because the modem firmware upgrade is handled by the modem itself.
       * If you want to perform a full modem firmware upgrade, an |external_flash_size| is required.
 
@@ -270,7 +270,7 @@ To perform a FOTA upgrade, complete the following steps:
       |fota_upgrades_building|
       The :file:`app_update.bin` file is the file that should be uploaded to the server.
 
-      To create binary files for a bootloader upgrade, make sure that :option:`CONFIG_SECURE_BOOT` and :option:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
+      To create binary files for a bootloader upgrade, make sure that :kconfig:`CONFIG_SECURE_BOOT` and :kconfig:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
       The build will create a binary file for each variant of the upgradable bootloader, one for each bootloader slot.
       See :ref:`upgradable_bootloader` for more information.
 

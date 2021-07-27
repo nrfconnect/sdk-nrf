@@ -42,7 +42,7 @@ The content of this frame is constant and it is available in the driver source c
 Initialization
 **************
 
-You can initialize the RTT driver using the :option:`CONFIG_ETH_RTT` Kconfig option.
+You can initialize the RTT driver using the :kconfig:`CONFIG_ETH_RTT` Kconfig option.
 
 API documentation
 *****************

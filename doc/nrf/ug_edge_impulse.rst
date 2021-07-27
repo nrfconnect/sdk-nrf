@@ -57,16 +57,16 @@ Complete the following steps to configure the building process:
 
 1. Make sure that the following Kconfig options are enabled:
 
-   * :option:`CONFIG_CPLUSPLUS`
-   * :option:`CONFIG_STD_CPP11`
-   * :option:`CONFIG_LIB_CPLUSPLUS`
-   * :option:`CONFIG_NEWLIB_LIBC`
-   * :option:`CONFIG_NEWLIB_LIBC_FLOAT_PRINTF`
-   * :option:`CONFIG_FPU`
+   * :kconfig:`CONFIG_CPLUSPLUS`
+   * :kconfig:`CONFIG_STD_CPP11`
+   * :kconfig:`CONFIG_LIB_CPLUSPLUS`
+   * :kconfig:`CONFIG_NEWLIB_LIBC`
+   * :kconfig:`CONFIG_NEWLIB_LIBC_FLOAT_PRINTF`
+   * :kconfig:`CONFIG_FPU`
 
-#. Enable building the downloaded library by setting the :option:`CONFIG_EDGE_IMPULSE` Kconfig option.
+#. Enable building the downloaded library by setting the :kconfig:`CONFIG_EDGE_IMPULSE` Kconfig option.
    Setting this option also enables the :ref:`ei_wrapper`.
-#. Enable and specify the Uniform Resource Identifier (URI) in the :option:`CONFIG_EDGE_IMPULSE_URI` Kconfig option.
+#. Enable and specify the Uniform Resource Identifier (URI) in the :kconfig:`CONFIG_EDGE_IMPULSE_URI` Kconfig option.
    You can set it to one of the following values:
 
    * An absolute path to a file in the local file system.
@@ -86,7 +86,7 @@ Downloading model directly from Edge Impulse studio
 As an example of downloadable URI, you can configure the |NCS| build system to download your model directly from the Edge Impulse studio.
 Complete the following steps to do this:
 
-1. Set :option:`CONFIG_EDGE_IMPULSE_URI` to the URI from Edge Impulse studio:
+1. Set :kconfig:`CONFIG_EDGE_IMPULSE_URI` to the URI from Edge Impulse studio:
 
    .. parsed-literal::
       :class: highlight

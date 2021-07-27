@@ -118,7 +118,7 @@ nRF9160
   * :ref:`lib_nrf_cloud` library:
 
     * Added cellular positioning support to the :ref:`lib_nrf_cloud_cell_pos` library.
-    * Added Kconfig option :option:`CONFIG_NRF_CLOUD_CELL_POS` to obtain cell-based location from nRF Cloud instead of using the modem's GPS.
+    * Added Kconfig option :kconfig:`CONFIG_NRF_CLOUD_CELL_POS` to obtain cell-based location from nRF Cloud instead of using the modem's GPS.
     * Added function :c:func:`nrf_cloud_modem_fota_completed`, which is to be called by the application after it re-initializes the modem (instead of rebooting) after a modem FOTA update.
     * Updated to include the FOTA type value in the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event.
     * Updated configuration options for setting the source of the MQTT client ID (nRF Cloud device ID).
@@ -132,7 +132,7 @@ nRF9160
     * Added :file:`overlay-agps-pgps.conf` to enable A-GPS and P-GPS support.
     * Updated to handle new Kconfig options:
 
-      * :option:`CONFIG_NRF_CLOUD_CELL_POS`
+      * :kconfig:`CONFIG_NRF_CLOUD_CELL_POS`
 
   * :ref:`asset_tracker_v2` application:
 
@@ -206,8 +206,8 @@ nRF9160
     * Removed provisioning using :ref:`modem_key_mgmt` and :file:`certificates.h`, because this is not the recommended way of provisioning private certificates.
     * Renamed the following Kconfig options:
 
-      * ``CONFIG_CLOUD_CERT_SEC_TAG`` renamed to :option:`CONFIG_CERT_SEC_TAG`.
-      * ``CONFIG_USE_CLOUD_CLIENT_ID`` renamed to :option:`CONFIG_USE_CUSTOM_CLIENT_ID`.
+      * ``CONFIG_CLOUD_CERT_SEC_TAG`` renamed to :kconfig:`CONFIG_CERT_SEC_TAG`.
+      * ``CONFIG_USE_CLOUD_CLIENT_ID`` renamed to :kconfig:`CONFIG_USE_CUSTOM_CLIENT_ID`.
       * ``CONFIG_CLOUD_CLIENT_ID`` renamed to ``CONFIG_CLIENT_ID``.
       * ``CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`` renamed to ``CONFIG_CLIENT_ID_PREFIX``.
 
@@ -257,7 +257,7 @@ Bluetooth mesh
   * Updated the :ref:`bt_mesh_light_xyl_srv_readme` model to publish its state values that were loaded from flash after powering up.
   * Replaced the linked list of scene entries in the model contexts, with a lookup in ROM-allocated scene entries.
   * Updated so the transition pointer can be NULL, if no transition time parameters are provided in APIs.
-  * Renamed Kconfig option ``CONFIG_BT_MESH_LIGHT_CTRL_STORE_TIMEOUT`` to :option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`, and default value is set to 0.
+  * Renamed Kconfig option ``CONFIG_BT_MESH_LIGHT_CTRL_STORE_TIMEOUT`` to :kconfig:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`, and default value is set to 0.
   * Updated the :ref:`bt_mesh_light_ctrl_srv_readme` model with a timer, allowing it to resume operation after a certain delay.
   * Updated the proportional-integral (PI) feedback regulator to use instant transition time to relieve the application from overhead.
   * Fixed an issue where an undefined state for some sensor properties is a valid state, and should be handled without giving errors.
@@ -273,7 +273,7 @@ Bluetooth mesh
   * Fixed an issue where :ref:`bt_mesh_light_ctrl_srv_readme` should disable control when the lightness is set by receiving a message.
   * Added persistent storage to the :ref:`bt_mesh_scheduler_readme` to restore previously configured entries on power-up.
   * Fixed an issue where CTL temperature bindings should use rounding operation for division in the binding formula.
-  * Samples are using :option:`CONFIG_NVS` instead of :option:`CONFIG_FCB` as the default storage backend.
+  * Samples are using :kconfig:`CONFIG_NVS` instead of :kconfig:`CONFIG_FCB` as the default storage backend.
   * Fixed an issue in :ref:`bt_mesh_light_ctrl_srv_readme` by always setting the transition time to a Fade Standby Manual state time when a Light Off event is received.
   * Fixed an issue by reporting maximum remaining time for all components for CTL state transition time when GET is processed.
   * Fixed an issue where a deleted :ref:`bt_mesh_scene_srv_readme` did not delete all its pages from the file system.

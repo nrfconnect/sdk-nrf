@@ -230,7 +230,7 @@ struct azure_iot_hub_config {
  *           successfully for subsequent calls to this library to succeed.
  *
  *  @param[in] config Pointer to struct containing connection parameters. Can be
- *		      NULL if @option{CONFIG_AZURE_IOT_HUB_DEVICE_ID} is set.
+ *		      NULL if @kconfig{CONFIG_AZURE_IOT_HUB_DEVICE_ID} is set.
  *  @param[in] event_handler Pointer to event handler function.
  *
  *  @retval 0 If successful. Otherwise, a (negative) error code is returned.
