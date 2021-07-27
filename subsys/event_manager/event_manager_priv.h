@@ -158,7 +158,7 @@ extern "C" {
 
 /* Wrappers used for defining event infos */
 #ifdef CONFIG_EVENT_MANAGER_TRACE_EVENT_EXECUTION
-#define MEM_ADDRESS_LABEL "mem_address",
+#define MEM_ADDRESS_LABEL "_em_mem_address_",
 #define MEM_ADDRESS_TYPE PROFILER_ARG_U32,
 
 #else
