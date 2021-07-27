@@ -121,6 +121,8 @@ void enter_sleep(void)
 	nrf_gpio_cfg_input(CONFIG_SLM_INTERFACE_PIN, NRF_GPIO_PIN_PULLUP);
 	nrf_gpio_cfg_sense_set(CONFIG_SLM_INTERFACE_PIN, NRF_GPIO_PIN_SENSE_LOW);
 
+	k_sleep(K_MSEC(100));
+
 	nrf_regulators_system_off(NRF_REGULATORS_NS);
 }
 

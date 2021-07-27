@@ -125,59 +125,45 @@ Change the line ``status = "okay"`` to ``status = "disabled"`` and then save the
 Set command
 -----------
 
-The set command makes the nRF91 development kit go into idle or sleep mode.
+The set command makes the nRF91 development kit go into either idle or sleep mode, or it powers off the UART device.
 
 Syntax
 ~~~~~~
 
 ::
 
-   #XSLEEP[=<shutdown_mode>]
+   #XSLEEP=<shutdown_mode>
 
 The ``<shutdown_mode>`` parameter accepts only the following integer values:
 
 * ``0`` - Enter Idle.
   In this mode, the SLM service is terminated, but the LTE connection is maintained.
-  You can also use the syntax ``AT#XSLEEP``.
 * ``1`` - Enter Sleep.
   In this mode, both the SLM service and the LTE connection are terminated.
 * ``2`` - Power off UART.
   In this mode, both the SLM service and the LTE connection are maintained.
 
-The default value is 0.
-
-Response syntax
-~~~~~~~~~~~~~~~
-
-There is no response:
-
-* In case of Idle, it will exit by GPIO.
-* In case of Sleep, it will wake up by GPIO.
-* In case of UART power off, it will be powered on by GPIO or by SLM when needed.
+* In case of Idle, it will exit by interface GPIO.
+* In case of Sleep, it will wake up by interface GPIO.
+* In case of UART power off, UART will be powered on by interface GPIO or internally by SLM when needed.
 
 Examples
 ~~~~~~~~
 
 ::
 
-   AT#XSLEEP
-
-::
-
    AT#XSLEEP=0
+   OK
 
 ::
 
    AT#XSLEEP=1
+   OK
 
 ::
 
    AT#XSLEEP=2
-
-::
-
-   AT#XSLEEP?
-   ERROR
+   OK
 
 Read command
 ------------
