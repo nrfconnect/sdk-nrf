@@ -139,7 +139,7 @@ That means that if you do not have local modifications to a documentation set, y
 Downloading is usually quicker than building the documentation from scratch, however, this might depend on your Internet connection speed.
 
 .. note::
-   Using cached builds is currently in experimental state.
+   Using cached builds is currently in an experimental state.
 
 To enable the online cache, set the ``NCS_CACHE_ENABLE`` environment variable.
 For example, on Windows, enter the following command::
