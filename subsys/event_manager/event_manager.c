@@ -171,8 +171,8 @@ static void trace_event_submission(const struct event_header *eh)
 
 static void trace_register_execution_tracking_events(void)
 {
-	const char *labels[] = {"mem_address"};
-	enum profiler_arg types[] = {PROFILER_ARG_U32};
+	static const char * const labels[] = {EM_MEM_ADDRESS_LABEL};
+	enum profiler_arg types[] = {MEM_ADDRESS_TYPE};
 	size_t event_cnt = __stop_event_types - __start_event_types;
 	uint16_t profiler_event_id;
 
