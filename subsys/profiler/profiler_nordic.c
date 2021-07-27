@@ -142,6 +142,13 @@ static void profiler_nordic_thread_fn(void)
 
 int profiler_init(void)
 {
+	static bool profiler_initialized;
+
+	k_sched_lock();
+	if (profiler_initialized) {
+		k_sched_unlock();
+		return 0;
+	}
 	protocol_running = true;
 	if (IS_ENABLED(CONFIG_PROFILER_NORDIC_START_LOGGING_ON_SYSTEM_START)) {
 		sending_events = true;
@@ -178,6 +185,8 @@ int profiler_init(void)
 			(k_thread_entry_t) profiler_nordic_thread_fn,
 			NULL, NULL, NULL,
 			CONFIG_PROFILER_NORDIC_THREAD_PRIORITY, 0, K_NO_WAIT);
+	profiler_initialized = true;
+	k_sched_unlock();
 	return 0;
 }
 
