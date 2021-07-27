@@ -18,8 +18,10 @@ See the release notes and documentation for those protocols and libraries for fu
 Highlights
 **********
 
-* Fixed :ref:`SoftDevice Controller DRGN-15852 <drgn_15852>`.
-* Fixed :ref:`HomeKit KRKNWK-10611 <krknwk_10611>`.
+This minor release adds the following fixes on top of :ref:`nRF Connect SDK v1.6.0 <ncs_release_notes_160>`:
+
+* Fixed an issue in SoftDevice Controller that affected scanning on the nRF53 Series (DRGN-15852).
+* Fixed an issue in the HomeKit component, where DFU would fail when using external flash memory for update image storage (KRKNWK-10611).
 
 Release tag
 ***********
