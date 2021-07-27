@@ -320,14 +320,14 @@ class NcsCompare(NcsWestCommand):
         # Get a dict containing projects that are in the NCS which are
         # *not* imported from Zephyr in nrf/west.yml. We will treat
         # these specially to make the output easier to understand.
-        ignored_imports = Manifest.from_file(
-            import_flags=ImportFlag.IGNORE_PROJECTS)
-        in_nrf = set(p.name for p in
-                     ignored_imports.projects[MANIFEST_PROJECT_INDEX + 1:])
+        ncs_only = Manifest.from_file(import_flags=ImportFlag.IGNORE_PROJECTS)
+        ncs_only_projects = ncs_only.projects[MANIFEST_PROJECT_INDEX + 1:]
+        ncs_only_names = set(p.name for p in ncs_only_projects)
         # This is a dict mapping names of projects which *are* imported
         # from zephyr to the Project instances.
-        self.imported_pmap = {name: project for name, project in
-                              self.ncs_pmap.items() if name not in in_nrf}
+        self.imported_pmap = {name: project
+                              for name, project in self.ncs_pmap.items()
+                              if name not in ncs_only_names}
 
         log.inf('Comparing your manifest-rev branches with zephyr/west.yml '
                 f'at {self.zephyr_rev}' +
