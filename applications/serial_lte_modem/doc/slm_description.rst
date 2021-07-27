@@ -25,13 +25,13 @@ The application supports the following development kit:
 Overview
 ********
 
-The nRF9160 SiP integrates both a full LTE modem and an application MCU, which enables you to run your LTE application directly on the nRF9160.
+The nRF9160 SiP integrates both a full LTE modem and an application MCU, enabling you to run your LTE application directly on the nRF9160.
 
 However, you might want to run your application on a different chip and use the nRF9160 only as a modem.
 For this use case, the serial LTE modem application provides an interface for controlling the LTE modem through AT commands.
 
-The proprietary AT commands that are specific to the serial LTE modem application are described in the :ref:`SLM_AT_intro` documentation.
-In addition to these proprietary AT commands, the application supports the nRF91 AT commands described in the `AT Commands Reference Guide`_.
+The proprietary AT commands specific to the serial LTE modem application are described in the :ref:`SLM_AT_intro` documentation.
+In addition to these, the application also supports the nRF91 AT commands described in the `AT Commands Reference Guide`_.
 
 Communicating with the modem
 ============================
@@ -53,7 +53,7 @@ Alternatively, you can use a terminal emulator like PuTTY to establish a termina
 See :ref:`putty` for instructions.
 
 .. note::
-   The default AT command terminator is carriage return and line feed (``\r\n``).
+   The default AT command terminator is a carriage return followed by a line feed (``\r\n``).
    LTE Link Monitor supports this format.
    When connecting with another terminal emulator, make sure that the configured AT command terminator corresponds to the line terminator of your terminal.
    You can change the termination mode in the :ref:`application configuration <slm_config>`.
@@ -98,7 +98,7 @@ UART configuration:
 * Operation mode: IRQ
 
 .. note::
-   The GPIO output level on nRF9160 side must be 3 V.
+   The GPIO output level on the nRF9160 side must be 3 V.
    You can set the VDD voltage with the **VDD IO** switch (**SW9**).
    See the `VDD supply rail section in the nRF9160 DK User Guide`_ for more information.
 
@@ -140,26 +140,16 @@ Check and configure the following configuration options for the sample:
    This option selects UART 2 for the UART connection.
    Select this option if you want to test the application with an external CPU.
 
-.. option:: CONFIG_SLM_GPIO_WAKEUP - Support of GPIO wakeup
-
-   This option enables using GPIO to wake up nRF9160 from deep sleep mode.
-   Select this option if you enable :option:`CONFIG_SLM_START_SLEEP` to put nRF9160 into deep sleep mode after startup.
-
-   This option is selected by default.
-
 .. option:: CONFIG_SLM_START_SLEEP - Enter sleep on startup
 
    This option makes nRF9160 enter deep sleep after startup.
 
    This option is not selected by default.
-   It requires :option:`CONFIG_SLM_GPIO_WAKEUP` to be selected.
 
-.. option:: CONFIG_SLM_INTERFACE_PIN - Interface GPIO to wake up or exit idle mode
+.. option:: CONFIG_SLM_INTERFACE_PIN - Interface GPIO to wake up from sleep or exit idle
 
    This option specifies which interface GPIO to use for exiting sleep or idle mode.
    By default, **P0.6** (Button 1 on the nRF9160 DK) is used when :option:`CONFIG_SLM_CONNECT_UART_0` is selected, and **P0.31** is used when when :option:`CONFIG_SLM_CONNECT_UART_2` is selected.
-
-   Note that when :option:`CONFIG_SLM_CONNECT_UART_0` is selected, Button 1 can be used to exit idle mode, but not to wake up from sleep mode.
 
 .. option:: CONFIG_SLM_SOCKET_RX_MAX - Maximum RX buffer size for receiving socket data
 
@@ -179,7 +169,7 @@ Check and configure the following configuration options for the sample:
 
 .. option:: CONFIG_SLM_CR_LF_TERMINATION - CR+LF termination
 
-   This option configures the application to accept AT commands ending with carriage return and line feed.
+   This option configures the application to accept AT commands ending with a carriage return followed by a line feed.
 
 .. option:: CONFIG_SLM_TCP_FILTER_SIZE - Size of IPv4 address allowlist
 
@@ -192,7 +182,7 @@ Check and configure the following configuration options for the sample:
 
 .. option:: CONFIG_SLM_SMS - SMS support in SLM
 
-   This option enables additional AT commands for using SMS service.
+   This option enables additional AT commands for using the SMS service.
 
 .. option:: CONFIG_SLM_GPS - GPS support in SLM
 
@@ -281,7 +271,7 @@ However, if you require customized TLS/DTLS features that are not supported by t
 The serial LTE modem application will then handle all secure sockets used in TCP/IP, TCP/IP proxy, and MQTT.
 
 If native TLS is enabled, the `Credential storage management %CMNG`_ command is overridden to map the :ref:`security tag <nrfxlib:security_tags>` from the serial LTE modem application to the modem.
-You must use the overridden AT%CMNG command to provision credentials to the modem.
+You must use the overridden AT%CMNG command to provision the credentials to the modem.
 Note that the serial LTE modem application supports security tags in the range of 0 - 214748364.
 
 The configuration options that are required to enable the native TLS socket are defined in the :file:`overlay-native_tls.conf` file.

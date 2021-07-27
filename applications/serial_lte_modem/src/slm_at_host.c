@@ -512,9 +512,6 @@ static void cmd_send(struct k_work *work)
 			rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		}
 		goto done;
-	} else if (err == -ESHUTDOWN) {
-		/*Entered IDLE or UART Power Off */
-		return;
 	} else if (err != -ENOENT) {
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
