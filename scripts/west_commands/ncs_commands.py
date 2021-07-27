@@ -289,6 +289,9 @@ class NcsLoot(NcsWestCommand):
 
         if args.json:
             json_data[name] = {
+                'path': project.path,
+                'ncs-commit': nsha,
+                'upstream-commit': zsha,
                 'shas': json_sha_list,
                 'shortlogs': json_shortlog_list,
             }
