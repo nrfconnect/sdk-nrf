@@ -8,3 +8,4 @@ sphinxcontrib-plantuml
 pygit2~=1.5
 pyyaml~=5.4
 azure-storage-blob~=12.8
+sphinx_markdown_tables
