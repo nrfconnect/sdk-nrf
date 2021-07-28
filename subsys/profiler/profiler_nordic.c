@@ -241,12 +241,21 @@ uint16_t profiler_register_event_type(const char *name, const char * const *args
 	return ne;
 }
 
+void profiler_log_encode_LEB128(struct log_event_buf *buf, uint32_t data)
+{
+	/* Encoding using Little Endian Base 128 (LEB128) */
+	while (data > BIT_MASK(7)) {
+		profiler_log_encode_uint8(buf, (uint8_t) ((data & BIT_MASK(7)) | BIT(7)));
+		data >>= 7;
+	}
+	profiler_log_encode_uint8(buf, (uint8_t) data);
+}
+
 void profiler_log_start(struct log_event_buf *buf)
 {
 	/* Adding one to pointer to make space for event type ID */
 	__ASSERT_NO_MSG(sizeof(uint8_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
 	buf->payload = buf->payload_start + sizeof(uint8_t);
-	profiler_log_encode_uint32(buf, k_cycle_get_32());
 }
 
 void profiler_log_encode_uint32(struct log_event_buf *buf, uint32_t data)
@@ -315,6 +324,8 @@ void profiler_log_add_mem_address(struct log_event_buf *buf,
 
 void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 {
+	static uint32_t old_time;
+
 	__ASSERT_NO_MSG(event_type_id <= UCHAR_MAX);
 	if (sending_events) {
 		uint8_t type_id = event_type_id & UCHAR_MAX;
@@ -322,6 +333,10 @@ void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 		buf->payload_start[0] = type_id;
 		int key = irq_lock();
 
+		uint32_t new_time = k_cycle_get_32();
+
+		profiler_log_encode_LEB128(buf, new_time - old_time);
+		old_time = new_time;
 		uint8_t num_bytes_send = SEGGER_RTT_WriteNoLock(
 				CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
 				buf->payload_start,
