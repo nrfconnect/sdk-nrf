@@ -255,13 +255,22 @@ uint16_t profiler_register_event_type(const char *name, const char * const *args
 	return ne;
 }
 
+static void profiler_log_encode_LEB128(struct log_event_buf *buf, uint32_t data)
+{
+	/* Encoding using Little Endian Base 128 (LEB128) */
+	while (data > BIT_MASK(7)) {
+		profiler_log_encode_uint8(buf, (uint8_t) ((data & BIT_MASK(7)) | BIT(7)));
+		data >>= 7;
+	}
+	profiler_log_encode_uint8(buf, (uint8_t) data);
+}
+
 void profiler_log_start(struct log_event_buf *buf)
 {
 	/* Adding one to pointer to make space for event type ID */
 	BUILD_ASSERT(sizeof(uint8_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN,
 		     "Profiler custom event buffer length is too small");
 	buf->payload = buf->payload_start + sizeof(uint8_t);
-	profiler_log_encode_uint32(buf, k_cycle_get_32());
 }
 
 void profiler_log_encode_uint32(struct log_event_buf *buf, uint32_t data)
@@ -328,14 +337,18 @@ void profiler_log_add_mem_address(struct log_event_buf *buf,
 	profiler_log_encode_uint32(buf, (uint32_t)mem_address);
 }
 
-static bool profiler_RTT_send(struct log_event_buf *buf, uint8_t type_id)
+static bool profiler_RTT_send(struct log_event_buf *buf, uint8_t type_id, uint32_t timestamp)
 {
+	static uint32_t old_time;
+
 	buf->payload_start[0] = type_id;
+	profiler_log_encode_LEB128(buf, timestamp - old_time);
 	unsigned int num_bytes_send = SEGGER_RTT_WriteNoLock(
 			CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
 			buf->payload_start,
 			buf->payload - buf->payload_start);
 	if (num_bytes_send == buf->payload - buf->payload_start) {
+		old_time = timestamp;
 		return true;
 	}
 	return false;
@@ -343,12 +356,14 @@ static bool profiler_RTT_send(struct log_event_buf *buf, uint8_t type_id)
 
 static void profiler_fatal_error(void)
 {
+	uint32_t timestamp = k_cycle_get_32();
+
 	while (true) {
 		struct log_event_buf buf;
 
 		profiler_log_start(&buf);
 		/* Sending Fatal Error event */
-		if (profiler_RTT_send(&buf, (uint8_t)fatal_error_event_id)) {
+		if (profiler_RTT_send(&buf, (uint8_t)fatal_error_event_id, timestamp)) {
 			break;
 		}
 	}
@@ -363,7 +378,9 @@ void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 
 		k_spinlock_key_t key = k_spin_lock(&lock);
 
-		if (profiler_RTT_send(buf, type_id)) {
+		uint32_t timestamp = k_cycle_get_32();
+
+		if (profiler_RTT_send(buf, type_id, timestamp)) {
 			k_spin_unlock(&lock, key);
 		} else {
 			profiler_fatal_error();

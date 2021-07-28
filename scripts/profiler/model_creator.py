@@ -47,8 +47,7 @@ class ModelCreator:
         else:
             self.sending = False
 
-        self.timestamp_overflows = 0
-        self.after_half = False
+        self.last_timestamp_raw = 0
 
         self.processed_events = ProcessedEvents()
         self.temp_events = []
@@ -105,9 +104,7 @@ class ModelCreator:
         return self._get_buffered_data(num_bytes)
 
     def _timestamp_from_ticks(self, clock_ticks):
-        ts_ticks_aggregated = self.timestamp_overflows * self.config['timestamp_raw_max']
-        ts_ticks_aggregated += clock_ticks
-        ts_s = ts_ticks_aggregated * self.config['ms_per_timestamp_tick'] / 1000
+        ts_s = clock_ticks * self.config['ms_per_timestamp_tick'] / 1000
         return ts_s
 
     def transmit_all_events_descriptions(self):
@@ -154,23 +151,6 @@ class ModelCreator:
         et = self.raw_data.registered_events_types[id]
         if et.name == PROFILER_FATAL_ERROR_EVENT_NAME:
             self.logger.error("Fatal error of Profiler on device! Event has been dropped. Probably data buffer has overflown.")
-
-        buf = self._read_bytes(4)
-        timestamp_raw = (
-            int.from_bytes(
-                buf,
-                byteorder=self.config['byteorder'],
-                signed=False))
-
-        if self.after_half \
-        and timestamp_raw < 0.2 * self.config['timestamp_raw_max']:
-            self.timestamp_overflows += 1
-            self.after_half = False
-
-        if timestamp_raw > 0.6 * self.config['timestamp_raw_max']:
-            if timestamp_raw < 0.9 * self.config['timestamp_raw_max']:
-                self.after_half = True
-        timestamp = self._timestamp_from_ticks(timestamp_raw)
 
         def process_int32(self, data):
             buf = self._read_bytes(4)
@@ -221,6 +201,25 @@ class ModelCreator:
         data=[]
         for event_data_type in et.data_types:
             READ_BYTES[event_data_type](self, data)
+
+        # Calculating timestamp
+        buf = self._read_bytes(1)
+        encoded = int.from_bytes(buf, byteorder=self.config['byteorder'],
+                                signed=False)
+        decoded = 0
+        counter = 0
+        # Decoding using Little Endian Base 128 (LEB128)
+        while encoded > 0x7f:
+            decoded |= (encoded & 0x7f) << (counter * 7)
+            buf = self._read_bytes(1)
+            encoded = int.from_bytes(buf, byteorder=self.config['byteorder'],
+                                    signed=False)
+            counter += 1
+        decoded |= encoded << (counter * 7)
+        self.last_timestamp_raw += decoded
+
+        timestamp = self._timestamp_from_ticks(self.last_timestamp_raw)
+
         return Event(id, timestamp, data)
 
     def _send_event(self, tracked_event):
