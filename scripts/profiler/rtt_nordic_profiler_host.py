@@ -29,8 +29,7 @@ class RttNordicProfilerHost:
         self.finish_event = finish_event
         self.queue = queue
         self.received_events = EventsData([], {})
-        self.timestamp_overflows = 0
-        self.after_half = False
+        self.last_timestamp_raw = 0
 
         self.desc_buf = ""
         self.bufs = list()
@@ -215,8 +214,7 @@ class RttNordicProfilerHost:
         return self._get_buffered_data(num_bytes)
 
     def _calculate_timestamp_from_clock_ticks(self, clock_ticks):
-        return self.config['ms_per_timestamp_tick'] * (
-            clock_ticks + self.timestamp_overflows * self.config['timestamp_raw_max']) / 1000
+        return self.config['ms_per_timestamp_tick'] * clock_ticks / 1000
 
     def _read_single_event_description(self):
         while '\n' not in self.desc_buf:
@@ -272,23 +270,6 @@ class RttNordicProfilerHost:
             signed=False)
         et = self.received_events.registered_events_types[id]
 
-        buf = self._read_bytes(4)
-        timestamp_raw = (
-            int.from_bytes(
-                buf,
-                byteorder=self.config['byteorder'],
-                signed=False))
-
-        if self.after_half \
-        and timestamp_raw < 0.2 * self.config['timestamp_raw_max']:
-            self.timestamp_overflows += 1
-            self.after_half = False
-
-        if timestamp_raw > 0.6 * self.config['timestamp_raw_max']:
-            if timestamp_raw < 0.9 * self.config['timestamp_raw_max']:
-                self.after_half = True
-        timestamp = self._calculate_timestamp_from_clock_ticks(timestamp_raw)
-
         def process_int32(self, data):
             buf = self._read_bytes(4)
             data.append(int.from_bytes(buf, byteorder=self.config['byteorder'],
@@ -338,6 +319,25 @@ class RttNordicProfilerHost:
         data=[]
         for event_data_type in et.data_types:
             READ_BYTES[event_data_type](self, data)
+
+        # Calculating timestamp
+        buf = self._read_bytes(1)
+        encoded = int.from_bytes(buf, byteorder=self.config['byteorder'],
+                                 signed=False)
+        decoded = 0
+        counter = 0
+        # Decoding using Little Endian Base 128 (LEB128)
+        while encoded > 0x7f:
+            decoded |= (encoded & 0x7f) << (counter * 7)
+            buf = self._read_bytes(1)
+            encoded = int.from_bytes(buf, byteorder=self.config['byteorder'],
+                                     signed=False)
+            counter += 1
+        decoded |= encoded << (counter * 7)
+        self.last_timestamp_raw += decoded
+
+        timestamp = self._calculate_timestamp_from_clock_ticks(self.last_timestamp_raw)
+
         return Event(id, timestamp, data)
 
     def _read_remaining_events(self):
