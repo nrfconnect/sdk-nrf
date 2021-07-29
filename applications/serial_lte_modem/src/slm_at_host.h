@@ -25,7 +25,12 @@ enum slm_datamode_operation_t {
 	DATAMODE_EXIT   /* Exit data mode */
 };
 
-/**@brief Data mode sending handler type. */
+/**@brief Data mode sending handler type.
+ *
+ * @retval 0 means all data is sent successfully.
+ *         Positive value means the actual size of bytes that has been sent.
+ *         Negative value means error occurrs in sending.
+ */
 typedef int (*slm_datamode_handler_t)(uint8_t op, const uint8_t *data, int len);
 
 /**

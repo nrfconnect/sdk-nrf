@@ -650,7 +650,7 @@ static int do_send_datamode(const uint8_t *data, int datalen)
 		offset += ret;
 	}
 
-	return offset;
+	return (offset > 0) ? offset : -1;
 }
 
 static int do_recv(int timeout)
@@ -807,7 +807,7 @@ static int do_sendto_datamode(const uint8_t *data, int datalen)
 		offset += ret;
 	}
 
-	return offset;
+	return (offset > 0) ? offset : -1;
 }
 
 static int do_recvfrom(int timeout)

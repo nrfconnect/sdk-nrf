@@ -79,8 +79,11 @@ Two triggers can initiate the transmission of the buffered data to the LTE netwo
 Flow control in data mode
 =========================
 
-The MCU must impose flow control to the SLM application over the UART interface when SLM has filled its receiving buffer.
-SLM disables UART receptions until there is buffer space available after the transmission of the data previously received.
+When SLM fills its receiving buffer, the MCU must impose flow control to the SLM over the UART interface to avoid any buffer overflow.
+Otherwise, if SLM imposes flow control, it disables the UART reception when it runs out of space in the buffer, potentially leading to data loss.
+
+SLM reenables UART receptions after the transmission of the data previously received has freed up buffer space.
+The buffer size is set to 3884 bytes by default.
 
 .. note:
    There is no unsolicited notification defined for this event.
