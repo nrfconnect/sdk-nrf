@@ -61,3 +61,9 @@ properties:
             can be changed if, instead of SKY66112-11, another device with
             different gain, but compatible with the control interface via the
             CTX, CRX pins is used.
+
+    ant-sel-gpios:
+        type: phandle-array
+        required: false
+        description: |
+            Gpio of the SOC controlling ANT-SEL pin of the SKY66112-11 device.
