@@ -1633,8 +1633,15 @@ static void light_ctrl_srv_reset(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 	struct bt_mesh_light_ctrl_srv_cfg cfg = BT_MESH_LIGHT_CTRL_SRV_CFG_INIT;
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	struct bt_mesh_light_ctrl_srv_reg_cfg reg_cfg = BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT;
+#endif
 
 	srv->cfg = cfg;
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	srv->reg.cfg = reg_cfg;
+#endif
+
 	ctrl_disable(srv);
 	net_buf_simple_reset(srv->pub.msg);
 

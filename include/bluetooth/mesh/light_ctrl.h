@@ -203,8 +203,8 @@ enum bt_mesh_light_ctrl_coeff {
 #define BT_MESH_LIGHT_CTRL_OP_PROP_STATUS BT_MESH_MODEL_OP_1(0x64)
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-#define BT_MESH_LIGHT_CTRL_SRV_REG_INIT .reg = {                               \
-	.cfg = {                                                               \
+#define BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT                                    \
+	{                                                                      \
 		.lux = { { CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY },    \
 			 { CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON },         \
 			 { CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG } },  \
@@ -213,7 +213,11 @@ enum bt_mesh_light_ctrl_coeff {
 		.kpu = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KPU,                  \
 		.kpd = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KPD,                  \
 		.accuracy = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY,        \
-	} }
+	}
+
+#define BT_MESH_LIGHT_CTRL_SRV_REG_INIT .reg = {                               \
+		.cfg = BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT                     \
+	}
 #else
 #define BT_MESH_LIGHT_CTRL_SRV_REG_INIT
 #endif
