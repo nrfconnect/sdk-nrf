@@ -7,8 +7,13 @@
 #ifndef NRF_CLOUD_H__
 #define NRF_CLOUD_H__
 
+#include <zephyr.h>
 #include <zephyr/types.h>
 #include <net/mqtt.h>
+#if defined(CONFIG_MODEM_INFO)
+#include <modem/modem_info.h>
+#endif
+#include <cJSON.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,6 +46,9 @@ extern "C" {
 /** @} */
 
 #define NRF_CLOUD_SETTINGS_NAME "nrf_cloud"
+
+#define NRF_CLOUD_FOTA_VER	2
+#define NRF_CLOUD_FOTA_VER_STR "fota_v" STRINGIFY(NRF_CLOUD_FOTA_VER)
 
 #define NRF_CLOUD_CLIENT_ID_MAX_LEN 64
 
@@ -123,6 +131,8 @@ enum nrf_cloud_sensor {
 	NRF_CLOUD_LTE_LINK_RSRP,
 	/** The descriptive DEVICE data indicating its status. */
 	NRF_CLOUD_DEVICE_INFO,
+	/** The light sensor on the device. */
+	NRF_CLOUD_SENSOR_LIGHT,
 };
 
 /** @brief Topic types supported by nRF Cloud. */
@@ -217,6 +227,74 @@ struct nrf_cloud_tx_data {
 	enum mqtt_qos qos;
 };
 
+/**@brief Controls which values are added to the FOTA array in the "serviceInfo" shadow section */
+struct nrf_cloud_svc_info_fota {
+	uint8_t bootloader:1;
+	uint8_t modem:1;
+	uint8_t application:1;
+
+	uint8_t _rsvd:5;
+};
+
+/**@brief Controls which values are added to the UI array in the "serviceInfo" shadow section */
+struct nrf_cloud_svc_info_ui {
+	/** Items with UI support on nRF Cloud */
+	uint8_t temperature:1;
+	uint8_t gps:1;
+	uint8_t flip:1; /* Orientation */
+	uint8_t humidity:1;
+	uint8_t air_pressure:1;
+	uint8_t rsrp:1;
+
+	/** Items without UI support on nRF Cloud */
+	uint8_t air_quality:1;
+	uint8_t light_sensor:1;
+	uint8_t button:1;
+
+	uint8_t _rsvd:7;
+};
+
+/**@brief How the info sections are handled when encoding shadow data */
+enum nrf_cloud_shadow_info {
+	/** Data will not be modified */
+	NRF_CLOUD_INFO_NO_CHANGE = 0,
+	/** Data will be set/updated */
+	NRF_CLOUD_INFO_SET = 1,
+	/** Data section will be cleared */
+	NRF_CLOUD_INFO_CLEAR = 2,
+};
+
+/**@brief Modem info data and which sections should be encoded */
+struct nrf_cloud_modem_info {
+	enum nrf_cloud_shadow_info device;
+	enum nrf_cloud_shadow_info network;
+	enum nrf_cloud_shadow_info sim;
+
+#if defined(CONFIG_MODEM_INFO)
+	/** Pointer to a populated @ref modem_param_info struct.
+	 * If NULL, modem data will be fetched.
+	 */
+	const struct modem_param_info *mpi;
+#endif
+
+};
+
+/**@brief Structure to specify which components are added to the encoded service info object */
+struct nrf_cloud_svc_info {
+	/** Specify FOTA components to enable, set to NULL to remove the FOTA entry */
+	struct nrf_cloud_svc_info_fota *fota;
+	/** Specify UI components to enable, set to NULL to remove the UI entry */
+	struct nrf_cloud_svc_info_ui *ui;
+};
+
+/**@brief Structure to specify which components are added to the encoded device status object */
+struct nrf_cloud_device_status {
+	/** Specify which modem info components to include, set to NULL to skip */
+	struct nrf_cloud_modem_info *modem;
+	/** Specify which service info components to include, set to NULL to skip */
+	struct nrf_cloud_svc_info *svc;
+};
+
 /**
  * @brief  Event handler registered with the module to handle asynchronous
  * events from the module.
@@ -245,8 +323,9 @@ struct nrf_cloud_init_param {
  *
  * @param[in] param Initialization parameters.
  *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval 0       If successful.
+ * @retval -EACCES Already initialized or @ref nrf_cloud_uninit is in progress.
+ *                 Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_init(const struct nrf_cloud_init_param *param);
 
@@ -287,8 +366,9 @@ int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
  *
  * @param[in] param	Sensor information.
  *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval 0       If successful.
+ * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ *                 Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_sensor_attach(const struct nrf_cloud_sa_param *param);
 
@@ -302,8 +382,9 @@ int nrf_cloud_sensor_attach(const struct nrf_cloud_sa_param *param);
  *
  * @param[in] param Sensor data.
  *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval 0       If successful.
+ * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ *                 Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param);
 
@@ -312,10 +393,22 @@ int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param);
  *
  * @param[in] param Sensor data.
  *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval 0       If successful.
+ * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ *                 Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param);
+
+/**
+ * @brief Update the device status in the shadow.
+ *
+ * @param[in] dev_status Device status to be encoded.
+ *
+ * @retval 0       If successful.
+ * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ *                 Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_shadow_device_status_update(const struct nrf_cloud_device_status * const dev_status);
 
 /**
  * @brief Stream sensor data.
@@ -325,8 +418,9 @@ int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param);
  *
  * @param[in] param Sensor data.
  *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval 0       If successful.
+ * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ *                 Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
 
@@ -338,8 +432,9 @@ int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
  * @param[in] msg Pointer to a structure containting data and topic
  *                information.
  *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval 0       If successful.
+ * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ *                 Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_send(const struct nrf_cloud_tx_data *msg);
 
@@ -351,8 +446,10 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg);
  * If the API succeeds, you can expect the
  * @ref NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED event.
  *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval 0       If successful.
+ * @retval -EACCES Cloud connection is not established; wait for
+ *                 @ref NRF_CLOUD_EVT_TRANSPORT_CONNECTED.
+ *                 Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_disconnect(void);
 
@@ -373,6 +470,32 @@ void nrf_cloud_process(void);
  *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_modem_fota_completed(const bool fota_success);
+
+/**
+ * @brief Add service info into the provided cJSON object.
+ *
+ * @param[in]     svc_inf     Service info to add.
+ * @param[in,out] svc_inf_obj cJSON object to which service info will be added.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_service_info_json_encode(const struct nrf_cloud_svc_info * const svc_inf,
+				       cJSON * const svc_inf_obj);
+
+/**
+ * @brief Add modem info into the provided cJSON object.
+ *
+ * @note To add modem info, CONFIG_MODEM_INFO must be enabled.
+ *
+ * @param[in]     mod_inf     Modem info to add.
+ * @param[in,out] mod_inf_obj cJSON object to which modem info will be added.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info * const mod_inf,
+				     cJSON * const mod_inf_obj);
 
 /** @} */
 
