@@ -196,6 +196,10 @@ int modem_info_name_get(enum modem_info info, char *name);
 enum at_param_type modem_info_type_get(enum modem_info info);
 
 #ifdef CONFIG_CJSON_LIB
+#define MODEM_INFO_JSON_KEY_NET_INF	"networkInfo"
+#define MODEM_INFO_JSON_KEY_SIM_INF	"simInfo"
+#define MODEM_INFO_JSON_KEY_DEV_INF	"deviceInfo"
+
 /** @brief Encode the modem parameters.
  *
  * The data is added to the string buffer with JSON formatting.
