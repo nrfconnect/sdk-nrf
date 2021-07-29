@@ -207,7 +207,7 @@ void AppTask::UpdateClusterState()
 	uint8_t level = LightingMgr().GetLevel();
 
 	status = emberAfWriteAttribute(1, ZCL_LEVEL_CONTROL_CLUSTER_ID, ZCL_CURRENT_LEVEL_ATTRIBUTE_ID,
-				       CLUSTER_MASK_SERVER, &level, ZCL_DATA8_ATTRIBUTE_TYPE);
+				       CLUSTER_MASK_SERVER, &level, ZCL_INT8U_ATTRIBUTE_TYPE);
 
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating level cluster failed: %x", status);
@@ -382,7 +382,7 @@ void AppTask::StartBLEAdvertisingHandler()
 		return;
 	}
 
-	if (OpenDefaultPairingWindow(chip::ResetAdmins::kNo) == CHIP_NO_ERROR) {
+	if (OpenDefaultPairingWindow(chip::ResetFabrics::kNo) == CHIP_NO_ERROR) {
 		LOG_INF("Enabled BLE Advertisement");
 	} else {
 		LOG_ERR("OpenDefaultPairingWindow() failed");

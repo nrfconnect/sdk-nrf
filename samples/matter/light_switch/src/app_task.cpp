@@ -36,7 +36,7 @@ k_timer sDiscoveryTimeout; /* timer for stopping light bulb discovery */
 
 AppTask AppTask::sAppTask;
 
-int AppTask::Init()
+CHIP_ERROR AppTask::Init()
 {
 	/* Initialize CHIP */
 
@@ -75,27 +75,27 @@ int AppTask::Init()
 
 	if (ret) {
 		LOG_ERR("dk_buttons_init() failed");
-		return ret;
+		return chip::System::MapErrorZephyr(ret);
 	}
 
 	k_timer_init(&sLightLevelTimer, AppTask::LightLevelTimerHandler, nullptr);
 	k_timer_init(&sDiscoveryTimeout, AppTask::DiscoveryTimeoutHandler, nullptr);
-	return 0;
+	return CHIP_NO_ERROR;
 }
 
-int AppTask::StartApp()
+CHIP_ERROR AppTask::StartApp()
 {
-	int ret = Init();
+	CHIP_ERROR err = Init();
 
-	if (ret) {
+	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("AppTask.Init() failed");
-		return ret;
+		return err;
 	}
 
 	AppEvent event = {};
 
 	while (true) {
-		ret = k_msgq_get(&sAppEventQueue, &event, K_MSEC(10));
+		int ret = k_msgq_get(&sAppEventQueue, &event, K_MSEC(10));
 
 		while (!ret) {
 			DispatchEvent(event);
@@ -104,6 +104,8 @@ int AppTask::StartApp()
 
 		sStatusLED.Animate();
 	}
+
+	return CHIP_NO_ERROR;
 }
 
 void AppTask::PostEvent(const AppEvent &event)

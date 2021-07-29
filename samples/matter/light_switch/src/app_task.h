@@ -8,17 +8,19 @@
 
 #include "app_event.h"
 
+#include <core/CHIPError.h>
+
 #include <cstdint>
 
 struct k_timer;
 
 class AppTask {
 public:
-	int StartApp();
+	CHIP_ERROR StartApp();
 	void PostEvent(const AppEvent &event);
 
 private:
-	int Init();
+	CHIP_ERROR Init();
 
 	void DispatchEvent(const AppEvent &event);
 	void StartDiscoveryHandler();

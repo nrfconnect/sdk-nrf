@@ -17,36 +17,47 @@ using namespace ::chip::DeviceLayer;
 
 int main()
 {
-	int ret = chip::Platform::MemoryInit();
+	int ret = 0;
+	CHIP_ERROR err = CHIP_NO_ERROR;
 
-	if (ret != CHIP_NO_ERROR) {
+	err = chip::Platform::MemoryInit();
+	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("Platform::MemoryInit() failed");
-		return ret;
+		goto exit;
 	}
 
-	ret = PlatformMgr().InitChipStack();
-	if (ret != CHIP_NO_ERROR) {
+	LOG_INF("Init CHIP stack");
+	err = PlatformMgr().InitChipStack();
+	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("PlatformMgr().InitChipStack() failed");
-		return ret;
+		goto exit;
 	}
 
-	ret = PlatformMgr().StartEventLoopTask();
-	if (ret != CHIP_NO_ERROR) {
+	LOG_INF("Starting CHIP task");
+	err = PlatformMgr().StartEventLoopTask();
+	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
-		return ret;
+		goto exit;
 	}
 
-	ret = ThreadStackMgr().InitThreadStack();
-	if (ret != CHIP_NO_ERROR) {
+	LOG_INF("Init Thread stack");
+	err = ThreadStackMgr().InitThreadStack();
+	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ThreadStackMgr().InitThreadStack() failed");
-		return ret;
+		goto exit;
 	}
 
-	ret = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
-	if (ret != CHIP_NO_ERROR) {
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
-		return ret;
+		goto exit;
 	}
 
-	return GetAppTask().StartApp();
+	ret = GetAppTask().StartApp();
+	if (ret != 0) {
+		err = chip::System::MapErrorZephyr(ret);
+	}
+
+exit:
+	return err == CHIP_NO_ERROR ? EXIT_SUCCESS : EXIT_FAILURE;
 }
