@@ -28,10 +28,19 @@ struct led_ctx {
 	bool value;
 };
 
-static struct led_ctx led_ctx[4] = {
-	[0 ... 3] = {
-		.srv = BT_MESH_ONOFF_SRV_INIT(&onoff_handlers),
-	}
+static struct led_ctx led_ctx[] = {
+#if DT_NODE_EXISTS(DT_ALIAS(led0))
+	{ .srv = BT_MESH_ONOFF_SRV_INIT(&onoff_handlers) },
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led1))
+	{ .srv = BT_MESH_ONOFF_SRV_INIT(&onoff_handlers) },
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led2))
+	{ .srv = BT_MESH_ONOFF_SRV_INIT(&onoff_handlers) },
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led3))
+	{ .srv = BT_MESH_ONOFF_SRV_INIT(&onoff_handlers) },
+#endif
 };
 
 static void led_transition_start(struct led_ctx *led)
@@ -125,10 +134,18 @@ static void attention_blink(struct k_work *work)
 {
 	static int idx;
 	const uint8_t pattern[] = {
-		BIT(0) | BIT(1),
-		BIT(1) | BIT(2),
-		BIT(2) | BIT(3),
-		BIT(3) | BIT(0),
+#if DT_NODE_EXISTS(DT_ALIAS(led0))
+		BIT(0),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led1))
+		BIT(1),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led2))
+		BIT(2),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led3))
+		BIT(3),
+#endif
 	};
 
 	if (attention) {
@@ -163,21 +180,29 @@ static struct bt_mesh_health_srv health_srv = {
 BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 
 static struct bt_mesh_elem elements[] = {
+#if DT_NODE_EXISTS(DT_ALIAS(led0))
 	BT_MESH_ELEM(
 		1, BT_MESH_MODEL_LIST(
 			BT_MESH_MODEL_CFG_SRV,
 			BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 			BT_MESH_MODEL_ONOFF_SRV(&led_ctx[0].srv)),
 		BT_MESH_MODEL_NONE),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led1))
 	BT_MESH_ELEM(
 		2, BT_MESH_MODEL_LIST(BT_MESH_MODEL_ONOFF_SRV(&led_ctx[1].srv)),
 		BT_MESH_MODEL_NONE),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led2))
 	BT_MESH_ELEM(
 		3, BT_MESH_MODEL_LIST(BT_MESH_MODEL_ONOFF_SRV(&led_ctx[2].srv)),
 		BT_MESH_MODEL_NONE),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(led3))
 	BT_MESH_ELEM(
 		4, BT_MESH_MODEL_LIST(BT_MESH_MODEL_ONOFF_SRV(&led_ctx[3].srv)),
 		BT_MESH_MODEL_NONE),
+#endif
 };
 
 static const struct bt_mesh_comp comp = {
