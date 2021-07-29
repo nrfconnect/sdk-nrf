@@ -45,6 +45,13 @@ int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 				     struct nrf_cloud_data *const output,
 				     bool *const has_config);
 
+/** @brief Encode the device status data into a JSON formatted buffer */
+int nrf_cloud_device_status_encode(const struct nrf_cloud_device_status * const dev_status,
+				   struct nrf_cloud_data * const output);
+
+/** @brief Free memory allocated by @ref nrf_cloud_device_status_encode. */
+void nrf_cloud_device_status_free(struct nrf_cloud_data *status);
+
 #ifdef __cplusplus
 }
 #endif

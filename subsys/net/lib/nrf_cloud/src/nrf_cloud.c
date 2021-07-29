@@ -259,6 +259,30 @@ int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param)
 	return err;
 }
 
+int nrf_cloud_shadow_device_status_update(const struct nrf_cloud_device_status *const dev_status)
+{
+	int err = 0;
+	struct nrf_cloud_tx_data tx_data = {
+		.topic_type = NRF_CLOUD_TOPIC_STATE,
+		.qos = MQTT_QOS_1_AT_LEAST_ONCE
+	};
+
+	if (current_state != STATE_DC_CONNECTED) {
+		return -EACCES;
+	}
+
+	err = nrf_cloud_device_status_encode(dev_status, &tx_data.data);
+	if (err) {
+		return err;
+	}
+
+	err = nrf_cloud_send(&tx_data);
+
+	nrf_cloud_device_status_free(&tx_data.data);
+
+	return err;
+}
+
 int nrf_cloud_sensor_attach(const struct nrf_cloud_sa_param *param)
 {
 	if (current_state != STATE_DC_CONNECTED) {

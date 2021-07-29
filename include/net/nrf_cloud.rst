@@ -115,6 +115,8 @@ When the library is included by the application, the :option:`CONFIG_NRF_CLOUD_F
 
 For FOTA updates to work, the device must provide the information about the supported FOTA types to nRF Connect for Cloud.
 The device passes this information by writing a ``fota_v2`` field containing an array of FOTA types into the ``serviceInfo`` field in the device's shadow.
+:c:func:`nrf_cloud_service_info_json_encode` can be used to generate the proper JSON data to enable FOTA.
+Additionally, :c:func:`nrf_cloud_shadow_device_status_update` can be used to generate the JSON data and perform the shadow update.
 
 Following are the three supported FOTA types:
 
@@ -155,6 +157,20 @@ Use :c:func:`nrf_cloud_sensor_data_stream` to send sensor data with best quality
 Before sending any sensor data, call the function :c:func:`nrf_cloud_sensor_attach` with the type of the sensor.
 Note that this function must be called after receiving the event :c:enumerator:`NRF_CLOUD_EVT_READY`.
 It triggers the event :c:enumerator:`NRF_CLOUD_EVT_SENSOR_ATTACHED` if the function executes successfully.
+
+To view sensor data on nRF Connect for Cloud, the device must first inform the cloud what types of sensor data to display.
+The device passes this information by writing a ``ui`` field, containing an array of sensor types, into the ``serviceInfo`` field in the device's shadow.
+:c:func:`nrf_cloud_service_info_json_encode` can be used to generate the proper JSON data to enable FOTA.
+Additionally, :c:func:`nrf_cloud_shadow_device_status_update` can be used to generate the JSON data and perform the shadow update.
+
+Following are the supported UI types on nRF Cloud:
+
+* ``GPS``
+* ``FLIP``
+* ``TEMP``
+* ``HUMIDITY``
+* ``AIR_PRESS``
+* ``RSRP``
 
 .. _lib_nrf_cloud_unlink:
 
