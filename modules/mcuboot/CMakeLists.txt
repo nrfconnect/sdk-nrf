@@ -159,6 +159,8 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   endif()
 
   if(CONFIG_SIGN_IMAGES)
+    set(app_core_binary_name app_update.bin)
+
     execute_process(COMMAND
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/imgtool.py
@@ -191,7 +193,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       set(zb_add_ota_header_cmd
         ${PYTHON_EXECUTABLE}
         ${NRF_DIR}/scripts/bootloader/zb_add_ota_header.py
-        --application ${PROJECT_BINARY_DIR}/app_update.bin
+        --application ${PROJECT_BINARY_DIR}/${app_core_binary_name}
         --application-version-string ${CONFIG_MCUBOOT_IMAGE_VERSION}
         --zigbee-manufacturer-id ${CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID}
         --zigbee-image-type ${CONFIG_ZIGBEE_FOTA_IMAGE_TYPE}
@@ -225,16 +227,6 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       mcuboot_sign_target
       )
 
-    generate_dfu_zip(
-      TARGET mcuboot_sign_target
-      OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip
-      BIN_FILES ${PROJECT_BINARY_DIR}/app_update.bin
-      TYPE application
-      SCRIPT_PARAMS
-      "load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
-      "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
-      )
-
     if (CONFIG_NRF53_UPGRADE_NETWORK_CORE
         AND CONFIG_HCI_RPMSG_BUILD_STRATEGY_FROM_SOURCE)
       # Network core application updates are enabled.
@@ -242,6 +234,8 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # a network core child image is included in the build.
       # These updates are verified by the application core MCUBoot.
       # Create a signed variant of the network core application.
+
+      set(net_core_binary_name net_core_app_update.bin)
 
       # Load the shared vars to get the path to the hex file to sign.
       include(${CMAKE_BINARY_DIR}/hci_rpmsg/shared_vars.cmake)
@@ -264,6 +258,32 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         net_core_app_sign_target
         )
 
+      generate_dfu_zip(
+        TARGET mcuboot_sign_target
+        OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip
+        BIN_FILES ${PROJECT_BINARY_DIR}/${app_core_binary_name} ${PROJECT_BINARY_DIR}/${net_core_binary_name}
+        TYPE application
+        SCRIPT_PARAMS
+        "${app_core_binary_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
+        "${net_core_binary_name}load_address=missing"
+        "${app_core_binary_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+        "${net_core_binary_name}version_BN0=${hci_rpmsg_CONFIG_FW_INFO_FIRMWARE_VERSION}"
+	"${net_core_binary_name}board=${CONFIG_DOMAIN_CPUNET_BOARD}"
+	"${net_core_binary_name}soc=missing"
+        "${app_core_binary_name}image_slot=2" # image_1
+        "${net_core_binary_name}image_slot=3" # image_2
+        )
+
+    else()
+      generate_dfu_zip(
+        TARGET mcuboot_sign_target
+        OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip
+        BIN_FILES ${PROJECT_BINARY_DIR}/${app_core_binary_name}
+        TYPE application
+        SCRIPT_PARAMS
+        "load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
+        "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+        )
     endif()
 
     if (CONFIG_BUILD_S1_VARIANT AND ("${CONFIG_S1_VARIANT_IMAGE_NAME}" STREQUAL "mcuboot"))
