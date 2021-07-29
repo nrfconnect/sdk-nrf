@@ -132,11 +132,14 @@ See the :ref:`zephyr:zephyr_2.6` Release Notes for an overview of the most impor
 Matter (Project CHIP)
 =====================
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to and including ``aa96ea0365``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``b77bfb047374b7013dbdf688f542b9326842a39e``.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* No changes yet
+* Added:
+
+  * Support for Certificate-Authenticated Session Establishment (CASE) for communication among operational Matter nodes.
+  * Support for OpenThread's DNS Client to enable Matter node discovery on Thread devices.
 
 Documentation
 =============

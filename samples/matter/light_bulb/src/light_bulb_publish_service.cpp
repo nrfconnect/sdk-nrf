@@ -37,7 +37,7 @@ void LightBulbPublishService::Init()
 	/* Initialize UDP endpoint */
 	UdpListenParameters udpParams(&chip::DeviceLayer::InetLayer);
 	udpParams.SetListenPort(kServiceUDPPort);
-	if (mUdp.Init(udpParams)) {
+	if (mUdp.Init(udpParams) != CHIP_NO_ERROR) {
 		LOG_ERR("LightBulbPublishService initialization failed");
 	}
 

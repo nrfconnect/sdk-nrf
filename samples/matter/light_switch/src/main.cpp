@@ -6,11 +6,12 @@
 
 #include "app_task.h"
 
+#include <cstdlib>
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(app);
 
 int main()
 {
-	return GetAppTask().StartApp();
+	return GetAppTask().StartApp() == CHIP_NO_ERROR ? EXIT_SUCCESS : EXIT_FAILURE;
 }

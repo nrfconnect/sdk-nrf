@@ -358,7 +358,7 @@ void AppTask::StartBLEAdvertisingHandler()
 		return;
 	}
 
-	if (OpenDefaultPairingWindow(chip::ResetAdmins::kNo) == CHIP_NO_ERROR) {
+	if (OpenDefaultPairingWindow(chip::ResetFabrics::kNo) == CHIP_NO_ERROR) {
 		LOG_INF("Enabled BLE Advertisement");
 	} else {
 		LOG_ERR("OpenDefaultPairingWindow() failed");
