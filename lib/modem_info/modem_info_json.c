@@ -113,7 +113,7 @@ static int network_data_add(struct network_param *network, cJSON *json_obj)
 	total_len += json_add_data(&network->ue_mode, json_obj);
 
 	len = modem_info_name_get(network->cellid_hex.type, data_name);
-	data_name[len] =  '\0';
+	data_name[len] = '\0';
 	ret = json_add_num(json_obj, data_name, network->cellid_dec);
 
 	if (ret) {
@@ -121,6 +121,8 @@ static int network_data_add(struct network_param *network, cJSON *json_obj)
 	} else {
 		total_len += sizeof(double);
 	}
+
+	network->network_mode[0] = '\0';
 
 	if (network->lte_mode.value == 1) {
 		strcat(network->network_mode, lte_string);
@@ -138,7 +140,7 @@ static int network_data_add(struct network_param *network, cJSON *json_obj)
 	ret = json_add_str(json_obj, "networkMode", network->network_mode);
 
 	if (ret) {
-		printk("Unable to add the network mode");
+		LOG_ERR("Unable to add the network mode");
 	}
 
 	return total_len;
