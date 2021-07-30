@@ -1463,7 +1463,7 @@ static ptt_ret_t cmd_uart_l_set_payload(void)
 		(strtok_r(NULL, UART_TEXT_PAYLOAD_DELIMETERS, &save) != NULL)) /* lets be sure that there are no extra parameters */
 	{
 		ret = PTT_RET_INVALID_VALUE;
-	    } else
+	} else
 	{
 		uint8_t actual_len;
 
@@ -1736,7 +1736,7 @@ static ptt_ret_t cmd_uart_l_indication(void)
 
 	    *p_is_timer_active = false;
 	}
-    } else if ((0 == activate) && (m_led_indication_evt != PTT_EVENT_UNASSIGNED))
+    } else if ((activate == 0) && (m_led_indication_evt != PTT_EVENT_UNASSIGNED))
     {
 	ptt_evt_ctx_data_t *p_ctx_data = ptt_event_get_p_ctx_data(m_led_indication_evt);
 
@@ -1809,7 +1809,7 @@ void cmd_uart_l_indication_proc(void)
 		PTT_TRACE("%s: ptt_timer_add for LED indication returns error: %d",
 			  __func__,
 			  led_ret);
-	    } else
+	} else
 	{
 		ptt_ctrl_led_indication_on();
 		*p_is_timer_active = true;
@@ -1856,7 +1856,7 @@ static ptt_ret_t cmd_uart_l_tx(void)
 		(strtok_r(NULL, UART_TEXT_PAYLOAD_DELIMETERS, &save) != NULL)) /* lets be sure that there are no extra parameters */
 	{
 		ret = PTT_RET_INVALID_VALUE;
-	    } else
+	} else
 	{
 		ret = ptt_parser_string_to_uint16(p_token_str, &(p_ltx_info->timeout), 0);
 
@@ -2436,7 +2436,7 @@ static ptt_ret_t cmd_uart_parse_waveform_timings(const uint8_t *p_uart_cmd_paylo
 	if (p_token_str == NULL)
 	{
 		ret = PTT_RET_INVALID_VALUE;
-	    } else
+	} else
 	{
 		ret = ptt_parser_string_to_int32(p_token_str, p_interval, 0);
 
@@ -2449,7 +2449,7 @@ static ptt_ret_t cmd_uart_parse_waveform_timings(const uint8_t *p_uart_cmd_paylo
 			(strtok_r(NULL, UART_TEXT_PAYLOAD_DELIMETERS, &save) != NULL))
 		{
 			ret = PTT_RET_INVALID_VALUE;
-		    } else
+		} else
 		{
 			ret = ptt_parser_string_to_int32(p_token_str, p_duration, 0);
 		}
@@ -2536,7 +2536,7 @@ static ptt_ret_t cmd_uart_l_carrier(void)
 
 		PTT_TRACE("%s: error occurs during timers arming: %d. Aborting command handling",
 			  __func__, ret);
-	    } else
+	} else
 	    /* start sending carrier */
 	{
 		ret = ptt_rf_start_continuous_carrier(m_uart_cmd_evt);
@@ -2772,7 +2772,7 @@ static ptt_ret_t cmd_uart_l_stream(void)
 		PTT_TRACE("%s: error occurs during timers arming: %d. Aborting command handling",
 			  __func__, ret);
 		ptt_timer_remove(m_uart_cmd_evt);
-	    } else
+	} else
 	    /* start sending stream */
 	{
 		ret = cmd_uart_l_stream_start();
