@@ -61,11 +61,11 @@ void comm_input_process(text_proc_t *p_text_proc, const uint8_t *buf, uint32_t l
     switch (p_text_proc->state)
     {
 	case INPUT_STATE_IDLE:
-	    if (p_text_proc->len != 0)
-	    {
+	if (p_text_proc->len != 0)
+	{
 		LOG_WRN("p_text_proc->len is not 0 when input state is idle");
 		p_text_proc->len = 0;
-	    }
+	}
 
 	    /* start the timer after first received symbol */
 	    k_timer_start(&p_text_proc->timer, K_MSEC(COMM_PER_COMMAND_TIMEOUT), K_MSEC(0));
@@ -73,20 +73,20 @@ void comm_input_process(text_proc_t *p_text_proc, const uint8_t *buf, uint32_t l
 	    p_text_proc->state = INPUT_STATE_WAITING_FOR_NEWLINE;
 
 	    comm_symbols_process(p_text_proc, buf, len);
-	    break;
+	break;
 
 	case INPUT_STATE_WAITING_FOR_NEWLINE:
 	    comm_symbols_process(p_text_proc, buf, len);
-	    break;
+	break;
 
 	case INPUT_STATE_TEXT_PROCESSING:
 	    LOG_WRN(
 		"received a command when processing previous one, discarded");
-	    break;
+	break;
 
 	default:
 	    LOG_ERR("incorrect input state");
-	    break;
+	break;
     }
 }
 
@@ -125,21 +125,21 @@ static void comm_symbols_process(text_proc_t *p_text_proc, const uint8_t *buf, u
 	    k_work_submit(&p_text_proc->work);
 
 	    p_text_proc->state = INPUT_STATE_TEXT_PROCESSING;
-	    break;
-        } else
+	break;
+	} else
 	{
 	    p_text_proc->buf[p_text_proc->len] = buf[cnt];
 	    ++p_text_proc->len;
 
-	    if (p_text_proc->len >= COMM_MAX_TEXT_DATA_SIZE)
-	    {
+	if (p_text_proc->len >= COMM_MAX_TEXT_DATA_SIZE)
+	{
 		LOG_ERR("received %d bytes and do not able to parse it, freeing input buffer",
 			COMM_MAX_TEXT_DATA_SIZE);
 
 		/* Stop the timeout timer */
 		k_timer_stop(&p_text_proc->timer);
 		input_state_reset(p_text_proc);
-	    }
+	}
 	}
     }
 }

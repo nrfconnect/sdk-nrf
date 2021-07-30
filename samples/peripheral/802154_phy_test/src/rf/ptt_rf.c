@@ -334,7 +334,7 @@ ptt_ret_t ptt_rf_send_packet(ptt_evt_id_t    evt_id,
 
     if (ptt_rf_try_lock(evt_id) == PTT_RET_SUCCESS)
     {
-	if ((NULL == p_pkt) || (len == 0))
+	if ((p_pkt == NULL) || (len == 0))
 	{
 	    ret = PTT_RET_INVALID_VALUE;
 	}
@@ -342,10 +342,10 @@ ptt_ret_t ptt_rf_send_packet(ptt_evt_id_t    evt_id,
 	if (ret == PTT_RET_SUCCESS)
 	{
 	    /* will be unlocked inside ptt_rf_tx_finished/ptt_rf_tx_failed functions */
-	    if (false == ptt_rf_send_packet_ext(p_pkt, len, m_ptt_rf_ctx.cca_on_tx))
-	    {
+	if (false == ptt_rf_send_packet_ext(p_pkt, len, m_ptt_rf_ctx.cca_on_tx))
+	{
 		ret = PTT_RET_BUSY;
-	    }
+	}
 	}
 
 	if (ret != PTT_RET_SUCCESS)
@@ -463,7 +463,7 @@ uint8_t ptt_rf_convert_channel_mask_to_num(uint32_t mask)
 	if (((mask >> i) & 1u) == 1u)
 	{
 	    channel_num = i;
-	    break;
+	break;
 	}
     }
 
@@ -569,7 +569,7 @@ ptt_ret_t ptt_rf_start_modulated_stream(ptt_evt_id_t    evt_id,
 
     if (ptt_rf_try_lock(evt_id) == PTT_RET_SUCCESS)
     {
-	if ((NULL == p_pkt) || (len == 0))
+	if ((p_pkt == NULL) || (len == 0))
 	{
 	    ret = PTT_RET_INVALID_VALUE;
 	}
@@ -577,10 +577,10 @@ ptt_ret_t ptt_rf_start_modulated_stream(ptt_evt_id_t    evt_id,
 	if (ret == PTT_RET_SUCCESS)
 	{
 	    /* will be unlocked inside ptt_rf_stop_modulated_stream */
-	    if (false == ptt_rf_modulated_stream_ext(p_pkt, len))
-	    {
+	if (false == ptt_rf_modulated_stream_ext(p_pkt, len))
+	{
 		ret = PTT_RET_BUSY;
-	    }
+	}
 	}
 
 	if (ret != PTT_RET_SUCCESS)

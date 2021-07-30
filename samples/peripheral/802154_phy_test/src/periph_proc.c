@@ -196,7 +196,7 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 	if (err != NRFX_SUCCESS)
 	{
 	    LOG_ERR("nrfx_gpiote_out_init error: %08x", err);
-	    return false;
+	return false;
 	}
 
 	compare_evt_addr = nrfx_timer_event_address_get(&m_clk_timer, NRF_TIMER_EVENT_COMPARE0);
@@ -212,7 +212,7 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 	if (err != NRFX_SUCCESS)
 	{
 	    LOG_ERR("(D)PPI channel allocation error: %08x", err);
-	    return false;
+	return false;
 	}
 
 	nrfx_gppi_channel_endpoints_setup(ppi_channel, compare_evt_addr,
@@ -228,7 +228,7 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 	if (err != NRFX_SUCCESS)
 	{
 	    LOG_ERR("Failed to enable (D)PPI channel, error: %08x", err);
-	    return false;
+	return false;
 	}
 
 	nrfx_timer_enable(&m_clk_timer);
@@ -244,7 +244,7 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 	if (err != NRFX_SUCCESS)
 	{
 	    LOG_ERR("Failed to disable (D)PPI channel, error: %08x", err);
-	    return false;
+	return false;
 	}
 	nrfx_gpiote_out_uninit(pin);
     }
@@ -257,15 +257,15 @@ static const struct device *get_pin_port(uint32_t *pin)
     switch (nrf_gpio_pin_port_number_extract(pin))
     {
 	case 0:
-	    return gpio_port0_dev;
+	return gpio_port0_dev;
 
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio1), okay)
 	case 1:
-	    return gpio_port1_dev;
+	return gpio_port1_dev;
 
 #endif
 	default:
-	    return NULL;
+	return NULL;
     }
 }
 
@@ -280,7 +280,7 @@ bool ptt_set_gpio_ext(uint8_t pin, uint8_t value)
 	port = get_pin_port(&pin_nr);
 	if (port == NULL)
 	{
-	    return false;
+	return false;
 	}
 
 	ret = gpio_pin_configure(port, pin_nr, GPIO_OUTPUT);
@@ -288,10 +288,10 @@ bool ptt_set_gpio_ext(uint8_t pin, uint8_t value)
 	if (ret == 0)
 	{
 	    ret = gpio_pin_set(port, pin_nr, value);
-	    if (ret == 0)
-	    {
+	if (ret == 0)
+	{
 		return true;
-	    }
+	}
 	}
     }
 
@@ -309,7 +309,7 @@ bool ptt_get_gpio_ext(uint8_t pin, uint8_t *value)
 	port = get_pin_port(&pin_nr);
 	if (port == NULL)
 	{
-	    return false;
+	return false;
 	}
 
 	ret = gpio_pin_configure(port, pin_nr, GPIO_INPUT);
@@ -317,7 +317,7 @@ bool ptt_get_gpio_ext(uint8_t pin, uint8_t *value)
 	if (ret == 0)
 	{
 	    *value = gpio_pin_get(port, pin_nr);
-	    return true;
+	return true;
 	}
     }
 

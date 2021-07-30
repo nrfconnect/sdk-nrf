@@ -213,7 +213,7 @@ void nrf_802154_received_raw(uint8_t *p_data, int8_t power, uint8_t lqi)
 	    p_rx_pkt->rssi     = power;
 	    p_rx_pkt->lqi      = lqi;
 	    pkt_placed         = true;
-	    break;
+	break;
 	}
     }
     if (false == pkt_placed)
@@ -275,7 +275,7 @@ void nrf_802154_transmit_failed(const uint8_t *p_frame, nrf_802154_tx_error_t er
     if (error == NRF_802154_TX_ERROR_INVALID_ACK)
     {
 	rf_tx_failed_info.tx_error = PTT_RF_TX_ERROR_INVALID_ACK_FCS;
-    } else if (NRF_802154_TX_ERROR_NO_ACK == error)
+    } else if (error == NRF_802154_TX_ERROR_NO_ACK)
     {
 	rf_tx_failed_info.tx_error = PTT_RF_TX_ERROR_NO_ACK;
     } else

@@ -327,7 +327,7 @@ static ptt_ret_t text_cmd_parser(ptt_evt_id_t evt_id)
 	{
 		/* raw payload already written in data, just pass */
 		ret = PTT_RET_SUCCESS;
-	    } else if (m_text_cmds[i].payload_type == PTT_UART_PAYLOAD_PARSED_AS_BYTES)
+	} else if (m_text_cmds[i].payload_type == PTT_UART_PAYLOAD_PARSED_AS_BYTES)
 	{
 		/* after a command should be only whitespace in case of payload or \0 */
 		if ((p_data->arr[cmd_name_len] == '\0') || (p_data->arr[cmd_name_len] == ' '))
@@ -339,7 +339,7 @@ static ptt_ret_t text_cmd_parser(ptt_evt_id_t evt_id)
 		{
 		    ret = PTT_RET_INVALID_VALUE;
 		}
-	    } else
+	} else
 	{
 		ret = PTT_RET_INVALID_VALUE;
 	}

@@ -50,8 +50,8 @@
 
 #define PTT_UNUSED(x)          ((void)(x))
 
-#define PTT_CAST_TO_UINT8_P(x) (( uint8_t *)(x) )
-#define PTT_CAST_TO_STR(x)     (( char *)(x) )
+#define PTT_CAST_TO_UINT8_P(x) ((uint8_t *)(x))
+#define PTT_CAST_TO_STR(x)     ((char *)(x))
 
 #endif /* PTT_UTILS_H__ */
 
