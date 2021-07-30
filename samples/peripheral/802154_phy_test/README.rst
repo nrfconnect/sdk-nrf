@@ -7,7 +7,7 @@ IEEE 802.15.4 PHY Test Tool
    :local:
    :depth: 2
 
-IEEE 802.15.4 PHY Test Tool provides a solution for performing Zigbee RF Performance and PHY Certification tests, as well as general evaluation of the integrated radio with IEEE 802.15.4 standard. 
+IEEE 802.15.4 PHY Test Tool provides a solution for performing Zigbee RF Performance and PHY Certification tests, as well as general evaluation of the integrated radio with IEEE 802.15.4 standard.
 
 Overview
 ********
@@ -60,7 +60,7 @@ User interface
      - cutom lindication 1
    * - Ping the DUT
      - custom rping
-     - 
+     -
      - CMD will send PING to the DUT and wait for the reply
      - custom rping
    * - Set the ping timeout
@@ -70,7 +70,7 @@ User interface
      - custom lpingtimeout 0 255
    * - Set the common radio channel for the DUT and CMD
      - custom setchannel <channel:3> <channel:2> <channel:1> <channel:0>
-     - <channel:3-0> 4 octets defining the channel page and number 
+     - <channel:3-0> 4 octets defining the channel page and number
      - Sets the DUT and CMD channel, sends  PING and waits for a response
      - custom setchannel 0 0 8 0
    * - Set the CMD radio channel
@@ -85,7 +85,7 @@ User interface
      - custom rsetchannel 13
    * - Get the CMD radio channel
      - custom lgetchannel
-     - 
+     -
      - Gets the current CMD device configured channel
      - custom lgetchannel
    * - Set the CMD radio power
@@ -100,12 +100,12 @@ User interface
      - custom rsetpower 0 0 -17
    * - Get the CMD radio power
      - custom lgetpower
-     - 
+     -
      - Gets the current CMD configured power
      - custom lgetpower
    * - Get the DUT radio power
      - custom rgetpower
-     - 
+     -
      - Gets the current DUT configured power
      - custom rgetpower
    * - DUT Modulated Waveform Transmission
@@ -115,17 +115,17 @@ User interface
      - custom rstream 255 255
    * - Start the RX Test
      - custom rstart
-     - 
+     -
      - Command the DUT to start the RX test routine, clearing previous statistics
      - custom rstart
    * - End the RX Test
      - custom rend
-     - 
+     -
      - Command the DUT to terminate the RX test routine. The DUT will send the test results to the CMD device
      - custom rend
    * - Find the DUT
      - custom find
-     - 
+     -
      - CMD device cycles all channels (11-26) trying to PING the DUT, stops upon receiving a reply
      - custom find
    * - Clear Channel Assessment
@@ -135,17 +135,17 @@ User interface
      - custom lgetcca 1
    * - Perform Energy Detection
      - custom lgeted
-     - 
+     -
      - Perform ED and report result as 2 hex bytes
      - custom lgeted
    * - Get Link Quality Indicator
      - custom lgetlqi
-     - 
+     -
      - Put the device in receive mode and wait for a packet. Output the result as 2 hex bytes
      - custom lgetlqi
    * - Measure RSSI
      - custom lgetrssi
-     - 
+     -
      - Get the RSSI in dBm
      - custom lgetrssi
    * - Set short address
@@ -175,17 +175,17 @@ User interface
      - custom ltx 10 1000
    * - Stop burst transmission of packets
      - custom ltxend
-     - 
-     - CMD will stop current burst transmission. 
+     -
+     - CMD will stop current burst transmission.
      - custom ltxend
    * - Start continuous receive mode
      - custom lstart
-     - 
+     -
      - Enter continuous receive mode and print received packet information over serial connection. No commmands are accepted until custom lend is received
      - custom lstart
    * - End continuous receive mode
      - custom lend
-     - 
+     -
      - Leave continuous receive mode and print statistics in format: [total]0x%x%x%x%x [protocol]0x%x%x%x%x [totalLqi]0x%x%x%x%x [totalRssiMgnitude]0x%x%x%x%x
      - custom lend
    * - Set CMD antenna number
@@ -195,7 +195,7 @@ User interface
      - custom lsetantenna 1
    * - Get CMD antenna number
      - custom lgetantenna
-     - 
+     -
      - Gets the antenna used by the CMD device
      - custom lgetantenna
    * - Set DUT antenna number
@@ -205,7 +205,7 @@ User interface
      - custom rsetantenna 1
    * - Get DUT antenna number
      - custom rgetantenna
-     - 
+     -
      - Gets the antenna used by the DUT device
      - custom rgetantenna
    * - Unmodulated waveform (carrier) transmission
@@ -220,12 +220,12 @@ User interface
      - custom lstream 100 200 20000
    * - Get the DUT hardware version
      - custom rhardwareversion
-     - 
+     -
      - Gets the DUT hardware version
      - custom rhardwareversion
    * - Get the DUT software version
      - custom rsoftwareversion
-     - 
+     -
      - Gets the DUT software version
      - custom rsoftwareversion
    * - High frequency clock output on a selected pin
@@ -250,7 +250,7 @@ User interface
      - custom lsetdcdc 1
    * - Get DC/DC mode
      - custom lgetdcdc
-     - 
+     -
      - Gets the DC/DC mode of CMD device, always 0 for unsupported boards
      - custom lgetdcdc
    * - Set ICACHE configuration
@@ -260,27 +260,27 @@ User interface
      - custom lseticache 1
    * - Read SoC temperature
      - custom lgettemp
-     - 
+     -
      - CMD will print SoC temperature in the following format: <.%02>
      - custom lgettemp
    * - Transition radio to sleep mode
      - custom lsleep
-     - 
+     -
      - CMD will put radio into sleep mode
      - custom lsleep
    * - Transition radio to receive mode
      - custom lreceive
-     - 
+     -
      - CMD will put radio in receive mode
      - custom lreceive
    * - Reboot the device
      - custom lreboot
-     - 
+     -
      - Reboots the device
      - custom lreboot
 
 
-   
+
 
 Building and running
 ********************
@@ -303,8 +303,8 @@ After programming the supported development kit of your choice with the sample, 
 .. _802154_phy_test_testing_check:
 
 .. note::
-   The sample doesn't implement serial echo, and the timeout for receiving the entire command after receiving its first character is very short. 
-   Thus, commands cannot be sent character-by-character manually. For the commands to be received by the device properly, use a terminal application which supports `line mode`, or send entire commands using `echo`, `printf`, etc. 
+   The sample doesn't implement serial echo, and the timeout for receiving the entire command after receiving its first character is very short.
+   Thus, commands cannot be sent character-by-character manually. For the commands to be received by the device properly, use a terminal application which supports `line mode`, or send entire commands using `echo`, `printf`, etc.
 
 Checking if the sample works as expected
 ----------------------------------------
@@ -323,36 +323,36 @@ Checking if the sample works as expected
 
 #. On the bottom side of your DK, locate a table describing GPIO pin assignment to LEDs. Read the number of GPIO pin assigned to LED 1, 2, 3 or 4. For example, on nRF52840DK, the LEDs are controlled by pins from P0.13 through P0.16.
 #. The LEDs on nRF5340DK and nRF52840DK are in ``sink`` configuration. In order to turn them on, you need to set the respective pin's state to low in order to let the current flow through the LED. Send the following command to the device:
-    
-    - ``custom lsetgpio <pin> 0`` where ``<pin>`` is the number of the pin assigned for selected LED.
-    - ``custom lsetgpio 28 0`` would be the proper command to light up LED 1 on nRF5340DK. 
 
-#. If the selected LED lights up, the sample works as expected and is redy for use. 
+    - ``custom lsetgpio <pin> 0`` where ``<pin>`` is the number of the pin assigned for selected LED.
+    - ``custom lsetgpio 28 0`` would be the proper command to light up LED 1 on nRF5340DK.
+
+#. If the selected LED lights up, the sample works as expected and is redy for use.
 
 .. _802154_phy_test_testing_board:
 
 Performing radio tests without serial interface
 -----------------------------------------------
 
-1. Make sure that at least one of the development kits can be set into CMD mode, and the other one to the DUT mode. DUT device will not initialize serial interface. The easiest way to achieve this is to flash both devices with the cample configured to support BOTH modes (default setting). 
+1. Make sure that at least one of the development kits can be set into CMD mode, and the other one to the DUT mode. DUT device will not initialize serial interface. The easiest way to achieve this is to flash both devices with the cample configured to support BOTH modes (default setting).
 #. Connect both development kits to the computer using a USB cable.
    The kits are assigned a COM port (Windows) or ttyACM device (Linux), which should be now visible in the Device Manager or /dev directory.
 #. Connect to the DKs using a terminal emulator (for example, PuTTY or minicom), with the following settings:
-    
+
     - Baudrate: 115200
     - Parity bits: none
     - Stop bits: 1
 
 #. If the samples are configured to support BOTH modes (the default setting), switch one of the DKs into CMD mode by sending the following command:
-    
+
     - ``custom changemode 1``
 
 #. Run the following command on the CMD kit:
-    
+
     - ``custom find``
 
 #. The CMD kit should respond with
-    
+
     - ``channel <ch> find <ack>`` if the CMD device successfully communicates with the DUT device
     - ``DUT NOT FOUND`` if it couldn't exchange packets with the DUT device
 
