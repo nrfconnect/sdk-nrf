@@ -152,7 +152,8 @@ static bool is_motion_active(void)
 
 static bool handle_hid_report_sent_event(const struct hid_report_sent_event *event)
 {
-	if (event->report_id == REPORT_ID_MOUSE) {
+	if ((event->report_id == REPORT_ID_MOUSE) ||
+	    (event->report_id == REPORT_ID_BOOT_MOUSE)) {
 		if (state == STATE_PENDING) {
 			if (is_motion_active()) {
 				send_motion();
@@ -167,7 +168,8 @@ static bool handle_hid_report_sent_event(const struct hid_report_sent_event *eve
 
 static bool handle_hid_report_subscription_event(const struct hid_report_subscription_event *event)
 {
-	if (event->report_id == REPORT_ID_MOUSE) {
+	if ((event->report_id == REPORT_ID_MOUSE) ||
+	    (event->report_id == REPORT_ID_BOOT_MOUSE)) {
 		static uint8_t peer_count;
 
 		if (event->enabled) {

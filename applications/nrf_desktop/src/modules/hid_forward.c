@@ -918,8 +918,9 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 			uint8_t report_id = bt_hogp_rep_id(rep);
 			size_t size = bt_hogp_rep_size(rep);
 
-			__ASSERT_NO_MSG((report_id != REPORT_ID_RESERVED) &&
-					(report_id < REPORT_ID_COUNT));
+			if ((report_id == REPORT_ID_RESERVED) || (report_id >= REPORT_ID_COUNT)) {
+				continue;
+			}
 
 			/* Release all pressed keys. */
 			uint8_t empty_data[size];

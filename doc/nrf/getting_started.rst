@@ -16,11 +16,10 @@ After that, pick a sample that is related to the application you want to create 
    :maxdepth: 2
    :caption: Subpages:
 
-   gs_ins_os
    gs_recommended_versions
    gs_assistant
    gs_installing
-   gs_updating
    gs_programming
    gs_testing
    gs_modifying
+   gs_updating

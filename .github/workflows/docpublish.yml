@@ -18,6 +18,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: docbuild.yml
+          run_id: ${{ github.event.workflow_run.id }}
           name: cache
           path: cache
 

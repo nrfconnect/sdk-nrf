@@ -16,6 +16,20 @@
 #include <app/server/Server.h>
 #include <app/util/attribute-storage.h>
 
+/* MCUMgr BT FOTA includes */
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+#include "os_mgmt/os_mgmt.h"
+#endif
+#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
+#include "img_mgmt/img_mgmt.h"
+#endif
+#ifdef CONFIG_MCUMGR_SMP_BT
+#include <mgmt/mcumgr/smp_bt.h>
+#endif
+#ifdef CONFIG_BOOTLOADER_MCUBOOT
+#include <dfu/mcuboot.h>
+#endif
+
 #include <dk_buttons_and_leds.h>
 #include <drivers/sensor.h>
 #include <logging/log.h>
@@ -86,6 +100,24 @@ int AppTask::Init()
 		return -1;
 	}
 
+#ifdef CONFIG_BOOTLOADER_MCUBOOT
+	/* Check if the image is run in the REVERT mode and eventually
+	confirm it to prevent reverting on the next boot. */
+	if (mcuboot_swap_type() == BOOT_SWAP_TYPE_REVERT) {
+		if (boot_write_img_confirmed()) {
+			LOG_ERR("Confirming firmware image failed, it will be reverted on the next boot.");
+		} else {
+			LOG_INF("New firmware image confirmed.");
+		}
+	}
+
+	/* Register SMP service for software update purpose */
+	os_mgmt_register_group();
+	img_mgmt_register_group();
+	img_mgmt_set_upload_cb(SoftwareUpdateConfirmationHandler, NULL);
+	smp_bt_register();
+#endif
+
 	/* Initialize timer */
 	k_timer_init(
 		&sFunctionTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent::Type::kTimer, FunctionTimerHandler); },
@@ -105,10 +137,13 @@ int AppTask::Init()
 
 void AppTask::OpenPairingWindow()
 {
+	/* Start BLE advertising despite having Thread provisioned only in case of supporting for DFU over BLE. */
+#ifndef CONFIG_BOOTLOADER_MCUBOOT
 	if (ConnectivityMgr().IsThreadProvisioned()) {
 		LOG_INF("NFC Tag emulation and BLE advertisement not started - device is commissioned to a Thread network.");
 		return;
 	}
+#endif
 
 	if (ConnectivityMgr().IsBLEAdvertisingEnabled()) {
 		LOG_INF("BLE Advertisement is already enabled");
@@ -167,6 +202,14 @@ void AppTask::PostEvent(AppEvent::Type type, AppEvent::Handler handler)
 	event.mType = type;
 	event.mHandler = handler;
 	PostEvent(&event);
+}
+
+int AppTask::SoftwareUpdateConfirmationHandler(uint32_t offset, uint32_t size, void *arg)
+{
+	/* For now just print update progress and confirm data chunk without any additional checks. */
+	LOG_INF("Software update progress %d B / %d B", offset, size);
+
+	return 0;
 }
 
 void AppTask::DispatchEvent(AppEvent *event)

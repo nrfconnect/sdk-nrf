@@ -30,3 +30,4 @@ If you are new to Matter, check also the tutorials on `DevZone`_.
 
    ug_matter_architecture.rst
    ug_matter_configuring.rst
+   ug_matter_creating_accessory.rst

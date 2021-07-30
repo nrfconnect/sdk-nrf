@@ -21,7 +21,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v1.6.0`_ for the list of issues valid for this release.
+See `known issues for nRF Connect SDK v1.6.1`_ for the list of issues valid for this release.
 
 Changelog
 *********
@@ -69,7 +69,17 @@ Matter
 ------
 
 * Added:
-   * :ref:`Weather station <matter_weather_station_sample>` sample.
+
+  * :ref:`Weather station <matter_weather_station_sample>` sample.
+  * :ref:`Template <matter_template_sample>` sample with a guide about :ref:`ug_matter_creating_accessory`.
+
+Zigbee
+------
+
+* Added:
+
+  * :ref:`lib_zigbee_zcl_scenes` library with documentation.
+    This library was separated from the Zigbee light bulb sample.
 
 Common
 ======

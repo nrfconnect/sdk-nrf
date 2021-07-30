@@ -25,7 +25,12 @@ enum slm_datamode_operation_t {
 	DATAMODE_EXIT   /* Exit data mode */
 };
 
-/**@brief Data mode sending handler type. */
+/**@brief Data mode sending handler type.
+ *
+ * @retval 0 means all data is sent successfully.
+ *         Positive value means the actual size of bytes that has been sent.
+ *         Negative value means error occurrs in sending.
+ */
 typedef int (*slm_datamode_handler_t)(uint8_t op, const uint8_t *data, int len);
 
 /**
@@ -49,7 +54,16 @@ void slm_at_host_uninit(void);
  * @param len Length of response message
  *
  */
-void rsp_send(const uint8_t *str, size_t len);
+void rsp_send(const char *str, size_t len);
+
+/**
+ * @brief Send raw data received in data mode
+ *
+ * @param data Raw data received
+ * @param len Length of raw data
+ *
+ */
+void datamode_send(const uint8_t *data, size_t len);
 
 /**
  * @brief Request SLM AT host to enter data mode

@@ -12,6 +12,14 @@ endif()
 
 set(CONF_FILE "prj_${CMAKE_BUILD_TYPE}.conf")
 
+option(BUILD_WITH_DFU "Build target with Device Firmware Upgrade support" ON)
+if(BUILD_WITH_DFU)
+    list(INSERT OVERLAY_CONFIG 0 ${CMAKE_CURRENT_SOURCE_DIR}/../common/config/overlay-dfu_support.conf)
+    list(INSERT OVERLAY_CONFIG 0 ${CMAKE_CURRENT_SOURCE_DIR}/../common/config/overlay-dfu_nrf53_extension.conf)
+    set(mcuboot_CONF_FILE ${CMAKE_CURRENT_SOURCE_DIR}/child_image/mcuboot_${CMAKE_BUILD_TYPE}.conf)
+    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/thingy53_nrf5340_cpuapp/pm_static.yml)
+endif()
+
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-weather-station)

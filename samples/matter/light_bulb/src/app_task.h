@@ -35,15 +35,11 @@ private:
 	void StartThreadHandler();
 	void StartBLEAdvertisingHandler();
 
-#ifdef CONFIG_CHIP_NFC_COMMISSIONING
-	int StartNFCTag();
-#endif
-
 	static void ActionInitiated(LightingManager::Action aAction);
 	static void ActionCompleted(LightingManager::Action aAction);
 	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void TimerEventHandler(k_timer *timer);
-	static void ThreadProvisioningHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
+	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static int SoftwareUpdateConfirmationHandler(uint32_t offset, uint32_t size, void *arg);
 
 	friend AppTask &GetAppTask();
