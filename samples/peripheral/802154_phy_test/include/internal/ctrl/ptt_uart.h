@@ -254,4 +254,3 @@ void ptt_handler_busy(void);
 void ptt_handler_free(void);
 
 #endif /* PTT_UART_H__ */
-

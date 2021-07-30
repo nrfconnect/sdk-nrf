@@ -149,4 +149,3 @@ static ptt_ret_t ptt_mode_init(ptt_mode_t mode)
 
     return ret;
 }
-

@@ -90,4 +90,3 @@ typedef struct {
 } rf_rx_pkt_t;
 
 #endif  /* RF_PROC_H__ */
-

@@ -688,4 +688,3 @@ static inline void dut_reset_cur_evt(void)
     ptt_event_free(m_cur_evt);
     m_cur_evt = PTT_EVENT_UNASSIGNED;
 }
-

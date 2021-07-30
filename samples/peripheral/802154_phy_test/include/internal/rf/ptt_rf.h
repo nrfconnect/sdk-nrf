@@ -325,4 +325,3 @@ ptt_ret_t ptt_rf_receive(void);
 ptt_ret_t ptt_rf_sleep(void);
 
 #endif /* PTT_RF_H__ */
-

@@ -745,4 +745,3 @@ inline ptt_ltx_payload_t *ptt_rf_get_custom_ltx_payload(void)
 {
     return &(m_ptt_rf_ctx.ltx_payload);
 }
-

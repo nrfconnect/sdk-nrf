@@ -236,4 +236,3 @@ void ptt_ctrl_rf_rx_failed(ptt_rf_rx_error_t rx_error)
 #ifdef TESTS
 #include "test_rf_proc_wrappers.c"
 #endif /* TESTS */
-

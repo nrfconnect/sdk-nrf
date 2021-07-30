@@ -128,4 +128,3 @@ void ptt_ctrl_rf_cca_done(ptt_evt_id_t evt_id, ptt_cca_t result);
 void ptt_ctrl_rf_cca_failed(ptt_evt_id_t evt_id);
 
 #endif /* PTT_CTRL_H__ */
-

@@ -485,4 +485,3 @@ static void rf_rx_pool_clear(void)
 	}
     }
 }
-

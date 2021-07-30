@@ -407,4 +407,3 @@ static ptt_ret_t payload_fill(ptt_evt_ctx_data_t *p_ctx_data, char *p_payload, u
 
     return ret;
 }
-
