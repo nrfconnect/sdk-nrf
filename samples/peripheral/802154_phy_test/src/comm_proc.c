@@ -59,31 +59,32 @@ static inline void input_state_reset(text_proc_t *text_proc);
 void comm_input_process(text_proc_t *p_text_proc, const uint8_t *buf, uint32_t len)
 {
     switch (p_text_proc->state) {
-        case INPUT_STATE_IDLE:
-        if (p_text_proc->len != 0) {
-            LOG_WRN("p_text_proc->len is not 0 when input state is idle");
-            p_text_proc->len = 0;
-        }
-            /* start the timer after first received symbol */
-            k_timer_start(&p_text_proc->timer, K_MSEC(COMM_PER_COMMAND_TIMEOUT), K_MSEC(0));
+	case INPUT_STATE_IDLE:
+	if (p_text_proc->len != 0) {
+		LOG_WRN("p_text_proc->len is not 0 when input state is idle");
+		p_text_proc->len = 0;
+	}
 
-            p_text_proc->state = INPUT_STATE_WAITING_FOR_NEWLINE;
+	    /* start the timer after first received symbol */
+	    k_timer_start(&p_text_proc->timer, K_MSEC(COMM_PER_COMMAND_TIMEOUT), K_MSEC(0));
 
-            comm_symbols_process(p_text_proc, buf, len);
-        break;
+	    p_text_proc->state = INPUT_STATE_WAITING_FOR_NEWLINE;
 
-        case INPUT_STATE_WAITING_FOR_NEWLINE:
-            comm_symbols_process(p_text_proc, buf, len);
-        break;
+	    comm_symbols_process(p_text_proc, buf, len);
+	break;
 
-        case INPUT_STATE_TEXT_PROCESSING:
-            LOG_WRN(
-            "received a command when processing previous one, discarded");
-        break;
+	case INPUT_STATE_WAITING_FOR_NEWLINE:
+	    comm_symbols_process(p_text_proc, buf, len);
+	break;
 
-        default:
-            LOG_ERR("incorrect input state");
-        break;
+	case INPUT_STATE_TEXT_PROCESSING:
+	    LOG_WRN(
+		"received a command when processing previous one, discarded");
+	break;
+
+	default:
+	    LOG_ERR("incorrect input state");
+	break;
     }
 }
 
