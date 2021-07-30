@@ -69,4 +69,3 @@ typedef uint8_t ptt_rf_tx_error_t;
 #define PTT_RF_TX_ERROR_OPERATION_FAILED 0x03 /**< transmission failed */
 
 #endif  /* PTT_TYPES_H__ */
-

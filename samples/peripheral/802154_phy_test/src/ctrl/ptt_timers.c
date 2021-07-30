@@ -352,4 +352,3 @@ static void update_timers(ptt_time_t current_time)
 
     PTT_TRACE("update_timers -<\n");
 }
-

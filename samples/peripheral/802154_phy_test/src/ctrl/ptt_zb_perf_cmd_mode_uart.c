@@ -2989,4 +2989,3 @@ static inline ptt_bool_t cmd_is_uart_cmd_locked_by(ptt_evt_id_t evt_id)
 {
     return (evt_id == m_uart_cmd_evt) ? true : false;
 }
-

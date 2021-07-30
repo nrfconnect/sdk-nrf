@@ -553,4 +553,3 @@ void cmd_uart_send_rsp_l_get_gpio_error(ptt_evt_id_t evt_id)
     ptt_uart_send_packet(p_evt_data->arr,
 			 strlen(PTT_CAST_TO_STR(p_evt_data->arr)));
 }
-

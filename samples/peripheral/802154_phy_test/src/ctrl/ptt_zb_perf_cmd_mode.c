@@ -75,4 +75,3 @@ ptt_ret_t ptt_zb_perf_cmd_mode_uninit(void)
     PTT_TRACE("ptt_zb_perf_cmd_mode_uninit -<\n");
     return PTT_RET_SUCCESS;
 }
-

@@ -897,4 +897,3 @@ static ptt_ret_t cmd_make_and_send_rf_packet(ptt_cmd_t cmd)
 
     return ret;
 }
-

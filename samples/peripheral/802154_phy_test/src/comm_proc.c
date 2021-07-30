@@ -195,4 +195,3 @@ void comm_proc(void)
     usb_task();
 #endif
 }
-

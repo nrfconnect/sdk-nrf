@@ -397,4 +397,3 @@ void ptt_ctrl_led_indication_off_ext(void)
 {
     gpio_pin_set(indication_led_dev, PIN, false);
 }
-

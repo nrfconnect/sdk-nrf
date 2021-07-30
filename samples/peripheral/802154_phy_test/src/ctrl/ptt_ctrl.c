@@ -286,4 +286,3 @@ ptt_ext_evt_handler ptt_ctrl_get_handler_rf_cca_failed(void)
 #ifdef TESTS
 #include "test_ctrl_wrappers.c"
 #endif /* TESTS */
-

@@ -156,4 +156,3 @@ extern void ptt_rf_set_antenna_ext(uint8_t antenna);
 extern uint8_t ptt_rf_get_antenna_ext(void);
 
 #endif /* PTT_RF_API_H__ */
-

@@ -54,4 +54,3 @@ typedef enum {
 } ptt_ret_t;
 
 #endif  /* PTT_ERRORS_H__ */
-

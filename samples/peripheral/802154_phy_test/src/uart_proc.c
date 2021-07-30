@@ -123,4 +123,3 @@ int32_t uart_send(const uint8_t *p_pkt, ptt_pkt_len_t len, bool add_crlf)
 
     return len;
 }
-

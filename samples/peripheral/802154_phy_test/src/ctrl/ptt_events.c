@@ -316,4 +316,3 @@ ptt_evt_data_t *ptt_event_get_p_data(ptt_evt_id_t evt_id)
     PTT_TRACE("ptt_event_get_p_data -< ctx %p\n", &p_event->data);
     return &p_event->data;
 }
-
