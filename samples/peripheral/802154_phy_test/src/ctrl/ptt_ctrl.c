@@ -100,8 +100,7 @@ ptt_timer_ctx_t *ptt_ctrl_get_p_timer_ctx(void)
 
 void ptt_ctrl_call_me_cb(ptt_time_t timeout)
 {
-    if (m_ptt_ctrl_ctx.call_me_cb != NULL)
-    {
+    if (m_ptt_ctrl_ctx.call_me_cb != NULL) {
 	m_ptt_ctrl_ctx.call_me_cb(timeout);
     }
 }
@@ -141,12 +140,10 @@ ptt_mode_t ptt_ctrl_get_default_mode(void)
     uint32_t   mode_mask;
     ptt_mode_t mode = PTT_MODE_ZB_PERF_DUT;
 
-    if (ptt_get_mode_mask_ext(&mode_mask))
-    {
+    if (ptt_get_mode_mask_ext(&mode_mask)) {
 	for (uint8_t i = 0; i <= sizeof(mode_mask) * 8; i++)
 	{
-	if (((mode_mask >> i) & 1u) == 1u)
-	{
+	if (((mode_mask >> i) & 1u) == 1u) {
 		mode = i;
 		break;
 	}
@@ -186,8 +183,7 @@ ptt_ret_t ptt_ctrl_get_temp(int32_t *p_temp)
 {
     ptt_ret_t ret = PTT_RET_SUCCESS;
 
-    if (!ptt_get_temp_ext(p_temp))
-    {
+    if (!ptt_get_temp_ext(p_temp)) {
 	ret = PTT_RET_INVALID_VALUE;
     }
 
@@ -202,8 +198,7 @@ ptt_ext_evts_handlers_t *ptt_ctrl_get_p_handlers(void)
 void ptt_random_vector_generate(uint8_t *p_buff,
 				uint8_t   requested_size)
 {
-    for (int i = 0; i < requested_size; ++i)
-    {
+    for (int i = 0; i < requested_size; ++i) {
 	p_buff[i] = ptt_random_get_ext() % UINT8_MAX;
     }
 }

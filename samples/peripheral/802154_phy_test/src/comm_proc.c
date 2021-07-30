@@ -58,7 +58,7 @@ static inline void input_state_reset(text_proc_t *text_proc);
 
 void comm_input_process(text_proc_t *p_text_proc, const uint8_t *buf, uint32_t len)
 {
-    switch (p_text_proc->state) {
+	switch (p_text_proc->state) {
 	case INPUT_STATE_IDLE:
 	if (p_text_proc->len != 0) {
 		LOG_WRN("p_text_proc->len is not 0 when input state is idle");

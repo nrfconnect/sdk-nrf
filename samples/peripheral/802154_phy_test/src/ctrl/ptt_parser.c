@@ -55,13 +55,11 @@ ptt_ret_t ptt_parser_string_to_int(const char *p_str,
 				   int32_t      min,
 				   int32_t      max)
 {
-    if (p_str == NULL)
-    {
+    if (p_str == NULL) {
 	return PTT_RET_NULL_PTR;
     }
 
-    if (p_out_value == NULL)
-    {
+    if (p_out_value == NULL) {
 	return PTT_RET_NULL_PTR;
     }
 
@@ -76,11 +74,9 @@ ptt_ret_t ptt_parser_string_to_int(const char *p_str,
     /* also lets discard LONG_MIN/LONG_MAX values which show strtol failed */
     if (('\0' != *p_end) ||
 	(out_num < min) || (out_num > max) ||
-	(out_num == LONG_MIN) || (out_num == LONG_MAX))
-    {
+	(out_num == LONG_MIN) || (out_num == LONG_MAX)) {
 	ret = PTT_RET_INVALID_VALUE;
-    } else
-    {
+    } else {
 	*p_out_value = out_num;
     }
 
@@ -97,8 +93,7 @@ inline ptt_ret_t ptt_parser_string_to_byte(const char *p_str, uint8_t *p_out_val
     int32_t   out_value;
     ptt_ret_t ret = ptt_parser_string_to_int(p_str, &out_value, base, INT8_MIN, UINT8_MAX);
 
-    if (ret == PTT_RET_SUCCESS)
-    {
+    if (ret == PTT_RET_SUCCESS) {
 	*p_out_value = out_value;
     }
 
@@ -110,8 +105,7 @@ inline ptt_ret_t ptt_parser_string_to_int8(const char *p_str, int8_t *p_out_valu
     int32_t   out_value;
     ptt_ret_t ret = ptt_parser_string_to_int(p_str, &out_value, base, INT8_MIN, INT8_MAX);
 
-    if (ret == PTT_RET_SUCCESS)
-    {
+    if (ret == PTT_RET_SUCCESS) {
 	*p_out_value = out_value;
     }
 
@@ -123,8 +117,7 @@ inline ptt_ret_t ptt_parser_string_to_uint8(const char *p_str, uint8_t *p_out_va
     int32_t   out_value;
     ptt_ret_t ret = ptt_parser_string_to_int(p_str, &out_value, base, 0, UINT8_MAX);
 
-    if (ret == PTT_RET_SUCCESS)
-    {
+    if (ret == PTT_RET_SUCCESS) {
 	*p_out_value = out_value;
     }
 
@@ -136,8 +129,7 @@ inline ptt_ret_t ptt_parser_string_to_int16(const char *p_str, int16_t *p_out_va
     int32_t   out_value;
     ptt_ret_t ret = ptt_parser_string_to_int(p_str, &out_value, base, INT16_MIN, INT16_MAX);
 
-    if (ret == PTT_RET_SUCCESS)
-    {
+    if (ret == PTT_RET_SUCCESS) {
 	*p_out_value = out_value;
     }
 
@@ -151,8 +143,7 @@ inline ptt_ret_t ptt_parser_string_to_uint16(const char *p_str,
     int32_t   out_value;
     ptt_ret_t ret = ptt_parser_string_to_int(p_str, &out_value, base, 0, UINT16_MAX);
 
-    if (ret == PTT_RET_SUCCESS)
-    {
+    if (ret == PTT_RET_SUCCESS) {
 	*p_out_value = out_value;
     }
 
@@ -164,52 +155,43 @@ ptt_ret_t ptt_parser_hex_string_to_uint8_array(const char *p_hex_str,
 					       uint8_t      max_len,
 					       uint8_t    *p_written_len)
 {
-    if (p_hex_str == NULL)
-    {
+    if (p_hex_str == NULL) {
 	return PTT_RET_NULL_PTR;
     }
 
-    if (p_out_value == NULL)
-    {
+    if (p_out_value == NULL) {
 	return PTT_RET_NULL_PTR;
     }
 
-    if (max_len == 0)
-    {
+    if (max_len == 0) {
 	return PTT_RET_NO_FREE_SLOT;
     }
 
     /* cut away prefix, if present */
     if ((p_hex_str[0] == '0') &&
-	((p_hex_str[1] == 'X') || (p_hex_str[1] == 'x')))
-    {
+	((p_hex_str[1] == 'X') || (p_hex_str[1] == 'x'))) {
 	p_hex_str += 2;
     }
 
     /* one byte is represented by 2 ASCII symbols => we expect even number of elements */
-    if ((strlen(p_hex_str) % 2) || (!strlen(p_hex_str)))
-    {
+    if ((strlen(p_hex_str) % 2) || (!strlen(p_hex_str))) {
 	return PTT_RET_INVALID_VALUE;
     }
 
     ptt_ret_t ret      = PTT_RET_SUCCESS;
     uint8_t   byte_cnt = 0;
 
-    while ((ret == PTT_RET_SUCCESS) && strlen(p_hex_str))
-    {
-	if (byte_cnt < max_len)
-	{
+    while ((ret == PTT_RET_SUCCESS) && strlen(p_hex_str)) {
+	if (byte_cnt < max_len) {
 	    ret        = ptt_parser_hex_string_next_byte(p_hex_str, &(p_out_value[byte_cnt]));
 	    p_hex_str += 2;
 	    ++byte_cnt;
-	} else
-	{
+	} else {
 	    ret = PTT_RET_NO_FREE_SLOT;
 	}
     }
 
-    if (p_written_len != NULL)
-    {
+    if (p_written_len != NULL) {
 	*p_written_len = byte_cnt;
     }
 
@@ -232,11 +214,9 @@ static ptt_ret_t ptt_parser_hex_string_next_byte(const char *p_hex_str, uint8_t 
      * is valid." <- from man strtol */
     if ((*p_end != '\0') ||
 	(out_num < INT8_MIN) ||
-	(out_num > UINT8_MAX))
-    {
+	(out_num > UINT8_MAX)) {
 	ret = PTT_RET_INVALID_VALUE;
-    } else
-    {
+    } else {
 	*p_out_num = (uint8_t)out_num;
     }
 
