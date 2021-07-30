@@ -82,3 +82,7 @@ K_THREAD_DEFINE(rf_id, RF_THREAD_STACKSIZE, rf_thread, NULL, NULL, NULL,
 
 K_THREAD_DEFINE(comm_id, COMM_THREAD_STACKSIZE, comm_proc, NULL, NULL, NULL,
 		COMM_THREAD_PRIORITY, 0, 0);
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 4d52c32798cd1e2dd58e4547dbf49b84baa037eb
