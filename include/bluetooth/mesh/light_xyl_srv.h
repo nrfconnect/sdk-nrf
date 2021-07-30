@@ -28,14 +28,13 @@ struct bt_mesh_light_xyl_srv;
  *
  * @brief initialization parameters for a @ref bt_mesh_light_xyl_srv instance.
  *
- * @param[in] _lightness_handlers Lightness server callbacks.
+ * @param[in] _lightness_srv Pointer to Lightness server instance.
  * @param[in] _light_xyl_handlers Light xyL server callbacks.
  */
-#define BT_MESH_LIGHT_XYL_SRV_INIT(_lightness_handlers, _light_xyl_handlers)   \
+#define BT_MESH_LIGHT_XYL_SRV_INIT(_lightness_srv, _light_xyl_handlers)   \
 	{                                                                      \
 		.handlers = _light_xyl_handlers,                               \
-		.lightness_srv =                                               \
-			BT_MESH_LIGHTNESS_SRV_INIT(_lightness_handlers),       \
+		.lightness_srv = _lightness_srv,				\
 		.range = {                                                     \
 			.min = { .x = 0, .y = 0 },                             \
 			.max = { .x = UINT16_MAX, .y = UINT16_MAX }            \
@@ -49,7 +48,6 @@ struct bt_mesh_light_xyl_srv;
  * @param[in] _srv Pointer to a @ref bt_mesh_light_xyl_srv instance.
  */
 #define BT_MESH_MODEL_LIGHT_XYL_SRV(_srv)                                      \
-	BT_MESH_MODEL_LIGHTNESS_SRV(&(_srv)->lightness_srv),                   \
 		BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_XYL_SRV,               \
 				 _bt_mesh_light_xyl_srv_op, &(_srv)->pub,      \
 				 BT_MESH_MODEL_USER_DATA(                      \
@@ -145,8 +143,8 @@ struct bt_mesh_light_xyl_srv_handlers {
 struct bt_mesh_light_xyl_srv {
 	/** Model entry. */
 	struct bt_mesh_model *model;
-	/** Lightness Server instance. */
-	struct bt_mesh_lightness_srv lightness_srv;
+	/** Pointer to Lightness Server instance. */
+	struct bt_mesh_lightness_srv *lightness_srv;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */
