@@ -52,7 +52,7 @@
  *
  *  @return none
  */
-void ptt_rf_push_packet(const uint8_t * p_pkt, ptt_pkt_len_t len, int8_t rssi, uint8_t lqi);
+void ptt_rf_push_packet(const uint8_t *p_pkt, ptt_pkt_len_t len, int8_t rssi, uint8_t lqi);
 
 /** @brief Provides library RF module with "Transmission started" event
  *
@@ -133,9 +133,9 @@ extern ptt_bool_t ptt_rf_sleep_ext(void);
 /* external provided function to start sending continuous carrier on current radio */
 extern ptt_bool_t ptt_rf_continuous_carrier_ext(void);
 /* external provided function to start sending modulated carrier on current radio */
-extern ptt_bool_t ptt_rf_modulated_stream_ext(const uint8_t * p_pkt, ptt_pkt_len_t len);
+extern ptt_bool_t ptt_rf_modulated_stream_ext(const uint8_t *p_pkt, ptt_pkt_len_t len);
 /* external provided function to send a packet on current radio */
-extern ptt_bool_t ptt_rf_send_packet_ext(const uint8_t * p_pkt, ptt_pkt_len_t len, ptt_bool_t cca);
+extern ptt_bool_t ptt_rf_send_packet_ext(const uint8_t *p_pkt, ptt_pkt_len_t len, ptt_bool_t cca);
 /* external provided function to verify if the channel is clear */
 extern ptt_bool_t ptt_rf_cca_ext(uint8_t mode);
 /* external provided function to detects the maximum energy for a given time */
@@ -145,14 +145,15 @@ extern ptt_bool_t ptt_rf_rssi_measure_begin_ext(void);
 /* external provided function to get the result of the last RSSI measurement */
 extern ptt_rssi_t ptt_rf_rssi_last_get_ext(void);
 /* external provided function to set PAN ID used by the device */
-extern void ptt_rf_set_pan_id_ext(const uint8_t * p_pan_id);
+extern void ptt_rf_set_pan_id_ext(const uint8_t *p_pan_id);
 /* external provided function to set extended address of the device */
-extern void ptt_rf_set_extended_address_ext(const uint8_t * p_extended_address);
+extern void ptt_rf_set_extended_address_ext(const uint8_t *p_extended_address);
 /* external provided function to set short address of the device */
-extern void ptt_rf_set_short_address_ext(const uint8_t * p_short_address);
+extern void ptt_rf_set_short_address_ext(const uint8_t *p_short_address);
 /* external provided function to set antenna on current radio */
 extern void ptt_rf_set_antenna_ext(uint8_t antenna);
 /* external provided function to get current antenna from current radio */
 extern uint8_t ptt_rf_get_antenna_ext(void);
 
 #endif /* PTT_RF_API_H__ */
+

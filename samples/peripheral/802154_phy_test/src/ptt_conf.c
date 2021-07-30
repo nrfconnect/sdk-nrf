@@ -40,7 +40,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-bool ptt_get_mode_mask_ext(uint32_t * mode_mask)
+bool ptt_get_mode_mask_ext(uint32_t *mode_mask)
 {
     assert(mode_mask != NULL);
 
@@ -54,7 +54,7 @@ bool ptt_get_mode_mask_ext(uint32_t * mode_mask)
     return true;
 }
 
-bool ptt_get_channel_mask_ext(uint32_t * channel_mask)
+bool ptt_get_channel_mask_ext(uint32_t *channel_mask)
 {
     assert(channel_mask != NULL);
 
@@ -63,7 +63,7 @@ bool ptt_get_channel_mask_ext(uint32_t * channel_mask)
 
 }
 
-bool ptt_get_power_ext(int8_t * power)
+bool ptt_get_power_ext(int8_t *power)
 {
     assert(power != NULL);
 
@@ -71,7 +71,7 @@ bool ptt_get_power_ext(int8_t * power)
     return true;
 }
 
-bool ptt_get_antenna_ext(uint8_t * antenna)
+bool ptt_get_antenna_ext(uint8_t *antenna)
 {
     assert(antenna != NULL);
 
@@ -83,7 +83,7 @@ bool ptt_get_antenna_ext(uint8_t * antenna)
 #endif
 }
 
-bool ptt_get_sw_version_ext(uint8_t * sw_version)
+bool ptt_get_sw_version_ext(uint8_t *sw_version)
 {
     assert(sw_version != NULL);
 
@@ -91,7 +91,7 @@ bool ptt_get_sw_version_ext(uint8_t * sw_version)
     return true;
 }
 
-bool ptt_get_hw_version_ext(uint8_t * hw_version)
+bool ptt_get_hw_version_ext(uint8_t *hw_version)
 {
     assert(hw_version != NULL);
 
@@ -99,7 +99,7 @@ bool ptt_get_hw_version_ext(uint8_t * hw_version)
     return true;
 }
 
-bool ptt_get_ant_mode_ext(uint8_t * ant_mode)
+bool ptt_get_ant_mode_ext(uint8_t *ant_mode)
 {
     assert(ant_mode != NULL);
 
@@ -117,7 +117,7 @@ bool ptt_get_ant_mode_ext(uint8_t * ant_mode)
 #endif
 }
 
-bool ptt_get_ant_num_ext(uint8_t * ant_num)
+bool ptt_get_ant_num_ext(uint8_t *ant_num)
 {
     assert(ant_num != NULL);
 
@@ -128,3 +128,4 @@ bool ptt_get_ant_num_ext(uint8_t * ant_num)
     return false;
 #endif
 }
+

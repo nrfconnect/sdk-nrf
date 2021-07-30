@@ -160,13 +160,13 @@ static uart_text_cmd_t m_text_cmds[PTT_UART_CMD_N] = {
      PTT_UART_PAYLOAD_PARSED_AS_BYTES},
 };
 
-static ptt_uart_send_cb m_uart_send_cb = NULL;
+static ptt_uart_send_cb m_uart_send_cb;
 
-static bool m_handler_busy = false;
+static bool m_handler_busy;
 
 static ptt_ret_t packet_parser(ptt_evt_id_t evt_id);
 static ptt_ret_t text_cmd_parser(ptt_evt_id_t evt_id);
-static ptt_ret_t payload_fill(ptt_evt_ctx_data_t * p_ctx_data, char * p_payload, uint8_t len);
+static ptt_ret_t payload_fill(ptt_evt_ctx_data_t *p_ctx_data, char *p_payload, uint8_t len);
 
 void ptt_uart_init(ptt_uart_send_cb send_cb)
 {
@@ -181,71 +181,68 @@ void ptt_uart_uninit(void)
 
 inline void ptt_uart_print_prompt(void)
 {
-    if (NULL != m_uart_send_cb)
+    if (m_uart_send_cb != NULL)
     {
-        m_uart_send_cb(PTT_CAST_TO_UINT8_P(PTT_UART_PROMPT_STR), sizeof(PTT_UART_PROMPT_STR) - 1,
-                       false);
+	m_uart_send_cb(PTT_CAST_TO_UINT8_P(PTT_UART_PROMPT_STR), sizeof(PTT_UART_PROMPT_STR) - 1,
+		       false);
     }
 }
 
-ptt_ret_t ptt_uart_send_packet(const uint8_t * p_pkt, ptt_pkt_len_t len)
+ptt_ret_t ptt_uart_send_packet(const uint8_t *p_pkt, ptt_pkt_len_t len)
 {
     ptt_ret_t ret = PTT_RET_SUCCESS;
 
-    if ((NULL == p_pkt) || (0 == len))
+    if ((p_pkt == NULL) || (len == 0))
     {
-        ret = PTT_RET_INVALID_VALUE;
+	ret = PTT_RET_INVALID_VALUE;
     }
 
-    if (PTT_RET_SUCCESS == ret)
+    if (ret == PTT_RET_SUCCESS)
     {
-        if (NULL == m_uart_send_cb)
-        {
-            ret = PTT_RET_NULL_PTR;
-        }
-        else
-        {
-            int32_t size = m_uart_send_cb(p_pkt, len, true);
+	if (m_uart_send_cb == NULL)
+	{
+	    ret = PTT_RET_NULL_PTR;
+	} else
+	{
+	int32_t size = m_uart_send_cb(p_pkt, len, true);
 
-            if (size != len)
-            {
-                ret = PTT_RET_BUSY;
-            }
-        }
+	if (size != len)
+	{
+		ret = PTT_RET_BUSY;
+	}
+	}
     }
 
     PTT_TRACE("ptt_uart_send_packet: ret %d", ret);
     return ret;
 }
 
-void ptt_uart_push_packet(const uint8_t * p_pkt, ptt_pkt_len_t len)
+void ptt_uart_push_packet(const uint8_t *p_pkt, ptt_pkt_len_t len)
 {
     ptt_evt_id_t evt_id;
     ptt_ret_t    ret;
 
-    if ((NULL == p_pkt) || (0 == len))
+    if ((p_pkt == NULL) || (len == 0))
     {
-        ret = PTT_RET_INVALID_VALUE;
-        PTT_TRACE("%s: invalid input value", __func__);
-    }
-    else
+	ret = PTT_RET_INVALID_VALUE;
+	PTT_TRACE("%s: invalid input value", __func__);
+    } else
     {
-        ret = ptt_event_alloc_and_fill(&evt_id, p_pkt, len);
+	ret = ptt_event_alloc_and_fill(&evt_id, p_pkt, len);
 
-        if (PTT_RET_SUCCESS != ret)
-        {
-            PTT_TRACE("%s: ptt_event_alloc_and_fill return error code: %d", __func__, ret);
-        }
-        else
-        {
-            ret = packet_parser(evt_id);
-        }
+	if (ret != PTT_RET_SUCCESS)
+	{
+	    PTT_TRACE("%s: ptt_event_alloc_and_fill return error code: %d", __func__, ret);
+	} else
+	{
+	    ret = packet_parser(evt_id);
+	}
     }
 
     /* to prevent sending prompt on invalid command when handler is busy processing previous command */
-    if ((PTT_RET_SUCCESS != ret) && !m_handler_busy)
+    if ((ret != PTT_RET_SUCCESS) && !m_handler_busy)
     {
-        ptt_uart_print_prompt();
+	ptt_uart_print_prompt();
     }
 }
 
@@ -267,38 +264,35 @@ static ptt_ret_t packet_parser(ptt_evt_id_t evt_id)
 
     ret = text_cmd_parser(evt_id);
 
-    if (PTT_RET_SUCCESS == ret)
+    if (ret == PTT_RET_SUCCESS)
     {
-        if (PTT_UART_CMD_CHANGE_MODE == ptt_event_get_cmd(evt_id))
-        {
-            ptt_evt_ctx_data_t * p_ctx_data = ptt_event_get_p_ctx_data(evt_id);
+	if (ptt_event_get_cmd(evt_id) == PTT_UART_CMD_CHANGE_MODE)
+	{
+	ptt_evt_ctx_data_t *p_ctx_data = ptt_event_get_p_ctx_data(evt_id);
 
-            assert(p_ctx_data != NULL);
+	    assert(p_ctx_data != NULL);
 
-            ret = ptt_mode_switch(p_ctx_data->arr[0]);
+	    ret = ptt_mode_switch(p_ctx_data->arr[0]);
 
-            ptt_uart_print_prompt();
+	    ptt_uart_print_prompt();
 
-            ptt_event_free(evt_id);
-        }
-        else if (NULL == handler)
-        {
-            ret = PTT_RET_INVALID_MODE;
-            ptt_event_free(evt_id);
-        }
-        else
-        {
-            handler(evt_id);
-        }
-    }
-    else
+	    ptt_event_free(evt_id);
+	} else if (handler == NULL)
+	{
+	    ret = PTT_RET_INVALID_MODE;
+	    ptt_event_free(evt_id);
+	} else
+	{
+	    handler(evt_id);
+	}
+    } else
     {
-        ptt_event_free(evt_id);
+	ptt_event_free(evt_id);
     }
 
-    if (PTT_RET_SUCCESS != ret)
+    if (ret != PTT_RET_SUCCESS)
     {
-        PTT_TRACE("packet parser ended with error code: %u", ret);
+	PTT_TRACE("packet parser ended with error code: %u", ret);
     }
 
     return ret;
@@ -311,109 +305,106 @@ static ptt_ret_t text_cmd_parser(ptt_evt_id_t evt_id)
     uint8_t              i;
     size_t               cmd_name_len;
     ptt_ret_t            ret        = PTT_RET_SUCCESS;
-    ptt_evt_data_t     * p_data     = ptt_event_get_p_data(evt_id);
-    ptt_evt_ctx_data_t * p_ctx_data = ptt_event_get_p_ctx_data(evt_id);
+    ptt_evt_data_t     *p_data     = ptt_event_get_p_data(evt_id);
+    ptt_evt_ctx_data_t *p_ctx_data = ptt_event_get_p_ctx_data(evt_id);
 
-    assert(NULL != p_data);
-    assert(NULL != p_ctx_data);
+    assert(p_data != NULL);
+    assert(p_ctx_data != NULL);
 
     for (i = 0; i < PTT_UART_CMD_N; ++i)
     {
-        cmd_name_len = strlen(m_text_cmds[i].name);
+	cmd_name_len = strlen(m_text_cmds[i].name);
 
-        /* compare without '\0' symbol */
-        p_str = strncmp(PTT_CAST_TO_STR(p_data->arr), m_text_cmds[i].name, cmd_name_len);
+	/* compare without '\0' symbol */
+	p_str = strncmp(PTT_CAST_TO_STR(p_data->arr), m_text_cmds[i].name, cmd_name_len);
 
-        if (0 != p_str)
-        {
-            ret = PTT_RET_INVALID_VALUE;
-        }
-        else
-        {
-            if (PTT_UART_PAYLOAD_RAW == m_text_cmds[i].payload_type)
-            {
-                /* raw payload already written in data, just pass */
-                ret = PTT_RET_SUCCESS;
-            }
-            else if (PTT_UART_PAYLOAD_PARSED_AS_BYTES == m_text_cmds[i].payload_type)
-            {
-                /* after a command should be only whitespace in case of payload or \0 */
-                if ((p_data->arr[cmd_name_len] == '\0') || (p_data->arr[cmd_name_len] == ' '))
-                {
-                    char * p_payload = PTT_CAST_TO_STR(p_data->arr + cmd_name_len);
+	if (p_str != 0)
+	{
+	    ret = PTT_RET_INVALID_VALUE;
+	} else
+	{
+	if (m_text_cmds[i].payload_type == PTT_UART_PAYLOAD_RAW)
+	{
+		/* raw payload already written in data, just pass */
+		ret = PTT_RET_SUCCESS;
+	    } else if (m_text_cmds[i].payload_type == PTT_UART_PAYLOAD_PARSED_AS_BYTES)
+	{
+		/* after a command should be only whitespace in case of payload or \0 */
+		if ((p_data->arr[cmd_name_len] == '\0') || (p_data->arr[cmd_name_len] == ' '))
+		{
+		char *p_payload = PTT_CAST_TO_STR(p_data->arr + cmd_name_len);
 
-                    ret = payload_fill(p_ctx_data, p_payload, m_text_cmds[i].payload_len);
-                }
-                else
-                {
-                    ret = PTT_RET_INVALID_VALUE;
-                }
-            }
-            else
-            {
-                ret = PTT_RET_INVALID_VALUE;
-            }
+		    ret = payload_fill(p_ctx_data, p_payload, m_text_cmds[i].payload_len);
+		} else
+		{
+		    ret = PTT_RET_INVALID_VALUE;
+		}
+	    } else
+	{
+		ret = PTT_RET_INVALID_VALUE;
+	}
 
-            if (PTT_RET_SUCCESS == ret)
-            {
-                ptt_event_set_cmd(evt_id, m_text_cmds[i].code);
-            }
+	if (ret == PTT_RET_SUCCESS)
+	{
+		ptt_event_set_cmd(evt_id, m_text_cmds[i].code);
+	}
 
-            /* we found command name, time to quit */
-            break;
-        }
+	    /* we found command name, time to quit */
+	break;
+	}
     }
 
     return ret;
 }
 
 /* p_payload points to payload of text cmd */
-static ptt_ret_t payload_fill(ptt_evt_ctx_data_t * p_ctx_data, char * p_payload, uint8_t len)
+static ptt_ret_t payload_fill(ptt_evt_ctx_data_t *p_ctx_data, char *p_payload, uint8_t len)
 {
-    if ((NULL == p_payload) || (NULL == p_ctx_data))
+    if ((p_payload == NULL) || (p_ctx_data == NULL))
     {
-        return PTT_RET_INVALID_VALUE;
+	return PTT_RET_INVALID_VALUE;
     }
 
     ptt_ret_t     ret = PTT_RET_SUCCESS;
-    static char * save;
-    char        * p_next_word = strtok_r(p_payload, UART_TEXT_PAYLOAD_DELIMETERS, &save);
+    static char *save;
+    char        *p_next_word = strtok_r(p_payload, UART_TEXT_PAYLOAD_DELIMETERS, &save);
 
     for (uint8_t i = 0; i < len; ++i)
     {
-        if (NULL == p_next_word)
-        {
-            /* expected more words in payload */
-            ret = PTT_RET_INVALID_VALUE;
-            break;
-        }
+	if (p_next_word == NULL)
+	{
+	    /* expected more words in payload */
+	    ret = PTT_RET_INVALID_VALUE;
+	break;
+	}
 
-        uint8_t out_num;
+	uint8_t out_num;
 
-        /* signed values are processed in their handlers */
-        ret = ptt_parser_string_to_uint8(p_next_word, &out_num, 0);
+	/* signed values are processed in their handlers */
+	ret = ptt_parser_string_to_uint8(p_next_word, &out_num, 0);
 
-        if (PTT_RET_SUCCESS != ret)
-        {
-            break;
-        }
+	if (ret != PTT_RET_SUCCESS)
+	{
+	break;
+	}
 
-        if (p_ctx_data->len >= PTT_EVENT_CTX_SIZE)
-        {
-            ret = PTT_RET_INVALID_VALUE;
-            break;
-        }
+	if (p_ctx_data->len >= PTT_EVENT_CTX_SIZE)
+	{
+	    ret = PTT_RET_INVALID_VALUE;
+	break;
+	}
 
-        p_ctx_data->arr[p_ctx_data->len] = out_num;
-        ++(p_ctx_data->len);
+	p_ctx_data->arr[p_ctx_data->len] = out_num;
+	++(p_ctx_data->len);
 
-        p_next_word = strtok_r(NULL, UART_TEXT_PAYLOAD_DELIMETERS, &save);
+	p_next_word = strtok_r(NULL, UART_TEXT_PAYLOAD_DELIMETERS, &save);
     }
 
-    if (NULL != p_next_word)
+    if (p_next_word != NULL)
     {
-        ret = PTT_RET_INVALID_VALUE;
+	ret = PTT_RET_INVALID_VALUE;
     }
 
     return ret;
 }
+

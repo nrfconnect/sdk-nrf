@@ -45,8 +45,7 @@
 #include "ptt_utils.h"
 
 /** device modes */
-typedef enum
-{
+typedef enum {
     PTT_MODE_ZB_PERF_DUT = 0, /**< device under test mode */
     PTT_MODE_ZB_PERF_CMD,     /**< command mode */
     PTT_MODE_N                /**< mode count */
@@ -110,3 +109,4 @@ ptt_ret_t ptt_zb_perf_dut_mode_init(void);
 ptt_ret_t ptt_zb_perf_dut_mode_uninit(void);
 
 #endif /* PTT_MODES_H__ */
+

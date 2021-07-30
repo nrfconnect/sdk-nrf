@@ -54,8 +54,7 @@
 #define PTT_RF_DEFAULT_ANTENNA 0u
 
 /** RF module context */
-typedef struct
-{
+typedef struct {
     uint8_t           channel;      /**< configured RF channel */
     int8_t            power;        /**< configured RF power */
     uint8_t           antenna;      /**< configured RF antenna */
@@ -67,3 +66,4 @@ typedef struct
 } ptt_rf_ctx_t;
 
 #endif  /* PTT_RF_INTERNAL_H__ */
+

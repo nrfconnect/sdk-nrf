@@ -47,24 +47,24 @@
 
 #include "ptt_types.h"
 
-ptt_bool_t ptt_proto_check_packet(const uint8_t * p_pkt, ptt_pkt_len_t len)
+ptt_bool_t ptt_proto_check_packet(const uint8_t *p_pkt, ptt_pkt_len_t len)
 {
     ptt_bool_t ret = false;
 
     if ((p_pkt != NULL) && (len > PTT_PREAMBLE_LEN))
     {
-        if ((PTT_PREAMBLE_1ST == p_pkt[0])
-            && (PTT_PREAMBLE_2ND == p_pkt[1])
-            && (PTT_PREAMBLE_3D == p_pkt[2]))
-        {
-            ret = true;
-        }
+	if ((p_pkt[0] == PTT_PREAMBLE_1ST)
+	    && (p_pkt[1] == PTT_PREAMBLE_2ND)
+	    && (p_pkt[2] == PTT_PREAMBLE_3D))
+	{
+	    ret = true;
+	}
     }
 
     return ret;
 }
 
-ptt_pkt_len_t ptt_proto_construct_header(uint8_t * p_pkt, ptt_cmd_t cmd, ptt_pkt_len_t pkt_max_size)
+ptt_pkt_len_t ptt_proto_construct_header(uint8_t *p_pkt, ptt_cmd_t cmd, ptt_pkt_len_t pkt_max_size)
 {
     ptt_pkt_len_t len = 0;
 
@@ -84,7 +84,7 @@ ptt_pkt_len_t ptt_proto_construct_header(uint8_t * p_pkt, ptt_cmd_t cmd, ptt_pkt
     return len;
 }
 
-void ptt_htobe16(uint8_t * p_src, uint8_t * p_dst)
+void ptt_htobe16(uint8_t *p_src, uint8_t *p_dst)
 {
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     p_dst[0] = p_src[1];
@@ -97,7 +97,7 @@ void ptt_htobe16(uint8_t * p_src, uint8_t * p_dst)
 #endif
 }
 
-void ptt_htole16(uint8_t * p_src, uint8_t * p_dst)
+void ptt_htole16(uint8_t *p_src, uint8_t *p_dst)
 {
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     p_dst[0] = p_src[0];
@@ -110,7 +110,7 @@ void ptt_htole16(uint8_t * p_src, uint8_t * p_dst)
 #endif
 }
 
-void ptt_htobe32(uint8_t * p_src, uint8_t * p_dst)
+void ptt_htobe32(uint8_t *p_src, uint8_t *p_dst)
 {
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     p_dst[0] = p_src[3];
@@ -127,17 +127,17 @@ void ptt_htobe32(uint8_t * p_src, uint8_t * p_dst)
 #endif
 }
 
-void ptt_betoh16(uint8_t * p_src, uint8_t * p_dst)
+void ptt_betoh16(uint8_t *p_src, uint8_t *p_dst)
 {
     ptt_htobe16(p_src, p_dst);
 }
 
-void ptt_betoh32(uint8_t * p_src, uint8_t * p_dst)
+void ptt_betoh32(uint8_t *p_src, uint8_t *p_dst)
 {
     ptt_htobe32(p_src, p_dst);
 }
 
-uint16_t ptt_htobe16_val(uint8_t * p_src)
+uint16_t ptt_htobe16_val(uint8_t *p_src)
 {
     uint16_t val = 0;
 
@@ -146,7 +146,7 @@ uint16_t ptt_htobe16_val(uint8_t * p_src)
     return val;
 }
 
-uint32_t ptt_htobe32_val(uint8_t * p_src)
+uint32_t ptt_htobe32_val(uint8_t *p_src)
 {
     uint32_t val = 0;
 
@@ -155,7 +155,7 @@ uint32_t ptt_htobe32_val(uint8_t * p_src)
     return val;
 }
 
-uint16_t ptt_betoh16_val(uint8_t * p_src)
+uint16_t ptt_betoh16_val(uint8_t *p_src)
 {
     uint16_t val = 0;
 
@@ -164,7 +164,7 @@ uint16_t ptt_betoh16_val(uint8_t * p_src)
     return val;
 }
 
-uint32_t ptt_betoh32_val(uint8_t * p_src)
+uint32_t ptt_betoh32_val(uint8_t *p_src)
 {
     uint32_t val = 0;
 
@@ -172,3 +172,4 @@ uint32_t ptt_betoh32_val(uint8_t * p_src)
 
     return val;
 }
+

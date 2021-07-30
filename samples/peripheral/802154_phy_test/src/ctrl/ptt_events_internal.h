@@ -56,8 +56,7 @@ typedef uint8_t ptt_evt_state_t;
 PTT_COMPILE_TIME_ASSERT((PTT_EVENT_DATA_SIZE % sizeof(int32_t)) == 0u);
 
 /** struct to hold packet data and length */
-typedef struct
-{
+typedef struct {
     uint8_t  arr[PTT_EVENT_DATA_SIZE]; /**< packet */
     uint16_t len;                      /**< packet used lengths */
 } ptt_evt_data_t;
@@ -65,15 +64,13 @@ typedef struct
 PTT_COMPILE_TIME_ASSERT((PTT_EVENT_CTX_SIZE % sizeof(int32_t)) == 0u);
 
 /** struct to hold context data and length */
-typedef struct
-{
+typedef struct {
     uint8_t  arr[PTT_EVENT_CTX_SIZE]; /**< context */
     uint16_t len;                     /**< context used lengths */
 } ptt_evt_ctx_data_t;
 
 /** event data */
-typedef struct
-{
+typedef struct {
     ptt_evt_data_t     data;  /**< packet payload */
     ptt_evt_ctx_data_t ctx;   /**< command's context */
     ptt_evt_cmd_t      cmd;   /**< command */
@@ -82,8 +79,7 @@ typedef struct
 } ptt_event_t;
 
 /** events context */
-typedef struct
-{
+typedef struct {
     ptt_event_t evt_pool[PTT_EVENT_POOL_N]; /**< array of events */
 } ptt_evt_ctx_t;
 
@@ -117,7 +113,7 @@ void ptt_events_reset_all(void);
  *
  *  @return PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_event_alloc(ptt_evt_id_t * p_evt_id);
+ptt_ret_t ptt_event_alloc(ptt_evt_id_t *p_evt_id);
 
 /** @brief Free event in the event pool
  *
@@ -139,8 +135,8 @@ ptt_ret_t ptt_event_free(ptt_evt_id_t evt_id);
  *
  *  @return PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_event_alloc_and_fill(ptt_evt_id_t * p_evt_id, const uint8_t * p_pkt,
-                                   ptt_pkt_len_t len);
+ptt_ret_t ptt_event_alloc_and_fill(ptt_evt_id_t *p_evt_id, const uint8_t *p_pkt,
+				   ptt_pkt_len_t len);
 
 /** @brief Return pointer to an event by its index in the event pool
  *
@@ -148,7 +144,7 @@ ptt_ret_t ptt_event_alloc_and_fill(ptt_evt_id_t * p_evt_id, const uint8_t * p_pk
  *
  *  @return pointer to the event, or NULL if the event is not found
  */
-ptt_event_t * ptt_get_p_event_by_id(ptt_evt_id_t evt_id);
+ptt_event_t *ptt_get_p_event_by_id(ptt_evt_id_t evt_id);
 
 /** @brief Assign given command to the event
  *
@@ -192,7 +188,7 @@ ptt_evt_state_t ptt_event_get_state(ptt_evt_id_t evt_id);
  *
  *  @return none
  */
-void ptt_event_set_ctx_data(ptt_evt_id_t evt_id, const uint8_t * p_data, uint16_t len);
+void ptt_event_set_ctx_data(ptt_evt_id_t evt_id, const uint8_t *p_data, uint16_t len);
 
 /** @brief Returns a pointer to context data of the event
  *
@@ -200,7 +196,7 @@ void ptt_event_set_ctx_data(ptt_evt_id_t evt_id, const uint8_t * p_data, uint16_
  *
  *  @return none
  */
-ptt_evt_ctx_data_t * ptt_event_get_p_ctx_data(ptt_evt_id_t evt_id);
+ptt_evt_ctx_data_t *ptt_event_get_p_ctx_data(ptt_evt_id_t evt_id);
 
 /** @brief Copy data to event data
  *
@@ -210,7 +206,7 @@ ptt_evt_ctx_data_t * ptt_event_get_p_ctx_data(ptt_evt_id_t evt_id);
  *
  *  @return none
  */
-void ptt_event_set_data(ptt_evt_id_t evt_id, const uint8_t * p_data, uint16_t len);
+void ptt_event_set_data(ptt_evt_id_t evt_id, const uint8_t *p_data, uint16_t len);
 
 /** @brief Returns a pointer to data of the event
  *
@@ -218,6 +214,7 @@ void ptt_event_set_data(ptt_evt_id_t evt_id, const uint8_t * p_data, uint16_t le
  *
  *  @return none
  */
-ptt_evt_data_t * ptt_event_get_p_data(ptt_evt_id_t evt_id);
+ptt_evt_data_t *ptt_event_get_p_data(ptt_evt_id_t evt_id);
 
 #endif /* PTT_EVENTS_INTERNAL_H__ */
+

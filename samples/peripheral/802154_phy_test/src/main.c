@@ -57,7 +57,7 @@ void ptt_do_reset_ext(void)
     NVIC_SystemReset();
 }
 
-static int setup(const struct device * dev)
+static int setup(const struct device *dev)
 {
     LOG_INF("Setup started");
 
@@ -78,7 +78,8 @@ static int setup(const struct device * dev)
 SYS_INIT(setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
 K_THREAD_DEFINE(rf_id, RF_THREAD_STACKSIZE, rf_thread, NULL, NULL, NULL,
-                RF_THREAD_PRIORITY, 0, 0);
+		RF_THREAD_PRIORITY, 0, 0);
 
 K_THREAD_DEFINE(comm_id, COMM_THREAD_STACKSIZE, comm_proc, NULL, NULL, NULL,
-                COMM_THREAD_PRIORITY, 0, 0);
+		COMM_THREAD_PRIORITY, 0, 0);
+

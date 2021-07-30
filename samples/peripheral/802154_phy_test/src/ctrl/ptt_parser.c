@@ -47,27 +47,27 @@
 #define PARSER_HEXADECIMAL_BASE 16
 #define PARSER_BASE_NOT_FOUND   0xffu
 
-static ptt_ret_t ptt_parser_hex_string_next_byte(const char * p_hex_str, uint8_t * p_out_num);
+static ptt_ret_t ptt_parser_hex_string_next_byte(const char *p_hex_str, uint8_t *p_out_num);
 
-ptt_ret_t ptt_parser_string_to_int(const char * p_str,
-                                   int32_t    * p_out_value,
-                                   uint8_t      base,
-                                   int32_t      min,
-                                   int32_t      max)
+ptt_ret_t ptt_parser_string_to_int(const char *p_str,
+				   int32_t    *p_out_value,
+				   uint8_t      base,
+				   int32_t      min,
+				   int32_t      max)
 {
-    if (NULL == p_str)
+    if (p_str == NULL)
     {
-        return PTT_RET_NULL_PTR;
+	return PTT_RET_NULL_PTR;
     }
 
-    if (NULL == p_out_value)
+    if (p_out_value == NULL)
     {
-        return PTT_RET_NULL_PTR;
+	return PTT_RET_NULL_PTR;
     }
 
     ptt_ret_t ret = PTT_RET_SUCCESS;
 
-    char * p_end;
+    char *p_end;
 
     long out_num = strtol(p_str, &p_end, base);
 
@@ -75,150 +75,148 @@ ptt_ret_t ptt_parser_string_to_int(const char * p_str,
      * is valid." <- from man strtol */
     /* also lets discard LONG_MIN/LONG_MAX values which show strtol failed */
     if (('\0' != *p_end) ||
-        (out_num < min) || (out_num > max) ||
-        (out_num == LONG_MIN) || (out_num == LONG_MAX))
+	(out_num < min) || (out_num > max) ||
+	(out_num == LONG_MIN) || (out_num == LONG_MAX))
     {
-        ret = PTT_RET_INVALID_VALUE;
-    }
-    else
+	ret = PTT_RET_INVALID_VALUE;
+    } else
     {
-        *p_out_value = out_num;
+	*p_out_value = out_num;
     }
 
     return ret;
 }
 
-inline ptt_ret_t ptt_parser_string_to_int32(const char * p_str, int32_t * p_out_value, uint8_t base)
+inline ptt_ret_t ptt_parser_string_to_int32(const char *p_str, int32_t *p_out_value, uint8_t base)
 {
     return ptt_parser_string_to_int(p_str, p_out_value, base, INT32_MIN, INT32_MAX);
 }
 
-inline ptt_ret_t ptt_parser_string_to_byte(const char * p_str, uint8_t * p_out_value, uint8_t base)
+inline ptt_ret_t ptt_parser_string_to_byte(const char *p_str, uint8_t *p_out_value, uint8_t base)
 {
     int32_t   out_value;
     ptt_ret_t ret = ptt_parser_string_to_int(p_str, &out_value, base, INT8_MIN, UINT8_MAX);
 
-    if (PTT_RET_SUCCESS == ret)
+    if (ret == PTT_RET_SUCCESS)
     {
-        *p_out_value = out_value;
+	*p_out_value = out_value;
     }
 
     return ret;
 }
 
-inline ptt_ret_t ptt_parser_string_to_int8(const char * p_str, int8_t * p_out_value, uint8_t base)
+inline ptt_ret_t ptt_parser_string_to_int8(const char *p_str, int8_t *p_out_value, uint8_t base)
 {
     int32_t   out_value;
     ptt_ret_t ret = ptt_parser_string_to_int(p_str, &out_value, base, INT8_MIN, INT8_MAX);
 
-    if (PTT_RET_SUCCESS == ret)
+    if (ret == PTT_RET_SUCCESS)
     {
-        *p_out_value = out_value;
+	*p_out_value = out_value;
     }
 
     return ret;
 }
 
-inline ptt_ret_t ptt_parser_string_to_uint8(const char * p_str, uint8_t * p_out_value, uint8_t base)
+inline ptt_ret_t ptt_parser_string_to_uint8(const char *p_str, uint8_t *p_out_value, uint8_t base)
 {
     int32_t   out_value;
     ptt_ret_t ret = ptt_parser_string_to_int(p_str, &out_value, base, 0, UINT8_MAX);
 
-    if (PTT_RET_SUCCESS == ret)
+    if (ret == PTT_RET_SUCCESS)
     {
-        *p_out_value = out_value;
+	*p_out_value = out_value;
     }
 
     return ret;
 }
 
-inline ptt_ret_t ptt_parser_string_to_int16(const char * p_str, int16_t * p_out_value, uint8_t base)
+inline ptt_ret_t ptt_parser_string_to_int16(const char *p_str, int16_t *p_out_value, uint8_t base)
 {
     int32_t   out_value;
     ptt_ret_t ret = ptt_parser_string_to_int(p_str, &out_value, base, INT16_MIN, INT16_MAX);
 
-    if (PTT_RET_SUCCESS == ret)
+    if (ret == PTT_RET_SUCCESS)
     {
-        *p_out_value = out_value;
+	*p_out_value = out_value;
     }
 
     return ret;
 }
 
-inline ptt_ret_t ptt_parser_string_to_uint16(const char * p_str,
-                                             uint16_t   * p_out_value,
-                                             uint8_t      base)
+inline ptt_ret_t ptt_parser_string_to_uint16(const char *p_str,
+					     uint16_t   *p_out_value,
+					     uint8_t      base)
 {
     int32_t   out_value;
     ptt_ret_t ret = ptt_parser_string_to_int(p_str, &out_value, base, 0, UINT16_MAX);
 
-    if (PTT_RET_SUCCESS == ret)
+    if (ret == PTT_RET_SUCCESS)
     {
-        *p_out_value = out_value;
+	*p_out_value = out_value;
     }
 
     return ret;
 }
 
-ptt_ret_t ptt_parser_hex_string_to_uint8_array(const char * p_hex_str,
-                                               uint8_t    * p_out_value,
-                                               uint8_t      max_len,
-                                               uint8_t    * p_written_len)
+ptt_ret_t ptt_parser_hex_string_to_uint8_array(const char *p_hex_str,
+					       uint8_t    *p_out_value,
+					       uint8_t      max_len,
+					       uint8_t    *p_written_len)
 {
-    if (NULL == p_hex_str)
+    if (p_hex_str == NULL)
     {
-        return PTT_RET_NULL_PTR;
+	return PTT_RET_NULL_PTR;
     }
 
-    if (NULL == p_out_value)
+    if (p_out_value == NULL)
     {
-        return PTT_RET_NULL_PTR;
+	return PTT_RET_NULL_PTR;
     }
 
-    if (0 == max_len)
+    if (max_len == 0)
     {
-        return PTT_RET_NO_FREE_SLOT;
+	return PTT_RET_NO_FREE_SLOT;
     }
 
     /* cut away prefix, if present */
     if ((p_hex_str[0] == '0') &&
-        ((p_hex_str[1] == 'X') || (p_hex_str[1] == 'x')))
+	((p_hex_str[1] == 'X') || (p_hex_str[1] == 'x')))
     {
-        p_hex_str += 2;
+	p_hex_str += 2;
     }
 
     /* one byte is represented by 2 ASCII symbols => we expect even number of elements */
     if ((strlen(p_hex_str) % 2) || (!strlen(p_hex_str)))
     {
-        return PTT_RET_INVALID_VALUE;
+	return PTT_RET_INVALID_VALUE;
     }
 
     ptt_ret_t ret      = PTT_RET_SUCCESS;
     uint8_t   byte_cnt = 0;
 
-    while ((PTT_RET_SUCCESS == ret) && strlen(p_hex_str))
+    while ((ret == PTT_RET_SUCCESS) && strlen(p_hex_str))
     {
-        if (byte_cnt < max_len)
-        {
-            ret        = ptt_parser_hex_string_next_byte(p_hex_str, &(p_out_value[byte_cnt]));
-            p_hex_str += 2;
-            ++byte_cnt;
-        }
-        else
-        {
-            ret = PTT_RET_NO_FREE_SLOT;
-        }
+	if (byte_cnt < max_len)
+	{
+	    ret        = ptt_parser_hex_string_next_byte(p_hex_str, &(p_out_value[byte_cnt]));
+	    p_hex_str += 2;
+	    ++byte_cnt;
+	} else
+	{
+	    ret = PTT_RET_NO_FREE_SLOT;
+	}
     }
 
-    if (NULL != p_written_len)
+    if (p_written_len != NULL)
     {
-        *p_written_len = byte_cnt;
+	*p_written_len = byte_cnt;
     }
 
     return ret;
 }
 
-static ptt_ret_t ptt_parser_hex_string_next_byte(const char * p_hex_str, uint8_t * p_out_num)
+static ptt_ret_t ptt_parser_hex_string_next_byte(const char *p_hex_str, uint8_t *p_out_num)
 {
     ptt_ret_t ret           = PTT_RET_SUCCESS;
     char      p_hex_byte[3] = {0};
@@ -227,21 +225,21 @@ static ptt_ret_t ptt_parser_hex_string_next_byte(const char * p_hex_str, uint8_t
     p_hex_byte[1] = p_hex_str[1];
     p_hex_byte[2] = '\0';
 
-    char * p_end;
+    char *p_end;
     long   out_num = strtol(p_hex_byte, &p_end, PARSER_HEXADECIMAL_BASE);
 
     /* "In particular, if *nptr is not '\0' but **endptr is '\0' on return, the entire string
      * is valid." <- from man strtol */
     if ((*p_end != '\0') ||
-        (out_num < INT8_MIN) ||
-        (out_num > UINT8_MAX))
+	(out_num < INT8_MIN) ||
+	(out_num > UINT8_MAX))
     {
-        ret = PTT_RET_INVALID_VALUE;
-    }
-    else
+	ret = PTT_RET_INVALID_VALUE;
+    } else
     {
-        *p_out_num = (uint8_t)out_num;
+	*p_out_num = (uint8_t)out_num;
     }
 
     return ret;
 }
+

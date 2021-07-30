@@ -72,8 +72,7 @@
 #define PTT_PAYLOAD_LEN_GET_ANTENNA  1
 
 /** OTA commands codes */
-typedef enum
-{
+typedef enum {
     PTT_CMD_PING                          = 0x00, /**< ping command */
     PTT_CMD_ACK                           = 0x01, /**< ack command */
     PTT_CMD_SET_CHANNEL                   = 0x02, /**< set DUT radio channel command */
@@ -102,7 +101,7 @@ typedef enum
  *  @return true - packet header is valid
  *  @return false - packet header isn't valid
  */
-ptt_bool_t ptt_proto_check_packet(const uint8_t * p_pkt, ptt_pkt_len_t len);
+ptt_bool_t ptt_proto_check_packet(const uint8_t *p_pkt, ptt_pkt_len_t len);
 
 /** @brief Fill a packet with protocol header and provided command
  *
@@ -112,20 +111,21 @@ ptt_bool_t ptt_proto_check_packet(const uint8_t * p_pkt, ptt_pkt_len_t len);
  *
  *  @return ptt_pkt_len_t - length of header with command
  */
-ptt_pkt_len_t ptt_proto_construct_header(uint8_t * p_pkt, ptt_cmd_t cmd,
-                                         ptt_pkt_len_t pkt_max_size);
+ptt_pkt_len_t ptt_proto_construct_header(uint8_t *p_pkt, ptt_cmd_t cmd,
+					 ptt_pkt_len_t pkt_max_size);
 
 /* helper functions to convert between protocol big-endian format and host endianness */
-void ptt_htobe16(uint8_t * p_src, uint8_t * p_dst);
-void ptt_htobe32(uint8_t * p_src, uint8_t * p_dst);
-void ptt_betoh16(uint8_t * p_src, uint8_t * p_dst);
-void ptt_betoh32(uint8_t * p_src, uint8_t * p_dst);
+void ptt_htobe16(uint8_t *p_src, uint8_t *p_dst);
+void ptt_htobe32(uint8_t *p_src, uint8_t *p_dst);
+void ptt_betoh16(uint8_t *p_src, uint8_t *p_dst);
+void ptt_betoh32(uint8_t *p_src, uint8_t *p_dst);
 
-uint16_t ptt_htobe16_val(uint8_t * p_src);
-uint32_t ptt_htobe32_val(uint8_t * p_src);
-uint16_t ptt_betoh16_val(uint8_t * p_src);
-uint32_t ptt_betoh32_val(uint8_t * p_src);
+uint16_t ptt_htobe16_val(uint8_t *p_src);
+uint32_t ptt_htobe32_val(uint8_t *p_src);
+uint16_t ptt_betoh16_val(uint8_t *p_src);
+uint32_t ptt_betoh32_val(uint8_t *p_src);
 
-void ptt_htole16(uint8_t * p_src, uint8_t * p_dst);
+void ptt_htole16(uint8_t *p_src, uint8_t *p_dst);
 
 #endif /* PTT_PROTO_H__ */
+

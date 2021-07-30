@@ -49,8 +49,7 @@
 #include "ptt_errors.h"
 
 /** possible states of library in DUT mode */
-typedef enum
-{
+typedef enum {
     DUT_STATE_IDLE = 0,               /**< waiting for next command */
     DUT_STATE_ACK_SENDING,            /**< rf module send ack command */
     DUT_STATE_POWER_SENDING,          /**< DUT sends power */
@@ -64,3 +63,4 @@ typedef enum
 } dut_state_t;
 
 #endif  /* PTT_MODE_ZB_PERF_DUT_H__ */
+

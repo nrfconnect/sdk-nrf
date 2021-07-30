@@ -52,6 +52,7 @@ config HW_VERSION
 
 config ANTENNA_DIVERSITY
 	bool "Enable Antenna Diversity (Not Yet Supported)"
+	default n
 	
 if ANTENNA_DIVERSITY
 

@@ -154,8 +154,7 @@
 #define UART_SET_EXTENDED_SYM_NUM         18
 
 /** UART commands */
-typedef enum
-{
+typedef enum {
     PTT_UART_CMD_R_PING = 0x00,  /**< send ping to DUT */
     PTT_UART_CMD_L_PING_TIMEOUT, /**< set ping timeout to CMD */
     PTT_UART_CMD_SETCHANNEL,     /**< set channel to CMD and DUT */
@@ -207,17 +206,15 @@ typedef enum
 } ptt_uart_cmd_t;
 
 /** Actions to perform with payload before sending it to command handler */
-typedef enum
-{
+typedef enum {
     PTT_UART_PAYLOAD_PARSED_AS_BYTES, /**< payload will be parsed as bytes separated by @ref UART_TEXT_PAYLOAD_DELIMETERS before it will be send to command handler */
     PTT_UART_PAYLOAD_RAW,             /**< payload will be written as raw ASCII and command handler will be responsible for parsing */
     PTT_UART_PAYLOAD_N,               /**< actions types count */
 } ptt_uart_payload_t;
 
 /** command name and additional info for text command parsing */
-typedef struct
-{
-    const char       * name;         /**< string containing command name */
+typedef struct {
+    const char       *name;         /**< string containing command name */
     ptt_uart_cmd_t     code;         /**< command code */
     uint8_t            payload_len;  /**< payload length for this command in space separated words */
     ptt_uart_payload_t payload_type; /**< action to perform with payload before sending it to command handler */
@@ -230,7 +227,7 @@ typedef struct
  *
  *  @return PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_uart_send_packet(const uint8_t * p_pkt, ptt_pkt_len_t len);
+ptt_ret_t ptt_uart_send_packet(const uint8_t *p_pkt, ptt_pkt_len_t len);
 
 /** @brief Send @ref PTT_UART_PROMPT_STR over UART
  *
@@ -257,3 +254,4 @@ void ptt_handler_busy(void);
 void ptt_handler_free(void);
 
 #endif /* PTT_UART_H__ */
+
