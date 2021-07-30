@@ -157,6 +157,7 @@ Kconfig*                                  @tejlmand
 /tests/bluetooth/tester/                  @joerchan @carlescufi @trond-snekvik
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/lib/modem_jwt/                     @SeppoTakalo
+/tests/subsys/profiler/                   @pdunaj @MarekPieta
 /tests/subsys/zigbee/                     @tomchy @sebastiandraus
 /tests/subsys/bluetooth/mesh/             @joerchan @trond-snekvik
 /zephyr/                                  @carlescufi
