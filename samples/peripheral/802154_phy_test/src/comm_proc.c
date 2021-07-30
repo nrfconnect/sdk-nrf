@@ -113,10 +113,8 @@ void comm_input_timeout_handler(struct k_timer *timer)
 
 static void comm_symbols_process(text_proc_t *p_text_proc, const uint8_t *buf, uint32_t len)
 {
-    for (uint32_t cnt = 0; cnt < len; cnt++)
-    {
-	if (('\n' == buf[cnt]) || ('\r' == buf[cnt]))
-	{
+    for (uint32_t cnt = 0; cnt < len; cnt++) {
+	if (('\n' == buf[cnt]) || ('\r' == buf[cnt])) {
 	    LOG_DBG("push packet to lib via newline");
 	    /* Stop the timeout timer */
 	    k_timer_stop(&p_text_proc->timer);
@@ -124,13 +122,11 @@ static void comm_symbols_process(text_proc_t *p_text_proc, const uint8_t *buf, u
 
 	    p_text_proc->state = INPUT_STATE_TEXT_PROCESSING;
 	break;
-	} else
-	{
+	} else {
 	    p_text_proc->buf[p_text_proc->len] = buf[cnt];
 	    ++p_text_proc->len;
 
-	if (p_text_proc->len >= COMM_MAX_TEXT_DATA_SIZE)
-	{
+	if (p_text_proc->len >= COMM_MAX_TEXT_DATA_SIZE) {
 		LOG_ERR("received %d bytes and do not able to parse it, freeing input buffer",
 			COMM_MAX_TEXT_DATA_SIZE);
 
@@ -172,8 +168,7 @@ void comm_init(void)
 static int32_t comm_send_cb(const uint8_t *p_pkt, ptt_pkt_len_t len, bool add_crlf)
 {
     if ((add_crlf && (len >= (COMM_TX_BUFFER_SIZE - COMM_APPENDIX_SIZE))) ||
-	(!add_crlf && (len >= COMM_TX_BUFFER_SIZE)))
-    {
+	(!add_crlf && (len >= COMM_TX_BUFFER_SIZE))) {
 	LOG_WRN("comm_send_cb: not enough of tx buffer size");
 	return -1;
     }
