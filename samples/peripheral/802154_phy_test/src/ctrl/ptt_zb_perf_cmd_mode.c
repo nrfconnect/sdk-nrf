@@ -49,7 +49,7 @@ ptt_ret_t ptt_zb_perf_cmd_mode_init(void)
     cmd_ota_cmd_init();
     cmd_uart_cmd_init();
 
-    ptt_ext_evts_handlers_t * p_handlers = ptt_ctrl_get_p_handlers();
+    ptt_ext_evts_handlers_t *p_handlers = ptt_ctrl_get_p_handlers();
 
     p_handlers->rf_tx_finished    = cmd_rf_tx_finished;
     p_handlers->rf_tx_failed      = cmd_rf_tx_failed;
@@ -75,3 +75,4 @@ ptt_ret_t ptt_zb_perf_cmd_mode_uninit(void)
     PTT_TRACE("ptt_zb_perf_cmd_mode_uninit -<\n");
     return PTT_RET_SUCCESS;
 }
+

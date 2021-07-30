@@ -50,108 +50,107 @@ LOG_MODULE_REGISTER(comm);
 
 #include "ptt_uart_api.h"
 
-static int32_t comm_send_cb(const uint8_t * p_pkt, ptt_pkt_len_t len, bool add_crlf);
+static int32_t comm_send_cb(const uint8_t *p_pkt, ptt_pkt_len_t len, bool add_crlf);
 
-static void comm_symbols_process(text_proc_t * p_text_proc, const uint8_t * buf, uint32_t len);
-static inline void text_process(text_proc_t * p_text_proc);
-static inline void input_state_reset(text_proc_t * text_proc);
+static void comm_symbols_process(text_proc_t *p_text_proc, const uint8_t *buf, uint32_t len);
+static inline void text_process(text_proc_t *p_text_proc);
+static inline void input_state_reset(text_proc_t *text_proc);
 
-void comm_input_process(text_proc_t * p_text_proc, const uint8_t * buf, uint32_t len)
+void comm_input_process(text_proc_t *p_text_proc, const uint8_t *buf, uint32_t len)
 {
     switch (p_text_proc->state)
     {
-        case INPUT_STATE_IDLE:
-            if (0 != p_text_proc->len)
-            {
-                LOG_WRN("p_text_proc->len is not 0 when input state is idle");
-                p_text_proc->len = 0;
-            }
+	case INPUT_STATE_IDLE:
+	    if (p_text_proc->len != 0)
+	    {
+		LOG_WRN("p_text_proc->len is not 0 when input state is idle");
+		p_text_proc->len = 0;
+	    }
 
-            /* start the timer after first received symbol */
-            k_timer_start(&p_text_proc->timer, K_MSEC(COMM_PER_COMMAND_TIMEOUT), K_MSEC(0));
+	    /* start the timer after first received symbol */
+	    k_timer_start(&p_text_proc->timer, K_MSEC(COMM_PER_COMMAND_TIMEOUT), K_MSEC(0));
 
-            p_text_proc->state = INPUT_STATE_WAITING_FOR_NEWLINE;
+	    p_text_proc->state = INPUT_STATE_WAITING_FOR_NEWLINE;
 
-            comm_symbols_process(p_text_proc, buf, len);
-            break;
+	    comm_symbols_process(p_text_proc, buf, len);
+	    break;
 
-        case INPUT_STATE_WAITING_FOR_NEWLINE:
-            comm_symbols_process(p_text_proc, buf, len);
-            break;
+	case INPUT_STATE_WAITING_FOR_NEWLINE:
+	    comm_symbols_process(p_text_proc, buf, len);
+	    break;
 
-        case INPUT_STATE_TEXT_PROCESSING:
-            LOG_WRN(
-                "received a command when processing previous one, discarded");
-            break;
+	case INPUT_STATE_TEXT_PROCESSING:
+	    LOG_WRN(
+		"received a command when processing previous one, discarded");
+	    break;
 
-        default:
-            LOG_ERR("incorrect input state");
-            break;
+	default:
+	    LOG_ERR("incorrect input state");
+	    break;
     }
 }
 
 K_FIFO_DEFINE(text_processing_fifo);
 
-void comm_text_processor_fn(struct k_work * work)
+void comm_text_processor_fn(struct k_work *work)
 {
     LOG_DBG("Called work queue function");
-    text_proc_t * p_text_proc = CONTAINER_OF(work, text_proc_t, work);
+    text_proc_t *p_text_proc = CONTAINER_OF(work, text_proc_t, work);
 
     /* force string termination for further processing */
     p_text_proc->buf[p_text_proc->len] = '\0';
     LOG_DBG("received packet to lib: len %d, %s",
-            p_text_proc->len,
-            log_strdup(p_text_proc->buf));
+	    p_text_proc->len,
+	    log_strdup(p_text_proc->buf));
     text_process(p_text_proc);
 }
 
-void comm_input_timeout_handler(struct k_timer * timer)
+void comm_input_timeout_handler(struct k_timer *timer)
 {
     LOG_DBG("push packet to lib via timer");
-    text_proc_t * p_text_proc = CONTAINER_OF(timer, text_proc_t, timer);
+    text_proc_t *p_text_proc = CONTAINER_OF(timer, text_proc_t, timer);
 
     k_work_submit(&p_text_proc->work);
 }
 
-static void comm_symbols_process(text_proc_t * p_text_proc, const uint8_t * buf, uint32_t len)
+static void comm_symbols_process(text_proc_t *p_text_proc, const uint8_t *buf, uint32_t len)
 {
     for (uint32_t cnt = 0; cnt < len; cnt++)
     {
-        if (('\n' == buf[cnt]) || ('\r' == buf[cnt]))
-        {
-            LOG_DBG("push packet to lib via newline");
-            /* Stop the timeout timer */
-            k_timer_stop(&p_text_proc->timer);
-            k_work_submit(&p_text_proc->work);
+	if (('\n' == buf[cnt]) || ('\r' == buf[cnt]))
+	{
+	    LOG_DBG("push packet to lib via newline");
+	    /* Stop the timeout timer */
+	    k_timer_stop(&p_text_proc->timer);
+	    k_work_submit(&p_text_proc->work);
 
-            p_text_proc->state = INPUT_STATE_TEXT_PROCESSING;
-            break;
-        }
-        else
-        {
-            p_text_proc->buf[p_text_proc->len] = buf[cnt];
-            ++p_text_proc->len;
+	    p_text_proc->state = INPUT_STATE_TEXT_PROCESSING;
+	    break;
+        } else
+	{
+	    p_text_proc->buf[p_text_proc->len] = buf[cnt];
+	    ++p_text_proc->len;
 
-            if (p_text_proc->len >= COMM_MAX_TEXT_DATA_SIZE)
-            {
-                LOG_ERR("received %d bytes and do not able to parse it, freeing input buffer",
-                        COMM_MAX_TEXT_DATA_SIZE);
+	    if (p_text_proc->len >= COMM_MAX_TEXT_DATA_SIZE)
+	    {
+		LOG_ERR("received %d bytes and do not able to parse it, freeing input buffer",
+			COMM_MAX_TEXT_DATA_SIZE);
 
-                /* Stop the timeout timer */
-                k_timer_stop(&p_text_proc->timer);
-                input_state_reset(p_text_proc);
-            }
-        }
+		/* Stop the timeout timer */
+		k_timer_stop(&p_text_proc->timer);
+		input_state_reset(p_text_proc);
+	    }
+	}
     }
 }
 
-static inline void input_state_reset(text_proc_t * p_text_proc)
+static inline void input_state_reset(text_proc_t *p_text_proc)
 {
     p_text_proc->len   = 0;
     p_text_proc->state = INPUT_STATE_IDLE;
 }
 
-static inline void text_process(text_proc_t * p_text_proc)
+static inline void text_process(text_proc_t *p_text_proc)
 {
     ptt_uart_push_packet((uint8_t *)p_text_proc->buf, p_text_proc->len);
     input_state_reset(p_text_proc);
@@ -172,13 +171,13 @@ void comm_init(void)
 #endif
 }
 
-static int32_t comm_send_cb(const uint8_t * p_pkt, ptt_pkt_len_t len, bool add_crlf)
+static int32_t comm_send_cb(const uint8_t *p_pkt, ptt_pkt_len_t len, bool add_crlf)
 {
     if ((add_crlf && (len >= (COMM_TX_BUFFER_SIZE - COMM_APPENDIX_SIZE))) ||
-        (!add_crlf && (len >= COMM_TX_BUFFER_SIZE)))
+	(!add_crlf && (len >= COMM_TX_BUFFER_SIZE)))
     {
-        LOG_WRN("comm_send_cb: not enough of tx buffer size");
-        return -1;
+	LOG_WRN("comm_send_cb: not enough of tx buffer size");
+	return -1;
     }
 
     uart_send(p_pkt, len, add_crlf);
@@ -196,3 +195,4 @@ void comm_proc(void)
     usb_task();
 #endif
 }
+

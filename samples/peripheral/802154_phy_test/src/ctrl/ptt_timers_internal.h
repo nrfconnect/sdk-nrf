@@ -45,8 +45,7 @@
 #include "ptt_types.h"
 
 /** timer */
-typedef struct
-{
+typedef struct {
     ptt_time_t   timeout; /**< timeout, when expires user function will be called */
     ptt_timer_cb cb;      /**< function to be called when timer is expired */
     ptt_evt_id_t evt_id;  /**< event id which will be passed to user function */
@@ -54,8 +53,7 @@ typedef struct
 } ptt_timer_t;
 
 /** context for timer */
-typedef struct
-{
+typedef struct {
     ptt_timer_t timer_pool[PTT_TIMER_POOL_N]; /**< array of timers */
     ptt_time_t  last_update_time;             /**< time of last update of used timers in the pool */
     ptt_time_t  last_timeout;                 /**< timeout with which call_me_cb was called last time */
@@ -95,3 +93,4 @@ void ptt_timers_reset_all(void);
 void ptt_timers_process(ptt_time_t current_time);
 
 #endif /* PTT_TIMERS_INTERNAL_H__ */
+

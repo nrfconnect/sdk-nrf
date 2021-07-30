@@ -45,7 +45,7 @@
 #include "ptt_types_internal.h"
 
 /** type definition of function to be call when timer is expired */
-typedef void (* ptt_timer_cb)(ptt_evt_id_t evt_id);
+typedef void (*ptt_timer_cb)(ptt_evt_id_t evt_id);
 
 /** @brief Add a timer to the timer pool
  *
@@ -64,3 +64,4 @@ ptt_ret_t ptt_timer_add(ptt_time_t timeout, ptt_timer_cb cb, ptt_evt_id_t evt_id
 void ptt_timer_remove(ptt_evt_id_t evt_id);
 
 #endif /* PTT_TIMERS_H__ */
+

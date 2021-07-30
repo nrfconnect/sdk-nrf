@@ -64,6 +64,7 @@ void ptt_uart_uninit(void);
  *
  *  @return none
  */
-void ptt_uart_push_packet(const uint8_t * p_pkt, ptt_pkt_len_t len);
+void ptt_uart_push_packet(const uint8_t *p_pkt, ptt_pkt_len_t len);
 
 #endif /* PTT_UART_API_H__ */
+

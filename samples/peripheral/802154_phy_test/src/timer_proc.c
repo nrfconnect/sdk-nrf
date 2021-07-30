@@ -45,14 +45,14 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(timer);
 
-static void ptt_process_timer_handler(struct k_timer * timer);
-static void schedule_ptt_process(struct k_work * work);
+static void ptt_process_timer_handler(struct k_timer *timer);
+static void schedule_ptt_process(struct k_work *work);
 
 K_TIMER_DEFINE(m_app_timer, ptt_process_timer_handler, NULL);
 
 K_WORK_DEFINE(schedule_ptt_processor, schedule_ptt_process);
 
-static void ptt_process_timer_handler(struct k_timer * timer)
+static void ptt_process_timer_handler(struct k_timer *timer)
 {
     k_work_submit(&schedule_ptt_processor);
 }
@@ -70,20 +70,20 @@ ptt_time_t ptt_get_max_time(void)
 
 void launch_ptt_process_timer(ptt_time_t timeout)
 {
-    if (0 == timeout)
+    if (timeout == 0)
     {
-        /* schedule immediately */
-        k_work_submit(&schedule_ptt_processor);
-    }
-    else
+	/* schedule immediately */
+	k_work_submit(&schedule_ptt_processor);
+    } else
     {
-        /* Schedule a single shot timer to trigger after the timeout */
-        k_timer_start(&m_app_timer, K_MSEC(timeout), K_MSEC(0));
+	/* Schedule a single shot timer to trigger after the timeout */
+	k_timer_start(&m_app_timer, K_MSEC(timeout), K_MSEC(0));
     }
 }
 
 /* scheduler context */
-static void schedule_ptt_process(struct k_work * work)
+static void schedule_ptt_process(struct k_work *work)
 {
     ptt_process(ptt_get_current_time());
 }
+

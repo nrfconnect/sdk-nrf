@@ -48,13 +48,12 @@
 #include "ptt_timers_internal.h"
 
 /** type definition of function to handle event */
-typedef void (* ptt_ext_evt_handler)(ptt_evt_id_t evt_id);
+typedef void (*ptt_ext_evt_handler)(ptt_evt_id_t evt_id);
 
 /** handlers for each event
  *  NULL if unsupported by current mode
  */
-typedef struct
-{
+typedef struct {
     ptt_ext_evt_handler rf_tx_finished;    /**< packet transmission finished */
     ptt_ext_evt_handler rf_tx_failed;      /**< packet transmission failed */
     ptt_ext_evt_handler rf_tx_started;     /**< packet transmission started */
@@ -68,8 +67,7 @@ typedef struct
 } ptt_ext_evts_handlers_t;
 
 /** control module context */
-typedef struct
-{
+typedef struct {
     ptt_call_me_cb_t        call_me_cb;    /**< callback from application to be call when need to update nearest timeout */
     ptt_mode_t              current_mode;  /**< current device mode */
     ptt_ext_evts_handlers_t mode_handlers; /**< event handlers */
@@ -80,10 +78,10 @@ typedef struct
 } ptt_ctrl_t;
 
 /* Get timer context */
-ptt_timer_ctx_t * ptt_ctrl_get_p_timer_ctx(void);
+ptt_timer_ctx_t *ptt_ctrl_get_p_timer_ctx(void);
 
 /* Get event context */
-ptt_evt_ctx_t * ptt_ctrl_get_p_evt_ctx(void);
+ptt_evt_ctx_t *ptt_ctrl_get_p_evt_ctx(void);
 
 /* Call call_me_cb - an application callback with given timeout */
 void ptt_ctrl_call_me_cb(ptt_time_t timeout);
@@ -98,7 +96,7 @@ void ptt_ctrl_set_rsp_timeout(ptt_time_t timeout);
 ptt_time_t ptt_ctrl_get_max_time(void);
 
 /* Get SoC temperature */
-ptt_ret_t ptt_ctrl_get_temp(int32_t * p_temp);
+ptt_ret_t ptt_ctrl_get_temp(int32_t *p_temp);
 
 /* Get current mode */
 ptt_mode_t ptt_ctrl_get_current_mode(void);
@@ -116,7 +114,7 @@ uint8_t ptt_ctrl_get_hw_version(void);
 uint8_t ptt_ctrl_get_sw_version(void);
 
 /* Get external events handlers structure */
-ptt_ext_evts_handlers_t * ptt_ctrl_get_p_handlers(void);
+ptt_ext_evts_handlers_t *ptt_ctrl_get_p_handlers(void);
 
 /* Disable/enable DC/DC mode */
 void ptt_ctrl_set_dcdc(bool activate);
@@ -170,8 +168,8 @@ ptt_ext_evt_handler ptt_ctrl_get_handler_rf_ed_failed(void);
  *
  *  @return - None
  */
-void ptt_random_vector_generate(uint8_t * p_buff,
-                                uint8_t   requested_size);
+void ptt_random_vector_generate(uint8_t *p_buff,
+				uint8_t   requested_size);
 
 /* Change state of LED indicating received packet to ON */
 void ptt_ctrl_led_indication_on(void);
@@ -180,3 +178,4 @@ void ptt_ctrl_led_indication_on(void);
 void ptt_ctrl_led_indication_off(void);
 
 #endif /* PTT_CTRL_INTERNAL_H__ */
+

@@ -56,11 +56,11 @@
  *
  *  @return ptt_ret_t returns PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_parser_string_to_int(const char * p_str,
-                                   int32_t    * p_out_value,
-                                   uint8_t      base,
-                                   int32_t      min,
-                                   int32_t      max);
+ptt_ret_t ptt_parser_string_to_int(const char *p_str,
+				   int32_t    *p_out_value,
+				   uint8_t      base,
+				   int32_t      min,
+				   int32_t      max);
 
 /** @brief Converts string to uint8_t, will be successful for all value that fit in one byte
  *
@@ -73,7 +73,7 @@ ptt_ret_t ptt_parser_string_to_int(const char * p_str,
  *
  *  @return ptt_ret_t returns PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_parser_string_to_byte(const char * p_str, uint8_t * p_out_value, uint8_t base);
+ptt_ret_t ptt_parser_string_to_byte(const char *p_str, uint8_t *p_out_value, uint8_t base);
 
 /** @brief Converts string to int32_t
  *
@@ -85,7 +85,7 @@ ptt_ret_t ptt_parser_string_to_byte(const char * p_str, uint8_t * p_out_value, u
  *
  *  @return ptt_ret_t returns PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_parser_string_to_int32(const char * p_str, int32_t * p_out_value, uint8_t base);
+ptt_ret_t ptt_parser_string_to_int32(const char *p_str, int32_t *p_out_value, uint8_t base);
 
 /** @brief Converts string to int8_t
  *
@@ -97,7 +97,7 @@ ptt_ret_t ptt_parser_string_to_int32(const char * p_str, int32_t * p_out_value, 
  *
  *  @return ptt_ret_t returns PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_parser_string_to_int8(const char * p_str, int8_t * p_out_value, uint8_t base);
+ptt_ret_t ptt_parser_string_to_int8(const char *p_str, int8_t *p_out_value, uint8_t base);
 
 /** @brief Converts string to uint8_t
  *
@@ -109,7 +109,7 @@ ptt_ret_t ptt_parser_string_to_int8(const char * p_str, int8_t * p_out_value, ui
  *
  *  @return ptt_ret_t returns PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_parser_string_to_uint8(const char * p_str, uint8_t * p_out_value, uint8_t base);
+ptt_ret_t ptt_parser_string_to_uint8(const char *p_str, uint8_t *p_out_value, uint8_t base);
 
 /** @brief Converts string to int16_t
  *
@@ -121,7 +121,7 @@ ptt_ret_t ptt_parser_string_to_uint8(const char * p_str, uint8_t * p_out_value, 
  *
  *  @return ptt_ret_t returns PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_parser_string_to_int16(const char * p_str, int16_t * p_out_value, uint8_t base);
+ptt_ret_t ptt_parser_string_to_int16(const char *p_str, int16_t *p_out_value, uint8_t base);
 
 /** @brief Converts string to uint16_t
  *
@@ -133,7 +133,7 @@ ptt_ret_t ptt_parser_string_to_int16(const char * p_str, int16_t * p_out_value, 
  *
  *  @return ptt_ret_t returns PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_parser_string_to_uint16(const char * p_str, uint16_t * p_out_value, uint8_t base);
+ptt_ret_t ptt_parser_string_to_uint16(const char *p_str, uint16_t *p_out_value, uint8_t base);
 
 /** @brief Converts string of hexadecimal values to array of uint8_t
  *
@@ -147,9 +147,10 @@ ptt_ret_t ptt_parser_string_to_uint16(const char * p_str, uint16_t * p_out_value
  *
  *  @return ptt_ret_t returns PTT_RET_SUCCESS, or error code
  */
-ptt_ret_t ptt_parser_hex_string_to_uint8_array(const char * p_hex_str,
-                                               uint8_t    * p_out_value,
-                                               uint8_t      max_len,
-                                               uint8_t    * p_written_len);
+ptt_ret_t ptt_parser_hex_string_to_uint8_array(const char *p_hex_str,
+					       uint8_t    *p_out_value,
+					       uint8_t      max_len,
+					       uint8_t    *p_written_len);
 
 #endif /* PTT_PARSER_INTERNAL_H__ */
+

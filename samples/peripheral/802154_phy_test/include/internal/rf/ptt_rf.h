@@ -56,23 +56,20 @@
 #define PTT_EXTENDED_ADDRESS_SIZE (8u)
 
 /* received packets statistic */
-typedef struct
-{
+typedef struct {
     uint32_t total_pkts; /**< total received packets */
     uint32_t total_lqi;  /**< sum of lqi of received packets */
     uint32_t total_rssi; /**< sum of rssi of received packets */
 } ptt_rf_stat_t;
 
 /** payload for `custom ltx` command */
-typedef struct
-{
+typedef struct {
     uint8_t arr[PTT_CUSTOM_LTX_PAYLOAD_MAX_SIZE]; /**< raw PHY packet */
     uint8_t len;                                  /**< length of used part of arr */
 } ptt_ltx_payload_t;
 
 /* information that came with the packet */
-typedef struct
-{
+typedef struct {
     uint8_t lqi;
     int8_t  rssi;
 } ptt_rf_packet_info_t;
@@ -110,8 +107,8 @@ void ptt_rf_reset(void);
  *  @return ptt_ret_t - PTT_RET_SUCCESS or error
  */
 ptt_ret_t ptt_rf_send_packet(ptt_evt_id_t    evt_id,
-                             const uint8_t * p_pkt,
-                             ptt_pkt_len_t   len);
+			     const uint8_t *p_pkt,
+			     ptt_pkt_len_t   len);
 
 /** @brief Set channel mask to radio driver
  *
@@ -138,7 +135,7 @@ ptt_ret_t ptt_rf_set_channel(ptt_evt_id_t evt_id, uint8_t channel);
  *
  *  @return ptt_ret_t - PTT_RET_SUCCESS or error
  */
-ptt_ret_t ptt_rf_set_short_address(ptt_evt_id_t evt_id, const uint8_t * p_short_addr);
+ptt_ret_t ptt_rf_set_short_address(ptt_evt_id_t evt_id, const uint8_t *p_short_addr);
 
 /** @brief Set extended address to radio driver
  *
@@ -147,7 +144,7 @@ ptt_ret_t ptt_rf_set_short_address(ptt_evt_id_t evt_id, const uint8_t * p_short_
  *
  *  @return ptt_ret_t - PTT_RET_SUCCESS or error
  */
-ptt_ret_t ptt_rf_set_extended_address(ptt_evt_id_t evt_id, const uint8_t * p_extended_addr);
+ptt_ret_t ptt_rf_set_extended_address(ptt_evt_id_t evt_id, const uint8_t *p_extended_addr);
 
 /** @brief Set pan id to radio driver
  *
@@ -156,7 +153,7 @@ ptt_ret_t ptt_rf_set_extended_address(ptt_evt_id_t evt_id, const uint8_t * p_ext
  *
  *  @return ptt_ret_t - PTT_RET_SUCCESS or error
  */
-ptt_ret_t ptt_rf_set_pan_id(ptt_evt_id_t evt_id, const uint8_t * p_pan_id);
+ptt_ret_t ptt_rf_set_pan_id(ptt_evt_id_t evt_id, const uint8_t *p_pan_id);
 
 /** @brief Returns number of current channel
  *
@@ -233,7 +230,7 @@ ptt_ret_t ptt_rf_rssi_measure_begin(ptt_evt_id_t evt_id);
  *
  *  @return ptt_ret_t - PTT_RET_SUCCESS or error
  */
-ptt_ret_t ptt_rf_rssi_last_get(ptt_evt_id_t evt_id, ptt_rssi_t * rssi);
+ptt_ret_t ptt_rf_rssi_last_get(ptt_evt_id_t evt_id, ptt_rssi_t *rssi);
 
 /** @brief Convert channel bitmask into a channel number
  *
@@ -276,8 +273,8 @@ ptt_rf_stat_t ptt_rf_get_stat_report(void);
  *  @return ptt_ret_t - PTT_RET_SUCCESS or error
  */
 ptt_ret_t ptt_rf_start_modulated_stream(ptt_evt_id_t    evt_id,
-                                        const uint8_t * p_pkt,
-                                        ptt_pkt_len_t   len);
+					const uint8_t *p_pkt,
+					ptt_pkt_len_t   len);
 
 /** @brief Stop modulated stream transmission
  *
@@ -309,7 +306,7 @@ ptt_ret_t ptt_rf_stop_continuous_carrier(ptt_evt_id_t evt_id);
  *
  *  @return ptt_ltx_payload_t * pointer to payload
  */
-ptt_ltx_payload_t * ptt_rf_get_custom_ltx_payload();
+ptt_ltx_payload_t *ptt_rf_get_custom_ltx_payload(void);
 
 /** @brief Change radio state to receiving
  *
@@ -328,3 +325,4 @@ ptt_ret_t ptt_rf_receive(void);
 ptt_ret_t ptt_rf_sleep(void);
 
 #endif /* PTT_RF_H__ */
+

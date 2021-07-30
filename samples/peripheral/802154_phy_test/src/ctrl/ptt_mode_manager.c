@@ -61,29 +61,28 @@ ptt_ret_t ptt_mode_switch(ptt_mode_t new_mode)
 
     if (new_mode >= PTT_MODE_N)
     {
-        PTT_TRACE("ptt_mode_switch: invalid new_mode %d\n", new_mode);
-        ret = PTT_RET_INVALID_VALUE;
-    }
-    else
+	PTT_TRACE("ptt_mode_switch: invalid new_mode %d\n", new_mode);
+	ret = PTT_RET_INVALID_VALUE;
+    } else
     {
-        if (ptt_get_mode_mask_ext(&mode_mask))
-        {
-            /* if new_mode isn't allowed */
-            if ((mode_mask & (1u << new_mode)) == 0)
-            {
-                PTT_TRACE("ptt_mode_switch: new_mode isn't allowed %d\n", new_mode);
-                ret = PTT_RET_INVALID_VALUE;
-            }
-        }
+	if (ptt_get_mode_mask_ext(&mode_mask))
+	{
+	    /* if new_mode isn't allowed */
+	if ((mode_mask & (1u << new_mode)) == 0)
+	{
+		PTT_TRACE("ptt_mode_switch: new_mode isn't allowed %d\n", new_mode);
+		ret = PTT_RET_INVALID_VALUE;
+	}
+	}
     }
 
-    if (PTT_RET_SUCCESS == ret)
+    if (ret == PTT_RET_SUCCESS)
     {
-        ret = ptt_mode_uninit();
-        if (PTT_RET_SUCCESS == ret)
-        {
-            ret = ptt_mode_init(new_mode);
-        }
+	ret = ptt_mode_uninit();
+	if (ret == PTT_RET_SUCCESS)
+	{
+	    ret = ptt_mode_init(new_mode);
+	}
     }
 
     return ret;
@@ -96,27 +95,27 @@ ptt_ret_t ptt_mode_uninit(void)
 
     switch (current_mode)
     {
-        case PTT_MODE_ZB_PERF_DUT:
-            ret = ptt_zb_perf_dut_mode_uninit();
-            break;
+	case PTT_MODE_ZB_PERF_DUT:
+	    ret = ptt_zb_perf_dut_mode_uninit();
+	break;
 
-        case PTT_MODE_ZB_PERF_CMD:
-            ret = ptt_zb_perf_cmd_mode_uninit();
-            break;
+	case PTT_MODE_ZB_PERF_CMD:
+	    ret = ptt_zb_perf_cmd_mode_uninit();
+	break;
 
-        default:
-            PTT_TRACE("ptt_mode_uninit: invalid current_mode %d\n", current_mode);
-            ret = PTT_RET_INVALID_MODE;
-            break;
+	default:
+	    PTT_TRACE("ptt_mode_uninit: invalid current_mode %d\n", current_mode);
+	    ret = PTT_RET_INVALID_MODE;
+	break;
     }
 
-    if (PTT_RET_SUCCESS == ret)
+    if (ret == PTT_RET_SUCCESS)
     {
-        ptt_timers_reset_all();
-        ptt_events_reset_all();
-        ptt_ctrl_handlers_reset_all();
-        ptt_rf_reset();
-        ptt_ctrl_set_current_mode(PTT_MODE_N);
+	ptt_timers_reset_all();
+	ptt_events_reset_all();
+	ptt_ctrl_handlers_reset_all();
+	ptt_rf_reset();
+	ptt_ctrl_set_current_mode(PTT_MODE_N);
     }
 
     return ret;
@@ -129,24 +128,25 @@ static ptt_ret_t ptt_mode_init(ptt_mode_t mode)
 
     switch (mode)
     {
-        case PTT_MODE_ZB_PERF_DUT:
-            ret = ptt_zb_perf_dut_mode_init();
-            break;
+	case PTT_MODE_ZB_PERF_DUT:
+	    ret = ptt_zb_perf_dut_mode_init();
+	break;
 
-        case PTT_MODE_ZB_PERF_CMD:
-            ret = ptt_zb_perf_cmd_mode_init();
-            break;
+	case PTT_MODE_ZB_PERF_CMD:
+	    ret = ptt_zb_perf_cmd_mode_init();
+	break;
 
-        default:
-            PTT_TRACE("ptt_mode_init: invalid mode %d\n", mode);
-            ret = PTT_RET_INVALID_MODE;
-            break;
+	default:
+	    PTT_TRACE("ptt_mode_init: invalid mode %d\n", mode);
+	    ret = PTT_RET_INVALID_MODE;
+	break;
     }
 
-    if (PTT_RET_SUCCESS == ret)
+    if (ret == PTT_RET_SUCCESS)
     {
-        ptt_ctrl_set_current_mode(mode);
+	ptt_ctrl_set_current_mode(mode);
     }
 
     return ret;
 }
+

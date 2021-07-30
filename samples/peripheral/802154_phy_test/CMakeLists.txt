@@ -15,7 +15,6 @@ target_include_directories(app PRIVATE
     include/internal/ctrl
     include/internal/rf)
 
-# NORDIC SDK APP START
 target_sources(app PRIVATE 
     src/main.c
     src/comm_proc.c
@@ -24,7 +23,6 @@ target_sources(app PRIVATE
     src/ptt_conf.c
     src/periph_proc.c
     src/timer_proc.c
-    src/ctrl/ptt_cmd_proc.c
     src/ctrl/ptt_ctrl.c
     src/ctrl/ptt_events.c
     src/ctrl/ptt_mode_manager.c
@@ -40,4 +38,3 @@ target_sources(app PRIVATE
     src/ctrl/ptt_zb_perf_cmd_mode.c
     src/ctrl/ptt_zb_perf_dut_mode.c
     src/rf/ptt_rf.c)
-# NORDIC SDK APP END

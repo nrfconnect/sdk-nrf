@@ -75,7 +75,7 @@ void ptt_init(ptt_call_me_cb_t call_me_cb, ptt_time_t max_time)
 
     ret = ptt_mode_default_init();
 
-    assert(PTT_RET_SUCCESS == ret);
+    assert(ret == PTT_RET_SUCCESS);
 
     PTT_UNUSED(ret);
 }
@@ -93,7 +93,7 @@ void ptt_process(ptt_time_t current_time)
     ptt_timers_process(current_time);
 }
 
-ptt_timer_ctx_t * ptt_ctrl_get_p_timer_ctx(void)
+ptt_timer_ctx_t *ptt_ctrl_get_p_timer_ctx(void)
 {
     return &m_ptt_ctrl_ctx.timer_ctx;
 }
@@ -102,11 +102,11 @@ void ptt_ctrl_call_me_cb(ptt_time_t timeout)
 {
     if (m_ptt_ctrl_ctx.call_me_cb != NULL)
     {
-        m_ptt_ctrl_ctx.call_me_cb(timeout);
+	m_ptt_ctrl_ctx.call_me_cb(timeout);
     }
 }
 
-ptt_evt_ctx_t * ptt_ctrl_get_p_evt_ctx(void)
+ptt_evt_ctx_t *ptt_ctrl_get_p_evt_ctx(void)
 {
     return &m_ptt_ctrl_ctx.evt_ctx;
 }
@@ -143,14 +143,14 @@ ptt_mode_t ptt_ctrl_get_default_mode(void)
 
     if (ptt_get_mode_mask_ext(&mode_mask))
     {
-        for (uint8_t i = 0; i <= sizeof(mode_mask) * 8; i++)
-        {
-            if (((mode_mask >> i) & 1u) == 1u)
-            {
-                mode = i;
-                break;
-            }
-        }
+	for (uint8_t i = 0; i <= sizeof(mode_mask) * 8; i++)
+	{
+	if (((mode_mask >> i) & 1u) == 1u)
+	{
+		mode = i;
+		break;
+	}
+	}
     }
 
     return mode;
@@ -182,29 +182,29 @@ bool ptt_ctrl_get_dcdc(void)
     return ptt_get_dcdc_ext();
 }
 
-ptt_ret_t ptt_ctrl_get_temp(int32_t * p_temp)
+ptt_ret_t ptt_ctrl_get_temp(int32_t *p_temp)
 {
     ptt_ret_t ret = PTT_RET_SUCCESS;
 
     if (!ptt_get_temp_ext(p_temp))
     {
-        ret = PTT_RET_INVALID_VALUE;
+	ret = PTT_RET_INVALID_VALUE;
     }
 
     return ret;
 }
 
-ptt_ext_evts_handlers_t * ptt_ctrl_get_p_handlers(void)
+ptt_ext_evts_handlers_t *ptt_ctrl_get_p_handlers(void)
 {
     return &m_ptt_ctrl_ctx.mode_handlers;
 }
 
-void ptt_random_vector_generate(uint8_t * p_buff,
-                                uint8_t   requested_size)
+void ptt_random_vector_generate(uint8_t *p_buff,
+				uint8_t   requested_size)
 {
     for (int i = 0; i < requested_size; ++i)
     {
-        p_buff[i] = ptt_random_get_ext() % UINT8_MAX;
+	p_buff[i] = ptt_random_get_ext() % UINT8_MAX;
     }
 }
 
@@ -286,3 +286,4 @@ ptt_ext_evt_handler ptt_ctrl_get_handler_rf_cca_failed(void)
 #ifdef TESTS
 #include "test_ctrl_wrappers.c"
 #endif /* TESTS */
+

@@ -55,10 +55,10 @@
  *
  *  @return none
  */
-void ptt_ctrl_rf_push_packet(const uint8_t * p_pkt,
-                             ptt_pkt_len_t   len,
-                             int8_t          rssi,
-                             uint8_t         lqi);
+void ptt_ctrl_rf_push_packet(const uint8_t *p_pkt,
+			     ptt_pkt_len_t   len,
+			     int8_t          rssi,
+			     uint8_t         lqi);
 
 /** @brief Pass an event "Transmission started"
  *
@@ -128,3 +128,4 @@ void ptt_ctrl_rf_cca_done(ptt_evt_id_t evt_id, ptt_cca_t result);
 void ptt_ctrl_rf_cca_failed(ptt_evt_id_t evt_id);
 
 #endif /* PTT_CTRL_H__ */
+

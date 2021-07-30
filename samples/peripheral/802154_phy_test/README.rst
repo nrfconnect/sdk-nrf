@@ -292,7 +292,6 @@ Building and running
    On the |nRF5340DKnoref|, the IEEE 802.15.4 PHY Test Tool is a standalone network sample that does not require any counterpart application sample.
    However, you must still program the application core to boot up the network core (and forward UART pins to the network core of the CMD device).
    The :ref:`nrf5340_empty_app_core`, which accomplishes both, is built and programmed automatically by default.
-   If you want to program another sample for the application core, unset the :option:'CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE' option.
 
 .. _802154_phy_test_testing:
 
@@ -302,6 +301,10 @@ Using the tool
 After programming the supported development kit of your choice with the sample, you can verify that it functions as expected and begin performing tests.
 
 .. _802154_phy_test_testing_check:
+
+.. note::
+   The sample doesn't implement serial echo, and the timeout for receiving the entire command after receiving its first character is very short. 
+   Thus, commands cannot be sent character-by-character manually. For the commands to be received by the device properly, use a terminal application which supports `line mode`, or send entire commands using `echo`, `printf`, etc. 
 
 Checking if the sample works as expected
 ----------------------------------------

@@ -81,13 +81,13 @@ void rf_uninit(void);
 void rf_thread(void);
 
 /**< element of received packets array */
-typedef struct
-{
-    uint8_t     * p_rf_buf; /**< pointer to buffer inside radio driver with a received packet */
-    uint8_t     * p_data;   /**< pointer to payload */
+typedef struct {
+    uint8_t     *p_rf_buf; /**< pointer to buffer inside radio driver with a received packet */
+    uint8_t     *p_data;   /**< pointer to payload */
     ptt_pkt_len_t length;   /**< size of payload of received packet */
     int8_t        rssi;     /**< RSSI */
     uint8_t       lqi;      /**< LQI */
 } rf_rx_pkt_t;
 
 #endif  /* RF_PROC_H__ */
+

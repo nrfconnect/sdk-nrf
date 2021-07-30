@@ -57,15 +57,13 @@
 #define COMM_APPENDIX_SIZE       sizeof(COMM_APPENDIX)
 
 /**< Stated of COMM packet parser */
-typedef enum
-{
+typedef enum {
     INPUT_STATE_IDLE = 0,            /**< Wait for the first symbol */
     INPUT_STATE_WAITING_FOR_NEWLINE, /**< Wait for new line symbol or timeout */
     INPUT_STATE_TEXT_PROCESSING,     /**< Passes received string to the library */
 } input_state_t;
 
-typedef struct text_proc_s
-{
+typedef struct text_proc_s {
     struct k_timer timer;
     struct k_work  work;
     char           buf[COMM_MAX_TEXT_DATA_SIZE];
@@ -75,12 +73,13 @@ typedef struct text_proc_s
 
 void comm_init(void);
 
-void comm_input_process(text_proc_t * text_proc, const uint8_t * buf, uint32_t len);
+void comm_input_process(text_proc_t *text_proc, const uint8_t *buf, uint32_t len);
 
-void comm_text_processor_fn(struct k_work * work);
+void comm_text_processor_fn(struct k_work *work);
 
 void comm_proc(void);
 
-void comm_input_timeout_handler(struct k_timer * timer);
+void comm_input_timeout_handler(struct k_timer *timer);
 
 #endif /* COMM_PROC_H__ */
+

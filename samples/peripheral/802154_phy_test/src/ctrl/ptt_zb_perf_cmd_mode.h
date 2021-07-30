@@ -76,8 +76,7 @@
 #define PTT_GET_ICACHE_MES         "ICACHE:" /* note: value will be added in response function */
 
 /** states of OTA commands processing in CMD mode */
-typedef enum
-{
+typedef enum {
     CMD_OTA_STATE_IDLE = 0,                       /**< waiting for next command */
     CMD_OTA_STATE_PING_SENDING,                   /**< rf module send ping command */
     CMD_OTA_STATE_PING_WAITING_FOR_ACK,           /**< ping sent, waiting for ack */
@@ -100,8 +99,7 @@ typedef enum
 } cmd_ota_state_t;
 
 /** states of uart command processing in CMD mode */
-typedef enum
-{
+typedef enum {
     CMD_UART_STATE_IDLE = 0,              /**< waiting for next command */
     CMD_UART_STATE_SET_CHANNEL,           /**< CMD device set channel on DUT */
     CMD_UART_STATE_STREAM,                /**< CMD device processes enable stream on DUT */
@@ -120,8 +118,7 @@ typedef enum
 } cmd_uart_state_t;
 
 /* information for "custom ltx" command */
-typedef struct
-{
+typedef struct {
     bool     is_infinite;
     bool     is_stop_requested;
     uint8_t  repeats_cnt;
@@ -130,16 +127,15 @@ typedef struct
     uint16_t timeout;
 } cmd_uart_ltx_info_t;
 
-PTT_COMPILE_TIME_ASSERT(PTT_EVENT_CTX_SIZE >= sizeof(cmd_uart_ltx_info_t));
+PTT_COMPILE_TIME_ASSERT(sizeof(cmd_uart_ltx_info_t) <= PTT_EVENT_CTX_SIZE);
 
 /* information for "custom lcarrier" command */
-typedef struct
-{
+typedef struct {
     int32_t pulse_duration;
     int32_t interval;
 } cmd_uart_waveform_timings_t;
 
-PTT_COMPILE_TIME_ASSERT(PTT_EVENT_CTX_SIZE >= sizeof(cmd_uart_waveform_timings_t));
+PTT_COMPILE_TIME_ASSERT(sizeof(cmd_uart_waveform_timings_t) <= PTT_EVENT_CTX_SIZE);
 
 /** @brief Initialize OTA commands processing module in CMD mode
  *
@@ -363,7 +359,7 @@ void cmd_uart_send_rsp_l_start_rx_fail(ptt_evt_id_t new_rf_pkt_evt);
 /* Sends GPIO pin value through UART */
 void cmd_uart_send_rsp_l_get_gpio(ptt_evt_id_t evt_id);
 /* Sends GPIO pin reading error through UART */
-void cmd_uart_send_rsp_l_get_gpio_error(ptt_evt_id_t evt_id);;
+void cmd_uart_send_rsp_l_get_gpio_error(ptt_evt_id_t evt_id);
 /* Sends SoC temperature through UART */
 void cmd_uart_send_rsp_get_temp(ptt_evt_id_t evt_id);
 /* Sends current DCDC mode through UART */
@@ -372,3 +368,4 @@ void cmd_uart_send_rsp_get_dcdc(ptt_evt_id_t evt_id);
 void cmd_uart_send_rsp_get_icache(ptt_evt_id_t evt_id);
 
 #endif /* PTT_MODE_ZB_PERF_CMD_H__ */
+

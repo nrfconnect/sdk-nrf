@@ -46,10 +46,10 @@ typedef bool ptt_bool_t;
 
 typedef uint16_t ptt_pkt_len_t;
 
-typedef int32_t (* ptt_uart_send_cb)(const uint8_t * p_pkt, ptt_pkt_len_t len, bool add_crlf);
+typedef int32_t (* ptt_uart_send_cb)(const uint8_t *p_pkt, ptt_pkt_len_t len, bool add_crlf);
 
 typedef uint32_t ptt_time_t;
-typedef void (* ptt_call_me_cb_t)(ptt_time_t timeout);
+typedef void (*ptt_call_me_cb_t)(ptt_time_t timeout);
 
 typedef ptt_bool_t ptt_cca_t;
 typedef uint16_t ptt_ed_t;
@@ -69,3 +69,4 @@ typedef uint8_t ptt_rf_tx_error_t;
 #define PTT_RF_TX_ERROR_OPERATION_FAILED 0x03 /**< transmission failed */
 
 #endif  /* PTT_TYPES_H__ */
+

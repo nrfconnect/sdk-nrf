@@ -42,8 +42,7 @@
 #include <stdint.h>
 
 /** error codes */
-typedef enum
-{
+typedef enum {
     PTT_RET_SUCCESS = 0,     /**< success */
     PTT_RET_NULL_PTR,        /**< pointer is NULL */
     PTT_RET_INVALID_VALUE,   /**< invalid input value */
@@ -55,3 +54,4 @@ typedef enum
 } ptt_ret_t;
 
 #endif  /* PTT_ERRORS_H__ */
+
