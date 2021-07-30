@@ -55,7 +55,7 @@ static void hsl_get(struct bt_mesh_light_hsl_srv *srv,
 
 	srv->hue.handlers->get(&srv->hue, ctx, &hue);
 	srv->sat.handlers->get(&srv->sat, ctx, &sat);
-	srv->lightness.handlers->light_get(&srv->lightness, ctx, &lightness);
+	srv->lightness->handlers->light_get(srv->lightness, ctx, &lightness);
 
 	*status = (struct bt_mesh_light_hsl_status)HSL_STATUS_INIT(
 		&hue, &sat, &lightness, current);
@@ -128,8 +128,8 @@ static void hsl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	bt_mesh_light_hue_srv_set(&srv->hue, ctx, &set.h, &hue);
 	bt_mesh_light_sat_srv_set(&srv->sat, ctx, &set.s, &sat);
-	lightness_srv_disable_control(&srv->lightness);
-	lightness_srv_change_lvl(&srv->lightness, ctx, &set.l, &lightness, true);
+	lightness_srv_disable_control(srv->lightness);
+	lightness_srv_change_lvl(srv->lightness, ctx, &set.l, &lightness, true);
 
 	srv->pub_pending = false;
 
@@ -177,7 +177,7 @@ static void hsl_target_get_handle(struct bt_mesh_model *model,
 
 	srv->hue.handlers->get(&srv->hue, ctx, &hue);
 	srv->sat.handlers->get(&srv->sat, ctx, &sat);
-	srv->lightness.handlers->light_get(&srv->lightness, ctx, &lightness);
+	srv->lightness->handlers->light_get(srv->lightness, ctx, &lightness);
 
 	struct bt_mesh_light_hsl_status status =
 		HSL_STATUS_INIT(&hue, &sat, &lightness, target);
@@ -194,7 +194,7 @@ static void default_rsp(struct bt_mesh_model *model,
 {
 	struct bt_mesh_light_hsl_srv *srv = model->user_data;
 	const struct bt_mesh_light_hsl hsl = {
-		.lightness = srv->lightness.default_light,
+		.lightness = srv->lightness->default_light,
 		.hue = srv->hue.dflt,
 		.saturation = srv->sat.dflt,
 	};
@@ -215,7 +215,7 @@ static void default_set(struct bt_mesh_model *model,
 
 	light_hsl_buf_pull(buf, &val);
 
-	lightness_srv_default_set(&srv->lightness, ctx, val.lightness);
+	lightness_srv_default_set(srv->lightness, ctx, val.lightness);
 	bt_mesh_light_hue_srv_default_set(&srv->hue, ctx, val.hue);
 	bt_mesh_light_sat_srv_default_set(&srv->sat, ctx, val.saturation);
 }
@@ -413,11 +413,11 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	struct bt_mesh_light_hsl_srv *srv = model->user_data;
 	struct bt_mesh_lightness_status status = { 0 };
 
-	if (atomic_test_bit(&srv->lightness.flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
+	if (atomic_test_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
 		return 0;
 	}
 
-	srv->lightness.handlers->light_get(&srv->lightness, NULL, &status);
+	srv->lightness->handlers->light_get(srv->lightness, NULL, &status);
 	sys_put_le16(status.remaining_time ? light_to_repr(status.target, ACTUAL) :
 					     status.current,
 		     &data[0]);
@@ -431,7 +431,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 {
 	struct bt_mesh_light_hsl_srv *srv = model->user_data;
 
-	if (atomic_test_bit(&srv->lightness.flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
+	if (atomic_test_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
 		return;
 	}
 
@@ -441,7 +441,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 		.transition = transition,
 	};
 
-	lightness_srv_change_lvl(&srv->lightness, NULL, &light_set, &light_status, false);
+	lightness_srv_change_lvl(srv->lightness, NULL, &light_set, &light_status, false);
 }
 
 static void scene_recall_complete(struct bt_mesh_model *model)
@@ -453,7 +453,7 @@ static void scene_recall_complete(struct bt_mesh_model *model)
 
 	srv->hue.handlers->get(&srv->hue, NULL, &hue_status);
 	srv->sat.handlers->get(&srv->sat, NULL, &sat_status);
-	srv->lightness.handlers->light_get(&srv->lightness, NULL, &light_status);
+	srv->lightness->handlers->light_get(srv->lightness, NULL, &light_status);
 
 	struct bt_mesh_light_hsl_status hsl =
 		HSL_STATUS_INIT(&hue_status, &sat_status, &light_status, current);
@@ -502,7 +502,7 @@ static int bt_mesh_light_hsl_srv_init(struct bt_mesh_model *model)
 	 * stack, but it makes it a lot easier to extend this model, as
 	 * we won't have to support multiple extenders.
 	 */
-	bt_mesh_model_extend(model, srv->lightness.lightness_model);
+	bt_mesh_model_extend(model, srv->lightness->lightness_model);
 	bt_mesh_model_extend(
 		model, bt_mesh_model_find(
 			       bt_mesh_model_elem(model),
@@ -534,7 +534,7 @@ static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *model)
 
 	bt_mesh_dtt_srv_transition_get(model, &transition);
 
-	switch (srv->lightness.ponoff.on_power_up) {
+	switch (srv->lightness->ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_ON:
 	case BT_MESH_ON_POWER_UP_OFF:
 		hue.lvl = srv->hue.dflt;
@@ -565,7 +565,7 @@ static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *model)
 			/* The lightness server updated its "last" value in its
 			 * start function, which has already completed:
 			 */
-			.lightness = srv->lightness.last,
+			.lightness = srv->lightness->last,
 		},
 		.remaining_time = 0,
 	};

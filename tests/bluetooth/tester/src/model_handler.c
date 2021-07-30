@@ -695,6 +695,22 @@ struct light_hsl_ctx {
 	struct bt_mesh_light_hsl_srv srv;
 	struct light_hue_ctx light_hue_ctx;
 	struct light_sat_ctx light_sat_ctx;
+	struct lightness_ctx *lightness_ctx;
+};
+
+struct light_xy_ctx {
+	struct bt_mesh_light_xyl_srv srv;
+	struct k_work_delayable work;
+	uint32_t remaining;
+	uint32_t period;
+	struct bt_mesh_light_xy current;
+	struct bt_mesh_light_xy target;
+	struct lightness_ctx *lightness_ctx;
+};
+
+struct light_xyl_hsl_ctx {
+	struct light_xy_ctx xyl_ctx;
+	struct light_hsl_ctx hsl_ctx;
 	struct lightness_ctx lightness_ctx;
 };
 
@@ -703,8 +719,8 @@ static void light_hsl_status(struct light_hsl_ctx *ctx,
 {
 	rsp->params.hue = ctx->light_hue_ctx.current;
 	rsp->params.saturation = ctx->light_sat_ctx.current;
-	rsp->params.lightness = ctx->lightness_ctx.current;
-	rsp->remaining_time = MAX(MAX(ctx->lightness_ctx.remaining,
+	rsp->params.lightness = ctx->lightness_ctx->current;
+	rsp->remaining_time = MAX(MAX(ctx->lightness_ctx->remaining,
 				      ctx->light_hue_ctx.remaining),
 				  ctx->light_sat_ctx.remaining);
 }
@@ -733,7 +749,7 @@ static void periodic_light_hue_work(struct k_work *work)
 	struct light_hsl_ctx *hsl_ctx =
 		CONTAINER_OF(ctx, struct light_hsl_ctx, light_hue_ctx);
 	struct light_sat_ctx *sat_ctx = &hsl_ctx->light_sat_ctx;
-	struct lightness_ctx *lightness_ctx = &hsl_ctx->lightness_ctx;
+	struct lightness_ctx *lightness_ctx = hsl_ctx->lightness_ctx;
 
 	ctx->remaining -= ctx->period;
 
@@ -832,7 +848,7 @@ static void periodic_light_sat_work(struct k_work *work)
 	struct light_hsl_ctx *hsl_ctx =
 		CONTAINER_OF(ctx, struct light_hsl_ctx, light_sat_ctx);
 	struct light_hue_ctx *hue_ctx = &hsl_ctx->light_hue_ctx;
-	struct lightness_ctx *lightness_ctx = &hsl_ctx->lightness_ctx;
+	struct lightness_ctx *lightness_ctx = hsl_ctx->lightness_ctx;
 
 	ctx->remaining -= ctx->period;
 
@@ -907,111 +923,6 @@ static const struct bt_mesh_light_sat_srv_handlers sat_cb = {
 	.get = light_sat_get,
 };
 
-static void periodic_light_hsl_lightness_work(struct k_work *work)
-{
-	struct lightness_ctx *ctx =
-		CONTAINER_OF(work, struct lightness_ctx, work);
-	struct light_hsl_ctx *hsl_ctx =
-		CONTAINER_OF(ctx, struct light_hsl_ctx, lightness_ctx);
-	struct light_hue_ctx *hue_ctx = &hsl_ctx->light_hue_ctx;
-	struct light_sat_ctx *sat_ctx = &hsl_ctx->light_sat_ctx;
-
-	ctx->remaining -= ctx->period;
-
-	if ((ctx->remaining <= ctx->period) ||
-	    (abs(ctx->target - ctx->current) <= PWM_SIZE_STEP)) {
-		ctx->current = ctx->target;
-		ctx->remaining = 0;
-		/* Publish the new value at the end of the transition */
-		struct bt_mesh_lightness_status status;
-
-		lightness_status(ctx, &status);
-		bt_mesh_lightness_srv_pub(&hsl_ctx->srv.lightness, NULL,
-					  &status);
-
-		if (hue_ctx->remaining == 0 && sat_ctx->remaining == 0) {
-			struct bt_mesh_light_hsl_status hsl_status;
-
-			light_hsl_status(hsl_ctx, &hsl_status);
-			bt_mesh_light_hsl_srv_pub(&hsl_ctx->srv, NULL, &hsl_status);
-		}
-		return;
-	} else if (ctx->target > ctx->current) {
-		ctx->current += PWM_SIZE_STEP;
-	} else {
-		ctx->current -= PWM_SIZE_STEP;
-	}
-
-	k_work_reschedule(&ctx->work, K_MSEC(ctx->period));
-}
-
-static void light_hsl_lightness_set(struct bt_mesh_lightness_srv *srv,
-				    struct bt_mesh_msg_ctx *ctx,
-				    const struct bt_mesh_lightness_set *set,
-				    struct bt_mesh_lightness_status *rsp)
-{
-	struct bt_mesh_light_hsl_srv *hsl_srv =
-		CONTAINER_OF(srv, struct bt_mesh_light_hsl_srv, lightness);
-	struct light_hsl_ctx *hsl_ctx =
-		CONTAINER_OF(hsl_srv, struct light_hsl_ctx, srv);
-	struct lightness_ctx *l_ctx = &hsl_ctx->lightness_ctx;
-	uint32_t step_cnt;
-
-	l_ctx->target = set->lvl;
-	if (set->transition) {
-		l_ctx->remaining = set->transition->time + set->transition->delay;
-	} else {
-		l_ctx->remaining = 0;
-	}
-
-	if (l_ctx->remaining) {
-		step_cnt = abs(l_ctx->target - l_ctx->current) / PWM_SIZE_STEP;
-		start_new_lightness_trans(step_cnt, set->transition, l_ctx);
-	} else {
-		l_ctx->current = l_ctx->target;
-	}
-
-	lightness_status(l_ctx, rsp);
-
-	struct bt_mesh_light_hsl_status hsl_status;
-
-	light_hsl_status(hsl_ctx, &hsl_status);
-	bt_mesh_light_hsl_srv_pub(&hsl_ctx->srv, NULL, &hsl_status);
-}
-
-static void light_hsl_lightness_get(struct bt_mesh_lightness_srv *srv,
-				    struct bt_mesh_msg_ctx *ctx,
-				    struct bt_mesh_lightness_status *rsp)
-{
-	struct bt_mesh_light_hsl_srv *hsl_srv =
-		CONTAINER_OF(srv, struct bt_mesh_light_hsl_srv, lightness);
-	struct light_hsl_ctx *hsl_ctx =
-		CONTAINER_OF(hsl_srv, struct light_hsl_ctx, srv);
-	struct lightness_ctx *l_ctx = &hsl_ctx->lightness_ctx;
-
-	lightness_status(l_ctx, rsp);
-}
-
-static const struct bt_mesh_lightness_srv_handlers hsl_lightness_srv_handlers = {
-	.light_set = light_hsl_lightness_set,
-	.light_get = light_hsl_lightness_get,
-};
-
-static struct light_hsl_ctx light_hsl_ctx = {
-	.srv = BT_MESH_LIGHT_HSL_SRV_INIT(&hue_cb, &sat_cb,
-					  &hsl_lightness_srv_handlers),
-};
-
-struct light_xy_ctx {
-	struct bt_mesh_light_xyl_srv srv;
-	struct k_work_delayable work;
-	uint32_t remaining;
-	uint32_t period;
-	struct bt_mesh_light_xy current;
-	struct bt_mesh_light_xy target;
-	struct lightness_ctx xyl_lightness_ctx;
-};
-
 static void
 start_new_light_xy_trans(uint32_t step_cnt,
 			 const struct bt_mesh_model_transition *transition,
@@ -1036,7 +947,7 @@ static void xyl_get(struct bt_mesh_light_xyl_srv *srv,
 	struct bt_mesh_lightness_status lightness = { 0 };
 	struct bt_mesh_light_xy_status xy = { 0 };
 
-	srv->lightness_srv.handlers->light_get(&srv->lightness_srv, ctx,
+	srv->lightness_srv->handlers->light_get(srv->lightness_srv, ctx,
 					       &lightness);
 	srv->handlers->xy_get(srv, ctx, &xy);
 
@@ -1050,6 +961,8 @@ static void periodic_light_xy_work(struct k_work *work)
 {
 	struct light_xy_ctx *ctx =
 		CONTAINER_OF(work, struct light_xy_ctx, work);
+	struct light_xyl_hsl_ctx *xyl_hsl_ctx =
+		CONTAINER_OF(ctx, struct light_xyl_hsl_ctx, xyl_ctx);
 
 	ctx->remaining -= ctx->period;
 
@@ -1060,10 +973,15 @@ static void periodic_light_xy_work(struct k_work *work)
 		ctx->current.y = ctx->target.y;
 		ctx->remaining = 0;
 		/* Publish the new value at the end of the transition */
-		struct bt_mesh_light_xyl_status status;
+		struct bt_mesh_light_xyl_status xyl_status;
+		struct bt_mesh_light_hsl_status hsl_status;
 
-		xyl_get(&ctx->srv, NULL, &status);
-		bt_mesh_light_xyl_srv_pub(&ctx->srv, NULL, &status);
+		xyl_get(&ctx->srv, NULL, &xyl_status);
+		bt_mesh_light_xyl_srv_pub(&ctx->srv, NULL, &xyl_status);
+
+		light_hsl_status(&xyl_hsl_ctx->hsl_ctx, &hsl_status);
+		bt_mesh_light_hsl_srv_pub(&xyl_hsl_ctx->hsl_ctx.srv, NULL, &hsl_status);
+
 		return;
 	} else if ((ctx->target.x > ctx->current.x) &&
 		   (ctx->target.y > ctx->current.y)) {
@@ -1084,6 +1002,9 @@ static void light_xy_set(struct bt_mesh_light_xyl_srv *srv,
 {
 	struct light_xy_ctx *l_ctx =
 		CONTAINER_OF(srv, struct light_xy_ctx, srv);
+	struct light_xyl_hsl_ctx *xyl_hsl_ctx =
+		CONTAINER_OF(l_ctx, struct light_xyl_hsl_ctx, xyl_ctx);
+	struct bt_mesh_light_hsl_status hsl_status;
 	uint32_t step_cnt;
 
 	l_ctx->target.x = set->params.x;
@@ -1105,6 +1026,9 @@ static void light_xy_set(struct bt_mesh_light_xyl_srv *srv,
 		l_ctx->current.y = l_ctx->target.y;
 	}
 	light_xy_status(l_ctx, rsp);
+
+	light_hsl_status(&xyl_hsl_ctx->hsl_ctx, &hsl_status);
+	bt_mesh_light_hsl_srv_pub(&xyl_hsl_ctx->hsl_ctx.srv, NULL, &hsl_status);
 }
 static void light_xy_get(struct bt_mesh_light_xyl_srv *srv,
 			 struct bt_mesh_msg_ctx *ctx,
@@ -1121,12 +1045,14 @@ static const struct bt_mesh_light_xyl_srv_handlers light_xyl_handlers = {
 	.xy_get = light_xy_get,
 };
 
-static void periodic_light_xyl_lightness_work(struct k_work *work)
+static void periodic_light_xyl_hsl_lightness_work(struct k_work *work)
 {
 	struct lightness_ctx *ctx =
 		CONTAINER_OF(work, struct lightness_ctx, work);
-	struct light_xy_ctx *xyl_ctx =
-		CONTAINER_OF(ctx, struct light_xy_ctx, xyl_lightness_ctx);
+	struct light_xyl_hsl_ctx *xyl_hsl_ctx =
+		CONTAINER_OF(ctx, struct light_xyl_hsl_ctx, lightness_ctx);
+	struct light_hue_ctx *hue_ctx = &xyl_hsl_ctx->hsl_ctx.light_hue_ctx;
+	struct light_sat_ctx *sat_ctx = &xyl_hsl_ctx->hsl_ctx.light_sat_ctx;
 
 	ctx->remaining -= ctx->period;
 
@@ -1138,8 +1064,14 @@ static void periodic_light_xyl_lightness_work(struct k_work *work)
 		struct bt_mesh_lightness_status status;
 
 		lightness_status(ctx, &status);
-		bt_mesh_lightness_srv_pub(&xyl_ctx->srv.lightness_srv, NULL,
-					  &status);
+		bt_mesh_lightness_srv_pub(&xyl_hsl_ctx->lightness_ctx.srv, NULL, &status);
+
+		if (hue_ctx->remaining == 0 && sat_ctx->remaining == 0) {
+			struct bt_mesh_light_hsl_status hsl_status;
+
+			light_hsl_status(&xyl_hsl_ctx->hsl_ctx, &hsl_status);
+			bt_mesh_light_hsl_srv_pub(&xyl_hsl_ctx->hsl_ctx.srv, NULL, &hsl_status);
+		}
 		return;
 	} else if (ctx->target > ctx->current) {
 		ctx->current += PWM_SIZE_STEP;
@@ -1150,16 +1082,16 @@ static void periodic_light_xyl_lightness_work(struct k_work *work)
 	k_work_reschedule(&ctx->work, K_MSEC(ctx->period));
 }
 
-static void light_xyl_lightness_set(struct bt_mesh_lightness_srv *srv,
+static void light_xyl_hsl_lightness_set(struct bt_mesh_lightness_srv *srv,
 				    struct bt_mesh_msg_ctx *ctx,
 				    const struct bt_mesh_lightness_set *set,
 				    struct bt_mesh_lightness_status *rsp)
 {
-	struct bt_mesh_light_xyl_srv *xyl_srv =
-		CONTAINER_OF(srv, struct bt_mesh_light_xyl_srv, lightness_srv);
-	struct light_xy_ctx *xyl_ctx =
-		CONTAINER_OF(xyl_srv, struct light_xy_ctx, srv);
-	struct lightness_ctx *l_ctx = &xyl_ctx->xyl_lightness_ctx;
+	struct lightness_ctx *l_ctx = CONTAINER_OF(srv, struct lightness_ctx, srv);
+	struct light_xyl_hsl_ctx *xyl_hsl_ctx =
+		CONTAINER_OF(l_ctx, struct light_xyl_hsl_ctx, lightness_ctx);
+	struct bt_mesh_light_xyl_status xyl_status;
+	struct bt_mesh_light_hsl_status hsl_status;
 	uint32_t step_cnt;
 
 	l_ctx->target = set->lvl;
@@ -1177,29 +1109,39 @@ static void light_xyl_lightness_set(struct bt_mesh_lightness_srv *srv,
 	}
 
 	lightness_status(l_ctx, rsp);
+
+	xyl_get(&xyl_hsl_ctx->xyl_ctx.srv, NULL, &xyl_status);
+	bt_mesh_light_xyl_srv_pub(&xyl_hsl_ctx->xyl_ctx.srv, NULL, &xyl_status);
+
+	light_hsl_status(&xyl_hsl_ctx->hsl_ctx, &hsl_status);
+	bt_mesh_light_hsl_srv_pub(&xyl_hsl_ctx->hsl_ctx.srv, NULL, &hsl_status);
 }
 
-static void light_xyl_lightness_get(struct bt_mesh_lightness_srv *srv,
+static void light_xyl_hsl_lightness_get(struct bt_mesh_lightness_srv *srv,
 				    struct bt_mesh_msg_ctx *ctx,
 				    struct bt_mesh_lightness_status *rsp)
 {
-	struct bt_mesh_light_xyl_srv *xyl_srv =
-		CONTAINER_OF(srv, struct bt_mesh_light_xyl_srv, lightness_srv);
-	struct light_xy_ctx *xyl_ctx =
-		CONTAINER_OF(xyl_srv, struct light_xy_ctx, srv);
-	struct lightness_ctx *l_ctx = &xyl_ctx->xyl_lightness_ctx;
+	struct lightness_ctx *l_ctx = CONTAINER_OF(srv, struct lightness_ctx, srv);
 
 	lightness_status(l_ctx, rsp);
 }
 
-static const struct bt_mesh_lightness_srv_handlers xyl_lightness_srv_handlers = {
-	.light_set = light_xyl_lightness_set,
-	.light_get = light_xyl_lightness_get,
+static const struct bt_mesh_lightness_srv_handlers xyl_hsl_lightness_srv_handlers = {
+	.light_set = light_xyl_hsl_lightness_set,
+	.light_get = light_xyl_hsl_lightness_get,
 };
 
-static struct light_xy_ctx light_xy_ctx = {
-	.srv = BT_MESH_LIGHT_XYL_SRV_INIT(&xyl_lightness_srv_handlers,
-					  &light_xyl_handlers),
+static struct light_xyl_hsl_ctx xyl_hsl_ctx = {
+	.lightness_ctx.srv = BT_MESH_LIGHTNESS_SRV_INIT(&xyl_hsl_lightness_srv_handlers),
+	.xyl_ctx = {
+		.srv = BT_MESH_LIGHT_XYL_SRV_INIT(&xyl_hsl_ctx.lightness_ctx.srv,
+						  &light_xyl_handlers),
+		.lightness_ctx = &xyl_hsl_ctx.lightness_ctx,
+	},
+	.hsl_ctx = {
+		.srv = BT_MESH_LIGHT_HSL_SRV_INIT(&xyl_hsl_ctx.lightness_ctx.srv, &hue_cb, &sat_cb),
+		.lightness_ctx = &xyl_hsl_ctx.lightness_ctx,
+	}
 };
 
 static void get_faults(uint8_t *faults, uint8_t faults_size, uint8_t *dst,
@@ -1357,29 +1299,27 @@ static struct bt_mesh_elem elements[] = {
 		     BT_MESH_MODEL_NONE),
 	BT_MESH_ELEM(50,
 		     BT_MESH_MODEL_LIST(
-			     BT_MESH_MODEL_LIGHT_HSL_SRV(&light_hsl_ctx.srv)),
+			     BT_MESH_MODEL_LIGHTNESS_SRV(&xyl_hsl_ctx.lightness_ctx.srv),
+			     BT_MESH_MODEL_LIGHT_XYL_SRV(&xyl_hsl_ctx.xyl_ctx.srv),
+			     BT_MESH_MODEL_LIGHT_HSL_SRV(&xyl_hsl_ctx.hsl_ctx.srv)),
 		     BT_MESH_MODEL_NONE),
 	BT_MESH_ELEM(51,
 		     BT_MESH_MODEL_LIST(
-			     BT_MESH_MODEL_LIGHT_HUE_SRV(&light_hsl_ctx.srv.hue)),
+			     BT_MESH_MODEL_LIGHT_HUE_SRV(&xyl_hsl_ctx.hsl_ctx.srv.hue)),
 		     BT_MESH_MODEL_NONE),
 	BT_MESH_ELEM(52,
 		     BT_MESH_MODEL_LIST(
-			     BT_MESH_MODEL_LIGHT_SAT_SRV(&light_hsl_ctx.srv.sat)),
+			     BT_MESH_MODEL_LIGHT_SAT_SRV(&xyl_hsl_ctx.hsl_ctx.srv.sat)),
 		     BT_MESH_MODEL_NONE),
 	BT_MESH_ELEM(60,
 		     BT_MESH_MODEL_LIST(
-			     BT_MESH_MODEL_LIGHT_XYL_SRV(&light_xy_ctx.srv)),
-		     BT_MESH_MODEL_NONE),
-	BT_MESH_ELEM(70,
-		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_LIGHT_CTL_SRV(&light_ctl_ctx.srv)),
 		     BT_MESH_MODEL_NONE),
-	BT_MESH_ELEM(71,
+	BT_MESH_ELEM(61,
 		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_LIGHT_TEMP_SRV(&light_ctl_ctx.srv.temp_srv)),
 		     BT_MESH_MODEL_NONE),
-	BT_MESH_ELEM(80,
+	BT_MESH_ELEM(70,
 		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_ONOFF_CLI(&onoff_cli),
 			     BT_MESH_MODEL_LVL_CLI(&lvl_cli),
@@ -1411,18 +1351,16 @@ const struct bt_mesh_comp *model_handler_init(void)
 {
 	k_work_init_delayable(&lvl_ctx.work, periodic_led_work);
 	k_work_init_delayable(&lightness_ctx.work, periodic_led_lightness_work);
-	k_work_init_delayable(&light_xy_ctx.work, periodic_light_xy_work);
-	k_work_init_delayable(&light_xy_ctx.xyl_lightness_ctx.work,
-			      periodic_light_xyl_lightness_work);
+	k_work_init_delayable(&xyl_hsl_ctx.xyl_ctx.work, periodic_light_xy_work);
+	k_work_init_delayable(&xyl_hsl_ctx.lightness_ctx.work,
+			      periodic_light_xyl_hsl_lightness_work);
+	k_work_init_delayable(&xyl_hsl_ctx.hsl_ctx.light_hue_ctx.work,
+			      periodic_light_hue_work);
+	k_work_init_delayable(&xyl_hsl_ctx.hsl_ctx.light_sat_ctx.work,
+			      periodic_light_sat_work);
 	k_work_init_delayable(&light_ctl_ctx.ctl_lightness_ctx.work,
 			      periodic_light_ctl_lightness_work);
 	k_work_init_delayable(&light_ctl_ctx.light_temp_ctx.work,
 			      periodic_light_temp_work);
-	k_work_init_delayable(&light_hsl_ctx.light_hue_ctx.work,
-			      periodic_light_hue_work);
-	k_work_init_delayable(&light_hsl_ctx.light_sat_ctx.work,
-			      periodic_light_sat_work);
-	k_work_init_delayable(&light_hsl_ctx.lightness_ctx.work,
-			      periodic_light_hsl_lightness_work);
 	return &comp;
 }

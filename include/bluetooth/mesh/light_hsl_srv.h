@@ -30,16 +30,15 @@ struct bt_mesh_light_hsl_srv;
  *
  *  @brief Initialization parameters for a @ref bt_mesh_light_hsl_srv instance.
  *
+ *  @param[in] _lightness_srv Pointer to the Lightness Server instance.
  *  @param[in] _hue_handlers Hue Server model handlers.
  *  @param[in] _sat_handlers Saturation Server model handlers.
- *  @param[in] _light_handlers Lightness Server model handlers.
  */
-#define BT_MESH_LIGHT_HSL_SRV_INIT(_hue_handlers, _sat_handlers,               \
-				   _light_handlers)                            \
-	{                                                                      \
-		.hue = BT_MESH_LIGHT_HUE_SRV_INIT(_hue_handlers),              \
-		.sat = BT_MESH_LIGHT_SAT_SRV_INIT(_sat_handlers),              \
-		.lightness = BT_MESH_LIGHTNESS_SRV_INIT(_light_handlers),      \
+#define BT_MESH_LIGHT_HSL_SRV_INIT(_lightness_srv, _hue_handlers, _sat_handlers)                 \
+	{                                                                                          \
+		.lightness = _lightness_srv,                          \
+		.hue = BT_MESH_LIGHT_HUE_SRV_INIT(_hue_handlers),                                  \
+		.sat = BT_MESH_LIGHT_SAT_SRV_INIT(_sat_handlers),                                  \
 	}
 
 /** @def BT_MESH_MODEL_LIGHT_HSL_SRV
@@ -49,7 +48,6 @@ struct bt_mesh_light_hsl_srv;
  *  @param[in] _srv Pointer to a @ref bt_mesh_light_hsl_srv instance.
  */
 #define BT_MESH_MODEL_LIGHT_HSL_SRV(_srv)                                      \
-	BT_MESH_MODEL_LIGHTNESS_SRV(&(_srv)->lightness),                       \
 	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_HSL_SRV,                       \
 			 _bt_mesh_light_hsl_srv_op, &(_srv)->pub,              \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_light_hsl_srv, \
@@ -69,8 +67,8 @@ struct bt_mesh_light_hsl_srv {
 	struct bt_mesh_light_hue_srv hue;
 	/** Light Saturation Server instance. */
 	struct bt_mesh_light_sat_srv sat;
-	/** Lightness Server instance. */
-	struct bt_mesh_lightness_srv lightness;
+	/** Pointer to Lightness Server instance. */
+	struct bt_mesh_lightness_srv *lightness;
 
 	/** Model entry. */
 	struct bt_mesh_model *model;
