@@ -51,12 +51,10 @@ ptt_bool_t ptt_proto_check_packet(const uint8_t *p_pkt, ptt_pkt_len_t len)
 {
     ptt_bool_t ret = false;
 
-    if ((p_pkt != NULL) && (len > PTT_PREAMBLE_LEN))
-    {
+    if ((p_pkt != NULL) && (len > PTT_PREAMBLE_LEN)) {
 	if ((p_pkt[0] == PTT_PREAMBLE_1ST)
 	    && (p_pkt[1] == PTT_PREAMBLE_2ND)
-	    && (p_pkt[2] == PTT_PREAMBLE_3D))
-	{
+	    && (p_pkt[2] == PTT_PREAMBLE_3D)) {
 	    ret = true;
 	}
     }

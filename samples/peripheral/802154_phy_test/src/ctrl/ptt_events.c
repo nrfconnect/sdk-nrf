@@ -86,17 +86,14 @@ ptt_ret_t ptt_event_alloc(ptt_evt_id_t *p_evt_id)
 
     assert(p_evt_ctx != NULL);
 
-    if (p_evt_id == NULL)
-    {
+    if (p_evt_id == NULL) {
 	ret = PTT_RET_NULL_PTR;
 	PTT_TRACE("ptt_event_alloc -< ret %d\n", ret);
 	return ret;
     }
 
-    for (i = 0; i < PTT_EVENT_POOL_N; ++i)
-    {
-	if (false == p_evt_ctx->evt_pool[i].use)
-	{
+    for (i = 0; i < PTT_EVENT_POOL_N; ++i) {
+	if (false == p_evt_ctx->evt_pool[i].use) {
 	    *p_evt_id                  = i;
 	    p_evt_ctx->evt_pool[i].use = true;
 
@@ -117,8 +114,7 @@ ptt_ret_t ptt_event_free(ptt_evt_id_t evt_id)
 
     ptt_ret_t ret = PTT_RET_SUCCESS;
 
-    if (evt_id >= PTT_EVENT_POOL_N)
-    {
+    if (evt_id >= PTT_EVENT_POOL_N) {
 	ret = PTT_RET_INVALID_VALUE;
 	PTT_TRACE("ptt_event_free -< ret %d\n", ret);
 	return ret;
@@ -128,8 +124,7 @@ ptt_ret_t ptt_event_free(ptt_evt_id_t evt_id)
 
     assert(p_evt_ctx != NULL);
 
-    if (false == p_evt_ctx->evt_pool[evt_id].use)
-    {
+    if (false == p_evt_ctx->evt_pool[evt_id].use) {
 	/* evt already inactive */
 	ret = PTT_RET_SUCCESS;
 	PTT_TRACE("ptt_event_free -< ret %d\n", ret);
@@ -149,20 +144,17 @@ ptt_ret_t ptt_event_alloc_and_fill(ptt_evt_id_t *p_evt_id, const uint8_t *p_pkt,
 
     ptt_ret_t ret = PTT_RET_SUCCESS;
 
-    if (p_pkt == NULL)
-    {
+    if (p_pkt == NULL) {
 	ret = PTT_RET_NULL_PTR;
 	PTT_TRACE("ptt_event_alloc_and_fill -< ret %d\n", ret);
 	return ret;
     }
-    if (len > PTT_EVENT_DATA_SIZE)
-    {
+    if (len > PTT_EVENT_DATA_SIZE) {
 	ret = PTT_RET_INVALID_VALUE;
 	PTT_TRACE("ptt_event_alloc_and_fill -< ret %d\n", ret);
 	return ret;
     }
-    if (len == 0)
-    {
+    if (len == 0) {
 	ret = PTT_RET_INVALID_VALUE;
 	PTT_TRACE("ptt_event_alloc_and_fill -< ret %d\n", ret);
 	return ret;
@@ -170,8 +162,7 @@ ptt_ret_t ptt_event_alloc_and_fill(ptt_evt_id_t *p_evt_id, const uint8_t *p_pkt,
 
     ret = ptt_event_alloc(p_evt_id);
 
-    if (ret != PTT_RET_SUCCESS)
-    {
+    if (ret != PTT_RET_SUCCESS) {
 	PTT_TRACE("ptt_event_alloc_and_fill -< ret %d\n", ret);
 	return ret;
     }
@@ -191,8 +182,7 @@ ptt_event_t *ptt_get_p_event_by_id(ptt_evt_id_t evt_id)
 {
     PTT_TRACE("ptt_get_p_event_by_id -> evt_id %d\n", evt_id);
 
-    if (evt_id >= PTT_EVENT_POOL_N)
-    {
+    if (evt_id >= PTT_EVENT_POOL_N) {
 	return NULL;
     }
 
@@ -200,8 +190,7 @@ ptt_event_t *ptt_get_p_event_by_id(ptt_evt_id_t evt_id)
 
     assert(p_evt_ctx != NULL);
 
-    if (false == p_evt_ctx->evt_pool[evt_id].use)
-    {
+    if (false == p_evt_ctx->evt_pool[evt_id].use) {
 	/* event inactive */
 	return NULL;
     }
