@@ -13,7 +13,7 @@
 #include <usb/usb_device.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(peripheral_uart_thingy53);
+LOG_MODULE_REGISTER(thingy53_setup);
 
 
 static int bt_smp_init(const struct device *dev)
