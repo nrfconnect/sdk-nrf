@@ -19,7 +19,11 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, thingy53_nrf5340_cpuapp
+
+.. note::
+   When used with :ref:`zephyr:thingy53_nrf5340`, the sample supports the MCUboot bootloader with serial recovery and SMP DFU over Bluetooth.
+   Debug logs are provided over the USB CDC ACM class serial port.
 
 You need at least two development kits:
 
@@ -44,8 +48,8 @@ This mobile application is also used to configure key bindings, and publication 
 The Generic OnOff Client model is used for manipulating the Generic OnOff state associated with the Generic OnOff Server model.
 The light switch sample implements the Generic OnOff Client model.
 
-The sample has four buttons to control the state of LED 1 on servers (implemented by the :ref:`bluetooth_mesh_light` sample).
-Four instances of the Generic OnOff Client model are instantiated in the light switch sample, one for each button on the development kit that is used.
+The sample instantiates up to four instances of the Generic OnOff Client model to control the state of LEDs on servers (implemented by the :ref:`bluetooth_mesh_light` sample).
+One instance of the Generic OnOff Client model is instantiated in the light switch sample for each button available on the development kit that is used.
 When a user presses any of the buttons, an OnOff Set message is sent out to the configured destination address.
 
 After provisioning and configuring the mesh models supported by the sample using the `nRF Mesh mobile app`_, you can control the LEDs on the other (server) development kit(s) from the app.
@@ -72,9 +76,13 @@ The following table shows the mesh light switch composition data for this sample
    Gen. OnOff Client
    =================  =================  =================  =================
 
+.. note::
+   When used with :ref:`zephyr:thingy53_nrf5340`, Elements 3 and 4 are not available.
+   :ref:`zephyr:thingy53_nrf5340` supports only two buttons.
+
 The models are used for the following purposes:
 
-* :ref:`bt_mesh_onoff_cli_readme` instances in elements 1 to 4 are controlled by the buttons on the development kit.
+* :ref:`bt_mesh_onoff_cli_readme` instances in available elements are controlled by the buttons on the development kit.
 * Config Server allows configurator devices to configure the node remotely.
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
@@ -91,13 +99,17 @@ User interface
 **************
 
 Buttons:
-      During the provisioning process, the buttons (1 to 4) can be used for OOB input.
+      During the provisioning process, the buttons can be used for OOB input.
       Once the provisioning and configuration are completed, the buttons are used to initiate certain actions and control the respective Generic OnOff Client instances.
       When pressed, the button publishes an OnOff message using the configured publication parameters of its model instance, and toggles the LED state on a :ref:`mesh light <bluetooth_mesh_light>` device.
 
 LEDs:
-   During the provisioning process, the LEDs (1 to 4) are used to output the OOB actions.
+   During the provisioning process, on board LEDs are used to output the OOB actions.
    Once the provisioning and configuration are completed, the LEDs are used to reflect the status of actions, and they show the last known OnOff state of the corresponding button.
+
+.. note::
+   :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
+   Each RGB LED channel is used as separate LED.
 
 Configuration
 *************
@@ -109,8 +121,10 @@ Source file setup
 
 The light switch sample is split into the following source files:
 
-* A :file:`main.c` file to handle initialization.
-* One additional file for handling mesh models, :file:`model_handler.c`.
+* :file:`main.c` used to handle initialization.
+* :file:`model_handler.c` used to handle mesh models.
+* :file:`thingy53.c` used to handle preinitialization of the :ref:`zephyr:thingy53_nrf5340` board.
+   Only compiled when the sample is build for :ref:`zephyr:thingy53_nrf5340` board.
 
 Building and running
 ********************
