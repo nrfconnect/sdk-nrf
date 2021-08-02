@@ -9,8 +9,8 @@ menuconfig PROFILER
 
 if PROFILER
 
-config PROFILER_MAX_NUMBER_OF_EVENTS
-	int "Maximum number of stored event types"
+config PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS
+	int "Maximum number of stored application event types"
 	default 32
 	range 0 255
 	help
@@ -19,6 +19,7 @@ config PROFILER_MAX_NUMBER_OF_EVENTS
 config PROFILER_CUSTOM_EVENT_BUF_LEN
 	int "Length of data buffer for custom event data (in bytes)"
 	default 64
+	range 5 1023
 
 config PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS
 	int "Maximum number of characters used to describe single event type"
@@ -34,6 +35,13 @@ config PROFILER_NORDIC
 	select USE_SEGGER_RTT
 
 endchoice
+
+config PROFILER_NUMBER_OF_INTERNAL_EVENTS
+	int
+	default 1 if PROFILER_NORDIC
+	default 0
+	help
+	  Number of internal events.
 
 menu "Nordic profiler advanced"
 	depends on PROFILER_NORDIC

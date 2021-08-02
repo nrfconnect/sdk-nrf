@@ -314,7 +314,7 @@ int event_manager_init(void)
 	 * start and end of an Event Manager event.
 	 */
 	__ASSERT_NO_MSG(__stop_event_types - __start_event_types + 2 <=
-			CONFIG_PROFILER_MAX_NUMBER_OF_EVENTS);
+			CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS);
 #endif /*CONFIG_EVENT_MANAGER_PROFILER_ENABLED*/
 
 	log_event_init();
