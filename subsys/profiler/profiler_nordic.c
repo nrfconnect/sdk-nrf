@@ -325,18 +325,19 @@ void profiler_log_add_mem_address(struct log_event_buf *buf,
 void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 {
 	__ASSERT_NO_MSG(event_type_id <= UCHAR_MAX);
+	static struct k_spinlock lock;
 	if (sending_events) {
 		uint8_t type_id = event_type_id & UCHAR_MAX;
 
 		buf->payload_start[0] = type_id;
-		int key = irq_lock();
+		k_spinlock_key_t key = k_spin_lock(&lock);
 
 		uint8_t num_bytes_send = SEGGER_RTT_WriteNoLock(
 				CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
 				buf->payload_start,
 				buf->payload - buf->payload_start);
 		ARG_UNUSED(num_bytes_send);
-		irq_unlock(key);
+		k_spin_unlock(&lock, key);
 		__ASSERT_NO_MSG(num_bytes_send > 0);
 	}
 }
