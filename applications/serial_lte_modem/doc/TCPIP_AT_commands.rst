@@ -35,8 +35,8 @@ Syntax
 * The ``<op>`` parameter can accept one of the following values:
 
   * ``0`` - Stop the server.
-  * ``1`` - Start the server for IP protocol family version 4.
-  * ``2`` - Start the server for IP protocol family version 6.
+  * ``1`` - Start the server using IP protocol family version 4.
+  * ``2`` - Start the server using IP protocol family version 6.
 
 * The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the TCP service port.

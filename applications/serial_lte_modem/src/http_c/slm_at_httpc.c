@@ -17,12 +17,10 @@
 
 LOG_MODULE_REGISTER(slm_httpc, CONFIG_SLM_LOG_LEVEL);
 
-#define HTTPC_HOST_LEN		64
 #define HTTPC_METHOD_LEN	20
 #define HTTPC_RES_LEN		256
 #define HTTPC_HEADER_LEN	512
-#define HTTPC_REQ_LEN		(HTTPC_METHOD_LEN + HTTPC_RES_LEN \
-				+ HTTPC_HEADER_LEN + 3)
+#define HTTPC_REQ_LEN		(HTTPC_METHOD_LEN + HTTPC_RES_LEN + HTTPC_HEADER_LEN + 3)
 #define HTTPC_FRAG_SIZE		NET_IPV4_MTU
 #define HTTPC_BUF_LEN		1024
 #if HTTPC_REQ_LEN > HTTPC_BUF_LEN
@@ -35,8 +33,9 @@ static uint8_t data_buf[HTTPC_BUF_LEN];
 
 /**@brief HTTP connect operations. */
 enum slm_httpccon_operation {
-	AT_HTTPCCON_DISCONNECT,
-	AT_HTTPCCON_CONNECT
+	HTTPC_DISCONNECT,
+	HTTPC_CONNECT,
+	HTTPC_CONNECT6
 };
 
 /**@brief HTTP client state */
@@ -49,9 +48,9 @@ enum httpc_state {
 
 static struct slm_httpc_ctx {
 	int fd;				/* HTTPC socket */
-	bool sec_transport;		/* secure session flag */
+	int family;			/* Socket address family */
 	uint32_t sec_tag;		/* security tag to be used */
-	char host[HTTPC_HOST_LEN + 1];	/* HTTP server address */
+	char host[SLM_MAX_URL + 1];	/* HTTP server address */
 	uint16_t port;			/* HTTP server port */
 	char *method_str;		/* request method */
 	char *resource;			/* resource */
@@ -71,187 +70,6 @@ static struct k_thread httpc_thread;
 static K_THREAD_STACK_DEFINE(httpc_thread_stack, HTTPC_THREAD_STACK_SIZE);
 
 static K_SEM_DEFINE(http_req_sem, 0, 1);
-
-static int socket_sectag_set(int fd, int sec_tag)
-{
-	int err;
-	int verify;
-	sec_tag_t sec_tag_list[] = { sec_tag };
-
-	verify = TLS_PEER_VERIFY_REQUIRED;
-
-	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
-	if (err) {
-		LOG_ERR("Failed to setup peer verification, errno %d", errno);
-		return -1;
-	}
-
-	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
-			 sizeof(sec_tag_t) * ARRAY_SIZE(sec_tag_list));
-	if (err) {
-		LOG_ERR("Failed to set socket security tag, errno %d", errno);
-		return -1;
-	}
-
-	err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME,
-			 httpc.host, sizeof(httpc.host));
-	if (err < 0) {
-		LOG_ERR("Failed to set TLS_HOSTNAME option: %d", errno);
-		return -errno;
-	}
-
-	return 0;
-}
-
-static int resolve_and_connect(int family, const char *host, int sec_tag)
-{
-	int fd;
-	int err;
-	int proto;
-	uint16_t port;
-	struct addrinfo *addr;
-	struct addrinfo *info;
-
-	__ASSERT_NO_MSG(host);
-
-	/* Set up port and protocol */
-	if (httpc.sec_transport == false) {
-		/* HTTP, port 80 */
-		proto = IPPROTO_TCP;
-	} else {
-		/* HTTPS, port 443 */
-		proto = IPPROTO_TLS_1_2;
-	}
-
-	port = htons(httpc.port);
-
-	/* Lookup host */
-	struct addrinfo hints = {
-		.ai_family = family,
-		.ai_socktype = SOCK_STREAM,
-	};
-
-	err = getaddrinfo(host, NULL, &hints, &info);
-	if (err) {
-		LOG_ERR("Failed to resolve hostname %s on %s",
-			log_strdup(host),
-			family == AF_INET ? "IPv4" : "IPv6");
-		return -1;
-	}
-	LOG_INF("Attempting to connect over %s",
-		family == AF_INET ? log_strdup("IPv4") : log_strdup("IPv6"));
-	fd = socket(family, SOCK_STREAM, proto);
-	if (fd < 0) {
-		LOG_ERR("Failed to create socket, errno %d", errno);
-		goto cleanup;
-	}
-
-	if (proto == IPPROTO_TLS_1_2) {
-		LOG_INF("Setting up TLS credentials");
-		err = socket_sectag_set(fd, sec_tag);
-		if (err) {
-			LOG_ERR("Fail to set up TLS credentials: %d", err);
-			goto cleanup;
-		}
-	}
-
-	/* Not connected */
-	err = -1;
-
-	for (addr = info; addr != NULL; addr = addr->ai_next) {
-		struct sockaddr *const sa = addr->ai_addr;
-
-		switch (sa->sa_family) {
-		case AF_INET6:
-			((struct sockaddr_in6 *)sa)->sin6_port = port;
-			break;
-		case AF_INET:
-			((struct sockaddr_in *)sa)->sin_port = port;
-			break;
-		}
-
-		err = connect(fd, sa, addr->ai_addrlen);
-		if (err) {
-			/* Try next address */
-			LOG_ERR("Unable to connect, errno %d", errno);
-		} else {
-			/* Connected */
-			break;
-		}
-	}
-
-cleanup:
-	freeaddrinfo(info);
-
-	if (err) {
-		/* Unable to connect, close socket */
-		close(fd);
-		fd = -1;
-	}
-
-	return fd;
-}
-
-static int socket_timeout_set(int fd)
-{
-	int err;
-	const uint32_t timeout_ms = HTTPC_REQ_TO_S * MSEC_PER_SEC;
-
-	struct timeval timeo = {
-		.tv_sec = (timeout_ms / 1000),
-		.tv_usec = (timeout_ms % 1000) * 1000,
-	};
-	LOG_DBG("Configuring socket timeout (%ld s)", timeo.tv_sec);
-	err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
-	if (err) {
-		LOG_WRN("Failed to set socket TX timeout, errno %d", errno);
-		return -errno;
-	}
-	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
-	if (err) {
-		LOG_WRN("Failed to set socket RX timeout, errno %d", errno);
-		return -errno;
-	}
-
-	return 0;
-}
-
-static int server_connect(const char *host, int sec_tag)
-{
-	int fd;
-	int err;
-
-	if (host == NULL) {
-		LOG_ERR("Empty remote host.");
-		return INVALID_SOCKET;
-	}
-
-	if ((httpc.sec_transport == true) && (sec_tag == -1)) {
-		LOG_ERR("Empty secure tag.");
-		return INVALID_SOCKET;
-	}
-
-	/* Attempt IPv6 connection if configured, fallback to IPv4 */
-	fd = resolve_and_connect(AF_INET6, host, sec_tag);
-	if (fd < 0) {
-		fd = resolve_and_connect(AF_INET, host, sec_tag);
-	}
-
-	if (fd < 0) {
-		LOG_ERR("Fail to resolve and connect");
-		return INVALID_SOCKET;
-	}
-	LOG_INF("Connected to %s", log_strdup(host));
-
-	/* Set socket timeout, if configured */
-	err = socket_timeout_set(fd);
-	if (err) {
-		close(fd);
-		return INVALID_SOCKET;
-	}
-
-	return fd;
-}
 
 static void response_cb(struct http_response *rsp,
 			enum http_final_call final_data,
@@ -420,23 +238,117 @@ static int payload_cb(int sock, struct http_request *req, void *user_data)
 
 static int do_http_connect(void)
 {
-	/* Connect to server if it is not connected yet. */
-	if (httpc.fd == INVALID_SOCKET) {
-		httpc.fd = server_connect(httpc.host, httpc.sec_tag);
-		if (httpc.fd == INVALID_SOCKET) {
-			LOG_ERR("server_connect fail.");
-			sprintf(rsp_buf, "\r\n#XHTTPCCON: 0\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
-		} else {
-			sprintf(rsp_buf, "\r\n#XHTTPCCON: 1\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
-		}
-	} else {
+	int ret;
+
+	if (httpc.fd != INVALID_SOCKET) {
 		LOG_ERR("Already connected to server.");
 		return -EINVAL;
 	}
 
-	return httpc.fd;
+	/* Open socket */
+	if (httpc.sec_tag == INVALID_SEC_TAG) {
+		ret = socket(httpc.family, SOCK_STREAM, IPPROTO_TCP);
+	} else {
+		ret = socket(httpc.family, SOCK_STREAM, IPPROTO_TLS_1_2);
+
+	}
+	if (ret < 0) {
+		LOG_ERR("socket() failed: %d", -errno);
+		return ret;
+	}
+	httpc.fd = ret;
+
+	/* Set socket options */
+	const uint32_t timeout_ms = HTTPC_REQ_TO_S * MSEC_PER_SEC;
+	struct timeval timeo = {
+		.tv_sec = (timeout_ms / 1000),
+		.tv_usec = (timeout_ms % 1000) * 1000,
+	};
+
+	LOG_DBG("Configuring socket timeout (%ld s)", timeo.tv_sec);
+	ret = setsockopt(httpc.fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
+	if (ret) {
+		LOG_ERR("setsockopt(SO_SNDTIMEO) error: %d", -errno);
+		ret = -errno;
+		goto exit_cli;
+	}
+	ret = setsockopt(httpc.fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
+	if (ret) {
+		LOG_ERR("setsockopt(SO_SNDTIMEO) error: %d", -errno);
+		ret = -errno;
+		goto exit_cli;
+	}
+	if (httpc.sec_tag != INVALID_SEC_TAG) {
+		sec_tag_t sec_tag_list[] = { httpc.sec_tag };
+		int peer_verify = TLS_PEER_VERIFY_REQUIRED;
+
+		ret = setsockopt(httpc.fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
+				 sizeof(sec_tag_t));
+		if (ret) {
+			LOG_ERR("setsockopt(TLS_SEC_TAG_LIST) error: %d", -errno);
+			ret = -errno;
+			goto exit_cli;
+		}
+		ret = setsockopt(httpc.fd, SOL_TLS, TLS_PEER_VERIFY, &peer_verify,
+				 sizeof(peer_verify));
+		if (ret) {
+			LOG_ERR("setsockopt(TLS_PEER_VERIFY) error: %d", -errno);
+			ret = -errno;
+			goto exit_cli;
+		}
+		ret = setsockopt(httpc.fd, SOL_TLS, TLS_HOSTNAME, httpc.host,
+				 strlen(httpc.host) + 1);
+		if (ret) {
+			LOG_ERR("setsockopt(TLS_HOSTNAME) error: %d", -errno);
+			ret = -errno;
+			goto exit_cli;
+		}
+	}
+
+	/* Connect to HTTP server */
+	struct addrinfo *res;
+	struct addrinfo hints = {
+		.ai_family = httpc.family,
+		.ai_socktype = SOCK_STREAM
+	};
+
+	ret = getaddrinfo(httpc.host, NULL, &hints, &res);
+	if (ret) {
+		LOG_ERR("getaddrinfo() failed: %d", ret);
+		goto exit_cli;
+	}
+
+	if (httpc.family == AF_INET) {
+		struct sockaddr_in *host = (struct sockaddr_in *)res->ai_addr;
+
+		host->sin_port = htons(httpc.port);
+		ret = connect(httpc.fd, (struct sockaddr *)host, sizeof(struct sockaddr_in));
+	} else {
+		struct sockaddr_in6 *host = (struct sockaddr_in6 *)res->ai_addr;
+
+		host->sin6_port = htons(httpc.port);
+		ret = connect(httpc.fd, (struct sockaddr *)host, sizeof(struct sockaddr_in6));
+	}
+	if (ret) {
+		LOG_ERR("connect() failed: %d", -errno);
+		ret = -errno;
+		freeaddrinfo(res);
+		goto exit_cli;
+	}
+
+	sprintf(rsp_buf, "\r\n#XHTTPCCON: 1\r\n");
+	rsp_send(rsp_buf, strlen(rsp_buf));
+
+	freeaddrinfo(res);
+	return 0;
+
+exit_cli:
+	close(httpc.fd);
+	httpc.fd = INVALID_SOCKET;
+	sprintf(rsp_buf, "\r\n#XHTTPCCON: 0\r\n");
+	rsp_send(rsp_buf, strlen(rsp_buf));
+
+	return ret;
 }
 
 static int do_http_disconnect(void)
@@ -526,75 +438,50 @@ static int do_http_request(void)
 int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-
 	uint16_t op;
-	size_t host_sz = HTTPC_HOST_LEN;
+	size_t host_sz = SLM_MAX_URL;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) == 0) {
-			return -EINVAL;
-		}
 		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
-		if (err < 0) {
-			LOG_ERR("Fail to get op: %d", err);
+		if (err) {
 			return err;
 		}
-
-		if (op == AT_HTTPCCON_CONNECT) {
-			uint16_t port;
-
-			if (at_params_valid_count_get(&at_param_list) <= 3) {
-				return -EINVAL;
-			}
-			if (httpc.fd != INVALID_SOCKET) {
-				return -EINPROGRESS;
-			}
+		if (op == HTTPC_CONNECT || op == HTTPC_CONNECT6) {
 			err = util_string_get(&at_param_list, 2, httpc.host, &host_sz);
-			if (err < 0) {
-				LOG_ERR("Fail to get host: %d", err);
+			if (err) {
 				return err;
 			}
-
-			err = at_params_unsigned_short_get(&at_param_list, 3, &port);
-			if (err < 0) {
-				LOG_ERR("Fail to get port: %d", err);
+			err = at_params_unsigned_short_get(&at_param_list, 3, &httpc.port);
+			if (err) {
 				return err;
 			}
-			httpc.port = (uint16_t)port;
-			if (at_params_valid_count_get(&at_param_list) == 5) {
+			httpc.sec_tag = INVALID_SEC_TAG;
+			if (at_params_valid_count_get(&at_param_list) > 4) {
 				err = at_params_unsigned_int_get(&at_param_list, 4,
 							&httpc.sec_tag);
-				if (err < 0) {
-					LOG_ERR("Fail to get sec_tag: %d", err);
+				if (err) {
 					return err;
 				}
-				httpc.sec_transport = true;
 			}
-			LOG_DBG("Connect from http server");
-			if (do_http_connect() >= 0) {
-				err = 0;
-			} else {
-				err = -EINVAL;
-			}
+			httpc.family = (op == HTTPC_CONNECT) ? AF_INET : AF_INET6;
+			err = do_http_connect();
 			break;
-		} else if (op == AT_HTTPCCON_DISCONNECT) {
-			LOG_DBG("Disconnect from http server");
+		} else if (op == HTTPC_DISCONNECT) {
 			err = do_http_disconnect();
-			if (err) {
-				LOG_ERR("Fail to disconnect. Error: %d", err);
-			}
+		} else {
+			err = -EINVAL;
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		if (httpc.sec_transport) {
+		if (httpc.sec_tag != INVALID_SEC_TAG) {
 			sprintf(rsp_buf, "\r\n#XHTTPCCON: %d,\"%s\",%d,%d\r\n",
-				(httpc.fd == INVALID_SOCKET)?0:1, httpc.host,
-				httpc.port, httpc.sec_tag);
+				(httpc.fd == INVALID_SOCKET) ? 0 : 1,
+				httpc.host, httpc.port, httpc.sec_tag);
 		} else {
 			sprintf(rsp_buf, "\r\n#XHTTPCCON: %d,\"%s\",%d\r\n",
-				(httpc.fd == INVALID_SOCKET)?0:1, httpc.host,
-				httpc.port);
+				(httpc.fd == INVALID_SOCKET) ? 0 : 1,
+				httpc.host, httpc.port);
 		}
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
@@ -602,8 +489,8 @@ int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf,
-			"\r\n#XHTTPCCON: (%d,%d),<host>,<port>,<sec_tag>\r\n",
-			AT_HTTPCCON_DISCONNECT, AT_HTTPCCON_CONNECT);
+			"\r\n#XHTTPCCON: (%d,%d,%d),<host>,<port>,<sec_tag>\r\n",
+			HTTPC_DISCONNECT, HTTPC_CONNECT, HTTPC_CONNECT6);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
