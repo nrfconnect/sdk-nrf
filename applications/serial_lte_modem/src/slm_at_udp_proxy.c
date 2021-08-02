@@ -196,36 +196,24 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 		}
 	}
 
+	/* Connect to remote host */
 	struct addrinfo *res;
+	struct addrinfo hints = {
+		.ai_family = proxy.family,
+		.ai_socktype = SOCK_DGRAM
+	};
 
+	ret = getaddrinfo(url, NULL, &hints, &res);
+	if (ret) {
+		LOG_ERR("getaddrinfo() failed: %d", ret);
+		goto cli_exit;
+	}
 	if (proxy.family == AF_INET) {
-		struct addrinfo hints = {
-			.ai_family = AF_INET,
-			.ai_socktype = SOCK_DGRAM
-		};
-
-		ret = getaddrinfo(url, NULL, &hints, &res);
-		if (ret) {
-			LOG_ERR("getaddrinfo() failed: %d", ret);
-			goto cli_exit;
-		}
-		/* Connect to remote host */
 		struct sockaddr_in *host = (struct sockaddr_in *)res->ai_addr;
 
 		host->sin_port = htons(port);
 		ret = connect(proxy.sock, (struct sockaddr *)host, sizeof(struct sockaddr_in));
 	} else {
-		struct addrinfo hints = {
-			.ai_family = AF_INET6,
-			.ai_socktype = SOCK_DGRAM
-		};
-
-		ret = getaddrinfo(url, NULL, &hints, &res);
-		if (ret) {
-			LOG_ERR("getaddrinfo() failed: %d", ret);
-			goto cli_exit;
-		}
-		/* Connect to remote host */
 		struct sockaddr_in6 *host = (struct sockaddr_in6 *)res->ai_addr;
 
 		host->sin6_port = htons(port);
