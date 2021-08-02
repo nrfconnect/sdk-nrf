@@ -30,8 +30,19 @@ static void status_handler(struct bt_mesh_onoff_cli *cli,
 			   struct bt_mesh_msg_ctx *ctx,
 			   const struct bt_mesh_onoff_status *status);
 
-static struct button buttons[4] = {
-	[0 ... 3] = { .client = BT_MESH_ONOFF_CLI_INIT(&status_handler) },
+static struct button buttons[] = {
+#if DT_NODE_EXISTS(DT_ALIAS(sw0))
+	{ .client = BT_MESH_ONOFF_CLI_INIT(&status_handler) },
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(sw1))
+	{ .client = BT_MESH_ONOFF_CLI_INIT(&status_handler) },
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(sw2))
+	{ .client = BT_MESH_ONOFF_CLI_INIT(&status_handler) },
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(sw3))
+	{ .client = BT_MESH_ONOFF_CLI_INIT(&status_handler) },
+#endif
 };
 
 static void status_handler(struct bt_mesh_onoff_cli *cli,
@@ -55,7 +66,7 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 		return;
 	}
 
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < ARRAY_SIZE(buttons); ++i) {
 		if (!(pressed & changed & BIT(i))) {
 			continue;
 		}
@@ -100,10 +111,18 @@ static void attention_blink(struct k_work *work)
 {
 	static int idx;
 	const uint8_t pattern[] = {
-		BIT(0) | BIT(1),
-		BIT(1) | BIT(2),
-		BIT(2) | BIT(3),
-		BIT(3) | BIT(0),
+#if DT_NODE_EXISTS(DT_ALIAS(sw0))
+		BIT(0),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(sw1))
+		BIT(1),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(sw2))
+		BIT(2),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(sw3))
+		BIT(3),
+#endif
 	};
 
 	if (attention) {
@@ -138,24 +157,32 @@ static struct bt_mesh_health_srv health_srv = {
 BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 
 static struct bt_mesh_elem elements[] = {
+#if DT_NODE_EXISTS(DT_ALIAS(sw0))
 	BT_MESH_ELEM(1,
 		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_CFG_SRV,
 			     BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 			     BT_MESH_MODEL_ONOFF_CLI(&buttons[0].client)),
 		     BT_MESH_MODEL_NONE),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(sw1))
 	BT_MESH_ELEM(2,
 		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_ONOFF_CLI(&buttons[1].client)),
 		     BT_MESH_MODEL_NONE),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(sw2))
 	BT_MESH_ELEM(3,
 		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_ONOFF_CLI(&buttons[2].client)),
 		     BT_MESH_MODEL_NONE),
+#endif
+#if DT_NODE_EXISTS(DT_ALIAS(sw3))
 	BT_MESH_ELEM(4,
 		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_ONOFF_CLI(&buttons[3].client)),
 		     BT_MESH_MODEL_NONE),
+#endif
 };
 
 static const struct bt_mesh_comp comp = {
