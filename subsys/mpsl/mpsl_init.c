@@ -155,7 +155,10 @@ static int mpsl_lib_init(const struct device *dev)
 	clock_cfg.skip_wait_lfclk_started =
 		IS_ENABLED(CONFIG_SYSTEM_CLOCK_NO_WAIT);
 
-#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION
+#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
+	BUILD_ASSERT(IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION),
+		    "MPSL requires clock calibration to be enabled when RC is used as LFCLK");
+
 	/* clock_cfg.rc_ctiv is given in 1/4 seconds units.
 	 * CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD is given in ms. */
 	clock_cfg.rc_ctiv = (CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD * 4 / 1000);
