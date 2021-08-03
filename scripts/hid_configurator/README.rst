@@ -83,11 +83,12 @@ Complete the following steps:
 
    Additionally, to call the Python script on Linux without root rights, install the provided udev rule :file:`99-hid.rules` file by copying it to :file:`/etc/udev/rules.d` and replugging the device.
 
-#. If you want to display LED stream based on sound data, you must also install the additional requrements using the following command:
+#. If you want to display an LED stream based on sound data, you must also install the additional requirements using the following commands:
 
    .. parsed-literal::
       :class: highlight
 
+      sudo apt-get install portaudio19-dev python3-pyaudio
       pip3 install --user -r requirements_music_led_stream.txt
 
 For more detailed information about LED stream functionality, see the `Playing LEDstream`_ section.
@@ -137,7 +138,7 @@ Configuring device runtime options
 ==================================
 
 The script can pass the configuration values to the linked FW module using the ``config`` command.
-Use the following syntax to display list of modules that can have device runtime options configured:
+Use the following syntax to display the list of modules that can have device runtime options configured:
 
 .. parsed-literal::
     :class: highlight
@@ -146,7 +147,7 @@ Use the following syntax to display list of modules that can have device runtime
 
 .. note::
   The list contains all the configurable modules used by nRF Desktop devices.
-  Make sure that selected module and option combination is supported by the configured device using ``show`` command.
+  Make sure that the selected module and option combination is supported by the configured device using ``show`` command.
 
 Use the following syntax to display list of options for the given module that can have device runtime options configured:
 
@@ -164,7 +165,7 @@ Use the following syntax to display list of options for the given module that ca
 
 Customize the command with the following variables:
 
-* ``MODULE_NAME`` - The third argument is used to pass the name of module to be configured.
+* ``MODULE_NAME`` - The third argument is used to pass the name of the module to be configured.
 * ``OPTION_NAME`` - The fourth argument is used to pass the name of the option.
 * ``VALUE`` - Optional fifth argument is used to pass a new value of the selected option.
 
@@ -279,13 +280,13 @@ Implementation details
 **********************
 
 Every nRF Desktop device must be discovered by the script before it can be configured.
-The script fetches the hardware ID and board name, and scans for the configurable modules.
+The script fetches the hardware ID and board name and scans for the configurable modules.
 For each module, it obtains the list of available options.
 For details about options available within each module, see the module documentation.
 
-From the user perspective, the nRF Desktop device is handled in the same way no matter if it is connected to the host directly or through the nRF Desktop dongle.
-During the device discovery, the script asks for the Bluetooth connected nRF Desktop peripherals.
-In case the currently discovered device has connected peripherals, these peripherals are discovered and then they can be configured too.
+From the user perspective, the nRF Desktop device is handled in the same way, regardless of it being connected to the host directly or through the nRF Desktop dongle.
+During the device discovery, the script asks for the nRF Desktop peripherals connected through Bluetooth.
+In case the currently discovered device has connected peripherals, these peripherals are discovered, readying them for configuration.
 
 Dependencies
 ************
