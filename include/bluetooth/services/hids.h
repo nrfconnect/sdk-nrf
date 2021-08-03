@@ -65,8 +65,9 @@ extern "C" {
  *        the link context size for HIDS instance.
  */
 #define _BT_HIDS_CONN_CTX_SIZE_CALC(...)		   \
-	(FOR_EACH(GET_ARG1, (+), __VA_ARGS__)	+ \
+	(FOR_EACH(_BT_HIDS_GET_ARG1, (+), __VA_ARGS__)	+ \
 	sizeof(struct bt_hids_conn_data))
+#define _BT_HIDS_GET_ARG1(...) GET_ARG_N(1, __VA_ARGS__)
 
 /** @brief Possible values for the Protocol Mode Characteristic value.
  */
