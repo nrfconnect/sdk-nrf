@@ -1000,6 +1000,11 @@ Closing sockets
 Multiprotocol Service Layer (MPSL)
 ==================================
 
+.. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0
+
+DRGN-15979: :option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION` must be set when :option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is set.
+  MPSL requires RC clock calibration to be enabled when the RC clock is used as the Low Frequency clock source.
+
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1
 
 DRGN-15223: `CONFIG_SYSTEM_CLOCK_NO_WAIT` is not supported for nRF5340
