@@ -206,6 +206,7 @@ Zigbee
   * :ref:`zigbee_template_sample` sample.
     This minimal Zigbee router application can be used as the starting point for developing custom Zigbee devices.
   * Added API for vendor-specific NCP commands.
+    See the :ref:`Zigbee NCP sample <zigbee_ncp_vendor_specific_commands>` page for more information.
   * Added API for Zigbee command for getting active nodes.
 
 * Updated:

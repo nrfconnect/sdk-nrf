@@ -16,6 +16,9 @@
 #include <zb_osif_ext.h>
 #include <zephyr.h>
 #include <device.h>
+#include <dk_buttons_and_leds.h>
+#include <ncp/ncp_dev_api.h>
+
 
 #if CONFIG_BOOTLOADER_MCUBOOT
 #include <dfu/mcuboot.h>
@@ -28,6 +31,23 @@ LOG_MODULE_REGISTER(app);
 #define RST_PIN_NUMBER DT_GPIO_PIN(DT_ALIAS(rst0), gpios)
 #define RST_PIN_LVL	0
 #endif
+
+#define VENDOR_SPECIFIC_LED DK_LED2
+
+#define VENDOR_SPECIFIC_LED_ACTION_OFF (0U)
+#define VENDOR_SPECIFIC_LED_ACTION_ON (1U)
+#define VENDOR_SPECIFIC_LED_ACTION_TOGGLE (2U)
+
+#define VENDOR_SPECIFIC_REQUEST_LEN (1U)
+#define VENDOR_SPECIFIC_RESPONSE_LEN (1U)
+
+#define VENDOR_SPECIFIC_IND_LEN (1U)
+#define VENDOR_SPECIFIC_IND_DELAY (ZB_TIME_ONE_SECOND * 3)
+
+
+/* The state of a led controlled by ncp custom commands */
+static zb_uint8_t vendor_specific_led_state = VENDOR_SPECIFIC_LED_ACTION_OFF;
+
 
 zb_ret_t zb_osif_bootloader_run_after_reboot(void)
 {
@@ -66,6 +86,87 @@ void zb_osif_bootloader_report_successful_loading(void)
 		}
 	}
 #endif
+}
+
+static void custom_indication(zb_uint8_t buf, zb_uint16_t led_idx)
+{
+	zb_uint8_t *ind_data = zb_buf_initial_alloc(buf, VENDOR_SPECIFIC_IND_LEN);
+
+	*ind_data = (zb_uint8_t)led_idx;
+
+	zb_ncp_custom_indication(buf);
+}
+
+static void perform_custom_indication(zb_uint8_t led_idx)
+{
+	zb_buf_get_out_delayed_ext(custom_indication, led_idx, 0);
+}
+
+static zb_ret_t ncp_vendor_specific_req_handler(zb_uint8_t buf)
+{
+	/* request tsn */
+	zb_uint8_t tsn = *ZB_BUF_GET_PARAM(buf, zb_uint8_t);
+	/* actual payload passed by the request */
+	zb_uint8_t *led_action = (zb_uint8_t *)zb_buf_begin(buf);
+
+	zb_uint8_t resp_buf = zb_buf_get(ZB_FALSE, VENDOR_SPECIFIC_RESPONSE_LEN);
+	zb_uint8_t *resp_data;
+	ncp_hl_custom_resp_t *resp_args;
+
+	if (resp_buf == ZB_BUF_INVALID) {
+		LOG_ERR("Couldn't get buf");
+		return RET_NO_MEMORY;
+	}
+
+	resp_data = zb_buf_initial_alloc(resp_buf, VENDOR_SPECIFIC_RESPONSE_LEN);
+	resp_args = ZB_BUF_GET_PARAM(resp_buf, ncp_hl_custom_resp_t);
+
+	if (zb_buf_len(buf) == VENDOR_SPECIFIC_REQUEST_LEN) {
+		switch (*led_action) {
+		case VENDOR_SPECIFIC_LED_ACTION_OFF:
+			zb_osif_led_off(VENDOR_SPECIFIC_LED);
+			resp_args->status = RET_OK;
+
+			vendor_specific_led_state = 0;
+			break;
+		case VENDOR_SPECIFIC_LED_ACTION_ON:
+			zb_osif_led_on(VENDOR_SPECIFIC_LED);
+			resp_args->status = RET_OK;
+
+			vendor_specific_led_state = 1;
+			break;
+		case VENDOR_SPECIFIC_LED_ACTION_TOGGLE:
+			vendor_specific_led_state ^= 0x01;
+			if (vendor_specific_led_state) {
+				zb_osif_led_on(VENDOR_SPECIFIC_LED);
+			} else {
+				zb_osif_led_off(VENDOR_SPECIFIC_LED);
+			}
+			resp_args->status = RET_OK;
+
+			break;
+		default:
+			resp_args->status = RET_ERROR;
+			break;
+		}
+	} else {
+		resp_args->status = RET_ERROR;
+	}
+
+	resp_args->tsn = tsn;
+	*resp_data = vendor_specific_led_state;
+
+	return zb_ncp_custom_response(resp_buf);
+}
+
+static void ncp_vendor_specific_init(void)
+{
+	zb_osif_led_button_init();
+
+	zb_ncp_custom_register_request_cb(ncp_vendor_specific_req_handler);
+
+	ZB_SCHEDULE_APP_ALARM(perform_custom_indication, (zb_uint8_t)VENDOR_SPECIFIC_LED,
+						  VENDOR_SPECIFIC_IND_DELAY);
 }
 
 int main(void)
@@ -115,6 +216,9 @@ int main(void)
 #endif /* CONFIG_USB */
 
 	zb_osif_ncp_set_nvram_filter();
+
+	/* Setup ncp custom command handling */
+	ncp_vendor_specific_init();
 
 	/* Start Zigbee default thread */
 	zigbee_enable();
