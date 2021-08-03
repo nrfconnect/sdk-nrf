@@ -14,6 +14,8 @@ target_sources(app
   PRIVATE
   ${app_sources}
   ${NRF_DIR}/subsys/bluetooth/mesh/light_ctrl_srv.c
+  ${NRF_DIR}/subsys/bluetooth/mesh/sensor_types.c
+  ${NRF_DIR}/subsys/bluetooth/mesh/sensor.c
   ${ZEPHYR_BASE}/subsys/net/buf.c
   )
 
