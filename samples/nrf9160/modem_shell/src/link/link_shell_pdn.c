@@ -121,9 +121,7 @@ void link_pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 			    event_str[event]);
 #if defined(CONFIG_MOSH_PPP)
 		if (cid == 0) {
-			/* Notify PPP side about the default PDN activation
-			 * status:
-			 */
+			/* Notify PPP side about the default PDN activation status */
 			if (event == PDN_EVENT_ACTIVATED) {
 				ppp_ctrl_default_pdn_active(true);
 			} else if (event == PDN_EVENT_DEACTIVATED) {
@@ -182,14 +180,14 @@ static struct link_shell_pdn_info *link_shell_pdn_info_list_add(int pdn_id, uint
 	struct link_shell_pdn_info *new_pdn_info = NULL;
 	struct link_shell_pdn_info *iterator = NULL;
 
-	/* Check if already in list, if there; then return an existing one: */
+	/* Check if already in list, if there; then return an existing one */
 	SYS_DLIST_FOR_EACH_CONTAINER(&pdn_info_list, iterator, dnode) {
 		if (iterator->cid == cid) {
 			return iterator;
 		}
 	}
 
-	/* Not already at list, let's add it: */
+	/* Not already at list, let's add it */
 	new_pdn_info =
 		(struct link_shell_pdn_info *)k_calloc(1, sizeof(struct link_shell_pdn_info));
 	new_pdn_info->cid = cid;
@@ -265,14 +263,14 @@ int link_shell_pdn_connect(const struct shell *shell, const char *apn_name,
 		goto cleanup_and_fail;
 	}
 
-	/* Configure a PDP context with APN and Family */
+	/* Configure a PDP context with APN and family */
 	ret = pdn_ctx_configure(cid, apn_name, pdn_lib_family, NULL);
 	if (ret) {
 		shell_error(shell, "pdn_ctx_configure() failed, err %d\n", ret);
 		goto cleanup_and_fail;
 	}
 
-	/* Set authentication params if requested: */
+	/* Set authentication params if requested */
 	if (auth_params != NULL) {
 		ret = pdn_ctx_auth_set(cid, auth_params->method,
 				       auth_params->user,
@@ -294,7 +292,7 @@ int link_shell_pdn_connect(const struct shell *shell, const char *apn_name,
 
 	pdn_id = pdn_id_get(cid);
 
-	/* Add to PDN list: */
+	/* Add to PDN list */
 	new_pdn_info = link_shell_pdn_info_list_add(pdn_id, cid);
 	if (new_pdn_info == NULL) {
 		shell_error(

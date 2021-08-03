@@ -86,7 +86,7 @@ static const char link_usage_str[] =
 	"  disconnect:   Disconnect from given apn by deactivating and destroying\n"
 	"                a PDP context\n"
 	"  rsrp:         Subscribe/unsubscribe for RSRP signal info\n"
-	"  ncellmeas:    Start/stop neighbor cell measurements\n"
+	"  ncellmeas:    Start/cancel neighbor cell measurements\n"
 	"  msleep:       Subscribe/unsubscribe for modem sleep notifications\n"
 	"  tau:          Subscribe/unsubscribe for modem TAU pre-warning notifications\n"
 	"  funmode:      Set/read functional modes of the modem\n"
@@ -405,6 +405,7 @@ static void link_shell_cmd_defaults_set(struct link_shell_cmd_args_t *link_cmd_a
 		LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 	link_cmd_args->lte_mode = LTE_LC_LTE_MODE_NONE;
 	link_cmd_args->ncellmeasmode = LINK_NCELLMEAS_MODE_NONE;
+	link_cmd_args->common_option = LINK_COMMON_NONE;
 }
 
 /******************************************************************************/
@@ -554,6 +555,9 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		ret = -EINVAL;
 		goto show_usage;
 	}
+
+	/* Reset getopt due to possible previous failures: */
+	optreset = 1;
 
 	/* We start from subcmd arguments */
 	optind = 2;
@@ -731,8 +735,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 					shell,
 					"APN string length %d exceeded. Maximum is %d.",
 					apn_len, LINK_APN_STR_MAX_LENGTH);
-				ret = -EINVAL;
-				goto show_usage;
+				return -EINVAL;
 			}
 			apn = optarg;
 			break;
@@ -1333,6 +1336,9 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 	return ret;
 
 show_usage:
+	/* Reset getopt for another users: */
+	optreset = 1;
+
 	link_shell_print_usage(shell, &link_cmd_args);
 	return ret;
 }
