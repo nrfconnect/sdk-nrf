@@ -48,16 +48,18 @@ struct pdn_activation_status_info {
 	uint8_t cid;
 };
 
-/* System work queue for getting the modem info that ain't in lte connection ind: */
+/* Work for getting the modem info that ain't in lte connection ind: */
 static struct k_work registered_work;
 
-/* Work queue for signal info: */
+/* Work for a signal info: */
 static struct k_work modem_info_signal_work;
+
 #define LINK_RSRP_VALUE_NOT_KNOWN -999
 static int32_t modem_rsrp = LINK_RSRP_VALUE_NOT_KNOWN;
 
-/* Work queue for continuous neighbor cell measurements: */
+/* Work for continuous neighbor cell measurements: */
 static struct k_work continuous_ncellmeas_work;
+
 enum link_ncellmeas_modes ncellmeas_mode = LINK_NCELLMEAS_MODE_NONE;
 
 static void link_continuous_ncellmeas(struct k_work *work)
