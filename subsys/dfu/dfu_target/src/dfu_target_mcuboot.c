@@ -56,23 +56,31 @@ int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active,
 	}
 
 	/* We have verified that there is a null-terminator, so this is safe */
-	char *space = strstr(file, " ");
+	char *delimiter = strstr(file, "+");
 
-	if (space == NULL) {
-		/* Could not find space separator in input */
+	if (delimiter == NULL) {
+		/* Could not find delimiter in input */
 		*update = NULL;
 
 		return 0;
 	}
 
+	*update = file;
 	if (s0_active) {
-		/* Point after space to 'activate' second file path (S1) */
-		*update = space + 1;
-	} else {
-		*update = file;
+		char *tmp = strrchr(file, '/');
 
+		if (tmp == NULL) {
+			/* Point after delimiter to 'activate' second file path (S1) */
+			*update = delimiter + 1;
+		} else {
+			/* Copy after delimiter to 'activate' second file path (S1)
+			 * Copy one byte more to include the ending '\0' in original string
+			 */
+			memcpy(tmp + 1, delimiter + 1, strlen(delimiter));
+		}
+	} else {
 		/* Insert null-terminator to 'activate' first file path (S0) */
-		*space = '\0';
+		*delimiter = '\0';
 	}
 
 	return 0;
