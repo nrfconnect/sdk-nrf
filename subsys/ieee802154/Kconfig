@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Nordic IEEE 802.15.4"
+
+config NRF_802154_RADIO_CONFIG_PRIO
+	int "nRF52 IEEE 802.15.4 configuration priority"
+	default 91
+	help
+	  Set the nRF IEEE 802.15.4 configuration priority number. Must be
+	  greater than nRF IEEE 802.15.4 Radio initialization priority.
+
+endmenu
