@@ -5,6 +5,7 @@
  */
 #include <logging/log.h>
 #include <zephyr.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <net/socket.h>
@@ -17,9 +18,6 @@ LOG_MODULE_REGISTER(ftp_client, CONFIG_FTP_CLIENT_LOG_LEVEL);
 #define INVALID_SOCKET		-1
 #define INVALID_SEC_TAG		-1
 
-#define FTP_MAX_HOSTNAME	64
-#define FTP_MAX_USERNAME	32
-#define FTP_MAX_PASSWORD	32
 #define FTP_MAX_BUFFER_SIZE	708 /* align with MSS on modem side */
 #define FTP_DATA_TIMEOUT_SEC	60  /* time in seconds to wait for "Transfer complete" */
 
@@ -30,13 +28,17 @@ LOG_MODULE_REGISTER(ftp_client, CONFIG_FTP_CLIENT_LOG_LEVEL);
 static K_THREAD_STACK_DEFINE(ftp_stack_area, FTP_STACK_SIZE);
 
 static struct ftp_client {
+	int family;     /* Socket address family */
+	bool connected; /* Server connected flag */
 	int cmd_sock;
 	int data_sock;
-	bool connected; /* Server connected flag */
-	struct sockaddr_in remote; /* Server */
 	int sec_tag;
 	ftp_client_callback_t ctrl_callback;
 	ftp_client_callback_t data_callback;
+	union {
+		struct sockaddr_in  remote;  /* IPv4 server */
+		struct sockaddr_in6 remote6; /* IPv6 server */
+	};
 } client;
 
 static struct k_work_q ftp_work_q;
@@ -55,17 +57,19 @@ static struct data_task {
 	uint16_t length;	/* TX length */
 } data_task_param;
 
+static bool ftp_inactivity;
+
 static int parse_return_code(const uint8_t *message, int success_code)
 {
-	char code_str[6]; /* max 1xxxx*/
+	char success_code_str[6]; /* max 1xxxx*/
 	int ret = FTP_CODE_500;
 
 	if (success_code == FTP_CODE_ANY) {
 		return success_code;
 	}
 
-	sprintf(code_str, "%d ", success_code);
-	if (strstr(message, code_str)) {
+	sprintf(success_code_str, "%d ", success_code);
+	if (strstr(message, success_code_str)) {
 		ret = success_code;
 	}
 
@@ -75,46 +79,50 @@ static int parse_return_code(const uint8_t *message, int success_code)
 static int establish_data_channel(const char *pasv_msg)
 {
 	int ret;
-	char tmp[16];
+	char tmp[8];
 	char *tmp1, *tmp2;
 	uint16_t data_port;
 
 	/* Parse Server port from passive message
-	 * e.g. "227 Entering Passive Mode (90,130,70,73,86,111)"
+	 * e.g. "227 Entering Passive Mode (90,130,70,73,86,111)" in case of IPv4
+	 * e.g. "227 Entering Passive Mode (0,0,0,0,97,78)" in case of IPv6
+	 * NOTE assume no IP address change from the Control channel
 	 */
-	tmp1 = strstr(pasv_msg, "(");
-	tmp1++;
-	tmp2 = strstr(tmp1, ",");
-	tmp2++;
-	tmp1 = strstr(tmp2, ",");
-	tmp1++;
-	tmp2 = strstr(tmp1, ",");
-	tmp2++;
-	tmp1 = strstr(tmp2, ",");
-	tmp1++;
-	tmp2 = strstr(tmp1, ",");
-	memset(tmp, 0x00, 16);
-	strncpy(tmp, (const char *)tmp1, (size_t)(tmp2 - tmp1));
-	data_port = atoi(tmp) << 8;
-	tmp2++;
-	tmp1 = strstr(tmp2, ")");
-	memset(tmp, 0x00, 16);
-	strncpy(tmp, (const char *)tmp2, (size_t)(tmp1 - tmp2));
-	data_port += atoi(tmp);
+	tmp1 = strrchr(pasv_msg, ')');
+	if (tmp1 == NULL) {
+		return -EINVAL;
+	}
+	tmp2 = strrchr(pasv_msg, ',');
+	if (tmp2 == NULL) {
+		return -EINVAL;
+	}
+	memset(tmp, 0x00, sizeof(tmp));
+	strncpy(tmp, (const char *)(tmp2 + 1), (size_t)(tmp1 - tmp2 - 1));
+	data_port = atoi(tmp);
+	tmp1 = tmp2 - 1;
+	while (isdigit((int)(*tmp1))) {
+		tmp1--;
+	}
+	if (*tmp1 != ',') {
+		return -EINVAL;
+	}
+	memset(tmp, 0x00, sizeof(tmp));
+	strncpy(tmp, (const char *)(tmp1 + 1), (size_t)(tmp2 - tmp1 - 1));
+	data_port += atoi(tmp) << 8;
+	LOG_DBG("data port: %d", data_port);
 
-	/* Establish the second connect for data */
+	/* open data socket */
 	if (client.sec_tag <= 0) {
-		client.data_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		client.data_sock = socket(client.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
-		client.data_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
+		client.data_sock = socket(client.family, SOCK_STREAM, IPPROTO_TLS_1_2);
 	}
 	if (client.data_sock < 0) {
 		LOG_ERR("socket(data) failed: %d", -errno);
-		ret = -errno;
+		return -errno;
 	}
-
-	if (client.sec_tag > 0) {
-		sec_tag_t sec_tag_list[1] = { client.sec_tag };
+	if (client.sec_tag != INVALID_SEC_TAG) {
+		sec_tag_t sec_tag_list[] = { client.sec_tag };
 
 		ret = setsockopt(client.data_sock, SOL_TLS, TLS_SEC_TAG_LIST,
 				sec_tag_list, sizeof(sec_tag_t));
@@ -125,16 +133,24 @@ static int establish_data_channel(const char *pasv_msg)
 		}
 
 	}
-	client.remote.sin_port = htons(data_port);
-	ret = connect(client.data_sock, (struct sockaddr *)&client.remote,
-		 sizeof(struct sockaddr_in));
+
+	/* Connect to remote host */
+	if (client.family == AF_INET) {
+		client.remote.sin_port = htons(data_port);
+		ret = connect(client.data_sock, (struct sockaddr *)&client.remote,
+			sizeof(struct sockaddr_in));
+	} else {
+		client.remote6.sin6_port = htons(data_port);
+		ret = connect(client.data_sock, (struct sockaddr *)&client.remote6,
+			sizeof(struct sockaddr_in6));
+	}
 	if (ret < 0) {
 		LOG_ERR("connect(data) failed: %d", -errno);
 		close(client.data_sock);
 		return -errno;
 	}
 
-	return ret;
+	return 0;
 }
 
 static void close_connection(int code, int error)
@@ -166,11 +182,13 @@ static void close_connection(int code, int error)
 	if (client.data_sock != INVALID_SOCKET) {
 		close(client.data_sock);
 	}
-	close(client.cmd_sock);
-	client.cmd_sock = INVALID_SOCKET;
-	client.data_sock = INVALID_SOCKET;
-	client.connected = false;
-	client.sec_tag = INVALID_SEC_TAG;
+	if (client.cmd_sock != INVALID_SOCKET) {
+		close(client.cmd_sock);
+		client.cmd_sock = INVALID_SOCKET;
+		client.data_sock = INVALID_SOCKET;
+		client.connected = false;
+		client.sec_tag = INVALID_SEC_TAG;
+	}
 }
 
 /**@brief Send FTP message via socket
@@ -180,8 +198,7 @@ static int do_ftp_send_ctrl(const uint8_t *message, int length)
 	int ret = 0;
 	uint32_t offset = 0;
 
-	LOG_HEXDUMP_DBG(message, length, "TXC");
-
+	LOG_DBG("%s", log_strdup(message));
 	while (offset < length) {
 		ret = send(client.cmd_sock, message + offset, length - offset, 0);
 		if (ret < 0) {
@@ -198,6 +215,7 @@ static int do_ftp_send_ctrl(const uint8_t *message, int length)
 	} else {
 		LOG_DBG("CMD sent");
 	}
+	ftp_inactivity = false;
 	return ret;
 }
 
@@ -210,11 +228,9 @@ static int do_ftp_send_data(const char *pasv_msg, uint8_t *message, uint16_t len
 
 	/* Establish data channel */
 	ret = establish_data_channel(pasv_msg);
-	if (ret < 0) {
+	if (ret) {
 		return ret;
 	}
-
-	LOG_HEXDUMP_DBG(message, length, "TXD");
 
 	while (offset < length) {
 		ret = send(client.data_sock, message + offset, length - offset, 0);
@@ -223,12 +239,13 @@ static int do_ftp_send_data(const char *pasv_msg, uint8_t *message, uint16_t len
 			ret = -errno;
 			break;
 		}
+		LOG_DBG("DATA sent %d", ret);
 		offset += ret;
 		ret = 0;
 	}
 
-	LOG_DBG("DATA sent");
 	close(client.data_sock);
+	ftp_inactivity = false;
 	return ret;
 }
 
@@ -274,13 +291,12 @@ static int do_ftp_recv_ctrl(bool post_result, int success_code)
 	}
 
 	ctrl_buf[ret] = 0x00;
-	LOG_HEXDUMP_DBG(ctrl_buf, ret, "RXC");
-
 	if (post_result) {
 		client.ctrl_callback(ctrl_buf, ret);
 	}
 
-	LOG_DBG("CTRL received");
+	LOG_DBG("%s", log_strdup(ctrl_buf));
+	ftp_inactivity = false;
 	return parse_return_code(ctrl_buf, success_code);
 }
 
@@ -294,7 +310,7 @@ static void do_ftp_recv_data(const char *pasv_msg)
 
 	/* Establish data channel */
 	ret = establish_data_channel(pasv_msg);
-	if (ret < 0) {
+	if (ret) {
 		return;
 	}
 
@@ -308,7 +324,7 @@ static void do_ftp_recv_data(const char *pasv_msg)
 			break;
 		}
 		if ((fds[0].revents & POLLIN) != POLLIN) {
-			LOG_INF("No more data");
+			LOG_DBG("No more data");
 			break;
 		}
 		ret = recv(client.data_sock, data_buf, sizeof(data_buf), 0);
@@ -320,13 +336,12 @@ static void do_ftp_recv_data(const char *pasv_msg)
 			/* Server close connection */
 			break;
 		}
-
-		LOG_HEXDUMP_DBG(data_buf, ret, "RXD");
 		client.data_callback(data_buf, ret);
+		LOG_DBG("DATA received %d", ret);
 	} while (true);
 
 	close(client.data_sock);
-	LOG_DBG("DATA received");
+	ftp_inactivity = false;
 }
 
 static int poll_data_task_done(void)
@@ -371,9 +386,13 @@ static void keepalive_handler(struct k_work *work)
 {
 	int ret;
 
-	ret = do_ftp_send_ctrl(CMD_NOOP, sizeof(CMD_NOOP) - 1);
-	if (ret == 0) {
-		(void)do_ftp_recv_ctrl(false, FTP_CODE_200);
+	if (ftp_inactivity) {
+		ret = do_ftp_send_ctrl(CMD_NOOP, sizeof(CMD_NOOP) - 1);
+		if (ret == 0) {
+			(void)do_ftp_recv_ctrl(false, FTP_CODE_200);
+		}
+	} else {
+		ftp_inactivity = true;
 	}
 }
 
@@ -390,31 +409,58 @@ static void keepalive_timeout(struct k_timer *dummy)
 	}
 }
 
+static int host_lookup(const char *hostname, int family, struct sockaddr *sa)
+{
+	int err;
+	struct addrinfo *ai;
+	struct addrinfo hints = {
+		.ai_family = family,
+		.ai_socktype = SOCK_STREAM
+	};
+
+	err = getaddrinfo(hostname, NULL, &hints, &ai);
+	if (err) {
+		LOG_DBG("getaddrinfo(%d) error: %d", family, err);
+		return -EHOSTUNREACH;
+	}
+
+	*sa = *(ai->ai_addr);
+	client.family = family;
+	freeaddrinfo(ai);
+	return 0;
+}
+
 int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 {
 	int ret;
-	struct addrinfo *result;
-	struct addrinfo hints = {
-		.ai_family = AF_INET
-	};
 
 	if (client.connected) {
 		LOG_ERR("FTP already connected");
 		return -EINVAL;
 	}
+
+	/* Attempt IPv6 resolution, fallback to IPv4 if failed */
+	ret = host_lookup(hostname, AF_INET6, (struct sockaddr *)(&client.remote6));
+	if (ret) {
+		ret = host_lookup(hostname, AF_INET, (struct sockaddr *)(&client.remote));
+		if (ret) {
+			LOG_ERR("Failed to parse remote host");
+			return -EHOSTUNREACH;
+		}
+	}
+
 	/* open control socket */
-	if (sec_tag <= 0) {
-		client.cmd_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (sec_tag == INVALID_SEC_TAG) {
+		client.cmd_sock = socket(client.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
-		client.cmd_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
+		client.cmd_sock = socket(client.family, SOCK_STREAM, IPPROTO_TLS_1_2);
 	}
 	if (client.cmd_sock < 0) {
 		LOG_ERR("socket(ctrl) failed: %d", -errno);
 		ret = -errno;
 	}
-
-	if (sec_tag > 0) {
-		sec_tag_t sec_tag_list[1] = { sec_tag };
+	if (sec_tag != INVALID_SEC_TAG) {
+		sec_tag_t sec_tag_list[] = { sec_tag };
 
 		ret = setsockopt(client.cmd_sock, SOL_TLS, TLS_SEC_TAG_LIST,
 				sec_tag_list, sizeof(sec_tag_t));
@@ -427,26 +473,20 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 	}
 
 	/* Connect to remote host */
-	ret = getaddrinfo(hostname, NULL, &hints, &result);
-	if (ret || result == NULL) {
-		LOG_ERR("ERROR: getaddrinfo(ctrl) failed %d", ret);
-		close(client.cmd_sock);
-		return ret;
+	if (client.family == AF_INET) {
+		client.remote.sin_port = htons(port);
+		ret = connect(client.cmd_sock, (struct sockaddr *)&client.remote,
+			sizeof(struct sockaddr_in));
+	} else {
+		client.remote6.sin6_port = htons(port);
+		ret = connect(client.cmd_sock, (struct sockaddr *)&client.remote6,
+			sizeof(struct sockaddr_in6));
 	}
-	client.remote.sin_family = AF_INET;
-	client.remote.sin_port = htons(port);
-	client.remote.sin_addr.s_addr =
-		((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
-	ret = connect(client.cmd_sock, (struct sockaddr *)&client.remote,
-		 sizeof(struct sockaddr_in));
 	if (ret < 0) {
 		LOG_ERR("connect(ctrl) failed: %d", -errno);
 		close(client.cmd_sock);
-		freeaddrinfo(result);
 		return -errno;
 	}
-
-	freeaddrinfo(result);
 
 	/* Receive server greeting */
 	ret = do_ftp_recv_ctrl(true, FTP_CODE_220);
@@ -509,11 +549,14 @@ int ftp_close(void)
 	if (client.connected) {
 		ret = do_ftp_send_ctrl(CMD_QUIT, sizeof(CMD_QUIT) - 1);
 		if (ret == 0) {
-			ret = do_ftp_recv_ctrl(true, FTP_CODE_221);
+			/* Some FTP servers do not reply QUIT */
+			(void)do_ftp_recv_ctrl(true, FTP_CODE_221);
+		} else {
+			return ret;
 		}
 	}
 	close_connection(FTP_CODE_200, 0);
-	return ret;
+	return FTP_CODE_221;
 }
 
 int ftp_status(void)
