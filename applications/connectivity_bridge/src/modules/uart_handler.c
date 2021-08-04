@@ -243,8 +243,8 @@ static void set_uart_power_state(uint8_t dev_idx, bool active)
 #if UART_SET_PM_STATE
 	const struct device *dev = devices[dev_idx];
 	int err;
-	uint32_t current_state;
-	uint32_t target_state;
+	enum pm_device_state current_state;
+	enum pm_device_state target_state;
 
 	target_state = active ? PM_DEVICE_STATE_ACTIVE : PM_DEVICE_STATE_SUSPEND;
 
