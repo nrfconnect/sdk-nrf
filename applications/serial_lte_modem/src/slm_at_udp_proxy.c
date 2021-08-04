@@ -54,8 +54,6 @@ static struct udp_proxy {
 	};
 } proxy;
 
-static K_SEM_DEFINE(stop_disconnect, 0, 1);
-
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
@@ -141,7 +139,7 @@ static int do_udp_server_stop(void)
 {
 	int ret = 0;
 
-	if (proxy.sock != INVALID_SOCKET) {
+	if (proxy.sock == INVALID_SOCKET) {
 		return 0;
 	}
 	ret = close(proxy.sock);
@@ -158,7 +156,7 @@ static int do_udp_server_stop(void)
 		(void)slm_at_udp_proxy_init();
 	}
 	if (ret == 0 &&
-	    k_sem_take(&stop_disconnect, K_SECONDS(CONFIG_SLM_UDP_POLL_TIME * 2)) != 0) {
+	    k_thread_join(&udp_thread, K_SECONDS(CONFIG_SLM_UDP_POLL_TIME * 2)) != 0) {
 		LOG_WRN("Wait for thread terminate failed");
 	}
 	sprintf(rsp_buf, "\r\n#XUDPSVR: %d,\"stopped\"\r\n", ret);
@@ -262,7 +260,7 @@ static int do_udp_client_disconnect(void)
 		proxy.sock = INVALID_SOCKET;
 	}
 	if (ret == 0 &&
-	    k_sem_take(&stop_disconnect, K_SECONDS(CONFIG_SLM_UDP_POLL_TIME * 2)) != 0) {
+	    k_thread_join(&udp_thread, K_SECONDS(CONFIG_SLM_UDP_POLL_TIME * 2)) != 0) {
 		LOG_WRN("Wait for thread terminate failed");
 	}
 	sprintf(rsp_buf, "\r\n#XUDPCLI: %d,\"disconnected\"\r\n", ret);
@@ -436,7 +434,6 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
-	k_sem_give(&stop_disconnect);
 	LOG_INF("UDP thread terminated");
 }
 
