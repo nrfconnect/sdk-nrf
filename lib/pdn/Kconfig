@@ -6,7 +6,7 @@
 
 menuconfig PDN
 	bool "Packet Domain Network library"
-	depends on NRF_MODEM_LIB && AT_CMD && AT_NOTIF
+	depends on NRF_MODEM_LIB && AT_MONITOR
 
 if PDN
 
