@@ -41,7 +41,22 @@ static struct bt_mesh_light_ctrl_srv light_ctrl_srv =
 
 static struct bt_mesh_model mock_ligth_ctrl_model = {
 	.user_data = &light_ctrl_srv,
-	.elem_idx = 1
+	.elem_idx = 1,
+};
+
+enum light_ctrl_timer {
+	STATE_TIMER,
+	ACTION_DELAY_TIMER,
+	REG_TIMER,
+};
+
+static struct {
+	k_work_handler_t handler;
+	struct k_work_delayable *dwork;
+} mock_timers[] = {
+	[STATE_TIMER] = { .dwork = &light_ctrl_srv.timer },
+	[ACTION_DELAY_TIMER] = { .dwork = &light_ctrl_srv.action_delay },
+	[REG_TIMER] = { .dwork = &light_ctrl_srv.reg.timer },
 };
 
 void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
@@ -104,6 +119,55 @@ int bt_mesh_model_extend(struct bt_mesh_model *mod,
 	return 0;
 }
 
+void k_work_init_delayable(struct k_work_delayable *dwork,
+			   k_work_handler_t handler)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(mock_timers); i++) {
+		if (mock_timers[i].dwork == dwork) {
+			mock_timers[i].handler = handler;
+			return;
+		}
+	}
+
+	ztest_test_fail();
+}
+
+int k_work_cancel_delayable(struct k_work_delayable *dwork)
+{
+	ztest_check_expected_value(dwork);
+	return 0;
+}
+
+/*
+ * This is mocked, as k_work_reschedule is inline and can't be, but calls this
+ * underneath
+ */
+int k_work_reschedule_for_queue(struct k_work_q *queue,
+				struct k_work_delayable *dwork,
+				k_timeout_t delay)
+{
+	zassert_equal(queue, &k_sys_work_q, "Not rescheduled on k_sys_work_q");
+	ztest_check_expected_value(dwork);
+	ztest_check_expected_data(&delay, sizeof(delay));
+	return 0;
+}
+
+int k_work_schedule(struct k_work_delayable *dwork,
+		    k_timeout_t delay)
+{
+	ztest_check_expected_value(dwork);
+	ztest_check_expected_data(&delay, sizeof(delay));
+	return 0;
+}
+
+k_ticks_t z_timeout_remaining(const struct _timeout *timeout)
+{
+	k_ticks_t ticks;
+
+	ztest_copy_return_data(&ticks, sizeof(k_ticks_t));
+	return ticks;
+}
+
 /** End Mocks **************************************/
 static struct bt_mesh_model_transition expected_transition;
 static struct bt_mesh_lightness_set expected_set = {
@@ -112,7 +176,19 @@ static struct bt_mesh_lightness_set expected_set = {
 static uint8_t expected_msg[10];
 static struct bt_mesh_onoff_status expected_onoff_status = { 0 };
 
-static void expect_light_onoff_pub(uint8_t *expected_msg, size_t len)
+static void schedule_dwork_timeout(enum light_ctrl_timer timer_idx)
+{
+	zassert_not_null(mock_timers[timer_idx].handler, "No timer handler");
+	mock_timers[timer_idx].handler(&mock_timers[timer_idx].dwork->work);
+}
+
+static void expect_timer_reschedule(enum light_ctrl_timer timer_idx, k_timeout_t *wait_timeout)
+{
+	ztest_expect_value(k_work_reschedule_for_queue, dwork, mock_timers[timer_idx].dwork);
+	ztest_expect_data(k_work_reschedule_for_queue, &delay, wait_timeout);
+}
+
+static void expect_light_onoff_pub(uint8_t *expected_msg, size_t len, k_timeout_t *timeout)
 {
 	ztest_expect_value(bt_mesh_model_msg_init, opcode,
 			   BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS);
@@ -127,10 +203,18 @@ static void expect_light_onoff_pub(uint8_t *expected_msg, size_t len)
 			   expected_onoff_status.target_on_off);
 	ztest_expect_value(bt_mesh_onoff_srv_pub, status->remaining_time,
 			   expected_onoff_status.remaining_time);
+
+	if (timeout != NULL) {
+		ztest_return_data(z_timeout_remaining, &ticks, &timeout->ticks);
+		/* Generic OnOff state publishing */
+		ztest_return_data(z_timeout_remaining, &ticks, &timeout->ticks);
+	}
 }
 
-static void expect_transition_start(void)
+static void expect_transition_start(k_timeout_t *timeout)
 {
+	expect_timer_reschedule(STATE_TIMER, timeout);
+
 	ztest_expect_value(lightness_srv_change_lvl, srv, &lightness_srv);
 	ztest_expect_value(lightness_srv_change_lvl, set->lvl,
 			   expected_set.lvl);
@@ -144,44 +228,66 @@ static void expect_ctrl_disable(void)
 	expected_onoff_status.present_on_off = false;
 	expected_onoff_status.target_on_off = false;
 	expected_onoff_status.remaining_time = 0;
-	expect_light_onoff_pub(expected_msg, 1);
+	expect_light_onoff_pub(expected_msg, 1, NULL);
+
+	ztest_expect_value(k_work_cancel_delayable, dwork, mock_timers[ACTION_DELAY_TIMER].dwork);
+	ztest_expect_value(k_work_cancel_delayable, dwork, mock_timers[STATE_TIMER].dwork);
+	ztest_expect_value(k_work_cancel_delayable, dwork, mock_timers[REG_TIMER].dwork);
 }
 
 static void expect_ctrl_enable(void)
 {
+	static k_timeout_t state_timeout;
+	static k_timeout_t reg_start_timeout;
+
 	expected_transition.time = 0;
 	expected_set.lvl = light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_STANDBY];
-	expect_transition_start();
+
+	state_timeout = K_MSEC(0);
+	expect_transition_start(&state_timeout);
+
+	reg_start_timeout = K_MSEC(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_INTERVAL);
+	ztest_expect_value(k_work_schedule, dwork, mock_timers[REG_TIMER].dwork);
+	ztest_expect_data(k_work_schedule, &delay, &reg_start_timeout);
 }
 
 static void expect_turn_off_state_change(void)
 {
+	static k_timeout_t state_timeout;
+
 	expected_transition.time = light_ctrl_srv.cfg.fade_standby_manual;
 	expected_set.lvl = light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_STANDBY];
-	expect_transition_start();
+
+	state_timeout = K_MSEC(expected_transition.time);
+	expect_transition_start(&state_timeout);
 
 	expected_msg[0] = 1;
 	expected_msg[1] = 0;
 	expected_msg[2] = 0;
 	expected_onoff_status.present_on_off = true;
 	expected_onoff_status.target_on_off = false;
-	expected_onoff_status.remaining_time = 510;
-	expect_light_onoff_pub(expected_msg, 3);
+	expected_onoff_status.remaining_time = light_ctrl_srv.cfg.fade_standby_manual;
+	expect_light_onoff_pub(expected_msg, 3, &state_timeout);
 }
 
 static void expect_turn_on_state_change(void)
 {
+	static k_timeout_t state_timeout;
+
 	expected_transition.time = light_ctrl_srv.cfg.fade_on;
 	expected_set.lvl = light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_ON];
-	expect_transition_start();
+
+	state_timeout = K_MSEC(expected_transition.time);
+	expect_transition_start(&state_timeout);
 
 	expected_msg[0] = 1;
 	expected_msg[1] = 1;
 	expected_msg[2] = 0;
 	expected_onoff_status.present_on_off = true;
 	expected_onoff_status.target_on_off = true;
-	expected_onoff_status.remaining_time = 510;
-	expect_light_onoff_pub(expected_msg, 3);
+	expected_onoff_status.remaining_time = light_ctrl_srv.cfg.fade_on;
+
+	expect_light_onoff_pub(expected_msg, 3, &state_timeout);
 }
 
 static void
@@ -196,7 +302,8 @@ expected_statemachine_cond(bool enabled,
 		zassert_is_null(light_ctrl_srv.lightness->ctrl,
 				"Is not disabled");
 	}
-	zassert_equal(light_ctrl_srv.state, expected_state, "Wrong state");
+	zassert_equal(light_ctrl_srv.state, expected_state, "Wrong state, expected: %d, got: %d",
+		      expected_state, light_ctrl_srv.state);
 	zassert_equal(light_ctrl_srv.flags, expected_flags,
 		      "Wrong Flags: 0x%X:0x%X", light_ctrl_srv.flags,
 		      expected_flags);
@@ -225,7 +332,7 @@ static void test_fsm_no_change_by_light_onoff(void)
 
 	/* Wait for transition to completed. */
 	expected_flags = expected_flags & ~BIT(FLAG_TRANSITION);
-	k_sleep(K_MSEC(5)); // Sleep test to allow timeout to run.
+	schedule_dwork_timeout(STATE_TIMER);
 
 	expected_statemachine_cond(true, expected_state, expected_flags);
 
@@ -250,6 +357,13 @@ static void test_fsm_no_change_by_light_onoff(void)
 	expected_state = LIGHT_CTRL_STATE_STANDBY;
 	expected_flags = expected_flags | BIT(FLAG_MANUAL);
 	expected_flags = expected_flags & ~BIT(FLAG_ON);
+	/* Transition is not finished yet, Light Controller will calc remaining time. */
+	k_ticks_t ticks = 50;
+
+	/* Remaining time till target Lightness value. */
+	ztest_return_data(z_timeout_remaining, &ticks, &ticks);
+	/* Remaining time till target LuxLevel value. */
+	ztest_return_data(z_timeout_remaining, &ticks, &ticks);
 	expect_turn_off_state_change();
 	bt_mesh_light_ctrl_srv_off(&light_ctrl_srv);
 	expected_statemachine_cond(true, expected_state, expected_flags);
