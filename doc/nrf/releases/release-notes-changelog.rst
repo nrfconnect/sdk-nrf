@@ -87,6 +87,12 @@ nRF5
 
 The following changes are relevant for the nRF52 and nRF53 Series.
 
+Front-end module (FEM)
+----------------------
+
+* Added support for nRF21540 to nRF5340 network core.
+* Added support for RF front-end Modules (FEM) for nRF5340 in :ref:`mpsl` library. The front-end module feature for nRF5340 in MPSL currently supports nRF21540, but does not support SKY66112-11 device.
+
 nRF Desktop
 -----------
 

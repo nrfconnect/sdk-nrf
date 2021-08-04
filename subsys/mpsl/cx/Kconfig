@@ -63,3 +63,7 @@ config MPSL_CX_THREAD_PIN_GRANT
 endif
 
 endif	# MPSL_CX
+
+module=MPSL_CX
+module-str=MPSL_CX
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

@@ -114,6 +114,37 @@ static int ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
 	return 0;
 }
 
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+static int egu_instance_alloc(uint8_t *p_egu_instance_no)
+{
+	/* Always return EGU0. */
+	*p_egu_instance_no = 0;
+
+	return 0;
+}
+
+static int egu_channel_alloc(uint8_t *egu_channels, size_t size, uint8_t egu_instance_no)
+{
+	(void)egu_instance_no;
+
+	/* The 802.15.4 radio driver is the only user of EGU peripheral on nRF5340 network core
+	 * and it uses channels: 0, 1, 2, 3, 15. Therefore starting from channel 4, a consecutive
+	 * block of at most 11 channels can be allocated.
+	 */
+	if (size > 11U) {
+		return -ENOMEM;
+	}
+
+	uint8_t starting_channel = 4U;
+
+	for (int i = 0; i < size; i++) {
+		egu_channels[i] = starting_channel + i;
+	}
+
+	return 0;
+}
+#endif
+
 #if IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_GPIO)
 static int fem_nrf21540_gpio_configure(void)
 {
@@ -206,7 +237,24 @@ static int fem_nrf21540_gpio_configure(void)
 		}
 	};
 
-	err = ppi_channel_alloc(cfg.ppi_channels, ARRAY_SIZE(cfg.ppi_channels));
+	IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
+		   (err = ppi_channel_alloc(cfg.ppi_channels, ARRAY_SIZE(cfg.ppi_channels));));
+	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
+		   (err = ppi_channel_alloc(cfg.dppi_channels, ARRAY_SIZE(cfg.dppi_channels));));
+	if (err) {
+		return err;
+	}
+
+	IF_ENABLED(CONFIG_SOC_SERIES_NRF53X,
+		   (err = egu_instance_alloc(&cfg.egu_instance_no);));
+	if (err) {
+		return err;
+	}
+
+	IF_ENABLED(CONFIG_SOC_SERIES_NRF53X,
+		   (err = egu_channel_alloc(cfg.egu_channels,
+					    ARRAY_SIZE(cfg.egu_channels),
+					    cfg.egu_instance_no);))
 	if (err) {
 		return err;
 	}
@@ -382,8 +430,12 @@ static int fem_simple_gpio_configure(void)
 }
 #endif
 
-int mpsl_fem_configure(void)
+static int mpsl_fem_init(const struct device *dev)
 {
+	ARG_UNUSED(dev);
+
+	mpsl_fem_device_config_254_apply_set(IS_ENABLED(CONFIG_MPSL_FEM_DEVICE_CONFIG_254));
+
 	int err = 0;
 
 #if IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_GPIO)
@@ -396,3 +448,5 @@ int mpsl_fem_configure(void)
 
 	return err;
 }
+
+SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
