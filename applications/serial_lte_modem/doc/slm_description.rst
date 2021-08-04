@@ -195,18 +195,6 @@ Check and configure the following configuration options for the sample:
 
    This option enables additional AT commands for using the FTP client service.
 
-.. option:: CONFIG_SLM_FTP_SERVER_PORT - FTP service port on remote host
-
-   This option specifies the port to use when connecting to an FTP server.
-
-.. option:: CONFIG_SLM_FTP_USER_ANONYMOUS - FTP client anonymous login user
-
-   This option specifies the user name to use for anonymous login on an FTP server.
-
-.. option:: CONFIG_SLM_FTP_PASSWORD_ANONYMOUS - FTP client anonymous login password
-
-   This option specifies the password to use for anonymous login on an FTP server.
-
 .. option:: CONFIG_SLM_MQTTC - MQTT client support in SLM
 
    This option enables additional AT commands for using the MQTT client service.
