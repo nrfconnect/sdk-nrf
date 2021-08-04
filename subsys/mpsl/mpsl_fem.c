@@ -62,7 +62,7 @@ static void fem_pin_num_correction(uint8_t *p_gpio_pin, const char *gpio_lbl)
 }
 
 #if IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_GPIO)
-static int inactive_pin_configure(uint8_t pin, const char *gpio_lbl,
+static inline int inactive_pin_configure(uint8_t pin, const char *gpio_lbl,
 				  gpio_flags_t flags)
 {
 	const struct device *port;
