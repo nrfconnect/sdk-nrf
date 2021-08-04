@@ -258,7 +258,7 @@ static void set_uart_power_state(uint8_t dev_idx, bool active)
 		return;
 	}
 
-	err = pm_device_state_set(dev, target_state, NULL, NULL);
+	err = pm_device_state_set(dev, target_state);
 	if (err) {
 		LOG_ERR("device_set_power_state: %d", err);
 		return;

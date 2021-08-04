@@ -63,9 +63,7 @@ static void buzzer_disable(void)
 	pwm_out(0, 0);
 
 #ifdef CONFIG_PM_DEVICE
-	int err = pm_device_state_set(pwm_dev,
-				      PM_DEVICE_STATE_SUSPEND,
-				      NULL, NULL);
+	int err = pm_device_state_set(pwm_dev, PM_DEVICE_STATE_SUSPEND);
 	if (err) {
 		LOG_ERR("PWM disable failed");
 	}
@@ -79,9 +77,7 @@ static int buzzer_enable(void)
 	atomic_set(&buzzer_enabled, 1);
 
 #ifdef CONFIG_PM_DEVICE
-	err = pm_device_state_set(pwm_dev,
-				 PM_DEVICE_STATE_ACTIVE,
-				 NULL, NULL);
+	err = pm_device_state_set(pwm_dev, PM_DEVICE_STATE_ACTIVE);
 	if (err) {
 		LOG_ERR("PWM enable failed");
 		return err;
