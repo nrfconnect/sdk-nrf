@@ -112,6 +112,30 @@ int verify_public_keys(void)
 	return 0;
 }
 
+/**
+ * Helper procedure for public_key_data_read()
+ *
+ * Copies @p src into @p dst. Reads from @p src are done 32 bits at a
+ * time. Writes to @p dst are done a byte at a time.
+ *
+ * @param dst destination buffer
+ * @param src source buffer
+ * @param size number of *bytes* in src to copy into dst
+ */
+static void public_key_copy32(uint8_t *dst, const uint32_t *src, size_t size)
+{
+	while (size) {
+		uint32_t val = *src++;
+
+		*dst++ = val & 0xFF;
+		*dst++ = (val >> 8U) & 0xFF;
+		*dst++ = (val >> 16U) & 0xFF;
+		*dst++ = (val >> 24U) & 0xFF;
+
+		size -= 4;
+	}
+}
+
 int public_key_data_read(uint32_t key_idx, uint8_t *p_buf, size_t buf_size)
 {
 	const uint8_t *p_key;
@@ -138,7 +162,7 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf, size_t buf_size)
 	BUILD_ASSERT(offsetof(struct bl_storage_data, key_data) % 4 == 0);
 	__ASSERT(((uint32_t)p_key % 4 == 0), "Key address is not word aligned");
 
-	memcpy(p_buf, p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
+	public_key_copy32(p_buf, (const uint32_t *)p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 
 	return CONFIG_SB_PUBLIC_KEY_HASH_LEN;
