@@ -9,7 +9,7 @@ DT_COMPAT_GENERIC_FEM_2_CTRL_PIN := generic-fem-two-ctrl-pins
 
 config MPSL_FEM_NRF21540_GPIO_SUPPORT
 	bool
-	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540_GPIO)) && !BT
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540_GPIO))
 
 config MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
 	bool
