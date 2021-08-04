@@ -516,6 +516,8 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 			LOG_ERR("Fail to disconnect. Error: %d", err);
 		}
 	}
+
+	LOG_INF("HTTP thread terminated");
 }
 
 /**@brief handle AT#XHTTPCREQ commands

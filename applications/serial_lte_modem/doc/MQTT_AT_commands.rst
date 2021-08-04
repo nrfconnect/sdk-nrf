@@ -30,7 +30,8 @@ Syntax
   It can accept one of the following values:
 
   * ``0`` - Disconnect from the MQTT broker.
-  * ``1`` - Connect to the MQTT broker.
+  * ``1`` - Connect to the MQTT broker using IP protocol family version 4.
+  * ``2`` - Connect to the MQTT broker using IP protocol family version 6.
 
 * The ``<client_id>`` parameter is a string.
   It indicates the MQTT Client ID.
@@ -93,14 +94,10 @@ Response syntax
 
 ::
 
-   #XMQTTCON: <cid>,<username>,<password>,<url>,<port>[,<sec_tag>]]
+   #XMQTTCON: <client_id>,<url>,<port>[,<sec_tag>]]
 
-* The ``<cid>`` value is a string.
+* The ``<client_id>`` value is a string.
   It indicates the MQTT client ID.
-* The ``<username>`` value is a string.
-  It indicates the MQTT Client username.
-* The ``<password>`` value is a string.
-  It indicates the MQTT Client password in cleartext.
 * The ``<url>`` value is a string.
   It indicates the MQTT broker hostname.
 * The ``<port>`` value is an unsigned 16-bit integer (0 - 65535).

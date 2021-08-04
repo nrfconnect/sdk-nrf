@@ -14,6 +14,8 @@
 #define INVALID_ROLE         -1
 
 #define SLM_MAX_URL          128  /** max size of URL string */
+#define SLM_MAX_USERNAME     32   /** max size of username in login */
+#define SLM_MAX_PASSWORD     32   /** max size of password in login */
 
 #define MODEM_MSS            708
 #define MODEM_MTU            1280
