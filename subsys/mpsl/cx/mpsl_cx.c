@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "mpsl_cx_internal.h"
-
-#include <mpsl/mpsl_cx_config_thread.h>
+#include <device.h>
 #include <sys/util.h>
 
 #if IS_ENABLED(CONFIG_MPSL_CX_THREAD)
+#include <mpsl/mpsl_cx_config_thread.h>
+
 static int cx_thread_configure(void)
 {
 	struct mpsl_cx_thread_interface_config cfg = {
@@ -22,7 +22,7 @@ static int cx_thread_configure(void)
 }
 #endif
 
-int mpsl_cx_configure(void)
+static int mpsl_cx_configure(void)
 {
 	int err = 0;
 
@@ -34,3 +34,16 @@ int mpsl_cx_configure(void)
 
 	return err;
 }
+
+static int mpsl_cx_init(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+
+#if IS_ENABLED(CONFIG_MPSL_CX)
+	return mpsl_cx_configure();
+#else
+	return 0;
+#endif
+}
+
+SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);

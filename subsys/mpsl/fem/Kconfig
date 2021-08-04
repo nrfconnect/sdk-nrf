@@ -17,9 +17,10 @@ config MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
 
 config MPSL_FEM
 	bool "Radio front-end module (FEM) support"
-# MPSL FEM is not supported on 53 yet
-	depends on !(SOC_NRF5340_CPUAPP || SOC_NRF5340_CPUNET) && \
-		   (MPSL_FEM_NRF21540_GPIO_SUPPORT || MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT)
+	# MPSL_FEM_GENERIC_TWO_CTRL_PINS is not supported on nRF53 yet
+	depends on MPSL
+	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT || \
+		(MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT && !SOC_SERIES_NRF53X)
 	default y
 	help
 	  Controls if front-end module (FEM) is to be configured and enabled
@@ -34,16 +35,17 @@ choice MPSL_FEM_CHOICE
 config MPSL_FEM_NRF21540_GPIO
 	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT
 	select NRFX_GPIOTE
-	select NRFX_PPI
+	select NRFX_PPI if SOC_SERIES_NRF52X
+	select NRFX_DPPI if SOC_SERIES_NRF53X
 	bool "nRF21540 front-end module in GPIO mode"
 	help
 	  FEM device is nRF21540 and its control mode is GPIO.
-	  Note: nRF21540 is unavailable when Bluetooth LE is enabled
 
 config MPSL_FEM_SIMPLE_GPIO
 	depends on MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
 	select NRFX_GPIOTE
-	select NRFX_PPI
+	select NRFX_PPI if SOC_SERIES_NRF52X
+	select NRFX_DPPI if SOC_SERIES_NRF53X
 	bool "Generic front-end module with two-pin control"
 	help
 	  FEM device has a generic two-pin control interface.
@@ -83,3 +85,7 @@ config MPSL_FEM_DEVICE_CONFIG_254
 	  Specification, especially when an external PA is present.
 	  Device configuration 254 may be required to improve RX blocking,
 	  especially when an external LNA is present.
+
+module=MPSL_FEM
+module-str=MPSL_FEM
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
