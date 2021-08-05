@@ -1536,7 +1536,9 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 			evt_handler(&evt);
 		}
 
-		err = pgps_request_all();
+		if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_REQUEST_ALL_UPON_INIT)) {
+			err = pgps_request_all();
+		}
 	} else if (num_valid < count) {
 		/* read missing predictions at end */
 		struct gps_pgps_request request;
