@@ -16,7 +16,7 @@ The library also provides functionality that enables the application to receive 
 Configuration
 *************
 
-To enable the link controller library, set the option :option:`CONFIG_LTE_LINK_CONTROL` option to ``y`` in the project configuration file :file:`prj.conf`.
+To enable the link controller library, set the option :kconfig:`CONFIG_LTE_LINK_CONTROL` option to ``y`` in the project configuration file :file:`prj.conf`.
 
 Establishing an LTE connection
 ==============================
@@ -99,7 +99,7 @@ The following list mentions some of the information that can be extracted from t
    To check if a desired feature is compatible with a certain modem firmware version, see nRF9160 `AT Commands Reference Guide`_.
 
 The library supports an auto initialization and connection feature that enables the library to initialize and connect to LTE prior to the start of the application.
-To enable this feature, set the configuration option :option:`CONFIG_LTE_AUTO_INIT_AND_CONNECT` to ``y``.
+To enable this feature, set the configuration option :kconfig:`CONFIG_LTE_AUTO_INIT_AND_CONNECT` to ``y``.
 If you enable this option, you need not run additional library APIs.
 
 Enabling power-saving features
@@ -149,10 +149,10 @@ This saves the overhead related to the additional packet exchange.
 
 The timer values requested by the modem can be configured with the following options and API calls:
 
-* :option:`CONFIG_LTE_PSM_REQ_RPTAU`
-* :option:`CONFIG_LTE_PSM_REQ_RAT`
-* :option:`CONFIG_LTE_EDRX_REQ_VALUE_LTE_M`
-* :option:`CONFIG_LTE_EDRX_REQ_VALUE_NBIOT`
+* :kconfig:`CONFIG_LTE_PSM_REQ_RPTAU`
+* :kconfig:`CONFIG_LTE_PSM_REQ_RAT`
+* :kconfig:`CONFIG_LTE_EDRX_REQ_VALUE_LTE_M`
+* :kconfig:`CONFIG_LTE_EDRX_REQ_VALUE_NBIOT`
 * :c:func:`lte_lc_psm_param_set`
 * :c:func:`lte_lc_edrx_param_set`
 
@@ -214,8 +214,8 @@ For instance, TAU pre-warning notifications can be used to schedule data transfe
 Modem sleep notifications can be used to schedule processing in the same operational window as the modem to limit the overall computation time of the nRF9160 SiP.
 To enable modem sleep and TAU pre-warning notifications, enable the following options:
 
-* :option:`CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS`
-* :option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS`
+* :kconfig:`CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS`
+* :kconfig:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS`
 
 Additional configurations related to these features can be found in the API documentation for the link controller.
 

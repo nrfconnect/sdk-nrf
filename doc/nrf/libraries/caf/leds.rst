@@ -22,31 +22,31 @@ To use the module, you must conplete the following requirements:
 
 1. Enable the following Kconfig options:
 
-   * :option:`CONFIG_CAF_LEDS` - This option enables the LEDs module.
-   * :option:`CONFIG_LED` - This option enables the LED driver API.
+   * :kconfig:`CONFIG_CAF_LEDS` - This option enables the LEDs module.
+   * :kconfig:`CONFIG_LED` - This option enables the LED driver API.
 
 #. Complete one of the following steps to choose and configure the LED driver implementation:
 
    a. For the PWM-based implementation, Zephyr's :ref:`zephyr:pwm_api` driver is used for setting the LED color (that is, the brightness of the diodes).
       For this reason, set the following options:
 
-      * :option:`CONFIG_CAF_LEDS_PWM`
-      * :option:`CONFIG_LED_PWM`
-      * :option:`CONFIG_PWM`
+      * :kconfig:`CONFIG_CAF_LEDS_PWM`
+      * :kconfig:`CONFIG_LED_PWM`
+      * :kconfig:`CONFIG_PWM`
 
    b. For the GPIO-based implementation, Zephyr's :ref:`zephyr:gpio_api` driver is used for setting the LED color (that is, the brightness of the diodes).
       For this reason, set the following options:
 
-      * :option:`CONFIG_CAF_LEDS_GPIO`
-      * :option:`CONFIG_LED_GPIO`
-      * :option:`CONFIG_GPIO`
+      * :kconfig:`CONFIG_CAF_LEDS_GPIO`
+      * :kconfig:`CONFIG_LED_GPIO`
+      * :kconfig:`CONFIG_GPIO`
 
 #. Configure LEDs in DTS.
    See `Configuring LEDs in DTS`_ for details.
 
 The following Kconfig options are also available for this module:
 
-* :option:`CONFIG_CAF_LEDS_PM_EVENTS` - This option enables the reaction to `Power management events`_.
+* :kconfig:`CONFIG_CAF_LEDS_PM_EVENTS` - This option enables the reaction to `Power management events`_.
 
 .. note::
    The GPIO-based LED driver implementation supports only turning LED on or off.
@@ -293,7 +293,7 @@ If the flag is not set, the sequence stops and the given LED effect ends.
 Power management events
 =======================
 
-If the :option:`CONFIG_CAF_LEDS_PM_EVENTS` Kconfig option is enabled, the module can react to following power management events:
+If the :kconfig:`CONFIG_CAF_LEDS_PM_EVENTS` Kconfig option is enabled, the module can react to following power management events:
 
 * ``power_down_event``
 * ``wake_up_event``

@@ -85,8 +85,8 @@ Persistent storage
 The Generic Power Level Server stores any changes to the Default Power and Power Range states, as well as the last known non-zero Generic Power Level and whether the Generic Power Level is on or off.
 This information is used to reestablish the correct Generic Power Level when the device powers up.
 
-If :option:`CONFIG_BT_SETTINGS` is enabled, the Generic Power Level Server stores all its states persistently using a configurable storage delay to stagger storing.
-See :option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+If :kconfig:`CONFIG_BT_SETTINGS` is enabled, the Generic Power Level Server stores all its states persistently using a configurable storage delay to stagger storing.
+See :kconfig:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
 
 API documentation
 ==================

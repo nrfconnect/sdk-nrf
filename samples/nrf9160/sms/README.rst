@@ -19,7 +19,7 @@ The sample requires an LTE connection.
 When the sample starts, it sends SMS if a recipient phone number is set in the configuration.
 The sample then receives all the SMS messages and displays the information about the messages including the text that is sent.
 
-The maximum size of the AT command response defined by :option:`CONFIG_AT_CMD_RESPONSE_MAX_LEN` might limit the size of the SMS message that can be received.
+The maximum size of the AT command response defined by :kconfig:`CONFIG_AT_CMD_RESPONSE_MAX_LEN` might limit the size of the SMS message that can be received.
 This parameter is defined in the :ref:`at_cmd_readme` module.
 Values over 512 bytes will not restrict the size of the received message as the maximum data length of the SMS is 140 bytes.
 
@@ -52,17 +52,17 @@ Additional Configuration
 
 Check and configure the following mandatory library options that are used by the sample:
 
-* :option:`CONFIG_SMS`
-* :option:`CONFIG_NRF_MODEM_LIB`
+* :kconfig:`CONFIG_SMS`
+* :kconfig:`CONFIG_NRF_MODEM_LIB`
 
 Check and configure the following optional library options that are used by the sample:
 
-* :option:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT`
-* :option:`CONFIG_AT_CMD_RESPONSE_MAX_LEN`
-* :option:`CONFIG_LTE_AUTO_INIT_AND_CONNECT`
-* :option:`CONFIG_LOG`
-* :option:`CONFIG_ASSERT`
-* :option:`CONFIG_ASSERT_VERBOSE`
+* :kconfig:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT`
+* :kconfig:`CONFIG_AT_CMD_RESPONSE_MAX_LEN`
+* :kconfig:`CONFIG_LTE_AUTO_INIT_AND_CONNECT`
+* :kconfig:`CONFIG_LOG`
+* :kconfig:`CONFIG_ASSERT`
+* :kconfig:`CONFIG_ASSERT_VERBOSE`
 
 Building and running
 ********************

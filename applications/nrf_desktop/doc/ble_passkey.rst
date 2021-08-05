@@ -23,9 +23,9 @@ Configuration
 *************
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-The module can be used only for Bluetooth Peripheral devices (:option:`CONFIG_BT_PERIPHERAL`).
+The module can be used only for Bluetooth Peripheral devices (:kconfig:`CONFIG_BT_PERIPHERAL`).
 
-Use the option :option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY` to enable the module.
+Use the option :kconfig:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY` to enable the module.
 Make sure to enable and configure the :ref:`nrf_desktop_passkey` if you decide to use this option.
 
 Implementation details
@@ -43,4 +43,4 @@ The passkey input is handled in the :ref:`nrf_desktop_passkey`.
 .. note::
     By default, Zephyr's Bluetooth Peripheral demands the security level 3 in case the passkey authentication is enabled.
     If the nRF Desktop dongle is unable to achieve the security level 3, it will be unable to connect with the peripheral.
-    Disable the :option:`CONFIG_BT_SMP_ENFORCE_MITM` option to allow the dongle to connect without the authentication.
+    Disable the :kconfig:`CONFIG_BT_SMP_ENFORCE_MITM` option to allow the dongle to connect without the authentication.

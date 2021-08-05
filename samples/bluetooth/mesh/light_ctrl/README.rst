@@ -158,11 +158,11 @@ You should now see the following actions:
 
 1. The LED fades from 0% to 100% over 500ms :guilabel:`Standby -> On`.
 #. The LED stays at 100% for three seconds :guilabel:`On`.
-#. The LED fades from 100% to :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` over five seconds :guilabel:`On -> Prolong`.
-#. The LED stays at :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` for three seconds :guilabel:`Prolong`.
-#. The LED fades from :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` to 0% over five seconds :guilabel:`Prolong -> Standby`.
+#. The LED fades from 100% to :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` over five seconds :guilabel:`On -> Prolong`.
+#. The LED stays at :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` for three seconds :guilabel:`Prolong`.
+#. The LED fades from :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` to 0% over five seconds :guilabel:`Prolong -> Standby`.
 
-The default value of :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` is 10000 (~15%).
+The default value of :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` is 10000 (~15%).
 
 .. figure:: images/bt_mesh_light_ctrl_levels.svg
    :alt: Light level transitions over time

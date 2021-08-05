@@ -1341,9 +1341,9 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
 FTP AT commands
 ***************
 
-Note that these commands are available only if :option:`CONFIG_SLM_FTPC` is defined.
-Before you test the FTP AT commands, check the setting of the :option:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` option.
-By default, the :ref:`lib_ftp_client` library keeps the connection to the FTP server alive for 60 seconds, but you can change the duration or turn KEEPALIVE off by setting :option:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` to 0.
+Note that these commands are available only if :kconfig:`CONFIG_SLM_FTPC` is defined.
+Before you test the FTP AT commands, check the setting of the :kconfig:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` option.
+By default, the :ref:`lib_ftp_client` library keeps the connection to the FTP server alive for 60 seconds, but you can change the duration or turn KEEPALIVE off by setting :kconfig:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` to 0.
 
 The FTP client behavior depends on the FTP server that is used for testing.
 Complete the following steps to test the functionality provided by the :ref:`SLM_AT_FTP` with two example servers:

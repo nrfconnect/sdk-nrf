@@ -24,7 +24,7 @@ If you are implementing clusters that are not included in this list, you must im
 Configuration
 *************
 
-To enable the Zigbee ZCL scene helper library, set the :option:`CONFIG_ZIGBEE_SCENES` Kconfig option.
+To enable the Zigbee ZCL scene helper library, set the :kconfig:`CONFIG_ZIGBEE_SCENES` Kconfig option.
 
 Because the library uses Zephyr's :ref:`settings_api` subsystem, the application must call the following functions for the library to work correctly:
 
@@ -55,12 +55,12 @@ You must implement these functions in the following manner:
          }
       }
 
-Setting the :option:`CONFIG_ZIGBEE_SCENES` option allows you to configure the following library-specific Kconfig options:
+Setting the :kconfig:`CONFIG_ZIGBEE_SCENES` option allows you to configure the following library-specific Kconfig options:
 
-* :option:`CONFIG_ZIGBEE_SCENES_ENDPOINT` - This option sets the endpoint number on which the device implements the ZCL scene cluster.
-* :option:`CONFIG_ZIGBEE_SCENE_TABLE_SIZE` - This options sets the value for the amount of scenes that can be configured.
+* :kconfig:`CONFIG_ZIGBEE_SCENES_ENDPOINT` - This option sets the endpoint number on which the device implements the ZCL scene cluster.
+* :kconfig:`CONFIG_ZIGBEE_SCENE_TABLE_SIZE` - This options sets the value for the amount of scenes that can be configured.
 
-To configure the logging level of the library, use the :option:`CONFIG_ZIGBEE_SCENES_LOG_LEVEL` Kconfig option.
+To configure the logging level of the library, use the :kconfig:`CONFIG_ZIGBEE_SCENES_LOG_LEVEL` Kconfig option.
 
 API documentation
 *****************

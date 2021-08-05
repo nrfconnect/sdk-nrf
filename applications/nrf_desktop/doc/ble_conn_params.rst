@@ -26,7 +26,7 @@ Configuration
 *************
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-The module is automatically enabled for every nRF Desktop central device (:option:`CONFIG_BT_CENTRAL`).
+The module is automatically enabled for every nRF Desktop central device (:kconfig:`CONFIG_BT_CENTRAL`).
 
 Implementation details
 **********************
@@ -54,7 +54,7 @@ After the :ref:`nrf_desktop_ble_discovery` completes the peripheral discovery, t
 * If the central and the connected peripheral both support the Low Latency Packet Mode (LLPM), the connection interval is set to **1 ms**.
 * If neither the central nor the connected peripheral support LLPM, or if only one of them supports it, the interval is set to the following values:
 
-  * **7.5 ms** if LLPM is not supported by the central or :option:`CONFIG_BT_MAX_CONN` is set to value 2 or lower.
+  * **7.5 ms** if LLPM is not supported by the central or :kconfig:`CONFIG_BT_MAX_CONN` is set to value 2 or lower.
     This is the shortest interval allowed by the standard Bluetooth.
   * **10 ms** otherwise.
     This is required to avoid Bluetooth Link Layer scheduling conflicts that could lead to HID report rate drop.

@@ -169,7 +169,7 @@ The application uses dynamic allocation to:
 
 When configuring HEAP, make sure that the values for the following options match the typical event size and the system needs:
 
-* :option:`CONFIG_HEAP_MEM_POOL_SIZE` - The size must be big enough to handle the worst possible use case for the given device.
+* :kconfig:`CONFIG_HEAP_MEM_POOL_SIZE` - The size must be big enough to handle the worst possible use case for the given device.
 
 .. important::
     The nRF Desktop uses ``k_heap`` as the backend for dynamic allocation.
@@ -694,7 +694,7 @@ For example, LEDs are turned off and advertising is stopped.
 
 Moving the mouse or pressing any button wakes up the device and turns on the disabled functionalities.
 
-You can define the amount of time after which the peripherals are suspended or powered off in :option:`CONFIG_CAF_POWER_MANAGER_TIMEOUT`.
+You can define the amount of time after which the peripherals are suspended or powered off in :kconfig:`CONFIG_CAF_POWER_MANAGER_TIMEOUT`.
 By default, this period is set to 120 seconds.
 
 .. important::
@@ -760,7 +760,7 @@ After building the application with or without :ref:`specifying the build type <
    .. note::
         You can manually start the scanning for new peripheral devices by pressing the **SW1** button on the dongle for a short time.
         This might be needed if the dongle does not connect with all the peripherals before timeout.
-        The scanning is interrupted after the amount of time predefined in :option:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S`, because it negatively affects the performance of already connected peripherals.
+        The scanning is interrupted after the amount of time predefined in :kconfig:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S`, because it negatively affects the performance of already connected peripherals.
 
 #. Move the mouse and press any key on the keyboard.
    The input is reflected on the host.
@@ -953,7 +953,7 @@ To use the nRF Desktop application with your custom board:
    a. Ensure that the Bluetooth role is properly configured.
       For mouse, it should be configured as peripheral.
    #. Update the configuration related to peer control.
-      You can also disable the peer control using the :option:`CONFIG_DESKTOP_BLE_PEER_CONTROL` option.
+      You can also disable the peer control using the :kconfig:`CONFIG_DESKTOP_BLE_PEER_CONTROL` option.
       Peer control details are described in the :ref:`nrf_desktop_ble_bond` documentation.
 
    Refer to the :ref:`nrf_desktop_bluetooth_guide` section and Zephyr's :ref:`zephyr:bluetooth` page for more detailed information about the Bluetooth configuration.
@@ -1158,8 +1158,8 @@ Since the nRF Desktop application uses the partition manager when the bootloader
 
 .. important::
     By default, Zephyr does not use the code partition defined in the DTS files.
-    It is only used if :option:`CONFIG_USE_DT_CODE_PARTITION` is enabled.
-    If this option is disabled, the code is loaded at the address defined by :option:`CONFIG_FLASH_LOAD_OFFSET` and can spawn for :option:`CONFIG_FLASH_LOAD_SIZE` (or for the whole flash if the load size is set to zero).
+    It is only used if :kconfig:`CONFIG_USE_DT_CODE_PARTITION` is enabled.
+    If this option is disabled, the code is loaded at the address defined by :kconfig:`CONFIG_FLASH_LOAD_OFFSET` and can spawn for :kconfig:`CONFIG_FLASH_LOAD_SIZE` (or for the whole flash if the load size is set to zero).
 
 Because the nRF Desktop application depends on the DTS layout only for configurations without the bootloader, only the settings partition is relevant in such cases and other partitions are ignored.
 
@@ -1209,13 +1209,13 @@ The nRF Desktop devices come in the following types:
 
 * Peripheral devices (mouse or keyboard)
 
-  * Support only the Bluetooth Peripheral role (:option:`CONFIG_BT_PERIPHERAL`).
+  * Support only the Bluetooth Peripheral role (:kconfig:`CONFIG_BT_PERIPHERAL`).
   * Handle only one Bluetooth LE connection at a time.
   * Use more than one Bluetooth local identity.
 
 * Central devices (dongle)
 
-  * Support only the Bluetooth Central role (:option:`CONFIG_BT_CENTRAL`).
+  * Support only the Bluetooth Central role (:kconfig:`CONFIG_BT_CENTRAL`).
   * Handle multiple Bluetooth LE connections simultaneously.
   * Use only one Bluetooth local identity (the default one).
 
@@ -1237,12 +1237,12 @@ Configuration options
 This section describes the most important Bluetooth Kconfig options common for all nRF Desktop devices.
 For detailed information about every option, see the Kconfig help.
 
-* :option:`CONFIG_BT_MAX_PAIRED`
+* :kconfig:`CONFIG_BT_MAX_PAIRED`
 
   * nRF Desktop central: The maximum number of paired devices is greater than or equal to the maximum number of simultaneously connected peers.
   * nRF Desktop peripheral: The maximum number of paired devices is equal to the number of peers plus one, where the one additional paired device slot is used for erase advertising.
 
-* :option:`CONFIG_BT_ID_MAX`
+* :kconfig:`CONFIG_BT_ID_MAX`
 
   * nRF Desktop central: The device uses only one Bluetooth local identity, that is the default one.
   * nRF Desktop peripheral: The number of Bluetooth local identities must be equal to the number of peers plus two.
@@ -1251,7 +1251,7 @@ For detailed information about every option, see the Kconfig help.
     * The other additional local identity is the default local identity, which is unused, because it cannot be reset after removing the bond.
       Without the identity reset, the previously bonded central could still try to reconnect after being removed from Bluetooth bonds on the peripheral side.
 
-* :option:`CONFIG_BT_MAX_CONN`
+* :kconfig:`CONFIG_BT_MAX_CONN`
 
   * nRF Desktop central: Set the option to the maximum number of simultaneously connected devices.
   * nRF Desktop peripheral: The default value (one) is used.
@@ -1267,22 +1267,22 @@ Link Layer configuration options
 
 The nRF Desktop devices use one of the following Link Layers:
 
-* :option:`CONFIG_BT_LL_SW_SPLIT`
+* :kconfig:`CONFIG_BT_LL_SW_SPLIT`
     This Link Layer does not support the Low Latency Packet Mode (LLPM) and has a lower memory usage, so it can be used by memory-limited devices.
 
-* :option:`CONFIG_BT_LL_SOFTDEVICE`
+* :kconfig:`CONFIG_BT_LL_SOFTDEVICE`
     This Link Layer does support the Low Latency Packet Mode (LLPM).
-    If you opt for this Link Layer and enable the :option:`CONFIG_BT_CTLR_LLPM`, the :option:`CONFIG_CAF_BLE_USE_LLPM` is also enabled by default and can be configured further:
+    If you opt for this Link Layer and enable the :kconfig:`CONFIG_BT_CTLR_LLPM`, the :kconfig:`CONFIG_CAF_BLE_USE_LLPM` is also enabled by default and can be configured further:
 
-    * When :option:`CONFIG_CAF_BLE_USE_LLPM` is enabled, set the value for :option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``3000``.
+    * When :kconfig:`CONFIG_CAF_BLE_USE_LLPM` is enabled, set the value for :kconfig:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``3000``.
 
       This is required by the nRF Desktop central and helps avoid scheduling conflicts with Bluetooth Link Layer.
       Such conflicts could lead to a drop in HID input report rate or a disconnection.
       Setting the value to ``3000`` also enables the nRF Desktop central to exchange data with up to 2 standard Bluetooth LE peripherals during every connection interval (every 7.5 ms).
 
-    * When :option:`CONFIG_CAF_BLE_USE_LLPM` is disabled, the device will use only standard Bluetooth LE connection parameters with the lowest available connection interval of 7.5 ms.
+    * When :kconfig:`CONFIG_CAF_BLE_USE_LLPM` is disabled, the device will use only standard Bluetooth LE connection parameters with the lowest available connection interval of 7.5 ms.
 
-      If the LLPM is disabled and more than 2 simultaneous Bluetooth connections are supported (:option:`CONFIG_BT_MAX_CONN`), you can set the value for :option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``2500``.
+      If the LLPM is disabled and more than 2 simultaneous Bluetooth connections are supported (:kconfig:`CONFIG_BT_MAX_CONN`), you can set the value for :kconfig:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``2500``.
       With this value, the nRF Desktop central is able to exchange the data with up to 3 Bluetooth LE peripherals during every 7.5-ms connection interval.
       Using the value of ``3000`` for more than 2 simultaneous Bluetooth LE connections will result in a lower HID input report rate.
 
@@ -1306,7 +1306,7 @@ Optionally, you can also enable the following module:
   The module can be used only with the SoftDevice Link Layer.
 
 .. note::
-   The nRF Destkop devices enable :option:`CONFIG_BT_SETTINGS`.
+   The nRF Destkop devices enable :kconfig:`CONFIG_BT_SETTINGS`.
    When this option is enabled, the application is responsible for calling the :c:func:`settings_load` function - this is handled by the :ref:`nrf_desktop_settings_loader`.
 
 .. _nrf_desktop_bluetooth_guide_peripheral:
@@ -1320,7 +1320,7 @@ The HID over GATT profile specification requires Bluetooth Peripherals to define
 
 * HID Service - Handled in the :ref:`nrf_desktop_hids`.
 * Battery Service - Handled in the :ref:`nrf_desktop_bas`.
-* Device Information Service - Implemented in Zephyr and enabled with :option:`CONFIG_BT_DIS`.
+* Device Information Service - Implemented in Zephyr and enabled with :kconfig:`CONFIG_BT_DIS`.
   It can be configured using Kconfig options with the ``CONFIG_BT_DIS`` prefix.
 
 The nRF Desktop peripherals must also define a dedicated GATT Service, which is used to provide the following information:
@@ -1399,25 +1399,25 @@ The nRF Desktop application can use one of the following bootloaders:
 Configuring the B0 bootloader
 -----------------------------
 
-To enable the B0 bootloader, select the :option:`CONFIG_SECURE_BOOT` Kconfig option.
+To enable the B0 bootloader, select the :kconfig:`CONFIG_SECURE_BOOT` Kconfig option.
 
 The B0 bootloader requires the following options enabled:
 
-* :option:`CONFIG_SB_SIGNING_KEY_FILE` - Required for providing the signature used for image signing and verification.
-* :option:`CONFIG_FW_INFO` - Required for the application versioning information.
-* :option:`CONFIG_FW_INFO_FIRMWARE_VERSION` - Enable this option to set the version of the application after you enabled :option:`CONFIG_FW_INFO`.
-* :option:`CONFIG_BUILD_S1_VARIANT` - Required for the build system to be able to construct the application binaries for both application's slots in flash memory.
+* :kconfig:`CONFIG_SB_SIGNING_KEY_FILE` - Required for providing the signature used for image signing and verification.
+* :kconfig:`CONFIG_FW_INFO` - Required for the application versioning information.
+* :kconfig:`CONFIG_FW_INFO_FIRMWARE_VERSION` - Enable this option to set the version of the application after you enabled :kconfig:`CONFIG_FW_INFO`.
+* :kconfig:`CONFIG_BUILD_S1_VARIANT` - Required for the build system to be able to construct the application binaries for both application's slots in flash memory.
 
 Configuring the MCUboot bootloader
 ----------------------------------
 
-To enable the MCUboot bootloader, select the :option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
+To enable the MCUboot bootloader, select the :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
 
 Configure the MCUboot bootloader with the following options:
 
 * ``CONFIG_BOOT_SIGNATURE_KEY_FILE`` - This option defines the path to the private key that is used to sign the application and that is used by the bootloader to verify the application signature.
   The key must be defined only in the MCUboot bootloader configuration file.
-* :option:`CONFIG_IMG_MANAGER` and :option:`CONFIG_MCUBOOT_IMG_MANAGER` - These options allow the application to manage the DFU image.
+* :kconfig:`CONFIG_IMG_MANAGER` and :kconfig:`CONFIG_MCUBOOT_IMG_MANAGER` - These options allow the application to manage the DFU image.
   Enable both of them only for configurations that support :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.
   For these configurations, the :ref:`nrf_desktop_dfu` uses the provided API to request firmware upgrade and confirm the running image.
 
@@ -1448,7 +1448,7 @@ The update image is generated in the build directory when building the firmware 
 
   .. note::
       By default, the build process for the B0 bootloader will construct an image for the first slot (slot 0 or S0).
-      To ensure that application is built for both slots, select the :option:`CONFIG_BUILD_S1_VARIANT` Kconfig option.
+      To ensure that application is built for both slots, select the :kconfig:`CONFIG_BUILD_S1_VARIANT` Kconfig option.
 
       When this option is selected, the :file:`zephyr/dfu_application.zip` contains both images.
       The update tool checks if the currently running image runs from either slot 0 or slot 1.

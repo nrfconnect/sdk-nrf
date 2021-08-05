@@ -25,14 +25,14 @@ Configuration
 The module uses ``button_event`` sent by :ref:`caf_buttons`.
 Make sure mentioned hardware interface is defined.
 
-The module is enabled with :option:`CONFIG_DESKTOP_FN_KEYS_ENABLE` option.
+The module is enabled with :kconfig:`CONFIG_DESKTOP_FN_KEYS_ENABLE` option.
 
 You must configure the following options:
 
-* :option:`CONFIG_DESKTOP_FN_KEYS_SWITCH` - Fn key button.
-* :option:`CONFIG_DESKTOP_FN_KEYS_LOCK` - Fn lock button.
-* :option:`CONFIG_DESKTOP_STORE_FN_LOCK` - Option for defining if the device should store the Fn lock state after reboot (set by default to storing the state).
-* :option:`CONFIG_DESKTOP_FN_KEYS_MAX_ACTIVE` - Maximum number of dual-purpose keys pressed at the same time (8 by default).
+* :kconfig:`CONFIG_DESKTOP_FN_KEYS_SWITCH` - Fn key button.
+* :kconfig:`CONFIG_DESKTOP_FN_KEYS_LOCK` - Fn lock button.
+* :kconfig:`CONFIG_DESKTOP_STORE_FN_LOCK` - Option for defining if the device should store the Fn lock state after reboot (set by default to storing the state).
+* :kconfig:`CONFIG_DESKTOP_FN_KEYS_MAX_ACTIVE` - Maximum number of dual-purpose keys pressed at the same time (8 by default).
   The module remembers the pressed keys to send proper key releases.
 
 In the file :file:`fn_keys_def.h``, define all the dual-purpose keys.

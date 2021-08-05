@@ -123,10 +123,10 @@ Testing
 #. Observe that the sample displays the following information in the terminal::
 
        The MQTT simple sample started
-#. Observe that the development kit connects to the configured MQTT broker (:option:`CONFIG_MQTT_BROKER_HOSTNAME`) after it gets the LTE connection.
-   At this stage, the development kit is ready to echo the data sent to it on the configured subscribe topic (:option:`CONFIG_MQTT_SUB_TOPIC`).
+#. Observe that the development kit connects to the configured MQTT broker (:kconfig:`CONFIG_MQTT_BROKER_HOSTNAME`) after it gets the LTE connection.
+   At this stage, the development kit is ready to echo the data sent to it on the configured subscribe topic (:kconfig:`CONFIG_MQTT_SUB_TOPIC`).
 #. Use an MQTT client like `Mosquitto`_ to subscribe to and publish data to the broker.
-   Observe that the development kit publishes all the data that you publish to :option:`CONFIG_MQTT_SUB_TOPIC` on :option:`CONFIG_MQTT_PUB_TOPIC`.
+   Observe that the development kit publishes all the data that you publish to :kconfig:`CONFIG_MQTT_SUB_TOPIC` on :kconfig:`CONFIG_MQTT_PUB_TOPIC`.
 
 Sample output
 =============
@@ -154,10 +154,10 @@ Troubleshooting
 ===============
 
 Public MQTT brokers might be unstable.
-If you experience problems connecting to the MQTT broker, try switching to another MQTT broker by changing the value of the :option:`CONFIG_MQTT_BROKER_HOSTNAME` configuration option.
+If you experience problems connecting to the MQTT broker, try switching to another MQTT broker by changing the value of the :kconfig:`CONFIG_MQTT_BROKER_HOSTNAME` configuration option.
 
 .. note::
-   If the :option:`CONFIG_MQTT_BROKER_HOSTNAME` configuration option is changed and the overlay TLS configuration is used, the included CA certificate must be updated with the CA certificate for
+   If the :kconfig:`CONFIG_MQTT_BROKER_HOSTNAME` configuration option is changed and the overlay TLS configuration is used, the included CA certificate must be updated with the CA certificate for
    the newly configurated MQTT broker.
 
 

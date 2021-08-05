@@ -13,8 +13,8 @@ The file is downloaded in fragments of :c:enumerator:`NET_IPV4_MTU`.
 The size of a file can be fetched by LIST command.
 
 The FTP client library reports FTP control message and download data with two separate callback functions (:c:type:`ftp_client_callback_t` and :c:type:`ftp_client_callback_t`).
-The library automatically sends KEEPALIVE message to the server through a timer if :option:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` is not zero.
-The KEEPALIVE message is sent periodically at the completion of the time interval indicated by the value of :option:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME`.
+The library automatically sends KEEPALIVE message to the server through a timer if :kconfig:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` is not zero.
+The KEEPALIVE message is sent periodically at the completion of the time interval indicated by the value of :kconfig:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME`.
 
 If there is no username or password provided, the library performs a login as an anonymous user.
 

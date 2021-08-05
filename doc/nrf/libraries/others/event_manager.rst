@@ -53,8 +53,8 @@ Configuration
 
 To use Event Manager, you must enable the following Kconfig options:
 
-* :option:`CONFIG_EVENT_MANAGER` - This option enables the Event Manager.
-* :option:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` - This option enables orphan memory sections used by the Event Manager.
+* :kconfig:`CONFIG_EVENT_MANAGER` - This option enables the Event Manager.
+* :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` - This option enables orphan memory sections used by the Event Manager.
   Set this option to suppress warnings and errors.
 
 Initializing the Event Manager
@@ -311,7 +311,7 @@ Profiler allows you to observe the propagation of an event in the system, view t
 
 To profile an event, you must complete the following steps:
 
-1. Enable the profiler using the :option:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED` Kconfig option.
+1. Enable the profiler using the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED` Kconfig option.
 #. Edit the source file for the event type:
 
    a. Define a profiling function that logs the event data to a given buffer by calling one of the following functions for every registered data type:

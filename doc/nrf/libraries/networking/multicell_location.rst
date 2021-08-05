@@ -37,30 +37,30 @@ The library has an API to handle provisioning of the required TLS certificates f
 Configuration
 *************
 
-To enable the multicell location library, enable the :option:`CONFIG_MULTICELL_LOCATION` Kconfig option.
+To enable the multicell location library, enable the :kconfig:`CONFIG_MULTICELL_LOCATION` Kconfig option.
 
 The user must select nRF Cloud, HERE or Skyhook location services using one of the following options:
 
-*  :option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
-*  :option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE`
-*  :option:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK`.
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK`.
 
 
 The next required step is to configure the authentication method.
 By default, API key is used for nRF Cloud, HERE and Skyhook.
 Depending on the selected service, one of the two options below must be configured:
 
-*  :option:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_API_KEY`
-*  :option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
-*  :option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_API_KEY`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
 
 Following are the options that can usually have default values:
 
-*  :option:`CONFIG_MULTICELL_LOCATION_HOSTNAME`
-*  :option:`CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG`
-*  :option:`CONFIG_MULTICELL_LOCATION_SEND_BUF_SIZE`
-*  :option:`CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE`
-*  :option:`CONFIG_MULTICELL_LOCATION_HTTPS_PORT`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HOSTNAME`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_TLS_SEC_TAG`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_SEND_BUF_SIZE`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_HTTPS_PORT`
 
 Limitations
 ***********

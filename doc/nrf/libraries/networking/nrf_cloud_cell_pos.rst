@@ -18,8 +18,8 @@ Configuration
 
 Configure the following options to enable or disable the use of this library:
 
-* :option:`CONFIG_NRF_CLOUD`
-* :option:`CONFIG_NRF_CLOUD_CELL_POS`
+* :kconfig:`CONFIG_NRF_CLOUD`
+* :kconfig:`CONFIG_NRF_CLOUD_CELL_POS`
 
 
 Request and process cellular positioning data

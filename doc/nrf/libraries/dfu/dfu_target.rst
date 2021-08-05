@@ -48,7 +48,7 @@ When the complete transfer is done, call the :c:func:`dfu_target_done` function 
 On the next reboot, the device will run the new firmware.
 
 .. note::
-   To maintain the writing progress in case the device reboots, enable the configuration options :option:`CONFIG_SETTINGS` and :option:`CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS`.
+   To maintain the writing progress in case the device reboots, enable the configuration options :kconfig:`CONFIG_SETTINGS` and :kconfig:`CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS`.
    The MCUboot target then uses the :ref:`zephyr:settings_api` subsystem in Zephyr to store the current progress used by the :c:func:`dfu_target_write` function across power failures and device resets.
 
 
@@ -81,9 +81,9 @@ Configuration
 
 You can disable support for specific DFU targets with the following parameters:
 
-* :option:`CONFIG_DFU_TARGET_MCUBOOT`
-* :option:`CONFIG_DFU_TARGET_MODEM_DELTA`
-* :option:`CONFIG_DFU_TARGET_FULL_MODEM`
+* :kconfig:`CONFIG_DFU_TARGET_MCUBOOT`
+* :kconfig:`CONFIG_DFU_TARGET_MODEM_DELTA`
+* :kconfig:`CONFIG_DFU_TARGET_FULL_MODEM`
 
 API documentation
 *****************

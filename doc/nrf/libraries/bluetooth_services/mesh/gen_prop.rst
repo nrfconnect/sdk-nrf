@@ -15,8 +15,8 @@ For types common to all models, see :ref:`bt_mesh_models`.
 
 The following configuration parameters are associated with the Generic Property models:
 
-* :option:`CONFIG_BT_MESH_PROP_MAXSIZE` - The largest available property value.
-* :option:`CONFIG_BT_MESH_PROP_MAXCOUNT` - The largest number of properties available on a single Generic Property Server.
+* :kconfig:`CONFIG_BT_MESH_PROP_MAXSIZE` - The largest available property value.
+* :kconfig:`CONFIG_BT_MESH_PROP_MAXCOUNT` - The largest number of properties available on a single Generic Property Server.
 
 .. toctree::
    :maxdepth: 1

@@ -35,7 +35,7 @@ Data is returned to the user if the return code is OK.
 In the case of a handler function, the return code is removed and the rest of the string is delivered to the handler function through a char pointer parameter.
 Allocation and deallocation of the buffer is handled by the AT command interface, and the content should not be considered valid outside of the handler.
 
-Both schemes are limited to the maximum reception size defined by :option:`CONFIG_AT_CMD_RESPONSE_MAX_LEN`.
+Both schemes are limited to the maximum reception size defined by :kconfig:`CONFIG_AT_CMD_RESPONSE_MAX_LEN`.
 
 Notifications are always handled by a callback function.
 This callback function is separate from the one that is used to handle data returned immediately after sending a command.

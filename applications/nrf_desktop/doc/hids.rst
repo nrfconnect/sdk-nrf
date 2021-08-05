@@ -27,14 +27,14 @@ Configuration
 Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-   During this configuration, you must enable the :option:`CONFIG_BT_PERIPHERAL` Kconfig option for every nRF Desktop peripheral.
-   When this option is enabled, the :option:`CONFIG_DESKTOP_HID_PERIPHERAL` is set to ``y``, which enables the following two additional options, among others:
+   During this configuration, you must enable the :kconfig:`CONFIG_BT_PERIPHERAL` Kconfig option for every nRF Desktop peripheral.
+   When this option is enabled, the :kconfig:`CONFIG_DESKTOP_HID_PERIPHERAL` is set to ``y``, which enables the following two additional options, among others:
 
-   * :option:`CONFIG_BT_HIDS` - This is required because the HID Service module is based on the :ref:`hids_readme` implementation of the GATT Service.
-   * :option:`CONFIG_DESKTOP_HIDS_ENABLE` - This enables the ``hids`` application module.
+   * :kconfig:`CONFIG_BT_HIDS` - This is required because the HID Service module is based on the :ref:`hids_readme` implementation of the GATT Service.
+   * :kconfig:`CONFIG_DESKTOP_HIDS_ENABLE` - This enables the ``hids`` application module.
 
    This step also enables the |GATT_HID|.
-#. Enable the :ref:`bt_conn_ctx_readme` (:option:`CONFIG_BT_CONN_CTX`).
+#. Enable the :ref:`bt_conn_ctx_readme` (:kconfig:`CONFIG_BT_CONN_CTX`).
    This is required by the |GATT_HID|.
 #. Configure the :ref:`hids_readme`.
    See its documentation for configuration details.
@@ -46,13 +46,13 @@ The HID Service application module forwards the information about the enabled HI
 These notifications are enabled by the connected Bluetooth Central.
 By default, the ``hids`` application module starts forwarding the subscriptions right after the Bluetooth connection is secured.
 
-You can define additional delay for forwarding the notifications on connection (:option:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY`).
+You can define additional delay for forwarding the notifications on connection (:kconfig:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY`).
 Sending the first HID report to the connected Bluetooth peer is delayed by this period of time.
 
 .. note::
    The nRF Desktop centrals perform the GATT service discovery and reenable the HID notifications on every reconnection.
    A HID report that is received before the subscription is reenabled will be dropped before it reaches the application.
-   The :option:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY` is used for keyboard reference design (nRF52832 Desktop Keyboard) to make sure that the input will not be lost on reconnection with the nRF Desktop dongle.
+   The :kconfig:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY` is used for keyboard reference design (nRF52832 Desktop Keyboard) to make sure that the input will not be lost on reconnection with the nRF Desktop dongle.
 
 Implementation details
 **********************

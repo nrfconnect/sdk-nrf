@@ -55,7 +55,7 @@ To provision the certificates and the private key to the nRF9160 modem, complete
 #. Select a desired security tag (any positive integer, for example, ``42``) and click :guilabel:`Update certificates`.
 
 .. note::
-   The chosen security tag while provisioning the certificates must be same as the security tag configured by the :option:`CONFIG_AZURE_IOT_HUB_SEC_TAG` option.
+   The chosen security tag while provisioning the certificates must be same as the security tag configured by the :kconfig:`CONFIG_AZURE_IOT_HUB_SEC_TAG` option.
 
 
 Configuring the library
@@ -69,9 +69,9 @@ Configuration without using DPS
 To connect to Azure IoT Hub without using DPS, complete the following minimum required configuration:
 
 1. In the `Azure Portal`_, navigate to :guilabel:`IoT Hub` and select the desired IoT hub.
-#. In the overview page, locate and copy the ``Hostname`` and configure :option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` to this address.
-#. Set the option :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` to the device ID. The device ID must match the device ID used while creating the certificates.
-#. Set :option:`CONFIG_AZURE_IOT_HUB_SEC_TAG` to the security tag used in :ref:`azure_iot_hub_flash_certs`.
+#. In the overview page, locate and copy the ``Hostname`` and configure :kconfig:`CONFIG_AZURE_IOT_HUB_HOSTNAME` to this address.
+#. Set the option :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` to the device ID. The device ID must match the device ID used while creating the certificates.
+#. Set :kconfig:`CONFIG_AZURE_IOT_HUB_SEC_TAG` to the security tag used in :ref:`azure_iot_hub_flash_certs`.
 
 
 .. _dps_config:
@@ -84,11 +84,11 @@ To connect to Azure IoT Hub using DPS, complete the following steps:
 1. `Set up an Azure IoT Hub Device Provisioning Service (DPS) instance`_ and obtain the ID scope.
 #. `Add certificates to the DPS instance`_.
 #. Create an *enrollment group* as described in `Device enrollments with Azure Portal`_ and link it to your IoT hub. Select the certificate added in the previous step as the *Primary certificate​​​​​​​*.
-#. Enable :option:`CONFIG_AZURE_IOT_HUB_DPS`.
+#. Enable :kconfig:`CONFIG_AZURE_IOT_HUB_DPS`.
 #. In the `Azure Portal`_, click :guilabel:`Device Provisioning Services` and select the DPS instance to use.
-#. In the overview page, locate and copy the ``ID Scope`` and configure :option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` to this string.
-#. Set the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` option to device ID, unless :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` is enabled. The device ID must match the device ID used while creating the certificates.
-#. Set :option:`CONFIG_AZURE_IOT_HUB_SEC_TAG` to the security tag used while :ref:`azure_iot_hub_flash_certs`.
+#. In the overview page, locate and copy the ``ID Scope`` and configure :kconfig:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` to this string.
+#. Set the :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` option to device ID, unless :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` is enabled. The device ID must match the device ID used while creating the certificates.
+#. Set :kconfig:`CONFIG_AZURE_IOT_HUB_SEC_TAG` to the security tag used while :ref:`azure_iot_hub_flash_certs`.
 
 
 Initializing the library
@@ -96,9 +96,9 @@ Initializing the library
 
 The library is initialized by calling the :c:func:`azure_iot_hub_init` function.
 If the initialization fails, the application cannot use any APIs of the library.
-Optionally, you can enable :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` and include a pointer to the :c:struct:`azure_iot_hub_config` structure containing the device ID in the :c:func:`azure_iot_hub_init` function call.
+Optionally, you can enable :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` and include a pointer to the :c:struct:`azure_iot_hub_config` structure containing the device ID in the :c:func:`azure_iot_hub_init` function call.
 
-Below is an example for setting the device ID at run time instead of compile time by configuring the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` option:
+Below is an example for setting the device ID at run time instead of compile time by configuring the :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` option:
 
    .. code-block:: c
 
@@ -135,11 +135,11 @@ Configuration
 
 Configure the following parameters when using this library:
 
-* :option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. It must be configured, since DPS is not enabled by default.
-* :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Specifies the device ID, which is used when connecting to Azure IoT Hub or when DPS is enabled.
-* :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` - Used to provide the device ID at run time.
-* :option:`CONFIG_AZURE_IOT_HUB_DPS` - Enables Azure IoT Hub DPS.
-* :option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` - Sets the Azure IoT Hub DPS ID scope that is used while provisioning the device.
+* :kconfig:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. It must be configured, since DPS is not enabled by default.
+* :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Specifies the device ID, which is used when connecting to Azure IoT Hub or when DPS is enabled.
+* :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` - Used to provide the device ID at run time.
+* :kconfig:`CONFIG_AZURE_IOT_HUB_DPS` - Enables Azure IoT Hub DPS.
+* :kconfig:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` - Sets the Azure IoT Hub DPS ID scope that is used while provisioning the device.
 
 API documentation
 *****************

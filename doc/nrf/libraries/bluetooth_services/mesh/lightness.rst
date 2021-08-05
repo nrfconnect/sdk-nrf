@@ -26,8 +26,8 @@ For types common to all models, see :ref:`bt_mesh_models`.
 The application can select whether to use the Actual or Linear representation.
 To do so, use the following options in the API at compile time:
 
-* :option:`CONFIG_BT_MESH_LIGHTNESS_ACTUAL` - Used by default.
-* :option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR`
+* :kconfig:`CONFIG_BT_MESH_LIGHTNESS_ACTUAL` - Used by default.
+* :kconfig:`CONFIG_BT_MESH_LIGHTNESS_LINEAR`
 
 Internally, the models will always support both representations, so nodes with different representations can be be used interchangeably.
 

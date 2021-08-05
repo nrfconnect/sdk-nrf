@@ -10,7 +10,7 @@ Multiprotocol Service Layer assert
 The Multiprotocol Service Layer assert library makes it possible to add a custom assert handler to the :ref:`nrfxlib:mpsl` library.
 You can then use this assert handler to print custom error messages or log assert information.
 
-:option:`CONFIG_MPSL_ASSERT_HANDLER` enables the custom assert handler.
+:kconfig:`CONFIG_MPSL_ASSERT_HANDLER` enables the custom assert handler.
 If enabled, the application must provide the definition of :c:func:`mpsl_assert_handle`.
 The :c:func:`mpsl_assert_handle` function is invoked whenever the MPSL code encounters an unrecoverable error.
 

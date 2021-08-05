@@ -34,15 +34,15 @@ To use NB-IoT, a bootstrap server, or the queue mode, follow the implementation 
 
 Configure the following parameters when using this library:
 
-* :option:`CONFIG_LWM2M_CLIENT_UTILS` enabled
-* :option:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` enabled
-* :option:`CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT` enabled
-* :option:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT` enabled
-* :option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT` enabled
-* :option:`CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT` enabled
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS` enabled
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` enabled
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT` enabled
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT` enabled
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT` enabled
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT` enabled
 
 Support for the objects can be set individually but are enabled by default.
-Disable the :option:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` Kconfig option only if you are implementing a ``reboot`` resource on your application because of a mandatory requirement.
+Disable the :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` Kconfig option only if you are implementing a ``reboot`` resource on your application because of a mandatory requirement.
 
 Defining custom objects
 ***********************
@@ -68,7 +68,7 @@ To define custom objects, complete the following steps:
 #. Pass the resource information to the LwM2M client utils library to register callbacks for the resource and to publish the sensor data.
 
 The following example describes how you can define an object that follows the Generic Sensor definition from IPSO.
-To enable the support for Generic Sensor set the Kconfig option :option:`CONFIG_LWM2M_IPSO_GENERIC_SENSOR` to ``y``.
+To enable the support for Generic Sensor set the Kconfig option :kconfig:`CONFIG_LWM2M_IPSO_GENERIC_SENSOR` to ``y``.
 
 To define an object that follows the Generic Sensor definition, complete the following steps:
 

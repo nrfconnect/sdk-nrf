@@ -50,7 +50,7 @@ Overview
 
 The sample demonstrates using a Nordic Semiconductor's Development Kit as Zigbee Network Co-Processor.
 
-The sample uses the :option:`CONFIG_ZIGBEE_LIBRARY_NCP_DEV` Kconfig option, which is available as part of the :ref:`nrfxlib:zboss_configuration`.
+The sample uses the :kconfig:`CONFIG_ZIGBEE_LIBRARY_NCP_DEV` Kconfig option, which is available as part of the :ref:`nrfxlib:zboss_configuration`.
 The NCP Kconfig option extends the compilation process with an implementation of the ZBOSS API serialization through NCP commands.
 It also implements the ZBOSS default signal handler function, which controls the ZBOSS and commissioning logic.
 
@@ -70,7 +70,7 @@ Serial communication setup
 ==========================
 
 The communication channel uses Zephyr's :ref:`zephyr:uart_api` API.
-This serial device is selected with :option:`CONFIG_ZIGBEE_UART_DEVICE_NAME`.
+This serial device is selected with :kconfig:`CONFIG_ZIGBEE_UART_DEVICE_NAME`.
 
 By default, the NCP sample communicates through the UART serialization (``UART0``).
 As a result, Zephyr's logger is configured to use ``UART1``, which is available through GPIO pins (**P1.00** and **P1.01**).
@@ -112,7 +112,7 @@ MCUboot
 
 When the `Communication through USB`_ is selected, MCUboot in this sample is built with support for single application slot, and uses the USB DFU class driver to allow uploading image over USB.
 
-If you want to use the default UART serial communication channel, you can enable MCUboot by setting the :option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
+If you want to use the default UART serial communication channel, you can enable MCUboot by setting the :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
 To use the same MCUboot configuration as in `Communication through USB`_, you need to provide MCUboot with the Kconfig options included in the :file:`child_image/mcuboot_usb.conf` file.
 See :ref:`ug_multi_image_variables` for how to set the required options.
 

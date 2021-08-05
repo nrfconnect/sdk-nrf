@@ -21,16 +21,16 @@ To use the module, you must complete the following requirements:
    For more information about adding sensor device to devicetree, refer to :ref:`zephyr:use-dt-overlays`.
 #. Enable the following Kconfig options:
 
-   * :option:`CONFIG_CAF_SENSOR_SAMPLER` - This option enables the |sensor_sampler|.
-   * :option:`CONFIG_SENSOR` - This option enables Zephyr's :ref:`zephyr:sensor_api` driver, which is required for interacting with the sensors.
+   * :kconfig:`CONFIG_CAF_SENSOR_SAMPLER` - This option enables the |sensor_sampler|.
+   * :kconfig:`CONFIG_SENSOR` - This option enables Zephyr's :ref:`zephyr:sensor_api` driver, which is required for interacting with the sensors.
 
 Additionally, you need to configure the sensor that you want to use in your application and enable it in the sensor Kconfig option.
 
 The following Kconfig options are also available for the module:
 
-* :option:`CONFIG_CAF_SENSOR_SAMPLER_DEF_PATH`
-* :option:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_STACK_SIZE`
-* :option:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_PRIORITY`
+* :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_DEF_PATH`
+* :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_STACK_SIZE`
+* :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_PRIORITY`
 
 Adding module configuration file
 ================================
@@ -78,7 +78,7 @@ To do so, complete the following steps:
                 },
         };
 
-#. Specify the location of the file with the :option:`CONFIG_CAF_SENSOR_SAMPLER_DEF_PATH` Kconfig option.
+#. Specify the location of the file with the :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_DEF_PATH` Kconfig option.
 
 .. note::
     |only_configured_module_note|
@@ -167,11 +167,11 @@ When started, it can do the following operations:
 
 The |sensor_sampler| samples sensors periodically, according to the configuration specified for each sensor.
 Sampling of the sensors is done from a dedicated preemptive thread.
-You can change the thread priority by setting the :option:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_PRIORITY` Kconfig option.
+You can change the thread priority by setting the :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_PRIORITY` Kconfig option.
 Use the preemptive thread priority to make sure that the thread does not block other operations in the system.
 
 The dedicated thread uses its own thread stack.
-You can change the size of the stack by setting the :option:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_STACK_SIZE` Kconfig option.
+You can change the size of the stack by setting the :kconfig:`CONFIG_CAF_SENSOR_SAMPLER_THREAD_STACK_SIZE` Kconfig option.
 The thread stack size must be big enough for the sensors used.
 
 Sensor state events

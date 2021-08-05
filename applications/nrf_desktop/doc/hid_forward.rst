@@ -28,19 +28,19 @@ Configuration
 Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-#. Enable and configure the :ref:`hogp_readme` (:option:`CONFIG_BT_HOGP`).
+#. Enable and configure the :ref:`hogp_readme` (:kconfig:`CONFIG_BT_HOGP`).
 
    .. note::
-       Make sure to define the maximum number of supported HID reports (:option:`CONFIG_BT_HOGP_REPORTS_MAX`).
+       Make sure to define the maximum number of supported HID reports (:kconfig:`CONFIG_BT_HOGP_REPORTS_MAX`).
 
-#. Make sure that the :option:`CONFIG_DESKTOP_HID_STATE_ENABLE` option is disabled.
+#. Make sure that the :kconfig:`CONFIG_DESKTOP_HID_STATE_ENABLE` option is disabled.
    The nRF Desktop central does not generate its own HID input reports.
    It only forwards HID input reports that it receives from the peripherals connected over Bluetooth.
-#. The |hid_forward| is enabled with the :option:`CONFIG_DESKTOP_HID_FORWARD_ENABLE` option.
-   This option is available only if you enable both the :option:`CONFIG_BT_CENTRAL` and :option:`CONFIG_BT_HOGP` Kconfig options.
+#. The |hid_forward| is enabled with the :kconfig:`CONFIG_DESKTOP_HID_FORWARD_ENABLE` option.
+   This option is available only if you enable both the :kconfig:`CONFIG_BT_CENTRAL` and :kconfig:`CONFIG_BT_HOGP` Kconfig options.
    The module is used on Bluetooth Central to forward the HID reports that are received by the HID service client.
 
-You can set the queued HID input reports limit using the :option:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS` Kconfig option.
+You can set the queued HID input reports limit using the :kconfig:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS` Kconfig option.
 
 Implementation details
 **********************
@@ -89,7 +89,7 @@ Enqueuing incoming HID input reports
 The |hid_forward| forwards only one HID input report to the HID-class USB device at a time.
 Another HID input report may be received from a peripheral connected over Bluetooth before the previous one was sent.
 In that case, ``hid_report_event`` is enqueued and submitted later.
-Up to :option:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS` reports can be enqueued at a time for each report type and for each connected peripheral.
+Up to :kconfig:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS` reports can be enqueued at a time for each report type and for each connected peripheral.
 If there is not enough space to enqueue a new event, the module drops the oldest enqueued event that was received from this peripheral (of the same type).
 
 Upon receiving the ``hid_report_sent_event``, the |hid_forward| submits the ``hid_report_event`` enqueued for the peripheral that is associated with the HID-class USB device.

@@ -71,8 +71,8 @@ The Light Hue Server stores the following information:
 
 This information is used to reestablish the correct Hue level when the device powers up.
 
-If :option:`CONFIG_BT_SETTINGS` is enabled, the Light Hue Server stores all its states persistently using a configurable storage delay to stagger storing.
-See :option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+If :kconfig:`CONFIG_BT_SETTINGS` is enabled, the Light Hue Server stores all its states persistently using a configurable storage delay to stagger storing.
+See :kconfig:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
 
 API documentation
 ******************

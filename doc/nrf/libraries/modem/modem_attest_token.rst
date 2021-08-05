@@ -21,7 +21,7 @@ To use the library to obtain the attestation token, complete the following steps
 * Enable the Modem attestation token library.
 * Initialize the :ref:`nrf_modem_lib_readme` and :ref:`at_cmd_parser_readme` libraries.
 * Call the :c:func:`modem_attest_token_get` function to obtain the two base64url strings in the :c:struct:`nrf_attestation_token` structure.
-* Enable token parsing (:option:`CONFIG_MODEM_ATTEST_TOKEN_PARSING`).
+* Enable token parsing (:kconfig:`CONFIG_MODEM_ATTEST_TOKEN_PARSING`).
 * Call the :c:func:`modem_attest_token_parse` function to parse the token.
 
 The function :c:func:`modem_attest_token_parse` parses :c:struct:`nrf_attestation_token` and populates the :c:struct:`nrf_attestation_data` structure with the data.
@@ -32,8 +32,8 @@ Configuration
 
 Configure the following options when using this library:
 
-* :option:`CONFIG_MODEM_ATTEST_TOKEN`
-* :option:`CONFIG_MODEM_ATTEST_TOKEN_PARSING`
+* :kconfig:`CONFIG_MODEM_ATTEST_TOKEN`
+* :kconfig:`CONFIG_MODEM_ATTEST_TOKEN_PARSING`
 
 API documentation
 *****************

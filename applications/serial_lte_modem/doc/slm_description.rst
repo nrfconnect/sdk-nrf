@@ -42,7 +42,7 @@ As a client, you can use either a PC or an external MCU.
 Connecting with a PC
 --------------------
 
-To connect to the nRF9160 DK with a PC, make sure that :option:`CONFIG_SLM_CONNECT_UART_0` is defined in the application.
+To connect to the nRF9160 DK with a PC, make sure that :kconfig:`CONFIG_SLM_CONNECT_UART_0` is defined in the application.
 It is defined in the default configuration.
 
 Use LTE Link Monitor to connect to the nRF9160 DK.
@@ -64,7 +64,7 @@ Connecting with an external MCU
 If you run your user application on an external MCU (for example, an nRF52 Series DK), you can control the modem on the nRF9160 directly from the application.
 See the `nRF52 client for serial LTE modem application`_ repository for a sample implementation of such an application.
 
-To connect with an external MCU, you must set the configuration option :option:`CONFIG_UART_2_NRF_HW_ASYNC_TIMER` and :option:`CONFIG_SLM_CONNECT_UART_2` in the serial LTE modem application configuration.
+To connect with an external MCU, you must set the configuration option :kconfig:`CONFIG_UART_2_NRF_HW_ASYNC_TIMER` and :kconfig:`CONFIG_SLM_CONNECT_UART_2` in the serial LTE modem application configuration.
 
 The following table shows how to connect an nRF52 Series DK to the nRF9160 DK to be able to communicate through UART:
 
@@ -149,7 +149,7 @@ Check and configure the following configuration options for the sample:
 .. option:: CONFIG_SLM_INTERFACE_PIN - Interface GPIO to wake up from sleep or exit idle
 
    This option specifies which interface GPIO to use for exiting sleep or idle mode.
-   By default, **P0.6** (Button 1 on the nRF9160 DK) is used when :option:`CONFIG_SLM_CONNECT_UART_0` is selected, and **P0.31** is used when when :option:`CONFIG_SLM_CONNECT_UART_2` is selected.
+   By default, **P0.6** (Button 1 on the nRF9160 DK) is used when :kconfig:`CONFIG_SLM_CONNECT_UART_0` is selected, and **P0.31** is used when when :kconfig:`CONFIG_SLM_CONNECT_UART_2` is selected.
 
 .. option:: CONFIG_SLM_SOCKET_RX_MAX - Maximum RX buffer size for receiving socket data
 
@@ -179,21 +179,17 @@ Check and configure the following configuration options for the sample:
 
    This option enables additional AT commands for using the SMS service.
 
-.. option:: CONFIG_SLM_GNSS - GNSS support in SLM
+.. option:: CONFIG_SLM_GPS - GPS support in SLM
 
-   This option enables additional AT commands for using the GNSS service.
+   This option enables additional AT commands for using GPS service.
 
-.. option:: CONFIG_SLM_AGPS - nRF Cloud A-GPS support in SLM
+.. option:: CONFIG_SLM_SUPL_SERVER - SUPL server
 
-   This option enables additional AT commands for using the GPS service together with nRF Cloud A-GPS service.
+   This option specifies the SUPL server to use for retrieving SUPL A-GPS data.
 
-.. option:: CONFIG_SLM_PGPS - nRF Cloud P-GPS support in SLM
+.. option:: CONFIG_SLM_SUPL_PORT - SUPL server port
 
-   This option enables additional AT commands for using the GPS service together with nRF Cloud P-GPS service.
-
-.. option:: CONFIG_SLM_CELL_POS - nRF Cloud cellular positioning support in SLM
-
-   This option enables additional AT commands for using the cellular positioning service from nRF Cloud.
+   This option specifies the port to use for the specified SUPL server.
 
 .. option:: CONFIG_SLM_FTPC - FTP client support in SLM
 
@@ -308,10 +304,7 @@ This application uses the following |NCS| libraries:
 * :ref:`at_cmd_parser_readme`
 * :ref:`at_notif_readme`
 * :ref:`lib_ftp_client`
-* :ref:`lib_fota_download`
-* :ref:`cloud_api_readme`
-* :ref:`lib_nrf_cloud`
-* :ref:`lib_nrf_cloud_agps`
+* :ref:`supl_client`
 
 It uses the following `sdk-nrfxlib`_ libraries:
 

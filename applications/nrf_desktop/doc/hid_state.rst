@@ -28,19 +28,19 @@ Module events
 Configuration
 *************
 
-The |hid_state| module is enabled by selecting :option:`CONFIG_DESKTOP_HID_STATE_ENABLE`.
+The |hid_state| module is enabled by selecting :kconfig:`CONFIG_DESKTOP_HID_STATE_ENABLE`.
 This module is optional and turned off by default.
 
 Report expiration
 =================
 
-With the :option:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION` configuration option, you can set the amount of time after which a key will be considered expired.
+With the :kconfig:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION` configuration option, you can set the amount of time after which a key will be considered expired.
 The higher the value, the longer the period after which the nRF Desktop application will recall pressed keys when the connection is established.
 
 Queue event size
 ================
 
-With the :option:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE` configuration option, you can set the number of elements on the queue where the keys are stored before the connection is established.
+With the :kconfig:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE` configuration option, you can set the number of elements on the queue where the keys are stored before the connection is established.
 When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage is pushed onto the queue.
 If there is no space in the queue, the oldest element is released.
 
@@ -122,11 +122,11 @@ This queue preserves an order at which input data events are received.
 Storing limitations
 -------------------
 
-The number of events that can be inserted into the queue is limited by :option:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE`.
+The number of events that can be inserted into the queue is limited by :kconfig:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE`.
 
 Discarding events
     When there is no space for a new input event, the |hid_state| module will try to free space by discarding the oldest event in the queue.
-    Events stored in the queue are automatically discarded after the period defined by :option:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION`.
+    Events stored in the queue are automatically discarded after the period defined by :kconfig:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION`.
 
     When discarding an event from the queue, the module checks if the key associated with the event is pressed.
     This is to avoid missing key releases for earlier key presses when the keys from the queue are replayed to the host.
@@ -184,6 +184,6 @@ The :c:struct:`report_data` structure is passed as an argument to this function.
 
 .. note::
     The HID report formatting function must work according to the HID report descriptor (``hid_report_desc``).
-    The source file containing the descriptor is given by :option:`CONFIG_DESKTOP_HID_REPORT_DESC`.
+    The source file containing the descriptor is given by :kconfig:`CONFIG_DESKTOP_HID_REPORT_DESC`.
 
 .. |hid_state| replace:: HID state module

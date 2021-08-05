@@ -95,7 +95,7 @@ Make sure to maintain the folder structure that is used in the zip file.
 Configuration
 =============
 
-To enable the SUPL client library, set :option:`CONFIG_SUPL_CLIENT_LIB` to ``y``.
+To enable the SUPL client library, set :kconfig:`CONFIG_SUPL_CLIENT_LIB` to ``y``.
 See :ref:`configure_application` for information on how to change configuration options.
 
 Resource initialization and ownership

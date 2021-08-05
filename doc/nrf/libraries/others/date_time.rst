@@ -8,7 +8,7 @@ Date-Time
    :depth: 2
 
 The date-time library maintains the current date-time information in UTC format.
-The option :option:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` determines the frequency with which the library updates the date-time information.
+The option :kconfig:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` determines the frequency with which the library updates the date-time information.
 
 The information is fetched in the following prioritized order:
 
@@ -27,13 +27,13 @@ See the API documentation for more information on these functions.
 
 .. note::
 
-   The first date-time update cycle (after boot) does not occur until the time set by the :option:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` has elapsed.
+   The first date-time update cycle (after boot) does not occur until the time set by the :kconfig:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` has elapsed.
    It is recommended to call the :c:func:`date_time_update_async` function after the device has connected to LTE, to get the initial date-time information.
 
 Configuration
 *************
 
-:option:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS`
+:kconfig:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS`
 
    Configure this option to control the frequency with which the library fetches the time information.
 

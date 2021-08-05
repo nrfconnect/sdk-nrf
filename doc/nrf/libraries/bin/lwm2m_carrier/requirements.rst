@@ -17,7 +17,7 @@ Below are some of the requirements and limitations of the application while runn
 * The application must not use the *NB-IoT* LTE mode.
 
    * The LwM2M carrier library is currently only certified for the *LTE-M* LTE mode.
-   * The :option:`CONFIG_LTE_NETWORK_USE_FALLBACK` must be disabled in your application, as seen in the :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`).
+   * The :kconfig:`CONFIG_LTE_NETWORK_USE_FALLBACK` must be disabled in your application, as seen in the :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`).
 
 * The LwM2M carrier library registers to receive several AT event reports using the :ref:`at_cmd_readme` and :ref:`at_notif_readme` libraries. The following notifications must not be deregistered by the application:
 

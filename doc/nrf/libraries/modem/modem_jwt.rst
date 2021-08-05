@@ -33,8 +33,8 @@ Configuration
 
 Configure the following options when using the library:
 
-* :option:`CONFIG_MODEM_JWT`
-* :option:`CONFIG_MODEM_JWT_MAX_LEN`
+* :kconfig:`CONFIG_MODEM_JWT`
+* :kconfig:`CONFIG_MODEM_JWT_MAX_LEN`
 
 API documentation
 *****************

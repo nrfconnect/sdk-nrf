@@ -10,8 +10,8 @@ Bluetooth mesh sensor types
 All sensor types are collected in :file:`include/bluetooth/mesh/sensor_types.h`, and are divided into the categories listed in the page index.
 
 To keep the total flash usage down, the sensor types are only instantiated if they're referenced by the application.
-This behavior can be overridden by enabling :option:`CONFIG_BT_MESH_SENSOR_ALL_TYPES`.
-Note that if the Sensor Client is enabled, :option:`CONFIG_BT_MESH_SENSOR_ALL_TYPES` is enabled by default.
+This behavior can be overridden by enabling :kconfig:`CONFIG_BT_MESH_SENSOR_ALL_TYPES`.
+Note that if the Sensor Client is enabled, :kconfig:`CONFIG_BT_MESH_SENSOR_ALL_TYPES` is enabled by default.
 
 Sensor types can be forced into the build by the :c:macro:`BT_MESH_SENSOR_TYPE_FORCE` macro.
 

@@ -56,16 +56,16 @@ Additional configuration
 
 Check and configure the following library options that are used by the sample:
 
-* :option:`CONFIG_AZURE_FOTA_APP_VERSION` - Defines the application version string. Indicates the current firmware version on the development kit.
-* :option:`CONFIG_AZURE_FOTA_APP_VERSION_AUTO` - Automatically generates the application version. If enabled, :option:`CONFIG_AZURE_FOTA_APP_VERSION` is ignored.
-* :option:`CONFIG_AZURE_FOTA_TLS` - Enables HTTPS for downloads. By default, TLS is enabled and currently, the transport protocol must be configured at compile time.
-* :option:`CONFIG_AZURE_FOTA_SEC_TAG` - Sets the security tag for TLS credentials when using HTTPS as the transport layer. See :ref:`certificates` for more details.
-* :option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. If DPS is used, the sample assumes that the IoT hub host name is unknown, and the configuration is ignored.
-* :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Specifies the device ID, which is used when connecting to Azure IoT Hub or when DPS is enabled.
+* :kconfig:`CONFIG_AZURE_FOTA_APP_VERSION` - Defines the application version string. Indicates the current firmware version on the development kit.
+* :kconfig:`CONFIG_AZURE_FOTA_APP_VERSION_AUTO` - Automatically generates the application version. If enabled, :kconfig:`CONFIG_AZURE_FOTA_APP_VERSION` is ignored.
+* :kconfig:`CONFIG_AZURE_FOTA_TLS` - Enables HTTPS for downloads. By default, TLS is enabled and currently, the transport protocol must be configured at compile time.
+* :kconfig:`CONFIG_AZURE_FOTA_SEC_TAG` - Sets the security tag for TLS credentials when using HTTPS as the transport layer. See :ref:`certificates` for more details.
+* :kconfig:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. If DPS is used, the sample assumes that the IoT hub host name is unknown, and the configuration is ignored.
+* :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Specifies the device ID, which is used when connecting to Azure IoT Hub or when DPS is enabled.
 
 .. note::
-   If the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is disabled, the device ID must be set in :file:`prj.conf`.
-   If the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is enabled, the device ID must be provided using the :c:struct:`azure_iot_hub_config` configuration struct in a call to the :c:func:`azure_iot_hub_init` function.
+   If the :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is disabled, the device ID must be set in :file:`prj.conf`.
+   If the :kconfig:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is enabled, the device ID must be provided using the :c:struct:`azure_iot_hub_config` configuration struct in a call to the :c:func:`azure_iot_hub_init` function.
 
 Building and running
 ********************

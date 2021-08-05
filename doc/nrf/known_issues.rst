@@ -253,7 +253,7 @@ KRKNWK-10633: Incorrect data when using ACK-based Probing with Link Metrics
 
 KRKNWK-10467: Security issues for retransmitted frames with Thread 1.2
   The Thread 1.2 current implementation does not guarantee that all retransmitted frames will be secured when using the transmission security capabilities of the radio driver.
-  For this reason, OpenThread retransmissions are disabled by default when the :option:`CONFIG_NRF_802154_ENCRYPTION` Kconfig option is enabled.
+  For this reason, OpenThread retransmissions are disabled by default when the :kconfig:`CONFIG_NRF_802154_ENCRYPTION` Kconfig option is enabled.
   You can enable the retransmissions at your own risk.
 
 .. rst-class:: v1-6-1 v1-6-0
@@ -1021,7 +1021,7 @@ Multiprotocol Service Layer (MPSL)
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
-DRGN-15979: :option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION` must be set when :option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is set.
+DRGN-15979: :kconfig:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION` must be set when :kconfig:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is set.
   MPSL requires RC clock calibration to be enabled when the RC clock is used as the Low Frequency clock source.
 
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1

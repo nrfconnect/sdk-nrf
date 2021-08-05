@@ -40,10 +40,10 @@ This functionality is implemented as a monotonic version counter that contains a
 Each update to the counter is written to the next available slot.
 When reading the counter, the bootloader storage library iterates over each slot and returns the largest value.
 
-The number of available slots, thus the number of different version numbers that can be stored, is configurable through :option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`.
+The number of available slots, thus the number of different version numbers that can be stored, is configurable through :kconfig:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`.
 
 The monotonic counter is enabled by default.
-You can disable it through :option:`CONFIG_SB_MONOTONIC_COUNTER`.
+You can disable it through :kconfig:`CONFIG_SB_MONOTONIC_COUNTER`.
 If the counter is enabled, the :ref:`doc_bl_validation` library checks it against an image's version during :c:func:`bl_validate_firmware`.
 
 

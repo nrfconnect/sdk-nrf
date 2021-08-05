@@ -19,7 +19,7 @@ See :ref:`crypto_test_ztest_custom` for details.
 
 The tests are executed if the cryptographic functionality is enabled in Kconfig.
 Make sure to configure :ref:`nrfxlib:nrf_security` and all available hardware or software backends to enable the tests.
-See :option:`CONFIG_NORDIC_SECURITY_BACKEND`.
+See :kconfig:`CONFIG_NORDIC_SECURITY_BACKEND`.
 
 +--------------------+-------------+----------------------------------------------------------------------------+----------------------------------------------------------------------------+
 | Cryptographic mode |   Sub-mode  |                          Link to standard                                  |                              Test Vector Source                            |
@@ -158,9 +158,9 @@ Ztest custom log formatting
 ===========================
 
 Cryptography tests replace the standard Ztest formatting to assure more efficient reporting of running tests and test results.
-Set the configuration option :option:`CONFIG_ZTEST_TC_UTIL_USER_OVERRIDE` to replace the Ztest macros ``TC_START`` and ``Z_TC_END_RESULT`` with versions more suited for reporting results of cryptographic tests.
+Set the configuration option :kconfig:`CONFIG_ZTEST_TC_UTIL_USER_OVERRIDE` to replace the Ztest macros ``TC_START`` and ``Z_TC_END_RESULT`` with versions more suited for reporting results of cryptographic tests.
 
-:option:`CONFIG_ZTEST_TC_UTIL_USER_OVERRIDE` uses :file:`tests/crypto/include_override/tc_util_user_override.h` to define the custom formatting.
+:kconfig:`CONFIG_ZTEST_TC_UTIL_USER_OVERRIDE` uses :file:`tests/crypto/include_override/tc_util_user_override.h` to define the custom formatting.
 
 .. _crypto_test_testing:
 

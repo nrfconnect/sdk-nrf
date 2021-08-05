@@ -25,8 +25,8 @@ Configuration
 
 The following configuration parameters are associated with the Generic Power OnOff Server model:
 
-* :option:`CONFIG_BT_SETTINGS` - The server requires this option to be enabled to work properly.
-  Unless :option:`CONFIG_BT_SETTINGS` is explicitly disabled, including the Generic Power OnOff Server will enable :option:`CONFIG_BT_SETTINGS`.
+* :kconfig:`CONFIG_BT_SETTINGS` - The server requires this option to be enabled to work properly.
+  Unless :kconfig:`CONFIG_BT_SETTINGS` is explicitly disabled, including the Generic Power OnOff Server will enable :kconfig:`CONFIG_BT_SETTINGS`.
 
 States
 ======
@@ -61,8 +61,8 @@ Persistent storage
 
 The Generic On Power Up state is stored persistently, along with the current Generic OnOff state of the extended :ref:`bt_mesh_onoff_srv_readme`.
 
-If :option:`CONFIG_BT_SETTINGS` is enabled, the Generic Power OnOff Server stores all its states persistently using a configurable storage delay to stagger storing.
-See :option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+If :kconfig:`CONFIG_BT_SETTINGS` is enabled, the Generic Power OnOff Server stores all its states persistently using a configurable storage delay to stagger storing.
+See :kconfig:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
 
 API documentation
 =================

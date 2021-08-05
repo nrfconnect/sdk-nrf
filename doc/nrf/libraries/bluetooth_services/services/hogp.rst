@@ -25,7 +25,7 @@ Configuration
 
 Apart from standard configuration parameters, there is one important setting:
 
-:option:`CONFIG_BT_HOGP_REPORTS_MAX`
+:kconfig:`CONFIG_BT_HOGP_REPORTS_MAX`
   Sets the maximum number of total reports supported by the library.
   The report memory is shared along all HIDS client objects, so this option should be set to the maximum total number of reports supported by the application.
 

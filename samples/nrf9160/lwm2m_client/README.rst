@@ -97,9 +97,9 @@ Additional configurations
 
 Check and configure the following library options that are used by the sample:
 
-* :option:`CONFIG_LWM2M_CLIENT_UTILS` - Enables the utility library :ref:`lib_lwm2m_client_utils`, which initializes a predefined set of objects.
+* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS` - Enables the utility library :ref:`lib_lwm2m_client_utils`, which initializes a predefined set of objects.
 
-* :option:`CONFIG_LWM2M_IPSO_SUPPORT` - Enables support for different IPSO objects. If you are disabling this option, you must disable all the individual configuration options that enables the sensor.
+* :kconfig:`CONFIG_LWM2M_IPSO_SUPPORT` - Enables support for different IPSO objects. If you are disabling this option, you must disable all the individual configuration options that enables the sensor.
 
 
 Configuration files

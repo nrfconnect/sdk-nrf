@@ -461,9 +461,9 @@ Use the following code as reference, with a call to :c:func:`zigbee_default_sign
 Configuration
 *************
 
-To enable the Zigbee application utilities library, set the :option:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
+To enable the Zigbee application utilities library, set the :kconfig:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
 
-To configure the logging level of the library, use the :option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
+To configure the logging level of the library, use the :kconfig:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
 
 For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_application_utilities`.
 

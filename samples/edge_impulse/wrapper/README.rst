@@ -44,7 +44,7 @@ To run the sample using a custom machine learning model, you must complete the f
 1. Configure the Edge Impulse wrapper by completing the following steps:
 
    a. Prepare your own machine learning model using `Edge Impulse studio`_.
-   #. Set the :option:`CONFIG_EDGE_IMPULSE_URI` to URI of your machine learning model.
+   #. Set the :kconfig:`CONFIG_EDGE_IMPULSE_URI` to URI of your machine learning model.
 
    See the :ref:`ei_wrapper` page for detailed configuration steps.
 #. Define the input data for the machine learning model in :file:`samples/edge_impulse/wrapper/src/include/input_data.h`.

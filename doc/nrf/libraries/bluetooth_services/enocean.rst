@@ -19,7 +19,7 @@ The library supports different types of commissioning for both wall switches and
 The library supports replay protection based on sequence numbers.
 Only new, authenticated packets from commissioned devices will go through to the event callbacks.
 
-If the :option:`CONFIG_BT_SETTINGS` subsystem is enabled, the device information of all commissioned devices are stored persistently using the :ref:`zephyr:settings_api` subsystem, including the sequence number information.
+If the :kconfig:`CONFIG_BT_SETTINGS` subsystem is enabled, the device information of all commissioned devices are stored persistently using the :ref:`zephyr:settings_api` subsystem, including the sequence number information.
 
 For a demonstration of the library features, see the :ref:`enocean_sample` sample.
 
@@ -90,9 +90,9 @@ See the :ref:`enocean_sample` for a demonstration of the handler callback functi
 Dependencies
 ************
 
-The EnOcean library depends on the :option:`CONFIG_BT_OBSERVER` capability in the Bluetooth stack to function.
+The EnOcean library depends on the :kconfig:`CONFIG_BT_OBSERVER` capability in the Bluetooth stack to function.
 
-To enable persistent storage of device commissioning data, the :option:`CONFIG_BT_SETTINGS` subsystem must also be enabled.
+To enable persistent storage of device commissioning data, the :kconfig:`CONFIG_BT_SETTINGS` subsystem must also be enabled.
 
 API documentation
 =================

@@ -109,15 +109,15 @@ Additional configuration
 Check and configure the following library options that are used by the sample:
 
 
-* :option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
-* :option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE`
-* :option:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK`
 
 For the location service that is used, the authorization method can be set with one of the following options:
 
-* :option:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_API_KEY`
-* :option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
-* :option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_API_KEY`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
+* :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
 
 See :ref:`lib_multicell_location` for more information on the various configuration options that exist for the services.
 

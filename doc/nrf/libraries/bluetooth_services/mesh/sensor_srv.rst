@@ -77,8 +77,8 @@ The Sensor Server stores the cadence state of each sensor instance persistently,
 Any other data is managed by the application and must be stored separately.
 This applies for example to sensor settings or sample data.
 
-If :option:`CONFIG_BT_SETTINGS` is enabled, the Sensor Server stores all its states persistently using a configurable storage delay to stagger storing.
-See :option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+If :kconfig:`CONFIG_BT_SETTINGS` is enabled, the Sensor Server stores all its states persistently using a configurable storage delay to stagger storing.
+See :kconfig:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
 
 API documentation
 =================

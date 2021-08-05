@@ -18,7 +18,7 @@ Overview
 ********
 
 When connected, the sample performs the handshake procedure and informs the peer of its supported capabilities.
-Directives sent by the connected peer are printed as log messages when :option:`CONFIG_LOG` is set.
+Directives sent by the connected peer are printed as log messages when :kconfig:`CONFIG_LOG` is set.
 Additionally, when the "wake word" State Update directive is received, LED 3 on the development kit is turned on.
 
 Gadget capabilities

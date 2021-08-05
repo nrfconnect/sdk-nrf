@@ -216,7 +216,7 @@ Alternatively, use the command line tool ``menuconfig`` or configure the options
 .. external_antenna_note_start
 
 .. note::
-   For nRF9160 DK v0.15.0 and later, set the :option:`CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL` option to ``y`` when building the application to achieve the best external antenna performance.
+   For nRF9160 DK v0.15.0 and later, set the :kconfig:`CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL` option to ``y`` when building the application to achieve the best external antenna performance.
 
 .. external_antenna_note_end
 

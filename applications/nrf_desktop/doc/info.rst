@@ -29,9 +29,9 @@ Configuration
 *************
 
 The module uses Zephyr's :ref:`zephyr:hwinfo_api` to obtain the hardware ID.
-Enable the required driver using :option:`CONFIG_HWINFO`.
+Enable the required driver using :kconfig:`CONFIG_HWINFO`.
 
-The module is enabled with the same Kconfig option as the :ref:`nrf_desktop_config_channel`: :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE`.
+The module is enabled with the same Kconfig option as the :ref:`nrf_desktop_config_channel`: :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE`.
 
 Implementation details
 **********************
@@ -39,4 +39,4 @@ Implementation details
 Providing the highest ID of the configuration channel listener is based on the number of elements in the ``config_channel_modules`` section.
 :c:macro:`GEN_CONFIG_EVENT_HANDLERS` adds an element to the section for every registered configuration channel listener.
 
-The board name provided by the module through the :ref:`nrf_desktop_config_channel` is a part of the Zephyr board name (:option:`CONFIG_BOARD`), ending with the predefined character (:c:macro:`BOARD_NAME_SEPARATOR`).
+The board name provided by the module through the :ref:`nrf_desktop_config_channel` is a part of the Zephyr board name (:kconfig:`CONFIG_BOARD`), ending with the predefined character (:c:macro:`BOARD_NAME_SEPARATOR`).

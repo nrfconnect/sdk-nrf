@@ -23,12 +23,12 @@ Module Events
 Configuration
 *************
 
-Use the :option:`CONFIG_DESKTOP_FAILSAFE_ENABLE` option to enable the module.
+Use the :kconfig:`CONFIG_DESKTOP_FAILSAFE_ENABLE` option to enable the module.
 
 Additionally, make sure that the following options are set as follows:
 
-* :option:`CONFIG_WATCHDOG` - The watchdog must be enabled.
-* :option:`CONFIG_RESET_ON_FATAL_ERROR` - The reset on fatal error must be disabled.
+* :kconfig:`CONFIG_WATCHDOG` - The watchdog must be enabled.
+* :kconfig:`CONFIG_RESET_ON_FATAL_ERROR` - The reset on fatal error must be disabled.
 
 This is to ensure that the device will be blocked after a fatal error and then the watchdog will trigger the reboot.
 

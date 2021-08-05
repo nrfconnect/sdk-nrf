@@ -41,8 +41,8 @@ Multiple PDP contexts might share the same PDN connection if they are configured
 
 The library requires the following Kconfig options to be set to ``y``:
 
-* :option:`CONFIG_AT_CMD`
-* :option:`CONFIG_AT_NOTIF`
+* :kconfig:`CONFIG_AT_CMD`
+* :kconfig:`CONFIG_AT_NOTIF`
 
 Configuration
 *************
@@ -54,7 +54,7 @@ The default PDP context configuration consists of the following parameters:
 * Authentication method
 * Authentication credentials
 
-The PDN library can override the default PDP context configuration by using the :option:`CONFIG_PDN_DEFAULTS_OVERRIDE` Kconfig option.
+The PDN library can override the default PDP context configuration by using the :kconfig:`CONFIG_PDN_DEFAULTS_OVERRIDE` Kconfig option.
 
 Limitations
 ***********

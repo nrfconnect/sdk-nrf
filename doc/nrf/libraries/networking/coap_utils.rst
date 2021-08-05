@@ -26,7 +26,7 @@ Currently, the library only supports the User Datagram Protocol (UDP) protocol.
 Configuration
 *************
 
-To enable the CoAP utils library, set the :option:`CONFIG_COAP_UTILS` Kconfig option.
+To enable the CoAP utils library, set the :kconfig:`CONFIG_COAP_UTILS` Kconfig option.
 
 API documentation
 *****************

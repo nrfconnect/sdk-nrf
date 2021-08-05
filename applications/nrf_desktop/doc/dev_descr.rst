@@ -13,7 +13,7 @@ The device description module defines custom GATT Service, which contains:
 * Hardware ID (HW ID) of the peripheral
 
 To support the LLPM, the peripheral must use the SoftDevice Link Layer.
-This means that you must enable both the :option:`CONFIG_BT_LL_SOFTDEVICE` and the :option:`CONFIG_CAF_BLE_USE_LLPM` Kconfig options.
+This means that you must enable both the :kconfig:`CONFIG_BT_LL_SOFTDEVICE` and the :kconfig:`CONFIG_CAF_BLE_USE_LLPM` Kconfig options.
 
 The Service is mandatory for all nRF Desktop peripherals that connect to the nRF Desktop centrals.
 
@@ -26,7 +26,7 @@ Configuration
 *************
 
 The module uses Zephyr's :ref:`zephyr:hwinfo_api` to obtain the hardware ID.
-Enable the required driver using :option:`CONFIG_HWINFO`.
+Enable the required driver using :kconfig:`CONFIG_HWINFO`.
 
 The module is enabled by default for all nRF Desktop peripheral devices.
 
