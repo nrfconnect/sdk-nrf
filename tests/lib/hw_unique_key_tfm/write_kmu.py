@@ -55,7 +55,7 @@ if __name__ == "__main__":
     run(["nrfjprog", "--snr", args.snr, "-e"]).check_returncode()
 
     if args.family == "NRF91":
-        write_kmu(bytes(key_nrf91), perm, dest_nrf91, 2, args.snr)
+        write_kmu(bytes(key_nrf91), perm, dest_nrf91, 4, args.snr)
     else:
-        write_kmu(bytes(key_nrf53[:16]), perm, dest_nrf53_1, 2, args.snr)
-        write_kmu(bytes(key_nrf53[16:]), perm, dest_nrf53_2, 3, args.snr)
+        write_kmu(bytes(key_nrf53[:16]), perm, dest_nrf53_1, 4, args.snr)
+        write_kmu(bytes(key_nrf53[16:]), perm, dest_nrf53_2, 5, args.snr)
