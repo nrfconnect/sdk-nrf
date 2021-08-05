@@ -1,0 +1,17 @@
+# Config options for logger sample app
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "GPS Module unity test"
+
+menu "GPS Module configuration"
+
+config UUT_PARAM_CHECK
+	bool "Enabled function parameter check"
+
+endmenu
+
+source "Kconfig.zephyr"
