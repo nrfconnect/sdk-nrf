@@ -41,6 +41,9 @@ In Zephyr, :ref:`zephyr:nrf9160dk_nrf9160` is divided into two different build t
 * ``nrf9160dk_nrf9160`` for firmware in the secure domain
 * ``nrf9160dk_nrf9160_ns`` for firmware in the non-secure domain
 
+.. note::
+   In |NCS| releases before v1.6.1, the build target ``nrf9160dk_nrf9160_ns`` was named ``nrf9160dk_nrf9160ns``.
+
 Make sure to select a suitable build target when building your application.
 
 Secure bootloader chain

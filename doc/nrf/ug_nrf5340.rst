@@ -71,6 +71,9 @@ In Zephyr, the application core is divided into two different build targets:
 * ``nrf5340dk_nrf5340_cpuapp`` for the secure domain
 * ``nrf5340dk_nrf5340_cpuapp_ns`` for the non-secure domain
 
+.. note::
+   In |NCS| releases before v1.6.1, the build target ``nrf5340dk_nrf5340_cpuapp_ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
+
 Inter-core communication
 ========================
 
