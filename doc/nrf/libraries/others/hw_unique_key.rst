@@ -24,7 +24,7 @@ The library supports 3 different types of HUKs, depending on the device:
 * Device root key (KDR).
   It is used for deriving general-purpose keys.
   In devices with the Arm CryptoCell CC310, it must be written to a specific KDR register during the boot process, using the :c:func:`hw_unique_key_load_kdr` function.
-  The nRF Secure Immutable Bootloader does this automatically if you enable :option:`CONFIG_HW_UNIQUE_KEY` in the bootloader image.
+  The nRF Secure Immutable Bootloader does this automatically if you enable :kconfig:`CONFIG_HW_UNIQUE_KEY` in the bootloader image.
 * Master key encryption key (MKEK).
   It is used for deriving Key Encryption Keys (KEKs), which are used to encrypt other keys when these are stored.
   It is provided to CryptoCell when it is used.
@@ -72,8 +72,8 @@ Usage
 
 The library provides a function for writing arbitrary keys and a function for writing random keys.
 
-To use the library, enable the :option:`CONFIG_HW_UNIQUE_KEY` option for the nRF Secure Immutable Bootloader image.
-Additionally, you can enable the :option:`CONFIG_HW_UNIQUE_KEY_RANDOM` option to enable the :c:func:`hw_unique_key_write_random` function and its dependencies, to generate random keys.
+To use the library, enable the :kconfig:`CONFIG_HW_UNIQUE_KEY` option for the nRF Secure Immutable Bootloader image.
+Additionally, you can enable the :kconfig:`CONFIG_HW_UNIQUE_KEY_RANDOM` option to enable the :c:func:`hw_unique_key_write_random` function and its dependencies, to generate random keys.
 
 See :ref:`configure_application` for information on how to enable the required configuration options.
 

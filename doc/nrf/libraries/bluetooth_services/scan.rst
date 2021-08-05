@@ -109,7 +109,7 @@ After a scanning is started by the application, some peripheral devices can disc
 This might result in a loop of the connection and disconnection events.
 
 To avoid this loop, you can enable the connection attempts filter that limits number of the connection attempts.
-Use the :option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER` to enable this filter.
+Use the :kconfig:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER` to enable this filter.
 
 This filter automatically tracks the connected devices and counts all disconnection events for them.
 If the disconnection count is greater than or equal to the number of allowed attempts, the scanning module ignores this device.
@@ -119,17 +119,17 @@ It is recommended to use :cpp:func:`bt_scan_conn_attempts_filter_clear` before e
 If the filter array is full, the scanning module overwrites the oldest device with the new one.
 In the default configuration, the filter allows to add two devices and limits the connection tries to two.
 
-You can increase the device number by setting the configuration option :option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER_LEN`.
-The option :option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT` is responsible for the number of connection attempts.
+You can increase the device number by setting the configuration option :kconfig:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER_LEN`.
+The option :kconfig:`CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT` is responsible for the number of connection attempts.
 
 Blocklist
 =========
 
 Devices can be added to the blocklist, which means that the scanning module ignores these devices and does not generate any events for them.
-Use the option :option:`CONFIG_BT_SCAN_BLOCKLIST` to enable the blocklist.
+Use the option :kconfig:`CONFIG_BT_SCAN_BLOCKLIST` to enable the blocklist.
 
 In the default configuration, the scanning module allows to add up to two devices to the blocklist.
-You can increase the blocklist size by setting the option :option:`CONFIG_BT_SCAN_BLOCKLIST_LEN`.
+You can increase the blocklist size by setting the option :kconfig:`CONFIG_BT_SCAN_BLOCKLIST_LEN`.
 Use the :cpp:func:`bt_scan_blocklist_device_add` function to add a new device to the blocklist.
 To remove all devices from the blocklist, use :cpp:func:`bt_scan_blocklist_clear`.
 
@@ -141,11 +141,11 @@ Directed Advertising
 
 To receive directed advertising packets using the Scanning Module, enable one of the following options in Zephyr:
 
-* :option:`CONFIG_BT_PRIVACY` - Scan with changing addresses
-* :option:`CONFIG_BT_SCAN_WITH_IDENTITY` - Scan with a local identity address
+* :kconfig:`CONFIG_BT_PRIVACY` - Scan with changing addresses
+* :kconfig:`CONFIG_BT_SCAN_WITH_IDENTITY` - Scan with a local identity address
 
-It is recommended to enable the :option:`CONFIG_BT_PRIVACY` option to support directed advertising only between bonded peers.
-Use the :option:`CONFIG_BT_SCAN_WITH_IDENTITY` option only when the :option:`CONFIG_BT_PRIVACY` option is not available.
+It is recommended to enable the :kconfig:`CONFIG_BT_PRIVACY` option to support directed advertising only between bonded peers.
+Use the :kconfig:`CONFIG_BT_SCAN_WITH_IDENTITY` option only when the :kconfig:`CONFIG_BT_PRIVACY` option is not available.
 
 When the scanning module is set in advanced mode and :ref:`filters <nrf_bt_scan_readme_filters>` are set, you can use the ``filter_no_match`` event to check if directed advertising packets have been received.
 They will typically not match any filter as, by specification, they do not contain any advertising data.

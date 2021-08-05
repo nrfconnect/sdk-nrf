@@ -39,10 +39,10 @@ The library uses :ref:`nrfxlib:zboss`'s ZCL API to download the image.
 
 After the OTA Upgrade Client downloads the Zigbee OTA image header, the stack verifies the following mandatory fields:
 
-* Manufacturer ID - Defined by the :option:`CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID` Kconfig option.
-* Image type - Defined by the :option:`CONFIG_ZIGBEE_FOTA_IMAGE_TYPE` Kconfig option; it may be different than the MCUboot image type value.
-* Hardware version - Defined by the :option:`CONFIG_ZIGBEE_FOTA_HW_VERSION` Kconfig option.
-* Firmware version - Defined by the :option:`CONFIG_MCUBOOT_IMAGE_VERSION` Kconfig option; see :ref:`ug_zigbee_configuring_components_ota` for details.
+* Manufacturer ID - Defined by the :kconfig:`CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID` Kconfig option.
+* Image type - Defined by the :kconfig:`CONFIG_ZIGBEE_FOTA_IMAGE_TYPE` Kconfig option; it may be different than the MCUboot image type value.
+* Hardware version - Defined by the :kconfig:`CONFIG_ZIGBEE_FOTA_HW_VERSION` Kconfig option.
+* Firmware version - Defined by the :kconfig:`CONFIG_MCUBOOT_IMAGE_VERSION` Kconfig option; see :ref:`ug_zigbee_configuring_components_ota` for details.
 
 If all values are accepted, the OTA Upgrade Client downloads the first fragment of the firmware image.
 
@@ -63,21 +63,21 @@ When the consumer of the library receives this event, it should issue a reboot c
 Configuration
 *************
 
-To enable the Zigbee FOTA library, set the :option:`CONFIG_ZIGBEE_FOTA` Kconfig option.
+To enable the Zigbee FOTA library, set the :kconfig:`CONFIG_ZIGBEE_FOTA` Kconfig option.
 
 To configure the Zigbee FOTA library, use the following options:
 
-* :option:`CONFIG_ZIGBEE_FOTA_HW_VERSION`
-* :option:`CONFIG_ZIGBEE_FOTA_DATA_BLOCK_SIZE`
-* :option:`CONFIG_ZIGBEE_FOTA_ENDPOINT`
-* :option:`CONFIG_ZIGBEE_FOTA_PROGRESS_EVT`
-* :option:`CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID`
-* :option:`CONFIG_ZIGBEE_FOTA_IMAGE_TYPE`
-* :option:`CONFIG_ZIGBEE_FOTA_COMMENT`
-* :option:`CONFIG_ENABLE_ZIGBEE_FOTA_MIN_HW_VERSION`
-* :option:`CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION`
-* :option:`CONFIG_ENABLE_ZIGBEE_FOTA_MAX_HW_VERSION`
-* :option:`CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION`
+* :kconfig:`CONFIG_ZIGBEE_FOTA_HW_VERSION`
+* :kconfig:`CONFIG_ZIGBEE_FOTA_DATA_BLOCK_SIZE`
+* :kconfig:`CONFIG_ZIGBEE_FOTA_ENDPOINT`
+* :kconfig:`CONFIG_ZIGBEE_FOTA_PROGRESS_EVT`
+* :kconfig:`CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID`
+* :kconfig:`CONFIG_ZIGBEE_FOTA_IMAGE_TYPE`
+* :kconfig:`CONFIG_ZIGBEE_FOTA_COMMENT`
+* :kconfig:`CONFIG_ENABLE_ZIGBEE_FOTA_MIN_HW_VERSION`
+* :kconfig:`CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION`
+* :kconfig:`CONFIG_ENABLE_ZIGBEE_FOTA_MAX_HW_VERSION`
+* :kconfig:`CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION`
 
 For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_ota`.
 
@@ -86,7 +86,7 @@ Limitations
 
 The Zigbee FOTA library has the following limitations:
 
-* The endpoint definition in the library includes the endpoint ID, defined with :option:`CONFIG_ZIGBEE_FOTA_ENDPOINT`.
+* The endpoint definition in the library includes the endpoint ID, defined with :kconfig:`CONFIG_ZIGBEE_FOTA_ENDPOINT`.
   When using the Zigbee FOTA library, this endpoint ID cannot be used for other endpoints.
 * The Zigbee FOTA upgrades are currently only supported on the nRF52840 DK (PCA10056).
 * The Zigbee FOTA library does not currently support bootloader upgrades.

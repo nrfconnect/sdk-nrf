@@ -117,7 +117,7 @@ After programming the sample to your development kit, test it by performing the 
 #. |connect_terminal|
 #. Optionally, you can display debug messages. See :ref:`peripheral_uart_debug` for details.
 #. Reset the kit.
-#. Observe that **LED 1** is blinking and that the device is advertising with the device name that is configured in :option:`CONFIG_BT_DEVICE_NAME`.
+#. Observe that **LED 1** is blinking and that the device is advertising with the device name that is configured in :kconfig:`CONFIG_BT_DEVICE_NAME`.
 #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
 #. Connect to the device using nRF Connect for Mobile.
    Observe that **LED 2** is on.

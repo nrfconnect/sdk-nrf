@@ -35,36 +35,36 @@ It provides an abstraction of the following modules:
 The OS abstraction layer is fully implemented for the |NCS|, and it would have to be ported if used with other RTOS or on other systems.
 
 To run the library in an application, you must implement the application with the API of the library.
-You can enable the module using the :option:`CONFIG_LWM2M_CARRIER` Kconfig option.
+You can enable the module using the :kconfig:`CONFIG_LWM2M_CARRIER` Kconfig option.
 
 The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
 You can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` to overwrite the carrier default settings with the Kconfig options described below:
 
 
-* :option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE`:
+* :kconfig:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE`:
 
   * This configuration specifies if the LwM2M carrier library will connect to the carrier's certification servers or production servers.
   * Expected to be set during self-testing part of the certification process.
-  * This configuration is ignored if :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` is set.
+  * This configuration is ignored if :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` is set.
 
-* :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI`:
+* :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI`:
 
-  * This configuration, together with :option:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI` lets the LwM2M carrier library connect to a bootstrap server other than the normal carrier server, thereby enabling the generic mode.
+  * This configuration, together with :kconfig:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI` lets the LwM2M carrier library connect to a bootstrap server other than the normal carrier server, thereby enabling the generic mode.
   * Expected to be set during self-testing, or if the end product is not to be certified with the applicable carriers. See :ref:`lwm2m_certification`.
-  * If this configuration is set, :option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` is ignored.
+  * If this configuration is set, :kconfig:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` is ignored.
 
-* :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK`:
+* :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK`:
 
-  * This configuration, together with :option:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK` can be set to use a non-default `Pre-Shared Key (PSK)`_.
+  * This configuration, together with :kconfig:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK` can be set to use a non-default `Pre-Shared Key (PSK)`_.
   * If connecting to the normal carrier device management servers (normal operation), this configuration must not be set unless your carrier explicitly states to use a custom PSK, for example during self-testing.
-  * If the :option:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI` option is set and the server requires a secure connection, a PSK is required.
+  * If the :kconfig:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI` option is set and the server requires a secure connection, a PSK is required.
 
-* :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN`:
+* :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN`:
 
-  * This configuration, together with :option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` produce different results depending on normal or generic mode of operation.
-  * If :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` is not set (normal), this configuration supplies a fallback APN. This might be required in your application, depending on the requirements from the carrier.
-  * If :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` is set (generic), :option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` is used instead of the default APN, (and there is no fallback APN).
+  * This configuration, together with :kconfig:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` produce different results depending on normal or generic mode of operation.
+  * If :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` is not set (normal), this configuration supplies a fallback APN. This might be required in your application, depending on the requirements from the carrier.
+  * If :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` is set (generic), :kconfig:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` is used instead of the default APN, (and there is no fallback APN).
 
 Note that these settings can put the LwM2M carrier library either in the normal mode where it connects to the applicable carriers, or in the generic mode where it can connect to any bootstrap server.
 

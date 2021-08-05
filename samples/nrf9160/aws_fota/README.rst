@@ -93,7 +93,7 @@ Use LTE Link Monitor to write the certificates to the kit:
    #. Paste the three certificates into the respective fields.
    #. Choose a security tag.
    #. Click :guilabel:`Update certificates`.
-   #. Before programming the sample, make sure to configure the :option:`security tag <CONFIG_CERT_SEC_TAG>` to the one that you chose.
+   #. Before programming the sample, make sure to configure the :kconfig:`security tag <CONFIG_CERT_SEC_TAG>` to the one that you chose.
 
 .. include:: /includes/aws_s3_bucket.txt
 

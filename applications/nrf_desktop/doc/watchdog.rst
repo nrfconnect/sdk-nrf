@@ -26,11 +26,11 @@ Configuration
 *************
 
 The module uses Zephyr's :ref:`zephyr:watchdog_api` driver.
-For this reason, set the :option:`CONFIG_WATCHDOG` option.
+For this reason, set the :kconfig:`CONFIG_WATCHDOG` option.
 
-The module is enabled by the :option:`CONFIG_DESKTOP_WATCHDOG_ENABLE` option.
+The module is enabled by the :kconfig:`CONFIG_DESKTOP_WATCHDOG_ENABLE` option.
 
-You must define :option:`CONFIG_DESKTOP_WATCHDOG_TIMEOUT`.
+You must define :kconfig:`CONFIG_DESKTOP_WATCHDOG_TIMEOUT`.
 After this amount of time (in ms), the device will be restarted if the watchdog timer was not reset.
 
 .. note::

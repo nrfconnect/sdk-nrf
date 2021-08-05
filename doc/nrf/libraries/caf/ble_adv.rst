@@ -17,14 +17,14 @@ Configuration
 
 The following Kconfig options are available for this module:
 
-* :option:`CONFIG_CAF_BLE_ADV`
-* :option:`CONFIG_CAF_BLE_ADV_DEF_PATH`
-* :option:`CONFIG_CAF_BLE_ADV_PM_EVENTS`
-* :option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV`
-* :option:`CONFIG_CAF_BLE_ADV_FAST_ADV`
-* :option:`CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT`
-* :option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR`
-* :option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD`
+* :kconfig:`CONFIG_CAF_BLE_ADV`
+* :kconfig:`CONFIG_CAF_BLE_ADV_DEF_PATH`
+* :kconfig:`CONFIG_CAF_BLE_ADV_PM_EVENTS`
+* :kconfig:`CONFIG_CAF_BLE_ADV_DIRECT_ADV`
+* :kconfig:`CONFIG_CAF_BLE_ADV_FAST_ADV`
+* :kconfig:`CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT`
+* :kconfig:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR`
+* :kconfig:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD`
 
 Read about some of these options in the following sections.
 
@@ -34,9 +34,9 @@ Enabling the module
 To enable the |ble_adv|, complete the following steps:
 
 1. Enable and configure the :ref:`CAF Bluetooth LE state module <caf_ble_state>`.
-#. Define the Bluetooth device name using the :option:`CONFIG_BT_DEVICE_NAME` Kconfig option.
-#. Define the Bluetooth device appearance using the :option:`CONFIG_BT_DEVICE_APPEARANCE` Kconfig option.
-#. Set the :option:`CONFIG_CAF_BLE_ADV` Kconfig option.
+#. Define the Bluetooth device name using the :kconfig:`CONFIG_BT_DEVICE_NAME` Kconfig option.
+#. Define the Bluetooth device appearance using the :kconfig:`CONFIG_BT_DEVICE_APPEARANCE` Kconfig option.
+#. Set the :kconfig:`CONFIG_CAF_BLE_ADV` Kconfig option.
 #. Create a configuration file that defines Bluetooth LE advertising data.
 #. In the configuration file, define the following arrays of :c:struct:`bt_data`:
 
@@ -67,7 +67,7 @@ To enable the |ble_adv|, complete the following steps:
 
       static const struct bt_data sd[] = {};
 
-#. Specify the path to the configuration file with the :option:`CONFIG_CAF_BLE_ADV_DEF_PATH` Kconfig option.
+#. Specify the path to the configuration file with the :kconfig:`CONFIG_CAF_BLE_ADV_DEF_PATH` Kconfig option.
 
 .. note::
     The configuration file should be included only by the configured module.
@@ -77,7 +77,7 @@ Using directed advertising
 ==========================
 
 By default, the module uses indirect advertising.
-Set the :option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` option to use directed advertising.
+Set the :kconfig:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` option to use directed advertising.
 The directed advertising can be used to call the selected peer device to connect as quickly as possible.
 
 .. note::
@@ -87,10 +87,10 @@ The directed advertising can be used to call the selected peer device to connect
 Changing advertising interval
 =============================
 
-Set the :option:`CONFIG_CAF_BLE_ADV_FAST_ADV` Kconfig option to make the Peripheral initially advertise with a shorter interval.
+Set the :kconfig:`CONFIG_CAF_BLE_ADV_FAST_ADV` Kconfig option to make the Peripheral initially advertise with a shorter interval.
 This lets you speed up finding the Peripheral by Bluetooth Centrals.
 
-* If the device uses indirect advertising, it will switch to slower advertising after the period of time defined in :option:`CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT` (in seconds).
+* If the device uses indirect advertising, it will switch to slower advertising after the period of time defined in :kconfig:`CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT` (in seconds).
 * If the device uses directed advertising, the |ble_adv| will receive :c:struct:`ble_peer_event` with :c:member:`ble_peer_event.state` set to :c:enumerator:`PEER_STATE_CONN_FAILED` if the Central does not connect during the predefined period of fast directed advertising.
   The :c:struct:`ble_peer_event` is submitted by :ref:`caf_ble_state`.
   After the event is received, the device will switch to the low duty cycle directed advertising.
@@ -100,11 +100,11 @@ Switching to slower advertising is done to reduce the energy consumption.
 Using Swift Pair
 ================
 
-You can use the :option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR` option to enable the Swift Pair feature.
+You can use the :kconfig:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR` option to enable the Swift Pair feature.
 The feature simplifies pairing the Bluetooth Peripheral with Windows 10 hosts.
 
 .. note::
-   Make sure to add the Swift Pair data to advertising packets for unbonded device in the configuration file if you enable :option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR` option.
+   Make sure to add the Swift Pair data to advertising packets for unbonded device in the configuration file if you enable :kconfig:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR` option.
    The Swift Pair data must be added as the last member of ``ad_unbonded`` array.
 
 Power-down
@@ -112,7 +112,7 @@ Power-down
 
 When the system goes to the Power-down state, the advertising stops.
 
-If the Swift Pair feature is enabled with :option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR`, the device advertises without the Swift Pair data for additional :option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD` seconds to ensure that the user does not try to connect to the device that is no longer available.
+If the Swift Pair feature is enabled with :kconfig:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR`, the device advertises without the Swift Pair data for additional :kconfig:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD` seconds to ensure that the user does not try to connect to the device that is no longer available.
 
 Implementation details
 **********************
@@ -124,7 +124,7 @@ The |ble_adv| uses Zephyr's :ref:`zephyr:settings_api` to store the information 
 Reaction on Bluetooth peer operation
 ====================================
 
-If the application supports Bluetooth LE bond management (:option:`CONFIG_CAF_BLE_BOND_SUPPORTED`), the Bluetooth LE bond module defined for the application is used to control the Bluetooth bonds.
+If the application supports Bluetooth LE bond management (:kconfig:`CONFIG_CAF_BLE_BOND_SUPPORTED`), the Bluetooth LE bond module defined for the application is used to control the Bluetooth bonds.
 The Bluetooth LE bond module broadcasts information related to bond control using :c:struct:`ble_peer_operation_event`.
 
 The |ble_adv| reacts on :c:struct:`ble_peer_operation_event` related to the Bluetooth peer change or erase advertising.
@@ -136,7 +136,7 @@ The module performs one of the following operations:
 Avoiding connection requests from unbonded centrals when bonded
 ===============================================================
 
-If :option:`CONFIG_BT_WHITELIST` is enabled and Bluetooth local identity that is in use already has a bond, the device will whitelist incoming scan response data requests and connection requests.
+If :kconfig:`CONFIG_BT_WHITELIST` is enabled and Bluetooth local identity that is in use already has a bond, the device will whitelist incoming scan response data requests and connection requests.
 This is done to prevent Bluetooth Centrals other than the bonded one from connecting with the device.
 
 .. |ble_adv| replace:: Bluetooth LE advertising module

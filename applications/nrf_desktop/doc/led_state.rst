@@ -46,7 +46,7 @@ Module events
 Configuration
 *************
 
-The |led_state| is enabled when you set the :option:`CONFIG_CAF_LEDS` option.
+The |led_state| is enabled when you set the :kconfig:`CONFIG_CAF_LEDS` option.
 You must also configure :ref:`caf_leds`, which is used as sink module for ``led_state``.
 
 For every board that has this option enabled, you must define the module configuration.

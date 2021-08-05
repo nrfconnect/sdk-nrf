@@ -32,7 +32,7 @@ Initialization
 The application can initialize the AT monitor library in the following ways:
 
 * Manually by using the :c:func:`at_monitor_init` function.
-* Automatically by using the ``SYS_INIT`` macro and by enabling :option:`CONFIG_AT_MONITOR_SYS_INIT`.
+* Automatically by using the ``SYS_INIT`` macro and by enabling :kconfig:`CONFIG_AT_MONITOR_SYS_INIT`.
 
 Upon initialization, the AT monitor library registers itself as the receiver of AT notifications from the Modem library (using :c:func:`nrf_modem_at_notif_handler_set`).
 

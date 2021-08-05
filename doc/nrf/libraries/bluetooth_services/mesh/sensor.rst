@@ -82,7 +82,7 @@ For sensor values that are represented as whole numbers, the fractional part of 
 Boolean types are inferred only from the integer part of the value (:c:member:`sensor_value.val1`).
 
 Every sensor channel has a name and a unit, as listed in the sensor type documentation.
-The name and unit are only available if :option:`CONFIG_BT_MESH_SENSOR_LABELS` option is set, and can aid in debugging and presentation of the sensor output.
+The name and unit are only available if :kconfig:`CONFIG_BT_MESH_SENSOR_LABELS` option is set, and can aid in debugging and presentation of the sensor output.
 Both the channel name and unit is also listed in the documentation for each sensor type.
 
 Most sensor values are reported as scalars with some scaling factor applied to them during encoding.

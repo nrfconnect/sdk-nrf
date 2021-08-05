@@ -53,13 +53,13 @@ Configuration
 
 You can configure the following options:
 
-* :option:`CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES`
-* :option:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS`
-* :option:`CONFIG_UDP_SERVER_ADDRESS_STATIC`
-* :option:`CONFIG_UDP_SERVER_PORT`
-* :option:`CONFIG_UDP_PSM_ENABLE`
-* :option:`CONFIG_UDP_EDRX_ENABLE`
-* :option:`CONFIG_UDP_RAI_ENABLE`
+* :kconfig:`CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES`
+* :kconfig:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS`
+* :kconfig:`CONFIG_UDP_SERVER_ADDRESS_STATIC`
+* :kconfig:`CONFIG_UDP_SERVER_PORT`
+* :kconfig:`CONFIG_UDP_PSM_ENABLE`
+* :kconfig:`CONFIG_UDP_EDRX_ENABLE`
+* :kconfig:`CONFIG_UDP_RAI_ENABLE`
 
 
 Configuration options
@@ -102,11 +102,11 @@ Additional configuration
 
 Below configurations are recommended for low power behavior:
 
- * :option:`CONFIG_LTE_PSM_REQ_RPTAU` option set to a value greater than the value of :option:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS`.
- * :option:`CONFIG_LTE_PSM_REQ_RAT` set to 0.
- * :option:`CONFIG_SERIAL` disabled in ``prj.conf`` and ``spm.conf``.
- * :option:`CONFIG_UDP_EDRX_ENABLE` set to false.
- * :option:`CONFIG_UDP_RAI_ENABLE` set to true for NB-IoT. It is not supported for LTE-M.
+ * :kconfig:`CONFIG_LTE_PSM_REQ_RPTAU` option set to a value greater than the value of :kconfig:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS`.
+ * :kconfig:`CONFIG_LTE_PSM_REQ_RAT` set to 0.
+ * :kconfig:`CONFIG_SERIAL` disabled in ``prj.conf`` and ``spm.conf``.
+ * :kconfig:`CONFIG_UDP_EDRX_ENABLE` set to false.
+ * :kconfig:`CONFIG_UDP_RAI_ENABLE` set to true for NB-IoT. It is not supported for LTE-M.
 
 PSM and eDRX timers are set with binary strings that signify a time duration in seconds.
 See `Power saving mode setting section in AT commands reference document`_ for a conversion chart of these timer values.
@@ -146,7 +146,7 @@ After programming the sample to your device, test it by performing the following
 
 .. note::
    Logging output is disabled by default in this sample in order to produce the lowest possible amount of current consumption.
-   To enable logging, set the :option:`CONFIG_SERIAL` option in the ``prj.conf`` and ``spm.conf`` configuration files.
+   To enable logging, set the :kconfig:`CONFIG_SERIAL` option in the ``prj.conf`` and ``spm.conf`` configuration files.
 
 .. _uart_output:
 

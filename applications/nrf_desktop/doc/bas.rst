@@ -22,8 +22,8 @@ Module events
 Configuration
 *************
 
-The module is enabled with the :option:`CONFIG_DESKTOP_BAS_ENABLE` option.
-The option is selected by :option:`CONFIG_DESKTOP_HID_PERIPHERAL` -- Battery Service is required for the HID peripheral device.
+The module is enabled with the :kconfig:`CONFIG_DESKTOP_BAS_ENABLE` option.
+The option is selected by :kconfig:`CONFIG_DESKTOP_HID_PERIPHERAL` -- Battery Service is required for the HID peripheral device.
 
 Implementation details
 **********************

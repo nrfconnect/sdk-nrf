@@ -13,22 +13,22 @@ The module achieves this reduction by switching to low power modes when the devi
 Configuration
 *************
 
-You can enable the |power_manager| by selecting the :option:`CONFIG_CAF_POWER_MANAGER` option in the configuration.
+You can enable the |power_manager| by selecting the :kconfig:`CONFIG_CAF_POWER_MANAGER` option in the configuration.
 
 This module uses Zephyr's :ref:`zephyr:power_management_api` subsystem.
 
 Timeout configuration options
 =============================
 
-With the :option:`CONFIG_CAF_POWER_MANAGER_TIMEOUT` configuration option, you can set the period of time after which the application enters the low power mode.
+With the :kconfig:`CONFIG_CAF_POWER_MANAGER_TIMEOUT` configuration option, you can set the period of time after which the application enters the low power mode.
 By default, the timeout is set to 120 seconds.
 
-The :option:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT` sets the period of time after which the device is turned off upon an internal error.
+The :kconfig:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT` sets the period of time after which the device is turned off upon an internal error.
 
 Optional boolean for keeping the system on
 ==========================================
 
-The :option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` lets the system stay on also when there are no active connections.
+The :kconfig:`CONFIG_CAF_POWER_MANAGER_STAY_ON` lets the system stay on also when there are no active connections.
 
 For more information about configuration options, check the help in the configuration tool.
 
@@ -100,7 +100,7 @@ Error
 The |power_manager| checks if any application modules have reported an error condition.
 
 When any application module switches to the error state (that is, broadcasts :c:enum:`MODULE_STATE_ERROR` through :c:struct:`module_state_event`), the |power_manager| puts the application into the error state.
-Then, after the period of time defined by :option:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT`, it puts the application to the off state.
+Then, after the period of time defined by :kconfig:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT`, it puts the application to the off state.
 During this period, other modules can report the error condition to the user (for example, :ref:`caf_leds` can keep working in the error state).
 
 Restricting power states
@@ -128,7 +128,7 @@ Only after all modules confirmed that they have entered the low power state (by 
 If a disconnection happens while the device is in the suspended state, the |power_manager| switches the application to the off state.
 
 However, the application can also be configured to keep the system in the suspended state when there are no active connections, instead of switching to the off state.
-To select this behavior, use the :option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` configuration option.
+To select this behavior, use the :kconfig:`CONFIG_CAF_POWER_MANAGER_STAY_ON` configuration option.
 
 Wake-up scenarios
 =================

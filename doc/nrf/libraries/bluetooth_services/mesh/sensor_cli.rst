@@ -21,7 +21,7 @@ In most cases, the incoming data needs to be interpreted differently based on th
 When parsing incoming messages, the Sensor Client is required to do a lookup of the sensor type of the data so it can decode it correctly.
 For this purpose, the :ref:`bt_mesh_sensor_types` module includes the :ref:`list of available sensor types <bt_mesh_sensor_types_readme>`.
 
-By default, all sensor types are available when the Sensor Client model is compiled in, but this behavior can be overridden to reduce flash consumption by explicitly disabling :option:`CONFIG_BT_MESH_SENSOR_ALL_TYPES`.
+By default, all sensor types are available when the Sensor Client model is compiled in, but this behavior can be overridden to reduce flash consumption by explicitly disabling :kconfig:`CONFIG_BT_MESH_SENSOR_ALL_TYPES`.
 In this case, only the referenced sensor types will be available.
 
 .. note::

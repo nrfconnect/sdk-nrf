@@ -25,17 +25,17 @@ Configuration
 
 To use the module, you must enable the following Kconfig options:
 
-* :option:`CONFIG_BT`
-* :option:`CONFIG_BT_SMP` - This option enables Security Manager Protocol support.
+* :kconfig:`CONFIG_BT`
+* :kconfig:`CONFIG_BT_SMP` - This option enables Security Manager Protocol support.
   The |ble_state| on Bluetooth Peripheral requires at least the connection security level 2 (encryption).
-* :option:`CONFIG_CAF_BLE_STATE` - This option enables the |ble_state| and selects the :option:`CONFIG_CAF_BLE_COMMON_EVENTS` Kconfig option, which enables Bluetooth LE common events in CAF.
+* :kconfig:`CONFIG_CAF_BLE_STATE` - This option enables the |ble_state| and selects the :kconfig:`CONFIG_CAF_BLE_COMMON_EVENTS` Kconfig option, which enables Bluetooth LE common events in CAF.
 
 The following Kconfig options are also available for this module:
 
-* :option:`CONFIG_CAF_BLE_STATE_EXCHANGE_MTU` - This option can be used for GATT client (:option:`CONFIG_BT_GATT_CLIENT`) to set the Maximum Transmission Unit (MTU) to the maximum possible size that the buffers can hold.
+* :kconfig:`CONFIG_CAF_BLE_STATE_EXCHANGE_MTU` - This option can be used for GATT client (:kconfig:`CONFIG_BT_GATT_CLIENT`) to set the Maximum Transmission Unit (MTU) to the maximum possible size that the buffers can hold.
   This option is enabled by default.
-* :option:`CONFIG_CAF_BLE_USE_LLPM` - This option enables the Low Latency Packet Mode (LLPM).
-  This option is enabled by default and depends on :option:`CONFIG_BT_CTLR_LLPM` and :option:`CONFIG_BT_LL_SOFTDEVICE`.
+* :kconfig:`CONFIG_CAF_BLE_USE_LLPM` - This option enables the Low Latency Packet Mode (LLPM).
+  This option is enabled by default and depends on :kconfig:`CONFIG_BT_CTLR_LLPM` and :kconfig:`CONFIG_BT_LL_SOFTDEVICE`.
 
 Implementation details
 **********************
@@ -87,7 +87,7 @@ After :c:struct:`ble_peer_event` about disconnection or connection failure is re
 Behavior with SoftDevice Link Layer
 ===================================
 
-If Nordic Semiconductor's SoftDevice Bluetooth LE Link Layer is selected (:option:`CONFIG_BT_LL_SOFTDEVICE`) and the :option:`CONFIG_CAF_BLE_USE_LLPM` option is enabled, the |ble_state| sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
+If Nordic Semiconductor's SoftDevice Bluetooth LE Link Layer is selected (:kconfig:`CONFIG_BT_LL_SOFTDEVICE`) and the :kconfig:`CONFIG_CAF_BLE_USE_LLPM` option is enabled, the |ble_state| sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
 
 If the SoftDevice Link Layer is selected, the |ble_state| also sets the TX power for connections.
 The TX power is set according to Zephyr's Kconfig options related to selecting the default TX power.

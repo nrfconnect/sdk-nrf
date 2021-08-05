@@ -24,7 +24,7 @@ Configuration
 
 Configure the following parameters when using this library:
 
-* :option:`CONFIG_UPDATE_JOB_PAYLOAD_LEN`
+* :kconfig:`CONFIG_UPDATE_JOB_PAYLOAD_LEN`
 
 
 API documentation

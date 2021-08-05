@@ -72,9 +72,9 @@ For example, enabling the Zigbee endpoint logger library with the :ref:`zigbee_l
 Configuration
 *************
 
-To enable the Zigbee endpoint logger library, set the :option:`CONFIG_ZIGBEE_LOGGER_EP` Kconfig option.
+To enable the Zigbee endpoint logger library, set the :kconfig:`CONFIG_ZIGBEE_LOGGER_EP` Kconfig option.
 
-To configure the logging level of the library, use the :option:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL` Kconfig option.
+To configure the logging level of the library, use the :kconfig:`CONFIG_ZIGBEE_LOGGER_EP_LOG_LEVEL` Kconfig option.
 
 For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_logger_ep`.
 

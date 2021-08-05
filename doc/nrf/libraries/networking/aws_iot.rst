@@ -56,46 +56,46 @@ Configuring the required library options
 
 To establish a connection to the AWS IoT message broker, set the following options:
 
-* :option:`CONFIG_AWS_IOT_SEC_TAG`
-* :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
-* :option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
+* :kconfig:`CONFIG_AWS_IOT_SEC_TAG`
+* :kconfig:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
+* :kconfig:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 
 To configure the required library options, complete the following steps:
 
 1. In the `AWS IoT console`_, navigate to :guilabel:`IoT core` > :guilabel:`Manage` > :guilabel:`things` and click on the entry for the *thing* created during the steps of :ref:`creating_a_thing_in_AWS_IoT`.
-#. Navigate to :guilabel:`interact`, find the ``Rest API Endpoint`` and set the configurable option :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` to this address string.
-#. Set the option :option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` to the name of the *thing* created during the aforementioned steps.
-#. Set the security tag configuration :option:`CONFIG_AWS_IOT_SEC_TAG` to the security tag, chosen while `Programming the certificates to the on-board modem of the nRF9160-based kit`_.
+#. Navigate to :guilabel:`interact`, find the ``Rest API Endpoint`` and set the configurable option :kconfig:`CONFIG_AWS_IOT_BROKER_HOST_NAME` to this address string.
+#. Set the option :kconfig:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` to the name of the *thing* created during the aforementioned steps.
+#. Set the security tag configuration :kconfig:`CONFIG_AWS_IOT_SEC_TAG` to the security tag, chosen while `Programming the certificates to the on-board modem of the nRF9160-based kit`_.
 
 Configuring the optional library options
 ========================================
 
 To subscribe to the various `AWS IoT Device Shadow Topics`_, set the following options:
 
-* :option:`CONFIG_AWS_IOT_TOPIC_GET_ACCEPTED_SUBSCRIBE`
-* :option:`CONFIG_AWS_IOT_TOPIC_GET_REJECTED_SUBSCRIBE`
-* :option:`CONFIG_AWS_IOT_TOPIC_UPDATE_ACCEPTED_SUBSCRIBE`
-* :option:`CONFIG_AWS_IOT_TOPIC_UPDATE_REJECTED_SUBSCRIBE`
-* :option:`CONFIG_AWS_IOT_TOPIC_UPDATE_DELTA_SUBSCRIBE`
-* :option:`CONFIG_AWS_IOT_TOPIC_DELETE_ACCEPTED_SUBSCRIBE`
-* :option:`CONFIG_AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE`
+* :kconfig:`CONFIG_AWS_IOT_TOPIC_GET_ACCEPTED_SUBSCRIBE`
+* :kconfig:`CONFIG_AWS_IOT_TOPIC_GET_REJECTED_SUBSCRIBE`
+* :kconfig:`CONFIG_AWS_IOT_TOPIC_UPDATE_ACCEPTED_SUBSCRIBE`
+* :kconfig:`CONFIG_AWS_IOT_TOPIC_UPDATE_REJECTED_SUBSCRIBE`
+* :kconfig:`CONFIG_AWS_IOT_TOPIC_UPDATE_DELTA_SUBSCRIBE`
+* :kconfig:`CONFIG_AWS_IOT_TOPIC_DELETE_ACCEPTED_SUBSCRIBE`
+* :kconfig:`CONFIG_AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE`
 
 To subscribe to non-AWS specific topics, complete the following steps:
 
-* Specify the number of additional topics that needs to be subscribed to, by setting the :option:`CONFIG_AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT` option
+* Specify the number of additional topics that needs to be subscribed to, by setting the :kconfig:`CONFIG_AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT` option
 * Pass a list containing application specific topics in the :c:func:`aws_iot_subscription_topics_add` function, after the :c:func:`aws_iot_init` function call and before the :c:func:`aws_iot_connect` function call
 
 The AWS IoT library also supports passing in the client ID at run time.
 To enable this feature, set the ``client_id`` entry in the :c:struct:`aws_iot_config` structure that is passed in the :c:func:`aws_iot_init` function when initializing the library, and set the following option:
 
-* :option:`CONFIG_AWS_IOT_CLIENT_ID_APP`
+* :kconfig:`CONFIG_AWS_IOT_CLIENT_ID_APP`
 
 .. note::
-   If you are using a longer device ID that is either set by the option :option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` or passed in during initialization, it might be required to increase the value of the option :option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN` for proper initialization of the library.
+   If you are using a longer device ID that is either set by the option :kconfig:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` or passed in during initialization, it might be required to increase the value of the option :kconfig:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN` for proper initialization of the library.
 
 .. note::
    The AWS IoT library is compatible with the :ref:`cloud_api_readme`, a generic API that enables multiple cloud backends to be interchanged, statically and at run time.
-   To enable the use of the cloud, API set the configurable option :option:`CONFIG_CLOUD_API`, in addition to the other selected library options.
+   To enable the use of the cloud, API set the configurable option :kconfig:`CONFIG_CLOUD_API`, in addition to the other selected library options.
 
 Initializing the library
 ************************

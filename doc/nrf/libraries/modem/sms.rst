@@ -31,9 +31,9 @@ Configuration
 
 Configure the following Kconfig options when using this library:
 
-* :option:`CONFIG_SMS` - Enables the SMS subscriber library.
-* :option:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT` - Sets the maximum number of SMS subscribers.
-* :option:`CONFIG_AT_CMD_RESPONSE_MAX_LEN` - Defines the maximum size of the AT command response, which might limit the size of the received SMS message. Values over 512 bytes will not restrict the size of the received message as the maximum data length of the SMS is 140 bytes. This parameter is defined in the :ref:`at_cmd_readme` module.
+* :kconfig:`CONFIG_SMS` - Enables the SMS subscriber library.
+* :kconfig:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT` - Sets the maximum number of SMS subscribers.
+* :kconfig:`CONFIG_AT_CMD_RESPONSE_MAX_LEN` - Defines the maximum size of the AT command response, which might limit the size of the received SMS message. Values over 512 bytes will not restrict the size of the received message as the maximum data length of the SMS is 140 bytes. This parameter is defined in the :ref:`at_cmd_readme` module.
 
 Limitations
 ***********

@@ -16,8 +16,8 @@ Configuration
 
 To use the module, you must enable the following Kconfig options:
 
-* :option:`CONFIG_CAF_BUTTONS` - This option enables the buttons module.
-* :option:`CONFIG_GPIO` - This option enables Zephyr's :ref:`zephyr:gpio_api` driver, which is required for interacting with the GPIO pins.
+* :kconfig:`CONFIG_CAF_BUTTONS` - This option enables the buttons module.
+* :kconfig:`CONFIG_GPIO` - This option enables Zephyr's :ref:`zephyr:gpio_api` driver, which is required for interacting with the GPIO pins.
 
 When defining how buttons are connected, you must create a configuration file with the following arrays:
 
@@ -42,7 +42,7 @@ For example, the file contents should look like follows:
 		{ .port = 1, .pin = 14 },
 	};
 
-You must define both arrays in this configuration file, and specify its location with the :option:`CONFIG_CAF_BUTTONS_DEF_PATH` Kconfig option.
+You must define both arrays in this configuration file, and specify its location with the :kconfig:`CONFIG_CAF_BUTTONS_DEF_PATH` Kconfig option.
 
 .. note::
 	The configuration file should be included only by the configured module.
@@ -50,15 +50,15 @@ You must define both arrays in this configuration file, and specify its location
 
 The following Kconfig options are available for this module:
 
-* :option:`CONFIG_CAF_BUTTONS_DEF_PATH`
-* :option:`CONFIG_CAF_BUTTONS_PM_EVENTS`
-* :option:`CONFIG_CAF_BUTTONS_SCAN_INTERVAL`
-* :option:`CONFIG_CAF_BUTTONS_DEBOUNCE_INTERVAL`
-* :option:`CONFIG_CAF_BUTTONS_POLARITY_INVERSED`
-* :option:`CONFIG_CAF_BUTTONS_EVENT_LIMIT`
+* :kconfig:`CONFIG_CAF_BUTTONS_DEF_PATH`
+* :kconfig:`CONFIG_CAF_BUTTONS_PM_EVENTS`
+* :kconfig:`CONFIG_CAF_BUTTONS_SCAN_INTERVAL`
+* :kconfig:`CONFIG_CAF_BUTTONS_DEBOUNCE_INTERVAL`
+* :kconfig:`CONFIG_CAF_BUTTONS_POLARITY_INVERSED`
+* :kconfig:`CONFIG_CAF_BUTTONS_EVENT_LIMIT`
 
 By default, a button press is indicated by a pin switch from the low to the high state.
-You can change this with :option:`CONFIG_CAF_BUTTONS_POLARITY_INVERSED`, which will cause the application to react to an opposite pin change (from the high to the low state).
+You can change this with :kconfig:`CONFIG_CAF_BUTTONS_POLARITY_INVERSED`, which will cause the application to react to an opposite pin change (from the high to the low state).
 
 Implementation details
 **********************
@@ -80,17 +80,17 @@ If no buttons are pressed the module switches to ``STATE_ACTIVE``.
 In this state, the module enables the GPIO interrupts and waits for the pin state to change.
 
 Whenever a button is pressed, the module switches to ``STATE_SCANNING``.
-When the switch occurs, the module submits a work with a delay set to :option:`CONFIG_CAF_BUTTONS_DEBOUNCE_INTERVAL`.
+When the switch occurs, the module submits a work with a delay set to :kconfig:`CONFIG_CAF_BUTTONS_DEBOUNCE_INTERVAL`.
 The work scans the keyboard matrix, or directly connected buttons (depends on configuration).
 If any button state change occurs, the module sends related event.
 
-* If the button is kept pressed while the scanning is performed, the work will be resubmitted with a delay set to :option:`CONFIG_CAF_BUTTONS_SCAN_INTERVAL`.
+* If the button is kept pressed while the scanning is performed, the work will be resubmitted with a delay set to :kconfig:`CONFIG_CAF_BUTTONS_SCAN_INTERVAL`.
 * If no button is pressed, the module switches back to ``STATE_ACTIVE``.
 
 Power management states
 =======================
 
-If the :option:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module can react to power management events and submit ``wake_up_event``.
+If the :kconfig:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module can react to power management events and submit ``wake_up_event``.
 In that case, the following additional states are available:
 
 * ``STATE_SUSPENDING``

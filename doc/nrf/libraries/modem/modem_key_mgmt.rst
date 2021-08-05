@@ -21,7 +21,7 @@ See :ref:`nrfxlib:security_tags` for more information about how security tags ar
 
 .. important::
    Security credentials usually exceed the default AT command response length.
-   Therefore, you must set :option:`CONFIG_AT_CMD_RESPONSE_MAX_LEN` to a sufficiently high value when using this library.
+   Therefore, you must set :kconfig:`CONFIG_AT_CMD_RESPONSE_MAX_LEN` to a sufficiently high value when using this library.
 
 .. _cert_dwload:
 

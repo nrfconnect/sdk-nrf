@@ -110,8 +110,8 @@ In addition, the model takes over the persistent storage responsibility of the :
 
 This information is used to reestablish the correct light configuration when the device powers up.
 
-If :option:`CONFIG_BT_SETTINGS` is enabled, the Light xyL Server stores all its states persistently using a configurable storage delay to stagger storing.
-See :option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+If :kconfig:`CONFIG_BT_SETTINGS` is enabled, the Light xyL Server stores all its states persistently using a configurable storage delay to stagger storing.
+See :kconfig:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
 
 API documentation
 *****************

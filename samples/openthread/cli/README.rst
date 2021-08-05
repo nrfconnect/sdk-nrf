@@ -21,7 +21,7 @@ OpenThread CLI is integrated into the system shell accessible over serial connec
 To indicate a Thread command, the ``ot`` keyword needs to precede the command.
 
 The amount of commands you can test depends on the application configuration.
-The CLI sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
+The CLI sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
 
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample to be able to test communication.
@@ -31,13 +31,13 @@ It is recommended to use at least two development kits running the same sample t
 Diagnostic module
 =================
 
-By default, the CLI sample comes with the :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` :ref:`feature set <thread_ug_feature_sets>` enabled, which allows you to use Zephyr's diagnostic module with its ``diag`` commands.
+By default, the CLI sample comes with the :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` :ref:`feature set <thread_ug_feature_sets>` enabled, which allows you to use Zephyr's diagnostic module with its ``diag`` commands.
 Use these commands for manually checking hardware-related functionalities without running a Thread network.
 For example, when adding a new functionality or during the manufacturing process to ensure radio communication is working.
 See `Testing diagnostic module`_ section for an example.
 
 .. note::
-    If you disable the :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` feature set, you can enable the diagnostic module with the :option:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
+    If you disable the :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` feature set, you can enable the diagnostic module with the :kconfig:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
 
 .. _ot_cli_sample_thread_v12:
 

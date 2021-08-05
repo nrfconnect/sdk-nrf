@@ -22,12 +22,12 @@ Configuration
 
 Apart from standard configuration parameters, there is one required setting:
 
-:option:`CONFIG_PROFILER`
+:kconfig:`CONFIG_PROFILER`
   Set this option to add the Profiler source code to the application.
-  If you use the Event Manager, you can also set this option by selecting :option:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED`.
+  If you use the Event Manager, you can also set this option by selecting :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED`.
 
 Call :c:func:`profiler_init` during the application start to initialize the Profiler.
-If you set :option:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED`, the Profiler is automatically initialized when you initialize the :ref:`event_manager`.
+If you set :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_ENABLED`, the Profiler is automatically initialized when you initialize the :ref:`event_manager`.
 
 
 Profiling custom events
@@ -97,7 +97,7 @@ Select the custom backend to use dedicated tools written in Python for event vis
 To save profiling data, the tools use CSV files (for event occurrences) and JSON files (for event descriptions).
 The scripts can be found under :file:`scripts/profiler/` in the |NCS| folder structure.
 
-Set :option:`CONFIG_PROFILER_NORDIC` to enable this backend.
+Set :kconfig:`CONFIG_PROFILER_NORDIC` to enable this backend.
 
 To use the tools, run the scripts on the command line:
 

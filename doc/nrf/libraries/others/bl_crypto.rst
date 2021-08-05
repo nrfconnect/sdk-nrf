@@ -33,15 +33,15 @@ When using the library, you can choose between the following backends:
 
 To configure which backend is used for hashing, set one of the following configuration options:
 
-* :option:`CONFIG_SB_CRYPTO_OBERON_SHA256`
-* :option:`CONFIG_SB_CRYPTO_CC310_SHA256`
-* :option:`CONFIG_SB_CRYPTO_CLIENT_SHA256`
+* :kconfig:`CONFIG_SB_CRYPTO_OBERON_SHA256`
+* :kconfig:`CONFIG_SB_CRYPTO_CC310_SHA256`
+* :kconfig:`CONFIG_SB_CRYPTO_CLIENT_SHA256`
 
 To configure which backend is used for firmware verification, set one of the following configuration options:
 
-* :option:`CONFIG_SB_CRYPTO_CC310_ECDSA_SECP256R1`
-* :option:`CONFIG_SB_CRYPTO_OBERON_ECDSA_SECP256R1`
-* :option:`CONFIG_SB_CRYPTO_CLIENT_ECDSA_SECP256R1`
+* :kconfig:`CONFIG_SB_CRYPTO_CC310_ECDSA_SECP256R1`
+* :kconfig:`CONFIG_SB_CRYPTO_OBERON_ECDSA_SECP256R1`
+* :kconfig:`CONFIG_SB_CRYPTO_CLIENT_ECDSA_SECP256R1`
 
 
 

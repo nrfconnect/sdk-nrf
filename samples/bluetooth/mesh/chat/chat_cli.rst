@@ -100,4 +100,4 @@ None.
 Persistent storage
 ******************
 
-If :option:`CONFIG_BT_SETTINGS` is enabled, the Chat Client stores its presence state.
+If :kconfig:`CONFIG_BT_SETTINGS` is enabled, the Chat Client stores its presence state.

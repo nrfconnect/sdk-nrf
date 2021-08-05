@@ -11,7 +11,7 @@ The Silvair EnOcean Proxy Server model integrates an EnOcean switch together wit
 It implements the `Silvair EnOcean Switch Mesh Proxy Server`_ specification.
 
 The model initializes the :ref:`bt_enocean_readme` library.
-The EnOcean switch can be automatically commissioned if option :option:`CONFIG_BT_MESH_SILVAIR_ENOCEAN_AUTO_COMMISSION` is set.
+The EnOcean switch can be automatically commissioned if option :kconfig:`CONFIG_BT_MESH_SILVAIR_ENOCEAN_AUTO_COMMISSION` is set.
 
 The Silvair EnOcean Proxy Server uses either one or two elements on a node.
 Each element handles its own button pair and has its own corresponding :ref:`bt_mesh_onoff_srv_readme` and :ref:`bt_mesh_lvl_srv_readme` models.
@@ -55,7 +55,7 @@ None
 Persistent storage
 ==================
 
-If :option:`CONFIG_BT_ENOCEAN_STORE` is enabled, the Silvair EnOcean Proxy Server stores the commissioned EnOcean device address.
+If :kconfig:`CONFIG_BT_ENOCEAN_STORE` is enabled, the Silvair EnOcean Proxy Server stores the commissioned EnOcean device address.
 
 API documentation
 =================

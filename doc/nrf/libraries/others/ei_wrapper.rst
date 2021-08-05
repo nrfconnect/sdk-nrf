@@ -24,14 +24,14 @@ Before using the wrapper, you need to :ref:`add the machine learning model <ug_e
 Configuration
 *************
 
-Enable the Edge Impulse wrapper by :option:`CONFIG_EI_WRAPPER` option.
-The option is enabled by default if :option:`CONFIG_EDGE_IMPULSE` is set.
+Enable the Edge Impulse wrapper by :kconfig:`CONFIG_EI_WRAPPER` option.
+The option is enabled by default if :kconfig:`CONFIG_EDGE_IMPULSE` is set.
 
 The Edge Impulse NCS library can be configured with the following Kconfig options:
 
-* :option:`CONFIG_EI_WRAPPER_DATA_BUF_SIZE`
-* :option:`CONFIG_EI_WRAPPER_THREAD_STACK_SIZE`
-* :option:`CONFIG_EI_WRAPPER_THREAD_PRIORITY`
+* :kconfig:`CONFIG_EI_WRAPPER_DATA_BUF_SIZE`
+* :kconfig:`CONFIG_EI_WRAPPER_THREAD_STACK_SIZE`
+* :kconfig:`CONFIG_EI_WRAPPER_THREAD_PRIORITY`
 
 For more detailed description of these options, refer to the Kconfig help.
 
@@ -50,7 +50,7 @@ Use the following Edge Impulse wrapper API:
 
      * The number of provided input values is divisible by the input frame size for the machine learning model used.
        Otherwise, an error code is returned.
-     * The value for the :option:`CONFIG_EI_WRAPPER_DATA_BUF_SIZE` Kconfig option is big enough to temporarily store the data provided by your application.
+     * The value for the :kconfig:`CONFIG_EI_WRAPPER_DATA_BUF_SIZE` Kconfig option is big enough to temporarily store the data provided by your application.
 
 * Call the :c:func:`ei_wrapper_start_prediction` function to shift the prediction window and start the prediction for the buffered data.
   If the whole input window is filled with data right after the shift operation, the prediction is started instantly.

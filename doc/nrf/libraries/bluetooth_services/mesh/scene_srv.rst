@@ -101,7 +101,7 @@ Current scene: ``uint16_t``
 
 Scene registry: ``uint16_t[]``
    The full list of scenes stored by the Scene Server.
-   The scene registry has a limited number of slots, controlled by :option:`CONFIG_BT_MESH_SCENES_MAX`.
+   The scene registry has a limited number of slots, controlled by :kconfig:`CONFIG_BT_MESH_SCENES_MAX`.
 
 Extended models
 ================

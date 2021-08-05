@@ -17,7 +17,7 @@ To precisely measure the sleep period, the module requires the POWER peripheral 
 The events are connected to a TIMER peripheral using PPI/DPPI.
 
 The sleep period is measured using the TIMER peripheral, which is clocked by default by the high frequency clock.
-Alternatively, it can be clocked using low frequency clock (see :option:`CONFIG_CPU_LOAD_ALIGNED_CLOCKS`).
+Alternatively, it can be clocked using low frequency clock (see :kconfig:`CONFIG_CPU_LOAD_ALIGNED_CLOCKS`).
 It is then compared against the system clock, which is clocked by the low frequency clock.
 The accuracy of measurements depends on the accuracy of the given clock sources.
 

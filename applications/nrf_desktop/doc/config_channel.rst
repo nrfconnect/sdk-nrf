@@ -96,7 +96,7 @@ Each feature report contains the following components:
 Handling configuration channel in firmware
 ==========================================
 
-To enable the configuration channel in the nRF Desktop firmware, set the :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` Kconfig option.
+To enable the configuration channel in the nRF Desktop firmware, set the :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` Kconfig option.
 This option also enables the mandatory :ref:`nrf_desktop_info`.
 
 Make sure you also configure the following configuration channel elements:
@@ -129,7 +129,7 @@ Depending on the connection method:
 
    The GATT write without response operation cannot be performed on HID feature report.
    To allow GATT write without response, the peripheral must provide an additional HID output report.
-   Use the :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT` Kconfig option in nRF Desktop peripheral configuration to add the mentioned HID output report.
+   Use the :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT` Kconfig option in nRF Desktop peripheral configuration to add the mentioned HID output report.
    Disabling this option reduces the memory consumption.
 
 The :c:struct:`config_event` is used to propagate the configuration channel data.

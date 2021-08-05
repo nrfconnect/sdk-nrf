@@ -68,10 +68,10 @@ Configures the time interval between each publishing of the message.
 
 .. note::
 
-   The sample sets the option :option:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value, 1200 seconds (20 minutes) as specified by AWS IoT Core.
+   The sample sets the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value, 1200 seconds (20 minutes) as specified by AWS IoT Core.
    This is to limit the IP traffic between the device and the AWS IoT message broker for supporting a low power sample.
    However, note that in certain LTE networks, the NAT timeout can be considerably lower than 1200 seconds.
-   So as a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, the option :option:`CONFIG_MQTT_KEEPALIVE` must be set to the lowest of the aforementioned timeout limits (Maximum allowed MQTT keepalive and NAT timeout).
+   So as a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, the option :kconfig:`CONFIG_MQTT_KEEPALIVE` must be set to the lowest of the aforementioned timeout limits (Maximum allowed MQTT keepalive and NAT timeout).
 
 Building and running
 ********************
@@ -86,12 +86,12 @@ Testing
 1. Make sure that you have completed the steps in :ref:`setup_awsiot`.
    This retrieves the AWS IoT broker hostname, security tag and client-id.
 
-#. Set the :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`, :option:`CONFIG_AWS_IOT_SEC_TAG`, and :option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` options to reflect the values retrieved during step 1.
+#. Set the :kconfig:`CONFIG_AWS_IOT_BROKER_HOST_NAME`, :kconfig:`CONFIG_AWS_IOT_SEC_TAG`, and :kconfig:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` options to reflect the values retrieved during step 1.
 #. Program the sample to hardware.
 
 .. note::
 
-   The sample might require increasing the values of :option:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN` and :option:`CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN` options.
+   The sample might require increasing the values of :kconfig:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN` and :kconfig:`CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN` options.
 
 Sample Output
 =============

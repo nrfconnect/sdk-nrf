@@ -20,8 +20,8 @@ Configuration
 
 To use this library, include its header in your application and pass the error code that should be checked using its macros.
 
-Additionally, if you want the error code to be printed to log, enable the :option:`CONFIG_LOG` and :option:`CONFIG_ZBOSS_ERROR_PRINT_TO_LOG` Kconfig options.
-The :option:`CONFIG_ZBOSS_ERROR_PRINT_TO_LOG` option automatically enables the :option:`CONFIG_ZIGBEE_ERROR_TO_STRING_ENABLED` Kconfig option, which obtains the ZBOSS error code name.
+Additionally, if you want the error code to be printed to log, enable the :kconfig:`CONFIG_LOG` and :kconfig:`CONFIG_ZBOSS_ERROR_PRINT_TO_LOG` Kconfig options.
+The :kconfig:`CONFIG_ZBOSS_ERROR_PRINT_TO_LOG` option automatically enables the :kconfig:`CONFIG_ZIGBEE_ERROR_TO_STRING_ENABLED` Kconfig option, which obtains the ZBOSS error code name.
 
 The library also provides a macro for checking the value returned by the :c:func:`bdb_start_top_level_commissioning` function.
 

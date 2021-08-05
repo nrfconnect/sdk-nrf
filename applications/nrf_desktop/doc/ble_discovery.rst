@@ -26,8 +26,8 @@ Configuration
 Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-#. Set the :option:`CONFIG_BT_GATT_CLIENT` Kconfig option to enable support for the GATT Client role.
-#. Set the :option:`CONFIG_BT_GATT_DM` Kconfig option to enable the :ref:`gatt_dm_readme`.
+#. Set the :kconfig:`CONFIG_BT_GATT_CLIENT` Kconfig option to enable support for the GATT Client role.
+#. Set the :kconfig:`CONFIG_BT_GATT_DM` Kconfig option to enable the :ref:`gatt_dm_readme`.
    The :ref:`gatt_dm_readme` is used by the ``ble_discovery`` application module.
 #. Define the module configuration in the :file:`ble_discovery_def.h` file, located in the board-specific directory in the application configuration directory.
    You must define the following parameters for every nRF Desktop peripheral that connects with the given nRF Desktop central:
@@ -49,7 +49,7 @@ Complete the following steps to configure the module:
 
         The assigned PIDs should be unique for devices with the same VID.
 
-#. Set the :option:`CONFIG_DESKTOP_BLE_DISCOVERY_ENABLE` Kconfig option to enable the ``ble_discovery`` application module.
+#. Set the :kconfig:`CONFIG_DESKTOP_BLE_DISCOVERY_ENABLE` Kconfig option to enable the ``ble_discovery`` application module.
 
 Implementation details
 **********************

@@ -22,17 +22,17 @@ Module events
 Configuration
 *************
 
-Enable the module with the :option:`CONFIG_DESKTOP_WHEEL_ENABLE` Kconfig option.
+Enable the module with the :kconfig:`CONFIG_DESKTOP_WHEEL_ENABLE` Kconfig option.
 
 For detecting rotation, the wheel module uses Zephyr's QDEC driver.
-The module can be enabled only when QDEC is configured in DTS (that is, :option:`CONFIG_QDEC_NRFX` is set).
+The module can be enabled only when QDEC is configured in DTS (that is, :kconfig:`CONFIG_QDEC_NRFX` is set).
 
 The QDEC DTS configuration specifies how many steps are done during one full angle.
 The sensor reports the rotation data in angle degrees.
-Then, :option:`CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER` (a wheel configuration option) converts the angle value into a value that is passed with a ``wheel_event`` to the destination module.
+Then, :kconfig:`CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER` (a wheel configuration option) converts the angle value into a value that is passed with a ``wheel_event`` to the destination module.
 
 For example, configuring QDEC with 24 steps means that for each step the sensor will report a rotation of 15 degrees.
-For HID to see this rotation as increment of one, :option:`CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER` should be set to 15.
+For HID to see this rotation as increment of one, :kconfig:`CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER` should be set to 15.
 
 Implementation details
 **********************
@@ -47,7 +47,7 @@ The wheel module can be in the following states:
 When in ``STATE_ACTIVE``, the module enables the QDEC driver and waits for callback that indicates rotation.
 The QDEC driver may consume power during its operation.
 
-If no rotation is detected after the time specified in :option:`CONFIG_DESKTOP_WHEEL_SENSOR_IDLE_TIMEOUT`, the wheel module switches to ``STATE_ACTIVE_IDLE``, in which QDEC is disabled.
+If no rotation is detected after the time specified in :kconfig:`CONFIG_DESKTOP_WHEEL_SENSOR_IDLE_TIMEOUT`, the wheel module switches to ``STATE_ACTIVE_IDLE``, in which QDEC is disabled.
 In this state, the rotation is detected using GPIO interrupts.
 When the rotation is detected, the module switches back to ``STATE_ACTIVE``.
 

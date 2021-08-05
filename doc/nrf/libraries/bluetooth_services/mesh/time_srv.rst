@@ -57,14 +57,14 @@ The Time Server's time synchronization mechanism is not perfect, and every times
 The clock uncertainty is measured in milliseconds, and can come from various sources, like inaccuracies in the original clock source, internal clock drift or uncertainty in the mesh stack itself.
 The Time Server inherits the uncertainty of the node it got its Time Status from, and the clock uncertainty of each mesh node increases for every hop the Time Status had to make from the Time Authority.
 
-The expected uncertainty in the mesh stack comes from the fluctuation in time to encrypt a message and broadcast it, and can be configured through the :option:`CONFIG_BT_MESH_TIME_MESH_HOP_UNCERTAINTY`.
+The expected uncertainty in the mesh stack comes from the fluctuation in time to encrypt a message and broadcast it, and can be configured through the :kconfig:`CONFIG_BT_MESH_TIME_MESH_HOP_UNCERTAINTY`.
 
 In addition to the uncertainty added by the mesh stack itself, the internal clock of each device will increase the uncertainty of the timestamp over time.
 As crystal hardware is not perfectly accurate, it will gradually drift away from the correct time.
 The potential range of this clock drift is generally a known property of the onboard hardware, even if the actual drift fluctuates.
 As it's impossible to measure the actual clock drift at any given moment, the Time Server will instead gradually increase the uncertainty of its timestamp based on the known clock accuracy.
 
-The Time Server's notion of the local clock accuracy can be configured with :option:`CONFIG_BT_MESH_TIME_SRV_CLOCK_ACCURACY`.
+The Time Server's notion of the local clock accuracy can be configured with :kconfig:`CONFIG_BT_MESH_TIME_SRV_CLOCK_ACCURACY`.
 By default, it uses the configured kernel clock control accuracy.
 
 Leap seconds and time zones
@@ -161,8 +161,8 @@ Configuration
 
 The clock uncertainty of the Time Server model can be configured with the following configuration options:
 
-* :option:`CONFIG_BT_MESH_TIME_MESH_HOP_UNCERTAINTY`: The amount of uncertainty introduced in the mesh stack through sending a single message, in milliseconds.
-* :option:`CONFIG_BT_MESH_TIME_SRV_CLOCK_ACCURACY`: The largest possible clock drift introduced by the kernel clock's hardware, in parts per million.
+* :kconfig:`CONFIG_BT_MESH_TIME_MESH_HOP_UNCERTAINTY`: The amount of uncertainty introduced in the mesh stack through sending a single message, in milliseconds.
+* :kconfig:`CONFIG_BT_MESH_TIME_SRV_CLOCK_ACCURACY`: The largest possible clock drift introduced by the kernel clock's hardware, in parts per million.
 
 States
 ======

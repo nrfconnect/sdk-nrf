@@ -8,7 +8,7 @@ nRF9160: A-GPS
    :depth: 2
 
 The A-GPS sample demonstrates how the `nRF Connect for Cloud`_ Assisted GPS (`A-GPS`_) feature or an external :ref:`SUPL client <supl_client>` can be used to implement A-GPS in your application.
-The sample uses the generic A-GPS library, which allows the selection of different A-GPS sources via the :option:`CONFIG_AGPS_SRC_SUPL` configurable option.
+The sample uses the generic A-GPS library, which allows the selection of different A-GPS sources via the :kconfig:`CONFIG_AGPS_SRC_SUPL` configurable option.
 By default, `nRF Connect for Cloud`_ is used for A-GPS and cloud communication.
 
 Requirements
@@ -59,7 +59,7 @@ In RRC idle mode, the GPS is usually able to operate.
 It is recommended to use LTE Power Saving Mode (PSM) and extended Discontinuous Reception (eDRX) mode to increase the allowed time of operation for GPS.
 During the defined intervals of PSM and eDRX, LTE communication does not occur, and the GPS has full access to the radio resources.
 In this sample, both PSM and eDRX are enabled by default.
-You can enable or disable these features by using the :option:`CONFIG_LTE_POWER_SAVING_MODE` and :option:`CONFIG_LTE_EDRX_REQ` configuration options.
+You can enable or disable these features by using the :kconfig:`CONFIG_LTE_POWER_SAVING_MODE` and :kconfig:`CONFIG_LTE_EDRX_REQ` configuration options.
 
 .. include:: /applications/asset_tracker/README.rst
    :start-after: external_antenna_note_start
@@ -69,7 +69,7 @@ User interface
 **************
 
 You can send a predefined message to nRF Connect for Cloud by pressing button 1.
-The message can be changed by setting the :option:`CONFIG_CLOUD_MESSAGE` to a new message.
+The message can be changed by setting the :kconfig:`CONFIG_CLOUD_MESSAGE` to a new message.
 
 To ease outdoors and remote testing of A-GPS feature, two methods for resetting the kit are provided, if the default A-GPS source is used.
 Both are equivalent to pressing the reset button on the nRF9160 DK, or power-cycling the nRF9160 DK or Thingy:91.
@@ -99,7 +99,7 @@ Additional configuration
 
 Check and configure the following library options that are used by the sample:
 
-* :option:`CONFIG_LTE_EDRX_REQ`
+* :kconfig:`CONFIG_LTE_EDRX_REQ`
 
 
 Building and running

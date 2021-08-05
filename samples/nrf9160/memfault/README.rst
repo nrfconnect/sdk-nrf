@@ -43,14 +43,14 @@ There are also some metrics, which are specific to |NCS| that are enabled by def
 
 * LTE metrics:
 
-  * Enabled and disabled using :option:`CONFIG_MEMFAULT_NCS_LTE_METRICS`.
+  * Enabled and disabled using :kconfig:`CONFIG_MEMFAULT_NCS_LTE_METRICS`.
   * ``Ncs_LteTimeToConnect`` - Time from the point when the device starts to search for an LTE network until the time when it gets registered with the network.
   *  ``Ncs_LteConnectionLossCount`` - The number of times that the device has lost the LTE network connection after the initial network registration.
 
 * Stack usage metrics:
 
    * Shows how many bytes of unused space is left in a stack.
-   * Configurable using :option:`CONFIG_MEMFAULT_NCS_STACK_METRICS`.
+   * Configurable using :kconfig:`CONFIG_MEMFAULT_NCS_STACK_METRICS`.
    * ``Ncs_AtCmdUnusedStack`` - The :ref:`at_cmd_readme` library's stack.
    * ``Ncs_ConnectionPollUnusedStack``- Stack used by the cloud libraries for :ref:`lib_nrf_cloud`, :ref:`lib_aws_iot` and :ref:`lib_azure_iot_hub`.
 
@@ -98,7 +98,7 @@ See `Memfault SDK`_ for more information.
 Minimal setup
 =============
 
-To send data to the Memfault cloud, a project key must be configured using :option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`.
+To send data to the Memfault cloud, a project key must be configured using :kconfig:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`.
 
 .. note::
    The Memfault SDK requires certificates required for the HTTPS transport.
@@ -116,25 +116,25 @@ There are two sources for Kconfig options when using Memfault SDK in |NCS|:
 
 Check and configure the following options in Memfault SDK that are used by the sample:
 
-* :option:`CONFIG_MEMFAULT`
-* :option:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM`
-* :option:`CONFIG_MEMFAULT_SHELL`
-* :option:`CONFIG_MEMFAULT_HTTP_ENABLE`
-* :option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD`
-* :option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECS`
-* :option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE`
-* :option:`CONFIG_MEMFAULT_COREDUMP_COLLECT_BSS_REGIONS`
+* :kconfig:`CONFIG_MEMFAULT`
+* :kconfig:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM`
+* :kconfig:`CONFIG_MEMFAULT_SHELL`
+* :kconfig:`CONFIG_MEMFAULT_HTTP_ENABLE`
+* :kconfig:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD`
+* :kconfig:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECS`
+* :kconfig:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE`
+* :kconfig:`CONFIG_MEMFAULT_COREDUMP_COLLECT_BSS_REGIONS`
 
-If :option:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM` is enabled, TLS certificates used for HTTP uploads are provisioned to the nRF9160 modem when :c:func:`memfault_zephyr_port_install_root_certs` is called.
+If :kconfig:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM` is enabled, TLS certificates used for HTTP uploads are provisioned to the nRF9160 modem when :c:func:`memfault_zephyr_port_install_root_certs` is called.
 
 Check and configure the following options for Memfault that are specific to |NCS|:
 
-* :option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`
-* :option:`CONFIG_MEMFAULT_NCS_LTE_METRICS`
-* :option:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
-* :option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`
+* :kconfig:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`
+* :kconfig:`CONFIG_MEMFAULT_NCS_LTE_METRICS`
+* :kconfig:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
+* :kconfig:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`
 
-If :option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` is enabled, :option:`CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE` can be used to set the flash partition size for the flash storage.
+If :kconfig:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` is enabled, :kconfig:`CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE` can be used to set the flash partition size for the flash storage.
 
 
 Configuration files
