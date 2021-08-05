@@ -14,6 +14,13 @@ menuconfig NRF_CLOUD_PGPS
 
 if NRF_CLOUD_PGPS
 
+config NRF_CLOUD_PGPS_REQUEST_ALL_UPON_INIT
+	bool "Request all available P-GPS data upon initialization"
+	default y
+	help
+	  If this option is enabled, all available P-GPS data will be requested from cloud when
+	  the library is initialized given that no P-GPS data has previously been stored to flash.
+
 config NRF_CLOUD_PGPS_PREDICTION_PERIOD
 	int "Desired time in minutes between predictions."
 	range 60 480
