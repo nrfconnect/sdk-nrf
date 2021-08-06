@@ -244,6 +244,25 @@ Missing :file:`CMakeLists.txt`
 Thread
 ======
 
+.. rst-class:: v1-6-1 v1-6-0
+
+KRKNWK-10633: Incorrect data when using ACK-based Probing with Link Metrics
+  When using the ACK-based Probing enhanced with Link Metrics, the Thread Information Element contains fixed data instead of the correct Link Metrics data for the acknowledged frame.
+
+.. rst-class:: v1-6-1 v1-6-0
+
+KRKNWK-10467: Security issues for retransmitted frames with Thread 1.2
+  The Thread 1.2 current implementation does not guarantee that all retransmitted frames will be secured when using the transmission security capabilities of the radio driver.
+  For this reason, OpenThread retransmissions are disabled by default when the :option:`CONFIG_NRF_802154_ENCRYPTION` Kconfig option is enabled.
+  You can enable the retransmissions at your own risk.
+
+.. rst-class:: v1-6-1 v1-6-0
+
+KRKNWK-11037:  ``Udp::GetEphemeralPort`` can cause infinite loop
+  Using ``Udp::GetEphemeralPort`` in OpenThread can potentially cause an infinite loop.
+
+  **Workaround:** Avoid using ``Udp::GetEphemeralPort``.
+
 .. rst-class:: v1-5-1
 
 KRKNWK-9461 / KRKNWK-9596 : Multiprotocol sample crashes with some smartphones
