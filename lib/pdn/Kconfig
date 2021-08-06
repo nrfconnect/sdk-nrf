@@ -31,6 +31,8 @@ config PDN_ESM_TIMEOUT
 
 config PDN_SYS_INIT
 	bool "Initialize during SYS_INIT"
+	depends on NRF_MODEM_LIB_SYS_INIT
+	default y if NRF_MODEM_LIB_SYS_INIT
 
 if PDN_SYS_INIT
 
