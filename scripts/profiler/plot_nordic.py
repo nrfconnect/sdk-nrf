@@ -448,15 +448,6 @@ class PlotNordic():
                 self.processed_events.tracked_events.append(TrackedEvent(event, None, None))
             else:
                 self.temp_events.append(event)
-                if event.timestamp > time.time() - self.start_time + self.draw_state.added_time - \
-                        0.2 * self.draw_state.timeline_width:
-                    self.draw_state.added_time += 0.05
-
-                if event.timestamp < time.time() - self.start_time + self.draw_state.added_time - \
-                        0.8 * self.draw_state.timeline_width:
-                    self.draw_state.added_time -= 0.05
-
-                events.append(event)
 
         # translating plot
         if not self.draw_state.synchronized_with_events:
