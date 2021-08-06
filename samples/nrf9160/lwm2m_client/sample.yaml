@@ -3,7 +3,6 @@ sample:
 tests:
   samples.nrf9160.lwm2m_client:
     build_only: true
-    build_on_all: true
     extra_args: OVERLAY_CONFIG=overlay-ci.conf
     platform_allow: nrf9160dk_nrf9160ns
     integration_platforms:

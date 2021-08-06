@@ -4,7 +4,6 @@ sample:
 tests:
   samples.ei_data_forwarder:
     build_only: true
-    build_on_all: true
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840

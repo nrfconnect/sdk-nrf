@@ -5,7 +5,6 @@ sample:
 tests:
   samples.nrf5340.multiprotocol_rpmsg.build:
     build_only: true
-    build_on_all: true
     platform_allow: nrf5340dk_nrf5340_cpunet
     integration_platforms:
       - nrf5340dk_nrf5340_cpunet

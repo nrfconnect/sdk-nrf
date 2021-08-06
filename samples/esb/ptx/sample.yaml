@@ -8,6 +8,5 @@ tests:
     platform_allow: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf52dk_nrf52810
   samples.esb.ptx.build:
     build_only: true
-    build_on_all: true
     platform_allow: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf52dk_nrf52810 nrf5340dk_nrf5340_cpunet
     tags: ci_build
