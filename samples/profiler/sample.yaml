@@ -4,7 +4,6 @@ sample:
 tests:
   samples.profiler:
     build_only: true
-    build_on_all: true
     platform_exclude: native_posix qemu_x86 qemu_cortex_m3
     integration_platforms:
       - nrf52dk_nrf52832

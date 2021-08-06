@@ -4,5 +4,4 @@ sample:
 tests:
   samples.nrf_rpc.entropy_cpuapp:
     build_only: true
-    build_on_all: true
     platform_allow: nrf5340dk_nrf5340_cpuapp

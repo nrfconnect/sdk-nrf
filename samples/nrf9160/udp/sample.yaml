@@ -3,7 +3,6 @@ sample:
 tests:
   samples.nrf9160.udp:
     build_only: true
-    build_on_all: true
     platform_allow: nrf9160dk_nrf9160ns thingy91_nrf9160ns
     integration_platforms:
       - nrf9160dk_nrf9160ns
