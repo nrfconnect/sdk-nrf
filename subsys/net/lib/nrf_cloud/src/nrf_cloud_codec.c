@@ -69,32 +69,28 @@ static const char *const sensor_type_str[] = {
 
 static int json_add_obj_cs(cJSON *parent, const char *str, cJSON *item)
 {
+	if (!parent || !str || !item) {
+		return -EINVAL;
+	}
 	return cJSON_AddItemToObjectCS(parent, str, item) ? 0 : -ENOMEM;
-
 }
 
 static int json_add_str_cs(cJSON *parent, const char *str, const char *item)
 {
-	cJSON *json_str;
-
-	json_str = cJSON_CreateString(item);
-	if (json_str == NULL) {
-		return -ENOMEM;
+	if (!parent || !str || !item) {
+		return -EINVAL;
 	}
 
-	return json_add_obj_cs(parent, str, json_str);
+	return cJSON_AddStringToObjectCS(parent, str, item) ? 0 : -ENOMEM;
 }
 
 static int json_add_null_cs(cJSON *parent, const char *const str)
 {
-	cJSON *json_null;
-
-	json_null = cJSON_CreateNull();
-	if (json_null == NULL) {
-		return -ENOMEM;
+	if (!parent || !str) {
+		return -EINVAL;
 	}
 
-	return json_add_obj_cs(parent, str, json_null);
+	return cJSON_AddNullToObjectCS(parent, str) ? 0 : -ENOMEM;
 }
 
 static cJSON *json_object_decode(cJSON *obj, const char *str)
@@ -155,7 +151,7 @@ int nrf_cloud_encode_shadow_data(const struct nrf_cloud_sensor_data *sensor,
 				 struct nrf_cloud_data *output)
 {
 	int ret;
-	char *buffer;
+	char *buffer = NULL;
 
 	__ASSERT_NO_MSG(sensor != NULL);
 	__ASSERT_NO_MSG(sensor->data.ptr != NULL);
@@ -163,34 +159,25 @@ int nrf_cloud_encode_shadow_data(const struct nrf_cloud_sensor_data *sensor,
 	__ASSERT_NO_MSG(output != NULL);
 
 	cJSON *root_obj = cJSON_CreateObject();
-	cJSON *state_obj = cJSON_CreateObject();
-	cJSON *reported_obj = cJSON_CreateObject();
-
-	if (root_obj == NULL || state_obj == NULL || reported_obj == NULL) {
-		cJSON_Delete(root_obj);
-		cJSON_Delete(state_obj);
-		cJSON_Delete(reported_obj);
-		return -ENOMEM;
-	}
+	cJSON *state_obj = cJSON_AddObjectToObjectCS(root_obj, JSON_KEY_STATE);
+	cJSON *reported_obj = cJSON_AddObjectToObjectCS(state_obj, JSON_KEY_REP);
 
 	ret = json_add_obj_cs(reported_obj, sensor_type_str[sensor->type],
 			   (cJSON *)sensor->data.ptr);
-	ret += json_add_obj_cs(state_obj, JSON_KEY_REP, reported_obj);
-	ret += json_add_obj_cs(root_obj, JSON_KEY_STATE, state_obj);
 
-	if (ret != 0) {
-		cJSON_Delete(root_obj);
-		cJSON_Delete(state_obj);
-		cJSON_Delete(reported_obj);
+	if (ret == 0) {
+		buffer = cJSON_PrintUnformatted(root_obj);
 	}
 
-	buffer = cJSON_PrintUnformatted(root_obj);
+	if (buffer) {
+		output->ptr = buffer;
+		output->len = strlen(buffer);
+	} else {
+		ret = -ENOMEM;
+	}
+
 	cJSON_Delete(root_obj);
-
-	output->ptr = buffer;
-	output->len = strlen(buffer);
-
-	return 0;
+	return ret;
 }
 
 int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *sensor,
@@ -298,7 +285,6 @@ int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 	char *buffer = NULL;
 	cJSON *root_obj = NULL;
 	cJSON *desired_obj = NULL;
-	cJSON *null_obj = NULL;
 	cJSON *reported_obj = NULL;
 	cJSON *state_obj = NULL;
 	cJSON *config_obj = NULL;
@@ -322,7 +308,6 @@ int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 	if ((state_obj == NULL) || (config_obj == NULL)) {
 		cJSON_Delete(state_obj);
 		cJSON_Delete(config_obj);
-
 		output->ptr = NULL;
 		output->len = 0;
 		return 0;
@@ -330,35 +315,28 @@ int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 
 	/* Prepare JSON response for the delta */
 	root_obj = cJSON_CreateObject();
-	desired_obj = cJSON_CreateObject();
-	null_obj = cJSON_CreateNull();
-	reported_obj = cJSON_CreateObject();
+	desired_obj = cJSON_AddObjectToObjectCS(root_obj, JSON_KEY_DES);
+	reported_obj = cJSON_AddObjectToObjectCS(root_obj, JSON_KEY_REP);
 
-	if ((root_obj == NULL) || (desired_obj == NULL) || (null_obj == NULL) ||
-		(reported_obj == NULL)) {
+	/* Add a null config to desired and add the delta config to reported */
+	if (json_add_null_cs(desired_obj, JSON_KEY_CFG) ||
+	    json_add_obj_cs(reported_obj, JSON_KEY_CFG, config_obj)) {
 		cJSON_Delete(root_obj);
-		cJSON_Delete(desired_obj);
-		cJSON_Delete(null_obj);
-		cJSON_Delete(reported_obj);
 		cJSON_Delete(config_obj);
 		cJSON_Delete(state_obj);
 		return -ENOMEM;
 	}
 
-	/* Add delta config to reported */
-	(void)json_add_obj_cs(reported_obj, JSON_KEY_CFG, config_obj);
-	(void)json_add_obj_cs(root_obj, JSON_KEY_REP, reported_obj);
-
-	/* Add a null config to desired */
-	(void)json_add_obj_cs(desired_obj, JSON_KEY_CFG, null_obj);
-	(void)json_add_obj_cs(root_obj, JSON_KEY_DES, desired_obj);
-
 	/* Cleanup received state obj and re-use for the response */
 	cJSON_Delete(state_obj);
 	state_obj = cJSON_CreateObject();
-	(void)json_add_obj_cs(state_obj, JSON_KEY_STATE, root_obj);
-	buffer = cJSON_PrintUnformatted(state_obj);
-	cJSON_Delete(state_obj);
+	if (state_obj) {
+		(void)json_add_obj_cs(state_obj, JSON_KEY_STATE, root_obj);
+		buffer = cJSON_PrintUnformatted(state_obj);
+		cJSON_Delete(state_obj);
+	} else {
+		cJSON_Delete(root_obj);
+	}
 
 	if (buffer == NULL) {
 		return -ENOMEM;
@@ -372,29 +350,20 @@ int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 
 int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *output)
 {
-	int ret;
-
 	__ASSERT_NO_MSG(output != NULL);
 
+	char *buffer;
+	int ret = 0;
 	cJSON *root_obj = cJSON_CreateObject();
-	cJSON *state_obj = cJSON_CreateObject();
-	cJSON *reported_obj = cJSON_CreateObject();
-	cJSON *pairing_obj = cJSON_CreateObject();
-	cJSON *connection_obj = cJSON_CreateObject();
+	cJSON *state_obj = cJSON_AddObjectToObjectCS(root_obj, JSON_KEY_STATE);
+	cJSON *reported_obj = cJSON_AddObjectToObjectCS(state_obj, JSON_KEY_REP);
+	cJSON *pairing_obj = cJSON_AddObjectToObjectCS(reported_obj, JSON_KEY_PAIRING);
+	cJSON *connection_obj = cJSON_AddObjectToObjectCS(reported_obj, JSON_KEY_CONN);
 
-	if ((root_obj == NULL) || (state_obj == NULL) ||
-	    (reported_obj == NULL) || (pairing_obj == NULL) ||
-	    (connection_obj == NULL)) {
+	if (!pairing_obj || !connection_obj) {
 		cJSON_Delete(root_obj);
-		cJSON_Delete(state_obj);
-		cJSON_Delete(reported_obj);
-		cJSON_Delete(pairing_obj);
-		cJSON_Delete(connection_obj);
-
 		return -ENOMEM;
 	}
-
-	ret = 0;
 
 	switch (reported_state) {
 	case STATE_UA_PIN_WAIT: {
@@ -413,8 +382,7 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 
 		/* Get the endpoint information. */
 		nct_dc_endpoint_get(&tx_endp, &rx_endp, &m_endp);
-		ret += json_add_str_cs(reported_obj, JSON_KEY_TOPIC_PRFX,
-				    m_endp.ptr);
+		ret += json_add_str_cs(reported_obj, JSON_KEY_TOPIC_PRFX, m_endp.ptr);
 
 		/* Clear pairing config and pairingStatus fields. */
 		ret += json_add_str_cs(pairing_obj, JSON_KEY_STATE, PAIRED_STR);
@@ -428,53 +396,22 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 		}
 
 		/* Report pairing topics. */
-		cJSON *topics_obj = cJSON_CreateObject();
-
-		if (topics_obj == NULL) {
-			cJSON_Delete(root_obj);
-			cJSON_Delete(state_obj);
-			cJSON_Delete(reported_obj);
-			cJSON_Delete(pairing_obj);
-			cJSON_Delete(connection_obj);
-
-			return -ENOMEM;
-		}
+		cJSON *topics_obj = cJSON_AddObjectToObjectCS(pairing_obj, JSON_KEY_TOPICS);
 
 		ret += json_add_str_cs(topics_obj, JSON_KEY_D2C, tx_endp.ptr);
 		ret += json_add_str_cs(topics_obj, JSON_KEY_C2D, rx_endp.ptr);
-		ret += json_add_obj_cs(pairing_obj, JSON_KEY_TOPICS, topics_obj);
 
 		if (ret != 0) {
-			cJSON_Delete(topics_obj);
+			cJSON_Delete(root_obj);
+			return -ENOMEM;
 		}
 		break;
 	}
 	default: {
 		cJSON_Delete(root_obj);
-		cJSON_Delete(state_obj);
-		cJSON_Delete(reported_obj);
-		cJSON_Delete(pairing_obj);
-		cJSON_Delete(connection_obj);
 		return -ENOTSUP;
 	}
 	}
-
-	ret += json_add_obj_cs(reported_obj, JSON_KEY_PAIRING, pairing_obj);
-	ret += json_add_obj_cs(reported_obj, JSON_KEY_CONN, connection_obj);
-	ret += json_add_obj_cs(state_obj, JSON_KEY_REP, reported_obj);
-	ret += json_add_obj_cs(root_obj, JSON_KEY_STATE, state_obj);
-
-	if (ret != 0) {
-		cJSON_Delete(root_obj);
-		cJSON_Delete(state_obj);
-		cJSON_Delete(reported_obj);
-		cJSON_Delete(pairing_obj);
-		cJSON_Delete(connection_obj);
-
-		return -ENOMEM;
-	}
-
-	char *buffer;
 
 	buffer = cJSON_PrintUnformatted(root_obj);
 	cJSON_Delete(root_obj);
