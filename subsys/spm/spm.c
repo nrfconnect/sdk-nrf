@@ -451,6 +451,9 @@ static void spm_config_peripherals(void)
 #ifdef NRF_RESET
 		PERIPH("NRF_RESET", NRF_RESET, CONFIG_SPM_NRF_RESET_NS),
 #endif
+#ifdef NRF_POWER
+		PERIPH("NRF_POWER", NRF_POWER, CONFIG_SPM_NRF_POWER_NS),
+#endif
 
 		/* There is no DTS node for the peripherals below,
 		 * so address them using nrfx macros directly.

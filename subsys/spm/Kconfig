@@ -289,6 +289,10 @@ config SPM_NRF_PDM_NS
 config SPM_NRF_I2S_NS
 	bool "I2S is Non-Secure"
 	default y
+
+config SPM_NRF_POWER_NS
+	bool "Power is Non-Secure"
+	default y
 endif #SOC_NRF9160
 
 if SOC_NRF5340_CPUAPP
