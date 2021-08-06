@@ -67,6 +67,10 @@ nRF9160
 
     * The library has been deprecated in favor of the :ref:`at_monitor_readme` library.
 
+  * ``thingy91_nrf9160_ns`` board:
+
+    * The ``thingy91_nrf9160ns`` board has been renamed to ``thingy91_nrf9160_ns`` for consistency with the changes inherited from upstream Zephyr.
+
 nRF5
 ====
 
@@ -174,6 +178,13 @@ For a complete list of |NCS| specific commits, run:
 
 The current |NCS| release is based on Zephyr v2.6.0-rc1.
 See the :ref:`zephyr:zephyr_2.6` Release Notes for an overview of the most important changes inherited from upstream Zephyr.
+
+The following list summarizes the most important changes inherited from upstream Zephyr:
+
+* The ``nrf9160dk_nrf9160ns`` and the ``nrf5340dk_nrf5340_cpuappns`` boards have been renamed respectively to ``nrf9160dk_nrf9160_ns`` and ``nrf5340dk_nrf5340_cpuapp_ns``.
+* A config option for ``memcpy`` that skips the word-based loop before the byte-based loop was added.
+  It is now enabled by default if :kconfig:`SIZE_OPTIMIZATIONS` is set.
+  As result, any application-specific assumptions about ``memcpy`` read or write size behavior should be rechecked if this option is enabled.
 
 Matter (Project CHIP)
 =====================
