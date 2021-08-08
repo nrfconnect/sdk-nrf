@@ -19,7 +19,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
 
 For remote testing scenarios, if you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
 
@@ -77,6 +77,9 @@ Device Firmware Upgrade support
 
 .. matter_door_lock_sample_build_with_dfu_start
 
+.. note::
+   Over-the-air Device Firmware Upgrade can be enabled only on hardware platforms containing external flash memory.
+
 You can configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade using Bluetooth® LE, using the following build flags during the build process:
 
 * ``-DOVERLAY_CONFIG=../common/config/overlay-dfu_support.conf``
@@ -92,6 +95,11 @@ For example, when building on the command line, run the following command with *
    west build -b *build_target* -- -DBUILD_WITH_DFU=1
 
 .. matter_door_lock_sample_build_with_dfu_end
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 User interface
 **************

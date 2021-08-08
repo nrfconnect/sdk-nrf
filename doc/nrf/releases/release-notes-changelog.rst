@@ -96,6 +96,7 @@ Matter
   * :ref:`Thngy:53 Weather station <matter_weather_station_app>` application.
   * :ref:`Template <matter_template_sample>` sample with a guide about :ref:`ug_matter_creating_accessory`.
   * :ref:`ug_matter_tools` page with information about building options for Matter controllers.
+  * PA/LNA GPIO interface support for RF front-end modules (FEM) in Matter.
 
 Zigbee
 ------

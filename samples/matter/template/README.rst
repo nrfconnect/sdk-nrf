@@ -20,7 +20,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
 
 For testing purposes, that is to commission the device and :ref:`control it remotely <matter_template_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
 
@@ -57,6 +57,16 @@ As a result, the device can join the Thread network and communicate with other T
 
 To start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
 The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, printed to the UART console.
+
+Configuration
+*************
+
+|config|
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 User interface
 **************

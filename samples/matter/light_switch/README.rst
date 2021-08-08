@@ -19,7 +19,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
 
 For this sample to work, you also need the :ref:`Matter light bulb <matter_light_bulb_sample>` sample programmed to another supported development kit.
 
@@ -49,6 +49,16 @@ Pairing
 After the test mode is activated and both devices are initialized with the same network parameters, the pairing phase starts.
 During this phase, the light bulb device periodically sends multicast messages with static content.
 Once such a message is intercepted by the light switch device, the light switch is made aware of the IP address of the nearby light bulb device and the pairing is done.
+
+Configuration
+*************
+
+|config|
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 User interface
 **************
