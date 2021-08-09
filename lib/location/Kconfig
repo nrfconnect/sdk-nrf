@@ -12,6 +12,12 @@ menuconfig LOCATION
 
 if LOCATION
 
+config METHOD_GNSS
+   bool "Allow GNSS to be used for obtaining the location"
+
+config METHOD_CELLULAR
+   bool "Allow cellular positioning to be used for obtaining the location"
+
 module = LOCATION
 module-str = Location
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
