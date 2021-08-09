@@ -1,2 +1,2 @@
-When built for nrf5340dk_nrf5340_cpuappns and nrf9160dk_nrf9160ns targets, the sample is configured to compile and run as a non-secure application.
+When built for nrf5340dk_nrf5340_cpuappns and nrf9160dk_nrf9160_ns targets, the sample is configured to compile and run as a non-secure application.
 Therefore, it automatically includes :ref:`TF-M <ug_tfm>` that prepares the required peripherals to be available for the application.
