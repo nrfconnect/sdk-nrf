@@ -214,7 +214,7 @@ The application supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: thingy91_nrf9160ns, nrf9160dk_nrf9160_ns
+   :rows: thingy91_nrf9160_ns, nrf9160dk_nrf9160_ns
 
 .. include:: /includes/spm.txt
 
@@ -377,7 +377,7 @@ The application contains examples of Kconfig overlays.
 The following configuration files are available in the application folder:
 
 * :file:`prj.conf` - Configuration file common for all build targets
-* :file:`boards/thingy91_nrf9160ns.conf` - Configuration file specific for Thingy:91. This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160ns`` build target.
+* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file specific for Thingy:91. This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160_ns`` build target.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for nRF9160 DK. This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
 * :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features  that consume extra power like LED control and logging.
 * :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities to the application

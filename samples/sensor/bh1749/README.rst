@@ -21,7 +21,7 @@ The sample supports the following nRF9160-based device:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: thingy91_nrf9160ns
+   :rows: thingy91_nrf9160_ns
 
 Building and Running
 ********************

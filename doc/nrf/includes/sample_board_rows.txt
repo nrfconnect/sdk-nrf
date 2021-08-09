@@ -54,9 +54,9 @@
 
 | nRF52820 Dongle | PCA10114 | nrf52820dongle_nrf52820 | ``nrf52820dongle_nrf52820`` |
 
-.. thingy91_nrf9160ns
+.. thingy91_nrf9160_ns
 
-| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91_nrf9160 | ``thingy91_nrf9160ns`` |
+| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91_nrf9160 | ``thingy91_nrf9160_ns`` |
 
 .. nrf52dk_nrf52810
 
