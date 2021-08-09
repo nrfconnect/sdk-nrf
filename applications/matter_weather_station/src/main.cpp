@@ -8,8 +8,13 @@
 
 #include <logging/log.h>
 
+#ifdef CONFIG_USB
+#include <usb/usb_device.h>
+#endif
+
 #include <platform/CHIPDeviceLayer.h>
 #include <support/CHIPMem.h>
+#include <system/SystemError.h>
 
 LOG_MODULE_REGISTER(app);
 
@@ -19,6 +24,13 @@ int main()
 {
 	int ret = 0;
 	CHIP_ERROR err = CHIP_NO_ERROR;
+
+#ifdef CONFIG_USB
+	err = chip::System::MapErrorZephyr(usb_enable(NULL));
+	if (err != CHIP_NO_ERROR) {
+		goto exit;
+	}
+#endif
 
 	err = chip::Platform::MemoryInit();
 	if (err != CHIP_NO_ERROR) {
@@ -47,11 +59,32 @@ int main()
 		goto exit;
 	}
 
-	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+#ifdef CONFIG_OPENTHREAD_MTD_SED
+	err = ConnectivityMgr().SetThreadDeviceType(
+		ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
 		goto exit;
 	}
+
+	ConnectivityManager::ThreadPollingConfig pollingConfig;
+	pollingConfig.Clear();
+	pollingConfig.ActivePollingIntervalMS = CONFIG_OPENTHREAD_POLL_PERIOD;
+	pollingConfig.InactivePollingIntervalMS = CONFIG_OPENTHREAD_POLL_PERIOD;
+
+	err = ConnectivityMgr().SetThreadPollingConfig(pollingConfig);
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ConnectivityMgr().SetThreadPollingConfig() failed");
+		goto exit;
+	}
+#else
+	err = ConnectivityMgr().SetThreadDeviceType(
+		ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
+		goto exit;
+	}
+#endif
 
 	ret = GetAppTask().StartApp();
 	if (ret != 0) {
