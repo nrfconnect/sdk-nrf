@@ -153,17 +153,17 @@ You can also program the Thingy:91 by using the images obtained by building the 
 To set up your system to be able to build a compatible firmware image, follow the :ref:`getting_started` guide for |NCS|.
 The build targets of interest for Thingy:91 in |NCS| are as follows:
 
-+---------------+--------------------------------------------------+
-|Component      |  Build target                                    |
-+===============+==================================================+
-|nRF9160 SiP    |``thingy91_nrf9160`` for the secure version       |
-|               |                                                  |
-|               |``thingy91_nrf9160ns`` for the non-secure version |
-+---------------+--------------------------------------------------+
-|nRF52840 SoC   |``thingy91_nrf52840``                             |
-+---------------+--------------------------------------------------+
++---------------+---------------------------------------------------+
+|Component      |  Build target                                     |
++===============+===================================================+
+|nRF9160 SiP    |``thingy91_nrf9160`` for the secure version        |
+|               |                                                   |
+|               |``thingy91_nrf9160_ns`` for the non-secure version |
++---------------+---------------------------------------------------+
+|nRF52840 SoC   |``thingy91_nrf52840``                              |
++---------------+---------------------------------------------------+
 
-You must use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
+You must use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160_ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
 
 .. note::
 
@@ -223,7 +223,7 @@ Building and programming using SEGGER Embedded Studio
    .. figure:: images/ses_thingy_configuration.png
       :alt: Opening the Asset tracker application
 
-      Opening the Asset tracker application for the thingy91_nrf9160ns build target
+      Opening the Asset tracker application for the thingy91_nrf9160_ns build target
 
    .. note::
 
@@ -293,7 +293,7 @@ To build and program the source code from the command line, complete the followi
 
       west build -b *build_target* -d *destination_directory_name*
 
-   The parameter *build_target* should be ``thingy91_nrf9160`` or ``thingy91_nrf9160ns`` if building for the nRF9160 SiP component and ``thingy91_nrf52840`` if building for the nRF52840 SoC component.
+   The parameter *build_target* should be ``thingy91_nrf9160`` or ``thingy91_nrf9160_ns`` if building for the nRF9160 SiP component and ``thingy91_nrf52840`` if building for the nRF52840 SoC component.
 
    .. note::
 

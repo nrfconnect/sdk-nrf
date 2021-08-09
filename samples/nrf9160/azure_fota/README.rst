@@ -16,7 +16,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: thingy91_nrf9160ns, nrf9160dk_nrf9160_ns
+   :rows: thingy91_nrf9160_ns, nrf9160dk_nrf9160_ns
 
 The sample also requires an Azure IoT Hub instance, and optionally an `Azure IoT Hub Device Provisioning Service (DPS)`_ instance, if the device is not already registered with the IoT hub.
 

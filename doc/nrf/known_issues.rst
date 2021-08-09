@@ -934,8 +934,8 @@ Secure Partition Manager (SPM)
 
 .. rst-class:: v1-5-1 v1-5-0
 
-CIA-248: Samples with default SPM config fails to build for ``thingy91_nrf9160ns``
-   All samples using the default SPM config fails to build for the ``thingy91_nrf9160ns``  build target if the sample is not set up with MCUboot.
+CIA-248: Samples with default SPM config fails to build for ``thingy91_nrf9160_ns``
+   All samples using the default SPM config fails to build for the ``thingy91_nrf9160_ns``  build target if the sample is not set up with MCUboot.
 
    **Workaround:** Use the master branch.
 
