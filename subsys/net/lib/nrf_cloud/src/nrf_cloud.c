@@ -283,21 +283,6 @@ int nrf_cloud_shadow_device_status_update(const struct nrf_cloud_device_status *
 	return err;
 }
 
-int nrf_cloud_sensor_attach(const struct nrf_cloud_sa_param *param)
-{
-	if (current_state != STATE_DC_CONNECTED) {
-		return -EACCES;
-	}
-
-	const struct nrf_cloud_evt evt = {
-		.type = NRF_CLOUD_EVT_SENSOR_ATTACHED
-	};
-
-	nfsm_set_current_state_and_notify(STATE_DC_CONNECTED, &evt);
-
-	return 0;
-}
-
 int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param)
 {
 	int err;
@@ -629,10 +614,6 @@ static void api_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		evt.type = CLOUD_EVT_READY;
 
 		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
-		break;
-	case NRF_CLOUD_EVT_SENSOR_ATTACHED:
-		LOG_DBG("NRF_CLOUD_EVT_SENSOR_ATTACHED");
-
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");

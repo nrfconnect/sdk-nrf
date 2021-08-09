@@ -103,9 +103,6 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
 		notify = true;
 		break;
-	case NRF_CLOUD_EVT_SENSOR_ATTACHED:
-		LOG_DBG("NRF_CLOUD_EVT_SENSOR_ATTACHED");
-		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
 		break;

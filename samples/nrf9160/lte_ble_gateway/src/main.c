@@ -288,8 +288,6 @@ static void on_cloud_evt_user_associated(void)
 /**@brief Callback for nRF Cloud events. */
 static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
-	int err;
-
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		printk("NRF_CLOUD_EVT_TRANSPORT_CONNECTED\n");
@@ -313,30 +311,8 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_READY:
 		printk("NRF_CLOUD_EVT_READY\n");
 		display_state = LEDS_CLOUD_CONNECTED;
-		struct nrf_cloud_sa_param param = {
-			.sensor_type = NRF_CLOUD_SENSOR_FLIP,
-		};
-
-		err = nrf_cloud_sensor_attach(&param);
-
-		if (err) {
-			printk("nrf_cloud_sensor_attach failed: %d\n", err);
-			nrf_cloud_error_handler(err);
-		}
-
-		param.sensor_type = NRF_CLOUD_SENSOR_GPS;
-		err = nrf_cloud_sensor_attach(&param);
-
-		if (err) {
-			printk("nrf_cloud_sensor_attach failed: %d\n", err);
-			nrf_cloud_error_handler(err);
-		}
-
 		sensors_init();
 		atomic_set(&send_data_enable, 1);
-		break;
-	case NRF_CLOUD_EVT_SENSOR_ATTACHED:
-		printk("NRF_CLOUD_EVT_SENSOR_ATTACHED\n");
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		printk("NRF_CLOUD_EVT_SENSOR_DATA_ACK\n");
