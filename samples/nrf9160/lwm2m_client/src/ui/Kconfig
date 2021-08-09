@@ -10,8 +10,8 @@ config UI_LED_USE_PWM
 	bool "Use PWM to control LEDs"
 	default y
 	depends on $(dt_alias_enabled,rgb-pwm)
-	select PWM if BOARD_THINGY91_NRF9160NS
-	select PWM_0 if BOARD_THINGY91_NRF9160NS
+	select PWM if BOARD_THINGY91_NRF9160_NS
+	select PWM_0 if BOARD_THINGY91_NRF9160_NS
 	help
 		If enabled, LEDs will be controlled with PWM. In order
 		to enable this option, the devicetree must have an
@@ -24,8 +24,8 @@ config UI_BUZZER
 	bool "Enable buzzer"
 	default y
 	depends on $(dt_alias_enabled,buzzer-pwm)
-	select PWM if BOARD_THINGY91_NRF9160NS
-	select PWM_1 if BOARD_THINGY91_NRF9160NS
+	select PWM if BOARD_THINGY91_NRF9160_NS
+	select PWM_1 if BOARD_THINGY91_NRF9160_NS
 	help
 		If enabled, a buzzer will be controllable with PWM. In
 		order to enable this option, the devicetree must have

@@ -24,8 +24,8 @@ config MBEDTLS_LIBRARY_NRF_SECURITY
 endchoice
 
 # This is a temporary solution to whitelist
-# BOARD_THINGY91_NRF9160NS in compliance
-config BOARD_THINGY91_NRF9160NS
+# BOARD_THINGY91_NRF9160_NS in compliance
+config BOARD_THINGY91_NRF9160_NS
 	bool
 
 # nRF Connect SDK needs a larger default stacks in certain configurations

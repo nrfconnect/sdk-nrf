@@ -9,7 +9,7 @@ if(CONFIG_BOARD_THINGY91_NRF9160 AND NOT DEFINED CONFIG_MCUBOOT)
 	zephyr_library_sources(board_secure.c)
 endif()
 
-if(CONFIG_BOARD_THINGY91_NRF9160NS)
+if(CONFIG_BOARD_THINGY91_NRF9160_NS)
 	zephyr_library()
 	zephyr_library_sources(board_nonsecure.c)
 

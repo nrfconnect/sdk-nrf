@@ -3,7 +3,7 @@ sample:
 tests:
   samples.nrf9160.memfault:
     build_only: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160ns
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
     tags: ci_build
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"

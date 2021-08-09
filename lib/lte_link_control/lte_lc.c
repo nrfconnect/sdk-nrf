@@ -152,13 +152,13 @@ static const char system_mode_preference[] = {
 };
 
 #if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT) && \
-	defined(CONFIG_BOARD_THINGY91_NRF9160NS)
+	defined(CONFIG_BOARD_THINGY91_NRF9160_NS)
 static const char thingy91_magpio[] = {
 	"AT%XMAGPIO=1,1,1,7,1,746,803,2,698,748,"
 	"2,1710,2200,3,824,894,4,880,960,5,791,849,"
 	"7,1565,1586"
 };
-#endif /* !CONFIG_NRF_MODEM_LIB_SYS_INIT && CONFIG_BOARD_THINGY91_NRF9160NS */
+#endif /* !CONFIG_NRF_MODEM_LIB_SYS_INIT && CONFIG_BOARD_THINGY91_NRF9160_NS */
 
 static struct k_sem link;
 
@@ -572,7 +572,7 @@ static int init_and_config(void)
 	}
 
 #if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT) && \
-	defined(CONFIG_BOARD_THINGY91_NRF9160NS)
+	defined(CONFIG_BOARD_THINGY91_NRF9160_NS)
 	/* Configuring MAGPIO, so that the correct antenna
 	 * matching network is used for each LTE band and GPS.
 	 */
