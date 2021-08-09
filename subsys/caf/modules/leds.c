@@ -20,7 +20,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_LEDS_LOG_LEVEL);
 #define LED_ID(led) ((led) - &leds[0])
 
 struct led {
-	const char *label;
 	const struct device *dev;
 	uint8_t color_count;
 
@@ -34,15 +33,13 @@ struct led {
 
 #ifdef CONFIG_CAF_LEDS_PWM
   #define DT_DRV_COMPAT pwm_leds
-  #define DEFAULT_LABEL(id) STRINGIFY(_CONCAT(LED_PWM_, id))
 #elif defined(CONFIG_CAF_LEDS_GPIO)
   #define DT_DRV_COMPAT gpio_leds
-  #define DEFAULT_LABEL(id) "leds"
 #else
   #error "LED driver must be specified in configuration"
 #endif
 
-#define _LED_COLOR_ID(id) 0,
+#define _LED_COLOR_ID(_unused) 0,
 
 #define _LED_COLOR_COUNT(id)					\
 	static const uint8_t led_colors_##id[] = {		\
@@ -53,7 +50,7 @@ DT_INST_FOREACH_STATUS_OKAY(_LED_COLOR_COUNT)
 
 #define _LED_INSTANCE_DEF(id)						\
 	{								\
-		.label = DT_INST_PROP_OR(id, label, DEFAULT_LABEL(id)),	\
+		.dev = DEVICE_DT_GET(DT_DRV_INST(id)),			\
 		.color_count = ARRAY_SIZE(led_colors_##id),		\
 	},
 
@@ -177,44 +174,20 @@ static void led_update(struct led *led)
 	}
 }
 
-static void verify_labels(void)
-{
-	/* Zephyr boards by default define "gpio_leds" compatible DT node called "leds". CAF LEDs
-	 * uses "leds" as a default name to get the related GPIO LED driver binding. In that case
-	 * only one CAF led instance can use the default driver device name. Using the same driver
-	 * device name by multiple instances would result in referring to improper driver device.
-	 */
-	if (IS_ENABLED(CONFIG_ASSERT) && IS_ENABLED(CONFIG_CAF_LEDS_GPIO)) {
-		size_t default_label_cnt = 0;
-
-		for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
-			if (!strcmp(leds[i].label, DEFAULT_LABEL(0))) {
-				default_label_cnt++;
-			}
-		}
-
-		__ASSERT_NO_MSG(default_label_cnt <= 1);
-	}
-}
-
 static int leds_init(void)
 {
 	int err = 0;
 
 	BUILD_ASSERT(DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT) > 0, "No LEDs defined");
 
-	verify_labels();
-
 	for (size_t i = 0; (i < ARRAY_SIZE(leds)) && !err; i++) {
 		struct led *led = &leds[i];
 
 		__ASSERT_NO_MSG((led->color_count == 1) || (led->color_count == 3));
 
-		led->dev = device_get_binding(led->label);
-
-		if (!led->dev) {
-			LOG_ERR("Cannot bind %s", led->label);
-			err = -ENXIO;
+		if (!device_is_ready(led->dev)) {
+			LOG_ERR("Device %s is not ready", led->dev->name);
+			err = -ENODEV;
 		} else {
 			k_work_init_delayable(&led->work, work_handler);
 			led_update(led);
