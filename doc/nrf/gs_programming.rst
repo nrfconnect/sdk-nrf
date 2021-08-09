@@ -73,7 +73,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
    .. build_SES_projimport_open_end
 
-   The following figure shows an example configuration for the Asset Tracker application built for the ``nrf9160dk_nrf9160ns`` build target:
+   The following figure shows an example configuration for the Asset Tracker application built for the ``nrf9160dk_nrf9160_ns`` build target:
 
    .. figure:: images/ses_config.png
       :alt: Opening the Asset Tracker project

@@ -129,7 +129,7 @@ The tests support the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160ns, nrf52840dk_nrf52840
+   :rows: nrf9160dk_nrf9160_ns, nrf52840dk_nrf52840
 
 .. note::
    Nordic devices such as nRF51, nRF52810, or nRF52811 cannot run the full test suite because of limited flash capacity.

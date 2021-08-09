@@ -31,7 +31,7 @@ The sample supports the following development kit:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160ns
+   :rows: nrf9160dk_nrf9160_ns
 
 The sample also requires a `Nordic Thingy:52`_.
 
@@ -77,7 +77,7 @@ After programming the board controller, you must program the main controller wit
 You can program the main controller as follows:
 
 1. Set the **SW5** switch, marked as *debug/prog*, in the **NRF91** position.
-#. Build the LTE Sensor Gateway sample (this sample) for the nrf9160dk_nrf9160ns build target and program the main controller with it.
+#. Build the LTE Sensor Gateway sample (this sample) for the nrf9160dk_nrf9160_ns build target and program the main controller with it.
 #. Verify that the program was successful.
    To do so, use a terminal emulator, like PuTTY, to connect to the first serial port and check the output.
    See :ref:`putty` for the required settings.

@@ -27,7 +27,7 @@ The sample supports the following development kit:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160ns
+   :rows: nrf9160dk_nrf9160_ns
 
 The sample also requires a signed firmware image that is available for download from an HTTP server.
 This image is automatically generated when building the application.
@@ -41,7 +41,7 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-The sample is built as a non-secure firmware image for the nrf9160dk_nrf9160ns build target.
+The sample is built as a non-secure firmware image for the nrf9160dk_nrf9160_ns build target.
 Because of this, it automatically includes the :ref:`secure_partition_manager`.
 The sample also uses MCUboot, which is automatically built and merged into the final HEX file when building the sample.
 

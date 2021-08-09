@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: thingy91_nrf9160ns, nrf9160dk_nrf9160ns
+   :rows: thingy91_nrf9160ns, nrf9160dk_nrf9160_ns
 
 Before using the Memfault platform, you must register an account in `Memfault`_ and a set up a project according to the instructions in `Memfault documentation <Memfault Docs_>`_.
 

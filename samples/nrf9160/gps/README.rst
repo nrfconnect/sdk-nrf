@@ -43,7 +43,7 @@ The sample supports the following development kit:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160ns
+   :rows: nrf9160dk_nrf9160_ns
 
 The sample can be optionally used with the SUPL Client library (for details on download, see :ref:`supl_client`).
 

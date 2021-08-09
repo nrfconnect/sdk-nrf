@@ -51,7 +51,7 @@ To disable serial output, you must change the project configuration associated w
     See :ref:`ug_nrf5340` and :ref:`ug_multi_image`.
 
 1. Set the project configuration ``CONFIG_SERIAL`` to ``n`` irrespective of whether you are building the sample for the secure or non-secure build targets.
-#. For the non-secure build target (``nrf9160dk_nrf9160ns``), ensure that serial logging is also disabled in :ref:`secure_partition_manager`. To disable serial logging in Secure Partition Manager, complete the following steps:
+#. For the non-secure build target (``nrf9160dk_nrf9160_ns``), ensure that serial logging is also disabled in :ref:`secure_partition_manager`. To disable serial logging in Secure Partition Manager, complete the following steps:
 
    a. Add a :file:`spm.conf` file in the project directory with the following content:
 
@@ -78,7 +78,7 @@ The average current reduces to 4 µA, which implies 14 years of battery life on 
 
 For a similar configuration, see the :ref:`udp` sample, which transmits UDP packets to an LTE network using an nRF9160 DK.
 You can use the sample to characterize the current consumption of the nRF9160 SiP.
-It is optimized for low power operation on the ``nrf9160dk_nrf9160ns`` build target without any modifications.
+It is optimized for low power operation on the ``nrf9160dk_nrf9160_ns`` build target without any modifications.
 
 Idle current due to other peripherals
 *************************************

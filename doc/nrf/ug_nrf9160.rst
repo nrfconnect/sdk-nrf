@@ -39,7 +39,7 @@ The secure bootloader chain starts the :ref:`nrf9160_ug_secure_partition_manager
 In Zephyr, :ref:`zephyr:nrf9160dk_nrf9160` is divided into two different build targets:
 
 * ``nrf9160dk_nrf9160`` for firmware in the secure domain
-* ``nrf9160dk_nrf9160ns`` for firmware in the non-secure domain
+* ``nrf9160dk_nrf9160_ns`` for firmware in the non-secure domain
 
 Make sure to select a suitable build target when building your application.
 
@@ -61,7 +61,7 @@ All nRF9160 samples require the :ref:`secure_partition_manager` sample.
 It provides a reference implementation of a Secure Partition Manager firmware.
 This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
 
-The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160ns`` build target.
+The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160_ns`` build target.
 To disable the automatic inclusion of the Secure Partition Manager sample, set the option :kconfig:`CONFIG_SPM` to "n" in the project configuration.
 
 Trusted Firmware-M (TF-M) support
@@ -80,7 +80,7 @@ Application
 -----------
 
 The user application runs in the non-secure domain.
-Therefore, it must be built for the ``nrf9160dk_nrf9160ns`` build target.
+Therefore, it must be built for the ``nrf9160dk_nrf9160_ns`` build target.
 
 The application image might require other images to be present.
 Depending on the configuration, all these images can be built at the same time in a :ref:`multi-image build <ug_multi_image>`.
@@ -328,7 +328,7 @@ For example, when building a non-secure application for nRF9160 DK v1.0.0, use `
 When building with |SES|, specify the board revision as additional CMake option (see :ref:`cmake_options` for instructions).
 For example, for nRF9160 DK v1.0.0, add the following CMake option::
 
-  -DBOARD=nrf9160dk_nrf9160ns@1.0.0
+  -DBOARD=nrf9160dk_nrf9160_ns@1.0.0
 
 See :ref:`zephyr:application_board_version` and :ref:`zephyr:nrf9160dk_additional_hardware` for more information.
 

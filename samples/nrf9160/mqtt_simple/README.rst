@@ -16,7 +16,7 @@ The sample supports the following development kit:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160ns
+   :rows: nrf9160dk_nrf9160_ns
 
 Additionally, the sample supports :ref:`qemu_x86`.
 
@@ -100,7 +100,7 @@ For example, when building on the command line, you can build the sample with th
 
   .. code-block:: console
 
-     west build -b nrf9160dk_nrf9160ns -- -DOVERLAY_CONFIG=overlay-tls.conf
+     west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-tls.conf
 
 .. note::
    The CA certificate for the default MQTT broker is included in the project and automatically provisioned after boot if the sample is built with the TLS configuration.
