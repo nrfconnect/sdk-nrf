@@ -18,7 +18,7 @@ Matter is in an early development stage and must be treated as an experimental f
 .. matter_intro_end
 
 The |NCS| allows you to develop applications that are compatible with Matter.
-See :ref:`matter_samples` for the list of available samples.
+See :ref:`matter_samples` for the list of available samples or :ref:`Matter Weather Station <matter_weather_station_app>` for specific Matter application.
 If you are new to Matter, check also the tutorials on `DevZone`_.
 
 .. note::

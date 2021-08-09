@@ -7,24 +7,18 @@
 cmake_minimum_required(VERSION 3.13.1)
 
 if (NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE release)
+  set(CMAKE_BUILD_TYPE ZDebug)
 endif()
 
-set(CONF_FILE "prj_${CMAKE_BUILD_TYPE}.conf")
-
-option(BUILD_WITH_DFU "Build target with Device Firmware Upgrade support" ON)
-if(BUILD_WITH_DFU)
-    list(INSERT OVERLAY_CONFIG 0 ${CMAKE_CURRENT_SOURCE_DIR}/../common/config/overlay-dfu_support.conf)
-    list(INSERT OVERLAY_CONFIG 0 ${CMAKE_CURRENT_SOURCE_DIR}/../common/config/overlay-dfu_nrf53_extension.conf)
-    set(mcuboot_CONF_FILE ${CMAKE_CURRENT_SOURCE_DIR}/child_image/mcuboot_${CMAKE_BUILD_TYPE}.conf)
-    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/thingy53_nrf5340_cpuapp/pm_static.yml)
-endif()
+set(CONF_FILE           ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/prj_${CMAKE_BUILD_TYPE}.conf)
+set(mcuboot_CONF_FILE   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf)
+set(PM_STATIC_YML_FILE  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml)
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-weather-station)
 
-set(COMMON_ROOT ${CMAKE_CURRENT_LIST_DIR}/../common)
+set(COMMON_ROOT ${CMAKE_CURRENT_LIST_DIR}/../../samples/matter/common)
 set(NLIO_ROOT ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/third_party/nlio/repo)
 include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/app/enable-gnu-std.cmake)
 
@@ -39,6 +33,7 @@ target_sources(app PRIVATE
                src/gen/callback-stub.cpp
                ${COMMON_ROOT}/src/thread_util.cpp
                ${COMMON_ROOT}/src/led_widget.cpp
+               ${COMMON_ROOT}/src/dfu_over_smp.cpp
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/DataModelHandler.cpp
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/reporting/reporting-default-configuration.cpp
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/reporting/reporting.cpp
@@ -71,7 +66,3 @@ target_sources(app PRIVATE
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/server/Server.cpp
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/server/StorablePeerConnection.cpp)
 # NORDIC SDK APP END
-
-if(BUILD_WITH_DFU)
-    target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu_over_smp.cpp)
-endif()
