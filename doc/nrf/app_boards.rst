@@ -52,7 +52,7 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            |                                                                 |                                       |
 |                   |            |                                                                 | ``nrf5340dk_nrf5340_cpuapp``          |
 |                   |            |                                                                 |                                       |
-|                   |            |                                                                 | ``nrf5340dk_nrf5340_cpuappns``        |
+|                   |            |                                                                 | ``nrf5340dk_nrf5340_cpuapp_ns``       |
 +-------------------+------------+-----------------------------------------------------------------+---------------------------------------+
 | nRF9160 DK        | PCA10090   | :ref:`nrf9160dk_nrf9160 <zephyr:nrf9160dk_nrf9160>`             | ``nrf9160dk_nrf9160``                 |
 |                   |            |                                                                 |                                       |
