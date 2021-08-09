@@ -69,7 +69,7 @@ Trusted Firmware-M (TF-M)
 In Zephyr, the application core is divided into two different build targets:
 
 * ``nrf5340dk_nrf5340_cpuapp`` for the secure domain
-* ``nrf5340dk_nrf5340_cpuappns`` for the non-secure domain
+* ``nrf5340dk_nrf5340_cpuapp_ns`` for the non-secure domain
 
 Inter-core communication
 ========================
@@ -335,7 +335,7 @@ To program a multi-image HEX file, you must add the project files for the networ
 Separate images
 ---------------
 
-To build and program only the application core, follow the instructions in :ref:`gs_programming_ses` and use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuappns`` as build target.
+To build and program only the application core, follow the instructions in :ref:`gs_programming_ses` and use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as build target.
 
 To build and program a dedicated network sample, follow the instructions in :ref:`gs_programming_ses` and use ``nrf5340dk_nrf5340_cpunet`` as the build target.
 
@@ -357,7 +357,7 @@ You must manually add a network core project to the application core project to 
 Follow these steps to build and program a multi-image build to the nRF5340 application core and network core:
 
 1. Follow the instructions in :ref:`gs_programming_ses` and open the application core sample (for example, :ref:`peripheral_lbs`) in |SES|.
-   Use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuappns`` as the build target.
+   Use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the build target.
 #. Build the sample as described in :ref:`gs_programming_ses`.
    This creates both the application core image and the network core image.
 #. Select :guilabel:`File` > :guilabel:`New Project`.

@@ -354,7 +354,7 @@ The application supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160ns, nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuappns, nrf52840dk_nrf52840
+   :rows: nrf9160dk_nrf9160ns, nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp_ns, nrf52840dk_nrf52840
 
 The nRF Pelion Client application is configured to compile and run as a non-secure application on nRF91's and nRF5340's Cortex-M33.
 Therefore, it automatically includes the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.

@@ -212,7 +212,7 @@ NCSDK-9786: Wrong FLASH_PAGE_ERASE_MAX_TIME_US for the nRF53 network core
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-7234: UART output is not received from the network core
-  The UART output is not received from the network core if the application core is programmed and running with a non-secure image (using the ``nrf5340dk_nrf5340_cpuappns`` build target).
+  The UART output is not received from the network core if the application core is programmed and running with a non-secure image (using the ``nrf5340dk_nrf5340_cpuapp_ns`` build target).
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0
 
@@ -796,7 +796,7 @@ Build system
 Missing files or permissions when building on Windows
   Because of the Windows path length limitations, the build can fail with errors related to permissions or missing files if some paths in the build are too long.
 
-  **Workaround:** Shorten the build folder name, for example, from "build_nrf5340dk_nrf5340_cpuappns" to "build", or shorten the path to the build folder in some other way.
+  **Workaround:** Shorten the build folder name, for example, from "build_nrf5340dk_nrf5340_cpuapp_ns" to "build", or shorten the path to the build folder in some other way.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 

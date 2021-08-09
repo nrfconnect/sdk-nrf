@@ -30,9 +30,9 @@
 
 | :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>` | ``nrf5340dk_nrf5340_cpuapp`` |
 
-.. nrf5340dk_nrf5340_cpuappns
+.. nrf5340dk_nrf5340_cpuapp_ns
 
-| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>` | ``nrf5340dk_nrf5340_cpuappns`` |
+| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>` | ``nrf5340dk_nrf5340_cpuapp_ns`` |
 
 .. nrf5340dk_nrf5340_cpunet
 
@@ -92,9 +92,9 @@
 
 .. nrf5340dk_nrf5340_cpuapp_and_cpuappns
 
-| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>` | ``nrf5340dk_nrf5340_cpuapp``   |
-|                                |          |                                              |                                |
-|                                |          |                                              | ``nrf5340dk_nrf5340_cpuappns`` |
+| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>` | ``nrf5340dk_nrf5340_cpuapp``    |
+|                                |          |                                              |                                 |
+|                                |          |                                              | ``nrf5340dk_nrf5340_cpuapp_ns`` |
 
 .. nrf5340dk_nrf5340_cpuapp_and_cpunet
 
