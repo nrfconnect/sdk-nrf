@@ -41,19 +41,19 @@ config TFM_MINIMAL
 	  needs a different TF-M configuration you have to disable this option
 	  and reproduce the desired configuration through kconfig fragments.
 
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
+
 if !TFM_MINIMAL
 rsource "Kconfig.mbedtls.defconfig"
-source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig"
+
+# When enabling full TFM support, then partitions and crypto modules shall be available.
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.partitions"
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules"
 endif
 
 if TFM_MINIMAL
-
 rsource "Kconfig.mbedtls_minimal.defconfig"
-
 rsource "Kconfig.tfm_minimal.defconfig"
-
-source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
-
 endif # TFM_MINIMAL
 
 if BUILD_WITH_TFM
