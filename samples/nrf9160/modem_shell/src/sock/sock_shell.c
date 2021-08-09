@@ -490,6 +490,21 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		err = sock_close(arg_socket_id);
 		break;
 	case SOCK_CMD_RAI:
+		{
+		bool rai_status = false;
+
+		(void)link_api_rai_status(&rai_status);
+		/* If RAI is disabled or reading it fails, show warning. It's only
+		 * warning because RAI status may be out of sync if device hadn't gone
+		 * to normal mode since changing it.
+		 */
+		if (!rai_status) {
+			shell_warn(
+				shell,
+				"RAI is requested but RAI is disabled.\n"
+				"Use 'link rai' command to enable it for socket usage.");
+		}
+
 		err = sock_rai(
 			arg_socket_id,
 			arg_rai_last,
@@ -498,6 +513,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 			arg_rai_ongoing,
 			arg_rai_wait_more);
 		break;
+		}
 	case SOCK_CMD_LIST:
 		err = sock_list();
 		break;

@@ -29,7 +29,8 @@ static const char icmp_ping_shell_cmd_usage_str[] =
 	"  -I, --cid, [int]         Use this option to bind pinging to specific CID.\n"
 	"                           See link cmd for interfaces\n"
 	"  -6, --ipv6,              Force IPv6 usage with the dual stack interfaces\n"
-	"  -r, --rai                Set RAI options for ping socket\n"
+	"  -r, --rai                Set RAI options for ping socket. In order to use RAI,\n"
+	"                           it must be enabled with 'link rai' command.\n"
 	"  -h, --help,              Shows this help information\n";
 
 /* Specifying the expected options (both long and short): */
@@ -175,8 +176,23 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 			ping_args.force_ipv6 = true;
 			break;
 		case 'r': /* RAI */
+			{
+			bool rai_status = false;
+
 			ping_args.rai = true;
+			(void)link_api_rai_status(&rai_status);
+			/* If RAI is disabled or reading it fails, show warning. It's only
+			 * warning because RAI status may be out of sync if device hadn't gone
+			 * to normal mode since changing it.
+			 */
+			if (!rai_status) {
+				shell_warn(
+					shell,
+					"RAI is requested but RAI is disabled.\n"
+					"Use 'link rai' command to enable it for ping usage.");
+			}
 			break;
+			}
 		case 'h': /* help */
 		default:
 			goto show_usage;

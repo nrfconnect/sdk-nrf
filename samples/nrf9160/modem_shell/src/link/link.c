@@ -625,6 +625,22 @@ int link_func_mode_set(enum lte_lc_func_mode fun)
 	return return_value;
 }
 
+void link_rai_read(void)
+{
+	bool rai_status = false;
+	int err;
+
+	err = link_api_rai_status(&rai_status);
+	if (err == 0) {
+		shell_print(
+			shell_global,
+			"Release Assistance Indication status is enabled=%d",
+			rai_status);
+	} else {
+		shell_error(shell_global, "Reading RAI failed with error code %d", err);
+	}
+}
+
 int link_rai_enable(bool enable)
 {
 	enum at_cmd_state state = AT_CMD_ERROR;

@@ -28,6 +28,7 @@ void link_modem_tau_notifications_subscribe(uint32_t warn_time_ms, uint32_t thre
 void link_modem_tau_notifications_unsubscribe(void);
 int link_func_mode_set(enum lte_lc_func_mode fun);
 int link_func_mode_get(void);
+void link_rai_read(void);
 int link_rai_enable(bool enable);
 
 #endif /* MOSH_LINK_H */

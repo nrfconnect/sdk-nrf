@@ -890,3 +890,61 @@ void link_api_modem_info_get_for_shell(const struct shell *shell, bool connected
 #endif /* CONFIG_AT_CMD */
 	}
 }
+
+#define AT_CMD_RAI "AT%RAI?"
+#define AT_CMD_RAI_RESP_PARAM_COUNT 2
+#define AT_CMD_RAI_RESP_ENABLE_INDEX 1
+
+int link_api_rai_status(bool *rai_status)
+{
+	enum at_cmd_state state = AT_CMD_ERROR;
+	struct at_param_list param_list = { 0 };
+	char at_response_str[20];
+	int err;
+	int status;
+
+	if (rai_status == NULL) {
+		return -EINVAL;
+	}
+	*rai_status = false;
+
+	err = at_cmd_write(AT_CMD_RAI, at_response_str, sizeof(at_response_str), &state);
+	if (state != AT_CMD_OK) {
+		shell_error(shell_global, "Error state=%d, error=%d", state, err);
+		return -EFAULT;
+	}
+
+	err = at_params_list_init(&param_list, AT_CMD_RAI_RESP_PARAM_COUNT);
+	if (err) {
+		shell_error(
+			shell_global,
+			"Could not init AT params list for \"%s\", error: %d",
+			AT_CMD_RAI, err);
+		return err;
+	}
+
+	err = at_parser_params_from_str(at_response_str, NULL, &param_list);
+	if (err) {
+		shell_error(
+			shell_global,
+			"Could not parse %s response, error: %d",
+			AT_CMD_RAI, err);
+		goto clean_exit;
+	}
+
+	err = at_params_int_get(&param_list, AT_CMD_RAI_RESP_ENABLE_INDEX, &status);
+	if (err) {
+		/* Invalid AT int resp parameter at given index */
+		shell_error(
+			shell_global,
+			"Could not find int parameter index=%d from response=%s, error: %d",
+			AT_CMD_RAI_RESP_ENABLE_INDEX, at_response_str, err);
+		goto clean_exit;
+	}
+
+	*rai_status = (bool)status;
+
+clean_exit:
+	at_params_list_free(&param_list);
+	return err;
+}
