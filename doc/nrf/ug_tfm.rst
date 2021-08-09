@@ -46,9 +46,9 @@ You must build TF-M using a non-secure build target.
 The following targets are currently supported:
 
 * ``nrf5340dk_nrf5340_cpuapp_ns``
-* ``nrf9160dk_nrf9160ns``
+* ``nrf9160dk_nrf9160_ns``
 
-When building for ``nrf9160dk_nrf9160ns``, UART1 must be disabled in the non-secure application, because it is used by the TF-M secure application.
+When building for ``nrf9160dk_nrf9160_ns``, UART1 must be disabled in the non-secure application, because it is used by the TF-M secure application.
 Otherwise, the non-secure application will fail to run.
 The recommended way to do this is to copy the .overlay file from the :ref:`tfm_hello_world` sample.
 

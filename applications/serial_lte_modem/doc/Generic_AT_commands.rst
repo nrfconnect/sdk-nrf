@@ -119,8 +119,8 @@ Power saving #XSLEEP
 The ``#XSLEEP`` command makes the nRF91 development kit go into idle or sleep mode.
 
 If you are going to do power measurements on the nRF9160 DK while running the SLM application it is recommended to disable unused peripherals.
-By default UART2 is enabled in the :file:`nrf9160dk_nrf9160ns.overlay` file so disable the UART2 by switching the status.
-Change the line ``status = "okay"`` to ``status = "disabled"`` and then save the :file:`nrf9160dk_nrf9160ns.overlay`` file to make sure you will get the expected power consumption numbers when doing the measurements.
+By default UART2 is enabled in the :file:`nrf9160dk_nrf9160_ns.overlay` file so disable the UART2 by switching the status.
+Change the line ``status = "okay"`` to ``status = "disabled"`` and then save the :file:`nrf9160dk_nrf9160_ns.overlay`` file to make sure you will get the expected power consumption numbers when doing the measurements.
 
 Set command
 -----------

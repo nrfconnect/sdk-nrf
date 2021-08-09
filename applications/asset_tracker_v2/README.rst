@@ -214,7 +214,7 @@ The application supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: thingy91_nrf9160ns, nrf9160dk_nrf9160ns
+   :rows: thingy91_nrf9160ns, nrf9160dk_nrf9160_ns
 
 .. include:: /includes/spm.txt
 
@@ -378,7 +378,7 @@ The following configuration files are available in the application folder:
 
 * :file:`prj.conf` - Configuration file common for all build targets
 * :file:`boards/thingy91_nrf9160ns.conf` - Configuration file specific for Thingy:91. This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160ns`` build target.
-* :file:`boards/nrf9160dk_nrf9160ns.conf` - Configuration file specific for nRF9160 DK. This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160ns`` build target.
+* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for nRF9160 DK. This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
 * :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features  that consume extra power like LED control and logging.
 * :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities to the application
 * :file:`boards/<BOARD>/led_state_def.h` - Header file that describes the LED behavior of the CAF LEDs module.
@@ -415,9 +415,9 @@ Building with overlays
 
 To build with Kconfig overlay, it must be based to the build system, as shown in the following example:
 
-``west build -b nrf9160dk_nrf9160ns -- -DOVERLAY_CONFIG=overlay-low-power.conf``
+``west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-low-power.conf``
 
-The above command will build for nRF9160 DK using the configurations found in :file:`overlay-low-power.conf`, in addition to the configurations found in :file:`prj_nrf9160dk_nrf9160ns.conf`.
+The above command will build for nRF9160 DK using the configurations found in :file:`overlay-low-power.conf`, in addition to the configurations found in :file:`prj_nrf9160dk_nrf9160_ns.conf`.
 If some options are defined in both files, the options set in the overlay take precedence.
 
 Testing

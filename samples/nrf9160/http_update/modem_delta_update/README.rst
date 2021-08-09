@@ -26,7 +26,7 @@ The sample supports the following development kit:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160ns
+   :rows: nrf9160dk_nrf9160_ns
 
 .. include:: /includes/spm.txt
 
@@ -38,7 +38,7 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-The sample is built as a non-secure firmware image for the ``nrf9160dk_nrf9160ns`` build target.
+The sample is built as a non-secure firmware image for the ``nrf9160dk_nrf9160_ns`` build target.
 Because of this, it automatically includes the :ref:`secure_partition_manager`.
 
 Testing
