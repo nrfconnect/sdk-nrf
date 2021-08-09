@@ -121,7 +121,7 @@ Kconfig*                                  @tejlmand
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
-/scripts/                                 @mbolivar @tejlmand
+/scripts/                                 @mbolivar-nordic @tejlmand
 /scripts/hid_configurator/                @pdunaj
 /scripts/tools-versions-*.txt             @tejlmand @asle-nordic @grho @shanta-14
 /share/zephyrbuild-package/               @tejlmand
