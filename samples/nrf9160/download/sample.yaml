@@ -3,9 +3,9 @@ sample:
 tests:
   samples.nrf9160.download_client:
     build_only: true
-    platform_allow: nrf9160dk_nrf9160ns
+    platform_allow: nrf9160dk_nrf9160_ns
     integration_platforms:
-      - nrf9160dk_nrf9160ns
+      - nrf9160dk_nrf9160_ns
     tags: ci_build
     extra_configs:
       - CONFIG_SHELL=y
@@ -13,8 +13,8 @@ tests:
       - CONFIG_DOWNLOAD_CLIENT_SHELL=y
   samples.nrf9160.download.tfm:
     build_only: true
-    platform_allow: nrf9160dk_nrf9160ns
+    platform_allow: nrf9160dk_nrf9160_ns
     integration_platforms:
-      - nrf9160dk_nrf9160ns
+      - nrf9160dk_nrf9160_ns
     tags: ci_build
     extra_args: OVERLAY_CONFIG="overlay-tfm.conf"

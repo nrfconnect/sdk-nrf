@@ -134,8 +134,8 @@ config ACCEL_TRIGGER
 
 config FLIP_INPUT
 	int "Button or switch number to simulate flip"
-	range 1 4 if BOARD_NRF9160DK_NRF9160NS
-	default 3 if BOARD_NRF9160DK_NRF9160NS
+	range 1 4 if BOARD_NRF9160DK_NRF9160_NS
+	default 3 if BOARD_NRF9160DK_NRF9160_NS
 	default 0
 	help
 		Button or switch number to use for simulating
@@ -195,8 +195,8 @@ config ACCEL_CALIBRATION_ITERATIONS
 
 config CALIBRATION_INPUT
 	int "Button to trigger accelerometer calibration"
-	range 1 2 if BOARD_NRF9160DK_NRF9160NS
-	default 1 if BOARD_NRF9160DK_NRF9160NS
+	range 1 2 if BOARD_NRF9160DK_NRF9160_NS
+	default 1 if BOARD_NRF9160DK_NRF9160_NS
 	help
 		Button number to use to trigger accelerometer calibration:
 		1 - Button 1
