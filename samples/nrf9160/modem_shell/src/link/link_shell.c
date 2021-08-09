@@ -102,8 +102,8 @@ static const char link_usage_str[] =
 	"  edrx:         Enable/disable eDRX with default or with custom parameters\n"
 	"  psm:          Enable/disable Power Saving Mode (PSM) with\n"
 	"                default or with custom parameters\n"
-	"  rai:          Enable/disable RAI feature. Actual use must be set for sockets\n"
-	"                with 'sock rai' command. Effective when going to normal mode.\n";
+	"  rai:          Enable/disable RAI feature. Actual use must be set for commands\n"
+	"                supporting RAI. Effective when going to normal mode.\n";
 
 static const char link_settings_usage_str[] =
 	"Usage: link settings --read | --reset\n"
@@ -266,6 +266,7 @@ static const char link_tau_usage_str[] =
 static const char link_rai_usage_str[] =
 	"Usage: link rai --enable | --disable\n"
 	"Options:\n"
+	"  -r, --read,         Read current RAI status\n"
 	"  -d, --disable,      Disable RAI\n"
 	"  -e, --enable,       Enable RAI\n";
 
@@ -1340,10 +1341,14 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 					     auth_params_ptr);
 	} break;
 	case LINK_CMD_RAI:
-		if (link_cmd_args.common_option == LINK_COMMON_ENABLE) {
+		if (link_cmd_args.common_option == LINK_COMMON_READ) {
+			link_rai_read();
+		} else if (link_cmd_args.common_option == LINK_COMMON_ENABLE) {
 			link_rai_enable(true);
-		} else {
+		} else if (link_cmd_args.common_option == LINK_COMMON_DISABLE) {
 			link_rai_enable(false);
+		} else {
+			goto show_usage;
 		}
 		break;
 	case LINK_CMD_DISCONNECT:
