@@ -19,20 +19,6 @@
 #include <app/server/Server.h>
 #include <app/util/attribute-storage.h>
 
-/* MCUMgr BT FOTA includes */
-#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
-#include "os_mgmt/os_mgmt.h"
-#endif
-#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
-#include "img_mgmt/img_mgmt.h"
-#endif
-#ifdef CONFIG_MCUMGR_SMP_BT
-#include <mgmt/mcumgr/smp_bt.h>
-#endif
-#ifdef CONFIG_BOOTLOADER_MCUBOOT
-#include <dfu/mcuboot.h>
-#endif
-
 #include <dk_buttons_and_leds.h>
 #include <logging/log.h>
 #include <zephyr.h>
@@ -83,16 +69,9 @@ int AppTask::Init()
 		return ret;
 	}
 
-#ifdef CONFIG_BOOTLOADER_MCUBOOT
-	/* Check if the image is run in the REVERT mode and eventually
-	confirm it to prevent reverting on the next boot. */
-	if (mcuboot_swap_type() == BOOT_SWAP_TYPE_REVERT) {
-		if (boot_write_img_confirmed()) {
-			LOG_ERR("Confirming firmware image failed, it will be reverted on the next boot.");
-		} else {
-			LOG_INF("New firmware image confirmed.");
-		}
-	}
+#ifdef CONFIG_MCUMGR_SMP_BT
+	GetDFUOverSMP().Init(RequestSMPAdvertisingStart);
+	GetDFUOverSMP().ConfirmNewImage();
 #endif
 
 	/* Initialize function timer */
@@ -107,7 +86,7 @@ int AppTask::Init()
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
-#ifdef CONFIG_CHIP_NFC_COMMISSIONING
+#if defined(CONFIG_CHIP_NFC_COMMISSIONING) || defined(CONFIG_MCUMGR_SMP_BT)
 	PlatformMgr().AddEventHandler(AppTask::ChipEventHandler, 0);
 #endif
 
@@ -196,13 +175,12 @@ void AppTask::UpdateClusterState()
 	}
 }
 
-int AppTask::SoftwareUpdateConfirmationHandler(uint32_t offset, uint32_t size, void *arg)
+#ifdef CONFIG_MCUMGR_SMP_BT
+void AppTask::RequestSMPAdvertisingStart(void)
 {
-	/* For now just print update progress and confirm data chunk without any additional checks. */
-	LOG_INF("Software update progress %d B / %d B", offset, size);
-
-	return 0;
+	sAppTask.PostEvent(AppEvent{ AppEvent::StartSMPAdvertising });
 }
+#endif
 
 void AppTask::DispatchEvent(const AppEvent &event)
 {
@@ -236,6 +214,11 @@ void AppTask::DispatchEvent(const AppEvent &event)
 	case AppEvent::StartBleAdvertising:
 		StartBLEAdvertisingHandler();
 		break;
+#ifdef CONFIG_MCUMGR_SMP_BT
+	case AppEvent::StartSMPAdvertising:
+		GetDFUOverSMP().StartBLEAdvertising();
+		break;
+#endif
 	default:
 		LOG_INF("Unknown event received");
 		break;
@@ -277,19 +260,8 @@ void AppTask::FunctionReleaseHandler()
 		sAppTask.CancelFunctionTimer();
 		sAppTask.mFunction = TimerFunction::NoneSelected;
 
-#if defined(CONFIG_MCUMGR_SMP_BT) && defined(CONFIG_MCUMGR_CMD_IMG_MGMT) && defined(CONFIG_MCUMGR_CMD_OS_MGMT)
-		if (!sAppTask.mSoftwareUpdateEnabled) {
-			sAppTask.mSoftwareUpdateEnabled = true;
-			os_mgmt_register_group();
-			img_mgmt_register_group();
-			img_mgmt_set_upload_cb(SoftwareUpdateConfirmationHandler, NULL);
-			smp_bt_register();
-
-			LOG_INF("Enabled software update");
-		} else {
-			LOG_INF("Software update is already enabled");
-		}
-
+#ifdef CONFIG_MCUMGR_SMP_BT
+		GetDFUOverSMP().StartServer();
 #else
 		LOG_INF("Software update is disabled");
 #endif
@@ -348,8 +320,9 @@ void AppTask::StartThreadHandler()
 
 void AppTask::StartBLEAdvertisingHandler()
 {
-	if (chip::DeviceLayer::ConnectivityMgr().IsThreadProvisioned() && !sAppTask.mSoftwareUpdateEnabled) {
-		LOG_INF("NFC Tag emulation and BLE advertisement not started - device is commissioned to a Thread network.");
+	/* Don't allow on starting Matter service BLE advertising after Thread provisioning. */
+	if (ConnectivityMgr().IsThreadProvisioned()) {
+		LOG_INF("NFC Tag emulation and Matter service BLE advertisement not started - device is commissioned to a Thread network.");
 		return;
 	}
 
@@ -365,23 +338,34 @@ void AppTask::StartBLEAdvertisingHandler()
 	}
 }
 
-#ifdef CONFIG_CHIP_NFC_COMMISSIONING
 void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 {
-	if (event->Type == DeviceEventType::kCHIPoBLEAdvertisingChange) {
-		if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
-			if (NFCMgr().IsTagEmulationStarted()) {
-				LOG_INF("NFC Tag emulation is already started");
-			} else {
-				ShareQRCodeOverNFC(
-					chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
-			}
-		} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
-			NFCMgr().StopTagEmulation();
+	if (event->Type != DeviceEventType::kCHIPoBLEAdvertisingChange)
+		return;
+
+	if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING
+		NFCMgr().StopTagEmulation();
+#endif
+#ifdef CONFIG_MCUMGR_SMP_BT
+		/* After CHIPoBLE advertising stop, start advertising SMP in case Thread is enabled or there are no
+		 * active CHIPoBLE connections (exclude the case when CHIPoBLE advertising is stopped on the connection
+		 * time) */
+		if (GetDFUOverSMP().IsEnabled() &&
+		    (ConnectivityMgr().IsThreadProvisioned() || ConnectivityMgr().NumBLEConnections() == 0))
+			sAppTask.RequestSMPAdvertisingStart();
+#endif
+	}
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING
+	else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
+		if (NFCMgr().IsTagEmulationStarted()) {
+			LOG_INF("NFC Tag emulation is already started");
+		} else {
+			ShareQRCodeOverNFC(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 		}
 	}
-}
 #endif
+}
 
 void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)
 {

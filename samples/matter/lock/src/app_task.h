@@ -11,6 +11,10 @@
 
 #include <platform/CHIPDeviceLayer.h>
 
+#ifdef CONFIG_MCUMGR_SMP_BT
+#include "dfu_over_smp.h"
+#endif
+
 struct k_timer;
 
 class AppTask {
@@ -38,7 +42,9 @@ private:
 	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void TimerEventHandler(k_timer *timer);
 	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
-	static int SoftwareUpdateConfirmationHandler(uint32_t offset, uint32_t size, void *arg);
+#ifdef CONFIG_MCUMGR_SMP_BT
+	static void RequestSMPAdvertisingStart(void);
+#endif
 
 	friend AppTask &GetAppTask();
 
@@ -48,7 +54,6 @@ private:
 
 	static AppTask sAppTask;
 	bool mFunctionTimerActive = false;
-	bool mSoftwareUpdateEnabled = false;
 };
 
 inline AppTask &GetAppTask()

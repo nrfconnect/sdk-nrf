@@ -13,7 +13,13 @@ struct AppEvent {
 
 	enum FunctionEventType : uint8_t { FunctionPress = CompleteLockAction + 1, FunctionRelease, FunctionTimer };
 
-	enum OtherEventType : uint8_t { StartThread = FunctionTimer + 1, StartBleAdvertising };
+	enum OtherEventType : uint8_t {
+		StartThread = FunctionTimer + 1,
+		StartBleAdvertising,
+#ifdef CONFIG_MCUMGR_SMP_BT
+		StartSMPAdvertising
+#endif
+	};
 
 	AppEvent() = default;
 	AppEvent(LockEventType type, bool chipInitiated) : Type(type), LockEvent{ chipInitiated } {}
@@ -23,8 +29,7 @@ struct AppEvent {
 	uint8_t Type;
 
 	union {
-		struct {
-			/* was the event triggered by CHIP Data Model layer */
+		struct { /* was the event triggered by CHIP Data Model layer */
 			bool ChipInitiated;
 		} LockEvent;
 	};
