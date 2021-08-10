@@ -72,8 +72,8 @@ int location_request(const struct loc_config *config)
 	int err;
 	struct loc_method_config selected_method = { 0 };
 
-	if (config->interval > 0) {
-		LOG_ERR("Periodic location updates not yet supported.");
+	if ((config->interval > 0) && (config->interval < 10)) {
+		LOG_ERR("Interval for periodic location updates must be 10...65535 seconds.");
 		return -EINVAL;
 	}
 
@@ -104,23 +104,9 @@ int location_request(const struct loc_config *config)
 
 	/* TODO: Add protection so that only one request is handled at a time */
 
-	/* Single fix mode */
-	err = nrf_modem_gnss_fix_interval_set(0);
-	err |= nrf_modem_gnss_fix_retry_set(selected_method.config.gnss.timeout);
-	if (err) {
-		LOG_ERR("Failed to configure GNSS");
-		return -EINVAL;
-	}
+	err = gnss_configure_and_start(&selected_method.config.gnss, config->interval);
 
-	err = nrf_modem_gnss_start();
-	if (err) {
-		LOG_ERR("Failed to start GNSS");
-		return err;
-	}
-
-	LOG_DBG("GNSS started");
-
-	return 0;
+	return err;
 }
 
 int location_request_cancel(void)
