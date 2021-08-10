@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Increase the heap size of mbedtls when building with TF-M.
+config MBEDTLS_HEAP_SIZE
+	default 8320 if BUILD_WITH_TFM

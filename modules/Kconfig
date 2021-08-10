@@ -5,6 +5,7 @@
 #
 
 rsource "Kconfig.mcuboot"
-rsource "tfm/zephyr/Kconfig"
 rsource "cddl-gen/Kconfig"
+rsource "mbedtls/Kconfig"
 rsource "memfault/Kconfig"
+rsource "tfm/zephyr/Kconfig"
