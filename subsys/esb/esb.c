@@ -938,7 +938,7 @@ static void get_and_clear_irqs(uint32_t *interrupts)
 	irq_unlock(key);
 }
 
-static void RADIO_IRQHandler(void)
+static void radio_irq_handler(void)
 {
 	if (NRF_RADIO->EVENTS_READY &&
 	    (NRF_RADIO->INTENSET & RADIO_INTENSET_READY_Msk)) {
@@ -969,7 +969,7 @@ static void RADIO_IRQHandler(void)
 	}
 }
 
-static void ESB_EVT_IRQHandler(void)
+static void esb_evt_irq_handler(void)
 {
 	uint32_t interrupts;
 	struct esb_evt event;
@@ -993,8 +993,30 @@ static void ESB_EVT_IRQHandler(void)
 	}
 }
 
-static void ESB_SYS_TIMER_IRQHandler(void)
+ISR_DIRECT_DECLARE(RADIO_IRQHandler)
 {
+	radio_irq_handler();
+
+	ISR_DIRECT_PM();
+
+	return 1;
+}
+
+
+ISR_DIRECT_DECLARE(ESB_EVT_IRQHandler)
+{
+	esb_evt_irq_handler();
+
+	ISR_DIRECT_PM();
+
+	return 1;
+}
+
+ISR_DIRECT_DECLARE(ESB_SYS_TIMER_IRQHandler)
+{
+	ISR_DIRECT_PM();
+
+	return 1;
 }
 
 int esb_init(const struct esb_config *config)
