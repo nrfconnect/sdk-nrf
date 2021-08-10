@@ -12,7 +12,7 @@
 # is used to link documentation sets together. It is configured in the Sphinx
 # configuration files.
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.20.0)
 project(nrf-connect-sdk-doc LANGUAGES NONE)
 
 set(NO_BOILERPLATE TRUE)

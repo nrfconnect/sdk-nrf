@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-cmake_minimum_required(VERSION 3.13.1)
+cmake_minimum_required(VERSION 3.20.0)
 
 # Stub for ZBOSS callout
 add_compile_definitions(zb_nvram_erase_finished=zb_nvram_erase_finished_stub)
