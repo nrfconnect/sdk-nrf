@@ -13,7 +13,14 @@ struct AppEvent {
 
 	enum FunctionEventType : uint8_t { FunctionPress = Level + 1, FunctionRelease, FunctionTimer };
 
-	enum OtherEventType : uint8_t { StartThread = FunctionTimer + 1, StartBleAdvertising, PublishLightBulbService };
+	enum OtherEventType : uint8_t {
+		StartThread = FunctionTimer + 1,
+		StartBleAdvertising,
+		PublishLightBulbService,
+#ifdef CONFIG_MCUMGR_SMP_BT
+		StartSMPAdvertising
+#endif
+	};
 
 	AppEvent() = default;
 

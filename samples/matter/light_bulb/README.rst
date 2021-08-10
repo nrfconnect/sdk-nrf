@@ -189,9 +189,8 @@ Commissioning the device
     :start-after: matter_door_lock_sample_commissioning_start
     :end-before: matter_door_lock_sample_commissioning_end
 
-Before starting the commissioning procedure, you must make the device discoverable over Bluetooth LE.
-To enable Bluetooth LE for a predefined period of time (15 minutes by default), press **Button 4**.
-If the Bluetooth LE advertising times out, you can re-enable using the same button.
+Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE, which starts automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
+If the Bluetooth LE advertising times out, you can re-enable it by pressing **Button 4**.
 
 When you start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
 The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, printed to the UART console, and can be shared using an NFC tag.

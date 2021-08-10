@@ -70,3 +70,7 @@ target_sources(app PRIVATE
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/server/Server.cpp
                ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/server/StorablePeerConnection.cpp)
 # NORDIC SDK APP END
+
+if(BUILD_WITH_DFU)
+    target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu_over_smp.cpp)
+endif()

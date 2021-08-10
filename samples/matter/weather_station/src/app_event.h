@@ -7,7 +7,14 @@
 #pragma once
 
 struct AppEvent {
-	enum class Type { kButtonPush, kButtonRelease, kTimer };
+	enum class Type {
+		kButtonPush,
+		kButtonRelease,
+		kTimer,
+#ifdef CONFIG_MCUMGR_SMP_BT
+		kStartSMPAdvertising
+#endif
+	};
 
 	using Handler = void (*)(AppEvent *);
 

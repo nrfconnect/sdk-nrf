@@ -10,6 +10,10 @@
 
 #include <platform/CHIPDeviceLayer.h>
 
+#ifdef CONFIG_MCUMGR_SMP_BT
+#include "dfu_over_smp.h"
+#endif
+
 struct k_timer;
 
 class AppTask {
@@ -28,7 +32,9 @@ private:
 	void OpenPairingWindow();
 	void DispatchEvent(AppEvent *event);
 
-	static int SoftwareUpdateConfirmationHandler(uint32_t offset, uint32_t size, void *arg);
+#ifdef CONFIG_MCUMGR_SMP_BT
+	static void RequestSMPAdvertisingStart(void);
+#endif
 	static void ButtonStateHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void ButtonPushHandler(AppEvent *event);
 	static void ButtonReleaseHandler(AppEvent *event);

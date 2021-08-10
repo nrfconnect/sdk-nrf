@@ -185,6 +185,8 @@ The following list summarizes the most important changes inherited from the upst
 
   * Support for Certificate-Authenticated Session Establishment (CASE) for communication among operational Matter nodes.
   * Support for OpenThread's DNS Client to enable Matter node discovery on Thread devices.
+  * Fixed the known issue KRKNWK-10387 where Matter service was needlessly advertised over Bluetooth LE during DFU.
+    Now if Matter pairing mode is not opened and the Bluetooth LE advertising is needed due to DFU requirements, only the SMP service is advertised.
 
 Documentation
 =============
