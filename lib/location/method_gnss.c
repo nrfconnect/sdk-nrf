@@ -72,13 +72,25 @@ void gnss_timeout_work_fn(struct k_work *item)
 
 int gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t interval)
 {
+	int err = 0;
+
 	if (interval == 1 ) {
 		LOG_ERR("Failed to configure GNSS, continuous navigation "
 			"not supported at the moment.");
 		return -EINVAL;
 	}
 
-	int err = nrf_modem_gnss_fix_interval_set(interval);
+	if (gnss_config->accuracy == LOC_ACCURACY_LOW)
+	{
+		uint8_t use_case;
+
+		use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START |
+			   NRF_MODEM_GNSS_USE_CASE_LOW_ACCURACY;
+
+		err = nrf_modem_gnss_use_case_set(use_case);
+	}
+
+	err |= nrf_modem_gnss_fix_interval_set(interval);
 
 	err |= nrf_modem_gnss_fix_retry_set(gnss_config->timeout);
 	if (err) {
