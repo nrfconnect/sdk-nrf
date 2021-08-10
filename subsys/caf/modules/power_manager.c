@@ -52,14 +52,13 @@ static struct k_work_delayable  error_trigger;
 static struct module_flags power_mode_restrict_flags[POWER_MANAGER_LEVEL_MAX];
 
 
-static bool check_power_alive_required(void)
-{
-	return !module_flags_check_zero(&power_mode_restrict_flags[0]);
-}
+static bool check_if_power_state_allowed(enum power_manager_level lvl);
+
 
 static void power_down_counter_reset(void)
 {
-	if ((power_state == POWER_STATE_IDLE) && !check_power_alive_required()) {
+	if ((power_state == POWER_STATE_IDLE) &&
+	    check_if_power_state_allowed(POWER_MANAGER_LEVEL_SUSPENDED)) {
 		k_work_reschedule(&power_down_trigger, POWER_DOWN_TIMEOUT);
 		LOG_INF("Power down timer restarted");
 	}
@@ -144,7 +143,8 @@ static void system_off_on_error(void)
 
 static void power_down(struct k_work *work)
 {
-	__ASSERT_NO_MSG((power_state == POWER_STATE_IDLE) && !check_power_alive_required());
+	__ASSERT_NO_MSG(power_state == POWER_STATE_IDLE);
+	__ASSERT_NO_MSG(check_if_power_state_allowed(POWER_MANAGER_LEVEL_SUSPENDED));
 
 	LOG_INF("System power down");
 
@@ -200,20 +200,42 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_power_manager_restrict_event(eh)) {
-		bool was_alive_forced = check_power_alive_required();
 		const struct power_manager_restrict_event *event =
 			cast_power_manager_restrict_event(eh);
 
+		bool was_sus_allowed = check_if_power_state_allowed(POWER_MANAGER_LEVEL_SUSPENDED);
+		bool was_off_allowed = check_if_power_state_allowed(POWER_MANAGER_LEVEL_OFF);
+
 		restrict_power_state(event->module_idx, event->level);
-		if (was_alive_forced != check_power_alive_required()) {
-			if (was_alive_forced) {
-				power_down_counter_reset();
-			} else {
-				power_down_counter_abort();
-				if (power_state == POWER_STATE_SUSPENDING ||
-				    power_state == POWER_STATE_SUSPENDED) {
-					send_wake_up();
-				}
+
+		bool is_sus_allowed = check_if_power_state_allowed(POWER_MANAGER_LEVEL_SUSPENDED);
+		bool is_off_allowed = check_if_power_state_allowed(POWER_MANAGER_LEVEL_OFF);
+
+		if (!was_sus_allowed && is_sus_allowed) {
+			/* System suspend is now allowed - restart timer. */
+			power_down_counter_reset();
+		}
+		if (!is_sus_allowed && was_sus_allowed) {
+			/* System suspend is not allowed.
+			 * Turn off suspend timer. If needed wakeup system.
+			 */
+			power_down_counter_abort();
+			if (power_state != POWER_STATE_IDLE) {
+				send_wake_up();
+			}
+		}
+
+		if (!was_off_allowed && is_off_allowed) {
+			/* System off is now allowed. Turn system off if needed. */
+			if (power_state == POWER_STATE_SUSPENDED) {
+				system_off();
+			}
+		}
+		if (is_off_allowed && !was_off_allowed) {
+			/* System off is not allowed. Reboot if needed. */
+			if (power_state == POWER_STATE_OFF) {
+				LOG_INF("Off restricted - rebooting");
+				sys_reboot(SYS_REBOOT_WARM);
 			}
 		}
 
