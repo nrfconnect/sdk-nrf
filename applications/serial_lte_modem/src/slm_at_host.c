@@ -832,5 +832,8 @@ void slm_at_host_uninit(void)
 		LOG_WRN("Can't power off uart: %d", err);
 	}
 
+	/* Un-initialize AT Parser */
+	at_params_list_free(&at_param_list);
+
 	LOG_DBG("at_host uninit done");
 }
