@@ -4,9 +4,9 @@ sample:
   name: hello world TFM
 common:
     tags: tfm
-    platform_allow: nrf5340dk_nrf5340_cpuappns nrf9160dk_nrf9160ns
+    platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf9160dk_nrf9160ns
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuappns
+      - nrf5340dk_nrf5340_cpuapp_ns
       - nrf9160dk_nrf9160ns
     harness: console
     harness_config:
