@@ -1,5 +1,5 @@
 tests:
   lib.hw_unique_key_tfm:
-    platform_allow: nrf9160dk_nrf9160ns nrf5340dk_nrf5340_cpuappns
+    platform_allow: nrf9160dk_nrf9160ns nrf5340dk_nrf5340_cpuapp_ns
     tags: hw_unique_key
     build_only: true

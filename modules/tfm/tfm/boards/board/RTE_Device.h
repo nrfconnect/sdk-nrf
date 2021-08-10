@@ -42,7 +42,7 @@
 // <i> Configuration settings for Driver_USART1 in component ::Drivers:USART
 #define   RTE_USART1                    1
 //   <h> Pin Selection (0xFFFFFFFF means Disconnected)
-#if defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPPNS)
+#if defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP_NS)
 //     <o> TXD
 #define   RTE_USART1_TXD_PIN            25 // TODO: Add to devicetree
 //     <o> RXD

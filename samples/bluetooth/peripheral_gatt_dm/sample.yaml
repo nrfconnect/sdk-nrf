@@ -5,11 +5,11 @@ tests:
   samples.bluetooth.peripheral_gatt_dm:
     build_only: true
     platform_allow: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840
-      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuappns
+      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns
     integration_platforms:
       - nrf51dk_nrf51422
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-      - nrf5340dk_nrf5340_cpuappns
+      - nrf5340dk_nrf5340_cpuapp_ns
     tags: bluetooth ci_build
