@@ -87,6 +87,15 @@ config MOSH_WORKER_THREADS
 endmenu
 endif #MOSH_IPERF3
 
+config MOSH_LOCATION_API
+	bool "Location API support"
+	default y
+	select LOCATION
+	select METHOD_GNSS
+	select METHOD_CELLULAR
+	help
+	  Location queries via Location API.
+
 if MOSH_LINK
 menu "MoSH link control selections"
 

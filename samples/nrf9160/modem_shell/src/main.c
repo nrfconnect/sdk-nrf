@@ -49,6 +49,10 @@
 #include "mosh_defines.h"
 #include "mosh_print.h"
 
+#if defined(CONFIG_MOSH_LOCATION_API)
+#include "location_shell.h"
+#endif
+
 /* Global variables */
 struct modem_param_info modem_param;
 struct k_poll_signal mosh_signal;
@@ -179,6 +183,10 @@ void main(void)
 	if (err) {
 		printk("Failed to initialize DK buttons library, error: %d", err);
 	}
+
+#if defined(CONFIG_MOSH_LOCATION_API)
+	location_ctrl_init();
+#endif
 
 	/* Application started successfully, mark image as OK to prevent
 	 * revert at next reboot.
