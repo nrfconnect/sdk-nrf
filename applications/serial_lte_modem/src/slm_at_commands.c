@@ -476,6 +476,7 @@ int slm_at_parse(const char *at_cmd)
 		if (slm_util_cmd_casecmp(at_cmd, slm_at_cmd_list[i].string)) {
 			enum at_cmd_type type = at_parser_cmd_type_get(at_cmd);
 
+			at_params_list_clear(&at_param_list);
 			ret = at_parser_params_from_str(at_cmd, NULL, &at_param_list);
 			if (ret) {
 				LOG_ERR("Failed to parse AT command %d", ret);

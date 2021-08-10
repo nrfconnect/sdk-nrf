@@ -172,6 +172,7 @@ void util_get_ip_addr(char *addr4, char *addr6)
 	 * PDN type "IPV6": PDP_addr_1 is <IPv6>
 	 * PDN type "IPV4V6": <IPv4>,<IPv6> or <IPV4> or <IPv6>
 	 */
+	at_params_list_clear(&at_param_list);
 	err = at_parser_params_from_str(rsp, NULL, &at_param_list);
 	if (err) {
 		return;
