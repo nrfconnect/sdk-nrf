@@ -89,7 +89,7 @@ Kconfig*                                  @tejlmand
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @nvlsianpu
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
-/samples/sensor/bh1749/                   @wlgrd
+/samples/sensor/bh1749/                   @jfischer-no
 /samples/bluetooth/                       @joerchan @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga @joerchan
