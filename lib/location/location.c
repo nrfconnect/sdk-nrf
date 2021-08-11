@@ -17,9 +17,6 @@ LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 location_event_handler_t event_handler;
 struct loc_event_data event_data;
 
-extern struct k_work gnss_fix_work;
-extern struct k_work gnss_timeout_work;
-
 void event_data_init(enum loc_event_id event_id, enum loc_method method)
 {
 	memset(&event_data, 0, sizeof(event_data));
@@ -45,20 +42,11 @@ int location_init(location_event_handler_t handler)
 
 	event_handler = handler;
 
-	err = nrf_modem_gnss_init();
+	err = gnss_init();
 	if (err) {
-		LOG_ERR("Failed to initialize GNSS interface, error %d", err);
-		return -err;
+		LOG_ERR("Failed to initialize GNSS method");
+		return err;
 	}
-
-	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
-	if (err) {
-		LOG_ERR("Failed to set GNSS event handler, error %d", err);
-		return -err;
-	}
-
-	k_work_init(&gnss_fix_work, gnss_fix_work_fn);
-	k_work_init(&gnss_timeout_work, gnss_timeout_work_fn);
 
 	initialized = true;
 

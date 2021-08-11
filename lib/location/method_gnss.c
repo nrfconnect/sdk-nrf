@@ -80,6 +80,26 @@ void gnss_timeout_work_fn(struct k_work *item)
 	}
 }
 
+int gnss_init()
+{
+	int err = nrf_modem_gnss_init();
+	if (err) {
+		LOG_ERR("Failed to initialize GNSS interface, error %d", err);
+		return -err;
+	}
+
+	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
+	if (err) {
+		LOG_ERR("Failed to set GNSS event handler, error %d", err);
+		return -err;
+	}
+
+	k_work_init(&gnss_fix_work, gnss_fix_work_fn);
+	k_work_init(&gnss_timeout_work, gnss_timeout_work_fn);
+
+	return 0;
+}
+
 int gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t interval)
 {
 	int err = 0;

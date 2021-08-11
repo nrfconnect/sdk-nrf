@@ -7,18 +7,14 @@
 #ifndef METHOD_GNSS_H
 #define METHOD_GNSS_H
 
+int gnss_init();
 void gnss_event_handler(int event);
 void gnss_fix_work_fn(struct k_work *item);
 void gnss_timeout_work_fn(struct k_work *item);
 
 /** @brief Sets the GNSS configuration and starts GNSS.
  *
- * @details Single fix navigation mode is engaged by setting the fix interval to 0.
- *
- * Continuous navigation mode is not supported at the moment.
- *
- * Periodic navigation mode is engaged by setting the fix interval to value 10...65535. The unit is
- * seconds.
+ * @details Currently supported configurations are fix interval, fix timeout and fix accuracy.
  *
  * @param[in] gnss_config pointer to requested gnss configuration.
  * @param[in] interval    requested fix interval.
