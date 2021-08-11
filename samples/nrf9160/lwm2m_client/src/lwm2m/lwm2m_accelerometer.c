@@ -5,267 +5,254 @@
  */
 
 #include <zephyr.h>
-#include <drivers/sensor.h>
 #include <net/lwm2m.h>
+#include <lwm2m_resource_ids.h>
+#include <math.h>
 
-#include "ui.h"
-#include "lwm2m_client_app.h"
+#include "accelerometer.h"
+#include "accel_event.h"
+#include "lwm2m_app_utils.h"
+
+#define MODULE app_lwm2m_accel
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(app_lwm2m_accel, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
-#define SENSOR_UNIT_NAME		"Orientation"
-#define FLIP_ACCELERATION_THRESHOLD	5.0
-#define CALIBRATION_ITERATIONS		CONFIG_ACCEL_CALIBRATION_ITERATIONS
-#define MEASUREMENT_ITERATIONS		CONFIG_ACCEL_ITERATIONS
-#define ACCEL_INVERTED			CONFIG_ACCEL_INVERTED
-
-#if defined(CONFIG_FLIP_POLL)
-#define FLIP_POLL_INTERVAL		K_MSEC(CONFIG_FLIP_POLL_INTERVAL)
-#else
-#define FLIP_POLL_INTERVAL		K_NO_WAIT
+#if defined(CONFIG_ACCEL_USE_EXTERNAL)
+#define ACCEL_APP_TYPE "ADXL362 Accelerometer"
+#elif defined(CONFIG_ACCEL_USE_SIM)
+#define ACCEL_APP_TYPE "Simulated Accelerometer"
 #endif
 
-#ifdef CONFIG_ACCEL_USE_SIM
-#define FLIP_INPUT			CONFIG_FLIP_INPUT
-#define CALIBRATION_INPUT		-1
+#define SENSOR_UNIT_NAME "m/s^2"
+
+#if defined(CONFIG_ADXL362_ACCEL_RANGE_8G)
+#define ACCEL_RANGE_G 8
+#elif defined(CONFIG_ADXL362_ACCEL_RANGE_4G)
+#define ACCEL_RANGE_G 4
 #else
-#define FLIP_INPUT			-1
-#ifdef CONFIG_ACCEL_CALIBRATE
-#define CALIBRATION_INPUT		CONFIG_CALIBRATION_INPUT
-#else
-#define CALIBRATION_INPUT		-1
-#endif /* CONFIG_ACCEL_CALIBRATE */
-#endif /* CONFIG_ACCEL_USE_SIM */
+#define ACCEL_RANGE_G 2
+#endif
 
-/**@brief Orientation states. */
-enum orientation_state {
-	ORIENTATION_NOT_KNOWN,   /**< Initial state. */
-	ORIENTATION_NORMAL,      /**< Has normal orientation. */
-	ORIENTATION_UPSIDE_DOWN, /**< System is upside down. */
-	ORIENTATION_ON_SIDE      /**< System is placed on its side. */
-};
+#define MIN_RANGE_VALUE (-ACCEL_RANGE_G * SENSOR_G / 1000000.0)
+#define MAX_RANGE_VALUE (ACCEL_RANGE_G * SENSOR_G / 1000000.0)
 
+static float32_value_t *x_val;
+static float32_value_t *y_val;
+static float32_value_t *z_val;
+static int64_t accel_read_timestamp[3];
+int32_t lwm2m_timestamp;
+static uint8_t meas_qual_ind;
 
-/**@brief Struct containing current orientation and 3 axis acceleration data. */
-struct orientation_detector_sensor_data {
-	double x;			    /**< x-axis acceleration [m/s^2]. */
-	double y;			    /**< y-axis acceleration [m/s^2]. */
-	double z;			    /**< z-axis acceleration [m/s^2]. */
-	enum orientation_state orientation; /**< Current orientation. */
-};
-
-static const struct device *accel_dev;
-static double accel_offset[3];
-static struct k_work_delayable flip_poll_work;
-static uint32_t timestamp;
-
-int orientation_detector_poll(
-	struct orientation_detector_sensor_data *sensor_data)
+static int get_res_timestamp_index(uint16_t res_id)
 {
-	int err;
-	uint8_t i;
-	double aggregated_data[3] = {0};
-	struct sensor_value accel_data[3];
-	enum orientation_state current_orientation;
-
-	for (i = 0; i < MEASUREMENT_ITERATIONS; i++) {
-		err = sensor_sample_fetch_chan(accel_dev, SENSOR_CHAN_ACCEL_Z);
-		if (err) {
-			LOG_ERR("sensor_sample_fetch failed");
-			return err;
-		}
-
-		err = sensor_channel_get(accel_dev,
-				SENSOR_CHAN_ACCEL_Z, &accel_data[2]);
-		if (err) {
-			LOG_ERR("sensor_channel_get failed");
-			return err;
-		}
-
-		aggregated_data[2] += sensor_value_to_double(&accel_data[2]);
-	}
-
-	sensor_data->z = (aggregated_data[2] / (double)MEASUREMENT_ITERATIONS) -
-				accel_offset[2];
-
-	if (sensor_data->z >= FLIP_ACCELERATION_THRESHOLD) {
-		if (IS_ENABLED(ACCEL_INVERTED)) {
-			current_orientation = ORIENTATION_UPSIDE_DOWN;
-		} else {
-			current_orientation = ORIENTATION_NORMAL;
-		}
-	} else if (sensor_data->z <= -FLIP_ACCELERATION_THRESHOLD) {
-		if (IS_ENABLED(ACCEL_INVERTED)) {
-			current_orientation = ORIENTATION_NORMAL;
-		} else {
-			current_orientation = ORIENTATION_UPSIDE_DOWN;
-		}
-	} else {
-		current_orientation = ORIENTATION_ON_SIDE;
-	}
-
-	sensor_data->orientation = current_orientation;
-
-	return 0;
-}
-
-/**@brief Poll flip orientation and update object if flip mode is enabled. */
-static void flip_work(struct k_work *work)
-{
-	int32_t ts;
-	static enum orientation_state last_orientation_state =
-		ORIENTATION_NOT_KNOWN;
-	static struct orientation_detector_sensor_data sensor_data;
-	struct float32_value f32;
-
-	if (orientation_detector_poll(&sensor_data) == 0) {
-		if (sensor_data.orientation == last_orientation_state) {
-			goto exit;
-		}
-
-		/* get current time from device */
-		lwm2m_engine_get_s32("3/0/13", &ts);
-
-		f32.val1 = 0;
-		f32.val2 = 0;
-		switch (sensor_data.orientation) {
-		case ORIENTATION_NORMAL:
-			/* X=0, Y=0, Z=1 */
-			LOG_INF("accelerometer normal");
-			lwm2m_engine_set_float32("3313/0/5702", &f32);
-			lwm2m_engine_set_float32("3313/0/5703", &f32);
-			f32.val1 = 1;
-			lwm2m_engine_set_float32("3313/0/5704", &f32);
-			break;
-		case ORIENTATION_UPSIDE_DOWN:
-			/* X=0, Y=0, Z=-1 */
-			LOG_INF("accelerometer upside down");
-			lwm2m_engine_set_float32("3313/0/5702", &f32);
-			lwm2m_engine_set_float32("3313/0/5703", &f32);
-			f32.val1 = -1;
-			lwm2m_engine_set_float32("3313/0/5704", &f32);
-			break;
-		case ORIENTATION_ON_SIDE:
-			/* X=1, Y=0, Z=0 */
-			LOG_INF("accelerometer on side");
-			lwm2m_engine_set_float32("3313/0/5702", &f32);
-			lwm2m_engine_set_float32("3313/0/5704", &f32);
-			f32.val1 = 1;
-			lwm2m_engine_set_float32("3313/0/5703", &f32);
-			break;
-		default:
-			/* X=0, Y=0, Z=0 */
-			LOG_INF("accelerometer in unknown position");
-			lwm2m_engine_set_float32("3313/0/5702", &f32);
-			lwm2m_engine_set_float32("3313/0/5703", &f32);
-			lwm2m_engine_set_float32("3313/0/5704", &f32);
-			goto exit;
-		}
-
-		/* set timestamp */
-		lwm2m_engine_set_s32("3313/0/5518", ts);
-		last_orientation_state = sensor_data.orientation;
-	}
-
-exit:
-	if (work) {
-		k_work_schedule(&flip_poll_work, FLIP_POLL_INTERVAL);
-	}
-}
-
-static int accel_calibrate(void)
-{
-	uint8_t i;
-	int err;
-	struct sensor_value accel_data[3];
-	double aggregated_data[3] = {0};
-
-	for (i = 0; i < CALIBRATION_ITERATIONS; i++) {
-		err = sensor_sample_fetch(accel_dev);
-		if (err) {
-			LOG_INF("sensor_sample_fetch failed");
-			return err;
-		}
-
-		err = sensor_channel_get(accel_dev,
-				SENSOR_CHAN_ACCEL_X, &accel_data[0]);
-		err += sensor_channel_get(accel_dev,
-				SENSOR_CHAN_ACCEL_Y, &accel_data[1]);
-		err += sensor_channel_get(accel_dev,
-				SENSOR_CHAN_ACCEL_Z, &accel_data[2]);
-
-		if (err) {
-			LOG_ERR("sensor_channel_get failed");
-			return err;
-		}
-
-		aggregated_data[0] += sensor_value_to_double(&accel_data[0]);
-		aggregated_data[1] += sensor_value_to_double(&accel_data[1]);
-		aggregated_data[2] +=
-			(sensor_value_to_double(&accel_data[2])
-			+ ((double)SENSOR_G) / 1000000.0);
-	}
-
-	accel_offset[0] = aggregated_data[0] / (double)CALIBRATION_ITERATIONS;
-	accel_offset[1] = aggregated_data[1] / (double)CALIBRATION_ITERATIONS;
-	accel_offset[2] = aggregated_data[2] / (double)CALIBRATION_ITERATIONS;
-
-	return 0;
-}
-
-int handle_accel_events(struct ui_evt *evt)
-{
-	if (!evt) {
-		return -EINVAL;
-	}
-
-	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (evt->button == FLIP_INPUT)) {
-		flip_work(NULL);
+	switch (res_id) {
+	case X_VALUE_RID:
 		return 0;
+	case Y_VALUE_RID:
+		return 1;
+	case Z_VALUE_RID:
+		return 2;
+	default:
+		LOG_ERR("Resource ID not supported (%d)", -ENOTSUP);
+		return -ENOTSUP;
+	}
+}
+
+static void *accel_x_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
+			     size_t *data_len)
+{
+	uint8_t res_timestamp_index = get_res_timestamp_index(res_id);
+
+	if (is_regular_read_cb(accel_read_timestamp[res_timestamp_index])) {
+		int ret;
+		struct accelerometer_sensor_data accel_data;
+		float32_value_t new_x_val;
+
+		ret = accelerometer_read(&accel_data);
+		if (ret) {
+			LOG_ERR("Read accelerometer failed (%d)", ret);
+			return NULL;
+		}
+
+		LOG_INF("Acceleration x-direction: %d.%06d", accel_data.x.val1, accel_data.x.val2);
+
+		accel_read_timestamp[0] = k_uptime_get();
+
+		if (IS_ENABLED(CONFIG_LWM2M_IPSO_ACCELEROMETER_VERSION_1_1)) {
+			lwm2m_set_timestamp(IPSO_OBJECT_ACCELEROMETER_ID, obj_inst_id);
+		}
+
+		new_x_val = sensor_value_to_float32(accel_data.x);
+		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
+					 &new_x_val);
 	}
 
-	return -ENOENT;
+	*data_len = sizeof(*x_val);
+
+	return x_val;
+}
+
+static void *accel_y_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
+			     size_t *data_len)
+{
+	uint8_t res_timestamp_index = get_res_timestamp_index(res_id);
+
+	if (is_regular_read_cb(accel_read_timestamp[res_timestamp_index])) {
+		int ret;
+		struct accelerometer_sensor_data accel_data;
+		float32_value_t new_y_val;
+
+		ret = accelerometer_read(&accel_data);
+		if (ret) {
+			LOG_ERR("Read accelerometer failed (%d)", ret);
+			return NULL;
+		}
+
+		LOG_INF("Acceleration y-direction: %d.%06d", accel_data.y.val1, accel_data.y.val2);
+
+		accel_read_timestamp[1] = k_uptime_get();
+
+		if (IS_ENABLED(CONFIG_LWM2M_IPSO_ACCELEROMETER_VERSION_1_1)) {
+			lwm2m_set_timestamp(IPSO_OBJECT_ACCELEROMETER_ID, obj_inst_id);
+		}
+
+		new_y_val = sensor_value_to_float32(accel_data.y);
+		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
+					 &new_y_val);
+	}
+
+	*data_len = sizeof(*y_val);
+
+	return y_val;
+}
+
+static void *accel_z_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
+			     size_t *data_len)
+{
+	uint8_t res_timestamp_index = get_res_timestamp_index(res_id);
+
+	if (is_regular_read_cb(accel_read_timestamp[res_timestamp_index])) {
+		int ret;
+		struct accelerometer_sensor_data accel_data;
+		float32_value_t new_z_val;
+
+		ret = accelerometer_read(&accel_data);
+		if (ret) {
+			LOG_ERR("Read accelerometer failed (%d)", ret);
+			return NULL;
+		}
+
+		LOG_INF("Acceleration z-direction: %d.%06d", accel_data.z.val1, accel_data.z.val2);
+
+		accel_read_timestamp[2] = k_uptime_get();
+
+		if (IS_ENABLED(CONFIG_LWM2M_IPSO_ACCELEROMETER_VERSION_1_1)) {
+			lwm2m_set_timestamp(IPSO_OBJECT_ACCELEROMETER_ID, obj_inst_id);
+		}
+
+		new_z_val = sensor_value_to_float32(accel_data.z);
+		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
+					 &new_z_val);
+	}
+
+	*data_len = sizeof(*z_val);
+
+	return z_val;
 }
 
 int lwm2m_init_accel(void)
 {
-	int ret;
+	float32_value_t min_range_val = { .val1 = (int)MIN_RANGE_VALUE,
+					  .val2 = (MIN_RANGE_VALUE - (int)MIN_RANGE_VALUE) *
+						  100000 };
+	float32_value_t max_range_val = { .val1 = (int)MAX_RANGE_VALUE,
+					  .val2 = (MAX_RANGE_VALUE - (int)MAX_RANGE_VALUE) *
+						  100000 };
+	uint16_t dummy_data_len;
+	uint8_t dummy_data_flags;
 
-	if (IS_ENABLED(CONFIG_FLIP_POLL)) {
-		k_work_init_delayable(&flip_poll_work, flip_work);
-	}
+	accel_read_timestamp[0] = k_uptime_get();
+	accel_read_timestamp[1] = k_uptime_get();
+	accel_read_timestamp[2] = k_uptime_get();
 
-	accel_dev = device_get_binding(CONFIG_ACCEL_DEV_NAME);
-	if (accel_dev == NULL) {
-		LOG_ERR("Could not get %s device", CONFIG_ACCEL_DEV_NAME);
-		return -ENOENT;
-	}
+	accelerometer_init();
 
-	if (IS_ENABLED(CONFIG_ACCEL_CALIBRATE)) {
-		ret = accel_calibrate();
-		if (ret) {
-			LOG_ERR("Could not calibrate accelerometer device: %d",
-				ret);
-			return ret;
-		}
-	}
-
-	/* create accel object */
-	lwm2m_engine_create_obj_inst("3313/0");
-	lwm2m_engine_set_res_data("3313/0/5701",
+	lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0));
+	lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, SENSOR_UNITS_RID),
 				  SENSOR_UNIT_NAME, sizeof(SENSOR_UNIT_NAME),
 				  LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_data("3313/0/5518",
-				  &timestamp, sizeof(timestamp), 0);
+	lwm2m_engine_register_read_callback(
+		LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID), accel_x_read_cb);
+	lwm2m_engine_register_read_callback(
+		LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID), accel_y_read_cb);
+	lwm2m_engine_register_read_callback(
+		LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID), accel_z_read_cb);
+	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
+				  (void **)&x_val, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
+				  (void **)&y_val, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
+				  (void **)&z_val, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, MIN_RANGE_VALUE_RID),
+				 &min_range_val);
+	lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, MAX_RANGE_VALUE_RID),
+				 &max_range_val);
 
-	if (IS_ENABLED(CONFIG_FLIP_POLL)) {
-		k_work_schedule(&flip_poll_work, K_NO_WAIT);
-	}
+	if (IS_ENABLED(CONFIG_LWM2M_IPSO_ACCELEROMETER_VERSION_1_1)) {
+		meas_qual_ind = 0;
 
-	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM)) {
-		flip_work(NULL);
+		lwm2m_engine_set_res_data(
+			LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, APPLICATION_TYPE_RID),
+			ACCEL_APP_TYPE, sizeof(ACCEL_APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
+		lwm2m_engine_set_res_data(
+			LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, TIMESTAMP_RID),
+			&lwm2m_timestamp, sizeof(lwm2m_timestamp), LWM2M_RES_DATA_FLAG_RW);
+		lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0,
+						     MEASUREMENT_QUALITY_INDICATOR_RID),
+					  &meas_qual_ind, sizeof(meas_qual_ind),
+					  LWM2M_RES_DATA_FLAG_RW);
 	}
 
 	return 0;
 }
+
+static bool event_handler(const struct event_header *eh)
+{
+	if (is_accel_event(eh)) {
+		struct accel_event *event = cast_accel_event(eh);
+		float32_value_t received_value;
+
+		accel_read_timestamp[0] = k_uptime_get();
+		accel_read_timestamp[1] = k_uptime_get();
+		accel_read_timestamp[2] = k_uptime_get();
+
+		if (IS_ENABLED(CONFIG_LWM2M_IPSO_ACCELEROMETER_VERSION_1_1)) {
+			lwm2m_set_timestamp(IPSO_OBJECT_ACCELEROMETER_ID, 0);
+		}
+
+		LOG_DBG("Accelerometer sensor event received:"
+			"x = %d.%06d, y = %d.%06d, z = %d.%06d",
+			event->data.x.val1, event->data.x.val2, event->data.y.val1,
+			event->data.y.val2, event->data.z.val1, event->data.z.val2);
+
+		received_value = sensor_value_to_float32(event->data.x);
+		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
+					 &received_value);
+
+		received_value = sensor_value_to_float32(event->data.y);
+		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
+					 &received_value);
+
+		received_value = sensor_value_to_float32(event->data.z);
+		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
+					 &received_value);
+
+		return true;
+	}
+
+	return false;
+}
+
+EVENT_LISTENER(MODULE, event_handler);
+EVENT_SUBSCRIBE(MODULE, accel_event);

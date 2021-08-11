@@ -31,7 +31,12 @@ The following sections provide detailed lists of changes by component.
 nRF9160
 =======
 
-There are no entries for this section yet.
+  * :ref:`lwm2m_client` sample:
+
+    * Added support for Thingy:91.
+    * Added more LwM2M objects.
+    * LwM2M sensor objects now uses the actual sensors available to the Thingy:91. If the nRF9160 DK is used, it uses simulated sensors instead.
+    * Added possibility to poll sensors and notify the server if the measured changes are large enough.
 
 nRF5
 ====
