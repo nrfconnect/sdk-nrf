@@ -26,6 +26,7 @@ extern "C" {
 /** @defgroup nrf_cloud_mqtt_msg_ids MQTT message IDs for nRF Cloud.
  * @{
  */
+#define NCT_MSG_ID_USE_NEXT_INCREMENT     0
 #define NCT_MSG_ID_CC_SUB               100
 #define NCT_MSG_ID_DC_SUB               101
 #define NCT_MSG_ID_CG_SUB               102
@@ -42,8 +43,13 @@ extern "C" {
 #define NCT_MSG_ID_FOTA_REPORT          302
 #define NCT_MSG_ID_FOTA_BLE_REPORT      303
 #define NCT_MSG_ID_INCREMENT_BEGIN     1000
-#define NCT_MSG_ID_INCREMENT_END       0xFFFF /* MQTT message IDs are uint16_t */
+#define NCT_MSG_ID_INCREMENT_END       9999
+#define NCT_MSG_ID_USER_TAG_BEGIN      (NCT_MSG_ID_INCREMENT_END + 1)
+#define NCT_MSG_ID_USER_TAG_END        0xFFFF /* MQTT message IDs are uint16_t */
 /** @} */
+
+#define IS_VALID_USER_TAG(tag) ((tag >= NCT_MSG_ID_USER_TAG_BEGIN) && \
+				(tag <= NCT_MSG_ID_USER_TAG_END))
 
 #define NRF_CLOUD_SETTINGS_NAME "nrf_cloud"
 
@@ -213,10 +219,12 @@ struct nrf_cloud_sensor_data {
 	enum nrf_cloud_sensor type;
 	/** Sensor data to be transmitted. */
 	struct nrf_cloud_data data;
-	/** Unique tag to identify the sent data.
-	 *  Useful for matching the acknowledgment.
+	/** Unique tag to identify the sent data. Can be used to match
+	 * acknowledgment on the NRF_CLOUD_EVT_SENSOR_DATA_ACK event.
+	 * Valid range: NCT_MSG_ID_USER_TAG_BEGIN to NCT_MSG_ID_USER_TAG_END.
+	 * Any other value will suppress the NRF_CLOUD_EVT_SENSOR_DATA_ACK event.
 	 */
-	uint32_t tag;
+	uint16_t tag;
 };
 
 /**@brief Asynchronous events received from the module. */
@@ -384,7 +392,8 @@ int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
  * This API should only be called after receiving an
  * @ref NRF_CLOUD_EVT_READY event.
  * If the API succeeds, you can expect the
- * @ref NRF_CLOUD_EVT_SENSOR_DATA_ACK event.
+ * @ref NRF_CLOUD_EVT_SENSOR_DATA_ACK event for data sent with
+ * a valid tag value.
  *
  * @param[in] param Sensor data.
  *
@@ -417,12 +426,12 @@ int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param);
 int nrf_cloud_shadow_device_status_update(const struct nrf_cloud_device_status * const dev_status);
 
 /**
- * @brief Stream sensor data.
+ * @brief Stream sensor data. Uses lowest QoS; no acknowledgment,
  *
  * This API should only be called after receiving an
  * @ref NRF_CLOUD_EVT_READY event.
  *
- * @param[in] param Sensor data.
+ * @param[in] param Sensor data; tag value is ignored.
  *
  * @retval 0       If successful.
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.

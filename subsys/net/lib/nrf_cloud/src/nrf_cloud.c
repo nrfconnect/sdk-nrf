@@ -237,7 +237,6 @@ int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param)
 	int err;
 	struct nct_cc_data sensor_data = {
 		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
-		.id = param->tag
 	};
 
 	if (current_state != STATE_DC_CONNECTED) {
@@ -246,6 +245,12 @@ int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param)
 
 	if (param == NULL) {
 		return -EINVAL;
+	}
+
+	if (IS_VALID_USER_TAG(param->tag)) {
+		sensor_data.message_id = param->tag;
+	} else {
+		sensor_data.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT;
 	}
 
 	err = nrf_cloud_encode_shadow_data(param, &sensor_data.data);
@@ -301,7 +306,12 @@ int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param)
 		return err;
 	}
 
-	sensor_data.id = param->tag;
+	if (IS_VALID_USER_TAG(param->tag)) {
+		sensor_data.message_id = param->tag;
+	} else {
+		sensor_data.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT;
+	}
+
 	err = nct_dc_send(&sensor_data);
 	nrf_cloud_free((void *)sensor_data.data.ptr);
 
@@ -326,7 +336,6 @@ int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param)
 		return err;
 	}
 
-	sensor_data.id = param->tag;
 	err = nct_dc_stream(&sensor_data);
 	nrf_cloud_free((void *)sensor_data.data.ptr);
 
@@ -346,7 +355,8 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		const struct nct_cc_data shadow_data = {
 			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
 			.data.ptr = msg->data.ptr,
-			.data.len = msg->data.len
+			.data.len = msg->data.len,
+			.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT
 		};
 
 		err = nct_cc_send(&shadow_data);
@@ -360,7 +370,8 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 	case NRF_CLOUD_TOPIC_MESSAGE: {
 		const struct nct_dc_data buf = {
 			.data.ptr = msg->data.ptr,
-			.data.len = msg->data.len
+			.data.len = msg->data.len,
+			.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT
 		};
 
 		if (msg->qos == MQTT_QOS_0_AT_MOST_ONCE) {
@@ -626,11 +637,9 @@ static void api_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
-		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
-
-		evt.type = CLOUD_EVT_DATA_SENT;
-
-		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
+		/* Not implemented; the cloud API does not support a
+		 * tag/message ID when sending data.
+		 */
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
