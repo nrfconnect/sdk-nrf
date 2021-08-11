@@ -9,6 +9,7 @@
 #include <drivers/gps.h>
 #include <net/socket.h>
 #include <nrf_socket.h>
+#include <nrf_modem_gnss.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 #include <modem/modem_info.h>
@@ -339,21 +340,21 @@ static int send_to_modem(void *data, size_t data_len,
 		agps_print(type, data);
 	}
 
-	/* At this point, GPS driver or app-provided socket is assumed. */
 	if (gps_dev) {
-		return gps_agps_write(gps_dev, type_socket2gps(type), data,
-				      data_len);
-	}
-
-	err = nrf_sendto(fd, data, data_len, 0, &type, sizeof(type));
-	if (err < 0) {
-		LOG_ERR("Failed to send AGPS data to modem, errno: %d", errno);
-		err = -errno;
+		/* GPS driver */
+		err = gps_agps_write(gps_dev, type_socket2gps(type), data, data_len);
+	} else if (fd != -1) {
+		/* GNSS socket */
+		err = nrf_sendto(fd, data, data_len, 0, &type, sizeof(type));
+		if (err < 0) {
+			err = -errno;
+		} else {
+			err = 0;
+		}
 	} else {
-		err = 0;
+		/* GNSS API */
+		err = nrf_modem_gnss_agps_write(data, data_len, type);
 	}
-
-	LOG_DBG("A-GSP data sent to modem");
 
 	return err;
 }
@@ -725,7 +726,7 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 
 		parsed_len += element_size;
 
-		LOG_DBG("Parsed_len: %d\n", parsed_len);
+		LOG_DBG("Parsed_len: %d", parsed_len);
 
 		if (element.type == NRF_CLOUD_AGPS_GPS_TOWS) {
 			memcpy(&sys_time.sv_tow[element.tow->sv_id - 1],
