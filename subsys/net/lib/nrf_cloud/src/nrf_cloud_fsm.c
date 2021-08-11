@@ -139,7 +139,7 @@ static int state_ua_pin_wait(void)
 	int err;
 	struct nct_cc_data msg = {
 		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
-		.id = NCT_MSG_ID_STATE_REPORT,
+		.message_id = NCT_MSG_ID_STATE_REPORT,
 	};
 
 	/* Publish report to the cloud on current status. */
@@ -173,7 +173,7 @@ static int handle_device_config_update(const struct nct_evt *const evt,
 	int err;
 	struct nct_cc_data msg = {
 		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
-		.id = NCT_MSG_ID_STATE_REPORT,
+		.message_id = NCT_MSG_ID_STATE_REPORT,
 	};
 
 	struct nrf_cloud_evt cloud_evt = {
@@ -221,7 +221,7 @@ static int state_ua_pin_complete(void)
 	int err;
 	struct nct_cc_data msg = {
 		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
-		.id = NCT_MSG_ID_PAIR_STATUS_REPORT,
+		.message_id = NCT_MSG_ID_PAIR_STATUS_REPORT,
 	};
 
 	err = nrf_cloud_encode_state(STATE_UA_PIN_COMPLETE, &msg.data);
@@ -321,7 +321,7 @@ static int cc_connection_handler(const struct nct_evt *nct_evt)
 	 */
 	static const struct nct_cc_data get_request = {
 		.opcode = NCT_CC_OPCODE_GET_REQ,
-		.id = NCT_MSG_ID_STATE_REQUEST,
+		.message_id = NCT_MSG_ID_STATE_REQUEST,
 	};
 
 	int err;
@@ -423,13 +423,11 @@ static int cc_tx_ack_handler(const struct nct_evt *nct_evt)
 {
 	int err;
 
-	if (nct_evt->param.data_id == NCT_MSG_ID_STATE_REQUEST) {
+	if (nct_evt->param.message_id == NCT_MSG_ID_STATE_REQUEST) {
 		nfsm_set_current_state_and_notify(STATE_CLOUD_STATE_REQUESTED,
 						  NULL);
 		return 0;
-	}
-
-	if (nct_evt->param.data_id == NCT_MSG_ID_PAIR_STATUS_REPORT) {
+	} else if (nct_evt->param.message_id == NCT_MSG_ID_PAIR_STATUS_REPORT) {
 		if (!persistent_session) {
 			err = nct_dc_connect();
 			if (err) {
@@ -442,10 +440,18 @@ static int cc_tx_ack_handler(const struct nct_evt *nct_evt)
 			struct nct_evt nevt = { .type = NCT_EVT_DC_CONNECTED,
 						.status = 0 };
 
-			LOG_DBG("Previous session valid;"
-				" skipping nct_dc_connect()");
+			LOG_DBG("Previous session valid; skipping nct_dc_connect()");
 			nfsm_handle_incoming_event(&nevt, STATE_DC_CONNECTING);
 		}
+	} else if (IS_VALID_USER_TAG(nct_evt->param.message_id)) {
+		struct nrf_cloud_evt evt = {
+			.type = NRF_CLOUD_EVT_SENSOR_DATA_ACK,
+			.data.len = sizeof(nct_evt->param.message_id),
+			.data.ptr = &nct_evt->param.message_id
+		};
+
+		LOG_DBG("Data ACK for user tag: %u", nct_evt->param.message_id);
+		nfsm_set_current_state_and_notify(nfsm_get_current_state(), &evt);
 	}
 
 	return 0;
@@ -453,7 +459,7 @@ static int cc_tx_ack_handler(const struct nct_evt *nct_evt)
 
 static int cc_tx_ack_in_state_requested_handler(const struct nct_evt *nct_evt)
 {
-	if (nct_evt->param.data_id == NCT_MSG_ID_STATE_REQUEST) {
+	if (nct_evt->param.message_id == NCT_MSG_ID_STATE_REQUEST) {
 		nfsm_set_current_state_and_notify(STATE_CLOUD_STATE_REQUESTED,
 						  NULL);
 	}

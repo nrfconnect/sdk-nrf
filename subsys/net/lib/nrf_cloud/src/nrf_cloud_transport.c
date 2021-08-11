@@ -162,6 +162,15 @@ static uint16_t get_next_message_id(void)
 	return nct.message_id;
 }
 
+static uint16_t get_message_id(const uint16_t requested_id)
+{
+	if (requested_id != NCT_MSG_ID_USE_NEXT_INCREMENT) {
+		return requested_id;
+	}
+
+	return get_next_message_id();
+}
+
 /* Free memory allocated for the data endpoint and reset the endpoint.
  *
  * Casting away const for rx, tx, and m seems to be OK because the
@@ -193,6 +202,7 @@ static uint32_t dc_send(const struct nct_dc_data *dc_data, uint8_t qos)
 	}
 
 	struct mqtt_publish_param publish = {
+		.message_id = 0,
 		.message.topic.qos = qos,
 		.message.topic.topic.size = nct.dc_tx_endp.size,
 		.message.topic.topic.utf8 = nct.dc_tx_endp.utf8,
@@ -204,10 +214,8 @@ static uint32_t dc_send(const struct nct_dc_data *dc_data, uint8_t qos)
 		publish.message.payload.len = dc_data->data.len;
 	}
 
-	if (dc_data->id != 0) {
-		publish.message_id = dc_data->id;
-	} else {
-		publish.message_id = get_next_message_id();
+	if (qos != MQTT_QOS_0_AT_MOST_ONCE) {
+		publish.message_id = get_message_id(dc_data->message_id);
 	}
 
 	return mqtt_publish(&nct.client, &publish);
@@ -885,7 +893,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 		 */
 		if (control_channel_topic_match(NCT_RX_LIST, &p->message.topic,
 						&cc.opcode)) {
-			cc.id = p->message_id;
+			cc.message_id = p->message_id;
 			cc.data.ptr = nct.payload_buf;
 			cc.data.len = p->message.payload.len;
 			cc.topic.len = p->message.topic.topic.size;
@@ -896,7 +904,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			event_notify = true;
 		} else {
 			/* Try to match it with one of the data topics. */
-			dc.id = p->message_id;
+			dc.message_id = p->message_id;
 			dc.data.ptr = nct.payload_buf;
 			dc.data.len = p->message.payload.len;
 			dc.topic.len = p->message.topic.topic.size;
@@ -958,7 +966,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			_mqtt_evt->param.puback.message_id, _mqtt_evt->result);
 
 		evt.type = NCT_EVT_CC_TX_DATA_ACK;
-		evt.param.data_id = _mqtt_evt->param.puback.message_id;
+		evt.param.message_id = _mqtt_evt->param.puback.message_id;
 		event_notify = true;
 		break;
 	}
@@ -1163,7 +1171,7 @@ int nct_cc_send(const struct nct_cc_data *cc_data)
 		publish.message.payload.len = cc_data->data.len;
 	}
 
-	publish.message_id = cc_data->id ? cc_data->id : get_next_message_id();
+	publish.message_id = get_message_id(cc_data->message_id);
 
 	LOG_DBG("mqtt_publish: id = %d opcode = %d len = %d", publish.message_id,
 		cc_data->opcode, cc_data->data.len);

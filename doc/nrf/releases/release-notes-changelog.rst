@@ -54,6 +54,7 @@ nRF9160
     * Added Kconfig option :kconfig:`CONFIG_NRF_CLOUD_GATEWAY`, which enables functionality to behave as an nRF Cloud gateway.
     * Removed function ``nrf_cloud_sensor_attach()``, the associated structure ``nrf_cloud_sa_param``, and event ``NRF_CLOUD_EVT_SENSOR_ATTACHED``. These items provided no useful functionality.
     * Added the option to use the P-GPS API independent of nRF Cloud MQTT transport.
+    * Implemented functionality for the :c:enumerator:`NRF_CLOUD_EVT_SENSOR_DATA_ACK` event. The event is now generated when a valid tag value (NCT_MSG_ID_USER_TAG_BEGIN through NCT_MSG_ID_USER_TAG_END) is provided with the sensor data when calling either :c:func:`nrf_cloud_sensor_data_send` or :c:func:`nrf_cloud_shadow_update`.
 
   * :ref:`serial_lte_modem` application:
 
