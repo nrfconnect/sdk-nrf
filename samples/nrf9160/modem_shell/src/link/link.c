@@ -229,7 +229,8 @@ void link_init(void)
 
 	link_shell_pdn_init();
 
-	lte_lc_register_handler(link_ind_handler);
+	/* Commented out for now to get Location API working */
+	/* lte_lc_register_handler(link_ind_handler); */
 
 /* With CONFIG_LWM2M_CARRIER, MoSH auto connect must be disabled
  * because LwM2M carrier lib handles that.
@@ -588,18 +589,7 @@ int link_func_mode_set(enum lte_lc_func_mode fun)
 				mosh_warn("lte_lc_system_mode_set returned error %d", return_value);
 			}
 		}
-
-		if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-			return_value = lte_lc_normal();
-		} else {
-			/* TODO: why not just do lte_lc_normal() as notifications are
-			 * subscribed there also nowadays?
-			 */
-			return_value = lte_lc_init_and_connect_async(link_ind_handler);
-			if (return_value == -EALREADY) {
-				return_value = lte_lc_connect_async(link_ind_handler);
-			}
-		}
+		return_value = lte_lc_normal();
 		break;
 	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:
 	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
