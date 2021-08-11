@@ -4,10 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import csv
-import json
-import hashlib
-import logging
-import sys
+from io import StringIO
+from ast import literal_eval
+
 
 
 class Event():
@@ -42,109 +41,53 @@ class EventType():
 
 
 class TrackedEvent():
+    TRACKED_EVENT_FIELDNAMES = ['type_id', 'timestamp', 'data', 'proc_start_time', 'proc_end_time']
+    si = StringIO()
+    wr = csv.DictWriter(si, delimiter=',', fieldnames=TRACKED_EVENT_FIELDNAMES)
+    rd = csv.DictReader(si, fieldnames=TRACKED_EVENT_FIELDNAMES, delimiter=',')
+
     def __init__(self, submit, start_time, end_time):
         self.submit = submit
         self.proc_start_time = start_time
         self.proc_end_time = end_time
 
+    def serialize(self):
+        TrackedEvent.wr.writerow({
+                                  'type_id': self.submit.type_id,
+                                  'timestamp': self.submit.timestamp,
+                                  'data': self.submit.data,
+                                  'proc_start_time': self.proc_start_time,
+                                  'proc_end_time': self.proc_end_time
+                                 })
+        serialized = TrackedEvent.si.getvalue().strip('\r\n')
+        TrackedEvent.si.truncate(0)
+        TrackedEvent.si.seek(0)
+        return serialized
+
+    @staticmethod
+    def deserialize(scsv):
+        TrackedEvent.si.write(scsv)
+        TrackedEvent.si.seek(0)
+        rows = list(TrackedEvent.rd)
+        assert len(rows) == 1
+        TrackedEvent.si.truncate(0)
+        TrackedEvent.si.seek(0)
+        row = rows[0]
+        type_id = int(row['type_id'])
+        timestamp = float(row['timestamp'])
+        data_string = row['data']
+        data = literal_eval(data_string)
+        proc_start_time = float(row['proc_start_time']) if row['proc_start_time'] != '' else None
+        proc_end_time = float(row['proc_end_time']) if row['proc_end_time'] != '' else None
+        return TrackedEvent(Event(type_id, timestamp, data), proc_start_time, proc_end_time)
 
 class EventsData():
     def __init__(self, events, registered_events_types):
         self.events = events
         self.registered_events_types = registered_events_types
-        self.logger = logging.getLogger('Events Data')
-        self.logger_console = logging.StreamHandler()
-        self.logger.setLevel(logging.WARNING)
-        self.log_format = logging.Formatter(
-                              '[%(levelname)s] %(name)s: %(message)s')
-        self.logger_console.setFormatter(self.log_format)
-        self.logger.addHandler(self.logger_console)
 
     def get_event_type_id(self, type_name):
         for key, value in self.registered_events_types.items():
             if type_name == value.name:
                 return key
         return None
-
-    def verify(self):
-        for ev in self.events:
-            if ev.type_id not in self.registered_events_types:
-                return False
-        return True
-
-    def write_data_to_files(self, filename_events, filename_event_types):
-        self._write_events_csv(filename_events)
-        csv_hash = EventsData._calculate_md5_hash_of_file(filename_events)
-        self._write_events_types_json(filename_event_types, csv_hash)
-
-    def read_data_from_files(self, filename_events, filename_event_types):
-        csv_hash1 = self._read_events_types_json(filename_event_types)
-        self._read_events_csv(filename_events)
-        csv_hash2 = EventsData._calculate_md5_hash_of_file(filename_events)
-        if csv_hash1 != csv_hash2:
-            self.logger.warning("Hash values of csv files do not match")
-            self.logger.warning("Events and descriptions may be inconsistent")
-    @staticmethod
-    def _calculate_md5_hash_of_file(filename):
-        return hashlib.md5(open(filename, 'rb').read()).hexdigest()
-
-    def _write_events_csv(self, filename):
-        try:
-            with open(filename, 'w', newline='') as csvfile:
-                fieldnames = ['type_id', 'timestamp', 'data']
-                wr = csv.DictWriter(csvfile, delimiter=',',
-                                    fieldnames=fieldnames)
-                wr.writeheader()
-                for ev in self.events:
-                    wr.writerow({
-                                 'type_id': ev.type_id,
-                                 'timestamp': ev.timestamp,
-                                 'data': ev.data
-                                })
-        except IOError:
-            self.logger.error("Problem with accessing file: " + filename)
-            sys.exit()
-
-    def _read_events_csv(self, filename):
-        try:
-            with open(filename, 'r', newline='') as csvfile:
-                rd = csv.DictReader(csvfile, delimiter=',')
-                for row in rd:
-                    type_id = int(row['type_id'])
-                    timestamp = float(row['timestamp'])
-                    # reading event data from single row in csv file
-                    if row['data'][1:-1] != '':
-                        data = list(map(lambda s, data_type: s if data_type == "s" else int(s),
-                                        row['data'][1:-1].split(','),
-                                        self.registered_events_types[type_id].data_types))
-                    else:
-                        data = []
-                    ev = Event(type_id, timestamp, data)
-                    self.events.append(ev)
-        except IOError:
-            self.logger.error("Problem with accessing file: " + filename)
-            sys.exit()
-
-    def _write_events_types_json(self, filename, csv_hash):
-        d = dict((k, v.serialize())
-                 for k, v in self.registered_events_types.items())
-        d['csv_hash'] = csv_hash
-        try:
-            with open(filename, "w") as wr:
-                json.dump(d, wr, indent=4)
-        except IOError:
-            self.logger.error("Problem with accessing file: " + filename)
-            sys.exit()
-
-    def _read_events_types_json(self, filename):
-        try:
-            with open(filename, "r") as rd:
-                data = json.load(rd)
-        except IOError:
-            self.logger.error("Problem with accessing file: " + filename)
-            sys.exit()
-        csv_hash = data['csv_hash']
-        del data['csv_hash']
-        self.registered_events_types = dict((int(k), EventType.deserialize(v))
-                                            for k, v in data.items())
-        return csv_hash
