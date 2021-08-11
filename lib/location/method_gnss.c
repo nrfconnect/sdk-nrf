@@ -19,6 +19,8 @@ extern struct loc_event_data event_data;
 struct k_work gnss_fix_work;
 struct k_work gnss_timeout_work;
 
+int32_t gnss_fix_interval;
+
 void gnss_event_handler(int event)
 {
 	switch (event) {
@@ -58,7 +60,11 @@ void gnss_fix_work_fn(struct k_work *item)
 
 	event_handler(&event_data);
 
-	nrf_modem_gnss_stop();
+	/* If configured for single fix mode, stop GNSS */
+	if (!gnss_fix_interval) {
+		nrf_modem_gnss_stop();
+		LOG_DBG("GNSS stopped");
+	}
 }
 
 void gnss_timeout_work_fn(struct k_work *item)
@@ -67,7 +73,11 @@ void gnss_timeout_work_fn(struct k_work *item)
 
 	event_handler(&event_data);
 
-	nrf_modem_gnss_stop();
+	/* If configured for single fix mode, stop GNSS */
+	if (!gnss_fix_interval) {
+		nrf_modem_gnss_stop();
+		LOG_DBG("GNSS stopped");
+	}
 }
 
 int gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t interval)
@@ -80,6 +90,10 @@ int gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t inter
 		return -EINVAL;
 	}
 
+	err = nrf_modem_gnss_fix_interval_set(interval);
+
+	err |= nrf_modem_gnss_fix_retry_set(gnss_config->timeout);
+
 	if (gnss_config->accuracy == LOC_ACCURACY_LOW)
 	{
 		uint8_t use_case;
@@ -87,12 +101,10 @@ int gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t inter
 		use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START |
 			   NRF_MODEM_GNSS_USE_CASE_LOW_ACCURACY;
 
-		err = nrf_modem_gnss_use_case_set(use_case);
+		err |= nrf_modem_gnss_use_case_set(use_case);
 	}
 
-	err |= nrf_modem_gnss_fix_interval_set(interval);
 
-	err |= nrf_modem_gnss_fix_retry_set(gnss_config->timeout);
 	if (err) {
 		LOG_ERR("Failed to configure GNSS");
 		return -EINVAL;
@@ -105,6 +117,8 @@ int gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t inter
 	}
 
 	LOG_DBG("GNSS started");
+
+	gnss_fix_interval = interval;
 
 	return err;
 }
