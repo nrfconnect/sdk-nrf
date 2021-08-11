@@ -200,7 +200,6 @@ menu "nRF Cloud A-GPS"
 
 config NRF_CLOUD_AGPS
 	bool "Enable nRF Cloud Assisted GPS"
-	depends on NRF9160_GPS
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK
 
@@ -230,7 +229,6 @@ menu "nRF Cloud P-GPS"
 
 config NRF_CLOUD_PGPS
 	bool "Enable nRF Cloud Predicted GPS"
-	depends on NRF9160_GPS
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK
 	select STREAM_FLASH_ERASE
