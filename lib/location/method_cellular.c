@@ -6,11 +6,163 @@
 
 #include <stdio.h>
 #include <zephyr.h>
+
 #include <logging/log.h>
+
+#include <modem/lte_lc.h>
+#include <net/multicell_location.h>
 #include <modem/location.h>
+
 #include "location.h"
 
 LOG_MODULE_REGISTER(method_cellular, CONFIG_LOCATION_LOG_LEVEL);
 
 extern location_event_handler_t event_handler;
 extern struct loc_event_data event_data;
+
+#define METHOD_CELLULAR_STACK_SIZE 2048
+#define METHOD_CELLULAR_PRIORITY  5
+K_THREAD_STACK_DEFINE(method_cellular_stack, METHOD_CELLULAR_STACK_SIZE);
+
+struct k_work_q method_cellular_work_q;
+static struct k_work method_cellular_positioning_work;
+
+static K_SEM_DEFINE(cellmeas_data_ready, 0, 1);
+
+static struct lte_lc_ncell neighbor_cells[CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS];
+static struct lte_lc_cells_info cell_data = {
+	.neighbor_cells = neighbor_cells,
+};
+static bool lte_connected;
+static bool is_busy;
+
+void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
+{
+	switch (evt->type) {
+	case LTE_LC_EVT_NW_REG_STATUS:
+		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
+		     (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+			lte_connected = false;
+			break;
+		}
+
+		LOG_INF("Network registration status: %s",
+			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
+			"Connected - home network" : "Connected - roaming");
+		lte_connected = true;
+		break;		
+	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS:
+		LOG_INF("Neighbor cell measurements received");
+
+		/* Copy current and neighbor cell information */
+		memcpy(&cell_data, &evt->cells_info, sizeof(struct lte_lc_cells_info));
+		memcpy(neighbor_cells, evt->cells_info.neighbor_cells,
+			sizeof(struct lte_lc_ncell) * cell_data.ncells_count);
+		cell_data.neighbor_cells = neighbor_cells;
+
+		k_sem_give(&cellmeas_data_ready);
+		break;
+	default:
+		break;
+	}		
+}
+
+static int method_cellular_ncellmeas_start(void)
+{
+	int err = lte_lc_neighbor_cell_measurement();
+	if (err) {
+		LOG_ERR("Failed to initiate neighbor cell measurements");
+		event_data_init(LOC_EVT_ERROR, LOC_METHOD_CELL_ID);
+		event_handler(&event_data);
+		is_busy = false;
+		return err;
+	}
+	k_work_submit(&method_cellular_positioning_work);
+	return 0;
+}
+
+static void method_cellular_positioning_work_fn(struct k_work *work)
+{
+	struct multicell_location location;
+	int ret;
+
+	ARG_UNUSED(work);
+	k_sem_take(&cellmeas_data_ready, K_FOREVER); /* TODO: cannot be forever? interval only */
+
+	ret = multicell_location_get(&cell_data, &location);
+	if (ret) {
+		LOG_ERR("Failed to acquire location from multicell_location lib, error: %d", ret);		
+		event_data_init(LOC_EVT_ERROR, LOC_METHOD_CELL_ID);
+
+	} else {
+		event_data_init(LOC_EVT_LOCATION, LOC_METHOD_CELL_ID);
+		event_data.location.latitude = location.latitude;
+		event_data.location.longitude = location.longitude;
+		event_data.location.accuracy = location.accuracy;
+		//TODO:
+		/*event_data.location.datetime.valid = true;
+		event_data.location.datetime.year = pvt_data.datetime.year;
+		event_data.location.datetime.month = pvt_data.datetime.month;
+		event_data.location.datetime.day = pvt_data.datetime.day;
+		event_data.location.datetime.hour = pvt_data.datetime.hour;
+		event_data.location.datetime.minute = pvt_data.datetime.minute;
+		event_data.location.datetime.second = pvt_data.datetime.seconds;
+		event_data.location.datetime.ms = pvt_data.datetime.ms;*/
+		(void)lte_lc_neighbor_cell_measurement_cancel();
+	}
+	event_handler(&event_data);
+	is_busy = false;
+}
+
+int method_cellular_configure_and_start(struct loc_cell_id_config *cell_config, uint16_t interval)
+{
+	int ret = 0;
+
+	ARG_UNUSED(cell_config);
+
+	if (interval > 0 ) {
+		LOG_ERR("Periodic cellular positioning mode not supported at the moment.");
+		return -EINVAL;
+	}
+
+	if (is_busy) {
+		LOG_ERR("Previous operation on going.");
+		return -EBUSY;
+	}
+
+	ret = method_cellular_ncellmeas_start();
+	if (ret) {
+		return ret;
+	}
+
+	LOG_INF("Triggered start of cell measurements");
+	is_busy = true;
+
+	return 0;
+}
+
+void method_cellular_init(void)
+{
+	int ret;
+
+	lte_connected = false;
+	is_busy = false;
+	
+	ret = multicell_location_provision_certificate(false);
+	if (ret) {
+		LOG_ERR("Certificate provisioning failed");
+		return;
+	}
+
+	k_work_queue_start(
+		&method_cellular_work_q, method_cellular_stack,
+		K_THREAD_STACK_SIZEOF(method_cellular_stack),
+		METHOD_CELLULAR_PRIORITY, NULL);
+
+	k_work_init(&method_cellular_positioning_work, method_cellular_positioning_work_fn);
+	lte_lc_register_handler(method_cellular_lte_ind_handler);
+
+	/* TODO: fetch LTE connection status from modem?
+	 * ...because we do not know when lib is initialized
+	 */
+}

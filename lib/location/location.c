@@ -6,10 +6,22 @@
 
 #include <stdio.h>
 #include <zephyr.h>
+
+#include <assert.h>
+
 #include <nrf_modem_gnss.h>
 #include <logging/log.h>
+
+#include <net/multicell_location.h>
 #include <modem/location.h>
+
 #include "method_gnss.h"
+
+
+#if defined(CONFIG_METHOD_CELLULAR)
+#include "method_cellular.h"
+#endif
+
 #include "location.h"
 
 LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
@@ -42,11 +54,17 @@ int location_init(location_event_handler_t handler)
 
 	event_handler = handler;
 
+	/* GNSS init */
 	err = gnss_init();
 	if (err) {
 		LOG_ERR("Failed to initialize GNSS method");
 		return err;
 	}
+
+	/* Cellular positioning init */
+#if defined(CONFIG_METHOD_CELLULAR)
+	method_cellular_init();
+#endif
 
 	initialized = true;
 
@@ -68,7 +86,8 @@ int location_request(const struct loc_config *config)
 	for (int i = 0; i < LOC_MAX_METHODS; i++) {
 		switch (config->methods[i].method) {
 		case LOC_METHOD_CELL_ID:
-			LOG_DBG("Cell ID not yet supported");
+			LOG_DBG("Cellular positioning method selected");
+			selected_method = config->methods[i];
 			break;
 
 		case LOC_METHOD_GNSS:
@@ -92,7 +111,12 @@ int location_request(const struct loc_config *config)
 
 	/* TODO: Add protection so that only one request is handled at a time */
 
-	err = gnss_configure_and_start(&selected_method.config.gnss, config->interval);
+	if (selected_method.method == LOC_METHOD_GNSS) {
+		err = gnss_configure_and_start(&selected_method.config.gnss, config->interval);
+	} else {
+		assert(selected_method.method == LOC_METHOD_CELL_ID);
+		err = method_cellular_configure_and_start(&selected_method.config.cell_id, config->interval);
+	}
 
 	return err;
 }
