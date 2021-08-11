@@ -135,7 +135,12 @@ Complete zigbee_default_signal_handler implementation
 
 In its complete implementation, the `zboss_signal_handler()`_ allows the application to control a broader set of basic functionalities, including joining, commissioning, and network formation.
 
-The following sections describe the logic implemented inside :c:func:`zigbee_default_signal_handler`.
+.. figure:: /images/zigbee_signal_handler_overview.svg
+   :alt: Zigbee default signal handler logic (simplified)
+
+   Zigbee default signal handler logic (simplified)
+
+The following sections describe the logic implemented inside :c:func:`zigbee_default_signal_handler` and correspond to the shapes in the figure.
 
 .. _zarco_signal_handler_startup:
 
@@ -149,14 +154,14 @@ When the stack is started through :c:func:`zigbee_enable`, the stack generates t
 
 The reception of these signals determines the behavior of the default signal handler:
 
-* Upon reception of `ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY`_, the default signal handler prints out a log with the signal status and exit.
+* Upon reception of `ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY`_, the default signal handler prints out a log with the signal status, and then exits.
 
 .. figure:: /images/zigbee_signal_handler_01_production_config.svg
    :alt: ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY signal handler
 
    ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY signal handler
 
-* Upon reception of `ZB_ZDO_SIGNAL_SKIP_STARTUP`_ signal, the default signal handler performs the BDB initialization procedure, and then exit.
+* Upon reception of `ZB_ZDO_SIGNAL_SKIP_STARTUP`_ signal, the default signal handler performs the BDB initialization procedure, and then exits.
 
 .. figure:: /images/zigbee_signal_handler_02_startup.svg
    :alt: ZB_ZDO_SIGNAL_SKIP_STARTUP signal handler
@@ -207,16 +212,16 @@ Commissioned device scenario
 
 For devices that have been already commissioned, the default handler performs the following actions:
 
-* Not perform additional actions if the device implements a coordinator role.
+* For devices that implement the coordinator role, the handler does not perform additional actions.
 
     * This keeps the network closed for new Zigbee devices even if the coordinator is reset.
 
-* Not perform additional actions if the device successfully rejoins Zigbee network.
+* For devices that successfully rejoin the Zigbee network, the handler does not perform additional actions.
 
     * This does not open the network for new devices if one of existing devices is reset.
     * If :ref:`zarco_network_rejoin` is running, it is cancelled.
 
-* For routers and end devices, if they did not join the Zigbee network successfully, :ref:`zarco_network_rejoin` is started by calling :c:func:`start_network_rejoin`.
+* For routers and end devices, if they did not join the Zigbee network successfully, the handler starts :ref:`zarco_network_rejoin` by calling :c:func:`start_network_rejoin`.
 
 Once finished, the stack generates the `ZB_BDB_SIGNAL_STEERING`_ signal, and continues to :ref:`zarco_signal_handler_network`.
 
@@ -228,7 +233,7 @@ Once finished, the stack generates the `ZB_BDB_SIGNAL_STEERING`_ signal, and con
 .. _zarco_signal_handler_network:
 
 Zigbee network formation and commissioning
-++++++++++++++++++++++++++++++++++++++++++
+------------------------------------------
 
 According to the logic implemented inside the default signal handler, the devices can either form a network or join an existing network:
 
@@ -277,29 +282,42 @@ It is used in :c:func:`zigbee_default_signal_handler` by default.
 
 If the network is left by a router or an end device, the device tries to join any open network.
 
+The Zigbee rejoin procedure retries to join a network with each try after ``2^n`` seconds, where ``n`` is the number of retries.
+The period is limited to the time specified in ``REJOIN_INTERVAL_MAX_S``, which by default equals 15 minutes.
+
+When :c:func:`start_network_rejoin` is called, the rejoin procedure is started.
+
+.. figure:: /images/zigbee_signal_handler_10_rejoin.svg
+   :alt: Starting the rejoin procedure
+
+   Starting the rejoin procedure
+
+When ``stop_network_rejoin(was_scheduled)`` is called, the network rejoin is canceled and the alarms scheduled by :c:func:`start_network_rejoin` are canceled.
+
+.. figure:: /images/zigbee_signal_handler_10_rejoin_stop.svg
+   :alt: Stopping the rejoin procedure
+
+   Stopping the rejoin procedure
+
+The rejoin procedure is different for routers and end devices in the following aspects:
+
 * The router uses the default signal handler to try to join or rejoin the network until it succeeds.
 * The end device uses the default signal handler to try to join or rejoin the network for a finite period of time, because the end devices are often powered by batteries.
 
-  * The procedure to join or rejoin the network is restarted after the device reset or power cycle.
+  * The procedure to join or rejoin the network is restarted after the device resets or power cycles.
   * The procedure to join or rejoin the network can be restarted by calling :c:func:`user_input_indicate`, but it needs to be implemented in the application (for example, by calling :c:func:`user_input_indicate` when a button is pressed).
-    The procedure is restarted only if the device does not join and the procedure is not running.
+    The procedure is restarted only if the device was unable to join and the procedure is not running.
 
-The Zigbee rejoin procedure retries to join a network with each try after a specified amount of time: ``2^n`` seconds, where ``n`` is the number of retries.
+  For the end device, the application alarm is scheduled with ``stop_network_rejoin(ZB_TRUE)``, to be called after the amount of time specified in ``ZB_DEV_REJOIN_TIMEOUT_MS``.
 
-The period is limited to 15 minutes if the result is higher than that.
-
-* When :c:func:`start_network_rejoin` is called, the rejoin procedure is started, and depending on the device role:
-
-  * For the end device, the application alarm is scheduled with ``stop_network_rejoin(ZB_TRUE)``, to be called after the amount of time specified in ``ZB_DEV_REJOIN_TIMEOUT_MS``.
-    Once called, the alarm stops the rejoin.
-
-* When ``stop_network_rejoin(was_scheduled)`` is called, the network rejoin is canceled and the alarms scheduled by :c:func:`start_network_rejoin` are canceled.
-
-  * Additionally for the end device, if :c:func:`stop_network_rejoin` is called with ``was_scheduled`` set to ``ZB_TRUE``, :c:func:`user_input_indicate` can restart the rejoin procedure.
-
-* For end devices only, :c:func:`user_input_indicate` restarts the rejoin procedure if the device did not join the network and is not trying to join a network.
+  If :c:func:`stop_network_rejoin` is called with ``was_scheduled`` set to ``ZB_TRUE``, :c:func:`user_input_indicate` can restart the rejoin procedure.
+  :c:func:`user_input_indicate` restarts the rejoin procedure if the device did not join the network and is not trying to join a network.
   It is safe to call this function from an interrupt and to call it multiple times.
 
+  .. figure:: /images/zigbee_signal_handler_10_rejoin_user_input.svg
+     :alt: User input restarting the the rejoin procedure
+
+     User input restarting the the rejoin procedure
 
 .. note::
     The Zigbee network rejoin procedure is managed from multiple signals in :c:func:`zigbee_default_signal_handler`.
