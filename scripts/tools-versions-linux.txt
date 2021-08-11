@@ -1,6 +1,6 @@
 python3=3.8.2
 git=1:2.25.1
-cmake=3.17.3
+cmake=3.20.5
 ninja-build=1.9.0
 gperf=3.1
 dtc=1.4.7
