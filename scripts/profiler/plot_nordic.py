@@ -14,12 +14,12 @@ import numpy as np
 import sys
 import time
 import logging
+import json
 
-from events import TrackedEvent
-from processed_events import ProcessedEvents
-from processed_events import MEM_ADDRESS_DATA_DESC
+from processed_events import ProcessedEvents, EM_MEM_ADDRESS_DATA_DESC
+from events import TrackedEvent, EventType
+from stream import Stream, StreamError
 from plot_nordic_config import PlotNordicConfig
-
 
 class MouseButton(Enum):
     LEFT = 1
@@ -61,7 +61,7 @@ class DrawState():
 
 class PlotNordic():
 
-    def __init__(self, log_lvl=logging.WARNING):
+    def __init__(self, own_recv_socket_dict=None, log_lvl=logging.WARNING):
         plt.rcParams['toolbar'] = 'None'
         plt.ioff()
         self.plot_config = PlotNordicConfig
@@ -69,13 +69,18 @@ class PlotNordic():
             self.plot_config['timeline_width_init'],
             self.plot_config['event_processing_rect_height'],
             self.plot_config['event_submit_markersize'])
+        self.ani = None
+        self.close_event_flag = False
         self.processed_events = ProcessedEvents()
-        self.finish_event = None
-        self.submitted_event_type = None
 
-        self.temp_events = []
+        if own_recv_socket_dict is not None:
+            timeouts = {
+                'descriptions': None,
+                'events': 0
+            }
+            self.in_stream = Stream(own_recv_socket_dict, timeouts)
 
-        self.logger = logging.getLogger('RTT Plot Nordic')
+        self.logger = logging.getLogger('Plot Nordic')
         self.logger_console = logging.StreamHandler()
         self.logger.setLevel(log_lvl)
         self.log_format = logging.Formatter(
@@ -85,14 +90,10 @@ class PlotNordic():
 
 
     def read_data_from_files(self, events_filename, events_types_filename):
-        self.processed_events.raw_data.read_data_from_files(
+        self.processed_events.read_data_from_files(
             events_filename, events_types_filename)
-        if not self.processed_events.raw_data.verify():
+        if not self.processed_events.verify():
             self.logger.warning("Missing event descriptions")
-
-    def write_data_to_files(self, events_filename, events_types_filename):
-        self.processed_events.raw_data.write_data_to_files(
-            events_filename, events_types_filename)
 
     def on_click_start_stop(self, event):
         if self.draw_state.paused:
@@ -127,19 +128,13 @@ class PlotNordic():
         plt.title("Custom events")
         plt.grid(True)
 
-        minimum = selected_events_types[0]
-        maximum = selected_events_types[0]
+        minimum = min(selected_events_types)
+        maximum = max(selected_events_types)
         ticks = []
         labels = []
         for j in selected_events_types:
-            if j not in (self.processed_events.event_processing_start_id,
-                         self.processed_events.event_processing_end_id):
-                if j > maximum:
-                    maximum = j
-                if j < minimum:
-                    minimum = j
-                ticks.append(j)
-                labels.append(self.processed_events.raw_data.registered_events_types[j].name)
+            ticks.append(j)
+            labels.append(self.processed_events.registered_events_types[j].name)
         plt.yticks(ticks, labels)
 
         # min and max range of y axis are bigger by one so markers fit nicely
@@ -213,10 +208,7 @@ class PlotNordic():
                                     self.processed_events.tracked_events))
         if len(filtered_id) == 0:
             return None
-        if len(self.processed_events.raw_data.registered_events_types[round(y_coord)].data_types) == 0:
-            dists = list(map(lambda x: abs(x.submit.timestamp - x_coord), filtered_id))
-            return filtered_id[np.argmin(dists)]
-        if self.processed_events.raw_data.registered_events_types[round(y_coord)].data_types[0] != MEM_ADDRESS_DATA_DESC:
+        if not self.processed_events.is_event_tracked(round(y_coord)):
             dists = list(map(lambda x: abs(x.submit.timestamp - x_coord), filtered_id))
             return filtered_id[np.argmin(dists)]
         else:
@@ -289,7 +281,7 @@ class PlotNordic():
                     self.draw_state.selected_event_processing)
 
             self.draw_state.selected_event_text = \
-                self.processed_events.raw_data.registered_events_types[event_submit.type_id].name + '\n'
+                self.processed_events.registered_events_types[event_submit.type_id].name + '\n'
             self.draw_state.selected_event_text += 'Submit: ' + \
                 PlotNordic._stringify_time(event_submit.timestamp) + '\n'
 
@@ -304,10 +296,10 @@ class PlotNordic():
                     PlotNordic._stringify_time(selected_event.proc_end_time - \
                         selected_event.proc_start_time) + '\n'
 
-            ev_type = self.processed_events.raw_data.registered_events_types[event_submit.type_id]
+            ev_type = self.processed_events.registered_events_types[event_submit.type_id]
 
             for i in range(0, len(ev_type.data_descriptions)):
-                if ev_type.data_descriptions[i] == MEM_ADDRESS_DATA_DESC:
+                if ev_type.data_descriptions[i] == EM_MEM_ADDRESS_DATA_DESC:
                     continue
                 self.draw_state.selected_event_text += ev_type.data_descriptions[i] + ' = '
                 self.draw_state.selected_event_text += str(event_submit.data[i]) + '\n'
@@ -391,63 +383,38 @@ class PlotNordic():
         plt.tight_layout()
 
     def close_event(self, event):
-        if self.finish_event is not None:
-            self.finish_event.set()
-        plt.close('all')
-        sys.exit()
+        self.close_event_flag = True
 
-    def animate_events_real_time(self, fig, selected_events_types, one_line):
+    def animate_events_real_time(self, fig):
         rects = []
         events = []
-        xranges = []
-        for i in range(0, len(selected_events_types)):
-            xranges.append([])
-        while not self.queue.empty():
-            event = self.queue.get()
-            if event is None:
-                self.logger.info("Stopped collecting new events")
+        #Receive events
+        while True:
+            try:
+                data = self.in_stream.recv_ev()
+            except StreamError as err:
+                if err.args[1] == 'timeout':
+                    break
+                self.logger.error("Receiving error: {}. Exiting".format(err))
                 self.close_event(None)
+                sys.exit()
+            data_str = data.decode()
+            tracked_event = TrackedEvent.deserialize(data_str)
 
-            if event.type_id == self.processed_events.event_processing_start_id:
-                self.processed_events.start_event = event
-                for i in range(len(self.temp_events) - 1, -1, -1):
-                    # comparing memory addresses of event processing start
-                    # and event submit to identify matching events
-                    if self.temp_events[i].data[0] == self.processed_events.start_event.data[0]:
-                        self.processed_events.submit_event = self.temp_events[i]
-                        events.append(self.temp_events[i])
-                        self.submitted_event_type = self.processed_events.submit_event.type_id
-                        del self.temp_events[i]
-                        break
+            events.append(tracked_event.submit)
+            self.processed_events.tracked_events.append(tracked_event)
 
-            elif event.type_id == self.processed_events.event_processing_end_id:
-                # comparing memory addresses of event processing start and
-                # end to identify matching events
-                if self.submitted_event_type is not None and event.data[0] \
-                            == self.processed_events.start_event.data[0]:
-                    rects.append(
-                        matplotlib.patches.Rectangle(
-                            (self.processed_events.start_event.timestamp,
-                                self.processed_events.submit_event.type_id -
-                                self.draw_state.event_processing_rect_height/2),
-                            event.timestamp -
-                            self.processed_events.start_event.timestamp,
-                            self.draw_state.event_processing_rect_height,
-                            edgecolor='black'))
-                    self.processed_events.tracked_events.append(
-                        TrackedEvent(
-                            self.processed_events.submit_event,
-                            self.processed_events.start_event.timestamp,
-                            event.timestamp))
-                    self.submitted_event_type = None
-            elif len(event.data) == 0:
-                events.append(event)
-                self.processed_events.tracked_events.append(TrackedEvent(event, None, None))
-            elif self.processed_events.raw_data.registered_events_types[event.type_id].data_descriptions[0] != MEM_ADDRESS_DATA_DESC:
-                events.append(event)
-                self.processed_events.tracked_events.append(TrackedEvent(event, None, None))
-            else:
-                self.temp_events.append(event)
+            if tracked_event.proc_start_time is not None:
+                assert tracked_event.proc_end_time is not None
+                rects.append(
+                    matplotlib.patches.Rectangle(
+                        (tracked_event.proc_start_time,
+                            tracked_event.submit.type_id -
+                            self.draw_state.event_processing_rect_height/2),
+                        tracked_event.proc_end_time -
+                        tracked_event.proc_start_time,
+                        self.draw_state.event_processing_rect_height,
+                        edgecolor='black'))
 
         # translating plot
         if not self.draw_state.synchronized_with_events:
@@ -482,28 +449,28 @@ class PlotNordic():
 
         self.draw_state.ax.add_collection(PatchCollection(rects))
         plt.gcf().canvas.flush_events()
+        if self.close_event_flag:
+            sys.exit()
 
-    def plot_events_real_time(
-            self,
-            queue,
-            finish_event,
-            selected_events_types=None,
-            one_line=False):
+    def plot_events_real_time(self, selected_events_types=None):
         self.start_time = time.time()
-        self.queue = queue
-
-        self.finish_event = finish_event
-        self.processed_events.raw_data.registered_events_types = queue.get()
-
-        self.processed_events.match_event_processing()
+        #Receive event descriptions
+        try:
+            bytes = self.in_stream.recv_desc()
+        except StreamError as err:
+            self.logger.error("Receiving error: {}. Exiting".format(err))
+            sys.exit()
+        data_str = bytes.decode()
+        event_types_dict = json.loads(data_str)
+        self.processed_events.registered_events_types = dict((int(k), EventType.deserialize(v))
+                                                             for k, v in event_types_dict.items())
+        if self.processed_events.registered_events_types is None:
+            self.logger.error("Event descriptors not sent properly")
+            sys.exit()
         if selected_events_types is None:
             selected_events_types = list(
-                self.processed_events.raw_data.registered_events_types.keys())
+                self.processed_events.registered_events_types.keys())
 
-        self.processed_events.event_processing_start_id = \
-            self.processed_events.raw_data.get_event_type_id('event_processing_start')
-        self.processed_events.event_processing_end_id = \
-            self.processed_events.raw_data.get_event_type_id('event_processing_end')
         fig = self._prepare_plot(selected_events_types)
 
         self.start_stop_ax = plt.axes([0.8, 0.025, 0.1, 0.04])
@@ -514,24 +481,20 @@ class PlotNordic():
         self.ani = animation.FuncAnimation(
             fig,
             self.animate_events_real_time,
-            fargs=[
-                selected_events_types,
-                one_line],
             interval=self.plot_config['refresh_time'])
         plt.show()
 
     def plot_events_from_file(
             self, selected_events_types=None, one_line=False):
         self.draw_state.paused = True
-        if len(self.processed_events.raw_data.events) == 0 or \
-                len(self.processed_events.raw_data.registered_events_types) == 0:
+        if len(self.processed_events.tracked_events) == 0 or \
+                len(self.processed_events.registered_events_types) == 0:
             self.logger.error("Please read some events data before plotting")
 
         if selected_events_types is None:
             selected_events_types = list(
-                self.processed_events.raw_data.registered_events_types.keys())
+                self.processed_events.registered_events_types.keys())
 
-        self.processed_events.match_event_processing()
         self._prepare_plot(selected_events_types)
 
         x = list(map(lambda x: x.submit.timestamp, self.processed_events.tracked_events))
