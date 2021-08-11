@@ -1,8 +1,3 @@
-&uart0 {
-	status = "okay";
-	current-speed = <19200>;
-};
-
 &spi0 {
 	status = "disabled";
 };
