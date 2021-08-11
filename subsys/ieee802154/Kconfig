@@ -6,6 +6,12 @@
 
 menu "Nordic IEEE 802.15.4"
 
+config NRF_802154_RADIO_CONFIG
+	bool "nRF52 IEEE 802.15.4 configurator"
+	default NRF_802154_SER_RADIO || IEEE802154_NRF5
+	help
+	  Enable the nRF IEEE 802.15.4 configurator module.
+
 config NRF_802154_RADIO_CONFIG_PRIO
 	int "nRF52 IEEE 802.15.4 configuration priority"
 	default 91
