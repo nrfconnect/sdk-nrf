@@ -1,0 +1,13 @@
+sample:
+  name: Zigbee application template
+  description: Zigbee application template
+tests:
+  zigbee.template:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build smoke
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf21540dk_nrf52840

@@ -101,6 +101,9 @@ Zigbee
   * :ref:`lib_zigbee_zcl_scenes` library with documentation.
     This library was separated from the Zigbee light bulb sample.
 
+  * :ref:`zigbee_template_sample` sample.
+    This minimal Zigbee router application can be used as the starting point for developing custom Zigbee devices.
+
 Common
 ======
 
