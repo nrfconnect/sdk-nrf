@@ -4,8 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_library()
+if(CONFIG_NRF_802154_RADIO_CONFIG)
+  zephyr_library()
 
-zephyr_library_sources(
-  nrf_802154_configurator.c
-  )
+  zephyr_library_sources(
+    nrf_802154_configurator.c
+    )
+endif()
