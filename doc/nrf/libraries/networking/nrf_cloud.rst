@@ -149,10 +149,7 @@ If the value equals :c:enumerator:`NRF_CLOUD_FOTA_MODEM`, the application can op
 
 Sending sensor data
 *******************
-The library offers two APIs, :c:func:`nrf_cloud_sensor_data_send` and :c:func:`nrf_cloud_sensor_data_stream`, for sending sensor data to the cloud.
-Currently, the supported sensor types are GPS and FLIP (see :c:enum:`nrf_cloud_sensor`).
-
-Use :c:func:`nrf_cloud_sensor_data_stream` to send sensor data with best quality.
+The library offers two APIs, :c:func:`nrf_cloud_sensor_data_send` and :c:func:`nrf_cloud_sensor_data_stream` (lowest QoS), for sending sensor data to the cloud.
 
 To view sensor data on nRF Connect for Cloud, the device must first inform the cloud what types of sensor data to display.
 The device passes this information by writing a ``ui`` field, containing an array of sensor types, into the ``serviceInfo`` field in the device's shadow.
