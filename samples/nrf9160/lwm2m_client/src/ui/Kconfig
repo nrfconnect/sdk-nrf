@@ -4,53 +4,30 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "User Interface"
-
-config UI_LED_USE_PWM
-	bool "Use PWM to control LEDs"
-	default y
-	depends on $(dt_alias_enabled,rgb-pwm)
-	select PWM if BOARD_THINGY91_NRF9160_NS
-	select PWM_0 if BOARD_THINGY91_NRF9160_NS
+config UI_LED
+	bool
 	help
-		If enabled, LEDs will be controlled with PWM. In order
-		to enable this option, the devicetree must have an
-		"rgb-pwm" property in /aliases, which must point to an
-		enabled PWM node with compatible "nordic,nrf-pwm". The
-		red, green, and blue LEDs must be connected to
-		channels 0, 1, and 2 of this PWM, respectively.
+	  Enable LEDs.
 
 config UI_BUZZER
-	bool "Enable buzzer"
-	default y
-	depends on $(dt_alias_enabled,buzzer-pwm)
-	select PWM if BOARD_THINGY91_NRF9160_NS
-	select PWM_1 if BOARD_THINGY91_NRF9160_NS
+	bool
+	select PWM
+	select PWM_1
 	help
-		If enabled, a buzzer will be controllable with PWM. In
-		order to enable this option, the devicetree must have
-		a "buzzer-pwm" property in /aliases, which must point
-		to an enabled PWM node with compatible
-		"nordic,nrf-pwm". The buzzer must be connected to
-		channel 0 of this PWM.
+	  If enabled, a buzzer will be controllable with PWM.
 
-if UI_BUZZER
 
-config UI_BUZZER_MIN_FREQUENCY
-	int "Minimum buzzer frequency"
-	default 100
+config UI_INPUT
+	bool
+	select DK_LIBRARY
+	help
+	  Enable switches and buttons.
 
-config UI_BUZZER_MAX_FREQUENCY
-	int "Maximum buzzer frequency"
-	default 10000
 
-endif # UI_BUZZER
-
-config UI_BUTTON
-	bool "Enable buttons"
-	default y if BOARD_NRF9160DK_NRF9160_NS
-
-endmenu
+config UI_SENSE_LED
+	bool
+	help
+	  Enables the sense LEDs available on the Thingy:91.
 
 module = UI
 module-str = User Interface

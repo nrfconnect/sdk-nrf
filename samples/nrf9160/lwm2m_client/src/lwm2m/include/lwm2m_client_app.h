@@ -10,36 +10,49 @@
 #include <zephyr.h>
 #include <net/lwm2m.h>
 
-#include "ui.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Device */
 int lwm2m_app_init_device(char *serial_num);
 
-#if defined(CONFIG_LWM2M_IPSO_LIGHT_CONTROL)
+#if defined(CONFIG_LWM2M_APP_LIGHT_CONTROL)
 int lwm2m_init_light_control(void);
 #endif
 
-#if defined(CONFIG_LWM2M_IPSO_TEMP_SENSOR)
-int lwm2m_init_temp(void);
+#if defined(CONFIG_LWM2M_APP_TEMP_SENSOR)
+int lwm2m_init_temp_sensor(void);
 #endif
 
-#if defined(CONFIG_UI_BUZZER)
+#if defined(CONFIG_LWM2M_APP_PRESS_SENSOR)
+int lwm2m_init_press_sensor(void);
+#endif
+
+#if defined(CONFIG_LWM2M_APP_HUMID_SENSOR)
+int lwm2m_init_humid_sensor(void);
+#endif
+
+#if defined(CONFIG_LWM2M_APP_GAS_RES_SENSOR)
+int lwm2m_init_gas_res_sensor(void);
+#endif
+
+#if defined(CONFIG_LWM2M_APP_LIGHT_SENSOR)
+int lwm2m_init_light_sensor(void);
+#endif
+
+#if defined(CONFIG_LWM2M_APP_BUZZER)
 int lwm2m_init_buzzer(void);
 #endif
 
-#if defined(CONFIG_UI_BUTTON)
-int handle_button_events(struct ui_evt *evt);
-int lwm2m_init_button(void);
+#if defined(CONFIG_LWM2M_APP_PUSH_BUTTON)
+int lwm2m_init_push_button(void);
 #endif
 
-#if defined(CONFIG_LWM2M_IPSO_ACCELEROMETER)
-#if CONFIG_FLIP_INPUT > 0
-int handle_accel_events(struct ui_evt *evt);
+#if defined(CONFIG_LWM2M_APP_ONOFF_SWITCH)
+int lwm2m_init_onoff_switch(void);
 #endif
+
+#if defined(CONFIG_LWM2M_APP_ACCELEROMETER)
 int lwm2m_init_accel(void);
 #endif
 

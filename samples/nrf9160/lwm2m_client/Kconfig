@@ -7,6 +7,111 @@
 menu "Application sample"
 
 rsource "src/ui/Kconfig"
+rsource "src/modules/Kconfig"
+rsource "src/lwm2m/Kconfig"
+
+menu "LwM2M objects"
+config APP_PUSH_BUTTON
+	bool "Enable button(s)"
+	select UI_INPUT
+	select LWM2M_IPSO_PUSH_BUTTON
+	select LWM2M_APP_PUSH_BUTTON
+
+
+config APP_ONOFF_SWITCH
+	bool "Enable switches"
+	depends on BOARD_NRF9160DK_NRF9160_NS
+	select UI_INPUT
+	select LWM2M_IPSO_ONOFF_SWITCH
+	select LWM2M_APP_ONOFF_SWITCH
+
+
+menuconfig APP_LIGHT_CONTROL
+	bool "Enable LED(s)"
+	select UI_LED
+	select LWM2M_IPSO_LIGHT_CONTROL
+	select LWM2M_APP_LIGHT_CONTROL
+
+if APP_LIGHT_CONTROL
+	rsource "src/ui/Kconfig.ui_led"
+endif # APP_LIGHT_CONTROL
+
+
+menuconfig APP_BUZZER
+	bool "Enable buzzer"
+	depends on BOARD_THINGY91_NRF9160_NS
+	select UI_BUZZER
+	select LWM2M_APP_BUZZER
+
+
+menuconfig APP_LIGHT_SENSOR
+	bool "Enable light sensor"
+	select LIGHT_SENSOR
+	select LWM2M_IPSO_APP_COLOUR_SENSOR
+	select LWM2M_APP_LIGHT_SENSOR
+
+if APP_LIGHT_SENSOR
+	rsource "src/sensors/Kconfig.light_sensor"
+	rsource "src/ipso/Kconfig.ipso_colour_sensor"
+endif # APP_LIGHT_SENSOR
+
+
+menuconfig APP_ENV_SENSOR
+	bool "Enable environment sensors"
+	select ENVIRONMENT_SENSOR
+	help
+	  Enables options for enabling temperature, pressure, humidity and gas resistance sensors.
+
+if APP_ENV_SENSOR
+rsource "src/sensors/Kconfig.env_sensor"
+
+config APP_TEMP_SENSOR
+	bool "Enable temperature sensor"
+	select LWM2M_IPSO_TEMP_SENSOR
+	select LWM2M_APP_TEMP_SENSOR
+
+config APP_PRESS_SENSOR
+	bool "Enable air pressure sensor"
+	select LWM2M_IPSO_PRESSURE_SENSOR
+	select LWM2M_APP_PRESS_SENSOR
+
+config APP_HUMID_SENSOR
+	bool "Enable humidity sensor"
+	select LWM2M_IPSO_HUMIDITY_SENSOR
+	select LWM2M_APP_HUMID_SENSOR
+
+config APP_GAS_RES_SENSOR
+	bool "Enable gas resistance sensor"
+	select LWM2M_IPSO_GENERIC_SENSOR
+	select LWM2M_APP_GAS_RES_SENSOR
+endif # APP_ENV_SENSOR
+
+
+menuconfig APP_ACCELEROMETER
+	bool "Enable accelerometer"
+	select ACCELEROMETER
+	select LWM2M_IPSO_ACCELEROMETER
+	select LWM2M_APP_ACCELEROMETER
+
+if APP_ACCELEROMETER
+	rsource "src/sensors/Kconfig.accelerometer"
+endif # APP_ACCELEROMETER
+
+menuconfig APP_GPS
+	bool "Enable GPS"
+	select GPS
+	select LWM2M_LOCATION_OBJ_SUPPORT
+
+if APP_GPS
+	rsource "src/sensors/Kconfig.gps"
+
+config APP_GPS_HOLD_TIME
+	int "Minimum time [s] between location data notification messages"
+	default 60
+	help
+	  The minimum time in seconds that notifications can be sent to observers of the Location data.
+endif # APP_GPS
+endmenu # LwM2M objects
 
 config APP_LWM2M_SERVER
 	string "LwM2M server name or IP address"
@@ -17,7 +122,14 @@ config APP_LWM2M_PSK
 	string "LwM2M pre-shared key for communication"
 	default "000102030405060708090a0b0c0d0e0f"
 	help
-	  Pre-shared key used for communicationg with the server
+	  Pre Shared Key must be identical to the PSK registered with the device on the LwM2M server.
+	  Use the hexadecimal representation.
+
+config APP_ENDPOINT_PREFIX
+	string "Prefix used in the endpoint name"
+	default "urn:imei:"
+	help
+	  Sets the prefix of the endpoint name used when connecting to the LwM2M server.
 
 config APP_SERVER_TLS_TAG
 	int "LwM2M server TLS tag"
@@ -41,15 +153,8 @@ config APP_HOLD_TIME_RSRP
 	int "Minimum time [s] between RSRP notification messages"
 	default 60
 	help
-	  The minimum time in seconds that notifications can be sent to
-	  observers of the Connectivity Monitoring data.
-
-config APP_HOLD_TIME_GPS
-	int "Minimum time [s] between location data notification messages"
-	default 60
-	help
-	  The minimum time in seconds that notifications can be sent to
-	  observers of the Location data.
+	  The minimum time in seconds that notifications can be sent to observers of the
+	  Connectivity Monitoring data.
 
 config APP_MCUBOOT_FLASH_BUF_SZ
 	int "Size of buffer used for flash write operations during MCUboot updates"
@@ -58,172 +163,13 @@ config APP_MCUBOOT_FLASH_BUF_SZ
 	help
 	  Buffer size must be aligned to the minimal flash write block size.
 
-choice
-	prompt "GPS device"
-	default GPS_USE_SIM
-	help
-		Select from which device GPS data will be fetched.
-
-config GPS_USE_SIM
-	bool "Use GPS simulator"
-	select GPS_SIM
-	select GPS_SIM_TRIGGER
-	help
-		Use simulated GPS data.
-
-config GPS_USE_EXTERNAL
-	bool "User provided GPS device"
-	help
-		Provide a GPS device that location data will be fetched from and
-		sent to nRF Cloud
-
-endchoice
-
-if GPS_USE_SIM
-
-config GPS_DEV_NAME
-	string
-	default GPS_SIM_DEV_NAME
-
-config GPS_TRIGGER
-	bool
-	default GPS_SIM_TRIGGER
-
-endif
-
-if GPS_USE_EXTERNAL
-config GPS_DEV_NAME
-	string "GPS device name"
-	help
-		GPS device from which location data will be fetched and sent
-		to nRF Cloud.
-
-endif
-
-choice
-	prompt "Accelerometer device"
-	default ACCEL_USE_SIM
-	help
-		Select which device will provide accelerometer data.
-
-config ACCEL_USE_SIM
-	bool "Use simulated accelerometer data"
-	select SENSOR
-	select SENSOR_SIM
-	select SENSOR_SIM_TRIGGER
-	help
-		Use sensor simulator to generate accelerometer data for
-		flip detection data sent to nRF Cloud.
-
-config ACCEL_USE_EXTERNAL
-	bool "User provided accelerometer device"
-	help
-		The user will provide an accelerometer device that will
-		be used for flip detection.
-
-endchoice
-
-if ACCEL_USE_SIM
-config ACCEL_DEV_NAME
-	string
-	default SENSOR_SIM_DEV_NAME
-
-config ACCEL_TRIGGER
-	bool
-	default SENSOR_SIM_TRIGGER
-
-config FLIP_INPUT
-	int "Button or switch number to simulate flip"
-	range 1 4 if BOARD_NRF9160DK_NRF9160_NS
-	default 3 if BOARD_NRF9160DK_NRF9160_NS
-	default 0
-	help
-		Button or switch number to use for simulating
-		a board flip event.
-		0 - not set
-		1 - Button 1
-		2 - Button 2
-		3 - Switch 1
-		4 - Switch 2
-endif
-
-config FLIP_POLL
-	bool "Use polling to detect flip"
-	help
-		Poll the defined accelerometer device at interval determined by
-		FLIP_POLL_INTERVAL. Data will be sent to nRF Cloud if a flip
-		has happened and the orientation thus has changed.
-
-if FLIP_POLL
-config FLIP_POLL_INTERVAL
-	int "Flip detection poll interval"
-	default 1000
-	help
-		Flip polling interval in milliseconds.
-endif
-
-if ACCEL_USE_EXTERNAL
-
-config ACCEL_DEV_NAME
-	string "Accelerometer device name"
-	help
-		Device from which accelerometer data will be fetched and used
-		for orientation detection and sent to nRF Cloud.
-
-endif
-
-config ACCEL_INVERTED
-	bool "Accelerometer inverted"
-	help
-		Enable if the accelerometer is mounted with the top side facing
-		down when the board itself is in normal position.
-
-config ACCEL_CALIBRATE
-	bool "Calibrate accelerometer"
-	help
-		Calibrate the accelerometer on a flat surface to filter away
-		static measurement offset that could affect orientation
-		detection.
-
-if ACCEL_CALIBRATE
-config ACCEL_CALIBRATION_ITERATIONS
-	int "Number of readings for calibration"
-	help
-		Number of measurement readings to average over to find the
-		static offset in the readings when calibrating the
-		accelerometer.
-
-config CALIBRATION_INPUT
-	int "Button to trigger accelerometer calibration"
-	range 1 2 if BOARD_NRF9160DK_NRF9160_NS
-	default 1 if BOARD_NRF9160DK_NRF9160_NS
-	help
-		Button number to use to trigger accelerometer calibration:
-		1 - Button 1
-		2 - Button 2
-endif
-
-if !ACCEL_CALIBRATE
-config ACCEL_CALIBRATION_ITERATIONS
-	int
-	default 0
-endif
-
-config ACCEL_ITERATIONS
-	int "Number of readings per measurement"
-	default 1
-	help
-		Number of measurement readings to average over for each time
-		the orientation detector determines the orientation of the
-		board. Used for simple filtering of noisy measurements.
-
 module = APP
 module-dep = LOG
 module-str = Log level for sample
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+endmenu # Application sample
 
-endmenu
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
-endmenu
+endmenu # Zephyr Kernel

@@ -618,6 +618,11 @@
 .. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/
 .. _`Zigbee Cluster Library specification`: https://zigbeealliance.org/wp-content/uploads/2019/12/07-5123-06-zigbee-cluster-library-specification.pdf
 
+.. ### Source: avsystem.com
+
+.. _`Coiote Device Management`: https://www.avsystem.com/products/coiote-iot-device-management-platform/
+.. _`Coiote Device Management server`: https://eu.iot.avsystem.cloud/
+
 .. ### Source: other
 
 .. _`Pelion Device Management Portal`: https://portal.mbedcloud.com/login
@@ -723,6 +728,7 @@
 
 .. _`Power Saving Mode (PSM)`: https://www.sharetechnote.com/html/Handbook_LTE_PSM.html
 
+.. _`Leshan Demo Server web UI`:
 .. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io
 
 .. _`public Leshan Bootstrap Server Demo`: https://leshan.eclipseprojects.io/bs

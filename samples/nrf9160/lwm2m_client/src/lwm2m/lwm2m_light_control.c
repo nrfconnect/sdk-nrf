@@ -5,31 +5,192 @@
  */
 
 #include <zephyr.h>
-#include <ui.h>
 #include <net/lwm2m.h>
+#include <lwm2m_resource_ids.h>
+#include <stdlib.h>
 
-#include "lwm2m_client_app.h"
+#include "lwm2m_app_utils.h"
+#include "ui_led.h"
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(app_lwm2m_light, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(app_lwm2m_light_control, CONFIG_APP_LOG_LEVEL);
 
-#define LIGHT_NAME	"LED1"
+#if defined(CONFIG_BOARD_THINGY91_NRF9160_NS) && defined(CONFIG_UI_LED_USE_PWM)
+#define APP_TYPE	"RGB PWM LED controller"
+#elif defined(CONFIG_BOARD_THINGY91_NRF9160_NS)
+#define APP_TYPE	"RGB GPIO LED controller"
+#elif defined(CONFIG_BOARD_NRF9160DK_NRF9160_NS) && defined(CONFIG_UI_LED_USE_PWM)
+#define APP_TYPE	"PWM LED controller"
+#elif defined(CONFIG_BOARD_NRF9160DK_NRF9160_NS)
+#define APP_TYPE	"GPIO LED controller"
+#endif
 
-static uint32_t led_state;
+#define BRIGHTNESS_MAX   100U
 
-/* TODO: Move to a pre write hook that can handle ret codes once available */
-static int lc_on_off_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
-			uint8_t *data, uint16_t data_len,
-			bool last_block, size_t total_size)
+static bool state[NUM_LEDS];
+static uint8_t brightness_val[NUM_LEDS];
+static uint8_t colour_val[NUM_LEDS];
+
+static void reset_on_time(uint16_t obj_inst_id)
 {
-	uint32_t led_val;
+	char lwm2m_path[MAX_LWM2M_PATH_LEN];
 
-	led_val = *(uint8_t *) data;
-	if (led_val != led_state) {
-		ui_led_set_state(UI_LED_1, led_val);
-		led_state = led_val;
-		/* TODO: Move to be set by an internal post write function */
-		lwm2m_engine_set_s32("3311/0/5852", 0);
+	snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d", IPSO_OBJECT_LIGHT_CONTROL_ID,
+			obj_inst_id, ON_TIME_RID);
+	lwm2m_engine_set_s32(lwm2m_path, 0);
+}
+
+static int rgb_lc_on_off_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
+			uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+{
+	int ret = 0;
+	bool new_state = *(bool *)data;
+
+	if (IS_ENABLED(CONFIG_UI_LED_USE_PWM)) {
+		/* Reset on-time if transition from off to on */
+		if (state[0] == false && new_state == true) {
+			reset_on_time(obj_inst_id);
+		}
+
+		for (int i = 0; i < NUM_LEDS; ++i) {
+			state[i] = new_state;
+			ret = ui_led_pwm_on_off(i, new_state);
+			if (ret) {
+				LOG_ERR("Set PWM LED %d on/off failed (%d)", i, ret);
+				continue;
+			}
+		}
+	} else if (IS_ENABLED(CONFIG_UI_LED_USE_GPIO)) {
+		/* Reset on-time if transition from off to on */
+		if (state[0] == false && new_state == true) {
+			reset_on_time(obj_inst_id);
+		}
+
+		for (int i = 0; i < NUM_LEDS; ++i) {
+			state[i] = new_state;
+			ret = ui_led_gpio_on_off(i, state[i] && (bool)colour_val[i]);
+			if (ret) {
+				LOG_ERR("Set GPIO LED %d on/off failed (%d)", i, ret);
+				continue;
+			}
+		}
+	}
+
+	return ret;
+}
+
+static uint8_t calculate_intensity(uint8_t colour_value, uint8_t brightness_value)
+{
+	uint32_t numerator = (uint32_t)colour_value * brightness_value;
+	uint32_t denominator = BRIGHTNESS_MAX;
+
+	return (uint8_t)(numerator / denominator);
+}
+
+static int rgb_lc_colour_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
+			uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+{
+	int ret = 0;
+	uint32_t colour_values = strtoul(data, NULL, 0);
+
+	if (IS_ENABLED(CONFIG_UI_LED_USE_PWM)) {
+		uint8_t intensity;
+
+		for (int i = 0; i < NUM_LEDS; ++i) {
+			colour_val[i] = (uint8_t)(colour_values >> 8 * (2 - i));
+			intensity = calculate_intensity(colour_val[i], brightness_val[i]);
+			ret = ui_led_pwm_set_intensity(i, intensity);
+			if (ret) {
+				LOG_ERR("Set PWM LED %d intensity failed (%d)", i, ret);
+				continue;
+			}
+		}
+	} else if (IS_ENABLED(CONFIG_UI_LED_USE_GPIO)) {
+		for (int i = 0; i < NUM_LEDS; ++i) {
+			colour_val[i] = (uint8_t)(colour_values >> 8 * (2 - i));
+			ret = ui_led_gpio_on_off(i, state[i] && (bool)colour_val[i]);
+			if (ret) {
+				LOG_ERR("Set GPIO LED %d failed (%d)", i, ret);
+				continue;
+			}
+		}
+	}
+
+	return ret;
+}
+
+static int rgb_lc_dimmer_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
+			uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+{
+	int ret = 0;
+	uint8_t new_brightness = *data;
+	uint8_t intensity;
+
+	if (IS_ENABLED(CONFIG_UI_LED_USE_PWM)) {
+		for (int i = 0; i < NUM_LEDS; ++i) {
+			brightness_val[i] = new_brightness;
+			intensity = calculate_intensity(colour_val[i], brightness_val[i]);
+			ret = ui_led_pwm_set_intensity(i, intensity);
+			if (ret) {
+				LOG_ERR("Set PWM LED %d intensity failed (%d)", i, ret);
+				continue;
+			}
+		}
+	}
+
+	return ret;
+}
+
+static int lc_on_off_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
+			uint16_t data_len, bool last_block, size_t total_size)
+{
+	int ret = 0;
+	bool new_state = *(bool *)data;
+
+	if (IS_ENABLED(CONFIG_UI_LED_USE_PWM)) {
+		/* Reset on-time if transition from off to on */
+		if (state[0] == false && new_state == true) {
+			reset_on_time(obj_inst_id);
+		}
+
+		state[obj_inst_id] = new_state;
+		ret = ui_led_pwm_on_off(obj_inst_id, new_state);
+		if (ret) {
+			LOG_ERR("Set PWM LED %u on/off failed (%d)", obj_inst_id, ret);
+			return ret;
+		}
+	} else if (IS_ENABLED(CONFIG_UI_LED_USE_GPIO)) {
+		/* Reset on-time if transition from off to on */
+		if (state[0] == false && new_state == true) {
+			reset_on_time(obj_inst_id);
+		}
+
+		state[obj_inst_id] = new_state;
+		ret = ui_led_gpio_on_off(obj_inst_id, new_state);
+		if (ret) {
+			LOG_ERR("Set GPIO LED %u on/off failed (%d)", obj_inst_id, ret);
+			return ret;
+		}
+	}
+
+	return ret;
+}
+
+static int lc_dimmer_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
+			uint16_t data_len, bool last_block, size_t total_size)
+{
+	int ret;
+	uint8_t new_brightness = *data;
+	uint8_t intensity;
+
+	if (IS_ENABLED(CONFIG_UI_LED_USE_PWM)) {
+		brightness_val[obj_inst_id] = new_brightness;
+		intensity = calculate_intensity(UINT8_MAX, brightness_val[obj_inst_id]);
+		ret = ui_led_pwm_set_intensity(obj_inst_id, intensity);
+		if (ret) {
+			LOG_ERR("Set PWM LED %u intensity failed (%d)", obj_inst_id, ret);
+			return ret;
+		}
 	}
 
 	return 0;
@@ -37,15 +198,67 @@ static int lc_on_off_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 
 int lwm2m_init_light_control(void)
 {
-	/* start with LED off */
-	ui_led_set_state(UI_LED_1, 0);
+	int ret = 0;
+	uint8_t intensity;
+	char colour_str[RGBIR_STR_LENGTH];
 
-	/* create light control device */
-	lwm2m_engine_create_obj_inst("3311/0");
-	lwm2m_engine_register_post_write_callback("3311/0/5850", lc_on_off_cb);
-	lwm2m_engine_set_res_data("3311/0/5750",
-				  LIGHT_NAME, sizeof(LIGHT_NAME),
-				  LWM2M_RES_DATA_FLAG_RO);
+	if (IS_ENABLED(CONFIG_UI_LED_USE_PWM)) {
+		ui_led_pwm_init();
+		for (int i = 0; i < NUM_LEDS; ++i) {
+			colour_val[i] = UINT8_MAX;
+			brightness_val[i] = BRIGHTNESS_MAX;
+			intensity = calculate_intensity(colour_val[i], brightness_val[i]);
+			ui_led_pwm_set_intensity(i, intensity);
+		}
+		snprintk(colour_str, RGBIR_STR_LENGTH, "0xFFFFFF");
+	} else if (IS_ENABLED(CONFIG_UI_LED_USE_GPIO)) {
+		ui_led_gpio_init();
+		snprintk(colour_str, RGBIR_STR_LENGTH, "0x010101");
+	}
 
-	return 0;
+	if (IS_ENABLED(CONFIG_BOARD_THINGY91_NRF9160_NS)) {
+		/* Create RGB light control object */
+		lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0));
+		lwm2m_engine_register_post_write_callback(
+			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, ON_OFF_RID), rgb_lc_on_off_cb);
+		lwm2m_engine_register_post_write_callback(
+			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, COLOUR_RID), rgb_lc_colour_cb);
+		lwm2m_engine_register_post_write_callback(
+			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, DIMMER_RID), rgb_lc_dimmer_cb);
+		lwm2m_engine_set_res_data(
+			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, APPLICATION_TYPE_RID),
+			APP_TYPE, sizeof(APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
+		lwm2m_engine_set_string(LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, COLOUR_RID),
+			colour_str);
+		lwm2m_engine_set_u8(LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, DIMMER_RID),
+			BRIGHTNESS_MAX);
+	} else if (IS_ENABLED(CONFIG_BOARD_NRF9160DK_NRF9160_NS)) {
+		char lwm2m_path[MAX_LWM2M_PATH_LEN];
+
+		for (int i = 0; i < NUM_LEDS; ++i) {
+			/* Create light control object */
+			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u",
+				IPSO_OBJECT_LIGHT_CONTROL_ID, i);
+			lwm2m_engine_create_obj_inst(lwm2m_path);
+
+			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d",
+				IPSO_OBJECT_LIGHT_CONTROL_ID, i, ON_OFF_RID);
+			lwm2m_engine_register_post_write_callback(lwm2m_path, lc_on_off_cb);
+
+			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d",
+				IPSO_OBJECT_LIGHT_CONTROL_ID, i, DIMMER_RID);
+			lwm2m_engine_register_post_write_callback(lwm2m_path, lc_dimmer_cb);
+
+			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d",
+				IPSO_OBJECT_LIGHT_CONTROL_ID, i, APPLICATION_TYPE_RID);
+			lwm2m_engine_set_res_data(lwm2m_path, APP_TYPE, sizeof(APP_TYPE),
+				LWM2M_RES_DATA_FLAG_RO);
+
+			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d",
+				IPSO_OBJECT_LIGHT_CONTROL_ID, i, DIMMER_RID);
+			lwm2m_engine_set_u8(lwm2m_path, BRIGHTNESS_MAX);
+		}
+	}
+
+	return ret;
 }

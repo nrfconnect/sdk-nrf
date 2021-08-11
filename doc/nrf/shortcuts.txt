@@ -4,6 +4,9 @@
 .. |release_tt| replace:: ``v1.7.0``
 .. |release_number_tt| replace:: ``1.7.0``
 
+.. |plusminus| unicode:: U+000B1 .. PLUS-MINUS SIGN
+   :rtrim:
+
 .. |SES| replace:: SEGGER Embedded Studio
 
 .. |config| replace:: See :ref:`configure_application` for information about how to permanently or temporarily change the configuration.

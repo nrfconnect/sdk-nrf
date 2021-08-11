@@ -1,0 +1,362 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Modules"
+menuconfig SENSOR_MODULE
+	bool "Enable sensor module"
+	help
+	  Enables options for periodically reading sensor devices, and notifying the LwM2M server when
+	  a sufficiently large change occurs.
+
+if SENSOR_MODULE
+menuconfig SENSOR_MODULE_ACCEL
+	bool "Enable value tracking of accelerometer"
+	depends on APP_ACCELEROMETER
+	help
+	  Enable value tracking of accelerometer values.
+	  Requires enabling value tracking for X Value, Y Value and Z Value under Accelerometer object
+	  on the LwM2M server.
+
+if SENSOR_MODULE_ACCEL
+config SENSOR_MODULE_ACCEL_STARTUP_DELAY
+	int "Time before first accelerometer read"
+	default 30
+	help
+	  Time in seconds before the first accelerometer reading is executed.
+
+config SENSOR_MODULE_ACCEL_PERIOD
+	int "Accelerometer read period"
+	default 120
+	help
+	  Time in seconds before a new accelerometer work is submitted to the system work queue.
+	  Actual time between accelerometer reads will vary on the execution time of the other works in
+	  the queue at the time the accelerometer work is submitted.
+
+config SENSOR_MODULE_ACCEL_X_DELTA_INT
+	int "Required acceleration variation in x direction to notify server. Integer part"
+	default 1
+	help
+	  Required difference in acceleration in x-dircetion to send a notification to the server.
+	  Unit is m/s^2.
+	  Set this and the decimal part to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_ACCEL_X_DELTA_DEC
+	int "Required acceleration variation in x direction to notify server. Decimal part"
+	default 0
+	help
+	  Required difference in acceleration in x dircetion to send a notification to the server.
+	  Unit is decimal part of m/s^2.
+	  Divide by 1E6 to get actual decimal value.
+	  Set this and the integer part to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_ACCEL_Y_DELTA_INT
+	int "Required acceleration variation in y direction to notify server. Integer part"
+	default 1
+	help
+	  Required difference in acceleration in y dircetion to send a notification to the server.
+	  Unit is m/s^2.
+	  Set this and the decimal part to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_ACCEL_Y_DELTA_DEC
+	int "Required acceleration variation in y direction to notify server. Decimal part"
+	default 0
+	help
+	  Required difference in acceleration in y dircetion to send a notification to the server.
+	  Unit is decimal part of m/s^2.
+	  Divide by 1E6 to get actual decimal value.
+	  Set this and the integer part to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_ACCEL_Z_DELTA_INT
+	int "Required acceleration variation in z direction to notify server. Integer part"
+	default 1
+	help
+	  Required difference in acceleration in z dircetion to send a notification to the server.
+	  Unit is m/s^2.
+	  Set this and the decimal part to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_ACCEL_Z_DELTA_DEC
+	int "Required acceleration variation in z direction to notify server. Decimal part"
+	default 0
+	help
+	  Required difference in acceleration in z dircetion to send a notification to the server.
+	  Unit is decimal part of m/s^2.
+	  Divide by 1E6 to get actual decimal value.
+	  Set this and the integer part to 0 to always send the latest measurement.
+endif # SENSOR_MODULE_ACCEL
+
+
+menuconfig SENSOR_MODULE_TEMP
+	bool "Enable value tracking of temperature"
+	depends on APP_TEMP_SENSOR
+	help
+	  Enable value tracking of temperature values.
+	  Requires enabling value tracking for Sensor Value under Temperature object on the LwM2M
+	  server.
+
+if SENSOR_MODULE_TEMP
+config SENSOR_MODULE_TEMP_STARTUP_DELAY
+	int "Time before first temperature read"
+	default 30
+	help
+	  Time in seconds before the first temperature read is executed.
+
+config SENSOR_MODULE_TEMP_PERIOD
+	int "Temperature read period"
+	default 120
+	help
+	  Time in seconds before a new temperature work is submitted to the system work queue.
+	  Actual time between temperature sensor reads will vary on the execution time of the other
+	  works in the queue at the time the temperature work is submitted.
+
+config SENSOR_MODULE_TEMP_DELTA_INT
+	int "Required temperature variation to notify server. Integer part"
+	default 1
+	help
+	  Required difference in temperature to send a notification to the server.
+	  Unit is degrees Celsius.
+	  Set this and the decimal part to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_TEMP_DELTA_DEC
+	int "Required temperature variation to notify server. Decimal part"
+	default 0
+	help
+	  Required difference in temperature to send a notification to the server.
+	  Unit is decimal part of degrees Celsius.
+	  Divide by 1E6 to get actual decimal value.
+	  Set this and the integer part to 0 to always send the latest measurement.
+endif # SENSOR_MODULE_TEMP
+
+
+menuconfig SENSOR_MODULE_PRESS
+	bool "Enable value tracking of pressure"
+	depends on APP_PRESS_SENSOR
+	help
+	  Enable value tracking of pressure values.
+	  Requires enabling value tracking for Sensor Value under Pressure object on the LwM2M server.
+
+if SENSOR_MODULE_PRESS
+config SENSOR_MODULE_PRESS_STARTUP_DELAY
+	int "Time before first pressure read"
+	default 30
+	help
+	  Time in seconds before the first pressure read is executed.
+
+config SENSOR_MODULE_PRESS_PERIOD
+	int "Pressure read period"
+	default 120
+	help
+	  Time in seconds before a new pressure work is submitted to the system work queue.
+	  Actual time between pressure sensor reads will vary on the execution time of the other works
+	  in the queue at the time the pressure work is added.
+
+config SENSOR_MODULE_PRESS_DELTA_INT
+	int "Required pressure variation to notify server. Integer part"
+	default 0
+	help
+	  Required difference in pressure to send a notification to the server.
+	  Unit is kilo Pascal.
+	  Set this and the decimal part to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_PRESS_DELTA_DEC
+	int "Required pressure variation to notify server. Decimal part"
+	default 5000
+	help
+	  Required difference in pressure to send a notification to the server.
+	  Unit is decimal part of kilo Pascal.
+	  Divide by 1E6 to get actual decimal value.
+	  Set this and the integer part to 0 to always send the latest measurement.
+endif # SENSOR_MODULE_PRESS
+
+
+menuconfig SENSOR_MODULE_HUMID
+	bool "Enable value tracking of humidity"
+	depends on APP_HUMID_SENSOR
+	help
+	  Enable value tracking of humidity values.
+	  Requires enabling value tracking for Sensor Value under Humidity object on the LwM2M server.
+
+if SENSOR_MODULE_HUMID
+config SENSOR_MODULE_HUMID_STARTUP_DELAY
+	int "Time before first humidity read"
+	default 30
+	help
+	  Time in seconds before the first humidity read is executed.
+
+config SENSOR_MODULE_HUMID_PERIOD
+	int "Humidity read period"
+	default 120
+	help
+	  Time in seconds before a new humidity work is submitted to the system work queue.
+	  Actual time between humidity sensor reads will vary on the execution time of the other works
+	  in the queue at the time the humidity work is added.
+
+config SENSOR_MODULE_HUMID_DELTA_INT
+	int "Required humidity variation to notify server. Integer part"
+	default 1
+	help
+	  Required difference in humidity to send a notification to the server.
+	  Unit is relative humidity represented as a percentage.
+	  Set this and the decimal part to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_HUMID_DELTA_DEC
+	int "Required humidity variation to notify server. Decimal part"
+	default 0
+	help
+	  Required difference in humidity to send a notification to the server.
+	  Unit is decimal part of relative humidity represented as a percentage.
+	  Divide by 1E6 to get actual decimal value.
+	  Set this and the integer part to 0 to always send the latest measurement.
+endif # SENSOR_MODULE_HUMID
+
+
+menuconfig SENSOR_MODULE_GAS_RES
+	bool "Enable value tracking of gas resistance"
+	depends on APP_GAS_RES_SENSOR
+	help
+	  Enable value tracking of gas resistance values.
+	  Requires enabling value tracking for Sensor Value under Generic Sensor object on the LwM2M
+	  server.
+
+if SENSOR_MODULE_GAS_RES
+config SENSOR_MODULE_GAS_RES_STARTUP_DELAY
+	int "Time before first gas resistance read"
+	default 30
+	help
+	  Time in seconds before the first gas resistance read is executed.
+
+config SENSOR_MODULE_GAS_RES_PERIOD
+	int "Gas resistance read period"
+	default 120
+	help
+	  Time in seconds before a new gas resistance work is submitted to the system work queue.
+	  Actual time between gas resistance sensor reads will vary on the execution time of the other
+	  works in the queue at the time the gas resistance work is added.
+
+config SENSOR_MODULE_GAS_RES_DELTA
+	int "Required gas resistance variation to notify server"
+	default 1000
+	help
+	  Required difference in gas resistance to send a notification to the server.
+	  Unit is Ohm.
+	  Set this to 0 to always send the latest measurement.
+endif # SENSOR_MODULE_GAS_RES
+
+
+menuconfig SENSOR_MODULE_LIGHT
+	bool "Enable value tracking of light"
+	depends on APP_LIGHT_SENSOR
+	help
+	  Enable value tracking of light values.
+	  Requires enabling value tracking for Colour under Colour object instance 0 on the LwM2M
+	  server.
+
+if SENSOR_MODULE_LIGHT
+config SENSOR_MODULE_LIGHT_STARTUP_DELAY
+	int "Time before first light sensor read"
+	default 30
+	help
+	  Time in seconds before the first light read is executed.
+
+config SENSOR_MODULE_LIGHT_PERIOD
+	int "Light sensor read period"
+	default 120
+	help
+	  Time in seconds before a new light work is submitted to the system work queue.
+	  Actual time between light sensor reads will vary on the execution time of the other works in
+	  the queue at the time the light work is added.
+
+config SENSOR_MODULE_LIGHT_DELTA_R
+	int "Variation in red light required to notify server"
+	range 0 255
+	default 50
+	help
+	  Required difference in red light to send a notification to the server.
+	  Set this to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_LIGHT_DELTA_G
+	int "Variation in green light required to notify server"
+	range 0 255
+	default 50
+	help
+	  Required difference in green light to send a notification to the server.
+	  Set this to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_LIGHT_DELTA_B
+	int "Variation in blue light required to notify server"
+	range 0 255
+	default 50
+	help
+	  Required difference in blue light to send a notification to the server.
+	  Set this to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_LIGHT_DELTA_IR
+	int "Variation in infrared light required to notify server"
+	range 0 255
+	default 50
+	help
+	  Required difference in infrared light to send a notification to the server.
+	  Set this to 0 to always send the latest measurement.
+endif # SENSOR_MODULE_LIGHT
+
+
+menuconfig SENSOR_MODULE_COLOUR
+	bool "Enable value tracking of colour"
+	depends on APP_LIGHT_SENSOR
+	help
+	  Enable value tracking of colour values.
+	  Requires enabling value tracking for Colour under Colour object instance 1 on the LwM2M
+	  server.
+
+if SENSOR_MODULE_COLOUR
+config SENSOR_MODULE_COLOUR_STARTUP_DELAY
+	int "Time before first colour sensor read"
+	default 30
+	help
+	  Time in seconds before the first colour read is executed.
+
+config SENSOR_MODULE_COLOUR_PERIOD
+	int "Colour sensor read period"
+	default 120
+	help
+	  Time in seconds before a new colour work is submitted to the system work queue.
+	  Actual time between colour sensor reads will vary on the execution time of the other works in
+	  the queue at the time the colour work is added.
+
+config SENSOR_MODULE_COLOUR_DELTA_R
+	int "Variation in red colour required to notify server"
+	range 0 255
+	default 20
+	help
+	  Required difference in red colour send a notification to the server.
+	  Set this to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_COLOUR_DELTA_G
+	int "Variation in green colour required to notify server"
+	range 0 255
+	default 20
+	help
+	  Required difference in green colour send a notification to the server.
+	  Set this to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_COLOUR_DELTA_B
+	int "Variation in blue colour required to notify server"
+	range 0 255
+	default 20
+	help
+	  Required difference in blue colour send a notification to the server.
+	  Set this to 0 to always send the latest measurement.
+
+config SENSOR_MODULE_COLOUR_DELTA_IR
+	int "Variation in infrared colour required to notify server"
+	range 0 255
+	default 20
+	help
+	  Required difference in infrared colour send a notification to the server.
+	  Set this to 0 to always send the latest measurement.
+
+endif # SENSOR_MODULE_COLOUR
+endif # SENSOR_MODULE
+endmenu # Modules
