@@ -17,11 +17,11 @@ extern location_event_handler_t event_handler;
 extern struct loc_event_data event_data;
 
 struct k_work gnss_fix_work;
-struct k_work gnss_timeout_work;
+struct k_work method_gnss_timeout_work;
 
 int32_t gnss_fix_interval;
 
-void gnss_event_handler(int event)
+void method_gnss_event_handler(int event)
 {
 	switch (event) {
 	case NRF_MODEM_GNSS_EVT_FIX:
@@ -31,12 +31,12 @@ void gnss_event_handler(int event)
 
 	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
 		LOG_DBG("GNSS: Timeout");
-		k_work_submit(&gnss_timeout_work);
+		k_work_submit(&method_gnss_timeout_work);
 		break;
 	}
 }
 
-void gnss_fix_work_fn(struct k_work *item)
+void method_gnss_fix_work_fn(struct k_work *item)
 {
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
 
@@ -67,7 +67,7 @@ void gnss_fix_work_fn(struct k_work *item)
 	}
 }
 
-void gnss_timeout_work_fn(struct k_work *item)
+void method_gnss_timeout_work_fn(struct k_work *item)
 {
 	event_data_init(LOC_EVT_TIMEOUT, LOC_METHOD_GNSS);
 
@@ -80,7 +80,7 @@ void gnss_timeout_work_fn(struct k_work *item)
 	}
 }
 
-int gnss_init()
+int method_gnss_init()
 {
 	int err = nrf_modem_gnss_init();
 	if (err) {
@@ -88,19 +88,19 @@ int gnss_init()
 		return -err;
 	}
 
-	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
+	err = nrf_modem_gnss_event_handler_set(method_gnss_event_handler);
 	if (err) {
 		LOG_ERR("Failed to set GNSS event handler, error %d", err);
 		return -err;
 	}
 
-	k_work_init(&gnss_fix_work, gnss_fix_work_fn);
-	k_work_init(&gnss_timeout_work, gnss_timeout_work_fn);
+	k_work_init(&gnss_fix_work, method_gnss_fix_work_fn);
+	k_work_init(&method_gnss_timeout_work, method_gnss_timeout_work_fn);
 
 	return 0;
 }
 
-int gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t interval)
+int method_gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t interval)
 {
 	int err = 0;
 

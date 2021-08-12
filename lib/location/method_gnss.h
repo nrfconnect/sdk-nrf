@@ -7,10 +7,10 @@
 #ifndef METHOD_GNSS_H
 #define METHOD_GNSS_H
 
-int gnss_init();
-void gnss_event_handler(int event);
-void gnss_fix_work_fn(struct k_work *item);
-void gnss_timeout_work_fn(struct k_work *item);
+int method_gnss_init();
+void method_gnss_event_handler(int event);
+void method_gnss_fix_work_fn(struct k_work *item);
+void method_gnss_timeout_work_fn(struct k_work *item);
 
 /** @brief Sets the GNSS configuration and starts GNSS.
  *
@@ -24,6 +24,6 @@ void gnss_timeout_work_fn(struct k_work *item);
  * @retval NRF_EINVAL if GNSS returned an error.
  * @retval NRF_EAGAIN if out of memory.
  */
-int gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t interval);
+int method_gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t interval);
 
 #endif /* METHOD_GNSS_H */

@@ -55,7 +55,7 @@ int location_init(location_event_handler_t handler)
 	event_handler = handler;
 
 	/* GNSS init */
-	err = gnss_init();
+	err = method_gnss_init();
 	if (err) {
 		LOG_ERR("Failed to initialize GNSS method");
 		return err;
@@ -112,7 +112,7 @@ int location_request(const struct loc_config *config)
 	/* TODO: Add protection so that only one request is handled at a time */
 
 	if (selected_method.method == LOC_METHOD_GNSS) {
-		err = gnss_configure_and_start(&selected_method.config.gnss, config->interval);
+		err = method_gnss_configure_and_start(&selected_method.config.gnss, config->interval);
 	} else {
 		assert(selected_method.method == LOC_METHOD_CELL_ID);
 		err = method_cellular_configure_and_start(&selected_method.config.cell_id, config->interval);
