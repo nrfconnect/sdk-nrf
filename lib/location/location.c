@@ -29,13 +29,16 @@ LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 struct loc_event_data event_data;
 static location_event_handler_t event_handler;
 static int current_location_method_index;
+static struct loc_config current_loc_config;
 
 const static struct location_method_api method_gnss_api = {
+	.method_string    = "GNSS",
 	.init             = method_gnss_init,
 	.location_request = method_gnss_configure_and_start,
 };
 
 const static struct location_method_api method_cellular_api = {
+	.method_string    = "Cellular",
 	.init             = method_cellular_init,
 	.location_request = method_cellular_configure_and_start,
 };
@@ -51,13 +54,6 @@ void event_data_init(enum loc_event_id event_id, enum loc_method method)
 
 	event_data.id = event_id;
 	event_data.method = method;
-}
-
-void event_location_callback(const struct loc_event_data *event_data)
-{
-	/* TODO: Do fallback in this function */
-
-	event_handler(event_data);
 }
 
 const struct location_method_api *location_method_api_get(enum loc_method method)
@@ -126,6 +122,7 @@ int location_request(const struct loc_config *config)
 
 	/* Location request starts from the first method */
 	current_location_method_index = 0;
+	current_loc_config = *config;
 
 	/* TODO: Add protection so that only one request is handled at a time */
 
@@ -141,6 +138,37 @@ int location_request(const struct loc_config *config)
 		&config->methods[current_location_method_index], config->interval);
 
 	return err;
+}
+
+void event_location_callback(const struct loc_event_data *event_data)
+{
+	enum loc_method requested_location_method;
+	enum loc_method previous_location_method;
+	int err;
+
+	event_handler(event_data);
+
+	if (event_data->id == LOC_EVT_LOCATION) {
+		/* Location was acquired properly, finish location request */
+		return;
+	}
+
+	/* Do fallback to next preferred method */
+	previous_location_method = event_data->method;
+	current_location_method_index++;
+	if (current_location_method_index < LOC_MAX_METHODS) {
+		requested_location_method =
+			current_loc_config.methods[current_location_method_index].method;
+		LOG_INF("Acquisition failed for '%s', trying with '%s' next",
+			(char *)location_method_api_get(previous_location_method)->method_string,
+			(char *)location_method_api_get(requested_location_method)->method_string);
+
+		err = location_method_api_get(requested_location_method)->location_request(
+			&current_loc_config.methods[current_location_method_index],
+			current_loc_config.interval);
+	} else {
+		LOG_INF("Location acquisition failed and no further trials will be made");
+	}
 }
 
 int location_request_cancel(void)

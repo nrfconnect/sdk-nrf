@@ -8,8 +8,9 @@
 #define LOCATION_H
 
 struct location_method_api {
-	int (*init)(void);
-	int (*location_request)(const struct loc_method_config *config, uint16_t interval);
+	char method_string[10];
+	int  (*init)(void);
+	int  (*location_request)(const struct loc_method_config *config, uint16_t interval);
 };
 
 struct location_method_supported {
