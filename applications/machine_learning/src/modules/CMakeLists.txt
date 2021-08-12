@@ -19,5 +19,8 @@ target_sources_ifdef(CONFIG_ML_APP_ML_RUNNER
 target_sources_ifdef(CONFIG_ML_APP_ML_STATE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ml_state.c)
 
+target_sources_ifdef(CONFIG_ML_APP_USB_STATE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/usb_state.c)
+
 target_sources_ifdef(CONFIG_ML_APP_SENSOR_SIM_CTRL
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sensor_sim_ctrl.c)
