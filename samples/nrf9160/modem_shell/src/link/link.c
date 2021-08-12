@@ -229,8 +229,7 @@ void link_init(void)
 
 	link_shell_pdn_init();
 
-	/* Commented out for now to get Location API working */
-	/* lte_lc_register_handler(link_ind_handler); */
+	lte_lc_register_handler(link_ind_handler);
 
 /* With CONFIG_LWM2M_CARRIER, MoSH auto connect must be disabled
  * because LwM2M carrier lib handles that.
