@@ -7,7 +7,7 @@
 #ifndef METHOD_CELLULAR_H
 #define METHOD_CELLULAR_H
 
-int method_cellular_configure_and_start(struct loc_cell_id_config *cell_config, uint16_t interval);
-void method_cellular_init(void);
+int method_cellular_configure_and_start(const struct loc_method_config *config, uint16_t interval);
+int method_cellular_init(void);
 
 #endif /* METHOD_CELLULAR_H */

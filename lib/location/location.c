@@ -26,8 +26,24 @@
 
 LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 
-location_event_handler_t event_handler;
 struct loc_event_data event_data;
+static location_event_handler_t event_handler;
+static int current_location_method_index;
+
+const static struct location_method_api method_gnss_api = {
+	.init             = method_gnss_init,
+	.location_request = method_gnss_configure_and_start,
+};
+
+const static struct location_method_api method_cellular_api = {
+	.init             = method_cellular_init,
+	.location_request = method_cellular_configure_and_start,
+};
+
+static struct location_method_supported methods_supported[LOC_MAX_METHODS] = {
+	{LOC_METHOD_GNSS, &method_gnss_api},
+	{LOC_METHOD_CELL_ID, &method_cellular_api},
+};
 
 void event_data_init(enum loc_event_id event_id, enum loc_method method)
 {
@@ -35,6 +51,30 @@ void event_data_init(enum loc_event_id event_id, enum loc_method method)
 
 	event_data.id = event_id;
 	event_data.method = method;
+}
+
+void event_location_callback(const struct loc_event_data *event_data)
+{
+	/* TODO: Do fallback in this function */
+
+	event_handler(event_data);
+}
+
+const struct location_method_api *location_method_api_get(enum loc_method method)
+{
+	const struct location_method_api *method_api = NULL;
+
+	for (int i = 0; i < LOC_MAX_METHODS; i++) {
+		if (method == methods_supported[i].method) {
+			method_api = methods_supported[i].api;
+			break;
+		}
+	}
+	/* This function is not supposed to be called when API is not found so
+	 * to find issues elsewhere we'll assert here
+	 */
+	assert(method_api != NULL);
+	return method_api;
 }
 
 int location_init(location_event_handler_t handler)
@@ -54,15 +94,21 @@ int location_init(location_event_handler_t handler)
 
 	event_handler = handler;
 
+	/* TODO: Run inits in the loop but first need to compose LOC_MAX_METHODS
+	 * based on configured methods
+	 */
+
+#if defined(CONFIG_METHOD_GNSS)
 	/* GNSS init */
 	err = method_gnss_init();
 	if (err) {
 		LOG_ERR("Failed to initialize GNSS method");
 		return err;
 	}
+#endif
 
-	/* Cellular positioning init */
 #if defined(CONFIG_METHOD_CELLULAR)
+	/* Cellular positioning init */
 	method_cellular_init();
 #endif
 
@@ -76,47 +122,23 @@ int location_init(location_event_handler_t handler)
 int location_request(const struct loc_config *config)
 {
 	int err;
-	struct loc_method_config selected_method = { 0 };
+	enum loc_method requested_location_method;
 
+	/* Location request starts from the first method */
+	current_location_method_index = 0;
+
+	/* TODO: Add protection so that only one request is handled at a time */
+
+	/* TODO: Validate location method */
+	/* TODO: Configuration validation into own function and own method specific validations */
 	if ((config->interval > 0) && (config->interval < 10)) {
 		LOG_ERR("Interval for periodic location updates must be 10...65535 seconds.");
 		return -EINVAL;
 	}
 
-	for (int i = 0; i < LOC_MAX_METHODS; i++) {
-		switch (config->methods[i].method) {
-		case LOC_METHOD_CELL_ID:
-			LOG_DBG("Cellular positioning method selected");
-			selected_method = config->methods[i];
-			break;
-
-		case LOC_METHOD_GNSS:
-			LOG_DBG("GNSS selected");
-			selected_method = config->methods[i];
-			break;
-
-		default:
-			break;
-		}
-
-		if (selected_method.method) {
-			continue;
-		}
-	}
-
-	if (!selected_method.method) {
-		LOG_ERR("No location method found");
-		return -EINVAL;
-	}
-
-	/* TODO: Add protection so that only one request is handled at a time */
-
-	if (selected_method.method == LOC_METHOD_GNSS) {
-		err = method_gnss_configure_and_start(&selected_method.config.gnss, config->interval);
-	} else {
-		assert(selected_method.method == LOC_METHOD_CELL_ID);
-		err = method_cellular_configure_and_start(&selected_method.config.cell_id, config->interval);
-	}
+	requested_location_method = config->methods[current_location_method_index].method;
+	err = location_method_api_get(requested_location_method)->location_request(
+		&config->methods[current_location_method_index], config->interval);
 
 	return err;
 }

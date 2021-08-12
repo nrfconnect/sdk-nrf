@@ -11,7 +11,7 @@
 #include <modem/location.h>
 #include "location.h"
 
-LOG_MODULE_REGISTER(method_gnss, CONFIG_LOCATION_LOG_LEVEL);
+LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 extern location_event_handler_t event_handler;
 extern struct loc_event_data event_data;
@@ -58,7 +58,7 @@ void method_gnss_fix_work_fn(struct k_work *item)
 	event_data.location.datetime.second = pvt_data.datetime.seconds;
 	event_data.location.datetime.ms = pvt_data.datetime.ms;
 
-	event_handler(&event_data);
+	event_location_callback(&event_data);
 
 	/* If configured for single fix mode, stop GNSS */
 	if (!gnss_fix_interval) {
@@ -71,7 +71,7 @@ void method_gnss_timeout_work_fn(struct k_work *item)
 {
 	event_data_init(LOC_EVT_TIMEOUT, LOC_METHOD_GNSS);
 
-	event_handler(&event_data);
+	event_location_callback(&event_data);
 
 	/* If configured for single fix mode, stop GNSS */
 	if (!gnss_fix_interval) {
@@ -100,9 +100,11 @@ int method_gnss_init()
 	return 0;
 }
 
-int method_gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t interval)
+int method_gnss_configure_and_start(const struct loc_method_config *config, uint16_t interval)
 {
 	int err = 0;
+
+	const struct loc_gnss_config *gnss_config = &config->config.gnss;
 
 	if (interval == 1 ) {
 		LOG_ERR("Failed to configure GNSS, continuous navigation "

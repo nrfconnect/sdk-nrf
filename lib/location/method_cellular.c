@@ -71,9 +71,9 @@ static int method_cellular_ncellmeas_start(void)
 {
 	int err = lte_lc_neighbor_cell_measurement();
 	if (err) {
-		LOG_ERR("Failed to initiate neighbor cell measurements");
+		LOG_ERR("Failed to initiate neighbor cell measurements: %d", err);
 		event_data_init(LOC_EVT_ERROR, LOC_METHOD_CELL_ID);
-		event_handler(&event_data);
+		event_location_callback(&event_data);
 		is_busy = false;
 		return err;
 	}
@@ -110,15 +110,16 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 		event_data.location.datetime.ms = pvt_data.datetime.ms;*/
 		(void)lte_lc_neighbor_cell_measurement_cancel();
 	}
-	event_handler(&event_data);
+	event_location_callback(&event_data);
 	is_busy = false;
 }
 
-int method_cellular_configure_and_start(struct loc_cell_id_config *cell_config, uint16_t interval)
+int method_cellular_configure_and_start(const struct loc_method_config *config, uint16_t interval)
 {
 	int ret = 0;
+	const struct loc_cell_id_config *gnss_config = &config->config.cell_id;
 
-	ARG_UNUSED(cell_config);
+	ARG_UNUSED(gnss_config);
 
 	if (interval > 0 ) {
 		LOG_ERR("Periodic cellular positioning mode not supported at the moment.");
@@ -141,19 +142,13 @@ int method_cellular_configure_and_start(struct loc_cell_id_config *cell_config, 
 	return 0;
 }
 
-void method_cellular_init(void)
+int method_cellular_init(void)
 {
 	int ret;
 
 	lte_connected = false;
 	is_busy = false;
 	
-	ret = multicell_location_provision_certificate(false);
-	if (ret) {
-		LOG_ERR("Certificate provisioning failed");
-		return;
-	}
-
 	k_work_queue_start(
 		&method_cellular_work_q, method_cellular_stack,
 		K_THREAD_STACK_SIZEOF(method_cellular_stack),
@@ -165,4 +160,12 @@ void method_cellular_init(void)
 	/* TODO: fetch LTE connection status from modem?
 	 * ...because we do not know when lib is initialized
 	 */
+
+	ret = multicell_location_provision_certificate(true);
+	if (ret) {
+		LOG_ERR("Certificate provisioning failed");
+		return ret;
+	}
+
+	return 0;
 }

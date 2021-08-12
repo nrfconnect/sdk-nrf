@@ -16,14 +16,14 @@ void method_gnss_timeout_work_fn(struct k_work *item);
  *
  * @details Currently supported configurations are fix interval, fix timeout and fix accuracy.
  *
- * @param[in] gnss_config pointer to requested gnss configuration.
- * @param[in] interval    requested fix interval.
+ * @param[in] config   Requested gnss configuration.
+ * @param[in] interval Requested fix interval.
  *
  * @retval 0 on success.
  * @retval NRF_EPERM if GNSS is running or not initialized.
  * @retval NRF_EINVAL if GNSS returned an error.
  * @retval NRF_EAGAIN if out of memory.
  */
-int method_gnss_configure_and_start(struct loc_gnss_config *gnss_config, uint16_t interval);
+int method_gnss_configure_and_start(const struct loc_method_config *config, uint16_t interval);
 
 #endif /* METHOD_GNSS_H */
