@@ -605,10 +605,21 @@ typedef void(*lte_lc_evt_handler_t)(const struct lte_lc_evt *const evt);
 
 /** @brief Register event handler for LTE events.
  *
- *  @param handler Event handler. Handler is de-registered if parameter is
- *		   NULL.
+ *  @param handler Event handler.
  */
+
 void lte_lc_register_handler(lte_lc_evt_handler_t handler);
+
+/**
+ * @brief Function to de-register event handler for LTE events.
+ *
+ *  @param handler Event handler.
+ *
+ * @retval 0            If command execution was successful.
+ * @retval -ENXIO       If handler cannot be found.
+ * @retval -EINVAL      If handler is a NULL pointer.
+ */
+int lte_lc_deregister_handler(lte_lc_evt_handler_t handler);
 
 /** @brief Initializes the module and configures the modem.
  *

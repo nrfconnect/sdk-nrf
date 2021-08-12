@@ -289,3 +289,33 @@ int parse_coneval(const char *at_response, struct lte_lc_conn_eval_params *param
  * @retval -ENODATA If no modem event type was found in the AT response.
  */
 int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt);
+
+/* @brief Add the handler in the event handler list if not already present.
+ *
+ *  @param handler Event handler.
+ *
+ * @return Zero on success, negative errno code if the API call fails.
+ */
+int event_handler_list_append_handler(lte_lc_evt_handler_t handler);
+
+/* @brief Remove the handler from the event handler list if present.
+ *
+ *  @param handler Event handler.
+ *
+ * @return Zero on success, negative errno code if the API call fails.
+ */
+int event_handler_list_remove_notif_handler(lte_lc_evt_handler_t handler);
+
+/* @brief Dispatch events for the registered event handlers.
+ *
+ *  @param evt Event.
+ *
+ * @return Zero on success, negative errno code if the API call fails.
+ */
+void event_handler_list_dispatch(const struct lte_lc_evt *const evt);
+
+/* @brief Test if the handler list is empty.
+ *
+ * @return a boolean, true if it's empty, false otherwise
+ */
+bool event_handler_list_is_empty(void);
