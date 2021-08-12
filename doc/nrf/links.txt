@@ -560,16 +560,18 @@
 .. _`nRF Connect for Cloud`: https://nrfcloud.com/
 
 .. _`nRF Cloud documentation`:
-.. _`nRF Connect for Cloud documentation`: https://nrfcloud.com/#/docs
+.. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/
 
 .. _`nRF Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
 
-.. _`nRF Cloud Device API`:
+.. _`nRF Cloud REST API`:
 .. _`nRF Connect for Cloud Device API`: https://api.nrfcloud.com/v1
 
 .. _`nRF Cloud REST API`: https://nrfcloud.com/#/docs/guides/restapi
 
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
+
+.. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
 
 .. ### Source: other
 

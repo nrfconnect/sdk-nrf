@@ -36,7 +36,7 @@ As of now, the application supports the following cloud services and the corresp
 +---------------------------+---------------------------------------------------------------------------------------+
 | `Azure IoT Hub`_          | `nRF Asset Tracker for Azure`_                                                        |
 +---------------------------+---------------------------------------------------------------------------------------+
-| `nRF Cloud`_              | `nRF Cloud Device API`_ (See `nRF Cloud documentation`_.)                             |
+| `nRF Cloud`_              | `nRF Cloud REST API`_ (See `nRF Cloud documentation`_.)                               |
 +---------------------------+---------------------------------------------------------------------------------------+
 
 Firmware architecture

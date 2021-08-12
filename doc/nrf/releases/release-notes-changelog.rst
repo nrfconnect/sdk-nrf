@@ -225,6 +225,10 @@ The following list summarizes the most important changes inherited from the upst
 Documentation
 =============
 
+* Added:
+
+  * User guide :ref:`ug_nrf_cloud`.
+
 * Updated:
 
   * Renamed :ref:`ncs_release_notes_changelog` (this page).
