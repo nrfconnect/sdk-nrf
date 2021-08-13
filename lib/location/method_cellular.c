@@ -159,7 +159,7 @@ int method_cellular_init(void)
 	 * ...because we do not know when lib is initialized
 	 */
 
-	ret = multicell_location_provision_certificate(true);
+	ret = multicell_location_provision_certificate(false);
 	if (ret) {
 		LOG_ERR("Certificate provisioning failed");
 		return ret;
