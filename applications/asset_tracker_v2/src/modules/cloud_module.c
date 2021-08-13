@@ -10,6 +10,9 @@
 #include <dfu/mcuboot.h>
 #include <math.h>
 #include <event_manager.h>
+#if defined(CONFIG_AGPS)
+#include <modem/agps.h>
+#endif
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_agps.h>
@@ -224,7 +227,7 @@ static void agps_data_handle(const uint8_t *buf, size_t len)
 	int err;
 
 #if defined(CONFIG_AGPS)
-	err = gps_process_agps_data(buf, len);
+	err = agps_cloud_data_process(buf, len);
 	if (err) {
 		LOG_WRN("Unable to process agps data, error: %d", err);
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -259,6 +262,36 @@ static void agps_data_handle(const uint8_t *buf, size_t len)
 	(void)err;
 }
 
+#if defined(CONFIG_AGPS)
+/* Converts the A-GPS data request from GPS driver to GNSS API format. */
+static void agps_request_convert(
+	struct nrf_modem_gnss_agps_data_frame *dest,
+	const struct gps_agps_request *src)
+{
+	dest->sv_mask_ephe = src->sv_mask_ephe;
+	dest->sv_mask_alm = src->sv_mask_alm;
+	dest->data_flags = 0;
+	if (src->utc) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
+	}
+	if (src->klobuchar) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
+	}
+	if (src->nequick) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
+	}
+	if (src->system_time_tow) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
+	}
+	if (src->position) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
+	}
+	if (src->integrity) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
+	}
+}
+#endif
+
 static void agps_data_request_handle(struct gps_agps_request *incoming_request)
 {
 	int err;
@@ -269,7 +302,11 @@ static void agps_data_request_handle(struct gps_agps_request *incoming_request)
 	memcpy(&agps_request, incoming_request, sizeof(agps_request));
 
 #if defined(CONFIG_AGPS)
-	err = gps_agps_request_send(agps_request, GPS_SOCKET_NOT_PROVIDED);
+	struct nrf_modem_gnss_agps_data_frame request;
+
+	agps_request_convert(&request, &agps_request);
+
+	err = agps_request_send(request, AGPS_SOCKET_NOT_PROVIDED);
 	if (err) {
 		LOG_WRN("Failed to request A-GPS data, error: %d", err);
 		LOG_WRN("This is expected to fail if we are not in a connected state");

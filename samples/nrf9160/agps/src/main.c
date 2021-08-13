@@ -11,6 +11,7 @@
 #include <net/socket.h>
 #include <dk_buttons_and_leds.h>
 #include <drivers/gps.h>
+#include <modem/agps.h>
 #include <sys/reboot.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_agps.h>
@@ -143,10 +144,44 @@ static void gps_start_work_fn(struct k_work *work)
 		gps_cfg.interval, gps_cfg.timeout);
 }
 
+#if defined(CONFIG_AGPS)
+/* Converts the A-GPS data request from GPS driver to GNSS API format. */
+static void agps_request_convert(
+	struct nrf_modem_gnss_agps_data_frame *dest,
+	const struct gps_agps_request *src)
+{
+	dest->sv_mask_ephe = src->sv_mask_ephe;
+	dest->sv_mask_alm = src->sv_mask_alm;
+	dest->data_flags = 0;
+	if (src->utc) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
+	}
+	if (src->klobuchar) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
+	}
+	if (src->nequick) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST;
+	}
+	if (src->system_time_tow) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
+	}
+	if (src->position) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
+	}
+	if (src->integrity) {
+		dest->data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
+	}
+}
+#endif
+
 static void on_agps_needed(struct gps_agps_request request)
 {
 #if defined(CONFIG_AGPS)
-	int err = gps_agps_request_send(request, GPS_SOCKET_NOT_PROVIDED);
+	struct nrf_modem_gnss_agps_data_frame agps_request;
+
+	agps_request_convert(&agps_request, &request);
+
+	int err = agps_request_send(agps_request, AGPS_SOCKET_NOT_PROVIDED);
 
 	if (err) {
 		LOG_ERR("Failed to request A-GPS data, error: %d", err);
@@ -237,7 +272,7 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 		}
 
 #if defined(CONFIG_AGPS)
-		err = gps_process_agps_data(evt->data.msg.buf, evt->data.msg.len);
+		err = agps_cloud_data_process(evt->data.msg.buf, evt->data.msg.len);
 		if (!err) {
 			LOG_INF("A-GPS data processed");
 #if defined(CONFIG_NRF_CLOUD_PGPS)

@@ -9,6 +9,7 @@
 #include <logging/log.h>
 #include <net/socket.h>
 #include <nrf_socket.h>
+#include <nrf_modem_gnss.h>
 #include <device.h>
 #include <drivers/gps.h>
 
@@ -30,41 +31,44 @@ static int gnss_fd;
 static int supl_fd;
 #endif /* CONFIG_AGPS_SRC_SUPL */
 
-static enum gps_agps_type type_lookup_socket2gps[] = {
-	[NRF_GNSS_AGPS_UTC_PARAMETERS]	= GPS_AGPS_UTC_PARAMETERS,
-	[NRF_GNSS_AGPS_EPHEMERIDES]	= GPS_AGPS_EPHEMERIDES,
-	[NRF_GNSS_AGPS_ALMANAC]		= GPS_AGPS_ALMANAC,
-	[NRF_GNSS_AGPS_KLOBUCHAR_IONOSPHERIC_CORRECTION]
-					= GPS_AGPS_KLOBUCHAR_CORRECTION,
-	[NRF_GNSS_AGPS_NEQUICK_IONOSPHERIC_CORRECTION]
-					= GPS_AGPS_NEQUICK_CORRECTION,
-	[NRF_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS]
-					= GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS,
-	[NRF_GNSS_AGPS_LOCATION]	= GPS_AGPS_LOCATION,
-	[NRF_GNSS_AGPS_INTEGRITY]	= GPS_AGPS_INTEGRITY,
+static enum gps_agps_type type_lookup_api2driver[] = {
+	[NRF_MODEM_GNSS_AGPS_UTC_PARAMETERS] =
+		GPS_AGPS_UTC_PARAMETERS,
+	[NRF_MODEM_GNSS_AGPS_EPHEMERIDES] =
+		GPS_AGPS_EPHEMERIDES,
+	[NRF_MODEM_GNSS_AGPS_ALMANAC] =
+		GPS_AGPS_ALMANAC,
+	[NRF_MODEM_GNSS_AGPS_KLOBUCHAR_IONOSPHERIC_CORRECTION] =
+		GPS_AGPS_KLOBUCHAR_CORRECTION,
+	[NRF_MODEM_GNSS_AGPS_NEQUICK_IONOSPHERIC_CORRECTION] =
+		GPS_AGPS_NEQUICK_CORRECTION,
+	[NRF_MODEM_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS] =
+		GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS,
+	[NRF_MODEM_GNSS_AGPS_LOCATION] =
+		GPS_AGPS_LOCATION,
+	[NRF_MODEM_GNSS_AGPS_INTEGRITY]	=
+		GPS_AGPS_INTEGRITY
 };
 
-/* Convert nrf_socket A-GPS type to GPS API type. */
-static inline enum gps_agps_type type_socket2gps(nrf_gnss_agps_data_type_t type)
+/* Convert GNSS API A-GPS type to GPS driver type. */
+static inline enum gps_agps_type type_api2driver(uint16_t type)
 {
-	return type_lookup_socket2gps[type];
+	return type_lookup_api2driver[type];
 }
 
 #if defined(CONFIG_AGPS_SRC_SUPL)
-static int send_to_modem(void *data, size_t data_len,
-			 nrf_gnss_agps_data_type_t type)
+static int send_to_modem(void *data, size_t data_len, uint16_t type)
 {
 	int err;
 
 	/* At this point, GPS driver or app-provided socket is assumed. */
 	if (gps_dev) {
-		return gps_agps_write(gps_dev, type_socket2gps(type), data,
-				      data_len);
+		return gps_agps_write(gps_dev, type_api2driver(type), data, data_len);
 	}
 
 	err = nrf_sendto(gnss_fd, data, data_len, 0, &type, sizeof(type));
 	if (err < 0) {
-		LOG_ERR("Failed to send AGPS data to modem, errno: %d", errno);
+		LOG_ERR("Failed to send A-GPS data to modem, errno: %d", errno);
 		err = -errno;
 	} else {
 		err = 0;
@@ -77,7 +81,7 @@ static int send_to_modem(void *data, size_t data_len,
 
 static int inject_agps_type(void *agps,
 			    size_t agps_size,
-			    nrf_gnss_agps_data_type_t type,
+			    uint16_t type,
 			    void *user_data)
 {
 	ARG_UNUSED(user_data);
@@ -85,12 +89,12 @@ static int inject_agps_type(void *agps,
 
 	err = send_to_modem(agps, agps_size, type);
 	if (err) {
-		LOG_ERR("Failed to send AGNSS data, type: %d (err: %d)",
+		LOG_ERR("Failed to send A-GPS data, type: %d (err: %d)",
 			type, err);
 		return err;
 	}
 
-	LOG_DBG("Injected AGPS data, type: %d, size: %d", type, agps_size);
+	LOG_DBG("Injected A-GPS data, type: %d, size: %d", type, agps_size);
 
 	return 0;
 }
@@ -283,26 +287,9 @@ static int init_supl(int socket)
 	return 0;
 }
 
-static int supl_start(const struct gps_agps_request request)
+static int supl_start(const struct nrf_modem_gnss_agps_data_frame request)
 {
 	int err;
-	struct nrf_modem_gnss_agps_data_frame req = {
-		.sv_mask_ephe = request.sv_mask_ephe,
-		.sv_mask_alm = request.sv_mask_alm,
-		.data_flags =
-			(request.utc ?
-			BIT(NRF_GNSS_AGPS_GPS_UTC_REQUEST) : 0) |
-			(request.klobuchar ?
-			BIT(NRF_GNSS_AGPS_KLOBUCHAR_REQUEST) : 0) |
-			(request.nequick ?
-			BIT(NRF_GNSS_AGPS_NEQUICK_REQUEST) : 0) |
-			(request.system_time_tow ?
-			BIT(NRF_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) : 0) |
-			(request.position ?
-			BIT(NRF_GNSS_AGPS_POSITION_REQUEST) : 0) |
-			(request.integrity ?
-			BIT(NRF_GNSS_AGPS_INTEGRITY_REQUEST) : 0),
-	};
 
 	err = open_supl_socket();
 	if (err) {
@@ -312,7 +299,7 @@ static int supl_start(const struct gps_agps_request request)
 
 	LOG_INF("Starting SUPL session");
 
-	err = supl_session(&req);
+	err = supl_session(&request);
 	if (err) {
 		LOG_ERR("SUPL session failed, error: %d", err);
 		goto cleanup;
@@ -328,7 +315,7 @@ cleanup:
 
 #endif /* CONFIG_AGPS_SRC_SUPL */
 
-int gps_agps_request_send(struct gps_agps_request request, int socket)
+int agps_request_send(struct nrf_modem_gnss_agps_data_frame request, int socket)
 {
 	int err;
 
@@ -352,7 +339,25 @@ int gps_agps_request_send(struct gps_agps_request request, int socket)
 	}
 
 #elif defined(CONFIG_AGPS_SRC_NRF_CLOUD)
-	err = nrf_cloud_agps_request(request);
+	/* Convert GNSS API A-GPS request to GPS driver A-GPS request. */
+	struct gps_agps_request agps_request;
+
+	agps_request.sv_mask_ephe = request.sv_mask_ephe;
+	agps_request.sv_mask_alm = request.sv_mask_alm;
+	agps_request.utc =
+		request.data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST ? 1 : 0;
+	agps_request.klobuchar =
+		request.data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST ? 1 : 0;
+	agps_request.nequick =
+		request.data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST ? 1 : 0;
+	agps_request.system_time_tow =
+		request.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST ? 1 : 0;
+	agps_request.position =
+		request.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST ? 1 : 0;
+	agps_request.integrity =
+		request.data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST ? 1 : 0;
+
+	err = nrf_cloud_agps_request(agps_request);
 	if (err) {
 		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
 		return err;
@@ -362,15 +367,14 @@ int gps_agps_request_send(struct gps_agps_request request, int socket)
 	return 0;
 }
 
-int gps_process_agps_data(const uint8_t *buf, size_t len)
+int agps_cloud_data_process(const uint8_t *buf, size_t len)
 {
 	int err = 0;
 
 #if defined(CONFIG_AGPS_SRC_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGPS)
-
 	err = nrf_cloud_agps_process(buf, len, NULL);
 	if (err) {
-		LOG_ERR("A-GPS failed, error: %d", err);
+		LOG_ERR("Processing A-GPS data failed, error: %d", err);
 	} else {
 		LOG_INF("A-GPS data successfully processed");
 	}
