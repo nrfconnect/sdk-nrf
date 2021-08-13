@@ -1337,7 +1337,11 @@ void bt_le_per_adv_sync_synced_info_dec(struct ser_scratchpad *scratchpad,
 	data->phy = ser_decode_uint(value);
 	data->recv_enabled = ser_decode_bool(value);
 	data->service_data = ser_decode_uint(value);
+#if defined(CONFIG_BT_CONN)
 	data->conn = bt_rpc_decode_bt_conn(value);
+#else
+	data->conn = 0;
+#endif /* defined(CONFIG_BT_CONN) */
 }
 
 static void per_adv_sync_cb_synced(struct bt_le_per_adv_sync *sync,

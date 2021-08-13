@@ -1293,7 +1293,7 @@ static void bt_rpc_auth_cb_pairing_accept_rpc_handler(CborValue *value, void *ha
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_AUTH_CB_PAIRING_ACCEPT_RPC_CMD, ([a-z0-9_]+data));
+	report_decoding_error(BT_RPC_AUTH_CB_PAIRING_ACCEPT_RPC_CMD, handler_data);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_pairing_accept,
