@@ -94,6 +94,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 		if (ret) {
 			LOG_ERR("Failed to acquire location from multicell_location lib, error: %d", ret);		
 			event_location_callback_error();
+			running = false;
 		} else {
 			location_result.latitude = location.latitude;
 			location_result.longitude = location.longitude;
