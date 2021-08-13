@@ -19,6 +19,8 @@ struct location_method_supported {
 };
 
 void event_data_init(enum loc_event_id event_id, enum loc_method method);
-void event_location_callback(const struct loc_event_data *event_data);
+void event_location_callback(const struct loc_event_data *event_data_param);
+void event_location_callback_error();
+void event_location_callback_timeout();
 
 #endif /* LOCATION_H */

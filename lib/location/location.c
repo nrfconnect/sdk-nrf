@@ -26,7 +26,7 @@
 
 LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 
-struct loc_event_data event_data;
+struct loc_event_data current_event_data;
 static location_event_handler_t event_handler;
 static int current_location_method_index;
 static struct loc_config current_loc_config;
@@ -50,10 +50,10 @@ static struct location_method_supported methods_supported[LOC_MAX_METHODS] = {
 
 void event_data_init(enum loc_event_id event_id, enum loc_method method)
 {
-	memset(&event_data, 0, sizeof(event_data));
+	memset(&current_event_data, 0, sizeof(current_event_data));
 
-	event_data.id = event_id;
-	event_data.method = method;
+	current_event_data.id = event_id;
+	current_event_data.method = method;
 }
 
 const struct location_method_api *location_method_api_get(enum loc_method method)
@@ -134,27 +134,43 @@ int location_request(const struct loc_config *config)
 	}
 
 	requested_location_method = config->methods[current_location_method_index].method;
+	memset(&current_event_data, 0, sizeof(current_event_data));
+	current_event_data.method = requested_location_method;
 	err = location_method_api_get(requested_location_method)->location_request(
 		&config->methods[current_location_method_index], config->interval);
 
 	return err;
 }
 
-void event_location_callback(const struct loc_event_data *event_data)
+void event_location_callback_error()
+{
+	current_event_data.id = LOC_EVT_ERROR;
+
+	event_location_callback(&current_event_data);
+}
+
+void event_location_callback_timeout()
+{
+	current_event_data.id = LOC_EVT_TIMEOUT;
+
+	event_location_callback(&current_event_data);
+}
+
+void event_location_callback(const struct loc_event_data *event_data_param)
 {
 	enum loc_method requested_location_method;
 	enum loc_method previous_location_method;
 	int err;
 
-	event_handler(event_data);
+	event_handler(event_data_param);
 
-	if (event_data->id == LOC_EVT_LOCATION) {
+	if (event_data_param->id == LOC_EVT_LOCATION) {
 		/* Location was acquired properly, finish location request */
 		return;
 	}
 
 	/* Do fallback to next preferred method */
-	previous_location_method = event_data->method;
+	previous_location_method = event_data_param->method;
 	current_location_method_index++;
 	if (current_location_method_index < LOC_MAX_METHODS) {
 		requested_location_method =
@@ -163,11 +179,14 @@ void event_location_callback(const struct loc_event_data *event_data)
 			(char *)location_method_api_get(previous_location_method)->method_string,
 			(char *)location_method_api_get(requested_location_method)->method_string);
 
+		memset(&current_event_data, 0, sizeof(current_event_data));
+		current_event_data.method = requested_location_method;
+
 		err = location_method_api_get(requested_location_method)->location_request(
 			&current_loc_config.methods[current_location_method_index],
 			current_loc_config.interval);
 	} else {
-		LOG_INF("Location acquisition failed and no further trials will be made");
+		LOG_ERR("Location acquisition failed and no further trials will be made");
 	}
 }
 

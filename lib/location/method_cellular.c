@@ -18,7 +18,7 @@
 LOG_MODULE_REGISTER(method_cellular, CONFIG_LOCATION_LOG_LEVEL);
 
 extern location_event_handler_t event_handler;
-extern struct loc_event_data event_data;
+extern struct loc_event_data current_event_data;
 
 #define METHOD_CELLULAR_STACK_SIZE 2048
 #define METHOD_CELLULAR_PRIORITY  5
@@ -72,8 +72,7 @@ static int method_cellular_ncellmeas_start(void)
 	int err = lte_lc_neighbor_cell_measurement();
 	if (err) {
 		LOG_ERR("Failed to initiate neighbor cell measurements: %d", err);
-		event_data_init(LOC_EVT_ERROR, LOC_METHOD_CELL_ID);
-		event_location_callback(&event_data);
+		event_location_callback_error();
 		is_busy = false;
 		return err;
 	}
@@ -92,25 +91,24 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	ret = multicell_location_get(&cell_data, &location);
 	if (ret) {
 		LOG_ERR("Failed to acquire location from multicell_location lib, error: %d", ret);		
-		event_data_init(LOC_EVT_ERROR, LOC_METHOD_CELL_ID);
-
+		event_location_callback_error();
 	} else {
 		event_data_init(LOC_EVT_LOCATION, LOC_METHOD_CELL_ID);
-		event_data.location.latitude = location.latitude;
-		event_data.location.longitude = location.longitude;
-		event_data.location.accuracy = location.accuracy;
+		current_event_data.location.latitude = location.latitude;
+		current_event_data.location.longitude = location.longitude;
+		current_event_data.location.accuracy = location.accuracy;
 		//TODO:
-		/*event_data.location.datetime.valid = true;
-		event_data.location.datetime.year = pvt_data.datetime.year;
-		event_data.location.datetime.month = pvt_data.datetime.month;
-		event_data.location.datetime.day = pvt_data.datetime.day;
-		event_data.location.datetime.hour = pvt_data.datetime.hour;
-		event_data.location.datetime.minute = pvt_data.datetime.minute;
-		event_data.location.datetime.second = pvt_data.datetime.seconds;
-		event_data.location.datetime.ms = pvt_data.datetime.ms;*/
+		/*current_event_data.location.datetime.valid = true;
+		current_event_data.location.datetime.year = pvt_data.datetime.year;
+		current_event_data.location.datetime.month = pvt_data.datetime.month;
+		current_event_data.location.datetime.day = pvt_data.datetime.day;
+		current_event_data.location.datetime.hour = pvt_data.datetime.hour;
+		current_event_data.location.datetime.minute = pvt_data.datetime.minute;
+		current_event_data.location.datetime.second = pvt_data.datetime.seconds;
+		current_event_data.location.datetime.ms = pvt_data.datetime.ms;*/
 		(void)lte_lc_neighbor_cell_measurement_cancel();
+		event_location_callback(&current_event_data);
 	}
-	event_location_callback(&event_data);
 	is_busy = false;
 }
 

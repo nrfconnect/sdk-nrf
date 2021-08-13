@@ -14,7 +14,7 @@
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 extern location_event_handler_t event_handler;
-extern struct loc_event_data event_data;
+extern struct loc_event_data current_event_data;
 
 struct k_work gnss_fix_work;
 struct k_work method_gnss_timeout_work;
@@ -46,19 +46,19 @@ void method_gnss_fix_work_fn(struct k_work *item)
 	}
 
 	event_data_init(LOC_EVT_LOCATION, LOC_METHOD_GNSS);
-	event_data.location.latitude = pvt_data.latitude;
-	event_data.location.longitude = pvt_data.longitude;
-	event_data.location.accuracy = pvt_data.accuracy;
-	event_data.location.datetime.valid = true;
-	event_data.location.datetime.year = pvt_data.datetime.year;
-	event_data.location.datetime.month = pvt_data.datetime.month;
-	event_data.location.datetime.day = pvt_data.datetime.day;
-	event_data.location.datetime.hour = pvt_data.datetime.hour;
-	event_data.location.datetime.minute = pvt_data.datetime.minute;
-	event_data.location.datetime.second = pvt_data.datetime.seconds;
-	event_data.location.datetime.ms = pvt_data.datetime.ms;
+	current_event_data.location.latitude = pvt_data.latitude;
+	current_event_data.location.longitude = pvt_data.longitude;
+	current_event_data.location.accuracy = pvt_data.accuracy;
+	current_event_data.location.datetime.valid = true;
+	current_event_data.location.datetime.year = pvt_data.datetime.year;
+	current_event_data.location.datetime.month = pvt_data.datetime.month;
+	current_event_data.location.datetime.day = pvt_data.datetime.day;
+	current_event_data.location.datetime.hour = pvt_data.datetime.hour;
+	current_event_data.location.datetime.minute = pvt_data.datetime.minute;
+	current_event_data.location.datetime.second = pvt_data.datetime.seconds;
+	current_event_data.location.datetime.ms = pvt_data.datetime.ms;
 
-	event_location_callback(&event_data);
+	event_location_callback(&current_event_data);
 
 	/* If configured for single fix mode, stop GNSS */
 	if (!gnss_fix_interval) {
@@ -69,9 +69,7 @@ void method_gnss_fix_work_fn(struct k_work *item)
 
 void method_gnss_timeout_work_fn(struct k_work *item)
 {
-	event_data_init(LOC_EVT_TIMEOUT, LOC_METHOD_GNSS);
-
-	event_location_callback(&event_data);
+	event_location_callback_timeout();
 
 	/* If configured for single fix mode, stop GNSS */
 	if (!gnss_fix_interval) {
