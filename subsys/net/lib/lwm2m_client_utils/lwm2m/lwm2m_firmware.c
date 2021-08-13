@@ -121,7 +121,13 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 	uint32_t current_bytes;
 	size_t offset;
 	size_t skip = 0;
-	int ret = 0;
+	int ret;
+
+	/* Resets the DFU target */
+	if (!total_size) {
+		ret = -ENODATA;
+		goto cleanup;
+	}
 
 	if (!data_len) {
 		LOG_ERR("Data len is zero, nothing to write.");
@@ -132,8 +138,26 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 		client_acknowledge();
 
 		image_type = dfu_target_img_type(data, data_len);
-		if (image_type < 0) {
+
+		switch (image_type) {
+		case DFU_TARGET_IMAGE_TYPE_MODEM_DELTA:
+		case DFU_TARGET_IMAGE_TYPE_FULL_MODEM:
+			if (obj_inst_id != CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM) {
+				LOG_WRN("Unsupported DFU image type");
+				ret = -ENOMSG;
+				goto cleanup;
+			}
+		break;
+		case DFU_TARGET_IMAGE_TYPE_MCUBOOT:
+			if (obj_inst_id != CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP) {
+				LOG_WRN("Unsupported DFU image type");
+				ret = -ENOMSG;
+				goto cleanup;
+			}
+		break;
+		default:
 			LOG_ERR("Invalid DFU target image type");
+			ret = -ENOMSG;
 			goto cleanup;
 		}
 
