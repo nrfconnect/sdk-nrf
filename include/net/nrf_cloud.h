@@ -395,7 +395,8 @@ int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
  * @ref NRF_CLOUD_EVT_SENSOR_DATA_ACK event for data sent with
  * a valid tag value.
  *
- * @param[in] param Sensor data.
+ * @param[in] param Sensor data; the data pointed to by param->data.ptr
+ *                  must be a string.
  *
  * @retval 0       If successful.
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
@@ -406,7 +407,8 @@ int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param);
 /**
  * @brief Update the device shadow with sensor data.
  *
- * @param[in] param Sensor data.
+ * @param[in] param Sensor data; the data pointed to by param->data.ptr must be a
+ *                  valid JSON string.
  *
  * @retval 0       If successful.
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
