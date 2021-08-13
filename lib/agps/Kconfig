@@ -6,6 +6,7 @@
 
 config AGPS
 	bool "A-GPS library"
+	depends on NRF_MODEM_LIB
 	help
 	  A library to simplify switching between A-GPS data sources.
 
@@ -28,7 +29,6 @@ config AGPS_SRC_NRF_CLOUD
 
 config AGPS_SRC_SUPL
 	bool "Use SUPL as data source"
-	depends on NRF_MODEM_LIB
 	imply SUPL_CLIENT_LIB
 	help
 	  Note that a request for A-GPS data using SUPL service will block until
