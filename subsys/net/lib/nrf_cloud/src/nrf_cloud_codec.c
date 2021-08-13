@@ -49,6 +49,7 @@ static const char *const sensor_type_str[] = {
 	[NRF_CLOUD_DEVICE_INFO] = "DEVICE",
 	[NRF_CLOUD_SENSOR_LIGHT] = "LIGHT",
 };
+#define SENSOR_TYPE_ARRAY_SIZE (sizeof(sensor_type_str) / sizeof(*sensor_type_str))
 #endif
 
 #define MSGTYPE_VAL_DATA	"DATA"
@@ -286,16 +287,19 @@ int nrf_cloud_encode_shadow_data(const struct nrf_cloud_sensor_data *sensor,
 	__ASSERT_NO_MSG(sensor->data.ptr != NULL);
 	__ASSERT_NO_MSG(sensor->data.len != 0);
 	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(sensor->type < SENSOR_TYPE_ARRAY_SIZE);
 
 	cJSON *root_obj = cJSON_CreateObject();
 	cJSON *state_obj = cJSON_AddObjectToObjectCS(root_obj, JSON_KEY_STATE);
 	cJSON *reported_obj = cJSON_AddObjectToObjectCS(state_obj, JSON_KEY_REP);
+	cJSON *input_obj = cJSON_ParseWithLength(sensor->data.ptr, sensor->data.len);
 
-	ret = json_add_obj_cs(reported_obj, sensor_type_str[sensor->type],
-			   (cJSON *)sensor->data.ptr);
+	ret = json_add_obj_cs(reported_obj, sensor_type_str[sensor->type], input_obj);
 
 	if (ret == 0) {
 		buffer = cJSON_PrintUnformatted(root_obj);
+	} else {
+		cJSON_Delete(input_obj);
 	}
 
 	if (buffer) {
@@ -318,6 +322,7 @@ int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *sensor,
 	__ASSERT_NO_MSG(sensor->data.ptr != NULL);
 	__ASSERT_NO_MSG(sensor->data.len != 0);
 	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(sensor->type < SENSOR_TYPE_ARRAY_SIZE);
 
 	cJSON *root_obj = cJSON_CreateObject();
 
