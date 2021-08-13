@@ -175,7 +175,7 @@ void event_location_callback(const struct loc_event_data *event_data_param)
 	if (current_location_method_index < LOC_MAX_METHODS) {
 		requested_location_method =
 			current_loc_config.methods[current_location_method_index].method;
-		LOG_INF("Acquisition failed for '%s', trying with '%s' next",
+		LOG_INF("Failed to acquire location using '%s', trying with '%s' next",
 			(char *)location_method_api_get(previous_location_method)->method_string,
 			(char *)location_method_api_get(requested_location_method)->method_string);
 

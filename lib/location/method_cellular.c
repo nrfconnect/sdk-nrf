@@ -125,7 +125,7 @@ int method_cellular_configure_and_start(const struct loc_method_config *config, 
 	}
 
 	if (is_busy) {
-		LOG_ERR("Previous operation on going.");
+		LOG_ERR("Previous operation ongoing.");
 		return -EBUSY;
 	}
 
