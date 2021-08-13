@@ -40,26 +40,26 @@ void method_gnss_event_handler(int event)
 void method_gnss_fix_work_fn(struct k_work *item)
 {
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
+	struct loc_location location_result = { 0 };
 
 	if (nrf_modem_gnss_read(&pvt_data, sizeof(pvt_data), NRF_MODEM_GNSS_DATA_PVT) != 0) {
 		LOG_ERR("Failed to read PVT data from GNSS");
 		return;
 	}
 
-	event_data_init(LOC_EVT_LOCATION, LOC_METHOD_GNSS);
-	current_event_data.location.latitude = pvt_data.latitude;
-	current_event_data.location.longitude = pvt_data.longitude;
-	current_event_data.location.accuracy = pvt_data.accuracy;
-	current_event_data.location.datetime.valid = true;
-	current_event_data.location.datetime.year = pvt_data.datetime.year;
-	current_event_data.location.datetime.month = pvt_data.datetime.month;
-	current_event_data.location.datetime.day = pvt_data.datetime.day;
-	current_event_data.location.datetime.hour = pvt_data.datetime.hour;
-	current_event_data.location.datetime.minute = pvt_data.datetime.minute;
-	current_event_data.location.datetime.second = pvt_data.datetime.seconds;
-	current_event_data.location.datetime.ms = pvt_data.datetime.ms;
+	location_result.latitude = pvt_data.latitude;
+	location_result.longitude = pvt_data.longitude;
+	location_result.accuracy = pvt_data.accuracy;
+	location_result.datetime.valid = true;
+	location_result.datetime.year = pvt_data.datetime.year;
+	location_result.datetime.month = pvt_data.datetime.month;
+	location_result.datetime.day = pvt_data.datetime.day;
+	location_result.datetime.hour = pvt_data.datetime.hour;
+	location_result.datetime.minute = pvt_data.datetime.minute;
+	location_result.datetime.second = pvt_data.datetime.seconds;
+	location_result.datetime.ms = pvt_data.datetime.ms;
 
-	event_location_callback(&current_event_data);
+	event_location_callback(&location_result);
 
 	/* If configured for single fix mode, stop GNSS */
 	if (!gnss_fix_interval) {

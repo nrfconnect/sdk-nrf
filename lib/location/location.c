@@ -50,14 +50,15 @@ static struct location_method_supported methods_supported[LOC_MAX_METHODS] = {
 	{LOC_METHOD_CELL_ID, &method_cellular_api},
 };
 
-void event_data_init(enum loc_event_id event_id, enum loc_method method)
+/*
+static void event_data_init(enum loc_event_id event_id, enum loc_method method)
 {
 	memset(&current_event_data, 0, sizeof(current_event_data));
 
 	current_event_data.id = event_id;
 	current_event_data.method = method;
 }
-
+*/
 const struct location_method_api *location_method_api_get(enum loc_method method)
 {
 	const struct location_method_api *method_api = NULL;
@@ -148,46 +149,82 @@ void event_location_callback_error()
 {
 	current_event_data.id = LOC_EVT_ERROR;
 
-	event_location_callback(&current_event_data);
+	event_location_callback(NULL);
 }
 
 void event_location_callback_timeout()
 {
 	current_event_data.id = LOC_EVT_TIMEOUT;
 
-	event_location_callback(&current_event_data);
+	event_location_callback(NULL);
 }
 
-void event_location_callback(const struct loc_event_data *event_data_param)
+void event_location_callback(const struct loc_location *location)
 {
+	char temp_str[16];
 	enum loc_method requested_location_method;
 	enum loc_method previous_location_method;
 	int err;
+	bool retry = false;
 
-	event_handler(event_data_param);
-
-	if (event_data_param->id == LOC_EVT_LOCATION) {
+	if (location != NULL) {
 		/* Location was acquired properly, finish location request */
+		current_event_data.id = LOC_EVT_LOCATION;
+		current_event_data.location = *location;
+
+		LOG_DBG("Location acquired successfully:");
+		LOG_DBG("  method: TODO: STRING HERE (%d)", current_event_data.method);
+		/* Logging v1 doesn't support double and float logging. Logging v2 would support
+		 * but that's up to application to configure.
+		 */
+		sprintf(temp_str, "%.06f", current_event_data.location.latitude);
+		LOG_DBG("  latitude: %s", log_strdup(temp_str));
+		sprintf(temp_str, "%.06f", current_event_data.location.longitude);
+		LOG_DBG("  longitude: %s", log_strdup(temp_str));
+		sprintf(temp_str, "%.01f", current_event_data.location.accuracy);
+		LOG_DBG("  accuracy: %s m", log_strdup(temp_str));
+		if (current_event_data.location.datetime.valid) {
+			LOG_DBG("  date: %04d-%02d-%02d",
+				current_event_data.location.datetime.year,
+				current_event_data.location.datetime.month,
+				current_event_data.location.datetime.day);
+			LOG_DBG("  time: %02d:%02d:%02d.%03d UTC",
+				current_event_data.location.datetime.hour,
+				current_event_data.location.datetime.minute,
+				current_event_data.location.datetime.second,
+				current_event_data.location.datetime.ms);
+		}
+
+		event_handler(&current_event_data);
+
 		return;
 	}
 
 	/* Do fallback to next preferred method */
-	previous_location_method = event_data_param->method;
+	previous_location_method = current_event_data.method;
 	current_location_method_index++;
 	if (current_location_method_index < LOC_MAX_METHODS) {
 		requested_location_method =
 			current_loc_config.methods[current_location_method_index].method;
-		LOG_INF("Failed to acquire location using '%s', trying with '%s' next",
-			(char *)location_method_api_get(previous_location_method)->method_string,
-			(char *)location_method_api_get(requested_location_method)->method_string);
 
-		memset(&current_event_data, 0, sizeof(current_event_data));
-		current_event_data.method = requested_location_method;
+		/* TODO: Should we have NONE method in the API? */
+		if (requested_location_method != 0) {
+			LOG_INF("Failed to acquire location using '%s', trying with '%s' next",
+				(char *)location_method_api_get(previous_location_method)
+					->method_string,
+				(char *)location_method_api_get(requested_location_method)
+					->method_string);
 
-		err = location_method_api_get(requested_location_method)->location_request(
-			&current_loc_config.methods[current_location_method_index],
-			current_loc_config.interval);
-	} else {
+			memset(&current_event_data, 0, sizeof(current_event_data));
+			current_event_data.method = requested_location_method;
+			retry = true;
+			err = location_method_api_get(requested_location_method)->location_request(
+				&current_loc_config.methods[current_location_method_index],
+				current_loc_config.interval);
+		}
+	}
+
+	if (!retry) {
 		LOG_ERR("Location acquisition failed and no further trials will be made");
 	}
 }

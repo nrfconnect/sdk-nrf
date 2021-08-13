@@ -83,6 +83,7 @@ static int method_cellular_ncellmeas_start(void)
 static void method_cellular_positioning_work_fn(struct k_work *work)
 {
 	struct multicell_location location;
+	struct loc_location location_result = { 0 };
 	int ret;
 
 	ARG_UNUSED(work);
@@ -94,22 +95,21 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			LOG_ERR("Failed to acquire location from multicell_location lib, error: %d", ret);		
 			event_location_callback_error();
 		} else {
-			event_data_init(LOC_EVT_LOCATION, LOC_METHOD_CELL_ID);
-			current_event_data.location.latitude = location.latitude;
-			current_event_data.location.longitude = location.longitude;
-			current_event_data.location.accuracy = location.accuracy;
+			location_result.latitude = location.latitude;
+			location_result.longitude = location.longitude;
+			location_result.accuracy = location.accuracy;
 			//TODO:
-			/*current_event_data.location.datetime.valid = true;
-			current_event_data.location.datetime.year = pvt_data.datetime.year;
-			current_event_data.location.datetime.month = pvt_data.datetime.month;
-			current_event_data.location.datetime.day = pvt_data.datetime.day;
-			current_event_data.location.datetime.hour = pvt_data.datetime.hour;
-			current_event_data.location.datetime.minute = pvt_data.datetime.minute;
-			current_event_data.location.datetime.second = pvt_data.datetime.seconds;
-			current_event_data.location.datetime.ms = pvt_data.datetime.ms;*/
+			/*location_result.datetime.valid = true;
+			location_result.datetime.year = pvt_data.datetime.year;
+			location_result.datetime.month = pvt_data.datetime.month;
+			location_result.datetime.day = pvt_data.datetime.day;
+			location_result.datetime.hour = pvt_data.datetime.hour;
+			location_result.datetime.minute = pvt_data.datetime.minute;
+			location_result.datetime.second = pvt_data.datetime.seconds;
+			location_result.datetime.ms = pvt_data.datetime.ms;*/
 			(void)lte_lc_neighbor_cell_measurement_cancel();
 			if (running) {
-				event_location_callback(&current_event_data);
+				event_location_callback(&location_result);
 				running = false;
 			}
 		}
