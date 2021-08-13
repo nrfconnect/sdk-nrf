@@ -27,7 +27,7 @@ LOG_MODULE_REGISTER(agps, CONFIG_AGPS_LOG_LEVEL);
 #define DNS_ATTEMPT_COUNT  3
 
 static const struct device *gps_dev;
-static int gnss_fd;
+static int gnss_fd = -1;
 static int supl_fd;
 #endif /* CONFIG_AGPS_SRC_SUPL */
 
@@ -61,20 +61,21 @@ static int send_to_modem(void *data, size_t data_len, uint16_t type)
 {
 	int err;
 
-	/* At this point, GPS driver or app-provided socket is assumed. */
 	if (gps_dev) {
-		return gps_agps_write(gps_dev, type_api2driver(type), data, data_len);
-	}
-
-	err = nrf_sendto(gnss_fd, data, data_len, 0, &type, sizeof(type));
-	if (err < 0) {
-		LOG_ERR("Failed to send A-GPS data to modem, errno: %d", errno);
-		err = -errno;
+		/* GPS driver */
+		err = gps_agps_write(gps_dev, type_api2driver(type), data, data_len);
+	} else if (gnss_fd != -1) {
+		/* GNSS socket */
+		err = nrf_sendto(gnss_fd, data, data_len, 0, &type, sizeof(type));
+		if (err < 0) {
+			err = -errno;
+		} else {
+			err = 0;
+		}
 	} else {
-		err = 0;
+		/* GNSS API */
+		err = nrf_modem_gnss_agps_write(data, data_len, type);
 	}
-
-	LOG_DBG("A-GPS data sent to modem");
 
 	return err;
 }
@@ -270,13 +271,11 @@ static int init_supl(int socket)
 	if (socket) {
 		LOG_DBG("Using user-provided socket, fd %d", socket);
 
-		gps_dev = NULL;
 		gnss_fd = socket;
 	} else {
 		gps_dev = device_get_binding("NRF9160_GPS");
 		if (gps_dev == NULL) {
-			LOG_ERR("Could not get binding to nRF9160 GPS");
-			return -ENODEV;
+			LOG_DBG("Using GNSS API to input assistance data");
 		}
 
 		LOG_DBG("Using GPS driver to input assistance data");
