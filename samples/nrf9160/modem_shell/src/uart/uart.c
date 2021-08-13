@@ -28,7 +28,7 @@ void disable_uarts(void)
 void enable_uarts(void)
 {
 	const struct device *uart_dev;
-	uint32_t current_state;
+	enum pm_device_state current_state;
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
 
