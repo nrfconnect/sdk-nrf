@@ -79,7 +79,7 @@ void uart_toggle_power_state_at_event(const struct shell *shell, const struct lt
 void uart_toggle_power_state(const struct shell *shell)
 {
 	const struct device *uart_dev;
-	uint32_t uart0_power_state;
+	enum pm_device_state uart0_power_state;
 	int err;
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
@@ -99,27 +99,21 @@ void uart_toggle_power_state(const struct shell *shell)
 			k_sleep(K_MSEC(500));
 
 			/* set uart0 to low power state */
-			err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER, NULL, NULL);
+			err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER);
 
 			/* set uart1 to low power state */
 			uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
 			if (uart_dev) {
-				pm_device_state_set(uart_dev,
-						    PM_DEVICE_STATE_LOW_POWER,
-						    NULL,
-						    NULL);
+				pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER);
 			}
 		} else {
 			/* set uart0 to active state */
-			err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE, NULL, NULL);
+			err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
 
 			/* set uart1 to active state */
 			uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
 			if (uart_dev) {
-				pm_device_state_set(uart_dev,
-						    PM_DEVICE_STATE_ACTIVE,
-						    NULL,
-						    NULL);
+				pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
 			}
 			shell_print(shell, "Enabling UARTs");
 

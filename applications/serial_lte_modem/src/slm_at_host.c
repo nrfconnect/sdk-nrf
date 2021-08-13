@@ -208,7 +208,7 @@ int poweroff_uart(void)
 int poweron_uart(void)
 {
 	int err;
-	uint32_t current_state = 0;
+	enum pm_device_state current_state = PM_DEVICE_STATE_ACTIVE;
 
 	err = pm_device_state_get(uart_dev, &current_state);
 	if (err) {
