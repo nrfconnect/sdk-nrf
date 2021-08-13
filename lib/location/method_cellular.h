@@ -9,5 +9,6 @@
 
 int method_cellular_configure_and_start(const struct loc_method_config *config, uint16_t interval);
 int method_cellular_init(void);
+int method_cellular_cancel(void);
 
 #endif /* METHOD_CELLULAR_H */

@@ -34,7 +34,7 @@ static struct lte_lc_cells_info cell_data = {
 	.neighbor_cells = neighbor_cells,
 };
 static bool lte_connected;
-static bool is_busy;
+static bool running;
 
 void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 {
@@ -73,7 +73,7 @@ static int method_cellular_ncellmeas_start(void)
 	if (err) {
 		LOG_ERR("Failed to initiate neighbor cell measurements: %d", err);
 		event_location_callback_error();
-		is_busy = false;
+		running = false;
 		return err;
 	}
 	k_work_submit(&method_cellular_positioning_work);
@@ -88,28 +88,32 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	ARG_UNUSED(work);
 	k_sem_take(&cellmeas_data_ready, K_FOREVER); /* TODO: cannot be forever? interval only */
 
-	ret = multicell_location_get(&cell_data, &location);
-	if (ret) {
-		LOG_ERR("Failed to acquire location from multicell_location lib, error: %d", ret);		
-		event_location_callback_error();
-	} else {
-		event_data_init(LOC_EVT_LOCATION, LOC_METHOD_CELL_ID);
-		current_event_data.location.latitude = location.latitude;
-		current_event_data.location.longitude = location.longitude;
-		current_event_data.location.accuracy = location.accuracy;
-		//TODO:
-		/*current_event_data.location.datetime.valid = true;
-		current_event_data.location.datetime.year = pvt_data.datetime.year;
-		current_event_data.location.datetime.month = pvt_data.datetime.month;
-		current_event_data.location.datetime.day = pvt_data.datetime.day;
-		current_event_data.location.datetime.hour = pvt_data.datetime.hour;
-		current_event_data.location.datetime.minute = pvt_data.datetime.minute;
-		current_event_data.location.datetime.second = pvt_data.datetime.seconds;
-		current_event_data.location.datetime.ms = pvt_data.datetime.ms;*/
-		(void)lte_lc_neighbor_cell_measurement_cancel();
-		event_location_callback(&current_event_data);
-	}
-	is_busy = false;
+	if (running) {
+		ret = multicell_location_get(&cell_data, &location);
+		if (ret) {
+			LOG_ERR("Failed to acquire location from multicell_location lib, error: %d", ret);		
+			event_location_callback_error();
+		} else {
+			event_data_init(LOC_EVT_LOCATION, LOC_METHOD_CELL_ID);
+			current_event_data.location.latitude = location.latitude;
+			current_event_data.location.longitude = location.longitude;
+			current_event_data.location.accuracy = location.accuracy;
+			//TODO:
+			/*current_event_data.location.datetime.valid = true;
+			current_event_data.location.datetime.year = pvt_data.datetime.year;
+			current_event_data.location.datetime.month = pvt_data.datetime.month;
+			current_event_data.location.datetime.day = pvt_data.datetime.day;
+			current_event_data.location.datetime.hour = pvt_data.datetime.hour;
+			current_event_data.location.datetime.minute = pvt_data.datetime.minute;
+			current_event_data.location.datetime.second = pvt_data.datetime.seconds;
+			current_event_data.location.datetime.ms = pvt_data.datetime.ms;*/
+			(void)lte_lc_neighbor_cell_measurement_cancel();
+			if (running) {
+				event_location_callback(&current_event_data);
+				running = false;
+			}
+		}
+	}	
 }
 
 int method_cellular_configure_and_start(const struct loc_method_config *config, uint16_t interval)
@@ -124,8 +128,8 @@ int method_cellular_configure_and_start(const struct loc_method_config *config, 
 		return -EINVAL;
 	}
 
-	if (is_busy) {
-		LOG_ERR("Previous operation ongoing.");
+	if (running) {
+		LOG_ERR("Previous operation on going.");
 		return -EBUSY;
 	}
 
@@ -135,7 +139,22 @@ int method_cellular_configure_and_start(const struct loc_method_config *config, 
 	}
 
 	LOG_INF("Triggered start of cell measurements");
-	is_busy = true;
+	running = true;
+
+	return 0;
+}
+
+int method_cellular_cancel(void)
+{
+	if (running) {
+		(void)lte_lc_neighbor_cell_measurement_cancel();
+		(void)k_work_cancel(&method_cellular_positioning_work);
+		running = false;
+		k_sem_reset(&cellmeas_data_ready);
+	} else {
+		LOG_DBG("Not running");
+		return -ESRCH;
+	}
 
 	return 0;
 }
@@ -145,7 +164,7 @@ int method_cellular_init(void)
 	int ret;
 
 	lte_connected = false;
-	is_busy = false;
+	running = false;
 	
 	k_work_queue_start(
 		&method_cellular_work_q, method_cellular_stack,
