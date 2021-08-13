@@ -16,7 +16,11 @@
 
 extern const struct shell *shell_global;
 
-enum location_shell_command { LOCATION_CMD_GET = 0 };
+enum location_shell_command {
+	LOCATION_CMD_NONE = 0,
+	LOCATION_CMD_GET,
+	LOCATION_CMD_CANCEL
+};
 
 struct location_shell_cmd_args {
 	enum location_shell_command command;
@@ -27,7 +31,8 @@ static const char location_usage_str[] =
 	"Usage: location <subcommand> [options]\n"
 	"\n"
 	"Subcommands:\n"
-	"  get:      Requests the current position or starts periodic position updates.\n";
+	"  get:      Requests the current position or starts periodic position updates.\n"
+	"  cancel:   Cancel/Stop on going request. No options\n";
 
 static const char location_get_usage_str[] =
 	"Usage: location get [--interval <secs>] [--method1 <method>] [--method2 <method>] [--gnss_accuracy <acc>] [--gnss_timeout <timeout_in_secs>]\n"
@@ -149,14 +154,16 @@ void location_ctrl_init(void)
 
 int location_shell(const struct shell *shell, size_t argc, char **argv)
 {
-	struct location_shell_cmd_args loc_cmd_args;
+	struct location_shell_cmd_args loc_cmd_args = {
+		.command = LOCATION_CMD_NONE
+	};
 
 	int interval = 0;
 
 	int gnss_timeout = 0;
 	bool gnss_timeout_given = false;
 
-	enum loc_accuracy gnss_accuracy;
+	enum loc_accuracy gnss_accuracy = LOC_ACCURACY_LOW;
 	bool gnss_accuracy_set = false;
 
 	bool method1_set = false;
@@ -177,6 +184,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	/* sub-command = argv[1]       */
 	if (strcmp(argv[1], "get") == 0) {
 		loc_cmd_args.command = LOCATION_CMD_GET;
+	} else if (strcmp(argv[1], "cancel") == 0) {
+		loc_cmd_args.command = LOCATION_CMD_CANCEL;
 	} else {
 		shell_error(shell, "Unsupported command=%s\n", argv[1]);
 		ret = -EINVAL;
@@ -250,6 +259,15 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 	switch (loc_cmd_args.command) {
+	case LOCATION_CMD_CANCEL:
+		ret = location_request_cancel();
+		if (ret) {
+			shell_error(shell, "Cannot cancel location request, err: %d\n", ret);
+			return -1;
+		}
+		shell_print(shell, "Getting of location cancelled");
+		break;
+
 	case LOCATION_CMD_GET: {
 		struct loc_config config = { 0 };
 
@@ -314,6 +332,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		shell_print(shell, "Started of getting a current location...");
 		break;
 	}
+	default:
+		shell_error(shell, "Unknown command. See usage:");
+		goto show_usage;
 	}
 	return ret;
 show_usage:
