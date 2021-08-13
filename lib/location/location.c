@@ -28,19 +28,21 @@ LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 
 struct loc_event_data current_event_data;
 static location_event_handler_t event_handler;
-static int current_location_method_index;
+static int current_location_method_index = -1;
 static struct loc_config current_loc_config;
 
 const static struct location_method_api method_gnss_api = {
 	.method_string    = "GNSS",
 	.init             = method_gnss_init,
 	.location_request = method_gnss_configure_and_start,
+	.cancel_request   = method_gnss_cancel,
 };
 
 const static struct location_method_api method_cellular_api = {
 	.method_string    = "Cellular",
 	.init             = method_cellular_init,
 	.location_request = method_cellular_configure_and_start,
+	.cancel_request   = method_cellular_cancel,
 };
 
 static struct location_method_supported methods_supported[LOC_MAX_METHODS] = {
@@ -192,5 +194,15 @@ void event_location_callback(const struct loc_event_data *event_data_param)
 
 int location_request_cancel(void)
 {
-	return -1;
+	int err = -EPERM;
+
+	/* Check if location has been requested using one of the methods */
+	if (current_location_method_index >= 0) {
+		enum loc_method current_location_method =
+		current_loc_config.methods[current_location_method_index].method;
+
+		err = location_method_api_get(current_location_method)->cancel_request();
+	}
+	
+	return err;
 }

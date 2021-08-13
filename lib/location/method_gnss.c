@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <zephyr.h>
 #include <nrf_modem_gnss.h>
+#include <nrf_errno.h>
 #include <logging/log.h>
 #include <modem/location.h>
 #include "location.h"
@@ -78,7 +79,7 @@ void method_gnss_timeout_work_fn(struct k_work *item)
 	}
 }
 
-int method_gnss_init()
+int method_gnss_init(void)
 {
 	int err = nrf_modem_gnss_init();
 	if (err) {
@@ -141,4 +142,18 @@ int method_gnss_configure_and_start(const struct loc_method_config *config, uint
 	gnss_fix_interval = interval;
 
 	return err;
+}
+
+int method_gnss_cancel(void)
+{
+	int err = nrf_modem_gnss_stop();
+	if (!err) {
+		LOG_DBG("GNSS stopped");
+	} else if (err == NRF_EPERM) {
+		LOG_ERR("GNSS is not running");
+	} else {
+		LOG_ERR("Failed to stop GNSS");
+	}
+
+	return -err;
 }
