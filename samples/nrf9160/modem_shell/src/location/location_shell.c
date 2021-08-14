@@ -326,7 +326,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 		ret = location_request(&config);
 		if (ret) {
-			shell_error(shell, "Requesting location failed, err: %d\n", ret);
+			shell_error(shell, "Requesting location failed, err: %d", ret);
 			return -1;
 		}
 		shell_print(shell, "Started of getting a current location...");
