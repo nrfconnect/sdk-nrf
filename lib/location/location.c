@@ -91,23 +91,18 @@ int location_init(location_event_handler_t handler)
 
 	event_handler = handler;
 
-	/* TODO: Run inits in the loop but first need to compose LOC_MAX_METHODS
-	 * based on configured methods
-	 */
-
-#if defined(CONFIG_METHOD_GNSS)
-	/* GNSS init */
-	err = method_gnss_init();
-	if (err) {
-		LOG_ERR("Failed to initialize GNSS method");
-		return err;
+	for (int i = 0; i < LOC_MAX_METHODS; i++) {
+		if (methods_supported[i].method != 0) {
+			err = methods_supported[i].api->init();
+			if (err) {
+				LOG_ERR("Failed to initialize '%s' method",
+					methods_supported[i].api->method_string);
+			} else {
+				LOG_DBG("Initialized '%s' method successfully",
+					methods_supported[i].api->method_string);
+			}
+		}
 	}
-#endif
-
-#if defined(CONFIG_METHOD_CELLULAR)
-	/* Cellular positioning init */
-	method_cellular_init();
-#endif
 
 	initialized = true;
 
