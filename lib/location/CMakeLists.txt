@@ -6,7 +6,5 @@
 
 zephyr_library()
 zephyr_library_sources(location.c)
-#TODO add if METHOD_GNSS is enabled
-zephyr_library_sources(method_gnss.c)
-#TODO add if METHOD_CELLULAR is enabled
-zephyr_library_sources_ifdef(CONFIG_METHOD_CELLULAR method_cellular.c)
+zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_GNSS method_gnss.c)
+zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_CELLULAR method_cellular.c)

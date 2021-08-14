@@ -12,12 +12,14 @@ menuconfig LOCATION
 
 if LOCATION
 
-config METHOD_GNSS
+config LOCATION_METHOD_GNSS
 	bool "Allow GNSS to be used for obtaining the location"
+	default y
 
-config METHOD_CELLULAR
+config LOCATION_METHOD_CELLULAR
    	bool "Allow cellular positioning to be used for obtaining the location"
-	depends on MULTICELL_LOCATION
+	select MULTICELL_LOCATION
+	default y
 
 module = LOCATION
 module-str = Location

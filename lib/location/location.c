@@ -15,10 +15,10 @@
 #include <net/multicell_location.h>
 #include <modem/location.h>
 
+#if defined(CONFIG_LOCATION_METHOD_GNSS)
 #include "method_gnss.h"
-
-
-#if defined(CONFIG_METHOD_CELLULAR)
+#endif
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 #include "method_cellular.h"
 #endif
 
@@ -31,23 +31,34 @@ static location_event_handler_t event_handler;
 static int current_location_method_index = -1;
 static struct loc_config current_loc_config;
 
+#if defined(CONFIG_LOCATION_METHOD_GNSS)
 const static struct location_method_api method_gnss_api = {
 	.method_string    = "GNSS",
 	.init             = method_gnss_init,
 	.location_request = method_gnss_configure_and_start,
 	.cancel_request   = method_gnss_cancel,
 };
-
+#endif
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 const static struct location_method_api method_cellular_api = {
 	.method_string    = "Cellular",
 	.init             = method_cellular_init,
 	.location_request = method_cellular_configure_and_start,
 	.cancel_request   = method_cellular_cancel,
 };
+#endif
 
-static struct location_method_supported methods_supported[LOC_MAX_METHODS] = {
+static struct location_method_supported methods_supported[] = {
+#if defined(CONFIG_LOCATION_METHOD_GNSS)
 	{LOC_METHOD_GNSS, &method_gnss_api},
+#else
+	{0, NULL},
+#endif
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 	{LOC_METHOD_CELL_ID, &method_cellular_api},
+#else
+	{0, NULL},
+#endif
 };
 
 static void loc_core_current_event_data_init(enum loc_method method)
@@ -69,6 +80,9 @@ const struct location_method_api *location_method_api_get(enum loc_method method
 	}
 	/* This function is not supposed to be called when API is not found so
 	 * to find issues elsewhere we'll assert here
+	 */
+	/* TODO: MOSH will hit this if some methods are disabled from compilation
+	 *       and two methods are given
 	 */
 	assert(method_api != NULL);
 	return method_api;
