@@ -120,9 +120,9 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 int method_cellular_configure_and_start(const struct loc_method_config *config, uint16_t interval)
 {
 	int ret = 0;
-	const struct loc_cell_id_config *gnss_config = &config->config.cell_id;
+	const struct loc_cellular_config *cellular_config = &config->config.cellular;
 
-	ARG_UNUSED(gnss_config);
+	ARG_UNUSED(cellular_config);
 
 	if (interval > 0 ) {
 		LOG_ERR("Periodic cellular positioning mode not supported at the moment.");

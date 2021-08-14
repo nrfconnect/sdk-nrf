@@ -55,7 +55,7 @@ static struct location_method_supported methods_supported[] = {
 	{0, NULL},
 #endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
-	{LOC_METHOD_CELL_ID, &method_cellular_api},
+	{LOC_METHOD_CELLULAR, &method_cellular_api},
 #else
 	{0, NULL},
 #endif

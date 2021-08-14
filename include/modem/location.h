@@ -27,7 +27,7 @@ extern "C" {
 /** Positioning methods. */
 enum loc_method {
 	/** LTE cellular positioning. */
-	LOC_METHOD_CELL_ID = 1,
+	LOC_METHOD_CELLULAR = 1,
 	/** Global Navigation Satellite System (GNSS). */
 	LOC_METHOD_GNSS,
 };
@@ -105,7 +105,7 @@ struct loc_event_data {
 };
 
 /** LTE cellular positioning configuration. */
-struct loc_cell_id_config {
+struct loc_cellular_config {
 };
 
 /** GNSS configuration. */
@@ -121,8 +121,8 @@ struct loc_method_config {
 	/** Positioning method. */
 	enum loc_method method;
 	union {
-		/** Configuration for LOC_METHOD_CELL_ID. */
-		struct loc_cell_id_config cell_id;
+		/** Configuration for LOC_METHOD_CELLULAR. */
+		struct loc_cellular_config cellular;
 		/** Configuration for LOC_METHOD_GNSS. */
 		struct loc_gnss_config gnss;
 	} config;
