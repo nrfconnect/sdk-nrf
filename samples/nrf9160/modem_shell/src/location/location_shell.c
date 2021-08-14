@@ -83,7 +83,7 @@ static const char *location_shell_method_to_string(int method, char *out_str_buf
 {
         switch (method)
         {
-        case LOC_METHOD_CELL_ID:
+	case LOC_METHOD_CELLULAR:
                 strcpy(out_str_buff, "Cellular");
                 break;
         case LOC_METHOD_GNSS:
@@ -167,7 +167,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	bool gnss_accuracy_set = false;
 
 	bool method1_set = false;
-	enum loc_method method1 = LOC_METHOD_CELL_ID;
+	enum loc_method method1 = LOC_METHOD_CELLULAR;
 	bool method2_set = false;
 	enum loc_method method2 = LOC_METHOD_GNSS;
 
@@ -229,7 +229,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case LOCATION_SHELL_OPT_METHOD_1:
 			if (strcmp(optarg, "cellular") == 0) {
-				method1 = LOC_METHOD_CELL_ID;
+				method1 = LOC_METHOD_CELLULAR;
 			} else if (strcmp(optarg, "gnss") == 0) {
 				method1 = LOC_METHOD_GNSS;
 			} else {
@@ -241,7 +241,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case LOCATION_SHELL_OPT_METHOD_2:
 			if (strcmp(optarg, "cellular") == 0) {
-				method2 = LOC_METHOD_CELL_ID;
+				method2 = LOC_METHOD_CELLULAR;
 			} else if (strcmp(optarg, "gnss") == 0) {
 				method2 = LOC_METHOD_GNSS;
 			} else {
