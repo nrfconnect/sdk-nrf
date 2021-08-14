@@ -317,7 +317,8 @@ static int start(const struct device *dev, struct gps_config *cfg)
 		return -EALREADY;
 	}
 
-	if (cfg->timeout >= cfg->interval) {
+	if ((drv_data->cfg.nav_mode != GPS_NAV_MODE_SINGLE_FIX) &&
+	    (cfg->timeout >= cfg->interval)) {
 		LOG_ERR("The timeout must be less than the interval");
 		return -EINVAL;
 	}
