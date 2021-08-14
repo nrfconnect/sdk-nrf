@@ -15,7 +15,7 @@
 
 #include "location.h"
 
-LOG_MODULE_REGISTER(method_cellular, CONFIG_LOCATION_LOG_LEVEL);
+LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 extern location_event_handler_t event_handler;
 extern struct loc_event_data current_event_data;

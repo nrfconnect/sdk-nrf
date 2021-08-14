@@ -50,15 +50,13 @@ static struct location_method_supported methods_supported[LOC_MAX_METHODS] = {
 	{LOC_METHOD_CELL_ID, &method_cellular_api},
 };
 
-/*
-static void event_data_init(enum loc_event_id event_id, enum loc_method method)
+static void loc_core_current_event_data_init(enum loc_method method)
 {
 	memset(&current_event_data, 0, sizeof(current_event_data));
 
-	current_event_data.id = event_id;
 	current_event_data.method = method;
 }
-*/
+
 const struct location_method_api *location_method_api_get(enum loc_method method)
 {
 	const struct location_method_api *method_api = NULL;
@@ -137,8 +135,7 @@ int location_request(const struct loc_config *config)
 	}
 
 	requested_location_method = config->methods[current_location_method_index].method;
-	memset(&current_event_data, 0, sizeof(current_event_data));
-	current_event_data.method = requested_location_method;
+	loc_core_current_event_data_init(requested_location_method);
 	err = location_method_api_get(requested_location_method)->location_request(
 		&config->methods[current_location_method_index], config->interval);
 
@@ -173,7 +170,9 @@ void event_location_callback(const struct loc_location *location)
 		current_event_data.location = *location;
 
 		LOG_DBG("Location acquired successfully:");
-		LOG_DBG("  method: TODO: STRING HERE (%d)", current_event_data.method);
+		LOG_DBG("  method: %s (%d)",
+			(char *)location_method_api_get(current_event_data.method)->method_string,
+			current_event_data.method);
 		/* Logging v1 doesn't support double and float logging. Logging v2 would support
 		 * but that's up to application to configure.
 		 */
@@ -215,9 +214,8 @@ void event_location_callback(const struct loc_location *location)
 				(char *)location_method_api_get(requested_location_method)
 					->method_string);
 
-			memset(&current_event_data, 0, sizeof(current_event_data));
-			current_event_data.method = requested_location_method;
 			retry = true;
+			loc_core_current_event_data_init(requested_location_method);
 			err = location_method_api_get(requested_location_method)->location_request(
 				&current_loc_config.methods[current_location_method_index],
 				current_loc_config.interval);
