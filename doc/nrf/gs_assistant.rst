@@ -54,18 +54,16 @@ Once you have installed the Toolchain manager, open it in nRF Connect for Deskto
 
 Click :guilabel:`Settings` in the navigation bar to specify where you want to install the |NCS|.
 Then, in :guilabel:`SDK Environments`, click the :guilabel:`Install` button next to the |NCS| version that you want to install.
-
 The |NCS| version of your choice is installed on your machine, and the :guilabel:`Install` button changes to :guilabel:`Open IDE`.
-This button lets you start SEGGER Embedded Studio if you want to start :ref:`gs_programming_ses`.
 
-.. figure:: images/gs-assistant_tm_installed.png
-   :alt: The Toolchain manager options after installing the nRF Connect SDK version, cropped
+There are two ways you can build an application:
 
-   The Toolchain Manager options after installing the |NCS| version
+1. To :ref:`build with SES <gs_programming_ses>`, click on the :guilabel:`Open IDE` button.
+#. To build on the command line, use the following steps:
 
-Additionally, the dropdown menu becomes available.
-Among other options, this menu lets you open bash and command prompt that use the installed Toolchain manager tools.
-You can use the :guilabel:`Open bash` option from this menu when you start :ref:`gs_programming_cmd`.
+   1. With admin permissions enabled, download and install the `nRF Command Line Tools`_.
+   #. Restart the Toolchain manager application.
+   #. Follow the instructions in :ref:`gs_programming_cmd`.
 
 .. figure:: images/gs-assistant_tm_dropdown.png
    :alt: The Toolchain manager dropdown menu for the installed nRF Connect SDK version, cropped
@@ -77,7 +75,7 @@ You can use the :guilabel:`Open bash` option from this menu when you start :ref:
 Getting Started Assistant
 *************************
 
-The |GSA| app is available for Linux.
+The |GSA| app is the automatic installation option for Linux.
 It provides you with step-by-step instructions for installing the toolchain for |NCS|.
 
 The app allows you to check which of the required tools are already installed on your computer and verify the installation.
