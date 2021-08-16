@@ -81,6 +81,58 @@ The command argument description uses the following convention:
 
 ----
 
+.. _shell_help:
+
+help
+====
+
+Display help for all available shell commands.
+
+.. parsed-literal::
+   :class: highlight
+
+   [*group*] help
+
+If the optional argument is not provided, displays help for all command groups.
+
+If the optional argument is provided, displays help for subcommands of the specified command group.
+For example, ``zdo help`` displays help for all ``zdo`` commands.
+
+Example:
+
+.. code-block::
+
+   help
+   Please press the <Tab> button to see all available commands.
+   You can also use the <Tab> button to prompt or auto-complete all commands or its subcommands.
+   You can try to call commands with <-h> or <--help> parameter for more information.
+
+   Shell supports following meta-keys:
+   Ctrl + (a key from: abcdefklnpuw)
+   Alt  + (a key from: bf)
+   Please refer to shell documentation for more details.
+
+   Available commands:
+   bdb                :Base device behaviour manipulation
+   clear              :Clear screen.
+   device             :Device commands
+   devmem             :Read/write physical memory"devmem address [width [value]]"
+   flash              :Flash shell commands
+   help               :Prints the help message.
+   history            :Command history.
+   kernel             :Kernel commands
+   nrf_clock_control  :Clock control commmands
+   resize             :Console gets terminal screen size or assumes default in
+                      case the readout fails. It must be executed after each
+                      terminal width change to ensure correct text display.
+   sensor             :Sensor commands
+   shell              :Useful, not Unix-like shell commands.
+   version            :Print firmware version
+   zcl                :ZCL subsystem commands.
+   zdo                :ZDO manipulation
+
+----
+
 .. _bdb_role:
 
 bdb role
