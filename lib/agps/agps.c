@@ -23,12 +23,9 @@
 LOG_MODULE_REGISTER(agps, CONFIG_AGPS_LOG_LEVEL);
 
 #if defined(CONFIG_AGPS_SRC_SUPL)
-/* Number of DNS lookup attempts */
-#define DNS_ATTEMPT_COUNT  3
-
 static const struct device *gps_dev;
 static int gnss_fd = -1;
-static int supl_fd;
+static int supl_fd = -1;
 #endif /* CONFIG_AGPS_SRC_SUPL */
 
 static enum gps_agps_type type_lookup_api2driver[] = {
@@ -103,85 +100,68 @@ static int inject_agps_type(void *agps,
 static int open_supl_socket(void)
 {
 	int err;
-	int proto;
-	uint16_t port;
-	struct addrinfo *addr;
 	struct addrinfo *info;
 
-	proto = IPPROTO_TCP;
-	port = htons(CONFIG_AGPS_SUPL_PORT);
-
 	struct addrinfo hints = {
-		.ai_family = AF_INET,
-		.ai_socktype = SOCK_STREAM,
-		.ai_protocol = proto,
-		/* Either a valid,
-		 * NULL-terminated access point name or NULL.
-		 */
-		.ai_canonname = NULL,
+		.ai_family = AF_UNSPEC, /* Both IPv4 and IPv6 addresses accepted. */
+		.ai_socktype = SOCK_STREAM
 	};
 
-	err = getaddrinfo(CONFIG_AGPS_SUPL_HOST_NAME, NULL, &hints,
-			  &info);
-
+	err = getaddrinfo(CONFIG_AGPS_SUPL_HOST_NAME, NULL, &hints, &info);
 	if (err) {
-		LOG_ERR("Failed to resolve IPv4 hostname %s, errno: %d",
+		LOG_ERR("Failed to resolve hostname %s, error: %d",
 			CONFIG_AGPS_SUPL_HOST_NAME, err);
-		return -ECHILD;
-	}
 
-	/* Create socket */
-	supl_fd = socket(AF_INET, SOCK_STREAM, proto);
-	if (supl_fd < 0) {
-		LOG_ERR("Failed to create socket, errno %d", errno);
-		err = -errno;
-		goto cleanup;
-	}
-
-	struct timeval timeout = {
-		.tv_sec = 1,
-		.tv_usec = 0,
-	};
-
-	err = setsockopt(supl_fd,
-			 SOL_SOCKET,
-			 SO_RCVTIMEO,
-			 &timeout,
-			 sizeof(timeout));
-	if (err) {
-		LOG_ERR("Failed to setup socket timeout, errno %d", errno);
-		err = -errno;
-		goto cleanup;
+		return -1;
 	}
 
 	/* Not connected */
 	err = -1;
 
-	for (addr = info; addr != NULL; addr = addr->ai_next) {
+	for (struct addrinfo *addr = info; addr != NULL; addr = addr->ai_next) {
+		char ip[INET6_ADDRSTRLEN] = { 0 };
 		struct sockaddr *const sa = addr->ai_addr;
 
 		switch (sa->sa_family) {
 		case AF_INET6:
-			continue;
+			((struct sockaddr_in6 *)sa)->sin6_port = htons(CONFIG_AGPS_SUPL_PORT);
+			break;
 		case AF_INET:
-			((struct sockaddr_in *)sa)->sin_port = port;
-			char ip[INET_ADDRSTRLEN];
-
-			inet_ntop(AF_INET,
-				  &((struct sockaddr_in *)sa)->sin_addr, ip,
-				  sizeof(ip));
-
-			LOG_DBG("ip %s (%x) port %d", log_strdup(ip),
-				((struct sockaddr_in *)sa)->sin_addr.s_addr,
-				ntohs(port));
+			((struct sockaddr_in *)sa)->sin_port = htons(CONFIG_AGPS_SUPL_PORT);
 			break;
 		}
 
+		supl_fd = socket(sa->sa_family, SOCK_STREAM, IPPROTO_TCP);
+		if (supl_fd < 0) {
+			LOG_ERR("Failed to create socket, errno %d", errno);
+			goto cleanup;
+		}
+
+		/* The SUPL library expects a 1 second timeout for the read function. */
+		struct timeval timeout = {
+			.tv_sec = 1,
+			.tv_usec = 0,
+		};
+
+		err = setsockopt(supl_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+		if (err) {
+			LOG_ERR("Failed to set socket timeout, errno %d", errno);
+			goto cleanup;
+		}
+
+		inet_ntop(sa->sa_family,
+			  (void *)&((struct sockaddr_in *)sa)->sin_addr,
+			  ip,
+			  INET6_ADDRSTRLEN);
+		LOG_DBG("Connecting to %s port %d", ip, CONFIG_AGPS_SUPL_PORT);
+
 		err = connect(supl_fd, sa, addr->ai_addrlen);
 		if (err) {
-			/* Try next address */
-			LOG_ERR("Unable to connect, errno %d", errno);
-			err = -errno;
+			close(supl_fd);
+			supl_fd = -1;
+
+			/* Try the next address */
+			LOG_WRN("Connecting to server failed, errno %d", errno);
 		} else {
 			/* Connected */
 			break;
@@ -193,11 +173,15 @@ cleanup:
 
 	if (err) {
 		/* Unable to connect, close socket */
-		close(supl_fd);
-		supl_fd = -1;
+		LOG_ERR("Could not connect to SUPL server");
+		if (supl_fd > -1) {
+			close(supl_fd);
+			supl_fd = -1;
+		}
+		return -1;
 	}
 
-	return err;
+	return 0;
 }
 
 static void close_supl_socket(void)
