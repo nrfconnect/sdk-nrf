@@ -297,29 +297,28 @@ static int cmd_gnss_config_elevation(const struct shell *shell, size_t argc, cha
 	return gnss_set_elevation_threshold(elevation);
 }
 
-static int cmd_gnss_config_accuracy(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
-static int cmd_gnss_config_accuracy_normal(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_config_use_case(const struct shell *shell, size_t argc, char **argv)
 {
 	if (gnss_running) {
 		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
 		return -ENOEXEC;
 	}
 
-	return gnss_set_low_accuracy(false);
-}
+	uint8_t value;
+	bool low_accuracy_enabled = false;
+	bool scheduled_downloads_disabled = false;
 
-static int cmd_gnss_config_accuracy_low(const struct shell *shell, size_t argc, char **argv)
-{
-	if (gnss_running) {
-		shell_error(shell, "%s: stop GNSS to execute command", argv[0]);
-		return -ENOEXEC;
+	value = atoi(argv[1]);
+	if (value == 1) {
+		low_accuracy_enabled = true;
 	}
 
-	return gnss_set_low_accuracy(true);
+	value = atoi(argv[2]);
+	if (value == 1) {
+		scheduled_downloads_disabled = true;
+	}
+
+	return gnss_set_use_case(low_accuracy_enabled, scheduled_downloads_disabled);
 }
 
 static int cmd_gnss_config_nmea(const struct shell *shell, size_t argc, char **argv)
@@ -878,14 +877,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	sub_gnss_config_accuracy,
-	SHELL_CMD_ARG(normal, NULL, "Normal accuracy fixes (default).",
-		      cmd_gnss_config_accuracy_normal, 1, 0),
-	SHELL_CMD_ARG(low, NULL, "Low accuracy fixes allowed.", cmd_gnss_config_accuracy_low, 1, 0),
-	SHELL_SUBCMD_SET_END
-);
-
-SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_config_powersave,
 	SHELL_CMD_ARG(off, NULL, "Power saving off (default).",
 		      cmd_gnss_config_powersave_off, 1, 0),
@@ -930,7 +921,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      cmd_gnss_config_system, 2, 0),
 	SHELL_CMD(elevation, NULL, "<angle>\nElevation threshold angle.",
 		  cmd_gnss_config_elevation),
-	SHELL_CMD(accuracy, &sub_gnss_config_accuracy, "Fix accuracy.", cmd_gnss_config_accuracy),
+	SHELL_CMD_ARG(use_case, NULL,
+		      "<low accuracy allowed> <scheduled downloads disabled>\n"
+		      "Use case configuration. 0 = option disabled, 1 = option enabled "
+		      "(default all disabled).",
+		      cmd_gnss_config_use_case, 3, 0),
 	SHELL_CMD_ARG(nmea, NULL,
 		      "<GGA enabled> <GLL enabled> <GSA enabled> <GSV enabled> <RMC enabled>\n"
 		      "NMEA mask. 0 = disabled, 1 = enabled (default all enabled).",

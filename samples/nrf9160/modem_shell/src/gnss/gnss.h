@@ -185,14 +185,15 @@ int gnss_set_duty_cycling_policy(enum gnss_duty_cycling_policy policy);
 int gnss_set_elevation_threshold(uint8_t elevation);
 
 /**
- * @brief Sets whether low accuracy fixes are allowed.
+ * @brief Sets the GNSS use case configuration.
  *
- * @param value True if low accuracy fixes are allowed, false if not.
+ * @param low_accuracy_enabled True if low accuracy fixes are allowed, false if not.
+ * @param scheduled_downloads_disabled True if scheduled downloads are disabled, false if not.
  *
  * @retval 0 if the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int gnss_set_low_accuracy(bool value);
+int gnss_set_use_case(bool low_accuracy_enabled, bool scheduled_downloads_disabled);
 
 /**
  * @brief Sets the NMEA mask.

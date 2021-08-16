@@ -302,7 +302,7 @@ int gnss_set_elevation_threshold(uint8_t elevation)
 	return -EOPNOTSUPP;
 }
 
-int gnss_set_low_accuracy(bool value)
+int gnss_set_use_case(bool low_accuracy_enabled, bool scheduled_downloads_disabled)
 {
 	shell_error(shell_global,
 		    "GNSS: Operation not supported in GPS driver mode");

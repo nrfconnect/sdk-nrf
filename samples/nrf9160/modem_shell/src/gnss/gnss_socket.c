@@ -781,9 +781,16 @@ int gnss_set_elevation_threshold(uint8_t elevation)
 	return 0;
 }
 
-int gnss_set_low_accuracy(bool value)
+int gnss_set_use_case(bool low_accuracy_enabled, bool scheduled_downloads_disabled)
 {
-	low_accuracy = value;
+	if (scheduled_downloads_disabled) {
+		shell_error(shell_global,
+			    "GNSS: Disabling scheduled downloads not supported in "
+			    "GNSS socket API mode");
+		return -EOPNOTSUPP;
+	}
+
+	low_accuracy = low_accuracy_enabled;
 
 	return 0;
 }
