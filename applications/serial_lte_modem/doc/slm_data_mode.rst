@@ -54,6 +54,8 @@ To exit data mode, the MCU sends the termination command set by the ``CONFIG_SLM
 
 When instructed to exit data mode, the SLM application returns the AT command response ``OK``.
 
+If the current sending function fails, the SLM application exits data mode and returns the AT command response ``ERROR``.
+
 The SLM application also exits data mode automatically in the following scenarios:
 
 * The TCP server is stopped.

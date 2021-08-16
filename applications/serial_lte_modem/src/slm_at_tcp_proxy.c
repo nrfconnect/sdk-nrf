@@ -431,7 +431,7 @@ static int tcp_datamode_callback(uint8_t op, const uint8_t *data, int len)
 static void tcpsvr_terminate_connection(int cause)
 {
 	if (in_datamode()) {
-		(void)exit_datamode(false);
+		(void)exit_datamode(DATAMODE_EXIT_URC);
 	}
 	if (proxy.sock_peer != INVALID_SOCKET) {
 		close(proxy.sock_peer);
@@ -520,7 +520,7 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 				(void)inet_ntop(AF_INET6, &client.sin6_addr, peer_addr,
 					sizeof(peer_addr));
 			}
-			if (fds[1].fd != INVALID_SOCKET) {
+			if (fds[1].fd >= 0) {
 				LOG_WRN("Full. Close connection.");
 				close(ret);
 				goto client_events;
@@ -657,7 +657,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 	}
 
 	if (in_datamode()) {
-		(void)exit_datamode(false);
+		(void)exit_datamode(DATAMODE_EXIT_URC);
 	}
 	if (proxy.sock != INVALID_SOCKET) {
 		(void)close(proxy.sock);

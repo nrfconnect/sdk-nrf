@@ -20,9 +20,16 @@
 #include "slm_defines.h"
 
 /**@brief Operations in datamode. */
-enum slm_datamode_operation_t {
+enum slm_datamode_operation {
 	DATAMODE_SEND,  /* Send data in datamode */
 	DATAMODE_EXIT   /* Exit data mode */
+};
+
+/**@brief Exit modes in datamode. */
+enum slm_datamode_exit_mode {
+	DATAMODE_EXIT_OK,      /* Exit datamode, send OK response */
+	DATAMODE_EXIT_ERROR,   /* Exit datamode, send ERROR response */
+	DATAMODE_EXIT_URC      /* Exit datamode, send URC notification */
 };
 
 /**@brief Data mode sending handler type.
@@ -87,12 +94,12 @@ bool in_datamode(void);
 /**
  * @brief Request SLM AT host to exit data mode
  *
- * @param response Whether to send "OK" response or not
+ * @param exit_mode Response type. Refer to enum slm_datamode_exit_mode.
  *
  * @retval true If normal exit from data mode.
  *         false If not in data mode.
  */
-bool exit_datamode(bool response);
+bool exit_datamode(int exit_mode);
 /** @} */
 
 #endif /* SLM_AT_HOST_ */

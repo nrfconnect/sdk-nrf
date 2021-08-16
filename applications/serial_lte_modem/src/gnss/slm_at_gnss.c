@@ -640,7 +640,6 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 			 */
 			run_type = RUN_TYPE_AGPS;
 			err = nrf_modem_gnss_start();
-			LOG_INF("[JUZO] nrf_modem_gnss_start %d", err);
 			if (err) {
 				LOG_ERR("Failed to start GNSS, error: %d", err);
 				run_type = RUN_TYPE_NONE;

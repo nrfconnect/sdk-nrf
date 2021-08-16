@@ -164,7 +164,7 @@ bool in_datamode(void)
 	return (slm_operation_mode == SLM_DATA_MODE);
 }
 
-bool exit_datamode(bool response)
+bool exit_datamode(int exit_mode)
 {
 	if (slm_operation_mode == SLM_DATA_MODE) {
 		ring_buf_reset(&data_rb);
@@ -173,8 +173,10 @@ bool exit_datamode(bool response)
 		k_sleep(K_MSEC(10));
 		(void)uart_receive();
 
-		if (response) {
+		if (exit_mode == DATAMODE_EXIT_OK) {
 			strcpy(rsp_buf, OK_STR);
+		} else if (exit_mode == DATAMODE_EXIT_ERROR) {
+			strcpy(rsp_buf, ERROR_STR);
 		} else {
 			sprintf(rsp_buf, "\r\n#XDATAMODE: 0\r\n");
 		}
@@ -282,7 +284,7 @@ static void response_handler(void *context, const char *response)
 static void raw_send(struct k_work *work)
 {
 	uint8_t *data = NULL;
-	uint32_t size_send, size_sent;
+	int size_send, size_sent;
 
 	ARG_UNUSED(work);
 
@@ -299,7 +301,13 @@ static void raw_send(struct k_work *work)
 				} else if (size_sent == 0) {
 					(void)ring_buf_get_finish(&data_rb, size_send);
 				} else {
-					LOG_WRN("Raw send failed");
+					LOG_WRN("Raw send failed, %d dropped", size_send);
+					(void)ring_buf_get_finish(&data_rb, size_send);
+					(void)exit_datamode(DATAMODE_EXIT_ERROR);
+					if (datamode_rx_disabled) {
+						/* UART RX already resumed */
+						datamode_rx_disabled = false;
+					}
 					break;
 				}
 			} else {
@@ -347,7 +355,7 @@ static void silence_timer_handler(struct k_timer *timer)
 	} else {
 		LOG_WRN("missing datamode handler");
 	}
-	(void)exit_datamode(true);
+	(void)exit_datamode(DATAMODE_EXIT_OK);
 	datamode_off_pending = false;
 }
 

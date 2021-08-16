@@ -757,11 +757,11 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 	sprintf(rsp_buf, "\r\n#XSENDTO: %d\r\n", offset);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
+	freeaddrinfo(res);
 	if (ret >= 0) {
 		return 0;
 	}
 
-	freeaddrinfo(res);
 	return ret;
 }
 

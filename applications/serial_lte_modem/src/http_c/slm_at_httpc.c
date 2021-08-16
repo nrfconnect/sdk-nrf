@@ -507,7 +507,7 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 	int err;
 
 	err = do_http_request();
-	(void)exit_datamode(false);
+	(void)exit_datamode(DATAMODE_EXIT_URC);
 	if (err < 0) {
 		LOG_ERR("do_http_request fail:%d", err);
 		/* Disconnect from server */
