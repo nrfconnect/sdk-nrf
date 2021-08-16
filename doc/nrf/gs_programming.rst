@@ -143,7 +143,7 @@ If it is installed, verify that its location is correct in the PATH variable or,
 Building on the command line
 ****************************
 
-Complete the following steps to build |NCS| projects on the command line after completing the :ref:`command-line build setup <build_environment_cli>`.
+After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <gs_app_installing-ncs-tcm>` command-line build setup, use the following steps to build |NCS| projects on the command line.
 
 1.    Open a terminal window.
 
