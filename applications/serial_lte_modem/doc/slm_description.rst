@@ -306,11 +306,9 @@ Dependencies
 
 This application uses the following |NCS| libraries:
 
-* :ref:`at_cmd_readme`
 * :ref:`at_cmd_parser_readme`
-* :ref:`at_notif_readme`
+* :ref:`at_monitor_readme`
 * :ref:`lib_ftp_client`
-* :ref:`supl_client`
 
 It uses the following `sdk-nrfxlib`_ libraries:
 

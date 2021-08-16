@@ -16,7 +16,6 @@
 #include <zephyr/types.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 
 /**

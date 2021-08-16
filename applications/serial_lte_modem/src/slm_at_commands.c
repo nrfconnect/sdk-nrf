@@ -12,7 +12,6 @@
 #include <drivers/uart.h>
 #include <string.h>
 #include <init.h>
-#include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 #include <sys/reboot.h>
 #include "ncs_version.h"
@@ -65,7 +64,7 @@ static struct slm_work_info {
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 extern uint16_t datamode_time_limit;
 extern struct uart_config slm_uart;
 
@@ -87,7 +86,7 @@ static void modem_power_off(void)
 	 * Refer to https://infocenter.nordicsemi.com/topic/ps_nrf9160/
 	 * pmu.html?cp=2_0_0_4_0_0_1#system_off_mode
 	 */
-	(void)at_cmd_write("AT+CFUN=0", NULL, 0, NULL);
+	(void)nrf_modem_at_printf("AT+CFUN=0");
 	k_sleep(K_SECONDS(1));
 }
 

@@ -47,7 +47,7 @@ int slm_setting_fota_init(void);
 int slm_setting_fota_save(void);
 
 /* global variable defined in different files */
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 extern struct at_param_list at_param_list;
 extern uint8_t fota_stage;
 extern uint8_t fota_status;

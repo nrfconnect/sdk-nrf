@@ -26,7 +26,7 @@ static int sms_handle;
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
 static void sms_callback(struct sms_data *const data, void *context)
 {
