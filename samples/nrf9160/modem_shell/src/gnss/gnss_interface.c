@@ -933,20 +933,23 @@ int gnss_set_elevation_threshold(uint8_t elevation)
 	return err;
 }
 
-int gnss_set_low_accuracy(bool value)
+int gnss_set_use_case(bool low_accuracy_enabled, bool scheduled_downloads_disabled)
 {
 	int err;
 	uint8_t use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
 
 	gnss_api_init();
 
-	if (value) {
+	if (low_accuracy_enabled) {
 		use_case |= NRF_MODEM_GNSS_USE_CASE_LOW_ACCURACY;
+	}
+	if (scheduled_downloads_disabled) {
+		use_case |= NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE;
 	}
 
 	err = nrf_modem_gnss_use_case_set(use_case);
 	if (err) {
-		shell_error(shell_global, "GNSS: Failed to set use case");
+		shell_error(shell_global, "GNSS: Failed to set use case, check modem FW version");
 	}
 
 	return err;
