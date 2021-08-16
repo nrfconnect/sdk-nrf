@@ -14,6 +14,10 @@
   - "doc/**/*"
   - "**/*.rst"
 
+"CI-libmodem-test":
+  - "samples/nrf9160/**/*"
+  - "lib/nrf_modem_lib/*"
+
 "CI-boot-dfu-test":
   - "include/bl*"
   - "include/fprotect.h"
