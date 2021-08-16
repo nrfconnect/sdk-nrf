@@ -621,7 +621,7 @@ struct mesh_scheduler_action_set {
 	uint8_t ack;
 	uint8_t index;
 	uint8_t year;
-	uint8_t month;
+	uint16_t month;
 	uint8_t day;
 	uint8_t hour;
 	uint8_t minute;

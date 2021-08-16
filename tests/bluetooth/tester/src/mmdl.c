@@ -5159,7 +5159,7 @@ static void scheduler_action_set(uint8_t *data, uint16_t len)
 	if (cmd->ack) {
 		net_buf_simple_init(buf, 0);
 		net_buf_simple_add_u8(buf, status.year);
-		net_buf_simple_add_u8(buf, status.month);
+		net_buf_simple_add_le16(buf, status.month);
 		net_buf_simple_add_u8(buf, status.day);
 		net_buf_simple_add_u8(buf, status.hour);
 		net_buf_simple_add_u8(buf, status.minute);
