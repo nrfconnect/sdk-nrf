@@ -99,9 +99,13 @@ int method_gnss_init(void)
 	return 0;
 }
 
-int method_gnss_configure_and_start(const struct loc_method_config *config, uint16_t interval)
+int method_gnss_location_request(const struct loc_method_config *config)
 {
 	int err = 0;
+	/* TODO: Tuomas to check what to do with this.
+	 *       Interval is here as dummy one as it's removed from API.
+	 */
+	int interval = 0;
 
 	const struct loc_gnss_config *gnss_config = &config->config.gnss;
 
