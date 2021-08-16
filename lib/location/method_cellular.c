@@ -114,7 +114,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 				running = false;
 			}
 		}
-	}	
+	}
 }
 
 int method_cellular_configure_and_start(const struct loc_method_config *config, uint16_t interval)
@@ -123,11 +123,6 @@ int method_cellular_configure_and_start(const struct loc_method_config *config, 
 	const struct loc_cellular_config *cellular_config = &config->config.cellular;
 
 	ARG_UNUSED(cellular_config);
-
-	if (interval > 0 ) {
-		LOG_ERR("Periodic cellular positioning mode not supported at the moment.");
-		return -EINVAL;
-	}
 
 	if (running) {
 		LOG_ERR("Previous operation on going.");

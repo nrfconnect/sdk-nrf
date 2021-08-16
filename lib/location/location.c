@@ -31,6 +31,9 @@ static location_event_handler_t event_handler;
 static int current_location_method_index = 0;
 static struct loc_config current_loc_config;
 
+static void loc_core_periodic_work_fn(struct k_work *work);
+K_WORK_DELAYABLE_DEFINE(loc_periodic_work, loc_core_periodic_work_fn);
+
 #if defined(CONFIG_LOCATION_METHOD_GNSS)
 const static struct location_method_api method_gnss_api = {
 	.method_string    = "GNSS",
@@ -144,6 +147,8 @@ int location_request(const struct loc_config *config)
 	}
 
 	requested_location_method = config->methods[current_location_method_index].method;
+	LOG_DBG("Requesting location with '%s' method",
+		(char *)location_method_api_get(requested_location_method)->method_string);
 	loc_core_current_event_data_init(requested_location_method);
 	err = location_method_api_get(requested_location_method)->location_request(
 		&config->methods[current_location_method_index], config->interval);
@@ -171,7 +176,6 @@ void event_location_callback(const struct loc_location *location)
 	enum loc_method requested_location_method;
 	enum loc_method previous_location_method;
 	int err;
-	bool retry = false;
 
 	if (location != NULL) {
 		/* Location was acquired properly, finish location request */
@@ -205,39 +209,54 @@ void event_location_callback(const struct loc_location *location)
 
 		event_handler(&current_event_data);
 
-		return;
-	}
+	} else {
+		/* Do fallback to next preferred method */
+		previous_location_method = current_event_data.method;
+		current_location_method_index++;
+		if (current_location_method_index < LOC_MAX_METHODS) {
+			requested_location_method =
+				current_loc_config.methods[current_location_method_index].method;
 
-	/* Do fallback to next preferred method */
-	previous_location_method = current_event_data.method;
-	current_location_method_index++;
-	if (current_location_method_index < LOC_MAX_METHODS) {
-		requested_location_method =
-			current_loc_config.methods[current_location_method_index].method;
+			/* TODO: Should we have NONE method in the API? */
+			if (requested_location_method != 0) {
+				LOG_WRN("Failed to acquire location using '%s', "
+					"trying with '%s' next",
+					(char *)location_method_api_get(previous_location_method)
+						->method_string,
+					(char *)location_method_api_get(requested_location_method)
+						->method_string);
 
-		/* TODO: Should we have NONE method in the API? */
-		if (requested_location_method != 0) {
-			LOG_INF("Failed to acquire location using '%s', trying with '%s' next",
-				(char *)location_method_api_get(previous_location_method)
-					->method_string,
-				(char *)location_method_api_get(requested_location_method)
-					->method_string);
-
-			retry = true;
-			loc_core_current_event_data_init(requested_location_method);
-			err = location_method_api_get(requested_location_method)->location_request(
-				&current_loc_config.methods[current_location_method_index],
-				current_loc_config.interval);
+				loc_core_current_event_data_init(requested_location_method);
+				err = location_method_api_get(requested_location_method)->
+					location_request(
+					&current_loc_config.methods[current_location_method_index],
+					0);
+				return;
+			}
+			LOG_ERR("Location acquisition failed and fallbacks are also done");
+		} else {
+			LOG_ERR("Location acquisition failed and fallbacks are also done");
 		}
 	}
 
-	if (!retry) {
-		LOG_ERR("Location acquisition failed and no further trials will be made");
+	if (current_loc_config.interval > 0) {
+		/* TODO: Use own work queue k_work_schedule_for_queue */
+		k_work_schedule(&loc_periodic_work, K_SECONDS(current_loc_config.interval));
 	}
+}
+
+static void loc_core_periodic_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+	location_request(&current_loc_config);
 }
 
 int location_request_cancel(void)
 {
+	/* TODO: Error code has to be checked as we get error when cancelling periodic now.
+	 * We should probably run method cancel only if periodic work is not busy as otherwise
+	 * we are just waiting for something to get running.
+	 */
 	int err = -EPERM;
 
 	enum loc_method current_location_method =
@@ -248,5 +267,8 @@ int location_request_cancel(void)
 		err = location_method_api_get(current_location_method)->cancel_request();
 	}
 
+	if (k_work_delayable_busy_get(&loc_periodic_work) > 0) {
+		k_work_cancel_delayable(&loc_periodic_work);
+	}
 	return err;
 }
