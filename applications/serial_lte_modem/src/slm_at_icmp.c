@@ -35,6 +35,7 @@ static struct ping_argv_t {
 	uint16_t waitms;
 	uint16_t count;
 	uint16_t interval;
+	uint16_t pdn;
 } ping_argv;
 
 /* global variable defined in different files */
@@ -247,6 +248,23 @@ static uint32_t send_ping_wait_reply(void)
 		LOG_ERR("socket() failed: (%d)", -errno);
 		free(buf);
 		return (uint32_t)delta_t;
+	}
+
+	/* Use non-primary PDN if specified, fail if cannot proceed
+	 */
+	if (ping_argv.pdn != 0) {
+		size_t len;
+		struct ifreq ifr = { 0 };
+
+		snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "pdn%d", ping_argv.pdn);
+		len = strlen(ifr.ifr_name);
+		if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len) < 0) {
+			LOG_WRN("Unable to set socket SO_BINDTODEVICE, abort");
+			goto close_end;
+		}
+		LOG_DBG("Use PDN: %d", ping_argv.pdn);
+	} else {
+		LOG_DBG("Use PDN: 0");
 	}
 
 	/* We have a blocking socket and we do not want to block for
@@ -469,7 +487,7 @@ static int ping_test_handler(const char *target)
 		char ipv4_addr[NET_IPV4_ADDR_LEN] = {0};
 
 		LOG_INF("Ping target's IPv4 address");
-		util_get_ip_addr(ipv4_addr, NULL);
+		util_get_ip_addr(ping_argv.pdn, ipv4_addr, NULL);
 		if (strlen(ipv4_addr) == 0) {
 			LOG_ERR("Unable to obtain local IPv4 address");
 			freeaddrinfo(res);
@@ -489,7 +507,7 @@ static int ping_test_handler(const char *target)
 		char ipv6_addr[NET_IPV6_ADDR_LEN] = {0};
 
 		LOG_INF("Ping target's IPv6 address");
-		util_get_ip_addr(NULL, ipv6_addr);
+		util_get_ip_addr(ping_argv.pdn, NULL, ipv6_addr);
 		if (strlen(ipv6_addr) == 0) {
 			LOG_ERR("Unable to obtain local IPv6 address");
 			freeaddrinfo(res);
@@ -514,7 +532,7 @@ static int ping_test_handler(const char *target)
 }
 
 /**@brief handle AT#XPING commands
- *  AT#XPING=<url>,<length>,<timeout>[,<count>[,<interval>]]
+ *  AT#XPING=<url>,<length>,<timeout>[,<count>[,<interval>[,<pdn>]]]
  *  AT#XPING? READ command not supported
  *  AT#XPING=? TEST command not supported
  */
@@ -548,6 +566,13 @@ int handle_at_icmp_ping(enum at_cmd_type cmd_type)
 		ping_argv.interval = 1000; /* default 1s */
 		if (at_params_valid_count_get(&at_param_list) > 5) {
 			err = at_params_unsigned_short_get(&at_param_list, 5, &ping_argv.interval);
+			if (err < 0) {
+				return err;
+			};
+		}
+		ping_argv.pdn = 0; /* default 0 primary PDN */
+		if (at_params_valid_count_get(&at_param_list) > 6) {
+			err = at_params_unsigned_short_get(&at_param_list, 6, &ping_argv.pdn);
 			if (err < 0) {
 				return err;
 			};

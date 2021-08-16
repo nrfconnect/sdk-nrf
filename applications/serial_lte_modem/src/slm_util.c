@@ -153,27 +153,29 @@ int util_string_get(const struct at_param_list *list, size_t index, char *value,
 }
 
 /**
- * @brief use AT command to get IPv4 and/or IPv6 address
+ * @brief use AT command to get IPv4 and/or IPv6 address for specified PDN
  */
-void util_get_ip_addr(char *addr4, char *addr6)
+void util_get_ip_addr(int cid, char *addr4, char *addr6)
 {
 	int err;
-	char rsp[128];
+	char buf[128];
 	char tmp[sizeof(struct in6_addr)];
 	char addr[NET_IPV6_ADDR_LEN];
 	size_t addr_len;
 
-	err = at_cmd_write("AT+CGPADDR", rsp, sizeof(rsp), NULL);
+	sprintf(buf, "AT+CGPADDR=%d", cid);
+	err = at_cmd_write(buf, buf, sizeof(buf), NULL);
 	if (err) {
 		return;
 	}
+
 	/** parse +CGPADDR: <cid>,<PDP_addr_1>,<PDP_addr_2>
 	 * PDN type "IP": PDP_addr_1 is <IPv4>
 	 * PDN type "IPV6": PDP_addr_1 is <IPv6>
 	 * PDN type "IPV4V6": <IPv4>,<IPv6> or <IPV4> or <IPv6>
 	 */
 	at_params_list_clear(&at_param_list);
-	err = at_parser_params_from_str(rsp, NULL, &at_param_list);
+	err = at_parser_params_from_str(buf, NULL, &at_param_list);
 	if (err) {
 		return;
 	}

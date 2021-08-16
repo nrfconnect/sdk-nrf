@@ -94,12 +94,13 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len, uint8_t *hex, uint16_t 
 int util_string_get(const struct at_param_list *list, size_t index, char *value, size_t *len);
 
 /**
- * @brief use AT command to get IPv4 and IPv6 addresses
+ * @brief use AT command to get IPv4 and IPv6 addresses for specified PDN
  *
+ * @param[in] cid PDP Context ID as defined in "+CGDCONT" command (0~10)
  * @param[in] addr4 buffer to hold the IPv4 address, size NET_IPV4_ADDR_LEN
  * @param[in] addr6 buffer to hold the IPv6 address, size NET_IPV6_ADDR_LEN
  */
-void util_get_ip_addr(char *addr4, char *addr6);
+void util_get_ip_addr(int cid, char *addr4, char *addr6);
 /** @} */
 
 #endif /* SLM_UTIL_ */
