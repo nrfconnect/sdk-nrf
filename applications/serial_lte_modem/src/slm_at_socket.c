@@ -58,7 +58,7 @@ static struct {
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
 /* forward declarations */
 #define SOCKET_SEND_TMO_SEC      30

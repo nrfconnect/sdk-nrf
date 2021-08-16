@@ -492,9 +492,10 @@ Syntax
 
 The ``<op>`` parameter accepts the following integer values:
 
-* ``0`` - Stop cellular positioning
-* ``1`` - Start cellular positioning in single-cell mode
-* ``2`` - Start cellular positioning in multi-cell mode
+* ``0`` - Stop cellular positioning.
+* ``1`` - Start cellular positioning in single-cell mode.
+* ``2`` - Start cellular positioning in multi-cell mode.
+  To use ``2``, you must issue the ``AT%NCELLMEAS`` command first.
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -532,11 +533,18 @@ Example
   OK
 
   #XCELLPOS: 0,35.455833,139.626111,1094
+
+  AT%NCELLMEAS
+
+  OK
+
+  %NCELLMEAS: 0,"0199F10A","44020","107E",65535,3750,5,49,27,107504,3750,251,33,4,0,475,107,26,14,25,475,58,26,17,25,475,277,24,9,25,475,51,18,1,25
+
   AT#XCELLPOS=2
 
   OK
 
-  #XCELLPOS: 0,35.455833,139.626111,25000
+  #XCELLPOS: 1,35.534999,139.722362,1801
   AT#XCELLPOS=0
 
   OK

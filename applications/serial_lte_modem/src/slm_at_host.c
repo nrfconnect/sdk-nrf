@@ -13,8 +13,6 @@
 #include <sys/util.h>
 #include <string.h>
 #include <init.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
@@ -71,7 +69,7 @@ int slm_setting_uart_save(void);
 
 /* global variable used across different files */
 struct at_param_list at_param_list;           /* For AT parser */
-char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN]; /* SLM URC and socket data */
+char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];    /* SLM URC and socket data */
 uint16_t datamode_time_limit;                 /* Send trigger by time in data mode */
 
 /* global variable defined in different files */
@@ -268,16 +266,14 @@ bool verify_datamode_control(uint16_t time_limit, uint16_t *min_time_limit)
 	return true;
 }
 
-static void response_handler(void *context, const char *response)
+AT_MONITOR(at_notify, ANY, notification_handler);
+
+static void notification_handler(const char *response)
 {
-	int len = strlen(response);
-
-	ARG_UNUSED(context);
-
-	/* Forward the data over UART */
-	if (slm_operation_mode == SLM_AT_COMMAND_MODE && len > 0) {
+	if (slm_operation_mode == SLM_AT_COMMAND_MODE) {
+		/* Forward the data over UART */
 		rsp_send("\r\n", 2);
-		rsp_send(response, len);
+		rsp_send(response, strlen(response));
 	}
 }
 
@@ -511,8 +507,6 @@ static int cmd_grammar_check(const uint8_t *cmd, uint16_t length)
 
 static void cmd_send(struct k_work *work)
 {
-	char str[32];
-	enum at_cmd_state state;
 	int err;
 
 	ARG_UNUSED(work);
@@ -542,34 +536,18 @@ static void cmd_send(struct k_work *work)
 	}
 
 	/* Send to modem */
-	err = at_cmd_write(at_buf, at_buf, sizeof(at_buf), &state);
+	err = nrf_modem_at_cmd(at_buf, sizeof(at_buf), "%s", at_buf);
 	if (err < 0) {
-		LOG_ERR("AT command error: %d", err);
-		state = AT_CMD_ERROR;
+		LOG_ERR("AT command failed: %d", err);
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	} else if (err > 0) {
+		LOG_ERR("AT command error, type: %d", nrf_modem_at_err_type(err));
 	}
 
 	if (strlen(at_buf) > 0) {
 		rsp_send("\r\n", 2);
 		rsp_send(at_buf, strlen(at_buf));
-	}
-
-	switch (state) {
-	case AT_CMD_OK:
-		rsp_send(OK_STR, sizeof(OK_STR) - 1);
-		break;
-	case AT_CMD_ERROR:
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
-		break;
-	case AT_CMD_ERROR_CMS:
-		sprintf(str, "\r\n+CMS ERROR: %d\r\n", err);
-		rsp_send(str, strlen(str));
-		break;
-	case AT_CMD_ERROR_CME:
-		sprintf(str, "\r\n+CME ERROR: %d\r\n", err);
-		rsp_send(str, strlen(str));
-		break;
-	default:
-		break;
 	}
 
 done:
@@ -782,12 +760,6 @@ int slm_at_host_init(void)
 		return -EFAULT;
 	}
 
-	err = at_notif_register_handler(NULL, response_handler);
-	if (err) {
-		LOG_ERR("Can't register handler: %d", err);
-		return err;
-	}
-
 	/* Initialize AT Parser */
 	err = at_params_list_init(&at_param_list, CONFIG_SLM_AT_MAX_PARAM);
 	if (err) {
@@ -826,11 +798,6 @@ void slm_at_host_uninit(void)
 	datamode_handler = NULL;
 
 	slm_at_uninit();
-
-	err = at_notif_deregister_handler(NULL, response_handler);
-	if (err) {
-		LOG_WRN("Can't deregister handler: %d", err);
-	}
 
 	/* Power off UART module */
 	uart_rx_disable(uart_dev);

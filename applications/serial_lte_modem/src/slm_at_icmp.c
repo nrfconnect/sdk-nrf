@@ -45,7 +45,7 @@ static struct k_work ping_work;
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
 static inline void setip(uint8_t *buffer, uint32_t ipaddr)
 {

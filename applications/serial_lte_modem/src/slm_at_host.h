@@ -15,8 +15,9 @@
 
 #include <zephyr/types.h>
 #include <ctype.h>
+#include <nrf_modem_at.h>
+#include <modem/at_monitor.h>
 #include <modem/at_cmd_parser.h>
-#include <modem/at_cmd.h>
 #include "slm_defines.h"
 
 /**@brief Operations in datamode. */

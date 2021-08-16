@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <net/socket.h>
 #include <modem/at_cmd_parser.h>
+#include "slm_at_host.h"
 #include "slm_util.h"
 
 /* global variable defined in different files */
@@ -157,54 +158,36 @@ int util_string_get(const struct at_param_list *list, size_t index, char *value,
  */
 void util_get_ip_addr(int cid, char *addr4, char *addr6)
 {
-	int err;
-	char buf[128];
+	int ret;
+	char cmd[128];
 	char tmp[sizeof(struct in6_addr)];
-	char addr[NET_IPV6_ADDR_LEN];
-	size_t addr_len;
+	char addr1[NET_IPV6_ADDR_LEN] = { 0 };
+	char addr2[NET_IPV6_ADDR_LEN] = { 0 };
 
-	sprintf(buf, "AT+CGPADDR=%d", cid);
-	err = at_cmd_write(buf, buf, sizeof(buf), NULL);
-	if (err) {
-		return;
-	}
-
+	sprintf(cmd, "AT+CGPADDR=%d", cid);
 	/** parse +CGPADDR: <cid>,<PDP_addr_1>,<PDP_addr_2>
-	 * PDN type "IP": PDP_addr_1 is <IPv4>
-	 * PDN type "IPV6": PDP_addr_1 is <IPv6>
+	 * PDN type "IP": PDP_addr_1 is <IPv4>, max 16(INET_ADDRSTRLEN), '.' and digits
+	 * PDN type "IPV6": PDP_addr_1 is <IPv6>, max 46(INET6_ADDRSTRLEN),':', digits, 'A'~'F'
 	 * PDN type "IPV4V6": <IPv4>,<IPv6> or <IPV4> or <IPv6>
 	 */
-	at_params_list_clear(&at_param_list);
-	err = at_parser_params_from_str(buf, NULL, &at_param_list);
-	if (err) {
+	ret = nrf_modem_at_scanf(cmd, "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"",
+				 addr1, addr2);
+	if (ret <= 0) {
 		return;
 	}
-
-	/* parse first IP string, could be IPv4 or IPv6 */
-	addr_len = NET_IPV6_ADDR_LEN;
-	err = util_string_get(&at_param_list, 2, addr, &addr_len);
-	if (err) {
-		return;
-	}
-	if (addr4 != NULL && inet_pton(AF_INET, addr, tmp) == 1) {
-		strcpy(addr4, addr);
-	} else if (addr6 != NULL && inet_pton(AF_INET6, addr, tmp) == 1) {
-		strcpy(addr6, addr);
+	if (addr4 != NULL && inet_pton(AF_INET, addr1, tmp) == 1) {
+		strcpy(addr4, addr1);
+	} else if (addr6 != NULL && inet_pton(AF_INET6, addr1, tmp) == 1) {
+		strcpy(addr6, addr1);
 		return;
 	}
 	/* parse second IP string, IPv6 only */
 	if (addr6 == NULL) {
 		return;
 	}
-	addr_len = NET_IPV6_ADDR_LEN;
-	err = util_string_get(&at_param_list, 3, addr, &addr_len);
-	if (err) {
-		return;
+	if (ret > 1 && inet_pton(AF_INET6, addr2, tmp) == 1) {
+		strcpy(addr6, addr2);
 	}
-	if (inet_pton(AF_INET6, addr, tmp) == 1) {
-		strcpy(addr6, addr);
-	}
-	/* only parse addresses from primary PDN */
 }
 
 int util_str_to_int(const char *str_buf, int base, int *output)

@@ -14,9 +14,7 @@
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_cell_pos.h>
-#include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
-#include <modem/at_monitor.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_gnss.h"
@@ -60,7 +58,6 @@ static enum {
 } run_type;
 
 static K_SEM_DEFINE(sem_date_time, 0, 1);
-static K_SEM_DEFINE(sem_ncell_meas, 0, 1);
 
 /** Definitins for %NCELLMEAS notification
  * %NCELLMEAS: status [,<cell_id>, <plmn>, <tac>, <timing_advance>, <current_earfcn>,
@@ -298,7 +295,6 @@ static void ncell_meas_mon(const char *notify)
 
 exit:
 	LOG_INF("NCELLMEAS notification parse (err: %d)", err);
-	k_sem_give(&sem_ncell_meas);
 }
 
 static void cell_pos_req_wk(struct k_work *work)
@@ -315,17 +311,7 @@ static void cell_pos_req_wk(struct k_work *work)
 			LOG_INF("nRF Cloud SCELL requested");
 		}
 	} else {
-		err = nrf_modem_at_printf("AT%%NCELLMEAS");
-		if (err) {
-			LOG_ERR("Failed to send NCELLMEAS: %d", err);
-			return;
-		}
-		at_monitor_resume(ncell_meas);
-		if (k_sem_take(&sem_ncell_meas, K_SECONDS(30)) != 0) {
-			LOG_ERR("Neighboring cell measurement timeout");
-			return;
-		}
-		if (ncell_meas_status == 0) {
+		if (ncell_meas_status == 0 && cell_data.current_cell.id != 0) {
 			err = nrf_cloud_cell_pos_request(&cell_data, true);
 			if (err) {
 				LOG_ERR("Failed to request MCELL, error: %d", err);
@@ -333,9 +319,12 @@ static void cell_pos_req_wk(struct k_work *work)
 				LOG_INF("nRF Cloud MCELL requested, with %d neighboring cells",
 					cell_data.ncells_count);
 			}
+		} else {
+			LOG_WRN("No request of MCELL");
+			sprintf(rsp_buf, "\r\n#XCELLPOS: \r\n");
+			rsp_send(rsp_buf, strlen(rsp_buf));
+			run_type = RUN_TYPE_NONE;
 		}
-		at_monitor_pause(ncell_meas);
-		k_sem_reset(&sem_ncell_meas);
 	}
 }
 
@@ -538,6 +527,7 @@ static void on_cloud_evt_ready(void)
 	nrf_cloud_ready = true;
 	sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
 	rsp_send(rsp_buf, strlen(rsp_buf));
+	at_monitor_resume(ncell_meas);
 }
 
 static void on_cloud_evt_disconnected(void)
@@ -545,6 +535,7 @@ static void on_cloud_evt_disconnected(void)
 	nrf_cloud_ready = false;
 	sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
 	rsp_send(rsp_buf, strlen(rsp_buf));
+	at_monitor_pause(ncell_meas);
 }
 
 static void on_cloud_evt_data_received(const struct cloud_event *const evt)

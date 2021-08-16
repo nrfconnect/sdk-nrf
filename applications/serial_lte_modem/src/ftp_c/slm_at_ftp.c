@@ -109,7 +109,7 @@ RING_BUF_DECLARE(ftp_data_buf, SLM_MAX_PAYLOAD);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
 void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 {
