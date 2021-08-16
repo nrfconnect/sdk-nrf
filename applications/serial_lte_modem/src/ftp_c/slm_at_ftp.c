@@ -139,7 +139,7 @@ void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 			sprintf(rsp_buf, "\r\n#XFTP: %d,\"disconnected\"\r\n", -ENOEXEC);
 			break;
 		}
-		if (ftp_data_mode_handler && exit_datamode(false)) {
+		if (ftp_data_mode_handler && exit_datamode(DATAMODE_EXIT_URC)) {
 			ftp_data_mode_handler = NULL;
 		}
 		if (ftp_verbose_on) {
@@ -466,7 +466,7 @@ static int ftp_put_handler(const uint8_t *data, int len)
 		ret = ftp_put(filepath, data, len, FTP_PUT_NORMAL);
 	}
 
-	if (exit_datamode(false)) {
+	if (exit_datamode(DATAMODE_EXIT_URC)) {
 		ftp_data_mode_handler = NULL;
 	}
 
@@ -518,7 +518,7 @@ static int ftp_uput_handler(const uint8_t *data, int len)
 		ret = ftp_put(NULL, data, len, FTP_PUT_UNIQUE);
 	}
 
-	if (exit_datamode(false)) {
+	if (exit_datamode(DATAMODE_EXIT_URC)) {
 		ftp_data_mode_handler = NULL;
 	}
 
