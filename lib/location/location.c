@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 
 struct loc_event_data current_event_data;
 static location_event_handler_t event_handler;
-static int current_location_method_index = -1;
+static int current_location_method_index = 0;
 static struct loc_config current_loc_config;
 
 #if defined(CONFIG_LOCATION_METHOD_GNSS)
@@ -240,13 +240,13 @@ int location_request_cancel(void)
 {
 	int err = -EPERM;
 
-	/* Check if location has been requested using one of the methods */
-	if (current_location_method_index >= 0) {
-		enum loc_method current_location_method =
-		current_loc_config.methods[current_location_method_index].method;
+	enum loc_method current_location_method =
+	current_loc_config.methods[current_location_method_index].method;
 
+	/* Check if location has been requested using one of the methods */
+	if (current_location_method != 0) {
 		err = location_method_api_get(current_location_method)->cancel_request();
 	}
-	
+
 	return err;
 }
