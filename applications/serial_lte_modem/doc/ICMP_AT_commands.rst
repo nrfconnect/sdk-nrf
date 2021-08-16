@@ -24,7 +24,7 @@ Syntax
 
 ::
 
-   #XPING=<url>,<length>,<timeout>[,<count>[,<interval>]]
+   #XPING=<url>,<length>,<timeout>[,<count>[,<interval>[,<pdn>]]]
 
 * The ``<url>`` parameter is a string.
   It represents the hostname, the IPv4, or the IPv6 address of the target host.
@@ -38,6 +38,9 @@ Syntax
 * The ``<interval>`` parameter is an integer.
   It represents the time to wait for sending the next echo request, in milliseconds.
   Its default value is ``1000``.
+* The ``<pdn>`` parameter is an integer.
+  It represents ``cid`` in the ``+CGDCONT`` command.
+  Its default value is ``0``.
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,6 +76,14 @@ Example
    #XPING: 0.037 seconds
    #XPING: 0.106 seconds
    #XPING: average 0.123 seconds
+   AT#XPING="5.189.130.26",45,5000,5,1000,1
+   OK
+   #XPING: 1.612 seconds
+   #XPING: 0.349 seconds
+   #XPING: 0.334 seconds
+   #XPING: 0.278 seconds
+   #XPING: 0.278 seconds
+   #XPING: average 0.570 seconds
 
 Read command
 ------------

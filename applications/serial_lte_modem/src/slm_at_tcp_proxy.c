@@ -134,7 +134,7 @@ static int do_tcp_server_start(uint16_t port)
 	if (proxy.family == AF_INET) {
 		char ipv4_addr[NET_IPV4_ADDR_LEN] = {0};
 
-		util_get_ip_addr(ipv4_addr, NULL);
+		util_get_ip_addr(0, ipv4_addr, NULL);
 		if (strlen(ipv4_addr) == 0) {
 			LOG_ERR("Unable to obtain local IPv4 address");
 			ret = -ENETUNREACH;
@@ -155,7 +155,7 @@ static int do_tcp_server_start(uint16_t port)
 	} else {
 		char ipv6_addr[NET_IPV6_ADDR_LEN] = {0};
 
-		util_get_ip_addr(NULL, ipv6_addr);
+		util_get_ip_addr(0, NULL, ipv6_addr);
 		if (strlen(ipv6_addr) == 0) {
 			LOG_ERR("Unable to obtain local IPv6 address");
 			ret = -ENETUNREACH;

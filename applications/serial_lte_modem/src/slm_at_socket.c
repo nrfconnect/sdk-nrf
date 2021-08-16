@@ -430,7 +430,7 @@ static int do_bind(uint16_t port)
 	if (sock.family == AF_INET) {
 		char ipv4_addr[INET_ADDRSTRLEN] = {0};
 
-		util_get_ip_addr(ipv4_addr, NULL);
+		util_get_ip_addr(0, ipv4_addr, NULL);
 		if (strlen(ipv4_addr) == 0) {
 			LOG_ERR("Get local IPv4 address failed");
 			return -EINVAL;
@@ -455,7 +455,7 @@ static int do_bind(uint16_t port)
 	} else if (sock.family == AF_INET6) {
 		char ipv6_addr[INET6_ADDRSTRLEN] = {0};
 
-		util_get_ip_addr(NULL, ipv6_addr);
+		util_get_ip_addr(0, NULL, ipv6_addr);
 		if (strlen(ipv6_addr) == 0) {
 			LOG_ERR("Get local IPv6 address failed");
 			return -EINVAL;
