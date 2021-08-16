@@ -1,0 +1,80 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "PHY Test Tool configuration"
+
+choice
+	prompt "Device Mode"
+	default PTT_BOTH
+	help
+	  Select the device mode
+
+config PTT_DUT_MODE
+	bool "Configure device as a DUT"
+	help
+	  DUT (Device Under Test) - serial communication is not initialized
+
+config PTT_CMD_MODE
+	bool "Configure device as a CMD"
+	help
+	  CMD - serial communication is available with 115200 8N1 settings
+
+config PTT_BOTH
+	bool "Supports both CMD and DUT modes"
+	help
+	  Device can be switched between modes using "custom changemode 0/1" command.
+
+endchoice
+
+config PTT_POWER
+	int "Transmit Power (dBm)"
+	default 0
+	range -20 8
+
+config PTT_CHANNEL_MASK
+	hex "Channel page and channel number mask"
+	default 0x00000800
+
+config PTT_SW_VERSION
+	int "Software Version"
+	default 1
+	range 0 255
+
+config PTT_HW_VERSION
+	int "Hardware Version"
+	default 1
+	range 0 255
+
+config PTT_ANTENNA_DIVERSITY
+	bool "Enable Antenna Diversity (Not Yet Supported)"
+	default n
+
+if PTT_ANTENNA_DIVERSITY
+
+choice
+	prompt "Antenna Mode"
+	default PTT_ANT_MODE_AUTO
+	help
+	  Select the antenna diversity mode
+
+config PTT_ANT_MODE_AUTO
+	bool "Automatic"
+
+config PTT_ANT_MODE_MANUAL
+	bool "Manual"
+
+endchoice
+
+config PTT_ANTENNA_NUMBER
+	int "Antenna Number"
+	range 0 2
+	default 0
+
+endif #PTT_ANTENNA_DIVERSITY
+
+endmenu
