@@ -27,6 +27,6 @@ tests:
     build_only: true
     platform_allow: nrf52840dk_nrf52840
     tags: ci_build
-    extra_args: DTC_OVERLAY_FILE=boards/nrf52840dk_nrf52840.overlay;../common/dts-nrf21540-fem.overlay
+    extra_args: SHIELD=nrf21540_ek
     integration_platforms:
       - nrf52840dk_nrf52840

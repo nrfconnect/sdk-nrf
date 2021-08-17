@@ -41,8 +41,6 @@ Configuration
 FEM support
 ===========
 
-.. |fem_file_path| replace:: :file:`samples/zigbee/common`
-
 .. include:: /includes/sample_fem_support.txt
 
 User interface

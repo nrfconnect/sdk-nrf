@@ -57,8 +57,6 @@ Use the :file:`overlay-logging.conf` overlay file as reference for this purpose.
 FEM support
 ===========
 
-.. |fem_file_path| replace:: :file:`samples/openthread/common`
-
 .. include:: /includes/sample_fem_support.txt
 
 Requirements

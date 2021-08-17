@@ -75,8 +75,6 @@ You can switch to USB transport by :ref:`activating the USB overlay extension <o
 FEM support
 ===========
 
-.. |fem_file_path| replace:: :file:`samples/openthread/common`
-
 .. include:: /includes/sample_fem_support.txt
 
 Requirements

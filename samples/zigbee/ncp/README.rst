@@ -158,8 +158,6 @@ to upgrade the dongle, you can use one of the following options:
 FEM support
 ===========
 
-.. |fem_file_path| replace:: :file:`samples/zigbee/common`
-
 .. include:: /includes/sample_fem_support.txt
 
 .. _zigbee_ncp_user_interface:

@@ -119,8 +119,6 @@ For more information about using configuration overlay files, see :ref:`zephyr:i
 FEM support
 ===========
 
-.. |fem_file_path| replace:: :file:`samples/zigbee/common`
-
 .. include:: /includes/sample_fem_support.txt
 
 .. _zigbee_light_switch_user_interface:
