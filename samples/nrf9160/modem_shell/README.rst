@@ -294,10 +294,6 @@ Enable LTE PSM, only NMEA output, automatic A-GPS data fetching and start period
    gnss mode periodic 300 120
    gnss start
 
-Enable Low Noise Amplifier (LNA) for use with the on-board GPS antenna::
-
-   gnss lna enable
-
 FOTA
 ====
 

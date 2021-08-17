@@ -64,7 +64,7 @@ struct gnss_1pps_mode {
 
 /* Common functions */
 
-int gnss_set_lna_enabled(bool enabled);
+int gnss_configure_lna(void);
 
 /* Functions implemented by different API implementations */
 
