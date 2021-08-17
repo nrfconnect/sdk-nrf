@@ -200,4 +200,4 @@
     - "!subsys/bluetooth/mesh/**/*"
 
 "no-changelog":
-  - "!doc/nrf/releases/release-notes-latest.rst"
+  - "!doc/nrf/releases/release-notes-changelog.rst"
