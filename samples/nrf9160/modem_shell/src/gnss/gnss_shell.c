@@ -788,21 +788,6 @@ static int cmd_gnss_1pps_disable(const struct shell *shell, size_t argc, char **
 	return gnss_set_1pps_mode(&mode);
 }
 
-static int cmd_gnss_lna(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
-static int cmd_gnss_lna_enable(const struct shell *shell, size_t argc, char **argv)
-{
-	return gnss_set_lna_enabled(true);
-}
-
-static int cmd_gnss_lna_disable(const struct shell *shell, size_t argc, char **argv)
-{
-	return gnss_set_lna_enabled(false);
-}
-
 static int cmd_gnss_output(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
@@ -981,13 +966,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	sub_gnss_lna,
-	SHELL_CMD_ARG(enable, NULL, "Enable LNA.", cmd_gnss_lna_enable, 1, 0),
-	SHELL_CMD_ARG(disable, NULL, "Disable LNA.", cmd_gnss_lna_disable, 1, 0),
-	SHELL_SUBCMD_SET_END
-);
-
-SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss,
 	SHELL_CMD_ARG(start, NULL, "Start GNSS.", cmd_gnss_start, 1, 0),
 	SHELL_CMD_ARG(stop, NULL, "Stop GNSS.", cmd_gnss_stop, 1, 0),
@@ -999,7 +977,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  cmd_gnss_priority),
 	SHELL_CMD(agps, &sub_gnss_agps, "AGPS configuration and commands.", cmd_gnss_agps),
 	SHELL_CMD(1pps, &sub_gnss_1pps, "1PPS control.", cmd_gnss_1pps),
-	SHELL_CMD(lna, &sub_gnss_lna, "Enable or disable LNA.", cmd_gnss_lna),
 	SHELL_CMD(output, NULL, "<pvt level> <nmea level> <event level>\nSet output levels.",
 		  cmd_gnss_output),
 	SHELL_SUBCMD_SET_END
