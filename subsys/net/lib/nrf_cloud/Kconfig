@@ -291,6 +291,13 @@ endif
 config NRF_CLOUD_CONNECTION_POLL_THREAD
 	bool "Poll cloud connection in a separate thread"
 
+config NRF_CLOUD_MQTT_KEEPALIVE
+	int "Maximum number of keep alive time for MQTT (in seconds)"
+	default MQTT_KEEPALIVE
+	help
+	  Keep alive time for MQTT (in seconds) connection to nRF Cloud,
+	  allow overwriting CONFIG_MQTT_KEEPALIVE value.
+
 module=NRF_CLOUD
 module-dep=LOG
 module-str=Log level for nRF Cloud

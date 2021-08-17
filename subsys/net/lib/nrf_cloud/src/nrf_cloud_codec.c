@@ -391,7 +391,7 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 
 		/* Report keepalive value. */
 		if (cJSON_AddNumberToObjectCS(connection_obj, JSON_KEY_KEEPALIVE,
-					    CONFIG_MQTT_KEEPALIVE) == NULL) {
+					    CONFIG_NRF_CLOUD_MQTT_KEEPALIVE) == NULL) {
 			ret = -ENOMEM;
 		}
 

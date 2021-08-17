@@ -244,9 +244,11 @@ static int validate_prediction(const struct nrf_cloud_pgps_prediction *p,
 			err = -EINVAL;
 		}
 	}
+#if IS_ENABLED(CONFIG_NRF_CLOUD_LOG_LEVEL_DBG)
 	if (!err) {
 		print_time_details("prediction:", pred_sec, p->time.date_day, p->time.time_full_s);
 	}
+#endif
 	return err;
 }
 
@@ -283,7 +285,7 @@ static int validate_stored_predictions(uint16_t *first_bad_day,
 				pred->time.time_full_s);
 		} else if (index.predictions[pnum] == NULL) {
 			index.predictions[pnum] = pred;
-			LOG_INF("Prediction num:%u stored at idx:%d", pnum, i);
+			LOG_DBG("Prediction num:%u stored at idx:%d", pnum, i);
 		} else {
 			LOG_WRN("Prediction num:%u stored more than once!", pnum);
 		}
@@ -319,7 +321,7 @@ static int validate_stored_predictions(uint16_t *first_bad_day,
 		}
 
 		i = npgps_pointer_to_block((uint8_t *)pred);
-		LOG_INF("Prediction num:%u, loc:%p, blk:%d", pnum, pred, i);
+		LOG_DBG("Prediction num:%u, loc:%p, blk:%d", pnum, pred, i);
 		__ASSERT(i != -1, "unexpected pointer value %p", pred);
 		npgps_mark_block_used(i, true);
 	}
