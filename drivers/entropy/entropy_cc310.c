@@ -22,8 +22,6 @@
 #include <tfm_ns_interface.h>
 #else
 #include "nrf_cc3xx_platform_ctr_drbg.h"
-
-static nrf_cc3xx_platform_ctr_drbg_context_t ctr_drbg_ctx;
 #endif
 
 #define CTR_DRBG_MAX_REQUEST 1024
@@ -73,11 +71,13 @@ static int entropy_cc3xx_rng_get_entropy(
 			 * case entropy is gathered using CC3xx HW
 			 * using the CTR_DRBG features of the
 			 * nrf_cc310_platform/nrf_cc312_platform library.
+			 * When the given context is NULL, a global internal
+			 * ctr_drbg context is being used.
 			 */
-			res = nrf_cc3xx_platform_ctr_drbg_get(&ctr_drbg_ctx,
-								buffer + offset,
-								chunk_size,
-								&olen);
+			res = nrf_cc3xx_platform_ctr_drbg_get(NULL,
+										buffer + offset,
+										chunk_size,
+										&olen);
 		#endif
 
 		if (olen != chunk_size) {
@@ -110,7 +110,10 @@ static int entropy_cc3xx_rng_init(const struct device *dev)
 	#elif !defined(CONFIG_SPM)
 		int ret = 0;
 
-		ret = nrf_cc3xx_platform_ctr_drbg_init(&ctr_drbg_ctx, NULL, 0);
+		/* When the given context is NULL, a global internal
+		 * ctr_drbg context is being used.
+		 */
+		ret = nrf_cc3xx_platform_ctr_drbg_init(NULL, NULL, 0);
 		if (ret != 0) {
 			return -EINVAL;
 		}
