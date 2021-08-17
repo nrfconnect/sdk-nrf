@@ -6,11 +6,13 @@
 
 #include <stdio.h>
 #include <zephyr.h>
+#include <logging/log.h>
+
+#include <modem/location.h>
 #include <nrf_modem_gnss.h>
 #include <nrf_errno.h>
-#include <logging/log.h>
-#include <modem/location.h>
-#include "location.h"
+
+#include "loc_core.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
