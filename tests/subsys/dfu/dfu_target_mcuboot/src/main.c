@@ -17,7 +17,7 @@
  */
 char buf[1024];
 
-#define S0_S1 "s0 s1"
+#define S0_S1 "s0+s1"
 #define NO_SPACE "s0s1"
 
 const char *flash_ptr = S0_S1;
