@@ -33,6 +33,7 @@ enum class LedState { kAlive, kAdvertisingBle, kConnectedBle, kProvisioned };
 constexpr size_t kAppEventQueueSize = 10;
 constexpr size_t kFactoryResetTriggerTimeoutMs = 3000;
 constexpr size_t kFactoryResetCompleteTimeoutMs = 3000;
+constexpr size_t kMeasurementsIntervalMs = 250;
 constexpr uint8_t kTemperatureMeasurementEndpointId = 1;
 constexpr int16_t kTemperatureMeasurementAttributeMaxValue = 0x7fff;
 constexpr int16_t kTemperatureMeasurementAttributeMinValue = 0x954d;
@@ -48,6 +49,8 @@ constexpr int16_t kPressureMeasurementAttributeInvalidValue = 0x8000;
 
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppEvent));
 k_timer sFunctionTimer;
+k_timer sMeasurementsTimer;
+bool sMeasurementTrigger;
 FunctionTimerMode sFunctionTimerMode = FunctionTimerMode::kDisabled;
 
 LEDWidget sRedLED;
@@ -92,10 +95,14 @@ int AppTask::Init()
 	GetDFUOverSMP().StartServer();
 #endif
 
-	/* Initialize timer */
+	/* Initialize timers */
 	k_timer_init(
 		&sFunctionTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent::Type::kTimer, FunctionTimerHandler); },
 		nullptr);
+	k_timer_init(
+		&sMeasurementsTimer,
+		[](k_timer *) { sAppTask.PostEvent(AppEvent::Type::kTimer, MeasurementsTimerHandler); }, nullptr);
+	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs), K_NO_WAIT);
 
 	/* Init ZCL Data Model and start server */
 	InitServer();
@@ -156,7 +163,11 @@ int AppTask::StartApp()
 			PlatformMgr().UnlockChipStack();
 		}
 
-		UpdateClusterState();
+		if (sMeasurementTrigger) {
+			sMeasurementTrigger = false;
+			UpdateClusterState();
+		}
+
 		UpdateLedState();
 	}
 }
@@ -179,9 +190,6 @@ void AppTask::PostEvent(AppEvent::Type type, AppEvent::Handler handler)
 #ifdef CONFIG_MCUMGR_SMP_BT
 void AppTask::RequestSMPAdvertisingStart(void)
 {
-	// AppEvent event;
-	// event.mType = AppEvent::Type::kStartSMPAdvertising;
-	// event.mHandler = [](AppEvent *) { GetDFUOverSMP().StartBLEAdvertising(); };
 	sAppTask.PostEvent(AppEvent::Type::kStartSMPAdvertising,
 			   [](AppEvent *) { GetDFUOverSMP().StartBLEAdvertising(); });
 }
@@ -236,6 +244,12 @@ void AppTask::FunctionTimerHandler(AppEvent *)
 	default:
 		break;
 	}
+}
+
+void AppTask::MeasurementsTimerHandler(AppEvent *)
+{
+	sMeasurementTrigger = true;
+	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs), K_NO_WAIT);
 }
 
 void AppTask::UpdateClusterState()

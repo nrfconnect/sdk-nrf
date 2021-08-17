@@ -39,6 +39,7 @@ private:
 	static void ButtonPushHandler(AppEvent *event);
 	static void ButtonReleaseHandler(AppEvent *event);
 	static void FunctionTimerHandler(AppEvent *event);
+	static void MeasurementsTimerHandler(AppEvent *event);
 	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 
 	static AppTask sAppTask;
