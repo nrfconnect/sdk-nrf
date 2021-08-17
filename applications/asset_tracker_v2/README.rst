@@ -341,10 +341,12 @@ The default values for the device configuration parameters can be set by manipul
 Mandatory library configuration
 ===============================
 
-You can set the mandatory library-specific Kconfig options in the :file:`prj.conf` file of the application.
+You can set the mandatory library-specific Kconfig options in the designated `.conf` file found under the `configuration` folder.
 
 Configurations for AWS IoT library
 ----------------------------------
+
+These options are located in :file:`configuration/aws.conf`.
 
 * :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
 * :option:`CONFIG_AWS_IOT_SEC_TAG`
@@ -353,13 +355,15 @@ Configurations for AWS IoT library
 Configurations for Azure IoT Hub library
 ----------------------------------------
 
+These options are located in :file:`configuration/azure.conf`.
+
 * :option:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
 * :option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE`
 * :option:`CONFIG_AZURE_IOT_HUB_SEC_TAG`
 * :option:`CONFIG_AZURE_FOTA_SEC_TAG`
 
 .. note:
-   The nRF Cloud library does not require any library-specific Kconfig options to be set.
+   The nRF Cloud library does not require any library-specific Kconfig options to be set. nRF Cloud specific configuration are located in :file:`nrf-cloud.conf`
 
 Optional library configurations
 ===============================
@@ -371,35 +375,31 @@ You can add the following optional configurations to configure the heap or to pr
 * :option:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the APN. An example is ``apn.example.com``.
 
 The application supports Assisted GPS.
-To set the source of the A-GPS data, set the following options:
+To set the source of the A-GPS data, set the following options in :file:`configuration/agps.conf`:
 
 * :option:`CONFIG_AGPS_SRC_SUPL` - Sets the external SUPL Client library as A-GPS data source. See the documentation on :ref:`supl_client_lib`.
 * :option:`CONFIG_AGPS_SRC_NRF_CLOUD` - Sets nRF Cloud as A-GPS data source.
-
-The application supports Predicted GPS.
-To enable P-GPS, set the following option:
-
-* :option:`CONFIG_NRF_CLOUD_PGPS` - Enables requesting and processing of P-GPS data from nRF Cloud.
 
 Configuration files
 ===================
 
 The application provides predefined configuration files for typical use cases.
-You can find the configuration files in the :file:`applications/asset_tracker_v2/` directory.
-
-It is possible to build the application with overlay files for both DTS and Kconfig to override the default values for the board.
-The application contains examples of Kconfig overlays.
+You can find the configuration files in the :file:`applications/asset_tracker_v2/` and :file:`applications/asset_tracker_v2/configuration` directories.
 
 The following configuration files are available in the application folder:
 
 * :file:`prj.conf` - Configuration file common for all build targets
+* :file:`configuration/nrf-cloud.conf` - Configuration file to set nRF Cloud as cloud provider
+* :file:`configuration/aws.conf` - Configuration file to set AWS IoT as cloud provider
+* :file:`configuration/azure.conf` - Configuration file to set Azure IoT Hub as cloud provider
+* :file:`configuration/agps.conf` - Configuration file to enable A-GPS
+* :file:`configuration/pgps.conf` - Configuration file to enable P-GPS
+* :file:`configuration/debug.conf` - Configuration file to enable debug features
+* :file:`configuration/low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features that consume extra power like LED control and logging.
 * :file:`boards/thingy91_nrf9160ns.conf` - Configuration file specific for Thingy:91. This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160ns`` build target.
 * :file:`boards/nrf9160dk_nrf9160ns.conf` - Configuration file specific for nRF9160 DK. This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160ns`` build target.
-* :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features  that consume extra power like LED control and logging.
-* :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities to the application
 * :file:`boards/<BOARD>/led_state_def.h` - Header file that describes the LED behavior of the CAF LEDs module.
 
-Generally, Kconfig overlays have an ``overlay-`` prefix and a ``.conf`` extension.
 Board-specific configuration files are placed in the :file:`boards` folder and are named as :file:`<BOARD>.conf`.
 DTS overlay files are named the same as the build target and use the file extension ``.overlay``. They are placed in the :file:`boards` folder.
 When the DTS overlay filename matches the build target, the overlay is automatically chosen and applied by the build system.
@@ -415,6 +415,35 @@ Also, the device must be provisioned and configured with the certificates accord
    This application supports :ref:`ug_bootloader`, which is disabled by default.
    To enable the immutable bootloader, set ``CONFIG_SECURE_BOOT=y``.
 
+The application requires that a CMake list variable `APP_CONFIG_LIST` is set when calling the west build command. `APP_CONFIG_LIST` contains a set
+of entries that enables certain features in the application by patching in the corresponding configuration file.
+
+The following table lists the various supported `APP_CONFIG_LIST` entries:
+
++---------------+-----------------------+--------------------------------------+
+| Feature       | APP_CONFIG_LIST entry | Configuration file                   |
++---------------+-----------------------+--------------------------------------+
+| nRF Cloud     | "nrf-cloud"           | :file:`configuration/nrf-cloud.conf` |
++---------------+-----------------------+--------------------------------------+
+| AWS IoT       | "aws"                 | :file:`configuration/aws.conf`       |
++---------------+-----------------------+--------------------------------------+
+| Azure IoT Hub | "azure"               | :file:`configuration/azure.conf`     |
++---------------+-----------------------+--------------------------------------+
+| A-GPS         | "agps"                | :file:`configuration/agps.conf`      |
++---------------+-----------------------+--------------------------------------+
+| P-GPS         | "pgps"                |                                      |
+|               |                       | :file:`configuration/pgps.conf`      |
++---------------+-----------------------+--------------------------------------+
+| Debug         | "debug"               | :file:`configuration/debug.conf`     |
++---------------+-----------------------+--------------------------------------+
+| Low power     | "low-power"           | :file:`configuration/low-power.conf` |
++---------------+-----------------------+--------------------------------------+
+
+Multiple list entries can be combined and must be separated with the `;` character. The following west command builds the application with nRF Cloud, A-GPS, P-GPS, and debug features enabled:
+
+``west build -b nrf9160dk_nrf9160ns -- -DAPP_CONFIG_LIST="nrf-cloud;agps;pgps;debug``
+
+If building with SES, the list has to be provided as a CMake option. See :ref:`cmake_options` for more information.
 
 .. |sample path| replace:: :file:`applications/asset_tracker_v2`
 .. include:: /includes/build_and_run_nrf9160.txt
@@ -425,16 +454,6 @@ Also, the device must be provisioned and configured with the certificates accord
    For nRF9160 DK v0.15.0 and later, set the :option:`CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL` option to ``y`` when building the application to achieve the best external antenna performance.
 
 .. external_antenna_note_end
-
-Building with overlays
-======================
-
-To build with Kconfig overlay, it must be based to the build system, as shown in the following example:
-
-``west build -b nrf9160dk_nrf9160ns -- -DOVERLAY_CONFIG=overlay-low-power.conf``
-
-The above command will build for nRF9160 DK using the configurations found in :file:`overlay-low-power.conf`, in addition to the configurations found in :file:`prj_nrf9160dk_nrf9160ns.conf`.
-If some options are defined in both files, the options set in the overlay take precedence.
 
 Testing
 =======
