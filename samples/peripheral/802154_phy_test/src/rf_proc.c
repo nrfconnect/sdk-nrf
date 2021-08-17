@@ -200,18 +200,19 @@ void nrf_802154_receive_failed(nrf_802154_rx_error_t error, uint32_t id)
 	k_work_submit(&rf_rx_failed_info.work);
 }
 
-void nrf_802154_transmitted_raw(const uint8_t *frame, uint8_t *ack, int8_t power, uint8_t lqi)
+void nrf_802154_transmitted_raw(uint8_t *frame,
+	const nrf_802154_transmit_done_metadata_t *metadata)
 {
 	ARG_UNUSED(frame);
 
-	if (ack != NULL) {
+	if (metadata->data.transmitted.p_ack != NULL) {
 		ack_packet = (struct rf_rx_pkt_s){ 0 };
 
-		ack_packet.data = &ack[1];
-		ack_packet.length = ack[0];
-		ack_packet.rssi = power;
-		ack_packet.lqi = lqi;
-		ack_packet.rf_buf = ack;
+		ack_packet.data = metadata->data.transmitted.p_ack;
+		ack_packet.length = metadata->data.transmitted.length;
+		ack_packet.rssi = metadata->data.transmitted.power;
+		ack_packet.lqi = metadata->data.transmitted.lqi;
+		ack_packet.rf_buf = metadata->data.transmitted.p_ack;
 
 		k_work_submit(&rf_tx_ack_received_wq);
 	}
@@ -219,7 +220,8 @@ void nrf_802154_transmitted_raw(const uint8_t *frame, uint8_t *ack, int8_t power
 	k_work_submit(&rf_tx_finished_wq);
 }
 
-void nrf_802154_transmit_failed(const uint8_t *frame, nrf_802154_tx_error_t error)
+void nrf_802154_transmit_failed(uint8_t *frame, nrf_802154_tx_error_t error,
+	const nrf_802154_transmit_done_metadata_t *p_metadata)
 {
 	ARG_UNUSED(frame);
 
@@ -374,8 +376,10 @@ bool ptt_rf_send_packet_ext(const uint8_t *pkt, ptt_pkt_len_t len, bool cca)
 		/* temp_tx_pkt is protected inside ptt rf by locking mechanism */
 		temp_tx_pkt[0] = len + RF_FCS_SIZE;
 		memcpy(&temp_tx_pkt[RF_PSDU_START], pkt, len);
-
-		ret = nrf_802154_transmit_raw(temp_tx_pkt, cca);
+		const nrf_802154_transmit_metadata_t metadata = {
+			.cca = cca
+		};
+		ret = nrf_802154_transmit_raw(temp_tx_pkt, &metadata);
 	}
 
 	return ret;
