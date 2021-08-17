@@ -116,7 +116,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	}
 }
 
-int method_cellular_location_request(const struct loc_method_config *config)
+int method_cellular_location_get(const struct loc_method_config *config)
 {
 	int ret = 0;
 	const struct loc_cellular_config *cellular_config = &config->config.cellular;

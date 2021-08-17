@@ -101,7 +101,7 @@ int method_gnss_init(void)
 	return 0;
 }
 
-int method_gnss_location_request(const struct loc_method_config *config)
+int method_gnss_location_get(const struct loc_method_config *config)
 {
 	int err = 0;
 	/* TODO: Tuomas to check what to do with this.

@@ -34,8 +34,8 @@ static const struct loc_method_api method_gnss_api = {
 	.method_string    = "GNSS",
 	.init             = method_gnss_init,
 	.validate_params  = NULL,
-	.location_request = method_gnss_location_request,
-	.cancel_request   = method_gnss_cancel,
+	.location_get     = method_gnss_location_get,
+	.cancel   = method_gnss_cancel,
 };
 #endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
@@ -44,8 +44,8 @@ static const struct loc_method_api method_cellular_api = {
 	.method_string    = "Cellular",
 	.init             = method_cellular_init,
 	.validate_params  = NULL,
-	.location_request = method_cellular_location_request,
-	.cancel_request   = method_cellular_cancel,
+	.location_get     = method_cellular_location_get,
+	.cancel   = method_cellular_cancel,
 };
 #endif
 
@@ -184,7 +184,7 @@ int loc_core_location_get(const struct loc_config *config)
 	LOG_DBG("Requesting location with '%s' method",
 		(char *)loc_method_api_get(requested_location_method)->method_string);
 	loc_core_current_event_data_init(requested_location_method);
-	err = loc_method_api_get(requested_location_method)->location_request(
+	err = loc_method_api_get(requested_location_method)->location_get(
 		&config->methods[current_location_method_index]);
 
 	return err;
@@ -262,7 +262,7 @@ void loc_core_event_cb(const struct loc_location *location)
 
 				loc_core_current_event_data_init(requested_location_method);
 				err = loc_method_api_get(requested_location_method)->
-					location_request(
+					location_get(
 					&current_loc_config.methods[current_location_method_index]);
 				return;
 			}
@@ -297,7 +297,7 @@ int loc_core_cancel(void)
 
 	/* Check if location has been requested using one of the methods */
 	if (current_location_method != 0) {
-		err = loc_method_api_get(current_location_method)->cancel_request();
+		err = loc_method_api_get(current_location_method)->cancel();
 	}
 
 	if (k_work_delayable_busy_get(&loc_periodic_work) > 0) {

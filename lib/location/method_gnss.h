@@ -24,7 +24,7 @@ void method_gnss_timeout_work_fn(struct k_work *item);
  * @retval NRF_EINVAL if GNSS returned an error.
  * @retval NRF_EAGAIN if out of memory.
  */
-int method_gnss_location_request(const struct loc_method_config *config);
+int method_gnss_location_get(const struct loc_method_config *config);
 
 int method_gnss_cancel(void);
 

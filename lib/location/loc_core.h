@@ -12,8 +12,8 @@ struct loc_method_api {
 	char method_string[10];
 	int  (*init)(void);
 	int  (*validate_params)(const struct loc_method_config *config);
-	int  (*location_request)(const struct loc_method_config *config);
-	int  (*cancel_request)();
+	int  (*location_get)(const struct loc_method_config *config);
+	int  (*cancel)();
 };
 
 int loc_core_init(location_event_handler_t handler);
