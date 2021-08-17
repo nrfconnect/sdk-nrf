@@ -61,7 +61,7 @@ void method_gnss_fix_work_fn(struct k_work *item)
 	location_result.datetime.second = pvt_data.datetime.seconds;
 	location_result.datetime.ms = pvt_data.datetime.ms;
 
-	event_location_callback(&location_result);
+	loc_core_event_cb(&location_result);
 
 	/* If configured for single fix mode, stop GNSS */
 	if (!gnss_fix_interval) {
@@ -72,7 +72,7 @@ void method_gnss_fix_work_fn(struct k_work *item)
 
 void method_gnss_timeout_work_fn(struct k_work *item)
 {
-	event_location_callback_timeout();
+	loc_core_event_cb_timeout();
 
 	/* If configured for single fix mode, stop GNSS */
 	if (!gnss_fix_interval) {

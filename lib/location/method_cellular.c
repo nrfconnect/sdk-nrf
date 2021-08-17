@@ -71,7 +71,7 @@ static int method_cellular_ncellmeas_start(void)
 	int err = lte_lc_neighbor_cell_measurement();
 	if (err) {
 		LOG_ERR("Failed to initiate neighbor cell measurements: %d", err);
-		event_location_callback_error();
+		loc_core_event_cb_error();
 		running = false;
 		return err;
 	}
@@ -92,7 +92,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 		ret = multicell_location_get(&cell_data, &location);
 		if (ret) {
 			LOG_ERR("Failed to acquire location from multicell_location lib, error: %d", ret);		
-			event_location_callback_error();
+			loc_core_event_cb_error();
 			running = false;
 		} else {
 			location_result.latitude = location.latitude;
@@ -109,7 +109,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			location_result.datetime.ms = pvt_data.datetime.ms;*/
 			(void)lte_lc_neighbor_cell_measurement_cancel();
 			if (running) {
-				event_location_callback(&location_result);
+				loc_core_event_cb(&location_result);
 				running = false;
 			}
 		}

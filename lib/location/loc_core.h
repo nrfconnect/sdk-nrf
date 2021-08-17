@@ -21,8 +21,8 @@ int loc_core_validate_params(const struct loc_config *config);
 int loc_core_location_get(const struct loc_config *config);
 int loc_core_cancel(void);
 
-void event_location_callback(const struct loc_location *location);
-void event_location_callback_error();
-void event_location_callback_timeout();
+void loc_core_event_cb(const struct loc_location *location);
+void loc_core_event_cb_error(void);
+void loc_core_event_cb_timeout(void);
 
 #endif /* LOC_CORE_H */

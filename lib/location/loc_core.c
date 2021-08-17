@@ -190,21 +190,21 @@ int loc_core_location_get(const struct loc_config *config)
 	return err;
 }
 
-void event_location_callback_error(void)
+void loc_core_event_cb_error(void)
 {
 	current_event_data.id = LOC_EVT_ERROR;
 
-	event_location_callback(NULL);
+	loc_core_event_cb(NULL);
 }
 
-void event_location_callback_timeout(void)
+void loc_core_event_cb_timeout(void)
 {
 	current_event_data.id = LOC_EVT_TIMEOUT;
 
-	event_location_callback(NULL);
+	loc_core_event_cb(NULL);
 }
 
-void event_location_callback(const struct loc_location *location)
+void loc_core_event_cb(const struct loc_location *location)
 {
 	char temp_str[16];
 	enum loc_method requested_location_method;
