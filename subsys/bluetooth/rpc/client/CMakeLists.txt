@@ -8,7 +8,11 @@ zephyr_library()
 zephyr_library_link_libraries(subsys_bluetooth_rpc)
 zephyr_library_link_libraries(subsys__bluetooth)
 
-zephyr_library_sources(bt_rpc_gap_client.c)
+zephyr_library_sources(
+  bt_rpc_gap_client.c
+  bt_rpc_crypto_client.c
+)
+
 zephyr_library_sources_ifdef(
   CONFIG_BT_CONN
   bt_rpc_conn_client.c
