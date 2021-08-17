@@ -351,7 +351,7 @@ void npgps_print_blocks(void)
 		map[i] = pool.block_used[i] ? '1' : '0';
 	}
 	map[i] = '\0';
-	LOG_INF("map:%s", map);
+	LOG_INF("map:%s", log_strdup(map));
 }
 
 
