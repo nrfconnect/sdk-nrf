@@ -59,7 +59,7 @@ Kconfig*                                  @tejlmand
 /include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
-/include/mpsl/                            @joerchan @carlopaparo
+/include/mpsl/                            @joerchan @rugeGerritsen
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
 /include/shell/                           @nordic-krch
@@ -79,7 +79,7 @@ Kconfig*                                  @tejlmand
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
 /lib/multicell_location/                  @jtguggedal
-/lib/multithreading_lock/                 @joerchan @carlopaparo
+/lib/multithreading_lock/                 @joerchan @rugeGerritsen
 /lib/pdn/                                 @lemrey @rlubos
 /lib/pelion/                              @pdunaj
 /lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
@@ -109,7 +109,7 @@ Kconfig*                                  @tejlmand
 /samples/esb/                             @lemrey
 /samples/event_manager/                   @pdunaj @MarekPieta
 /samples/keys/random_hw_unique_key/       @oyvindronningstad @Vge0rge
-/samples/mpsl/                            @joerchan @carlopaparo
+/samples/mpsl/                            @joerchan @rugeGerritsen
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
 /samples/nrf5340/empty_app_core/          @doki-nordic
@@ -144,7 +144,7 @@ Kconfig*                                  @tejlmand
 /subsys/esb/                              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/fw_info/                          @hakonfam
-/subsys/mpsl/                             @joerchan @carlopaparo
+/subsys/mpsl/                             @joerchan @rugeGerritsen
 /subsys/net/                              @rlubos
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
 /subsys/net/lib/lwm2m_client_utils/       @rlubos @VeijoPesonen
