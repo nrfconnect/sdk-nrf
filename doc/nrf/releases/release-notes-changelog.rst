@@ -1,21 +1,16 @@
-.. _ncs_release_notes_latest:
+.. _ncs_release_notes_changelog:
 
-Changes in |NCS| v1.6.99
-########################
+Changelog for |NCS| v1.6.99
+###########################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the master branch of the |NCS|, as compared to the latest release, are tracked in this file.
+The most relevant changes that are present on the master branch of the |NCS|, as compared to the latest official release, are tracked in this file.
 
 .. note::
    This file is a work in progress and might not cover all relevant changes.
-
-Highlights
-**********
-
-There are no entries for this section yet.
 
 Known issues
 ************
@@ -194,4 +189,6 @@ The following list summarizes the most important changes inherited from the upst
 Documentation
 =============
 
-There are no entries for this section yet.
+* Updated:
+
+  * Renamed :ref:`ncs_release_notes_changelog`.

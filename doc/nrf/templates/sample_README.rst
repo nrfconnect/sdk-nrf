@@ -223,12 +223,6 @@ Troubleshooting*
 
 If the LEDs do not start blinking, check if the music is loud enough.
 
-
-Known issues and limitations*
-*****************************
-
-The sample only works with good music.
-
 References*
 ***********
 
