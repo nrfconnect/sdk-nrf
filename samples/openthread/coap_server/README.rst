@@ -29,8 +29,6 @@ For example usage of the Zephyr CoAp API, see the :ref:`coap_client_sample` samp
 FEM support
 ===========
 
-.. |fem_file_path| replace:: :file:`samples/openthread/common`
-
 .. include:: /includes/sample_fem_support.txt
 
 Requirements

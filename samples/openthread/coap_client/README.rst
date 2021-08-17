@@ -41,8 +41,6 @@ For more information about the multiprotocol feature, see :ref:`ug_multiprotocol
 FEM support
 ===========
 
-.. |fem_file_path| replace:: :file:`samples/openthread/common`
-
 .. include:: /includes/sample_fem_support.txt
 
 Device Firmware Upgrade extension
