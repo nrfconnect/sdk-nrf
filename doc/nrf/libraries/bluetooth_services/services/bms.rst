@@ -32,7 +32,7 @@ You can set this callback when initializing the module.
 Deleting the bonds
 ******************
 
-The Server deletes bonding information on Client's request right away when there is no active Bluetooth LE connection associated with a bond.
+The Server deletes bonding information on Client's request right away when there is no active Bluetooth® LE connection associated with a bond.
 Otherwise, the Server removes the bond for a given peer when it disconnects.
 
 API documentation

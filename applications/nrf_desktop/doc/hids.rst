@@ -8,7 +8,7 @@ HID Service module
    :depth: 2
 
 Use the HID Service module to handle the GATT Human Interface Device Service.
-The GATT Service is used to exchange HID data with the peer connected over Bluetooth.
+The GATT Service is used to exchange HID data with the peer connected over Bluetooth®.
 For this reason, it is mandatory for every nRF Desktop peripheral.
 
 Module events
@@ -43,7 +43,7 @@ Complete the following steps to configure the module:
      If the HID report configuration is identical to the configuration used for one of the existing devices, you can use the same |GATT_HID| configuration.
 
 The HID Service application module forwards the information about the enabled HID notifications to other application modules using ``hid_report_subscription_event``.
-These notifications are enabled by the connected Bluetooth Central.
+These notifications are enabled by the connected Bluetooth® Central.
 By default, the ``hids`` application module starts forwarding the subscriptions right after the Bluetooth connection is secured.
 
 You can define additional delay for forwarding the notifications on connection (:kconfig:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY`).

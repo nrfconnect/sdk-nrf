@@ -7,7 +7,7 @@ Bluetooth: Mesh sensor
    :local:
    :depth: 2
 
-The Bluetooth mesh sensor sample demonstrates how to set up a basic mesh Sensor Server model application that provides sensor data to one :ref:`bt_mesh_sensor_cli_readme` model.
+The Bluetooth® mesh sensor sample demonstrates how to set up a basic mesh Sensor Server model application that provides sensor data to one :ref:`bt_mesh_sensor_cli_readme` model.
 Four different sensor types are used to showcase different ways for the server to publish data.
 In addition, the sample demonstrates usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`.
 

@@ -9,7 +9,7 @@ Reserved vendor model IDs and opcodes
 
 This page contains information about vendor model IDs and opcodes allocated by Nordic Semiconductor.
 
-As the Bluetooth SIG member, Nordic Semiconductor has been assigned the Company ID *0x0059*.
+As a Bluetooth® Special Interest Group (SIG) member, Nordic Semiconductor has been assigned the Company ID *0x0059*.
 You can find this information on the `Bluetooth SIG company identifiers`_ page.
 
 Reserved vendor model IDs
@@ -40,7 +40,7 @@ The table below lists all vendor-assigned model identifiers allocated by Nordic 
 Reserved opcodes
 ****************
 
-The table below lists the manufactor-specific opcodes allocated by Nordic Semiconductor:
+The table below lists the manufacturer-specific opcodes allocated by Nordic Semiconductor:
 
    +-----------------------------------+--------+
    | Message name                      | Opcode |

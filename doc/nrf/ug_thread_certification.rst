@@ -72,7 +72,7 @@ Complete the following steps to prepare for the certification tests:
 
    .. note::
       The configuration option selects the precompiled OpenThread libraries.
-      The overlay file enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth LE advertising.
+      The overlay file enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth® LE advertising.
 
 #. Prepare Thread Test Harness.
 

@@ -9,7 +9,7 @@ nRF9160: LTE Sensor Gateway
 
 The LTE Sensor Gateway sample demonstrates how to transmit sensor data from an nRF9160 development kit to the `nRF Connect for Cloud`_.
 
-The sensor data is collected via Bluetooth LE, unlike the :ref:`asset_tracker` sample.
+The sensor data is collected via Bluetooth® Low Energy, unlike the :ref:`asset_tracker` sample.
 Therefore, this sample acts as a gateway between the Bluetooth LE and the LTE connections to nRF Connect for Cloud.
 
 Overview

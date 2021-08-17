@@ -8,7 +8,7 @@ Connection Handover messages and records
    :depth: 2
 
 Connection Handover records and the corresponding messages are used to negotiate and activate an alternative communication carrier.
-The negotiated communication carrier can then be used to perform certain activities between the two devices, such as Bluetooth pairing.
+The negotiated communication carrier can then be used to perform certain activities between the two devices, such as Bluetooth® pairing.
 
 Connection Handover records
 ***************************

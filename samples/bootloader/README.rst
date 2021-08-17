@@ -16,7 +16,7 @@ See :ref:`ug_bootloader` for more information about the full bootloader chain.
 .. note::
 
    Currently, this immutable bootloader does not support firmware updates over the SMP transport for either an upgradable bootloader or an application.
-   If the application using this bootloader requires SMP-based firmware updates, such as Bluetooth LE DFU, :ref:`include MCUboot as a second-stage bootloader <ug_bootloader_adding_upgradable>`.
+   If the application using this bootloader requires SMP-based firmware updates, such as Bluetooth® LE DFU, :ref:`include MCUboot as a second-stage bootloader <ug_bootloader_adding_upgradable>`.
 
 .. _bootloader_rot:
 

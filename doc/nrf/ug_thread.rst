@@ -14,7 +14,7 @@ The OpenThread stack is integrated into Zephyr.
 
 .. thread_intro_end
 
-You can use Thread in parallel with Bluetooth Low Energy.
+You can use Thread in parallel with Bluetooth® Low Energy.
 See :ref:`ug_multiprotocol_support` for more information.
 
 See :ref:`openthread_samples` for the list of available Thread samples.

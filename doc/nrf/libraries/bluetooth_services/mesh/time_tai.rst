@@ -18,5 +18,5 @@ This allows applications to calculate the number of seconds between any two TAI 
 
 To convert to UTC, TAI based applications keep track of the UTC leap seconds separately, as well as the time zone and time zone adjustments.
 
-The Bluetooth mesh Time models share time as a composite state of TAI seconds, 256 subseconds, UTC offset, time zone steps and uncertainty.
+The Bluetooth® mesh Time models share time as a composite state of TAI seconds, 256 subseconds, UTC offset, time zone steps and uncertainty.
 See :cpp:type:`bt_mesh_time_status` for details.

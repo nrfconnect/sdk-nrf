@@ -7,7 +7,7 @@ Bluetooth: Peripheral Alexa Gadgets
    :local:
    :depth: 2
 
-The Peripheral Alexa Gadgets sample demonstrates how a Bluetooth LE device can connect to an Amazon Echo device using the Alexa Gadgets Bluetooth Service and Profile.
+The Peripheral Alexa Gadgets sample demonstrates how a Bluetooth® LE device can connect to an Amazon Echo device using the Alexa Gadgets Bluetooth Service and Profile.
 
 Documentation for the Gadgets Service and Profile can be found at `Alexa Gadgets Bluetooth LE`_.
 

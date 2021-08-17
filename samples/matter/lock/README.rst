@@ -46,7 +46,7 @@ Remote testing in a network
 .. matter_door_lock_sample_remote_testing_start
 
 By default, the Matter accessory device has Thread disabled.
-You must pair it with the Matter controller over Bluetooth LE to get configuration from the controller if you want to use the device within a Thread network.
+You must pair it with the Matter controller over Bluetooth® LE to get configuration from the controller if you want to use the device within a Thread network.
 To do this, the device must be made discoverable manually (for security reasons) and the controller must get the commissioning information from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
 
@@ -77,7 +77,7 @@ Device Firmware Upgrade support
 
 .. matter_door_lock_sample_build_with_dfu_start
 
-You can configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade using Bluetooth LE, using the following build flags during the build process:
+You can configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade using Bluetooth® LE, using the following build flags during the build process:
 
 * ``-DOVERLAY_CONFIG=../common/config/overlay-dfu_support.conf``
 * ``-DPM_STATIC_YML_FILE="configuration/build-target/pm_static.yml``

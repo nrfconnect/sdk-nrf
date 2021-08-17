@@ -89,7 +89,7 @@ The figure visualizes relations between Event Manager, modules, drivers, and lib
 
 Since the application architecture is uniform and the code is shared, the set of modules in use depends on configuration.
 In other words, not all of the modules need to be enabled for a given reference design.
-For example, the :ref:`caf_ble_state` and :ref:`caf_ble_adv` modules are not enabled if the configuration does not use Bluetooth.
+For example, the :ref:`caf_ble_state` and :ref:`caf_ble_adv` modules are not enabled if the configuration does not use Bluetooth®.
 
 See :ref:`nrf_machine_learning_app_internal_modules` for detailed information about every module used by the nRF Machine Learning application.
 
@@ -348,10 +348,10 @@ After programming the application, perform the following steps to test the nRF M
    After the mode is switched, the LED color changes to red and the LED starts blinking very slowly.
 #. Program the :ref:`central_uart` sample to a compatible development kit, for example the nRF52840 Development Kit.
    Turn on the programmed device.
-   After a brief delay the Bluetooth connection between the sample and the Thingy:52 is established.
+   After a brief delay the Bluetooth® connection between the sample and the Thingy:52 is established.
    The Thingy:52 forwards the sensor readouts over NUS.
    The LED on the Thingy:52 starts to blink rapidly.
-#. Connect to the Bluetooth Central UART sample with a terminal emulator (for example, PuTTY).
+#. Connect to the Bluetooth® Central UART sample with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
 #. Observe the sensor readouts represented as comma-separated values.
    Every line represents a single sensor readout.

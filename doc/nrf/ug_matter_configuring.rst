@@ -15,7 +15,7 @@ To pair and control the Matter accessory device remotely over such a network, yo
 A Matter controller is a role within the Matter environment.
 This controller interacts with the accessory devices using the following protocols:
 
-* Bluetooth LE during the commissioning process - to securely pass the network credentials and provision the accessory device into the Thread network.
+* Bluetooth® LE during the commissioning process - to securely pass the network credentials and provision the accessory device into the Thread network.
 * Regular IPv6 communication after the accessory device joins the Thread network - to interact with each other by exchanging application messages.
   For example, to report temperature measurements of a sensor.
 

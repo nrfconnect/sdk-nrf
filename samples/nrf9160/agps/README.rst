@@ -140,7 +140,7 @@ Testing
    This is to achieve sufficient satellite coverage to get a position fix.
 #. Optionally, connect the nRF9160-based device to a PC with a USB cable. The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. Optionally, connect to the kit with a terminal emulator (for example, PuTTY) to see log output. See How to connect with PuTTY for the required settings.
-   You can also use the Bluetooth LE service of Thingy:91 to see log output on a mobile device.
+   You can also use the Bluetooth® LE service of Thingy:91 to see log output on a mobile device.
 #. Log into your nRF Connect for Cloud account and select your device.
 #. Power on the nRF9160-based device.
 

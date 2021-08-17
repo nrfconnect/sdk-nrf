@@ -7,7 +7,7 @@ Scanning module
    :local:
    :depth: 2
 
-The scanning module handles the Bluetooth Low Energy scanning for your application.
+The scanning module handles the Bluetooth® Low Energy scanning for your application.
 You can use it to find advertising devices and establish connections with them.
 
 Using :ref:`filters <nrf_bt_scan_readme_filters>`, you can narrow down the scan to devices of a specific type.

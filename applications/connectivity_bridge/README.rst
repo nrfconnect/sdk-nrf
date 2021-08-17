@@ -9,7 +9,7 @@ Connectivity bridge
 
 The Connectivity bridge application demonstrates the bridge functionality for the Thingy:91 hardware.
 
-Additionally, the application also provides an option of adding the bluetooth functionality by making use of the :ref:`nus_service_readme`.
+Additionally, the application also provides an option of adding the Bluetooth® functionality by making use of the :ref:`nus_service_readme`.
 
 Overview
 ********
@@ -32,7 +32,7 @@ See :ref:`thingy91_serialports` for information on the baud rate configuration f
 
 The application adds the functionality of a USB Mass Storage device, which contains several utility files such as a :file:`README.txt` file.
 
-The application also provides a Bluetooth LE UART Service, which can be enabled by the option ``CONFIG_BRIDGE_BLE_ENABLE``.
+The application also provides a Bluetooth® LE UART Service, which can be enabled by the option ``CONFIG_BRIDGE_BLE_ENABLE``.
 This service can be used for a wireless connection to one of the UART interfaces in the following way:
 
 .. list-table::

@@ -43,8 +43,8 @@ LLPM connections
 
 The Low Latency Packet Mode (LLPM) connection parameters are not supported by the standard Bluetooth.
 
-The LLPM connection parameters update requires using Vendor Sprecific HCI commands.
-Moreover, the peripheral cannot request the LLPM connection parameters using Zephyr Bluetooth API.
+The LLPM connection parameters update requires using vendor-specific HCI commands.
+Moreover, the peripheral cannot request the LLPM connection parameters using Zephyr Bluetooth® API.
 
 Connection interval update
 ==========================
@@ -59,4 +59,4 @@ After the :ref:`nrf_desktop_ble_discovery` completes the peripheral discovery, t
   * **10 ms** otherwise.
     This is required to avoid Bluetooth Link Layer scheduling conflicts that could lead to HID report rate drop.
 
-.. |ble_conn_params| replace:: Bluetooth LE connection parameters module
+.. |ble_conn_params| replace:: Bluetooth® LE connection parameters module

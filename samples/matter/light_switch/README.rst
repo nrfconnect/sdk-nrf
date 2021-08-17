@@ -36,7 +36,7 @@ The light switch must be put into the test mode and paired with a light bulb dev
 Test mode
 =========
 
-Unlike other samples, such as :ref:`Matter door lock <matter_lock_sample>`, the light switch sample does not support Matter commissioning over Bluetooth LE.
+Unlike other samples, such as :ref:`Matter door lock <matter_lock_sample>`, the light switch sample does not support Matter commissioning over Bluetooth® LE.
 To make the light switch and the light bulb devices able to communicate with each other, they must be initialized with the same static Thread network parameters and static Matter cryptographic keys.
 
 Pressing **Button 3** activates the test mode before enabling the pairing phase on the device.

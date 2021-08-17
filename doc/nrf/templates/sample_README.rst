@@ -148,7 +148,7 @@ Additional configuration*
 
 Check and configure the following library options that are used by the sample:
 
-* :kconfig:`CONFIG_BT_DEVICE_NAME` - Defines the Bluetooth device name.
+* :kconfig:`CONFIG_BT_DEVICE_NAME` - Defines the Bluetooth® device name.
 * :kconfig:`CONFIG_BT_LBS` - Enables the :ref:`lbs_readme`.
 
 Configuration files*
@@ -226,7 +226,7 @@ If the LEDs do not start blinking, check if the music is loud enough.
 References*
 ***********
 
-* Music chapter in the Bluetooth Spec (-> always link)
+* Music chapter in the Bluetooth® Spec (-> always link)
 * Disco ball datasheet
 
 .. tip::

@@ -7,7 +7,7 @@ Bluetooth: Central NFC pairing
    :local:
    :depth: 2
 
-The Central NFC pairing sample demonstrates Bluetooth LE out-of-band pairing using an :ref:`st25r3911b_nfc_readme` and the NFC TNEP protocol.
+The Central NFC pairing sample demonstrates Bluetooth® LE out-of-band pairing using an :ref:`st25r3911b_nfc_readme` and the NFC TNEP protocol.
 You can use it to test the touch-to-pair feature between Nordic Semiconductor's devices with :ref:`st25r3911b_nfc_readme` and an NFC Tag device with Bluetooth LE support.
 
 The sample shows the usage of NFC NDEF :ref:`nfc_ch` and :ref:`tnep_poller_readme` with the :ref:`Connection Handover service<nfc_tnep_ch_readme>`.

@@ -86,7 +86,7 @@ Bluetooth LE
 
 * Updated:
 
-  * :ref:`ble_samples` - Changed the Bluetooth sample Central DFU SMP name to :ref:`Central SMP Client <bluetooth_central_dfu_smp>`.
+  * :ref:`ble_samples` - Changed the Bluetooth® sample Central DFU SMP name to :ref:`Central SMP Client <bluetooth_central_dfu_smp>`.
 
 Matter
 ------

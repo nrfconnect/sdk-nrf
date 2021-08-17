@@ -95,7 +95,7 @@ After programming the sample to your development kit, you can test it either by 
 Testing with a Microsoft Windows computer
 -----------------------------------------
 
-To test with a Microsoft Windows computer that has a Bluetooth radio, complete the following steps:
+To test with a Microsoft Windows computer that has a Bluetooth® radio, complete the following steps:
 
 1. Power on your development kit.
 #. Press **Button 4** on the kit if the device is not advertising.

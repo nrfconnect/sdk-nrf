@@ -8,7 +8,7 @@ Near Field Communication (NFC)
    :depth: 2
 
 Near Field Communication (NFC) is a technology for wireless transfer of small amounts of data between two devices.
-It uses very simple communication protocols and therefore allows quicker connection than Bluetooth Low Energy.
+It uses very simple communication protocols and, therefore, allows quicker connection than Bluetooth® Low Energy.
 However, because NFC uses magnetic induction to enable communication, the devices must be very close (< 10 cm) to connect.
 
 The following image gives a simplified overview of how NFC works.

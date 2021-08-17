@@ -10,7 +10,7 @@ GATT Human Interface Device (HID) Service
 This module implements the Human Interface Device Service with the corresponding
 set of characteristics. When initialized, it adds the HID Service and a set of
 characteristics, according to the HID Service specification and to the user
-requirements, to the Zephyr Bluetooth stack database.
+requirements, to the Zephyr Bluetooth® stack database.
 
 If enabled, notification of Input Report characteristics is performed when the
 application calls the corresponding :c:func:`bt_hids_inp_rep_send` function.

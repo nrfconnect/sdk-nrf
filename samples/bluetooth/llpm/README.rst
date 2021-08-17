@@ -7,7 +7,7 @@ Bluetooth: LLPM
    :local:
    :depth: 2
 
-The Bluetooth Low Latency Packet Mode (LLPM) sample uses the :ref:`latency_readme` and the :ref:`latency_client_readme` to showcase the LLPM proprietary Bluetooth extension from Nordic Semiconductor.
+The Bluetooth® Low Latency Packet Mode (LLPM) sample uses the :ref:`latency_readme` and the :ref:`latency_client_readme` to showcase the LLPM proprietary Bluetooth extension from Nordic Semiconductor.
 You can use it to determine the transmission latency of LLPM-enabled connections, or to compare with different connection parameters and check their influence on the results.
 
 
@@ -25,7 +25,7 @@ LLPM connection interval (1 ms)
    The lowest supported connection interval is 1 ms for one link.
 
 Physical layer (PHY)
-   Starting with Bluetooth 5, the over-the-air data rate in Bluetooth Low Energy supports 2 Ms/s (mega symbol per second), which allows for faster transmission.
+   Starting with Bluetooth® 5, the over-the-air data rate in Bluetooth Low Energy supports 2 Ms/s (mega symbol per second), which allows for faster transmission.
    The LLPM connection interval is only supported on *LE 2M PHY*.
    Otherwise, the SoftDevice Controller will deny the request command.
 

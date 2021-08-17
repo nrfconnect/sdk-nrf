@@ -44,4 +44,4 @@ Limitations for Thread 1.2 support
 
 The Thread 1.2 Specification support has the following limitation:
 
-* Due to code size limitation, the combination of complete set of Thread 1.2 features with the Bluetooth LE multiprotocol support is not possible for the nRF52833 DKs.
+* Due to code size limitation, the combination of complete set of Thread 1.2 features with the Bluetooth® LE multiprotocol support is not possible for the nRF52833 DKs.

@@ -25,7 +25,7 @@ The following subsections give more information on how to optimize specific subs
 Bluetooth
 *********
 
-Complete the following actions to optimize the Bluetooth part of your application:
+Complete the following actions to optimize the Bluetooth® part of your application:
 
 * Disable features that your application does not use.
   For example, disable the following features:

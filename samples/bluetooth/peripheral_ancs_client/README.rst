@@ -32,7 +32,7 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp_and_cpuappns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52dk_nrf52832
 
-The sample also requires a device running an ANCS Server to connect with (for example, an iPhone which runs iOS, or a Bluetooth Low Energy dongle and nRF Connect for Desktop).
+The sample also requires a device running an ANCS Server to connect with (for example, an iPhone which runs iOS, or a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
 
 User interface
 **************

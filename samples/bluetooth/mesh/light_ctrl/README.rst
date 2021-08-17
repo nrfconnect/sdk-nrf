@@ -7,7 +7,7 @@ Bluetooth: Mesh light fixture
    :local:
    :depth: 2
 
-The Bluetooth mesh light fixture sample demonstrates how to set up a light control mesh server model application, and control a dimmable LED with Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
+The Bluetooth® mesh light fixture sample demonstrates how to set up a light control mesh server model application, and control a dimmable LED with Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
 
 Requirements
 ************

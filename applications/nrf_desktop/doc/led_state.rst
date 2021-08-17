@@ -7,7 +7,7 @@ LED state module
    :local:
    :depth: 2
 
-The |led_state| is used to set LED effects based on the Bluetooth peer state and the system state.
+The |led_state| is used to set LED effects based on the Bluetooth® peer state and the system state.
 
 Controlled LEDs
 ***************
@@ -28,7 +28,7 @@ The module controls LEDs defined by enumerators in :c:enum:`led_id`:
   * :c:enumerator:`LED_PEER_STATE_CONNECTED` - Bluetooth peer is connected.
   * :c:enumerator:`LED_PEER_STATE_PEER_SEARCH` - Device is looking for a peer, either by scanning or advertising.
   * :c:enumerator:`LED_PEER_STATE_CONFIRM_SELECT` - Bluetooth peer is being selected (the device is waiting for confirmation).
-  * :c:enumerator:`LED_PEER_STATE_CONFIRM_ERASE` - Device is waiting for user confirmation to erase peers (for Bluetooth Central) or start erase advertising (for Bluetooth Peripheral).
+  * :c:enumerator:`LED_PEER_STATE_CONFIRM_ERASE` - Device is waiting for user confirmation to erase peers (for Bluetooth® Central) or start erase advertising (for Bluetooth® Peripheral).
   * :c:enumerator:`LED_PEER_STATE_ERASE_ADV` - Device is advertising for peer erase.
 
 For the complete description of peer management, see :ref:`nrf_desktop_ble_bond`.

@@ -54,8 +54,8 @@ USB device instance configuration
 The nRF Desktop device can provide multiple instances of a HID-class USB device.
 The number of instances is controlled by :kconfig:`CONFIG_USB_HID_DEVICE_COUNT`.
 
-* The Bluetooth Peripheral device will be able to use a single instance only.
-* The Bluetooth Central device can use either a single instance or a number of instances equal to :kconfig:`CONFIG_BT_MAX_PAIRED`.
+* The Bluetooth® Peripheral device will be able to use a single instance only.
+* The Bluetooth® Central device can use either a single instance or a number of instances equal to :kconfig:`CONFIG_BT_MAX_PAIRED`.
 
 On the Bluetooth Central device, if only one instance is used, reports from all Peripherals connected to the Central are forwarded to the same instance.
 In other cases, reports from each of the bonded peripherals will be forwarded to a dedicated HID-class USB device instance.

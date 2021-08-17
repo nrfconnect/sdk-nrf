@@ -492,14 +492,14 @@ Matter (Project CHIP)
 .. rst-class:: v1-6-1 v1-6-0
 
 KRKNWK-10589: Android CHIPTool crashes when commissioning a Matter device
-  In random circumstances, Android CHIPTool crashes when trying to connect to a Matter device over Bluetooth LE.
+  In random circumstances, Android CHIPTool crashes when trying to connect to a Matter device over Bluetooth® LE.
 
   **Workaround** Restart the application and try to commission the Matter device again.
   If the problem persists, clear the application data and try again.
 
 .. rst-class:: v1-6-1 v1-6-0
 
-KRKNWK-10387: Matter service is needlessly advertised over Bluetooth LE during DFU
+KRKNWK-10387: Matter service is needlessly advertised over Bluetooth® LE during DFU
   The Matter samples can be configured to include the support for Device Firmware Upgrade (DFU) over Bluetooth LE.
   When the DFU procedure is started, the Matter Bluetooth LE service is needlessly advertised, revealing the device identifiers such as Vendor and Product IDs.
   The service is meant to be advertised only during the device commissioning.
@@ -546,7 +546,7 @@ DESK-978: Directed advertising issues with SoftDevice Link Layer
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth LE to Linux host
+NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth® LE to Linux host
   Using :ref:`nrf_desktop_config_channel_script` for peripherals connected to host directly over Bluetooth LE may result in receiving improper HID feature report ID.
   In such case, the device will provide HID input reports, but it cannot be configured with the HID configurator.
 
@@ -575,7 +575,7 @@ NCSDK-9820: The :ref:`peripheral_lbs` - If **Button 1** is pushed and released w
 
 .. rst-class:: v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-NCSDK-9106: Bluetooth ECC thread stack size too small
+NCSDK-9106: Bluetooth® ECC thread stack size too small
   The Bluetooth ECC thread used during the pairing procedure with LE Secure Connections might overflow when an interrupt is triggered when the stack usage is at its maximum.
 
   **Workaround:** Increase the ECC stack size by setting :kconfig:`CONFIG_BT_HCI_ECC_STACK_SIZE` to ``1140``.
@@ -640,14 +640,14 @@ NCSDK-5711: High-throughput transmission can deadlock the receive thread
 
 .. rst-class:: v1-2-1 v1-2-0
 
-Only secure applications can use Bluetooth LE
+Only secure applications can use Bluetooth® LE
   Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` build target.
 
   **Workaround:** Use the ``nrf5340_dk_nrf5340_cpuapp`` build target instead.
 
 .. rst-class:: v1-2-1 v1-2-0
 
-Peripheral HIDS keyboard sample cannot be used with nRF Bluetooth LE Controller
+Peripheral HIDS keyboard sample cannot be used with nRF Bluetooth® LE Controller
   The :ref:`peripheral_hids_keyboard` sample cannot be used with the :ref:`nrfxlib:softdevice_controller` because the NFC subsystem does not work with the controller library.
   The library uses the MPSL Clock driver, which does not provide an API for asynchronous clock operation.
   NFC requires this API to work correctly.
@@ -655,7 +655,7 @@ Peripheral HIDS keyboard sample cannot be used with nRF Bluetooth LE Controller
 .. rst-class:: v1-2-1 v1-2-0
 
 Peripheral HIDS mouse sample advertising issues
-  When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth LE Controller, directed advertising does not time out and the regular advertising cannot be started.
+  When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth® LE Controller, directed advertising does not time out and the regular advertising cannot be started.
 
 .. rst-class:: v1-2-1 v1-2-0
 
@@ -665,7 +665,7 @@ Central HIDS sample issues with directed advertising
 .. rst-class:: v1-1-0
 
 Unstable samples
-  Bluetooth Low Energy peripheral samples are unstable in some conditions (when pairing and bonding are performed and then disconnections/re-connections happen).
+  Bluetooth® Low Energy peripheral samples are unstable in some conditions (when pairing and bonding are performed and then disconnections/re-connections happen).
 
 .. rst-class:: v1-2-1 v1-2-0 v1-1-0
 
@@ -686,13 +686,13 @@ Reconnection issues on some operating systems
 .. rst-class:: v1-0-0
 
 :ref:`bluetooth_central_hids` loses UART connectivity
-  After programming a HEX file to the nrf52_pca10040 board, UART connectivity is lost when using the Bluetooth LE Controller.
+  After programming a HEX file to the nrf52_pca10040 board, UART connectivity is lost when using the Bluetooth® LE Controller.
   The board must be reset to get UART output.
 
 .. rst-class:: v1-1-0 v1-0-0
 
 Samples crashing on nRF51 when using GPIO
-  On nRF51 devices, Bluetooth LE samples that use GPIO might crash when buttons are pressed frequently.
+  On nRF51 devices, Bluetooth® LE samples that use GPIO might crash when buttons are pressed frequently.
   In such case, the GPIO ISR introduces latency that violates real-time requirements of the Radio ISR.
   nRF51 is more sensitive to this issue than nRF52 (faster core).
 
@@ -704,7 +704,7 @@ GATT Discovery Manager missing support
 .. rst-class:: v0-4-0
 
 Samples do not work with SD Controller v0.1.0
-  Bluetooth LE samples cannot be built with the :ref:`nrfxlib:softdevice_controller` v0.1.0.
+  Bluetooth® LE samples cannot be built with the :ref:`nrfxlib:softdevice_controller` v0.1.0.
 
 .. rst-class:: v1-0-0 v0-4-0 v0-3-0
 
@@ -733,12 +733,12 @@ Bluetooth mesh
 .. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-5580: nRF5340 only supports SoftDevice Controller
-  On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth mesh.
+  On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth® mesh.
 
 .. rst-class:: v1-6-1 v1-6-0
 
 NCSDK-10200: The device stops sending Secure Network Beacons after re-provisioning
-  Bluetooth mesh stops sending Secure Network Beacons if the device is re-provisioned after reset through Config Node Reset message or ``bt_mesh_reset()`` call.
+  Bluetooth® mesh stops sending Secure Network Beacons if the device is re-provisioned after reset through Config Node Reset message or ``bt_mesh_reset()`` call.
 
   **Workaround:** Reboot the device after re-provisioning.
 
@@ -1094,7 +1094,7 @@ SoftDevice Controller
 
 DRGN-15852: In rare cases on nRF53 Series devices, an assert can occur while scanning
   This only occurs when the host started scanning using HCI LE Set Scan Enable.
-  This is default configuration of the Bluetooth host.
+  This is default configuration of the Bluetooth® host.
 
   **Workaround:** Use extended scanning commands.
   That is, set :kconfig:`CONFIG_BT_EXT_ADV` to use HCI LE Set Extended Scan Enable instead.

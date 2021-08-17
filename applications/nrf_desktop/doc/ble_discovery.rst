@@ -88,4 +88,4 @@ The same actions are taken if the peripheral's VID and PID value combination is 
 The nRF Desktop central works only with predefined subset of peripherals.
 The mentioned peripherals must be described in the :file:`ble_discovery_def.h` file.
 
-.. |ble_discovery| replace:: Bluetooth LE discovery module
+.. |ble_discovery| replace:: Bluetooth® LE discovery module

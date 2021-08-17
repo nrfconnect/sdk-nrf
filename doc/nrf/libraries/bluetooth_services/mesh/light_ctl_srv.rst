@@ -51,7 +51,7 @@ The Lightness and Light Temperature Server callbacks will pass pointers to :c:me
 .. note::
 
     The Light CTL Server will verify that its internal Light Temperature Server is instantiated on a subsequent element on startup.
-    If the Light Temperature Server is missing or instantiated on the same or a preceding element, the Bluetooth mesh startup procedure will fail, and the device will not be responsive.
+    If the Light Temperature Server is missing or instantiated on the same or a preceding element, the Bluetooth® mesh startup procedure will fail, and the device will not be responsive.
 
 States
 ======

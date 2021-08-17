@@ -81,7 +81,7 @@ This platform design is suitable for the following development kits:
 Single-chip, multiprotocol (SoC)
 ================================
 
-nRF52 and nRF53 Series devices support multiple wireless technologies, including IEEE 802.15.4 and Bluetooth Low Energy (Bluetooth LE).
+nRF52 and nRF53 Series devices support multiple wireless technologies, including IEEE 802.15.4 and Bluetooth® Low Energy (Bluetooth LE).
 
 In a single-chip, multiprotocol design, the application layer and OpenThread run on the same processor.
 

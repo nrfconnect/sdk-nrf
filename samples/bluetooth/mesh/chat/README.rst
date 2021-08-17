@@ -7,7 +7,7 @@ Bluetooth: Mesh chat
    :local:
    :depth: 2
 
-The Bluetooth mesh chat sample demonstrates how the mesh network can be used to facilitate communication between nodes by text, using the :ref:`bt_mesh_chat_client_model`.
+The Bluetooth® mesh chat sample demonstrates how the mesh network can be used to facilitate communication between nodes by text, using the :ref:`bt_mesh_chat_client_model`.
 
 .. toctree::
    :maxdepth: 1

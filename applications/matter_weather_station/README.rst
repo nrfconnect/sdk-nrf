@@ -42,7 +42,7 @@ The measurement results are stored in the device memory and can be read using th
 The controller communicates with the weather station device over the Matter protocol using Zigbee Cluster Library (ZCL).
 The library describes data measurements within the proper clusters that correspond to the measurement type.
 
-The application uses MCUboot secure bootloader and SMP protocol for performing over-the-air Device Firmware Upgrade using Bluetooth LE.
+The application uses MCUboot secure bootloader and SMP protocol for performing over-the-air Device Firmware Upgrade using Bluetooth® LE.
 For information about how to upgrade the device firmware using a PC or a mobile, see the :ref:`matter_weather_station_app_dfu` section.
 
 .. _matter_weather_station_network_mode:

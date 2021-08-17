@@ -7,11 +7,11 @@ Bluetooth mesh concepts
    :local:
    :depth: 2
 
-Bluetooth mesh is a profile specification developed and published by the Bluetooth Special Interest Group (SIG).
+Bluetooth® mesh is a profile specification developed and published by the Bluetooth® Special Interest Group (SIG).
 This document explains the basic concepts of the Bluetooth mesh and gives an overview of the operation and capabilities of the profile, as well as the life cycle of a mesh device.
 For more information about the |NCS| implementation of the Bluetooth mesh, see :ref:`Bluetooth mesh architecture documentation <mesh_architecture>`.
 
-The Bluetooth mesh is based on the Bluetooth LE part of the Bluetooth 4.0 Specification, and shares the lowest layers with this protocol.
+The Bluetooth mesh is based on the Bluetooth LE part of the Bluetooth® 4.0 Specification, and shares the lowest layers with this protocol.
 On-air, the Bluetooth mesh physical representation is compatible with existing Bluetooth LE devices, as mesh messages are contained inside the payload of Bluetooth LE *advertisement* packets.
 However, Bluetooth mesh specifies a completely new host stack, and although some concepts are shared, Bluetooth mesh is incompatible with the Bluetooth Host.
 

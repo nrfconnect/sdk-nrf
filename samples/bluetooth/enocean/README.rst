@@ -7,7 +7,7 @@ Bluetooth: EnOcean
    :local:
    :depth: 2
 
-The Bluetooth EnOcean sample demonstrates the basic usage of the :ref:`bt_enocean_readme` library.
+The Bluetooth® EnOcean sample demonstrates the basic usage of the :ref:`bt_enocean_readme` library.
 
 Overview
 ********

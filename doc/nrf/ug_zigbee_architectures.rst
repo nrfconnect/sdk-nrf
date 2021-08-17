@@ -59,7 +59,7 @@ This platform design is suitable for the following development kits:
 Single-chip, multiprotocol (SoC)
 ================================
 
-With the nRF devices supporting multiple wireless technologies, including IEEE 802.15.4 and Bluetooth Low Energy (Bluetooth LE), the application layer and the Zigbee and Bluetooth LE stack run on the same chip.
+With the nRF devices supporting multiple wireless technologies, including IEEE 802.15.4 and Bluetooth® Low Energy (Bluetooth LE), the application layer and the Zigbee and Bluetooth LE stack run on the same chip.
 
 This design has the following advantages:
 

@@ -7,7 +7,7 @@ Bluetooth: Direction finding connectionless locator
    :local:
    :depth: 2
 
-The direction finding connectionless locator sample application demonstrates Bluetooth LE direction finding reception.
+The direction finding connectionless locator sample application demonstrates Bluetooth® LE direction finding reception.
 
 Requirements
 ************

@@ -150,7 +150,7 @@ Tracking state of transports
 
 The |hid_state| refers collectively to all transports as _subscribers_.
 
-The module tracks the state of the connected Bluetooth LE peers and the state of USB by listening to ``ble_peer_event`` and ``usb_state_event``, respectively.
+The module tracks the state of the connected Bluetooth® LE peers and the state of USB by listening to ``ble_peer_event`` and ``usb_state_event``, respectively.
 When the connection to the host is indicated by any of these events, the |hid_state| will create a subscriber associated with the transport.
 
 The subscriber that is associated with USB has priority over any Bluetooth LE peer subscriber.
