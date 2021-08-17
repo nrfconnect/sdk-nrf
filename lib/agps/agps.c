@@ -258,11 +258,11 @@ static int init_supl(int socket)
 		gnss_fd = socket;
 	} else {
 		gps_dev = device_get_binding("NRF9160_GPS");
-		if (gps_dev == NULL) {
+		if (gps_dev != NULL) {
+			LOG_DBG("Using GPS driver to input assistance data");
+		} else {
 			LOG_DBG("Using GNSS API to input assistance data");
 		}
-
-		LOG_DBG("Using GPS driver to input assistance data");
 	}
 
 	LOG_INF("SUPL is initialized");
