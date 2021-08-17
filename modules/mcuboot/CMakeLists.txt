@@ -235,23 +235,33 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
       )
 
+    get_shared(cpunet_signed_app_hex IMAGE CPUNET PROPERTY PM_SIGNED_APP_HEX)
+
     if (CONFIG_NRF53_UPGRADE_NETWORK_CORE
-        AND CONFIG_HCI_RPMSG_BUILD_STRATEGY_FROM_SOURCE)
+        AND DEFINED cpunet_signed_app_hex)
       # Network core application updates are enabled.
       # We know this since MCUBoot is enabled on the application core, and
       # a network core child image is included in the build.
       # These updates are verified by the application core MCUBoot.
       # Create a signed variant of the network core application.
 
-      get_shared(hci_rpmsg_byproducts IMAGE hci_rpmsg PROPERTY BUILD_BYPRODUCTS)
-      get_shared(cpunet_signed_app_hex IMAGE CPUNET PROPERTY PM_SIGNED_APP_HEX)
+      get_shared(cpunet_images IMAGE CPUNET PROPERTY PM_DOMAIN_IMAGES)
+      foreach(image ${cpunet_images})
+        if(${image} MATCHES "CPUNET:(.*)")
+          set(image_name ${CMAKE_MATCH_1})
+          if(TARGET ${image_name}_subimage)
+            get_shared(${image_name}_byproducts IMAGE ${image_name} PROPERTY BUILD_BYPRODUCTS)
+            list(APPEND sign_depends ${image_name}_subimage ${${image_name}_byproducts})
+          endif()
+        endif()
+      endforeach()
 
       sign(
         SIGNED_BIN_FILE_IN ${cpunet_signed_app_hex}
         SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/net_core_app
         START_ADDRESS_OFFSET $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
         SIGNED_HEX_FILE_OUT net_core_app_signed_hex
-        DEPENDS hci_rpmsg_subimage ${hci_rpmsg_byproducts}
+        DEPENDS ${sign_depends}
         )
 
       add_custom_target(
