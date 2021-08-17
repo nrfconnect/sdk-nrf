@@ -132,7 +132,7 @@ To avoid having a Lightness Server running independently forever, the Light LC S
 The resume timer can be configured with the :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY` option, and is disabled by default.
 
 .. note::
-    The resume timer does not exist in the Bluetooth mesh specification, and may become incompatible with future specification changes.
+    The resume timer does not exist in the Bluetooth® mesh specification, and may become incompatible with future specification changes.
     Although it does not break the specification or qualification tests in the current iteration of the Bluetooth mesh specification, its behavior may be unexpected for third party devices, and should be used with caution.
 
 State machine outputs

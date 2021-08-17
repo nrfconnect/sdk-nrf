@@ -32,10 +32,10 @@ Glossary
       "[It] allows a device referred to as the server to expose a set of attributes and their associated values to a peer device referred to as the client."
       `Bluetooth Core Specification`_, Version 5.3, Vol 3, Part F, Section 1.1.
 
-   Bluetooth LE Controller layer
+   Bluetooth® LE Controller layer
       A layer of the Bluetooth LE protocol stack that implements the Link Layer (LL).
 
-   Bluetooth LE Host layer
+   Bluetooth® LE Host layer
       A layer of the Bluetooth LE protocol stack comprised of multiple (non real-time) network and transport protocols enabling applications to communicate with peer devices in a standard and interoperable way.
 
    Board

@@ -8,7 +8,7 @@ Bluetooth: Central UART
    :depth: 2
 
 The Central UART sample demonstrates how to use the :ref:`nus_client_readme`.
-It uses the NUS Client to send data back and forth between a UART connection and a Bluetooth LE connection, emulating a serial port over Bluetooth LE.
+It uses the NUS Client to send data back and forth between a UART connection and a Bluetooth® LE connection, emulating a serial port over Bluetooth LE.
 
 
 Overview

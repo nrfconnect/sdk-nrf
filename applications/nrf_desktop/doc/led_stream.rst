@@ -70,7 +70,7 @@ The sequence ends when there are no more effects available in the queue.
 LED state interaction
 =====================
 
-The :ref:`nrf_desktop_led_state` uses LEDs to display both the state of the system and the state of the connected Bluetooth peer.
+The :ref:`nrf_desktop_led_state` uses LEDs to display both the state of the system and the state of the connected Bluetooth® peer.
 The |led_stream| takes control over the selected LED only when the sequence is displayed.
 After the sequence ends, the LED effect selected by the LED state module is restored.
 

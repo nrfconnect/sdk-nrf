@@ -5,7 +5,7 @@ Bluetooth libraries and services
 
 .. toctree::
    :maxdepth: 1
-   :caption: Bluetooth libraries:
+   :caption: Bluetooth® libraries:
    :glob:
 
    *
@@ -13,7 +13,7 @@ Bluetooth libraries and services
 
 .. toctree::
    :maxdepth: 1
-   :caption: Bluetooth services:
+   :caption: Bluetooth® services:
    :glob:
 
    services/*

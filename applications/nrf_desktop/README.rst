@@ -7,7 +7,7 @@ nRF Desktop
    :local:
    :depth: 2
 
-The nRF Desktop is a reference design of a Human Interface Device (HID) that is connected to a host through Bluetooth LE or USB, or both.
+The nRF Desktop is a reference design of a Human Interface Device (HID) that is connected to a host through Bluetooth® Low Energy or USB, or both.
 Depending on the configuration, this application can work as desktop mouse, gaming mouse, keyboard, or connection dongle.
 
 .. tip::
@@ -145,11 +145,11 @@ The following threads are kept running in the application:
     * System workqueue thread
     * Logger thread (on debug :ref:`build types <nrf_desktop_requirements_build_types>`)
     * Shell thread (on :ref:`build types <nrf_desktop_requirements_build_types>` with shell enabled)
-    * Threads related to Bluetooth LE (the exact number depends on the selected Link Layer)
+    * Threads related to Bluetooth® LE (the exact number depends on the selected Link Layer)
 * Application-related threads
     * Motion sensor thread (running only on mouse)
     * Settings loading thread (enabled by default only on keyboard)
-    * QoS data sampling thread (running only if Bluetooth LE QoS feature is enabled)
+    * QoS data sampling thread (running only if Bluetooth® LE QoS feature is enabled)
 
 Most of the application activity takes place in the context of the system work queue thread, either through scheduled work objects or through the event manager callbacks (executed from the system workqueue thread).
 Because of this, the application does not need to handle resource protection.
@@ -414,7 +414,7 @@ When it is connected through USB, charging of the rechargeable batteries starts.
 Dongle USB
 ~~~~~~~~~~
 
-The nRF Desktop dongle works as a bridge between the devices connected through standard Bluetooth LE or Low Latency Packet Mode and the host connected through USB.
+The nRF Desktop dongle works as a bridge between the devices connected through standard Bluetooth® Low Energy or Low Latency Packet Mode and the host connected through USB.
 It receives data wirelessly from the connected peripherals and forwards the data to the host.
 
 The nRF Desktop dongle is powered directly through USB.

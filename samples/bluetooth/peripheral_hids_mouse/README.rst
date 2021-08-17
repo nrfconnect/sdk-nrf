@@ -21,7 +21,7 @@ This sample exposes the HID GATT Service.
 It uses a report map for a generic mouse.
 
 You can also disable directed advertising feature by clearing the BT_DIRECTED_ADVERTISING flag in the application configuration.
-This feature is enabled by default and it changes the way in which advertising works in comparison to the other Bluetooth LE samples.
+This feature is enabled by default and it changes the way in which advertising works in comparison to the other Bluetooth® Low Energy samples.
 When the device wants to advertise, it starts with high duty cycle directed advertising provided that it has bonding information.
 If the timeout occurs, then the device starts directed advertising to the next bonded peer.
 If all bonding information is used and there is still no connection, then the regular advertising starts.

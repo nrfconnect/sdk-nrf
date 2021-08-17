@@ -9,7 +9,7 @@ HID forward module
 
 Use the |hid_forward| to:
 
-* Receive the HID input reports from the peripherals connected over Bluetooth.
+* Receive the HID input reports from the peripherals connected over Bluetooth®.
 * Forward the :ref:`nrf_desktop_config_channel` data between the peripherals connected over Bluetooth and the host.
 
 Module events

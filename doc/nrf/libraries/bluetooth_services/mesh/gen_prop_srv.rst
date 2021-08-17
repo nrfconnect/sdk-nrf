@@ -52,7 +52,7 @@ Extended models
 
 Generic Admin Property Server and Generic Manufacturer Property Server should both extend the Generic User Property Server.
 This is not handled automatically by the model implementation.
-For this reason, to ensure compliance with the Bluetooth mesh model specification, a Generic User Property Server must be instantiated in the same element in the device composition data as the Generic Admin or Generic Manufacturer Property Server.
+For this reason, to ensure compliance with the Bluetooth® mesh model specification, a Generic User Property Server must be instantiated in the same element in the device composition data as the Generic Admin or Generic Manufacturer Property Server.
 
 Persistent storage
 ==================

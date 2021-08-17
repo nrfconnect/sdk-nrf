@@ -7,7 +7,7 @@ Bluetooth: Direction finding connectionless beacon
    :local:
    :depth: 2
 
-The direction finding connectionless beacon sample demonstrates Bluetooth LE direction finding transmission.
+The direction finding connectionless beacon sample demonstrates Bluetooth® LE direction finding transmission.
 
 Requirements
 ************

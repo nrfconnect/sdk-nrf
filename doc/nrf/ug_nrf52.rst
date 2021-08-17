@@ -15,7 +15,7 @@ Introduction
 ************
 
 The nRF52 Series of System-on-Chip (SoC) devices embed a powerful yet low-power Arm Cortex-M4 processor with our industry leading 2.4 GHz RF transceivers.
-All of the nRF52 Series SoCs have support for Bluetooth 5 features, in addition to multiprotocol capabilities.
+All of the nRF52 Series SoCs have support for Bluetooth® 5 features, in addition to multiprotocol capabilities.
 
 See `nRF52 Series`_ for the technical documentation on the nRF52 Series chips and associated kits.
 

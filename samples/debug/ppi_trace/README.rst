@@ -18,7 +18,7 @@ The sample initializes trace pins to observe the following hardware events:
 * RTC Compare event (:c:enumerator:`NRF_RTC_EVENT_COMPARE_0`)
 * RTC Tick event (:c:enumerator:`NRF_RTC_EVENT_TICK`)
 * Low frequency clock (LFCLK) Started event (:c:enumerator:`NRF_CLOCK_EVENT_LFCLKSTARTED`)
-* Radio activity during *Bluetooth* advertising (available only for Bluetooth capable devices)
+* Radio activity during Bluetooth® advertising (available only for Bluetooth capable devices)
 
 The sample sets up a :ref:`zephyr:counter_api` to generate an :c:enumerator:`NRF_RTC_EVENT_COMPARE_0` event every 50 ms.
 Initially, RTC runs on RC low frequency (lower precision) as clock source.

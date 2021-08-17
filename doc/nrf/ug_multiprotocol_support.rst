@@ -27,7 +27,7 @@ To enable the multiprotocol support for either Thread or Zigbee, set the followi
 This option activates the :ref:`nrfxlib:softdevice_controller`, which by default supports the multiprotocol features.
 Disabling the SoftDevice Controller also disables the multiprotocol support.
 
-After enabling this option, the application can start configuring Bluetooth LE's API options alongside Thread's or Zigbee's in the respective :file:`.conf` file.
+After enabling this option, the application can start configuring Bluetooth® LE's API options alongside Thread's or Zigbee's in the respective :file:`.conf` file.
 
 Multiprotocol limitations in application development
 ****************************************************

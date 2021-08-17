@@ -7,7 +7,7 @@ Bluetooth LE state module
    :local:
    :depth: 2
 
-In nRF Desktop, the Bluetooth LE state module is responsible for the following actions:
+In nRF Desktop, the Bluetooth® LE state module is responsible for the following actions:
 
 * Enabling Bluetooth (:c:func:`bt_enable`).
 * Handling Zephyr connection callbacks (:c:struct:`bt_conn_cb`).

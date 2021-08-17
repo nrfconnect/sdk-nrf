@@ -37,4 +37,4 @@ The nRF Desktop dongle scans for peripheral devices using the Bluetooth device n
 
 
 
-.. |ble_adv| replace:: Bluetooth LE advertising module
+.. |ble_adv| replace:: Bluetooth® LE advertising module

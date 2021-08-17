@@ -14,7 +14,7 @@ Nordic Thingy:91 is a battery-operated prototyping platform for cellular IoT sys
 Thingy:91 integrates the following components:
 
 * nRF9160 SiP - supporting LTE-M, NB-IoT, and Global Positioning System (GPS)
-* nRF52840 SoC - supporting Bluetooth Low Energy and Near Field Communication (NFC)
+* nRF52840 SoC - supporting Bluetooth® Low Energy and Near Field Communication (NFC)
 
 You can find more information on the product in the `Thingy:91 product page`_ and in the `Nordic Thingy:91 User Guide`_.
 The |NCS| provides support for developing applications on the Thingy:91.

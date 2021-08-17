@@ -7,7 +7,7 @@ Bluetooth: Mesh sensor observer
    :local:
    :depth: 2
 
-The Bluetooth mesh sensor observer sample demonstrates how to set up a basic Bluetooth mesh :ref:`bt_mesh_sensor_cli_readme` model application that gets sensor data from one :ref:`bt_mesh_sensor_srv_readme` model.
+The Bluetooth® mesh sensor observer sample demonstrates how to set up a basic Bluetooth mesh :ref:`bt_mesh_sensor_cli_readme` model application that gets sensor data from one :ref:`bt_mesh_sensor_srv_readme` model.
 Four different sensor types are used to showcase different ways for the server to publish data.
 In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`.
 

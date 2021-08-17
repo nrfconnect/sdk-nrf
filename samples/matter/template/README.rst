@@ -30,7 +30,7 @@ For testing purposes, that is to commission the device and :ref:`control it remo
 Overview
 ********
 
-The sample starts the Bluetooth LE advertising automatically and prepares the Matter device for commissioning into a Matter-enabled Thread network.
+The sample starts the Bluetooth® LE advertising automatically and prepares the Matter device for commissioning into a Matter-enabled Thread network.
 The sample uses an LED to show the state of the connection.
 You can press a button to start the factory reset when needed.
 

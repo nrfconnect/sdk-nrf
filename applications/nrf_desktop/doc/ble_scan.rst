@@ -140,4 +140,4 @@ a. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatical
 
 At this point, the scanning can be restarted.
 
-.. |ble_scan| replace:: Bluetooth LE scanning module
+.. |ble_scan| replace:: Bluetooth® LE scanning module

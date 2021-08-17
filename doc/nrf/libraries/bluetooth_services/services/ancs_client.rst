@@ -21,7 +21,7 @@ The term "notification" is used in two different meanings:
 
 * An iOS notification is the data received from the Notification Provider.
 
-* A GATT notification is a way to transfer data with Bluetooth Low Energy.
+* A GATT notification is a way to transfer data with Bluetooth® Low Energy.
 
 In this module, iOS notifications are received through the GATT notifications.
 The full term (iOS notification or GATT notification) is used where required to avoid confusion.

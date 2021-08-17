@@ -3,7 +3,7 @@
 Supported Bluetooth mesh features
 #################################
 
-The Bluetooth mesh in |NCS| supports all mandatory features of the `Bluetooth mesh profile specification`_ and the `Bluetooth mesh model specification`_, as well as most of the optional features.
+The Bluetooth® mesh in |NCS| supports all mandatory features of the `Bluetooth mesh profile specification`_ and the `Bluetooth mesh model specification`_, as well as most of the optional features.
 
 The following features are supported by Zephyr's :ref:`zephyr:bluetooth_mesh`:
 

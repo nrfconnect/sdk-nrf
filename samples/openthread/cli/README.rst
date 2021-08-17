@@ -477,7 +477,7 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:thread_protocol_interface`
 
-The following dependencies are added by the optional multiprotocol Bluetooth LE extension:
+The following dependencies are added by the optional multiprotocol Bluetooth® LE extension:
 
 * :ref:`nrfxlib:softdevice_controller`
 * :ref:`nus_service_readme`

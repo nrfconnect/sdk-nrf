@@ -10,7 +10,7 @@ Bluetooth: Throughput
 .. note::
    The implementation and usage of this sample has changed considerably with |NCS| v1.5.0.
 
-The Bluetooth Throughput sample uses the :ref:`throughput_readme` to measure *Bluetooth* Low Energy throughput performance.
+The Bluetooth® Throughput sample uses the :ref:`throughput_readme` to measure Bluetooth® Low Energy throughput performance.
 You can use it to determine the maximum throughput, or to experiment with different connection parameters and check their influence on the throughput.
 
 Overview
@@ -39,7 +39,7 @@ Connection interval
    When increasing this value, more packets may be sent in one interval, but if a packet is lost, the wait until the retransmission is longer.
 
 Physical layer (PHY) data rate
-   Starting with Bluetooth 5, the over-the-air data rate in Bluetooth Low Energy can exceed 1 Ms/s (mega symbol per second), which allows for faster transmission.
+   Starting with Bluetooth® 5, the over-the-air data rate in Bluetooth Low Energy can exceed 1 Ms/s (mega symbol per second), which allows for faster transmission.
    In addition, it is possible to use coded PHY (available on the nRF52840 SoC only) for long-range transmission.
 
 By default, the following connection parameter values are used:

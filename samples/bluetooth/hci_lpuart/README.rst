@@ -21,7 +21,7 @@ The sample supports the following development kit:
 Overview
 ********
 
-The sample implements the Bluetooth HCI controller using the :ref:`uart_nrf_sw_lpuart` for UART communication.
+The sample implements the Bluetooth® HCI controller using the :ref:`uart_nrf_sw_lpuart` for UART communication.
 
 Building and running
 ********************

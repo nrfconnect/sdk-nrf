@@ -115,7 +115,7 @@ Bluetooth Low Energy
    * - :ref:`ble_rpc_host` (supported for development)
      - Some Bluetooth Low Energy samples, for example, :ref:`zephyr:bluetooth-beacon-sample`
 
-When using Bluetooth Low Energy on the nRF5340, you have two options:
+When using Bluetooth® Low Energy on the nRF5340, you have two options:
 
 * Split the Bluetooth LE Controller and the host part of the Bluetooth LE stack and run them on different cores.
 * Run the full Bluetooth LE stack on the network core (currently supported for development only).

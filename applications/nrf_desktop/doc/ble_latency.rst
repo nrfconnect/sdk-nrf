@@ -71,4 +71,4 @@ The module does not register itself using the ``GEN_CONFIG_EVENT_HANDLERS`` macr
 
    For more detailed information, see the :ref:`nrf_desktop_ble_conn_params` documentation page.
 
-.. |ble_latency| replace:: Bluetooth LE latency module
+.. |ble_latency| replace:: Bluetooth® LE latency module

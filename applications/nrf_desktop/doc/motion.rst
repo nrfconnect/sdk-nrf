@@ -65,7 +65,7 @@ Simulated movement data
 Selecting the :kconfig:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE` option adds the :file:`src/hw_interface/motion_simulated.c` file to the compilation.
 
 If shell is available (:kconfig:`CONFIG_SHELL` option is set) the motion module registers a shell module ``motion_sim`` and links to it two commands: ``start`` and ``stop``.
-If shell is not available motion generation starts automatically when the device is connected to the USB or Bluetooth.
+If shell is not available motion generation starts automatically when the device is connected to the USB or Bluetooth®.
 
 When started, the module will generate simulated motion events.
 The movement data in each event will be tracing the predefined path, an eight-sided polygon.

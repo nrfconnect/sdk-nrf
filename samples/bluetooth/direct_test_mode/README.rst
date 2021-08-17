@@ -7,7 +7,7 @@ Bluetooth: Direct Test Mode
    :local:
    :depth: 2
 
-This sample enables the Direct Test Mode functions described in `Bluetooth Core Specification`_: Version 5.2, Vol. 6, Part F.
+This sample enables the Direct Test Mode functions described in `Bluetooth® Core Specification <Bluetooth Core Specification>`_: Version 5.2, Vol. 6, Part F.
 
 Overview
 ********
@@ -20,7 +20,7 @@ The sample uses Direct Test Mode (DTM) to test the operation of the following fe
 * Packet error rate
 * Intermodulation performance
 
-Test procedures are defined in the document `Bluetooth Low Energy RF PHY Test Specification`_: Document number RF-PHY.TS.p15
+Test procedures are defined in the document `Bluetooth® Low Energy RF PHY Test Specification <Bluetooth Low Energy RF PHY Test Specification>`_: Document number RF-PHY.TS.p15
 
 You can carry out conformance tests using dedicated test equipment, such as the Anritsu MT8852 or similar, with an nRF5 running the DTM sample set as device under test (DUT).
 

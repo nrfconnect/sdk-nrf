@@ -12,7 +12,7 @@ This sample exposes the :ref:`softdevice_controller` and the IEEE 802.15.4 radio
 Overview
 ********
 
-The sample is compatible with the HCI RPMsg driver provided by the |NCS| Bluetooth :ref:`bt_hci_drivers` core and with the nRF 802.15.4 Serialization Host module.
+The sample is compatible with the HCI RPMsg driver provided by the |NCS| Bluetooth® :ref:`bt_hci_drivers` core and with the nRF 802.15.4 Serialization Host module.
 
 See the following configuration options for more information:
 

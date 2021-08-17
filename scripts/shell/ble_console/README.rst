@@ -7,7 +7,7 @@ Bluetooth LE Console
    :local:
    :depth: 2
 
-Bluetooth LE Console (located in :file:`scripts/shell/ble_console`) is a desktop application that can be used to communicate with an nRF device over Bluetooth Low Energy using the :ref:`shell_bt_nus_readme`.
+Bluetooth® LE Console (located in :file:`scripts/shell/ble_console`) is a desktop application that can be used to communicate with an nRF device over Bluetooth® Low Energy using the :ref:`shell_bt_nus_readme`.
 
 The application supports Linux only and cannot be run on Windows.
 You should run it on a natively installed Linux.
