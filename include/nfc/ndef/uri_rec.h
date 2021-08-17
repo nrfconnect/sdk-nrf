@@ -80,7 +80,7 @@ struct nfc_ndef_uri_rec_payload {
 	/** Pointer to a URI string. */
 	uint8_t const *uri_data;
 	/** Length of the URI string. */
-	uint8_t uri_data_len;
+	uint16_t uri_data_len;
 };
 
 /**
