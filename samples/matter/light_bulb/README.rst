@@ -106,7 +106,7 @@ Button 3:
     If for some reason the light switch device is not able to receive messages during this predefined period of time, you can restart publishing service by pressing this button again.
 
 Button 4:
-    Starts the the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time, and makes the device discoverable over Bluetooth LE.
+    Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
     This button is used during the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
 
 .. include:: ../lock/README.rst
