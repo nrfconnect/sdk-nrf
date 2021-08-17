@@ -705,13 +705,12 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 
 		gps_dev = NULL;
 		fd = *socket;
-	} else if (gps_dev == NULL) {
+	} else {
 		gps_dev = device_get_binding("NRF9160_GPS");
-		if (gps_dev == NULL) {
-			LOG_ERR("GPS is not enabled, A-GPS response unhandled");
-			LOG_DBG("A-GPS_inject_active UNLOCKED");
-			k_sem_give(&agps_injection_active);
-			return -ENODEV;
+		if (gps_dev != NULL) {
+			LOG_DBG("Using GPS driver to input assistance data");
+		} else {
+			LOG_DBG("Using GNSS API to input assistance data");
 		}
 	}
 
