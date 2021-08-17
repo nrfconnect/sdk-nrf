@@ -110,6 +110,9 @@ void location_ctrl_event_handler(const struct loc_event_data *event_data)
 		shell_print(shell_global, "  used method: %s (%d)", 
 			    location_shell_method_to_string(event_data->method, snum),
                             event_data->method);
+		if (event_data->method == LOC_METHOD_CELLULAR) {
+			shell_print(shell_global, "  Used service: %s", CONFIG_MULTICELL_LOCATION_HOSTNAME);
+		}
 		shell_print(shell_global, "  latitude: %.06f", event_data->location.latitude);
 		shell_print(shell_global, "  longitude: %.06f", event_data->location.longitude);
 		shell_print(shell_global, "  accuracy: %.01f m", event_data->location.accuracy);
