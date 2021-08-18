@@ -20,10 +20,19 @@
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
-struct loc_event_data current_event_data;
 static location_event_handler_t event_handler;
-static int current_location_method_index;
-static struct loc_config current_loc_config;
+
+/* Variables for storing information on currently handled location request */
+/** Event data for currently ongoing location request. */
+static struct loc_event_data current_event_data;
+/** Configuration given for currently ongoing location request. */
+static struct loc_config current_loc_config = { 0 };
+/** Method specific configuration. This is for reserving memory and this table is referred to in
+ * current_loc_config.methods.
+ */
+static struct loc_method_config current_loc_config_methods[LOC_MAX_METHODS] = { 0 };
+/** Index to the current_loc_config_methods for the currently used method. */
+static int current_loc_method_index;
 
 static void loc_core_periodic_work_fn(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(loc_periodic_work, loc_core_periodic_work_fn);
@@ -35,7 +44,7 @@ static const struct loc_method_api method_gnss_api = {
 	.init             = method_gnss_init,
 	.validate_params  = NULL,
 	.location_get     = method_gnss_location_get,
-	.cancel   = method_gnss_cancel,
+	.cancel           = method_gnss_cancel,
 };
 #endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
@@ -45,7 +54,7 @@ static const struct loc_method_api method_cellular_api = {
 	.init             = method_cellular_init,
 	.validate_params  = NULL,
 	.location_get     = method_cellular_location_get,
-	.cancel   = method_cellular_cancel,
+	.cancel           = method_cellular_cancel,
 };
 #endif
 
@@ -68,7 +77,6 @@ static void loc_core_current_event_data_init(enum loc_method method)
 
 	current_event_data.method = method;
 }
-
 
 /** @brief Returns API for given location method.
  *
@@ -97,19 +105,12 @@ static const struct loc_method_api *loc_method_api_validity_get(enum loc_method 
  */
 static const struct loc_method_api *loc_method_api_get(enum loc_method method)
 {
-	const struct loc_method_api *method_api = NULL;
+	const struct loc_method_api *method_api;
 
-	for (int i = 0; i < LOC_MAX_METHODS; i++) {
-		if (method == methods_supported[i]->method) {
-			method_api = methods_supported[i];
-			break;
-		}
-	}
+	method_api = loc_method_api_validity_get(method);
+
 	/* This function is not supposed to be called when API is not found so
 	 * to find issues elsewhere we'll assert here
-	 */
-	/* TODO: MOSH will hit this if some methods are disabled from compilation
-	 *       and two methods are given
 	 */
 	assert(method_api != NULL);
 	return method_api;
@@ -127,17 +128,19 @@ int loc_core_init(location_event_handler_t handler)
 	event_handler = handler;
 
 	for (int i = 0; i < LOC_MAX_METHODS; i++) {
-		if (methods_supported[i]->method != 0) {
+		if (methods_supported[i] != NULL) {
 			err = methods_supported[i]->init();
 			if (err) {
 				LOG_ERR("Failed to initialize '%s' method",
 					methods_supported[i]->method_string);
-				return err;
+			} else {
+				LOG_DBG("Initialized '%s' method successfully",
+					methods_supported[i]->method_string);
 			}
-			LOG_DBG("Initialized '%s' method successfully",
-				methods_supported[i]->method_string);
 		}
 	}
+
+	current_loc_config.methods = current_loc_config_methods;
 
 	return 0;
 }
@@ -147,45 +150,67 @@ int loc_core_validate_params(const struct loc_config *config)
 	const struct loc_method_api *method_api;
 	int err;
 
-	if ((config->interval > 0) && (config->interval < 10)) {
-		LOG_ERR("Interval for periodic location updates must be 10...65535 seconds.");
+	if (config->methods_count > LOC_MAX_METHODS) {
+		LOG_ERR("Maximum number of methods (%d) exceeded: %d",
+			LOC_MAX_METHODS, config->methods_count);
 		return -EINVAL;
 	}
 
-	for (int i = 0; i < LOC_MAX_METHODS; i++) {
-		if (config->methods[i].method != 0) {
-			method_api = loc_method_api_validity_get(config->methods[i].method);
-			if (method_api == NULL) {
-				LOG_ERR("Location method (%d) not supported",
-					config->methods[i].method);
-				return -EINVAL;
-			}
-			if (methods_supported[i]->validate_params) {
-				err = methods_supported[i]->validate_params(&config->methods[i]);
-				if (err) {
-					return err;
-				}
+	if ((config->interval > 0) && (config->interval < 10)) {
+		LOG_ERR("Interval for periodic location updates must be 10...65535 seconds");
+		return -EINVAL;
+	}
+
+	for (int i = 0; i < config->methods_count; i++) {
+		/* Check if the method is valid */
+		method_api = loc_method_api_validity_get(config->methods[i].method);
+		if (method_api == NULL) {
+			LOG_ERR("Location method (%d) not supported", config->methods[i].method);
+			return -EINVAL;
+		}
+		/* Validate method specific parameters */
+		if (methods_supported[i]->validate_params) {
+			err = methods_supported[i]->validate_params(&config->methods[i]);
+			if (err) {
+				return err;
 			}
 		}
 	}
 	return 0;
 }
 
+static void current_loc_config_set(const struct loc_config *config)
+{
+	assert(config->methods_count <= LOC_MAX_METHODS);
+
+	if (config == &current_loc_config) {
+		/* This is hit in periodic mode */
+		return;
+	}
+
+	current_loc_config.methods_count = config->methods_count;
+	current_loc_config.interval = config->interval;
+
+	memset(current_loc_config.methods, 0,
+		sizeof(struct loc_method_config) * LOC_MAX_METHODS);
+	memcpy(current_loc_config.methods, config->methods,
+		sizeof(struct loc_method_config) * config->methods_count);
+}
+
 int loc_core_location_get(const struct loc_config *config)
 {
 	int err;
-	enum loc_method requested_location_method;
+	enum loc_method requested_loc_method;
 
+	current_loc_config_set(config);
 	/* Location request starts from the first method */
-	current_location_method_index = 0;
-	current_loc_config = *config;
-
-	requested_location_method = config->methods[current_location_method_index].method;
+	current_loc_method_index = 0;
+	requested_loc_method = config->methods[current_loc_method_index].method;
 	LOG_DBG("Requesting location with '%s' method",
-		(char *)loc_method_api_get(requested_location_method)->method_string);
-	loc_core_current_event_data_init(requested_location_method);
-	err = loc_method_api_get(requested_location_method)->location_get(
-		&config->methods[current_location_method_index]);
+		(char *)loc_method_api_get(requested_loc_method)->method_string);
+	loc_core_current_event_data_init(requested_loc_method);
+	err = loc_method_api_get(requested_loc_method)->location_get(
+		&config->methods[current_loc_method_index]);
 
 	return err;
 }
@@ -207,8 +232,8 @@ void loc_core_event_cb_timeout(void)
 void loc_core_event_cb(const struct loc_location *location)
 {
 	char temp_str[16];
-	enum loc_method requested_location_method;
-	enum loc_method previous_location_method;
+	enum loc_method requested_loc_method;
+	enum loc_method previous_loc_method;
 	int err;
 
 	if (location != NULL) {
@@ -245,28 +270,21 @@ void loc_core_event_cb(const struct loc_location *location)
 
 	} else {
 		/* Do fallback to next preferred method */
-		previous_location_method = current_event_data.method;
-		current_location_method_index++;
-		if (current_location_method_index < LOC_MAX_METHODS) {
-			requested_location_method =
-				current_loc_config.methods[current_location_method_index].method;
+		previous_loc_method = current_event_data.method;
+		current_loc_method_index++;
+		if (current_loc_method_index < current_loc_config.methods_count) {
+			requested_loc_method =
+				current_loc_config.methods[current_loc_method_index].method;
 
-			/* TODO: Should we have NONE method in the API? */
-			if (requested_location_method != 0) {
-				LOG_WRN("Failed to acquire location using '%s', "
-					"trying with '%s' next",
-					(char *)loc_method_api_get(previous_location_method)
-						->method_string,
-					(char *)loc_method_api_get(requested_location_method)
-						->method_string);
+			LOG_WRN("Failed to acquire location using '%s', "
+				"trying with '%s' next",
+				(char *)loc_method_api_get(previous_loc_method)->method_string,
+				(char *)loc_method_api_get(requested_loc_method)->method_string);
 
-				loc_core_current_event_data_init(requested_location_method);
-				err = loc_method_api_get(requested_location_method)->
-					location_get(
-					&current_loc_config.methods[current_location_method_index]);
-				return;
-			}
-			LOG_ERR("Location acquisition failed and fallbacks are also done");
+			loc_core_current_event_data_init(requested_loc_method);
+			err = loc_method_api_get(requested_loc_method)->location_get(
+				&current_loc_config.methods[current_loc_method_index]);
+			return;
 		} else {
 			LOG_ERR("Location acquisition failed and fallbacks are also done");
 		}
@@ -287,16 +305,15 @@ static void loc_core_periodic_work_fn(struct k_work *work)
 int loc_core_cancel(void)
 {
 	int err = 0;
-
-	enum loc_method current_location_method =
-	current_loc_config.methods[current_location_method_index].method;
+	enum loc_method current_loc_method =
+		current_loc_config.methods[current_loc_method_index].method;
 
 	/* Check if location has been requested using one of the methods */
-	if (current_location_method != 0) {
+	if (current_loc_method != 0) {
 		/* Run method cancel only if periodic work is not busy as otherwise
 		 * we are just waiting for something to start running. */
 		if (!k_work_delayable_busy_get(&loc_periodic_work)) {
-			err = loc_method_api_get(current_location_method)->cancel();
+			err = loc_method_api_get(current_loc_method)->cancel();
 		}
 	}
 

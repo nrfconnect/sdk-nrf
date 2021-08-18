@@ -130,10 +130,12 @@ struct loc_method_config {
 
 /** Location request configuration. */
 struct loc_config {
+	/** Number of location methods in 'methods'. */
+	uint8_t methods_count;
 	/** Selected positioning methods and associated configurations in priority order. Index 0
-	 *  has the highest priority. Unused entries in the array must be initialized to zero.
+	 *  has the highest priority. Number of methods is indicated in 'methods_count'.
 	 */
-	struct loc_method_config methods[LOC_MAX_METHODS];
+	struct loc_method_config *methods;
 	/** Position update interval in seconds. Set to 0 for a single position update. For periodic
 	 *  position updates the valid range is 10...65535 seconds.
 	 */
@@ -142,7 +144,7 @@ struct loc_config {
 
 /** @brief Event handler prototype.
  *
- * @param[in] event_data Pointer to event data.
+ * @param[in] event_data Event data.
  */
 typedef void (*location_event_handler_t)(const struct loc_event_data *event_data);
 
@@ -164,7 +166,7 @@ int location_init(location_event_handler_t event_handler);
  *
  *          Periodic position updates can be stopped by calling location_cancel().
  *
- * @param[in] config Pointer to the used configuration or NULL to get a single position update with
+ * @param[in] config Used configuration or NULL to get a single position update with
  *                   the default configuration.
  *
  * @return 0 on success, or negative error code on failure.
