@@ -21,6 +21,10 @@ static const struct tfm_read_service_range ranges[] = {
 	/* Allow reads of mcuboot metadata */
 	{.start = PM_MCUBOOT_PAD_ADDRESS,
 		.size = PM_MCUBOOT_PAD_SIZE},
+#ifdef PM_MCUBOOT_PAD_1_ADDRESS
+	{.start = PM_MCUBOOT_PAD_1_ADDRESS,
+		.size = PM_MCUBOOT_PAD_1_SIZE},
+#endif
 #endif
 	{.start = FICR_PUBLIC_ADDR,
 		.size = FICR_PUBLIC_SIZE},
