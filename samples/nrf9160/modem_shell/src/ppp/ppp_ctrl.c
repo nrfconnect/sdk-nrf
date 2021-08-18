@@ -27,8 +27,11 @@
 #include <posix/sys/socket.h>
 #include <shell/shell.h>
 
+#include <settings/settings.h>
+
 #include "link_api.h"
 
+#include "ppp_settings.h"
 #include "ppp_ctrl.h"
 
 /* ppp globals: */
@@ -48,6 +51,8 @@ struct ppp_ctrl_worker_data {
 	struct k_work work;
 	bool default_pdn_active;
 } ppp_ctrl_worker_data;
+
+static const struct device *ppp_uart_dev;
 
 /******************************************************************************/
 
@@ -136,6 +141,14 @@ void ppp_ctrl_init(void)
 
 	k_work_init(&ppp_ctrl_worker_data.work,
 		    ppp_ctrl_link_default_pdn_status_handler);
+
+	ppp_uart_dev = device_get_binding(CONFIG_NET_PPP_UART_NAME);
+	if (!ppp_uart_dev) {
+		shell_warn(shell_global, "Cannot get ppp dev binding");
+		ppp_uart_dev = NULL;
+	}
+
+	ppp_settings_init();
 }
 
 void ppp_ctrl_default_pdn_active(bool default_pdn_active)
@@ -151,7 +164,6 @@ int ppp_ctrl_start(const struct shell *shell)
 	struct ppp_context *ctx;
 	struct net_if *iface;
 	struct pdp_context_info *pdp_context_info;
-
 	int idx = 0; /* Note: PPP iface index assumed to be 0 */
 
 	if (ppp_modem_data_socket_fd != PPP_MODEM_DATA_RAW_SCKT_FD_NONE) {
