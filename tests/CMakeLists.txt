@@ -13,16 +13,20 @@ if (CONFIG_ZTEST AND
     "${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/secure_boot.conf"
     )
 
-  # Add a child image in the network core.
-  # Since we have enabled MCUBoot in the app core, the B0N bootloader is
-  # automatically added. This can not be done from the test CMakeLists.txt
-  # since it will not be considered when running partition_manager.cmake.
-  add_child_image(
-    NAME hello_world
-    SOURCE_DIR ${ZEPHYR_BASE}/samples/hello_world
-    DOMAIN CPUNET
-    BOARD ${CONFIG_DOMAIN_CPUNET_BOARD})
+  if(NOT DEFINED CPUNET_PM_DOMAIN_DYNAMIC_PARTITION
+     OR "${CPUNET_PM_DOMAIN_DYNAMIC_PARTITION}" STREQUAL hello_world
+  )
+    # Add a child image in the network core if there is not an image already.
+    # Since we have enabled MCUBoot in the app core, the B0N bootloader is
+    # automatically added. This can not be done from the test CMakeLists.txt
+    # since it will not be considered when running partition_manager.cmake.
+    add_child_image(
+      NAME hello_world
+      SOURCE_DIR ${ZEPHYR_BASE}/samples/hello_world
+      DOMAIN CPUNET
+      BOARD ${CONFIG_DOMAIN_CPUNET_BOARD})
 
+  endif()
 endif()
 
 
