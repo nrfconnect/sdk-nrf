@@ -116,6 +116,20 @@ function(add_child_image_from_source)
         "typically defined in ${BOARD_DIR}/Kconfig")
     endif()
 
+    set(domain_parent ${${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION})
+    if(DEFINED ${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION
+       AND NOT "${domain_parent}" STREQUAL "${ACI_NAME}"
+    )
+      # A domain may only have one child image, which can then act as a parent
+      # to other images in the domain.
+      # As it is a cache variable we check it's content so that CMake re-run
+      # will pass the check as long as the child image hasn't changed.
+      message(FATAL_ERROR "A domain may only have a single child image."
+        "Current domain image is: ${domain_parent}, `${domain_parent}` is a "
+	"domain parent image, so you may add `${ACI_NAME}` as a child inside "
+	"`${domain_parent}`"
+      )
+    endif()
     # This needs to be made globally available as it is used in other files.
     set(${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION ${ACI_NAME} CACHE INTERNAL "")
 
