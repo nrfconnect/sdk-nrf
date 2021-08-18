@@ -35,7 +35,9 @@ extern int ppp_data_socket_fd;
 
 /* Local defines: */
 #define PPP_MODEM_DATA_SND_THREAD_STACK_SIZE 1024
-#define PPP_MODEM_DATA_SND_THREAD_PRIORITY K_PRIO_COOP(10)      /* -6 */
+
+#define PPP_MODEM_DATA_SND_THREAD_PRIORITY K_PRIO_COOP(10) /* -6 */
+
 #define PPP_MODEM_DATA_SND_POLL_TIMEOUT_MS 1000                 /* Milliseconds */
 #define PPP_MODEM_DATA_SND_BUFFER_SIZE CONFIG_NET_PPP_MTU_MRU
 #define PPP_MODEM_DATA_SND_PKT_BUF_ALLOC_TIMEOUT K_MSEC(500)

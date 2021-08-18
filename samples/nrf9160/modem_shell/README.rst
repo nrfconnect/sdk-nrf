@@ -320,9 +320,12 @@ The MoSh command is simple but you need to have a normal dial-up setup in your P
 
 .. note::
 
-   Dial-up connection is non functional when using Segger virtual UART ports.
+   In Windows, dial-up connection is not functional when using Segger virtual UART ports.
    PPP has been used successfully with FTDI UART port though.
    Refer to `nRF9160 Hardware Verification Guidelines - UART interface`_.
+
+   PPP has been successfully used running Ubuntu Linux in a virtualization environment hosted by Windows.
+   In the hosted virtual Linux environment, using PPP is possible also with plain Segger UART ports.
 
 Examples
 --------
@@ -334,6 +337,10 @@ Set the PPP network interface up::
 Set the PPP network interface down::
 
    ppp down
+
+Set the custom configuration for PPP UART::
+
+   ppp uartconf --baudrate 460800
 
 Requirements
 ************
