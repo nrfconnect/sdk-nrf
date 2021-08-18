@@ -286,18 +286,18 @@ static void loc_core_periodic_work_fn(struct k_work *work)
 
 int loc_core_cancel(void)
 {
-	/* TODO: Error code has to be checked as we get error when cancelling periodic now.
-	 * We should probably run method cancel only if periodic work is not busy as otherwise
-	 * we are just waiting for something to get running.
-	 */
-	int err = -EPERM;
+	int err = 0;
 
 	enum loc_method current_location_method =
 	current_loc_config.methods[current_location_method_index].method;
 
 	/* Check if location has been requested using one of the methods */
 	if (current_location_method != 0) {
-		err = loc_method_api_get(current_location_method)->cancel();
+		/* Run method cancel only if periodic work is not busy as otherwise
+		 * we are just waiting for something to start running. */
+		if (!k_work_delayable_busy_get(&loc_periodic_work)) {
+			err = loc_method_api_get(current_location_method)->cancel();
+		}
 	}
 
 	if (k_work_delayable_busy_get(&loc_periodic_work) > 0) {
