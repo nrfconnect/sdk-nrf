@@ -202,6 +202,7 @@ exit_svr:
 #if defined(CONFIG_SLM_NATIVE_TLS)
 	if (proxy.sec_tag != INVALID_SEC_TAG) {
 		(void)slm_tls_unloadcrdl(proxy.sec_tag);
+		proxy.sec_tag = INVALID_SEC_TAG;
 	}
 #endif
 	if (proxy.sock != INVALID_SOCKET) {
@@ -224,6 +225,7 @@ static int do_tcp_server_stop(void)
 #if defined(CONFIG_SLM_NATIVE_TLS)
 	if (proxy.sec_tag != INVALID_SEC_TAG) {
 		(void)slm_tls_unloadcrdl(proxy.sec_tag);
+		proxy.sec_tag = INVALID_SEC_TAG;
 	}
 #endif
 	if (proxy.sock_peer != INVALID_SOCKET) {
@@ -256,7 +258,6 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
 		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
-
 	}
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
@@ -516,7 +517,7 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 					LOG_WRN("accept(ipv6) error: %d", -errno);
 					goto client_events;
 				}
-				(void)inet_ntop(AF_INET, &client.sin6_addr, peer_addr,
+				(void)inet_ntop(AF_INET6, &client.sin6_addr, peer_addr,
 					sizeof(peer_addr));
 			}
 			if (fds[1].fd != INVALID_SOCKET) {
@@ -578,15 +579,10 @@ client_events:
 #if defined(CONFIG_SLM_NATIVE_TLS)
 	if (proxy.sec_tag != INVALID_SEC_TAG) {
 		(void)slm_tls_unloadcrdl(proxy.sec_tag);
+		proxy.sec_tag = INVALID_SEC_TAG;
 	}
 #endif
-	if (in_datamode()) {
-		(void)exit_datamode(false);
-	}
-	if (proxy.sock_peer != INVALID_SOCKET) {
-		(void)close(proxy.sock_peer);
-		proxy.sock_peer = INVALID_SOCKET;
-	}
+	tcpsvr_terminate_connection(ret);
 	if (proxy.sock != INVALID_SOCKET) {
 		(void)close(proxy.sock);
 		proxy.sock = INVALID_SOCKET;
