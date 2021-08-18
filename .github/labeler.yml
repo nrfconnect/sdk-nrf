@@ -199,5 +199,5 @@
     - "subsys/bluetooth/**/*"
     - "!subsys/bluetooth/mesh/**/*"
 
-"no-changelog":
+"changelog-entry-required":
   - "!doc/nrf/releases/release-notes-changelog.rst"
