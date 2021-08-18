@@ -59,8 +59,6 @@ The sample also requires one of the following testing devices:
 nRF21540 front-end module
 =========================
 
-.. |fem_file_path| replace:: :file:`samples/peripheral/radio_test/configuration`
-
 .. include:: /includes/sample_dtm_radio_test_fem.txt
 
 The nRF21540 transmitted power gain, antenna and an activation delay can be configured using the user interface :ref:`radio_test_ui`.

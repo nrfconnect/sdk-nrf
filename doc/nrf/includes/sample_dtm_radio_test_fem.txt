@@ -1,33 +1,14 @@
 You can add support for the nRF21540 front-end module (FEM) to the sample.
-Set ``-DNRF21540EK_FEM=y`` when you invoke ``west build`` or ``cmake`` in your sample directory.
-Follow the instructions in :ref:`cmake_options`.
-For example:
 
-``west build -b nrf5340dk_nrf5340_cpunet -- -DNRF21540EK_FEM=y``
-
-When you set ``NRF21540EK_FEM=y`` the :file:`dts-nrf21540-fem.overlay` devicetree overlay file is used to override the default settings.
-The configuration from this file is merged with the additional development kit overlay file from the :file:`boards` folder if it exists.
-
-The :file:`dts-nrf21540-fem.overlay` is located in the |fem_file_path| folder.
-Make sure that the GPIOs and the SPI configuration in the file correspond to those in which your front-end module is connected.
+To add support for the nRF21540 FEM, build the sample for a board containing nRF21540 FEM like :ref:`nrf21540dk_nrf52840 <zephyr:nrf21540dk_nrf52840>` or create a devicetree overlay file describing how FEM is connected to nRF5 SoC in your device.
 
 .. note::
-   You must set ``NRF21540EK_FEM=y`` if you use the nRF21540 EK.
+   If you use the nRF21540 EK, append ``nrf21540_ek`` shield to your build command instructing build system to append the appropriate devicetree overlay file.
    If you use the nRF21540 DK, build your application for the :ref:`nrf21540dk_nrf52840 <zephyr:nrf21540dk_nrf52840>` board.
    The devicetree for the nRF21540 DK already contains the required FEM configuration, so you do not need to set an additional build option.
 
-Sometimes, you may need to add an extra overlay file.
-The easiest way to add the file when building is to set it in the ``DTC_OVERLAY_FILE`` variable.
-However, that will override the default settings.
-When you set the ``DTC_OVERLAY_FILE`` variable, you must specify all overlay files that are needed for building.
-
-Follow the instructions in :ref:`cmake_options` to specify the ``DTC_OVERLAY_FILE`` variable.
 For example, to build the sample from the command line for an nRF5340 DK with an attached nRF21540 EK, invoke the following command within the sample directory:
-``west build -b nrf5340dk_nrf5340_cpunet -- -DDTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpunet.overlay;../configuration/dts-nrf21540-fem.overlay;your_overlay_file.overlay"``
-
-See :ref:`zephyr:set-devicetree-overlays` for different ways of adding the overlay file.
-
-Alternatively, you can copy the contents of :file:`dts-nrf21540-fem.overlay` to the board's overlay file.
+``west build -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540_ek``
 
 .. note::
    The nRF5340 DK network core peripherals, like UART and SPI, share an ID and a base address.
