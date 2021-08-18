@@ -18,6 +18,20 @@ config NRF_CLOUD_REST_FRAGMENT_SIZE
 	range 128 1700
 	default 1700
 
+config NRF_CLOUD_REST_SEND_TIMEOUT
+	int "Socket send timeout, in seconds"
+	default 60
+	help
+	  Sets the timeout duration in seconds to use when sending data.
+	  To disable, set the timeout duration to -1.
+
+config NRF_CLOUD_REST_RECV_TIMEOUT
+	int "Socket receive timeout, in seconds"
+	default 60
+	help
+	  Sets the timeout duration in seconds to use when receiving data.
+	  To disable, set the timeout duration to -1.
+
 module = NRF_CLOUD_REST
 module-str = nRF Cloud REST
 source "subsys/logging/Kconfig.template.log_config"
