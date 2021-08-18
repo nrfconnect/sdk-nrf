@@ -19,7 +19,7 @@ cmock_handle(${ZEPHYR_BASE}/../nrf/include/drivers/gps.h drivers )
 cmock_handle(${ZEPHYR_BASE}/../nrf/applications/asset_tracker_v2/src/modules/modules_common.h )
 
 
-# add gps_module (the UUT)
+# add gps_module (the unit and test)
 target_sources(app PRIVATE ../../src/modules/gps_module.c)
 
 # add test file
@@ -31,9 +31,8 @@ target_include_directories(app PRIVATE ../../src/modules/)
 target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrf/subsys/event_manager)
 target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrf/modules/cjson/include)
 target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrf/applications/asset_tracker_v2/src/events/)
-target_include_directories(app PRIVATE )
 
-# Options that cannot be passed through kconfig fragments.
+# Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE
   	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
 	-DCONFIG_GPS_MODULE_LOG_LEVEL=4

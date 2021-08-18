@@ -49,15 +49,26 @@ const struct event_type __event_type_util_module_event;
 
 /** Dummy functions and objects - End.  **/
 
-/* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
+/* The following is required because unity is using a different main signature
+ * (returns int) and zephyr expects main to not return value.
+ */
+extern int unity_main(void);
+
+/* Variable to store the event handler function that the GPS module registers
+ * with the GPS driver through the gps_init() function. This can be used to
+ * simulate events from the GPS driver.
+ */
+static gps_event_handler_t gps_module_gps_evt_handler;
+
+/* Suite teardown finalizes with mandatory call to generic_suiteTearDown. */
 extern int generic_suiteTearDown(int num_failures);
+
 
 int test_suiteTearDown(int num_failures)
 {
 	return generic_suiteTearDown(num_failures);
 }
 
-static gps_event_handler_t gps_module_gps_evt_handler;
 
 static int gps_init_callback(const struct device *dev,
 			     gps_event_handler_t handler, int number_of_calls)
@@ -86,7 +97,6 @@ static void validate_gps_data_ready_evt(struct event_header *eh, int no_of_calls
 }
 
 
-
 static void setup_gps_module_in_init_state(void)
 {
 	struct app_module_event *app_module_event = new_app_module_event();
@@ -110,6 +120,7 @@ static void setup_gps_module_in_init_state(void)
 	free(app_module_event);
 }
 
+
 static void setup_gps_module_in_running_state(void)
 {
 	setup_gps_module_in_init_state();
@@ -126,6 +137,7 @@ static void setup_gps_module_in_running_state(void)
 	free(data_module_event);
 }
 
+
 static struct gps_event *generate_gps_fix_evt(void)
 {
 	static struct gps_event evt = {
@@ -137,6 +149,7 @@ static struct gps_event *generate_gps_fix_evt(void)
 
 	return &evt;
 }
+
 
 /* Test whether sending a APP_EVT_DATA_GET event to the GPS module generates
  * the GPS_EVT_ACTIVE event, when the GPS module is in the running state.
@@ -166,8 +179,9 @@ void test_gps_start(void)
 	__wrap__event_submit_Stub(NULL);
 }
 
-/* Test whether sending a APP_EVT_DATA_GET event to the GPS module generates
- * the GPS_EVT_ACTIVE event, when the GPS module is in the running state.
+
+/* Test whether the GPS module generates an event with GPS fix on receiving a
+ * fix from the GPS driver.
  */
 void test_gps_fix(void)
 {
@@ -204,11 +218,6 @@ void test_gps_fix(void)
 	__wrap__event_submit_Stub(NULL);
 }
 
-/* It is required to be added to each test. That is because unity is using
- * different main signature (returns int) and zephyr expects main which does
- * not return value.
- */
-extern int unity_main(void);
 
 void main(void)
 {
