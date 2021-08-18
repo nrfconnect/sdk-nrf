@@ -98,6 +98,8 @@
 .. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/27bce6d/docs/guides/nrfconnect_platform_overview.md
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/27bce6d/src/controller
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
+.. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
+.. _`Building Android CHIPTool`: https://github.com/project-chip/connectedhomeip/blob/27bce6d/docs/guides/android_chiptool_building.md
 
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 
