@@ -275,6 +275,7 @@ zb_bool_t zb_trans_is_active(void)
 zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 			    zb_uint8_t *tx_buf, zb_uint8_t current_channel)
 {
+	struct net_pkt *pkt = NULL;
 	struct net_buf frag = {
 		.frags = NULL,
 		.b = {
@@ -293,6 +294,12 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 	ARG_UNUSED(current_channel);
 #endif
 
+	pkt = net_pkt_alloc(K_NO_WAIT);
+	if (!pkt) {
+		ZB_ASSERT(0);
+		return ZB_FALSE;
+	}
+
 	ack_frame = NULL;
 
 	switch (wait_type) {
@@ -306,22 +313,15 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 			mode = IEEE802154_TX_MODE_CCA;
 		}
 
-		err = radio_api->tx(radio_dev, mode, NULL, &frag);
+		err = radio_api->tx(radio_dev, mode, pkt, &frag);
 		break;
 	}
 
 #ifdef ZB_ENABLE_ZGP_DIRECT
 	case ZB_MAC_TX_WAIT_ZGP: {
-		struct net_pkt *pkt = NULL;
-
 		if (!(radio_api->get_capabilities(radio_dev)
 		      & IEEE802154_HW_TXTIME)) {
-			return ZB_FALSE;
-		}
-
-		pkt = net_pkt_alloc(K_NO_WAIT);
-		if (!pkt) {
-			ZB_ASSERT(0);
+			net_pkt_unref(pkt);
 			return ZB_FALSE;
 		}
 
@@ -331,7 +331,6 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 				    IEEE802154_TX_MODE_TXTIME,
 				    pkt,
 				    &frag);
-		net_pkt_unref(pkt);
 		break;
 	}
 #endif
@@ -340,15 +339,17 @@ zb_bool_t zb_trans_transmit(zb_uint8_t wait_type, zb_time_t tx_at,
 		state_cache.radio_state = RADIO_802154_STATE_TRANSMIT;
 		err = radio_api->tx(radio_dev,
 				    IEEE802154_TX_MODE_DIRECT,
-				    NULL,
+				    pkt,
 				    &frag);
 		break;
 	default:
 		LOG_DBG("Illegal wait_type parameter: %d", wait_type);
 		ZB_ASSERT(0);
+		net_pkt_unref(pkt);
 		return ZB_FALSE;
 	}
 
+	net_pkt_unref(pkt);
 	state_cache.radio_state = RADIO_802154_STATE_RECEIVE;
 
 	switch (err) {
