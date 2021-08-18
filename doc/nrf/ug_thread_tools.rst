@@ -14,28 +14,40 @@ The tools listed on this page can be helpful when developing your Thread applica
 nRF Sniffer for 802.15.4
 ************************
 
+.. sniffer_shortdesc_start
+
 The nRF Sniffer for 802.15.4 is a tool for learning about and debugging applications that are using protocols based on IEEE 802.15.4, like Thread or Zigbee.
 It provides a near real-time display of 802.15.4 packets that are sent back and forth between devices, even when the link is encrypted.
 
 See `nRF Sniffer for 802.15.4`_ for documentation.
+
+.. sniffer_shortdesc_end
 
 .. _ug_thread_tools_ttm:
 
 nRF Thread Topology Monitor
 ***************************
 
+.. ttm_shortdesc_start
+
 nRF Thread Topology Monitor is a desktop application that connects to a Thread network through a serial connection to visualize the topology of Thread devices.
 It allows you to scan for new devices in real time, check their parameters, and inspect network processes through the log.
 
 See `nRF Thread Topology Monitor`_ for documentation.
+
+.. ttm_shortdesc_end
 
 .. _ug_thread_tools_tbr:
 
 Thread Border Router
 ********************
 
+.. tbr_shortdesc_start
+
 The Thread Border Router is a specific type of Border Router device that provides connectivity from the IEEE 802.15.4 network to adjacent networks on other physical layers (such as Wi-Fi or Ethernet).
 Border Routers provide services for devices within the IEEE 802.15.4 network, including routing services for off-network operations.
+
+.. tbr_shortdesc_end
 
 Typically, a Border Router solution consists of the following parts:
 
