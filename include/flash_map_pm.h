@@ -15,6 +15,23 @@
 #define image_1 mcuboot_secondary
 #define image_0_nonsecure mcuboot_primary
 #define image_1_nonsecure mcuboot_secondary
+#if PM_mcuboot_primary_1_IS_ENABLED
+#define image_2 mcuboot_primary_1
+#if CONFIG_SOC_NRF5340_CPUAPP
+#if CONFIG_FLASH_SIMULATOR  /* TODO: Add special option for netcore update with RAM */
+#define PM_image_2_IS_ENABLED 1
+#define PM__image_2_IS_ENABLED 1
+#endif
+#else
+#define PM_image_2_IS_ENABLED 1
+#define PM__image_2_IS_ENABLED 1
+#endif /* CONFIG_SOC_NRF5340_CPUAPP */
+#endif
+#if PM_mcuboot_secondary_1_IS_ENABLED
+#define image_3 mcuboot_secondary_1
+#define PM_image_3_IS_ENABLED 1
+#define PM__image_3_IS_ENABLED 1
+#endif
 #define image_scratch mcuboot_scratch
 
 #if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS)
