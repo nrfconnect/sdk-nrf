@@ -1,0 +1,44 @@
+name: Asset tracker unit test
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - master
+      - 'v*-branch'
+  push:
+    branches:
+      - master
+      - 'v*-branch'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        with:
+          path: ncs/nrf
+          fetch-depth: 0
+
+      - name: Install base dependencies
+        working-directory: ncs
+        run: |
+          sudo apt install -y ninja-build gcc-multilib
+          pip3 install -r nrf/scripts/requirements-base.txt
+          pip3 install pyelftools
+
+      - name: West init and update
+        working-directory: ncs
+        run: |
+          west init -l nrf --mf unit_test_west.yml
+          west update --narrow -o=--depth=1
+          west zephyr-export
+
+      - name: Run asset tracker unit test
+        working-directory: ncs/nrf/applications/asset_tracker_v2/tests/gps_module
+        run: |
+            west build -b native_posix -t run
+
+

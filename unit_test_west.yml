@@ -1,0 +1,96 @@
+# The west manifest file (west.yml) for the nRF Connect SDK (NCS).
+#
+# The per-workspace west configuration file, ncs/.west/config,
+# specifies the location of this manifest file like this:
+#
+#     [manifest]
+#     path = nrf
+#
+# See the west documentation for more information:
+#
+# https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
+
+manifest:
+  version: "0.10"
+
+  # "remotes" is a list of locations where git repositories are cloned
+  # and fetched from.
+  remotes:
+    # nRF Connect SDK GitHub organization.
+    # NCS repositories are hosted here.
+    - name: ncs
+      url-base: https://github.com/nrfconnect
+    # Third-party repository sources:
+    - name: zephyrproject
+      url-base: https://github.com/zephyrproject-rtos
+    - name: throwtheswitch
+      url-base: https://github.com/ThrowTheSwitch
+    - name: nordicsemi
+      url-base: https://github.com/NordicSemiconductor
+    - name: memfault
+      url-base: https://github.com/memfault
+
+  # If not otherwise specified, the projects below should be obtained
+  # from the ncs remote.
+  defaults:
+    remote: ncs
+
+  # "projects" is a list of git repositories which make up the NCS
+  # source code.
+  projects:
+
+    # The Zephyr RTOS fork in the NCS, along with the subset of its
+    # modules which NCS imports directly.
+    #
+    # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
+    # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
+    - name: zephyr
+      repo-path: sdk-zephyr
+      revision: 0944459b5b622048a08ad1f8cf8a044c135fd0d3
+      import:
+        # In addition to the zephyr repository itself, NCS also
+        # imports the contents of zephyr/west.yml at the above
+        # revision. Only the projects explicitly named in the
+        # following allowlist are imported.
+        #
+        # Note that the zephyr west extensions (like 'build', 'flash',
+        # 'debug', etc.) are automatically provided by this import, so
+        # there's no need to add a redundant west-commands: key for
+        # the zephyr project.
+        #
+        # Please keep this list sorted alphabetically.
+        name-allowlist:
+          - cmsis
+          - hal_nordic
+          - nrf_hw_models
+
+
+    # NCS repositories.
+    #
+    # Some of these are also Zephyr modules which have NCS-specific
+    # changes.
+
+    - name: nrfxlib
+      repo-path: sdk-nrfxlib
+      path: nrfxlib
+      revision: 1a894638c438ce738c101b2c35894c9ffa2beb95
+    # Other third-party repositories.
+    - name: cmock
+      path: test/cmock
+      revision: 9d092898ef26ece140d9225e037274b64d4f851e
+      remote: throwtheswitch
+    - name: unity
+      path: test/cmock/vendor/unity
+      revision: 74cde089e65c3435ce9aa87d5c69f4f16b7f6ade
+      remote: throwtheswitch
+    - name: memfault-firmware-sdk
+      path: modules/lib/memfault-firmware-sdk
+      revision: 0.21.1
+      remote: memfault
+  # West-related configuration for the nrf repository.
+  self:
+    # This repository should be cloned to ncs/nrf.
+    path: nrf
+    # This line configures west extensions which are currently only
+    # for internal use by NCS maintainers.
+    west-commands: scripts/west-commands.yml
