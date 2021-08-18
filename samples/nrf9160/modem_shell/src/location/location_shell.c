@@ -261,11 +261,13 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		}
 	}
+
+	/* Handle location subcommands */
 	switch (loc_cmd_args.command) {
 	case LOCATION_CMD_CANCEL:
 		ret = location_request_cancel();
 		if (ret) {
-			shell_error(shell, "Cannot cancel location request, err: %d\n", ret);
+			shell_error(shell, "Cannot cancel location request, err: %d", ret);
 			return -1;
 		}
 		shell_print(shell, "Getting of location cancelled");
@@ -273,8 +275,11 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 	case LOCATION_CMD_GET: {
 		struct loc_config config = { 0 };
+		struct loc_method_config methods[LOC_MAX_METHODS] = { 0 };
 
 		config.interval = interval;
+		config.methods_count = method_count;
+		config.methods = methods;
 
 		if (method_count == 1) {
 			if (method1_set) {
