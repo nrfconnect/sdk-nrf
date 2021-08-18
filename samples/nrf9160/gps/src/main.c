@@ -229,6 +229,28 @@ static int init_app(void)
 	}
 
 	lte_lc_register_handler(lte_handler);
+
+	static struct supl_api supl_api = {
+		.read       = supl_read,
+		.write      = supl_write,
+		.handler    = inject_agps_type,
+		.logger     = supl_logger,
+		.counter_ms = k_uptime_get
+	};
+
+	k_work_queue_start(
+		&agps_work_q,
+		agps_workq_stack_area,
+		K_THREAD_STACK_SIZEOF(agps_workq_stack_area),
+		AGPS_WORKQ_THREAD_PRIORITY,
+		NULL);
+
+	k_work_init(&get_agps_data_work, get_agps_data);
+
+	if (supl_init(&supl_api) != 0) {
+		printk("Failed to initialize SUPL library\n");
+		return -1;
+	}
 #endif /* CONFIG_SUPL_CLIENT_LIB */
 
 	if (setup_modem() != 0) {
@@ -270,30 +292,6 @@ static int init_app(void)
 		printk("Failed to start GNSS\n");
 		return -1;
 	}
-
-#ifdef CONFIG_SUPL_CLIENT_LIB
-	static struct supl_api supl_api = {
-		.read       = supl_read,
-		.write      = supl_write,
-		.handler    = inject_agps_type,
-		.logger     = supl_logger,
-		.counter_ms = k_uptime_get
-	};
-
-	k_work_queue_start(
-		&agps_work_q,
-		agps_workq_stack_area,
-		K_THREAD_STACK_SIZEOF(agps_workq_stack_area),
-		AGPS_WORKQ_THREAD_PRIORITY,
-		NULL);
-
-	k_work_init(&get_agps_data_work, get_agps_data);
-
-	if (supl_init(&supl_api) != 0) {
-		printk("Failed to initialize SUPL library\n");
-		return -1;
-	}
-#endif
 
 	return 0;
 }
