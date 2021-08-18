@@ -198,25 +198,25 @@ static int tls_setup(int fd, const char *const tls_hostname, const sec_tag_t sec
 static int socket_timeouts_set(int fd)
 {
 	int err;
+	struct timeval timeout = {0};
 
-	/* Set socket timeouts (send TO also affects TCP connect) */
-	struct timeval timeout = {
-		.tv_sec = 60,
-		.tv_usec = 0
-	};
-
-	err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO,
-			 &timeout, sizeof(timeout));
-	if (err) {
-		LOG_ERR("Failed to set socket send timeout, error: %d", errno);
-		return err;
+	if (CONFIG_NRF_CLOUD_REST_SEND_TIMEOUT > -1) {
+		/* Send TO also affects TCP connect */
+		timeout.tv_sec = CONFIG_NRF_CLOUD_REST_SEND_TIMEOUT;
+		err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+		if (err) {
+			LOG_ERR("Failed to set socket send timeout, error: %d", errno);
+			return err;
+		}
 	}
 
-	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO,
-			 &timeout, sizeof(timeout));
-	if (err) {
-		LOG_ERR("Failed to set socket recv timeout, error: %d", errno);
-		return err;
+	if (CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT > -1) {
+		timeout.tv_sec = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT;
+		err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+		if (err) {
+			LOG_ERR("Failed to set socket recv timeout, error: %d", errno);
+			return err;
+		}
 	}
 
 	return 0;
@@ -610,6 +610,7 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 	/* Get payload */
 	ret = nrf_cloud_format_cell_pos_req(request->net_info, 1, &payload);
 	if (ret) {
+		LOG_ERR("Failed to generate cellular positioning request, err: %d", ret);
 		goto clean_up;
 	}
 
