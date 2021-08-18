@@ -44,10 +44,16 @@ int main(void)
 {
 	int err;
 	struct loc_config config = { 0 };
+	struct loc_method_config methods[2] = { 0 };
 
-	config.interval = 0; // Single position
+	printk("Starting location sample\n");
 
-	config.methods[0].method = LOC_METHOD_CELL_ID;
+	config.interval = 0; /* Single position */
+
+	config.methods_count = 2;
+	config.methods = methods;
+
+	config.methods[0].method = LOC_METHOD_CELLULAR;
 
 	config.methods[1].method = LOC_METHOD_GNSS;
 	config.methods[1].config.gnss.timeout = 120;
@@ -62,11 +68,13 @@ int main(void)
 		return -1;
 	}
 
+	printk("Requesting location\n");
 	err = location_request(&config);
 	if (err) {
 		printk("Requesting location failed, err: %d\n", err);
 		return -1;
 	}
+	printk("Requesting location succeeded\n");
 
 	return 0;
 }
