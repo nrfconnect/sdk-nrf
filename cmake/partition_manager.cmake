@@ -187,6 +187,20 @@ if (CONFIG_PM_EXTERNAL_FLASH)
     )
 endif()
 
+get_shared(mcuboot_UPDATEABLE_IMAGE_NUMBER IMAGE mcuboot PROPERTY UPDATEABLE_IMAGE_NUMBER)
+if (CONFIG_NRF53_UPGRADE_NETWORK_CORE
+  AND CONFIG_HCI_RPMSG_BUILD_STRATEGY_FROM_SOURCE
+  AND (mcuboot_UPDATEABLE_IMAGE_NUMBER GREATER 1))
+  add_region(
+    NAME ram_flash
+    SIZE 0x40000
+    BASE 0x00000000
+    PLACEMENT start_to_end
+    DEVICE "flash_ctrl"
+    )
+endif()
+
+
 if (DOMAIN)
   set(UNDERSCORE_DOMAIN _${DOMAIN})
 endif()
@@ -445,8 +459,66 @@ else()
             )
 
           # There is no padding in front of the network core application.
-          math(EXPR net_app_TO_SECONDARY
-            "${PM_MCUBOOT_SECONDARY_ADDRESS} - ${net_app_addr} + ${PM_MCUBOOT_PAD_SIZE}")
+	  if(CONFIG_PM_EXTERNAL_FLASH)
+	    if(CONFIG_SOC_NRF5340_CPUAPP)
+	      set(EXTERNAL_FLASH_START_ADDRESS 0x10000000)
+            else()
+	      set(EXTERNAL_FLASH_START_ADDRESS 0x12000000)
+            endif()
+            math(EXPR net_app_TO_SECONDARY "${EXTERNAL_FLASH_START_ADDRESS} + ${CONFIG_PM_EXTERNAL_FLASH_BASE}
+	         + ${PM_MCUBOOT_SECONDARY_SIZE} - ${net_app_addr} + ${PM_MCUBOOT_PAD_SIZE}")
+
+            math(EXPR app_TO_SECONDARY
+		"${EXTERNAL_FLASH_START_ADDRESS} + ${CONFIG_PM_EXTERNAL_FLASH_BASE} - ${PM_MCUBOOT_PRIMARY_ADDRESS}")
+
+            set_property(
+              TARGET partition_manager
+              PROPERTY net_app_slot_size
+	      ${PM_MCUBOOT_SECONDARY_SIZE}
+            )
+
+	  elseif((mcuboot_UPDATEABLE_IMAGE_NUMBER EQUAL 2) AND CONFIG_PM_EXTERNAL_FLASH)
+            math(EXPR net_app_TO_SECONDARY "${CONFIG_PM_EXTERNAL_FLASH_BASE}
+	         + ${PM_MCUBOOT_SECONDARY_1_ADDRESS} - ${net_app_addr} + ${PM_MCUBOOT_PAD_1_SIZE}")
+
+            math(EXPR app_TO_SECONDARY
+		"${CONFIG_PM_EXTERNAL_FLASH_BASE} - ${PM_MCUBOOT_PRIMARY_ADDRESS} + ${PM_MCUBOOT_SECONDARY_ADDRESS}")
+
+            set_property(
+              TARGET partition_manager
+              PROPERTY net_app_slot_size
+	      ${PM_MCUBOOT_SECONDARY_1_SIZE}
+              )
+
+	  elseif(mcuboot_UPDATEABLE_IMAGE_NUMBER EQUAL 2)
+	    math(EXPR net_app_TO_SECONDARY "${PM_MCUBOOT_SECONDARY_1_ADDRESS}
+	        - ${net_app_addr} + ${PM_MCUBOOT_PAD_1_SIZE}")
+            math(EXPR app_TO_SECONDARY "${PM_MCUBOOT_PRIMARY_SIZE}")
+
+            set_property(
+              TARGET partition_manager
+              PROPERTY net_app_slot_size
+	      ${PM_MCUBOOT_SECONDARY_1_SIZE}
+              )
+
+	  else()
+            math(EXPR net_app_TO_SECONDARY
+              "${PM_MCUBOOT_SECONDARY_ADDRESS} - ${net_app_addr} + ${PM_MCUBOOT_PAD_SIZE}")
+
+            set_property(
+              TARGET partition_manager
+              PROPERTY net_app_slot_size
+	      ${PM_MCUBOOT_SECONDARY_SIZE}
+            )
+
+            math(EXPR app_TO_SECONDARY "${PM_MCUBOOT_SECONDARY_ADDRESS} - ${PM_MCUBOOT_PRIMARY_ADDRESS}")
+	  endif()
+
+          set_property(
+            TARGET partition_manager
+            PROPERTY app_TO_SECONDARY
+            ${app_TO_SECONDARY}
+            )
 
           set_property(
             TARGET partition_manager
