@@ -22,8 +22,6 @@ extern struct loc_event_data current_event_data;
 struct k_work gnss_fix_work;
 struct k_work method_gnss_timeout_work;
 
-int32_t gnss_fix_interval;
-
 void method_gnss_event_handler(int event)
 {
 	switch (event) {
@@ -37,6 +35,20 @@ void method_gnss_event_handler(int event)
 		k_work_submit(&method_gnss_timeout_work);
 		break;
 	}
+}
+
+int method_gnss_cancel(void)
+{
+	int err = nrf_modem_gnss_stop();
+	if (!err) {
+		LOG_DBG("GNSS stopped");
+	} else if (err == NRF_EPERM) {
+		LOG_ERR("GNSS is not running");
+	} else {
+		LOG_ERR("Failed to stop GNSS");
+	}
+
+	return -err;
 }
 
 void method_gnss_fix_work_fn(struct k_work *item)
@@ -63,22 +75,14 @@ void method_gnss_fix_work_fn(struct k_work *item)
 
 	loc_core_event_cb(&location_result);
 
-	/* If configured for single fix mode, stop GNSS */
-	if (!gnss_fix_interval) {
-		nrf_modem_gnss_stop();
-		LOG_DBG("GNSS stopped");
-	}
+	method_gnss_cancel();
 }
 
 void method_gnss_timeout_work_fn(struct k_work *item)
 {
 	loc_core_event_cb_timeout();
 
-	/* If configured for single fix mode, stop GNSS */
-	if (!gnss_fix_interval) {
-		nrf_modem_gnss_stop();
-		LOG_DBG("GNSS stopped");
-	}
+	method_gnss_cancel();
 }
 
 int method_gnss_init(void)
@@ -104,20 +108,11 @@ int method_gnss_init(void)
 int method_gnss_location_get(const struct loc_method_config *config)
 {
 	int err = 0;
-	/* TODO: Tuomas to check what to do with this.
-	 *       Interval is here as dummy one as it's removed from API.
-	 */
-	int interval = 0;
 
 	const struct loc_gnss_config *gnss_config = &config->config.gnss;
 
-	if (interval == 1 ) {
-		LOG_ERR("Failed to configure GNSS, continuous navigation "
-			"not supported at the moment.");
-		return -EINVAL;
-	}
-
-	err = nrf_modem_gnss_fix_interval_set(interval);
+	/* Configure GNSS to provide a single fix */
+	err = nrf_modem_gnss_fix_interval_set(0);
 
 	err |= nrf_modem_gnss_fix_retry_set(gnss_config->timeout);
 
@@ -145,21 +140,5 @@ int method_gnss_location_get(const struct loc_method_config *config)
 
 	LOG_DBG("GNSS started");
 
-	gnss_fix_interval = interval;
-
 	return err;
-}
-
-int method_gnss_cancel(void)
-{
-	int err = nrf_modem_gnss_stop();
-	if (!err) {
-		LOG_DBG("GNSS stopped");
-	} else if (err == NRF_EPERM) {
-		LOG_ERR("GNSS is not running");
-	} else {
-		LOG_ERR("Failed to stop GNSS");
-	}
-
-	return -err;
 }
