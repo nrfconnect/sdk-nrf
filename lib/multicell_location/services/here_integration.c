@@ -132,8 +132,11 @@ const char *location_service_get_certificate(void)
 }
 
 int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
+				      const char *const device_id,
 				      char *buf, size_t buf_len)
 {
+	ARG_UNUSED(device_id);
+
 	int len;
 	size_t neighbors_to_use =
 		MIN(CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS, cell_data->ncells_count);

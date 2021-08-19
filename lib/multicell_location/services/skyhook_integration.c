@@ -148,6 +148,7 @@ static int adjust_rsrp(int input)
 }
 
 int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
+				      const char *const device_id,
 				      char *buf, size_t buf_len)
 {
 	int len;
@@ -155,6 +156,7 @@ int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
 	int err;
 	char imei[20];
 	char timing_advance[30];
+	char *dev_id = device_id ? (char *)device_id : imei;
 	size_t neighbors_to_use =
 		MIN(CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS, cell_data->ncells_count);
 
@@ -173,20 +175,22 @@ int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
 		return err;
 	}
 
-	err = modem_info_string_get(MODEM_INFO_IMEI, imei, sizeof(imei));
-	if (err < 0) {
-		LOG_ERR("Failed to get IMEI, error: %d", err);
-		LOG_WRN("Falling back to uptime as user ID");
+	if (device_id == NULL) {
+		err = modem_info_string_get(MODEM_INFO_IMEI, imei, sizeof(imei));
+		if (err < 0) {
+			LOG_ERR("Failed to get IMEI, error: %d", err);
+			LOG_WRN("Falling back to uptime as user ID");
 
-		len = snprintk(imei, sizeof(imei), "%d", k_cycle_get_32());
-		if ((len < 0) || (len >= sizeof(imei))) {
-			LOG_ERR("Too small buffer for IMEI buffer");
-			return -ENOMEM;
+			len = snprintk(imei, sizeof(imei), "%d", k_cycle_get_32());
+			if ((len < 0) || (len >= sizeof(imei))) {
+				LOG_ERR("Too small buffer for IMEI buffer");
+				return -ENOMEM;
+			}
+
+		} else {
+			/* Null-terminate the IMEI. */
+			imei[15] = '\0';
 		}
-
-	} else {
-		/* Null-terminate the IMEI. */
-		imei[15] = '\0';
 	}
 
 	err = lte_lc_lte_mode_get(&mode);
@@ -223,7 +227,7 @@ int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
 			return -ENOMEM;
 		}
 
-		len = snprintk(buf, buf_len, HTTP_REQUEST_HEADER "%s", imei, strlen(body), body);
+		len = snprintk(buf, buf_len, HTTP_REQUEST_HEADER "%s", dev_id, strlen(body), body);
 		if ((len < 0) || (len >= buf_len)) {
 			LOG_ERR("Too small buffer for HTTP request body");
 			return -ENOMEM;
@@ -279,7 +283,7 @@ int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
 		return -ENOMEM;
 	}
 
-	len = snprintk(buf, buf_len, HTTP_REQUEST_HEADER "%s", imei, strlen(body), body);
+	len = snprintk(buf, buf_len, HTTP_REQUEST_HEADER "%s", dev_id, strlen(body), body);
 	if ((len < 0) || (len >= buf_len)) {
 		LOG_ERR("Too small buffer for HTTP request");
 		return -ENOMEM;

@@ -5,42 +5,15 @@
  */
 
 #include <zephyr.h>
-#include <modem/lte_lc.h>
-#include <cJSON.h>
-#include <cJSON_os.h>
-#include <modem/at_cmd.h>
-
+#include <modem/modem_jwt.h>
+#include <net/nrf_cloud_rest.h>
 #include "location_service.h"
 
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(multicell_location_nrf_cloud, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
-#define HOSTNAME CONFIG_MULTICELL_LOCATION_HOSTNAME
-
-/* Length of nrf9160 device IMEI */
-#define IMEI_LEN 15
-
-BUILD_ASSERT(sizeof(CONFIG_MULTICELL_LOCATION_NRF_CLOUD_API_KEY) > 1,
-	     "API key must be configured");
-#define API_KEY CONFIG_MULTICELL_LOCATION_NRF_CLOUD_API_KEY
-
-#define REQUEST_PARAMETERS							\
-	"?deviceIdentifier=%s"							\
-	"&mcc=%d"								\
-	"&mnc=%d"								\
-	"&tac=%d"								\
-	"&eci=%d"								\
-	"&format=json"
-
-#define HTTP_REQUEST_HEADER							\
-	"GET /v1/location/single-cell" REQUEST_PARAMETERS " HTTP/1.1\r\n"	\
-	"Host: "HOSTNAME"\r\n"							\
-	"Authorization: Bearer "API_KEY"\r\n"					\
-	"Connection: close\r\n"							\
-	"Content-Type: application/json\r\n\r\n"
-
-BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
+#define HOSTNAME CONFIG_NRF_CLOUD_REST_HOST_NAME
 
 /* TLS certificate:
  *	CN=Starfield Services Root Certificate Authority - G2
@@ -89,121 +62,51 @@ const char *location_service_get_certificate(void)
 	return tls_certificate;
 }
 
-int location_service_generate_request(const struct lte_lc_cells_info *cell_data,
-				      char *buf, size_t buf_len)
+int location_service_get_cell_location(const struct lte_lc_cells_info *cell_data,
+				       const char * const device_id,
+				       char * const rcv_buf, const size_t rcv_buf_len,
+				       struct multicell_location *const location)
 {
-	int len;
 	int err;
-	char device_id[20];
+	struct nrf_cloud_cell_pos_result result;
+	struct jwt_data jwt = {
+		.subject = device_id,
+		.audience = NULL,
+		.exp_delta_s = (5 * 60),
+		.sec_tag = CONFIG_MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG,
+		.key = JWT_KEY_TYPE_CLIENT_PRIV,
+		.alg = JWT_ALG_TYPE_ES256
+	};
+	struct nrf_cloud_rest_context rest_ctx = {
+		.connect_socket = -1,
+		.keep_alive = false,
+		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
+		.rx_buf = rcv_buf,
+		.rx_buf_len = rcv_buf_len,
+		.fragment_size = 0
+	};
 
-	if ((cell_data == NULL) || (buf == NULL) || (buf_len == 0)) {
-		return -EINVAL;
-	}
+	const struct nrf_cloud_rest_cell_pos_request loc_req = {
+		.net_info = (struct lte_lc_cells_info *)cell_data
+	};
 
-	if (cell_data->current_cell.id == 0) {
-		LOG_WRN("No cells were found");
-		return -ENOENT;
-	}
-
-	/* Retrieve device IMEI from modem. */
-	err = at_cmd_write("AT+CGSN", device_id, sizeof(device_id), NULL);
+	err = modem_jwt_generate(&jwt);
 	if (err) {
-		LOG_ERR("Not able to return device IMEI from modem");
+		LOG_ERR("Failed to generate JWT, error: %d", err);
 		return err;
 	}
 
-	/* Set null character at the end of the device IMEI. */
-	device_id[IMEI_LEN] = 0;
+	rest_ctx.auth = jwt.jwt_buf;
 
-	len = snprintk(buf, buf_len, HTTP_REQUEST_HEADER,
-		       device_id,
-		       cell_data->current_cell.mcc,
-		       cell_data->current_cell.mnc,
-		       cell_data->current_cell.tac,
-		       cell_data->current_cell.id);
-	if ((len < 0) || (len >= buf_len)) {
-		LOG_ERR("Too small buffer for HTTP request");
-		return -ENOMEM;
+	err = nrf_cloud_rest_cell_pos_get(&rest_ctx, &loc_req, &result);
+
+	modem_jwt_free(jwt.jwt_buf);
+
+	if (!err) {
+		location->accuracy = (double)result.unc;
+		location->latitude = result.lat;
+		location->longitude = result.lon;
 	}
-
-	return 0;
-}
-
-int location_service_parse_response(const char *response, struct multicell_location *location)
-{
-	int err;
-	struct cJSON *root_obj, *lat_obj, *lng_obj, *accuracy_obj;
-	char *json_start, *http_status;
-	static bool cjson_is_init;
-
-	if ((response == NULL) || (location == NULL)) {
-		return -EINVAL;
-	}
-
-	if (!cjson_is_init) {
-		cJSON_Init();
-
-		cjson_is_init = true;
-	}
-
-	/* The expected response format is the following:
-	 *
-	 * HTTP/1.1 <HTTP status, 200 OK if successful>
-	 * <Additional HTTP header elements>
-	 * <\r\n\r\n>
-	 * {"lat":<latitude>,"lon":<longitude>,"alt":<altitude>,"uncertainty":<uncertainty>}
-	 */
-
-	http_status = strstr(response, "HTTP/1.1 200");
-	if (http_status == NULL) {
-		LOG_ERR("HTTP status was not \"200\"");
-		return -1;
-	}
-
-	json_start = strstr(response, "\r\n\r\n");
-	if (json_start == NULL) {
-		LOG_ERR("No payload found");
-		return -1;
-	}
-
-	root_obj = cJSON_Parse(json_start);
-	if (root_obj == NULL) {
-		LOG_ERR("Could not parse JSON in payload");
-		return -1;
-	}
-
-	lat_obj = cJSON_GetObjectItemCaseSensitive(root_obj, "lat");
-	if (lat_obj == NULL) {
-		LOG_DBG("No 'lat' object found");
-
-		err = -1;
-		goto clean_exit;
-	}
-
-	lng_obj = cJSON_GetObjectItemCaseSensitive(root_obj, "lon");
-	if (lng_obj == NULL) {
-		LOG_DBG("No 'lon' object found");
-
-		err = -1;
-		goto clean_exit;
-	}
-
-	accuracy_obj = cJSON_GetObjectItemCaseSensitive(root_obj, "uncertainty");
-	if (accuracy_obj == NULL) {
-		LOG_DBG("No 'uncertainty' object found");
-
-		err = -1;
-		goto clean_exit;
-	}
-
-	location->latitude = lat_obj->valuedouble;
-	location->longitude = lng_obj->valuedouble;
-	location->accuracy = accuracy_obj->valuedouble;
-
-	err = 0;
-
-clean_exit:
-	cJSON_Delete(root_obj);
 
 	return err;
 }
