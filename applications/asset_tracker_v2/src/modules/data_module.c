@@ -672,8 +672,29 @@ static int get_modem_info(struct modem_param_info *const modem_info)
 	return 0;
 }
 
+/* Converts the A-GPS data request from GNSS API to GPS driver format. */
+static void agps_request_convert(
+	struct gps_agps_request *dest,
+	const struct nrf_modem_gnss_agps_data_frame *src)
+{
+	dest->sv_mask_ephe = src->sv_mask_ephe;
+	dest->sv_mask_alm = src->sv_mask_alm;
+	dest->utc = src->data_flags &
+		NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST ? 1 : 0;
+	dest->klobuchar = src->data_flags &
+		NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST ? 1 : 0;
+	dest->nequick = src->data_flags &
+		NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST ? 1 : 0;
+	dest->system_time_tow = src->data_flags &
+		NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST ? 1 : 0;
+	dest->position = src->data_flags &
+		NRF_MODEM_GNSS_AGPS_POSITION_REQUEST ? 1 : 0;
+	dest->integrity = src->data_flags &
+		NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST ? 1 : 0;
+}
+
 /**
- * @brief Combine and encode modem network parameters togheter with the incoming A-GPS data request
+ * @brief Combine and encode modem network parameters together with the incoming A-GPS data request
  *	  types to form the A-GPS request.
  *
  * @param[in] incoming_request Pointer to a structure containing A-GPS data types that has been
@@ -681,28 +702,31 @@ static int get_modem_info(struct modem_param_info *const modem_info)
  *
  * @return 0 on success, otherwise a negative error code indicating reason of failure.
  */
-static int agps_request_encode(struct gps_agps_request *incoming_request)
+static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_request)
 {
 	int err;
 	struct cloud_codec_data codec = {0};
 	static struct modem_param_info modem_info = {0};
-	static struct cloud_data_agps_request agps_request = {0};
+	struct gps_agps_request agps_request;
+	static struct cloud_data_agps_request cloud_agps_request = {0};
 
 	err = get_modem_info(&modem_info);
 	if (err) {
 		return err;
 	}
 
-	agps_request.mcc = modem_info.network.mcc.value;
-	agps_request.mnc = modem_info.network.mnc.value;
-	agps_request.cell = modem_info.network.cellid_dec;
-	agps_request.area = modem_info.network.area_code.value;
-	agps_request.queued = true;
+	cloud_agps_request.mcc = modem_info.network.mcc.value;
+	cloud_agps_request.mnc = modem_info.network.mnc.value;
+	cloud_agps_request.cell = modem_info.network.cellid_dec;
+	cloud_agps_request.area = modem_info.network.area_code.value;
+	cloud_agps_request.queued = true;
 
-	BUILD_ASSERT(sizeof(agps_request.request) == sizeof(*incoming_request));
-	memcpy(&agps_request.request, incoming_request, sizeof(agps_request.request));
+	agps_request_convert(&agps_request, incoming_request);
 
-	err = cloud_codec_encode_agps_request(&codec, &agps_request);
+	BUILD_ASSERT(sizeof(cloud_agps_request.request) == sizeof(agps_request));
+	memcpy(&cloud_agps_request.request, &agps_request, sizeof(cloud_agps_request.request));
+
+	err = cloud_codec_encode_agps_request(&codec, &cloud_agps_request);
 	switch (err) {
 	case 0:
 		LOG_DBG("A-GPS request encoded successfully");
@@ -970,33 +994,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 	LOG_DBG("No new values in incoming device configuration update message");
 }
 
-#if defined(CONFIG_AGPS) && (defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_AGPS_SRC_SUPL))
-/* Converts the A-GPS data request from the GPS module to the GNSS API format. */
-static void agps_request_convert(struct nrf_modem_gnss_agps_data_frame *dest,
-				 const struct gps_agps_request *src)
-{
-	dest->sv_mask_ephe = src->sv_mask_ephe;
-	dest->sv_mask_alm = src->sv_mask_alm;
-	dest->data_flags = 0;
-
-	if (src->utc) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST;
-	}
-	if (src->klobuchar) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST;
-	}
-	if (src->system_time_tow) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
-	}
-	if (src->position) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
-	}
-	if (src->integrity) {
-		dest->data_flags |= NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
-	}
-}
-#endif /* CONFIG_AGPS && (CONFIG_NRF_CLOUD_MQTT || CONFIG_AGPS_SRC_SUPL) */
-
 /**
  * @brief Function that requests A-GPS and P-GPS data upon receiving a request from the GPS module.
  *	  If both A-GPS and P-GPS is enabled. A-GPS will take precedence.
@@ -1006,7 +1003,7 @@ static void agps_request_convert(struct nrf_modem_gnss_agps_data_frame *dest,
  *
  * @return 0 on success, otherwise a negative error code indicating reason of failure.
  */
-static void agps_request_handle(struct gps_agps_request *incoming_request)
+static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_request)
 {
 	int err;
 
@@ -1024,11 +1021,7 @@ static void agps_request_handle(struct gps_agps_request *incoming_request)
 	 * selected as the A-GPS source via the CONFIG_AGPS_SRC_NRF_CLOUD option.
 	 */
 #if defined(CONFIG_AGPS) && (defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_AGPS_SRC_SUPL))
-	struct nrf_modem_gnss_agps_data_frame request;
-
-	agps_request_convert(&request, incoming_request);
-
-	err = agps_request_send(request, AGPS_SOCKET_NOT_PROVIDED);
+	err = agps_request_send(*incoming_request, AGPS_SOCKET_NOT_PROVIDED);
 	if (err) {
 		LOG_WRN("Failed to request A-GPS data, error: %d", err);
 		LOG_WRN("This is expected to fail if we are not in a connected state");
@@ -1316,7 +1309,6 @@ static void on_all_states(struct data_msg_data *msg)
 			new_gps_data.pvt.hdg = msg->module.gps.data.gps.pvt.heading;
 			new_gps_data.pvt.lat = msg->module.gps.data.gps.pvt.latitude;
 			new_gps_data.pvt.longi = msg->module.gps.data.gps.pvt.longitude;
-			new_gps_data.pvt.spd = msg->module.gps.data.gps.pvt.speed;
 			new_gps_data.pvt.spd = msg->module.gps.data.gps.pvt.speed;
 
 		};

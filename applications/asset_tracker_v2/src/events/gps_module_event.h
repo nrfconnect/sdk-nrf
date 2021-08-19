@@ -13,7 +13,7 @@
  * @{
  */
 
-#include <drivers/gps.h>
+#include <nrf_modem_gnss.h>
 
 #include "event_manager.h"
 
@@ -66,7 +66,7 @@ struct gps_module_event {
 
 	union {
 		struct gps_module_data gps;
-		struct gps_agps_request agps_request;
+		struct nrf_modem_gnss_agps_data_frame agps_request;
 		/* Module ID, used when acknowledging shutdown requests. */
 		uint32_t id;
 		int err;

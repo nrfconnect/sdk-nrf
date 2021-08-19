@@ -5,11 +5,11 @@
  */
 
 #include <zephyr.h>
-#include <drivers/gps.h>
 #include <stdio.h>
 #include <date_time.h>
 #include <event_manager.h>
-#include <drivers/gps.h>
+#include <modem/at_cmd.h>
+#include <nrf_modem_gnss.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_GPS_MODULE_PGPS_STORE_LOCATION)
 #include <net/nrf_cloud_pgps.h>
 #endif
@@ -25,7 +25,13 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_GPS_MODULE_LOG_LEVEL);
 
-#define GPS_TIMEOUT_DEFAULT 60
+#define GNSS_TIMEOUT_DEFAULT	     60
+/* Timeout (in seconds) for determining that GNSS search has stopped because of a timeout. Used
+ * with pre-v1.3.0 MFWs, which do not support the sleep events.
+ */
+#define GNSS_INACTIVITY_TIMEOUT	     5
+#define GNSS_EVENT_THREAD_STACK_SIZE 768
+#define GNSS_EVENT_THREAD_PRIORITY   5
 
 struct gps_msg_data {
 	union {
@@ -49,16 +55,13 @@ static enum sub_state_type {
 	SUB_STATE_SEARCH
 } sub_state;
 
-/* GPS device. Used to identify the GPS driver in the sensor API. */
-static const struct device *gps_dev;
+static uint16_t gnss_timeout = GNSS_TIMEOUT_DEFAULT;
 
-/* nRF9160 GPS driver configuration. */
-static struct gps_config gps_cfg = {
-	.nav_mode = GPS_NAV_MODE_SINGLE_FIX,
-	.power_mode = GPS_POWER_MODE_DISABLED,
-	.interval = 0,
-	.timeout = GPS_TIMEOUT_DEFAULT
-};
+static struct nrf_modem_gnss_pvt_data_frame pvt_data;
+static struct nrf_modem_gnss_nmea_data_frame nmea_data;
+static struct nrf_modem_gnss_agps_data_frame agps_data;
+
+K_MSGQ_DEFINE(event_msgq, sizeof(int), 10, 4);
 
 static struct module_data self = {
 	.name = "gps",
@@ -70,9 +73,10 @@ static struct module_data self = {
 static void message_handler(struct gps_msg_data *data);
 static void search_start(void);
 static void inactive_send(void);
-static void time_set(struct gps_pvt *gps_data);
-static void data_send_pvt(struct gps_pvt *gps_data);
-static void data_send_nmea(struct gps_nmea *gps_data);
+static void time_set(void);
+static void data_send_pvt(void);
+static void data_send_nmea(void);
+static void print_pvt(void);
 
 /* Convenience functions used in internal state handling. */
 static char *state2str(enum state_type new_state)
@@ -171,84 +175,158 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-static void gps_event_handler(const struct device *dev, struct gps_event *evt)
+static void inactivity_timeout_handler(struct k_timer *timer_id)
 {
-	switch (evt->type) {
-	case GPS_EVT_SEARCH_STARTED:
-		LOG_DBG("GPS_EVT_SEARCH_STARTED");
-		break;
-	case GPS_EVT_SEARCH_STOPPED:
-		LOG_DBG("GPS_EVT_SEARCH_STOPPED");
-		break;
-	case GPS_EVT_SEARCH_TIMEOUT:
-		LOG_DBG("GPS_EVT_SEARCH_TIMEOUT");
-		SEND_EVENT(gps, GPS_EVT_TIMEOUT);
+	/* Simulate a sleep event from GNSS with older MFWs. */
+	int event = NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT;
 
-		/* Wrap sending of GPS_EVT_INACTIVE to avoid macro redefinition errors. */
-		inactive_send();
-		break;
-	case GPS_EVT_PVT:
-		/* Don't spam logs */
-		break;
-	case GPS_EVT_PVT_FIX:
-		LOG_DBG("GPS_EVT_PVT_FIX");
-		time_set(&evt->pvt);
-		inactive_send();
+	k_msgq_put(&event_msgq, &event, K_NO_WAIT);
+}
 
-#if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_GPS_MODULE_PGPS_STORE_LOCATION)
-		nrf_cloud_pgps_set_location(evt->pvt.latitude, evt->pvt.longitude);
-#endif
+static K_TIMER_DEFINE(inactivity_timer, inactivity_timeout_handler, NULL);
 
-		if (IS_ENABLED(CONFIG_GPS_MODULE_PVT)) {
-			data_send_pvt(&evt->pvt);
-		}
-		break;
-	case GPS_EVT_NMEA_FIX:
-		LOG_DBG("GPS_EVT_NMEA_FIX");
+static void gnss_event_handler(int event)
+{
+	int err;
 
-		if (IS_ENABLED(CONFIG_GPS_MODULE_NMEA)) {
-			data_send_nmea(&evt->nmea);
-		}
-		break;
-	case GPS_EVT_NMEA:
-		/* Don't spam logs */
-		break;
-	case GPS_EVT_OPERATION_BLOCKED:
-		LOG_DBG("GPS_EVT_OPERATION_BLOCKED");
-		break;
-	case GPS_EVT_OPERATION_UNBLOCKED:
-		LOG_DBG("GPS_EVT_OPERATION_UNBLOCKED");
-		break;
-	case GPS_EVT_AGPS_DATA_NEEDED:
-		LOG_DBG("GPS_EVT_AGPS_DATA_NEEDED");
-		struct gps_module_event *gps_module_event =
-				new_gps_module_event();
-
-		gps_module_event->data.agps_request = evt->agps_request;
-		gps_module_event->type = GPS_EVT_AGPS_NEEDED;
-		EVENT_SUBMIT(gps_module_event);
-		break;
-	case GPS_EVT_ERROR: {
-		LOG_ERR("GPS_EVT_ERROR");
-		SEND_ERROR(gps, GPS_EVT_ERROR_CODE, evt->error);
-		break;
-	}
-	default:
-		break;
+	/* Write the event into a message queue, processing is done in a separate thread. */
+	err = k_msgq_put(&event_msgq, &event, K_NO_WAIT);
+	if (err) {
+		SEND_ERROR(gps, GPS_EVT_ERROR_CODE, err);
 	}
 }
 
+/* GNSS event handler thread. */
+static void gnss_event_thread_fn(void)
+{
+	int err;
+	int event;
+	static bool got_fix;
+
+	while (true) {
+		k_msgq_get(&event_msgq, &event, K_FOREVER);
+
+		switch (event) {
+		case NRF_MODEM_GNSS_EVT_PVT:
+			/* Don't spam logs. */
+			err = nrf_modem_gnss_read(&pvt_data,
+						  sizeof(struct nrf_modem_gnss_pvt_data_frame),
+						  NRF_MODEM_GNSS_DATA_PVT);
+			if (err) {
+				LOG_WRN("Reading PVT data from GNSS failed, error: %d", err);
+				break;
+			}
+
+			if (pvt_data.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
+				k_timer_stop(&inactivity_timer);
+
+				got_fix = true;
+
+				inactive_send();
+				time_set();
+
+#if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_GPS_MODULE_PGPS_STORE_LOCATION)
+				nrf_cloud_pgps_set_location(pvt_data.latitude, pvt_data.longitude);
+#endif
+
+				if (IS_ENABLED(CONFIG_GPS_MODULE_PVT)) {
+					data_send_pvt();
+				}
+			} else {
+				k_timer_start(&inactivity_timer,
+					K_SECONDS(GNSS_INACTIVITY_TIMEOUT),
+					K_NO_WAIT);
+
+				got_fix = false;
+			}
+
+			print_pvt();
+
+			break;
+		case NRF_MODEM_GNSS_EVT_FIX:
+			LOG_DBG("NRF_MODEM_GNSS_EVT_FIX");
+			break;
+		case NRF_MODEM_GNSS_EVT_NMEA:
+			/* Don't spam logs. */
+			if (IS_ENABLED(CONFIG_GPS_MODULE_NMEA) && got_fix) {
+				err = nrf_modem_gnss_read(
+						nmea_data.nmea_str,
+						sizeof(struct nrf_modem_gnss_nmea_data_frame),
+						NRF_MODEM_GNSS_DATA_NMEA);
+				if (err) {
+					LOG_WRN("Reading NMEA data from GNSS failed, error: %d",
+						err);
+					break;
+				}
+
+				data_send_nmea();
+			}
+			break;
+		case NRF_MODEM_GNSS_EVT_AGPS_REQ:
+			LOG_DBG("NRF_MODEM_GNSS_EVT_AGPS_REQ");
+			err = nrf_modem_gnss_read(&agps_data,
+						  sizeof(struct nrf_modem_gnss_agps_data_frame),
+						  NRF_MODEM_GNSS_DATA_AGPS_REQ);
+			if (err) {
+				LOG_WRN("Reading A-GPS req data from GNSS failed, error: %d", err);
+				break;
+			}
+
+			LOG_DBG("Requested A-GPS data: ephe 0x%08x, alm 0x%08x, data_flags 0x%02x",
+				agps_data.sv_mask_ephe,
+				agps_data.sv_mask_alm,
+				agps_data.data_flags);
+
+			struct gps_module_event *gps_module_event = new_gps_module_event();
+
+			gps_module_event->data.agps_request = agps_data;
+			gps_module_event->type = GPS_EVT_AGPS_NEEDED;
+			EVENT_SUBMIT(gps_module_event);
+			break;
+		case NRF_MODEM_GNSS_EVT_BLOCKED:
+			LOG_DBG("NRF_MODEM_GNSS_EVT_BLOCKED");
+			break;
+		case NRF_MODEM_GNSS_EVT_UNBLOCKED:
+			LOG_DBG("NRF_MODEM_GNSS_EVT_UNBLOCKED");
+			break;
+		case NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP:
+			LOG_DBG("NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP");
+			break;
+		case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
+			LOG_DBG("NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT");
+			k_timer_stop(&inactivity_timer);
+			SEND_EVENT(gps, GPS_EVT_TIMEOUT);
+
+			/* Wrap sending of GPS_EVT_INACTIVE to avoid macro redefinition errors. */
+			inactive_send();
+			break;
+		case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX:
+			LOG_DBG("NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX");
+			break;
+		case NRF_MODEM_GNSS_EVT_REF_ALT_EXPIRED:
+			LOG_DBG("NRF_MODEM_GNSS_EVT_REF_ALT_EXPIRED");
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+K_THREAD_DEFINE(gnss_event_thread, GNSS_EVENT_THREAD_STACK_SIZE,
+		gnss_event_thread_fn, NULL, NULL, NULL,
+		K_PRIO_PREEMPT(GNSS_EVENT_THREAD_PRIORITY), 0, 0);
+
 /* Static module functions. */
-static void data_send_pvt(struct gps_pvt *gps_data)
+static void data_send_pvt(void)
 {
 	struct gps_module_event *gps_module_event = new_gps_module_event();
 
-	gps_module_event->data.gps.pvt.longitude = gps_data->longitude;
-	gps_module_event->data.gps.pvt.latitude = gps_data->latitude;
-	gps_module_event->data.gps.pvt.altitude = gps_data->altitude;
-	gps_module_event->data.gps.pvt.accuracy = gps_data->accuracy;
-	gps_module_event->data.gps.pvt.speed = gps_data->speed;
-	gps_module_event->data.gps.pvt.heading = gps_data->heading;
+	gps_module_event->data.gps.pvt.longitude = pvt_data.longitude;
+	gps_module_event->data.gps.pvt.latitude = pvt_data.latitude;
+	gps_module_event->data.gps.pvt.altitude = pvt_data.altitude;
+	gps_module_event->data.gps.pvt.accuracy = pvt_data.accuracy;
+	gps_module_event->data.gps.pvt.speed = pvt_data.speed;
+	gps_module_event->data.gps.pvt.heading = pvt_data.heading;
 	gps_module_event->data.gps.timestamp = k_uptime_get();
 	gps_module_event->type = GPS_EVT_DATA_READY;
 	gps_module_event->data.gps.format = GPS_MODULE_DATA_FORMAT_PVT;
@@ -256,11 +334,11 @@ static void data_send_pvt(struct gps_pvt *gps_data)
 	EVENT_SUBMIT(gps_module_event);
 }
 
-static void data_send_nmea(struct gps_nmea *gps_data)
+static void data_send_nmea(void)
 {
 	struct gps_module_event *gps_module_event = new_gps_module_event();
 
-	strncpy(gps_module_event->data.gps.nmea, gps_data->buf,
+	strncpy(gps_module_event->data.gps.nmea, nmea_data.nmea_str,
 		sizeof(gps_module_event->data.gps.nmea) - 1);
 
 	gps_module_event->data.gps.nmea[sizeof(gps_module_event->data.gps.nmea) - 1] = '\0';
@@ -271,13 +349,63 @@ static void data_send_nmea(struct gps_nmea *gps_data)
 	EVENT_SUBMIT(gps_module_event);
 }
 
+static void print_pvt(void)
+{
+	if (pvt_data.sv[0].sv == 0) {
+		LOG_DBG("No tracked satellites");
+		return;
+	}
+
+	LOG_DBG("Tracked satellites:");
+
+	for (int i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
+		if (pvt_data.sv[i].sv == 0) {
+			break;
+		}
+
+		struct nrf_modem_gnss_sv *sv_data = &pvt_data.sv[i];
+
+		LOG_DBG("PRN: %2d, C/N0: %4.1f, in fix: %d, unhealthy: %d",
+			sv_data->sv,
+			sv_data->cn0 / 10.0,
+			sv_data->flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX ? 1 : 0,
+			sv_data->flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY ? 1 : 0);
+	}
+}
+
 static void search_start(void)
 {
 	int err;
 
-	err = gps_start(gps_dev, &gps_cfg);
+	/* When GNSS is used in single fix mode, it needs to be stopped before it can be
+	 * started again.
+	 */
+	(void)nrf_modem_gnss_stop();
+
+	/* Configure GNSS for single fix mode. */
+	err = nrf_modem_gnss_fix_interval_set(0);
 	if (err) {
-		LOG_WRN("Failed to start GPS, error: %d", err);
+		LOG_WRN("Failed to set GNSS fix interval, error: %d", err);
+		return;
+	}
+
+	err = nrf_modem_gnss_fix_retry_set(gnss_timeout);
+	if (err) {
+		LOG_WRN("Failed to set GNSS timeout, error: %d", err);
+		return;
+	}
+
+	if (IS_ENABLED(CONFIG_GPS_MODULE_NMEA)) {
+		err = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_GGA_MASK);
+		if (err) {
+			LOG_ERR("Failed to set GNSS NMEA mask, error %d", err);
+			return;
+		}
+	}
+
+	err = nrf_modem_gnss_start();
+	if (err) {
+		LOG_WRN("Failed to start GNSS, error: %d", err);
 		return;
 	}
 
@@ -289,18 +417,18 @@ static void inactive_send(void)
 	SEND_EVENT(gps, GPS_EVT_INACTIVE);
 }
 
-static void time_set(struct gps_pvt *gps_data)
+static void time_set(void)
 {
 	/* Change datetime.year and datetime.month to accommodate the
 	 * correct input format.
 	 */
 	struct tm gps_time = {
-		.tm_year = gps_data->datetime.year - 1900,
-		.tm_mon = gps_data->datetime.month - 1,
-		.tm_mday = gps_data->datetime.day,
-		.tm_hour = gps_data->datetime.hour,
-		.tm_min = gps_data->datetime.minute,
-		.tm_sec = gps_data->datetime.seconds,
+		.tm_year = pvt_data.datetime.year - 1900,
+		.tm_mon = pvt_data.datetime.month - 1,
+		.tm_mday = pvt_data.datetime.day,
+		.tm_hour = pvt_data.datetime.hour,
+		.tm_min = pvt_data.datetime.minute,
+		.tm_sec = pvt_data.datetime.seconds,
 	};
 
 	date_time_set(&gps_time);
@@ -318,19 +446,52 @@ static bool gps_data_requested(enum app_module_data_type *data_list,
 	return false;
 }
 
+static int lna_configure(void)
+{
+	int err;
+	const char *xmagpio_command = CONFIG_GPS_MODULE_AT_MAGPIO;
+	const char *xcoex0_command = CONFIG_GPS_MODULE_AT_COEX0;
+
+	LOG_DBG("MAGPIO command: %s", log_strdup(xmagpio_command));
+	LOG_DBG("COEX0 command: %s", log_strdup(xcoex0_command));
+
+	/* Make sure the AT command is not empty. */
+	if (xmagpio_command[0] != '\0') {
+		err = at_cmd_write(xmagpio_command, NULL, 0, NULL);
+		if (err) {
+			return err;
+		}
+	}
+
+	if (xcoex0_command[0] != '\0') {
+		err = at_cmd_write(xcoex0_command, NULL, 0, NULL);
+		if (err) {
+			return err;
+		}
+	}
+
+	return 0;
+}
+
 static int setup(void)
 {
 	int err;
 
-	gps_dev = device_get_binding(CONFIG_GPS_DEV_NAME);
-	if (gps_dev == NULL) {
-		LOG_ERR("Could not get %s device", CONFIG_GPS_DEV_NAME);
-		return -ENODEV;
+	err = lna_configure();
+	if (err) {
+		LOG_ERR("Failed to configure LNA, error %d", err);
+		return err;
 	}
 
-	err = gps_init(gps_dev, gps_event_handler);
+	err = nrf_modem_gnss_init();
 	if (err) {
-		LOG_ERR("Could not initialize GPS, error: %d", err);
+		LOG_ERR("Failed to initialize GNSS, error %d", err);
+		return err;
+	}
+
+	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
+	if (err) {
+		LOG_ERR("Failed to set GNSS event handler, error %d", err);
 		return err;
 	}
 
@@ -341,7 +502,7 @@ static int setup(void)
 static void on_state_init(struct gps_msg_data *msg)
 {
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_INIT)) {
-		gps_cfg.timeout = msg->module.data.data.cfg.gps_timeout;
+		gnss_timeout = msg->module.data.data.cfg.gps_timeout;
 		state_set(STATE_RUNNING);
 	}
 }
@@ -350,7 +511,7 @@ static void on_state_init(struct gps_msg_data *msg)
 static void on_state_running(struct gps_msg_data *msg)
 {
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_READY)) {
-		gps_cfg.timeout = msg->module.data.data.cfg.gps_timeout;
+		gnss_timeout = msg->module.data.data.cfg.gps_timeout;
 	}
 }
 
@@ -453,7 +614,7 @@ static void message_handler(struct gps_msg_data *msg)
 }
 
 EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, app_module_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
 EVENT_SUBSCRIBE(MODULE, data_module_event);
 EVENT_SUBSCRIBE(MODULE, util_module_event);
 EVENT_SUBSCRIBE(MODULE, gps_module_event);
