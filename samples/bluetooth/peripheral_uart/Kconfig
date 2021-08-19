@@ -40,4 +40,11 @@ config BT_NUS_UART_RX_WAIT_TIME
 	help
 	  Wait for RX complete event time in milliseconds
 
+config BT_NUS_UART_ASYNC_ADAPTER
+	bool "Enable UART async adapter"
+	select SERIAL_SUPPORT_ASYNC
+	help
+	  Enables asynchronous adapter for UART drives that supports only
+	  IRQ interface.
+
 endmenu
