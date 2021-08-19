@@ -166,6 +166,10 @@ void main(void)
 	}
 #endif
 
+#if defined(CONFIG_MOSH_LOCATION_API)
+	/* Location API should be initialized between lte_lc_init and before normal mode: */
+	location_ctrl_init();
+#endif
 #if defined(CONFIG_LTE_LINK_CONTROL) && defined(CONFIG_MOSH_LINK)
 	link_init();
 #endif
@@ -183,10 +187,6 @@ void main(void)
 	if (err) {
 		printk("Failed to initialize DK buttons library, error: %d", err);
 	}
-
-#if defined(CONFIG_MOSH_LOCATION_API)
-	location_ctrl_init();
-#endif
 
 	/* Application started successfully, mark image as OK to prevent
 	 * revert at next reboot.
