@@ -52,9 +52,6 @@ Example
    AT#XFOTA=1,"http://remote.host/fota/slm_app_update.bin"
    AT#XRESET
 
-   Abnormal download the same image twice, REVERT error
-   AT#XFOTA=1,"http://remote.host/fota/slm_app_update.bin"
-
    Erase previous image after FOTA
    AT#XFOTA=8
 
@@ -103,8 +100,6 @@ Unsolicited notification
   +-------------------------+----------------------------+-------------------------------------------------------------------------------+
   |``1`` (namely *Download*)| ``2`` (namely *CANCELLED*) | ``0`` - Downloading is cancelled before completion                            |
   +-------------------------+------------------------+---+-------------------------------------------------------------------------------+
-  |``5`` (namely *Complete*)| ``3`` (namely *REVERTED*)  | ``0`` - New application image has problem and MCUBOOT revert to current image |
-  +-------------------------+----------------------------+-------------------------------------------------------------------------------+
 
   The error codes can be the following:
 

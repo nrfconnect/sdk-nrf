@@ -615,7 +615,7 @@ void slm_at_uninit(void)
 	if (err) {
 		LOG_WRN("ICMP could not be uninitialized: %d", err);
 	}
-#if defined(CONFIG_SLM_GPS)
+#if defined(CONFIG_SLM_SMS)
 	err = slm_at_sms_uninit();
 	if (err) {
 		LOG_WRN("SMS could not be uninitialized: %d", err);

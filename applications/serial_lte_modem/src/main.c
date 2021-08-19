@@ -214,19 +214,28 @@ static void handle_nrf_modem_lib_init_ret(void)
 void handle_mcuboot_swap_ret(void)
 {
 	int err;
+
+	/** When a TEST image is swapped to primary partition and booted by MCUBOOT,
+	 * the API mcuboot_swap_type() will return BOOT_SWAP_TYPE_REVERT. By this type
+	 * MCUBOOT means that the TEST image is booted OK and, if it's not confirmed
+	 * next, it'll be swapped back to secondary partition and original application
+	 * image will be restored to the primary partition (so-called Revert).
+	 */
 	int type = mcuboot_swap_type();
 
 	fota_stage = FOTA_STAGE_COMPLETE;
 	switch (type) {
-	/** Swap failed because image to be run is not valid */
-	case BOOT_SWAP_TYPE_FAIL:
-		LOG_INF("BOOT_SWAP_TYPE_FAIL");
+	/** Attempt to boot the contents of slot 0. */
+	case BOOT_SWAP_TYPE_NONE:
+	/** Swap to slot 1. Absent a confirm command, revert back on next boot. */
+	case BOOT_SWAP_TYPE_TEST:
+	/** Swap to slot 1, and permanently switch to booting its contents. */
+	case BOOT_SWAP_TYPE_PERM:
 		fota_status = FOTA_STATUS_ERROR;
 		fota_info = -EBADF;
 		break;
-	/** Swap to slot 1. Absent a confirm command, revert back on next boot. */
-	case BOOT_SWAP_TYPE_TEST:
-		LOG_INF("BOOT_SWAP_TYPE_TEST");
+	/** Swap back to alternate slot. A confirm changes this state to NONE. */
+	case BOOT_SWAP_TYPE_REVERT:
 		err = boot_write_img_confirmed();
 		if (err) {
 			fota_status = FOTA_STATUS_ERROR;
@@ -235,17 +244,9 @@ void handle_mcuboot_swap_ret(void)
 			fota_status = FOTA_STATUS_OK;
 			fota_info = 0;
 		} break;
-	/** Swap back to alternate slot. A confirm changes this state to NONE. */
-	case BOOT_SWAP_TYPE_REVERT:
-		LOG_INF("BOOT_SWAP_TYPE_REVERT");
-		boot_write_img_confirmed();
-		fota_status = FOTA_STATUS_REVERTED;
-		fota_info = 0;
 		break;
-	/** Attempt to boot the contents of slot 0. */
-	case BOOT_SWAP_TYPE_NONE:
-	/** Swap to slot 1, and permanently switch to booting its contents. */
-	case BOOT_SWAP_TYPE_PERM:
+	/** Swap failed because image to be run is not valid */
+	case BOOT_SWAP_TYPE_FAIL:
 	default:
 		break;
 	}
