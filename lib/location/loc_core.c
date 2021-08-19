@@ -22,19 +22,36 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 static location_event_handler_t event_handler;
 
-/* Variables for storing information on currently handled location request */
-/** Event data for currently ongoing location request. */
+/***** Variables for storing information on currently handled location request *****/
+
+/** @brief Event data for currently ongoing location request. */
 static struct loc_event_data current_event_data;
-/** Configuration given for currently ongoing location request. */
+
+/** @brief Configuration given for currently ongoing location request. */
 static struct loc_config current_loc_config = { 0 };
-/** Method specific configuration. This is for reserving memory and this table is referred to in
+
+/** @brief Method specific configuration.
+ * @details This is for reserving memory and this table is referred to in
  * current_loc_config.methods.
  */
 static struct loc_method_config current_loc_config_methods[LOC_MAX_METHODS] = { 0 };
-/** Index to the current_loc_config_methods for the currently used method. */
+
+/** @brief Index to the current_loc_config_methods for the currently used method. */
 static int current_loc_method_index;
 
+/***** Work queue and work item definitions *****/
+
+#define LOC_CORE_STACK_SIZE 2048
+#define LOC_CORE_PRIORITY  5
+K_THREAD_STACK_DEFINE(loc_core_stack, LOC_CORE_STACK_SIZE);
+
+/** @brief Work queue for location library. Location methods can run their tasks in it. */
+struct k_work_q loc_core_work_q;
+
+/** @brief Handler for periodic location requests. */
 static void loc_core_periodic_work_fn(struct k_work *work);
+
+/** @brief Work item for periodic location requests. */
 K_WORK_DELAYABLE_DEFINE(loc_periodic_work, loc_core_periodic_work_fn);
 
 #if defined(CONFIG_LOCATION_METHOD_GNSS)
@@ -126,6 +143,13 @@ int loc_core_init(location_event_handler_t handler)
 	}
 
 	event_handler = handler;
+
+	k_work_queue_start(
+		&loc_core_work_q,
+		loc_core_stack,
+		K_THREAD_STACK_SIZEOF(loc_core_stack),
+		LOC_CORE_PRIORITY,
+		NULL);
 
 	for (int i = 0; i < LOC_MAX_METHODS; i++) {
 		if (methods_supported[i] != NULL) {
@@ -291,9 +315,16 @@ void loc_core_event_cb(const struct loc_location *location)
 	}
 
 	if (current_loc_config.interval > 0) {
-		/* TODO: Use own work queue k_work_schedule_for_queue */
-		k_work_schedule(&loc_periodic_work, K_SECONDS(current_loc_config.interval));
+		k_work_schedule_for_queue(
+			loc_core_work_queue_get(),
+			&loc_periodic_work,
+			K_SECONDS(current_loc_config.interval));
 	}
+}
+
+struct k_work_q *loc_core_work_queue_get(void)
+{
+	return &loc_core_work_q;
 }
 
 static void loc_core_periodic_work_fn(struct k_work *work)
