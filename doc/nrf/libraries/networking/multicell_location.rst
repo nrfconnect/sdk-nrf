@@ -47,12 +47,13 @@ The user must select nRF Cloud, HERE or Skyhook location services using one of t
 
 
 The next required step is to configure the authentication method.
-By default, API key is used for nRF Cloud, HERE and Skyhook.
-Depending on the selected service, one of the two options below must be configured:
+By default, API key is used for HERE and Skyhook.
+A JSON Web Token (JWT) signed by the device's private key is used for nRF Cloud.
+Depending on the selected service, one of the three options below must be configured:
 
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_API_KEY`
 *  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
 *  :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
+*  :kconfig:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG`
 
 Following are the options that can usually have default values:
 
@@ -65,7 +66,6 @@ Following are the options that can usually have default values:
 Limitations
 ***********
 
-*  nRF Cloud uses only the current cell when resolving the location.
 *  Retrieving the device's location is a blocking operation.
 
 Dependencies

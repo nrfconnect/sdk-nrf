@@ -29,10 +29,12 @@ config MULTICELL_LOCATION_SERVICE_NONE
 
 config MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
+	depends on NRF_CLOUD
+	depends on NRF_CLOUD_REST
+	depends on MODEM_JWT
 	help
-	  Use nRF Cloud location service. Note that the service currently
-	  supports the use of a single cell in requests.
-	  Cell measurements for the current cell will be used.
+	  Use nRF Cloud location service. If a device ID is not provided for
+	  a location request, the device's internal UUID will be used.
 
 config MULTICELL_LOCATION_SERVICE_HERE
 	bool "HERE location service"
@@ -42,7 +44,8 @@ config MULTICELL_LOCATION_SERVICE_HERE
 config MULTICELL_LOCATION_SERVICE_SKYHOOK
 	bool "Skyhook location service"
 	help
-	  Use Skyhook location service
+	  Use Skyhook location service. If a device ID is not provided for
+	  a location request, the device's IMEI will be used.
 endchoice
 
 if MULTICELL_LOCATION_SERVICE_HERE
@@ -113,12 +116,6 @@ config MULTICELL_LOCATION_SKYHOOK_API_KEY
 
 endif # MULTICELL_LOCATION_SERVICE_SKYHOOK
 
-config MULTICELL_LOCATION_NRF_CLOUD_API_KEY
-	depends on MULTICELL_LOCATION_SERVICE_NRF_CLOUD
-	string "nRF Cloud API key"
-	help
-	  nRF Cloud API key
-
 config MULTICELL_LOCATION_MAX_NEIGHBORS
 	int "Max number of neighbor cells"
 	range 0 17
@@ -139,16 +136,26 @@ config MULTICELL_LOCATION_HOSTNAME
 	default "pos.api.here.com" if MULTICELL_LOCATION_HERE_V1
 	default "positioning.hereapi.com" if MULTICELL_LOCATION_HERE_V2
 	default "global.skyhookwireless.com" if MULTICELL_LOCATION_SERVICE_SKYHOOK
-	default "api.nrfcloud.com" if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+	default NRF_CLOUD_REST_HOST_NAME if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	help
 	  Server hostname to use when connecting to the selected locations service
+
+if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+config MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG
+	int "Security tag for JWT signing"
+	default NRF_CLOUD_SEC_TAG
+	help
+	  Modem security tag which contains the JWT signing key for nRF Cloud.
+	  This will usually be the same value as MULTICELL_LOCATION_TLS_SEC_TAG.
+endif # MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 
 config MULTICELL_LOCATION_TLS_SEC_TAG
 	int "Security tag for TLS certificates"
 	default 175 if MULTICELL_LOCATION_SERVICE_HERE
 	default 176 if MULTICELL_LOCATION_SERVICE_SKYHOOK
-	default 177 if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+	default NRF_CLOUD_SEC_TAG if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	default -1
+	range NRF_CLOUD_SEC_TAG NRF_CLOUD_SEC_TAG if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	help
 	  Security tag where the required TLS certificates for the selected
 	  service will be stored. This sec tag will also be used to provision
@@ -156,6 +163,8 @@ config MULTICELL_LOCATION_TLS_SEC_TAG
 
 config MULTICELL_LOCATION_SEND_TIMEOUT
 	int "Send timeout, in seconds"
+	default NRF_CLOUD_REST_SEND_TIMEOUT if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+	range NRF_CLOUD_REST_SEND_TIMEOUT NRF_CLOUD_REST_SEND_TIMEOUT if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	default 60
 	help
 	  Sets the timeout duration in seconds to use when sending data.
@@ -163,6 +172,8 @@ config MULTICELL_LOCATION_SEND_TIMEOUT
 
 config MULTICELL_LOCATION_RECV_TIMEOUT
 	int "Receive timeout, in seconds"
+	default NRF_CLOUD_REST_RECV_TIMEOUT if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+	range NRF_CLOUD_REST_RECV_TIMEOUT NRF_CLOUD_REST_RECV_TIMEOUT if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	default 60
 	help
 	  Sets the timeout duration in seconds to use when receiving data.
@@ -171,6 +182,7 @@ config MULTICELL_LOCATION_RECV_TIMEOUT
 config MULTICELL_LOCATION_SEND_BUF_SIZE
 	int "Send buffer size"
 	default 2048 if MULTICELL_LOCATION_SERVICE_SKYHOOK
+	default 0 if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	default 1024
 	help
 	  Size of the buffer used to store the generated HTTP request that's sent

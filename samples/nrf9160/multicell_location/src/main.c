@@ -7,10 +7,25 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
+#include <modem/at_cmd.h>
 #include <dk_buttons_and_leds.h>
 #include <net/multicell_location.h>
 
 #include <logging/log.h>
+
+#define DEVICE_ID_MAX_LEN 64
+
+#if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_DEV_ID_IMEI)
+#define CGSN_RESPONSE_LENGTH 19
+#define IMEI_LEN 15
+#define DEV_ID_IMEI_LEN (sizeof(CONFIG_MULTICELL_LOCATION_SAMPLE_DEV_ID_IMEI_PREFIX) - 1 \
+			 + IMEI_LEN)
+BUILD_ASSERT(DEV_ID_IMEI_LEN <= DEVICE_ID_MAX_LEN,
+	"Device ID prefix length plus IMEI length must not exceed DEVICE_ID_MAX_LEN");
+#elif defined(CONFIG_MULTICELL_LOCATION_SAMPLE_DEV_ID_COMPILE_TIME)
+BUILD_ASSERT(sizeof(CONFIG_MULTICELL_LOCATION_SAMPLE_DEV_ID_COMPILE_TIME_STRING) > 1,
+	"Compile time device ID is not set");
+#endif
 
 LOG_MODULE_REGISTER(multicell_location_sample, CONFIG_MULTICELL_LOCATION_SAMPLE_LOG_LEVEL);
 
@@ -205,10 +220,53 @@ static void print_cell_data(void)
 	}
 }
 
+const char * const get_device_id(void)
+{
+#if defined(CONFIG_MULTICELL_LOCATION_SAMPLE_DEV_ID_RUNTIME)
+	/* TODO: Provide desired device ID string */
+	return "my_device_id";
+#elif defined(CONFIG_MULTICELL_LOCATION_SAMPLE_DEV_ID_COMPILE_TIME)
+	return CONFIG_MULTICELL_LOCATION_SAMPLE_DEV_ID_COMPILE_TIME_STRING;
+#elif defined(CONFIG_MULTICELL_LOCATION_SAMPLE_DEV_ID_IMEI)
+	int err;
+	char imei_buf[CGSN_RESPONSE_LENGTH + 1];
+	static char dev_id[DEVICE_ID_MAX_LEN + 1];
+
+	if (!IS_ENABLED(CONFIG_AT_CMD_SYS_INIT)) {
+		err = at_cmd_init();
+		if (err) {
+			LOG_ERR("at_cmd_init() failed, error: %d", err);
+			return NULL;
+		}
+	}
+
+	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
+	if (err) {
+		LOG_ERR("Failed to obtain IMEI, error: %d", err);
+		return NULL;
+	}
+
+	imei_buf[IMEI_LEN] = 0;
+
+	err = snprintf(dev_id, sizeof(dev_id), "%s%.*s",
+		       CONFIG_MULTICELL_LOCATION_SAMPLE_DEV_ID_IMEI_PREFIX,
+		       IMEI_LEN, imei_buf);
+	if (err <= 0 || err >= sizeof(dev_id)) {
+		LOG_ERR("Failed to format IMEI based device ID");
+		return NULL;
+	}
+
+	return dev_id;
+#elif defined(CONFIG_MULTICELL_LOCATION_SAMPLE_DEV_ID_NONE)
+	return NULL;
+#endif
+}
+
 void main(void)
 {
 	int err;
 	struct multicell_location location;
+	const char *device_id = NULL;
 
 	LOG_INF("Multicell location sample has started");
 
@@ -232,7 +290,7 @@ void main(void)
 		return;
 	}
 
-	LOG_INF("Connecting to LTE network, this may take several minutes...");
+	LOG_INF("Connecting to LTE network, this may take several minutes..");
 
 	k_sem_take(&lte_connected, K_FOREVER);
 
@@ -244,6 +302,9 @@ void main(void)
 		k_work_schedule(&periodic_search_work, K_NO_WAIT);
 	}
 
+	device_id = get_device_id();
+	LOG_INF("Device ID: %s", device_id ? device_id : "None");
+
 	while (true) {
 		k_sem_take(&cell_data_ready, K_FOREVER);
 
@@ -251,9 +312,9 @@ void main(void)
 			print_cell_data();
 		}
 
-		LOG_INF("Sending location request...");
+		LOG_INF("Sending location request..");
 
-		err = multicell_location_get(&cell_data, &location);
+		err = multicell_location_get(&cell_data, device_id, &location);
 		if (err) {
 			LOG_ERR("Failed to acquire location, error: %d", err);
 			continue;

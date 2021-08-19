@@ -45,6 +45,44 @@ config MULTICELL_LOCATION_SAMPLE_EDRX
 	help
 	  Request eDRX from the LTE network.
 
+menu "Device ID"
+choice
+	prompt "Unique device identifier to be used for location request."
+	default MULTICELL_LOCATION_SAMPLE_DEV_ID_NONE
+
+config MULTICELL_LOCATION_SAMPLE_DEV_ID_NONE
+	bool "No device ID will be specified"
+	help
+	  By not providing a device ID, the configured multicell service
+	  will use its default value if required.
+
+config MULTICELL_LOCATION_SAMPLE_DEV_ID_IMEI
+	depends on NRF_MODEM_LIB
+	bool "Use the device's IMEI with an optional prefix"
+
+config MULTICELL_LOCATION_SAMPLE_DEV_ID_COMPILE_TIME
+	bool "Compile time value"
+	help
+	  Use the configured device ID string.
+
+config MULTICELL_LOCATION_SAMPLE_DEV_ID_RUNTIME
+	bool "Runtime value"
+	help
+	  Application must provide a device ID string.
+endchoice
+
+if MULTICELL_LOCATION_SAMPLE_DEV_ID_IMEI
+config MULTICELL_LOCATION_SAMPLE_DEV_ID_IMEI_PREFIX
+	string "Prefix used when constructing device ID from the IMEI"
+	default "nrf-"
+endif
+
+if MULTICELL_LOCATION_SAMPLE_DEV_ID_COMPILE_TIME
+config MULTICELL_LOCATION_SAMPLE_DEV_ID_COMPILE_TIME_STRING
+	string "Device ID set at compile time"
+endif
+endmenu # Device ID
+
 module = MULTICELL_LOCATION_SAMPLE
 module-str = Multicell location sample
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
