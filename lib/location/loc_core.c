@@ -289,9 +289,6 @@ void loc_core_event_cb(const struct loc_location *location)
 				current_event_data.location.datetime.second,
 				current_event_data.location.datetime.ms);
 		}
-
-		event_handler(&current_event_data);
-
 	} else {
 		/* Do fallback to next preferred method */
 		previous_loc_method = current_event_data.method;
@@ -313,6 +310,8 @@ void loc_core_event_cb(const struct loc_location *location)
 			LOG_ERR("Location acquisition failed and fallbacks are also done");
 		}
 	}
+
+	event_handler(&current_event_data);
 
 	if (current_loc_config.interval > 0) {
 		k_work_schedule_for_queue(
