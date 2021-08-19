@@ -60,7 +60,7 @@ static void power_down_counter_reset(void)
 	if ((power_state == POWER_STATE_IDLE) &&
 	    check_if_power_state_allowed(POWER_MANAGER_LEVEL_SUSPENDED)) {
 		k_work_reschedule(&power_down_trigger, POWER_DOWN_TIMEOUT);
-		LOG_INF("Power down timer restarted");
+		LOG_DBG("Power down timer restarted");
 	}
 }
 
