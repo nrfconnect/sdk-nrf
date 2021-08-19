@@ -17,6 +17,11 @@ target_sources(app PRIVATE
   src/main.c
 )
 
+# Include UART ASYNC API adapter
+target_sources_ifdef(CONFIG_BT_NUS_UART_ASYNC_ADAPTER app PRIVATE
+  src/uart_async_adapter.c
+)
+
 # Preinitialization related to Thingy:53 DFU
 target_sources_ifdef(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP app PRIVATE
   boards/thingy53.c

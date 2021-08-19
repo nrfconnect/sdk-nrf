@@ -7,10 +7,12 @@
 /** @file
  *  @brief Nordic UART Bridge Service (NUS) sample
  */
+#include "uart_async_adapter.h"
 
 #include <zephyr/types.h>
 #include <zephyr.h>
 #include <drivers/uart.h>
+#include <usb/usb_device.h>
 
 #include <device.h>
 #include <soc.h>
@@ -77,6 +79,12 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NUS_VAL),
 };
 
+#if CONFIG_BT_NUS_UART_ASYNC_ADAPTER
+UART_ASYNC_ADAPTER_INST_DEFINE(async_adapter);
+#else
+static const struct device *const async_adapter;
+#endif
+
 static void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
 {
 	ARG_UNUSED(dev);
@@ -89,6 +97,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 
 	switch (evt->type) {
 	case UART_TX_DONE:
+		LOG_DBG("tx_done");
 		if ((evt->data.tx.len == 0) ||
 		    (!evt->data.tx.buf)) {
 			return;
@@ -118,6 +127,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		break;
 
 	case UART_RX_RDY:
+		LOG_DBG("rx_rdy");
 		buf = CONTAINER_OF(evt->data.rx.buf, struct uart_data_t, data);
 		buf->len += evt->data.rx.len;
 		buf_release = false;
@@ -135,6 +145,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		break;
 
 	case UART_RX_DISABLED:
+		LOG_DBG("rx_disabled");
 		buf = k_malloc(sizeof(*buf));
 		if (buf) {
 			buf->len = 0;
@@ -150,6 +161,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		break;
 
 	case UART_RX_BUF_REQUEST:
+		LOG_DBG("rx_buf_request");
 		buf = k_malloc(sizeof(*buf));
 		if (buf) {
 			buf->len = 0;
@@ -161,6 +173,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		break;
 
 	case UART_RX_BUF_RELEASED:
+		LOG_DBG("rx_buf_released");
 		buf = CONTAINER_OF(evt->data.rx_buf.buf, struct uart_data_t,
 				   data);
 		if (buf_release && (current_buf != evt->data.rx_buf.buf)) {
@@ -172,6 +185,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		break;
 
 	case UART_TX_ABORTED:
+			LOG_DBG("tx_aborted");
 			if (!aborted_buf) {
 				aborted_buf = (uint8_t *)evt->data.tx.buf;
 			}
@@ -206,6 +220,14 @@ static void uart_work_handler(struct k_work *item)
 	uart_rx_enable(uart, buf->data, sizeof(buf->data), UART_WAIT_FOR_RX);
 }
 
+static bool uart_test_async_api(const struct device *dev)
+{
+	const struct uart_driver_api *api =
+			(const struct uart_driver_api *)dev->api;
+
+	return (api->callback_set != NULL);
+}
+
 static int uart_init(void)
 {
 	int err;
@@ -218,6 +240,14 @@ static int uart_init(void)
 		return -ENXIO;
 	}
 
+	if (IS_ENABLED(CONFIG_USB)) {
+		err = usb_enable(NULL);
+		if (err) {
+			LOG_ERR("Failed to enable USB");
+			return err;
+		}
+	}
+
 	rx = k_malloc(sizeof(*rx));
 	if (rx) {
 		rx->len = 0;
@@ -227,9 +257,40 @@ static int uart_init(void)
 
 	k_work_init_delayable(&uart_work, uart_work_handler);
 
+
+	if (IS_ENABLED(CONFIG_BT_NUS_UART_ASYNC_ADAPTER) && !uart_test_async_api(uart)) {
+		/* Implement API adapter */
+		uart_async_adapter_init(async_adapter, uart);
+		uart = async_adapter;
+	}
+
 	err = uart_callback_set(uart, uart_cb, NULL);
 	if (err) {
+		LOG_ERR("Cannot initialize UART callback");
 		return err;
+	}
+
+	if (IS_ENABLED(CONFIG_UART_LINE_CTRL)) {
+		LOG_INF("Wait for DTR");
+		while (true) {
+			uint32_t dtr = 0;
+
+			uart_line_ctrl_get(uart, UART_LINE_CTRL_DTR, &dtr);
+			if (dtr) {
+				break;
+			}
+			/* Give CPU resources to low priority threads. */
+			k_sleep(K_MSEC(100));
+		}
+		LOG_INF("DTR set");
+		err = uart_line_ctrl_set(uart, UART_LINE_CTRL_DCD, 1);
+		if (err) {
+			LOG_WRN("Failed to set DCD, ret code %d", err);
+		}
+		err = uart_line_ctrl_set(uart, UART_LINE_CTRL_DSR, 1);
+		if (err) {
+			LOG_WRN("Failed to set DSR, ret code %d", err);
+		}
 	}
 
 	tx = k_malloc(sizeof(*tx));
