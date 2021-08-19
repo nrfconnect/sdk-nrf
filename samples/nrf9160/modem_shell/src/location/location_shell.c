@@ -276,6 +276,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	case LOCATION_CMD_GET: {
 		struct loc_config config = { 0 };
 		struct loc_method_config methods[LOC_MAX_METHODS] = { 0 };
+		struct loc_config *real_config = &config;
 
 		config.interval = interval;
 		config.methods_count = method_count;
@@ -297,9 +298,12 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			if (!method1_set && method2_set) {
 				config.methods[0].method = method2;
 			}
-		} else {
+		} else if (method_count != 0) {
 			shell_error(shell, "Max number of methods is %d.", LOC_MAX_METHODS);
 			goto show_usage;
+		} else {
+			/* No methods given. Use NULL to indicate default configuration. */
+			real_config = NULL;
 		}
 
 		if (config.methods[0].method == LOC_METHOD_GNSS) {
@@ -332,7 +336,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 		}
 
-		ret = location_request(&config);
+		ret = location_request(real_config);
 		if (ret) {
 			shell_error(shell, "Requesting location failed, err: %d", ret);
 			return -1;
