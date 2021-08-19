@@ -182,6 +182,11 @@ int loc_core_validate_params(const struct loc_config *config)
 	const struct loc_method_api *method_api;
 	int err;
 
+	if (config == NULL) {
+		/* Default configuration will be applied and it's valid */
+		return 0;
+	}
+
 	if (config->methods_count > LOC_MAX_METHODS) {
 		LOG_ERR("Maximum number of methods (%d) exceeded: %d",
 			LOC_MAX_METHODS, config->methods_count);
@@ -233,6 +238,25 @@ int loc_core_location_get(const struct loc_config *config)
 {
 	int err;
 	enum loc_method requested_loc_method;
+
+	struct loc_config default_config = { 0 };
+	struct loc_method_config methods[2] = { 0 };
+
+	if (config == NULL) {
+		LOG_DBG("No configuration given. Using default configuration.");
+
+		default_config.interval = 0; /* Single position */
+
+		default_config.methods_count = 2;
+		default_config.methods = methods;
+
+		default_config.methods[0].method = LOC_METHOD_GNSS;
+		default_config.methods[0].config.gnss.timeout = 120;
+		default_config.methods[0].config.gnss.accuracy = LOC_ACCURACY_NORMAL;
+
+		default_config.methods[1].method = LOC_METHOD_CELLULAR;
+		config = &default_config;
+	}
 
 	current_loc_config_set(config);
 	/* Location request starts from the first method */
