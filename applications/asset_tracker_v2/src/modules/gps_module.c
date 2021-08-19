@@ -21,6 +21,7 @@
 #include "events/gps_module_event.h"
 #include "events/data_module_event.h"
 #include "events/util_module_event.h"
+#include "events/modem_module_event.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_GPS_MODULE_LOG_LEVEL);
@@ -38,6 +39,7 @@ struct gps_msg_data {
 		struct app_module_event app;
 		struct data_module_event data;
 		struct util_module_event util;
+		struct modem_module_event modem;
 		struct gps_module_event gps;
 	} module;
 };
@@ -181,6 +183,14 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&msg);
 	}
 
+	if (is_modem_module_event(eh)) {
+		struct modem_module_event *event = cast_modem_module_event(eh);
+		struct gps_msg_data msg = {
+			.module.modem = *event
+		};
+
+		message_handler(&msg);
+	}
 	return false;
 }
 
@@ -545,7 +555,6 @@ static void on_state_init(struct gps_msg_data *msg)
 {
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_INIT)) {
 		gnss_timeout = msg->module.data.data.cfg.gps_timeout;
-		state_set(STATE_RUNNING);
 	}
 }
 
@@ -606,12 +615,18 @@ static void on_all_states(struct gps_msg_data *msg)
 		}
 
 		state_set(STATE_INIT);
+	}
+
+	if (IS_EVENT(msg, modem, MODEM_EVT_INITIALIZED)) {
+		int err;
 
 		err = setup();
 		if (err) {
 			LOG_ERR("setup, error: %d", err);
 			SEND_ERROR(gps, GPS_EVT_ERROR_CODE, err);
 		}
+
+		state_set(STATE_RUNNING);
 	}
 
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
@@ -659,4 +674,5 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
 EVENT_SUBSCRIBE(MODULE, data_module_event);
 EVENT_SUBSCRIBE(MODULE, util_module_event);
+EVENT_SUBSCRIBE(MODULE, modem_module_event);
 EVENT_SUBSCRIBE(MODULE, gps_module_event);

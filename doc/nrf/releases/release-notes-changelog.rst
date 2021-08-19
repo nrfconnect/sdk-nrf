@@ -72,6 +72,7 @@ nRF9160
     * Added support for A-GPS when configuring the application for AWS IoT.
     * Added support for P-GPS when configuring the application for AWS IoT.
     * Added a new debug module that implements support for `Memfault`_.
+    * Added support for the :ref:`liblwm2m_carrier_readme` library.
 
   * :ref:`at_cmd_readme` library:
 

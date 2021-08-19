@@ -229,17 +229,18 @@ static void reboot_ack_check(uint32_t module_id)
 /* Message handler for STATE_INIT. */
 static void on_state_init(struct util_msg_data *msg)
 {
-	if (IS_EVENT(msg, cloud,  CLOUD_EVT_FOTA_DONE)) {
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_FOTA_DONE)) {
 		send_reboot_request(REASON_FOTA_UPDATE);
 	}
 
-	if ((IS_EVENT(msg, cloud,  CLOUD_EVT_ERROR))	 ||
-	    (IS_EVENT(msg, modem,  MODEM_EVT_ERROR))	 ||
-	    (IS_EVENT(msg, sensor, SENSOR_EVT_ERROR))	 ||
-	    (IS_EVENT(msg, gps,	   GPS_EVT_ERROR_CODE))	 ||
-	    (IS_EVENT(msg, data,   DATA_EVT_ERROR))	 ||
-	    (IS_EVENT(msg, app,	   APP_EVT_ERROR))	 ||
-	    (IS_EVENT(msg, ui,	   UI_EVT_ERROR))) {
+	if ((IS_EVENT(msg, cloud,  CLOUD_EVT_ERROR))	||
+	    (IS_EVENT(msg, modem,  MODEM_EVT_ERROR))	||
+	    (IS_EVENT(msg, sensor, SENSOR_EVT_ERROR))	||
+	    (IS_EVENT(msg, gps,	   GPS_EVT_ERROR_CODE))	||
+	    (IS_EVENT(msg, data,   DATA_EVT_ERROR))	||
+	    (IS_EVENT(msg, app,	   APP_EVT_ERROR))	||
+	    (IS_EVENT(msg, ui,	   UI_EVT_ERROR))	||
+	    (IS_EVENT(msg, modem,  MODEM_EVT_CARRIER_REBOOT_REQUEST))) {
 		send_reboot_request(REASON_GENERIC);
 		return;
 	}

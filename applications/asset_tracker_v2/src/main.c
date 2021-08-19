@@ -479,7 +479,9 @@ void main(void)
 	int err;
 	struct app_msg_data msg;
 
-	handle_nrf_modem_lib_init_ret();
+	if (!IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
+		handle_nrf_modem_lib_init_ret();
+	}
 
 	if (event_manager_init()) {
 		/* Without the event manager, the application will not work

@@ -15,6 +15,7 @@
 #include "app_module_event.h"
 #include "gps_module_event.h"
 #include "data_module_event.h"
+#include "modem_module_event.h"
 
 extern struct event_listener __event_listener_gps_module;
 
@@ -86,6 +87,7 @@ const struct event_type __event_type_gps_module_event;
 const struct event_type __event_type_app_module_event;
 const struct event_type __event_type_data_module_event;
 const struct event_type __event_type_util_module_event;
+const struct event_type __event_type_modem_module_event;
 
 /* Dummy functions and objects - End.  */
 
@@ -280,16 +282,15 @@ static void setup_gps_module_in_running_state(void)
 {
 	setup_gps_module_in_init_state();
 
-	struct data_module_event *data_module_event = new_data_module_event();
+	struct modem_module_event *modem_module_event = new_modem_module_event();
 
-	data_module_event->type = DATA_EVT_CONFIG_INIT;
-	data_module_event->data.cfg.gps_timeout = 60;
+	modem_module_event->type = MODEM_EVT_INITIALIZED;
 
-	bool ret = GPS_MODULE_EVT_HANDLER((struct event_header *)data_module_event);
+	bool ret = GPS_MODULE_EVT_HANDLER((struct event_header *)modem_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
 
-	free(data_module_event);
+	free(modem_module_event);
 }
 
 /* Test whether sending a APP_EVT_DATA_GET event to the GPS module generates

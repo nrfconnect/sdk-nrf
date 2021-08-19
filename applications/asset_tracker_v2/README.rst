@@ -207,6 +207,23 @@ The following table shows the LED behavior demonstrated by the application:
 | Completion of FOTA Update | White, rapid blinking   | all 4 LEDs on         |
 +---------------------------+-------------------------+-----------------------+
 
+.. _atv2_lwm2m_carrier_support:
+
+Using the LwM2M carrier library
+*******************************
+
+This application supports the |NCS| :ref:`liblwm2m_carrier_readme` library that can be used to connect to the operator's device management platform.
+See the library's documentation for more information and configuration options.
+
+To enable the LwM2M carrier library, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay-carrier.conf``
+
+In |SES|, select :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`nRF Connect` to add the above CMake parameter.
+See :ref:`cmake_options` for more information.
+
+Alternatively, you can manually set the configuration options to match the contents of the overlay configuration file.
+
 Requirements
 ************
 
@@ -398,6 +415,7 @@ The following configuration files are available in the application folder:
 * :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features  that consume extra power like LED control and logging.
 * :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities and enables the debug module.
 * :file:`overlay-memfault.conf` - Configuration file that enables `Memfault`_. To take advantage of all Memfault features in the application, you must build Memfault with the debug module enabled. To enable the debug module, include both :file:`overlay-debug.conf` and :file:`overlay-memfault.conf` in the ``west build`` command.
+* :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support. See :ref:`atv2_lwm2m_carrier_support` for more information.
 * :file:`boards/<BOARD>/led_state_def.h` - Header file that describes the LED behavior of the CAF LEDs module.
 
 Generally, Kconfig overlays have an ``overlay-`` prefix and a ``.conf`` extension.
