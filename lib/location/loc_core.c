@@ -54,7 +54,13 @@ static void loc_core_periodic_work_fn(struct k_work *work);
 /** @brief Work item for periodic location requests. */
 K_WORK_DELAYABLE_DEFINE(loc_periodic_work, loc_core_periodic_work_fn);
 
+/* From location.c */
+extern struct k_sem loc_core_sem;
+
+/***** Location method configurations *****/
+
 #if defined(CONFIG_LOCATION_METHOD_GNSS)
+/** @brief GNSS location method configuration. */
 static const struct loc_method_api method_gnss_api = {
 	.method           = LOC_METHOD_GNSS,
 	.method_string    = "GNSS",
@@ -65,6 +71,7 @@ static const struct loc_method_api method_gnss_api = {
 };
 #endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
+/** @brief Cellular location method configuration. */
 static const struct loc_method_api method_cellular_api = {
 	.method           = LOC_METHOD_CELLULAR,
 	.method_string    = "Cellular",
@@ -75,6 +82,7 @@ static const struct loc_method_api method_cellular_api = {
 };
 #endif
 
+/** @brief Supported location methods. */
 static const struct loc_method_api *methods_supported[] = {
 #if defined(CONFIG_LOCATION_METHOD_GNSS)
 	&method_gnss_api,
@@ -318,6 +326,8 @@ void loc_core_event_cb(const struct loc_location *location)
 			loc_core_work_queue_get(),
 			&loc_periodic_work,
 			K_SECONDS(current_loc_config.interval));
+	} else {
+		k_sem_give(&loc_core_sem);
 	}
 }
 
@@ -350,5 +360,8 @@ int loc_core_cancel(void)
 	if (k_work_delayable_busy_get(&loc_periodic_work) > 0) {
 		k_work_cancel_delayable(&loc_periodic_work);
 	}
+
+	k_sem_give(&loc_core_sem);
+
 	return err;
 }

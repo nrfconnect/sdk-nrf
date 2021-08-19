@@ -14,6 +14,9 @@
 
 LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 
+/** @brief Semaphore protecting the use of location requests. */
+K_SEM_DEFINE(loc_core_sem, 1, 1);
+
 int location_init(location_event_handler_t handler)
 {
 	int err;
@@ -40,7 +43,11 @@ int location_request(const struct loc_config *config)
 {
 	int err;
 
-	/* TODO: Add protection so that only one request is handled at a time */
+	err = k_sem_take(&loc_core_sem, K_SECONDS(1));
+	if (err) {
+		LOG_ERR("Location request already ongoing");
+		return -EBUSY;
+	}
 
 	err = loc_core_validate_params(config);
 	if (err) {
