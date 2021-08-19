@@ -56,6 +56,7 @@ struct cloud_msg_data {
 
 /* Cloud module super states. */
 static enum state_type {
+	STATE_LTE_INIT,
 	STATE_LTE_DISCONNECTED,
 	STATE_LTE_CONNECTED,
 	STATE_SHUTDOWN
@@ -571,6 +572,15 @@ static void connect_cloud(void)
 	k_work_reschedule(&connect_check_work, K_SECONDS(backoff_sec));
 }
 
+static void disconnect_cloud(void)
+{
+	cloud_wrap_disconnect();
+
+	connect_retries = 0;
+
+	k_work_cancel_delayable(&connect_check_work);
+}
+
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 /* Converts the A-GPS data request from GNSS API to GPS driver format. */
 static void agps_request_convert(
@@ -697,23 +707,39 @@ static int setup(void)
 	return 0;
 }
 
+/* Message handler for STATE_LTE_INIT. */
+static void on_state_init(struct cloud_msg_data *msg)
+{
+	if (IS_EVENT(msg, modem, MODEM_EVT_INITIALIZED)) {
+		int err;
+
+		state_set(STATE_LTE_DISCONNECTED);
+
+		err = setup();
+		__ASSERT(err == 0, "setp() failed");
+	}
+}
+
 /* Message handler for STATE_LTE_CONNECTED. */
 static void on_state_lte_connected(struct cloud_msg_data *msg)
 {
 	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_DISCONNECTED)) {
-		state_set(STATE_LTE_DISCONNECTED);
 		sub_state_set(SUB_STATE_CLOUD_DISCONNECTED);
+		state_set(STATE_LTE_DISCONNECTED);
 
-		/* Explicitly disconnect cloud when we receive an LTE disconnected event. This is
-		 * to clear up the cloud library state.
+		/* Explicitly disconnect cloud when you receive an LTE disconnected event.
+		 * This is to clear up the cloud library state.
 		 */
-		cloud_wrap_disconnect();
+		disconnect_cloud();
+	}
 
-		connect_retries = 0;
+	if (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_FOTA_PENDING)) {
+		sub_state_set(SUB_STATE_CLOUD_DISCONNECTED);
+		disconnect_cloud();
+	}
 
-		k_work_cancel_delayable(&connect_check_work);
-
-		return;
+	if (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_FOTA_STOPPED)) {
+		connect_cloud();
 	}
 }
 
@@ -852,21 +878,18 @@ static void module_thread_fn(void)
 		SEND_ERROR(cloud, CLOUD_EVT_ERROR, err);
 	}
 
-	state_set(STATE_LTE_DISCONNECTED);
+	state_set(STATE_LTE_INIT);
 	sub_state_set(SUB_STATE_CLOUD_DISCONNECTED);
 
 	k_work_init_delayable(&connect_check_work, connect_check_work_fn);
-
-	err = setup();
-	if (err) {
-		LOG_ERR("setup, error %d", err);
-		SEND_ERROR(cloud, CLOUD_EVT_ERROR, err);
-	}
 
 	while (true) {
 		module_get_next_msg(&self, &msg);
 
 		switch (state) {
+		case STATE_LTE_INIT:
+			on_state_init(&msg);
+			break;
 		case STATE_LTE_CONNECTED:
 			switch (sub_state) {
 			case SUB_STATE_CLOUD_CONNECTED:

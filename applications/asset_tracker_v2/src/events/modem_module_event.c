@@ -11,6 +11,8 @@
 static char *get_evt_type_str(enum modem_module_event_type type)
 {
 	switch (type) {
+	case MODEM_EVT_INITIALIZED:
+		return "MODEM_EVT_INITIALIZED";
 	case MODEM_EVT_LTE_CONNECTED:
 		return "MODEM_EVT_LTE_CONNECTED";
 	case MODEM_EVT_LTE_DISCONNECTED:
@@ -43,6 +45,14 @@ static char *get_evt_type_str(enum modem_module_event_type type)
 		return "MODEM_EVT_SHUTDOWN_READY";
 	case MODEM_EVT_ERROR:
 		return "MODEM_EVT_ERROR";
+	case MODEM_EVT_CARRIER_INITIALIZED:
+		return "MODEM_EVT_CARRIER_INITIALIZED";
+	case MODEM_EVT_CARRIER_FOTA_PENDING:
+		return "MODEM_EVT_CARRIER_FOTA_PENDING";
+	case MODEM_EVT_CARRIER_FOTA_STOPPED:
+		return "MODEM_EVT_CARRIER_FOTA_STOPPED";
+	case MODEM_EVT_CARRIER_REBOOT_REQUEST:
+		return "MODEM_EVT_CARRIER_REBOOT_REQUEST";
 	default:
 		return "Unknown event";
 	}

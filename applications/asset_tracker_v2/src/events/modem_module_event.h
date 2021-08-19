@@ -23,6 +23,10 @@ extern "C" {
 
 /** @brief Modem event types submitted by Modem module. */
 enum modem_module_event_type {
+	/** Event signalling that the modem library and AT command library
+	 *  have been initialized and are ready for use by other modules.
+	 */
+	MODEM_EVT_INITIALIZED,
 	MODEM_EVT_LTE_CONNECTED,
 	MODEM_EVT_LTE_DISCONNECTED,
 	MODEM_EVT_LTE_CONNECTING,
@@ -38,7 +42,26 @@ enum modem_module_event_type {
 	MODEM_EVT_BATTERY_DATA_NOT_READY,
 	MODEM_EVT_BATTERY_DATA_READY,
 	MODEM_EVT_SHUTDOWN_READY,
-	MODEM_EVT_ERROR
+	MODEM_EVT_ERROR,
+	/** The carrier library has initialized the modem library and it is
+	 *  now ready to be used. When the carrier library is enabled, this
+	 *  event must be received before the modem module can proceed to initialize
+	 *  other dependencies and subsequently send MODEM_EVT_INITIALIZED.
+	 */
+	MODEM_EVT_CARRIER_INITIALIZED,
+	/** Due to modem limitations for active TLS connections, the carrier
+	 *  library requires all other TLS connections in the system to
+	 *  be terminated while FOTA update is ongoing.
+	 */
+	MODEM_EVT_CARRIER_FOTA_PENDING,
+	/** FOTA update has been stopped and the application can set up TLS
+	 *  connections again.
+	 */
+	MODEM_EVT_CARRIER_FOTA_STOPPED,
+	/** The carrier library requests that the device reboots to apply
+	 *  downloaded firmware image(s) or for other reasons.
+	 */
+	MODEM_EVT_CARRIER_REBOOT_REQUEST,
 };
 
 /** @brief LTE cell information. */

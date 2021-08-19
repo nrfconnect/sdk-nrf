@@ -22,7 +22,7 @@ config MODEM_SEND_ALL_SAMPLED_DATA
 
 config MODEM_THREAD_STACK_SIZE
 	int "Modem module thread stack size"
-	default 1280
+	default 2048
 
 config MODEM_AUTO_REQUEST_POWER_SAVING_FEATURES
 	bool "Auto request power saving features"
