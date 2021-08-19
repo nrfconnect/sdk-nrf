@@ -13,6 +13,9 @@
 #if defined(CONFIG_DATE_TIME_MODEM)
 #include <modem/at_cmd.h>
 #endif
+#if defined(CONFIG_LTE_LINK_CONTROL)
+#include <modem/lte_lc.h>
+#endif
 #include <time.h>
 #include <errno.h>
 #include <string.h>
@@ -193,9 +196,40 @@ socket_close:
 	return err;
 }
 
+#if defined(CONFIG_LTE_LINK_CONTROL)
+static bool is_connected_to_lte(void)
+{
+	int err;
+	enum lte_lc_nw_reg_status reg_status;
+
+	err = lte_lc_nw_reg_status_get(&reg_status);
+	if (err) {
+		LOG_WRN("Failed getting LTE network registration status, error: %d", err);
+		return false;
+	}
+
+	if (reg_status == LTE_LC_NW_REG_REGISTERED_EMERGENCY ||
+	    reg_status == LTE_LC_NW_REG_REGISTERED_HOME ||
+	    reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING) {
+		return true;
+	}
+
+	return false;
+}
+#endif /* defined(CONFIG_LTE_LINK_CONTROL) */
+
 static int time_NTP_server_get(void)
 {
 	int err;
+
+#if defined(CONFIG_LTE_LINK_CONTROL)
+	if (!is_connected_to_lte()) {
+		LOG_DBG("Not connected to LTE, skipping NTP UTC time update");
+		return -ENODATA;
+	}
+
+	LOG_DBG("Connected to LTE, performing NTP UTC time update");
+#endif
 
 	for (int i = 0; i < ARRAY_SIZE(servers); i++) {
 		err =  sntp_time_request(&servers[i],
