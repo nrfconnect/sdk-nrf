@@ -16,8 +16,10 @@ test_runner_generate(src/gps_module_test.c)
 cmock_handle(../../src/modules/modules_common.h )
 cmock_handle(${ZEPHYR_BASE}/../nrf/include/event_manager.h )
 cmock_handle(${ZEPHYR_BASE}/../nrf/include/date_time.h )
-cmock_handle(${ZEPHYR_BASE}/../nrf/include/drivers/gps.h drivers )
+cmock_handle(${ZEPHYR_BASE}/../nrf/include/modem/at_cmd.h )
+cmock_handle(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/nrf_modem_gnss.h )
 cmock_handle(${ZEPHYR_BASE}/include/sys/reboot.h sys)
+
 
 
 # add gps_module (the unit under test)
@@ -35,6 +37,7 @@ target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrf/modules/cjson/inclu
 
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE
-  	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
-	-DCONFIG_GPS_DEV_NAME="GPS_SIM"
-	-DCONFIG_GPS_MODULE_NMEA)
+	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
+	-DCONFIG_GPS_MODULE_NMEA
+	-DCONFIG_GPS_MODULE_AT_MAGPIO="AT%XMAGPIO"
+	-DCONFIG_GPS_MODULE_AT_COEX0="AT%XCOEX0")

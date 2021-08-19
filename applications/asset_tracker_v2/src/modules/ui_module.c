@@ -6,6 +6,7 @@
 
 #include <zephyr.h>
 #include <stdio.h>
+#include <device.h>
 #include <event_manager.h>
 #include <dk_buttons_and_leds.h>
 
