@@ -205,4 +205,5 @@ Documentation
 
 * Updated:
 
-  * Renamed :ref:`ncs_release_notes_changelog`.
+  * Renamed :ref:`ncs_release_notes_changelog` (this page).
+  * :ref:`gs_installing` - added information about the version folder created when extracting the GNU Arm Embedded Toolchain.
