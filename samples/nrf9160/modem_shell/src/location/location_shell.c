@@ -37,20 +37,20 @@ static const char location_usage_str[] =
 static const char location_get_usage_str[] =
 	"Usage: location get [--interval <secs>] [--method1 <method>] [--method2 <method>] [--gnss_accuracy <acc>] [--gnss_timeout <timeout_in_secs>]\n"
 	"Options:\n"
-	"  --method1,        1st priority location method: ""cellular"" or ""gnss""\n"
-	"  --method2,        2nd priority location method: ""cellular"" or ""gnss""\n"
+	"  --method1,        1st priority location method: 'cellular' or 'gnss'\n"
+	"  --method2,        2nd priority location method: 'cellular' or 'gnss'\n"
 	"  --interval,       Position update interval in seconds (default: 0, = single position)\n"
-	"  --gnss_accuracy,  Used GNSS accuracy: ""low"" or ""normal"" or ""high""\n"
+	"  --gnss_accuracy,  Used GNSS accuracy: 'low' or 'normal' or 'high'\n"
 	"  --gnss_timeout,   GNSS timeout in seconds\n";
 
 /******************************************************************************/
 
 /* Following are not having short options: */
-enum { LOCATION_SHELL_OPT_METHOD_1      = 1001,
-       LOCATION_SHELL_OPT_METHOD_2      = 1002,
-       LOCATION_SHELL_OPT_INTERVAL      = 1003,
-       LOCATION_SHELL_OPT_GNSS_ACCURACY = 1004,
-       LOCATION_SHELL_OPT_GNSS_TIMEOUT  = 1005,
+enum {  LOCATION_SHELL_OPT_METHOD_1      = 1001,
+	LOCATION_SHELL_OPT_METHOD_2      = 1002,
+	LOCATION_SHELL_OPT_INTERVAL      = 1003,
+	LOCATION_SHELL_OPT_GNSS_ACCURACY = 1004,
+	LOCATION_SHELL_OPT_GNSS_TIMEOUT  = 1005,
 };
 
 /* Specifying the expected options: */
@@ -81,18 +81,17 @@ static void location_shell_print_usage(const struct shell *shell,
 
 static const char *location_shell_method_to_string(int method, char *out_str_buff)
 {
-        switch (method)
-        {
+	switch (method) {
 	case LOC_METHOD_CELLULAR:
-                strcpy(out_str_buff, "Cellular");
-                break;
-        case LOC_METHOD_GNSS:
-                strcpy(out_str_buff, "GNSS");
-                break;
-        
-        default:
-                strcpy(out_str_buff, "Unknown");
-        }
+		strcpy(out_str_buff, "Cellular");
+		break;
+	case LOC_METHOD_GNSS:
+		strcpy(out_str_buff, "GNSS");
+		break;
+
+	default:
+		strcpy(out_str_buff, "Unknown");
+	}
 
 	return out_str_buff;
 }
@@ -107,11 +106,14 @@ void location_ctrl_event_handler(const struct loc_event_data *event_data)
 	switch (event_data->id) {
 	case LOC_EVT_LOCATION:
 		shell_print(shell_global, "Location:");
-		shell_print(shell_global, "  used method: %s (%d)", 
+		shell_print(shell_global, "  used method: %s (%d)",
 			    location_shell_method_to_string(event_data->method, snum),
-                            event_data->method);
+			    event_data->method);
 		if (event_data->method == LOC_METHOD_CELLULAR) {
-			shell_print(shell_global, "  Used service: %s", CONFIG_MULTICELL_LOCATION_HOSTNAME);
+			shell_print(
+				shell_global,
+				"  Used service: %s",
+				CONFIG_MULTICELL_LOCATION_HOSTNAME);
 		}
 		shell_print(shell_global, "  latitude: %.06f", event_data->location.latitude);
 		shell_print(shell_global, "  longitude: %.06f", event_data->location.longitude);
