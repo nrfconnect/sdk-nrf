@@ -385,6 +385,8 @@ To set up the toolchain, complete the following steps:
 #. Extract the contents of the root folder of the toolchain into a directory of your choice.
    The recommended folder is :file:`c:\gnuarmemb` on Windows and :file:`~/gnuarmemb` on Linux or macOS.
    Make sure that the folder name does not contain any spaces or special characters.
+   By default, the contents are extracted to another folder that corresponds to the GNU Arm Embedded Toolchain version (*version-folder* in the following step).
+   For example, :file:`c:\gccarmemb\10_2021.07`, where :file:`10_2021.07` is the *version-folder* name edited to contain no empty spaces.
 #. If you want to build and program applications from the command line, define the environment variables for the GNU Arm Embedded Toolchain.
    Depending on your operating system:
 
@@ -394,37 +396,37 @@ To set up the toolchain, complete the following steps:
 
           Open a command-line window and enter the commands below.
 
-          If you did not install the toolchain in the recommended folder, change the value of GNUARMEMB_TOOLCHAIN_PATH to the folder you used.
+          If you did not install the toolchain in the recommended folder, change the value of GNUARMEMB_TOOLCHAIN_PATH to the folder you used and make sure to provide the name of the *version-folder*.
 
             .. parsed-literal::
                :class: highlight
 
                set ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-               set GNUARMEMB_TOOLCHAIN_PATH=\ c:\\gnuarmemb
+               set GNUARMEMB_TOOLCHAIN_PATH=\ c:\\gnuarmemb\\version-folder
 
        .. group-tab:: Linux
 
           Open a terminal window and enter the commands below.
 
-          If you did not install the toolchain in the recommended folder, change the value of GNUARMEMB_TOOLCHAIN_PATH to the folder you used.
+          If you did not install the toolchain in the recommended folder, change the value of GNUARMEMB_TOOLCHAIN_PATH to the folder you used and make sure to provide the name of the *version-folder*.
 
             .. parsed-literal::
                :class: highlight
 
                export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-               export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb"
+               export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb/*version-folder*"
 
        .. group-tab:: macOS
 
           Open a terminal window and enter the commands below.
 
-          If you did not install the toolchain in the recommended folder, change the value of GNUARMEMB_TOOLCHAIN_PATH to the folder you used.
+          If you did not install the toolchain in the recommended folder, change the value of GNUARMEMB_TOOLCHAIN_PATH to the folder you used and make sure to provide the name of the *version-folder*.
 
             .. parsed-literal::
                :class: highlight
 
                export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-               export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb"
+               export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb/*version-folder*"
 
 #. Set the environment variables persistently.
    Depending on your operating system:
