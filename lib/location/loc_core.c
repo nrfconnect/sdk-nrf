@@ -338,9 +338,8 @@ void loc_core_event_cb(const struct loc_location *location)
 			err = loc_method_api_get(requested_loc_method)->location_get(
 				&current_loc_config.methods[current_loc_method_index]);
 			return;
-		} else {
-			LOG_ERR("Location acquisition failed and fallbacks are also done");
 		}
+		LOG_ERR("Location acquisition failed and fallbacks are also done");
 	}
 
 	event_handler(&current_event_data);
@@ -375,7 +374,8 @@ int loc_core_cancel(void)
 	/* Check if location has been requested using one of the methods */
 	if (current_loc_method != 0) {
 		/* Run method cancel only if periodic work is not busy as otherwise
-		 * we are just waiting for something to start running. */
+		 * we are just waiting for something to start running.
+		 */
 		if (!k_work_delayable_busy_get(&loc_periodic_work)) {
 			err = loc_method_api_get(current_loc_method)->cancel();
 		}

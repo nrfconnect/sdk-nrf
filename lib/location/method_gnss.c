@@ -40,6 +40,7 @@ void method_gnss_event_handler(int event)
 int method_gnss_cancel(void)
 {
 	int err = nrf_modem_gnss_stop();
+
 	if (!err) {
 		LOG_DBG("GNSS stopped");
 	} else if (err == NRF_EPERM) {
@@ -88,6 +89,7 @@ void method_gnss_timeout_work_fn(struct k_work *item)
 int method_gnss_init(void)
 {
 	int err = nrf_modem_gnss_init();
+
 	if (err) {
 		LOG_ERR("Failed to initialize GNSS interface, error %d", err);
 		return -err;
@@ -116,8 +118,7 @@ int method_gnss_location_get(const struct loc_method_config *config)
 
 	err |= nrf_modem_gnss_fix_retry_set(gnss_config->timeout);
 
-	if (gnss_config->accuracy == LOC_ACCURACY_LOW)
-	{
+	if (gnss_config->accuracy == LOC_ACCURACY_LOW) {
 		uint8_t use_case;
 
 		use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START |

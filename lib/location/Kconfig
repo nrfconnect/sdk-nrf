@@ -17,7 +17,7 @@ config LOCATION_METHOD_GNSS
 	default y
 
 config LOCATION_METHOD_CELLULAR
-   	bool "Allow cellular positioning to be used for obtaining the location"
+	bool "Allow cellular positioning to be used for obtaining the location"
 	select MULTICELL_LOCATION
 	default y
 

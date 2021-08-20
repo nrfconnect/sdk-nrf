@@ -110,7 +110,11 @@ struct loc_cellular_config {
 
 /** GNSS configuration. */
 struct loc_gnss_config {
-	/** Timeout (in seconds), i.e. how long GNSS is allowed to run when trying to acquire a fix. */
+	/** @brief Timeout (in seconds), i.e. how long GNSS is allowed to run when trying to
+	 * acquire a fix.
+	 *
+	 * @details Note that this is not real time as experienced by the user.
+	 */
 	uint16_t timeout;
 	/** Desired accuracy level. */
 	enum loc_accuracy accuracy;

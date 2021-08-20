@@ -53,7 +53,7 @@ void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
 		struct lte_lc_cells_info cells = evt->cells_info;
 		struct lte_lc_cell cur_cell = cells.current_cell;
-		
+
 		LOG_INF("Cell measurements results received");
 		memset(&cell_data, 0, sizeof(struct lte_lc_cells_info));
 
@@ -73,7 +73,7 @@ void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 	} break;
 	default:
 		break;
-	}		
+	}
 }
 
 static int method_cellular_ncellmeas_start(void)
@@ -103,7 +103,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	if (ret) {
 		LOG_WRN("Cannot start cell measurements - cannot fetch location");
 		loc_core_event_cb_error();
-		running = false;		
+		running = false;
 		return;
 	}
 
@@ -117,13 +117,14 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 		if (cell_data.current_cell.id == 0) {
 			LOG_WRN("No cells were found - cannot fetch location");
 			loc_core_event_cb_error();
-			running = false;			
+			running = false;
 			return;
 		}
-		
+
 		ret = multicell_location_get(&cell_data, &location);
 		if (ret) {
-			LOG_ERR("Failed to acquire location from multicell_location lib, error: %d", ret);		
+			LOG_ERR("Failed to acquire location from multicell_location lib, error: %d",
+				ret);
 			loc_core_event_cb_error();
 			running = false;
 		} else {
@@ -179,11 +180,11 @@ int method_cellular_init(void)
 	int ret;
 	struct k_work_queue_config cfg = {
 		.name = "location_api_cellular_workq",
-	};	
+	};
 
 	lte_connected = false;
 	running = false;
-	
+
 	k_work_queue_start(
 		&method_cellular_work_q, method_cellular_stack,
 		K_THREAD_STACK_SIZEOF(method_cellular_stack),
@@ -196,9 +197,9 @@ int method_cellular_init(void)
 	if (ret) {
 		LOG_ERR("Certificate provisioning failed, ret %d", ret);
 		if (ret == -EACCES) {
-			LOG_INF("err: -EACCESS, that might indicate that modem is in"
+			LOG_INF("err: -EACCESS, that might indicate that modem is in "
 				"state where cert cannot be written, i.e. not in pwroff");
-		}		
+		}
 		return ret;
 	}
 
