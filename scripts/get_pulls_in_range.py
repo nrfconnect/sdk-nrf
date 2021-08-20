@@ -369,7 +369,6 @@ def main():
         del pr_num_to_info[NO_PULL_REQUEST]
 
     # Print information about each resulting pull request.
-    print(f'\n{len(pr_num_to_info)} pull requests found in the range.\n')
     if args.zephyr_areas:
         area_to_pr_infos = defaultdict(list)
         for pr_num, info in pr_num_to_info.items():
@@ -377,12 +376,21 @@ def main():
             area = guess_pr_area(info.commits)
             area_to_pr_infos[area].append(info)
 
-        print('Pull requests grouped by a guess of the zephyr area:')
-        for area, infos in area_to_pr_infos.items():
+        print('Summary\n'
+              '-------\n\n'
+              f'{len(pr_num_to_info)} pull requests found in the range.\n')
+        for area in sorted(area_to_pr_infos):
             if args.zephyr_only_areas and area not in args.zephyr_only_areas:
                 continue
-            print(f'\n{area}')
-            print('-' * len(area))
+            print(f'- {area}: {len(area_to_pr_infos[area])} pull requests')
+
+        for area in sorted(area_to_pr_infos):
+            if args.zephyr_only_areas and area not in args.zephyr_only_areas:
+                continue
+            infos = area_to_pr_infos[area]
+            title = f'{area} ({len(infos)} pull requests)'
+            print(f'\n{title}')
+            print('-' * len(title))
             print()
             for info in infos:
                 print_pr_info(info)
