@@ -14,18 +14,17 @@ Below are some of the requirements and limitations of the application while runn
    * The LwM2M carrier library initializes and uses the :ref:`nrf_modem`.
      This library is needed to track the modem FOTA states.
 
-* The application must not use the *NB-IoT* LTE mode.
-
-   * The LwM2M carrier library is currently only certified for the *LTE-M* LTE mode.
-   * The :kconfig:`CONFIG_LTE_NETWORK_USE_FALLBACK` must be disabled in your application, as seen in the :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`).
-
 * The LwM2M carrier library registers to receive several AT event reports using the :ref:`at_cmd_readme` and :ref:`at_notif_readme` libraries. The following notifications must not be deregistered by the application:
 
    * SMS events (AT+CNMI).
    * Packet Domain events (AT+CGEREP).
    * Extended signal quality events (AT+CESQ).
-   * Report Network Error Codes events (AT+CNEC): EPS Session Management events are used by the LwM2M carrier library. The application may enable or disable EPS Mobility Management events.
-   * Network Registration Status events (AT+CEREG): Notification Level 2 is used by the LwM2M carrier library. The application may increase this level but must not decrease it.
+   * Network Time events (AT%XTIME).
+   * Modem Domain events (AT%MDMEV).
+   * Report Network Error Codes events (AT+CNEC) - EPS Session Management events are used by the LwM2M carrier library. The application may enable or disable EPS Mobility Management events.
+   * Network Registration Status events (AT+CEREG) - Notification Level 4 is used by the LwM2M carrier library. The application can increase this level but must not decrease it.
+
+* If the application wants to use eDRX, it must enable mode 2, since the LwM2M carrier library requires the unsolicited result code.
 
 * The LwM2M carrier library controls the LTE link.
 

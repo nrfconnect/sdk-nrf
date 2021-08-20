@@ -9,6 +9,50 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.21.0
+***********************
+
+Release for modem firmware version 1.3.1.
+
+Certification status
+====================
+
+For certification status, see `Mobile network operator certifications`_.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 75216         | 14275      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 103104        | 42672      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Library can now be provided a non-bootstrap custom URI. Previously, only bootstrap custom URI was accepted.
+
+  * New Kconfig :c:kconfig:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` indicates if the custom URI is a Bootstrap-Server.
+  * New Kconfig :c:kconfig:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` sets the lifetime for the (non-bootstrap) LwM2M server.
+* Library will now read bootstrap information from Smartcard when applicable.
+
+  * New Kconfig :c:kconfig:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD` can be used to disable this feature.
+* Added a new event :c:macro:`LWM2M_CARRIER_EVENT_MODEM_DOMAIN` to indicate modem domain events.
+* Removed logging from the OS glue layer.
+* Added the Cellular Connectivity object.
+
+  * Increased +CEREG notification level requirement from 2 to 4, so that the library can receive Active-Time and Periodic-TAU.
+* Added the Location object, including the API :c:func:`lwm2m_carrier_location_set` and :c:func:`lwm2m_carrier_velocity_set`.
+
+* Removed a limitation which stated that the application could not use the NB-IoT LTE mode.
+
 liblwm2m_carrier 0.20.1
 ***********************
 
@@ -18,6 +62,21 @@ Certification status
 ====================
 
 For certification status, see `Mobile network operator certifications`_.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 64620         | 10687      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 109520        | 35184      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
 
 Changes
 =======

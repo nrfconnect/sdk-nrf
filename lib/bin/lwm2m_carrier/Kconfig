@@ -17,15 +17,16 @@ menuconfig LWM2M_CARRIER
 	depends on FLASH && FLASH_PAGE_LAYOUT
 	depends on MPU_ALLOW_FLASH_WRITE
 	depends on NVS
-	# Heap requirements
+	# Heap and stack requirements
 	depends on (HEAP_MEM_POOL_SIZE >= 4096)
+	depends on (SYSTEM_WORKQUEUE_STACK_SIZE >= 1312)
 	# NCS dependencies
 	# Networking - Zephyr
 	depends on NETWORKING
 	depends on NET_SOCKETS
 	depends on NET_SOCKETS_OFFLOAD
 	# Networking NCS
-	depends on LTE_LINK_CONTROL && !LTE_AUTO_INIT_AND_CONNECT && !LTE_NETWORK_USE_FALLBACK
+	depends on LTE_LINK_CONTROL && !LTE_AUTO_INIT_AND_CONNECT
 	depends on DOWNLOAD_CLIENT
 	# Credentials NCS
 	depends on MODEM_KEY_MGMT
@@ -45,38 +46,55 @@ if LWM2M_CARRIER
 
 config LWM2M_CARRIER_CERTIFICATION_MODE
 	bool "Connect to certification servers"
+	select LWM2M_CARRIER_IS_SERVER_BOOTSTRAP if LWM2M_CARRIER_USE_CUSTOM_URI
 	help
 	  Connect to certification servers instead of production servers.
 
-config LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
-	bool "Use custom bootstrap URI"
+config LWM2M_CARRIER_USE_CUSTOM_URI
+	bool "Use custom server URI"
 	help
-	  Use a custom bootstrap URI.
+	  Use a custom server URI.
 
-if LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
+if LWM2M_CARRIER_USE_CUSTOM_URI
 
-config LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI
-	string "LwM2M carrier custom bootstrap URI"
+config LWM2M_CARRIER_CUSTOM_URI
+	string "LwM2M carrier custom URI"
 	default ""
 	help
-	  URI of the custom bootstrap server.
+	  URI of the custom server.
 
-endif # LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
-
-config LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
-	bool "Use custom bootstrap PSK"
+config LWM2M_CARRIER_IS_SERVER_BOOTSTRAP
+	bool "Bootstrap-Server"
+	default y
 	help
-	  Use a custom bootstrap PSK.
+	  Configure if server is a LwM2M Bootstrap-Server or a standard LwM2M Server
 
-if LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
+if !LWM2M_CARRIER_IS_SERVER_BOOTSTRAP
 
-config LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK
+config LWM2M_CARRIER_SERVER_LIFETIME
+	int "Server lifetime"
+	default 60
+	help
+	  Default server lifetime.
+
+endif # !LWM2M_CARRIER_IS_SERVER_BOOTSTRAP
+
+endif # LWM2M_CARRIER_USE_CUSTOM_URI
+
+config LWM2M_CARRIER_USE_CUSTOM_PSK
+	bool "Use custom PSK"
+	help
+	  Use a custom PSK.
+
+if LWM2M_CARRIER_USE_CUSTOM_PSK
+
+config LWM2M_CARRIER_CUSTOM_PSK
 	string "LwM2M carrier custom bootstrap PSK"
 	default ""
 	help
 	  PSK of the custom bootstrap server.
 
-endif # LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
+endif # LWM2M_CARRIER_USE_CUSTOM_PSK
 
 config LWM2M_CARRIER_USE_CUSTOM_APN
 	bool "Use custom APN"
@@ -92,6 +110,12 @@ config LWM2M_CARRIER_CUSTOM_APN
 	  Custom APN.
 
 endif # LWM2M_CARRIER_USE_CUSTOM_APN
+
+config LWM2M_CARRIER_BOOTSTRAP_SMARTCARD
+	bool "Allow bootstrap from Smartcard"
+	default y
+	help
+	  Bootstrap from Smartcard mode when this is enabled by the carrier.
 
 module=LWM2M_CARRIER
 module-dep=LOG
