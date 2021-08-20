@@ -35,12 +35,6 @@ set(b0_CONF_FILE
   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/b0_${CMAKE_BUILD_TYPE}.conf
   )
 
-# Use static partition layout to ensure consistency between builds.
-# This is to ensure settings storage will be at the same location after the DFU.
-set(PM_STATIC_YML_FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_${CMAKE_BUILD_TYPE}.yml
-  )
-
 # Define configuration files.
 set(CONF_FILE "configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
 
