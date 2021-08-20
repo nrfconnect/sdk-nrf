@@ -26,8 +26,16 @@ class pr_info(NamedTuple):
     html_url: str
     commits: List[pygit2.Commit]
 
+NO_PULL_REQUEST = -1
+
 # A tuple describing the results of querying the file system and
 # GitHub API for information about a commit.
+#
+# pr_num is either a positive pull request number or NO_PULL_REQUEST.
+#
+# NO_PULL_REQUEST happens when commits are directly pushed to a branch
+# without a PR. In that case, pr_title and pr_url will be empty
+# strings.
 class commit_result(NamedTuple):
     sha: str
     remote_org: str
@@ -35,6 +43,11 @@ class commit_result(NamedTuple):
     pr_num: int
     pr_title: str
     pr_url: str
+
+def check_commit_result(result: commit_result):
+    if result.pr_num == NO_PULL_REQUEST:
+        assert result.pr_title == ''
+        assert result.pr_url == ''
 
 class ResultsDatabase:
     '''Object oriented interface for accessing the results database.
@@ -97,7 +110,9 @@ class ResultsDatabase:
             if result is None:
                 return None
             else:
-                return commit_result(*tuple(result))
+                ret = commit_result(*tuple(result))
+                check_commit_result(ret)
+                return ret
 
     def add_result(self, result: commit_result) -> None:
         '''Insert a new commit_result into the database.
@@ -105,6 +120,7 @@ class ResultsDatabase:
         Raises sqlite3.IntegrityError if duplicate entries for the
         same SHA are added to the database.
         '''
+        check_commit_result(result)
         with closing(self._con.cursor()) as cursor:
             cursor.execute('INSERT INTO results VALUES '
                            '(?,?,?,?,?,?)', result)
@@ -274,19 +290,29 @@ def get_result_from_network(commit: pygit2.Commit,
     # Get the commit_result for commit from gh_repo.
     sha = str(commit.oid)
     gh_prs = list(gh_repo.get_commit(sha).get_pulls())
-    if len(gh_prs) != 1:
+    if len(gh_prs) == 0:
+        gh_pr = None
+        result = commit_result(sha, gh_repo.owner.login, gh_repo.name,
+                               NO_PULL_REQUEST, '', '')
+    elif len(gh_prs) == 1:
+        gh_pr = gh_prs[0]
+        result = commit_result(sha, gh_repo.owner.login, gh_repo.name,
+                               gh_pr.number, gh_pr.title, gh_pr.html_url)
+    else:
         sys.exit(f'{sha} has {len(gh_prs)} prs (expected 1): {gh_prs}')
-    gh_pr = gh_prs[0]
-    result = commit_result(sha, gh_repo.owner.login, gh_repo.name,
-                           gh_pr.number, gh_pr.title, gh_pr.html_url)
 
     # Cache the result in the database.
     db.add_result(result)
 
     # Print sign of life.
-    print(f'\t{sha[:10]} {commit_shortlog(commit)}\n'
-          f'\t           PR #{gh_pr.number:5}: {gh_pr.title}',
-          file=sys.stderr)
+    if gh_pr:
+        print(f'\t{sha[:10]} {commit_shortlog(commit)}\n'
+              f'\t           PR #{gh_pr.number:5}: {gh_pr.title}',
+              file=sys.stderr)
+    else:
+        print(f'\t{sha[:10]} {commit_shortlog(commit)}\n'
+              f'\t           Not merged via pull request',
+              file=sys.stderr)
 
     return result
 
@@ -337,11 +363,17 @@ def main():
                                          results[0].pr_url,
                                          commits)
 
+    no_pr_commits = pr_num_to_commits.pop(NO_PULL_REQUEST, [])
+    if no_pr_commits:
+        del pr_num_to_results[NO_PULL_REQUEST]
+        del pr_num_to_info[NO_PULL_REQUEST]
+
     # Print information about each resulting pull request.
     print(f'\n{len(pr_num_to_info)} pull requests found in the range.\n')
     if args.zephyr_areas:
         area_to_pr_infos = defaultdict(list)
         for pr_num, info in pr_num_to_info.items():
+            assert pr_num != NO_PULL_REQUEST
             area = guess_pr_area(info.commits)
             area_to_pr_infos[area].append(info)
 
@@ -358,6 +390,10 @@ def main():
         for info in pr_num_to_info.values():
             print_pr_info(info)
 
+    if no_pr_commits:
+        print('\nCommits not merged via pull request:\n')
+        for commit in no_pr_commits:
+            print(f'- {commit.oid} {commit_shortlog(commit)}')
 
 if __name__ == '__main__':
     try:
