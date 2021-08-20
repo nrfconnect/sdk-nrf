@@ -24,9 +24,6 @@ These methods are only available to protocol drivers that are using FEM features
 They are also valid for cases where an application uses just one protocol, but benefits from features provided by MPSL.
 To avoid conflicts, check the protocol documentation to see if it uses FEM support provided by MPSL.
 
-Work is underway to make the protocols shipped with |NCS| use FEM.
-At the moment, :ref:`ug_thread` and :ref:`ug_zigbee` support the :ref:`nRF21540 DK <nrf21540dk_nrf52840>` and the nRF21540 EK for nRF52 Series devices, but there is no multiprotocol support or support for nRF5340 yet.
-
 |NCS| provides a friendly wrapper that configures FEM based on devicetree (DTS) and Kconfig information.
 To enable FEM support, you must enable FEM and MPSL, and add an ``nrf_radio_fem`` node in the devicetree file.
 The node can also be provided by the devicetree file of the target devkit or by an overlay file.
@@ -191,3 +188,91 @@ Then there is no need to define a GPIO to control the PDN signal. The line ``pdn
 
 Generally, if pin ``X`` is not used, the ``X-gpios = < .. >;`` property can be removed.
 This applies to all properties with a ``-gpios`` suffix, for both nRF21540 and SKY66112-11.
+
+.. _ug_radio_fem_boards:
+
+Supported boards
+****************
+
+Two nRF21540 boards are available, showcasing the possibilities of the nRF21540 FEM:
+
+* :ref:`nRF21540 DK <nrf21540dk_nrf52840>`
+* nRF21540 EK, described in sections below
+
+While the front-end module feature is supported on the nRF52 Series, it is yet not supported on the nRF53 Series.
+Work is underway to make the protocols shipped with |NCS| use FEM.
+At the moment, :ref:`ug_thread` and :ref:`ug_zigbee` support both the nRF21540 DK and the nRF21540 EK for the nRF52 Series devices.
+
+.. _ug_radio_fem_nrf21540_ek:
+
+nRF21540 EK
+===========
+
+The nRF21540 EK (Evaluation Kit) is an RF front-end module (FEM) for Bluetooth Low Energy, Bluetooth mesh, 2.4 GHz proprietary, Thread, and Zigbee range extension.
+When combined with an nRF52 or nRF53 Series SoC, the nRF21540 RF FEM’s +21 dBm TX output power and 13 dB RX gain ensure a superior link budget for up to 16x range extension.
+
+Overview
+--------
+
+The nRF21540 complementary device has a 50 Ω SMA transceiver interface and 2x 50 Ω SMA antenna interfaces.
+This enables connecting an SoC or a signal generator to the input.
+It also enables connecting the outputs to measurement tools or to antennas directly.
+The FEM can be configured through the pins available on the Arduino headers.
+
+The nRF21540's gain control, antenna switching, and modes are controlled via GPIO or SPI, or a combination of both.
+GPIO and SPI are accessible through the Arduino Uno Rev3 compatible headers.
+The shield also features two additional SMA connectors hooked to the dual antenna ports from the RF FEM, to monitor the performance of the RF FEM using any equipment desired.
+The FEM SMA input can be connected to the nRF52 or nRF53 Series SoC RF output with a coaxial RF cable with SMA\SWF connectors.
+
+.. figure:: /images/nrf21540_ek.png
+   :width: 350px
+   :align: center
+   :alt: nRF21540_EK
+
+   nRF21540 EK shield
+
+Pin assignment of the nRF21540 EK
+---------------------------------
+
++-----------------------+----------+-----------------+
+| Shield connector pin  | SIGNAL   | FEM function    |
++=======================+==========+=================+
+| D2                    | GPIO     | Mode Select     |
++-----------------------+----------+-----------------+
+| D3                    | GPIO     | RX Enable       |
++-----------------------+----------+-----------------+
+| D4                    | GPIO     | Antenna Select  |
++-----------------------+----------+-----------------+
+| D5                    | GPIO     | TX Enable       |
++-----------------------+----------+-----------------+
+| D9                    | GPIO     | Power Down      |
++-----------------------+----------+-----------------+
+| D10                   | SPI CS   | Chip Select     |
++-----------------------+----------+-----------------+
+| D11                   | SPI MOSI | Serial Data In  |
++-----------------------+----------+-----------------+
+| D12                   | SPI MISO | Serial Data Out |
++-----------------------+----------+-----------------+
+| D13                   | SPI SCK  | Serial Clock    |
++-----------------------+----------+-----------------+
+
+Programming
+-----------
+
+Set ``-DSHIELD=nrf21540_ek`` when you invoke ``west build`` or ``cmake`` in your Zephyr application.
+
+Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
+
+.. code-block:: none
+
+	set(SHIELD nrf21540_ek)
+
+To build with SES, in the :guilabel:`Extended Settings` specify ``-DSHIELD=nrf21540_ek``.
+See :ref:`cmake_options`.
+
+References
+----------
+
+* `nRF21540 DK product page`_
+* `nRF21540 Product Specification`_
+* `nRF21540`_

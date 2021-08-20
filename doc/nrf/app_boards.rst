@@ -95,6 +95,7 @@ The following boards are defined in the :file:`nrf/boards/arm/` folder.
 |                   |            | :ref:`thingy91_nrf52840 <ug_thingy91>`                   | ``thingy91_nrf52840``                 |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
 
+The :ref:`nRF21540 EK shield <ug_radio_fem_nrf21540_ek>` is defined in the :file:`nrf/boards/shields` folder.
 
 Custom boards
 *************
