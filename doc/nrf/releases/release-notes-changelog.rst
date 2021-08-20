@@ -78,8 +78,9 @@ nRF9160
 
     * The library has been deprecated in favor of the :ref:`at_monitor_readme` library.
 
-  * ``thingy91_nrf9160_ns`` board:
+  * Board names:
 
+    * The ``nrf9160dk_nrf9160ns`` and the ``nrf5340dk_nrf5340_cpuappns`` boards have been renamed respectively to ``nrf9160dk_nrf9160_ns`` and ``nrf5340dk_nrf5340_cpuapp_ns``, in a change inherited from upstream Zephyr.
     * The ``thingy91_nrf9160ns`` board has been renamed to ``thingy91_nrf9160_ns`` for consistency with the changes inherited from upstream Zephyr.
 
 nRF5
@@ -173,6 +174,8 @@ Pelion
 MCUboot
 =======
 
+.. TODO update this following https://github.com/nrfconnect/sdk-nrf/pull/5189. Delete this comment once that is complete.
+
 The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``2fce9769b1``, plus some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in :file:`ncs/nrf/modules/mcuboot`.
@@ -185,6 +188,8 @@ The following list summarizes the most important changes inherited from upstream
 Mcumgr
 ======
 
+.. TODO update this following https://github.com/nrfconnect/sdk-nrf/pull/5189. Delete this comment once that is complete.
+
 The mcumgr library contains all commits from the upstream mcumgr repository up to and including snapshot ``74e77ad08``.
 
 The following list summarizes the most important changes inherited from upstream mcumgr:
@@ -194,31 +199,67 @@ The following list summarizes the most important changes inherited from upstream
 Zephyr
 ======
 
-.. NOTE TO MAINTAINERS: The latest Zephyr commit appears in multiple places; make sure you update them all.
+.. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each NCS release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``730acbd6ed`` (``v2.6.0-rc1``), plus some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``14f09a3b00``, plus some |NCS| specific additions.
 
 For a complete list of upstream Zephyr commits incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline v2.6.0-rc1 ^v2.4.99-ncs1
+   git log --oneline 14f09a3b00 ^v2.6.0-rc1-ncs1
 
 For a complete list of |NCS| specific commits, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^v2.6.0-rc1
+   git log --oneline manifest-rev ^14f09a3b00
 
-The current |NCS| release is based on Zephyr v2.6.0-rc1.
-See the :ref:`zephyr:zephyr_2.6` Release Notes for an overview of the most important changes inherited from upstream Zephyr.
+The current |NCS| master branch is based on the Zephyr v2.7 development branch.
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
-* The ``nrf9160dk_nrf9160ns`` and the ``nrf5340dk_nrf5340_cpuappns`` boards have been renamed respectively to ``nrf9160dk_nrf9160_ns`` and ``nrf5340dk_nrf5340_cpuapp_ns``.
-* A config option for ``memcpy`` that skips the word-based loop before the byte-based loop was added.
-  It is now enabled by default if :kconfig:`SIZE_OPTIMIZATIONS` is set.
-  As result, any application-specific assumptions about ``memcpy`` read or write size behavior should be rechecked if this option is enabled.
+.. TODO update the following sections to reflect https://github.com/nrfconnect/sdk-nrf/pull/5189. Delete this comment once that is complete.
+
+* Arches/Boards:
+
+.. TODO
+
+* Bluetooth:
+
+.. TODO
+
+* Devicetree:
+
+.. TODO
+
+* Documentation:
+
+.. TODO
+
+* Drivers:
+
+.. TODO
+
+* Kernel:
+
+.. TODO
+
+* Networking:
+
+.. TODO
+
+* Testing:
+
+.. TODO
+
+* Other:
+
+.. TODO
+
+  * A config option for ``memcpy`` that skips the word-based loop before the byte-based loop was added.
+    It is now enabled by default if :kconfig:`SIZE_OPTIMIZATIONS` is set.
+    As result, any application-specific assumptions about ``memcpy`` read or write size behavior should be rechecked if this option is enabled.
 
 Matter (Project CHIP)
 =====================
@@ -240,6 +281,8 @@ Documentation
 * Added:
 
   * User guide :ref:`ug_nrf_cloud`.
+
+.. TODO update this following https://github.com/nrfconnect/sdk-nrf/pull/5189. Delete this comment once that is complete.
 
 * Updated:
 
