@@ -27,12 +27,12 @@ void method_gnss_event_handler(int event)
 	switch (event) {
 	case NRF_MODEM_GNSS_EVT_FIX:
 		LOG_DBG("GNSS: Got fix");
-		k_work_submit(&gnss_fix_work);
+		k_work_submit_to_queue(loc_core_work_queue_get(), &gnss_fix_work);
 		break;
 
 	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
 		LOG_DBG("GNSS: Timeout");
-		k_work_submit(&method_gnss_timeout_work);
+		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_timeout_work);
 		break;
 	}
 }
