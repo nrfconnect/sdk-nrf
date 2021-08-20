@@ -136,9 +136,11 @@ def commit_affects_files(commit, files):
 AREAS_NCS_SUBSET = set([
     'Bluetooth',
     'Devicetree',
+    'Documentation',
     'Drivers',
     'Kernel',
     'Networking',
+    'Testing',
     # Keep this list sorted alphabetically.
 ])
 
