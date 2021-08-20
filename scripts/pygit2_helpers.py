@@ -130,6 +130,18 @@ def commit_affects_files(commit, files):
                 return True
     return False
 
+# The code this was copied from has finer-grained area heuristics than
+# NCS currently tracks. This kludge preserves the work that's already
+# been done while making a rougher-grained breakdown.
+AREAS_NCS_SUBSET = set([
+    'Bluetooth',
+    'Devicetree',
+    'Drivers',
+    'Kernel',
+    'Networking',
+    # Keep this list sorted alphabetically.
+])
+
 def zephyr_commit_area(commit):
     '''Make a guess about what area a zephyr commit affected.
 
@@ -155,11 +167,7 @@ def zephyr_commit_area(commit):
     else:
         area = 'Other'
 
-    # The code this was copied from has finer-grained area heuristics
-    # than NCS currently needs. Don't throw that work away as we may
-    # want to drill down a bit more in the future, but for now, we
-    # only want a rough breakdown.
-    if area in ('Kernel', 'Bluetooth', 'Devicetree', 'Drivers', 'Networking'):
+    if area in AREAS_NCS_SUBSET:
         return area
 
     if area in ('Arches', 'Boards'):
