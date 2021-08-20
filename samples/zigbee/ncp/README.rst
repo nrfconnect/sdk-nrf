@@ -80,14 +80,14 @@ The ``UART0`` pins are configured by Devicetree :file:`overlay` files for each s
 Communication through USB
 -------------------------
 
-You can change the communication channel from the default UART to nRF USB by using the :file:`prj_usb.conf` configuration file, adding the ``-DCONF_FILE='prj_usb.conf'`` flag to your build.
+You can change the communication channel from the default UART to nRF USB by using the :file:`overlay-via-usb.conf` overlay configuration file, adding the ``-DOVERLAY_CONFIG='overlay-via-usb.conf'`` flag to your build.
 
 See :ref:`cmake_options` for instructions on how to add this flag to your build.
 For example, when building on the command line, you can do so as follows:
 
 .. code-block:: console
 
-   west build samples/zigbee/ncp -b nrf52840dk_nrf52840 -- -DCONF_FILE='prj_usb.conf'
+   west build samples/zigbee/ncp -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG='overlay-via-usb.conf'
 
 The USB device VID and PID are configured by the sample's Kconfig file.
 

@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&uart1 {
+	status = "okay";
+	tx-pin = <20>;
+	rx-pin = <22>;
+	rts-pin = <19>;
+	cts-pin = <21>;
+};
+
+&uart0 {
+	rx-pin = <36>;
+	tx-pin = <37>;
+	/delete-property/ rts-pin;
+	/delete-property/ cts-pin;
+};
