@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -28,7 +28,9 @@
 #include <toolchain.h>
 #include <fs/nvs.h>
 #include <logging/log.h>
+#include <logging/log_ctrl.h>
 #include <nrf_errno.h>
+#include <modem/at_monitor.h>
 
 /* NVS-related defines */
 
@@ -45,7 +47,7 @@ static struct nvs_fs fs = {
 	.offset = NVS_STORAGE_OFFSET,
 };
 
-K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS, 2048);
+K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS, 4096);
 struct k_work_q lwm2m_os_work_qs[LWM2M_OS_MAX_WORK_QS];
 
 static struct k_sem lwm2m_os_sems[LWM2M_OS_MAX_SEM_COUNT];
@@ -146,12 +148,6 @@ int lwm2m_os_storage_delete(uint16_t id)
 	__ASSERT((id >= LWM2M_OS_STORAGE_BASE) || (id <= LWM2M_OS_STORAGE_END),
 		 "Storage ID out of range");
 
-	if ((id == LWM2M_OS_STORAGE_END - 16) ||
-	    (id == LWM2M_OS_STORAGE_END - 18) ||
-	    (id == LWM2M_OS_STORAGE_END - 19)) {
-		return 0;
-	}
-
 	return nvs_delete(&fs, id);
 }
 
@@ -245,13 +241,10 @@ void lwm2m_os_timer_release(lwm2m_os_timer_t *timer)
 		return;
 	}
 
-	/* Workaround. The work is being reused by the library without ever reassigning
-	 * the handler, hence the timer cannot be released. Instead, only cancel the work.
-	 */
-	k_work_cancel_delayable_sync(&work->work_item, &work->work_sync);
+	work->handler = NULL;
 }
 
-int lwm2m_os_timer_start(lwm2m_os_timer_t *timer, int64_t msec)
+int lwm2m_os_timer_start(lwm2m_os_timer_t *timer, int64_t delay)
 {
 	struct lwm2m_work *work = (struct lwm2m_work *)timer;
 
@@ -261,12 +254,12 @@ int lwm2m_os_timer_start(lwm2m_os_timer_t *timer, int64_t msec)
 		return -EINVAL;
 	}
 
-	k_work_reschedule(&work->work_item, K_MSEC(msec));
+	k_work_reschedule(&work->work_item, K_MSEC(delay));
 
 	return 0;
 }
 
-int lwm2m_os_timer_start_on_q(lwm2m_os_work_q_t *work_q, lwm2m_os_timer_t *timer, int64_t msec)
+int lwm2m_os_timer_start_on_q(lwm2m_os_work_q_t *work_q, lwm2m_os_timer_t *timer, int64_t delay)
 {
 	struct k_work_q *queue = (struct k_work_q *)work_q;
 	struct lwm2m_work *work = (struct lwm2m_work *)timer;
@@ -278,7 +271,7 @@ int lwm2m_os_timer_start_on_q(lwm2m_os_work_q_t *work_q, lwm2m_os_timer_t *timer
 		return -EINVAL;
 	}
 
-	k_work_reschedule_for_queue(queue, &work->work_item, K_MSEC(msec));
+	k_work_reschedule_for_queue(queue, &work->work_item, K_MSEC(delay));
 
 	return 0;
 }
@@ -324,89 +317,55 @@ bool lwm2m_os_timer_is_pending(lwm2m_os_timer_t *timer)
 
 /* LWM2M logs. */
 
-LOG_MODULE_REGISTER(lwm2m, CONFIG_LOG_DEFAULT_LEVEL);
-
-static const uint8_t log_level_lut[] = {
-	LOG_LEVEL_NONE, /* LWM2M_LOG_LEVEL_NONE */
-	LOG_LEVEL_ERR,	/* LWM2M_LOG_LEVEL_ERR */
-	LOG_LEVEL_WRN,	/* LWM2M_LOG_LEVEL_WRN */
-	LOG_LEVEL_INF,	/* LWM2M_LOG_LEVEL_INF */
-	LOG_LEVEL_DBG,	/* LWM2M_LOG_LEVEL_TRC */
-};
-
-const char *lwm2m_os_log_strdup(const char *str)
-{
-	if (IS_ENABLED(CONFIG_LOG)) {
-		return log_strdup(str);
-	}
-
-	return str;
-}
-
-void lwm2m_os_log(int level, const char *fmt, ...)
-{
-	if (IS_ENABLED(CONFIG_LOG)) {
-		struct log_msg_ids src_level = {
-			.level = log_level_lut[level],
-			.domain_id = CONFIG_LOG_DOMAIN_ID,
-			.source_id = LOG_CURRENT_MODULE_ID()
-		};
-
-		va_list ap;
-
-		va_start(ap, fmt);
-		log_generic(src_level, fmt, ap, LOG_STRDUP_SKIP);
-		va_end(ap);
-	}
-}
-
-void lwm2m_os_logdump(int level, const char *str, const void *data, size_t len)
-{
-	if (IS_ENABLED(CONFIG_LOG)) {
-		struct log_msg_ids src_level = {
-			.level = log_level_lut[level],
-			.domain_id = CONFIG_LOG_DOMAIN_ID,
-			.source_id = LOG_CURRENT_MODULE_ID()
-		};
-		log_hexdump(str, data, len, src_level);
-	}
-}
+LOG_MODULE_REGISTER(lwm2m_os, LOG_LEVEL_DBG);
 
 int lwm2m_os_nrf_modem_init(void)
 {
-	int err;
+	int nrf_err;
 
-	err = nrf_modem_lib_init(NORMAL_MODE);
+#if defined CONFIG_LOG_RUNTIME_FILTERING
+	log_filter_set(NULL, CONFIG_LOG_DOMAIN_ID, LOG_CURRENT_MODULE_ID(),
+		       CONFIG_LOG_DEFAULT_LEVEL);
+#endif /* CONFIG_LOG_RUNTIME_FILTERING */
 
-	switch (err) {
+	nrf_err = nrf_modem_lib_init(NORMAL_MODE);
+
+	switch (nrf_err) {
 	case MODEM_DFU_RESULT_OK:
-		lwm2m_os_log(LOG_LEVEL_INF, "Modem firmware update successful.");
-		lwm2m_os_log(LOG_LEVEL_INF, "Modem will run the new firmware after reboot.");
+		LOG_INF("Modem firmware update successful.");
+		LOG_INF("Modem will run the new firmware after reboot.");
 		break;
 	case MODEM_DFU_RESULT_UUID_ERROR:
 	case MODEM_DFU_RESULT_AUTH_ERROR:
-		lwm2m_os_log(LOG_LEVEL_ERR, "Modem firmware update failed.");
-		lwm2m_os_log(LOG_LEVEL_ERR, "Modem will run non-updated firmware on reboot.");
+		LOG_ERR("Modem firmware update failed.");
+		LOG_ERR("Modem will run non-updated firmware on reboot.");
 		break;
 	case MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case MODEM_DFU_RESULT_INTERNAL_ERROR:
-		lwm2m_os_log(LOG_LEVEL_ERR, "Modem firmware update failed.");
-		lwm2m_os_log(LOG_LEVEL_ERR, "Fatal error.");
+		LOG_ERR("Modem firmware update failed.");
+		LOG_ERR("Fatal error.");
 		break;
 	case -1:
-		lwm2m_os_log(LOG_LEVEL_ERR, "Could not initialize modem library.");
-		lwm2m_os_log(LOG_LEVEL_ERR, "Fatal error.");
-		break;
+		LOG_ERR("Could not initialize modem library.");
+		LOG_ERR("Fatal error.");
+		return -EIO;
 	default:
 		break;
 	}
 
-	return err;
+	return nrf_err;
 }
 
 int lwm2m_os_nrf_modem_shutdown(void)
 {
-	return nrf_modem_lib_shutdown();
+	int err = nrf_modem_lib_shutdown();
+
+	if (err != 0) {
+		LOG_ERR("nrf_modem_lib_shutdown() failed on: %d", err);
+		return -EIO;
+	}
+
+	return 0;
 }
 
 /* AT command module abstractions. */
@@ -417,13 +376,15 @@ int lwm2m_os_at_init(void)
 
 	err = at_cmd_init();
 	if (err) {
-		return -1;
+		return -EIO;
 	}
 
 	err = at_notif_init();
 	if (err) {
-		return -1;
+		return -EIO;
 	}
+
+	at_monitor_init();
 
 	return 0;
 }
@@ -626,7 +587,7 @@ int lwm2m_os_at_params_valid_count_get(struct lwm2m_os_at_param_list *list)
 
 /* SMS subscriber module abstraction.*/
 
-/**@brief Forward declaration */
+/** @brief Forward declaration */
 static lwm2m_os_sms_callback_t lib_sms_callback;
 
 /**
@@ -679,17 +640,17 @@ int lwm2m_os_sms_client_register(lwm2m_os_sms_callback_t callback, void *context
 	lib_sms_callback = callback;
 	ret = sms_register_listener(sms_callback, context);
 	if (ret < 0) {
-		lwm2m_os_log(LOG_LEVEL_ERR, "Unable to register as SMS listener");
-		return -1;
+		LOG_ERR("Unable to register as SMS listener");
+		return -EIO;
 	}
-	lwm2m_os_log(LOG_LEVEL_INF, "Registered as SMS listener");
-	return ret;
+	LOG_INF("Registered as SMS listener");
+	return 0;
 }
 
 void lwm2m_os_sms_client_deregister(int handle)
 {
 	sms_unregister_listener(handle);
-	lwm2m_os_log(LOG_LEVEL_INF, "Deregistered as SMS listener");
+	LOG_INF("Deregistered as SMS listener");
 }
 
 /* Download client module abstractions. */
@@ -843,9 +804,9 @@ int lwm2m_os_pdn_ctx_destroy(uint8_t cid)
 	return pdn_ctx_destroy(cid);
 }
 
-int lwm2m_os_pdn_activate(uint8_t cid, int *esm)
+int lwm2m_os_pdn_activate(uint8_t cid, int *esm, enum lwm2m_os_pdn_fam *family)
 {
-	return pdn_activate(cid, esm, NULL);
+	return pdn_activate(cid, esm, (enum pdn_fam *)family);
 }
 
 int lwm2m_os_pdn_deactivate(uint8_t cid)
@@ -869,18 +830,13 @@ int lwm2m_os_pdn_default_callback_set(lwm2m_os_pdn_event_handler_t cb)
 }
 
 /* errno handling. */
-int lwm2m_os_errno(void)
+int lwm2m_os_nrf_errno(void)
 {
 	/* nrf_errno have the same values as newlibc errno */
 	return errno;
 }
 
-const char *lwm2m_os_strerror(void)
-{
-	return strerror(errno);
-}
-
-int lwm2m_os_sec_ca_chain_exists(uint32_t sec_tag, bool *exists, uint8_t *flags)
+int lwm2m_os_sec_ca_chain_exists(uint32_t sec_tag, bool *exists)
 {
 	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, exists);
 }
@@ -895,7 +851,7 @@ int lwm2m_os_sec_ca_chain_write(uint32_t sec_tag, const void *buf, size_t len)
 	return modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, buf, len);
 }
 
-int lwm2m_os_sec_psk_exists(uint32_t sec_tag, bool *exists, uint8_t *perm_flags)
+int lwm2m_os_sec_psk_exists(uint32_t sec_tag, bool *exists)
 {
 	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK, exists);
 }
@@ -910,7 +866,7 @@ int lwm2m_os_sec_psk_delete(uint32_t sec_tag)
 	return modem_key_mgmt_delete(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK);
 }
 
-int lwm2m_os_sec_identity_exists(uint32_t sec_tag, bool *exists, uint8_t *perm_flags)
+int lwm2m_os_sec_identity_exists(uint32_t sec_tag, bool *exists)
 {
 	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY, exists);
 }

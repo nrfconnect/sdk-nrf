@@ -36,7 +36,7 @@ After programming the sample and all prerequisites to the development kit, test 
 #. Open a terminal emulator and observe that the kit prints the following information::
 
         LWM2M Carrier library sample.
-#. Observe that the application receives events from the **LwM2M carrier** library using the registered event handler.
+#. Observe that the application receives events from the :ref:`liblwm2m_carrier_readme` library using the registered event handler.
 
 
 Troubleshooting

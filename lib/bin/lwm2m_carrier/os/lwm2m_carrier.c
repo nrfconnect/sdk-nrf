@@ -27,21 +27,30 @@ void lwm2m_carrier_thread_run(void)
 #ifdef CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE
 	config.certification_mode = CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE;
 #endif
-#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
-	config.bootstrap_uri = CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI;
+#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI
+	config.server_uri = CONFIG_LWM2M_CARRIER_CUSTOM_URI;
+#ifdef CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP
+	config.is_bootstrap_server = true;
+#else
+	config.server_lifetime = CONFIG_LWM2M_CARRIER_SERVER_LIFETIME;
 #endif
-#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
-	config.psk = CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK;
+#endif /* CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI */
+#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_PSK
+	config.psk = CONFIG_LWM2M_CARRIER_CUSTOM_PSK;
 #endif
 
 #ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN
 	config.apn = CONFIG_LWM2M_CARRIER_CUSTOM_APN;
 #endif
 
+#ifndef CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD
+	config.disable_bootstrap_from_smartcard = true;
+#endif
+
 	err = lwm2m_carrier_init(&config);
-	__ASSERT(err == 0, "Failed to initialize LwM2M carrier library");
 
 	if (err != 0) {
+		printk("Failed to initialize the LwM2M carrier library. Error %d\n", err);
 		return;
 	}
 

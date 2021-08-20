@@ -462,6 +462,10 @@ Libraries for networking
 
   * Added callback parameter to :c:func:`nrf_cloud_cell_pos_request` to handle response data from the cloud.
 
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Updated to v0.21.0. See the :ref:`liblwm2m_carrier_changelog` for detailed information.
+
 Libraries for NFC
 -----------------
 
