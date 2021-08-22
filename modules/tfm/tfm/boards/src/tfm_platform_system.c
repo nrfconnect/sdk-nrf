@@ -28,6 +28,8 @@ tfm_platform_hal_read_service(const psa_invec  *in_vec,
 {
 	struct tfm_read_service_args_t *args;
 	struct tfm_read_service_out_t *out;
+	enum tfm_platform_err_t err;
+
 
 	if (in_vec->len != sizeof(struct tfm_read_service_args_t) ||
 	    out_vec->len != sizeof(struct tfm_read_service_out_t)) {
@@ -39,6 +41,7 @@ tfm_platform_hal_read_service(const psa_invec  *in_vec,
 
 	/* Assume failure, unless valid region is hit in the loop */
 	out->result = -1;
+	err = TFM_PLATFORM_ERR_INVALID_PARAM;
 
 	if (args->destination == NULL || args->len <= 0) {
 		return TFM_PLATFORM_ERR_INVALID_PARAM;
@@ -58,6 +61,7 @@ tfm_platform_hal_read_service(const psa_invec  *in_vec,
 			       (const void *)args->addr,
 			       args->len);
 			out->result = 0;
+			err = TFM_PLATFORM_ERR_SUCCESS;
 			break;
 		}
 	}
@@ -65,7 +69,7 @@ tfm_platform_hal_read_service(const psa_invec  *in_vec,
 	in_vec++;
 	out_vec++;
 
-	return TFM_PLATFORM_ERR_SUCCESS;
+	return err;
 }
 
 
