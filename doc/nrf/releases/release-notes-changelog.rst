@@ -225,6 +225,12 @@ Modem library
 * The AT socket API is now deprecated.
 * The DFU socket API is now deprecated.
 
+Trusted Firmware-M
+------------------
+
+* Updated :file:`tfm_platform_system.c` to fix a bug that returned ``TFM_PLATFORM_ERR_SUCCESS`` instead of ``TFM_PLATFORM_ERR_INVALID_PARAM`` when the address passed is outside of the accepted read range.
+* Added a test case for the secure read service that verifies that only addresses within the accepted range can be read.
+
 Pelion
 ------
 
