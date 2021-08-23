@@ -105,9 +105,19 @@ Zigbee
 
   * :ref:`lib_zigbee_zcl_scenes` library with documentation.
     This library was separated from the Zigbee light bulb sample.
-
+  * Added production support for :ref:`radio front-end module (FEM) <ug_radio_fem>` for nRF52 Series devices and nRF21540 EK.
   * :ref:`zigbee_template_sample` sample.
     This minimal Zigbee router application can be used as the starting point for developing custom Zigbee devices.
+  * Added API for vendor-specific NCP commands.
+  * Added API for Zigbee command for getting active nodes.
+
+* Updated:
+
+  * Fixed the KRKNWK-9743 known issue where the timer could not be stopped in Zigbee routers and coordinators.
+  * Fixed the KRKNWK-10490 known issue that would cause a deadlock in the NCP frame fragmentation logic.
+  * Fixed the KRKNWK-6071 known issue with inaccurate ZBOSS alarms.
+  * Fixed the KRKNWK-5535 known issue where the device would assert if flooded with multiple Network Address requests.
+  * Fixed an issue where the NCS would assert in the host application when the host started just after SoC's SysReset.
 
 Common
 ======
