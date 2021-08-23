@@ -90,7 +90,7 @@
 
 | :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91_nrf52840 | ``thingy91_nrf52840`` |
 
-.. nrf5340dk_nrf5340_cpuapp_and_cpuappns
+.. nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns
 
 | :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>` | ``nrf5340dk_nrf5340_cpuapp``    |
 |                                |          |                                              |                                 |
