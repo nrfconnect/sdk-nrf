@@ -174,15 +174,15 @@ Pelion
 MCUboot
 =======
 
-.. TODO update this following https://github.com/nrfconnect/sdk-nrf/pull/5189. Delete this comment once that is complete.
-
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``2fce9769b1``, plus some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``7a51968``, plus some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in :file:`ncs/nrf/modules/mcuboot`.
 
 The following list summarizes the most important changes inherited from upstream MCUboot:
 
-* No changes yet
+* Added AES support for image encryption (based on mbedTLS).
+* MCUboot serial: Ported encoding to use the cddl-gen module (which removes dependency on the `TinyCBOR`_ library).
+* bootutil_public library: Made ``boot_read_swap_state()`` declaration public.
 
 
 Mcumgr
