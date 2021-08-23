@@ -1,7 +1,10 @@
+import os
 from os import PathLike
 from pathlib import Path
+import textwrap
 from typing import Dict, Tuple, Optional
 
+from sphinx.application import Sphinx
 from sphinx.cmd.build import get_parser
 from west.manifest import Manifest
 
@@ -114,3 +117,40 @@ def get_intersphinx_mapping(docset: str) -> Optional[Tuple[str, str]]:
         return
 
     return (str(Path("..") / docset), str(inventory))
+
+
+def configure_algolia(app: Sphinx) -> None:
+    """Configure algolia search on the given Sphinx instance.
+
+    Notes:
+        This function will not do anything unless ``NCS_USE_ALGOLIA``
+        environment variable is set.
+
+    Args:
+        app: Sphinx instance.
+    """
+
+    if not os.environ.get("NCS_USE_ALGOLIA"):
+        return
+
+    app.add_js_file(
+        "https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js",
+        defer="defer",
+        onload=textwrap.dedent(
+            f"""
+            docsearch({{
+                apiKey: 'fee2fbd62a3aa11ae2f30777a328b19f',
+                indexName: 'nrf_connect_sdk',
+                inputSelector: '#rtd-search-form input[type=text]',
+                algoliaOptions: {{
+                    hitsPerPage: 10,
+                }},
+            }});
+            """
+        ),
+    )
+
+    app.add_css_file(
+        "https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"
+    )
+    app.add_css_file("css/algolia.css")

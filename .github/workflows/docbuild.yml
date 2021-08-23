@@ -55,7 +55,7 @@ jobs:
         working-directory: ncs/nrf
         run: |
           cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-W"
-          ninja -C doc/_build
+          NCS_USE_ALGOLIA=1 ninja -C doc/_build
 
       - name: Build cache
         working-directory: ncs/nrf

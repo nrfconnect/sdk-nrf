@@ -70,3 +70,4 @@ ncs_cache_manifest = NRF_BASE / "west.yml"
 def setup(app):
     app.add_css_file("css/common.css")
     app.add_css_file("css/nrfx.css")
+    utils.configure_algolia(app)
