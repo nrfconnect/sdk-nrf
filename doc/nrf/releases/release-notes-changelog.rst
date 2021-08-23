@@ -104,22 +104,19 @@ Zigbee
 
   * :ref:`lib_zigbee_zcl_scenes` library with documentation.
     This library was separated from the Zigbee light bulb sample.
-
+  * Added production support for :ref:`radio front-end module (FEM) <ug_radio_fem>` for nRF52 Series devices and nRF21540 EK.
   * :ref:`zigbee_template_sample` sample.
     This minimal Zigbee router application can be used as the starting point for developing custom Zigbee devices.
-  * Added Zigbee Production support for FEM - nRF52 + nRF21540
-  * Added API for Vendor specific NCP commands
-  * Added API for Zigbee command for getting active nodes
-  * Known issues bugfixes:
+  * Added API for vendor-specific NCP commands.
+  * Added API for Zigbee command for getting active nodes.
 
-     * KRKNWK-9743 Timer cannot be stopped in Zigbee routers and coordinators - The call to the zb_timer_enable_stop() API has no effect on the timer logic in Zigbee routers and coordinators.
-     * KRKNWK-10490: Deadlock in the NCP frame fragmentation logic - If the last piece of a fragmented NCP command is not delivered, the receiving side becomes unresponsive to further commands.
-     * KRKNWK-6071: ZBOSS alarms inaccurate - On average, ZBOSS alarms last longer by 6.4 percent than Zephyr alarms.
-     * KRKNWK-5535: Device assert if flooded with multiple Network Address requests - The device could assert if it receives Network Address requests every 0.2 second or more frequently.
+* Updated:
 
-  * Other bug fixing:
-     * KRKNWK-11096: NCP: assert in host application when host started just after soc SysReset - improved NCP host startup sequance
-
+  * Fixed the KRKNWK-9743 known issue where the timer could not be stopped in Zigbee routers and coordinators.
+  * Fixed the KRKNWK-10490 known issue that would cause a deadlock in the NCP frame fragmentation logic.
+  * Fixed the KRKNWK-6071 known issue with inaccurate ZBOSS alarms.
+  * Fixed the KRKNWK-5535 known issue where the device would assert if flooded with multiple Network Address requests.
+  * Fixed an issue where the NCS would assert in the host application when the host started just after SoC's SysReset.
 
 Common
 ======
