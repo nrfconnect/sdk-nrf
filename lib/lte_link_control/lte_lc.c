@@ -188,6 +188,15 @@ static bool is_relevant_notif(const char *notif, enum lte_lc_notif_type *type)
 	return false;
 }
 
+static bool is_cellid_valid(uint32_t cellid)
+{
+	if (cellid == UINT32_MAX) {
+		return false;
+	}
+
+	return true;
+}
+
 static void at_handler(void *context, const char *response)
 {
 	ARG_UNUSED(context);
@@ -226,6 +235,13 @@ static void at_handler(void *context, const char *response)
 			LOG_ERR("Failed to parse notification (error %d): %s",
 				err, log_strdup(response));
 			return;
+		}
+
+		/* Set the network registration status to UNKNOWN if the cell ID is parsed to
+		 * UINT32_MAX (FFFFFFFF).
+		 */
+		if (!is_cellid_valid(cell.id)) {
+			reg_status = LTE_LC_NW_REG_UNKNOWN;
 		}
 
 		if ((reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
