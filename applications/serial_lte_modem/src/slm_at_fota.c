@@ -136,6 +136,20 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 		return -EINVAL;
 	}
 
+#if defined(CONFIG_SECURE_BOOT)
+	/* When download MCUBOOT bootloader, S0 and S1 must be separated by "+"
+	 * Convert "+" to " " SPACE as this is required in fota_download
+	 */
+	char *delimiter = strstr(path, "+");
+
+	if (delimiter == NULL) {
+		LOG_ERR("Invalid S0/S1 string");
+		return -EINVAL;
+	}
+
+	*delimiter = ' ';
+#endif
+
 	memset(hostname, 0x00, URI_HOST_MAX);
 	strncpy(hostname, file_uri, strlen(file_uri) - parser.field_data[UF_PATH].len);
 

@@ -56,7 +56,7 @@ int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active,
 	}
 
 	/* We have verified that there is a null-terminator, so this is safe */
-	char *delimiter = strstr(file, "+");
+	char *delimiter = strstr(file, " ");
 
 	if (delimiter == NULL) {
 		/* Could not find delimiter in input */
