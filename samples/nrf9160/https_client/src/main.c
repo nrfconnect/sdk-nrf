@@ -17,9 +17,11 @@
 
 #define HTTPS_PORT 443
 
+#define HTTPS_HOSTNAME "example.com"
+
 #define HTTP_HEAD                                                              \
 	"HEAD / HTTP/1.1\r\n"                                                  \
-	"Host: example.com:443\r\n"                                            \
+	"Host: " HTTPS_HOSTNAME ":443\r\n"                                     \
 	"Connection: close\r\n\r\n"
 
 #define HTTP_HEAD_LEN (sizeof(HTTP_HEAD) - 1)
@@ -137,6 +139,11 @@ int tls_setup(int fd)
 		return err;
 	}
 
+	err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, HTTPS_HOSTNAME, sizeof(HTTPS_HOSTNAME) - 1);
+	if (err) {
+		printk("Failed to setup TLS hostname, err %d\n", errno);
+		return err;
+	}
 	return 0;
 }
 
@@ -181,7 +188,7 @@ void main(void)
 	}
 	printk("OK\n");
 
-	err = getaddrinfo("example.com", NULL, &hints, &res);
+	err = getaddrinfo(HTTPS_HOSTNAME, NULL, &hints, &res);
 	if (err) {
 		printk("getaddrinfo() failed, err %d\n", errno);
 		return;
@@ -201,7 +208,7 @@ void main(void)
 		goto clean_up;
 	}
 
-	printk("Connecting to %s\n", "example.com");
+	printk("Connecting to %s\n", HTTPS_HOSTNAME);
 	err = connect(fd, res->ai_addr, sizeof(struct sockaddr_in));
 	if (err) {
 		printk("connect() failed, err: %d\n", errno);
