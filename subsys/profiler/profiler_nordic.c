@@ -352,10 +352,10 @@ void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 {
 	static uint32_t old_time;
 
-	__ASSERT_NO_MSG(event_type_id <= UCHAR_MAX);
+	__ASSERT_NO_MSG(event_type_id <= UINT8_MAX);
 	static struct k_spinlock lock;
 	if (sending_events) {
-		uint8_t type_id = event_type_id & UCHAR_MAX;
+		uint8_t type_id = event_type_id & UINT8_MAX;
 
 		buf->payload_start[0] = type_id;
 		k_spinlock_key_t key = k_spin_lock(&lock);
