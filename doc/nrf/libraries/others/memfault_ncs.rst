@@ -25,6 +25,7 @@ See the :ref:`memfault_sample` sample for an example of Memfault implementation 
 
 Memfault in |NCS| currently supports the nRF9160-based build targets.
 
+.. _using_memfault:
 
 Using Memfault SDK
 ******************
@@ -36,6 +37,7 @@ To include Memfault in your build, enable the Kconfig option :kconfig:`CONFIG_ME
 The APIs in Memfault SDK can then be linked into your application.
 
 In addition, you must configure a Memfault project key using :kconfig:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`.
+:kconfig:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` is located in :file:`../overlay-memfault.conf`.
 
 To get access to all the benefits, like up to 100 free devices connected, register at the `Memfault registration page`_.
 

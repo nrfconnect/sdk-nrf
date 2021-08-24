@@ -24,6 +24,7 @@ rsource "src/modules/Kconfig.sensor_module"
 rsource "src/modules/Kconfig.ui_module"
 rsource "src/modules/Kconfig.util_module"
 rsource "src/modules/Kconfig.led_module"
+rsource "src/modules/Kconfig.debug_module"
 
 rsource "src/cloud/cloud_codec/Kconfig"
 rsource "src/watchdog/Kconfig"

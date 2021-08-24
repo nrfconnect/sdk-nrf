@@ -42,6 +42,10 @@ config DATA_EVENTS_LOG
 	bool "Enable logging for data module events"
 	default y
 
+config DEBUG_EVENTS_LOG
+	bool "Enable logging for debug module events"
+	default y
+
 if PROFILER
 
 choice

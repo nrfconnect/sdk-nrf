@@ -1,0 +1,3 @@
+/* Application-specific trace reasons can be defined here.
+ * Please refer to https://docs.memfault.com/docs/embedded/trace-events for more details.
+ */
