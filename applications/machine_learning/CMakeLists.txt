@@ -28,13 +28,6 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
   set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
 endif()
 
-set(mcuboot_CONF_FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf
-  )
-set(b0_CONF_FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/b0_${CMAKE_BUILD_TYPE}.conf
-  )
-
 # Use static partition layout to ensure consistency between builds.
 # This is to ensure settings storage will be at the same location after the DFU.
 set(PM_STATIC_YML_FILE
@@ -73,10 +66,3 @@ zephyr_include_directories(
 add_subdirectory(src/events)
 add_subdirectory(src/modules)
 add_subdirectory(src/util)
-
-if(CONFIG_BOOTLOADER_MCUBOOT)
-  assert_exists(mcuboot_CONF_FILE)
-endif()
-if(CONFIG_SECURE_BOOT)
-  assert_exists(b0_CONF_FILE)
-endif()
