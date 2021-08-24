@@ -375,7 +375,7 @@ int json_common_gps_data_add(cJSON *parent,
 			goto exit;
 		}
 
-		err = json_add_number(gps_val_obj, DATA_MOVEMENT, data->pvt.acc);
+		err = json_add_number(gps_val_obj, DATA_GPS_ACCURACY, data->pvt.acc);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
