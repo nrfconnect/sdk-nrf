@@ -144,6 +144,8 @@ Bluetooth LE
 * Added:
 
   * Production support for :ref:`nRF21540 GPIO <ug_radio_fem_nrf21540_gpio>` for both nRF52 and nRF53 Series.
+  * :ref:`rscs_readme` - This module implements the Running Speed and Cadence Service (RSCS) with the corresponding set of characteristics.
+  * :ref:`peripheral_rscs` sample - This sample demonstrates how to use the Running Speed and Cadence Service (RSCS).
 
 * Updated:
 
