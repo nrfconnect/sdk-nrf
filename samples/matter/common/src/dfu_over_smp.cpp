@@ -19,6 +19,8 @@
 
 #include <support/logging/CHIPLogging.h>
 
+using namespace ::chip::DeviceLayer;
+
 DFUOverSMP DFUOverSMP::sDFUOverSMP;
 
 void DFUOverSMP::Init(DFUOverSMPRestartAdvertisingHandler startAdvertisingCb)
@@ -33,6 +35,8 @@ void DFUOverSMP::Init(DFUOverSMPRestartAdvertisingHandler startAdvertisingCb)
 	bt_conn_cb_register(&mBleConnCallbacks);
 
 	restartAdvertisingCallback = startAdvertisingCb;
+
+	PlatformMgr().AddEventHandler(ChipEventHandler, 0);
 }
 
 void DFUOverSMP::ConfirmNewImage()
@@ -66,7 +70,7 @@ void DFUOverSMP::StartServer()
 		ChipLogProgress(DeviceLayer, "Enabled software update");
 
 		/* Start SMP advertising only in case CHIPoBLE advertising is not working. */
-		if (!chip::DeviceLayer::ConnectivityMgr().IsBLEAdvertisingEnabled())
+		if (!ConnectivityMgr().IsBLEAdvertisingEnabled())
 			StartBLEAdvertising();
 	} else {
 		ChipLogProgress(DeviceLayer, "Software update is already enabled");
@@ -75,7 +79,7 @@ void DFUOverSMP::StartServer()
 
 void DFUOverSMP::StartBLEAdvertising()
 {
-	if (!mIsEnabled)
+	if (!mIsEnabled && !mIsAdvertisingEnabled)
 		return;
 
 	const char *deviceName = bt_get_name();
@@ -98,20 +102,45 @@ void DFUOverSMP::StartBLEAdvertising()
 		ChipLogError(DeviceLayer, "SMP advertising start failed (rc %d)", rc);
 	} else {
 		ChipLogProgress(DeviceLayer, "Started SMP service BLE advertising");
+		mIsAdvertisingEnabled = true;
 	}
 }
 
 void DFUOverSMP::OnBleDisconnect(struct bt_conn *conId, uint8_t reason)
 {
-	chip::DeviceLayer::PlatformMgr().LockChipStack();
+	PlatformMgr().LockChipStack();
 
 	/* After BLE disconnect SMP advertising needs to be restarted. Before making it ensure that BLE disconnect was
 	 * not triggered by closing CHIPoBLE service connection (in that case CHIPoBLE advertising needs to be
 	 * restarted). */
-	if (!chip::DeviceLayer::ConnectivityMgr().IsBLEAdvertisingEnabled() &&
-	    chip::DeviceLayer::ConnectivityMgr().NumBLEConnections() == 0) {
+	if (!ConnectivityMgr().IsBLEAdvertisingEnabled() && (ConnectivityMgr().NumBLEConnections() == 0)) {
 		sDFUOverSMP.restartAdvertisingCallback();
 	}
 
-	chip::DeviceLayer::PlatformMgr().UnlockChipStack();
+	PlatformMgr().UnlockChipStack();
+}
+
+void DFUOverSMP::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
+{
+	if (!GetDFUOverSMP().IsEnabled())
+		return;
+
+	switch (event->Type) {
+	case DeviceEventType::kCHIPoBLEAdvertisingChange:
+		if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
+			/* Check if CHIPoBLE advertising was stopped permanently or it just a matter of opened BLE
+			 * connection. */
+			if (ConnectivityMgr().NumBLEConnections() == 0)
+				sDFUOverSMP.restartAdvertisingCallback();
+		}
+		break;
+	case DeviceEventType::kCHIPoBLEConnectionClosed:
+		/* Check if after closing CHIPoBLE connection advertising is working, if no start SMP advertising. */
+		if (!ConnectivityMgr().IsBLEAdvertisingEnabled()) {
+			sDFUOverSMP.restartAdvertisingCallback();
+		}
+		break;
+	default:
+		break;
+	}
 }
