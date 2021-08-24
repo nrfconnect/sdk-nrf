@@ -256,6 +256,8 @@ Pin assignment of the nRF21540 EK
 | D13                   | SPI SCK  | Serial Clock    |
 +-----------------------+----------+-----------------+
 
+.. _ug_radio_fem_nrf21540_ek_programming:
+
 Programming
 -----------
 
@@ -269,6 +271,21 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
 
 To build with SES, in the :guilabel:`Extended Settings` specify ``-DSHIELD=nrf21540_ek``.
 See :ref:`cmake_options`.
+
+When building for a board with an additional network core, for example nRF5340, add an additional ``-DSHIELD`` variable with the *childImageName_* parameter to build for the network core as well.
+For example:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek -D*multiprotocol_rpmsg_*SHIELD=nrf21540_ek
+
+In this command, the *childImageName_* parameter has the ``multiprotocol_rpmsg_`` value and builds a multiprotocol application with support for 802.15.4 and Bluetooth.
+The *childImageName_* parameter can take the following values:
+
+*  ``multiprotocol_rpmsg_`` for multiprotocol applications with support for 802.15.4 and Bluetooth
+*  ``802154_rpmsg_`` for applications with support for 802.15.4, but without support for Bluetooth
+*  ``hci_rpmsg_`` for application with support for Bluetooth, but without support for 802.15.4
 
 References
 ----------
