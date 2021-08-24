@@ -158,7 +158,7 @@ static void led_update(struct led *led)
 	led->effect_substep = 0;
 
 	if (!led->effect) {
-		LOG_WRN("No effect set");
+		LOG_DBG("No effect set");
 		return;
 	}
 
