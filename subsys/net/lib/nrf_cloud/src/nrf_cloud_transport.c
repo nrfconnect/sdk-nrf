@@ -788,7 +788,7 @@ int nct_mqtt_connect(void)
 			LOG_WRN("Continuing with blocking socket");
 			err = 0;
 		} else {
-			LOG_INF("Using non-blocking socket");
+			LOG_DBG("Using non-blocking socket");
 		}
 	}  else if (IS_ENABLED(CONFIG_NRF_CLOUD_SEND_TIMEOUT)) {
 		struct timeval timeout = {
@@ -801,7 +801,7 @@ int nct_mqtt_connect(void)
 			LOG_ERR("Failed to set timeout, errno: %d", errno);
 			err = 0;
 		} else {
-			LOG_INF("Using socket send timeout of %d seconds",
+			LOG_DBG("Using socket send timeout of %d seconds",
 				CONFIG_NRF_CLOUD_SEND_TIMEOUT_SEC);
 		}
 	}
