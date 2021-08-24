@@ -111,13 +111,21 @@ struct loc_cellular_config {
 /** GNSS configuration. */
 struct loc_gnss_config {
 	/** @brief Timeout (in seconds), i.e. how long GNSS is allowed to run when trying to
-	 * acquire a fix.
+	 *  acquire a fix.
 	 *
-	 * @details Note that this is not real time as experienced by the user.
+	 *  @details Note that this is not real time as experienced by the user.
 	 */
 	uint16_t timeout;
 	/** Desired accuracy level. */
 	enum loc_accuracy accuracy;
+	/** @brief If accuracy is set to LOC_ACCURACY_HIGH, allow GNSS to attempt
+	 *  num_consecutive_fixes fixes after the first succesful fix before outputting the
+	 *  current location.
+	 *
+	 *  @details This typically improves the location accuracy. If accuracy is set to
+	 *  LOC_ACCURACY_NORMAL or LOC_ACCURACY_LOW this parameter has no effect.
+	*/
+	uint8_t num_consecutive_fixes;
 };
 
 /** Positioning method configuration. */

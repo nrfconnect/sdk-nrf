@@ -35,22 +35,27 @@ static const char location_usage_str[] =
 	"  cancel:   Cancel/Stop on going request. No options\n";
 
 static const char location_get_usage_str[] =
-	"Usage: location get [--interval <secs>] [--method1 <method>] [--method2 <method>] [--gnss_accuracy <acc>] [--gnss_timeout <timeout_in_secs>]\n"
+	"Usage: location get [--interval <secs>] [--method1 <method>] [--method2 <method>] "
+	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>] "
+	"[--gnss_timeout <timeout in secs>]\n"
 	"Options:\n"
 	"  --method1,        1st priority location method: 'cellular' or 'gnss'\n"
 	"  --method2,        2nd priority location method: 'cellular' or 'gnss'\n"
 	"  --interval,       Position update interval in seconds (default: 0, = single position)\n"
 	"  --gnss_accuracy,  Used GNSS accuracy: 'low' or 'normal' or 'high'\n"
+	"  --gnss_num_fixes, Number of consecutive fix attemps (if gnss_accuracy set to 'high', "
+			     "default: 2)\n"
 	"  --gnss_timeout,   GNSS timeout in seconds\n";
 
 /******************************************************************************/
 
 /* Following are not having short options: */
-enum {  LOCATION_SHELL_OPT_METHOD_1      = 1001,
-	LOCATION_SHELL_OPT_METHOD_2      = 1002,
-	LOCATION_SHELL_OPT_INTERVAL      = 1003,
-	LOCATION_SHELL_OPT_GNSS_ACCURACY = 1004,
-	LOCATION_SHELL_OPT_GNSS_TIMEOUT  = 1005,
+enum {  LOCATION_SHELL_OPT_METHOD_1       = 1001,
+	LOCATION_SHELL_OPT_METHOD_2       = 1002,
+	LOCATION_SHELL_OPT_INTERVAL       = 1003,
+	LOCATION_SHELL_OPT_GNSS_ACCURACY  = 1004,
+	LOCATION_SHELL_OPT_GNSS_TIMEOUT   = 1005,
+	LOCATION_SHELL_OPT_GNSS_NUM_FIXES = 1006,
 };
 
 /* Specifying the expected options: */
@@ -60,6 +65,7 @@ static struct option long_options[] = {
 	{ "interval", required_argument, 0, LOCATION_SHELL_OPT_INTERVAL },
 	{ "gnss_accuracy", required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY },
 	{ "gnss_timeout", required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
+	{ "gnss_num_fixes", required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
 	{ 0, 0, 0, 0 }
 };
 
@@ -166,7 +172,10 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	int interval = 0;
 
 	int gnss_timeout = 0;
-	bool gnss_timeout_given = false;
+	bool gnss_timeout_set = false;
+
+	int gnss_num_fixes = 2;
+	bool gnss_num_fixes_set = false;
 
 	enum loc_accuracy gnss_accuracy = LOC_ACCURACY_LOW;
 	bool gnss_accuracy_set = false;
@@ -212,7 +221,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 					    gnss_timeout);
 				return -EINVAL;
 			}
-			gnss_timeout_given = true;
+			gnss_timeout_set = true;
 			break;
 
 		case LOCATION_SHELL_OPT_INTERVAL:
@@ -231,6 +240,10 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				goto show_usage;
 			}
 			gnss_accuracy_set = true;
+			break;
+		case LOCATION_SHELL_OPT_GNSS_NUM_FIXES:
+			gnss_num_fixes = atoi(optarg);
+			gnss_num_fixes_set = true;
 			break;
 		case LOCATION_SHELL_OPT_METHOD_1:
 			if (strcmp(optarg, "cellular") == 0) {
@@ -309,7 +322,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		}
 
 		if (config.methods[0].method == LOC_METHOD_GNSS) {
-			if (gnss_timeout_given) {
+			if (gnss_timeout_set) {
 				config.methods[0].config.gnss.timeout = gnss_timeout;
 			} else {
 				shell_error(shell, "gnss_timeout is mandatory to be given.");
@@ -322,8 +335,12 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			} else {
 				config.methods[0].config.gnss.accuracy = gnss_accuracy;
 			}
+
+			config.methods[0].config.gnss.num_consecutive_fixes =
+			gnss_num_fixes;
+
 		} else if (config.methods[1].method == LOC_METHOD_GNSS) {
-			if (gnss_timeout_given) {
+			if (gnss_timeout_set) {
 				config.methods[1].config.gnss.timeout = gnss_timeout;
 			} else {
 				shell_error(shell, "gnss_timeout is mandatory to be given.");
@@ -336,6 +353,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			} else {
 				config.methods[1].config.gnss.accuracy = gnss_accuracy;
 			}
+
+			config.methods[1].config.gnss.num_consecutive_fixes =
+			gnss_num_fixes;
 		}
 
 		ret = location_request(real_config);
