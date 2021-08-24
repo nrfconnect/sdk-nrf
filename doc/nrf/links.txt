@@ -565,6 +565,8 @@
 
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 
+.. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/Reference/LocationServices
+
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
 
 .. ### Source: other

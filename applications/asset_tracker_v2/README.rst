@@ -267,7 +267,7 @@ This enables the cloud to indirectly fetch A-GPS and P-GPS data from `nRF Cloud`
 This approach saves data and energy costs related to maintaining multiple connections.
 
 .. note::
-   For more information on the various trade-offs of using A-GPS compared to using P-GPS, see `nRF Cloud Location Services`_.
+   For more information on the various trade-offs of using A-GPS compared to using P-GPS, see the `nRF Cloud Location Services documentation`_.
 
 By default, the application is configured to communicate with `nRF Cloud`_ using the factory-provisioned certificates on Thingy:91 and nRF9160 DK.
 This enables the application to function out-of-the-box with nRF Cloud.
@@ -303,7 +303,7 @@ Check and configure the following configuration options for the application:
 
    This application configuration is used to enable the use of custom client ID for the respective cloud. By default, the application uses the IMEI of the nRF9160-based device as the client ID in the cloud connection.
 
-.. option:: CLOUD_CLIENT_ID - Configuration for providing a custom cloud client ID
+.. option:: CONFIG_CLOUD_CLIENT_ID - Configuration for providing a custom cloud client ID
 
    This application configuration sets a custom client ID for the respective cloud. For setting a custom client ID, you need to set :kconfig:`CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM` to ``y``.
 
@@ -396,7 +396,8 @@ The following configuration files are available in the application folder:
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file specific for Thingy:91. This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160_ns`` build target.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for nRF9160 DK. This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
 * :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features  that consume extra power like LED control and logging.
-* :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities to the application
+* :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities and enables the debug module.
+* :file:`overlay-memfault.conf` - Configuration file that enables `Memfault`_. To take advantage of all Memfault features in the application, you must build Memfault with the debug module enabled. To enable the debug module, include both :file:`overlay-debug.conf` and :file:`overlay-memfault.conf` in the ``west build`` command.
 * :file:`boards/<BOARD>/led_state_def.h` - Header file that describes the LED behavior of the CAF LEDs module.
 
 Generally, Kconfig overlays have an ``overlay-`` prefix and a ``.conf`` extension.
@@ -431,10 +432,18 @@ Building with overlays
 
 To build with Kconfig overlay, it must be based to the build system, as shown in the following example:
 
-``west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-low-power.conf``
+.. code-block:: console
+
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-low-power.conf
 
 The above command will build for nRF9160 DK using the configurations found in :file:`overlay-low-power.conf`, in addition to the configurations found in :file:`prj_nrf9160dk_nrf9160_ns.conf`.
 If some options are defined in both files, the options set in the overlay take precedence.
+
+To build with multiple overlay files, ``-DOVERLAY_CONFIG`` must be set to a list of overlay configurations, as shown in the following example:
+
+.. code-block:: console
+
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-debug.conf;overlay-memfault.conf"
 
 Testing
 =======
@@ -507,7 +516,8 @@ Following are the current limitations in the nRF Cloud implementation of the Ass
 				"movementTimeout":3600,
 				"movementResolution":120,
 				"gpsTimeout":60,
-				"movementThreshold":10
+				"movementThreshold":10,
+				"nod":[]
 			}
 		}
 	}
@@ -568,6 +578,14 @@ The messages are then queued in the case of the cloud module or processed direct
     :alt: Event handling in modules
 
     Event handling in modules
+
+More information about each module and its configuration details is available on the subpages.
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Subpages:
+
+   doc/debug_module.rst
 
 Thread usage
 ============
