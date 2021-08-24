@@ -19,7 +19,7 @@ Before you start
 Before you can build the documentation, you must install the required tools.
 The following tool versions have been tested to work:
 
-* Doxygen 1.8.13
+* Doxygen 1.9.2
 * Mscgen 0.20
 * PlantUML
 * Python dependencies as listed in :ref:`python_req_documentation`

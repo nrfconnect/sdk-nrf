@@ -29,7 +29,7 @@ set(SPHINXOPTS_EXTRA "" CACHE STRING "Extra Sphinx Options")
 
 find_package(PythonInterp 3.4)
 set(DOXYGEN_SKIP_DOT True)
-find_package(Doxygen REQUIRED)
+find_package(Doxygen 1.8.18 REQUIRED)
 
 find_program(SPHINXBUILD sphinx-build)
 if(NOT SPHINXBUILD)
