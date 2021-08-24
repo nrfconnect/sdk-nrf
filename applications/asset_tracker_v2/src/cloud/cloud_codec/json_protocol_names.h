@@ -16,6 +16,7 @@
 #define DATA_GPS_ALTITUDE	"alt"
 #define DATA_GPS_SPEED		"spd"
 #define DATA_GPS_HEADING	"hdg"
+#define DATA_GPS_ACCURACY	"acc"
 
 #define DATA_MODEM_DYNAMIC	"networkInfo"
 #define DATA_MODEM_STATIC	"deviceInfo"
@@ -145,6 +146,7 @@
 #define DATA_GPS_ALTITUDE	"alt"
 #define DATA_GPS_SPEED		"spd"
 #define DATA_GPS_HEADING	"hdg"
+#define DATA_GPS_ACCURACY	"acc"
 #define DATA_GPS_NMEA		"nmea"
 
 #define DATA_NEIGHBOR_CELLS_MCC		  "mcc"
