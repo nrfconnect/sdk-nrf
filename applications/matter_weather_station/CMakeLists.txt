@@ -11,7 +11,6 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(CONF_FILE           ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/prj_${CMAKE_BUILD_TYPE}.conf)
-set(mcuboot_CONF_FILE   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf)
 set(PM_STATIC_YML_FILE  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml)
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
