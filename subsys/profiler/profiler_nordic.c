@@ -15,6 +15,8 @@
 #include <string.h>
 #include <nrfx.h>
 
+#define FATAL_ERROR_EVENT_ID UINT8_MAX
+
 
 /* By default, when there is no shell, all events are profiled. */
 #ifndef CONFIG_SHELL
@@ -25,6 +27,7 @@ uint32_t profiler_enabled_events = 0xffffffff;
 static K_SEM_DEFINE(profiler_sem, 0, 1);
 static bool protocol_running;
 static bool sending_events;
+static struct k_spinlock lock;
 
 enum nordic_command {
 	NORDIC_COMMAND_START	= 1,
@@ -68,7 +71,7 @@ static int send_info_data(const char *data, size_t data_len)
 				  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
 				  data, data_len);
 
-	while (num_bytes_send == 0) {
+	while (num_bytes_send != data_len) {
 		/* Give host time to read the data and free some space
 		 * in the buffer. */
 		k_sleep(K_MSEC(100));
@@ -241,7 +244,7 @@ uint16_t profiler_register_event_type(const char *name, const char * const *args
 	return ne;
 }
 
-void profiler_log_encode_LEB128(struct log_event_buf *buf, uint32_t data)
+static void profiler_log_encode_LEB128(struct log_event_buf *buf, uint32_t data)
 {
 	/* Encoding using Little Endian Base 128 (LEB128) */
 	while (data > BIT_MASK(7)) {
@@ -254,7 +257,8 @@ void profiler_log_encode_LEB128(struct log_event_buf *buf, uint32_t data)
 void profiler_log_start(struct log_event_buf *buf)
 {
 	/* Adding one to pointer to make space for event type ID */
-	__ASSERT_NO_MSG(sizeof(uint8_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
+	BUILD_ASSERT(sizeof(uint8_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN,
+		     "Profiler custom event buffer length is too small");
 	buf->payload = buf->payload_start + sizeof(uint8_t);
 }
 
@@ -322,6 +326,28 @@ void profiler_log_add_mem_address(struct log_event_buf *buf,
 	profiler_log_encode_uint32(buf, (uint32_t)mem_address);
 }
 
+static void profiler_fatal_error(void)
+{
+	k_spinlock_key_t key = k_spin_lock(&lock);
+
+	struct log_event_buf buf;
+
+	profiler_log_start(&buf);
+	buf.payload_start[0] = FATAL_ERROR_EVENT_ID;
+	while (true) {
+		/* Sending Fatal Error */
+		unsigned int num_bytes_send = SEGGER_RTT_WriteNoLock(
+				CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
+				buf.payload_start,
+				buf.payload - buf.payload_start);
+		if (num_bytes_send == buf.payload - buf.payload_start) {
+			break;
+		}
+	}
+	k_oops();
+	k_spin_unlock(&lock, key);
+}
+
 void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 {
 	static uint32_t old_time;
@@ -338,12 +364,13 @@ void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 
 		profiler_log_encode_LEB128(buf, new_time - old_time);
 		old_time = new_time;
-		uint8_t num_bytes_send = SEGGER_RTT_WriteNoLock(
+		unsigned int num_bytes_send = SEGGER_RTT_WriteNoLock(
 				CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
 				buf->payload_start,
 				buf->payload - buf->payload_start);
-		ARG_UNUSED(num_bytes_send);
 		k_spin_unlock(&lock, key);
-		__ASSERT_NO_MSG(num_bytes_send > 0);
+		if (num_bytes_send != buf->payload - buf->payload_start) {
+			profiler_fatal_error();
+		}
 	}
 }

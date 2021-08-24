@@ -12,6 +12,8 @@ from rtt_nordic_config import RttNordicConfig
 from events import Event, EventType, EventsData
 import logging
 
+PROFILER_FATAL_ERROR_EVENT_ID = 255
+
 class Command(Enum):
     START = 1
     STOP = 2
@@ -268,6 +270,12 @@ class RttNordicProfilerHost:
             self._read_bytes(1),
             byteorder=self.config['byteorder'],
             signed=False)
+
+        if id == PROFILER_FATAL_ERROR_EVENT_ID:
+            self.logger.error("Fatal error of Profiler on device! Event has been dropped. Probably data buffer has overflown.")
+            self.shutdown()
+            self.logger.info("Events data saved to files")
+            sys.exit()
         et = self.received_events.registered_events_types[id]
 
         def process_int32(self, data):
