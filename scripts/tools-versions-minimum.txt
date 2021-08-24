@@ -8,3 +8,4 @@ gnuarmemb-short=9-2019q4
 ses=5.50c
 west=0.11.0
 gn=1851
+doxygen=1.8.18
