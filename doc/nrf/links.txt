@@ -90,16 +90,16 @@
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
-.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/27bce6d/src/android/CHIPTool
-.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/27bce6d/docs/guides/nrfconnect_android_commissioning.md
-.. _`Working with Python Controller`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/27bce6d/docs/guides/python_chip_controller_building.md
-.. _`Performing Device Firmware Upgrade in Matter device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/27bce6d/docs/guides/nrfconnect_examples_software_update.md
-.. _`Matter Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/27bce6d/README.md
-.. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/27bce6d/docs/guides/nrfconnect_platform_overview.md
-.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/27bce6d/src/controller
+.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/ee7ed2a/src/android/CHIPTool
+.. _`Commissioning nRF Connect Accessory using Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ee7ed2a/docs/guides/nrfconnect_android_commissioning.md
+.. _`Working with Python Controller`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ee7ed2a/docs/guides/python_chip_controller_building.md
+.. _`Performing Device Firmware Upgrade in Matter device`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ee7ed2a/docs/guides/nrfconnect_examples_software_update.md
+.. _`Matter Protocol Overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ee7ed2a/README.md
+.. _`nRF Connect platform overview`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/ee7ed2a/docs/guides/nrfconnect_platform_overview.md
+.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/ee7ed2a/src/controller
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
-.. _`Building Android CHIPTool`: https://github.com/project-chip/connectedhomeip/blob/27bce6d/docs/guides/android_chiptool_building.md
+.. _`Building Android CHIPTool`: https://github.com/project-chip/connectedhomeip/blob/ee7ed2a/docs/guides/android_chiptool_building.md
 
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 
