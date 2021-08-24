@@ -31,7 +31,17 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832
+   :rows: nrf9160dk_nrf9160_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
+
+Configuration
+*************
+
+|config|
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************
@@ -42,7 +52,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, you can test it by running the script ``real_time_plot.py`` (located under :file:`scripts/profiler`).
+After programming the sample to your development kit, you can test it by running the script ``real_time_plot.py`` (located at :file:`scripts/profiler`).
 As an argument, pass the name that should be used to store the data.
 For example, run ``real_time_plot.py test_name`` to generate a :file:`test_name.csv` and a :file:`test_name.json` file.
 
