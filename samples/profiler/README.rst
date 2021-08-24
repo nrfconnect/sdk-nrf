@@ -52,7 +52,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, you can test it by running the script ``real_time_plot.py`` (located at :file:`scripts/profiler`).
+After programming the sample to your development kit, you can test it by running the script ``real_time_plot.py`` (located in :file:`scripts/profiler`).
 As an argument, pass the name that should be used to store the data.
 For example, run ``real_time_plot.py test_name`` to generate a :file:`test_name.csv` and a :file:`test_name.json` file.
 
