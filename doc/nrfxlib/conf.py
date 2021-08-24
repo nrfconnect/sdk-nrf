@@ -32,6 +32,7 @@ extensions = [
     "sphinxcontrib.mscgen",
     "inventory_builder",
     "zephyr.kconfig-role",
+    "zephyr.warnings_filter",
     "ncs_cache",
     "external_content",
     "doxyrunner",
@@ -65,6 +66,11 @@ if kconfig_mapping:
 nrf_mapping = utils.get_intersphinx_mapping("nrf")
 if nrf_mapping:
     intersphinx_mapping["nrf"] = nrf_mapping
+
+# -- Options for zephyr.warnings_filter ----------------------------------------
+
+warnings_filter_config = str(NRF_BASE / "doc" / "nrfxlib" / "known-warnings.txt")
+warnings_filter_silent = False
 
 # -- Options for doxyrunner plugin ---------------------------------------------
 
