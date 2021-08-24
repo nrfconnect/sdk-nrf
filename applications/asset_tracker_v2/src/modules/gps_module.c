@@ -63,6 +63,15 @@ static struct nrf_modem_gnss_agps_data_frame agps_data;
 
 K_MSGQ_DEFINE(event_msgq, sizeof(int), 10, 4);
 
+static struct module_stats {
+	/* Uptime set when GPS search is started. Used to calculate search time for
+	 * GPS fix and timeout.
+	 */
+	uint64_t start_uptime;
+	/* Number of satellites tracked before getting a GPS fix or a timeout. */
+	uint8_t satellites_tracked;
+} stats;
+
 static struct module_data self = {
 	.name = "gps",
 	.msg_q = NULL,
@@ -196,6 +205,34 @@ static void gnss_event_handler(int event)
 	}
 }
 
+static uint8_t set_satellites_tracked(struct nrf_modem_gnss_sv *sv, uint8_t sv_entries)
+{
+	uint8_t sv_used = 0;
+
+	/* Check number of tracked Satellites. SV number 0 indicates that the satellite was not
+	 * tracked.
+	 */
+	for (int i = 0; i < sv_entries; i++) {
+		if (sv[i].sv) {
+			sv_used++;
+		}
+	}
+
+	return sv_used;
+}
+
+static void timeout_send(void)
+{
+	struct gps_module_event *gps_module_event = new_gps_module_event();
+
+	gps_module_event->data.gps.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
+	gps_module_event->data.gps.satellites_tracked =
+				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
+	gps_module_event->type = GPS_EVT_TIMEOUT;
+
+	EVENT_SUBMIT(gps_module_event);
+}
+
 /* GNSS event handler thread. */
 static void gnss_event_thread_fn(void)
 {
@@ -295,9 +332,7 @@ static void gnss_event_thread_fn(void)
 		case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
 			LOG_DBG("NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT");
 			k_timer_stop(&inactivity_timer);
-			SEND_EVENT(gps, GPS_EVT_TIMEOUT);
-
-			/* Wrap sending of GPS_EVT_INACTIVE to avoid macro redefinition errors. */
+			timeout_send();
 			inactive_send();
 			break;
 		case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX:
@@ -330,6 +365,9 @@ static void data_send_pvt(void)
 	gps_module_event->data.gps.timestamp = k_uptime_get();
 	gps_module_event->type = GPS_EVT_DATA_READY;
 	gps_module_event->data.gps.format = GPS_MODULE_DATA_FORMAT_PVT;
+	gps_module_event->data.gps.satellites_tracked =
+				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
+	gps_module_event->data.gps.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 
 	EVENT_SUBMIT(gps_module_event);
 }
@@ -345,6 +383,9 @@ static void data_send_nmea(void)
 	gps_module_event->data.gps.timestamp = k_uptime_get();
 	gps_module_event->type = GPS_EVT_DATA_READY;
 	gps_module_event->data.gps.format = GPS_MODULE_DATA_FORMAT_NMEA;
+	gps_module_event->data.gps.satellites_tracked =
+				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
+	gps_module_event->data.gps.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 
 	EVENT_SUBMIT(gps_module_event);
 }
@@ -410,6 +451,7 @@ static void search_start(void)
 	}
 
 	SEND_EVENT(gps, GPS_EVT_ACTIVE);
+	stats.start_uptime = k_uptime_get();
 }
 
 static void inactive_send(void)

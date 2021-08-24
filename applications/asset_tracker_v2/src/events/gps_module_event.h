@@ -55,6 +55,8 @@ struct gps_module_data {
 		char nmea[NMEA_MAX_LEN];
 	};
 
+	uint8_t satellites_tracked;
+	uint32_t search_time;
 	enum gps_module_format format;
 	int64_t timestamp;
 };
