@@ -12,7 +12,7 @@
 #include <modem/nrf_modem_lib.h>
 
 #if defined(CONFIG_WATCHDOG_APPLICATION)
-#include "watchdog.h"
+#include "watchdog_app.h"
 #endif
 
 /* Module name is used by the event manager macros in this file */
