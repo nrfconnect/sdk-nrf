@@ -221,7 +221,17 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160_ns, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832
+   :rows: nrf9160dk_nrf9160_ns, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
+
+Configuration
+*************
+
+|config|
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 .. _bootloader_build_and_run:
 
