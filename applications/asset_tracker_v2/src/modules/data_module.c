@@ -493,6 +493,33 @@ static int setup(void)
 	return 0;
 }
 
+static void config_print_all(void)
+{
+	if (current_cfg.active_mode) {
+		LOG_DBG("Device mode: Active");
+	} else {
+		LOG_DBG("Device mode: Passive");
+	}
+
+	LOG_DBG("Active wait timeout: %d", current_cfg.active_wait_timeout);
+	LOG_DBG("Movement resolution: %d", current_cfg.movement_resolution);
+	LOG_DBG("Movement timeout: %d", current_cfg.movement_timeout);
+	LOG_DBG("GPS timeout: %d", current_cfg.gps_timeout);
+	LOG_DBG("Accelerometer threshold: %f", current_cfg.accelerometer_threshold);
+
+	if (!current_cfg.no_data.neighbor_cell) {
+		LOG_DBG("Requesting of neighbor cell data is enabled");
+	} else {
+		LOG_DBG("Requesting of neighbor cell data is disabled");
+	}
+
+	if (!current_cfg.no_data.gnss) {
+		LOG_DBG("Requesting of GNSS data is enabled");
+	} else {
+		LOG_DBG("Requesting of GNSS data is disabled");
+	}
+}
+
 static void config_distribute(enum data_module_event_type type)
 {
 	struct data_module_event *data_module_event = new_data_module_event();
@@ -1110,6 +1137,7 @@ static void on_all_states(struct data_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, app, APP_EVT_START)) {
+		config_print_all();
 		config_distribute(DATA_EVT_CONFIG_INIT);
 	}
 

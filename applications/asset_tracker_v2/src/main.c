@@ -289,10 +289,10 @@ static void waiting_for_movement_handler(struct k_timer *timer)
 /* Static module functions. */
 static void passive_mode_timers_start_all(void)
 {
-	LOG_INF("Device mode: Passive");
-	LOG_INF("Start movement timeout: %d seconds interval", app_cfg.movement_timeout);
+	LOG_DBG("Device mode: Passive");
+	LOG_DBG("Start movement timeout: %d seconds interval", app_cfg.movement_timeout);
 
-	LOG_INF("%d seconds until movement can trigger a new data sample/publication",
+	LOG_DBG("%d seconds until movement can trigger a new data sample/publication",
 		app_cfg.movement_resolution);
 
 	k_timer_start(&movement_resolution_timer,
@@ -308,8 +308,8 @@ static void passive_mode_timers_start_all(void)
 
 static void active_mode_timers_start_all(void)
 {
-	LOG_INF("Device mode: Active");
-	LOG_INF("Start data sample timer: %d seconds interval", app_cfg.active_wait_timeout);
+	LOG_DBG("Device mode: Active");
+	LOG_DBG("Start data sample timer: %d seconds interval", app_cfg.active_wait_timeout);
 
 	k_timer_start(&data_sample_timer,
 		      K_SECONDS(app_cfg.active_wait_timeout),
