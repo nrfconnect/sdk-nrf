@@ -25,6 +25,8 @@ uint32_t profiler_enabled_events = 0xffffffff;
 static K_SEM_DEFINE(profiler_sem, 0, 1);
 static bool protocol_running;
 static bool sending_events;
+static uint16_t fatal_error_event_id;
+static struct k_spinlock lock;
 
 enum nordic_command {
 	NORDIC_COMMAND_START	= 1,
@@ -68,7 +70,7 @@ static int send_info_data(const char *data, size_t data_len)
 				  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
 				  data, data_len);
 
-	while (num_bytes_send == 0) {
+	while (num_bytes_send != data_len) {
 		/* Give host time to read the data and free some space
 		 * in the buffer. */
 		k_sleep(K_MSEC(100));
@@ -186,6 +188,9 @@ int profiler_init(void)
 			(k_thread_entry_t) profiler_nordic_thread_fn,
 			NULL, NULL, NULL,
 			CONFIG_PROFILER_NORDIC_THREAD_PRIORITY, 0, K_NO_WAIT);
+	/* Registering fatal error event */
+	fatal_error_event_id = profiler_register_event_type("_profiler_fatal_error_event_",
+							    NULL, NULL, 0);
 	profiler_initialized = true;
 	k_sched_unlock();
 	return 0;
@@ -253,7 +258,8 @@ uint16_t profiler_register_event_type(const char *name, const char * const *args
 void profiler_log_start(struct log_event_buf *buf)
 {
 	/* Adding one to pointer to make space for event type ID */
-	__ASSERT_NO_MSG(sizeof(uint8_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
+	BUILD_ASSERT(sizeof(uint8_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN,
+		     "Profiler custom event buffer length is too small");
 	buf->payload = buf->payload_start + sizeof(uint8_t);
 	profiler_log_encode_uint32(buf, k_cycle_get_32());
 }
@@ -322,22 +328,45 @@ void profiler_log_add_mem_address(struct log_event_buf *buf,
 	profiler_log_encode_uint32(buf, (uint32_t)mem_address);
 }
 
+static bool profiler_RTT_send(struct log_event_buf *buf, uint8_t type_id)
+{
+	buf->payload_start[0] = type_id;
+	unsigned int num_bytes_send = SEGGER_RTT_WriteNoLock(
+			CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
+			buf->payload_start,
+			buf->payload - buf->payload_start);
+	if (num_bytes_send == buf->payload - buf->payload_start) {
+		return true;
+	}
+	return false;
+}
+
+static void profiler_fatal_error(void)
+{
+	while (true) {
+		struct log_event_buf buf;
+
+		profiler_log_start(&buf);
+		/* Sending Fatal Error event */
+		if (profiler_RTT_send(&buf, (uint8_t)fatal_error_event_id)) {
+			break;
+		}
+	}
+	k_oops();
+}
+
 void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 {
 	__ASSERT_NO_MSG(event_type_id <= UCHAR_MAX);
-	static struct k_spinlock lock;
 	if (sending_events) {
 		uint8_t type_id = event_type_id & UCHAR_MAX;
 
-		buf->payload_start[0] = type_id;
 		k_spinlock_key_t key = k_spin_lock(&lock);
 
-		uint8_t num_bytes_send = SEGGER_RTT_WriteNoLock(
-				CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
-				buf->payload_start,
-				buf->payload - buf->payload_start);
-		ARG_UNUSED(num_bytes_send);
-		k_spin_unlock(&lock, key);
-		__ASSERT_NO_MSG(num_bytes_send > 0);
+		if (profiler_RTT_send(buf, type_id)) {
+			k_spin_unlock(&lock, key);
+		} else {
+			profiler_fatal_error();
+		}
 	}
 }
