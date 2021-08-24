@@ -357,9 +357,9 @@ static void profiler_fatal_error(void)
 
 void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 {
-	__ASSERT_NO_MSG(event_type_id <= UCHAR_MAX);
+	__ASSERT_NO_MSG(event_type_id <= UINT8_MAX);
 	if (sending_events) {
-		uint8_t type_id = event_type_id & UCHAR_MAX;
+		uint8_t type_id = event_type_id & UINT8_MAX;
 
 		k_spinlock_key_t key = k_spin_lock(&lock);
 
