@@ -1,0 +1,5 @@
+# Each line should contain the regular expression of a known Sphinx warning
+# that should be filtered out
+.*Duplicate C declaration.*\n.*'\.\. c:.*:: nrf_modem_full_dfu_digest'.*
+.*Duplicate C declaration.*\n.*'\.\. c:.*:: nrf_modem_full_dfu_uuid'.*
+.*Duplicate C declaration.*\n.*'\.\. c:.*:: nrf_modem_delta_dfu_uuid'.*
