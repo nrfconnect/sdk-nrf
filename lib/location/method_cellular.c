@@ -142,7 +142,7 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 
 int method_cellular_location_get(const struct loc_method_config *config)
 {
-	const struct loc_cellular_config *cellular_config = &config->config.cellular;
+	const struct loc_cellular_config *cellular_config = &config->cellular;
 
 	ARG_UNUSED(cellular_config);
 

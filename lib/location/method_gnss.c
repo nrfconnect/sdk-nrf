@@ -135,7 +135,7 @@ int method_gnss_location_get(const struct loc_method_config *config)
 {
 	int err = 0;
 
-	const struct loc_gnss_config *gnss_config = &config->config.gnss;
+	const struct loc_gnss_config *gnss_config = &config->gnss;
 
 	/* Configure GNSS to continuous tracking mode */
 	err = nrf_modem_gnss_fix_interval_set(1);

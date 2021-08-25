@@ -251,8 +251,8 @@ int loc_core_location_get(const struct loc_config *config)
 		default_config.methods = methods;
 
 		default_config.methods[0].method = LOC_METHOD_GNSS;
-		default_config.methods[0].config.gnss.timeout = 120;
-		default_config.methods[0].config.gnss.accuracy = LOC_ACCURACY_NORMAL;
+		default_config.methods[0].gnss.timeout = 120;
+		default_config.methods[0].gnss.accuracy = LOC_ACCURACY_NORMAL;
 
 		default_config.methods[1].method = LOC_METHOD_CELLULAR;
 		config = &default_config;
