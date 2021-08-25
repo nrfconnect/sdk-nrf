@@ -1,0 +1,64 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Cloud REST A-GPS API Sample"
+
+config REST_RETRY_WAIT_TIME_MIN
+	int "Wait time, in minutes, before retrying (rebooting)"
+	default 5
+
+config REST_NMEA
+	bool "Log NMEA sentences, not just PVT reports"
+
+config REST_API_TOKEN
+	string "API token which can be used instead of a JWT"
+
+config REST_ENABLE_LED
+	select DK_LIBRARY
+	bool "Turn on LED when connected to network"
+	default y
+
+config REST_BUTTON_EVT_NUM
+	int "Button number to use for device interactions"
+	default 1
+
+if REST_ENABLE_LED
+config REST_LED_NUM
+	int "LED number to use"
+	default 0
+endif
+
+config REST_DO_JITP
+	bool "Ask to perform just-in-time provisioning on startup"
+
+config LTE_POWER_SAVING_MODE
+	bool "Request Power Saving Mode (PSM) from cellular network"
+
+config SAMPLE_AT_MAGPIO
+	string "AT%XMAGPIO command"
+	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160DK_NRF9160_NS
+	default "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200,3,824,894,4,880,960,5,791,849,7,1565,1586" if BOARD_THINGY91_NRF9160_NS
+	help
+	  Defines what is the AT%XMAGPIO command to be sent to GPS module. Leave
+	  empty if this command should not be sent.
+
+config SAMPLE_AT_COEX0
+	string "AT%XCOEX0 command"
+	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GPS_SAMPLE_ANTENNA_ONBOARD
+	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GPS_SAMPLE_ANTENNA_EXTERNAL
+	help
+	  Defines what is the AT%XCOEX0 command to be sent to GPS module. Leave
+	  empty if this command should not be sent.
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = NRF_CLOUD_REST_AGPS_SAMPLE
+module-str = nRF Cloud Rest A-GPS Sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
