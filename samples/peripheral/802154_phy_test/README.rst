@@ -23,7 +23,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet, nrf52840dk_nrf52840
+   :rows: nrf5340dk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf21540dk_nrf52840
 
 Conducting tests using the sample also requires a testing device, like another development kit running the same sample, set into DUT mode.
 For more information, see :ref:`802154_phy_test_testing`.
@@ -904,6 +904,16 @@ See the following example:
       :class: highlight
 
       custom lreboot
+
+Configuration
+*************
+
+|config|
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************
