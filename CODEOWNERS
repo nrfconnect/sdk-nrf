@@ -43,6 +43,7 @@ Kconfig*                                  @tejlmand
 /doc/nrf/                                 @carlescufi
 /doc/nrfx/                                @gmarull
 /doc/matter/                              @gmarull
+/doc/nrfxlib/                             @gmarull
 /doc/update_versions.cmake                @carlescufi
 /doc/versions.json                        @carlescufi
 # All subfolders
