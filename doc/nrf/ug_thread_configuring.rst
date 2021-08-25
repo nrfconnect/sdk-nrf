@@ -66,8 +66,6 @@ Depending on your configuration needs, you can also set the following options:
 
 * :kconfig:`CONFIG_NET_SOCKETS` - This option enables API similar to BSD Sockets on top of the native Zephyr networking API.
   This configuration is needed for managing networking protocols.
-* :kconfig:`CONFIG_NET_SHELL` - This option enables Zephyr's :ref:`zephyr:net_shell`.
-  This configuration is needed for managing the network, based on Zephyr's IP stack, from the command line.
 * :kconfig:`CONFIG_OPENTHREAD_SHELL` - This option enables OpenThread CLI (see `OpenThread CLI Reference`_).
 * :kconfig:`CONFIG_COAP` - This option enables Zephyr's :ref:`zephyr:coap_sock_interface` support.
 * :kconfig:`CONFIG_COAP_UTILS` - This option enables the :ref:`CoAP utils library <coap_utils_readme>`.
