@@ -15,21 +15,21 @@ To make a REST call, configure a :c:struct:`nrf_cloud_rest_context` structure wi
 * ``auth`` - Use :ref:`lib_modem_jwt` to generate a JWT string. The ``sec_tag`` used for JWT generation must contain a credential that has been registered with nRF Cloud.
 
 Pass the REST context structure, along with any other required parameters, to the desired function.
-When the function returns, the context will contain the status of the API call.
-If the API call is successful, the context will also contain the response data and length.
+When the function returns, the context contains the status of the API call.
+If the API call is successful, the context also contains the response data and length.
 Some functions also have an optional ``result`` parameter.
 If this parameter is provided, the response data is parsed into ``result``.
 
-Response handling:
+Response is handled in the following way:
 
-* :c:func:`nrf_cloud_rest_pgps_data_get` - Pass response data to the P-GPS library :ref:`lib_nrf_cloud_pgps`
-* :c:func:`nrf_cloud_rest_agps_data_get` - Pass response data to the A-GPS library :ref:`lib_nrf_cloud_agps`
-* :c:func:`nrf_cloud_rest_fota_job_get` - If a FOTA job exists, :ref:`lib_fota_download` can be used to perform the firmware download and installation. Call the :c:func:`nrf_cloud_rest_fota_job_update` function to report the status of the job.
+* :c:func:`nrf_cloud_rest_pgps_data_get` - Pass response data to the P-GPS library :ref:`lib_nrf_cloud_pgps`.
+* :c:func:`nrf_cloud_rest_agps_data_get` - Pass response data to the A-GPS library :ref:`lib_nrf_cloud_agps`.
+* :c:func:`nrf_cloud_rest_fota_job_get` - If a FOTA job exists, :ref:`lib_fota_download` can perform the firmware download and installation. Call the :c:func:`nrf_cloud_rest_fota_job_update` function to report the status of the job.
 
 Configuration
 *************
 
-Configure the :kconfig:`CONFIG_NRF_CLOUD_REST` to enable or disable the use of this library.
+Configure the :kconfig:`CONFIG_NRF_CLOUD_REST` option to enable or disable the use of this library.
 
 Additionally, configure the following options for the needs of your application:
 

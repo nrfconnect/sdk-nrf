@@ -108,20 +108,20 @@ P-GPS data can be requested from the cloud using one of the following methods:
 
   * If :kconfig:`CONFIG_NRF_CLOUD_MQTT` is enabled:
 
-   * By calling the function :c:func:`nrf_cloud_pgps_request_all` to request a full set of predictions.
-   * By passing a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function.
+   * Call the function :c:func:`nrf_cloud_pgps_request_all` to request a full set of predictions.
+   * Pass a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function.
 
   * If :kconfig:`CONFIG_NRF_CLOUD_REST` is enabled:
 
-   * By passing a properly initialized :c:struct:`nrf_cloud_rest_pgps_request` structure to the :c:func:`nrf_cloud_rest_pgps_data_get` function.
+   * Pass a properly initialized :c:struct:`nrf_cloud_rest_pgps_request` structure to the :c:func:`nrf_cloud_rest_pgps_data_get` function.
 
 * Indirectly:
 
   * If :kconfig:`CONFIG_NRF_CLOUD_MQTT` is enabled:
 
-   * By calling :c:func:`nrf_cloud_pgps_init`, with no valid predictions present in flash, or with some or all of the predictions expired.
-   * By calling :c:func:`nrf_cloud_pgps_preemptive_updates`.
-   * By calling :c:func:`nrf_cloud_pgps_notify_prediction`.
+   * Call :c:func:`nrf_cloud_pgps_init`, with no valid predictions present in flash, or with some or all of the predictions expired.
+   * Call :c:func:`nrf_cloud_pgps_preemptive_updates`.
+   * Call :c:func:`nrf_cloud_pgps_notify_prediction`.
 
   * If :kconfig:`CONFIG_NRF_CLOUD_REST` is enabled:
 

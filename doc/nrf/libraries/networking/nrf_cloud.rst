@@ -275,7 +275,7 @@ The following events can cause disconnection if the backend thread is monitoring
 
 .. _lib_nrf_cloud_location_services:
 
-Location Services
+Location services
 *****************
 
 `nRF Cloud`_ offers location services that allow you to obtain the location of your device.
