@@ -107,6 +107,22 @@ Bluetooth LE
   * :ref:`ble_samples` - Changed the Bluetooth® sample Central DFU SMP name to :ref:`Central SMP Client <bluetooth_central_dfu_smp>`.
   * :ref:`direction_finding_connectionless_rx` and :ref:`direction_finding_connectionless_tx` samples - Added default configuration for ``nrf52833dk_nrf52820`` and ``nrf5340dk_nrf5340_cpuapp``, and ``nrf5340dk_nrf5340_cpuapp_ns`` boards.
 
+Bluetooth mesh
+---------------
+
+* Added:
+
+  * The choice of default Bluetooth® LE Controller changed from Zephyr Bluetooth® LE Controller to SoftDevice Controller.
+  * Bluetooth® mesh profiles and models are ready for production.
+
+* Updated:
+
+  * Updated the :ref:`bt_mesh_light_hsl_srv_readme` and the :ref:`bt_mesh_light_xyl_srv_readme` models to no longer extend the :ref:`bt_mesh_lightness_srv_readme` model, and instead get a pointer to this model in the initialization macro.
+  * Updated samples with support for the :ref:`zephyr:thingy53_nrf5340`.
+  * Fixed an issue where beacons were stopped being sent after node reset.
+  * Fixed an issue where the IV update procedure could be started immediately after the device has been provisioned.
+  * Fixed multiple issues in :ref:`bt_mesh_sensor_types_readme` module.
+
 Matter
 ------
 
