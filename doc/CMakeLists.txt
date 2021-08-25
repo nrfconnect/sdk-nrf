@@ -365,6 +365,25 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E copy ${NRF_BASE}/doc/versions.json ${HTML_DIR}
 )
 
+add_custom_target(
+  merge-search-indexes
+  COMMAND
+    ${PYTHON_EXECUTABLE}
+    ${NRF_BASE}/doc/_scripts/merge_search_indexes.py
+    -b ${CMAKE_BINARY_DIR}
+  COMMENT "Merging search indexes..."
+)
+
+add_dependencies(merge-search-indexes
+    nrf-html-all
+    nrfx-html-all
+    nrfxlib-html-all
+    zephyr-html-all
+    mcuboot-html-all
+    tfm-html-all
+    kconfig-html-all
+)
+
 add_dependencies(zephyr-html-all kconfig-html-all)
 add_dependencies(mcuboot-html-all kconfig-html-all)
 add_dependencies(nrfxlib-inventory-all kconfig-html-all)
@@ -374,6 +393,7 @@ add_dependencies(nrfxlib-html-all nrf-html-all)
 add_custom_target(build-all ALL)
 add_dependencies(build-all
     copy-extra-content
+    merge-search-indexes
     nrf-html-all
     nrfx-html-all
     nrfxlib-html-all
