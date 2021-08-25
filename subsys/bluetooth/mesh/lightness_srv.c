@@ -579,25 +579,20 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		CONTAINER_OF(lvl_srv, struct bt_mesh_lightness_srv, lvl);
 	struct bt_mesh_lightness_status status = { 0 };
 	int32_t target_actual;
-	uint16_t start_lvl;
 
 	if (delta_set->new_transaction) {
 		srv->handlers->light_get(srv, NULL, &status);
-		start_lvl = status.current;
-	} else {
-		start_lvl = srv->last;
+		/* Delta lvl is bound to the lightness actual state, so the
+		 * calculation must happen in that space:
+		 */
+		srv->delta_start = light_to_repr(status.current, ACTUAL);
 	}
-
-	/* Delta lvl is bound to the lightness actual state, so the calculation
-	 * must happen in that space:
-	 */
-	start_lvl = light_to_repr(start_lvl, ACTUAL);
 
 	/* Clamp the value to the lightness range before storing it in an
 	 * unsigned 16 bit value, as this would overflow if the target is beyond
 	 * its storage limits, causing invalid values.
 	 */
-	target_actual = CLAMP(start_lvl + delta_set->delta,
+	target_actual = CLAMP(srv->delta_start + delta_set->delta,
 			      BT_MESH_LIGHTNESS_MIN, BT_MESH_LIGHTNESS_MAX);
 
 	struct bt_mesh_lightness_set set = {
@@ -612,12 +607,19 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	lightness_srv_disable_control(srv);
 	lightness_srv_change_lvl(srv, ctx, &set, &status, true);
 
-	/* Override "last" value to be able to make corrective deltas when
-	 * new_transaction is false. Note that the "last" value in persistent
-	 * storage will still be the target value, allowing us to recover
-	 * correctly on power loss.
+	/* Override the "last" value if this is dimmed all the way to off. Then
+	 * set the "last" value to the value it was before the dimming was
+	 * started.
 	 */
-	srv->last = start_lvl;
+	if ((set.lvl == 0) &&
+	    (repr_to_light(srv->delta_start, ACTUAL) != 0) &&
+	    (repr_to_light(srv->delta_start, ACTUAL) != srv->last)) {
+		/* Recalulate it back to light state when overriding the "last"
+		 * value.
+		 */
+		srv->last = repr_to_light(srv->delta_start, ACTUAL);
+		store_state(srv);
+	}
 
 	if (rsp) {
 		rsp->current = LIGHT_TO_LVL(status.current);
@@ -906,7 +908,6 @@ int lightness_on_power_up(struct bt_mesh_lightness_srv *srv)
 
 	switch (srv->ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:
-		srv->last = 0;
 		break;
 	case BT_MESH_ON_POWER_UP_ON:
 		set.lvl = (srv->default_light ? srv->default_light : srv->last);
