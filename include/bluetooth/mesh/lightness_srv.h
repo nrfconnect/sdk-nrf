@@ -163,6 +163,8 @@ struct bt_mesh_lightness_srv {
 	uint16_t default_light;
 	/** The last known Light Level. */
 	uint16_t last;
+	/** The delta start Light Level */
+	uint16_t delta_start;
 	/** Internal flag state. */
 	atomic_t flags;
 
