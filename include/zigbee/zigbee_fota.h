@@ -64,7 +64,7 @@ struct zigbee_fota_evt {
 /**
  * @brief Zigbee FOTA download asynchronous callback function.
  *
- * @param event_id Event ID.
+ * @param evt Event.
  *
  */
 typedef void (*zigbee_fota_callback_t)(const struct zigbee_fota_evt *evt);
