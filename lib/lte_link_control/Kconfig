@@ -6,12 +6,20 @@
 
 menuconfig LTE_LINK_CONTROL
 	bool "nRF91 LTE Link control library"
-	select AT_CMD
 	select AT_CMD_PARSER
 	select AT_NOTIF
 	default n
 
 if LTE_LINK_CONTROL
+
+config LTE_AT_CMD
+	bool
+	default y
+	select AT_CMD
+	help
+	  Use the AT Command library with LTE link control library. This is
+	  separated here from other dependencies to allow disabling of
+	  AT Command library in tests for mocking purposes.
 
 config LTE_AUTO_INIT_AND_CONNECT
 	bool "Auto Initialize and Connect for the LTE link"

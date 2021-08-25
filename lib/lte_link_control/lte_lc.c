@@ -198,7 +198,8 @@ static bool is_cellid_valid(uint32_t cellid)
 	return true;
 }
 
-static void at_handler(void *context, const char *response)
+/* AT handler is not static so that it can be called from unit tests. */
+void lte_lc_at_handler(void *context, const char *response)
 {
 	ARG_UNUSED(context);
 
@@ -580,7 +581,7 @@ static int init_and_config(void)
 		LOG_DBG("Default system mode is used: %d", sys_mode_current);
 	}
 
-	err = at_notif_register_handler(NULL, at_handler);
+	err = at_notif_register_handler(NULL, lte_lc_at_handler);
 	if (err) {
 		LOG_ERR("Can't register AT handler, error: %d", err);
 		return err;
@@ -808,7 +809,7 @@ int lte_lc_deinit(void)
 {
 	if (is_initialized) {
 		is_initialized = false;
-		at_notif_deregister_handler(NULL, at_handler);
+		at_notif_deregister_handler(NULL, lte_lc_at_handler);
 		return lte_lc_func_mode_set(LTE_LC_FUNC_MODE_POWER_OFF);
 	}
 
