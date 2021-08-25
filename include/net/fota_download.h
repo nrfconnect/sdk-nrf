@@ -76,7 +76,7 @@ struct fota_download_evt {
 /**
  * @brief FOTA download asynchronous callback function.
  *
- * @param event_id Event ID.
+ * @param evt Event.
  *
  */
 typedef void (*fota_download_callback_t)(const struct fota_download_evt *evt);
