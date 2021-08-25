@@ -56,8 +56,8 @@ int main(void)
 	config.methods[0].method = LOC_METHOD_CELLULAR;
 
 	config.methods[1].method = LOC_METHOD_GNSS;
-	config.methods[1].config.gnss.timeout = 120;
-	config.methods[1].config.gnss.accuracy = LOC_ACCURACY_NORMAL;
+	config.methods[1].gnss.timeout = 120;
+	config.methods[1].gnss.accuracy = LOC_ACCURACY_NORMAL;
 
 	/* Disable LTE to help get a GNSS fix faster for now */
 	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_DEACTIVATE_LTE);
