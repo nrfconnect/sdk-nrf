@@ -204,6 +204,7 @@
 
 .. _`nRF9160 DK Getting Started`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/intro.html
 .. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_modem_firmware.html
+.. _`Updating the nRF Cloud certificate`:
 .. _`Updating the nRF Connect for Cloud certificate`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_certificates.html
 
 .. _`nRF9160 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/intro.html
@@ -289,9 +290,11 @@
 
 .. _`nRF9160 Hardware Verification Guidelines - UART interface`: https://infocenter.nordicsemi.com/topic/nwp_034/WP/nwp_034/nwp_034_uart_if.html
 
-.. _`Creating an nRF Cloud account`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/common/create_nrfcloud_account.html
+.. _`Creating an nRF Cloud account`:
+.. _`Creating an nRF Connect for Cloud account`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/common/create_nrfcloud_account.html
 
-.. _`Connecting your device to nRF Cloud`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/connecting_nrf_cloud.html
+.. _`Connecting your device to nRF Cloud`:
+.. _`Connecting your device to nRF Connect for Cloud`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/connecting_nrf_cloud.html
 
 .. ### Source: devzone.nordicsemi.com
 
@@ -554,22 +557,16 @@
 
 .. _`nRF Cloud`:
 .. _`nRF Connect for Cloud`: https://nrfcloud.com/
-
 .. _`nRF Cloud documentation`:
 .. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/
-
-.. _`nRF Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
-
-.. _`nRF Connect for Cloud Device API`: https://api.nrfcloud.com/v1
-
-.. _`nRF Cloud REST API`: https://nrfcloud.com/#/docs/guides/restapi
-
+.. _`nRF Cloud Patch Device State`:
+.. _`nRF Connect for Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
+.. _`nRF Cloud Device API`: https://api.nrfcloud.com/v1
+.. _`nRF Cloud REST API`:
+.. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/Reference/Interacting/REST#the-nrf-cloud-rest-api
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
-
 .. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/Reference/LocationServices
-
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
-
 .. _`Securely Generating Credentials on the nRF9160`: https://docs.nrfcloud.com/Guides/GettingStarted/Devices#securely-generating-credentials-on-the-nrf9160
 
 .. ### Source: other
