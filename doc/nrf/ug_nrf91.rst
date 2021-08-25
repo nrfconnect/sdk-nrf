@@ -9,7 +9,7 @@ Working with nRF91 Series
 
 The |NCS| provides support for developing on the nRF9160 System in Package (SiP) using the nRF9160 DK (PCA10090) and Thingy:91 (PCA20035), and offers :ref:`samples <nrf9160_samples>` dedicated to these devices.
 
-For board spesific information please vist the following subpages:
+For board specific information please visit the following subpages:
 
 .. toctree::
    :maxdepth: 2
@@ -22,7 +22,7 @@ Introduction
 ************
 
 The nRF9160 SiP integrates an application MCU, a full LTE modem, an RF front end, and power management.
-With built-in GPS support, it is dedicated to asset tracking applications.
+With built-in GNSS support, it is a great choice for asset tracking applications.
 
 For more details on the SiP, see the `nRF9160 product website`_ and the `nRF9160 Product Specification`_.
 
@@ -31,7 +31,7 @@ For more details on the SiP, see the `nRF9160 product website`_ and the `nRF9160
 
    Overview of nRF91 application architecture
 
-The figure illustrates the conceptual layout when targeting an nRF9160 Cortex-M33 application MCU with TrustZone.
+The figure above illustrates the conceptual layout when targeting an nRF9160 Cortex-M33 application MCU with TrustZone.
 
 Supported boards
 ================
@@ -91,7 +91,7 @@ Not all of the nRF9160 samples include a secure bootloader chain, but the ones t
 Secure Partition Manager
 ------------------------
 
-All nRF9160 samples require the :ref:`secure_partition_manager` sample.
+All nRF9160 samples default includes the :ref:`secure_partition_manager` sample.
 It provides a reference implementation of a Secure Partition Manager firmware.
 This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
 
@@ -118,14 +118,16 @@ It is controlled through `AT commands <AT Commands Reference Guide_>`_.
 
 The firmware for the modem is available as a precompiled binary.
 You can download the firmware from the `nRF9160 product website (compatible downloads)`_.
-The zip file contains both the full firmware and patches to upgrade from one version to another.
+The zip file contains both the full firmware and delta patches to upgrade from one version to another.
+A delta patch can only upgrade the modem firmware from one specific version to another version (e.g. 1.2.1 to 1.2.2).
+If you are going to do a Major update (e.g 1.2.x to 1.3.x) you need an external flash of minimum 4MB.
 
-Different versions of the LTE modem firmware are available, and these versions are certified for the mobile network operators who have their own certification programs.
+Different versions of the LTE modem firmware are available, and these versions are certified for the mobile network operators which have their own certification programs.
 See the `Mobile network operator certifications`_ for more information.
 
 .. note::
 
-   Most operators do not require other certifications than GCF or PTCRB.
+   Most operators do not require certifications other than GCF or PTCRB.
    For the current status of GCF and PTCRB certifications, see `nRF9160 certifications`_.
 
 There are two ways to update the modem firmware:
@@ -142,7 +144,7 @@ Full upgrade
     * You can also use the nRF pynrfjprog Python package to perform the update, as long as a custom application image integrating the ``lib_fmfu_mgmt`` subsystem is included in the existing firmware of the device.
       See the :ref:`fmfu_smp_svr_sample` sample for an example on how to integrate the :ref:`subsystem <lib_fmfu_mgmt>` in your custom application.
 
-  * When using a wireless connection, the upgrade is applied over-the-air (OTA).
+  * When using a wireless connection, the upgrade is applied over-the-air (OTA). Requires external Flash of minimum 4MB.
     See :ref:`nrf9160_ug_fota` for more information.
 
  See :ref:`nrfxlib:full_dfu`, for more information on the full firmware update of modem using :ref:`nrfxlib:nrf_modem`.
@@ -150,7 +152,7 @@ Full upgrade
 Delta patches
   Delta patches are upgrades that contain only the difference from the last version.
   A delta patch can only upgrade the modem firmware from one specific version to another version.
-  See :ref:`nrfxlib:nrf_modem_delta_dfu` for more information on delta firmware update of modem using :ref:`nrfxlib:nrf_modem`.
+  See :ref:`nrfxlib:nrf_modem_delta_dfu` for more information on a delta firmware update of the modem using :ref:`nrfxlib:nrf_modem`.
   When applying a delta patch, you must therefore ensure that this patch works with the current firmware version on your device.
   Delta patches are applied as firmware over-the-air (FOTA) upgrades.
   See :ref:`nrf9160_ug_fota` for more information.
@@ -165,8 +167,104 @@ The Modem library integration layer fulfills the integration requirements of the
 For more information on the integration, see :ref:`nrf_modem_lib_readme`.
 
 
-.. _nrf9160_ug_band_lock:
+GNSS
+*********
+The nRF9160 is a highly versatile device that integrates both cellular and GNSS functionality.
+Please note that GNSS functionality is only available on the SICA variant, not the SIAA or SIBA variants.
+See :ref:`nRF9160 SiP revisions and variants` for more information.
 
+Introduction
+=============
+There are many GNSS constellations (GPS, BeiDou, Galileo, GLONASS, etc.) available today but GPS can be seen as the most mature technology.
+The nRF9160 supports both GPS L1 C/A (Coarse/Acquisition) and QZSS L1C/A at 1575.42 MHz.
+This frequency band is ideal for penetrating through layers of the atmosphere (troposphere and ionosphere) as well as clouds, fog, rain, etc.
+GNSS is designed to be used with a line of sight to the sky. Therefore, the performance is not ideal when there are obstructions overhead or if the receiver is indoors.
+
+The nRF9160 has GNSS operation time multiplexed with the LTE modem. Therefore, the LTE modem should either be completely deactivated or in RRC (Radio Resource Control) idle or Power Saving Mode (PSM) when using the GNSS receiver.
+See the :ref:`nRF9160 GPS receiver Specification` for more information. For customers developing their own hardware with the nRF9160, it is strongly recommended to use the :ref:`nRF9160 Antenna and RF Interface Guidelines` as a reference.
+Section 4 provides details about the GNSS interface and antenna.
+
+Note: Starting from nRF Connect SDK v1.6.0 (modem library v1.2.0), the GNSS socket (:ref:`gnss_extension`) is deprecated and replaced with the GNSS interface (:ref:`gnss_interface`).
+
+Obtaining a fix
+=============
+GPS provides lots of useful information including 3D location (latitude, longitude, altitude), time, and velocity.
+
+The time to obtain a fix (also referred to as Time To First Fix (TTFF)) will depend on the last time that the GPS receiver was turned ON and used.
+
+Cold start
+   GPS started after being powered off for a long time, no knowledge of the time, where it is, or the satellite orbits.
+
+Warm start
+   GPS has some coarse knowledge of the time, location, or satellite orbits from a fix that was more than ~30 minutes ago.
+
+Hot start
+   GPS fix is requested within ~30 minutes of the last successful fix.
+
+Each GPS satellite transmits its own ephemeris data and common almanac data.
+This data transmission occurs at a slow data rate of 50 bits/s. The orbital data can be received faster using A-GPS, which is discussed below.
+
+Ephemeris data
+   Provides information about the orbit of the GPS satellite transmitting it. This data is valid for 4 hours before it becomes inaccurate.
+
+Almanac data
+   Provides coarse orbit and status information for each satellite in the constellation. Each satellite broadcasts almanac data for all satellites.
+
+Due to clock bias on the receiver, we have 4 unknowns when looking for a GPS fix, latitude, longitude, altitude, and clock bias.
+This results in solving an equation system with 4 unknowns, and therefore a minimum of 4 satellites need to be tracked to acquire a fix.
+
+Enhancements to GNSS
+=============
+When GNSS has not been in use for a while or is in relatively weak signal conditions, it may take longer to acquire a fix.
+To improve this, Nordic Semiconductor has implemented 2 methods to help acquire a fix: A-GPS/P-GPS and Low Accuracy Mode.
+
+Assisted GPS (A-GPS)
+---------------------
+A-GPS is commonly used to improve the time to first fix (TTFF) by utilizing a connection to the internet (for example, over cellular) to retrieve the almanac and ephemeris data.
+A connection to an internet server that has the almanac and ephemeris data is several orders of magnitude quicker than using the slow 50 bits/s data link to the GPS satellites. There are many options to retrieve this A-GPS data.
+Two such options are using nRF Cloud and SUPL, for both of which there exist examples in nRF Connect SDK. The A-GPS solution available through nRF Cloud has been optimized for embedded devices to reduce protocol overhead and data usage.
+This in turn allows for a smaller download thereby savings on time, power consumption, and data costs. More information about the retrieval of A-GPS data can be found here. -> https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/gnss_interface.html#a-gps-data
+
+Predicted GPS (P-GPS)
+---------------------
+P-GPS is a form of assistance, where the device can download up to two weeks of predicted satellite ephemerides data.
+This will help devices to determine the exact orbital location of the satellite without needing to connect to the cellular network every ~2 hours for up-to-date satellite ephemeris information or download the ephemeris from the acquired satellites,
+but the tradeoff is the reduced accuracy of the calculated position over time. Note that this requires more memory compared to regular A-GPS.
+
+Also note that due to satellite clock inaccuracies, not all healthy satellites have two weeks' worth of ephemerides data in the downloaded PGPS package,
+i.e., roughly after 10 days the number of satellites having valid predicted ephemerides is starting to drop gradually.
+This means that the GNSS module needs to download the ephemeris from the satellite broadcast if no predicted ephemeris is found for that satellite in order to be able to use the satellite.
+
+SUPL vs. nRF Cloud as location service
+---------------------
+SUPL library uses ~100kB of memory and also a bit more overhead which costs data and will suffer power consumption because you need to have the LTE radio ON much longer.
+NRF Cloud as location services instead has been designed to use minimal memory space on the device as well as using minimal possible data sent over the air to save power.
+This means that the nRF Cloud does the heavy lifting.
+
+Low Accuracy Mode
+---------------------
+Low accuracy mode allows the GNSS receiver to accept a looser criterion for a fix with 4 or more satellites or by using a reference altitude to allow for a fix using just 3 satellites.
+This will, of course, come at a tradeoff of reduced accuracy.
+This reference altitude can be from a recent valid normal fix or artificially injected.
+More information about low accuracy mode and its usage can be found here. --> https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/gnss_interface.html#low-accuracy-mode
+
+Samples in nRF Connect SDK
+=============
+There are many examples in the SDK that use GNSS. They are listed below with some information about their GNSS usage.
+
+:ref:`asset_tracker_v2`
+   Uses nRF Cloud for A-GPS and/or P-GPS, obtains GNSS fixes, and transmits them to nRF Cloud along with sensor data.
+
+:ref:`serial_lte_modem`
+   Uses AT commands to start and stop GNSS and has support for nRF Cloud A-GPS and P-GPS. It prints tracking and fix information to the serial console.
+
+:ref:`agps_sample`
+   Uses nRF Cloud for A-GPS by default, can be configured to use SUPL. It obtains GNSS fixes and transmits them to nRF Cloud.
+
+:ref:`gps_with_supl_support_sample`
+   Does not use A-GPS by default but can be configured to use SUPL. It prints tracking, fix information, and NMEA strings to the serial console.
+
+.. _nrf9160_ug_band_lock:
 Band lock
 *********
 
@@ -175,6 +273,7 @@ The band lock is handled by the LTE Link Control driver.
 By default, the functionality is disabled in the driver's Kconfig file.
 
 The modem can operate in the following E-UTRA Bands: 1, 2, 3, 4, 5, 8, 12, 13, 17, 18, 19, 20, 25, 26, 28, and 66.
+Please check your modem firmware version for more details :ref:`nRF9160 product website (compatible downloads)`.
 
 You can use the band lock to restrict modem operation to a subset of the supported bands, which might improve the performance of your application.
 To check which bands are certified in your region, visit `nRF9160 Certifications`_.
@@ -211,7 +310,7 @@ Network mode
 ************
 
 The modem supports LTE-M (Cat-M1) and Narrowband Internet of Things (NB-IoT or LTE Cat-NB).
-By default, the modem starts in LTE-M mode.
+By default in our samples, the modem starts in LTE-M mode. However, this is highly configurable.
 
 When using the LTE Link Control driver, you can select LTE-M with :kconfig:`CONFIG_LTE_NETWORK_MODE_LTE_M` or NB-IoT with :kconfig:`CONFIG_LTE_NETWORK_MODE_NBIOT`.
 
@@ -236,11 +335,11 @@ For more detailed information, see the `system mode section in the AT Commands r
 
 .. nrf9160_gps_lte_start
 
-Concurrent GPS and LTE
+Concurrent GNSS and LTE
 ======================
 
-|An nRF9160-based device| supports GPS in LTE-M and NB-IoT.
-Concurrent operation of GPS with optional power-saving features, such as extended Discontinuous Reception (eDRX) and Power Saving Mode (PSM), is also supported, and recommended.
+|An nRF9160-based device| supports GNSS in LTE-M and NB-IoT.
+Concurrent operation of GNSS with optional power-saving features, such as extended Discontinuous Reception (eDRX) and Power Saving Mode (PSM), is also supported, and recommended.
 
 The following figure shows how the data transfer occurs in |an nRF9160-based device| with power-saving in place.
 
@@ -249,10 +348,10 @@ The following figure shows how the data transfer occurs in |an nRF9160-based dev
 
 See `Energy efficiency`_ for more information.
 
-Asset Tracker enables the concurrent working of GPS and LTE in eDRX and PSM modes when the device is in `RRC idle mode`_.
+Asset Tracker enables the concurrent working of GNSS and LTE in eDRX and PSM modes when the device is in `RRC idle mode`_.
 The time between the transition of a device from RRC connected mode (data transfer mode) to RRC idle mode is dependent on the network.
 Typically, the time ranges between 5 seconds to 70 seconds after the last data transfer on LTE.
-Sensor and GPS data is sent to the cloud only during the data transfer phase.
+Sensor and GNSS data is sent to the cloud only during the data transfer phase.
 
 .. nrf9160_gps_lte_end
 
