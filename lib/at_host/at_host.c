@@ -292,6 +292,12 @@ static int at_host_init(const struct device *arg)
 		return -EINVAL;
 	}
 
+	err = at_notif_init();
+	if (err) {
+		LOG_ERR("Failed to initialize AT notifications, err %d", err);
+		return err;
+	}
+
 	err = at_notif_register_handler(NULL, response_handler);
 	if (err != 0) {
 		LOG_ERR("Can't register handler err=%d", err);
