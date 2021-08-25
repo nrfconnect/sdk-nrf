@@ -299,19 +299,19 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 		if (method_count == 1) {
 			if (method1_set) {
-				config.methods[0].method = method1;
+				methods[0].method = method1;
 			} else if (method2_set) {
-				config.methods[0].method = method2;
+				methods[0].method = method2;
 			}
 		} else if (method_count == 2) {
 			if (method1_set) {
-				config.methods[0].method = method1;
+				methods[0].method = method1;
 			}
 			if (method1_set && method2_set) {
-				config.methods[1].method = method2;
+				methods[1].method = method2;
 			}
 			if (!method1_set && method2_set) {
-				config.methods[0].method = method2;
+				methods[0].method = method2;
 			}
 		} else if (method_count != 0) {
 			shell_error(shell, "Max number of methods is %d.", LOC_MAX_METHODS);
@@ -321,9 +321,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			real_config = NULL;
 		}
 
-		if (config.methods[0].method == LOC_METHOD_GNSS) {
+		if (methods[0].method == LOC_METHOD_GNSS) {
 			if (gnss_timeout_set) {
-				config.methods[0].config.gnss.timeout = gnss_timeout;
+				methods[0].gnss.timeout = gnss_timeout;
 			} else {
 				shell_error(shell, "gnss_timeout is mandatory to be given.");
 				goto show_usage;
@@ -333,15 +333,14 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				shell_error(shell, "gnss_accuracy is mandatory to be given.");
 				goto show_usage;
 			} else {
-				config.methods[0].config.gnss.accuracy = gnss_accuracy;
+				methods[0].gnss.accuracy = gnss_accuracy;
 			}
 
-			config.methods[0].config.gnss.num_consecutive_fixes =
-			gnss_num_fixes;
+			methods[0].gnss.num_consecutive_fixes = gnss_num_fixes;
 
-		} else if (config.methods[1].method == LOC_METHOD_GNSS) {
+		} else if (methods[1].method == LOC_METHOD_GNSS) {
 			if (gnss_timeout_set) {
-				config.methods[1].config.gnss.timeout = gnss_timeout;
+				methods[1].gnss.timeout = gnss_timeout;
 			} else {
 				shell_error(shell, "gnss_timeout is mandatory to be given.");
 				goto show_usage;
@@ -351,11 +350,10 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				shell_error(shell, "gnss_accuracy is mandatory to be given.");
 				goto show_usage;
 			} else {
-				config.methods[1].config.gnss.accuracy = gnss_accuracy;
+				methods[1].gnss.accuracy = gnss_accuracy;
 			}
 
-			config.methods[1].config.gnss.num_consecutive_fixes =
-			gnss_num_fixes;
+			methods[1].gnss.num_consecutive_fixes = gnss_num_fixes;
 		}
 
 		ret = location_request(real_config);
