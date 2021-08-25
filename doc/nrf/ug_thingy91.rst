@@ -9,6 +9,7 @@ Working with Thingy:91
    :local:
    :depth: 2
 
+
 Nordic Thingy:91 is a battery-operated prototyping platform for cellular IoT systems, designed especially for asset tracking applications and environmental monitoring.
 
 Thingy:91 integrates the following components:
@@ -80,13 +81,6 @@ Thingy:91 has a multimode modem, which enables it to support automatic switching
 A built-in parameter in the Thingy:91 firmware determines whether the modem first attempts to connect in LTE-M or NB-IoT mode.
 If the modem fails to connect using this preferred mode within the default timeout period (10 minutes), the modem switches to the other mode.
 
-.. |An nRF9160-based device| replace:: A Thingy:91
-
-.. |an nRF9160-based device| replace:: a Thingy:91
-
-.. include:: ug_nrf9160.rst
-   :start-after: nrf9160_gps_lte_start
-   :end-before: nrf9160_gps_lte_end
 
 Modem firmware
 ==============
@@ -98,7 +92,7 @@ The downloadable zip file contains both the full firmware images that can be pro
 .. _precompiled_fw:
 
 Programming precompiled firmware images
-****************************************
+***************************************
 
 Precompiled firmware image files are useful in the following scenarios:
 
