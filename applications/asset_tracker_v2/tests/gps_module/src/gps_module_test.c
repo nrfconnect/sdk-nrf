@@ -68,6 +68,20 @@ int test_suiteTearDown(int num_failures)
 	return generic_suiteTearDown(num_failures);
 }
 
+void setUp(void)
+{
+	mock_gps_Init();
+	mock_modules_common_Init();
+	mock_event_manager_Init();
+}
+
+void tearDown(void)
+{
+	mock_gps_Verify();
+	mock_modules_common_Verify();
+	mock_event_manager_Verify();
+}
+
 static int gps_init_callback(const struct device *dev,
 			     gps_event_handler_t handler, int number_of_calls)
 {
