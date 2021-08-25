@@ -9,6 +9,7 @@ Working with Thingy:91
    :local:
    :depth: 2
 
+
 Nordic Thingy:91 is a battery-operated prototyping platform for cellular IoT systems, designed especially for asset tracking applications and environmental monitoring.
 
 Thingy:91 integrates the following components:
@@ -22,7 +23,7 @@ The |NCS| provides support for developing applications on the Thingy:91.
 .. _thingy91_serialports:
 
 Connecting to Thingy:91 serial ports
-************************************
+===============
 
 For connecting to Thingy:91, you can use `LTE Link Monitor`_, `Trace Collector`_, or a serial terminal.
 In the case of LTE Link Monitor or Trace Collector, the baud rate for the communication is set automatically.
@@ -43,7 +44,7 @@ Thingy:91 uses the following UART baud rate configuration:
      - 1000000
 
 
-Firmware
+Thingy:91: Firmware
 ********
 
 The firmware of Thingy:91 has been developed using the nRF Connect SDK.
@@ -97,7 +98,7 @@ The downloadable zip file contains both the full firmware images that can be pro
 
 .. _precompiled_fw:
 
-Programming precompiled firmware images
+Thingy:91: Programming precompiled firmware images
 ****************************************
 
 Precompiled firmware image files are useful in the following scenarios:
@@ -145,7 +146,7 @@ See `Programming the Thingy:91 modem`_ for the detailed steps to update the mode
 
 .. _building_pgming:
 
-Building and programming from the source code
+Thingy:91: Building and programming from the source code
 *********************************************
 
 You can also program the Thingy:91 by using the images obtained by building the code in an |NCS| environment.
@@ -313,3 +314,4 @@ To build and program the source code from the command line, complete the followi
        west flash
 
       The device will reset and run the programmed sample or application.
+      
