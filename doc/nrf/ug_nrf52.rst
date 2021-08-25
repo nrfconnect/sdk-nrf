@@ -68,6 +68,14 @@ Devices in the nRF52 Series are supported by these boards in the Zephyr open sou
      - ``nrf52840dongle_nrf52840``
      - | `Product Specification <nRF52840 Product Specification_>`_
        | `User Guide <nRF52840 Dongle User Guide_>`_
+   * - :ref:`zephyr:`nrf21540dk_nrf52840`
+     - PCA10112
+     - ``nrf21540dk_nrf52840``
+     - `Product Specification <nRF21540 Product Specification_>`
+   * - nRF21540 EK
+     - PCA10112
+     -
+     - :ref:`User Guide <ug_radio_fem_nrf21540_ek>`
 
 
 nRF Desktop
