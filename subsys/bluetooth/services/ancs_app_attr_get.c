@@ -181,12 +181,7 @@ int bt_ancs_app_attr_request(struct bt_ancs_client *ancs_c,
 			     const uint8_t *app_id, uint32_t len,
 			     bt_ancs_write_cb func)
 {
-	/* App ID to be requested must be null-terminated. */
 	if (!len) {
-		return -EINVAL;
-	}
-	if (app_id[len] !=
-	    '\0') {
 		return -EINVAL;
 	}
 
