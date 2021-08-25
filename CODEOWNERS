@@ -48,7 +48,7 @@ Kconfig*                                  @tejlmand
 /doc/versions.json                        @carlescufi
 # All subfolders
 /drivers/                                 @anangl
-/dts/                                     @anangl
+/dts/                                     @mbolivar-nordic @anangl
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos @pizi-nordic
 /include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
