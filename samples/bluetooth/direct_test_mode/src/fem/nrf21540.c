@@ -186,7 +186,7 @@ static uint32_t radio_tx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode)
 		ramp_up = fast ? RADIO_RAMP_UP_TX_2M_FAST_US :
 				 RADIO_RAMP_UP_TX_2M_US;
 		break;
-
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 	case NRF_RADIO_MODE_BLE_LR125KBIT:
 		ramp_up = fast ? RADIO_RAMP_UP_TX_S8_FAST_US :
 				 RADIO_RAMP_UP_TX_S8_US;
@@ -196,11 +196,14 @@ static uint32_t radio_tx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode)
 		ramp_up = fast ? RADIO_RAMP_UP_TX_S2_FAST_US :
 				 RADIO_RAMP_UP_TX_S2_US;
 		break;
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	case NRF_RADIO_MODE_IEEE802154_250KBIT:
 		ramp_up = fast ? RADIO_RAMP_UP_IEEE_FAST_US :
 				 RADIO_RAMP_UP_IEEE_US;
 		break;
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 	default:
 		ramp_up = fast ? RADIO_RAMP_UP_DEFAULT_FAST_US :
@@ -226,6 +229,7 @@ static uint32_t radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode)
 				 RADIO_RAMP_UP_RX_2M_US;
 		break;
 
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 	case NRF_RADIO_MODE_BLE_LR125KBIT:
 		ramp_up = fast ? RADIO_RAMP_UP_RX_S8_FAST_US :
 				 RADIO_RAMP_UP_RX_S8_US;
@@ -235,11 +239,14 @@ static uint32_t radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode)
 		ramp_up = fast ? RADIO_RAMP_UP_RX_S2_FAST_US :
 				 RADIO_RAMP_UP_RX_S2_US;
 		break;
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	case NRF_RADIO_MODE_IEEE802154_250KBIT:
 		ramp_up = fast ? RADIO_RAMP_UP_IEEE_FAST_US :
 				 RADIO_RAMP_UP_IEEE_US;
 		break;
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 	default:
 		ramp_up = fast ? RADIO_RAMP_UP_DEFAULT_FAST_US :
@@ -264,9 +271,12 @@ static uint32_t gpio_port_num_decode(NRF_GPIO_Type *reg)
 {
 	if (reg == NRF_P0) {
 		return 0;
-	} else if (reg == NRF_P1) {
+	}
+#if CONFIG_HAS_HW_NRF_GPIO1
+	else if (reg == NRF_P1) {
 		return 1;
 	}
+#endif /* CONFIG_HAS_HW_NRF_GPIO1 */
 
 	__ASSERT(false, "Unknown GPIO port");
 	return 0;
