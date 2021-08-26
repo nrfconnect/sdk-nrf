@@ -142,6 +142,8 @@ Following are the various LwM2M carrier library events:
 
     * :c:macro:`LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION` - The server registration has not completed, and the server does not recognize the connecting device. If this event persists, contact the carrier.
 
+    * :c:macro:`LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE` - The server is unavailable due to maintenance.
+
 * :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START`:
 
   * This event indicates that the modem update has started.
@@ -174,8 +176,6 @@ Following are the various LwM2M carrier library events:
     * :c:macro:`LWM2M_CARRIER_ERROR_FOTA_CONN_LOST` - This error indicates a loss of connection, or an unexpected closure of connection by the server.
 
     * :c:macro:`LWM2M_CARRIER_ERROR_FOTA_FAIL` - This error indicates a failure in applying a valid update. If this error persists, create a ticket in `DevZone`_ with the modem trace.
-
-    * :c:macro:`LWM2M_CARRIER_ERROR_SERVICE_UNAVAILABLE` - This error indicates that the LWM2M Server in maintenance mode.
 
     * :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION` - This error indicates that an illegal object configuration was detected.
 
