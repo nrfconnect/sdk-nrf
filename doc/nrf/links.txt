@@ -564,7 +564,6 @@
 
 .. _`nRF Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
 
-.. _`nRF Cloud REST API`:
 .. _`nRF Connect for Cloud Device API`: https://api.nrfcloud.com/v1
 
 .. _`nRF Cloud REST API`: https://nrfcloud.com/#/docs/guides/restapi
