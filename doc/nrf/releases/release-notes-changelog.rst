@@ -113,6 +113,10 @@ nRF Desktop
 Bluetooth LE
 ------------
 
+* Added:
+
+  * Production support for :ref:`nRF21540 GPIO <ug_radio_fem_nrf21540_gpio>` for both nRF52 and nRF53 Series.
+
 * Updated:
 
   * :ref:`ble_samples` - Changed the Bluetooth® sample Central DFU SMP name to :ref:`Central SMP Client <bluetooth_central_dfu_smp>`.
