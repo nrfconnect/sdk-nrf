@@ -41,8 +41,8 @@ void print_err(const lwm2m_carrier_event_t *evt)
 			"Connection to remote server lost",
 		[LWM2M_CARRIER_ERROR_FOTA_FAIL] =
 			"Modem firmware update failed",
-		[LWM2M_CARRIER_ERROR_SERVICE_UNAVAILABLE] =
-			"LWM2M server in maintenance mode",
+		[LWM2M_CARRIER_ERROR_CONFIGURATION] =
+			"Illegal object configuration detected",
 	};
 
 	__ASSERT(PART_OF_ARRAY(strerr[err->code]),
@@ -73,6 +73,8 @@ void print_deferred(const lwm2m_carrier_event_t *evt)
 			"Failed to connect to server",
 		[LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION] =
 			"Server registration sequence not completed",
+		[LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE] =
+			"Server in maintenance mode",
 	};
 
 	__ASSERT(PART_OF_ARRAY(strdef[def->reason]),
