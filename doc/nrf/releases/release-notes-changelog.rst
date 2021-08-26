@@ -239,7 +239,54 @@ The following list summarizes the most important changes inherited from upstream
 
 * Drivers:
 
-.. TODO
+  * Display:
+
+    * Added support for ILI9341 display controller.
+
+  * Flash:
+
+    * Added Devicetree property to configure RXDELAY.
+
+  * GPIO:
+
+    * Added support for the STMPE1600 GPIO expander.
+    * Added new ``struct gpio_dt_spec`` type and helper functions to provide a single handle to GPIO API calls.
+
+  * IEEE 802.15.4:
+
+    * Added CSL receiver for nRF5 radio driver.
+    * Added support for secured transmission in nRF5 radio driver.
+    * Added TX retry logic to nRF5 radio driver.
+    * Added support to include timestamp in acks for nRF5 radio driver.
+
+  * Modem:
+
+    * Changed API to operate on device pointers instead of names.
+
+  * PWM:
+
+    * Fixed nRF PWM driver suspending.
+
+  * Serial:
+
+    * Fixed race condition in nRF UARTE driver ASYNC ISR implementation.
+    * Added pullups support to RXD and CTS pins in nRF UART driver.
+    * Introduced Kconfig option `CONFIG_UART_USE_RUNTIME_CONFIGURE` to enable runtime configuration of UART.
+    * Fixed power management transitions in nRF UARTE driver.
+
+  * Sensors:
+
+    * Added support for Sensirion SGP40 and Sensirion SHT4X sensors.
+    * Added support for Everlight B1414 LED controller.
+
+  * SPI:
+
+    * Added timeout support for transfer completion.
+    * Added new ``struct spi_dt_spec`` type and helper functions to provide a single handle to SPI API calls.
+
+  * Timer:
+
+    * Fixed race condition in nRF timer driver ISR implementation.
 
 * Kernel:
 
@@ -247,7 +294,42 @@ The following list summarizes the most important changes inherited from upstream
 
 * Networking:
 
-.. TODO
+  * General:
+
+    * Added Ethernet bridging support.
+    * Fixed LL address handling on IEEE 802.15.4 frame reception
+    * Refactored tftp library.
+    * Added Ethernet Qbv, Qbu, and TXTIME options.
+    * Fixed mutli-IP DNS resolution.
+
+  * LwM2M:
+
+    * Removed notifications on non-readable resources.
+    * Fixed handling of multi instance resources with only a single resource.
+    * Added notify timeout handling.
+    * Fixed block transfer with TLV.
+
+  * OpenThread:
+
+    * Added Kconfig options for periodic parent search
+    * Added option to configure software transmission security.
+    * Fixed CSL API.
+
+  * MQTT:
+
+    * Added support for user defined custom transport type.
+
+  * Sockets:
+
+    * Fixed poll() handling for DTLS clients when the underlying socket is an offloaded socket.
+    * Fixed TLS/DTLS handshake on non blocking sockets.
+    * Changed :c:func:`zsock_select` to support microsecond resolution.
+    * Changed TLS sockets implementation to use secure random generator API.
+
+  * CoAP:
+
+    * Fixed :c:func:`coap_packet_get_payload` function.
+    * Fixed coap client observe out-of-order messages.
 
 * Testing:
 
