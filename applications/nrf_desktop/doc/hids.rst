@@ -67,12 +67,17 @@ Sending HID input reports
 After subscriptions are enabled in |HID_state|, the |HID_state| sends the HID input reports as ``hid_report_event``.
 The HID Service application module sends the report over Bluetooth LE and submits the ``hid_report_sent_event`` to inform that the given HID input report was sent.
 
-Ignored LED HID output reports
+HID keyboard LED output report
 ==============================
 
-The HID output reports for keyboard LEDs are ignored by the module, because the nRF Desktop keyboard does not support them.
-The keyboard has only one LED that is used to display Bluetooth LE peer state.
-Detailed information about the usage of LEDs to display information to the user is available in the :ref:`nrf_desktop_led_state` documentation.
+The module can receive an HID output report setting state of the keyboard LEDs, e.g. state of the Caps Lock.
+The report is received from the Bluetooth connected host.
+The module forwards the report using ``hid_report_event``, that is handled either by |HID_state| (for peripheral) or :ref:`nrf_desktop_hid_forward` (for central).
+
+Right now, the only board that displays information received in the HID output report using hardware LEDs is :ref:`nrf52840dk_nrf52840 <nrf52840dk_nrf52840>` in ``ZDebug_keyboard`` configuration.
+The keyboard reference design (nrf52kbd_nrf52832) has only one LED that is used to display the Bluetooth LE peer state.
+Detailed information about the usage of LEDs to display information about Bluetooth LE peer state and system state to the user is available in the :ref:`nrf_desktop_led_state` documentation.
+Detailed information about displaying state of the HID keyboard LEDs using hardware LEDs is available in :ref:`nrf_desktop_hid_state` documentation.
 
 Bluetooth LE connections and disconnections
 ===========================================

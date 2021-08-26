@@ -176,10 +176,43 @@ When configuring HEAP, make sure that the values for the following options match
     This backend is used by default in Zephyr.
     For more information, refer to Zephyr's documentation about :ref:`zephyr:heap_v2`.
 
-HID mouse data forwarding
-=========================
+HID data handling
+=================
 
-The nRF Desktop mouse sends HID input reports to host after the host connects and subscribes for the HID reports.
+The nRF Desktop device and the host can exchange HID data using one of the following HID report types:
+
+* HID input report
+* HID output report
+* HID feature report
+
+The nRF Desktop application uses all of these report types.
+See sections below for details about handling given HID report type.
+
+HID input reports
+-----------------
+
+The nRF Desktop application uses HID input reports to transmit information about user input from the nRF Desktop device to a host.
+The user input can be, for example, button press or mouse motion.
+
+The nRF Desktop supports the following HID input reports:
+
+* HID mouse report
+* HID keyboard report
+* HID consumer control report
+* HID system control report
+
+Every of these reports uses predefined report format and provides the given information.
+For example, the mouse motion is forwarded as HID mouse report.
+
+An nRF Desktop device supports the selected subset of the HID input reports.
+For example, the nRF Desktop keyboard reference desing (nrf52kbd_nrf52832) supports HID keyboard report, HID consumer control report and HID system control report.
+
+As an example, the following section describes handling HID mouse report data.
+
+HID mouse report handling
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The nRF Desktop mouse sends HID input reports to the host after the host connects and subscribes for the HID reports.
 
 The :ref:`nrf_desktop_motion` sensor sampling is synchronized with sending the HID mouse input reports to the host.
 
@@ -195,17 +228,16 @@ a. USB state (or Bluetooth HIDS) sends a HID mouse report to the host and submit
 #. After the sample is fetched, the thread forwards it to the :ref:`nrf_desktop_hid_state` as ``motion_event``.
 #. The |hid_state| updates the HID report data, generates new HID input report, and submits it as ``hid_report_event``.
 #. The HID report data is forwarded to the host either by the :ref:`nrf_desktop_usb_state` or by the :ref:`nrf_desktop_hids`.
-#. USB state has precedence if USB is connected.
+   The USB state has precedence if the USB is connected.
 #. When the HID input report is sent to the host, ``hid_report_sent_event`` is submitted.
    The motion sensor sample is triggered and the sequence repeats.
 
-If the device is connected through Bluetooth, the :ref:`nrf_desktop_hid_state` uses a pipeline that consists of two HID reports.
-The pipeline is created when the first ``motion_event`` is received.
+If the device is connected through Bluetooth, the :ref:`nrf_desktop_hid_state` uses a pipeline that consists of two HID reports, which it creates upon receiving the first ``motion_event``.
 The |hid_state| submits two ``hid_report_event`` events.
-When the first one is sent to the host, the motion sensor sample is triggered.
+Sending the first event to the host triggers the motion sensor sample.
 
 For the Bluetooth connections, submitting ``hid_report_sent_event`` is delayed by one Bluetooth connection interval.
-Because of this delay, the :ref:`nrf_desktop_hids` requires pipeline of two HID reports to make sure that data will be sent on every connection event.
+Because of this delay, the :ref:`nrf_desktop_hids` requires pipeline of two HID reports to make sure that data is sent on every connection event.
 Such solution is necessary to achieve high report rate.
 
 If there is no motion data for the predefined number of samples, the :ref:`nrf_desktop_motion` goes to the idle state.
@@ -219,6 +251,51 @@ To keep it simple, the diagram only shows data related to HID input reports that
    :alt: nRF Desktop mouse HID data sensing and transmission
 
    nRF Desktop mouse HID data sensing and transmission
+
+HID output reports
+------------------
+
+HID output reports are used to transmit data from host to an nRF Desktop device.
+The nRF Desktop supports the HID keyboard LED report.
+The report is used by the host to update the state of the keyboard LEDs, for example to indicate that the Caps Lock key is active.
+
+.. note::
+   Only the nrf52840dk_nrf52840 in ``ZDebug_keyboard`` configuration has hardware LEDs that can be used to disaply state of the Caps Lock and Num Lock.
+
+The following diagrams show the HID output report data exchange between the application modules.
+
+* Scenario 1: Peripheral connected directly to the host
+
+  .. figure:: /images/nrf_desktop_peripheral_host.svg
+     :alt: HID output report: Data handling and transmission between host and peripheral
+
+     HID output report: Data handling and transmission between host and peripheral
+
+  In this scenario, the HID output report is sent from the host to the peripheral either through Bluetooth or the USB connection.
+  Depending on the connection, the HID report is received by the :ref:`nrf_desktop_hids` or :ref:`nrf_desktop_usb_state`, respectively.
+  The module then sends the HID output report as ``hid_report_event`` to the :ref:`nrf_desktop_hid_state`, which keeps track of the HID output report states and updates state of the hardware LEDs by sending ``led_event`` to :ref:`nrf_desktop_leds`.
+
+* Scenario 2: Dongle intermediates between the host and the peripheral
+
+  .. figure:: /images/nrf_desktop_peripheral_host_dongle.svg
+     :alt: HID output report: Data handling and transmission between host and peripheral through dongle
+
+     HID output report: Data handling and transmission between host and peripheral through dongle
+
+  In this scenario, the HID output report is sent from the host to the dongle using the USB connection and is received by the :ref:`nrf_desktop_usb_state`.
+  The destination module then sends the HID output report as ``hid_report_event`` to the :ref:`nrf_desktop_hid_forward`, which sends it to the peripheral using Bluetooth.
+
+HID feature reports
+-------------------
+
+HID feature reports are used to transmit data between the host and an nRF Desktop device (in both directions).
+The nRF Desktop uses only one HID feature report: the user config report.
+The report is used by the :ref:`nrf_desktop_config_channel`.
+
+.. note::
+   The nRF Desktop also uses a dedicated HID output report to forward the :ref:`nrf_desktop_config_channel` data through the nRF Desktop dongle.
+   This report is handled using the configuration channel's infrastructure and it can be enabled using :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT`.
+   See the Kconfig option's help for details about the report.
 
 Requirements
 ************
@@ -286,7 +363,7 @@ Check :ref:`nrf_desktop_porting_guide` for details.
 nRF Desktop build types
 =======================
 
-nRF Desktop does not use a single :file:`prj.conf` file.
+The nRF Desktop does not use a single :file:`prj.conf` file.
 Configuration files are provided for different build types for each supported board.
 
 .. include:: /gs_modifying.rst
@@ -297,7 +374,7 @@ Configuration files are provided for different build types for each supported bo
     `Selecting a build type`_ is optional.
     The ``ZDebug`` build type is used by default in nRF Desktop if no build type is explicitly selected.
 
-The following build types are available for various boards in nRF Desktop:
+The following build types are available for various boards in the nRF Desktop:
 
 * ``ZRelease`` -- Release version of the application with no debugging features.
 * ``ZReleaseB0`` -- ``ZRelease`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
