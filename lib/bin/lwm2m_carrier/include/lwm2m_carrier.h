@@ -83,6 +83,8 @@ typedef struct {
 #define LWM2M_CARRIER_DEFERRED_SERVER_CONNECT	   6
 /** Server registration sequence not completed. */
 #define LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION 7
+/** Server in maintenance mode. */
+#define LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE 9
 /** @} */
 
 /*
@@ -117,8 +119,6 @@ typedef struct {
 #define LWM2M_CARRIER_ERROR_FOTA_CONN_LOST	7
 /**< Update failed. */
 #define LWM2M_CARRIER_ERROR_FOTA_FAIL		8
-/**< LWM2M server in maintenance mode. */
-#define LWM2M_CARRIER_ERROR_SERVICE_UNAVAILABLE 9
 /**< Illegal object configuration detected. */
 #define LWM2M_CARRIER_ERROR_CONFIGURATION      10
 /** @} */
