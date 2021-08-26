@@ -14,6 +14,7 @@ It is responsible for the following operations:
 * Tracking state of the HID report subscriptions.
 * Forming the HID reports.
 * Transmitting the HID reports to the right subscriber.
+* Sending :c:struct:`led_event` based on the HID keyboard LED output reports.
 
 Module events
 *************
@@ -30,6 +31,74 @@ Configuration
 
 The |hid_state| is enabled by selecting :kconfig:`CONFIG_DESKTOP_HID_STATE_ENABLE`.
 This module is optional and turned off by default.
+
+HID keymap
+==========
+
+You must define mapping between button IDs and usage IDs in generated HID reports.
+For that purpose you must create a configuration file with ``hid_keymap`` array.
+Every element of the array contains mapping from a single hardware key ID to HID report ID and usage ID.
+
+For example, the file contents should look like follows:
+
+.. code-block:: c
+
+	#include "hid_keymap.h"
+	#include <caf/key_id.h>
+
+	static const struct hid_keymap hid_keymap[] = {
+		{ KEY_ID(0x00, 0x01), 0x0014, REPORT_ID_KEYBOARD_KEYS }, /* Q */
+		{ KEY_ID(0x00, 0x02), 0x001A, REPORT_ID_KEYBOARD_KEYS }, /* W */
+		{ KEY_ID(0x00, 0x03), 0x0008, REPORT_ID_KEYBOARD_KEYS }, /* E */
+		{ KEY_ID(0x00, 0x04), 0x0015, REPORT_ID_KEYBOARD_KEYS }, /* R */
+		{ KEY_ID(0x00, 0x05), 0x0018, REPORT_ID_KEYBOARD_KEYS }, /* U */
+
+		...
+
+		{ FN_KEY_ID(0x06, 0x02), 0x0082, REPORT_ID_SYSTEM_CTRL },   /* sleep */
+		{ FN_KEY_ID(0x06, 0x03), 0x0196, REPORT_ID_CONSUMER_CTRL }, /* internet */
+	};
+
+You must define the mentioned array in this configuration file, and specify its location with the :kconfig:`CONFIG_DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH` Kconfig option.
+
+.. note::
+   The configuration file should be included only by the configured module.
+   Do not include the configuration file in other source files.
+
+HID keyboard LEDs
+=================
+
+You must define which hardware LEDs are used to display state of the HID keyboard LEDs report and LED effects that should be used to display the state.
+See documentation of :ref:`caf_leds` for details about LED effects.
+
+You must create a configuration file with the following data:
+
+* ``keyboard_led_on`` - LED effect defined to represent LED turned on by the host.
+* ``keyboard_led_off`` - LED effect defined to represent LED turned off by the host.
+* ``keyboard_led_map`` - IDs of the hardware LEDs used to represent state of the HID keyboard LED.
+
+For example, the file contents should look like follows:
+
+.. code-block:: c
+
+	#include "hid_keyboard_leds.h"
+
+	static const struct led_effect keyboard_led_on = LED_EFFECT_LED_ON(LED_COLOR(255, 255, 255));
+	static const struct led_effect keyboard_led_off = LED_EFFECT_LED_OFF();
+
+	static const uint8_t keyboard_led_map[] = {
+		[HID_KEYBOARD_LEDS_NUM_LOCK] = 2,
+		[HID_KEYBOARD_LEDS_CAPS_LOCK] = 3,
+		[HID_KEYBOARD_LEDS_SCROLL_LOCK] = LED_UNAVAILABLE,
+		[HID_KEYBOARD_LEDS_COMPOSE] = LED_UNAVAILABLE,
+		[HID_KEYBOARD_LEDS_KANA] = LED_UNAVAILABLE,
+	};
+
+You must define all of the mentioned data in this configuration file, and specify its location with the :kconfig:`CONFIG_DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH` Kconfig option.
+
+.. note::
+   The configuration file should be included only by the configured module.
+   Do not include the configuration file in other source files.
 
 Report expiration
 =================
@@ -60,6 +129,8 @@ For the routing mechanism to work, the module performs the following operations:
 * `Tracking state of transports`_
 * `Tracking state of HID report notifications`_
 * `Forming HID reports`_
+
+Apart from the routing mechanism, the module is also responsible for `Handling HID keyboard LED state`_.
 
 
 Linking input data with the right HID report
@@ -185,5 +256,14 @@ The :c:struct:`report_data` structure is passed as an argument to this function.
 .. note::
     The HID report formatting function must work according to the HID report descriptor (``hid_report_desc``).
     The source file containing the descriptor is given by :kconfig:`CONFIG_DESKTOP_HID_REPORT_DESC`.
+
+Handling HID keyboard LED state
+===============================
+
+When the |hid_state| receives a :c:struct:`hid_report_event` that contains an HID output report, it updates the remembered information about the state of the HID output report of the appropriate subscriber.
+
+By default, nRF Desktop supports only HID keyboard LED output report.
+The nRF Desktop peripheral displays the state of the keyboard LEDs that was specified by the HID subscriber that subscribed for keyboard key HID input report.
+When the subscriber is changed or it updates the state of the keyboard LEDs, the |hid_state| sends :c:struct:`leds_event` to update the state of the hardware LEDs.
 
 .. |hid_state| replace:: HID state module

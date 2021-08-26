@@ -84,7 +84,7 @@ The received HID input report data is converted to ``hid_report_event``.
 When a HID report is sent to the host by the HID-class USB device, the |hid_forward| receives a ``hid_report_sent_event`` with the identifier of this device.
 
 Enqueuing incoming HID input reports
-====================================
+------------------------------------
 
 The |hid_forward| forwards only one HID input report to the HID-class USB device at a time.
 Another HID input report may be received from a peripheral connected over Bluetooth before the previous one was sent.
@@ -97,6 +97,17 @@ The enqueued report to be sent is chosen by the |hid_forward| in the round-robin
 The report of the next type will be sent if available.
 If not available, the next report type will be checked until a report is found or there is no report in any of the queues.
 If there is no ``hid_report_event`` in the queue, the module waits for receiving data from peripherals.
+
+Forwarding HID output reports
+=============================
+
+When the |hid_forward| receives a ``hid_report_event`` that contains an output report from a :ref:`nrf_desktop_usb_state`, it tries to forward the output report.
+The HID output report is forwarded to all of the Bluetooth connected peripherals that forward the HID data to HID subscriber that is source of the HID output report.
+The HID output report is never forwarded to peripheral that does not support it.
+
+If the GATT write without response operation is in progress for given HID output report ID and connected peripheral, the report is placed in a queue and sent later.
+The |hid_forward| sends information only about the last received HID output report with given ID.
+If changes of state related to HID output report with given ID are frequent, some intermediate states can be omitted by the |hid_forward|.
 
 Bluetooth Peripheral disconnection
 ==================================
