@@ -144,8 +144,6 @@ struct nrf_cloud_pgps_event {
  * events from the module.
  *
  * @param[in] event The event that just occurred.
- * @param[in] p For event PGPS_EVT_AVAILABLE, a pointer to the prediction;
- * otherwise, NULL.
  */
 typedef void (*pgps_event_handler_t)(struct nrf_cloud_pgps_event *event);
 
