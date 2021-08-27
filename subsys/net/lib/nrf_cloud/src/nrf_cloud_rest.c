@@ -8,7 +8,14 @@
 #include <zephyr.h>
 #include <stdlib.h>
 #include <stdio.h>
+#if defined(CONFIG_POSIX_API)
+#include <posix/arpa/inet.h>
+#include <posix/unistd.h>
+#include <posix/netdb.h>
+#include <posix/sys/socket.h>
+#else
 #include <net/socket.h>
+#endif
 #include <net/net_ip.h>
 #include <modem/nrf_modem_lib.h>
 #include <net/tls_credentials.h>
