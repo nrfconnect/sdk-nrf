@@ -240,6 +240,12 @@ struct lte_lc_edrx_cfg {
 	float ptw;
 };
 
+#define LTE_LC_CELL_TIMING_ADVANCE_MAX		20512
+#define LTE_LC_CELL_TIMING_ADVANCE_INVALID	65535
+#define LTE_LC_CELL_EARFCN_MAX			262143
+#define LTE_LC_CELL_RSRP_INVALID		255
+#define LTE_LC_CELL_RSRQ_INVALID		255
+
 struct lte_lc_cell {
 	/** Mobile Country Code. */
 	int mcc;

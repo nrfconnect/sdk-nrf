@@ -36,6 +36,17 @@ struct nrf_cloud_cell_pos_result {
 	uint32_t unc;
 };
 
+/** @defgroup nrf_cloud_cell_pos_omit Omit item from cellular positioning request.
+ * @{
+ */
+#define NRF_CLOUD_CELL_POS_OMIT_TIME_ADV	LTE_LC_CELL_TIMING_ADVANCE_INVALID
+#define NRF_CLOUD_CELL_POS_OMIT_RSRQ		LTE_LC_CELL_RSRQ_INVALID
+#define NRF_CLOUD_CELL_POS_OMIT_RSRP		LTE_LC_CELL_RSRP_INVALID
+#define NRF_CLOUD_CELL_POS_OMIT_EARFCN		UINT32_MAX
+/** @} */
+
+#define NRF_CLOUD_CELL_POS_TIME_ADV_MAX		LTE_LC_CELL_TIMING_ADVANCE_MAX
+
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 /**@brief Perform an nRF Cloud cellular positioning request via MQTT using
  * the provided cell info.
@@ -45,7 +56,8 @@ struct nrf_cloud_cell_pos_result {
  *                  cell parameters are E-ARFCN and physical cell identity.
  *                  The parameters for time diff and measurement time are not used.
  *                  The remaining parameters are optional; including them may improve
- *                  location accuracy.
+ *                  location accuracy. To omit a request parameter, use the appropriate
+ *                  define in @ref nrf_cloud_rest_pgps_omit.
  *                  If NULL, current (single) cell tower data will be requested from
  *                  the modem and used in the request.
  * @param request_loc If true, cloud will send location to the device.
