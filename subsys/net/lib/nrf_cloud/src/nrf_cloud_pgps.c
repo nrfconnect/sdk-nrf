@@ -620,6 +620,7 @@ static int pgps_request(const struct gps_pgps_request *request)
 	}
 
 	index.expected_count = request->prediction_count;
+	ignore_packets = false;
 
 #if defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)
 	struct nrf_cloud_pgps_event evt = {
@@ -637,8 +638,6 @@ static int pgps_request(const struct gps_pgps_request *request)
 	cJSON *data_obj;
 	cJSON *pgps_req_obj;
 	cJSON *ret;
-
-	ignore_packets = false;
 
 	LOG_INF("Requesting %u predictions...", request->prediction_count);
 
@@ -1363,6 +1362,7 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 
 	if (ignore_packets) {
 		LOG_ERR("IGNORING PACKETS");
+		LOG_HEXDUMP_INF(buf, buf_len, "Unexpected packet");
 		return -EINVAL;
 	}
 
