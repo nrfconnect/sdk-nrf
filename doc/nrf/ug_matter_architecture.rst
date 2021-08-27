@@ -16,7 +16,6 @@ This allows for routing messages regardless of the underlying physical and link 
    Matter (formerly Project CHIP) architecture overview
 
 The Matter application layer can be broken down into several main components, from IP framing and transport management up to Data Model structure and Application itself.
-For detailed description, see the `Matter Protocol Overview`_ page in the Matter documentation.
 
 Matter is included in the |NCS| as one of the submodule repositories managed with the :ref:`zephyr:west` tool.
 That is, the code used for the |NCS| and Matter integration is stored in the Matter repository (nRF Connect platform) and is compiled when building one of the available :ref:`matter_samples`.
@@ -31,5 +30,5 @@ The |NCS|'s Multiprotocol Service Layer (MPSL) driver allows running Bluetooth L
 
    nRF Connect platform in Matter
 
-For detailed description, see the `nRF Connect platform overview`_ page in the Matter documentation.
+For detailed description, see the :doc:`matter:nrfconnect_platform_overview` page in the Matter documentation.
 If you are new to Matter, check also the tutorials on `DevZone`_.

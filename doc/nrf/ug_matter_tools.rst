@@ -41,9 +41,9 @@ To use this controller type, you need to build it first using one of the followi
 
 * Use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page.
   Make sure that the package is compatible with your |NCS| version.
-* Build it manually from the source files available in the :file:`modules/lib/matter/src/controller/python` directory and using the building instructions from the `Working with Python Controller`_ page in the Matter documentation.
+* Build it manually from the source files available in the :file:`modules/lib/matter/src/controller/python` directory and using the building instructions from the :doc:`matter:python_chip_controller_building` page in the Matter documentation.
 
-For instructions about how to test using the Python Controller for Linux, see `Working with Python Controller`_.
+For instructions about how to test using the Python Controller for Linux, see the :doc:`matter:python_chip_controller_building` page in the Matter documentation.
 
 Mobile controller for Android
 =============================
@@ -55,9 +55,9 @@ To use this controller type, you need to build it first using one of the followi
 
 * Use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page.
   Make sure that the package is compatible with your |NCS| version.
-* Build it manually from the source files available in the :file:`modules/lib/matter/src/android/CHIPTool` directory and using the building instructions from the `Building Android CHIPTool`_ page in the Matter documentation.
+* Build it manually from the source files available in the :file:`modules/lib/matter/src/android/CHIPTool` directory and using the building instructions from the :doc:`matter:android_chiptool_building` page in the Matter documentation.
 
-For instructions about how to test using the Mobile Controller for Android, see `Commissioning nRF Connect Accessory using Android CHIPTool`_.
+For instructions about how to test using the Mobile Controller for Android, see the :doc:`matter:nrfconnect_android_commissioning` page in the Matter documentation.
 
 Thread tools
 ************

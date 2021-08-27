@@ -100,6 +100,10 @@ nrfx_mapping = utils.get_intersphinx_mapping("nrfx")
 if nrfx_mapping:
     intersphinx_mapping["nrfx"] = nrfx_mapping
 
+matter_mapping = utils.get_intersphinx_mapping("matter")
+if matter_mapping:
+    intersphinx_mapping["matter"] = matter_mapping
+
 # -- Options for doxyrunner plugin ---------------------------------------------
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")

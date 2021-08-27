@@ -163,7 +163,7 @@ Testing
 .. note::
     The testing procedure assumes you are using the mobile Matter controller application.
     You can also obtain the measurement values using the PC command-line-based Matter controller and invoking the read commands manually.
-    To see how to send read commands from the PC Matter controller, read the `Working with Python Controller`_ guide in the Matter documentation.
+    To see how to send read commands from the PC Matter controller, read the :doc:`matter:python_chip_controller_building` guide in the Matter documentation.
 
 After programming the application, perform the following steps to test the Matter weather station application on the Thingy:53 with the mobile Matter controller application:
 
@@ -236,7 +236,7 @@ Updating the device firmware
     Device Firmware Upgrade feature is under development and currently it is possible to update only the application core image.
     Network core image update is not yet available.
 
-To update the device firmware, complete the steps listed for the selected method in the `Performing Device Firmware Upgrade in Matter device`_ tutorial.
+To update the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial in the Matter documentation.
 
 Dependencies
 ************

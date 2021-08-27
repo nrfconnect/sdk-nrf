@@ -239,7 +239,7 @@ The data payload, which includes the device discriminator and setup PIN code, is
 Upgrading the device firmware
 =============================
 
-To upgrade the device firmware, complete the steps listed for the selected method in the `Performing Device Firmware Upgrade in Matter device`_ tutorial.
+To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial in the Matter documentation.
 
 Dependencies
 ************
