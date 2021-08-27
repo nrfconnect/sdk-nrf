@@ -235,7 +235,11 @@ The following list summarizes the most important changes inherited from upstream
 
 * Documentation:
 
-.. TODO
+  * Kconfig options need to be referenced using the ``:kconfig:`` Sphinx role.
+    Previous to this change, ``:option:`` was used for this purpose.
+  * Doxygen alias ``@config{}`` has been deprecated in favor of ``@kconfig{}``.
+  * Graphviz diagrams can now be embedded in the documentation. Defaults are provided to make their look and feel consistent with the documentation style.
+  * PDF build has been fixed with improvements in look and feel. It is now regularly published upstream together with the HTML build.
 
 * Drivers:
 
@@ -281,8 +285,6 @@ Documentation
 * Added:
 
   * User guide :ref:`ug_nrf_cloud`.
-
-.. TODO update this following https://github.com/nrfconnect/sdk-nrf/pull/5189. Delete this comment once that is complete.
 
 * Updated:
 
