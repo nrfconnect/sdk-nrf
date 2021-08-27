@@ -121,7 +121,8 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 			return;
 		}
 
-		ret = multicell_location_get(&cell_data, &location);
+		/* TODO: pass a device id / IMEI (fetched runtime?) */
+		ret = multicell_location_get(&cell_data, NULL, &location);
 		if (ret) {
 			LOG_ERR("Failed to acquire location from multicell_location lib, error: %d",
 				ret);
