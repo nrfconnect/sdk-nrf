@@ -141,6 +141,28 @@ config MULTICELL_LOCATION_HOSTNAME
 	  Server hostname to use when connecting to the selected locations service
 
 if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
+choice MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT
+	prompt "Choose how JWT is handled"
+	default MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT_GENERATED
+	help
+	  Select how JWT is done
+
+config MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT_COMPILE_TIME
+	bool "Use compile time JWT"
+	help
+	  Use compile time JWT given as a string
+
+config MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT_GENERATED
+	bool "JWT generated on the fly based on device id"
+	help
+	  JWT generated on the run time based on device id
+endchoice
+
+if MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT_COMPILE_TIME
+config MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT_STRING
+	string "JWT set at compile time"
+endif
+
 config MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG
 	int "Security tag for JWT signing"
 	default NRF_CLOUD_SEC_TAG
