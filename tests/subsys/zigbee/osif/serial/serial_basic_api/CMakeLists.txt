@@ -14,6 +14,7 @@ add_definitions(-Wno-packed-bitfield-compat)
 # Add the serial definition here, so we can test ZBOSS'es Kconfig option without including ZBOSS libraries
 zephyr_compile_definitions(CONFIG_ZB_HAVE_SERIAL)
 zephyr_compile_definitions(CONFIG_ZIGBEE_HAVE_SERIAL)
+zephyr_compile_definitions(CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL)
 zephyr_compile_definitions(CONFIG_ZIGBEE_UART_DEVICE_NAME="UART_1")
 zephyr_compile_definitions(CONFIG_ZBOSS_TRACE_BINARY_NCP_TRANSPORT_LOGGING)
 zephyr_compile_definitions(CONFIG_ZIGBEE_UART_TX_TIMEOUT=10)
