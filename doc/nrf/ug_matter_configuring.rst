@@ -88,8 +88,8 @@ For information about how to configure and use the required components, complete
 * Configuring the Thread Border Router on a Raspberry Pi - see :ref:`ug_thread_tools_tbr` in the |NCS| documentation
 * Depending on the Matter controller type:
 
-  * Python Matter controller - See :ref:`ug_matter_tools` for building instructions and `Working with Python Controller`_ in the Matter documentation for information about testing.
-  * Android Mobile controller - See :ref:`ug_matter_tools` for building instructions and `Commissioning nRF Connect Accessory using Android CHIPTool`_ in the Matter documentation for information about testing.
+  * Python Matter controller - See :ref:`ug_matter_tools` for building instructions and :doc:`matter:python_chip_controller_building` in the Matter documentation for information about testing.
+  * Android Mobile controller - See :ref:`ug_matter_tools` for building instructions and :doc:`matter:nrfconnect_android_commissioning` in the Matter documentation for information about testing.
 
 Running Thread Border Router and Matter controller on the same device
 =====================================================================
@@ -113,7 +113,7 @@ To use this setup, you need the following hardware:
 For information about how to configure and use the required components, see the following user guides:
 
 * Configuring Thread Border Router on a PC or a Raspberry Pi - see :ref:`ug_thread_tools_tbr` in the |NCS| documentation
-* Python Matter controller - See :ref:`ug_matter_tools` for building instructions and `Working with Python Controller`_ in the Matter documentation for information about testing.
+* Python Matter controller - See :ref:`ug_matter_tools` for building instructions and :doc:`matter:python_chip_controller_building` in the Matter documentation for information about testing.
 
 .. note::
     The Python Matter controller is currently not supported for building on Raspbian OS.

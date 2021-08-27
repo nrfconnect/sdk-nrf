@@ -143,6 +143,7 @@ Matter
   * :ref:`Template <matter_template_sample>` sample with a guide about :ref:`ug_matter_creating_accessory`.
   * :ref:`ug_matter_tools` page with information about building options for Matter controllers.
   * PA/LNA GPIO interface support for RF front-end modules (FEM) in Matter.
+  * :doc:`Matter documentation set <matter:index>` based on the documentation from the Matter submodule.
 
 Thread
 ------
