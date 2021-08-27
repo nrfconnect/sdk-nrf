@@ -91,7 +91,7 @@ The following changes are relevant for the nRF52 and nRF53 Series.
 Front-end module (FEM)
 ----------------------
 
-* Added support for nRF21540 to nRF5340 network core.
+* Added support for the nRF21540 GPIO interface to the nRF5340 network core.
 * Added support for RF front-end Modules (FEM) for nRF5340 in :ref:`mpsl` library. The front-end module feature for nRF5340 in MPSL currently supports nRF21540, but does not support SKY66112-11 device.
 
 nRF Desktop
@@ -142,6 +142,14 @@ Zigbee
 
   * :ref:`zigbee_ug_logging_stack_logs` - Improved printing ZBOSS stack logs.
     Added new backend options to print ZBOSS stack logs with option for using binary format.
+
+nRF IEEE 802.15.4 radio driver
+------------------------------
+
+* Added:
+
+  * :ref:`802154_phy_test` sample, with an experimental Antenna Diversity functionality.
+  * Experimental Wi-Fi Coexistence functionality.
 
 Common
 ======
