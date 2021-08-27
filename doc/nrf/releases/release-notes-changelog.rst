@@ -227,7 +227,45 @@ The following list summarizes the most important changes inherited from upstream
 
 * Bluetooth:
 
-.. TODO
+  * Controller:
+
+    * Initial support for chaining in periodic advertising
+    * Implemented Extended and Periodic Advertising related radio event time reservations
+    * Various Advertising Extensions feature related bug fixes
+    * Add/Remove ACAD on create/terminate BIG
+    * Implement Channel Selection Algorithm #2 for ISO subevents
+
+  * Audio:
+
+    * AICS: Remove connection pointer from discovery callbacks
+    * Fix null pointer dereference in MICS client
+    * Rename bt_mics to bt_mics_included
+    * Rename bt_vcs to bt_vcs_included
+
+  * Host:
+
+    * GATT: Added checks for database out of sync on read multiple requests
+    * GATT: Fix transfer of long device names
+    * GATT Cancel all prepared writes on invalid Write Responses
+    * Check advertising status before enabling advertiser
+    * Added "find attribute by UUID" helper function
+    * Disabling scanning before setting random address
+    * Fixed CCC store on write for multiple connections
+    * Fixed extended advertising feature bit check
+    * Fixed L2CAP sent callback being issued on disconnected channels
+    * Added rejection of remote public keys on same X coordinate as our own
+    * ISO: Fixed BIG clean up procedure
+
+  * Mesh:
+
+    * Added return values on message opcode handlers
+    * Added API for manually storing RPL entries
+    * Added support for OOB Public keys in Provisioning devices
+    * Added check for the Model's CID when receiving vendor opcodes
+    * Added rejection of identical public keys during provisioning
+    * Fixed bug where LPN issued poll message on master credentials during friendship setup
+    * Fixed bug where the wrong pointer is passed to the publish_sent callback
+    * Various Proxy and Provisioning fixes
 
 * Devicetree:
 
