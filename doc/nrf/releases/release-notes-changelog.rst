@@ -133,6 +133,20 @@ Matter
   * :ref:`ug_matter_tools` page with information about building options for Matter controllers.
   * PA/LNA GPIO interface support for RF front-end modules (FEM) in Matter.
 
+Thread
+------
+
+* :ref:`ot_cli_sample` sample updated with USB support.
+* :ref:`ot_coprocessor_sample` sample updated with USB support.
+* Thread 1.2 improvements:
+  * Thread 1.2 supported in all samples.
+  * Retransmissions now supported when transmission security is handled by the radio driver.
+  * Added support for CSL Accuracy TLV in the MLE Parent Response.
+  * Link Metrics data properly updated when using ACK-based Probing.
+* nRF21540 supported for nRF52 and nRF53 families, including Bluetooth LE in multiprotocol configuration.
+* Thread Backbone Border Router supported based on RCP architecture.
+* `NET_SHELL` removed from Thread samples due to its limited usefulness.
+
 Zigbee
 ------
 
