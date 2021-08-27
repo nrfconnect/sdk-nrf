@@ -10,7 +10,9 @@ The API offers functionality to initialize and configure a device, to start and 
    :local:
    :depth: 2
 
+.. note::
 
+   The GPS driver is deprecated since v1.7.0. Use the :ref:`nrfxlib:gnss_interface` instead.
 
 API documentation
 *****************
