@@ -206,3 +206,21 @@ void util_get_ip_addr(int cid, char *addr4, char *addr6)
 	}
 	/* only parse addresses from primary PDN */
 }
+
+int util_str_to_int(const char *str_buf, int base, int *output)
+{
+	int temp;
+	char *end_ptr = NULL;
+
+	errno = 0;
+	temp = strtol(str_buf, &end_ptr, base);
+
+	if (end_ptr == str_buf || *end_ptr != '\0' ||
+	    ((temp == LONG_MAX || temp == LONG_MIN) && errno == ERANGE)) {
+		return -ENODATA;
+	}
+
+	*output = temp;
+
+	return 0;
+}
