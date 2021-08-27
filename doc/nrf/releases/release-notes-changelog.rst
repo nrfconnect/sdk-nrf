@@ -12,6 +12,11 @@ The most relevant changes that are present on the master branch of the |NCS|, as
 .. note::
    This file is a work in progress and might not cover all relevant changes.
 
+Highlights
+**********
+
+* Added support for NFC and *pair before use* type of accessories to the Apple Find My add-on.
+
 Known issues
 ************
 
@@ -118,6 +123,7 @@ Front-end module (FEM)
 
 * Added support for the nRF21540 GPIO interface to the nRF5340 network core.
 * Added support for RF front-end Modules (FEM) for nRF5340 in :ref:`mpsl` library. The front-end module feature for nRF5340 in MPSL currently supports nRF21540, but does not support SKY66112-11 device.
+* Added a device tree shield definition for the nRF21540 Evaluation Kit.
 
 nRF Desktop
 -----------
@@ -152,6 +158,11 @@ Bluetooth LE
 
   * :ref:`ble_samples` - Changed the Bluetooth® sample Central DFU SMP name to :ref:`Central SMP Client <bluetooth_central_dfu_smp>`.
   * :ref:`direction_finding_connectionless_rx` and :ref:`direction_finding_connectionless_tx` samples - Added default configuration for ``nrf52833dk_nrf52820`` and ``nrf5340dk_nrf5340_cpuapp``, and ``nrf5340dk_nrf5340_cpuapp_ns`` boards.
+  * :ref:`direct_test_mode` - added an automatic build of the :ref:`nrf5340_empty_app_core` sample, when building for ``nrf5340dk_nrf5340_cpunet``.
+  * Fixed the NCSDK-9820 known issue in the :ref:`peripheral_lbs` sample.
+    When **Button 1** was pressed and released while holding one of the other buttons, the notification for release was the same as for press.
+  * Fixed an issue in the :ref:`gatt_dm_readme` library where a memory fault could happen if a peer device disconnected during the service discovery process.
+  * :ref:`lbs_readme` library - added write request data validation in the LED characteristic.
 
 Bluetooth mesh
 ---------------
@@ -225,6 +236,13 @@ Zigbee
   * ZBOSS Zigbee stack to version 3.8.0.1+4.0.0.
     See the :ref:`nrfxlib:zboss_changelog` in the nrfxlib documentation for detailed information.
 
+ESB
+---
+
+* Updated:
+
+  * Modified the ESB interrupts configuration to reduce the ISR latency and enable scheduling decision in the interrupt context.
+
 nRF IEEE 802.15.4 radio driver
 ------------------------------
 
@@ -233,6 +251,11 @@ nRF IEEE 802.15.4 radio driver
   * :ref:`802154_phy_test` sample, with an experimental Antenna Diversity functionality.
   * Experimental Wi-Fi Coexistence functionality.
 
+Other samples
+-------------
+
+* :ref:`radio_test` - added an automatic build of the :ref:`nrf5340_empty_app_core` sample, when building for ``nrf5340dk_nrf5340_cpunet``.
+
 Common
 ======
 
@@ -240,6 +263,8 @@ The following changes are relevant for all device families.
 
 sdk-nrfxlib
 -----------
+
+* Updated the default :ref:`nrf_rpc` transport backend to use the RPMsg Service library.
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
@@ -255,6 +280,12 @@ Modem library
 
 * The AT socket API is now deprecated.
 * The DFU socket API is now deprecated.
+
+NFC
+---
+
+* Updated the NFCT interrupt configuration to reduce the ISR latency and enable scheduling decision in the interrupt context.
+* Updated the :ref:`nfc_uri` library to allow encoding of URI strings longer than 255 characters.
 
 Trusted Firmware-M
 ------------------
