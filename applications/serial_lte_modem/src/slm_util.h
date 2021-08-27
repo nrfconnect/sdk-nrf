@@ -96,11 +96,23 @@ int util_string_get(const struct at_param_list *list, size_t index, char *value,
 /**
  * @brief use AT command to get IPv4 and IPv6 addresses for specified PDN
  *
- * @param[in] cid PDP Context ID as defined in "+CGDCONT" command (0~10)
- * @param[in] addr4 buffer to hold the IPv4 address, size NET_IPV4_ADDR_LEN
- * @param[in] addr6 buffer to hold the IPv6 address, size NET_IPV6_ADDR_LEN
+ * @param[in] cid PDP Context ID as defined in "+CGDCONT" command (0~10).
+ * @param[out] addr4 Buffer to hold the IPv4 address, size NET_IPV4_ADDR_LEN.
+ * @param[out] addr6 Buffer to hold the IPv6 address, size NET_IPV6_ADDR_LEN.
  */
 void util_get_ip_addr(int cid, char *addr4, char *addr6);
+
+/**
+ * @brief convert string to integer
+ *
+ * @param[in] str A string containing the representation of an integral number.
+ * @param[in] base The base, which must be between 2 and 36 inclusive or the special value 0.
+ * @param[out] output The converted integral number as a long int value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int util_str_to_int(const char *str, int base, int *output);
 /** @} */
 
 #endif /* SLM_UTIL_ */

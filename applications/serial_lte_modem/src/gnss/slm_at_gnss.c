@@ -14,6 +14,9 @@
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_cell_pos.h>
+#include <nrf_modem_at.h>
+#include <modem/lte_lc.h>
+#include <modem/at_monitor.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_gnss.h"
@@ -56,7 +59,32 @@ static enum {
 	RUN_TYPE_CELL_POS
 } run_type;
 
-K_SEM_DEFINE(sem_date_time, 0, 1);
+static K_SEM_DEFINE(sem_date_time, 0, 1);
+static K_SEM_DEFINE(sem_ncell_meas, 0, 1);
+
+/** Definitins for %NCELLMEAS notification
+ * %NCELLMEAS: status [,<cell_id>, <plmn>, <tac>, <timing_advance>, <current_earfcn>,
+ * <current_phys_cell_id>, <current_rsrp>, <current_rsrq>,<measurement_time>,]
+ * [,<n_earfcn>1, <n_phys_cell_id>1, <n_rsrp>1, <n_rsrq>1,<time_diff>1]
+ * [,<n_earfcn>2, <n_phys_cell_id>2, <n_rsrp>2, <n_rsrq>2,<time_diff>2] ...
+ * [,<n_earfcn>17, <n_phys_cell_id>17, <n_rsrp>17, <n_rsrq>17,<time_diff>17
+ *
+ * Max 17 ncell, but align with CONFIG_SLM_AT_MAX_PARAM
+ * 11 number of parameters for current cell (including "%NCELLMEAS")
+ * 5  number of parameters for one neighboring cell
+ */
+#define MAX_PARAM_CELL   11
+#define MAX_PARAM_NCELL  5
+/* Must support at least all params for current cell plus one ncell */
+BUILD_ASSERT(CONFIG_SLM_AT_MAX_PARAM > (MAX_PARAM_CELL + MAX_PARAM_NCELL),
+	     "CONFIG_SLM_AT_MAX_PARAM too small");
+#define NCELL_CNT ((CONFIG_SLM_AT_MAX_PARAM - MAX_PARAM_CELL) / MAX_PARAM_NCELL)
+
+static struct lte_lc_ncell neighbor_cells[NCELL_CNT];
+static struct lte_lc_cells_info cell_data = {
+	.neighbor_cells = neighbor_cells
+};
+static int ncell_meas_status;
 
 /* global functions defined in different files */
 void rsp_send(const char *str, size_t len);
@@ -122,15 +150,192 @@ static void pgps_req_wk(struct k_work *work)
 	}
 }
 
+AT_MONITOR(ncell_meas, "NCELLMEAS", ncell_meas_mon, PAUSED);
+
+static void ncell_meas_mon(const char *notify)
+{
+	int err;
+	uint32_t param_count;
+
+	ncell_meas_status = -1;
+	at_params_list_clear(&at_param_list);
+	err = at_parser_params_from_str(notify, NULL, &at_param_list);
+	if (err) {
+		goto exit;
+	}
+
+	/* parse status, 0: success 1: fail */
+	err = at_params_int_get(&at_param_list, 1, &ncell_meas_status);
+	if (err) {
+		goto exit;
+	}
+	if (ncell_meas_status != 0) {
+		LOG_ERR("NCELLMEAS failed");
+		err = -EAGAIN;
+		goto exit;
+	}
+	param_count = at_params_valid_count_get(&at_param_list);
+	if (param_count < MAX_PARAM_CELL) { /* at least current cell */
+		LOG_ERR("Missing param in NCELLMEAS notification");
+		err = -EAGAIN;
+		goto exit;
+	}
+
+	/* parse Cell ID */
+	char cid[9] = {0};
+	size_t size;
+
+	size = sizeof(cid);
+	err = util_string_get(&at_param_list, 2, cid, &size);
+	if (err) {
+		goto exit;
+	}
+	err = util_str_to_int(cid, 16, (int *)&cell_data.current_cell.id);
+	if (err) {
+		goto exit;
+	}
+
+	/* parse PLMN */
+	char plmn[6] = {0};
+	char mcc[4]  = {0};
+
+	size = sizeof(plmn);
+	err = util_string_get(&at_param_list, 3, plmn, &size);
+	if (err) {
+		goto exit;
+	}
+	strncpy(mcc, plmn, 3); /* MCC always 3-digit */
+	err = util_str_to_int(mcc, 10, &cell_data.current_cell.mcc);
+	if (err) {
+		goto exit;
+	}
+	err = util_str_to_int(&plmn[3], 10, &cell_data.current_cell.mnc);
+	if (err) {
+		goto exit;
+	}
+
+	/* parse TAC */
+	char tac[9] = {0};
+
+	size = sizeof(tac);
+	err = util_string_get(&at_param_list, 4, tac, &size);
+	if (err) {
+		goto exit;
+	}
+	err = util_str_to_int(tac, 16, (int *)&cell_data.current_cell.tac);
+	if (err) {
+		goto exit;
+	}
+
+	/* omit timing_advance */
+	cell_data.current_cell.timing_advance = NRF_CLOUD_CELL_POS_OMIT_TIME_ADV;
+
+	/* parse EARFCN */
+	err = at_params_unsigned_int_get(&at_param_list, 6, &cell_data.current_cell.earfcn);
+	if (err) {
+		goto exit;
+	}
+
+	/* parse PCI */
+	err = at_params_unsigned_short_get(&at_param_list, 7,
+					   &cell_data.current_cell.phys_cell_id);
+	if (err) {
+		goto exit;
+	}
+
+	/* parse RSRP and RSRQ */
+	err = at_params_short_get(&at_param_list, 8, &cell_data.current_cell.rsrp);
+	if (err < 0) {
+		goto exit;
+	}
+	err = at_params_short_get(&at_param_list, 9, &cell_data.current_cell.rsrq);
+	if (err < 0) {
+		goto exit;
+	}
+
+	/* omit measurement_time */
+
+	cell_data.ncells_count = 0;
+	for (int i = 0; i < NCELL_CNT; i++) {
+		int offset = i * MAX_PARAM_NCELL + 11;
+
+		if (param_count < (offset + MAX_PARAM_NCELL)) {
+			break;
+		}
+
+		/* parse n_earfcn */
+		err = at_params_unsigned_int_get(&at_param_list, offset,
+						 &neighbor_cells[i].earfcn);
+		if (err < 0) {
+			goto exit;
+		}
+
+		/* parse n_phys_cell_id */
+		err = at_params_unsigned_short_get(&at_param_list, offset + 1,
+						   &neighbor_cells[i].phys_cell_id);
+		if (err < 0) {
+			goto exit;
+		}
+
+		/* parse n_rsrp */
+		err = at_params_short_get(&at_param_list, offset + 2, &neighbor_cells[i].rsrp);
+		if (err < 0) {
+			goto exit;
+		}
+
+		/* parse n_rsrq */
+		err = at_params_short_get(&at_param_list, offset + 3, &neighbor_cells[i].rsrq);
+		if (err < 0) {
+			goto exit;
+		}
+
+		/* omit time_diff */
+
+		cell_data.ncells_count++;
+	}
+
+	err = 0;
+
+exit:
+	LOG_INF("NCELLMEAS notification parse (err: %d)", err);
+	k_sem_give(&sem_ncell_meas);
+}
+
 static void cell_pos_req_wk(struct k_work *work)
 {
 	int err;
 
 	ARG_UNUSED(work);
 
-	err = nrf_cloud_cell_pos_request(NULL, true);
-	if (err) {
-		LOG_ERR("Failed to request cell_pos %d, error: %d", cell_pos_type, err);
+	if (cell_pos_type == CELL_POS_TYPE_SINGLE) {
+		err = nrf_cloud_cell_pos_request(NULL, true);
+		if (err) {
+			LOG_ERR("Failed to request SCELL, error: %d", err);
+		} else {
+			LOG_INF("nRF Cloud SCELL requested");
+		}
+	} else {
+		err = nrf_modem_at_printf("AT%%NCELLMEAS");
+		if (err) {
+			LOG_ERR("Failed to send NCELLMEAS: %d", err);
+			return;
+		}
+		at_monitor_resume(ncell_meas);
+		if (k_sem_take(&sem_ncell_meas, K_SECONDS(30)) != 0) {
+			LOG_ERR("Neighboring cell measurement timeout");
+			return;
+		}
+		if (ncell_meas_status == 0) {
+			err = nrf_cloud_cell_pos_request(&cell_data, true);
+			if (err) {
+				LOG_ERR("Failed to request MCELL, error: %d", err);
+			} else {
+				LOG_INF("nRF Cloud MCELL requested, with %d neighboring cells",
+					cell_data.ncells_count);
+			}
+		}
+		at_monitor_pause(ncell_meas);
+		k_sem_reset(&sem_ncell_meas);
 	}
 }
 
@@ -214,6 +419,7 @@ static void fix_rep_wk(struct k_work *work)
 		return;
 	}
 
+	/* GIS accuracy: http://wiki.gis.com/wiki/index.php/Decimal_degrees, use default .6lf */
 	sprintf(rsp_buf,
 		"\r\n#XGPS: %lf,%lf,%f,%f,%f,%f,\"%04u-%02u-%02u %02u:%02u:%02u\"\r\n",
 		pvt.latitude, pvt.longitude, pvt.altitude,
@@ -712,6 +918,7 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 				LOG_ERR("Failed to get current time");
 				return -EAGAIN;
 			}
+			k_sem_reset(&sem_date_time);
 
 			struct nrf_cloud_pgps_init_param param = {
 				.event_handler = pgps_event_handler,
@@ -774,9 +981,7 @@ int handle_at_cellpos(enum at_cmd_type cmd_type)
 			if (op == CELLPOS_START_SCELL) {
 				cell_pos_type = CELL_POS_TYPE_SINGLE;
 			} else {
-				sprintf(rsp_buf, "\r\n#XCELLPOS: \"not supported\"\r\n");
-				rsp_send(rsp_buf, strlen(rsp_buf));
-				return -ENOTSUP;
+				cell_pos_type = CELL_POS_TYPE_MULTI;
 			}
 			ttft_start = k_uptime_get();
 			k_work_submit_to_queue(&slm_work_q, &cell_pos_req);
