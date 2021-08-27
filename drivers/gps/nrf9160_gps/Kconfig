@@ -6,7 +6,7 @@
 #
 
 menuconfig NRF9160_GPS
-	bool "nRF9160 GPS driver [experimental]"
+	bool "nRF9160 GPS driver [deprecated]"
 	depends on NRF_MODEM_LIB
 	# FPU_SHARING needs to be enabled if FPU is enabled, as other contexts
 	# might also use the FPU.

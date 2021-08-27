@@ -89,6 +89,10 @@ nRF9160
 
     * Adjusted the messages printed in :c:func:`lwm2m_carrier_event_handler` to reflect the updated event definitions in the :ref:`liblwm2m_carrier_readme` library.
 
+  * :ref:`gps_api` driver:
+
+    * The driver has been deprecated in favor of the :ref:`nrfxlib:gnss_interface`.
+
   * Board names:
 
     * The ``nrf9160dk_nrf9160ns`` and the ``nrf5340dk_nrf5340_cpuappns`` boards have been renamed respectively to ``nrf9160dk_nrf9160_ns`` and ``nrf5340dk_nrf5340_cpuapp_ns``, in a change inherited from upstream Zephyr.

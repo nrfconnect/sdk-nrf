@@ -10,6 +10,8 @@
  * @file gps.h
  *
  * @brief Public APIs for the GPS interface.
+ *
+ * @deprecated since v1.7.0.
  */
 
 #include <zephyr.h>
