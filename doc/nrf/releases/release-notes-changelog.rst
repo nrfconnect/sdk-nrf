@@ -121,7 +121,22 @@ Front-end module (FEM)
 nRF Desktop
 -----------
 
-* Settings backend changed from FCB to NVS.
+
+Updated:
+
+* Changed settings backend from FCB to NVS.
+* Switched to using :ref:`caf_power_manager`.
+* Fixed an issue with generating motion in :ref:`nrf_desktop_motion` (``motion_buttons`` and ``motion_simulated``) while the HID boot protocol was in use.
+
+Added:
+
+* Added a functionality to clear the button state reported over Bluetooth LE if the USB was connected while the button was pressed.
+  This fixes an issue related to reporting wrong button state over Bluetooth LE.
+* Added support for HID keyboard LED output report.
+  The report is handled by the nRF Desktop peripherals and forwarded by the nRF Desktop dongles.
+* Added support for nRF5340 DK working as an nRF Desktop dongle.
+* Added a functionality for forwarding HID boot reports in :ref:`nrf_desktop_hid_forward`.
+* Added GPIO LEDs to the ``nrf52820dongle_nrf52820`` board.
 
 Bluetooth LE
 ------------
@@ -243,10 +258,29 @@ Trusted Firmware-M
 * Updated :file:`tfm_platform_system.c` to fix a bug that returned ``TFM_PLATFORM_ERR_SUCCESS`` instead of ``TFM_PLATFORM_ERR_INVALID_PARAM`` when the address passed is outside of the accepted read range.
 * Added a test case for the secure read service that verifies that only addresses within the accepted range can be read.
 
+Common Application Framework (CAF)
+----------------------------------
+
+* Added :ref:`caf_net_state`.
+* Added :ref:`caf_power_manager`.
+
+Profiler
+--------
+
+* Added profiling string data.
+* Optimized numeric data encoding.
+
+Edge Impulse
+------------
+
+* Added support for Thingy:53 to :ref:`nrf_machine_learning_app`.
+* Added configuration for nRF52840 DK that supports data forwarder over NUS to :ref:`nrf_machine_learning_app`.
+
 Pelion
 ------
 
 * Updated Pelion Device Management Client library version to 4.10.0.
+* Switched to using :ref:`caf_power_manager` and :ref:`caf_net_state` in :ref:`pelion_client`.
 
 MCUboot
 =======
