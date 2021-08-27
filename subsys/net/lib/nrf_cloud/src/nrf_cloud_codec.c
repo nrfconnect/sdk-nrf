@@ -1255,29 +1255,44 @@ int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf
 		/* required items */
 		if (json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_ECI, cur->id) ||
 		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_MCC, cur->mcc) ||
-		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_MNC, cur->mnc)) {
+		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_MNC, cur->mnc) ||
+		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_TAC, cur->tac)) {
 			goto cleanup;
 		}
 
 		/* optional */
-		if (json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_TAC, cur->tac) ||
-		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_EARFCN, cur->earfcn) ||
+		if ((cur->earfcn != NRF_CLOUD_CELL_POS_OMIT_EARFCN) &&
+		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_EARFCN, cur->earfcn)) {
+			goto cleanup;
+		}
+
+		if ((cur->rsrp != NRF_CLOUD_CELL_POS_OMIT_RSRP) &&
 		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRP,
-				    RSRP_ADJ(cur->rsrp)) ||
+				    RSRP_ADJ(cur->rsrp))) {
+			goto cleanup;
+		}
+
+		if ((cur->rsrq != NRF_CLOUD_CELL_POS_OMIT_RSRQ) &&
 		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ, cur->rsrq)) {
 			goto cleanup;
 		}
 
-		if ((cur->timing_advance != 65535) &&
-		    (json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_T_ADV,
-		     cur->timing_advance))) {
-			goto cleanup;
+		if (cur->timing_advance != NRF_CLOUD_CELL_POS_OMIT_TIME_ADV) {
+			uint16_t t_adv = cur->timing_advance;
+
+			if (t_adv > NRF_CLOUD_CELL_POS_TIME_ADV_MAX) {
+				t_adv = NRF_CLOUD_CELL_POS_TIME_ADV_MAX;
+			}
+
+			if (json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_T_ADV, t_adv)) {
+				goto cleanup;
+			}
 		}
 
 		/* Add an array for neighbor cell data if there are any */
 		if (lte->ncells_count) {
 			nmr_array = cJSON_AddArrayToObjectCS(lte_obj,
-							   NRF_CLOUD_CELL_POS_JSON_KEY_NBORS);
+							     NRF_CLOUD_CELL_POS_JSON_KEY_NBORS);
 			if (!nmr_array) {
 				goto cleanup;
 			}
@@ -1299,21 +1314,24 @@ int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf
 
 			/* required items */
 			if (json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_EARFCN,
-					 ncell->earfcn) ||
+					    ncell->earfcn) ||
 			    json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_PCI,
-					 ncell->phys_cell_id)) {
+					    ncell->phys_cell_id)) {
 				goto cleanup;
 			}
 
 			/* optional */
-			if (json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRP,
-					 RSRP_ADJ(ncell->rsrp)) ||
+			if ((ncell->rsrp != NRF_CLOUD_CELL_POS_OMIT_RSRP) &&
+			    json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRP,
+					    RSRP_ADJ(ncell->rsrp))) {
+				goto cleanup;
+			}
+			if ((ncell->rsrq != NRF_CLOUD_CELL_POS_OMIT_RSRQ) &&
 			    json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ,
-					 ncell->rsrq)) {
+					    ncell->rsrq)) {
 				goto cleanup;
 			}
 		}
-
 	}
 
 	return 0;
