@@ -82,6 +82,10 @@ endif()
 
 if (CONFIG_SECURE_BOOT)
   if (CONFIG_SOC_NRF5340_CPUNET)
+    # Share some information which is used when generating the zip file
+    # with the update binaries.
+    set_shared(IMAGE net_core PROPERTY SOC ${CONFIG_SOC})
+    set_shared(IMAGE net_core PROPERTY VERSION ${CONFIG_FW_INFO_FIRMWARE_VERSION})
     add_child_image(
       NAME b0n
       SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/nrf5340/netboot
