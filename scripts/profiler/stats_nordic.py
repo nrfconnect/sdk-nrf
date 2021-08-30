@@ -3,13 +3,11 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from events import EventsData
 from processed_events import ProcessedEvents
 from enum import Enum
 import matplotlib.pyplot as plt
 import numpy as np
 import logging
-import csv
 import os
 
 
@@ -26,9 +24,7 @@ class StatsNordic():
     def __init__(self, events_filename, events_types_filename, log_lvl):
         self.data_name = events_filename.split('.')[0]
         self.processed_data = ProcessedEvents()
-        self.processed_data.raw_data.read_data_from_files(
-                                      events_filename, events_types_filename)
-        self.processed_data.match_event_processing()
+        self.processed_data.read_data_from_files(events_filename, events_types_filename)
 
         self.logger = logging.getLogger('Stats Nordic')
         self.logger_console = logging.StreamHandler()
@@ -57,16 +53,19 @@ class StatsNordic():
         plt.show()
 
     def _get_timestamps(self, event_name, event_state, start_meas, end_meas):
-        event_type_id = self.processed_data.raw_data.get_event_type_id(event_name)
-        if event_type_id == None:
+        event_type_id = self.processed_data.get_event_type_id(event_name)
+        if event_type_id is None:
             self.logger.error("Event name not found: " + event_name)
+            return None
+        if not self.processed_data.is_event_tracked(event_type_id) and event_state != EventState.SUBMIT:
+            self.logger.error("This event is not tracked: " + event_name)
             return None
 
         trackings = list(filter(lambda x:
                       x.submit.type_id == event_type_id,
                       self.processed_data.tracked_events))
 
-        if type(event_state) is not EventState:
+        if not isinstance(event_state, EventState):
             self.logger.error("Event state should be EventState enum")
             return None
 
@@ -85,7 +84,8 @@ class StatsNordic():
 
         return timestamps
 
-    def calculate_times_between(self, start_times, end_times):
+    @staticmethod
+    def calculate_times_between(start_times, end_times):
         if end_times[0] <= start_times[0]:
             end_times = end_times[1:]
         if len(start_times) > len(end_times):
@@ -93,7 +93,8 @@ class StatsNordic():
 
         return (end_times - start_times) * 1000
 
-    def prepare_stats_txt(self, times_between):
+    @staticmethod
+    def prepare_stats_txt(times_between):
         stats_text = "Max time: "
         stats_text += "{0:.3f}".format(max(times_between)) + "ms\n"
         stats_text += "Min time: "
@@ -113,12 +114,6 @@ class StatsNordic():
                             start_meas=0, end_meas=float('inf')):
         self.logger.info("Stats calculating: {}->{}".format(start_event_name,
                                                             end_event_name))
-        if not self.processed_data.tracking_execution:
-            if start_event_state != EventState.SUBMIT or \
-              end_event_state != EventState.SUBMIT:
-                self.logger.error("Events processing is not tracked: " + \
-                                  start_event_name + "->" + end_event_name)
-                return
 
         start_times = self._get_timestamps(start_event_name, start_event_state,
                                            start_meas, end_meas)
@@ -133,7 +128,7 @@ class StatsNordic():
             return
 
         if len(end_times) == 0:
-            self.logger.error("No events logged: " + stop_event_name)
+            self.logger.error("No events logged: " + end_event_name)
             return
 
         if len(start_times) != len(end_times):
@@ -149,15 +144,15 @@ class StatsNordic():
         plt.figure()
 
         ax = plt.gca()
-        stats_textbox = ax.text(0.05,
-                                0.95,
-                                stats_text,
-                                transform=ax.transAxes,
-                                fontsize=12,
-                                verticalalignment='top',
-                                bbox=dict(boxstyle='round',
-                                          alpha=0.5,
-                                          facecolor='linen'))
+        ax.text(0.05,
+                0.95,
+                stats_text,
+                transform=ax.transAxes,
+                fontsize=12,
+                verticalalignment='top',
+                bbox=dict(boxstyle='round',
+                            alpha=0.5,
+                            facecolor='linen'))
 
         plt.xlabel('Duration[ms]')
         plt.ylabel('Number of occurrences')
@@ -179,8 +174,12 @@ class StatsNordic():
         plt.yscale('log')
         plt.grid(True)
 
+        if end_meas == float('inf'):
+            end_meas_string = 'inf'
+        else:
+            end_meas_string = int(end_meas)
         dir_name = "{}{}_{}_{}/".format(OUTPUT_FOLDER, self.data_name,
-                                        int(start_meas), int(end_meas))
+                                        int(start_meas), end_meas_string)
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
 
