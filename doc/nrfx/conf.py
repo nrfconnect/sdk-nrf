@@ -14,6 +14,7 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
 NRFX_BASE = utils.get_projdir("nrfx") / "nrfx"
+ZEPHYR_BASE = utils.get_projdir("zephyr")
 
 # pylint: disable=undefined-variable
 
@@ -23,8 +24,9 @@ NRFX_BASE = utils.get_projdir("nrfx") / "nrfx"
 conf = eval_config_file(str(NRFX_BASE / "doc" / "sphinx" / "conf.py"), tags)
 locals().update(conf)
 
+sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
-extensions.extend(["ncs_cache", "external_content", "doxyrunner"])
+extensions.extend(["ncs_cache", "zephyr.external_content", "doxyrunner"])
 
 # Options for HTML output ------------------------------------------------------
 
@@ -48,7 +50,7 @@ breathe_projects = {"nrfx": str(doxyrunner_outdir / "xml")}
 
 # Options for external_content -------------------------------------------------
 
-from external_content import DEFAULT_DIRECTIVES
+from zephyr.external_content import DEFAULT_DIRECTIVES
 
 directives = DEFAULT_DIRECTIVES + ("mdinclude",)
 

@@ -34,7 +34,7 @@ extensions = [
     "zephyr.kconfig-role",
     "zephyr.warnings_filter",
     "ncs_cache",
-    "external_content",
+    "zephyr.external_content",
     "doxyrunner",
 ]
 master_doc = "README"

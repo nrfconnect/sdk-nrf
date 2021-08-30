@@ -13,6 +13,7 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
 TFM_BASE = utils.get_projdir("tfm") / "trusted-firmware-m"
+ZEPHYR_BASE = utils.get_projdir("zephyr")
 
 # General configuration --------------------------------------------------------
 
@@ -24,6 +25,7 @@ with open(TFM_BASE / "CMakeLists.txt") as f:
     m = re.findall(r"TFM_VERSION ([0-9\.]+)", f.read())
     version = m[0] if m else "Unknown"
 
+sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
@@ -31,7 +33,7 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinxcontrib.plantuml",
     "ncs_cache",
-    "external_content",
+    "zephyr.external_content",
 ]
 source_suffix = [".rst", ".md"]
 

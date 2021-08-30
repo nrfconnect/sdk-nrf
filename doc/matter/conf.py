@@ -10,18 +10,20 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
 MATTER_BASE = utils.get_projdir("matter")
+ZEPHYR_BASE = utils.get_projdir("zephyr")
 
 # General configuration --------------------------------------------------------
 
 project = "Matter"
 
+sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "recommonmark",
     "sphinx_markdown_tables",
     "ncs_cache",
-    "external_content"
+    "zephyr.external_content"
 ]
 source_suffix = [".rst", ".md"]
 
