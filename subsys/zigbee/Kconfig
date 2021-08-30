@@ -244,7 +244,6 @@ config ZBOSS_TRACE_USB_CDC_LOGGING
 	select USB
 	select USB_DEVICE_STACK
 	select USB_CDC_ACM
-	select USB_COMPOSITE_DEVICE
 	select UART_LINE_CTRL
 	select UART_INTERRUPT_DRIVEN
 
@@ -252,8 +251,9 @@ endchoice
 
 config ZBOSS_TRACE_LOGGER_DEVICE_NAME
 	string "UART device name for logging ZBOSS Traces"
+	# Use UART_1 to avoid using the same UART as Zephyr logger
 	default "UART_1" if ZBOSS_TRACE_UART_LOGGING
-	default "CDC_ACM_1" if ZBOSS_TRACE_USB_CDC_LOGGING
+	default "CDC_ACM_0" if ZBOSS_TRACE_USB_CDC_LOGGING
 
 endif # ZBOSS_TRACE_BINARY_LOGGING
 
@@ -282,6 +282,11 @@ if ZIGBEE_HAVE_SERIAL
 config ZIGBEE_UART_DEVICE_NAME
 	string "Zigbee UART device name"
 	default "UART_1"
+
+config ZIGBEE_UART_SUPPORTS_FLOW_CONTROL
+	bool "Set to true to inform application that Zigbee UART device supports flow control"
+	default n
+	depends on UART_LINE_CTRL
 
 config ZIGBEE_UART_TX_TIMEOUT
 	int "Timeout value for starting asynchronous transmission, in milliseconds"

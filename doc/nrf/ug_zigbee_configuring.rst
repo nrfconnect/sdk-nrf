@@ -163,7 +163,7 @@ The stack logs are provided in a binary format and you can configure how they ar
   By default, this option is set to the following values:
 
   * ``UART_1`` if :kconfig:`CONFIG_ZBOSS_TRACE_UART_LOGGING` is selected.
-  * ``CDC_ACM_1`` if :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` is selected.
+  * ``CDC_ACM_0`` if :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` is selected.
 
   .. note::
       When you select :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING`, make sure that the USB CDC serial is correctly started by the application.
