@@ -226,8 +226,6 @@ The following list summarizes the most important changes inherited from upstream
 Mcumgr
 ======
 
-.. TODO update this following https://github.com/nrfconnect/sdk-nrf/pull/5189. Delete this comment once that is complete.
-
 The mcumgr library contains all commits from the upstream mcumgr repository up to and including snapshot ``74e77ad08``.
 
 The following list summarizes the most important changes inherited from upstream mcumgr:
@@ -254,54 +252,6 @@ For a complete list of |NCS| specific commits, run:
    git log --oneline manifest-rev ^14f09a3b00
 
 The current |NCS| master branch is based on the Zephyr v2.7 development branch.
-
-The following list summarizes the most important changes inherited from upstream Zephyr:
-
-.. TODO update the following sections to reflect https://github.com/nrfconnect/sdk-nrf/pull/5189. Delete this comment once that is complete.
-
-* Arches/Boards:
-
-.. TODO
-
-* Bluetooth:
-
-.. TODO
-
-* Devicetree:
-
-.. TODO
-
-* Documentation:
-
-  * Kconfig options need to be referenced using the ``:kconfig:`` Sphinx role.
-    Previous to this change, ``:option:`` was used for this purpose.
-  * Doxygen alias ``@config{}`` has been deprecated in favor of ``@kconfig{}``.
-  * Graphviz diagrams can now be embedded in the documentation. Defaults are provided to make their look and feel consistent with the documentation style.
-  * PDF build has been fixed with improvements in look and feel. It is now regularly published upstream together with the HTML build.
-
-* Drivers:
-
-.. TODO
-
-* Kernel:
-
-.. TODO
-
-* Networking:
-
-.. TODO
-
-* Testing:
-
-.. TODO
-
-* Other:
-
-.. TODO
-
-  * A config option for ``memcpy`` that skips the word-based loop before the byte-based loop was added.
-    It is now enabled by default if :kconfig:`SIZE_OPTIMIZATIONS` is set.
-    As result, any application-specific assumptions about ``memcpy`` read or write size behavior should be rechecked if this option is enabled.
 
 Matter (Project CHIP)
 =====================
