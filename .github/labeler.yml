@@ -78,9 +78,19 @@
   - "include/zigbee/**/*"
   - "samples/zigbee/**/*"
   - "subsys/dfu/**/*"
-  - "subsys/mpsl/**/*"
   - "subsys/zigbee/**/*"
   - "tests/subsys/zigbee/**/*"
+  - "subsys/mpsl/**/*"
+  - "drivers/mpsl/**/*"
+  - "dts/bindings/radio_fem/**/*"
+  - "samples/nrf5340/multiprotocol_rpmsg/**/*"
+  - "modules/nrfxlib/nrf_802154/**/*"
+  - any:
+    - "subsys/bluetooth/**/*"
+    - "!subsys/bluetooth/mesh/**/*"
+  - any:
+    - "include/bluetooth/**/*"
+    - "!include/bluetooth/mesh/**/*"
 
 "CI-thingy91-test":
   - "applications/asset_tracker/**/*"
