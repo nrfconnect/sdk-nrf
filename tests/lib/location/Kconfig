@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config LOCATION
+	bool "Internal"
+	#depends on NRF_MODEM_LIB
+	default y
+	help
+	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+config MULTICELL_LOCATION
+	bool "Internal"
+	#depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
+	#select MODEM_KEY_MGMT
+	select CJSON_LIB
+	default y
+	help
+	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+config MULTICELL_LOCATION_HTTP
+	bool
+	default n
+	help
+	  Disable sending of HTTP data in multicell location library as we want to mock it.
+
+config AT_NOTIF
+	bool "Internal"
+	default y
+	help
+	  Used in tests to enable mocking of AT Command library, i.e., remove
+	  dependency from AT Command Notifications library to AT command library
+
+config LTE_AT_CMD
+	bool
+	default n
+	help
+	  Used in tests to enable mocking of AT Command library
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

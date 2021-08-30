@@ -1,0 +1,3 @@
+tests:
+  unity.location_test:
+    tags: location
