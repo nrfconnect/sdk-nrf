@@ -166,10 +166,9 @@ The stack logs are provided in a binary format and you can configure how they ar
   * ``CDC_ACM_0`` if :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` is selected.
 
   .. note::
-      When you select :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING`, make sure that the USB CDC serial is correctly started by the application.
-      The application must enable the USB peripheral and set the UART line control signals.
-      See the :c:func:`main` of :ref:`NCP sample <zigbee_ncp_sample>` for an example of how to implement the USB CDC serial support.
-      This can be skipped only for :ref:`NCP sample <zigbee_ncp_sample>`, for other applications you must correctly configure and start USB CDC serial.
+      When you select :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING`, the USB peripheral is enabled and the USB CDC serial is configured as a part of the :c:func:`zb_osif_serial_logger_init` function.
+      The application does not wait for the connection to be established and unreceived data is lost.
+      For this reason, start collecting the data as soon as you need to.
 
 * :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_NCP_TRANSPORT_LOGGING` - Stack logs are printed in the binary format using the NCP transport channel.
 

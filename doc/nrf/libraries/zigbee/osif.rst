@@ -28,6 +28,7 @@ You can also configure the following OSIF-related Kconfig options:
       These functions are useful for debugging, but they can cause instability of the device.
 
 * :kconfig:`CONFIG_ZIGBEE_HAVE_SERIAL` - Enables the UART serial abstract for the ZBOSS OSIF layer and allows to configure the serial glue layer.
+  For more information, see the :ref:`zigbee_osif_zboss_osif_serial` section.
 * :kconfig:`CONFIG_ZIGBEE_USE_BUTTONS` - Enables the buttons abstract for the ZBOSS OSIF layer.
   You can use this option if you want to test ZBOSS examples directly in the |NCS|.
 * :kconfig:`CONFIG_ZIGBEE_USE_DIMMABLE_LED` - Dimmable LED (PWM) abstract for the ZBOSS OSIF layer.
@@ -39,6 +40,93 @@ You can also configure the following OSIF-related Kconfig options:
 Additionally, the following Kconfig option is available when setting :ref:`zigbee_ug_logging_logger_options`:
 
 * :kconfig:`CONFIG_ZBOSS_OSIF_LOG_LEVEL` - Configures the custom logger options for the ZBOSS OSIF layer.
+
+.. _zigbee_osif_zboss_osif_serial:
+
+ZBOSS OSIF serial abstract
+**************************
+
+Setting the :kconfig:`CONFIG_ZIGBEE_HAVE_SERIAL` option enables the serial abstract for the ZBOSS OSIF layer.
+
+The ZBOSS OSIF serial implements sets of backend functions that are used by the ZBOSS stack for serial communication:
+
+* Zigbee async serial
+* Zigbee serial logger
+* Zigbee logger
+
+These backend functions serve one or both of the following purposes:
+
+* Logging ZBOSS traces - Used for handling stack logs that are useful for debugging and are provided in binary format.
+* Handling NCP communication with the host device - Used only for the :ref:`NCP architecture <ug_zigbee_platform_design_ncp>`.
+
+The following table shows which sets of functions serve which purpose.
+
+.. _osif_table:
+
++----------------------------+---------------+---------------+----------+
+|                            | Async serial  | Serial logger | Logger   |
++============================+===============+===============+==========+
+| Logging ZBOSS traces       | -             | -             | -        |
++----------------------------+---------------+---------------+----------+
+| Handling NCP communication | -             |               |          |
++----------------------------+---------------+---------------+----------+
+
+For more information about configuring ZBOSS stack logs, see :ref:`zigbee_ug_logging_stack_logs`.
+
+.. _zigbee_osif_zigbee_async_serial:
+
+Zigbee async serial
+===================
+
+The Zigbee async serial is the only backend that the ZBOSS OSIF serial supports for handling the NCP communication.
+This set of functions uses :ref:`Zephyr UART API <zephyr:uart_api>` and can be configured to use UART peripheral or USB CDC ACM device.
+The data received is internally buffered.
+
+You can also use the Zigbee async serial for logging ZBOSS traces.
+When enabled, it logs ZBOSS traces in the binary format.
+In such case, the transmission data is also buffered.
+
+Zigbee async serial configuration options
+-----------------------------------------
+
+To configure this set of functions, use the following options:
+
+* :kconfig:`CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL` - This option enables Zigbee async serial.
+* :kconfig:`CONFIG_ZIGBEE_UART_DEVICE_NAME` - This option specifies serial device to use.
+* :kconfig:`CONFIG_ZIGBEE_UART_SUPPORTS_FLOW_CONTROL` - This option should be set if serial device supports flow control.
+* :kconfig:`CONFIG_ZIGBEE_UART_RX_BUF_LEN` - This option enables and configures the size of internal RX and TX buffer.
+* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_NCP_TRANSPORT_LOGGING` - This option enables logging ZBOSS traces in binary format with Zigbee async serial.
+
+Zigbee serial logger
+====================
+
+This set of functions uses Zephyr's :ref:`UART API <zephyr:uart_api>` and can be configured to use either the UART peripheral or the USB CDC ACM device.
+Data is buffered internally in ring buffer and printed in the binary format.
+
+Zigbee serial logger configuration options
+------------------------------------------
+
+Use the following options to configure the Zigbee serial logger:
+
+  * :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - This option enables logging ZBOSS traces with Zigbee serial logger.
+  * :kconfig:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - This option selects the UART serial backend.
+  * :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - This option selects the USB CDC ACM serial backend.
+  * :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - This option specifies the serial device to use.
+  * :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies the size of the internal ring buffer.
+
+Zigbee logger
+=============
+
+This set of functions uses Zephyr's :ref:`zephyr:logging_api` API for logging hexdumps of received binary data.
+Data is buffered internally in ring buffer.
+
+Zigbee logger configuration options
+-----------------------------------
+
+Use the following options to configure the Zigbee logger:
+
+  * :kconfig:`CONFIG_ZBOSS_TRACE_HEXDUMP_LOGGING` - This option enables Logging ZBOSS Traces with Zigbee logger.
+  * :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies size of internal ring buffer.
 
 API documentation
 *****************
