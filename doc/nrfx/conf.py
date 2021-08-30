@@ -26,7 +26,7 @@ locals().update(conf)
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
-extensions.extend(["ncs_cache", "zephyr.external_content", "doxyrunner"])
+extensions.extend(["ncs_cache", "zephyr.external_content", "zephyr.doxyrunner"])
 
 # Options for HTML output ------------------------------------------------------
 
