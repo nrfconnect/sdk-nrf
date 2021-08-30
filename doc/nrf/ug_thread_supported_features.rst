@@ -35,7 +35,7 @@ In |NCS|, you can choose which version of the Thread protocol to use in your app
 By default, |NCS| supports Thread 1.1, but you can enable and configure Thread 1.2 by using :ref:`dedicated options <thread_ug_thread_1_2>`.
 
 .. note::
-    All Thread 1.2 mandatory functionalities are currently implemented, execept for the full Border Router support.
+    All Thread 1.2 mandatory functionalities are currently implemented, except for the full Border Router support.
     See :ref:`thread_ug_thread_1_2` for the list of 1.2 features that are currently available in |NCS|, with information about how to enable them.
     Currently, the :ref:`ot_cli_sample` sample is the only sample that provides an :ref:`ot_cli_sample_thread_v12`.
 
@@ -45,3 +45,30 @@ Limitations for Thread 1.2 support
 The Thread 1.2 Specification support has the following limitation:
 
 * Due to code size limitation, the combination of complete set of Thread 1.2 features with the Bluetooth® LE multiprotocol support is not possible for the nRF52833 DKs.
+
+Link Metrics Probing Protocol
+=============================
+
+Thread 1.2 Specification introduces Link Metrics Probing Protocol as a mechanism to gather information about the link quality with neighbors.
+
+The available metrics are:
+
+* Count of received PDUs.
+* Exponential Moving Average of the LQI.
+* Exponential Moving Average of the link margin (dB).
+* Exponential Moving Average of the RSSI (dBm).
+
+The main potential usage of this feature is to allow a battery powered device to lower its transmission power when the link quality with its parent is good enough.
+This way the device can save energy on each transmitted frame.
+The device interested in receiving link quality information is referred to as Link Metrics Initiator, while the device delivering that information is referred to as Link Metrics Subject.
+
+Developers can make use of the OpenThread API to obtain information about the link quality in three ways:
+
+* Single probe: a single-shot MLE command that returns the requested metrics in the reply.
+* Forward Tracking Series: the Initiator configures the Subject to start tracking link quality information for every received frame.
+  At any point, the Initiator retrieves the averaged values for that series by means of an MLE Data Request.
+* Enhanced-ACK probing: the Initiator configures the Subject to include link metrics information as Information Elements in the Enh-ACKs that are generated in reply to IEEE 802.15.4-2015 frames sent by the Initiator.
+
+Enhanced-ACK probing is the most power efficient method to retrieve link metrics since very little message overhead is required.
+|NCS| provides full Link Metrics support even for the RCP architecture, which is the most technically challenging one since the radio driver must handle the injection of Information Elements on time to match the acknowledgment timing requirements.
+The decision on how to interpret the link metrics information to adjust the transmission power is left to the application itself.
