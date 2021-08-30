@@ -23,8 +23,8 @@ See :ref:`gs_recommended_versions` for information on the supported operating sy
 Toolchain Manager
 *****************
 
-The Toolchain Manager app is available for Windows and macOS.
-It installs the full toolchain that you need to work with the |NCS|, including SEGGER Embedded Studio and the |NCS| source code.
+The Toolchain manager app is available for Windows and macOS.
+It installs the full toolchain that you need to work with the |NCS|, including the |VSC| extension, |SES|, and the |NCS| source code.
 
 
 Installing the Toolchain Manager
@@ -54,12 +54,15 @@ Once you have installed the Toolchain Manager, open it in nRF Connect for Deskto
 
 Click :guilabel:`Settings` in the navigation bar to specify where you want to install the |NCS|.
 Then, in :guilabel:`SDK Environments`, click the :guilabel:`Install` button next to the |NCS| version that you want to install.
-The |NCS| version of your choice is installed on your machine, and the :guilabel:`Install` button changes to :guilabel:`Open IDE`.
+The |NCS| version of your choice is installed on your machine.
 
-There are two ways you can build an application:
+There are several ways you can build an application:
 
-1. To :ref:`build with SES <gs_programming_ses>`, click on the :guilabel:`Open IDE` button.
-#. To build on the command line, use the following steps:
+* To build with |VSC|, click on the :guilabel:`Open VS Code` button.
+
+* To build with |SES|, click on the :guilabel:`Open Segger Embedded Studio` button.
+
+* To build on the command line, use the following steps:
 
    1. With admin permissions enabled, download and install the `nRF Command Line Tools`_.
    #. Restart the Toolchain Manager application.
