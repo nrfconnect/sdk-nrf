@@ -17,7 +17,7 @@ RING_BUF_DECLARE(logger_buf, CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE);
 
 void zb_osif_logger_put_bytes(const zb_uint8_t *buf, zb_short_t len)
 {
-	zb_uint8_t *buf_dest;
+	zb_uint8_t *buf_dest = NULL;
 	zb_uint32_t allocated = 0;
 
 	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_LOG_LEVEL_OFF)) {
@@ -44,8 +44,8 @@ void zb_osif_logger_put_bytes(const zb_uint8_t *buf, zb_short_t len)
 void zb_trace_msg_port_do(void)
 {
 	zb_uint32_t data_len;
-	zb_uint8_t *data_ptr;
 	int ret_val;
+	zb_uint8_t *data_ptr = NULL;
 
 	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_LOG_LEVEL_OFF)) {
 		return;
