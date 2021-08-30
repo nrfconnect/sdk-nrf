@@ -201,6 +201,8 @@ config ZBOSS_TRAF_DUMP
 	help
 	  Dumps all packets destined to the node over ZBOSS binary trace protocol
 
+if ZIGBEE_HAVE_SERIAL
+
 choice
 	prompt "Select ZBOSS trace logging method: hexdump, binary, NCP transport"
 	default ZBOSS_TRACE_HEXDUMP_LOGGING
@@ -216,9 +218,10 @@ config ZBOSS_TRACE_BINARY_LOGGING
 
 config ZBOSS_TRACE_BINARY_NCP_TRANSPORT_LOGGING
 	bool "Enable logging binary ZBOSS Traces over the NCP transport channel"
-	depends on ZIGBEE_HAVE_SERIAL
+	depends on ZIGBEE_HAVE_ASYNC_SERIAL
 
 endchoice
+endif # ZIGBEE_HAVE_SERIAL
 
 if (ZBOSS_TRACE_HEXDUMP_LOGGING || ZBOSS_TRACE_BINARY_LOGGING)
 
@@ -271,13 +274,18 @@ endmenu #menu "Zigbee Log configuration"
 
 menu "ZBOSS OSIF configuration"
 
-menuconfig ZIGBEE_HAVE_SERIAL
+config ZIGBEE_HAVE_SERIAL
 	bool "UART serial abstract for ZBOSS OSIF"
+	default y
+
+menuconfig ZIGBEE_HAVE_ASYNC_SERIAL
+	bool "Asynchronous UART serial abstract for ZBOSS OSIF"
 	select SERIAL
 	select UART_INTERRUPT_DRIVEN
 	select RING_BUFFER
+	depends on ZIGBEE_HAVE_SERIAL
 
-if ZIGBEE_HAVE_SERIAL
+if ZIGBEE_HAVE_ASYNC_SERIAL
 
 config ZIGBEE_UART_DEVICE_NAME
 	string "Zigbee UART device name"
@@ -301,8 +309,8 @@ config ZIGBEE_UART_RX_TIMEOUT
 	default 10
 
 config ZIGBEE_UART_PARTIAL_RX_TIMEOUT
-       int "Timeout value between the last received byte and the RX event if only a part of RX buffer was received, in milliseconds"
-       default 10
+	int "Timeout value between the last received byte and the RX event if only a part of RX buffer was received, in milliseconds"
+	default 10
 
 config ZIGBEE_UART_RX_BUF_LEN
 	int "Size of the asynchronous receive buffer"
@@ -312,7 +320,7 @@ config ZIGBEE_UART_TX_BUF_LEN
 	int "Size of the synchronous transmit buffer"
 	default 128
 
-endif #ZIGBEE_HAVE_SERIAL
+endif #ZIGBEE_HAVE_ASYNC_SERIAL
 
 config ZIGBEE_USE_SOFTWARE_AES
 	bool "Use software based AES"
