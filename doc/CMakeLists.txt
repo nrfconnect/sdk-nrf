@@ -81,6 +81,7 @@ function(add_docset name)
   set(DOCSET_CFG_DIR ${CMAKE_CURRENT_LIST_DIR}/${name})
   set(DOCSET_BUILD_DIR ${CMAKE_BINARY_DIR}/${name})
   set(DOCSET_SRC_DIR ${CMAKE_BINARY_DIR}/${name}/src)
+  set(DOCSET_DOCTREE_DIR ${CMAKE_BINARY_DIR}/${name}/doctree)
   set(DOCSET_HTML_DIR ${CMAKE_BINARY_DIR}/html/${name})
   set(DOCSET_MAKE_DIRS ${DOCSET_BUILD_DIR};${DOCSET_SRC_DIR})
   set(DOCSET_CLEAN_DIRS ${DOCSET_BUILD_DIR};${DOCSET_HTML_DIR})
@@ -97,6 +98,7 @@ function(add_docset name)
     ${SPHINXBUILD}
       -b inventory
       -c ${DOCSET_CFG_DIR}
+      -d ${DOCSET_DOCTREE_DIR}
       -w ${DOCSET_BUILD_DIR}/inventory.log
       ${SPHINXOPTS_DEFAULT}
       ${DOCSET_SRC_DIR}
@@ -111,6 +113,7 @@ function(add_docset name)
     ${SPHINXBUILD}
       -b html
       -c ${DOCSET_CFG_DIR}
+      -d ${DOCSET_DOCTREE_DIR}
       -w ${DOCSET_BUILD_DIR}/html.log
       ${SPHINXOPTS_DEFAULT}
       ${EXTRA_ARGS}
@@ -126,6 +129,7 @@ function(add_docset name)
     ${SPHINXBUILD}
       -b linkcheck
       -c ${DOCSET_CFG_DIR}
+      -d ${DOCSET_DOCTREE_DIR}
       -w ${DOCSET_BUILD_DIR}/linkcheck.log
       ${SPHINXOPTS_DEFAULT}
       ${EXTRA_ARGS}
