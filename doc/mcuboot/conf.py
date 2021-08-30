@@ -28,7 +28,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "recommonmark",
     "ncs_cache",
-    "external_content"
+    "zephyr.external_content"
 ]
 source_suffix = [".rst", ".md"]
 master_doc = "wrapper"
