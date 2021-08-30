@@ -12,8 +12,6 @@ project(sms_test)
 # generate runner for the test
 test_runner_generate(src/sms_test.c)
 
-target_include_directories(app PRIVATE src)
-
 cmock_handle(../../../include/modem/at_cmd.h)
 
 # add test file

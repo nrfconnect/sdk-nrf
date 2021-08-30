@@ -9,6 +9,7 @@
 #include <string.h>
 #include <kernel.h>
 #include <modem/sms.h>
+#include <modem/at_notif.h>
 #include <mock_at_cmd.h>
 
 
@@ -44,11 +45,15 @@ void setUp(void)
 	test_handle = 0;
 	sms_callback_called_occurred = false;
 	sms_callback_called_expected = false;
+
+	mock_at_cmd_Init();
 }
 
 void tearDown(void)
 {
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
+
+	mock_at_cmd_Verify();
 }
 
 static void sms_reg_helper(void)
@@ -80,6 +85,13 @@ static void sms_unreg_helper(void)
 
 void test_sms_init_uninit(void)
 {
+	/* Initialize at_notif library, which is needed before using it.
+	 * This is not repeated for each test but one initialization is enough.
+	 */
+	__wrap_at_cmd_set_notification_handler_Expect(NULL);
+	__wrap_at_cmd_set_notification_handler_IgnoreArg_handler();
+	at_notif_init();
+
 	sms_reg_helper();
 	sms_unreg_helper();
 }
