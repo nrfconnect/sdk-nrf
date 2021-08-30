@@ -37,7 +37,7 @@ extensions = [
     "zephyr.kconfig-role",
     "ncs_cache",
     "zephyr.external_content",
-    "doxyrunner",
+    "zephyr.doxyrunner",
     "sphinx_tabs.tabs",
 ]
 

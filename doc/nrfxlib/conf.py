@@ -35,7 +35,7 @@ extensions = [
     "zephyr.warnings_filter",
     "ncs_cache",
     "zephyr.external_content",
-    "doxyrunner",
+    "zephyr.doxyrunner",
 ]
 master_doc = "README"
 
