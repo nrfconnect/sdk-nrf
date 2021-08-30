@@ -202,6 +202,8 @@ Zigbee
 
   * :ref:`zigbee_ug_logging_stack_logs` - Improved printing ZBOSS stack logs.
     Added new backend options to print ZBOSS stack logs with option for using binary format.
+  * ZBOSS Zigbee stack to version 3.8.0.1+4.0.0.
+    See the :ref:`nrfxlib:zboss_changelog` in the nrfxlib documentation for detailed information.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
