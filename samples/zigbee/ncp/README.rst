@@ -95,11 +95,34 @@ The USB device VID and PID are configured by the sample's Kconfig file.
 .. note::
     The USB is used as the default NCP communication channel when using the nRF52840 Dongle.
 
-You can configure :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` to be printed in binary format over the USB CDC using an independent serial port by setting:
-* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - to enable binary format.
-* :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - to select USB CDC serial over UART serial.
+When communication channel is changed to nRF USB, :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` are being printed by default in binary format using ``UART1``.
+This is configured by setting:
 
-No additional changes in application are required. For more configuration options, see :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>`.
+* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - to enable binary format.
+* :kconfig:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - to select the UART serial over the nRF USB serial.
+  This option is set by default when the binary format is enabled.
+* :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - to select the serial device to use for printing Zigbee stack logs.
+  This option is set to ``"UART_1"`` when the UART serial selected.
+
+Alternatively, you can configure :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` to be printed in binary format using independent CDC ACM device of the same nRF USB.
+This can be configured by setting:
+
+* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - to enable binary format.
+* :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - to select nRF USB serial over UART serial.
+* :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - to select the serial device for printing Zigbee stack logs, set to ``"CDC_ACM_1"``.
+
+To create two instances of USB CDC ACM for application, set the following:
+
+* :kconfig:`CONFIG_USB_CDC_ACM_DEVICE_COUNT` - defines number of USB CDC ACM devices to create, set to ``2`` in this configuration of NCP sample.
+* :kconfig:`CONFIG_USB_COMPOSITE_DEVICE` - to enable composite USB device driver.
+
+.. note::
+    With this configuration, you will see two serial ports created by the NCP sample.
+    Use the first one for NCP communication.
+    Use second serial port for collecting Zigbee stack logs.
+
+Also, complete configuration of Zigbee stack logs over nRF USB serial is present in the :file:`prj_usb.conf`.
+For more configuration options, see :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>`.
 
 .. _zigbee_ncp_bootloader:
 

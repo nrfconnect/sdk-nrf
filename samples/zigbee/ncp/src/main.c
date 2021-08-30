@@ -80,45 +80,35 @@ int main(void)
 		return ret;
 	}
 
-#ifdef CONFIG_UART_LINE_CTRL
-	const struct device *uart_dev;
-	uint32_t dtr = 0U;
+	/* Configure line control if flow control supported by Zigbee Async serial. */
+	if (IS_ENABLED(CONFIG_ZIGBEE_UART_SUPPORTS_FLOW_CONTROL)) {
+		const struct device *uart_dev;
+		uint32_t dtr = 0U;
 
-	uart_dev = device_get_binding(CONFIG_ZIGBEE_UART_DEVICE_NAME);
-	if (uart_dev == NULL) {
-		LOG_ERR("Error during NCP serial initialization");
-		return -EIO;
-	}
-
-	while (true) {
-		uart_line_ctrl_get(uart_dev, UART_LINE_CTRL_DTR, &dtr);
-		if (dtr) {
-			break;
+		uart_dev = device_get_binding(CONFIG_ZIGBEE_UART_DEVICE_NAME);
+		if (uart_dev == NULL) {
+			LOG_ERR("Error during NCP serial initialization");
+			return -EIO;
 		}
-		/* Give CPU resources to low priority threads. */
-		k_sleep(K_MSEC(100));
+
+		while (true) {
+			/* Break loop if line control can't be retrieved. */
+			if (uart_line_ctrl_get(uart_dev, UART_LINE_CTRL_DTR, &dtr)) {
+				LOG_ERR("Couldn't get DTR signal during NCP serial initialization");
+				break;
+			}
+			if (dtr) {
+				break;
+			}
+			/* Give CPU resources to low priority threads. */
+			k_sleep(K_MSEC(100));
+		}
+
+		/* Data Carrier Detect Modem - mark connection as established. */
+		(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DCD, 1);
+		/* Data Set Ready - the NCP SoC is ready to communicate. */
+		(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DSR, 1);
 	}
-
-	/* Data Carrier Detect Modem - mark connection as established. */
-	(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DCD, 1);
-	/* Data Set Ready - the NCP SoC is ready to communicate. */
-	(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DSR, 1);
-
-#ifdef CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING
-	/* Configure USB device to use for logging ZBOSS Traces. */
-	uart_dev = device_get_binding(CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME);
-	if (uart_dev == NULL) {
-		LOG_ERR("Error during ZBOSS Trace serial initialization");
-		return -EIO;
-	}
-
-	/* Data Carrier Detect Modem - mark connection as established. */
-	(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DCD, 1);
-	/* Data Set Ready - the NCP SoC is ready to communicate. */
-	(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DSR, 1);
-#endif /* CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING */
-
-#endif /* CONFIG_UART_LINE_CTRL */
 
 	/* Wait 1 sec for the host to do all settings */
 	k_sleep(K_SECONDS(1));

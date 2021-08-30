@@ -5,6 +5,7 @@
  */
 
 #include <kernel.h>
+#include <string.h>
 #include <zboss_api.h>
 #include "zb_nrf_platform.h"
 
@@ -26,6 +27,13 @@ void zb_osif_async_serial_wake_up(void);
 
 void zb_osif_serial_init(void)
 {
+#if defined(CONFIG_ZBOSS_TRACE_BINARY_LOGGING) && defined(CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL)
+	/* Assert that Serial Logger and Async Serial don't use the same serial device. */
+	int ret = strcmp(CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME, CONFIG_ZIGBEE_UART_DEVICE_NAME);
+
+	__ASSERT(ret, "The same serial device used for serial logger and async serial!");
+#endif /* defined(CONFIG_ZBOSS_TRACE_BINARY_LOGGING) && defined(CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL) */
+
 	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_BINARY_LOGGING)) {
 		zb_osif_serial_logger_init();
 	}

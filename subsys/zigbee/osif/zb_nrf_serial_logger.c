@@ -7,6 +7,7 @@
 #include <zboss_api.h>
 #include <sys/ring_buffer.h>
 #include <drivers/uart.h>
+#include <usb/usb_device.h>
 
 #if defined ZB_NRF_TRACE
 
@@ -136,11 +137,18 @@ void zb_trace_msg_port_do(void)
 		return;
 	}
 
+	if (uart_dev == NULL) {
+		return;
+	}
+
 	uart_irq_tx_enable(uart_dev);
 }
 
 void zb_osif_serial_logger_init(void)
 {
+	/* Prevent multiple initiaizations as serial init function may be called more than once
+	 * by ZBOSS stack.
+	 */
 	if (uart_dev != NULL) {
 		return;
 	}
@@ -151,6 +159,23 @@ void zb_osif_serial_logger_init(void)
 		return;
 	}
 
+	/* Enable and configure USB device if USB CDC ACM is used to log ZBOSS Traces. */
+	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING)) {
+		int ret = usb_enable(NULL);
+
+		if (ret != 0) {
+			LOG_ERR("USB initialization failed - No UART device to log ZBOSS Traces");
+			/* USB initialization failed - mark UART device as unavailable. */
+			uart_dev = NULL;
+			return;
+		}
+
+		/* Data Carrier Detect Modem - mark connection as established. */
+		(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DCD, 1);
+		/* Data Set Ready - the NCP SoC is ready to communicate. */
+		(void)uart_line_ctrl_set(uart_dev, UART_LINE_CTRL_DSR, 1);
+	}
+
 	uart_irq_callback_set(uart_dev, interrupt_handler);
 
 	/* Enable rx interrupts. */
@@ -159,6 +184,10 @@ void zb_osif_serial_logger_init(void)
 
 void zb_osif_serial_logger_flush(void)
 {
+	if (uart_dev == NULL) {
+		return;
+	}
+
 	uart_irq_tx_enable(uart_dev);
 	while (!ring_buf_is_empty(&logger_buf)) {
 		k_sleep(K_MSEC(100));
