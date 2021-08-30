@@ -29,7 +29,7 @@ void zb_osif_serial_init(void)
 	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_BINARY_LOGGING)) {
 		zb_osif_serial_logger_init();
 	}
-	if (IS_ENABLED(CONFIG_ZIGBEE_HAVE_SERIAL)) {
+	if (IS_ENABLED(CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL)) {
 		zb_osif_async_serial_init();
 	}
 }
@@ -66,21 +66,21 @@ void zb_osif_serial_flush(void)
 	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_BINARY_LOGGING)) {
 		zb_osif_serial_logger_flush();
 	}
-	if (IS_ENABLED(CONFIG_ZIGBEE_HAVE_SERIAL)) {
+	if (IS_ENABLED(CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL)) {
 		zb_osif_async_serial_flush();
 	}
 }
 
 void zb_osif_uart_sleep(void)
 {
-	if (IS_ENABLED(CONFIG_ZIGBEE_HAVE_SERIAL)) {
+	if (IS_ENABLED(CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL)) {
 		zb_osif_async_serial_sleep();
 	}
 }
 
 void zb_osif_uart_wake_up(void)
 {
-	if (IS_ENABLED(CONFIG_ZIGBEE_HAVE_SERIAL)) {
+	if (IS_ENABLED(CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL)) {
 		zb_osif_async_serial_wake_up();
 	}
 }
