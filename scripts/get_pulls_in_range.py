@@ -322,10 +322,27 @@ def guess_pr_area(commits: List[pygit2.Commit]) -> str:
     # enough. We could consider adding pull request label tracking to
     # what we retrieve from GitHub if it turns out not to be.
 
+    # area_counts maps areas to the number of commits with that area,
+    # for the list of commits in 'commits'.
     area_counts = defaultdict(int)
     for commit in commits:
         area_counts[zephyr_commit_area(commit)] += 1
-    return max(area_counts, key=lambda area: area_counts[area])
+
+    # Try not to return 'Testing' as the result of this function if
+    # multiple areas have the maximum count in 'area_counts'.
+    #
+    # This avoids situations like having a PR with one commit with a
+    # new feature, another commit with tests, and assigning the whole
+    # PR to "Testing".
+    max_count = max(area_counts.values())
+    max_count_areas = [area for area, count in area_counts.items()
+                       if count == max_count]
+
+    for area in max_count_areas:
+        if area != 'Testing':
+            return area
+
+    return max_count_areas[0]
 
 def print_pr_info(info):
     print(f'- #{info.number}: {info.title}\n'
