@@ -1,0 +1,41 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# The purpose of this file is to define new default values of settings related
+# to building Thread from sources.
+# This file only changes defaults and thus all symbols here must be prompltless
+# and safeguarded so that they only are applied when building Thread.
+
+# Question, is this the best symbol to use ?
+if NET_L2_OPENTHREAD
+
+# Note, ASSERT is implied here:
+# https://github.com/nrfconnect/sdk-nrf/blob/03be701d0c88e7d04beffe68f4458a515db87b26/samples/Kconfig#L12
+# So below code is only added for reference on how it could be done.
+#config ASSERT
+#	bool
+#	default y
+
+config FPU
+	bool
+	default y
+
+# Note, FP_HARDABI is alrady the default, see:
+# https://github.com/zephyrproject-rtos/zephyr/blob/fb90113dc82de48741a9697bccac5293f7d5626f/arch/arm/core/aarch32/Kconfig#L241
+# No no need for changes there.
+
+choice LIBC_IMPLEMENTATION
+	default NEWLIB_LIBC
+endchoice
+
+config NUM_METAIRQ_PRIORITIES
+	int
+	default 1
+
+config CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE
+	int
+	default 1120
+
+endif
