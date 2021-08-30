@@ -98,7 +98,6 @@ static void interrupt_handler(const struct device *dev, void *user_data)
 void zb_osif_serial_logger_put_bytes(const zb_uint8_t *buf, zb_short_t len)
 {
 	zb_uint8_t *buf_dest;
-	k_spinlock_key_t key;
 	zb_uint32_t allocated = 0;
 	zb_uint32_t bytes_copied = 0;
 
