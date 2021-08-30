@@ -170,7 +170,7 @@ Following are the supported UI types on nRF Cloud:
 Removing the link between device and user
 *****************************************
 
-If you want to remove the link between a device and an nRF Cloud user, you must do this from the nRF Cloud.
+If you want to remove the link between a device and an nRF Cloud user, you must do this from nRF Cloud.
 It is not possible for a device to unlink itself.
 
 When a user disassociates a device, the library disallows any further sensor data to be sent to the cloud and generates an :c:enumerator:`NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST` event.
@@ -191,7 +191,7 @@ See the following message sequence chart:
 Using Cloud API with nRF Cloud library
 **************************************
 You can use this library in conjunction with :ref:`cloud_api_readme`.
-The following sections describe the various stages in the process of connection to the nRF Cloud.
+The following sections describe the various stages in the process of connection to nRF Cloud.
 
 Initialization
 ==============

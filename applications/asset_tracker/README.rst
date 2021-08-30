@@ -10,14 +10,14 @@ nRF9160: Asset Tracker
 .. note::
    The Asset Tracker application is deprecated and succeeded by the :ref:`asset_tracker_v2` application.
 
-The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based kit to the `nRF Connect for Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the device.
+The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based kit to the `nRF Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the device.
 
 Overview
 ********
 
 The application uses the LTE link control driver to establish a network connection.
-It then collects various data locally, and transmits the data to Nordic Semiconductor's cloud solution, `nRF Connect for Cloud`_.
-The data is visualized in nRF Connect for Cloud's web interface.
+It then collects various data locally, and transmits the data to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
+The data is visualized in nRF Cloud's web interface.
 
 The collected data includes the GPS position, accelerometer readings (the device's physical orientation), and data from various environment sensors.
 
@@ -52,10 +52,10 @@ On the Thingy:91, onboard sensors are used by default.
 GPS is enabled by default on both the kits.
 
 In addition to the sensor data, the application retrieves information from the LTE modem, such as the signal strength, battery voltage, and current operator.
-This information is available in nRF Connect for Cloud under the section **Cellular Link Monitor**.
+This information is available in nRF Cloud under the section **Cellular Link Monitor**.
 
 The `LTE Link Monitor`_ application, implemented as part of `nRF Connect for Desktop`_  can be used to send AT commands to the device and receive the responses.
-You can also send AT commands from the **Terminal** card on nRF Connect for Cloud when the device is connected.
+You can also send AT commands from the **Terminal** card on nRF Cloud when the device is connected.
 
 By default, the Asset Tracker supports firmware updates through :ref:`lib_aws_fota`.
 
@@ -112,7 +112,7 @@ User interface
 The buttons and switches have the following functions when the connection is established:
 
 Button 1 (SW3 on Thingy:91):
-    * Send a BUTTON event to the nRF Connect for Cloud.
+    * Send a BUTTON event to nRF Cloud.
     * Enable or disable GPS operation (long press the button for a minimum of 10 seconds).
 
 Switch 1 (only on nRF9160 DK):
@@ -126,8 +126,8 @@ On the nRF9160 DK, the application state is indicated by the LEDs.
 LED 3 and LED 4:
     * LED 3 blinking: The device is connecting to the LTE network.
     * LED 3 ON: The device is connected to the LTE network.
-    * LED 4 blinking: The device is connecting to nRF Connect for Cloud.
-    * LED 3 and LED 4 blinking: The MQTT connection has been established and the user association procedure with nRF Connect for Cloud has been initiated.
+    * LED 4 blinking: The device is connecting to nRF Cloud.
+    * LED 3 and LED 4 blinking: The MQTT connection has been established and the user association procedure with nRF Cloud has been initiated.
     * LED 4 ON: The device is connected and ready for sensor data transfer.
 
     .. figure:: /images/nrf_cloud_led_states.svg
@@ -137,7 +137,7 @@ LED 3 and LED 4:
 
 All LEDs (1-4):
     * Blinking in groups of two (LED 1 and 3, LED 2 and 4): Recoverable error in the Modem library.
-    * Blinking in cross pattern (LED 1 and 4, LED 2 and 3): Communication error with the nRF Connect for Cloud.
+    * Blinking in cross pattern (LED 1 and 4, LED 2 and 3): Communication error with nRF Cloud.
 
 On the Thingy:91, the application state is indicated by a single RGB LED as follows:
 
@@ -152,7 +152,7 @@ On the Thingy:91, the application state is indicated by a single RGB LED as foll
    * - White
      - Connecting to network
    * - Cyan
-     - Connecting to nRF Connect for Cloud
+     - Connecting to nRF Cloud
    * - Yellow
      - Waiting for user association
    * - Blue
@@ -182,7 +182,7 @@ Alternatively, you can manually set the configuration options to match the conte
 Using nRF Cloud A-GPS or P-GPS
 ******************************
 By default, this application enables :ref:`lib_nrf_cloud_agps` (Assisted GPS) support.
-Each time the GPS unit attempts to get a location fix, it may require additional information from  `nRF Connect for Cloud`_ to speed up the time to get that fix.
+Each time the GPS unit attempts to get a location fix, it may require additional information from  `nRF Cloud`_ to speed up the time to get that fix.
 
 Alternatively, :ref:`lib_nrf_cloud_pgps` (Predicted GPS) downloads and stores assistance predictions in Flash for one or two weeks, and does not require the cloud to help with each fix.
 
@@ -195,7 +195,7 @@ In order to use A-GPS and P-GPS at the same time, use the following instead:
 Using nRF Cloud FOTA
 ********************
 
-You can add the nRF Cloud FOTA update functionality to the application through the :ref:`lib_nrf_cloud` library.
+You can add nRF Cloud FOTA update functionality to the application through the :ref:`lib_nrf_cloud` library.
 The FOTA functionality is automatically enabled when you include the nRF Cloud library.
 For more information, see :ref:`lib_nrf_cloud_fota`.
 
@@ -254,20 +254,20 @@ After programming the application and all prerequisites to your kit, test the As
       ***** Booting Zephyr OS v1.13.99 *****
       Application started
 
-#. Observe in the terminal window that the connection to nRF Connect for Cloud is established. This may take several minutes.
+#. Observe in the terminal window that the connection to nRF Cloud is established. This may take several minutes.
 #. Open a web browser and navigate to https://nrfcloud.com/.
    Follow the instructions to set up your account and add an LTE device.
 #. The first time you start the application, add the device to your account:
 
    a. Observe that the LED(s) indicate that the device is waiting for user association.
-   #. Follow the instructions on `nRF Connect for Cloud`_ to add your device.
-   #. If association is successful, the device reconnects to nRF Connect for Cloud.
+   #. Follow the instructions on `nRF Cloud`_ to add your device.
+   #. If association is successful, the device reconnects to nRF Cloud.
       If the LED(s) indicate an error, check the details of the error in the terminal window.
       The device must be power-cycled to restart the association procedure.
 #. Observe that the LED(s) indicate that the connection is established.
-#. Observe that the device count on your nRF Connect for Cloud dashboard is incremented by one.
-#. Select the device from your device list on nRF Connect for Cloud, and observe that sensor data and modem information is received from the kit.
-#. Press Button 1 (SW3 on Thingy:91) to send BUTTON data to nRF Connect for Cloud.
+#. Observe that the device count on your nRF Cloud dashboard is incremented by one.
+#. Select the device from your device list on nRF Cloud, and observe that sensor data and modem information is received from the kit.
+#. Press Button 1 (SW3 on Thingy:91) to send BUTTON data to nRF Cloud.
 #. Press Button 1 (SW3 on Thingy:91) for a minimum of 10 seconds to enable GPS tracking.
    The kit must be outdoors in clear space for a few minutes to get the first position fix.
 #. Optionally send AT commands from the terminal, and observe that the response is received.

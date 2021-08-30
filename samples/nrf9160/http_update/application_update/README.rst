@@ -82,7 +82,7 @@ After programming the sample to your development kit, test it by performing the 
    To do so, either change ``CONFIG_APPLICATION_VERSION`` to 2 in the :file:`prj.conf` file, or select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project` > :guilabel:`HTTP application update sample` in |SES| and change the value for :guilabel:`Application version`.
    Then rebuild the application.
 #. Upload the file :file:`update.bin` to the server you have chosen.
-   To upload the file on nRF Connect for Cloud, click :guilabel:`Upload` for the firmware URL that you generated earlier.
+   To upload the file on nRF Cloud, click :guilabel:`Upload` for the firmware URL that you generated earlier.
    Then select the file :file:`update.bin` and upload it.
 #. Reset your nRF9160 DK to start the application.
 #. Open a terminal emulator and observe that an output similar to this is printed:
