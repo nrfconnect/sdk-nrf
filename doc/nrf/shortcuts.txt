@@ -82,3 +82,7 @@
 .. |external_flash_size| replace:: external flash memory with minimum 4MB
 
 .. |application_sample_definition| replace:: For simplicity, this guide will refer to both :ref:`samples<samples>` and :ref:`applications<applications>` as "applications".
+
+.. |vsc_extension_instructions| replace:: The `nRF Connect for Visual Studio Code`_ extension is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices. This includes an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the nRF Connect SDK, and a serial terminal.
+
+.. |VSC| replace:: nRF Connect for Visual Studio Code

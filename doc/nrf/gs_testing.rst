@@ -14,6 +14,15 @@ Follow the instructions in the testing section of the application's documentatio
 Information about the current state of the application is usually provided through the LEDs or through UART, or through both.
 See the user interface section of the application's documentation for description of the LED states or available UART commands.
 
+.. _testing_vscode:
+
+How to connect with the VS Code extension
+*****************************************
+
+The `nRF Connect for Visual Studio Code`_ extension is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices.
+It includes nRF Terminal, which is an integrated serial port and RTT terminal to connect to your board.
+For detailed instructions, see `Testing an application`_ in the extension's README file.
+
 .. _putty:
 
 How to connect with PuTTY

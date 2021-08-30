@@ -450,16 +450,27 @@ To set up the toolchain, complete the following steps:
           Define the environment variables in the :file:`~/.zephyrrc` file as described in :ref:`build_environment_cli`.
           This lets you avoid setting them every time you open a terminal window.
 
+.. rst-class:: numbered-step
+
+Install a build IDE
+*******************
+
+You can install either the |VSC| extension or the |SES| (SES) Nordic Edition to open and compile projects in the |NCS|:
+
+.. _installing_vsc:
+
+Visual Studio Code extension
+============================
+
+|vsc_extension_instructions|
+For detailed instructions see the `nRF Connect for Visual Studio Code`_ README file.
 
 .. _installing_ses:
 
-.. rst-class:: numbered-step
+|SES| Nordic Edition
+====================
 
-Install the |SES| Nordic Edition
-********************************
-
-You must install the |SES| (SES) Nordic Edition to be able to open and compile projects in the |NCS|.
-
+You can install the |SES| (SES) Nordic Edition to open and compile projects in the |NCS|.
 SES is free of charge for use with Nordic Semiconductor devices.
 
 To install the Nordic Edition, complete the following steps:
@@ -518,12 +529,10 @@ To install the Nordic Edition, complete the following steps:
 .. _build_environment:
 .. _setting_up_SES:
 
-.. rst-class:: numbered-step
-
 Set up the build environment in SES
 ***********************************
 
-Before you start :ref:`building and programming a sample application <gs_programming>`, you must set up your build environment.
+If you chose to use |SES| for :ref:`building and programming a sample application <gs_programming>`, you must first set up your build environment.
 
 1. Set up the SES environment.
    If you plan to :ref:`build with SEGGER Embedded Studio <gs_programming_ses>`, the first time you import an |NCS| project, SES might prompt you to set the paths to the Zephyr Base directory and the GNU ARM Embedded Toolchain.
@@ -606,8 +615,7 @@ If you want to configure tools that are not listed in the SES options, add them 
 Set up the command-line build environment
 *****************************************
 
-The default build environment for the |NCS| is SES.
-However, you can also build and program your application from the command line.
+In addition to |VSC| and |SES|, you can also build and program your application from the command line.
 You have to set up your build environment by defining the required environment variables every time you open a new command-line or terminal window.
 
 See :ref:`zephyr:important-build-vars` for more information about the various relevant environment variables.

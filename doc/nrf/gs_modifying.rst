@@ -11,7 +11,6 @@ Modifying an application
 
 After programming and testing an application, you probably want to make some modifications to the application, for example, add your own files with additional functionality, change compilation options, or update the default configuration.
 
-
 Adding files and changing compiler settings
 *******************************************
 
@@ -104,6 +103,14 @@ Similarly, the default configuration for a board is specified in its :file:`*_de
 The configuration for your application, which might override some default options of the libraries or the board, is specified in a :file:`prj.conf` file in the application directory.
 
 For detailed information about configuration options, see :ref:`zephyr:application-kconfig` in the Zephyr documentation.
+
+.. _configuring_vsc:
+
+Configuring in the VS Code extension
+====================================
+
+The `nRF Connect for Visual Studio Code`_ extension lets you modify your build configuration for custom boards, add additional CMake build arguments, select Kconfig fragments, and more.
+For detailed instructions on how to configure your application, see `Building an application`_ in the extension's README file.
 
 Changing the configuration permanently
 ======================================

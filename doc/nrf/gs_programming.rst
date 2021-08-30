@@ -7,15 +7,21 @@ Building and programming an application
    :local:
    :depth: 2
 
-The recommended way of building and programming an |NCS| application is to use the Nordic Edition of the |SES| (SES) IDE.
-
 |application_sample_definition|
 
-.. note::
+For additional information, check the user guide for the hardware platform that you are using.
+These user guides contain platform-specific instructions for building and programming.
+For additional information, check the user guide for the hardware platform that you are using.
+For example, see :ref:`ug_nrf5340_building` in the :ref:`ug_nrf5340` user guide for information about programming an nRF5340 DK, or :ref:`precompiled_fw` and :ref:`building_pgming` for information about programming a Thingy:91.
 
-   For additional information, check the user guide for the hardware platform that you are using.
-   These user guides contain platform-specific instructions for building and programming.
-   For example, see :ref:`ug_nrf5340_building` in the :ref:`ug_nrf5340` user guide for information about programming an nRF5340 DK, or :ref:`precompiled_fw` and :ref:`building_pgming` for information about programming a Thingy:91.
+.. _gs_programming_vsc:
+
+Building with the VS Code extension
+***********************************
+
+|vsc_extension_instructions|
+For detailed instructions on how to set up your build configuration, see `Creating an application`_ in the extension's README file.
+
 
 .. _gs_programming_ses:
 
@@ -28,7 +34,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
 1. Start SEGGER Embedded Studio.
 
-   If you have installed the |NCS| using the :ref:`gs_app_tcm`, click :guilabel:`Open IDE` next to the version you installed to start SES.
+   If you have installed the |NCS| using the :ref:`gs_app_tcm`, click the :guilabel:`Open Segger Embedded Studio` button next to the version you installed to start SES.
    If you have installed SES manually, run the :file:`emStudio` executable file from the :file:`bin` directory.
 
    .. figure:: images/gs-assistant_tm_installed.png

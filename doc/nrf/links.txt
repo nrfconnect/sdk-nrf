@@ -114,6 +114,11 @@
 .. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.6.x/docs/aws/GettingStarted/Index.html
 .. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.6.x/docs/azure/GettingStarted/Index.html
 
+.. _`nRF Connect for Visual Studio Code`: https://nordicplayground.github.io/vscode-nrf-connect/
+.. _`Creating an application`: https://nordicplayground.github.io/vscode-nrf-connect/#creating-an-application
+.. _`Building an application`: https://nordicplayground.github.io/vscode-nrf-connect/#building-an-application
+.. _`Testing an application`: https://nordicplayground.github.io/vscode-nrf-connect/#testing-an-application
+
 .. ### Source: developer.nordicsemi.com
 
 .. _`nRF Connect SDK v1.4.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.4.0/nrf/index.html
