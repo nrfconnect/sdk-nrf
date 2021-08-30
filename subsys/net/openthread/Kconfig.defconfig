@@ -1,0 +1,125 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# The purpose of this file is to define new default values of settings related
+# to building Thread from sources.
+# This file only changes defaults and thus all symbols here must be prompltless
+# and safeguarded so that they only are applied when building Thread.
+
+if NET_L2_OPENTHREAD
+
+choice LIBC_IMPLEMENTATION
+	default NEWLIB_LIBC
+endchoice
+
+config NUM_METAIRQ_PRIORITIES
+	int
+	default 1
+
+config SYSTEM_WORKQUEUE_STACK_SIZE
+	int
+	default 1120
+
+config MAIN_STACK_SIZE
+	int
+	default 2048
+
+config NET_CONNECTION_MANAGER
+	bool
+	default y
+
+config INIT_STACKS
+	bool
+	default y
+
+config NET_LOG
+	bool
+	default y
+
+config NET_STATISTICS
+	bool
+	default y
+
+config NET_IPV6_NBR_CACHE
+	bool
+	default n
+
+config NET_IPV6_MLD
+	bool
+	default n
+
+config NET_PKT_RX_COUNT
+	int
+	default 10
+
+config NET_PKT_TX_COUNT
+	int
+	default 16
+
+config OPENTHREAD_MANUAL_START
+	bool
+	default y
+
+choice OPENTHREAD_SECURITY
+	default OPENTHREAD_NRF_SECURITY_CHOICE
+endchoice
+
+config MBEDTLS_CIPHER_MODE_CBC
+	bool
+	default n
+
+config MBEDTLS_CIPHER_MODE_CTR
+	bool
+	default n
+
+config MBEDTLS_CIPHER_MODE_CFB
+	bool
+	default n
+
+config MBEDTLS_CIPHER_MODE_OFB
+	bool
+	default n
+
+config MBEDTLS_CHACHA20_C
+	bool
+	default n
+
+config MBEDTLS_POLY1305_C
+	bool
+	default n
+
+config MBEDTLS_CHACHAPOLY_C
+	bool
+	default n
+
+config MBEDTLS_DHM_C
+	bool
+	default n
+
+config MBEDTLS_RSA_C
+	bool
+	default n
+
+config MBEDTLS_SHA512_C
+	bool
+	default n
+
+config MBEDTLS_GCM_C
+	bool
+	default n
+
+config MBEDTLS_CIPHER_MODE_XTS
+	bool
+	default n
+
+config MBEDTLS_HEAP_SIZE
+	int
+	default 10240
+
+config OPENTHREAD_PING_SENDER
+	bool
+	default y
+
+endif

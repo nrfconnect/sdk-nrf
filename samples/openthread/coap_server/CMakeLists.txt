@@ -6,8 +6,6 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-list(INSERT OVERLAY_CONFIG 0 ../common/overlay-ot-defaults.conf)
-
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(openthread_coap_server)

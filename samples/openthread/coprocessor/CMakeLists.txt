@@ -8,8 +8,6 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(OT_NCP_VENDOR_HOOK_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-list(INSERT OVERLAY_CONFIG 0 ../common/overlay-ot-defaults.conf)
-
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(openthread_coprocessor)
