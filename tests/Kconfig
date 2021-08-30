@@ -4,4 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config NCS_TEST_INCLUDE_HELLO_WORLD_CHILD_IMAGE
+	bool "Include 'hello_world' sample as child image"
+	depends on ZTEST
+	depends on SOC_SERIES_NRF53X
+	depends on BOARD_ENABLE_CPUNET
+
+config NCS_TEST_INCLUDE_HELLO_WORLD_B0N
+	bool "Add bootloader to hello_world image"
+	depends on NCS_TEST_INCLUDE_HELLO_WORLD_CHILD_IMAGE
+	default y if BOOTLOADER_MCUBOOT
+
 rsource "unity/Kconfig"
