@@ -106,6 +106,7 @@ void test_loc_init(void)
 	__wrap_nrf_modem_gnss_init_IgnoreAndReturn(0);
 	__wrap_nrf_modem_gnss_event_handler_set_IgnoreAndReturn(0);
 	__wrap_modem_key_mgmt_exists_IgnoreAndReturn(0);
+	__wrap_at_cmd_write_ExpectAndReturn("AT%XMODEMSLEEP=1,0,10240", NULL, 0, NULL, 0);
 
 	ret = location_init(location_event_handler);
 	TEST_ASSERT_EQUAL(0, ret);
@@ -152,10 +153,27 @@ void test_loc_gnss(void)
 
 	location_callback_called_expected = true;
 
+	/* TODO: Tommi got 0,0,1,0 when trying the AT command but that fails here with -E2BIG */
+	static const char system_mode_resp[] = "%XSYSTEMMODE: 1,0,1";
+	static const char cereg_resp[] =
+		"+CEREG: 5,1,\"5A00\",\"00038107\",7,,,\"00011110\",\"11100000\"";
+
 	__wrap_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__wrap_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__wrap_nrf_modem_gnss_start_ExpectAndReturn(0);
+
+	__wrap_at_cmd_write_ExpectAndReturn("AT%XSYSTEMMODE?", "", 0, NULL, 0);
+	__wrap_at_cmd_write_IgnoreArg_buf_len();
+	__wrap_at_cmd_write_ReturnArrayThruPtr_buf((char *)system_mode_resp,
+						   sizeof(system_mode_resp));
+
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CEREG=5", NULL, 0, NULL, 0);
+
+	__wrap_at_cmd_write_ExpectAndReturn("AT+CEREG?", "", 0, NULL, 0);
+	__wrap_at_cmd_write_IgnoreArg_buf_len();
+	__wrap_at_cmd_write_ReturnArrayThruPtr_buf((char *)cereg_resp, sizeof(cereg_resp));
+
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 
