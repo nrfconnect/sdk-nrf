@@ -178,6 +178,7 @@ Zigbee
 
 * Updated:
 
+  * :ref:`ug_zigbee_tools_ncp_host` to the production-ready v1.0.0.
   * Fixed the KRKNWK-9743 known issue where the timer could not be stopped in Zigbee routers and coordinators.
   * Fixed the KRKNWK-10490 known issue that would cause a deadlock in the NCP frame fragmentation logic.
   * Fixed the KRKNWK-6071 known issue with inaccurate ZBOSS alarms.
