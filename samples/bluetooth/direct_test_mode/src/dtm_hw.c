@@ -101,12 +101,10 @@ bool dtm_hw_radio_validate(nrf_radio_txpower_t tx_power,
 	 */
 
 	if (!(
-#if defined(RADIO_MODE_MODE_Ble_LR125Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 		radio_mode == NRF_RADIO_MODE_BLE_LR125KBIT  ||
-#endif
-#if defined(RADIO_MODE_MODE_Ble_LR500Kbit)
 		radio_mode == NRF_RADIO_MODE_BLE_LR500KBIT  ||
-#endif
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 		radio_mode == NRF_RADIO_MODE_BLE_1MBIT      ||
 		radio_mode == NRF_RADIO_MODE_BLE_2MBIT
 		)
@@ -125,16 +123,15 @@ bool dtm_hw_radio_validate(nrf_radio_txpower_t tx_power,
 
 bool dtm_hw_radio_lr_check(nrf_radio_mode_t radio_mode)
 {
-#if defined(RADIO_MODE_MODE_Ble_LR125Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 	if (radio_mode == NRF_RADIO_MODE_BLE_LR125KBIT) {
 		return true;
 	}
-#endif
-#if defined(RADIO_MODE_MODE_Ble_LR500Kbit)
+
 	if (radio_mode == NRF_RADIO_MODE_BLE_LR500KBIT) {
 		return true;
 	}
-#endif
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 
 	return false;
 }
