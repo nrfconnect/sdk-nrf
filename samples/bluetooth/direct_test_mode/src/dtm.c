@@ -1119,7 +1119,7 @@ static uint32_t dtm_packet_interval_calculate(uint32_t test_payload_length,
 		 * 24 CRC
 		 */
 		overhead_bits = 80; /* 10 bytes */
-#if defined(RADIO_MODE_MODE_Ble_LR125Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 	} else if (mode == NRF_RADIO_MODE_BLE_LR125KBIT) {
 		/* 80     preamble
 		 * 32 * 8 sync word coding=8
@@ -1144,23 +1144,22 @@ static uint32_t dtm_packet_interval_calculate(uint32_t test_payload_length,
 		 *       assumption the radio will handle this
 		 */
 		overhead_bits = 462; /* 57.75 bytes */
-#endif /* defined(RADIO_MODE_MODE_Ble_LR125Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 	}
 
 	/* Add PDU payload test_payload length */
 	test_packet_length = (test_payload_length * 8); /* in bits */
 
 	/* Account for the encoding of PDU */
-#if defined(RADIO_MODE_MODE_Ble_LR125Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 	if (mode == NRF_RADIO_MODE_BLE_LR125KBIT) {
 		test_packet_length *= 8; /* 1 to 8 encoding */
 	}
-#endif /* defined(RADIO_MODE_MODE_Ble_LR125Kbit) */
-#if defined(RADIO_MODE_MODE_Ble_LR500Kbit)
+
 	if (mode == NRF_RADIO_MODE_BLE_LR500KBIT) {
 		test_packet_length *= 2; /* 1 to 2 encoding */
 	}
-#endif /* defined(RADIO_MODE_MODE_Ble_LR500Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 
 	/* Add overhead calculated above */
 	test_packet_length += overhead_bits;
@@ -1234,7 +1233,7 @@ static enum dtm_err_code phy_set(uint8_t phy)
 		return radio_init();
 	} else if ((phy >= LE_PHY_LE_CODED_S8_MIN_RANGE) &&
 		   (phy <= LE_PHY_LE_CODED_S8_MAX_RANGE)) {
-#if defined(RADIO_MODE_MODE_Ble_LR125Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 		dtm_inst.radio_mode =
 			NRF_RADIO_MODE_BLE_LR125KBIT;
 		dtm_inst.packet_hdr_plen =
@@ -1255,10 +1254,10 @@ static enum dtm_err_code phy_set(uint8_t phy)
 #else
 		dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
 		return DTM_ERROR_ILLEGAL_CONFIGURATION;
-#endif /* defined(RADIO_MODE_MODE_Ble_LR125Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 	} else if ((phy >= LE_PHY_LE_CODED_S2_MIN_RANGE) &&
 		   (phy <= LE_PHY_LE_CODED_S2_MAX_RANGE)) {
-#if defined(RADIO_MODE_MODE_Ble_LR500Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 		dtm_inst.radio_mode =
 			NRF_RADIO_MODE_BLE_LR500KBIT;
 		dtm_inst.packet_hdr_plen =
@@ -1281,7 +1280,7 @@ static enum dtm_err_code phy_set(uint8_t phy)
 #else
 		dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
 		return DTM_ERROR_ILLEGAL_CONFIGURATION;
-#endif /* defined(RADIO_MODE_MODE_Ble_LR500Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 	}
 
 	dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
