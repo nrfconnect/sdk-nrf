@@ -11,7 +11,22 @@
 #include <stdlib.h>
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
-#include <crypto_common.h>
+
+#ifdef CONFIG_BUILD_WITH_TFM
+#include <tfm_ns_interface.h>
+#endif
+
+#define APP_SUCCESS		(0)
+#define APP_ERROR		(-1)
+#define APP_SUCCESS_MESSAGE "Example finished successfully!"
+#define APP_ERROR_MESSAGE "Example exited with error!"
+
+#define PRINT_HEX(p_label, p_text, len)\
+	({\
+		LOG_INF("---- %s (len: %u): ----", p_label, len);\
+		LOG_HEXDUMP_INF(p_text, len, "Content:");\
+		LOG_INF("---- %s end  ----", p_label);\
+	})
 
 LOG_MODULE_REGISTER(ecdsa, LOG_LEVEL_DBG);
 
@@ -38,6 +53,18 @@ static psa_key_handle_t keypair_handle;
 static psa_key_handle_t pub_key_handle;
 /* ====================================================================== */
 
+int crypto_init(void)
+{
+	psa_status_t status;
+
+	/* Initialize PSA Crypto */
+	status = psa_crypto_init();
+	if (status != PSA_SUCCESS)
+		return APP_ERROR;
+
+	return APP_SUCCESS;
+}
+
 int crypto_finish(void)
 {
 	psa_status_t status;
@@ -45,13 +72,13 @@ int crypto_finish(void)
 	/* Destroy the key handle */
 	status = psa_destroy_key(keypair_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_destroy_key", status);
+		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	status = psa_destroy_key(pub_key_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_destroy_key", status);
+		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -63,7 +90,7 @@ int generate_ecdsa_keypair(void)
 	psa_status_t status;
 	size_t olen;
 
-	PRINT_MESSAGE("Generating random ECDSA keypair...");
+	LOG_INF("Generating random ECDSA keypair...");
 
 	/* Configure the key attributes */
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -80,14 +107,14 @@ int generate_ecdsa_keypair(void)
 	 */
 	status = psa_generate_key(&key_attributes, &keypair_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_generate_key", status);
+		LOG_INF("psa_generate_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	/* Export the public key */
 	status = psa_export_public_key(keypair_handle, m_pub_key, sizeof(m_pub_key), &olen);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_export_public_key", status);
+		LOG_INF("psa_export_public_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -112,7 +139,7 @@ int import_ecdsa_pub_key(void)
 
 	status = psa_import_key(&key_attributes, m_pub_key, sizeof(m_pub_key), &pub_key_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_import_key", status);
+		LOG_INF("psa_import_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -127,7 +154,7 @@ int sign_message(void)
 	uint32_t output_len;
 	psa_status_t status;
 
-	PRINT_MESSAGE("Signing a message using ECDSA...");
+	LOG_INF("Signing a message using ECDSA...");
 
 	/* Compute the SHA256 hash*/
 	status = psa_hash_compute(PSA_ALG_SHA_256,
@@ -137,7 +164,7 @@ int sign_message(void)
 				  sizeof(m_hash),
 				  &output_len);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_hash_compute", status);
+		LOG_INF("psa_hash_compute failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -150,11 +177,11 @@ int sign_message(void)
 			       sizeof(m_signature),
 			       &output_len);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_sign_hash", status);
+		LOG_INF("psa_sign_hash failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE("Signing the message successful!");
+	LOG_INF("Signing the message successful!");
 	PRINT_HEX("Plaintext", m_plain_text, sizeof(m_plain_text));
 	PRINT_HEX("SHA256 hash", m_hash, sizeof(m_hash));
 	PRINT_HEX("Signature", m_signature, sizeof(m_signature));
@@ -166,7 +193,7 @@ int verify_message(void)
 {
 	psa_status_t status;
 
-	PRINT_MESSAGE("Verifying ECDSA signature...");
+	LOG_INF("Verifying ECDSA signature...");
 
 	/* Verify the signature of the hash */
 	status = psa_verify_hash(pub_key_handle,
@@ -176,11 +203,11 @@ int verify_message(void)
 				 m_signature,
 				 sizeof(m_signature));
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_verify_hash", status);
+		LOG_INF("psa_verify_hash failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE("Signature verification was successful!");
+	LOG_INF("Signature verification was successful!");
 
 	return APP_SUCCESS;
 }
@@ -189,45 +216,45 @@ int main(void)
 {
 	int status;
 
-	PRINT_MESSAGE("Starting ECDSA example...");
+	LOG_INF("Starting ECDSA example...");
 
 	status = crypto_init();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = generate_ecdsa_keypair();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = import_ecdsa_pub_key();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = sign_message();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = verify_message();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = crypto_finish();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE(APP_SUCCESS_MESSAGE);
+	LOG_INF(APP_SUCCESS_MESSAGE);
 
 	return APP_SUCCESS;
 }

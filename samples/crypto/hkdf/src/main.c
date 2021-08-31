@@ -11,7 +11,22 @@
 #include <stdlib.h>
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
-#include <crypto_common.h>
+
+#ifdef CONFIG_BUILD_WITH_TFM
+#include <tfm_ns_interface.h>
+#endif
+
+#define APP_SUCCESS		(0)
+#define APP_ERROR		(-1)
+#define APP_SUCCESS_MESSAGE "Example finished successfully!"
+#define APP_ERROR_MESSAGE "Example exited with error!"
+
+#define PRINT_HEX(p_label, p_text, len)\
+	({\
+		LOG_INF("---- %s (len: %u): ----", p_label, len);\
+		LOG_HEXDUMP_INF(p_text, len, "Content:");\
+		LOG_INF("---- %s end  ----", p_label);\
+	})
 
 LOG_MODULE_REGISTER(hkdf, LOG_LEVEL_DBG);
 
@@ -54,6 +69,18 @@ psa_key_handle_t input_key_handle;
 psa_key_handle_t output_key_handle;
 /* ====================================================================== */
 
+int crypto_init(void)
+{
+	psa_status_t status;
+
+	/* Initialize PSA Crypto */
+	status = psa_crypto_init();
+	if (status != PSA_SUCCESS)
+		return APP_ERROR;
+
+	return APP_SUCCESS;
+}
+
 int crypto_finish(void)
 {
 	psa_status_t status;
@@ -61,13 +88,13 @@ int crypto_finish(void)
 	/* Destroy the key handle */
 	status = psa_destroy_key(input_key_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_destroy_key", status);
+		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	status = psa_destroy_key(output_key_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_destroy_key", status);
+		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -93,7 +120,7 @@ int import_input_key(void)
 				sizeof(m_input_key),
 				&input_key_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_import_key", status);
+		LOG_INF("psa_import_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -108,14 +135,14 @@ int export_derived_key(void)
 	/* Export the generated key content to verify it's value */
 	status = psa_export_key(output_key_handle, m_output_key, sizeof(m_output_key), &olen);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_export_key", status);
+		LOG_INF("psa_export_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE("Compare derived key with expected value...");
+	LOG_INF("Compare derived key with expected value...");
 	cmp_status = memcmp(m_expected_output_key, m_output_key, sizeof(m_output_key));
 	if (cmp_status != 0) {
-		PRINT_MESSAGE("Error, the derived key doesn't match the expected value!");
+		LOG_INF("Error, the derived key doesn't match the expected value!");
 		return APP_ERROR;
 	}
 
@@ -131,7 +158,7 @@ int derive_hkdf(void)
 	psa_key_derivation_operation_t operation =
 		PSA_KEY_DERIVATION_OPERATION_INIT;
 
-	PRINT_MESSAGE("Deriving a key using HKDF and SHA256...");
+	LOG_INF("Deriving a key using HKDF and SHA256...");
 
 	/* Derived key settings
 	 * WARNING: This key usage makes the key exportable which is not safe and
@@ -147,7 +174,7 @@ int derive_hkdf(void)
 	status = psa_key_derivation_setup(&operation,
 					  PSA_ALG_HKDF(PSA_ALG_SHA_256));
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_key_derivation_setup", status);
+		LOG_INF("psa_key_derivation_setup failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -157,7 +184,7 @@ int derive_hkdf(void)
 						m_salt,
 						sizeof(m_salt));
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_key_derivation_input_bytes", status);
+		LOG_INF("psa_key_derivation_input_bytes failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -165,7 +192,7 @@ int derive_hkdf(void)
 	status = psa_key_derivation_input_key(
 		&operation, PSA_KEY_DERIVATION_INPUT_SECRET, input_key_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_key_derivation_input_key", status);
+		LOG_INF("psa_key_derivation_input_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -175,25 +202,25 @@ int derive_hkdf(void)
 						m_ainfo,
 						sizeof(m_ainfo));
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_key_derivation_input_bytes", status);
+		LOG_INF("psa_key_derivation_input_bytes failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	/* Store the derived key in the keystore slot pointed by out_key_handle */
 	status = psa_key_derivation_output_key(&key_attributes, &operation, &output_key_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_key_derivation_output_key", status);
+		LOG_INF("psa_key_derivation_output_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	/* Clean up the context */
 	status = psa_key_derivation_abort(&operation);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_key_derivation_abort", status);
+		LOG_INF("psa_key_derivation_abort failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE("Key derivation successful!");
+	LOG_INF("Key derivation successful!");
 	PRINT_HEX("Input key", m_input_key, sizeof(m_input_key));
 	PRINT_HEX("Salt", m_salt, sizeof(m_salt));
 	PRINT_HEX("Additional data", m_ainfo, sizeof(m_ainfo));
@@ -205,39 +232,39 @@ int main(void)
 {
 	int status;
 
-	PRINT_MESSAGE("Starting HKDF example...");
+	LOG_INF("Starting HKDF example...");
 
 	status = crypto_init();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = import_input_key();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = derive_hkdf();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = export_derived_key();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = crypto_finish();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE(APP_SUCCESS_MESSAGE);
+	LOG_INF(APP_SUCCESS_MESSAGE);
 
 	return APP_SUCCESS;
 }
