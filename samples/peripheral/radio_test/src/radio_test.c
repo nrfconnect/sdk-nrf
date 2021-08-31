@@ -108,7 +108,7 @@ static uint8_t rnd8(void)
 
 static void radio_channel_set(nrf_radio_mode_t mode, uint8_t channel)
 {
-#if defined(RADIO_MODE_MODE_Ieee802154_250Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
 		if ((channel >= IEEE_MIN_CHANNEL) &&
 			(channel <= IEEE_MAX_CHANNEL)) {
@@ -125,7 +125,7 @@ static void radio_channel_set(nrf_radio_mode_t mode, uint8_t channel)
 	}
 #else
 	nrf_radio_frequency_set(NRF_RADIO, CHAN_TO_FREQ(channel));
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 }
 
 static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
@@ -181,7 +181,7 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 	packet_conf.whiteen = true;
 
 	switch (mode) {
-#if defined(RADIO_MODE_MODE_Ieee802154_250Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	case NRF_RADIO_MODE_IEEE802154_250KBIT:
 		/* Packet configuration:
 		 * S1 size = 0 bits,
@@ -198,11 +198,9 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 		nrf_radio_modecnf0_set(NRF_RADIO, true,
 				       RADIO_MODECNF0_DTX_Center);
 		break;
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
-#if defined(RADIO_MODE_MODE_Ble_LR125Kbit) || \
-	defined(RADIO_MODE_MODE_Ble_LR500Kbit)
-
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 	case NRF_RADIO_MODE_BLE_LR500KBIT:
 	case NRF_RADIO_MODE_BLE_LR125KBIT:
 		/* Packet configuration:
@@ -228,9 +226,7 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 					NRF_RADIO_CRC_ADDR_SKIP, 0);
 		break;
 
-#endif /* defined(RADIO_MODE_MODE_Ble_LR125Kbit) ||
-	* defined(RADIO_MODE_MODE_Ble_LR500Kbit)
-	*/
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 
 	case NRF_RADIO_MODE_BLE_2MBIT:
 		/* Packet configuration:
@@ -260,7 +256,7 @@ static void generate_modulated_rf_packet(uint8_t mode,
 	radio_config(mode, pattern);
 
 	/* One byte used for size, actual size is SIZE-1 */
-#if defined(RADIO_MODE_MODE_Ieee802154_250Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
 		tx_packet[0] = IEEE_MAX_PAYLOAD_LEN - 1;
 	} else {
@@ -268,7 +264,7 @@ static void generate_modulated_rf_packet(uint8_t mode,
 	}
 #else
 	tx_packet[0] = sizeof(tx_packet) - 1;
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 	/* Fill payload with random data. */
 	for (uint8_t i = 0; i < sizeof(tx_packet) - 1; i++) {
@@ -332,10 +328,7 @@ static void radio_modulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t ch
 	generate_modulated_rf_packet(mode, pattern);
 
 	switch (mode) {
-#if defined(RADIO_MODE_MODE_Ieee802154_250Kbit) || \
-	defined(RADIO_MODE_MODE_Ble_LR500Kbit) || \
-	defined(RADIO_MODE_MODE_Ble_LR125Kbit)
-
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154 || CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 	case NRF_RADIO_MODE_IEEE802154_250KBIT:
 	case NRF_RADIO_MODE_BLE_LR125KBIT:
 	case NRF_RADIO_MODE_BLE_LR500KBIT:
@@ -344,10 +337,7 @@ static void radio_modulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t ch
 					NRF_RADIO_SHORT_PHYEND_START_MASK);
 		break;
 
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit) ||
-	* defined(RADIO_MODE_MODE_Ble_LR500Kbit) ||
-	* defined(RADIO_MODE_MODE_Ble_LR125Kbit)
-	*/
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 || CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 
 	case NRF_RADIO_MODE_BLE_1MBIT:
 	case NRF_RADIO_MODE_BLE_2MBIT:
@@ -553,7 +543,7 @@ void radio_rx_stats_get(struct radio_rx_stats *rx_stats)
 {
 	size_t size;
 
-#if defined(RADIO_MODE_MODE_Ieee802154_250Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	nrf_radio_mode_t radio_mode;
 
 	radio_mode = nrf_radio_mode_get(NRF_RADIO);
@@ -564,7 +554,7 @@ void radio_rx_stats_get(struct radio_rx_stats *rx_stats)
 	}
 #else
 	size = sizeof(rx_packet);
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 	rx_stats->last_packet.buf = rx_packet;
 	rx_stats->last_packet.len = size;
