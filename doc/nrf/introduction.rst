@@ -8,7 +8,7 @@ About the |NCS|
    :depth: 2
 
 The |NCS| enables you to develop applications for nRF52, nRF53, and nRF91 Series devices.
-It is a set of open source projects maintained by Nordic Semiconductor, consisting of several repositories such as:
+It is a set of open source projects maintained by Nordic Semiconductor, consisting of several Git repositories publicly hosted on `GitHub`_:
 
 * `sdk-nrf`_ repository - contains applications, samples, libraries, and drivers that are specifically targeted at Nordic Semiconductor devices.
 * `sdk-nrfxlib`_ repository - contains closed-source libraries and modules in binary format.
@@ -19,7 +19,8 @@ It is a set of open source projects maintained by Nordic Semiconductor, consisti
 * `sdk-zephyr`_ repository - contains a fork of the `Zephyr`_ project, which provides samples, libraries, and drivers for a wide variety of devices, including Nordic Semiconductor devices.
   See the :doc:`documentation <zephyr:index>` in Nordic Semiconductor’s Zephyr fork.
 
-The main repository is ``sdk-nrf``.
+Every nRF Connect SDK release consists of a combination of these repositories at different revisions.
+The revision of each of those repositories is determined by the current revision of the main (or manifest) repository, ``sdk-nrf``.
 It contains the SDK manifest file that enables you to manage the repositories as one code base with the west tool.
 
 Documentation structure
@@ -65,12 +66,38 @@ All of them have a role in the creation of an application, from configuring the 
 West
 ====
 
-The Zephyr project includes a tool called west that enables you to manage multiple repositories.
+The Zephyr project includes a tool called west.
+The |NCS| uses :ref:`west <zephyr:west>` to manage the combination of multiple Git repositories and versions.
+
+Some of west’s features are similar to those provided by Git Submodules and Google’s Repo tool.
+But west also includes custom features required by the Zephyr project that were not sufficiently supported by the existing tools.
+
+For more details about the reasons behind the introduction of west, see the :ref:`zephyr:west-history` section of the Zephyr documentation.
+
+West's workspace contains exactly one :ref:`manifest repository <zephyr:west-basics>`, which is a main Git repository containing a `west manifest file`_.
+Additional Git repositories in the workspace managed by west are called projects.
+The manifest repository controls which commits to use from the different projects through the manifest file.
+In the |NCS|, the main repository `sdk-nrf`_ contains a west manifest file :file:`west.yml`, that determines the revision of all other repositories.
+This means that sdk-nrf acts as the manifest repository, while the other repositories are projects.
+
 When developing in the |NCS|, your application will use libraries and features from folders that are cloned from different repositories or projects.
 The west tool keeps control of which commits to use from the different projects.
 It also makes it fairly simple to add and remove modules.
 
-A west workspace contains one manifest repository and multiple projects, where the manifest repository controls which commits to use from the different projects.
-For more information, see the :ref:`zephyr:west` user guide.
+Some west commands are related to Git commands with the same name, but operate on the entire west workspace.
+Some west commands take projects as arguments.
+The two most important workspace-related commands in west are ``west init`` and ``west update``.
+
+The ``west init`` command creates a west workspace, and you typically need to run it only once to initialize west with the revision of the |NCS| that you want to check out.
+It clones the manifest repository into the workspace.
+However, the content of the manifest repository is managed using Git commands, since west does not modify or update it.
+
+To clone the project repositories, use the ``west update`` command.
+This command makes sure your workspace contains Git repositories matching the projects defined in the manifest file.
+Whenever you check out a different revision in your manifest repository, you should run ``west update`` to make sure your workspace contains the project repositories the new revision expects (according to the manifest file).
+
+For more information about ``west init``, ``west update``, and other built-in commands, see :ref:`zephyr:west-built-in-cmds`.
+
+For more information about the west tool, see the :ref:`zephyr:west` user guide.
 
 See :ref:`getting_started` for information about how to install the |NCS| and about the first steps.

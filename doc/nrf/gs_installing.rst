@@ -229,9 +229,7 @@ You only need to do this once.
 Get the |NCS| code
 ******************
 
-The |NCS| consists of a set of :ref:`Git repositories <ncs_introduction>`.
-
-Every |NCS| release consists of a combination of these repositories at different revisions.
+Every |NCS| release consists of a combination of :ref:`Git repositories <ncs_introduction>` at different revisions.
 The revision of each of those repositories is determined by the current revision of the main (or manifest) repository, `sdk-nrf`_.
 
 .. note::
@@ -241,9 +239,6 @@ The revision of each of those repositories is determined by the current revision
    For a higher degree of quality assurance, check out a tagged release.
 
    Unless you are familiar with the development process, you should always work with a specific release of the |NCS|.
-
-The main repository, `sdk-nrf`_, contains a `west manifest file`_, :file:`west.yml`, that determines the revision of all other repositories.
-This means that sdk-nrf acts as the :ref:`manifest repository <zephyr:west-basics>`, while the other repositories are project repositories.
 
 For more information about the repository and development model, see the :ref:`development model section <dev-model>`.
 
