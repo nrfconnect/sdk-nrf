@@ -146,30 +146,16 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 	}
 }
 
-void main(void)
+static void handle_lte_connection_started(void)
 {
-	int err;
 	uint32_t time_to_lte_connection;
-
-	LOG_INF("Memfault sample has started");
-
-	modem_configure();
-
-	err = dk_buttons_init(button_handler);
-	if (err) {
-		LOG_ERR("dk_buttons_init, error: %d", err);
-	}
-
-	LOG_INF("Connecting to LTE network, this may take several minutes...");
-
-	k_sem_take(&lte_connected, K_FOREVER);
 
 	/* Retrieve the LTE time to connect metric. */
 	memfault_metrics_heartbeat_timer_read(
 		MEMFAULT_METRICS_KEY(Ncs_LteTimeToConnect),
 		&time_to_lte_connection);
 
-	LOG_INF("Connected to LTE network. Time to connect: %d ms", time_to_lte_connection);
+	LOG_INF("(Re-)Connected to LTE network. Time to connect: %d ms", time_to_lte_connection);
 	LOG_INF("Sending already captured data to Memfault");
 
 	/* Trigger collection of heartbeat data. */
@@ -188,4 +174,33 @@ void main(void)
 	 * CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECS.
 	 */
 	memfault_zephyr_port_post_data();
+}
+
+void main(void)
+{
+	int err;
+
+	LOG_INF("Memfault sample has started");
+
+	modem_configure();
+
+	err = dk_buttons_init(button_handler);
+	if (err) {
+		LOG_ERR("dk_buttons_init, error: %d", err);
+	}
+
+	LOG_INF("Connecting to LTE network, this may take several minutes...");
+
+	/* Performing in an infinite loop to be resilient against
+	 * re-connect bursts directly after boot, e.g. when connected
+	 * to a roaming network or via weak signal. Note that
+	 * Memfault data will be uploaded periodically every
+	 * CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECS.
+	 * We post data here so as soon as a connection is available
+	 * the latest data will be pushed to Memfault.
+	 */
+	while (1) {
+		k_sem_take(&lte_connected, K_FOREVER);
+		handle_lte_connection_started();
+	}
 }
