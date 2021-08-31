@@ -3,6 +3,10 @@
 Customizing the bootloader
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 By default, to set Kconfig options, the |NSIB| and MCUboot bootloaders use Kconfig project configuration files, usually called :file:`prj.conf`, located in their source directories:
 
 * |NSIB| - :file:`nrf/samples/bootloader`
@@ -14,7 +18,7 @@ However, there are other ways to customize your application using Kconfig option
 * Using Kconfig fragments - for temporary options.
 
 Using custom project configurations
-===================================
+***********************************
 
 You can also use custom project configuration files to set permanent options for the associated image, specifying them at build time using :ref:`ug_multi_image_variables`.
 
@@ -32,7 +36,7 @@ In the example above, :file:`prj_app.conf` includes :kconfig:`CONFIG_SECURE_BOOT
 You can use custom project configuration files in combination with temporary configuration options associated with a single build, set using either the command line or Kconfig fragments.
 
 Assigning Kconfig fragments
-===========================
+***************************
 
 You can use Kconfig fragments specific to bootloaders to set temporary configuration options for the associated image, specifying them at build time using :ref:`ug_multi_image_variables`.
 
