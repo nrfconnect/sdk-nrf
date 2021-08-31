@@ -730,7 +730,7 @@ Reconnection issues after bonding
 Bluetooth mesh
 ==============
 
-.. rst-class:: v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
+.. rst-class:: v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-5580: nRF5340 only supports SoftDevice Controller
   On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth® mesh.
