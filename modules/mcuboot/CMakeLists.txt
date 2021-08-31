@@ -341,7 +341,6 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     endif()
 
     generate_dfu_zip(
-      TARGET mcuboot_sign_target
       OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip
       BIN_FILES ${generate_bin_files}
       TYPE application
@@ -412,7 +411,6 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         )
 
       generate_dfu_zip(
-        TARGET signed_s1_target
         OUTPUT ${PROJECT_BINARY_DIR}/dfu_mcuboot.zip
         BIN_FILES ${s0_bin_path} ${s1_bin_path}
         TYPE mcuboot

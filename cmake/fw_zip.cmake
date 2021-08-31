@@ -13,8 +13,7 @@ function(generate_dfu_zip)
     GENZIP_BIN_FILES AND
     GENZIP_SCRIPT_PARAMS AND
     GENZIP_OUTPUT AND
-    GENZIP_TYPE AND
-    GENZIP_TARGET
+    GENZIP_TYPE
     ))
     message(FATAL_ERROR "Missing required param")
   endif()
@@ -30,7 +29,7 @@ function(generate_dfu_zip)
     "type=${GENZIP_TYPE}"
     "board=${CONFIG_BOARD}"
     "soc=${CONFIG_SOC}"
-    DEPENDS ${GENZIP_TARGET}
+    DEPENDS ${GENZIP_BIN_FILES}
     )
 
   get_filename_component(TARGET_NAME ${GENZIP_OUTPUT} NAME)
