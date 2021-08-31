@@ -99,7 +99,7 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 10254a9e8799f9500d5b9b2366f5ea5d28067255
+      revision: e45719acc69e4333423e06c2eab847bc4ababfca
       path: bootloader/mcuboot
     - name: nrfxlib
       repo-path: sdk-nrfxlib
