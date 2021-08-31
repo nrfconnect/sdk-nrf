@@ -490,6 +490,14 @@ KRKNWK-6073: Potential delay during FOTA
 Matter (Project CHIP)
 =====================
 
+.. rst-class:: v1-7-0
+
+KRKNWK-11225: Android CHIPTool cannot communicate with a Matter device after the device reboots
+  Android CHIPTool does not implement any mechanism to recover a secure session to a Matter device after the device has rebooted and lost the session.
+  As a result, the device can no longer decrypt and process messages sent by Android CHIPTool as the controller keeps using stale cryptographic keys.
+
+  **Workaround** Do not reboot the device after commissioning it with Android CHIPTool.
+
 .. rst-class:: v1-7-0 v1-6-1 v1-6-0
 
 KRKNWK-10589: Android CHIPTool crashes when commissioning a Matter device
