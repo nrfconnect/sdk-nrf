@@ -75,7 +75,7 @@ static struct radio_test_config test_config;
 /* If true, RX sweep, TX sweep or duty cycle test is performed. */
 static bool test_in_progress;
 
-#if defined(NRF_RADIO_MODE_IEEE802154_250KBIT)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 static void ieee_channel_check(const struct shell *shell, uint8_t channel)
 {
 	if (config.mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
@@ -93,7 +93,7 @@ static void ieee_channel_check(const struct shell *shell, uint8_t channel)
 
 	}
 }
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit)*/
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 static int cmd_start_channel_set(const struct shell *shell, size_t argc,
 				 char **argv)
@@ -213,9 +213,9 @@ static int cmd_tx_carrier_start(const struct shell *shell, size_t argc,
 		test_in_progress = false;
 	}
 
-#if defined(NRF_RADIO_MODE_IEEE802154_250KBIT)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	ieee_channel_check(shell, config.channel_start);
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit)*/
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 	memset(&test_config, 0, sizeof(test_config));
 	test_config.type = UNMODULATED_TX;
@@ -246,9 +246,9 @@ static int cmd_tx_modulated_carrier_start(const struct shell *shell,
 		test_in_progress = false;
 	}
 
-#if defined(NRF_RADIO_MODE_IEEE802154_250KBIT)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	ieee_channel_check(shell, config.channel_start);
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit)*/
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 	if (argc > 2) {
 		shell_error(shell, "%s: bad parameters count.", argv[0]);
@@ -301,9 +301,9 @@ static int cmd_duty_cycle_set(const struct shell *shell, size_t argc,
 
 	config.duty_cycle = duty_cycle;
 
-#if defined(NRF_RADIO_MODE_IEEE802154_250KBIT)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	ieee_channel_check(shell, config.channel_start);
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit)*/
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 	memset(&test_config, 0, sizeof(test_config));
 	test_config.type = MODULATED_TX_DUTY_CYCLE;
@@ -446,29 +446,27 @@ static int cmd_print(const struct shell *shell, size_t argc, char **argv)
 			    STRINGIFY(NRF_RADIO_MODE_BLE_2MBIT));
 		break;
 
-#if defined(RADIO_MODE_MODE_Ble_LR125Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 	case NRF_RADIO_MODE_BLE_LR125KBIT:
 		shell_print(shell,
 			    "Data rate: %s",
 			    STRINGIFY(NRF_RADIO_MODE_BLE_LR125KBIT));
 		break;
-#endif /* defined(RADIO_MODE_MODE_Ble_LR125Kbit) */
 
-#if defined(RADIO_MODE_MODE_Ble_LR500Kbit)
 	case NRF_RADIO_MODE_BLE_LR500KBIT:
 		shell_print(shell,
 			    "Data rate: %s",
 			    STRINGIFY(NRF_RADIO_MODE_BLE_LR500KBIT));
 		break;
-#endif /* defined(RADIO_MODE_MODE_Ble_LR500Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 
-#if defined(NRF_RADIO_MODE_IEEE802154_250KBIT)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	case NRF_RADIO_MODE_IEEE802154_250KBIT:
 		shell_print(shell,
 			    "Data rate: %s",
 			    STRINGIFY(NRF_RADIO_MODE_IEEE802154_250KBIT));
 		break;
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit)*/
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 	default:
 		shell_print(shell,
@@ -722,9 +720,9 @@ static int cmd_rx_start(const struct shell *shell, size_t argc, char **argv)
 		test_in_progress = false;
 	}
 
-#if defined(NRF_RADIO_MODE_IEEE802154_250KBIT)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	ieee_channel_check(shell, config.channel_start);
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit)*/
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 	memset(&test_config, 0, sizeof(test_config));
 	test_config.type = RX;
@@ -963,7 +961,7 @@ static int cmd_ble_2mbit(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-#if defined(RADIO_MODE_MODE_Ble_LR125Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 static int cmd_ble_lr125kbit(const struct shell *shell, size_t argc,
 			     char **argv)
 {
@@ -973,9 +971,7 @@ static int cmd_ble_lr125kbit(const struct shell *shell, size_t argc,
 
 	return 0;
 }
-#endif /* defined(RADIO_MODE_MODE_Ble_LR125Kbit) */
 
-#if defined(RADIO_MODE_MODE_Ble_LR500Kbit)
 static int cmd_ble_lr500kbit(const struct shell *shell, size_t argc,
 			     char **argv)
 {
@@ -985,9 +981,9 @@ static int cmd_ble_lr500kbit(const struct shell *shell, size_t argc,
 
 	return 0;
 }
-#endif /* defined(RADIO_MODE_MODE_Ble_LR500Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 
-#if defined(RADIO_MODE_MODE_Ieee802154_250Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 static int cmd_ble_ieee(const struct shell *shell, size_t argc, char **argv)
 {
 	config.mode = NRF_RADIO_MODE_IEEE802154_250KBIT;
@@ -996,7 +992,7 @@ static int cmd_ble_ieee(const struct shell *shell, size_t argc, char **argv)
 
 	return 0;
 }
-#endif /* RADIO_MODE_MODE_Ieee802154_250Kbit */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 static int cmd_pattern_random(const struct shell *shell, size_t argc,
 			      char **argv)
@@ -1048,22 +1044,20 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_data_rate,
 	SHELL_CMD(ble_2Mbit, NULL, "2 Mbit/s Bluetooth Low Energy",
 		  cmd_ble_2mbit),
 
-#if defined(RADIO_MODE_MODE_Ble_LR125Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
 	SHELL_CMD(ble_lr125Kbit, NULL,
 		  "Long range 125 kbit/s TX, 125 kbit/s and 500 kbit/s RX",
 		  cmd_ble_lr125kbit),
-#endif /* defined(RADIO_MODE_MODE_Ble_LR125Kbit) */
 
-#if defined(RADIO_MODE_MODE_Ble_LR500Kbit)
 	SHELL_CMD(ble_lr500Kbit, NULL,
 		  "Long range 500 kbit/s TX, 125 kbit/s and 500 kbit/s RX",
 		  cmd_ble_lr500kbit),
-#endif /* defined(RADIO_MODE_MODE_Ble_LR125Kbit) */
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
 
-#if defined(RADIO_MODE_MODE_Ieee802154_250Kbit)
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	SHELL_CMD(ieee802154_250Kbit, NULL, "IEEE 802.15.4-2006 250 kbit/s",
 		  cmd_ble_ieee),
-#endif /* defined(RADIO_MODE_MODE_Ieee802154_250Kbit)*/
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
 	SHELL_SUBCMD_SET_END
 );
