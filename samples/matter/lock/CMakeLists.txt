@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.13.1)
 
 option(BUILD_WITH_DFU "Build target with Device Firmware Upgrade support" OFF)
 if(BUILD_WITH_DFU)
-    list(INSERT OVERLAY_CONFIG 0 ${CMAKE_CURRENT_SOURCE_DIR}/../common/config/overlay-dfu_support.conf)
+    set(CONF_FILE prj_dfu.conf)
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml")
         set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml)
     else()
@@ -20,7 +20,7 @@ find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-lock)
 
-set(COMMON_ROOT ${CMAKE_CURRENT_LIST_DIR}/../common)
+set(COMMON_ROOT ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common)
 set(NLIO_ROOT ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/third_party/nlio/repo)
 include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/app/enable-gnu-std.cmake)
 

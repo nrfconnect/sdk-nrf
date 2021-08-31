@@ -80,14 +80,11 @@ Device Firmware Upgrade support
 .. note::
    Over-the-air Device Firmware Upgrade can be enabled only on hardware platforms containing external flash memory.
 
-You can configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade using Bluetooth® LE, using the following build flags during the build process:
-
-* ``-DOVERLAY_CONFIG=../common/config/overlay-dfu_support.conf``
-* ``-DPM_STATIC_YML_FILE="configuration/build-target/pm_static.yml``
+You can configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade using Bluetooth® LE, using the ``-DBUILD_WITH_DFU=1`` build flag during the build process.
 
 See :ref:`cmake_options` for instructions on how to add these options to your build.
 
-For example, when building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
+For example, when building on the command line, you can run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
 
 .. parsed-literal::
    :class: highlight

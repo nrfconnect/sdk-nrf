@@ -17,7 +17,7 @@ find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-weather-station)
 
-set(COMMON_ROOT ${CMAKE_CURRENT_LIST_DIR}/../../samples/matter/common)
+set(COMMON_ROOT ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common)
 set(NLIO_ROOT ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/third_party/nlio/repo)
 include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/app/enable-gnu-std.cmake)
 
