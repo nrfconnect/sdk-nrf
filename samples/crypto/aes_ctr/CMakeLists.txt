@@ -10,7 +10,5 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(aes_ctr)
 
-target_include_directories(app PUBLIC ../crypto_common)
-
 target_sources(app PRIVATE
         src/main.c)

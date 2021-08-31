@@ -11,7 +11,22 @@
 #include <stdlib.h>
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
-#include <crypto_common.h>
+
+#ifdef CONFIG_BUILD_WITH_TFM
+#include <tfm_ns_interface.h>
+#endif
+
+#define APP_SUCCESS		(0)
+#define APP_ERROR		(-1)
+#define APP_SUCCESS_MESSAGE "Example finished successfully!"
+#define APP_ERROR_MESSAGE "Example exited with error!"
+
+#define PRINT_HEX(p_label, p_text, len)\
+	({\
+		LOG_INF("---- %s (len: %u): ----", p_label, len);\
+		LOG_HEXDUMP_INF(p_text, len, "Content:");\
+		LOG_INF("---- %s end  ----", p_label);\
+	})
 
 LOG_MODULE_REGISTER(ecdh, LOG_LEVEL_DBG);
 
@@ -34,6 +49,18 @@ psa_key_handle_t key_handle_bob;
 
 /* ====================================================================== */
 
+int crypto_init(void)
+{
+	psa_status_t status;
+
+	/* Initialize PSA Crypto */
+	status = psa_crypto_init();
+	if (status != PSA_SUCCESS)
+		return APP_ERROR;
+
+	return APP_SUCCESS;
+}
+
 int crypto_finish(void)
 {
 	psa_status_t status;
@@ -41,14 +68,14 @@ int crypto_finish(void)
 	/* Destroy the key handle */
 	status = psa_destroy_key(key_handle_alice);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_destroy_key", status);
+		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	/* Destroy the key handle */
 	status = psa_destroy_key(key_handle_bob);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_destroy_key", status);
+		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -72,13 +99,13 @@ int create_ecdh_keypair(psa_key_handle_t *key_handle)
 	/* Generate a key pair */
 	status = psa_generate_key(&key_attributes, key_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_generate_key", status);
+		LOG_INF("psa_generate_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	psa_reset_key_attributes(&key_attributes);
 
-	PRINT_MESSAGE("ECDH keypair created successfully!");
+	LOG_INF("ECDH keypair created successfully!");
 
 	return APP_SUCCESS;
 }
@@ -91,11 +118,11 @@ int export_ecdh_public_key(psa_key_handle_t *key_handle, uint8_t *buff, size_t b
 	/* Export the public key */
 	status = psa_export_public_key(*key_handle, buff, buff_size, &olen);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_export_public_key", status);
+		LOG_INF("psa_export_public_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE("ECDH public key exported successfully!");
+	LOG_INF("ECDH public key exported successfully!");
 
 	return APP_SUCCESS;
 }
@@ -113,11 +140,11 @@ int calculate_ecdh_secret(psa_key_handle_t *key_handle,
 	status = psa_raw_key_agreement(
 		PSA_ALG_ECDH, *key_handle, pub_key, pub_key_len, secret, secret_len, &output_len);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_raw_key_agreement", status);
+		LOG_INF("psa_raw_key_agreement failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE("ECDH secret calculated successfully!");
+	LOG_INF("ECDH secret calculated successfully!");
 
 	return APP_SUCCESS;
 }
@@ -126,15 +153,15 @@ int compare_secrets(void)
 {
 	int status;
 
-	PRINT_MESSAGE("Comparing the secret values of Alice and Bob");
+	LOG_INF("Comparing the secret values of Alice and Bob");
 
 	status = memcmp(m_secret_bob, m_secret_alice, sizeof(m_secret_alice));
 	if (status != 0) {
-		PRINT_MESSAGE("Error: Secret values don't match!");
+		LOG_INF("Error: Secret values don't match!");
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE("The secret values of Alice and Bob match!");
+	LOG_INF("The secret values of Alice and Bob match!");
 
 	return APP_SUCCESS;
 }
@@ -143,82 +170,82 @@ int main(void)
 {
 	int status;
 
-	PRINT_MESSAGE("Starting ECDH example...");
+	LOG_INF("Starting ECDH example...");
 	/* Init crypto */
 	status = crypto_init();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	/* Create the ECDH key pairs for Alice and Bob  */
-	PRINT_MESSAGE("Creating ECDH key pair for Alice");
+	LOG_INF("Creating ECDH key pair for Alice");
 	status = create_ecdh_keypair(&key_handle_alice);
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE("Creating ECDH key pair for Bob");
+	LOG_INF("Creating ECDH key pair for Bob");
 	status = create_ecdh_keypair(&key_handle_bob);
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	/* Export the ECDH public keys */
-	PRINT_MESSAGE("Export Alice's public key");
+	LOG_INF("Export Alice's public key");
 	status =
 		export_ecdh_public_key(&key_handle_alice, m_pub_key_alice, sizeof(m_pub_key_alice));
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE("Export Bob's public key");
+	LOG_INF("Export Bob's public key");
 	status = export_ecdh_public_key(&key_handle_bob, m_pub_key_bob, sizeof(m_pub_key_bob));
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	/* Calculate the secret value for each participant */
-	PRINT_MESSAGE("Calculating the secret value for Alice");
+	LOG_INF("Calculating the secret value for Alice");
 	status = calculate_ecdh_secret(&key_handle_alice,
 				       m_pub_key_bob,
 				       sizeof(m_pub_key_bob),
 				       m_secret_alice,
 				       sizeof(m_secret_alice));
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE("Calculating the secret value for Bob");
+	LOG_INF("Calculating the secret value for Bob");
 	status = calculate_ecdh_secret(&key_handle_bob,
 				       m_pub_key_alice,
 				       sizeof(m_pub_key_alice),
 				       m_secret_bob,
 				       sizeof(m_secret_bob));
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	/* Verify that the calculated secrets match */
 	status = compare_secrets();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = crypto_finish();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE(APP_SUCCESS_MESSAGE);
+	LOG_INF(APP_SUCCESS_MESSAGE);
 
 	return APP_SUCCESS;
 }

@@ -10,7 +10,22 @@
 #include <stdio.h>
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
-#include <crypto_common.h>
+
+#ifdef CONFIG_BUILD_WITH_TFM
+#include <tfm_ns_interface.h>
+#endif
+
+#define APP_SUCCESS		(0)
+#define APP_ERROR		(-1)
+#define APP_SUCCESS_MESSAGE "Example finished successfully!"
+#define APP_ERROR_MESSAGE "Example exited with error!"
+
+#define PRINT_HEX(p_label, p_text, len)\
+	({\
+		LOG_INF("---- %s (len: %u): ----", p_label, len);\
+		LOG_HEXDUMP_INF(p_text, len, "Content:");\
+		LOG_INF("---- %s end  ----", p_label);\
+	})
 
 LOG_MODULE_REGISTER(persistent_key_usage, LOG_LEVEL_DBG);
 
@@ -26,6 +41,18 @@ LOG_MODULE_REGISTER(persistent_key_usage, LOG_LEVEL_DBG);
 static psa_key_handle_t key_handle;
 /* ====================================================================== */
 
+int crypto_init(void)
+{
+	psa_status_t status;
+
+	/* Initialize PSA Crypto */
+	status = psa_crypto_init();
+	if (status != PSA_SUCCESS)
+		return APP_ERROR;
+
+	return APP_SUCCESS;
+}
+
 int crypto_finish(void)
 {
 	psa_status_t status;
@@ -33,7 +60,7 @@ int crypto_finish(void)
 	/* Destroy the key handle */
 	status = psa_destroy_key(key_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_destroy_key", status);
+		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -44,7 +71,7 @@ int generate_prersistent_key(void)
 {
 	psa_status_t status;
 
-	PRINT_MESSAGE("Generating random persistent AES key...");
+	LOG_INF("Generating random persistent AES key...");
 
 	/* Configure the key attributes */
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -63,14 +90,14 @@ int generate_prersistent_key(void)
 	 */
 	status = psa_generate_key(&key_attributes, &key_handle);
 	if (status != PSA_SUCCESS) {
-		PRINT_ERROR("psa_generate_key", status);
+		LOG_INF("psa_generate_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	/* After the key handle is acquired the attributes are not needed */
 	psa_reset_key_attributes(&key_attributes);
 
-	PRINT_MESSAGE("Persistent key generated successfully!");
+	LOG_INF("Persistent key generated successfully!");
 
 	return APP_SUCCESS;
 }
@@ -79,27 +106,27 @@ int main(void)
 {
 	int status;
 
-	PRINT_MESSAGE("Starting persistent key example...");
+	LOG_INF("Starting persistent key example...");
 
 	status = crypto_init();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = generate_prersistent_key();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	status = crypto_finish();
 	if (status != APP_SUCCESS) {
-		PRINT_MESSAGE(APP_ERROR_MESSAGE);
+		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
-	PRINT_MESSAGE(APP_SUCCESS_MESSAGE);
+	LOG_INF(APP_SUCCESS_MESSAGE);
 
 	return APP_SUCCESS;
 }
