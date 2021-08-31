@@ -9,6 +9,8 @@
 #include <logging/log.h>
 
 #include <modem/location.h>
+#include <modem/lte_lc.h>
+#include <modem/at_cmd.h>
 #include <nrf_modem_gnss.h>
 #include <nrf_errno.h>
 
@@ -16,26 +18,59 @@
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
+/* range 10240-3456000000 ms, see AT command %XMODEMSLEEP */
+#define MIN_SLEEP_DURATION_FOR_STARTING_GNSS 10240
+#define AT_MDM_SLEEP_NOTIF_START "AT%%XMODEMSLEEP=1,%d,%d"
+#define AT_MDM_SLEEP_NOTIF_STOP "AT%XMODEMSLEEP=0" /* not used at the moment */
+
 extern location_event_handler_t event_handler;
 extern struct loc_event_data current_event_data;
 
-struct k_work gnss_fix_work;
+struct k_work_args {
+	struct k_work work_item;
+	struct loc_gnss_config gnss_config;
+};
+
+static struct k_work_args method_gnss_start_work;
+struct k_work method_gnss_fix_work;
 struct k_work method_gnss_timeout_work;
 
 static int fix_attemps_remaining;
 static bool first_fix_obtained;
+static bool running;
+
+static K_SEM_DEFINE(entered_psm_mode, 0, 1);
+
+void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
+{
+	switch (evt->type) {
+	case LTE_LC_EVT_MODEM_SLEEP_ENTER:
+		if (evt->modem_sleep.type == LTE_LC_MODEM_SLEEP_PSM) {
+			/* Signal to method_gnss_positioning_work_fn() that GNSS can be started. */
+			k_sem_give(&entered_psm_mode);
+		}
+		break;
+
+	case LTE_LC_EVT_MODEM_SLEEP_EXIT:
+		/* Prevent GNSS from starting while LTE is running. */
+		k_sem_reset(&entered_psm_mode);
+		break;
+	default:
+		break;
+	}
+}
 
 void method_gnss_event_handler(int event)
 {
 	switch (event) {
 	case NRF_MODEM_GNSS_EVT_FIX:
 		LOG_DBG("GNSS: Got fix");
-		k_work_submit_to_queue(loc_core_work_queue_get(), &gnss_fix_work);
+		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_fix_work);
 		break;
 
 	case NRF_MODEM_GNSS_EVT_PVT:
 		LOG_DBG("GNSS: Got PVT event");
-		k_work_submit_to_queue(loc_core_work_queue_get(), &gnss_fix_work);
+		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_fix_work);
 		break;
 
 	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
@@ -55,6 +90,20 @@ int method_gnss_cancel(void)
 		LOG_ERR("GNSS is not running");
 	} else {
 		LOG_ERR("Failed to stop GNSS");
+	}
+
+	running = false;
+
+	/* Cancel any work that has not been started yet */
+	(void)k_work_cancel(&method_gnss_start_work.work_item);
+
+	/* If we are currently not in PSM, i.e., LTE is running, reset the semaphore to unblock
+	 * method_gnss_positioning_work_fn() and allow the ongoing location request to terminate.
+	 * Otherwise, don't reset the semaphore in order not to lose information about the current
+	 * sleep state. */
+	int sleeping = k_sem_count_get(&entered_psm_mode);
+	if (!sleeping) {
+		k_sem_reset(&entered_psm_mode);
 	}
 
 	fix_attemps_remaining = 0;
@@ -110,39 +159,45 @@ void method_gnss_timeout_work_fn(struct k_work *item)
 	method_gnss_cancel();
 }
 
-int method_gnss_init(void)
-{
-	int err = nrf_modem_gnss_init();
-
-	if (err) {
-		LOG_ERR("Failed to initialize GNSS interface, error %d", err);
-		return -err;
-	}
-
-	err = nrf_modem_gnss_event_handler_set(method_gnss_event_handler);
-	if (err) {
-		LOG_ERR("Failed to set GNSS event handler, error %d", err);
-		return -err;
-	}
-
-	k_work_init(&gnss_fix_work, method_gnss_fix_work_fn);
-	k_work_init(&method_gnss_timeout_work, method_gnss_timeout_work_fn);
-
-	return 0;
-}
-
-int method_gnss_location_get(const struct loc_method_config *config)
+static void method_gnss_positioning_work_fn(struct k_work *work)
 {
 	int err = 0;
+	int tau;
+	int active_time;
+	enum lte_lc_system_mode mode;
 
-	const struct loc_gnss_config *gnss_config = &config->gnss;
+	struct k_work_args *work_data =
+		CONTAINER_OF(work, struct k_work_args, work_item);
+
+	const struct loc_gnss_config gnss_config = work_data->gnss_config;
+
+	lte_lc_system_mode_get(&mode, NULL);
+
+	/* Don't care about PSM if we are in GNSS only mode */
+	if(mode != LTE_LC_SYSTEM_MODE_GPS) {
+		int ret = lte_lc_psm_get(&tau, &active_time);
+		if (ret < 0) {
+			LOG_ERR("Cannot get PSM config: %d. Starting GNSS right away.", ret);
+		} else if ((tau >= 0) & (active_time >= 0)) {
+			LOG_INF("Waiting for LTE to enter PSM: tau %d active_time %d",
+				tau, active_time);
+
+			/* Wait for the PSM to start. If semaphore is reset during the waiting
+			 * period, the position request was canceled. Thus, return without
+			 * doing anything */
+			if (k_sem_take(&entered_psm_mode, K_FOREVER) == -EAGAIN) {
+				return;
+			}
+			k_sem_give(&entered_psm_mode);
+		}
+	}
 
 	/* Configure GNSS to continuous tracking mode */
 	err = nrf_modem_gnss_fix_interval_set(1);
 
 	uint8_t use_case;
 
-	switch (gnss_config->accuracy) {
+	switch (gnss_config.accuracy) {
 	case LOC_ACCURACY_LOW:
 		use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START |
 			   NRF_MODEM_GNSS_USE_CASE_LOW_ACCURACY;
@@ -158,23 +213,87 @@ int method_gnss_location_get(const struct loc_method_config *config)
 		use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
 		err |= nrf_modem_gnss_use_case_set(use_case);
 		if (!err) {
-			fix_attemps_remaining = gnss_config->num_consecutive_fixes;
+			fix_attemps_remaining = gnss_config.num_consecutive_fixes;
 		}
 		break;
 	}
 
 	if (err) {
 		LOG_ERR("Failed to configure GNSS");
-		return -EINVAL;
+		loc_core_event_cb_error();
+		running = false;
 	}
 
 	err = nrf_modem_gnss_start();
 	if (err) {
 		LOG_ERR("Failed to start GNSS");
-		return err;
+		loc_core_event_cb_error();
+		running = false;
 	}
 
 	LOG_DBG("GNSS started");
+}
 
-	return err;
+void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
+{
+	char buf_sub[48];
+	int err;
+
+	snprintk(buf_sub, sizeof(buf_sub), AT_MDM_SLEEP_NOTIF_START,
+		 0, threshold_ms);
+
+	err = at_cmd_write(buf_sub, NULL, 0, NULL);
+	if (err) {
+		LOG_ERR("Cannot subscribe to modem sleep notifications, err %d", err);
+	} else {
+		LOG_DBG("Subscribed to modem sleep notifications");
+	}
+}
+
+int method_gnss_location_get(const struct loc_method_config *config)
+{
+	const struct loc_gnss_config gnss_config = config->gnss;
+
+	LOG_INF("Starting to get a location by using gnss method");
+
+	if (running) {
+		LOG_ERR("Previous operation ongoing.");
+		return -EBUSY;
+	}
+
+	k_work_init(&method_gnss_start_work.work_item, method_gnss_positioning_work_fn);
+	method_gnss_start_work.gnss_config = gnss_config;
+	k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_start_work.work_item);
+
+	running = true;
+
+	return 0;
+}
+
+int method_gnss_init(void)
+{
+	running = false;
+
+	int err = nrf_modem_gnss_init();
+
+	if (err) {
+		LOG_ERR("Failed to initialize GNSS interface, error %d", err);
+		return -err;
+	}
+
+	err = nrf_modem_gnss_event_handler_set(method_gnss_event_handler);
+	if (err) {
+		LOG_ERR("Failed to set GNSS event handler, error %d", err);
+		return -err;
+	}
+
+	/* Subscribe to sleep notification to monitor when modem enters power saving mode */
+	method_gnss_modem_sleep_notif_subscribe(MIN_SLEEP_DURATION_FOR_STARTING_GNSS);
+
+	k_work_init(&method_gnss_fix_work, method_gnss_fix_work_fn);
+	k_work_init(&method_gnss_timeout_work, method_gnss_timeout_work_fn);
+
+	lte_lc_register_handler(method_gnss_lte_ind_handler);
+
+	return 0;
 }

@@ -115,8 +115,10 @@ struct loc_gnss_config {
 	 * acquire a fix.
 	 *
 	 * @details Note that this is not real time as experienced by the user.
-	 * This timeout starts when GNSS radio can be started. I.e., if cellular
-	 * connection blocks it, the timer will only start once cellular connection is released.
+	 * Since GNSS cannot run while LTE is operating, the running time is
+	 * counted from the instant when GNSS is allowed to start. If LTE power saving mode (PSM)
+	 * is requested, GNSS waits until the modem enters PSM before starting up, thus maximizing
+	 * uninterrupted operating window and minimizing power consumption.
 	 */
 	uint16_t timeout;
 	/** Desired accuracy level. */
