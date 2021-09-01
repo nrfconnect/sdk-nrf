@@ -491,38 +491,28 @@ static int do_bind(uint16_t port)
 static int do_connect(const char *url, uint16_t port)
 {
 	int ret = 0;
-	struct addrinfo *res;
-	struct addrinfo hints = {
-		.ai_family = sock.family
+	struct sockaddr sa = {
+		.sa_family = AF_UNSPEC
 	};
 
 	LOG_DBG("connect %s:%d", log_strdup(url), port);
-
-	ret = getaddrinfo(url, NULL, &hints, &res);
+	ret = util_resolve_host(0, url, port, sock.family, &sa);
 	if (ret) {
 		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(ret)));
 		return -EAGAIN;
 	}
-	if (res->ai_family == AF_INET) {
-		struct sockaddr_in *host = (struct sockaddr_in *)res->ai_addr;
-
-		host->sin_port = htons(port);
-		ret = connect(sock.fd, (struct sockaddr *)host, sizeof(struct sockaddr_in));
+	if (sa.sa_family == AF_INET) {
+		ret = connect(sock.fd, &sa, sizeof(struct sockaddr_in));
 	} else {
-		struct sockaddr_in6 *host = (struct sockaddr_in6 *)res->ai_addr;
-
-		host->sin6_port = htons(port);
-		ret = connect(sock.fd, (struct sockaddr *)host, sizeof(struct sockaddr_in6));
+		ret = connect(sock.fd, &sa, sizeof(struct sockaddr_in6));
 	}
 	if (ret) {
 		LOG_ERR("connect() error: %d", -errno);
-		freeaddrinfo(res);
 		return -errno;
 	}
 
 	sprintf(rsp_buf, "\r\n#XCONNECT: 1\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
-	freeaddrinfo(res);
 
 	return ret;
 }
@@ -722,15 +712,13 @@ static int do_recv(int timeout)
 static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int datalen)
 {
 	int ret = 0;
-	struct addrinfo *res;
 	uint32_t offset = 0;
-	struct addrinfo hints = {
-		.ai_family = sock.family
+	struct sockaddr sa = {
+		.sa_family = AF_UNSPEC
 	};
 
 	LOG_DBG("sendto %s:%d", log_strdup(url), port);
-
-	ret = getaddrinfo(url, NULL, &hints, &res);
+	ret = util_resolve_host(0, url, port, sock.family, &sa);
 	if (ret) {
 		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(ret)));
 		return -EAGAIN;
@@ -741,18 +729,12 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 		if (ret) {
 			break;
 		}
-		if (res->ai_family == AF_INET) {
-			struct sockaddr_in *peer = (struct sockaddr_in *)res->ai_addr;
-
-			peer->sin_port = htons(port);
+		if (sa.sa_family == AF_INET) {
 			ret = sendto(sock.fd, data + offset, datalen - offset, 0,
-				(struct sockaddr *)peer, sizeof(struct sockaddr_in));
+				&sa, sizeof(struct sockaddr_in));
 		} else {
-			struct sockaddr_in6 *peer = (struct sockaddr_in6 *)res->ai_addr;
-
-			peer->sin6_port = htons(port);
 			ret = sendto(sock.fd, data + offset, datalen - offset, 0,
-				(struct sockaddr *)peer, sizeof(struct sockaddr_in6));
+				&sa, sizeof(struct sockaddr_in6));
 		}
 		if (ret <= 0) {
 			LOG_ERR("sendto() failed: %d, sent: %d", -errno, offset);
@@ -765,7 +747,6 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 	sprintf(rsp_buf, "\r\n#XSENDTO: %d\r\n", offset);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
-	freeaddrinfo(res);
 	if (ret >= 0) {
 		return 0;
 	}
@@ -776,14 +757,12 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 static int do_sendto_datamode(const uint8_t *data, int datalen)
 {
 	int ret = 0;
-	struct addrinfo *res;
-	struct addrinfo hints = {
-		.ai_family = sock.family
+	struct sockaddr sa = {
+		.sa_family = AF_UNSPEC
 	};
 
 	LOG_DBG("sendto %s:%d", log_strdup(udp_url), udp_port);
-
-	ret = getaddrinfo(udp_url, NULL, &hints, &res);
+	ret = util_resolve_host(0, udp_url, udp_port, sock.family, &sa);
 	if (ret) {
 		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(ret)));
 		return -EAGAIN;
@@ -796,18 +775,12 @@ static int do_sendto_datamode(const uint8_t *data, int datalen)
 		if (ret) {
 			break;
 		}
-		if (res->ai_family == AF_INET) {
-			struct sockaddr_in *peer = (struct sockaddr_in *)res->ai_addr;
-
-			peer->sin_port = htons(udp_port);
+		if (sa.sa_family == AF_INET) {
 			ret = sendto(sock.fd, data + offset, datalen - offset, 0,
-				(struct sockaddr *)peer, sizeof(struct sockaddr_in));
+				&sa, sizeof(struct sockaddr_in));
 		} else {
-			struct sockaddr_in6 *peer = (struct sockaddr_in6 *)res->ai_addr;
-
-			peer->sin6_port = htons(udp_port);
 			ret = sendto(sock.fd, data + offset, datalen - offset, 0,
-				(struct sockaddr *)peer, sizeof(struct sockaddr_in6));
+				&sa, sizeof(struct sockaddr_in6));
 		}
 		if (ret <= 0) {
 			LOG_ERR("sendto() failed: %d, sent: %d", -errno, offset);
@@ -816,7 +789,6 @@ static int do_sendto_datamode(const uint8_t *data, int datalen)
 		offset += ret;
 	}
 
-	freeaddrinfo(res);
 	return (offset > 0) ? offset : -1;
 }
 

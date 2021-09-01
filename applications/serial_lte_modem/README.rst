@@ -12,7 +12,6 @@ See the subpages for how to use the application, how to extend it, and informati
    :maxdepth: 2
    :caption: Subpages:
 
-   doc/CHANGELOG
    doc/slm_description
    doc/slm_testing
    doc/slm_extending

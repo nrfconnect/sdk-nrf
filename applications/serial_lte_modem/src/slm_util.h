@@ -16,6 +16,7 @@
 #include <zephyr/types.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <net/socket.h>
 #include <modem/at_cmd_parser.h>
 
 /**
@@ -112,6 +113,22 @@ void util_get_ip_addr(int cid, char *addr4, char *addr6);
  *           Otherwise, a (negative) error code is returned.
  */
 int util_str_to_int(const char *str, int base, int *output);
+
+/**
+ * @brief Resolve remote host by host name or IP address
+ *
+ * This function wraps up getaddrinfo() to return first resolved address.
+ *
+ * @param[in] cid PDP Context ID as defined in "+CGDCONT" command (0~10).
+ * @param[in] host Name or IP address of remote host.
+ * @param[in] port Service port of remote host.
+ * @param[in] family Desired address family for the returned address.
+ * @param[out] sa The returned address.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, EAI error code as defined by getaddrinfo().
+ */
+int util_resolve_host(int cid, const char *host, uint16_t port, int family, struct sockaddr *sa);
 /** @} */
 
 #endif /* SLM_UTIL_ */

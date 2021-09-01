@@ -261,28 +261,21 @@ static void mqtt_thread_fn(void *arg1, void *arg2, void *arg3)
 static int broker_init(void)
 {
 	int err;
-	struct addrinfo *result;
-	struct addrinfo hints = {
-		.ai_family = ctx.family,
-		.ai_socktype = SOCK_STREAM
+	struct sockaddr sa = {
+		.sa_family = AF_UNSPEC
 	};
 
-	err = getaddrinfo(mqtt_broker_url, NULL, &hints, &result);
+	err = util_resolve_host(0, mqtt_broker_url, mqtt_broker_port, ctx.family, &sa);
 	if (err) {
-		LOG_ERR("ERROR: getaddrinfo failed %d", err);
-		return err;
+		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(err)));
+		return -EAGAIN;
 	}
-
-	if (ctx.family == AF_INET) {
-		ctx.broker = *(struct sockaddr_in *)result->ai_addr;
-		ctx.broker.sin_port = htons(mqtt_broker_port);
+	if (sa.sa_family == AF_INET) {
+		ctx.broker = *(struct sockaddr_in *)&sa;
 	} else {
-		ctx.broker6 = *(struct sockaddr_in6 *)result->ai_addr;
-		ctx.broker6.sin6_port = htons(mqtt_broker_port);
+		ctx.broker6 = *(struct sockaddr_in6 *)&sa;
 	}
 
-	/* Free the address. */
-	freeaddrinfo(result);
 	return 0;
 }
 
