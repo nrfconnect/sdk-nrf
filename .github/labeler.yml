@@ -215,4 +215,4 @@
   - "samples/nrf_rpc/**/*"
 
 "changelog-entry-required":
-  - "!doc/nrf/releases/release-notes-changelog.rst"
+  - all: ["!doc/nrf/releases/release-notes-changelog.rst"]
