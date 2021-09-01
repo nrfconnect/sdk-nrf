@@ -60,15 +60,15 @@ See the following example:
 
       custom changemode *1*
 
-indication - LED indication
-===========================
+lindication - LED indication
+============================
 
 It makes the CMD device control the LED indicating packet reception.
 
    .. parsed-literal::
       :class: highlight
 
-      custom indication *<value>*
+      custom lindication *<value>*
 
 The ``<value>`` argument can assume one of the following values:
 
@@ -80,7 +80,7 @@ See the following example:
    .. parsed-literal::
       :class: highlight
 
-      custom indication *1*
+      custom lindication *1*
 
 rping - Ping the DUT
 ====================
@@ -1163,4 +1163,4 @@ Performing radio tests without the serial interface
 Refer to the :ref:`802154_phy_test_ui` for the complete list of the available commands.
 
 .. note::
-   Currently the RSSI measurements are performed without additional temperature correction. 
+   Currently the RSSI measurements are performed without additional temperature correction.
