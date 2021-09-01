@@ -79,6 +79,11 @@ static int do_socket_open(void)
 	} else if (sock.type == SOCK_DGRAM) {
 		ret = socket(sock.family, SOCK_DGRAM, IPPROTO_UDP);
 		proto = IPPROTO_UDP;
+	} else if (sock.type == SOCK_RAW) {
+		sock.family = AF_PACKET;
+		sock.role = AT_SOCKET_ROLE_CLIENT;
+		ret = socket(sock.family, SOCK_RAW, IPPROTO_IP);
+		proto = IPPROTO_IP;
 	} else {
 		LOG_ERR("socket type %d not supported", sock.type);
 		return -ENOTSUP;
@@ -676,13 +681,16 @@ static int do_recv(int timeout)
 		} else {
 			length = UDP_MAX_PAYLOAD_IPV4;
 		}
-	} else {
+	} else if (sock.family == AF_INET6) {
 		if (sock.type == SOCK_STREAM) {
 			length = TCP_MAX_PAYLOAD_IPV6;
 		} else {
 			length = UDP_MAX_PAYLOAD_IPV6;
 		}
+	} else {
+		length = SLM_MAX_PAYLOAD;
 	}
+
 	ret = socket_poll(sockfd, POLLIN, timeout);
 	if (ret) {
 		return ret;
@@ -954,9 +962,9 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "\r\n#XSOCKET: (%d,%d,%d),(%d,%d),(%d,%d)",
+		sprintf(rsp_buf, "\r\n#XSOCKET: (%d,%d,%d),(%d,%d,%d),(%d,%d)",
 			AT_SOCKET_CLOSE, AT_SOCKET_OPEN, AT_SOCKET_OPEN6,
-			SOCK_STREAM, SOCK_DGRAM,
+			SOCK_STREAM, SOCK_DGRAM, SOCK_RAW,
 			AT_SOCKET_ROLE_CLIENT, AT_SOCKET_ROLE_SERVER);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
