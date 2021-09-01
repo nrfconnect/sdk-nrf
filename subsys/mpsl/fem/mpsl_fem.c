@@ -65,7 +65,7 @@ static void fem_pin_num_correction(uint8_t *p_gpio_pin, const char *gpio_lbl)
 static inline int inactive_pin_configure(uint8_t pin, const char *gpio_lbl,
 				  gpio_flags_t flags)
 {
-	const struct device *port;
+	const struct device *port = NULL;
 
 	if (gpio_lbl != NULL) {
 		port = device_get_binding(gpio_lbl);
