@@ -25,7 +25,7 @@ The following two model instances are added:
 * Light CTL Server - Provides write access to Lightness, Temperature and Delta UV states for the user, in addition to read access to all meta states
 * Light CTL Setup Server - Provides write access to Default CTL state and Temperature Range meta states, allowing configurator devices to set up a temperature range and a default CTL state
 
-In addition to the extended Lightness Server model, the Light CTL Server also requires a :ref:`bt_mesh_light_temp_srv_readme` to be instantiated on a subsequent element.
+In addition to the extended Light Lightness Server model, the Light CTL Server also requires a :ref:`bt_mesh_light_temp_srv_readme` to be instantiated on a subsequent element.
 The Light Temperature Server should reference the :c:member:`bt_mesh_light_ctl_srv.temp_srv`.
 
 Conventionally, the Light Temperature Server model is instantiated on the very next element, and the composition data looks as presented below.
@@ -56,7 +56,7 @@ The Lightness and Light Temperature Server callbacks will pass pointers to :c:me
 States
 ======
 
-The Generic Power OnOff Server model (extended by the Lightness Server model) contains the following states:
+The Generic Power OnOff Server model (extended by the Light Lightness Server model) contains the following states:
 
 Lightness: ``uint16_t``
     The Lightness state represents the emitted light level of an element, and ranges from ``0`` to ``65535``.
@@ -126,10 +126,10 @@ The Light CTL Server extends the following model:
 
 * :ref:`bt_mesh_lightness_srv_readme`
 
-The state of the extended Lightness Server model is for the most part bound to states in the Light CTL Server.
+The state of the extended Light Lightness Server model is for the most part bound to states in the Light CTL Server.
 The only exception is the Lightness range state, which is exposed to the application through the :c:member:`bt_mesh_light_ctl_srv_handlers.lightness_range_update` callback of the Light CTL Server model.
 
-In addition to the extended Lightness Server model, the Light CTL Server model is associated with a Light Temperature model on a subsequent element.
+In addition to the extended Light Lightness Server model, the Light CTL Server model is associated with a Light Temperature model on a subsequent element.
 Unlike the extended models, the associated models do not share subscription lists, but still share states.
 
 Persistent storage

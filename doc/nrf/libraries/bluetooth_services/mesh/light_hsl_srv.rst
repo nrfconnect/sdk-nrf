@@ -30,19 +30,19 @@ Model composition
 *****************
 
 The Light HSL Server requires a :ref:`bt_mesh_light_hue_srv_readme` and a :ref:`bt_mesh_light_sat_srv_readme` model to be instantiated in any of the following elements.
-As each of the Hue, Saturation and Lightness Server models extend the :ref:`bt_mesh_lvl_srv_readme` model, they cannot be instantiated on the same element.
+As each of the Light Hue, Saturation and Lightness Server models extend the :ref:`bt_mesh_lvl_srv_readme` model, they cannot be instantiated on the same element.
 
-The recommended configuration for the Light HSL Server model is to instantiate the HSL Server (with its extended Lightness Server model) on one element, then instantiate the corresponding Light Hue Server model on the subsequent element, and the corresponding Light Saturation Server model on the next element after that:
+The recommended configuration for the Light HSL Server model is to instantiate the Light HSL Server (with its extended Light Lightness Server model) on one element, then instantiate the corresponding Light Hue Server model on the subsequent element, and the corresponding Light Saturation Server model on the next element after that:
 
 .. table::
    :align: center
 
-   =================  =================  =======================
-   Element N          Element N+1        Element N+2
-   =================  =================  =======================
-   Lightness Server   Light Hue Server   Light Saturation Server
+   =======================  =================  =======================
+   Element N                Element N+1        Element N+2
+   =======================  =================  =======================
+   Light Lightness Server   Light Hue Server   Light Saturation Server
    Light HSL Server
-   =================  =================  =======================
+   =======================  =================  =======================
 
 In the application code, this would look like this:
 
@@ -74,8 +74,11 @@ In the application code, this would look like this:
    The :c:struct:`bt_mesh_light_hsl_srv` also contains a pointer to the Light Lightness Server model.
    Pointer to this model should be passed to the Light HSL Server initialization macro.
 
-The Light HSL Server does not contain any states on its own, but instead operates on the underlying Hue, Saturation and Lightness Server model's states.
+The Light HSL Server does not contain any states on its own, but instead operates on the underlying Light Hue, Saturation and Lightness Server models' states.
 Because of this, the Light HSL Server does not have a message handler structure, but will instead defer its messages to the individual submodels' handler callbacks.
+
+It's also possible to combine the Light HSL Server model with a :ref:`bt_mesh_light_xyl_srv_readme`.
+See :ref:`bt_mesh_light_xyl_hsl_srv` for details.
 
 States
 ******
