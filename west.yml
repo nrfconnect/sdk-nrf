@@ -108,7 +108,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: 52a2fbefe02da485f4c6103d40a86b3a529cbd8e
+      revision: d1c70fbee87e2e9cd917f68bf771dc7618cee180
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
