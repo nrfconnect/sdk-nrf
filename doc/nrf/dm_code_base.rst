@@ -12,25 +12,6 @@ Basic familiarity with Git is required to understand the architecture of the rep
 
 All |NCS| repositories are publicly hosted on `GitHub`_, and accessible to both individual users and companies.
 
-Git basics
-**********
-
-Git is a distributed version control system that allows repositories to be easily duplicated.
-Every time you take an existing Git repository and create a copy of it, you are creating a *fork* of that repository.
-This means that you create an identical copy that might diverge from the original over time, since commits to the original will not be automatically reflected in the copy, and commits to your copy will not be automatically reflected in the original.
-
-.. note::
-   When we talk about forks or copying Git repositories, we refer to the creation of a new repository hosted on a server and accessible to other users.
-   If you clone a repository to your local machine using ``git clone``, that is referred to as a *clone* and not a fork.
-
-When you create a fork by copying an existing repository, the original repository is called the *upstream* repository and the newly created copy the *downstream* repository.
-
-A fork can be hosted on any server, including a public Git hosting site like `GitHub`_.
-It is, however, important to differentiate between the generic concept of a fork and GitHub's concept of a `GitHub fork`_.
-When you create a GitHub fork, GitHub copies the original repository and tags the downstream repository (the fork) with a flag that allows users to send pull requests from the fork to its upstream repository.
-GitHub also supports creating forks without linking them to the upstream respository.
-See the `GitHub documentation <GitHub duplicate_>`_ for information about how to do this.
-
 .. _dm_repo_types:
 
 Repository types
@@ -65,8 +46,7 @@ For example:
 Repository structure
 ********************
 
-In order to manage the combination of repositories and versions, the |NCS| uses :ref:`west <zephyr:west>`, the same tool that Zephyr uses to manage its repository set.
-You can learn more about the reasons behind the introduction of west in :ref:`this section <zephyr:west-history>` of the Zephyr documentation.
+The |NCS| uses :ref:`west <zephyr:west>` to manage the combination of repositories and versions.
 
 A :ref:`manifest repository <zephyr:west-manifests>`, `sdk-nrf`_, contains a file in its root folder, :file:`west.yml`, which lists all other repositories (west projects) included in the |NCS|.
 The |NCS| repository structure has a star topology, with the `sdk-nrf`_ repository being the center of the star and all other repositories being west projects that are managed by :file:`west.yml`.
