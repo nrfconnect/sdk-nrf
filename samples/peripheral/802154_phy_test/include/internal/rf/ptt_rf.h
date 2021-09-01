@@ -207,6 +207,15 @@ uint8_t ptt_rf_get_last_rx_best_antenna(void);
  */
 enum ptt_ret ptt_rf_cca(ptt_evt_id_t evt_id, uint8_t mode);
 
+/** @brief Calls radio driver to toggle performing CCA on TX
+ *
+ *  @param evt_id - event id locking radio module
+ *  @param activate - CCA toggle
+ *
+ *  @return enum ptt_ret - PTT_RET_SUCCESS or error
+ */
+enum ptt_ret ptt_rf_set_cca(ptt_evt_id_t evt_id, uint8_t activate);
+
 /** @brief Calls radio driver to detect the maximum energy for a given time
  *
  *  @param evt_id - event id locking radio module
