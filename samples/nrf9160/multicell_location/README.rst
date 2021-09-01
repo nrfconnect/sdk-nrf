@@ -33,9 +33,11 @@ The cell information is passed on to the :ref:`lib_multicell_location` library, 
 Responses from location services are parsed and returned to the sample, which displays the responses on a terminal.
 
 Currently, the sample can be used with the location services supported by the :ref:`lib_multicell_location` library, which are `nRF Cloud Location Services`_, `HERE Positioning`_ and `Skyhook Precision Location`_.
-Note that nRF Cloud currently is a single-cell location service, and does not make use of neighboring cells in location resolution.
 Before you use the services, see the :ref:`lib_multicell_location` library documentation and the respective location service documentation for the required setup.
 
+.. include:: ../../../doc/nrf/libraries/networking/multicell_location.rst
+   :start-after: reprovision_cert_note_start
+   :end-before: reprovision_cert_note_end
 
 Trigger location requests
 *************************

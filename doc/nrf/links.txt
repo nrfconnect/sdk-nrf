@@ -569,6 +569,8 @@
 
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
 
+.. _`Securely Generating Credentials on the nRF9160`: https://docs.nrfcloud.com/Guides/GettingStarted/Devices#securely-generating-credentials-on-the-nrf9160
+
 .. ### Source: other
 
 .. _`Pelion Device Management Portal`: https://portal.mbedcloud.com/login

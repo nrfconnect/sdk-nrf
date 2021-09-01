@@ -21,8 +21,19 @@ When the location service has resolved the location based on the cell measuremen
 After receiving the HTTP response, the Multicell location library parses the response and returns the location to the caller.
 
 The library supports location services from `nRF Cloud Location Services`_, `HERE Positioning`_ (v1 and v2) and `Skyhook Precision Location`_.
-Note that nRF Cloud currently is a single-cell location service, and does not make use of neighboring cells in location resolution.
 To use the location services, see the respective documentation for account setup and for getting the required credentials for authentication.
+
+.. reprovision_cert_note_start
+
+.. note::
+
+   nRF9160 DK and Thingy:91 devices are shipped with RSA256 certificates.
+   To start using the Multicell location library with nRF Cloud, you must perform either of the following actions:
+
+      * Delete the device from nRF Cloud and reprovision it with a new ES256 device certificate. See `Updating the nRF Connect for Cloud certificate`_ for more information.
+      * Register a separate key for JWT signing as described in `Securely Generating Credentials on the nRF9160`_ and set :kconfig:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG` accordingly.
+
+.. reprovision_cert_note_end
 
 The required credentials for the location services are configurable using Kconfig options.
 There is no difference in the API calls when using the services.
