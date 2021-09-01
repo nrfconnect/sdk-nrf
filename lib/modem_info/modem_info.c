@@ -457,26 +457,136 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf)
 	return sizeof(uint16_t);
 }
 
-int modem_info_string_get(enum modem_info info, char *buf,
-				  const size_t buf_size)
+static int parse_ip_addresses(char *out_buf, size_t out_buf_size, char *in_buf)
+{
+	int err;
+	char *str_end = in_buf;
+	int current_ip_idx = 0;
+	int total_ip_count = 0;
+	size_t line_len = 0;
+	/* Tracks length of buf when parsing multiple IP addresses */
+	size_t out_buf_len = 0;
+	/* Return value indicating length of the string written to IP buffer */
+	size_t len = 0;
+	size_t line_start_idx = 0;
+	char ip_buf[INET_ADDRSTRLEN + sizeof(" ") + INET6_ADDRSTRLEN];
+	char *ip_v6_str;
+	bool first_address;
+
+	/* Check for potentially multiple IP addresses */
+	while ((str_end = strstr(str_end, AT_CMD_RSP_DELIM)) != NULL) {
+		str_end++;
+		total_ip_count++;
+	}
+
+	if (total_ip_count == 0) {
+		LOG_DBG("No IP addresses found");
+		return 0;
+	}
+
+	current_ip_idx = total_ip_count;
+	first_address = true;
+
+	LOG_DBG("Device has %d IP addresses", total_ip_count);
+
+parse_line:
+	/* Parse each +CGDCONT: line separately */
+	str_end = strstr(&in_buf[line_start_idx], AT_CMD_RSP_DELIM);
+	if (str_end == NULL) {
+		return -EFAULT;
+	}
+
+	/* Get the size and then null-terminate the line */
+	line_len = str_end - &in_buf[line_start_idx];
+	in_buf[++line_len + line_start_idx] = '\0';
+
+	err = modem_info_parse(modem_data[MODEM_INFO_IP_ADDRESS], &in_buf[line_start_idx]);
+	if (err) {
+		LOG_ERR("Unable to parse data: %d", err);
+		return err;
+	}
+
+	len = sizeof(ip_buf);
+	err = at_params_string_get(&m_param_list,
+				   modem_data[MODEM_INFO_IP_ADDRESS]->param_index,
+				   ip_buf,
+				   &len);
+	if (err != 0) {
+		return err;
+	} else if (len >= sizeof(ip_buf)) {
+		return -EMSGSIZE;
+	}
+
+	if (len == 0) {
+		/* No IP address found */
+		line_start_idx += line_len + 1;
+
+		if (--current_ip_idx) {
+			goto parse_line;
+		} else {
+			return strlen(out_buf);
+		}
+	}
+
+	ip_buf[len] = '\0';
+
+	/* For now get only IPv4 address if both v4 and v6 are given,
+	 * discard IPv6 which are separated by a space.
+	 */
+	ip_v6_str = strstr(ip_buf, " ");
+
+	if (ip_v6_str) {
+		/* Discard IPv6 info and adjust length */
+		*ip_v6_str = '\0';
+		len = strlen(ip_buf);
+
+		LOG_DBG("IPv6 address (%s) discarded", log_strdup(ip_v6_str + 1));
+	}
+
+	LOG_DBG("IP address found: %s", log_strdup(ip_buf));
+
+	out_buf_len = strlen(out_buf);
+
+	/* Write IP address to output buffer */
+	err = snprintk(out_buf + out_buf_len,
+		       out_buf_size - out_buf_len,
+		       "%s%s",
+		       first_address ? "" : IP_ADDR_SEPARATOR,
+		       ip_buf);
+	if ((err <= 0) || (err > (out_buf_size - out_buf_len))) {
+		return -EMSGSIZE;
+	}
+
+	first_address = false;
+
+	if (--current_ip_idx) {
+		line_start_idx  += line_len + 1;
+		goto parse_line;
+	}
+
+	return strlen(out_buf);
+}
+
+int modem_info_string_get(enum modem_info info, char *buf, const size_t buf_size)
 {
 	int err;
 	char recv_buf[CONFIG_MODEM_INFO_BUFFER_SIZE] = {0};
 	uint16_t param_value;
-	int ip_cnt = 0;
 	char *str_end = recv_buf;
-	/* index into the AT cmd response buffer */
-	size_t cmd_rsp_idx = 0;
-	/* length of each parsed IP address line */
-	size_t ip_str_len = 0;
 	/* tracks length of buf when parsing multiple IP addresses */
 	size_t out_buf_len = 0;
 	/* return value indicating length of the string written to buf */
 	size_t len = 0;
+	/* The accumulated length written to buf when a command has more than
+	 * one elements, such as multiple IP addresses.
+	 */
+	size_t accumulated_len = 0;
 
 	if ((buf == NULL) || (buf_size == 0)) {
 		return -EINVAL;
 	}
+
+	buf[0] = '\0';
 
 	err = at_cmd_write(modem_data[info]->cmd,
 			  recv_buf,
@@ -511,32 +621,15 @@ int modem_info_string_get(enum modem_info info, char *buf,
 		strcpy(buf, str_begin);
 		return len;
 	}
-	if (info == MODEM_INFO_IP_ADDRESS) {
-		/* check for multiple IP addresses */
-		while ((str_end = strstr(str_end, AT_CMD_RSP_DELIM))
-			   != NULL) {
-			++str_end;
-			++ip_cnt;
-		}
-		LOG_DBG("Device contains %d IP addresses", ip_cnt);
-	}
 
-parse:
-	if (info == MODEM_INFO_IP_ADDRESS) {
-		/* parse each IP address line separately */
-		str_end = strstr(&recv_buf[cmd_rsp_idx], AT_CMD_RSP_DELIM);
-		if (str_end == NULL) {
-			return -EFAULT;
-		}
-		/* get the size and then null-terminate the line */
-		ip_str_len = str_end - &recv_buf[cmd_rsp_idx];
-		recv_buf[++ip_str_len] = 0;
-	}
-	err = modem_info_parse(modem_data[info], &recv_buf[cmd_rsp_idx]);
-
+	err = modem_info_parse(modem_data[info], recv_buf);
 	if (err) {
 		LOG_ERR("Unable to parse data: %d", err);
 		return err;
+	}
+
+	if (info == MODEM_INFO_IP_ADDRESS) {
+		return parse_ip_addresses(buf, buf_size, recv_buf);
 	}
 
 	if (modem_data[info]->data_type == AT_PARAM_TYPE_NUM_INT) {
@@ -547,6 +640,7 @@ parse:
 			LOG_ERR("Unable to obtain short: %d", err);
 			return err;
 		}
+
 		len = snprintf(buf, buf_size, "%d", param_value);
 		if ((len <= 0) || (len > buf_size)) {
 			return -EMSGSIZE;
@@ -561,9 +655,11 @@ parse:
 			return err;
 		} else if (len >= buf_size) {
 			return -EMSGSIZE;
+
 		}
-		/* null-terminate the string */
-		buf[len] = 0;
+
+		accumulated_len += len;
+		buf[accumulated_len] = '\0';
 	}
 
 	if (info == MODEM_INFO_ICCID) {
@@ -574,38 +670,6 @@ parse:
 		   (buf[len - 1] == ICCID_PAD_CHAR)) {
 			buf[len - 1] = '\0';
 			--len;
-		}
-	}
-
-	if ((info == MODEM_INFO_IP_ADDRESS) && (ip_cnt > 0)) {
-		/* for now get only IPv4 address, discard IPv6
-		 * which are separated by a space
-		 */
-		char *ip_v6_str = strstr(&buf[out_buf_len], " ");
-
-		if (ip_v6_str) {
-			/* discard IPv6 info and adjust length */
-			*ip_v6_str = 0;
-			len = strlen(&buf[out_buf_len]);
-		}
-		out_buf_len += len;
-		/* if there are more addresses, add a separator */
-		if (ip_cnt > 1) {
-			err = snprintf(&buf[out_buf_len],
-					buf_size - out_buf_len,
-					IP_ADDR_SEPARATOR);
-			if ((err <= 0) || (err > (buf_size - out_buf_len))) {
-				return -EMSGSIZE;
-			}
-			out_buf_len += IP_ADDR_SEPARATOR_LEN;
-			/* advance (after null) to next IP string */
-			cmd_rsp_idx = ip_str_len + 1;
-		}
-
-		if (--ip_cnt) {
-			goto parse;
-		} else {
-			len = out_buf_len;
 		}
 	}
 
