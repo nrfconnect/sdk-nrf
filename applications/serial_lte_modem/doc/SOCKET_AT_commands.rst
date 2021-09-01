@@ -36,8 +36,9 @@ Syntax
 
 * The ``<type>`` parameter can accept one of the following values:
 
-  * ``1``: ``SOCK_STREAM`` for TCP
-  * ``2``: ``SOCK_DGRAM`` for UDP
+  * ``1`` - Set SOCK_STREAM for the stream socket type using the TCP protocol.
+  * ``2`` - Set SOCK_DGRAM for the datagram socket type using the UDP protocol.
+  * ``3`` - Set SOCK_RAW for the raw socket type using a generic IP protocol.
 
 * The ``<role>`` parameter can accept one of the following values:
 
@@ -58,11 +59,13 @@ Response syntax
 
 * The ``<type>`` value can be one of the following integers:
 
-  * ``1``: ``SOCK_STREAM`` for TCP
-  * ``2``: ``SOCK_DGRAM`` for UDP
+  * ``1`` - Set SOCK_STREAM for the stream socket type using the TCP protocol.
+  * ``2`` - Set SOCK_DGRAM for the datagram socket type using the UDP protocol.
+  * ``3`` - Set SOCK_RAW for the raw socket type using a generic IP protocol.
 
 * The ``<protocol>`` value can be one of the following integers:
 
+  * ``0`` - IPPROTO_IP
   * ``6`` - IPPROTO_TCP
   * ``17`` - IPPROTO_UDP
 
@@ -75,10 +78,13 @@ Examples
    #XSOCKET: 3,1,6
    OK
    AT#XSOCKET=1,2,0
-   #XSOCKET: 3,2,17
+   #XSOCKET: 1,2,17
    OK
    AT#XSOCKET=2,1,0
    #XSOCKET: 1,1,6
+   OK
+   AT#XSOCKET=1,3,0
+   #XSOCKET: 1,3,0
    OK
    AT#XSOCKET=0
    #XSOCKET: 0,"closed"
@@ -113,6 +119,7 @@ Response syntax
 
   * ``1`` - IP protocol family version 4.
   * ``2`` - IP protocol family version 6.
+  * ``3`` - Packet family.
 
 * The ``<role>`` value can be one of the following integers:
 
@@ -156,8 +163,9 @@ Response syntax
 
 * The ``<list of types>`` value can be one of the following integers:
 
-  * ``1``: ``SOCK_STREAM`` for TCP
-  * ``2``: ``SOCK_DGRAM`` for UDP
+  * ``1`` - Set SOCK_STREAM for the stream socket type using the TCP protocol.
+  * ``2`` - Set SOCK_DGRAM for the datagram socket type using the UDP protocol.
+  * ``3`` - Set SOCK_RAW for the raw socket type using a generic IP protocol.
 
 * The ``<list of roles>`` value can be one of the following integers:
 
@@ -170,7 +178,7 @@ Examples
 ::
 
    AT#XSOCKET=?
-   #XSOCKET: (0,1,2),(1,2),(0,1)
+   #XSOCKET: (0,1,2),(1,2,3),(0,1)
    OK
 
 Secure Socket #XSSOCKET
@@ -201,8 +209,8 @@ Syntax
 
 * The ``<type>`` parameter can accept one of the following values:
 
-  * ``1``: ``SOCK_STREAM`` for TLS
-  * ``2``: ``SOCK_DGRAM`` for DTLS
+  * ``1`` - Set SOCK_STREAM for the stream socket type using the TLS 1.2 protocol.
+  * ``2`` - Set SOCK_DGRAM for the datagram socket type using the DTLS 1.2 protocol.
 
 * The ``<role>`` parameter can accept one of the following values:
 
@@ -233,13 +241,13 @@ Response syntax
 
 * The ``<type>`` value can be one of the following integers:
 
-  * ``1``: ``SOCK_STREAM`` for TLS
-  * ``2``: ``SOCK_DGRAM`` for DTLS
+  * ``1`` - SOCK_STREAM for the stream socket type using the TLS 1.2 protocol.
+  * ``2`` - SOCK_DGRAM for the datagram socket type using the DTLS 1.2 protocol.
 
 * The ``<protocol>`` value can be one of the following integers:
 
-  * ``258`` - ``IPPROTO_TLS_1_2``
-  * ``273`` - ``IPPROTO_DTLS_1_2``
+  * ``258`` - IPPROTO_TLS_1_2
+  * ``273`` - IPPROTO_DTLS_1_2
 
 Examples
 ~~~~~~~~
@@ -331,8 +339,8 @@ Response syntax
 
 * The ``<list of types>>`` value can be one of the following integers.
 
-  * ``1``: ``SOCK_STREAM`` for TLS
-  * ``2``: ``SOCK_DGRAM`` for DTLS
+  * ``1`` - SOCK_STREAM for the stream socket type using the TLS 1.2 protocol.
+  * ``2`` - SOCK_DGRAM for the datagram socket type using the DTLS 1.2 protocol.
 
 * The ``<list of roles>`` value can be one of the following integers:
 
