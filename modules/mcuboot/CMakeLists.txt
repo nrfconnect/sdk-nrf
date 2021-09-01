@@ -219,7 +219,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         set(zb_add_ota_header_cmd "")
       endif(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
 
-    set(app_offset $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>)
+    set(app_offset $<TARGET_PROPERTY:partition_manager,app_TO_SECONDARY>)
 
     sign(
       SIGNED_BIN_FILE_IN ${app_to_sign_hex}

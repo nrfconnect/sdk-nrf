@@ -186,7 +186,8 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	default y if BOOTLOADER_MCUBOOT
 	help
 	  Place the secondary partition of MCUboot in the external flash instead
-	  of the internal flash.
+	  of the internal flash. This option should only be enabled by the user
+	  in the parent image.
 
 config PM_IMAGE_NOT_BUILT_FROM_SOURCE
 	bool
