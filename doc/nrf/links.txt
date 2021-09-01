@@ -641,8 +641,6 @@
 
 .. _`ZBOSS Open Initiative (ZOI)`: https://dsr-zoi.com/
 
-.. _`GEC 2: Test Vectors for SEC 1`: http://read.pudn.com/downloads168/doc/772358/TestVectorsforSEC%201-gec2.pdf
-
 .. _`Git`: https://git-scm.com/
 
 .. _`Go language package`: https://golang.org/doc/install
