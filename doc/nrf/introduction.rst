@@ -75,6 +75,46 @@ All of them have a role in the creation of an application, from configuring the 
 * Ninja (comparable to make) uses the build files to build the program, see the `Ninja documentation`_.
 * The `GCC compiler`_ creates the executables.
 
+Git
+===
+
+`Git`_ is a free and open source distributed version control system that allows managing the changes in the code or other collections of information (set of files) over time.
+
+Git organizes data (files or directories) in project repositories.
+The data is managed like a series of snapshots.
+Every time you commit, or save the state of your project, Git takes a snapshot of what the files look like at that exact moment and stores a reference to that snapshot.
+For unchanged files, Git provides just a link to the previous identical file it has already stored.
+
+Git offers a lot of flexibility in how users manage changes, and repositories are easily duplicated.
+In |NCS|, forking is the agreed-upon Git workflow.
+To contribute, the official public repository in GitHub is forked.
+
+When you say you are *forking* a repository, you are creating a copy of the repository under your GitHub ID.
+This means that you are creating an identical copy that might diverge from the original over time.
+This copy is your personal public repository that nobody else is allowed to push to, but changes can be pulled from it.
+
+The original repository is called the *upstream* repository, and the newly created copy the *downstream* repository.
+Any changes made to the original repository are reflected back to your forked repositories by using fetch and rebase commands.
+
+A ``git clone`` command is used to get a copy of your downstream repository onto your local machine.
+This serves as a private development environment.
+
+Local commits are pushed to your own downstream repository, and not the official one.
+To integrate the changes into the main upstream repository, a pull request is created explicitly.
+Before it is merged, the pull request also serves as a convenient discussion thread if there are issues with the contributed code.
+If your pull request is approved, the changes are merged with the existing original content.
+Until then, your changes are reflected only in the copy you forked.
+
+A fork can be hosted on any server, including a public Git hosting site like `GitHub`_.
+It is, however, important to differentiate between the generic concept of a fork and GitHub's concept of a `GitHub fork`_.
+When you create a GitHub fork, GitHub copies the original repository and tags the downstream repository (the fork) with a flag that allows users to send pull requests from the fork to its upstream repository.
+GitHub also supports creating forks without linking them to the upstream respository.
+See the `GitHub documentation <GitHub duplicate_>`_ for information about how to do this.
+
+Everything in Git is checksummed before it is stored and is then referred to by that checksum.
+The mechanism that Git uses for this checksumming is called a SHA-1 hash.
+This hash is a 40-character string, composed of hexadecimal characters (0–9 and a–f), and calculated based on the contents of a file or directory structure in Git.
+
 West
 ====
 
@@ -113,3 +153,4 @@ For more information about ``west init``, ``west update``, and other built-in co
 For more information about the west tool, see the :ref:`zephyr:west` user guide.
 
 See :ref:`getting_started` for information about how to install the |NCS| and about the first steps.
+See :ref:`dev-model` for more information about the |NCS| code base and how to manage it.

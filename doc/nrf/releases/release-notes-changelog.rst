@@ -345,7 +345,12 @@ In addition to documentation related to the changes listed above, the following 
 
   * Modified section names on this page.
     Now the section names better match the |NCS| code and documentation structure.
-  * :ref:`ncs_introduction` - Added a section describing how licenses work in |NCS|.
+  * :ref:`ncs_introduction`:
+
+    * Added a section describing how licenses work in |NCS|.
+    * Added a section describing the Git tool.
+    * Expanded the existing section about the West tool.
+
   * :ref:`glossary` - Added new terms related to :ref:`ug_matter` and :ref:`ug_zigbee`.
   * :ref:`library_template` - added a template for documenting libraries.
 
