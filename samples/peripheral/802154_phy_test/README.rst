@@ -552,17 +552,17 @@ See the following example:
 
       custom lend
 
-lsetantenna - Set CMD antenna number
-====================================
+lsetantenna - Set CMD antenna id
+================================
 
-It sets the antenna used by the CMD device.
+It sets the antenna used by the CMD device fr both TX and RX operations.
 
    .. parsed-literal::
       :class: highlight
 
       custom lsetantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``225``.
+The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
 
 See the following example:
 
@@ -571,10 +571,48 @@ See the following example:
 
       custom lsetantenna *1*
 
-lgetantenna - Get CMD antenna number
-====================================
+lsetrxantenna - Set CMD antenna id for RX
+=========================================
 
-It gets the antenna used by the CMD device.
+It sets the antenna used by the CMD device for RX.
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom lsetrxantenna *<antenna>*
+
+The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
+
+See the following example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom lsetrxantenna *1*
+
+lsettxantenna - Set CMD antenna id for TX
+=========================================
+
+It sets the antenna used by the CMD device for TX.
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom lsettxantenna *<antenna>*
+
+The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
+
+See the following example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom lsettxantenna *1*
+
+lgetrxantenna - Get CMD RX antenna id
+=====================================
+
+It gets the antenna used for RX by the CMD device.
 
    .. parsed-literal::
       :class: highlight
@@ -586,19 +624,53 @@ See the following example:
    .. parsed-literal::
       :class: highlight
 
+      custom lgetrxantenna
+
+lgettxantenna - Get CMD TX antenna id
+=====================================
+
+It gets the antenna used for TX by the CMD device.
+
+   .. parsed-literal::
+      :class: highlight
+
       custom lgetantenna
+
+See the following example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom lgettxantenna
+
+lgetbestrxantenna - Get last best CMD RX antenna id selected by Antenna Diversity algorithm
+===========================================================================================
+
+It gets the last best antenna selected for RX by Antenna Diversity algorithm.
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom lgetantenna
+
+See the following example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom lgetbestrxantenna
 
 rsetantenna - Set DUT antenna number
 ====================================
 
-It sets the antenna used by the DUT device.
+It sets the antenna used by the DUT device for both TX and RX operations.
 
    .. parsed-literal::
       :class: highlight
 
       custom rsetantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``225``.
+The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
 
 See the following example:
 
@@ -607,22 +679,94 @@ See the following example:
 
       custom rsetantenna *1*
 
-rgetantenna - Get DUT antenna number
-====================================
+rsettxantenna - Set DUT TX antenna number
+=========================================
 
-It gets the antenna used by the DUT device.
+It sets the antenna used by the DUT device for TX.
 
    .. parsed-literal::
       :class: highlight
 
-      custom rgetantenna
+      custom rsettxantenna *<antenna>*
+
+The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
 
 See the following example:
 
    .. parsed-literal::
       :class: highlight
 
-      custom rgetantenna
+      custom rsettxantenna *1*
+
+rsetrxantenna - Set DUT RX antenna number
+=========================================
+
+It sets the antenna used by the DUT device for RX.
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom rsetrxantenna *<antenna>*
+
+The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
+
+See the following example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom rsetrxantenna *1*
+
+rgetrxantenna - Get DUT RX antenna number
+=========================================
+
+It gets the antenna used by the DUT device for RX.
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom rgetrxantenna
+
+See the following example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom rgetrxantenna
+
+rgettxantenna - Get DUT TX antenna number
+=========================================
+
+It gets the antenna used by the DUT device for TX.
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom rgettxantenna
+
+See the following example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom rgettxantenna
+
+rgetbestrxantenna - Get last best DUT RX antenna id selected by Antenna Diversity algorithm
+===========================================================================================
+
+It gets the last best antenna selected for RX by Antenna Diversity algorithm.
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom rgetbestrxantenna
+
+See the following example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom rgetbestrxantenna
 
 lcarrier - Unmodulated waveform (carrier) transmission
 ======================================================
@@ -915,6 +1059,10 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
+.. note::
+   The sample provides support for Antenna Diversity feature on nRF52840. It can be enabled and configured using Kconfig configuration.
+
+
 Building and running
 ********************
 
@@ -994,3 +1142,6 @@ Performing radio tests without the serial interface
     * ``DUT NOT FOUND`` - if it could not exchange packets with the DUT device.
 
 Refer to the :ref:`802154_phy_test_ui` for the complete list of the available commands.
+
+.. note::
+   Currently the RSSI measurements are performed without additional temperature correction. 

@@ -156,13 +156,47 @@ int8_t ptt_rf_get_power(void);
  */
 enum ptt_ret ptt_rf_set_antenna(ptt_evt_id_t evt_id, uint8_t antenna);
 
-/** @brief Returns current antenna
+/** @brief Set TX antenna to radio driver
+ *
+ *  @param evt_id - event id locking setting antenna
+ *  @param antenna - is value in range [0-255]
+ *
+ *  @return enum ptt_ret - PTT_RET_SUCCESS or error
+ */
+enum ptt_ret ptt_rf_set_tx_antenna(ptt_evt_id_t evt_id, uint8_t antenna);
+
+/** @brief Set RX antenna to radio driver
+ *
+ *  @param evt_id - event id locking setting antenna
+ *  @param antenna - is value in range [0-255]
+ *
+ *  @return enum ptt_ret - PTT_RET_SUCCESS or error
+ */
+enum ptt_ret ptt_rf_set_rx_antenna(ptt_evt_id_t evt_id, uint8_t antenna);
+
+/** @brief Returns current rx antenna
  *
  *  @param none
  *
- *  @return uint8_t - current antenna
+ *  @return uint8_t - current rx antenna
  */
-uint8_t ptt_rf_get_antenna(void);
+uint8_t ptt_rf_get_rx_antenna(void);
+
+/** @brief Returns current tx antenna
+ *
+ *  @param none
+ *
+ *  @return uint8_t - current tx antenna
+ */
+uint8_t ptt_rf_get_tx_antenna(void);
+
+/** @brief Returns last best rx antenna
+ *
+ *  @param none
+ *
+ *  @return uint8_t - last best rx antenna
+ */
+uint8_t ptt_rf_get_last_rx_best_antenna(void);
 
 /** @brief Calls radio driver to verify if the channel is clear
  *

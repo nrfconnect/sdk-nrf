@@ -46,9 +46,17 @@
 #define UART_CMD_L_START_TEXT "custom lstart"
 #define UART_CMD_L_END_TEXT "custom lend"
 #define UART_CMD_L_SET_ANTENNA_TEXT "custom lsetantenna"
-#define UART_CMD_L_GET_ANTENNA_TEXT "custom lgetantenna"
+#define UART_CMD_L_SET_TX_ANTENNA_TEXT "custom lsettxantenna"
+#define UART_CMD_L_SET_RX_ANTENNA_TEXT "custom lsetrxantenna"
+#define UART_CMD_L_GET_RX_ANTENNA_TEXT "custom lgetrxantenna"
+#define UART_CMD_L_GET_TX_ANTENNA_TEXT "custom lgettxantenna"
+#define UART_CMD_L_GET_LAST_BEST_RX_ANTENNA_TEXT "custom lgetbestrxantenna"
 #define UART_CMD_R_SET_ANTENNA_TEXT "custom rsetantenna"
-#define UART_CMD_R_GET_ANTENNA_TEXT "custom rgetantenna"
+#define UART_CMD_R_SET_TX_ANTENNA_TEXT "custom rsettxantenna"
+#define UART_CMD_R_SET_RX_ANTENNA_TEXT "custom rsetrxantenna"
+#define UART_CMD_R_GET_RX_ANTENNA_TEXT "custom rgetrxantenna"
+#define UART_CMD_R_GET_TX_ANTENNA_TEXT "custom rgettxantenna"
+#define UART_CMD_R_GET_LAST_BEST_RX_ANTENNA_TEXT "custom rgetbestrxantenna"
 #define UART_CMD_L_TX_TEXT "custom ltx"
 #define UART_CMD_L_CLK_TEXT "custom lclk"
 #define UART_CMD_L_SET_GPIO_TEXT "custom lsetgpio"
@@ -95,9 +103,17 @@
 #define UART_CMD_L_START_PAYLOAD_L 0
 #define UART_CMD_L_END_PAYLOAD_L 0
 #define UART_CMD_L_SET_ANTENNA_PAYLOAD_L 1
-#define UART_CMD_L_GET_ANTENNA_PAYLOAD_L 0
+#define UART_CMD_L_SET_TX_ANTENNA_PAYLOAD_L 1
+#define UART_CMD_L_SET_RX_ANTENNA_PAYLOAD_L 1
+#define UART_CMD_L_GET_RX_ANTENNA_PAYLOAD_L 0
+#define UART_CMD_L_GET_TX_ANTENNA_PAYLOAD_L 0
+#define UART_CMD_L_GET_LAST_BEST_RX_ANTENNA_PAYLOAD_L 0
 #define UART_CMD_R_SET_ANTENNA_PAYLOAD_L 1
-#define UART_CMD_R_GET_ANTENNA_PAYLOAD_L 0
+#define UART_CMD_R_SET_TX_ANTENNA_PAYLOAD_L 1
+#define UART_CMD_R_SET_RX_ANTENNA_PAYLOAD_L 1
+#define UART_CMD_R_GET_RX_ANTENNA_PAYLOAD_L 0
+#define UART_CMD_R_GET_TX_ANTENNA_PAYLOAD_L 0
+#define UART_CMD_R_GET_LAST_BEST_RX_ANTENNA_PAYLOAD_L 0
 #define UART_CMD_L_TX_PAYLOAD_L 2
 #define UART_CMD_L_CLK_PAYLOAD_L 2
 #define UART_CMD_L_SET_GPIO_PAYLOAD_L 2
@@ -158,9 +174,17 @@ enum ptt_uart_cmd {
 	/**< CMD will stop the continuous receive mode, if active. If continuous receive mode */
 	/** is not active, the command is ignored. */
 	PTT_UART_CMD_L_SET_ANTENNA, /**< CMD will set antenna device is sending frames with. */
-	PTT_UART_CMD_L_GET_ANTENNA, /**< CMD will print out the antenna used by the device */
+	PTT_UART_CMD_L_SET_TX_ANTENNA, /**< CMD will set TX antenna. */
+	PTT_UART_CMD_L_SET_RX_ANTENNA, /**< CMD will set RX antenna. */
+	PTT_UART_CMD_L_GET_RX_ANTENNA, /**< CMD will print out the rx antenna used by the device */
+	PTT_UART_CMD_L_GET_TX_ANTENNA, /**< CMD will print out the tx antenna used by the device */
+	PTT_UART_CMD_L_GET_LAST_BEST_RX_ANTENNA,
 	PTT_UART_CMD_R_SET_ANTENNA, /**< CMD will set antenna DUT device is sending frames with. */
-	PTT_UART_CMD_R_GET_ANTENNA, /**< CMD will print out the antenna used by the DUT  device */
+	PTT_UART_CMD_R_SET_TX_ANTENNA, /**< CMD will set TX antenna for DUT. */
+	PTT_UART_CMD_R_SET_RX_ANTENNA, /**< CMD will set RX antenna for DUT. */
+	PTT_UART_CMD_R_GET_RX_ANTENNA, /**< CMD will print out the RX antenna used by the DUT. */
+	PTT_UART_CMD_R_GET_TX_ANTENNA, /**< CMD will print out the TX antenna used by the DUT. */
+	PTT_UART_CMD_R_GET_LAST_BEST_RX_ANTENNA,
 	PTT_UART_CMD_L_TX,
 	/**< CMD will transmit a number of raw 802.15.4 frames with */
 	/** payload previously set by “custom lsetpayload” */

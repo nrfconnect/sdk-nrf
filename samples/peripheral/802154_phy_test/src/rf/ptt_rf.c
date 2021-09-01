@@ -12,6 +12,7 @@
 #include "ctrl/ptt_trace.h"
 #include "rf/ptt_rf.h"
 #include "ptt.h"
+#include "nrf_802154.h"
 
 #include "ptt_rf_api.h"
 #include "ptt_rf_internal.h"
@@ -30,6 +31,9 @@ static void ptt_rf_stat_inc(int8_t rssi, uint8_t lqi);
 static void ptt_rf_set_default_channel(void);
 static void ptt_rf_set_default_power(void);
 static void ptt_rf_set_default_antenna(void);
+#if CONFIG_PTT_ANTENNA_DIVERSITY
+static void ptt_rf_set_ant_div_mode(void);
+#endif
 
 void ptt_rf_init(void)
 {
@@ -40,6 +44,10 @@ void ptt_rf_init(void)
 	ptt_rf_set_default_channel();
 	ptt_rf_set_default_power();
 	ptt_rf_set_default_antenna();
+
+#if CONFIG_PTT_ANTENNA_DIVERSITY
+	ptt_rf_set_ant_div_mode();
+#endif
 
 	/* we need raw PHY packets without any filtering */
 	ptt_rf_promiscuous_set(true);
@@ -101,6 +109,22 @@ static void ptt_rf_set_default_antenna(void)
 		ptt_rf_set_antenna(PTT_RF_EVT_UNLOCKED, PTT_RF_DEFAULT_ANTENNA);
 	}
 }
+
+#if CONFIG_PTT_ANTENNA_DIVERSITY
+static void ptt_rf_set_ant_div_mode(void)
+{
+#if CONFIG_PTT_ANT_MODE_AUTO
+	nrf_802154_antenna_diversity_rx_mode_set(NRF_802154_SL_ANT_DIV_MODE_AUTO);
+	nrf_802154_antenna_diversity_tx_mode_set(NRF_802154_SL_ANT_DIV_MODE_AUTO);
+#elif CONFIG_PTT_ANT_MODE_MANUAL
+	nrf_802154_antenna_diversity_rx_mode_set(NRF_802154_SL_ANT_DIV_MODE_AUTO);
+	nrf_802154_antenna_diversity_tx_mode_set(NRF_802154_SL_ANT_DIV_MODE_AUTO);
+
+	nrf_802154_antenna_diversity_rx_mode_set(NRF_802154_SL_ANT_DIV_MODE_MANUAL);
+	nrf_802154_antenna_diversity_tx_mode_set(NRF_802154_SL_ANT_DIV_MODE_MANUAL);
+#endif
+}
+#endif
 
 void ptt_rf_push_packet(const uint8_t *pkt, ptt_pkt_len_t len, int8_t rssi, uint8_t lqi)
 {
@@ -428,9 +452,51 @@ enum ptt_ret ptt_rf_set_antenna(ptt_evt_id_t evt_id, uint8_t antenna)
 	return ret;
 }
 
-uint8_t ptt_rf_get_antenna(void)
+enum ptt_ret ptt_rf_set_tx_antenna(ptt_evt_id_t evt_id, uint8_t antenna)
 {
-	ptt_rf_ctx.antenna = ptt_rf_get_antenna_ext();
+	enum ptt_ret ret = PTT_RET_SUCCESS;
+
+	if (ptt_rf_try_lock(evt_id) == PTT_RET_SUCCESS) {
+		ptt_rf_set_tx_antenna_ext(antenna);
+
+		ptt_rf_unlock();
+	} else {
+		ret = PTT_RET_BUSY;
+	}
+
+	return ret;
+}
+
+enum ptt_ret ptt_rf_set_rx_antenna(ptt_evt_id_t evt_id, uint8_t antenna)
+{
+	enum ptt_ret ret = PTT_RET_SUCCESS;
+
+	if (ptt_rf_try_lock(evt_id) == PTT_RET_SUCCESS) {
+		ptt_rf_set_rx_antenna_ext(antenna);
+
+		ptt_rf_unlock();
+	} else {
+		ret = PTT_RET_BUSY;
+	}
+
+	return ret;
+}
+
+uint8_t ptt_rf_get_rx_antenna(void)
+{
+	ptt_rf_ctx.antenna = ptt_rf_get_rx_antenna_ext();
+	return ptt_rf_ctx.antenna;
+}
+
+uint8_t ptt_rf_get_tx_antenna(void)
+{
+	ptt_rf_ctx.antenna = ptt_rf_get_tx_antenna_ext();
+	return ptt_rf_ctx.antenna;
+}
+
+uint8_t ptt_rf_get_last_rx_best_antenna(void)
+{
+	ptt_rf_ctx.antenna = ptt_rf_get_lat_rx_best_antenna_ext();
 	return ptt_rf_ctx.antenna;
 }
 

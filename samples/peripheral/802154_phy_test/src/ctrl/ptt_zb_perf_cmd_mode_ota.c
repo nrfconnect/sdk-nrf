@@ -48,7 +48,11 @@ static void cmd_get_software_sent(void);
 static enum ptt_ret cmd_stream(void);
 static enum ptt_ret cmd_start_rx_test(void);
 static enum ptt_ret cmd_set_antenna(void);
-static enum ptt_ret cmd_get_antenna(void);
+static enum ptt_ret cmd_set_tx_antenna(void);
+static enum ptt_ret cmd_set_rx_antenna(void);
+static enum ptt_ret cmd_get_rx_antenna(void);
+static enum ptt_ret cmd_get_tx_antenna(void);
+static enum ptt_ret cmd_get_last_best_rx_antenna(void);
 static void cmd_get_antenna_sent(void);
 
 /* timer handlers */
@@ -169,8 +173,24 @@ static enum ptt_ret cmd_ota_cmd_proc(void)
 		ret = cmd_set_antenna();
 		break;
 
-	case PTT_CMD_GET_ANTENNA:
-		ret = cmd_get_antenna();
+	case PTT_CMD_SET_TX_ANTENNA:
+		ret = cmd_set_tx_antenna();
+		break;
+
+	case PTT_CMD_SET_RX_ANTENNA:
+		ret = cmd_set_rx_antenna();
+		break;
+
+	case PTT_CMD_GET_RX_ANTENNA:
+		ret = cmd_get_rx_antenna();
+		break;
+
+	case PTT_CMD_GET_TX_ANTENNA:
+		ret = cmd_get_tx_antenna();
+		break;
+
+	case PTT_CMD_GET_LAST_BEST_RX_ANTENNA:
+		ret = cmd_get_last_best_rx_antenna();
 		break;
 
 	default:
@@ -472,12 +492,56 @@ static enum ptt_ret cmd_set_antenna(void)
 	return ret;
 }
 
-static enum ptt_ret cmd_get_antenna(void)
+static enum ptt_ret cmd_set_tx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	cmd_change_ota_cmd_state(CMD_OTA_STATE_SET_ANTENNA_SENDING);
+	enum ptt_ret ret = cmd_make_and_send_rf_packet(PTT_CMD_SET_TX_ANTENNA);
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret cmd_set_rx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	cmd_change_ota_cmd_state(CMD_OTA_STATE_SET_ANTENNA_SENDING);
+	enum ptt_ret ret = cmd_make_and_send_rf_packet(PTT_CMD_SET_RX_ANTENNA);
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret cmd_get_rx_antenna(void)
 {
 	PTT_TRACE_FUNC_ENTER();
 
 	cmd_change_ota_cmd_state(CMD_OTA_STATE_GET_ANTENNA_SENDING);
-	enum ptt_ret ret = cmd_make_and_send_rf_packet(PTT_CMD_GET_ANTENNA);
+	enum ptt_ret ret = cmd_make_and_send_rf_packet(PTT_CMD_GET_RX_ANTENNA);
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret cmd_get_tx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	cmd_change_ota_cmd_state(CMD_OTA_STATE_GET_ANTENNA_SENDING);
+	enum ptt_ret ret = cmd_make_and_send_rf_packet(PTT_CMD_GET_TX_ANTENNA);
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret cmd_get_last_best_rx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	cmd_change_ota_cmd_state(CMD_OTA_STATE_GET_ANTENNA_SENDING);
+	enum ptt_ret ret = cmd_make_and_send_rf_packet(PTT_CMD_GET_LAST_BEST_RX_ANTENNA);
 
 	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 	return ret;

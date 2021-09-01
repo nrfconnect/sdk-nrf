@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "nrf_802154.h"
 
 bool ptt_get_mode_mask_ext(uint32_t *mode_mask)
 {
@@ -73,11 +74,15 @@ bool ptt_get_ant_mode_ext(uint8_t *ant_mode)
 
 #if CONFIG_PTT_ANTENNA_DIVERSITY
 #if CONFIG_PTT_ANT_MODE_AUTO
-	/* TODO: Implement when antenna diversity is supported in NCS */
+	nrf_802154_antenna_diversity_rx_mode_set(NRF_802154_SL_ANT_DIV_MODE_AUTO);
+	nrf_802154_antenna_diversity_tx_mode_set(NRF_802154_SL_ANT_DIV_MODE_AUTO);
 #elif CONFIG_PTT_ANT_MODE_MANUAL
-	/* TODO: Implement when antenna diversity is supported in NCS */
+	nrf_802154_antenna_diversity_rx_mode_set(NRF_802154_SL_ANT_DIV_MODE_AUTO);
+	nrf_802154_antenna_diversity_tx_mode_set(NRF_802154_SL_ANT_DIV_MODE_AUTO);
+
+	nrf_802154_antenna_diversity_rx_mode_set(NRF_802154_SL_ANT_DIV_MODE_MANUAL);
+	nrf_802154_antenna_diversity_tx_mode_set(NRF_802154_SL_ANT_DIV_MODE_MANUAL);
 #else
-	/* TODO: Implement when antenna diversity is supported in NCS */
 #endif
 	return true;
 #else

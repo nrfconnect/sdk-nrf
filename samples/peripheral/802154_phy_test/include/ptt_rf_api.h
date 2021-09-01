@@ -121,7 +121,15 @@ extern void ptt_rf_set_extended_address_ext(const uint8_t *extended_address);
 extern void ptt_rf_set_short_address_ext(const uint8_t *short_address);
 /* external provided function to set antenna on current radio */
 extern void ptt_rf_set_antenna_ext(uint8_t antenna);
-/* external provided function to get current antenna from current radio */
-extern uint8_t ptt_rf_get_antenna_ext(void);
+/* external provided function to set TX antenna on current radio */
+extern void ptt_rf_set_tx_antenna_ext(uint8_t antenna);
+/* external provided function to set RX antenna on current radio */
+extern void ptt_rf_set_rx_antenna_ext(uint8_t antenna);
+/* external provided function to get current rx antenna from current radio */
+extern uint8_t ptt_rf_get_rx_antenna_ext(void);
+/* external provided function to get current tx antenna from current radio */
+extern uint8_t ptt_rf_get_tx_antenna_ext(void);
+/* external provided function to get last best rx antenna from current radio */
+extern uint8_t ptt_rf_get_lat_rx_best_antenna_ext(void);
 
 #endif /* PTT_RF_API_H__ */
