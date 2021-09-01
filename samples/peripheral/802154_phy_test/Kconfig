@@ -51,8 +51,8 @@ config PTT_HW_VERSION
 	range 0 255
 
 config PTT_ANTENNA_DIVERSITY
-	bool "Enable Antenna Diversity (Not Yet Supported)"
-	default n
+	depends on !SOC_SERIES_NRF53X
+	bool "Enable Antenna Diversity [EXPERIMENTAL]"
 
 if PTT_ANTENNA_DIVERSITY
 
@@ -72,8 +72,20 @@ endchoice
 
 config PTT_ANTENNA_NUMBER
 	int "Antenna Number"
-	range 0 2
+	range 0 1
 	default 0
+
+config PTT_ANT_PIN
+	int "Antenna Selection Pin"
+	default 20
+	help
+	  Choose which GPIO Pin is responsible for antenna selection
+
+config PTT_ANT_TOGGLE_TIME
+	int "Antenna Toggle Time"
+	default 40
+	help
+	  Time in microseconds between antenna switches in Auto Mode
 
 endif #PTT_ANTENNA_DIVERSITY
 

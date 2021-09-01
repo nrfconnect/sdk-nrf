@@ -38,7 +38,11 @@ static enum ptt_ret dut_start_rx_test(void);
 static enum ptt_ret dut_hw_version(void);
 static enum ptt_ret dut_sw_version(void);
 static enum ptt_ret dut_set_antenna(void);
-static enum ptt_ret dut_get_antenna(void);
+static enum ptt_ret dut_set_tx_antenna(void);
+static enum ptt_ret dut_set_rx_antenna(void);
+static enum ptt_ret dut_get_tx_antenna(void);
+static enum ptt_ret dut_get_rx_antenna(void);
+static enum ptt_ret dut_get_last_best_rx_antenna(void);
 
 /* new event handlers */
 static void dut_rf_rx_done(ptt_evt_id_t new_evt_id);
@@ -168,8 +172,28 @@ static void dut_idle_packet_proc(void)
 		dut_reset_cur_evt();
 		break;
 
-	case PTT_CMD_GET_ANTENNA:
-		ret = dut_get_antenna();
+	case PTT_CMD_SET_TX_ANTENNA:
+		ret = dut_set_tx_antenna();
+		dut_reset_cur_evt();
+		break;
+
+	case PTT_CMD_SET_RX_ANTENNA:
+		ret = dut_set_rx_antenna();
+		dut_reset_cur_evt();
+		break;
+
+	case PTT_CMD_GET_RX_ANTENNA:
+		ret = dut_get_rx_antenna();
+		break;
+
+	case PTT_CMD_GET_TX_ANTENNA:
+		ret = dut_get_tx_antenna();
+		dut_reset_cur_evt();
+		break;
+
+	case PTT_CMD_GET_LAST_BEST_RX_ANTENNA:
+		ret = dut_get_last_best_rx_antenna();
+		dut_reset_cur_evt();
 		break;
 
 	default:
@@ -358,7 +382,53 @@ static enum ptt_ret dut_set_antenna(void)
 	return ret;
 }
 
-static enum ptt_ret dut_get_antenna(void)
+static enum ptt_ret dut_set_rx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	enum ptt_ret ret = PTT_RET_SUCCESS;
+
+	struct ptt_evt_data_s *evt_data = ptt_event_get_data(cur_evt);
+
+	assert(evt_data != NULL);
+
+	if ((PTT_PREAMBLE_LEN + PTT_CMD_CODE_LEN + PTT_PAYLOAD_LEN_SET_ANTENNA) != evt_data->len) {
+		PTT_TRACE("%s: invalid length %d\n", __func__, evt_data->len);
+		ret = PTT_RET_INVALID_COMMAND;
+	} else {
+		uint8_t antenna = evt_data->arr[PTT_PAYLOAD_START];
+
+		ret = ptt_rf_set_rx_antenna(cur_evt, antenna);
+	}
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret dut_set_tx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	enum ptt_ret ret = PTT_RET_SUCCESS;
+
+	struct ptt_evt_data_s *evt_data = ptt_event_get_data(cur_evt);
+
+	assert(evt_data != NULL);
+
+	if ((PTT_PREAMBLE_LEN + PTT_CMD_CODE_LEN + PTT_PAYLOAD_LEN_SET_ANTENNA) != evt_data->len) {
+		PTT_TRACE("%s: invalid length %d\n", __func__, evt_data->len);
+		ret = PTT_RET_INVALID_COMMAND;
+	} else {
+		uint8_t antenna = evt_data->arr[PTT_PAYLOAD_START];
+
+		ret = ptt_rf_set_tx_antenna(cur_evt, antenna);
+	}
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret dut_get_rx_antenna(void)
 {
 	PTT_TRACE_FUNC_ENTER();
 
@@ -372,7 +442,54 @@ static enum ptt_ret dut_get_antenna(void)
 
 	evt_data->len =
 		ptt_proto_construct_header(p, PTT_CMD_GET_ANTENNA_RESPONSE, PTT_EVENT_DATA_SIZE);
-	p[evt_data->len] = ptt_rf_get_antenna();
+	p[evt_data->len] = ptt_rf_get_rx_antenna();
+	evt_data->len++;
+
+	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret dut_get_tx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	struct ptt_evt_data_s *evt_data = ptt_event_get_data(cur_evt);
+
+	assert(evt_data != NULL);
+
+	uint8_t *p = evt_data->arr;
+
+	dut_change_cur_state(DUT_STATE_ANTENNA_SENDING);
+
+	evt_data->len =
+		ptt_proto_construct_header(p, PTT_CMD_GET_ANTENNA_RESPONSE, PTT_EVENT_DATA_SIZE);
+	p[evt_data->len] = ptt_rf_get_tx_antenna();
+	evt_data->len++;
+
+	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret dut_get_last_best_rx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	struct ptt_evt_data_s *evt_data = ptt_event_get_data(cur_evt);
+
+	assert(evt_data != NULL);
+
+	uint8_t *p = evt_data->arr;
+
+	dut_change_cur_state(DUT_STATE_ANTENNA_SENDING);
+
+	evt_data->len =
+		ptt_proto_construct_header(p, PTT_CMD_GET_ANTENNA_RESPONSE, PTT_EVENT_DATA_SIZE);
+
+	p[evt_data->len] = ptt_rf_get_last_rx_best_antenna();
 	evt_data->len++;
 
 	enum ptt_ret ret = ptt_rf_send_packet(cur_evt, evt_data->arr, evt_data->len);

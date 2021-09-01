@@ -129,11 +129,29 @@ static void cmd_uart_l_get_lqi_process_rf_packet(ptt_evt_id_t new_rf_pkt_evt);
 /* "lsetantenna" command routine */
 static enum ptt_ret cmd_uart_l_set_antenna(void);
 
-/* "lgetantenna" command routine */
-static enum ptt_ret cmd_uart_l_get_antenna(void);
+/* "lsettxantenna" command routine */
+static enum ptt_ret cmd_uart_l_set_tx_antenna(void);
+
+/* "lsetrxantenna" command routine */
+static enum ptt_ret cmd_uart_l_set_rx_antenna(void);
+
+/* "lgetrxantenna" command routine */
+static enum ptt_ret cmd_uart_l_get_rx_antenna(void);
+
+/* "lgettxantenna" command routine */
+static enum ptt_ret cmd_uart_l_get_tx_antenna(void);
+
+/* "lgetbestrxantenna" command routine */
+static enum ptt_ret cmd_uart_l_get_last_best_rx_antenna(void);
 
 /* "rsetantenna" command routine */
 static enum ptt_ret cmd_uart_r_set_antenna(void);
+
+/* "rsettxantenna" command routine */
+static enum ptt_ret cmd_uart_r_set_tx_antenna(void);
+
+/* "rsetrxantenna" command routine */
+static enum ptt_ret cmd_uart_r_set_rx_antenna(void);
 
 /* "ltx" command routine */
 static enum ptt_ret cmd_uart_l_tx(void);
@@ -418,8 +436,28 @@ static void cmd_uart_idle_packet_proc(void)
 		cmd_uart_cmd_unlock();
 		break;
 
-	case PTT_UART_CMD_L_GET_ANTENNA:
-		ret = cmd_uart_l_get_antenna();
+	case PTT_UART_CMD_L_SET_TX_ANTENNA:
+		ret = cmd_uart_l_set_tx_antenna();
+		cmd_uart_cmd_unlock();
+		break;
+
+	case PTT_UART_CMD_L_SET_RX_ANTENNA:
+		ret = cmd_uart_l_set_rx_antenna();
+		cmd_uart_cmd_unlock();
+		break;
+
+	case PTT_UART_CMD_L_GET_RX_ANTENNA:
+		ret = cmd_uart_l_get_rx_antenna();
+		cmd_uart_cmd_unlock();
+		break;
+
+	case PTT_UART_CMD_L_GET_TX_ANTENNA:
+		ret = cmd_uart_l_get_tx_antenna();
+		cmd_uart_cmd_unlock();
+		break;
+
+	case PTT_UART_CMD_L_GET_LAST_BEST_RX_ANTENNA:
+		ret = cmd_uart_l_get_last_best_rx_antenna();
 		cmd_uart_cmd_unlock();
 		break;
 
@@ -427,8 +465,24 @@ static void cmd_uart_idle_packet_proc(void)
 		ret = cmd_uart_r_set_antenna();
 		break;
 
-	case PTT_UART_CMD_R_GET_ANTENNA:
-		ret = cmd_uart_call_ota_cmd(PTT_CMD_GET_ANTENNA, NULL);
+	case PTT_UART_CMD_R_SET_TX_ANTENNA:
+		ret = cmd_uart_r_set_tx_antenna();
+		break;
+
+	case PTT_UART_CMD_R_SET_RX_ANTENNA:
+		ret = cmd_uart_r_set_rx_antenna();
+		break;
+
+	case PTT_UART_CMD_R_GET_RX_ANTENNA:
+		ret = cmd_uart_call_ota_cmd(PTT_CMD_GET_RX_ANTENNA, NULL);
+		break;
+
+	case PTT_UART_CMD_R_GET_TX_ANTENNA:
+		ret = cmd_uart_call_ota_cmd(PTT_CMD_GET_TX_ANTENNA, NULL);
+		break;
+
+case PTT_UART_CMD_R_GET_LAST_BEST_RX_ANTENNA:
+		ret = cmd_uart_call_ota_cmd(PTT_CMD_GET_LAST_BEST_RX_ANTENNA, NULL);
 		break;
 
 	case PTT_UART_CMD_L_TX:
@@ -533,6 +587,8 @@ void cmt_uart_ota_cmd_timeout_notify(ptt_evt_id_t ota_cmd_evt)
 	case PTT_UART_CMD_R_STREAM:
 	case PTT_UART_CMD_R_START:
 	case PTT_UART_CMD_R_SET_ANTENNA:
+	case PTT_UART_CMD_R_SET_TX_ANTENNA:
+	case PTT_UART_CMD_R_SET_RX_ANTENNA:
 		cmd_uart_cmd_unlock();
 		break;
 
@@ -560,7 +616,12 @@ void cmt_uart_ota_cmd_timeout_notify(ptt_evt_id_t ota_cmd_evt)
 		cmd_uart_cmd_unlock();
 		break;
 
-	case PTT_UART_CMD_R_GET_ANTENNA:
+	case PTT_UART_CMD_R_GET_RX_ANTENNA:
+		cmd_uart_send_rsp_antenna_error(ota_cmd_evt);
+		cmd_uart_cmd_unlock();
+		break;
+
+	case PTT_UART_CMD_R_GET_TX_ANTENNA:
 		cmd_uart_send_rsp_antenna_error(ota_cmd_evt);
 		cmd_uart_cmd_unlock();
 		break;
@@ -600,6 +661,8 @@ void cmt_uart_ota_cmd_finish_notify(ptt_evt_id_t ota_cmd_evt)
 	case PTT_UART_CMD_R_STREAM:
 	case PTT_UART_CMD_R_START:
 	case PTT_UART_CMD_R_SET_ANTENNA:
+	case PTT_UART_CMD_R_SET_TX_ANTENNA:
+	case PTT_UART_CMD_R_SET_RX_ANTENNA:
 		cmd_uart_cmd_unlock();
 		break;
 
@@ -627,7 +690,17 @@ void cmt_uart_ota_cmd_finish_notify(ptt_evt_id_t ota_cmd_evt)
 		cmd_uart_cmd_unlock();
 		break;
 
-	case PTT_UART_CMD_R_GET_ANTENNA:
+	case PTT_UART_CMD_R_GET_RX_ANTENNA:
+		cmd_uart_send_rsp_antenna(ota_cmd_evt);
+		cmd_uart_cmd_unlock();
+		break;
+
+	case PTT_UART_CMD_R_GET_TX_ANTENNA:
+		cmd_uart_send_rsp_antenna(ota_cmd_evt);
+		cmd_uart_cmd_unlock();
+		break;
+
+	case PTT_UART_CMD_R_GET_LAST_BEST_RX_ANTENNA:
 		cmd_uart_send_rsp_antenna(ota_cmd_evt);
 		cmd_uart_cmd_unlock();
 		break;
@@ -1504,6 +1577,38 @@ static enum ptt_ret cmd_uart_l_set_antenna(void)
 	return ret;
 }
 
+static enum ptt_ret cmd_uart_l_set_tx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	struct ptt_evt_ctx_data_s *ctx_data = ptt_event_get_ctx_data(uart_cmd_evt);
+
+	assert(ctx_data != NULL);
+
+	uint8_t antenna = ctx_data->arr[0];
+
+	enum ptt_ret ret = ptt_rf_set_tx_antenna(uart_cmd_evt, antenna);
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret cmd_uart_l_set_rx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	struct ptt_evt_ctx_data_s *ctx_data = ptt_event_get_ctx_data(uart_cmd_evt);
+
+	assert(ctx_data != NULL);
+
+	uint8_t antenna = ctx_data->arr[0];
+
+	enum ptt_ret ret = ptt_rf_set_rx_antenna(uart_cmd_evt, antenna);
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
 static enum ptt_ret cmd_uart_l_set_dcdc(void)
 {
 	PTT_TRACE_FUNC_ENTER();
@@ -1769,7 +1874,7 @@ static void cmd_uart_l_tx_end(ptt_evt_id_t new_uart_cmd)
 	PTT_TRACE_FUNC_EXIT();
 }
 
-static enum ptt_ret cmd_uart_l_get_antenna(void)
+static enum ptt_ret cmd_uart_l_get_rx_antenna(void)
 {
 	PTT_TRACE_FUNC_ENTER();
 
@@ -1779,7 +1884,49 @@ static enum ptt_ret cmd_uart_l_get_antenna(void)
 
 	assert(ctx_data != NULL);
 
-	uint8_t antenna = ptt_rf_get_antenna();
+	uint8_t antenna = ptt_rf_get_rx_antenna();
+
+	ctx_data->arr[0] = antenna;
+	ctx_data->len = sizeof(antenna);
+
+	cmd_uart_send_rsp_antenna(uart_cmd_evt);
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret cmd_uart_l_get_tx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	enum ptt_ret ret = PTT_RET_SUCCESS;
+
+	struct ptt_evt_ctx_data_s *ctx_data = ptt_event_get_ctx_data(uart_cmd_evt);
+
+	assert(ctx_data != NULL);
+
+	uint8_t antenna = ptt_rf_get_tx_antenna();
+
+	ctx_data->arr[0] = antenna;
+	ctx_data->len = sizeof(antenna);
+
+	cmd_uart_send_rsp_antenna(uart_cmd_evt);
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret cmd_uart_l_get_last_best_rx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	enum ptt_ret ret = PTT_RET_SUCCESS;
+
+	struct ptt_evt_ctx_data_s *ctx_data = ptt_event_get_ctx_data(uart_cmd_evt);
+
+	assert(ctx_data != NULL);
+
+	uint8_t antenna = ptt_rf_get_last_rx_best_antenna();
 
 	ctx_data->arr[0] = antenna;
 	ctx_data->len = sizeof(antenna);
@@ -1992,6 +2139,28 @@ static enum ptt_ret cmd_uart_r_set_antenna(void)
 
 	enum ptt_ret ret =
 		cmd_uart_call_ota_cmd(PTT_CMD_SET_ANTENNA, ptt_event_get_ctx_data(uart_cmd_evt));
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret cmd_uart_r_set_tx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	enum ptt_ret ret =
+		cmd_uart_call_ota_cmd(PTT_CMD_SET_TX_ANTENNA, ptt_event_get_ctx_data(uart_cmd_evt));
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
+	return ret;
+}
+
+static enum ptt_ret cmd_uart_r_set_rx_antenna(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	enum ptt_ret ret =
+		cmd_uart_call_ota_cmd(PTT_CMD_SET_RX_ANTENNA, ptt_event_get_ctx_data(uart_cmd_evt));
 
 	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 	return ret;

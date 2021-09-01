@@ -56,9 +56,13 @@ enum ptt_cmd {
 	PTT_CMD_GET_HARDWARE_VERSION_RESPONSE = 0x12, /**< get hardware version response */
 	PTT_CMD_GET_SOFTWARE_VERSION = 0x13, /**< send software version request to DUT */
 	PTT_CMD_GET_SOFTWARE_VERSION_RESPONSE = 0x14, /**< get software version response */
-	PTT_CMD_GET_ANTENNA = 0x20, /**< send antenna request to DUT command */
-	PTT_CMD_GET_ANTENNA_RESPONSE = 0x21, /**< get antenna command response */
-	PTT_CMD_SET_ANTENNA = 0x22, /**< set DUT antenna command */
+	PTT_CMD_GET_RX_ANTENNA = 0x20, /**< send antenna request to DUT command */
+	PTT_CMD_GET_TX_ANTENNA = 0x21, /**< send antenna request to DUT command */
+	PTT_CMD_GET_LAST_BEST_RX_ANTENNA = 0x22, /**< send antenna request to DUT command */
+	PTT_CMD_GET_ANTENNA_RESPONSE = 0x23, /**< get antenna command response */
+	PTT_CMD_SET_ANTENNA = 0x24, /**< set DUT antenna command */
+	PTT_CMD_SET_TX_ANTENNA = 0x25, /**< set DUT antenna command */
+	PTT_CMD_SET_RX_ANTENNA = 0x26, /**< set DUT antenna command */
 	PTT_CMD_CHANGE_MODE = 0xF0, /**< change device mode command */
 };
 

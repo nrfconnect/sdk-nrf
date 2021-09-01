@@ -8,10 +8,18 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
-
 #include <kernel.h>
+#include <nrfx_gpiote.h>
+#include <nrfx.h>
+
+#if defined(DPPI_PRESENT)
+#include <nrfx_dppi.h>
+#else
+#include <nrfx_ppi.h>
+#endif
 
 #include "nrf_802154.h"
+#include "nrf_802154_sl_ant_div.h"
 
 #include "rf_proc.h"
 
@@ -96,8 +104,6 @@ static void rf_ed_detected_fn(struct k_work *work)
 }
 
 #if CONFIG_PTT_ANTENNA_DIVERSITY
-#warning "Antenna diversity enabled but not yet supported in NCS"
-/* TODO: Implement when antenna diversity is supported in NCS */
 static void configure_antenna_diversity(void);
 
 #endif /* CONFIG_PTT_ANTENNA_DIVERSITY */
@@ -117,7 +123,6 @@ void rf_init(void)
 	nrf_802154_init();
 
 #if CONFIG_PTT_ANTENNA_DIVERSITY
-	/* TODO: Implement when antenna diversity is supported in NCS */
 	configure_antenna_diversity();
 #endif
 }
@@ -133,7 +138,26 @@ void rf_uninit(void)
 #if CONFIG_PTT_ANTENNA_DIVERSITY
 static void configure_antenna_diversity(void)
 {
-	/* TODO: Implement when antenna diversity is supported in NCS */
+	nrf_ppi_channel_t ppi_channel;
+	uint8_t gpiote_channel;
+	NRF_TIMER_Type *ad_timer = NRF_TIMER3;
+
+	nrf_802154_sl_ant_div_cfg_t cfg = {
+		.ant_sel_pin = CONFIG_PTT_ANT_PIN,
+		.toggle_time = CONFIG_PTT_ANT_TOGGLE_TIME,
+		.p_timer = ad_timer
+	};
+
+	nrfx_ppi_channel_alloc(&ppi_channel);
+	cfg.ppi_ch = (uint8_t)ppi_channel;
+	nrfx_gpiote_channel_alloc(&gpiote_channel);
+	cfg.gpiote_ch = gpiote_channel;
+	nrf_802154_sl_ant_div_mode_t ant_div_auto = 0x02;
+
+	nrf_802154_antenna_diversity_config_set(&cfg);
+	nrf_802154_antenna_diversity_init();
+	nrf_802154_antenna_diversity_rx_mode_set(ant_div_auto);
+	nrf_802154_antenna_diversity_tx_mode_set(ant_div_auto);
 }
 
 #endif /* CONFIG_PTT_ANTENNA_DIVERSITY */
@@ -291,15 +315,53 @@ int8_t ptt_rf_get_power_ext(void)
 void ptt_rf_set_antenna_ext(uint8_t antenna)
 {
 #if CONFIG_PTT_ANTENNA_DIVERSITY
-	/* TODO: Implement when antenna diversity is supported in NCS */
+	nrf_802154_sl_ant_div_antenna_t ant = antenna;
+
+	nrf_802154_antenna_diversity_rx_antenna_set(ant);
+	nrf_802154_antenna_diversity_tx_antenna_set(ant);
 #endif
 }
 
-uint8_t ptt_rf_get_antenna_ext(void)
+void ptt_rf_set_tx_antenna_ext(uint8_t antenna)
 {
 #if CONFIG_PTT_ANTENNA_DIVERSITY
-	/* TODO: Implement when antenna diversity is supported in NCS */
+	nrf_802154_sl_ant_div_antenna_t ant = antenna;
+
+	nrf_802154_antenna_diversity_tx_antenna_set(ant);
+#endif
+}
+
+void ptt_rf_set_rx_antenna_ext(uint8_t antenna)
+{
+#if CONFIG_PTT_ANTENNA_DIVERSITY
+	nrf_802154_sl_ant_div_antenna_t ant = antenna;
+
+	nrf_802154_antenna_diversity_rx_antenna_set(ant);
+#endif
+}
+
+uint8_t ptt_rf_get_rx_antenna_ext(void)
+{
+#if CONFIG_PTT_ANTENNA_DIVERSITY
+	return nrf_802154_antenna_diversity_rx_antenna_get();
+#else
 	return 0;
+#endif
+}
+
+uint8_t ptt_rf_get_tx_antenna_ext(void)
+{
+#if CONFIG_PTT_ANTENNA_DIVERSITY
+	return nrf_802154_antenna_diversity_tx_antenna_get();
+#else
+	return 0;
+#endif
+}
+
+uint8_t ptt_rf_get_lat_rx_best_antenna_ext(void)
+{
+#if CONFIG_PTT_ANTENNA_DIVERSITY
+	return nrf_802154_antenna_diversity_last_rx_best_antenna_get();
 #else
 	return 0;
 #endif
@@ -377,6 +439,7 @@ bool ptt_rf_send_packet_ext(const uint8_t *pkt, ptt_pkt_len_t len, bool cca)
 		temp_tx_pkt[0] = len + RF_FCS_SIZE;
 		memcpy(&temp_tx_pkt[RF_PSDU_START], pkt, len);
 		const nrf_802154_transmit_metadata_t metadata = {
+			.frame_props = NRF_802154_TRANSMITTED_FRAME_PROPS_DEFAULT_INIT,
 			.cca = cca
 		};
 		ret = nrf_802154_transmit_raw(temp_tx_pkt, &metadata);
