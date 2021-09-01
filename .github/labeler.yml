@@ -82,6 +82,7 @@
   - "subsys/zigbee/**/*"
   - "tests/subsys/zigbee/**/*"
   - "subsys/mpsl/**/*"
+  - "subsys/ieee802154/**/*"
   - "drivers/mpsl/**/*"
   - "dts/bindings/radio_fem/**/*"
   - "samples/nrf5340/multiprotocol_rpmsg/**/*"
@@ -137,6 +138,7 @@
 
 "CI-rs-test":
   - "subsys/mpsl/**/*"
+  - "subsys/ieee802154/**/*"
   - "drivers/mpsl/**/*"
   - "dts/bindings/radio_fem/**/*"
   - "samples/nrf5340/multiprotocol_rpmsg/**/*"
@@ -146,6 +148,7 @@
 "CI-homekit-test":
   - any:
     - "subsys/mpsl/**/*"
+    - "subsys/ieee802154/**/*"
     - "drivers/mpsl/**/*"
     - "dts/bindings/radio_fem/**/*"
     - "modules/nrfxlib/nrf_802154/**/*"
@@ -163,6 +166,7 @@
 "CI-thread-test":
   - "samples/openthread/**/*"
   - "subsys/mpsl/**/*"
+  - "subsys/ieee802154/**/*"
   - "subsys/net/lib/coap_utils/**/*"
   - "subsys/net/openthread/**/*"
 
@@ -180,6 +184,7 @@
   - "drivers/hw_cc310/*"
   - "drivers/net/*"
   - "subsys/mpsl/**/*"
+  - "subsys/ieee802154/**/*"
   - "subsys/bootloader/**/*"
   - "subsys/partition_manager/**/*"
   - "subsys/nfc/**/*"
