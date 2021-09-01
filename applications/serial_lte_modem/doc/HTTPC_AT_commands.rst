@@ -118,15 +118,16 @@ Syntax
 
 ::
 
-   AT#XHTTPCREQ=<method>,<resource>,<header>[,<payload_length>]
+   AT#XHTTPCREQ=<method>,<resource>,<headers>[,<payload_length>]
 
 * The ``<method>`` is a string.
   It represents the request method string.
 * The ``<resource>`` is a string.
   It represents the target resource to apply the request.
-* The ``<header>`` is a string.
+* The ``<headers>`` is a string.
   It represents the header field of the request.
   Each header field should end with ``<CR><LF>``.
+  Any occurrence of "\\r\\n" (4 bytes) inside is replaced by ``<CR><LF>`` (2 bytes).
 * The ``<payload_length>`` is an integer.
   It represents the length of the payload.
   If ``payload_length`` is greater than ``0``, the SLM will enter data mode and expect the upcoming UART input data as payload.
@@ -177,6 +178,14 @@ The following example sends a GET request to retrieve data from the server witho
    #XHTTPCRSP:1,0
    }
    #XHTTPCRSP:0,1
+
+The following example sends a GET request with some headers that are delimited by "\\r\\n".
+
+::
+
+   AT#XHTTPCREQ="GET","/instruments/150771004/temperature-values/?page=1 HTTP/1.1","Host: demo.abc.com\r\nAccept: application/vnd.api+json\r\nAuthorization: Basic ZGVtbzpkZxxx\r\n"
+
+   OK
 
 Read command
 ------------
