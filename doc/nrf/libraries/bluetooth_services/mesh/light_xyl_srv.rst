@@ -17,13 +17,107 @@ Three states can be used to configure the lighting output of an element:
 * x - Determines the x coordinate on the CIE1931 color space chart of a color light emitted by an element.
 * y - Determines the y coordinate on the CIE1931 color space chart of a color light emitted by an element.
 
-The Light xyL Server adds two model instances in the composition data, in addition to the extended :ref:`bt_mesh_lightness_srv_readme` model.
 These model instances share the states of the Light xyL Server, but accept different messages.
 This allows for a fine-grained control of the access rights for the Light xyL states, as the model instances can be bound to different application keys.
 The following two model instances are added:
 
 * Light xyL Server - Provides write access to the Lightness, x and y states for the user, in addition to read access to all meta states
 * Light xyL Setup Server - Provides write access to Default xyL state and Range meta states, allowing configurator devices to set up a range for the x and y state, and a default xyL state
+
+The extended :ref:`bt_mesh_lightness_srv_readme` model should be defined and initialized separately, and the pointer to this model should be passed to the Light xyL Server initialization macro.
+
+Model composition
+*****************
+
+The extended Light Lightness Server shall be instantiated on the same element:
+
++------------------------+
+| Element N              |
++========================+
+| Light Lightness Server |
++------------------------+
+| Light xyL Server       |
++------------------------+
+
+The Light xyL Server structure does not contain a Light Lightness Server instance, so this must be instantiated separately.
+
+In the application code, this would look like this:
+
+.. code-block:: c
+
+   static struct bt_mesh_lightness_srv lightess_srv = BT_MESH_LIGHTNESS_SRV_INIT(&lightness_cb);
+
+   static struct bt_mesh_light_xyl_srv xyl_srv =
+ 	BT_MESH_LIGHT_XYL_SRV_INIT(&lightness_srv, &xyl_handlers);
+
+   static struct bt_mesh_elem elements[] = {
+    	BT_MESH_ELEM(
+    		1, BT_MESH_MODEL_LIST(
+    		   BT_MESH_MODEL_LIGHTNESS_SRV(&lightness_srv),
+    		   BT_MESH_MODEL_LIGHT_XYL_SRV(&xyl_srv)),
+    		BT_MESH_MODEL_NONE),
+   };
+
+
+.. _bt_mesh_light_xyl_hsl_srv:
+
+Usage with the Light HSL Server
+===============================
+
+Just like the Light xyL Server, the :ref:`bt_mesh_light_hsl_srv_readme` provides the ability to control colored lights.
+In some cases, it may be desirable to use the Light HSL and Light xyL Servers to provide two different interfaces for controlling the same light.
+To achieve this, the Light xyL and Light HSL Server models should be instantiated on the same element, and share the same Light Lightness Server.
+
+With the Light HSL Server's corresponding :ref:`bt_mesh_light_hue_srv_readme` and :ref:`bt_mesh_light_sat_srv_readme` models, the composition data should look like this:
+
+.. table::
+   :align: center
+
+   =======================  =================  =======================
+   Element N                Element N+1        Element N+2
+   =======================  =================  =======================
+   Light Lightness Server   Light Hue Server   Light Saturation Server
+   Light HSL Server
+   Light xyL Server
+   =======================  =================  =======================
+
+
+In the application code, this would look like this:
+
+.. code-block:: c
+
+   static struct bt_mesh_lightness_srv lightess_srv =
+      BT_MESH_LIGHTNESS_SRV_INIT(&lightness_cb);
+
+   static struct bt_mesh_light_hsl_srv hsl_srv =
+   	BT_MESH_LIGHT_HSL_SRV_INIT(&lightness_srv, &hue_cb, &sat_cb);
+
+   static struct bt_mesh_light_xyl_srv xyl_srv =
+ 	BT_MESH_LIGHT_XYL_SRV_INIT(&lightness_srv, &xyl_handlers);
+
+   static struct bt_mesh_elem elements[] = {
+   	BT_MESH_ELEM(
+   		1, BT_MESH_MODEL_LIST(
+            BT_MESH_MODEL_LIGHTNESS_SRV(&lightness_srv),
+            BT_MESH_MODEL_LIGHT_HSL_SRV(&hsl_srv),
+            BT_MESH_MODEL_LIGHT_XYL_SRV(&xyl_srv)),
+   		BT_MESH_MODEL_NONE),
+   	BT_MESH_ELEM(
+   		2, BT_MESH_MODEL_LIST(BT_MESH_MODEL_LIGHT_HUE_SRV(&hsl_srv.hue)),
+   		BT_MESH_MODEL_NONE),
+   	BT_MESH_ELEM(
+   		3, BT_MESH_MODEL_LIST(BT_MESH_MODEL_LIGHT_SAT_SRV(&hsl_srv.sat)),
+   		BT_MESH_MODEL_NONE),
+   };
+
+While there is just one shared instance of the Light Lightness Server controlling the Lightness in this configuration, the light's hue and saturation level may be controlled independently by the Light xyL and Light HSL Servers.
+The binding between the Light xyL Server's x and y states, and the Light HSL Server's Hue and Saturation states is application-specific.
+
+Even though there are no qualification tests verifying the binding between the color spectrum states of the Light xyL and Light HSL Servers, application developers are strongly encouraged to implement the general characteristics of bound states:
+
+* Any changes to one state should be immediately reflected in the other.
+* If publication is enabled for any of the models, a change to the bound state of one of the models should be published on both.
+* Any range limitations on one of the bound states should be respected when setting the value of the other bound state.
 
 States
 ******
@@ -96,7 +190,7 @@ The Light xyL Server extends the following model:
 
 * :ref:`bt_mesh_lightness_srv_readme`
 
-State of the extended Lightness Server model is partially controlled by the Light xyL Server, making it able to alter states like Lightness and the Default Lightness of the Lightness Server model.
+State of the extended Light Lightness Server model is partially controlled by the Light xyL Server, making it able to alter states like Lightness and Default Lightness of the Light Lightness Server model.
 
 Persistent storage
 ******************

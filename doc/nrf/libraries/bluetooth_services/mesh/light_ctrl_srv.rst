@@ -58,7 +58,7 @@ In the application, this composition data looks like this:
           BT_MESH_MODEL_NONE),
    };
 
-The Light LC Server will log an error during initialization if the controlled Lightness Server is on the same element.
+The Light LC Server will log an error during initialization if the controlled Light Lightness Server is on the same element.
 
 Relationship with other nodes
 =============================
@@ -68,8 +68,8 @@ When the Light LC Server model controls a Light Lightness Server, all nodes shou
 .. figure:: images/bt_mesh_light_ctrl_nodes.svg
    :alt: Light Lightness Control Server node organization
 
-The dimmer devices that want to override the light level of the Lightness Server can publish directly to the Lightness Server.
-This disengages the Light LC Server, and the Lightness Server operates independently until the Light LC Server is explicitly re-enabled.
+The dimmer devices that want to override the light level of the Light Lightness Server can publish directly to it.
+This disengages the Light LC Server, and the Light Lightness Server operates independently until the Light LC Server is explicitly re-enabled.
 
 .. _bt_mesh_light_ctrl_srv_composition_state_machine:
 
@@ -125,10 +125,10 @@ If the On event is triggered while in the On state, the timer is reset, and the 
 Resuming the state machine operation
 ------------------------------------
 
-Whenever something but the Light LC Server interacts with the controlled Lightness Server, the Light LC Server disables its state machine, and the Lightness Server starts running independently.
+Whenever something but the Light LC Server interacts with the controlled Light Lightness Server, the Light LC Server disables its state machine, and the Light Lightness Server starts running independently.
 To resume the state machine operation, the Light LC Server must be explicitly re-enabled.
 
-To avoid having a Lightness Server running independently forever, the Light LC Server implements a resume timer that lets the Light LC Server regain control after being disabled for a certain number of seconds.
+To avoid having a Light Lightness Server running independently forever, the Light LC Server implements a resume timer that lets the Light LC Server regain control after being disabled for a certain number of seconds.
 The resume timer can be configured with the :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY` option, and is disabled by default.
 
 .. note::
@@ -298,7 +298,7 @@ Illuminance regulator
 =====================
 
 The illuminance regulator complements the light level state machine by adding an ambient illuminance sensor feedback loop.
-This allows the Lightness Server to adjust its output level that is based on the room's ambient light, and as a result conserve energy and achieve more consistent light levels.
+This allows the Light Lightness Server to adjust its output level that is based on the room's ambient light, and as a result conserve energy and achieve more consistent light levels.
 
 .. figure:: images/bt_mesh_light_ctrl_reg.svg
    :alt: Light Lightness Control Server illuminance regulator
@@ -335,7 +335,7 @@ This sensor data must come from an external :ref:`bt_mesh_sensor_srv_readme` mod
 The Sensor Server should publish its sensor readings to an address the Light LC Server is subscribed to, using a common application key.
 
 The Light LC Server will process all incoming sensor messages and use them in the next regulator step.
-The regulator depends on frequent readings from the sensor server to provide a stable output for the Lightness Server.
+The regulator depends on frequent readings from the sensor server to provide a stable output for the Light Lightness Server.
 If the sensor reports are too slow, the regulator might oscillate, as it attempts to compensate for outdated feedback.
 
 .. tip::
@@ -400,7 +400,7 @@ Not to be confused with the :ref:`state machine states <bt_mesh_light_ctrl_srv_c
 
 Mode: ``bool``
     Enables or disables the Light LC Server.
-    When disabled, the controlled Lightness Server operates independently.
+    When disabled, the controlled Light Lightness Server operates independently.
 
 Occupancy mode: ``bool``
     The occupancy mode controls whether sensor activity can turn the lights on.
@@ -435,15 +435,15 @@ Changes to the configuration properties are stored and restored on power-up, so 
 Power-up behavior
 =================
 
-When powering up, the Light LC Server behavior depends on the controlled Lightness Server's extended :ref:`bt_mesh_ponoff_srv_readme`'s state:
+When powering up, the Light LC Server behavior depends on the controlled Light Lightness Server's extended :ref:`bt_mesh_ponoff_srv_readme`'s state:
 
-* On Power Up is :c:enumerator:`BT_MESH_ON_POWER_UP_OFF` - The Light LC Server is disabled, and the Lightness Server remains off.
-* On Power Up is :c:enumerator:`BT_MESH_ON_POWER_UP_ON` - The Light LC Server is disabled, and the Lightness Server light level is set to its default value.
+* On Power Up is :c:enumerator:`BT_MESH_ON_POWER_UP_OFF` - The Light LC Server is disabled, and the Light Lightness Server remains off.
+* On Power Up is :c:enumerator:`BT_MESH_ON_POWER_UP_ON` - The Light LC Server is disabled, and the Light Lightness Server's Light level is set to its default value.
 * On Power Up is :c:enumerator:`BT_MESH_ON_POWER_UP_RESTORE` - The Light LC Server is enabled and takes control of the Lightness Server.
   If the last known value of the Light OnOff state was On, the Light LC Server triggers a transition to the On state.
 
 .. warning::
-    The Light LC Server is only re-enabled on startup if the Lightness Server's extended Generic Power OnOff Server is in the restore mode.
+    The Light LC Server is only re-enabled on startup if the Light Lightness Server's extended Generic Power OnOff Server is in the restore mode.
 
 API documentation
 *****************
