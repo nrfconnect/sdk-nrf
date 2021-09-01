@@ -6,6 +6,7 @@
 
 config BT_RPC
 	bool "Bluetooth over RPC"
+	default y if BT_RPC_STACK
 	select NRF_RPC
 	select NRF_RPC_CBOR
 	depends on BT
@@ -26,13 +27,14 @@ if BT_RPC
 choice BT_RPC_ROLE_CHOICE
 	prompt "Bluetooth over RPC role selection"
 	default BT_RPC_HOST if SOC_NRF5340_CPUNET
-	default BT_RPC_CLIENT
+	default BT_RPC_CLIENT if BT_RPC_STACK
 	help
 	  Select the device role for Bluetooth over RPC. The default role is
 	  a client role.
 
 config BT_RPC_CLIENT
 	bool "Bluetooth over RPC Client"
+	depends on BT_RPC_STACK
 	help
 	  Bluetooth Low Energy API will use nRF RPC library to access host on
 	  the remote core.
@@ -88,17 +90,8 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 if BT_RPC_CLIENT
 
-# Overrides the default Bluetooth HCI driver
-choice BT_HCI_BUS_TYPE
-	default BT_NO_DRIVER
-endchoice
-
 config HEAP_MEM_POOL_SIZE
 	default 4096
-
-# Overrides the Bluetooth Controller to disable it
-config BT_CTLR
-	default n
 
 endif # BT_RPC_CLIENT
 
@@ -113,3 +106,175 @@ config BT_RPC_GATT_BUFFER_SIZE
 
 endif # BT_RPC_HOST
 endif # BT_RPC
+
+choice BT_STACK_SELECTION
+    prompt "Bluetooth Stack Selection"
+config BT_RPC_STACK
+    bool "Bluetooth over RPC Client"
+    help
+      Bluetooth serialized stack
+endchoice
+
+if BT_RPC_STACK
+
+config BT_CENTRAL
+	bool "Central Role support"
+	select BT_OBSERVER
+	select BT_CONN
+
+config BT_PERIPHERAL
+	bool "Peripheral Role support"
+	select BT_BROADCASTER
+	select BT_CONN
+
+config BT_WHITELIST
+	bool "Enable whitelist support"
+
+config BT_SCAN_WITH_IDENTITY
+	bool "Perform active scanning using local identity address"
+	depends on !BT_PRIVACY && (BT_CENTRAL || BT_OBSERVER)
+
+config BT_REMOTE_VERSION
+	bool "Enable fetching of remote version"
+
+config BT_CONN
+	bool
+
+if BT_CONN
+
+config BT_SMP
+	bool "Security Manager Protocol support"
+	select BT_ECC
+
+if BT_SMP
+
+config BT_PRIVACY
+	bool "Privacy Feature"
+
+config BT_FIXED_PASSKEY
+	bool "Use a fixed passkey for pairing"
+
+config BT_SMP_APP_PAIRING_ACCEPT
+	bool "Accept or reject pairing initiative"
+
+config BT_SMP_SC_PAIR_ONLY
+	bool "Disable legacy pairing"
+
+endif # BT_SMP
+
+config BT_REMOTE_INFO
+	bool "Enable application access to remote information"
+
+config BT_MAX_PAIRED
+	int "Maximum number of paired devices"
+	default 0 if !BT_SMP
+	default 1
+
+config BT_MAX_CONN
+	int "Maximum number of simultaneous connections"
+	default 1
+
+config BT_USER_PHY_UPDATE
+	bool "User control of PHY Update Procedure"
+	depends on BT_PHY_UPDATE
+
+config BT_USER_DATA_LEN_UPDATE
+	bool "User control of Data Length Update Procedure"
+	depends on BT_DATA_LEN_UPDATE
+
+endif # BT_CONN
+
+config BT_OBSERVER
+	bool "Observer Role support"
+
+menu "Broadcaster"
+	visible if !BT_PERIPHERAL
+
+config BT_BROADCASTER
+	bool "Broadcaster Role support"
+	default y if !BT_OBSERVER
+	help
+	  Select this for LE Broadcaster role support.
+
+endmenu
+
+config BT_EXT_ADV
+	bool "Extended Advertising and Scanning support"
+
+if BT_EXT_ADV
+
+config BT_EXT_ADV_MAX_ADV_SET
+	int "Maximum number of simultaneous advertising sets"
+	default 1
+
+config BT_PER_ADV
+	bool "Periodic Advertising and Scanning support [EXPERIMENTAL]"
+
+config BT_PER_ADV_SYNC
+	bool "Periodic advertising sync support [EXPERIMENTAL]"
+
+if BT_PER_ADV_SYNC
+
+config BT_PER_ADV_SYNC_MAX
+	int "Maximum number of simultaneous periodic advertising syncs"
+	default 1
+
+endif # BT_PER_ADV_SYNC_MAX
+endif # BT_EXT_ADV_MAX_ADV_SET
+
+config BT_ECC
+	bool "Enable ECDH key generation support"
+	default y if BT_SMP && !BT_SMP_OOB_LEGACY_PAIR_ONLY
+
+config BT_DEVICE_NAME_DYNAMIC
+	bool "Allow to set Bluetooth device name on runtime"
+
+config BT_SETTINGS
+	bool "Store Bluetooth state and configuration persistently"
+	depends on SETTINGS
+	select MPU_ALLOW_FLASH_WRITE if ARM_MPU
+
+
+if BT_SETTINGS
+
+config BT_SETTINGS_CCC_LAZY_LOADING
+	bool "Load CCC values from settings when peer connects"
+	depends on BT_CONN
+	default y
+
+endif # BT_SETTINGS
+
+config BT_ID_MAX
+	int "Maximum number of local identities"
+	default 1
+
+
+config BT_DEVICE_NAME_MAX
+	int "Maximum size in bytes for device name"
+	depends on BT_DEVICE_NAME_DYNAMIC
+	default 28
+	range 2 248
+
+config BT_DEVICE_NAME
+	string "Bluetooth device name"
+	default "Zephyr"
+
+config BT_DEVICE_APPEARANCE
+	int "Bluetooth device appearance"
+	range 0 65535
+	default 0
+
+config BT_GATT_SERVICE_CHANGED
+	bool "GATT Service Changed support"
+	default y
+
+config BT_GATT_DYNAMIC_DB
+	bool "GATT dynamic database support"
+	depends on BT_GATT_SERVICE_CHANGED
+
+# We should be able to use services on a client but we cannot use
+# source to include a Kconfig due to choice values redefinition
+
+# source "$(ZEPHYR_BASE)/subsys/bluetooth/services/Kconfig"
+
+endif # BT_RPC_STACK

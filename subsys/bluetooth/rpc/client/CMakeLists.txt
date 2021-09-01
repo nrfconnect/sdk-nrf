@@ -18,3 +18,7 @@ zephyr_library_sources_ifdef(
   bt_rpc_conn_client.c
   bt_rpc_gatt_svc_client.c
 )
+
+zephyr_library_sources(
+  ${ZEPHYR_BASE}/subsys/bluetooth/host/uuid.c
+)
