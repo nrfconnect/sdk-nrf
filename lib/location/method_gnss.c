@@ -13,6 +13,8 @@
 #include <modem/at_cmd.h>
 #include <nrf_modem_gnss.h>
 #include <nrf_errno.h>
+#include <net/nrf_cloud_rest.h>
+#include <net/nrf_cloud_agps.h>
 
 #include "loc_core.h"
 
@@ -22,6 +24,7 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 #define MIN_SLEEP_DURATION_FOR_STARTING_GNSS 10240
 #define AT_MDM_SLEEP_NOTIF_START "AT%%XMODEMSLEEP=1,%d,%d"
 #define AT_MDM_SLEEP_NOTIF_STOP "AT%XMODEMSLEEP=0" /* not used at the moment */
+#define CONFIG_AGPS_REQUEST_RECV_BUF_SIZE 4096
 
 extern location_event_handler_t event_handler;
 extern struct loc_event_data current_event_data;
@@ -38,6 +41,10 @@ struct k_work method_gnss_timeout_work;
 static int fix_attemps_remaining;
 static bool first_fix_obtained;
 static bool running;
+
+
+static char recv_buf[CONFIG_AGPS_REQUEST_RECV_BUF_SIZE];
+static char recv_buf2[CONFIG_AGPS_REQUEST_RECV_BUF_SIZE];
 
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 
@@ -60,6 +67,30 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
+int method_gnss_agps_request()
+{
+	struct nrf_cloud_rest_context rest_ctx = {
+		.connect_socket = -1,
+		.keep_alive = false,
+		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
+		.auth = CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD_JWT_STRING,
+		.rx_buf = recv_buf,
+		.rx_buf_len = sizeof(recv_buf),
+		.fragment_size = 0
+	};
+
+	struct nrf_cloud_rest_agps_request request =
+		{ NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE, NULL, NULL};
+
+	struct nrf_cloud_rest_agps_result result = {recv_buf2, sizeof(recv_buf2), 0};
+
+	nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
+
+	nrf_cloud_agps_process(recv_buf2, sizeof(recv_buf2), NULL);
+
+	return 0;
+}
+
 void method_gnss_event_handler(int event)
 {
 	switch (event) {
@@ -77,6 +108,10 @@ void method_gnss_event_handler(int event)
 		LOG_DBG("GNSS: Timeout");
 		k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_timeout_work);
 		break;
+	/*case GPS_EVT_AGPS_DATA_NEEDED:
+		LOG_DBG("GNSS: Request A-GPS data");
+		method_gnss_agps_request();
+		break;*/
 	}
 }
 
@@ -261,6 +296,8 @@ int method_gnss_location_get(const struct loc_method_config *config)
 		return -EBUSY;
 	}
 
+	method_gnss_agps_request();
+
 	k_work_init(&method_gnss_start_work.work_item, method_gnss_positioning_work_fn);
 	method_gnss_start_work.gnss_config = gnss_config;
 	k_work_submit_to_queue(loc_core_work_queue_get(), &method_gnss_start_work.work_item);
@@ -286,6 +323,11 @@ int method_gnss_init(void)
 		LOG_ERR("Failed to set GNSS event handler, error %d", err);
 		return -err;
 	}
+
+	/* Start and stop GNSS just to see if A-GPS data is needed
+	 * (triggers event GPS_EVT_AGPS_DATA_NEEDED) */
+	/* nrf_modem_gnss_start();
+	nrf_modem_gnss_stop(); */
 
 	/* Subscribe to sleep notification to monitor when modem enters power saving mode */
 	method_gnss_modem_sleep_notif_subscribe(MIN_SLEEP_DURATION_FOR_STARTING_GNSS);
