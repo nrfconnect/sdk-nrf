@@ -99,6 +99,10 @@ nRF9160
     * The ``nrf9160dk_nrf9160ns`` and the ``nrf5340dk_nrf5340_cpuappns`` boards have been renamed respectively to ``nrf9160dk_nrf9160_ns`` and ``nrf5340dk_nrf5340_cpuapp_ns``, in a change inherited from upstream Zephyr.
     * The ``thingy91_nrf9160ns`` board has been renamed to ``thingy91_nrf9160_ns`` for consistency with the changes inherited from upstream Zephyr.
 
+* Deprecated:
+
+  * :ref:`asset_tracker` has been deprecated in favor of :ref`asset_tracker_v2`.
+
 nRF5
 ====
 

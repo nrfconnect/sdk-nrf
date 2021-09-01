@@ -8,8 +8,7 @@ nRF9160: Asset Tracker
    :depth: 2
 
 .. note::
-   The Asset Tracker application is succeeded by the :ref:`asset_tracker_v2` application.
-   It will be phased out in future releases.
+   The Asset Tracker application is deprecated and succeeded by the :ref:`asset_tracker_v2` application.
 
 The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160-based kit to the `nRF Connect for Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the device.
 
