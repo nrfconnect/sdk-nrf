@@ -127,7 +127,7 @@ P-GPS data can be requested from the cloud using one of the following methods:
 
    * N/A
 
-The indirect methods are used in the :ref:`agps_sample` sample and in the :ref:`asset_tracker` application.
+The indirect methods are used in the :ref:`agps_sample` sample and in the :ref:`asset_tracker_v2` application.
 They are simpler to use than the direct methods.
 
 When nRF Cloud responds with the requested P-GPS data, the application's :c:func:`cloud_evt_handler_t` function must call the :c:func:`nrf_cloud_pgps_process` function when it receives the :c:enum:`CLOUD_EVT_DATA_RECEIVED` event.
@@ -141,7 +141,7 @@ A P-GPS prediction for the current date and time can be retrieved using one of t
 * Directly, by calling the function :c:func:`nrf_cloud_pgps_find_prediction`
 * Indirectly, by calling the function :c:func:`nrf_cloud_pgps_notify_prediction`
 
-The indirect method is used in the :ref:`agps_sample` sample and in the :ref:`asset_tracker` application.
+The indirect method is used in the :ref:`agps_sample` sample and in the :ref:`asset_tracker_v2` application.
 
 The application can inject the data contained in the prediction to the GPS unit in the modem by calling the :c:func:`nrf_cloud_pgps_inject` function.
 This must be done when the GPS driver callback indicates that assistance is needed.
