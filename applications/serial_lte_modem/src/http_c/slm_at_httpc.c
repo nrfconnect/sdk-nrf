@@ -306,40 +306,29 @@ static int do_http_connect(void)
 	}
 
 	/* Connect to HTTP server */
-	struct addrinfo *res;
-	struct addrinfo hints = {
-		.ai_family = httpc.family,
-		.ai_socktype = SOCK_STREAM
+	struct sockaddr sa = {
+		.sa_family = AF_UNSPEC
 	};
 
-	ret = getaddrinfo(httpc.host, NULL, &hints, &res);
+	ret = util_resolve_host(0, httpc.host, httpc.port, httpc.family, &sa);
 	if (ret) {
-		LOG_ERR("getaddrinfo() failed: %d", ret);
+		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(ret)));
 		goto exit_cli;
 	}
-
-	if (httpc.family == AF_INET) {
-		struct sockaddr_in *host = (struct sockaddr_in *)res->ai_addr;
-
-		host->sin_port = htons(httpc.port);
-		ret = connect(httpc.fd, (struct sockaddr *)host, sizeof(struct sockaddr_in));
+	if (sa.sa_family == AF_INET) {
+		ret = connect(httpc.fd, &sa, sizeof(struct sockaddr_in));
 	} else {
-		struct sockaddr_in6 *host = (struct sockaddr_in6 *)res->ai_addr;
-
-		host->sin6_port = htons(httpc.port);
-		ret = connect(httpc.fd, (struct sockaddr *)host, sizeof(struct sockaddr_in6));
+		ret = connect(httpc.fd, &sa, sizeof(struct sockaddr_in6));
 	}
+
 	if (ret) {
 		LOG_ERR("connect() failed: %d", -errno);
 		ret = -errno;
-		freeaddrinfo(res);
 		goto exit_cli;
 	}
 
 	sprintf(rsp_buf, "\r\n#XHTTPCCON: 1\r\n");
 	rsp_send(rsp_buf, strlen(rsp_buf));
-
-	freeaddrinfo(res);
 	return 0;
 
 exit_cli:

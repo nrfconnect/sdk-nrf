@@ -7,10 +7,8 @@
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
-#include <net/socket.h>
-#include <modem/at_cmd_parser.h>
-#include "slm_at_host.h"
 #include "slm_util.h"
+#include "slm_at_host.h"
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -190,6 +188,9 @@ void util_get_ip_addr(int cid, char *addr4, char *addr6)
 	}
 }
 
+/**
+ * @brief Convert string to integer
+ */
 int util_str_to_int(const char *str_buf, int base, int *output)
 {
 	int temp;
@@ -204,6 +205,42 @@ int util_str_to_int(const char *str_buf, int base, int *output)
 	}
 
 	*output = temp;
+	return 0;
+}
+
+/**
+ * @brief Resolve remote host by hostname or IP address
+ */
+#define PORT_MAX_SIZE    5 /* 0xFFFF = 65535 */
+#define PDN_ID_MAX_SIZE  2 /* 0..10 */
+
+int util_resolve_host(int cid, const char *host, uint16_t port, int family, struct sockaddr *sa)
+{
+	int err;
+	char service[PORT_MAX_SIZE + PDN_ID_MAX_SIZE + 2];
+	struct addrinfo *ai = NULL;
+	struct addrinfo hints = {
+		.ai_flags  = AI_NUMERICSERV | AI_PDNSERV,
+		.ai_family = family
+	};
+
+	if (sa == NULL) {
+		return DNS_EAI_AGAIN;
+	}
+
+	/* "service" shall be formatted as follows: "port:pdn_id" */
+	snprintf(service, sizeof(service), "%hu:%d", port, cid);
+	err = getaddrinfo(host, service, &hints, &ai);
+	if (err) {
+		return err;
+	}
+
+	*sa = *(ai->ai_addr);
+	freeaddrinfo(ai);
+
+	if (sa->sa_family != AF_INET && sa->sa_family != AF_INET6) {
+		return DNS_EAI_ADDRFAMILY;
+	}
 
 	return 0;
 }
