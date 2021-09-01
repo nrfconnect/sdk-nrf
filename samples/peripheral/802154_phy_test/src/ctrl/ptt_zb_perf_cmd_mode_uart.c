@@ -107,6 +107,9 @@ static enum ptt_ret cmd_uart_l_ping_timeout(void);
 /* "lgetcca" command routine*/
 static enum ptt_ret cmd_uart_l_get_cca(void);
 
+/* "lsetcca" command routine*/
+static enum ptt_ret cmd_uart_l_set_cca(void);
+
 /* "lgeted" command routine*/
 static enum ptt_ret cmd_uart_l_get_ed(void);
 
@@ -393,6 +396,10 @@ static void cmd_uart_idle_packet_proc(void)
 
 	case PTT_UART_CMD_L_GET_CCA:
 		ret = cmd_uart_l_get_cca();
+		break;
+
+	case PTT_UART_CMD_L_SET_CCA:
+		ret = cmd_uart_l_set_cca();
 		break;
 
 	case PTT_UART_CMD_L_GET_ED:
@@ -1199,6 +1206,27 @@ static enum ptt_ret cmd_uart_l_get_cca(void)
 	}
 
 	PTT_TRACE_FUNC_EXIT();
+	return ret;
+}
+
+static enum ptt_ret cmd_uart_l_set_cca(void)
+{
+	PTT_TRACE_FUNC_ENTER();
+
+	struct ptt_evt_ctx_data_s *ctx_data = ptt_event_get_ctx_data(uart_cmd_evt);
+
+	assert(ctx_data != NULL);
+
+	enum ptt_ret ret = PTT_RET_SUCCESS;
+	uint8_t activate = ctx_data->arr[0];
+
+	if ((activate == 0) || (activate == 1)) {
+		ptt_rf_set_cca(uart_cmd_evt, activate);
+	} else {
+		ret = PTT_RET_INVALID_VALUE;
+	}
+
+	PTT_TRACE_FUNC_EXIT_WITH_VALUE(ret);
 	return ret;
 }
 

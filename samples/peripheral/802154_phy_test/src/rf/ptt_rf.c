@@ -209,6 +209,27 @@ enum ptt_ret ptt_rf_cca(ptt_evt_id_t evt_id, uint8_t mode)
 	return ret;
 }
 
+enum ptt_ret ptt_rf_set_cca(ptt_evt_id_t evt_id, uint8_t activate)
+{
+	enum ptt_ret ret = PTT_RET_SUCCESS;
+
+	if (ptt_rf_try_lock(evt_id) == PTT_RET_SUCCESS) {
+		if ((activate != 0 && activate != 1)) {
+			ret = PTT_RET_INVALID_VALUE;
+		}
+
+		if (ret == PTT_RET_SUCCESS) {
+			ptt_rf_ctx.cca_on_tx = activate;
+		}
+
+		ptt_rf_unlock();
+	} else {
+		ret = PTT_RET_BUSY;
+	}
+
+	return ret;
+}
+
 void ptt_rf_ed_detected(ptt_ed_t result)
 {
 	if (ptt_rf_is_locked()) {

@@ -36,6 +36,7 @@
 #define UART_CMD_R_SW_VERSION_TEXT "custom rsoftwareversion"
 #define UART_CMD_CHANGE_MODE_TEXT "custom changemode"
 #define UART_CMD_L_GET_CCA_TEXT "custom lgetcca"
+#define UART_CMD_L_SET_CCA_TEXT "custom lsetcca"
 #define UART_CMD_L_GET_ED_TEXT "custom lgeted"
 #define UART_CMD_L_GET_LQI_TEXT "custom lgetlqi"
 #define UART_CMD_L_GET_RSSI_TEXT "custom lgetrssi"
@@ -93,6 +94,7 @@
 #define UART_CMD_R_SW_VERSION_PAYLOAD_L 0
 #define UART_CMD_CHANGE_MODE_PAYLOAD_L 1
 #define UART_CMD_L_GET_CCA_PAYLOAD_L 1
+#define UART_CMD_L_SET_CCA_PAYLOAD_L 1
 #define UART_CMD_L_GET_ED_PAYLOAD_L 0
 #define UART_CMD_L_GET_LQI_PAYLOAD_L 0
 #define UART_CMD_L_GET_RSSI_PAYLOAD_L 0
@@ -159,6 +161,7 @@ enum ptt_uart_cmd {
 	PTT_UART_CMD_R_SW_VERSION, /**< get SW version from DUT */
 	PTT_UART_CMD_CHANGE_MODE, /**< change device mode */
 	PTT_UART_CMD_L_GET_CCA, /**< CMD will perform CCA with selected mode and print result*/
+	PTT_UART_CMD_L_SET_CCA, /**< CMD will toggle performing CCA prior to TX*/
 	PTT_UART_CMD_L_GET_ED, /**< CMD will perform ED and print out the result */
 	PTT_UART_CMD_L_GET_LQI,
 	/**< CMD will put the device into receive mode and wait for reception of a single packet */

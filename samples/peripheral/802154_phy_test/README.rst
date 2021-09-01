@@ -340,6 +340,25 @@ See the following example:
 
       custom lgetcca *1*
 
+lsetcca - Clear Channel Assessment
+==================================
+
+If enabled, it makes the CMD device perform a Clear Channel Assessment (CCA) prior to TX.
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom lsetcca *<toggle>*
+
+The ``<toggle>`` argument enbles (1) or disables (0) CCA prior to TX.
+
+See the following example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom lsetcca *1*
+
 lgeted - Perform Energy Detection
 =================================
 
