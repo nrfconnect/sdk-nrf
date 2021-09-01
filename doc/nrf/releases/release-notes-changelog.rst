@@ -154,7 +154,7 @@ The following list summarizes the most important changes inherited from the upst
 Partition Manager
 =================
 
-There are no entries for this section yet.
+* Added the ``share_size`` functionality to let a partition share size with a partition in another region.
 
 Documentation
 =============

@@ -103,7 +103,7 @@ def resolve_one_of(reqs, partitions, invalid=False):
                 reqs[k] = [i if i not in to_remove else to_add.pop(0) for i in v]
 
 
-def remove_all_zero_sized_partitions(reqs, dp, to_delete=None):
+def remove_all_zero_sized_partitions(reqs, dp, system_reqs, to_delete=None):
     first = False
     if to_delete is None:
         to_delete = list()
@@ -112,9 +112,10 @@ def remove_all_zero_sized_partitions(reqs, dp, to_delete=None):
     for k, v in reqs.items():
         if 'size' in v and v['size'] == 0:
             to_delete.append(k)
-            remove_all_zero_sized_partitions({k: v for k, v in reqs.items() if k not in to_delete}, dp, to_delete)
+            remove_all_zero_sized_partitions({k: v for k, v in reqs.items() if k not in to_delete},
+                dp, {k: v for k, v in system_reqs.items() if k not in to_delete}, to_delete)
         if 'share_size' in v.keys():
-            non_zero_partitions = [p for p in reqs if 'size' not in reqs[p] or reqs[p]['size'] != 0]
+            non_zero_partitions = [p for p in system_reqs if 'size' not in system_reqs[p] or system_reqs[p]['size'] != 0]
             actual_partitions = v['share_size'] if not isinstance(v['share_size'], dict) else v['share_size']['one_of']
             remove_item_not_in_list(actual_partitions, non_zero_partitions, dp)
             if not v['share_size'] or ('one_of' in v['share_size'] and len(v['share_size']['one_of']) == 0):
@@ -122,7 +123,8 @@ def remove_all_zero_sized_partitions(reqs, dp, to_delete=None):
                 if 'size' not in v.keys():
                     # The partition has no size, delete it, and rerun this function with the new reqs.
                     to_delete.append(k)
-                    remove_all_zero_sized_partitions({k: v for k, v in reqs.items() if k not in to_delete}, dp, to_delete)
+                    remove_all_zero_sized_partitions({k: v for k, v in reqs.items() if k not in to_delete},
+                        dp, {k: v for k, v in system_reqs.items() if k not in to_delete}, to_delete)
 
     if first and to_delete:
         for k in list(set(to_delete)):
@@ -130,8 +132,8 @@ def remove_all_zero_sized_partitions(reqs, dp, to_delete=None):
             del reqs[k]
 
 
-def remove_irrelevant_requirements(reqs, dp):
-    remove_all_zero_sized_partitions(reqs, dp)
+def remove_irrelevant_requirements(reqs, system_reqs, dp):
+    remove_all_zero_sized_partitions(reqs, dp, system_reqs)
 
     # Verify that no partitions define an empty 'placement'
     for k, v in reqs.items():
@@ -278,11 +280,13 @@ def resolve_ambiguous_requirements(reqs, unsolved):
                     = {'before': [partitions[i + 1]]}
 
 
-def resolve(reqs, dp):
+def resolve(reqs, dp, system_reqs = None):
+    if system_reqs is None:
+        system_reqs = reqs
     convert_str_to_list(reqs)
     solution = ["start", dp, "end"]
 
-    remove_irrelevant_requirements(reqs, dp)
+    remove_irrelevant_requirements(reqs, system_reqs, dp)
     sub_partitions = {k: v for k, v in reqs.items() if 'span' in v}
     for k, v in list(reqs.items()):
         if 'span' in v:
@@ -328,10 +332,10 @@ def resolve(reqs, dp):
 
 
 def shared_size(reqs, share_with, total_size, dp):
-    sharer_count = reqs[share_with]['sharers']
     size = sizeof(reqs, share_with, total_size, dp)
     if share_with == dp or \
             ('span' in reqs[share_with].keys() and dp in reqs[share_with]['span']):
+        sharer_count = reqs[share_with]['sharers']
         size /= (sharer_count + 1)
     return int(size)
 
@@ -344,22 +348,23 @@ def get_size_source(reqs, sharer):
     return size_source
 
 
-def set_shared_size(all_reqs, total_size, dp):
+def set_shared_size(all_reqs, total_size, dp, system_reqs):
     for req in all_reqs.keys():
         if 'share_size' in all_reqs[req].keys():
-            size_source = get_size_source(all_reqs, req)
-            if 'sharers' not in all_reqs[size_source].keys():
-                all_reqs[size_source]['sharers'] = 0
-            all_reqs[size_source]['sharers'] += 1
-            all_reqs[req]['share_size'] = [size_source]
+            size_source = get_size_source(system_reqs, req)
+            if size_source in all_reqs.keys():
+                if 'sharers' not in all_reqs[size_source].keys():
+                    all_reqs[size_source]['sharers'] = 0
+                all_reqs[size_source]['sharers'] += 1
+                all_reqs[req]['share_size'] = [size_source]
 
     new_sizes = dict()
 
     # Find partitions which share size with dynamic partition or a container partition which spans dynamic partition.
-    dynamic_size_sharers = get_dependent_partitions(all_reqs, dp)
+    dynamic_size_sharers = get_dependent_partitions(all_reqs, dp, system_reqs)
     static_size_sharers = [k for k, v in all_reqs.items() if 'share_size' in v.keys() and k not in dynamic_size_sharers]
     for req in static_size_sharers:
-        all_reqs[req]['size'] = shared_size(all_reqs, all_reqs[req]['share_size'][0], total_size, dp)
+        all_reqs[req]['size'] = shared_size(system_reqs, system_reqs[req]['share_size'][0], total_size, dp)
     for req in dynamic_size_sharers:
         new_sizes[req] = shared_size(all_reqs, all_reqs[req]['share_size'][0], total_size, dp)
     # Update all sizes after-the-fact or else the calculation will be messed up.
@@ -367,11 +372,11 @@ def set_shared_size(all_reqs, total_size, dp):
         all_reqs[key]['size'] = value
 
 
-def get_dependent_partitions(all_reqs, target):
+def get_dependent_partitions(all_reqs, target, system_reqs):
     return [k for k, v in all_reqs.items() if 'share_size' in v.keys()
             and (v['share_size'][0] == target
-                 or ('span' in all_reqs[v['share_size'][0]].keys()
-                     and target in all_reqs[v['share_size'][0]]['span']))]
+                 or ('span' in system_reqs[v['share_size'][0]].keys()
+                     and target in system_reqs[v['share_size'][0]]['span']))]
 
 
 def dynamic_partitions_size(reqs, total_size, dp):
@@ -397,11 +402,13 @@ def verify_layout(reqs, solution, total_size, flash_start):
                              ' address')
 
 
-def set_addresses_and_align(reqs, sub_partitions, solution, size, dp, start=0):
+def set_addresses_and_align(reqs, sub_partitions, solution, size, dp, start=0, system_reqs=None):
     all_reqs = dict(reqs, **sub_partitions)
-    set_shared_size(all_reqs, size, dp)
+    if system_reqs is None:
+        system_reqs = all_reqs
+    set_shared_size(all_reqs, size, dp, system_reqs)
     dynamic_partitions = [dp]
-    dynamic_partitions += get_dependent_partitions(all_reqs, dp)
+    dynamic_partitions += get_dependent_partitions(all_reqs, dp, system_reqs)
     reqs[dp]['size'] = dynamic_partitions_size(reqs, size, dp)
     reqs[solution[0]]['address'] = start
 
@@ -682,7 +689,9 @@ def calculate_end_address(pm_config):
         pm_config[part]['end_address'] = pm_config[part]['address'] + pm_config[part]['size']
 
 
-def get_region_config(pm_config, region_config, static_conf=None):
+def get_region_config(pm_config, region_config, static_conf=None, system_reqs=None):
+    if system_reqs is None:
+        system_reqs = pm_config
     start = region_config['base_address']
     size = region_config['size']
     placement_strategy = region_config['placement_strategy']
@@ -708,7 +717,7 @@ def get_region_config(pm_config, region_config, static_conf=None):
         pm_config[dp] = dict()
         pm_config[dp]['region'] = region_config['name']
 
-        solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf, dp)
+        solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf, dp, system_reqs)
 
     calculate_end_address(pm_config)
 
@@ -795,7 +804,7 @@ def verify_static_conf_simple(size, start, placement_strategy, static_conf):
             f"region '{list(static_conf.values())[0]['region']}'.")
 
 
-def solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf, dp):
+def solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf, dp, system_reqs):
     free_size = size
 
     if static_conf:
@@ -810,8 +819,8 @@ def solve_complex_region(pm_config, start, size, placement_strategy, region_name
             pm_config[dp]['size'] = free_size
             return
 
-    solution, sub_partitions = resolve(pm_config, dp)
-    set_addresses_and_align(pm_config, sub_partitions, solution, free_size, dp, start=start)
+    solution, sub_partitions = resolve(pm_config, dp, system_reqs)
+    set_addresses_and_align(pm_config, sub_partitions, solution, free_size, dp, start=start, system_reqs=system_reqs)
     set_sub_partition_address_and_size(pm_config, sub_partitions)
 
     if static_conf:
@@ -907,13 +916,13 @@ def get_region_config_from_args(args, ranges_configuration):
     return regions
 
 
-def solve_region(pm_config, region, region_config, static_config):
+def solve_region(pm_config, region, region_config, static_config, regions):
     solution = dict()
     region_config['name'] = region
     partitions = {k: v for k, v in pm_config.items() if region in v['region']}
     static_partitions = {k: v for k, v in static_config.items() if region in v['region']}
 
-    get_region_config(partitions, region_config, static_partitions)
+    get_region_config(partitions, region_config, static_partitions, system_reqs=pm_config)
 
     solution.update(partitions)
 
@@ -933,6 +942,29 @@ def load_static_configuration(args, pm_config):
             del pm_config[statically_defined_image]
     return static_config
 
+def region_sort_key(pm_config, region, used_regions):
+    if region in used_regions:
+        raise PartitionError("Found 'share_size' loop between the following regions\n" + pformat(used_regions))
+    used_regions.append(region)
+    i = 1 # Partitions without 'share_size' will have the smallest key (1)
+
+    # Iterate over all partitions in 'region'.
+    # For every partition with a share_size entry that is in another region, recursively find the sort_key of
+    # that region, and add 1. Keep the biggest sort_key out of the ones found. This sort_key will correspond to
+    # the longest region dependency path.
+    for config in {k:v for k,v in pm_config.items() if v['region'] == region}.values():
+        if 'share_size' in config:
+            ssize = config['share_size']
+            candidates = [ssize] if isinstance(ssize, str) else ssize if isinstance(ssize, list) else ssize['one_of']
+            # For lists and 'oneof' specs, treat each option as a dependency.
+            for cand in candidates:
+                if cand in pm_config and config['region'] != pm_config[cand]['region']:
+                    used = used_regions.copy() # For checking for loops
+                    i = max(i, 1 + region_sort_key(pm_config, pm_config[cand]['region'], used))
+    return i
+
+def sort_regions(pm_config, regions):
+    return {k: v for k, v in sorted(regions.items(), key = lambda r: region_sort_key(pm_config, r[0], []))}
 
 def main():
     args, ranges_configuration = parse_args()
@@ -942,11 +974,13 @@ def main():
 
     regions = get_region_config_from_args(args, ranges_configuration)
 
+    regions = sort_regions(pm_config, regions)
+
     solution = dict()
     for region, region_config in regions.items():
         try:
             solution.update(solve_region(pm_config, region, region_config,
-                                         static_config))
+                                         static_config, regions))
         except PartitionError as e:
             print(f"Partition manager failed: {str(e)}")
             print(f"Failed to partition region {region},"
@@ -1211,6 +1245,33 @@ def test():
     expect_addr_size(td, 'app', 600, 200)  # s spans a, b and c
     expect_addr_size(td, 'e', 800, 200)  # s spans a, b and c
 
+    #
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 100},
+        'b': {'placement': {'after': ['x0', 'x1', 'a', 'x2']}, 'size': 200},
+        'c': {'placement': {'after': 'b'}, 'share_size': {'one_of': ['x0', 'x1', 'b', 'a']}},
+        'd': {'placement': {'after': 'c'}, 'share_size': {'one_of': ['a', 'b']}},  # Should take first existing
+        # We can use  several 'one_of' - dicts inside lists
+        's': {'span': ['a', {'one_of': ['x0', 'b', 'd']}, {'one_of': ['x2', 'c', 'a']}]},
+        'app': {},
+        'e': {'placement': {'after': 'app'}, 'share_size': {'one_of': ['x0', 'app']}},  # app always exists
+        'f': {'placement': {'before':  'end'}, 'share_size': 'p_ext'}
+    }
+    s_reqs = td.copy()
+    s_reqs['p_ext'] = {'region': 'ext', 'size': 250}
+    s, sub_partitions = resolve(td, 'app', s_reqs)
+    set_addresses_and_align(td, sub_partitions, s, 1250, 'app', system_reqs = s_reqs)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    calculate_end_address(td)
+    expect_addr_size(td, 'a', 0, 100)  # b is after a
+    expect_addr_size(td, 'b', 100, 200)  # b is after a
+    expect_addr_size(td, 'c', 300, 200)  # c shares size with b
+    expect_addr_size(td, 'd', 500, 100)  # d shares size with a
+    expect_addr_size(td, 's', 0, 500)  # s spans a, b and c
+    expect_addr_size(td, 'app', 600, 200)  # s spans a, b and c
+    expect_addr_size(td, 'e', 800, 200)  # s spans a, b and c
+    expect_addr_size(td, 'f', 1000, 250) # Shares size with 'p_ext' from a different region
+
     # Verify that all 'share_size' with value partition that has size 0 is compatible with 'one_of' dicts
     td = {
         'a': {'placement': {'after': 'start'}, 'size': 0},
@@ -1223,7 +1284,7 @@ def test():
         # You get the point
         'e': {'placement': {'after': ['a', 'b', 'c', 'd', 'start']}, 'size': 100}
     }
-    remove_all_zero_sized_partitions(td, 'app')
+    remove_all_zero_sized_partitions(td, 'app', td)
     assert 'a' not in td
     assert 'b' not in td
     assert 'c' not in td
@@ -1741,6 +1802,47 @@ def test():
     except PartitionError:
         failed = True
     assert failed
+
+    td = {'first': {'region': 'region1'},
+          'second': {'region': 'region1', 'share_size': 'first'},
+          'third': {'region': 'region2', 'share_size': 'second'},
+          'fourth': {'region': 'region3'}}
+    regions = {'region1': None,
+               'region2': None,
+               'region3': None}
+    sorted_regions = sort_regions(td, regions)
+    assert list(sorted_regions.keys()) == ['region1', 'region3', 'region2']
+
+    # dependency loop
+    failed = False
+    td = {'first': {'region': 'region1'},
+          'second': {'region': 'region1', 'share_size': 'third'},
+          'third': {'region': 'region2', 'share_size': 'second'},
+          'fourth': {'region': 'region3'}}
+    regions = {'region1': None,
+               'region2': None,
+               'region3': None}
+    try:
+        sorted_regions = sort_regions(td, regions)
+    except PartitionError:
+        failed = True
+    assert failed
+
+    td = {'first': {'region': 'region1', 'share_size': 'third'},
+          'second': {'region': 'region1', 'share_size': 'fourth'},
+          'third': {'region': 'region2'},
+          'fourth': {'region': 'region3', 'share_size': 'fifth'},
+          'fifth': {'region': 'region4'},
+          'sixth': {'region': 'region4', 'share_size': 'seventh'},
+          'seventh': {'region': 'region5'},
+          'eighth': {'region': 'region2'}}
+    regions = {'region1': None,
+               'region2': None,
+               'region3': None,
+               'region4': None,
+               'region5': None}
+    sorted_regions = sort_regions(td, regions)
+    assert list(sorted_regions.keys()) == ['region2', 'region5', 'region4', 'region3', 'region1']
 
     print('All tests passed!')
 
