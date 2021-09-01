@@ -27,7 +27,13 @@ config MPSL_FEM
 	  when MPSL is initialized. Default type of FEM to use depends on which
 	  compatible nodes are in devicetree.
 
-if MPSL_FEM
+config MPSL_FEM_PIN_FORWARDER
+	bool "Forward pin control for front-end module (FEM) to the radio core"
+	depends on SOC_NRF5340_CPUAPP
+	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT
+	default y
+
+if MPSL_FEM || MPSL_FEM_PIN_FORWARDER
 
 choice MPSL_FEM_CHOICE
 	prompt "Radio front-end module (FEM) type"
