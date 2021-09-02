@@ -1091,6 +1091,7 @@ FEM support
 .. note::
    The sample provides support for the *antenna diversity* feature on the nRF52840.
    It can be enabled and configured using Kconfig configuration options.
+   To enable the feature, set PTT_ANTENNA_DIVERSITY config as enabled.
 
 
 Building and running
