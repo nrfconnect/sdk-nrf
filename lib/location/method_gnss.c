@@ -130,7 +130,9 @@ int method_gnss_cancel(void)
 	if (!err) {
 		LOG_DBG("GNSS stopped");
 	} else if (err == NRF_EPERM) {
-		LOG_ERR("GNSS is not running");
+		/* Let's convert NRF_EPERM to EPERM to make sure loc_core works properly */
+		err = EPERM;
+		/* NRF_EPERM is logged in loc_core */
 	} else {
 		LOG_ERR("Failed to stop GNSS");
 	}

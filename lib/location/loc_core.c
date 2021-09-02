@@ -234,8 +234,7 @@ static void current_loc_config_set(const struct loc_config *config)
 	current_loc_config.methods_count = config->methods_count;
 	current_loc_config.interval = config->interval;
 
-	memset(current_loc_config.methods, 0,
-		sizeof(struct loc_method_config) * LOC_MAX_METHODS);
+	memset(current_loc_config.methods, 0, sizeof(struct loc_method_config) * LOC_MAX_METHODS);
 	memcpy(current_loc_config.methods, config->methods,
 		sizeof(struct loc_method_config) * config->methods_count);
 }
@@ -362,6 +361,9 @@ void loc_core_event_cb(const struct loc_location *location)
 			&loc_periodic_work,
 			K_SECONDS(current_loc_config.interval));
 	} else {
+		memset(current_loc_config.methods, 0,
+		       sizeof(struct loc_method_config) * LOC_MAX_METHODS);
+
 		k_sem_give(&loc_core_sem);
 	}
 }
@@ -410,7 +412,18 @@ int loc_core_cancel(void)
 		LOG_DBG("Cancelling location method for '%s' method",
 			(char *)loc_method_api_get(current_loc_method)->method_string);
 		err = loc_method_api_get(current_loc_method)->cancel();
+
+		/* -EPERM means method wasn't running and this is converted to no error.
+		 * This is normal in periodic mode.
+		 */
+		if (err == -EPERM) {
+			err = 0;
+		}
+	} else {
+		LOG_DBG("No location request pending so not cancelling anything");
 	}
+
+	memset(current_loc_config.methods, 0, sizeof(struct loc_method_config) * LOC_MAX_METHODS);
 
 	k_sem_give(&loc_core_sem);
 

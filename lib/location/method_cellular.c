@@ -169,7 +169,6 @@ int method_cellular_cancel(void)
 		running = false;
 		k_sem_reset(&cellmeas_data_ready);
 	} else {
-		LOG_DBG("Not running");
 		return -EPERM;
 	}
 
