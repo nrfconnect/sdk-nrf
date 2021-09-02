@@ -160,6 +160,213 @@ The :ref:`nrfxlib:nrf_modem` is released as an OS-independent binary library in 
 The Modem library integration layer fulfills the integration requirements of the Modem library in |NCS|.
 For more information on the integration, see :ref:`nrf_modem_lib_readme`.
 
+.. _nrf9160_fota:
+
+FOTA upgrades
+=============
+
+|fota_upgrades_def|
+FOTA upgrades can be used to apply delta patches to the :ref:`lte_modem` firmware, full :ref:`lte_modem` firmware upgrades, and to replace the upgradable bootloader or the application.
+
+.. note::
+   Even though the Secure Partition Manager and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware upgrades.
+   Any reference to the application in this section is meant to indicate the application including the Secure Partition Manager.
+
+To perform a FOTA upgrade, complete the following steps:
+
+1. Make sure that your application supports FOTA upgrades.
+      To download and apply FOTA upgrades, your application must use the :ref:`lib_fota_download` library.
+      This library deduces the type of upgrade by inspecting the header of the firmware and invokes the :ref:`lib_dfu_target` library to apply the firmware upgrade.
+      In its default configuration, the DFU target library is set to support all the types of FOTA upgrades except full modem firmware upgrades, but you can freely enable or disable the support for specific targets.
+
+      In addition, the following requirements apply:
+
+      * |fota_upgrades_req_mcuboot|
+      * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:kconfig:`CONFIG_SECURE_BOOT`).
+      * If you want to upgrade the modem firmware through modem delta updates, neither MCUboot nor the immutable bootloader are required, because the modem firmware upgrade is handled by the modem itself.
+      * If you want to perform a full modem firmware upgrade, an |external_flash_size| is required.
+
+#. Create a binary file that contains the new image.
+
+      .. note::
+         This step does not apply for upgrades of the modem firmware.
+         You can download delta patches and full binaries of the modem firmware from the `nRF9160 product website (compatible downloads)`_.
+
+      |fota_upgrades_building|
+      The :file:`app_update.bin` file is the file that should be uploaded to the server.
+
+      To create binary files for a bootloader upgrade, make sure that :kconfig:`CONFIG_SECURE_BOOT` and :kconfig:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
+      The build will create a binary file for each variant of the upgradable bootloader, one for each bootloader slot.
+      See :ref:`upgradable_bootloader` for more information.
+
+#. Make the binary file (or files) available for download.
+      Upload the serialized :file:`.cbor` binary file or files to a web server that is compatible with the :ref:`lib_download_client` library.
+
+The full FOTA procedure depends on where the binary files are hosted for download.
+
+FOTA upgrades using nRF Cloud
+-----------------------------
+
+FOTA upgrades can be managed through a comprehensive management portal on `nRF Cloud`_, either fully hosted on nRF Cloud or accessible from a customer cloud using the `nRF Cloud REST API`_.
+If you are using nRF Cloud, see the `nRF Cloud Getting Started FOTA documentation`_ for instructions.
+
+
+Currently, delta modem firmware FOTA files are available in nRF Cloud under :guilabel:`Firmware Updates` in the :guilabel:`Device Management` tab on the left.
+If you intend to obtain FOTA files from nRF Cloud, see the additional requirements in :ref:`lib_nrf_cloud_fota`.
+
+You can upload custom application binaries to nRF Cloud for application FOTA updates.
+After `Creating an nRF Cloud account`_, you can upload the files to your nRF Cloud account as a bundle after navigating to :guilabel:`Device Management` on the left and clicking :guilabel:`Firmware Updates`.
+
+FOTA upgrades using other cloud services
+----------------------------------------
+
+FOTA upgrades can alternatively be hosted from a customer-developed cloud services such as solutions based on AWS and Azure.
+If you are uploading the files to an Amazon Web Services Simple Storage Service (AWS S3) bucket, see the :ref:`lib_aws_fota` documentation for instructions.
+Samples are provided in |NCS| for AWS (:ref:`aws_fota_sample` sample) and Azure (:ref:`azure_fota_sample` sample).
+
+Your application must be able to retrieve the host and file name for the binary file.
+See the :ref:`lib_fota_download` library documentation for information about the format of this information, especially when providing two files for a bootloader upgrade.
+You can hardcode the information in the application, or you can use a functionality like AWS jobs to provide the URL dynamically.
+
+Samples and applications implementing FOTA
+------------------------------------------
+
+* :ref:`http_full_modem_update_sample` sample - performs a full firmware OTA update of the modem.
+* :ref:`http_modem_delta_update_sample` sample - performs a delta OTA update of the modem firmware.
+* :ref:`http_application_update_sample` sample - performs a basic application FOTA update.
+* :ref:`aws_fota_sample` sample - performs a FOTA update via MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
+* :ref:`azure_fota_sample` sample - performs a FOTA update from the Azure IoT Hub.
+* :ref:`asset_tracker_v2` application - performs FOTA updates of the application, modem (delta), and boot (if enabled). It also supports nRF Cloud FOTA as well as AWS or Azure FOTA. Only one must be configured at a time.
+
+.. _nrf9160_ug_gnss:
+
+GNSS
+****
+
+An nRF9160-based device is a highly versatile device that integrates both cellular and GNSS functionality.
+Note that GNSS functionality is only available on the SICA variant and not on the SIAA or SIBA variants.
+See `nRF9160 SiP revisions and variants`_ for more information.
+
+There are many GNSS constellations (GPS, BeiDou, Galileo, GLONASS) available but GPS is the most mature technology.
+An nRF9160-based device supports both GPS L1 C/A (Coarse/Acquisition) and QZSS L1C/A at 1575.42 MHz.
+This frequency band is ideal for penetrating through layers of the atmosphere (troposphere and ionosphere) and suitable for various weather conditions.
+GNSS is designed to be used with a line of sight to the sky.
+Therefore, the performance is not ideal when there are obstructions overhead or if the receiver is indoors.
+
+The GNSS operation in an nRF9160-based device is time-multiplexed with the LTE modem.
+Therefore, the LTE modem must either be completely deactivated or in `RRC idle mode`_ or `Power Saving Mode (PSM)`_ when using the GNSS receiver.
+See the `nRF9160 GPS receiver Specification`_ for more information.
+Customers who are developing their own hardware with the nRF9160 are strongly recommended to use the `nRF9160 Antenna and RF Interface Guidelines`_ as a reference.
+See `GPS interface and antenna`_ for more details on GNSS interface and antenna.
+
+.. note::
+
+   Starting from |NCS| v1.6.0 (Modem library v1.2.0), the :ref:`GNSS socket <nrfxlib:gnss_extension>` is deprecated and replaced with the :ref:`GNSS interface <gnss_interface>`.
+
+
+Obtaining a fix
+===============
+
+GPS provides lots of useful information including 3D location (latitude, longitude, altitude), time, and velocity.
+
+The time to obtain a fix (also referred to as Time to First Fix (TTFF)) will depend on the time when the GPS receiver was last turned on and used.
+
+Following are the various GPS start modes:
+
+* Cold start - GPS starts after being powered off for a long time with zero knowledge of the time, current location, or the satellite orbits.
+* Warm start - GPS has some coarse knowledge of the time, location, or satellite orbits from a previous fix that is more than around 37 minutes old.
+* Hot start - GPS fix is requested within an interval of around 37 minutes from the last successful fix.
+
+Each GPS satellite transmits its own `Ephemeris`_ data and common `Almanac`_ data:
+
+* Ephemeris data - Provides information about the orbit of the GPS satellite transmitting it. This data is valid for four hours and becomes inaccurate after that.
+* Almanac data - Provides coarse orbit and status information for each satellite in the constellation. Each satellite broadcasts Almanac data for all satellites.
+
+The data transmission occurs at a slow data rate of 50 bps.
+The orbital data can be received faster using A-GPS.
+
+Due to the clock bias on the receiver, there are four unknowns when looking for a GPS fix - latitude, longitude, altitude, and clock bias.
+This results in solving an equation system with four unknowns, and therefore a minimum of four satellites must be tracked to acquire a fix.
+
+Enhancements to GNSS
+====================
+
+When GNSS has not been in use for a while or if the device is in relatively weak signaling conditions, it might take longer to acquire a fix.
+To improve this, Nordic Semiconductor has implemented the following methods for acquiring a fix in a shorter time:
+
+•	A-GPS or P-GPS or a combination of both
+•	Low accuracy mode
+
+Assisted GPS (A-GPS)
+---------------------
+
+A-GPS is commonly used to improve the Time to first fix (TTFF) by utilizing a connection (for example, over cellular) to the internet to retrieve the Almanac and Ephemeris data.
+A connection to an internet server that has the Almanac and Ephemeris data is several times quicker than using the slow 50 bps data link to the GPS satellites.
+There are many options to retrieve this A-GPS data.
+Two such options are using `nRF Cloud`_ and SUPL.
+|NCS| provides example implementations for both these options.
+The A-GPS solution available through nRF Cloud has been optimized for embedded devices to reduce protocol overhead and data usage.
+This, in turn, results in the download of reduced amount of data, thereby reducing data transfer time, power consumption, and data costs.
+See :ref:`nrfxlib:gnss_int_agps_data` for more information about the retrieval of A-GPS data.
+
+Predicted GPS (P-GPS)
+---------------------
+
+P-GPS is a form of assistance, where the device can download up to two weeks of predicted satellite Ephemerides data.
+Normally, devices connect to the cellular network approximately every two hours for up-to-date satellite Ephemeris information or they download the Ephemeris data from the acquired satellites.
+P-GPS enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
+Note that P-GPS requires more memory compared to regular A-GPS.
+
+Also, note that due to satellite clock inaccuracies, not all functional satellites will have Ephemerides data valid for two weeks in the downloaded PGPS package.
+This means that the number of satellites having valid predicted Ephemerides reduces in number roughly after ten days.
+Hence, the GNSS module needs to download the Ephemeris data from the satellite broadcast if no predicted Ephemeris is found for that satellite to be able to use the satellite.
+
+nRF Cloud A-GPS compared with SUPL library
+------------------------------------------
+
+The :ref:`lib_nrf_cloud_agps` library is more efficient to use when compared to the :ref:`SUPL <supl_client>` library, and the latter takes a bit more memory on the device.
+Another advantage of nRF Cloud A-GPS library is that the data is encrypted whereas SUPL uses plain socket.
+Also, no licenses are required from external vendors to use nRF Cloud A-GPS, whereas for commercial use of SUPL, you must obtain a license.
+The :ref:`lib_nrf_cloud_agps` library is also highly integrated into `Nordic Semiconductor's IoT cloud platform`_.
+
+Low Accuracy Mode
+-----------------
+
+Low accuracy mode allows the GNSS receiver to accept a looser criterion for a fix with four or more satellites or by using a reference altitude to allow for a fix using only three satellites.
+This has a tradeoff of reduced accuracy.
+This reference altitude can be from a recent valid normal fix or it can be artificially injected.
+See :ref:`nrfxlib:gnss_int_low_accuracy_mode` for more information about low accuracy mode and its usage.
+
+Samples using GNSS in |NCS|
+===========================
+
+There are many examples in |NCS| that use GNSS.
+Following is a list of the samples and applications with some information about the GNSS usage:
+
+* :ref:`asset_tracker_v2` application - Uses nRF Cloud for A-GPS or P-GPS  or a combination of both. The application obtains GNSS fixes and transmits them to nRF Cloud along with sensor data.
+* :ref:`serial_lte_modem` application - Uses AT commands to start and stop GNSS and has support for nRF Cloud A-GPS and P-GPS. The application displays tracking and GNSS fix information in the serial console.
+* :ref:`agps_sample` sample - Uses nRF Cloud for A-GPS by default and can be configured to use SUPL. The sample obtains GNSS fixes and transmits them to nRF Cloud.
+* :ref:`gps_with_supl_support_sample` sample - Does not use A-GPS by default but can be configured to use SUPL. The sample displays tracking, fix information, and NMEA strings in the serial console.
+
+.. _nrf9160_gps_lte:
+
+Concurrent GNSS and LTE
+=======================
+
+An nRF9160-based device supports GNSS in LTE-M and NB-IoT.
+Concurrent operation of GNSS with optional power-saving features, such as extended Discontinuous Reception (eDRX) and Power Saving Mode (PSM), is also supported, and recommended.
+
+The following figure shows how the data transfer occurs in an nRF9160-based device with power-saving in place.
+
+.. figure:: /images/power_consumption.png
+   :alt: Power consumption
+
+See `Energy efficiency`_ for more information.
+
+Asset Tracker enables the concurrent working of GNSS and LTE in eDRX and PSM modes when the device is in `RRC idle mode`_.
+The time between the transition of a device from RRC connected mode (data transfer mode) to RRC idle mode is dependent on the network.
+Typically, the time ranges between 5 seconds to 70 seconds after the last data transfer on LTE.
+Sensor and GNSS data are sent to the cloud only during the data transfer phase.
 
 .. _nrf9160_ug_band_lock:
 
@@ -224,86 +431,3 @@ To change the mode at runtime, set the modem to LTE RF OFF state before reconfig
 If the modem is shut down gracefully before the next boot (by using ``AT+CFUN=0``), it keeps the current setting.
 
 For more detailed information, see the `system mode section in the AT Commands reference document`_.
-
-.. _nrf9160_gps_lte:
-
-.. nrf9160_gps_lte_start
-
-Concurrent GNSS and LTE
-=======================
-
-An nRF9160-based device supports GNSS in LTE-M and NB-IoT.
-Concurrent operation of GNSS with optional power-saving features, such as extended Discontinuous Reception (eDRX) and Power Saving Mode (PSM), is also supported, and recommended.
-
-The following figure shows how the data transfer occurs in an nRF9160-based device with power-saving in place.
-
-.. figure:: /images/power_consumption.png
-   :alt: Power consumption
-
-See `Energy efficiency`_ for more information.
-
-Asset Tracker enables the concurrent working of GNSS and LTE in eDRX and PSM modes when the device is in `RRC idle mode`_.
-The time between the transition of a device from RRC connected mode (data transfer mode) to RRC idle mode is dependent on the network.
-Typically, the time ranges between 5 seconds to 70 seconds after the last data transfer on LTE.
-Sensor and GNSS data are sent to the cloud only during the data transfer phase.
-
-.. nrf9160_gps_lte_end
-
-.. _nrf9160_fota:
-
-FOTA upgrades
-=============
-
-|fota_upgrades_def|
-FOTA upgrades can be used to apply delta patches to the :ref:`lte_modem` firmware, full :ref:`lte_modem` firmware upgrades, and to replace the upgradable bootloader or the application.
-
-.. note::
-   Even though the Secure Partition Manager and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware upgrades.
-   Any reference to the application in this section is meant to indicate the application including the Secure Partition Manager.
-
-To perform a FOTA upgrade, complete the following steps:
-
-1. Make sure that your application supports FOTA upgrades.
-      To download and apply FOTA upgrades, your application must use the :ref:`lib_fota_download` library.
-      This library deduces the type of upgrade by inspecting the header of the firmware and invokes the :ref:`lib_dfu_target` library to apply the firmware upgrade.
-      In its default configuration, the DFU target library is set to support all the types of FOTA upgrades except full modem firmware upgrades, but you can freely enable or disable the support for specific targets.
-
-      In addition, the following requirements apply:
-
-      * |fota_upgrades_req_mcuboot|
-      * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:kconfig:`CONFIG_SECURE_BOOT`).
-      * If you want to upgrade the modem firmware through modem delta updates, neither MCUboot nor the immutable bootloader are required, because the modem firmware upgrade is handled by the modem itself.
-      * If you want to perform a full modem firmware upgrade, an |external_flash_size| is required.
-
-#. Create a binary file that contains the new image.
-
-      .. note::
-         This step does not apply for upgrades of the modem firmware.
-         You can download delta patches and full binaries of the modem firmware from the `nRF9160 product website (compatible downloads)`_.
-
-      |fota_upgrades_building|
-      The :file:`app_update.bin` file is the file that should be uploaded to the server.
-
-      To create binary files for a bootloader upgrade, make sure that :kconfig:`CONFIG_SECURE_BOOT` and :kconfig:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
-      The build will create a binary file for each variant of the upgradable bootloader, one for each bootloader slot.
-      See :ref:`upgradable_bootloader` for more information.
-
-#. Make the binary file (or files) available for download.
-     Upload the serialized :file:`.cbor` binary file or files to a web server that is compatible with the :ref:`lib_download_client` library.
-     One way of doing this is to upload the files to an Amazon Web Services Simple Storage Service (AWS S3) bucket.
-     See the :ref:`lib_aws_fota` documentation for instructions.
-
-     Your application must be able to retrieve the host and file name for the binary file.
-     See :ref:`lib_fota_download` for information about the format of this information, especially when providing two files for a bootloader upgrade.
-     You can hardcode the information in the application, or you can use functionality like AWS jobs to provide the URL dynamically.
-
-The full FOTA procedure depends on where the binary files are hosted for download.
-
-You can refer to the following implementation samples and applications:
-
-* :ref:`http_full_modem_update_sample` sample - performs a full firmware OTA update of the modem.
-* :ref:`http_modem_delta_update_sample` sample - performs a delta OTA update of the modem firmware.
-* :ref:`http_application_update_sample` sample - performs a basic application FOTA update.
-* :ref:`aws_fota_sample` sample - performs a FOTA update via MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
-* :ref:azure_fota_sample sample - performs a FOTA update from the Azure IoT Hub
-* :ref:`asset_tracker_v2` application - performs FOTA updates of the application, modem (delta), and boot (if enabled).

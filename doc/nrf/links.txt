@@ -204,6 +204,7 @@
 .. _`nRF pynrfjprog`: https://infocenter.nordicsemi.com/topic/ug_pynrfjprog/UG/pynrfjprog/pynrfjprog_lpage.html
 
 .. _`nRF9160 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/nRF9160_html5_keyfeatures.html
+.. _`nRF9160 GPS receiver specification`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf9160%2Fgps.html&cp=2_0_0_7
 
 .. _`nRF9160 DK Getting Started`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/intro.html
 .. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/nrf91_DK_gsg/updating_modem_firmware.html
@@ -292,6 +293,10 @@
 .. _`System Protection Unit`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/spu.html
 
 .. _`nRF9160 Hardware Verification Guidelines - UART interface`: https://infocenter.nordicsemi.com/topic/nwp_034/WP/nwp_034/nwp_034_uart_if.html
+.. _`nRF9160 Antenna and RF Interface Guidelines`: https://infocenter.nordicsemi.com/topic/nwp_033/WP/nwp_033/nwp_033_intro.html
+.. _`GPS interface and antenna`: https://infocenter.nordicsemi.com/topic/nwp_033/WP/nwp_033/nwp_033_gps.html
+
+.. _`nRF9160 SiP revisions and variants`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_ic_revision_overview.html
 
 .. _`Creating an nRF Cloud account`:
 .. _`Creating an nRF Connect for Cloud account`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk_gsg/UG/common/create_nrfcloud_account.html
@@ -569,6 +574,9 @@
 .. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/Reference/Interacting/REST#the-nrf-cloud-rest-api
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 .. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/Reference/LocationServices
+
+.. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/Guides/GettingStarted/FOTA/
+
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
 .. _`Securely Generating Credentials on the nRF9160`: https://docs.nrfcloud.com/Guides/GettingStarted/Devices#securely-generating-credentials-on-the-nrf9160
 
