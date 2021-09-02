@@ -63,7 +63,9 @@ For example, building the :ref:`zephyr:bluetooth-beacon-sample` sample for the n
 
 To do so on the command line, run the following command in the beacon sample directory:
 
-      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONFIG_BT_RPC=y
+.. code-block:: console
+
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DCONFIG_BT_RPC=y
 
 Testing
 =======
