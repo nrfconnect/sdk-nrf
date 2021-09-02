@@ -19,12 +19,12 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 extern location_event_handler_t event_handler;
 extern struct loc_event_data current_event_data;
 
-#define METHOD_CELLULAR_STACK_SIZE 2048
-#define METHOD_CELLULAR_PRIORITY  5
-K_THREAD_STACK_DEFINE(method_cellular_stack, METHOD_CELLULAR_STACK_SIZE);
+struct k_work_args {
+	struct k_work work_item;
+	struct loc_cellular_config cellular_config;
+};
 
-struct k_work_q method_cellular_work_q;
-static struct k_work method_cellular_positioning_work;
+static struct k_work_args method_cellular_positioning_work;
 
 static K_SEM_DEFINE(cellmeas_data_ready, 0, 1);
 
@@ -45,7 +45,7 @@ void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 			break;
 		}
 
-		LOG_INF("Network registration status: %s",
+		LOG_DBG("Network registration status: %s",
 			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
 			"Connected - home network" : "Connected - roaming");
 		lte_connected = true;
@@ -54,7 +54,7 @@ void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 		struct lte_lc_cells_info cells = evt->cells_info;
 		struct lte_lc_cell cur_cell = cells.current_cell;
 
-		LOG_INF("Cell measurements results received");
+		LOG_DBG("Cell measurements results received");
 		memset(&cell_data, 0, sizeof(struct lte_lc_cells_info));
 
 		if (cur_cell.id) {
@@ -80,7 +80,7 @@ static int method_cellular_ncellmeas_start(void)
 {
 	int err;
 
-	LOG_INF("Triggering start of cell measurements");
+	LOG_DBG("Triggering start of cell measurements");
 	err = lte_lc_neighbor_cell_measurement();
 	if (err) {
 		LOG_ERR("Failed to initiate neighbor cell measurements: %d", err);
@@ -96,8 +96,10 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	struct multicell_location location;
 	struct loc_location location_result = { 0 };
 	int ret;
+	struct k_work_args *work_data = CONTAINER_OF(work, struct k_work_args, work_item);
+	const struct loc_cellular_config cellular_config = work_data->cellular_config;
 
-	ARG_UNUSED(work);
+	loc_core_timer_start(cellular_config.timeout);
 
 	ret = method_cellular_ncellmeas_start();
 	if (ret) {
@@ -143,18 +145,16 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 
 int method_cellular_location_get(const struct loc_method_config *config)
 {
-	const struct loc_cellular_config *cellular_config = &config->cellular;
-
-	ARG_UNUSED(cellular_config);
-
-	LOG_INF("Starting to get a location by using cellular method");
+	const struct loc_cellular_config cellular_config = config->cellular;
 
 	if (running) {
 		LOG_ERR("Previous operation on going.");
 		return -EBUSY;
 	}
 
-	k_work_submit(&method_cellular_positioning_work);
+	method_cellular_positioning_work.cellular_config = cellular_config;
+	k_work_submit_to_queue(loc_core_work_queue_get(),
+			       &method_cellular_positioning_work.work_item);
 
 	running = true;
 
@@ -165,7 +165,7 @@ int method_cellular_cancel(void)
 {
 	if (running) {
 		(void)lte_lc_neighbor_cell_measurement_cancel();
-		(void)k_work_cancel(&method_cellular_positioning_work);
+		(void)k_work_cancel(&method_cellular_positioning_work.work_item);
 		running = false;
 		k_sem_reset(&cellmeas_data_ready);
 	} else {
@@ -179,26 +179,19 @@ int method_cellular_cancel(void)
 int method_cellular_init(void)
 {
 	int ret;
-	struct k_work_queue_config cfg = {
-		.name = "location_api_cellular_workq",
-	};
 
 	lte_connected = false;
 	running = false;
 
-	k_work_queue_start(
-		&method_cellular_work_q, method_cellular_stack,
-		K_THREAD_STACK_SIZEOF(method_cellular_stack),
-		METHOD_CELLULAR_PRIORITY, &cfg);
-
-	k_work_init(&method_cellular_positioning_work, method_cellular_positioning_work_fn);
+	k_work_init(&method_cellular_positioning_work.work_item,
+		    method_cellular_positioning_work_fn);
 	lte_lc_register_handler(method_cellular_lte_ind_handler);
 
 	ret = multicell_location_provision_certificate(false);
 	if (ret) {
 		LOG_ERR("Certificate provisioning failed, ret %d", ret);
 		if (ret == -EACCES) {
-			LOG_INF("err: -EACCESS, that might indicate that modem is in "
+			LOG_WRN("err: -EACCESS, that might indicate that modem is in "
 				"state where cert cannot be written, i.e. not in pwroff");
 		}
 		return ret;

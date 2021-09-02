@@ -25,6 +25,7 @@ void loc_core_event_cb(const struct loc_location *location);
 void loc_core_event_cb_error(void);
 void loc_core_event_cb_timeout(void);
 
+void loc_core_timer_start(uint16_t timeout);
 struct k_work_q *loc_core_work_queue_get(void);
 
 #endif /* LOC_CORE_H */

@@ -106,6 +106,10 @@ struct loc_event_data {
 
 /** LTE cellular positioning configuration. */
 struct loc_cellular_config {
+	/**
+	 * @brief Timeout (in seconds) on how long cellular positioning procedure can take.
+	 */
+	uint16_t timeout;
 };
 
 /** GNSS configuration. */

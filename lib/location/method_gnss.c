@@ -200,10 +200,7 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	int tau;
 	int active_time;
 	enum lte_lc_system_mode mode;
-
-	struct k_work_args *work_data =
-		CONTAINER_OF(work, struct k_work_args, work_item);
-
+	struct k_work_args *work_data = CONTAINER_OF(work, struct k_work_args, work_item);
 	const struct loc_gnss_config gnss_config = work_data->gnss_config;
 
 	lte_lc_system_mode_get(&mode, NULL);
@@ -266,6 +263,8 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 		running = false;
 	}
 
+	loc_core_timer_start(gnss_config.timeout);
+
 	LOG_DBG("GNSS started");
 }
 
@@ -274,8 +273,7 @@ void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
 	char buf_sub[48];
 	int err;
 
-	snprintk(buf_sub, sizeof(buf_sub), AT_MDM_SLEEP_NOTIF_START,
-		 0, threshold_ms);
+	snprintk(buf_sub, sizeof(buf_sub), AT_MDM_SLEEP_NOTIF_START, 0, threshold_ms);
 
 	err = at_cmd_write(buf_sub, NULL, 0, NULL);
 	if (err) {
@@ -288,8 +286,6 @@ void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
 int method_gnss_location_get(const struct loc_method_config *config)
 {
 	const struct loc_gnss_config gnss_config = config->gnss;
-
-	LOG_INF("Starting to get a location by using gnss method");
 
 	if (running) {
 		LOG_ERR("Previous operation ongoing.");

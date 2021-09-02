@@ -41,7 +41,7 @@ static int current_loc_method_index;
 
 /***** Work queue and work item definitions *****/
 
-#define LOC_CORE_STACK_SIZE 2048
+#define LOC_CORE_STACK_SIZE 3072
 #define LOC_CORE_PRIORITY  5
 K_THREAD_STACK_DEFINE(loc_core_stack, LOC_CORE_STACK_SIZE);
 
@@ -53,6 +53,12 @@ static void loc_core_periodic_work_fn(struct k_work *work);
 
 /** @brief Work item for periodic location requests. */
 K_WORK_DELAYABLE_DEFINE(loc_periodic_work, loc_core_periodic_work_fn);
+
+/** @brief Handler for timeout. */
+static void loc_core_timeout_work_fn(struct k_work *work);
+
+/** @brief Work item for timeout handler. */
+K_WORK_DELAYABLE_DEFINE(loc_timeout_work, loc_core_timeout_work_fn);
 
 /* From location.c */
 extern struct k_sem loc_core_sem;
@@ -292,6 +298,8 @@ void loc_core_event_cb(const struct loc_location *location)
 	enum loc_method previous_loc_method;
 	int err;
 
+	k_work_cancel_delayable(&loc_timeout_work);
+
 	if (location != NULL) {
 		/* Location was acquired properly, finish location request */
 		current_event_data.id = LOC_EVT_LOCATION;
@@ -365,24 +373,39 @@ static void loc_core_periodic_work_fn(struct k_work *work)
 	loc_core_location_get(&current_loc_config);
 }
 
+static void loc_core_timeout_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	LOG_WRN("Timeout occurred");
+	loc_core_cancel();
+	loc_core_event_cb_timeout();
+}
+
+void loc_core_timer_start(uint16_t timeout)
+{
+	if (timeout > 0) {
+		k_work_schedule_for_queue(
+			loc_core_work_queue_get(),
+			&loc_timeout_work,
+			K_SECONDS(timeout));
+	}
+}
+
 int loc_core_cancel(void)
 {
 	int err = 0;
 	enum loc_method current_loc_method =
 		current_loc_config.methods[current_loc_method_index].method;
 
+	k_work_cancel_delayable(&loc_timeout_work);
+	k_work_cancel_delayable(&loc_periodic_work);
+
 	/* Check if location has been requested using one of the methods */
 	if (current_loc_method != 0) {
-		/* Run method cancel only if periodic work is not busy as otherwise
-		 * we are just waiting for something to start running.
-		 */
-		if (!k_work_delayable_busy_get(&loc_periodic_work)) {
-			err = loc_method_api_get(current_loc_method)->cancel();
-		}
-	}
-
-	if (k_work_delayable_busy_get(&loc_periodic_work) > 0) {
-		k_work_cancel_delayable(&loc_periodic_work);
+		LOG_DBG("Cancelling location method for '%s' method",
+			(char *)loc_method_api_get(current_loc_method)->method_string);
+		err = loc_method_api_get(current_loc_method)->cancel();
 	}
 
 	k_sem_give(&loc_core_sem);
