@@ -181,6 +181,7 @@ Zigbee
 
 * Added:
 
+  * Added development support for ``nrf5340dk_nrf5340_cpuapp`` to the :ref:`zigbee_ncp_sample` sample.
   * :ref:`lib_zigbee_zcl_scenes` library with documentation.
     This library was separated from the Zigbee light bulb sample.
   * Added production support for :ref:`radio front-end module (FEM) <ug_radio_fem>` for nRF52 Series devices and nRF21540 EK.

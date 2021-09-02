@@ -23,6 +23,8 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf52840dongle_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840, nrf5340dk_nrf5340_cpuapp
 
+``nrf5340dk_nrf5340_cpuapp`` is supported only for development.
+
 You can use any of the development kits listed above.
 
 .. note::
