@@ -13,8 +13,10 @@
 #include <modem/at_cmd.h>
 #include <nrf_modem_gnss.h>
 #include <nrf_errno.h>
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_agps.h>
+#endif
 
 #include "loc_core.h"
 
@@ -24,7 +26,7 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 #define MIN_SLEEP_DURATION_FOR_STARTING_GNSS 10240
 #define AT_MDM_SLEEP_NOTIF_START "AT%%XMODEMSLEEP=1,%d,%d"
 #define AT_MDM_SLEEP_NOTIF_STOP "AT%XMODEMSLEEP=0" /* not used at the moment */
-#define CONFIG_AGPS_REQUEST_RECV_BUF_SIZE 4096
+#define AGPS_REQUEST_RECV_BUF_SIZE 4096
 
 extern location_event_handler_t event_handler;
 extern struct loc_event_data current_event_data;
@@ -43,8 +45,10 @@ static bool first_fix_obtained;
 static bool running;
 
 
-static char recv_buf[CONFIG_AGPS_REQUEST_RECV_BUF_SIZE];
-static char recv_buf2[CONFIG_AGPS_REQUEST_RECV_BUF_SIZE];
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+static char recv_buf[AGPS_REQUEST_RECV_BUF_SIZE];
+static char recv_buf2[AGPS_REQUEST_RECV_BUF_SIZE];
+#endif
 
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 
@@ -67,6 +71,7 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 int method_gnss_agps_request()
 {
 	struct nrf_cloud_rest_context rest_ctx = {
@@ -90,6 +95,7 @@ int method_gnss_agps_request()
 
 	return 0;
 }
+#endif
 
 void method_gnss_event_handler(int event)
 {
@@ -292,7 +298,9 @@ int method_gnss_location_get(const struct loc_method_config *config)
 		return -EBUSY;
 	}
 
+#if defined(CONFIG_NRF_CLOUD_AGPS)
 	method_gnss_agps_request();
+#endif
 
 	k_work_init(&method_gnss_start_work.work_item, method_gnss_positioning_work_fn);
 	method_gnss_start_work.gnss_config = gnss_config;
