@@ -1,4 +1,4 @@
 tests:
   net.lib.aws_jobs:
-    platform_allow: native_posix
+    platform_allow: native_posix qemu_cortex_m3
     tags: aws
