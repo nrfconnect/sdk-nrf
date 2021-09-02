@@ -293,7 +293,9 @@ void loc_core_event_cb_timeout(void)
 
 void loc_core_event_cb(const struct loc_location *location)
 {
-	char temp_str[16];
+	char latitude_str[12];
+	char longitude_str[12];
+	char accuracy_str[12];
 	enum loc_method requested_loc_method;
 	enum loc_method previous_loc_method;
 	int err;
@@ -312,12 +314,12 @@ void loc_core_event_cb(const struct loc_location *location)
 		/* Logging v1 doesn't support double and float logging. Logging v2 would support
 		 * but that's up to application to configure.
 		 */
-		sprintf(temp_str, "%.06f", current_event_data.location.latitude);
-		LOG_DBG("  latitude: %s", log_strdup(temp_str));
-		sprintf(temp_str, "%.06f", current_event_data.location.longitude);
-		LOG_DBG("  longitude: %s", log_strdup(temp_str));
-		sprintf(temp_str, "%.01f", current_event_data.location.accuracy);
-		LOG_DBG("  accuracy: %s m", log_strdup(temp_str));
+		sprintf(latitude_str, "%.06f", current_event_data.location.latitude);
+		LOG_DBG("  latitude: %s", log_strdup(latitude_str));
+		sprintf(longitude_str, "%.06f", current_event_data.location.longitude);
+		LOG_DBG("  longitude: %s", log_strdup(longitude_str));
+		sprintf(accuracy_str, "%.01f", current_event_data.location.accuracy);
+		LOG_DBG("  accuracy: %s m", log_strdup(accuracy_str));
 		if (current_event_data.location.datetime.valid) {
 			LOG_DBG("  date: %04d-%02d-%02d",
 				current_event_data.location.datetime.year,
@@ -329,6 +331,8 @@ void loc_core_event_cb(const struct loc_location *location)
 				current_event_data.location.datetime.second,
 				current_event_data.location.datetime.ms);
 		}
+		LOG_DBG("  Google maps URL: https://maps.google.com/?q=%s,%s",
+			log_strdup(latitude_str), log_strdup(longitude_str));
 	} else {
 		/* Do fallback to next preferred method */
 		previous_loc_method = current_event_data.method;
