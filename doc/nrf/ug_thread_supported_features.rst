@@ -46,6 +46,16 @@ The Thread 1.2 Specification support has the following limitation:
 
 * Due to code size limitation, the combination of complete set of Thread 1.2 features with the Bluetooth® LE multiprotocol support is not possible for the nRF52833 DKs.
 
+Coordinated Sampled Listening (CSL)
+===================================
+
+Coordinated Sampled Listening defined in IEEE 802.15.4-2015 is introduced by Thread 1.2 Specification to provide low latency communication for Sleepy End Devices.
+Thread 1.2 routers are required to support synchronized CSL transmissions to children which require them, known as Synchronized Sleepy End Devices (SSEDs).
+SSEDs are allowed to transmit frames normally at any time, but the routers should use the CSL transmission mechanism as long as the synchronization is maintained.
+This allows an SSED to stay in a sleepy state more than 99% of the time and only turn on its radio periodically for a few hundreds of microseconds in order to receive frames from its parent.
+
+The most common use case for SSEDs is for developing low latency battery-powered actuators, such as window blinds.
+
 Link Metrics Probing Protocol
 =============================
 
