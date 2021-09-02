@@ -216,108 +216,119 @@ You can refer to the following implementation samples and applications:
 * :ref:`http_modem_delta_update_sample` sample - performs a delta OTA update of the modem firmware.
 * :ref:`http_application_update_sample` sample - performs a basic application FOTA update.
 * :ref:`aws_fota_sample` sample - performs a FOTA update via MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
-* :ref:azure_fota_sample sample - performs a FOTA update from the Azure IoT Hub
+* :ref:`azure_fota_sample` sample - performs a FOTA update from the Azure IoT Hub
 * :ref:`asset_tracker_v2` application - performs FOTA updates of the application, modem (delta), and boot (if enabled).
 
 
 .. _nrf9160_ug_gnss:
 
 GNSS
-*********
-The nRF9160 is a highly versatile device that integrates both cellular and GNSS functionality.
-Please note that GNSS functionality is only available on the SICA variant, not the SIAA or SIBA variants.
-See :ref:`nRF9160 SiP revisions and variants` for more information.
+****
 
-Introduction
-=============
-There are many GNSS constellations (GPS, BeiDou, Galileo, GLONASS, etc.) available today but GPS can be seen as the most mature technology.
-The nRF9160 supports both GPS L1 C/A (Coarse/Acquisition) and QZSS L1C/A at 1575.42 MHz.
-This frequency band is ideal for penetrating through layers of the atmosphere (troposphere and ionosphere) as well as clouds, fog, rain, etc.
-GNSS is designed to be used with a line of sight to the sky. Therefore, the performance is not ideal when there are obstructions overhead or if the receiver is indoors.
+An nRF9160-based device is a highly versatile device that integrates both cellular and GNSS functionality.
+Note that GNSS functionality is only available on the SICA variant and not on the SIAA or SIBA variants.
+See `nRF9160 SiP revisions and variants`_ for more information.
 
-The nRF9160 has GNSS operation time multiplexed with the LTE modem. Therefore, the LTE modem should either be completely deactivated or in RRC (Radio Resource Control) idle or Power Saving Mode (PSM) when using the GNSS receiver.
-See the :ref:`nRF9160 GPS receiver Specification` for more information. For customers developing their own hardware with the nRF9160, it is strongly recommended to use the :ref:`nRF9160 Antenna and RF Interface Guidelines` as a reference.
-Section 4 provides details about the GNSS interface and antenna.
+There are many GNSS constellations (GPS, BeiDou, Galileo, GLONASS) available but GPS is the most mature technology.
+An nRF9160-based device supports both GPS L1 C/A (Coarse/Acquisition) and QZSS L1C/A at 1575.42 MHz.
+This frequency band is ideal for penetrating through layers of the atmosphere (troposphere and ionosphere) and suitable for various weather conditions.
+GNSS is designed to be used with a line of sight to the sky.
+Therefore, the performance is not ideal when there are obstructions overhead or if the receiver is indoors.
 
-Note: Starting from nRF Connect SDK v1.6.0 (modem library v1.2.0), the GNSS socket (:ref:`gnss_extension`) is deprecated and replaced with the GNSS interface (:ref:`gnss_interface`).
+The GNSS operation in an nRF9160-based device is time-multiplexed with the LTE modem.
+Therefore, the LTE modem must either be completely deactivated or in `RRC idle mode`_ or `Power Saving Mode (PSM)`_ when using the GNSS receiver.
+See the `nRF9160 GPS receiver Specification`_ for more information.
+Customers who are developing their own hardware with the nRF9160 are strongly recommended to use the `nRF9160 Antenna and RF Interface Guidelines`_ as a reference.
+See `GPS interface and antenna`_ for more details on GNSS interface and antenna.
+
+.. note::
+
+   Starting from |NCS| v1.6.0 (Modem library v1.2.0), the :ref:`GNSS socket <nrfxlib:gnss_extension>` is deprecated and replaced with the :ref:`GNSS interface <gnss_interface>`.
 
 Obtaining a fix
-=============
+===============
+
 GPS provides lots of useful information including 3D location (latitude, longitude, altitude), time, and velocity.
 
-The time to obtain a fix (also referred to as Time To First Fix (TTFF)) will depend on the last time that the GPS receiver was turned ON and used.
+The time to obtain a fix (also referred to as Time to First Fix (TTFF)) will depend on the time when the GPS receiver was last  turned on and used.
 
-Cold start
-   GPS started after being powered off for a long time, no knowledge of the time, where it is, or the satellite orbits.
+Following are the various GPS start modes:
 
-Warm start
-   GPS has some coarse knowledge of the time, location, or satellite orbits from a fix that was more than ~30 minutes ago.
+* Cold start - GPS starts after being powered off for a long time with zero knowledge of the time, current location, or the satellite orbits.
+* Warm start - GPS has some coarse knowledge of the time, location, or satellite orbits from a fix that is approximately 30 minutes old.
+* Hot start - GPS fix is requested within approximately 30 minutes from the last successful fix.
 
-Hot start
-   GPS fix is requested within ~30 minutes of the last successful fix.
+Each GPS satellite transmits its own `Ephemeris`_ data and common `Almanac`_ data:
 
-Each GPS satellite transmits its own ephemeris data and common almanac data.
-This data transmission occurs at a slow data rate of 50 bits/s. The orbital data can be received faster using A-GPS, which is discussed below.
+* Ephemeris data - Provides information about the orbit of the GPS satellite transmitting it. This data is valid for four hours and becomes inaccurate after that.
+* Almanac data - Provides coarse orbit and status information for each satellite in the constellation. Each satellite broadcasts Almanac data for all satellites.
 
-Ephemeris data
-   Provides information about the orbit of the GPS satellite transmitting it. This data is valid for 4 hours before it becomes inaccurate.
+The data transmission occurs at a slow data rate of 50 bps.
+The orbital data can be received faster using A-GPS.
 
-Almanac data
-   Provides coarse orbit and status information for each satellite in the constellation. Each satellite broadcasts almanac data for all satellites.
-
-Due to clock bias on the receiver, we have 4 unknowns when looking for a GPS fix, latitude, longitude, altitude, and clock bias.
-This results in solving an equation system with 4 unknowns, and therefore a minimum of 4 satellites need to be tracked to acquire a fix.
+Due to the clock bias on the receiver, there are four unknowns when looking for a GPS fix - latitude, longitude, altitude, and clock bias.
+This results in solving an equation system with four unknowns, and therefore a minimum of four satellites must be tracked to acquire a fix.
 
 Enhancements to GNSS
-=============
-When GNSS has not been in use for a while or is in relatively weak signal conditions, it may take longer to acquire a fix.
-To improve this, Nordic Semiconductor has implemented 2 methods to help acquire a fix: A-GPS/P-GPS and Low Accuracy Mode.
+====================
+
+When GNSS has not been in use for a while or if the device is in relatively weak signaling conditions, it might take longer to acquire a fix.
+To improve this, Nordic Semiconductor has implemented the following methods for acquiring a fix in a shorter time:
+
+•	A-GPS or P-GPS or a combination of both
+•	Low accuracy mode
 
 Assisted GPS (A-GPS)
 ---------------------
-A-GPS is commonly used to improve the time to first fix (TTFF) by utilizing a connection to the internet (for example, over cellular) to retrieve the almanac and ephemeris data.
-A connection to an internet server that has the almanac and ephemeris data is several orders of magnitude quicker than using the slow 50 bits/s data link to the GPS satellites. There are many options to retrieve this A-GPS data.
-Two such options are using nRF Cloud and SUPL, for both of which there exist examples in nRF Connect SDK. The A-GPS solution available through nRF Cloud has been optimized for embedded devices to reduce protocol overhead and data usage.
-This in turn allows for a smaller download thereby savings on time, power consumption, and data costs. More information about the retrieval of A-GPS data can be found here. -> https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/gnss_interface.html#a-gps-data
+
+A-GPS is commonly used to improve the Time to first fix (TTFF) by utilizing a connection (for example, over cellular) to the internet to retrieve the Almanac and Ephemeris data.
+A connection to an internet server that has the Almanac and Ephemeris data is several times quicker than using the slow 50 bps data link to the GPS satellites.
+There are many options to retrieve this A-GPS data.
+Two such options are using `nRF Cloud`_ and SUPL.
+|NCS| provides example implementations for both these options.
+The A-GPS solution available through nRF Cloud has been optimized for embedded devices to reduce protocol overhead and data usage.
+This in turn results in the download of reduced amount of data, thereby reducing time, power consumption, and data costs.
+See the section on A-GPS data in :ref:`nrfxlib:gnss_interface` for more information about the retrieval of A-GPS data.
 
 Predicted GPS (P-GPS)
 ---------------------
-P-GPS is a form of assistance, where the device can download up to two weeks of predicted satellite ephemerides data.
-This will help devices to determine the exact orbital location of the satellite without needing to connect to the cellular network every ~2 hours for up-to-date satellite ephemeris information or download the ephemeris from the acquired satellites,
-but the tradeoff is the reduced accuracy of the calculated position over time. Note that this requires more memory compared to regular A-GPS.
 
-Also note that due to satellite clock inaccuracies, not all healthy satellites have two weeks' worth of ephemerides data in the downloaded PGPS package,
-i.e., roughly after 10 days the number of satellites having valid predicted ephemerides is starting to drop gradually.
-This means that the GNSS module needs to download the ephemeris from the satellite broadcast if no predicted ephemeris is found for that satellite in order to be able to use the satellite.
+P-GPS is a form of assistance, where the device can download up to two weeks of predicted satellite Ephemerides data.
+Normally, devices connect to the cellular network approximately every two hours for up-to-date satellite Ephemeris information or they download the Ephemeris data from the acquired satellites.
+P-GPS enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
+Note that P-GPS requires more memory compared to regular A-GPS.
 
-SUPL vs. nRF Cloud as location service
----------------------
-SUPL library uses ~100kB of memory and also a bit more overhead which costs data and will suffer power consumption because you need to have the LTE radio ON much longer.
-NRF Cloud as location services instead has been designed to use minimal memory space on the device as well as using minimal possible data sent over the air to save power.
-This means that the nRF Cloud does the heavy lifting.
+Also, note that due to satellite clock inaccuracies, not all functional satellites will have Ephemerides data valid for two weeks in the downloaded PGPS package.
+This means that the number of satellites having valid predicted Ephemerides reduces in number roughly after ten days.
+Hence, the GNSS module needs to download the Ephemeris data from the satellite broadcast if no predicted Ephemeris is found for that satellite to be able to use the satellite.
+
+SUPL compared to nRF Cloud as location service
+----------------------------------------------
+
+SUPL library uses approximately 100 kB of memory with a bit more overhead, which costs data and results in power consumption because you must have the LTE radio on for a longer period. nRF Cloud as location services instead has been designed to use minimal memory space on the device and send minimal possible data over the air to save power.
 
 Low Accuracy Mode
----------------------
-Low accuracy mode allows the GNSS receiver to accept a looser criterion for a fix with 4 or more satellites or by using a reference altitude to allow for a fix using just 3 satellites.
-This will, of course, come at a tradeoff of reduced accuracy.
-This reference altitude can be from a recent valid normal fix or artificially injected.
-More information about low accuracy mode and its usage can be found here. --> https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/gnss_interface.html#low-accuracy-mode
+-----------------
 
-Samples in nRF Connect SDK
-=============
-There are many examples in the SDK that use GNSS. They are listed below with some information about their GNSS usage.
+Low accuracy mode allows the GNSS receiver to accept a looser criterion for a fix with four or more satellites or by using a reference altitude to allow for a fix using only three satellites.
+This has a tradeoff of reduced accuracy.
+This reference altitude can be from a recent valid normal fix or it can be artificially injected.
+See the section on low accuracy mode in :ref:`nrfxlib:gnss_interface` for more information about low accuracy mode and its usage.
 
-:ref:`asset_tracker_v2`
-   Uses nRF Cloud for A-GPS and/or P-GPS, obtains GNSS fixes, and transmits them to nRF Cloud along with sensor data.
+Samples using GNSS in |NCS|
+===========================
 
-:ref:`serial_lte_modem`
-   Uses AT commands to start and stop GNSS and has support for nRF Cloud A-GPS and P-GPS. It prints tracking and fix information to the serial console.
+There are many examples in |NCS| that use GNSS.
+Following is a list of the samples and applications with some information about the GNSS usage:
 
-:ref:`agps_sample`
-   Uses nRF Cloud for A-GPS by default, can be configured to use SUPL. It obtains GNSS fixes and transmits them to nRF Cloud.
+* :ref:`asset_tracker_v2` application - Uses nRF Cloud for A-GPS or P-GPS  or a combination of both. The application obtains GNSS fixes and transmits them to nRF Cloud along with sensor data.
+* :ref:`serial_lte_modem` application - Uses AT commands to start and stop GNSS and has support for nRF Cloud A-GPS and P-GPS. The application displays tracking and fix information in the serial console.
 
-:ref:`gps_with_supl_support_sample`
-   Does not use A-GPS by default but can be configured to use SUPL. It prints tracking, fix information, and NMEA strings to the serial console.
+* :ref:`agps_sample` sample - Uses nRF Cloud for A-GPS by default and can be configured to use SUPL. The sample obtains GNSS fixes and transmits them to nRF Cloud.
+
+* :ref:`gps_with_supl_support_sample` sample - Does not use A-GPS by default but can be configured to use SUPL. The sample displays tracking, fix information, and NMEA strings in the serial console.
+
+
 
 .. _nrf9160_ug_band_lock:
 
