@@ -343,8 +343,6 @@ static int do_api_call(struct http_request *http_req, struct nrf_cloud_rest_cont
 		err = 0;
 	}
 
-	close_connection(rest_ctx);
-
 	return err;
 }
 
@@ -672,7 +670,7 @@ BUILD_ASSERT((GPS_AGPS_UTC_PARAMETERS <= AGPS_CUSTOM_TYPE_CNT) &&
 	     (GPS_AGPS_LOCATION <= AGPS_CUSTOM_TYPE_CNT) &&
 	     (GPS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS <= AGPS_CUSTOM_TYPE_CNT) &&
 	     (GPS_AGPS_GPS_TOWS <= AGPS_CUSTOM_TYPE_CNT),
-	     "AGPS enumeration values have changed, update format_agps_custom_types_str()");
+	     "A-GPS enumeration values have changed, update format_agps_custom_types_str()");
 
 /* Macro to print the comma separated list of custom types */
 #define AGPS_TYPE_PRINT(buf, type)		\
@@ -781,7 +779,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	if ((request->type == NRF_CLOUD_REST_AGPS_REQ_CUSTOM) &&
 	    (request->agps_req == NULL)) {
-		LOG_ERR("Custom request type requires AGPS request data");
+		LOG_ERR("Custom request type requires A-GPS request data");
 		ret = -EINVAL;
 		goto clean_up;
 	} else if (result && !result->buf) {
@@ -801,7 +799,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	case NRF_CLOUD_REST_AGPS_REQ_CUSTOM:
 		ret = format_agps_custom_types_str(request->agps_req, custom_types);
 		if (ret) {
-			LOG_ERR("No AGPS types requested");
+			LOG_ERR("No A-GPS types requested");
 			goto clean_up;
 		}
 		url_sz += strlen(AGPS_CUSTOM_TYPE) + strlen(custom_types);
@@ -942,14 +940,16 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 				goto clean_up;
 
 			} else if (result->buf_sz < total_bytes) {
-				LOG_ERR("Provided buffer is too small");
+				LOG_ERR("Result buffer too small for %d bytes of A-GPS data",
+					total_bytes);
 				ret = -ENOBUFS;
+				goto clean_up;
 			}
 		}
 
 		rcvd_bytes += rest_ctx->response_len;
 
-		LOG_DBG("AGPS data rx: %u/%u", rcvd_bytes, total_bytes);
+		LOG_DBG("A-GPS data rx: %u/%u", rcvd_bytes, total_bytes);
 		if (rcvd_bytes > total_bytes) {
 			ret = -EFBIG;
 			goto clean_up;
