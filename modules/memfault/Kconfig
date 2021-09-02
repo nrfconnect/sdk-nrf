@@ -89,6 +89,13 @@ config MEMFAULT_NCS_FW_VERSION_PREFIX
 	  If the build version string is "a1b2c3d", the full firmware version
 	  will become "<prefix>a1b2c3d".
 
+config MEMFAULT_NCS_FW_VERSION
+	string "Static firmware version to use"
+	depends on MEMFAULT_NCS_FW_VERSION_STATIC
+	help
+	 When using a statically configured firmware version, this value
+	 will be reported to Memfault
+
 config MEMFAULT_NCS_INIT_PRIORITY
 	int "Memfault initialization priority"
 	range AT_CMD_INIT_PRIORITY 99 if MEMFAULT_NCS_DEVICE_ID_IMEI
