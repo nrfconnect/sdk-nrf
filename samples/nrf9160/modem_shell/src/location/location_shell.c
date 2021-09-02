@@ -50,12 +50,13 @@ static const char location_get_usage_str[] =
 /******************************************************************************/
 
 /* Following are not having short options: */
-enum {  LOCATION_SHELL_OPT_METHOD_1       = 1001,
-	LOCATION_SHELL_OPT_METHOD_2       = 1002,
-	LOCATION_SHELL_OPT_INTERVAL       = 1003,
-	LOCATION_SHELL_OPT_GNSS_ACCURACY  = 1004,
-	LOCATION_SHELL_OPT_GNSS_TIMEOUT   = 1005,
-	LOCATION_SHELL_OPT_GNSS_NUM_FIXES = 1006,
+enum {  LOCATION_SHELL_OPT_METHOD_1         = 1001,
+	LOCATION_SHELL_OPT_METHOD_2         = 1002,
+	LOCATION_SHELL_OPT_INTERVAL         = 1003,
+	LOCATION_SHELL_OPT_GNSS_ACCURACY    = 1004,
+	LOCATION_SHELL_OPT_GNSS_TIMEOUT     = 1005,
+	LOCATION_SHELL_OPT_GNSS_NUM_FIXES   = 1006,
+	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT = 1007,
 };
 
 /* Specifying the expected options: */
@@ -66,6 +67,7 @@ static struct option long_options[] = {
 	{ "gnss_accuracy", required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY },
 	{ "gnss_timeout", required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
 	{ "gnss_num_fixes", required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
+	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
 	{ 0, 0, 0, 0 }
 };
 
@@ -180,6 +182,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	enum loc_accuracy gnss_accuracy = LOC_ACCURACY_LOW;
 	bool gnss_accuracy_set = false;
 
+	int cellular_timeout = 0;
+	bool cellular_timeout_set = false;
+
 	bool method1_set = false;
 	enum loc_method method1 = LOC_METHOD_CELLULAR;
 	bool method2_set = false;
@@ -222,6 +227,17 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				return -EINVAL;
 			}
 			gnss_timeout_set = true;
+			break;
+
+		case LOCATION_SHELL_OPT_CELLULAR_TIMEOUT:
+			cellular_timeout = atoi(optarg);
+			if (cellular_timeout == 0) {
+				shell_error(shell,
+					    "Cellular timeout (%d) must be positive integer. ",
+					    cellular_timeout);
+				return -EINVAL;
+			}
+			cellular_timeout_set = true;
 			break;
 
 		case LOCATION_SHELL_OPT_INTERVAL:
@@ -355,6 +371,17 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 			methods[1].gnss.num_consecutive_fixes = gnss_num_fixes;
 		}
+
+		if (methods[0].method == LOC_METHOD_CELLULAR) {
+			if (cellular_timeout_set) {
+				methods[0].cellular.timeout = cellular_timeout;
+			}
+		} else if (methods[1].method == LOC_METHOD_CELLULAR) {
+			if (cellular_timeout_set) {
+				methods[1].cellular.timeout = cellular_timeout;
+			}
+		}
+
 
 		ret = location_request(real_config);
 		if (ret) {
