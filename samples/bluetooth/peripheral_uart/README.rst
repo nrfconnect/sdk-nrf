@@ -32,6 +32,11 @@ If you want to view the debug messages, follow the procedure in :ref:`testing_rt
 .. note::
    On Thingy:53 debug logs are provided over the USB CDC ACM class serial port, instead of using RTT.
 
+FEM support
+***********
+
+.. include:: /includes/sample_fem_support.txt
+
 Requirements
 ************
 
@@ -39,7 +44,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810, thingy53_nrf5340_cpuapp
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52840dk_nrf52811, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52833dk_nrf52820, nrf52dk_nrf52832, nrf52dk_nrf52810, thingy53_nrf5340_cpuapp, nrf21540dk_nrf52840
 
 .. note::
    * To build this sample for ``nrf52dk_nrf52810``, ``nrf52840dk_nrf52811`` or ``nrf52833dk_nrf52820``, use the `Minimal build`_ approach.

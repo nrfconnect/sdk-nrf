@@ -30,6 +30,11 @@ Debug messages are not displayed in the UART console, but are printed by the RTT
 
 If you want to view the debug messages, follow the procedure in :ref:`testing_rtt_connect`.
 
+FEM support
+***********
+
+.. include:: /includes/sample_fem_support.txt
+
 Requirements
 ************
 
@@ -37,7 +42,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf21540dk_nrf52840
 
 The sample also requires another development kit running a compatible application (see :ref:`peripheral_uart`).
 
