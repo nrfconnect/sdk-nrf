@@ -43,9 +43,6 @@ BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_VERSION_STATIC) > 1,
 	     "Firmware version must be configured");
 #endif
 
-static char fw_version[sizeof(CONFIG_MEMFAULT_NCS_FW_VERSION_PREFIX) + 8] =
-	CONFIG_MEMFAULT_NCS_FW_VERSION_PREFIX;
-
 #if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI)
 	static char device_serial[IMEI_LEN + 1];
 #elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_STATIC)
@@ -64,7 +61,11 @@ sMfltHttpClientConfig g_mflt_http_client_config = {
 
 void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 {
+#if defined(CONFIG_MEMFAULT_NCS_FW_VERSION_AUTO)
 	static bool is_init;
+
+	static char fw_version[sizeof(CONFIG_MEMFAULT_NCS_FW_VERSION_PREFIX) + 8] =
+	    CONFIG_MEMFAULT_NCS_FW_VERSION_PREFIX;
 
 	if (!is_init) {
 		const size_t version_len = strlen(fw_version);
@@ -75,6 +76,9 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 		memfault_build_id_get_string(&fw_version[version_len], build_id_num_chars);
 		is_init = true;
 	}
+#else
+	static const char *fw_version = CONFIG_MEMFAULT_NCS_FW_VERSION;
+#endif /* defined(CONFIG_MEMFAULT_NCS_FW_VERSION_AUTO) */
 
 	*info = (sMemfaultDeviceInfo) {
 		.device_serial = device_serial,
