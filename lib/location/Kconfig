@@ -21,6 +21,13 @@ config LOCATION_METHOD_CELLULAR
 	select MULTICELL_LOCATION
 	default y
 
+if NRF_CLOUD_AGPS
+
+config AGPS_LOCATION_SERVICE_NRF_CLOUD_JWT_STRING
+	string "JWT set at compile time"
+
+endif # NRF_CLOUD_AGPS
+
 module = LOCATION
 module-str = Location
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
