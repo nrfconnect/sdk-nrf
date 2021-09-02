@@ -343,14 +343,18 @@ See the following example:
 lsetcca - Clear Channel Assessment
 ==================================
 
-If enabled, it makes the CMD device perform a Clear Channel Assessment (CCA) prior to TX.
+If enabled, it makes the CMD device perform a Clear Channel Assessment (CCA) before each transmission.
 
    .. parsed-literal::
       :class: highlight
 
       custom lsetcca *<toggle>*
 
-The ``<toggle>`` argument enbles (1) or disables (0) CCA prior to TX.
+The ``<toggle>`` argument enables or disables the execution of a CCA before each transmission.
+It can be set to the following values:
+
+* ``1`` - enable CCA
+* ``0`` - disable CCA
 
 See the following example:
 
@@ -574,14 +578,15 @@ See the following example:
 lsetantenna - Set CMD antenna id
 ================================
 
-It sets the antenna used by the CMD device fr both TX and RX operations.
+It sets the antenna used by the CMD device for both TX and RX operations.
 
    .. parsed-literal::
       :class: highlight
 
       custom lsetantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
+The ``<antenna>`` argument indicates the antenna id.
+It can either be ``0`` or ``1``.
 
 See the following example:
 
@@ -593,14 +598,15 @@ See the following example:
 lsetrxantenna - Set CMD antenna id for RX
 =========================================
 
-It sets the antenna used by the CMD device for RX.
+It sets the antenna used by the CMD device for RX operations.
 
    .. parsed-literal::
       :class: highlight
 
       custom lsetrxantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
+The ``<antenna>`` argument indicates the antenna id.
+It can either be ``0`` or ``1``.
 
 See the following example:
 
@@ -612,14 +618,15 @@ See the following example:
 lsettxantenna - Set CMD antenna id for TX
 =========================================
 
-It sets the antenna used by the CMD device for TX.
+It sets the antenna used by the CMD device for TX operations.
 
    .. parsed-literal::
       :class: highlight
 
       custom lsettxantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
+The ``<antenna>`` argument indicates the antenna id.
+It can either be ``0`` or ``1``.
 
 See the following example:
 
@@ -631,12 +638,12 @@ See the following example:
 lgetrxantenna - Get CMD RX antenna id
 =====================================
 
-It gets the antenna used for RX by the CMD device.
+It gets the antenna used by the CMD device for RX operations.
 
    .. parsed-literal::
       :class: highlight
 
-      custom lgetantenna
+      custom lgetrxantenna
 
 See the following example:
 
@@ -648,12 +655,12 @@ See the following example:
 lgettxantenna - Get CMD TX antenna id
 =====================================
 
-It gets the antenna used for TX by the CMD device.
+It gets the antenna used by the CMD device for TX operations.
 
    .. parsed-literal::
       :class: highlight
 
-      custom lgetantenna
+      custom lgettxantenna
 
 See the following example:
 
@@ -662,15 +669,15 @@ See the following example:
 
       custom lgettxantenna
 
-lgetbestrxantenna - Get last best CMD RX antenna id selected by Antenna Diversity algorithm
+lgetbestrxantenna - Get last best CMD RX antenna id selected by antenna diversity algorithm
 ===========================================================================================
 
-It gets the last best antenna selected for RX by Antenna Diversity algorithm.
+It gets the last best antenna selected for RX operations by the antenna diversity algorithm.
 
    .. parsed-literal::
       :class: highlight
 
-      custom lgetantenna
+      custom lgetbestrxantenna
 
 See the following example:
 
@@ -679,8 +686,8 @@ See the following example:
 
       custom lgetbestrxantenna
 
-rsetantenna - Set DUT antenna number
-====================================
+rsetantenna - Set DUT antenna id
+================================
 
 It sets the antenna used by the DUT device for both TX and RX operations.
 
@@ -689,7 +696,8 @@ It sets the antenna used by the DUT device for both TX and RX operations.
 
       custom rsetantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
+The ``<antenna>`` argument indicates the antenna id.
+It can either be ``0`` or ``1``.
 
 See the following example:
 
@@ -698,17 +706,18 @@ See the following example:
 
       custom rsetantenna *1*
 
-rsettxantenna - Set DUT TX antenna number
-=========================================
+rsettxantenna - Set DUT TX antenna id
+=====================================
 
-It sets the antenna used by the DUT device for TX.
+It sets the antenna used by the DUT device for TX operations.
 
    .. parsed-literal::
       :class: highlight
 
       custom rsettxantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
+The ``<antenna>`` argument indicates the antenna id.
+It can either be ``0`` or ``1``.
 
 See the following example:
 
@@ -717,17 +726,18 @@ See the following example:
 
       custom rsettxantenna *1*
 
-rsetrxantenna - Set DUT RX antenna number
-=========================================
+rsetrxantenna - Set DUT RX antenna id
+=====================================
 
-It sets the antenna used by the DUT device for RX.
+It sets the antenna used by the DUT device for RX operations.
 
    .. parsed-literal::
       :class: highlight
 
       custom rsetrxantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna number, in the range between ``0`` and ``1``.
+The ``<antenna>`` argument indicates the antenna id.
+It can either be ``0`` or ``1``.
 
 See the following example:
 
@@ -736,27 +746,10 @@ See the following example:
 
       custom rsetrxantenna *1*
 
-rgetrxantenna - Get DUT RX antenna number
-=========================================
+rgetrxantenna - Get DUT TX antenna id
+=====================================
 
-It gets the antenna used by the DUT device for RX.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom rgetrxantenna
-
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom rgetrxantenna
-
-rgettxantenna - Get DUT TX antenna number
-=========================================
-
-It gets the antenna used by the DUT device for TX.
+It gets the antenna used by the DUT device for TX operations.
 
    .. parsed-literal::
       :class: highlight
@@ -770,10 +763,27 @@ See the following example:
 
       custom rgettxantenna
 
-rgetbestrxantenna - Get last best DUT RX antenna id selected by Antenna Diversity algorithm
+rgettxantenna - Get DUT RX antenna id
+=====================================
+
+It gets the antenna used by the DUT device for RX operations.
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom rgetrxantenna
+
+See the following example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      custom rgetrxantenna
+
+rgetbestrxantenna - Get last best DUT RX antenna id selected by antenna diversity algorithm
 ===========================================================================================
 
-It gets the last best antenna selected for RX by Antenna Diversity algorithm.
+It gets the last best antenna selected for RX operations by the antenna diversity algorithm.
 
    .. parsed-literal::
       :class: highlight
@@ -1079,7 +1089,8 @@ FEM support
 .. include:: /includes/sample_fem_support.txt
 
 .. note::
-   The sample provides support for Antenna Diversity feature on nRF52840. It can be enabled and configured using Kconfig configuration.
+   The sample provides support for the *antenna diversity* feature on the nRF52840.
+   It can be enabled and configured using Kconfig configuration options.
 
 
 Building and running
@@ -1163,4 +1174,4 @@ Performing radio tests without the serial interface
 Refer to the :ref:`802154_phy_test_ui` for the complete list of the available commands.
 
 .. note::
-   Currently the RSSI measurements are performed without additional temperature correction.
+   Currently, the RSSI measurements are performed without additional temperature correction.
