@@ -19,7 +19,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 project = "Trusted Firmware-M"
 copyright = "2017-2019, ARM CE-OSS"
 author = "ARM CE-OSS"
-version = "1.3.0"
+version = "1.3.99"
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
