@@ -177,7 +177,28 @@ add_region(
   DEVICE NRF_FLASH_DRV_NAME
   )
 
-if (CONFIG_PM_EXTERNAL_FLASH)
+dt_chosen(ext_flash_dev PROPERTY nordic,pm-ext-flash)
+if (DEFINED ext_flash_dev)
+  dt_prop(dev_name PATH ${ext_flash_dev} PROPERTY label)
+  dt_prop(num_bits PATH ${ext_flash_dev} PROPERTY size)
+  math(EXPR num_bytes "${num_bits} / 8")
+
+  add_region(
+    NAME external_flash
+    SIZE ${num_bytes}
+    BASE ${CONFIG_PM_EXTERNAL_FLASH_BASE}
+    PLACEMENT start_to_end
+    DEVICE ${dev_name}
+    )
+elseif(CONFIG_PM_EXTERNAL_FLASH)
+  if (NOT CONFIG_PM_EXTERNAL_FLASH_SUPPORT_LEGACY)
+    message(WARNING "\
+External flash for partition manager is configured through Kconfig. This \
+should now be done through devicetree instead. See 'Using external flash \
+memory partitions' chapter in the documentation for instructions on how to \
+fix this, or enable `CONFIG_PM_EXTERNAL_FLASH_SUPPORT_LEGACY` in Kconfig.")
+  endif()
+
   add_region(
     NAME external_flash
     SIZE ${CONFIG_PM_EXTERNAL_FLASH_SIZE}
@@ -520,6 +541,21 @@ else()
   set(ZEPHYR_RUNNER_CONFIG_KERNEL_HEX "${final_merged}"
     CACHE STRING "Path to merged image in Intel Hex format" FORCE)
 
+endif()
+
+# Ensure that the size of the second slot matches the primary slot when
+# external flash is used. This check must be here since the size of
+# the primary slot is not known during the configure stage of the mcuboot
+# child image.
+if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
+  get_shared(mcuboot_secondary_size IMAGE mcuboot PROPERTY SECONDARY_SIZE)
+  if (NOT "${mcuboot_secondary_size}" EQUAL "${PM_MCUBOOT_PRIMARY_SIZE}")
+    message(WARNING "\
+The property 'PM_PARTITION_SIZE_MCUBOOT_SECONDARY' for \
+the mcuboot child image has an incorrect value ${mcuboot_secondary_size}. \
+Its value must be set to ${PM_MCUBOOT_PRIMARY_SIZE} so that it matches the \
+primary partition.")
+  endif()
 endif()
 
 # We need to tell the flash runner use the merged hex file instead of
