@@ -28,7 +28,12 @@ LOG_MODULE_REGISTER(nrf_cloud_codec, CONFIG_NRF_CLOUD_LOG_LEVEL);
 #define TIMEOUT_STR "timeout"
 #define PAIRED_STR "paired"
 
+/* Modem returns RSRP and RSRQ as index values which require
+ * a conversion to dBm and dB respectively. See modem AT
+ * command reference guide for more information.
+ */
 #define RSRP_ADJ(rsrp) (rsrp - ((rsrp <= 0) ? 140 : 141))
+#define RSRQ_ADJ(rsrq) (((double)rsrq * 0.5) - 19.5)
 
 bool initialized;
 
@@ -1273,7 +1278,8 @@ int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf
 		}
 
 		if ((cur->rsrq != NRF_CLOUD_CELL_POS_OMIT_RSRQ) &&
-		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ, cur->rsrq)) {
+		    json_add_num_cs(lte_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ,
+				    RSRQ_ADJ(cur->rsrq))) {
 			goto cleanup;
 		}
 
@@ -1328,7 +1334,7 @@ int nrf_cloud_format_cell_pos_req_json(struct lte_lc_cells_info const *const inf
 			}
 			if ((ncell->rsrq != NRF_CLOUD_CELL_POS_OMIT_RSRQ) &&
 			    json_add_num_cs(ncell_obj, NRF_CLOUD_CELL_POS_JSON_KEY_RSRQ,
-					    ncell->rsrq)) {
+					    RSRQ_ADJ(ncell->rsrq))) {
 				goto cleanup;
 			}
 		}
