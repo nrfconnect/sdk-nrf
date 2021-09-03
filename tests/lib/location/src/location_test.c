@@ -158,6 +158,8 @@ void test_loc_gnss(void)
 	static const char cereg_resp[] =
 		"+CEREG: 5,1,\"5A00\",\"00038107\",7,,,\"00011110\",\"11100000\"";
 
+	__wrap_nrf_modem_gnss_event_handler_set_IgnoreAndReturn(0);
+
 	__wrap_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__wrap_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
