@@ -98,6 +98,9 @@
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 
 .. _`Pelion Device Management Client library reference example`: https://github.com/PelionIoT/mbed-cloud-client-example
+.. _`Pelion manifest tool`: https://github.com/PelionIoT/manifest-tool#device-management-manifest-cli-tool
+.. _`Installing the manifest tool`: https://github.com/PelionIoT/manifest-tool#installing-the-manifest-tool
+.. _`Using the manifest tool`: https://github.com/PelionIoT/manifest-tool#using-the-manifest-tool
 
 .. ### Source: github.io
 
@@ -540,7 +543,7 @@
 .. _`Device Management Update`: https://developer.pelion.com/docs/device-management/v4.7/updating-firmware/index.html
 .. _`Factory Configuration Client`: https://developer.pelion.com/docs/device-management/current/factory-client/index.html
 .. _`Pelion's factory_configurator_client.h`: https://developer.pelion.com/docs/device-management/current/factory-client/factory__configurator__client_8h.html
-.. _`Pelion Manifest Tool`: https://developer.pelion.com/docs/device-management/v4.7/updating-firmware/manifest-tool.html
+.. _`Pelion Manifest Tool for version 4.7`: https://developer.pelion.com/docs/device-management/v4.7/updating-firmware/manifest-tool.html
 .. _`Zephyr integration tutorial`: https://developer.pelion.com/docs/device-management/current/connecting/zephyr.html
 
 .. ### Source: memfault.com
