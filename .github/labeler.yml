@@ -73,6 +73,9 @@
   - any:
     - "samples/bluetooth/**/*"
     - "!samples/bluetooth/mesh/**/*"
+  - "subsys/nrf_rpc/**/*"
+  - "subsys/mpsl/**/*"
+  - "drivers/mpsl/**/*"
 
 "CI-mesh-test":
   - "subsys/bluetooth/mesh/**/*"
