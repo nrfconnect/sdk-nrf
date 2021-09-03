@@ -63,8 +63,8 @@ if __name__ == '__main__':
         special_info[n]['file'] = n
         special_info[n]['modtime'] = int(path.getmtime(p))
         merged = dict()
-        merged.update(special_info[n])
         merged.update(shared_info)
+        merged.update(special_info[n])
         manifest['files'].append(merged)
 
     path_to_manifest = path.join(path.dirname(args.output.name), f'{path.basename(args.output.name)}_manifest.json')
