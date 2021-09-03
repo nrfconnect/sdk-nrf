@@ -608,11 +608,9 @@ static void gnss_api_init(void)
 	}
 
 	/* Activate GNSS API v2 */
-	err = nrf_modem_gnss_init();
+	nrf_modem_gnss_init();
 
-	if (!err) {
-		err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
-	}
+	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
 
 	if (!err) {
 		gnss_api_initialized = true;
