@@ -6,9 +6,12 @@
 
 #include <zephyr.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <modem/lte_lc.h>
 #include <net/cloud.h>
 #include <net/socket.h>
+#include <net/nrf_cloud.h>
+#include <sys/reboot.h>
 #include <dk_buttons_and_leds.h>
 
 #include <logging/log.h>
@@ -18,6 +21,7 @@ LOG_MODULE_REGISTER(cloud_client, CONFIG_CLOUD_CLIENT_LOG_LEVEL);
 static struct cloud_backend *cloud_backend;
 static struct k_work_delayable cloud_update_work;
 static struct k_work_delayable connect_work;
+static struct k_work device_status_work;
 
 static K_SEM_DEFINE(lte_connected, 0, 1);
 
@@ -25,6 +29,38 @@ static K_SEM_DEFINE(lte_connected, 0, 1);
  * used to abort/allow cloud publications.
  */
 static bool cloud_connected;
+
+static void device_status_send(struct k_work *work)
+{
+	static bool sent;
+
+	if (sent) {
+		return;
+	}
+
+	struct nrf_cloud_svc_info_fota fota = {
+		.bootloader = false,
+		.modem = true,
+		.application = true
+	};
+	struct nrf_cloud_svc_info svc = {
+		.fota = &fota,
+		.ui = NULL
+	};
+	struct nrf_cloud_device_status dev_status = {
+		.modem = NULL,
+		.svc = &svc
+	};
+	int ret;
+
+	ret = nrf_cloud_shadow_device_status_update(&dev_status);
+	if (ret) {
+		LOG_ERR("Unable to encode cloud data: %d", ret);
+	} else {
+		sent = true;
+		LOG_INF("Updated device shadow");
+	}
+}
 
 static void connect_work_fn(struct k_work *work)
 {
@@ -85,6 +121,23 @@ static void cloud_update_work_fn(struct k_work *work)
 #endif
 }
 
+void fota_done_handler(const struct cloud_event *const evt)
+{
+#if defined(CONFIG_NRF_CLOUD_FOTA)
+	enum nrf_cloud_fota_type fota_type = NRF_CLOUD_FOTA_TYPE__INVALID;
+
+	if (evt && evt->data.msg.buf) {
+		fota_type = *(enum nrf_cloud_fota_type *)evt->data.msg.buf;
+		LOG_INF("FOTA type: %d", fota_type);
+	}
+#endif
+#if defined(CONFIG_LTE_LINK_CONTROL)
+	lte_lc_power_off();
+#endif
+	LOG_INF("Rebooting to complete FOTA update");
+	sys_reboot(SYS_REBOOT_COLD);
+}
+
 void cloud_event_handler(const struct cloud_backend *const backend,
 			 const struct cloud_event *const evt,
 			 void *user_data)
@@ -108,8 +161,14 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		break;
 	case CLOUD_EVT_READY:
 		LOG_INF("CLOUD_EVT_READY");
+#if defined(CONFIG_BOOTLOADER_MCUBOOT) && !defined(CONFIG_NRF_CLOUD_FOTA)
+		/* Mark image as good to avoid rolling back after update */
+		LOG_INF("Marking any FOTA image as confirmed")
+		boot_write_img_confirmed();
+#endif
+		k_work_submit(&device_status_work);
 #if defined(CONFIG_CLOUD_PUBLICATION_SEQUENTIAL)
-		k_work_reschedule(&cloud_update_work, K_NO_WAIT);
+		k_work_reschedule(&cloud_update_work, K_SECONDS(5));
 #endif
 		break;
 	case CLOUD_EVT_DISCONNECTED:
@@ -137,6 +196,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		break;
 	case CLOUD_EVT_FOTA_DONE:
 		LOG_INF("CLOUD_EVT_FOTA_DONE");
+		fota_done_handler(evt);
 		break;
 	case CLOUD_EVT_FOTA_ERROR:
 		LOG_INF("CLOUD_EVT_FOTA_ERROR");
@@ -151,6 +211,7 @@ static void work_init(void)
 {
 	k_work_init_delayable(&cloud_update_work, cloud_update_work_fn);
 	k_work_init_delayable(&connect_work, connect_work_fn);
+	k_work_init(&device_status_work, device_status_send);
 }
 
 static void lte_handler(const struct lte_lc_evt *const evt)
@@ -286,6 +347,8 @@ void main(void)
 	if (err) {
 		LOG_ERR("Cloud backend could not be initialized, error: %d",
 			err);
+		LOG_INF("Rebooting");
+		sys_reboot(SYS_REBOOT_COLD);
 	}
 
 	work_init();
