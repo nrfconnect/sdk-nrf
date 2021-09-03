@@ -275,7 +275,7 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 
 	loc_core_timer_start(gnss_config.timeout);
 
-	LOG_DBG("GNSS started");
+	LOG_INF("GNSS started");
 }
 
 void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
@@ -300,6 +300,14 @@ int method_gnss_location_get(const struct loc_method_config *config)
 	if (running) {
 		LOG_ERR("Previous operation ongoing.");
 		return -EBUSY;
+	}
+
+	/* GNSS event handler is already set once in method_gnss_init(). If no other thread is
+	 * using GNSS, setting it again is not needed. */
+	int err = nrf_modem_gnss_event_handler_set(method_gnss_event_handler);
+	if (err) {
+		LOG_ERR("Failed to set GNSS event handler, error %d", err);
+		return -err;
 	}
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
