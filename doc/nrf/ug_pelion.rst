@@ -23,6 +23,7 @@ Setting up dependencies
 For the library to work with your device, complete the following configuration steps:
 
 1. `Create Pelion developer account`_.
+#. `Download Pelion development tools`_.
 #. `Enable and configure Mbed TLS`_.
 #. `Provision the device with credentials`_, required for the connection to Pelion Device Management Portal.
 #. `Provision the device with update resources`_ for the firmware update procedure to work.
@@ -36,6 +37,14 @@ Create Pelion developer account
 ===============================
 
 To use the Pelion Device Management library, you need a developer account on `Pelion Device Management Portal`_.
+
+Download Pelion development tools
+=================================
+
+The `Pelion manifest tool`_ simplifies the creation of update resources and manifests.
+You can also use them to run update campaigns directly from command line.
+
+To download and install the tool, see `Installing the manifest tool`_ in the Pelion repository.
 
 Enable and configure Mbed TLS
 =============================
@@ -62,6 +71,8 @@ Provision the device with update resources
 ==========================================
 
 For details about provisioning the device with update resources, see the `Device Management Update`_ guide in the Pelion documentation.
+You can also use the `Pelion manifest tool`_ to run the update process during development stage.
+See `Using the manifest tool`_ in the Pelion repository for details.
 
 .. note::
    Zephyr's port of Pelion might not support the most recent update client features.

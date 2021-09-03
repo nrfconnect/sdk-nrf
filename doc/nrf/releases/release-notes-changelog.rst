@@ -319,6 +319,7 @@ Pelion
 
 * Updated Pelion Device Management Client library version to 4.10.0.
 * Switched to using :ref:`caf_power_manager` and :ref:`caf_net_state` in :ref:`pelion_client`.
+* Updated documentation with information regarding Pelion development tools location.
 
 MCUboot
 =======

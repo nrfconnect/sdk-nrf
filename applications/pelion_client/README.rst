@@ -445,7 +445,7 @@ This option enables components required for image transport and storage.
 
 For the update campaign to be recognized and the image be accepted, you need to provision the device with the valid update resources (device unique identifiers and certificate used for update process validation).
 These resources are normally stored on device at production time.
-To simplify the development process, you can have the update resources created by the update manifest generation tool (see `Pelion Manifest Tool`_ in the Pelion documentation).
+To simplify the development process, you can have the update resources created by the update manifest generation tool (see `Pelion Manifest Tool for version 4.7`_ in the Pelion documentation).
 The generated C file must be stored to the :file:`update_default_resources.c` file, located in the :file:`applications/pelion_client/configuration/common` directory.
 The update resources embedded into the application image are used to provision the device.
 
