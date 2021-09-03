@@ -398,6 +398,7 @@ Documentation
 * Added:
 
   * User guide :ref:`ug_nrf_cloud`.
+  * User guide :ref:`ug_thingy53`.
 
 * Updated:
 

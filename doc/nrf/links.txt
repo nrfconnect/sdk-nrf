@@ -189,6 +189,7 @@
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT
 
+.. _`Thingy:53 product page`: https://www.nordicsemi.com/thingy53
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
 .. _`Thingy:91 product page`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-91
 .. _`Thingy:91 product website (downloads)`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91/Download#infotabs
@@ -261,6 +262,10 @@
 .. _`nRF21540 Product Specification`: https://infocenter.nordicsemi.com/topic/struct_fem/struct/nrf21540_ps.html
 
 .. _`Programming SoCs with nrfjprog`: https://infocenter.nordicsemi.com/topic/ug_nrf_cltools/UG/cltools/nrf_nrfjprogexe.html
+
+.. _`Nordic Thingy:53 User Guide`: https://infocenter.nordicsemi.com/topic/ug_thingy53/UG/thingy53/intro/frontpage.html
+
+.. _`Updating Nordic Thingy:53 firmware`: https://infocenter.nordicsemi.com/topic/ug_thingy53_gsg/UG/thingy53_gsg/updating_fw.html
 
 .. _`Nordic Thingy:91 User Guide`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/intro/frontpage.html
 .. _`Nordic Thingy:91 Getting Started`: https://infocenter.nordicsemi.com/topic/ug_thingy91_gsg/UG/thingy91_gsg/intro.html
@@ -541,6 +546,7 @@
 .. _`Continuous motion recognition tutorial`: https://docs.edgeimpulse.com/docs/continuous-motion-recognition
 .. _`Edge Impulse's data forwarder`: https://docs.edgeimpulse.com/docs/cli-data-forwarder
 .. _`Edge Impulse CLI installation guide`: https://docs.edgeimpulse.com/docs/cli-installation
+.. _`Nordic Semi Thingy:53 page`: https://www.edgeimpulse.com/docs/nordic-semi-thingy53
 
 .. ### Source: pelion.com
 
