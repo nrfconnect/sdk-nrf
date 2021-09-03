@@ -42,17 +42,31 @@ int location_init(location_event_handler_t handler)
 int location_request(const struct loc_config *config)
 {
 	int err;
+	struct loc_config default_config = { 0 };
+	struct loc_method_config methods[2] = { 0 };
 
-	err = k_sem_take(&loc_core_sem, K_SECONDS(1));
-	if (err) {
-		LOG_ERR("Location request already ongoing");
-		return -EBUSY;
+	if (config == NULL) {
+		LOG_DBG("No configuration given. Using default configuration.");
+
+		loc_config_defaults_set(&default_config, 2, methods);
+		loc_config_method_defaults_set(&methods[0], LOC_METHOD_GNSS);
+		loc_config_method_defaults_set(&methods[1], LOC_METHOD_CELLULAR);
+
+		config = &default_config;
 	}
+
+	loc_core_config_log(config);
 
 	err = loc_core_validate_params(config);
 	if (err) {
 		LOG_ERR("Invalid parameters given.");
 		return err;
+	}
+
+	err = k_sem_take(&loc_core_sem, K_SECONDS(1));
+	if (err) {
+		LOG_ERR("Location request already ongoing");
+		return -EBUSY;
 	}
 
 	err = loc_core_location_get(config);
@@ -66,4 +80,29 @@ int location_request_cancel(void)
 
 	err = loc_core_cancel();
 	return err;
+}
+
+void loc_config_defaults_set(
+	struct loc_config *config,
+	uint8_t methods_count,
+	struct loc_method_config *methods)
+{
+	memset(config, 0, sizeof(struct loc_config));
+	memset(methods, 0, sizeof(struct loc_method_config) * methods_count);
+
+	config->methods_count = methods_count;
+	config->methods = methods;
+	config->interval = 0;
+}
+
+void loc_config_method_defaults_set(struct loc_method_config *method, enum loc_method method_type)
+{
+	method->method = method_type;
+	if (method_type == LOC_METHOD_GNSS) {
+		method->gnss.timeout = 120;
+		method->gnss.accuracy = LOC_ACCURACY_NORMAL;
+		method->gnss.num_consecutive_fixes = 3;
+	} else if (method_type == LOC_METHOD_CELLULAR) {
+		method->gnss.timeout = 30;
+	}
 }

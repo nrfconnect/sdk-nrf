@@ -201,6 +201,28 @@ int location_request(const struct loc_config *config);
  */
 int location_request_cancel(void);
 
+/** @brief Sets default values to given configuration.
+ *
+ * @details Given methods are set as list of methods for the given configuration.
+ * Caller is response for allocating and deallocating memory for both configuration and method list.
+ * 'methods' memory area must be kept allocated as long as the configuration is used.
+ *
+ * @param[inout] config Configuration which is supplied with default values.
+ * @param[in] methods_count Number of methods to be stored in 'methods'.
+ * @param[in] methods List of methods. This will be initialized to zero.
+ */
+void loc_config_defaults_set(struct loc_config *config, uint8_t methods_count,
+			     struct loc_method_config *methods);
+
+/** @brief Sets default values for given method configuration based on given type.
+ *
+ * @details Intended use is that this is part of loc_config that has been initialized earlier.
+ *
+ * @param[inout] method Method configuration which is supplied with default values.
+ * @param[in] method_type Location method type.
+ */
+void loc_config_method_defaults_set(struct loc_method_config *method, enum loc_method method_type);
+
 /** @} */
 
 #ifdef __cplusplus
