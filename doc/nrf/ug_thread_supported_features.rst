@@ -92,3 +92,17 @@ A Thread Domain is a set of Thread Devices that receive and apply a common Threa
 The Thread Domain operational configuration enables Thread Devices to join and participate in larger interconnected systems extending beyond the limits of a single Thread network.
 A user or network administrator may use functions of either Thread Commissioning or Thread Border Routers to set up a common Thread Domain operational configuration for Thread Devices.
 The Thread Devices can belong to different Thread networks or Partitions that have potentially different per-network credentials.
+
+Multicast across Thread networks
+================================
+
+Thread 1.1 border routers have a limitation not to forward multicast traffic with scope greater than realm-local.
+For certain applications it could be useful to be able to control multicast groups from a host outside the Thread network.
+This is achieved in Thread 1.2 by allowing Thread border routers to forward multicast traffic with scope greater than realm-local in two ways:
+
+* From the Thread network to the exterior network: as a configuration option in the border router, for every multicast group.
+* From the exterior network to the Thread network: the Primary Backbone Router (PBBR) would forward only multicast traffic with a destination matching one of the multicast groups registered by Thread devices in its network.
+
+For the second case, a Thread Commissioner can be used as well to register allowed multicast groups on behalf of the devices.
+
+The OpenThread stack will automatically handle the registration of multicast groups with proper PBBR whenever they are configured in the device.
