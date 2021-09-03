@@ -381,10 +381,14 @@ static void loc_core_periodic_work_fn(struct k_work *work)
 
 static void loc_core_timeout_work_fn(struct k_work *work)
 {
+	enum loc_method current_loc_method =
+		current_loc_config.methods[current_loc_method_index].method;
+
 	ARG_UNUSED(work);
 
 	LOG_WRN("Timeout occurred");
-	loc_core_cancel();
+
+	loc_method_api_get(current_loc_method)->cancel();
 	loc_core_event_cb_timeout();
 }
 
