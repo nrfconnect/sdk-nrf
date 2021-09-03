@@ -158,6 +158,7 @@ static int tx(const struct device *dev, const uint8_t *buf, size_t len, int32_t 
 		data->tx.buf = buf;
 		data->tx.curr_buf = buf;
 		data->tx.size_left = len;
+		data->tx.enabled = true;
 		tx_send = true;
 		LOG_DBG("%s: sending", __func__);
 	}
@@ -179,6 +180,7 @@ static int tx_abort(const struct device *dev)
 	struct uart_event event = {UART_TX_ABORTED};
 	struct uart_async_adapter_data *data = access_dev_data(dev);
 
+	data->tx.enabled = false;
 	k_timer_stop(&data->tx.timeout_timer);
 	uart_irq_tx_disable(data->target);
 
@@ -221,6 +223,7 @@ static int rx_enable(const struct device *dev, uint8_t *buf, size_t len, int32_t
 	data->rx.next_buf = buf;
 	data->rx.next_buf_len = len;
 	data->rx.timeout = timeout;
+	data->rx.enabled = true;
 
 	k_spin_unlock(&(data->lock), key);
 
@@ -255,6 +258,7 @@ static int rx_disable(const struct device *dev)
 	struct uart_async_adapter_data *data = access_dev_data(dev);
 	struct uart_event event_disabled = {UART_RX_DISABLED};
 
+	data->rx.enabled = false;
 	uart_irq_rx_disable(data->target);
 	uart_irq_err_disable(data->target);
 	while (data->rx.buf) {
@@ -403,6 +407,7 @@ static inline void on_tx_complete(const struct device *dev, struct uart_async_ad
 	if (!data->tx.size_left) {
 		struct uart_event event = {UART_TX_DONE};
 
+		data->tx.enabled = false;
 		uart_irq_tx_disable(data->target);
 
 		k_spinlock_key_t key = k_spin_lock(&(data->lock));
@@ -516,13 +521,13 @@ static void uart_irq_handler(const struct device *target_dev, void *context)
 		"IRQ handler called with a context that seems uninitialized.");
 	LOG_DBG("irq_handler: Enter");
 	if (uart_irq_update(target_dev) && uart_irq_is_pending(target_dev)) {
-		if (uart_irq_tx_ready(target_dev)) {
+		if (data->tx.enabled && uart_irq_tx_ready(target_dev)) {
 			on_tx_ready(dev, data);
 		}
-		if (uart_irq_tx_complete(target_dev)) {
+		if (data->tx.enabled && uart_irq_tx_complete(target_dev)) {
 			on_tx_complete(dev, data);
 		}
-		if (uart_irq_rx_ready(target_dev)) {
+		if (data->rx.enabled && uart_irq_rx_ready(target_dev)) {
 			on_rx_ready(dev, data);
 		}
 
@@ -532,7 +537,7 @@ static void uart_irq_handler(const struct device *target_dev, void *context)
 		if (rx_err < 0) {
 			rx_err = 0;
 		}
-		if (rx_err) {
+		if (data->rx.enabled && rx_err) {
 			on_error(dev, data, rx_err);
 		}
 	}

@@ -51,6 +51,8 @@ struct uart_async_adapter_data {
 		volatile size_t size_left;
 		/** Timer used for timeout */
 		struct k_timer timeout_timer;
+		/** Tx state */
+		bool enabled;
 	} tx;
 
 	/** Data used for input transmission */
@@ -71,6 +73,8 @@ struct uart_async_adapter_data {
 		int32_t timeout;
 		/** Timer used for timeout */
 		struct k_timer timeout_timer;
+		/** RX state */
+		bool enabled;
 	} rx;
 };
 
