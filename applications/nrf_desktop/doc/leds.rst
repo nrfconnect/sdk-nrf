@@ -23,5 +23,5 @@ Module events
 Implementation details
 **********************
 
-nRF Desktop uses the buttons module from :ref:`lib_caf` (CAF).
-See the :ref:`CAF button module <caf_leds>` page for implementation details.
+nRF Desktop uses LEDs module from :ref:`lib_caf` (CAF).
+See the :ref:`CAF LEDs module <caf_leds>` page for implementation details.
