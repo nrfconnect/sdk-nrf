@@ -47,7 +47,6 @@ Adding support for nRF21540 in GPIO mode
 ****************************************
 
 The nRF21540 device is a range extender that can be used with nRF52 and nRF53 Series devices.
-However, software support for nRF21540 is currently available for nRF52 Series devices only.
 For more information about nRF21540, see the `nRF21540`_ documentation.
 
 The nRF21540 GPIO mode implementation of FEM is compatible with this device and implements the 3-pin PA/LNA interface.
@@ -59,16 +58,16 @@ To use nRF21540 in GPIO mode, complete the following steps:
 
 1. Add the following node in the devicetree file:
 
-.. code-block::
+   .. code-block::
 
-   / {
-       nrf_radio_fem: name_of_fem_node {
-           compatible  = "nordic,nrf21540-fem";
-           tx-en-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
-           rx-en-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
-           pdn-gpios   = <&gpio0 15 GPIO_ACTIVE_HIGH>;
-       };
-   };
+      / {
+            nrf_radio_fem: name_of_fem_node {
+               compatible  = "nordic,nrf21540-fem";
+               tx-en-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+               rx-en-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+               pdn-gpios   = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+         };
+      };
 
 #. Optionally replace the node name ``name_of_fem_node``.
 #. Replace the pin numbers provided for each of the required properties:
@@ -85,6 +84,15 @@ To use nRF21540 in GPIO mode, complete the following steps:
    The last element must be ``GPIO_ACTIVE_HIGH`` for nRF21540, but for a different FEM module you can use ``GPIO_ACTIVE_LOW``.
 
    The state of the remaining control pins should be set in other ways and according to `nRF21540 Product Specification`_.
+
+#. On nRF53 devices, you must also apply the same devicetree node mentioned in step 1 to the network core.
+   To do so, apply the overlay to the correct network core child image by creating an overlay file named :file:`child_image/*childImageName*.overlay` in your application directory, for example :file:`child_image/multiprotocol_rpmsg.overlay`.
+
+   The ``*childImageName*`` string must be one of the following values:
+
+   *  ``multiprotocol_rpmsg`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
+   *  ``802154_rpmsg`` for applications having support for 802.15.4, but not for Bluetooth.
+   *  ``hci_rpmsg`` for application having support for Bluetooth, but not for 802.15.4.
 
 Optional properties
 ===================
@@ -118,6 +126,8 @@ Adding support for SKY66112-11
 ******************************
 
 SKY66112-11 is one of many FEM devices that support the 2-pin PA/LNA interface.
+Currently, only the nRF52 Series devices support this interface.
+nRF53 Series devices are not supported.
 
 .. note::
   In the naming convention used in the API of the MPSL library, the functionalities designated as ``PA`` and ``LNA`` apply to the ``ctx-gpios`` and ``crx-gpios`` pins listed below, respectively.
@@ -126,15 +136,15 @@ To use the Simple GPIO implementation of FEM with SKY66112-11, complete the foll
 
 1. Add the following node in the devicetree file:
 
-.. code-block::
+   .. code-block::
 
-   / {
-       nrf_radio_fem: name_of_fem_node {
-           compatible = "skyworks,sky66112-11", "generic-fem-two-ctrl-pins";
-           ctx-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
-           crx-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
-       };
-   };
+      / {
+         nrf_radio_fem: name_of_fem_node {
+            compatible = "skyworks,sky66112-11", "generic-fem-two-ctrl-pins";
+            ctx-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+            crx-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+         };
+      };
 
 #. Optionally replace the node name ``name_of_fem_node``.
 #. Replace the pin numbers provided for each of the required properties:
@@ -199,9 +209,7 @@ Two nRF21540 boards are available, showcasing the possibilities of the nRF21540 
 * :ref:`nRF21540 DK <nrf21540dk_nrf52840>`
 * nRF21540 EK, described in sections below
 
-While the front-end module feature is supported on the nRF52 Series, it is yet not supported on the nRF53 Series.
-Work is underway to make the protocols shipped with |NCS| use FEM.
-At the moment, :ref:`ug_thread` and :ref:`ug_zigbee` support both the nRF21540 DK and the nRF21540 EK for the nRF52 Series devices.
+The front-end module feature is supported on the nRF52 and nRF53 Series devices.
 
 .. _ug_radio_fem_nrf21540_ek:
 
@@ -278,7 +286,7 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek -D*multiprotocol_rpmsg_*SHIELD=nrf21540_ek
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek -D\*multiprotocol_rpmsg_\*SHIELD=nrf21540_ek
 
 In this command, the *childImageName_* parameter has the ``multiprotocol_rpmsg_`` value and builds a multiprotocol application with support for 802.15.4 and Bluetooth.
 The *childImageName_* parameter can take the following values:

@@ -51,7 +51,7 @@ The sample is automatically built by the non-secure applications when the non-se
 However, it is not a part of the non-secure application.
 
 Instead of programming SPM and the non-secure application at the same time, you might want to program them individually.
-To do this, disable the automatic building of SPM by setting the option ``CONFIG_SPM=n`` in the ``prj.conf`` file of the application.
+To do this, disable the automatic building of SPM by setting the option ``CONFIG_SPM=n`` in the :file:`prj.conf` file of the application.
 
 If this results in a single-image build, the start address of the non-secure application will change.
 The security attribution configuration for the flash will change when SPM is not built as a sub-image.

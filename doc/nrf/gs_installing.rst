@@ -97,7 +97,7 @@ This system generates the Ninja files that the |NCS| uses.
 
       1. Download the latest version of the GN binary archive for Windows from the `GN website`_.
       2. Extract the :file:`zip` archive.
-      3. Ensure that the GN tool is added to your :envvar:`PATH` environment variable.
+      3. Check that the GN tool is added to your :envvar:`PATH` environment variable.
          See :ref:`zephyr:env_vars` for instructions if needed.
 
    .. group-tab:: Linux
@@ -121,7 +121,7 @@ This system generates the Ninja files that the |NCS| uses.
             rm gn.zip
 
          The wget tool is installed when installing the required tools on Linux.
-      #. Add the location of the GN tool to the system PATH.
+      #. Add the location of the GN tool to the system :envvar:`PATH`.
          For example, if you are using ``bash``, run the following commands:
 
          .. parsed-literal::
@@ -157,7 +157,7 @@ This system generates the Ninja files that the |NCS| uses.
             unzip gn.zip
             rm gn.zip
 
-      #. Add the location of the GN tool to the system PATH.
+      #. Add the location of the GN tool to the system :envvar:`PATH`.
          For example, if you are using ``bash``, run the following commands:
 
          a. Create the :file:`.bash_profile` file if you do not have it already:
@@ -386,7 +386,7 @@ To set up the toolchain, complete the following steps:
    The recommended folder is :file:`c:\gnuarmemb` on Windows and :file:`~/gnuarmemb` on Linux or macOS.
    Make sure that the folder name does not contain any spaces or special characters.
    By default, the contents are extracted to another folder that corresponds to the GNU Arm Embedded Toolchain version (*version-folder* in the following step).
-   For example, :file:`c:\gccarmemb\10_2021.07`, where :file:`10_2021.07` is the *version-folder* name edited to contain no empty spaces.
+   For example, :file:`c:\gccarmemb\9_2019-q4-major`, where :file:`9_2019-q4-major` is the *version-folder* name edited to contain no empty spaces.
 #. If you want to build and program applications from the command line, define the environment variables for the GNU Arm Embedded Toolchain.
    Depending on your operating system:
 
@@ -552,13 +552,13 @@ Before you start :ref:`building and programming a sample application <gs_program
 
       .. group-tab:: Windows
 
-         Make sure the locations of executable tools are added to the PATH variable, including Python, CMake, Ninja, and DTC.
-         On Windows, SES uses the PATH variable to find executables if they are not set in SES.
+         Make sure the locations of executable tools are added to the :envvar:`PATH` variable, including Python, CMake, Ninja, and DTC.
+         On Windows, SES uses the :envvar:`PATH` variable to find executables if they are not set in SES.
 
       .. group-tab:: Linux
 
-         Make sure the locations of executable tools are added to the PATH variable, including Python, CMake, Ninja, and DTC.
-         On Linux, SES uses the PATH variable to find executables if they are not set in SES.
+         Make sure the locations of executable tools are added to the :envvar:`PATH` variable, including Python, CMake, Ninja, and DTC.
+         On Linux, SES uses the :envvar:`PATH` variable to find executables if they are not set in SES.
 
       .. group-tab:: macOS
 
@@ -580,11 +580,11 @@ Before you start :ref:`building and programming a sample application <gs_program
 
                -DWEST=\ *path_to_west*
 
-         If you start SES from the command line, it uses the global PATH variable to find the executables.
+         If you start SES from the command line, it uses the global :envvar:`PATH` variable to find the executables.
          You do not need to explicitly configure the executables in SES.
 
          Regardless of how you start SES, if you get an error that a tool or command cannot be found, first make sure that the tool is installed.
-         If it is installed, verify that its path is configured correctly in the SES settings or in the PATH variable.
+         If it is installed, verify that its path is configured correctly in the SES settings or in the :envvar:`PATH` variable.
 
    ..
 
@@ -597,7 +597,7 @@ If you want to change the SES environment settings after the initial setup, clic
 
       nRF Connect SDK options in SES (Windows)
 
-If you want to configure tools that are not listed in the SES options, add them to the PATH variable.
+If you want to configure tools that are not listed in the SES options, add them to the :envvar:`PATH` variable.
 
 .. _build_environment_cli:
 

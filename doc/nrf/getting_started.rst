@@ -9,7 +9,7 @@ Alternatively, check the :ref:`gs_installing` section for instructions on settin
 We recommend using SEGGER Embedded Studio for building your applications. See :ref:`gs_programming` for the download links and instructions.
 
 Once you are set up, check out the :ref:`samples`.
-If this is the first time you work with embedded devices, it is probably a good idea to program an unchanged sample to your development kit first and test if it works as expected.
+If this is the first time you are working with embedded devices, it is probably a good idea to program an unchanged sample to your development kit first and test if it works as expected.
 After that, pick a sample that is related to the application you want to create and start developing!
 
 .. toctree::

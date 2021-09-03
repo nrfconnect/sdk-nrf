@@ -9,10 +9,10 @@ Testing an application
 
 |application_sample_definition|
 
-Follow the instructions in the testing section of the application documentation to ensure that the application runs as expected.
+Follow the instructions in the testing section of the application's documentation to make sure that the application runs as expected.
 
 Information about the current state of the application is usually provided through the LEDs or through UART, or through both.
-See the user interface section of the application documentation for description of the LED states or available UART commands.
+See the user interface section of the application's documentation for description of the LED states or available UART commands.
 
 .. _putty:
 
@@ -94,7 +94,7 @@ To connect to the nRF9160-based kit with LTE Link Monitor, perform the following
 
    .. note::
 
-      Make sure that **Automatic requests** is enabled in LTE Link Monitor.
+      Make sure that :guilabel:`Automatic requests` is enabled in LTE Link Monitor.
 
 #. Connect the nRF9160-based kit to the PC with a USB cable.
 #. Power on the nRF9160-based kit.

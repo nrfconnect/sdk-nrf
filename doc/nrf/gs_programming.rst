@@ -136,7 +136,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    	In a multi-image build, this allows you to debug the source code of your application only.
 
 If you get an error that a tool or command cannot be found, first make sure that the tool is installed.
-If it is installed, verify that its location is correct in the PATH variable or, if applicable, in the SES settings.
+If it is installed, verify that its location is correct in the :envvar:`PATH` variable or, if applicable, in the SES settings.
 
 .. _gs_programming_cmd:
 
