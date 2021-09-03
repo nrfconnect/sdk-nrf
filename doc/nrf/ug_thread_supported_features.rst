@@ -82,3 +82,13 @@ Developers can make use of the OpenThread API to obtain information about the li
 Enhanced-ACK probing is the most power efficient method to retrieve link metrics since very little message overhead is required.
 |NCS| provides full Link Metrics support even for the RCP architecture, which is the most technically challenging one since the radio driver must handle the injection of Information Elements on time to match the acknowledgment timing requirements.
 The decision on how to interpret the link metrics information to adjust the transmission power is left to the application itself.
+
+Thread Domain unicast addressing
+================================
+
+Thread 1.2 Specification introduces the concept of Thread Domains.
+
+A Thread Domain is a set of Thread Devices that receive and apply a common Thread Domain operational configuration.
+The Thread Domain operational configuration enables Thread Devices to join and participate in larger interconnected systems extending beyond the limits of a single Thread network.
+A user or network administrator may use functions of either Thread Commissioning or Thread Border Routers to set up a common Thread Domain operational configuration for Thread Devices.
+The Thread Devices can belong to different Thread networks or Partitions that have potentially different per-network credentials.
