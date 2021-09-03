@@ -2,6 +2,12 @@ add_subdirectory(${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/bootutil/zephyr
                  ${CMAKE_CURRENT_BINARY_DIR}/boot/bootutil/zephyr
 )
 
+if (CONFIG_MCUBOOT)
+  if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
+    set_shared(IMAGE ${IMAGE_NAME} PROPERTY SECONDARY_SIZE
+      ${CONFIG_PM_PARTITION_SIZE_MCUBOOT_SECONDARY})
+  endif()
+endif()
 if(CONFIG_BOOTLOADER_MCUBOOT)
 
   include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
@@ -106,6 +112,16 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     add_overlay_config(
       mcuboot
       ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/build_s1.conf
+      )
+  endif()
+
+  if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
+    # By passing this value we don't require the user to pass any overlay files
+    # to the MCUboot child image for storing the secondary partition in
+    # external flash.
+    add_overlay_config(
+      mcuboot
+      ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/ext_flash_mcuboot_secondary.conf
       )
   endif()
 

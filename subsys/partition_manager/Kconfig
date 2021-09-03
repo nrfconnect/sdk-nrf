@@ -130,26 +130,64 @@ config PM_SINGLE_IMAGE
 	  The option is always defined in builds where a TF-M image for the
 	  Secure Execution environment is generated.
 
-menuconfig PM_EXTERNAL_FLASH
-	bool "Support external flash in Partition Manager"
+DT_CHOSEN_EXT_FLASH:= nordic,pm-ext-flash
 
-if PM_EXTERNAL_FLASH
+config PM_EXTERNAL_FLASH
+	bool "[DEPRECATED] Support external flash in Partition Manager"
+	depends on !$(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
+	help
+	  [DEPRECATED] This value is extracted directly from devicetree. Remove
+	  its configuration. See 'Using external flash memory partitions'
+	  chapter in the documentation for instructions on how to fix this.
+
+config PM_EXTERNAL_FLASH_SUPPORT_LEGACY
+	bool "Support legacy external flash partitioning"
+	help
+	  The PM_EXTERNAL_FLASH Kconfig settings has been deprecated in favor of devicetree support.
+	  Enable this setting if your system is depending upon the old behavior.
+	depends on !$(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
+	depends on PM_EXTERNAL_FLASH
 
 config PM_EXTERNAL_FLASH_DEV_NAME
-	 string "Name of the external flash device"
+	string "[DEPRECATED] Name of the external flash device"
+	depends on !$(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
 	help
-	  Must match the 'drv_name' argument used when initializing the
-	  driver for the external flash through the 'DEVICE...INIT'
-	  function call. The value is used when calling 'device_get_binding'.
+	  [DEPRECATED] This value is extracted directly from devicetree. Remove
+	  its configuration. See 'Using external flash memory partitions'
+	  chapter in the documentation for instructions on how to fix this.
 
 config PM_EXTERNAL_FLASH_SIZE
-	hex "External flash size (in bytes)"
+	hex "[DEPRECATED] External flash size (in bytes)"
+	depends on !$(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
+	default 0
+	help
+	  [DEPRECATED] This value is extracted directly from devicetree. Remove
+	  its configuration. See 'Using external flash memory partitions'
+	  chapter in the documentation for instructions on how to fix this.
 
 config PM_EXTERNAL_FLASH_BASE
 	hex "External flash base address"
 	default 0
 
-endif
+config PM_PARTITION_SIZE_MCUBOOT_SECONDARY
+	hex "Size of MCUboot secondary partition"
+	default 0
+	depends on PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	depends on BOOTLOADER_MCUBOOT || MCUBOOT
+	help
+	  Must be set to the same size as the 'MCUBOOT_PRIMARY' partition.
+
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	bool "Place MCUboot secondary in external flash"
+	depends on BOOTLOADER_MCUBOOT || MCUBOOT
+	# Only depend on the chosen for the parent image. The value of this
+	# option is propagated to the MCUboot child image automatically.
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH)) || MCUBOOT
+	default y if BOOTLOADER_MCUBOOT
+	help
+	  Place the secondary partition of MCUboot in the external flash instead
+	  of the internal flash. This option should only be enabled by the user
+	  in the parent image.
 
 config PM_IMAGE_NOT_BUILT_FROM_SOURCE
 	bool
