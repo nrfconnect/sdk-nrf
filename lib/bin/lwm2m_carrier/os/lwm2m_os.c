@@ -146,6 +146,12 @@ int lwm2m_os_storage_delete(uint16_t id)
 	__ASSERT((id >= LWM2M_OS_STORAGE_BASE) || (id <= LWM2M_OS_STORAGE_END),
 		 "Storage ID out of range");
 
+	if ((id == LWM2M_OS_STORAGE_END - 16) ||
+	    (id == LWM2M_OS_STORAGE_END - 18) ||
+	    (id == LWM2M_OS_STORAGE_END - 19)) {
+		return 0;
+	}
+
 	return nvs_delete(&fs, id);
 }
 
