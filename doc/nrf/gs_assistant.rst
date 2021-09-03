@@ -9,14 +9,14 @@ Installing automatically
 
 `nRF Connect for Desktop`_, a cross-platform tool available for Windows, Linux, and macOS, provides different apps that simplify installing the |NCS|.
 
+.. note::
+   When installing the |NCS| through the |GSA| app, you will not be able to build on the command line using west.
+
 On Windows or macOS, use the :ref:`gs_app_tcm`.
 On Linux, use the :ref:`gs_app_gsa` or follow the steps found on the :ref:`gs_installing` page.
 
 Before you start setting up the toolchain, install available updates for your operating system.
 See :ref:`gs_recommended_versions` for information on the supported operating systems and Zephyr features.
-
-.. note::
-   When installing the |NCS| through the |GSA| app, you will not be able to build on the command line using west.
 
 .. _gs_app_tcm:
 

@@ -39,13 +39,6 @@ By default, |NCS| supports Thread 1.1, but you can enable and configure Thread 1
     See :ref:`thread_ug_thread_1_2` for the list of 1.2 features that are currently available in |NCS|, with information about how to enable them.
     Currently, the :ref:`ot_cli_sample` sample is the only sample that provides an :ref:`ot_cli_sample_thread_v12`.
 
-Limitations for Thread 1.2 support
-==================================
-
-The Thread 1.2 Specification support has the following limitation:
-
-* Due to code size limitation, the combination of complete set of Thread 1.2 features with the Bluetooth® LE multiprotocol support is not possible for the nRF52833 DKs.
-
 Coordinated Sampled Listening (CSL)
 ===================================
 
@@ -106,3 +99,11 @@ This is achieved in Thread 1.2 by allowing Thread border routers to forward mult
 For the second case, a Thread Commissioner can be used as well to register allowed multicast groups on behalf of the devices.
 
 The OpenThread stack will automatically handle the registration of multicast groups with proper PBBR whenever they are configured in the device.
+
+
+Limitations for Thread 1.2 support
+==================================
+
+The Thread 1.2 Specification support has the following limitation:
+
+* Due to code size limitation, the combination of complete set of Thread 1.2 features with the Bluetooth® LE multiprotocol support is not possible for the nRF52833 DKs.

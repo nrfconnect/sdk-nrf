@@ -22,14 +22,14 @@ The following tool versions have been tested to work:
 * Doxygen 1.9.2
 * Mscgen 0.20
 * PlantUML
-* Python dependencies as listed in :ref:`python_req_documentation`
+* Python dependencies as listed in :ref:`python_req_documentation` on the Requirements page
 
 Complete the following steps to install the required tools:
 
 1. If you have not done so already, install the |NCS| as described in :ref:`gs_installing` or :ref:`gs_assistant`.
 #. Install or update all required :ref:`Python dependencies <additional_deps>`.
 #. Install `Doxygen`_.
-#. Install `mscgen`_ and make sure that the ``mscgen`` executable is in your ``PATH``.
+#. Install `mscgen`_ and make sure that the ``mscgen`` executable is in your :envvar:`PATH`.
 #. Install PlantUML.
    On Windows, you can install `PlantUML from chocolatey`_.
 
@@ -51,6 +51,7 @@ Following are the available documentation sets:
 - ``zephyr``: Zephyr RTOS
 - ``mcuboot``: MCUboot
 - ``tfm``: Trusted Firmware-M
+- ``matter``: Matter
 - ``kconfig``: All available Kconfig options in the |NCS|
 
 Since there are links from the |NCS| documentation set into other documentation sets, the documentation is built in a predefined order.
@@ -141,13 +142,13 @@ Downloading is usually quicker than building the documentation from scratch, how
 .. note::
    Using cached builds is currently in an experimental state.
 
-To enable the online cache, set the ``NCS_CACHE_ENABLE`` environment variable.
+To enable the online cache, set the :envvar:`NCS_CACHE_ENABLE` environment variable.
 For example, on Windows, enter the following command::
 
   set NCS_CACHE_ENABLE=1
 
 The cached build is downloaded only if there are no local modifications to a specific documentation set.
-To force the download even if there are local modifications, set ``NCS_CACHE_FORCE`` in addition to ``NCS_CACHE_ENABLE``.
+To force the download even if there are local modifications, set :envvar:`NCS_CACHE_FORCE` in addition to :envvar:`NCS_CACHE_ENABLE`.
 
 Different versions
 ******************

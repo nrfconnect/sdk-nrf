@@ -81,16 +81,16 @@ Configuration files
 
 The sample provides the following predefined configuration files for the following development kits:
 
-* ``prj.conf`` - For nRF9160 DK
-* ``prj_qemu_x86.conf`` - For x86 Emulation (QEMU)
+* :file:`prj.conf` - For nRF9160 DK
+* :file:`prj_qemu_x86.conf` - For x86 Emulation (QEMU)
 
 In addition, the sample provides overlay configuration files, which are used to enable additional features in the sample:
 
-* ``overlay-tls.conf`` - TLS overlay configuration file for nRF9160 DK
-* ``overlay-qemu-x86-tls.conf`` - TLS overlay configuration file for x86 Emulation (QEMU)
-* ``overlay-carrier.conf`` - LWM2M carrier support for nRF9160 DK
+* :file:`overlay-tls.conf` - TLS overlay configuration file for nRF9160 DK
+* :file:`overlay-qemu-x86-tls.conf` - TLS overlay configuration file for x86 Emulation (QEMU)
+* :file:`overlay-carrier.conf` - LWM2M carrier support for nRF9160 DK
 
-They are located in ``samples/nrf9160/mqtt_simple`` folder.
+They are located in :file:`samples/nrf9160/mqtt_simple` folder.
 
 
 To add a specific overlay configuration file to the build, add the ``-- -DOVERLAY_CONFIG=<overlay_config_file>`` flag to your build.

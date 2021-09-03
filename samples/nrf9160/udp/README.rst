@@ -139,8 +139,7 @@ After programming the sample to your device, test it by performing the following
 1. |connect_kit|
 #. |connect_terminal|
 #. Enable logging by setting the :kconfig:`CONFIG_SERIAL` option to ``y`` in the :file:`prj.conf` and :file:`spm.conf` configuration files.
-#. Observe that the sample shows the following output in the terminal emulator.
-   Note that this is an example, and the output need not be identical to your observed output.
+#. Observe that the sample shows output similar to the following one in the terminal emulator:
 
    .. code-block:: console
 

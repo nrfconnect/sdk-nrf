@@ -12,7 +12,7 @@ You can add bootloader chains to an application in the following ways:
 * Permanently:
 
   * Using Kconfig fragments.
-  * Using ``prj.conf`` Kconfig project configuration files.
+  * Using :file:`prj.conf` Kconfig project configuration files.
 
 * Temporarily (for a single build):
 
@@ -39,7 +39,7 @@ The following sections describe how to add either |NSIB| or MCUboot as an immuta
 Adding |NSIB| as an immutable bootloader
 ========================================
 
-To build |NSIB| with a Zephyr or |NCS| sample, enable the :kconfig:`CONFIG_SECURE_BOOT` in the application's ``prj.conf`` file, in an associated Kconfig fragment, or using the command line:
+To build |NSIB| with a Zephyr or |NCS| sample, enable the :kconfig:`CONFIG_SECURE_BOOT` in the application's :file:`prj.conf` file, in an associated Kconfig fragment, or using the command line:
 
 .. code-block:: console
 
@@ -64,7 +64,7 @@ See :ref:`ug_bootloader_config` for more information about using Kconfig fragmen
 Adding a custom signature key file
 ----------------------------------
 
-To add a signature key file to this bootloader, set the :kconfig:`CONFIG_SB_SIGNING_KEY_FILE` option in the application's ``prj.conf`` file, in an associated Kconfig fragment, or using the command line:
+To add a signature key file to this bootloader, set the :kconfig:`CONFIG_SB_SIGNING_KEY_FILE` option in the application's :file:`prj.conf` file, in an associated Kconfig fragment, or using the command line:
 
 .. tabs::
 
@@ -88,7 +88,7 @@ The file argument must be a string and is specified in one of the following ways
 
 * The relative path to the file from the application directory.
 
-  * If the ``prj.conf`` file is external to the directory, the key's location is determined relative to the application directory, not to the configuration file.
+  * If the :file:`prj.conf` file is external to the directory, the key's location is determined relative to the application directory, not to the configuration file.
 
 * The absolute path to the file.
 
@@ -120,7 +120,7 @@ For example, if a directory named :file:`_keys` located in :file:`/home/user/ncs
 
          -DCONFIG_SB_SIGNING_KEY_FILE=\"/home/user/ncs/_keys/priv.pem\"
 
-      Or, if you set an environment variable named ``NCS`` to :file:`/home/user/ncs`:
+      Or, if you set an environment variable named :envvar:`NCS` to :file:`/home/user/ncs`:
 
       .. code-block:: console
 
@@ -129,7 +129,7 @@ For example, if a directory named :file:`_keys` located in :file:`/home/user/ncs
 .. note::
 
    The public key string must be an absolute path to the location of the public key file.
-   Environment variables (like ``$HOME``,``$PWD``, or ``$USER``) and the ``~`` character on Unix systems are not expanded when setting an absolute path from a ``prj.conf`` file or Kconfig fragment, but are expanded correctly in key file paths from the command line that are not given as strings.
+   Environment variables (like :envvar:`$HOME`, :envvar:`$PWD`, or :envvar:`$USER`) and the ``~`` character on Unix systems are not expanded when setting an absolute path from a :file:`prj.conf` file or Kconfig fragment, but are expanded correctly in key file paths from the command line that are not given as strings.
 
 You can find specific configuration options for keys with this bootloader in :file:`nrf/subsys/bootloader/Kconfig`.
 
@@ -164,7 +164,7 @@ If you want complete control over the key handling of a project, you can use a c
 Using a custom signing command removes the need to use of a private key from the build system.
 This is useful when the private keys are stored, managed, or otherwise processed through a *hardware security module* (`HSM`_) or an in-house tool.
 
-To use a custom signing command with this bootloader, set the following options in the application's ``prj.conf`` file, in an associated Kconfig fragment, or using the command line:
+To use a custom signing command with this bootloader, set the following options in the application's :file:`prj.conf` file, in an associated Kconfig fragment, or using the command line:
 
 .. tabs::
 
@@ -206,7 +206,7 @@ See the description of :kconfig:`CONFIG_SB_SIGNING_COMMAND` for which arguments 
 .. note::
 
    Whitespace, hyphens, and other non-alphanumeric characters must be escaped appropriately when setting the string from the command line.
-   If the custom signing command uses its own options or arguments, it is recommended to define the string in a ``prj.conf`` file or Kconfig fragment to avoid tracking backslashes.
+   If the custom signing command uses its own options or arguments, it is recommended to define the string in a :file:`prj.conf` file or Kconfig fragment to avoid tracking backslashes.
    Like public key paths, environment variables are not expanded when using them in a command string set from one of these files.
 
 .. _ug_bootloader_adding_immutable_mcuboot:

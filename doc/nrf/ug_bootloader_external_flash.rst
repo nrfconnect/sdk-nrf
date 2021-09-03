@@ -19,7 +19,7 @@ CMake gives a warning when the values do not match, and it also provides the cor
 
 .. note::
 
-    Currently, you must manually synchronize the value of :kconfig:`CONFIG_PM_PARTITION_SIZE_MCUBOOT_SECONDARY` by setting it for both the parent image and the MCUboot child image.
+   Currently, you must manually synchronize the value of :kconfig:`CONFIG_PM_PARTITION_SIZE_MCUBOOT_SECONDARY` by setting it for both the parent image and the MCUboot child image.
 
 Both the nRF52840 DK and nRF5340 DK come with an external flash memory that can be used for the secondary slot and can be accessed using the QSPI NOR flash memory driver.
 See the test in :file:`tests/modules/mcuboot/external_flash` for an example on how to enable this.

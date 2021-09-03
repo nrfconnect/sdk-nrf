@@ -16,7 +16,7 @@ A power-optimized development ecosystem typically consists of the following deve
 * `Power Profiler Kit II (PPK2)`_
 
 Together, they provide a unified solution for developers to evaluate, develop and characterize ultra-low power designs with ease.
-See :ref:`getting_started` for more information on |NCS| and the development environment.
+See :ref:`getting_started` for more information about the |NCS| and the development environment.
 
 Online Power Profiler for LTE is a tool to estimate the current consumption of the nRF9160 LTE modem.
 See the `Online Power Profiler user guide`_ for a basic overview of the tool and explanation of different parameters.
@@ -30,7 +30,7 @@ Disabling serial logging
 ************************
 
 Current measurements on devices that have the |NCS| samples or applications programmed with the default configuration, might show elevated current values, when compared to the expected current values from  Nordic ultra-low power SoCs.
-It is because most of the samples and applications in |NCS| are configured to perform logging over serial port (associated with UART(E) peripheral) by default.
+It is because most of the samples and applications in the |NCS| are configured to perform logging over serial port (associated with UART(E) peripheral) by default.
 
 The image below shows the power measurement output on Power Profiler Kit II for an nRF9160 DK with the :ref:`zephyr:blinky-sample` sample compiled for the ``nrf9160dk_nrf9160`` build target without modifications in the sample configuration.
 
@@ -51,7 +51,8 @@ To disable serial output, you must change the project configuration associated w
     See :ref:`ug_nrf5340` and :ref:`ug_multi_image`.
 
 1. Set the project configuration ``CONFIG_SERIAL`` to ``n`` irrespective of whether you are building the sample for the secure or non-secure build targets.
-#. For the non-secure build target (``nrf9160dk_nrf9160_ns``), ensure that serial logging is also disabled in :ref:`secure_partition_manager`. To disable serial logging in Secure Partition Manager, complete the following steps:
+#. For the non-secure build target (``nrf9160dk_nrf9160_ns``), ensure that serial logging is also disabled in :ref:`secure_partition_manager`.
+   To disable serial logging in Secure Partition Manager, complete the following steps:
 
    a. Add a :file:`spm.conf` file in the project directory with the following content:
 
@@ -167,7 +168,8 @@ To simulate the use case with Online Power Profiler, complete the following step
 
 	The average current is now 48.93 µA, which is below the calculated maximum limit of 57 µA.
 
-#. Export the settings from the Online Power Profiler tool and compare them with the measurements in real networks. Complete the following sub-steps to export the settings from Online Power Profiler:
+#. Export the settings from the Online Power Profiler tool and compare them with the measurements in real networks.
+   Complete the following sub-steps to export the settings from Online Power Profiler:
 
    a. Click :guilabel:`Export settings` to store current Online Power Profiler settings to a :file:`.json` file.
    #. Click :guilabel:`Export project config` to export the configuration parameters in a :file:`opp.conf` file that you can use when building the firmware.
@@ -309,7 +311,8 @@ To tune the network parameters for the example use case, complete the following 
 
 For the example use case, an estimate (based on the values from Online Power Profiler) calculated with the recommended factor is:
 
-   .. code-block:: none
+   .. parsed-literal::
+      :class: highlight
 
       (Total charge - cDRX charge) + cDRX charge * 1.5 = (108.91 mC - 68.73 mC) + 68.73 mC * 1.5 = 143.28 mC (which is close to the 142 mC from the Power Profiler Kit II measurements).
 

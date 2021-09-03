@@ -167,18 +167,18 @@ However, this approach requires you to download the OpenThread Border Router rep
 To set up and configure the OpenThread Border Router, follow the official `OpenThread Border Router Codelab tutorial`_ on the OpenThread documentation portal.
 After cloning the repository, make sure to check out the compatible commit id:
 
-   .. code-block:: console
+.. code-block:: console
 
-      git checkout e149a60
+   git checkout e149a60
 
-Omit the *Build and flash RCP firmware* section, because this section duplicates the steps performed in the previous section.
+Omit the *Build and flash RCP firmware* section, because that section duplicates the steps already performed in the `Configuring a radio co-processor`_ section of this guide.
 
 Running OTBR using Docker
 =========================
 
 For development purposes, you can run the OpenThread Border Router on any Linux-based system using a Docker container that already has the Border Router installed.
 This solution can be used when you are only interested in direct communication between your Border Router and the Thread network.
-For example, you can use the Docker container when you want to establish IP communication between an application running on Linux (such as the Python Controller for Matter) and an application running on a Thread node.
+For example, you can use the Docker container when you want to establish IP communication between an application running on Linux (such as the :ref:`Python Controller for Matter <ug_matter_configuring>`) and an application running on a Thread node.
 
 To install and configure the OpenThread Border Router using the Docker container on an Ubuntu operating system, complete the following steps:
 
