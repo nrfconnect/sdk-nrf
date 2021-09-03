@@ -100,7 +100,7 @@ Example
    AT#XSENDTO
    AT#XRECVFROM
    AT#XPING
-   AT#XGPSRUN
+   AT#XGPS
    OK
 
 Read command

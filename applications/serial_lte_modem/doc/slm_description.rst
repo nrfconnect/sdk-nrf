@@ -143,8 +143,7 @@ Check and configure the following configuration options for the sample:
 .. option:: CONFIG_SLM_START_SLEEP - Enter sleep on startup
 
    This option makes nRF9160 enter deep sleep after startup.
-
-   This option is not selected by default.
+   It is not selected by default.
 
 .. option:: CONFIG_SLM_INTERFACE_PIN - Interface GPIO to wake up from sleep or exit idle
 
@@ -179,17 +178,24 @@ Check and configure the following configuration options for the sample:
 
    This option enables additional AT commands for using the SMS service.
 
-.. option:: CONFIG_SLM_GPS - GPS support in SLM
+.. option:: CONFIG_SLM_GNSS - GNSS support in SLM
 
-   This option enables additional AT commands for using GPS service.
+   This option enables additional AT commands for using GNSS service.
 
-.. option:: CONFIG_SLM_SUPL_SERVER - SUPL server
+.. option:: CONFIG_SLM_AGPS - nRF Cloud A-GPS support in SLM
 
-   This option specifies the SUPL server to use for retrieving SUPL A-GPS data.
+   This option enables additional AT commands for using the nRF Cloud A-GPS service.
+   It is not selected by default.
 
-.. option:: CONFIG_SLM_SUPL_PORT - SUPL server port
+.. option:: CONFIG_SLM_PGPS - nRF Cloud P-GPS support in SLM
 
-   This option specifies the port to use for the specified SUPL server.
+   This option enables additional AT commands for using the nRF Cloud P-GPS service.
+   It is not selected by default.
+
+.. option:: CONFIG_SLM_CELL_POS - nRF Cloud cellular positioning support in SLM
+
+   This option enables additional AT commands for using the nRF Cloud Cellular Positioning service.
+   It is not selected by default.
 
 .. option:: CONFIG_SLM_FTPC - FTP client support in SLM
 
