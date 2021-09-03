@@ -53,7 +53,7 @@ In addition to the |NCS| documentation, information is available in the followin
    ug_dev_model
    ug_app_dev
    ug_nrf91
-   ug_nrf5340
+   ug_nrf53
    ug_nrf52
    protocols
    applications
