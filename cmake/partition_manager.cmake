@@ -208,6 +208,33 @@ fix this, or enable `CONFIG_PM_EXTERNAL_FLASH_SUPPORT_LEGACY` in Kconfig.")
     )
 endif()
 
+# If simultaneous updates of the network core and application core is supported
+# we add a region which is used to emulate flash. In reality this data is being
+# placed in RAM. This is used to bank the network core update in RAM while
+# the application core update is banked in flash. This works since the nRF53
+# application core has 512kB of RAM and the network core only has 256kB of flash
+get_shared(
+  mcuboot_NRF53_MULTI_IMAGE_UPDATE
+  IMAGE mcuboot
+  PROPERTY NRF53_MULTI_IMAGE_UPDATE
+  )
+
+if (DEFINED mcuboot_NRF53_MULTI_IMAGE_UPDATE)
+  # This region will contain the 'mcuboot_secondary' partition, and the banked
+  # updates for the network core will be stored here.
+  get_shared(ram_flash_label IMAGE mcuboot PROPERTY RAM_FLASH_LABEL)
+  get_shared(ram_flash_addr IMAGE mcuboot PROPERTY RAM_FLASH_ADDR)
+  get_shared(ram_flash_size IMAGE mcuboot PROPERTY RAM_FLASH_SIZE)
+
+  add_region(
+    NAME ram_flash
+    SIZE ${ram_flash_size}
+    BASE ${ram_flash_addr}
+    PLACEMENT start_to_end
+    DEVICE ${ram_flash_label}
+    )
+endif()
+
 if (DOMAIN)
   set(UNDERSCORE_DOMAIN _${DOMAIN})
 endif()
@@ -449,35 +476,89 @@ else()
           ${${name}}
           )
       endforeach()
-
-      if (CONFIG_NRF53_UPGRADE_NETWORK_CORE
-          AND CONFIG_HCI_RPMSG_BUILD_STRATEGY_FROM_SOURCE)
-          # Create symbols for the offset reqired for moving the signed network
-          # core application to MCUBoots secondary slot. This is needed
-          # because  objcopy does not support arithmetic expressions as argument
-          # (e.g. '0x100+0x200'), and all of the symbols used to generate the
-          # offset are only available as a generator expression when MCUBoots
-          # cmake code exectues.
-
-          get_target_property(
-            net_app_addr
-            partition_manager
-            CPUNET_PM_APP_ADDRESS
-            )
-
-          # There is no padding in front of the network core application.
-          math(EXPR net_app_TO_SECONDARY
-            "${PM_MCUBOOT_SECONDARY_ADDRESS} - ${net_app_addr} + ${PM_MCUBOOT_PAD_SIZE}")
-
-          set_property(
-            TARGET partition_manager
-            PROPERTY net_app_TO_SECONDARY
-            ${net_app_TO_SECONDARY}
-            )
-        endif()
-
     endif()
   endforeach()
+
+  if (CONFIG_BOOTLOADER_MCUBOOT)
+    if (CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
+      get_filename_component(qspi_node ${ext_flash_dev} DIRECTORY)
+      dt_reg_addr(xip_addr PATH ${qspi_node} NAME qspi_mm)
+      if (NOT DEFINED xip_addr)
+        message(WARNING "\
+Could not find memory mapped address for XIP. Generated update hex files will \
+not have the correct base address. Hence they can not be programmed directly \
+to the external flash")
+      endif()
+    endif()
+
+    # Create symbols for the offset required for moving the signed network
+    # core application to MCUBoots secondary slot. This is needed
+    # because  objcopy does not support arithmetic expressions as argument
+    # (e.g. '0x100+0x200'), and all of the symbols used to generate the
+    # offset are only available as a generator expression when MCUBoots
+    # cmake code executes.
+
+    # Check if a signed version of the network core application is defined.
+    # If so, this indicates that we need to support firmware updates on the
+    # network core. This again means that we should generate the required
+    # hex files.
+    get_shared(cpunet_signed_app_hex IMAGE CPUNET PROPERTY PM_SIGNED_APP_HEX)
+
+    if (CONFIG_NRF53_UPGRADE_NETWORK_CORE
+        AND DEFINED cpunet_signed_app_hex)
+      # The address coming from other domains are not available in this scope
+      # since it is imported by a different domain. Hence, it must be fetched
+      # through the 'partition_manager' target.
+      get_target_property(net_app_addr partition_manager CPUNET_PM_APP_ADDRESS)
+
+      get_shared(
+        mcuboot_NRF53_MULTI_IMAGE_UPDATE
+        IMAGE mcuboot
+        PROPERTY NRF53_MULTI_IMAGE_UPDATE
+        )
+
+      # Check if multi image updates are enabled, in which case we need
+      # to use the "_1" variant of the secondary partition for the network core.
+      if(DEFINED mcuboot_NRF53_MULTI_IMAGE_UPDATE)
+        set(sec_slot_idx "_1")
+      endif()
+
+      # Calculate the offset from the address which the net/app core app is linked
+      # against to the secondary slot. We need these values to generate hex files
+      # which targets the secondary slot.
+      math(EXPR net_app_to_secondary
+        "${xip_addr} \
+        + ${PM_MCUBOOT_SECONDARY${sec_slot_idx}_ADDRESS} \
+        - ${net_app_addr} \
+        + ${PM_MCUBOOT_PAD_SIZE}"
+        )
+
+      set_property(
+        TARGET partition_manager
+        PROPERTY net_app_TO_SECONDARY
+        ${net_app_to_secondary}
+        )
+
+      # This value is needed by `imgtool.py` which is used to sign the images.
+      set_property(
+        TARGET partition_manager
+        PROPERTY net_app_slot_size
+        ${PM_MCUBOOT_SECONDARY${sec_slot_idx}_SIZE}
+        )
+    endif()
+
+    math(EXPR app_to_secondary
+      "${xip_addr} \
+      + ${PM_MCUBOOT_SECONDARY_ADDRESS} \
+      - ${PM_MCUBOOT_PRIMARY_ADDRESS}"
+      )
+
+    set_property(
+      TARGET partition_manager
+      PROPERTY app_TO_SECONDARY
+      ${app_to_secondary}
+      )
+  endif()
 
   # Explicitly add the root image domain hex file to the list
   list(APPEND domain_hex_files ${PROJECT_BINARY_DIR}/${merged}.hex)
